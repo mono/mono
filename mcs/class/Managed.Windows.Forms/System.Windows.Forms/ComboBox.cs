@@ -58,8 +58,7 @@ namespace System.Windows.Forms
 		private readonly int def_button_width = 16;
 		private bool clicked;		
 		private int max_length;
-		private ComboListBox listbox_ctrl;
-		private StringFormat string_format;
+		private ComboListBox listbox_ctrl;		
 		private TextBox textbox_ctrl;
 		private bool process_textchanged_event;
 
@@ -114,9 +113,7 @@ namespace System.Windows.Forms
 			dropdown_width = -1;
 			max_length = 0;
 			integral_height = true;
-			process_textchanged_event = true;
-			
-			string_format = new StringFormat ();			
+			process_textchanged_event = true;			
 
 			/* Events */
 			MouseDown += new MouseEventHandler (OnMouseDownCB);
@@ -665,30 +662,7 @@ namespace System.Windows.Forms
 				return;
 			}
 			
-			Color back_color, fore_color;
-			Rectangle text_draw = e.Bounds;
-			
-			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
-				back_color = ThemeEngine.Current.ColorHilight;
-				fore_color = ThemeEngine.Current.ColorHilightText;
-			}
-			else {
-				back_color = e.BackColor;
-				fore_color = e.ForeColor;
-			}			
-							
-			e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (back_color), e.Bounds);
-
-			if (e.Index != -1) {
-				e.Graphics.DrawString (Items[e.Index].ToString (), e.Font,
-					ThemeEngine.Current.ResPool.GetSolidBrush (fore_color),
-					text_draw, string_format);
-			}
-			
-			if ((e.State & DrawItemState.Focus) == DrawItemState.Focus) {
-				ThemeEngine.Current.CPDrawFocusRectangle (e.Graphics, e.Bounds, fore_color, back_color);
-			}
-			
+			ThemeEngine.Current.DrawComboBoxItem (this, e);
 		}		
 
 		protected virtual void OnDropDown (EventArgs e)

@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
@@ -62,10 +62,7 @@ namespace System.Windows.Forms
 		private bool menubar;
 		private DrawItemState status;
 		private MenuMerge mergetype;
-		static StringFormat string_format_text;
-		static StringFormat string_format_shortcut;
-		static StringFormat string_format_menubar_text;   		
-
+		
 		public MenuItem (): base (null)
 		{	
 			CommonConstructor (string.Empty);
@@ -133,21 +130,6 @@ namespace System.Windows.Forms
 			mergeorder = 0;
 			mergetype = MenuMerge.Add;
 			Text = text;	// Text can change separator status
-			
-			/* String formats */
-			string_format_text = new StringFormat ();
-			string_format_text.LineAlignment = StringAlignment.Center;
-			string_format_text.Alignment = StringAlignment.Near;
-			string_format_text.HotkeyPrefix = HotkeyPrefix.Show;
-
-			string_format_shortcut = new StringFormat ();	
-			string_format_shortcut.LineAlignment = StringAlignment.Center;
-			string_format_shortcut.Alignment = StringAlignment.Far;
-
-			string_format_menubar_text = new StringFormat ();
-			string_format_menubar_text.LineAlignment = StringAlignment.Center;
-			string_format_menubar_text.Alignment = StringAlignment.Center;
-			string_format_menubar_text.HotkeyPrefix = HotkeyPrefix.Show;			
 		}
 
 		#region Events
@@ -412,122 +394,7 @@ namespace System.Windows.Forms
 				return;
 			}
 			
-			StringFormat string_format;
-			Rectangle rect_text = e.Bounds;		
-			
-
-			if (Visible == false)
-				return;
-
-			if (MenuBar) {
-				string_format = string_format_menubar_text;
-			}
-			else {
-				string_format = string_format_text;
-			}		
-
-			if (Separator == true) {
-				e.Graphics.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
-					e.Bounds.X, e.Bounds.Y, e.Bounds.X + e.Bounds.Width, e.Bounds.Y);
-
-				e.Graphics.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonHilight),
-					e.Bounds.X, e.Bounds.Y + 1, e.Bounds.X + e.Bounds.Width, e.Bounds.Y + 1);
-
-				return;
-			}			
-
-			if (!MenuBar)
-				rect_text.X += ThemeEngine.Current.MenuCheckSize.Width;
-
-			if (BarBreak) { /* Draw vertical break bar*/
-				Rectangle rect = e.Bounds;
-				rect.Y++;
-	        		rect.Width = 3;
-	        		rect.Height = MenuHeight - 6;
-
-				e.Graphics.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
-					rect.X, rect.Y , rect.X, rect.Y + rect.Height);
-
-				e.Graphics.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonHilight),
-					rect.X + 1, rect.Y , rect.X +1, rect.Y + rect.Height);
-			}			
-			
-			Color color_text;
-			Color color_back;
-			
-			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
-				color_text = ThemeEngine.Current.ColorHilightText;
-				color_back = ThemeEngine.Current.ColorHilight;
-			}
-			else {
-				color_text = ThemeEngine.Current.ColorMenuText;
-				color_back = ThemeEngine.Current.ColorMenu;
-			}
-
-			/* Draw background */
-			Rectangle rect_back = e.Bounds;
-			rect_back.X++;
-			rect_back.Width -=2;
-			e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (color_back), rect_back);
-			
-			if (Enabled) {					
-				e.Graphics.DrawString (Text, e.Font,
-					ThemeEngine.Current.ResPool.GetSolidBrush (color_text),
-					rect_text, string_format);
-
-				if (!MenuBar && Shortcut != Shortcut.None && ShowShortcut) {
-					string str = GetShortCutText ();
-					Rectangle rect = rect_text;
-					rect.X = XTab;
-					rect.Width -= XTab;
-
-					e.Graphics.DrawString (str, e.Font, ThemeEngine.Current.ResPool.GetSolidBrush (color_text),
-						rect, string_format_shortcut);
-				}
-			}
-			else {
-				ControlPaint.DrawStringDisabled (e.Graphics, Text, e.Font, 
-					Color.Black, rect_text, string_format);
-			}
-
-			/* Draw arrow */
-			if (MenuBar == false && IsPopup) {
-
-				int cx = ThemeEngine.Current.MenuCheckSize.Width;
-				int cy = ThemeEngine.Current.MenuCheckSize.Height;
-				Bitmap	bmp = new Bitmap (cx, cy);
-				Graphics gr = Graphics.FromImage (bmp);
-				Rectangle rect_arrow = new Rectangle (0, 0, cx, cy);
-				ControlPaint.DrawMenuGlyph (gr, rect_arrow, MenuGlyph.Arrow);
-				bmp.MakeTransparent ();
-				e.Graphics.DrawImage (bmp, e.Bounds.X + e.Bounds.Width - cx,
-					e.Bounds.Y + ((e.Bounds.Height - cy) /2));
-
-				gr.Dispose ();
-				bmp.Dispose ();
-			}
-
-			/* Draw checked or radio */
-			if (MenuBar == false && Checked) {
-
-				Rectangle area = e.Bounds;
-				int cx = ThemeEngine.Current.MenuCheckSize.Width;
-				int cy = ThemeEngine.Current.MenuCheckSize.Height;
-				Bitmap	bmp = new Bitmap (cx, cy);
-				Graphics gr = Graphics.FromImage (bmp);
-				Rectangle rect_arrow = new Rectangle (0, 0, cx, cy);
-
-				if (RadioCheck)
-					ControlPaint.DrawMenuGlyph (gr, rect_arrow, MenuGlyph.Bullet);
-				else
-					ControlPaint.DrawMenuGlyph (gr, rect_arrow, MenuGlyph.Checkmark);
-
-				bmp.MakeTransparent ();
-				e.Graphics.DrawImage (bmp, area.X, e.Bounds.Y + ((e.Bounds.Height - cy) / 2));
-
-				gr.Dispose ();
-				bmp.Dispose ();
-			}
+			ThemeEngine.Current.DrawMenuItem (this, e);	
 		}
 
 

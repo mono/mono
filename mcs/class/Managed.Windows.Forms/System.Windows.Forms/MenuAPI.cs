@@ -26,7 +26,6 @@
 // NOT COMPLETE
 
 using System.Drawing;
-using System.Drawing.Text;
 using System.Collections;
 
 namespace System.Windows.Forms
@@ -41,11 +40,6 @@ namespace System.Windows.Forms
 	internal class MenuAPI
 	{
 		static ArrayList menu_list = new ArrayList ();		
-		const int SEPARATOR_HEIGHT = 5;
-		const int SM_CXBORDER = 1;
-		const int SM_CYBORDER = 1;		
-    		const int MENU_TAB_SPACE = 8;		// Pixels added to the width of an item because of a tab
-    		const int MENU_BAR_ITEMS_SPACE = 8;	// Space between menu bar items
 
 		public class MENU
 		{
@@ -263,199 +257,7 @@ namespace System.Windows.Forms
 
 			return true;
 		}
-
-		/*
-			Menu drawing API
-		*/
-
-		static public void CalcItemSize (Graphics dc, MENUITEM item, int y, int x, bool menuBar)
-		{
-			item.rect.Y = y;
-			item.rect.X = x;		
-
-			if (item.item.Visible == false)
-				return;
-
-			if (item.item.Separator == true) {
-				item.rect.Height = SEPARATOR_HEIGHT / 2;
-				item.rect.Width = -1;
-				return;
-			}
-			
-			if (item.item.MeasureEventDefined) {
-				MeasureItemEventArgs mi = new MeasureItemEventArgs (dc, item.pos);
-				item.item.PerformMeasureItem (mi);
-				item.rect.Height = mi.ItemHeight;
-				item.rect.Width = mi.ItemWidth;
-				return;
-			} else {		
-
-				SizeF size;
-				size =  dc.MeasureString (item.item.Text, ThemeEngine.Current.MenuFont);
-				item.rect.Width = (int) size.Width;
-				item.rect.Height = (int) size.Height;
 	
-				if (!menuBar) {
-	
-					if (item.item.Shortcut != Shortcut.None && item.item.ShowShortcut) {
-						item.item.XTab = ThemeEngine.Current.MenuCheckSize.Width + MENU_TAB_SPACE + (int) size.Width;
-						size =  dc.MeasureString (" " + item.item.GetShortCutText (), ThemeEngine.Current.MenuFont);
-						item.rect.Width += MENU_TAB_SPACE + (int) size.Width;
-					}
-	
-					item.rect.Width += 4 + (ThemeEngine.Current.MenuCheckSize.Width * 2);
-				}
-				else {
-					item.rect.Width += MENU_BAR_ITEMS_SPACE;
-					x += item.rect.Width;
-				}
-	
-				if (item.rect.Height < ThemeEngine.Current.MenuHeight)
-					item.rect.Height = ThemeEngine.Current.MenuHeight;
-				}
-		}
-
-		static public void CalcPopupMenuSize (Graphics dc, IntPtr hMenu)
-		{
-			int x = 3;
-			int start = 0;
-			int i, n, y, max;
-
-			MENU menu = GetMenuFromID (hMenu);
-			menu.Height = 0;
-
-			while (start < menu.items.Count) {
-				y = 2;
-				max = 0;
-				for (i = start; i < menu.items.Count; i++) {
-					MENUITEM item = (MENUITEM) menu.items[i];
-
-					if ((i != start) && (item.item.Break || item.item.BarBreak))
-						break;
-
-					CalcItemSize (dc, item, y, x, false);
-					y += item.rect.Height;
-
-					if (item.rect.Width > max)
-						max = item.rect.Width;
-				}
-
-				// Reemplace the -1 by the menu width (separators)
-				for (n = start; n < i; n++, start++) {
-					MENUITEM item = (MENUITEM) menu.items[n];
-					item.rect.Width = max;
-				}
-
-				if (y > menu.Height)
-					menu.Height = y;
-
-				x+= max;
-			}
-
-			menu.Width = x;
-
-			//space for border
-			menu.Width += 2;
-			menu.Height += 2;
-
-			menu.Width += SM_CXBORDER;
-    			menu.Height += SM_CYBORDER;
-		}
-
-
-		static public void DrawPopupMenu (Graphics dc, IntPtr hMenu, Rectangle cliparea, Rectangle rect)
-		{
-			MENU menu = GetMenuFromID (hMenu);
-
-			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
-				(ThemeEngine.Current.ColorMenu), cliparea);
-
-			/* Draw menu borders */
-			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorHilightText),
-				rect.X, rect.Y, rect.X + rect.Width, rect.Y);
-
-			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorHilightText),
-				rect.X, rect.Y, rect.X, rect.Y + rect.Height);
-
-			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
-				rect.X + rect.Width - 1 , rect.Y , rect.X + rect.Width - 1, rect.Y + rect.Height);
-
-			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonDkShadow),
-				rect.X + rect.Width, rect.Y , rect.X + rect.Width, rect.Y + rect.Height);
-
-			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
-				rect.X , rect.Y + rect.Height - 1 , rect.X + rect.Width - 1, rect.Y + rect.Height -1);
-
-			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonDkShadow),
-				rect.X , rect.Y + rect.Height, rect.X + rect.Width - 1, rect.Y + rect.Height);
-
-			for (int i = 0; i < menu.items.Count; i++)
-				if (cliparea.IntersectsWith (((MENUITEM) menu.items[i]).rect)) {
-					MENUITEM it = (MENUITEM) menu.items[i];
-					it.item.MenuHeight = menu.Height;
-					it.item.PerformDrawItem (new DrawItemEventArgs (dc, ThemeEngine.Current.MenuFont,
-						it.rect, i, it.item.Status));
-			}
-		}
-
-		// Updates the menu rect and returns the height
-		static public int MenuBarCalcSize (Graphics dc, IntPtr hMenu, int width)
-		{
-			int x = 0;
-			int i = 0;
-			int y = 0;
-			MENU menu = GetMenuFromID (hMenu);
-			menu.Height = 0;
-			MENUITEM item;
-
-			while (i < menu.items.Count) {
-
-				item = (MENUITEM) menu.items[i];
-				CalcItemSize (dc, item, y, x, true);
-				i = i + 1;
-
-				if (x + item.rect.Width > width) {
-					item.rect.X = 0;
-					y += item.rect.Height;
-					item.rect.Y = y;
-					x = 0;
-				}
-
-				x += item.rect.Width;
-				item.item.MenuBar = true;				
-
-				if (y + item.rect.Height > menu.Height)
-					menu.Height = item.rect.Height + y;
-			}
-
-			menu.Width = width;						
-			return menu.Height;
-		}
-
-		// Draws a menu bar in a Window
-		static public void DrawMenuBar (Graphics dc, IntPtr hMenu, Rectangle rect)
-		{
-			MENU menu = GetMenuFromID (hMenu);			
-			Rectangle item_rect;
-
-			if (menu.Height == 0)
-				MenuBarCalcSize (dc, hMenu, rect.Width);
-				
-			rect.Height = menu.Height;
-			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (menu.Wnd.BackColor), rect);
-						
-			for (int i = 0; i < menu.items.Count; i++) {
-				MENUITEM it = (MENUITEM) menu.items[i];
-				item_rect = it.rect;
-				item_rect.X += rect.X;
-				item_rect.Y += rect.Y;
-				it.item.MenuHeight = menu.Height;
-				it.item.PerformDrawItem (new DrawItemEventArgs (dc, ThemeEngine.Current.MenuFont,
-						item_rect, i, it.item.Status));			
-				
-			}				
-		}
-
 		/*
 			Menu handeling API
 		*/
@@ -520,10 +322,9 @@ namespace System.Windows.Forms
 				menu.Width, menu.Height);
 
 			g = XplatUI.GetMenuDC(menu.Wnd.window.Handle, IntPtr.Zero);
-			MenuAPI.DrawMenuBar (g, hMenu, rect);
+			ThemeEngine.Current.DrawMenuBar (g, hMenu, rect);
 			XplatUI.ReleaseMenuDC(menu.Wnd.window.Handle, g);
 		}
-
 		
 		static public void UnSelectItem (IntPtr hMenu, MENUITEM item)
 		{			
@@ -1138,7 +939,7 @@ namespace System.Windows.Forms
 		internal void RefreshItems ()
 		{
 			MenuAPI.MENU menu = MenuAPI.GetMenuFromID (hMenu);
-			MenuAPI.CalcPopupMenuSize (DeviceContext, hMenu);
+			ThemeEngine.Current.CalcPopupMenuSize (DeviceContext, hMenu);
 
 			Width = menu.Width;
 			Height = menu.Height;			
@@ -1146,7 +947,7 @@ namespace System.Windows.Forms
 
 		private void Draw (Rectangle clip)
 		{
-			MenuAPI.DrawPopupMenu  (DeviceContext, hMenu, clip, ClientRectangle);
+			ThemeEngine.Current.DrawPopupMenu  (DeviceContext, hMenu, clip, ClientRectangle);
 		}
 	}
 

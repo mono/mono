@@ -476,7 +476,7 @@ namespace System.Windows.Forms {
 					// FIXME - Do we still need this?
 					this.SetBoundsCore(0, 0, 0, 0, BoundsSpecified.None);
 
-					MenuAPI.MenuBarCalcSize(DeviceContext, menu.Handle, ClientSize.Width);
+					ThemeEngine.Current.CalcMenuBarSize (DeviceContext, menu.Handle, ClientSize.Width);
 				}
 			}
 		}
@@ -957,7 +957,7 @@ namespace System.Windows.Forms {
 						ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure(m.LParam, typeof(XplatUIWin32.NCCALCSIZE_PARAMS));
 
 						// Adjust for menu
-						ncp.rgrc1.top += MenuAPI.MenuBarCalcSize(DeviceContext, menu.menu_handle, ClientSize.Width);
+						ncp.rgrc1.top += ThemeEngine.Current.CalcMenuBarSize (DeviceContext, menu.menu_handle, ClientSize.Width);
 						Marshal.StructureToPtr(ncp, m.LParam, true);
 					}
 					DefWndProc(ref m);

@@ -139,8 +139,7 @@ namespace System.Windows.Forms
 		private bool shift_pressed;
 		private bool has_focus;
 		
-		internal int focused_item;
-		internal StringFormat string_format;
+		internal int focused_item;		
 		internal ListBoxInfo listbox_info;
 		internal ObjectCollection items;
 
@@ -170,8 +169,7 @@ namespace System.Windows.Forms
 			items = new ObjectCollection (this);
 			selected_indices = new SelectedIndexCollection (this);
 			selected_items = new SelectedObjectCollection (this);
-			listbox_info = new ListBoxInfo ();
-			string_format = new StringFormat ();
+			listbox_info = new ListBoxInfo ();			
 			listbox_info.item_height = FontHeight;
 
 			/* Vertical scrollbar */
@@ -197,9 +195,7 @@ namespace System.Windows.Forms
 			KeyDown += new KeyEventHandler (OnKeyDownLB);
 			KeyUp += new KeyEventHandler (OnKeyUpLB);
 			GotFocus += new EventHandler (OnGotFocus);
-			LostFocus += new EventHandler (OnLostFocus);			
-
-			UpdateFormatString ();
+			LostFocus += new EventHandler (OnLostFocus);
 		}
 
 		#region Events
@@ -425,8 +421,7 @@ namespace System.Windows.Forms
 				if (base.RightToLeft == value)
 					return;
 
-    				base.RightToLeft = value;
-    				UpdateFormatString ();
+    				base.RightToLeft = value;    				
 				base.Refresh ();
 			}
 		}
@@ -605,8 +600,7 @@ namespace System.Windows.Forms
 				if (use_tabstops == value)
 					return;
 
-    				use_tabstops = value;
-    				UpdateFormatString ();
+    				use_tabstops = value;    				
 				base.Refresh ();
     			}
 		}
@@ -784,34 +778,14 @@ namespace System.Windows.Forms
 		}
 
 		protected virtual void OnDrawItem (DrawItemEventArgs e)
-		{
-			Color back_color, fore_color;
+		{			
 			
 			if (DrawItem != null && (DrawMode == DrawMode.OwnerDrawFixed || DrawMode == DrawMode.OwnerDrawVariable)) {
 				DrawItem (this, e);
 				return;
 			}			
 
-			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
-				back_color = ThemeEngine.Current.ColorHilight;
-				fore_color = ThemeEngine.Current.ColorHilightText;
-			}
-			else {
-				back_color = e.BackColor;
-				fore_color = e.ForeColor;
-			}
-			
-			e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
-				(back_color), e.Bounds);
-
-			e.Graphics.DrawString (Items[e.Index].ToString (), e.Font,
-				ThemeEngine.Current.ResPool.GetSolidBrush (fore_color),
-				e.Bounds, string_format);
-					
-			if ((e.State & DrawItemState.Focus) == DrawItemState.Focus) {
-				ThemeEngine.Current.CPDrawFocusRectangle (e.Graphics, e.Bounds,
-					fore_color, back_color);
-			}
+			ThemeEngine.Current.DrawListBoxItem (this, e);
 		}
 
 		protected override void OnFontChanged (EventArgs e)
@@ -1603,8 +1577,10 @@ namespace System.Windows.Forms
 				Invalidate (invalidate);
 		}
 
-		private void UpdateFormatString ()
+		internal StringFormat GetFormatString ()
 		{			
+			StringFormat string_format = new StringFormat ();
+			
 			if (RightToLeft == RightToLeft.Yes)
 				string_format.Alignment = StringAlignment.Far;				
 			else
@@ -1612,6 +1588,8 @@ namespace System.Windows.Forms
 
 			if (UseTabStops)
 				string_format.SetTabStops (0, new float [] {(float)(Font.Height * 3.7)});
+				
+			return string_format;
 		}
 
 		// Updates the scrollbar's position with the new items and inside area

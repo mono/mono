@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
@@ -404,10 +404,17 @@ namespace System.Windows.Forms
 		public abstract void DrawCheckBox(Graphics dc, Rectangle clip_area, CheckBox checkbox);
 		#endregion	// CheckBox
 		
+		#region CheckedListBox
+		// Drawing		
+		public abstract void DrawCheckedListBoxItem (CheckedListBox ctrl, DrawItemEventArgs e);
+		public abstract Rectangle CheckedListBoxCheckRectangle ();
+		#endregion // CheckedListBox
+		
 		#region ComboBox
 		// Drawing
 		public abstract void DrawComboBoxEditDecorations (Graphics dc, ComboBox ctrl, Rectangle rect);
 		public abstract void DrawComboListBoxDecorations (Graphics dc, ComboBox ctrl, Rectangle rect);
+		public abstract void DrawComboBoxItem (ComboBox ctrl, DrawItemEventArgs e);
 		
 		// Sizing
 		public abstract int DrawComboBoxEditDecorationTop ();
@@ -455,13 +462,14 @@ namespace System.Windows.Forms
 		#region ListBox
 		// Drawing
 		public abstract void DrawListBoxDecorations (Graphics dc, ListBox ctrl);
+		public abstract void DrawListBoxItem (ListBox ctrl, DrawItemEventArgs e);
 		
 		// Sizing
 		public abstract int DrawListBoxDecorationTop (BorderStyle border_style);
 		public abstract int DrawListBoxDecorationBottom (BorderStyle border_style);
 		public abstract int DrawListBoxDecorationRight (BorderStyle border_style);
 		public abstract int DrawListBoxDecorationLeft (BorderStyle border_style);
-		#endregion	// ListBox
+		#endregion	// ListBox		
 		
 		#region ListView
 		// Drawing
@@ -476,6 +484,19 @@ namespace System.Windows.Forms
 		public abstract int ListViewHorizontalSpacing { get; }
 		public abstract Size ListViewDefaultSize { get; }
 		#endregion	// ListView
+		
+		#region Menus
+		public abstract void CalcItemSize (Graphics dc, MenuAPI.MENUITEM item, int y, int x, bool menuBar);
+		public abstract void CalcPopupMenuSize (Graphics dc, IntPtr hMenu);
+		public abstract int CalcMenuBarSize (Graphics dc, IntPtr hMenu, int width);
+		public abstract void DrawMenuBar (Graphics dc, IntPtr hMenu, Rectangle rect);
+		public abstract void DrawMenuItem (MenuItem item, DrawItemEventArgs e);
+		public abstract void DrawPopupMenu (Graphics dc, IntPtr hMenu, Rectangle cliparea, Rectangle rect);		
+		#endregion 	// Menus
+
+		#region MonthCalendar
+		public abstract void DrawMonthCalendar(Graphics dc, Rectangle clip_rectangle, MonthCalendar month_calendar);
+		#endregion 	// MonthCalendar
 
 		#region Panel
 		// Sizing
@@ -554,24 +575,12 @@ namespace System.Windows.Forms
 		#region ToolTip
 		public abstract void DrawToolTip(Graphics dc, Rectangle clip_rectangle, ToolTip tt);
 		public abstract Size ToolTipSize(ToolTip tt, string text);
-		#endregion	// ToolTip
-
-		#region MonthCalendar
-
-		public abstract void DrawMonthCalendar(Graphics dc, Rectangle clip_rectangle, MonthCalendar month_calendar);
-
-		#endregion 	// MonthCalendar
+		#endregion	// ToolTip		
+		
 
 		#region TrackBar
 		// Drawing
 		public abstract void DrawTrackBar (Graphics dc, Rectangle clip_rectangle, TrackBar tb);
-//public abstract void DrawTrackBar (Graphics dc, Rectangle area, TrackBar tb, 
-//ref Rectangle thumb_pos, 
-//ref Rectangle thumb_area, 
-//bool highli_thumb, 
-//float ticks, 
-//int value_pos, 
-//bool mouse_value);
 
 		// Sizing
 		public abstract Size TrackBarDefaultSize{get; }		// Default size for the TrackBar control

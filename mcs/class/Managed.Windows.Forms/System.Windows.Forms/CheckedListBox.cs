@@ -41,8 +41,7 @@ namespace System.Windows.Forms
 		private CheckedItemCollection checked_items;
 		private bool check_onclick;
 		private bool three_dcheckboxes;
-		private static readonly Rectangle checkbox_rect = new Rectangle (2, 2, 11,11); // Position of the checkbox relative to the item
-
+		
 		public CheckedListBox ()
 		{
 			items = new CheckedListBox.ObjectCollection (this);
@@ -218,49 +217,7 @@ namespace System.Windows.Forms
 		
 		protected override void OnDrawItem (DrawItemEventArgs e)
 		{
-			Color back_color, fore_color;
-			Rectangle item_rect = e.Bounds;
-			ButtonState state;
-
-			/* Draw checkbox */		
-
-			if ((Items.GetListBoxItem (e.Index)).State == CheckState.Checked)
-				state = ButtonState.Checked;
-			else
-				state = ButtonState.Normal;
-
-			if (ThreeDCheckBoxes == false)
-				state |= ButtonState.Flat;
-
-			ControlPaint.DrawCheckBox (e.Graphics,
-				item_rect.X + checkbox_rect.X, item_rect.Y + checkbox_rect.Y,
-				checkbox_rect.Width, checkbox_rect.Height,
-				state);
-
-			item_rect.X += checkbox_rect.Width + checkbox_rect.X * 2;
-			item_rect.Width -= checkbox_rect.Width + checkbox_rect.X * 2;
-			
-			/* Draw text*/
-			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
-				back_color = ThemeEngine.Current.ColorHilight;
-				fore_color = ThemeEngine.Current.ColorHilightText;
-			}
-			else {
-				back_color = e.BackColor;
-				fore_color = e.ForeColor;
-			}
-			
-			e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
-				(back_color), item_rect);
-
-			e.Graphics.DrawString (Items[e.Index].ToString (), e.Font,
-				ThemeEngine.Current.ResPool.GetSolidBrush (fore_color),
-				item_rect, string_format);
-					
-			if ((e.State & DrawItemState.Focus) == DrawItemState.Focus) {
-				ThemeEngine.Current.CPDrawFocusRectangle (e.Graphics, item_rect,
-					fore_color, back_color);
-			}
+			ThemeEngine.Current.DrawCheckedListBoxItem (this, e);
 		}
 
 		protected override void OnFontChanged (EventArgs e)
@@ -369,10 +326,10 @@ namespace System.Windows.Forms
 			
 			/* CheckBox hit */
 			hit_rect = item_rect = GetItemDisplayRectangle (index, LBoxInfo.top_item); // Full item rect
-			hit_rect.X += checkbox_rect.X;
-			hit_rect.Y += checkbox_rect.Y;
-			hit_rect.Width = checkbox_rect.Width;
-			hit_rect.Height = checkbox_rect.Height;
+			hit_rect.X += ThemeEngine.Current.CheckedListBoxCheckRectangle().X;
+			hit_rect.Y += ThemeEngine.Current.CheckedListBoxCheckRectangle().Y;
+			hit_rect.Width = ThemeEngine.Current.CheckedListBoxCheckRectangle().Width;
+			hit_rect.Height = ThemeEngine.Current.CheckedListBoxCheckRectangle().Height;
 			
 			if ((Items.GetListBoxItem (index)).State == CheckState.Checked)
 					value = CheckState.Unchecked;

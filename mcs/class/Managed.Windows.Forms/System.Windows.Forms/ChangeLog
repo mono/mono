@@ -1,3 +1,14 @@
+2005-02-19  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* Form.cs: Move menu drawing code to Theme class
+	* ComboBox.cs: Move ComboBox drawing code to Theme class
+	* MenuItem.cs: Move menu drawing code to Theme class
+	* MenuAPI.cs: Move menu drawing code to Theme class
+	* ThemeWin32Classic.cs: New methods 
+	* CheckedListBox.cs: Move CheckedListbox drawing code to Theme class
+	* ListBox.cs: Move Listbox drawing code to Theme class
+	* Theme.cs: New methods
+
 2005-02-20  Peter Bartok  <pbartok@novell.com>
 
 	* Control.cs:

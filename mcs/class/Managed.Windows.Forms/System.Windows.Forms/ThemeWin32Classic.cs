@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
@@ -78,6 +78,15 @@ namespace System.Windows.Forms
 		static readonly Color arrow_color = Color.Black;
 		static readonly Color pen_ticks_color = Color.Black;
 		static readonly Color progressbarblock_color = Color.FromArgb (255, 0, 0, 128);
+		static StringFormat string_format_menu_text;
+		static StringFormat string_format_menu_shortcut;
+		static StringFormat string_format_menu_menubar_text;
+		static readonly Rectangle checkbox_rect = new Rectangle (2, 2, 11,11); // Position of the checkbox relative to the item
+		const int SEPARATOR_HEIGHT = 5;
+		const int SM_CXBORDER = 1;
+		const int SM_CYBORDER = 1;		
+    		const int MENU_TAB_SPACE = 8;		// Pixels added to the width of an item because of a tab
+    		const int MENU_BAR_ITEMS_SPACE = 8;	// Space between menu bar items
 
 		#region	Principal Theme Methods
 		public ThemeWin32Classic ()
@@ -91,6 +100,21 @@ namespace System.Windows.Forms
 			defaultWindowBackColor = SystemColors.Window;
 			defaultWindowForeColor = ColorButtonText;
 			default_font =	new Font (FontFamily.GenericSansSerif, 8.25f);
+			
+			/* Menu string formats */
+			string_format_menu_text = new StringFormat ();
+			string_format_menu_text.LineAlignment = StringAlignment.Center;
+			string_format_menu_text.Alignment = StringAlignment.Near;
+			string_format_menu_text.HotkeyPrefix = HotkeyPrefix.Show;
+
+			string_format_menu_shortcut = new StringFormat ();	
+			string_format_menu_shortcut.LineAlignment = StringAlignment.Center;
+			string_format_menu_shortcut.Alignment = StringAlignment.Far;
+
+			string_format_menu_menubar_text = new StringFormat ();
+			string_format_menu_menubar_text.LineAlignment = StringAlignment.Center;
+			string_format_menu_menubar_text.Alignment = StringAlignment.Center;
+			string_format_menu_menubar_text.HotkeyPrefix = HotkeyPrefix.Show;
 		}	
 
 		public override void ResetDefaults() {
@@ -685,6 +709,63 @@ namespace System.Windows.Forms
 
 		#endregion	// CheckBox
 		
+		#region CheckedListBox
+		
+		public override Rectangle CheckedListBoxCheckRectangle ()
+		{
+			return checkbox_rect;
+		}
+		
+		public override void DrawCheckedListBoxItem (CheckedListBox ctrl, DrawItemEventArgs e)
+		{			
+			Color back_color, fore_color;
+			Rectangle item_rect = e.Bounds;
+			ButtonState state;
+			StringFormat string_format = ctrl.GetFormatString ();
+
+			/* Draw checkbox */		
+
+			if ((ctrl.Items.GetListBoxItem (e.Index)).State == CheckState.Checked)
+				state = ButtonState.Checked;
+			else
+				state = ButtonState.Normal;
+
+			if (ctrl.ThreeDCheckBoxes == false)
+				state |= ButtonState.Flat;
+
+			ControlPaint.DrawCheckBox (e.Graphics,
+				item_rect.X + checkbox_rect.X, item_rect.Y + checkbox_rect.Y,
+				checkbox_rect.Width, checkbox_rect.Height,
+				state);
+
+			item_rect.X += checkbox_rect.Width + checkbox_rect.X * 2;
+			item_rect.Width -= checkbox_rect.Width + checkbox_rect.X * 2;
+			
+			/* Draw text*/
+			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
+				back_color = ThemeEngine.Current.ColorHilight;
+				fore_color = ThemeEngine.Current.ColorHilightText;
+			}
+			else {
+				back_color = e.BackColor;
+				fore_color = e.ForeColor;
+			}
+			
+			e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
+				(back_color), item_rect);
+
+			e.Graphics.DrawString (ctrl.Items[e.Index].ToString (), e.Font,
+				ThemeEngine.Current.ResPool.GetSolidBrush (fore_color),
+				item_rect, string_format);
+					
+			if ((e.State & DrawItemState.Focus) == DrawItemState.Focus) {
+				ThemeEngine.Current.CPDrawFocusRectangle (e.Graphics, item_rect,
+					fore_color, back_color);
+			}
+		}
+		
+		#endregion // CheckedListBox
+		
 		#region ComboBox
 		
 		// Drawing
@@ -744,6 +825,34 @@ namespace System.Windows.Forms
 				dc.DrawRectangle (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorWindowFrame),
 					cl.X, cl.Y, cl.Width - 1, cl.Height - 1);
 			}			
+		}
+		
+		public override void DrawComboBoxItem (ComboBox ctrl, DrawItemEventArgs e)
+		{
+			Color back_color, fore_color;
+			Rectangle text_draw = e.Bounds;
+			StringFormat string_format = new StringFormat ();
+			
+			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
+				back_color = ThemeEngine.Current.ColorHilight;
+				fore_color = ThemeEngine.Current.ColorHilightText;
+			}
+			else {
+				back_color = e.BackColor;
+				fore_color = e.ForeColor;
+			}			
+							
+			e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (back_color), e.Bounds);
+
+			if (e.Index != -1) {
+				e.Graphics.DrawString (ctrl.Items[e.Index].ToString (), e.Font,
+					ThemeEngine.Current.ResPool.GetSolidBrush (fore_color),
+					text_draw, string_format);
+			}
+			
+			if ((e.State & DrawItemState.Focus) == DrawItemState.Focus) {
+				ThemeEngine.Current.CPDrawFocusRectangle (e.Graphics, e.Bounds, fore_color, back_color);
+			}
 		}
 		
 		#endregion ComboBox
@@ -888,8 +997,7 @@ namespace System.Windows.Forms
 		
 		#region ListBox
 		
-		// Drawing
-		
+		// Drawing		
 		public override void DrawListBoxDecorations (Graphics dc, ListBox ctrl)
 		{			
 			Rectangle cl = ctrl.LBoxInfo.client_rect;
@@ -936,6 +1044,33 @@ namespace System.Windows.Forms
 		public override int DrawListBoxDecorationBottom  (BorderStyle border_style) { return DrawListBoxDecorationSize (border_style);}
 		public override int DrawListBoxDecorationRight (BorderStyle border_style) { return DrawListBoxDecorationSize (border_style);}
 		public override int DrawListBoxDecorationLeft (BorderStyle border_style) { return DrawListBoxDecorationSize (border_style);}
+		
+		public override void DrawListBoxItem (ListBox ctrl, DrawItemEventArgs e)
+		{
+			Color back_color, fore_color;
+			StringFormat string_format = ctrl.GetFormatString ();
+			
+			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
+				back_color = ThemeEngine.Current.ColorHilight;
+				fore_color = ThemeEngine.Current.ColorHilightText;
+			}
+			else {
+				back_color = e.BackColor;
+				fore_color = e.ForeColor;
+			}
+			
+			e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
+				(back_color), e.Bounds);
+
+			e.Graphics.DrawString (ctrl.Items[e.Index].ToString (), e.Font,
+				ThemeEngine.Current.ResPool.GetSolidBrush (fore_color),
+				e.Bounds, string_format);
+					
+			if ((e.State & DrawItemState.Focus) == DrawItemState.Focus) {
+				ThemeEngine.Current.CPDrawFocusRectangle (e.Graphics, e.Bounds,
+					fore_color, back_color);
+			}
+		}
 		
 		#endregion ListBox
 
@@ -1223,6 +1358,316 @@ namespace System.Windows.Forms
 			get { return new Size (121, 97); }
 		}
 		#endregion	// ListView
+		
+		#region Menus
+		public override void CalcItemSize (Graphics dc, MenuAPI.MENUITEM item, int y, int x, bool menuBar)
+		{
+			item.rect.Y = y;
+			item.rect.X = x;
+
+			if (item.item.Visible == false)
+				return;
+
+			if (item.item.Separator == true) {
+				item.rect.Height = SEPARATOR_HEIGHT / 2;
+				item.rect.Width = -1;
+				return;
+			}
+			
+			if (item.item.MeasureEventDefined) {
+				MeasureItemEventArgs mi = new MeasureItemEventArgs (dc, item.pos);
+				item.item.PerformMeasureItem (mi);
+				item.rect.Height = mi.ItemHeight;
+				item.rect.Width = mi.ItemWidth;
+				return;
+			} else {		
+
+				SizeF size;
+				size =  dc.MeasureString (item.item.Text, ThemeEngine.Current.MenuFont);
+				item.rect.Width = (int) size.Width;
+				item.rect.Height = (int) size.Height;
+	
+				if (!menuBar) {
+	
+					if (item.item.Shortcut != Shortcut.None && item.item.ShowShortcut) {
+						item.item.XTab = ThemeEngine.Current.MenuCheckSize.Width + MENU_TAB_SPACE + (int) size.Width;
+						size =  dc.MeasureString (" " + item.item.GetShortCutText (), ThemeEngine.Current.MenuFont);
+						item.rect.Width += MENU_TAB_SPACE + (int) size.Width;
+					}
+	
+					item.rect.Width += 4 + (ThemeEngine.Current.MenuCheckSize.Width * 2);
+				}
+				else {
+					item.rect.Width += MENU_BAR_ITEMS_SPACE;
+					x += item.rect.Width;
+				}
+	
+				if (item.rect.Height < ThemeEngine.Current.MenuHeight)
+					item.rect.Height = ThemeEngine.Current.MenuHeight;
+				}
+		}
+		
+		// Updates the menu rect and returns the height
+		public override int CalcMenuBarSize (Graphics dc, IntPtr hMenu, int width)
+		{
+			int x = 0;
+			int i = 0;
+			int y = 0;
+			MenuAPI.MENU menu = MenuAPI.GetMenuFromID (hMenu);
+			menu.Height = 0;
+			MenuAPI.MENUITEM item;
+
+			while (i < menu.items.Count) {
+
+				item = (MenuAPI.MENUITEM) menu.items[i];
+				CalcItemSize (dc, item, y, x, true);
+				i = i + 1;
+
+				if (x + item.rect.Width > width) {
+					item.rect.X = 0;
+					y += item.rect.Height;
+					item.rect.Y = y;
+					x = 0;
+				}
+
+				x += item.rect.Width;
+				item.item.MenuBar = true;				
+
+				if (y + item.rect.Height > menu.Height)
+					menu.Height = item.rect.Height + y;
+			}
+
+			menu.Width = width;						
+			return menu.Height;
+		}
+
+		
+		public override void CalcPopupMenuSize (Graphics dc, IntPtr hMenu)
+		{
+			int x = 3;
+			int start = 0;
+			int i, n, y, max;
+
+			MenuAPI.MENU menu = MenuAPI.GetMenuFromID (hMenu);
+			menu.Height = 0;
+
+			while (start < menu.items.Count) {
+				y = 2;
+				max = 0;
+				for (i = start; i < menu.items.Count; i++) {
+					MenuAPI.MENUITEM item = (MenuAPI.MENUITEM) menu.items[i];
+
+					if ((i != start) && (item.item.Break || item.item.BarBreak))
+						break;
+
+					CalcItemSize (dc, item, y, x, false);
+					y += item.rect.Height;
+
+					if (item.rect.Width > max)
+						max = item.rect.Width;
+				}
+
+				// Reemplace the -1 by the menu width (separators)
+				for (n = start; n < i; n++, start++) {
+					MenuAPI.MENUITEM item = (MenuAPI.MENUITEM) menu.items[n];
+					item.rect.Width = max;
+				}
+
+				if (y > menu.Height)
+					menu.Height = y;
+
+				x+= max;
+			}
+
+			menu.Width = x;
+
+			//space for border
+			menu.Width += 2;
+			menu.Height += 2;
+
+			menu.Width += SM_CXBORDER;
+    			menu.Height += SM_CYBORDER;
+		}
+		
+		// Draws a menu bar in a window
+		public override void DrawMenuBar (Graphics dc, IntPtr hMenu, Rectangle rect)
+		{
+			MenuAPI.MENU menu = MenuAPI.GetMenuFromID (hMenu);			
+			Rectangle item_rect;
+
+			if (menu.Height == 0)
+				ThemeEngine.Current.CalcMenuBarSize (dc, hMenu, rect.Width);
+				
+			rect.Height = menu.Height;
+			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (menu.Wnd.BackColor), rect);
+						
+			for (int i = 0; i < menu.items.Count; i++) {
+				MenuAPI.MENUITEM it = (MenuAPI.MENUITEM) menu.items[i];
+				item_rect = it.rect;
+				item_rect.X += rect.X;
+				item_rect.Y += rect.Y;
+				it.item.MenuHeight = menu.Height;
+				it.item.PerformDrawItem (new DrawItemEventArgs (dc, ThemeEngine.Current.MenuFont,
+						item_rect, i, it.item.Status));			
+				
+			}				
+		}		
+		
+		public override void DrawMenuItem (MenuItem item, DrawItemEventArgs e)
+		{
+			StringFormat string_format;
+			Rectangle rect_text = e.Bounds;
+
+			if (item.Visible == false)
+				return;
+
+			if (item.MenuBar) {
+				string_format = string_format_menu_menubar_text;
+			}
+			else {
+				string_format = string_format_menu_text;
+			}		
+
+			if (item.Separator == true) {
+				e.Graphics.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
+					e.Bounds.X, e.Bounds.Y, e.Bounds.X + e.Bounds.Width, e.Bounds.Y);
+
+				e.Graphics.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonHilight),
+					e.Bounds.X, e.Bounds.Y + 1, e.Bounds.X + e.Bounds.Width, e.Bounds.Y + 1);
+
+				return;
+			}
+
+			if (!item.MenuBar)
+				rect_text.X += ThemeEngine.Current.MenuCheckSize.Width;
+
+			if (item.BarBreak) { /* Draw vertical break bar*/
+				Rectangle rect = e.Bounds;
+				rect.Y++;
+	        		rect.Width = 3;
+	        		rect.Height = MenuHeight - 6;
+
+				e.Graphics.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
+					rect.X, rect.Y , rect.X, rect.Y + rect.Height);
+
+				e.Graphics.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonHilight),
+					rect.X + 1, rect.Y , rect.X +1, rect.Y + rect.Height);
+			}			
+			
+			Color color_text;
+			Color color_back;
+			
+			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
+				color_text = ThemeEngine.Current.ColorHilightText;
+				color_back = ThemeEngine.Current.ColorHilight;
+			}
+			else {
+				color_text = ThemeEngine.Current.ColorMenuText;
+				color_back = ThemeEngine.Current.ColorMenu;
+			}
+
+			/* Draw background */
+			Rectangle rect_back = e.Bounds;
+			rect_back.X++;
+			rect_back.Width -=2;
+			e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (color_back), rect_back);
+			
+			if (item.Enabled) {
+				e.Graphics.DrawString (item.Text, e.Font,
+					ThemeEngine.Current.ResPool.GetSolidBrush (color_text),
+					rect_text, string_format);
+
+				if (!item.MenuBar && item.Shortcut != Shortcut.None && item.ShowShortcut) {
+					string str = item.GetShortCutText ();
+					Rectangle rect = rect_text;
+					rect.X = item.XTab;
+					rect.Width -= item.XTab;
+
+					e.Graphics.DrawString (str, e.Font, ThemeEngine.Current.ResPool.GetSolidBrush (color_text),
+						rect, string_format_menu_shortcut);
+				}
+			}
+			else {
+				ControlPaint.DrawStringDisabled (e.Graphics, item.Text, e.Font, 
+					Color.Black, rect_text, string_format);
+			}
+
+			/* Draw arrow */
+			if (item.MenuBar == false && item.IsPopup) {
+
+				int cx = ThemeEngine.Current.MenuCheckSize.Width;
+				int cy = ThemeEngine.Current.MenuCheckSize.Height;
+				Bitmap	bmp = new Bitmap (cx, cy);
+				Graphics gr = Graphics.FromImage (bmp);
+				Rectangle rect_arrow = new Rectangle (0, 0, cx, cy);
+				ControlPaint.DrawMenuGlyph (gr, rect_arrow, MenuGlyph.Arrow);
+				bmp.MakeTransparent ();
+				e.Graphics.DrawImage (bmp, e.Bounds.X + e.Bounds.Width - cx,
+					e.Bounds.Y + ((e.Bounds.Height - cy) /2));
+
+				gr.Dispose ();
+				bmp.Dispose ();
+			}
+
+			/* Draw checked or radio */
+			if (item.MenuBar == false && item.Checked) {
+
+				Rectangle area = e.Bounds;
+				int cx = ThemeEngine.Current.MenuCheckSize.Width;
+				int cy = ThemeEngine.Current.MenuCheckSize.Height;
+				Bitmap	bmp = new Bitmap (cx, cy);
+				Graphics gr = Graphics.FromImage (bmp);
+				Rectangle rect_arrow = new Rectangle (0, 0, cx, cy);
+
+				if (item.RadioCheck)
+					ControlPaint.DrawMenuGlyph (gr, rect_arrow, MenuGlyph.Bullet);
+				else
+					ControlPaint.DrawMenuGlyph (gr, rect_arrow, MenuGlyph.Checkmark);
+
+				bmp.MakeTransparent ();
+				e.Graphics.DrawImage (bmp, area.X, e.Bounds.Y + ((e.Bounds.Height - cy) / 2));
+
+				gr.Dispose ();
+				bmp.Dispose ();
+			}			
+		}		
+			
+		public override void DrawPopupMenu (Graphics dc, IntPtr hMenu, Rectangle cliparea, Rectangle rect)
+		{
+			MenuAPI.MENU menu = MenuAPI.GetMenuFromID (hMenu);
+
+			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
+				(ThemeEngine.Current.ColorMenu), cliparea);
+
+			/* Draw menu borders */
+			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorHilightText),
+				rect.X, rect.Y, rect.X + rect.Width, rect.Y);
+
+			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorHilightText),
+				rect.X, rect.Y, rect.X, rect.Y + rect.Height);
+
+			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
+				rect.X + rect.Width - 1 , rect.Y , rect.X + rect.Width - 1, rect.Y + rect.Height);
+
+			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonDkShadow),
+				rect.X + rect.Width, rect.Y , rect.X + rect.Width, rect.Y + rect.Height);
+
+			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
+				rect.X , rect.Y + rect.Height - 1 , rect.X + rect.Width - 1, rect.Y + rect.Height -1);
+
+			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonDkShadow),
+				rect.X , rect.Y + rect.Height, rect.X + rect.Width - 1, rect.Y + rect.Height);
+
+			for (int i = 0; i < menu.items.Count; i++)
+				if (cliparea.IntersectsWith (((MenuAPI.MENUITEM) menu.items[i]).rect)) {
+					MenuAPI.MENUITEM it = (MenuAPI.MENUITEM) menu.items[i];
+					it.item.MenuHeight = menu.Height;
+					it.item.PerformDrawItem (new DrawItemEventArgs (dc, ThemeEngine.Current.MenuFont,
+						it.rect, i, it.item.Status));
+			}
+		}
+		
+		#endregion // Menus
 
 		#region MonthCalendar
 
@@ -3292,12 +3737,8 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public override void DrawTrackBar (Graphics dc, Rectangle clip_rectangle, TrackBar tb) {
-//public override void DrawTrackBar (Graphics dc, 
-//Rectangle area, 
-//TrackBar tb,
-//ref Rectangle thumb_pos, 
-//ref Rectangle thumb_area,  
+		public override void DrawTrackBar (Graphics dc, Rectangle clip_rectangle, TrackBar tb) 
+		{
 			Brush		br_thumb;
 			int		value_pos;
 			bool		mouse_value;
