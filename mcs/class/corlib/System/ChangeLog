@@ -1,3 +1,8 @@
+2002/04/09  Nick Drochak <ndrochak@gol.com>
+
+	* String.cs (Substring): Copy only non-null characters to the new
+	string.
+
 2002-04-09  Nick Drochak  <ndrochak@gol.com>
 
 	* IntegerFormatter.cs: Don't use a format character to indicate a
