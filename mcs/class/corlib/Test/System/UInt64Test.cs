@@ -181,25 +181,25 @@ public class UInt64Test : Assertion
 	public void TestToString()
 	{
 		//test ToString()
-		AssertEquals(MyString1, MyUInt64_1.ToString());
-		AssertEquals(MyString2, MyUInt64_2.ToString());
-		AssertEquals(MyString3, MyUInt64_3.ToString());
+		AssertEquals("A", MyString1, MyUInt64_1.ToString());
+		AssertEquals("B", MyString2, MyUInt64_2.ToString());
+		AssertEquals("C", MyString3, MyUInt64_3.ToString());
 		//test ToString(string format)
 		for (int i=0; i < Formats1.Length; i++) {
-			AssertEquals(Results1[i], MyUInt64_2.ToString(Formats1[i]));
-			AssertEquals(Results2[i], MyUInt64_3.ToString(Formats2[i]));
+			AssertEquals("D", Results1[i], MyUInt64_2.ToString(Formats1[i]));
+			AssertEquals("E: format #" + i, Results2[i], MyUInt64_3.ToString(Formats2[i]));
 		}
 		//test ToString(string format, IFormatProvider provider);
 		for (int i=0; i < Formats1.Length; i++) {
-			AssertEquals(ResultsNfi1[i], MyUInt64_2.ToString(Formats1[i], Nfi));
-			AssertEquals(ResultsNfi2[i], MyUInt64_3.ToString(Formats2[i], Nfi));
+			AssertEquals("F", ResultsNfi1[i], MyUInt64_2.ToString(Formats1[i], Nfi));
+			AssertEquals("G", ResultsNfi2[i], MyUInt64_3.ToString(Formats2[i], Nfi));
 		}
 		try {
 			MyUInt64_1.ToString("z");
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert("H", typeof(FormatException) == e.GetType());
 		}
 	}
 
