@@ -13,7 +13,7 @@ using System.Xml;
 using Commons.Xml.Relaxng;
 using NUnit.Framework;
 
-using RVR = RelaxngValidatingReader;
+using RVR = Commons.Xml.Relaxng.RelaxngValidatingReader;
 
 namespace MonoTests.Commons.Xml.Relaxng
 {
