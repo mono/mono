@@ -5242,13 +5242,17 @@ namespace PEAPI
     }
 
     internal sealed override void Write(FileImage output) {
-      if (code == null) output.Write(0);
+      if (ZeroRva ()) output.Write(0);
       else output.WriteCodeRVA(textOffset);
       output.Write(implFlags);
       output.Write(methFlags);
       output.StringsIndex(nameIx);
       output.BlobIndex(sigIx);
       output.WriteIndex(MDTable.Param,parIx);
+    }
+
+    internal bool ZeroRva () {
+	return ((methFlags & (ushort)MethAttr.Abstract) != 0);
     }
 
     internal sealed override uint GetCodedIx(CIx code) {

@@ -1,5 +1,10 @@
 2003-08-03 Jackson Harper <jackson@latitudegeo.com>
 
+	* PEAPI.cs: Only give method definitions 0 RVAs if they are
+	marked abstract.
+	
+2003-08-03 Jackson Harper <jackson@latitudegeo.com>
+
 	* PEAPI.cs: Offsets are not explicit offsets, they are just
 	byte offsets from the current position.
 
