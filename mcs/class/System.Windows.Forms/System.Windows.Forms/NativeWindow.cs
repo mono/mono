@@ -107,8 +107,9 @@ namespace System.Windows.Forms {
 				if (windowHandle != (IntPtr) 0) {
 					windowCollection.Add (windowHandle, this);
 					if( (cp.Style & (int)WindowStyles.WS_CHILD) != 0) {
-						//Win32.SetWindowLong(windowHandle, GetWindowLongFlag.GWL_ID, (int)windowHandle);
-						// it was breaking working of MDI interface
+						IntPtr curId = Win32.GetWindowLong( windowHandle, GetWindowLongFlag.GWL_ID);
+						if( curId == IntPtr.Zero)
+							Win32.SetWindowLong(windowHandle, GetWindowLongFlag.GWL_ID, (int)windowHandle);
 					}
 				}
 				//debug

@@ -1,3 +1,6 @@
+2003-04-15 Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* NativeWindow.cs : don't assign window ID when it was already assigned by the system
+
 2003-04-11 Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* Control.cs : some new functions implemented, using BitVector32
 			instead of declaring separate boolean varibales for every control status
