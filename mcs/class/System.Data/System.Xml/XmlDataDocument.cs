@@ -296,7 +296,7 @@ namespace System.Xml {
 
 			// TODO: Here should be some kind of error checking.
 			GetElementsByTagName (eventArgs.Column.ToString ()) [dataRowIDList.IndexOf (
-				eventArgs.Row.XmlRowID)].InnerText = newValue;
+				eventArgs.Row.XmlRowID)].InnerText = (string)eventArgs.ProposedValue;
 			
 			
 		}
