@@ -1,6 +1,11 @@
 2004-09-15  Marek Safar  <marek.safar@seznam.cz>
 
 	Fixed bug #65766
+	* statement.cs: Error 152 report constains also location.
+
+2004-09-15  Marek Safar  <marek.safar@seznam.cz>
+
+	Fixed bug #65766
 	* const.cs: Explicitly set constant as static.
 
 2004-09-15  Marek Safar  <marek.safar@seznam.cz>

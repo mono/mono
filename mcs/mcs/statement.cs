@@ -2119,11 +2119,10 @@ namespace Mono.CSharp {
 			return converted;
 		}
 
-		void error152 (string n)
-		{
-			Report.Error (
-				152, "The label `" + n + ":' " +
-				"is already present on this switch statement");
+		static string Error152 {
+			get {
+				return "The label '{0}:' already occurs in this switch statement";
+			}
 		}
 		
 		//
@@ -2155,7 +2154,7 @@ namespace Mono.CSharp {
 
 					if (sl.Label == null){
 						if (got_default){
-							error152 ("default");
+							Report.Error (152, sl.loc, Error152, "default");
 							error = true;
 						}
 						got_default = true;
@@ -2262,8 +2261,8 @@ namespace Mono.CSharp {
 								     SwitchType + " " + compare_type);
 					}
 
-					if (lname != null){
-						error152 ("case + " + lname);
+					if (lname != null) {
+						Report.Error (152, sl.loc, Error152, "case " + lname);
 						error = true;
 					}
 				}
