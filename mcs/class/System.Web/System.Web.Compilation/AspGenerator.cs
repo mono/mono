@@ -1605,16 +1605,15 @@ class AspGenerator
 			return data;
 		}
 
-		string csName = Path.GetTempFileName () + ".cs";
-		string dll = Path.ChangeExtension (csName, ".dll");
-		UserControlCompiler compiler = new UserControlCompiler (new UserControlParser (src), csName);
+		string dll = Path.GetTempFileName () + ".dll";
+		UserControlCompiler compiler = new UserControlCompiler (new UserControlParser (src), dll);
 		Type t = compiler.GetCompiledType ();
 		if (t == null) {
 			data.result = UserControlResult.CompilationFailed;
 			return data;
 		}
 		
-		data.className = t.FullName;
+		data.className = t.Name;
 		data.assemblyName = dll;
 		
 		return data;

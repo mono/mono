@@ -1,3 +1,8 @@
+2002-11-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UserControl.cs: fixed SetAttribute.
+	* UserControlParser.cs: set the correct base type.
+
 2002-11-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateParser.cs: fixed BaseType.

@@ -34,7 +34,7 @@ namespace System.Web.UI
 		protected override Type DefaultBaseType
 		{
 			get {
-				return typeof (Control);
+				return typeof (UserControl);
 			}
 		}
 

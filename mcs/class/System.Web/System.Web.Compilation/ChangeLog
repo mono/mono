@@ -1,3 +1,8 @@
+2002-11-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: fixed target file name and generated class name.
+	* BaseCompiler.cs: reference assemblies in PrivateBinPath.
+
 2002-11-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: reworked user control

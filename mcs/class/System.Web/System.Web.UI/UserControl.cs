@@ -181,6 +181,7 @@ namespace System.Web.UI
 		
 		void IAttributeAccessor.SetAttribute (string name, string value)
 		{
+			EnsureAttributes ();
 			Attributes [name] = value;
 		}
 	}
