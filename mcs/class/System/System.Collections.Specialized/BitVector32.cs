@@ -14,7 +14,7 @@ using System.Text;
 namespace System.Collections.Specialized {
 	
 	public struct BitVector32 {
-		int value;
+		int bits;
 
 		public struct Section {
 			private short mask;
@@ -60,35 +60,45 @@ namespace System.Collections.Specialized {
 		
 		public BitVector32 (BitVector32 source)
 		{
-			value = source.value;
+			bits = source.bits;
 		}
 
 		public BitVector32 (int init)
 		{
-			value = init;
+			bits = init;
 		}
 		
 		// Properties
 		
 		public int Data {
-			get { return value; }
+			get { return bits; }
 		}
 		
-		[MonoTODO]
 		public int this [BitVector32.Section section] {
-			get { return ((this.value >> section.Offset) & section.Mask); }
-			set { 
-				throw new NotImplementedException ();	
+			get {
+				return ((bits >> section.Offset) & section.Mask);
+			}
+
+			set {
+				if (value < 0)
+					throw new ArgumentException ("Section can't hold negative values");
+				if (value > section.Mask)
+					throw new ArgumentException ("Value too large to fit in section");
+				bits &= (~section.Mask << section.Offset);
+				bits |= (value << section.Offset);
 			}
 		}
 		
-		public bool this [int bit] {
-			get { return (value & bit) == bit; }
+		public bool this [int mask] {
+			get {
+				return (bits & mask) == mask;
+			}
+			
 			set { 
 				if (value)
-					this.value |= bit;
+					bits |= mask;
 				else
-					this.value &= ~bit;
+					bits &= ~mask;
 			}
 		}
 		
@@ -144,12 +154,12 @@ namespace System.Collections.Specialized {
 			if (!(o is BitVector32))
 				return false;
 
-			return value == ((BitVector32) o).value;
+			return bits == ((BitVector32) o).bits;
 		}
 
 		public override int GetHashCode ()
 		{
-			return value.GetHashCode ();
+			return bits.GetHashCode ();
 		}
 		
 		public override string ToString () 
@@ -159,12 +169,11 @@ namespace System.Collections.Specialized {
 		
 		public static string ToString (BitVector32 value)
 		{
-			long val = (long) value.value;
 			StringBuilder b = new StringBuilder ();
 			b.Append ("BitVector32{");
 			long mask = (long) 0x80000000;
 			while (mask > 0) {
-				b.Append (((val & mask) == 0) ? '0' : '1');
+				b.Append (((value.bits & mask) == 0) ? '0' : '1');
 				mask >>= 1;
 			}
 			b.Append ('}');
