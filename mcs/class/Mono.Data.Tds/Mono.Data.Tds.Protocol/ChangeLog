@@ -1,3 +1,32 @@
+2002-10-20  Tim Coleman (tim@timcoleman.com)
+	* TdsColumnType.cs:
+	* TdsContext.cs:
+	* TdsEnvPacketSubType.cs:
+	* TdsMessage.cs:
+	* TdsPacketColumnInfoResult.cs:
+	* TdsPacketColumnNamesResult.cs:
+	* TdsPacketColumnOrderResult.cs:
+	* TdsPacketControlResult.cs:
+	* TdsPacketEndTokenResult.cs:
+	* TdsPacketErrorResult.cs:
+	* TdsPacketMessageResult.cs:
+	* TdsPacketOutputParam.cs:
+	* TdsPacketResult.cs:
+	* TdsPacketRetStatResult.cs:
+	* TdsPacketRowResult.cs:
+	* TdsPacketSubType.cs:
+	* TdsPacketTableNameResult.cs:
+	* TdsPacketUnknown.cs:
+		New classes added as part of TDS internal implementation.
+	* Tds.cs:
+		Some work on receiving and interpreting packages received from
+		SQL Server.  Still doesn't work completely.
+	* TdsComm.cs:
+		Add some methods as part of the ongoing work with Tds.cs
+	* TdsConnectionParameters.cs:
+		Add default values for Encoding ("iso-8859-1"), Port (1433), 
+		TDS Version (4.2).
+
 2002-10-18  Tim Coleman (tim@timcoleman.com)
 	* TdsConnectionInternal:
 		Add some implementation details

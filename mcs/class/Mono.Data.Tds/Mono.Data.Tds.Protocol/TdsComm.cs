@@ -46,6 +46,11 @@ namespace Mono.Data.TdsClient.Internal {
 		public TdsComm (Socket socket, int packetSize, TdsVersion tdsVersion)
 		{
 			this.packetSize = packetSize;
+			outBuffer = new byte[packetSize];
+			inBuffer = new byte[packetSize];
+
+			outBufferLength = packetSize;
+			inBufferLength = packetSize;
 			stream = new NetworkStream (socket);
 		}
 		
@@ -61,6 +66,16 @@ namespace Mono.Data.TdsClient.Internal {
 		#endregion // Properties
 		
 		#region Methods
+
+		internal void ResizeOutBuf (int newSize)
+		{
+			if (newSize > outBufferLength) {
+				byte[] newBuf = new byte[newSize];
+				Array.Copy (outBuffer, 0, newBuf, 0, outBufferLength);
+				outBufferLength = newSize;
+				outBuffer = newBuf;
+			}
+		}
 		
 		public void StartPacket (TdsPacketType type)
 		{
@@ -76,12 +91,6 @@ namespace Mono.Data.TdsClient.Internal {
 				inBufferIndex = inBufferLength;
 			}
 
-			// Only one thread at a time can be building an outboudn packet.
-			// This is primarily a concern with building cancel packets.
-			//  XXX: as why should more than one thread work with the same tds-stream ??? would be fatal anyway
-
-			Monitor.Enter (packetType);
-
 			packetType = type;
 			nextOutBufferIndex = headerLength;
 		}
@@ -94,13 +103,10 @@ namespace Mono.Data.TdsClient.Internal {
 		public void AppendByte (byte b)
 		{
 			if (nextOutBufferIndex == outBufferLength) {
-				// If we have a full physical packet then ship it out to the
-				// network.
 				SendPhysicalPacket (false);
 				nextOutBufferIndex = headerLength;
 			}
-	
-			StoreByte( nextOutBufferIndex, b );
+			StoreByte (nextOutBufferIndex, b);
 			nextOutBufferIndex++;
 		}	
 		
@@ -113,10 +119,10 @@ namespace Mono.Data.TdsClient.Internal {
 		{
 			int i = 0;
 			for ( ; i < b.Length && i < len; i++)
-			    AppendByte( b[i] );
+			    AppendByte (b[i]);
 
 			for ( ; i < len; i++)
-			    AppendByte( pad );
+			    AppendByte (pad);
 		}	
 
 
@@ -188,11 +194,9 @@ namespace Mono.Data.TdsClient.Internal {
 
 		public void SendPacket ()
 		{
-			Monitor.Pulse (packetType);
 			SendPhysicalPacket (true);
 			nextOutBufferIndex = 0;
 			packetType = TdsPacketType.None;
-			Monitor.Exit (packetType);
 		}
 		
 		private void StoreByte (int index, byte value)
@@ -357,7 +361,7 @@ namespace Mono.Data.TdsClient.Internal {
 
 			TdsPacketType packetType = (TdsPacketType) tmpBuf[0];
 			if (packetType != TdsPacketType.Logon && packetType != TdsPacketType.Query && packetType != TdsPacketType.Reply) {
-				//throw new TdsUnknownPacketType (packetType, tmpBuf);
+				throw new TdsException (String.Format ("Unknown packet type {0}", tmpBuf[0]));
 			}
 
 			// figure out how many bytes are remaining in this packet.
@@ -367,7 +371,7 @@ namespace Mono.Data.TdsClient.Internal {
 				inBuffer = new byte[len];
 
 			if (len < 0) {
-				//throw new TdsException ("Confused by a length of " + len);
+				throw new TdsException (String.Format ("Confused by a length of {0}", len));
 			}
 
 			// now get the data

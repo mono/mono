@@ -12,15 +12,15 @@ namespace Mono.Data.TdsClient.Internal {
 	{
 		public string ApplicationName = "Mono.Data.TdsClient Data Provider";
 		public string Database;
-		public string Encoding;
+		public string Encoding = "iso-8859-1";
 		public string Host;
 		public string Language = "us_english";
 		public string LibraryName = "Mono.Data.TdsClient";
 		public int PacketSize;
 		public string Password;
-		public int Port;
+		public int Port = 1433;
 		public string ProgName = "Mono.Data.TdsClient Data Provider";
-		public TdsVersion TdsVersion;
+		public TdsVersion TdsVersion = TdsVersion.tds42;
 		public string User;
 	}
 }
