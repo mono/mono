@@ -658,6 +658,12 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern string MonoDebugger_GetMethodIndex (MethodBase method);
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern Type MonoDebugger_MakeArrayType (MonoType type, int rank);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern int MonoDebugger_GetTypeToken (Type type);
+
 #if NET_2_0
 		[MonoTODO]
 		[ComVisible (false)]

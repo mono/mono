@@ -326,6 +326,17 @@ namespace System.Reflection {
 		}
 #endif
 
+		internal static Type MonoDebugger_ResolveType (Module module, int token)
+		{
+			ResolveTokenError error;
+
+			IntPtr handle = ResolveTypeToken (module._impl, token, out error);
+			if (handle == IntPtr.Zero)
+				return null;
+			else
+				return Type.GetTypeFromHandle (new RuntimeTypeHandle (handle));
+		}
+
 		// Mono Extension: returns the GUID of this module
 		internal static Guid Mono_GetGuid (Module module)
 		{

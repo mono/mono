@@ -1,5 +1,12 @@
 2005-02-10  Martin Baulig  <martin@ximian.com>
 
+	* Module.cs (MonoDebugger_ResolveType): New internal method.
+
+	* Assembly.cs (MonoDebugger_MakeArrayType): New internal method.
+	(MonoDebugger_GetTypeToken): New internal method.
+
+2005-02-10  Martin Baulig  <martin@ximian.com>
+
 	* Assembly.cs (MonoDebugger_GetMethodIndex): New internal method.
 
 2005-02-10  Marek Safar  <marek.safar@seznam.cz>
