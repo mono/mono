@@ -1,4 +1,4 @@
-//
+ //
 // System.Drawing.Bitmap.cs
 //
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
@@ -23,6 +23,7 @@
 using System;
 using System.IO;
 using System.Drawing.Imaging;
+using System.Runtime.Serialization;
 
 namespace System.Drawing {
 	struct BITMAPFILEHEADER {        // File info header
@@ -57,6 +58,8 @@ namespace System.Drawing {
 		public BITMAPINFOHEADER bitmapinfoheader;
 		public RGBQUAD[] colorpalette;
 	}
+
+	[Serializable]
 	public sealed class Bitmap : Image {
 
 		internal static IBitmapFactory	factory_ = Factories.GetBitmapFactory();
@@ -124,6 +127,11 @@ namespace System.Drawing {
 			implementation_ = factory_.Bitmap(width, height, stride, format, scan0);
 			imageSize_ = implementation_.Size;
 		}
+
+        	private Bitmap (SerializationInfo info, StreamingContext context)
+		{
+		}
+
 		#endregion
 		// methods
 		public Color GetPixel (int x, int y) {

@@ -45,7 +45,7 @@ namespace System.Drawing {
 		static public Color Control
 		{	
 			get {
-				return Color.FromArgbSystem (255, 131, 153, 177, "Control");
+				return Color.FromArgbSystem (255, 192, 192, 192, "Control");
 			}
 		}
 

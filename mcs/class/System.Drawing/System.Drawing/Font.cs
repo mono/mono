@@ -1,9 +1,20 @@
+using System.Runtime.Serialization;
+
 namespace System.Drawing {
 
-	public sealed class Font : MarshalByRefObject, IDisposable
+	[Serializable]
+        public sealed class Font : MarshalByRefObject, ISerializable, ICloneable, IDisposable
 	{
 		internal IFont implementation_;
 		internal static IFontFactory factory_ = Factories.GetFontFactory();
+
+        	private Font (SerializationInfo info, StreamingContext context)
+		{
+		}
+
+		void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+		}
 
 		public void Dispose ()
 		{
@@ -30,5 +41,9 @@ namespace System.Drawing {
 			implementation_ = factory_.Font(familyName, size, style);
 		}
 
+		object ICloneable.Clone()
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

@@ -14,16 +14,24 @@ using System;
 using System.Runtime.Remoting;
 using System.Runtime.Serialization;
 
-//[Serializable]
+[Serializable]
 //[ComVisible(true)]
 
-public abstract class Image : MarshalByRefObject, IDisposable /*, ICloneable, ISerializable */ {
+public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISerializable {
 
 	internal IImage	implementation_ = null;
 
 	protected Size imageSize_;
 	// constructor
 	public Image () {}
+
+       	private Image (SerializationInfo info, StreamingContext context)
+	{
+	}
+
+	void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+	{
+	}
     
 	// public methods
 	// static
@@ -199,6 +207,12 @@ public abstract class Image : MarshalByRefObject, IDisposable /*, ICloneable, IS
 	public void Dispose ()
 	{
 		implementation_.Dispose();
+	}
+
+	[MonoTODO]
+	object ICloneable.Clone()
+	{
+		throw new NotImplementedException ();
 	}
 
 }

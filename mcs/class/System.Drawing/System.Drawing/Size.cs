@@ -8,13 +8,15 @@
 //
 
 using System;
+using System.Runtime.Serialization;
 
 namespace System.Drawing {
 	
+	[Serializable]
 	public struct Size { 
 		
-		// Private height and width fields.
-		int wd, ht;
+		// Private Height and width fields.
+		int width, height;
 
 		// -----------------------
 		// Public Shared Members
@@ -193,8 +195,8 @@ namespace System.Drawing {
 		
 		public Size (Point pt)
 		{
-			wd = pt.X;
-			ht = pt.Y;
+			width = pt.X;
+			height = pt.Y;
 		}
 
 		/// <summary>
@@ -207,8 +209,8 @@ namespace System.Drawing {
 		
 		public Size (int width, int height)
 		{
-			wd = width;
-			ht = height;
+			this.width = width;
+			this.height = height;
 		}
 
 		// -----------------------
@@ -225,7 +227,7 @@ namespace System.Drawing {
 		
 		public bool IsEmpty {
 			get {
-				return ((wd == 0) && (ht == 0));
+				return ((Width == 0) && (Height == 0));
 			}
 		}
 
@@ -239,10 +241,10 @@ namespace System.Drawing {
 		
 		public int Width {
 			get {
-				return wd;
+				return width;
 			}
 			set {
-				wd = value;
+				width = value;
 			}
 		}
 
@@ -256,10 +258,10 @@ namespace System.Drawing {
 		
 		public int Height {
 			get {
-				return ht;
+				return height;
 			}
 			set {
-				ht = value;
+				height = value;
 			}
 		}
 
@@ -289,7 +291,7 @@ namespace System.Drawing {
 		
 		public override int GetHashCode ()
 		{
-			return wd^ht;
+			return Width^Height;
 		}
 
 		/// <summary>
@@ -302,7 +304,7 @@ namespace System.Drawing {
 		
 		public override string ToString ()
 		{
-			return String.Format ("[{0},{1}]", wd, ht);
+			return String.Format ("[{0},{1}]", Width, Height);
 		}
 
 	}
