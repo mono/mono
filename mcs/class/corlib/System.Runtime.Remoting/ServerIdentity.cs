@@ -16,6 +16,8 @@ namespace System.Runtime.Remoting
 {
 	internal abstract class ServerIdentity : Identity
 	{
+		protected Type _objectType;
+
 		protected MarshalByRefObject _serverObject;
 
 		// Message sink used in the server to dispatch a message
@@ -25,9 +27,15 @@ namespace System.Runtime.Remoting
 		protected Context _context;
 		protected Lease _lease;
 
-		public ServerIdentity(string objectUri, Context context, Type objectType): base (objectUri, objectType)
+		public ServerIdentity (string objectUri, Context context, Type objectType): base (objectUri)
 		{
+			_objectType = objectType;
 			_context = context;
+		}
+
+		public Type ObjectType
+		{
+			get { return _objectType; }
 		}
 
 		public void StartTrackingLifetime (ILease lease)

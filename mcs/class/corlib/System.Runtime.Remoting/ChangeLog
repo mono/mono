@@ -1,3 +1,10 @@
+2004-03-04  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Identity.cs: Removed object type from Identity, since it is hold
+	  now in the IRemotingTypeInfo object.
+	* ServerIdentity.cs: Added object type.
+	* TypeInfo.cs: Added null check for the class hierarchy.
+
 2004-02-17  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* RemotingServices.cs: Client identities are registered using the full url,

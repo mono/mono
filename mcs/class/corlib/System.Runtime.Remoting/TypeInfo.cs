@@ -79,14 +79,13 @@ namespace System.Runtime.Remoting
 
 			if ( (serverType + ",").StartsWith (fromName)) return true;
 
-			foreach (string basec in serverHierarchy)
-				if ( (basec + ",").StartsWith (fromName)) return true;
+			if (serverHierarchy != null)
+				foreach (string basec in serverHierarchy)
+					if ( (basec + ",").StartsWith (fromName)) return true;
 
 			if (interfacesImplemented != null)
-			{
 				foreach (string basec in interfacesImplemented)
 					if ( (basec + ",").StartsWith (fromName)) return true;
-			}
 			
 			return false;
 		}

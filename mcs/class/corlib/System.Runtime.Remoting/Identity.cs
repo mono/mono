@@ -21,8 +21,6 @@ namespace System.Runtime.Remoting
 		// and also to store server side information (information
 		// about how to dispatch messages to the object in the server).
 
-		protected Type _objectType;
-
 		// URI of the object
 		protected string _objectUri;
 
@@ -42,10 +40,9 @@ namespace System.Runtime.Remoting
 		// dispose the identity twice.
 		bool _disposed = false;
 
-		public Identity(string objectUri, Type objectType)
+		public Identity(string objectUri)
 		{
 			_objectUri = objectUri;
-			_objectType = objectType;
 		}
 
 		public abstract ObjRef CreateObjRef (Type requestedType);
@@ -67,11 +64,6 @@ namespace System.Runtime.Remoting
 		public IMessageSink EnvoySink
 		{
 			get { return _envoySink; }
-		}
-
-		public Type ObjectType
-		{
-			get { return _objectType; }
 		}
 
 		public string ObjectUri
@@ -134,7 +126,7 @@ namespace System.Runtime.Remoting
 	{
 		WeakReference _proxyReference;
 
-		public ClientIdentity (string objectUri, ObjRef objRef): base (objectUri, Type.GetType (objRef.TypeInfo.TypeName,true))
+		public ClientIdentity (string objectUri, ObjRef objRef): base (objectUri)
 		{
 			_objRef = objRef;
 			_envoySink = (_objRef.EnvoyInfo != null) ? _objRef.EnvoyInfo.EnvoySinks : null;
