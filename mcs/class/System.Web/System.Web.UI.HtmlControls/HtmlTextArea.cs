@@ -127,7 +127,7 @@ namespace System.Web.UI.HtmlControls{
 		
 		protected override void AddParsedSubObject(object obj){
 			if (obj is LiteralControl || obj is DataBoundLiteralControl)
-				AddParsedSubObject(obj);
+				base.AddParsedSubObject(obj);
 			else
 				throw new NotSupportedException("HtmlTextArea cannot have children of Type " + obj.GetType().Name);
 		}
