@@ -1,3 +1,17 @@
+2004-04-05 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* inssel.brg (MONO_EMIT_BOUNDS_CHECK): a new macro to emit bounds
+	checks.
+	(MONO_EMIT_BOUNDS_CHECK_IMM): the above, but when you know the
+	index.
+	(OP_GETCHR): use the above
+	(CEE_LDELEMA): use the above.
+
+	* inseel-x86.brg (MONO_EMIT_BOUNDS_CHECK): a faster and smaller
+	version of the generic impl.
+	(MONO_EMIT_BOUNDS_CHECK_IMM): the same
+	(CEE_LDELEMA): use the above.
+
 2004-04-05  Martin Baulig  <martin@ximian.com>
 
 	* mini-x86.c (mono_arch_setup_jit_tls_data): Reverted Zoltan's
