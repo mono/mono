@@ -1865,10 +1865,11 @@ namespace Mono.CSharp {
 				//
 				if (cmpAttrs.Length != paramTypes.Length)
 					continue;
-	
-				for (int j = cmpAttrs.Length - 1; j >= 0; j --)
-					if (paramTypes [j] != cmpAttrs [j])
+
+				for (int j = cmpAttrs.Length - 1; j >= 0; j --) {
+					if (!paramTypes [j].Equals (cmpAttrs [j]))
 						goto next;
+				}
 				
 				//
 				// get one of the methods because this has the visibility info.

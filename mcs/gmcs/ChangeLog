@@ -1,5 +1,10 @@
 2004-03-29  Martin Baulig  <martin@ximian.com>
 
+	* decl.cs (MemberCache.FindMemberToOverride): Use
+	`paramTypes [j].Equals (cmpAttrs [j])' instead of `=='.
+
+2004-03-29  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs (GenericMethod.Define): Resolve our type parameters.
 
 2004-03-29  Martin Baulig  <martin@ximian.com>
