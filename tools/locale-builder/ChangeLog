@@ -1,5 +1,10 @@
 2004-06-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Driver.cs : To make "extra pattern only" xxxFormatLength possible,
+	  fill values only when the exact element was available.
+
+2004-06-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DateTimeFormatEntry.cs : Use "{0}" for empty array.
 
 2004-06-08  Atsushi Enomoto  <atsushi@ximian.com>
