@@ -178,12 +178,16 @@ namespace System {
 		}
 
 		public static string ToString(byte[] value) {
+			if (value == null) {
+				throw new ArgumentNullException();
+			}
+
 			return ToString(value, 0, value.Length);
 		}
 
 		public static string ToString(byte[] value, int start_index) {
-			if (start_index >= value.Length) {
-				throw new ArgumentOutOfRangeException();
+			if (value == null) {
+				throw new ArgumentNullException();
 			}
 
 			return ToString(value, start_index, value.Length - start_index);
@@ -199,9 +203,10 @@ namespace System {
 			}
 
 			string ret = "";
+			int end = start_index + length;
 
-			for (int i = 0; i < value.Length; i++) {
-				if (i > 0)
+			for (int i = start_index; i < end; i++) {
+				if (i > start_index)
 					ret = ret + '-';
 				
 				char high = (char)((value[i] >> 4) & 0x0f);
@@ -209,13 +214,17 @@ namespace System {
 
 				if (high < 10) 
 					high += '0';
-				else
+				else {
+					high -= (char) 10;
 					high += 'A';
+				}
 
 				if (low < 10)
 					low += '0';
-				else
+				else {
+					low -= (char) 10;
 					low += 'A';
+				}
 
 				ret = ret + high + low;
 			}

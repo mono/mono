@@ -35,7 +35,8 @@ public struct Guid  : IFormattable, IComparable  {
 		protected ulong _lastTimestamp;
 		protected byte[] _mac;
 
-		public int NextInt(uint x) {
+		public int NextInt(uint x)
+		 {
 			if (_usePRnd) {
 				return _prnd.Next ((int) x);
 			}
@@ -49,7 +50,8 @@ public struct Guid  : IFormattable, IComparable  {
 			}
 		}
 
-		public void NextBytes(byte[] b) {
+		public void NextBytes(byte[] b)
+		{
 			if ( _usePRnd ) {
 				_prnd . NextBytes (b);
 			}
@@ -59,10 +61,11 @@ public struct Guid  : IFormattable, IComparable  {
 		}
 	
 		[MonoTODO("Get real MAC address")]
-		public GuidState (bool usePRnd) {
+		public GuidState (bool usePRnd)
+		{
 			_usePRnd = usePRnd;
 			if ( _usePRnd ) {
-				_prnd = new Random(unchecked((int) DateTime.Now.Ticks));
+				_prnd = new Random (unchecked((int) DateTime.Now.Ticks));
 			}
 			else {
 				_rnd = RandomNumberGenerator.Create ();
@@ -74,11 +77,12 @@ public struct Guid  : IFormattable, IComparable  {
 			_mac[0] |= 0x80;
 		}
 
-		public ulong NewTimestamp () {
+		public ulong NewTimestamp ()
+		{
 			ulong timestamp;
 
 			do {
-				timestamp = (ulong) (DateTime.UtcNow - new DateTime(1582, 10, 15, 0, 0, 0)).Ticks;
+				timestamp = (ulong) (DateTime.UtcNow - new DateTime (1582, 10, 15, 0, 0, 0)).Ticks;
 				if (timestamp < _lastTimestamp) {
 					// clock moved backwards!
 					_clockSeq++;
@@ -114,21 +118,25 @@ public struct Guid  : IFormattable, IComparable  {
 		private int _length;
 		private int _cur;
 	
-		public GuidParser (string src) {
+		public GuidParser (string src)
+		{
 			_src = src;
 			Reset ();
 		}
 		
-		private void Reset () {
+		private void Reset ()
+		{
 			_cur = 0;
 			_length = _src.Length;
 		}
 	
-		private bool AtEnd () {
+		private bool AtEnd ()
+		{
 			return _cur >= _length;
 		}
 	
-		private void ThrowFormatException () {
+		private void ThrowFormatException ()
+		{
 			throw new FormatException (Locale.GetText ("Invalid format for Guid.Guid(string)"));
 		}
 	
@@ -171,7 +179,8 @@ public struct Guid  : IFormattable, IComparable  {
 			return res;
 		}
 	
-		private bool ParseOptChar (char c) {
+		private bool ParseOptChar (char c)
+		{
 			if (!AtEnd() && _src[_cur] == c) {
 				_cur++;
 				return true;
@@ -181,14 +190,16 @@ public struct Guid  : IFormattable, IComparable  {
 			}
 		}
 	
-		private void ParseChar (char c) {
+		private void ParseChar (char c)
+		{
 			bool b = ParseOptChar (c);
 			if (!b) {
 				ThrowFormatException ();
 			}
 		}
 	
-		private Guid ParseGuid1 () {
+		private Guid ParseGuid1 ()
+		{
 			bool openBrace; 
 			int a;
 			short b;
@@ -217,7 +228,8 @@ public struct Guid  : IFormattable, IComparable  {
 			return new Guid(a, b, c, d);
 		}
 	
-		private void ParseHexPrefix () {
+		private void ParseHexPrefix ()
+		{
 			ParseChar ('0');
 			ParseChar ('x');
 		}
@@ -227,7 +239,7 @@ public struct Guid  : IFormattable, IComparable  {
 			int a;
 			short b;
 			short c;
-			byte[] d = new byte[8];
+			byte[] d = new byte [8];
 			int i;
 	
 			ParseChar ('{');
@@ -245,7 +257,7 @@ public struct Guid  : IFormattable, IComparable  {
 				ParseHexPrefix ();
 				d[i] = (byte) ParseHex (2, false);
 				if (i != 7) {
-					ParseChar(',');
+					ParseChar (',');
 				}
 
 			}	
@@ -277,7 +289,8 @@ public struct Guid  : IFormattable, IComparable  {
 
 	private static GuidState _guidState = new GuidState ( true /* use pseudo RNG? */ ); 
 
-	private static void CheckNull (object o) {
+	private static void CheckNull (object o)
+	{
 		if (o == null) {
 			throw new ArgumentNullException (Locale.GetText ("Value cannot be null."));
 		}
@@ -286,16 +299,18 @@ public struct Guid  : IFormattable, IComparable  {
 	private static void CheckLength (byte[] o, int l)
 	{
 		if (o . Length != l) {
-			throw new ArgumentException (String.Format(Locale.GetText ("Array should be exactly {0} bytes long."), l));
+			throw new ArgumentException (String.Format (Locale.GetText ("Array should be exactly {0} bytes long."), l));
 		}
 	}
 
-	private static void CheckArray (byte[] o, int l) {
+	private static void CheckArray (byte[] o, int l)
+	{
 		CheckNull (o);
 		CheckLength (o, l);
 	}
 
-	public Guid (byte[] b) {
+	public Guid (byte[] b)
+	{
 		CheckArray (b, 16);
 		_timeLow = System.BitConverter.ToUInt32 (b, 0);
 		_timeMid = System.BitConverter.ToUInt16 (b, 4);
@@ -389,7 +404,8 @@ public struct Guid  : IFormattable, IComparable  {
 		}
 	}
 
-	public int CompareTo (object value ) {
+	public int CompareTo (object value )
+	{
 		if (value == null )
 			return 1;
 
@@ -437,16 +453,18 @@ public struct Guid  : IFormattable, IComparable  {
 		return 0;
 	}
 
-	public override bool Equals ( object o ) {
+	public override bool Equals ( object o )
+	{
 		try {
-			return CompareTo(o) == 0;	
+			return CompareTo (o) == 0;	
 		}
 		catch ( ArgumentException ) {
 			return false;
 		}
 	}
 
-	public override int GetHashCode () {
+	public override int GetHashCode ()
+	{
 		int res;
 
 		res = (int) _timeLow; 
@@ -463,7 +481,8 @@ public struct Guid  : IFormattable, IComparable  {
 		return res;
 	}
 
-	private static Guid NewTimeGuid() {
+	private static Guid NewTimeGuid()
+	{
 		ulong timestamp = _guidState.NewTimestamp ();
 
 		// Bit [31..0] (32 bits) for timeLow
@@ -484,7 +503,8 @@ public struct Guid  : IFormattable, IComparable  {
 		return new Guid(timeLow, timeMid, timeHi, clockSeqHi, clockSeqLow, mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 	}
 
-	private static Guid NewRandomGuid () {
+	private static Guid NewRandomGuid ()
+	{
 		byte[] b = new byte[16];
 
 		_guidState.NextBytes (b);
@@ -498,11 +518,13 @@ public struct Guid  : IFormattable, IComparable  {
 	}
 
 	[MonoTODO]
-	public static Guid NewGuid () {
+	public static Guid NewGuid ()
+	{
 		return NewRandomGuid();
 	}
 
-	public byte[] ToByteArray () {
+	public byte[] ToByteArray ()
+	{
 		byte[] res = new byte[16];
 		byte[] tmp;
 		int d = 0;
@@ -535,7 +557,8 @@ public struct Guid  : IFormattable, IComparable  {
 		return res;
 	}
 
-	private string BaseToString(bool h, bool p, bool b) {
+	private string BaseToString(bool h, bool p, bool b)
+	{
 		string res = "";
 		
 		if (p) {
@@ -545,29 +568,29 @@ public struct Guid  : IFormattable, IComparable  {
 			res += "{";
 		}
 	
-		res += _timeLow.ToString("x8");
+		res += _timeLow.ToString ("x8");
 		if (h) {
 			res += "-";
 		}
-		res += _timeMid.ToString("x4");
+		res += _timeMid.ToString ("x4");
 		if (h) {
 			res += "-";
 		}
-		res += _timeHighAndVersion.ToString("x4");
+		res += _timeHighAndVersion.ToString ("x4");
 		if (h) {
 			res += "-";
 		}
-		res += _clockSeqHiAndReserved.ToString("x2");
-		res += _clockSeqLow.ToString("x2");
+		res += _clockSeqHiAndReserved.ToString ("x2");
+		res += _clockSeqLow.ToString ("x2");
 		if (h) {
 			res += "-";
 		}
-		res += _node0.ToString("x2");
-		res += _node1.ToString("x2");
-		res += _node2.ToString("x2");
-		res += _node3.ToString("x2");
-		res += _node4.ToString("x2");
-		res += _node5.ToString("x2");
+		res += _node0.ToString ("x2");
+		res += _node1.ToString ("x2");
+		res += _node2.ToString ("x2");
+		res += _node3.ToString ("x2");
+		res += _node4.ToString ("x2");
+		res += _node5.ToString ("x2");
 
 		if (p) {
 			res += ")";
@@ -579,11 +602,13 @@ public struct Guid  : IFormattable, IComparable  {
 		return res;
 	}
 
-	public override string ToString () {
+	public override string ToString ()
+	{
 		return BaseToString (true, false, false);
 	}
 
-	public string ToString (string format) {
+	public string ToString (string format)
+	{
 		string f;
 		bool h = true;
 		bool p = false;
@@ -609,15 +634,18 @@ public struct Guid  : IFormattable, IComparable  {
 		return BaseToString (h, p, b);
 	}
 
-	public string ToString (string format, IFormatProvider provider) {
+	public string ToString (string format, IFormatProvider provider)
+	{
 		return ToString (format);
 	}
 
-	public static bool operator == (Guid a, Guid b) {
+	public static bool operator == (Guid a, Guid b)
+	{
 		return a.Equals(b);
 	}
 
-	public static bool operator != (Guid a, Guid b) {
+	public static bool operator != (Guid a, Guid b)
+	{
 		return !( a.Equals (b) );
 	}
 

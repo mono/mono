@@ -1,3 +1,6 @@
+2002-03-01  Duco Fijma <duco@lorentz.xs4all.nl>
+	* BitConverterTest.cs: completed test cases
+
 2002-03-01  Martin Baulig  <martin@gnome.org>
 
 	* MartinTests.cs: 15 tests currently work on Linux, call them all and

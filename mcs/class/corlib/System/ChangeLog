@@ -1,3 +1,5 @@
+2002-03-01  Duco Fijma  <duco@lorentz.xs4all.nl>
+	* BitConverter.cs: Fixed bugs in ToString methods
 
 Fri Mar 1 15:20:00 CET 2002 Paolo Molaro <lupus@ximian.com>
 
