@@ -1,5 +1,9 @@
 2004-12-30  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* signal.c: Mac OS X portability fixes -- it doesn't provide sighandler_t!
+
+2004-12-30  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* Makefile.am: Add signal.c to the build.
 	* signal.c: Added.  Contains helper functions to wrap signal(2).
 
