@@ -677,10 +677,8 @@ namespace System.Windows.Forms
 		
 		// Drawing
 		
-		public override void DrawComboBoxDecorations (Graphics dc, ComboBox ctrl)
-		{			
-			Rectangle cl = ctrl.ClientRectangle;			
-			
+		public override void DrawComboBoxEditDecorations (Graphics dc, ComboBox ctrl, Rectangle cl)
+		{				
 			dc.DrawLine (ResPool.GetPen (ColorButtonShadow), cl.X, cl.Y, cl.X + cl.Width, cl.Y); //top 
 			dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), cl.X + 1, cl.Y + 1, cl.X + cl.Width - 2, cl.Y + 1);
 			dc.DrawLine (ResPool.GetPen (ColorButtonFace), cl.X, cl.Y + cl.Height - 2, cl.X + cl.Width, cl.Y + cl.Height - 2); //down
@@ -692,10 +690,49 @@ namespace System.Windows.Forms
 		}		
 		
 		// Sizing				
-		public override int DrawComboBoxDecorationTop () { return 2;}
-		public override int DrawComboBoxDecorationBottom () { return 2;}
-		public override int DrawComboBoxDecorationRight () { return 2;}
-		public override int DrawComboBoxDecorationLeft () { return 2;}
+		public override int DrawComboBoxEditDecorationTop () { return 2;}
+		public override int DrawComboBoxEditDecorationBottom () { return 2;}
+		public override int DrawComboBoxEditDecorationRight () { return 2;}
+		public override int DrawComboBoxEditDecorationLeft () { return 2;}
+		
+		private int DrawComboListBoxDecoration (ComboBoxStyle style)
+		{
+			if (style == ComboBoxStyle.Simple)
+				return 2;
+			else
+				return 1;
+		}
+				
+		public override int DrawComboListBoxDecorationTop (ComboBoxStyle style) 
+		{
+			return DrawComboListBoxDecoration (style);
+		}
+		
+		public override int DrawComboListBoxDecorationBottom (ComboBoxStyle style)
+		{
+			return DrawComboListBoxDecoration (style);
+		}
+		
+		public override int DrawComboListBoxDecorationRight (ComboBoxStyle style)
+		{
+			return DrawComboListBoxDecoration (style);
+		}
+		
+		public override int DrawComboListBoxDecorationLeft (ComboBoxStyle style)
+		{
+			return DrawComboListBoxDecoration (style);
+		}
+		
+		public override void DrawComboListBoxDecorations (Graphics dc, ComboBox ctrl, Rectangle cl)
+		{
+			if (ctrl.DropDownStyle == ComboBoxStyle.Simple) {
+				DrawComboBoxEditDecorations (dc, ctrl, cl);
+			}
+			else {			
+				dc.DrawRectangle (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorWindowFrame),
+					cl.X, cl.Y, cl.Width - 1, cl.Height - 1);
+			}			
+		}
 		
 		#endregion ComboBox
 

@@ -641,8 +641,10 @@ namespace System.Windows.Forms
 
 		protected virtual void OnDrawItem (DrawItemEventArgs e)
 		{
-			if (DrawItem != null && (DrawMode == DrawMode.OwnerDrawFixed || DrawMode == DrawMode.OwnerDrawVariable))
+			if (DrawItem != null && (DrawMode == DrawMode.OwnerDrawFixed || DrawMode == DrawMode.OwnerDrawVariable)) {
 				DrawItem (this, e);
+				return;
+			}
 
 			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
 				e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
@@ -812,6 +814,7 @@ namespace System.Windows.Forms
 			listbox_info.textdrawing_rect = listbox_info.client_rect;
 			listbox_info.textdrawing_rect.Y += ThemeEngine.Current.DrawListBoxDecorationTop (BorderStyle);
 			listbox_info.textdrawing_rect.X += ThemeEngine.Current.DrawListBoxDecorationLeft (BorderStyle);
+			//BUG: Top and Left decorations
 			listbox_info.textdrawing_rect.Height -= ThemeEngine.Current.DrawListBoxDecorationBottom (BorderStyle);
 			listbox_info.textdrawing_rect.Width -= ThemeEngine.Current.DrawListBoxDecorationRight (BorderStyle);
 

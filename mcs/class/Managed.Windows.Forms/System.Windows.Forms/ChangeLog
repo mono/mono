@@ -1,3 +1,8 @@
+2005-01-04  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ComboBox.cs, ThemeWin32Classic.cs, ListBox.cs, Theme.cs:
+	Simple mode, fixes, IntegralHeight, etc.
+
 2005-01-04  Peter Bartok <pbartok@novell.com>
 
 	* TextBoxBase.cs: Using proper font variable now
