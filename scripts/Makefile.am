@@ -53,8 +53,8 @@ mono_one_instdir = $(shell cygpath -m $(libdir))/mono/1.0
 mono_two_instdir = $(shell cygpath -m $(libdir))/mono/2.0
 else
 plat_bindir = $(bindir)
-mono_one_instdir = $(libdir)/mono/1.0
-mono_two_instdir = $(libdir)/mono/2.0
+mono_one_instdir = $(prefix)/lib/mono/1.0
+mono_two_instdir = $(prefix)/lib/mono/2.0
 endif
 
 REWRITE = sed \
