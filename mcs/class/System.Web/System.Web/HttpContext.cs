@@ -1,8 +1,11 @@
 //
 // System.Web.HttpContext
 //
-// Author:
-//   Patrik Torstensson (Patrik.Torstensson@labs2.com)
+// Authors:
+// 	Patrik Torstensson (Patrik.Torstensson@labs2.com)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//
+// (c) 2003 Novell, Inc. (http://www.novell.com)
 //
 using System;
 using System.Collections;
@@ -33,6 +36,9 @@ namespace System.Web
 		private bool _skipauth;
 		private Hashtable		_oItems;
 		private DateTime		_oTimestamp;
+		int timeoutPossible;
+		long timeoutBegin;
+		object configTimeout;
 
 		public HttpContext (HttpRequest Request, HttpResponse Response)
 		{
@@ -243,6 +249,42 @@ namespace System.Web
 			}
 		}
 
+		internal void BeginTimeoutPossible ()
+		{
+			timeoutPossible = 1;
+			timeoutBegin = DateTime.Now.Ticks;
+		}
+
+		internal void EndTimeoutPossible ()
+		{
+			Interlocked.CompareExchange (ref timeoutPossible, 0, 1);
+		}
+		
+		internal void TryWaitForTimeout () 
+		{
+			while (Interlocked.CompareExchange (ref timeoutPossible, 1, 1) == 1) {
+				Thread.Sleep (500);
+			}
+		}
+
+		internal bool CheckIfTimeout (DateTime dt)
+		{
+			TimeSpan ts = new TimeSpan (dt.Ticks - timeoutBegin);
+			return (ts > ConfigTimeout);
+		}
+
+		internal TimeSpan ConfigTimeout {
+			get {
+				if (configTimeout == null) {
+					HttpRuntimeConfig config = (HttpRuntimeConfig)
+								GetConfig ("system.web/httpRuntime");
+					configTimeout = new TimeSpan (0, 0, config.ExecutionTimeout);
+				}
+
+				return (TimeSpan) configTimeout;
+			}
+		}
+		
 		internal void SetSession (HttpSessionState session)
 		{
 			_oSession = session;

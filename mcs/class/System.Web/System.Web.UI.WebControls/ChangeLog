@@ -1,3 +1,7 @@
+2003-11-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Xml.cs: class status based fixes.
+
 2003-11-19  Jackson Harper  <jackson@ximian.com>
 
 	* HyperLink.cs: Use ResolveUrl instead of ResolveBaseUrl.

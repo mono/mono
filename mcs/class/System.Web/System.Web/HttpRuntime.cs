@@ -44,6 +44,7 @@ namespace System.Web {
 		private DateTime _firstRequestStartTime;
 
 		private Exception _initError;
+		private TimeoutManager timeoutManager;
 
 		static HttpRuntime ()
 		{
@@ -70,8 +71,8 @@ namespace System.Web {
 		{
 			try {
 				_cache = new Cache ();
+				timeoutManager = new TimeoutManager ();
 
-				// TODO: timeout manager
 				// TODO: Load all app domain data
 				// TODO: Trace manager
 				_endOfSendCallback = new HttpWorkerRequest.EndOfSendNotification(OnEndOfSend);
@@ -185,7 +186,7 @@ namespace System.Web {
 
 			do {
 				// TODO: We should check the request queue here also
-				if (_activeRequests == 0)
+				if (Interlocked.CompareExchange (ref _activeRequests, 0, 0) == 0)
 					return;
 
 				Thread.Sleep(100);
@@ -324,6 +325,12 @@ namespace System.Web {
 		public static string MachineConfigurationDirectory {
 			get {
 				throw new NotImplementedException ();
+			}
+		}
+
+		internal static TimeoutManager TimeoutManager {
+			get {
+				return HttpRuntime._runtime.timeoutManager;
 			}
 		}
 

@@ -1,3 +1,13 @@
+2003-11-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* PersistChildrenAttribute.cs:
+	* PersistenceModeAttribute.cs: implemented.
+
+	* TODO: Removed file.
+	* OutputCacheLocation.cs:
+	* TemplateControlParser.cs:
+	* HtmlInputFile.cs: class status based fixes.
+
 2003-11-19  Jackson Harper <jackson@ximian.com>
 
 	* Page.cs: Always set the cache expire time. Tell the response to

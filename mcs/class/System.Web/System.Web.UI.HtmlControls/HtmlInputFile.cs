@@ -82,6 +82,23 @@ namespace System.Web.UI.HtmlControls{
 				return Context.Request.Files[RenderedName];
 			}
 		}
+
+#if NET_1_1
+		[Browsable (false)]
+		public override string Value {
+			get {
+				HttpPostedFile file = PostedFile;
+				if (file == null)
+					return "";
+
+				return file.FileName;
+			}
+
+			set {
+				throw new NotSupportedException ();
+			}
+		}
+#endif
 		
 	} // class HtmlInputFile
 } // namespace System.Web.UI.HtmlControls

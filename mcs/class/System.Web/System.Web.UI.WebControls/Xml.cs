@@ -25,8 +25,7 @@ namespace System.Web.UI.WebControls
 {
 	[DefaultProperty("DocumentSource")]
 	[PersistChildren(false)]
-	// TODO add control builder
-	//[ControlBuilder ()]
+	[ControlBuilder (typeof (ControlBuilderAttribute))]
 	[Designer ("System.Web.UI.Design.WebControls.XmlDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	public class Xml : Control
 	{

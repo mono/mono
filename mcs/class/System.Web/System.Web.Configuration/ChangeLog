@@ -1,3 +1,10 @@
+2003-11-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CompilationConfiguration.cs: don't throw an HttpException.
+	* HttpRuntimeConfig.cs:
+	* HttpRuntimeConfigurationHandler.cs: handle system.web/httpRuntime
+	configuration section.
+
 2003-11-10 Jackson Harper <jackson@ximian.com>
 
 	* CompilationConfigurationHandler.cs: Append .dll to shortened

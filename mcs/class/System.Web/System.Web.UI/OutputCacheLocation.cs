@@ -18,6 +18,9 @@ namespace System.Web.UI
                 Client,
                 Downstream,
                 Server,
-                None
+                None,
+#if NET_1_1
+		ServerAndClient
+#endif
         }
 }

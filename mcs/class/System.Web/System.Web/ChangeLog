@@ -1,3 +1,11 @@
+2003-11-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs:
+	* HttpContext.cs:
+	* HttpRuntime.cs: add timeout handling.
+	* TimeoutManager.cs: new class that takes care of aborting threads on
+	timeout.
+
 2003-11-19  Jackson Harper <jackson@ximian.com>
 
 	* HttpWriter.cs: Use a constant for the buffer size so the cache

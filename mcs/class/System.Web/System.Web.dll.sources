@@ -53,6 +53,7 @@ System.Web/ProcessShutdownReason.cs
 System.Web/ProcessStatus.cs
 System.Web/StaticFileHandler.cs
 System.Web/TODOAttribute.cs
+System.Web/TimeoutManager.cs
 System.Web/TraceContext.cs
 System.Web/TraceMode.cs
 System.Web/WebCategoryAttribute.cs
@@ -105,6 +106,8 @@ System.Web.Configuration/HttpCapabilitiesBase.cs
 System.Web.Configuration/HttpConfigurationContext.cs
 System.Web.Configuration/HttpHandlersSectionHandler.cs
 System.Web.Configuration/HttpModulesConfigurationHandler.cs
+System.Web.Configuration/HttpRuntimeConfig.cs
+System.Web.Configuration/HttpRuntimeConfigurationHandler.cs
 System.Web.Configuration/ModuleItem.cs
 System.Web.Configuration/ModulesConfiguration.cs
 System.Web.Configuration/AuthorizationConfigHandler.cs

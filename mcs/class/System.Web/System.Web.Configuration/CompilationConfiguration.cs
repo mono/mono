@@ -60,7 +60,7 @@ namespace System.Web.Configuration
 			config = context.GetConfig ("system.web/compilation") as CompilationConfiguration;
 
 			if (config == null)
-				throw new HttpException ("Configuration error.", 500);
+				throw new Exception ("Configuration error.");
 
 			return config;
 		}

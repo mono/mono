@@ -20,6 +20,10 @@ namespace System.Web.UI
 		bool autoEventWireup = true;
 		bool enableViewState = true;
 
+		protected TemplateControlParser ()
+		{
+		}
+
 		internal override void ProcessMainAttributes (Hashtable atts)
 		{
 			autoEventWireup = GetBool (atts, "AutoEventWireup", true);

@@ -20,32 +20,41 @@ namespace System.Web.UI {
 			this.mode = mode;
 		}
 
-		public static readonly PersistenceModeAttribute Attribute;
-		public static readonly PersistenceModeAttribute Default;
-		public static readonly PersistenceModeAttribute EncodedInnerDefaultProperty;
-		public static readonly PersistenceModeAttribute InnerDefaultProperty;
-		public static readonly PersistenceModeAttribute InnerProperty;
+		public static readonly PersistenceModeAttribute Attribute =
+						new PersistenceModeAttribute (PersistenceMode.Attribute);
+
+		public static readonly PersistenceModeAttribute Default =
+						new PersistenceModeAttribute (PersistenceMode.Attribute);
+
+		public static readonly PersistenceModeAttribute EncodedInnerDefaultProperty =
+						new PersistenceModeAttribute (PersistenceMode.EncodedInnerDefaultProperty);
+
+		public static readonly PersistenceModeAttribute InnerDefaultProperty =
+						new PersistenceModeAttribute (PersistenceMode.InnerDefaultProperty);
+
+		public static readonly PersistenceModeAttribute InnerProperty =
+						new PersistenceModeAttribute (PersistenceMode.InnerProperty);
 		
 		public PersistenceMode Mode {
 			get { return mode; }
 		}
 
-		[MonoTODO]
 		public override bool Equals (object obj)
 		{
-			return false;
+			if (!(obj is PersistenceModeAttribute))
+				return false;
+
+			return ((PersistenceModeAttribute) obj).mode == mode;
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			return 42;
+			return (int) mode;
 		}
 
-		[MonoTODO]
 		public override bool IsDefaultAttribute ()
 		{
-			return false;
+			return (mode == PersistenceMode.Attribute);
 		}
 	}
 }

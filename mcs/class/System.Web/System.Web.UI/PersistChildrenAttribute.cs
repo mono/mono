@@ -20,31 +20,31 @@ namespace System.Web.UI {
 			this.persist = persist;
 		}
 
-		public static readonly PersistChildrenAttribute Default;
-		public static readonly PersistChildrenAttribute Yes;
-		public static readonly PersistChildrenAttribute No;
+		public static readonly PersistChildrenAttribute Default = new PersistChildrenAttribute (true);
+		public static readonly PersistChildrenAttribute Yes = new PersistChildrenAttribute (true);
+		public static readonly PersistChildrenAttribute No = new PersistChildrenAttribute (false);
 
 		public bool Persist {
 			get { return persist; }
 		}
 
-		[MonoTODO]
 		public override bool Equals (object obj)
 		{
-			return false;
+			if (!(obj is PersistChildrenAttribute))
+				return false;
+
+			return (((PersistChildrenAttribute) obj).persist == persist);
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			return 42;
+			return persist ? 1 : 0;
 		}
 
-		[MonoTODO]
 		public override bool IsDefaultAttribute ()
 		{
-			return false;
+			return (persist == true);
 		}
 	}
 }
-	
+
