@@ -1,6 +1,12 @@
+2003-01-06  Martin Baulig  <martin@ximian.com>
+
+	* debug.c: Correctly handle the `debugger_finished_mutex'; it is
+	only unlocked by the pthread_cond_wait() in mono_debugger_wait().
+
 2003-01-04 Jackson Harper <jackson@latitudegeo.com>
 
-	* debug.c: Move must_send_finished var declaration out of #if win32 block (this fixes the build on win32)
+	* debug.c: Move must_send_finished var declaration out of #if win32
+	block (this fixes the build on win32)
 
 2003-01-05  Martin Baulig  <martin@ximian.com>
 
