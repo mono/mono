@@ -1,5 +1,8 @@
 2004-05-21  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* DecimalTest.cs: Added new unit test to check for correct rounding.
+	It appears that Decimal.To... trunk but Convert.To... use banking
+	rounding (so we can't use Convert.To... to implement To...).
 	* SingleTest.cs: New. Unit tests for Single (adapted from Double).
 
 2004-05-20  Sebastien Pouliot  <sebastien@ximian.com>
