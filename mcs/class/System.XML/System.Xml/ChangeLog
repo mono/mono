@@ -1,3 +1,7 @@
+2002-09-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XmlTextReader.cs: line and position begin with 1.
+
 2002-09-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XmlException.cs: added a new internal constructor for IXmlLineInfo

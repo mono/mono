@@ -40,10 +40,8 @@ namespace System.Xml
 	{
 		#region Constructors
 
-		[MonoTODO]
 		protected XmlTextReader ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -611,8 +609,8 @@ namespace System.Xml
 		private StringBuilder xmlBuffer; // This is for Read(Inner|Outer)Xml
 		private StringBuilder currentTag; // A buffer for ReadContent for ReadOuterXml
 		private bool saveToXmlBuffer;
-		private int line;
-		private int column;
+		private int line = 1;
+		private int column = 1;
 
 		private void Init ()
 		{
