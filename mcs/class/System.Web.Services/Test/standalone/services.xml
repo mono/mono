@@ -2894,4 +2894,20 @@
     </protocols>
     <clientTest>false</clientTest>
   </service>
+  <service>
+    <wsdl>http://www.culand.net/WebServices/bin/WSMaze_Server.dll/wsdl/IWSMazeServer</wsdl>
+    <name>IWSMazeServerTest</name>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://63.138.157.107/av/wsdl/ITAddressValidations</wsdl>
+    <name>ITAddressValidationsTest</name>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
 </services>

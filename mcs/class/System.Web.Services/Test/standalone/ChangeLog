@@ -1,3 +1,9 @@
+2003-12-15  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Makefile.cs: Generate list of client test files in target "gen".
+	* services.xml: Added a couple of services.
+	* wstest.cs: Added "stat" option.
+	
 2003-12-12  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Added web service test suite

@@ -29,6 +29,7 @@ update:
 
 gen:
 	mono --debug wstest.exe gp
+	mono --debug wstest.exe gc
 
 regen:
 	mono --debug wstest.exe gp all

@@ -59,6 +59,10 @@ public class Driver
 		{
 			UpdateReferences (GetArg (args,1), GetArg (args,2));
 		}
+		else if (args[0] == "stat")
+		{
+			ShowStatus ();
+		}
 		else if (args[0] == "clean")
 		{
 			Clean ();
@@ -282,6 +286,30 @@ public class Driver
 			if (sd.Name == name) return sd;
 
 		return null;
+	}
+	
+	static void ShowStatus ()
+	{
+		int total = 0;
+		int soap = 0;
+		int post = 0;
+		int get = 0;
+		int tests = 0;
+		
+		foreach (ServiceData sd in services.services)
+		{
+			if (Array.IndexOf(sd.Protocols, "Soap") != -1) soap++;
+			if (Array.IndexOf(sd.Protocols, "HttpPost") != -1) post++;
+			if (Array.IndexOf(sd.Protocols, "HttpGet") != -1) get++;
+			if (sd.ClientTest) tests++;
+		}
+		
+		Console.WriteLine ("Total services: " + services.services.Count);
+		Console.WriteLine ("Soap Protocol: " + soap);
+		Console.WriteLine ("HttpPost Protocol: " + post);
+		Console.WriteLine ("HttpGet Protocol:  " + get);
+		Console.WriteLine ("Total proxies: " + (soap + post + get));
+		Console.WriteLine ("Nunit Tests: " + tests);
 	}
 
 	static void BuildProxies (bool buildAll)
