@@ -18,6 +18,7 @@ namespace System
 	{
 		RuntimeTypeHandle type;
 		IntPtr value;
+		IntPtr klass;
 		
 		public override bool Equals(object o)
 		{
