@@ -17,7 +17,7 @@ using System.Security.Policy;
 namespace System.Security.Policy {
 
         [Serializable]
-        public sealed class Site: IIdentityPermissionFactory {
+        public sealed class Site: IIdentityPermissionFactory, IBuiltInEvidence {
 
 		internal string origin_site;
 
@@ -72,6 +72,26 @@ namespace System.Security.Policy {
                 public string Name {
                         get { return origin_site; }
                 }
+
+		// interface IBuiltInEvidence
+
+		[MonoTODO]
+		int IBuiltInEvidence.GetRequiredSize (bool verbose) 
+		{
+			return 0;
+		}
+
+		[MonoTODO]
+		int IBuiltInEvidence.InitFromBuffer (char [] buffer, int position) 
+		{
+			return 0;
+		}
+
+		[MonoTODO]
+		int IBuiltInEvidence.OutputToBuffer (char [] buffer, int position, bool verbose) 
+		{
+			return 0;
+		}
 
 		// internals
 

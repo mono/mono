@@ -16,7 +16,7 @@ using System.Text;
 namespace System.Security.Policy {
 
 [Serializable]
-public sealed class Publisher : IIdentityPermissionFactory {
+public sealed class Publisher : IIdentityPermissionFactory, IBuiltInEvidence {
 	
 	private X509Certificate x509;
 
@@ -75,6 +75,26 @@ public sealed class Publisher : IIdentityPermissionFactory {
 			cert.Text = data;
 		se.AddChild (cert);
 		return se.ToString ();
+	}
+
+	// interface IBuiltInEvidence
+
+	[MonoTODO]
+	int IBuiltInEvidence.GetRequiredSize (bool verbose) 
+	{
+		return 0;
+	}
+
+	[MonoTODO]
+	int IBuiltInEvidence.InitFromBuffer (char [] buffer, int position) 
+	{
+		return 0;
+	}
+
+	[MonoTODO]
+	int IBuiltInEvidence.OutputToBuffer (char [] buffer, int position, bool verbose) 
+	{
+		return 0;
 	}
 }
 

@@ -19,7 +19,7 @@ using System.Security.Cryptography;
 namespace System.Security.Policy {
 
 [Serializable]
-public sealed class Hash : ISerializable {
+public sealed class Hash : ISerializable, IBuiltInEvidence {
 
 	private Assembly assembly;
 	private byte[] data = null;
@@ -103,6 +103,26 @@ public sealed class Hash : ISerializable {
 		}
 
 		return data;
+	}
+
+	// interface IBuiltInEvidence
+
+	[MonoTODO]
+	int IBuiltInEvidence.GetRequiredSize (bool verbose) 
+	{
+		return 0;
+	}
+
+	[MonoTODO]
+	int IBuiltInEvidence.InitFromBuffer (char [] buffer, int position) 
+	{
+		return 0;
+	}
+
+	[MonoTODO]
+	int IBuiltInEvidence.OutputToBuffer (char [] buffer, int position, bool verbose) 
+	{
+		return 0;
 	}
 }
 

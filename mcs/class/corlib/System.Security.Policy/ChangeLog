@@ -1,3 +1,14 @@
+2004-01-26  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AllMembershipCondition.cs: Clean up. Removed FIXME.
+	* ApplicationDirectory.cs: Added IBuiltInEvidence (to please corcompare).
+	* Hash.cs: Added IBuiltInEvidence (to please corcompare).
+	* Publisher.cs: Added IBuiltInEvidence (to please corcompare).
+	* Site.cs: Added IBuiltInEvidence (to please corcompare).
+	* StrongName.cs: Added IBuiltInEvidence (to please corcompare). Now use
+	SecurityElement in ToString. Removed TODO on CreateIdentityPermission 
+	(evidence isn't required in this case).
+
 2004-01-14  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Url.cs: Added IBuiltInEvidence (corcompare) and new static methods 

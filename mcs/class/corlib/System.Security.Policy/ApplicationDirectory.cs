@@ -11,7 +11,7 @@ namespace System.Security.Policy {
 
 	[MonoTODO("This class should use a URLString like class instead of just a string")]
 	[Serializable]
-	public sealed class ApplicationDirectory /*: IBuiltInEvidence*/ {
+	public sealed class ApplicationDirectory : IBuiltInEvidence {
 		
 		private string directory;
 
@@ -71,9 +71,27 @@ namespace System.Security.Policy {
 			SecurityElement element = new SecurityElement (GetType().FullName);
 			element.AddAttribute ("version", "1");
 			element.AddAttribute ("Directory", Directory);
-
 			return element;
+		}
+
+		// interface IBuiltInEvidence
+
+		[MonoTODO]
+		int IBuiltInEvidence.GetRequiredSize (bool verbose) 
+		{
+			return 0;
+		}
+
+		[MonoTODO]
+		int IBuiltInEvidence.InitFromBuffer (char [] buffer, int position) 
+		{
+			return 0;
+		}
+
+		[MonoTODO]
+		int IBuiltInEvidence.OutputToBuffer (char [] buffer, int position, bool verbose) 
+		{
+			return 0;
 		}
 	}
 }
-

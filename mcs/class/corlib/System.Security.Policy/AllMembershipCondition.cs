@@ -8,12 +8,8 @@
 using System;
 using System.Security;
 
+namespace System.Security.Policy {
 
-namespace System.Security.Policy
-{
-	/// <summary>
-	/// Summary description for AllMembershipCondition.
-	/// </summary>
 	[Serializable]
 	public sealed class AllMembershipCondition
                 : IMembershipCondition, IConstantMembershipCondition, ISecurityEncodable, ISecurityPolicyEncodable
@@ -35,11 +31,9 @@ namespace System.Security.Policy
 			return new AllMembershipCondition();
 		}
 
-		public override bool Equals(object o)
+		public override bool Equals (object o)
 		{
-			if(o is System.Security.Policy.AllMembershipCondition)
-				return true;
-			return false;
+			return (o is System.Security.Policy.AllMembershipCondition);
 		}
  
 		public void FromXml(SecurityElement e)
@@ -47,7 +41,6 @@ namespace System.Security.Policy
 			FromXml(e, null);
 		}
 
-		//Fixme: is there a need for all this????
 		public void FromXml(SecurityElement e, PolicyLevel level)
 		{
 			if(e == null)
@@ -57,7 +50,6 @@ namespace System.Security.Policy
 					+ AllMembershipCondition.XmlTag);
 		}
 
-		
 		public override int GetHashCode()
 		{
 			return typeof (AllMembershipCondition).GetHashCode ();

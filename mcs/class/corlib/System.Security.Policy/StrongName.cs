@@ -14,7 +14,7 @@ using System.Text;
 namespace System.Security.Policy {
 
 [Serializable]
-public sealed class StrongName : IIdentityPermissionFactory {
+public sealed class StrongName : IIdentityPermissionFactory, IBuiltInEvidence {
 
 	private StrongNamePublicKeyBlob publickey;
 	private string name;
@@ -51,7 +51,6 @@ public sealed class StrongName : IIdentityPermissionFactory {
 		return (object) new StrongName (publickey, name, version);
 	}
 
-	[MonoTODO("What should we do with the evidence ? nothing?")]
 	public IPermission CreateIdentityPermission (Evidence evidence) 
 	{
 		return new StrongNameIdentityPermission (publickey, name, version);
@@ -76,15 +75,32 @@ public sealed class StrongName : IIdentityPermissionFactory {
 
 	public override string ToString () 
 	{
-		StringBuilder sb = new StringBuilder ();
-		sb.Append ("<StrongName version=\"1\"\r\n            Key=\"");
-		sb.Append (publickey.ToString ());
-		sb.Append ("\"\r\n            Name=\"");
-		sb.Append (name);
-		sb.Append ("\"\r\n            Version=\"");
-		sb.Append (version.ToString ());
-		sb.Append ("\"/>\r\n");
-		return sb.ToString ();
+		SecurityElement element = new SecurityElement (typeof (System.Security.Policy.StrongName).FullName);
+		element.AddAttribute ("version", "1");
+		element.AddAttribute ("Key", publickey.ToString ());
+		element.AddAttribute ("Name", name);
+		element.AddAttribute ("Version", version.ToString ());
+		return element.ToString ();
+	}
+
+	// interface IBuiltInEvidence
+
+	[MonoTODO]
+	int IBuiltInEvidence.GetRequiredSize (bool verbose) 
+	{
+		return 0;
+	}
+
+	[MonoTODO]
+	int IBuiltInEvidence.InitFromBuffer (char [] buffer, int position) 
+	{
+		return 0;
+	}
+
+	[MonoTODO]
+	int IBuiltInEvidence.OutputToBuffer (char [] buffer, int position, bool verbose) 
+	{
+		return 0;
 	}
 }
 
