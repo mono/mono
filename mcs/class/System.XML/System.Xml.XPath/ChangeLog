@@ -1,5 +1,9 @@
 2004-12-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Iterator.cs : actually I mean this patch.
+
+2004-12-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Iterator.cs : Create _current clone only when required. So just set
 	  null when MoveNextCore() succeeded (except for some cases that
 	  _current is _nav, such as SelfIterator).
