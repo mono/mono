@@ -1,5 +1,9 @@
 2005-02-16  Atsushi Enomoto <atsushi@ximian.com>
 
+	* Compiler.cs : don't return alias namespaces in GetNamespacesToCopy().
+
+2005-02-16  Atsushi Enomoto <atsushi@ximian.com>
+
 	* Compiler.cs : GetNamespacesToCopy() should also find for non-local
 	  namespace nodes. Patch by Andrew Skiba with some fixes.
 	* XslTransformProcessor.cs : Patch by Andrew Skiba.
