@@ -173,10 +173,9 @@ namespace System.Xml.Schema
 					this.currentPath = null;
 					return;
 				}
-				if (xpath.Length == pos || xpath [pos] != ':') {
+				if (xpath.Length == pos || xpath [pos] != ':')
 					step.Name = xpath.Substring (nameStart, pos - nameStart);
-					break;
-				} else {
+				else {
 					string prefix = xpath.Substring (nameStart, pos - nameStart);
 					pos++;
 					if (xpath.Length > pos && xpath [pos] == '*') {
@@ -186,8 +185,7 @@ namespace System.Xml.Schema
 							this.currentPath = null;
 							return;
 						}
-						step.Namespace = ns;
-						step.Name = "*";
+						step.NsName = ns;
 						pos++;
 					} else {
 						int localNameStart = pos;
@@ -206,8 +204,8 @@ namespace System.Xml.Schema
 						}
 						step.Namespace = ns;
 					}
-					break;
 				}
+				break;
 			}
 			if (!step.IsCurrent)	// Current step is meaningless, other than its representation.
 				steps.Add (step);

@@ -1,3 +1,8 @@
+2004-01-21  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaXPath.cs : wildcard with prefix (e.g. @foo:*) was
+	  incorrectly treated.
+
 2004-01-20  Atsushi Enomoto <atsushi@ximian.com>
 
 	* SchemaDataValueType.cs : UriValueType.ToString() should return 
