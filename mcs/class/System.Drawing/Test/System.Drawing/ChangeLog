@@ -1,3 +1,7 @@
+2004-03-13  Ravindra <rkumar@novell.com>
+
+	* TestSystemBrushes.cs: Added test fail conditions.
+
 2004-03-12  Ravindra <rkumar@novell.com>
 
 	* TestSystemBrushes.cs: Added.
