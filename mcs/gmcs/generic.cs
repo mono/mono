@@ -292,7 +292,6 @@ namespace Mono.CSharp {
 	}
 	
 	public class ConstructedType : TypeExpr {
-		Expression container_type;
 		string name, full_name;
 		TypeArguments args;
 		Type[] gen_params, atypes;
@@ -302,7 +301,6 @@ namespace Mono.CSharp {
 			: base (null, l)
 		{
 			loc = l;
-			this.container_type = container_type;
 			this.name = name;
 			this.args = args;
 			eclass = ExprClass.Type;
@@ -376,7 +374,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public Type Resolve (EmitContext ec, TypeBuilder parent)
+		public Type ResolveType (EmitContext ec)
 		{
 			//
 			// Resolve the arguments.
@@ -395,8 +393,8 @@ namespace Mono.CSharp {
 			}
 
 			if (args.HasTypeArguments) {
-				type = parent;
-				return parent;
+				type = gt;
+				return type;
 			}
 
 			for (int i = 0; i < gen_params.Length; i++) {
@@ -407,7 +405,7 @@ namespace Mono.CSharp {
 			//
 			// Now bind the parameters.
 			//
-			type = gt.BindGenericParameters (args.Arguments);
+			type = gt.BindGenericParameters (atypes);
 			return type;
 		}
 		

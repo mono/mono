@@ -1,3 +1,11 @@
+2003-11-02  Martin Baulig  <martin@ximian.com>
+
+	* generics.cs (ConstructedType.Resolve): Renamed to ResolveType()
+	and removed the TypeBuilder argument.
+
+	* typemanager.cs (TypeManager.IsValueType): Return
+	`t.IsGenericParameter || t.IsValueType'.
+
 2003-10-25  Martin Baulig  <martin@ximian.com>
 
 	* decl.cs (DeclSpace.ResolveType): If we're a ConstructedType,

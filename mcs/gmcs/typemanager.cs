@@ -1383,10 +1383,7 @@ public class TypeManager {
 		
 	public static bool IsValueType (Type t)
 	{
-		if (t.IsSubclassOf (TypeManager.value_type) && (t != TypeManager.enum_type))
-			return true;
-		else
-			return t.IsGenericParameter;
+		return t.IsGenericParameter || t.IsValueType;
 	}
 	
 	public static bool IsInterfaceType (Type t)

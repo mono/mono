@@ -858,7 +858,7 @@ namespace Mono.CSharp {
 
 			ConstructedType constructed = parent as ConstructedType;
 			if (constructed != null) {
-				Type ptype = constructed.Resolve (ec, TypeBuilder);
+				Type ptype = constructed.ResolveType (ec);
 				if (ptype == null)
 					return null;
 

@@ -341,7 +341,7 @@ namespace Mono.CSharp {
 			}
 
 			if (d is ConstructedType)
-				((ConstructedType) d).Resolve (type_resolve_ec, TypeBuilder);
+				((ConstructedType) d).ResolveType (type_resolve_ec);
 
 			if (!CheckAccessLevel (d.Type)) {
 				Report.	Error (122, loc,  "`" + d.Type + "' " +
