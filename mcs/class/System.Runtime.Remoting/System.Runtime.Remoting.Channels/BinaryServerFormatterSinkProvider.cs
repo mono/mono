@@ -61,10 +61,9 @@ namespace System.Runtime.Remoting.Channels
 			return result;
 		}
 
-		[MonoTODO]
 		public void GetChannelData (IChannelDataStore channelData)
 		{
-			// no idea why we need this
+			// Nothing to add here
 		}
 	}
 }

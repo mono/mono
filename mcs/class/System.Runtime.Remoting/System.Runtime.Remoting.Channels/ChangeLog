@@ -1,3 +1,8 @@
+2003-12-10  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* BinaryServerFormatterSinkProvider.cs: Removed TODO.
+	* CommonTransportKeys.cs: Added some internal transport keys.
+
 2003-11-21  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* BinaryClientFormatterSinkProvider.cs, BinaryServerFormatterSinkProvider.cs,
