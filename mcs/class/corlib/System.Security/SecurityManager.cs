@@ -574,23 +574,59 @@ namespace System.Security {
 			throw new SecurityException (message, an, granted, refused, method, SecurityAction.LinkDemand, demanded, failed, null);
 		}
 
+		private static void InheritanceDemandSecurityException (int securityViolation, Assembly a, Type t, MethodInfo method)
+		{
+			string message = null;
+			AssemblyName an = null;
+			PermissionSet granted = null;
+			PermissionSet refused = null;
+
+			if (a != null) {
+				an = a.GetName ();
+				granted = a.GrantedPermissionSet;
+				refused = a.DeniedPermissionSet;
+			}
+
+			switch (securityViolation) {
+			case 1: // MONO_METADATA_INHERITANCEDEMAND_CLASS
+				message = String.Format (Locale.GetText ("Class inheritance refused for {0}."), t);
+				break;
+			case 2: // MONO_METADATA_INHERITANCEDEMAND_CLASS
+				message = Locale.GetText ("Method override refused.");
+				break;
+			default:
+				message = Locale.GetText ("Load time InheritDemand failed.");
+				break;
+			}
+
+			throw new SecurityException (message, an, granted, refused, method, SecurityAction.LinkDemand, null, null, null);
+		}
+
 		// internal - get called by the class loader
 
 		// Called when
 		// - class inheritance
 		// - method overrides
-		private static bool InheritanceDemand (Assembly a, byte[] permissions, byte[] nonCasPermissions)
+		private unsafe static bool InheritanceDemand (Assembly a, RuntimeDeclSecurityActions *actions)
 		{
-			bool result = true;
-			if (permissions != null) {
-				PermissionSet ps = Decode (permissions);
-				result = SecurityManager.IsGranted (a, ps, false);
+			try {
+				PermissionSet ps = null;
+				bool result = true;
+				if (actions->cas.size > 0) {
+					ps = Decode (actions->cas.blob, actions->cas.size);
+					result = SecurityManager.IsGranted (a, ps, false);
+				}
+				if (actions->noncas.size > 0) {
+					ps = Decode (actions->noncas.blob, actions->noncas.size);
+					result = SecurityManager.IsGranted (a, ps, true);
+				}
+
+				// TODO InheritanceDemandChoice (2.0)
+				return result;
 			}
-			if (nonCasPermissions != null) {
-				PermissionSet ps = Decode (nonCasPermissions);
-				result &= SecurityManager.IsGranted (a, ps, true);
+			catch (SecurityException) {
+				return false;
 			}
-			return result;
 		}
 
 		// internal - get called by JIT generated code

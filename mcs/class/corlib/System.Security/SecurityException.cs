@@ -273,6 +273,13 @@ namespace System.Security {
 		{
 			StringBuilder sb = new StringBuilder (base.ToString ());
 			try {
+				if (_method != null) {
+					// method string representation doesn't include the type
+					string m = _method.ToString ();
+					int ret = m.IndexOf (" ") + 1;
+					sb.AppendFormat ("{0}Method: {1} {2}.{3}", Environment.NewLine, 
+						_method.ReturnType.Name, _method.ReflectedType, m.Substring (ret));
+				}
 				if (permissionState != null) {
 					sb.AppendFormat ("{0}State: {1}", Environment.NewLine, PermissionState);
 				}

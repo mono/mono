@@ -1,3 +1,10 @@
+2005-02-15  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* SecurityException.cs: Show the method informations when displaying a
+	SecurityException.
+	* SecurityManager.cs: Reworked InheritanceDemand implementation. Added
+	a new method to throw a SecurityException for an InheritanceDemand.
+
 2005-02-10  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* SecurityManager.cs: Reduced the number of parameters for LinkDemand.
