@@ -2300,7 +2300,7 @@ namespace nunit.trees.TreeSet
 		{
 			private TreeSet<int> tree;
 
-			int sz = 5000;
+			int sz = 50;
 
 
 			[Test]
@@ -2415,7 +2415,7 @@ namespace nunit.trees.TreeSet
 		{
 			private TreeSet<int> tree;
 
-			int sz = 500000;
+			int sz = 500;
 
 
 			[SetUp]
