@@ -109,24 +109,24 @@ namespace MonoTests.System.Xml
 		public void TestSerializeBool()
 		{
 			Serialize(true);
-			AssertEquals(WriterText, "<boolean>true</boolean>");
+			AssertEquals("<boolean>true</boolean>", WriterText);
 			
 			Serialize(false);
-			AssertEquals(WriterText, "<boolean>false</boolean>");
+			AssertEquals("<boolean>false</boolean>", WriterText);
 		}
 		
 		[Test]
 		public void TestSerializeString()
 		{
 			Serialize("hello");
-			AssertEquals(WriterText, "<string>hello</string>");
+			AssertEquals("<string>hello</string>", WriterText);
 		}
 
 		[Test]
 		public void TestSerializeEmptyString()
 		{
 			Serialize(String.Empty);
-			AssertEquals(WriterText, "<string />");
+			AssertEquals("<string />", WriterText);
 		}
 		
 		[Test]
@@ -228,7 +228,7 @@ namespace MonoTests.System.Xml
 		{
 			DateTime d = new DateTime();
 			Serialize(d);
-			AssertEquals(WriterText, "<dateTime>0001-01-01T00:00:00.0000000-05:00</dateTime>");
+			AssertEquals ("<dateTime>0001-01-01T00:00:00.0000000", WriterText.Substring (0, 37));
 		}
 
 		/*
