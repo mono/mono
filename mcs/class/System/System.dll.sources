@@ -400,6 +400,7 @@ System.Net/ConnectionModes.cs
 System.Net.Configuration/ConnectionManagementHandler.cs
 System.Net.Configuration/DefaultProxyHandler.cs
 System.Net.Configuration/NetAuthenticationModuleHandler.cs
+System.Net.Configuration/NetConfigurationHandler.cs
 System.Net.Configuration/WebRequestModuleHandler.cs
 System.Net/CookieCollection.cs
 System.Net/CookieContainer.cs
@@ -431,6 +432,7 @@ System.Net/IPv6Address.cs
 System.Net/IWebProxy.cs
 System.Net/IWebRequestCreate.cs
 System.Net/MonoHttpDate.cs
+System.Net/NetConfig.cs
 System.Net/NetworkAccess.cs
 System.Net/NetworkCredential.cs
 System.Net/ProtocolViolationException.cs
@@ -440,6 +442,7 @@ System.Net/SocketAddress.cs
 System.Net/SocketPermissionAttribute.cs
 System.Net/SocketPermission.cs
 System.Net.Sockets/AddressFamily.cs
+System.Net.Sockets/IPv6MulticastOption.cs
 System.Net.Sockets/LingerOption.cs
 System.Net.Sockets/MulticastOption.cs
 System.Net.Sockets/NetworkStream.cs
