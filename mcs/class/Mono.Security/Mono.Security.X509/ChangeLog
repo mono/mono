@@ -1,3 +1,8 @@
+2004-08-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Store.cs: Now returns empty collection/list for certificates/
+	CRL when access to a store is denied.
+
 2004-07-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X501Name.cs: Support for E (email) in FromString.
