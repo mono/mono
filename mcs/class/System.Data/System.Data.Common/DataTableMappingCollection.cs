@@ -17,11 +17,8 @@ namespace System.Data.Common
 	/// <summary>
 	/// A collection of DataTableMapping objects. This class cannot be inherited.
 	/// </summary>
-	public sealed class DataTableMappingCollection :
-	MarshalByRefObject, // ITableMappingCollection, IList,
-	        IEnumerable //ICollection, 
+	public sealed class DataTableMappingCollection : MarshalByRefObject, ITableMappingCollection, IList, ICollection, IEnumerable
 	{
-
 		#region Fields
 
 		ArrayList mappings;
@@ -62,6 +59,41 @@ namespace System.Data.Common
 		public DataTableMapping this[string sourceTable] {
 			get { return (DataTableMapping)(sourceTables[sourceTable]); }
 			set { this[mappings.IndexOf(sourceTables[sourceTable])] = value; }
+		}
+
+	
+		object IList.this[int index] {
+			get { return (object)(this[index]); }
+			set { 
+				if (!(value is DataTableMapping))
+					throw new ArgumentException (); 
+				this[index] = (DataTableMapping)value;
+			 } 
+		}
+
+		bool IList.IsReadOnly {
+			get { return false; }
+		}
+
+		bool IList.IsFixedSize {
+			get { return false; }
+		}
+
+		object ICollection.SyncRoot {
+			get { return mappings.SyncRoot; }
+		}
+
+		bool ICollection.IsSynchronized {
+			get { return mappings.IsSynchronized; }
+		}
+
+		object ITableMappingCollection.this[string sourceTable] {
+			get { return this[sourceTable]; }
+			set { 
+				if (!(value is DataTableMapping))
+					throw new ArgumentException ();
+				this[sourceTable] = (DataTableMapping)(value);
+			}
 		}
 
 		#endregion
@@ -152,6 +184,18 @@ namespace System.Data.Common
 
 		[MonoTODO]
 		public void Insert (int index, object value) 
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		ITableMapping ITableMappingCollection.Add (string sourceTableName, string dataSetTableName)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		ITableMapping ITableMappingCollection.GetByDataSetTable (string dataSetTableName)
 		{
 			throw new NotImplementedException ();
 		}

@@ -23,13 +23,8 @@ namespace System.Data.Common
 
 		public const string DefaultSourceTableName = "Table";
 
-		protected IDbCommand selectCommand;
-		protected IDbCommand insertCommand;
-		protected IDbCommand deleteCommand;
-		protected IDbCommand updateCommand;
-
 		#endregion
-
+		
 		#region Constructors
 
 		protected DbDataAdapter() 
@@ -40,29 +35,35 @@ namespace System.Data.Common
 
 		#region Properties
 
-		public IDbCommand SelectCommand {
-			get { return selectCommand; }
-			set { selectCommand = value; }
+		IDbCommand DeleteCommand {
+			get { return ((IDbDataAdapter)this).DeleteCommand; }
 		}
 
-		public IDbCommand InsertCommand {
-			get { return insertCommand; }
-			set { insertCommand = value; }
+		IDbCommand InsertCommand {
+			get { return ((IDbDataAdapter)this).InsertCommand; }
 		}
 
-		public IDbCommand DeleteCommand {
-			get { return deleteCommand; }
-			set { deleteCommand = value; }
+		IDbCommand SelectCommand {
+			get { return ((IDbDataAdapter)this).SelectCommand; }
 		}
 
-		public IDbCommand UpdateCommand {
-			get { return updateCommand; }
-			set { updateCommand = value; }
+
+		IDbCommand UpdateCommand {
+			get { return ((IDbDataAdapter)this).UpdateCommand; }
 		}
 
 		#endregion
 
 		#region Methods
+
+		protected abstract RowUpdatedEventArgs CreateRowUpdatedEvent (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping);
+		protected abstract RowUpdatingEventArgs CreateRowUpdatingEvent (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping);
+
+		[MonoTODO]
+		protected override void Dispose (bool disposing)
+		{
+			throw new NotImplementedException ();
+		}
 
                 public override int Fill (DataSet dataSet)
                 {
@@ -91,7 +92,7 @@ namespace System.Data.Common
 
 		public int Fill (DataSet dataSet, int startRecord, int maxRecords, string srcTable) 
 		{
-			return this.Fill (dataSet, startRecord, maxRecords, srcTable, selectCommand, CommandBehavior.Default);
+			return this.Fill (dataSet, startRecord, maxRecords, srcTable, SelectCommand, CommandBehavior.Default);
 		}
 
 		protected virtual int Fill (DataSet dataSet, string srcTable, IDataReader dataReader, int startRecord, int maxRecords) 
@@ -251,6 +252,12 @@ namespace System.Data.Common
 		}
 
 		[MonoTODO]
+		object ICloneable.Clone ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		public int Update (DataRow[] dataRows) 
 		{
 			throw new NotImplementedException ();
@@ -280,9 +287,7 @@ namespace System.Data.Common
 			throw new NotImplementedException ();
 		}
 
-		protected abstract RowUpdatedEventArgs CreateRowUpdatedEvent (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping);
 
-		protected abstract RowUpdatingEventArgs CreateRowUpdatingEvent (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping);
 
 		[MonoTODO]
 		protected virtual void OnFillError (FillErrorEventArgs value) 
@@ -293,13 +298,11 @@ namespace System.Data.Common
 		protected abstract void OnRowUpdated (RowUpdatedEventArgs value);
 		protected abstract void OnRowUpdating (RowUpdatingEventArgs value);
 		
-		public event FillErrorEventHandler FillError;
+		#endregion
+		
+		#region Events
 
-		[MonoTODO]
-		public object Clone ()
-		{
-			throw new NotImplementedException ();
-		}
+		public event FillErrorEventHandler FillError;
 
 		#endregion
 	}

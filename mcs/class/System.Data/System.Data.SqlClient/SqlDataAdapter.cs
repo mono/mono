@@ -22,8 +22,20 @@ namespace System.Data.SqlClient
 	/// to fill the DataSet and update a data source, all this 
 	/// from a SQL database.
 	/// </summary>
-	public sealed class SqlDataAdapter : DbDataAdapter 
+	public sealed class SqlDataAdapter : DbDataAdapter, IDbDataAdapter 
 	{
+		#region Fields
+	
+		SqlCommand deleteCommand;
+		SqlCommand insertCommand;
+		SqlCommand selectCommand;
+		SqlCommand updateCommand;
+
+		static readonly object EventRowUpdated = new object(); 
+		static readonly object EventRowUpdating = new object(); 
+
+		#endregion
+
 		#region Constructors
 		
 		public SqlDataAdapter () 	
@@ -31,12 +43,12 @@ namespace System.Data.SqlClient
 		{
 		}
 
-		public SqlDataAdapter (SqlCommand selectCommand) : base ()
+		public SqlDataAdapter (SqlCommand selectCommand) 
 		{
-			this.deleteCommand = new SqlCommand ();
-			this.insertCommand = new SqlCommand ();
-			this.selectCommand = selectCommand;
-			this.updateCommand = new SqlCommand ();
+			DeleteCommand = new SqlCommand ();
+			InsertCommand = new SqlCommand ();
+			SelectCommand = selectCommand;
+			UpdateCommand = new SqlCommand ();
 		}
 
 		public SqlDataAdapter (string selectCommandText, SqlConnection selectConnection) 
@@ -54,58 +66,108 @@ namespace System.Data.SqlClient
 		#region Properties
 
 		public new SqlCommand DeleteCommand {
-			get { return (SqlCommand)deleteCommand; }
+			get { return deleteCommand; }
 			set { deleteCommand = value; }
 		}
 
 		public new SqlCommand InsertCommand {
-			get { return (SqlCommand)insertCommand; }
+			get { return insertCommand; }
 			set { insertCommand = value; }
 		}
 
 		public new SqlCommand SelectCommand {
-			get { return (SqlCommand)selectCommand; }
+			get { return selectCommand; }
 			set { selectCommand = value; }
 		}
 
 		public new SqlCommand UpdateCommand {
-			get { return (SqlCommand)updateCommand; }
+			get { return updateCommand; }
 			set { updateCommand = value; }
+		}
+
+		IDbCommand IDbDataAdapter.DeleteCommand {
+			get { return DeleteCommand; }
+			set { 
+				if (!(value is SqlCommand)) 
+					throw new ArgumentException ();
+				DeleteCommand = (SqlCommand)value;
+			}
+		}
+
+		IDbCommand IDbDataAdapter.InsertCommand {
+			get { return InsertCommand; }
+			set { 
+				if (!(value is SqlCommand)) 
+					throw new ArgumentException ();
+				InsertCommand = (SqlCommand)value;
+			}
+		}
+
+		IDbCommand IDbDataAdapter.SelectCommand {
+			get { return SelectCommand; }
+			set { 
+				if (!(value is SqlCommand)) 
+					throw new ArgumentException ();
+				SelectCommand = (SqlCommand)value;
+			}
+		}
+
+		IDbCommand IDbDataAdapter.UpdateCommand {
+			get { return UpdateCommand; }
+			set { 
+				if (!(value is SqlCommand)) 
+					throw new ArgumentException ();
+				UpdateCommand = (SqlCommand)value;
+			}
+		}
+
+
+		ITableMappingCollection IDataAdapter.TableMappings {
+			get { return TableMappings; }
 		}
 
 		#endregion // Properties
 
 		#region Methods
 
-		[MonoTODO]
 		protected override RowUpdatedEventArgs CreateRowUpdatedEvent (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
 		{
-			throw new NotImplementedException ();
+			return new SqlRowUpdatedEventArgs (dataRow, command, statementType, tableMapping);
 		}
 
 
-		[MonoTODO]
 		protected override RowUpdatingEventArgs CreateRowUpdatingEvent (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
 		{
-			throw new NotImplementedException ();
+			return new SqlRowUpdatingEventArgs (dataRow, command, statementType, tableMapping);
 		}
 
 		protected override void OnRowUpdated (RowUpdatedEventArgs value) 
 		{
-			throw new NotImplementedException ();
+         		SqlRowUpdatedEventHandler handler = (SqlRowUpdatedEventHandler) Events[EventRowUpdated];
+			if ((handler != null) && (value is SqlRowUpdatedEventArgs))
+            			handler(this, (SqlRowUpdatedEventArgs) value);
 		}
 
 		protected override void OnRowUpdating (RowUpdatingEventArgs value) 
 		{
-			throw new NotImplementedException ();
+         		SqlRowUpdatingEventHandler handler = (SqlRowUpdatingEventHandler) Events[EventRowUpdating];
+			if ((handler != null) && (value is SqlRowUpdatingEventArgs))
+            			handler(this, (SqlRowUpdatingEventArgs) value);
 		}
 
 		#endregion // Methods
 
 		#region Events and Delegates
 
-		public event SqlRowUpdatedEventHandler RowUpdated;
-		public event SqlRowUpdatingEventHandler RowUpdating;
+		public event SqlRowUpdatedEventHandler RowUpdated {
+			add { Events.AddHandler (EventRowUpdated, value); }
+			remove { Events.RemoveHandler (EventRowUpdated, value); }
+		}
+
+		public event SqlRowUpdatingEventHandler RowUpdating {
+			add { Events.AddHandler (EventRowUpdating, value); }
+			remove { Events.RemoveHandler (EventRowUpdating, value); }
+		}
 
 		#endregion // Events and Delegates
 

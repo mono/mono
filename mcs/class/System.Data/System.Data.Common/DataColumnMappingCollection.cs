@@ -3,10 +3,8 @@
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
-//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc
-// (C) Copyright 2002 Tim Coleman
 //
 
 using System;
@@ -18,7 +16,7 @@ namespace System.Data.Common
 	/// <summary>
 	/// Contains a collection of DataColumnMapping objects. This class cannot be inherited.
 	/// </summary>
-	public sealed class DataColumnMappingCollection : MarshalByRefObject // , IColumnMappingCollection , IList, ICollection, IEnumerable
+	public sealed class DataColumnMappingCollection : MarshalByRefObject, IColumnMappingCollection , IList, ICollection, IEnumerable
 	{
 		#region Fields
 
@@ -59,6 +57,41 @@ namespace System.Data.Common
 			get { return (DataColumnMapping)(sourceColumns[sourceColumn]); }
 			set { this[list.IndexOf (sourceColumns[sourceColumn])] = value; }
 		}
+
+                object ICollection.SyncRoot {
+                        get { return list.SyncRoot; }
+                }
+
+                bool ICollection.IsSynchronized {
+                        get { return list.IsSynchronized; }
+                }
+
+		object IColumnMappingCollection.this[string sourceColumn] {
+			get { return this[sourceColumn]; }
+			set {
+				if (!(value is DataColumnMapping))
+					throw new ArgumentException ();
+				this[sourceColumn] = (DataColumnMapping)value;
+			}
+		}
+
+                object IList.this[int index] {
+                        get { return this[index]; }
+                        set {
+                                if (!(value is DataColumnMapping))
+                                        throw new ArgumentException ();
+                                this[index] = (DataColumnMapping)value;
+                         }
+                }
+
+                bool IList.IsReadOnly {
+                        get { return false; }
+                }
+
+                bool IList.IsFixedSize {
+                        get { return false; }
+                }
+		
 
 		#endregion
 
@@ -132,17 +165,15 @@ namespace System.Data.Common
 			return list.GetEnumerator ();
 		}
 
-/* FIXME
 		IColumnMapping IColumnMappingCollection.Add (string sourceColumnName, string dataSetColumnName)
 		{
-			return (IColumnMapping)(Add (sourceColumnName, dataSetColumnName));
+			return Add (sourceColumnName, dataSetColumnName);
 		}
 
 		IColumnMapping IColumnMappingCollection.GetByDataSetColumn (string dataSetColumnName)
 		{
-			return (IColumnMapping)(GetByDataSetColumn (dataSetColumnName));
+			return GetByDataSetColumn (dataSetColumnName);
 		}
-*/
 
 		public int IndexOf (object value) 
 		{

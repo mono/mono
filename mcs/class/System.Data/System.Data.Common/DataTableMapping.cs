@@ -3,10 +3,8 @@
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
-//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc
-// (C) Copyright 2002 Tim Coleman
 //
 
 using System.Data;
@@ -16,7 +14,7 @@ namespace System.Data.Common
 	/// <summary>
 	/// Contains a description of a mapped relationship between a source table and a DataTable. This class is used by a DataAdapter when populating a DataSet.
 	/// </summary>
-	public sealed class DataTableMapping : MarshalByRefObject // , ITableMapping, ICloneable
+	public sealed class DataTableMapping : MarshalByRefObject, ITableMapping, ICloneable
 	{
 		#region Fields
 
@@ -65,6 +63,10 @@ namespace System.Data.Common
 			get { return sourceTable; }
 			set { sourceTable = value; }
 		}
+
+		IColumnMappingCollection ITableMapping.ColumnMappings {
+			get { return ColumnMappings; }
+		}
 	
 		#endregion
 
@@ -77,6 +79,12 @@ namespace System.Data.Common
 
 		[MonoTODO]
 		public DataTable GetDataTableBySchemaAction (DataSet dataSet, MissingSchemaAction schemaAction) 
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		object ICloneable.Clone ()
 		{
 			throw new NotImplementedException ();
 		}

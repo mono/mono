@@ -1,3 +1,17 @@
+2002-05-24  Tim Coleman <tim@timcoleman.com>
+	* System.Data.Common/DbDataAdapter.cs: remove IDbCommands, except
+	for get accessors.  These should be implemented in derived classes.  See
+	SqlDataAdapter for clues.
+	* System.Data.SqlClient/SqlDataAdapter.cs: implement IDbDataAdapter
+	* System.Data.Common/DataAdapter.cs:
+	* System.Data.Common/DataTableMappingCollection.cs:
+	* System.Data.Common/DataTableMapping.cs:
+	* System.Data.Common/DataColumnMappingCollection.cs:
+	* System.Data.Common/DataColumnMapping.cs:
+	Properly (I hope!) implement all of the appropriate interfaces
+	for these classes.  
+
+
 2002-05-23  Tim Coleman <tim@timcoleman.com>
 	* System.Data.SqlClient/SqlCommand.cs: include
 	the BaseColumnName in the schema table.  Was missed before.

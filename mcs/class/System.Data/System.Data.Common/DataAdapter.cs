@@ -17,7 +17,7 @@ namespace System.Data.Common
 	/// <summary>
 	/// Represents a set of data commands and a database connection that are used to fill the DataSet and update the data source.
 	/// </summary>
-	public abstract class DataAdapter : Component
+	public abstract class DataAdapter : Component, IDataAdapter
 	{
 		#region Fields
 
@@ -66,6 +66,10 @@ namespace System.Data.Common
 
 		public DataTableMappingCollection TableMappings {
 			get { return tableMappings; }
+		}
+
+		ITableMappingCollection IDataAdapter.TableMappings {
+			get { return TableMappings; }
 		}
 
 		#endregion
