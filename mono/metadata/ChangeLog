@@ -1,3 +1,8 @@
+2004-09-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threads.c: don't call mono_thread_detach() in start_wrapper(),
+	avoiding a possible hang in GetCurrentThreadId(0). Fixes bug #65379.
+
 2004-09-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* image.c (mono_image_close): Applied patch from 
