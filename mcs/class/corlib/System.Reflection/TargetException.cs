@@ -15,7 +15,7 @@ namespace System.Reflection
 	public class TargetException : ApplicationException
 	{
 		public TargetException ()
-			: base (Locale.GetText ("Unable to invoke and invalid target."))
+			: base (Locale.GetText ("Unable to invoke an invalid target."))
 		{
 		}
 
