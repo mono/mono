@@ -1,5 +1,9 @@
 2003-12-16  Jackson Harper <jackson@ximian.com>
 
+	* TraceContext.cs: Render all the data, and the stylesheet.
+	
+2003-12-16  Jackson Harper <jackson@ximian.com>
+
 	* TraceContext.cs: Add incomplete render method.
 	
 2003-12-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
