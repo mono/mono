@@ -1,3 +1,8 @@
+2004-10-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (mono_arch_patch_code): Fix patching of class init
+	trampolines for AOT code.
+
 2004-10-22    <vargaz@freemail.hu>
 
 	* aot.c (mono_compile_assembly): Disable AOT for methods containing calls to methods of
