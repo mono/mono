@@ -275,6 +275,7 @@ namespace Mono.CSharp {
 								   Parameter.Modifier.NONE, null);
 
 			Parameters async_parameters = new Parameters (async_params, null, Location);
+			async_parameters.ComputeAndDefineParameterTypes (this);
 			
 			async_parameters.ComputeAndDefineParameterTypes (this);
 			TypeManager.RegisterMethod (BeginInvokeBuilder,
@@ -318,9 +319,13 @@ namespace Mono.CSharp {
 				EndInvokeBuilder.DefineParameter (i + 1, end_params [i].Attributes, end_params [i].Name);
 			}
 
+			Parameters end_parameters = new Parameters (end_params, null, Location);
+			end_parameters.ComputeAndDefineParameterTypes (this);
+
 			TypeManager.RegisterMethod (
-				EndInvokeBuilder, new InternalParameters (
-					container, new Parameters (end_params, null, Location)), end_param_types);
+				EndInvokeBuilder,
+				new InternalParameters (container, end_parameters),
+				end_param_types);
 
 			return true;
 		}
