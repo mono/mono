@@ -222,7 +222,7 @@ namespace Microsoft.VisualBasic
 			if(Rank < 1 || Rank > Array.Rank)
 				throw new RankException(Utils.GetResourceString("Argument_InvalidRank1", "Rank"));
 
-			return Array.GetUpperBound(Rank);
+			return Array.GetUpperBound(Rank-1);
 		}
 
 		public static System.Int32 LBound (System.Array Array, 
@@ -244,7 +244,7 @@ namespace Microsoft.VisualBasic
 			if(Rank < 1 || Rank > Array.Rank)
 				throw new RankException(Utils.GetResourceString("Argument_InvalidRank1", "Rank"));
 
-			return Array.GetLowerBound(Rank);
+			return Array.GetLowerBound(Rank-1);
 		}
 
 		public static Microsoft.VisualBasic.ErrObject Err() 
