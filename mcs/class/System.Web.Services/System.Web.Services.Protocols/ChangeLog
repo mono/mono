@@ -1,3 +1,11 @@
+2003-09-29  Lluis Sanchez Gual  <lluis@ximian.com>
+	
+	* Methods.cs: Little fix in binding check.
+	* SoapExtension.cs: Implemented ChainStream. Changed some methods from
+	  public to internal.
+	* SoapClientMessage: Implemented EnsureInStage.
+	* SoapServerMessage: Implemented EnsureInStage, EnsureOutStage.
+	  
 2003-09-28  Lluis Sanchez Gual  <lluis@ximian.com>
 	
 	* HttpSoapWebServiceHandler.cs: In SerializeResponse method, improved

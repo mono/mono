@@ -76,16 +76,14 @@ namespace System.Web.Services.Protocols {
 
 		#region Methods
 
-		[MonoTODO]
 		protected override void EnsureInStage ()
 		{
-			throw new NotImplementedException ();
+			EnsureStage (SoapMessageStage.AfterDeserialize);
 		}
 
-		[MonoTODO]
 		protected override void EnsureOutStage ()
 		{
-			throw new NotImplementedException ();
+			EnsureStage (SoapMessageStage.BeforeSerialize);
 		}
 
 		#endregion // Methods

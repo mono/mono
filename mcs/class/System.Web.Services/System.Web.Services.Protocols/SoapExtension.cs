@@ -30,10 +30,9 @@ namespace System.Web.Services.Protocols {
 
 		#region Methods
 
-		[MonoTODO]
 		public virtual Stream ChainStream (Stream stream)
 		{
-			throw new NotImplementedException ();
+			return stream;
 		}
 
 		public abstract object GetInitializer (Type serviceType);
@@ -145,7 +144,7 @@ namespace System.Web.Services.Protocols {
 			return exts;
 		}
 
-		public static Stream ExecuteChainStream (SoapExtension[] extensions, Stream stream)
+		internal static Stream ExecuteChainStream (SoapExtension[] extensions, Stream stream)
 		{
 			if (extensions == null) return stream;
 
@@ -155,7 +154,7 @@ namespace System.Web.Services.Protocols {
 			return newStream;
 		}
 
-		public static void ExecuteProcessMessage(SoapExtension[] extensions, SoapMessage message, bool inverseOrder)
+		internal static void ExecuteProcessMessage(SoapExtension[] extensions, SoapMessage message, bool inverseOrder)
 		{
 			if (extensions == null) return;
 

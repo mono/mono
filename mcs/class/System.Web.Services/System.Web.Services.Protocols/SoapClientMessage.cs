@@ -70,14 +70,9 @@ namespace System.Web.Services.Protocols {
 
 		#region Methods
 
-		[MonoTODO]
 		protected override void EnsureInStage ()
 		{
-			//
-			// I believe for SoapClientMessage, we can safely remove this check
-			// as the In parameters are always available
-			//
-			throw new NotImplementedException ();
+			EnsureStage (SoapMessageStage.BeforeSerialize);
 		}
 
 		protected override void EnsureOutStage ()

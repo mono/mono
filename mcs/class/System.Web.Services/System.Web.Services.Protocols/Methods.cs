@@ -152,7 +152,7 @@ namespace System.Web.Services.Protocols {
 			if (ResponseNamespace == "") ResponseNamespace = parent.WebServiceNamespace;
 			if (RequestName == "") RequestName = Name;
 			if (ResponseName == "")	ResponseName = Name + "Response";
-			if (Binding == null) Binding = parent.DefaultBinding;
+			if (Binding == null || Binding == "") Binding = parent.DefaultBinding;
 			else if (parent.GetBinding (Binding) == null) throw new InvalidOperationException ("Type '" + parent.Type + "' is missing WebServiceBinding attribute that defines a binding named '" + Binding + "'");
 				
 			if (Action == null || Action == "")
