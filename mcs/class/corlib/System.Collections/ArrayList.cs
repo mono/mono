@@ -143,7 +143,8 @@ namespace System.Collections {
 		private ArrayList source = null;
 
 		private int count = 0;
-		private int capacity = 16;
+		private const int defaultCapacity = 16;
+		private int capacity = defaultCapacity;
 
 		private object[] dataArray;
 
@@ -624,12 +625,16 @@ namespace System.Collections {
 			return outArray;
 		}
 
-		[MonoTODO]
 		public virtual void TrimToSize () {
 
 			if (IsReadOnly || IsFixedSize)
 				throw new NotSupportedException ();
 			
+			if (count == 0)
+				setSize(defaultCapacity);
+			else
+				setSize(count);
+
 			version++;
 		}
 	}

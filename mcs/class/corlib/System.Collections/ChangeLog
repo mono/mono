@@ -1,3 +1,7 @@
+2002-04-30  Nick Drochak  <ndrochak@gol.com>
+
+	* ArrayList.cs (TrimToSize) : Implement.
+
 2002-04-28  Duncan Mak  <duncan@ximian.com>
 
 	* ArrayList.cs (InsertRange): 
