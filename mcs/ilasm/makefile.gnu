@@ -86,6 +86,8 @@ parser/ILParser.cs: parser/ILParser.jay $(topdir)/jay/skeleton.cs
 list: $(SOURCES)
 	echo $(SOURCES) > list
 
+test:
+
 clean:
 	rm -f ilasm.exe parser/ILParser.cs list
 
