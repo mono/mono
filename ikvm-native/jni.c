@@ -22,10 +22,10 @@
   
 */
 #include <stdarg.h>
-#include <malloc.h>
 #include "jni.h"
 
 #ifdef _WIN32
+#include <malloc.h>
 #define ALLOCA _alloca
 #else
 #include <alloca.h>
