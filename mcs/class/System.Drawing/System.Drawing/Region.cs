@@ -479,13 +479,20 @@ namespace System.Drawing
 			int cnt;			
 			
 			Status status = GDIPlus.GdipGetRegionScansCount (nativeRegion, out cnt, matrix.NativeObject);                  
-                        GDIPlus.CheckStatus (status);                                             
+                        GDIPlus.CheckStatus (status);                                 
                         
+                        if (cnt == 0)
+                        	return new RectangleF[0];
+                                                
                         RectangleF[] rects = new RectangleF [cnt];					
+                        int size = Marshal.SizeOf (rects[0]);                  
                         
-			status = GDIPlus.GdipGetRegionScans (nativeRegion, rects, cnt, matrix.NativeObject);
-			GDIPlus.CheckStatus (status);                      	
+                        IntPtr dest = Marshal.AllocHGlobal (size * cnt);			
+                        
+			status = GDIPlus.GdipGetRegionScans (nativeRegion, dest, out cnt, matrix.NativeObject);
+			GDIPlus.CheckStatus (status);                	
 			
+			GDIPlus.FromUnManagedMemoryToRectangles (dest, rects);			
 			return rects;			
 		}		
 		

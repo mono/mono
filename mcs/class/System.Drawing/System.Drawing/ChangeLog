@@ -1,3 +1,7 @@
+2004-04-06  Jordi Mas i Hernandez <jordi@ximian.com>
+	* Region.cs: fixes GetRegionScans
+	* gdipFunctions.cs: fixes GetRegionScans
+
 2004-04-06  Vladimir Vukicevic  <vladimir@pobox.com>
 
 	* gdipFunctions.cs: Added stream delegate helpers for

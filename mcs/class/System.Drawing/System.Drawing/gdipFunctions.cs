@@ -83,10 +83,10 @@ namespace System.Drawing {
 		// Copies a Ptr to an array of v and releases the memory
 		static public void FromUnManagedMemoryToRectangles (IntPtr prt, RectangleF [] pts)
 		{						
-			int nPointSize = Marshal.SizeOf(pts[0]);
-			int pos = prt.ToInt32();
-			for (int i=0; i<pts.Length; i++, pos+=nPointSize)
-				pts[i] = (RectangleF) Marshal.PtrToStructure((IntPtr)pos, typeof(PointF));
+			int nPointSize = Marshal.SizeOf (pts[0]);
+			int pos = prt.ToInt32 ();
+			for (int i = 0; i < pts.Length; i++, pos+=nPointSize)
+				pts[i] = (RectangleF) Marshal.PtrToStructure((IntPtr)pos, typeof(RectangleF));
 			
 			Marshal.FreeHGlobal(prt);			
 		}
@@ -253,7 +253,7 @@ namespace System.Drawing {
 		static internal extern Status GdipGetRegionScansCount (IntPtr region, out int count, IntPtr matrix);
 
 		[DllImport("gdiplus.dll")]
-		static internal extern Status GdipGetRegionScans (IntPtr region,  RectangleF [] rects, int count, 
+		static internal extern Status GdipGetRegionScans (IntPtr region,  IntPtr rects, out int count, 
                    IntPtr matrix);
                 
                 [DllImport("gdiplus.dll")]
