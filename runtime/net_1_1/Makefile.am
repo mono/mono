@@ -86,6 +86,8 @@ mscorlib.dll $(gac_assemblies) $(mdb_files):
 	test -f $(top_srcdir)/../mcs/class/lib/default/$@
 	-rm -f $(srcdir)/$@
 	cd $(srcdir) && $(LN_S) ../../../mcs/class/lib/default/$@ $@
+	-cd $(srcdir) && $(LN_S) ../../../mcs/class/lib/default/$@.mdb $@.mdb
+
 
 all-local: $(gac_assemblies)
 
