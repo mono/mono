@@ -977,11 +977,6 @@ namespace System.Net.Sockets
 			
 			SocketAddress serial = remote_end.Serialize ();
 			Connect_internal(socket, serial, out error);
-			if (!blocking && error == 10035) {
-				Poll (-1, SelectMode.SelectWrite);
-				Connect_internal (socket, serial, out error);
-			}
-
 			if (error != 0)
 				throw new SocketException (error);
 			
