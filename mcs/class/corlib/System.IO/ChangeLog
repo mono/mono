@@ -1,3 +1,7 @@
+2003-06-27  Dietmar Maurer  <dietmar@ximian.com>
+
+	* Stream.cs: use async.delegate invoke 
+
 2003-06-18  Nick Drochak <ndrochak@gol.com>
 
 	* FileSystemInfo.cs: Refresh cache when changeing file times.

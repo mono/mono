@@ -1,3 +1,7 @@
+2003-06-27  Dietmar Maurer  <dietmar@ximian.com>
+
+	* ThreadPool.cs: use async delegate invoke.
+
 2003-06-25  Dick Porter  <dick@ximian.com>
 
 	* WaitHandle.cs: Default handle value should be InvalidHandle, not
