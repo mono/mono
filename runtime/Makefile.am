@@ -6,7 +6,7 @@ assemblies_DATA =	\
 	Accessibility.dll					\
 	ByteFX.Data.dll						\
 	Commons.Xml.Relaxng.dll					\
-	corlib.dll						\
+	mscorlib.dll						\
 	Cscompmgd.dll						\
 	I18N.CJK.dll						\
 	I18N.dll						\
