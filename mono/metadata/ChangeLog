@@ -1,3 +1,10 @@
+
+Fri Sep 27 15:38:31 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.h, assembly.c: use a sane API to hook into the assembly
+	loading process instead of a useless special-purpouse hack
+	(ngen needs a hook, too, for example).
+
 2002-09-27  Dick Porter  <dick@ximian.com>
 
 	* threads.c (mono_thread_init): Call GetCurrentProcess() so
