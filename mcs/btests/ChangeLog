@@ -1,3 +1,16 @@
+2004-08-20 Sachin Kumar <skumar1@novell.com>
+	* ConditionalStatementsB.vb:
+	* ConditionalStatementsC.vb:
+	* ConditionalStatementsD.vb:
+	* ConditionalStatementsC8.vb:
+	* ConditionalStatementsC9.vb:
+	* ConditionalStatementsC10.vb:
+	* ConditionalStatementsC11.vb:
+	* ConditionalStatementsC12.vb:
+	* ConditionalStatementsC13.vb:
+	* ConditionalStatementsC14.vb:
+	* Test.Sources: included new tests
+
 2004-08-19 Anirban Bhattacharjee <banirban@novell.com>
 	* NameSpaceTestA.vb: New test
 	* NameSpaceTestB.vb: New test

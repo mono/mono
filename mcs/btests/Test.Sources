@@ -183,7 +183,10 @@ ForEachA \
 AssignmentStatementsA \
 AssignmentStatementsB \
 AssignmentStatementsC \
-ConditionalStatementsA
+ConditionalStatementsA \
+ConditionalStatementsB \
+ConditionalStatementsC \
+ConditionalStatementsD
 
 # All negetive test cases which should
 # fail during compilation goes here
@@ -389,7 +392,14 @@ ConditionalStatementsC3 \
 ConditionalStatementsC4 \
 ConditionalStatementsC5 \
 ConditionalStatementsC6 \
-ConditionalStatementsC7
+ConditionalStatementsC7 \
+ConditionalStatementsC8.vb \
+ConditionalStatementsC9.vb \
+ConditionalStatementsC10.vb \
+ConditionalStatementsC11.vb \
+ConditionalStatementsC12.vb \
+ConditionalStatementsC13.vb \
+ConditionalStatementsC14.vb
 
 # All negetive test cases which should fail at
 # runtime goes here
