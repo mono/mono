@@ -20,7 +20,7 @@ public class Test
 		return IndexOf (array, value, 0, array.Length);
 	}
 
-	public static int IndexOf (Array array, object value, int startIndex, int count)
+	public static int IndexOf (Test array, object value, int startIndex, int count)
 	{
 		return 2;
 	}
