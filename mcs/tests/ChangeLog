@@ -1,3 +1,7 @@
+2002-05-07  Ravi Pratap  <ravi@ximian.com>
+
+	* test-117.cs : Add.
+
 2002-05-05  Miguel de Icaza  <miguel@ximian.com>
 
 	* test-28.cs: Improved test: before we were failing on abstract
