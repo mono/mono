@@ -33,11 +33,7 @@ namespace System.Web.Services.Description {
 					throw new ArgumentOutOfRangeException ();
 				return (Binding) List[index]; 
 			}
-                        set {
-                                Table.Remove (GetKey (List[index]));
-                                Table [GetKey (value)] = value;
-                                List [index] = value;
-                        }
+                        set { List [index] = value; }
 		}
 
 		public Binding this [string name] {
@@ -79,13 +75,11 @@ namespace System.Web.Services.Description {
 		public void Insert (int index, Binding binding)
 		{
 			SetParent (binding, serviceDescription);
-			Table [GetKey (binding)] = binding;
 			List.Insert (index, binding);
 		}
 	
 		public void Remove (Binding binding)
 		{
-			Table.Remove (GetKey (binding));
 			List.Remove (binding);
 		}
 			

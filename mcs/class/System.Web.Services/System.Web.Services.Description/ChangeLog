@@ -1,4 +1,7 @@
 2002-08-12  Tim Coleman <tim@timcoleman.com>
+	* BindingCollection.cs:
+		Remove Table handling on insert/delete/indexer
+		because it is handled in base class.
 	* ServiceDescriptionBaseCollection.cs:
 		Only add an element to the hashtable if its GetKey ()
 		method does not return null. 
