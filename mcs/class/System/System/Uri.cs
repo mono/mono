@@ -790,6 +790,8 @@ namespace System
 			if (c == ':') {
 				if (pos == 1) {
 					// a windows filepath
+					if (uriString.Length < 3 || (uriString [2] != '\\' && uriString [2] != '/'))
+						throw new UriFormatException ("Invalid URI: The format of the URI could not be determined.");
 					isWindowsFilePath = true;
 					scheme = Uri.UriSchemeFile;
 					path = uriString.Replace ('\\', '/');
@@ -807,6 +809,8 @@ namespace System
 					// unix UNC (kind of)
 					isUnc = true;
 			} else {
+				if (uriString [0] != '\\' && uriString [0] != '/' && uriString.StartsWith ("file://"))
+					throw new UriFormatException ("Invalid URI: The format of the URI could not be determined.");
 				scheme = Uri.UriSchemeFile;
 				if (uriString.StartsWith ("\\\\")) {
 					isUnc = true;

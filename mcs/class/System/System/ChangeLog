@@ -1,3 +1,7 @@
+2004-01-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Uri.cs : Fixed Parse(). Should not allow relative URIs.
+
 2004-01-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Uri.cs : fixed IsBadFileSystemCharacter() to reject more characters
