@@ -61,6 +61,7 @@ namespace System.Net
 		EventHandler abortHandler;
 		ReadState readState;
 		internal WebConnectionData Data;
+		WebConnectionStream prevStream;
 		bool chunkedRead;
 		ChunkStream chunkStream;
 		AutoResetEvent goAhead;
@@ -378,6 +379,7 @@ namespace System.Net
 					if (cnc.queue.Count > 0) {
 						stream.ReadAll ();
 					} else {
+						cnc.prevStream = stream;
 						stream.CheckComplete ();
 					}
 				}
@@ -551,6 +553,11 @@ namespace System.Net
 		internal EventHandler SendRequest (HttpWebRequest request)
 		{
 			lock (this) {
+				if (prevStream != null && socket != null && socket.Connected) {
+					prevStream.ReadAll ();
+					prevStream = null;
+				}
+
 				if (!busy) {
 					busy = true;
 					ThreadPool.RegisterWaitForSingleObject (goAhead, initConn,
@@ -569,6 +576,7 @@ namespace System.Net
 		{
 			lock (queue) {
 				if (queue.Count > 0) {
+					prevStream = null;
 					SendRequest ((HttpWebRequest) queue.Dequeue ());
 				}
 			}
@@ -594,6 +602,7 @@ namespace System.Net
 				goAhead.Set ();
 				lock (queue) {
 					if (queue.Count > 0) {
+						prevStream = null;
 						SendRequest ((HttpWebRequest) queue.Dequeue ());
 					}
 				}
