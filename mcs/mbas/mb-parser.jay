@@ -1335,7 +1335,7 @@ sub_declaration
 
 						Statement addhnd = (Statement) new AddHandler ((Expression) $4, 
 											DecomposeQI((string) $2, loc), 
-											DecomposeQI(evt_target, loc), loc);
+											loc);
 
 						current_container.AddEventHandler (addhnd);
 						found = true;
@@ -1352,7 +1352,7 @@ sub_declaration
 				string evt_id = ((BaseAccess) $4).member;
 				Statement addhnd = (Statement) new AddHandler ((Expression) $4, 
 											DecomposeQI((string) $2, loc), 
-											(Expression) $4, loc);	
+											loc);	
 											
 				current_container.AddEventHandler (addhnd);
 		  }
@@ -4770,15 +4770,10 @@ private void AddHandler (Block b, Expression evt_id, Expression handles_exp)
 	Expression evt_target;
 	Location loc = lexer.Location;
 	
-	if (evt_id is MemberAccess)
-		evt_target = ((MemberAccess)evt_id).Expr;
-	else
-		evt_target = (new This (current_block, lexer.Location));
-		
 	Statement addhnd = (Statement) new AddHandler (evt_id, 
 													handles_exp, 
-													evt_target, 
-													loc);
+													loc);													
+													
 	b.AddStatement (addhnd);
 }
 
@@ -4796,14 +4791,8 @@ private void RemoveHandler (Block b, Expression evt_definition, Expression handl
 	Expression evt_target;
 	Location loc = lexer.Location;
 	
-	if (evt_definition is MemberAccess)
-		evt_target = ((MemberAccess)evt_definition).Expr;
-	else
-		evt_target = (new This (current_block, lexer.Location));
-		
 	Statement rmhnd = (Statement) new RemoveHandler (evt_definition, 
 													handler_exp, 
-													evt_target, 
 													loc);
 	b.AddStatement (rmhnd);
 }

@@ -1,4 +1,10 @@
 2004-09-30 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay:
+	* statement.cs:
+		Removed unused event_target field from
+		AddHandler and RemoveHandler
+
+2004-09-30 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: RemoveHandler function made cleaner
 
 2004-09-30 Anirban Bhattacharjee <banirban@novell.com>
