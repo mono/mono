@@ -26,11 +26,11 @@
 //	Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.12 $
+// $Revision: 1.13 $
 // $Modtime: $
 // $Log: ScrollBar.cs,v $
-// Revision 1.12  2004/08/23 20:10:03  jordi
-// fixes properties and methods
+// Revision 1.13  2004/08/23 22:43:46  jordi
+// *** empty log message ***
 //
 // Revision 1.11  2004/08/22 19:34:22  jackson
 // Update the position through the Value property so the OnValueChanged event is raised.
@@ -73,7 +73,8 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms 
 {	
-	
+	[DefaultEvent ("Scroll")]
+	[DefaultProperty ("Value")]
 	public class ScrollBar : Control 
 	{		
 		#region Local Variables
@@ -101,28 +102,36 @@ namespace System.Windows.Forms
 		private const int thumb_min_size = 8;
 		internal bool vert;
 				
+				
+		public new event EventHandler BackColorChanged;			
+		public new event EventHandler BackgroundImageChanged;
+		public new event EventHandler Click;
+		public new event EventHandler DoubleClick;
+		public new event EventHandler FontChanged;
+		public new event EventHandler ForeColorChanged;
+		public new event EventHandler ImeModeChanged;
+		public new event MouseEventHandler MouseDown;
+		public new event MouseEventHandler MouseUp;
+		public new event PaintEventHandler Paint;
 		public event ScrollEventHandler Scroll;
-		public event EventHandler ValueChanged;				
+		public new event EventHandler TextChanged;
+		public event EventHandler ValueChanged;
+
 		#endregion	// Local Variables
 				
-		
-		public ScrollBar() : base()
+		public ScrollBar () : base ()
 		{				
 			position = 0;
 			minimum = 0;
 			maximum = 100;
 			largeChange = 10;
 			smallChange = 1;			
-//			base.TabStop = false;
-//			RightToLeft = RightToLeft.No;
-			Scroll = null;
-			ValueChanged = null;			
-
 
 			holdclick_timer = new Timer ();
 			firstclick_timer = new Timer ();
 			holdclick_timer.Tick += new EventHandler (OnHoldClickTimer);
 			firstclick_timer.Tick += new EventHandler (OnFirstClickTimer);
+			base.TabStop = false;
 
 			if (ThemeEngine.Current.WriteToWindow == true)
 				double_buffering = false;
@@ -137,36 +146,77 @@ namespace System.Windows.Forms
 		public override Color BackColor 
 		{
 			get { return base.BackColor; }
-			set { base.BackColor = value;}
+			set { 
+				if (base.BackColor == value)
+					return;
+
+				if (BackColorChanged != null)
+					BackColorChanged (this, EventArgs.Empty);
+
+				base.BackColor = value; 
+				Refresh ();
+			}
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]	 
-		[MonoTODO]
 		public override Image BackgroundImage 
 		{
-			get {
-				throw new NotImplementedException();	
-			}
+			get { return base.BackgroundImage; }
 			set { 
-				throw new NotImplementedException();
+				if (base.BackgroundImage == value)
+					return;
+
+				if (BackgroundImageChanged != null)
+					BackgroundImageChanged (this, EventArgs.Empty);
+
+				base.BackgroundImage = value; 
 			}
 		}
+
+		public override Font Font {
+			get { return base.Font; }
+			set { 
+				if (base.Font == value)
+					return;
+
+				if (FontChanged != null)
+					FontChanged (this, EventArgs.Empty);
+
+				base.Font = value; 
+			}
+		}
+
 
 		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override Color ForeColor 
 		{
 			get { return base.ForeColor; }
-			set { base.ForeColor = value; }
+			set { 
+				if (base.ForeColor == value)
+					return;
+
+				if (ForeColorChanged != null)
+					ForeColorChanged (this, EventArgs.Empty);
+
+				base.ForeColor = value; 
+				Refresh ();
+			}
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]	 
-		[MonoTODO]
 		public new ImeMode ImeMode 
 		{
-			get { return ImeMode.Disable;}
-			set { throw new NotImplementedException(); }
-		}
+			get { return base.ForeColor; }
+			set { 
+				if (base.ImeMode == value)
+					return;
 
+				if (ImeModeChanged != null)
+					ImeModeChanged (this, EventArgs.Empty);
+
+				base.ImeMode = value; 
+			}
+		}
 		
 		public int LargeChange {
 			get { return largeChange; }
@@ -218,12 +268,17 @@ namespace System.Windows.Forms
 			}
 		}
 
+
+		public new bool TabStop {
+			get { return base.TabStop; }
+			set { base.TabStop = value; }
+		}
+
 		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override string Text {
 			 get { return base.Text;  }
 			 set { base.Text = value; }
-		 }
-
+		}
 		
 		public int Value {
 			get { return position; }
