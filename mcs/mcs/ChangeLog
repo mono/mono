@@ -1,3 +1,9 @@
+2004-05-30  Martin Baulig  <martin@ximian.com>
+
+	Merged latest changes into gmcs.  Please keep this comment in
+	here, it makes it easier for me to see what changed in MCS since
+	the last time I merged.
+
 2004-05-30 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* convert.cs: add a trivial cache for overload operator resolution.
@@ -75,12 +81,6 @@
 	Fixed bug #58624
 	* ecore.cs (SimpleName.SimpleNameResolve): Added test for
 	unsafe type.
-
-2004-05-30  Martin Baulig  <martin@ximian.com>
-
-	Merged latest changes into gmcs.  Please keep this comment in
-	here, it makes it easier for me to see what changed in MCS since
-	the last time I merged.
 
 2004-05-30 Ben Maurer  <bmaurer@users.sourceforge.net>
 
