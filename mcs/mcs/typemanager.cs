@@ -1080,11 +1080,16 @@ public class TypeManager {
 	{
 		if (indexer_arguments.Contains (indexer))
 			return (Type []) indexer_arguments [indexer];
+		else if (indexer is PropertyBuilder)
+			// If we're a PropertyBuilder and not in the
+			// `indexer_arguments' hash, then we're a property and
+			// not an indexer.
+			return NoTypes;
 		else {
 			ParameterInfo [] pi = indexer.GetIndexParameters ();
 			// Property, not an indexer.
 			if (pi == null)
-				return Type.EmptyTypes;
+				return NoTypes;
 			int c = pi.Length;
 			Type [] types = new Type [c];
 			

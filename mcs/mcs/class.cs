@@ -1651,7 +1651,7 @@ namespace Mono.CSharp {
 		//
 		public bool AsAccessible (Type parent, int flags)
 		{
-			while (parent.HasElementType)
+			while (parent.IsArray || parent.IsPointer || parent.IsByRef)
 				parent = parent.GetElementType ();
 
 			AccessLevel level = GetAccessLevel (flags);
