@@ -1,3 +1,9 @@
+2004-05-24 18:18 CET Patrik Torstenson <totte@hiddenpeaks.com>
+
+	* mini-x86.c (mono_arch_local_regalloc): the reg allocator
+	now tries to allocate prefered physical reg's for virtual
+	regs. This reduces the number of emited spills/loads with
+	20-30% on our core assemblies.
 
 Mon May 24 18:21:51 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
