@@ -131,6 +131,7 @@ namespace MonoTests.System.Xml
 			XmlQualifiedName qname;
 			XmlSchemaComplexContentExtension xccx;
 			XmlSchemaComplexType cType;
+			XmlSchemaSequence seq;
 
 			XmlSchema schema = GetSchema ("XmlFiles/xsd/1.xsd");
 			schema.Compile (null);
@@ -143,6 +144,12 @@ namespace MonoTests.System.Xml
 			AssertNull (cType.ContentModel);
 			AssertCompiledComplexType (cType, qname, 0, 0,
 				false, null, true, XmlSchemaContentType.ElementOnly);
+			seq = cType.ContentTypeParticle as XmlSchemaSequence;
+			AssertNotNull (seq);
+			AssertEquals (2, seq.Items.Count);
+			XmlSchemaElement refFoo = seq.Items [0] as XmlSchemaElement;
+			AssertCompiledElement (refFoo, QName ("Foo", ns),
+				((XmlSchemaElement) schema.Elements [QName ("Foo", ns)]).ElementType);
 
 			// FugaType
 			qname = QName ("FugaType", ns);
@@ -151,11 +158,19 @@ namespace MonoTests.System.Xml
 			xccx = cType.ContentModel.Content as XmlSchemaComplexContentExtension;
 			AssertCompiledComplexContentExtension (
 				xccx, 0, false, QName ("HogeType", ns));
-			AssertEquals (typeof (XmlSchemaSequence), xccx.Particle.GetType ());
+
 			AssertCompiledComplexType (cType, qname, 0, 0,
 				false, typeof (XmlSchemaComplexContent),
 				true, XmlSchemaContentType.ElementOnly);
 			AssertNotNull (cType.BaseSchemaType);
+
+			seq = xccx.Particle as XmlSchemaSequence;
+			AssertNotNull (seq);
+			AssertEquals (1, seq.Items.Count);
+			XmlSchemaElement refBaz = seq.Items [0] as XmlSchemaElement;
+			AssertNotNull (refBaz);
+			AssertCompiledElement (refBaz, QName ("Baz", ""),
+				((XmlSchemaElement) schema.Elements [QName ("Foo", ns)]).ElementType);
 
 			qname = QName ("Bar", ns);
 			XmlSchemaElement element = schema.Elements [qname] as XmlSchemaElement;

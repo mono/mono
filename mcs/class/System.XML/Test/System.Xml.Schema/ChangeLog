@@ -1,3 +1,7 @@
+2003-07-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlSchemaTests.cs : added sequence and particle tests to TestCompile()
+
 2003-07-20  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlSchemaTests.cs : added AssertComplexTypeContentExtension() and
