@@ -8,12 +8,12 @@
 //
 
 using System.Runtime.Serialization;
-using System.Globalization;
 
-namespace System {
-	
+namespace System
+{
 	[Serializable]
-	public struct RuntimeTypeHandle : ISerializable {
+	public struct RuntimeTypeHandle : ISerializable
+	{
 		IntPtr value;
 
 		internal RuntimeTypeHandle (IntPtr val)
@@ -26,7 +26,7 @@ namespace System {
 				return (IntPtr) value;
 			}
 		}
-		
+
 		[MonoTODO]
 		public void GetObjectData (SerializationInfo info, StreamingContext context)
 		{

@@ -1,4 +1,5 @@
-// PlatformID.cs
+//
+// System.PlatformID.cs
 //
 // This code was automatically generated from
 // ECMA CLI XML Library Specification.
@@ -8,27 +9,19 @@
 // URL: http://devresource.hp.com/devresource/Docs/TechPapers/CSharp/all.xml
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
+//
 
-
-namespace System {
-
-
-	/// <summary>
-	/// </summary>
-	public enum PlatformID {
-
+namespace System
+{
+	public enum PlatformID
+	{
 		Win32S = 0,
-
 		Win32Windows = 1,
-
 		Win32NT = 2,
 #if NET_1_1
 		WinCE = 3
 #endif
-
 		// We can not expose this to userland, since it would break bin compat
-		
 		// Unix = 128
-	} // PlatformID
-
-} // System
+	}
+}

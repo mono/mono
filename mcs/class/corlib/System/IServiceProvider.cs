@@ -7,13 +7,13 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
-using System;
 using System.Runtime.InteropServices;
 
-namespace System {
-
-	[ComVisible(true)]
-	public interface IServiceProvider {
+namespace System
+{
+	[ComVisible (true)]
+	public interface IServiceProvider
+	{
 		object GetService (Type serviceType);
 	}
 }

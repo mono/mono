@@ -13,8 +13,8 @@ using System.Runtime.Serialization;
 using System.Reflection;
 using System.Diagnostics;
 
-namespace System {
-    
+namespace System
+{
 	[Serializable]
 	[ClassInterface (ClassInterfaceType.AutoDual)]
 	public class Exception : ISerializable 
@@ -49,15 +49,15 @@ namespace System {
 			if (info == null)
 				throw new ArgumentNullException ("info");
 
-			class_name		= info.GetString ("ClassName");
-			message			= info.GetString ("Message");
-			help_link		= info.GetString ("HelpURL");
-			stack_trace		= info.GetString ("StackTraceString");
-			remote_stack_trace	= info.GetString ("RemoteStackTraceString");
-			remote_stack_index	= info.GetInt32  ("RemoteStackIndex");
-			hresult                 = info.GetInt32  ("HResult");
-			source                  = info.GetString ("Source");
-			inner_exception	= (Exception) info.GetValue  ("InnerException", typeof (Exception));
+			class_name          = info.GetString ("ClassName");
+			message             = info.GetString ("Message");
+			help_link           = info.GetString ("HelpURL");
+			stack_trace         = info.GetString ("StackTraceString");
+			remote_stack_trace  = info.GetString ("RemoteStackTraceString");
+			remote_stack_index  = info.GetInt32  ("RemoteStackIndex");
+			hresult             = info.GetInt32  ("HResult");
+			source              = info.GetString ("Source");
+			inner_exception     = (Exception) info.GetValue ("InnerException", typeof (Exception));
 		}
 
 		public Exception (string msg, Exception e)
@@ -67,49 +67,28 @@ namespace System {
 			class_name = GetType().FullName;
 		}
 
-		public Exception InnerException 
-		{
-			get
-			{
-				return inner_exception;
-			}
+		public Exception InnerException {
+			get { return inner_exception; }
 		}
 
-		public virtual string HelpLink 
-		{
-			get 
-			{
-				return help_link;
-			}
-
-			set
-			{
-				help_link = value;
-			}
+		public virtual string HelpLink {
+			get { return help_link; }
+			set { help_link = value; }
 		}
 
-		protected int HResult 
-		{
-			get
-			{
-				return hresult;
-			}
-
-			set 
-			{
-				hresult = value;
-			}
+		protected int HResult {
+			get { return hresult; }
+			set { hresult = value; }
 		}
 
 		internal void SetMessage (string s)
 		{
 			message = s;
 		}
-		
-		public virtual string Message 
-		{
-			get 
-			{
+
+		[MonoTODO ("Locale.GetText()")]
+		public virtual string Message {
+			get {
 				if (message == null)
 					message = "Exception of type " + GetType () + " was thrown.";
 
@@ -117,10 +96,8 @@ namespace System {
 			}
 		}
 
-		public virtual string Source 
-		{
-			get 
-			{
+		public virtual string Source {
+			get {
 				if (source == null) {
 					StackTrace st = new StackTrace (this, true);
 					if (st.FrameCount > 0) {
@@ -139,24 +116,19 @@ namespace System {
 				return source;
 			}
 
-			set 
-			{
+			set {
 				source = value;
 			}
 		}
 
-		public virtual string StackTrace 
-		{
-			get 
-			{
+		public virtual string StackTrace {
+			get {
 				return stack_trace;
 			}
 		}
 
-		public MethodBase TargetSite 
-		{
-			get 
-			{
+		public MethodBase TargetSite {
+			get {
 				StackTrace st = new StackTrace (this, true);
 				if (st.FrameCount > 0)
 					return st.GetFrame (0).GetMethod ();
@@ -183,9 +155,9 @@ namespace System {
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			info.AddValue ("ClassName", class_name);
-			info.AddValue ("Message",   message);
+			info.AddValue ("Message", message);
 			info.AddValue ("InnerException", inner_exception);
-			info.AddValue ("HelpURL",   help_link);
+			info.AddValue ("HelpURL", help_link);
 			info.AddValue ("StackTraceString", stack_trace);
 			info.AddValue ("RemoteStackTraceString", remote_stack_trace);
 			info.AddValue ("RemoteStackIndex", remote_stack_index);
@@ -194,6 +166,7 @@ namespace System {
 			info.AddValue ("ExceptionMethod", null);
 		}
 
+		[MonoTODO ("Locale.GetText(), use Stringbuilder?")]
 		public override string ToString ()
 		{
 			string result = this.GetType ().FullName + ": " + Message;
@@ -213,13 +186,12 @@ namespace System {
 			return result;
 		}
 
-		internal Exception FixRemotingException()
+		internal Exception FixRemotingException ()
 		{
 			string message = (0 == remote_stack_index) ?
-				"{0}{0}Server stack trace: {0}{1}{0}{0}Exception rethrown at [{2}]: {0}" :
-				"{1}{0}{0}Exception rethrown at [{2}]: {0}";
-			string tmp = String.Format (message, Environment.NewLine, 
-				StackTrace, remote_stack_index);
+				Locale.GetText ("{0}{0}Server stack trace: {0}{1}{0}{0}Exception rethrown at [{2}]: {0}") :
+				Locale.GetText ("{1}{0}{0}Exception rethrown at [{2}]: {0}");
+			string tmp = String.Format (message, Environment.NewLine, StackTrace, remote_stack_index);
 
 			remote_stack_trace = tmp;
 			remote_stack_index++;

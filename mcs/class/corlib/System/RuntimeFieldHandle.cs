@@ -8,13 +8,13 @@
 //
 
 using System.Runtime.Serialization;
-using System.Globalization;
 
-namespace System {
-
+namespace System
+{
 	[MonoTODO]
 	[Serializable]
-	public struct RuntimeFieldHandle : ISerializable {
+	public struct RuntimeFieldHandle : ISerializable
+	{
 		IntPtr value;
 		
 		public IntPtr Value {
@@ -33,13 +33,13 @@ namespace System {
 			t = (Type) info.GetValue ("TypeObj", typeof (Type));
 
 			value = t.TypeHandle.Value;
-			if (value == (IntPtr) 0)
-				throw new SerializationException (Locale.GetText ("Insufficient state"));
+			if (value == IntPtr.Zero)
+				throw new SerializationException (Locale.GetText ("Insufficient state."));
 		}
-		
-                public void GetObjectData (SerializationInfo info, StreamingContext context)
-                {
+
+		public void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
 			info.AddValue ("TypeObj", value, value.GetType ());
-                }
+		}
 	}
 }

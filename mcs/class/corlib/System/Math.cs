@@ -11,18 +11,18 @@
 // Copyright (C) 2003 Pedro Martínez Juliá <yoros@wanadoo.es>
 //
 
-using System;
-using System.Globalization;
 using System.Runtime.CompilerServices;
 
 namespace System
 {
-        public sealed class Math
-        {
+	public sealed class Math
+	{
 		public const double E = 2.7182818284590452354;
 		public const double PI = 3.14159265358979323846;
 
-		private Math () {}
+		private Math ()
+		{
+		}
 
 		public static decimal Abs (decimal value)
 		{
@@ -42,14 +42,14 @@ namespace System
 		public static int Abs (int value)
 		{
 			if (value == Int32.MinValue)
-				throw new OverflowException (Locale.GetText ("Value is too small"));
+				throw new OverflowException (Locale.GetText ("Value is too small."));
 			return (value < 0)? -value: value;
 		}
 
 		public static long Abs (long value)
 		{
 			if (value == Int64.MinValue)
-				throw new OverflowException(Locale.GetText ("Value is too small"));
+				throw new OverflowException (Locale.GetText ("Value is too small."));
 			return (value < 0)? -value: value;
 		}
 
@@ -57,14 +57,14 @@ namespace System
 		public static sbyte Abs (sbyte value)
 		{
 			if (value == SByte.MinValue)
-				throw new OverflowException(Locale.GetText ("Value is too small"));
+				throw new OverflowException (Locale.GetText ("Value is too small."));
 			return (sbyte)((value < 0)? -value: value);
 		}
 
 		public static short Abs (short value)
 		{
 			if (value == Int16.MinValue)
-				throw new OverflowException(Locale.GetText ("Value is too small"));
+				throw new OverflowException (Locale.GetText ("Value is too small."));
 			return (short)((value < 0)? -value: value);
 		}
 
@@ -119,7 +119,7 @@ namespace System
 		}
 
 		public static byte Max (byte val1, byte val2)
-                {
+		{
 			return (val1 > val2)? val1: val2;
 		}
 
@@ -173,7 +173,7 @@ namespace System
 
 		[CLSCompliant (false)]
 		public static ulong Max (ulong val1, ulong val2)
-                {
+		{
 			return (val1 > val2)? val1: val2;
 		}
 
@@ -264,10 +264,9 @@ namespace System
 
 		public static decimal Round (decimal d, int decimals)
 		{
-			if (decimals < 0 || decimals > 28) {
-				throw new ArgumentOutOfRangeException(
-				Locale.GetText("Value is too small or too big."));
-			}
+			if (decimals < 0 || decimals > 28)
+				throw new ArgumentOutOfRangeException (Locale.GetText ("Value is too small or too big."));
+
 			// Just call Decimal.Round(d, decimals); when it
 			// rounds good.
 			decimal p = (decimal) Math.Pow(10, decimals);
@@ -286,10 +285,9 @@ namespace System
 
 		public static double Round (double value, int digits)
 		{
-			if (digits < 0 || digits > 15) {
-				throw new ArgumentOutOfRangeException(
-				Locale.GetText("Value is too small or too big."));
-			}
+			if (digits < 0 || digits > 15)
+				throw new ArgumentOutOfRangeException (Locale.GetText ("Value is too small or too big."));
+
 			return Round2(value, digits);
 		}
 
@@ -305,7 +303,7 @@ namespace System
 		public static int Sign (double value)
 		{
 			if (value == Double.NaN)
-				throw new ArithmeticException("NAN");
+				throw new ArithmeticException ("NAN");
 			if (value > 0) return 1;
 			return (value == 0)? 0: -1;
 		}
@@ -313,7 +311,7 @@ namespace System
 		public static int Sign (float value)
 		{
 			if (value == Single.NaN)
-				throw new ArithmeticException("NAN");
+				throw new ArithmeticException ("NAN");
 			if (value > 0) return 1;
 			return (value == 0)? 0: -1;
 		}
@@ -343,8 +341,7 @@ namespace System
 			return (value == 0)? 0: -1;
 		}
 
-		// internal calls 
-
+		// internal calls
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static double Sin (double x);
 

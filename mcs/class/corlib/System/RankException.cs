@@ -1,23 +1,23 @@
 //
 // System.RankException.cs
 //
-// Author:
+// Authors:
 //   Joe Shaw (joe@ximian.com)
 //   Duncan Mak (duncan@ximian.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System {
-
+namespace System
+{
 	[Serializable]
-	public class RankException : SystemException {
+	public class RankException : SystemException
+	{
 		// Constructors
 		public RankException ()
-			: base (Locale.GetText ("Two arrays must have the same number of dimensions"))
+			: base (Locale.GetText ("Two arrays must have the same number of dimensions."))
 		{
 		}
 
@@ -35,6 +35,5 @@ namespace System {
 			: base (info, context)
 		{
 		}
-					
 	}
 }

@@ -1,29 +1,29 @@
 //
 // System.ObjectDisposedException.cs
 //
-// Author:
+// Authors:
 //   Paolo Molaro (lupus@ximian.com)
 //   Duncan Mak (duncan@ximian.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System {
-
+namespace System
+{
 	[Serializable]
-	public class ObjectDisposedException : InvalidOperationException {
+	public class ObjectDisposedException : InvalidOperationException
+	{
 		private string obj_name;
 		private string msg;
 
-                // Constructors
+		// Constructors
 		public ObjectDisposedException (string objectName)
-			: base (Locale.GetText ("The object was used after being disposed"))
+			: base (Locale.GetText ("The object was used after being disposed."))
 		{
 			obj_name = objectName;
-			msg = Locale.GetText ("The object was used after being disposed");
+			msg = Locale.GetText ("The object was used after being disposed.");
 		}
 
 		public ObjectDisposedException (string objectName, string message) 
@@ -40,17 +40,14 @@ namespace System {
 		}
 
 		// Properties
-		public override string Message
-		{
+		public override string Message {
 			get { return msg; }
 		}
 
-		public string ObjectName
-		{
+		public string ObjectName {
 			get { return obj_name; }
 		}
 
-		
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);

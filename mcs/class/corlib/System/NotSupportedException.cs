@@ -1,23 +1,23 @@
 //
 // System.NotSupportedException.cs
 //
-// Author:
+// Authors:
 //   Joe Shaw (joe@ximian.com)
 //   Duncan Mak (duncan@ximian.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System {
-
+namespace System
+{
 	[Serializable]
-	public class NotSupportedException : SystemException {
+	public class NotSupportedException : SystemException
+	{
 		// Constructors
 		public NotSupportedException ()
-			: base (Locale.GetText ("Operation is not supported"))
+			: base (Locale.GetText ("Operation is not supported."))
 		{
 		}
 

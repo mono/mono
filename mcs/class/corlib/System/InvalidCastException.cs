@@ -1,23 +1,23 @@
 //
 // System.InvalidCastException.cs
 //
-// Author:
+// Authors:
 //   Joe Shaw (joe@ximian.com)
 //   Duncan Mak (duncan@ximian.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System {
-
+namespace System
+{
 	[Serializable]
-	public class InvalidCastException : SystemException {
+	public class InvalidCastException : SystemException
+	{
 		// Constructors
 		public InvalidCastException ()
-			: base (Locale.GetText ("Cannot cast from source type to destination type"))
+			: base (Locale.GetText ("Cannot cast from source type to destination type."))
 		{
 		}
 

@@ -31,7 +31,9 @@ namespace System
 		 */
 		private const int mono_corlib_version = 12;
 
-		private Environment () {}
+		private Environment ()
+		{
+		}
 
 		[MonoTODO]
 		public enum SpecialFolder
@@ -39,8 +41,8 @@ namespace System
 			//       have unix/linux counterparts
 
 #if NET_1_1
-                        Desktop = 0x00,
-                        MyComputer = 0x11,
+			Desktop = 0x00,
+			MyComputer = 0x11,
 #endif
 			Programs = 0x02,
 			Personal = 0x05,
@@ -139,7 +141,6 @@ namespace System
 			get;
 		}
 
-
 		//
 		// Support methods and fields for OSVersion property
 		//
@@ -153,6 +154,7 @@ namespace System
 		/// <summary>
 		/// Gets the current OS version information
 		/// </summary>
+		[MonoTODO("Correct version")]
 		public static OperatingSystem OSVersion {
 			get {
 				if (os == null)
@@ -165,7 +167,7 @@ namespace System
 		/// <summary>
 		/// Get StackTrace
 		/// </summary>
-		public static string StackTrace	{
+		public static string StackTrace {
 			get {
 				System.Diagnostics.StackTrace trace = new System.Diagnostics.StackTrace (1);
 				return trace.ToString ();
@@ -175,11 +177,9 @@ namespace System
 		/// <summary>
 		/// Get a fully qualified path to the system directory
 		/// </summary>
-		public static string SystemDirectory
-		{
-			get
-			{
-				return GetFolderPath(SpecialFolder.System);
+		public static string SystemDirectory {
+			get {
+				return GetFolderPath (SpecialFolder.System);
 			}
 		}
 
@@ -204,8 +204,7 @@ namespace System
 		/// Gets a flag indicating whether the process is in interactive mode
 		/// </summary>
 		[MonoTODO]
-		public static bool UserInteractive
-		{
+		public static bool UserInteractive {
 			get {
 				return false;
 			}

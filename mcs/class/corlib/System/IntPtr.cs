@@ -9,23 +9,23 @@
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
-// Remarks:			Requires '/unsafe' compiler option.  This class uses void*,
-//					in overloaded constructors, conversion, and cast members in 
-//					the public interface.  Using pointers is not valid CLS and 
-//					the methods in question have been marked with  the 
-//					CLSCompliant attribute that avoid compiler warnings.
+// Remarks:
+//   Requires '/unsafe' compiler option.  This class uses void*,
+//   in overloaded constructors, conversion, and cast members in 
+//   the public interface.  Using pointers is not valid CLS and 
+//   the methods in question have been marked with  the 
+//   CLSCompliant attribute that avoid compiler warnings.
 //
 // FIXME: How do you specify a native int in C#?  I am going to have to do some figuring out
 //
 
-using System;
 using System.Runtime.Serialization;
 
-namespace System {
-
+namespace System
+{
 	[Serializable]
-	public unsafe struct IntPtr : ISerializable {
-
+	public unsafe struct IntPtr : ISerializable
+	{
 		private void *value;
 
 		public static readonly IntPtr Zero;
@@ -34,7 +34,7 @@ namespace System {
 		{
 			Zero.value = (void *) 0;
 		}
-		
+
 		public IntPtr (int i32)
 		{
 			value = (void *) i32;
@@ -45,9 +45,7 @@ namespace System {
 			value = (void *) i64;
 		}
 
-		[
-			CLSCompliant(false)
-		]
+		[CLSCompliant (false)]
 		unsafe public IntPtr (void *ptr)
 		{
 			value = ptr;
@@ -65,12 +63,12 @@ namespace System {
 			}
 		}
 
-		void ISerializable.GetObjectData (SerializationInfo si, StreamingContext sc)
+		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			if( si == null )
-				throw new ArgumentNullException( "si" );
-        
-			si.AddValue("value", (long) value);
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
+			info.AddValue ("value", (long) value);
 		}
 
 		public override bool Equals (object o)
@@ -96,9 +94,7 @@ namespace System {
 			return (long) value;
 		}
 
-		[
-			CLSCompliant(false)
-		]
+		[CLSCompliant (false)]
 		unsafe public void *ToPointer ()
 		{
 			return value;
@@ -132,9 +128,7 @@ namespace System {
 			return new IntPtr (value);
 		}
 		
-		[
-			CLSCompliant(false)
-		]
+		[CLSCompliant (false)]
 		unsafe public static explicit operator IntPtr (void *value)
 		{
 			return new IntPtr (value);
@@ -150,9 +144,7 @@ namespace System {
 			return (long) value.value;
 		}
 
-		[
-			CLSCompliant(false)
-		]
+		[CLSCompliant (false)]
 		unsafe public static explicit operator void * (IntPtr value)
 		{
 			return value.value;

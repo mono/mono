@@ -5,22 +5,21 @@
 //
 // (C) Ximian, Inc. http://www.ximian.com
 //
-using System;
-using System.Globalization;
+
 using System.Runtime.Serialization;
 
-namespace System {
-
+namespace System
+{
 	[Serializable]
-	public class MissingMemberException : MemberAccessException {
-
+	public class MissingMemberException : MemberAccessException
+	{
 		// Fields
 		protected string ClassName;
 		protected string MemberName;
 		protected byte[] Signature;
 
 		public MissingMemberException ()
-			: base (Locale.GetText ("A missing member exception has occurred."))
+			: base (Locale.GetText ("Cannot find the requested class member."))
 		{
 		}
 
@@ -41,7 +40,7 @@ namespace System {
 			MemberName = info.GetString ("MMMemberName");
 			Signature = (byte[]) info.GetValue ("MMSignature", Signature.GetType ());
 		}
-		
+
 		public MissingMemberException (string className, string memberName)
 		{
 			ClassName = className;
@@ -65,6 +64,5 @@ namespace System {
 					return "Member " + ClassName + "." + MemberName + " not found.";
 			}
 		}
-
 	}
 }

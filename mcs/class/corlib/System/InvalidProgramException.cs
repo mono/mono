@@ -7,14 +7,14 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-using System.Globalization;
-namespace System {
-
+namespace System
+{
 	[Serializable]
-	public sealed class InvalidProgramException : SystemException {
+	public sealed class InvalidProgramException : SystemException
+	{
 		// Constructors
 		public InvalidProgramException ()
-			: base (Locale.GetText ("Metadata is incorrect"))
+			: base (Locale.GetText ("Metadata is invalid."))
 		{
 		}
 

@@ -7,16 +7,16 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System {
-
+namespace System
+{
 	[Serializable]
-	public class FormatException : SystemException {
+	public class FormatException : SystemException
+	{
 		// Constructors
 		public FormatException ()
-			: base (Locale.GetText ("Invalid format"))
+			: base (Locale.GetText ("Invalid format."))
 		{
 		}
 
@@ -30,8 +30,7 @@ namespace System {
 		{
 		}
 
-		protected FormatException (SerializationInfo info,
-					StreamingContext context)
+		protected FormatException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}

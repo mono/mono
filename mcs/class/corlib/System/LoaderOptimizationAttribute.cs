@@ -1,7 +1,8 @@
 //
 // System.LoaderOptimizationAttribute.cs
 //
-// Author: Duncan Mak  (duncan@ximian.com)
+// Author: 
+//   Duncan Mak (duncan@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
@@ -13,8 +14,8 @@ namespace System
 	{
 		private LoaderOptimization lo;
 		
-                // Constructors
-		public LoaderOptimizationAttribute (byte value) 
+		// Constructors
+		public LoaderOptimizationAttribute (byte value)
 		{
 			lo = (LoaderOptimization) value;
 		}
@@ -25,10 +26,8 @@ namespace System
 		}
 
 		// Properties
-		public LoaderOptimization Value
-		{
-				get { return lo; }
+		public LoaderOptimization Value {
+			get { return lo; }
 		}
-		   
 	}
 }

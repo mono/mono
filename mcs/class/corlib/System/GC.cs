@@ -1,7 +1,5 @@
-
-
 //
-// System/GC.cs
+// System.GC.cs
 //
 // Author:
 //   Paolo Molaro (lupus@ximian.com)
@@ -9,15 +7,17 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-using System;
 using System.Runtime.CompilerServices;
 
-namespace System {
-	public sealed class GC {
+namespace System
+{
+	public sealed class GC
+	{
+		private GC ()
+		{
+		}
 
-		private GC () {}
-
-		/* as long as we use Boehm... */
+		// TODO: as long as we use Boehm leave 0...
 		public static int MaxGeneration {
 			get {return 0;}
 		}
@@ -59,7 +59,7 @@ namespace System {
 		public extern static void SuppressFinalize (object obj);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static void WaitForPendingFinalizers();
+		public extern static void WaitForPendingFinalizers ();
 		
 	}
 }

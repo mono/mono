@@ -1,23 +1,23 @@
 //
 // System.NotImplementedException.cs
 //
-// Author:
+// Authors:
 //   Paolo Molaro (lupus@ximian.com)
 //   Duncan Mak (duncan@ximian.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System {
-
+namespace System
+{
 	[Serializable]
-	public class NotImplementedException : SystemException {
+	public class NotImplementedException : SystemException
+	{
 		// Constructors
 		public NotImplementedException ()
-			: base (Locale.GetText ("The requested feature is not yet implemented"))
+			: base (Locale.GetText ("The requested feature is not implemented."))
 		{
 		}
 

@@ -1,16 +1,11 @@
-//------------------------------------------------------------------------------
-// 
+//
 // System.OperatingSystem.cs 
 //
-// Copyright (C) 2001 Moonlight Enterprises, All Rights Reserved
-// 
-// Author:         Jim Richardson, develop@wtfo-guru.com
-// Created:        Saturday, August 11, 2001 
+// Author:
+//   Jim Richardson (develop@wtfo-guru.com)
 //
-//------------------------------------------------------------------------------
-
-using System;
-using System.Globalization;
+// (C) 2001 Moonlight Enterprises, All Rights Reserved
+//
 
 namespace System
 {
@@ -23,64 +18,58 @@ namespace System
 		private System.PlatformID itsPlatform;
 		private Version itsVersion;
 
-		public OperatingSystem(PlatformID platform, Version version)
+		public OperatingSystem (PlatformID platform, Version version)
 		{
-			if(version == null)
-			{
-				throw new ArgumentNullException();
+			if (version == null) {
+				throw new ArgumentNullException ("version");
 			}
-			
+
 			itsPlatform = platform;
 			itsVersion = version;
 		}
 
-		/// <summary>
-		/// Get the PlatformID
-		/// </summary>
-		public PlatformID Platform
-		{
-			get
-			{
+		public PlatformID Platform {
+			get {
 				return itsPlatform;
 			}
 		}
 
-		/// <summary>
-		/// Gets the version object
-		/// </summary>
-		public Version Version
-		{
-			get
-			{
+		public Version Version {
+			get {
 				return itsVersion;
 			}
 		}
 
-		/// <summary>
-		/// Return a clone of this object
-		/// </summary>
-		public object Clone()
+		public object Clone ()
 		{
-			return new OperatingSystem(itsPlatform, itsVersion);
+			return new OperatingSystem (itsPlatform, itsVersion);
 		}
 
-		/// <summary>
-		/// Return a string reprentation of this instance
-		/// </summary>
-		public override string ToString()
+		public override string ToString ()
 		{
 			string str;
-			
-			switch((int) itsPlatform)
-			{
-			case (int) System.PlatformID.Win32NT: str = "Microsoft Windows NT"; break;
-			case (int) System.PlatformID.Win32S: str = "Microsoft Win32S";  break;
-			case (int) System.PlatformID.Win32Windows: str = "Microsoft Windows 98"; break;
-			case 128 /* PlatformID.Unix */: str = "Unix"; break;
-			default: str = Locale.GetText ("<unknown>"); break;
+
+			switch ((int) itsPlatform) {
+			case (int) System.PlatformID.Win32NT:
+				str = "Microsoft Windows NT";
+				break;
+			case (int) System.PlatformID.Win32S:
+				str = "Microsoft Win32S";
+				break;
+			case (int) System.PlatformID.Win32Windows:
+				str = "Microsoft Windows 98";
+				break;
+			case 128 /* PlatformID.Unix */:
+				str = "Unix";
+				break;
+			default:
+				str = Locale.GetText ("<unknown>");
+				break;
 			}
 
 			return str + " " + itsVersion.ToString();
 		}
 	}
 }
+
+

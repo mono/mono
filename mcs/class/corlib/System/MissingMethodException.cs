@@ -1,16 +1,19 @@
-using System;
-using System.Runtime.Serialization;
-using System.Globalization;
+//
+// System.MissingMethodException.cs
+//
+// Author:
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
 
+using System.Runtime.Serialization;
 
 namespace System
 {
-     [Serializable]
-     public class MissingMethodException : MissingMemberException
+	[Serializable]
+	public class MissingMethodException : MissingMemberException
 	{
-		
 		public MissingMethodException ()
-			: base (Locale.GetText ("A missing method exception has occurred."))
+			: base (Locale.GetText ("Cannot find the requested method."))
 		{
 		}
 
@@ -20,9 +23,10 @@ namespace System
 		}
 
 		protected MissingMethodException (SerializationInfo info, StreamingContext context)
-			: base (info, context) {
+			: base (info, context)
+		{
 		}
-		
+
 		public MissingMethodException (string message, Exception inner)
 			: base (message, inner)
 		{
@@ -43,5 +47,3 @@ namespace System
 		}
 	}
 }
-
-

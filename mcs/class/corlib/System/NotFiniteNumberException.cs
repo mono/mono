@@ -1,24 +1,25 @@
 //
 // System.NotFiniteNumberException.cs
 //
-// Author:
+// Authors:
 //   Joe Shaw (joe@ximian.com)
 //   Duncan Mak (duncan@ximian.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
-using System.Globalization;
+
 using System.Runtime.Serialization;
 
-namespace System {
-
+namespace System
+{
 	[Serializable]
-	public class NotFiniteNumberException : ArithmeticException {
+	public class NotFiniteNumberException : ArithmeticException
+	{
 		double offending_number;
 
 		// Constructors
 		public NotFiniteNumberException ()
-			: base (Locale.GetText ("The number encountered was not a finite quantity"))
+			: base (Locale.GetText ("The number encountered was not a finite quantity."))
 		{
 		}
 
@@ -47,7 +48,7 @@ namespace System {
 			: base (info, context)
 		{
 			offending_number = info.GetDouble ("OffendingNumber");
-		}		
+		}
 
 		// Properties
 		public double OffendingNumber {
@@ -56,8 +57,7 @@ namespace System {
 			}
 		}
 
-		// Method
-
+		// Methods
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);

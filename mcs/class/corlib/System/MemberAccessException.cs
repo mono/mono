@@ -1,14 +1,19 @@
-using System;
-using System.Globalization;
+//
+// System.MemberAccessException.cs
+//
+// Author:
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+
 using System.Runtime.Serialization;
 
-namespace System {
-
+namespace System
+{
 	[Serializable]
-	public class MemberAccessException : SystemException {
-		
+	public class MemberAccessException : SystemException
+	{
 		public MemberAccessException ()
-			: base (Locale.GetText ("A member access exception has occurred."))
+			: base (Locale.GetText ("Cannot access a class member."))
 		{
 		}
 
@@ -18,7 +23,8 @@ namespace System {
 		}
 
 		protected MemberAccessException (SerializationInfo info, StreamingContext context)
-			: base (info, context) {
+			: base (info, context)
+		{
 		}
 		
 		public MemberAccessException (string message, Exception inner)

@@ -1,3 +1,50 @@
+2004-03-09  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* EventArgs.cs
+	* Exception.cs
+	* ExecutionEngineException.cs
+	* FieldAccessException.cs
+	* FormatException.cs
+	* GC.cs
+	* Guid.cs
+	* IndexOutOfRangeException.cs
+	* IntPtr.cs
+	* InvalidCastException.cs
+	* InvalidOperationException.cs
+	* InvalidProgramException.cs
+	* IServiceProvider.cs
+	* LoaderOptimization.cs
+	* LoaderOptimizationAttribute.cs
+	* MarshalByRefObject.cs
+	* Math.cs
+	* MemberAccessException.cs
+	* MethodAccessException.cs
+	* MissingFieldException.cs
+	* MissingMemberException.cs
+	* MissingMethodException.cs
+	* MultiCastDelegate.cs
+	* MulticastNotSupportedException.cs
+	* NonSerializedAttribute.cs
+	* NotFiniteNumberException.cs
+	* NotImplementedException.cs
+	* NotSupportedException.cs
+	* NullReferenceException.cs
+	* ObjectDisposedException.cs
+	* ObsoleteAttribute.cs
+	* OperatingSystem.cs
+	* OutOfMemoryException.cs
+	* OverflowExceptionException.cs
+	* PlatformID.cs
+	* PlatformNotSupportedException.cs
+	* Random.cs
+	* RankException.cs
+	* ResolveEventArgs.cs
+	* ResolveEventHandler.cs
+	* RuntimeFieldHandle.cs
+	* RuntimeMethodHandle.cs
+	* RuntimeTypeHandle.cs: Mono styled, fixed exceptions/ locales
+	  removed excess usings
+
 2004-03-08  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* SystemException.cs: Exceptions set the HResult

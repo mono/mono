@@ -7,16 +7,16 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System {
-
+namespace System
+{
 	[Serializable]
-	public sealed class IndexOutOfRangeException : SystemException {
+	public sealed class IndexOutOfRangeException : SystemException
+	{
 		// Constructors
 		public IndexOutOfRangeException ()
-			: base (Locale.GetText ("Array index is out of range"))
+			: base (Locale.GetText ("Array index is out of range."))
 		{
 		}
 

@@ -1,22 +1,23 @@
 //
 // System.InvalidOperationException.cs
 //
-// Author:
+// Authors:
 //   Joe Shaw (joe@ximian.com)
 //   Duncan Mak (duncan@ximian.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System {
+namespace System
+{
 	[Serializable]
-	public class InvalidOperationException : SystemException {
+	public class InvalidOperationException : SystemException
+	{
 		// Constructors
 		public InvalidOperationException ()
-			: base (Locale.GetText ("The requested operation cannot be performed"))
+			: base (Locale.GetText ("The requested operation could be performed."))
 		{
 		}
 
