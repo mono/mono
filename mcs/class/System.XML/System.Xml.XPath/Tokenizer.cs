@@ -20,11 +20,10 @@ namespace System.Xml.XPath
 		private char [] m_rgchInput;
 		private int m_ich;
 		private int m_cch;
-//		private System.IO.StreamReader m_input;
 		private int m_iToken;
 		private Object m_objToken;
-		private static Hashtable m_mapTokens = new Hashtable ();
-		private static readonly Object [] rgTokenMap =
+		private static Hashtable s_mapTokens = new Hashtable ();
+		private static readonly Object [] s_rgTokenMap =
 		{
 		   Token.AND, "and",
 		   Token.OR, "or",
@@ -48,11 +47,12 @@ namespace System.Xml.XPath
 		   Token.PROCESSING_INSTRUCTION, "processing-instruction",
 		   Token.NODE, "node",
 		};
+		private const char EOL = '\0';
 
 		static Tokenizer ()
 		{
-			for (int i = 0; i < rgTokenMap.Length; i += 2)
-				m_mapTokens.Add (rgTokenMap [i + 1], rgTokenMap [i]);
+			for (int i = 0; i < s_rgTokenMap.Length; i += 2)
+				s_mapTokens.Add (s_rgTokenMap [i + 1], s_rgTokenMap [i]);
 		}
 
 		public Tokenizer (string strInput)
@@ -63,21 +63,21 @@ namespace System.Xml.XPath
 			SkipWhitespace ();
 		}
 
-		private int Peek ()
+		private char Peek ()
 		{
 			if (m_ich >= m_cch)
-				return -1;
+				return EOL;
 			return m_rgchInput [m_ich];
 		}
 
-		private int GetChar ()
+		private char GetChar ()
 		{
 			if (m_ich >= m_cch)
-				return -1;
+				return EOL;
 			return m_rgchInput [m_ich++];
 		}
 
-		private int PutBack ()
+		private char PutBack ()
 		{
 			if (m_ich == 0)
 				throw new XPathException ("invalid tokenizer state");	// TODO: better description
@@ -113,11 +113,11 @@ namespace System.Xml.XPath
 		{
 			StringBuilder sb = new StringBuilder ();
 
-			int chInit = GetChar ();
-			int ch;
+			char chInit = GetChar ();
+			char ch;
 			while ((ch = Peek ()) != chInit)
 			{
-				if (ch == -1)
+				if (ch == EOL)
 					return Token.ERROR;
 				sb.Append ((char) GetChar ());
 			}
@@ -130,54 +130,43 @@ namespace System.Xml.XPath
 		{
 			StringBuilder sb = new StringBuilder ();
 
-			// FIXME: if it may be NCName, then many other characters should be allowed (e.g. unicode multibyte character).
-			while (true)
-			{
-				int ch = Peek ();
-				if (ch == '_' || ch == '-' ||
-						(ch >= 'a' && ch <= 'z') ||
-						(ch >= 'A' && ch <= 'Z') ||
-						(ch >= '0' && ch <= '9'))
-				{
-					sb.Append ((char) GetChar ());
-				}
-				else
-					break;
-			}
-			String strToken = sb.ToString ();
-			Object objToken = m_mapTokens [strToken];
-			if (objToken != null)
-			{
-				return (int) objToken;
-			}
-			else
-			{
-				m_objToken = strToken;
+			char ch;
+			while ((ch = Peek ()) == '_' || ch == '-' || Char.IsLetterOrDigit (ch))
+				sb.Append ((char) GetChar ());
 
-				SkipWhitespace ();
-				if (Peek () == '(')					
-					return Token.FUNCTION_NAME;
-				return Token.NCName;
-			}
+			String strToken = sb.ToString ();
+			Object objToken = s_mapTokens [strToken];
+			if (objToken != null)
+				return (int) objToken;
+
+			m_objToken = strToken;
+
+			SkipWhitespace ();
+			if (Peek () == '(')					
+				return Token.FUNCTION_NAME;
+
+			return Token.NCName;
 		}
 
-		private static bool IsWhitespace (int ch)
+		private static bool IsWhitespace (char ch)
 		{
+			// return Char.IsWhiteSpace (ch);
 			return (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r');
 		}
 
-		private static bool IsDigit (int ch)
+		private static bool IsDigit (char ch)
 		{
+			// return Char.IsDigit (ch);
 			return ch >= '0' && ch <= '9';
 		}
 
 
 		int ParseToken ()
 		{
-			int ch = Peek ();
+			char ch = Peek ();
 			switch (ch)
 			{
-				case -1:
+				case EOL:
 					return Token.EOF;
 
 				case '/':
