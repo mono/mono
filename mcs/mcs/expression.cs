@@ -1928,6 +1928,10 @@ namespace Mono.CSharp {
 						method = TypeManager.string_concat_object_object;
 						right = ConvertImplicit (ec, right,
 									 TypeManager.object_type, loc);
+						if (right == null){
+							Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+							return null;
+						}
 					}
 					type = TypeManager.string_type;
 
@@ -1947,6 +1951,10 @@ namespace Mono.CSharp {
 					
 					method = TypeManager.string_concat_object_object;
 					left = ConvertImplicit (ec, left, TypeManager.object_type, loc);
+					if (left == null){
+						Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+						return null;
+					}
 					Arguments = new ArrayList ();
 					Arguments.Add (new Argument (left, Argument.AType.Expression));
 					Arguments.Add (new Argument (right, Argument.AType.Expression));

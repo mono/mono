@@ -1,5 +1,8 @@
 2002-10-09  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (Binary.ResolveOperator): Report errors in a few
+	places where we had to.
+
 	* typemanager.cs (IsUnmanagedtype): Finish implementation.
 
 2002-10-08  Miguel de Icaza  <miguel@ximian.com>
