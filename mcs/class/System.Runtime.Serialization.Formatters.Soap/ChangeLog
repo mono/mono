@@ -1,3 +1,9 @@
+2003-11-21  Jean-Marc Andre <jeanmarc.andre@cpe.fr>
+	* SoapReader.cs: 
+		Bug fixed. SerializationBinder.BindToType wasn't called
+		the right way in GetElementInfo() (switched assemblyName and 
+		typeName parameters).
+
 2003-08-25  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* SoapTypeMapper.cs: Added mappings for more primitive types.
