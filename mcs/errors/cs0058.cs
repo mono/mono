@@ -1,5 +1,5 @@
 // cs0058.cs: Incompatible accessibility. Parameter type is less accessible than delegate.
-// Line:
+// Line: 10
 
 using System;
 
