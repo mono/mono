@@ -3468,6 +3468,8 @@ namespace Mono.CSharp {
 		public readonly Attributes OptAttributes;
 
 		protected MethodAttributes flags;
+			
+		protected readonly int explicit_mod_flags;
 
 		//
 		// The "short" name of this property / indexer / event.  This is the
@@ -3512,6 +3514,7 @@ namespace Mono.CSharp {
 				      Attributes attrs, Location loc)
 			: base (name, loc)
 		{
+			explicit_mod_flags = mod;
 			Type = type;
 			ModFlags = Modifiers.Check (allowed_mod, mod, def_mod, loc);
 			OptAttributes = attrs;
@@ -3792,6 +3795,8 @@ namespace Mono.CSharp {
 				
 				if (!container.VerifyImplements (InterfaceType, ShortName, Name, Location))
 					return false;
+				
+				Modifiers.Check (Modifiers.AllowedExplicitImplFlags, explicit_mod_flags, 0, Location);
 				
 				IsExplicitImpl = true;
 			} else

@@ -34,6 +34,8 @@ namespace Mono.CSharp {
 
 		public const int Accessibility =
 			PUBLIC | PROTECTED | INTERNAL | PRIVATE;
+		public const int AllowedExplicitImplFlags =
+			UNSAFE | EXTERN;
 		
 		static public string Name (int i)
 		{

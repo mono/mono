@@ -1,5 +1,15 @@
 2003-12-25 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* modifiers.cs: Add a new set of flags for the
+	flags allowed on explicit interface impls.
+	* cs-parser.jay: catch the use of modifiers in
+	interfaces correctly.
+	* class.cs: catch private void IFoo.Blah ().
+
+	All related to bug #50572.
+
+2003-12-25 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* decl.cs: Rewrite the consistant accessability checking.
 	Accessability is not linear, it must be implemented in
 	a tableish way. Fixes #49704.
