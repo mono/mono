@@ -1,3 +1,7 @@
+2003-08-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: set threadpool_thread to TRUE. Patch by totte.
+
 2003-08-11  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug-debugger.c (mono_debugger_lookup_type): New function.
