@@ -295,7 +295,8 @@ namespace Mono.Tools
 			}
 			*/
 
-			bool force = false;
+			//FIXME: force=true per mig's request.
+			bool force = true;
 
 			if (Array.IndexOf (args, "/f") != -1 || Array.IndexOf (args, "-f") != -1 ||
 			    Array.IndexOf (args, "--force") != -1) {
