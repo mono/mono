@@ -1,5 +1,13 @@
 2005-02-17  Atsushi Enomoto <atsushi@ximian.com>
 
+	* Outputter.cs,
+	  TextOutputter.cs,
+	  GenericOutputter.cs : removed WriteStartDocument(), WriteEndDocument()
+	  and WriteState. Writing XML declaration is done inside
+	  DetermineOutputMethod().
+
+2005-02-17  Atsushi Enomoto <atsushi@ximian.com>
+
 	* Compiler.cs : reverted previous fix, since it should be done
 	  in XslTransformProcessor with root stylesheet.
 	* XslTransformProcessor.cs : In TryElementNamespacesOutput(),

@@ -59,16 +59,8 @@ namespace System.Xml.Xsl {
 
 		public override void Transform (XPathNavigator input, XsltArgumentList args, TextWriter output, XmlResolver resolver) {
 			Outputter outputter = new GenericOutputter(output, s.Outputs, output.Encoding);			
-//			outputter.WriteStartDocument();
 			new XslTransformProcessor (s).Process (input, outputter, args, resolver);
-			switch (outputter.WriteState) {
-			case WriteState.Start:
-			case WriteState.Closed:
-				break;
-			default:
-				outputter.WriteEndDocument();
-				break;
-			}
+			outputter.Done ();
 			output.Flush ();
 		}
 		

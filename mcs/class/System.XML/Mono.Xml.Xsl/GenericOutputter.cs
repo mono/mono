@@ -84,7 +84,7 @@ namespace Mono.Xml.Xsl
 			_encoding = encoding;
 			_outputs = outputs;
 			_currentOutput = (XslOutput)outputs [String.Empty];
-			_state = WriteState.Start;
+			_state = WriteState.Prolog;
 			//TODO: Optimize using nametable
 			_nt = new NameTable ();
 			_nsManager = new XmlNamespaceManager (_nt);
@@ -147,7 +147,13 @@ namespace Mono.Xml.Xsl
 					XmlTextWriter w = new XmlTextWriter (pendingTextWriter);
 					if (xslOutput.Indent == "yes")
 						w.Formatting = Formatting.Indented;
+
 					_emitter = new XmlWriterEmitter (w);					
+					if (!_omitXmlDeclaration && !xslOutput.OmitXmlDeclaration)
+						_emitter.WriteStartDocument (
+							_encoding != null ? _encoding : xslOutput.Encoding,
+							xslOutput.Standalone);
+
 					break;
 				case OutputMethod.Text:
 					_emitter = new TextEmitter (pendingTextWriter);
@@ -164,9 +170,6 @@ namespace Mono.Xml.Xsl
 		/// </summary>
 		private void CheckState ()
 		{
-			if (_state == WriteState.Start)
-				WriteStartDocument ();
-
 			if (_state == WriteState.Element) {
 				//Push scope to allow to unwind namespaces scope back in WriteEndElement
 				//Subject to optimization - avoid redundant push/pop by moving 
@@ -215,22 +218,6 @@ namespace Mono.Xml.Xsl
 		}
 
 		#region Outputter's methods implementation
-		
-		public override void WriteStartDocument ()
-		{
-			if (_isVariable)
-				return;
-
-			if (!_omitXmlDeclaration && !_currentOutput.OmitXmlDeclaration)
-				Emitter.WriteStartDocument (_encoding != null ? _encoding : _currentOutput.Encoding, _currentOutput.Standalone);
-			
-			_state = WriteState.Prolog;
-		}
-		
-		public override void WriteEndDocument ()
-		{
-			Emitter.WriteEndDocument ();				
-		}
 
 		public override void WriteStartElement (string prefix, string localName, string nsURI)
 		{
@@ -241,9 +228,6 @@ namespace Mono.Xml.Xsl
 					pendingFirstSpaces = null;
 				}
 			}
-
-			if (_state == WriteState.Start)
-				WriteStartDocument ();
 
 			if (_state == WriteState.Prolog) {
 				//Seems to be the first element - take care of Doctype
@@ -382,8 +366,6 @@ namespace Mono.Xml.Xsl
 		public override bool CanProcessAttributes {
 			get { return _canProcessAttributes; }
 		}
-
-		public override WriteState WriteState { get { return _state; } }
 
 		public override bool InsideCDataSection {
 			get { return _insideCData; }

@@ -1,3 +1,7 @@
+2005-02-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ManagedXslTransform.cs : no need to write XML declaration here.
+
 2004-12-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsltException.cs, XsltCompileException.cs :

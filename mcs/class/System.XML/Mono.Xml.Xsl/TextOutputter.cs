@@ -48,10 +48,6 @@ namespace Mono.Xml.Xsl {
 			_ignoreNestedText = ignoreNestedText;
 		}
 
-		public override void WriteStartDocument () {}
-		
-		public override void WriteEndDocument () {}
-
 		public override void WriteStartElement (string prefix, string localName, string nsURI) {
 			if (_ignoreNestedText) _depth++;
 		}
@@ -88,7 +84,9 @@ namespace Mono.Xml.Xsl {
 			_writer.Flush ();
 		}
 
-		public override WriteState WriteState { get { return WriteState.Start; } }
+		public override bool CanProcessAttributes {
+			get { return false; }
+		}
 
 		public override bool InsideCDataSection { get { return false; } set { } }
 	}

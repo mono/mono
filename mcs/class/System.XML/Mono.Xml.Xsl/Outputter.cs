@@ -39,9 +39,6 @@ namespace Mono.Xml.Xsl {
 	/// it further down to real consumers.
 	/// </summary>
 	internal abstract class Outputter {
-		public abstract void WriteStartDocument ();		
-		public abstract void WriteEndDocument ();
-		
 		public void WriteStartElement (string localName, string nsURI)
 		{
 			WriteStartElement (null, localName, nsURI);
@@ -72,11 +69,7 @@ namespace Mono.Xml.Xsl {
 		
 		public abstract void Done ();
 
-		public virtual bool CanProcessAttributes {
-			get { return false; }
-		}
-
-		public abstract WriteState WriteState { get; }
+		public abstract bool CanProcessAttributes { get; }
 
 		public abstract bool InsideCDataSection { get; set; }
 	}
