@@ -1,3 +1,12 @@
+
+Wed Feb 9 18:32:51 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* gc-internal.h, null-gc.c, boehm-gc.c: added functions to the GC
+	API to alloc runtime data structures that need to be tracked by the
+	GC and contain pointers.
+	* appdomain.c, threads.c, object.c, gc.c: use the above changes to
+	make the code more readable and eventually use a different GC.
+
 2005-02-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (emit_marshal_vtype): Don't do managed->native conversion
