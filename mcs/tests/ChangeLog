@@ -1,3 +1,7 @@
+2002-06-13  Ravi Pratap  <ravi@ximian.com>
+
+	* test-131.cs : Add to test enum member attribute application.
+
 2002-06-10  Rachel Hestilow  <hestilow@ximian.com>
 
 	* unsafe-3.cs: New test for address-of-pointer.
