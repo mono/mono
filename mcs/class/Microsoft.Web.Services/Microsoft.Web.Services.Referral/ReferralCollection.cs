@@ -68,8 +68,9 @@ namespace Microsoft.Web.Services.Referral {
 #if WSE1
                 public IEnumerator GetEnumerator ()
 #else
-		public virtual IEnumerator GetEnumerator () {
+		public virtual IEnumerator GetEnumerator ()
 #endif
+		{
                         return list.GetEnumerator ();
                 }
 

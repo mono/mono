@@ -62,8 +62,9 @@ namespace Microsoft.Web.Services.Referral {
 #if WSE1
 		public void LoadXml (XmlElement element)
 #else
-		public virtual void LoadXml (XmlElement element) {
+		public virtual void LoadXml (XmlElement element)
 #endif
+		{
                         if (element == null)
                                 throw new ArgumentNullException (
                                         Locale.GetText ("Argument is null."));
@@ -112,6 +113,5 @@ namespace Microsoft.Web.Services.Referral {
 				throw new NotImplementedException ();
 			}
 		}
-                
         }
 }
