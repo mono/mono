@@ -1,5 +1,8 @@
 2004-11-26  Miguel de Icaza  <miguel@ximian.com>
 
+	* ecore.cs (EventExpr.Emit): Refine error report and distinguish
+	between cs0070 and cs0079.
+
 	* class.cs (MemberBase.DoDefine): When reporting a wrong
 	accessibility level, we use MethodCore to compare instead of
 	Method (this was a regression in some refactoring effort).
