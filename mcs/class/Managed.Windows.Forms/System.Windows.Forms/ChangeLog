@@ -1,5 +1,9 @@
 2005-01-06  Jackson Harper  <jackson@ximian.com>
 
+	* ScrollableControl.cs: Lazy init the scrollbars.
+
+2005-01-06  Jackson Harper  <jackson@ximian.com>
+
 	* Theme.cs: Speed up getting pens and solid brushes, by using
 	their ARGB as a hash instead of tostring and not calling Contains.
 

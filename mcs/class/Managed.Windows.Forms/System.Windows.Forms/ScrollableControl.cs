@@ -196,12 +196,6 @@ namespace System.Windows.Forms {
 			auto_scroll_min_size = new Size(0, 0);
 			auto_scroll_position = new Point(0, 0);
 			dock_padding = new DockPaddingEdges();
-
-			hscrollbar = new ScrollBar();
-			hscrollbar.Visible = false;
-
-			vscrollbar = new ScrollBar();
-			vscrollbar.Visible = false;
 		}
 		#endregion	// Public Constructors
 
@@ -323,6 +317,8 @@ namespace System.Windows.Forms {
 			set {
 				if (hscroll_visible != value) {
 					hscroll_visible = value;
+					if (hscroll_visible && hscrollbar == null)
+						hscrollbar = new ScrollBar ();
 				}
 			}
 		}
@@ -335,6 +331,8 @@ namespace System.Windows.Forms {
 			set {
 				if (vscroll_visible != value) {
 					vscroll_visible = value;
+					if (vscroll_visible && vscrollbar == null)
+						vscrollbar = new ScrollBar ();
 				}
 			}
 		}
