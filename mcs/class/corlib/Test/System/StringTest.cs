@@ -799,6 +799,8 @@ public class StringTest : TestCase
 			     s1.Replace("gin", "rum"));
 		AssertEquals("double string", "oreigeinal", 
 			     s1.Replace("i", "ei"));
+			     			     
+		AssertEquals ("result longer", ":!:", "::".Replace ("::", ":!:"));
 	}
 
 	public void TestSplit() {
