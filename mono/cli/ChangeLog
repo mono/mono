@@ -1,3 +1,16 @@
+2001-08-06  Dietmar Maurer  <dietmar@ximian.com>
+
+	* object.h: added MonoArrayObject and MonoStringObject
+
+	* loader.c (mono_typedef_from_name):
+	s/typedef_from_name/(mono_typedef_from_name and made it public.
+
+	* class.c (class_compute_field_layout): skip the FIELD signature
+	(mono_class_create_from_typedef): bug fix: field.last was wrong
+	(class_compute_field_layout): added some code to make it work for
+	classes with EXPLICIT_LAYOUT but no offsets specified (I observed
+	that behaviour on System.Array)
+
 2001-08-02  Dietmar Maurer  <dietmar@ximian.com>
 
 	* loader.c (mono_get_string_class_info): do a strcmp to check

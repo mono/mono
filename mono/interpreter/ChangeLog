@@ -1,3 +1,14 @@
+2001-08-06  Dietmar Maurer  <dietmar@ximian.com>
+
+	* interp.c (ves_exec_method): impl. NEWARR
+	(ves_exec_method): impl. most LDELEM/STELEM opcodes, LDLEN
+	(newarr): impl.
+	(mono_get_ansi_string): impl.
+
+2001-08-05  Dietmar Maurer  <dietmar@ximian.com>
+
+	* interp.c (ves_pinvoke_method): removed all static vars.
+
 2001-08-02  Dietmar Maurer  <dietmar@ximian.com>
 
 	* interp.c (ves_exec_method): found a way to do unordered
