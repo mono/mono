@@ -10,6 +10,7 @@
 #if NET_2_0
 using System;
 using System.IO;
+using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using NUnit.Framework;
@@ -21,6 +22,11 @@ namespace MonoTests.System.Xml
 	[TestFixture]
 	public class XmlReaderSettingsTests : Assertion
 	{
+		public Stream CreateStream (string xml)
+		{
+			return new MemoryStream (Encoding.Unicode.GetBytes (xml));
+		}
+
 		[Test]
 		public void DefaultValue ()
 		{
@@ -129,6 +135,26 @@ namespace MonoTests.System.Xml
 			AssertEquals ("\0", xr.Value);
 			xr.Read ();
 			AssertEquals ("\0", xr.Value);
+		}
+
+		[Test]
+		public void CreateAndSettings ()
+		{
+			AssertNotNull (XmlReader.Create (CreateStream ("<xml/>")).Settings);
+			AssertNotNull (XmlReader.Create ("Test/XmlFiles/simple.xml").Settings);
+		}
+
+		[Test]
+		public void CreateAndNameTable ()
+		{
+			// By default NameTable is null, but some of
+			// XmlReader.Create() should not result in null
+			// reference exceptions.
+			XmlReaderSettings s = new XmlReaderSettings ();
+			XmlReader.Create (new StringReader ("<root/>"), null, null, s)
+				.Read ();
+			XmlReader.Create (CreateStream ("<root/>"), null, Encoding.Unicode, null, s)
+				.Read ();
 		}
 	}
 }
