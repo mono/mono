@@ -4271,7 +4271,7 @@ namespace Mono.CSharp {
 			MemberInfo [] miset;
 			MethodGroupExpr union;
 
-			if (mg1 == null){
+			if (mg1 == null) {
 				if (mg2 == null)
 					return null;
 				return (MethodGroupExpr) mg2;
@@ -4291,25 +4291,21 @@ namespace Mono.CSharp {
 			
 			ArrayList common = new ArrayList ();
 
-			foreach (MethodBase l in left_set.Methods){
-				foreach (MethodBase r in right_set.Methods){
-					if (l != r)
-						continue;
+			foreach (MethodBase r in right_set.Methods){
+				if (TypeManager.ArrayContainsMethod (left_set.Methods, r))
 					common.Add (r);
-					break;
-				}
 			}
-			
+
 			miset = new MemberInfo [length1 + length2 - common.Count];
 			left_set.Methods.CopyTo (miset, 0);
 			
 			int k = length1;
 
-			foreach (MemberInfo mi in right_set.Methods){
-				if (!common.Contains (mi))
-					miset [k++] = mi;
+			foreach (MethodBase r in right_set.Methods) {
+				if (!common.Contains (r))
+					miset [k++] = r;
 			}
-			
+
 			union = new MethodGroupExpr (miset, loc);
 			
 			return union;

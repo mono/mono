@@ -1,3 +1,14 @@
+2003-07-29  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (Invocation.MakeUnionSet): Patch from Lluis
+	Sanchez : use TypeManager.ArrayContainsMethod instead of a direct
+	reference comparison.
+
+	(TypeManager.ArrayContainsMethod): When we have a MethodInfo, also
+	examine the ReturnType for equality - this is necessary in the
+	cases of implicit and explicit operators whose signature also
+	includes the return type.
+
 2003-07-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* namespace.cs: Cache the result of the namespace computation,
