@@ -12,11 +12,13 @@
 namespace Mono.Languages
 {
 	using System;
-	using System.Reflection;
-	using System.Reflection.Emit;
 	using System.Collections;
+	using System.Diagnostics;
 	using System.IO;
 	using System.Globalization;
+	using System.Reflection;
+	using System.Reflection.Emit;
+
 	using Mono.MonoBASIC;
 	using Mono.GetOptions;
 
@@ -68,8 +70,7 @@ namespace Mono.Languages
 		[Option(-1, "[Mono] References packages listed. {packagelist}=package,...", "pkg")]
 		public WhatToDoNext ReferenceSomePackage(string packageName)
 		{
-			ReferencePackage(packageName);
-			return WhatToDoNext.GoAhead;
+			return ReferencePackage(packageName)?WhatToDoNext.GoAhead:WhatToDoNext.AbandonProgram;
 		}
 
 		[Option("[Mono] Don\'t assume the standard library", "nostdlib")]
@@ -402,9 +403,55 @@ namespace Mono.Languages
 			return 0;
 		}
 
-		public void ReferencePackage(string packageName)
+		public bool ReferencePackage(string packageName)
 		{
-			//TODO: do it (See what mcs does)
+			if (packageName == ""){
+				DoAbout ();
+				return false;
+			}
+				
+			ProcessStartInfo pi = new ProcessStartInfo ();
+			pi.FileName = "pkg-config";
+			pi.RedirectStandardOutput = true;
+			pi.UseShellExecute = false;
+			pi.Arguments = "--libs " + packageName;
+			Process p = null;
+			try {
+				p = Process.Start (pi);
+			} catch (Exception e) {
+				Report.Error (-27, "Couldn't run pkg-config: " + e.Message);
+				return false;
+			}
+
+			if (p.StandardOutput == null){
+				Report.Warning (-27, "Specified package did not return any information");
+			}
+			string pkgout = p.StandardOutput.ReadToEnd ();
+			p.WaitForExit ();
+			if (p.ExitCode != 0) {
+				Report.Error (-27, "Error running pkg-config. Check the above output.");
+				return false;
+			}
+			p.Close ();
+			
+			if (pkgout != null) {
+				string [] xargs = pkgout.Trim (new Char [] {' ', '\n', '\r', '\t'}).
+					Split (new Char [] { ' ', '\t'});
+				foreach(string arg in xargs) {
+					string[] zargs = arg.Split(':', '=');
+					try {
+						if (zargs.Length > 1)
+							AddedReference = zargs[1];
+						else
+							AddedReference = arg;
+					} catch (Exception e) {
+						Report.Error (-27, "Something wrong with argument (" + arg + ") in 'pkg-config --libs' output: " + e.Message);
+						return false;
+					}
+				}
+			}
+
+			return true;
 		}
 
 		public void LoadModule (MethodInfo adder_method, string module)
