@@ -128,6 +128,11 @@ public class StringTest : Assertion
 				AssertEquals (s, res);
 			}    
 		}    
+
+		unsafe {
+			AssertEquals (String.Empty, new String ((sbyte*)null));
+			AssertEquals (String.Empty, new String ((char*)null, 0, 0));
+		}
 	}
 
 	public void TestLength ()

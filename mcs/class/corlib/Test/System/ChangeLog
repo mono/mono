@@ -1,3 +1,7 @@
+2005-03-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* StringTest.cs: Add some unsafe ctor tests.
+
 2005-02-19  Ben Maurer  <bmaurer@ximian.com>
 
 	* RandomTest.cs (NextDouble): Disable. See comment.
