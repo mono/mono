@@ -169,11 +169,7 @@ namespace Mono.Xml.Xsl
 		private void CheckState ()
 		{
 			if (_state == WriteState.Element) {
-				//Push scope to allow to unwind namespaces scope back in WriteEndElement
-				//Subject to optimization - avoid redundant push/pop by moving 
-				//namespaces to WriteStartElement
 				//Emit pending attributes
-				newNamespaces.Clear (); //remember indexes of new prefexes
 				_nsManager.PushScope ();
 				foreach (string prefix in _currentNamespaceDecls.Keys)
 				{
@@ -203,7 +199,7 @@ namespace Mono.Xml.Xsl
 							prefix = "xp_" + _xpCount++;
 						if (existing != prefix) {
 							newNamespaces.Add (prefix);
-							_currentNamespaceDecls [prefix] = attr.Namespace;
+							_currentNamespaceDecls.Add (prefix, attr.Namespace);
 							_nsManager.AddNamespace (prefix, attr.Namespace);
 						}
 					}
@@ -222,6 +218,7 @@ namespace Mono.Xml.Xsl
 				_currentNamespaceDecls.Clear ();
 				//Attributes flushed, state is Content now				
 				_state = WriteState.Content;
+				newNamespaces.Clear ();
 			}
 			_canProcessAttributes = false;
 		}
@@ -251,7 +248,8 @@ namespace Mono.Xml.Xsl
 			Emitter.WriteStartElement (prefix, localName, nsURI);
 			_state = WriteState.Element;
 			if (_nsManager.LookupNamespace (prefix, false) != nsURI)
-				_nsManager.AddNamespace (prefix, nsURI);
+//				_nsManager.AddNamespace (prefix, nsURI);
+				_currentNamespaceDecls [prefix] = nsURI;
 			pendingAttributesPos = 0;
 			_canProcessAttributes = true;
 		}

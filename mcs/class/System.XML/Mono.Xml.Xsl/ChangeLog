@@ -1,5 +1,10 @@
 2005-03-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* GenericOutputter.cs : When WriteStartElement() requires to add
+	  new namespace declaration, _currentNamespaceDecls needs to be set.
+
+2005-03-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* GenericOutputter.cs : for duplicate attribute in an element, no need
 	  to keep previous prefix.
 
