@@ -551,4 +551,24 @@ public class X
 		Console.WriteLine (myVar);
 	}
 
+	//
+	// Bug 58322
+	//
+	public static void test37 ()
+	{
+		int x = 0;
+		int y = 0;
+		switch (x) {
+		case 0:
+			switch (y) {
+			case 0:
+				goto k_0;
+			default:
+				throw new Exception ();
+			}
+		}
+
+	k_0:
+		;
+	}
 }
