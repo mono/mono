@@ -303,7 +303,7 @@ namespace System.Data {
 					if(typeCode != TypeCode.Int16 &&
 					   typeCode != TypeCode.Int32 &&
 					   typeCode != TypeCode.Int64)
-						throw new ArgumentException("AutoIncrement is true, but the value is set to a type unsupported by AutoIncrement.");
+						AutoIncrement = false;
 				}
 				_dataType = value;
 			}

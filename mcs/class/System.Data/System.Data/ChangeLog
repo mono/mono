@@ -1,3 +1,8 @@
+2003-03-26  Ville Palo <vi64pa@kolumbus.fi>
+
+	* DataColumn.cs: If DataType if set to something else than short, int
+	or long and AutoIncrement is true, AutoIncrement is must set to false.
+	
 2003-03-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataRow.cs:
