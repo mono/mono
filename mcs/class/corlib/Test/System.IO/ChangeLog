@@ -1,4 +1,8 @@
-2004-06-16  Atsushi Enomoto  <atsushi@ximian.com>
+2004-06-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	  FileInfoTest.cs : more '/' and Path.DirectorySeparatorChar fixes
+
+2004-06-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DirectoryInfoTest.cs,
 	  DirectoryTest.cs,
