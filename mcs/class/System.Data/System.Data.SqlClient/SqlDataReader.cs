@@ -164,8 +164,16 @@ namespace System.Data.SqlClient {
 			object value = GetValue (i);
 			if (!(value is byte []))
 				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
-			Array.Copy ((byte []) value, (int) dataIndex, buffer, bufferIndex, length);
-			return ((byte []) value).Length - dataIndex;
+			
+			if ( buffer == null ) {
+				// Return length of data
+				return ((byte []) value).Length;
+			}
+			else {
+				// Copy data into buffer
+				Array.Copy ((byte []) value, (int) dataIndex, buffer, bufferIndex, length);
+				return ((byte []) value).Length - dataIndex;
+			}
 		}
 
 		public char GetChar (int i)
