@@ -233,6 +233,9 @@ internal class Win32VersionResource : Win32Resource {
 	int file_subtype;
 	long file_date;
 
+	int file_lang;
+	int file_codepage;
+
 	Hashtable properties;
 
 	public Win32VersionResource (int id, int language) : base (Win32ResourceType.RT_VERSION, id, language) {
@@ -246,6 +249,9 @@ internal class Win32VersionResource : Win32Resource {
 		file_type = 2;
 		file_subtype = 0;
 		file_date = 0;
+
+		file_lang = 0x7f;
+		file_codepage = 1200;
 
 		properties = new Hashtable ();
 
@@ -265,7 +271,7 @@ internal class Win32VersionResource : Win32Resource {
 		}
 
 		set {
-			int[] ver = new int [4] { 0, 0, 0, 0 };
+			long[] ver = new long [4] { 0, 0, 0, 0 };
 			if (value != null) {
 				string[] parts = value.Split ('.');
 				
@@ -354,6 +360,15 @@ internal class Win32VersionResource : Win32Resource {
 		}
 	}
 
+	public virtual int FileLanguage {
+		get {
+			return file_lang;
+		}
+		set {
+			file_lang = value;
+		}
+	}
+
 	private void emit_padding (BinaryWriter w) {
 		Stream ms = w.BaseStream;
 
@@ -430,8 +445,8 @@ internal class Win32VersionResource : Win32Resource {
 			if ((ms.Position % 4) != 0)
 				w.Write ((short)0);
 
-			w.Write ((short)0x7f);
-			w.Write ((short)1200);
+			w.Write ((short)file_lang);
+			w.Write ((short)file_codepage);
 
 			patch_length (w, var_pos);
 
@@ -451,7 +466,7 @@ internal class Win32VersionResource : Win32Resource {
 			w.Write ((short)0);
 			w.Write ((short)0);
 			w.Write ((short)1);
-			w.Write ("007f04b0".ToCharArray ());
+			w.Write (String.Format ("{0:x4}{1:x4}", file_lang, file_codepage).ToCharArray ());
 
 			emit_padding (w);
 

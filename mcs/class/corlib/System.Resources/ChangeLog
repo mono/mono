@@ -5,6 +5,9 @@
 	Win32ResFileReader and Win32IconFileReader classes and the 
 	corresponding resource types.
 
+	* Win32Resources.cs (Win32VersionInfoResource): Fix version number 
+	calculation. Add Language property.
+
 2004-01-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Win32Resources.cs: New file.
