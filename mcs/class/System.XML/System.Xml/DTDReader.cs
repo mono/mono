@@ -1317,16 +1317,6 @@ namespace System.Xml
 			return currentInput.ReadChar ();
 		}
 
-		private string ExpandSurrogateChar (int ch)
-		{
-			if (ch < Char.MaxValue)
-				return ((char) ch).ToString ();
-			else {
-				char [] tmp = new char [] {(char) (ch / 0x10000 + 0xD800 - 1), (char) (ch % 0x10000 + 0xDC00)};
-				return new string (tmp);
-			}
-		}
-
 		// The reader is positioned on the first character after
 		// the leading '<!--'.
 		private void ReadComment ()
@@ -1524,10 +1514,19 @@ namespace System.Xml
 
 		private void AppendValueChar (int ch)
 		{
-			if (ch < Char.MaxValue)
+			//See http://www.faqs.org/rfcs/rfc2781.html for used algorithm
+			if (ch < 0x10000) {
 				valueBuffer.Append ((char) ch);
+				return;
+			}
+			if (ch > 0x10FFFF)
+				throw new XmlException ("The numeric entity value is too large", null, LineNumber, LinePosition);
 			else
-				valueBuffer.Append (ExpandSurrogateChar (ch));
+			{
+				int utag = ch - 0x10000;
+				valueBuffer.Append((char) ((utag >> 10) + 0xD800));
+				valueBuffer.Append((char) ((utag & 0x3FF) + 0xDC00));
+			}
 		}
 
 		private string CreateValueString ()

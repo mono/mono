@@ -1083,5 +1083,22 @@ namespace MonoTests.System.Xml
 			}
 		}
 #endif
+
+		[Test]
+		public void SurrogatePair ()
+		{
+			string xml = @"<!DOCTYPE test [<!ELEMENT test ANY>
+		<!ENTITY % a '<!ENTITY ref " + "\"\uF090\u8080\"" + @">'>
+		%a;
+	]>
+	<test>&ref;</test>";
+			XmlValidatingReader r = new XmlValidatingReader (xml, XmlNodeType.Document, null);
+			r.Read ();
+			r.Read ();
+			r.Read ();
+			r.Read ();
+			AssertEquals ("#1", 0xf090, (int) r.Value [0]);
+			AssertEquals ("#1", 0x8080, (int) r.Value [1]);
+		}
 	}
 }

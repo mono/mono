@@ -100,9 +100,10 @@ namespace System.Xml
 
 			peek_char = reader.Read ();
 			if (peek_char >= 0xD800 && peek_char <= 0xDBFF) {
+				peek_char = 0x10000+((peek_char-0xD800)<<10);
 				int i = reader.Read ();
 				if (i >= 0xDC00 && i <= 0xDFFF)
-					peek_char += i;
+					peek_char += (i-0xDC00);
 			}
 			has_peek = true;
 			return peek_char;
@@ -124,17 +125,8 @@ namespace System.Xml
 				return ch;
 			}
 
-			if (has_peek) {
-				ch = peek_char;
-				has_peek = false;
-			} else {
-				ch = reader.Read ();
-				if (ch >= 0xD800 && ch <= 0xDBFF) {
-					int i = reader.Read ();
-					if (i > 0xDC00 && i <= 0xDFFF)
-						ch += i;
-				}
-			}
+			ch = PeekChar ();
+			has_peek = false;
 
 			if (ch == '\n') {
 				line++;

@@ -1082,27 +1082,43 @@ namespace System.Xml
 			if (peekCharsLength == peekCharsIndex) {
 				if (!ReadTextReader ())
 					return -1;
-				else
 					return PeekChar ();
 			}
 
+			char c = peekChars [peekCharsIndex];
+			if (c == 0)
+				return -1;
+			if (!char.IsSurrogate (c))
+				return c;
+			if (peekCharsLength == peekCharsIndex+1) {
+				if (!ReadTextReader ())
+					//FIXME: copy MS.NET behaviour when unpaired surrogate found
 			return peekChars [peekCharsIndex];
+				return PeekChar ();
+			}
+            
+			char highhalfChar = peekChars [peekCharsIndex];
+			char lowhalfChar = peekChars [peekCharsIndex+1];
+
+			if (((highhalfChar & 0xFC00) != 0xD800) || ((lowhalfChar & 0xFC00) != 0xDC00))
+				//FIXME: copy MS.NET behaviour when unpaired surrogate found
+				return highhalfChar;
+			return 0x10000 + (highhalfChar-0xD800)*0x400 + (lowhalfChar-0xDC00);
 		}
 
 		private int ReadChar ()
 		{
-			int ch;
+			int ch = PeekChar ();
 
-			if (peekCharsLength == peekCharsIndex) {
-				if (!ReadTextReader ())
-					return -1;
-			}
-			ch = peekChars [peekCharsIndex++];
+			peekCharsIndex++;
+
+			if (ch >= 0x10000)
+				peekCharsIndex++; //Increment by 2 when a compound UCS-4 character was found
 
 			if (ch == '\n') {
 				line++;
 				column = 1;
-			} else if (ch == 0) {
+			} else if (ch == -1) {
 				return -1;
 			} else {
 				column++;
@@ -1117,16 +1133,6 @@ namespace System.Xml
 			peekCharsIndex = 0;
 			peekCharsLength = reader.Read (peekChars, 0, peekCharCapacity);
 			return (peekCharsLength != 0);
-		}
-
-		private string ExpandSurrogateChar (int ch)
-		{
-			if (ch < Char.MaxValue)
-				return ((char) ch).ToString ();
-			else {
-				char [] tmp = new char [] {(char) (ch / 0x10000 + 0xD800 - 1), (char) (ch % 0x10000 + 0xDC00)};
-				return new string (tmp);
-			}
 		}
 
 		private bool ReadContent ()

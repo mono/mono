@@ -1,3 +1,7 @@
+2005-03-09  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextReaderTests.cs : added SurrogatePair() based on bug #73513.
+
 2005-03-07  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlDocumentTests.cs : Added ReadNodeEntityReferenceFillsChildren.
