@@ -597,7 +597,7 @@ namespace System.Xml
 			{
 				string existingPrefix = namespaceManager.LookupPrefix (ns);
 
-				if (existingPrefix == null) 
+				if (existingPrefix == null || existingPrefix == "") 
 				{
 					newAttributeNamespaces.Add (ns);
 					if (prefix == "" || namespaceManager.LookupNamespace (prefix) != null)

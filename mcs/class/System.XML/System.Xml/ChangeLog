@@ -1,3 +1,8 @@
+2003-09-14  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* XmlTextWriter.cs: Attributes that have a namespace must be always
+	  prefixed.
+
 2003-09-13  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlTextWriterOpenElement.cs : Changed to receive prefix and localName
@@ -2318,4 +2323,3 @@ Wed Jul 24 13:16:19 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* XmlQualifiedName.cs: Fixed compile errors so it would build. Still has
 	MonoTODO's
-
