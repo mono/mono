@@ -1,3 +1,7 @@
+2004-09-15  John Luke  <john.luke@gmail.com>
+
+	* AssemblyInfo.cs: add CLSCompliant(true) attribute
+
 2004-08-11  Jambunathan K  <kjambunathan@novell.com>
 	* OptionList.cs: Fixed NormalizeArgs so that when an option starts
 	  with a '/' or a '-', the option and the argument pair gets split
