@@ -281,8 +281,8 @@ namespace System.Web.UI.WebControls
 			if(EnableClientScript)
 			{
 				// By now, return false
-				return false;
-				////throw new NotImplementedException();
+				//return false;
+				throw new NotImplementedException();
 				////TODO: I need to get the (Browser->Dom_version_major >= 4 &&
 				////                         Brower->Ecma_script_version >= 1.2)
 			}

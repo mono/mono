@@ -1,6 +1,15 @@
 
 2002-10-28      Gaurav Vaish <gvaish_mono@lycos.com>
 
+	* BaseValidator.cs      - DetermineRenderUpLevel()       : Uncomment
+	                          the NotImplementedException being thrown.
+	* DataGridPagerStyle.cs - Mode { set; }                  : Implemented.
+	* DataGridLinkButton.cs - Added new class (private)      : Implemented.
+	* DataGrid.cs           - InitializePager(DataGridItem, int,
+	                          PagedDataSource)               : Implemented.
+
+2002-10-28      Gaurav Vaish <gvaish_mono@lycos.com>
+
 	* DataList.cs          - PrepareControlHierarchy()       : Implemented.
 
 2002-10-28      Gaurav Vaish <gvaish_mono@lycos.com>

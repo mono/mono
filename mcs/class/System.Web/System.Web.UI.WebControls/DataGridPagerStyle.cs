@@ -63,7 +63,7 @@ namespace System.Web.UI.WebControls
 			{
 				if(!Enum.IsDefined(typeof(PagerMode), value))
 				{
-					throw new NotImplementedException();
+					throw new ArgumentOutOfRangeException("value");
 				}
 				ViewState["Mode"] = value;
 				Set(MODE);

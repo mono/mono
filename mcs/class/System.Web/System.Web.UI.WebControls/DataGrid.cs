@@ -13,6 +13,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Web;
 using System.Web.UI;
 using System.Web.Util;
@@ -1135,7 +1136,6 @@ namespace System.Web.UI.WebControls
 			pagedDataSource = null;
 		}
 
-		[MonoTODO]
 		private DataGridItem CreateItem(int itemIndex, int dsIndex, ListItemType type,
 		                                bool bind, object item, DataGridColumn[] columns,
 		                                TableRowCollection rows, PagedDataSource dataSrc)
@@ -1164,7 +1164,7 @@ namespace System.Web.UI.WebControls
 				}
 			} else
 			{
-				InitializePager(retVal, columns);
+				InitializePager(retVal, columns.Length, dataSrc);
 				OnItemCreated(args);
 				rows.Add(retVal);
 			}
@@ -1189,10 +1189,104 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[MonoTODO]
-		protected virtual void InitializePager(DataGridItem item, DataGridColumn[] columns)
+		protected virtual void InitializePager(DataGridItem item,
+		                       int columnSpan, PagedDataSource pagedDataSource)
 		{
-			throw new NotImplementedException();
+			TableCell toAdd = new TableCell();
+			toAdd.ColumnSpan = columnSpan;
+			
+			if(PagerStyle.Mode == PagerMode.NextPrev)
+			{
+				if(!pagedDataSource.IsFirstPage)
+				{
+					LinkButton link = new DataGridLinkButton();
+					link.Text = PagerStyle.PrevPageText;
+					link.CommandName = "Page";
+					link.CommandArgument = "Prev";
+					link.CausesValidation = false;
+					toAdd.Controls.Add(link);
+				} else
+				{
+					Label label = new Label();
+					label.Text = PagerStyle.PrevPageText;
+					toAdd.Controls.Add(label);
+				}
+				toAdd.Controls.Add(new LiteralControl("&nbsp;"));
+				if(!pagedDataSource.IsLastPage)
+				{
+					LinkButton link = new DataGridLinkButton();
+					link.Text = PagerStyle.NextPageText;
+					link.CommandName = "Page";
+					link.CommandArgument = "Next";
+					link.CausesValidation = false;
+					toAdd.Controls.Add(link);
+				} else
+				{
+					Label label = new Label();
+					label.Text = PagerStyle.NextPageText;
+					toAdd.Controls.Add(label);
+				}
+			} else
+			{
+				int pageCount = pagedDataSource.PageCount;
+				int currPage  = pagedDataSource.CurrentPageIndex + 1;
+				int btnCount  = PagerStyle.PageButtonCount;
+				int numberOfPages = btnCount;
+				if(numberOfPages > pageCount)
+					numberOfPages = pageCount;
+				int firstPageNumber = 1; // 10
+				int lastPageNumber  = numberOfPages; // 11
+				if(currPage > lastPageNumber)
+				{
+					firstPageNumber = (pagedDataSource.CurrentPageIndex / btnCount) * btnCount + 1;
+					lastPageNumber  = firstPageNumber + btnCount - 1;
+					if(lastPageNumber > pageCount)
+						lastPageNumber = pageCount;
+					if((lastPageNumber - firstPageNumber + 1) < btnCount)
+						firstPageNumber = Math.Max(1, lastPageNumber - btnCount + 1);
+				}
+				if(firstPageNumber != 1)
+				{
+					LinkButton toAddBtn = new DataGridLinkButton();
+					toAddBtn.Text = "...";
+					toAddBtn.CommandName = "Page";
+					toAddBtn.CommandArgument = (lastPageNumber - 1).ToString(NumberFormatInfo.InvariantInfo);
+					toAddBtn.CausesValidation = false;
+					toAdd.Controls.Add(toAddBtn);
+					toAdd.Controls.Add(new LiteralControl("&nbsp;"));
+				}
+				for(int i = firstPageNumber; i <= lastPageNumber; i++)
+				{
+					string argText = i.ToString(NumberFormatInfo.InvariantInfo);
+					if(i == currPage)
+					{
+						Label cPageLabel = new Label();
+						cPageLabel.Text = argText;
+						toAdd.Controls.Add(cPageLabel);
+					} else
+					{
+						LinkButton indexButton = new DataGridLinkButton();
+						indexButton.Text = argText;
+						indexButton.CommandName = "Page";
+						indexButton.CommandArgument = argText;
+						indexButton.CausesValidation = false;
+						toAdd.Controls.Add(indexButton);
+					}
+					if(i < lastPageNumber)
+						toAdd.Controls.Add(new LiteralControl("&nbsp;"));
+				}
+				if(pageCount > lastPageNumber)
+				{
+					toAdd.Controls.Add(new LiteralControl("&nbsp;"));
+					LinkButton contLink = new DataGridLinkButton();
+					contLink.Text = "...";
+					contLink.CommandName = "Page";
+					contLink.CommandArgument = (lastPageNumber + 1).ToString(NumberFormatInfo.InvariantInfo);
+					contLink.CausesValidation = false;
+					toAdd.Controls.Add(contLink);
+				}
+			}
+			item.Cells.Add(toAdd);
 		}
 
 		private PagedDataSource CreatePagedDataSource()
@@ -1212,7 +1306,6 @@ namespace System.Web.UI.WebControls
 		///<summary>
 		/// UnDocumented method
 		/// </summary>
-		[MonoTODO]
 		protected ArrayList CreateColumnSet(PagedDataSource source, bool useDataSource)
 		{
 			DataGridColumn[] cols = new DataGridColumn[Columns.Count];
