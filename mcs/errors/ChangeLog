@@ -1,3 +1,7 @@
+2004-12-06  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (test-multi-local): Fix compile command.
+
 2004-12-02  Duncan Mak  <duncan@ximian.com>
 
 	* cs0122-7.cs: 

@@ -64,7 +64,7 @@ test-multi-local:
 		test_out=`echo $$i | sed 's,.cs$$,.out,'` ; \
 		test_log=`echo $$i | sed 's,.cs$$,.log,'` ; \
 		echo -n "Running test $$i ... "; \
-		$(INTERNAL_MCS) $$i > $$test_out 2>&1 || : ; \
+		$(CSCOMPILE) $$i > $$test_out 2>&1 || : ; \
 		if $(RUNTEST_PL) $$i $$test_out > $$test_log 2>&1 ; \
 		then echo OK; rm -f $$test_out $$test_log ; \
 		     echo "PASS: $$i" >> $$testsuite_log ; \
