@@ -308,15 +308,23 @@ namespace Mono.WebServices
 			}
 
 			// Serialize headers
+			
+			bool writtenHeader = false;
 			foreach (object ob in msgbin.Extensions)
 			{
 				SoapHeaderBinding hb = ob as SoapHeaderBinding;
 				if (hb == null) continue;
 				
-				xtw.WriteStartElement ("soap", "Header", SoapEnvelopeNamespace);
+				if (!writtenHeader) {
+					xtw.WriteStartElement ("soap", "Header", SoapEnvelopeNamespace);
+					writtenHeader = true;
+				}
+				
 				WriteHeader (xtw, hb);
-				xtw.WriteEndElement ();
 			}
+			
+			if (writtenHeader)
+				xtw.WriteEndElement ();
 
 			// Serialize body
 			xtw.WriteStartElement ("soap", "Body", SoapEnvelopeNamespace);

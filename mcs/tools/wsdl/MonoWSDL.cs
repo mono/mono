@@ -150,19 +150,23 @@ namespace Mono.WebServices
 				hasWarnings = true;
 			}
 			
-			ServiceDescription rootDesc = null;
-			foreach (ServiceDescription desc in descriptions) {
-				if (desc.Services.Count > 0) {
-					rootDesc = desc;
-					break;
-				}
-			}
-				
-			if (rootDesc != null)
+			string fileName = null;
+			bool hasBindings = false;
+			
+			foreach (ServiceDescription desc in descriptions)
 			{
-				string serviceName = rootDesc.Services[0].Name;
-				WriteCodeUnit(codeUnit, serviceName);
+				if (fileName == null && desc.Services.Count > 0)
+					fileName = desc.Services[0].Name;
+
+				if (desc.Bindings.Count > 0 || desc.Services.Count > 0)
+					hasBindings = true;
 			}
+			
+			if (fileName == null)
+				fileName = "output";
+			
+			if (hasBindings)
+				WriteCodeUnit (codeUnit, fileName);
 			
 			return hasWarnings;
 		}
@@ -504,6 +508,9 @@ namespace Mono.WebServices
 				
 				DiscoveryClientProtocol dcc = CreateClient ();
 								
+				if (!url.StartsWith ("http://") && !url.StartsWith ("https://") && !url.StartsWith ("file://"))
+					url = "file://" + Path.GetFullPath (url);
+					
 				dcc.DiscoverAny (url);
 				dcc.ResolveAll ();
 				
@@ -529,6 +536,11 @@ namespace Mono.WebServices
 					return 1;
 				else
 					return 0;
+			}
+			catch (NullReferenceException e)
+			{
+				Console.WriteLine (e);
+				return 2;
 			}
 			catch (Exception exception)
 			{

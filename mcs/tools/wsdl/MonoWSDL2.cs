@@ -123,10 +123,14 @@ namespace Mono.WebServices
 				codeUnit.Namespaces.Add (proxyCode);
 				
 				WebReferenceCollection references = new WebReferenceCollection ();
-				foreach (string url in urls) 
+				foreach (string murl in urls) 
 				{
 					DiscoveryClientProtocol dcc = CreateClient ();
-									
+
+					string url = murl;
+					if (!url.StartsWith ("http://") && !url.StartsWith ("https://") && !url.StartsWith ("file://"))
+						url = "file://" + Path.GetFullPath (url);
+
 					dcc.DiscoverAny (url);
 					dcc.ResolveAll ();
 					
@@ -218,24 +222,25 @@ namespace Mono.WebServices
 			
 			if (hasWarnings) WriteText ("",0,0);
 				
-			ServiceDescription rootDesc = null;
+			string filename = outFilename;
+			bool hasBindings = false;
 			
-			foreach (object doc in references[0].Documents.Values) {
-				ServiceDescription desc = doc as ServiceDescription;
-				if (desc != null && desc.Services.Count > 0) {
-					rootDesc = desc;
-					break;
-				}
-			}
-				
-			if (rootDesc != null)
+			foreach (object doc in references[0].Documents.Values)
 			{
-				string filename;
-				if (outFilename != null)
-					filename = outFilename;
-				else
-					filename = rootDesc.Services[0].Name	+ "." + provider.FileExtension;
+				ServiceDescription desc = doc as ServiceDescription;
+				if (desc == null) continue;
 				
+				if (desc.Services.Count > 0 && filename == null)
+					filename = desc.Services[0].Name + "." + provider.FileExtension;
+					
+				if (desc.Bindings.Count > 0 || desc.Services.Count > 0)
+					hasBindings = true;
+			}
+			
+			if (filename == null)
+				filename = "output." + provider.FileExtension;
+			
+			if (hasBindings) {
 				WriteText ("Writing file '" + filename + "'", 0, 0);
 				StreamWriter writer = new StreamWriter(filename);
 				

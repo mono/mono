@@ -1,3 +1,11 @@
+2004-09-01  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* MonoWSDL.cs, MonoWSDL2.cs: Use a valid default file name when the wsdl
+	  documents does not contain a service from which to take the name.
+	  Use the "file://" prefix when using the DiscoveryClientProtocol class,
+	  since in MS.NET does not supports plain file paths.
+	* SampleGenerator.cs: Fixed header output.
+
 2004-08-24  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* MonoWSDL.cs, MonoWSDL2.cs: Handle files with absolute path names.
