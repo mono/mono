@@ -1,3 +1,8 @@
+2004-11-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlWriter.cs : after WriteAttributes(), argument XmlReader must
+	  move to element. This fixes bug #69350.
+
 2004-10-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTextReader.cs :

@@ -111,6 +111,7 @@ namespace System.Xml
 				do {
 					WriteAttribute (reader, defattr);
 				} while (reader.MoveToNextAttribute ());
+				reader.MoveToElement ();
 				break;
 			default:
 				throw new XmlException("NodeType is not one of Element, Attribute, nor XmlDeclaration.");
