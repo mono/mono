@@ -219,7 +219,7 @@ namespace System.Xml.Serialization {
 			{
 				case "boolean": return "(" + value + "?\"true\":\"false\")";
 				case "unsignedByte": return value + ".ToString()";
-				case "char": return value + ".ToString()";
+				case "char": return "((int)(" + value + ")).ToString()";
 				case "dateTime": return value + ".ToString(\"yyyy-MM-ddTHH:mm:ss.fffffffzzz\", CultureInfo.InvariantCulture)";
 				case "date": return value + ".ToString(\"yyyy-MM-dd\", CultureInfo.InvariantCulture)";
 				case "time": return value + ".ToString(\"HH:mm:ss.fffffffzzz\", CultureInfo.InvariantCulture";

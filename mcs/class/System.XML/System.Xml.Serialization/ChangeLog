@@ -1,3 +1,18 @@
+2004-03-24  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SerializationCodeGenerator.cs: Several fixes: generate valid names for 
+	  WriteRoot_ and ReadRoot_ methods. Cast result of ReadTypedPrimitive to
+	  the adequate type. Set the default value of members that do have a default
+	  value. Other minor fixes.
+	* SoapReflectionImporter.cs, XmlReflectionImporter.cs: All maps must derive
+	  from typeof(object) map, even those that have another base class.
+	* XmlCustomFormatter.cs: Fixed generation of conversion from char to string.
+	  It must serialize the char as number, not as character.
+	* XmlSerializationReaderInterpreter.cs: Set the default value of members 
+	  that do have a default value.
+	* XmlTypeMapping.cs: Added property MembersWithDefault, which returns a list
+	  of members that have a default value.
+
 2004-03-15  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* XmlSchemaImporter.cs: Import IXmlSerializable types as DataSet, like in MS.NET.

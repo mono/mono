@@ -200,6 +200,16 @@ namespace System.Xml.Serialization
 
 		void ReadMembers (ClassMap map, object ob, bool isValueList, bool readByOrder)
 		{
+			// Set the default values of the members
+			if (map.MembersWithDefault != null)
+			{
+				ArrayList members = map.MembersWithDefault;
+				for (int n=0; n<members.Count; n++) {
+					XmlTypeMapMember mem = (XmlTypeMapMember) members[n];
+					SetMemberValue (mem, ob, mem.DefaultValue, isValueList);
+				}
+			}
+			
 			if (map.AttributeMembers != null)
 			{
 				// Reads attributes

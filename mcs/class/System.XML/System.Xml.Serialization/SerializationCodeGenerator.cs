@@ -184,8 +184,9 @@ namespace System.Xml.Serialization
 				else
 					_result.Namespace = namspace;
 				
-				_result.WriteMethodName = "WriteRoot_" + typeName;
-				_result.ReadMethodName = "ReadRoot_" + typeName;
+				_result.WriteMethodName = GetUniqueName ("rwo", _typeMap, "WriteRoot_" + typeName);
+				_result.ReadMethodName = GetUniqueName ("rro", _typeMap, "ReadRoot_" + typeName);
+
 				_result.Mapping = _typeMap;
 				
 				ArrayList maps = (ArrayList) mapsByNamespace [_result.Namespace];
@@ -1265,7 +1266,7 @@ namespace System.Xml.Serialization
 
 			WriteLine ((first?"":"else ") + "if (t.Name != " + GetLiteral (typeMap.XmlType) + " || t.Namespace != " + GetLiteral (typeMap.XmlTypeNamespace) + ")");
 			if (typeMap.TypeData.Type == typeof(object))
-				WriteLine ("\treturn ReadTypedPrimitive (t);");
+				WriteLine ("\treturn " + GetCast (typeMap.TypeData, "ReadTypedPrimitive (t)") + ";");
 			else
 				WriteLine ("\tthrow CreateUnknownTypeException(t);");
 
@@ -1303,6 +1304,16 @@ namespace System.Xml.Serialization
 		{
 			XmlTypeMapping typeMap = xmlMap as XmlTypeMapping;
 			Type xmlMapType = (typeMap != null) ? typeMap.TypeData.Type : typeof(object[]);
+			
+			// Load the default value of members
+			if (map.MembersWithDefault != null)
+			{
+				ArrayList members = map.MembersWithDefault;
+				for (int n=0; n<members.Count; n++) {
+					XmlTypeMapMember mem = (XmlTypeMapMember) members[n];
+					GenerateSetMemberValue (mem, ob, GetLiteral (mem.DefaultValue), isValueList);
+				}
+			}
 			
 			// A value list cannot have attributes
 
@@ -1512,7 +1523,7 @@ namespace System.Xml.Serialization
 									WriteLine (list + " = " + GenerateGetMemberValue (info.Member, ob, isValueList) + ";");
 								else { 
 									WriteLine (list + " = " + GenerateCreateList (info.MappedType.TypeData.Type) + ";");
-									GenerateSetMemberValue (info.Member, ob, list, isValueList);
+									GenerateSetMemberValue (info.Member, ob, GetCast (info.Member.TypeData,list), isValueList);
 								}
 								WriteLine ("AddFixup (new CollectionFixup (" + list + ", new XmlSerializationCollectionFixupCallback (" + GetFillListName(info.Member.TypeData) + "), fixup.Ids[" + info.Member.Index + "]));");
 								WriteLine ("fixup.Ids[" + info.Member.Index + "] = null;");		// The member already has the value, no further fix needed.
@@ -1762,7 +1773,7 @@ namespace System.Xml.Serialization
 			else
 			{
 				WriteLineInd ("if (" + list + " == null)");
-				WriteLine ("throw CreateReadOnlyCollectionException (" + GetLiteral (typeMap.TypeFullName) + ")");
+				WriteLine ("throw CreateReadOnlyCollectionException (" + GetLiteral (typeMap.TypeFullName) + ");");
 				Unindent ();
 				WriteLineInd ("if (!ReadNull()) {");
 			}
@@ -1886,7 +1897,7 @@ namespace System.Xml.Serialization
 
 				WriteLine (td.FullTypeName + " dest = (" + td.FullTypeName + ") list;");
 				WriteLine ("foreach (object ob in (IEnumerable)source)");
-				WriteLine ("\t dest.Add (ob)");
+				WriteLine ("\t dest.Add (ob);");
 				WriteLineUni ("}");
 				WriteLine ("");
 			}
@@ -1901,7 +1912,7 @@ namespace System.Xml.Serialization
 		{
 			WriteLine ("XmlQualifiedName t = GetXsiType();");
 			WriteLine ("if (t == null) t = new XmlQualifiedName (" + GetLiteral(typeMap.XmlType) + ", " + GetLiteral(typeMap.Namespace) + ");");
-			WriteLine ("return ReadTypedPrimitive (t);");
+			WriteLine ("return " + GetCast (typeMap.TypeData, "ReadTypedPrimitive (t)") + ";");
 		}
 
 		void GenerateReadEnumElement (XmlTypeMapping typeMap, string isNullable)
@@ -2194,6 +2205,7 @@ namespace System.Xml.Serialization
 		
 		string GetUniqueName (string uniqueGroup, object ob, string name)
 		{
+			name = name.Replace ("[]","_array");
 			Hashtable names = (Hashtable) _uniqueNames [uniqueGroup];
 			if (names == null) {
 				names = new Hashtable ();

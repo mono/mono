@@ -114,9 +114,11 @@ namespace System.Xml.Serialization
 			// Returns the map for a subtype of this map's type
 
 			if (TypeFullName == objectFullTypeName) return this;
-			foreach (XmlTypeMapping map in _derivedTypes)
+			for (int n=0; n<_derivedTypes.Count; n++) {
+				XmlTypeMapping map = (XmlTypeMapping) _derivedTypes[n];
 				if (map.TypeFullName == objectFullTypeName) return map;
-
+			}
+			
 			return null;
 		}
 
@@ -146,6 +148,7 @@ namespace System.Xml.Serialization
 		XmlTypeMapElementInfo[] _elementsByIndex;
 		ArrayList _flatLists;
 		ArrayList _allMembers = new ArrayList ();
+		ArrayList _membersWithDefault;
 		XmlTypeMapMemberAnyElement _defaultAnyElement;
 		XmlTypeMapMemberAnyAttribute _defaultAnyAttribute;
 		XmlTypeMapMemberNamespaces _namespaceDeclarations;
@@ -156,6 +159,12 @@ namespace System.Xml.Serialization
 		public void AddMember (XmlTypeMapMember member)
 		{
 			_allMembers.Add (member);
+			
+			if (!(member.DefaultValue is System.DBNull)) {
+				if (_membersWithDefault == null) _membersWithDefault = new ArrayList ();
+				_membersWithDefault.Add (member);
+			}
+			
 			if (member is XmlTypeMapMemberAttribute)
 			{
 				XmlTypeMapMemberAttribute atm = (XmlTypeMapMemberAttribute)member;
@@ -307,6 +316,11 @@ namespace System.Xml.Serialization
 		public ArrayList FlatLists
 		{
 			get { return _flatLists; }
+		}
+		
+		public ArrayList MembersWithDefault
+		{
+			get { return _membersWithDefault; }
 		}
 
 		public XmlTypeMapMember XmlTextCollector

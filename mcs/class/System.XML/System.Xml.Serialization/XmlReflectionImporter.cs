@@ -283,6 +283,11 @@ namespace System.Xml.Serialization {
 			
 			if (map.BaseMap != null)
 				RegisterDerivedMap (map.BaseMap, derivedMap);
+			else {
+				XmlTypeMapping obmap = ImportTypeMapping (typeof(object));
+				if (obmap != map)
+					obmap.DerivedTypes.Add (derivedMap);
+			}
 		}
 
 		string GetTypeNamespace (TypeData typeData, XmlRootAttribute root, string defaultNamespace)
