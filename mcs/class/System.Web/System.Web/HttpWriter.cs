@@ -8,223 +8,233 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace System.Web {
-   public sealed class HttpWriter : TextWriter {
-      private HttpResponse	_Response;
-		
-      private HttpResponseStream _ResponseStream;
-		
-      private MemoryStream	_OutputStream;
-      private StreamWriter	_OutputHelper;
-      private Encoder		_Encoder;
-      private Encoding		_Encoding;	
+namespace System.Web
+{
+	public sealed class HttpWriter : TextWriter
+	{
+		HttpResponse _Response;
 
-      private Stream       _OutputFilter;
-      private HttpResponseStreamProxy  _OutputProxy;
+		HttpResponseStream _ResponseStream;
 
-      internal HttpWriter(HttpResponse Response) {
-         _Response = Response;
+		MemoryStream _OutputStream;
+		StreamWriter _OutputHelper;
+		Encoder _Encoder;
+		Encoding _Encoding;	
 
-         _OutputStream = new MemoryStream(32768);
-         _OutputHelper = new StreamWriter(_OutputStream, Encoding.Unicode);
-         _ResponseStream = new HttpResponseStream(this);
+		Stream _OutputFilter;
+		HttpResponseStreamProxy _OutputProxy;
 
-         Update();
-      }  
+		internal HttpWriter (HttpResponse Response)
+		{
+			_Response = Response;
 
-      internal void Dispose() {
-         _OutputHelper.Close();
-         _OutputStream.Close();
-			
-         _OutputFilter.Close();
-      }
-		
-      internal Stream GetActiveFilter() {
-         if (null == _OutputFilter) {
-            if (null == _OutputProxy) {
-               // Create a filter proxy to allow us to know if we have a valid filter
-               _OutputProxy = new HttpResponseStreamProxy(this);
-            }
-            		      
-            return _OutputProxy;
-         }
-		   
-         return _OutputFilter;
-      }
-		
-      internal void ActivateFilter(Stream OutputFilter) {
-         if (null == _OutputProxy) {
-            throw new HttpException("Invalid filter usage");
-         }
-		   
-         _OutputFilter = OutputFilter;
-      }
-		
-      internal void FilterData(bool CloseStream) {
-         // Check if we have any filter at all
-         if (null == _OutputFilter) {
-            return;
-         }
-		   
-         FlushBuffers();
-		     
-         // Save our current data
-         byte [] arrData = _OutputStream.ToArray();
-		   
-         // Remove our internal data
-         Clear();   	     
-         
-         // If we have a filter then we have a proxy
-         _OutputProxy.Active = true;
-         
-         try {
-            // Call the filter (it does a callback into our HttpWriter again)
-            _OutputFilter.Write(arrData, 0, arrData.Length);
-		      
-            if (CloseStream) {
-               _OutputFilter.Close();
-            }
-         }
-         finally {
-            _OutputProxy.Active = false;
-         }
-      }
+			_OutputStream = new MemoryStream (32768);
+			_OutputHelper = new StreamWriter (_OutputStream, Encoding.Unicode);
+			_ResponseStream = new HttpResponseStream (this);
 
-      internal void Clear() {
-         _OutputHelper.Close();
-         _OutputStream.Close();
-								
-         // Quick way of doing cleanup
-         _OutputStream = new MemoryStream(32768);
-         _OutputHelper = new StreamWriter(_OutputStream, Encoding.Unicode);
-      }
+			Update ();
+		}  
 
-      internal byte [] ToArray() {
-         if (_OutputStream.Length == 0) {
-            return null;
-         }
+		internal void Dispose ()
+		{
+			_OutputHelper.Close ();
+			_OutputStream.Close ();
+			_OutputFilter.Close ();
+		}
 
-         // TODO: Optimize
-         byte [] arrStream = _OutputStream.ToArray();
-         byte [] arrData = new byte [arrStream.Length - 2];
+		internal Stream GetActiveFilter()
+		{
+			if (null == _OutputFilter) {
+				// Create a filter proxy to allow us to know if we have a valid filter
+				if (null == _OutputProxy)
+					_OutputProxy = new HttpResponseStreamProxy (this);
 
-         Buffer.BlockCopy(arrStream, 2, arrData, 0, arrStream.Length - 2);
-			
-         byte [] arrContent = _Encoding.GetBytes(Encoding.Unicode.GetString(arrData));
+				return _OutputProxy;
+			}
+			return _OutputFilter;
+		}
 
-         return arrContent;
-      }
+		internal void ActivateFilter (Stream OutputFilter)
+		{
+			if (null == _OutputProxy)
+				throw new HttpException ("Invalid filter usage");
 
-      internal void SendContent(HttpWorkerRequest Handler) {
-         FlushBuffers();
+			_OutputFilter = OutputFilter;
+		}
 
-         if (_OutputStream.Length > 0) {
-            byte [] arrContent = ToArray();
-            Handler.SendResponseFromMemory(arrContent, arrContent.Length);
-         }
-      }
+		internal void FilterData (bool CloseStream)
+		{
+			// Check if we have any filter at all
+			if (null == _OutputFilter)
+				return;
 
-      internal void Update() {
-         _Encoder = _Response.ContentEncoder;
-         _Encoding = _Response.ContentEncoding;
-      }
+			FlushBuffers ();
 
-      internal long BufferSize {
-         get {
-            FlushBuffers();
+			// Save our current data
+			byte [] arrData = _OutputStream.ToArray ();
 
-            if (_OutputStream.Length == 0) {
-               return 0;
-            }
+			// Remove our internal data
+			Clear ();
 
-            return ToArray().Length;
-         }
-      }
+			// If we have a filter then we have a proxy
+			_OutputProxy.Active = true;
 
-      internal void FlushBuffers() {
-         _OutputHelper.Flush();
-         _OutputStream.Flush();
-      }
+			try {
+				// Call the filter (it does a callback into our HttpWriter again)
+				_OutputFilter.Write (arrData, 0, arrData.Length);
 
-      public override Encoding Encoding {
-         get {
-            return _Encoding;
-         }
-      }
+				if (CloseStream)
+					_OutputFilter.Close ();
+			} finally {
+				_OutputProxy.Active = false;
+			}
+		}
 
-      public Stream OutputStream {
-         get {
-            return _ResponseStream;
-         }
-      }
+		internal void Clear ()
+		{
+			_OutputHelper.Close ();
+			_OutputStream.Close ();
+					
+			// Quick way of doing cleanup
+			_OutputStream = new MemoryStream (32768);
+			_OutputHelper = new StreamWriter (_OutputStream, Encoding.Unicode);
+		}
 
-      public override void Close() {
-         FlushBuffers();
+		internal byte [] ToArray ()
+		{
+			if (_OutputStream.Length == 0)
+				return null;
 
-         _Response.Flush();
-         _Response.Close();
-      }
+			// TODO: Optimize
+			byte [] arrStream = _OutputStream.ToArray ();
+			byte [] arrData = new byte [arrStream.Length - 2];
 
-      public override void Flush() {
-         FlushBuffers();
+			Buffer.BlockCopy (arrStream, 2, arrData, 0, arrStream.Length - 2);
 
-         _Response.Flush();
-      }
+			byte [] arrContent = _Encoding.GetBytes (Encoding.Unicode.GetString (arrData));
 
-      public override void Write(char ch) {
-         _OutputHelper.Write(ch);
-         if (!_Response.BufferOutput) {
-            FlushBuffers();
-            _Response.Flush();
-         }
-      }
+			return arrContent;
+		}
 
-      public override void Write(object obj) {
-         _OutputHelper.Write(obj.ToString());
-         if (!_Response.BufferOutput) {
-            FlushBuffers();
-            _Response.Flush();
-         }
-      }
+		internal void SendContent (HttpWorkerRequest Handler)
+		{
+			FlushBuffers();
 
-      public override void Write(string s) {
-         _OutputHelper.Write(s);
-         if (!_Response.BufferOutput) {
-            FlushBuffers();
-            _Response.Flush();
-         }
-      }
+			if (_OutputStream.Length > 0) {
+				byte [] arrContent = ToArray ();
+				Handler.SendResponseFromMemory (arrContent, arrContent.Length);
+			}
+		}
 
-      public override void Write(char[] buffer, int index, int count) {
-         _OutputHelper.Write(buffer, index, count);
-         if (!_Response.BufferOutput) {
-            FlushBuffers();
-            _Response.Flush();
-         }
-      }
+		internal void Update ()
+		{
+			_Encoder = _Response.ContentEncoder;
+			_Encoding = _Response.ContentEncoding;
+		}
 
-      public void WriteBytes(byte[] buffer, int index, int count) {
-         _OutputStream.Write(buffer, index, count);
-         if (!_Response.BufferOutput) {
-            FlushBuffers();
-            _Response.Flush();
-         }
-      }
-		
-      override public void WriteLine() {
-         _OutputHelper.Write("\n\r");
-         if (!_Response.BufferOutput) {
-            FlushBuffers();
-            _Response.Flush();
-         }
-      }
+		internal long BufferSize
+		{
+			get {
+				FlushBuffers ();
 
-      public void WriteString(string s, int index, int count) {
-         _OutputHelper.Write(s.Substring(index, count));
-         if (!_Response.BufferOutput) {
-            FlushBuffers();
-            _Response.Flush();
-         }
-      }
-   }
+				if (_OutputStream.Length == 0)
+					return 0;
+
+				return ToArray ().Length;
+			}
+		}
+
+		internal void FlushBuffers ()
+		{
+			_OutputHelper.Flush ();
+			_OutputStream.Flush ();
+		}
+
+		public override Encoding Encoding
+		{
+			get { return _Encoding; }
+		}
+
+		public Stream OutputStream
+		{
+			get { return _ResponseStream; }
+		}
+
+		public override void Close ()
+		{
+			FlushBuffers ();
+			_Response.Flush ();
+			_Response.Close ();
+		}
+
+		public override void Flush ()
+		{
+			FlushBuffers ();
+			_Response.Flush ();
+		}
+
+		public override void Write (char ch)
+		{
+			_OutputHelper.Write (ch);
+			if (!_Response.BufferOutput) {
+				FlushBuffers ();
+				_Response.Flush ();
+			}
+		}
+
+		public override void Write (object obj)
+		{
+			_OutputHelper.Write (obj.ToString ());
+			if (!_Response.BufferOutput) {
+				FlushBuffers ();
+				_Response.Flush ();
+			}
+		}
+
+		public override void Write (string s)
+		{
+			_OutputHelper.Write (s);
+			if (!_Response.BufferOutput) {
+				FlushBuffers ();
+				_Response.Flush ();
+			}
+		}
+
+		public override void Write (char [] buffer, int index, int count)
+		{
+			_OutputHelper.Write (buffer, index, count);
+			if (!_Response.BufferOutput) {
+				FlushBuffers ();
+				_Response.Flush ();
+			}
+		}
+
+		public void WriteBytes (byte[] buffer, int index, int count)
+		{
+			_OutputStream.Write (buffer, index, count);
+			if (!_Response.BufferOutput) {
+				FlushBuffers ();
+				_Response.Flush ();
+			}
+		}
+
+		public override void WriteLine ()
+		{
+			_OutputHelper.Write ("\r\n");
+			if (!_Response.BufferOutput) {
+				FlushBuffers ();
+				_Response.Flush ();
+			}
+		}
+
+		public void WriteString (string s, int index, int count)
+		{
+			_OutputHelper.Write (s.Substring (index, count));
+			if (!_Response.BufferOutput) {
+				FlushBuffers ();
+				_Response.Flush ();
+			}
+		}
+	}
 }
+
