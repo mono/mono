@@ -941,13 +941,26 @@ namespace Mono.CSharp {
 				class_indexer_name = "Item";
 			IndexerName = class_indexer_name;
 		}
-		
+
+		static void Report1530 (Location loc)
+		{
+			Report.Error (1530, loc, "Keyword new not allowed for namespace elements");
+		}
+
 		/// <summary>
 		///   Populates our TypeBuilder with fields and methods
 		/// </summary>
 		public override bool Define (TypeContainer parent)
 		{
 			MemberInfo [] defined_names = null;
+
+			if (interface_order != null){
+				foreach (Interface iface in interface_order)
+					if ((iface.ModFlags & Modifiers.NEW) == 0)
+						iface.Define (this);
+					else
+						Report1530 (iface.Location);
+			}
 
 			if (RootContext.WarningLevel > 1){
 				Type ptype;
