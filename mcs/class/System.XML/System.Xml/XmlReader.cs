@@ -57,6 +57,7 @@ namespace System.Xml
 
 		protected XmlReader ()
 		{
+			evidence = new Evidence ();
 		}
 
 		#endregion

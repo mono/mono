@@ -163,6 +163,10 @@ namespace System.Xml
 			xtw.CloseOutput = settings.CloseOutput;
 			// NewLineOnAttributes
 			xtw.NewLineOnAttributes = settings.NewLineOnAttributes;
+			// ConformanceLevel
+			xtw.ConformanceLevel = settings.ConformanceLevel;
+			// OmitXmlDeclaration
+			xtw.OmitXmlDeclaration = settings.OmitXmlDeclaration;
 			return Create (xtw, settings);
 		}
 

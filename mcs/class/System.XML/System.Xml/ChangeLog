@@ -1,5 +1,11 @@
 2004-09-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlReader.cs : evidence is always provided.
+	* XmlWriter.cs, XmlTextWriter.cs :
+	  added support for ConformanceLevel and OmitXmlDeclaration.
+
+2004-09-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlTextReader.cs : Console.WriteLine() injected :(
 	* XmlTextWriter.cs : It it partly supports XmlWriterSettings.
 	* XmlWriter.cs : implemented Create().

@@ -37,7 +37,7 @@ using System.Text;
 
 namespace System.Xml
 {
-	[MonoTODO ("CheckCharacters; Conformance; NormalizeNewLines; OmitXmlDeclaration")]
+	[MonoTODO ("CheckCharacters; NormalizeNewLines")]
 	public class XmlTextWriter : XmlWriter
 	{
 		#region Fields
@@ -84,6 +84,10 @@ namespace System.Xml
 		bool closeOutput;
 		bool newLineOnAttributes;
 		string newLineChars;
+		bool outputXmlDeclaration;
+#if NET_2_0
+		ConformanceLevel conformanceLevel;
+#endif
 
 		#endregion
 
@@ -174,6 +178,21 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			set { closeOutput = value; }
 		}
 
+		// As for ConformanceLevel, MS.NET is inconsistent with
+		// MSDN documentation. For example, even if ConformanceLevel
+		// is set as .Auto, multiple WriteStartDocument() calls
+		// result in an error.
+		// ms-help://MS.NETFramework.v20.en/wd_xml/html/7db8802b-53d8-4735-a637-4d2d2158d643.htm
+		[MonoTODO]
+		internal ConformanceLevel ConformanceLevel {
+			get { return conformanceLevel; }
+			set {
+				conformanceLevel = value;
+				if (value == ConformanceLevel.Fragment)
+					documentStarted = true;
+			}
+		}
+
 		internal string IndentChars {
 //			get { return indentChars; }
 			set { indentChars = value == null ? String.Empty : value; }
@@ -189,6 +208,10 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			set { newLineOnAttributes = value; }
 		}
 
+		internal bool OmitXmlDeclaration {
+//			get { return !outputXmlDeclaration; }
+			set { outputXmlDeclaration = !value; }
+		}
 #endif
 
 		public bool Namespaces {
@@ -248,6 +271,16 @@ openElements [openElementCount - 1]).IndentingOverriden;
 		#endregion
 
 		#region Methods
+#if NET_2_0
+		private void CheckStartDocument ()
+		{
+			if (outputXmlDeclaration &&
+				conformanceLevel == ConformanceLevel.Document &&
+				ws == WriteState.Start)
+				WriteStartDocument ();
+		}
+#endif
+
 		private void AddMissingElementXmlns ()
 		{
 			// output namespace declaration if not exist.
@@ -302,6 +335,14 @@ openElements [openElementCount - 1]).IndentingOverriden;
 		}
 
 		private void CheckState ()
+		{
+#if NET_2_0
+			CheckStartDocument ();
+#endif
+			CheckOutputState ();
+		}
+
+		private void CheckOutputState ()
 		{
 			if (!openWriter) {
 				throw new InvalidOperationException ("The Writer is closed.");
@@ -800,7 +841,8 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			if (hasRoot)
 				throw new XmlException ("WriteStartDocument called twice.");
 
-			CheckState ();
+//			CheckState ();
+			CheckOutputState ();
 
 			string encodingFormatting = "";
 
@@ -829,8 +871,8 @@ openElements [openElementCount - 1]).IndentingOverriden;
 
 		private void WriteStartElementInternal (string prefix, string localName, string ns)
 		{
-			hasRoot = true;
 			CheckState ();
+			hasRoot = true;
 			CloseStartElement ();
 			newAttributeNamespaces.Clear ();
 			userWrittenNamespaces.Clear ();
