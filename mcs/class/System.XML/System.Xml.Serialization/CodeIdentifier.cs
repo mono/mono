@@ -35,7 +35,7 @@ namespace System.Xml.Serialization {
 			if (identifier.Length == 0)
 				return identifier;
 
-			string output;
+			string output = "";
 
 			if (Char.IsNumber (identifier[0]))
 				output = "Item";

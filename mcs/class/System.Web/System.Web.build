@@ -31,7 +31,6 @@
 				<!--<excludes name="System.Web.UI/**"/>-->
 				<!--<excludes name="System.Web.UI.HtmlControls/**"/>-->
 				<!--<excludes name="System.Web.UI.WebControls/**"/>-->
-				<excludes name="System.Web/HttpCacheValidateHandler.cs"/>
 			</sources>
 		</csc>
 	</target>
