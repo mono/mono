@@ -1,3 +1,7 @@
+2005-03-08  Ben Maurer  <bmaurer@ximian.com>
+
+	* valgrind-monofunc.pl: Add this wonderful script from Nat.
+
 2005-02-12  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* Makefile: added mjs
