@@ -1,3 +1,7 @@
+2004-02-21  Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+    * TlsServerHello: Fix for handle SecurityProtocolType.Default.
+
 2004-02-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Security.dll.sources: Added new file X509ChainStatusFlags in

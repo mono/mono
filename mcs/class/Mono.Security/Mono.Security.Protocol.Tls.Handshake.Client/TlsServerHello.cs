@@ -118,7 +118,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		{
 			SecurityProtocolType serverProtocol = this.Context.DecodeProtocolCode(protocol);
 
-			if ((serverProtocol & this.Context.SecurityProtocolFlags) == serverProtocol)
+			if ((serverProtocol & this.Context.SecurityProtocolFlags) == serverProtocol ||
+                (this.Context.SecurityProtocolFlags & SecurityProtocolType.Default) == SecurityProtocolType.Default)
 			{
 				this.Context.SecurityProtocol = serverProtocol;
 				this.Context.SupportedCiphers.Clear();
