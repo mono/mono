@@ -1,3 +1,10 @@
+
+Tue Jan 25 18:06:00 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* domain.c, object.c: change the ldstr_table to hold
+	MonoString* as keys: makes the runtime isinterned lookup
+	faster and simplifies memory management.
+
 2005-01-25  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* icall.c: Renamed GetEnvironmentVariable so internal* so it was
