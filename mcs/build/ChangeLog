@@ -1,3 +1,8 @@
+2003-10-28 Jackson Harper <jackson@ximian.com>
+
+	* platforms/linux.make: Tell users to read INSTALL.txt not the
+	non-existant README.building.
+	
 2003-10-22  Dick Porter  <dick@ximian.com>
 
 	* platforms/win32.make:

@@ -30,7 +30,7 @@ hidden_suffix =
 platform-check:
 	@if ! type $(BOOTSTRAP_MCS) >/dev/null 2>&1 ; then \
 	    echo "*** You need a C# compiler installed to build MCS." ; \
-	    echo "*** Read README.building for information on how to bootstrap" ; \
+	    echo "*** Read INSTALL.txt for information on how to bootstrap" ; \
 	    echo "*** a Mono installation." ; \
 	    exit 1 ; \
 	fi
