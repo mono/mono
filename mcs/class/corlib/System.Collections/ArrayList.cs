@@ -518,6 +518,10 @@ namespace System.Collections {
 			}
 
 		public virtual void Remove (object obj) {
+
+			if (IsFixedSize || IsReadOnly)
+				throw new NotSupportedException ();
+			
 			int objIndex = IndexOf (obj);
 
 			if (objIndex == -1) {
@@ -575,7 +579,14 @@ namespace System.Collections {
 		}
 
 		[MonoTODO]
-		public virtual void SetRange (int index, ICollection c) {
+		public virtual void SetRange (int index, ICollection c)
+		{
+			if (index < 0 || (index + c.Count) > Count)
+				throw new ArgumentOutOfRangeException ();
+			if (c == null)
+				throw new ArgumentNullException ();
+			if (IsReadOnly)
+				throw new NotSupportedException ();
 		}
 
 		public virtual void Sort () {
@@ -615,7 +626,10 @@ namespace System.Collections {
 
 		[MonoTODO]
 		public virtual void TrimToSize () {
-			// FIXME: implement this
+
+			if (IsReadOnly || IsFixedSize)
+				throw new NotSupportedException ();
+			
 			version++;
 		}
 	}

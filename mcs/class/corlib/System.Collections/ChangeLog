@@ -1,6 +1,9 @@
 2002-04-28  Duncan Mak  <duncan@ximian.com>
 
-	* ArrayList.cs (InsertRange): Throw exceptions where needed.
+	* ArrayList.cs (InsertRange): 
+	(SetRange):
+	(Remove):
+	(TrimToSize): Throw exceptions where needed.
 
 2002-04-29  Nick Drochak  <ndrochak@gol.com>
 

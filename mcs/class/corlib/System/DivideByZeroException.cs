@@ -8,6 +8,8 @@
 //
 
 using System.Globalization;
+using System.Runtime.Serialization;
+
 namespace System {
 
 	[Serializable]
@@ -25,6 +27,11 @@ namespace System {
 
 		public DivideByZeroException (string message, Exception inner)
 			: base (message, inner)
+		{
+		}
+
+		public DivideByZeroException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
 		{
 		}
 	}
