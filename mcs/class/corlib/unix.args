@@ -596,11 +596,6 @@ System.Security/SuppressUnmanagedCodeSecurityAttribute.cs
 System.Security/UnverifiableCodeAttribute.cs
 System.Security/VerificationException.cs
 System.Security/XmlSyntaxException.cs
-System.Security.Cryptography/AsymmetricAlgorithm.cs
-System.Security.Cryptography/AsymmetricKeyExchangeDeformatter.cs
-System.Security.Cryptography/AsymmetricKeyExchangeFormatter.cs
-System.Security.Cryptography/AsymmetricSignatureDeformatter.cs
-System.Security.Cryptography/AsymmetricSignatureFormatter.cs
 System.Security.Cryptography/CipherMode.cs
 System.Security.Cryptography/CryptoAPITransform.cs
 System.Security.Cryptography/CryptographicException.cs
@@ -612,11 +607,7 @@ System.Security.Cryptography/CspProviderFlags.cs
 System.Security.Cryptography/DeriveBytes.cs
 System.Security.Cryptography/DES.cs
 System.Security.Cryptography/DESCryptoServiceProvider.cs
-System.Security.Cryptography/DSA.cs
-System.Security.Cryptography/DSACryptoServiceProvider.cs
 System.Security.Cryptography/DSAParameters.cs
-System.Security.Cryptography/DSASignatureDeformatter.cs
-System.Security.Cryptography/DSASignatureFormatter.cs
 System.Security.Cryptography/FromBase64Transform.cs
 System.Security.Cryptography/HashAlgorithm.cs
 System.Security.Cryptography/ICryptoTransform.cs
@@ -630,7 +621,6 @@ System.Security.Cryptography/RC2CryptoServiceProvider.cs
 System.Security.Cryptography/Rijndael.cs
 System.Security.Cryptography/RijndaelManaged.cs
 System.Security.Cryptography/RNGCryptoServiceProvider.cs
-System.Security.Cryptography/RSA.cs
 System.Security.Cryptography/RSAParameters.cs
 System.Security.Cryptography/SHA1.cs
 System.Security.Cryptography/SHA1CryptoServiceProvider.cs
@@ -640,7 +630,6 @@ System.Security.Cryptography/SHA384.cs
 System.Security.Cryptography/SHA384Managed.cs
 System.Security.Cryptography/SHA512.cs
 System.Security.Cryptography/SHA512Managed.cs
-System.Security.Cryptography/SignatureDescription.cs
 System.Security.Cryptography/SymmetricAlgorithm.cs
 System.Security.Cryptography/ToBase64Transform.cs
 System.Security.Cryptography/X509Certificates.cs

@@ -31,6 +31,17 @@
 				<excludes name="Linux/**"/>
 				<excludes name="Windows/**"/>
 				<excludes name="System.PAL/**"/>
+				<excludes name="System.Security.Cryptography/AsymmetricAlgorithm.cs"/>
+				<excludes name="System.Security.Cryptography/AsymmetricKeyExchangeFormatter.cs"/>
+				<excludes name="System.Security.Cryptography/AsymmetricKeyExchangeDeformatter.cs"/>
+				<excludes name="System.Security.Cryptography/AsymmetricSignatureFormatter.cs"/>
+				<excludes name="System.Security.Cryptography/AsymmetricSignatureDeformatter.cs"/>
+				<excludes name="System.Security.Cryptography/SignatureDescription.cs"/>
+				<excludes name="System.Security.Cryptography/DSA.cs"/>
+				<excludes name="System.Security.Cryptography/DSASignatureFormatter.cs"/>
+				<excludes name="System.Security.Cryptography/DSASignatureDeformatter.cs"/>
+				<excludes name="System.Security.Cryptography/DSACryptoServiceProvider.cs"/>
+				<excludes name="System.Security.Cryptography/RSA.cs"/>
 			</sources>
 		</csc>
 		<csc target="library" output="../lib/corlib_cmp.dll" debug="${debug}">
@@ -63,6 +74,17 @@
 				<excludes name="System/Delegate.cs"/>
 				<excludes name="System/MulticastDelegate.cs"/>
 				<excludes name="System/Exception.cs"/>
+				<excludes name="System.Security.Cryptography/AsymmetricAlgorithm.cs"/>
+				<excludes name="System.Security.Cryptography/AsymmetricKeyExchangeFormatter.cs"/>
+				<excludes name="System.Security.Cryptography/AsymmetricKeyExchangeDeformatter.cs"/>
+				<excludes name="System.Security.Cryptography/AsymmetricSignatureFormatter.cs"/>
+				<excludes name="System.Security.Cryptography/AsymmetricSignatureDeformatter.cs"/>
+				<excludes name="System.Security.Cryptography/SignatureDescription.cs"/>
+				<excludes name="System.Security.Cryptography/DSA.cs"/>
+				<excludes name="System.Security.Cryptography/DSASignatureFormatter.cs"/>
+				<excludes name="System.Security.Cryptography/DSASignatureDeformatter.cs"/>
+				<excludes name="System.Security.Cryptography/DSACryptoServiceProvider.cs"/>
+				<excludes name="System.Security.Cryptography/RSA.cs"/>
 
 				<!-- DecimalConstantAttribute presence causes security exceptions in corcompare -->
 				<excludes name="System/Decimal.cs"/>
