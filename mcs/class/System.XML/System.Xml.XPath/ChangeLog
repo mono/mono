@@ -1,5 +1,10 @@
 2004-12-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Iterator.cs : with related to the previous patch, many comments
+	  got making no sense. Thanks to Harinath.
+
+2004-12-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Iterator.cs : actually I mean this patch.
 
 2004-12-01  Atsushi Enomoto  <atsushi@ximian.com>

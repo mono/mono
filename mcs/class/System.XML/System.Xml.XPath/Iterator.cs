@@ -267,7 +267,6 @@ namespace System.Xml.XPath
 		{
 			bool fSuccess = (CurrentPosition == 0) ? _nav.MoveToFirstChild () : _nav.MoveToNext ();
 			if (fSuccess) {
-				// This clone cannot be omitted
 				_current = null;
 			}
 			return fSuccess;
@@ -291,7 +290,6 @@ namespace System.Xml.XPath
 			}
 			if (_nav.MoveToNext ())
 			{
-				// This clone cannot be omitted
 				_current = null;
 				return true;
 			}
@@ -335,7 +333,6 @@ namespace System.Xml.XPath
 
 				_nav.MoveToFirst ();
 				if (!_nav.IsSamePosition (startPosition)) {
-					// This clone cannot be omitted
 					_current = null;
 					return true;
 				}
@@ -350,7 +347,6 @@ namespace System.Xml.XPath
 				finished = true;
 				return false;
 			} else {
-				// This clone cannot be omitted
 				_current = null;
 				return true;
 			}
@@ -407,7 +403,6 @@ namespace System.Xml.XPath
 				CollectResults ();
 				if (startPosition.NodeType != XPathNodeType.Root) {
 					// First time it returns Root
-					// This clone cannot be omitted
 					_nav.MoveToRoot ();
 					_current = null;
 					return true;
@@ -480,7 +475,6 @@ namespace System.Xml.XPath
 				CollectResults ();
 				if (startPosition.NodeType != XPathNodeType.Root) {
 					// First time it returns Root
-					// This clone cannot be omitted
 					_nav.MoveToRoot ();
 					_current = null;
 					return true;
@@ -536,7 +530,6 @@ namespace System.Xml.XPath
 			if (_nav.MoveToFirstChild ())
 			{
 				_depth ++;
-				// This clone cannot be omitted
 				_current = null;
 				return true;
 			}
@@ -544,7 +537,6 @@ namespace System.Xml.XPath
 			{
 				if (_nav.MoveToNext ())
 				{
-					// This clone cannot be omitted
 					_current = null;
 					return true;
 				}
@@ -581,14 +573,12 @@ namespace System.Xml.XPath
 			if (CurrentPosition == 0)
 			{
 				// self
-				// This clone cannot be omitted
 				_current = null;
 				return true;
 			}
 			if (_nav.MoveToFirstChild ())
 			{
 				_depth ++;
-				// This clone cannot be omitted
 				_current = null;
 				return true;
 			}
@@ -596,7 +586,6 @@ namespace System.Xml.XPath
 			{
 				if (_nav.MoveToNext ())
 				{
-					// This clone cannot be omitted
 					_current = null;
 					return true;
 				}
@@ -625,13 +614,11 @@ namespace System.Xml.XPath
 			{
 				if (_nav.MoveToNext ())
 				{
-					// This clone cannot be omitted
 					_current = null;
 					return true;
 				} else {
 					while (_nav.MoveToParent ()) {
 						if (_nav.MoveToNext ()) {
-							// This clone cannot be omitted
 							_current = null;
 							return true;
 						}
@@ -642,7 +629,6 @@ namespace System.Xml.XPath
 			{
 				if (_nav.MoveToFirstChild ())
 				{
-					// This clone cannot be omitted
 					_current = null;
 					return true;
 				}
@@ -650,7 +636,6 @@ namespace System.Xml.XPath
 				{
 					if (_nav.MoveToNext ())
 					{
-						// This clone cannot be omitted
 						_current = null;
 						return true;
 					}
@@ -710,7 +695,6 @@ namespace System.Xml.XPath
 				finished = true;
 				return false;
 			} else {
-				// This cannot be omitted
 				_current = null;
 				return true;
 			}
@@ -733,14 +717,12 @@ namespace System.Xml.XPath
 			{
 				if (_nav.MoveToFirstNamespace ())
 				{
-					// This clone cannot be omitted
 					_current = null;
 					return true;
 				}
 			}
 			else if (_nav.MoveToNextNamespace ())
 			{
-				// This clone cannot be omitted
 				_current = null;
 				return true;
 			}
@@ -762,14 +744,12 @@ namespace System.Xml.XPath
 			{
 				if (_nav.MoveToFirstAttribute ())
 				{
-					// This clone cannot be omitted
 					_current = null;
 					return true;
 				}
 			}
 			else if (_nav.MoveToNextAttribute ())
 			{
-				// This clone cannot be omitted
 				_current = null;
 				return true;
 			}
