@@ -194,7 +194,8 @@ namespace System.Web.Mail {
 		    // trLength must be the same size as the cipherText
 		    // length otherwise something is wrong
 		    if( trLength != cipherText.Length )
-			throw new Exception( "All of the plaintext bytes where not converted" );
+			throw new SmtpException( "Problems occured when "  + 
+						 "encoding to base64." );
 		
 		    // convert the bytes to a string and then add it to the
 		    // current row

@@ -46,7 +46,7 @@ namespace System.Web.Mail {
 	public void Send( MailMessage msg ) {
 
 	    if( ( ! HasData( msg.From )  ) || ( ! HasData( msg.To ) ) )
-		throw new ArgumentException( "From & To properties must be set." );
+		throw new SmtpException( "From & To properties must be set." );
 	    
 	    // start with a reset incase old data
 	    // is present at the server in this session

@@ -36,16 +36,13 @@ namespace System.Web.Mail {
 	public static SmtpResponse Parse( string line ) {
 	    SmtpResponse response = new SmtpResponse();
 	    
-	    if( line == null )
-		throw new ArgumentNullException( "Null is not allowed " + 
-						 "as a response string.");
-
 	    if( line.Length < 4 ) 
-		throw new FormatException( "Response is to short " + 
+		throw new SmtpException( "Response is to short " + 
 					   line.Length + ".");
 	    
 	    if( line[ 3 ] != ' ' )
-		throw new FormatException( "Response format is wrong.");
+		throw new SmtpException( "Response format is wrong.(" + 
+					 line + ")" );
 	    
 	    // parse the response code
 	    response.StatusCode = Int32.Parse( line.Substring( 0 , 3 ) );

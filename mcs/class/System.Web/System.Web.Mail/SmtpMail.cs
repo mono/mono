@@ -52,11 +52,8 @@ namespace System.Web.Mail
 			
 			throw new HttpException (ex.Message);
 			
-		    } catch (Exception ex) { // <<-- Should be fixed
-			
-			throw new HttpException (ex.Message);
-			
-		    }
+		    } 
+		    
 		}
 		
 		public static void Send (string from, string to, string subject, string messageText) 
