@@ -24,9 +24,12 @@
 //
 //
 //
-// $Revision: 1.5 $
+// $Revision: 1.6 $
 // $Modtime: $
 // $Log: ITheme.cs,v $
+// Revision 1.6  2004/08/09 21:36:34  jackson
+// Add support for drawing status bar and getting status bar item sizes
+//
 // Revision 1.5  2004/08/09 17:01:02  jackson
 // The theme engine now controls default window properties
 //
@@ -97,6 +100,13 @@ namespace System.Windows.Forms
 		Color ColorGradientInactiveTitle {get;} //COLOR_GRADIENTINACTIVECAPTION
 
 		/*
+		  Control sizing properties
+		*/
+
+		int SizeGripWidth {get;}
+		int StatusBarHorzGapWidth {get;}
+
+		/*
 			Methods that mimic ControlPaint signature and draw basic objects
 		*/
 
@@ -164,6 +174,8 @@ namespace System.Windows.Forms
 
 		void DrawProgressBar (Graphics dc, Rectangle area,  Rectangle client_area,
 			int barpos_pixels, int block_width);		
+
+		void DrawStatusBar (Graphics dc, Rectangle area, StatusBar sb);
 
 	}
 }
