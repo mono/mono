@@ -1,3 +1,7 @@
+2002-10-03  Dietmar Maurer  <dietmar@ximian.com>
+
+	* monoburg.c: added new %termprefix mode
+
 2002-09-30  Dietmar Maurer  <dietmar@ximian.com>
 
 	* monoburg.c (main): add option to specify default costs, added
