@@ -1,3 +1,8 @@
+2002-05-17  Radek Doulik  <rodo@ximian.com>
+
+	* interp.c (dump_stack): if --noptr then print content of strings
+	in form [str:<printed string>]
+
 2002-05-16  Radek Doulik  <rodo@ximian.com>
 
 	* interp.c (ves_exec_method): use data.i instead of data.l in i32
