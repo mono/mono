@@ -220,6 +220,8 @@ System.Xml.Schema/XmlSchemaGroupRef.cs
 System.Xml.Schema/XmlSchemaIdentityConstraint.cs
 System.Xml.Schema/XmlSchemaImport.cs
 System.Xml.Schema/XmlSchemaInclude.cs
+System.Xml.Schema/XmlSchemaInference.cs
+System.Xml.Schema/XmlSchemaInferenceException.cs
 System.Xml.Schema/XmlSchemaKey.cs
 System.Xml.Schema/XmlSchemaKeyref.cs
 System.Xml.Schema/XmlSchemaLengthFacet.cs
@@ -253,6 +255,7 @@ System.Xml.Schema/XmlSchemaType.cs
 System.Xml.Schema/XmlSchemaUnique.cs
 System.Xml.Schema/XmlSchemaUse.cs
 System.Xml.Schema/XmlSchemaValidity.cs
+System.Xml.Schema/XmlSchemaValidationException.cs
 System.Xml.Schema/XmlSchemaWhiteSpaceFacet.cs
 System.Xml.Schema/XmlSchemaXPath.cs
 System.Xml.Schema/XmlSeverityType.cs

@@ -1,5 +1,9 @@
 2004-11-17  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaValidationException.cs : added.
+
+2004-11-17  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaInference.cs,
 	  XmlSchemaInferenceException.cs : added.
 
