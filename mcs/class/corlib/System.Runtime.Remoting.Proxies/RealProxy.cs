@@ -12,6 +12,7 @@ using System;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 
 
 namespace System.Runtime.Remoting.Proxies
@@ -52,6 +53,12 @@ namespace System.Runtime.Remoting.Proxies
 			return _objectIdentity.CreateObjRef (requestedType);
 		}
 
+		[MonoTODO]
+		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			throw new NotImplementedException ();
+		}
+		
 		internal Identity ObjectIdentity
 		{
 			get { return _objectIdentity; }

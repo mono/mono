@@ -1,3 +1,7 @@
+2003-01-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* RealProxy.cs: fixed compilation by adding missing GetObjectData ().
+
 2002-12-20  Lluis Sanchez Gual <lsg@ctv.es>
 
 	* RealProxy.cs: Added ObjectIdentity property. 
