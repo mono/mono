@@ -479,6 +479,7 @@ namespace System.Windows.Forms
 		{
 			fontDialog.form.Controls.Remove( this );
 			fontDialog.Font = currentFont;
+			fontDialog.Color = currentColor;
 			fontDialog.form.DialogResult = DialogResult.OK;
 		}
 		
