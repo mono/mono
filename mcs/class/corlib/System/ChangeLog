@@ -27,6 +27,11 @@
 
 	* Type.cs : Ditto.
 
+	* Byte.cs, Char.cs, ContextBoundObject.cs, DateTime.cs, Delegate.cs : Ditto.
+
+	* Enum.cs, Environment.cs, Exception.cs, Int64.cs, SByte.cs, Single.cs, 
+	UInt16.cs, UInt32.cs, ValueType.cs: Ditto.
+
 	* Byte.cs, Char.cs, ContextBoundObject.cs, DateTime.cs,
 	Delegate.cs : Ditto.
 
