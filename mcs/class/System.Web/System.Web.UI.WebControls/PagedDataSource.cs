@@ -73,7 +73,7 @@ namespace System.Web.UI.WebControls
 			{
 				if(dataSource != null)
 				{
-					if(IsPagingEnabled)
+					if(!IsPagingEnabled)
 					{
 						return DataSourceCount;
 					}

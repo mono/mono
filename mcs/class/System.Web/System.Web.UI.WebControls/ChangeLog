@@ -1,5 +1,10 @@
 2003-10-25 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* PagedDataSource.cs: Patch by Ivo Haamer. Typo prevented
+	paging from working. Fixes #48814.
+
+2003-10-25 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* DataGrid.cs: A few typos kept us from viewing datagrids
 	that were based on customized collections.
 
