@@ -215,6 +215,9 @@ namespace Mono.CSharp {
 			if (value != null && (!(value is Method)))
 				return AdditionResult.NameExists;
 
+			if (name == Basename)
+				return AdditionResult.EnclosingClash;
+
 			if (methods == null)
 				methods = new ArrayList ();
 

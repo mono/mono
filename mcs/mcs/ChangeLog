@@ -1,3 +1,11 @@
+2002-07-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (TypeContainer.AddMethod): Adding methods do not use IsValid,
+	but this is required to check for a method name being the same as
+	the containing class.  
+
+	Handle this now.
+
 2002-07-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* interface.cs: initialize variable.
