@@ -1,3 +1,11 @@
+2004-07-27  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* corlib.dll.sources: Added new files for NET_2_0 profile: 
+		System.Threading/ExecutionContext.cs
+		System.Threading/ExecutionContextSwitcher.cs
+		System.Threading/SynchronizationContext.cs
+		System.Threading/SynchronizationContextSwitcher.cs
+
 2004-07-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Added new files for NET_2_0 profile: 

@@ -1036,6 +1036,8 @@ System.Threading/AutoResetEvent.cs
 System.Threading/CompressedStack.cs
 System.Threading/CompressedStackSwitcher.cs
 System.Threading/ContextCallback.cs
+System.Threading/ExecutionContext.cs
+System.Threading/ExecutionContextSwitcher.cs
 System.Threading/Interlocked.cs
 System.Threading/IOCompletionCallback.cs
 System.Threading/LockCookie.cs
@@ -1049,6 +1051,8 @@ System.Threading/Overlapped.cs
 System.Threading/ReaderWriterLock.cs
 System.Threading/RegisteredWaitHandle.cs
 System.Threading/SendOrPostCallback.cs
+System.Threading/SynchronizationContext.cs
+System.Threading/SynchronizationContextSwitcher.cs
 System.Threading/SynchronizationLockException.cs
 System.Threading/Thread.cs
 System.Threading/ThreadAbortException.cs
