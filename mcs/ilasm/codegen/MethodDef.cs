@@ -38,7 +38,10 @@ namespace Mono.ILASM {
                 private Hashtable named_local_table;
                 private bool init_locals;
                 private int max_stack;
-
+                private bool pinvoke_info;
+                private string pinvoke_mod;
+                private string pinvoke_name;
+                private PEAPI.PInvokeAttr pinvoke_attr;
 
                 public MethodDef (PEAPI.MethAttr meth_attr, PEAPI.CallConv call_conv,
                                 PEAPI.ImplAttr impl_attr, string name,
@@ -63,6 +66,7 @@ namespace Mono.ILASM {
                         entry_point = false;
                         init_locals = false;
                         max_stack = -1;
+                        pinvoke_info = false;
 
                         is_defined = false;
                         is_resolved = false;
@@ -104,6 +108,15 @@ namespace Mono.ILASM {
                                 type_list[count++] = param.Type;
                         }
                         return type_list;
+                }
+
+                public void AddPInvokeInfo (PEAPI.PInvokeAttr pinvoke_attr, string pinvoke_mod,
+                                string pinvoke_name)
+                {
+                        this.pinvoke_attr = pinvoke_attr;
+                        this.pinvoke_mod = pinvoke_mod;
+                        this.pinvoke_name = pinvoke_name;
+                        pinvoke_info = true;
                 }
 
                 public void AddLocals (ArrayList local_list)
@@ -297,6 +310,12 @@ namespace Mono.ILASM {
                         /// Add the custrom attributes to this method
                         foreach (CustomAttr customattr in customattr_list)
                                 customattr.AddTo (code_gen, methoddef);
+
+                        if (pinvoke_info) {
+                                methoddef.AddPInvokeInfo (code_gen.PEFile.AddExternModule (pinvoke_mod),
+                                                (pinvoke_name != null ? pinvoke_name : name), pinvoke_attr);
+
+                        }
 
                         if (inst_list.Count < 1)
                                 return;
