@@ -4,6 +4,8 @@
 	implementation, it works for simple delegates now and I am already
 	pretty close to have it working for every delegates, but I am
 	going to sleep and finish it tomorrow?
+	(mono_create_method_pointer): implements delegates with parameters
+	and return value
 
 2002-02-22  Jeffrey Stedfast  <fejj@ximian.com>
 
