@@ -28,16 +28,22 @@ namespace System.Data.SqlClient {
 
 		#region Constructors
 
+#if NET_1_2
+		[Obsolete ("Use SqlClientPermission(PermissionState.None)", true]
+#endif
 		public SqlClientPermission ()
 			: this (PermissionState.None, false)
 		{
 		}
 
 		public SqlClientPermission (PermissionState state) 
-			: this (state, false)
+			: base (state)
 		{
 		}
 
+#if NET_1_2
+		[Obsolete ("Use SqlClientPermission(PermissionState.None)", true]
+#endif
 		public SqlClientPermission (PermissionState state, bool allowBlankPassword) 
 		{
 			AllowBlankPassword = allowBlankPassword;

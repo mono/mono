@@ -1,3 +1,9 @@
+2003-12-19  Tim Coleman <tim@timcoleman.com>
+	* ISqlNotificationReceiver.cs SqlResultSet.cs:
+		New stubs added
+	* SqlClientPermission.cs:
+		Fix constructor for 1.2
+
 2003-12-04  John Luke  <jluke@cfl.rr.com>
 
 	* SqlXmlTextReader.cs: applied patch from Chris Masters <neeeeeep@bigpond.com>
