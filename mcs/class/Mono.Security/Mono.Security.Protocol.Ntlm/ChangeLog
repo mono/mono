@@ -1,3 +1,10 @@
+2003-12-17  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ChallengeResponse.cs: Sorry I must have a profesionnal problem with
+	weak passwords ;-). Anyway I corrected the CR for null passwords (which
+	would produce a weak key for the first DES key) and added clean up :).
+	However it (null password) doesn't work for SQL Server authentication ?
+
 2003-12-15  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ChallengeResponse.cs: Pre-calculated second part of the LM hash for 

@@ -26,6 +26,10 @@ namespace Mono.Security.Protocol.Ntlm {
 
 		static private byte[] magic = { 0x4B, 0x47, 0x53, 0x21, 0x40, 0x23, 0x24, 0x25 };
 
+		// This is the pre-encrypted magic value with a null DES key (0xAAD3B435B51404EE)
+		// Ref: http://packetstormsecurity.nl/Crackers/NT/l0phtcrack/l0phtcrack2.5-readme.html
+		static private byte[] nullEncMagic = { 0xAA, 0xD3, 0xB4, 0x35, 0xB5, 0x14, 0x04, 0xEE };
+
 		private bool _disposed;
 		private byte[] _challenge;
 		private byte[] _lmpwd;
@@ -56,38 +60,45 @@ namespace Mono.Security.Protocol.Ntlm {
 
 		public string Password {
 			set { 
-				if (value == null)
-					throw new ArgumentNullException ("Password");
 				if (_disposed)
 					throw new ObjectDisposedException ("too late");
+
 				// create Lan Manager password
 				DES des = DES.Create ();
 				des.Mode = CipherMode.ECB;
-				des.Key = PasswordToKey (value, 0);
-				ICryptoTransform ct = des.CreateEncryptor ();
-				ct.TransformBlock (magic, 0, 8, _lmpwd, 0);
-				if (value.Length < 8) {
-					// In .NET DES cannot accept a weak key (as would result a password <= 7 chars)
-					// but we (or better someone else) can pre-calculate this case 0xAAD3B435B51404EE
-					// http://packetstormsecurity.nl/Crackers/NT/l0phtcrack/l0phtcrack2.5-readme.html
-					_lmpwd  [8] = 0xAA;
-					_lmpwd  [9] = 0xD3;
-					_lmpwd [10] = 0xB4;
-					_lmpwd [11] = 0x35;
-					_lmpwd [12] = 0xB5;
-					_lmpwd [13] = 0x14;
-					_lmpwd [14] = 0x04;
-					_lmpwd [15] = 0xEE;
+				ICryptoTransform ct = null;
+				
+				// Note: In .NET DES cannot accept a weak key
+				// this can happen for a null password
+				if ((value == null) || (value.Length < 1)) {
+					Buffer.BlockCopy (nullEncMagic, 0, _lmpwd, 0, 8);
+				}
+				else {
+					des.Key = PasswordToKey (value, 0);
+					ct = des.CreateEncryptor ();
+					ct.TransformBlock (magic, 0, 8, _lmpwd, 0);
+				}
+
+				// and if a password has less than 8 characters
+				if ((value == null) || (value.Length < 8)) {
+					Buffer.BlockCopy (nullEncMagic, 0, _lmpwd, 8, 8);
 				}
 				else {
 					des.Key = PasswordToKey (value, 7);
 					ct = des.CreateEncryptor ();
 					ct.TransformBlock (magic, 0, 8, _lmpwd, 8);
 				}
+
 				// create NT password
 				MD4 md4 = MD4.Create ();
-				byte[] hash = md4.ComputeHash (Encoding.Unicode.GetBytes (value));
+				byte[] data = ((value == null) ? (new byte [0]) : (Encoding.Unicode.GetBytes (value)));
+				byte[] hash = md4.ComputeHash (data);
 				Buffer.BlockCopy (hash, 0, _ntpwd, 0, 16);
+
+				// clean up
+				Array.Clear (data, 0, data.Length);
+				Array.Clear (hash, 0, hash.Length);
+				des.Clear ();
 			}
 		}
 
