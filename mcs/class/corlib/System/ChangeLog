@@ -1,3 +1,7 @@
+2004-04-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* Guid.cs: Flag as Sequential.
+
 2004-04-02  Dick Porter  <dick@ximian.com>
 
 	* String.cs: More sanity checks in Replace().  Fixes bug 55822.

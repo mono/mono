@@ -9,10 +9,12 @@
 
 using System.Security.Cryptography;
 using System.Text;
+using System.Runtime.InteropServices;
 
 namespace System
 {
 	[Serializable]
+	[StructLayout (LayoutKind.Sequential)]
 	public struct Guid  : IFormattable, IComparable
 	{
 		private uint _timeLow;
