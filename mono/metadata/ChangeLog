@@ -1,4 +1,11 @@
 
+2003-01-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c:
+	(ves_icall_type_from_name): make it work as MS. Ie, if no assembly name
+	provided, look for the type in the calling assembly and then in
+	mscorlib; if the assembly name is provided, only try that one.
+
 Tue Jan 14 14:52:52 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* object.c: register the vtable before there is a chance it's
