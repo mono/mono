@@ -1,3 +1,8 @@
+
+Mon Mar 25 13:01:40 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c: use a gc-safe hash table to store tls pointers.
+
 2002-03-22  Dick Porter  <dick@ximian.com>
 
 	* threads.c: Fix a race condition where a thread can start and
