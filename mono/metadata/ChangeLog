@@ -1,3 +1,9 @@
+2003-05-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* string-icalls.c (ves_icall_System_String_ctor_chara_int_int): if
+	value is null, we should throw an exception.   This is slightly
+	different than the other conventions used for the constructor.
+
 2003-05-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* socket-io.c: fixed windows build.
