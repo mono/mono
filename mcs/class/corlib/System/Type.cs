@@ -493,8 +493,22 @@ namespace System {
 
 		public abstract Type GetInterface (string name, bool ignoreCase);
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern void GetInterfaceMapData (Type t, Type iface, out MethodInfo[] targets, out MethodInfo[] methods);
+		
 		public virtual InterfaceMapping GetInterfaceMap (Type interfaceType) {
-			throw new NotImplementedException ();
+			InterfaceMapping res;
+			if (interfaceType == null)
+				throw new ArgumentNullException ("interfaceType");
+			if (!interfaceType.IsInterface)
+				throw new ArgumentException ("type argument must be an interface", "interfaceType");
+			res.TargetType = this;
+			res.InterfaceType = interfaceType;
+			GetInterfaceMapData (this, interfaceType, out res.TargetMethods, out res.InterfaceMethods);
+			if (res.TargetMethods == null)
+				throw new ArgumentException ("interface not found", "interfaceType");
+
+			return res;
 		}
 
 		public abstract Type[] GetInterfaces ();
