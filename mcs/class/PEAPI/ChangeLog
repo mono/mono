@@ -1,5 +1,10 @@
 2003-04-05 Jackson Harper <jackson@latitudegeo.com>
 
+	* PEAPI.cs: Add indexes to GenericParameters, make string index
+	always a full 4 bytes.
+		
+2003-04-05 Jackson Harper <jackson@latitudegeo.com>
+
 	* PEAPI.cs: Add GenericParameter table, and method to add generic
 	parameters.
 		

@@ -1656,15 +1656,15 @@ namespace PEAPI
     /// <summary>
     ///   Add a generic type parameter.
     /// </summary>
-    public void AddGenericParameter (Type constraint) {
-            metaData.AddToTable (MDTable.GenericParam, new GenericParameter (this, constraint));
+    public void AddGenericParameter (short index, Type constraint) {
+            metaData.AddToTable (MDTable.GenericParam, new GenericParameter (this, index, constraint));
     }
 
     /// <summary>
     ///  Add a named generic type parameter
     /// </summary>
-    public void AddGenericParameter (Type constraint, string name) {
-	metaData.AddToTable (MDTable.GenericParam, new GenericParameter (this, constraint, name));
+    public void AddGenericParameter (short index, Type constraint, string name) {
+        metaData.AddToTable (MDTable.GenericParam, new GenericParameter (this, index, constraint, name));
     }
 
     /// <summary>
@@ -3908,19 +3908,21 @@ namespace PEAPI
                 Type constraint;
                 string name;
                 uint nameIx;
+                short index;
 
-                private GenericParameter (ClassDef owner) {
+                private GenericParameter (ClassDef owner, short index) {
 			this.owner = owner;
+                        this.index = index;
                         tabIx = MDTable.GenericParam;
                 }
 
-                public GenericParameter (ClassDef owner, Type constraint)
-			: this (owner) {
+                public GenericParameter (ClassDef owner, short index, Type constraint)
+                        : this (owner, index) {
                         this.constraint = constraint;
                 }
 
-                public GenericParameter (ClassDef owner, Type constraint,
-			string name) : this (owner, constraint) {
+                public GenericParameter (ClassDef owner, short index, Type constraint,
+                        string name) : this (owner, index, constraint) {
                         this.name = name;
                 }
 
@@ -3941,8 +3943,8 @@ namespace PEAPI
                 internal sealed override uint Size(MetaData md) {
                         return (uint) (4 +
                                md.CodedIndexSize(CIx.TypeDefOrRef) + 
-                               md.StringsIndexSize () +
-                               md.CodedIndexSize(CIx.TypeDefOrRef));
+                               4 +
+                               md.TableIndexSize(MDTable.TypeDef));
                 }
 
                 internal sealed override void BuildTables(MetaData md) {
@@ -3955,11 +3957,11 @@ namespace PEAPI
                 }
 
                 internal sealed override void Write(FileImage output) {
-                        output.Write ((short) 0);
+                        output.Write ((short) index);
                         output.Write ((short) 0);
                         output.WriteCodedIndex(CIx.TypeDefOrRef, owner);
-                        output.StringsIndex(nameIx);
-                        output.WriteCodedIndex (CIx.TypeDefOrRef, owner);
+                        output.Write ((uint) nameIx);
+                        output.WriteIndex(MDTable.TypeDef,owner.Row);
                 }
 
     
