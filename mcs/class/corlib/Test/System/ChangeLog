@@ -1,3 +1,8 @@
+2004-06-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* FloatingPointFormatterTest.cs : Format literal (i.e. '...') in
+	  format string should be kept as is.
+
 2004-06-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeTest.cs : Improved CultureIndependentTests(). Error message

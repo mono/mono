@@ -56,5 +56,17 @@ namespace MonoTests.System
 			AssertEquals ("#4", "percent48.57", 0.4857.ToString ("%###.###", nfi));
 			AssertEquals ("#5", "48.57percent", 0.4857.ToString ("###.###%", nfi));
 		}
+
+		[Test]
+		public void LiteralMixed ()
+		{
+			CultureInfo ci = CultureInfo.InvariantCulture;
+			AssertEquals ("#1", "test 235", 234.56.ToString ("'test' ###", ci));
+			AssertEquals ("#2", "235 test", 234.56.ToString ("### 'test'", ci));
+			AssertEquals ("#3", "234 test.56", 234.56.ToString ("### 'test'.###", ci));
+			AssertEquals ("#1", "hoge 235", 234.56.ToString ("'hoge' ###", ci));
+			AssertEquals ("#2", "235 hoge", 234.56.ToString ("### 'hoge'", ci));
+			AssertEquals ("#3", "234 hoge.56", 234.56.ToString ("### 'hoge'.###", ci));
+		}
         }
 }
