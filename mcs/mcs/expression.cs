@@ -272,7 +272,6 @@ namespace CIR {
 			if (expr_type == target_type)
 				return expr;
 			
-			
 			//
 			// Step 1: Perform implicit conversions as found on expr.Type
 			//
@@ -2048,9 +2047,42 @@ namespace CIR {
 			}
 		}
 
-		static bool ConversionExists (Type from, Type to)
+		static bool ConversionExists (Type from, Type to, TypeContainer tc)
 		{
-			// FIXME : Need to implement this !
+			// Locate user-defined implicit operators
+
+			Expression mg;
+			
+			mg = MemberLookup (tc.RootContext, to, "implicit", false);
+
+			if (mg != null) {
+				MethodGroupExpr me = (MethodGroupExpr) mg;
+				
+				for (int i = me.Methods.Length; i > 0;) {
+					i--;
+					MethodBase mb = me.Methods [i];
+					ParameterData pd = GetParameterData (mb);
+					
+					if (from == pd.ParameterType (0))
+						return true;
+				}
+			}
+
+			mg = MemberLookup (tc.RootContext, from, "implicit", false);
+
+			if (mg != null) {
+				MethodGroupExpr me = (MethodGroupExpr) mg;
+
+				for (int i = me.Methods.Length; i > 0;) {
+					i--;
+					MethodBase mb = me.Methods [i];
+					Method method = (Method) TypeContainer.LookupMethodByBuilder (mb);
+					
+					if (method.GetReturnType (tc) == to)
+						return true;
+				}
+			}
+			
 			return false;
 		}
 		
@@ -2059,16 +2091,16 @@ namespace CIR {
 		//  Returns : 1 if a->p is better
 		//            0 if a->q or neither is better 
 		// </summary>
-		static int BetterConversion (Argument a, Type p, Type q)
+		static int BetterConversion (Argument a, Type p, Type q, TypeContainer tc)
 		{
 			
 			Type argument_type = a.Expr.Type;
 			Expression argument_expr = a.Expr;
 
-			if (argument_type == null){
+			if (argument_type == null)
 				throw new Exception ("Expression of type " + a.Expr + " does not resolve its type");
-			}
-
+			
+			
 			if (p == q)
 				return 0;
 
@@ -2077,12 +2109,6 @@ namespace CIR {
 
 			if (argument_type == q)
 				return 0;
-
-			// Implicit conversions come here
-
-			//if (ConversionExists (p, q) == true &&
-			//    ConversionExists (q, p) == false)
-			//	return 1;
 
 			//
 			// Now probe whether an implicit constant expression conversion
@@ -2141,7 +2167,13 @@ namespace CIR {
 						return 1;
 				}
 			}
+
+			// User-defined Implicit conversions come here
 			
+			if (q != null)
+				if (ConversionExists (p, q, tc) == true &&
+				    ConversionExists (q, p, tc) == false)
+					return 1;
 			
 			if (p == TypeManager.sbyte_type)
 				if (q == TypeManager.byte_type || q == TypeManager.ushort_type ||
@@ -2169,7 +2201,7 @@ namespace CIR {
 		//  0 if candidate ain't better
 		//  1 if candidate is better than the current best match
 		// </summary>
-		static int BetterFunction (ArrayList args, MethodBase candidate, MethodBase best)
+		static int BetterFunction (ArrayList args, MethodBase candidate, MethodBase best, TypeContainer tc)
 		{
 			ParameterData candidate_pd = GetParameterData (candidate);
 			ParameterData best_pd;
@@ -2191,7 +2223,7 @@ namespace CIR {
 						
 						Argument a = (Argument) args [j];
 						
-						x = BetterConversion (a, candidate_pd.ParameterType (j), null);
+						x = BetterConversion (a, candidate_pd.ParameterType (j), null, tc);
 						
 						if (x > 0)
 							continue;
@@ -2219,8 +2251,10 @@ namespace CIR {
 					
 					Argument a = (Argument) args [j];
 
-					x = BetterConversion (a, candidate_pd.ParameterType (j), best_pd.ParameterType (j));
-					y = BetterConversion (a, best_pd.ParameterType (j), candidate_pd.ParameterType (j));
+					x = BetterConversion (a, candidate_pd.ParameterType (j),
+							      best_pd.ParameterType (j), tc);
+					y = BetterConversion (a, best_pd.ParameterType (j),
+							      candidate_pd.ParameterType (j), tc);
 
 					rating1 += x;
 					rating2 += y;
@@ -2277,7 +2311,7 @@ namespace CIR {
 				MethodBase candidate  = me.Methods [i];
 				int x;
 				
-				x = BetterFunction (Arguments, candidate, method);
+				x = BetterFunction (Arguments, candidate, method, tc);
 				
 				if (x == 0)
 					continue;

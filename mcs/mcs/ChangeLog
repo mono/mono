@@ -1,3 +1,11 @@
+2001-09-24  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (Invocation::BetterFunction): Take TypeContainer argument
+	(Invocation::BetterConversion): Same here
+	(Invocation::ConversionExists): Ditto.
+
+	(Invocation::ConversionExists): Implement.
+
 2001-09-22  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (OverloadResolve): Improve some more to catch errors 1502 and 1503
