@@ -163,18 +163,22 @@ namespace System.Web.UI.WebControls
 
 		public virtual int SelectedIndex
 		{
-			get
-			{
-				object o = ViewState["SelectedIndex"];
-				if(o!=null)
-					return (int)o;
+			get {
+				ListItemCollection items = Items;
+				int last = items.Count;
+				for (int i = 0; i < last; i++) {
+					if (items [i].Selected)
+						return i;
+				}
 				return -1;
 			}
-			set
-			{
-				if(value < -1 || value >= Items.Count)
-					throw new ArgumentOutOfRangeException();
-				ViewState["SelectedIndex"] = value;
+			set {
+				if (value < -1 || value > Items.Count)
+					throw new ArgumentOutOfRangeException ();
+
+				ClearSelection ();
+				if (value != -1)
+					Items [value].Selected = true;
 			}
 		}
 

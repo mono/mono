@@ -2,13 +2,14 @@
  * Namespace: System.Web.UI.WebControls
  * Class:     Calendar
  *
- * Author:  Gaurav Vaish
+ * Authors:  Gaurav Vaish, Gonzalo Paniagua Javier
  * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
+ * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>, <gonzalo@ximian.com>
  * Implementation: yes
  * Status:  98%
  *
  * (C) Gaurav Vaish (2001)
+ * (c) 2002 Ximian, Inc. (http://www.ximian.com)
  */
 
 using System;

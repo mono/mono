@@ -31,11 +31,11 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return BorderColor;
+				return base.BorderColor;
 			}
 			set
 			{
-				BorderColor = value;
+				base.BorderColor = value;
 			}
 		}
 
@@ -43,11 +43,11 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return BorderStyle;
+				return base.BorderStyle;
 			}
 			set
 			{
-				BorderStyle = value;
+				base.BorderStyle = value;
 			}
 		}
 
@@ -55,11 +55,11 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return BorderWidth;
+				return base.BorderWidth;
 			}
 			set
 			{
-				BorderWidth = value;
+				base.BorderWidth = value;
 			}
 		}
 
@@ -67,11 +67,16 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return SelectedIndex;
+				int index  = base.SelectedIndex;
+				if (index < 0 && Items.Count > 0) {
+					index = 0;
+					Items [0].Selected = true;
+				}
+				return index;
 			}
 			set
 			{
-				SelectedIndex = value;
+				base.SelectedIndex = value;
 			}
 		}
 

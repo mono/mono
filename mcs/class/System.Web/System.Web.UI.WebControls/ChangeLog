@@ -1,5 +1,11 @@
 2002-07-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Calendar.cs: added myself to the list of authors.
+	* DropDownList.cs: fixed a few properties.
+	* ListControl.cs: fixed SelectedIndex.
+
+2002-07-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Calendar.cs: lots of fixes. Render days.  Still left to persist
 	selected days when changing month.
 
