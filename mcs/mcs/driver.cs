@@ -411,7 +411,7 @@ namespace Mono.CSharp
 			//
 			string [] default_config = {
 				"System",
-				"System.XML",
+				"System.Xml",
 #if false
 				//
 				// Is it worth pre-loading all this stuff?
