@@ -7,7 +7,7 @@
 // (C) 2003 Ben Maurer
 //
 
-#if GENERICS
+#if NET_2_0
 using System;
 using System.Runtime.InteropServices;
 
