@@ -1,3 +1,7 @@
+2004-02-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CharCategoryTest.cs : csc build fix (line length excess.)
+
 2004-02-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CharCategoryTest.cs : cleaning ;)
