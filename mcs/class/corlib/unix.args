@@ -487,7 +487,11 @@ System.Runtime.Remoting.Channels/IServerFormatterSinkProvider.cs
 System.Runtime.Remoting.Channels/ITransportHeaders.cs
 System.Runtime.Remoting.Channels/ServerChannelSinkStack.cs
 System.Runtime.Remoting.Channels/ServerProcessing.cs
+System.Runtime.Remoting.Channels/SinkProviderData.cs
+System.Runtime.Remoting.Channels/SoapClientFormatterSink.cs
 System.Runtime.Remoting.Channels/SoapServerFormatterSink.cs
+System.Runtime.Remoting.Channels/SoapServerFormatterSinkProvider.cs
+System.Runtime.Remoting.Channels/TransportHeaders.cs
 System.Runtime.Remoting.Contexts/Context.cs
 System.Runtime.Remoting.Contexts/ContextAttribute.cs
 System.Runtime.Remoting.Contexts/ContextProperty.cs
