@@ -2506,7 +2506,7 @@ int32			: INT64
                           {
                                 long l = (long) $1;
                                 byte[] intb = BitConverter.GetBytes (l);
-                                $$ = BitConverter.ToInt32 (intb, 0);
+                                $$ = BitConverter.ToInt32 (intb, BitConverter.IsLittleEndian ? 0 : 4);
                           }
 			;
 
@@ -2518,23 +2518,23 @@ float64			: FLOAT64
                           {
                                 int i = (int) $3;
                                 byte[] intb = BitConverter.GetBytes (i);
-                                $$ = (double) BitConverter.ToSingle (intb, 0);
+                                $$ = (double) BitConverter.ToSingle (intb, BitConverter.IsLittleEndian ? 0 : 4);
                           }
                         | K_FLOAT32 OPEN_PARENS INT64 CLOSE_PARENS
                           {
                                 long l = (long) $3;
                                 byte[] intb = BitConverter.GetBytes (l);
-                                $$ = (double) BitConverter.ToSingle (intb, 0);
+                                $$ = (double) BitConverter.ToSingle (intb, BitConverter.IsLittleEndian ? 0 : 4);
                           }
 			| K_FLOAT64 OPEN_PARENS INT64 CLOSE_PARENS
                           {
                                 byte[] intb = BitConverter.GetBytes ((long) $3);
-				$$ = BitConverter.ToDouble (intb, 0);
+				$$ = BitConverter.ToDouble (intb, BitConverter.IsLittleEndian ? 0 : 4);
                           }
                         | K_FLOAT64 OPEN_PARENS INT32 CLOSE_PARENS
                           {
                                 byte[] intb = BitConverter.GetBytes ((int) $3);
-                                $$ = (double) BitConverter.ToSingle (intb, 0);
+                                $$ = (double) BitConverter.ToSingle (intb, BitConverter.IsLittleEndian ? 0 : 4);
                           }
 			;
 
