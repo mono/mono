@@ -1,5 +1,9 @@
 2003-05-19 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Same as below but with float64 ()
+		
+2003-05-19 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: When the float32 (0xFFFFFF) syntax is used the hex
 	value represents the exact byte value of a float NOT an integer
 	value that is converted to a float.
