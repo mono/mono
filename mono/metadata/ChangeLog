@@ -1,3 +1,24 @@
+2004-06-15  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* locales.c, threadpool.c: use mono_monitor_enter instead of mono_monitor_try_enter.
+	* monitor.c: New method mono_monitor_try_enter_internal, which takes a new
+	  parameter which allows to choose whether the wait can be interrupted or 
+	  not. Also added the method mono_monitor_enter(), which locks the monitor
+	  using an infinite wait and without allowing interruption.
+	  In the Monitor.Enter and Wait icalls, retry the lock if the wait is
+	  interrupted.
+	* object.h: Added new fields in MonoThread. suspend_event holds the event
+	  used to susped/resume the thread. synch_lock is the lock object to use for
+	  modifying the thread state.
+	* threads.c: Use the new synch_lock object for locking, instead of "this",
+	  which can generate deadlocks.
+	  Moved thread state change in Thread.Sleep and Thread.Join from managed
+	  to unmanaged code. This avoids a deadlock when the thread was suspended
+	  just after acquiring the thread lock.
+	  In general, use mono_monitor_enter instead of mono_monitor_try_enter.
+	  Implemented Thread.Suspend using an event instead of ThreadSuspend,
+	  which is not fully implemented in the io-layer.
+	* socket-io.c: Only try IPv6 DNS lookup if IPv4 fails.
 
 Tue Jun 15 18:34:21 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
