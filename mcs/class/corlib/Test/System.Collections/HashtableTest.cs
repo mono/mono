@@ -778,5 +778,13 @@ public class HashtableTest : Assertion {
 		Assert (!e.MoveNext ());
 
 	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void GetObjectData_NullSerializationInfo () 
+	{
+		SetDefaultData ();
+		ht.GetObjectData (null, new StreamingContext ());
+	}
 }
 }

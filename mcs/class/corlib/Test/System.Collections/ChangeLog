@@ -1,3 +1,8 @@
+2004-05-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ArrayListTest.cs: Added new test for null in BinarySearch.
+	* HashtableTest.cs: Added null checking fro GetObjectData.
+
 2004-05-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HashtableTest.cs: Added case where a cloned hashtable must also be

@@ -418,6 +418,14 @@ public class ArrayListTest : Assertion {
 		al.BinarySearch (1, Int32.MaxValue, this, null);
 	}
 
+	[Test]
+	public void BinarySearch_Null () 
+	{
+		ArrayList al = new ArrayList ();
+		al.Add (this);
+		AssertEquals ("null", -1, al.BinarySearch (null));
+	}
+
 	// TODO - BinarySearch with IComparer
 
 	public void TestClear() {
