@@ -434,6 +434,7 @@ namespace MonoTests.System.IO
 			string getTempPath = Path.GetTempPath ();
 			Assert ("GetTempPath #01",  getTempPath != String.Empty);
 			Assert ("GetTempPath #02",  Path.IsPathRooted (getTempPath));
+			AssertEquals ("GetTempPath #03", Path.DirectorySeparatorChar, getTempPath [getTempPath.Length - 1]);
 		}
 
 		public void TestGetTempFileName ()
