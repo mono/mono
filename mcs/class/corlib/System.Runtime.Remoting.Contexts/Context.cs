@@ -256,11 +256,11 @@ namespace System.Runtime.Remoting.Contexts {
 			return client_context_sink_chain;
 		}
 
-		internal IMessageSink CreateServerObjectSinkChain (MarshalByRefObject obj)
+		internal IMessageSink CreateServerObjectSinkChain (MarshalByRefObject obj, bool forceInternalExecute)
 		{
-			IMessageSink objectSink = new StackBuilderSink(obj);
-			objectSink = new ServerObjectTerminatorSink(objectSink);
-			objectSink = new Lifetime.LeaseSink(objectSink);
+			IMessageSink objectSink = new StackBuilderSink (obj, forceInternalExecute);
+			objectSink = new ServerObjectTerminatorSink (objectSink);
+			objectSink = new Lifetime.LeaseSink (objectSink);
 
 			if (context_properties != null)
 			{
