@@ -182,5 +182,31 @@ namespace System.Web.UI.MobileControls.Adapters
 			}
 			return -1;
 		}
+
+		protected string GetDefaultLabel(int labelID)
+		{
+			if(labelID < 0 || labelID >= labelIDs.Length)
+			{
+				// FIXME
+				throw new ArgumentException("ControlAdapter" +
+				                            "_InvalidDefaultLabel");
+			}
+			string retVal = null;
+			if(Page != null)
+			{
+				ControlAdapter ca = (ControlAdapter)Page.Adapter;
+				if(defaultLabels == null)
+				{
+					defaultLabels = new string[labelIDs.Length];
+					Array.Copy(labelIDs, defaultLabels, labelIDs.Length);
+				}
+				retVal = defaultLabels[labelID];
+			}
+			if(retVal == null)
+			{
+				retVal = labelIDs[labelID];
+			}
+			return retVal;
+		}
 	}
 }
