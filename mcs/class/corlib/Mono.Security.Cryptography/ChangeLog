@@ -1,3 +1,8 @@
+2004-02-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* KeyPairPersistence.cs: New. Class to persist keypairs in an XML
+	format to mimic the CryptoAPI key containers.
+
 2004-01-12  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoConvert.cs: RSA doesn't start with a Q - at least that what
