@@ -1,3 +1,8 @@
+
+Mon Nov 18 16:35:22 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: set a public key token on the core assemblies.
+
 2002-11-18  Dick Porter  <dick@ximian.com>
 
 	* threads.c: Split out some thread initialisation so that other
