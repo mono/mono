@@ -1,3 +1,8 @@
+2002-05-25  Miguel de Icaza  <miguel@ximian.com>
+
+	* delegate.cs (NewDelegate.Emit): We have to emit a null as the
+	instance if the method we are calling is static!
+
 2002-05-24  Miguel de Icaza  <miguel@ximian.com>
 
 	* attribute.cs (ApplyAttributes): Make this function filter out

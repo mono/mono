@@ -252,7 +252,7 @@ namespace Mono.CSharp
 				error ("Log: " + f.FusionLog);
 				return 1;
 			} catch (FileLoadException f){
-				error ("// File Load Exception: ");
+				error ("File Load Exception: " + assembly);
 				error ("Log: " + f.FusionLog);
 				return 1;
 			} catch (ArgumentNullException){

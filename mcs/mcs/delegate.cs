@@ -635,7 +635,8 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			if (delegate_instance_expr == null)
+			if (delegate_instance_expr == null ||
+			    delegate_method.IsStatic)
 				ec.ig.Emit (OpCodes.Ldnull);
 			else
 				delegate_instance_expr.Emit (ec);
