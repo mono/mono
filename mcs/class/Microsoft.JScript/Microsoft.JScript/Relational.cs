@@ -14,7 +14,7 @@ namespace Microsoft.JScript {
 
 	public class Relational : BinaryOp {
 
-		internal Relational (AST left, AST right, JSToken op)
+		internal Relational (AST parent, AST left, AST right, JSToken op)
 		{
 			this.left = left;
 			this.right = right;

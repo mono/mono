@@ -24,8 +24,8 @@ namespace Microsoft.JScript {
 					      string return_type,
 					      Block body)
 		{
-			Function = new FunctionObject (parent, name, p, 
-						       return_type, body);
+			this.parent = parent;
+			Function = new FunctionObject (name, p, return_type, body);
 		}
 
 		public static Closure JScriptFunctionDeclaration (RuntimeTypeHandle handle, string name, 
@@ -52,9 +52,9 @@ namespace Microsoft.JScript {
 		internal string get_composite_name ()
 		{
 			string parent_name, full_name;
-			FunctionDeclaration p = Function.parent as FunctionDeclaration;
+			FunctionDeclaration p = parent as FunctionDeclaration;
 
-			if (p.Function.parent != null)
+			if (p.parent != null)
 				parent_name = p.get_composite_name ();
 			else parent_name = p.Function.name;
 
@@ -69,25 +69,23 @@ namespace Microsoft.JScript {
 			MethodBuilder method;
 			string name;
 
-			if (!ec.is_global_code_method) {
-				if (Function.parent == null) {
-					name = Function.name;
-					type.DefineField (name, 
-							  typeof (Microsoft.JScript.ScriptFunction),
-							  FieldAttributes.Public | 
-							  FieldAttributes.Static);	       
-				} else {
-					name = get_composite_name ();
-					ec.ig.DeclareLocal (typeof (Microsoft.JScript.ScriptFunction));
-				}
-				method = type.DefineMethod (name, Function.attr, 
-							    Function.return_type,
-							    Function.params_types ());
-				
-				ec.ig = method.GetILGenerator ();
-			
-				Function.body.Emit (ec);
+			if (parent == null) {
+				name = Function.name;
+				type.DefineField (name, 
+						  typeof (Microsoft.JScript.ScriptFunction),
+						  FieldAttributes.Public | 
+						  FieldAttributes.Static);	       
+			} else {
+				name = get_composite_name ();
+				ec.ig.DeclareLocal (typeof (Microsoft.JScript.ScriptFunction));
 			}
+			method = type.DefineMethod (name, Function.attr, 
+						    Function.return_type,
+						    Function.params_types ());
+	
+			ec.ig = method.GetILGenerator ();
+		
+			Function.body.Emit (ec);
 		}
 
 		internal override bool Resolve (IdentificationTable context)

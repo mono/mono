@@ -15,7 +15,6 @@ namespace Microsoft.JScript {
 	public class Block : AST {
 
 		internal ArrayList Elements;
-		internal AST parent;
 
 		internal Block (AST parent)
 		{

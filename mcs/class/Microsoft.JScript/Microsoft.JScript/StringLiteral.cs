@@ -38,9 +38,14 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			if (ec.is_global_code_method) {
-				ec.ig.Emit (OpCodes.Ldstr, str);
-			}
+			ILGenerator ig;
+
+			if (parent == null)
+				ig = ec.gc_ig;
+			else 
+				ig = ec.ig;
+
+			ec.ig.Emit (OpCodes.Ldstr, str);
 		}
 	}
 }

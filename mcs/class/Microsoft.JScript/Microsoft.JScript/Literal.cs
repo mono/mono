@@ -29,8 +29,9 @@ namespace Microsoft.JScript {
 
 		internal bool val;
 
-		internal BooleanLiteral (bool val)
+		internal BooleanLiteral (AST parent, bool val)
 		{
+			this.parent = parent;
 			this.val = val;
 		}
 
@@ -46,14 +47,19 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			if (ec.is_global_code_method) {
-				if (val)
-					ec.ig.Emit (OpCodes.Ldc_I4_1);
-				else
-					ec.ig.Emit (OpCodes.Ldc_I4_0);
+			ILGenerator ig;
+			
+			if (parent == null)
+				ig = ec.gc_ig;
+			else
+				ig = ec.ig;
 
-				ec.ig.Emit (OpCodes.Box, typeof (System.Boolean));
-			}
+			if (val)
+				ig.Emit (OpCodes.Ldc_I4_1);
+			else
+				ig.Emit (OpCodes.Ldc_I4_0);
+
+			ig.Emit (OpCodes.Box, typeof (System.Boolean));
 		}
 	}
 
@@ -78,7 +84,15 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			ILGenerator ig;
+
+			if (parent == null)
+				ig = ec.gc_ig;
+			else
+				ig = ec.ig;
+
+			ig.Emit (OpCodes.Ldc_I4, (int) val);
+			ig.Emit (OpCodes.Box, typeof (System.Int32));
 		}
 	}
 }

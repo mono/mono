@@ -16,8 +16,9 @@ namespace Microsoft.JScript {
 
 	public class Unary : UnaryOp {
 
-		internal Unary (AST operand, JSToken oper)
+		internal Unary (AST parent, AST operand, JSToken oper)
 		{			
+			this.parent = parent;
 			this.operand = operand;
 			this.oper = oper;
 		}
@@ -52,9 +53,10 @@ namespace Microsoft.JScript {
 
 	public class Binary : BinaryOp {
 
-		internal Binary (AST left, AST right, JSToken op)
+		internal Binary (AST parent, AST left, AST right, JSToken op)
 		{
 			Console.WriteLine ("DEBUG::expression.cs::Binary constructor called");
+			this.parent = parent;
 			this.left = left;
 			this.right = right;
 			this.current_op = op;	
@@ -88,10 +90,14 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			if (ec.is_global_code_method) {
-				ILGenerator ig = ec.ig;
-				emit_operator (ig);
-			}
+			ILGenerator ig;
+
+			if (parent == null)
+				ig = ec.gc_ig;
+			else
+				ig = ec.ig;
+
+			emit_operator (ig);
 		}
 
 		internal void emit_operator (ILGenerator ig)
@@ -113,7 +119,7 @@ namespace Microsoft.JScript {
 
 		AST cond_expr, trueExpr, falseExpr;
 
-		internal Conditional (AST expr, AST  trueExpr, AST falseExpr)
+		internal Conditional (AST parent, AST expr, AST  trueExpr, AST falseExpr)
 		{
 			this.cond_expr = expr;
 			this.trueExpr = trueExpr;
@@ -151,8 +157,9 @@ namespace Microsoft.JScript {
 		internal AST args1;
 		internal AST args2;
 
-		public Call (AST member_exp, AST args1, AST args2)
+		public Call (AST parent, AST member_exp, AST args1, AST args2)
 		{
+			this.parent = parent;
 			this.member_exp = member_exp;
 			this.args1 = args1;
 			this.args2 = args2;

@@ -20,7 +20,6 @@ namespace Microsoft.JScript {
 		private Type type;
 		private string type_annot;
 		private AST val;
-		internal AST parent;
 
 		internal VariableDeclaration (AST parent, string id, string t, AST init)
 		{
@@ -70,16 +69,15 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			if (!ec.is_global_code_method)
-				if (parent == null) {
-					FieldBuilder field;
-					TypeBuilder type  = ec.type_builder;
-					
-					field = type.DefineField (id, Type,
-								  FieldAttributes.Public |
-								  FieldAttributes.Static);
-				} else
-					ec.ig.DeclareLocal (Type);
+			if (parent == null) {
+				FieldBuilder field;
+				TypeBuilder type  = ec.type_builder;
+				
+				field = type.DefineField (id, Type,
+							  FieldAttributes.Public |
+							  FieldAttributes.Static);
+			} else
+				ec.ig.DeclareLocal (Type);
 		}
 
 		internal override bool Resolve (IdentificationTable context)

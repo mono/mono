@@ -20,12 +20,20 @@ namespace Microsoft.JScript {
 
 		internal TypeBuilder type_builder;
 		internal ILGenerator ig;
-		internal bool is_global_code_method;
+		internal ILGenerator gc_ig;
 
 		internal EmitContext (TypeBuilder type)
 		{
 			type_builder = type;
-			is_global_code_method = false;
+
+			if (type_builder != null) {
+				MethodBuilder global_code =  type_builder.DefineMethod (
+									"Global Code",
+									MethodAttributes.Public,
+									typeof (System.Object),
+									new Type [] {});
+				gc_ig = global_code.GetILGenerator ();
+			}
 		}
 	}
 
@@ -86,32 +94,12 @@ namespace Microsoft.JScript {
 							 (typeof (CompilerGlobalScopeAttribute).GetConstructor (new Type [] {}), new object [] {}));
 
 			EmitContext ec = new EmitContext (type_builder);
+			ILGenerator global_code = ec.gc_ig;
 
-			//
-			// Build the default constructor of the type
-			//
 			emit_default_script_constructor (ec);
-
-			// here we only emit code for declarations.
+			emit_default_init_global_code (global_code);
 			prog.Emit (ec);
-
-			//
-			// statements and expression at global scope are emitted 
-			// inside 'Global Code' method.
-			//
-			type_builder = ec.type_builder;
-			MethodBuilder method = type_builder.DefineMethod ("Global Code",
-									  MethodAttributes.Public,
-									  typeof (System.Object),
-									  new Type [] {});
-									     
-			ec.ig = method.GetILGenerator ();
-			ec.is_global_code_method = true;
-
-			emit_default_init_global_code (ec.ig);
-			prog.Emit (ec);
-			emit_default_end_global_code (ec.ig);
-
+			emit_default_end_global_code (global_code);
 			ec.type_builder.CreateType ();
 
 			//

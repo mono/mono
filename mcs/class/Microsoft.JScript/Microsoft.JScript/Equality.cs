@@ -14,7 +14,7 @@ namespace Microsoft.JScript {
 
 	public class Equality : BinaryOp {
 
-		internal Equality (AST left, AST right, JSToken op)
+		internal Equality (AST parent, AST left, AST right, JSToken op)
 		{
 			this.left = left;
 			this.right = right;

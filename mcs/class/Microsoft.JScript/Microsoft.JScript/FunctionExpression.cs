@@ -18,8 +18,8 @@ namespace Microsoft.JScript {
 					     FormalParameterList p,
 					     string return_type, Block body)
 		{
-			Function = new FunctionObject (parent, name, p, 
-						       return_type, body);
+			this.parent = parent;
+			Function = new FunctionObject (name, p, return_type, body);
 		}
 						
 

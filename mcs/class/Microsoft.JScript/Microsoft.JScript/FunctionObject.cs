@@ -22,11 +22,8 @@ namespace Microsoft.JScript {
 		internal Type return_type;
 		internal FormalParameterList parameters;
 		internal Block body;
-		internal AST parent; 
 
-		internal FunctionObject (AST parent, string name,
-					 FormalParameterList p,
-					 string ret_type, Block body)
+		internal FunctionObject (string name, FormalParameterList p, string ret_type, Block body)
 		{
 			//
 			// FIXME: 
@@ -36,7 +33,6 @@ namespace Microsoft.JScript {
 			//
 			this.attr = MethodAttributes.Public | MethodAttributes.Static;
 
-			this.parent = parent;
 			this.name = name;
 			this.parameters = p;
 
@@ -53,7 +49,6 @@ namespace Microsoft.JScript {
 		internal FunctionObject ()
 		{
 			this.parameters = new FormalParameterList ();
-			this.body = new Block (parent);
 		}
 
 		public override string ToString ()

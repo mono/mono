@@ -11,6 +11,8 @@ namespace Microsoft.JScript {
 
 	public abstract class AST {
 
+		internal AST parent;
+
 		//
 		// Here the actual IL code generation happens.
 		//
