@@ -1,3 +1,15 @@
+2001-11-29  Radek Doulik  <rodo@ximian.com>
+
+	* object.c (mono_ldstr): swap bytes here, it's probably not the
+	best place, but works for me now, I'll redo it once I know mono
+	better, also note that I add PROT_WRITE and don't reset back, also
+	note that it's only affects big endians, so x86 should be OK
+
+	* mono-endian.h (read16): use just glib macros for both endians
+
+	* mono-endian.c: removed as glib macros are used in in
+	mono-endian.h so we don't need to care about endianess for read
+	macros as glib does that for us already
 
 Thu Nov 29 18:20:58 CET 2001 Paolo Molaro <lupus@ximian.com>
 
