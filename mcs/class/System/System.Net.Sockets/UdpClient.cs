@@ -127,19 +127,19 @@ namespace System.Net.Sockets
 		public byte [] Receive (ref IPEndPoint remoteEP)
 		{
 			try {
-				if (remoteEP == null)
-					throw new ArgumentNullException ("remoteEP cannot be null");
-
 				// Length of the array for receiving data??
 				byte [] recBuffer;
 				int available = socket.Available;
+				if (available < 512)
+					available = 512;
 
-				recBuffer = new byte [1024]; // FIXME: any suggestions?
-				EndPoint endPoint = (EndPoint) remoteEP;
+				recBuffer = new byte [available];
+				EndPoint endPoint = new IPEndPoint (IPAddress.Any, 0);
 				int dataRead = socket.ReceiveFrom (recBuffer, ref endPoint);
 				if (dataRead < recBuffer.Length)
-					return CutArray (recBuffer, dataRead);
+					recBuffer = CutArray (recBuffer, dataRead);
 
+				remoteEP = (IPEndPoint) endPoint;
 				return recBuffer;
 			} finally {
 				CheckDisposed ();
