@@ -1,3 +1,7 @@
+2002-12-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* reflection.h: added fields to match C# implementation.
+
 2002-12-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: patch from Jaroslaw Kowalski to fix Environment.MachineName.
