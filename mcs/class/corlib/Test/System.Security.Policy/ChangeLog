@@ -1,3 +1,8 @@
+2004-08-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* UnionCodeGroupTest.cs: Added unit tests for Resolve. Converted 
+	existing unit tests to NUnit 2.2 format.
+
 2004-08-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PolicyLevelTest.cs: Added new policy resolution tests (related to

@@ -37,7 +37,7 @@ using System.Security.Permissions;
 namespace MonoTests.System.Security.Policy {
 
 	[TestFixture]
-	public class UnionCodeGroupTest : Assertion {
+	public class UnionCodeGroupTest {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
@@ -51,22 +51,22 @@ namespace MonoTests.System.Security.Policy {
 		{
 			// legal
 			UnionCodeGroup cg = new UnionCodeGroup (new AllMembershipCondition (), null);
-			AssertNull ("PolicyStatement", cg.PolicyStatement);
+			Assert.IsNull (cg.PolicyStatement, "PolicyStatement");
 		}
 
 		[Test]
 		public void Constructor () 
 		{
 			UnionCodeGroup cg = new UnionCodeGroup (new AllMembershipCondition (), new PolicyStatement (new PermissionSet (PermissionState.None)));
-			AssertNotNull ("PolicyStatement", cg.PolicyStatement);
-			AssertNotNull ("MembershipCondition", cg.MembershipCondition);
+			Assert.IsNotNull (cg.PolicyStatement, "PolicyStatement");
+			Assert.IsNotNull (cg.MembershipCondition, "MembershipCondition");
 		}
 
 		[Test]
 		public void MergeLogic () 
 		{
 			UnionCodeGroup cg = new UnionCodeGroup (new AllMembershipCondition (), new PolicyStatement (new PermissionSet (PermissionState.None)));
-			AssertEquals ("MergeLogic", "Union", cg.MergeLogic);
+			Assert.AreEqual ("Union", cg.MergeLogic, "MergeLogic");
 		}
 
 		[Test]
@@ -74,13 +74,13 @@ namespace MonoTests.System.Security.Policy {
 		{
 			UnionCodeGroup cg = new UnionCodeGroup (new AllMembershipCondition (), new PolicyStatement (new PermissionSet (PermissionState.None)));
 			UnionCodeGroup cg2 = (UnionCodeGroup) cg.Copy ();
-			AssertEquals ("AttributeString", cg.AttributeString, cg2.AttributeString);
-			AssertEquals ("Children", cg.Children.Count, cg2.Children.Count);
-			AssertEquals ("Description", cg.Description, cg2.Description);
-			AssertEquals ("MergeLogic", cg.MergeLogic, cg2.MergeLogic);
-			AssertEquals ("Name", cg.Name, cg2.Name);
-			AssertEquals ("PermissionSetName", cg.PermissionSetName, cg2.PermissionSetName);
-			AssertEquals ("ToXml", cg.ToXml ().ToString (), cg2.ToXml ().ToString ());
+			Assert.AreEqual (cg.AttributeString, cg2.AttributeString, "AttributeString");
+			Assert.AreEqual (cg.Children.Count, cg2.Children.Count, "Children");
+			Assert.AreEqual (cg.Description, cg2.Description, "Description");
+			Assert.AreEqual (cg.MergeLogic, cg2.MergeLogic, "MergeLogic");
+			Assert.AreEqual (cg.Name, cg2.Name, "Name");
+			Assert.AreEqual (cg.PermissionSetName, cg2.PermissionSetName, "PermissionSetName");
+			Assert.AreEqual (cg.ToXml ().ToString (), cg2.ToXml ().ToString (), "ToXml");
 		}
 
 		[Test]
@@ -90,8 +90,8 @@ namespace MonoTests.System.Security.Policy {
 			UnionCodeGroup cg = new UnionCodeGroup (new AllMembershipCondition (), new PolicyStatement (new PermissionSet (PermissionState.None)));
 			cg.AddChild (cgChild);
 			UnionCodeGroup cg2 = (UnionCodeGroup) cg.Copy ();
-			AssertEquals ("Children", cg.Children.Count, cg2.Children.Count);
-			AssertEquals ("ToXml", cg.ToXml ().ToString (), cg2.ToXml ().ToString ());
+			Assert.AreEqual (cg.Children.Count, cg2.Children.Count, "Children");
+			Assert.AreEqual (cg.ToXml ().ToString (), cg2.ToXml ().ToString (), "ToXml");
 		}
 
 		[Test]
@@ -100,6 +100,222 @@ namespace MonoTests.System.Security.Policy {
 		{
 			UnionCodeGroup cg = new UnionCodeGroup (new AllMembershipCondition (), new PolicyStatement (new PermissionSet (PermissionState.None)));
 			cg.Resolve (null);
+		}
+
+		[Test]
+		public void Resolve_NoMatch ()
+		{
+			UnionCodeGroup cg = new UnionCodeGroup (new ZoneMembershipCondition (SecurityZone.Untrusted), new PolicyStatement (new PermissionSet (PermissionState.Unrestricted)));
+			Assert.IsNull (cg.Resolve (new Evidence ()));
+		}
+
+		[Test]
+		public void Resolve_AllMembershipCondition_None ()
+		{
+			UnionCodeGroup cg = new UnionCodeGroup (new AllMembershipCondition (), new PolicyStatement (new PermissionSet (PermissionState.None)));
+			PolicyStatement result = cg.Resolve (new Evidence ());
+			Assert.AreEqual (PolicyStatementAttribute.Nothing, result.Attributes, "Attributes");
+			Assert.AreEqual (String.Empty, result.AttributeString, "AttributeString");
+			Assert.IsFalse (result.PermissionSet.IsUnrestricted (), "IsUnrestricted");
+			Assert.AreEqual (0, result.PermissionSet.Count, "Count");
+		}
+
+		[Test]
+		public void Resolve_AllMembershipCondition_Unrestricted ()
+		{
+			UnionCodeGroup cg = new UnionCodeGroup (new AllMembershipCondition (), new PolicyStatement (new PermissionSet (PermissionState.Unrestricted)));
+			PolicyStatement result = cg.Resolve (new Evidence ());
+			Assert.AreEqual (PolicyStatementAttribute.Nothing, result.Attributes, "Attributes");
+			Assert.AreEqual (String.Empty, result.AttributeString, "AttributeString");
+			Assert.IsTrue (result.PermissionSet.IsUnrestricted (), "IsUnrestricted");
+			Assert.AreEqual (0, result.PermissionSet.Count, "Count");
+		}
+
+		[Test]
+		public void Resolve_ZoneMembershipCondition_Internet ()
+		{
+			IMembershipCondition mc = new ZoneMembershipCondition (SecurityZone.Internet);
+			PermissionSet pset = new PermissionSet (PermissionState.Unrestricted);
+			UnionCodeGroup cg = new UnionCodeGroup (mc, new PolicyStatement (pset, PolicyStatementAttribute.Nothing));
+
+			Evidence e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.Internet));
+			PolicyStatement result = cg.Resolve (e);
+			Assert.AreEqual (PolicyStatementAttribute.Nothing, result.Attributes, "Internet-Attributes");
+			Assert.AreEqual (String.Empty, result.AttributeString, "Internet-AttributeString");
+			Assert.IsTrue (result.PermissionSet.IsUnrestricted (),"Internet-IsUnrestricted");
+			Assert.AreEqual (0, result.PermissionSet.Count, "Internet-Count");
+
+			e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.Intranet));
+			Assert.IsNull (cg.Resolve (e), "Intranet");
+
+			e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.MyComputer));
+			Assert.IsNull (cg.Resolve (e), "MyComputer");
+
+			e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.NoZone));
+			Assert.IsNull (cg.Resolve (e), "NoZone");
+
+			e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.Trusted));
+			Assert.IsNull (cg.Resolve (e), "Trusted");
+
+			e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.Untrusted));
+			Assert.IsNull (cg.Resolve (e), "Untrusted");
+		}
+
+		[Test]
+		public void Resolve_ZoneMembershipCondition_Intranet ()
+		{
+			IMembershipCondition mc = new ZoneMembershipCondition (SecurityZone.Intranet);
+			PermissionSet pset = new PermissionSet (PermissionState.None);
+			UnionCodeGroup cg = new UnionCodeGroup (mc, new PolicyStatement (pset, PolicyStatementAttribute.Exclusive));
+
+			Evidence e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.Intranet));
+			PolicyStatement result = cg.Resolve (e);
+			Assert.AreEqual (PolicyStatementAttribute.Exclusive, result.Attributes, "Intranet-Attributes");
+			Assert.AreEqual ("Exclusive", result.AttributeString, "Intranet-AttributeString");
+			Assert.IsFalse (result.PermissionSet.IsUnrestricted (), "Intranet-IsUnrestricted");
+			Assert.AreEqual (0, result.PermissionSet.Count, "Intranet-Count");
+
+			e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.Internet));
+			Assert.IsNull (cg.Resolve (e), "Internet");
+
+			e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.MyComputer));
+			Assert.IsNull (cg.Resolve (e), "MyComputer");
+
+			e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.NoZone));
+			Assert.IsNull (cg.Resolve (e), "NoZone");
+
+			e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.Trusted));
+			Assert.IsNull (cg.Resolve (e), "Trusted");
+
+			e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.Untrusted));
+			Assert.IsNull (cg.Resolve (e), "Untrusted");
+		}
+
+		[Test]
+		public void Resolve_ZoneMembershipCondition_MyComputer ()
+		{
+			IMembershipCondition mc = new ZoneMembershipCondition (SecurityZone.MyComputer);
+			PermissionSet pset = new PermissionSet (PermissionState.Unrestricted);
+			UnionCodeGroup cg = new UnionCodeGroup (mc, new PolicyStatement (pset, PolicyStatementAttribute.LevelFinal));
+
+			Evidence e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.MyComputer));
+			PolicyStatement result = cg.Resolve (e);
+			Assert.AreEqual (PolicyStatementAttribute.LevelFinal, result.Attributes, "MyComputer-Attributes");
+			Assert.AreEqual ("LevelFinal", result.AttributeString, "MyComputer-AttributeString");
+			Assert.IsTrue (result.PermissionSet.IsUnrestricted (), "MyComputer-IsUnrestricted");
+			Assert.AreEqual (0, result.PermissionSet.Count, "MyComputer-Count");
+
+			e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.Internet));
+			Assert.IsNull (cg.Resolve (e), "Internet");
+
+			e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.Intranet));
+			Assert.IsNull (cg.Resolve (e), "Intranet");
+
+			e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.NoZone));
+			Assert.IsNull (cg.Resolve (e), "NoZone");
+
+			e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.Trusted));
+			Assert.IsNull (cg.Resolve (e), "Trusted");
+
+			e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.Untrusted));
+			Assert.IsNull (cg.Resolve (e), "Untrusted");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Resolve_ZoneMembershipCondition_NoZone ()
+		{
+			IMembershipCondition mc = new ZoneMembershipCondition (SecurityZone.NoZone);
+		}
+
+		[Test]
+		public void Resolve_ZoneMembershipCondition_Trusted ()
+		{
+			IMembershipCondition mc = new ZoneMembershipCondition (SecurityZone.Trusted);
+			PermissionSet pset = new PermissionSet (PermissionState.Unrestricted);
+			UnionCodeGroup cg = new UnionCodeGroup (mc, new PolicyStatement (pset, PolicyStatementAttribute.All));
+
+			Evidence e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.Trusted));
+			PolicyStatement result = cg.Resolve (e);
+			Assert.AreEqual (PolicyStatementAttribute.All, result.Attributes, "Trusted-Attributes");
+			Assert.AreEqual ("Exclusive LevelFinal", result.AttributeString, "Trusted-AttributeString");
+			Assert.IsTrue (result.PermissionSet.IsUnrestricted (), "Trusted-IsUnrestricted");
+			Assert.AreEqual (0, result.PermissionSet.Count, "Trusted-Count");
+
+			e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.Internet));
+			Assert.IsNull (cg.Resolve (e), "Internet");
+
+			e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.Intranet));
+			Assert.IsNull (cg.Resolve (e), "Intranet");
+
+			e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.MyComputer));
+			Assert.IsNull (cg.Resolve (e), "MyComputer");
+
+			e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.NoZone));
+			Assert.IsNull (cg.Resolve (e), "NoZone");
+
+			e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.Untrusted));
+			Assert.IsNull (cg.Resolve (e), "Untrusted");
+		}
+
+		[Test]
+		public void Resolve_ZoneMembershipCondition_Untrusted ()
+		{
+			IMembershipCondition mc = new ZoneMembershipCondition (SecurityZone.Untrusted);
+			PermissionSet pset = new PermissionSet (PermissionState.None);
+			UnionCodeGroup cg = new UnionCodeGroup (mc, new PolicyStatement (pset, PolicyStatementAttribute.Nothing));
+
+			Evidence e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.Untrusted));
+			PolicyStatement result = cg.Resolve (e);
+			Assert.AreEqual (PolicyStatementAttribute.Nothing, result.Attributes, "Untrusted-Attributes");
+			Assert.AreEqual (String.Empty, result.AttributeString, "Untrusted-AttributeString");
+			Assert.IsFalse (result.PermissionSet.IsUnrestricted (), "Untrusted-IsUnrestricted");
+			Assert.AreEqual (0, result.PermissionSet.Count, "Untrusted-Count");
+
+			e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.Internet));
+			Assert.IsNull (cg.Resolve (e), "Internet");
+
+			e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.Intranet));
+			Assert.IsNull (cg.Resolve (e), "Intranet");
+
+			e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.MyComputer));
+			Assert.IsNull (cg.Resolve (e), "MyComputer");
+
+			e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.NoZone));
+			Assert.IsNull (cg.Resolve (e), "NoZone");
+
+			e = new Evidence ();
+			e.AddHost (new Zone (SecurityZone.Trusted));
+			Assert.IsNull (cg.Resolve (e), "Trusted");
 		}
 
 		[Test]
@@ -114,7 +330,7 @@ namespace MonoTests.System.Security.Policy {
 		public void ResolveMatchingCodeGroups_NoMatch ()
 		{
 			UnionCodeGroup cg = new UnionCodeGroup (new ZoneMembershipCondition (SecurityZone.Untrusted), new PolicyStatement (new PermissionSet (PermissionState.Unrestricted)));
-			AssertNull (cg.ResolveMatchingCodeGroups (new Evidence ()));
+			Assert.IsNull (cg.ResolveMatchingCodeGroups (new Evidence ()));
 		}
 
 		[Test]
@@ -122,9 +338,9 @@ namespace MonoTests.System.Security.Policy {
 		{
 			UnionCodeGroup level1 = new UnionCodeGroup (new AllMembershipCondition (), new PolicyStatement (new PermissionSet (PermissionState.None)));
 			CodeGroup match = level1.ResolveMatchingCodeGroups (new Evidence ());
-			AssertNotNull ("Match", match);
-			Assert ("Equals(false)", match.Equals (level1, false));
-			Assert ("Equals(true)", match.Equals (level1, true));
+			Assert.IsNotNull (match, "Match");
+			Assert.IsTrue (match.Equals (level1, false), "Equals(false)");
+			Assert.IsTrue (match.Equals (level1, true), "Equals(true)");
 		}
 
 		[Test]
@@ -135,16 +351,16 @@ namespace MonoTests.System.Security.Policy {
 			level1.AddChild (level2);
 
 			CodeGroup match = level1.ResolveMatchingCodeGroups (new Evidence ());
-			AssertNotNull ("Match", match);
-			Assert ("Equals(false)", match.Equals (level1, false));
-			Assert ("Equals(true)", match.Equals (level1, true));
+			Assert.IsNotNull (match, "Match");
+			Assert.IsTrue (match.Equals (level1, false), "Equals(false)");
+			Assert.IsTrue (match.Equals (level1, true), "Equals(true)");
 
 			UnionCodeGroup level2b = new UnionCodeGroup (new ZoneMembershipCondition (SecurityZone.Untrusted), new PolicyStatement (new PermissionSet (PermissionState.Unrestricted)));
 			level1.AddChild (level2b);
 			CodeGroup match2 = level1.ResolveMatchingCodeGroups (new Evidence ());
-			AssertNotNull ("Match2", match2);
-			Assert ("Equals(false)2", match2.Equals (level1, false));
-			Assert ("Equals(true)2", !match2.Equals (level1, true));
+			Assert.IsNotNull (match2, "Match2");
+			Assert.IsTrue (match2.Equals (level1, false), "Equals(false)");
+			Assert.IsTrue (!match2.Equals (level1, true), "Equals(true)");
 		}
 
 		[Test]
@@ -157,10 +373,10 @@ namespace MonoTests.System.Security.Policy {
 			level2.AddChild (level3);
 
 			CodeGroup match = level1.ResolveMatchingCodeGroups (new Evidence ());
-			AssertNotNull ("Match", match);
-			Assert ("Equals(false)", match.Equals (level1, false));
+			Assert.IsNotNull (match, "Match");
+			Assert.IsTrue (match.Equals (level1, false), "Equals(false)");
 			// Equals (true) isn't a deep compare (just one level)
-			Assert ("Equals(true)", match.Equals (level1, true));
+			Assert.IsTrue (match.Equals (level1, true), "Equals(true)");
 		}
 
 		[Test]
@@ -171,16 +387,16 @@ namespace MonoTests.System.Security.Policy {
 			UnionCodeGroup cg = new UnionCodeGroup (new AllMembershipCondition (), ps);
 			cg.Name = "SomeName";
 			cg.Description = "Some Description";
-			Assert ("Equals (itself)", cg.Equals (cg));
+			Assert.IsTrue (cg.Equals (cg), "Equals (itself)");
 			SecurityElement se = cg.ToXml ();
 
 			UnionCodeGroup cg2 = new UnionCodeGroup (new AllMembershipCondition(), ps);
 			cg2.Name = "SomeOtherName";
 			cg2.Description = "Some Other Description";
-			Assert ("Equals (another)", !cg.Equals (cg2));
+			Assert.IsTrue (!cg.Equals (cg2), "Equals (another)");
 
 			cg2.FromXml (se);
-			Assert ("Equals (FromXml)", cg.Equals (cg2));
+			Assert.IsTrue (cg.Equals (cg2), "Equals (FromXml)");
 		}
 	}
 }
