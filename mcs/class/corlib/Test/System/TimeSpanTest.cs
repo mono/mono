@@ -1,10 +1,12 @@
 //
 // TimeSpanTest.cs - NUnit Test Cases for the System.TimeSpan struct
 //
-// author:
-//   Duco Fijma (duco@lorentz.xs4all.nl)
+// Authors:
+//	Duco Fijma (duco@lorentz.xs4all.nl)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-//   (C) 2001 Duco Fijma
+// (C) 2001 Duco Fijma
+// Copyright (C) 2004 Novell (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -13,9 +15,8 @@ using System;
 namespace MonoTests.System
 {
 
-public class TimeSpanTest : TestCase
-{
-	public TimeSpanTest() {}
+[TestFixture]
+public class TimeSpanTest : Assertion {
 
 	public void TestCtors ()
 	{
@@ -169,6 +170,191 @@ public class TimeSpanTest : TestCase
 		AssertEquals ("A4", "00:00:12.3450000", TimeSpan.FromSeconds (12.345).ToString ());
 		AssertEquals ("A5", "00:00:00.0120000", TimeSpan.FromMilliseconds (12.345).ToString ());
 		AssertEquals ("A6", "00:00:00.0012345", TimeSpan.FromTicks (12345).ToString ());
+	}
+
+	[Test]
+	[ExpectedException (typeof (OverflowException))]
+	public void FromDays_MinValue ()
+	{
+		TimeSpan.FromDays (Double.MinValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (OverflowException))]
+	public void FromDays_MaxValue ()
+	{
+		TimeSpan.FromDays (Double.MaxValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void FromDays_NaN ()
+	{
+		TimeSpan.FromDays (Double.NaN);
+	}
+
+	[Test]
+	[ExpectedException (typeof (OverflowException))]
+	public void FromDays_PositiveInfinity ()
+	{
+		// LAMESPEC: Document to return TimeSpan.MaxValue
+		AssertEquals (TimeSpan.MaxValue, TimeSpan.FromDays (Double.PositiveInfinity));
+	}
+
+	[Test]
+	[ExpectedException (typeof (OverflowException))]
+	public void FromDays_NegativeInfinity ()
+	{
+		// LAMESPEC: Document to return TimeSpan.MinValue
+		AssertEquals (TimeSpan.MinValue, TimeSpan.FromDays (Double.NegativeInfinity));
+	}
+
+	[Test]
+	[ExpectedException (typeof (OverflowException))]
+	public void FromHours_MinValue ()
+	{
+		TimeSpan.FromHours (Double.MinValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (OverflowException))]
+	public void FromHours_MaxValue ()
+	{
+		TimeSpan.FromHours (Double.MaxValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void FromHours_NaN ()
+	{
+		TimeSpan.FromHours (Double.NaN);
+	}
+
+	[Test]
+	[ExpectedException (typeof (OverflowException))]
+	public void FromHours_PositiveInfinity ()
+	{
+		// LAMESPEC: Document to return TimeSpan.MaxValue
+		AssertEquals (TimeSpan.MaxValue, TimeSpan.FromHours (Double.PositiveInfinity));
+	}
+
+	[Test]
+	[ExpectedException (typeof (OverflowException))]
+	public void FromHours_NegativeInfinity ()
+	{
+		// LAMESPEC: Document to return TimeSpan.MinValue
+		AssertEquals (TimeSpan.MinValue, TimeSpan.FromHours (Double.NegativeInfinity));
+	}
+
+	[Test]
+	[ExpectedException (typeof (OverflowException))]
+	public void FromMilliseconds_MinValue ()
+	{
+		TimeSpan.FromMilliseconds (Double.MinValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (OverflowException))]
+	public void FromMilliseconds_MaxValue ()
+	{
+		TimeSpan.FromMilliseconds (Double.MaxValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void FromMilliseconds_NaN ()
+	{
+		TimeSpan.FromMilliseconds (Double.NaN);
+	}
+
+	[Test]
+	[ExpectedException (typeof (OverflowException))]
+	public void FromMilliseconds_PositiveInfinity ()
+	{
+		// LAMESPEC: Document to return TimeSpan.MaxValue
+		AssertEquals (TimeSpan.MaxValue, TimeSpan.FromMilliseconds (Double.PositiveInfinity));
+	}
+
+	[Test]
+	[ExpectedException (typeof (OverflowException))]
+	public void FromMilliseconds_NegativeInfinity ()
+	{
+		// LAMESPEC: Document to return TimeSpan.MinValue
+		AssertEquals (TimeSpan.MinValue, TimeSpan.FromMilliseconds (Double.NegativeInfinity));
+	}
+
+	[Test]
+	[ExpectedException (typeof (OverflowException))]
+	public void FromMinutes_MinValue ()
+	{
+		TimeSpan.FromMinutes (Double.MinValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (OverflowException))]
+	public void FromMinutes_MaxValue ()
+	{
+		TimeSpan.FromMinutes (Double.MaxValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void FromMinutes_NaN ()
+	{
+		TimeSpan.FromMinutes (Double.NaN);
+	}
+
+	[Test]
+	[ExpectedException (typeof (OverflowException))]
+	public void FromMinutes_PositiveInfinity ()
+	{
+		// LAMESPEC: Document to return TimeSpan.MaxValue
+		AssertEquals (TimeSpan.MaxValue, TimeSpan.FromMinutes (Double.PositiveInfinity));
+	}
+
+	[Test]
+	[ExpectedException (typeof (OverflowException))]
+	public void FromMinutes_NegativeInfinity ()
+	{
+		// LAMESPEC: Document to return TimeSpan.MinValue
+		AssertEquals (TimeSpan.MinValue, TimeSpan.FromMinutes (Double.NegativeInfinity));
+	}
+
+	[Test]
+	[ExpectedException (typeof (OverflowException))]
+	public void FromSeconds_MinValue ()
+	{
+		TimeSpan.FromSeconds (Double.MinValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (OverflowException))]
+	public void FromSeconds_MaxValue ()
+	{
+		TimeSpan.FromSeconds (Double.MaxValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void FromSeconds_NaN ()
+	{
+		TimeSpan.FromSeconds (Double.NaN);
+	}
+
+	[Test]
+	[ExpectedException (typeof (OverflowException))]
+	public void FromSeconds_PositiveInfinity ()
+	{
+		// LAMESPEC: Document to return TimeSpan.MaxValue
+		AssertEquals (TimeSpan.MaxValue, TimeSpan.FromSeconds (Double.PositiveInfinity));
+	}
+
+	[Test]
+	[ExpectedException (typeof (OverflowException))]
+	public void FromSeconds_NegativeInfinity ()
+	{
+		// LAMESPEC: Document to return TimeSpan.MinValue
+		AssertEquals (TimeSpan.MinValue, TimeSpan.FromSeconds (Double.NegativeInfinity));
 	}
 
 	public void TestGetHashCode ()
