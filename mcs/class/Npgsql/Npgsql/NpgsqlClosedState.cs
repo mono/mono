@@ -85,24 +85,24 @@ namespace Npgsql
             // Create a new TLS Session
 			try 
 			{
-				TlsSession session = new TlsSession(tlsSettings);
-				BufferedStream stream = new BufferedStream(session.NetworkStream);
-				context.setNormalStream(session.NetworkStream);
+				context.TlsSession = new TlsSession(tlsSettings);
+				BufferedStream stream = new BufferedStream(context.TlsSession.NetworkStream);
+				context.setNormalStream(context.TlsSession.NetworkStream);
 				context.setStream(stream);
-				BinaryReader receive = new BinaryReader(session.NetworkStream);
-				BinaryWriter send = new BinaryWriter(session.NetworkStream);
+				BinaryReader receive = new BinaryReader(context.TlsSession.NetworkStream);
+				BinaryWriter send = new BinaryWriter(context.TlsSession.NetworkStream);
 
-				// If the PostgreSQL server has SSL connections enabled Open TLS session if (response == 'S') {
+				// If the PostgreSQL server has SSL connections enabled Open TLS context.TlsSession if (response == 'S') {
 				if (context.SSL=="yes")
 				{
-					PGUtil.WriteInt32(session.NetworkStream, 8);
-					PGUtil.WriteInt32(session.NetworkStream,80877103);
+					PGUtil.WriteInt32(context.TlsSession.NetworkStream, 8);
+					PGUtil.WriteInt32(context.TlsSession.NetworkStream,80877103);
 					// Receive response
-					Char response = (Char)session.NetworkStream.ReadByte();
+					Char response = (Char)context.TlsSession.NetworkStream.ReadByte();
 
 					if (response == 'S') 
 					{
-						session.Open(); // open TLS session
+						context.TlsSession.Open(); // open TLS context.TlsSession
 					} 
 					
 				} 

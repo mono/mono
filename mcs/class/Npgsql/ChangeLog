@@ -1,5 +1,13 @@
 2003-10-16  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
+	* Npgsql/NpgsqlClosedState.cs:
+	* Npgsql/NpgsqlConnectedState.cs:
+	* Npgsql/NpgsqlConnection.cs: Changed TcpClient by TlsSession
+	because now it is used TlsSession and it doesn't work without
+	these changes.
+
+2003-10-16  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
 	* Makefile: changed reference from Lib/System.Security.Tls.dll to
 	System.Security.Tls because the last will be installed before and
 	separatelly.

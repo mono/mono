@@ -77,7 +77,7 @@ namespace Npgsql
   																   "",
   																   "");
   		  
-  			startupPacket.WriteToStream( new BufferedStream(context.TcpClient.GetStream()), context.Encoding );
+  			startupPacket.WriteToStream( new BufferedStream(context.TlsSession.NetworkStream), context.Encoding );
   			ProcessBackendResponses( context );
 		    
 		    

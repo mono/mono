@@ -96,7 +96,7 @@ namespace Npgsql {
 		// Logging related values
 		private readonly String CLASSNAME = "NpgsqlConnection";
   		
-		private TcpClient				connection;
+		private TlsSession				session;
         private TlsNetworkStream		secstream;
         private BufferedStream			stream;
 
@@ -438,8 +438,8 @@ namespace Npgsql {
 			}
 			finally {
 				// Even if an exception occurs, let object in a consistent state.
-				if (TcpClient != null)
-					TcpClient.Close();
+				if (TlsSession != null)
+					TlsSession.Close();
 				connection_state = ConnectionState.Closed;
 			}
 		}
@@ -663,12 +663,12 @@ namespace Npgsql {
 
 		}
 
-		internal TcpClient TcpClient {
+		internal TlsSession TlsSession {
 			get {
-				return connection;
+				return session;
 			}
 			set {
-				connection = value;
+				session = value;
 			}
 		}
         
