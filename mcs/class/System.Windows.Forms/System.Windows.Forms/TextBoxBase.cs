@@ -50,6 +50,8 @@ namespace System.Windows.Forms {
 			base.foreColor = SystemColors.WindowText;
 			base.backColor = SystemColors.Window;
 			backgrBrush = IntPtr.Zero;
+
+			SetStyle ( ControlStyles.FixedHeight, true );
 		}
 
 		~TextBoxBase ( )
@@ -197,6 +199,9 @@ namespace System.Windows.Forms {
 			set {
 				if ( flags[ multiline ] != value ) {
 					flags[ multiline ] = value;
+
+					SetStyle ( ControlStyles.FixedHeight, !value );
+
 					RecreateHandle ( );
 					OnMultilineChanged ( EventArgs.Empty );
 				}

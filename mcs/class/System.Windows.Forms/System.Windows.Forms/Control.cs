@@ -2898,31 +2898,43 @@ namespace System.Windows.Forms {
 
 			int deltaWidth = Bounds.Width - oldBounds.Width;
 			int deltaHeight = Bounds.Height - oldBounds.Height;
-			int halfDeltaWidth = deltaWidth / 2;
-			int halfDeltaHeight = deltaHeight / 2;
+			
+			double x_change = 0;
+			double y_change = 0;
+
+			double halfDeltaWidth  = (double)deltaWidth  / 2.0;
+			double halfDeltaHeight = (double)deltaHeight / 2.0;
+
 			Rectangle controlBounds = ctrl.Bounds;
+
 			if ( (ctrl.Anchor & AnchorStyles.Left) == 0) {
-				controlBounds.X += halfDeltaWidth;
+				x_change += halfDeltaWidth;
 			}
 			if ( (ctrl.Anchor & AnchorStyles.Top) == 0) {
-				controlBounds.Y += halfDeltaHeight;
+				y_change += halfDeltaHeight;
 			}
 			if ( (ctrl.Anchor & AnchorStyles.Right) == AnchorStyles.Right) {
 				if ( (ctrl.Anchor & AnchorStyles.Left) == AnchorStyles.Left) {
-					controlBounds.Width += deltaWidth;
+					if ( !ctrl.GetStyle ( ControlStyles.FixedWidth ) )
+						controlBounds.Width += deltaWidth;
 				}
 				else {
-					controlBounds.X += halfDeltaWidth;
+					x_change += halfDeltaWidth;
 				}
 			}
 			if ( (ctrl.Anchor & AnchorStyles.Bottom) == AnchorStyles.Bottom) {
 				if ( (ctrl.Anchor & AnchorStyles.Top) == AnchorStyles.Top) {
-					controlBounds.Height += deltaHeight;
+					if ( !ctrl.GetStyle ( ControlStyles.FixedHeight ) )
+						controlBounds.Height += deltaHeight;
 				}
 				else {
-					controlBounds.Y += halfDeltaHeight;
+					y_change += halfDeltaHeight;
 				}
 			}
+			
+			controlBounds.X += (int) Math.Round( x_change );
+			controlBounds.Y += (int) Math.Round( y_change );
+
 			ctrl.Bounds = controlBounds;
 		}
 

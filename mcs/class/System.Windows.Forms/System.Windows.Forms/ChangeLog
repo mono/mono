@@ -1,3 +1,7 @@
+2003-07-31 Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* Control.cs : anchoring algorithm was fixed to avoid inaccuracies caused by rounding
+	* TextBoxBase.cs : set FixedHeight style for single line edit boxes
+
 2003-07-30 Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* TextBox.cs : ScrollBars, AcceptsReturn, CharacterCasing properties were implemented
 
