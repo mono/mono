@@ -1,3 +1,9 @@
+2004-10-21  Raja R Harinath  <rharinath@novell.com>
+
+	* do-tests.pl: Make robust to being invoked in parallel for
+	multiple profiles.
+	* Makefile: Clean any generated files.
+
 2004-10-07  Raja R Harinath  <rharinath@novell.com>
 
 	* mcs-ignore-tests: Empty.

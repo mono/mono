@@ -98,7 +98,7 @@ foreach (glob ($files)) {
 
         $total++;
 	my $testlogfile="$profile-$_.log";
-	system "$compile --expect-error $error_number $options $_ > $testlogfile 2>&1";
+	system "$compile --expect-error $error_number $options -out:$profile-$_.junk $_ > $testlogfile 2>&1";
 	
 	exit 1 if $? & 127;
 	
