@@ -1,3 +1,8 @@
+2004-11-10  Martin Baulig  <martin@ximian.com>
+
+	* IDictionary.cs (IDictionary): `IsReadOnly' and `Clear' are
+	inherited from ICollection.
+
 2004-09-20  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* ReadOnlyCollection.cs: Moved to System assembly

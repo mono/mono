@@ -39,11 +39,9 @@ namespace System.Collections.Generic {
 	[ComVisible(false)]
 	public interface IDictionary<K,V> : ICollection<KeyValuePair<K,V>> {
 		void Add (K key, V value);
-		void Clear ();
 		bool ContainsKey (K key);
 		bool Remove (K key);
 		bool IsFixedSize { get; }
-		bool IsReadOnly { get; }
 		V this[K key] { get; set; }
 		ICollection<KeyValuePair<K,V>> Keys { get; }
 		ICollection<KeyValuePair<K,V>> Values { get; }
