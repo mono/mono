@@ -1,3 +1,16 @@
+2002-11-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspElements.cs: added ServerComment class.
+	* AspParser.cs: ignore ServerComments tags. Remove server comments when 
+	in verbatim mode.
+
+	Fixes #33482.
+
+	* PageCompiler.cs: check if the type is already cached before generating
+	the C# file.
+	* TemplateFactory.cs: if csFile parameter is null, only checks if we
+	already have the page compiled.
+
 2002-11-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: undo one-liner change.

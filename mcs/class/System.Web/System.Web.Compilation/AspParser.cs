@@ -83,10 +83,14 @@ namespace System.Web.Compilation
 					elements.Add (new CloseTag (tag));
 					tokenizer.Verbatim = false;
 				}
-				else if (token == '<'){
+				else if (token == '<') {
 					element = GetTag ();
 					if (element == null)
 						error ();
+
+					if (element is ServerComment)
+						continue;
+
 					if (!(element is Tag)){
 						AddPlainText (((PlainText) element).Text);
 						continue;
@@ -115,27 +119,10 @@ namespace System.Web.Compilation
 		{
 			int token = tokenizer.get_token ();
 			string id;
-			TagAttributes attributes;
 
 			switch (token){
 			case '%':
-				if (Eat ('@')){
-					id = (Eat (Token.DIRECTIVE) ? tokenizer.value : "Page");
-					attributes = GetAttributes ();
-					if (!Eat ('%') || !Eat ('>'))
-						error ("expecting '%>'");
-
-					return new Directive (id, attributes);
-				}
-
-				bool varname = Eat ('=');
-				bool databinding = !varname && Eat ('#');
-				tokenizer.Verbatim = true;
-				string inside_tags = GetVerbatim (tokenizer.get_token (), "%>");
-				tokenizer.Verbatim = false;
-				if (databinding)
-					return new DataBindingTag (inside_tags);
-				return new CodeRenderTag (varname, inside_tags);
+				return GetServerTag ();
 			case '/':
 				if (!Eat (Token.IDENTIFIER))
 					error ("expecting TAGNAME");
@@ -230,8 +217,60 @@ namespace System.Web.Compilation
 			if (token == Token.EOF)
 				return null;
 
-			return vb_text.ToString ();
+			return RemoveComments (vb_text.ToString ());
 		}
+
+		private string RemoveComments (string text)
+		{
+			int end;
+			int start = text.IndexOf ("<%--");
+
+			while (start != -1) {
+				end = text.IndexOf ("--%>");
+				if (end == -1 || end <= start + 1)
+					break;
+
+				text = text.Remove (start, end - start + 4);
+				start = text.IndexOf ("<%--");
+			}
+
+			return text;
+		}
+
+		private Element GetServerTag ()
+		{
+			string id;
+			string inside_tags;
+			TagAttributes attributes;
+
+			if (Eat ('@')){
+				id = (Eat (Token.DIRECTIVE) ? tokenizer.value : "Page");
+				attributes = GetAttributes ();
+				if (!Eat ('%') || !Eat ('>'))
+					error ("expecting '%>'");
+
+				return new Directive (id, attributes);
+			} else if (Eat (Token.DOUBLEDASH)) {
+				tokenizer.Verbatim = true;
+				inside_tags = GetVerbatim (tokenizer.get_token (), "--%>");
+				tokenizer.Verbatim = false;
+				return new ServerComment ("<%--" + inside_tags + "--%>");
+			}
+
+			bool varname;
+			bool databinding;
+			varname = Eat ('=');
+			databinding = !varname && Eat ('#');
+
+			tokenizer.Verbatim = true;
+			inside_tags = GetVerbatim (tokenizer.get_token (), "%>");
+			tokenizer.Verbatim = false;
+			if (databinding)
+				return new DataBindingTag (inside_tags);
+
+			return new CodeRenderTag (varname, inside_tags);
+		}
+
 	}
 
 }

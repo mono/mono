@@ -242,13 +242,13 @@ namespace System.Web.Compilation
 
 		internal static Type GetTypeFromSource (string aspxFile, string csFile)
 		{
-			if (!File.Exists (csFile))
-				return null;
-
 			DateTime filedt = DateTime.Now;
 			Type type = AlreadyGotIt (aspxFile, ref filedt) as Type;
 			if (type != null)
 				return type;
+
+			if (csFile == null || !File.Exists (csFile))
+				return null; //FIXME: throw an exception if the file does not exists
 
 			PageBuilder builder = new PageBuilder (csFile);
 			lock (compiling) {

@@ -86,6 +86,7 @@ namespace System.Web.Compilation
 		PROPERTYTAG,
 		CODERENDER,
 		DATABINDING,
+		SERVERCOMMENT,
 		NOTYET
 	}
 
@@ -220,6 +221,8 @@ namespace System.Web.Compilation
 		protected bool hasDefaultID;
 		private static int ctrlNumber = 1;
 
+		internal Tag (ElementType etype) : base (etype) { }
+
 		internal Tag (Tag other) :
 			this (other.tag, other.attributes, other.self_closing)
 		{
@@ -296,7 +299,7 @@ namespace System.Web.Compilation
 			get { return hasDefaultID; }
 		}
 		
-		protected void SetNewID ()
+		protected virtual void SetNewID ()
 		{
 			if (attributes == null)
 				attributes = new TagAttributes ();
@@ -775,6 +778,32 @@ namespace System.Web.Compilation
 		{
 			get { return "<%#" + Data + "%>"; }
 		}	
+	}
+	
+	class ServerComment : Tag
+	{
+		public ServerComment (string tag)
+			: base (ElementType.TAG)
+		{
+			if (tag == null)
+				throw new ArgumentNullException ();
+
+			this.tag = tag;
+			this.attributes = null;
+			this.tagType = TagType.SERVERCOMMENT;
+			this.self_closing = true;
+			this.hasDefaultID = false;
+		}
+		
+		public override string ToString ()
+		{
+			return TagID;
+		}
+
+		protected override void SetNewID ()
+		{
+			throw new NotSupportedException ();
+		}
 	}
 }
 

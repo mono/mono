@@ -1343,7 +1343,7 @@ class AspGenerator
 	private Tag Map (Tag tag)
 	{
 		int pos = tag.TagID.IndexOf (":");
-		if (tag is CloseTag || 
+		if (tag is CloseTag ||
 		    ((tag.Attributes == null || 
 		    !tag.Attributes.IsRunAtServer ()) && pos == -1))
 			return tag;

@@ -24,6 +24,10 @@ namespace System.Web.Compilation
 
 		public static Type CompilePageType (PageParser pageParser)
 		{
+			Type t = TemplateFactory.GetTypeFromSource (pageParser.InputFile, null); 
+			if (t != null)
+				return t;
+
 			string sourceFile = GenerateSourceFile (pageParser);
 			WebTrace.WriteLine ("Compiling {0} ({1})", sourceFile, pageParser.InputFile);
 			return TemplateFactory.GetTypeFromSource (pageParser.InputFile, sourceFile);
