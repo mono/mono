@@ -1382,7 +1382,7 @@ constructor_declaration
 		c.OptAttributes = (Attributes) $1;
 		c.ModFlags = (int) $2;
 	
-		if (c.ShortName == current_container.Name){
+		if (c.Name == current_container.Basename){
 			if ((c.ModFlags & Modifiers.STATIC) != 0){
 				if ((c.ModFlags & Modifiers.Accessibility) != 0){
 					Report.Error (
@@ -1391,7 +1391,7 @@ constructor_declaration
 						c.Name, current_container.Name));
 				}
 	
-				c.ModFlags = Modifiers.Check (Constructor.AllowedModifiers, (int) $2, 0, c.Location);	
+				c.ModFlags = Modifiers.Check (Constructor.AllowedModifiers, (int) $2, Modifiers.PRIVATE, c.Location);	
 	
 				if (c.Initializer != null){
 					Report.Error (
@@ -1409,6 +1409,7 @@ constructor_declaration
 			}
 		} else {
 			// We let another layer check the validity of the constructor.
+			Console.WriteLine ("{0} and {1}", c.Name, current_container.Basename);
 		}
 
 		CheckDef (current_container.AddConstructor (c), c.Name, c.Location);
