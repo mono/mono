@@ -851,13 +851,14 @@ namespace Mono.Languages
 
 		public void CompileAll()
 		{
-		
+/* 
+		    VB.NET expects the default namespace to be "" (empty string)		
+		    
 		    if (RootContext.RootNamespace == "")
 		    {
-		      RootContext.RootNamespace =
-		          System.IO.Path.GetFileNameWithoutExtension(outputFileName);
+		      RootContext.RootNamespace = System.IO.Path.GetFileNameWithoutExtension(outputFileName);
 		    }
-
+*/
 			if (!ParseAll()) // Phase 1
 				return;
 
