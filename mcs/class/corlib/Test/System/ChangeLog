@@ -1,3 +1,11 @@
+2003-06-09  Duncan Mak  <duncan@ximian.com>
+
+	* ArrayTest.cs: 
+	(TestCreateInstance2):
+	(TestLastIndexOf4):
+	(TestLastIndexOf5):
+	(MoreSort10): Added 4 new tests.
+
 2003-06-10  Nick Drochak <ndrochak@gol.com>
 
 	* ArrayTest.cs: Cleanup some unused bits.

@@ -636,6 +636,13 @@ public class ArrayTest : Assertion
 	}
 	
 	[Test]
+        [ExpectedException (typeof (ArgumentException))]
+        public void TestCreateInstance2 ()
+        {
+                Array a = Array.CreateInstance (typeof (Int32), null);
+        }
+	
+	[Test]
 	public void TestGetEnumerator() {
 		String[] s1 = {"this", "is", "a", "test"};
 		IEnumerator en = s1.GetEnumerator ();
@@ -1413,6 +1420,31 @@ public class ArrayTest : Assertion
 			     3, Array.LastIndexOf(s1, "a", 3, 3));
 	}
 
+	[Test]
+        [ExpectedException (typeof (ArgumentOutOfRangeException))]
+        public void TestLastIndexOf4 ()
+        {
+                short [] a = new short [] { 19, 238, 317, 6, 565, 0, -52, 60, -563, 753, 238, 238};
+                Array.LastIndexOf (a, 16, -1);
+        }
+
+        [Test]
+        public void TestLastIndexOf5 ()
+        {
+                char [] a = new char [] {'j', 'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a', 'j', 'i', 'h'};
+                string s;
+                int retval;
+                bool error = false;
+
+                for (int i = a.Length - 1; i >= 0 ; i--) {
+                        s = i.ToString ();
+                        retval = Array.LastIndexOf(a, a [i], i, i + 1);
+                        if (retval != i)
+                                error = true;
+                }
+                Assert (!error);
+        }
+                           
 	[Test]
 	public void TestReverse() {
 		{
@@ -2379,6 +2411,14 @@ public class ArrayTest : Assertion
 	{
 		Array.Sort (arrsort, null, 0, arrsort.Length, null);
 	}
+
+        [Test]
+        [ExpectedException (typeof (InvalidOperationException))]
+        public void MoreSort10 ()
+        {
+                object [] array = {true, 'k', SByte.MinValue, Byte.MinValue, (short) 2, 634, (long) 436, (float) 1.1, 1.23, "Hello World"};
+                Array.Sort (array, (System.Collections.IComparer) null);
+        }
 }
 
 }
