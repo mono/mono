@@ -129,8 +129,8 @@ namespace System.IO {
 
 		protected override void Dispose (bool disposing) {
 			if (!DisposedAlready && disposing && internalStream != null) {
-				DisposedAlready = true;
 				Flush();
+				DisposedAlready = true;
 				internalStream.Close ();
 			}
 
