@@ -1,3 +1,7 @@
+2003-08-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.h reflection.c loader.c: Added support for parameter
+	marshalling to dynamically created types. Fixes #47295.
 
 Fri Aug 15 11:42:46 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
