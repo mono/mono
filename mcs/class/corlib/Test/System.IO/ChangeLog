@@ -1,3 +1,8 @@
+2003-03-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* StreamReaderTest.cs: added test for exception when the nase stream is
+	closed. Make the reader.CurrentEncoding test work.
+
 2003-03-05  Dick Porter  <dick@ximian.com>
 
 	* MemoryStreamTest.cs: Some more tests

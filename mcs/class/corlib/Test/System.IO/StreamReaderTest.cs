@@ -354,7 +354,7 @@ public class StreamReaderTest : TestCase
 			MemoryStream m = new MemoryStream(b);
 			StreamReader r = new StreamReader(m);
 			AssertEquals("wrong encoding", 
-				     Encoding.UTF8, r.CurrentEncoding);
+				     Encoding.UTF8.GetType (), r.CurrentEncoding.GetType ());
 		} catch (Exception e) {
 			Fail ("Unexpected exception thrown: " + e.ToString());
 		}
@@ -546,6 +546,22 @@ public class StreamReaderTest : TestCase
 		StreamReader r = new StreamReader(m);
 		AssertEquals("line doesn't match", "a\nb\nc\nd\n", r.ReadToEnd());
 		AssertEquals("line doesn't match", "", r.ReadToEnd());
+	}
+
+	public void TestBaseStreamClosed ()
+	{
+		byte [] b = {};
+		MemoryStream m = new MemoryStream (b);
+		StreamReader r = new StreamReader (m);
+		m.Close ();
+		bool thrown = false;
+		try {
+			r.Peek ();
+		} catch (ObjectDisposedException) {
+			thrown = true;
+		}
+
+		AssertEquals ("#01", true, thrown);
 	}
 }
 }
