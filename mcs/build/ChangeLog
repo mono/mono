@@ -1,3 +1,14 @@
+2004-05-20  Raja R Harinath  <rharinath@novell.com>
+
+	* profiles/default.make (TEST_RUNTIME): Look in class/lib/default
+	for library to be tested.
+	* rules.make (INTERNAL_RESGEN): New Define.
+	* library.make (run-test-local): Move commands to run-test-lib.
+	Preparartion for allowing creation of addition test dll with .vb
+	testcases.
+	* executable.make (PROGRAM_COMPILE): New define.
+	($(PROGRAM)): Use PROGRAM_COMPILE to compile PROGRAM.
+
 2004-05-14  Jackson Harper  <jackson@ximian.com>
 
 	* library.make: Install package files. Get params in magical

@@ -49,8 +49,12 @@ dist-local: dist-default
 # Changing makefile probably means changing the
 # sources, so let's be safe and add a Makefile dep
 
+ifndef PROGRAM_COMPILE
+PROGRAM_COMPILE = $(CSCOMPILE)
+endif
+
 $(PROGRAM): $(makefrag) $(response) $(stampfile)
-	$(CSCOMPILE) /target:exe /out:$@ $(BUILT_SOURCES) @$(response)
+	$(PROGRAM_COMPILE) /target:exe /out:$@ $(BUILT_SOURCES) @$(response)
 
 # warning: embedded tab in the 'echo touch' line
 $(makefrag): $(sourcefile)

@@ -70,7 +70,9 @@ $(test_nunitfw):
 
 test-local: $(test_nunitfw) $(the_lib) $(test_lib)
 
-run-test-local: test-local
+run-test-local: run-test-lib
+
+run-test-lib: test-local
 	$(TEST_RUNTIME) $(TEST_HARNESS) $(test_lib)
 
 else

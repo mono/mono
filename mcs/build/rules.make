@@ -27,6 +27,7 @@ MKINSTALLDIRS = $(SHELL) $(topdir)/mkinstalldirs
 INTERNAL_MCS = $(RUNTIME) $(topdir)/mcs/mcs.exe
 INTERNAL_GMCS = $(RUNTIME) $(topdir)/gmcs/gmcs.exe
 INTERNAL_ILASM = $(RUNTIME) $(topdir)/ilasm/ilasm.exe
+INTERNAL_RESGEN = $(RUNTIME) $(topdir)/monoresgen/monoresgen.exe
 corlib = mscorlib.dll
 
 depsdir = $(topdir)/build/deps
