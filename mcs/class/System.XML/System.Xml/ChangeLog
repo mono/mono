@@ -1,5 +1,9 @@
 2004-11-03  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlParserContext.cs : rewrote; especially to avoid XmlSpace boxing.
+
+2004-11-03  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlTextReader.cs : LookupNamespace() don't have to be called in
 	  ReadStartTag() to check prefix, since NamespaceURI is filled in
 	  FillNames(). 10% performance up by avoiding this extra check.

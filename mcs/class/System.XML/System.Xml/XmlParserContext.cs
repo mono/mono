@@ -37,6 +37,15 @@ namespace System.Xml
 {
 	public class XmlParserContext
 	{
+		#region Class
+		class ContextItem
+		{
+			public string BaseURI;
+			public string XmlLang;
+			public XmlSpace XmlSpace;
+		}
+		#endregion
+
 		#region Constructors
 
 		public XmlParserContext (
@@ -155,12 +164,11 @@ namespace System.Xml
 			}
 			this.encoding = enc;
 
-			baseURIStack = new Stack ();
-			xmlLangStack = new Stack ();
-			xmlSpaceStack = new Stack ();
-			baseURIStack.Push (baseURI != null ? baseURI : String.Empty);
-			xmlLangStack.Push (xmlLang);
-			xmlSpaceStack.Push (xmlSpace);
+			this.baseURI = baseURI;
+			this.xmlLang = xmlLang;
+			this.xmlSpace = xmlSpace;
+
+			contextItems = new ArrayList ();
 		}
 		#endregion
 
@@ -176,9 +184,8 @@ namespace System.Xml
 		private string systemID;
 		private string xmlLang;
 		private XmlSpace xmlSpace;
-		private Stack baseURIStack;
-		private Stack xmlLangStack;
-		private Stack xmlSpaceStack;
+		private ArrayList contextItems;
+		private int contextItemCount;
 		private DTDObjectModel dtd;
 
 		#endregion
@@ -186,7 +193,7 @@ namespace System.Xml
 		#region Properties
 
 		public string BaseURI {
-			get { return baseURI != null ? baseURI : baseURIStack.Peek () as string; }
+			get { return baseURI; }
 			set { baseURI = value; }
 		}
 
@@ -231,12 +238,12 @@ namespace System.Xml
 		}
 
 		public string XmlLang {
-			get { return xmlLang != null ? xmlLang : xmlLangStack.Peek () as string; }
+			get { return xmlLang; }
 			set { xmlLang = value; }
 		}
 
 		public XmlSpace XmlSpace {
-			get { return xmlSpace != XmlSpace.None ? xmlSpace : (XmlSpace) xmlSpaceStack.Peek (); }
+			get { return xmlSpace; }
 			set { xmlSpace = value; }
 		}
 
@@ -245,22 +252,26 @@ namespace System.Xml
 		#region Methods
 		internal void PushScope ()
 		{
-			baseURIStack.Push (BaseURI);
-			xmlLangStack.Push (XmlLang);
-			xmlSpaceStack.Push (XmlSpace);
-			baseURI = null;
-			xmlLang = null;
-			xmlSpace = XmlSpace.None;
+			ContextItem item = null;
+			if (contextItems.Count == contextItemCount) {
+				item = new ContextItem ();
+				contextItems.Add (item);
+			}
+			else
+				item = (ContextItem) contextItems [contextItemCount - 1];
+			item.BaseURI = BaseURI;
+			item.XmlLang = XmlLang;
+			item.XmlSpace = XmlSpace;
+			contextItemCount++;
 		}
 
 		internal void PopScope ()
 		{
-			baseURIStack.Pop ();
-			xmlLangStack.Pop ();
-			xmlSpaceStack.Pop ();
-			baseURI = null;
-			xmlLang = null;
-			xmlSpace = XmlSpace.None;
+			contextItemCount--;
+			ContextItem prev = (ContextItem) contextItems [contextItemCount];
+			baseURI = prev.BaseURI;
+			xmlLang = prev.XmlLang;
+			xmlSpace = prev.XmlSpace;
 		}
 		#endregion
 	}
