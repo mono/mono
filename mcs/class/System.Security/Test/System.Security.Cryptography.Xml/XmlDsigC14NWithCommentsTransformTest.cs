@@ -147,9 +147,11 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	        [Test]
 	        public void C14NSpecExample5 ()
 	        {
-			using (StreamWriter sw = new StreamWriter ("world.txt", false, Encoding.ASCII)) {
-				sw.Write ("world");
-				sw.Close ();
+			if (!File.Exists ("world.txt")) {
+				using (StreamWriter sw = new StreamWriter ("world.txt", false, Encoding.ASCII)) {
+					sw.Write ("world");
+					sw.Close ();
+				}
 			}
 	    	    	string res = ExecuteXmlDSigC14NTransform (C14NSpecExample5Input);
 	    	    	AssertEquals ("Example 5 from c14n spec - Entity References (with comments)", 

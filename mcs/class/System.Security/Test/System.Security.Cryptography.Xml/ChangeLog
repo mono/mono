@@ -1,3 +1,10 @@
+2004-03-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDsigC14NWithCommentsTransformTest,cs : world.txt causes FileShare
+	  Win32Error so it should be added only when it does not exist.
+	* XmlDsigXsltTransformTest.cs : embedded stylesheet should have
+	  version attribute. EmbeddedStylesheet() should also load input doc.
+
 2004-03-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* XmlDsigC14NTransformTest.cs: Fixed missing files error under MS.NET.

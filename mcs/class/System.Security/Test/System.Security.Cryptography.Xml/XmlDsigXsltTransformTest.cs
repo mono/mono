@@ -110,11 +110,12 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		// (see XSLT spec 2.7)
 		public void EmbeddedStylesheet () 
 		{
-			string test = "<Test>XmlDsigXsltTransform</Test>";
+			string test = "<Test xsl:version='1.0'>XmlDsigXsltTransform</Test>";
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml (test);
 
 			transform.LoadInnerXml (doc.ChildNodes);
+			transform.LoadInput (doc);
 			Stream s = (Stream) transform.GetOutput ();
 		}
 
