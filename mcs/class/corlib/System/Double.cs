@@ -37,23 +37,27 @@ namespace System {
 
 			double dv = (double)v;
 
-			if (IsPositiveInfinity(value) && IsPositiveInfinity(dv)){
+			if (IsPositiveInfinity(value) && IsPositiveInfinity(dv))
 				return 0;
-			}
 
-			if (IsNegativeInfinity(value) && IsNegativeInfinity(dv)){
+			if (IsNegativeInfinity(value) && IsNegativeInfinity(dv))
 				return 0;
-			}
 
-			if (IsNaN(dv)) {
+			if (IsNaN(dv))
 				if (IsNaN(value))
 					return 0;
 				else
 					return 1;
-			}
+
+			if (IsNaN(value))
+				if (IsNaN(dv))
+					return 0;
+				else
+					return -1;
 
 			if (value > dv) return 1;
-			else return -1;
+			else if (value < dv) return -1;
+			else return 0;
 		}
 
 		public override bool Equals (object o)
