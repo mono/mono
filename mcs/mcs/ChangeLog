@@ -1,5 +1,13 @@
 2001-12-20  Miguel de Icaza  <miguel@ximian.com>
 
+	* delegate.cs: Compute the basename for the delegate creation,
+	that should fix the delegate test case, and restore the correct
+	Type Lookup semantics in rootcontext
+
+	* rootcontext.cs: Revert Ravi's last patch.  The correct way of
+	referencing a nested type with the Reflection API is using the "+"
+	sign. 
+
 	* cs-parser.jay: Do not require EOF token at the end.
 
 2001-12-20  Ravi Pratap  <ravi@ximian.com>

@@ -114,6 +114,7 @@ namespace Mono.CSharp {
 
 			ConstantValue = ((Literal) Expr).GetValue ();
 
+			Console.WriteLine ("Constant Type: " + ConstantValue.GetType ());
 			FieldBuilder.SetConstant (ConstantValue);
 
 			if (!TypeManager.RegisterField (FieldBuilder, ConstantValue))

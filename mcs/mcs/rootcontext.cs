@@ -242,7 +242,7 @@ namespace Mono.CSharp {
 			}
 
 			// For the case the type we are looking for is nested within this one.
-			t = TypeManager.LookupType (ds.Name + "." + name);
+			t = TypeManager.LookupType (ds.Name + "+" + name);
 			if (t != null)
 				return t;
 
