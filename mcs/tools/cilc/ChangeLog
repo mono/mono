@@ -12,6 +12,7 @@
 	Include the Mono headers in the sources, not the headers.
 	Identify and report disparity in the order of type registration.
 	Start support for some more primitive types.
+	Cleanups.
 	* README:
 	Update with details of the new bundle feature and single-argument operation.
 	* Makefile:

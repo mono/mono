@@ -82,6 +82,7 @@ public class cilc
 		Directory.CreateDirectory (target_dir);
 
 		//register handled primitive types
+		//TODO: sync these with the handled types
 		RegisterCsType (typeof (string));
 		RegisterCsType (typeof (int));
 		RegisterCsType (typeof (bool));
@@ -379,11 +380,7 @@ public class cilc
 		H.WriteLine ("struct _" + CurType);
 		H.WriteLine ("{");
 
-		string ParentName;
-	 	if (IsRegistered (t.BaseType))
-			ParentName = NsToFlat (t.BaseType.Namespace) + t.BaseType.Name;
-		else
-			ParentName = "GObject";
+		string ParentName = CsTypeToG (t.BaseType);
 
 		H.WriteLine (ParentName + " parent_instance;");
 		H.WriteLine (CurType + "Private *priv;");
@@ -570,6 +567,14 @@ public class cilc
 		registered_types.Add (t);
 	}
 
+	static string CsTypeToG (Type t)
+	{
+		if (IsRegistered (t))
+			return NsToFlat (t.Namespace) + t.Name;
+
+		return "GObject";
+	}
+
 	static string CsTypeToC (Type t)
 	{
 		//TODO: use this method everywhere
@@ -594,10 +599,7 @@ public class cilc
 				return "GCallback ";
 		}
 
-		if (IsRegistered (t))
-			return NsToFlat (t.Namespace) + t.Name + " *";
-
-		return "GObject *";
+		return CsTypeToG (t) + " *";
 	}
 
 	static void EventGen (EventInfo ei, Type t)
