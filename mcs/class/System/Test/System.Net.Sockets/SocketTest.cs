@@ -7,6 +7,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Net;
 using System.Net.Sockets;
 using NUnit.Framework;
@@ -14,12 +15,12 @@ using NUnit.Framework;
 namespace MonoTests.System.Net.Sockets
 {
 	[TestFixture]
-	public class AsyncSocketTest
+	public class SocketTest
 	{
 		[Test]
 		public void EndConnect ()
 		{
-		    IPAddress ipOne = IPAddress.Parse ("127.1.2.3");   // something bogus
+		    IPAddress ipOne = IPAddress.Parse ("192.168.244.244");   // something bogus
 		    IPEndPoint ipEP = new IPEndPoint (ipOne, 23483);  // something bogus
 		    Socket sock = new Socket (ipEP.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 		    IAsyncResult ar = sock.BeginConnect (ipEP, null, null);
@@ -32,7 +33,15 @@ namespace MonoTests.System.Net.Sockets
 		    }
 
 		    Assertion.AssertEquals ("A01", gotException, true);
-		}	
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void SelectEmpty ()
+		{
+			ArrayList list = new ArrayList ();
+			Socket.Select (list, list, list, 1000);
+		}
 		
 	}
 
