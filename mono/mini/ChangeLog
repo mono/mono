@@ -1,3 +1,9 @@
+
+Thu Jan 27 13:38:34 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini-exceptions.c: don't bother getting stack trace info if
+	it's not going to be used.
+
 2005-01-27  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (common_sources): Add ssapre-cee-ops.h and
