@@ -1,3 +1,10 @@
+2004-08-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml.dll.sources: added those files:
+	  - Mono.Xml.XPath/XPathDocument2.cs
+	  - Mono.Xml.XPath/XPathDocument2Navigator.cs
+	  - Mono.Xml.XPath/XPathDocument2Editable.cs
+
 2004-07-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml.dll.sources: added Mono.Xml/SubtreeXmlReader.cs
