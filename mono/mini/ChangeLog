@@ -1,3 +1,11 @@
+
+Mon Jan 19 17:44:50 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.h: export ppc_patch().
+	* mini-ppc.c: call convention fixes. Added assert in ppc_patch().
+	* tramp-ppc.c: call convention fixes: Linux/PPC support should be
+	on par or better than on MacOSX.
+
 2004-01-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c tramp-x86.c tramp-sparc.c: Updated after changes to
