@@ -1,4 +1,9 @@
 
+Fri Aug 3 18:30:16 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* get.c (get_method): fix use of unitialized variable and
+	remove magic constants all over the place.
+
 Wed Aug 1 22:46:45 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* dis-cil.c: properly decode the switch opcode.
