@@ -1,3 +1,9 @@
+2004-01-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* Console.cs: Test for UTF-8 being present anywhere on the
+	string, also do ToUpper instead of ToLower, which will work even
+	around the ICU bug with different locales (#52065), and addresses #52101
+
 2004-01-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Environment.cs: Bump version.
