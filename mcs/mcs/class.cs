@@ -973,7 +973,7 @@ namespace Mono.CSharp {
 			int start, i, j;
 
 			if (Kind == Kind.Class){
-				TypeExpr name = ResolveTypeExpr (
+				TypeExpr name = ResolveBaseTypeExpr (
 					(Expression) Bases [0], false, Location);
 
 				if (name == null){
@@ -994,8 +994,7 @@ namespace Mono.CSharp {
 			TypeExpr [] ifaces = new TypeExpr [count-start];
 			
 			for (i = start, j = 0; i < count; i++, j++){
-				Expression name = (Expression) Bases [i];
-				TypeExpr resolved = ResolveTypeExpr (name, false, Location);
+				TypeExpr resolved = ResolveBaseTypeExpr ((Expression) Bases [i], false, Location);
 				if (resolved == null) {
 					error = true;
 					return null;
@@ -1180,6 +1179,8 @@ namespace Mono.CSharp {
 			TypeAttributes type_attributes = TypeAttr;
 
 			if (base_type != null) {
+				// FIXME: I think this should be ...ResolveType (Parent.EmitContext).
+				//        However, if Parent == RootContext.Tree.Types, its NamespaceEntry will be null.
 				ptype = base_type.ResolveType (ec);
 				if (ptype == null) {
 					error = true;
@@ -1226,6 +1227,8 @@ namespace Mono.CSharp {
 
 			// add interfaces that were not added at type creation
 			if (iface_exprs != null) {
+				// FIXME: I think this should be ...ExpandInterfaces (Parent.EmitContext, ...).
+				//        However, if Parent == RootContext.Tree.Types, its NamespaceEntry will be null.
 				ifaces = TypeManager.ExpandInterfaces (ec, iface_exprs);
 				if (ifaces == null) {
 					error = true;

@@ -1,3 +1,11 @@
+2005-01-06  Raja R Harinath  <rharinath@novell.com>
+
+	* decl.cs (DeclSpace.ResolveType): Remove.
+	(DeclSpace.ResolveBaseTypeExpr): Rename from ResolveTypeExpr.
+	Merge in code from ...
+	(DeclSpace.GetTypeResolvingEmitContext): ... here.  Remove.
+	* class.cs, enum.cs: Update to changes.
+
 2005-01-06  Miguel de Icaza  <miguel@ximian.com>
 
 	* anonymous.cs: Ensure that we init the scope of our parent if it

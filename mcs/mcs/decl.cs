@@ -596,32 +596,24 @@ namespace Mono.CSharp {
 		}
 
 		EmitContext type_resolve_ec;
-		EmitContext GetTypeResolveEmitContext (TypeContainer parent, Location loc)
-		{
-			type_resolve_ec = new EmitContext (parent, this, loc, null, null, ModFlags, false);
-			type_resolve_ec.ResolvingTypeTree = true;
-
-			return type_resolve_ec;
-		}
-
-		// <summary>
-		//    Looks up the type, as parsed into the expression `e'.
-		// </summary>
-		//[Obsolete ("This method is going away soon")]
-		public Type ResolveType (Expression e, bool silent, Location loc)
-		{
-			TypeExpr d = ResolveTypeExpr (e, silent, loc);
-			return d == null ? null : d.Type;
-		}
 
 		// <summary>
 		//    Resolves the expression `e' for a type, and will recursively define
 		//    types.  This should only be used for resolving base types.
 		// </summary>
-		public TypeExpr ResolveTypeExpr (Expression e, bool silent, Location loc)
+		public TypeExpr ResolveBaseTypeExpr (Expression e, bool silent, Location loc)
 		{
-			if (type_resolve_ec == null)
-				type_resolve_ec = GetTypeResolveEmitContext (Parent, loc);
+			if (type_resolve_ec == null) {
+				// FIXME: I think this should really be one of:
+				//
+				// a. type_resolve_ec = Parent.EmitContext;
+				// b. type_resolve_ec = new EmitContext (Parent, Parent, loc, null, null, ModFlags, false);
+				//
+				// However, if Parent == RootContext.Tree.Types, its NamespaceEntry will be null.
+				//
+				type_resolve_ec = new EmitContext (Parent, this, loc, null, null, ModFlags, false);
+				type_resolve_ec.ResolvingTypeTree = true;
+			}
 			type_resolve_ec.loc = loc;
 			type_resolve_ec.ContainerType = TypeBuilder;
 
