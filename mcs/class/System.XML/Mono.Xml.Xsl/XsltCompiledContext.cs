@@ -141,7 +141,7 @@ namespace Mono.Xml.Xsl {
 		public override System.Xml.Xsl.IXsltContextVariable ResolveVariable(string prefix, string name)
 		{
 			if (v != null) {
-				XslGeneralVariable var = v.Resolve (new QName (name));
+				XslGeneralVariable var = v.Resolve (p, new QName (name));
 	
 				if (var != null)
 					return var;

@@ -1,3 +1,10 @@
+2003-07-31 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* Compiler.cs: To resolve a variable you now need to pass the
+	processor, so that it can be passed to IsEvaluated. A local will
+	only be resolved if it has already been evaluated.
+	* XsltCompiledContext.cs: Pass along the processor.
+	
 2003-07-30 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Compiler.cs, XslTemplate.cs, XslTransformProcessor.cs: Store

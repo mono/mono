@@ -300,14 +300,13 @@ namespace Mono.Xml.Xsl {
 			return nextSlot++;
 		}
 		
-		public XslLocalVariable Resolve (QName name)
+		public XslLocalVariable Resolve (XslTransformProcessor p, QName name)
 		{
 			for (VariableScope s = this; s != null; s = s.Parent)			
 				if (s.variables != null && s.variables.Contains (name)) {
 					XslLocalVariable v = (XslLocalVariable)s.variables [name];								
-					return v;
-					// TODO: replace this logic
-					//	if (v.Evaluated) return v;
+					if (v.IsEvaluated (p))
+						return v;
 				}
 			
 			return null;

@@ -154,6 +154,11 @@ namespace Mono.Xml.Xsl.Operations {
 			return p.GetStackItem (slot);
 		}
 		
+		public bool IsEvaluated (XslTransformProcessor p)
+		{
+			return p.GetStackItem (slot) != null;
+		}
+		
 		public override bool IsLocal { get { return true; }}
 		public override bool IsParam { get { return false; }}
 	}
