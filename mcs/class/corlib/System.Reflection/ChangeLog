@@ -1,3 +1,7 @@
+2003-11-11  Todd Berman  <tberman@gentoo.org>
+
+	* AssemblyName.cs (FullName): Fixed to include a proper PublicKeyToken.
+
 2003-11-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MonoMethod.cs: Implement CallingConvention member.

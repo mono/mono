@@ -97,8 +97,14 @@ namespace System.Reflection {
 					fname.Append ("neutral");
 				else
 					fname.Append (cultureinfo.ToString ()); // ???
-				if (keypair == null)
+				byte[] pub_tok = GetPublicKeyToken ();
+				if (pub_tok == null || pub_tok.Length == 0)
 					fname.Append (", PublicKeyToken=null");
+				else {
+					fname.Append (", PublicKeyToken=");
+					for (int i = 0; i < pub_tok.Length; i++)
+						fname.Append (pub_tok[i].ToString ("x2"));
+				}
 				// TODO
 				return fname.ToString ();
 			}
