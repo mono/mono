@@ -1,3 +1,7 @@
+2004-06-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* culture-info-tables.h: freshly generated.
+
 2004-06-09  Martin Baulig  <martin@ximian.com>
 
 	* loader.c (mono_get_method_constrained): Call `mono_class_init
