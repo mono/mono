@@ -61,7 +61,7 @@ namespace Mono.CSharp {
 			get { return constraint_types; }
 		}
 
-		public bool Resolve (TypeContainer tc)
+		public bool Resolve (DeclSpace ds)
 		{
 			iface_constraints = new ArrayList ();
 
@@ -82,7 +82,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				Expression expr = tc.ResolveTypeExpr ((Expression) obj, false, loc);
+				Expression expr = ds.ResolveTypeExpr ((Expression) obj, false, loc);
 				if (expr == null)
 					return false;
 
@@ -148,10 +148,10 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool Resolve (TypeContainer tc)
+		public bool Resolve (DeclSpace ds)
 		{
 			if (constraints != null)
-				return constraints.Resolve (tc);
+				return constraints.Resolve (ds);
 
 			return true;
 		}

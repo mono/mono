@@ -682,14 +682,22 @@ struct_declaration
 		current_container = new_struct;
 		RootContext.Tree.RecordDecl (full_struct_name, new_struct);
 	  }
+	  opt_type_parameter_list
 	  opt_class_base
+	  opt_type_parameter_constraints_clauses
 	  struct_body
 	  opt_semicolon
 	  {
 		Struct new_struct = (Struct) current_container;
 
+		if ($8 != null && $6 == null)
+			Report.Error (-200, new_struct.Location,
+				      "Type parameter constraints only valid if there is a type parameter list");
 		if ($6 != null)
-			new_struct.Bases = (ArrayList) $6;
+			CheckDef (new_struct.SetParameterInfo ((ArrayList) $6, (ArrayList) $8), new_struct.Name, new_struct.Location);
+
+		if ($7 != null)
+			new_struct.Bases = (ArrayList) $7;
 
 		current_container = current_container.Parent;
 		CheckDef (current_container.AddStruct (new_struct), new_struct.Name, new_struct.Location);
@@ -1186,13 +1194,21 @@ interface_declaration
 		current_interface = new_interface;
 		RootContext.Tree.RecordDecl (full_interface_name, new_interface);
 	  }
+	  opt_type_parameter_list
 	  opt_interface_base
+	  opt_type_parameter_constraints_clauses
 	  interface_body opt_semicolon
 	  { 
 		Interface new_interface = (Interface) current_interface;
 
+		if ($8 != null && $6 == null)
+			Report.Error (-200, new_interface.Location,
+				      "Type parameter constraints only valid if there is a type parameter list");
+
 		if ($6 != null)
-			new_interface.Bases = (ArrayList) $6;
+			CheckDef (new_interface.SetParameterInfo ((ArrayList) $6, (ArrayList) $8), new_interface.Name, new_interface.Location);
+		if ($7 != null)
+			new_interface.Bases = (ArrayList) $7;
 
 		current_interface = null;
 		CheckDef (current_container.AddInterface (new_interface), 

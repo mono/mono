@@ -743,6 +743,14 @@ namespace Mono.CSharp {
 			if (error)
 				return null;
 
+			if (IsGeneric) {
+				foreach (TypeParameter type_param in TypeParameters)
+					if (!type_param.Resolve (this)) {
+						error = true;
+						return null;
+					}
+			}
+			
 			if (IsTopLevel) {
 				if (TypeManager.NamespaceClash (Name, Location))
 					return null;
@@ -766,6 +774,11 @@ namespace Mono.CSharp {
 
 				TypeContainer tc = TypeManager.LookupTypeContainer (builder);
 				tc.RegisterOrder (this);
+			}
+
+			if (IsGeneric) {
+				foreach (TypeParameter type_param in TypeParameters)
+					type_param.Define (TypeBuilder);
 			}
 
 			TypeManager.AddUserInterface (Name, TypeBuilder, this, ifaces);

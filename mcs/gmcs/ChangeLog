@@ -1,6 +1,17 @@
 2003-10-17  Martin Baulig  <martin@ximian.com>
 
-	* generics.cs (GenericMemberAccess.DoResolve): We can now actually
+	* generic.cs (Constraints.Resolve): Take a DecpSpace instead of a
+	TypeContainer so we can also use this for Interfaces.
+	(TypeParameter.Resolve): Likewise.
+
+	* interface.cs (Interface.DefineType): Added support for generic
+	interfaces.
+
+	* cs-parser.jay: Added support for generic structs and interfaces.
+
+2003-10-17  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (GenericMemberAccess.DoResolve): We can now actually
 	call generic methods :-)
 
 2003-10-16  Martin Baulig  <martin@ximian.com>
