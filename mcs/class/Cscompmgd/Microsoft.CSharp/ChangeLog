@@ -1,3 +1,7 @@
+2004-12-14  Jackson Harper  <jackson@ximian.com>
+
+	* Compiler.cs: mcs writes to stderr now.
+
 2004-07-02  Jackson Harper  <jackson@ximian.com>
 
 	* Compiler.cs:
