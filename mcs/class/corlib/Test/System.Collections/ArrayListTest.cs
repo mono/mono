@@ -622,6 +622,7 @@ public class ArrayListTest : TestCase {
 			char[] chars = {'a', 'b', 'c', 'd', 'e', 'f'};
 			ArrayList a = new ArrayList(chars);
 			ArrayList b = a.GetRange(1, 3);
+			AssertEquals("GetRange returned wrong size ArrayList", 3, b.Count);
 			for (int i = 0; i < b.Count; i++) {
 				AssertEquals("range didn't work",
 					     chars[i+1], b[i]);

@@ -1,3 +1,8 @@
+2002-02-20  Nick Drochak  <ndrochak@gol.com>
+
+	* ArrayListTest.cs: Add a small assert for a bug that I found and fixed
+	in ArrayList.  Make sure it doesn't come up again.
+
 2002-02-10  Nick Drochak  <ndrochak@gol.com>
 
 	* QueueTest.cs: Put in correct namespace.
