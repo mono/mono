@@ -33,10 +33,8 @@ namespace System.Drawing
 			lock (this)
 			{
 				this.color = color;
-				int brush;
-				Status status = GDIPlus.GdipCreateSolidFill (color.ToArgb (), out brush);
+				Status status = GDIPlus.GdipCreateSolidFill (color.ToArgb (), out nativeObject);
 				GDIPlus.CheckStatus (status);
-				nativeObject = (IntPtr) brush;
 			}
 		}
 

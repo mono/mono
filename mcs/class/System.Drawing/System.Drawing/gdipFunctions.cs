@@ -266,7 +266,7 @@ namespace System.Drawing
 		
 		// Solid brush functions
 		[DllImport("gdiplus.dll")]
-		static internal extern Status GdipCreateSolidFill (int color, out int brush);
+		static internal extern Status GdipCreateSolidFill (int color, out IntPtr brush);
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipGetSolidFillColor (IntPtr brush, out int color);
 		[DllImport("gdiplus.dll")]

@@ -58,7 +58,7 @@ namespace System.Drawing {
 		public Pen (Color color, float width)
 		{
 			lock (this)
-			{			
+			{
 				Status status = GDIPlus.GdipCreatePen1 (color.ToArgb (), width, Unit.UnitWorld, out nativeObject);
 				GDIPlus.CheckStatus (status);
 	
