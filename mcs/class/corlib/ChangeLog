@@ -1,3 +1,27 @@
+2004-07-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib.dll.sources: Added new files for NET_2_0 profile: 
+		System/ActivationContext.cs
+		System/ApplicationIdentity.cs
+		System/IApplicationDescription.cs
+		System/IHostContext.cs
+		System.Security.Policy/ApplicationDefaultCodeGroup.cs 
+		System.Security.Policy/ApplicationInstallScope.cs 
+		System.Security.Policy.Security.Policy/ApplicationTrust.cs 
+		System.Security.Policy/ApplicationVersionMatch.cs 
+		System.Security.Policy/CodeConnectAccess.cs 
+		System.Security.Policy/CodeGroupGrantScope.cs 
+		System.Security.Policy/IApplicationTrustManager.cs 
+		System.Security.Policy/ITrustLicenseIssuerCollection.cs 
+		System.Security.Policy/ITrustManager.cs 
+		System.Security.Policy/ITrustManagerConfig.cs 
+		System.Security.Policy/PromptingLevel.cs 
+		System.Security.Policy/ProvideAssemblyEvidenceEventArgs.cs 
+		System.Security.Policy/TrustLicenseIssuer.cs 
+		System.Security.Policy/TrustManagerContext.cs
+		System.Security.Policy/TrustManagerUIContext.cs 
+		System.Security.Policy/TrustManagerZoneConfig.cs 
+
 2004-07-10  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* corlib.dll.sources: Added System.Threading.SendOrPostCallback.cs.
