@@ -515,6 +515,14 @@ namespace System.Collections {
 		private void  CopyToArray (Array arr, int i, 
 					   EnumeratorMode mode)
 		{
+			if (arr == null)
+				throw new ArgumentNullException ("arr");
+
+			if (i < 0 || i + this.Count > arr.Length)
+				throw new ArgumentOutOfRangeException ("i");
+			
+
+			
 			IEnumerator it = new Enumerator (this, mode);
 
 			while (it.MoveNext ()) {
@@ -568,6 +576,8 @@ namespace System.Collections {
 
 			private object currentKey;
 			private object currentValue;
+				
+			bool invalid = false;
 
 			private readonly static string xstr = "SortedList.Enumerator: snapshot out of sync.";
 
@@ -585,17 +595,10 @@ namespace System.Collections {
 			{
 			}
 
-
-			private void FailFast ()
-			{
-				if (host.modificationCount != stamp) {
-					throw new InvalidOperationException (xstr);
-				}
-			}
-
 			public void Reset ()
 			{
-				FailFast ();
+				if (host.modificationCount != stamp || invalid)
+					throw new InvalidOperationException (xstr);
 
 				pos = -1;
 				currentKey = null;
@@ -604,7 +607,8 @@ namespace System.Collections {
 
 			public bool MoveNext ()
 			{
-				FailFast ();
+				if (host.modificationCount != stamp || invalid)
+					throw new InvalidOperationException (xstr);
 
 				Slot [] table = host.table;
 
@@ -624,7 +628,9 @@ namespace System.Collections {
 			public DictionaryEntry Entry
 			{
 				get {
-					FailFast ();
+					if (invalid || pos >= size || pos == -1)
+						throw new InvalidOperationException (xstr);
+					
 					return new DictionaryEntry (currentKey,
 					                            currentValue);
 				}
@@ -632,21 +638,25 @@ namespace System.Collections {
 
 			public Object Key {
 				get {
-					FailFast ();
+					if (invalid || pos >= size || pos == -1)
+						throw new InvalidOperationException (xstr);
 					return currentKey;
 				}
 			}
 
 			public Object Value {
 				get {
-					FailFast ();
+					if (invalid || pos >= size || pos == -1)
+						throw new InvalidOperationException (xstr);
 					return currentValue;
 				}
 			}
 
 			public Object Current {
 				get {
-					FailFast ();
+					if (invalid || pos >= size || pos == -1)
+						throw new InvalidOperationException (xstr);
+					
 					return (mode == EnumeratorMode.KEY_MODE)
 					        ? currentKey
 					        : currentValue;

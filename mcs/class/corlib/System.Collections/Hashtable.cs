@@ -752,6 +752,7 @@ namespace System.Collections {
 			public DictionaryEntry Entry
 			{
 				get {
+					if (currentKey == null) throw new InvalidOperationException ();
 					FailFast ();
 					return new DictionaryEntry (currentKey, currentValue);
 				}
@@ -759,6 +760,7 @@ namespace System.Collections {
 
 			public Object Key {
 				get {
+					if (currentKey == null) throw new InvalidOperationException ();
 					FailFast ();
 					return currentKey;
 				}
@@ -766,6 +768,7 @@ namespace System.Collections {
 
 			public Object Value {
 				get {
+					if (currentKey == null) throw new InvalidOperationException ();
 					FailFast ();
 					return currentValue;
 				}
@@ -773,7 +776,8 @@ namespace System.Collections {
 
 			public Object Current {
 				get {
-					FailFast ();
+					if (currentKey == null) throw new InvalidOperationException ();
+						
 					switch (mode) {
 					case EnumeratorMode.KEY_MODE:
 						return currentKey;
@@ -792,21 +796,19 @@ namespace System.Collections {
 		protected class HashKeys : ICollection, IEnumerable {
 
 			private Hashtable host;
-			private int count;
 
 			public HashKeys (Hashtable host) {
 				if (host == null)
 					throw new ArgumentNullException ();
 
 				this.host = host;
-				this.count = host.Count;
 			}
 
 			// ICollection
 
 			public virtual int Count {
 				get {
-					return count;
+					return host.Count;
 				}
 			}
 
@@ -822,6 +824,15 @@ namespace System.Collections {
 
 			public virtual void CopyTo (Array array, int arrayIndex)
 			{
+				if (array == null)
+					throw new ArgumentNullException ("array");
+				if (array.Rank != 1)
+					throw new ArgumentException ("array");
+				if (arrayIndex < 0) 
+					throw new ArgumentOutOfRangeException ("arrayIndex");
+				if (array.Length - arrayIndex < Count)
+					throw new ArgumentException ("not enough space");
+				
 				host.CopyToArray (array, arrayIndex, EnumeratorMode.KEY_MODE);
 			}
 
@@ -837,21 +848,19 @@ namespace System.Collections {
 		protected class HashValues : ICollection, IEnumerable {
 
 			private Hashtable host;
-			private int count;
 
 			public HashValues (Hashtable host) {
 				if (host == null)
 					throw new ArgumentNullException ();
 
 				this.host = host;
-				this.count = host.Count;
 			}
 
 			// ICollection
 
 			public virtual int Count {
 				get {
-					return count;
+					return host.Count;
 				}
 			}
 
@@ -869,6 +878,15 @@ namespace System.Collections {
 
 			public virtual void CopyTo (Array array, int arrayIndex)
 			{
+				if (array == null)
+					throw new ArgumentNullException ("array");
+				if (array.Rank != 1)
+					throw new ArgumentException ("array");
+				if (arrayIndex < 0) 
+					throw new ArgumentOutOfRangeException ("arrayIndex");
+				if (array.Length - arrayIndex < Count)
+					throw new ArgumentException ("not enough space");
+				
 				host.CopyToArray (array, arrayIndex, EnumeratorMode.VALUE_MODE);
 			}
 

@@ -713,6 +713,8 @@ namespace System.Collections {
 			private int num;
 			private ArrayList enumeratee;
 			private long version;
+			object current = null;
+			bool invalidated = false;
 
 			internal ArrayListEnumerator(int index, int count, object[] items, ArrayList al, long ver) {
 				data = items;
@@ -724,23 +726,38 @@ namespace System.Collections {
 			}
 
 			public object Clone () {
-				return new ArrayListEnumerator (start, num, data, enumeratee, version);
+				return this.MemberwiseClone ();
 			}
 
 			public virtual object Current {
 				get {
-					return data [idx];
+					if (invalidated || idx < start || idx >= start + num)
+						throw new InvalidOperationException ();
+					
+					return current;
 				}
 			}
 			public virtual bool MoveNext() {
-				if (enumeratee.version != version)
-					throw new InvalidOperationException();
-				if (++idx < start + num)
+				if (enumeratee.version != version || invalidated) {
+					invalidated = true;
+					throw new InvalidOperationException ();
+				}
+				
+				if (++idx < start + num) {
+					current = data [idx];
 					return true;
+				}
 				return false;
 			}
 			public virtual void Reset() {
+				
+				if (enumeratee.version != version || invalidated) {
+					invalidated = true;
+					throw new InvalidOperationException ();
+				}
+				
 				idx = start - 1;
+				current = null;
 			}
 		}
 
