@@ -49,6 +49,10 @@ Test cases listed by Category:
 
   test-157.cs test-158.cs
 
+* Arrays and array creation
+
+  test-165.cs
+
 Test cases listed by Number:
 ============================
 
@@ -134,6 +138,10 @@ Test to check we select string over object when we have a Null literal as the ar
 test-164.cs
 -----------
 Virtual functions in delegate creation expressions.
+
+test-165.cs
+-----------
+Enums in array creation expression.
 
 verify-1.cs
 -----------
