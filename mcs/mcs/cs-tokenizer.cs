@@ -687,7 +687,7 @@ namespace Mono.CSharp
 				} catch (OverflowException) {
 					val = 0m;     
 					error_details = "Floating-point constant is outside the range of the type 'decimal'";
-					Report.Error(594, Location, error_details);
+					Report.Error (594, Location, error_details);
 				}
 				break;
 			case Token.LITERAL_FLOAT:
@@ -696,7 +696,7 @@ namespace Mono.CSharp
 				} catch (OverflowException) {
 					val = 0.0f;     
 					error_details = "Floating-point constant is outside the range of the type 'float'";
-					Report.Error(594, Location, error_details);
+					Report.Error (594, Location, error_details);
 				}
 				break;
 				
@@ -708,7 +708,7 @@ namespace Mono.CSharp
 				} catch (OverflowException) {
 					val = 0.0;     
 					error_details = "Floating-point constant is outside the range of the type 'double'";
-					Report.Error(594, Location, error_details);
+					Report.Error (594, Location, error_details);
 				}
 				break;
 			}
@@ -999,7 +999,7 @@ namespace Mono.CSharp
 					
 					char [] quotes = { '\"' };
 					
-					ref_name = arg.Substring (pos). Trim(quotes);
+					ref_name = arg.Substring (pos). Trim (quotes);
 				} else {
 					ref_line = System.Int32.Parse (arg);
 				}
@@ -1016,19 +1016,19 @@ namespace Mono.CSharp
 		void PreProcessDefinition (bool is_define, string arg)
 		{
 			if (arg == "" || arg == "true" || arg == "false"){
-				Report.Error(1001, Location, "Missing identifer to pre-processor directive");
+				Report.Error (1001, Location, "Missing identifer to pre-processor directive");
 				return;
 			}
 
 			char[] whitespace = { ' ', '\t' };
 			if (arg.IndexOfAny (whitespace) != -1){
-				Report.Error(1025, Location, "Single-line comment or end-of-line expected");
+				Report.Error (1025, Location, "Single-line comment or end-of-line expected");
 				return;
 			}
 
 			foreach (char c in arg){
 				if (!Char.IsLetter (c) && (c != '_')){
-					Report.Error(1001, Location, "Identifier expected");
+					Report.Error (1001, Location, "Identifier expected");
 					return;
 				}
 			}
@@ -1079,13 +1079,13 @@ namespace Mono.CSharp
 					return false;
 				}
 				
-				if (is_identifier_start_character(c)){
+				if (is_identifier_start_character (c)){
 					int j = 1;
 
 					while (j < len){
 						c = s [j];
 						
-						if (is_identifier_part_character(c)){
+						if (is_identifier_part_character (c)){
 							j++;
 							continue;
 						}
@@ -1392,7 +1392,7 @@ namespace Mono.CSharp
 
 		}
 
-		private int consume_string(bool quoted) 
+		private int consume_string (bool quoted) 
 		{
 			int c;
 			string_builder.Length = 0;
@@ -1409,9 +1409,14 @@ namespace Mono.CSharp
 					}
 				}
 
-				if (c == '\n' && !quoted) {
-					Report.Error(1010, Location, "Newline in constant");
-				}
+				if (c == '\n'){
+					if (!quoted)
+						Report.Error (1010, Location, "Newline in constant");
+					line++;
+					ref_line++;
+					col = 0;
+				} else
+					col++;
 
 				if (!quoted){
 					c = escape (c);
@@ -1425,7 +1430,7 @@ namespace Mono.CSharp
 			return Token.EOF;
 		}
 
-		private int consume_identifier(int c, bool quoted) 
+		private int consume_identifier (int c, bool quoted) 
 		{
 			id_builder.Length = 0;
 
@@ -1464,9 +1469,9 @@ namespace Mono.CSharp
 			val = null;
 			// optimization: eliminate col and implement #directive semantic correctly.
 			for (;(c = getChar ()) != -1; col++) {
-				if (is_identifier_start_character((char)c)){
+				if (is_identifier_start_character ((char)c)){
 					tokens_seen = true;
-					return consume_identifier(c, false);
+					return consume_identifier (c, false);
 				}
 
 				if (c == '.'){
@@ -1563,7 +1568,7 @@ namespace Mono.CSharp
 				}
 				
 				if (c == '"') {
-					return consume_string(false);
+					return consume_string (false);
 				}
 
 				if (c == '\''){
@@ -1613,14 +1618,14 @@ namespace Mono.CSharp
 				}
 
 				if (c == '@') {
-					c = getChar();
+					c = getChar ();
 					if (c == '"') {
 						tokens_seen = true;
-						return consume_string(true);
-					} else if (is_identifier_start_character((char) c)){
-						return consume_identifier(c, true);
+						return consume_string (true);
+					} else if (is_identifier_start_character ((char) c)){
+						return consume_identifier (c, true);
 					} else {
-						Report.Error(1033, Location, "'@' must be followed by string constant or identifier");
+						Report.Error (1033, Location, "'@' must be followed by string constant or identifier");
 					}
 				}
 

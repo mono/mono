@@ -1,3 +1,8 @@
+2002-09-16  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-tokenizer.cs (consume_string): Track line numbers and columns
+	inside quoted strings, we were not doing this before.
+
 2002-09-16  Martin Baulig  <martin@gnome.org>
 
 	* ecore.cs (MethodGroupExpr.DoResolve): If we have an instance expression,
