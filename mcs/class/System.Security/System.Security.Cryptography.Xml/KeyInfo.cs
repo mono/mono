@@ -135,9 +135,11 @@ namespace System.Security.Cryptography.Xml {
 					case XmlSignature.ElementNames.RSAKeyValue:
 						kic = (KeyInfoClause) new RSAKeyValue ();
 						break;
+#if NET_2_0
 					case XmlSignature.ElementNames.EncryptedKey:
 						kic = (KeyInfoClause) new KeyInfoEncryptedKey ();
 						break;
+#endif
 					default:
 						kic = (KeyInfoClause) new KeyInfoNode ();
 						break;

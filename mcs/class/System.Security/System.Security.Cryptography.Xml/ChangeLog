@@ -1,3 +1,7 @@
+2004-08-30  Atsushi Enomoto <atsushi@ximian.com>
+
+	* KeyInfo.cs : NET_1_1 build fix.
+
 2004-08-29  Tim Coleman <tim@timcoleman.com>
 	* EncryptedKey.cs: Fix element name when generating XML.
 	* EncryptedXml.cs: Implement more of encryption/decryption routines for .NET 2.0
