@@ -263,7 +263,7 @@ namespace System.Web {
       }
 
       [MonoTODO()]
-      public HttpBrowserCapabilites Browser {
+      public HttpBrowserCapabilities Browser {
          get {
             throw new NotImplementedException();
          }

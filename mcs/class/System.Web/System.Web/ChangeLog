@@ -1,3 +1,12 @@
+2002-05-07  Duncan Mak  <duncan@ximian.com>
+
+	* HttpBrowserCapabilities.cs: Added, replacing
+	HttpBrowserCapabilites because of typo.
+
+	* HttpBrowserCapabilites.cs: Removed, replaced by above.
+
+	* HttpRequest.cs (Browser): Fixed typo.
+
 2002-04-12  Patrik Torstensson <patrik.torstensson@labs2.com>
 
 	* HttpApplication.cs: Minor updates
