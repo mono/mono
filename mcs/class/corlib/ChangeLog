@@ -1,5 +1,14 @@
 2004-08-17  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* corlib.dll.sources: Added System.Security.Permissions/
+	DataProtectionPermission.cs, DataProtectionPermissionAttribute.cs,
+	DataProtectionPermissionFlags.cs, HostProtectionAttribute.cs,
+	HostProtectionPermission.cs, KeyContainerPermission.cs,
+	KeyContainerPermissionAccessEntry.cs, 
+	KeyContainerPermissionAccessEntryCollection.cs,
+	KeyContainerPermissionAccessEntryEnumerator.cs
+	KeyContainerPermissionAttribute.cs and KeyContainerPermissionFlags.cs
+	to NET_2_0 profile.
 	* corlib_test.dll.sources: Added System.Security.Permissions/
 	IBuiltInPermissionTest.cs and UIPermissionTest.cs unit tests.
 

@@ -934,6 +934,9 @@ System.Security.Cryptography.X509Certificates/X509Certificate.cs
 System.Security.Cryptography.X509Certificates/X509ContentType.cs
 System.Security.Cryptography.X509Certificates/X509KeyStorageFlags.cs
 System.Security.Permissions/CodeAccessSecurityAttribute.cs
+System.Security.Permissions/DataProtectionPermission.cs
+System.Security.Permissions/DataProtectionPermissionAttribute.cs
+System.Security.Permissions/DataProtectionPermissionFlags.cs
 System.Security.Permissions/EnvironmentPermission.cs
 System.Security.Permissions/EnvironmentPermissionAccess.cs
 System.Security.Permissions/EnvironmentPermissionAttribute.cs
@@ -945,6 +948,8 @@ System.Security.Permissions/FileIOPermissionAccess.cs
 System.Security.Permissions/FileIOPermissionAttribute.cs
 System.Security.Permissions/GacIdentityPermission.cs
 System.Security.Permissions/GacIdentityPermissionAttribute.cs
+System.Security.Permissions/HostProtectionAttribute.cs
+System.Security.Permissions/HostProtectionPermission.cs
 System.Security.Permissions/HostProtectionResource.cs
 System.Security.Permissions/IBuiltInPermission.cs
 System.Security.Permissions/IsolatedStorageContainment.cs
@@ -953,6 +958,12 @@ System.Security.Permissions/IsolatedStorageFilePermissionAttribute.cs
 System.Security.Permissions/IsolatedStoragePermission.cs
 System.Security.Permissions/IsolatedStoragePermissionAttribute.cs
 System.Security.Permissions/IUnrestrictedPermission.cs
+System.Security.Permissions/KeyContainerPermission.cs
+System.Security.Permissions/KeyContainerPermissionAccessEntry.cs
+System.Security.Permissions/KeyContainerPermissionAccessEntryCollection.cs
+System.Security.Permissions/KeyContainerPermissionAccessEntryEnumerator.cs
+System.Security.Permissions/KeyContainerPermissionAttribute.cs
+System.Security.Permissions/KeyContainerPermissionFlags.cs
 System.Security.Permissions/PermissionSetAttribute.cs
 System.Security.Permissions/PermissionState.cs
 System.Security.Permissions/PrincipalPermission.cs 
