@@ -1,3 +1,8 @@
+2005-01-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* BitConverterTest.cs: There is no exception thrown in .NET here.
+	Fixes an false negative.
+
 2005-01-04  Raja R Harinath  <rharinath@novell.com>
 
 	Fix for forthcoming type-lookup standard-conformance changes.
