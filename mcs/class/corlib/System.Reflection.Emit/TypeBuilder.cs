@@ -96,6 +96,7 @@ namespace System.Reflection.Emit {
 			this.parent = null;
 			this.attrs = attr;
 			this.class_size = UnspecifiedTypeSize;
+			this.table_idx = 1;
 			fullname = this.tname = "<Module>";
 			this.nspace = "";
 			pmodule = mb;
@@ -987,7 +988,7 @@ namespace System.Reflection.Emit {
 		public override Type[] GetNestedTypes (BindingFlags bindingAttr) {
 			bool match;
 			ArrayList result = new ArrayList ();
-		
+
 			if (subtypes == null)
 				return Type.EmptyTypes;
 			foreach (TypeBuilder t in subtypes) {
