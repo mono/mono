@@ -1,3 +1,8 @@
+2005-02-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: don't block on Accept if the socket is non-blocking.
+	Fixes bug #73053. Patch by Ankit Jain.
+
 2005-02-23  Dick Porter  <dick@ximian.com>
 
 	* UdpClient.cs: Set the Broadcast option, as apparently the MS
