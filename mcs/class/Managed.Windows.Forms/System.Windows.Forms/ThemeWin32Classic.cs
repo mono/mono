@@ -26,9 +26,16 @@
 //
 //
 //
-// $Revision: 1.59 $
+// $Revision: 1.60 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.60  2004/11/09 03:12:00  jackson
+// 	* ThemeWin32Classic.cs (DrawTabControl): Render tabs from top to
+// 	bottom when they are bottom aligned so the bottoms of the tabs get
+// 	displayed.
+// 	* TabControl.cs (DropRow): Move rows up instead of down when the
+// 	tab control is bottom aligned.
+//
 // Revision 1.59  2004/11/08 20:40:08  jackson
 // Render the little scrolling jimmi in the correct location with bottom aligned tabs
 //
@@ -1800,7 +1807,6 @@ namespace System.Windows.Forms
 		}
 		#endregion	// StatusBar
 
- 		
 		public override void DrawTabControl (Graphics dc, Rectangle area, TabControl tab)
 		{
 			// Do we need to fill the back color? It can't be changed...
@@ -1812,14 +1818,27 @@ namespace System.Windows.Forms
 				CPDrawBorder3D (dc, panel_rect, Border3DStyle.Raised, Border3DSide.Right | Border3DSide.Bottom, ColorButtonFace);
 			}
 
-			for (int r = tab.RowCount; r > 0; r--) {
-				for (int i = 0; i < tab.TabPages.Count; i++) {
-					if (i == tab.SelectedIndex)
-						continue;
-					if (r != tab.TabPages [i].Row)
-						continue;
-					Rectangle rect = tab.GetTabRect (i);
-					DrawTab (dc, tab.TabPages [i], tab, rect, false);
+			if (tab.Alignment == TabAlignment.Top) {
+				for (int r = tab.TabPages.Count; r > 0; r--) {
+					for (int i = 0; i < tab.TabPages.Count; i++) {
+						if (i == tab.SelectedIndex)
+							continue;
+						if (r != tab.TabPages [i].Row)
+							continue;
+						Rectangle rect = tab.GetTabRect (i);
+						DrawTab (dc, tab.TabPages [i], tab, rect, false);
+					}
+				}
+			} else {
+				for (int r = 0; r < tab.TabPages.Count; r++) {
+					for (int i = 0; i < tab.TabPages.Count; i++) {
+						if (i == tab.SelectedIndex)
+							continue;
+						if (r != tab.TabPages [i].Row)
+							continue;
+						Rectangle rect = tab.GetTabRect (i);
+						DrawTab (dc, tab.TabPages [i], tab, rect, false);
+					}
 				}
 			}
 

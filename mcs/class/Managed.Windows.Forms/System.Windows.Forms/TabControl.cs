@@ -191,7 +191,7 @@ namespace System.Windows.Forms {
 					Controls [selected_index].Visible = true;
 				ResumeLayout ();
 
-				if (SelectedIndex != -1 && TabPages [SelectedIndex].Row != 1) 
+				if (SelectedIndex != -1 && TabPages [SelectedIndex].Row != BottomRow) 
 					DropRow (TabPages [selected_index].Row);
 				SizeTabs (Width);
 				
@@ -503,17 +503,47 @@ namespace System.Windows.Forms {
 				xpos += width + 1 + spacing.Width;
 			}
 
-			if (SelectedIndex != -1 && TabPages [SelectedIndex].Row != 1)
+			if (SelectedIndex != -1 && TabPages [SelectedIndex].Row != BottomRow)
 				DropRow (TabPages [SelectedIndex].Row);
+		}
+
+		private int BottomRow {
+			get {
+				switch (Alignment) {
+				case TabAlignment.Top:
+					return 1;
+				case TabAlignment.Bottom:
+					return row_count;
+				default:
+					throw new Exception ("vertical rendered tabs");
+				}
+			}
+		}
+
+		private int Direction
+		{
+			get {
+				switch (Alignment) {
+				case TabAlignment.Bottom:
+					return -1;
+				default:
+					return 1;
+				}
+			}
 		}
 
 		private void DropRow (int row)
 		{
+			int bottom = BottomRow;
+			int direction = Direction;
+
 			foreach (TabPage page in TabPages) {
 				if (page.Row == row) {
-					page.Row = 1;
-				} else if (page.Row < row) {
-					page.Row++;
+					page.Row = bottom;
+				} else if (direction == 1 && page.Row < row) {
+					page.Row += direction;
+				} else if (direction == -1 && page.Row > row) {
+					page.Row += direction;
 				}
 			}
 		}
