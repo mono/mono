@@ -28,8 +28,11 @@ namespace System.Web.UI {
 						 "Page_Load",
 						 "Page_DataBind",
 						 "Page_PreRender",
-						 "Page_Dispose",
-						 "Page_Error" };
+						 "Page_Disposed",
+						 "Page_Error",
+						 "Page_Unload",
+						 "Page_AbortTransaction",
+						 "Page_CommitTransaction" };
 
 		const BindingFlags bflags = BindingFlags.Public |
 					    BindingFlags.NonPublic |
@@ -142,7 +145,7 @@ namespace System.Web.UI {
 
 		protected virtual void OnAbortTransaction (EventArgs e)
 		{
-			EventHandler eh = Events [error] as EventHandler;
+			EventHandler eh = Events [abortTransaction] as EventHandler;
 			if (eh != null)
 				eh (this, e);
 		}
@@ -156,7 +159,7 @@ namespace System.Web.UI {
 
 		protected virtual void OnError (EventArgs e)
 		{
-			EventHandler eh = Events [abortTransaction] as EventHandler;
+			EventHandler eh = Events [error] as EventHandler;
 			if (eh != null)
 				eh (this, e);
 		}
