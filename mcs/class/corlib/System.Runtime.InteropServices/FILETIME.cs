@@ -31,9 +31,10 @@
 namespace System.Runtime.InteropServices
 {
 	[ComVisible (false)]
+	[StructLayout (LayoutKind.Sequential)]
 	public struct FILETIME
 	{
-		public int dwHighDateTime;
 		public int dwLowDateTime;
+		public int dwHighDateTime;
 	}
 }

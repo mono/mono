@@ -35,17 +35,17 @@ namespace System.Runtime.InteropServices
 	[ComVisible(false)]
 	[StructLayout (LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 	public struct EXCEPINFO {
+		public short wCode;
+		public short wReserved;
+		[MarshalAs (UnmanagedType.BStr)]
+		public string bstrSource;
 		[MarshalAs (UnmanagedType.BStr)]
 		public string bstrDescription;
 		[MarshalAs (UnmanagedType.BStr)]
 		public string bstrHelpFile;
-		[MarshalAs (UnmanagedType.BStr)]
-		public string bstrSource;
 		public int dwHelpContext;
-		public IntPtr pfnDeferredFillIn;
 		public IntPtr pvReserved;
-		public short wCode;
-		public short wReserved;
+		public IntPtr pfnDeferredFillIn;
 	}
 }
 

@@ -34,8 +34,8 @@ namespace System.Runtime.InteropServices
 	[StructLayout (LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 	public struct ELEMDESC
 	{
-		public DESCUNION desc;
 		public TYPEDESC tdesc;
+		public DESCUNION desc;
 
 		[ComVisible (false)]
 		[StructLayout (LayoutKind.Explicit, CharSet = CharSet.Unicode)]

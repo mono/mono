@@ -32,7 +32,7 @@ using System;
 
 namespace System.Runtime.InteropServices
 {
-	[Flags, ComVisible (false)]
+	[Flags, Serializable, ComVisible (false)]
 	public enum PARAMFLAG
 	{
 		PARAMFLAG_NONE = 0,

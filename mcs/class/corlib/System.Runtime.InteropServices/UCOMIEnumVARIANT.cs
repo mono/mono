@@ -36,9 +36,12 @@ namespace System.Runtime.InteropServices
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMIEnumVARIANT
 	{
-		void Clone (int ppenum);
+		[PreserveSigAttribute]
 		int Next (int celt, int rgvar, int pceltFetched);
-		int Reset ();
+		[PreserveSigAttribute]
 		int Skip (int celt);
+		[PreserveSigAttribute]
+		int Reset ();
+		void Clone (int ppenum);
 	}
 }

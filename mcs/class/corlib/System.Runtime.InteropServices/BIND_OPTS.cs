@@ -31,11 +31,12 @@
 namespace System.Runtime.InteropServices
 {
 	[ComVisible (false)]
+	[StructLayout (LayoutKind.Sequential)]
 	public struct BIND_OPTS
 	{
 		public int cbStruct;
-		public int dwTickCountDeadline;
 		public int grfFlags;
 		public int grfMode;
+		public int dwTickCountDeadline;
 	}
 }

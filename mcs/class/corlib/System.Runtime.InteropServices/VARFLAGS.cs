@@ -32,7 +32,7 @@ using System;
 
 namespace System.Runtime.InteropServices
 {
-	[ComVisible (false), Flags]
+	[Serializable, ComVisible (false), Flags]
 	public enum VARFLAGS
 	{
 		VARFLAG_FREADONLY = 1,

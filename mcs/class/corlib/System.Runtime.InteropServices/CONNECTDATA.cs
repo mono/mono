@@ -34,8 +34,8 @@ namespace System.Runtime.InteropServices
 	[StructLayout (LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 	public struct CONNECTDATA
 	{
-		public int dwCookie;
 		[MarshalAs (UnmanagedType.Interface)]
 		public object pUnk;
+		public int dwCookie;
 	}
 }

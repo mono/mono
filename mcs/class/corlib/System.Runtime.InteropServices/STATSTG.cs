@@ -30,20 +30,21 @@
 
 namespace System.Runtime.InteropServices
 {
-	[ComVisible (false)]
-	[StructLayout (LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+	[ComVisible(false)]
+	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 	public struct STATSTG
 	{
-		public FILETIME atime;
-		public long cbSize;
-		public Guid clsid;
-		public FILETIME ctime;
-		public int grfLocksSupported;
-		public int grfMode;
-		public int grfStateBits;
-		public FILETIME mtime;
 		public string pwcsName;
-		public int reserved;
 		public int type;
+		public long cbSize;
+		public FILETIME mtime;
+		public FILETIME ctime;
+		public FILETIME atime;
+		public int grfMode;
+		public int grfLocksSupported;
+		public Guid clsid;
+		public int grfStateBits;
+		public int reserved;
 	}
+
 }

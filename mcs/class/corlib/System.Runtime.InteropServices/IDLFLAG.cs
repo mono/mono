@@ -32,7 +32,7 @@ using System;
 
 namespace System.Runtime.InteropServices
 {
-	[Flags, ComVisible (false)]
+	[Flags, Serializable, ComVisible (false)]
 	public enum IDLFLAG
 	{
 		IDLFLAG_NONE = 0,

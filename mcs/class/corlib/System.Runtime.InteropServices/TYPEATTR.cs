@@ -36,23 +36,23 @@ namespace System.Runtime.InteropServices
 	{
 		public const int MEMBER_ID_NIL = -1;
 
-		public short cbAlignment;
-		public int cbSizeInstance;
-		public short cbSizeVft;
-		public short cFuncs;
-		public short cImplTypes;
-		public short cVars;
-		public int dwReserved;
 		public Guid guid;
-		public IDLDESC idldescType;
 		public int lcid;
-		public IntPtr lpstrSchema;
+		public int dwReserved;
 		public int memidConstructor;
 		public int memidDestructor;
-		public TYPEDESC tdescAlias;
+		public IntPtr lpstrSchema;
+		public int cbSizeInstance;
 		public TYPEKIND typekind;
+		public short cFuncs;
+		public short cVars;
+		public short cImplTypes;
+		public short cbSizeVft;
+		public short cbAlignment;
+		public TYPEFLAGS wTypeFlags;
 		public short wMajorVerNum;
 		public short wMinorVerNum;
-		public TYPEFLAGS wTypeFlags;
+		public TYPEDESC tdescAlias;
+		public IDLDESC idldescType;
 	}
 }

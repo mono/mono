@@ -35,10 +35,10 @@ namespace System.Runtime.InteropServices
 	[ComVisible(false)]
 	[StructLayout (LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 	public struct DISPPARAMS {
+		public IntPtr rgvarg;
+		public IntPtr rgdispidNamedArgs;
 		public int cArgs;
 		public int cNamedArgs;
-		public IntPtr rgdispidNamedArgs;
-		public IntPtr rgvarg;
 	}
 }
 

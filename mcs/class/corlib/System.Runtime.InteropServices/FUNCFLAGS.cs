@@ -32,7 +32,7 @@ using System;
 
 namespace System.Runtime.InteropServices
 {
-	[Flags, ComVisible (false)]
+	[Flags, Serializable, ComVisible (false)]
 	public enum FUNCFLAGS
 	{
 		FUNCFLAG_FRESTRICTED = 1,

@@ -31,19 +31,20 @@
 namespace System.Runtime.InteropServices
 {
 	[ComVisible (false)]
+	[StructLayout (LayoutKind.Sequential)]
 	public struct FUNCDESC
 	{
+		public int memid;
+		public IntPtr lprgscode;
+		public IntPtr lprgelemdescParam;
+		public FUNCKIND funckind;
+		public INVOKEKIND invkind;
 		public CALLCONV callconv;
 		public short cParams;
 		public short cParamsOpt;
+		public short oVft;
 		public short cScodes;
 		public ELEMDESC elemdescFunc;
-		public FUNCKIND funckind;
-		public INVOKEKIND invkind;
-		public IntPtr lprgelemdescParam;
-		public IntPtr lprgscode;
-		public int memid;
-		public short oVft;
 		public short wFuncFlags;
 	}
 }

@@ -34,11 +34,11 @@ namespace System.Runtime.InteropServices
 	[StructLayout (LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 	public struct VARDESC
 	{
-		public ELEMDESC elemdescVar;
-		public string lpstrSchema;
 		public int memid;
-		public VarEnum varkind;
+		public string lpstrSchema;
+		public ELEMDESC elemdescVar;
 		public short wVarFlags;
+		public VarEnum varkind;
 
 		[ComVisible (false)]
 		[StructLayout (LayoutKind.Explicit, CharSet = CharSet.Unicode)]

@@ -36,12 +36,12 @@ namespace System.Runtime.InteropServices
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMIEnumMoniker
 	{
-		void Clone (out UCOMIEnumMoniker ppenum);
 		[PreserveSigAttribute]
 		int Next (int celt, [Out, MarshalAs(UnmanagedType.LPArray, ArraySubType = Consts.UnmanagedType_80, SizeParamIndex = 0)] UCOMIMoniker[] rgelt, out int pceltFetched);
 		[PreserveSigAttribute]
-		int Reset ();
-		[PreserveSigAttribute]
 		int Skip (int celt);
+		[PreserveSigAttribute]
+		int Reset ();
+		void Clone (out UCOMIEnumMoniker ppenum);
 	}
 }

@@ -36,12 +36,12 @@ namespace System.Runtime.InteropServices
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMIEnumConnections
 	{
-		void Clone (out UCOMIEnumConnections ppenum);
 		[PreserveSigAttribute]
 		int Next (int celt, [Out, MarshalAs(UnmanagedType.LPArray, ArraySubType=Consts.UnmanagedType_80, SizeParamIndex=0)] CONNECTDATA[] rgelt, out int pceltFetched);
 		[PreserveSigAttribute]
-		void Reset ();
-		[PreserveSigAttribute]
 		int Skip (int celt);
+		[PreserveSigAttribute]
+		void Reset ();
+		void Clone (out UCOMIEnumConnections ppenum);
 	}
 }

@@ -36,15 +36,15 @@ namespace System.Runtime.InteropServices
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMIBindCtx
 	{
-		void EnumObjectParam (out UCOMIEnumString ppenum);
-		void GetBindOptions (ref BIND_OPTS pbindopts);
-		void GetObjectParam ([MarshalAs (UnmanagedType.LPWStr)] string pszKey, [MarshalAs (UnmanagedType.Interface)] out object ppunk);
-		void GetRunningObjectTable (out UCOMIRunningObjectTable pprot);
 		void RegisterObjectBound ([MarshalAs(UnmanagedType.Interface)] object punk);
-		void RegisterObjectParam ([MarshalAs (UnmanagedType.LPWStr)] string pszKey, [MarshalAs (UnmanagedType.Interface)] object punk);
-		void ReleaseBoundObjects ();
 		void RevokeObjectBound ([MarshalAs(UnmanagedType.Interface)] object punk);
-		void RevokeObjectParam ([MarshalAs(UnmanagedType.LPWStr)] string pszKey);
+		void ReleaseBoundObjects ();
 		void SetBindOptions ([In] ref BIND_OPTS pbindopts);
+		void GetBindOptions (ref BIND_OPTS pbindopts);
+		void GetRunningObjectTable (out UCOMIRunningObjectTable pprot);
+		void RegisterObjectParam ([MarshalAs (UnmanagedType.LPWStr)] string pszKey, [MarshalAs (UnmanagedType.Interface)] object punk);
+		void GetObjectParam ([MarshalAs (UnmanagedType.LPWStr)] string pszKey, [MarshalAs (UnmanagedType.Interface)] out object ppunk);
+		void EnumObjectParam (out UCOMIEnumString ppenum);
+		void RevokeObjectParam ([MarshalAs(UnmanagedType.LPWStr)] string pszKey);
 	}
 }

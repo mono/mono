@@ -37,8 +37,8 @@ namespace System.Runtime.InteropServices
 		public Guid guid;
 		public int lcid;
 		public SYSKIND syskind;
-		public LIBFLAGS wLibFlags;
 		public short wMajorVerNum;
 		public short wMinorVerNum;
+		public LIBFLAGS wLibFlags;
 	}
 }

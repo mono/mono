@@ -37,17 +37,17 @@ namespace System.Runtime.InteropServices
 	[Guid("00020402-0000-0000-c000-000000000046")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMITypeLib { 
-		void FindName ([MarshalAs(UnmanagedType.LPWStr)] string szNameBuf, int lHashVal, [Out, MarshalAs (UnmanagedType.LPArray, ArraySubType = Consts.UnmanagedType_80)] UCOMITypeInfo[] ppTInfo, [Out, MarshalAs (UnmanagedType.LPArray, ArraySubType = Consts.UnmanagedType_80)] int[] rgMemId, ref short pcFound);
-		void GetDocumentation (int index, out string strName, out string strDocString, out int dwHelpContext, out string strHelpFile);
-		void GetLibAttr (out IntPtr ppTLibAttr);
-		void GetTypeComp (out UCOMITypeComp ppTComp); 
-		void GetTypeInfo (int index, out UCOMITypeInfo ppTI);
 		[PreserveSig]
 		int GetTypeInfoCount ();
-		void GetTypeInfoOfGuid (ref Guid guid, out UCOMITypeInfo ppTInfo);
+		void GetTypeInfo (int index, out UCOMITypeInfo ppTI);
 		void GetTypeInfoType (int index, out TYPEKIND pTKind);
+		void GetTypeInfoOfGuid (ref Guid guid, out UCOMITypeInfo ppTInfo);
+		void GetLibAttr (out IntPtr ppTLibAttr);
+		void GetTypeComp (out UCOMITypeComp ppTComp); 
+		void GetDocumentation (int index, out string strName, out string strDocString, out int dwHelpContext, out string strHelpFile);
 		[return: MarshalAs (UnmanagedType.Bool)]
 		bool IsName ([MarshalAs(UnmanagedType.LPWStr)] string szNameBuf, int lHashVal);
+		void FindName ([MarshalAs(UnmanagedType.LPWStr)] string szNameBuf, int lHashVal, [Out, MarshalAs (UnmanagedType.LPArray, ArraySubType = Consts.UnmanagedType_80)] UCOMITypeInfo[] ppTInfo, [Out, MarshalAs (UnmanagedType.LPArray, ArraySubType = Consts.UnmanagedType_80)] int[] rgMemId, ref short pcFound);
 		[PreserveSig]
 		void ReleaseTLibAttr (IntPtr pTLibAttr);
 	}

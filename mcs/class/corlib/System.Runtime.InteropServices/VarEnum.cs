@@ -24,6 +24,7 @@
 using System;
 
 namespace System.Runtime.InteropServices {
+	[Serializable]
 	public enum VarEnum {
 		VT_EMPTY = 0,
 		VT_NULL = 1,

@@ -1,3 +1,18 @@
+2005-02-21  Kazuki Oikawa  <kazuki@panicode.com>
+
+	* BIND_OPTS.cs, CONNECTEDATA.cs, DISPPARAMS.cs, ELEMDESC.cs,
+	EXCEPINFO.cs, FILETIME.cs, FUNCDESC.cs, STATSTG.cs, TYPEATTR.cs,
+	TYPELIBATTR.cs, UCOMIBindCtx.cs, UCOMIConnectionPoint.cs,
+	UCOMIEnumConnectionPoints.cs, UCOMIEnumConnections.cs,
+	UCOMIEnumMoniker.cs, UCOMIEnumString.cs, UCOMIEnumVARIANT.cs,
+	UCOMIMoniker.cs, UCOMIPersistFile.cs, UCOMIRunningObjectTable.cs,
+	UCOMIStream.cs, UCOMITypeInfo.cs, UCOMITypeLib.cs, VARDESC.cs:
+	Corrected the order of the fields and the methods.
+
+	* BIND_OPTS.cs, CALLCONV.cs, FILETIME.cs, FUNCDESC.cs, FUNCFLAGS.cs,
+	FUNCKIND.cs, IDLFLAG.cs, IMPLTYPEFLAGS.cs, LIBFLAGS.cs, PARAMFLAG.cs,
+	STATSTG.cs, SYSKIND.cs, TYPEFLAGS.cs, VarEnum.cs, VARFLAGS.cs:
+	Added missing attributes.
 
 Wed Feb 16 16:20:56 CET 2005 Paolo Molaro <lupus@ximian.com>
 
