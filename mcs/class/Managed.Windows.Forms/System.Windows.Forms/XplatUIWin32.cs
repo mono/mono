@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.16 $
+// $Revision: 1.17 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.17  2004/08/13 21:42:15  pbartok
+// - Changed signature for GetCursorPos
+//
 // Revision 1.16  2004/08/13 19:00:15  jordi
 // implements PointToClient (ScreenToClient)
 //
@@ -674,7 +677,7 @@ Console.WriteLine("Creating window at {0}:{1} {2}x{3}", cp.X, cp.Y, cp.Width, cp
 			return true;
 		}
 
-		internal override void GetCursorPos(IntPtr handle, ref int x, ref int y) {
+		internal override void GetCursorPos(IntPtr handle, out int x, out int y) {
 			POINT	pt;
 
 			Win32GetCursorPos(out pt);

@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.13 $
+// $Revision: 1.14 $
 // $Modtime: $
 // $Log: XplatUIDriver.cs,v $
+// Revision 1.14  2004/08/13 21:42:15  pbartok
+// - Changed signature for GetCursorPos
+//
 // Revision 1.13  2004/08/13 19:00:15  jordi
 // implements PointToClient (ScreenToClient)
 //
@@ -162,7 +165,7 @@ namespace System.Windows.Forms {
 
 		internal abstract bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, bool HasMenu, out Rectangle WindowRect);
 
-		internal abstract void GetCursorPos(IntPtr handle, ref int x, ref int y);
+		internal abstract void GetCursorPos(IntPtr handle, out int x, out int y);
 		internal abstract void ScreenToClient(IntPtr handle, ref int x, ref int y);
 
 		internal abstract void GrabWindow(IntPtr hWnd);
