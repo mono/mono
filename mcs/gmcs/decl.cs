@@ -1719,5 +1719,100 @@ namespace Mono.CSharp {
 			global.CopyTo (copy);
 			return new MemberList (copy);
 		}
+		
+		//
+		// This finds the method or property for us to override. invocationType is the type where
+		// the override is going to be declared, name is the name of the method/property, and
+		// paramTypes is the parameters, if any to the method or property
+		//
+		// Because the MemberCache holds members from this class and all the base classes,
+		// we can avoid tons of reflection stuff.
+		//
+		public MemberInfo FindMemberToOverride (Type invocationType, string name, Type [] paramTypes, bool is_property)
+		{
+			ArrayList applicable;
+			if (method_hash != null && !is_property)
+				applicable = (ArrayList) method_hash [name];
+			else
+				applicable = (ArrayList) member_hash [name];
+			
+			if (applicable == null)
+				return null;
+			//
+			// Walk the chain of methods, starting from the top.
+			//
+			for (int i = applicable.Count - 1; i >= 0; i--) {
+				CacheEntry entry = (CacheEntry) applicable [i];
+				
+				if ((entry.EntryType & (is_property ? EntryType.Property : EntryType.Method)) == 0)
+					continue;
+
+				PropertyInfo pi = null;
+				MethodInfo mi = null;
+				Type [] cmpAttrs;
+				
+				if (is_property) {
+					pi = (PropertyInfo) entry.Member;
+					cmpAttrs = TypeManager.GetArgumentTypes (pi);
+				} else {
+					mi = (MethodInfo) entry.Member;
+					cmpAttrs = TypeManager.GetArgumentTypes (mi);
+				}
+				
+				//
+				// Check the arguments
+				//
+				if (cmpAttrs.Length != paramTypes.Length)
+					continue;
+	
+				for (int j = cmpAttrs.Length - 1; j >= 0; j --)
+					if (paramTypes [j] != cmpAttrs [j])
+						goto next;
+				
+				//
+				// get one of the methods because this has the visibility info.
+				//
+				if (is_property) {
+					mi = pi.GetGetMethod (true);
+					if (mi == null)
+						mi = pi.GetSetMethod (true);
+				}
+				
+				//
+				// Check visibility
+				//
+				switch (mi.Attributes & MethodAttributes.MemberAccessMask) {
+				case MethodAttributes.Private:
+					//
+					// A private method is Ok if we are a nested subtype.
+					// The spec actually is not very clear about this, see bug 52458.
+					//
+					if (invocationType == entry.Container.Type ||
+					    TypeManager.IsNestedChildOf (invocationType, entry.Container.Type))
+						return entry.Member;
+					
+					break;
+				case MethodAttributes.FamANDAssem:
+				case MethodAttributes.Assembly:
+					//
+					// Check for assembly methods
+					//
+					if (mi.DeclaringType.Assembly == CodeGen.Assembly.Builder)
+						return entry.Member;
+					
+					break;
+				default:
+					//
+					// A protected method is ok, because we are overriding.
+					// public is always ok.
+					//
+					return entry.Member;
+				}
+			next:
+				;
+			}
+			
+			return null;
+		}
 	}
 }
