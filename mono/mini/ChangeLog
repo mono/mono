@@ -1,3 +1,14 @@
+2004-04-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* mini-ppc.c (ppc_patch): Replaced the branch code patching with a
+	simpler mechanism: we do not care what is encoded initially
+	(branch absolute or relative), we care about the code and its
+	target.  I kept the old code for reference for now.
+
+	The new code tries first to determine if the jump is anywhere in
+	the -/+32 absolute meg range, if it succeeds, it encodes using the
+	absolute branch;  If not, it tried to find something in the
+	relative range, if not, it uses the handle_thunk code. 
 
 Fri Apr 23 14:20:40 EDT 2004 Paolo Molaro <lupus@ximian.com>
 
