@@ -1,13 +1,13 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     BaseCompareValidator
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Implementation: yes
  * Contact: <gvaish@iitk.ac.in>
  * Status:  100%
- * 
+ *
  * (C) Gaurav Vaish (2001)
  */
 
@@ -26,13 +26,13 @@ namespace System.Web.UI.WebControls
 		protected BaseCompareValidator(): base()
 		{
 		}
-		
+
 		public static bool CanConvert(string text, ValidationDataType type)
 		{
 			object o = null;
 			return Convert(text, type, out o);
 		}
-		
+
 		public ValidationDataType Type
 		{
 			get
@@ -49,7 +49,16 @@ namespace System.Web.UI.WebControls
 				ViewState["Type"] = value;
 			}
 		}
-		
+
+		public override ControlCollection Controls
+		{
+			get
+			{
+				EnsureChildControls();
+				return Controls;
+			}
+		}
+
 		protected static int CutoffYear
 		{
 			get
@@ -60,14 +69,14 @@ namespace System.Web.UI.WebControls
 
 		protected static int GetFullYear(int shortYear)
 		{
-			int century = DateTime.Today.Year - (DateTime.Today.Year % 100);			
+			int century = DateTime.Today.Year - (DateTime.Today.Year % 100);
 			if(century < CutoffYear)
 			{
 				return (shortYear + century);
 			}
 			return (shortYear + century - 100);
 		}
-		
+
 		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
 			base.AddAttributesToRender(writer);
@@ -100,7 +109,7 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		protected override bool DetermineRenderUplevel()
 		{
 			if(Type == ValidationDataType.Date && DateTimeFormatInfo.CurrentInfo.Calendar.GetType() != typeof(GregorianCalendar))
@@ -109,7 +118,7 @@ namespace System.Web.UI.WebControls
 			}
 			return base.DetermineRenderUplevel();
 		}
-		
+
 		/// <summary>
 		/// Undocumented
 		/// </summary>
@@ -164,14 +173,14 @@ namespace System.Web.UI.WebControls
 			}
 			return false;
 		}
-		
+
 		/// <summary>
 		/// Undocumented
 		/// </summary>
 		protected static string GetDateElementOrder()
 		{
 			string pattern = DateTimeFormatInfo.CurrentInfo.ShortDatePattern;
-			
+
 			//TODO: What are the various possibilities?
 			// I can think of only y*/M*/d*, d*/M*/y*, M*/d*/y*
 			if(pattern.IndexOf('y') < pattern.IndexOf('M'))
@@ -184,7 +193,7 @@ namespace System.Web.UI.WebControls
 			}
 			return "dmy";
 		}
-		
+
 		/// <summary>
 		/// Undocumented
 		/// </summary>
@@ -271,7 +280,7 @@ namespace System.Web.UI.WebControls
 							decPattern[3] = decDig.ToString(NumberFormatInfo.InvariantInfo);
 							decPattern[4] = @"}))";
 							patternArray[3] = String.Concat(decPattern);
-							
+
 						} else
 						{
 							patternArray[3] = String.Empty;

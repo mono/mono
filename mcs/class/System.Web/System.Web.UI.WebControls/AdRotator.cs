@@ -1,13 +1,13 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     AdRotator
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Implementation: yes
  * Contact: <gvaish@iitk.ac.in>
  * Status:  100%
- * 
+ *
  * (C) Gaurav Vaish (2001)
  */
 
@@ -133,7 +133,7 @@ namespace System.Web.UI.WebControls
 			}
 			return adsArray;
 		}
-		
+
 		private AdRecord[] GetData(string file)
 		{
 			string physPath = MapPathSecure(file);
@@ -152,7 +152,7 @@ namespace System.Web.UI.WebControls
 			}
 			return records;
 		}
-		
+
 		private IDictionary SelectAd()
 		{
 			AdRecord[] records = GetData(AdvertisementFile);
@@ -186,7 +186,7 @@ namespace System.Web.UI.WebControls
 			}
 			return null;
 		}
-		
+
 		private bool IsAdMatching(AdRecord currAd)
 		{
 			if(KeywordFilter!=String.Empty)
@@ -196,7 +196,7 @@ namespace System.Web.UI.WebControls
 			}
 			return true;
 		}
-		
+
 		private string ResolveAdUrl(string relativeUrl)
 		{
 			if(relativeUrl.Length==0 || !UrlUtils.IsRelativeUrl(relativeUrl))
@@ -210,7 +210,7 @@ namespace System.Web.UI.WebControls
 				return relativeUrl;
 			return (fullUrl + relativeUrl);
 		}
-		
+
 		public event AdCreatedEventHandler AdCreated
 		{
 			add
@@ -222,13 +222,13 @@ namespace System.Web.UI.WebControls
 				Events.RemoveHandler(AdCreatedEvent, value);
 			}
 		}
-		
+
 		public AdRotator(): base()
 		{
 			advertisementFile = string.Empty;
 			fileDirectory     = null;
 		}
-		
+
 		public string AdvertisementFile
 		{
 			get
@@ -240,7 +240,15 @@ namespace System.Web.UI.WebControls
 				advertisementFile = value;
 			}
 		}
-		
+
+		public override FontInfo Font
+		{
+			get
+			{
+				return Font;
+			}
+		}
+
 		public string KeywordFilter
 		{
 			get
@@ -271,12 +279,12 @@ namespace System.Web.UI.WebControls
 				ViewState["Target"] = value;
 			}
 		}
-		
+
 		protected override ControlCollection CreateControlCollection()
 		{
 			return new EmptyControlCollection(this);
 		}
-		
+
 		protected virtual void OnAdCreated(AdCreatedEventArgs e)
 		{
 			if(Events!=null)
@@ -297,7 +305,7 @@ namespace System.Web.UI.WebControls
 				alternateText = acea.AlternateText;
 			}
 		}
-		
+
 		protected override void Render(HtmlTextWriter writer)
 		{
 			HyperLink hLink = new HyperLink();

@@ -1,3 +1,14 @@
+2002-03-19      Gaurav Vaish <gvaish@iitk.ac.in>
+
+	   Some bug fixes
+
+	* AdRotator.cs             - Added definition for Font.
+	* BaseCompareValidator.cs  - Added definition for Controls.
+	* Calendar.cs              - SelectMonthText definition corrected.
+	* DataList.cs              - Added definition for SeparatorTemplate.
+	* BorderStyle.cs           - Namespace correction. It belongs not to UI,
+	                             but to UI.WebControls.
+
 2002-03-17      Gaurav Vaish <gvaish@iitk.ac.in>
 
 	Finally, I have made it. Today I did a second build for the

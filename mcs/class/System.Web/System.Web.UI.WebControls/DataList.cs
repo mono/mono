@@ -49,6 +49,7 @@ namespace System.Web.UI.WebControls
 		private ITemplate headerTemplate;
 		private ITemplate itemTemplate;
 		private ITemplate selectedItemTemplate;
+		private ITemplate separatorTemplate;
 		private ITemplate separatorItemTemplate;
 
 		private ArrayList itemsArray;
@@ -390,6 +391,18 @@ namespace System.Web.UI.WebControls
 						separatorStyle.TrackViewState();
 				}
 				return separatorStyle;
+			}
+		}
+
+		public virtual ITemplate SeparatorTemplate
+		{
+			get
+			{
+				return separatorTemplate;
+			}
+			set
+			{
+				separatorTemplate = value;
 			}
 		}
 

@@ -283,18 +283,18 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		public string SelectedMonthText
+		public string SelectMonthText
 		{
 			get
 			{
-				object o = ViewState["SelectedMonthText"];
+				object o = ViewState["SelectMonthText"];
 				if(o!=null)
 					return (string)o;
 				return "&gt;&gt;";
 			}
 			set
 			{
-				ViewState["SelectedMonthText"] = value;
+				ViewState["SelectMonthText"] = value;
 			}
 		}
 
@@ -845,7 +845,7 @@ namespace System.Web.UI.WebControls
 			if(isWeekMode)
 			{
 				headerCell.ApplyStyle(SelectorStyle);
-				selMthText = GetCalendarLinkText("selectMonth", SelectedMonthText, SelectorStyle.ForeColor, isActive);
+				selMthText = GetCalendarLinkText("selectMonth", SelectMonthText, SelectorStyle.ForeColor, isActive);
 			} else
 			{
 				headerCell.ApplyStyle(DayHeaderStyle);
