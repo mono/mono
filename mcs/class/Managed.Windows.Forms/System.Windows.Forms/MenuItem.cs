@@ -65,15 +65,7 @@ namespace System.Windows.Forms
 		private MenuMerge mergetype;
 		static StringFormat string_format_text;
 		static StringFormat string_format_shortcut;
-		static StringFormat string_format_menubar_text;
-		
-		const int SM_CXMENUCHECK = 14;		// Width of the menu check
-    		const int SM_CYMENUCHECK = 14;		// Height of the menu check
-		const int SM_CXARROWCHECK = 16;		// Width of the arrow
-    		const int SM_CYARROWCHECK = 16;		// Height of the arrow
-    		const int SM_CYMENU = 18;		// Minimum height of a menu
-    		const int MENU_TAB_SPACE = 8;		// Pixels added to the width of an item because of a tab
-    		const int MENU_BAR_ITEMS_SPACE = 8;	// Space between menu bar items		
+		static StringFormat string_format_menubar_text;   		
 
 		public MenuItem (): base (null)
 		{	
@@ -446,7 +438,7 @@ namespace System.Windows.Forms
 			}			
 
 			if (!MenuBar)
-				rect_text.X += SM_CXMENUCHECK;
+				rect_text.X += ThemeEngine.Current.MenuCheckSize.Width;
 
 			if (BarBreak) { /* Draw vertical break bar*/
 				Rectangle rect = e.Bounds;
@@ -503,13 +495,15 @@ namespace System.Windows.Forms
 			/* Draw arrow */
 			if (MenuBar == false && IsPopup) {
 
-				Bitmap	bmp = new Bitmap (SM_CXARROWCHECK, SM_CYARROWCHECK);
+				int cx = ThemeEngine.Current.MenuCheckSize.Width;
+				int cy = ThemeEngine.Current.MenuCheckSize.Height;
+				Bitmap	bmp = new Bitmap (cx, cy);
 				Graphics gr = Graphics.FromImage (bmp);
-				Rectangle rect_arrow = new Rectangle (0, 0, SM_CXARROWCHECK, SM_CYARROWCHECK);
+				Rectangle rect_arrow = new Rectangle (0, 0, cx, cy);
 				ControlPaint.DrawMenuGlyph (gr, rect_arrow, MenuGlyph.Arrow);
 				bmp.MakeTransparent ();
-				e.Graphics.DrawImage (bmp, e.Bounds.X + e.Bounds.Width - SM_CXARROWCHECK,
-					e.Bounds.Y + ((e.Bounds.Height - SM_CYARROWCHECK) /2));
+				e.Graphics.DrawImage (bmp, e.Bounds.X + e.Bounds.Width - cx,
+					e.Bounds.Y + ((e.Bounds.Height - cy) /2));
 
 				gr.Dispose ();
 				bmp.Dispose ();
@@ -519,9 +513,11 @@ namespace System.Windows.Forms
 			if (MenuBar == false && Checked) {
 
 				Rectangle area = e.Bounds;
-				Bitmap	bmp = new Bitmap (SM_CXMENUCHECK, SM_CYMENUCHECK);
+				int cx = ThemeEngine.Current.MenuCheckSize.Width;
+				int cy = ThemeEngine.Current.MenuCheckSize.Height;
+				Bitmap	bmp = new Bitmap (cx, cy);
 				Graphics gr = Graphics.FromImage (bmp);
-				Rectangle rect_arrow = new Rectangle (0, 0, SM_CXMENUCHECK, SM_CYMENUCHECK);
+				Rectangle rect_arrow = new Rectangle (0, 0, cx, cy);
 
 				if (RadioCheck)
 					ControlPaint.DrawMenuGlyph (gr, rect_arrow, MenuGlyph.Bullet);
@@ -529,7 +525,7 @@ namespace System.Windows.Forms
 					ControlPaint.DrawMenuGlyph (gr, rect_arrow, MenuGlyph.Checkmark);
 
 				bmp.MakeTransparent ();
-				e.Graphics.DrawImage (bmp, area.X, e.Bounds.Y + ((e.Bounds.Height - SM_CYMENUCHECK) / 2));
+				e.Graphics.DrawImage (bmp, area.X, e.Bounds.Y + ((e.Bounds.Height - cy) / 2));
 
 				gr.Dispose ();
 				bmp.Dispose ();
@@ -572,7 +568,7 @@ namespace System.Windows.Forms
 
 		public override string ToString ()
 		{
-			return "item:" + text;
+			return base.ToString () + ", Items.Count: " + MenuItems.Count + ", Text: " + text;
 		}
 
 		#endregion Public Methods

@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
@@ -41,17 +41,10 @@ namespace System.Windows.Forms
 	internal class MenuAPI
 	{
 		static ArrayList menu_list = new ArrayList ();		
-		static Font MENU_FONT = new Font (FontFamily.GenericSansSerif, 8.25f);
-		static int POPUP_ARROW_WITDH;
-		static int POPUP_ARROW_HEIGHT;
 		const int SEPARATOR_HEIGHT = 5;
 		const int SM_CXBORDER = 1;
 		const int SM_CYBORDER = 1;
-		const int SM_CXMENUCHECK = 14;		// Width of the menu check
-    		const int SM_CYMENUCHECK = 14;		// Height of the menu check
-		const int SM_CXARROWCHECK = 16;		// Width of the arrow
-    		const int SM_CYARROWCHECK = 16;		// Height of the arrow
-    		const int SM_CYMENU = 18;		// Minimum height of a menu
+		const int SM_CYMENU = 18;		// Minimum height of a menu
     		const int MENU_TAB_SPACE = 8;		// Pixels added to the width of an item because of a tab
     		const int MENU_BAR_ITEMS_SPACE = 8;	// Space between menu bar items
 
@@ -229,11 +222,7 @@ namespace System.Windows.Forms
 			if (hMenu == IntPtr.Zero)	// No submenus to track
 				return true;				
 
-			menu = GetMenuFromID (hMenu);
-			
-			Console.WriteLine ("TrackPopupMenu hTopMenu: {0} hMenu:{1} bMenubar:{2} top_menu.bMenubar: {3} menu.bMenubar: {4}",hTopMenu,
-				hMenu, bMenubar, top_menu.bMenubar, menu.bMenubar);
-			
+			menu = GetMenuFromID (hMenu);			
 			
 			menu.Wnd = new PopUpWindow (hMenu, tracker);
 			tracker.hCurrentMenu = hMenu;
@@ -303,19 +292,19 @@ namespace System.Windows.Forms
 			} else {		
 
 				SizeF size;
-				size =  dc.MeasureString (item.item.Text, MENU_FONT);
+				size =  dc.MeasureString (item.item.Text, ThemeEngine.Current.MenuFont);
 				item.rect.Width = (int) size.Width;
 				item.rect.Height = (int) size.Height;
 	
 				if (!menuBar) {
 	
 					if (item.item.Shortcut != Shortcut.None && item.item.ShowShortcut) {
-						item.item.XTab = SM_CXMENUCHECK + MENU_TAB_SPACE + (int) size.Width;
-						size =  dc.MeasureString (" " + item.item.GetShortCutText (), MENU_FONT);
+						item.item.XTab = ThemeEngine.Current.MenuCheckSize.Width + MENU_TAB_SPACE + (int) size.Width;
+						size =  dc.MeasureString (" " + item.item.GetShortCutText (), ThemeEngine.Current.MenuFont);
 						item.rect.Width += MENU_TAB_SPACE + (int) size.Width;
 					}
 	
-					item.rect.Width += 4 + (SM_CXMENUCHECK * 2);
+					item.rect.Width += 4 + (ThemeEngine.Current.MenuCheckSize.Width * 2);
 				}
 				else {
 					item.rect.Width += MENU_BAR_ITEMS_SPACE;
@@ -405,7 +394,7 @@ namespace System.Windows.Forms
 				if (cliparea.IntersectsWith (((MENUITEM) menu.items[i]).rect)) {
 					MENUITEM it = (MENUITEM) menu.items[i];
 					it.item.MenuHeight = menu.Height;
-					it.item.PerformDrawItem (new DrawItemEventArgs (dc, MENU_FONT,
+					it.item.PerformDrawItem (new DrawItemEventArgs (dc, ThemeEngine.Current.MenuFont,
 						it.rect, i, it.item.Status));
 			}
 		}
@@ -459,7 +448,7 @@ namespace System.Windows.Forms
 			for (int i = 0; i < menu.items.Count; i++) {
 				MENUITEM it = (MENUITEM) menu.items[i];
 				it.item.MenuHeight = menu.Height;
-				it.item.PerformDrawItem (new DrawItemEventArgs (dc, MENU_FONT,
+				it.item.PerformDrawItem (new DrawItemEventArgs (dc, ThemeEngine.Current.MenuFont,
 						it.rect, i, it.item.Status));
 			}				
 		}
@@ -584,9 +573,7 @@ namespace System.Windows.Forms
 			if (select_item != null)
 				MenuAPI.SelectItem (hMenu, select_item, false, tracker);
 
-			((PopUpWindow)menu.Wnd).ShowWindow ();		
-			Console.WriteLine ("ShowSubPopup end {0} {1}", ((PopUpWindow)menu.Wnd).Location,
-				((PopUpWindow)menu.Wnd).Size);	
+			((PopUpWindow)menu.Wnd).ShowWindow ();
 		}
 
 		/* Hides all the submenus open in a menu */
@@ -927,8 +914,7 @@ namespace System.Windows.Forms
 					break;
 				}
 				
-				case Keys.Return: {
-					Console.WriteLine ("Return key: "+ menu.SelectedItem.item.Text);
+				case Keys.Return: {					
 					MenuAPI.ExecFocusedItem (hMenu, menu.SelectedItem, tracker);
 					break;
 				}
@@ -1024,8 +1010,7 @@ namespace System.Windows.Forms
 				if (item != null) {
 					MenuAPI.UnSelectItem (tracker.hTopMenu, item);
 				}
-			} else { // Context Menu
-				Console.WriteLine ("HideWindow context menu {0} ", top_menu.hParent);
+			} else { // Context Menu				
 				((PopUpWindow)top_menu.Wnd).Hide ();
 			}
 		}

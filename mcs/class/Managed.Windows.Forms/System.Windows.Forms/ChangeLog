@@ -1,3 +1,8 @@
+2005-02-10  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* MenuItem.cs: Use SystemInformation and bug fixes	
+	* MenuAPI.cs: Use SystemInformation and bug fixes
+
 2005-02-09  Jackson Harper  <jackson@ximian.com>
 
 	* X11Keyboard.cs: We ignore some keys, but still need to set/reset
