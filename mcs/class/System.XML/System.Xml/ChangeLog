@@ -1,3 +1,13 @@
+2005-01-15  Ben Maurer  <bmaurer@ximian.com>
+
+	* XmlNode.cs (InnerText, AppendChildValues): Don't allocate a
+	string in the case where nothing needs to be appended.
+
+	* XmlAttribute.cs (BuildChildValue): Start out the string with
+	`null' not `String.Empty'. String.Concat (null, blah) == blah,
+	pointerwise. ie, there is no allocation. This makes it so that
+	getting the value of an attribute is faster for the fast case.
+
 2005-01-13  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlResolver.cs : throw ArgumentException in ResolveUri().
