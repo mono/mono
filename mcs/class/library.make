@@ -13,7 +13,7 @@ clean:
 
 .makefrag: $(LIB_LIST) $(topdir)/class/library.make
 	echo -n "library-deps.stamp: " >$@.new
-	cat $^ |egrep '\.cs$$' | sed -e 's,\.cs,.cs \\,' >>$@.new
+	cat $< |egrep '\.cs$$' | sed -e 's,\.cs,.cs \\,' >>$@.new
 	cat $@.new |sed -e '$$s, \\$$,,' >$@
 	echo -e "\ttouch library-deps.stamp" >>$@
 	rm -rf $@.new
