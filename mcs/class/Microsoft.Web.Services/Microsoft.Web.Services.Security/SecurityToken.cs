@@ -9,10 +9,10 @@
 
 using System;
 using System.Security.Cryptography.Xml;
-using System.Security.Principal;
 using System.Xml;
 using Microsoft.Web.Services;
 #if !WSE1
+using System.Security.Principal;
 using Microsoft.Web.Services.Xml;
 #endif
 
@@ -21,8 +21,9 @@ namespace Microsoft.Web.Services.Security {
 	public abstract class SecurityToken : IXmlElement {
 
 		private string id;
+#if !WSE1
 		private IPrincipal principal;
-
+#endif
 		public SecurityToken () 
 		{
 			// generate Id like WSDK

@@ -1,3 +1,15 @@
+2003-10-25  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* EncryptedData.cs: Can now encrypt SOAP body message (no decrypt yet).
+	* EncryptedKey.cs: Updated symmetric key creation.
+	* IMutableSecurityToken.cs: New. Interface in WSE2 to clone SecurityTokens.
+	* ReferenceList.cs: Completed implementation.
+	* Security.cs: Fixed Elements and Tokens collections that weren't always created.
+	* SecurityOutputFilter: Added support for EncryptedData.
+	* SecurityToken.cs: Private member IPrincipal is now only defined for WSE2 (removed warning).
+	* UsernameToken.cs: Updated for WSE2.
+	* X509SecurityToken.cs: Added SecurityTokenReference/KeyIdentifier in KeyInfo.
+
 2003-10-25  Todd Berman <tberman@gentoo.org>
 
 	* Nonce.cs: WSE2 Compilation fix

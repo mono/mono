@@ -18,6 +18,7 @@ namespace Microsoft.Web.Services.Security {
 
 		private const string vname = "X509v3";
 		private X509Certificate x509;
+		private EncryptionKey ek;
 
 		public X509SecurityToken (X509Certificate certificate) 
 			: base (new XmlQualifiedName (vname, WSSecurity.NamespaceURI))
@@ -64,7 +65,14 @@ namespace Microsoft.Web.Services.Security {
 			get {
 				if (x509 == null)
 					throw new InvalidOperationException ("null certificate");
-				return new AsymmetricEncryptionKey (x509.PublicKey);
+				if (ek == null) {
+					SecurityTokenReference str = new SecurityTokenReference ();
+					str.KeyIdentifier = new KeyIdentifier (x509.GetKeyIdentifier (), valueType);
+					XmlQualifiedName xqn = new XmlQualifiedName ("X509v3", WSSecurity.NamespaceURI);
+					ek = new AsymmetricEncryptionKey (x509.PublicKey);
+					ek.KeyInfo.AddClause (str);
+				}
+				return ek;
 			}
 		}
 
@@ -130,17 +138,21 @@ namespace Microsoft.Web.Services.Security {
 		[MonoTODO ("need to compare results with WSE2")]
 		public override int GetHashCode () 
                 {
-                    return x509.GetHashCode();
+			return x509.GetHashCode ();
                 }
 
 		[MonoTODO ("need to compare results with WSE2")]
 		public override bool Equals (SecurityToken token) 
 		{
-                    return false;
+			X509SecurityToken x = (token as X509SecurityToken);
+			if (x != null) {
+				return (x.Certificate.Equals (x509));
+			}
+			return false;
 		}
 
 		public override bool IsCurrent {
-			get { return false; }
+			get { return x509.IsCurrent; }
 		}
 #endif
 	}

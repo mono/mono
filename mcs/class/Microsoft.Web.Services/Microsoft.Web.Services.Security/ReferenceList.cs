@@ -6,14 +6,6 @@
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
-// Licensed under MIT X11 (see LICENSE) with this specific addition:
-//
-// “This source code may incorporate intellectual property owned by Microsoft 
-// Corporation. Our provision of this source code does not include any licenses
-// or any other rights to you under any Microsoft intellectual property. If you
-// would like a license from Microsoft (e.g. rebrand, redistribute), you need 
-// to contact Microsoft directly.” 
-//
 
 using System;
 using System.Collections;
@@ -44,14 +36,20 @@ namespace Microsoft.Web.Services.Security {
 		{
 			if (reference == null)
 				throw new ArgumentNullException ("reference");
-			list.Add (reference);
+			if (reference [0] == '#')
+				list.Add (reference.Substring (1));
+			else
+				list.Add (reference);
 		}
 
 		public bool Contains (string reference) 
 		{
 			if (reference == null)
 				throw new ArgumentNullException ("reference");
-			return list.Contains (reference);
+			if (reference [0] == '#')
+				return list.Contains (reference.Substring (1));
+			else
+				return list.Contains (reference);
 		}
 
 		public IEnumerator GetEnumerator() 
@@ -63,15 +61,33 @@ namespace Microsoft.Web.Services.Security {
 		{
 			if (document == null)
 				throw new ArgumentNullException ("document");
-			// TODO
-			return null;
+
+			XmlElement rl = document.CreateElement (XmlEncryption.Prefix, XmlEncryption.ElementNames.ReferenceList, XmlEncryption.NamespaceURI);
+			foreach (string s in list) {
+				XmlElement dr = document.CreateElement (XmlEncryption.Prefix, XmlEncryption.ElementNames.DataReference, XmlEncryption.NamespaceURI);
+				XmlAttribute uri = document.CreateAttribute (XmlEncryption.AttributeNames.URI);
+				uri.InnerText = "#" + s;
+				dr.Attributes.Append (uri);
+				rl.AppendChild (dr);
+			}
+			return rl;
 		}
 
 		public void LoadXml (XmlElement element) 
 		{
-			if ((element.LocalName != "") || (element.NamespaceURI != ""))
+			if (element == null)
+				throw new ArgumentNullException ("element");
+			if ((element.LocalName != XmlEncryption.ElementNames.ReferenceList) || (element.NamespaceURI != XmlEncryption.NamespaceURI))
 				throw new System.ArgumentException ("invalid LocalName or NamespaceURI");
-			// TODO
+			
+			foreach (XmlNode xn in element.ChildNodes) {
+				// we just drop other elements
+				if ((xn.LocalName == XmlEncryption.ElementNames.DataReference) && (xn.NamespaceURI == XmlEncryption.NamespaceURI)) {
+					XmlAttribute uri = xn.Attributes [XmlEncryption.AttributeNames.URI];
+					if (uri != null)
+						Add (uri.InnerText);
+				}
+			}
 		}
 	}
 }

@@ -27,12 +27,14 @@ namespace Microsoft.Web.Services.Security {
 	//	http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnglobspec/html/ws-security.asp
 	// b.	Web Services Security Addendum, Version 1.0, August 18, 2002
 	//	http://msdn.microsoft.com/library/en-us/dnglobspec/html/ws-security-addendum.asp
+	// c.	WS-Trust, Section 7
+	//	http://www-106.ibm.com/developerworks/library/ws-trust/
+
 #if WSE1
 	public sealed class UsernameToken : SecurityToken {
 #else
-	public class UsernameToken : SecurityToken {
+	public class UsernameToken : SecurityToken, IMutableSecurityToken {
 #endif
-
 		static private IPasswordProvider provider;
 
 		private string username;
@@ -271,7 +273,7 @@ namespace Microsoft.Web.Services.Security {
 			}
 		}
 
-#if WSE1 //The || is only here for a quick compilation fix
+#if WSE1
 		public override void Verify () {}
 #else
 		public IList AnyElements {
@@ -285,9 +287,9 @@ namespace Microsoft.Web.Services.Security {
 
 		[MonoTODO ("need to compare results with WSE2")]
 		public override int GetHashCode () 
-                {
-                    return username.GetHashCode();
-                }
+		{
+			return username.GetHashCode ();
+		}
 
 		[MonoTODO ("need to compare results with WSE2")]
 		public override bool Equals (SecurityToken token) 

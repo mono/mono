@@ -24,16 +24,20 @@ namespace Microsoft.Web.Services.Security {
 		private SecurityElementCollection elems;
 		private SecurityTokenCollection tokens;
 
-		internal Security () {}
+		internal Security () 
+		{
+			elems = new SecurityElementCollection ();
+			tokens = new SecurityTokenCollection ();
+		}
 
-		public Security (string actor) 
+		public Security (string actor) : this ()
 		{
 			if (actor == null)
 				throw new ArgumentNullException ("actor");
 			Actor = actor;
 		}
 
-		public Security (XmlElement element) 
+		public Security (XmlElement element) : this ()
 		{
 			LoadXml (element);
 		}

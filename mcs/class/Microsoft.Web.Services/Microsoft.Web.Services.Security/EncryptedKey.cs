@@ -83,28 +83,41 @@ namespace Microsoft.Web.Services.Security {
 			}
 		}
 
+		// note: no default key size is assumed because they could change in the future
+		private SymmetricAlgorithm GetSymmetricAlgorithm (string algorithmURI) 
+		{
+			SymmetricAlgorithm sa = null;
+			switch (algorithmURI) {
+					// Reference: http://www.w3.org/2001/04/xmlenc#aes128-cbc [REQUIRED]
+				case XmlEncryption.AlgorithmURI.AES128:
+					sa = Rijndael.Create ();
+					sa.KeySize = 128;
+					break;
+					// Reference: http://www.w3.org/2001/04/xmlenc#aes192-cbc [OPTIONAL]
+				case XmlEncryption.AlgorithmURI.AES192:
+					sa = Rijndael.Create ();
+					sa.KeySize = 192;
+					break;
+					// Reference: http://www.w3.org/2001/04/xmlenc#aes256-cbc [REQUIRED]
+				case XmlEncryption.AlgorithmURI.AES256:
+					sa = Rijndael.Create ();
+					sa.KeySize = 256;
+					break;
+					// Reference: http://www.w3.org/2001/04/xmlenc#tripledes-cbc [REQUIRED]
+				case XmlEncryption.AlgorithmURI.TripleDES:
+					sa = TripleDES.Create ();
+					sa.KeySize = 192;
+					break;
+				default:
+					return null;
+			}
+			return sa;
+		}
+
 		internal SymmetricEncryptionKey Key {
 			get {
 				if (key == null) {
-					SymmetricAlgorithm sa;
-					switch (session) {
-						case XmlEncryption.AlgorithmURI.AES128:
-							sa = Rijndael.Create ();
-							sa.KeySize = 128;
-							break;
-						case XmlEncryption.AlgorithmURI.AES192:
-							sa = Rijndael.Create ();
-							sa.KeySize = 192;
-							break;
-						case XmlEncryption.AlgorithmURI.AES256:
-							sa = Rijndael.Create ();
-							sa.KeySize = 256;
-							break;
-						default:
-							sa = TripleDES.Create ();
-							break;
-					}
-					key = new SymmetricEncryptionKey (sa);
+					key = new SymmetricEncryptionKey (GetSymmetricAlgorithm (session));
 				}
 				return key;
 			}
