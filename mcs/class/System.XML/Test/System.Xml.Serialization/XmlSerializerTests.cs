@@ -98,18 +98,21 @@ namespace MonoTests.System.Xml
 		}
 		
 		// test constructors
+#if USE_VERSION_1_1	// It doesn't pass on MS.NET 1.1.
 		[Test]
 		public void TestConstructor()
 		{
-			XmlSerializer ser=new XmlSerializer(null, "");
+			XmlSerializer ser = new XmlSerializer (null, "");
 		}
+#else
+#endif
 
 		// test basic types ////////////////////////////////////////////////////////
 		[Test]
 		public void TestSerializeInt()
 		{
 			Serialize(10);
-			AssertEquals(WriterText, "<int>10</int>");
+			AssertEquals("<int>10</int>", WriterText);
 		}
 
 		[Test]
@@ -140,54 +143,54 @@ namespace MonoTests.System.Xml
 		public void TestSerializeNullObject()
 		{
 			Serialize(null, typeof(object));
-			AssertEquals(WriterText, "<anyType xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:nil='true' />");
+			AssertEquals("<anyType xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:nil='true' />", WriterText);
 		}
 
 		[Test]
 		public void TestSerializeNullString()
 		{
 			Serialize(null, typeof(string));
-			Assert(WriterText.EndsWith("xsi:nil='true' />"));
+			AssertEquals ("<string xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:nil='true' />", WriterText);
 		}
 			
 		[Test]
 		public void TestSerializeIntArray()
 		{
 			Serialize(new int[] {1, 2, 3, 4});
-			Assert(WriterText.EndsWith("<int>1</int><int>2</int><int>3</int><int>4</int></ArrayOfInt>"));
+			AssertEquals ("<ArrayOfInt xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><int>1</int><int>2</int><int>3</int><int>4</int></ArrayOfInt>", WriterText);
 		}
 		
 		[Test]
 		public void TestSerializeEmptyArray()
 		{
 			Serialize(new int[] {});
-			AssertEquals(WriterText, "<ArrayOfInt xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />");
+			AssertEquals("<ArrayOfInt xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />", WriterText);
 		}
 		
 		[Test]
 		public void TestSerializeChar()
 		{
 			Serialize('A');
-			AssertEquals(WriterText, "<char>65</char>");
+			AssertEquals("<char>65</char>", WriterText);
 			
 			Serialize('\0');
-			AssertEquals(WriterText, "<char>0</char>");
+			AssertEquals("<char>0</char>", WriterText);
 			
 			Serialize('\n');
-			AssertEquals(WriterText, "<char>10</char>");
+			AssertEquals("<char>10</char>", WriterText);
 			
 			Serialize('\uFF01');
-			AssertEquals(WriterText, "<char>65281</char>");
+			AssertEquals("<char>65281</char>", WriterText);
 		}
 		
 		[Test]
 		public void TestSerializeFloat()
 		{
 			Serialize(10.78);
-			AssertEquals(WriterText, "<double>10.78</double>");
+			AssertEquals("<double>10.78</double>", WriterText);
 			
 			Serialize(-1e8);
-			AssertEquals(WriterText, "<double>-100000000</double>");
+			AssertEquals("<double>-100000000</double>", WriterText);
 			
 			// FIXME test INF and other boundary conditions that may exist with floats
 		}
@@ -197,37 +200,37 @@ namespace MonoTests.System.Xml
 		public void TestSerializeEnumeration()
 		{
 			Serialize(SimpleEnumeration.FIRST);
-			AssertEquals(WriterText, "<SimpleEnumeration>FIRST</SimpleEnumeration>");
+			AssertEquals("<SimpleEnumeration>FIRST</SimpleEnumeration>", WriterText);
 			
 			Serialize(SimpleEnumeration.SECOND);
-			AssertEquals(WriterText, "<SimpleEnumeration>SECOND</SimpleEnumeration>");
+			AssertEquals("<SimpleEnumeration>SECOND</SimpleEnumeration>", WriterText);
 		}
 		
 		[Test]
 		public void TestSerializeQualifiedName()
 		{
 			Serialize(new XmlQualifiedName("me", "home.urn"));
-			AssertEquals(WriterText, "<QName xmlns:q1='home.urn'>q1:me</QName>");
+			AssertEquals("<QName xmlns:q1='home.urn'>q1:me</QName>", WriterText);
 		}
 		
 		[Test]
 		public void TestSerializeBytes()
 		{
 			Serialize((byte)0xAB);
-			AssertEquals(WriterText, "<unsignedByte>171</unsignedByte>");
+			AssertEquals("<unsignedByte>171</unsignedByte>", WriterText);
 			
 			Serialize((byte)15);
-			AssertEquals(WriterText, "<unsignedByte>15</unsignedByte>");
+			AssertEquals("<unsignedByte>15</unsignedByte>", WriterText);
 		}
 		
 		[Test]
 		public void TestSerializeByteArrays()
 		{
 			Serialize(new byte[] {});
-			AssertEquals(WriterText, "<base64Binary />");
+			AssertEquals("<base64Binary />", WriterText);
 			
 			Serialize(new byte[] {0xAB, 0xCD});
-			AssertEquals(WriterText, "<base64Binary>q80=</base64Binary>");
+			AssertEquals("<base64Binary>q80=</base64Binary>", WriterText);
 		}
 		
 		[Test]
@@ -258,12 +261,12 @@ namespace MonoTests.System.Xml
 		{
 			SimpleClass simple = new SimpleClass();
 			Serialize(simple);
-			AssertEquals(WriterText, "<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />");
+			AssertEquals("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />", WriterText);
 			
 			simple.something = "hello";
 			
 			Serialize(simple);
-			AssertEquals(WriterText, "<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>hello</something></SimpleClass>");
+			AssertEquals("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>hello</something></SimpleClass>", WriterText);
 		}
 		
 		[Test]
@@ -332,11 +335,11 @@ namespace MonoTests.System.Xml
 		{
 			SimpleClassWithXmlAttributes simple = new SimpleClassWithXmlAttributes();
 			Serialize(simple);
-			AssertEquals(WriterText, "<simple xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />");
-			
+			AssertEquals("<simple xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />", WriterText);
+
 			simple.something = "hello";
 			Serialize(simple);
-			Assert(WriterText.EndsWith(" member='hello' />"));
+			AssertEquals ("<simple xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' member='hello' />", WriterText);
 		}
 		
 		// test overrides ///////////////////////////////////////////////////////
@@ -353,7 +356,7 @@ namespace MonoTests.System.Xml
 			SimpleClassWithXmlAttributes simple = new SimpleClassWithXmlAttributes();
 			simple.something = "hello";
 			Serialize(simple, overrides);
-			AssertEquals(WriterText, "<simple xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />");
+			AssertEquals("<simple xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />", WriterText);
 		}
 		
 		// test xmlText //////////////////////////////////////////////////////////
@@ -369,7 +372,7 @@ namespace MonoTests.System.Xml
 			
 			attr.XmlText = new XmlTextAttribute();
 			Serialize(simple, overrides);
-			AssertEquals(WriterText, "<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>hello</SimpleClass>");
+			AssertEquals("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>hello</SimpleClass>", WriterText);
 			
 			attr.XmlText = new XmlTextAttribute(typeof(string));
 			Serialize(simple, overrides);
@@ -434,7 +437,7 @@ namespace MonoTests.System.Xml
 			root.ElementName = null;
 			root.Namespace = "some.urn";
 			Serialize(simple, root);
-			AssertEquals(WriterText, "<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns='some.urn' />");
+			AssertEquals("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns='some.urn' />", WriterText);
 		}
 		
 		[Test]
@@ -471,17 +474,17 @@ namespace MonoTests.System.Xml
 			
 			SimpleClass simple = new SimpleClass();;
 			Serialize(simple, overrides);
-			AssertEquals(WriterText, "<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />");
+			AssertEquals("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />", WriterText);
 			
 			// regular
 			simple.something = "hello";
 			Serialize(simple, overrides);
-			Assert(WriterText.EndsWith(" something='hello' />"));
+			AssertEquals ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' something='hello' />", WriterText);
 			
 			// AttributeName
 			attr.XmlAttribute.AttributeName = "somethingelse";
 			Serialize(simple, overrides);
-			Assert(WriterText.EndsWith(" somethingelse='hello' />"));
+			AssertEquals ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' somethingelse='hello' />", WriterText);
 			
 			// Type
 			// FIXME this should work, shouldnt it?
@@ -515,12 +518,12 @@ namespace MonoTests.System.Xml
 			// null
 			SimpleClass simple = new SimpleClass();;
 			Serialize(simple, overrides);
-			AssertEquals(WriterText, "<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />");
+			AssertEquals("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />", WriterText);
 			
 			// not null
 			simple.something = "hello";
 			Serialize(simple, overrides);
-			Assert(WriterText.EndsWith("><something>hello</something></SimpleClass>"));
+			AssertEquals ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>hello</something></SimpleClass>", WriterText);
 			
 			//ElementName
 			element.ElementName = "saying";
@@ -572,17 +575,17 @@ namespace MonoTests.System.Xml
 			// empty collection & no type info in XmlElementAttribute
 			StringCollectionContainer container = new StringCollectionContainer();
 			Serialize(container, overrides);
-			AssertEquals(WriterText, "<StringCollectionContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />");
+			AssertEquals("<StringCollectionContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />", WriterText);
 			
 			// non-empty collection & no type info in XmlElementAttribute
 			container.Messages.Add("hello");
 			Serialize(container, overrides);
-			Assert(WriterText.EndsWith("><Messages>hello</Messages></StringCollectionContainer>"));
+			AssertEquals ("<StringCollectionContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><Messages>hello</Messages></StringCollectionContainer>", WriterText);
 			
 			// non-empty collection & only type info in XmlElementAttribute
 			element.Type = typeof(StringCollection);
 			Serialize(container, overrides);
-			Assert(WriterText.EndsWith("><Messages><string>hello</string></Messages></StringCollectionContainer>"));
+			AssertEquals ("<StringCollectionContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><Messages><string>hello</string></Messages></StringCollectionContainer>", WriterText);
 			
 			// non-empty collection & only type info in XmlElementAttribute
 			element.Type = typeof(string);
@@ -610,17 +613,17 @@ namespace MonoTests.System.Xml
 			// use the default
 			SimpleClass simple = new SimpleClass();
 			Serialize(simple, overrides);
-			AssertEquals(WriterText, "<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />");
+			AssertEquals("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />", WriterText);
 			
 			// same value as default
 			simple.something = defaultValueInstance;
 			Serialize(simple, overrides);
-			AssertEquals(WriterText, "<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />");
+			AssertEquals("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />", WriterText);
 			
 			// some other value
 			simple.something = "hello";
 			Serialize(simple, overrides);
-			AssertEquals(WriterText, "<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>hello</something></SimpleClass>");
+			AssertEquals("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>hello</something></SimpleClass>", WriterText);
 		}
 		
 		// test XmlEnum //////////////////////////////////////////////////////////

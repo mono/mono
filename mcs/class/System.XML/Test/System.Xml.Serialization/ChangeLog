@@ -1,3 +1,9 @@
+2003-05-18  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlSerializerTests.cs : fixed some AssertEquals() argument orders.
+	  and replaced some Assert() with AssertEquals().
+	  Applied USE_VERSION_1_1 to TestConstructor().
+
 2003-05-16  Dick Porter  <dick@ximian.com>
 
 	* XmlSerializerTests.cs: Test what happens when nulls are passed
