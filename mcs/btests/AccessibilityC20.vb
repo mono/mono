@@ -4,7 +4,7 @@ REM ErrorMessage: Only one of 'Public', 'Private', 'Protected', 'Friend', or 'Pr
 
 Imports System
 Class C1
-	Private Friend e As Integer
+	Public Protected b As Integer
 End Class
 Module Accessibility
 	Sub Main()

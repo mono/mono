@@ -1,28 +1,46 @@
+use Cwd;
 use File::Basename;
-use File::Copy;
-use File::Compare;
+use File::Find;
 
-my $Compiler = "mbas";
-my $VBFile = "PreProcessorDirective.vb";
-my $LogFile = "Results.log";
+my $Compiler = "vbc";
+my $VBFile;
+my $LogFile;
 my $ExpectedResult;
+my @VBFileList = ();
 my @ActualResults = ();
 
 # build the command line
 
-ParseTestFile();
-Compile();
-ExtractResults();
-$RetVal = ValidateResults();
+find(\&BuildVBFileList, Cwd::cwd);
 
-if($RetVal == 0) {
-    print "\n\nTEST PASSED";
+foreach $vbFile (@VBFileList) {
+    $VBFile = basename($vbFile);
+
+    $LogFile = $VBFile . ".log";
+
+    print "\nProcessing " . $VBFile;
+    ParseTestFile();
+    Compile();
+    ExtractResults();
+    $RetVal = ValidateResults();
+
+    if($RetVal == 0) {
+	print "\n\nTEST PASSED";
+    }
+    else {
+	print "\n\nTEST FAILED";
+    }
 }
-else {
-    print "\n\nTEST FAILED";
+
+sub BuildVBFileList
+{
+    my $fileName = $File::Find::name;
+    return unless -f $fileName;
+
+    if($fileName =~ /\.vb$/) {
+	push @VBFileList, $fileName;
+    }
 }
-
-
 
 
 sub ParseTestFile
@@ -78,6 +96,11 @@ sub ParseTestFile
 	print "\n\tLine:\t\t" . $ExpectedResult->{LINENO};
 	print "\n\tErrNo:\t\t" . $ExpectedResult->{ERRORNO};
     }
+    else 
+    {
+	$ExpectedResult = "PASS";
+    }
+
 }
 
 sub Compile
@@ -137,7 +160,7 @@ sub ValidateResults
     my $retval = 0;
     my @matching = ();
 
-    if(!defined $ExpectedResult)
+    if($ExpectedResult == "PASS")
     {
 	if(!@ActualResults) {
 	    return 0;

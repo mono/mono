@@ -1,6 +1,6 @@
 REM LineNo: 11
 REM ExpectedError: BC30451
-REM ErrorMessage: Name 'S2' is not declared.
+REM ErrorMessage: Name 'C' is not declared.
 
 Class C1
 End Class
@@ -8,7 +8,7 @@ End Class
 Class C2
 	Inherits C1
 	Public Sub S1()
-		S2()
+		C = 10
 	End Sub
 End Class
 
