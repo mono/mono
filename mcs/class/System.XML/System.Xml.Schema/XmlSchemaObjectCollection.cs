@@ -31,14 +31,16 @@ namespace System.Xml.Schema
 	/// </summary>
 	public class XmlSchemaObjectCollection : System.Collections.CollectionBase
 	{
-		private XmlSchemaObject parent;
+//		private XmlSchemaObject parent;
 
 		public XmlSchemaObjectCollection()
 		{
 		}
+
 		public XmlSchemaObjectCollection(XmlSchemaObject parent)
 		{
-			this.parent = parent;
+			// FIXME: how is it used publicly?
+//			this.parent = parent;
 		}
 
 		// Properties

@@ -440,8 +440,8 @@ namespace System.Xml.Schema
 				// TODO: 1.3 facet restriction valid.
 				break;
 			case XmlSchemaDerivationMethod.List:
-				XmlSchemaSimpleTypeList thisList = Content as XmlSchemaSimpleTypeList;
 				/*
+				XmlSchemaSimpleTypeList thisList = Content as XmlSchemaSimpleTypeList;
 				// 2.1 item list type not allowed
 				if (baseSimpleType != null && baseSimpleType.resolvedDerivedBy == XmlSchemaDerivationMethod.List)
 					error (h, "Base list schema type is not allowed.");

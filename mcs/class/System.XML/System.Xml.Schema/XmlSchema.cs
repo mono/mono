@@ -63,7 +63,6 @@ namespace System.Xml.Schema
 		private string targetNamespace ;
 		private XmlAttribute[] unhandledAttributes ;
 		private string version;
-		private string language;
 
 		// other post schema compilation infoset
 		private Hashtable idCollection;
@@ -267,7 +266,6 @@ namespace System.Xml.Schema
 		///             3. id must be of type ID
 		///             4. targetNamespace should be any uri
 		///             5. version should be a normalizedString
-		///             6. xml:lang should be a language
 		/// </remarks>
 		public void Compile (ValidationEventHandler handler)
 		{
@@ -340,8 +338,6 @@ namespace System.Xml.Schema
 			//5. version should be of type normalizedString
 			if (!XmlSchemaUtil.CheckNormalizedString(Version))
 				error(handler, Version + "is not a valid value for version attribute of schema");
-
-			//6. xml:lang must be a language (removed)
 
 			// Compile the content of this schema
 
@@ -711,9 +707,6 @@ namespace System.Xml.Schema
 						break;
 					case "version":
 						schema.version = reader.Value;
-						break;
-					case "xml:lang":
-						schema.language = reader.Value;
 						break;
 					default:
 						if((reader.NamespaceURI == "" && reader.Name != "xmlns") || reader.NamespaceURI == XmlSchema.Namespace)

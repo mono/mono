@@ -1,3 +1,15 @@
+2004-11-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaElement.cs,
+	  XmlSchemaComplexType.cs,
+	  XmlSchema.cs,
+	  XmlSchemaChoice.cs,
+	  XmlSchemaSimpleType.cs,
+	  XmlSchemaObjectTable.cs,
+	  XmlSchemaObjectCollection.cs,
+	  XmlSchemaCollection.cs,
+	  : All changes are just for warning removal.
+
 2004-11-24  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaDatatype.cs : added ParseValue() override.

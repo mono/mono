@@ -86,10 +86,8 @@ namespace System.Xml.Schema
 		{
 			private IDictionaryEnumerator xenum;
 			IEnumerable tmp;
-			XmlSchemaObjectTable table;
 			internal XmlSchemaObjectTableEnumerator (XmlSchemaObjectTable table)
 			{
-				this.table = table;
 				tmp = (IEnumerable) table.table;
 				xenum = (IDictionaryEnumerator) tmp.GetEnumerator ();
 			}

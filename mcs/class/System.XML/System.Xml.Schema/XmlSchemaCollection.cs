@@ -135,7 +135,6 @@ namespace System.Xml.Schema
 			if (!schema.IsCompiled)
 				return null;
 
-			string ns = GetSafeNs (schema.TargetNamespace);
 			lock (schemaSet) {
 				// consider imported schemas.
 				schemaSet.Add (schema.Schemas);

@@ -63,7 +63,7 @@ namespace System.Xml.Schema
 		private XmlQualifiedName qName;
 		private XmlSchemaDerivationMethod blockResolved;
 		private XmlSchemaDerivationMethod finalResolved;
-		private XmlSchemaParticle substChoice;
+//		private XmlSchemaParticle substChoice;
 		private XmlSchemaElement referencedElement;
 		private ArrayList substitutingElements = new ArrayList ();
 		private XmlSchemaElement substitutionGroupElement;
@@ -92,7 +92,7 @@ namespace System.Xml.Schema
 //			parentIsSchema = false; ... it is set in Schema's Compile()
 			blockResolved = XmlSchemaDerivationMethod.None;
 			finalResolved = XmlSchemaDerivationMethod.None;
-			substChoice = null;
+//			substChoice = null;
 			referencedElement = null;
 			substitutingElements.Clear ();
 			substitutionGroupElement = null;
@@ -567,7 +567,7 @@ namespace System.Xml.Schema
 				XmlSchemaChoice choice = new XmlSchemaChoice ();
 				choice.MinOccurs = MinOccurs;
 				choice.MaxOccurs = MaxOccurs;
-				substChoice = choice;
+//				substChoice = choice;
 				choice.Compile (null, schema); // compute Validated Min/Max Occurs.
 				XmlSchemaElement item = this.MemberwiseClone () as XmlSchemaElement;
 				item.MinOccurs = 1;

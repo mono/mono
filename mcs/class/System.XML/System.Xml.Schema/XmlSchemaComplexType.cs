@@ -323,35 +323,17 @@ namespace System.Xml.Schema
 					error(h,"attributes, particles or anyattribute is not allowed if ContentModel is present");
 				errorCount += contentModel.Compile (h, schema);
 
-				XmlQualifiedName baseTypeName = null;
 				XmlSchemaSimpleContent smodel = ContentModel as XmlSchemaSimpleContent;
 				if(smodel != null)
 				{
 					XmlSchemaSimpleContentExtension sscx = smodel.Content as XmlSchemaSimpleContentExtension;
-					if (sscx != null)
-						baseTypeName = sscx.BaseTypeName;
-					else {
+					if (sscx == null) {
 						XmlSchemaSimpleContentRestriction sscr = smodel.Content as XmlSchemaSimpleContentRestriction;
 						if (sscr != null) {
-							baseTypeName = sscr.BaseTypeName;
 							if (sscr.BaseType != null) {
 								sscr.BaseType.Compile (h, schema);
 								BaseXmlSchemaTypeInternal = sscr.BaseType;
 							}
-						}
-					}
-				}
-				else
-				{
-					XmlSchemaComplexContent cmodel = (XmlSchemaComplexContent) ContentModel;
-					XmlSchemaComplexContentExtension sccx = cmodel.Content as XmlSchemaComplexContentExtension;
-					if (sccx != null) {
-						baseTypeName = sccx.BaseTypeName;
-					}
-					else {
-						XmlSchemaComplexContentRestriction sccr = (XmlSchemaComplexContentRestriction) cmodel.Content;
-						if (sccr != null) {
-							baseTypeName = sccr.BaseTypeName;
 						}
 					}
 				}
@@ -760,7 +742,7 @@ namespace System.Xml.Schema
 					// do nothing for particle.
 				}
 				// otherwise, it might be missing sub components.
-				else if (baseType == null && !schema.IsNamespaceAbsent (BaseSchemaTypeName.Namespace))// && schema.Schemas [baseTypeName.Namespace] != null)
+				else if (baseType == null && !schema.IsNamespaceAbsent (BaseSchemaTypeName.Namespace))
 					error (h, "Referenced base schema type " + BaseSchemaTypeName + " was not found in the corresponding schema.");
 
 				// 3.4.3 Complex Type Definition Representation OK :: 2.

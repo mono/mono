@@ -198,7 +198,7 @@ namespace System.Xml.Schema
 				return true;
 
 			if (pd != null) {
-				XmlSchemaElement el = pd as XmlSchemaElement;
+//				XmlSchemaElement el = pd as XmlSchemaElement;
 				XmlSchemaParticle pdx = pd;
 //				if (el != null && el.SubstitutingElements.Count > 0)
 //					pdx = el.SubstitutingChoice;
