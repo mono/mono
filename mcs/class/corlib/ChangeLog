@@ -1,3 +1,9 @@
+2003-11-19  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* corlib_test.dll.sources: Added some test files:
+		System.Runtime.Remoting/ContextTest.cs
+		System.Runtime.Remoting/SynchronizationAttributeTest.cs
+
 2003-11-18  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* corlib.dll.sources: Added some files:
