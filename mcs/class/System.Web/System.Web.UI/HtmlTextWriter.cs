@@ -178,8 +178,8 @@ static HtmlTextWriter(){
 public HtmlTextWriter(TextWriter writer):this(writer, "	"){}
 
 public HtmlTextWriter(TextWriter writer, string tabString) : base() {
-	writer = writer;
-	tabString = tabString;
+	this.writer = writer;
+	this.tabString = tabString;
 	indentLevel = 0;
 	tabsPending = false;
 	_httpWriter = writer as HttpWriter;
