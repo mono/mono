@@ -1,5 +1,9 @@
 2003-05-18  Martin Baulig  <martin@ximian.com>
 
+	* test-154.cs: Added testcase for bug #41657.
+
+2003-05-18  Martin Baulig  <martin@ximian.com>
+
 	* test-154.cs: Added the contents of test-189.cs as a new testcase
 	to this test.
 

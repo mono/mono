@@ -417,4 +417,18 @@ public class X
 		return 0;
 	}
 
+	//
+	// Bug #41657.
+	//
+	static void test28 (out object value)
+	{
+		if (true) {
+			try {
+				value = null;
+				return;
+			} catch {
+			}
+		}
+		value = null;
+	}
 }
