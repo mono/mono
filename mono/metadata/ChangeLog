@@ -1,3 +1,9 @@
+
+Wed Jul 14 19:26:05 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c: allow GC handles to work even when no GC is compiled in.
+	Fix part of bug #61134 (GetAddrOfPinnedObject).
+
 2004-07-13  Peter Williams  <peter@newton.cx>
  
  	* process.c (complete_path): Make sure we don't attempt to execute
