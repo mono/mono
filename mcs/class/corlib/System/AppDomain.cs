@@ -1,4 +1,3 @@
-
 //
 // System/AppDomain.cs
 //
@@ -12,127 +11,82 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using System.Runtime.Remoting;
+using System.Security.Principal;
 using System.Security.Policy;
+using System.Security;
 
 namespace System {
 
-	public sealed class AppDomain /* : MarshalByRefObject , _AppDomain, IEvidenceFactory */ {
+	public sealed class AppDomain : MarshalByRefObject , _AppDomain , IEvidenceFactory {
 
-		private Hashtable loaded_assemblies = new Hashtable ();
-		private Hashtable data_hash = new Hashtable ();
-		private AppDomainSetup adsetup;
-		private string friendly_name;
-		private Evidence evidence;
+		IntPtr _mono_app_domain;
 
-		private AppDomain ()
-		{
-			//
-			// Prime the loaded assemblies with the assemblies that were loaded
-			// by the runtime in our behalf
-			//
-
-			//
-			// TODO: Maybe we can lazily do this, as loaded_assemblies
-			// will not be used all the time, we can just compute this on
-			// demand.
-			//
-			foreach (Assembly a in getDefaultAssemblies ())
-				loaded_assemblies [a.FullName] = a;
-		}
+		// Evidence evidence;
 		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern AppDomainSetup getSetup ();
+
 		public AppDomainSetup SetupInformation {
 
 			get {
-				return adsetup;
+				return getSetup ();
 			}
 		}
 
 		public string BaseDirectory {
 
 			get {
-				return adsetup.ApplicationBase;
+				return SetupInformation.ApplicationBase;
 			}
 		}
 
 		public string RelativeSearchPath {
 
 			get {
-				return adsetup.PrivateBinPath;
+				return SetupInformation.PrivateBinPath;
 			}
 		}
 
 		public string DynamicDirectory {
 
 			get {
-				// fixme: dont know what to return here
-				return null;
+				// fixme: dont know if this is right?
+				return SetupInformation.DynamicBase;
 			}
 		}
+
+		public bool ShadowCopyFiles {
+
+			get {
+				if (SetupInformation.ShadowCopyFiles == "true")
+					return true;
+				return false;
+			}
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern string getFriendlyName ();
 
 		public string FriendlyName {
 
 			get {
-				return friendly_name;
+				return getFriendlyName ();
 			}
 		}
 
 		public Evidence Evidence {
 
 			get {
-				return evidence;
+				return null;
+				//return evidence;
 			}
 		}
-
 		
-		public static AppDomain CreateDomain (string friendlyName)
-		{
-			return CreateDomain (friendlyName, new Evidence (), new AppDomainSetup ());
-		}
-		
-		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo)
-		{
-			return CreateDomain (friendlyName, securityInfo, new AppDomainSetup ());
-		}
-		
-		public static AppDomain CreateDomain (string friendlyName,
-						      Evidence securityInfo,
-						      AppDomainSetup info)
-		{
-			if (friendlyName == null || securityInfo == null || info == null)
-				throw new System.ArgumentNullException();
-
-			AppDomain ad = new AppDomain ();
-
-			ad.friendly_name = friendlyName;
-			ad.evidence = securityInfo;
-			ad.adsetup = info;
-
-			return ad;
-		}
-
-		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo,
-						      string appBasePath, string appRelativeSearchPath,
-						      bool shadowCopyFiles)
-		{
-			AppDomainSetup info = new AppDomainSetup ();
-
-			info.ApplicationBase = appBasePath;
-			info.PrivateBinPath = appRelativeSearchPath;
-
-			if (shadowCopyFiles)
-				info.ShadowCopyFiles = "true";
-			else
-				info.ShadowCopyFiles = "false";
-
-			return CreateDomain (friendlyName, securityInfo, info);
-		}
-		
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public static extern Assembly LoadFrom (String assemblyFile, Evidence securityEvidence);
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern AppDomain getCurDomain ();
 		
@@ -143,12 +97,221 @@ namespace System {
 			}
 		}
 
+		public void AppendPrivatePath (string path)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void ClearPrivatePath ()
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void ClearShadowCopyPath ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public ObjectHandle CreateInstance (string assemblyName, string typeName)
+		{
+			return CreateInstance (assemblyName, typeName, false, 0,
+					       null, null, null, null, null);
+		}
+
+		public ObjectHandle CreateInstance (string assemblyName, string typeName,
+						    object[] activationAttributes)
+		{
+			return CreateInstance (assemblyName, typeName, false, 0,
+					       null, null, null, activationAttributes, null);
+		}
+		
+		public ObjectHandle CreateInstance (string assemblyName,
+						    string typeName,
+						    bool ignoreCase,
+						    BindingFlags bindingAttr,
+						    Binder binder,
+						    object[] args,
+						    CultureInfo culture,
+						    object[] activationAttributes,
+						    Evidence securityAttribtutes)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public ObjectHandle CreateInstanceFrom (string assemblyName, string typeName)
+		{
+			return CreateInstanceFrom (assemblyName, typeName, false, 0,
+						   null, null, null, null, null);
+		}
+		
+		public ObjectHandle CreateInstanceFrom (string assemblyName, string typeName,
+							object[] activationAttributes)
+		{
+			return CreateInstanceFrom (assemblyName, typeName, false, 0,
+						   null, null, null, activationAttributes, null);
+		}
+		
+		public ObjectHandle CreateInstanceFrom (string assemblyName,
+							string typeName,
+							bool ignoreCase,
+							BindingFlags bindingAttr,
+							Binder binder,
+							object[] args,
+							CultureInfo culture,
+							object[] activationAttributes,
+							Evidence securityAttribtutes)
+		{
+			throw new NotImplementedException ();			
+		}
+
 		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name,
 							      AssemblyBuilderAccess access)
 		{
+			return DefineDynamicAssembly (name, access, null, null,
+						      null, null, null, false);
+		}
+
+		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name,
+							      AssemblyBuilderAccess access,
+							      Evidence evidence)
+		{
+			return DefineDynamicAssembly (name, access, null, evidence,
+						      null, null, null, false);
+		}
+		
+		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name,
+							      AssemblyBuilderAccess access,
+							      string dir)
+		{
+			return DefineDynamicAssembly (name, access, dir, null,
+						      null, null, null, false);
+		}
+		
+		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name,
+							      AssemblyBuilderAccess access,
+							      string dir,
+							      Evidence evidence)
+		{
+			return DefineDynamicAssembly (name, access, dir, evidence,
+						      null, null, null, false);
+		}
+		
+		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name,
+							      AssemblyBuilderAccess access,
+							      PermissionSet requiredPermissions,
+							      PermissionSet optionalPermissions,
+							      PermissionSet refusedPersmissions)
+		{
+			return DefineDynamicAssembly (name, access, null, null,
+						      requiredPermissions, optionalPermissions,
+						      refusedPersmissions, false);
+		}
+		
+		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name,
+							      AssemblyBuilderAccess access,
+							      Evidence evidence,
+							      PermissionSet requiredPermissions,
+							      PermissionSet optionalPermissions,
+							      PermissionSet refusedPersmissions)
+		{
+			return DefineDynamicAssembly (name, access, null, evidence,
+						      requiredPermissions, optionalPermissions,
+						      refusedPersmissions, false);
+		}
+		
+		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name,
+							      AssemblyBuilderAccess access,
+							      string dir,
+							      PermissionSet requiredPermissions,
+							      PermissionSet optionalPermissions,
+							      PermissionSet refusedPersmissions)
+		{
+			return DefineDynamicAssembly (name, access, dir, null,
+						      requiredPermissions, optionalPermissions,
+						      refusedPersmissions, false);
+		}
+		
+		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name,
+							      AssemblyBuilderAccess access,
+							      string dir,
+							      Evidence evidence,
+							      PermissionSet requiredPermissions,
+							      PermissionSet optionalPermissions,
+							      PermissionSet refusedPersmissions)
+		{
+			return DefineDynamicAssembly (name, access, dir, evidence,
+						      requiredPermissions, optionalPermissions,
+						      refusedPersmissions, false);
+
+		}
+		
+		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name,
+							      AssemblyBuilderAccess access,
+							      string dir,
+							      Evidence evidence,
+							      PermissionSet requiredPermissions,
+							      PermissionSet optionalPermissions,
+							      PermissionSet refusedPersmissions,
+							      bool isSynchronized)
+		{
+			// FIXME: examine all other parameters
+			
 			AssemblyBuilder ab = new AssemblyBuilder (name, access);
 			return ab;
 		}
+
+
+		public void DoCallBack (CrossAppDomainDelegate theDelegate)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public override bool Equals (object other)
+		{
+			if (!(other is AppDomain))
+				return false;
+
+			return this._mono_app_domain == ((AppDomain)other)._mono_app_domain;
+		}
+
+		public int ExecuteAssembly (string assemblyFile)
+		{
+			return ExecuteAssembly (assemblyFile, new Evidence (), null);
+		}
+		
+		public int ExecuteAssembly (string assemblyFile, Evidence assemblySecurity)
+		{
+			return ExecuteAssembly (assemblyFile, new Evidence (), null);
+		}
+		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern int ExecuteAssembly (string assemblyFile, Evidence assemblySecurity, string[] args);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern Assembly [] GetAssemblies ();
+
+		public object GetDate (string name)
+		{
+			throw new NotImplementedException ();			
+		}
+		
+		public override int GetHashCode ()
+		{
+			return (int)_mono_app_domain;
+		}
+
+		public object GetLifetimeService ()
+		{
+			throw new NotImplementedException ();			
+		}
+
+		public object InitializeLifetimeService ()
+		{
+			throw new NotImplementedException ();			
+		}
+	
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern Assembly LoadAssembly (AssemblyName assemblyRef, Evidence securityEvidence);
 
 		public Assembly Load (AssemblyName assemblyRef)
 		{
@@ -157,18 +320,7 @@ namespace System {
 
 		public Assembly Load (AssemblyName assemblyRef, Evidence assemblySecurity)
 		{
-			Assembly res;
-			
-			if ((res = (Assembly)loaded_assemblies [assemblyRef]) != null)
-				return res;
-
-			// fixme: we should pass the whole assemblyRef instead of the name,
-			// and maybe also the adsetup
-			res = LoadFrom (assemblyRef.Name, assemblySecurity);
-
-			loaded_assemblies [assemblyRef] = res;
-			
-			return res;
+			return LoadAssembly (assemblyRef, assemblySecurity);
 		}
 
 		public Assembly Load (string assemblyString)
@@ -201,60 +353,105 @@ namespace System {
 		{
 			throw new NotImplementedException ();
 		}
-
-		//
-		// This returns a list of the assemblies that were loaded in behalf
-		// of this AppDomain
-		//
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		static private extern Assembly [] getDefaultAssemblies ();
 			
-		public Assembly[] GetAssemblies ()
+		public void SetAppDomainPolicy (PolicyLevel domainPolicy)
 		{
-			int x = loaded_assemblies.Count;
-			Assembly[] res = new Assembly [loaded_assemblies.Count];
+			throw new NotImplementedException ();
+		}
+		
+		public void SetCachePath (string s)
+		{
+			SetupInformation.CachePath = s;
+		}
+		
+		public void SetPrincipalPolicy (PrincipalPolicy policy)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void SetShadowCopyPath (string s)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void SetThreadPrincipal (IPrincipal principal)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public static AppDomain CreateDomain (string friendlyName)
+		{
+			return CreateDomain (friendlyName, new Evidence (), new AppDomainSetup ());
+		}
+		
+		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo)
+		{
+			return CreateDomain (friendlyName, securityInfo, new AppDomainSetup ());
+		}
+		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private static extern AppDomain createDomain (string friendlyName, AppDomainSetup info);
 
-			int i = 0;
-			foreach (DictionaryEntry de in loaded_assemblies)
-				res [i++] = (Assembly) de.Value;
-				
-			return res;
+		public static AppDomain CreateDomain (string friendlyName,
+						      Evidence securityInfo,
+						      AppDomainSetup info)
+		{
+			if (friendlyName == null || securityInfo == null || info == null)
+				throw new System.ArgumentNullException();
+
+			AppDomain ad = createDomain (friendlyName, info);
+
+			// ad.evidence = securityInfo;
+
+			return ad;
 		}
 
-		// fixme: how does marshalling work ?
-		public object GetData (string name)
+		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo,
+						      string appBasePath, string appRelativeSearchPath,
+						      bool shadowCopyFiles)
 		{
-			switch (name) {
-			case "APPBASE":
-				return adsetup.ApplicationBase;
-			case "APP_CONFIG_FILE":
-				return adsetup.ConfigurationFile;
-			case "DYNAMIC_BASE":
-				return adsetup.DynamicBase;
-			case "APP_NAME":
-				return adsetup.ApplicationName;
-			case "CACHE_BASE":
-				return adsetup.CachePath;
-			case "PRIVATE_BINPATH":
-				return adsetup.PrivateBinPath;
-			case "BINPATH_PROBE_ONLY":
-				return adsetup.PrivateBinPathProbe;
-			case "SHADOW_COPY_DIRS":
-				return adsetup.ShadowCopyDirectories;
-			case "FORCE_CACHE_INSTALL":
-				return adsetup.ShadowCopyFiles;
-			}
+			AppDomainSetup info = new AppDomainSetup ();
 
-			return data_hash [name];
+			info.ApplicationBase = appBasePath;
+			info.PrivateBinPath = appRelativeSearchPath;
+
+			if (shadowCopyFiles)
+				info.ShadowCopyFiles = "true";
+			else
+				info.ShadowCopyFiles = "false";
+
+			return CreateDomain (friendlyName, securityInfo, info);
 		}
 
-		// fixme: how does marshalling work ?
-		public void SetData (string name, object data)
-		{
-			// LAMESPEC: why can't we set adsetup properties ??
 
-			data_hash [name] = data;
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public static extern void Unload (AppDomain domain);
+		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern object GetData ();
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern void SetData (string name, object data);
+
+		public static int GetCurrentThreadId ()
+		{
+			throw new NotImplementedException ();
 		}
 
+
+		public event AssemblyLoadEventHandler AssemblyLoad;
+		
+		public event ResolveEventHandler AssemblyResolve;
+		
+		public event EventHandler DomainUnload;
+
+		public event EventHandler ProcessExit;
+
+		public event ResolveEventHandler ResourceResolve;
+
+		public event ResolveEventHandler TypeResolve;
+
+		public event UnhandledExceptionEventHandler UnhandledException;
+    
 	}
 }

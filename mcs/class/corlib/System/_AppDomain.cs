@@ -137,17 +137,9 @@ public interface _AppDomain {
 	Assembly Load (byte[] rawAssembly, byte[] rawSymbolStore);
 	Assembly Load (string assemblyString, Evidence assemblySecurity);
 	Assembly Load (
-		AssemblyName assemblyRef,
-		Evidence assemblySecurity,
-		string callerLocation);
-	Assembly Load (
 		byte[] rawAssembly,
 		byte[] rawSymbolStore,
 		Evidence securityEvidence);
-	Assembly Load (
-		string assemblyString,
-		Evidence assemblySecurity,
-		string callerLocation);
 
 	void SetAppDomainPolicy (PolicyLevel domainPolicy);
 	void SetCachePath (string s);
