@@ -2506,6 +2506,7 @@ namespace Mono.CSharp {
 		//
 		public static int GetTypeSize (Type t)
 		{
+			t = TypeManager.TypeToCoreType (t);
 			if (t == TypeManager.int32_type ||
 			    t == TypeManager.uint32_type ||
 			    t == TypeManager.float_type)
