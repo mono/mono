@@ -1,3 +1,7 @@
+2004-07-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* pinvoke2.cs libtest.c: New tests for stringbuilder marshalling.
+
 2004-07-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Makefile.am (CLEANFILES): Delete .stdout files too.
