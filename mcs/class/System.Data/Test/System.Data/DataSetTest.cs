@@ -21,7 +21,7 @@ using System.Threading;
 namespace MonoTests.System.Data
 {
 	[TestFixture]
-        public class DataSetTest : Assertion
+        public class DataSetTest : DataSetAssertion
         {
         	string EOL = Environment.NewLine;
 
@@ -746,7 +746,17 @@ namespace MonoTests.System.Data
 		{
 			DataSet ds = new DataSet ();
 			ds.ReadXmlSchema ("Test/System.Data/store.xsd");
+			// check dataset properties before testing write
+			AssertDataSet ("ds", ds, "NewDataSet", 3, 2);
+			AssertDataTable ("tab1", ds.Tables [0], "bookstore", 1, 0, 0, 1);
+			AssertDataTable ("tab2", ds.Tables [1], "book", 5, 0, 1, 1);
+			AssertDataTable ("tab3", ds.Tables [2], "author", 3, 0, 1, 0);
+			// FIXME: currently order is not compatible. Use name as index
+			AssertDataRelation ("rel1", ds.Relations ["book_author"], "book_author", true, new string [] {"book_Id"}, new string [] {"book_Id"}, true, true);
+			AssertDataRelation ("rel2", ds.Relations ["bookstore_book"], "bookstore_book", true, new string [] {"bookstore_Id"}, new string [] {"bookstore_Id"}, true, true);
+
 			ds.ReadXml ("Test/System.Data/region.xml", XmlReadMode.InferSchema);
+
 			TextWriter writer = new StringWriter ();
 			ds.WriteXmlSchema (writer);
 		

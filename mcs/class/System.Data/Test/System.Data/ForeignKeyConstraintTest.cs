@@ -206,13 +206,13 @@ namespace MonoTests.System.Data
                                 table2.Constraints.Add (fkc);
                                 throw new ApplicationException ("An Exception was expected");
                         }
-                        catch(Exception e){
 #if NET_1_1
-                                Assertion.AssertEquals ("#A03", typeof (ArgumentException), e.GetType());
+                        catch (InvalidOperationException) {
+			}
 #else
-                                Assertion.AssertEquals ("#A03", typeof (ArgumentException), e.GetType());
-#endif
+                        catch (ArgumentException) {
                         }
+#endif
                                                                                                     
                         // OK - So AddRange() is the only way!
 			// FIXME: Here this test crashes.
@@ -316,18 +316,18 @@ namespace MonoTests.System.Data
 				Fail("A3: Wrong Exception type. " + exc.ToString());
 			}
 
-			//different dataTypes
 			try
 			{
 				fkc = new ForeignKeyConstraint(_ds.Tables[0].Columns[0], localTable.Columns[1]);
 				Fail("Failed to throw InvalidConstraintException.");
 			}
+#if NET_1_1
+			// tables in different datasets
+			catch (InvalidOperationException) {}
+#else
+			//different dataTypes
 			catch (InvalidConstraintException) {}
-			catch (AssertionException exc) {throw exc;}
-			catch (Exception exc)
-			{
-				Fail("A4: Wrong Exception type. " + exc.ToString());
-			}
+#endif
 
 			// Cannot create a Key from Columns that belong to
 			// different tables.
@@ -338,11 +338,6 @@ namespace MonoTests.System.Data
                         }                                             
                         catch (InvalidConstraintException) {}         
                         catch (AssertionException exc) {throw exc;} 
-                        catch (Exception exc)                         
-                        {                                             
-                                Fail("A5: Wrong Exceptiontype. " + exc.ToString());
-                        }                                             
-
 		}
 
 		[Test]
