@@ -1,3 +1,16 @@
+2004-06-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTime.cs :
+	  - Added new common pattern "yyyy/M/dZ"
+	  - empty string should not be compared in _ParseEnum()
+	  - Use culture independent string comparison in _ParseString()
+	  - Whitespace removal should be checked after '..' token check (some
+	    pattern such like es-ES LongDatePattern contains spaces in '..').
+	  - formats null check should be done (to throw ArgumentNullException)
+	    in ParseExact().
+	  - When specified one character format, dates are incorrectly regarded
+	    as to use invariant culture.
+
 2004-06-18  Gert Driesen <drieseng@users.sourceforge.net>
 
         * ArgIterator.cs: changed layout to Auto

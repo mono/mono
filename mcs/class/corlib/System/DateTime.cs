@@ -4,6 +4,7 @@
 // author:
 //   Marcel Narings (marcel@narings.nl)
 //   Martin Baulig (martin@gnome.org)
+//   Atsushi Enomoto (atsushi@ximian.com)
 //
 //   (C) 2001 Marcel Narings
 
@@ -95,6 +96,7 @@ namespace System
 			"yyyy-MM-ddTHH:mm:ss.fffffffzzz",
 			// UTC / allow any separator
 			"yyyy/MM/ddTHH:mm:ssZ",
+			"yyyy/M/dZ",
 			// bug #58938
 			"yyyy/M/d HH:mm:ss",
 			// bug #47720
@@ -759,6 +761,8 @@ namespace System
 			for (i = 0; i < values.Length; i++) {
 				if (s.Length < values[i].Length)
 					continue;
+				else if (values [i].Length == 0)
+					continue;
 				String tmp = s.Substring (0, values[i].Length);
 				if (String.Compare (tmp, values[i], true) == 0) {
 					num_parsed = values[i].Length;
@@ -772,13 +776,11 @@ namespace System
 
 		internal static bool _ParseString (string s, int maxlength, string value, out int num_parsed)
 		{
-			if (maxlength > 0)
-				value = value.Substring (0, maxlength);
+			if (maxlength <= 0)
+				maxlength = value.Length;
 
-			s = s.Substring (0, value.Length);
-
-			if (String.Compare (s, value, true) == 0) {
-				num_parsed = value.Length;
+			if (String.Compare (s, 0, value, 0, maxlength, true, CultureInfo.InvariantCulture) == 0) {
+				num_parsed = maxlength;
 				return true;
 			}
 
@@ -795,7 +797,7 @@ namespace System
 			bool use_invariant = false;
 			bool sloppy_parsing = false;
 			if (format.Length == 1)
-				format = _GetStandardPattern (format[0], dfi, out useutc, out use_invariant);
+				format = _GetStandardPattern (format [0], dfi, out useutc, out use_invariant);
 			else if (!exact && format.IndexOf ("GMT") >= 0)
 				useutc = true;
 
@@ -831,18 +833,6 @@ namespace System
 			{
 				if (s.Length == 0)
 					break;
-
-				if (Char.IsWhiteSpace (s[0])) {
-					s = s.Substring (1);
-
-					if (Char.IsWhiteSpace (chars[pos])) {
-						pos++;
-						continue;
-					}
-
-					if (exact && (style & DateTimeStyles.AllowInnerWhite) == 0)
-						return false;
-				}
 
 				if (chars[pos] == '\'') {
 					num = 1;
@@ -899,7 +889,18 @@ namespace System
 				} else if (chars[pos] == '%') {
 					pos++;
 					continue;
+				} else if (Char.IsWhiteSpace (s[0])) {
+					s = s.Substring (1);
+
+					if (Char.IsWhiteSpace (chars[pos])) {
+						pos++;
+						continue;
+					}
+
+					if (exact && (style & DateTimeStyles.AllowInnerWhite) == 0)
+						return false;
 				}
+
 
 				if ((pos+num+1 < len) && (chars[pos+num+1] == chars[pos+num])) {
 					num++;
@@ -1139,6 +1140,7 @@ namespace System
 					 */
 					if (exact && s [0] != '/')
 						return false;
+
 					if (_ParseString (s, 0,
 							  dfi.TimeSeparator,
 							  out num_parsed) ||
@@ -1290,7 +1292,7 @@ namespace System
 
 			if (s == null)
 				throw new ArgumentNullException (Locale.GetText ("s is null"));
-			if (formats.Length == 0)
+			if (formats == null || formats.Length == 0)
 				throw new ArgumentNullException (Locale.GetText ("format is null"));
 
 			DateTime result;
@@ -1417,7 +1419,7 @@ namespace System
 			String pattern;
 
 			useutc = false;
-			use_invariant = true;
+			use_invariant = false;
 
 			switch (format)
 			{
