@@ -3,9 +3,8 @@
 //
 // Author:
 //	Dennis Hayes (dennish@raytek.com)
-// (C) 2002 Ximian, Inc
 //
-
+// Copyright (C) 2002 Ximian, Inc http://www.ximian.com
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -28,6 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 using System;
 
 namespace System.Drawing
@@ -44,19 +44,19 @@ namespace System.Drawing
 		}
 
 		public int First {
-			get{
+			get {
 				return first;
 			}
-			set{
+			set {
 				first = value;
 			}
 		}
-		
+
 		public int Length {
-			get{
+			get {
 				return length;
 			}
-			set{
+			set {
 				length = value;
 			}
 		}
