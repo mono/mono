@@ -1,5 +1,8 @@
 2005-01-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c (emit_ptr_to_str_conv): Add support for 
+	ByValTStr -> string conversion. Fixes #71015.
+
 	* appdomain.c (mono_domain_owns_vtable_slot): New helper function.
 
 	* mempool.c (mono_mempool_contains_addr): New helper function.
