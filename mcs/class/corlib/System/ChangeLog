@@ -1,3 +1,12 @@
+2004-08-17  Martin Baulig  <martin@ximian.com>
+
+	* MonoType.cs (MonoType.getFullName): Added `bool full_name'
+	argument specifying whether or not to include the type arguments.
+	(MonoType.FullName): Don't include the type arguments.
+	(MonoType.ToString): Include them here.
+
+	* Environment.cs: Bumped mono_corlib_version to 24.
+
 2004-08-16  Duncan Mak  <duncan@ximian.com>
 
 	* AttributeUsageAttribute.cs: Change the AttributeUsage to

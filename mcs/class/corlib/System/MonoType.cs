@@ -442,12 +442,12 @@ namespace System
 
 		public override string AssemblyQualifiedName {
 			get {
-				return getFullName () + ", " + Assembly.GetName ().ToString ();
+				return getFullName (false) + ", " + Assembly.GetName ().ToString ();
 			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern string getFullName();
+		private extern string getFullName(bool full_name);
 
 		public extern override Type BaseType {
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -456,7 +456,7 @@ namespace System
 
 		public override string FullName {
 			get {
-				return getFullName ();
+				return getFullName (false);
 			}
 		}
 
@@ -533,6 +533,11 @@ namespace System
 		public void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			UnitySerializationHolder.GetTypeData (this, info, context);
+		}
+
+		public override string ToString()
+		{
+			return getFullName (true);
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
