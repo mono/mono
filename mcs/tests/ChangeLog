@@ -1,5 +1,11 @@
 2002-09-09  Martin Baulig  <martin@gnome.org>
 
+	* makefile: Reverted Ravi's `Update'.  When moving tests from
+	TESTS_NOPASS to TEST_SOURCES, please make sure that they actually
+	pass on both platforms and don't do it without a ChangeLog entry.
+
+2002-09-09  Martin Baulig  <martin@gnome.org>
+
 	* test-165.cs: Added testcase for bug #30040.
 
 2002-09-09  Martin Baulig  <martin@gnome.org>
