@@ -1,3 +1,8 @@
+2002-12-11  Jeroen Janssen <japj@darius.demon.nl>
+	
+	* enabled building Mono.Directory.LDAP and
+	  System.Design in .build file
+
 2002-12-10  Jeroen Janssen <japj@darius.demon.nl>
 	
 	* updated .build file(s) to correctly contain required buildfile 

@@ -24,20 +24,15 @@
 		<nant basedir="Mono.Data.MySql" target="build" buildfile="Mono.Data.MySql/Mono.Data.MySql.build"/>
 		<nant basedir="Mono.Data.PostgreSqlClient" target="build" buildfile="Mono.Data.PostgreSqlClient/Mono.Data.PostgreSqlClient.build"/>
 		<nant basedir="Mono.Data.SqliteClient" target="build" buildfile="Mono.Data.SqliteClient/Mono.Data.SqliteClient.build"/>	
-		<nant basedir="Mono.Data.SybaseClient" target="build" buildfile="Mono.Data.SybaseClient/Mono.Data.SybaseClient.build"/>
-		
+		<nant basedir="Mono.Data.SybaseClient" target="build" buildfile="Mono.Data.SybaseClient/Mono.Data.SybaseClient.build"/>	
 		<nant basedir="Mono.Data.TdsClient" target="build" buildfile="Mono.Data.TdsClient/Mono.Data.TdsClient.build"/>
-		<!-- TODO: LDAP doesn't compile with csc yet
 		<nant basedir="Mono.Directory.LDAP" target="build" buildfile="Mono.Directory.LDAP/Mono.Directory.LDAP.build"/> 
-		-->
 		<nant basedir="Mono.GetOptions" target="build" buildfile="Mono.GetOptions/Mono.GetOptions.build"/>
 		<nant basedir="Mono.PEToolkit" target="build" buildfile="Mono.PEToolkit/PEToolkit.build"/>
 		<nant basedir="System" target="build" buildfile="System/System.build"/>
 		<nant basedir="System.Configuration.Install" target="build" buildfile="System.Configuration.Install/System.Configuration.Install.build"/>
 		<nant basedir="System.Data.OracleClient" target="build" buildfile="System.Data.OracleClient/System.Data.OracleClient.build"/>
-		<!-- TODO: System.Design doesn't build yet on csc
 		<nant basedir="System.Design" target="build" buildfile="System.Design/System.Design.build"/>
-		-->
 		<nant basedir="System.Drawing" target="build" buildfile="System.Drawing/System.Drawing.build"/>
 		<nant basedir="System.EnterpriseServices" target="build" buildfile="System.EnterpriseServices/System.EnterpriseServices.build"/>
 		<nant basedir="System.Runtime.Remoting" target="build" buildfile="System.Runtime.Remoting/System.Runtime.Remoting.build"/>
