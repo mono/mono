@@ -29,9 +29,13 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.59 $
+// $Revision: 1.60 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.60  2004/09/10 22:54:52  pbartok
+// - Implemented remaining missing public instance properties
+// - Alphabetized some out of order properties
+//
 // Revision 1.59  2004/09/06 12:55:07  jordi
 // Caches ClientRectangle rectangle value
 //
@@ -277,7 +281,9 @@ namespace System.Windows.Forms
 		internal bool			is_entered;		// is the mouse inside the control?
 		internal bool			is_enabled;		// true if control is enabled (usable/not grayed out)
 		internal bool			is_selected;		// true if control is selected
+		internal bool			is_accessible;		// true if the control is visible to accessibility applications
 		internal bool			is_captured;		// tracks if the control has captured the mouse
+		internal bool			is_recreating;		// tracks if the handle for the control is being recreated
 		internal bool			causes_validation;	// tracks if validation is executed on changes
 		internal int			tab_index;		// position in tab order of siblings
 		internal bool			tab_stop = true;	// is the control a tab stop?
@@ -287,6 +293,7 @@ namespace System.Windows.Forms
 		internal ControlStyles		control_style;		// rather win32-specific, style bits for control
 		internal ImeMode		ime_mode = ImeMode.Inherit;
 		internal bool			layout_pending;		// true if our parent needs to re-layout us
+		internal object			control_tag;		// object that contains data about our control
 
 		// Visuals
 		internal Color			foreground_color;	// foreground color for control
@@ -710,6 +717,7 @@ namespace System.Windows.Forms
 		}
 
 		protected override void Dispose(bool disposing) {
+			is_disposed = true;
 			if (dc_mem!=null) {
 				dc_mem.Dispose();
 				dc_mem=null;
@@ -721,7 +729,6 @@ namespace System.Windows.Forms
 			}
 
 			DestroyHandle();
-			is_disposed=true;
 		}
 		#endregion 	// Public Constructors
 
@@ -1100,7 +1107,7 @@ namespace System.Windows.Forms
 
 		public bool Disposing {
 			get {
-				throw new NotImplementedException();
+				return is_disposed;
 			}
 		}
 
@@ -1134,7 +1141,8 @@ namespace System.Windows.Forms
 					return;
 				}
 
-				is_enabled = value;	
+				is_enabled = value;
+				Refresh();
 				OnEnabledChanged (EventArgs.Empty);				
 			}
 		}
@@ -1164,8 +1172,8 @@ namespace System.Windows.Forms
 				}
 
 				font = value;	
-				OnFontChanged (EventArgs.Empty);				
 				Refresh();
+				OnFontChanged (EventArgs.Empty);				
 			}
 		}
 
@@ -1186,6 +1194,63 @@ namespace System.Windows.Forms
 			}
 		}
 
+		public IntPtr Handle {							// IWin32Window
+			get {
+				if (!IsHandleCreated) {
+					CreateHandle();
+				}
+				return window.Handle;
+			}
+		}
+
+		public bool HasChildren {
+			get {
+				if (this.child_controls.Count>0) {
+					return true;
+				}
+				return false;
+			}
+		}
+
+		public int Height {
+			get {
+				return this.bounds.Height;
+			}
+
+			set {
+				SetBoundsCore(bounds.X, bounds.Y, bounds.Width, value, BoundsSpecified.Height);
+			}
+		}
+
+		public ImeMode ImeMode {
+			get {
+				return ime_mode;
+			}
+
+			set {
+				ime_mode = value;
+			}
+		}
+
+		public bool InvokeRequired {						// ISynchronizeInvoke
+			get {
+				if (creator_thread!=Thread.CurrentThread) {
+					return true;
+				}
+				return false;
+			}
+		}
+
+		public bool IsAccessible {
+			get {
+				return is_accessible;
+			}
+
+			set {
+				is_accessible = value;
+			}
+		}
+
 		public bool IsDisposed {
 			get {
 				return this.is_disposed;
@@ -1199,6 +1264,26 @@ namespace System.Windows.Forms
 				}
 
 				return false;
+			}
+		}
+
+		public int Left {
+			get {
+				return this.bounds.X;
+			}
+
+			set {
+				SetBoundsCore(value, bounds.Y, bounds.Width, bounds.Height, BoundsSpecified.X);
+			}
+		}
+
+		public Point Location {
+			get {
+				return new Point(bounds.X, bounds.Y);
+			}
+
+			set {
+				SetBoundsCore(value.X, value.Y, bounds.Width, bounds.Height, BoundsSpecified.Location);
 			}
 		}
 
@@ -1236,36 +1321,108 @@ namespace System.Windows.Forms
 			}
 		}
 
-
-		public IntPtr Handle {							// IWin32Window
-			get 
-			{
-				if (!IsHandleCreated) {
-					CreateHandle();
-				}
-				return window.Handle;
+		public string ProductName {
+			get {
+				return "Novell Mono .NET Framework";
 			}
 		}
 
-		public bool InvokeRequired {						// ISynchronizeInvoke
+		public string ProductVersion {
 			get {
-				if (creator_thread!=Thread.CurrentThread) {
-					return true;
-				}
-				return false;
+				return "1.1.4322.573";
 			}
 		}
 
-		public bool Visible {
+		public bool RecreatingHandle {
 			get {
-				return this.is_visible;
+				return is_recreating;
+			}
+		}
+
+		public Region Region {
+			get {
+				return new Region(this.bounds);
 			}
 
 			set {
-				if (value!=is_visible) {
-					is_visible=value;
-					XplatUI.SetVisible(Handle, value);
+				Graphics	g;
+				RectangleF	r;
+
+				g = Graphics.FromHwnd(this.window.Handle);
+				r = value.GetBounds(g);
+
+				SetBounds((int)r.X, (int)r.Y, (int)r.Width, (int)r.Height);
+
+				g.Dispose();
+			}
+		}
+
+		public int Right {
+			get {
+				return this.bounds.X+this.bounds.Width;
+			}
+		}
+
+		public virtual RightToLeft RightToLeft {
+			get {
+				return right_to_left;
+			}
+
+			set {
+				if (value != right_to_left) {
+					right_to_left = value;
+					OnRightToLeftChanged(EventArgs.Empty);
 				}
+			}
+		}
+
+		public override ISite Site {
+			get {
+				return base.Site;
+			}
+
+			set {
+				base.Site = value;
+			}
+		}
+
+		public Size Size {
+			get {
+				return new Size(Width, Height);
+			}
+
+			set {
+				SetBoundsCore(bounds.X, bounds.Y, value.Width, value.Height, BoundsSpecified.Size);
+			}
+		}
+
+		public int TabIndex {
+			get {
+				return tab_index;
+			}
+
+			set {
+				tab_index = value;
+			}
+		}
+
+		public bool TabStop {
+			get {
+				return tab_stop;
+			}
+
+			set {
+				tab_stop = value;
+			}
+		}
+
+		public object Tag {
+			get {
+				return control_tag;
+			}
+
+			set {
+				control_tag = value;
 			}
 		}
 
@@ -1278,18 +1435,9 @@ namespace System.Windows.Forms
 				if (text!=value) {
 					text=value;
 					XplatUI.Text(Handle, text);
+					// FIXME: Do we need a Refresh() here?
 					OnTextChanged (EventArgs.Empty);
 				}
-			}
-		}
-
-		public int Left {
-			get {
-				return this.bounds.X;
-			}
-
-			set {
-				SetBoundsCore(value, bounds.Y, bounds.Width, bounds.Height, BoundsSpecified.X);
 			}
 		}
 
@@ -1315,6 +1463,19 @@ namespace System.Windows.Forms
 			}
 		}
 
+		public bool Visible {
+			get {
+				return this.is_visible;
+			}
+
+			set {
+				if (value!=is_visible) {
+					is_visible=value;
+					XplatUI.SetVisible(Handle, value);
+				}
+			}
+		}
+
 		public int Width {
 			get {
 				return this.bounds.Width;
@@ -1325,72 +1486,13 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public int Height {
+		public IWindowTarget WindowTarget {
 			get {
-				return this.bounds.Height;
+				return null;
 			}
 
 			set {
-				SetBoundsCore(bounds.X, bounds.Y, bounds.Width, value, BoundsSpecified.Height);
-			}
-		}
-
-		public Point Location {
-			get {
-				return new Point(bounds.X, bounds.Y);
-			}
-
-			set {
-				SetBoundsCore(value.X, value.Y, bounds.Width, bounds.Height, BoundsSpecified.Location);
-			}
-		}
-
-		public Size Size {
-			get {
-				return new Size(Width, Height);
-			}
-
-			set {
-				SetBoundsCore(bounds.X, bounds.Y, value.Width, value.Height, BoundsSpecified.Size);
-			}
-		}
-
-		public int Right {
-			get {
-				return this.bounds.X+this.bounds.Width;
-			}
-		}
-
-		public virtual RightToLeft RightToLeft {
-			get {
-				return right_to_left;
-			}
-
-			set {
-				if (value != right_to_left) {
-					right_to_left = value;
-					OnRightToLeftChanged(EventArgs.Empty);
-				}
-			}
-		}
-
-		public ImeMode ImeMode {
-			get { return ime_mode; }
-			set { ime_mode = value; }
-		}
-
-		public bool TabStop {
-			get { return tab_stop; }
-			set { tab_stop = value; }
-		}
-
-		public int TabIndex {
-			get {
-				return tab_index;
-			}
-
-			set {
-				tab_index = value;
+				;
 			}
 		}
 		#endregion	// Public Instance Properties
@@ -2133,6 +2235,8 @@ namespace System.Windows.Forms
 		protected void RecreateHandle() {
 			IEnumerator child = child_controls.GetEnumerator();
 
+			is_recreating=true;
+
 			if (IsHandleCreated) {
 				DestroyHandle();
 				CreateHandle();
@@ -2142,7 +2246,11 @@ namespace System.Windows.Forms
 				while (child.MoveNext()) {
 					((Control)child.Current).RecreateHandle();
 				}
+			} else {
+				CreateHandle();
 			}
+
+			is_recreating = false;
 		}
 
 		protected virtual void ScaleCore(float dx, float dy) {
