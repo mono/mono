@@ -1,5 +1,9 @@
 2004-08-26  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* corlib.dll.sources: Added System.Security.Policy/
+	ApplicationSecurityManager.cs, ApplicationSecurityManagerCodeGroup.cs,
+	ApplicationTrustCollection.cs and ApplicationTrustEnumerator.cs for 
+	NET_2_0 profile.
 	* corlib_test.dll.sources: Added System.Security.Policy/
 	ApplicationDirectoryTest.cs, HashMembershipConditionTest.cs,
 	HashTest.cs and IBuiltInEvidenceTest.cs to unit tests.

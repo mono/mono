@@ -1001,7 +1001,11 @@ System.Security.Policy/ApplicationDirectoryMembershipCondition.cs
 System.Security.Policy/ApplicationInstallScope.cs
 System.Security.Policy/ApplicationMembershipCondition.cs
 System.Security.Policy/ApplicationSecurityInfo.cs
+System.Security.Policy/ApplicationSecurityManager.cs
+System.Security.Policy/ApplicationSecurityManagerCodeGroup.cs
 System.Security.Policy/ApplicationTrust.cs
+System.Security.Policy/ApplicationTrustCollection.cs
+System.Security.Policy/ApplicationTrustEnumerator.cs
 System.Security.Policy/ApplicationVersionMatch.cs
 System.Security.Policy/CodeConnectAccess.cs
 System.Security.Policy/CodeGroup.cs
