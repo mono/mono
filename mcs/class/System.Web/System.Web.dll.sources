@@ -180,12 +180,14 @@ System.Web.UI/DataBindingHandlerAttribute.cs
 System.Web.UI/DataBoundLiteralControl.cs
 System.Web.UI/DesignTimeParseData.cs
 System.Web.UI/EmptyControlCollection.cs
+System.Web.UI/HtmlControlPersistableAttribute.cs
 System.Web.UI/HtmlTextWriter.cs
 System.Web.UI/HtmlTextWriterAttribute.cs
 System.Web.UI/HtmlTextWriterStyle.cs
 System.Web.UI/HtmlTextWriterTag.cs
 System.Web.UI/IAttributeAccessor.cs
 System.Web.UI/IDataBindingsAccessor.cs
+System.Web.UI/IgnoreUnknownContentAttribute.cs
 System.Web.UI/INamingContainer.cs
 System.Web.UI/IParserAccessor.cs
 System.Web.UI/IPostBackDataHandler.cs
