@@ -268,11 +268,12 @@ namespace Mono.Data.Tds.Protocol {
 		private string FormatParameter (TdsMetaParameter parameter)
 		{
 			if (parameter.Direction == TdsParameterDirection.Output)
-				return String.Format ("{0} output", parameter.ParameterName);
+				return String.Format ("{0}={0} output", parameter.ParameterName);
 
 			if (parameter.Value == null)
-				return "NULL";
+				return parameter.ParameterName + "=NULL";
 
+			string value = null;
 			switch (parameter.TypeName) {
 			case "bigint":
 			case "decimal":
@@ -283,23 +284,33 @@ namespace Mono.Data.Tds.Protocol {
 			case "smallint":
 			case "smallmoney":
 			case "tinyint":
-				return parameter.Value.ToString ();
+				value = parameter.Value.ToString ();
+				break;
 			case "nvarchar":
 			case "nchar":
-				return String.Format ("N'{0}'", parameter.Value.ToString ().Replace ("'", "''"));
+				value = String.Format ("N'{0}'", parameter.Value.ToString ().Replace ("'", "''"));
+				break;
 			case "uniqueidentifier":
-				return String.Format ("0x{0}", ((Guid) parameter.Value).ToString ("N"));
+				value = String.Format ("0x{0}", ((Guid) parameter.Value).ToString ("N"));
+				break;
 			case "bit":
 				if (parameter.Value.GetType () == typeof (bool))
-					return (((bool) parameter.Value) ? "0x1" : "0x0");
-				return parameter.Value.ToString ();
+					value = (((bool) parameter.Value) ? "0x1" : "0x0");
+				else
+					value = parameter.Value.ToString ();
+
+				break;
 			case "image":
 			case "binary":
 			case "varbinary":
-				return String.Format ("0x{0}", BitConverter.ToString ((byte[]) parameter.Value).Replace ("-", "").ToLower ());
+				value = String.Format ("0x{0}", BitConverter.ToString ((byte[]) parameter.Value).Replace ("-", "").ToLower ());
+				break;
 			default:
-				return String.Format ("'{0}'", parameter.Value.ToString ().Replace ("'", "''"));
+				value = String.Format ("'{0}'", parameter.Value.ToString ().Replace ("'", "''"));
+				break;
 			}
+
+			return parameter.ParameterName + "=" + value;
 		}
 
 		public override string Prepare (string commandText, TdsMetaParameterCollection parameters)

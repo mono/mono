@@ -1,3 +1,10 @@
+2003-01-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Tds70.cs:
+	(FormatParameter): send input/output parameter names. This way we don't
+	depend on the parameter position being different of the index in the
+	parameter collection.
+
 2002-12-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Tds.cs:
