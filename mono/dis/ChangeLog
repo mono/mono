@@ -1,5 +1,11 @@
-2001-07-04  Miguel de Icaza  <miguel@ximian.com>
+Fri Jul  6 19:49:21 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
+	* dump.c,dump.h: implement dump_table_property().
+	* main.c: implement local variable info disassembling.
+	Annotate entrypoint method. Remove memory leak in 
+	parse_method_signature ().
+
+2001-07-04  Miguel de Icaza  <miguel@ximian.com>
 	
 	* get.c (get_methodref_signature): Implement.
 
