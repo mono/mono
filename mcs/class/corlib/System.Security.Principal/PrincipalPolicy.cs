@@ -9,7 +9,7 @@
 
 namespace System.Security.Principal {
 
-	enum PrincipalPolicy {
+	public enum PrincipalPolicy {
 		UnauthenticatedPrincipal,
 		NoPrincipal,
 		WindowsPrincipal
