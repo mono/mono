@@ -1,3 +1,11 @@
+//
+// verifier.cs: compares two assemblies and reports differences.
+//
+// Author:
+//   Sergey (serge@wildwestsoftware.com)
+//
+// (C) Sergey (serge@wildwestsoftware.com)
+//
 using System;
 using System.IO;
 using System.Collections;
