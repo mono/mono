@@ -85,7 +85,7 @@ namespace Mono.Xml.Xsl
 			openElement = false;
 
 			if (outputEncoding != null && elementNameStack.Count > 0) {
-				string name = ((string) elementNameStack.Peek ()).ToUpper ();
+				string name = ((string) elementNameStack.Peek ()).ToUpper (CultureInfo.InvariantCulture);
 				switch (name) {
 				case "HEAD":
 					WriteStartElement (String.Empty, "META", String.Empty);
@@ -108,7 +108,7 @@ namespace Mono.Xml.Xsl
 		{
 			if (!indent)
 				return;
-			switch (elementName.ToUpper ()) {
+			switch (elementName.ToUpper (CultureInfo.InvariantCulture)) {
 			case "ADDRESS":
 			case "APPLET":
 			case "BDO":
@@ -179,7 +179,7 @@ namespace Mono.Xml.Xsl
 		private bool IsHtmlElement (string localName)
 		{
 			// see http://www.w3.org/TR/html401/index/elements.html
-			switch (localName.ToUpper ()) {
+			switch (localName.ToUpper (CultureInfo.InvariantCulture)) {
 			case "A": case "ABBR": case "ACRONYM":
 			case "ADDRESS": case "APPLET": case "AREA":
 			case "B": case "BASE": case "BASEFONT": case "BDO": case "BIG": 
@@ -221,7 +221,7 @@ namespace Mono.Xml.Xsl
 		public override void WriteFullEndElement ()
 		{
 			string element = elementNameStack.Peek () as string;
-			switch (element.ToUpper ()) {
+			switch (element.ToUpper (CultureInfo.InvariantCulture)) {
 			case "AREA":
 			case "BASE":
 			case "BASEFONT":
@@ -270,7 +270,7 @@ namespace Mono.Xml.Xsl
 				return;
 			}
 
-			string attribute = localName.ToUpper ();
+			string attribute = localName.ToUpper (CultureInfo.InvariantCulture);
 			writer.Write (' ');
 			writer.Write (localName);
 
@@ -324,21 +324,21 @@ namespace Mono.Xml.Xsl
 				string attr = localName.ToLower (CultureInfo.InvariantCulture);
 				foreach (string a in attrNames) {
 					if (a == attr) {
-						value = UriEx.EscapeUri (value);
+						value = HtmlUriEscape.EscapeUri (value);
 						break;
 					}
 				}
 			}
 			else if (attrName != null && attrName == localName.ToLower (CultureInfo.InvariantCulture))
-				value = UriEx.EscapeUri (value);
+				value = HtmlUriEscape.EscapeUri (value);
 			WriteFormattedString (value);
 			openAttribute = false;
 			writer.Write ('\"');
 		}
 
-		class UriEx : Uri
+		class HtmlUriEscape : Uri
 		{
-			private UriEx () : base ("urn:foo") {}
+			private HtmlUriEscape () : base ("urn:foo") {}
 
 			public static string EscapeUri (string input)
 			{
@@ -358,7 +358,7 @@ namespace Mono.Xml.Xsl
 						preserve = true;
 						break;
 					default:
-						preserve = UriEx.IsExcludedCharacter (c);
+						preserve = HtmlUriEscape.IsExcludedCharacter (c);
 						break;
 					}
 					if (preserve) {
@@ -415,7 +415,7 @@ namespace Mono.Xml.Xsl
 		{
 			// style and script should not be escaped.
 			if (!openAttribute) {
-				string element = ((string) elementNameStack.Peek ()).ToUpper ();
+				string element = ((string) elementNameStack.Peek ()).ToUpper (CultureInfo.InvariantCulture);
 				switch (element) {
 				case "SCRIPT":
 				case "STYLE":

@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
@@ -247,7 +248,7 @@ namespace Mono.Xml.Xsl {
 				string pri = c.GetAttribute ("priority");
 				if (pri != null) {
 					try {
-						this.priority = double.Parse (pri);
+						this.priority = double.Parse (pri, CultureInfo.InvariantCulture);
 					} catch (FormatException ex) {
 						throw new XsltException ("Invalid priority number format.", ex, c.Input);
 					}

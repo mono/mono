@@ -9,6 +9,7 @@
 //
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Xml;
@@ -205,7 +206,7 @@ namespace Mono.Xml.Xsl
 			if (o is XPathNodeIterator)
 				return GetDocument ((iter.NamespaceManager as XsltCompiledContext), (XPathNodeIterator)o, baseUri);
 			else
-				return GetDocument ((iter.NamespaceManager as XsltCompiledContext), o.ToString (), baseUri);
+				return GetDocument ((iter.NamespaceManager as XsltCompiledContext), o is IFormattable ? ((IFormattable) o).ToString (null, CultureInfo.InvariantCulture) : o.ToString (), baseUri);
 		}
 		
 		static string VoidBaseUriFlag = "&^)(*&%*^$&$VOID!BASE!URI!";

@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
@@ -27,7 +28,7 @@ namespace Mono.Xml.Xsl {
 					case XPathNodeType.Element:
 						output = string.Format("<{0}:{1}", context.Prefix, context.LocalName);
 						for (bool attr = context.MoveToFirstAttribute(); attr; attr = context.MoveToNextAttribute()) {
-							output += string.Format(" {0}:{1}={2}", context.Prefix, context.LocalName, context.Value);
+							output += string.Format(CultureInfo.InvariantCulture, " {0}:{1}={2}", context.Prefix, context.LocalName, context.Value);
 						}
 						 output += ">";
 						break;

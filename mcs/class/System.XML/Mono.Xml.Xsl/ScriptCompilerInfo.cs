@@ -52,7 +52,6 @@ namespace Mono.Xml.Xsl
 		}
 
 
-#if true // Use CodeDom
 		public virtual Type GetScriptClass (string code, string classSuffix, XPathNavigator scriptNode, Evidence evidence)
 		{
 			PermissionSet ps = SecurityManager.ResolvePolicy (evidence);
@@ -77,7 +76,7 @@ namespace Mono.Xml.Xsl
 			IXmlLineInfo li = scriptNode as IXmlLineInfo;
 			string lineInfoLine = 
 				li != null && li.LineNumber > 0 ?
-				"\n#line " + li.LineNumber + " \"" + filename + "\"" :
+				String.Format (CultureInfo.InvariantCulture, "\n#line {0} \"{1}\"", li.LineNumber, filename) :
 				String.Empty;
 
 			string source = SourceTemplate.Replace ("{0}", DateTime.Now.ToString ()).Replace ("{1}", classSuffix).Replace ("{2}", lineInfoLine + code);
@@ -89,56 +88,6 @@ namespace Mono.Xml.Xsl
 				throw new XsltCompileException ("Cannot compile stylesheet script", null, scriptNode);
 			return res.CompiledAssembly.GetType ("GeneratedAssembly.Script" + classSuffix);
 		}
-#else // obsolete code - uses external process
-		[MonoTODO ("Should use Assembly.LoadFile() instead of LoadFrom() after its implementation has finished.")]
-		public virtual Type GetScriptClass (string code, string classSuffix, XPathNavigator scriptNode, Evidence evidence)
-		{
-			string tmpPath = Path.GetTempPath ();
-			if (!tmpPath.EndsWith (Path.DirectorySeparatorChar.ToString ()))
-				tmpPath += Path.DirectorySeparatorChar;
-			string tmpbase = tmpPath + Guid.NewGuid ();
-			ProcessStartInfo psi = new ProcessStartInfo ();
-			psi.UseShellExecute = false;
-			psi.RedirectStandardError = true;
-			psi.RedirectStandardOutput = true;
-			Process proc = new Process ();
-			proc.StartInfo = psi;
-			StreamWriter sw = null;
-			try {
-				PermissionSet ps = SecurityManager.ResolvePolicy (evidence);
-				if (ps != null)
-					ps.Demand ();
-				sw = File.CreateText (tmpbase + Extension);
-				IXmlLineInfo li = scriptNode as IXmlLineInfo;
-				string lineInfoLine = li != null ? "\n#line " + li.LineNumber + " \"" + scriptNode.BaseURI + "\"\n" : String.Empty;
-				sw.WriteLine (SourceTemplate.Replace ("{0}", DateTime.Now.ToString ()).Replace ("{1}", classSuffix).Replace ("{2}", lineInfoLine + code));
-
-				sw.Close ();
-				psi.FileName = CompilerCommand;
-				psi.Arguments = String.Concat (GetCompilerArguments (tmpbase + Extension));
-				psi.WorkingDirectory = tmpPath;
-				proc.Start ();
-//				Console.WriteLine (proc.StandardOutput.ReadToEnd ());
-//				Console.WriteLine (proc.StandardError.ReadToEnd ());
-				proc.WaitForExit (); // should we configure timeout?
-				Assembly generated = Assembly.LoadFrom (tmpbase + ".dll");
-
-				if (generated == null)
-					throw new XsltCompileException ("Could not load script assembly", null, scriptNode);
-				return generated.GetType ("GeneratedAssembly.Script" + classSuffix);
-			} catch (Exception ex) {
-				throw new XsltCompileException ("Script compilation error: " + ex.Message, ex, scriptNode);
-			} finally {
-				try {
-					File.Delete (tmpbase + Extension);
-					File.Delete (tmpbase + ".dll");
-					if (sw != null)
-						sw.Close ();
-				} catch (Exception) {
-				}
-			}
-		}
-#endif
 
 		private string FormatErrorMessage (CompilerResults res)
 		{

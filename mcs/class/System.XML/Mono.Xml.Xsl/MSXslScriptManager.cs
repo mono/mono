@@ -22,7 +22,7 @@ using System.Xml.Xsl;
 
 namespace Mono.Xml.Xsl {
 
-	[MonoTODO ("Correct evedence handling; test other than simple string case")]
+	[MonoTODO ("Correct evidence handling; test other than simple string case")]
 	internal class MSXslScriptManager {
 		Hashtable scripts = new Hashtable ();
 		Evidence evidence;
@@ -64,7 +64,7 @@ namespace Mono.Xml.Xsl {
 			{
 				node = nav.Clone ();
 				this.evidence = evidence;
-				this.suffix = suffix.ToString ();
+				this.suffix = suffix.ToString (CultureInfo.InvariantCulture);
 				code = nav.Value;
 				if (nav.MoveToFirstAttribute ()) {
 					do {

@@ -1,3 +1,9 @@
+2004-06-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Debug.cs, HtmlEmitter.cs, MSXslScriptManager.cs,
+	  ScriptCompilerInfo.cs, XslFunctions.cs, XslTemplate.cs
+	  : Globalization. Removed unused code.
+
 2004-06-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslKey.cs : Key-value search in absolute path search was 
