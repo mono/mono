@@ -1,6 +1,10 @@
 2003-08-26  Martin Baulig  <martin@ximian.com>
 
-	* verify-7.cs: New test buf bug #47681.
+	* test-215.cs: New test for bug #47927.
+
+2003-08-26  Martin Baulig  <martin@ximian.com>
+
+	* verify-7.cs: New test for bug #47681.
 
 2003-08-26  Martin Baulig  <martin@ximian.com>
 
