@@ -1,3 +1,7 @@
+2004-11-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeTest.cs: Add regression test for #69787.
+
 2004-11-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeTest.cs: Make property accessor test #if NET_2_0.
