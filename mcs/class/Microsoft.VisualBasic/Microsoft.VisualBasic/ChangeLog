@@ -1,3 +1,8 @@
+2004-07-22  Jambunathan K  <kjambunathan@novell.com>
+
+	* Constants.cs : Fixed the vbCr, vbLf, vbCrLf and vbNewLine
+	strings
+
 2004-06-24  Jambunathan K  <kjambunathan@novell.com>
 	* RandomVBFile.cs: Fixed FileGet() for Date and Decimal types
 	* FileSystem.cs: Fixed ChDir, FileCopy

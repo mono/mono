@@ -38,10 +38,10 @@ namespace Microsoft.VisualBasic {
 	sealed public class Constants {
 		// Declarations
 		public const System.Int32 vbObjectError = (System.Int32)(-2147221504);
-		public const System.String vbCrLf = "\n\r";
-		public const System.String vbNewLine = "\n\r";
-		public const System.String vbCr = "\n";
-		public const System.String vbLf = "\r";
+		public const System.String vbCrLf = "\r\n";
+		public const System.String vbNewLine = "\r\n";
+		public const System.String vbCr = "\r";
+		public const System.String vbLf = "\n";
 		public const System.String vbBack = "\b";
 		public const System.String vbFormFeed = "\f";
 		public const System.String vbTab = "\t";
