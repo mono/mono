@@ -137,7 +137,15 @@ namespace System.Windows.Forms {
 		}
 		
 		
-		
+		[MonoTODO]
+		public ImageList ImageList {
+			get {
+				throw new NotImplementedException ();
+			}
+			set{
+				//fixme:
+			}
+		}		
 		
 		// --- CheckBox methods ---
 
@@ -280,6 +288,9 @@ namespace System.Windows.Forms {
 		public event EventHandler CheckStateChanged;
 		
 		/// --- public class CheckBox.CheckBoxAccessibleObject : ButtonBase.ButtonBaseAccessibleObject ---
-		/// the class is not stubbed, cause it's only used for .NET framework
+		/// the class is only used for .NET framework
+		/// 
+		public class ButtonBaseAccessibleObject {
+		}
 	}
 }

@@ -3285,7 +3285,7 @@ namespace System.Windows.Forms {
     		/// Provides information about a control that can be used by an accessibility application.
     		/// </summary>
     		public class ControlAccessibleObject : AccessibleObject {
-.    			/// --- ControlAccessibleObject.constructor ---
+    			/// --- ControlAccessibleObject.constructor ---
     			[MonoTODO]
     			public ControlAccessibleObject (Control ownerControl) 
     			{

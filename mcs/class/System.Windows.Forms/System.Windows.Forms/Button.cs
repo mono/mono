@@ -54,15 +54,6 @@ namespace System.Windows.Forms {
 				return createParams;
 			}
 		}
-
-		[MonoTODO]
-		public ImageList ImageList {
-			get { 
-    				throw new NotImplementedException ();			}
-			set{
-				//FixMe
-			}
-		}
 		
 		// --- IButtonControl property ---
 		public virtual DialogResult DialogResult {

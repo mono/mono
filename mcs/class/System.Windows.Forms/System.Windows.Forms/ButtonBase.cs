@@ -88,7 +88,16 @@ namespace System.Windows.Forms {
 				Invalidate();
 			}
 		}
-		
+			[MonoTODO]
+		public ImageList ImageList {
+			get {
+				throw new NotImplementedException ();
+			}
+			set{
+				//fixme:
+			}
+		}
+
 		public ContentAlignment ImageAlign {
 			get { return imageAlign; }
 			set { 
@@ -287,6 +296,9 @@ namespace System.Windows.Forms {
 
 
 		/// --- ButtonBase.ButtonBaseAccessibleObject ---
-		/// the class is not stubbed, cause it's only used for .NET framework
+		/// the class isonly used for .NET framework
+		/// 
+		public class ButtonBaseAccessibleObject : AccessibleObject{
+		}
 	}
 }
