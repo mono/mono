@@ -200,6 +200,16 @@ public class Int32Test : TestCase
 			Assert(typeof(FormatException) == e.GetType());
 		}
 	}
+
+	public void TestCustomToString()
+	{
+		// culture sensitive?
+
+		int i = 123;
+
+		Assert ("Custom format string 00000", i.ToString ("00000") == "00123");
+		Assert ("Custom format string ####", i.ToString ("####") == "123");
+	}
 }
 
 }
