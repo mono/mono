@@ -1,3 +1,8 @@
+2004-05-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BinaryReader.cs: Added missing disposed check for most methods. 
+	Reordered some exceptions to match MS implementation.
+
 2004-05-27  Dick Porter  <dick@ximian.com>
 
 	* FileSystemInfo.cs: Take out the error checking in Refresh(), it

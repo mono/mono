@@ -62,10 +62,12 @@ namespace System.IO {
 			Dispose (true);
 		}
 
-		protected virtual void FillBuffer(int bytes) {
-			if(m_stream==null) {
+		protected virtual void FillBuffer (int bytes)
+		{
+			if (m_disposed)
+				throw new ObjectDisposedException ("BinaryReader", "Cannot read from a closed BinaryReader.");
+			if (m_stream==null)
 				throw new IOException("Stream is invalid");
-			}
 			
 			CheckBuffer(bytes);
 
@@ -96,7 +98,7 @@ namespace System.IO {
 				return -1;
 			}
 
-            char[] result = new char[1];
+			char[] result = new char[1];
 			byte[] bytes;
 			int bcount;
 
@@ -139,14 +141,14 @@ namespace System.IO {
 			if (buffer == null) {
 				throw new ArgumentNullException("buffer is null");
 			}
-			if (buffer.Length - index < count) {
-				throw new ArgumentException("buffer is too small");
-			}
 			if (index < 0) {
 				throw new ArgumentOutOfRangeException("index is less than 0");
 			}
 			if (count < 0) {
 				throw new ArgumentOutOfRangeException("count is less than 0");
+			}
+			if (buffer.Length - index < count) {
+				throw new ArgumentException("buffer is too small");
 			}
 
 			int bytes_read=m_stream.Read(buffer, index, count);
@@ -167,14 +169,14 @@ namespace System.IO {
 			if (buffer == null) {
 				throw new ArgumentNullException("buffer is null");
 			}
-			if (buffer.Length - index < count) {
-				throw new ArgumentException("buffer is too small");
-			}
 			if (index < 0) {
 				throw new ArgumentOutOfRangeException("index is less than 0");
 			}
 			if (count < 0) {
 				throw new ArgumentOutOfRangeException("count is less than 0");
+			}
+			if (buffer.Length - index < count) {
+				throw new ArgumentException("buffer is too small");
 			}
 
 			int bytes_read;
