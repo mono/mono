@@ -4145,7 +4145,7 @@ namespace Mono.CSharp {
 				
 				args = TypeManager.GetArgumentTypes (mi);
 				if (args != null && args.Length == 0){
-					if (mi.ReturnType == TypeManager.bool_type)
+					if (TypeManager.TypeToCoreType (mi.ReturnType) == TypeManager.bool_type)
 						return mi;
 				}
 			}
@@ -4229,7 +4229,7 @@ namespace Mono.CSharp {
 		{
 			if (m == null)
 				return false;
-			
+
 			if (!(m is MethodInfo))
 				return false;
 			
@@ -4262,7 +4262,7 @@ namespace Mono.CSharp {
 			// Ok, we can access it, now make sure that we can do something
 			// with this `GetEnumerator'
 			//
-			
+
 			Type return_type = mi.ReturnType;
 			if (mi.ReturnType == TypeManager.ienumerator_type ||
 			    TypeManager.ienumerator_type.IsAssignableFrom (return_type) ||
