@@ -93,9 +93,20 @@ Hello!
 	New providers are available in this release.  The relentless
 	System.Data team (Brian, Dan, Rodrigo, Tim and Ville) are
 	hacking non-stop on the databse code.  Improving existing
-	providers, and also providing new ones: Oracle, MS SQL, ODBC
-	and Sybase are the big names on this release.  Many regression
-	tests have been added as well.
+	providers, and new providers.  
+
+	The new providers on this release:
+
+		* Oracle
+		* MS SQL 
+		* ODBC
+		* Sybase
+		* Sqlite (for embedded use).
+
+	Many regression tests have been added as well (Ville has been
+	doing a great job here).
+
+	Stuart Caborn contributed Writing XML from a DataSet.
 
 * System.XML:
 
