@@ -33,16 +33,16 @@ using System.Configuration.Provider;
 
 namespace System.Web.Security {
 	public class MembershipProviderCollection : ProviderCollection {
-		public override void Add (IProvider provider)
+		public override void Add (ProviderBase provider)
 		{
-			if (provider is IMembershipProvider)
+			if (provider is MembershipProvider)
 				base.Add (provider);
 			else
 				throw new HttpException ();
 		}
 		
-		public new IMembershipProvider this [string name] {
-			get { return (IMembershipProvider) base [name]; }
+		public new MembershipProvider this [string name] {
+			get { return (MembershipProvider) base [name]; }
 		}
 	}
 }

@@ -36,6 +36,8 @@ using System.Text;
 namespace System.Web.Security {
 	public sealed class Membership {
 		
+		private Membership () {}
+		
 		public static MembershipUser CreateUser (string username, string password)
 		{
 			return CreateUser (username, password, null);
@@ -44,21 +46,26 @@ namespace System.Web.Security {
 		public static MembershipUser CreateUser (string username, string password, string email)
 		{
 			MembershipCreateStatus status;
-			MembershipUser usr = CreateUser (username, password, email, out status);
+			MembershipUser usr = CreateUser (username, password, email, null, null, true, out status);
 			if (usr == null)
 				throw new MembershipCreateUserException (status);
 			
 			return usr;
 		}
 		
-		public static MembershipUser CreateUser (string username, string password, string email, out MembershipCreateStatus status)
+		public static MembershipUser CreateUser (string username, string password, string email, string pwdQuestion, string pwdAnswer, bool isApproved, out MembershipCreateStatus status)
 		{
-			return Provider.CreateUser (username, password, email, out status);
+			return Provider.CreateUser (username, password, email, pwdQuestion, pwdAnswer, isApproved, out status);
 		}
 		
 		public static bool DeleteUser (string username)
 		{
-			return Provider.DeleteUser (username);
+			return Provider.DeleteUser (username, true);
+		}
+		
+		public static bool DeleteUser (string username, bool deleteAllRelatedData)
+		{
+			return Provider.DeleteUser (username, deleteAllRelatedData);
 		}
 		
 		[MonoTODO]
@@ -69,7 +76,13 @@ namespace System.Web.Security {
 		
 		public static MembershipUserCollection GetAllUsers ()
 		{
-			return Provider.GetAllUsers ();
+			int total;
+			return GetAllUsers (1, int.MaxValue, out total);
+		}
+		
+		public static MembershipUserCollection GetAllUsers (int pageIndex, int pageSize, out int totalRecords)
+		{
+			return Provider.GetAllUsers (pageIndex, pageSize, out totalRecords);
 		}
 		
 		public static int GetNumberOfUsersOnline ()
@@ -130,7 +143,7 @@ namespace System.Web.Security {
 		}
 		
 		[MonoTODO]
-		public static IMembershipProvider Provider {
+		public static MembershipProvider Provider {
 			get { throw new NotImplementedException (); }
 		}
 		

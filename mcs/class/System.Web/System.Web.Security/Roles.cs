@@ -191,7 +191,7 @@ namespace System.Web.Security {
 		}
 		
 		[MonoTODO]
-		public static IRoleProvider Provider {
+		public static RoleProvider Provider {
 			get { throw new NotImplementedException (); }
 		}
 		

@@ -33,16 +33,16 @@ using System.Configuration.Provider;
 
 namespace System.Web.Security {
 	public class RoleProviderCollection : ProviderCollection {
-		public override void Add (IProvider provider)
+		public override void Add (ProviderBase provider)
 		{
-			if (provider is IRoleProvider)
+			if (provider is RoleProvider)
 				base.Add (provider);
 			else
 				throw new HttpException ();
 		}
 		
-		public new IRoleProvider this [string name] {
-			get { return (IRoleProvider) base [name]; }
+		public new RoleProvider this [string name] {
+			get { return (RoleProvider) base [name]; }
 		}
 	}
 }

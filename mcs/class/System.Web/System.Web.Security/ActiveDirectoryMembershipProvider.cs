@@ -1,8 +1,9 @@
 //
-// System.Web.Security.ADMembershipProvider
+// System.Web.Security.ActiveDirectoryMembershipProvider
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Lluis Sanchez Gual (lluis@novell.com)
 //
 // (C) 2003 Ben Maurer
 //
@@ -34,28 +35,28 @@ using System.Collections.Specialized;
 using System.Text;
 
 namespace System.Web.Security {
-	public class ADMembershipProvider : IMembershipProvider {
+	public class ActiveDirectoryMembershipProvider : MembershipProvider {
 		
 		[MonoTODO]
-		public virtual bool ChangePassword (string username, string oldPwd, string newPwd)
+		public override bool ChangePassword (string username, string oldPwd, string newPwd)
 		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public virtual bool ChangePasswordQuestionAndAnswer (string username, string password, string newPwdQuestion, string newPwdAnswer)
+		public override bool ChangePasswordQuestionAndAnswer (string username, string password, string newPwdQuestion, string newPwdAnswer)
 		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public virtual MembershipUser CreateUser (string username, string password, string email,  out MembershipCreateStatus status)
+		public override MembershipUser CreateUser (string username, string password, string email, string pwdQuestion, string pwdAnswer, bool isApproved, out MembershipCreateStatus status)
 		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public virtual bool DeleteUser (string username)
+		public override bool DeleteUser (string username, bool deleteAllRelatedData)
 		{
 			throw new NotImplementedException ();
 		}
@@ -67,61 +68,73 @@ namespace System.Web.Security {
 		}
 		
 		[MonoTODO]
-		public MembershipUserCollection GetAllUsers ()
+		public override MembershipUserCollection FindUsersByEmail (string emailToMatch, int pageIndex, int pageSize, out int totalRecords)
 		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public int GetNumberOfUsersOnline ()
+		public override MembershipUserCollection FindUsersByName (string nameToMatch, int pageIndex, int pageSize, out int totalRecords)
 		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public virtual string GetPassword (string username, string answer)
+		public override MembershipUserCollection GetAllUsers (int pageIndex, int pageSize, out int totalRecords)
 		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public virtual MembershipUser GetUser (string username, bool userIsOnline)
+		public override int GetNumberOfUsersOnline ()
 		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public virtual string GetUserNameByEmail (string email)
+		public override string GetPassword (string username, string answer)
 		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public virtual void Initialize (string name, NameValueCollection config)
+		public override MembershipUser GetUser (string username, bool userIsOnline)
 		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public virtual string ResetPassword (string username, string answer)
+		public override string GetUserNameByEmail (string email)
 		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public virtual void UpdateUser (MembershipUser user)
+		public override void Initialize (string name, NameValueCollection config)
 		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public virtual bool ValidateUser (string username, string password)
+		public override string ResetPassword (string username, string answer)
 		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public string ApplicationName {
+		public override void UpdateUser (MembershipUser user)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public override bool ValidateUser (string username, string password)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public override string ApplicationName {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
@@ -132,17 +145,12 @@ namespace System.Web.Security {
 		}
 		
 		[MonoTODO]
-		public virtual bool EnablePasswordReset {
+		public override bool EnablePasswordReset {
 			get { throw new NotImplementedException (); }
 		}
 		
 		[MonoTODO]
-		public virtual bool EnablePasswordRetrieval {
-			get { throw new NotImplementedException (); }
-		}
-		
-		[MonoTODO]
-		public virtual string Name {
+		public override bool EnablePasswordRetrieval {
 			get { throw new NotImplementedException (); }
 		}
 		
@@ -152,7 +160,7 @@ namespace System.Web.Security {
 		}
 		
 		[MonoTODO]
-		public virtual bool RequiresQuestionAndAnswer {
+		public override bool RequiresQuestionAndAnswer {
 			get { throw new NotImplementedException (); }
 		}
 		

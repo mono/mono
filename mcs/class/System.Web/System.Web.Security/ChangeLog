@@ -1,3 +1,15 @@
+2004-11-18 Lluis Sanchez Gual <lluis@novell.com>
+
+	* RoleProvider.cs, Roles.cs, SqlRoleProvider.cs, RoleProviderCollection.cs,
+	AccessRoleProvider.cs: IRoleProvider has been renamed to ProviderBase.
+	* IMembershipProvider.cs: Deleted.
+	* MembershipProvider.cs, AccessMembershipProvider.cs, MembershipUser.cs,
+	Membership.cs, ADMembershipProvider.cs, SqlMembershipProvider.cs
+	MembershipProviderCollection.cs: MembershipProvider has been deleted
+	and replaced by the abstract class MembershipProvider.
+	* MembershipProviderCollection.cs: Minor fixes.
+	* ADMembershipProvider.cs: Renamed to ActiveDirectoryMembershipProvider.cs.
+
 2004-11-15 Lluis Sanchez Gual <lluis@novell.com>
 
 	* RoleProviderCollection.cs, MembershipProviderCollection.cs: 

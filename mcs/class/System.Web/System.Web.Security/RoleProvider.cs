@@ -1,5 +1,5 @@
 //
-// System.Web.Security.IMembershipProvider
+// System.Web.Security.IRoleProvider
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
@@ -31,24 +31,25 @@
 #if NET_2_0
 using System.Configuration.Provider;
 
-namespace System.Web.Security {
-	public interface IMembershipProvider : IProvider {
-		bool ChangePassword (string name, string oldPwd, string newPwd);
-		bool ChangePasswordQuestionAndAnswer (string name, string password, string newPwdQuestion, string newPwdAnswer);
-		MembershipUser CreateUser (string username, string password, string email, out MembershipCreateStatus status);
-		bool DeleteUser (string name);
-		MembershipUserCollection GetAllUsers ();
-		int GetNumberOfUsersOnline ();
-		string GetPassword (string name, string answer);
-		MembershipUser GetUser (string name, bool userIsOnline);
-		string GetUserNameByEmail (string email);
-		string ResetPassword (string name, string answer);
-		void UpdateUser (MembershipUser user);
-		bool ValidateUser (string name, string password);
-		string ApplicationName { get; set; }
-		bool EnablePasswordReset { get; }
-		bool EnablePasswordRetrieval { get; }
-		bool RequiresQuestionAndAnswer { get; }
+namespace System.Web.Security
+{
+	public abstract class RoleProvider : ProviderBase
+	{
+		protected RoleProvider ()
+		{
+		}
+		
+		public abstract void AddUsersToRoles (string [] usernames, string [] rolenames);
+		public abstract void CreateRole (string rolename);
+		public abstract void DeleteRole (string rolename, bool throwOnPopulatedRole);
+		public abstract void FindUsersInRole (string roleName, string usernameToMatch);
+		public abstract string [] GetAllRoles ();
+		public abstract string [] GetRolesForUser (string username);
+		public abstract string [] GetUsersInRole (string rolename);
+		public abstract bool IsUserInRole (string username, string rolename);
+		public abstract void RemoveUsersFromRoles (string [] usernames, string [] rolenames);
+		public abstract bool RoleExists (string rolename);
+		public abstract string ApplicationName { get; set; }
 	}
 }
 #endif

@@ -35,7 +35,7 @@ namespace System.Web.Security {
 		{
 		}
 		
-		public MembershipUser (IMembershipProvider provider, string name, string email,
+		public MembershipUser (MembershipProvider provider, string name, string email,
 			string passwordQuestion, string comment, bool isApproved,
 			DateTime creationDate, DateTime lastLoginDate, DateTime lastActivityDate,
 			DateTime lastPasswordChangedDate)
@@ -138,7 +138,7 @@ namespace System.Web.Security {
 			get { return passwordQuestion; }
 		}
 		
-		public virtual IMembershipProvider Provider {
+		public virtual MembershipProvider Provider {
 			get { return provider; }
 		}
 		
@@ -146,7 +146,7 @@ namespace System.Web.Security {
 			get { return name; }
 		}
 		
-		IMembershipProvider provider;
+		MembershipProvider provider;
 		string name;
 		string email;
 		string passwordQuestion;
