@@ -4,6 +4,7 @@
 // Author:
 //   Dennis Hayes (dennish@Raytek.com)
 //   Alexandre Pigolkine (pigolkine@gmx.de)
+//   Sanjay Gupta (gsanjay@novell.com)
 //
 // (C) 2002/2003 Ximian, Inc
 //
@@ -19,15 +20,40 @@ namespace System.Drawing {
 		static FontFamily genericSerif;
 
 		string name;
-		
-		public FontFamily(GenericFontFamilies genericFamily) {
+
+		internal IntPtr nativeFontFamily = IntPtr.Zero;
+				
+		internal FontFamily ( IntPtr ptr )
+		{
+			nativeFontFamily = ptr;
 		}
 		
-		public FontFamily(string familyName) {
-			name = familyName;
+		//Need to come back here, is Arial the right thing to do
+		internal FontFamily () : this ( "Arial", null )
+		{
+			//FIXME								
+		}
+
+		public FontFamily ( GenericFontFamilies genericFamily ) 
+		{
 		}
 		
-		public FontFamily(string familyName, FontCollection collection) {
+		public FontFamily ( string familyName ) : this( familyName, null )
+		{			
+		}
+		
+		public FontFamily ( string familyName, FontCollection collection ) 
+		{
+			Status status;
+			if ( collection != null )
+				status = GDIPlus.GdipCreateFontFamilyFromName( familyName, collection.nativeFontCollection, out nativeFontFamily );
+			else
+				status = GDIPlus.GdipCreateFontFamilyFromName( familyName, IntPtr.Zero, out nativeFontFamily );
+						
+			if ( status != Status.Ok ){
+				nativeFontFamily = IntPtr.Zero;
+				throw new Exception ( "Error calling GDIPlus.GdipCreateFontFamilyFromName: " + status );
+			}
 			name = familyName;
 		}
 		
@@ -39,8 +65,15 @@ namespace System.Drawing {
 		
 		public static FontFamily GenericMonospace {
 			get {
-				if( genericMonospace == null) {
-					genericMonospace = new FontFamily(GenericFontFamilies.Monospace);
+				if ( genericMonospace == null ) {
+					IntPtr generic = IntPtr.Zero;
+					Status status = GDIPlus.GdipGetGenericFontFamilyMonospace ( out generic );
+					if ( status != Status.Ok ) {
+						generic = IntPtr.Zero;
+						throw new Exception ( "Error calling GDIPlus.GdipGetGenericFontFamilyMonospace: " + status );
+					}
+					genericMonospace = new FontFamily ( generic );
+					genericMonospace.name = "Courier New";					
 				}
 				return genericMonospace;
 			}
@@ -48,8 +81,16 @@ namespace System.Drawing {
 		
 		public static FontFamily GenericSansSerif {
 			get {
-				if( genericSansSerif == null) {
-					genericSansSerif = new FontFamily(GenericFontFamilies.SansSerif);
+				if ( genericSansSerif == null ) {
+					IntPtr generic = IntPtr.Zero;
+					Status status = GDIPlus.GdipGetGenericFontFamilySansSerif ( out generic );
+					if ( status != Status.Ok ) 
+					{
+						generic = IntPtr.Zero;
+						throw new Exception ( "Error calling GDIPlus.GdipGetGenericFontFamilySansSerif: " + status );
+					}
+					genericSansSerif = new FontFamily ( generic );
+					genericSansSerif.name = "Sans Serif";					
 				}
 				return genericSansSerif;
 			}
@@ -57,34 +98,74 @@ namespace System.Drawing {
 		
 		public static FontFamily GenericSerif {
 			get {
-				if( genericSerif == null) {
-					genericSerif = new FontFamily(GenericFontFamilies.Serif);
+				if ( genericSerif == null ) {
+					IntPtr generic = IntPtr.Zero;
+					Status status = GDIPlus.GdipGetGenericFontFamilySerif ( out generic );
+					if ( status != Status.Ok ) 
+					{
+						generic = IntPtr.Zero;
+						throw new Exception ( "Error calling GDIPlus.GdipGetGenericFontFamilySerif: " + status );
+					}
+					genericSerif = new FontFamily ( generic );
+					genericSerif.name = "Times New Roman";					
 				}
 				return genericSerif;
 			}
 		}
 		
-		public int GetCellAscent (FontStyle style) {
+		public int GetCellAscent ( FontStyle style ) 
+		{
 			throw new NotImplementedException ();
 		}
 		
-		public int GetCellDescent (FontStyle style) {
+		public int GetCellDescent ( FontStyle style ) 
+		{
 			throw new NotImplementedException ();
 		}
 		
-		public int GetEmHeight (FontStyle style) {
+		public int GetEmHeight ( FontStyle style ) 
+		{
 			throw new NotImplementedException ();
 		}
 		
-		public int GetLineSpacing (FontStyle style) {
+		public int GetLineSpacing ( FontStyle style ) 
+		{
 			throw new NotImplementedException ();
 		}
 		
-		public bool IsStyleAvailable (FontStyle style){
+		public bool IsStyleAvailable ( FontStyle style )
+		{
 			throw new NotImplementedException ();
 		}
 		
-		public void Dispose() {
+		public void Dispose() 
+		{
+			Status status;
+			if ( genericSerif != null ) {
+				status = GDIPlus.GdipDeleteFontFamily ( genericSerif.nativeFontFamily );
+				if ( status != Status.Ok ) 
+					genericSerif.nativeFontFamily = IntPtr.Zero;					
+			}
+
+			if ( genericSansSerif != null ) 
+			{
+				status = GDIPlus.GdipDeleteFontFamily ( genericSansSerif.nativeFontFamily );
+				if ( status != Status.Ok ) 
+					genericSansSerif.nativeFontFamily = IntPtr.Zero;					
+			}
+
+			if ( genericMonospace != null ) 
+			{
+				status = GDIPlus.GdipDeleteFontFamily ( genericMonospace.nativeFontFamily );
+				if ( status != Status.Ok ) 
+					genericMonospace.nativeFontFamily = IntPtr.Zero;					
+			}
+
+			status = GDIPlus.GdipDeleteFontFamily ( nativeFontFamily );
+			if ( status != Status.Ok ) 
+				nativeFontFamily = IntPtr.Zero;					
+			
 		}
 	}
 }
+

@@ -1,3 +1,8 @@
+2004-01-28  Sanjay Gupta <gsanjay@novell.com>
+
+	* gdipFunctions.cs: Added FontFamily and FontCollection functions.
+	* FontFamily.cs: Implemented missing functionalities.
+
 2004-01-24  Duncan Mak  <duncan@ximian.com>
 
 	* Graphics.cs (DrawPath): Implemented.
@@ -10,7 +15,7 @@
 	* SizeF.cs: ToString modified. ToPoint and ToSize methods
 	are added.
 
-2004-01-21  Jordi Mas i Hern‡ndez
+2004-01-21  Jordi Mas i Hern√†ndez
 	* Bitmap.cs: Several new methods added.
 		
 2004-01-21  Duncan Mak  <duncan@ximian.com>

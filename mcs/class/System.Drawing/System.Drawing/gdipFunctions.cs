@@ -3,7 +3,8 @@
 //
 // Author: 
 // Alexandre Pigolkine (pigolkine@gmx.de)
-// Jordi Mas i Hern‡ndez (jordi@ximian.com)
+// Jordi Mas i Hern√†ndez (jordi@ximian.com)
+// Sanjay Gupta (gsanjay@novell.com)
 //
 
 using System;
@@ -654,7 +655,65 @@ namespace System.Drawing {
 				[DllImport ("gdiplus.dll")]     
 				internal static extern Status GdipSetImageAttributesColorMatrix(IntPtr imageattr,
                              ColorAdjustType type, bool enableFlag, ColorMatrix colorMatrix,
-                               ColorMatrix grayMatrix,  ColorMatrixFlag flags);                                
+                               ColorMatrix grayMatrix,  ColorMatrixFlag flags); 
+
+		// FontCollection
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetFontCollectionFamilyCount( IntPtr collection, out int found );
+		
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetFontCollectionFamilyList( IntPtr collection, int getCount, out IntPtr [] familyList, out int retCount );
+		//internal static extern Status GdipGetFontCollectionFamilyList( IntPtr collection, int getCount, [Out] FontFamily[] familyList, out int retCount );
+		
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipNewInstalledFontCollection( out IntPtr collection );
+		
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipNewPrivateFontCollection( out IntPtr collection );
+		
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipDeletePrivateFontCollection( IntPtr collection );
+		
+		[DllImport ("gdiplus.dll", CharSet=CharSet.Auto)]
+		internal static extern Status GdipPrivateAddFontFile( IntPtr collection, [MarshalAs(UnmanagedType.LPWStr)] string fileName );
+		
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipPrivateAddMemoryFont( IntPtr collection, IntPtr mem, int length );
+
+		//FontFamily
+		[DllImport ("gdiplus.dll", CharSet=CharSet.Auto)]
+		internal static extern Status GdipCreateFontFamilyFromName( [MarshalAs(UnmanagedType.LPWStr)] string fName, IntPtr collection, out IntPtr fontFamily );
+
+		/*[DllImport ("gdiplus.dll", CharSet=CharSet.Auto)]
+		internal static extern Status GdipGetFamilyName(IntPtr fontFamily,  );
+		GpStatus WINGDIPAPI GdipGetFamilyName( GDIPCONST GpFontFamily *family, WCHAR name[LF_FACESIZE], LANGID language )*/
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetGenericFontFamilySansSerif( out IntPtr fontFamily );
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetGenericFontFamilySerif( out IntPtr fontFamily );
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetGenericFontFamilyMonospace( out IntPtr fontFamily );
+		
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetCellAscent( IntPtr fontFamily, int style, out uint ascent );
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetCellDescent( IntPtr fontFamily, int style, out uint descent );
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetLineSpacing( IntPtr fontFamily, int style, out uint spacing );
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetEmHeight( IntPtr fontFamily, int style, out uint emHeight);
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipIsStyleAvailable( IntPtr fontFamily, int style, out bool styleAvailable );
+
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipDeleteFontFamily( IntPtr fontFamily );                              
 				
 
 #endregion      
