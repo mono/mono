@@ -70,6 +70,8 @@ namespace Microsoft.VisualBasic.CompilerServices {
 				}
 				if (!isLike)
 					count = count + 1;
+				else 
+					break;
 			}
 			return count;
 		}
@@ -88,6 +90,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			string pattern,
 			string source,
 			CompareMethod compareOption) {
+
 			int sourceLength = source.Length;
 			int numberOfSkipedChars = 0;
 			int patternLen;
@@ -129,8 +132,10 @@ namespace Microsoft.VisualBasic.CompilerServices {
 					int skipCharInPattern = sub.IndexOf(']');
 					if (skipCharInPattern < 0)
 						break;
-					numberOfSkipedChars ++;
-					patternIndex += skipCharInPattern;    
+					if (skipCharInPattern != patternIndex + 1) {
+						numberOfSkipedChars ++;
+					}
+					patternIndex += skipCharInPattern+1;    
 				}
 				else if (currentPatternChar == ']' || currentPatternChar == '?' || 
 					currentPatternChar == '#' || currentPatternChar == '!' ||
@@ -413,183 +418,126 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			char currentPatternChar = (char)0;
 			char currentCharInRange = (char)0;
 			char previousCharInRange = (char)0;
+			char previousChar = (char)0;
 			int patternIndex = 0;
 			bool isMatch = false;
 			bool isNotSignAppears = false;
 			bool specialChar = false;
 			bool isRangeSignAppears = false;
 			int patternLength = (pattern == null)? 0 : pattern.Length;
+			if (pattern.Length == 1) {
+				// Single Character
+				return (sourceChar == pattern[0]);
+			}	
+
+			previousCharInRange = pattern [0];
 			while (patternIndex < patternLength) {
 				currentPatternChar = pattern[patternIndex];
-				if (currentPatternChar == '*') {
-					isMatch =
-						compareBinary(
-						isNotSignAppears,
-						isMatch,
-						currentPatternChar,
-						sourceChar);
-					specialChar = true;
-				}
-				else if (currentPatternChar == '?') {
-					// the pattern is '[previousCharInRange-?
-					if (isRangeSignAppears) {
-						isRangeSignAppears = false;
-						currentCharInRange = currentPatternChar;
-						if (previousCharInRange > currentCharInRange)
-							throw new Exception("Bad patteren string");
-							//throw (Exception) ExceptionUtils.VbMakeException(
-							//	vbErrors.BadPatStr);
-						//when the previous char in the range matches the char in
-						// the source 
-						if (!(isNotSignAppears || isMatch)){
-							if (sourceChar == previousCharInRange)
-								isMatch = true;
-							if (isNotSignAppears)
-								isMatch = !isMatch;
-						}
-					}
-						//the first place in the range '[?'
-					else {
-						previousCharInRange = currentPatternChar;
-						specialChar = true;
-						isMatch =
-							compareBinary(
-							isNotSignAppears,
-							isMatch,
-							currentPatternChar,
-							sourceChar);
-					}
-				}
-				else if (currentPatternChar == '#') {
-					//the pattern is like '[previousCharInRange-#' 
-					if (isRangeSignAppears) {
-						isRangeSignAppears = false;
-						currentCharInRange = currentPatternChar;
-						if (previousCharInRange > currentCharInRange)
-							throw new Exception("Bad patteren string");
-							//throw (
-							//	Exception) ExceptionUtils.VbMakeException(
-							//	vbErrors.BadPatStr);
-						//when the previous char in the range matches the char in
-						// the source 
-						if (!(isNotSignAppears || isMatch)){
-							if (sourceChar == previousCharInRange)
-								isMatch = true;
-							if (isNotSignAppears)
-								isMatch = !isMatch;
-						}
-					}
-						//the first place in range. 
-					else {
-						previousCharInRange = currentPatternChar;
-						specialChar = true;
-						isMatch =
-							compareBinary(
-							isNotSignAppears,
-							isMatch,
-							currentPatternChar,
-							sourceChar);
-					}
-				}
-				else if (currentPatternChar == '-') {
-					//this pattern is not valid example is '[9--'
-					if (isRangeSignAppears && specialChar)
-						throw new ArgumentException(Utils.GetResourceString("Argument_InvalidValue1", "Pattern"));
-					if (!(specialChar) && !(isRangeSignAppears)) {
-						isMatch =
-							compareBinary(isNotSignAppears, isMatch, currentPatternChar, sourceChar);
-					}
-					isRangeSignAppears = true;
-				}
-				else if (currentPatternChar == '!') {
-					//this is the first symbol is the range
-					if (!(isNotSignAppears)) {
-						isNotSignAppears = true;
-						isMatch = true;
-					}
-						//this is the second '!' in the range '[!! ' or appears
-						//as a symbol in the pattern
-					else {
-						specialChar = true;
-						isMatch =
-							compareBinary(isNotSignAppears, isMatch, currentPatternChar, sourceChar);
-					}
-				}
-				else if (currentPatternChar == '[') {
-					if (isRangeSignAppears) {
-						isRangeSignAppears = false;
-						currentCharInRange = currentPatternChar;
-						if (previousCharInRange > currentCharInRange)
-							throw new Exception("Bad patteren string");
-							//throw (
-							//	Exception) ExceptionUtils.VbMakeException(
-							//	vbErrors.BadPatStr);
-						//when the previous char in the range matches the char in
-						// the source 
-						if (!(isNotSignAppears ^ isMatch)){
-							if (sourceChar == previousCharInRange)
-								isMatch = true;
-							if (isNotSignAppears)
-								isMatch = !isMatch;
-						}
-					}
-						//the first sign in the range of chars
-					else {
-						previousCharInRange = currentPatternChar;
-						specialChar = true;
-						isMatch =
-							compareBinary(
-							isNotSignAppears,
-							isMatch,
-							currentPatternChar,
-							sourceChar);
-					}
-				}
-				else if (currentPatternChar == ']') {
-					isMatch =
-						compareBinary(
-						isNotSignAppears,
-						isMatch,
-						currentPatternChar,
-						sourceChar);
-					if (!(isMatch))
-						break;
-				}
-					//this pattern char appears in range of chars.
-				else {
-					specialChar = true;
-					if (isRangeSignAppears) {
-						isRangeSignAppears = false;
-						currentCharInRange = currentPatternChar;
-						if (previousCharInRange > currentCharInRange)
-							throw new Exception("Bad patteren string");
-							//throw (Exception)ExceptionUtils.VbMakeException(vbErrors.BadPatStr);
-						if (!(isNotSignAppears || isMatch)){
-							if (sourceChar <= previousCharInRange || sourceChar > currentCharInRange)
-								isMatch = true;
-							else
-								isMatch = false;    
-							if (isNotSignAppears)
-								isMatch = !isMatch;
-						}
-					}
-					else {
-						previousCharInRange = currentPatternChar;
-						isMatch =
-							compareBinary(isNotSignAppears, isMatch, currentPatternChar, sourceChar);
-					}
-				}
-				patternIndex++;
 
+				if (currentPatternChar == '-') {
+					bool seenRangeSign = isRangeSignAppears;
+					if (previousCharInRange != (char)0)
+						isRangeSignAppears = true;
+					if (seenRangeSign) {
+						// The previous char was '-'
+						// handle patterns like '--'
+						if (patternIndex > 2 && pattern [patternIndex - 2] == '!') {
+							// pattern is like !-- ....
+							// so the first '-' (and not '!') is the lower bound of a range
+							// the current pattern char '-' is the range char
+							previousCharInRange = previousChar;
+						} else if (patternIndex > 1) {
+							// pattern like -- ...
+							// the second '-' is the upper bound of a range
+							specialChar = true;
+							if (previousCharInRange > currentPatternChar)
+								throw new Exception ("Bad pattern string");
+							if (sourceChar >= previousCharInRange && sourceChar <= currentPatternChar)
+								return (true ^ isNotSignAppears);
+							else 
+								isMatch = false;
+							previousCharInRange = (char) 0;
+							isRangeSignAppears = false;
+						} else 
+							previousCharInRange = previousChar;
+					}
+
+					if (previousChar == '!' && !specialChar) {
+						// Handle cases like !- ..
+						// in this case '-' is a not treated as a range character
+						specialChar = true;
+						isRangeSignAppears = false;
+					}
+					
+					if (!isRangeSignAppears) {
+						if (sourceChar == currentPatternChar)
+							isMatch = true;
+						else 
+							isMatch = false;
+
+						if (isMatch)
+							return (isMatch ^ isNotSignAppears);
+					}
+				} else if (currentPatternChar == '!') {
+					if (!isNotSignAppears) {
+						isNotSignAppears = true;
+					} else {
+						specialChar = true;
+						if (sourceChar == currentPatternChar)
+							isMatch = true;
+						else 
+							isMatch = false;
+						if (!isNotSignAppears && isMatch)
+							return true;
+					}
+				} else {
+					if (isRangeSignAppears) {
+						isRangeSignAppears = false;
+						if (!(currentPatternChar == '*' ||
+						      currentPatternChar == '#' ||
+						      currentPatternChar == '?' ||
+						      currentPatternChar == '[')) {
+							specialChar = true;
+						}
+
+						currentCharInRange = currentPatternChar;
+						if (previousCharInRange > currentCharInRange)
+							throw new Exception ("Bad pattern string");
+	
+						if (sourceChar >= previousCharInRange && sourceChar <= currentCharInRange)
+							isMatch = true;
+						else 
+							isMatch = false;
+
+						if (isMatch)
+							return (isMatch ^ isNotSignAppears);
+						previousCharInRange = (char) 0;
+					} else {
+						if (currentPatternChar == '*' ||
+						    currentPatternChar == '#' ||
+						    currentPatternChar == '?' ||
+						    currentPatternChar == '[') {
+							specialChar = true;
+						}
+						previousCharInRange = currentPatternChar;
+						if (sourceChar == currentPatternChar)
+							isMatch = true;
+						else 
+							isMatch = false;
+						if (isMatch)
+							return (isMatch ^ isNotSignAppears);
+					}
+
+				}
+				previousChar = currentPatternChar;
+				patternIndex++;
 			}
-			if (isNotSignAppears ^ isMatch) return true;
-			if (isRangeSignAppears && !isMatch)
-				return false;
-			else if (isNotSignAppears) {
-				if ('!' != sourceChar)
-					return false;
-			}
-			return true;
+
+
+			if (isNotSignAppears ^ isMatch) 
+				return true;
+
+			return false;
 		}
     
 		/**
@@ -601,6 +549,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		 */
 
 		public static bool StrLikeBinary(string source, string pattern) {
+
 			bool startRangeSignAppears = false;
 			bool isMatch = false;
 			char currentPatternChar = (char)0;
@@ -617,9 +566,10 @@ namespace Microsoft.VisualBasic.CompilerServices {
 
 			patternLength = (pattern == null)? 0 : pattern.Length;
 			sourceLength = (source == null)? 0 : source.Length ;
-        
+
 			if (sourceIndex < sourceLength)
 				currentSourceChar = source[sourceIndex];
+
 			while (patternIndex < patternLength) {
 				currentPatternChar = pattern[patternIndex];
 				if (currentPatternChar == '*') {
@@ -635,12 +585,16 @@ namespace Microsoft.VisualBasic.CompilerServices {
 						sourceIndex += numberOfSkipedChars;
 						if (sourceIndex < sourceLength)
 							currentSourceChar = source[sourceIndex];        
+						else 
+							currentSourceChar = (char) 0;
 					}
 				}
 				else if (currentPatternChar == '?') {
 					sourceIndex++;
 					if (sourceIndex < sourceLength)
 						currentSourceChar = source[sourceIndex];
+					else 
+						currentSourceChar = (char) 0;
 				}
 				else if (currentPatternChar == '#') {
 					if (!(char.IsDigit(currentSourceChar)))
@@ -648,6 +602,8 @@ namespace Microsoft.VisualBasic.CompilerServices {
 					sourceIndex++;
 					if (sourceIndex < sourceLength)
 						currentSourceChar = source[sourceIndex];
+					else 
+						currentSourceChar = (char) 0;
 				}          
 				else if (currentPatternChar == '-') {
 					isMatch =
@@ -659,6 +615,8 @@ namespace Microsoft.VisualBasic.CompilerServices {
 					sourceIndex++;
 					if (sourceIndex < sourceLength)
 						currentSourceChar = source[sourceIndex];
+					else 
+						currentSourceChar = (char) 0;
 					//isRangeSignAppears = true;
 				}
 				else if (currentPatternChar == '!') {
@@ -672,6 +630,8 @@ namespace Microsoft.VisualBasic.CompilerServices {
 					sourceIndex++;
 					if (sourceIndex < sourceLength)
 						currentSourceChar = source[sourceIndex];
+					else 
+						currentSourceChar = (char) 0;
 				}
 				else if (currentPatternChar == '[') {
 					string sub = pattern.Substring(patternIndex);
@@ -679,18 +639,25 @@ namespace Microsoft.VisualBasic.CompilerServices {
 					startRangeSignAppears = true;
 					if (indexOfEndBracket == -1)
 						break;
-					sub = sub.Substring(1, indexOfEndBracket);
+					sub = sub.Substring(1, indexOfEndBracket - 1);
 					startRangeSignAppears = false;
-					bool isOk = inBracketBinary(sub, currentSourceChar);
-					if (!isOk)                                 
-						break;                
-					sourceIndex++;
+					bool isOk = false;
+					// Ignore empty patterns like '[]'
+					if (!sub.Equals (String.Empty)) {
+						isOk = inBracketBinary(sub, currentSourceChar);
+						if (!isOk)                                 
+							break;                
+						sourceIndex++;
+					}
 					if (sourceIndex < sourceLength)
 						currentSourceChar = source[sourceIndex];
+					else 
+						currentSourceChar = (char) 0;
 					patternIndex += (sub.Length + 2);
 					continue;
 				}
 				else if (currentPatternChar == ']') {
+					string sub = pattern.Substring(patternIndex);
 					isMatch =
 						compareBinary(
 						isNotSignAppears,
@@ -715,6 +682,8 @@ namespace Microsoft.VisualBasic.CompilerServices {
 						currentSourceChar = source[sourceIndex];
 					else if (sourceIndex > sourceLength)
 						return false;
+					else 
+						currentSourceChar = (char) 0;
 				}
 				else
 					break;
@@ -736,9 +705,9 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			string pattern,
 			CompareMethod compareOption) {
 			if(compareOption == CompareMethod.Text)
-				return StrLikeBinary(source, pattern);
-			else
 				return StrLikeText(source, pattern);
+			else
+				return StrLikeBinary(source, pattern);
 		}
 
 //		/**
@@ -799,18 +768,23 @@ namespace Microsoft.VisualBasic.CompilerServices {
 						pattern.Substring(patternIndex + 1),
 						source.Substring(sourceIndex),
 						CompareMethod.Text);
-					if (numberOfSkipedChars < 0)
-						return false;
+					if (numberOfSkipedChars < 0) {
+						break;
+					}
 					if (numberOfSkipedChars > 0) {
 						sourceIndex += numberOfSkipedChars;
 						if (sourceIndex < sourceLength)
 							currentSourceChar = source[sourceIndex];
+						else 
+							currentSourceChar = (char) 0;
 					}
 				}
 				else if (currentPatternChar == '?') {
 					sourceIndex++;
 					if (sourceIndex < sourceLength)
 						currentSourceChar = source[sourceIndex];
+					else 
+						currentSourceChar = (char) 0;
 				}
 				else if (currentPatternChar == '#') {
 					if (!(char.IsDigit(currentSourceChar)))
@@ -818,6 +792,8 @@ namespace Microsoft.VisualBasic.CompilerServices {
 					sourceIndex++;
 					if (sourceIndex < sourceLength)
 						currentSourceChar = source[sourceIndex];
+					else
+						currentSourceChar = (char) 0;
 				}
 				else if (currentPatternChar == '-') {
 					isMatch =
@@ -829,6 +805,8 @@ namespace Microsoft.VisualBasic.CompilerServices {
 					sourceIndex++;
 					if (sourceIndex < sourceLength)
 						currentSourceChar = source[sourceIndex];
+					else
+						currentSourceChar = (char) 0;
 					//isRangeSignAppears = true;
 				}
 				else if (currentPatternChar == '!') {
@@ -842,23 +820,31 @@ namespace Microsoft.VisualBasic.CompilerServices {
 					sourceIndex++;
 					if (sourceIndex < sourceLength)
 						currentSourceChar = source[sourceIndex];
+					else
+						currentSourceChar = (char) 0;
 				}
 				else if (currentPatternChar == '[') {
 					string sub = pattern.Substring(patternIndex);
-					startRangeSignAppears = true;
 					int indexOfEndBracket = sub.IndexOf(']');
+					startRangeSignAppears = true;
 					if (indexOfEndBracket == -1)
 						break;
 					sub = sub.Substring(1, indexOfEndBracket);
 					startRangeSignAppears = false;
-					bool isOk = inBracketBinary(sub, currentSourceChar);
-					if (!isOk)
-						break;                
-					sourceIndex++;
-					if (sourceIndex < sourceLength)
-						currentSourceChar = source[sourceIndex];
-					patternIndex += (sub.Length + 2);
-					continue;
+					bool isOk = false;
+					// Ignore empty patterns like []
+                                        if (!sub.Equals (String.Empty)) {
+                                                isOk = inBracketBinary(sub, currentSourceChar);
+                                                if (!isOk)
+                                                        break;
+                                                sourceIndex++;
+                                        }
+                                        if (sourceIndex < sourceLength)
+                                                currentSourceChar = source[sourceIndex];
+                                        else
+                                                currentSourceChar = (char) 0;
+                                        patternIndex += (sub.Length + 2);
+                                        continue;
 				}
 				else if (currentPatternChar == ']') {
 					isMatch =
@@ -878,17 +864,19 @@ namespace Microsoft.VisualBasic.CompilerServices {
 					isNotSignAppears = false;
 					//isRangeSignAppears = false;
 				}
-				else {
-					//specialChar = true;
-					if (!(currentPatternChar == currentSourceChar || isNotSignAppears))
-						break;
+				else if (currentPatternChar == currentSourceChar || isNotSignAppears) {
+				
 					isNotSignAppears = false;
 					sourceIndex++;
 					if (sourceIndex < sourceLength)
 						currentSourceChar = source[sourceIndex];
 					else if (sourceIndex > sourceLength)
 						return false;
+					else
+						currentSourceChar = (char) 0;
 				}
+				else
+					break;
 				patternIndex++;
 			}
 			if (startRangeSignAppears) {
