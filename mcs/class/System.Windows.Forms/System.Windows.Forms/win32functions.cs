@@ -178,6 +178,11 @@ namespace System.Windows.Forms{
 		[DllImport("gdi32.dll",CharSet = CharSet.Ansi,EntryPoint="GetTextExtentPoint32A")]
 		internal static extern bool GetTextExtentPoint32(IntPtr hDC, string lpString, int cbString, ref SIZE lpSize);
 
+		[DllImport("gdi32.dll", CallingConvention = CallingConvention.StdCall )]
+		internal static extern IntPtr CreateBitmap( int nWidth, int nHeight, uint cPlanes, uint cBitsPerPel, IntPtr lpvBits  );
+
+		[DllImport("gdi32.dll", CallingConvention = CallingConvention.StdCall )]
+		internal static extern int SetDIBits( IntPtr hdc, IntPtr hbmp, uint uStartScan, uint cScanLines, IntPtr lpvBits, IntPtr lpbmi, uint fuColorUse );
 
 		[DllImport ("gdi32.dll", 
 			 CallingConvention = CallingConvention.StdCall, 
@@ -558,34 +563,43 @@ namespace System.Windows.Forms{
 
 		#region Common Controls functions
 
-		[DllImport("comctl32.dll")]
+		[DllImport("comctl32.dll", CallingConvention = CallingConvention.StdCall)]
 		internal static extern bool InitCommonControlsEx(INITCOMMONCONTROLSEX icc);
 
-		[DllImport("comctl32.dll")]
+		[DllImport("comctl32.dll", CallingConvention = CallingConvention.StdCall)]
 		internal static extern bool InitCommonControls();
 
 		[DllImport("comctl32.dll", EntryPoint="DllGetVersion")]
 		internal extern static int GetCommonControlDLLVersion(ref DLLVERSIONINFO dvi);
 
-		[DllImport("comctl32.dll")]
-		internal static extern IntPtr ImageList_Create(int width, int height, int flags, int count, int grow);
+		[DllImport("comctl32.dll", CallingConvention = CallingConvention.StdCall)]
+		internal static extern IntPtr ImageList_Create(int width, int height, uint flags, int count, int grow);
 
-		[DllImport("comctl32.dll")]
+		[DllImport("comctl32.dll", CallingConvention = CallingConvention.StdCall)]
 		internal static extern bool ImageList_Destroy(IntPtr handle);
 
-		[DllImport("comctl32.dll")]
+		[DllImport("comctl32.dll", CallingConvention = CallingConvention.StdCall)]
 		internal static extern int ImageList_Add(IntPtr imageHandle, IntPtr hBitmap, IntPtr hMask);
 
-		[DllImport("comctl32.dll")]
+		[DllImport("comctl32.dll", CallingConvention = CallingConvention.StdCall)]
 		internal static extern bool ImageList_Remove(IntPtr imageHandle, int index);
 
-		[DllImport("comctl32.dll")]
+		[DllImport("comctl32.dll", CallingConvention = CallingConvention.StdCall)]
+		internal static extern bool ImageList_SetImageCount ( IntPtr himl, uint uNewCount );
+
+		[DllImport("comctl32.dll", CallingConvention = CallingConvention.StdCall)]
+		internal static extern uint ImageList_SetBkColor ( IntPtr himl, uint clrBk );
+
+		[DllImport("comctl32.dll", CallingConvention = CallingConvention.StdCall)]
+		internal static extern bool ImageList_SetOverlayImage( IntPtr himl, int iImage,  int iOverlay );
+
+		[DllImport("comctl32.dll", CallingConvention = CallingConvention.StdCall)]
 		internal static extern bool ImageList_BeginDrag(IntPtr imageHandle, int imageIndex, int xHotSpot, int yHotSpot);
 
-		[DllImport("comctl32.dll")]
+		[DllImport("comctl32.dll", CallingConvention = CallingConvention.StdCall)]
 		internal static extern bool ImageList_DragEnter(IntPtr hWndLock, int x, int y);
 
-		[DllImport("comctl32.dll")]
+		[DllImport("comctl32.dll", CallingConvention = CallingConvention.StdCall)]
 		internal static extern bool ImageList_DragMove(int x, int y);
 
 		[DllImport("comctl32.dll")]

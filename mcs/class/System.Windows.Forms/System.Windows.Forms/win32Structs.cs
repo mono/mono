@@ -302,21 +302,32 @@ namespace System.Windows.Forms
 	}
 	#endregion
 	
+	#region BITMAPFILEHEADER
+	[StructLayout(LayoutKind.Sequential)]
+	struct BITMAPFILEHEADER {        // File info header
+		public ushort bfType;      // Specifies the type of file. This member must be BM.
+		public uint   bfSize;      // Specifies the size of the file, in bytes.
+		public ushort bfReserved1; // Reserved; must be set to zero.
+		public ushort bfReserved2; // Reserved; must be set to zero.
+		public uint   bfOffBits;   // Specifies the byte offset from the BITMAPFILEHEADER
+	}
+	#endregion
+
 	#region BITMAPINFOHEADER
 	[StructLayout(LayoutKind.Sequential)]
 	internal class BITMAPINFOHEADER 
 	{
-		internal int      biSize = Marshal.SizeOf(typeof(BITMAPINFOHEADER));
+		internal uint     biSize;
 		internal int      biWidth;
 		internal int      biHeight;
-		internal short    biPlanes;
-		internal short    biBitCount;
-		internal int      biCompression;
-		internal int      biSizeImage;
+		internal ushort   biPlanes;
+		internal ushort   biBitCount;
+		internal uint     biCompression;
+		internal uint     biSizeImage;
 		internal int      biXPelsPerMeter;
 		internal int      biYPelsPerMeter;
-		internal int      biClrUsed;
-		internal int      biClrImportant;
+		internal uint     biClrUsed;
+		internal uint     biClrImportant;
 	}
 	#endregion
 
@@ -773,7 +784,7 @@ namespace System.Windows.Forms
 		internal uint   idFirstChild; 
 	}
 
-	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
 	internal struct  TCITEM {
 		internal uint mask;
 		internal uint dwState;

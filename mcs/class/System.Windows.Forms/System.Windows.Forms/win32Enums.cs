@@ -2573,8 +2573,8 @@ namespace System.Windows.Forms{
 	internal enum TabControlMessages : int {
 		TCM_FIRST          =  0x1300,
 		TCM_GETITEM        =  (TCM_FIRST + 60),
-		TCM_SETITEM        =  (TCM_FIRST + 61),
-		TCM_INSERTITEM     =  (TCM_FIRST + 62),
+		TCM_SETITEM        =  (TCM_FIRST + 6),
+		TCM_INSERTITEM     =  (TCM_FIRST + 7),
 		TCM_DELETEITEM     =  (TCM_FIRST + 8),
 		TCM_DELETEALLITEMS =  (TCM_FIRST + 9),
 		TCM_GETITEMRECT    =  (TCM_FIRST + 10),

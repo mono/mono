@@ -1,3 +1,9 @@
+2003-05-26  Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* ImageListStreamer.cs: added deserialization code
+	* win32functions.cs : added some prototypes required for ImageList impl.
+	* win32strcuts.cs : added new structs, switched to CharSet.Ansi for TCITEM struct
+	* win32Enums.cs : use ansi messages for tab control
+
 2003-05-20  Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* win32functions.cs  
 	* NativeWindow.cs : fixed some issues causing problems when running SWF on Linux 
