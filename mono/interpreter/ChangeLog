@@ -1,3 +1,9 @@
+2003-08-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* interp.c (main): Call g_thread_init () to make glib thread-safe. 
+	Fixes #47682. Thanks to Laurent Morichetti (l_m@pacbell.net) for 
+	reporting this.
+
 2003-08-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* interp.c: Get rid of duplicate definition of CHECK_MUL_OVERFLOW.
