@@ -1,3 +1,7 @@
+2001-12-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* rawbuffer.cs: Added native Win32 implementation, avoids using
+	mmap on Cygwin.  This patch is from Dan Lewis (dihlewis@yahoo.co.uk)
 
 Thu Dec 20 20:11:26 CET 2001 Paolo Molaro <lupus@ximian.com>
 
