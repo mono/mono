@@ -28,7 +28,7 @@ class MonoP {
 		
 		o.Write ("public class {0}", t.Name);
 		
-		Type [] interfaces = t.GetInterfaces ();
+		Type [] interfaces = (Type []) MemberInfoComparer.Sort (t.GetInterfaces ());
 		Type parent = t.BaseType;
 		
 		if ((parent != null && parent != typeof (object))|| interfaces.Length != 0) {
@@ -55,7 +55,7 @@ class MonoP {
 		
 		o.WriteLine ();
 		
-		foreach (MethodInfo m in t.GetMethods ()) {
+		foreach (MethodInfo m in MemberInfoComparer.Sort (t.GetMethods ())) {
 			if ((m.Attributes & MethodAttributes.SpecialName) != 0)
 				continue;
 			
@@ -64,7 +64,7 @@ class MonoP {
 		
 		o.WriteLine ();
 		
-		foreach (PropertyInfo pi in t.GetProperties ()) {
+		foreach (PropertyInfo pi in MemberInfoComparer.Sort (t.GetProperties ())) {
 			ParameterInfo [] idxp = pi.GetIndexParameters ();
 			o.Write (PName (pi.PropertyType));
 			o.Write (" ");
@@ -148,5 +148,19 @@ class MonoP {
 			return type.Substring(7);
 		
 		return type;
+	}
+}
+
+public class MemberInfoComparer : IComparer  {
+	static MemberInfoComparer Value = new MemberInfoComparer ();
+	public int Compare (object a, object b)
+	{
+		return string.Compare (((MemberInfo) a).Name, ((MemberInfo) b).Name);
+	}
+	
+	public static MemberInfo [] Sort (MemberInfo [] inf)
+	{
+		Array.Sort (inf, Value);
+		return inf;
 	}
 }

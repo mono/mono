@@ -1,5 +1,9 @@
 2004-03-14 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* monop.cs: sort members
+
+2004-03-14 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* monop.cs: show base type, interfaces.
 
 2004-03-14 Ben Maurer  <bmaurer@users.sourceforge.net>
