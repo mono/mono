@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.5 $
+// $Revision: 1.6 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.6  2004/08/08 18:09:53  jackson
+// Add pen_buttonface
+//
 // Revision 1.5  2004/08/08 17:34:28  jordi
 // Use Windows Standard Colours
 //
@@ -75,7 +78,8 @@ namespace System.Windows.Forms
 		static private Pen pen_buttonshadow;
 		static private Pen pen_buttondkshadow;
 		static private Pen pen_buttonhilight;
-	
+		static private Pen pen_buttonface;
+
 		/* Cache */
 		static private SolidBrush label_br_fore_color;
 		static private SolidBrush label_br_back_color;		
@@ -107,7 +111,8 @@ namespace System.Windows.Forms
 			pen_buttonshadow = new Pen (ColorButtonShadow);
 			pen_buttondkshadow = new Pen (ColorButtonDkShadow);
 			pen_buttonhilight = new Pen (ColorButtonHilight);
-		}	
+			pen_buttonface = new Pen (ColorButtonFace);
+		}
 
 		/* Internal colors to paint controls */
 		public Color ColorLight {
