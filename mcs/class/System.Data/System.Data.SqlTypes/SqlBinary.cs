@@ -100,6 +100,8 @@ namespace System.Data.SqlTypes
 		{
 			if (!(value is SqlBinary))
 				return false;
+			else if (((SqlBinary)value).IsNull)
+				return false;
 			else
 				return (bool) (this == (SqlBinary)value);
 		}
@@ -157,12 +159,7 @@ namespace System.Data.SqlTypes
 
 		public override string ToString () 
 		{
-			string result = "";;
-			
-			foreach (char c in value)
-				result += c;
-			
-			return result;
+			return "SqlBinary(" + value.Length + ")";
 		}
 
 		#endregion
@@ -176,14 +173,15 @@ namespace System.Data.SqlTypes
 			int j = 0;
 			int i;
 
-			for (i = 0; i < x.Value.Length; i++)
+			for (i = 0; i < x.Value.Length; i++) 
 				b [i] = x.Value [i];
+			
 
-			for ( ; i < (x.Value.Length + y.Value.Length -1); i++) {
-				b [i] = y.Value [0];
+			for (; i < (x.Value.Length + y.Value.Length); i++) {
+				b [i] = y.Value [j];
 				j++;
 			}	
-
+			
 			return new SqlBinary (b);
 		}
 			
@@ -192,7 +190,7 @@ namespace System.Data.SqlTypes
 			if (x.IsNull || y.IsNull) 
 				return SqlBoolean.Null;
 			else
-				return x.Value.Equals (y.Value);
+				return new SqlBoolean (Compare (x, y) == 0);
 		}
 
 		public static SqlBoolean operator > (SqlBinary x, SqlBinary y) 
@@ -216,7 +214,7 @@ namespace System.Data.SqlTypes
 			if (x.IsNull || y.IsNull) 
 				return SqlBoolean.Null;
 			else
-				return !x.Value.Equals (y.Value);
+				return new SqlBoolean (Compare (x, y) != 0);
 		}
 
 		public static SqlBoolean operator < (SqlBinary x, SqlBinary y) 

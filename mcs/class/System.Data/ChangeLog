@@ -1,3 +1,8 @@
+2002-11-03  Ville Palo <vi64pa@koti.soon.fi>
+
+	* System.Data.SqlTypes/SqlBinary.cs: Finished and no errors generated
+	by NUnitConsole_mono.exe
+	
 2002-11-03  Tim Coleman (tim@timcoleman.com)
 	* System.Data.SqlClient/SqlCommand.cs:
 		Use SET NO_BROWSETABLE ON when CommandBehavior is KeyInfo
