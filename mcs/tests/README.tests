@@ -37,6 +37,10 @@ Test cases listed by Category:
 
   test-153.cs
 
+* Flow Analysis
+
+  test-154.cs error-1.cs
+
 Test cases listed by Number:
 ============================
 
@@ -77,6 +81,14 @@ Scope of variables declared inside a switch case.
 test-153.cs
 -----------
 Testing invocation of varargs function.
+
+test-154.cs
+-----------
+Flow analysis: This test contains all situations which are "allowed".
+
+error-1.cs
+----------
+Flow analysis: Check whether mcs correctly reports all errors.
 
 verify-1.cs
 -----------

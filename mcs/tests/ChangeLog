@@ -1,3 +1,13 @@
+2002-07-31  Martin Baulig  <martin@gnome.org>
+
+	* test-154.cs: New test for the flow analysis code.
+
+	* error-1.cs: Each method in this test must produce a compiler
+	error message.
+
+	* makefile (test-unsafe-mono): New target to compile and run all
+	the --unsafe tests wich MCS and the Mono runtime.
+
 2002-07-29  Martin Baulig  <martin@gnome.org>
 
 	* makefile: Put back test-152.cs.

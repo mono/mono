@@ -24,7 +24,7 @@ TEST_SOURCES = \
 	test-121          test-123          test-125 test-126 test-127 test-128 test-129 test-130 \
 	test-131                   test-134 test-135 test-136 test-137 test-138 test-139 test-140 \
 	test-141 test-142 test-143 test-144 test-145 test-146 test-147 test-148 test-149 test-150 \
-	                  test-153
+	                  test-153 test-154
 
 UNSAFE_SOURCES = \
 	unsafe-1 unsafe-2 unsafe-3 test-58.cs
@@ -118,6 +118,22 @@ test-compiler-mono:
 		echo -n "Running $$i ... "; \
 		if $(MCS2) $$i.cs > /dev/null; then \
 			echo OK; \
+		else \
+			echo FAILED TO COMPILE; exit 1; \
+		fi \
+	done
+
+# Compile with mono, run with mono jit
+test-unsafe-mono:
+	@rm -f *.exe; \
+	for i in $(UNSAFE_SOURCES); do \
+		echo -n "Running $$i ... "; \
+		if $(MCS2) --unsafe $$i.cs > /dev/null; then \
+			if mono ./$$i.exe > /dev/null; then \
+				echo OK; \
+			else \
+				echo FAILED; exit 1; \
+			fi; \
 		else \
 			echo FAILED TO COMPILE; exit 1; \
 		fi \
