@@ -1,3 +1,6 @@
+2004-08-31 Umadevi S <sumadevi@novell.com>
+	* OdbcDataReaderTest.cs - Added a test for Numeric Type
+
 2004-08-27  Sureshkumar T <tsureshkumar@novell.com>
 	* OdbcDataReader.cs - Added a test for TinyInt
 
