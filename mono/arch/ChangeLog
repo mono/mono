@@ -2,6 +2,7 @@
 
 	* ppc/tramp.c (emit_save_parameters): don't start saving 64bit values to
 	even registers
+	added stack saving for most arguments
 
 Tue Feb 19 20:19:38 CET 2002 Paolo Molaro <lupus@ximian.com>
 
