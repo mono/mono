@@ -600,7 +600,7 @@ namespace Mono.MonoBASIC {
 			}
 
 			if (!silent)
-				Report.Error (246, loc, "Cannot find type `"+name+"'");
+				Report.Error (30002, loc, "Cannot find type `"+name+"'");
 			
 			return null;
 		}

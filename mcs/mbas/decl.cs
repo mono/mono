@@ -426,7 +426,7 @@ namespace Mono.MonoBASIC {
 			Expression d = e.Resolve (type_resolve_ec, ResolveFlags.Type);
 			if (d == null || d.eclass != ExprClass.Type){
 				if (!silent && errors == Report.Errors){
-					Report.Error (246, loc, "Cannot find type `"+ e.ToString () +"'");
+					Report.Error (30002, loc, "Cannot find type `"+ e.ToString () +"'");
 				}
 				return null;
 			}
@@ -446,7 +446,7 @@ namespace Mono.MonoBASIC {
 			Expression d = e.Resolve (type_resolve_ec, ResolveFlags.Type);
 			if (d == null || d.eclass != ExprClass.Type){
 				if (!silent){
-					Report.Error (246, loc, "Cannot find type `"+ e +"'");
+					Report.Error (30002, loc, "Cannot find type `"+ e +"'");
 				}
 				return null;
 			}

@@ -1,4 +1,9 @@
 2004-08-06 Anirban Bhattacharjee <banirban@novell.com>
+	* decl.cs:
+	* rootcontext.cs:
+		Exception number made aligned to VB .net
+
+2004-08-06 Anirban Bhattacharjee <banirban@novell.com>
 	* class.cs: Improvements in the implementation of Implements clause in Type members
 
 2004-08-05 Anirban Bhattacharjee <banirban@novell.com>
