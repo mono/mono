@@ -1,3 +1,7 @@
+2004-11-22  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (profiles-do--all): Don't fallback to default pattern build.
+
 2004-11-19  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (net_2_0_SUBDIRS): Add nunit20.
