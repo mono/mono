@@ -1326,7 +1326,6 @@ namespace Mono.CSharp {
 		{
 			if (a != null && a.Type == TypeManager.cls_compliant_attribute_type) {
 				Report.Warning (3012, a.Location, "You must specify the CLSCompliant attribute on the assembly, not the module, to enable CLS compliance checking");
-				return;
 			}
 
 			Builder.SetCustomAttribute (customBuilder);
