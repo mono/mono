@@ -1,3 +1,278 @@
+2005-03-23  Jambunathan K  <kjambunathan.devel@gmail.com>
+	* Merged with GMCS trunk 42056
+	
+2005-02-08  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #72015.
+	* delegate.cs (Delegate.DefineType): When bootstrapping corlib, if
+	TypeManager.multicast_delegate_type is null, resolve it by looking
+	up "System.MulticastDelegate".
+	* rootcontext.cs (RootContext.ResolveCore): Simplify.
+
+2005-02-07  Abin Thomas (NOSIP)  <projectmonokochi@rediffmail.com>
+	    Anoob V.E (NOSIP)  <projectmonokochi@rediffmail.com>
+	    Harilal P.R (NOSIP)  <projectmonokochi@rediffmail.com>
+
+	Fix cs0164.cs.
+	* statement.cs (LabeledStatement.Resolve): Don't set 'referenced'.
+	(LabeledStatement.AddReference): New.  Set 'referenced'.
+	(Goto.Resolve): Use it.
+
+2005-02-05  John Luke  <john.luke@gmail.com>
+
+	* driver.cs: remove duplicate -doc line in Usage ()
+
+2005-02-04  Raja R Harinath  <rharinath@novell.com>
+
+	* location.cs (Location.AddFile): Fix CS2002 error report.
+
+2005-02-02  Martin Baulig  <martin@ximian.com>
+
+	* delegate.cs (Delegate.DefineType): Report an internal error if
+	TypeManager.multicast_delegate_type is null.  See bug #72015 for
+	details.	
+
+2005-02-02  Raja R Harinath  <rharinath@novell.com>
+
+	Fix a crasher in a variant of #31984.
+	* const.cs (Constant.CheckBase): New override that defers the
+	new-or-override check in case the base type hasn't been populated
+	yet.
+	(Constant.Define): Ensure the new-or-override check is performed.
+
+2005-02-01  Duncan Mak  <duncan@ximian.com>
+
+	* const.cs (LookupConstantValue): Check that `ce' is not null
+	before calling GetValue ().
+
+2005-02-01  Raja R Harinath  <rharinath@novell.com>
+
+	Fix test-334.cs (#69519).
+	* cs-parser.jay (using_alias_directive): Pass in an expression to
+	NamespaceEntry.UsingAlias.
+	(using_namespace_directive): Pass in an expression to
+	NamespaceEntry.Using.
+	(namespace_name): Don't flatten to a string.
+	* namespace.cs (NamespaceEntry.AliasEntry): Store an expression.
+	(NamespaceEntry.AliasEntry.Resolve): Lookup using
+	ResolveAsTypeStep.
+	(NamespaceEntry.UsingEntry): Likewise.
+	(NamespaceEntry.Using,NamespaceEntry.UsingAlias): Update to
+	changes.
+	(NamespaceEntry.LookupForUsing): Remove.
+	(NamespaceEntry.LookupNamespaceOrType): Add support for dotted
+	names.
+	(NamespaceEntry.Lookup): Remove support for dotted names.
+
+2005-02-01  Raja R Harinath  <rharinath@novell.com>
+
+	* namespace.cs (NamespaceEntry.NamespaceEntry): Simplify, and
+	split into two.
+	(NamespaceEntry.ImplicitParent): Compute on demand.
+	(NamespaceEntry.Doppelganger): New implicit namespace-entry that
+	parallels the current.
+	(NamespaceEntry.LookupForUsing): Use it.
+	(NamespaceEntry.Lookup): If the current namespace-entry is
+	implicit, don't search aliases and using tables.
+
+2005-02-01  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #31984.
+	* class.cs (TypeContainer.DoDefineMembers): Don't initialize
+	BaseCache here.
+	(TypeContainer.BaseCache): Compute on demand.
+	(TypeContainer.FindMembers): Define constants and types if they're
+	not already created.
+	(FieldMember.Define): Move resetting of ec.InUnsafe before error
+	check.
+	* const.cs (Constant.Define): Make idempotent.
+
+2005-01-29  Miguel de Icaza  <miguel@novell.com>
+
+	* pending.cs: Produce better code (no nops produced by using Ldarg
+	+ value).
+	
+	* pending.cs (PendingImplementation.DefineProxy): It was not `arg
+	i - 1' it should be arg + 1.
+
+	Fixes bug #71819.
+
+2005-01-28  Raja R Harinath  <rharinath@novell.com>
+
+	* attribute.cs (Attribute.CheckAttributeType): Make private
+	non-virtual.
+	(Attribute.ResolveType): Make virtual.
+	(GlobalAttribute.ResolveType,GlobalAttribute.Resolve): Simplify
+	handling of RootContext.Tree.Types.
+
+2005-01-27  Raja R Harinath  <rharinath@novell.com>
+
+	Update attribute-handling to use the SimpleName/MemberAccess
+	mechanisms.
+	* cs-parser.jay (attribute): Pass in an expression to the
+	constructors of Attribute and GlobalAttribute.
+	* attribute.cs (Attribute): Take an expression for the name.
+	(Attribute.ResolvePossibleAttributeTypes): New.  Resolves the
+	passed in attribute name expression.
+	(Attribute.CheckAttributeType): Use it.
+	* ecore.cs (FullNamedExpression.ResolveAsTypeStep): New.
+	* expression.cs (MemberAccess.ResolveAsTypeStep): Move body to ...
+	(MemberAccess.ResolveNamespaceOrType): ... here.  Add 'silent'
+	argument to prevent error messages if the lookup fails.
+
+2005-01-27  Marek Safar  <marek.safar@seznam.cz>
+
+	* expression.cs (Indirection): Implemented IVariable interface
+	to support indirection in AddressOf operator.
+	(PointerArithmetic.Emit): Add optimalization for case where
+	result can be precomputed.
+
+2005-01-26  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (TypeContainer.AttributeTargets): Return the correct
+	AttributeTargets depending on our `Kind' instead of throwing an
+	exception; fixes #71632.
+
+2005-01-26  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #71257
+	* expression.cs (MemberAccess.ResolveMemberAccess): Add CS0176 test for
+	constant members.
+
+2005-03-17  Martin Baulig  <martin@ximian.com>
+
+	* anonymous.cs (AnonymousMethod.method_modifiers): Change default
+	from `Modifiers.INTERNAL' to `Modifiers.PRIVATE'.  Fixes #73260.
+
+2005-03-17  Martin Baulig  <martin@ximian.com>
+
+	* anonymous.cs (AnonymousMethod.EmitMethod): Changed return type
+	to bool so we can return an error condition.
+	(AnonymousDelegate.Emit): Check whether AnonymousMethod.EmitMethod()
+	returned an error.
+
+2005-03-17  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (TypeMananager.IsIEnumerable): New public method.
+
+	* convert.cs (Convert.ImplicitReferenceConversion(Exists)): Allow
+	converting from an array-type of T to `IEnumerable<T>'.
+
+2005-03-16  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (Nullable.Unwrap): Implement IAssignMethod.
+	(Nullable.LiftedUnaryMutator): New public class.
+
+	* expression.cs (UnaryMutator.DoResolve): Added support for
+	Nullable Types.
+
+2005-03-14  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (Nullable.NullCoalescingOperator): Implemented.
+
+2005-03-14  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (Nullable.LiftedBinaryOperator): Added support for
+	the comparision operators `<', `>', `<=' and `>='.
+
+2005-03-13  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs
+	(Nullable.NullLiteral): Renamed to `Nullable.NullableLiteral' to
+	avoid confusion with the `NullLiteral'.
+	(Nullable.LiftedBinaryOperator): Correctly implement `==' and '!='.
+
+2005-03-13  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (Binary.ResolveOperator): For `==' and `!=', allow
+	comparing arbitrary types with the null literal.
+
+2005-03-13  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (Nullable.LiftedBinaryOperator): Add support for the
+	boolean operators '&&', '||', '&' and '|'.
+	(Nullable.OperatorTrueOrFalse): New public class.
+
+	* ecore.cs (Expression.GetOperatorTrue/False): Return an `Expression'
+	instead of a `StaticCallExpr'; added support for nullables.
+
+2005-03-10  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs
+	(ArrayAccess.EmitDynamicInitializers): Use `etype.IsValueType'
+	rather than `etype.IsSubclassOf (TypeManager.value_type)'.	
+
+2005-03-07  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (Nullable.Unwrap): Implement IMemoryLocation and make
+	it work if `expr' is not an IMemoryLocation.
+	(Nullable.Lifted): Implement IMemoryLocation.
+	(Nullable.LiftedConversion.ResolveUnderlying): Use the correct
+	target type.
+
+2005-03-05  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (Nullable.Unwrap, Wrap): New protected classes.
+	(Nullable.Lifted): New abstract class; rewrote the lifted conversions.
+	(Nullable): Added support for lifted unary and binary operators.
+
+	* expression.cs (Unary.DoResolve): Added support for nullable types.
+	(Binary.DoResolve): Likewise.
+	(Conditional.DoResolve): Likewise.
+
+2005-03-02  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (DeclSpace.SetParameterInfo): Make this virtual.
+
+	* class.cs (ClassPart.SetParameterInfo): Override this.
+	(PartialContainer.SetParameterInfo): Override this.
+	(TypeContainer.CheckConstraints): New protected method.
+	(PartialContainer.CheckConstraints): Override this and check
+	whether the same contraints were specified in all parts of a
+	partial generic type definition.
+	(PartialContainer.UpdateConstraints): New public method.
+
+	* generic.cs (TypeParameter.UpdateConstraints): New public method.
+
+2005-03-02  Martin Baulig  <martin@ximian.com>
+
+	Committing a patch from Carlos Alberto Cortez to fix #72887.
+
+	* convert.cs (Convert.ExplicitReferenceConversionExists): Allow
+	casts from `T []' to `int []'.
+
+2005-03-02  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (TypeManager.IsEqual): Make this symmetric.
+
+	* expression.cs (Binary.ResolveOperator): When resolving a
+	BinaryDelegate, use `TypeManager.IsEqual (l, r)' rather than just
+	`=='.  Fixes #71866.  See gen-127.cs.
+
+2005-03-02  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (TypeContainer.DoDefineMembers): We also need a default
+	static constructor in static classes.
+
+2005-03-02  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs
+	(NullableType.Name, NullableType.FullName): Add a "?" to the name.
+	(Nullable.LiftedConversion): Added support for user-defined
+	conversions.
+
+	* cs-tokenizer.cs (Tokenizer.PutbackCloseParens): New public method.
+
+	* cs-parser.jay: Use ComposedCast everywhere instead of
+	NullableType, so we don't need to check for NullableType
+	everywhere.
+	(conditional_expression): Added `INTERR CLOSE_PARENS' rule for the
+	case where we'll be resolved into a `parenthesized_expression_0'
+	afterwards.
+
+	* convert.cs
+	(Convert.UserDefinedConversion): Added nullable conversions.
+
 2005-02-28  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (TypeManager.IsNullableType): New static method.

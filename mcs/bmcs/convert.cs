@@ -234,7 +234,7 @@ namespace Mono.CSharp {
 				else
 					return null;
 			}
-				
+
 			// from an array-type S to an array-type of type T
 			if (expr_type.IsArray && target_type.IsArray) {
 				if (expr_type.GetArrayRank () == target_type.GetArrayRank ()) {
@@ -257,7 +257,11 @@ namespace Mono.CSharp {
 			// from an array-type to System.Array
 			if (expr_type.IsArray && target_type == TypeManager.array_type)
 				return new EmptyCast (expr, target_type);
-				
+
+			// from an array-type of type T to IEnumerable<T>
+			if (expr_type.IsArray && TypeManager.IsIEnumerable (expr_type, target_type))
+				return new EmptyCast (expr, target_type);
+
 			// from any delegate type to System.Delegate
 			if ((expr_type == TypeManager.delegate_type || TypeManager.IsDelegateType (expr_type)) &&
 			    target_type == TypeManager.delegate_type)
@@ -346,7 +350,11 @@ namespace Mono.CSharp {
 			// from an array-type to System.Array
 			if (expr_type.IsArray && (target_type == TypeManager.array_type))
 				return true;
-				
+
+			// from an array-type of type T to IEnumerable<T>
+			if (expr_type.IsArray && TypeManager.IsIEnumerable (expr_type, target_type))
+				return true;
+
 			// from any delegate type to System.Delegate
 			if ((expr_type == TypeManager.delegate_type || TypeManager.IsDelegateType (expr_type)) &&
 			    target_type == TypeManager.delegate_type)
@@ -381,7 +389,6 @@ namespace Mono.CSharp {
 		///   expr is the expression to convert, returns a new expression of type
 		///   target_type or null if an implicit conversion is not possible.
 		/// </summary>
-
 		static public Expression WideningNumericConversion (EmitContext ec, Expression expr,
 								    Type target_type, Location loc)
 		{
@@ -1092,6 +1099,10 @@ namespace Mono.CSharp {
 			Type source_type = source.Type;
 			MethodBase method = null;
 
+			if (TypeManager.IsNullableType (source_type) && TypeManager.IsNullableType (target))
+				return new Nullable.LiftedConversion (
+					source, target, true, look_for_explicit, loc).Resolve (ec);
+
 			union = GetConversionOperators (ec, source_type, target, loc, look_for_explicit);
 			if (union == null)
 				return null;
@@ -1200,11 +1211,12 @@ namespace Mono.CSharp {
 					return TypeParameter_to_Null (expr, target_type, loc);
 
 				if (TypeManager.IsNullableType (target_type))
-					return new Nullable.NullLiteral (target_type, loc);
+					return new Nullable.NullableLiteral (target_type, loc);
 			}
 
 			if (TypeManager.IsNullableType (expr_type) && TypeManager.IsNullableType (target_type))
-				return Nullable.LiftedConversion.Create (ec, expr, target_type, false, loc);
+				return new Nullable.LiftedConversion (
+					expr, target_type, false, false, loc).Resolve (ec);
 
 			if (expr.eclass == ExprClass.MethodGroup){
 				if (!TypeManager.IsDelegateType (target_type)){
@@ -1692,6 +1704,12 @@ namespace Mono.CSharp {
 			
 			if (source_type == target_type)
 				return true;
+			
+			//
+			// From generic parameter to any type
+			//
+			if (source_type.IsGenericParameter)
+				return true;
 
 			//
 			// From object to a generic parameter
@@ -1748,8 +1766,9 @@ namespace Mono.CSharp {
 					
 					Type source_element_type = TypeManager.GetElementType (source_type);
 					Type target_element_type = TypeManager.GetElementType (target_type);
-					
-					if (!source_element_type.IsValueType && !target_element_type.IsValueType)
+
+					if (source_element_type.IsGenericParameter ||
+					    (!source_element_type.IsValueType && !target_element_type.IsValueType))
 						if (NarrowingReferenceConversionExists (source_element_type,
 										       target_element_type))
 							return true;
@@ -1939,7 +1958,8 @@ namespace Mono.CSharp {
 				return ne;
 
 			if (TypeManager.IsNullableType (expr.Type) && TypeManager.IsNullableType (target_type))
-				return Nullable.LiftedConversion.Create (ec, expr, target_type, true, loc);
+				return new Nullable.LiftedConversion (
+					expr, target_type, false, true, loc).Resolve (ec);
 
 			ne = NarrowingNumericConversion (ec, expr, target_type, loc);
 			if (ne != null)
@@ -2066,7 +2086,8 @@ namespace Mono.CSharp {
 				return ne;
 
 			if (TypeManager.IsNullableType (expr.Type) && TypeManager.IsNullableType (target_type))
-				return Nullable.LiftedConversion.Create (ec, expr, target_type, true, l);
+				return new Nullable.LiftedConversion (
+					expr, target_type, false, true, l).Resolve (ec);
 
 			ne = NarrowingNumericConversion (ec, expr, target_type, l);
 			if (ne != null)

@@ -17,21 +17,6 @@ using Mono.CSharp ;
 
 namespace Mono.CSharp
 {
-	public class Utils
-	{
-		public static void AddSpecializedAttribute(ref Attributes attrs, string attributeName, ArrayList args, Location loc)
-		{
-			Mono.CSharp.Attribute specialAttr = new Mono.CSharp.Attribute(null, attributeName, args, loc); // Sudha :  passed null for target
-			ArrayList al = new ArrayList();
-			al.Add(specialAttr);
-			if (attrs == null) {
-				attrs = new Attributes(al);
-			} else {
-				attrs.AddAttributes(al);
-			}
-		}
-	}
-
 	public class VBModule : Class
 	{
 		public new const int AllowedModifiers = Modifiers.PUBLIC |Modifiers.INTERNAL;
@@ -49,7 +34,16 @@ namespace Mono.CSharp
 			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.INTERNAL, l);
 
 			// add specialized attribute
-			Utils.AddSpecializedAttribute(ref attributes, "Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute", null, l);
+
+			Mono.CSharp.Attribute standardModuleAttribute = new Mono.CSharp.Attribute(null, Expression.StringToExpression ("Microsoft.VisualBasic.CompilerServices", l), "StandardModuleAttribute", null, l); 
+			
+			ArrayList al = new ArrayList();
+			al.Add(standardModuleAttribute);
+			if (attributes == null) {
+				attributes = new Attributes(al);
+			} else {
+				attributes.AddAttributes(al);
+			}
 		}
 
 

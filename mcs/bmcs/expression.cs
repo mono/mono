@@ -431,13 +431,15 @@ namespace Mono.CSharp {
 				}
 
 				IVariable variable = Expr as IVariable;
-				if (!ec.InFixedInitializer && ((variable == null) || !variable.VerifyFixed (false))) {
+				bool is_fixed = variable != null && variable.VerifyFixed (false);
+
+				if (!ec.InFixedInitializer && !is_fixed) {
 					Error (212, "You can only take the address of an unfixed expression inside " +
 					       "of a fixed statement initializer");
 					return null;
 				}
 
-				if (ec.InFixedInitializer && ((variable != null) && variable.VerifyFixed (false))) {
+				if (ec.InFixedInitializer && is_fixed) {
 					Error (213, "You can not fix an already fixed expression");
 					return null;
 				}
@@ -581,6 +583,9 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return null;
 
+			if (TypeManager.IsNullableType (Expr.Type))
+				return new Nullable.LiftedUnaryOperator (Oper, Expr, loc).Resolve (ec);
+
 			eclass = ExprClass.Value;
 			return ResolveOperator (ec);
 		}
@@ -658,7 +663,7 @@ namespace Mono.CSharp {
 	// after semantic analysis (this is so we can take the address
 	// of an indirection).
 	//
-	public class Indirection : Expression, IMemoryLocation, IAssignMethod {
+	public class Indirection : Expression, IMemoryLocation, IAssignMethod, IVariable {
 		Expression expr;
 		LocalTemporary temporary;
 		bool prepared;
@@ -732,6 +737,21 @@ namespace Mono.CSharp {
 		{
 			return "*(" + expr + ")";
 		}
+
+		#region IVariable Members
+
+		public VariableInfo VariableInfo {
+			get {
+				return null;
+			}
+		}
+
+		public bool VerifyFixed (bool is_expression)
+		{
+			return true;
+		}
+
+		#endregion
 	}
 	
 	/// <summary>
@@ -893,6 +913,10 @@ namespace Mono.CSharp {
 				return null;
 
 			eclass = ExprClass.Value;
+
+			if (TypeManager.IsNullableType (expr.Type))
+				return new Nullable.LiftedUnaryMutator (mode, expr, loc).Resolve (ec);
+
 			return ResolveOperator (ec);
 		}
 
@@ -988,7 +1012,6 @@ namespace Mono.CSharp {
 			this.is_expr = is_expr;
 			((IAssignMethod) expr).EmitAssign (ec, this, is_expr && (mode == Mode.PreIncrement || mode == Mode.PreDecrement), true);
 		}
-		
 
 		public override void Emit (EmitContext ec)
 		{
@@ -2399,6 +2422,15 @@ namespace Mono.CSharp {
 					return this;
 				}
 
+				bool left_is_null = left is NullLiteral;
+				bool right_is_null = right is NullLiteral;
+				if (left_is_null || right_is_null) {
+					if (oper == Operator.Equality)
+						return new BoolLiteral (left_is_null == right_is_null);
+					else
+						return new BoolLiteral (left_is_null != right_is_null);
+				}
+
 				//
 				// operator != (object a, object b)
 				// operator == (object a, object b)
@@ -2458,33 +2490,33 @@ namespace Mono.CSharp {
 					     (r == TypeManager.anonymous_method_type))){
 						if ((RootContext.Version != LanguageVersion.ISO_1)){
 						Expression tmp = Convert.WideningConversionRequired (ec, right, l, loc);
-						if (tmp == null)
-							return null;
-						right = tmp;
-						r = right.Type;
-					}
+							if (tmp == null)
+								return null;
+							right = tmp;
+							r = right.Type;
+						}
 					}
 				
 					if (TypeManager.IsDelegateType (r)){
-					MethodInfo method;
-					ArrayList args = new ArrayList (2);
+						MethodInfo method;
+						ArrayList args = new ArrayList (2);
 					
-					args = new ArrayList (2);
-					args.Add (new Argument (left, Argument.AType.Expression));
-					args.Add (new Argument (right, Argument.AType.Expression));
+						args = new ArrayList (2);
+						args.Add (new Argument (left, Argument.AType.Expression));
+						args.Add (new Argument (right, Argument.AType.Expression));
 					
-					if (oper == Operator.Addition)
-						method = TypeManager.delegate_combine_delegate_delegate;
-					else
-						method = TypeManager.delegate_remove_delegate_delegate;
+						if (oper == Operator.Addition)
+							method = TypeManager.delegate_combine_delegate_delegate;
+						else
+							method = TypeManager.delegate_remove_delegate_delegate;
 
-					if (l != r) {
-						Error_OperatorCannotBeApplied ();
-						return null;
+						if (!TypeManager.IsEqual (l, r)) {
+							Error_OperatorCannotBeApplied ();
+							return null;
+						}
+
+						return new BinaryDelegate (l, method, args);
 					}
-
-					return new BinaryDelegate (l, method, args);
-				}
 				}
 
 				//
@@ -2748,6 +2780,9 @@ namespace Mono.CSharp {
 					if (e != null)
 						return e;
 			}
+
+			if (TypeManager.IsNullableType (left.Type) || TypeManager.IsNullableType (right.Type))
+				return new Nullable.LiftedBinaryOperator (oper, left, right, loc).Resolve (ec);
 
 			return ResolveOperator (ec);
 		}
@@ -3446,17 +3481,26 @@ namespace Mono.CSharp {
 				//
 				left.Emit (ec);
 				ig.Emit (OpCodes.Conv_I);
-				right.Emit (ec);
-				if (size != 1){
-					if (size == 0)
-						ig.Emit (OpCodes.Sizeof, element);
-					else 
-						IntLiteral.EmitInt (ig, size);
-					if (rtype == TypeManager.int64_type)
-						ig.Emit (OpCodes.Conv_I8);
-					else if (rtype == TypeManager.uint64_type)
-						ig.Emit (OpCodes.Conv_U8);
-					ig.Emit (OpCodes.Mul);
+
+				Constant right_const = right as Constant;
+				if (right_const != null && size != 0) {
+					Expression ex = ConstantFold.BinaryFold (ec, Binary.Operator.Multiply, new IntConstant (size), right_const, loc);
+					if (ex == null)
+						return;
+					ex.Emit (ec);
+				} else {
+					right.Emit (ec);
+					if (size != 1){
+						if (size == 0)
+							ig.Emit (OpCodes.Sizeof, element);
+						else 
+							IntLiteral.EmitInt (ig, size);
+						if (rtype == TypeManager.int64_type)
+							ig.Emit (OpCodes.Conv_I8);
+						else if (rtype == TypeManager.uint64_type)
+							ig.Emit (OpCodes.Conv_U8);
+						ig.Emit (OpCodes.Mul);
+					}
 				}
 				
 				if (rtype == TypeManager.int64_type || rtype == TypeManager.uint64_type)
@@ -3508,6 +3552,9 @@ namespace Mono.CSharp {
 
 			if (expr == null)
 				return null;
+
+			if (TypeManager.IsNullableType (expr.Type))
+				return new Nullable.LiftedConditional (expr, trueExpr, falseExpr, loc).Resolve (ec);
 			
 			if (expr.Type != TypeManager.bool_type){
 				expr = Expression.ResolveBoolean (
@@ -6707,8 +6754,7 @@ namespace Mono.CSharp {
 						// If we are dealing with a struct, get the
 						// address of it, so we can store it.
 						//
-						if ((dims == 1) && 
-						    etype.IsSubclassOf (TypeManager.value_type) &&
+						if ((dims == 1) && etype.IsValueType &&
 						    (!TypeManager.IsBuiltinOrEnum (etype) ||
 						     etype == TypeManager.decimal_type)) {
 							if (e is New){
@@ -7273,7 +7319,15 @@ namespace Mono.CSharp {
 
 						object real_value = ((Constant) c.Expr).GetValue ();
 
-						return Constantify (real_value, t);
+						Expression exp = Constantify (real_value, t);
+
+						if (left_is_explicit && !left_is_type && !IdenticalNameAndTypeName (ec, left_original, left, loc)) {
+							Report.SymbolRelatedToPreviousError (c);
+							error176 (loc, c.GetSignatureForError ());
+							return null;
+						}
+					
+						return exp;
 					}
 				}
 
@@ -7597,6 +7651,11 @@ namespace Mono.CSharp {
 
 		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec)
 		{
+			return ResolveNamespaceOrType (ec, false);
+		}
+
+		public FullNamedExpression ResolveNamespaceOrType (EmitContext ec, bool silent)
+		{
 			FullNamedExpression new_expr = expr.ResolveAsTypeStep (ec);
 
 			if (new_expr == null)
@@ -7609,7 +7668,7 @@ namespace Mono.CSharp {
 				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, lookup_id, loc);
 				if ((retval != null) && (args != null))
 					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (ec);
-				if (retval == null)
+				if (!silent && retval == null)
 					Report.Error (234, loc, "The type or namespace name `{0}' could not be found in namespace `{1}'", Identifier, ns.FullName);
 				return retval;
 			}
@@ -7628,7 +7687,7 @@ namespace Mono.CSharp {
 
 			Expression member_lookup;
 			member_lookup = MemberLookupFinal (ec, expr_type, expr_type, lookup_id, loc);
-			if (member_lookup == null) {
+			if (!silent && member_lookup == null) {
 				Report.Error (234, loc, "The type name `{0}' could not be found in type `{1}'", 
 					      Identifier, new_expr.FullName);
 				return null;

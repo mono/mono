@@ -946,12 +946,13 @@ imports_terms
 imports_term
 	: namespace_or_type_name 
 	{
-		string name = ((MemberName) $1).GetName ();
-	  	current_namespace.Using (name, lexer.Location);
+		MemberName ns_name = (MemberName) $1;
+		current_namespace.Using (ns_name.GetTypeExpression (lexer.Location), lexer.Location);
 	}
 	| identifier ASSIGN namespace_or_type_name 
 	{
-		  current_namespace.UsingAlias ((string) $1, (MemberName) $3, lexer.Location);
+		MemberName name = (MemberName) $3;
+		current_namespace.UsingAlias ((string) $1, name.GetTypeExpression (lexer.Location), lexer.Location);
 	}
 	;
 	
@@ -1102,10 +1103,13 @@ attribute
 		else {
 			expecting_local_attribs = true;
 			MemberName mname = (MemberName) $1;
-			string name = mname.GetName ();
 
-			$$ = new Attribute (null, name, (ArrayList) $3,
-					    (Location) $2);
+			MemberName left = mname.Left;
+			string identifier = mname.Name;
+
+			Expression left_expr = left == null ? null : left.GetTypeExpression ((Location)$2);
+
+			$$ = new Attribute (null, left_expr, identifier, (ArrayList) $3, (Location)$2);
 		}
  	   }
 	  | attribute_target_specifier 
@@ -1139,9 +1143,12 @@ attribute
 		expecting_global_attribs = true;
 
 		MemberName mname = (MemberName) $4;
-		string aname = mname.GetName ();
+		MemberName left = mname.Left;
+		string identifier = mname.Name;
 
-		$$ = new Attribute (attribute_target, aname, (ArrayList) $6, (Location) $5);
+		Expression left_expr = left == null ? null : left.GetTypeExpression ((Location) $5);
+
+		$$ = new GlobalAttribute (current_container, attribute_target, left_expr, identifier, (ArrayList) $6, (Location) $5);
 	    }	
  	;
 

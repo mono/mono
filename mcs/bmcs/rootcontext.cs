@@ -374,6 +374,9 @@ namespace Mono.CSharp {
 			// These are classes that depends on the core interfaces
 			//
 			string [] classes_second_stage = {
+				"System.Enum",
+				"System.String",
+				"System.Array",
 				"System.Reflection.MemberInfo",
 				"System.Type",
 				"System.Exception",
@@ -410,19 +413,18 @@ namespace Mono.CSharp {
 				"System.Security.CodeAccessPermission"
 			};
 
-			// We must store them here before calling BootstrapCorlib_ResolveDelegate.
-			TypeManager.string_type = BootstrapCorlib_ResolveClass (root, "System.String");
-			TypeManager.enum_type = BootstrapCorlib_ResolveClass (root, "System.Enum");
-			TypeManager.array_type = BootstrapCorlib_ResolveClass (root, "System.Array");
-			TypeManager.multicast_delegate_type = BootstrapCorlib_ResolveClass (root, "System.MulticastDelegate");
-			TypeManager.delegate_type = BootstrapCorlib_ResolveClass (root, "System.Delegate");
-			
 			foreach (string cname in classes_second_stage)
 				BootstrapCorlib_ResolveClass (root, cname);
 
 			BootstrapCorlib_ResolveStruct (root, "System.Nullable`1");
 
 			BootstrapCorlib_ResolveDelegate (root, "System.AsyncCallback");
+
+			// These will be defined indirectly during the previous ResolveDelegate.
+			// However make sure the rest of the checks happen.
+			string [] delegate_types = { "System.Delegate", "System.MulticastDelegate" };
+			foreach (string cname in delegate_types)
+				BootstrapCorlib_ResolveClass (root, cname);
 		}
 			
 		// <summary>

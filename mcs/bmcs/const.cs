@@ -62,11 +62,25 @@ namespace Mono.CSharp {
 		}
 #endif
 
+		protected override bool CheckBase ()
+		{
+			// Constant.Define can be called when the parent type hasn't yet been populated
+			// and it's base types need not have been populated.  So, we defer this check
+			// to the second time Define () is called on this member.
+			if (Parent.BaseCache == null)
+				return true;
+			return base.CheckBase ();
+		}
+
 		/// <summary>
 		///   Defines the constant in the @parent
 		/// </summary>
 		public override bool Define ()
 		{
+			// Make Define () idempotent, but ensure that the error check happens.
+			if (FieldBuilder != null)
+				return base.CheckBase ();
+
 			if (!base.Define ())
 				return false;
 
@@ -248,7 +262,9 @@ namespace Mono.CSharp {
 				}
 				Expr = ce;
 			}
-			ConstantValue = ce.GetValue ();
+
+			if (ce != null)
+				ConstantValue = ce.GetValue ();
 
 			if (MemberType.IsEnum){
 				//

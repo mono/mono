@@ -84,7 +84,12 @@ namespace Mono.CSharp {
 			string path = Path.GetFullPath (name);
 
 			if (source_files.Contains (path)){
-				Report.Warning (2002, name, "Source file '{0}' specified multiple times", path);
+				int id = (int) source_files [path];
+				string other_name = ((SourceFile) source_list [id - 1]).Name;
+				if (name.Equals (other_name))
+					Report.Warning (2002, "Source file '{0}' specified multiple times", name);
+				else
+					Report.Warning (2002, "Source filenames '{0}' and '{1}' both refer to the same file: {2}", name, other_name, path);
 				return;
 			}
 

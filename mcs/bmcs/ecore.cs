@@ -815,7 +815,7 @@ namespace Mono.CSharp {
 		///   Returns an expression that can be used to invoke operator true
 		///   on the expression if it exists.
 		/// </summary>
-		static public StaticCallExpr GetOperatorTrue (EmitContext ec, Expression e, Location loc)
+		static public Expression GetOperatorTrue (EmitContext ec, Expression e, Location loc)
 		{
 			return GetOperatorTrueOrFalse (ec, e, true, loc);
 		}
@@ -824,15 +824,18 @@ namespace Mono.CSharp {
 		///   Returns an expression that can be used to invoke operator false
 		///   on the expression if it exists.
 		/// </summary>
-		static public StaticCallExpr GetOperatorFalse (EmitContext ec, Expression e, Location loc)
+		static public Expression GetOperatorFalse (EmitContext ec, Expression e, Location loc)
 		{
 			return GetOperatorTrueOrFalse (ec, e, false, loc);
 		}
 
-		static StaticCallExpr GetOperatorTrueOrFalse (EmitContext ec, Expression e, bool is_true, Location loc)
+		static Expression GetOperatorTrueOrFalse (EmitContext ec, Expression e, bool is_true, Location loc)
 		{
 			MethodBase method;
 			Expression operator_group;
+
+			if (TypeManager.IsNullableType (e.Type))
+				return new Nullable.OperatorTrueOrFalse (e, is_true, loc).Resolve (ec);
 
 			operator_group = MethodLookup (ec, e.Type, is_true ? "op_True" : "op_False", loc);
 			if (operator_group == null)
@@ -941,7 +944,7 @@ namespace Mono.CSharp {
 				sb.Append (valid [i]);
 			}
 
-			Error (119, "Expression denotes a `" + ExprClassName () + "' where " +
+			Report.Error (119, loc, "Expression denotes a `" + ExprClassName () + "' where " +
 			       "a `" + sb.ToString () + "' was expected");
 		}
 		
@@ -2482,6 +2485,11 @@ namespace Mono.CSharp {
 	///   section 10.8.1 (Fully Qualified Names).
 	/// </summary>
 	public abstract class FullNamedExpression : Expression {
+		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec)
+		{
+			return this;
+		}
+
 		public abstract string FullName {
 			get;
 		}
