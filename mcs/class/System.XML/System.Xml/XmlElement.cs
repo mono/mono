@@ -358,14 +358,14 @@ namespace System.Xml
 			w.WriteStartElement(Prefix, LocalName, NamespaceURI);
 
 			// write namespace declarations(if not exist)
-			if(Prefix != null && w.LookupPrefix(Prefix) != NamespaceURI)
+			if(Prefix != null && Prefix != String.Empty && w.LookupPrefix(Prefix) != NamespaceURI)
 				w.WriteAttributeString("xmlns", Prefix, "http://www.w3.org/2000/xmlns/", NamespaceURI);
 
 			foreach(XmlNode attributeNode in Attributes)
 			{
 				attributeNode.WriteTo(w);
 				// write namespace declarations(if not exist)
-				if(attributeNode.Prefix != null && attributeNode.Prefix != "" &&
+				if(attributeNode.Prefix != null && attributeNode.Prefix != String.Empty &&
 				   w.LookupPrefix(attributeNode.Prefix) != attributeNode.NamespaceURI &&
 				   attributeNode.Prefix != "xmlns")
 					w.WriteAttributeString("xmlns", attributeNode.Prefix, "http://www.w3.org/2000/xmlns/", attributeNode.NamespaceURI);

@@ -93,10 +93,14 @@ namespace System.Xml
 			if ((prefix == "xmlns") || (localName == "xmlns"))
 			  {
 				ns = value;
+				
 				if (prefix == "xmlns" && namespaceManager.HasNamespace (localName))
 				  	return;
+				
+				/* Users need to be able to re-declare the default namespace for subnodes
 				else if (localName == "xmlns" && namespaceManager.HasNamespace (String.Empty))
 				  	return;
+				*/
 			  }
 			
 			WriteStartAttribute (prefix, localName, ns);
@@ -110,6 +114,7 @@ namespace System.Xml
 				else
 					namespaceManager.AddNamespace ("", ns);
 			}
+			
 		}
 
 		public abstract void WriteBase64 (byte[] buffer, int index, int count);

@@ -561,6 +561,7 @@ namespace System.Xml
 						namespaceManager.AddNamespace (prefix, ns);
 						addDefaultNamespace = true;
 					}
+
 					if (prefix == String.Empty)
 						prefix = existingPrefix;
 
