@@ -1,3 +1,7 @@
+2005-01-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_resolve_patch_target): Fix warning.
+
 2005-01-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-x86.c (mono_arch_local_regalloc): Fix bug introduced by
