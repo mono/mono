@@ -200,7 +200,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		void error31 (object val, Location loc)
+		void Error_ConstantValueCannotBeConverted (object val, Location loc)
 		{
 			if (val is Constant)
 				Report.Error (31, loc, "Constant value '" + ((Constant) val).AsString () +
@@ -269,7 +269,7 @@ namespace Mono.CSharp {
 					default_value = c.GetValue ();
 					
 					if (default_value == null) {
-						error31 (c, loc);
+						Error_ConstantValueCannotBeConverted (c, loc);
 						return null;
 					}
 					
@@ -290,7 +290,7 @@ namespace Mono.CSharp {
 			try {
 				default_value = Convert.ChangeType (default_value, UnderlyingType);
 			} catch {
-				error31 (c, loc);
+				Error_ConstantValueCannotBeConverted (c, loc);
 				return null;
 			}
 
@@ -349,7 +349,7 @@ namespace Mono.CSharp {
 					try {
 						default_value = Convert.ChangeType (default_value, UnderlyingType);
 					} catch {
-						error31 (default_value, loc);
+						Error_ConstantValueCannotBeConverted (default_value, loc);
 						return false;
 					}
 

@@ -25,16 +25,6 @@ MethodGroupExpr
 	not guaranteed to have set its `Expression.Type' to a non-null
 	value.
 
-AddressOf
-	Needs an extra argument: `set' or `read', this will help 
-	to track usage errors in variables (since AddressOf does not
-	really know what is it being used for, it could be either)
-
-Unsafe code:
-	Pointer arithmetic operators (++ and -- are done)
-	Test for ++ and -- for non-builtin-types
-	fixed
-
 readonly variables and ref/out
 	
 BUGS
@@ -145,7 +135,10 @@ BUGS
 PENDING TASKS
 -------------
 
-* Implement (fixed case 3: string)
+* Constant Folding
+
+	Constant Folding does not take into account Enumerations, we should maybe
+	extract the underlying value, and constant fold on it.
 
 * Revisit
 

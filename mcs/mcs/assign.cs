@@ -80,7 +80,7 @@ namespace Mono.CSharp {
 			ec.ig.Emit (OpCodes.Stloc, builder);
 		}
 
-		public void AddressOf (EmitContext ec)
+		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			ec.ig.Emit (OpCodes.Ldloca, builder);
 		}

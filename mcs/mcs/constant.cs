@@ -35,7 +35,7 @@ namespace Mono.CSharp {
 
 		override public string ToString ()
 		{
-			return AsString ();
+			return this.GetType ().Name + " (" + AsString () + ")";
 		}
 
 		/// <summary>
@@ -51,8 +51,109 @@ namespace Mono.CSharp {
 		{
 			return this;
 		}
-	}
 
+		//
+		// The various ToXXXX conversion functions are used by the constant
+		// folding evaluator.   A null value is returned if the conversion is
+		// not possible.   
+		//
+		// Note: not all the patterns for catching `implicit_conv' are the same.
+		// some implicit conversions can never be performed between two types
+		// even if the conversion would be lossless (for example short to uint),
+		// but some conversions are explicitly permitted by the standard provided
+		// that there will be no loss of information (for example, int to uint).
+		//
+		public DoubleConstant ToDouble (Location loc)
+		{
+			DoubleConstant c = ConvertToDouble ();
+
+			if (c == null)
+				Error_CannotConvertImplicit (loc, Type, TypeManager.double_type);
+
+			return c;
+		}
+
+		public FloatConstant ToFloat (, Location loc)
+		{
+			FloatConstant c = ConvertToFloat (implicit_conv);
+
+			if (c == null)
+				Error_CannotConvertImplicit (loc, Type, TypeManager.float_type);
+
+			return c;
+		}
+
+		public ULongConstant ToULong (, Location loc)
+		{
+			ULongConstant c = ConvertToULong (implicit_conv);
+
+			if (c == null)
+				Error_CannotConvertImplicit (loc, Type, TypeManager.uint64_type);
+
+			return c;
+		}
+
+		public LongConstant ToLong (, Location loc)
+		{
+			LongConstant c = ConvertToLong (implicit_conv);
+
+			if (c == null)
+				Error_CannotConvertImplicit (loc, Type, TypeManager.int64_type);
+
+			return c;
+		}
+		
+		public UIntConstant ToUInt (, Location loc)
+		{
+			UIntConstant c = ConvertToUInt (implicit_conv);
+
+			if (c == null)
+				Error_CannotConvertImplicit (loc, Type, TypeManager.uint32_type);
+
+			return c;
+		}
+
+		public IntConstant ToInt (, Location loc)
+		{
+			IntConstant c = ConvertToInt (implicit_conv);
+
+			if (c == null)
+				Error_CannotConvertImplicit (loc, Type, TypeManager.int32_type);
+
+			return c;
+		}
+		
+		public virtual DoubleConstant ConvertToDouble ()
+		{
+			return null;
+		}
+
+		public virtual FloatConstant ConvertToFloat ()
+		{
+			return null;
+		}
+
+		public virtual ULongConstant ConvertToULong ()
+		{
+			return null;
+		}
+
+		public virtual LongConstant ConvertToLong ()
+		{
+			return null;
+		}
+
+		public virtual UIntConstant ConvertToUInt ()
+		{
+			return null;
+		}
+
+		public virtual IntConstant ConvertToInt ()
+		{
+			return null;
+		}
+	}
+	
 	public class BoolConstant : Constant {
 		public readonly bool Value;
 		
@@ -105,6 +206,36 @@ namespace Mono.CSharp {
 		public override object GetValue ()
 		{
 			return Value;
+		}
+
+		public override DoubleConstant ConvertToDouble ()
+		{
+			return new DoubleConstant (Value);
+		}
+
+		public override FloatConstant ConvertToFloat ()
+		{
+			return new FloatConstant (Value);
+		}
+
+		public override ULongConstant ConvertToULong ()
+		{
+			return new ULongConstant (Value);
+		}
+
+		public override LongConstant ConvertToLong ()
+		{
+			return new LongConstant (Value);
+		}
+
+		public override UIntConstant ConvertToUInt ()
+		{
+			return new UIntConstant (Value);
+		}
+
+		public override IntConstant ConvertToInt ()
+		{
+			return new IntConstant (Value);
 		}
 	}
 
@@ -160,6 +291,36 @@ namespace Mono.CSharp {
 		{
 			return Value;
 		}
+
+		public override DoubleConstant ConvertToDouble ()
+		{
+			return new DoubleConstant (Value);
+		}
+
+		public override FloatConstant ConvertToFloat ()
+		{
+			return new FloatConstant (Value);
+		}
+
+		public override ULongConstant ConvertToULong ()
+		{
+			return new ULongConstant (Value);
+		}
+
+		public override LongConstant ConvertToLong ()
+		{
+			return new LongConstant (Value);
+		}
+
+		public override UIntConstant ConvertToUInt ()
+		{
+			return new UIntConstant (Value);
+		}
+
+		public override IntConstant ConvertToInt ()
+		{
+			return new IntConstant (Value);
+		}
 	}
 
 	public class SByteConstant : Constant {
@@ -184,6 +345,39 @@ namespace Mono.CSharp {
 		public override object GetValue ()
 		{
 			return Value;
+		}
+
+		public override DoubleConstant ConvertToDouble ()
+		{
+			return new DoubleConstant (Value);
+		}
+
+		public override FloatConstant ConvertToFloat ()
+		{
+			return new FloatConstant (Value);
+		}
+
+		public override ULongConstant ConvertToULong ()
+		{
+			if (Value >= 0)
+				return new ULongConstant ((ulong) Value);
+			
+			return null;
+		}
+
+		public override LongConstant ConvertToLong ()
+		{
+			return new LongConstant (Value);
+		}
+
+		public override UIntConstant ConvertToUInt ()
+		{
+			return null;
+		}
+
+		public override IntConstant ConvertToInt ()
+		{
+			return new IntConstant (Value);
 		}
 	}
 
@@ -210,6 +404,36 @@ namespace Mono.CSharp {
 		{
 			return Value;
 		}
+
+		public override DoubleConstant ConvertToDouble ()
+		{
+			return new DoubleConstant (Value);
+		}
+
+		public override FloatConstant ConvertToFloat ()
+		{
+			return new FloatConstant (Value);
+		}
+
+		public override ULongConstant ConvertToULong ()
+		{
+			return null;
+		}
+
+		public override LongConstant ConvertToLong ()
+		{
+			return new LongConstant (Value);
+		}
+
+		public override UIntConstant ConvertToUInt ()
+		{
+			return null;
+		}
+
+		public override IntConstant ConvertToInt ()
+		{
+			return new IntConstant (Value);
+		}
 	}
 
 	public class UShortConstant : Constant {
@@ -234,6 +458,36 @@ namespace Mono.CSharp {
 		public override object GetValue ()
 		{
 			return Value;
+		}
+
+		public override DoubleConstant ConvertToDouble ()
+		{
+			return new DoubleConstant (Value);
+		}
+
+		public override FloatConstant ConvertToFloat ()
+		{
+			return new FloatConstant (Value);
+		}
+
+		public override ULongConstant ConvertToULong ()
+		{
+			return new ULongConstant (Value);
+		}
+
+		public override LongConstant ConvertToLong ()
+		{
+			return new LongConstant (Value);
+		}
+
+		public override UIntConstant ConvertToUInt ()
+		{
+			return new UIntConstant (Value);
+		}
+
+		public override IntConstant ConvertToInt ()
+		{
+			return new IntConstant (Value);
 		}
 	}
 
@@ -312,6 +566,42 @@ namespace Mono.CSharp {
 		{
 			return Value;
 		}
+
+		public override DoubleConstant ConvertToDouble ()
+		{
+			return new DoubleConstant (Value);
+		}
+
+		public override FloatConstant ConvertToFloat ()
+		{
+			return new FloatConstant (Value);
+		}
+
+		public override ULongConstant ConvertToULong ()
+		{
+			if (Value < 0)
+				return null;
+
+			return new ULongConstant ((ulong) Value);
+		}
+
+		public override LongConstant ConvertToLong ()
+		{
+			return new LongConstant (Value);
+		}
+
+		public override UIntConstant ConvertToUInt ()
+		{
+			if (Value < 0)
+				return null;
+
+			return new UIntConstant ((uint) Value);
+		}
+
+		public override IntConstant ConvertToInt ()
+		{
+			return this;
+		}
 	}
 
 	public class UIntConstant : Constant {
@@ -336,6 +626,36 @@ namespace Mono.CSharp {
 		public override object GetValue ()
 		{
 			return Value;
+		}
+
+		public override DoubleConstant ConvertToDouble ()
+		{
+			return new DoubleConstant (Value);
+		}
+
+		public override FloatConstant ConvertToFloat ()
+		{
+			return new FloatConstant (Value);
+		}
+
+		public override ULongConstant ConvertToULong ()
+		{
+			return new ULongConstant (Value);
+		}
+
+		public override LongConstant ConvertToLong ()
+		{
+			return new LongConstant (Value);
+		}
+
+		public override UIntConstant ConvertToUInt ()
+		{
+			return this;
+		}
+
+		public override IntConstant ConvertToInt ()
+		{
+			return null;
 		}
 	}
 
@@ -369,6 +689,39 @@ namespace Mono.CSharp {
 		{
 			return Value;
 		}
+
+		public override DoubleConstant ConvertToDouble ()
+		{
+			return new DoubleConstant (Value);
+		}
+
+		public override FloatConstant ConvertToFloat ()
+		{
+			return new FloatConstant (Value);
+		}
+
+		public override ULongConstant ConvertToULong ()
+		{
+			if (Value < 0)
+				return null;
+			
+			return new ULongConstant ((ulong) Value);
+		}
+
+		public override LongConstant ConvertToLong ()
+		{
+			return this;
+		}
+
+		public override UIntConstant ConvertToUInt ()
+		{
+			return null;
+		}
+
+		public override IntConstant ConvertToInt ()
+		{
+			return null;
+		}
 	}
 
 	public class ULongConstant : Constant {
@@ -396,6 +749,36 @@ namespace Mono.CSharp {
 		{
 			return Value;
 		}
+
+		public override DoubleConstant ConvertToDouble ()
+		{
+			return new DoubleConstant (Value);
+		}
+
+		public override FloatConstant ConvertToFloat ()
+		{
+			return new FloatConstant (Value);
+		}
+
+		public override ULongConstant ConvertToULong ()
+		{
+			return this;
+		}
+
+		public override LongConstant ConvertToLong ()
+		{
+			return null;
+		}
+
+		public override UIntConstant ConvertToUInt ()
+		{
+			return null;
+		}
+
+		public override IntConstant ConvertToInt ()
+		{
+			return null;
+		}
 	}
 
 	public class FloatConstant : Constant {
@@ -421,6 +804,31 @@ namespace Mono.CSharp {
 		{
 			return Value;
 		}
+
+		public override DoubleConstant ConvertToDouble ()
+		{
+			return new DoubleConstant (Value);
+		}
+
+		public override FloatConstant ConvertToFloat ()
+		{
+			return this;
+		}
+
+		public override LongConstant ConvertToLong ()
+		{
+			return null;
+		}
+
+		public override UIntConstant ConvertToUInt ()
+		{
+			return null;
+		}
+
+		public override IntConstant ConvertToInt ()
+		{
+			return null;
+		}
 	}
 
 	public class DoubleConstant : Constant {
@@ -445,6 +853,36 @@ namespace Mono.CSharp {
 		public override object GetValue ()
 		{
 			return Value;
+		}
+
+		public override DoubleConstant ConvertToDouble ()
+		{
+			return this;
+		}
+
+		public override FloatConstant ConvertToFloat ()
+		{
+			return null;
+		}
+
+		public override ULongConstant ConvertToULong ()
+		{
+			return null;
+		}
+
+		public override LongConstant ConvertToLong ()
+		{
+			return null;
+		}
+
+		public override UIntConstant ConvertToUInt ()
+		{
+			return null;
+		}
+
+		public override IntConstant ConvertToInt ()
+		{
+			return null;
 		}
 	}
 

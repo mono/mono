@@ -36,15 +36,32 @@ namespace Mono.CSharp {
 		Nothing, 
 	}
 
+	//
+	// This is just as a hint to AddressOf of what will be done with the
+	// address.
+	[Flags]
+	public enum AddressOp {
+		Store = 1,
+		Load  = 2,
+		LoadStore = 3
+	};
+	
 	/// <summary>
 	///   This interface is implemented by variables
 	/// </summary>
 	public interface IMemoryLocation {
 		/// <summary>
 		///   The AddressOf method should generate code that loads
-		///   the address of the object and leaves it on the stack
+		///   the address of the object and leaves it on the stack.
+		///
+		///   The `mode' argument is used to notify the expression
+		///   of whether this will be used to read from the address or
+		///   write to the address.
+		///
+		///   This is just a hint that can be used to provide good error
+		///   reporting, and should have no other side effects. 
 		/// </summary>
-		void AddressOf (EmitContext ec);
+		void AddressOf (EmitContext ec, AddressOp mode);
 	}
 
 	/// <remarks>
@@ -85,7 +102,7 @@ namespace Mono.CSharp {
 			Report.Warning (warning, s);
 		}
 
-		static public void error30 (Location loc, Type source, Type target)
+		static public void Error_CannotConvertType (Location loc, Type source, Type target)
 		{
 			Report.Error (30, loc, "Cannot convert type '" +
 				      TypeManager.CSharpName (source) + "' to '" +
@@ -1304,7 +1321,7 @@ namespace Mono.CSharp {
 			int value = ic.Value;
 
 			//
-			// FIXME: This should really return constants instead of EmptyCasts
+			// FIXME: This could return constants instead of EmptyCasts
 			//
 			if (target_type == TypeManager.sbyte_type){
 				if (value >= SByte.MinValue && value <= SByte.MaxValue)
@@ -1337,6 +1354,15 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		static public void Error_CannotConvertImplicit (Location loc, Type source, Type target)
+		{
+			string msg = "Cannot convert implicitly from `"+
+				TypeManager.CSharpName (source) + "' to `" +
+				TypeManager.CSharpName (target) + "'";
+
+			Error (29, loc, msg);
+		}
+
 		/// <summary>
 		///   Attemptes to implicityly convert `target' into `type', using
 		///   ConvertImplicit.  If there is no implicit conversion, then
@@ -1357,11 +1383,7 @@ namespace Mono.CSharp {
 				       "float type, use F suffix to create a float literal");
 			}
 			
-			string msg = "Cannot convert implicitly from `"+
-				TypeManager.CSharpName (source.Type) + "' to `" +
-				TypeManager.CSharpName (target_type) + "'";
-
-			Error (29, loc, msg);
+			Error_CannotConvertImplicit (loc, source.Type, target_type);
 
 			return null;
 		}
@@ -1878,7 +1900,7 @@ namespace Mono.CSharp {
 			if (ne != null)
 				return ne;
 
-			error30 (loc, expr_type, target_type);
+			Error_CannotConvertType (loc, expr_type, target_type);
 			return null;
 		}
 
@@ -1901,7 +1923,7 @@ namespace Mono.CSharp {
 			if (ne != null)
 				return ne;
 
-			error30 (l, expr.Type, target_type);
+			Error_CannotConvertType (l, expr.Type, target_type);
 			return null;
 		}
 
@@ -1946,7 +1968,7 @@ namespace Mono.CSharp {
 			       "' where a `" + expected + "' was expected");
 		}
 
-		static void error31 (Location l, string val, Type t)
+		static void Error_ConstantValueCannotBeConverted (Location l, string val, Type t)
 		{
 			Report.Error (31, l, "Constant value `" + val + "' cannot be converted to " +
 				      TypeManager.CSharpName (t));
@@ -2222,7 +2244,7 @@ namespace Mono.CSharp {
 
 				s = v.ToString ();
 			}
-			error31 (loc, s, target_type);
+			Error_ConstantValueCannotBeConverted (loc, s, target_type);
 			return null;
 		}
 
@@ -2471,6 +2493,36 @@ namespace Mono.CSharp {
 		public override string AsString ()
 		{
 			return Child.AsString ();
+		}
+
+		public override DoubleConstant ConvertToDouble (bool implicit_conv)
+		{
+			return Child.ConvertToDouble (implicit_conv);
+		}
+
+		public override FloatConstant ConvertToFloat (bool implicit_conv)
+		{
+			return Child.ConvertToFloat (implicit_conv);
+		}
+
+		public override ULongConstant ConvertToULong (bool implicit_conv)
+		{
+			return Child.ConvertToULong (implicit_conv);
+		}
+
+		public override LongConstant ConvertToLong (bool implicit_conv)
+		{
+			return Child.ConvertToLong (implicit_conv);
+		}
+
+		public override UIntConstant ConvertToUInt (bool implicit_conv)
+		{
+			return Child.ConvertToUInt (implicit_conv);
+		}
+
+		public override IntConstant ConvertToInt (bool implicit_conv)
+		{
+			return Child.ConvertToInt (implicit_conv);
 		}
 	}
 
@@ -3282,7 +3334,7 @@ namespace Mono.CSharp {
 					} else
 						ml = (IMemoryLocation) InstanceExpression;
 
-					ml.AddressOf (ec);
+					ml.AddressOf (ec, AddressOp.Load);
 				} else 
 					InstanceExpression.Emit (ec);
 
@@ -3305,7 +3357,7 @@ namespace Mono.CSharp {
 					if (instance is IMemoryLocation){
 						IMemoryLocation ml = (IMemoryLocation) instance;
 
-						ml.AddressOf (ec);
+						ml.AddressOf (ec, AddressOp.Store);
 					} else
 						throw new Exception ("The " + instance + " of type " +
 								     instance.Type +
@@ -3334,7 +3386,7 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		public void AddressOf (EmitContext ec)
+		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			ILGenerator ig = ec.ig;
 			
@@ -3344,21 +3396,13 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Volatile);
 			}
 
-			//
-			// FIXME:
-			//
-			// Mhm.  We do not know what we are being used for:
-			// READING or WRITING the field.
-			//
-			// I think we want an extra argument to AddressOf to pass
-			// this semantic information.
-			//
-			// For now: just flag both assigned and used.
-			//
 			if (FieldInfo is FieldBuilder){
 				Field f = TypeManager.GetField (FieldInfo);
 
-				f.status |= Field.Status.ASSIGNED | Field.Status.USED;
+				if ((mode & AddressOp.Store) != 0)
+					f.status |= Field.Status.ASSIGNED;
+				if ((mode & AddressOp.Load) != 0)
+					f.status |= Field.Status.USED;
 			}
 
 			//

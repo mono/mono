@@ -1005,7 +1005,7 @@ namespace Mono.CSharp {
 					if (!(e is Constant)){
 						Report.Error (133, vi.Location,
 							      "The expression being assigned to `" +
-							      name + "' must be constant");
+							      name + "' must be constant (" + e + ")");
 						continue;
 					}
 
@@ -1666,11 +1666,14 @@ namespace Mono.CSharp {
 		public override bool Emit (EmitContext ec)
 		{
 			bool previous_state = ec.CheckState;
+			bool previous_state_const = ec.ConstantCheckState;
 			bool val;
 			
 			ec.CheckState = false;
+			ec.ConstantCheckState = false;
 			val = Block.Emit (ec);
 			ec.CheckState = previous_state;
+			ec.ConstantCheckState = previous_state_const;
 
 			return val;
 		}
@@ -1687,11 +1690,14 @@ namespace Mono.CSharp {
 		public override bool Emit (EmitContext ec)
 		{
 			bool previous_state = ec.CheckState;
+			bool previous_state_const = ec.ConstantCheckState;
 			bool val;
 			
 			ec.CheckState = true;
+			ec.ConstantCheckState = true;
 			val = Block.Emit (ec);
 			ec.CheckState = previous_state;
+			ec.ConstantCheckState = previous_state_const;
 
 			return val;
 		}
@@ -2260,12 +2266,12 @@ namespace Mono.CSharp {
 			
 			//
 			// Instantiate the enumerator
-
+			//
 			if (expr.Type.IsValueType){
 				if (expr is IMemoryLocation){
 					IMemoryLocation ml = (IMemoryLocation) expr;
 
-					ml.AddressOf (ec);
+					ml.AddressOf (ec, AddressOp.Load);
 				} else
 					throw new Exception ("Expr " + expr + " of type " + expr.Type +
 							     " does not implement IMemoryLocation");

@@ -125,7 +125,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Returns a stringified representation of the Operator
 		/// </summary>
-		string OperName ()
+		static public string OperName (Operator oper)
 		{
 			switch (oper){
 			case Operator.UnaryPlus:
@@ -159,10 +159,10 @@ namespace Mono.CSharp {
 			oper_names [(int) Operator.AddressOf] = "op_AddressOf";
 		}
 
-		void error23 (Type t)
+		void Error23 (Type t)
 		{
 			Report.Error (
-				23, loc, "Operator " + OperName () +
+				23, loc, "Operator " + OperName (oper) +
 				" cannot be applied to operand of type `" +
 				TypeManager.CSharpName (t) + "'");
 		}
@@ -210,7 +210,7 @@ namespace Mono.CSharp {
 				
 			case Operator.LogicalNot:
 				if (expr_type != TypeManager.bool_type) {
-					error23 (expr_type);
+					Error23 (expr_type);
 					return null;
 				}
 				
@@ -223,7 +223,7 @@ namespace Mono.CSharp {
 				      (expr_type == TypeManager.int64_type) ||
 				      (expr_type == TypeManager.uint64_type) ||
 				      (expr_type.IsSubclassOf (TypeManager.enum_type)))){
-					error23 (expr_type);
+					Error23 (expr_type);
 					return null;
 				}
 
@@ -244,9 +244,7 @@ namespace Mono.CSharp {
 				if (expr_type == TypeManager.uint64_type)
 					return new ULongConstant (~ ((ULongConstant) e).Value);
 
-				throw new Exception (
-					"FIXME: Implement constant OnesComplement of:" +
-					expr_type);
+				Error23 (expr_type);
 			}
 			throw new Exception ("Can not constant fold");
 		}
@@ -270,7 +268,7 @@ namespace Mono.CSharp {
 					ec, (MethodGroupExpr) mg, expr, loc);
 
 				if (e == null){
-					error23 (expr_type);
+					Error23 (expr_type);
 					return null;
 				}
 				
@@ -291,7 +289,7 @@ namespace Mono.CSharp {
 
 			if (oper == Operator.LogicalNot){
 				if (expr_type != TypeManager.bool_type) {
-					error23 (expr.Type);
+					Error23 (expr.Type);
 					return null;
 				}
 				
@@ -305,7 +303,7 @@ namespace Mono.CSharp {
 				      (expr_type == TypeManager.int64_type) ||
 				      (expr_type == TypeManager.uint64_type) ||
 				      (expr_type.IsSubclassOf (TypeManager.enum_type)))){
-					error23 (expr.Type);
+					Error23 (expr.Type);
 					return null;
 				}
 				type = expr_type;
@@ -358,7 +356,7 @@ namespace Mono.CSharp {
 					// -92233720368547758087 (-2^63) to be wrote as
 					// decimal integer literal.
 					//
-					error23 (expr_type);
+					Error23 (expr_type);
 					return null;
 				}
 
@@ -388,7 +386,7 @@ namespace Mono.CSharp {
 					return this;
 				}
 
-				error23 (expr_type);
+				Error23 (expr_type);
 				return null;
 			}
 
@@ -440,7 +438,7 @@ namespace Mono.CSharp {
 				return new Indirection (expr);
 			}
 			
-			Error (187, loc, "No such operator '" + OperName () + "' defined for type '" +
+			Error (187, loc, "No such operator '" + OperName (oper) + "' defined for type '" +
 			       TypeManager.CSharpName (expr_type) + "'");
 			return null;
 		}
@@ -482,7 +480,7 @@ namespace Mono.CSharp {
 				break;
 				
 			case Operator.AddressOf:
-				((IMemoryLocation)expr).AddressOf (ec);
+				((IMemoryLocation)expr).AddressOf (ec, AddressOp.LoadStore);
 				break;
 				
 			default:
@@ -538,7 +536,7 @@ namespace Mono.CSharp {
 			StoreFromPtr (ec.ig, type);
 		}
 		
-		public void AddressOf (EmitContext ec)
+		public void AddressOf (EmitContext ec, AddressOp Mode)
 		{
 			expr.Emit (ec);
 		}
@@ -590,16 +588,16 @@ namespace Mono.CSharp {
 			expr = e;
 		}
 
-		string OperName ()
+		static string OperName (Mode mode)
 		{
 			return (mode == Mode.PreIncrement || mode == Mode.PostIncrement) ?
 				"++" : "--";
 		}
 		
-		void error23 (Type t)
+		void Error23 (Type t)
 		{
 			Report.Error (
-				23, loc, "Operator " + OperName () + 
+				23, loc, "Operator " + OperName (mode) + 
 				" cannot be applied to operand of type `" +
 				TypeManager.CSharpName (t) + "'");
 		}
@@ -689,7 +687,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			Error (187, loc, "No such operator '" + OperName () + "' defined for type '" +
+			Error (187, loc, "No such operator '" + OperName (mode) + "' defined for type '" +
 			       TypeManager.CSharpName (expr_type) + "'");
 			return null;
 		}
@@ -1305,7 +1303,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Returns a stringified representation of the Operator
 		/// </summary>
-		string OperName ()
+		static string OperName (Operator oper)
 		{
 			switch (oper){
 			case Operator.Multiply:
@@ -1356,7 +1354,17 @@ namespace Mono.CSharp {
 
 			return ConvertImplicit (ec, expr, target_type, new Location (-1));
 		}
-		
+
+		public static void Error_OperatorAmbiguous (Location loc, Operator oper, Type l, Type r)
+		{
+			Report.Error (
+				34, loc, "Operator `" + OperName (oper) 
+				+ "' is ambiguous on operands of type `"
+				+ TypeManager.CSharpName (l) + "' "
+				+ "and `" + TypeManager.CSharpName (r)
+				+ "'");
+		}
+
 		//
 		// Note that handling the case l == Decimal || r == Decimal
 		// is taken care of by the Step 1 Operator Overload resolution.
@@ -1376,8 +1384,8 @@ namespace Mono.CSharp {
 				type = TypeManager.double_type;
 			} else if (l == TypeManager.float_type || r == TypeManager.float_type){
 				//
-				// if either operand is of type float, th eother operand is
-				// converd to type float.
+				// if either operand is of type float, the other operand is
+				// converted to type float.
 				//
 				if (r != TypeManager.double_type)
 					right = ConvertImplicit (ec, right, TypeManager.float_type, loc);
@@ -1433,15 +1441,8 @@ namespace Mono.CSharp {
 				if ((other == TypeManager.sbyte_type) ||
 				    (other == TypeManager.short_type) ||
 				    (other == TypeManager.int32_type) ||
-				    (other == TypeManager.int64_type)){
-					string oper = OperName ();
-					
-					Error (34, loc, "Operator `" + OperName ()
-					       + "' is ambiguous on operands of type `"
-					       + TypeManager.CSharpName (l) + "' "
-					       + "and `" + TypeManager.CSharpName (r)
-					       + "'");
-				}
+				    (other == TypeManager.int64_type))
+					Error_OperatorAmbiguous (loc, oper, l, r);
 				type = TypeManager.uint64_type;
 			} else if (l == TypeManager.int64_type || r == TypeManager.int64_type){
 				//
@@ -1532,13 +1533,17 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		void error19 ()
+		static public void Error_OperatorCannotBeApplied (Location loc, string name, Type l, Type r)
 		{
 			Error (19, loc,
-			       "Operator " + OperName () + " cannot be applied to operands of type `" +
-			       TypeManager.CSharpName (left.Type) + "' and `" +
-			       TypeManager.CSharpName (right.Type) + "'");
-						     
+			       "Operator " + name + " cannot be applied to operands of type `" +
+			       TypeManager.CSharpName (l) + "' and `" +
+			       TypeManager.CSharpName (r) + "'");
+		}
+		
+		void error19 ()
+		{
+			Error_OperatorCannotBeApplied (loc, OperName (oper), left.Type, right.Type);
 		}
 
 		static bool is_32_or_64 (Type t)
@@ -1872,58 +1877,6 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		/// <summary>
-		///   Constant expression reducer for binary operations
-		/// </summary>
-		public Expression ConstantFold (EmitContext ec)
-		{
-			object l = ((Constant) left).GetValue ();
-			object r = ((Constant) right).GetValue ();
-			
-			Type result_type = null;
-
-			//
-			// Enumerator folding
-			//
-			if (left.Type == right.Type && left is EnumConstant)
-				result_type = left.Type;
-
-			switch (oper){
-			case Operator.BitwiseOr:
-				if ((l is int) && (r is int)){
-					IntConstant v;
-					int res = (int)l | (int)r;
-					
-					v = new IntConstant (res);
-					if (result_type == null)
-						return v;
-					else
-						return new EnumConstant (v, result_type);
-				}
-				break;
-				
-			case Operator.BitwiseAnd:
-				if ((l is int) && (r is int)){
-					IntConstant v;
-					int res = (int)l & (int)r;
-					
-					v = new IntConstant (res);
-					if (result_type == null)
-						return v;
-					else
-						return new EnumConstant (v, result_type);
-				}
-				break;
-
-			case Operator.Addition:
-				if (l is string && r is string)
-					return new StringConstant ((string) l + (string) r);
-				break;
-			}
-					
-			return null;
-		}
-		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			left = left.Resolve (ec);
@@ -1944,10 +1897,8 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Value;
 
 			if (left is Constant && right is Constant){
-				//
-				// This is temporary until we do the full folding
-				//
-				Expression e = ConstantFold (ec);
+				Expression e = ConstantFold.BinaryFold (
+					ec, oper, (Constant) left, (Constant) right, loc);
 				if (e != null)
 					return e;
 			}
@@ -2559,13 +2510,15 @@ namespace Mono.CSharp {
 			Store (ig, vi.Idx);
 		}
 		
-		public void AddressOf (EmitContext ec)
+		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			VariableInfo vi = VariableInfo;
 			int idx = vi.Idx;
 
-			vi.Used = true;
-			vi.Assigned = true;
+			if ((mode & AddressOp.Load) != 0)
+				vi.Used = true;
+			if ((mode & AddressOp.Store) != 0)
+				vi.Assigned = true;
 			
 			if (idx <= 255)
 				ec.ig.Emit (OpCodes.Ldloca_S, (byte) idx);
@@ -2684,7 +2637,7 @@ namespace Mono.CSharp {
 			
 		}
 
-		public void AddressOf (EmitContext ec)
+		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			int arg_idx = idx;
 
@@ -2785,15 +2738,22 @@ namespace Mono.CSharp {
 			// to pass just the value
 			//
 			if (ArgType == AType.Ref || ArgType == AType.Out){
+				AddressOp mode = AddressOp.Store;
+
+				if (ArgType == AType.Ref)
+					mode |= AddressOp.Load;
+				
 				if (expr is ParameterReference){
 					ParameterReference pr = (ParameterReference) expr;
 
 					if (pr.is_ref)
 						pr.EmitLoad (ec);
-					else
-						pr.AddressOf (ec);
+					else {
+						
+						pr.AddressOf (ec, mode);
+					}
 				} else
-					((IMemoryLocation)expr).AddressOf (ec);
+					((IMemoryLocation)expr).AddressOf (ec, mode);
 			} else
 				expr.Emit (ec);
 		}
@@ -3665,7 +3625,7 @@ namespace Mono.CSharp {
 							// it.
 							if (instance_expr is IMemoryLocation){
 								((IMemoryLocation)instance_expr).
-									AddressOf (ec);
+									AddressOf (ec, AddressOp.LoadStore);
 							}
 							else {
 								Type t = instance_expr.Type;
@@ -3848,7 +3808,7 @@ namespace Mono.CSharp {
 					value_target = new LocalTemporary (ec, type);
 
 				ml = (IMemoryLocation) value_target;
-				ml.AddressOf (ec);
+				ml.AddressOf (ec, AddressOp.Store);
 			}
 
 			if (method != null)
@@ -4540,7 +4500,7 @@ namespace Mono.CSharp {
 			ec.ig.Emit (OpCodes.Starg, 0);
 		}
 
-		public void AddressOf (EmitContext ec)
+		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			ec.ig.Emit (OpCodes.Ldarg_0);
 
@@ -4981,8 +4941,12 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			Expr = Expr.Resolve (ec);
+			bool last_const_check = ec.ConstantCheckState;
 
+			ec.ConstantCheckState = true;
+			Expr = Expr.Resolve (ec);
+			ec.ConstantCheckState = last_const_check;
+			
 			if (Expr == null)
 				return null;
 
@@ -4994,10 +4958,13 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			bool last_check = ec.CheckState;
+			bool last_const_check = ec.ConstantCheckState;
 			
 			ec.CheckState = true;
+			ec.ConstantCheckState = true;
 			Expr.Emit (ec);
 			ec.CheckState = last_check;
+			ec.ConstantCheckState = last_const_check;
 		}
 		
 	}
@@ -5016,7 +4983,11 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			bool last_const_check = ec.ConstantCheckState;
+
+			ec.ConstantCheckState = false;
 			Expr = Expr.Resolve (ec);
+			ec.ConstantCheckState = last_const_check;
 
 			if (Expr == null)
 				return null;
@@ -5029,10 +5000,13 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			bool last_check = ec.CheckState;
+			bool last_const_check = ec.ConstantCheckState;
 			
 			ec.CheckState = false;
+			ec.ConstantCheckState = false;
 			Expr.Emit (ec);
 			ec.CheckState = last_check;
+			ec.ConstantCheckState = last_const_check;
 		}
 		
 	}
@@ -5367,7 +5341,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void AddressOf (EmitContext ec)
+		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			int rank = ea.Expr.Type.GetArrayRank ();
 			ILGenerator ig = ec.ig;

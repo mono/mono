@@ -7,14 +7,15 @@ COMMON_SOURCES = cs-parser.cs cs-tokenizer.cs tree.cs location.cs
 
 COMPILER_SOURCES = \
 	assign.cs			\
-	driver.cs $(COMMON_SOURCES) 	\
-	class.cs 			\
-	delegate.cs			\
 	attribute.cs			\
+	driver.cs $(COMMON_SOURCES) 	\
+	cfold.cs			\
+	class.cs 			\
 	codegen.cs			\
 	const.cs			\
 	constant.cs			\
 	decl.cs				\
+	delegate.cs			\
 	enum.cs				\
 	ecore.cs			\
 	expression.cs 			\
@@ -87,13 +88,4 @@ pn:
 #	sed -e "s/@CONTAINEE@/Parameter/g" -e "s/@arrayname@/parameters/g" < X-Collection.cs > parameterCollection.cs
 
 clean:
-	rm -f mcs.exe cs-parser.cs y.output mcs.pdb *~ .*~ mb-parser.cs mcs.log response
-
-MBAS_SOURCES = mb-parser.cs mb-tokenizer.cs
-
-mbas: cs-parser.cs MonoBASIC.Parser.cs
-	$(CSC) $(CSCFLAGS) /target:exe /r:System.dll /out:mcs.exe $(COMPILER_SOURCES) $(MBAS_SOURCES)
-
-mb-parser.cs: mb-parser.jay
-	../jay/jay -ctv < ../jay/skeleton.cs mb-parser.jay > mb-parser.cs
-
+	rm -f mcs.exe cs-parser.cs y.output mcs.pdb *~ .*~ mcs.log response

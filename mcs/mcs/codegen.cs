@@ -96,7 +96,26 @@ namespace Mono.CSharp {
 		public DeclSpace DeclSpace;
 		public TypeContainer TypeContainer;
 		public ILGenerator   ig;
+
+		/// <summary>
+		///   This variable tracks the `checked' state of the compilation,
+		///   it controls whether we should generate code that does overflow
+		///   checking, or if we generate code that ignores overflows.
+		///
+		///   The default setting comes from the command line option to generate
+		///   checked or unchecked code plus any source code changes using the
+		///   checked/unchecked statements or expressions.   Contrast this with
+		///   the ConstantCheckState flag.
+		/// </summary>
+		
 		public bool CheckState;
+
+		/// <summary>
+		///   The constant check state is always set to `true' and cant be changed
+		///   from the command line.  The source code can change this setting with
+		///   the `checked' and `unchecked' statements and expressions. 
+		/// </summary>
+		public bool ConstantCheckState;
 
 		/// <summary>
 		///   Whether we are emitting code inside a static or instance method
@@ -173,6 +192,8 @@ namespace Mono.CSharp {
 			TypeContainer = parent;
 			DeclSpace = ds;
 			CheckState = RootContext.Checked;
+			ConstantCheckState = true;
+			
 			IsStatic = (code_flags & Modifiers.STATIC) != 0;
 			ReturnType = return_type;
 			IsConstructor = is_constructor;

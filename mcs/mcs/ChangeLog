@@ -1,3 +1,52 @@
+2002-03-04  Miguel de Icaza  <miguel@ximian.com>
+
+	Constant Folding has been implemented now.
+	
+	* expression.cs (Unary.Reduce): Do not throw an exception, catch
+	the error instead on types that are not supported in one's
+	complement. 
+
+	* constant.cs (Constant and all children): New set of functions to
+	perform implict and explicit conversions.
+	
+	* ecore.cs (EnumConstant): Implement the new functions to perform
+	conversion by proxying to the child expression.
+
+	* codegen.cs: (ConstantCheckState): Constant evaluation has its
+	own separate setting that can not be turned off from the command
+	line using --unchecked or --checked and is only controlled using
+	the checked/unchecked statements and expressions.  This setting is
+	used by the constant folder to flag errors.
+
+	* expression.cs (CheckedExpr, UncheckedExpr): Set the
+	ConstantCheckState as well.   
+
+	During Resolve, they also have to flag the state, because the
+	constant folder runs completely in the Resolve phase.
+
+	* statement.cs (Checked, Unchecked): Set the ConstantCheckState as
+	well.
+
+2002-03-01  Miguel de Icaza  <miguel@ximian.com>
+
+	* cfold.cs: New file, this file contains the constant folder.
+	
+	* ecore.cs (IMemoryLocation.AddressOf): Now takes an extra
+	argument to track whether we are using the resulting address to
+	load or store a value and provide better error messages. 
+
+	(FieldExpr.Emit, FieldExpr.EmitAssign, FieldExpr.AddressOf): Use
+	new AddressOf arguments.
+
+	* statement.cs (Foreach.EmitCollectionForeach): Update
+
+	* expression.cs (Argument.Emit): Call AddressOf with proper
+	arguments to track usage.
+
+	(New.DoEmit): Call AddressOf with new arguments.
+
+	(Unary.Emit): Adjust AddressOf call.
+
 2002-03-01  Ravi Pratap  <ravi@ximian.com>
 
 	* cs-parser.jay (member_access): Change the case for pre-defined types
