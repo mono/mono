@@ -185,7 +185,7 @@ namespace System.Net {
 		/// <returns></returns>
 		public static bool IsLoopback (IPAddress addr)
 		{
-			return (NetworkToHostOrder (addr.address) & 0xFF) == 127;
+			return (addr.address & 0xFF) == 127;
 		}
 
 		/// <summary>

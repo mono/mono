@@ -1,5 +1,9 @@
 2002-05-05  Lawrence Pit <loz@cable.a2000.nl>
 
+	* IPAddress.cs: fixed IsLoopback, address was already in host order
+
+2002-05-05  Lawrence Pit <loz@cable.a2000.nl>
+
 	* IPv6Address.cs: added (note: not part of .net spec)
 
 2002-05-01  Lawrence Pit <loz@cable.a2000.nl>
