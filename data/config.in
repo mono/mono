@@ -16,4 +16,5 @@
 	<dllmap dll="libglade-2.0-0.dll" target="libglade-2.0.so" />
 	<dllmap dll="oci" target="clntsh" />
 	<dllmap dll="gtkhtml-3.0" target="libgtkhtml-3.0.so.2" />
+	<dllmap dll="db2cli" target="libdb2_36.so"/>
 </configuration>
