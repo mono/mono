@@ -52,7 +52,7 @@ namespace Npgsql
     /// PostgreSQL server.
     /// </summary>
     [System.Drawing.ToolboxBitmapAttribute(typeof(NpgsqlConnection))]
-    public sealed class NpgsqlConnection : Component, IDbConnection
+    public sealed class NpgsqlConnection : Component, IDbConnection, ICloneable
     {
         //Changed the Name of this event because events usually don't start with 'On' in the .Net-Framework
         // (but their handlers do ;-)
@@ -566,6 +566,12 @@ namespace Npgsql
                                 
             }
             base.Dispose (disposing);
+        }
+        
+        
+        public Object Clone()
+        {
+            return new NpgsqlConnection(ConnectionString);
         }
 
         // Private util methods
