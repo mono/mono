@@ -1,9 +1,9 @@
 
-2003-02-18	Gaurav Vaish <gvaish_mono AT lycos.com>
+2003-02-23	Gaurav Vaish <gvaish_mono AT lycos.com>
 
-	* MobileListItem.cs      : SetIndex(int)       - Stubbed.
-	* MobileListItemCollection.cs
-	                         : Completed stub-ing.
+	* Calendar.cs            : Completed.
+	* BaseValidator.cs       : Completed.
+	* CompareValidator.cs    : Completed.
 
 2003-01-30	Gaurav Vaish <gvaish_mono AT lycos.com>
 
