@@ -1,0 +1,8 @@
+
+Sun Jul 15 17:50:23 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* Started changelog.
+	* interp.c: use new mono_get_method () function to get the complete
+	info on a method invocation: we support now method invocation with
+	multiple (or zero) simple arguments and with or without a return value.
+	Implement also a couple more opcodes.
