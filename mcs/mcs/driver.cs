@@ -1430,6 +1430,13 @@ namespace Mono.CSharp
 				return true;
 
 			//
+			// This will point to the NamespaceEntry of the last file that was parsed, and may
+			// not be meaningful when resolving classes from other files.  So, reset it to prevent
+			// silent bugs.
+			//
+			RootContext.Tree.Types.NamespaceEntry = null;
+
+			//
 			// If we are an exe, require a source file for the entry point
 			//
 			if (RootContext.Target == Target.Exe || RootContext.Target == Target.WinExe){

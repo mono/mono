@@ -924,7 +924,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Emit attribute for Attributable symbol
 		/// </summary>
-		public void Emit (EmitContext ec, Attributable ias, ListDictionary emitted_attr)
+		public virtual void Emit (EmitContext ec, Attributable ias, ListDictionary emitted_attr)
 		{
 			CustomAttributeBuilder cb = Resolve (ec);
 			if (cb == null)
@@ -1181,12 +1181,38 @@ namespace Mono.CSharp {
 			// in effect where the attribute was used.  Since code elsewhere cannot assume
 			// that the NamespaceEntry is right, just overwrite it.
 			//
-			// FIXME: Check every place the NamespaceEntry of RootContext.Tree.Types is used
-			//        to ensure the right one is used.
-			if (ec.DeclSpace == RootContext.Tree.Types)
-				ec.DeclSpace.NamespaceEntry = ns;
+			// Precondition: RootContext.Tree.Types == null || RootContext.Tree.Types == ns.
+			//               The second case happens when we are recursively invoked from inside Emit.
 
-			return base.CheckAttributeType (ec);
+			NamespaceEntry old = null;
+			if (ec.DeclSpace == RootContext.Tree.Types) {
+				old = ec.DeclSpace.NamespaceEntry;
+				ec.DeclSpace.NamespaceEntry = ns;
+				if (old != null && old != ns)
+					throw new InternalErrorException (Location + " non-null NamespaceEntry " + old);
+			}
+
+			Type retval = base.CheckAttributeType (ec);
+
+			if (ec.DeclSpace == RootContext.Tree.Types)
+				ec.DeclSpace.NamespaceEntry = old;
+
+			return retval;
+		}
+
+		public override void Emit (EmitContext ec, Attributable ias, ListDictionary emitted_attr)
+		{
+			if (ec.DeclSpace == RootContext.Tree.Types) {
+				NamespaceEntry old = ec.DeclSpace.NamespaceEntry;
+				ec.DeclSpace.NamespaceEntry = ns;
+				if (old != null)
+					throw new InternalErrorException (Location + " non-null NamespaceEntry " + old);
+			}
+
+			base.Emit (ec, ias, emitted_attr);
+
+			if (ec.DeclSpace == RootContext.Tree.Types)
+				ec.DeclSpace.NamespaceEntry = null;
 		}
 	}
 

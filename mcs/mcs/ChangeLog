@@ -1,3 +1,13 @@
+2004-12-16  Raja R Harinath  <rharinath@novell.com>
+
+	New invariant: RootContext.Tree.Types.NamespaceEntry == null
+	except when in the parser, and in GlobalAttribute.
+	* driver.cs (MainDriver): Reset	RootContext.Tree.Types.NamespaceEntry.
+	* attribute.cs (GlobalAttribute.CheckAttributeType): Reset
+	RootContext.Tree.Types.NamespaceEntry once work is done.
+	(GlobalAttribute.Emit): New.  Wrapper for Attribute.Emit, but sets
+	and resets RootContext.Tree.Types.NamespaceEntry.
+
 2004-12-15  Marek Safar  <marek.safar@seznam.cz>
 
 	* cs-parser.jay: Don't create a block for every variable.
