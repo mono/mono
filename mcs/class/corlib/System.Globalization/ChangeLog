@@ -1,3 +1,8 @@
+2004-05-13  Jackson Harper  <jackson@ximian.com>
+
+	* CultureInfo.cs: DateTimeFormat and NumberFormat can not be
+	accessed for neutral cultures.
+	
 2004-04-30  Dick Porter  <dick@ximian.com>
 
 	* StringInfo.cs: 

@@ -308,6 +308,12 @@ namespace System.Globalization
 		public virtual NumberFormatInfo NumberFormat {
 			get {
 				if (!constructed) Construct ();
+				if (IsNeutralCulture) {
+					throw new NotSupportedException ("Culture \"" + m_name + "\" is " +
+							"a neutral culture. It can not be used in formatting " +
+							"and parsing and therefore cannot be set as the thread's " +
+							"current culture.");
+				}
 				if (numInfo == null){
 					lock (this){
 						if (numInfo == null) {
@@ -336,6 +342,12 @@ namespace System.Globalization
 			get 
 			{
 				if (!constructed) Construct ();
+				if (IsNeutralCulture) {
+					throw new NotSupportedException ("Culture \"" + m_name + "\" is " +
+							"a neutral culture. It can not be used in formatting " +
+							"and parsing and therefore cannot be set as the thread's " +
+							"current culture.");
+				}
 				if (dateTimeInfo == null)
 				{
 					lock (this)
