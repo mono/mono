@@ -29,6 +29,9 @@ namespace System.Web {
 		public TraceManager (HttpContext context)
 		{
 			TraceConfig config = (TraceConfig) context.GetConfig (traceConfigPath);
+
+			if (config == null)
+				return;
 			
 			enabled = config.Enabled;
 			local_only = config.LocalOnly;

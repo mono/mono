@@ -1,5 +1,9 @@
 2004-01-11  Jackson Harper <jackson@ximian.com>
 
+	* TraceManager.cs: Dont crash if there is no trace config element.
+	
+2004-01-11  Jackson Harper <jackson@ximian.com>
+
 	* HttpRequest.cs: Add property for determining if the request is
 	local or not.
 	
