@@ -1,5 +1,9 @@
 2003-01-03  Martin Baulig  <martin@ximian.com>
 
+	* debug.c: Disable the mono debugger stuff on Windows.
+
+2003-01-03  Martin Baulig  <martin@ximian.com>
+
 	* debug.c (mono_debugger_trampoline_breakpoint_callback): New
 	function.  This is called from the breakpoint trampoline to signal
 	the debugger and wait until it has reload the symbol tables.
