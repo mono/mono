@@ -1,400 +1,375 @@
 //
 // System.IO.MemoryStream 
 //
-// Author:	Marcin Szczepanski (marcins@zipworld.com.au)
+// Authors:	Marcin Szczepanski (marcins@zipworld.com.au)
 //		Patrik Torstensson
+//		Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// TODO: Clarify some of the lamespec issues
+// (c) 2001,2002 Marcin Szczepanski, Patrik Torstensson
+// (c) 2003 Ximian, Inc. (http://www.ximian.com)
 //
 
-namespace System.IO {
+namespace System.IO
+{
 	[Serializable]
-        public class MemoryStream : Stream {
-                private bool canRead;
-                private bool canSeek;
-                private bool canWrite;
-                
-                private bool allowGetBuffer;
+	public class MemoryStream : Stream
+	{
+		bool canWrite;
+		bool allowGetBuffer;
+		int capacity;
+		int length;
+		byte [] internalBuffer;
+		int initialIndex;
+		bool expandable;
+		bool streamClosed;
+		int position;
 
-                private int capacity;
+		public MemoryStream () : this (0)
+		{
+		}
 
-                private byte[] internalBuffer;
+		public MemoryStream (int capacity)
+		{
+			if (capacity < 0)
+				throw new ArgumentOutOfRangeException ("capacity");
 
-                private int initialLength;
-                private bool expandable;
+			canWrite = true;
 
-                private bool streamClosed = false;
+			this.capacity = capacity;
+			internalBuffer = new byte [capacity];
 
-                private long position = 0;
-                
-                public MemoryStream() {
-                        canRead = true;
-                        canSeek = true;
-                        canWrite = true;
+			expandable = true;
+			allowGetBuffer = true;
+		}
 
-                        capacity = 0;
+		public MemoryStream (byte [] buffer)
+		{
+			InternalConstructor (buffer, 0, buffer.Length, true, false);                        
+		}
 
-                        internalBuffer = new byte[0];   
+		public MemoryStream (byte [] buffer, bool writeable)
+		{
+			InternalConstructor (buffer, 0, buffer.Length, writeable, false);
+		}
 
-                        allowGetBuffer = true;
-                        expandable = true;
-                }
+		public MemoryStream (byte [] buffer, int index, int count)
+		{
+			InternalConstructor (buffer, index, count, true, false);
+		}
 
-                public MemoryStream( byte[] buffer ) {
-                        InternalConstructor( buffer, 0, buffer.Length, true, false );                        
-                }
+		public MemoryStream (byte [] buffer, int index, int count, bool writeable)
+		{
+			InternalConstructor (buffer, index, count, writeable, false);
+		}
 
-                public MemoryStream( int capacity ) {
-                        
-                        canRead = true;
-                        canSeek = true;
-                        canWrite = true;
-                        
-                        this.capacity = capacity;
-                        initialLength = 0;
-                        internalBuffer = new byte [capacity];
+		public MemoryStream (byte [] buffer, int index, int count, bool writeable, bool publicallyVisible)
+		{
+			InternalConstructor (buffer, index, count, writeable, publicallyVisible);
+		}
 
-                        expandable = true;
-                        allowGetBuffer = true;
-                }
+		void InternalConstructor (byte [] buffer, int index, int count, bool writeable, bool publicallyVisible)
+		{
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
 
-                public MemoryStream( byte[] buffer, bool writeable ) {
-                        if( buffer == null ) {
-                                throw new ArgumentNullException();
-                        }
+			if (index < 0 || count < 0)
+				throw new ArgumentOutOfRangeException ("index or count is less than 0.");
 
-                        InternalConstructor( buffer, 0, buffer.Length, writeable, true );
+			if (buffer.Length - index < count)
+				throw new ArgumentException ("index+count", 
+							     "The size of the buffer is less than index + count.");
 
-                }
- 
-                public MemoryStream( byte[] buffer, int index, int count ) { 
-                        if( buffer == null ) {
-                                throw new ArgumentNullException();
-                        }
-                        
-                        InternalConstructor( buffer, index, count, true, false );                                        
-                }
-                
-                public MemoryStream( byte[] buffer, int index, int count, bool writeable ) { 
-                        
-                        if( buffer == null ) {
-                                throw new ArgumentNullException();
-                        }
-                        
-                        InternalConstructor( buffer, index, count, writeable, true );        
-                }
+			canWrite = writeable;
 
-                public MemoryStream( byte[] buffer, int index, int count, bool writeable, bool publicallyVisible ) {
-                        InternalConstructor( buffer, index, count, writeable, publicallyVisible );
-                }
+			internalBuffer = buffer;
+			capacity = count + index;
+			length = capacity;
+			position = index;
+			initialIndex = index;
 
-                private void InternalConstructor( byte[] buffer, int index, int count, bool writeable, bool publicallyVisible ) {
-                
-                        if( buffer == null ) {
-                                throw new ArgumentNullException();
-                        } else if ( index < 0 || count < 0 ) {
-                                throw new ArgumentOutOfRangeException();
-                        } else if ( buffer.Length - index < count ) {
-                                throw new ArgumentException();
-                        }
+			allowGetBuffer = publicallyVisible;
+			expandable = false;                
+		}
 
-                        // LAMESPEC: The spec says to throw an UnauthorisedAccessException if
-                        // publicallyVisibile is fale?!  Doesn't that defy the point of having
-                        // it there in the first place.  I'll leave it out for now.
-                        
-                        canRead = true;
-                        canSeek = true;
-                        canWrite = writeable;
+		void CheckIfClosedThrowDisposed ()
+		{
+			if (streamClosed)
+				throw new ObjectDisposedException ("MemoryStream");
+		}
+		
+		void CheckIfClosedThrowIO ()
+		{
+			if (streamClosed)
+				throw new IOException ("MemoryStream is closed");
+		}
+		
+		public override bool CanRead {
+			get { return !streamClosed; }
+		}
 
-                        initialLength = count;
+		public override bool CanSeek {
+			get { return !streamClosed; }
+		}
 
-                        internalBuffer = new byte[ count ];
-                        capacity = count;
+		public override bool CanWrite {
+			get { return (!streamClosed && canWrite); }
+		}
 
-			Buffer.BlockCopyInternal (buffer, index, internalBuffer, 0, count);
+		public virtual int Capacity {
+			get {
+				CheckIfClosedThrowDisposed ();
+				return capacity - initialIndex;
+			}
 
-                        allowGetBuffer = publicallyVisible;
-                        expandable = false;                
-                 }
+			set {
+				CheckIfClosedThrowDisposed ();
+				if (value == capacity)
+					return; // LAMENESS: see MemoryStreamTest.ConstructorFive
 
-                 public override bool CanRead {
-                        get {
-                                return this.canRead;
-                        }
-                }
+				if (!expandable)
+					throw new NotSupportedException ("Cannot expand this MemoryStream");
 
-                public override bool CanSeek {
-                        get {
-                                return this.canSeek;
-                        }
-                }
+				if (value < 0 || value < length)
+					throw new ArgumentOutOfRangeException ("value",
+					"New capacity cannot be negative or less than the current capacity " + value + " " + capacity);
 
-                public override bool CanWrite {
-                        get {
-                                return this.canWrite;
-                        }
-                }
+				byte [] newBuffer = null;
+				if (value != 0) {
+					newBuffer = new byte [value];
+					Buffer.BlockCopyInternal (internalBuffer, 0, newBuffer, 0, length);
+				}
 
-                public virtual int Capacity {
-                        get {
-                                return this.capacity;
-                        }
+				internalBuffer = newBuffer; // It's null when capacity is set to 0
+				capacity = value;
+			}
+		}
 
-                        set {
-                                if( value < 0 || value < capacity ) {
-                                        throw new ArgumentOutOfRangeException("value",
-						"New capacity cannot be negative or less than the current capacity" );
-                                } else if( !expandable ) {
-                                        throw new NotSupportedException( "Cannot expand this MemoryStream" );
-                                }
+		public override long Length {
+			get {
+				// LAMESPEC: The spec says to throw an IOException if the
+				// stream is closed and an ObjectDisposedException if
+				// "methods were called after the stream was closed".  What
+				// is the difference?
 
-                                byte[] newBuffer = new byte[ value ];
-				Buffer.BlockCopyInternal (internalBuffer, 0, newBuffer, 0, capacity);
-                                capacity = value;
-                        }
-                }
+				CheckIfClosedThrowIO ();
 
-                public override long Length {
-                        get {
-                                // LAMESPEC: The spec says to throw an IOException if the
-                                // stream is closed and an ObjectDisposedException if
-                                // "methods were called after the stream was closed".  What
-                                // is the difference?
+				// This is ok for MemoryStreamTest.ConstructorFive
+				return length - initialIndex;
+			}
+		}
 
-                                if( streamClosed ) {
-                                        throw new IOException( "MemoryStream is closed" );
-                                }
-                                
-                                return internalBuffer.Length;
-                        }
-                }
+		public override long Position {
+			get {
+				CheckIfClosedThrowIO ();
+				return position - initialIndex;
+			}
 
-                public override long Position {
-                        get {
-                                if( streamClosed ) {
-                                        throw new IOException( "MemoryStream is closed" );
-                                }
+			set {
+				CheckIfClosedThrowIO ();
+				if (value < 0)
+					throw new ArgumentOutOfRangeException ("value",
+								"Position cannot be negative" );
 
-                                return position;
-                        }
+				if (value > Int32.MaxValue)
+					throw new ArgumentOutOfRangeException ("value",
+					"Position must be non-negative and less than 2^31 - 1 - origin");
 
-                        set {
+				position = initialIndex + (int) value;
+			}
+		}
 
-                                if( position < 0 ) {
-                                        throw new ArgumentOutOfRangeException ("value", "Position cannot be negative" );
-				} else if (position > Int32.MaxValue) {
-                                        throw new ArgumentOutOfRangeException ("value",
-							"Length must be non-negative and less than 2^31 - 1 - origin");
-                                } else if( streamClosed ) {
-                                        throw new IOException( "MemoryStream is closed" );
-                                }
-                                
-                                position = value;
-                        }
-                }
-                
-                public override void Close ()
+		public override void Close ()
 		{
 			streamClosed = true;
 			expandable = false;
-                }
+		}
 
-                public override void Flush() { }
+		public override void Flush ()
+		{
+			// Do nothing
+		}
 
-                public virtual byte[] GetBuffer() {
-                        if( !allowGetBuffer ) {
-                                throw new UnauthorizedAccessException();
-                        }  
+		public virtual byte [] GetBuffer ()
+		{
+			if (!allowGetBuffer)
+				throw new UnauthorizedAccessException ();
 
-                        return internalBuffer;
-                }
+			return internalBuffer;
+		}
 
-                public override int Read( byte[] buffer, int offset, int count ) {
-                        if( buffer == null ) {
-                                throw new ArgumentNullException();
-                        } else if( offset < 0 || count < 0 ) {
-                                throw new ArgumentOutOfRangeException();
-                        } else if( buffer.Length - offset < count ) {
-                                throw new ArgumentException();
-                        } else if ( streamClosed ) {
-                                throw new ObjectDisposedException( "MemoryStream" );
-                        }
+		public override int Read (byte [] buffer, int offset, int count)
+		{
+			CheckIfClosedThrowDisposed ();
 
-                        long ReadTo;
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
 
-                        if( position + count > internalBuffer.Length ) {
-                                ReadTo = internalBuffer.Length;
-                        } else {
-                                ReadTo = position + (long)count;
-                        }
+			if (offset < 0 || count < 0)
+				throw new ArgumentOutOfRangeException ("offset or count less than zero.");
 
-			Buffer.BlockCopyInternal (internalBuffer, (int)position, buffer, offset, (int)(ReadTo - position) );
+			if (buffer.Length - offset < count )
+				throw new ArgumentException ("offset+count",
+							      "The size of the buffer is less than offset + count.");
 
-                        int bytesRead = (int)(ReadTo - position);
+			if (position >= length || count == 0)
+				return 0;
 
-                        position = ReadTo;
+			if (position > length - count)
+				count = length - position;
 
-                        return bytesRead;
-                }
+			Buffer.BlockCopyInternal (internalBuffer, position, buffer, offset, count);
+			position += count;
+			return count;
+		}
 
-                public override int ReadByte( ) {
-                        if( streamClosed ) {
-                                throw new ObjectDisposedException( "MemoryStream" );
-                        }
+		public override int ReadByte ()
+		{
+			CheckIfClosedThrowDisposed ();
+			if (position >= length)
+				return -1;
 
+			return internalBuffer [position++];
+		}
 
-                        // LAMESPEC: What happens if we're at the end of the stream?  It's unspecified in the
-                        // docs but tests against the MS impl. show it returns -1
-                        //
+		public override long Seek (long offset, SeekOrigin loc)
+		{
+			CheckIfClosedThrowDisposed ();
 
-                        if( position >= internalBuffer.Length ) {
-                                return -1;
-                        } else {
-                                return internalBuffer[ position++ ];
-                        }
-                }
-                 
-                public override long Seek( long offset, SeekOrigin loc ) { 
-                        long refPoint;
+			// It's funny that they don't throw this exception for < Int32.MinValue
+			if (offset > (long) Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("Offset out of range. " + offset);
 
-                        if( streamClosed ) {
-                                throw new ObjectDisposedException( "MemoryStream" );
-                        }
-
-                        switch( loc ) {
-                                case SeekOrigin.Begin:
-                                        refPoint = 0;
-                                        break;
-                                case SeekOrigin.Current:
-                                        refPoint = position;
-                                        break;
-                                case SeekOrigin.End:
-                                        refPoint = internalBuffer.Length;
-                                        break;
-                                default:
-                                        throw new ArgumentException( "Invalid SeekOrigin" );
-                        }
-
-                        // LAMESPEC: My goodness, how may LAMESPECs are there in this
-                        // class! :)  In the spec for the Position property it's stated
-                        // "The position must not be more than one byte beyond the end of the stream."
-                        // In the spec for seek it says "Seeking to any location beyond the length of the 
-                        // stream is supported."  That's a contradiction i'd say.
-                        // I guess seek can go anywhere but if you use position it may get moved back.
-
-                        if( refPoint + offset < 0 ) {
-                                throw new IOException( "Attempted to seek before start of MemoryStream" );
-                        } else if( offset > internalBuffer.Length ) {
-                                throw new ArgumentOutOfRangeException("offset",
-						"Offset cannot be greater than length of MemoryStream" );
-                        }
-
-                        position = refPoint + offset;
-
-                        return position;
-                }
-                
-                
-                public override void SetLength( long value ) { 
-                        if( streamClosed ) {
-                                throw new ObjectDisposedException( "MemoryStream" );                        
-                        } else if( !expandable && value > capacity ) {
-                                throw new NotSupportedException( "Expanding this MemoryStream is not supported" );
-                        } else if( !canWrite ) {
-                                throw new IOException( "Cannot write to this MemoryStream" );
-                        } else if( value < 0 ) {
-
-                                // LAMESPEC: AGAIN! It says to throw this exception if value is
-                                // greater than "the maximum length of the MemoryStream".  I haven't
-                                // seen anywhere mention what the maximum length of a MemoryStream is and
-                                // since we're this far this memory stream is expandable.
-
-                                throw new ArgumentOutOfRangeException();
-                        } 
-
-                        byte[] newBuffer;
-			newBuffer = new byte[ value ];
-                        
-                        if (value < internalBuffer.Length) {
-                                // truncate
-				Buffer.BlockCopyInternal (internalBuffer, 0, newBuffer, 0, (int)value );
-                        } else {
-                                // expand
-				Buffer.BlockCopyInternal (internalBuffer, 0, newBuffer, 0, internalBuffer.Length );
-                        }
-                        internalBuffer = newBuffer;
-                        capacity = (int)value;
-
-                }
-                
-                
-                public virtual byte[] ToArray() { 
-                        byte[] outBuffer = new byte[capacity];
-			
-			Buffer.BlockCopyInternal (internalBuffer, 0, outBuffer, 0, capacity);
-                        return outBuffer; 
-                }
-
-                public override void Write( byte[] buffer, int offset, int count ) { 
-                        if( buffer == null ) {
-                                throw new ArgumentNullException();
-                        } else if( !canWrite ) {
-                                throw new NotSupportedException();
-                        } else if( buffer.Length - offset < count ) {
-                                throw new ArgumentException();
-                        } else if( offset < 0 || count < 0 ) {
-                                throw new ArgumentOutOfRangeException();
-                        } else if( streamClosed ) {
-                                throw new ObjectDisposedException( "MemoryStream" );
-                        }
-
-			if( position + count > capacity ) {
-				if( expandable ) {
-					// expand the buffer
-					SetLength( (position + count) * 2 );
-				} else {
-					// only write as many bytes as will fit
-					count = (int)((long)capacity - position);
-				}
+			int refPoint;
+			switch (loc) {
+			case SeekOrigin.Begin:
+				if (offset < 0)
+					throw new IOException ("Attempted to seek before start of MemoryStream.");
+				refPoint = initialIndex;
+				break;
+			case SeekOrigin.Current:
+				refPoint = position;
+				break;
+			case SeekOrigin.End:
+				refPoint = length;
+				break;
+			default:
+				throw new ArgumentException ("loc", "Invalid SeekOrigin");
 			}
 
-			// internal buffer may not be allocated all the way up to capacity
-			// count will already be limited to capacity above if non-expandable
-			if( position + count >= internalBuffer.Length )
-				SetLength ((position + count) * 2);
+			// LAMESPEC: My goodness, how may LAMESPECs are there in this
+			// class! :)  In the spec for the Position property it's stated
+			// "The position must not be more than one byte beyond the end of the stream."
+			// In the spec for seek it says "Seeking to any location beyond the length of the 
+			// stream is supported."  That's a contradiction i'd say.
+			// I guess seek can go anywhere but if you use position it may get moved back.
 
-			Buffer.BlockCopyInternal (buffer, offset, internalBuffer, (int)position, count);
-                        position += count;
-                }
+			refPoint += (int) offset;
+			if (refPoint < initialIndex)
+				throw new IOException ("Attempted to seek before start of MemoryStream.");
 
+			position = refPoint;
+			return position;
+		}
 
-                public override void WriteByte( byte value ) { 
-                        if ( streamClosed )
-                                throw new ObjectDisposedException( "MemoryStream" );
-			else if( !canWrite || (position >= capacity && !expandable))
-                                throw new NotSupportedException();
+		int CalculateNewCapacity (int minimum)
+		{
+			if (minimum < 256)
+				minimum = 256; // See GetBufferTwo test
 
-			if( position >= internalBuffer.Length )
-				SetLength ((position + 1) * 2);
+			if (minimum < capacity * 2)
+				minimum = capacity * 2;
 
-			internalBuffer[ position++ ] = value;
-                }
-                
+			return minimum;
+		}
 
-                public virtual void WriteTo( Stream stream ) { 
-			if (streamClosed)
-				throw new ObjectDisposedException ("MemoryStream");
+		public override void SetLength (long value)
+		{
+			CheckIfClosedThrowDisposed ();
+			if (!expandable && value > capacity)
+				throw new NotSupportedException ("Expanding this MemoryStream is not supported");
 
-                        if( stream == null ) {
-                                throw new ArgumentNullException();
-                        }
+			if (!canWrite)
+				throw new IOException ("Cannot write to this MemoryStream");
 
-                        stream.Write( internalBuffer, 0, internalBuffer.Length );
-                
-                }
-                               
-                       
-        }               
+			// LAMESPEC: AGAIN! It says to throw this exception if value is
+			// greater than "the maximum length of the MemoryStream".  I haven't
+			// seen anywhere mention what the maximum length of a MemoryStream is and
+			// since we're this far this memory stream is expandable.
+			if (value < 0 || (value + initialIndex) > (long) Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ();
 
+			int newSize = (int) value + initialIndex;
+			if (newSize > capacity) {
+				Capacity = CalculateNewCapacity (newSize);
+			} else if (newSize > length) {
+				for (int i = newSize; i < length; i++)
+					Buffer.SetByte (internalBuffer, i, 0);
+			}
 
+			length = newSize;
+			if (position > length)
+				position = length;
+		}
+
+		public virtual byte [] ToArray ()
+		{
+			int l = length - initialIndex;
+			byte[] outBuffer = new byte [l];
+
+			Buffer.BlockCopyInternal (internalBuffer, initialIndex, outBuffer, 0, l);
+			return outBuffer; 
+		}
+
+		public override void Write (byte [] buffer, int offset, int count)
+		{
+			CheckIfClosedThrowDisposed ();
+
+			if (!canWrite)
+				throw new NotSupportedException ("Cannot write to this stream.");
+
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+			
+			if (offset < 0 || count < 0)
+				throw new ArgumentOutOfRangeException ();
+
+			if (buffer.Length - offset < count)
+				throw new ArgumentException ("offset+count",
+							     "The size of the buffer is less than offset + count.");
+
+			if (position + count > capacity)
+				Capacity = CalculateNewCapacity (position + count);
+
+			Buffer.BlockCopyInternal (buffer, offset, internalBuffer, position, count);
+			position += count;
+			if (position >= length)
+				length = position;
+		}
+
+		public override void WriteByte (byte value)
+		{
+			CheckIfClosedThrowDisposed ();
+			if (!canWrite)
+				throw new NotSupportedException ("Cannot write to this stream.");
+
+			if (position + 1 >= capacity)
+				Capacity = CalculateNewCapacity (position + 1);
+
+			if (position >= length)
+				length = position + 1;
+
+			internalBuffer [position++] = value;
+		}
+
+		public virtual void WriteTo (Stream stream)
+		{
+			CheckIfClosedThrowDisposed ();
+
+			if (stream == null)
+				throw new ArgumentNullException ("stream");
+
+			stream.Write (internalBuffer, initialIndex, length - initialIndex);
+		}
+	}               
 }                      
+
