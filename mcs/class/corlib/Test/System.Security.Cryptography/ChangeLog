@@ -1,3 +1,11 @@
+2002-10-05  Andrew Birkett  <andy@nobugs.org>
+
+	* RC2Test.cs: New test.  Only three cases are enabled - the other
+	five work fine under mono, but fail under MS corlib, so I've 
+	commented them out.
+
+	* AllTests.cs: Added RC2Test.
+
 2002-09-23  Andrew Birkett  <andy@nobugs.org>
 
 	* RijndaelManagedTest.cs: Fixed initialization order problem 
