@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.19 $
+// $Revision: 1.20 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.20  2004/08/13 21:22:18  jordi
+// removes redundant code and fixes issues with tickposition
+//
 // Revision 1.19  2004/08/12 20:29:01  jordi
 // Trackbar enhancement, fix mouse problems, highli thumb, etc
 //
@@ -1191,13 +1194,13 @@ namespace System.Windows.Forms
 
 			dc.FillRectangle (br_buttonhilight, channel_startpoint.X + 3, channel_startpoint.Y,
 				1, thumb_area.Height);
+
+			pixel_len = thumb_area.Height - 11;
+			pixels_betweenticks = pixel_len / (tb.Maximum - tb.Minimum);
 			
 			/* Convert thumb position from mouse position to value*/
 			if (mouse_value) {
-
-				pixel_len = thumb_area.Height - 11;
-				pixels_betweenticks = pixel_len / (ticks);
-
+				
 				if (value_pos >= channel_startpoint.Y)
 					value_pos = (int)(((float) (value_pos - channel_startpoint.Y)) / pixels_betweenticks);
 				else
@@ -1207,10 +1210,8 @@ namespace System.Windows.Forms
 					value_pos = tb.Maximum - tb.Minimum;
                                 
 				tb.Value = value_pos + tb.Minimum;
-			}
-
-			pixel_len = thumb_area.Height - 11;
-			pixels_betweenticks = pixel_len / (tb.Maximum - tb.Minimum);
+			}			
+			
 			thumb_pos.Y = channel_startpoint.Y + (int) (pixels_betweenticks * (float) value_pos);
 			
 			/* Draw thumb fixed 10x22 size */
@@ -1283,17 +1284,15 @@ namespace System.Windows.Forms
 			default:
 				break;
 			}
+
+			pixel_len = thumb_area.Height - 11;
+			pixels_betweenticks = pixel_len / ticks;				
 			
 			/* Draw ticks*/
-			if ((tb.TickStyle & TickStyle.BottomRight) == TickStyle.BottomRight ||
-				((tb.TickStyle & TickStyle.Both) == TickStyle.Both)) {
+			if (pixels_betweenticks > 0 && ((tb.TickStyle & TickStyle.BottomRight) == TickStyle.BottomRight ||
+				((tb.TickStyle & TickStyle.Both) == TickStyle.Both))) {	
 				
-				pixel_len = thumb_area.Height - 11;
-				pixels_betweenticks = pixel_len / ticks;
-				
-				for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) 
-				{
-					//Console.WriteLine ("{0} {1} {2}", pixel_len, inc, pixels_betweenticks );
+				for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) 	{					
 					if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
 						dc.DrawLine (pen_ticks, area.X + bottomtick_startpoint.X , area.Y + bottomtick_startpoint.Y  + inc, 
 							area.X + bottomtick_startpoint.X  + 3, area.Y + bottomtick_startpoint.Y + inc);
@@ -1303,8 +1302,8 @@ namespace System.Windows.Forms
 				}
 			}
 
-			if ((tb.TickStyle & TickStyle.TopLeft) == TickStyle.TopLeft ||
-				((tb.TickStyle & TickStyle.Both) == TickStyle.Both)) {
+			if (pixels_betweenticks > 0 &&  ((tb.TickStyle & TickStyle.TopLeft) == TickStyle.TopLeft ||
+				((tb.TickStyle & TickStyle.Both) == TickStyle.Both))) {
 
 				pixel_len = thumb_area.Height - 11;
 				pixels_betweenticks = pixel_len / ticks;
@@ -1385,11 +1384,11 @@ namespace System.Windows.Forms
 			dc.FillRectangle (br_buttonhilight, channel_startpoint.X, channel_startpoint.Y +3,
 				thumb_area.Width, 1);
 
-			/* Convert thumb position from mouse position to value*/
-			if (mouse_value) {
-				pixel_len = thumb_area.Width - 11;
-				pixels_betweenticks = pixel_len / (ticks);
+			pixel_len = thumb_area.Width - 11;
+			pixels_betweenticks = pixel_len / (tb.Maximum - tb.Minimum);
 
+			/* Convert thumb position from mouse position to value*/
+			if (mouse_value) {			
 				if (value_pos >= channel_startpoint.X)
 					value_pos = (int)(((float) (value_pos - channel_startpoint.X)) / pixels_betweenticks);
 				else
@@ -1399,10 +1398,8 @@ namespace System.Windows.Forms
 					value_pos = tb.Maximum - tb.Minimum;
                                 
 				tb.Value = value_pos + tb.Minimum;
-			}
+			}			
 			
-			pixel_len = thumb_area.Width - 11;
-			pixels_betweenticks = pixel_len / (tb.Maximum - tb.Minimum);
 			thumb_pos.X = channel_startpoint.X + (int) (pixels_betweenticks * (float) value_pos);
 			
 			/* Draw thumb fixed 10x22 size */
@@ -1411,7 +1408,8 @@ namespace System.Windows.Forms
 
 			switch (tb.TickStyle) {
 			case TickStyle.BottomRight:
-			case TickStyle.None: {
+			case TickStyle.None: 
+			{
 				thumb_pos.Y = channel_startpoint.Y - 8;
 
 				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y, thumb_pos.X + 10, thumb_pos.Y);
@@ -1471,15 +1469,14 @@ namespace System.Windows.Forms
 				break;
 			}
 
+			pixel_len = thumb_area.Width - 11;
+			pixels_betweenticks = pixel_len / ticks;
+
 			/* Draw ticks*/
-			if ((tb.TickStyle & TickStyle.BottomRight) == TickStyle.BottomRight ||
-				((tb.TickStyle & TickStyle.Both) == TickStyle.Both)) {
+			if (pixels_betweenticks > 0 && ((tb.TickStyle & TickStyle.BottomRight) == TickStyle.BottomRight ||
+				((tb.TickStyle & TickStyle.Both) == TickStyle.Both))) {				
 				
-				pixel_len = thumb_area.Width - 11;
-				pixels_betweenticks = pixel_len / ticks;
-				
-				for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) {
-					//Console.WriteLine ("{0} {1} {2}", pixel_len, inc, pixels_betweenticks );
+				for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) {					
 					if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
 						dc.DrawLine (pen_ticks, area.X + bottomtick_startpoint.X + inc , area.Y + bottomtick_startpoint.Y, 
 							area.X + bottomtick_startpoint.X + inc , area.Y + bottomtick_startpoint.Y + 3);
@@ -1489,14 +1486,10 @@ namespace System.Windows.Forms
 				}
 			}
 
-			if ((tb.TickStyle & TickStyle.TopLeft) == TickStyle.TopLeft ||
-				((tb.TickStyle & TickStyle.Both) == TickStyle.Both)) {
-
-				pixel_len = thumb_area.Width - 11;
-				pixels_betweenticks = pixel_len / ticks;
+			if (pixels_betweenticks > 0 && ((tb.TickStyle & TickStyle.TopLeft) == TickStyle.TopLeft ||
+				((tb.TickStyle & TickStyle.Both) == TickStyle.Both))) {
 				
-				for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) {
-					//Console.WriteLine ("{0} {1} {2}", pixel_len, inc, pixels_betweenticks );
+				for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) {					
 					if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
 						dc.DrawLine (pen_ticks, area.X + toptick_startpoint.X + inc , area.Y + toptick_startpoint.Y - 3, 
 							area.X + toptick_startpoint.X + inc , area.Y + toptick_startpoint.Y);
