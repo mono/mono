@@ -1,5 +1,7 @@
 2004-08-24  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (handle_box): Fix warning.
+
 	* mini-amd64.c (mono_arch_local_regalloc): Fix regalloc problem.
 
 	* mini-amd64.h: Enable the emit_state optimization.
