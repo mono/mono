@@ -2278,6 +2278,11 @@ namespace Mono.CSharp {
 	///   section 10.8.1 (Fully Qualified Names).
 	/// </summary>
 	public abstract class FullNamedExpression : Expression {
+		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec)
+		{
+			return this;
+		}
+
 		public abstract string FullName {
 			get;
 		}

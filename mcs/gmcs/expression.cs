@@ -7641,6 +7641,11 @@ namespace Mono.CSharp {
 
 		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec)
 		{
+			return ResolveNamespaceOrType (ec, false);
+		}
+
+		public FullNamedExpression ResolveNamespaceOrType (EmitContext ec, bool silent)
+		{
 			FullNamedExpression new_expr = expr.ResolveAsTypeStep (ec);
 
 			if (new_expr == null)
@@ -7653,7 +7658,7 @@ namespace Mono.CSharp {
 				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, lookup_id, loc);
 				if ((retval != null) && (args != null))
 					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (ec);
-				if (retval == null)
+				if (!silent && retval == null)
 					Report.Error (234, loc, "The type or namespace name `{0}' could not be found in namespace `{1}'", Identifier, ns.FullName);
 				return retval;
 			}
@@ -7672,7 +7677,7 @@ namespace Mono.CSharp {
 
 			Expression member_lookup;
 			member_lookup = MemberLookupFinal (ec, expr_type, expr_type, lookup_id, loc);
-			if (member_lookup == null) {
+			if (!silent && member_lookup == null) {
 				Report.Error (234, loc, "The type name `{0}' could not be found in type `{1}'", 
 					      Identifier, new_expr.FullName);
 				return null;
