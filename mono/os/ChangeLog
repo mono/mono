@@ -1,0 +1,5 @@
+2005-03-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* gc_wrapper.h: Add required winsock2.h header for compiling with 
+	VS.NET and let the project file defines GC_GCJ_SUPPORT (to avoid 
+	tons of warnings).
