@@ -1,3 +1,9 @@
+2003-04-15 Eduardo Garcia Cebollero <kiwnix@yahoo.es>
+
+	* CaseInsensitiveComparerTest.cs: Fixed Compare Method (now works
+	like MS.NET) and implemented the
+	CaseInsensitiveComparerTest(culture) constructor.
+
 2003-03-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Queue.cs: fixed bug #39046.

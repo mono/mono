@@ -3,11 +3,13 @@
 //
 // Author:
 //   Sergey Chaban (serge@wildwestsoftware.com)
+//   Eduardo Garcia Cebollero (kiwnix@yahoo.es)
 //
 
 
 
 using System;
+using System.Threading;
 using System.Collections;
 using System.Globalization;
 
@@ -19,13 +21,12 @@ namespace System.Collections {
 	public class CaseInsensitiveComparer : IComparer {
 
 		private static CaseInsensitiveComparer singleton;
-
-
+		private CultureInfo cinfo;
 		// Class constructor
 
 		static CaseInsensitiveComparer ()
 		{
-			singleton=new CaseInsensitiveComparer ();
+		    singleton=new CaseInsensitiveComparer ();
 		}
 
 
@@ -33,12 +34,14 @@ namespace System.Collections {
 
 		public CaseInsensitiveComparer ()
 		{
+		    cinfo = Thread.CurrentThread.CurrentCulture;
 		}
 
-		[MonoTODO]
 		public CaseInsensitiveComparer (CultureInfo culture)
 		{
-			throw new NotImplementedException ();
+		    if (culture==null)
+			throw new ArgumentNullException("culture");
+		    cinfo = culture;
 		}
 
 
@@ -62,18 +65,14 @@ namespace System.Collections {
 		//
 
 		public int Compare (object a, object b)
-		{
-			string str1 = a as string;
-			string str2 = b as string;
+		{	  
+  		    string sa = a as string;
+		    string sb = b as string;
 
-
-			int res = 0;
-
-			if (str1 != null && str2 != null) {
-				res = String.Compare (str1, str2, true);
-			}
-
-			return res;
+		    if ((sa != null) && (sb != null))
+			return String.Compare (sa,sb,true,cinfo);
+		    
+		    return Comparer.Default.Compare (a,b);
 		}
 
 
