@@ -22,9 +22,12 @@
 // Author:
 //	Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 // $Modtime: $
 // $Log: ColumnHeader.cs,v $
+// Revision 1.4  2004/10/26 09:55:48  ravindra
+// Some formatting for my last checkins.
+//
 // Revision 1.3  2004/10/26 09:33:00  ravindra
 // Added some internal members and calculations for ColumnHeader.
 //
@@ -59,7 +62,8 @@ namespace System.Windows.Forms
 		#endregion	// Instance Variables
 
 		#region Internal Constructor
-		internal ColumnHeader (ListView owner, string text, HorizontalAlignment alignment, int width)
+		internal ColumnHeader (ListView owner, string text,
+				       HorizontalAlignment alignment, int width)
 		{
 			this.owner = owner;
 			this.text = text;
@@ -76,7 +80,7 @@ namespace System.Windows.Forms
 		#region Private Internal Methods Properties
 		// Since this class inherits from MarshalByRef,
 		// we can't do ColumnHeader.column_rect.XXX. Hence,
-		// we have following properties to work around.
+		// we have some of the following properties to work around CS0197.
 		internal int X {
 			get { return this.column_rect.X; }
 			set { this.column_rect.X = value; }

@@ -22,9 +22,12 @@
 // Author:
 //	Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.4 $
+// $Revision: 1.5 $
 // $Modtime: $
 // $Log: ListView.cs,v $
+// Revision 1.5  2004/10/26 09:55:48  ravindra
+// Some formatting for my last checkins.
+//
 // Revision 1.4  2004/10/26 09:31:35  ravindra
 // Added some internal members and calculations for ListView.
 //
@@ -51,7 +54,8 @@ namespace System.Windows.Forms
 {
 	[DefaultEvent ("SelectedIndexChanged")]
 	[DefaultProperty ("Items")]
-	[Designer ("System.Windows.Forms.Design.ListViewDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
+	[Designer ("System.Windows.Forms.Design.ListViewDesigner, " + Consts.AssemblySystem_Design,
+		   typeof (IDesigner))]
 	public class ListView : Control
 	{
 		private ItemActivation activation = ItemActivation.Standard;
@@ -405,7 +409,8 @@ namespace System.Windows.Forms
 			ColumnHeader col = this.columns [index];
 
 			if (col.Width == -2) { // autosize = max(items, columnheader)
-				Size size = Size.Ceiling (this.DeviceContext.MeasureString (text, this.Font));
+				Size size = Size.Ceiling (this.DeviceContext.MeasureString
+							  (text, this.Font));
 				ret_size = BiggestItem (index);
 				if (size.Width > ret_size.Width)
 					ret_size = size;
@@ -424,21 +429,23 @@ namespace System.Windows.Forms
 
 			if (col == 0) {
 				foreach (ListViewItem item in items) {
-						temp = Size.Ceiling (this.DeviceContext.MeasureString (item.Text, this.Font));
-						if (temp.Width > ret_size.Width)
-							ret_size = temp;
-					}
+					temp = Size.Ceiling (this.DeviceContext.MeasureString
+							     (item.Text, this.Font));
+					if (temp.Width > ret_size.Width)
+						ret_size = temp;
+				}
 			}
 			else {
 				foreach (ListViewItem item in items) {
-						if (col >=item.SubItems.Count)
-							continue;
-					Console.WriteLine ("col: {0}, count: {1}", col, item.SubItems.Count);
-						temp = Size.Ceiling (this.DeviceContext.MeasureString (item.SubItems [col].Text	, this.Font));
-						if (temp.Width > ret_size.Width)
-							ret_size = temp;
-					}
-			}				
+					if (col >=item.SubItems.Count)
+						continue;
+
+					temp = Size.Ceiling (this.DeviceContext.MeasureString
+							     (item.SubItems [col].Text	, this.Font));
+					if (temp.Width > ret_size.Width)
+						ret_size = temp;
+				}
+			}
 			return ret_size;
 		}
 
@@ -462,16 +469,16 @@ namespace System.Windows.Forms
 			}
 			else if (view == View.Details) {
 				if (columns.Count > 0) {
-						text_size = this.BiggestItem (0);
-						if (check_boxes)
-							text_size.Width -= (ThemeEngine.Current.CheckBoxWidth + 2);
-						if (small_image_list != null)
-							text_size.Width -= small_image_list.ImageSize.Width;
+					text_size = this.BiggestItem (0);
+					if (check_boxes)
+						text_size.Width -= (ThemeEngine.Current.CheckBoxWidth + 2);
+					if (small_image_list != null)
+						text_size.Width -= small_image_list.ImageSize.Width;
 				}
 			}
 			else
 				text_size = BiggestItem (0);
-			
+
 			// we do the default settings, if we have got 0's
 			if (text_size.Height <= 0)
 				text_size.Height = this.Font.Height;
@@ -513,15 +520,14 @@ namespace System.Windows.Forms
 				}
 				break;
 			case View.LargeIcon:
-					// take care of alignment, autoarrange too
+				// take care of alignment, autoarrange too
 				break;
 
 			case View.List:
 				break;
 
 			case View.SmallIcon:
-					// take care of alignment, autoarrange too
-					
+				// take care of alignment, autoarrange too
 				break;
 			}
 
@@ -554,12 +560,14 @@ namespace System.Windows.Forms
 				return;
 
 			if (redraw) {
-				ThemeEngine.Current.DrawListView (this.DeviceContext, pe.ClipRectangle, this);
+				ThemeEngine.Current.DrawListView (this.DeviceContext,
+								  pe.ClipRectangle, this);
 				redraw = false;
 			}
 
 			// paint on the screen
-			pe.Graphics.DrawImage (this.ImageBuffer, pe.ClipRectangle, pe.ClipRectangle, GraphicsUnit.Pixel);
+			pe.Graphics.DrawImage (this.ImageBuffer, pe.ClipRectangle,
+					       pe.ClipRectangle, GraphicsUnit.Pixel);
 
 			if (Paint != null)
 				Paint (this, pe);

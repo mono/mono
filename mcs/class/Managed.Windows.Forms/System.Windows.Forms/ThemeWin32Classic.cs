@@ -26,9 +26,12 @@
 //
 //
 //
-// $Revision: 1.50 $
+// $Revision: 1.51 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.51  2004/10/26 09:55:48  ravindra
+// Some formatting for my last checkins.
+//
 // Revision 1.50  2004/10/26 09:36:32  ravindra
 // Implemented DetailView drawing for ListView control and default values.
 //
@@ -907,13 +910,21 @@ namespace System.Windows.Forms
 						sub_item_rect.Width = col.Wd;
 
 						if (item.UseItemStyleForSubItems) {
-							dc.FillRectangle (this.ResPool.GetSolidBrush (item.BackColor), sub_item_rect);
-							dc.DrawString (subItem.Text, item.Font, this.ResPool.GetSolidBrush (item.ForeColor), sub_item_rect, col.Format);
+							dc.FillRectangle (this.ResPool.GetSolidBrush
+									  (item.BackColor), sub_item_rect);
+							dc.DrawString (subItem.Text, item.Font,
+								       this.ResPool.GetSolidBrush
+								       (item.ForeColor), sub_item_rect,
+								       col.Format);
 						}
 						else {
-							dc.FillRectangle (this.ResPool.GetSolidBrush (subItem.BackColor), sub_item_rect);
+							dc.FillRectangle (this.ResPool.GetSolidBrush
+									  (subItem.BackColor),
+									  sub_item_rect);
 							dc.DrawString (subItem.Text, subItem.Font,
-								       this.ResPool.GetSolidBrush (subItem.ForeColor), sub_item_rect, col.Format);
+								       this.ResPool.GetSolidBrush
+								       (subItem.ForeColor),
+								       sub_item_rect, col.Format);
 						}
 						sub_item_rect.X += col.Wd;
 					}

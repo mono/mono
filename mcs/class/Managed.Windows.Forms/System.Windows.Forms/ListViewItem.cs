@@ -22,9 +22,12 @@
 // Author:
 //      Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.4 $
+// $Revision: 1.5 $
 // $Modtime: $
 // $Log: ListViewItem.cs,v $
+// Revision 1.5  2004/10/26 09:55:48  ravindra
+// Some formatting for my last checkins.
+//
 // Revision 1.4  2004/10/26 09:32:19  ravindra
 // Calculations for ListViewItem.
 //
@@ -70,8 +73,8 @@ namespace System.Windows.Forms
 		private bool use_item_style = true;
 
 		// internal variables
-		internal CheckBox checkbox;				// the associated checkbox with an item
-		internal Rectangle checkbox_rect;		// calculated by CalcListViewItem method
+		internal CheckBox checkbox;		// the associated checkbox with an item
+		internal Rectangle checkbox_rect;	// calculated by CalcListViewItem method
 		internal Rectangle entire_rect;
 		internal Rectangle icon_rect;
 		internal Rectangle item_rect;
@@ -171,7 +174,8 @@ namespace System.Windows.Forms
 
 		[DefaultValue (-1)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design,
+			 typeof (System.Drawing.Design.UITypeEditor))]
 		[Localizable (true)]
 		[TypeConverter (typeof (ImageIndexConverter))]
 		public int ImageIndex {
@@ -229,7 +233,8 @@ namespace System.Windows.Forms
 		}
 
 		[DefaultValue (-1)]
-		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design,
+			 typeof (System.Drawing.Design.UITypeEditor))]
 		[Localizable (true)]
 		[TypeConverter (typeof (ImageIndexConverter))]
 		public int StateImageIndex {
@@ -373,7 +378,8 @@ namespace System.Windows.Forms
 
 			if (owner.CheckBoxes) {
 				checkbox_rect.Location = this.location;
-				checkbox_rect.Height = checkbox_rect.Width = ThemeEngine.Current.CheckBoxWidth;
+				checkbox_rect.Height = checkbox_rect.Width
+					= ThemeEngine.Current.CheckBoxWidth;
 				checkbox = new CheckBox ();
 			}
 			else
@@ -391,10 +397,12 @@ namespace System.Windows.Forms
 				icon_rect.X = checkbox_rect.X + checkbox_rect.Width + 2;
 				icon_rect.Y = location.Y;
 
-				item_ht = Math.Max (ThemeEngine.Current.CheckBoxWidth + 1, text_size.Height);
+				item_ht = Math.Max (ThemeEngine.Current.CheckBoxWidth + 1,
+						    text_size.Height);
 
 				if (owner.SmallImageList != null) {
-					item_ht = Math.Max (item_ht, owner.SmallImageList.ImageSize.Height + 1);
+					item_ht = Math.Max (item_ht,
+							    owner.SmallImageList.ImageSize.Height + 1);
 					icon_rect.Width = owner.SmallImageList.ImageSize.Width;
 				}
 				else
@@ -406,7 +414,8 @@ namespace System.Windows.Forms
 				label_rect.Y = icon_rect.Y;
 				label_rect.Width = text_size.Width;
 
-				item_rect = entire_rect = Rectangle.Union (Rectangle.Union (checkbox_rect, icon_rect), label_rect);
+				item_rect = entire_rect = Rectangle.Union
+					(Rectangle.Union (checkbox_rect, icon_rect), label_rect);
 
 				// Take into account the rest of columns. First column
 				// is already taken into account above.
@@ -445,7 +454,8 @@ namespace System.Windows.Forms
 				item_ht = Math.Max (ThemeEngine.Current.CheckBoxWidth, text_size.Height);
 
 				if (owner.SmallImageList != null) {
-					item_ht = Math.Max (item_ht, owner.SmallImageList.ImageSize.Height + 1);
+					item_ht = Math.Max (item_ht,
+							    owner.SmallImageList.ImageSize.Height + 1);
 					icon_rect.Width = owner.SmallImageList.ImageSize.Width;
 				}
 				else
@@ -468,7 +478,8 @@ namespace System.Windows.Forms
 				item_ht = Math.Max (ThemeEngine.Current.CheckBoxWidth, text_size.Height);
 
 				if (owner.SmallImageList != null) {
-					item_ht = Math.Max (item_ht, owner.SmallImageList.ImageSize.Height + 1);
+					item_ht = Math.Max (item_ht,
+							    owner.SmallImageList.ImageSize.Height + 1);
 					icon_rect.Width = owner.SmallImageList.ImageSize.Width;
 				}
 				else
