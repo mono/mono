@@ -1,5 +1,9 @@
 2005-02-12  Ben Maurer  <bmaurer@ximian.com>
 
+	* Version.cs (CompareTo, Equals): Make sure the versions for
+	generics handle `null'. The non-generics versions now just call
+	the regular versions, to reduce code duplication.
+
 	* Boolean.cs (CompareTo): make this really work for generics 
 
 	* Type.cs (GetProperty): Passing new Type [0] is different than

@@ -167,59 +167,28 @@ namespace System
 
 		public int CompareTo (object version)
 		{
-			Version v;
-
 			if (version == null)
 				return 1;
 
 			if (! (version is Version))
 				throw new ArgumentException (Locale.GetText ("Argument to Version.CompareTo must be a Version."));
 
-			v = version as Version;
-
-			if (this._Major > v._Major)
-				return 1;
-			else if (this._Major < v._Major)
-				return -1;
-
-			if (this._Minor > v._Minor)
-				return 1;
-			else if (this._Minor < v._Minor)
-				return -1;
-
-			if (this._Build > v._Build)
-				return 1;
-			else if (this._Build < v._Build)
-				return -1;
-
-			if (this._Revision > v._Revision)
-				return 1;
-			else if (this._Revision < v._Revision)
-				return -1;
-
-			return 0;
+			return this.CompareTo ((Version) version);
 		}
 
 		public override bool Equals (object obj)
 		{
-			Version x;
-			
-			if (obj == null || !(obj is Version))
-				return false;
-
-			x = (Version) obj;
-			
-			if ((x._Major == _Major) &&
-			    (x._Minor == _Minor) &&
-			    (x._Build == _Build) &&
-			    (x._Revision == _Revision))
-				return true;
-			return false;
+			return this.Equals (obj as Version);
 		}
 
 #if NET_2_0
-		public int CompareTo (Version v)
+		public
+#endif
+		int CompareTo (Version v)
 		{
+			if (v == null)
+				return 1;
+			
 			if (this._Major > v._Major)
 				return 1;
 			else if (this._Major < v._Major)
@@ -243,16 +212,17 @@ namespace System
 			return 0;
 		}
 
-		public bool Equals (Version x)
+#if NET_2_0
+		public
+#endif
+		bool Equals (Version x)
 		{
-			if ((x._Major == _Major) &&
+			return ((x != null) &&
+			    (x._Major == _Major) &&
 			    (x._Minor == _Minor) &&
 			    (x._Build == _Build) &&
-			    (x._Revision == _Revision))
-				return true;
-			return false;
+			    (x._Revision == _Revision));
 		}
-#endif
 
 		public override int GetHashCode ()
 		{
