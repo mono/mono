@@ -85,16 +85,25 @@ namespace CIR {
 			return false;
 		}
 		
-		public void EmitBoolExpression (Expression e)
+		public bool EmitBoolExpression (Expression e)
 		{
-			e.Resolve (parent);
-			if (!ConvertTo (TypeManager.bool_type, e.Type, false)){
+			e = e.Resolve (parent);
+
+			if (e == null)
+				return false;
+			
+			if (e.Type != TypeManager.bool_type)
+				e = Expression.ConvertImplicit (e, TypeManager.bool_type);
+
+			if (e.Type != TypeManager.bool_type){
 				parent.RootContext.Report.Error (
 					31, "Can not convert the expression to a boolean");
-				return;
+				return false;
 			}
 			
 			e.Emit (this);
+
+			return true;
 		}
 
 		public void EmitExpression (Expression e)
@@ -111,7 +120,9 @@ namespace CIR {
 			Label end;
 			Statement false_stat = s.FalseStatement;
 
-			EmitBoolExpression (s.Expr);
+			if (!EmitBoolExpression (s.Expr))
+				return;
+			
 			ig.Emit (OpCodes.Brfalse, false_target);
 			EmitStatement (s.TrueStatement);
 

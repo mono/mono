@@ -822,6 +822,7 @@ namespace CIR {
 			} else {
 				left = ForceConversion (left, TypeManager.int32_type);
 				right = ForceConversion (right, TypeManager.int32_type);
+				type = TypeManager.int32_type;
 			}
 		}
 
@@ -886,6 +887,9 @@ namespace CIR {
 			} else
 				DoNumericPromotions (tc, l, r);
 
+			if (left == null || right == null)
+				return null;
+
 			if (oper == Operator.BitwiseAnd ||
 			    oper == Operator.BitwiseOr ||
 			    oper == Operator.ExclusiveOr){
@@ -896,11 +900,17 @@ namespace CIR {
 					error19 (tc);
 					return null;
 				}
-			} else 
-			
-			if (left == null || right == null)
-				return null;
+			}
 
+			if (oper == Operator.Equal ||
+			    oper == Operator.NotEqual ||
+			    oper == Operator.LessOrEqual ||
+			    oper == Operator.LessThan ||
+			    oper == Operator.GreatherOrEqual ||
+			    oper == Operator.GreatherThan){
+				type = TypeManager.bool_type;
+			}
+			
 			return this;
 		}
 		
@@ -911,7 +921,7 @@ namespace CIR {
 
 			if (left == null || right == null)
 				return null;
-					
+
 			return ResolveOperator (tc);
 		}
 
@@ -1378,6 +1388,7 @@ namespace CIR {
 		public bool Resolve (TypeContainer tc)
 		{
 			expr = expr.Resolve (tc);
+
 			return expr != null;
 		}
 
@@ -1427,7 +1438,10 @@ namespace CIR {
 		/// </summary>
 		static int Badness (Argument a, Type t)
 		{
-			Console.WriteLine ("Considering: " + t + " and " + a.Expr.Type); 
+			if (a.Expr.Type == null){
+				throw new Exception ("Expression of type " + a.Expr + " does not resolve its type");
+			}
+			
 			if (t == a.Expr.Type)
 				return 0;
 
@@ -1488,7 +1502,7 @@ namespace CIR {
 						j--;
 						
 						Argument a = (Argument) Arguments [j];
-						
+
 						x = Badness (a, pd.ParameterType (j));
 						
 						if (x < 0){
@@ -1554,6 +1568,7 @@ namespace CIR {
 				return null;
 			}
 
+			type = method.ReturnType;
 			return this;
 		}
 

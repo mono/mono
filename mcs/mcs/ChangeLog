@@ -1,5 +1,17 @@
 2001-09-13  Miguel de Icaza  <miguel@ximian.com>
 
+	* codegen.cs (EmitContext::EmitBoolExpression): Use propper
+	Resolve pattern.  Attempt to implicitly convert value to boolean.
+	Emit code.
+
+	* expression.cs: Set the type for the int32/int32 argument case.
+	(Binary::ResolveOperator): Set the return type to boolean for
+	comparission operators
+
+	* typemanager.cs: Remove debugging print code.
+
+	(Invocation::Resolve): resolve type.
+
 	* class.cs: Allocate a MemberInfo of the correct size, as the code
 	elsewhere depends on the test to reflect the correct contents.
 

@@ -97,8 +97,6 @@ public class TypeManager {
 		// First lookup in user defined and cached values
 		//
 
-		Console.WriteLine ("Type lookup : {0}", name);
-		
 		t = (Type) types [name];
 		if (t != null)
 			return t;
