@@ -102,6 +102,13 @@ namespace System.Runtime.Remoting.Channels
 		{
 			get { return _deserializationFormatter; }
 		}
+		
+#if NET_1_1
+		public TypeFilterLevel TypeFilterLevel
+		{
+			get { return _filterLevel; }
+		}
+#endif
 	}
 }
 

@@ -96,8 +96,6 @@ namespace System.Runtime.Remoting.Channels
 			IMessageSink replySink)
 		{
 			ITransportHeaders transportHeaders = new TransportHeaders();
-			transportHeaders[CommonTransportKeys.RequestUri] = ((IMethodCallMessage)msg).Uri;
-
 			Stream stream = _nextInChain.GetRequestStream(msg, transportHeaders);
 			if (stream == null) stream = new MemoryStream ();
 

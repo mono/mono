@@ -1,4 +1,11 @@
-﻿2003-12-15  Lluis Sanchez Gual  <lluis@ximian.com>
+﻿2004-02-27  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* BinaryClientFormatterSink.cs: Don't set the request uri here, this will
+	  be done in the transport sink.
+	* BinaryCore.cs: Added TypeFilterLevel property.
+	* BinaryServerFormatterSinkProvider.cs: Added missing TypeFilterLevel property.
+
+2003-12-15  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* BinaryServerFormatterSinkProvider.cs, SoapServerFormatterSinkProvider.cs:
 	  Changed some ifdefs for allowedProperties field.
