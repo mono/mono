@@ -71,6 +71,15 @@ namespace System.Data.OracleClient.Oci {
 		{
 			if (!disposed) {
 				disposed = true;
+				
+				if (disposing) {
+					if (values != null) {
+						foreach (OciDefineHandle h in values)
+							h.Dispose ();
+						values = null;
+					}
+				}
+				
 				base.Dispose (disposing);
 			}
 		}

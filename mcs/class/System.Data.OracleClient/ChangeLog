@@ -1,3 +1,12 @@
+2004-03-31  Joerg Rosenkranz  <joergr@voelcker.com>
+
+	* System.Data.OracleClient.Oci/OciDefineHandle.cs:
+		Changed DefineChar to allow retrieval of 
+		multibyte characters (i.e. german umlauts).
+	* System.Data.OracleClient.Oci/OciStatementHandle.cs:
+		OciDefineHandles are now disposed in the
+		Dispose function.
+		
 2004-02-09  Joerg Rosenkranz  <joergr@voelcker.com>
 
 	* System.Data.OracleClient/OracleLob.cs:

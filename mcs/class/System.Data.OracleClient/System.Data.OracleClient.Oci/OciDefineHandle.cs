@@ -144,7 +144,10 @@ namespace System.Data.OracleClient.Oci {
 		void DefineChar (int position)
 		{
 			ociType = OciDataType.Char;
-			value = Marshal.AllocHGlobal (definedSize);
+			
+			// The buffer is able to contain twice the defined size
+			// to allow usage of multibyte characters
+			value = Marshal.AllocHGlobal (definedSize * 2);
 
 			int status = 0;
 
@@ -153,7 +156,7 @@ namespace System.Data.OracleClient.Oci {
 						ErrorHandle,
 						position + 1,
 						value,
-						definedSize,
+						definedSize * 2,
 						ociType,
 						ref indicator,
 						ref rlenp,
