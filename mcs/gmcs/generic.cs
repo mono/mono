@@ -499,9 +499,15 @@ namespace Mono.CSharp {
 			return type;
 		}
 
-		public Expression GetMemberAccess (TypeExpr current_type)
+		public Expression GetMemberAccess (EmitContext ec)
 		{
-			return new GenericMemberAccess (current_type, name, args, loc);
+			TypeExpr current;
+			if (ec.TypeContainer.CurrentType != null)
+				current = ec.TypeContainer.CurrentType;
+			else
+				current = new TypeExpression (ec.ContainerType, loc);
+
+			return new GenericMemberAccess (current, name, args, loc);
 		}
 
 		public override bool CheckAccessLevel (DeclSpace ds)

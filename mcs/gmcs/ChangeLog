@@ -1,5 +1,11 @@
 2004-03-16  Martin Baulig  <martin@ximian.com>
 
+	* generics.cs (ConstructedType.GetMemberAccess): Take the
+	EmitContext instead on the TypeExpr and use
+	ec.TypeContainer.CurrentType/ec.ContainerType.
+
+2004-03-16  Martin Baulig  <martin@ximian.com>
+
 	* ecore.cs (SimpleName.DoResolveAsTypeStep): Lookup type
 	parameters before aliases.
 
