@@ -11,6 +11,5 @@ class X
 {
 	static void Main ()
 	{
-		Foo<int> foo;
 	}
 }
