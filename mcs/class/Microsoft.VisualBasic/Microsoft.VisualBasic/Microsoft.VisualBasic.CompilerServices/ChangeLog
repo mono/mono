@@ -1,5 +1,8 @@
-2004-03-27  Duncan Mak  <duncan@ximian.com>
+2004-02-20  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* Utils.cs: 
+		Spacing corrections
 
+2004-03-27  Duncan Mak  <duncan@ximian.com>
 	* Utils.cs (GetResourceString): Added stub for easing the port
 	from the Mainsoft Java implementation.
 
