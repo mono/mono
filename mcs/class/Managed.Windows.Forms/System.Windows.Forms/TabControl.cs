@@ -194,7 +194,6 @@ namespace System.Windows.Forms {
 				if (SelectedIndex != -1 && TabPages [SelectedIndex].Row != BottomRow) 
 					DropRow (TabPages [selected_index].Row);
 				SizeTabs ();
-				
 				Refresh ();
 			}
 		}
@@ -209,8 +208,7 @@ namespace System.Windows.Forms {
 				int index = IndexForTabPage (value);
 				if (index == selected_index)
 					return;
-				selected_index = index;
-				Refresh ();
+				SelectedIndex = index;
 			}
 		}
 

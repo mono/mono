@@ -1,5 +1,11 @@
 2005-01-21  Jackson Harper  <jackson@ximian.com>
 
+	* TabControl.cs: Set the SelectedIndex property when SelectedTab
+	is set so that the page visibility is updated and the tabs are
+	sized correctly.
+
+2005-01-21  Jackson Harper  <jackson@ximian.com>
+
 	* TabControl.cs: Use cliping rectangle for blitting. Give the
 	theme the clipping rect so we can do clipping while
 	drawing. Remove some debug code.
