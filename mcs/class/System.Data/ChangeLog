@@ -1,3 +1,23 @@
+2002-05-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* System.Data/DataSet.cs: Remove [Serializable] attributes from
+	methods, those only apply to structs or classes.
+
+	Stub out ISerializable, ISupportInitialize, and IListSource methods 
+	
+	* System.Data/DataRowView.cs: Stub out interface methods for
+	IEditableObject, ICustomTypeDescriptor and IDataErrorInfo
+
+	* System.Data/DataView.cs: Comment out non-implemented
+	interfaces. 
+
+	* System.Data/DataViewSettingsCollection.cs: Type cast variables
+	to the correct type to make it compile.
+
+	* System.Data/DataViewSettings.cs: remove reference to
+	non-existance type ApplyDefaultSort, it is a boolean.
+	
+
 2002-05-05  Tim Coleman <tim@timcoleman.com>
         * System.Data.SqlTypes/SqlBinary.cs:
         * System.Data.SqlTypes/SqlBoolean.cs:
