@@ -8,6 +8,7 @@
 //
 
 using System.Globalization;
+using System.Security.Cryptography;
 
 namespace System {
 
@@ -26,25 +27,50 @@ public struct Guid  : IFormattable, IComparable  {
 	private byte _node5;
 
 	private class GuidState {
-		protected Random _rnd;
+		protected Random _prnd; // Pseudo RNG
+		protected RandomNumberGenerator _rnd; // Strong RNG
+		protected bool _usePRnd; // 'true' for pseudo RNG
 		protected ushort _clockSeq;
 		protected ulong _lastTimestamp;
 		protected byte[] _mac;
-	
-		[MonoTODO("Get real MAC address")]
-		public GuidState () {
-			_rnd = new Random(unchecked((int) DateTime.Now.Ticks));
-			_clockSeq = (ushort) _rnd.Next(0x4000); // 14 bits
-			_lastTimestamp = 0ul;
-			_mac = new byte[6];
-			_rnd.NextBytes (_mac);
-			_mac[0] |= 0x80;
+
+		public int NextInt(uint x) {
+			if (_usePRnd) {
+				return _prnd.Next ((int) x);
+			}
+			else {
+				byte[] b = new byte[4];
+				_rnd.GetBytes (b);
+
+				uint res = BitConverter.ToUInt32 (b, 0);
+				res = (res % x);
+				return (int) res;
+			}
 		}
 
-		public Random Rnd {
-			get {
-				return _rnd;
+		public void NextBytes(byte[] b) {
+			if ( _usePRnd ) {
+				_prnd . NextBytes (b);
 			}
+			else {
+				_rnd . GetBytes (b);
+			}
+		}
+	
+		[MonoTODO("Get real MAC address")]
+		public GuidState (bool usePRnd) {
+			_usePRnd = usePRnd;
+			if ( _usePRnd ) {
+				_prnd = new Random(unchecked((int) DateTime.Now.Ticks));
+			}
+			else {
+				_rnd = RandomNumberGenerator.Create ();
+			}
+			_clockSeq = (ushort) NextInt (0x4000); // 14 bits
+			_lastTimestamp = 0ul;
+			_mac = new byte[6];
+			NextBytes (_mac);
+			_mac[0] |= 0x80;
 		}
 
 		public ulong NewTimestamp () {
@@ -81,7 +107,7 @@ public struct Guid  : IFormattable, IComparable  {
 		
 	};
 
-	private static GuidState _guidState = new GuidState ();
+	private static GuidState _guidState = new GuidState ( false /* use pseudo RNG? */ ); 
 
 	private static void CheckNull (object o) {
 		if (o == null) {
@@ -281,7 +307,8 @@ public struct Guid  : IFormattable, IComparable  {
 
 	private static Guid NewRandomGuid () {
 		byte[] b = new byte[16];
-		_guidState.Rnd.NextBytes(b);
+
+		_guidState.NextBytes (b);
 
 		Guid res = new Guid(b);
 		// Mask in Variant 1-0 in Bit[7..6]
@@ -293,7 +320,7 @@ public struct Guid  : IFormattable, IComparable  {
 
 	[MonoTODO]
 	public static Guid NewGuid () {
-		return NewTimeGuid();
+		return NewRandomGuid();
 	}
 
 	public byte[] ToByteArray () {

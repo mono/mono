@@ -1,4 +1,8 @@
 2002-02-09  Duco Fijma <duco@lorentz.xs4all.nl>
+	* Changed Guid.NewGuid so that it can use both System.Random and 
+          System.Security.Cryptography.RandomNumberGenerator
+
+2002-02-09  Duco Fijma <duco@lorentz.xs4all.nl>
 	* First version of Guid.NewGuid
 
 2002-02-08  Duncan Mak  <duncan@ximian.com>
