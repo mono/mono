@@ -92,6 +92,8 @@ System.Windows.Forms/StatusBarDrawItemEventHandler.cs
 System.Windows.Forms/StatusBarPanel.cs
 System.Windows.Forms/StatusBarPanelAutoSize.cs
 System.Windows.Forms/StatusBarPanelBorderStyle.cs
+System.Windows.Forms/StatusBarPanelClickEventArgs.cs
+System.Windows.Forms/StatusBarPanelClickEventHandler.cs
 System.Windows.Forms/StatusBarPanelStyle.cs
 System.Windows.Forms/TODOAttribute.cs
 System.Windows.Forms/UICues.cs
