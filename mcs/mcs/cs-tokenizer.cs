@@ -289,23 +289,23 @@ namespace Mono.CSharp
 			number_builder = new System.Text.StringBuilder ();
 		}
 
-		bool is_keyword (string name)
-		{
-			bool res;
-			
-			res = keywords.Contains (name);
-			if (handle_get_set == false && (name == "get" || name == "set"))
-				return false;
-			if (handle_remove_add == false && (name == "remove" || name == "add"))
-				return false;
-			if (handle_assembly == false && (name == "assembly"))
-				return false;
-			return res;
-		}
-
 		int GetKeyword (string name)
 		{
-			return (int) (keywords [name]);
+			object o = keywords [name];
+
+			if (o == null)
+				return -1;
+			
+			int res = (int) o;
+			
+			if (handle_get_set == false && (res == Token.GET || res == Token.SET))
+				return -1;
+			if (handle_remove_add == false && (res == Token.REMOVE || res == Token.ADD))
+				return -1;
+			if (handle_assembly == false && res == Token.ASSEMBLY)
+				return -1;
+			return res;
+			
 		}
 
 		public Location Location {
@@ -1450,8 +1450,9 @@ namespace Mono.CSharp
 			}
 					
 			string ids = id_builder.ToString ();
-
-			if (!is_keyword (ids) || quoted) {
+			int keyword = GetKeyword (ids);
+			
+			if (keyword == -1 || quoted){
 				val = ids;
 				if (ids.Length > 512){
 					Report.Error (
@@ -1461,8 +1462,7 @@ namespace Mono.CSharp
 				return Token.IDENTIFIER;
 			}
 
-			// true, false and null are in the hash anyway.
-			return GetKeyword (ids);
+			return keyword;
 		}
 		
 		public int xtoken ()
