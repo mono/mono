@@ -1,3 +1,7 @@
+2002-11-22  Dietmar Maurer  <dietmar@ximian.com>
+
+	* threads.c (TlsGetValue): removed unnecessary mutex
+
 2002-11-20  Dick Porter  <dick@ximian.com>
 
 	* timed-thread.c (_wapi_timed_thread_attach): Attached threads
