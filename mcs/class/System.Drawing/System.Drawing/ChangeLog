@@ -1,3 +1,8 @@
+2004-04-22  Vladimir Vukicevic  <vladimir@pobox.com>
+
+	* gdipFunctions.cs: Fix StreamGetBytesImpl to handle
+	returning portions of the peek buffer back.  Fixes #57379.
+
 2004-04-41 Peter Bartok <pbartok@novell.com>
    * Font.cs: Implemented Font.FromHfont method
    * gdipStructs.cs: fixed sign for LOGFONTA lfHeight member

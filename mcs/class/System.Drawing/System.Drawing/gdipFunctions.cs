@@ -1307,13 +1307,18 @@ namespace System.Drawing {
 
 		    if (peekBytes != null) {
 		      if (bufsz < peekBytes.Length) {
-			// yeah, ok, get a real buffer then come back
-			return -1;
+			Marshal.Copy (peekBytes, 0, buf, bufsz);
+			byte[] newPeekBytes = new byte[peekBytes.Length - bufsz];
+			Array.Copy (peekBytes, bufsz, newPeekBytes, 0, newPeekBytes.Length);
+			bytesReturn += bufsz;
+			bufsz = 0;
+			peekBytes = newPeekBytes;
+		      } else {
+			Marshal.Copy (peekBytes, 0, buf, peekBytes.Length);
+			bytesReturn += peekBytes.Length;
+			bufsz -= peekBytes.Length;
+			peekBytes = null;
 		      }
-		      Marshal.Copy (peekBytes, 0, buf, peekBytes.Length);
-		      bytesReturn += peekBytes.Length;
-		      bufsz -= peekBytes.Length;
-		      peekBytes = null;
 		    }
 
 		    if (bufsz > 0) {
