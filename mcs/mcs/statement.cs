@@ -26,12 +26,13 @@ namespace Mono.CSharp {
 		/// <remarks>
 		///    Emits a bool expression.
 		/// </remarks>
-		public static bool EmitBoolExpression (EmitContext ec, Expression e, Label l, bool isTrue)
+		public static Expression EmitBoolExpression (EmitContext ec, Expression e,
+							     Label l, bool isTrue)
 		{
 			e = e.Resolve (ec);
 
 			if (e == null)
-				return false;
+				return null;
 
 			if (e.Type != TypeManager.bool_type)
 				e = Expression.ConvertImplicit (ec, e, TypeManager.bool_type,
@@ -40,7 +41,7 @@ namespace Mono.CSharp {
 			if (e == null){
 				Report.Error (
 					31, "Can not convert the expression to a boolean");
-				return false;
+				return null;
 			}
 
 			bool invert = false;
@@ -69,7 +70,7 @@ namespace Mono.CSharp {
 					ec.ig.Emit (OpCodes.Brfalse, l);
 			}
 			
-			return true;
+			return e;
 		}
 
 	}
@@ -108,7 +109,7 @@ namespace Mono.CSharp {
 			Label end;
 			bool is_true_ret, is_false_ret;
 			
-			if (!EmitBoolExpression (ec, Expr, false_target, false))
+			if (EmitBoolExpression (ec, Expr, false_target, false) == null)
 				return false;
 			
 			is_true_ret = TrueStatement.Emit (ec);
@@ -154,6 +155,7 @@ namespace Mono.CSharp {
 			Label old_begin = ec.LoopBegin;
 			Label old_end = ec.LoopEnd;
 			bool  old_inloop = ec.InLoop;
+			Expression e;
 			
 			ec.LoopBegin = ig.DefineLabel ();
 			ec.LoopEnd = ig.DefineLabel ();
@@ -162,12 +164,22 @@ namespace Mono.CSharp {
 			ig.MarkLabel (loop);
 			EmbeddedStatement.Emit (ec);
 			ig.MarkLabel (ec.LoopBegin);
-			EmitBoolExpression (ec, Expr, loop, true);
+			e = EmitBoolExpression (ec, Expr, loop, true);
 			ig.MarkLabel (ec.LoopEnd);
 
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
 			ec.InLoop = old_inloop;
+
+			//
+			// Inform whether we are infinite or not
+			//
+			if (e is BoolConstant){
+				BoolConstant bc = (BoolConstant) e;
+
+				if (bc.Value == true)
+					return true;
+			}
 			
 			return false;
 		}
@@ -189,13 +201,14 @@ namespace Mono.CSharp {
 			Label old_begin = ec.LoopBegin;
 			Label old_end = ec.LoopEnd;
 			bool old_inloop = ec.InLoop;
+			Expression e;
 			
 			ec.LoopBegin = ig.DefineLabel ();
 			ec.LoopEnd = ig.DefineLabel ();
 			ec.InLoop = true;
 			
 			ig.MarkLabel (ec.LoopBegin);
-			EmitBoolExpression (ec, Expr, ec.LoopEnd, false);
+			e = EmitBoolExpression (ec, Expr, ec.LoopEnd, false);
 			Statement.Emit (ec);
 			ig.Emit (OpCodes.Br, ec.LoopBegin);
 			ig.MarkLabel (ec.LoopEnd);
@@ -203,7 +216,16 @@ namespace Mono.CSharp {
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
 			ec.InLoop = old_inloop;
-			
+
+			//
+			// Inform whether we are infinite or not
+			//
+			if (e is BoolConstant){
+				BoolConstant bc = (BoolConstant) e;
+
+				if (bc.Value == true)
+					return true;
+			}
 			return false;
 		}
 	}
@@ -232,6 +254,7 @@ namespace Mono.CSharp {
 			Label old_end = ec.LoopEnd;
 			bool old_inloop = ec.InLoop;
 			Label loop = ig.DefineLabel ();
+			Expression e = null;
 
 			if (InitStatement != null)
 				if (! (InitStatement is EmptyStatement))
@@ -248,7 +271,7 @@ namespace Mono.CSharp {
 			// an infinite loop
 			//
 			if (Test != null)
-				EmitBoolExpression (ec, Test, ec.LoopEnd, false);
+				e = EmitBoolExpression (ec, Test, ec.LoopEnd, false);
 		
 			Statement.Emit (ec);
 			ig.MarkLabel (ec.LoopBegin);
@@ -261,7 +284,19 @@ namespace Mono.CSharp {
 			ec.LoopEnd = old_end;
 			ec.InLoop = old_inloop;
 
-			return Test == null;
+			//
+			// Inform whether we are infinite or not
+			//
+			if (Test != null){
+				if (e is BoolConstant){
+					BoolConstant bc = (BoolConstant) e;
+
+					if (bc.Value)
+						return true;
+				}
+				return false;
+			} else
+				return true;
 		}
 	}
 	

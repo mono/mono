@@ -2540,10 +2540,7 @@ namespace Mono.CSharp {
 
 		public Parameter.Modifier GetParameterModifier ()
 		{
-			if (ArgType == AType.Ref)
-				return Parameter.Modifier.REF;
-
-			if (ArgType == AType.Out)
+			if (ArgType == AType.Ref || ArgType == AType.Out)
 				return Parameter.Modifier.OUT;
 
 			return Parameter.Modifier.NONE;
@@ -3243,6 +3240,9 @@ namespace Mono.CSharp {
 				if (a.GetParameterModifier () != pd.ParameterModifier (j) &&
 				    pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS) {
 					if (!Location.IsNull (loc)) {
+						Console.WriteLine ("A:P: " + a.GetParameterModifier ());
+						Console.WriteLine ("PP:: " + pd.ParameterModifier (j));
+						Console.WriteLine ("PT:  " + parameter_type.IsByRef);
 						Error (1502, loc,
 						       "The best overloaded match for method '" + FullMethodDesc (method)+
 						       "' has some invalid arguments");

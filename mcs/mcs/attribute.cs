@@ -310,8 +310,10 @@ namespace Mono.CSharp {
 
 		public static void error592 (Attribute a, Location loc)
 		{
-			Report.Error (592, loc, "Attribute '" + a.Name + "' is not valid on this declaration type. " +
-				      "It is valid on " + GetValidPlaces (a) + "declarations only.");
+			Report.Error (
+				592, loc, "Attribute '" + a.Name +
+				"' is not valid on this declaration type. " +
+				"It is valid on " + GetValidPlaces (a) + "declarations only.");
 		}
 
 		public static bool CheckAttribute (Attribute a, object element)
@@ -374,7 +376,7 @@ namespace Mono.CSharp {
 					return true;
 				else
 					return false;
-			} else if (element is Parameter) {
+			} else if (element is ParameterBuilder) {
 				if ((targets & AttributeTargets.Parameter) != 0)
 					return true;
 				else
@@ -384,7 +386,7 @@ namespace Mono.CSharp {
 					return true;
 				else
 					return false;
-			}
+			} 
 
 			return false;
 		}
@@ -410,6 +412,7 @@ namespace Mono.CSharp {
 
 					if (!(kind is TypeContainer))
 						if (!CheckAttribute (a, kind)) {
+							Console.WriteLine ("Kind is: " + kind);
 							error592 (a, loc);
 							return;
 						}
@@ -426,19 +429,16 @@ namespace Mono.CSharp {
 						
 					} else if (kind is Constructor) {
 						((ConstructorBuilder) builder).SetCustomAttribute (cb);
-
 					} else if (kind is Field) {
 						((FieldBuilder) builder).SetCustomAttribute (cb);
-
 					} else if (kind is Property || kind is Indexer) {
 						((PropertyBuilder) builder).SetCustomAttribute (cb);
-
 					} else if (kind is Event) {
 						((EventBuilder) builder).SetCustomAttribute (cb);
-
+					} else if (kind is ParameterBuilder){
+						((ParameterBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is Operator) {
 						((MethodBuilder) builder).SetCustomAttribute (cb);
-
 					} else if (kind is Enum) {
 						((TypeBuilder) builder).SetCustomAttribute (cb); 
 

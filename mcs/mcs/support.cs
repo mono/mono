@@ -77,7 +77,8 @@ namespace Mono.CSharp {
 				if (last_arg_is_params)
 					return Parameter.Modifier.PARAMS;
 
-			if (pi [pos].IsOut)
+			Type t = pi [pos].ParameterType;
+			if (t.IsByRef)
 				return Parameter.Modifier.OUT;
 			
 			return Parameter.Modifier.NONE;
@@ -160,8 +161,18 @@ namespace Mono.CSharp {
 		{
 			if (pos >= parameters.FixedParameters.Length)
 				return parameters.ArrayParameter.ModFlags;
-			else
-				return parameters.FixedParameters [pos].ModFlags;
+			else {
+				Parameter.Modifier m = parameters.FixedParameters [pos].ModFlags;
+
+				//
+				// We use a return value of "OUT" for "reference" parameters.
+				// both out and ref flags in the source map to reference parameters.
+				//
+				if (m == Parameter.Modifier.OUT || m == Parameter.Modifier.REF)
+					return Parameter.Modifier.OUT;
+				
+				return Parameter.Modifier.NONE;
+			}
 		}
 		
 	}

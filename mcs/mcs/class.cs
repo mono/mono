@@ -1938,6 +1938,61 @@ namespace Mono.CSharp {
 			
 			return cc;
 		}
+
+		public void LabelParameters (EmitContext ec, Type [] parameters, MethodBase builder)
+		{
+			//
+			// Define each type attribute (in/out/ref) and
+			// the argument names.
+			//
+			Parameter [] p = Parameters.FixedParameters;
+			if (p == null)
+				return;
+
+			MethodBuilder mb = null;
+			ConstructorBuilder cb = null;
+
+			if (builder is MethodBuilder)
+				mb = (MethodBuilder) builder;
+			else
+				cb = (ConstructorBuilder) builder;
+			
+			int i;
+				
+			for (i = 0; i < p.Length; i++) {
+				ParameterBuilder pb;
+
+				if (mb == null)
+					pb = cb.DefineParameter (
+						i + 1, p [i].Attributes, p [i].Name);
+				else 
+					pb = mb.DefineParameter (
+						i + 1, p [i].Attributes, p [i].Name);
+				
+				Attributes attr = p [i].OptAttributes;
+				if (attr != null)
+					Attribute.ApplyAttributes (ec, pb, pb, attr, Location);
+			}
+			
+			if (i != parameters.Length) {
+				ParameterBuilder pb;
+				
+				Parameter array_param = Parameters.ArrayParameter;
+				if (mb == null)
+					pb = cb.DefineParameter (
+						i + 1, array_param.Attributes,
+						array_param.Name);
+				else
+					pb = mb.DefineParameter (
+						i + 1, array_param.Attributes,
+						array_param.Name);
+					
+				CustomAttributeBuilder a = new CustomAttributeBuilder (
+					TypeManager.cons_param_array_attribute, new object [0]);
+				
+				pb.SetCustomAttribute (a);
+			}
+		}
 	}
 	
 	public class Method : MethodCore {
@@ -2280,33 +2335,6 @@ namespace Mono.CSharp {
 				// error 28 if not.
 				//
 			}
-			
-			//
-			// Define each type attribute (in/out/ref) and
-			// the argument names.
-			//
-			Parameter [] p = Parameters.FixedParameters;
-			if (p != null){
-				int i;
-				
-				for (i = 0; i < p.Length; i++) 
-					MethodBuilder.DefineParameter (
-						      i + 1, p [i].Attributes, p [i].Name);
-					
-				if (i != parameters.Length) {
-					ParameterBuilder pb;
-					
-					Parameter array_param = Parameters.ArrayParameter;
-					pb = MethodBuilder.DefineParameter (
-						i + 1, array_param.Attributes,
-						array_param.Name);
-
-					CustomAttributeBuilder a = new CustomAttributeBuilder (
-						TypeManager.cons_param_array_attribute, new object [0]);
-
-					pb.SetCustomAttribute (a);
-				}
-			}
 
 			return true;
 		}
@@ -2323,8 +2351,11 @@ namespace Mono.CSharp {
 			EmitContext ec = new EmitContext (parent, Location, ig,
 							  GetReturnType (parent), ModFlags);
 
-			Attribute.ApplyAttributes (ec, MethodBuilder, this, OptAttributes, Location);
+			if (OptAttributes != null)
+				Attribute.ApplyAttributes (ec, MethodBuilder, this, OptAttributes, Location);
 			
+
+			LabelParameters (ec, ParameterTypes (parent), MethodBuilder);
 			
 			//
 			// abstract or extern methods have no bodies
@@ -2544,7 +2575,7 @@ namespace Mono.CSharp {
 					+ "'");
 				return false;
 			}
-				
+
 			return true;
 		}
 
@@ -2565,6 +2596,8 @@ namespace Mono.CSharp {
 				}
 			}
 
+			LabelParameters (ec, ParameterTypes (parent), ConstructorBuilder);
+			
 			//
 			// Classes can have base initializers and instance field initializers.
 			//

@@ -1,3 +1,30 @@
+2002-01-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (Do.Emit, While.Emit, For.Emit,
+	Statement.EmitBoolExpression): Add support to Do and While to
+	propagate infinite loop as `I do return' semantics.
+
+	Improve the For case to also test for boolean constants.
+
+	* attribute.cs (Attribute.ApplyAttributes): Add ParameterBuilder
+	to the list of attributes we can add.
+
+	Remove `EmitContext' argument.
+
+	* class.cs (Method.Define): Apply parameter attributes.
+	(Constructor.Define): Apply parameter attributes.
+	(MethodCore.LabelParameters): Move here the core of labeling
+	parameters. 
+
+	* support.cs (ReflectionParameters.ParameterModifier,
+	InternalParameters.ParameterModifier): Use IsByRef on the type and
+	only return the OUT bit for these parameters instead of in/out/ref
+	flags.
+
+	This is because I miss-understood things.  The ParameterInfo.IsIn
+	and IsOut represent whether the parameter has the [In] and [Out]
+	attributes set.  
+
 2002-01-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (FieldExpr.Emit): Release temporaries.
