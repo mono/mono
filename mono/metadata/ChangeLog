@@ -1,3 +1,9 @@
+
+Tue Apr 9 13:05:56 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* appdomain.h, appdomain.c, class.c, object.c: protect MonoDomain
+	data with a mutex.
+
 2002-04-09  Dietmar Maurer  <dietmar@ximian.com>
 
 	* mempool.c (mono_mempool_alloc): only use g_malloc when
