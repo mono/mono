@@ -1,3 +1,9 @@
+
+Wed May 1 17:05:40 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* SortedList.cs: fix RemoveAt () to use the correct length in
+	Array.Copy.
+
 2002-05-01  Nick Drochak  <ndrochak@gol.com>
 
 	* ArrayList.cs (Add & AddRange) : Throw exceptions where needed.

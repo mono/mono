@@ -269,7 +269,7 @@ namespace System.Collections {
 			int cnt = Count;
 			if (index >= 0 && index < cnt) {
 				if (index != cnt - 1) {
-					Array.Copy (table, index+1, table, index, cnt-1);
+					Array.Copy (table, index+1, table, index, cnt-1-index);
 				} else {
 					table [index].key = null;
 					table [index].value = null;
