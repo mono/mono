@@ -1,5 +1,8 @@
 2004-09-19  Zoltan Varga  <vargaz@freemail.hu>
 
+	* PortableExecutableKind.cs ImageFileMachine.cs: Make this internal
+	under 1.0.
+
 	* MemberInfo.cs ParameterInfo.cs: Add MetadataToken property.
 
 	* Module.cs: Add ModuleHandle property and new icalls.

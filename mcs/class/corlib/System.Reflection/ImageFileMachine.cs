@@ -26,16 +26,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 namespace System.Reflection {
 
 	[Serializable]
-	public enum ImageFileMachine {
+#if NET_2_0 || BOOTSTRAP_NET_2_0
+	public
+#else
+	internal
+#endif	
+	enum ImageFileMachine {
 		I386 = 332,
 		IA64 = 512,
 		AMD64 = 34404,
 	}
 }
-
-#endif

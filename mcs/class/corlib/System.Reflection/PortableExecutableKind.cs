@@ -26,13 +26,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 namespace System.Reflection {
 
 	[Flags]
 	[Serializable]
-	public enum PortableExecutableKind {
+#if NET_2_0 || BOOTSTRAP_NET_2_0
+	public
+#else
+	internal
+#endif
+	enum PortableExecutableKind {
 		NotAPortableExecutableImage = 0,
 		ILOnly = 1,
 		Required32Bit = 2,
@@ -41,4 +44,3 @@ namespace System.Reflection {
 	}
 }
 
-#endif
