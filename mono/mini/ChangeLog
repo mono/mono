@@ -1,4 +1,14 @@
 
+Mon Dec 1 16:54:05 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, tramp-ppc.c: save FP arguments in the trampoline.
+	More FP-related fixes.
+
+Sun Nov 30 19:13:52 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, cpu-g4.md, inssel-ppc.brg: fixed finally handlers
+	and register allocation buglet. Hello world now runs.
+
 Fri Nov 28 23:03:05 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* cpu-g4.md, inssel-ppc.brg, mini-ppc.c: better long return support.
