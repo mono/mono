@@ -1,3 +1,7 @@
+2003-01-12  Alp Toker  <alp@atoker.com>
+
+	* exception.c: Typo fix: insinde -> inside
+
 2003-01-08  Dietmar Maurer  <dietmar@ximian.com>
 
 	* exception.c (ves_icall_get_frame_info): skip one more frame and also
