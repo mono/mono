@@ -181,6 +181,7 @@ namespace NpgsqlTypes
 
             case DbType.String:
             case DbType.AnsiString:
+            case DbType.StringFixedLength:
                 return "'" + parameter.Value.ToString().Replace("'", "\\'") + "'";
 
             case DbType.Time:
