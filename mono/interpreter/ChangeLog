@@ -1,3 +1,9 @@
+2004-04-29  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* transform.c:
+	* interp.c:
+	Implement STARG for valuetypes as mcs needs it.
+
 2004-04-28  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* transform.c: Make sure ENSURE_I4 is called on
