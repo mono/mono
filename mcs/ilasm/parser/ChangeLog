@@ -1,5 +1,9 @@
 2003-08-03 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Make value types and enum types.
+	
+2003-08-03 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Create label references where appropriate instead
 	of adding labels.
 	

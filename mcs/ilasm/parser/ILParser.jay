@@ -18,6 +18,9 @@ namespace Mono.ILASM {
 
 		private CodeGen codegen;
 
+		private bool is_value_class;
+		private bool is_enum_class;
+
 		public ILParser (CodeGen codegen) {
 			this.codegen = codegen;
 		}
@@ -453,20 +456,30 @@ class_head 		: D_CLASS class_attr id formal_typars_clause extends_clause
                           {
                                 codegen.BeginTypeDef ((TypeAttr) $2, (string) $3, 
 						$5 as IClassRef, $6 as ArrayList, null);
+				
+				if (is_value_class)
+					codegen.CurrentTypeDef.MakeValueClass ();
+				if (is_enum_class)
+					codegen.CurrentTypeDef.MakeEnumClass ();
 
                                 if ($4 != null) {
                                         ArrayList typars_list = (ArrayList) $4;
                                         foreach (string id in typars_list)
                                                 codegen.CurrentTypeDef.AddGenericParam (id);
-                                }
-                                
+                                }                                
                           }
 			;
 
 class_attrs		: class_attrs class_attr
 			;
 
-class_attr		: /* EMPTY */                           { $$ = new TypeAttr (); }
+class_attr		: /* EMPTY */                           
+			  { 
+				// Reset some flags
+				is_value_class = false;
+				is_enum_class = false;
+				$$ = new TypeAttr ();
+			  }
 			| class_attr K_PUBLIC                   { $$ = (TypeAttr)$1 | TypeAttr.Public; }        
 			| class_attr K_PRIVATE                  { $$ = (TypeAttr)$1 | TypeAttr.Private; }
 			| class_attr K_NESTED K_PRIVATE         { $$ = (TypeAttr)$1 | TypeAttr.NestedPrivate; }
@@ -475,8 +488,8 @@ class_attr		: /* EMPTY */                           { $$ = new TypeAttr (); }
 			| class_attr K_NESTED K_ASSEMBLY        { $$ = (TypeAttr)$1 | TypeAttr.NestedAssembly;}
 			| class_attr K_NESTED K_FAMANDASSEM     { $$ = (TypeAttr)$1 | TypeAttr.NestedFamAndAssem; }
 			| class_attr K_NESTED K_FAMORASSEM      { $$ = (TypeAttr)$1 | TypeAttr.NestedFamOrAssem; }
-			| class_attr K_VALUE                    {  }
-			| class_attr K_ENUM                     {  }
+			| class_attr K_VALUE                    { is_value_class = true; }
+			| class_attr K_ENUM                     { is_enum_class = true; }
 			| class_attr K_INTERFACE                { $$ = (TypeAttr)$1 | TypeAttr.Interface; }
 			| class_attr K_SEALED                   { $$ = (TypeAttr)$1 | TypeAttr.Sealed; }
 			| class_attr K_ABSTRACT                 { $$ = (TypeAttr)$1 | TypeAttr.Abstract; }
