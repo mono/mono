@@ -47,7 +47,7 @@ namespace Mono.ILASM {
                 private bool init_locals;
                 private int max_stack;
                 private bool pinvoke_info;
-                private string pinvoke_mod;
+                private ExternModule pinvoke_mod;
                 private string pinvoke_name;
                 private PEAPI.PInvokeAttr pinvoke_attr;
 
@@ -119,7 +119,7 @@ namespace Mono.ILASM {
                         return type_list;
                 }
 
-                public void AddPInvokeInfo (PEAPI.PInvokeAttr pinvoke_attr, string pinvoke_mod,
+                public void AddPInvokeInfo (PEAPI.PInvokeAttr pinvoke_attr, ExternModule pinvoke_mod,
                                 string pinvoke_name)
                 {
                         this.pinvoke_attr = pinvoke_attr;
@@ -367,7 +367,7 @@ namespace Mono.ILASM {
                                 customattr.AddTo (code_gen, methoddef);
 
                         if (pinvoke_info) {
-                                methoddef.AddPInvokeInfo (code_gen.PEFile.AddExternModule (pinvoke_mod),
+                                methoddef.AddPInvokeInfo (pinvoke_mod.ModuleRef,
                                                 (pinvoke_name != null ? pinvoke_name : name), pinvoke_attr);
 
                         }

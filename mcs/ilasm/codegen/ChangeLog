@@ -1,3 +1,13 @@
+2004-06-26  Jackson Harper  <jackson@ximian.com>
+
+	* TypeDef.cs: Preserve the order of fields in a class. Then after
+	all the fields have been defined reset the order in PEAPI to the
+	correct order. This is done so sequential layouts actually
+	work. The order needs to be reset because it can be lost during
+	the recursive definition phase.
+	* MethodDef.cs: Use and ExternModule for pinvoke data's module
+	refs. This way we don't get duplicate module refs.
+	
 2004-06-24  Jackson Harper  <jackson@ximian.com>
 
 	* MethodDef.cs: Report when defining methods just like MS.
