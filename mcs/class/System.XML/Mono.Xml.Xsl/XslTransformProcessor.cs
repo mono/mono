@@ -83,15 +83,27 @@ namespace Mono.Xml.Xsl {
 			XPathExpression exp = root.Compile (".");
 			PushNodeset (root.Select (exp, this.XPathContext));
 			
-			foreach (XslGlobalVariable v in CompiledStyle.Variables.Values)	{
-				if (args != null && v is XslGlobalParam) {
-					object p = args.GetParam(v.Name.Name, v.Name.Namespace);
-					if (p != null)
-						((XslGlobalParam)v).Override (this, p);
-					else
+			// have to evaluate the params first, as Global vars may
+			// be dependant on them
+			if (args != null)
+			{
+				foreach (XslGlobalVariable v in CompiledStyle.Variables.Values)
+				{
+					if (v is XslGlobalParam)
+					{
+						object p = args.GetParam(v.Name.Name, v.Name.Namespace);
+						if (p != null)
+							((XslGlobalParam)v).Override (this, p);
+
 						v.Evaluate (this);
+					}
 				}
-				v.Evaluate (this);
+			}
+
+			foreach (XslGlobalVariable v in CompiledStyle.Variables.Values)	{
+				if (args == null || !(v is XslGlobalParam)) {
+					v.Evaluate (this);
+				}
 			}
 			
 			PopNodeset ();
@@ -305,24 +317,38 @@ namespace Mono.Xml.Xsl {
 			currentTemplateStack.Pop ();
 		}
 
-		internal void TryStylesheetNamespaceOutput (ArrayList excluded)
+		internal void TryElementNamespacesOutput (Hashtable nsDecls, ArrayList excludedPrefixes)
 		{
-			if (outputStylesheetXmlns) {
-				foreach (XmlQualifiedName qname in this.style.StylesheetNamespaces) {
-					string prefix = style.PrefixInEffect (qname.Name, excluded);
-					if (prefix == null)
+			if (nsDecls == null)
+				return;
+
+			foreach (DictionaryEntry cur in nsDecls) {
+				string name = (string)cur.Key;
+				string value = (string)cur.Value;
+				switch (value) {//FIXME: compare names by reference
+				case "http://www.w3.org/1999/XSL/Transform":
+					if ("xsl" == name)
 						continue;
-					else if (prefix == qname.Name)
-						Out.WriteNamespaceDecl (
-							prefix == "#default" ? String.Empty : prefix,
-							qname.Namespace);
 					else
-						Out.WriteNamespaceDecl (prefix, style.StyleDocument.GetNamespace (prefix));
+						goto default;
+				case XmlNamespaceManager.XmlnsXml:
+					if (XmlNamespaceManager.PrefixXml == name)
+						continue;
+					else
+						goto default;
+				case XmlNamespaceManager.XmlnsXmlns:
+					if (XmlNamespaceManager.PrefixXmlns == name)
+						continue;
+					else
+						goto default;
+				default:
+					if (! excludedPrefixes.Contains (name))
+						Out.WriteNamespaceDecl (name, value);
+					break;
 				}
-				outputStylesheetXmlns = false;
 			}
 		}
-		
+
 		XslTemplate FindTemplate (XPathNavigator node, QName mode)
 		{
 			XslTemplate ret = style.Templates.FindMatch (CurrentNode, mode, this);

@@ -66,6 +66,8 @@ namespace Mono.Xml.Xsl
 		private XmlNamespaceManager _nsManager;
 		private ArrayList _currentNsPrefixes;
 		private Hashtable _currentNamespaceDecls;
+		// See CheckState(). This is just a cache.
+		private ArrayList newNamespaces = new ArrayList();
 		//Name table
 		private NameTable _nt;
 		// Specified encoding (for TextWriter output)
@@ -75,6 +77,7 @@ namespace Mono.Xml.Xsl
 		bool _insideCData;
 		bool _isVariable;
 		bool _omitXmlDeclaration;
+		int _xpCount;
 
 		private GenericOutputter (Hashtable outputs, Encoding encoding)
 		{
@@ -87,6 +90,7 @@ namespace Mono.Xml.Xsl
 			_nsManager = new XmlNamespaceManager (_nt);
 			_currentNsPrefixes = new ArrayList ();
 			_currentNamespaceDecls = new Hashtable ();
+			_omitXmlDeclaration = false;
 		}
 
 		public GenericOutputter (XmlWriter writer, Hashtable outputs, Encoding encoding) 
@@ -167,18 +171,36 @@ namespace Mono.Xml.Xsl
 				//Push scope to allow to unwind namespaces scope back in WriteEndElement
 				//Subject to optimization - avoid redundant push/pop by moving 
 				//namespaces to WriteStartElement
-				_nsManager.PushScope ();
 				//Emit pending attributes
-				for (int i = 0; i < pendingAttributesPos; i++) {
-					Attribute attr = pendingAttributes [i];
-					string prefix = attr.Prefix;
-					if (prefix == String.Empty)
-						prefix = _nsManager.LookupPrefix (attr.Namespace, false);
-					Emitter.WriteAttributeString (prefix, attr.LocalName, attr.Namespace, attr.Value);
-				}
-				for (int i = 0; i < _currentNsPrefixes.Count; i++) {
+				newNamespaces.Clear (); //remember indexes of new prefexes
+				_nsManager.PushScope ();
+				for (int i = 0; i < _currentNsPrefixes.Count; i++) 
+				{
 					string prefix = (string) _currentNsPrefixes [i];
 					string uri = _currentNamespaceDecls [prefix] as string;
+					
+					if (_nsManager.LookupNamespace (prefix, false) == uri)
+						continue;
+
+					newNamespaces.Add(i);
+					_nsManager.AddNamespace (prefix, uri);
+				}
+				for (int i = 0; i < pendingAttributesPos; i++) 
+				{
+					Attribute attr = pendingAttributes [i];
+					string prefix = _nsManager.LookupPrefix (attr.Namespace, false);
+					if (prefix == null) {
+						prefix = attr.Prefix;
+						_nsManager.AddNamespace (prefix, attr.Namespace);
+					}
+					
+					Emitter.WriteAttributeString (prefix, attr.LocalName, attr.Namespace, attr.Value);
+				}
+				for (int i = 0; i < newNamespaces.Count; i++)
+				{
+					string prefix = (string) _currentNsPrefixes [(int)newNamespaces[i]];
+					string uri = _currentNamespaceDecls [prefix] as string;
+					
 					if (prefix != String.Empty)
 						Emitter.WriteAttributeString ("xmlns", prefix, XmlNamespaceManager.XmlnsXmlns, uri);
 					else
@@ -210,7 +232,6 @@ namespace Mono.Xml.Xsl
 			Emitter.WriteEndDocument ();				
 		}
 
-		int _nsCount;
 		public override void WriteStartElement (string prefix, string localName, string nsURI)
 		{
 			if (_emitter == null) {
@@ -233,7 +254,9 @@ namespace Mono.Xml.Xsl
 			}
 			CheckState ();
 			Emitter.WriteStartElement (prefix, localName, nsURI);
-			_state = WriteState.Element;						
+			_state = WriteState.Element;
+			if (_nsManager.LookupNamespace (prefix, false) != nsURI)
+				_nsManager.AddNamespace (prefix, nsURI);
 			pendingAttributesPos = 0;
 			_canProcessAttributes = true;
 		}
@@ -263,11 +286,7 @@ namespace Mono.Xml.Xsl
 		public override void WriteAttributeString (string prefix, string localName, string nsURI, string value)
 		{
 			if (prefix == String.Empty && nsURI != String.Empty) {
-				prefix = "xp_" + _nsCount;
-				_nsManager.AddNamespace (prefix, nsURI);
-				_currentNsPrefixes.Add (prefix);
-				_currentNamespaceDecls.Add (prefix, nsURI);
-				_nsCount++;
+				prefix = "xp_" + _xpCount++;
 			}
 
 			//Put attribute to pending attributes collection, replacing namesake one
@@ -299,16 +318,13 @@ namespace Mono.Xml.Xsl
 		public override void WriteNamespaceDecl (string prefix, string nsUri)
 		{
 			if (_nsManager.LookupNamespace (prefix, false) == nsUri)
-				return;
+				return; // do nothing
 
-			if (prefix == String.Empty) {
-				//Default namespace
-				if (_nsManager.DefaultNamespace != nsUri)
-					_nsManager.AddNamespace (prefix, nsUri);
-			} else if (_nsManager.LookupPrefix (nsUri, false) == null)
-				//That's new namespace - add it to the collection
-				_nsManager.AddNamespace (prefix, nsUri);
-
+			for (int i = 0; i < pendingAttributesPos; i++) {
+				Attribute attr = pendingAttributes [i];
+				if (attr.Prefix == prefix || attr.Namespace == nsUri)
+					return; //don't touch explicitly declared attributes
+			}
 			if (_currentNamespaceDecls [prefix] as string != nsUri) {
 				if (!_currentNsPrefixes.Contains (prefix))
 					_currentNsPrefixes.Add (prefix);

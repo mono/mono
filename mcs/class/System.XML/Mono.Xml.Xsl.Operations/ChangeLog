@@ -1,3 +1,12 @@
+2005-02-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslCopy.cs : According to the spec 7.5, namespace nodes should be
+	  copied. Patch by Andrew Skiba.
+	* XslLiteralElement.cs,
+	  XslElement.cs : Change in sync with TryElementNamespacesOutput().
+	* XslStylesheet.cs : version check was incorrectly done.
+	  Should check empty string, not null.
+
 2005-02-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslMessage.cs, XslOperation.cs, XslAttribute.cs, XslComment.cs,

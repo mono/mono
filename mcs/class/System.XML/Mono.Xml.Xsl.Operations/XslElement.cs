@@ -122,7 +122,7 @@ namespace Mono.Xml.Xsl.Operations {
 			bool isCData = p.InsideCDataElement;
 			p.PushElementState (localName, nmsp, false);
 			p.Out.WriteStartElement (prefix, localName, nmsp);
-			p.TryStylesheetNamespaceOutput (null);
+			p.TryElementNamespacesOutput (null, null);
 
 			if (useAttributeSets != null)
 				foreach (XmlQualifiedName s in useAttributeSets)

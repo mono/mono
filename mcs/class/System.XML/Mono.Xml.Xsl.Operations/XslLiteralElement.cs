@@ -67,6 +67,7 @@ namespace Mono.Xml.Xsl.Operations {
 			
 			public void Evaluate (XslTransformProcessor p)
 			{
+				//FIXME: fix attribute prefixes according to aliases
 				p.Out.WriteAttributeString (prefix, localname, nsUri, val.Evaluate (p));
 			}
 		}
@@ -139,7 +140,8 @@ namespace Mono.Xml.Xsl.Operations {
 					((XslLiteralAttribute)attrs [i]).Evaluate (p);
 			}
 
-			p.TryStylesheetNamespaceOutput (excludedPrefixes);
+			p.TryElementNamespacesOutput (nsDecls, excludedPrefixes);
+
 			if (nsDecls != null) {
 				foreach (DictionaryEntry de in nsDecls) {
 					string actualPrefix = p.CompiledStyle.Style.PrefixInEffect (de.Key as String, excludedPrefixes);

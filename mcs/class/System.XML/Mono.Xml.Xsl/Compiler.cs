@@ -465,11 +465,11 @@ namespace Mono.Xml.Xsl
 			XPathNavigator nav = Input.Clone ();
 			XPathNavigator nsScope = nav.Clone ();
 			
-			if (nav.MoveToFirstNamespace (XPathNamespaceScope.Local)) {
+			if (nav.MoveToFirstNamespace (XPathNamespaceScope.ExcludeXml)) {
 				do {
 					if (nav.Value != XsltNamespace && !ret.Contains (nav.Name))
 						ret.Add (nav.Name, nav.Value);
-				} while (nav.MoveToNextNamespace (XPathNamespaceScope.Local));
+				} while (nav.MoveToNextNamespace (XPathNamespaceScope.ExcludeXml));
 				nav.MoveToParent ();
 			}
 			
@@ -477,7 +477,7 @@ namespace Mono.Xml.Xsl
 				bool isXslt = nav.NamespaceURI == XsltNamespace;
 				nsScope.MoveTo (nav);
 
-				if (nav.MoveToFirstAttribute())	{
+				if (nav.MoveToFirstAttribute ()) {
 					do {
 						if ((nav.LocalName == "extension-element-prefixes" || nav.LocalName == "exclude-result-prefixes") &&
 							nav.NamespaceURI == (isXslt ? String.Empty : XsltNamespace))
@@ -490,7 +490,7 @@ namespace Mono.Xml.Xsl
 							}
 						}
 					} while (nav.MoveToNextAttribute ());
-					nav.MoveToParent();
+					nav.MoveToParent ();
 				}
 			} while (nav.MoveToParent ());
 			

@@ -132,7 +132,7 @@ namespace Mono.Xml.Xsl {
 					throw new XsltCompileException ("Stylesheet root element must be either \"stylesheet\" or \"transform\" or any literal element.", null, c.Input);
 
 			if (c.Input.NamespaceURI != XsltNamespace) {
-				if (c.Input.GetAttribute ("version", XsltNamespace) == null)
+				if (c.Input.GetAttribute ("version", XsltNamespace) == String.Empty)
 					throw new XsltCompileException ("Mandatory global attribute version is missing.", null, c.Input);
 				// then it is simplified stylesheet.
 				Templates.Add (new XslTemplate (c));
@@ -142,7 +142,7 @@ namespace Mono.Xml.Xsl {
 					throw new XsltCompileException ("Stylesheet root element must be either \"stylesheet\" or \"transform\" or any literal element.", null, c.Input);
 
 				version = c.Input.GetAttribute ("version", "");
-				if (version == null)
+				if (version == String.Empty)
 					throw new XsltCompileException ("Mandatory attribute version is missing.", null, c.Input);
 
 				extensionElementPrefixes = c.ParseQNameListAttribute ("extension-element-prefixes");

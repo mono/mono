@@ -40,12 +40,24 @@ namespace Mono.Xml.Xsl.Operations {
 	internal class XslCopy : XslCompiledElement {
 		XslOperation children;
 		XmlQualifiedName [] useAttributeSets;
+		Hashtable nsDecls;
+		ArrayList excludedPrefixes;
 		
 		public XslCopy (Compiler c) : base (c) {}
 		
 		protected override void Compile (Compiler c)
 		{
-			if (c.Input.MoveToFirstAttribute ()) {
+			this.nsDecls = c.GetNamespacesToCopy ();
+			if (nsDecls.Count == 0) nsDecls = null;
+			string excludeResultPrefixes;
+			string extensionElementPrefixes;
+			excludeResultPrefixes = c.Input.GetAttribute ("exclude-result-prefixes", XsltNamespace);
+			extensionElementPrefixes = c.Input.GetAttribute ("extension-element-prefixes", XsltNamespace);
+			excludedPrefixes = new ArrayList (excludeResultPrefixes.Split (XmlChar.WhitespaceChars));
+			excludedPrefixes.AddRange (extensionElementPrefixes.Split (XmlChar.WhitespaceChars));
+
+			if (c.Input.MoveToFirstAttribute ())
+			{
 				do {
 					if (c.Input.NamespaceURI == String.Empty && c.Input.LocalName != "use-attribute-sets")
 						throw new XsltCompileException ("Unrecognized attribute \"" + c.Input.Name + "\" in XSLT copy element.", null, c.Input);
@@ -80,7 +92,7 @@ namespace Mono.Xml.Xsl.Operations {
 				p.PushElementState (p.CurrentNode.LocalName, p.CurrentNode.NamespaceURI, true);
 				p.Out.WriteStartElement (p.CurrentNode.Prefix, p.CurrentNode.LocalName, p.CurrentNode.NamespaceURI);
 				
-				p.TryStylesheetNamespaceOutput (null);
+				p.TryElementNamespacesOutput (nsDecls, excludedPrefixes);
 				if (useAttributeSets != null)
 					foreach (XmlQualifiedName s in useAttributeSets)
 						p.ResolveAttributeSet (s).Evaluate (p);

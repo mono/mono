@@ -1,3 +1,20 @@
+2005-02-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Compiler.cs : GetNamespacesToCopy() should also find for non-local
+	  namespace nodes. Patch by Andrew Skiba with some fixes.
+	* XslTransformProcessor.cs : Patch by Andrew Skiba.
+	  TryStylesheetNamespaceOutput() is now TryElementNamespacesOutput()
+	  as to handle all namespace nodes to copy in stylesheet nodes.
+	  Global parameterss are evaluated before global variables. 
+	* XmlOutputter.cs : removed unused code.
+
+	Pending items:
+
+	* Actually variables and params should check reference recursion.
+	    This patch incompletely fixes the problem.
+	* Those operations that considers excluded-result-prefixes must
+	  also check those attributes of its ancestors.
+
 2005-02-10  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlWriterEmitter.cs : String.Replace() was insufficient for
