@@ -28,6 +28,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]		
 
+[assembly: Mono.Author("Anirban Bhattacharjee")]
 [assembly: Mono.Author("Martin Baulig")]
 [assembly: Mono.Author("Marco Ridoni")]
 [assembly: Mono.Author("Rafael Teixeira")]
