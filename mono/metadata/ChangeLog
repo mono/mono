@@ -1,3 +1,8 @@
+2002-07-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* loader.c:
+	(method_from_memberref): also print assembly name when method not found.
+
 2002-07-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c:
