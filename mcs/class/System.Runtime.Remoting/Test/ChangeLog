@@ -1,3 +1,8 @@
+2005-02-16  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* HttpCalls.cs, TcpCalls.cs: Don't use a hardcoded port number for the
+	test channels, take any free port.
+
 2004-12-17  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* HttpCalls.cs: Use a different port.

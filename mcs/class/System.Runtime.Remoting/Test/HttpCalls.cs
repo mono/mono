@@ -60,7 +60,7 @@ namespace MonoTests.Remoting
 
 		public override IChannelReceiver CreateServerChannel ()
 		{
-			return new HttpChannel (9739);
+			return new HttpChannel (0);
 		}
 	}
 }
