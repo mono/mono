@@ -1,3 +1,9 @@
+2004-07-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextReader.cs : Fixed several problems on ReadBase64();
+	  Whitespaces should be ignored, and '=' was not skipped correctly.
+	  It caused "unexpected end of document" error at immediate close tag.
+
 2004-07-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Added MonoFIXAttribute.cs
