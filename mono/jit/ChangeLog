@@ -1,3 +1,6 @@
+2001-11-29  Dietmar Maurer  <dietmar@ximian.com>
+
+	* jit.c (mono_analyze_stack): bug fix in DUP
 
 Thu Nov 29 12:32:01 CET 2001 Paolo Molaro <lupus@ximian.com>
 
