@@ -1,3 +1,9 @@
+2005-02-10  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.c, mono-debug-debugger.c: Completely reworked the
+	debugging code; this is almost a complete rewrite.
+
+	* icall.c (ves_icall_MonoDebugger_GetMethodIndex): New interncall.
 
 Thu Feb 10 15:19:01 CET 2005 Paolo Molaro <lupus@ximian.com>
 
