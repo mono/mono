@@ -768,14 +768,16 @@ public class TypeManager {
 				}
 			}
 		} else {
-			foreach (Assembly a in assemblies){
-				foreach (Type t in a.GetTypes ()){
+			Hashtable cache = new Hashtable ();
+			cache.Add ("", null);
+			foreach (Assembly a in assemblies) {
+				foreach (Type t in a.GetExportedTypes ()) {
 					string ns = t.Namespace;
-
-					// t.Namespace returns null for <PrivateImplDetails>
-					if (ns == ""|| ns == null)
+					if (ns == null || cache.Contains (ns))
 						continue;
+
 					Namespace.LookupNamespace (ns, true);
+					cache.Add (ns, null);
 				}
 			}
 		}
@@ -2146,6 +2148,8 @@ public class TypeManager {
 				return TypeManager.object_type;
 			if (t == typeof (System.Type))
 				return TypeManager.type_type;
+			if (t == typeof (System.IntPtr))
+				return TypeManager.intptr_type;
 			return t;
 		}
 	}

@@ -1,3 +1,11 @@
+2004-04-08  Marek Safar  <marek.safar@seznam.cz>
+
+	* typemanager.cs (TypeManager.TypeToCoreType): Handle IntPtr too.
+	(TypeManager.ComputeNamespaces): Faster implementation for
+	Microsoft runtime.
+
+	* compiler.csproj: Updated AssemblyName to mcs.
+
 2004-04-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* rootcontext.cs: Add new types to the boot resolution.
