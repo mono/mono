@@ -1,3 +1,9 @@
+2004-03-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* compiler.csproj: Updated for Visual Studio .NET 2003.
+	* compiler.csproj.user: Updated for Visual Studio .NET 2003.
+	* compiler.sln: Updated for Visual Studio .NET 2003.
+
 2004-03-24  Ravi Pratap M  <ravi@ximian.com>
 
 	* expression.cs: Fix bug #47234. We basically need to apply the

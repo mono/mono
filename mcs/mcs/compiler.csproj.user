@@ -1,5 +1,5 @@
 <VisualStudioProject>
-    <CSHARP>
+    <CSHARP LastOpenVersion = "7.10.3077" >
         <Build>
             <Settings ReferencePath = "" >
                 <Config
@@ -11,11 +11,11 @@
                     RemoteDebugEnabled = "false"
                     RemoteDebugMachine = ""
                     StartAction = "Project"
-                    StartArguments = "b.cs"
+                    StartArguments = ""
                     StartPage = ""
                     StartProgram = ""
                     StartURL = ""
-                    StartWorkingDirectory = "\mono\mcs\mcs"
+                    StartWorkingDirectory = ""
                     StartWithIE = "false"
                 />
                 <Config

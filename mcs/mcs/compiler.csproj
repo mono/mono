@@ -1,8 +1,8 @@
 <VisualStudioProject>
     <CSHARP
         ProjectType = "Local"
-        ProductVersion = "7.0.9466"
-        SchemaVersion = "1.0"
+        ProductVersion = "7.10.3077"
+        SchemaVersion = "2.0"
         ProjectGuid = "{896D1461-B76B-41C0-ABE6-ACA2BB4F7B5A}"
     >
         <Build>
@@ -16,7 +16,10 @@
                 DefaultTargetSchema = "IE50"
                 DelaySign = "false"
                 OutputType = "Exe"
+                PreBuildEvent = ""
+                PostBuildEvent = ""
                 RootNamespace = "CIR"
+                RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
             >
                 <Config
@@ -30,6 +33,8 @@
                     DebugSymbols = "true"
                     FileAlignment = "4096"
                     IncrementalBuild = "true"
+                    NoStdLib = "false"
+                    NoWarn = ""
                     Optimize = "false"
                     OutputPath = "bin\Debug\"
                     RegisterForComInterop = "false"
@@ -48,6 +53,8 @@
                     DebugSymbols = "false"
                     FileAlignment = "4096"
                     IncrementalBuild = "true"
+                    NoStdLib = "false"
+                    NoWarn = ""
                     Optimize = "true"
                     OutputPath = "bin\Release\"
                     RegisterForComInterop = "false"
@@ -61,22 +68,20 @@
                     Name = "System"
                     AssemblyName = "System"
                 />
-                <Reference
-                    Name = "System.Data"
-                    AssemblyName = "System.Data"
-                />
-                <Reference
-                    Name = "System.XML"
-                    AssemblyName = "System.Xml"
-                />
-                <Reference
-                    Name = "System.Web.Services"
-                    AssemblyName = "System.Web.Services"
-                />
             </References>
         </Build>
         <Files>
             <Include>
+                <File
+                    RelPath = "anonymous.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "AssemblyInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
                 <File
                     RelPath = "assign.cs"
                     SubType = "Code"
@@ -113,14 +118,14 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "cs-parser.cs"
+                    RelPath = "convert.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "cs-parser.jay"
+                    RelPath = "cs-parser.cs"
                     SubType = "Code"
-                    BuildAction = "None"
+                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "cs-tokenizer.cs"
@@ -158,12 +163,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "flowanalysis.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "genericparser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "interface.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "iterators.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -193,11 +208,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "parameterCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "pending.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -218,12 +228,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "statementCollection.cs"
+                    RelPath = "support.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "support.cs"
+                    RelPath = "symbolwriter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
