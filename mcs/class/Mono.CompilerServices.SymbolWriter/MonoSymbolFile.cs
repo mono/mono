@@ -252,10 +252,6 @@ namespace Mono.CompilerServices.SymbolWriter
 		{
 			return ++last_namespace_index;
 		}
-
-		byte [] stringBuffer;
-		int maxCharsPerRound;
-		static Encoding enc = Encoding.UTF8;
 		
 		internal string ReadString (int offset)
 		{
