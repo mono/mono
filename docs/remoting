@@ -1,0 +1,26 @@
+Runtime support for Remoting
+============================
+
+The runtime supports a special objects called "TransparentProxy". You can
+create objects of this type by calling GetTransparentProxy() on a "RealProxy"
+object. 
+
+LDFLD/STFLD for transparent proxies
+===================================
+
+Access to fields must be redirected to the remote object. System.Object has
+some special methods for that:
+
+void FieldGetter (string typeName, string fieldName, ref object val);
+		
+void FieldSetter (string typeName, string fieldName, object val);
+
+This methods are never called on actual object. The are only used to pack
+LDFLD/STFLD operations into method call messages, which are then passed to the
+RealProxy::Invoke() method. 
+
+There are two helper methods which can be used by the JIT and the interpreter
+to convert LDFLD/STFLD operations into messages and then call
+RealProxy::Invoke(): mono_store_remote_field() and mono_load_remote_field().
+
+
