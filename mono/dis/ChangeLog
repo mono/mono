@@ -1,3 +1,12 @@
+2004-09-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* main.c (dis_directive_assemblyref): Dump the locale and public
+	key tokens 
+
+	* get.c (dis_stringify_object_with_class): Escape assembly name. 
+
+	* main.c (dis_directive_assemblyref): Escape assembly name
+
 2004-09-21  Martin Baulig  <martin@ximian.com>
 
 	* main.c (main): If just a single assembly was specified, use the
