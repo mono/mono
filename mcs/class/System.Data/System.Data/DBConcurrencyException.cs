@@ -30,8 +30,8 @@ namespace System.Data {
 
 		[MonoTODO]
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
-			: base (info, context)
 		{
+			base (info, context)
 		}
 	}
 }
