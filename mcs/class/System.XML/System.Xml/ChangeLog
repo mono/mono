@@ -1,3 +1,8 @@
+2003-03-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlTextReader.cs : Fixed wrong notationdecl SYSTEM id read.
+	* XmlInputStream.cs : Should allow versionless input stream entity.
+
 2003-03-18  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* added XmlParserInput.cs for multi xml document sources.

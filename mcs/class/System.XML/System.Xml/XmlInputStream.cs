@@ -23,12 +23,22 @@ namespace Mono.Xml.Native
 		}
 
 		public XmlStreamReader (Stream input)
-			: this (new XmlInputStream (input))
+			: this (new XmlInputStream (input, true))
+		{
+		}
+
+		public XmlStreamReader (Stream input, bool docent)
+			: this (new XmlInputStream (input, docent))
 		{
 		}
 
 		public XmlStreamReader (string url)
-			: this (new XmlInputStream (url))
+			: this (url, true)
+		{
+		}
+
+		public XmlStreamReader (string url, bool docent)
+			: this (new XmlInputStream (url, docent))
 		{
 		}
 	}
@@ -41,11 +51,18 @@ namespace Mono.Xml.Native
 		byte[] buffer = new byte[256];
 		int bufLength;
 		int bufPos;
+		bool isDocumentEntity;	// allow omitting "version" or not.
 
 		static XmlException encodingException = new XmlException ("invalid encoding specification.");
 
 		public XmlInputStream (string url)
+			: this (url, true)
 		{
+		}
+
+		public XmlInputStream (string url, bool docent)
+		{
+			this.isDocumentEntity = docent;
 #if NetworkEnabled
 			try {
 				Uri uri = new Uri (url);
@@ -59,7 +76,13 @@ namespace Mono.Xml.Native
 		}
 
 		public XmlInputStream (Stream stream)
+			: this (stream, true)
 		{
+		}
+
+		public XmlInputStream (Stream stream, bool docent)
+		{
+			this.isDocumentEntity = docent;
 			Initialize (stream);
 		}
 
@@ -117,20 +140,24 @@ namespace Mono.Xml.Native
 				if (Encoding.ASCII.GetString (buffer, 1, 4) == "?xml") {
 					int loop = 0;
 					c = SkipWhitespace (ms);
-					// version
-					if (c != 'v' || stream.ReadByte () != 'e')
-						throw new XmlException ("invalid xml declaration.");
-					ms.WriteByte ((byte)'v');
-					ms.WriteByte ((byte)'e');
-					while (loop++ >= 0) {
-						c = stream.ReadByte ();
-						ms.WriteByte ((byte)c);
-						if (c == '0') {
-							ms.WriteByte ((byte)stream.ReadByte ());
-							break;
+
+					// version. It is optional here.
+					if (c != 'v') {
+						if (isDocumentEntity)
+							throw new XmlException ("invalid xml declaration.");
+					} else {
+						ms.WriteByte ((byte)'v');
+						while (loop++ >= 0 && c >= 0) {
+							c = stream.ReadByte ();
+							ms.WriteByte ((byte)c);
+							if (c == '0') { // 0 of 1.0
+								ms.WriteByte ((byte)stream.ReadByte ());
+								break;
+							}
 						}
+						c = SkipWhitespace (ms);
 					}
-					c = SkipWhitespace (ms);
+
 					if (c == 'e') {
 						ms.WriteByte ((byte)'e');
 						size = stream.Read (buffer, 0, 7);

@@ -12,8 +12,6 @@
 // FIXME:
 //
 //   I haven't checked whether DTD parser runs correct.
-//   I only checked with W3C test suite: http://www.w3.org/XML/Test/
-//   and libxml2 test cases.
 //
 //   More strict well-formedness checking should be done.
 //
@@ -1524,7 +1522,7 @@ namespace System.Xml
 					this.ReaderError ("Nested inclusion is not allowed: " + url);
 			}
 			parserInputStack.Push (currentInput);
-			currentInput = new XmlParserInput (new XmlStreamReader (absPath), absPath);
+			currentInput = new XmlParserInput (new XmlStreamReader (absPath, false), absPath);
 			baseURIStack.Push (BaseURI);
 			parserContext.BaseURI = absPath;
 		}
@@ -1645,13 +1643,13 @@ namespace System.Xml
 				case '\'':
 					if (State == DtdInputState.InsideSingleQuoted)
 						stateStack.Pop ();
-					else if (State != DtdInputState.Comment)
+					else if (State != DtdInputState.InsideDoubleQuoted && State != DtdInputState.Comment)
 						stateStack.Push (DtdInputState.InsideSingleQuoted);
 					break;
 				case '"':
 					if (State == DtdInputState.InsideDoubleQuoted)
 						stateStack.Pop ();
-					else if (State != DtdInputState.Comment)
+					else if (State != DtdInputState.InsideSingleQuoted && State != DtdInputState.Comment)
 						stateStack.Push (DtdInputState.InsideDoubleQuoted);
 					break;
 				case '>':
@@ -2340,14 +2338,14 @@ namespace System.Xml
 			}
 
 			SkipWhitespace ();
-			if(PeekChar () == 'P')
-			{
+			if(PeekChar () == 'P') {
 				decl.PublicId = ReadPubidLiteral ();
 				SkipWhitespace ();
-			}
-			SkipWhitespace ();
-			if(PeekChar () == 'S')
-			{
+				if (PeekChar () == '\'' || PeekChar () == '"') {
+					decl.SystemId = ReadSystemLiteral (false);
+					SkipWhitespace ();
+				}
+			} else if(PeekChar () == 'S') {
 				decl.SystemId = ReadSystemLiteral (true);
 				SkipWhitespace ();
 			}
