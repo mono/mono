@@ -115,7 +115,8 @@ namespace System.Net {
 		}
 		
 		/// <summary>
-		///   Constructor from a 32-bit constant.
+		///   Constructor from a 32-bit constant with its bytes 
+		///   in network order.
 		/// </summary>
 		public IPAddress (long addr)
 		{
@@ -162,7 +163,8 @@ namespace System.Net {
 
 			long a = 0;
 			string [] ips = ip.Split (new char [] {'.'});
-			for (int i = 0; i < ips.Length; i++)
+			// Make the number in network order
+			for (int i = ips.Length - 1; i >= 0; i--)
 				a = (a << 8) |  (Byte.Parse(ips [i]));
 
 			return (new IPAddress (a));
@@ -170,14 +172,14 @@ namespace System.Net {
 		
 		public long Address {
 			get {
-				return (NetworkToHostOrder (address));
+				return address;
 			}
 			set {
 			if (value < 0 || value > 0x00000000FFFFFFFF)
 				throw new ArgumentOutOfRangeException (
 					"the address must be between 0 and 0xFFFFFFFF");
 
-				address = HostToNetworkOrder (value);
+				address = value;
 			}
 		}
 

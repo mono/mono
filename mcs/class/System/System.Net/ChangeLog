@@ -3,6 +3,7 @@
 	* IPAddress.cs: finished all MonoTODO's. Use network order to store 
 	the address. Check for max and min values in Address:set. IsLoopback()
 	returns now true for all 127.x.y.z. Some more checks in Parse ().
+	Some changes to behave as MS does.
 
 2002-02-24  Duncan Mak  <duncan@ximian.com>
 
