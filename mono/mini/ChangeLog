@@ -1,5 +1,7 @@
 2005-01-04  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-x86.h (MONO_ARCH_ENABLE_EMIT_STATE_OPT): Enable this on x86.
+
 	* mini-x86.c cpu-pentium.md: More fixes for usage of global registers.
 
 	* mini-amd64.c (mono_arch_local_regalloc): Port some regalloc fixes 
