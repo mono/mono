@@ -2,6 +2,8 @@
 
 	* Assembly.cs: Add stub for LoadFrom.
 
+	* Assembly.cs: Fix build.
+
 2004-05-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Assembly.cs: Add ModuleResolve event.

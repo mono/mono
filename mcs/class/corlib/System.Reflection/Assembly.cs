@@ -16,6 +16,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Collections;
+using System.Configuration.Assemblies;
 
 namespace System.Reflection {
 
