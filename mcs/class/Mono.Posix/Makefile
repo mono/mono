@@ -18,3 +18,4 @@ else
 	$(CSCOMPILE)  -out:Mono.Unix/make-map.exe -r:Mono.Posix.dll Mono.Unix\\make-map.cs
 endif
 
+CLEAN_FILES = Mono.Unix/make-map.exe Mono.Unix/Mono.Posix.dll
