@@ -62,7 +62,7 @@ namespace Mono.CSharp {
 		
 		static TypeBuilder impl_details_class;
 
-		public static int WarningLevel = 2;
+		public static int WarningLevel = 4;
 		
 		public static Target Target = Target.Exe;
 		public static string TargetExt = ".exe";

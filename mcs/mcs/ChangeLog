@@ -1,5 +1,13 @@
 2004-09-23  Marek Safar  <marek.safar@seznam.cz>
 
+	* expression.cs (LocalVariableReference.DoResolveLValue):
+	Do not report warning 219 for out values.
+	(EmptyExpression.Null): New member to avoid extra allocations.
+
+	* rootcontext.cs: Warning 4 is back.
+
+2004-09-23  Marek Safar  <marek.safar@seznam.cz>
+
 	* cs-parser.jay: Fix wrong warning 642 report.
 
 	* cs-tokenizer.cs (CheckNextToken): New helper;
@@ -19,7 +27,7 @@
 2004-09-23  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (Operator.Define): Add error 448 and 559 report.
-        
+
 2004-09-22  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (MemberBase.IsTypePermitted): New protected
