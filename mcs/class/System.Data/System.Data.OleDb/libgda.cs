@@ -83,8 +83,20 @@ namespace System.Data.OleDb
 		public static extern bool gda_value_get_boolean (IntPtr value);
 
 		[DllImport("gda-2")]
+		public static extern int gda_value_get_smallint (IntPtr value);
+
+		[DllImport("gda-2")]
+		public static extern byte gda_value_get_tinyint (IntPtr value);
+
+		[DllImport("gda-2")]
+		public static extern string gda_value_stringify (IntPtr value);
+		
+		[DllImport("gda-2")]
 		public static extern IntPtr gda_parameter_list_new ();
 
+		[DllImport("gda-2")]
+		public static extern string gda_type_to_string (GdaValueType type);
+		
 		[DllImport("gda-2")]
 		public static extern int gda_data_model_get_n_rows (IntPtr model);
 

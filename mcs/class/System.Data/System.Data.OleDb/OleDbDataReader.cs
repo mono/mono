@@ -132,23 +132,33 @@ namespace System.Data.OleDb
 			IntPtr value;
 
 			if (currentResult == -1)
-				return false;
+				throw new InvalidCastException ();
 
 			value = libgda.gda_data_model_get_value_at ((IntPtr) gdaResults[currentResult],
 								    ordinal, currentRow);
-			if (value != IntPtr.Zero) {
-				if (libgda.gda_value_get_vtype (value) != GdaValueType.Boolean)
-					throw new InvalidCastException ();
-				return libgda.gda_value_get_boolean (value);
-			}
-
-			return false;
+			if (value == IntPtr.Zero)
+				throw new InvalidCastException ();
+			
+			if (libgda.gda_value_get_vtype (value) != GdaValueType.Boolean)
+				throw new InvalidCastException ();
+			return libgda.gda_value_get_boolean (value);
 		}
 
-		[MonoTODO]
 		public byte GetByte (int ordinal)
 		{
-			throw new NotImplementedException ();
+			IntPtr value;
+
+			if (currentResult == -1)
+				throw new InvalidCastException ();
+
+			value = libgda.gda_data_model_get_value_at ((IntPtr) gdaResults[currentResult],
+								    ordinal, currentRow);
+			if (value == IntPtr.Zero)
+				throw new InvalidCastException ();
+			
+			if (libgda.gda_value_get_vtype (value) != GdaValueType.Tinyint)
+				throw new InvalidCastException ();
+			return libgda.gda_value_get_tinyint (value);
 		}
 
 		[MonoTODO]
@@ -156,11 +166,22 @@ namespace System.Data.OleDb
 		{
 			throw new NotImplementedException ();
 		}
-
-		[MonoTODO]
+		
 		public char GetChar (int ordinal)
 		{
-			throw new NotImplementedException ();
+			IntPtr value;
+
+			if (currentResult == -1)
+				throw new InvalidCastException ();
+
+			value = libgda.gda_data_model_get_value_at ((IntPtr) gdaResults[currentResult],
+								    ordinal, currentRow);
+			if (value == IntPtr.Zero)
+				throw new InvalidCastException ();
+			
+			if (libgda.gda_value_get_vtype (value) != GdaValueType.Tinyint)
+				throw new InvalidCastException ();
+			return (char) libgda.gda_value_get_tinyint (value);
 		}
 
 		[MonoTODO]
@@ -175,10 +196,19 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public string GetDataTypeName (int index)
 		{
-			throw new NotImplementedException ();
+			IntPtr value;
+
+			if (currentResult == -1)
+				return "unknown";
+
+			value = libgda.gda_data_model_get_value_at ((IntPtr) gdaResults[currentResult],
+								    index, currentRow);
+			if (value == IntPtr.Zero)
+				return "unknown";
+
+			return libgda.gda_type_to_string (libgda.gda_value_get_vtype (value));
 		}
 
 		[MonoTODO]
@@ -265,10 +295,23 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public object GetValue (int ordinal)
 		{
-			throw new NotImplementedException ();
+			IntPtr value;
+			GdaValueType type;
+
+			if (currentResult == -1)
+				throw new IndexOutOfRangeException ();
+
+			value = libgda.gda_data_model_get_value_at ((IntPtr) gdaResults[currentResult],
+								    ordinal, currentRow);
+			if (value == IntPtr.Zero)
+				throw new IndexOutOfRangeException ();
+
+			type = libgda.gda_value_get_vtype (value);
+			// FIXME: return correct type
+
+			return (object) libgda.gda_value_stringify (value);
 		}
 
 		[MonoTODO]
@@ -306,7 +349,6 @@ namespace System.Data.OleDb
 			int i = currentResult + 1;
 			if (i >= 0 && i < gdaResults.Count) {
 				currentResult++;
-				currentRow = 0;
 				return true;
 			}
 
@@ -315,7 +357,16 @@ namespace System.Data.OleDb
 
 		public bool Read ()
 		{
-			throw new NotImplementedException ();
+			if (currentResult < 0 ||
+			    currentResult >= gdaResults.Count)
+				return false;
+
+			currentRow++;
+			if (currentRow <
+			    libgda.gda_data_model_get_n_rows ((IntPtr) gdaResults[currentResult]))
+				return true;
+
+			return false;
 		}
 
 		#endregion
