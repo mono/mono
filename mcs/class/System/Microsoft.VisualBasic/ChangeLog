@@ -1,3 +1,8 @@
+2003-10-17  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+
+	* Microsoft.VisualBasic/VBCodeCompiler.cs: Inserts "--" before file names block
+	* Microsoft.VisualBasic/VBCodeGenerator.cs: Indexer should be ".Item(xx)"
+
 2003-10-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Microsoft.VisualBasic/VBCodeCompiler.cs: New.

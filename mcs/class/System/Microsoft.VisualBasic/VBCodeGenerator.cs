@@ -190,7 +190,7 @@ namespace Microsoft.VisualBasic
 			TextWriter output = Output;
 
 			GenerateExpression (expression.TargetObject);
-			output.Write ('(');
+			output.Write ('.Item(');
 			OutputExpressionList (expression.Indices);
 			output.Write (')');
 		}

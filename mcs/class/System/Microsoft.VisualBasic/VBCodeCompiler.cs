@@ -172,6 +172,8 @@ namespace Microsoft.VisualBasic
 					args.AppendFormat ("/r:\"{0}\" ", import);
 			}
 
+			args.AppendFormat(" -- "); // makes mbas not try to process filenames as options
+
 			foreach (string source in fileNames)
 				args.AppendFormat("\"{0}\" ",source);
 
