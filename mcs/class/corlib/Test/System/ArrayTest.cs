@@ -572,6 +572,7 @@ public class ArrayTest : TestCase
 			}
 			Assert("#F03a", errorThrown);
 		}
+#if NET_1_1
 		{
 			bool errorThrown = false;
 			try {
@@ -581,6 +582,7 @@ public class ArrayTest : TestCase
 			}
 			Assert("#F03b", errorThrown);
 		}
+#endif
 		{
 			bool errorThrown = false;
 			try {
@@ -1109,6 +1111,7 @@ public class ArrayTest : TestCase
 			}
 			Assert("#I61a", errorThrown);
 		}
+#if NET_1_1
 		{
 			bool errorThrown = false;
 			try {
@@ -1119,6 +1122,7 @@ public class ArrayTest : TestCase
 			}
 			Assert("#I61b", errorThrown);
 		}
+#endif
 		{
 			bool errorThrown = false;
 			try {
@@ -1680,6 +1684,7 @@ public class ArrayTest : TestCase
 			}
 			Assert("#M61a", errorThrown);
 		}
+#if NET_1_1
 		{
 			bool errorThrown = false;
 			try {
@@ -1690,6 +1695,7 @@ public class ArrayTest : TestCase
 			}
 			Assert("#M61b", errorThrown);
 		}
+#endif
 		{
 			bool errorThrown = false;
 			try {
