@@ -12,3 +12,4 @@ clean:
 		$(MAKE) -C $$d -f makefile.gnu clean || exit 1; \
 	done
 
+install:
