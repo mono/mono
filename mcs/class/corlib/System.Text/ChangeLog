@@ -1,3 +1,10 @@
+2003-12-07 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* UTF8Encoding.cs (GetBytes string): Do not call base
+	The version in Encoding will call string.ToCharArray (),
+	allocating an extra array. By calling the better method
+	in our own class we can save memory.
+
 2003-11-17 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* StringBuilder.cs (Insert int, char): It is really silly and

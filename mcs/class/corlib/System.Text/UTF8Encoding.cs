@@ -656,15 +656,21 @@ public class UTF8Encoding : Encoding
 		}
 	}
 
-	public override byte [] GetBytes (String s)
-	{
-		return base.GetBytes (s);
-	}
-	
 	// Get the hash code for this object.
 	public override int GetHashCode ()
 	{
 		return base.GetHashCode ();
+	}
+	
+	public override byte [] GetBytes (String s)
+	{
+		if (s == null)
+			throw new ArgumentNullException ("s");
+		
+		int length = GetByteCount (s);
+		byte [] bytes = new byte [length];
+		GetBytes (s, 0, s.Length, bytes, 0);
+		return bytes;
 	}
 
 	// UTF-8 decoder implementation.
