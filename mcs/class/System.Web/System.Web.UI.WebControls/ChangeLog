@@ -1,5 +1,9 @@
 2002-06-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Literal.cs: beautified.
+
+2002-06-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Label.cs: beautified and fixed a couple of 'classic' bugs.
 
 	* WebControl.cs: use Span as default tag when no other provided in 

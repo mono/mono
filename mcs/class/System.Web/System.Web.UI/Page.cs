@@ -365,13 +365,21 @@ public class Page : TemplateControl, IHttpHandler
 		InvokeEventMethod ("Page_Load", sender, e);
 	}
 
-	private void SetPage (ControlCollection col)
+	private int defaultNumberID;
+	private void SetDefaults (ControlCollection col)
 	{
 		if (col.Count == 0)
 			return;
 		foreach (Control ctrl in col){
+			/*
+			 * Assing a default ID for controls that don't have one.
+			 * This can happen for programatically added controls (see web_placeholder.aspx).
+			 */
+			if (ctrl.ID == null)
+				ctrl.ID = "_ctrl_" + defaultNumberID++;
+			//
 			ctrl.Page = this;
-			SetPage (ctrl.Controls);
+			SetDefaults (ctrl.Controls);
 		}
 	}
 
@@ -400,7 +408,7 @@ public class Page : TemplateControl, IHttpHandler
 			// Assing Control.Page here. Controls should do the same before 
 			// rendering their children
 			ctrl.Page = this;
-			SetPage (ctrl.Controls);
+			SetDefaults (ctrl.Controls);
 			//
 			ctrl.RenderControl (output);
 		}

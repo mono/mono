@@ -23,46 +23,40 @@ namespace System.Web.UI.WebControls
 	//[DataBindingHandler("??")]
 	public class Literal : Control
 	{
-		public Literal(): base()
+		public Literal () : base ()
 		{
 		}
 
 		public string Text
 		{
-			get
-			{
-				object o = ViewState["Text"];
-				if(o != null)
-					return (string)o;
-				return String.Empty;
+			get {
+				object o = ViewState ["Text"];
+				return (o == null) ? String.Empty : (string) o;
 			}
-			set
-			{
-				ViewState["Text"] = value;
-			}
+
+			set { ViewState ["Text"] = value; }
 		}
 
-		protected override ControlCollection CreateControlCollection()
+		protected override ControlCollection CreateControlCollection ()
 		{
-			return new EmptyControlCollection(this);
+			return new EmptyControlCollection (this);
 		}
 
-		protected override void AddParsedSubObject(object obj)
+		protected override void AddParsedSubObject (object obj)
 		{
-			if(obj is LiteralControl)
-			{
-				Text = ((LiteralControl)obj).Text;
-				return;
-			}
-			throw new HttpException(HttpRuntime.FormatResourceString("Cannot_Have_Children_Of_Type", "Literal", obj.GetType().Name.ToString()));
+			if (!(obj is LiteralControl))
+				throw new HttpException (HttpRuntime.FormatResourceString (
+							"Cannot_Have_Children_Of_Type", "Literal",
+							obj.GetType ().Name.ToString ()));
+
+			Text = ((LiteralControl) obj).Text;
 		}
 
-		protected override void Render(HtmlTextWriter writer)
+		protected override void Render (HtmlTextWriter writer)
 		{
-			if(Text.Length > 0)
-			{
-				writer.Write(Text);
-			}
+			if (Text.Length > 0)
+				writer.Write (Text);
 		}
 	}
 }
+
