@@ -1288,5 +1288,22 @@ namespace MonoTests.System.Xml
 			while (!xmlReader.EOF)
 				xmlReader.Read ();
 		}
+
+		[Test]
+		public void SurrogatePairContent ()
+		{
+			string xml = "<root xmlns='&#x10100;'/>";
+			RunTest (xml, new TestMethod (SurrogatePairContent));
+		}
+
+		public void SurrogatePairContent (XmlReader xmlReader)
+		{
+			xmlReader.Read ();
+			AssertEquals (true, xmlReader.MoveToAttribute ("xmlns"));
+			AssertEquals ("xmlns", xmlReader.Name);
+			AssertEquals (2, xmlReader.Value.Length);
+			AssertEquals (0xD800, (int) xmlReader.Value [0]);
+			AssertEquals (0xDD00, (int) xmlReader.Value [1]);
+		}
 	}
 }

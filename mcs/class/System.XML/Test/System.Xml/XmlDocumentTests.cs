@@ -699,6 +699,15 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void LoadXmlReaderNamespacesFalse ()
+		{
+			XmlTextReader xtr = new XmlTextReader (
+				"<root xmlns='urn:foo' />", XmlNodeType.Document, null);
+			xtr.Namespaces = false;
+			document.Load (xtr); // Don't complain about xmlns attribute with its namespaceURI == String.Empty.
+		}
+
+		[Test]
 		public void LoadXmlCDATA ()
 		{
 			document.LoadXml ("<foo><![CDATA[bar]]></foo>");

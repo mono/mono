@@ -1,3 +1,9 @@
+2004-02-03  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReaderCommonTests.cs : Added SurrogatePairContent().
+	* XmlDocumentTests.cs : Added LoadXmlReaderNamespacesFalse().
+	* XmlEntityReferenceTests.cs : Added TestsDescendantsRecursively().
+
 2004-01-28  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlDocumentTypeTests.cs : Added IncorrectInternalSubset().
