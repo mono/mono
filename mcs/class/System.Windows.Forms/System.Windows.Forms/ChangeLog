@@ -1,9 +1,9 @@
-2003-07-31 Aleksey Ryabchuk <ryabchuk@yahoo.com>
-	* TreeView.cs
-	* TreeNode.cs
-	* TreeNodeCollection.cs
-	* win32enums.cs
-	* win32functions.cs : more implementation added
+2003-08-08 Dennis Hayes <dennish@raytek.com>
+	* Control.cs
+	* MonthCalander.cs
+	* Signiture corections.
+		* implmentation stuff changed to internal
+		* event "e" params names changed to "pevent" type names
 
 2003-08-03 Alexandre Pigolkine <pigolkine@gmx.de>
 	* CheckBox.cs			12x12 checkmark dimensions for a moment
@@ -23,6 +23,13 @@
 	* Label.cs				painting moved inside OnPaint function
 	* Button.cs				disposing Graphics in OnPaint
 	* win32functions.cs		StringFormat2DrawTextFormat added
+
+2003-07-31 Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* TreeView.cs
+	* TreeNode.cs
+	* TreeNodeCollection.cs
+	* win32enums.cs
+	* win32functions.cs : more implementation added
 
 2003-07-31 Alexandre Pigolkine <pigolkine@gmx.de>
 	* Control.cs : do not keep oldBounds if LAYOUT_SUSPENDED is true, 
