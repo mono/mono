@@ -26,10 +26,10 @@ namespace System.Web.UI.WebControls
 	{
 		private  static readonly object SelectedIndexChangedEvent = new object();
 		internal static string          ItemCountViewStateKey     = "_!ItemCount";
-		
+
 		private DataKeyCollection dataKeys;
 		private object            dataSource;
-		
+
 		public BaseDataList() : base()
 		{
 		}
@@ -40,12 +40,23 @@ namespace System.Web.UI.WebControls
 				return true;
 			return false;
 		}
-		
+
+		public override ControlCollection Controls
+		{
+			get
+			{
+				EnsureChildControls();
+				return Controls;
+			}
+		}
+
 		public override void DataBind()
 		{
 			OnDataBinding(EventArgs.Empty);
 		}
-		
+
+		[WebCategory("Action")]
+		[WebSysDescription("BaseDataList_OnSelectedIndexChanged")]
 		public event EventHandler SelectedIndexChanged
 		{
 			add
@@ -57,7 +68,11 @@ namespace System.Web.UI.WebControls
 				Events.RemoveHandler(SelectedIndexChangedEvent, value);
 			}
 		}
-		
+
+		[Bindable(true)]
+		[DefaultValue(-1)]
+		[WebCategory("Layout")]
+		[WebSysDescription("BaseDataList_CellPadding")]
 		public virtual int CellPadding
 		{
 			get
@@ -71,7 +86,11 @@ namespace System.Web.UI.WebControls
 				((TableStyle)ControlStyle).CellPadding = value;
 			}
 		}
-		
+
+		[Bindable(true)]
+		[DefaultValue(-1)]
+		[WebCategory("Layout")]
+		[WebSysDescription("BaseDataList_CellSpacing")]
 		public virtual int CellSpacing
 		{
 			get
@@ -85,7 +104,10 @@ namespace System.Web.UI.WebControls
 				((TableStyle)ControlStyle).CellSpacing = value;
 			}
 		}
-		
+
+		[DefaultValue("")]
+		[WebCategory("Data")]
+		[WebSysDescription("BaseDataList_DataKeyField")]
 		public virtual string DataKeyField
 		{
 			get
@@ -100,7 +122,10 @@ namespace System.Web.UI.WebControls
 				ViewState["DataKeyField"] = value;
 			}
 		}
-		
+
+		[Browsable(true)]
+		//[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("BaseDataList_DataKeys")]
 		public DataKeyCollection DataKeys
 		{
 			get
@@ -108,10 +133,13 @@ namespace System.Web.UI.WebControls
 				if( dataKeys==null )
 					dataKeys = new DataKeyCollection(DataKeysArray);
 				return dataKeys;
-				
+
 			}
 		}
-		
+
+		[DefaultValue("")]
+		[WebCategory("Data")]
+		[WebSysDescription("BaseDataList_DataMember")]
 		public string DataMember
 		{
 			get
@@ -126,7 +154,12 @@ namespace System.Web.UI.WebControls
 				ViewState["DataMember"] = value;
 			}
 		}
-		
+
+		[Bindable(true)]
+		[DefaultValue(null)]
+		//[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[WebCategory("Data")]
+		[WebSysDescription("BaseDataList_DataSource")]
 		public virtual object DataSource
 		{
 			get
@@ -135,7 +168,7 @@ namespace System.Web.UI.WebControls
 			}
 			set
 			{
-				if( (value!=null) && ( value is IListSource || value is IEnumerable) )
+				if( (value!=null) && (value is IListSource || value is IEnumerable) )
 				{
 					dataSource = value;
 				} else
@@ -145,6 +178,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Bindable(true)]
+		[DefaultValue(GridLines.Both)]
+		[WebCategory("Appearance")]
+		[WebSysDescription("BaseDataList_GridLines")]
 		public virtual GridLines GridLines
 		{
 			get
@@ -158,7 +195,11 @@ namespace System.Web.UI.WebControls
 				((TableStyle)ControlStyle).GridLines = value;
 			}
 		}
-		
+
+		[Bindable(true)]
+		[DefaultValue(HorizontalAlign.NotSet)]
+		[WebCategory("Layout")]
+		[WebSysDescription("BaseDataList_HorizontalAlign")]
 		public virtual HorizontalAlign HorizontalAlign
 		{
 			get
@@ -172,7 +213,7 @@ namespace System.Web.UI.WebControls
 				((TableStyle)ControlStyle).HorizontalAlign = value;
 			}
 		}
-		
+
 		protected ArrayList DataKeysArray
 		{
 			get
@@ -186,7 +227,7 @@ namespace System.Web.UI.WebControls
 				return (ArrayList)o;
 			}
 		}
-		
+
 		protected override void AddParsedSubObject(object o)
 		{
 			// Preventing literal controls from being added as children.
@@ -201,7 +242,7 @@ namespace System.Web.UI.WebControls
 				ClearChildViewState();
 			}
 		}
-		
+
 		protected override void OnDataBinding(EventArgs e)
 		{
 			base.OnDataBinding(e);
@@ -211,7 +252,7 @@ namespace System.Web.UI.WebControls
 			ChildControlsCreated = true;
 			TrackViewState();
 		}
-		
+
 		protected virtual void OnSelectedIndexChanged(EventArgs e)
 		{
 			if(Events != null)
@@ -221,13 +262,13 @@ namespace System.Web.UI.WebControls
 					eh(this, e);
 			}
 		}
-		
+
 		protected override void Render(HtmlTextWriter writer)
 		{
 			PrepareControlHierarchy();
 			base.RenderContents(writer);
 		}
-		
+
 		protected abstract void PrepareControlHierarchy();
 		protected abstract void CreateControlHierarchy(bool useDataSource);
 	}

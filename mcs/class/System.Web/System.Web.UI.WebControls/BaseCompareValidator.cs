@@ -18,6 +18,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI;
+using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
@@ -33,6 +34,9 @@ namespace System.Web.UI.WebControls
 			return Convert(text, type, out o);
 		}
 
+		[DefaultValue(ValidationDataType.String)]
+		[WebCategory("Behaviour")]
+		[WebSysDescription("RangeValidator_Type")]
 		public ValidationDataType Type
 		{
 			get
@@ -47,15 +51,6 @@ namespace System.Web.UI.WebControls
 				if(!System.Enum.IsDefined(typeof(ValidationDataType), value))
 					throw new ArgumentException();
 				ViewState["Type"] = value;
-			}
-		}
-
-		public override ControlCollection Controls
-		{
-			get
-			{
-				EnsureChildControls();
-				return Controls;
 			}
 		}
 

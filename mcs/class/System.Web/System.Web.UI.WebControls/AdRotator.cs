@@ -217,6 +217,8 @@ namespace System.Web.UI.WebControls
 			return (fullUrl + relativeUrl);
 		}
 
+		[WebCategory("Action")]
+		[WebSysDescription("AdRotator_OnAdCreated")]
 		public event AdCreatedEventHandler AdCreated
 		{
 			add
@@ -235,6 +237,11 @@ namespace System.Web.UI.WebControls
 			fileDirectory     = null;
 		}
 
+		[Bindable(true)]
+		[DefaultValue("")]
+		//[Editor("??")]
+		[WebCategory("Behaviour")]
+		[WebSysDescription("AdRotator_AdvertisementFile")]
 		public string AdvertisementFile
 		{
 			get
@@ -255,6 +262,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Bindable(true)]
+		[DefaultValue("")]
+		[WebCategory("Behaviour")]
+		[WebSysDescription("AdRotator_KeywordFilter")]
 		public string KeywordFilter
 		{
 			get
@@ -271,6 +282,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Bindable(true)]
+		[DefaultValue("")]
+		[TypeConverter(typeof(TargetConverter))]
+		[WebCategory("Behaviour")]
+		[WebSysDescription("AdRotator_Target")]
 		public string Target
 		{
 			get
