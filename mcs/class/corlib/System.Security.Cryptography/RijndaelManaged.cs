@@ -103,7 +103,7 @@ internal class RijndaelTransform : SymmetricTransform
 	private Int32[] rcon;
 
 	private Byte[,] state;
-		
+
 	public RijndaelTransform (Rijndael algo, bool encryption, byte[] key, byte[] iv) : base (algo, encryption, iv)
 	{
 		int keySize = algo.KeySize;
@@ -132,17 +132,44 @@ internal class RijndaelTransform : SymmetricTransform
 		}
 
 		shifts = new int[2,4];
-		// Encryption
-		shifts [0,0] = -1; // Not used
-		shifts [0,1] = 1;
-		shifts [0,2] = (Nb == 8) ? 3 : 2;
-		shifts [0,3] = (Nb == 8) ? 4 : 3;
-
-		// Decryption
-		shifts [1,0] = -1; // Not used
-		shifts [1,1] = 3;
-		shifts [1,2] = (Nb == 8) ? 1 : 2;
-		shifts [1,3] = (Nb == 8) ? 0 : 1;
+		switch (Nb) {
+		case 8: // 256 bits
+			// encryption
+			shifts [0,0] = -1; // Not used
+			shifts [0,1] = 1;
+			shifts [0,2] = 3;
+			shifts [0,3] = 4;
+			// decryption
+			shifts [1,0] = -1; // Not used
+			shifts [1,1] = 7;
+			shifts [1,2] = 5;
+			shifts [1,3] = 4;
+			break;
+		case 6: // 192 bits
+			// encryption
+			shifts [0,0] = -1; // Not used
+			shifts [0,1] = 1;
+			shifts [0,2] = 2;
+			shifts [0,3] = 3;
+			// decryption
+			shifts [1,0] = -1; // Not used
+			shifts [1,1] = 5;
+			shifts [1,2] = 4;
+			shifts [1,3] = 3;
+			break;
+		case 4: // 128 bits
+			// encryption
+			shifts [0,0] = -1; // Not used
+			shifts [0,1] = 1;
+			shifts [0,2] = 2;
+			shifts [0,3] = 3;
+			// decryption
+			shifts [1,0] = -1; // Not used
+			shifts [1,1] = 3;
+			shifts [1,2] = 2;
+			shifts [1,3] = 1;
+			break;
+		}
 
 		int rcon_entries = (Nb * (Nr+1)) / Nk;
 		rcon = new Int32 [rcon_entries + 1];
@@ -194,17 +221,24 @@ internal class RijndaelTransform : SymmetricTransform
 
 		AddRoundKey (0, encrypt);
 		if (encrypt) {
-			for (int round = 1; round < Nr; round++) 
-				Round (round, true);
+			for (int round = 1; round < Nr; round++) {
+				ByteSub (true);
+				ShiftRow (true);
+				MixColumn ();
+				AddRoundKey (round, true);
+			}
 			ByteSub (true);
 			ShiftRow (true);
 		}
 		else {
 			ShiftRow (false);
 			ByteSub (false);
-
-			for (int round = 1; round < Nr; round++)
-				Round (round, false);
+			for (int round = 1; round < Nr; round++) {
+				AddRoundKey (round, false);
+				InvMixColumn ();
+				ShiftRow (false);
+				ByteSub (false);
+			}
 		}
 		AddRoundKey (Nr, encrypt);
 
@@ -339,21 +373,6 @@ internal class RijndaelTransform : SymmetricTransform
 			state [1,col] ^= (byte) ((keyword >> 16) & 0xff);
 			state [2,col] ^= (byte) ((keyword >> 8) & 0xff);
 			state [3,col] ^= (byte) (keyword & 0xff);
-		}
-	}
-
-	private void Round (int round, bool encrypt)
-	{
-		if (encrypt) {
-			ByteSub (true);
-			ShiftRow (true);
-			MixColumn ();
-			AddRoundKey (round, true);
-		} else {
-			AddRoundKey (round, false);
-			InvMixColumn ();
-			ShiftRow (false);
-			ByteSub (false);
 		}
 	}
 

@@ -1,3 +1,7 @@
+2002-10-20  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* RjindaelManaged.cs: Fixed decryption for 192 and 256 bit block size
+
 2002-10-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* RC2CryptoServiceProvider.cs: fixed end of lines (changed from \r
