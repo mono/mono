@@ -1,3 +1,10 @@
+2004-05-15  Jackson Harper  <jackson@ximian.com>
+
+	* CultureInfo.cs: Initialize optional calendars. A pointer to an
+	array of ints is passed back from the runtime to the CultureInfo
+	object. The ints store the calendar type and any optional data
+	needed to construct the calendar.
+	
 2004-05-14  Dick Porter  <dick@ximian.com>
 
 	* HebrewCalendar.cs: Stubbed ToFourDigitYear()

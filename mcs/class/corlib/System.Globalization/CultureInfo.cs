@@ -17,7 +17,11 @@ namespace System.Globalization
 	public class CultureInfo : ICloneable, IFormatProvider
 	{
 		static CultureInfo invariant_culture_info;
-		
+
+		const int NumOptionalCalendars = 5;
+		const int CalendarTypeMask = 0xFF;
+		const int CalendarTypeBits = 24;
+
 		bool m_isReadOnly;
 		int  cultureID;
 		[NonSerialized]
@@ -49,8 +53,11 @@ namespace System.Globalization
 		[NonSerialized]
 		private string win3lang;
 		CompareInfo compareInfo;
-		Calendar calendar;
-		
+		[NonSerialized]
+		private unsafe int *calendar_data;
+		[NonSerialized]
+		private Calendar [] optional_calendars;
+				
 		int m_dataItem;	// MS.NET serializes this.
 		
 		// Deserialized instances will set this to false
@@ -84,7 +91,7 @@ namespace System.Globalization
 				return InvariantCulture;
 
 			CultureInfo ci = new CultureInfo ();
-			if (!construct_internal_locale_from_specific_name (ci, name.ToLowerInvariant ()))
+			if (!ConstructInternalLocaleFromSpecificName (ci, name.ToLowerInvariant ()))
 				throw new ArgumentException ("Culture name " + name +
 						" is not supported.", name);
 
@@ -108,7 +115,7 @@ namespace System.Globalization
 		internal static CultureInfo ConstructCurrentCulture ()
 		{
 			CultureInfo ci = new CultureInfo ();
-			if (!construct_internal_locale_from_current_locale (ci))
+			if (!ConstructInternalLocaleFromCurrentLocale (ci))
 				ci = InvariantCulture;
 			return ci;
 		}
@@ -138,18 +145,15 @@ namespace System.Globalization
 			}
 		}
 		
-
-		[MonoTODO]
 		public virtual Calendar Calendar
 		{
-			get { return calendar; }
+			get { return DateTimeFormat.Calendar; }
 		}
 
-		[MonoTODO]
 		public virtual Calendar[] OptionalCalendars
 		{
 			get {
-				return(null);
+				return optional_calendars;
 			}
 		}
 
@@ -355,6 +359,8 @@ namespace System.Globalization
 						if (dateTimeInfo == null) {
 							dateTimeInfo = new DateTimeFormatInfo();
 							construct_datetime_format ();
+							if (optional_calendars != null)
+								dateTimeInfo.Calendar = optional_calendars [0];
 						}
 					}
 				}
@@ -427,8 +433,45 @@ namespace System.Globalization
 			constructed = true;
 		}
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern void construct_internal_locale (string locale);
+		bool ConstructInternalLocaleFromName (string locale)
+		{
+			if (!construct_internal_locale_from_name (locale))
+				return false;
+			ConstructCalendars ();
+			return true;
+		}
+
+		bool ConstructInternalLocaleFromLcid (int lcid)
+		{
+			if (!construct_internal_locale_from_lcid (lcid))
+				return false;
+			ConstructCalendars ();
+			return true;
+		}
+
+		static bool ConstructInternalLocaleFromSpecificName (CultureInfo ci, string name)
+		{
+			if (!construct_internal_locale_from_specific_name (ci, name))
+				return false;
+			ci.ConstructCalendars ();
+			return true;
+		}
+
+		static bool ConstructInternalLocaleFromCurrentLocale (CultureInfo ci)
+		{
+			if (!construct_internal_locale_from_current_locale (ci))
+				return false;
+			ci.ConstructCalendars ();
+			return true;
+		}
+
+		static CultureInfo [] GetCultures (bool neutral, bool specific, bool installed)
+		{
+			CultureInfo [] cis = internal_get_cultures (neutral, specific, installed);
+			foreach (CultureInfo ci in cis)
+				ci.ConstructCalendars ();
+			return cis;
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern bool construct_internal_locale_from_lcid (int lcid);
@@ -493,7 +536,7 @@ namespace System.Globalization
 				return;
 			}
 
-			if (!construct_internal_locale_from_lcid (culture))
+			if (!ConstructInternalLocaleFromLcid (culture))
 				throw new ArgumentException ("Culture name " + m_name +
 						" is not supported.", "name");
 		}
@@ -513,9 +556,10 @@ namespace System.Globalization
 				return;
 			}
 
-			if (!construct_internal_locale_from_name (name.ToLowerInvariant ()))
+			if (!ConstructInternalLocaleFromName (name.ToLowerInvariant ()))
 				throw new ArgumentException ("Culture name " + name +
 						" is not supported.", "name");
+			ConstructCalendars ();
 		}
 
 		public CultureInfo (string name) : this (name, false) {}
@@ -524,5 +568,33 @@ namespace System.Globalization
 		// current locale so we can initialize the object without
 		// doing any member initialization
 		private CultureInfo () { constructed = true; } 
+
+		unsafe internal void ConstructCalendars ()
+		{
+			if (calendar_data == null)
+				return;
+
+			optional_calendars = new Calendar [NumOptionalCalendars];
+
+			for (int i=0; i<NumOptionalCalendars; i++) {
+				Calendar cal = null;
+				switch (*(calendar_data + i) & CalendarTypeMask >> CalendarTypeBits) {
+				case 0:
+					int gt = (*(calendar_data + i) & CalendarTypeMask);
+					GregorianCalendarTypes type = (GregorianCalendarTypes) gt;
+					cal = new GregorianCalendar (type);
+					break;
+				case 1:
+					cal = new HijriCalendar ();
+					break;
+				case 2:
+					cal = new ThaiBuddhistCalendar ();
+					break;
+				default:
+					throw new Exception ("invalid calendar type:  " + *(calendar_data + i));
+				}
+				optional_calendars [i] = cal;
+			}
+		}
 	}
 }
