@@ -1517,7 +1517,7 @@ namespace System {
 			int exponent = 0, position = maxIntLength;
 			int exp = 0, idx = 0;
 			ulong pow = 10;
-			uint number = value;
+			ulong number = (ulong)value;
 
 			// need to calculate the number of places to know if we need to round later
 			while (value >= 10) {
@@ -1901,7 +1901,8 @@ namespace System {
 
 			// else our exponent was > precision, use exponential format
 			// precision = number of digits to show. 
-			int idx = 0, pow = 1;
+			int idx = 0;
+			ulong pow = 1;
 
 			exponent = 0;
 			position = maxIntLength;
@@ -1931,7 +1932,7 @@ namespace System {
 			// and reuse pow for size
 			idx = position;
 			position = 0;
-			pow = precision + 6;
+			pow = (ulong)(precision + 6);
 			char[] buffy = new char[pow];
 
 			if (negative)
@@ -2087,7 +2088,7 @@ namespace System {
 			char[] tmp = new char [maxIntLength];
 			int exponent = 0;
 			int position = maxIntLength;
-			uint number = value;
+			ulong number = (ulong)value;
 
 			// get number into a buffer, going to be doing this no matter what
 			while (value >= 10) {
@@ -2107,7 +2108,8 @@ namespace System {
 
 			// else our exponent was > precision, use exponential format
 			// precision = number of digits to show. 
-			int idx = 0, pow = 1;
+			int idx = 0;
+			ulong pow = 1;
 
 			exponent = 0;
 			position = maxIntLength;
@@ -2137,7 +2139,7 @@ namespace System {
 			// and reuse pow for size
 			idx = position;
 			position = 0;
-			pow = precision + 6;
+			pow = (ulong)(precision + 6);
 			char[] buffy = new char[pow];
 
 			buffy[position++] = tmp[idx++];
