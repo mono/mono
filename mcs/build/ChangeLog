@@ -1,5 +1,10 @@
 2004-12-03  Raja R Harinath  <rharinath@novell.com>
 
+	* profiles/basic.make (MCS): Run the INTERNAL_MCS.
+	(USE_BOOT_COMPILE): Remove.
+
+2004-12-03  Raja R Harinath  <rharinath@novell.com>
+
 	* library.make (gacdir_flag): New.  Disable /gacdir flag if
 	RUNTIME_HAS_CONSISTENT_GACDIR flag is set.
 	(install-local): Use it.

@@ -1,10 +1,9 @@
 # -*- makefile -*-
 
 BOOTSTRAP_MCS = $(EXTERNAL_MCS)
-MCS = false
+MCS = MONO_PATH="$(topdir)/class/lib/$(PROFILE):$$MONO_PATH" $(INTERNAL_MCS)
 
 PROFILE_MCS_FLAGS = -d:NET_1_1 -d:ONLY_1_1 -d:BOOTSTRAP_WITH_OLDLIB
-USE_BOOT_COMPILE = yes
 NO_SIGN_ASSEMBLY = yes
 NO_TEST = yes
 NO_INSTALL = yes
