@@ -46,6 +46,20 @@ namespace System.Data.Common
 			tableMappings = new DataTableMappingCollection ();
 		}
 
+		protected DataAdapter (DataAdapter adapter)
+		{
+			AcceptChangesDuringFill = adapter.AcceptChangesDuringFill;
+			ContinueUpdateOnError = adapter.ContinueUpdateOnError;
+			MissingMappingAction = adapter.MissingMappingAction;
+			MissingSchemaAction = adapter.MissingSchemaAction;
+			if (adapter.tableMappings == null || adapter.TableMappings.Count <= 0) {
+				return;
+			}
+			foreach (ICloneable cloneable in adapter.TableMappings) {
+				TableMappings.Add (cloneable.Clone ());
+			}
+		}
+
 		#endregion
 
 		#region Properties

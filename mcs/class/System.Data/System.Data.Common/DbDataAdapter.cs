@@ -31,6 +31,11 @@ namespace System.Data.Common {
 		{
 		}
 
+		[MonoTODO]
+		protected DbDataAdapter(DbDataAdapter adapter) : base(adapter)
+		{
+		}
+
 		#endregion // Fields
 
 		#region Properties

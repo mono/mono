@@ -38,10 +38,23 @@ namespace System.Data.Common {
 		{
 		}
 
+		[MonoTODO]
+		protected DBDataPermission (DBDataPermission permission)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected DBDataPermission (DBDataPermissionAttribute permissionAttribute)
+		{
+			throw new NotImplementedException ();
+		}
+
 #if NET_2_0
 		[MonoTODO]
 		protected DBDataPermission (DbConnectionString constr)
 		{
+			throw new NotImplementedException ();
 		}
 #endif
 
@@ -97,6 +110,12 @@ namespace System.Data.Common {
 			throw new NotImplementedException ();
 		}
 #endif
+
+		[MonoTODO]
+		protected void Clear ()
+		{
+			throw new NotImplementedException ();
+		}
 
 		public override IPermission Copy () 
 		{
