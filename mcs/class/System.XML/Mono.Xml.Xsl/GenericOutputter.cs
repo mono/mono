@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.Xml;
 using System.IO;
@@ -64,8 +65,7 @@ namespace Mono.Xml.Xsl
 		int pendingAttributesPos = 0;
 		//Namespace manager. Subject to optimization.
 		private XmlNamespaceManager _nsManager;
-		private ArrayList _currentNsPrefixes;
-		private Hashtable _currentNamespaceDecls;
+		private ListDictionary _currentNamespaceDecls;
 		// See CheckState(). This is just a cache.
 		private ArrayList newNamespaces = new ArrayList();
 		//Name table
@@ -88,8 +88,7 @@ namespace Mono.Xml.Xsl
 			//TODO: Optimize using nametable
 			_nt = new NameTable ();
 			_nsManager = new XmlNamespaceManager (_nt);
-			_currentNsPrefixes = new ArrayList ();
-			_currentNamespaceDecls = new Hashtable ();
+			_currentNamespaceDecls = new ListDictionary ();
 			_omitXmlDeclaration = false;
 		}
 
@@ -176,15 +175,14 @@ namespace Mono.Xml.Xsl
 				//Emit pending attributes
 				newNamespaces.Clear (); //remember indexes of new prefexes
 				_nsManager.PushScope ();
-				for (int i = 0; i < _currentNsPrefixes.Count; i++) 
+				foreach (string prefix in _currentNamespaceDecls.Keys)
 				{
-					string prefix = (string) _currentNsPrefixes [i];
 					string uri = _currentNamespaceDecls [prefix] as string;
 					
 					if (_nsManager.LookupNamespace (prefix, false) == uri)
 						continue;
 
-					newNamespaces.Add(i);
+					newNamespaces.Add (prefix);
 					_nsManager.AddNamespace (prefix, uri);
 				}
 				for (int i = 0; i < pendingAttributesPos; i++) 
@@ -200,7 +198,7 @@ namespace Mono.Xml.Xsl
 				}
 				for (int i = 0; i < newNamespaces.Count; i++)
 				{
-					string prefix = (string) _currentNsPrefixes [(int)newNamespaces[i]];
+					string prefix = (string) newNamespaces [i];
 					string uri = _currentNamespaceDecls [prefix] as string;
 					
 					if (prefix != String.Empty)
@@ -208,7 +206,6 @@ namespace Mono.Xml.Xsl
 					else
 						Emitter.WriteAttributeString (String.Empty, "xmlns", XmlNamespaceManager.XmlnsXmlns, uri);
 				}
-				_currentNsPrefixes.Clear ();
 				_currentNamespaceDecls.Clear ();
 				//Attributes flushed, state is Content now				
 				_state = WriteState.Content;
@@ -310,11 +307,8 @@ namespace Mono.Xml.Xsl
 				if (attr.Prefix == prefix || attr.Namespace == nsUri)
 					return; //don't touch explicitly declared attributes
 			}
-			if (_currentNamespaceDecls [prefix] as string != nsUri) {
-				if (!_currentNsPrefixes.Contains (prefix))
-					_currentNsPrefixes.Add (prefix);
+			if (_currentNamespaceDecls [prefix] as string != nsUri)
 				_currentNamespaceDecls [prefix] = nsUri;
-			}
 		}
 			 		
 		public override void WriteComment (string text)

@@ -1,5 +1,11 @@
 2005-03-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* GenericOutputter.cs : no need to use two collections to store
+	  pending attributes. Just use ordered ListDictionary.
+	  newNamespace.Add(int) causes extraneous boxing.
+
+2005-03-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XslTransformProcessor.cs : renamed TryElementNamespacesOutput() to
 	  OutputLiteralNamespaceUriNodes() so that everyone can understand
 	  what it means and when it should be invoked.
