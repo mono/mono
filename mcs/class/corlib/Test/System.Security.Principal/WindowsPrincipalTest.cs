@@ -2,9 +2,10 @@
 // WindowsPrincipalTest.cs - NUnit Test Cases for WindowsPrincipal
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -25,7 +26,6 @@ namespace MonoTests.System.Security.Principal {
 		}
 
 		[Test]
-		[Ignore ("not currently supported on mono")]
 		public void Current () 
 		{
 			WindowsPrincipal p = new WindowsPrincipal (WindowsIdentity.GetCurrent ());
@@ -47,7 +47,6 @@ namespace MonoTests.System.Security.Principal {
 		}
 
 		[Test]
-		[Ignore ("not currently supported on mono")]
 		public void Anonymous () 
 		{
 			WindowsPrincipal p = new WindowsPrincipal (WindowsIdentity.GetAnonymous ());

@@ -1,3 +1,9 @@
+2004-04-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WindowsIdentityTest.cs: Adjusted unit tests to run on both Windows
+	and Linux (or any POSIX compliant OS).
+	* WindowsPrincipalTest.cs: Removed [Ignore] from some tests.
+
 2003-12-29  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* WindowsIdentityTest.cs: New. Partial unit test for WindowsIdentity.
