@@ -2736,9 +2736,16 @@ namespace System {
 					       IFormatProvider provider) 
 		{
 			if (value == null) {
-				if ((conversionType != null) && conversionType.IsValueType)
+				if ((conversionType != null) && conversionType.IsValueType){
+#if NET_2_0
 					throw new InvalidCastException ("Null object can not be converted to a value type.");
-				else
+#else
+					//
+					// Bug compatibility with 1.0
+					//
+					throw new NullReferenceException ("Null object can not be converted to a value type.");
+#endif
+				} else
 					return null;
 			}
 
