@@ -1,3 +1,8 @@
+2001-07-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* Convert.cs ToByte (float value), ToByte (double value) Use IsNan
+	instead of comparing the value to Nan.
+
 2001-07-19  Duco Fijma (duco@lorentz.xs4all.nl)
 
 	* TimeSpan.cs: New implementation.

@@ -6,8 +6,11 @@ ArithmeticException.cs
 Array.cs
 ArrayTypeMismatchException.cs
 Boolean.cs
+Byte.cs
+Char.cs
 Convert.cs
 DivideByZeroException.cs
+Double.cs
 DuplicateWaitObjectException.cs
 Exception.cs
 ExecutionEngineException.cs
@@ -33,7 +36,10 @@ NullReferenceException.cs
 OutOfMemoryException.cs
 OverflowException.cs
 RankException.cs
+SByte.cs
+Single.cs
 StackOverflowException.cs
+String.cs
 SystemException.cs
 TypeCode.cs
 TypeInitializationException.cs
