@@ -1,3 +1,7 @@
+2004-11-24  Martin Baulig  <martin@ximian.com>
+
+	* ecore.cs (Expression.LoadFromPtr): Use `ldobj' for generic parameters.
+
 2004-11-20  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (Invocation.InferType): Correctly infer generic

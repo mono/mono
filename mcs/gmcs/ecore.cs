@@ -1217,11 +1217,11 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Ldind_Ref);
 				else
 					LoadFromPtr (ig, TypeManager.EnumToUnderlying (t));
-			} else if (t.IsValueType)
+			} else if (t.IsValueType || t.IsGenericParameter)
 				ig.Emit (OpCodes.Ldobj, t);
 			else if (t.IsPointer)
 				ig.Emit (OpCodes.Ldind_I);
-			else 
+			else
 				ig.Emit (OpCodes.Ldind_Ref);
 		}
 
