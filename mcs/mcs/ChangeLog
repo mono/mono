@@ -1,3 +1,15 @@
+2002-07-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (FieldExpr.AddressOf): Fix for test-139 (augmented
+	now).  If the instace expression supports IMemoryLocation, we use
+	the AddressOf method from the IMemoryLocation to extract the
+	address instead of emitting the instance.
+
+	This showed up with `This', as we were emitting the instance
+	always (Emit) instead of the Address of This.  Particularly
+	interesting when This is a value type, as we dont want the Emit
+	effect (which was to load the object).
+	
 2002-07-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* attribute.cs: Pass the entry point to the DefinePInvokeMethod
