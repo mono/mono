@@ -1,3 +1,9 @@
+2004-12-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* test-sn.il: New. Added test when including a public key to test for
+	strongnaming an assembly (/key option).
+	* sn.snk: New. Strongname key for the test-sn.il test.
+
 2003-07-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* test-31.il: Added tests for static properties. Also made the code
