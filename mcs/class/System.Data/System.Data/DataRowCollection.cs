@@ -87,6 +87,8 @@ namespace System.Data
 		/// </summary>
 		public virtual DataRow Add (object[] values) 
 		{
+			if (values.Length > table.Columns.Count)
+				throw new ArgumentException ("The array is larger than the number of columns in the table.");
 			DataRow row = table.NewRow ();
 			row.ItemArray = values;
 			Add (row);
@@ -246,10 +248,17 @@ namespace System.Data
 				// we have to check that the new row doesn't colide with existing row
 				ValidateDataRowInternal(row);
 				
-			if (pos >= List.Count)
+			if (pos >= List.Count) {
+				row.RowID = List.Count;
 				List.Add (row);
-			else
+			}
+			else {
 				List.Insert (pos, row);
+				row.RowID = pos;
+				for (int i = pos+1; i < List.Count; i++) {
+        	                        ((DataRow)List [i]).RowID = i;
+	                        }
+			}
 				
 			row.HasParentCollection = true;
 			row.AttachRow ();

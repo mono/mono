@@ -176,6 +176,19 @@ namespace MonoTests.System.Data
 				// LAMESPEC: MSDN says this exception is InvalidCastException
 				AssertEquals ("test#26", typeof (ArgumentException), e.GetType ());
 			}
+
+			object [] obs1 = new object [5];
+			obs1 [0] = "A";
+			obs1 [1] = "B";
+			obs1 [2] = "C";
+			obs1 [3] = 38;
+			obs1 [4] = "Extra";
+			try {
+				Rows.Add (obs1);
+				Fail ("test#27");
+			} catch (Exception e) {
+				AssertEquals ("test#28", typeof(ArgumentException), e.GetType ());
+			}
 		}
 		
 		[Test]
@@ -531,6 +544,57 @@ namespace MonoTests.System.Data
 
 			Rows.InsertAt (Row, 500);
 			AssertEquals ("test#07", "g", Rows [6][0]);
+
+			try {
+                                Rows.InsertAt (Row, 6);	//Row already belongs to the table
+                                Fail ("test#08");
+                        }
+                        catch (Exception e) {
+                                AssertEquals ("test#09", typeof (ArgumentException), e.GetType ());
+                                AssertEquals ("test#10", "This row already belongs to this table.", e.Message);
+                        }
+
+			DataTable table = new DataTable ();
+			DataColumn col = new DataColumn ("Name");
+			table.Columns.Add (col);
+			Row = table.NewRow ();
+			Row ["Name"] = "Abc";
+			table.Rows.Add (Row);
+			try {
+				Rows.InsertAt (Row, 6);
+				Fail ("test#11");
+			}
+			catch (Exception e) {
+				AssertEquals ("test#12", typeof (ArgumentException), e.GetType ());
+				AssertEquals ("test#13", "This row already belongs to another table.", e.Message);
+			}
+
+			table = new DataTable ();
+			col = new DataColumn ("Name");
+			col.DataType = typeof (string);
+			table.Columns.Add (col);
+			UniqueConstraint uk = new UniqueConstraint (col);
+			table.Constraints.Add (uk);
+			
+			Row = table.NewRow ();
+			Row ["Name"] = "aaa";
+			table.Rows.InsertAt (Row, 0);
+	
+			Row = table.NewRow ();
+                        Row ["Name"] = "aaa";
+			try {
+				table.Rows.InsertAt (Row, 1);
+				Fail ("test#14");
+			}
+			catch (Exception e) {
+				AssertEquals ("test#15", typeof (ConstraintException), e.GetType ());
+			}
+			try {
+				table.Rows.InsertAt (null, 1);
+			}
+			catch (Exception e) {
+				AssertEquals ("test#16", typeof (ArgumentNullException), e.GetType ());
+			}
 		}
 		
 		[Test]
