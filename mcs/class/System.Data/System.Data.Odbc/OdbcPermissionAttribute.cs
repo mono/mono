@@ -56,13 +56,7 @@ namespace System.Data.Odbc {
 
 		public override IPermission CreatePermission () 
 		{
-			if (base.Unrestricted) {
-				return new OdbcPermission (PermissionState.Unrestricted);
-			}
-
-			OdbcPermission p = new OdbcPermission (PermissionState.None, this.AllowBlankPassword);
-			p.Add (this.ConnectionString, this.KeyRestrictions, this.KeyRestrictionBehavior);
-			return p;
+			return new OdbcPermission (this);
 		}
 
 		#endregion

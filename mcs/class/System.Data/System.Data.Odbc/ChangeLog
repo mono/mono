@@ -1,3 +1,10 @@
+2004-09-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* OdbcPermission.cs: Added internal constructor accepting an Odbc
+	PermissionAttribute parameter (using base class protected ctor).
+	* OdbcPermissionAttribute.cs: Copy now use the new OdbcPermission
+	constructor.
+
 2004-09-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* OdbcPermission.cs: Mostly completed (needs tests).

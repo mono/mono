@@ -67,6 +67,12 @@ namespace System.Data.Odbc {
 		{
 		}
 
+		// easier (and common) permission creation from attribute class
+		internal OdbcPermission (DBDataPermissionAttribute attribute)
+			: base (attribute)
+		{
+		}
+
 		#endregion
 
 		#region Properties
