@@ -10,9 +10,11 @@
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System.Resources {
+namespace System.Resources
+{
 
-	   public class MissingManifestResourceException: Exception {
+	   public class MissingManifestResourceException: Exception
+	   {
 			 private string param;
 
 			 // Constructors

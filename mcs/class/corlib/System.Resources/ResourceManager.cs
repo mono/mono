@@ -11,10 +11,11 @@ using System.Collections;
 using System.Reflection;
 using System.Globalization;
 
-namespace System.Resources {
-
-	  [Serializable]
-	   public class ResourceManager {
+namespace System.Resources
+{
+	   [Serializable]
+	   public class ResourceManager
+	   {
 			 public static readonly int HeaderVersionNumber;
 		   	 // public static readonly int MagicNumber = 0xBEEFCACE;
 
@@ -28,7 +29,8 @@ namespace System.Resources {
 			 // constructors
 			 public ResourceManager () {}
 
-			 public ResourceManager (Type resourceSource) {
+			 public ResourceManager (Type resourceSource)
+			 {
 				    if (resourceSource == null)
 						  throw new ArgumentNullException ("resourceSource is null.");
 
@@ -39,7 +41,8 @@ namespace System.Resources {
 				    resourceSetType = resourceSource;
 			 }
 
-			 public ResourceManager (string baseName, Assembly assembly) {
+			 public ResourceManager (string baseName, Assembly assembly)
+			 {
 				    if (baseName == null || assembly == null)
 						  throw new ArgumentNullException ("The arguments are null.");
 
@@ -49,7 +52,8 @@ namespace System.Resources {
 				    resourceSetType = typeof (ResourceSet);
 			 }
 			 
-			 public ResourceManager (string baseName, Assembly assembly, Type usingResourceSet) {
+			 public ResourceManager (string baseName, Assembly assembly, Type usingResourceSet)
+			 {
 				    if (baseName == null || assembly == null)
 						  throw new ArgumentNullException ("The arguments are null.");
 
@@ -68,32 +72,40 @@ namespace System.Resources {
 			 [MonoTODO]
 			 public static ResourceManager CreateFileBasedResourceManager (string baseName,
 															   string resourceDir,
-															   Type usingResourceSet) {
+															   Type usingResourceSet)
+			 {
 				    return null;
 			 }
 
-			 public virtual string BaseName { get { return BaseNameField; }}
+			 public virtual string BaseName
+			 {
+				    get { return BaseNameField; }
+			 }
 
-			 public virtual bool IgnoreCase {
+			 public virtual bool IgnoreCase
+			 {
 				    get { return ignoreCase; }
 				    set { ignoreCase = value; }
 			 }
 
-			 public virtual Type ResourceSetType {
+			 public virtual Type ResourceSetType
+			 {
 					get { return resourceSetType; }
 			 }
 			 
 			 [MonoTODO]
 			 public virtual ResourceSet GetResourceSet (CultureInfo culture,
 											    bool createIfNotExists,
-											    bool tryParents) {
+											    bool tryParents)
+			 {
 				    if (culture == null)
 						  throw new ArgumentNullException ("CultureInfo is a null reference.");
 				return null;
 			 }
 
 			 [MonoTODO]
-			 public virtual string GetString (string name) {
+			 public virtual string GetString (string name)
+			 {
 				    if (name == null)
 						  throw new ArgumentNullException ("Name is null.");
 				    if (ResourceSets.Contains (name)) {
@@ -106,29 +118,34 @@ namespace System.Resources {
 			 }
 
 			 [MonoTODO]
-			 public virtual string GetString (string name, CultureInfo culture) {
+			 public virtual string GetString (string name, CultureInfo culture)
+			 {
 				    if (name == null)
 						  throw new ArgumentNullException ("Name is null.");
 				    return null;
 			 }
 
-			 protected virtual string GetResourceFileName (CultureInfo culture) {
+			 protected virtual string GetResourceFileName (CultureInfo culture)
+			 {
 				    return culture.Name + ".resources";
 			 }
 
 			 [MonoTODO]
 			 protected virtual ResourceSet InternalGetResourceSet (CultureInfo culture,
 									       bool Createifnotexists,
-									       bool tryParents) {
+									       bool tryParents)
+			 {
 				    return null;
 			 }
 		   
-			 public virtual void ReleaseAllResources () {
+			 public virtual void ReleaseAllResources ()
+			 {
 				    foreach (ResourceSet r in ResourceSets)
 						  r.Close();
 			 }
 
-			 protected static CultureInfo GetNeutralResourcesLanguage (Assembly a) {
+			 protected static CultureInfo GetNeutralResourcesLanguage (Assembly a)
+			 {
 				    foreach (Attribute attribute in a.GetCustomAttributes (false)) {
 						  if (attribute is NeutralResourcesLanguageAttribute)
 								return new CultureInfo ((attribute as NeutralResourcesLanguageAttribute).CultureName);
@@ -136,7 +153,8 @@ namespace System.Resources {
 				    return null;
 			 }
 
-			 protected static Version GetSatelliteContractVersion (Assembly a) {
+			 protected static Version GetSatelliteContractVersion (Assembly a)
+			 {
 				    foreach (Attribute attribute in a.GetCustomAttributes (false)) {
 						  if (attribute is SatelliteContractVersionAttribute)
 								return new Version ((attribute as SatelliteContractVersionAttribute).Version);

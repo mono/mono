@@ -7,17 +7,21 @@
 // (C) 2001 Ximian, Inc.		http://www.ximian.com
 //
 
-namespace System.Resources {
+namespace System.Resources
+{
 	   [AttributeUsage (AttributeTargets.Assembly)]
-	   public sealed class NeutralResourcesLanguageAttribute : Attribute {
+	   public sealed class NeutralResourcesLanguageAttribute : Attribute
+	   {
 
 			 string culture;
 
 			 // Constructors
-			 public NeutralResourcesLanguageAttribute (string cultureName) {
+			 public NeutralResourcesLanguageAttribute (string cultureName)
+			 {
 				    culture = cultureName;
 			 }
-			 public string CultureName {
+			 public string CultureName
+			 {
 				    get { return culture; }
 			 }
 	   }

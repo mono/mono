@@ -10,9 +10,11 @@
 using System;
 using System.Collections;
 
-namespace System.Resources {
+namespace System.Resources
+{
 
-	   public interface IResourceReader : IEnumerable, IDisposable {
+	   public interface IResourceReader : IEnumerable, IDisposable
+	   {
 			 void Close();
 			 new IDictionaryEnumerator GetEnumerator();
 	   }

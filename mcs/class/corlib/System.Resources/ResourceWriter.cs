@@ -9,11 +9,13 @@
 
 using System.IO;
 
-namespace System.Resources {
-	   public sealed class ResourceWriter : IResourceWriter {
-
+namespace System.Resources
+{
+	   public sealed class ResourceWriter : IResourceWriter
+	   {
 			 [MonoTODO]
-			 public ResourceWriter (Stream stream) {
+			 public ResourceWriter (Stream stream)
+			 {
 				    if (stream == null)
 						  throw new ArgumentNullException ("stream is null");
 				    if (stream.CanWrite == false)
@@ -21,32 +23,37 @@ namespace System.Resources {
 			 }
 
 			 [MonoTODO]
-			 public ResourceWriter (String fileName) {
+			 public ResourceWriter (String fileName)
+			 {
 				    if (fileName == null)
 						  throw new ArgumentNullException ("fileName is null.");
 			 }
 
 			 [MonoTODO]
-			 public void AddResource (string name, byte[] value) {
+			 public void AddResource (string name, byte[] value)
+			 {
 				    if (name == null || value == null)
 						  throw new ArgumentNullException ("Parameter is a null reference.");
 			 }
 
 			 [MonoTODO]
-			 public void AddResource (string name, object value) {
+			 public void AddResource (string name, object value)
+			 {
 				    if (name == null || value == null)
 						  throw new ArgumentNullException ("Parameter is a null reference.");
 			 }
 
 			 [MonoTODO]
-			 public void AddResource (string name, string value) {
+			 public void AddResource (string name, string value)
+			 {
 				    if (name == null || value == null)
 						  throw new ArgumentNullException ("Parameter is a null reference.");
 			 }
 				    
 			 public void Close () {}
 			 
-			 public void Dispose () {
+			 public void Dispose ()
+			 {
 				    Close();
 			 }
 

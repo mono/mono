@@ -1,8 +1,10 @@
-2002-1-17  Duncan Mak  <duncan@192.168.10-120.masq>
+2002-1-17  Duncan Mak  <duncan@duncan@ximian.com>
 
 	* ResourceSet.cs: Implemented GetObject (string, bool) and GetString
 	(string, bool). ResourceSet has no more MonoTODOs! Also added in the
 	Serializable attribute.
+	
+	* *.cs: convert to Miguel's brace style.
 
 2002-01-17  Duncan Mak  <duncan@ximian.com>
 

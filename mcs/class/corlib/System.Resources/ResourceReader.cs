@@ -10,8 +10,10 @@
 using System.Collections;
 using System.IO;
 
-namespace System.Resources {
-	public sealed class ResoureReader : IResourceReader, IDisposable {
+namespace System.Resources
+{
+	public sealed class ResoureReader : IResourceReader, IDisposable
+	{
 		Stream stream;
 		
 		// Constructors
@@ -59,30 +61,36 @@ namespace System.Resources {
 		
 	}
 	
-	internal class DictionaryEnumerator : IDictionaryEnumerator {
+	internal class DictionaryEnumerator : IDictionaryEnumerator
+	{
 		protected DictionaryEntry entry;
 		protected object key;
 		protected object value;
 		
-		public DictionaryEntry Entry {
+		public DictionaryEntry Entry
+		{
 			get { return entry; }
 		}
 		
-		public object Key {
+		public object Key
+	     {
 			get { return key; }
 		}
 		
-		public object Value {
+		public object Value
+		{
 			get { return value; }
 		}
 		
 		[MonoTODO]
-		public object Current {
+		public object Current
+		{
 			get { return null; }
 		}
 		
 		[MonoTODO]
-		public bool MoveNext () {
+		public bool MoveNext ()
+		{
 			return false;
 		}
 		

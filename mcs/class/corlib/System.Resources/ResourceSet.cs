@@ -10,53 +10,64 @@
 using System.Collections;
 using System.IO;
 
-namespace System.Resources {
+namespace System.Resources
+{
 	   
 	   [Serializable]
-	   public class ResourceSet : IDisposable {
+	   public class ResourceSet : IDisposable
+	   {
 
 			 protected IResourceReader Reader;
-			 protected ResourceHashtable Table;
+			 protected Hashtable Table;
 			 
 			 // Constructors
 			 protected ResourceSet () {}
-			 protected ResourceSet (IResourceReader reader) {
+			 protected ResourceSet (IResourceReader reader)
+			 {
 				    if (reader == null)
 						  throw new ArgumentNullException ("The reader is null.");
 				    Reader = reader;
 			 }
 
-			 protected ResourceSet (Stream stream) {
+			 protected ResourceSet (Stream stream)
+			 {
 				    Reader = new ResourceReader (stream);
 			 }
 			 
-			 protected ResourceSet (String fileName) {
+			 protected ResourceSet (String fileName)
+			 {
 				    Reader = new ResourceReader (fileName);
 			 }
 
-			 public virtual void Close () {
+			 public virtual void Close ()
+			 {
 				    Dispose (true);
 			 }
 
-			 public void Dispose() {
+			 public void Dispose()
+			 {
 				    Dispose (true);
 			 }
 			 
-			 public void Dispose (bool disposing) {
+			 public void Dispose (bool disposing)
+			 {
 				    if (disposing) {
 						  Reader = null;
 						  Table = null;
 				    } 
 			 }
 			 
-			 public virtual Type GetDefaultReader () {
+			 public virtual Type GetDefaultReader ()
+			 {
 				    return (typeof (ResourceReader));
 			 } 
-			 public virtual Type GetDefaultWriter () {
+			 public virtual Type GetDefaultWriter ()
+			 {
 				    return (typeof (ResourceWriter));
 			 }
 
-			 public virtual object GetObject (string name) {
+			 public virtual object GetObject (string name)
+			 {
 				    if (name == null)
 						  throw new ArgumentNullException ("The name parameter is null.");
 				    if (Reader == null)
@@ -67,48 +78,45 @@ namespace System.Resources {
 				    }
 				    if (Table != null)
 						  return Table[name];
-				    return null;
 			 }
 
-			 public virtual object GetObject (string name, bool ignoreCase) {
+			 public virtual object GetObject (string name, bool ignoreCase)
+			 {
 				    if (name == null)
 						  throw new ArgumentNullException ("The name parameter is null.");
 				    if (Reader == null)
 						  throw new InvalidOperationException ("ResourceSet has been closed.");
 				    if (Table == null)
 						  ReadResources ();
-				    
-				    if (Table != null && ignoreCase == false)
-						  return Table[name];
-
 				    if (ignoreCase) {
-						  IComparer c = new CaseInsensitiveComparer ();
-						  Table.comparer (c);
-						  return Table[name];
-				    }
-				    
-				    else {  // Comparer is the default, case sensitive
-						  IComparer c = new Comparer ();
-						  Table.comparer (c);
-						  return Table[name];
-				    }
+						  foreach (DictionaryEntry de in Table) {
+								string key = (string) de.Key;
+
+								if (String.Compare (key, name, true))
+									   return de.Value;
+						  }
+				    } else
+						  return Table[name]
 			 }
 
-			 public virtual string GetString (string name) {
+			 public virtual string GetString (string name)
+			 {
 				    Object o = GetObject (name);
 				    if (o is string)
 						  return (string) o;
 				    return null;
 			 }
 
-			 public virtual string GetString (string name, bool ignoreCase) {
+			 public virtual string GetString (string name, bool ignoreCase)
+			 {
 				    Object o = GetObject (name, ignoreCase);
 				    if (o is string)
 						  return (string) o;
 				    return null;
 			 }
 
-			 public virtual void ReadResources () {
+			 public virtual void ReadResources ()
+			 {
 				    IDictionaryEnumerator i = Reader.GetEnumerator();
 
 				    if (Table == null)
@@ -119,6 +127,5 @@ namespace System.Resources {
 						  Table.Add (i.Key, i.Value);
 			 }
 	   }
-	   public class ResourceHashtable : Hashtable {}
 }
 
