@@ -1,4 +1,11 @@
 
+Tue Aug 28 15:47:15 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, class.h: add an interfaces member to MonoClass.
+	* image.c, image.h: add assembly_name field to MonoImage
+	from the assembly table.
+	* metadata.c, metadata.h: add mono_metadata_interfaces_from_typedef ().
+
 Mon Aug 27 20:12:01 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: Handle Array in mono_class_from_mono_type ().
