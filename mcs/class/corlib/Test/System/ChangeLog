@@ -1,3 +1,8 @@
+2005-01-28  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* EnvironmentCas.cs: New. Permission tests for Environment.
+	* ExceptionCas.cs: New. Permission tests for Exception.
+
 2005-01-27  Nick Drochak  <ndrochak@ieee.org>
 
 	* UInt64Test.cs: Identify tests better
