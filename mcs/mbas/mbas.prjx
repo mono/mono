@@ -36,6 +36,7 @@
     <File name="./support.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="./tree.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="./typemanager.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="./ChangeLog" subtype="Code" buildaction="Nothing" dependson="" data="" />
   </Contents>
   <References>
     <Reference type="Gac" refto="/usr/lib/Mono.GetOptions.dll" localcopy="True" />

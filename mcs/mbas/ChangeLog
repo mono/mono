@@ -1,3 +1,6 @@
+2004/03/02  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* mb-tokenizer.cs : handling better linebreak, specially when delaing with literals and preprocessing directives 
+
 2004-03-16 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: 
 		- changed variable declaration grammar and added support for multiple variables declartion under single type e.g. dim x, y as integer

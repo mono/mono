@@ -281,11 +281,21 @@ namespace Mono.MonoBASIC
 			styles = NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint;
 		}
 
+		public Tokenizer (System.IO.TextReader input, string fname, ArrayList defines)
+		{
+			this.ref_name = fname;
+			reader = input;
+			putback_char = -1;
+			
+			Location.Push (fname);
+		}
+
 		bool is_keyword (string name)
 		{
 			bool res;
+			name = name.ToLower();
 
-			res = keywords.Contains(name.ToLower());
+			res = keywords.Contains(name);
 			if ((name == "get" || name == "set") && handle_get_set == false)
 				return false;
 			return res;
@@ -843,6 +853,15 @@ namespace Mono.MonoBASIC
 		}
 		
 		private bool tokens_seen = false;
+		
+		private void nextLine()
+		{
+			cant_have_a_type_character = true;
+			line++;
+			ref_line++;
+			col = 0;
+			tokens_seen = false;
+		}
 
 		public int xtoken ()
 		{
@@ -879,11 +898,7 @@ namespace Mono.MonoBASIC
 				// Handle EOL.
 				if (IsEOL(c))
 				{
-					cant_have_a_type_character = true;
-					line++;
-					ref_line++;
-					col = 0;
-					tokens_seen = false;
+					nextLine();
 					if (current_token == Token.EOL) // if last token was also EOL keep skipping
 						continue;
 					return Token.EOL;
@@ -972,9 +987,7 @@ namespace Mono.MonoBASIC
 					return Token.LITERAL_DATE;
 				}
 				if (IsEOL(c)) {
-					col = 0;
-					line++;
-					ref_line++;
+					nextLine();
 					break;
 				} 
 				if (c == '-')
@@ -1013,8 +1026,11 @@ namespace Mono.MonoBASIC
 				}
 
 				if (IsEOL(c))
+				{
+					nextLine();
 					return Token.ERROR;
-							
+				}
+			
 				s.Append ((char) c);
 			}
 					
@@ -1095,15 +1111,6 @@ namespace Mono.MonoBASIC
 */				
 		}
 
-		public Tokenizer (System.IO.TextReader input, string fname, ArrayList defines)
-		{
-			this.ref_name = fname;
-			reader = input;
-			putback_char = -1;
-			
-			Location.Push (fname);
-		}
-
 		static StringBuilder static_cmd_arg = new StringBuilder ();
 		
 		void get_cmd_arg (out string cmd, out string arg)
@@ -1111,9 +1118,24 @@ namespace Mono.MonoBASIC
 			int c;
 			
 			tokens_seen = false;
+			cmd = "";
 			arg = "";
-			static_cmd_arg.Length = 0;
 				
+			// skip over white space
+			while ((c = getChar ()) != -1 && (c != '\n') && (c != '\r') && ((c == ' ') || (c == '\t')))
+				;
+
+			if (c == '\n'){
+				line++;
+				ref_line++;
+				return;
+			} else if (c == '\r')
+				col = 0;
+				
+			static_cmd_arg.Length = 0;
+			static_cmd_arg.Append ((char) c);
+			
+
 			while ((c = getChar ()) != -1 && (c != '\n') && (c != ' ') && (c != '\t') && (c != '\r')){
 				static_cmd_arg.Append ((char) c);
 			}
@@ -1128,7 +1150,7 @@ namespace Mono.MonoBASIC
 				col = 0;
 
 			// skip over white space
-			while ((c = getChar ()) != -1 && (c != '\n') && ((c == '\r') || (c == ' ') || (c == '\t')))
+			while ((c = getChar ()) != -1 && (c != '\n') && (c != '\r') && ((c == ' ') || (c == '\t')))
 				;
 
 			if (c == '\n'){
@@ -1425,13 +1447,13 @@ namespace Mono.MonoBASIC
 		//
 		bool handle_preprocessing_directive (bool caller_is_taking)
 		{
-			char [] blank = { ' ', '\t' };
+			//char [] blank = { ' ', '\t' };
 			string cmd, arg;
 			bool region_directive = false;
 
 			get_cmd_arg (out cmd, out arg);
 			// Eat any trailing whitespaces and single-line comments
-			if (arg.IndexOf ("//") != -1)
+			if (arg.IndexOf ("'") != -1)
 				arg = arg.Substring (0, arg.IndexOf ("//"));
 			arg = arg.TrimEnd (' ', '\t');
 
@@ -1608,7 +1630,7 @@ namespace Mono.MonoBASIC
 				return true;
 			}
 
-			Report.Error (1024, Location, "Preprocessor directive expected (got: " + cmd + ")");
+			Report.Error (1024, Location, "Preprocessor directive expected (got: '" + cmd + "')");
 			return true;
 		}
 
