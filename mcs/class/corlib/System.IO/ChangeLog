@@ -1,3 +1,8 @@
+2004-03-25  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Path.cs: In GetDirectoryName, fixed check for volumeSeparator. This
+	  fixes bug #53892.
+
 2004-03-24  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* File.cs: In Move, throw IOException instead of ArgumentException if destination
