@@ -1,3 +1,8 @@
+2004-02-14  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+        * Npgsql/NpgsqlCommand.cs: Fixed a bug when handling queries which retur
+n no data. Thanks Morten Mertner <morten@mertner.com> for the fix.
+
 2004-02-10  Francisco Figueiredo Jr. <fxjrlists@yahoo.com.br>
 	
 	* NpgsqlTypes/NpgsqlTypesHelper.cs: Added support for datetime and time datatypes with timezone data. Thanks Sami Kuhmonen (sami@iqs.fi).
