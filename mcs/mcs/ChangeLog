@@ -1,3 +1,8 @@
+2003-01-21  Tim Haynes <thaynes@openlinksw.com>
+
+	* driver.cs: use DirectorySeparatorChar instead of a hardcoded "/" to
+	get the path to *corlib.dll.
+
 2003-01-21  Nick Drochak <ndrochak@gol.com>
 
 	* cs-tokenizer.cs:
