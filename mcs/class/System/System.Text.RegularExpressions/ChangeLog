@@ -1,3 +1,8 @@
+2005-02-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* parser.cs: stuff inside {} might not be a quantifier. Fixes
+	bug #69193.
+
 2005-01-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* quicksearch.cs: handle IgnoreCase when getting the shift distance.
