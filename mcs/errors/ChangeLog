@@ -1,3 +1,7 @@
+2002-08-11  Martin Baulig  <martin@gnome.org>
+
+	* error-3.cs: New test.
+
 2002-08-08  Martin Baulig  <martin@gnome.org>
 
 	* cs1540.cs: New test.

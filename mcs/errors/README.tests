@@ -3,7 +3,7 @@ Test cases listed by Category:
 
 * Flow Analysis
 
-  error-1.cs
+  error-1.cs error-3.cs
 
 * Type Containers
 
@@ -20,3 +20,6 @@ error-2.cs
 ----------
 Base types are less accessible than the current type.
 
+error-3.cs
+----------
+Flow analysis: Check struct members.
