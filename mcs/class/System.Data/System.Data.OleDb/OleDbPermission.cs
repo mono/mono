@@ -22,6 +22,10 @@ namespace System.Data.OleDb
 		#region Constructors
 
 		[MonoTODO]
+#if NET_1_1
+                [Obsolete ("use OleDbPermission(PermissionState.None)", true)]
+#endif
+
 		public OleDbPermission () : base (PermissionState.None)
 		{
 			throw new NotImplementedException ();
@@ -35,6 +39,9 @@ namespace System.Data.OleDb
 		}
 
 		[MonoTODO]
+#if NET_1_1
+                [Obsolete ("use OleDbPermission(PermissionState.None)", true)]
+#endif
 		public OleDbPermission (PermissionState state, bool allowBlankPassword)
 			: base (state, allowBlankPassword, true)
 		{

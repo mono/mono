@@ -99,6 +99,7 @@ namespace System.Data.OleDb
 		[DataSysDescriptionAttribute ("The parameter generic type")]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		[DataCategory ("DataCategory_Data")]
 		public DbType DbType {
 			get { return dbType; }
 			set { 
@@ -108,6 +109,7 @@ namespace System.Data.OleDb
 		}
 		
 		[DataSysDescriptionAttribute ("Input, output, or bidirectional parameter")]			    [DefaultValue (ParameterDirection.Input)]
+		[DataCategory ("DataCategory_Data")]
 		public ParameterDirection Direction {
 			get { return direction; }
 			set { direction = value; }
@@ -126,6 +128,7 @@ namespace System.Data.OleDb
 		[DefaultValue (OleDbType.VarWChar)]
 		[DataSysDescriptionAttribute ("The parameter native type")]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
+		[DataCategory ("DataCategory_Data")]
 		public OleDbType OleDbType {
 			get { return oleDbType; }
 			set {
@@ -143,6 +146,7 @@ namespace System.Data.OleDb
 
 		[DefaultValue (0)]
                 [DataSysDescriptionAttribute ("For decimal, numeric, varnumeric DBTypes")]
+		[DataCategory ("DataCategory_Data")]
 		public byte Precision {
 			get { return precision; }
 			set { precision = value; }
@@ -150,6 +154,7 @@ namespace System.Data.OleDb
 		
 		[DefaultValue (0)]
                 [DataSysDescriptionAttribute ("For decimal, numeric, varnumeric DBTypes")]
+		[DataCategory ("DataCategory_Data")]
 		public byte Scale {
 			get { return scale; }
 			set { scale = value; }
@@ -158,6 +163,7 @@ namespace System.Data.OleDb
 
 		[DefaultValue (0)]
                 [DataSysDescriptionAttribute ("Size of variable length data types (string & arrays)")]
+		[DataCategory ("DataCategory_Data")]
 		public int Size {
 			get { return size; }
 			set { size = value; }
@@ -165,6 +171,7 @@ namespace System.Data.OleDb
 
 		[DefaultValue ("")]
                 [DataSysDescriptionAttribute ("When used by a DataAdapter.Update, the source column name that is used to find the DataSetColumn name in the ColumnMappings. This is to copy a value between the parameter and a datarow")]
+		[DataCategory ("DataCategory_Data")]
 		public string SourceColumn {
 			get { return sourceColumn; }
 			set { sourceColumn = value; }
@@ -172,6 +179,7 @@ namespace System.Data.OleDb
 		
 		[DefaultValue (DataRowVersion.Current)]
                 [DataSysDescriptionAttribute ("When used by a DataAdapter.Update(UpdateCommand only), the version of the DataRow value that is used to update the data source")]
+		[DataCategory ("DataCategory_Data")]
 		public DataRowVersion SourceVersion {
 			get { return sourceVersion; }
 			set { sourceVersion = value; }
@@ -180,6 +188,7 @@ namespace System.Data.OleDb
 		[DefaultValue (null)]
                 [DataSysDescriptionAttribute ("value of the parameter")]
 		[TypeConverter (typeof (StringConverter))]
+		[DataCategory ("DataCategory_Data")]
 		public object Value {
 			get { return value; }
 			set { this.value = value; }

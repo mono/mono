@@ -228,7 +228,12 @@ namespace System.Data.OleDb
 
 		#region Events and Delegates
 
+		[DataSysDescription ("DbDataAdapter_RowUpdated")]
+                [DataCategory ("DataCategory_Update")]
 		public event OleDbRowUpdatedEventHandler RowUpdated;
+
+		[DataSysDescription ("DbDataAdapter_RowUpdating")]
+                [DataCategory ("DataCategory_Update")]
 		public event OleDbRowUpdatingEventHandler RowUpdating;
 
 		#endregion // Events and Delegates

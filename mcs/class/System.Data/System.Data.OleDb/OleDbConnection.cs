@@ -292,7 +292,12 @@ namespace System.Data.OleDb
 
 		#region Events and Delegates
 
+                [DataSysDescription ("DbConnection_InfoMessage")]
+                [DataCategory ("DataCategory_InfoMessage")]
 		public event OleDbInfoMessageEventHandler InfoMessage;
+
+		[DataSysDescription ("DbConnection_StateChange")]
+                [DataCategory ("DataCategory_StateChange")]
 		public event StateChangeEventHandler StateChange;
 
 		#endregion
