@@ -1,3 +1,7 @@
+2003-11-12  Jackson Harper  <jackson@ximian.com>
+
+	* monograph.c: Change default assembly name to mscorlib.dll
+	
 Thu Feb  6 02:43:23 PST 2003 Piers Haken <piersh@friskit.com>
 
 	* monograph.c: more warning cleanups
