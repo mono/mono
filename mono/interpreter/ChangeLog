@@ -1,3 +1,6 @@
+2002-02-22  Radek Doulik  <rodo@ximian.com>
+
+	* interp.c: s/gulong/guint64 as it differs on ppc
 
 Wed Feb 20 22:18:40 CET 2002 Paolo Molaro <lupus@ximian.com>
 
