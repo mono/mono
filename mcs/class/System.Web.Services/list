@@ -93,6 +93,7 @@ System.Web.Services.Protocols/MimeFormatter.cs
 System.Web.Services.Protocols/MimeParameterReader.cs
 System.Web.Services.Protocols/MimeParameterWriter.cs
 System.Web.Services.Protocols/MimeReturnReader.cs
+System.Web.Services.Protocols/MimeReturnWriter.cs
 System.Web.Services.Protocols/NopReturnReader.cs
 System.Web.Services.Protocols/PatternMatcher.cs
 System.Web.Services.Protocols/ServerProtocol.cs
@@ -128,6 +129,7 @@ System.Web.Services.Protocols/WebClientProtocol.cs
 System.Web.Services.Protocols/WebServiceHandler.cs
 System.Web.Services.Protocols/WebServiceHandlerFactory.cs
 System.Web.Services.Protocols/XmlReturnReader.cs
+System.Web.Services.Protocols/XmlReturnWriter.cs
 System.Web.Services.Discovery/ContractReference.cs
 System.Web.Services.Discovery/ContractSearchPattern.cs
 System.Web.Services.Discovery/DiscoveryClientDocumentCollection.cs
