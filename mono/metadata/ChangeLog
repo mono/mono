@@ -1,3 +1,8 @@
+2002-09-18  Dick Porter  <dick@ximian.com>
+
+	* threads.c (mon_new): Use the GC_MALLOC macro to hide differences
+	on netbsd.  Fixes bug 30051.
+
 2002-09-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* reflection.c:
