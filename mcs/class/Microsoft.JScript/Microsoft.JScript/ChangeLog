@@ -1,3 +1,7 @@
+2004-11-22  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* Relational.cs (Emit): fix typo, emit boxing to boolean.
+
 2004-11-19  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* NumericBinary.cs: implement EvaluateNumericBinary.
