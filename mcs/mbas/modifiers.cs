@@ -167,7 +167,7 @@ namespace Mono.MonoBASIC {
 				ma |= MethodAttributes.Abstract | MethodAttributes.Virtual |
 					MethodAttributes.HideBySig;
 			}
-			if ((mod_flags & SEALED) != 0)
+			if ((mod_flags & NONVIRTUAL) != 0)
 				ma |= MethodAttributes.Final;
 
 			if ((mod_flags & VIRTUAL) != 0)

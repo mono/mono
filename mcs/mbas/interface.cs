@@ -74,7 +74,7 @@ namespace Mono.MonoBASIC {
 		public Interface (TypeContainer parent, string name, int mod, Attributes attrs, Location l)
 			: base (parent, name, l)
 		{
-			ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE, l);
+			ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PUBLIC, l);
 			OptAttributes = attrs;
 			
 			method_builders = new ArrayList ();

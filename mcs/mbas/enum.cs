@@ -54,7 +54,7 @@ namespace Mono.MonoBASIC {
 		{
 			this.BaseType = type;
 			ModFlags = Modifiers.Check (AllowedModifiers, mod_flags,
-						    IsTopLevel ? Modifiers.INTERNAL : Modifiers.PRIVATE, l);
+						    IsTopLevel ? Modifiers.INTERNAL : Modifiers.PUBLIC, l);
 			OptAttributes = attrs;
 
 			ordered_enums = new ArrayList ();
