@@ -1,3 +1,8 @@
+2002-01-23  Dietmar Maurer  <dietmar@ximian.com>
+
+	* icall.c (ves_icall_appdomain_get_cur_domain): runtime_init the
+	AppDomain object.
+
 2002-01-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* icall.c (ves_icall_appdomain_get_cur_domain): Cache the value of
