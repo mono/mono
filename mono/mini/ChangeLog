@@ -1,3 +1,7 @@
+2005-02-11  Martin Baulig  <martin@ximian.com>
+
+	* debug-mini.c (mono_debug_close_method): Free the line number array.
+
 2005-02-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* aot.c: Break up large methods into smaller ones. Share GOT slots for
