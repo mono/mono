@@ -112,6 +112,8 @@ namespace Mono.MonoBASIC
 		// An out-of-band stack.
 		//
 		Stack oob_stack;
+		
+		ArrayList current_rank_specifiers;
 
 		DoOptions do_type;
 		//
@@ -179,7 +181,7 @@ namespace Mono.MonoBASIC
 %token CSNG
 %token CSTR
 %token CTYPE
-%token DATE
+//%token DATE
 %token DECIMAL	
 %token DECLARE
 %token DEFAULT	
@@ -204,7 +206,7 @@ namespace Mono.MonoBASIC
 %token FRIEND
 %token FUNCTION
 %token GET
-%token GETTYPE
+//%token GETTYPE
 %token GOTO	
 %token HANDLES
 %token IF	
@@ -324,7 +326,7 @@ namespace Mono.MonoBASIC
 //%token OP_AND                 "and"
 //%token OP_OR                  "or"
 %token OP_XOR                 "xor"
-%token OP_MODULUS             //"mod"
+//%token OP_MODULUS             //"mod"
 %token OP_MULT_ASSIGN         "*="
 %token OP_DIV_ASSIGN          "/="
 %token OP_IDIV_ASSIGN         "\\="
@@ -909,8 +911,8 @@ module_member_declarator
 	;
 	
 constant_declaration // TODO: implement truly the logic
-	: CONST identifier ASSIGN constant_expression
-	| CONST identifier AS qualified_identifier ASSIGN constant_expression
+	: CONST identifier ASSIGN primary_expression EOL
+	| CONST identifier AS type ASSIGN constant_expression EOL
 	;
 	   
 opt_class_member_declarations
@@ -1777,7 +1779,7 @@ fixed_parameters
 fixed_parameter
 	: opt_attributes
 	  opt_parameter_modifier
-	  identifier opt_rank_specifier opt_type_spec opt_variable_initializer
+	  identifier opt_rank_specifiers opt_type_spec opt_variable_initializer
 	  {
 	  	Parameter.Modifier pm = (Parameter.Modifier)$2;
 	  	bool opt_parm = ((pm & Parameter.Modifier.OPTIONAL) != 0);
@@ -1797,7 +1799,8 @@ fixed_parameter
 			ptype = (Expression) $5;
 		else
 	  	{
-	  		string t = ((Expression) $5).ToString() + (string) $4;
+	  		//string t = ((Expression) $5).ToString() + (string) $4;
+	  		string t = ((Expression) $5).ToString() + VariableDeclaration.BuildRank ((ArrayList) $4);
 	  		ptype = DecomposeQI (t, lexer.Location);
 	  	}			
 		$$ = new Parameter (ptype, (string) $3, pm,
@@ -1836,12 +1839,12 @@ parameter_modifier
 
 opt_statement_list
 	: /* empty */
-	| statement_list EOL
+	| statement_list end_of_stmt
 	;
 
 statement_list
 	: statement 
-	| statement_list EOL statement
+	| statement_list end_of_stmt statement
 	;
 	
 statement : 
@@ -1867,10 +1870,12 @@ statement :
 	    {
 	    	RaiseEvent ((string) $2, (ArrayList) $4);
 	    }
+	  | array_handling_statement
+	  /* | empty_statement */
 	  ;	
 
 labeled_statement
-	: identifier COLON 
+	: identifier COLON end_of_stmt 
 	  {
 		LabeledStatement labeled = new LabeledStatement ((string) $1, lexer.Location);
 
@@ -1890,17 +1895,89 @@ embedded_statement
 	| try_statement
 	| jump_statement 
 	;
-        
+/*        
+empty_statement
+	: end_of_stmt
+	  {
+		  $$ = new EmptyStatement ();
+	  }
+	;        
+*/
+	
+array_handling_statement
+	: redim_statement
+	| erase_statement
+	;
+	
+redim_statement
+	: REDIM opt_preserve invocation_expression opt_array_initializer
+	  {
+	  	Invocation i = (Invocation) $3;
+	  	ReDim r = new ReDim (i.expr, i.Arguments, (bool) $2, (ArrayList) $4, lexer.Location);
+	  	current_block.AddStatement (r);	
+	  }
+	;	
+	
+opt_preserve
+	: /* empty */ 	{ $$ = false; }
+	| PRESERVE	{ $$ = true;  }
+	;
+	
+redim_clauses
+	: redim_clause
+	  {
+		ArrayList clauses = new ArrayList ();
+
+		clauses.Add ($1);
+		$$ = clauses;
+	  }	
+	| redim_clauses COMMA redim_clause
+	  {
+		ArrayList clauses = (ArrayList) ($1);
+		clauses.Add ($2);
+
+		$$ = clauses;
+	  }	
+	;
+
+redim_clause
+	: invocation_expression
+	/* : identifier OPEN_PARENS expression_list CLOSE_PARENS opt_array_initializer */
+	;
+
+opt_array_initializer
+	: /* empty */
+	| array_initializer
+	;
+			
+erase_statement
+	: ERASE primary_expression
+	;	
+		        
 jump_statement
 	: /*break_statement
 	| continue_statement
-	| goto_statement
-	| throw_statement
 	| */return_statement
+	| goto_statement	
+	| throw_statement	
 	| exit_statement
 	| yield_statement
 	;
 	        
+goto_statement
+	: GOTO identifier  
+	  {
+		$$ = new Goto (current_block, (string) $2, lexer.Location);
+	  }
+	;
+	
+throw_statement
+	: THROW opt_expression
+	  {
+		$$ = new Throw ((Expression) $2, lexer.Location);
+	  }
+	;	
+		        
 exit_statement
 	: EXIT exit_type
 	  {
@@ -1937,7 +2014,7 @@ foreach_statement
 	  {
 		oob_stack.Push (lexer.Location);
 	  }	  
-	  expression EOL
+	  expression end_of_stmt
 	  {
 		
 		start_block();
@@ -1951,6 +2028,8 @@ foreach_statement
 			// Get a reference to this variable.
 			v = new LocalVariableReference (foreach_block, (string) $3, l, vi, false);
 		}
+		else
+			Report.Error (451, "Name '" + (string) $3 + "' is not declared.");
 	
 		oob_stack.Push (v);
 	  } 	  
@@ -2014,7 +2093,7 @@ try_statement
 	;
 				
 try_header
-	: TRY EOL
+	: TRY end_of_stmt
 	  {   
 		start_block();  
 	  }
@@ -2052,7 +2131,7 @@ try_catch_finally
 	  { 
 		tmp_block = end_block(); 
 	  }	
-	  FINALLY EOL
+	  FINALLY end_of_stmt
   	  { 
 		start_block(); 
 	  }	  
@@ -2105,7 +2184,7 @@ opt_identifier
 	;
 
 catch_clause 
-	: CATCH opt_catch_args EOL
+	: CATCH opt_catch_args end_of_stmt
 	{
 		Expression type = null;
 		string id = null;
@@ -2167,7 +2246,7 @@ catch_args
         
         
 do_statement
-	: DO opt_do_construct EOL
+	: DO opt_do_construct end_of_stmt
 	  {
 		start_block();
 		oob_stack.Push (lexer.Location);
@@ -2217,7 +2296,7 @@ while_statement
 		start_block();
 		oob_stack.Push (lexer.Location);
 	}
-	boolean_expression EOL
+	boolean_expression end_of_stmt
 	opt_statement_list
 	END WHILE
 	{
@@ -2230,7 +2309,7 @@ while_statement
 	
 		
 for_statement
-	: FOR qualified_identifier ASSIGN expression TO expression opt_step EOL
+	: FOR identifier ASSIGN expression TO expression opt_step end_of_stmt
 	  {
 	  	start_block();
 	  }
@@ -2295,7 +2374,7 @@ opt_then
 	;
 	
 if_statement_rest
-	: EOL
+	: end_of_stmt
 	  opt_statement_list
 	  END IF
 	  { 
@@ -2304,9 +2383,9 @@ if_statement_rest
 		$$ = new If ((Expression) tmp_expr, (Statement) end_block(), l);
 
 	  }	  
-	| EOL
+	| end_of_stmt
 	  opt_statement_list
-	  ELSE EOL 
+	  ELSE end_of_stmt 
 	  { 
 	  	tmp_block = end_block();
 	  	start_block();
@@ -2317,11 +2396,15 @@ if_statement_rest
 		Location l = (Location) oob_stack.Pop ();
 
 		$$ = new If ((Expression) tmp_expr, (Statement) tmp_block, (Statement) end_block(), l);
-	  }	   
+	  }	
+	| end_of_stmt
+	  opt_statement_list 
+	  ELSEIF boolean_expression opt_then 
+	  if_statement_rest 	     
 	;
 	
 select_statement
-	: SELECT opt_case expression EOL
+	: SELECT opt_case expression end_of_stmt
 	  { 
 		oob_stack.Push (lexer.Location);
 		switch_stack.Push (current_block);
@@ -2357,7 +2440,7 @@ case_sections
 	;
 
 case_section
-	: CASE case_clauses EOL
+	: CASE case_clauses end_of_stmt
 	  { 
 	  	start_block();
 	  }
@@ -2372,7 +2455,7 @@ case_section
 		topmost.statements.Add (new Break (lexer.Location));
 	  	$$ = new SwitchSection ((ArrayList) $2, topmost);
 	  }
-	  | CASE ELSE EOL
+	  | CASE ELSE end_of_stmt
 	    /* FIXME: we should somehow flag an error 
 	       (BC30321 'Case' cannot follow a 'Case Else' 
 	       in the same 'Select' statement.) 
@@ -2469,32 +2552,23 @@ array_creation_expression
 	: object_creation_expression array_initializer
 	  {
 	  	New n = (New) $1;
-	  	string dims = "";
+	  	ArrayList dims = new ArrayList();
 	  	
 	  	if (n.Arguments != null) {
 		  	foreach (Argument a in n.Arguments) {
-		  		if (a.Expr is EmptyExpression)
-		  			dims += ",";
-		  		else
-		  			dims += (((IntLiteral)a.Expr).AsString() + ",");
+		  		dims.Add (a.Expr);
 		  	}
-			dims = "[" + dims.Substring (0, dims.Length - 1) + "]";
 		}
-		else
-			dims = "[]";
 			
 	  	Expression atype = n.RequestedType;
   	
-	  	if (VariableDeclaration.IndexesSpecified(dims)) {
-	  		ArrayList dimlist = VariableDeclaration.ParseIndexList (dims);
-	  		dims = VariableDeclaration.StripIndexesFromDims (dims);
-	  		//$$ = new ArrayCreation (atype, dimlist, dims, (ArrayList) $2, lexer.Location); 
-	  		$$ = new ArrayCreation (atype, dimlist, "", (ArrayList) $2, lexer.Location); 
+	  	if (VariableDeclaration.IndexesSpecified(this)) {
+	  		$$ = new ArrayCreation (atype, dims, "", (ArrayList) $2, lexer.Location); 
 	  	}
 	  	else
 	  	{
-	  		//$$ = new ArrayCreation (atype, dims, (ArrayList) $2, lexer.Location); 
-	  		$$ = new ArrayCreation (atype, dims, (ArrayList) $2, lexer.Location); 
+	  		string rank = VariableDeclaration.BuildRank (dims);
+	  		$$ = new ArrayCreation (atype, rank, (ArrayList) $2, lexer.Location); 
 	  	}
 	  	//Console.WriteLine ("Creating a new array of type " + (atype.ToString()) + " with rank '" + dims + "'");
 	  }
@@ -2569,11 +2643,12 @@ variable_declarator
 	: variable_identifier opt_type_decl opt_variable_initializer
 	  {
 	  	string varname = (string)$1;
-	  	string dims = "[]";
 	  	object varinit = $3;
 	  	Expression vartype;
+	  	ArrayList a_dims = null;
 	  	
 	  	// Some checking is required for particularly weird declarations
+	  	// like Dim a As Integer(,)
 	  	if ($2 is Pair) {
 	  		vartype = (Expression) ((Pair) $2).First;
 	  		if ($3 != null && $3 is ArrayList)
@@ -2582,31 +2657,32 @@ variable_declarator
 			ArrayList args = (ArrayList) ((Pair) $2).Second;
 			if (VariableDeclaration.HasExplicitIndexes (args))	  
 				Report.Error (638, "Array bounds cannot appear in type specifiers.");	
-				
-			varname += "[";
+	
+			string s_vartype = vartype.ToString();				
+			s_vartype += "[";
 			if (args != null)
 				for (int x = 0; x < args.Count; x++)
-					varname += ",";
+					s_vartype += ",";
 				
-			varname += "]";							
+			s_vartype += "]";	
+			vartype = DecomposeQI(s_vartype, Location.Null);						
 	  	}
 	  	else
 	  		vartype = (Expression) $2;
+	  		  		
 	  	/*
 	  	   Check for a declaration like Dim a(2) or Dim a(2,3)
 	  	   If this is the case, we must generate an ArrayCreationExpression
 	  	   and, in case, add the initializer after the array has been created.
 	  	*/
-	  	if (VariableDeclaration.IsArrayDecl (varname)) {
-			if (VariableDeclaration.IndexesSpecified(varname)) { 
-				varname = VariableDeclaration.StripDims (varname, ref dims);
-				ArrayList a_dims = VariableDeclaration.ParseIndexList(dims);
-				varinit = new ArrayCreation (vartype, a_dims,"", (ArrayList) varinit, lexer.Location);
+	  	if (VariableDeclaration.IsArrayDecl (this)) {	
+			if (VariableDeclaration.IndexesSpecified(this)) {   
+				a_dims = (ArrayList) current_rank_specifiers;
+				//varinit = new ArrayCreation (vartype, a_dims, "", (ArrayList) varinit, lexer.Location);
+				varinit = VariableDeclaration.BuildArrayCreator(vartype, a_dims, (ArrayList) varinit, lexer.Location);
 			}
-			else
-				varname = VariableDeclaration.StripDims (varname, ref dims);
-				
-			vartype = DecomposeQI (vartype.ToString() + VariableDeclaration.GetRank (dims), lexer.Location);
+
+			vartype = DecomposeQI (vartype.ToString() + VariableDeclaration.BuildRanks (this), lexer.Location);
 		}
 
 		if (vartype is New) {
@@ -2629,8 +2705,7 @@ variable_identifier
 	: identifier opt_array_name_modifier 
 	  {
 	  	$$ = $1; 
-	  	if ($2 != null)
-	  		$$ = (string)$$ + (string)$2;
+	  	current_rank_specifiers = (ArrayList) $2;
 	  }
 	;		
 		
@@ -2652,7 +2727,6 @@ opt_type_decl
 	  }
 	| AS type OPEN_PARENS opt_argument_list CLOSE_PARENS
 	  {
-	  	// Report.Error (30638, "Array bounds cannot appear in type specifiers");
 	  	$$ = new Pair ($2, $4);;
 	  }
 	| AS NEW type
@@ -2673,7 +2747,7 @@ opt_array_name_modifier
 	;
 	
 array_type_modifier
-	: rank_specifiers  { $$ = $1; }
+	: rank_specifiers		{ $$ = $1; }
 	;
 	
 opt_variable_initializer
@@ -2727,7 +2801,7 @@ variable_initializer_list
  * > The expressions are converted into types during semantic analysis.
  */
 local_variable_type
-	: primary_expression opt_rank_specifier
+	: primary_expression opt_rank_specifiers
 	  { 
 		// FIXME: Do something smart here regarding the composition of the type.
 
@@ -2760,7 +2834,7 @@ local_variable_type
 				$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
 		}
 	  }
-	| builtin_types opt_rank_specifier
+	| builtin_types opt_rank_specifiers
 	  {
 		if ((string) $2 == "")
 			$$ = $1;
@@ -2768,44 +2842,53 @@ local_variable_type
 			$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
 	  }
         ;
-        	
-rank_specifiers
-	: rank_specifier
-	  {
-		  $$ = $1;
-	  }
-	| rank_specifiers rank_specifier
-	  {
-		  $$ = (string) $2 + (string) $1;
-	  }     	
-        ;
-
-rank_specifier
-	: OPEN_PARENS opt_dim_separators CLOSE_PARENS
-	  {
-		$$ = "[" + (string) $2 + "]";
-	  }
-	;
 	        	
-opt_rank_specifier
+opt_rank_specifiers
 	: /* empty */
 	  {
-		  $$ = "";
+		  // $$ = "";
+		  $$ = null;
 	  }
 	| rank_specifiers
 	  {
 			$$ = $1;
 	  }
-	;        	
+	;      
 	
+rank_specifiers
+	: rank_specifier
+	  {
+		  ArrayList rs = new ArrayList();
+		  rs.Add ($1);
+		  $$ = rs;
+	  }
+	| rank_specifiers rank_specifier
+	  {
+		  ArrayList rs = (ArrayList) $1;
+		  rs.Add ($2);
+		  $$ = rs;
+	  }     	
+        ;	  	
+	
+rank_specifier
+	: OPEN_PARENS opt_dim_separators CLOSE_PARENS
+	  {
+		$$ = $2;
+	  }
+	;
+		
 opt_dim_separators
 	: /* empty */
 	  {
-		$$ = "";
+		ArrayList ds = new ArrayList();
+	  	ds.Add (new EmptyExpression());
+	  	$$ = ds;		
 	  }
 	| dim_separators
 	  {
-		$$ = $1;
+		ArrayList ds = (ArrayList) $1;
+	  	ds.Add (new EmptyExpression());
+	  	$$ = ds;	
 	  }	
 	| dim_specifiers
 	  {
@@ -2816,20 +2899,32 @@ opt_dim_separators
 dim_separators
 	: COMMA
 	  {
-		$$ = ",";
+	  	ArrayList ds = new ArrayList();
+	  	ds.Add (new EmptyExpression());
+	  	$$ = ds;
 	  }
 	| dim_separators COMMA
 	  {
-		$$ = (string) $1 + ",";
+		ArrayList ds = (ArrayList) $1;
+	  	ds.Add (new EmptyExpression());
+	  	$$ = ds;		
 	  }
 	;
 
 dim_specifiers
-	: integer_literal 			{ $$ = ((IntLiteral)$1).AsString(); }
-	| dim_specifiers COMMA integer_literal	{ $$ = $1 + "," + ((IntLiteral)$3).AsString(); }
+	: expression
+	  {
+	  	ArrayList ds = new ArrayList();
+	  	ds.Add ((Expression) $1);
+	  	$$ = ds;
+	  }	
+	| dim_specifiers COMMA expression
+	  {
+		ArrayList ds = (ArrayList) $1;
+	  	ds.Add ((Expression) $3);
+	  	$$ = ds;		
+	  }	
 	;
-
-
 	
 /* Expressions */
 primary_expression
@@ -2926,14 +3021,6 @@ invocation_expression
 		$$ = new Invocation ((Expression) $1, (ArrayList) $3, lexer.Location);
 //		Console.WriteLine ("Invocation: {0} with {1} arguments", $1, ($3 != null) ? ((ArrayList) $3).Count : 0);
 	  } 
-	| GETTYPE OPEN_PARENS expression CLOSE_PARENS
-	  {
-	  	Expression GetTypeExpr = DecomposeQI("System.Type.GetType", lexer.Location);
-		ArrayList args = new ArrayList();
-		Argument arg = new Argument ((Expression) $3, Argument.AType.Expression);
-		args.Add (arg);
-		$$ = new Invocation (GetTypeExpr, args, lexer.Location);
-	  }
 	;
 	
 base_access
@@ -3000,35 +3087,6 @@ argument
 variable_reference
 	: expression {/* note ("section 5.4"); */  $$ = $1;  }
 	;
-/*
-element_access
-	: primary_expression OPEN_PARENS expression_list CLOSE_PARENS
-	  {
-		$$ = new ElementAccess ((Expression) $1, (ArrayList) $3, lexer.Location);
-	  }
-	| primary_expression rank_specifiers
-	  {
-		// So the super-trick is that primary_expression
-		// can only be either a SimpleName or a MemberAccess.
-		// The MemberAccess case arises when you have a fully qualified type-name like :
-		// Foo.Bar.Blah i;
-		// SimpleName is when you have
-		// Blah i;
-		Expression expr = (Expression) $1;
-		
-		if (!(expr is SimpleName || expr is MemberAccess)) {
-			Error_ExpectingTypeName (lexer.Location, expr);
-			$$ = TypeManager.system_object_expr;
-		} else {
-			//
-			// So we extract the string corresponding to the SimpleName
-			// or MemberAccess
-			//
-			$$ = new SimpleName (GetQualifiedIdentifier (expr) + (string) $2, lexer.Location);
-		}
-	  }
-	;
-*/
 
 negation_expression
 	: NOT expression 
@@ -3149,7 +3207,12 @@ multiplicative_expression
 		$$ = new Binary (Binary.Operator.Division,
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
-	| multiplicative_expression OP_MODULUS prefixed_unary_expression
+	| multiplicative_expression OP_IDIV prefixed_unary_expression
+	  {
+		$$ = new Binary (Binary.Operator.Division,
+			         (Expression) $1, (Expression) $3, lexer.Location);
+	  }	  
+	| multiplicative_expression MOD prefixed_unary_expression
 	  {
 		$$ = new Binary (Binary.Operator.Modulus,
 			         (Expression) $1, (Expression) $3, lexer.Location);
@@ -3293,6 +3356,13 @@ assignment_expression
 		$$ = new CompoundAssign (
 			Binary.Operator.Division, (Expression) $1, (Expression) $3, l);
 	  }
+	| prefixed_unary_expression OP_IDIV_ASSIGN expression
+	  {
+		Location l = lexer.Location;
+
+		$$ = new CompoundAssign (
+			Binary.Operator.Division, (Expression) $1, (Expression) $3, l);
+	  }	  
 	| prefixed_unary_expression OP_ADD_ASSIGN expression
 	  {
 		Location l = lexer.Location;
@@ -3306,7 +3376,14 @@ assignment_expression
 
 		$$ = new CompoundAssign (
 			Binary.Operator.Subtraction, (Expression) $1, (Expression) $3, l);
-	  }	  
+	  }
+	| prefixed_unary_expression OP_CONCAT_ASSIGN expression
+	  {
+		Location l = lexer.Location;
+
+		$$ = new CompoundAssign (
+			Binary.Operator.Addition, (Expression) $1, (Expression) $3, l);
+	  }	  	  
 	;
 
 constant_expression
@@ -3418,6 +3495,11 @@ integral_type
 interface_type
 	: type_name
 	;
+	
+end_of_stmt
+	: EOL
+	| COLON
+	;	
 %%
 
 
@@ -3565,6 +3647,12 @@ public class VariableDeclaration {
 	{
 	}	
 	
+	public static ArrayCreation BuildArrayCreator (Expression vartype, ArrayList a_dims, ArrayList varinit, Location l)
+	{	
+		// FIXME : This is broken: only the first rank is parsed
+		return new ArrayCreation (vartype, (ArrayList) a_dims[0], "", varinit, l);
+	}
+	
 	public static void FixupTypes (ArrayList vars)
 	{
 		int varcount = 	vars.Count;
@@ -3585,16 +3673,19 @@ public class VariableDeclaration {
 		}
 	}
 	
-	public static bool IndexesSpecified (string varname)
+	public static bool IndexesSpecified (Parser t)
 	{
 		bool res = false;
+		ArrayList ranks = t.current_rank_specifiers;
 		
-		if (varname.IndexOf("[") >= 0) {
-			char[] ds = {'1','2','3','4','5','6','7','8','9'};
-			
-			string dimpart = varname.Substring(varname.IndexOf("["), (varname.LastIndexOf("]") - varname.IndexOf("["))+1);
-			if (dimpart.IndexOfAny (ds) >= 0) 
-				res = true;
+		if (ranks != null) {
+			foreach (ArrayList IndexList in ranks) {
+				foreach (Expression e in IndexList)
+					if (!(e is EmptyExpression)) {
+						res = true;
+						break;
+					}
+			}	
 		}
 		return (res);
 	}
@@ -3630,16 +3721,26 @@ public class VariableDeclaration {
 		return sb.ToString();				
 	}
 	
-	public static string GetRank (string dims)
+	public static string BuildRank (ArrayList rank)
 	{
 		string res = "";
-		int x;
+
+		res += "[";
+		for (int x = 0; x < (rank.Count -1 ); x++)
+			res += ",";
+			
+		res += "]";
+		return res;
+	}
 		
-		for (x = 0; x < dims.Length; x++) {
-			if (dims[x] == '[' || dims[x] == ']' || dims[x] == ',')
-				res = res + dims[x];
-		}				
-		return (res);
+	public static string BuildRanks (Parser t)
+	{
+		string res = "";
+
+		foreach (ArrayList rank in t.current_rank_specifiers)
+			res += BuildRank (rank);
+
+		return res;
 	}	
 	
 	public static bool HasExplicitIndexes (ArrayList a)
@@ -3656,12 +3757,14 @@ public class VariableDeclaration {
 		return res;			
 	}
 	
-	public static ArrayList ParseIndexList (string dims)
+	public static ArrayList ParseIndexList (Parser t)
 	{
 		ArrayList res = new ArrayList();
-		string d = dims.Substring (1, dims.Length -2);
-		Array a = d.Split (',');
+		//string d = dims.Substring (1, dims.Length -2);
+		//Array a = d.Split (',');
 		
+		return t.current_rank_specifiers;
+		/*
 		if (a.GetLength(0) > 32) {
 			Report.Error (999, "Arrays cannot have more than 32 dimensions");
 		}
@@ -3672,12 +3775,13 @@ public class VariableDeclaration {
 			else
 				res.Add (new IntLiteral ((Int32) 0));
 		
-		return (res);
+		return (res);*/
 	}		
 	
-	public static bool IsArrayDecl (string varname)
+	public static bool IsArrayDecl (Parser t)
 	{
-		return (varname.IndexOf("[") >= 0);
+		// return (varname.IndexOf("[") >= 0);
+		return (t.current_rank_specifiers != null);
 	}			
 	
 	public static void FixupArrayTypes (ArrayList vars)
@@ -3895,8 +3999,8 @@ public override int parse ()
 	catch (Exception e)
 	{
 		Console.WriteLine (lexer.location + "  : Parsing error in " + lexer.ref_name);
-		Report.Error (9999, lexer.Location, "");
-		Console.WriteLine (e);
+		Report.Error (9999, lexer.Location, "\n");
+		//Console.WriteLine (e);
 	}
 	
 	return Report.Errors;

@@ -163,13 +163,13 @@ public class TypeManager {
 	//   This is the type_cache from the assemblies to avoid
 	//   hitting System.Reflection on every lookup.
 	// </summary>
-	static Hashtable types;
+	static CaseInsensitiveHashtable types;
 
 	// <remarks>
 	//  This is used to hotld the corresponding TypeContainer objects
 	//  since we need this in FindMembers
 	// </remarks>
-	static Hashtable typecontainers;
+	static CaseInsensitiveHashtable typecontainers;
 
 	// <remarks>
 	//   Keeps track of those types that are defined by the
@@ -295,8 +295,8 @@ public class TypeManager {
 		modules = null;
 		user_types = new ArrayList ();
 		
-		types = new Hashtable ();
-		typecontainers = new Hashtable ();
+		types = new CaseInsensitiveHashtable ();
+		typecontainers = new CaseInsensitiveHashtable ();
 		
 		builder_to_declspace = new PtrHashtable ();
 		builder_to_attr = new PtrHashtable ();
@@ -552,9 +552,9 @@ public class TypeManager {
 	//
 	// Returns a list of all namespaces in the assemblies and types loaded.
 	//
-	public static Hashtable GetNamespaces ()
+	public static CaseInsensitiveHashtable GetNamespaces ()
 	{
-		Hashtable namespaces = new Hashtable ();
+		CaseInsensitiveHashtable namespaces = new CaseInsensitiveHashtable ();
 
 		foreach (Assembly a in assemblies){
 			foreach (Type t in a.GetTypes ()){
@@ -938,7 +938,7 @@ public class TypeManager {
 
 	const BindingFlags instance_and_static = BindingFlags.Static | BindingFlags.Instance;
 
-	static Hashtable type_hash = new Hashtable ();
+	static CaseInsensitiveHashtable type_hash = new CaseInsensitiveHashtable ();
 
 	/// <remarks>
 	///   This is the "old", non-cache based FindMembers() function.  We cannot use
@@ -948,7 +948,7 @@ public class TypeManager {
 					      MemberFilter filter, object criteria)
 	{
 		DeclSpace decl = (DeclSpace) builder_to_declspace [t];
-
+bf |= BindingFlags.IgnoreCase;
 		//
 		// `builder_to_declspace' contains all dynamic types.
 		//
@@ -1187,7 +1187,7 @@ public class TypeManager {
 		}
 	}
 
-	public static Hashtable TypeContainers {
+	public static CaseInsensitiveHashtable TypeContainers {
 		get {
 			return typecontainers;
 		}
@@ -1305,7 +1305,7 @@ public class TypeManager {
 	//  This is a workaround the fact that GetValue is not
 	//  supported for dynamic types
 	// </remarks>
-	static Hashtable fields = new Hashtable ();
+	static CaseInsensitiveHashtable fields = new CaseInsensitiveHashtable ();
 	static public bool RegisterFieldValue (FieldBuilder fb, object value)
 	{
 		if (fields.Contains (fb))
@@ -1321,7 +1321,7 @@ public class TypeManager {
 		return fields [fb];
 	}
 
-	static Hashtable fieldbuilders_to_fields = new Hashtable ();
+	static CaseInsensitiveHashtable fieldbuilders_to_fields = new CaseInsensitiveHashtable ();
 	static public bool RegisterFieldBase (FieldBuilder fb, FieldBase f)
 	{
 		if (fieldbuilders_to_fields.Contains (fb))
@@ -1336,12 +1336,12 @@ public class TypeManager {
 		return (FieldBase) fieldbuilders_to_fields [fb];
 	}
 	
-	static Hashtable events;
+	static CaseInsensitiveHashtable events;
 
 	static public bool RegisterEvent (MyEventBuilder eb, MethodBase add, MethodBase remove)
 	{
 		if (events == null)
-			events = new Hashtable ();
+			events = new CaseInsensitiveHashtable ();
 
 		if (events.Contains (eb))
 			return false;
@@ -1371,12 +1371,12 @@ public class TypeManager {
 			return ei.GetAddMethod ();
 	}
 
-	static Hashtable priv_fields_events;
+	static CaseInsensitiveHashtable priv_fields_events;
 
 	static public bool RegisterPrivateFieldOfEvent (EventInfo einfo, FieldBuilder builder)
 	{
 		if (priv_fields_events == null)
-			priv_fields_events = new Hashtable ();
+			priv_fields_events = new CaseInsensitiveHashtable ();
 
 		if (priv_fields_events.Contains (einfo))
 			return false;
@@ -1391,12 +1391,12 @@ public class TypeManager {
 		return (MemberInfo) priv_fields_events [ei];
 	}
 		
-	static Hashtable properties;
+	static CaseInsensitiveHashtable properties;
 	
 	static public bool RegisterProperty (PropertyBuilder pb, MethodBase get, MethodBase set)
 	{
 		if (properties == null)
-			properties = new Hashtable ();
+			properties = new CaseInsensitiveHashtable ();
 
 		if (properties.Contains (pb))
 			return false;

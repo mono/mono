@@ -219,6 +219,16 @@ namespace Mono.CSharp {
 		public PtrHashtable ()
 		{
 			comparer = new PtrComparer ();
+			hcp = new CaseInsensitiveHashCodeProvider();
+		}
+	}
+	
+
+	public class CaseInsensitiveHashtable : Hashtable {
+		public CaseInsensitiveHashtable() : base()
+		{
+			comparer = new CaseInsensitiveComparer();
+			hcp = new CaseInsensitiveHashCodeProvider();
 		}
 	}
 

@@ -154,7 +154,7 @@ namespace Mono.MonoBASIC
 			keywords.Add ("csng", Token.CSNG);
 			keywords.Add ("cstr", Token.CSTR);
 			keywords.Add ("ctype", Token.CTYPE);
-			keywords.Add ("date", Token.DATE);
+			//keywords.Add ("date", Token.DATE);
 			keywords.Add ("decimal", Token.DECIMAL);
 			keywords.Add ("declare", Token.DECLARE);
 			keywords.Add ("default", Token.DEFAULT);
@@ -178,7 +178,7 @@ namespace Mono.MonoBASIC
 			keywords.Add ("friend", Token.FRIEND);
 			keywords.Add ("function", Token.FUNCTION);
 			keywords.Add ("get", Token.GET);
-			keywords.Add ("gettype", Token.GETTYPE);
+			//keywords.Add ("gettype", Token.GETTYPE);
 			keywords.Add ("goto", Token.GOTO);
 			keywords.Add ("handles", Token.HANDLES);
 			keywords.Add ("if", Token.IF);
@@ -358,8 +358,8 @@ namespace Mono.MonoBASIC
 			//	return Token.COLON;
 			case '?':
 				return Token.INTERR;
-			case '&':
-				return Token.OP_CONCAT;				
+			//case '&':
+			//	return Token.OP_CONCAT;				
 			}
 
 			d = peekChar ();
@@ -374,6 +374,14 @@ namespace Mono.MonoBASIC
 				doread = true;
 				return t;
 			}
+			if (c == '&'){
+				if (d == '=')
+					t = Token.OP_CONCAT_ASSIGN;
+				else
+					return Token.OP_CONCAT;
+				doread = true;
+				return t;
+			}			
 			if (c == '-'){
 				if (d == '=')
 					t = Token.OP_SUB_ASSIGN;
@@ -763,8 +771,12 @@ namespace Mono.MonoBASIC
 				// Handle line continuation character
 				if (c == '_') 
 				{
-					while ((c = getChar ()) != -1 && !IsEOL(c)) {}
-					c = getChar ();					
+					int d = getChar();
+					putback(d);
+					if (!is_identifier_part_character((char)d)) {
+						while ((c = getChar ()) != -1 && !IsEOL(c)) {}
+						c = getChar ();			
+					}		
 				}
 				// Handle EOL.
 				if (IsEOL(c))
@@ -950,7 +962,7 @@ namespace Mono.MonoBASIC
 			}
 
 			cmd = static_cmd_arg.ToString ();
-			
+
 			if (c == '\n'){
 				line++;
 				ref_line++;
@@ -985,12 +997,15 @@ namespace Mono.MonoBASIC
 				col = 0;
 			arg = static_cmd_arg.ToString ().Trim ();
 			
-			if (cmd.ToLower() == "end") {
-				cmd = cmd + " " + arg;
+			if (cmd == "End" && arg == "Region") {
+				cmd = "End Region";
 				arg = "";	
 			}
-
-			cmd = cmd.ToLower();  // MUST BE case insensitive
+			if (cmd == "End" && arg == "If") {
+				cmd = "End If";
+				arg = "";	
+			}			
+				
 		}
 
 		//
@@ -1258,7 +1273,6 @@ namespace Mono.MonoBASIC
 			bool region_directive = false;
 
 			get_cmd_arg (out cmd, out arg);
-			cmd = cmd.ToLower();
 			// Eat any trailing whitespaces and single-line comments
 			if (arg.IndexOf ("//") != -1)
 				arg = arg.Substring (0, arg.IndexOf ("//"));
@@ -1268,23 +1282,23 @@ namespace Mono.MonoBASIC
 			// The first group of pre-processing instructions is always processed
 			//
 			switch (cmd){
-			case "line": // MonoBASIC extension
+			case "line":
 				if (!PreProcessLine (arg))
 					Report.Error (
 						1576, Location,
 						"Argument to #line directive is missing or invalid");
 				return true;
 
-			case "region":
+			case "Region":
 				region_directive = true;
 				arg = "true";
-				goto case "if";
+				goto case "If";
 
-			case "end region":
+			case "End Region":
 				region_directive = true;
-				goto case "end if";
+				goto case "End If";
 				
-			case "if":
+			case "If":
 				if (arg == ""){
 					Error_InvalidDirective ();
 					return true;
@@ -1315,7 +1329,7 @@ namespace Mono.MonoBASIC
 					return false;
 				}
 				
-			case "end if":
+			case "End If":
 				if (ifstack == null || ifstack.Count == 0){
 					Error_UnexpectedDirective ("no #if for this #endif");
 					return true;
@@ -1339,7 +1353,7 @@ namespace Mono.MonoBASIC
 					}
 				}
 
-			case "elseif":
+			case "ElseIf":
 				if (ifstack == null || ifstack.Count == 0){
 					Error_UnexpectedDirective ("no #if for this #elif");
 					return true;
@@ -1367,7 +1381,7 @@ namespace Mono.MonoBASIC
 						return false;
 				}
 
-			case "else":
+			case "Else":
 				if (ifstack == null || ifstack.Count == 0){
 					Report.Error (
 						1028, Location,
@@ -1406,37 +1420,40 @@ namespace Mono.MonoBASIC
 			}
 
 			//
-			// These are only processed if we are in a 'taking' block
+			// These are only processed if we are in a `taking' block
 			//
-			
+			if (!caller_is_taking)
+				return false;
+					
 			switch (cmd){
-			case "const": // equivalent to C# "define":
-				if (caller_is_taking)
-					PreProcessDefinition (true, arg); // TODO: have to correctly deal with #Const syntax
-				break;
-			/* VB.NET does not have such directive - QUESTION: SHOULD we extend to have it in MonoBASIC?
+			case "define":
+				/* if (any_token_seen){
+					Error_TokensSeen ();
+					return true;
+				} */
+				PreProcessDefinition (true, arg);
+				return true;
+
 			case "undef":
-				if (caller_is_taking)
-					PreProcessDefinition (false, arg);
-				break;
-			*/
-			case "externalsource": // Don't know yet what this should do
-			case "end externalsource": // Don't know yet what this should do
-				break;
-			case "error": // MonoBASIC extension
-				if (caller_is_taking)
-					Report.Error (1029, Location, "#error: '" + arg + "'");
-				break;
-			case "warning": // MonoBASIC extension
-				if (caller_is_taking)
-					Report.Warning (1030, Location, "#warning: '" + arg + "'");
-				break;
-			default:
-				Report.Error (1024, Location, "Preprocessor directive expected (got: " + cmd + ")");
-				break;		
+				/* if (any_token_seen){
+					Error_TokensSeen ();
+					return true;
+				} */
+				PreProcessDefinition (false, arg);
+				return true;
+
+			case "error":
+				Report.Error (1029, Location, "#error: '" + arg + "'");
+				return true;
+
+			case "warning":
+				Report.Warning (1030, Location, "#warning: '" + arg + "'");
+				return true;
 			}
 
-			return caller_is_taking;
+			Report.Error (1024, Location, "Preprocessor directive expected (got: " + cmd + ")");
+			return true;
+
 		}
 
 	}

@@ -107,7 +107,7 @@ namespace Mono.CSharp {
 		public void UsingAlias (string alias, string namespace_or_type, Location loc)
 		{
 			if (aliases == null)
-				aliases = new Hashtable ();
+				aliases = new CaseInsensitiveHashtable ();
 			
 			if (aliases.Contains (alias)){
 				Report.Error (1537, loc, "The using alias `" + alias +
@@ -158,7 +158,7 @@ namespace Mono.CSharp {
 			// whether it is unused, or it was missing
 			//
 			if (unused.Count > 0){
-				Hashtable namespaces = TypeManager.GetNamespaces ();
+				CaseInsensitiveHashtable namespaces = TypeManager.GetNamespaces ();
 
 				foreach (UsingEntry ue in unused){
 					if (namespaces.Contains (ue.Name)){

@@ -2609,21 +2609,21 @@ namespace Mono.CSharp {
 		//
 		// Labels.  (label, block) pairs.
 		//
-		Hashtable labels;
+		CaseInsensitiveHashtable labels;
 
 		//
 		// Keeps track of (name, type) pairs
 		//
-		Hashtable variables;
+		CaseInsensitiveHashtable variables;
 
 		//
 		// Keeps track of constants
-		Hashtable constants;
+		CaseInsensitiveHashtable constants;
 
 		//
 		// Maps variable names to ILGenerator.LocalBuilders
 		//
-		Hashtable local_builders;
+		CaseInsensitiveHashtable local_builders;
 
 		bool used = false;
 
@@ -2703,7 +2703,7 @@ namespace Mono.CSharp {
 		public bool AddLabel (string name, LabeledStatement target)
 		{
 			if (labels == null)
-				labels = new Hashtable ();
+				labels = new CaseInsensitiveHashtable ();
 			if (labels.Contains (name))
 				return false;
 			
@@ -2751,7 +2751,7 @@ namespace Mono.CSharp {
 		public void AddChildVariableName (string name)
 		{
 			if (child_variable_names == null)
-				child_variable_names = new Hashtable ();
+				child_variable_names = new CaseInsensitiveHashtable ();
 
 			if (!child_variable_names.Contains (name))
 				child_variable_names.Add (name, true);
@@ -2802,7 +2802,7 @@ namespace Mono.CSharp {
 			this_variable = new VariableInfo (tc, ID, l);
 
 			if (variables == null)
-				variables = new Hashtable ();
+				variables = new CaseInsensitiveHashtable ();
 			variables.Add ("this", this_variable);
 
 			return this_variable;
@@ -2811,7 +2811,7 @@ namespace Mono.CSharp {
 		public VariableInfo AddVariable (Expression type, string name, Parameters pars, Location l)
 		{
 			if (variables == null)
-				variables = new Hashtable ();
+				variables = new CaseInsensitiveHashtable ();
 
 			VariableInfo vi = GetVariableInfo (name);
 			if (vi != null) {
@@ -2866,7 +2866,7 @@ namespace Mono.CSharp {
 				return false;
 			
 			if (constants == null)
-				constants = new Hashtable ();
+				constants = new CaseInsensitiveHashtable ();
 
 			constants.Add (name, value);
 			return true;
@@ -3061,7 +3061,7 @@ namespace Mono.CSharp {
 			// Process this block variables
 			//
 			if (variables != null){
-				local_builders = new Hashtable ();
+				local_builders = new CaseInsensitiveHashtable ();
 				
 				foreach (DictionaryEntry de in variables){
 					string name = (string) de.Key;
@@ -3430,7 +3430,7 @@ namespace Mono.CSharp {
 		{
 			Type compare_type;
 			bool error = false;
-			Elements = new Hashtable ();
+			Elements = new CaseInsensitiveHashtable ();
 				
 			got_default = false;
 
@@ -5490,4 +5490,58 @@ namespace Mono.CSharp {
 			return false;
 		}
 	}	
+	
+	public class ReDim : Statement {
+		Expression RedimTarget;
+		ArrayList NewIndexes;
+		ArrayList Initializers;
+		Type BaseType;
+		
+		private StatementExpression ReDimExpr;
+		
+		public ReDim (Expression expr, ArrayList args, bool opt_preserve, ArrayList inits, Location l)
+		{
+			loc = l;
+			RedimTarget = expr;
+			NewIndexes = args;
+			Initializers = inits;
+		}
+		
+		public override bool Resolve (EmitContext ec)
+		{
+			RedimTarget = RedimTarget.Resolve (ec);
+			if (!RedimTarget.Type.IsArray) 
+				Report.Error (49, "'ReDim' statement requires an array");
+
+			ArrayList args = new ArrayList();
+			foreach (Argument a in NewIndexes) {
+				if (a.Resolve(ec, loc))
+					args.Add (a.Expr);
+			}
+			
+			for (int x = 0; x < args.Count; x++) {
+				args[x] = new Binary (Binary.Operator.Addition, 
+							(Expression) args[x], new IntLiteral (1), Location.Null);	
+			}
+
+			NewIndexes = args;
+			if (RedimTarget.Type.GetArrayRank() != args.Count) 
+				Report.Error (415, "'ReDim' cannot change the number of dimensions of an array.");
+
+			BaseType = RedimTarget.Type.GetElementType();
+			Expression BaseTypeExpr = MonoBASIC.Parser.DecomposeQI(BaseType.FullName.ToString(), Location.Null);
+			ArrayCreation acExpr = new ArrayCreation (BaseTypeExpr, NewIndexes, "", Initializers, Location.Null); 	
+			ReDimExpr = (StatementExpression) new StatementExpression ((ExpressionStatement) new Assign (RedimTarget, acExpr, loc), loc);
+			ReDimExpr.Resolve(ec);
+			
+			return true;
+		}
+				
+		protected override bool DoEmit (EmitContext ec)
+		{
+			ReDimExpr.Emit(ec);
+			return false;
+		}		
+		
+	}
 }

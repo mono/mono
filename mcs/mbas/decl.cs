@@ -812,9 +812,9 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class MemberCache {
 		public readonly IMemberContainer Container;
-		protected Hashtable member_hash;
-		protected Hashtable method_hash;
-		protected Hashtable interface_hash;
+		protected CaseInsensitiveHashtable member_hash;
+		protected CaseInsensitiveHashtable method_hash;
+		protected CaseInsensitiveHashtable interface_hash;
 
 		/// <summary>
 		///   Create a new MemberCache for the given IMemberContainer `container'.
@@ -826,7 +826,7 @@ namespace Mono.CSharp {
 			Timer.IncrementCounter (CounterType.MemberCache);
 			Timer.StartTimer (TimerType.CacheInit);
 
-			interface_hash = new Hashtable ();
+			interface_hash = new CaseInsensitiveHashtable ();
 
 			// If we have a parent class (we have a parent class unless we're
 			// TypeManager.object_type), we deep-copy its MemberCache here.
@@ -835,13 +835,13 @@ namespace Mono.CSharp {
 			else if (Container.IsInterface)
 				member_hash = SetupCacheForInterface ();
 			else
-				member_hash = new Hashtable ();
+				member_hash = new CaseInsensitiveHashtable ();
 
 			// If this is neither a dynamic type nor an interface, create a special
 			// method cache with all declared and inherited methods.
 			Type type = container.Type;
 			if (!(type is TypeBuilder) && !type.IsInterface) {
-				method_hash = new Hashtable ();
+				method_hash = new CaseInsensitiveHashtable ();
 				AddMethods (type);
 			}
 
@@ -854,9 +854,9 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Bootstrap this member cache by doing a deep-copy of our parent.
 		/// </summary>
-		Hashtable SetupCache (MemberCache parent)
+		CaseInsensitiveHashtable SetupCache (MemberCache parent)
 		{
-			Hashtable hash = new Hashtable ();
+			CaseInsensitiveHashtable hash = new CaseInsensitiveHashtable ();
 
 			IDictionaryEnumerator it = parent.member_hash.GetEnumerator ();
 			while (it.MoveNext ()) {
@@ -894,9 +894,9 @@ namespace Mono.CSharp {
 		///   Type.GetMembers() won't return any inherited members for interface types,
 		///   so we need to do this manually.  Interfaces also inherit from System.Object.
 		/// </summary>
-		Hashtable SetupCacheForInterface ()
+		CaseInsensitiveHashtable SetupCacheForInterface ()
 		{
-			Hashtable hash = SetupCache (TypeHandle.ObjectType.MemberCache);
+			CaseInsensitiveHashtable hash = SetupCache (TypeHandle.ObjectType.MemberCache);
 			Type [] ifaces = TypeManager.GetInterfaces (Container.Type);
 
 			foreach (Type iface in ifaces) {
@@ -1160,7 +1160,7 @@ namespace Mono.CSharp {
 			// If we have a method cache and we aren't already doing a method-only search,
 			// then we restart a method search if the first match is a method.
 			bool do_method_search = !method_search && (method_hash != null);
-
+bf |= BindingFlags.IgnoreCase;
 			ArrayList applicable;
 
 			// If this is a method-only search, we try to use the method cache if

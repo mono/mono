@@ -602,7 +602,8 @@ namespace Mono.CSharp {
 		public const BindingFlags AllBindingFlags =
 			BindingFlags.Public |
 			BindingFlags.Static |
-			BindingFlags.Instance;
+			BindingFlags.Instance |
+			BindingFlags.IgnoreCase;
 
 		public static Expression MemberLookup (EmitContext ec, Type t, string name, Location loc)
 		{
@@ -1653,7 +1654,6 @@ namespace Mono.CSharp {
 		 	args.Add (arg);
 			e = (Expression) new Invocation (etmp, args, loc);
 			e = e.Resolve(ec);	
-			
 			return (e);		
 		}
 		
@@ -1744,6 +1744,13 @@ namespace Mono.CSharp {
 							break;											
 					}
 					break;													
+			}
+			
+			// We must examine separately some types that
+			// don't have a TypeCode but are supported 
+			// in the runtime
+			if (expr_type == typeof(System.String) && target_type == typeof (System.Char[])) {
+				e = RTConversionExpression(ec, "CharArrayType.FromString", expr, loc);
 			}
 			
 			return e;
