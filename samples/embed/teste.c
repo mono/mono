@@ -3,7 +3,7 @@
 /*
  * Very simple mono embedding example.
  * Compile with: 
- * 	gcc -o teste teste.c `pkg-config --cflags --libs mono`
+ * 	gcc -o teste teste.c `pkg-config --cflags --libs mono` -lm
  * 	mcs test.cs
  * Run with:
  * 	./teste test.exe
@@ -21,8 +21,10 @@ main(int argc, char* argv[]) {
 	const char *file;
 	int retval;
 
-	if (argc < 2)
+	if (argc < 2){
+		fprintf (stderr, "Please provide an assembly to load");
 		return 1;
+	}
 	file = argv [1];
 	/*
 	 * mono_jit_init() creates a domain: each assembly is
