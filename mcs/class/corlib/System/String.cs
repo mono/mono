@@ -1333,7 +1333,8 @@ namespace System {
 			}
 
 			/* fit the remaining chunk of the @this into it's own element */
-			if (index < this.length - 1) {
+			if (index <= this.length)
+			{
 				char[] str;
 				int i;
 
@@ -1341,6 +1342,11 @@ namespace System {
 				for (i = index; i < this.length; i++)
 					str[i - index] = this.c_str[i];
 
+				// maxCount cannot be zero if we reach this point and this means that
+				// index can't be zero either.
+				if (used == maxCount)
+					list[used-1] += this.c_str[index-1] + new String (str);
+				else
 				list.Add (new String (str));
 			}
 

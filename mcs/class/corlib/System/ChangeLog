@@ -1,5 +1,10 @@
 2002-03-08  Martin Baulig  <martin@gnome.org>
 
+	* String.cs (Split): Really fix it this time. Also adding several new
+	testcase to the testsuite.	 
+
+2002-03-08  Martin Baulig  <martin@gnome.org>
+
 	* Array.cs (Copy): Optimized: removed duplicate null check, removed
 	two duplicate GetLowerBound() calls and one duplicate IsValueType.
 
