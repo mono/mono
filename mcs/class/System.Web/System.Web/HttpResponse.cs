@@ -21,8 +21,8 @@ namespace System.Web
 	public sealed class HttpResponse
 	{
 		// Chunked encoding static helpers
-		static byte [] s_arrChunkSuffix = { 10, 13 };
-		static byte [] s_arrChunkEnd = { 10 , 13 };
+		static byte [] s_arrChunkSuffix = {13, 10};
+		static byte [] s_arrChunkEnd = {48, 13, 10, 13, 10};
 		static string s_sChunkedPrefix = "\r\n";
 
 		ArrayList _Headers;
@@ -628,11 +628,7 @@ namespace System.Web
 				break;
 			case HttpWorkerRequest.HeaderTransferEncoding:
 				_sTransferEncoding = value;
-				if (value.Equals ("chunked")) {
-					_bChunked = true;
-				} else {
-					_bChunked = false;
-				}
+				_bChunked = (value == "chunked");
 				break;
 			case HttpWorkerRequest.HeaderPragma:
 				_sCacheControl = value;
@@ -657,11 +653,7 @@ namespace System.Web
 				break;
 			case "transfer-encoding":
 				_sTransferEncoding = value;
-				if (value.Equals ("chunked")) {
-					_bChunked = true;
-				} else {
-					_bChunked = false;
-				}
+				_bChunked = (value == "chunked");
 				break;
 			case "pragma":
 				_sCacheControl = value;
@@ -795,9 +787,6 @@ namespace System.Web
 						   _sTransferEncoding == null) {
 							// Check we are going todo chunked encoding
 							string sProto = Request.ServerVariables ["SERVER_PROTOCOL"];
-							sProto = "HTTP/1.0"; // Remove this line when we support properly
-									     // chunked content
-
 							if (sProto != null && sProto == "HTTP/1.1") {
 								AppendHeader (
 									HttpWorkerRequest.HeaderTransferEncoding,
@@ -822,6 +811,11 @@ namespace System.Web
 				}
 
 				if (length == 0) {
+					if (bFinish && _bChunked) {
+						_WorkerRequest.SendResponseFromMemory (s_arrChunkEnd,
+										s_arrChunkEnd.Length);
+					}
+
 					_WorkerRequest.FlushResponse (bFinish);
 					if (!bFinish)
 						_Writer.Clear ();

@@ -26,9 +26,9 @@ namespace System.Web {
 		private int cur_item;
 		private TraceData[] data;
 		
-		public TraceManager (HttpContext context)
+		public TraceManager ()
 		{
-			TraceConfig config = (TraceConfig) context.GetConfig (traceConfigPath);
+			TraceConfig config = (TraceConfig) HttpContext.GetAppConfig (traceConfigPath);
 
 			if (config == null)
 				return;

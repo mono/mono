@@ -94,7 +94,7 @@ namespace System.Web {
 
 			try {
 				WebConfigurationSettings.Init (context);
-				traceManager = new TraceManager (context);
+				traceManager = new TraceManager ();
 				queueManager = new QueueManager ();
 			} catch (Exception e) {
 				_initError = e;
@@ -166,8 +166,8 @@ namespace System.Web {
 			if (!_firstRequestExecuted) {
 				lock (this) {
 					if (!_firstRequestExecuted) {
-						OnFirstRequestEnd();
 						_firstRequestExecuted = true;
+						OnFirstRequestEnd();
 					}
 				}
 			}
@@ -257,10 +257,9 @@ namespace System.Web {
 				if (!_firstRequestStarted) {
 					lock (this) {
 						if (!_firstRequestStarted) {
-							_firstRequestStartTime = DateTime.Now;
-
-							OnFirstRequestStart(context);
 							_firstRequestStarted = true;
+							_firstRequestStartTime = DateTime.Now;
+							OnFirstRequestStart(context);
 						}						
 					}
 				}

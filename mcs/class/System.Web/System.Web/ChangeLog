@@ -1,3 +1,15 @@
+2004-05-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponse.cs: remove hardcoded "HTTP/1.0" version that kept
+	chunked encoding disabled. Fixed chunked suffix and end. Send the
+	'lastchunk' marked when in the final Flush even if the content length
+	is 0. This makes mod-mono-server work fine with chunked encoding.
+	 
+	* HttpRuntime.cs: Set the _firstRequest* variables to true
+	earlier. TraceContext don't take any parameter now.
+
+	* TraceManager.cs: don't need a context. Use GetAppConfig.
+
 2004-05-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: set culture/uiculture from configuration and
