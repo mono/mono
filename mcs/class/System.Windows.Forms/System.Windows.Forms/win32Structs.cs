@@ -856,6 +856,49 @@ namespace System.Windows.Forms
 		internal Win32.FnHookProc lpfnHook; 
 		internal string        lpTemplateName; 
 	}
+	
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
+	public  struct LOGFONT 	
+	{
+	    internal uint	lfHeight;
+	    internal uint	lfWidth;
+	    internal uint	lfEscapement;
+	    internal uint	lfOrientation;
+	    internal uint	lfWeight;
+	    internal byte	lfItalic;
+	    internal byte	lfUnderline;
+	    internal byte	lfStrikeOut;
+	    internal byte	lfCharSet;
+	    internal byte	lfOutPrecision;
+	    internal byte	lfClipPrecision;
+	    internal byte   lfQuality;
+	    internal byte	lfPitchAndFamily;
+	    [MarshalAs(UnmanagedType.ByValTStr, SizeConst=32)]
+		internal string lfFaceName;
+		
+	} 
+	
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
+	public  struct CHOOSEFONT {
+	
+		internal uint				lStructSize;
+		internal IntPtr 			hwndOwner; 
+		internal IntPtr 			hDC; 		
+		internal IntPtr				lpLogFont;       
+		internal int   				iPointSize; 
+		internal uint   			Flags;    
+		internal uint   			rgbColors;
+		internal uint   			lCustData;
+		internal Win32.FnHookProc 	lpfnHook; 		
+		internal uint   			lpTemplateName; 
+		internal IntPtr				hInstance;   		                      
+		internal uint				lpszStyle;    		                      
+		internal short				nFontType;    
+		internal short				___MISSING_ALIGNMENT__;          
+		internal int 				nSizeMin;          
+		internal int  				nSizeMax;         
+		                                 
+		} 
 
 	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
 	struct OFNOTIFY { 

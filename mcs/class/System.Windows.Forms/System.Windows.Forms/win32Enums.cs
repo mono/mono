@@ -4,6 +4,7 @@
  *  Minor additons for project Mono by
  *  John Sohn (jsohn@columbus.rr.com)
  *	Dennis Hayes (dennish@raytek.com)
+ *  Jordi Mas i Hernàndez (jmas@softcatala.org)
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -1066,7 +1067,11 @@ namespace System.Windows.Forms{
 		LVM_FIRST           =    0x1000,
 		LVM_GETSUBITEMRECT  = (LVM_FIRST + 56),
 		LVM_GETITEMSTATE    = (LVM_FIRST + 44),
-		LVM_GETITEMTEXTW    = (LVM_FIRST + 115)
+		LVM_GETITEMTEXTW    = (LVM_FIRST + 115),	
+		LVM_INSERTITEMA		= (LVM_FIRST + 7),
+		LVM_INSERTITEMW     = (LVM_FIRST + 77),
+		LVM_INSERTCOLUMNA   = (LVM_FIRST + 27),
+		LVM_INSERTCOLUMNW   = (LVM_FIRST + 97)
 	}
 	#endregion
 
@@ -2895,6 +2900,38 @@ namespace System.Windows.Forms{
 		OFN_LONGNAMES                = 0x00200000,
 		OFN_ENABLEINCLUDENOTIFY      = 0x00400000,
 		OFN_ENABLESIZING             = 0x00800000
+	}
+	
+	internal enum FontDlgFlags : int {
+		CF_SCREENFONTS				= 0x00000001,
+		CF_PRINTERFONTS				= 0x00000002,
+		CF_BOTH						= (CF_SCREENFONTS | CF_PRINTERFONTS),
+		CF_SHOWHELP					= 0x00000004,
+		CF_ENABLEHOOK				= 0x00000008,
+		CF_ENABLETEMPLATE			= 0x00000010,
+		CF_ENABLETEMPLATEHANDLE		= 0x00000020,
+		CF_INITTOLOGFONTSTRUCT		= 0x00000040,
+		CF_USESTYLE					= 0x00000080,
+		CF_EFFECTS					= 0x00000100,
+		CF_APPLY					= 0x00000200,
+		CF_ANSIONLY					= 0x00000400,		
+		CF_SCRIPTSONLY				= CF_ANSIONLY,		
+		CF_NOVECTORFONTS			= 0x00000800,
+		CF_NOOEMFONTS				= CF_NOVECTORFONTS,
+		CF_NOSIMULATIONS			= 0x00001000,
+		CF_LIMITSIZE				= 0x00002000,
+		CF_FIXEDPITCHONLY			= 0x00004000,
+		CF_WYSIWYG					= 0x00008000, // must also have CF_SCREENFONTS & CF_PRINTERFONTS
+		CF_FORCEFONTEXIST			= 0x00010000,
+		CF_SCALABLEONLY				= 0x00020000,
+		CF_TTONLY					= 0x00040000,
+		CF_NOFACESEL				= 0x00080000,
+		CF_NOSTYLESEL				= 0x00100000,
+		CF_NOSIZESEL				= 0x00200000,
+		CF_SELECTSCRIPT				= 0x00400000,
+		CF_NOSCRIPTSEL				= 0x00800000,
+		CF_NOVERTFONTS				= 0x01000000,
+
 	}
 
 	internal enum CommDlgErrors : uint {
