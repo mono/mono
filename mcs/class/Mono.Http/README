@@ -6,5 +6,17 @@ pages when hosting ASP.NET pages (xsp uses it) and others.
 
 Watch out the NEWS file.
 
+How to...
+----------
+
+* ... enable gzip compression in your own progran that uses ASP.NET hosting?
+
+    See the web.config file in xsp/test. Look for Mono.Http.
+
+* ... use WebRequest/WebResponse wrappers for gzipped content?
+
+    See samples/http-get-gzip.cs file.
+
+
 -Gonzalo
 

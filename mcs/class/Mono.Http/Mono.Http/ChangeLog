@@ -1,3 +1,10 @@
+2003-07-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* GZipWebRequest.cs:
+	* GZipWebResponse.cs: wrappers for WebRequest/WebResponse to allow
+	requesting and receiving gzipped content that is transparently
+	uncompressed.
+
 2003-07-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	Initial check-in.

@@ -1,4 +1,6 @@
 Mono.Http/AcceptEncodingConfig.cs
 Mono.Http/AcceptEncodingModule.cs
 Mono.Http/AcceptEncodingSectionHandler.cs
+Mono.Http/GZipWebRequest.cs
+Mono.Http/GZipWebResponse.cs
 Mono.Http/GZipWriteFilter.cs

@@ -1,0 +1,6 @@
+2003-07-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ChangeLog:
+	* Makefile:
+	* http-get-gzip.cs: initial check-in with.
+
