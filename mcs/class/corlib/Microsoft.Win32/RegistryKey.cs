@@ -40,7 +40,7 @@ namespace Microsoft.Win32 {
 		}
 
 		[MonoTODO]
-		public object Getvalue (string name, object defaultvalue)
+		public object GetValue (string name, object defaultvalue)
 		{
 			throw new NotImplementedException ();
 		}

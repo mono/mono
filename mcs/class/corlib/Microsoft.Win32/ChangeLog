@@ -1,0 +1,3 @@
+2002-11-20  Nick Drochak  <ndrochak@gol.com>
+
+	* RegistryKey.cs: Fix typo.
