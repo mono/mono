@@ -1,3 +1,8 @@
+
+Thu Feb 14 18:59:37 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* main.c: output pack and size info if needed.
+
 2002-02-13  Dietmar Maurer  <dietmar@ximian.com>
 
 	* *.c: s/MonoMetadata/MonoImage/ 
