@@ -460,11 +460,11 @@ namespace Mono.CSharp {
 
 					DoFlowAnalysis = old_do_flow_analysis;
 
-					has_ret = block.Emit (this);
+					block.Emit (this);
 
 					if ((reachability.Returns == FlowBranching.FlowReturns.Always) ||
-					    (reachability.Returns == FlowBranching.FlowReturns.Exception) ||
-					    (reachability.Returns == FlowBranching.FlowReturns.Unreachable))
+					    (reachability.Throws == FlowBranching.FlowReturns.Always) ||
+					    (reachability.Reachable == FlowBranching.FlowReturns.Never))
 						has_ret = true;
 
 					if (Report.Errors == errors){

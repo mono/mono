@@ -1,3 +1,21 @@
+2003-12-11  Martin Baulig  <martin@ximian.com>
+
+	Reworked flow analyis and made it more precise and bug-free.  The
+	most important change is that we're now using a special `Reachability'
+	class instead of having "magic" meanings of `FlowReturns'.  I'll
+	do some more cleanups and optimizations and also add some more
+	documentation this week.
+
+	* flowanalysis.cs (Reachability): Added `Throws' and `Barrier';
+	largely reworked this class.
+	(FlowReturns): Removed `Unreachable' and `Exception'; we now use
+	the new `Reachability' class instead of having "magic" values here.
+	(FlowBranching): We're now using an instance of `Reachability'
+	instead of having separate `Returns', `Breaks' etc. fields.
+
+	* codegen.cs (EmitContext.EmitTopBlock): Set `has_ret' solely
+	based on flow analysis; ignore the return value of block.Emit ().
+
 2003-12-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* driver.cs typemanager.cs: Find the mono extensions to corlib even

@@ -29,6 +29,9 @@ namespace Mono.CSharp
 			// Normal (conditional or toplevel) block.
 			Block,
 
+			// Conditional.
+			Conditional,
+
 			// A loop block.
 			LoopBlock,
 
@@ -46,6 +49,7 @@ namespace Mono.CSharp
 		//   The type of one sibling of a branching.
 		// </summary>
 		public enum SiblingType {
+			Block,
 			Conditional,
 			SwitchSection,
 			Try,
@@ -70,33 +74,223 @@ namespace Mono.CSharp
 
 			// The code always returns, ie. there's an unconditional return / break
 			// statement in it.
-			Always,
-
-			// The code always throws an exception.
-			Exception,
-
-			// The current code block is unreachable.  This happens if it's immediately
-			// following a FlowReturns.Always block.
-			Unreachable
+			Always
 		}
 
 		public sealed class Reachability
 		{
-			public readonly FlowReturns Returns;
-			public readonly FlowReturns Breaks;
-			public readonly FlowReturns Reachable;
+			FlowReturns returns, breaks, throws, barrier, reachable;
 
-			public Reachability (FlowReturns returns, FlowReturns breaks, FlowReturns reachable)
+			public FlowReturns Returns {
+				get { return returns; }
+			}
+			public FlowReturns Breaks {
+				get { return breaks; }
+			}
+			public FlowReturns Throws {
+				get { return throws; }
+			}
+			public FlowReturns Barrier {
+				get { return barrier; }
+			}
+			public FlowReturns Reachable {
+				get { return reachable; }
+			}
+
+			public Reachability (FlowReturns returns, FlowReturns breaks,
+					     FlowReturns throws, FlowReturns barrier)
 			{
-				this.Returns = returns;
-				this.Breaks = breaks;
-				this.Reachable = reachable;
+				this.returns = returns;
+				this.breaks = breaks;
+				this.throws = throws;
+				this.barrier = barrier;
+
+				update ();
+			}
+
+			public Reachability Clone ()
+			{
+				Reachability cloned = new Reachability (returns, breaks, throws, barrier);
+				cloned.reachable = reachable;
+				return cloned;
+			}
+
+			public static void And (ref Reachability a, Reachability b, bool do_break)
+			{
+				if (a == null) {
+					a = b.Clone ();
+					return;
+				}
+
+				Report.Debug (4, "AND REACHABILITY", a, b, do_break);
+
+				//
+				// `break' does not "break" in a Switch or a LoopBlock
+				//
+				bool a_breaks = do_break && a.AlwaysBreaks;
+				bool b_breaks = do_break && b.AlwaysBreaks;
+
+				bool a_has_barrier, b_has_barrier;
+				if (do_break) {
+					//
+					// This is the normal case: the code following a barrier
+					// cannot be reached.
+					//
+					a_has_barrier = a.AlwaysHasBarrier;
+					b_has_barrier = b.AlwaysHasBarrier;
+				} else {
+					//
+					// Special case for Switch and LoopBlocks: we can reach the
+					// code after the barrier via the `break'.
+					//
+					a_has_barrier = !a.AlwaysBreaks && a.AlwaysHasBarrier;
+					b_has_barrier = !b.AlwaysBreaks && b.AlwaysHasBarrier;
+				}
+
+				bool a_unreachable = a_breaks || a.AlwaysThrows || a_has_barrier;
+				bool b_unreachable = b_breaks || b.AlwaysThrows || b_has_barrier;
+
+				//
+				// Do all code paths always return ?
+				//
+				if (a.AlwaysReturns) {
+					if (b.AlwaysReturns || b_unreachable)
+						a.returns = FlowReturns.Always;
+					else
+						a.returns = FlowReturns.Sometimes;
+				} else if (b.AlwaysReturns) {
+					if (a.AlwaysReturns || a_unreachable)
+						a.returns = FlowReturns.Always;
+					else
+						a.returns = FlowReturns.Sometimes;
+				} else if (!a.MayReturn) {
+					if (b.MayReturn)
+						a.returns = FlowReturns.Sometimes;
+					else
+						a.returns = FlowReturns.Never;
+				} else if (!b.MayReturn) {
+					if (a.MayReturn)
+						a.returns = FlowReturns.Sometimes;
+					else
+						a.returns = FlowReturns.Never;
+				}
+
+				a.breaks = AndFlowReturns (a.breaks, b.breaks);
+				a.throws = AndFlowReturns (a.throws, b.throws);
+				a.barrier = AndFlowReturns (a.barrier, b.barrier);
+
+				a.reachable = AndFlowReturns (a.reachable, b.reachable);
+			}
+
+			public static Reachability Never ()
+			{
+				return new Reachability (
+					FlowReturns.Never, FlowReturns.Never,
+					FlowReturns.Never, FlowReturns.Never);
+			}
+
+			void update ()
+			{
+				if ((returns == FlowReturns.Always) || (breaks == FlowReturns.Always) ||
+				    (throws == FlowReturns.Always) || (barrier == FlowReturns.Always))
+					reachable = FlowReturns.Never;
+				else if ((returns == FlowReturns.Never) && (breaks == FlowReturns.Never) &&
+					 (throws == FlowReturns.Never) && (barrier == FlowReturns.Never))
+					reachable = FlowReturns.Always;
+				else
+					reachable = FlowReturns.Sometimes;
+			}
+
+			public bool AlwaysBreaks {
+				get { return breaks == FlowReturns.Always; }
+			}
+
+			public bool MayBreak {
+				get { return breaks != FlowReturns.Never; }
+			}
+
+			public bool AlwaysReturns {
+				get { return returns == FlowReturns.Always; }
+			}
+
+			public bool MayReturn {
+				get { return returns != FlowReturns.Never; }
+			}
+
+			public bool AlwaysThrows {
+				get { return throws == FlowReturns.Always; }
+			}
+
+			public bool MayThrow {
+				get { return throws != FlowReturns.Never; }
+			}
+
+			public bool AlwaysHasBarrier {
+				get { return barrier == FlowReturns.Always; }
+			}
+
+			public bool MayHaveBarrier {
+				get { return barrier != FlowReturns.Never; }
+			}
+
+			public bool IsUnreachable {
+				get { return reachable == FlowReturns.Never; }
+			}
+
+			public void SetReturns ()
+			{
+				returns = FlowReturns.Always;
+				update ();
+			}
+
+			public void SetReturnsSometimes ()
+			{
+				returns = FlowReturns.Sometimes;
+				update ();
+			}
+
+			public void SetBreaks ()
+			{
+				breaks = FlowReturns.Always;
+				update ();
+			}
+
+			public void ResetBreaks ()
+			{
+				breaks = FlowReturns.Never;
+				update ();
+			}
+
+			public void SetThrows ()
+			{
+				throws = FlowReturns.Always;
+				update ();
+			}
+
+			public void SetBarrier ()
+			{
+				barrier = FlowReturns.Always;
+				update ();
+			}
+
+			static string ShortName (FlowReturns returns)
+			{
+				switch (returns) {
+				case FlowReturns.Never:
+					return "N";
+				case FlowReturns.Sometimes:
+					return "S";
+				default:
+					return "A";
+				}
 			}
 
 			public override string ToString ()
 			{
-				return String.Format ("Reachability({0}:{1}:{2})",
-						      Returns, Breaks, Reachable);
+				return String.Format ("[{0}:{1}:{2}:{3}:{4}]",
+						      ShortName (returns), ShortName (breaks),
+						      ShortName (throws), ShortName (barrier),
+						      ShortName (reachable));
 			}
 		}
 
@@ -108,6 +302,12 @@ namespace Mono.CSharp
 
 			case BranchingType.Switch:
 				return new FlowBranchingBlock (parent, type, SiblingType.SwitchSection, block, loc);
+
+			case BranchingType.SwitchSection:
+				return new FlowBranchingBlock (parent, type, SiblingType.Block, block, loc);
+
+			case BranchingType.Block:
+				return new FlowBranchingBlock (parent, type, SiblingType.Block, block, loc);
 
 			default:
 				return new FlowBranchingBlock (parent, type, SiblingType.Conditional, block, loc);
@@ -140,11 +340,6 @@ namespace Mono.CSharp
 		// </summary>
 		public bool Infinite;
 
-		// <summary>
-		//   If we may leave the current loop.
-		// </summary>
-		public bool MayLeaveLoop;
-
 		//
 		// Private
 		//
@@ -162,8 +357,6 @@ namespace Mono.CSharp
 		{
 			if (a == FlowReturns.Undefined)
 				return b;
-			if (b == FlowReturns.Unreachable)
-				return a;
 
 			switch (a) {
 			case FlowReturns.Never:
@@ -176,18 +369,13 @@ namespace Mono.CSharp
 				return FlowReturns.Sometimes;
 
 			case FlowReturns.Always:
-				if ((b == FlowReturns.Always) || (b == FlowReturns.Exception))
+				if (b == FlowReturns.Always)
 					return FlowReturns.Always;
 				else
 					return FlowReturns.Sometimes;
 
-			case FlowReturns.Exception:
-				if (b == FlowReturns.Exception)
-					return FlowReturns.Exception;
-				else if (b == FlowReturns.Always)
-					return FlowReturns.Always;
-				else
-					return FlowReturns.Sometimes;
+			default:
+				throw new ArgumentException ();
 			}
 
 			return b;
@@ -235,7 +423,7 @@ namespace Mono.CSharp
 			// Private.
 			//
 			MyBitVector locals, parameters;
-			FlowReturns RealReturns, RealBreaks, RealReachable;
+			Reachability reachability;
 			bool is_finally;
 
 			static int next_id = 0;
@@ -251,20 +439,19 @@ namespace Mono.CSharp
 				this.InheritsFrom = parent;
 				this.CountParameters = num_params;
 				this.CountLocals = num_locals;
-				this.RealReturns = FlowReturns.Never;
-				this.RealBreaks = FlowReturns.Never;
-				this.RealReachable = FlowReturns.Always;
 
 				if (parent != null) {
 					locals = new MyBitVector (parent.locals, CountLocals);
 					if (num_params > 0)
 						parameters = new MyBitVector (parent.parameters, num_params);
-					RealReturns = parent.Returns;
-					RealBreaks = parent.Breaks;
+
+					reachability = parent.Reachability.Clone ();
 				} else {
 					locals = new MyBitVector (null, CountLocals);
 					if (num_params > 0)
 						parameters = new MyBitVector (null, num_params);
+
+					reachability = Reachability.Never ();
 				}
 
 				id = ++next_id;
@@ -284,16 +471,14 @@ namespace Mono.CSharp
 				retval.locals = locals.Clone ();
 				if (parameters != null)
 					retval.parameters = parameters.Clone ();
-				retval.RealReturns = RealReturns;
-				retval.RealBreaks = RealBreaks;
-				retval.RealReachable = RealReachable;
+				retval.reachability = reachability.Clone ();
 
 				return retval;
 			}
 
 			public bool IsAssigned (VariableInfo var)
 			{
-				if (!var.IsParameter && AlwaysBreaks)
+				if (!var.IsParameter && Reachability.AlwaysBreaks)
 					return true;
 
 				return var.IsAssigned (var.IsParameter ? parameters : locals);
@@ -301,15 +486,16 @@ namespace Mono.CSharp
 
 			public void SetAssigned (VariableInfo var)
 			{
-				if (!var.IsParameter && AlwaysBreaks)
+				if (!var.IsParameter && Reachability.AlwaysBreaks)
 					return;
 
+				IsDirty = true;
 				var.SetAssigned (var.IsParameter ? parameters : locals);
 			}
 
 			public bool IsFieldAssigned (VariableInfo var, string name)
 			{
-				if (!var.IsParameter && AlwaysBreaks)
+				if (!var.IsParameter && Reachability.AlwaysBreaks)
 					return true;
 
 				return var.IsFieldAssigned (var.IsParameter ? parameters : locals, name);
@@ -317,122 +503,61 @@ namespace Mono.CSharp
 
 			public void SetFieldAssigned (VariableInfo var, string name)
 			{
-				if (!var.IsParameter && AlwaysBreaks)
+				if (!var.IsParameter && Reachability.AlwaysBreaks)
 					return;
 
+				IsDirty = true;
 				var.SetFieldAssigned (var.IsParameter ? parameters : locals, name);
 			}
 
-			// <summary>
-			//   Specifies when the current block returns.
-			//   If this is FlowReturns.Unreachable, then control can never reach the
-			//   end of the method (so that we don't need to emit a return statement).
-			//   The same applies for FlowReturns.Exception, but in this case the return
-			//   value will never be used.
-			// </summary>
-			public FlowReturns Returns {
+			public Reachability Reachability {
 				get {
-					return RealReturns;
+					return reachability;
 				}
 			}
 
-			// <summary>
-			//   Specifies whether control may return to our containing block
-			//   before reaching the end of this block.  This happens if there
-			//   is a break/continue/goto/return in it.
-			//   This can also be used to find out whether the statement immediately
-			//   following the current block may be reached or not.
-			// </summary>
-			public FlowReturns Breaks {
-				get {
-					return RealBreaks;
-				}
-			}
-
-			public FlowReturns Reachable {
-				get {
-					return RealReachable;
-				}
-			}
-
-			public bool AlwaysBreaks {
-				get {
-					return (Breaks == FlowReturns.Always) ||
-						(Breaks == FlowReturns.Exception) ||
-						(Breaks == FlowReturns.Unreachable);
-				}
-			}
-
-			public bool MayBreak {
-				get {
-					return Breaks != FlowReturns.Never;
-				}
-			}
-
-			public bool AlwaysReturns {
-				get {
-					return (Returns == FlowReturns.Always) ||
-						(Returns == FlowReturns.Exception);
-				}
-			}
-
-			public bool MayReturn {
-				get {
-					return (Returns == FlowReturns.Sometimes) ||
-						(Returns == FlowReturns.Always);
+			public void Return ()
+			{
+				if (!reachability.IsUnreachable) {
+					IsDirty = true;
+					reachability.SetReturns ();
 				}
 			}
 
 			public void Break ()
 			{
-				RealBreaks = FlowReturns.Always;
+				if (!reachability.IsUnreachable) {
+					IsDirty = true;
+					reachability.SetBreaks ();
+				}
 			}
 
-			public void Return ()
+			public void Throw ()
 			{
-				RealReturns = FlowReturns.Always;
-			}
-
-			public bool IsUnreachable {
-				get {
-					return (Reachable == FlowReturns.Exception) ||
-						(Reachable == FlowReturns.Unreachable);
+				if (!reachability.IsUnreachable) {
+					IsDirty = true;
+					reachability.SetThrows ();
 				}
 			}
 
 			public void Goto ()
 			{
-				// If we're already unreachable, don't modify the reason why.
-				if (!IsUnreachable)
-					RealReachable = FlowReturns.Unreachable;
-			}
-
-			public void NeverReachable ()
-			{
-				// If we're already unreachable, don't modify the reason why.
-				if (!IsUnreachable)
-					RealReachable = FlowReturns.Never;
-			}
-
-			public void Throw ()
-			{
-				// If we're already unreachable, don't modify the reason why.
-				if (!IsUnreachable)
-					RealReachable = FlowReturns.Exception;
+				if (!reachability.IsUnreachable) {
+					IsDirty = true;
+					reachability.SetBarrier ();
+				}
 			}
 
 			// <summary>
 			//   Merges a child branching.
 			// </summary>
-			public void MergeChild (MyBitVector new_params, MyBitVector new_locals,
+			public void MergeResult (MyBitVector new_params, MyBitVector new_locals,
 						Reachability new_reachability)
 			{
-				Report.Debug (2, "MERGING CHILD", this, new_params, new_locals,
-					      new_reachability);
+				Report.Debug (2, "  MERGING RESULT", this, IsDirty,
+					      new_params, new_locals, new_reachability, Type);
 
-				RealReturns = new_reachability.Returns;
-				RealBreaks = new_reachability.Breaks;
-				RealReachable = new_reachability.Reachable;
+				reachability = new_reachability;
 
 				//
 				// We've now either reached the point after the branching or we will
@@ -443,23 +568,22 @@ namespace Mono.CSharp
 				// we need to look at (see above).
 				//
 
-				if ((Reachable == FlowReturns.Always) || (Reachable == FlowReturns.Sometimes) ||
-				    (Reachable == FlowReturns.Never)) {
-					if ((Returns == FlowReturns.Always) || (Breaks == FlowReturns.Always))
-						RealReachable = FlowReturns.Never;
-					if ((Type == SiblingType.SwitchSection) && (Reachable != FlowReturns.Never)) {
-						Report.Error (163, Location, "Control cannot fall through from one " +
-							      "case label to another");
-					}
-
-					if (new_locals != null)
-						locals.Or (new_locals);
-
-					if (new_params != null)
-						parameters.Or (new_params);
+				if ((Type == SiblingType.SwitchSection) && !reachability.IsUnreachable) {
+					Report.Error (163, Location,
+						      "Control cannot fall through from one " +
+						      "case label to another");
+					return;
 				}
 
-				Report.Debug (2, "MERGING CHILD DONE", this);
+				if (new_locals != null)
+					locals.Or (new_locals);
+
+				if (new_params != null)
+					parameters.Or (new_params);
+
+				Report.Debug (2, "  MERGING RESULT DONE", this);
+
+				IsDirty = true;
 			}
 
 			// <summary>
@@ -484,28 +608,24 @@ namespace Mono.CSharp
 			// </summary>
 			public void MergeJumpOrigins (ICollection origin_vectors)
 			{
-				Report.Debug (1, "MERGING JUMP ORIGIN", this);
+				Report.Debug (1, "  MERGING JUMP ORIGIN", this);
 
-				RealBreaks = FlowReturns.Never;
-				RealReturns = FlowReturns.Never;
-				if (Reachable != FlowReturns.Always)
-					RealReachable = FlowReturns.Always;
+				reachability = Reachability.Never ();
 
 				if (origin_vectors == null)
 					return;
 
 				foreach (UsageVector vector in origin_vectors) {
-					Report.Debug (1, "  MERGING JUMP ORIGIN", vector);
+					Report.Debug (1, "    MERGING JUMP ORIGIN", vector);
 
 					locals.And (vector.locals);
 					if (parameters != null)
 						parameters.And (vector.parameters);
-					RealBreaks = AndFlowReturns (RealBreaks, vector.Breaks);
-					RealReturns = AndFlowReturns (RealReturns, vector.Returns);
-					RealReachable = AndFlowReturns (RealReachable, vector.Reachable);
+
+					Reachability.And (ref reachability, vector.Reachability, true);
 				}
 
-				Report.Debug (1, "MERGING JUMP ORIGIN DONE", this);
+				Report.Debug (1, "  MERGING JUMP ORIGIN DONE", this);
 			}
 
 			// <summary>
@@ -514,21 +634,26 @@ namespace Mono.CSharp
 			// </summary>
 			public void MergeFinallyOrigins (ICollection finally_vectors)
 			{
-				Report.Debug (1, "MERGING FINALLY ORIGIN", this);
+				Report.Debug (1, "  MERGING FINALLY ORIGIN", this);
 
+#if FIXME
 				RealBreaks = FlowReturns.Never;
+#endif
 
 				foreach (UsageVector vector in finally_vectors) {
-					Report.Debug (1, "  MERGING FINALLY ORIGIN", vector);
+					Report.Debug (1, "    MERGING FINALLY ORIGIN", vector);
 
 					if (parameters != null)
 						parameters.And (vector.parameters);
+
+#if FIXME
 					RealBreaks = AndFlowReturns (Breaks, vector.Breaks);
+#endif
 				}
 
 				is_finally = true;
 
-				Report.Debug (1, "MERGING FINALLY ORIGIN DONE", this);
+				Report.Debug (1, "  MERGING FINALLY ORIGIN DONE", this);
 			}
 
 			public void CheckOutParameters (FlowBranching branching)
@@ -542,6 +667,7 @@ namespace Mono.CSharp
 			// </summary>
 			public void Or (UsageVector new_vector)
 			{
+				IsDirty = true;
 				locals.Or (new_vector.locals);
 				if (parameters != null)
 					parameters.Or (new_vector.parameters);
@@ -552,6 +678,7 @@ namespace Mono.CSharp
 			// </summary>
 			public void AndLocals (UsageVector new_vector)
 			{
+				IsDirty = true;
 				locals.And (new_vector.locals);
 			}
 
@@ -611,11 +738,9 @@ namespace Mono.CSharp
 				sb.Append ("Vector (");
 				sb.Append (id);
 				sb.Append (",");
-				sb.Append (Returns);
+				sb.Append (IsDirty);
 				sb.Append (",");
-				sb.Append (Breaks);
-				sb.Append (",");
-				sb.Append (Reachable);
+				sb.Append (reachability);
 				if (parameters != null) {
 					sb.Append (" - ");
 					sb.Append (parameters);
@@ -670,12 +795,11 @@ namespace Mono.CSharp
 		{
 			AddSibling (new UsageVector (type, Parent.CurrentUsageVector, Location));
 
-			Report.Debug (1, "CREATED SIBLING", CurrentUsageVector);
+			Report.Debug (1, "  CREATED SIBLING", CurrentUsageVector);
 		}
 
 		protected abstract void AddSibling (UsageVector uv);
 
-		public abstract void Break ();
 		public abstract void Label (ArrayList origin_vectors);
 
 		// <summary>
@@ -703,15 +827,13 @@ namespace Mono.CSharp
 			public MyBitVector Parameters;
 			public MyBitVector Locals;
 			public Reachability Reachability;
-			public bool MayLeaveLoop;
 
 			public MergeResult (MyBitVector parameters, MyBitVector locals,
-					    Reachability reachability, bool may_leave_loop)
+					    Reachability reachability)
 			{
 				this.Parameters = parameters;
 				this.Locals = locals;
 				this.Reachability = reachability;
-				this.MayLeaveLoop = may_leave_loop;
 			}
 		}
 
@@ -720,29 +842,23 @@ namespace Mono.CSharp
 			MyBitVector locals = null;
 			MyBitVector parameters = null;
 
-			FlowReturns returns = FlowReturns.Undefined;
-			FlowReturns breaks = FlowReturns.Undefined;
-			FlowReturns reachable = FlowReturns.Undefined;
+			Reachability reachability = null;
 
-			Report.Debug (2, "MERGING CHILDREN", this, Type, children.Count);
+			Report.Debug (2, "  MERGING CHILDREN", Name, children.Count);
 
 			int children_count = children.Count;
 			for (int ix = 0; ix < children_count; ix++){
 				UsageVector child = (UsageVector) children [ix];
-				
-				Report.Debug (2, "  MERGING CHILD", child, child.AlwaysBreaks, child.AlwaysReturns,
-					      child.IsUnreachable, child.Locals, child.Parameters,
-					      child.Returns, child.Breaks, child.Reachable);
 
-				reachable = AndFlowReturns (reachable, child.Reachable);
+				bool do_break = (Type != BranchingType.Switch) &&
+					(Type != BranchingType.LoopBlock);
 
-				// Ignore unreachable children.
-				if (child.IsUnreachable)
-					continue;
+				Report.Debug (2, "    MERGING CHILD   ", child,
+					      child.Locals, child.Parameters,
+					      reachability, child.Reachability, do_break);
 
-				returns = AndFlowReturns (returns, child.Returns);
-				breaks = AndFlowReturns (breaks, child.Breaks);
-					
+				Reachability.And (ref reachability, child.Reachability, do_break);
+
 				// A local variable is initialized after a flow branching if it
 				// has been initialized in all its branches which do neither
 				// always return or always throw an exception.
@@ -778,42 +894,60 @@ namespace Mono.CSharp
 				// Here, `a' is initialized in line 3 and we must not look at
 				// line 5 since it always returns.
 				// 
-				if (!child.AlwaysReturns && !child.AlwaysBreaks)
+				bool do_break_2 = (child.Type != SiblingType.Block) &&
+					(child.Type != SiblingType.SwitchSection);
+				bool unreachable = (do_break_2 && child.Reachability.AlwaysBreaks) ||
+					child.Reachability.AlwaysThrows ||
+					child.Reachability.AlwaysReturns ||
+					child.Reachability.AlwaysHasBarrier;
+
+				Report.Debug (2, "    MERGING CHILD #1", reachability,
+					      Type, child.Type, child.Reachability.IsUnreachable,
+					      do_break_2, unreachable);
+
+				if (!unreachable)
 					MyBitVector.And (ref locals, child.LocalVector);
 
 				// An `out' parameter must be assigned in all branches which do
 				// not always throw an exception.
 				if ((child.Type != SiblingType.Catch) &&
-				    (child.ParameterVector != null) && (child.Breaks != FlowReturns.Exception))
+				    (child.ParameterVector != null) && !child.Reachability.AlwaysThrows)
 					MyBitVector.And (ref parameters, child.ParameterVector);
 			}
 
-			Report.Debug (2, "MERGING CHILDREN DONE", Type, parameters, locals, returns, breaks, reachable,
-				      Infinite, MayLeaveLoop, this);
+			if (reachability == null)
+				reachability = Reachability.Never ();
 
-			if (Infinite && !MayLeaveLoop) {
-				Report.Debug (1, "INFINITE", returns, breaks, this);
+			Report.Debug (2, "  MERGING CHILDREN #1  ", Type, reachability,
+				      Infinite, reachability.MayBreak);
 
-				if (returns == FlowReturns.Never) {
-					// We're actually infinite.
-					breaks = FlowReturns.Unreachable;
-					returns = FlowReturns.Unreachable;
-				} else if ((returns == FlowReturns.Sometimes) || (returns == FlowReturns.Always)) {
-					// If we're an infinite loop and do not break, the code after
-					// the loop can never be reached.  However, if we may return
-					// from the loop, then we do always return (or stay in the loop
-					// forever).
-					returns = FlowReturns.Always;
+			if (Type == BranchingType.LoopBlock) {
+				bool may_leave_loop = reachability.MayBreak;
+				reachability.ResetBreaks ();
+
+				if (Infinite && !may_leave_loop) {
+					if (reachability.Returns == FlowReturns.Sometimes) {
+						// If we're an infinite loop and do not break, the code
+						// after the loop can never be reached.  However, if we
+						// may return from the loop, then we do always return
+						// (or stay in the loop forever).
+						reachability.SetReturns ();
+					}
+
+					reachability.SetBarrier ();
+				} else {
+					if (reachability.Returns == FlowReturns.Always) {
+						// We're either finite or we may leave the loop.
+						reachability.SetReturnsSometimes ();
+					}
 				}
-			}
+			} else if (Type == BranchingType.Switch)
+				reachability.ResetBreaks ();
 
-			if (returns == FlowReturns.Undefined)
-				returns = FlowReturns.Never;
-			if (breaks == FlowReturns.Undefined)
-				breaks = FlowReturns.Never;
+			Report.Debug (2, "  MERGING CHILDREN DONE", parameters, locals,
+				      reachability, Infinite);
 
-			Reachability reachability = new Reachability (returns, breaks, reachable);
-			return new MergeResult (parameters, locals, reachability, MayLeaveLoop);
+			return new MergeResult (parameters, locals, reachability);
 		}
 
 		protected abstract MergeResult Merge ();
@@ -825,18 +959,13 @@ namespace Mono.CSharp
 		{
 			MergeResult result = child.Merge ();
 
-			CurrentUsageVector.MergeChild (
+			CurrentUsageVector.MergeResult (
 				result.Parameters, result.Locals, result.Reachability);
 
-			if ((child.Type != BranchingType.LoopBlock) && (child.Type != BranchingType.SwitchSection))
-				MayLeaveLoop |= child.MayLeaveLoop;
+			Report.Debug (4, "  MERGE CHILD", Location, child, CurrentUsageVector,
+				      result.Reachability);
 
-			if (result.Reachability.Reachable == FlowReturns.Exception)
-				return new Reachability (
-					FlowReturns.Exception, result.Reachability.Breaks,
-					result.Reachability.Reachable);
-			else
-				return result.Reachability;
+			return result.Reachability;
  		}
 
 		// <summary>
@@ -851,14 +980,12 @@ namespace Mono.CSharp
 				SiblingType.Conditional, null, Location, param_map.Length, local_map.Length);
 
 			MergeResult result = Merge ();
-			vector.MergeChild (result.Parameters, result.Locals, result.Reachability);
+			vector.MergeResult (result.Parameters, result.Locals, result.Reachability);
 
-			if (vector.Reachable != FlowReturns.Exception)
+			Report.Debug (4, "MERGE TOP BLOCK", Location, vector, result.Reachability);
+
+			if (vector.Reachability.Throws != FlowReturns.Always)
 				CheckOutParameters (vector.Parameters, Location);
-			else
-				return new Reachability (
-					FlowReturns.Exception, result.Reachability.Breaks,
-					result.Reachability.Reachable);
 
 			return result.Reachability;
 		}
@@ -924,6 +1051,13 @@ namespace Mono.CSharp
 			sb.Append (")");
 			return sb.ToString ();
 		}
+
+		public string Name {
+			get {
+				return String.Format ("{0} ({1}:{2}:{3})",
+						      GetType (), id, Type, Location);
+			}
+		}
 	}
 
 	public class FlowBranchingBlock : FlowBranching
@@ -946,17 +1080,6 @@ namespace Mono.CSharp
 			current_vector = sibling;
 		}
 
-		public override void Break ()
-		{
-			if (Type == BranchingType.SwitchSection)
-				CurrentUsageVector.NeverReachable ();
-			else {
-				if (Type == BranchingType.LoopBlock)
-					MayLeaveLoop = true;
-				CurrentUsageVector.Break ();
-			}
-		}
-
 		public override void Label (ArrayList origin_vectors)
 		{
 			CurrentUsageVector.MergeJumpOrigins (origin_vectors);
@@ -964,10 +1087,7 @@ namespace Mono.CSharp
 
 		protected override MergeResult Merge ()
 		{
-			MergeResult result = Merge (siblings);
-			if (Type == BranchingType.LoopBlock)
-				result.MayLeaveLoop = false;
-			return result;
+			return Merge (siblings);
 		}
 	}
 
@@ -1016,11 +1136,6 @@ namespace Mono.CSharp
 		public override void AddFinallyVector (UsageVector vector)
 		{
 			finally_vectors.Add (vector.Clone ());
-		}
-
-		public override void Break ()
-		{
-			CurrentUsageVector.Break ();
 		}
 
 		public override void Label (ArrayList origin_vectors)
@@ -1861,20 +1976,16 @@ namespace Mono.CSharp
 
 		public override string ToString ()
 		{
-			StringBuilder sb = new StringBuilder ("MyBitVector (");
+			StringBuilder sb = new StringBuilder ("{");
 
 			BitArray vector = Vector;
-			sb.Append (Count);
-			sb.Append (",");
 			if (!IsDirty)
-				sb.Append ("INHERITED - ");
+				sb.Append ("=");
 			for (int i = 0; i < vector.Count; i++) {
-				if (i > 0)
-					sb.Append (",");
-				sb.Append (vector [i]);
+				sb.Append (vector [i] ? "1" : "0");
 			}
 			
-			sb.Append (")");
+			sb.Append ("}");
 			return sb.ToString ();
 		}
 	}

@@ -144,7 +144,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 			
-			ec.StartFlowBranching (FlowBranching.BranchingType.Block, loc);
+			ec.StartFlowBranching (FlowBranching.BranchingType.Conditional, loc);
 			
 			if (!TrueStatement.Resolve (ec)) {
 				ec.KillFlowBranching ();
@@ -931,8 +931,7 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			ec.CurrentBranching.MayLeaveLoop = true;
-			ec.CurrentBranching.Break ();
+			ec.CurrentBranching.CurrentUsageVector.Break ();
 			return true;
 		}
 
@@ -1745,7 +1744,7 @@ namespace Mono.CSharp {
 			ec.CurrentBlock = this;
 			ec.StartFlowBranching (this);
 
-			Report.Debug (1, "RESOLVE BLOCK", StartLocation, ec.CurrentBranching);
+			Report.Debug (4, "RESOLVE BLOCK", StartLocation, ec.CurrentBranching);
 			
 			bool unreachable = false, warning_shown = false;
 
@@ -1772,10 +1771,10 @@ namespace Mono.CSharp {
 				if (s is LabeledStatement)
 					unreachable = false;
 				else
-					unreachable = ec.CurrentBranching.CurrentUsageVector.IsUnreachable;
+					unreachable = ec.CurrentBranching.CurrentUsageVector.Reachability.IsUnreachable;
 			}
 
-			Report.Debug (1, "RESOLVE BLOCK DONE", StartLocation, ec.CurrentBranching);
+			Report.Debug (4, "RESOLVE BLOCK DONE", StartLocation, ec.CurrentBranching);
 
 			FlowBranching.Reachability reachability = ec.EndFlowBranching ();
 			ec.CurrentBlock = prev_block;
@@ -1783,7 +1782,7 @@ namespace Mono.CSharp {
 			// If we're a non-static `struct' constructor which doesn't have an
 			// initializer, then we must initialize all of the struct's fields.
 			if ((this_variable != null) &&
-			    (reachability.Returns != FlowBranching.FlowReturns.Exception) &&
+			    (reachability.Throws != FlowBranching.FlowReturns.Always) &&
 			    !this_variable.IsThisAssigned (ec, loc))
 				ok = false;
 
@@ -1794,11 +1793,11 @@ namespace Mono.CSharp {
 								"This label has not been referenced");
 			}
 
-			Report.Debug (1, "RESOLVE BLOCK DONE #2", StartLocation, reachability);
+			Report.Debug (4, "RESOLVE BLOCK DONE #2", StartLocation, reachability);
 
 			if ((reachability.Returns == FlowBranching.FlowReturns.Always) ||
-			    (reachability.Returns == FlowBranching.FlowReturns.Exception) ||
-			    (reachability.Returns == FlowBranching.FlowReturns.Unreachable))
+			    (reachability.Throws == FlowBranching.FlowReturns.Always) ||
+			    (reachability.Reachable == FlowBranching.FlowReturns.Never))
 				flags |= Flags.HasRet;
 
 			return ok;
