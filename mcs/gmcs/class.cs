@@ -111,7 +111,7 @@ namespace Mono.CSharp {
 		// from classes from the arraylist `type_bases' 
 		//
 		string     base_class_name;
-		public Type base_classs_type;
+		TypeExpr   parent_type;
 
 		ArrayList type_bases;
 
@@ -640,8 +640,7 @@ namespace Mono.CSharp {
 		///   The @parent argument is set to the parent object or null
 		///   if this is `System.Object'. 
 		/// </summary>
-		TypeExpr [] GetClassBases (bool is_class, bool is_iface,
-					   out TypeExpr parent, out bool error)
+		TypeExpr [] GetClassBases (bool is_class, bool is_iface, out bool error)
 		{
 			ArrayList bases = Bases;
 			int count;
@@ -650,16 +649,16 @@ namespace Mono.CSharp {
 			error = false;
 
 			if (is_class || is_iface)
-				parent = null;
+				parent_type = null;
 			else
-				parent = TypeManager.system_valuetype_expr;
+				parent_type = TypeManager.system_valuetype_expr;
 
 			if (bases == null){
 				if (is_class){
 					if (RootContext.StdLib)
-						parent = TypeManager.system_object_expr;
+						parent_type = TypeManager.system_object_expr;
 					else if (Name != "System.Object")
-						parent = TypeManager.system_object_expr;
+						parent_type = TypeManager.system_object_expr;
 				} else {
 					//
 					// If we are compiling our runtime,
@@ -667,7 +666,7 @@ namespace Mono.CSharp {
 					// parent is `System.Object'.
 					//
 					if (!RootContext.StdLib && Name == "System.ValueType")
-						parent = TypeManager.system_object_expr;
+						parent_type = TypeManager.system_object_expr;
 				}
 
 				return null;
@@ -705,10 +704,10 @@ namespace Mono.CSharp {
 				}
 
 				if (name.IsClass){
-					parent = name;
+					parent_type = name;
 					start = 1;
 				} else {
-					parent = TypeManager.system_object_expr;
+					parent_type = TypeManager.system_object_expr;
 					start = 0;
 				}
 				if (name.IsSealed){
@@ -724,15 +723,15 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				if (!parent.CanInheritFrom ()){
+				if (!parent_type.CanInheritFrom ()){
 					Report.Error (644, Location,
 						      "`{0}' cannot inherit from special class `{1}'",
-						      Name, parent.Name);
+						      Name, parent_type.Name);
 					error = true;
 					return null;
 				}
 
-				if (!parent.AsAccessible (this, ModFlags))
+				if (!parent_type.AsAccessible (this, ModFlags))
 					Report.Error (60, Location,
 						      "Inconsistent accessibility: base class `" +
 						      name.Name + "' is less accessible than class `" +
@@ -742,8 +741,8 @@ namespace Mono.CSharp {
 				start = 0;
 			}
 
-			if (parent != null)
-				base_class_name = parent.Name;
+			if (parent_type != null)
+				base_class_name = parent_type.Name;
 
 			TypeExpr [] ifaces = new TypeExpr [count-start];
 
@@ -764,7 +763,7 @@ namespace Mono.CSharp {
 				}
 				
 				if (resolved.IsClass) {
-					if (parent != null){
+					if (parent_type != null){
 						Report.Error (527, "In Class `" + Name + "', type `"+
 							      name+"' is not an interface");
 						error = true;
@@ -859,7 +858,7 @@ namespace Mono.CSharp {
 
 			ec = new EmitContext (this, Mono.CSharp.Location.Null, null, null, ModFlags);
 
-			ifaces = GetClassBases (is_class, is_iface, out parent, out error); 
+			ifaces = GetClassBases (is_class, is_iface, out error); 
 
 			if (error)
 				return null;
@@ -878,9 +877,9 @@ namespace Mono.CSharp {
 			TypeAttributes type_attributes = TypeAttr;
 
 			Type ptype;
-			ConstructedType constructed = parent as ConstructedType;
-			if ((constructed == null) && (parent != null))
-				ptype = parent.ResolveType (ec);
+			ConstructedType constructed = parent_type as ConstructedType;
+			if ((constructed == null) && (parent_type != null))
+				ptype = parent_type.ResolveType (ec);
 			else
 				ptype = null;
 
@@ -976,7 +975,7 @@ namespace Mono.CSharp {
 			//
 			ec.ContainerType = TypeBuilder;
 
-			if ((parent != null) && parent.IsAttribute) {
+			if ((parent_type != null) && parent_type.IsAttribute) {
 				RootContext.RegisterAttribute (this);
 			} else
 				RootContext.RegisterOrder (this); 
@@ -3239,6 +3238,12 @@ namespace Mono.CSharp {
 		{
 			return should_ignore;
 		}
+
+		GenericMethod IMethodData.GenericMethod {
+			get {
+				return GenericMethod;
+			}
+		}
 		#endregion
 	}
 
@@ -3412,7 +3417,7 @@ namespace Mono.CSharp {
 			if (parent_constructor == null)
 				return;
 
-			TypeContainer type_ds = TypeManager.LookupTypeContainer (tc.base_classs_type);
+			TypeContainer type_ds = TypeManager.LookupTypeContainer (tc.TypeBuilder.BaseType);
 			if (type_ds == null) {
 				ObsoleteAttribute oa = AttributeTester.GetMemberObsoleteAttribute (parent_constructor);
 
@@ -3758,6 +3763,7 @@ namespace Mono.CSharp {
 		string MethodName { get; }
 		Type[] ParameterTypes { get; }
 		Type ReturnType { get; }
+		GenericMethod GenericMethod { get; }
 
 		Attributes OptAttributes { get; }
 		Block Block { get; }
@@ -5173,6 +5179,12 @@ namespace Mono.CSharp {
 			{
 				return method_data.ShouldIgnore ();
 			}
+
+			GenericMethod IMethodData.GenericMethod {
+				get {
+					return null;
+				}
+			}
 			#endregion
 		}
 
@@ -5903,6 +5915,12 @@ namespace Mono.CSharp {
 			bool IMethodData.ShouldIgnore ()
 			{
 				return method_data.ShouldIgnore ();
+			}
+
+			GenericMethod IMethodData.GenericMethod {
+				get {
+					return null;
+				}
 			}
 
 			public abstract string MethodName { get; }

@@ -2641,7 +2641,7 @@ public class TypeManager {
 	static public bool IsGenericMethod (MethodBase mb)
 	{
 		if (mb.DeclaringType is TypeBuilder) {
-			MethodData method = (MethodData) builder_to_method [mb];
+			IMethodData method = (IMethodData) builder_to_method [mb];
 			if (method == null)
 				return false;
 
