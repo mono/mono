@@ -533,7 +533,7 @@ namespace Mono.CSharp {
 		public void AddConstructor (Constructor c)
 		{
 			if (c.Name != Basename)  {
-				Report.Error (1520, Location, "Class, struct, or interface method must have a return type");
+				Report.Error (1520, c.Location, "Class, struct, or interface method must have a return type");
 			}
 
 			bool is_static = (c.ModFlags & Modifiers.STATIC) != 0;
@@ -2666,6 +2666,7 @@ namespace Mono.CSharp {
 					Report.Error (711, m.Location, "'{0}': Static class cannot contain destructor", GetSignatureForError ());
 					continue;
 				}
+
 				Report.Error (708, m.Location, "'{0}': cannot declare instance members in a static class", m.GetSignatureForError (this));
 			}
 

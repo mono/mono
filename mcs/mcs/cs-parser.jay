@@ -1632,7 +1632,7 @@ constructor_declaration
 			}
 		} else {
 			// We let another layer check the validity of the constructor.
-			Console.WriteLine ("{0} and {1}", c.Name, current_container.Basename);
+			//Console.WriteLine ("{0} and {1}", c.Name, current_container.Basename);
 		}
 
 		current_container.AddConstructor (c);

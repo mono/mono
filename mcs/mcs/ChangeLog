@@ -1,5 +1,9 @@
 2004-09-20  John Luke <jluke@cfl.rr.com>
 
+	* class.cs, cs-parser.jay: Improve the error report for 1520:
+	report the actual line where the error happens, not where the
+	class was declared.
+
 	* assign.cs, delegate.cs, ecore.cs, expression.cs, statement.cs:
 	Pass location information that was available elsewhere.
 
