@@ -1,3 +1,12 @@
+2004-04-02  Dick Porter  <dick@ximian.com>
+
+	* icall.c: Deleted the icalls that were obsoleted some time ago
+	by the ICU string code, and which were mixed into the icall
+	rearranging.  Fixes bug 55969.
+
+	* string-icalls.h: 
+	* string-icalls.c: Deleted the code that those icalls reference.
+
 2004-04-01  Martin Baulig  <martin@ximian.com>
 
 	* metadata.h (MONO_CLASS_IS_INTERFACE): New macro.
