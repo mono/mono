@@ -592,6 +592,8 @@ primative_type_ref	: K_CHAR
 			  {$$ = new TypeRef (PrimitiveType.UInt64, "System.UInt64"); }
 			| K_STRING 		
 			  {$$ = new TypeRef (PrimitiveType.String, "System.String"); }
+			| K_OBJECT 
+			  { $$ = new TypeRef (PrimitiveType.Object, "System.Object"); }
 			;
 
 internal_type_ref	: name1
