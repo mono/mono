@@ -13,6 +13,8 @@ using System.Xml;
 using Commons.Xml.Relaxng;
 using NUnit.Framework;
 
+using RVR = RelaxngValidatingReader;
+
 namespace MonoTests.Commons.Xml.Relaxng
 {
 	[TestFixture]
@@ -68,14 +70,15 @@ namespace MonoTests.Commons.Xml.Relaxng
 				reader.Read ();
 		}
 
-/*
 		[Test]
-		public void ReadPracticalSample2 ()
+		public void ValidateRelaxngGrammar ()
 		{
-			SetupReaderFromUrl ("XmlFiles/team.rng", "XmlFiles/relaxng.rng");
-			while (!reader.EOF)
-				reader.Read ();
+			// validate relaxng.rng with relaxng.rng
+			RVR r = new RVR (
+				new XmlTextReader ("Test/XmlFiles/relaxng.rng"),
+				new XmlTextReader ("Test/XmlFiles/relaxng.rng"));
+			while (!r.EOF)
+				r.Read ();
 		}
-*/
 	}
 }

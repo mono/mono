@@ -39,16 +39,16 @@ namespace MonoTests.Commons.Xml.Relaxng
 			AssertEquals (RelaxngPatternType.Element, p.PatternType);
 		}
 
-/*
 		[Test]
-		public void ValidateRelaxngGrammar ()
+		public void CompileRelaxngGrammar ()
 		{
-			loadGrammarFromUrl ("XmlFiles/relaxng.rng");
+			loadGrammarFromUrl ("Test/XmlFiles/relaxng.rng");
 			RelaxngPattern p = reader.ReadPattern ();
 
 			AssertEquals (RelaxngPatternType.Grammar, p.PatternType);
+
+			p.Compile ();
 		}
-*/
 
 	}
 }

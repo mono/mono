@@ -1,3 +1,9 @@
+2004-03-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Added RncTests.cs (compact syntax test).
+	* RelaxngReaderTests.cs : modified and fixed relaxng.rng reading test.
+	* RelaxngValidatingReaderTests.cs : Added relaxng.rng validation test.
+
 2004-02-28  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Removed Commons.Xml.Relaxng_test.args.
