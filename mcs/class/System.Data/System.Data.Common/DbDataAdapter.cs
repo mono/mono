@@ -143,7 +143,7 @@ namespace System.Data.Common
                                 DataRow thisRow;
                                 object[] itemArray = new object[dataReader.FieldCount];
 
-                                while (dataReader.Read () && (changeCount != 0 || changeCount < maxRecords))
+                                while (dataReader.Read () && !(maxRecords > 0 && changeCount > maxRecords && srcTable == tableName))
                                 {
                                         // need to check for existing rows to reconcile if we have key
                                         // information.  skip this step for now

@@ -1,4 +1,8 @@
 2002-05-13  Tim Coleman
+	* System.Data.Common/DbDataAdapter.cs:
+		The maxRecords check was not correct.
+
+2002-05-13  Tim Coleman
 	* System.Data/DataTableCollection.cs:
 		Fix an issue when adding a DataTable and size == 0.
 		Now explicitly checks if size > 0 before doing Array.Copy ()
