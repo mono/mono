@@ -466,7 +466,7 @@ namespace System.Data {
 		/// on a form or used by another component. The initialization
 		/// occurs at runtime.
 		/// </summary>
-		public void BeginInit () 
+		public virtual void BeginInit () 
 		{
 		}
 
@@ -654,7 +654,7 @@ namespace System.Data {
 		/// initialization occurs at runtime.
 		/// </summary>
 		[MonoTODO]
-		public void EndInit () 
+		public virtual void EndInit () 
 		{
 
 		}
