@@ -1,3 +1,8 @@
+2004-09-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib_test.dll.sources: Added System.Security.Permissions/
+	RegistryPermissionTest.cs to unit tests.
+
 2004-08-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Added Mono.Security/Uri.cs to the build.

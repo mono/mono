@@ -188,6 +188,7 @@ System.Security.Permissions/PublisherIdentityPermissionTest.cs
 System.Security.Permissions/ReflectionPermissionAttributeTest.cs
 System.Security.Permissions/ReflectionPermissionTest.cs
 System.Security.Permissions/RegistryPermissionAttributeTest.cs
+System.Security.Permissions/RegistryPermissionTest.cs
 System.Security.Permissions/SecurityPermissionAttributeTest.cs
 System.Security.Permissions/SecurityPermissionTest.cs
 System.Security.Permissions/SiteIdentityPermissionAttributeTest.cs
