@@ -1,5 +1,5 @@
 //
-// System.Int16.cs
+// System.UInt16.cs
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
@@ -9,26 +9,26 @@
 
 namespace System {
 	
-	public struct Int16 : ValueType {
-		public const short MinValue = -32768;
-		public const short MaxValue =  32767;
+	public struct UInt16 : ValueType {
+		public const ushort MinValue = 0;
+		public const ushort MaxValue = 0xffff;
 		
 		short value;
 
 		public int CompareTo (object v)
 		{
-			if (!(value is System.Int16))
+			if (!(value is System.UInt16))
 				throw new ArgumentException ("Value is not a System.Int16");
 
-			return value - ((short) v);
+			return value - ((ushort) v);
 		}
 
 		public override bool Equals (object o)
 		{
-			if (!(o is System.Int16))
+			if (!(o is System.UInt16))
 				return false;
 
-			return ((short) o) == value;
+			return ((ushort) o) == value;
 		}
 
 		public override int GetHashCode ()
@@ -38,28 +38,28 @@ namespace System {
 
 		public TypeCode GetTypeCode ()
 		{
-			return TypeCode.Int16;
+			return TypeCode.UInt16;
 		}
 
-		public static short Parse (string s)
+		public static ushort Parse (string s)
 		{
 			// TODO: Implement me
 			return 0;
 		}
 
-		public static short Parse (string s, IFormatProvider)
+		public static ushort Parse (string s, IFormatProvider)
 		{
 			// TODO: Implement me
 			return 0;
 		}
 
-		public static short Parse (string s, NumberStyles s, fp)
+		public static ushort Parse (string s, NumberStyles s, fp)
 		{
 			// TODO: Implement me
 			return 0;
 		}
 
-		public static short Parse (string s, NumberStyles s, IFormatProvider fp)
+		public static ushort Parse (string s, NumberStyles s, IFormatProvider fp)
 		{
 			// TODO: Implement me
 			return 0;

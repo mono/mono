@@ -1,5 +1,5 @@
 //
-// System.Int16.cs
+// System.Int64.cs
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
@@ -9,57 +9,57 @@
 
 namespace System {
 	
-	public struct Int16 : ValueType {
-		public const short MinValue = -32768;
-		public const short MaxValue =  32767;
+	public struct Int64 : ValueType {
+		public const long MinValue = 0x8000000000000000;
+		public const long MaxValue = 0x7fffffffffffffff;
 		
-		short value;
+		long value;
 
 		public int CompareTo (object v)
 		{
-			if (!(value is System.Int16))
-				throw new ArgumentException ("Value is not a System.Int16");
+			if (!(value is System.Int64))
+				throw new ArgumentException ("Value is not a System.Int64");
 
-			return value - ((short) v);
+			return value - (long) v;
 		}
 
 		public override bool Equals (object o)
 		{
-			if (!(o is System.Int16))
+			if (!(o is System.Int64))
 				return false;
 
-			return ((short) o) == value;
+			return ((long) o) == value;
 		}
 
 		public override int GetHashCode ()
 		{
-			return value;
+			return (value & 0xffffffff) ^ (value >> 32);
 		}
 
 		public TypeCode GetTypeCode ()
 		{
-			return TypeCode.Int16;
+			return TypeCode.Int64;
 		}
 
-		public static short Parse (string s)
+		public static long Parse (string s)
 		{
 			// TODO: Implement me
 			return 0;
 		}
 
-		public static short Parse (string s, IFormatProvider)
+		public static long Parse (string s, IFormatProvider)
 		{
 			// TODO: Implement me
 			return 0;
 		}
 
-		public static short Parse (string s, NumberStyles s, fp)
+		public static long Parse (string s, NumberStyles s, fp)
 		{
 			// TODO: Implement me
 			return 0;
 		}
 
-		public static short Parse (string s, NumberStyles s, IFormatProvider fp)
+		public static long Parse (string s, NumberStyles s, IFormatProvider fp)
 		{
 			// TODO: Implement me
 			return 0;

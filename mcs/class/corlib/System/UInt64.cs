@@ -1,5 +1,5 @@
 //
-// System.Int16.cs
+// System.UInt64.cs
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
@@ -9,57 +9,57 @@
 
 namespace System {
 	
-	public struct Int16 : ValueType {
-		public const short MinValue = -32768;
-		public const short MaxValue =  32767;
+	public struct UInt64 : ValueType {
+		public const ulong MinValue = 0;
+		public const ulong MaxValue = 0xffffffffffffffff;
 		
-		short value;
+		ulong value;
 
 		public int CompareTo (object v)
 		{
-			if (!(value is System.Int16))
-				throw new ArgumentException ("Value is not a System.Int16");
+			if (!(value is System.UInt64))
+				throw new ArgumentException ("Value is not a System.UInt64");
 
-			return value - ((short) v);
+			return value - (long) v;
 		}
 
 		public override bool Equals (object o)
 		{
-			if (!(o is System.Int16))
+			if (!(o is System.UInt64))
 				return false;
 
-			return ((short) o) == value;
+			return ((ulong) o) == value;
 		}
 
 		public override int GetHashCode ()
 		{
-			return value;
+			return (value & 0xffffffff) ^ (value >> 32);
 		}
 
 		public TypeCode GetTypeCode ()
 		{
-			return TypeCode.Int16;
+			return TypeCode.UInt64;
 		}
 
-		public static short Parse (string s)
+		public static ulong Parse (string s)
 		{
 			// TODO: Implement me
 			return 0;
 		}
 
-		public static short Parse (string s, IFormatProvider)
+		public static ulong Parse (string s, IFormatProvider)
 		{
 			// TODO: Implement me
 			return 0;
 		}
 
-		public static short Parse (string s, NumberStyles s, fp)
+		public static ulong Parse (string s, NumberStyles s, fp)
 		{
 			// TODO: Implement me
 			return 0;
 		}
 
-		public static short Parse (string s, NumberStyles s, IFormatProvider fp)
+		public static ulong Parse (string s, NumberStyles s, IFormatProvider fp)
 		{
 			// TODO: Implement me
 			return 0;
