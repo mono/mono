@@ -95,6 +95,18 @@ namespace System {
 			return (char) 0;
 		}
 
+		private static char ToLower (char c)
+		{
+			// FIXME: make me unicode aware
+			return (c >= 'A' && c <= 'Z') ? (char) (c + 33) : c;
+		}
+
+		private static char ToUpper (char c)
+		{
+			// FIXME: make me unicode aware
+			return (char) ((c >= 'a' && c <= 'z') ? c - 33 : c);
+		}
+
 		public override string ToString ()
 		{
 			// TODO: Implement me

@@ -181,18 +181,6 @@ namespace System {
 			return str.Length;
 		}
 
-		private static char tolower (char c)
-		{
-			// FIXME: make me unicode aware
-			return c >= 'A' && c <= 'Z' ? c + (char) 33 : c;
-		}
-
-		private static char toupper (char c)
-		{
-			// FIXME: make me unicode aware
-			return c >= 'a' && c <= 'z' ? c - (char) 33 : c;
-		}
-
 		private static char tolowerordinal (char c)
 		{
 			// FIXME: implement me
@@ -219,7 +207,7 @@ namespace System {
 			char *nc_ptr;  /* compare pointers */
 			char *h_ptr;
 			char *the_ptr;  /* haystack pointers */
-			uint h_len, n_len, n, i;
+			int h_len, n_len, n, i;
 
 			if (haystack == null || needle == null)
 				throw new ArgumentNullException ();
@@ -317,7 +305,7 @@ namespace System {
 				return 1;
 
 			for (i = 0; strA[i] != '\0' && strB[i] != '\0'; i++) {
-				if (tolower (strA[i]) != tolower (strB[i]))
+				if (Char.ToLower (strA[i]) != Char.ToLower (strB[i]))
 					break;
 			}
 
@@ -381,7 +369,7 @@ namespace System {
 				return 1;
 
 			for (i = 0; i < length - 1; i++) {
-				if (tolower (strA[indexA + i]) != tolower (strB[indexB + i]))
+				if (Char.ToLower (strA[indexA + i]) != Char.ToLower (strB[indexB + i]))
 					break;
 			}
 

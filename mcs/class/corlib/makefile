@@ -6,7 +6,7 @@ all:
 
 windows: make-list
 	$(CSC) /unsafe /target:library /out:corlibx.dll /nowarn:1595 @list
-	$(CSC) /unsafe /target:library /out:corlib.dll /nowarn:1595 System\\Object.cs System\\ValueType.cs @list
+	$(CSC) /unsafe /nostdlib /target:library /out:corlib.dll /nowarn:1595 System\\Object.cs System\\ValueType.cs @list
 
 unix:
 	@echo "'make unix' is broken for now."

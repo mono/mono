@@ -1,5 +1,9 @@
 2001-07-19  Miguel de Icaza  <miguel@ximian.com>
 
+	* String.cs: Removed tolower and toupper.
+
+	* Char.cs: Moved ToLower and ToUpper from string to here. 
+
 	* Convert.cs ToByte (float value), ToByte (double value) Use IsNan
 	instead of comparing the value to Nan.
 
