@@ -2119,7 +2119,7 @@ catch_clause
 				ArrayList one = new ArrayList ();
 				Location loc = lexer.Location;
 
-				one.Add (new VariableDeclaration (id, null, loc));
+				one.Add (new VariableDeclaration (id, type, loc));
 
 
 				$1 = current_block;
