@@ -2,10 +2,14 @@
 // StringCollection.cs
 //
 // Authors:
+//	John Barnette (jbarn@httcb.net)
+//	Sean MacIsaac (macisaac@ximian.com)
 //	Ben Maurer (bmaurer@users.sourceforge.net)
 //
 // (C) 2003 Ben Maurer
-//
+// Copyright (C) 2001 John Barnette
+// (C) Ximian, Inc.  http://www.ximian.com
+
 
 namespace System.Collections.Specialized {
 	
