@@ -21,7 +21,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-	public unsafe class NativeWindow : MarshalByRefObject {
+	public class NativeWindow : MarshalByRefObject {
 
 		// the window's HWND
 		private IntPtr windowHandle;

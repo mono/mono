@@ -8,8 +8,9 @@ LIBMONO=/usr/local/lib/libmono.a
 SOURCES = \
 	Win32.cs \
 	Font.cs \
+	MenuItem.cs \
 	DrawItemEventArgs.cs \
-	../System.Windows.Forms/DrawItemEventHandler.cs \
+	DrawItemEventHandler.cs \
 	../System.Windows.Forms/Message.cs \
 	../System.Windows.Forms/CreateParams.cs \
 	../System.Windows.Forms/MdiLayout.cs \
@@ -34,7 +35,6 @@ SOURCES = \
 	../System.Windows.Forms/DrawItemState.cs \
 	../System.Windows.Forms/ComVisible.cs \
 	../System.Windows.Forms/Menu.cs \
-	../System.Windows.Forms/MenuItem.cs \
 	../System.Windows.Forms/MainMenu.cs \
 	../System.Windows.Forms/ContextMenu.cs \
 	../System.Windows.Forms/DialogResult.cs \
@@ -90,24 +90,16 @@ SOURCES = \
 	Application.cs \
 	NativeWindow.cs
 
-# The Mono 0.13 build used at the time this code was written seems to be 
-# missing some object code in the static libs. Due to conflicts between 
-# functions in the shared libs of Mono and Wine this stub at this point 
-# it seems we will need to statically link the embedded Mono engine.
-#
-# TODO: is the above statement correct or is the link phase missing an
-# object/library or gcc/ld switch?
-#
-# These are the two object files are missing in the libmono.a so link these 
-# in also:
-LIBMETADATA=/home/john/mono-src/mono-0.13/mono/metadata/.libs/libmetadata.al
-LIBMONORUNTIME=/home/john/mono-src/mono-0.13/mono/metadata/.libs/libmonoruntime.al
+all:	monostub.exe.so System.Windows.Forms.dll NativeWindowTest.exe \
+	FormTest.exe
 
-all:  monostub.exe.so System.Windows.Forms.dll NativeWindowTest.exe FormTest.exe 
 ##########################################################################
 # build the mono stub application
 monostub.exe.so: monostub.o monostart.o monostub.exe.spec.o monostub.exe.dbg.o
-	gcc -shared -Wl,-Bsymbolic -o monostub.exe.so monostub.exe.spec.o monostub.o monostub.exe.dbg.o monostart.o -I/usr/local/include -I -I$(GLIB20_INCUDE) -I$(GLIB20_LIB_INCLUDE) -L/usr/lib $(LIBMONO) -lwine -lntdll.dll -lglib-2.0 -lgmodule-2.0 -lm $(LIBMETADATA) $(LIBMONORUNTIME)
+	gcc -shared -Wl,-Bsymbolic -o monostub.exe.so monostub.exe.spec.o \
+	monostub.o monostub.exe.dbg.o monostart.o -I/usr/local/include \
+	 -I$(GLIB20_INCUDE) -I$(GLIB20_LIB_INCLUDE) -L/usr/lib $(LIBMONO) \
+	-lwine -lntdll.dll -lglib-2.0 -lgmodule-2.0 -lm -lpthread -lgc
 
 clean:	
 	rm *.o monostub.exe.dbg.c monostub.exe.spec.c monostub.exe.so *.exe *.dll
@@ -138,10 +130,10 @@ monostub.exe.dbg.o: monostub.exe.dbg.c
 # build System.Windows.Forms.dll and test/sample applications
 
 NativeWindowTest.exe: NativeWindowTest.cs System.Windows.Forms.dll
-	$(CSC) --unsafe -r System.Windows.Forms.dll NativeWindowTest.cs
+	$(CSC) -r System.Windows.Forms.dll NativeWindowTest.cs
 
 FormTest.exe: FormTest.cs System.Windows.Forms.dll
-	$(CSC) --unsafe -r System.Windows.Forms.dll FormTest.cs
+	$(CSC) -r System.Windows.Forms.dll FormTest.cs
 
 System.Windows.Forms.dll: $(SOURCES)
-	$(CSC) --unsafe --target library -o System.Windows.Forms.dll $(SOURCES) -r System.Drawing
+	$(CSC) --target library -o System.Windows.Forms.dll $(SOURCES) -r System.Drawing

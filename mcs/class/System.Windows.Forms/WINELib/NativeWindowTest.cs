@@ -14,7 +14,7 @@ public class NativeWindowTest : NativeWindow {
 		DefWndProc (ref m);
 	}
 
-	static public unsafe void Main () {
+	static public void Main () {
 		Console.WriteLine ("NativeWindow sample application begin");
 		Console.WriteLine ("Creating NativeWindow");
 		NativeWindow nw = new NativeWindow ();
@@ -33,18 +33,18 @@ public class NativeWindowTest : NativeWindow {
 		cp.ExStyle = 0;
 		cp.Param = 0;
 		cp.Param = 0;
-		cp.Style = Win32.WS_OVERLAPPEDWINDOW;
+		cp.Style = (int) Win32.WS_OVERLAPPEDWINDOW;
 
 		Console.WriteLine ("creating handle");
 		nw.CreateHandle (cp);
 		Console.WriteLine ("showing window");
-		Win32.ShowWindow (nw.Handle, Win32.SW_SHOW);
+		Win32.ShowWindow (nw.Handle, (int) Win32.SW_SHOW);
 
 		int msg;
 
-		while (Win32.GetMessageA (&msg, 0, 0, 0) != 0) {
-			Win32.TranslateMessage (&msg);
-			Win32.DispatchMessageA (&msg);
+		while (Win32.GetMessageA (ref msg, 0, 0, 0) != 0) {
+			Win32.TranslateMessage (ref msg);
+			Win32.DispatchMessageA (ref msg);
 		}
 	}
 }

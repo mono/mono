@@ -176,7 +176,7 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		//[TypeAttributes.BeforeFieldInit]
-		public static unsafe void Run (Form context)
+		public static void Run (Form context)
 		// Documents say this parameter name should be mainform, 
 		// but the verifier says context.
 		{

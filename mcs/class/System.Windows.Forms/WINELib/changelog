@@ -1,3 +1,8 @@
+2002-8-21  John Sohn <jsohn@columbus.rr.com>
+	* Application.cs:
+	* NativeWindow.cs: 
+	* NativeWindowTest.cs: compliant with new DllImports in Win32.cs
+	* makefile: correctly links libmono.a
 2002-8-20  John Sohn <jsohn@columbus.rr.com>
 	* Win32.cs: now uses correct Win32 imports and defs. Fixed file provded
 	by Dennis Hayes (dennish@raytek.com)
