@@ -1,5 +1,7 @@
 2002-05-10  Dietmar Maurer  <dietmar@ximian.com>
 
+	* linear-scan.c (mono_update_gen_set): improvement/bug fix
+
 	* x86.brg: added additional rules to handle global allocated registers
 
 	* mono.c (usage): the option is called --nols, and it dissables
