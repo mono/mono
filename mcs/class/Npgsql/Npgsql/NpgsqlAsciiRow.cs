@@ -50,15 +50,20 @@ namespace Npgsql
 		private readonly Int16	READ_BUFFER_SIZE = 300; //[FIXME] Is this enough??
 		private NpgsqlRowDescription row_desc;
 		private Hashtable							oid_to_name_mapping;
+	  private Int32                 protocol_version; 
 		
-		public NpgsqlAsciiRow(NpgsqlRowDescription rowDesc, Hashtable oidToNameMapping)
+		
+		
+		public NpgsqlAsciiRow(NpgsqlRowDescription rowDesc, Hashtable oidToNameMapping, Int32 protocolVersion)
 		{
-			NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".NpgsqlAsciiRow()", LogLevel.Debug);
-			
+		  NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME);
+		  						
 			data = new ArrayList();
 			row_desc = rowDesc;
 			null_map_array = new Byte[(row_desc.NumFields + 7)/8];
 			oid_to_name_mapping = oidToNameMapping;
+		  protocol_version = protocolVersion;
+		  
 			//num_fields = numFields;
 				
 			
@@ -67,60 +72,114 @@ namespace Npgsql
 		
 		public void ReadFromStream(Stream inputStream, Encoding encoding)
 		{
-			NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".ReadFromStream()", LogLevel.Debug);
-			
+		  NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ReadFromStream()");
+		  
 			Byte[] input_buffer = new Byte[READ_BUFFER_SIZE]; 
 			
-			Array.Clear(null_map_array, 0, null_map_array.Length);
 			
-			// Read the null fields bitmap.
-			PGUtil.CheckedStreamRead(inputStream, null_map_array, 0, null_map_array.Length );
-			
-			// Get the data.
-			for (Int16 field_count = 0; field_count < row_desc.NumFields; field_count++)
+			if (protocol_version == ProtocolVersion.Version2)
 			{
-				
-				// Check if this field isn't null
-				if (IsNull(field_count))
-				{
-					// Field is null just keep next field.
-					
-					//[FIXME] See this[] method.
-					data.Add(null);
-					continue;
-				}
-				
-				// Read the first data of the first row.
-								
-				PGUtil.CheckedStreamRead(inputStream, input_buffer, 0, 4);
-								
-				Int32 field_value_size = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(input_buffer, 0));
-							
-				Int32 bytes_left = field_value_size - 4;
-				
-				StringBuilder result = new StringBuilder();
-				
-				while (bytes_left > READ_BUFFER_SIZE)
-				{
-					// Now, read just the field value.
-					PGUtil.CheckedStreamRead(inputStream, input_buffer, 0, READ_BUFFER_SIZE);
-					
-					// Read the bytes as string.
-					result.Append(new String(encoding.GetChars(input_buffer, 0, READ_BUFFER_SIZE)));
-									
-					bytes_left -= READ_BUFFER_SIZE;
-				}
-				
-				// Now, read just the field value.
-				PGUtil.CheckedStreamRead(inputStream, input_buffer, 0, bytes_left);
-				
-				// Read the bytes as string.
-				result.Append(new String(encoding.GetChars(input_buffer, 0, bytes_left)));
-				
-				
-				// Add them to the AsciiRow data.
-				data.Add(NpgsqlTypesHelper.ConvertBackendStringToSystemType(oid_to_name_mapping, result.ToString(), row_desc[field_count].type_oid, row_desc[field_count].type_modifier));
-				
+  			
+  			Array.Clear(null_map_array, 0, null_map_array.Length);
+  			
+  			// Read the null fields bitmap.
+  			PGUtil.CheckedStreamRead(inputStream, null_map_array, 0, null_map_array.Length );
+  			
+  			// Get the data.
+  			for (Int16 field_count = 0; field_count < row_desc.NumFields; field_count++)
+  			{
+  				
+  				// Check if this field isn't null
+  				if (IsNull(field_count))
+  				{
+  					// Field is null just keep next field.
+  					
+  					//[FIXME] See this[] method.
+  					data.Add(null);
+  					continue;
+  				}
+  				
+  				// Read the first data of the first row.
+  								
+  				PGUtil.CheckedStreamRead(inputStream, input_buffer, 0, 4);
+  								
+  				Int32 field_value_size = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(input_buffer, 0));
+  				field_value_size -= 4;			
+  				Int32 bytes_left = field_value_size;
+  				
+  				StringBuilder result = new StringBuilder();
+  				
+  				while (bytes_left > READ_BUFFER_SIZE)
+  				{
+  					// Now, read just the field value.
+  					PGUtil.CheckedStreamRead(inputStream, input_buffer, 0, READ_BUFFER_SIZE);
+  					
+  					// Read the bytes as string.
+  					result.Append(new String(encoding.GetChars(input_buffer, 0, READ_BUFFER_SIZE)));
+  									
+  					bytes_left -= READ_BUFFER_SIZE;
+  				}
+  				
+  				// Now, read just the field value.
+  				PGUtil.CheckedStreamRead(inputStream, input_buffer, 0, bytes_left);
+  				
+  				// Read the bytes as string.
+  				result.Append(new String(encoding.GetChars(input_buffer, 0, bytes_left)));
+  				
+  				
+  				// Add them to the AsciiRow data.
+  				data.Add(NpgsqlTypesHelper.ConvertBackendStringToSystemType(oid_to_name_mapping, result.ToString(), row_desc[field_count].type_oid, row_desc[field_count].type_modifier));
+  				
+  			}
+			}
+			else
+			{
+			  			  
+			  PGUtil.ReadInt32(inputStream, input_buffer);
+			  Int16 numCols = PGUtil.ReadInt16(inputStream, input_buffer);
+			  
+			  for (Int16 field_count = 0; field_count < numCols; field_count++)
+			  {
+			    Int32 field_value_size = PGUtil.ReadInt32(inputStream, input_buffer);
+			    
+			    if (field_value_size == -1) // Null value
+			    {
+			      // Field is null just keep next field.
+  					
+  					//[FIXME] See this[] method.
+  					data.Add(null);
+  					continue;
+			      
+			    }
+  				Int32 bytes_left = field_value_size;
+  				
+  				StringBuilder result = new StringBuilder();
+  				
+  				while (bytes_left > READ_BUFFER_SIZE)
+  				{
+  					// Now, read just the field value.
+  					PGUtil.CheckedStreamRead(inputStream, input_buffer, 0, READ_BUFFER_SIZE);
+  					
+  					// Read the bytes as string.
+  					result.Append(new String(encoding.GetChars(input_buffer, 0, READ_BUFFER_SIZE)));
+  									
+  					bytes_left -= READ_BUFFER_SIZE;
+  				}
+  				
+  				// Now, read just the field value.
+  				PGUtil.CheckedStreamRead(inputStream, input_buffer, 0, bytes_left);
+  				
+  				if (row_desc[field_count].format_code == FormatCode.Text) 
+  				{
+  				  // Read the bytes as string.
+  				  result.Append(new String(encoding.GetChars(input_buffer, 0, bytes_left)));
+  				  // Add them to the AsciiRow data.
+  				  data.Add(NpgsqlTypesHelper.ConvertBackendStringToSystemType(oid_to_name_mapping, result.ToString(), row_desc[field_count].type_oid, row_desc[field_count].type_modifier));
+  				}
+  				else
+  				  data.Add(NpgsqlTypesHelper.ConvertBackendBytesToStytemType(oid_to_name_mapping, input_buffer, encoding, field_value_size, row_desc[field_count].type_oid, row_desc[field_count].type_modifier));
+			  }
+			  
 			}
 			
 		}
@@ -128,6 +187,8 @@ namespace Npgsql
 		
 		public Boolean IsNull(Int32 index)
 		{
+		  
+		  NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "IsNull", index);
 			// [FIXME] Check more optimized way of doing this.
 			// Should this be public or internal?
 			
@@ -152,6 +213,8 @@ namespace Npgsql
 			get
 			{
 				
+				NpgsqlEventLog.LogIndexerGet(LogLevel.Debug, CLASSNAME, index);
+			  
 				if ((index < 0) || (index >= row_desc.NumFields))
 					throw new ArgumentOutOfRangeException("this[] index value");
 				// [FIXME] Should return null or something else

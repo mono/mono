@@ -23,15 +23,17 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using System;
+using System.IO;
+using System.Security.Tls;
+
 
 namespace Npgsql
 {
 	internal sealed class NpgsqlConnectedState : NpgsqlState
 	{
-		private readonly int ProtocolVersionMajor = 2;
-		private readonly int ProtocolVersionMinor = 0;
-    
+	    
 		private static NpgsqlConnectedState _instance = null;
+	  
 		private NpgsqlConnectedState()
 		{
 		}
@@ -48,16 +50,39 @@ namespace Npgsql
 		}
 		public override void Startup(NpgsqlConnection context)
 		{
-			NpgsqlStartupPacket startupPacket  = new NpgsqlStartupPacket(296,
-																   ProtocolVersionMajor,
-																   ProtocolVersionMinor,
-																   context.DatabaseName,
-																   context.UserName,
-																   "",
-																   "",
-																   "");
-			startupPacket.WriteToStream( context.TcpClient.GetStream(), context.Encoding );
-			ProcessBackendResponses( context );
+		  if (context.BackendProtocolVersion == ProtocolVersion.Version3)
+		  {
+  		  
+  		  NpgsqlStartupPacket startupPacket  = new NpgsqlStartupPacket(296, //Not used.
+  																   3,
+  																   0,
+  																   context.DatabaseName,
+  																   context.UserName,
+  																   "",
+  																   "",
+  																   "");
+  		  
+  			startupPacket.WriteToStream( context.getStream(), context.Encoding );
+  			ProcessBackendResponses( context );
+		  }
+		  else if (context.BackendProtocolVersion == ProtocolVersion.Version2)
+		  {
+		    
+  		  NpgsqlStartupPacket startupPacket  = new NpgsqlStartupPacket(296,
+  																   2,
+  																   0,
+  																   context.DatabaseName,
+  																   context.UserName,
+  																   "",
+  																   "",
+  																   "");
+  		  
+  			startupPacket.WriteToStream( new BufferedStream(context.TcpClient.GetStream()), context.Encoding );
+  			ProcessBackendResponses( context );
+		    
+		    
+		  }
+		  
 		}
 		
 	}

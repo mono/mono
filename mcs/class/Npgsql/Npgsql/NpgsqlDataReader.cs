@@ -65,7 +65,7 @@ namespace Npgsql
 	  
 	  private Boolean CanRead()
 	  {
-	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".CanRead() ", LogLevel.Debug);
+	  	NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "CanRead");
 	  	/*if (_currentResultset == null)
 	  		return false;*/
 	  	return ((_currentResultset != null) && (_currentResultset.Count > 0));
@@ -86,7 +86,7 @@ namespace Npgsql
 	  {
 	  	get
 	  	{
-	  		NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".get_Depth() ", LogLevel.Debug);
+	  		NpgsqlEventLog.LogPropertyGet(LogLevel.Debug, CLASSNAME, "Depth");
 	  		return 0;
 	  	}
 	  }
@@ -95,7 +95,7 @@ namespace Npgsql
 	  {
 	  	get
 	  	{
-	  		NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".get_IsClosed()", LogLevel.Debug);
+	  		NpgsqlEventLog.LogPropertyGet(LogLevel.Debug, CLASSNAME, "IsClosed");
 	  		return false; 
 	  	}
 	  }
@@ -104,7 +104,7 @@ namespace Npgsql
 	  {
 	  	get
 	  	{
-	  		NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".get_RecordsAffected()", LogLevel.Debug);
+	  		NpgsqlEventLog.LogPropertyGet(LogLevel.Debug, CLASSNAME, "RecordsAffected");
 	  		
 	  		/*if (_currentResultset == null)
 	  			return 0;	//[FIXME] Get the actual number of rows deleted, updated or inserted.
@@ -128,7 +128,7 @@ namespace Npgsql
 	  
 	  public Boolean NextResult()
 	  {
-	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".NextResult()", LogLevel.Debug);
+	  	NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "NextResult");
 	    //throw new NotImplementedException();
 	  	
 	  	//[FIXME] Should the currentResultset not be modified
@@ -151,7 +151,7 @@ namespace Npgsql
 	  
 	  public Boolean Read()
 	  {
-	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".Read()", LogLevel.Debug);
+	  	NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Read");
 	  	
 	  	if (!CanRead())
 	  		return false;
@@ -162,7 +162,7 @@ namespace Npgsql
 	  
 	  public DataTable GetSchemaTable()
 	  {
-	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetSchemaTable()", LogLevel.Debug);
+	  	NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetSchemaTable");
 	    //throw new NotImplementedException();
 	  	
 	  	if (!CanRead())
@@ -181,12 +181,19 @@ namespace Npgsql
 	  	get
 	  	{
 	  		
-	  		NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".get_FieldCount()", LogLevel.Debug);
+	  		NpgsqlEventLog.LogPropertyGet(LogLevel.Debug, CLASSNAME, "FieldCount");
 	  		//return ((_currentResultset == null) ? 0 : _currentResultset.RowDescription.NumFields);
-	  		if (CanRead())
+	  		
+	  		/*if (CanRead())
 	  			return _currentResultset.RowDescription.NumFields;
 	  		else
-	  			return -1;
+	  			return -1;*/
+	  			
+	  		if (_currentResultset == null) //Executed a non return rows query.
+	  		  return -1;
+	  	  else
+	  	    return _currentResultset.RowDescription.NumFields;
+	  	  
 	  			
 	  	}
 	    
@@ -194,34 +201,37 @@ namespace Npgsql
 	  
 	  public String GetName(Int32 i)
 	  {
-	    //throw new NotImplementedException();
-	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetName(Int32)", LogLevel.Debug);
+	    NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetName");
 	  	
-	  	if (CanRead())
-	  		return _currentResultset.RowDescription[i].name;
-	  	else
+	  	if (_currentResultset == null)
 	  		return String.Empty;
+	  	else
+	  		return _currentResultset.RowDescription[i].name;
 	  }
 	  
 	  public String GetDataTypeName(Int32 i)
 	  {
 	  	// FIXME: have a type name instead of the oid
-			return (_currentResultset.RowDescription[i].type_oid).ToString();
+	  	if (_currentResultset == null)
+	  		return String.Empty;
+	  	else
+			  return (_currentResultset.RowDescription[i].type_oid).ToString();
 	  }
 	  
 	  public Type GetFieldType(Int32 i)
 	  {
-	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetFieldType(Int32)", LogLevel.Debug);
+	  	NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetFieldType");
 	    	  	
 	  	  	
-	  	//return Type.GetType(NpgsqlTypesHelper.GetSystemTypeNameFromTypeOid(_connection.OidToNameMapping, _currentResultset.RowDescription[i].type_oid));
-	  	
+	  	if (_currentResultset == null)
+	  		return null;
+	  	else
 	  	return NpgsqlTypesHelper.GetSystemTypeFromTypeOid(_connection.OidToNameMapping, _currentResultset.RowDescription[i].type_oid);
 	  }
 	  
 	  public Object GetValue(Int32 i)
 	  {
-	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetValue(Int32)", LogLevel.Debug);
+	  	NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetValue");
 	    
 	    CheckCanRead();
 	    
@@ -235,7 +245,7 @@ namespace Npgsql
 	  
 	  public Int32 GetValues(Object[] values)
 	  {
-	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetValues(Object[])", LogLevel.Debug);
+	  	NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetValues");
 	  	
 	  	CheckCanRead();
 	    
@@ -260,7 +270,7 @@ namespace Npgsql
 	  {
 	  	get
 	  	{
-	  		NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".this[Int32]", LogLevel.Debug);
+	  		NpgsqlEventLog.LogIndexerGet(LogLevel.Debug, CLASSNAME, i);
 	  		return GetValue(i);
 	  	}
 	  }
@@ -270,7 +280,7 @@ namespace Npgsql
 	  	get
 	  	{
 		  	//throw new NotImplementedException();
-	  		NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".this[String]", LogLevel.Debug);
+	  		NpgsqlEventLog.LogIndexerGet(LogLevel.Debug, CLASSNAME, name);
 	  		return GetValue(_currentResultset.RowDescription.FieldIndex(name));
 	  	}
 	  }
@@ -279,7 +289,7 @@ namespace Npgsql
 	  {
 	    // Should this be done using the GetValue directly and not by converting to String
 	  	// and parsing from there?
-	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetBoolean(Int32)", LogLevel.Debug);
+	  	NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetBoolean");
 	  	
   		  		
   		return (Boolean) GetValue(i);
@@ -293,7 +303,19 @@ namespace Npgsql
 	  
 	  public Int64 GetBytes(Int32 i, Int64 fieldOffset, Byte[] buffer, Int32 bufferoffset, Int32 length)
 	  {
-	    throw new NotImplementedException();
+	    
+	    Byte[] result;
+	    
+	    result = (Byte[]) GetValue(i);
+	    
+	    // [TODO] Implement blob support.
+	    if (buffer != null)
+	    {
+	      result.CopyTo(buffer, 0);
+	    }
+	    
+	    return result.Length;
+	    
 	  }
 	  
 	  public Char GetChar(Int32 i)
@@ -320,36 +342,16 @@ namespace Npgsql
 	  
 	  public Int16 GetInt16(Int32 i)
 	  {
-	    // Should this be done using the GetValue directly and not by converting to String
-	  	// and parsing from there?
-	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetInt16(Int32)", LogLevel.Debug);
-	  	/*try
-	  	{
-		    return Int16.Parse((String) this[i]);
-	  	} catch (System.FormatException)
-	  	{
-	  		throw new System.InvalidCastException();
-	  	}*/
+	   	NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetInt16");
 	  	
 	  	return (Int16) GetValue(i);
 	  	
-
 	  }
 	  
 	  
 	  public Int32 GetInt32(Int32 i)
 	  {
-	    // Should this be done using the GetValue directly and not by converting to String
-	  	// and parsing from there?
-	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetInt32(Int32)", LogLevel.Debug);
-	  	/*try
-	  	{
-		    return Int32.Parse((String) this[i]);
-	  	} catch (System.FormatException)
-	  	{
-	  		throw new System.InvalidCastException();
-	  	}*/
-	  	
+	    NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetInt32");
 	  	
 	  	return (Int32) GetValue(i);
 	  
@@ -358,16 +360,8 @@ namespace Npgsql
 	  
 	  public Int64 GetInt64(Int32 i)
 	  {
-	    // Should this be done using the GetValue directly and not by converting to String
-	  	// and parsing from there?
-	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetInt64(Int32)", LogLevel.Debug);
-	  	/*try
-	  	{
-		    return Int64.Parse((String) this[i]);
-	  	} catch (System.FormatException)
-	  	{
-	  		throw new System.InvalidCastException();
-	  	}*/
+	    NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetInt64");
+	  	
 	  	return (Int64) GetValue(i);
 	  }
 	  
@@ -375,7 +369,7 @@ namespace Npgsql
 	  {
 	    // Should this be done using the GetValue directly and not by converting to String
 	  	// and parsing from there?
-	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetFloat(Int32)", LogLevel.Debug);
+	  	NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetFloat");
 	  	/*try
 	  	{
 	  		return Single.Parse((String) this[i]);
@@ -390,7 +384,7 @@ namespace Npgsql
 	  {
 	    // Should this be done using the GetValue directly and not by converting to String
 	  	// and parsing from there?
-	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetDouble(Int32)", LogLevel.Debug);
+	  	NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetDouble");
 	  	/*try
 	  	{
 		    return Double.Parse((String) this[i]);
@@ -403,24 +397,23 @@ namespace Npgsql
 	  
 	  public String GetString(Int32 i)
 	  {
-	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetString(Int32)", LogLevel.Debug);
+	  	NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetString");
+	    
 	    return (String) GetValue(i);
 	  }
 	  
 	  public Decimal GetDecimal(Int32 i)
 	  {
-	    // Should this be done using the GetValue directly and not by converting to String
-	  	// and parsing from there?
-	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetDecimal(Int32)", LogLevel.Debug);
-	  	
+	    NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetDecimal");
 	  	
 	  	return (Decimal) GetValue(i);
 	  }
 	  
 	  public DateTime GetDateTime(Int32 i)
 	  {
-	    //throw new NotImplementedException();
-	  	return (DateTime) GetValue(i);
+	    NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetDateTime");
+	    
+	    return (DateTime) GetValue(i);
 	  }
 	  
 	  public IDataReader GetData(Int32 i)
@@ -430,21 +423,17 @@ namespace Npgsql
 	  
 	  public Boolean IsDBNull(Int32 i)
 	  {
+	    NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "IsDBNull");
 	  	
 	  	CheckCanRead();
 	    
 	  	return ((NpgsqlAsciiRow)_currentResultset[_rowIndex]).IsNull(i);
 	  }
 
-
-		
-	  
-	  
-
 		private DataTable GetResultsetSchema()
 		{
 			
-			NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetResultsetSchema()", LogLevel.Debug);
+			NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetResultsetSchema");
 			DataTable result = null;
 
 			NpgsqlRowDescription rd = _currentResultset.RowDescription;

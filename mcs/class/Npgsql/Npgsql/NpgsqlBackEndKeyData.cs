@@ -41,20 +41,34 @@ namespace Npgsql
 		// Logging related values
     private static readonly String CLASSNAME = "NpgsqlBackEndKeyData";
 		
-		private Int32 process_id;
-		private Int32 secret_key;
+		private Int32 _processId;
+		private Int32 _secretKey;
+	  
+	  private Int32 _protocolVersion;
+	  
+	  public NpgsqlBackEndKeyData(Int32 protocolVersion)
+	  {
+	    _protocolVersion = protocolVersion;
+	    _processId = -1;
+	    _secretKey = -1;
+	  }
 		
 				
-		public void ReadFromStream(Stream input_stream)
+		public void ReadFromStream(Stream inputStream)
 		{
-			NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".ReadFromStream()", LogLevel.Debug);
-			
-			Byte[] input_buffer = new Byte[8];
+		  NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME);
+		  
+			Byte[] inputBuffer = new Byte[8];
 			
 			// Read the BackendKeyData message contents. Two Int32 integers = 8 Bytes.
-			input_stream.Read(input_buffer, 0, 8);
-			process_id = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(input_buffer, 0));
-			secret_key = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(input_buffer, 4));
+			// For protocol version 3.0 they are three integers. The first one is just the size of message
+			// so, just read it.
+			if (_protocolVersion >= ProtocolVersion.Version3)
+			  inputStream.Read(inputBuffer, 0, 4);
+		  
+			inputStream.Read(inputBuffer, 0, 8);
+			_processId = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(inputBuffer, 0));
+			_secretKey = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(inputBuffer, 4));
 			
 		}
 		
@@ -62,8 +76,8 @@ namespace Npgsql
 		{
 			get
 			{
-				NpgsqlEventLog.LogMsg("Got ProcessID. Value: " + process_id, LogLevel.Debug);
-				return process_id;
+                NpgsqlEventLog.LogPropertyGet(LogLevel.Debug, CLASSNAME, "ProcessID");
+				return _processId;
 			}
 		}
 		
@@ -71,8 +85,8 @@ namespace Npgsql
 		{
 			get
 			{
-				NpgsqlEventLog.LogMsg("Got SecretKey. Value: " + secret_key, LogLevel.Debug);
-				return secret_key;
+				NpgsqlEventLog.LogPropertyGet(LogLevel.Debug, CLASSNAME, "SecretKey");
+				return _secretKey;
 			}
 		}
 	}

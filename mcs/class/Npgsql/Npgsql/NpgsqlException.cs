@@ -24,29 +24,32 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using System;
+using System.Resources;
 
 namespace Npgsql
 {
 	public class NpgsqlException : Exception
 	{
-	
-    // Logging related values
-    private static readonly String CLASSNAME = "NpgsqlException";
-    
+        
+        // Logging related values
+        private static readonly String CLASSNAME = "NpgsqlException";
+        private static ResourceManager resman = new ResourceManager(typeof(NpgsqlException));
+        
 		public NpgsqlException()
 		{
-			NpgsqlEventLog.LogMsg("An NpgsqlException occured: <no message>", LogLevel.Normal);
+            NpgsqlEventLog.LogMsg(resman, "Log_ExceptionOccured", LogLevel.Normal, "<no message>");
+			
 		}
 		
 		public NpgsqlException(String message) : base(message)
 		{
-		  NpgsqlEventLog.LogMsg("An NpgsqlException occured: " + message, LogLevel.Normal);
+		    NpgsqlEventLog.LogMsg(resman, "Log_ExceptionOccured", LogLevel.Normal, message);
 		}
 		
 		public NpgsqlException(String message, Exception inner)
 		: base(message, inner)
 		{
-			NpgsqlEventLog.LogMsg("An NpgsqlException occured: " + message + " (" + inner.Message + ")", LogLevel.Normal);
+            NpgsqlEventLog.LogMsg(resman, "Log_ExceptionOccured", LogLevel.Normal, message + " (" + inner.Message + ")");
 		}
 	}
 }

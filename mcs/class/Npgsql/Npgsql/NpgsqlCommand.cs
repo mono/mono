@@ -30,231 +30,313 @@ using System.Net;
 using System.Net.Sockets;
 using System.IO;
 using System.Text;
+using System.ComponentModel;
 using System.Collections;
 using NpgsqlTypes;
+using Npgsql.Design;
 
-namespace Npgsql
-{
-	public sealed class NpgsqlCommand : IDbCommand
-	{
+namespace Npgsql {
+	/// <summary>
+	/// Represents a SQL statement or function (stored procedure) to execute against a PostgreSQL database. This class cannot be inherited.
+	/// </summary>
+	[System.Drawing.ToolboxBitmapAttribute(typeof(NpgsqlCommand)), ToolboxItem(true)]
+	public sealed class NpgsqlCommand : Component, IDbCommand, IDisposable {
 		
-		private NpgsqlConnection 					connection;
-		private String										text;
-		private Int32											timeout;
-		private CommandType								type;
-		private NpgsqlParameterCollection	parameters;
-		private String										planName;
-		private static Int32							planIndex = 0;
-    // Logging related values
-    private static readonly String CLASSNAME = "NpgsqlCommand";
-		
+		private NpgsqlConnection connection;
+		private NpgsqlTransaction transaction;
+		private String text;
+		private Int32 timeout;
+		private CommandType type;
+		private NpgsqlParameterCollection parameters;
+		private String planName;
+		private static Int32 planIndex = 0;
+	  private static Int32              portalIndex = 0;
+	  
+	  private NpgsqlParse               parse;
+	  private NpgsqlBind                bind;
+	  
+		// Logging related values
+		private static readonly String CLASSNAME = "NpgsqlCommand";
+		private System.Resources.ResourceManager resman;
+
 		// Constructors
 		
-		public NpgsqlCommand() : this(null, null){}
-		
-		public NpgsqlCommand(String cmdText) : this(cmdText, null){}
-		
-		
-		public NpgsqlCommand(String cmdText, NpgsqlConnection connection)
-		{
-		  NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".NpgsqlCommand()", LogLevel.Debug);
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Npgsql.NpgsqlCommand">NpgsqlCommand</see> class.
+		/// </summary>
+		public NpgsqlCommand() : this(String.Empty, null, null){}
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Npgsql.NpgsqlCommand">NpgsqlCommand</see> class with the text of the query.
+		/// </summary>
+		/// <param name="cmdText">The text of the query.</param>
+		public NpgsqlCommand(String cmdText) : this(cmdText, null, null){}
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Npgsql.NpgsqlCommand">NpgsqlCommand</see> class with the text of the query and a <see cref="Npgsql.NpgsqlConnection">NpgsqlConnection</see>.
+		/// </summary>
+		/// <param name="cmdText">The text of the query.</param>
+		/// <param name="connection">A <see cref="Npgsql.NpgsqlConnection">NpgsqlConnection</see> that represents the connection to a PostgreSQL server.</param>
+		public NpgsqlCommand(String cmdText, NpgsqlConnection connection) : this(cmdText, connection, null){}		
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Npgsql.NpgsqlCommand">NpgsqlCommand</see> class with the text of the query, a <see cref="Npgsql.NpgsqlConnection">NpgsqlConnection</see>, and the <see cref="Npgsql.NpgsqlTransaction">NpgsqlTransaction</see>.
+		/// </summary>
+		/// <param name="cmdText">The text of the query.</param>
+		/// <param name="connection">A <see cref="Npgsql.NpgsqlConnection">NpgsqlConnection</see> that represents the connection to a PostgreSQL server.</param>
+		/// <param name="transaction">The <see cref="Npgsql.NpgsqlTransaction">NpgsqlTransaction</see> in which the <see cref="Npgsql.NpgsqlCommand">NpgsqlCommand</see> executes.</param>
+		public NpgsqlCommand(String cmdText, NpgsqlConnection connection, NpgsqlTransaction transaction) {
+			resman = new System.Resources.ResourceManager(this.GetType());
+			NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME);
 			
 			planName = String.Empty;
 			text = cmdText;
 			this.connection = connection;
 			parameters = new NpgsqlParameterCollection();
 			timeout = 20;
-			type = CommandType.Text;			
+			type = CommandType.Text;
+		  this.Transaction = transaction;
 		}
 				
 		// Public properties.
-		
-		public String CommandText
-		{
-			get
-			{
+		/// <summary>
+		/// Gets or sets the SQL statement or function (stored procedure) to execute at the data source.
+		/// </summary>
+		/// <value>The Transact-SQL statement or stored procedure to execute. The default is an empty string.</value>
+		[Category("Data"), DefaultValue("")]
+		public String CommandText {
+			get {
 				return text;
 			}
 			
-			set
-			{
+			set {
 				// [TODO] Validate commandtext.
+				NpgsqlEventLog.LogPropertySet(LogLevel.Debug, CLASSNAME, "CommandText", value);
 				text = value;
-				NpgsqlEventLog.LogMsg("Set " + CLASSNAME + ".CommandText = " + value, LogLevel.Normal);
 				planName = String.Empty;
+			  parse = null;
+			  bind = null;
 			}
 		}
-		
-		public Int32 CommandTimeout
-		{
-			get
-			{
+
+		/// <summary>
+		/// Gets or sets the wait time before terminating the attempt 
+		/// to execute a command and generating an error.
+		/// </summary>
+		/// <value>The time (in seconds) to wait for the command to execute. 
+		/// The default is 20 seconds.</value>
+		[DefaultValue(20)]
+		public Int32 CommandTimeout {
+			get {
 				return timeout;
 			}
 			
-			set
-			{
+			set {
 				if (value < 0)
-					throw new ArgumentException("CommandTimeout can't be less than zero");
+					throw new ArgumentException(resman.GetString("Exception_CommandTimeoutLessZero"));
 				
 				timeout = value;
-				NpgsqlEventLog.LogMsg("Set " + CLASSNAME + ".CommandTimeout = " + value, LogLevel.Normal);
+				NpgsqlEventLog.LogPropertySet(LogLevel.Debug, CLASSNAME, "CommandTimeout", value);
 			}
 		}
-		
-		public CommandType CommandType
-		{
-			get
-			{
+
+		/// <summary>
+		/// Gets or sets a value indicating how the 
+		/// <see cref="Npgsql.NpgsqlCommand.CommandText">CommandText</see> property is to be interpreted.
+		/// </summary>
+		/// <value>One of the <see cref="System.Data.CommandType">CommandType</see> values. The default is <see cref="System.Data.CommandType">CommandType.Text</see>.</value>
+		[Category("Data"), DefaultValue(CommandType.Text)]
+		public CommandType CommandType {
+			get {
 				return type;
 			}
 			
-			set
-			{
+			set {
 				type = value;
-				NpgsqlEventLog.LogMsg("Set " + CLASSNAME + ".CommandType = " + value, LogLevel.Normal);
+				NpgsqlEventLog.LogPropertySet(LogLevel.Debug, CLASSNAME, "CommandType", value);
 			}
 			
 		}
 		
-		IDbConnection IDbCommand.Connection
-		{
-			get
-			{
+		IDbConnection IDbCommand.Connection {
+			get {
 				return Connection;
 			}
 			
-			set
-			{
+			set {
 				connection = (NpgsqlConnection) value;
-				NpgsqlEventLog.LogMsg("Set " + CLASSNAME + ".IDbCommand.Connection", LogLevel.Debug);
+				NpgsqlEventLog.LogPropertySet(LogLevel.Debug, CLASSNAME, "IDbCommand.Connection", value);
 			}
 		}
-		
-		public NpgsqlConnection Connection
-		{
-			get
-			{
-				NpgsqlEventLog.LogMsg(CLASSNAME + ".get_Connection", LogLevel.Debug);
+
+		/// <summary>
+		/// Gets or sets the <see cref="Npgsql.NpgsqlConnection">NpgsqlConnection</see> 
+		/// used by this instance of the <see cref="Npgsql.NpgsqlCommand">NpgsqlCommand</see>.
+		/// </summary>
+		/// <value>The connection to a data source. The default value is a null reference.</value>
+		[Category("Behavior"), DefaultValue(null)]
+		public NpgsqlConnection Connection {
+			get {
+				NpgsqlEventLog.LogPropertyGet(LogLevel.Debug, CLASSNAME, "Connection");
 				return connection;
 			}
 			
-			set
-			{
-				connection = value;
-				NpgsqlEventLog.LogMsg("Set " + CLASSNAME + ".Connection", LogLevel.Debug);
+			set {
+				if (this.transaction != null && this.transaction.Connection == null)
+					this.transaction = null;
+				if (this.connection != null && this.connection.InTransaction == true)
+					throw new NpgsqlException(resman.GetString("Exception_SetConnectionInTransaction"));
+				this.connection = value;
+				NpgsqlEventLog.LogPropertySet(LogLevel.Debug, CLASSNAME, "Connection", value);
 			}
 		}
 		
-		IDataParameterCollection IDbCommand.Parameters
-		{
-			get
-			{
+		IDataParameterCollection IDbCommand.Parameters {
+			get {
 				return Parameters;
 			}
 		}
-		
-		public NpgsqlParameterCollection Parameters
-		{
-			get
-			{
-				NpgsqlEventLog.LogMsg(CLASSNAME + ".get_Parameters", LogLevel.Debug);
+
+		/// <summary>
+		/// Gets the <see cref="Npgsql.NpgsqlParameterCollection">NpgsqlParameterCollection</see>.
+		/// </summary>
+		/// <value>The parameters of the SQL statement or function (stored procedure). The default is an empty collection.</value>
+		[Category("Data"), DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+		public NpgsqlParameterCollection Parameters {
+			get {
+				NpgsqlEventLog.LogPropertyGet(LogLevel.Debug, CLASSNAME, "Parameters");
 				return parameters;
 			}
 		}
-		
-		public IDbTransaction Transaction
-		{
-			get
-			{
-				NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".get_Transaction()", LogLevel.Debug);
-				throw new NotImplementedException();
+
+		/// <summary>
+		/// Gets or sets the <see cref="Npgsql.NpgsqlTransaction">NpgsqlTransaction</see> 
+		/// within which the <see cref="Npgsql.NpgsqlCommand">NpgsqlCommand</see> executes.
+		/// </summary>
+		/// <value>The <see cref="Npgsql.NpgsqlTransaction">NpgsqlTransaction</see>. 
+		/// The default value is a null reference.</value>
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public IDbTransaction Transaction {
+			get {
+				NpgsqlEventLog.LogPropertyGet(LogLevel.Debug, CLASSNAME, "Transaction");
+				//throw new NotImplementedException();
+				if (this.transaction != null && this.transaction.Connection == null){
+					this.transaction = null;
+				}
+				return this.transaction;
 			}
 			
-			set
-			{
-				NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".set_Transaction()", LogLevel.Debug);
-				throw new NotImplementedException();	
+			set {
+				NpgsqlEventLog.LogPropertySet(LogLevel.Debug, CLASSNAME, "Transaction" ,value);
+				//throw new NotImplementedException();
+				/*if (this.connection != null && this.connection.InTransaction == true){
+					throw new NpgsqlException(resman.GetString("Exception_SetTransactionInTransaction"));
+				}*/
+				this.transaction = (NpgsqlTransaction) value;
 			}
 		}
-		
-		public UpdateRowSource UpdatedRowSource
-		{
-			get
-			{
+
+		/// <summary>
+		/// Gets or sets how command results are applied to the <see cref="System.Data.DataRow">DataRow</see> 
+		/// when used by the <see cref="System.Data.Common.DbDataAdapter.Update">Update</see> 
+		/// method of the <see cref="System.Data.Common.DbDataAdapter">DbDataAdapter</see>.
+		/// </summary>
+		/// <value>One of the <see cref="System.Data.UpdateRowSource">UpdateRowSource</see> values.</value>
+		[Category("Behavior"), DefaultValue(UpdateRowSource.Both)]
+		public UpdateRowSource UpdatedRowSource {
+			get {
 				
-				NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".get_UpdatedRowSource()", LogLevel.Debug);
+				NpgsqlEventLog.LogPropertyGet(LogLevel.Debug, CLASSNAME, "UpdatedRowSource");
 				// [FIXME] Strange, the line below doesn't appears in the stack trace.
 				
 				//throw new NotImplementedException();
 				return UpdateRowSource.Both;
 			}
 			
-			set
-			{
+			set {
 				throw new NotImplementedException();
 			}
 		}
-		
-		public void CheckNotification()
- 		{
- 			if (connection.Mediator.Notifications.Count > 0)
- 				for (int i=0; i < connection.Mediator.Notifications.Count; i++)
- 					connection.Notification((NpgsqlNotificationEventArgs) connection.Mediator.Notifications[i]);
- 
- 		}
 
-		public void Cancel()
-		{
-		  NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".Cancel()", LogLevel.Debug);
+		private void CheckNotification() {
+			if (connection.Mediator.Notifications.Count > 0)
+				for (int i=0; i < connection.Mediator.Notifications.Count; i++)
+					connection.Notify((NpgsqlNotificationEventArgs) connection.Mediator.Notifications[i]);
+ 
+		}
+
+		/// <summary>
+		/// Attempts to cancel the execution of a <see cref="Npgsql.NpgsqlCommand">NpgsqlCommand</see>.
+		/// </summary>
+		/// <remarks>This Method isn't implemented yet.</remarks>
+		public void Cancel() {
+			NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Cancel");
 		  
 			// [TODO] Finish method implementation.
 			throw new NotImplementedException();
 		}
-		
-		
-		IDbDataParameter IDbCommand.CreateParameter()
-		{
-		  NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".IDbCommand.CreateParameter()", LogLevel.Debug);
+
+		/// <summary>
+		/// Creates a new instance of an <see cref="System.Data.IDbDataParameter">IDbDataParameter</see> object.
+		/// </summary>
+		/// <returns>An <see cref="System.Data.IDbDataParameter">IDbDataParameter</see> object.</returns>
+		IDbDataParameter IDbCommand.CreateParameter() {
+			NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "IDbCommand.CreateParameter");
 		  
 			return (NpgsqlParameter) CreateParameter();
 		}
-		
-		public NpgsqlParameter CreateParameter()
-		{
-		  NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".CreateParameter()", LogLevel.Debug);
+
+		/// <summary>
+		/// Creates a new instance of a <see cref="Npgsql.NpgsqlParameter">NpgsqlParameter</see> object.
+		/// </summary>
+		/// <returns>A <see cref="Npgsql.NpgsqlParameter">NpgsqlParameter</see> object.</returns>
+		public NpgsqlParameter CreateParameter() {
+			NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "CreateParameter");
 		  
 			return new NpgsqlParameter();
 		}
-		
-		public Int32 ExecuteNonQuery()
-		{
-		  NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".ExecuteNonQuery()", LogLevel.Debug);
+
+		/// <summary>
+		/// Executes a SQL statement against the connection and returns the number of rows affected.
+		/// </summary>
+		/// <returns>The number of rows affected.</returns>
+		public Int32 ExecuteNonQuery() {
+			NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ExecuteNonQuery");
 		  
-		  // Check the connection state.
+			// Check the connection state.
 			CheckConnectionState();
-			
-			if ((type == CommandType.Text) || (type == CommandType.StoredProcedure))
-				connection.Query(this); 
+					  
+			/*if ((type == CommandType.Text) || (type == CommandType.StoredProcedure))
+  			if (parse == null)
+    				connection.Query(this); 
+  		    else
+  		    {
+  		      BindParameters();
+  		      connection.Execute(new NpgsqlExecute(bind.PortalName, 0));
+  		    }
 			else
-				throw new NotImplementedException("Only Text and StoredProcedure types supported!");
+				throw new NotImplementedException(resman.GetString("Exception_CommandTypeTableDirect"));
+			*/
 			
-			
+			ExecuteCommand();
 			
 			// Check if there were any errors.
-			// [FIXME] Just check the first error.
-			if (connection.Mediator.Errors.Count > 0)
-				throw new NpgsqlException(connection.Mediator.Errors[0].ToString());
+			if (connection.Mediator.Errors.Count > 0) {
+				StringWriter sw = new StringWriter();
+				sw.WriteLine(String.Format(resman.GetString("Exception_MediatorErrors"), "ExecuteNonQuery"));
+				uint i = 1;
+				foreach(string error in connection.Mediator.Errors){
+					sw.WriteLine("{0}. {1}", i++, error);
+				}
+				throw new NpgsqlException(sw.ToString());
+			}
 			
 			CheckNotification();
 		  
 		  
 			
-		  // The only expected result is the CompletedResponse result.
-		  // If nothing is returned, just return -1.
+			// The only expected result is the CompletedResponse result.
+			// If nothing is returned, just return -1.
 		  
-		  if(connection.Mediator.GetCompletedResponses().Count == 0)
-			  return -1;
+			if(connection.Mediator.GetCompletedResponses().Count == 0)
+				return -1;
 		  		  
 			String[] ret_string_tokens = ((String)connection.Mediator.GetCompletedResponses()[0]).Split(null);	// whitespace separator.
 						
@@ -262,8 +344,8 @@ namespace Npgsql
 			// Only theses commands return rows affected.
 			// [FIXME] Is there a better way to check this??
 			if ((String.Compare(ret_string_tokens[0], "INSERT", true) == 0) ||
-			    (String.Compare(ret_string_tokens[0], "UPDATE", true) == 0) ||
-			    (String.Compare(ret_string_tokens[0], "DELETE", true) == 0))
+				(String.Compare(ret_string_tokens[0], "UPDATE", true) == 0) ||
+				(String.Compare(ret_string_tokens[0], "DELETE", true) == 0))
 			    
 				// The number of rows affected is in the third token for insert queries
 				// and in the second token for update and delete queries.
@@ -274,51 +356,90 @@ namespace Npgsql
 				return -1;
 			
 		}
-		
-		IDataReader IDbCommand.ExecuteReader()
-		{
-		  NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".ExecuteReader() implicit impl", LogLevel.Debug);
+
+		/// <summary>
+		/// Sends the <see cref="Npgsql.NpgsqlCommand.CommandText">CommandText</see> to 
+		/// the <see cref="Npgsql.NpgsqlConnection">Connection</see> and builds a 
+		/// <see cref="Npgsql.NpgsqlDataReader">NpgsqlDataReader</see>.
+		/// </summary>
+		/// <returns>A <see cref="Npgsql.NpgsqlDataReader">NpgsqlDataReader</see> object.</returns>
+		IDataReader IDbCommand.ExecuteReader() {
+			NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "IDbCommand.ExecuteReader");
 		  
 			return (NpgsqlDataReader) ExecuteReader();
 		}
 		
-		IDataReader IDbCommand.ExecuteReader(CommandBehavior cb)
-		{
-		  NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".ExecuteReader() implicit impl(cb)", LogLevel.Debug);
+		/// <summary>
+		/// Sends the <see cref="Npgsql.NpgsqlCommand.CommandText">CommandText</see> to 
+		/// the <see cref="Npgsql.NpgsqlConnection">Connection</see> and builds a 
+		/// <see cref="Npgsql.NpgsqlDataReader">NpgsqlDataReader</see> 
+		/// using one of the <see cref="System.Data.CommandBehavior">CommandBehavior</see> values.
+		/// </summary>
+		/// <param name="cb">One of the <see cref="System.Data.CommandBehavior">CommandBehavior</see> values.</param>
+		/// <returns>A <see cref="Npgsql.NpgsqlDataReader">NpgsqlDataReader</see> object.</returns>
+		IDataReader IDbCommand.ExecuteReader(CommandBehavior cb) {
+			NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "IDbCommand.ExecuteReader", cb);
 		  
 			return (NpgsqlDataReader) ExecuteReader(cb);
 			
 		}
-		
-		public NpgsqlDataReader ExecuteReader()
-		{
-		  NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".ExecuteReader()", LogLevel.Debug);
+
+		/// <summary>
+		/// Sends the <see cref="Npgsql.NpgsqlCommand.CommandText">CommandText</see> to 
+		/// the <see cref="Npgsql.NpgsqlConnection">Connection</see> and builds a 
+		/// <see cref="Npgsql.NpgsqlDataReader">NpgsqlDataReader</see>.
+		/// </summary>
+		/// <returns>A <see cref="Npgsql.NpgsqlDataReader">NpgsqlDataReader</see> object.</returns>
+		public NpgsqlDataReader ExecuteReader() {
+			NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ExecuteReader");
 		  
 			
 			return ExecuteReader(CommandBehavior.Default);
 			
 		}
-		
-		public NpgsqlDataReader ExecuteReader(CommandBehavior cb)
-		{
+
+		/// <summary>
+		/// Sends the <see cref="Npgsql.NpgsqlCommand.CommandText">CommandText</see> to 
+		/// the <see cref="Npgsql.NpgsqlConnection">Connection</see> and builds a 
+		/// <see cref="Npgsql.NpgsqlDataReader">NpgsqlDataReader</see> 
+		/// using one of the <see cref="System.Data.CommandBehavior">CommandBehavior</see> values.
+		/// </summary>
+		/// <param name="cb">One of the <see cref="System.Data.CommandBehavior">CommandBehavior</see> values.</param>
+		/// <returns>A <see cref="Npgsql.NpgsqlDataReader">NpgsqlDataReader</see> object.</returns>
+		/// <remarks>Currently the CommandBehavior parameter is ignored.</remarks>
+		public NpgsqlDataReader ExecuteReader(CommandBehavior cb) {
 			// [FIXME] No command behavior handling.
 			
-			NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".ExecuteReader(CommandBehavior)", LogLevel.Debug);
+			NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ExecuteReader", cb);
 		  
-		  // Check the connection state.
+			// Check the connection state.
 			CheckConnectionState();
-			
-			if ((type == CommandType.Text) || (type == CommandType.StoredProcedure))
-				connection.Query(this); 
+					  
+			/*if ((type == CommandType.Text) || (type == CommandType.StoredProcedure))
+			  if (parse == null)
+				  connection.Query(this); 
+		    else
+		    {
+		      BindParameters();
+		      connection.Execute(new NpgsqlExecute(bind.PortalName, 0));
+		    }
 			else
-				throw new NotImplementedException("Only Text and StoredProcedure types supported!");
+				throw new NotImplementedException(resman.GetString("Exception_CommandTypeTableDirect"));
+			*/
 			
+			ExecuteCommand();
 						
 			// Check if there were any errors.
-			// [FIXME] Just check the first error.
-			if (connection.Mediator.Errors.Count > 0)
-				throw new NpgsqlException(connection.Mediator.Errors[0].ToString());
-			
+			if (connection.Mediator.Errors.Count > 0) {
+				StringWriter sw = new StringWriter();
+				sw.WriteLine(String.Format(resman.GetString("Exception_MediatorErrors_1P"), "ExecuteReader", cb));
+				uint i = 1;
+				foreach(string error in connection.Mediator.Errors){
+					sw.WriteLine("{0}. {1}", i++, error);
+				}
+				throw new NpgsqlException(sw.ToString());
+			}
+
 			CheckNotification();
 		  
 			
@@ -326,29 +447,74 @@ namespace Npgsql
 			return new NpgsqlDataReader(connection.Mediator.GetResultSets(), connection.Mediator.GetCompletedResponses(), connection);
 		}
 		
-		public Object ExecuteScalar()
+		
+		///<summary>
+		/// This method binds the parameters from parameters collection to the bind
+		/// message.
+		/// </summary>
+		private void BindParameters()
 		{
-		  NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".ExecuteScalar()", LogLevel.Debug);
+		  
+		  if (parameters.Count != 0)
+		  {
+		    Object[] parameterValues = new Object[parameters.Count];
+		    for (Int32 i = 0; i < parameters.Count; i++)
+  			{
+  				parameterValues[i] = NpgsqlTypesHelper.ConvertNpgsqlParameterToBackendStringValue(parameters[i]);
+  			}
+  			bind.ParameterValues = parameterValues;
+		  }
+		  
+		  connection.Bind(bind);
+		  connection.Flush();
+		  
+		}
+		
+
+		/// <summary>
+		/// Executes the query, and returns the first column of the first row 
+		/// in the result set returned by the query. Extra columns or rows are ignored.
+		/// </summary>
+		/// <returns>The first column of the first row in the result set, 
+		/// or a null reference if the result set is empty.</returns>
+		public Object ExecuteScalar() {
+			NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ExecuteScalar");
+
 		  
 			// Check the connection state.
 			CheckConnectionState();
-						
-			if ((type == CommandType.Text) || (type == CommandType.StoredProcedure))
-				connection.Query(this); 
+					  
+			/*if ((type == CommandType.Text) || (type == CommandType.StoredProcedure))
+			  if (parse == null)
+  				connection.Query(this); 
+		    else
+		    {
+		      BindParameters();
+		      connection.Execute(new NpgsqlExecute(bind.PortalName, 0));
+		    }
 			else
-				throw new NotImplementedException("Only Text and StoredProcedure types supported!");
+				throw new NotImplementedException(resman.GetString("Exception_CommandTypeTableDirect"));
+			*/
 			
+			ExecuteCommand();
 			
 			// Check if there were any errors.
 			// [FIXME] Just check the first error.
-			if (connection.Mediator.Errors.Count > 0)
-				throw new NpgsqlException(connection.Mediator.Errors[0].ToString());
+			if (connection.Mediator.Errors.Count > 0) {
+				StringWriter sw = new StringWriter();
+			  sw.WriteLine(String.Format(resman.GetString("Exception_MediatorErrors"), "ExecuteScalar"));
+				uint i = 1;
+				foreach(string error in connection.Mediator.Errors){
+					sw.WriteLine("{0}. {1}", i++, error);
+				}
+				throw new NpgsqlException(sw.ToString());
+			}
 			
 			CheckNotification();
 		  
 			//ArrayList results = connection.Mediator.Data;
 			
-			Object result = null;	// Result of the ExecuteScalar().
+			//Object result = null;	// Result of the ExecuteScalar().
 			
 			
 			// Now get the results.
@@ -371,35 +537,52 @@ namespace Npgsql
 			
 			
 		}
-		
-		
-		
-		public void Prepare()
-		{
-		  NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".Prepare()", LogLevel.Debug);
+
+		/// <summary>
+		/// Creates a prepared version of the command on a PostgreSQL server.
+		/// </summary>
+		public void Prepare() {
+			NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Prepare");
 			
-		  
-		  if (!connection.SupportsPrepare)
-		  	return;	// Do nothing.
-		  	
-			// Check the connection state.
+		  // Check the connection state.
 			CheckConnectionState();
+		  
+			if (!connection.SupportsPrepare)
+				return;	// Do nothing.
+		  	
+			
 			
 			// [TODO] Finish method implementation.
 			//throw new NotImplementedException();
 			
 			//NpgsqlCommand command = new NpgsqlCommand("prepare plan1 as " + GetCommandText(), connection );
-			NpgsqlCommand command = new NpgsqlCommand(GetPrepareCommandText(), connection );						
-			command.ExecuteNonQuery();
-			
-						
-			
+		  
+		  if (connection.BackendProtocolVersion == ProtocolVersion.Version2)
+		  {
+			  NpgsqlCommand command = new NpgsqlCommand(GetPrepareCommandText(), connection );						
+			  command.ExecuteNonQuery();
+		  }
+		  else
+		  {
+		    // Use the extended query parsing...
+		    planName = "NpgsqlPlan" + System.Threading.Interlocked.Increment(ref planIndex);
+		    String portalName = "NpgsqlPortal" + System.Threading.Interlocked.Increment(ref portalIndex);
+		    
+		    parse = new NpgsqlParse(planName, GetParseCommandText(), new Int32[] {});
+		    
+		    connection.Parse(parse);
+		    connection.Flush();
+		    
+		    bind = new NpgsqlBind(portalName, planName, new Int16[] {0}, null, new Int16[] {0});
+		      
+		  }
 		}
-		
-		public void Dispose()
-		{
-		  NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".Dispose()", LogLevel.Debug);
-			
+
+		/// <summary>
+		/// Releases the resources used by the <see cref="Npgsql.NpgsqlCommand">NpgsqlCommand</see>.
+		/// </summary>
+		public new void Dispose() {
+			NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Dispose");
 		}
 		
 		///<summary>
@@ -407,29 +590,25 @@ namespace Npgsql
 		/// is set or it is open. If one of this conditions is not met, throws
 		/// an InvalidOperationException
 		///</summary>
-		
-		private void CheckConnectionState()
-		{
-		  NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".CheckConnectionState()", LogLevel.Debug);
+		private void CheckConnectionState() {
+			NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "CheckConnectionState");
 		  
 			// Check the connection state.
 			if (connection == null)
-				throw new InvalidOperationException("The Connection is not set");
+				throw new InvalidOperationException(resman.GetString("Exception_ConnectionNull"));
 			if (connection.State != ConnectionState.Open)
-				throw new InvalidOperationException("The Connection is not open");
+				throw new InvalidOperationException(resman.GetString("Exception_ConnectionNotOpen"));
 			
 		}
 		
-		///<summary>
-		/// This method substitutes the parameters, if exist, in the command
+		/// <summary>
+		/// This method substitutes the <see cref="Npgsql.NpgsqlCommand.Parameters">Parameters</see>, if exist, in the command
 		/// to their actual values.
 		/// The parameter name format is <b>:ParameterName</b>.
 		/// </summary>
-		/// 
-		
-		internal String GetCommandText()
-		{
-			NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetCommandText()", LogLevel.Debug);
+		/// <returns>A version of <see cref="Npgsql.NpgsqlCommand.CommandText">CommandText</see> with the <see cref="Npgsql.NpgsqlCommand.Parameters">Parameters</see> inserted.</returns>
+		internal String GetCommandText() {
+			NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetCommandText");
 			
 			if (planName == String.Empty)
 				return GetClearCommandText();
@@ -440,9 +619,8 @@ namespace Npgsql
 		}
 		
 		
-		private String GetClearCommandText()
-		{
-			NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetClearCommandText()", LogLevel.Debug);
+		private String GetClearCommandText() {
+			NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetClearCommandText");
 			
 			
 			String result = text;
@@ -452,7 +630,9 @@ namespace Npgsql
 					result = "select * from " + result; // This syntax is only available in 7.3+ as well SupportsPrepare.
 				else
 					result = "select " + result;				// Only a single result return supported. 7.2 and earlier.
-						
+			else if (type == CommandType.TableDirect)
+			  return "select * from " + result; // There is no parameter support on table direct.
+		  
 			if (parameters.Count == 0)
 				return result;
 						
@@ -461,11 +641,10 @@ namespace Npgsql
 			
 			String parameterName;
 						
-			for (Int32 i = 0; i < parameters.Count; i++)
-			{
+			for (Int32 i = 0; i < parameters.Count; i++) {
 				parameterName = parameters[i].ParameterName;
 			  
-			 	result = ReplaceParameterValue(result, parameterName, NpgsqlTypesHelper.ConvertNpgsqlParameterToBackendStringValue(parameters[i]));
+				result = ReplaceParameterValue(result, parameterName, NpgsqlTypesHelper.ConvertNpgsqlParameterToBackendStringValue(parameters[i]));
 			  
 			}
 			
@@ -475,9 +654,8 @@ namespace Npgsql
 		
 		
 		
-		private String GetPreparedCommandText()
-		{
-			NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetPreparedCommandText()", LogLevel.Debug);
+		private String GetPreparedCommandText() {
+			NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetPreparedCommandText");
 			
 			if (parameters.Count == 0)
 				return "execute " + planName;
@@ -486,8 +664,7 @@ namespace Npgsql
 			StringBuilder result = new StringBuilder("execute " + planName + '(');
 			
 			
-			for (Int32 i = 0; i < parameters.Count; i++)
-			{
+			for (Int32 i = 0; i < parameters.Count; i++) {
 				result.Append(NpgsqlTypesHelper.ConvertNpgsqlParameterToBackendStringValue(parameters[i]) + ',');
 			}
 			
@@ -499,23 +676,19 @@ namespace Npgsql
 		}
 		
 		
-		private String GetPrepareCommandText()
+
+		private String GetParseCommandText()
 		{
-			NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetPrepareCommandText()", LogLevel.Debug);
-			
-			
-			planName = "NpgsqlPlan" + System.Threading.Interlocked.Increment(ref planIndex);
-			
-			StringBuilder command = new StringBuilder("prepare " + planName);
-			
-			String textCommand = text;
-			
-			if (type == CommandType.StoredProcedure)
-				textCommand = "select * from " + textCommand;
-			
-			
-			
-			if (parameters.Count > 0)
+		  NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetParseCommandText");
+		  
+		  String parseCommand = text;
+		  
+		  if (type == CommandType.StoredProcedure) 
+				parseCommand = "select * from " + parseCommand; // This syntax is only available in 7.3+ as well SupportsPrepare.
+			else if (type == CommandType.TableDirect)	
+			  return "select * from " + parseCommand; // There is no parameter support on TableDirect.
+						
+		  if (parameters.Count > 0)
 			{
 				// The ReplaceParameterValue below, also checks if the parameter is present.
 			  
@@ -527,7 +700,44 @@ namespace Npgsql
 					//result = result.Replace(":" + parameterName, parameters[i].Value.ToString());
 					parameterName = parameters[i].ParameterName;
 					//textCommand = textCommand.Replace(':' + parameterName, "$" + (i+1));
-				  textCommand = ReplaceParameterValue(textCommand, parameterName, "$" + (i+1));
+				  parseCommand = ReplaceParameterValue(parseCommand, parameterName, "$" + (i+1));
+				  
+				}
+			}
+			
+			return parseCommand;
+		  
+		}
+		
+		
+		private String GetPrepareCommandText() {
+			NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetPrepareCommandText");
+
+			
+			
+			planName = "NpgsqlPlan" + System.Threading.Interlocked.Increment(ref planIndex);
+			
+			StringBuilder command = new StringBuilder("prepare " + planName);
+			
+			String textCommand = text;
+			
+			if (type == CommandType.StoredProcedure) 
+				textCommand = "select * from " + textCommand;
+			else if (type == CommandType.TableDirect)	
+			  return "select * from " + textCommand; // There is no parameter support on TableDirect.
+			
+			
+			if (parameters.Count > 0) {
+				// The ReplaceParameterValue below, also checks if the parameter is present.
+			  
+				String parameterName;
+				Int32 i;
+			  
+				for (i = 0; i < parameters.Count; i++) {
+					//result = result.Replace(":" + parameterName, parameters[i].Value.ToString());
+					parameterName = parameters[i].ParameterName;
+					//textCommand = textCommand.Replace(':' + parameterName, "$" + (i+1));
+					textCommand = ReplaceParameterValue(textCommand, parameterName, "$" + (i+1));
 				  
 				}
 				
@@ -536,8 +746,7 @@ namespace Npgsql
 				
 				command.Append('(');
 				
-				for (i = 0; i < parameters.Count; i++)
-				{
+				for (i = 0; i < parameters.Count; i++) {
 					command.Append(NpgsqlTypesHelper.GetBackendTypeNameFromDbType(parameters[i].DbType));
 					
 					command.Append(',');
@@ -557,44 +766,54 @@ namespace Npgsql
 		}
 		
 		
-		private String ReplaceParameterValue(String result, String parameterName, String paramVal)
-		{
+		private String ReplaceParameterValue(String result, String parameterName, String paramVal) {
 			Int32 resLen = result.Length;
 			Int32 paramStart = result.IndexOf(parameterName);
 			Int32 paramLen = parameterName.Length;
 			Int32 paramEnd = paramStart + paramLen;
 			Boolean found = false;
 			
-			while(paramStart > -1)
-			{
+			while(paramStart > -1) {
 				if((resLen > paramEnd) &&
-				   (result[paramEnd] == ' ' ||
-				    result[paramEnd] == ',' ||
-				    result[paramEnd] == ')' ||
-				    result[paramEnd] == ';'))
-				{
+					(result[paramEnd] == ' ' ||
+					result[paramEnd] == ',' ||
+					result[paramEnd] == ')' ||
+					result[paramEnd] == ';')) {
 					result = result.Substring(0, paramStart) + paramVal + result.Substring(paramEnd);
 					found = true;
 				}
-				else if(resLen == paramEnd)
-				{
+				else if(resLen == paramEnd) {
 					result = result.Substring(0, paramStart)+ paramVal;
 					found = true;
 				}
 				else 
-				  break;
+					break;
 				resLen = result.Length;
 				paramStart = result.IndexOf(parameterName, paramStart);
 				paramEnd = paramStart + paramLen;
 				
 			}//while
 			if(!found)	
-			  throw new NpgsqlException(String.Format("Parameter {0} not found in query.", parameterName));
+				throw new NpgsqlException(String.Format(resman.GetString("Exception_ParamNotInQuery"), parameterName));
 			
 			return result;
 		}//ReplaceParameterValue
 		
-		
+	
+  	private void ExecuteCommand()
+  	{
+  	  //if ((type == CommandType.Text) || (type == CommandType.StoredProcedure))
+  			  if (parse == null)
+    				connection.Query(this); 
+  		    else
+  		    {
+  		      BindParameters();
+  		      connection.Execute(new NpgsqlExecute(bind.PortalName, 0));
+  		    }
+  		/*	else
+  				throw new NotImplementedException(resman.GetString("Exception_CommandTypeTableDirect"));*/
+  	  
+  	}
 		
 		
 	}

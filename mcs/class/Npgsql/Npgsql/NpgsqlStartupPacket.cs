@@ -62,7 +62,7 @@ namespace Npgsql
 		                           String optional_tty)
 		{
 			
-			NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".NpgsqlStartupPacket()", LogLevel.Debug);
+			NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME);
 			// Just copy the values.
 			
 			// [FIXME] Validate params? We are the only clients, so, hopefully, we
@@ -78,33 +78,68 @@ namespace Npgsql
 			
 		}
 		
+				
 		public void WriteToStream(Stream output_stream, Encoding encoding)
 		{
 			
-			NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".WriteToStream()", LogLevel.Debug);
+			NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "WriteToStream");
 			
 			// [FIXME] Need exception handling ?
 			
-			// Packet length = 296
-      output_stream.Write(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(this.packet_size)), 0, 4);
-	    	
-      // Protocol version = 2.0
-      output_stream.Write(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(this.protocol_version)), 0, 4);
-	    	
-      // Database name.
-			PGUtil.WriteLimString(this.database_name, 64, output_stream, encoding);
-      
-      // User name.
-      PGUtil.WriteLimString(this.user_name, 32, output_stream, encoding);
-    	
-    	// Arguments.
-    	PGUtil.WriteLimString(this.arguments, 64, output_stream, encoding);
+			if (protocol_version == ProtocolVersion.Version2) // Protocol 2.0
+			{
+			  
+  			// Packet length = 296
+        output_stream.Write(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(this.packet_size)), 0, 4);
+  	    	
+        // Protocol version = 2.0
+        output_stream.Write(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(this.protocol_version)), 0, 4);
+  	    	
+        // Database name.
+  			PGUtil.WriteLimString(this.database_name, 64, output_stream, encoding);
+        
+        // User name.
+        PGUtil.WriteLimString(this.user_name, 32, output_stream, encoding);
+      	
+      	// Arguments.
+      	PGUtil.WriteLimString(this.arguments, 64, output_stream, encoding);
+  			
+        // Unused.
+        PGUtil.WriteLimString(this.unused, 64, output_stream, encoding);
+        
+        // Optional tty.
+        PGUtil.WriteLimString(this.optional_tty, 64, output_stream, encoding);
+			  output_stream.Flush();
+			  
+			}
 			
-      // Unused.
-      PGUtil.WriteLimString(this.unused, 64, output_stream, encoding);
-      
-      // Optional tty.
-      PGUtil.WriteLimString(this.optional_tty, 64, output_stream, encoding);
+			if (protocol_version >= ProtocolVersion.Version3) // Protocol 3+
+			{
+			  PGUtil.WriteInt32(output_stream, 4 + 4 + 5 + encoding.GetByteCount(user_name) + 1 + 9 + encoding.GetByteCount(database_name) + 1 + 1);
+			  
+			  // Protocol version = 3.0
+         	    
+  	    PGUtil.WriteInt32(output_stream, this.protocol_version);
+			  
+  	    // User name.
+  	    
+        PGUtil.WriteString("user", output_stream, encoding);
+			  
+        // User name.
+        PGUtil.WriteString(user_name, output_stream, encoding);
+      	
+  	    // Database name.
+  			PGUtil.WriteString("database", output_stream, encoding);
+			  
+  	    // Database name.
+  			PGUtil.WriteString(database_name, output_stream, encoding);
+        
+        output_stream.WriteByte(0);       
+      	output_stream.Flush();
+      	
+			}
+		  
+		  
 			
 			
 		}

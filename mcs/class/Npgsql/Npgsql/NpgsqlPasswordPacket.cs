@@ -42,25 +42,42 @@ namespace Npgsql
     private static readonly String CLASSNAME = "NpgsqlPasswordPacket";
 		
 		private String password;
+	  private Int32 protocolVersion;
+	  
 		
-		public NpgsqlPasswordPacket(String password)
+		public NpgsqlPasswordPacket(String password, Int32 protocolVersion)
 		{
-			NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".NpgsqlPasswordPacket()", LogLevel.Debug);
+			NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME);
 			
-			this.password = password;	
+			this.password = password;
+			this.protocolVersion = protocolVersion;
 		}
 		
-		public void WriteToStream(Stream output_stream, Encoding encoding)
+		public void WriteToStream(Stream outputStream, Encoding encoding)
 		{
-			NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".WriteToStream()", LogLevel.Debug);
-			// Write the size of the packet.
-			// 4 + (passwordlength + 1) -> Int32 + NULL terminated string.
-			output_stream.Write(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(4 + (password.Length + 1))), 0, 4);
-			
-			// Write String.
-			PGUtil.WriteString(password, output_stream, encoding);
+			NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "WriteToStream");
+		  
+		  if (protocolVersion == ProtocolVersion.Version2)
+  		{ // Write the size of the packet.
+  			// 4 + (passwordlength + 1) -> Int32 + NULL terminated string.
+  			//output_stream.Write(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(4 + (password.Length + 1))), 0, 4);
+  		  
+  		  PGUtil.WriteInt32(outputStream, 4 + encoding.GetByteCount(password) + 1);
+  			
+  			// Write String.
+  			PGUtil.WriteString(password, outputStream, encoding);
+  		}
+  		else
+  		{
+  		  outputStream.WriteByte((Byte)'p');
+  		  PGUtil.WriteInt32(outputStream, 4 + encoding.GetByteCount(password) + 1);
+  			
+  			// Write String.
+  			PGUtil.WriteString(password, outputStream, encoding);
+  		}
+  		
+  		
 		}
 	}
 	
 }
-

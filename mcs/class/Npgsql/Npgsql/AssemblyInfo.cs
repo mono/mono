@@ -48,17 +48,10 @@ using System.Runtime.CompilerServices;
 // You can specify all values by your own or you can build default build and revision
 // numbers with the '*' character (the default):
 
-[assembly: AssemblyVersion("0.5")]
+[assembly: AssemblyVersion("0.6")]
 
 // The following attributes specify the key for the sign of your assembly. See the
 // .NET Framework documentation for more information about signing.
 // This is not required, if you don't want signing let these attributes like they're.
-//
-// FIXME: We don't strongname corlib.dll right now, so we can't strongname this dll.
-// This is only a problem on windows, where we have the option of linking against
-// mscorlib.dll. But there are other libraries that need to link against our corlib,
-// and in general always linking against the mono corlib seems like the right thing
-// to do.
-//
-//[assembly: AssemblyDelaySign(false)]
-//[assembly: AssemblyKeyFile("Npgsql.snk")]
+[assembly: AssemblyDelaySign(false)]
+[assembly: AssemblyKeyFile("Npgsql.snk")]

@@ -46,27 +46,25 @@ namespace Npgsql
 		
 		private ArrayList							data;
 		private Byte[]								null_map_array;
-		private Int16									num_fields;
 		private readonly Int16	READ_BUFFER_SIZE = 300; //[FIXME] Is this enough??
 		private NpgsqlRowDescription row_desc;
 		
 		public NpgsqlBinaryRow(NpgsqlRowDescription rowDesc)
 		{
-			NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".NpgsqlBinaryRow()", LogLevel.Debug);
-			
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME);
+						
 			data = new ArrayList();
 			row_desc = rowDesc;
 			null_map_array = new Byte[(row_desc.NumFields + 7)/8];
-			//num_fields = numFields;
-				
+						
 			
 		}
 		
 		
 		public void ReadFromStream(Stream inputStream, Encoding encoding)
 		{
-			NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".ReadFromStream()", LogLevel.Debug);
-			
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ReadFromStream");
+						
 			//Byte[] input_buffer = new Byte[READ_BUFFER_SIZE]; 
 			Byte[] input_buffer = null;
 			
@@ -131,6 +129,7 @@ namespace Npgsql
 		
 		public Boolean IsNull(Int32 index)
 		{
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "IsNull");
 			// [FIXME] Check more optimized way of doing this.
 			// Should this be public or internal?
 			
@@ -154,7 +153,7 @@ namespace Npgsql
 		{
 			get
 			{
-				
+				NpgsqlEventLog.LogIndexerGet(LogLevel.Debug, CLASSNAME, index);
 				if ((index < 0) || (index >= row_desc.NumFields))
 					throw new ArgumentOutOfRangeException("this[] index value");
 				// [FIXME] Should return null or something else

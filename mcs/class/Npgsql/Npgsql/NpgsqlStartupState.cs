@@ -34,10 +34,11 @@ namespace Npgsql
 	internal sealed class NpgsqlStartupState : NpgsqlState
 	{
 		private static NpgsqlStartupState _instance = null;
+        
+        private readonly String CLASSNAME = "NpgsqlStartupState";
 		
-		private NpgsqlStartupState()
-		{
-		}
+		private NpgsqlStartupState() : base() { }
+        
 		public static NpgsqlStartupState Instance
 		{
 			get
@@ -51,9 +52,9 @@ namespace Npgsql
 		}
 		public override void Authenticate( NpgsqlConnection context, string password)
 		{
-			NpgsqlEventLog.LogMsg("Entering NpgsqlStartupState.Authenticate", LogLevel.Debug);
-			NpgsqlPasswordPacket pwpck = new NpgsqlPasswordPacket(password);
-			BufferedStream stream = new BufferedStream(context.TcpClient.GetStream());
+			NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Authenticate");
+			NpgsqlPasswordPacket pwpck = new NpgsqlPasswordPacket(password, context.BackendProtocolVersion);
+			BufferedStream stream = context.getStream();
 			pwpck.WriteToStream(stream, context.Encoding);
 			stream.Flush();
 			

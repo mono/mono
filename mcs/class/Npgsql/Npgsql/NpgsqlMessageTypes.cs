@@ -52,6 +52,7 @@ namespace Npgsql
 
 		public const Char BackendKeyData = 'K';
 		public const Char BinaryRow = 'B';
+	  public const Char BindComplete = '2';
 		public const Char CancelRequest = 'F';
 		public const Char CompletedResponse = 'C';
 		public const Char CopyDataRows = ' ';
@@ -69,6 +70,8 @@ namespace Npgsql
 		
 		public const Char NoticeResponse = 'N';
 		public const Char NotificationResponse = 'A';
+	  public const Char ParameterStatus = 'S';
+	  public const Char ParseComplete = '1';
 		public const Char PasswordPacket = ' ';
 		public const Char Query = 'Q';
 		public const Char ReadyForQuery = 'Z';

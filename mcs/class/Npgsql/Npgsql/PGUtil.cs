@@ -29,10 +29,25 @@ using System.IO;
 using System.Text;
 using System.Net.Sockets;
 using System.Net;
-
+using System.Resources;
 
 namespace Npgsql
 {
+  
+  
+  internal struct ProtocolVersion
+  {
+    public const Int32 Version2 = 131072;
+    public const Int32 Version3 = 196608;
+  }
+  
+  internal enum FormatCode:short
+  {
+    Text = 0,
+    Binary = 1
+  }
+  
+  
 	///<summary>
 	/// This class provides many util methods to handle 
 	/// reading and writing of PostgreSQL protocol messages.
@@ -47,6 +62,7 @@ namespace Npgsql
 		
     // Logging related values
     private static readonly String CLASSNAME = "PGUtil";
+    private static ResourceManager resman = new ResourceManager(typeof(PGUtil));
 				
 		///<summary>
 		/// This method gets a C NULL terminated string from the network stream.
@@ -57,7 +73,7 @@ namespace Npgsql
 		
 		public static String ReadString(Stream network_stream, Encoding encoding)
 		{  
-		  NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".ReadString()", LogLevel.Debug);
+		  NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ReadString");
 		
 			// [FIXME] Is 512 enough?
 			Byte[] buffer = new Byte[512];
@@ -74,7 +90,7 @@ namespace Npgsql
 				b = (Byte)network_stream.ReadByte();
 			}
 			String string_read = encoding.GetString(buffer, 0, counter);
-			NpgsqlEventLog.LogMsg("String Read: " + string_read, LogLevel.Debug);
+            NpgsqlEventLog.LogMsg(resman, "Log_StringRead", LogLevel.Debug, string_read);
 			return string_read;
 		}
 		
@@ -85,9 +101,9 @@ namespace Npgsql
 		
 		public static void WriteString(String the_string, Stream network_stream, Encoding encoding)
 		{
-		  NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".WriteString()", LogLevel.Debug);
+		  NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "WriteString");
 		  
-			network_stream.Write(encoding.GetBytes(the_string + '\x00') , 0, the_string.Length + 1);
+			network_stream.Write(encoding.GetBytes(the_string + '\x00') , 0, encoding.GetByteCount(the_string) + 1);
 		}
 		
 		///<summary>
@@ -98,7 +114,7 @@ namespace Npgsql
 		
 		public static void WriteLimString(String the_string, Int32 n, Stream network_stream, Encoding encoding)
 		{
-		  NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".WriteLimString()", LogLevel.Debug);
+		  NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "WriteLimString");
 		  
 			// [FIXME] Parameters should be validated. And what about strings
 			// larger than or equal to n?
@@ -123,7 +139,33 @@ namespace Npgsql
 			
 		}
 		
-		public static void WriteQueryToStream( String query, Stream stream, Encoding encoding )
+		
+		public static void WriteInt32(Stream stream, Int32 value)
+		{
+		  stream.Write(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(value)), 0, 4);
+		}
+		
+		public static Int32 ReadInt32(Stream stream, Byte[] buffer)
+		{
+		  CheckedStreamRead(stream, buffer, 0, 4);
+  		return IPAddress.NetworkToHostOrder(BitConverter.ToInt32(buffer, 0));
+		  
+		}
+		
+		public static void WriteInt16(Stream stream, Int16 value)
+		{
+		  stream.Write(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(value)), 0, 2);
+		}
+		
+		public static Int16 ReadInt16(Stream stream, Byte[] buffer)
+		{
+		  CheckedStreamRead(stream, buffer, 0, 2);
+  		return IPAddress.NetworkToHostOrder(BitConverter.ToInt16(buffer, 0));
+		  
+		}
+		
+		
+		/*public static void WriteQueryToStream( String query, Stream stream, Encoding encoding )
 		{
 			NpgsqlEventLog.LogMsg( CLASSNAME + query, LogLevel.Debug  );
 			// Send the query to server.
@@ -138,6 +180,16 @@ namespace Npgsql
 			stream.Flush();
 			
 		}
+		
+		public static Int32 ProtocolVersionMajor(Int32 protocolVersion)
+		{
+		  return (protocolVersion >> 16) & 0xffff;
+		}
+		
+		public static Int32 ProtocolVersionMinor(Int32 protocolVersion)
+		{
+		  return protocolVersion & 0xffff;
+		}*/
 		
 		
    
