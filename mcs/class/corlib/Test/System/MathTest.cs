@@ -148,14 +148,14 @@ public class MathTest : TestCase {
 		double c = 1.5707963267948966;
 		double d = -1.5707963267948966;
 
-		Assert(a.ToString("G99") + " != " + b.ToString("G99"), 
+		Assert("#1: " + a.ToString("G99") + " != " + b.ToString("G99"), 
 		       (Math.Abs(a - b) <= double.Epsilon));
 		Assert("should return NaN", 
 		       double.IsNaN(Math.Atan(double.NaN)));
-		Assert(Math.Atan(double.PositiveInfinity).ToString("G99")+" != "+c.ToString("G99"), 
-		       Math.Abs((double)Math.Atan(double.PositiveInfinity) - c) <= double.Epsilon);
-		Assert(Math.Atan(double.NegativeInfinity).ToString("G99")+" != "+d.ToString("G99"),
-		       Math.Abs((double)Math.Atan(double.NegativeInfinity) - d) <= double.Epsilon);
+		Assert("#2: " + Math.Atan(double.PositiveInfinity).ToString("G99")+" != "+c.ToString("G99"), 
+		       Math.Abs((double)Math.Atan(double.PositiveInfinity) - c) <= 0.0000000000000001);
+		Assert("#3: " + Math.Atan(double.NegativeInfinity).ToString("G99")+" != "+d.ToString("G99"),
+		       Math.Abs((double)Math.Atan(double.NegativeInfinity) - d) <= 0.0000000000000001);
 	}
 
 	public void TestAtan2() {
@@ -243,7 +243,7 @@ public class MathTest : TestCase {
 		double b = 0.12371341868561381;
 
 		Assert(a.ToString("G99") + " != " + b.ToString("G99"), 
-		       (Math.Abs(a - b) <= double.Epsilon));
+		       Math.Abs(a - b) <= 0.0000000000000001);
 		Assert(double.IsNaN(Math.Sinh(Double.NaN)));
 		Assert(double.IsNegativeInfinity(Math.Sinh(Double.NegativeInfinity)));
 		Assert(double.IsPositiveInfinity(Math.Sinh(Double.PositiveInfinity)));

@@ -1,3 +1,7 @@
+2004-04-25  Nick Drochak <ndrochak@gol.com>
+
+	* MathTest.cs: Check precision only so far.
+
 2004-04-22  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* AppDomainSetupTest.cs: Changed again test 3 to test that the appdomain is 
