@@ -1,3 +1,7 @@
+2004-01-20  Ravindra <rkumar@novell.com>
+
+	* pen.c: Fixed bug #52811.
+
 2004-01-19  Duncan Mak  <duncan@ximian.com>
 
 	* graphics-path.c (GdipGetPathPoints): Fixed.

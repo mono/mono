@@ -335,9 +335,9 @@ GdipSetPenTransform (GpPen *pen, GpMatrix *matrix)
 }
 
 GpStatus
-GdipGetPenTransform (GpPen *pen, GpMatrix *matrix)
+GdipGetPenTransform (GpPen *pen, GpMatrix **matrix)
 {
-        matrix = pen->matrix;
+        *matrix = pen->matrix;
         return Ok;
 }
 
