@@ -1,3 +1,12 @@
+2001-08-09  Sergey Chaban <serge@wildwestsoftware.com>
+
+	* ToBase64Transform.cs: Base64Table now supports both encoding
+	  and decoding tables. As a result Table was renamed to EncodeTable
+	  and DecodeTable was added.
+	* FromBase64Transform.cs: Initial check-in.
+	* DES.cs: Initial check-in.
+	* DESCryptoServiceProvider.cs: Initial check-in.
+
 2001-08-01  Matthew S. Ford  <Matthew.S.Ford@Rose-Hulman.Edu>
 
 	* CipherMode.cs: Initial version.
