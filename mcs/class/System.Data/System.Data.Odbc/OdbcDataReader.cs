@@ -567,10 +567,20 @@ namespace System.Data.Odbc
                                                 }
                                         }
 
-					schemaRow["BaseCatalogName"] = "";				
-					schemaRow["BaseColumnName"] = GetColumnAttributeStr (i+1, FieldIdentifier.BaseColumnName);
-					schemaRow["BaseSchemaName"] = "";
-					schemaRow["BaseTableName"] = GetColumnAttributeStr (i+1, FieldIdentifier.BaseTableName);
+                                        schemaRow["BaseCatalogName"] = "";
+                                        schemaRow["BaseColumnName"] = "";
+                                        schemaRow["BaseSchemaName"] = "";
+                                        schemaRow["BaseTableName"] = "";
+
+                                        try {
+                                                schemaRow["BaseColumnName"] = GetColumnAttributeStr (i+1, FieldIdentifier.BaseColumnName);
+                                                schemaRow["BaseTableName"] = GetColumnAttributeStr (i+1, FieldIdentifier.BaseTableName);
+                                        } catch (Exception e) {
+                                                // ignore these properties as they are optional.
+                                        }
+                                        
+
+
 					schemaRow["DataType"] = col.DataType;
 
 					schemaRow["AllowDBNull"] = col.AllowDBNull;
