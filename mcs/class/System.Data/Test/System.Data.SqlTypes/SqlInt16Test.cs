@@ -14,7 +14,7 @@ namespace MonoTests.System.Data.SqlTypes
 {
         public class SqlInt16Test : TestCase {
 
-                public SqlInt16Test() : base ("System.Data.SqlTypes.SqlInt64") {}
+                public SqlInt16Test() : base ("System.Data.SqlTypes.SqlInt16") {}
                 public SqlInt16Test(string name) : base(name) {}
 
                 protected override void TearDown() {}
@@ -23,7 +23,7 @@ namespace MonoTests.System.Data.SqlTypes
 
                 public static ITest Suite {
                         get {
-                                return new TestSuite(typeof(SqlInt32));
+                                return new TestSuite(typeof(SqlInt16));
                         }
                 }
 
