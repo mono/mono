@@ -1,3 +1,7 @@
+2005-01-31  Martin Baulig  <martin@ximian.com>
+
+	* metadata.c (mono_metadata_has_generic_params): New public
+	function; checks whether something is a generic method.
 
 Sun Jan 30 20:19:48 CET 2005 Paolo Molaro <lupus@ximian.com>
 
