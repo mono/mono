@@ -1,4 +1,8 @@
 
+Tue Jul 2 20:40:56 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: turn errors into warnings to allow compiling corlib.
+
 Tue Jul 2 19:33:20 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: add special cases to compile corlib.
