@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.15 $
+// $Revision: 1.16 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.16  2004/08/10 17:43:04  pbartok
+// - Added more to the still unfinished Dock/Anchor layout code
+//
 // Revision 1.15  2004/08/10 15:08:05  jackson
 // Control will now handle the buffering code, so each control does not have to implement this.
 //
@@ -120,6 +123,13 @@ namespace System.Windows.Forms
 		internal Font			font;			// font for control
 		internal string			text;			// window/title text for control
 
+		// Layout
+		internal AnchorStyles		anchor_style;		// anchoring requirements for our control
+		internal DockStyle		dock_style;		// docking requirements for our control (supercedes anchoring)
+		internal int			prev_width;		// previous width of the control; required for anchoring
+		internal int			prev_height;		// previous height of our control; required for anchoring
+		internal Size prev_size;
+
 		// to be categorized...
 		static internal Hashtable	controls;		// All of the applications controls, in a flat list
 		internal ControlCollection	child_controls;		// our children
@@ -127,8 +137,6 @@ namespace System.Windows.Forms
 		internal int			num_of_children;	// number of children the control has
 		internal Control[]		children;		// our children
 		internal AccessibleObject	accessibility_object;	// object that contains accessibility information about our control
-		internal AnchorStyles		anchor_style;		// TODO
-		internal DockStyle		dock_style;		// TODO
 		internal BindingContext		binding_context;	// TODO
 		internal RightToLeft		right_to_left;		// drawing direction for control
 		internal int			layout_suspended;
@@ -481,6 +489,7 @@ namespace System.Windows.Forms
 			bounds = new Rectangle(0, 0, DefaultSize.Width, DefaultSize.Height);
 			window_size = new Size(DefaultSize.Width, DefaultSize.Height);
 			client_size = new Size(DefaultSize.Width, DefaultSize.Height);
+			prev_size = client_size;
 
 			is_visible = true;
 			is_disposed = false;
@@ -1182,7 +1191,13 @@ namespace System.Windows.Forms
 		}
 
 		protected void UpdateBounds() {
-			UpdateBounds(bounds.X, bounds.Y, bounds.Width, bounds.Height);
+			int	x;
+			int	y;
+			int	width;
+			int	height;
+
+			XplatUI.GetWindowPos(this.Handle, out x, out y, out width, out height);
+			UpdateBounds(x, y, width, height);
 		}
 
 		protected void UpdateBounds(int x, int y, int width, int height) {
@@ -1291,6 +1306,7 @@ namespace System.Windows.Forms
 			// Perform all Dock and Anchor calculations
 			try {
 				Control		child;
+				AnchorStyles	anchor;
 				Rectangle	space;
 
 				space=this.DisplayRectangle;
@@ -1339,15 +1355,71 @@ namespace System.Windows.Forms
 					}
 				}
 
+				space=this.DisplayRectangle;
+
 				// Deal with anchoring
 				for (int i=0; i < num_of_children; i++) {
-					child=children[i];
+					int left;
+					int top;
+					int width;
+					int height;
+					int diff_width;
+					int diff_height;
 
+					child=children[i];
+					anchor=child.Anchor;
+
+					left=child.Left-space.Left;
+					top=child.Top-space.Top;
+					width=prev_size.Width-child.Width-child.Left;
+					height=prev_size.Height-child.Height-child.Top;
+
+					diff_width=space.Width-prev_size.Width;
+					diff_height=space.Height-prev_size.Height;
+
+					prev_size.Width=space.Width;
+					prev_size.Height=space.Height;
+
+					// If the control is docked we don't need to do anything
 					if (child.Dock != DockStyle.None) {
 						continue;
 					}
 
-					
+					if ((anchor & AnchorStyles.Left) !=0 ) {
+						if ((anchor & AnchorStyles.Right) != 0) {
+							// Anchoring to left and right
+							width=width+diff_width;
+						} else {
+							; // nothing to do
+						}
+					} else if ((anchor & AnchorStyles.Right) != 0) {
+						left+=diff_width;
+					} else {
+						left+=diff_width/2;
+					}
+
+					if ((anchor & AnchorStyles.Top) !=0 ) {
+						if ((anchor & AnchorStyles.Bottom) != 0) {
+							height+=diff_height;
+						} else {
+							; // nothing to do
+						}
+					} else if ((anchor & AnchorStyles.Bottom) != 0) {
+						top+=diff_height;
+					} else {
+						top+=diff_height/2;
+					}
+
+					// Sanity
+					if (width < 0) {
+						width=0;
+					}
+
+					if (height < 0) {
+						height=0;
+					}
+
+					child.SetBounds(left, top, width, height);
 				}
 
 				// Let everyone know
@@ -1408,6 +1480,12 @@ namespace System.Windows.Forms
 				case Msg.WM_KEYUP:		throw new NotImplementedException();	break;
 #endif
 				// Window management
+				case Msg.WM_WINDOWPOSCHANGED: {
+					UpdateBounds();
+					DefWndProc(ref m);
+					break;
+				}
+
 				case Msg.WM_PAINT: {
 					Rectangle	rect;
 					PaintEventArgs	paint_event;
@@ -1631,7 +1709,7 @@ namespace System.Windows.Forms
 		protected virtual void SetClientSizeCore(int x, int y) {
 			bounds.Width=x;
 			bounds.Height=y;
-			XplatUI.SetWindowPos(Handle, bounds);
+			XplatUI.MoveWindow(Handle, bounds.X, bounds.Y, bounds.Width, bounds.Height);
 		}
 
 		protected void SetStyle(ControlStyles flag, bool value) {
@@ -1909,6 +1987,7 @@ namespace System.Windows.Forms
 
 		protected virtual void OnResize(EventArgs e) {
 			if (Resize!=null) Resize(this, e);
+			PerformLayout();
 		}
 
 		protected virtual void OnRightToLeftChanged(EventArgs e) {
