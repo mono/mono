@@ -18,3 +18,5 @@ File.cs
 IOException.cs
 StreamWriter.cs
 StreamReader.cs
+CheckArgument.cs
+CheckPermission.cs
