@@ -1,5 +1,10 @@
 2003-10-15  Zoltan Varga  <vargaz@freemail.hu>
 
+	* object.h: Add a new field to TypedRef to simplify the implementation
+	of the REFANY opcodes in the JIT.
+
+	* icall.c: Make use of the new field.
+
 	* metadata.c (mono_type_size): Compute the size of TYPEDBYREF types
 	dynamically.
 
