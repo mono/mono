@@ -100,6 +100,8 @@ namespace System.Web.UI.WebControls
 				return String.Empty;
 			}
 			set {
+				if (HasControls())
+					Controls.Clear();
 				ViewState["Text"] = value;
 				textSet = true;
 			}

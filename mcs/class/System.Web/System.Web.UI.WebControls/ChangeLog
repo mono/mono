@@ -1,3 +1,8 @@
+2003-12-16  Alon Gazit <along@mainsoft.com>
+	* HyperLink.cs: Change Text property implementation. in MS when the Text
+	property is set, all the controls in the HyperLink are being deleted. 
+	This fixes bug #52239.   
+
 2003-12-15  Alon Gazit <along@mainsoft.com>
 	* RepeatInfo.cs: Fixed DoVerticalRendering() and DoHorizontalRendering().
 	Both methods add additional empty table row in the head of each item table 
