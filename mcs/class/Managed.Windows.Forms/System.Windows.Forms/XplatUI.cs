@@ -334,7 +334,7 @@ namespace System.Windows.Forms {
 			return driver.TranslateMessage(ref msg);
 		}
 
-		internal static bool DispatchMessage(ref MSG msg) {
+		internal static IntPtr DispatchMessage(ref MSG msg) {
 			return driver.DispatchMessage(ref msg);
 		}
 

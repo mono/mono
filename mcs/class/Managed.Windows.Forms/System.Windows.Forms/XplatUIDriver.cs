@@ -208,7 +208,7 @@ namespace System.Windows.Forms {
 		internal abstract bool PeekMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags);
 		internal abstract bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax);
 		internal abstract bool TranslateMessage(ref MSG msg);
-		internal abstract bool DispatchMessage(ref MSG msg);
+		internal abstract IntPtr DispatchMessage(ref MSG msg);
 
 		internal abstract bool SetZOrder(IntPtr hWnd, IntPtr AfterhWnd, bool Top, bool Bottom);
 		internal abstract bool SetTopmost(IntPtr hWnd, IntPtr hWndOwner, bool Enabled);
