@@ -1,3 +1,9 @@
+2004-03-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StrongNameKeyPair.cs: Added an internal method to return a 
+	StrongName object (for AssemblyBuilder). Simplified implementation 
+	using Mono.Security.Cryptography.CryptoConvert class.
+
 2004-03-24  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyFileVersionAttribute.cs (.ctor): Add argument checking.
