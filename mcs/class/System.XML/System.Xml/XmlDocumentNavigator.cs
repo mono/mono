@@ -507,7 +507,11 @@ namespace System.Xml
 
 		public override void MoveToRoot ()
 		{
-			node = document;
+			XmlAttribute attr = node as XmlAttribute;
+			XmlNode tmp = attr != null ? attr.OwnerElement : node;
+			while (tmp.ParentNode != null)
+				tmp = tmp.ParentNode;
+			node = tmp;
 			nsNode = null;
 		}
 

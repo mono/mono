@@ -1,3 +1,10 @@
+2003-09-26  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlDocumentNavigator.cs : Fix for bugzilla #48931. MoveToRoot() now
+	  considers such case that target node was not adapted to the document.
+	* XmlNamespaceManager.cs : GetEnumerator() missed the last pair.
+	* XmlTextWriter.cs : use 'as'  instead of 'try..catch'.
+
 2003-09-25 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* XmlNode.cs (XPathNodeType): Give more useful debugging message.

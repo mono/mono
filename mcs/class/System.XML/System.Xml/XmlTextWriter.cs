@@ -61,11 +61,9 @@ namespace System.Xml
 		{
 			this.w = w;
 			nullEncoding = (w.Encoding == null);
-			
-			try {
+			StreamWriter sw = w as StreamWriter;
+			if (sw != null)
 				baseStream = ((StreamWriter)w).BaseStream;
-			}
-			catch (Exception) { }
 		}
 
 		public XmlTextWriter (Stream w,	Encoding encoding) : base ()

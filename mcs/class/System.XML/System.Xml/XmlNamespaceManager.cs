@@ -155,7 +155,7 @@ namespace System.Xml
 			// while HasNamespace() ignores pushed namespaces.
 			
 			Hashtable ht = new Hashtable ();
-			for (int i = 0; i < declPos; i++) {
+			for (int i = 0; i <= declPos; i++) {
 				if (decls [i].Prefix != string.Empty && decls [i].Uri != null) {
 					ht [decls [i].Prefix] = decls [i].Uri;
 				}
