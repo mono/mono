@@ -9,6 +9,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -19,7 +20,11 @@ namespace Mono.Security.Cryptography {
 #else
 	public
 #endif
-	class CryptoConvert {
+	sealed class CryptoConvert {
+
+		private CryptoConvert () 
+		{
+		}
 
 		static private int ToInt32LE (byte [] bytes, int offset)
 		{
@@ -46,7 +51,7 @@ namespace Mono.Security.Cryptography {
 			for (int i=0; i < array.Length; i++) {
 				if (array [i] != 0x00) {
 					byte[] result = new byte [array.Length - i];
-					Array.Copy (array, i, result, 0, result.Length);
+					Buffer.BlockCopy (array, i, result, 0, result.Length);
 					return result;
 				}
 			}
@@ -85,7 +90,7 @@ namespace Mono.Security.Cryptography {
 				// DWORD public exponent
 				RSAParameters rsap = new RSAParameters ();
 				byte[] exp = new byte [4];
-				Array.Copy (blob, offset+16, exp, 0, 4);
+				Buffer.BlockCopy (blob, offset+16, exp, 0, 4);
 				Array.Reverse (exp);
 				rsap.Exponent = Trim (exp);
 			
@@ -93,44 +98,44 @@ namespace Mono.Security.Cryptography {
 				// BYTE modulus[rsapubkey.bitlen/8];
 				int byteLen = (bitLen >> 3);
 				rsap.Modulus = new byte [byteLen];
-				Array.Copy (blob, pos, rsap.Modulus, 0, byteLen);
+				Buffer.BlockCopy (blob, pos, rsap.Modulus, 0, byteLen);
 				Array.Reverse (rsap.Modulus);
 				pos += byteLen;
 
 				// BYTE prime1[rsapubkey.bitlen/16];
 				int byteHalfLen = (byteLen >> 1);
 				rsap.P = new byte [byteHalfLen];
-				Array.Copy (blob, pos, rsap.P, 0, byteHalfLen);
+				Buffer.BlockCopy (blob, pos, rsap.P, 0, byteHalfLen);
 				Array.Reverse (rsap.P);
 				pos += byteHalfLen;
 
 				// BYTE prime2[rsapubkey.bitlen/16];
 				rsap.Q = new byte [byteHalfLen];
-				Array.Copy (blob, pos, rsap.Q, 0, byteHalfLen);
+				Buffer.BlockCopy (blob, pos, rsap.Q, 0, byteHalfLen);
 				Array.Reverse (rsap.Q);
 				pos += byteHalfLen;
 
 				// BYTE exponent1[rsapubkey.bitlen/16];
 				rsap.DP = new byte [byteHalfLen];
-				Array.Copy (blob, pos, rsap.DP, 0, byteHalfLen);
+				Buffer.BlockCopy (blob, pos, rsap.DP, 0, byteHalfLen);
 				Array.Reverse (rsap.DP);
 				pos += byteHalfLen;
 
 				// BYTE exponent2[rsapubkey.bitlen/16];
 				rsap.DQ = new byte [byteHalfLen];
-				Array.Copy (blob, pos, rsap.DQ, 0, byteHalfLen);
+				Buffer.BlockCopy (blob, pos, rsap.DQ, 0, byteHalfLen);
 				Array.Reverse (rsap.DQ);
 				pos += byteHalfLen;
 
 				// BYTE coefficient[rsapubkey.bitlen/16];
 				rsap.InverseQ = new byte [byteHalfLen];
-				Array.Copy (blob, pos, rsap.InverseQ, 0, byteHalfLen);
+				Buffer.BlockCopy (blob, pos, rsap.InverseQ, 0, byteHalfLen);
 				Array.Reverse (rsap.InverseQ);
 				pos += byteHalfLen;
 
 				// BYTE privateExponent[rsapubkey.bitlen/8];
 				rsap.D = new byte [byteLen];
-				Array.Copy (blob, pos, rsap.D, 0, byteLen);
+				Buffer.BlockCopy (blob, pos, rsap.D, 0, byteLen);
 				Array.Reverse (rsap.D);
 
 				RSA rsa = (RSA)RSA.Create ();
@@ -173,43 +178,43 @@ namespace Mono.Security.Cryptography {
 			byte[] part = p.Modulus;
 			int len = part.Length;
 			Array.Reverse (part, 0, len);
-			Array.Copy (part, 0, blob, pos, len);
+			Buffer.BlockCopy (part, 0, blob, pos, len);
 			pos += len;
 			// private key
 			part = p.P;
 			len = part.Length;
 			Array.Reverse (part, 0, len);
-			Array.Copy (part, 0, blob, pos, len);
+			Buffer.BlockCopy (part, 0, blob, pos, len);
 			pos += len;
 
 			part = p.Q;
 			len = part.Length;
 			Array.Reverse (part, 0, len);
-			Array.Copy (part, 0, blob, pos, len);
+			Buffer.BlockCopy (part, 0, blob, pos, len);
 			pos += len;
 
 			part = p.DP;
 			len = part.Length;
 			Array.Reverse (part, 0, len);
-			Array.Copy (part, 0, blob, pos, len);
+			Buffer.BlockCopy (part, 0, blob, pos, len);
 			pos += len;
 
 			part = p.DQ;
 			len = part.Length;
 			Array.Reverse (part, 0, len);
-			Array.Copy (part, 0, blob, pos, len);
+			Buffer.BlockCopy (part, 0, blob, pos, len);
 			pos += len;
 
 			part = p.InverseQ;
 			len = part.Length;
 			Array.Reverse (part, 0, len);
-			Array.Copy (part, 0, blob, pos, len);
+			Buffer.BlockCopy (part, 0, blob, pos, len);
 			pos += len;
 
 			part = p.D;
 			len = part.Length;
 			Array.Reverse (part, 0, len);
-			Array.Copy (part, 0, blob, pos, len);
+			Buffer.BlockCopy (part, 0, blob, pos, len);
 
 			return blob;
 		}
@@ -251,7 +256,7 @@ namespace Mono.Security.Cryptography {
 				// BYTE modulus[rsapubkey.bitlen/8];
 				int byteLen = (bitLen >> 3);
 				rsap.Modulus = new byte [byteLen];
-				Array.Copy (blob, pos, rsap.Modulus, 0, byteLen);
+				Buffer.BlockCopy (blob, pos, rsap.Modulus, 0, byteLen);
 				Array.Reverse (rsap.Modulus);
 
 				RSA rsa = (RSA)RSA.Create ();
@@ -294,7 +299,7 @@ namespace Mono.Security.Cryptography {
 			byte[] part = p.Modulus;
 			int len = part.Length;
 			Array.Reverse (part, 0, len);
-			Array.Copy (part, 0, blob, pos, len);
+			Buffer.BlockCopy (part, 0, blob, pos, len);
 			pos += len;
 			return blob;
 		}
@@ -360,7 +365,7 @@ namespace Mono.Security.Cryptography {
 
 			StringBuilder sb = new StringBuilder (input.Length * 2);
 			foreach (byte b in input) {
-				sb.Append (b.ToString ("X2"));
+				sb.Append (b.ToString ("X2", CultureInfo.InvariantCulture));
 			}
 			return sb.ToString ();
 		}

@@ -21,8 +21,12 @@ namespace Mono.Security.Cryptography {
 #else
 	public
 #endif
-	class PKCS1 {
-	
+	sealed class PKCS1 {
+
+		private PKCS1 () 
+		{
+		}
+
 		private static bool Compare (byte[] array1, byte[] array2) 
 		{
 			bool result = (array1.Length == array2.Length);
@@ -73,7 +77,7 @@ namespace Mono.Security.Cryptography {
 		public static byte[] I2OSP (byte[] x, int size) 
 		{
 			byte[] result = new byte [size];
-			Array.Copy (x, 0, result, (result.Length - x.Length), x.Length);
+			Buffer.BlockCopy (x, 0, result, (result.Length - x.Length), x.Length);
 			return result;
 		}
 	
@@ -86,7 +90,7 @@ namespace Mono.Security.Cryptography {
 			i--;
 			if (i > 0) {
 				byte[] result = new byte [x.Length - i];
-				Array.Copy (x, i, result, 0, result.Length);
+				Buffer.BlockCopy (x, i, result, 0, result.Length);
 				return result;
 			}
 			else
@@ -136,9 +140,9 @@ namespace Mono.Security.Cryptography {
 			int PSLength = (size - M.Length - 2 * hLen - 2);
 			// DB = lHash || PS || 0x01 || M
 			byte[] DB = new byte [lHash.Length + PSLength + 1 + M.Length];
-			Array.Copy (lHash, 0, DB, 0, lHash.Length);
+			Buffer.BlockCopy (lHash, 0, DB, 0, lHash.Length);
 			DB [(lHash.Length + PSLength)] = 0x01;
-			Array.Copy (M, 0, DB, (DB.Length - M.Length), M.Length);
+			Buffer.BlockCopy (M, 0, DB, (DB.Length - M.Length), M.Length);
 	
 			byte[] seed = new byte [hLen];
 			rng.GetBytes (seed);
@@ -149,8 +153,8 @@ namespace Mono.Security.Cryptography {
 			byte[] maskedSeed = xor (seed, seedMask);
 			// EM = 0x00 || maskedSeed || maskedDB
 			byte[] EM = new byte [maskedSeed.Length + maskedDB.Length + 1];
-			Array.Copy (maskedSeed, 0, EM, 1, maskedSeed.Length);
-			Array.Copy (maskedDB, 0, EM, maskedSeed.Length + 1, maskedDB.Length);
+			Buffer.BlockCopy (maskedSeed, 0, EM, 1, maskedSeed.Length);
+			Buffer.BlockCopy (maskedDB, 0, EM, maskedSeed.Length + 1, maskedDB.Length);
 	
 			byte[] m = OS2IP (EM);
 			byte[] c = RSAEP (rsa, m);
@@ -172,9 +176,9 @@ namespace Mono.Security.Cryptography {
 	
 			// split EM = Y || maskedSeed || maskedDB
 			byte[] maskedSeed = new byte [hLen];
-			Array.Copy (EM, 1, maskedSeed, 0, maskedSeed.Length);
+			Buffer.BlockCopy (EM, 1, maskedSeed, 0, maskedSeed.Length);
 			byte[] maskedDB = new byte [size - hLen - 1];
-			Array.Copy (EM, (EM.Length - maskedDB.Length), maskedDB, 0, maskedDB.Length);
+			Buffer.BlockCopy (EM, (EM.Length - maskedDB.Length), maskedDB, 0, maskedDB.Length);
 	
 			byte[] seedMask = MGF1 (hash, maskedDB, hLen);
 			byte[] seed = xor (maskedSeed, seedMask);
@@ -184,7 +188,7 @@ namespace Mono.Security.Cryptography {
 			byte[] lHash = GetEmptyHash (hash);
 			// split DB = lHash' || PS || 0x01 || M
 			byte[] dbHash = new byte [lHash.Length];
-			Array.Copy (DB, 0, dbHash, 0, dbHash.Length);
+			Buffer.BlockCopy (DB, 0, dbHash, 0, dbHash.Length);
 			bool h = Compare (lHash, dbHash);
 	
 			// find separator 0x01
@@ -194,7 +198,7 @@ namespace Mono.Security.Cryptography {
 	
 			int Msize = DB.Length - nPos - 1;
 			byte[] M = new byte [Msize];
-			Array.Copy (DB, (nPos + 1), M, 0, Msize);
+			Buffer.BlockCopy (DB, (nPos + 1), M, 0, Msize);
 	
 			// we could have returned EM[0] sooner but would be helping a timing attack
 			if ((EM[0] != 0) || (!h) || (DB[nPos] != 0x01))
@@ -214,8 +218,8 @@ namespace Mono.Security.Cryptography {
 			rng.GetNonZeroBytes (PS);
 			byte[] EM = new byte [size];
 			EM [1] = 0x02;
-			Array.Copy (PS, 0, EM, 2, PSLength);
-			Array.Copy (M, 0, EM, (size - M.Length), M.Length);
+			Buffer.BlockCopy (PS, 0, EM, 2, PSLength);
+			Buffer.BlockCopy (M, 0, EM, (size - M.Length), M.Length);
 	
 			byte[] m = OS2IP (EM);
 			byte[] c = RSAEP (rsa, m);
@@ -245,7 +249,7 @@ namespace Mono.Security.Cryptography {
 				return null;
 			mPos++;
 			byte[] M = new byte [EM.Length - mPos];
-			Array.Copy (EM, mPos, M, 0, M.Length);
+			Buffer.BlockCopy (EM, mPos, M, 0, M.Length);
 			return M;
 		}
 	
@@ -278,7 +282,7 @@ namespace Mono.Security.Cryptography {
 					return false;
 				// TODO: add more validation
 				byte[] decryptedHash = new byte [hashValue.Length];
-				Array.Copy (EM2, EM2.Length - hashValue.Length, decryptedHash, 0, decryptedHash.Length);
+				Buffer.BlockCopy (EM2, EM2.Length - hashValue.Length, decryptedHash, 0, decryptedHash.Length);
 				result = Compare (decryptedHash, hashValue);
 			}
 			return result;
@@ -318,7 +322,7 @@ namespace Mono.Security.Cryptography {
 				t = hashValue;
 			}
 
-			Array.Copy (hashValue, 0, t, t.Length - hashValue.Length, hashValue.Length);
+			Buffer.BlockCopy (hashValue, 0, t, t.Length - hashValue.Length, hashValue.Length);
 	
 			int PSLength = System.Math.Max (8, emLength - t.Length - 3);
 			// PS = PSLength of 0xff
@@ -328,7 +332,7 @@ namespace Mono.Security.Cryptography {
 			EM [1] = 0x01;
 			for (int i=2; i < PSLength + 2; i++)
 				EM[i] = 0xff;
-			Array.Copy (t, 0, EM, PSLength + 3, t.Length);
+			Buffer.BlockCopy (t, 0, EM, PSLength + 3, t.Length);
 	
 			return EM;
 		}
@@ -359,16 +363,16 @@ namespace Mono.Security.Cryptography {
 	
 				// b.	Concatenate the hash of the seed mgfSeed and C to the octet string T:
 				//	T = T || Hash (mgfSeed || C)
-				Array.Copy (mgfSeed, 0, toBeHashed, 0, mgfSeedLength);
-				Array.Copy (C, 0, toBeHashed, mgfSeedLength, 4);
+				Buffer.BlockCopy (mgfSeed, 0, toBeHashed, 0, mgfSeedLength);
+				Buffer.BlockCopy (C, 0, toBeHashed, mgfSeedLength, 4);
 				byte[] output = hash.ComputeHash (toBeHashed);
-				Array.Copy (output, 0, T, pos, hLen);
+				Buffer.BlockCopy (output, 0, T, pos, hLen);
 				pos += mgfSeedLength;
 			}
 			
 			// 4. Output the leading maskLen octets of T as the octet string mask.
 			byte[] mask = new byte [maskLen];
-			Array.Copy (T, 0, mask, 0, maskLen);
+			Buffer.BlockCopy (T, 0, mask, 0, maskLen);
 			return mask;
 		}
 	}

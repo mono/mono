@@ -3,9 +3,10 @@
 //	Shared class for common cryptographic functionalities
 //
 // Authors:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -18,17 +19,19 @@ namespace Mono.Security.Cryptography {
 #else
 	public
 #endif
-	class KeyBuilder {
+	sealed class KeyBuilder {
 	
 		static private RandomNumberGenerator rng;
-	
-		static KeyBuilder () 
+
+		private KeyBuilder ()
 		{
-			rng = RandomNumberGenerator.Create ();
 		}
 	
 		static public byte[] Key (int size) 
 		{
+			if (rng == null)
+				rng = RandomNumberGenerator.Create ();
+
 			byte[] key = new byte [size];
 			rng.GetBytes (key);
 			return key;
@@ -36,6 +39,9 @@ namespace Mono.Security.Cryptography {
 	
 		static public byte[] IV (int size) 
 		{
+			if (rng == null)
+				rng = RandomNumberGenerator.Create ();
+
 			byte[] iv = new byte [size];
 			rng.GetBytes (iv);
 			return iv;
@@ -87,7 +93,7 @@ namespace Mono.Security.Cryptography {
 		{
 			// 1. fill the rest of the "block"
 			int n = System.Math.Min (blockSize - blockCount, cb);
-			Array.Copy (rgb, ib, block, blockCount, n); 
+			Buffer.BlockCopy (rgb, ib, block, blockCount, n); 
 			blockCount += n;
 	
 			// 2. if block is full then transform it
@@ -104,7 +110,7 @@ namespace Mono.Security.Cryptography {
 				// 4. if data is still present fill the "block" with the remainder
 				blockCount = cb - n;
 				if (blockCount > 0)
-					Array.Copy (rgb, n, block, 0, blockCount);
+					Buffer.BlockCopy (rgb, n, block, 0, blockCount);
 			}
 		}
 	

@@ -65,20 +65,20 @@ namespace Mono.Security.Cryptography {
 			GenerateKeyPair ();
 			keypairGenerated = true;
 			if (KeyGenerated != null)
-				KeyGenerated (this);
+				KeyGenerated (this, null);
 		}
 
 		// this part is quite fast
 		private void GenerateKeyPair () 
 		{
-			x = BigInteger.genRandom (160);
+			x = BigInteger.GenerateRandom (160);
 			while ((x == 0) || (x >= q)) {
 				// size of x (private key) isn't affected by the keysize (512-1024)
-				x.randomize ();
+				x.Randomize ();
 			}
 
 			// calculate the public key y = g^x % p
-			y = g.modPow (x, p);
+			y = g.ModPow (x, p);
 		}
 
 		private void add (byte[] a, byte[] b, int value) 
@@ -130,7 +130,7 @@ namespace Mono.Security.Cryptography {
 
 					q = new BigInteger (u);
 				}
-				while (!q.isProbablePrime ());
+				while (!q.IsProbablePrime ());
 
 				counter = 0;
 				int offset = 2;
@@ -152,8 +152,8 @@ namespace Mono.Security.Cryptography {
 
 					p = x - (c - 1);
 
-					if (p.testBit ((uint)(keyLength - 1))) {
-						if (p.isProbablePrime ()) {
+					if (p.TestBit ((uint)(keyLength - 1))) {
+						if (p.IsProbablePrime ()) {
 							primesFound = true;
 							break;
 						}
@@ -167,11 +167,11 @@ namespace Mono.Security.Cryptography {
 			// calculate the generator g
 			BigInteger pMinusOneOverQ = (p - 1) / q;
 			for (;;) {
-				BigInteger h = BigInteger.genRandom (keyLength);
+				BigInteger h = BigInteger.GenerateRandom (keyLength);
 				if ((h <= 1) || (h >= (p - 1)))
 					continue;
 
-				g = h.modPow (pMinusOneOverQ, p);
+				g = h.ModPow (pMinusOneOverQ, p);
 				if (g <= 1)
 					continue;
 				break;
@@ -204,7 +204,7 @@ namespace Mono.Security.Cryptography {
 			get { 
 				// in case keypair hasn't been (yet) generated
 				if (keypairGenerated)
-					return p.bitCount (); 
+					return p.BitCount (); 
 				else
 					return base.KeySize;
 			}
@@ -251,17 +251,17 @@ namespace Mono.Security.Cryptography {
 			// all parameters must be in multiple of 4 bytes arrays
 			// this isn't (generally) a problem for most of the parameters
 			// except for J (but we won't take a chance)
-			param.P = NormalizeArray (p.getBytes ());
-			param.Q = NormalizeArray (q.getBytes ());
-			param.G = NormalizeArray (g.getBytes ());
-			param.Y = NormalizeArray (y.getBytes ());
-			param.J = NormalizeArray (j.getBytes ());
+			param.P = NormalizeArray (p.GetBytes ());
+			param.Q = NormalizeArray (q.GetBytes ());
+			param.G = NormalizeArray (g.GetBytes ());
+			param.Y = NormalizeArray (y.GetBytes ());
+			param.J = NormalizeArray (j.GetBytes ());
 			if (seed != 0) {
-				param.Seed = NormalizeArray (seed.getBytes ());
+				param.Seed = NormalizeArray (seed.GetBytes ());
 				param.Counter = counter;
 			}
 			if (includePrivateParameters) {
-				byte[] privateKey = x.getBytes ();
+				byte[] privateKey = x.GetBytes ();
 				if (privateKey.Length == 20) {
 					param.X = NormalizeArray (privateKey);
 				}
@@ -323,18 +323,18 @@ namespace Mono.Security.Cryptography {
 	
 			BigInteger m = new BigInteger (rgbHash);
 			// (a) Select a random secret integer k; 0 < k < q.
-			BigInteger k = BigInteger.genRandom (160);
+			BigInteger k = BigInteger.GenerateRandom (160);
 			while (k >= q)
-				k.randomize ();
+				k.Randomize ();
 			// (b) Compute r = (g^k mod p) mod q
-			BigInteger r = (g.modPow (k, p)) % q;
+			BigInteger r = (g.ModPow (k, p)) % q;
 			// (c) Compute k -1 mod q (e.g., using Algorithm 2.142).
 			// (d) Compute s = k -1 fh(m) +arg mod q.
-			BigInteger s = (k.modInverse (q) * (m + x * r)) % q;
+			BigInteger s = (k.ModInverse (q) * (m + x * r)) % q;
 			// (e) A's signature for m is the pair (r; s).
 			byte[] signature = new byte [40];
-			byte[] part1 = r.getBytes ();
-			byte[] part2 = s.getBytes ();
+			byte[] part1 = r.GetBytes ();
+			byte[] part2 = s.GetBytes ();
 			// note: sometime (1/256) we may get less than 20 bytes (if first is 00)
 			int start = 20 - part1.Length;
 			Array.Copy (part1, 0, signature, start, part1.Length);
@@ -380,12 +380,12 @@ namespace Mono.Security.Cryptography {
 				if ((s < 0) || (q <= s))
 					return false;
 
-				BigInteger w = s.modInverse(q);
+				BigInteger w = s.ModInverse(q);
 				BigInteger u1 = m * w % q;
 				BigInteger u2 = r * w % q;
 
-				u1 = g.modPow(u1, p);
-				u2 = y.modPow(u2, p);
+				u1 = g.ModPow(u1, p);
+				u2 = y.ModPow(u2, p);
 
 				BigInteger v = ((u1 * u2 % p) % q);
 				return (v == r);
@@ -438,7 +438,7 @@ namespace Mono.Security.Cryptography {
 			m_disposed = true;
 		}
 
-		public delegate void KeyGeneratedEventHandler (object sender);
+		public delegate void KeyGeneratedEventHandler (object sender, EventArgs e);
 
 		public event KeyGeneratedEventHandler KeyGenerated;
 	}

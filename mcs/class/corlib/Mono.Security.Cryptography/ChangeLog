@@ -1,5 +1,10 @@
 2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* CryptoConvert.cs: In sync with Mono.Security.dll version.
+	* CryptoTools.cs: In sync with Mono.Security.dll version.
+	* DSAManaged.cs: Changed delegate to please FxCop.
+	* PKCS1.cs: In sync with Mono.Security.dll version.
+	* RSAManaged.cs: In sync with Mono.Security.dll version.
 	* SymmetricTransform.cs: Fixed a bug when offset > 0 in destination
 	buffer. Changed Array.Copy to Buffer.BlockCopy.
 
