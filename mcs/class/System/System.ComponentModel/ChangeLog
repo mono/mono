@@ -1,3 +1,21 @@
+2001-10-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* DesignerSerializationVisibilityAttribute.cs: Implemented.
+
+	* DesignerSerializationVisibility.cs: New enumeration.
+
+	* LocalizableAttribute.cs: Implemented.
+
+	* BrowsableAttribute.cs: Implemented.
+
+	* DesignOnlyAttribute.cs: Implemented.
+
+	* DescriptionAttribute.cs: Implement.
+
+	* MemberDescriptor.cs: Implemented.
+
+	* CategoryAttribute.cs: implemented.
+
 2001-08-21  Nick Drochak <ndrochak@gol.com>
 
 	* Component.cs: Eliminated compile errors by removing redundant fields and
