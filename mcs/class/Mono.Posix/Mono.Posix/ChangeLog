@@ -28,6 +28,7 @@
 	    hopefully they're still compatible, but no effort was made to maintain
 	    compatibility.  For example, FileMode was removed and replaced with
 	    FilePermissions, to avoid a name conflict with System.IO.FileMode.
+		- Change umount() to use MonoPosixHelper: portability fix for Mac OS X.
 	* make-map.cs: Another effective re-write, to clean up the code, produce
 	  better output, and produce more output.  For example, most of
 	  PosixConvert can be auto-generated, so it is (modulo version delays and

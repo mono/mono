@@ -1423,10 +1423,12 @@ namespace Mono.Posix {
 		public static extern int mount (string source, string target, 
 				string filesystemtype, MountFlags mountflags, string data);
 
-		[DllImport (LIBC, SetLastError=true)]
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_umount")]
 		public static extern int umount (string target);
 
-		[DllImport (LIBC, SetLastError=true, EntryPoint="umount2")]
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_umount2")]
 		private static extern int sys_umount2 (string target, int flags);
 
 		public static int umount2 (string target, UmountFlags flags)
