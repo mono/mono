@@ -334,7 +334,7 @@ namespace System.Xml.Schema
 				}
 				else if (SchemaTypeName == XmlSchemaComplexType.AnyTypeName)
 					attributeType = XmlSchemaComplexType.AnyType;
-				else if (SchemaTypeName.Namespace == XmlSchema.Namespace) {
+				else if (XmlSchemaUtil.IsBuiltInDatatypeName (SchemaTypeName)) {
 					attributeType = XmlSchemaDatatype.FromName (SchemaTypeName);
 					if (attributeType == null)
 						error (h, "Invalid xml schema namespace datatype was specified.");

@@ -662,7 +662,7 @@ namespace System.Xml.Schema
 				this.DatatypeInternal = baseType.Datatype;
 			} else if (BaseSchemaTypeName == XmlSchemaComplexType.AnyTypeName)
 				DatatypeInternal = XmlSchemaSimpleType.AnySimpleType;
-			else if (BaseSchemaTypeName.Namespace == XmlSchema.Namespace) {
+			else if (XmlSchemaUtil.IsBuiltInDatatypeName (BaseSchemaTypeName)) {
 				DatatypeInternal = XmlSchemaDatatype.FromName (BaseSchemaTypeName);
 			}
 
@@ -684,7 +684,7 @@ namespace System.Xml.Schema
 				// base
 				if (BaseSchemaTypeName == XmlSchemaComplexType.AnyTypeName)
 					baseComplexType = XmlSchemaComplexType.AnyType;
-				else if (BaseSchemaTypeName.Namespace == XmlSchema.Namespace)
+				else if (XmlSchemaUtil.IsBuiltInDatatypeName (BaseSchemaTypeName))
 					error (h, "Referenced base schema type is XML Schema datatype.");
 				else if (baseComplexType == null && !schema.IsNamespaceAbsent (BaseSchemaTypeName.Namespace))
 					error (h, "Referenced base schema type " + BaseSchemaTypeName + " was not complex type or not found in the corresponding schema.");
@@ -703,9 +703,7 @@ namespace System.Xml.Schema
 					error (h, "Base schema complex type of a simple content must be simple content type. Base type is " + BaseSchemaTypeName);
 				} else if (sce == null && (baseSimpleType != null && BaseSchemaTypeName.Namespace != XmlSchema.Namespace)) {
 					error (h, "If a simple content is not an extension, base schema type must be complex type. Base type is " + BaseSchemaTypeName);
-				} else if (BaseSchemaTypeName.Namespace == XmlSchema.Namespace) {
-					if (XmlSchemaDatatype.FromName (BaseSchemaTypeName) == null)
-						error (h, "Invalid schema data type was specified: " + BaseSchemaTypeName);
+				} else if (XmlSchemaUtil.IsBuiltInDatatypeName (BaseSchemaTypeName)) {
 					// do nothing for particle.
 				}
 				// otherwise, it might be missing sub components.
@@ -855,7 +853,7 @@ namespace System.Xml.Schema
 				error (h, "Derivation type " + resolvedDerivedBy + " is prohibited by the base type.");
 			if (BaseXmlSchemaType == b) // 2.2
 				return;
-			if (BaseXmlSchemaType == XmlSchemaComplexType.AnyType) { // 2.3.1
+			if (BaseXmlSchemaType == null || BaseXmlSchemaType == XmlSchemaComplexType.AnyType) { // 2.3.1
 				error (h, "Derived type's base schema type is anyType.");
 				return;
 			}
@@ -987,7 +985,7 @@ namespace System.Xml.Schema
 			}
 			// I think 3. is considered in 2.
 			// 4.
-			if (this.AttributeWildcard != null) {
+			if (this.AttributeWildcard != null && baseType != XmlSchemaComplexType.AnyType) {
 				if (baseType.AttributeWildcard == null)
 					error (h, "Invalid attribute derivation by restriction because of attribute wildcard.");
 				else

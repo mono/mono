@@ -13,7 +13,7 @@ namespace System.Xml.Schema
 	/// </summary>
 	internal class XmlSchemaUtil
 	{
-		static XmlSchemaUtil()
+		static XmlSchemaUtil ()
 		{
 			FinalAllowed = XmlSchemaDerivationMethod.Restriction | 
 				XmlSchemaDerivationMethod.Extension;
@@ -82,11 +82,6 @@ namespace System.Xml.Schema
 			return true;
 		}
 
-//		public static bool CheckLanguage(string lang)
-//		{
-			//check if the string conforms to http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/datatypes.html#language
-//			return true;
-//		}
 		public static bool CheckNCName(string name)
 		{
 			//check if the string conforms to http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/datatypes.html#NCName
@@ -115,6 +110,38 @@ namespace System.Xml.Schema
 				return xctx.ParserContext;
 
 			throw new NotSupportedException ("XmlParserContext cannot be acquired from this XmlReader.");
+		}
+
+		public static bool IsBuiltInDatatypeName (XmlQualifiedName qname)
+		{
+			if (qname.Namespace != XmlSchema.Namespace)
+				return false;
+			switch (qname.Name) {
+			case "anySimpleType":
+			case "duration": case "dateTime": case "time":
+			case "date": case "gYearMonth": case "gYear":
+			case "gMonthDay": case "gDay": case "gMonth":
+			case "boolean":
+			case "base64Binary": case "hexBinary":
+			case "float": case "double":
+			case "anyURI":
+			case "QName":
+			case "NOTATION":
+			case "string": case "normalizedString": case "token":
+			case "language": case "Name": case "NCName":
+			case "ID": case "IDREF": case "IDREFS":
+			case "ENTITY": case "ENTITIES":
+			case "NMTOKEN": case "NMTOKENS":
+			case "decimal": case "integer":
+			case "nonPositiveInteger": case "negativeInteger":
+			case "nonNegativeInteger":
+			case "unsignedLong": case "unsignedInt":
+			case "unsignedShort": case "unsignedByte":
+			case "positiveInteger":
+			case "long": case "int": case "short": case "byte":
+				return true;
+			}
+			return false;
 		}
 
 		public static bool IsSchemaDatatypeEquals (XsdAnySimpleType st1, object v1,

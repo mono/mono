@@ -1229,8 +1229,8 @@ namespace Mono.Xml.Schema
 			if (nsmgr == null)
 				throw new ArgumentNullException ("namespace manager");
 			int colonAt = s.IndexOf (':');
-			string localName = 
-				nameTable.Add (colonAt < 0 ? s : s.Substring (colonAt + 1));
+			string localName = colonAt < 0 ? s : s.Substring (colonAt + 1);
+//			string localName = nameTable.Add (colonAt < 0 ? s : s.Substring (colonAt + 1));
 			return new XmlQualifiedName (localName, nsmgr.LookupNamespace (
 				colonAt < 0 ? "" : s.Substring (0, colonAt - 1)));
 		}

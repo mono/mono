@@ -1,5 +1,19 @@
 2004-01-22  Atsushi Enomoto <atsushi@ximian.com>
 
+	* BuiltInDatatype.cs : On parsing QName, we don't have to spend costs
+	  on Add()ing parsed name to name table.
+	* XmlSchemaUtil.cs : Added IsBuiltInDatatypeName().
+	* XmlSchemaAttribute.cs, XmlSchemaComplexType.cs, 
+	  XmlSchemaElement.cs, XmlSchemaSimpleContentExtension.cs,
+	  XmlSchemaSimpleContentRestriction.cs, XmlSchemaSimpleTypeList.cs :
+	  Use the method above instead of Namespace string comparison.
+	  (it will be required to validate schema for schemas.)
+	* XmlSchemaComplexType.cs : Type Derivation OK (3.4.6) should also
+	  treat null base type as anyType.  Derivation Valid Restriction 
+	  (3.4.6) should allow base type wildcard absense in case of anyType.
+
+2004-01-22  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchema.cs : When we have schema A which includes schema B which
 	  includes schema C (i.e. A->B->C), C components should be compiled.
 	  Here, same URL inclusions are ignored.

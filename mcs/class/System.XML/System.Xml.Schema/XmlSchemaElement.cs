@@ -58,7 +58,6 @@ namespace System.Xml.Schema
 			refName = XmlQualifiedName.Empty;
 			schemaTypeName = XmlQualifiedName.Empty;
 			substitutionGroup = XmlQualifiedName.Empty;
-			substitutionGroup = XmlQualifiedName.Empty;
 		}
 
 		#region Attributes
@@ -599,7 +598,7 @@ namespace System.Xml.Schema
 				}
 				else if (SchemaTypeName == XmlSchemaComplexType.AnyTypeName)
 					elementType = XmlSchemaComplexType.AnyType;
-				else if (SchemaTypeName.Namespace == XmlSchema.Namespace) {
+				else if (XmlSchemaUtil.IsBuiltInDatatypeName (SchemaTypeName)) {
 					datatype = XmlSchemaDatatype.FromName (SchemaTypeName);
 					if (datatype == null)
 						error (h, "Invalid schema datatype was specified.");

@@ -130,7 +130,7 @@ namespace System.Xml.Schema
 				actualBaseSchemaType = st;
 			} else if (baseTypeName == XmlSchemaComplexType.AnyTypeName) {
 				actualBaseSchemaType = XmlSchemaComplexType.AnyType;
-			} else if (baseTypeName.Namespace == XmlSchema.Namespace) {
+			} else if (XmlSchemaUtil.IsBuiltInDatatypeName (baseTypeName)) {
 				actualBaseSchemaType = XmlSchemaDatatype.FromName (baseTypeName);
 				if (actualBaseSchemaType == null)
 					error (h, "Invalid schema datatype name is specified.");

@@ -92,7 +92,7 @@ namespace System.Xml.Schema
 				validatedListItemType = type;
 			} else if (itemTypeName == XmlSchemaComplexType.AnyTypeName) {
 				validatedListItemType = XmlSchemaSimpleType.AnySimpleType;
-			} else if (itemTypeName.Namespace == XmlSchema.Namespace) {
+			} else if (XmlSchemaUtil.IsBuiltInDatatypeName (itemTypeName)) {
 				validatedListItemType = XmlSchemaDatatype.FromName (itemTypeName);
 				if (validatedListItemType == null)
 					error (h, "Invalid schema type name was specified: " + itemTypeName);
