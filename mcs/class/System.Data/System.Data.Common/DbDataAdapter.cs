@@ -250,10 +250,10 @@ namespace System.Data.Common {
 			if (maxRecords < 0)
 				throw new ArgumentException ("The maxRecords parameter was less than 0.");
 
-			if (dataReader.FieldCount == 0) {
-				dataReader.Close ();
-				return 0;
-			}
+			//if (dataReader.FieldCount == 0) {
+			//	dataReader.Close ();
+			//	return 0;
+			//}
 
 			DataTable dataTable;
 			int resultIndex = 0;
@@ -273,8 +273,10 @@ namespace System.Data.Common {
 							dataSet.Tables.Add (dataTable);
 						}
 
-						if (!FillTable (dataTable, dataReader, startRecord, maxRecords, ref count))
-							break;
+						if (!FillTable (dataTable, dataReader, startRecord, maxRecords, ref count)) {
+							//break;
+							continue;
+						}
 
 						tableName = String.Format ("{0}{1}", srcTable, ++resultIndex);
 
@@ -286,7 +288,7 @@ namespace System.Data.Common {
 				dataReader.Close ();
 			}
 
-                        return count;
+            return count;
 		}
 		
 		protected virtual int Fill (DataSet dataSet, int startRecord, int maxRecords, string srcTable, IDbCommand command, CommandBehavior behavior) 
@@ -303,15 +305,21 @@ namespace System.Data.Common {
 
 		private bool FillTable (DataTable dataTable, IDataReader dataReader, int startRecord, int maxRecords, ref int counter) 
 		{
+			if (dataReader.FieldCount == 0) {
+				return false;
+			}
+
 			int counterStart = counter;
 			
 			int[] mapping = BuildSchema (dataReader, dataTable, SchemaType.Mapped);
+			
 			object[] readerArray = new object[dataReader.FieldCount];
 			object[] tableArray = new object[mapping.Length];
 
+			for (int i = 0; i < startRecord; i++)
+				dataReader.Read ();
+
 			while (dataReader.Read () && (maxRecords == 0 || (counterStart - counter) < maxRecords)) {
-				for (int i = 0; i < startRecord; i++)
-					dataReader.Read ();
 
 				// we get the values from the datareader
 				dataReader.GetValues (readerArray);

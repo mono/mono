@@ -1,3 +1,9 @@
+2003-04-25  Boris Kirzner <borisk@mainsoft.com>
+	* DbDataAdapter.cs : Fixed bug in Fill :
+	  - Reader can have empty results (fo example from UPDATE or DELETE).
+	  - Reader can have results with no rows (SELECT that returns 0 rows but have columns)
+	  - In FillTable - skip rows only once for each table.
+	
 2003-04-14  Juraj Skripsky <juraj@hotfeet.ch>
 	* DbDataAdapter.cs : Refactoring of Fill. New private method
 	FillTable does most of the work now. Use int[] instead of
