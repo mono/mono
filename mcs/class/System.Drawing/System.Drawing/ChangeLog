@@ -1,6 +1,10 @@
+2004-02-21  Jordi Mas i Hernandez <jordi@ximian.com>
+	* gdipFunctions.cs: MeasureString 
+	* Graphics.cs : MeasureString
+	
 2004-02-17  Jordi Mas i Hernandez <jordi@ximian.com>
 	* Font.cs: destructor and unit conversion 
-	* graphics.cs : system dpi support
+	* Graphics.cs : system dpi support
 
 2004-02-13  Ravindra <rkumar@novell.com>
 	* Pen.cs: Fixed some bugs.

@@ -63,6 +63,9 @@ namespace Font1Sample {
 		{						
 			float width = 700.0F;
 			float height = 600.0F;
+			string str;
+			int charactersFitted = 0;
+			int linesFilled = 0;
             
 			Font f1 = new Font("Arial",12);				
 			Font f2  = new Font("Verdana", 8);			
@@ -138,9 +141,16 @@ namespace Font1Sample {
 			
 			gr.FillEllipse(new SolidBrush(Color.Blue), rect1);
 			gr.DrawRectangle( new Pen(Color.Green), rect2);			
-			gr.DrawString("Ara que tinc &vint anys, ara que encara tinc força,que no tinc l'ànima morta, i em sento bullir la sang. (" + f1.Name + ")", 
-				f1, new SolidBrush(Color.White), rect1, strfmt1);						
-			gr.DrawString(flagProcessing(strfmt1), fonttxt, brushtxt, calcRect(rect1), strfmttxt);			
+			
+			str = "Ara que tinc &vint anys, ara que encara tinc força,que no tinc l'ànima morta, i em sento bullir la sang. (" + f1.Name + ")";
+			
+			gr.DrawString( str,	f1, new SolidBrush(Color.White), rect1, strfmt1);						
+			gr.DrawString(flagProcessing(strfmt1), fonttxt, brushtxt, calcRect(rect1), strfmttxt);									                        
+            
+            SizeF sz =  gr.MeasureString (str, f1, new SizeF (rect1.Width, rect1.Height), strfmt1, 
+                                out charactersFitted, out linesFilled);                             			
+                                
+			Console.WriteLine("MeasureString str1 " + sz + ";chars:" + charactersFitted + " lines:" + linesFilled);
 				
 			gr.DrawString("Ara que em sento capaç de cantar si un altre canta. Avui que encara tinc veu i encara puc creure en déus (" + f2.Name + ")", 
 				f2, new SolidBrush(Color.Red),rect2, strfmt2);														

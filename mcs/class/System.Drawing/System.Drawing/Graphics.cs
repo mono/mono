@@ -1184,16 +1184,23 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		
 		public SizeF MeasureString (string text, Font font)
 		{
-			throw new NotImplementedException ();
+			return MeasureString (text, font, new Size(0,0));
 		}
 
-		[MonoTODO]
+		
 		public SizeF MeasureString (string text, Font font, SizeF layoutArea)
 		{
-			throw new NotImplementedException ();
+			int charactersFitted, linesFilled;			
+			RectangleF boundingBox = new RectangleF ();
+			RectangleF rect = new RectangleF (0,0,layoutArea.Width, layoutArea.Height);
+					
+			GDIPlus.GdipMeasureString (nativeObject, text, text.Length, font.NativeObject,
+    		 ref rect, IntPtr.Zero, out boundingBox, out charactersFitted, out linesFilled);
+    				
+    		return new SizeF(boundingBox.Width, boundingBox.Height);
 		}
 
 		[MonoTODO]
@@ -1202,10 +1209,11 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		
 		public SizeF MeasureString (string text, Font font, SizeF layoutArea, StringFormat stringFormat)
 		{
-			throw new NotImplementedException ();
+			int charactersFitted, linesFilled;			
+			return MeasureString (text, font, layoutArea, stringFormat, out charactersFitted, out linesFilled);
 		}
 
 		[MonoTODO]
@@ -1214,17 +1222,31 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		
 		public SizeF MeasureString (string text, Font font, PointF origin, StringFormat stringFormat)
 		{
-			throw new NotImplementedException ();
+			RectangleF boundingBox = new RectangleF ();
+			RectangleF rect = new RectangleF (origin.X, origin.Y, 0,0);
+			int charactersFitted, linesFilled;
+					
+			GDIPlus.GdipMeasureString (nativeObject, text, text.Length, font.NativeObject,
+    		 ref rect, stringFormat.NativeObject, out boundingBox, out charactersFitted, out linesFilled);
+    				
+    		return new SizeF(boundingBox.Width, boundingBox.Height);
 		}
 
-		[MonoTODO]
+		
 		public SizeF MeasureString (string text, Font font, SizeF layoutArea, StringFormat stringFormat, 
                                 out int charactersFitted, out int linesFilled)
-		{
-			throw new NotImplementedException ();
+		{	
+			RectangleF boundingBox = new RectangleF ();
+			RectangleF rect = new RectangleF (0,0,layoutArea.Width, layoutArea.Height);
+					
+			GDIPlus.GdipMeasureString (nativeObject, text, text.Length, font.NativeObject,
+    		 ref rect, stringFormat.NativeObject, out boundingBox, out charactersFitted,
+    				out linesFilled);
+    				
+    		return new SizeF(boundingBox.Width, boundingBox.Height);
 		}
 
 		public void MultiplyTransform (Matrix matrix)
