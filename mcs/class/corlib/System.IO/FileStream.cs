@@ -233,7 +233,12 @@ namespace System.IO
 		public override void Flush ()
 		{
 			FlushBuffer ();
-			MonoIO.Flush (handle);
+
+			//
+			// The flushing is not actually required, in the mono runtime we were
+			// mapping flush to `fsync' which is not the same.
+			//
+			//MonoIO.Flush (handle);
 		}
 
 		public override void Close ()

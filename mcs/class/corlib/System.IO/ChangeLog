@@ -1,3 +1,7 @@
+2002-09-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* FileStream.cs: Do not call FSync on the file.
+
 2002-09-16  Miguel de Icaza  <miguel@ximian.com>
 
 	* TextWriter.cs (Null): The Null field should be an instance of a
