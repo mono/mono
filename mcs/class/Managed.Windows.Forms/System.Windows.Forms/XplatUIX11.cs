@@ -685,7 +685,16 @@ namespace System.Windows.Forms {
 						data.HasExpose = true;
 					}
 					break;
-				default:
+				case XEventName.KeyPress:
+				case XEventName.KeyRelease:
+				case XEventName.ButtonPress:
+				case XEventName.ButtonRelease:
+				case XEventName.MotionNotify:
+				case XEventName.EnterNotify:
+				case XEventName.LeaveNotify:
+				case XEventName.ConfigureNotify:
+				case XEventName.DestroyNotify:
+				case XEventName.ClientMessage:
 					lock (message_queue) {
 						message_queue.Enqueue (xevent);
 					}
@@ -716,6 +725,10 @@ namespace System.Windows.Forms {
 
 			msg.hwnd=xevent.AnyEvent.window;
 
+			//
+			// If you add a new event to this switch make sure to add it in
+			// UpdateMessage also unless it is not coming through the X event system.
+			//
 			switch(xevent.type) {
 				case XEventName.KeyPress: {
 					msg.message = Msg.WM_KEYDOWN;
@@ -879,11 +892,11 @@ namespace System.Windows.Forms {
                                 xevent.TimerNotifyEvent.handler (this, EventArgs.Empty);
                                 break;
                         }
-                                
-                        default: {
-					msg.message = Msg.WM_NULL;
-					break;
-				}
+                        	
+			default: {
+				msg.message = Msg.WM_NULL;
+				break;
+			}
 			}
 
 			NativeWindow.WndProc(msg.hwnd, msg.message, msg.wParam, msg.lParam);
