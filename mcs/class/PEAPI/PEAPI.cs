@@ -5536,12 +5536,14 @@ if (rsrc != null)
     /// <param name="meth">the function to be referenced</param>
     public MethPtrType (CallConv callconv, Type retType, Type[] pars,
                     bool varArgMeth, Type[] optPars) : base(0x1B) {
+      this.retType = retType;
+      callConv = callconv;
       parList = pars;
       if (parList != null) numPars = (uint)parList.Length;
       if (varArgMeth) {
         optParList = optPars;
         if (optParList != null) numOptPars = (uint)optParList.Length;
-        callConv = CallConv.Vararg;
+        callConv |= CallConv.Vararg;
       }
       tabIx = MDTable.TypeSpec;
     }
