@@ -1,3 +1,7 @@
+2005-02-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.cs libtest.c: Add new test for GetDelegateForFunctionPointer.
+
 2005-02-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* libtest.c (NameManglingAuto): Fix test. Fixes #72559.
