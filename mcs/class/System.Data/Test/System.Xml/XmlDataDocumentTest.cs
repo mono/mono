@@ -328,9 +328,9 @@ namespace MonoTests.System.Data.Xml
 		{
                         DataSet RegionDS = new DataSet ();
 			
-                        RegionDS.ReadXmlSchema ("System.Xml/Region.xsd");
+                        RegionDS.ReadXmlSchema ("System.Xml/region.xsd");
                         XmlDataDocument DataDoc = new XmlDataDocument (RegionDS);
-                        DataDoc.Load("System.Xml/Region.xml" );
+                        DataDoc.Load("System.Xml/region.xml" );
 			DataTable table = DataDoc.DataSet.Tables ["Region"];
 			DataRow newRow = table.NewRow ();
 			newRow [0] = "new row";
@@ -488,9 +488,9 @@ namespace MonoTests.System.Data.Xml
 		{
                         DataSet RegionDS = new DataSet ();
 			
-                        RegionDS.ReadXmlSchema ("System.Xml/Region.xsd");
+                        RegionDS.ReadXmlSchema ("System.Xml/region.xsd");
                         XmlDataDocument DataDoc = new XmlDataDocument (RegionDS);
-                        DataDoc.Load("System.Xml/Region.xml" );
+                        DataDoc.Load("System.Xml/region.xml" );
 			try {
 				DataDoc.DocumentElement.AppendChild (DataDoc.DocumentElement.FirstChild);
 				Fail ("#G01");
@@ -543,9 +543,9 @@ namespace MonoTests.System.Data.Xml
 		{
 			DataSet RegionDS = new DataSet ();
 			
-			RegionDS.ReadXmlSchema ("region.xsd");
+			RegionDS.ReadXmlSchema ("System.Xml/region.xsd");
 			XmlDataDocument DataDoc = new XmlDataDocument (RegionDS);
-			DataDoc.Load("region.xml" );
+			DataDoc.Load("System.Xml/region.xml" );
 			DataDoc.DataSet.EnforceConstraints = false;
 			
 			XmlElement newNode = DataDoc.CreateElement ("Region");
