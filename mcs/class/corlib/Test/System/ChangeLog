@@ -10,6 +10,8 @@
 	* Int64Test.cs: Added tests for default ToString(String.Empty).
 	* SByteTest.cs: Added tests for default ToString(String.Empty).
 	* SingleTest.cs: Added tests for default ToString(String.Empty).
+	* StringTest.cs: Added more cases for Join (null separator and null 
+	values).
 	* UInt16Test.cs: Added tests for default ToString(String.Empty).
 	* UInt32Test.cs: Added tests for default ToString(String.Empty).
 	* UInt64Test.cs: Added tests for default ToString(String.Empty).

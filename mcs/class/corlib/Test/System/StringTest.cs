@@ -689,6 +689,33 @@ public class StringTest : Assertion
 	}
 
 	[Test]
+	public void Join_SeparatorNull () 
+	{
+		string[] chunks = {"this", "is", "a", "test"};
+		AssertEquals ("SeparatorNull", "thisisatest", String.Join (null, chunks));
+	}
+
+	[Test]
+	public void Join_ValuesNull () 
+	{
+		string[] chunks1 = {null, "is", "a", null};
+		AssertEquals ("SomeNull", " is a ", String.Join (" ", chunks1));
+
+		string[] chunks2 = {null, "is", "a", null};
+		AssertEquals ("Some+Sep=Null", "isa", String.Join (null, chunks2));
+
+		string[] chunks3 = {null, null, null, null};
+		AssertEquals ("AllValuesNull", "   ", String.Join (" ", chunks3));
+	}
+
+	[Test]
+	public void Join_AllNull () 
+	{
+		string[] chunks = {null, null, null};
+		AssertEquals ("AllNull", "", String.Join (null, chunks));
+	}
+
+	[Test]
 	[ExpectedException (typeof (ArgumentOutOfRangeException))]
 	public void Join_StartIndexNegative () 
 	{
