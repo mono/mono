@@ -1,3 +1,8 @@
+2004-09-06 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* HttpWriter.cs (.ctor): Dont create teh StreamWriter twice
+	(Clear): Don't recreate the MemoryStream and StreamWriter
+
 2004-09-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: only add/remove to/from the timeout
