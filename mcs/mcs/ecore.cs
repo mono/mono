@@ -311,10 +311,16 @@ namespace Mono.CSharp {
 				SimpleName s = (SimpleName) e;
 
 				if ((flags & ResolveFlags.SimpleName) == 0) {
-					Report.Error (
-						103, loc,
-						"The name `" + s.Name + "' could not be found in `" +
-						ec.DeclSpace.Name + "'");
+
+					object lookup = TypeManager.MemberLookup (
+						ec.ContainerType, ec.ContainerType, AllMemberTypes,
+						AllBindingFlags | BindingFlags.NonPublic, s.Name);
+					if (lookup != null)
+						Error (122, "`" + s.Name + "' " +
+						       "is inaccessible because of its protection level");
+					else
+						Error (103, "The name `" + s.Name + "' could not be " +
+						       "found in `" + ec.DeclSpace.Name + "'");
 					return null;
 				}
 

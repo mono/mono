@@ -1,5 +1,11 @@
 2002-08-28  Martin Baulig  <martin@gnome.org>
 
+	* ecore.cs (Expression.DoResolve): Do a TypeManager.MemberLook
+	for private members before reporting a CS0103; if we find anything,
+	it's a CS0122.
+
+2002-08-28  Martin Baulig  <martin@gnome.org>
+
 	* typemanager.cs (TypeManager.FilterWithClosure): It's not enough
 	to check whether `closure_start_type == closure_invocation_type',
 	we also need to check whether `m.DeclaringType == closure_invocation_type'
