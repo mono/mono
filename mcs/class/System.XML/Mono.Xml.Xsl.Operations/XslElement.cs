@@ -42,7 +42,7 @@ namespace Mono.Xml.Xsl.Operations {
 	internal class XslElement : XslCompiledElement {
 		XslAvt name, ns;
 		string calcName, calcNs, calcPrefix;
-		XmlNamespaceManager nsm;
+		Hashtable nsDecls;
 		bool isEmptyElement;
 
 		XslOperation value;
@@ -53,7 +53,7 @@ namespace Mono.Xml.Xsl.Operations {
 		{
 			name = c.ParseAvtAttribute ("name");
 			ns = c.ParseAvtAttribute ("namespace");
-			
+			nsDecls = c.GetNamespacesToCopy ();
 			calcName = XslAvt.AttemptPreCalc (ref name);
 			
 			if (calcName != null) {
@@ -75,9 +75,6 @@ namespace Mono.Xml.Xsl.Operations {
 			} else if (ns != null)
 				calcNs = XslAvt.AttemptPreCalc (ref ns);
 			
-			if (ns == null && calcNs == null)
-				nsm = c.GetNsm ();
-			
 			useAttributeSets = c.ParseQNameListAttribute ("use-attribute-sets");
 			
 			isEmptyElement = c.Input.IsEmptyElement;
@@ -95,17 +92,17 @@ namespace Mono.Xml.Xsl.Operations {
 			localName = nm = calcName != null ? calcName : name.Evaluate (p);
 			nmsp = calcNs != null ? calcNs : ns != null ? ns.Evaluate (p) : null;
 
-			if (nmsp == null) {
-				QName q = XslNameUtil.FromString (nm, nsm);
-				localName = q.Name;
+			QName q = XslNameUtil.FromString (nm, nsDecls);
+			localName = q.Name;
+			if (nmsp == null)
 				nmsp = q.Namespace;
-				int colonAt = nm.IndexOf (':');
-				if (colonAt > 0)
-					calcPrefix = nm.Substring (0, colonAt);
-				else if (colonAt == 0)
-					// raises an error
-					XmlConvert.VerifyNCName (String.Empty);
-			}
+			int colonAt = nm.IndexOf (':');
+			if (colonAt > 0)
+				calcPrefix = nm.Substring (0, colonAt);
+			else if (colonAt == 0)
+				// raises an error
+				XmlConvert.VerifyNCName (String.Empty);
+
 			prefix = calcPrefix != null ? calcPrefix : String.Empty;
 
 			if (prefix != String.Empty)

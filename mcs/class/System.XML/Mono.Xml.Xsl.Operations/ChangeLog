@@ -1,5 +1,10 @@
 2005-03-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XslElement.cs : name should be splitted regardless of "namespace"
+	  attribute existence. Removed XPathNavigatorNsm dependency.
+
+2005-03-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XslElement.cs : We throw exception when element name is resolved as
 	  invalid cname, so it should not ignore such name like ":foo".
 	  Fixed ambiguous error message. Removed unused code.
