@@ -1,3 +1,7 @@
+2004-12-02  Lluis Sanchez Gual <lluis@novell.com>
+
+	* callback.js: Added callback script.
+
 2004-11-26  Lluis Sanchez Gual <lluis@novell.com>
 
 	* arrow_minus.gif, arrow_noexpand.gif, arrow_plus.gif, box_full.gif,
