@@ -8,14 +8,17 @@
 
 using System;
 using System.Net;
+using System.Text;
 using System.Threading;
 using System.Collections;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Lifetime;
 using System.Runtime.Remoting.Channels.Tcp;
 using System.Runtime.Remoting.Activation;
 using System.Runtime.Remoting.Contexts;
+using System.Runtime.InteropServices;
 using NUnit.Framework;
 
 namespace MonoTests.System.Runtime.Remoting
@@ -193,6 +196,24 @@ namespace MonoTests.System.Runtime.Remoting
 			RunTestComplexParamsInOut (InternalGetInterfaceSurrogate());
 		}
 
+		[Test]
+		public void TestInstanceProcessContextData ()
+		{
+			RunTestProcessContextData (InternalGetInstanceSurrogate());
+		}
+
+		[Test]
+		public void TestAbstractProcessContextData ()
+		{
+			RunTestProcessContextData (InternalGetAbstractSurrogate());
+		}
+
+		[Test]
+		public void TestInterfaceProcessContextData ()
+		{
+			RunTestProcessContextData (InternalGetInterfaceSurrogate());
+		}
+
 		//
 		// The tests runners
 		//
@@ -254,9 +275,13 @@ namespace MonoTests.System.Runtime.Remoting
 			ArrayList list = new ArrayList ();
 			list.Add (new Complex (11,"first"));
 			list.Add (new Complex (22,"second"));
+			
+			byte[] bytes = new byte [100];
+			for (byte n=0; n<100; n++) bytes[n] = n;
+			StringBuilder sb = new StringBuilder ("hello from client");
 
 			Complex c;
-			Complex r = testerSurrogate.ComplexParamsInOut (ref list, out c, "third");
+			Complex r = testerSurrogate.ComplexParamsInOut (ref list, out c, bytes, sb, "third");
 
 			AssertNotNull ("ReturnValue is null", r);
 			AssertNotNull ("c is null", c);
@@ -265,6 +290,8 @@ namespace MonoTests.System.Runtime.Remoting
 			AssertNotNull ("list[0] is null", list[0]);
 			AssertNotNull ("list[1] is null", list[1]);
 			AssertNotNull ("list[2] is null", list[2]);
+			AssertNotNull ("bytes is null", bytes);
+			AssertNotNull ("sb is null", sb);
 			
 			AssertEquals ("ReturnValue.Id", 33, r.Id);
 			AssertEquals ("ReturnValue.Name", "third@"+remoteDomId, r.Name);
@@ -277,6 +304,39 @@ namespace MonoTests.System.Runtime.Remoting
 			AssertEquals ("list[1].Name", "second", ((Complex)list[1]).Name);
 			AssertEquals ("list[0].Id", 11, ((Complex)list[0]).Id);
 			AssertEquals ("list[0].Name", "first", ((Complex)list[0]).Name);
+			
+			AssertEquals ("sb", "hello from client and from server", sb.ToString ());
+			for (int n=0; n<100; n++) 
+				AssertEquals ("bytes["+n+"]", n+1, bytes[n]);
+		}
+		
+		public void RunTestProcessContextData (IRemoteObject testerSurrogate)
+		{
+			CallContext.FreeNamedDataSlot ("clientData");
+			CallContext.FreeNamedDataSlot ("serverData");
+			CallContext.FreeNamedDataSlot ("mustNotPass");
+
+			ContextData cdata = new ContextData ();
+			cdata.data = "hi from client";
+			cdata.id = 1123;
+			CallContext.SetData ("clientData", cdata);
+			CallContext.SetData ("mustNotPass", "more data");
+			
+			testerSurrogate.ProcessContextData ();
+			
+			cdata = CallContext.GetData ("clientData") as ContextData;
+			AssertNotNull ("clientData is null", cdata);
+			AssertEquals ("clientData.data", "hi from client", cdata.data);
+			AssertEquals ("clientData.id", 1123, cdata.id);
+			
+			cdata = CallContext.GetData ("serverData") as ContextData;
+			AssertNotNull ("serverData is null", cdata);
+			AssertEquals ("serverData.data", "hi from server", cdata.data);
+			AssertEquals ("serverData.id", 3211, cdata.id);
+			
+			string mdata = CallContext.GetData ("mustNotPass") as string;
+			AssertNotNull ("mustNotPass is null", mdata);
+			AssertEquals ("mustNotPass", "more data", mdata);
 		}
 	}
 
@@ -321,6 +381,13 @@ namespace MonoTests.System.Runtime.Remoting
 			return Thread.GetDomainID();
 		}
 	}
+	
+	[Serializable]
+	public class ContextData : ILogicalThreadAffinative
+	{
+		public string data;
+		public int id;
+	}
 
 	[Serializable]
 	public abstract class ChannelManager
@@ -339,7 +406,8 @@ namespace MonoTests.System.Runtime.Remoting
 		string PrimitiveParams (int a, uint b, char c, string d);
 		string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, ref char c1, out char c2, ref string d1, out string d2);
 		Complex ComplexParams (ArrayList a, Complex b, string c);
-		Complex ComplexParamsInOut (ref ArrayList a, out Complex b, string c);
+		Complex ComplexParamsInOut (ref ArrayList a, out Complex b, [In,Out] byte[] bytes, [In,Out] StringBuilder sb, string c);
+		void ProcessContextData ();
 	}
 
 	// Base classes for tester surrogates
@@ -351,7 +419,8 @@ namespace MonoTests.System.Runtime.Remoting
 		public abstract string PrimitiveParams (int a, uint b, char c, string d);
 		public abstract string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, ref char c1, out char c2, ref string d1, out string d2);
 		public abstract Complex ComplexParams (ArrayList a, Complex b, string c);
-		public abstract Complex ComplexParamsInOut (ref ArrayList a, out Complex b, string c);
+		public abstract Complex ComplexParamsInOut (ref ArrayList a, out Complex b, [In,Out] byte[] bytes, [In,Out] StringBuilder sb, string c);
+		public abstract void ProcessContextData ();
 	}
 	
 	public abstract class AbstractSurrogate : IRemoteObject
@@ -361,7 +430,8 @@ namespace MonoTests.System.Runtime.Remoting
 		public abstract string PrimitiveParams (int a, uint b, char c, string d);
 		public abstract string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, ref char c1, out char c2, ref string d1, out string d2);
 		public abstract Complex ComplexParams (ArrayList a, Complex b, string c);
-		public abstract Complex ComplexParamsInOut (ref ArrayList a, out Complex b, string c);
+		public abstract Complex ComplexParamsInOut (ref ArrayList a, out Complex b, [In,Out] byte[] bytes, [In,Out] StringBuilder sb, string c);
+		public abstract void ProcessContextData ();
 	}
 
 	public abstract class InterfaceSurrogate : IRemoteObject
@@ -371,7 +441,8 @@ namespace MonoTests.System.Runtime.Remoting
 		public abstract string PrimitiveParams (int a, uint b, char c, string d);
 		public abstract string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, ref char c1, out char c2, ref string d1, out string d2);
 		public abstract Complex ComplexParams (ArrayList a, Complex b, string c);
-		public abstract Complex ComplexParamsInOut (ref ArrayList a, out Complex b, string c);
+		public abstract Complex ComplexParamsInOut (ref ArrayList a, out Complex b, [In,Out] byte[] bytes, [In,Out] StringBuilder sb, string c);
+		public abstract void ProcessContextData ();
 	}
 
 	
@@ -385,7 +456,8 @@ namespace MonoTests.System.Runtime.Remoting
 		public abstract string PrimitiveParams (int a, uint b, char c, string d);
 		public abstract string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, ref char c1, out char c2, ref string d1, out string d2);
 		public abstract Complex ComplexParams (ArrayList a, Complex b, string c);
-		public abstract Complex ComplexParamsInOut (ref ArrayList a, out Complex b, string c);
+		public abstract Complex ComplexParamsInOut (ref ArrayList a, out Complex b, [In,Out] byte[] bytes, [In,Out] StringBuilder sb, string c);
+		public abstract void ProcessContextData ();
 	}
 
 	//
@@ -426,11 +498,30 @@ namespace MonoTests.System.Runtime.Remoting
 			return cp;
 		}
 
-		public override Complex ComplexParamsInOut (ref ArrayList a, out Complex b, string c)
+		public override Complex ComplexParamsInOut (ref ArrayList a, out Complex b, [In,Out] byte[] bytes, [In,Out] StringBuilder sb, string c)
 		{
 			b = new Complex (33,c+ "@" + Thread.GetDomainID());
 			a.Add (b);
+			for (byte n=0; n<100; n++) bytes[n] = (byte)(bytes[n] + 1);
+			sb.Append (" and from server");
 			return b;
+		}
+
+		public override void ProcessContextData ()
+		{
+			ContextData cdata = CallContext.GetData ("clientData") as ContextData;
+			if (cdata == null) 
+				throw new Exception ("server: clientData is null");
+			if (cdata.data != "hi from client" || cdata.id != 1123)
+				throw new Exception ("server: clientData is not valid");
+			
+			cdata = new ContextData ();
+			cdata.data = "hi from server";
+			cdata.id = 3211;
+			CallContext.SetData ("serverData", cdata);
+			
+			string mdata = CallContext.GetData ("mustNotPass") as string;
+			if (mdata != null) throw new Exception ("mustNotPass is not null");
 		}
 	}
 
@@ -448,5 +539,3 @@ namespace MonoTests.System.Runtime.Remoting
 		public Complex Child;
 	}
 }
-
-  

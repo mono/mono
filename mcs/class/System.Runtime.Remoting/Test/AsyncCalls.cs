@@ -10,6 +10,8 @@ using System;
 using System.Collections;
 using System.Threading;
 using NUnit.Framework;
+using System.Text;
+using System.Runtime.InteropServices;
 
 namespace MonoTests.System.Runtime.Remoting
 {
@@ -30,7 +32,8 @@ namespace MonoTests.System.Runtime.Remoting
 	public delegate string DelegatePrimitiveParams (int a, uint b, char c, string d);
 	public delegate string DelegatePrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, ref char c1, out char c2, ref string d1, out string d2);
 	public delegate Complex DelegateComplexParams (ArrayList a, Complex b, string c);
-	public delegate Complex DelegateComplexParamsInOut (ref ArrayList a, out Complex b, string c);
+	public delegate Complex DelegateComplexParamsInOut (ref ArrayList a, out Complex b, byte[] bytes, StringBuilder sb, string c);
+	public delegate void DelegateProcessContextData ();
 
 	public class AsyncInstanceSurrogate : InstanceSurrogate
 	{
@@ -66,12 +69,20 @@ namespace MonoTests.System.Runtime.Remoting
 			return de.EndInvoke (ar);
 		}
 
-		public override Complex ComplexParamsInOut (ref ArrayList a, out Complex b, string c)
+		public override Complex ComplexParamsInOut (ref ArrayList a, out Complex b, [In,Out] byte[] bytes, StringBuilder sb, string c)
 		{
 			DelegateComplexParamsInOut de = new DelegateComplexParamsInOut (RemoteObject.ComplexParamsInOut);
-			IAsyncResult ar = de.BeginInvoke (ref a, out b, c,null,null);
+			IAsyncResult ar = de.BeginInvoke (ref a, out b, bytes, sb, c, null,null);
 			AsyncCallTest.DoWork ();
 			return de.EndInvoke (ref a, out b, ar);
+		}
+
+		public override void ProcessContextData ()
+		{
+			DelegateProcessContextData de = new DelegateProcessContextData (RemoteObject.ProcessContextData);
+			IAsyncResult ar = de.BeginInvoke (null,null);
+			AsyncCallTest.DoWork ();
+			de.EndInvoke (ar);
 		}
 	}
 
@@ -109,12 +120,20 @@ namespace MonoTests.System.Runtime.Remoting
 			return de.EndInvoke (ar);
 		}
 
-		public override Complex ComplexParamsInOut (ref ArrayList a, out Complex b, string c)
+		public override Complex ComplexParamsInOut (ref ArrayList a, out Complex b, [In,Out] byte[] bytes, StringBuilder sb, string c)
 		{
 			DelegateComplexParamsInOut de = new DelegateComplexParamsInOut (RemoteObject.ComplexParamsInOut);
-			IAsyncResult ar = de.BeginInvoke (ref a, out b, c,null,null);
+			IAsyncResult ar = de.BeginInvoke (ref a, out b, bytes, sb, c, null,null);
 			AsyncCallTest.DoWork ();
 			return de.EndInvoke (ref a, out b, ar);
+		}
+
+		public override void ProcessContextData ()
+		{
+			DelegateProcessContextData de = new DelegateProcessContextData (RemoteObject.ProcessContextData);
+			IAsyncResult ar = de.BeginInvoke (null,null);
+			AsyncCallTest.DoWork ();
+			de.EndInvoke (ar);
 		}
 	}
 
@@ -152,12 +171,20 @@ namespace MonoTests.System.Runtime.Remoting
 			return de.EndInvoke (ar);
 		}
 
-		public override Complex ComplexParamsInOut (ref ArrayList a, out Complex b, string c)
+		public override Complex ComplexParamsInOut (ref ArrayList a, out Complex b, [In,Out] byte[] bytes, StringBuilder sb, string c)
 		{
 			DelegateComplexParamsInOut de = new DelegateComplexParamsInOut (RemoteObject.ComplexParamsInOut);
-			IAsyncResult ar = de.BeginInvoke (ref a, out b, c,null,null);
+			IAsyncResult ar = de.BeginInvoke (ref a, out b, bytes, sb, c, null,null);
 			AsyncCallTest.DoWork ();
 			return de.EndInvoke (ref a, out b, ar);
+		}
+
+		public override void ProcessContextData ()
+		{
+			DelegateProcessContextData de = new DelegateProcessContextData (RemoteObject.ProcessContextData);
+			IAsyncResult ar = de.BeginInvoke (null,null);
+			AsyncCallTest.DoWork ();
+			de.EndInvoke (ar);
 		}
 	}
 }

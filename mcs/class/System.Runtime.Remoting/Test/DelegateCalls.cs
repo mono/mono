@@ -9,6 +9,8 @@
 using System;
 using System.Collections;
 using NUnit.Framework;
+using System.Text;
+using System.Runtime.InteropServices;
 
 namespace MonoTests.System.Runtime.Remoting
 {
@@ -45,10 +47,16 @@ namespace MonoTests.System.Runtime.Remoting
 			return de (a,b,c);
 		}
 
-		public override Complex ComplexParamsInOut (ref ArrayList a, out Complex b, string c)
+		public override Complex ComplexParamsInOut (ref ArrayList a, out Complex b, [In,Out] byte[] bytes, [In,Out] StringBuilder sb, string c)
 		{
 			DelegateComplexParamsInOut de = new DelegateComplexParamsInOut (RemoteObject.ComplexParamsInOut);
-			return de (ref a, out b, c);
+			return de (ref a, out b, bytes, sb, c);
+		}
+
+		public override void ProcessContextData ()
+		{
+			DelegateProcessContextData de = new DelegateProcessContextData (RemoteObject.ProcessContextData);
+			de ();
 		}
 	}
 
@@ -78,10 +86,16 @@ namespace MonoTests.System.Runtime.Remoting
 			return de (a,b,c);
 		}
 
-		public override Complex ComplexParamsInOut (ref ArrayList a, out Complex b, string c)
+		public override Complex ComplexParamsInOut (ref ArrayList a, out Complex b, [In,Out] byte[] bytes, [In,Out] StringBuilder sb, string c)
 		{
 			DelegateComplexParamsInOut de = new DelegateComplexParamsInOut (RemoteObject.ComplexParamsInOut);
-			return de (ref a, out b, c);
+			return de (ref a, out b, bytes, sb, c);
+		}
+
+		public override void ProcessContextData ()
+		{
+			DelegateProcessContextData de = new DelegateProcessContextData (RemoteObject.ProcessContextData);
+			de ();
 		}
 	}
 
@@ -111,10 +125,16 @@ namespace MonoTests.System.Runtime.Remoting
 			return de (a,b,c);
 		}
 
-		public override Complex ComplexParamsInOut (ref ArrayList a, out Complex b, string c)
+		public override Complex ComplexParamsInOut (ref ArrayList a, out Complex b, [In,Out] byte[] bytes, [In,Out] StringBuilder sb, string c)
 		{
 			DelegateComplexParamsInOut de = new DelegateComplexParamsInOut (RemoteObject.ComplexParamsInOut);
-			return de (ref a, out b, c);
+			return de (ref a, out b, bytes, sb, c);
+		}
+
+		public override void ProcessContextData ()
+		{
+			DelegateProcessContextData de = new DelegateProcessContextData (RemoteObject.ProcessContextData);
+			de ();
 		}
 	}
 }

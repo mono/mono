@@ -1,3 +1,8 @@
+2003-09-11  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* AsyncCalls.cs BaseCalls.cs DelegateCalls.cs ReflectionCalls.cs SyncCalls.cs:
+	  Added tests for CallContext and for parameters with the Out flag.
+	  
 2003-09-01  Nick Drochak  <ndrochak@gol.com>
 
 	* AsyncCalls.cs: Fix Build breaker on .NET 1.1.
@@ -25,4 +30,3 @@
 2003-07-23  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ContextsTest.cs, CallSeq.cs, ContextHookAttribute.cs, ServerObject.cs: Added.
-

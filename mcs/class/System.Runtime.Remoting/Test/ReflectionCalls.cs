@@ -10,6 +10,8 @@ using System;
 using System.Reflection;
 using System.Collections;
 using NUnit.Framework;
+using System.Text;
+using System.Runtime.InteropServices;
 
 namespace MonoTests.System.Runtime.Remoting
 {
@@ -56,14 +58,20 @@ namespace MonoTests.System.Runtime.Remoting
 			return (Complex) m.Invoke (target, parms);
 		}
 
-		public static Complex ComplexParamsInOut (Type type, object target, ref ArrayList a, out Complex b, string c)
+		public static Complex ComplexParamsInOut (Type type, object target, ref ArrayList a, out Complex b, [In,Out] byte[] bytes, [In,Out] StringBuilder sb, string c)
 		{
-			object[] parms = new object[] {a,null,c};
+			object[] parms = new object[] {a,null,bytes,sb,c};
 			MethodBase m = type.GetMethod ("ComplexParamsInOut");
 			Complex res = (Complex) m.Invoke (target, parms);
 			a = (ArrayList) parms[0];
 			b = (Complex) parms[1];
 			return res;
+		}
+
+		public static void ProcessContextData (Type type, object target)
+		{
+			MethodBase m = type.GetMethod ("ProcessContextData");
+			m.Invoke (target, null);
 		}
 	}
 
@@ -89,9 +97,14 @@ namespace MonoTests.System.Runtime.Remoting
 			return ReflectionCallTest.ComplexParams (typeof (RemoteObject), RemoteObject, a, b, c);
 		}
 
-		public override Complex ComplexParamsInOut (ref ArrayList a, out Complex b, string c)
+		public override Complex ComplexParamsInOut (ref ArrayList a, out Complex b, [In,Out] byte[] bytes, [In,Out] StringBuilder sb, string c)
 		{
-			return ReflectionCallTest.ComplexParamsInOut (typeof (RemoteObject), RemoteObject, ref a, out b, c);
+			return ReflectionCallTest.ComplexParamsInOut (typeof (RemoteObject), RemoteObject, ref a, out b, bytes, sb, c);
+		}
+
+		public override void ProcessContextData ()
+		{
+			ReflectionCallTest.ProcessContextData (typeof (RemoteObject), RemoteObject);
 		}
 	}
 
@@ -117,9 +130,14 @@ namespace MonoTests.System.Runtime.Remoting
 			return ReflectionCallTest.ComplexParams (typeof (AbstractRemoteObject), RemoteObject, a, b, c);
 		}
 
-		public override Complex ComplexParamsInOut (ref ArrayList a, out Complex b, string c)
+		public override Complex ComplexParamsInOut (ref ArrayList a, out Complex b, [In,Out] byte[] bytes, [In,Out] StringBuilder sb, string c)
 		{
-			return ReflectionCallTest.ComplexParamsInOut (typeof (AbstractRemoteObject), RemoteObject, ref a, out b, c);
+			return ReflectionCallTest.ComplexParamsInOut (typeof (AbstractRemoteObject), RemoteObject, ref a, out b, bytes, sb, c);
+		}
+
+		public override void ProcessContextData ()
+		{
+			ReflectionCallTest.ProcessContextData (typeof (AbstractRemoteObject), RemoteObject);
 		}
 	}
 
@@ -145,10 +163,14 @@ namespace MonoTests.System.Runtime.Remoting
 			return ReflectionCallTest.ComplexParams (typeof (IRemoteObject), RemoteObject, a, b, c);
 		}
 
-		public override Complex ComplexParamsInOut (ref ArrayList a, out Complex b, string c)
+		public override Complex ComplexParamsInOut (ref ArrayList a, out Complex b, [In,Out] byte[] bytes, [In,Out] StringBuilder sb, string c)
 		{
-			return ReflectionCallTest.ComplexParamsInOut (typeof (IRemoteObject), RemoteObject, ref a, out b, c);
+			return ReflectionCallTest.ComplexParamsInOut (typeof (IRemoteObject), RemoteObject, ref a, out b, bytes, sb, c);
+		}
+
+		public override void ProcessContextData ()
+		{
+			ReflectionCallTest.ProcessContextData (typeof (IRemoteObject), RemoteObject);
 		}
 	}
 }
-

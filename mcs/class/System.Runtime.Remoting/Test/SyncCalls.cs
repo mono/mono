@@ -9,6 +9,8 @@
 using System;
 using System.Collections;
 using NUnit.Framework;
+using System.Text;
+using System.Runtime.InteropServices;
 
 namespace MonoTests.System.Runtime.Remoting
 {
@@ -41,9 +43,14 @@ namespace MonoTests.System.Runtime.Remoting
 			return RemoteObject.ComplexParams (a, b, c);
 		}
 
-		public override Complex ComplexParamsInOut (ref ArrayList a, out Complex b, string c)
+		public override Complex ComplexParamsInOut (ref ArrayList a, out Complex b, [In,Out] byte[] bytes, [In,Out] StringBuilder sb, string c)
 		{
-			return RemoteObject.ComplexParamsInOut (ref a, out b, c);
+			return RemoteObject.ComplexParamsInOut (ref a, out b, bytes, sb, c);
+		}
+
+		public override void ProcessContextData ()
+		{
+			RemoteObject.ProcessContextData ();
 		}
 	}
 
@@ -69,9 +76,14 @@ namespace MonoTests.System.Runtime.Remoting
 			return RemoteObject.ComplexParams (a, b, c);
 		}
 
-		public override Complex ComplexParamsInOut (ref ArrayList a, out Complex b, string c)
+		public override Complex ComplexParamsInOut (ref ArrayList a, out Complex b, [In,Out] byte[] bytes, [In,Out] StringBuilder sb, string c)
 		{
-			return RemoteObject.ComplexParamsInOut (ref a, out b, c);
+			return RemoteObject.ComplexParamsInOut (ref a, out b, bytes, sb, c);
+		}
+
+		public override void ProcessContextData ()
+		{
+			RemoteObject.ProcessContextData ();
 		}
 	}
 
@@ -97,10 +109,14 @@ namespace MonoTests.System.Runtime.Remoting
 			return RemoteObject.ComplexParams (a, b, c);
 		}
 
-		public override Complex ComplexParamsInOut (ref ArrayList a, out Complex b, string c)
+		public override Complex ComplexParamsInOut (ref ArrayList a, out Complex b, [In,Out] byte[] bytes, [In,Out] StringBuilder sb, string c)
 		{
-			return RemoteObject.ComplexParamsInOut (ref a, out b, c);
+			return RemoteObject.ComplexParamsInOut (ref a, out b, bytes, sb, c);
+		}
+
+		public override void ProcessContextData ()
+		{
+			RemoteObject.ProcessContextData ();
 		}
 	}
 }
-
