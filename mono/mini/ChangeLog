@@ -1,5 +1,11 @@
 2005-01-26  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (remove_block_if_useless): Only print debug stuff with -v -v.
+
+	* aot.c: Avoid calling mono_method_get_header () if not needed.
+
+	* mini.h: Bump AOT file format version.
+	
 	* mini.c (mono_emit_native_call): Allocate a GOT var here.
 
 	* mini.c (mono_print_tree): Print more info for calls.
