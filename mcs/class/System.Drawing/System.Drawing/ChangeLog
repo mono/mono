@@ -1,3 +1,7 @@
+2002-02-25  Christian Meyer  <Christian.Meyer@cs.tum.edu>
+
+	* Bitmap.cs: Added, no implementation's done, yet.
+
 2001-12-15  Mike Kestner <mkestner@speakeasy.net>
 
 	* Rectangle.cs : Add a doc comment.
