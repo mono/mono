@@ -1,3 +1,9 @@
+2003-12-04  John Luke  <jluke@cfl.rr.com>
+	
+	* Uri.cs: applied patch from Chris Masters <neeeeeep@bigpond.com>
+	fixes bug #51510.  ftp uses port 21, https uses 443 and 
+	parse the host name properly for UNC path.
+	
 2003-10-10  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* Uri.cs: fixed a problem with some URIs like file://some_file.txt

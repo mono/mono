@@ -851,8 +851,7 @@ namespace System
 				path = host + path;
 				host = String.Empty;
 			} else if (isUnixFilepath) {
-				path = host + path;
-				host = String.Empty;
+				// leave it alone
 			} else if (host.Length == 0) {
 				throw new UriFormatException ("Invalid URI: The hostname could not be parsed");
 			}
@@ -875,8 +874,8 @@ namespace System
 
 		static UriScheme [] schemes = new UriScheme [] {
 			new UriScheme (UriSchemeHttp, SchemeDelimiter, 80),
-			new UriScheme (UriSchemeHttps, SchemeDelimiter, 223),
-			new UriScheme (UriSchemeFtp, SchemeDelimiter, 23),
+			new UriScheme (UriSchemeHttps, SchemeDelimiter, 443),
+			new UriScheme (UriSchemeFtp, SchemeDelimiter, 21),
 			new UriScheme (UriSchemeFile, SchemeDelimiter, -1),
 			new UriScheme (UriSchemeMailto, ":", 25),
 			new UriScheme (UriSchemeNews, ":", -1),
