@@ -28,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 && XML_DEP
+#if NET_2_0
 using System;
 using System.Collections;
 using System.Configuration;
@@ -37,6 +37,7 @@ using System.Xml;
 
 namespace System.CodeDom.Compiler
 {
+#if XML_DEP
 	class CodeDomConfigurationHandler : IConfigurationSectionHandler
 	{
 		public object Create (object parent, object context, XmlNode section)
@@ -200,6 +201,8 @@ namespace System.CodeDom.Compiler
 		}
 	}
 
+#endif // XML_DEP
+
 	sealed class CompilationConfiguration
 	{
 		bool debug;
@@ -344,5 +347,5 @@ namespace System.CodeDom.Compiler
 	}
 }
 
-#endif // NET_2_0 && XML_DEP
+#endif // NET_2_0
 
