@@ -45,7 +45,7 @@ namespace Mono.Xml.Xsl.Operations {
 			if (select != null) {
 				return p.Evaluate (select);
 			} else if (content != null) {
-				XmlNodeWriter w = new XmlNodeWriter ();
+				XmlNodeWriter w = new XmlNodeWriter (false);
 				//TODO: which outputter should be used here?
 				Outputter outputter = new XmlOutputter(w, p.Outputs);
 				p.PushOutput (outputter);

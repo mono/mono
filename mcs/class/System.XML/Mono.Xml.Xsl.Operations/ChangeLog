@@ -1,3 +1,8 @@
+2003-08-21 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XslVariable.cs : use newly introduced XmlNodeWriter.ctor(false) to
+	  support for tree fragment, not only for single element.
+
 2003-08-20 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* XslComment.cs, XslMessage.cs, XslProcessingInsturction.cs:
