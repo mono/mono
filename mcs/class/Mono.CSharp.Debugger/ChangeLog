@@ -1,3 +1,8 @@
+2003-06-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MonoSymbolWriter.cs: Enable calling of DefineDocument multiple
+	times with the same URL.
+
 2003-06-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MonoSymbolFile.cs: Fix off-by-one error.

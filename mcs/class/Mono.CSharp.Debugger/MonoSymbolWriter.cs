@@ -279,6 +279,8 @@ namespace Mono.CSharp.Debugger
 							     Guid languageVendor,
 							     Guid documentType)
 		{
+			if (sources.ContainsKey (url))
+				return (ISymbolDocumentWriter)sources [url];
 			SourceFile source_info = new SourceFile (file, url);
 			sources.Add (url, source_info);
 			return source_info;
