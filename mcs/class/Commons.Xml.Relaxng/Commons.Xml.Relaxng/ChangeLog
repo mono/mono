@@ -1,5 +1,14 @@
 2004-02-25  Atsushi Enomoto <atsushi@ximian.com>
 
+	* Removed 
+	  - RngGrammar.cs
+	  - RngNameClass.cs
+	  - RngPattern.cs
+	  - RngPatternType.cs
+	  They are moved to RelaxngXXX.cs and improved
+
+2004-02-25  Atsushi Enomoto <atsushi@ximian.com>
+
 	* Added 
 	  - RelaxngDatatype.cs
 	  - RelaxngDatatypeProvider.cs
