@@ -1,0 +1,224 @@
+2004-08-20 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* include/private/gc_priv.h: use the test glib does
+	for EXPECT.
+
+2004-08-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* include/private/gc_priv.h (__GNUC_PREREQ): Fix typo spotted by Ben.
+
+	* include/gc_local_alloc.h pthread_support.c: Add 
+	GC_local_gcj_fast_malloc.
+
+	* include/private/gc_priv.h (EXPECT): Enable this on modern versions
+	of gcc.
+
+2004-08-17 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* pthread_support.c: make __thread variable static
+	
+	* include/gc_local_alloc.c: make the other headers get
+	included before we define our own variable. This fixes
+	up an ordering problem with GCJ and thread local alloc.
+	
+	The problem was that gc.h needed to include gc_local_alloc.h
+	before gc_gcj.h. However, when gc.h was included after
+	GC_LOCAL_ALLOC_H was #defined, it would not include
+	gc_local_alloc.h.
+
+2004-08-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile.am: Create a static version of libmonogc for inclusion into
+	the mono executable.
+
+2004-07-27  John Merryweather Cooper <john_m_cooper@yahoo.com>
+
+	* configure.in:  Fix to properly select flags for pthreads
+	on FreeBSD 4.x (aka -STABLE) and 5.x (aka -CURRENT).
+	
+2004-07-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* include/install-sh doc/install-sh: New files.
+
+2004-06-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* include/private/gc_priv.h (SMALL_OBJ): Add Hans' fix for crashes
+	seen on SPARC64.
+
+Thu Jun 24 15:39:00 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* alloc.c: use Hans' fix for bug #59557.
+
+2004-06-18  Dick Porter  <dick@ximian.com>
+
+	* darwin_stop_world.c: Make the world actually stop.  This seems
+	to fix the finalizer thread signalling deadlock in 58706.
+
+Sat Jun 5 19:38:20 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* alloc.c: temporary fix for bug #59557.
+
+Tue May 25 13:41:08 EDT 2004 Paolo Molaro <lupus@ximian.com>
+
+	* darwin_stop_world.c: more thread died races fixes.
+
+2004-05-21  Martin Baulig  <martin@ximian.com>
+
+	* pthread_stop_world.c: Merged the changes from linux_threads.c.
+
+	* linux_threads.c: Removed, this file no longer exists in the
+	latest upstream version.
+
+2004-05-20  Martin Baulig  <martin@ximian.com>
+
+	* libgc.patch: Removed.  There's no need to have this in a
+	separate file, just use CVS.
+
+2004-05-20  Jackson Harper  <jackson@ximian.com>
+
+	* Makefile.am: Remove tests from EXTRA_DIST.
+	
+Wed May 19 18:57:30 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* darwin_stop_world.c: deal with threads that die before they can be
+	suspended (should solce the thread_info failed aborts).
+
+Wed May 19 18:42:23 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* configure.in, Makefile.am: update correctly from the libgc sources:
+	this excludes linux_threads.c from the build: Martin will have to port
+	his changes to the new code, since linux_threads.c doesn't exist
+	anymore in the upstream sources.
+
+2004-05-19  Raja R Harinath  <rharinath@novell.com>
+
+	* configure.in ($enable_embed_check): New internal option that
+	will be passed by mono's configure.
+	(THREADS): Use $with_libgc_threads, which is passed by mono's
+	configure.
+
+2004-05-18  Martin Baulig  <martin@ximian.com>
+
+	Importing Boehm GC 6.3 alpha 6.
+
+2004-03-24 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* gcj_mlc.c: Do finalization.
+
+	This is a patch from Hans Boehm that fixes a bug where
+	GC_gcj_malloc never does finalization.
+
+	See:
+	http://www.hpl.hp.com/hosted/linux/mail-archives/gc/2004-March/000359.html
+	http://bugzilla.ximian.com/show_bug.cgi?id=55644
+
+	Fixes #55644.
+
+	I am checking this in at Zoltan's request.
+
+2003-11-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* autogen.sh: Fix previous patch and silence noisy GNU which.	
+	
+	* autogen.sh: Applied patch from Peter Teichman (peter@ximian.com). 
+	Use 'glibtool' instead of 'libtool' on OSX. 
+
+2003-10-01  Pedro Martínez Juliá  <yoro@wanadoo.es>
+
+	* Makefile.am: Change lib_LTLIBRARIES to noinst_LTLIBRARIES because
+	of libmonogc is included inside libmono and without this change it
+	breaks down and not include it.
+
+2003-09-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mips_sgi_mach_dep.S: Remove since it is a duplicate of .s and it
+	breaks cvs checkout under windows.
+
+Wed Sep 17 17:29:11 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* configure.in: disable ALL_INTERIOR_POINTERS: managed pointers
+	are not allowed in the heap, so this should be safe and it helps
+	reducing false positives.
+
+2003-08-28  Dick Porter  <dick@ximian.com>
+
+	* pthread_support.c:
+	* aix_irix_threads.c:  Applied bug fix from alpha libgc
+
+2003-08-26  Martin Baulig  <martin@ximian.com>
+
+	Imported Boehm GC 6.2.
+
+2003-06-20  Martin Baulig  <martin@ximian.com>
+
+	* include/gc.h: Fixed compiler warnings.
+
+2003-06-09  Martin Baulig  <martin@ximian.com>
+
+	* include/libgc-mono-debugger.h: New header file.  This is
+	installed as <mono/private/libgc-mono-debugger.h>, but it's a
+	private header files and may only be used by the Mono Debugger.
+
+	* Makefile.am: Build libmonogc.la and install it.  For some
+	reason, using a libtool convenience archive doesn't work here.
+
+2003-06-08  Martin Baulig  <martin@ximian.com>
+
+	* libgc-mono.pc.in: Removed.
+
+	* Makefile.am: Don't install anything.
+
+	* configure.in: We're now embedded in mono and can't be built as a
+	stand-alone module any longer.
+
+2003-05-17  Martin Baulig  <martin@ximian.com>
+
+	* libgc.patch, libgc.log: Added patch against the original version
+	and a ChangeLog entry.
+
+2003-05-17  Martin Baulig  <martin@ximian.com>
+
+	* misc.c, os_dep.c, include/private/gc_priv.h: Back to the
+	original version.
+
+	* linux_threads.c: Use the `gc_thread_vtable' internally in this
+	file instead of calling it from the header files.
+
+2003-05-16  Martin Baulig  <martin@ximian.com>
+
+	* include/gc.h (GCThreadFunctions): Removed the `pthread_*'
+	function since we don't need them here.
+
+	* include/gc_pthread_redirects.h: Put back the original version.
+
+2003-04-08  Alp Toker <alp@atoker.com>
+
+	* configure.in: fix automake 1.6 compatibility without breaking
+	previous versions (AM_PROG_AS)
+
+2003-03-31  Martin Baulig  <martin@ximian.com>
+
+	* include/gc.h (GCThreadFunctions): New type.
+	(gc_thread_vtable): New global variable.
+
+	* include/gc_pthread_redirects.h: Use the `gc_thread_vtable'
+	vtable for the redirects instead of calling the methods directly.
+	This allows us to override them at runtime.	
+
+2003-03-31  Martin Baulig  <martin@ximian.com>
+
+	* include/Makefile.am: Install gc_pthread_redirects.h.
+
+	* include/gc.h: `#include <gc/gc_pthread_redirects.h>', not
+	`#include "gc_pthread_redirects.h"'.
+
+2003-03-31  Martin Baulig  <martin@ximian.com>
+
+	* configure.in: Call the package `libgc-mono'.
+
+	* libgc-mono.pc.in: Added pkg-config files.
+
+2003-03-31  Martin Baulig  <martin@ximian.com>
+
+	This is a modified version of Boehm GC 6.1.
+

@@ -1,0 +1,215 @@
+The collector has at various times been compiled under Windows 95 & later, NT,
+and XP, with the original Microsoft SDK, with Visual C++ 2.0, 4.0, and 6, with
+the GNU win32 tools, with Borland 4.5,  with Watcom C, and recently
+with the Digital Mars compiler.  It is likely that some of these have been
+broken in the meantime.  Patches are appreciated.
+
+For historical reasons,
+the collector test program "gctest" is linked as a GUI application,
+but does not open any windows.  Its output appears in the file
+"gc.log".  It may be started from the file manager.  The hour glass
+cursor may appear as long as it's running.  If it is started from the
+command line, it will usually run in the background.  Wait a few
+minutes (a few seconds on a modern machine) before you check the output.
+You should see either a failure indication or a "Collector appears to
+work" message.
+
+The cord test program has not been ported (but should port
+easily).  A toy editor (cord/de.exe) based on cords (heavyweight
+strings represented as trees) has been ported and is included.
+It runs fine under either win32 or win32S.  It serves as an example
+of a true Windows application, except that it was written by a
+nonexpert Windows programmer.  (There are some peculiarities
+in the way files are displayed.  The <cr> is displayed explicitly
+for standard DOS text files.  As in the UNIX version, control
+characters are displayed explicitly, but in this case as red text.
+This may be suboptimal for some tastes and/or sets of default
+window colors.)
+
+In general -DREDIRECT_MALLOC is unlikely to work unless the
+application is completely statically linked.
+
+The collector normally allocates memory from the OS with VirtualAlloc.
+This appears to cause problems under Windows NT and Windows 2000 (but
+not Windows 95/98) if the memory is later passed to CreateDIBitmap.
+To work around this problem, build the collector with -DUSE_GLOBAL_ALLOC.
+This is currently incompatible with -DUSE_MUNMAP.  (Thanks to Jonathan
+Clark for tracking this down.  There's some chance this may be fixed
+in 6.1alpha4, since we now separate heap sections with an unused page.)
+
+Microsoft Tools
+---------------
+For Microsoft development tools, rename NT_MAKEFILE as
+MAKEFILE.  (Make sure that the CPU environment variable is defined
+to be i386.)  In order to use the gc_cpp.h C++ interface, all
+client code should include gc_cpp.h.
+
+For historical reasons,
+the collector test program "gctest" is linked as a GUI application,
+but does not open any windows.  Its output appears in the file
+"gc.log".  It may be started from the file manager.  The hour glass
+cursor may appear as long as it's running.  If it is started from the
+command line, it will usually run in the background.  Wait a few
+minutes (a few seconds on a modern machine) before you check the output.
+You should see either a failure indication or a "Collector appears to
+work" message.
+
+If you would prefer a VC++.NET project file, ask boehm@acm.org.  One has
+been contributed, but it seems to contain some absolute paths etc., so
+it can presumably only be a starting point, and is not in the standard
+distribution.  It is unclear (to me, Hans Boehm) whether it is feasible to
+change that.
+
+Clients may need to define GC_NOT_DLL before including gc.h, if the
+collector was built as a static library (as it normally is in the
+absence of thread support).
+
+GNU Tools
+---------
+For GNU-win32, use the regular makefile, possibly after uncommenting
+the line "include Makefile.DLLs".  The latter should be necessary only
+if you want to package the collector as a DLL.
+[Is the following sentence obsolete? -HB] The GNU-win32 port is
+believed to work only for b18, not b19, probably due to linker changes
+in b19.  This is probably fixable with a different definition of
+DATASTART and DATAEND in gcconfig.h.
+
+The collector should also be buildable under Cygwin with either the
+old standard Makefile, or with the "configure;make" machinery.
+
+Borland Tools
+-------------
+[Rarely tested.]
+For Borland tools, use BCC_MAKEFILE.  Note that
+Borland's compiler defaults to 1 byte alignment in structures (-a1),
+whereas Visual C++ appears to default to 8 byte alignment (/Zp8).
+The garbage collector in its default configuration EXPECTS AT
+LEAST 4 BYTE ALIGNMENT.  Thus the BORLAND DEFAULT MUST
+BE OVERRIDDEN.  (In my opinion, it should usually be anyway.
+I expect that -a1 introduces major performance penalties on a
+486 or Pentium.)  Note that this changes structure layouts.  (As a last
+resort, gcconfig.h can be changed to allow 1 byte alignment.  But
+this has significant negative performance implications.)
+The Makefile is set up to assume Borland 4.5.  If you have another
+version, change the line near the top.  By default, it does not
+require the assembler.  If you do have the assembler, I recommend
+removing the -DUSE_GENERIC.
+
+Incremental Collection
+----------------------
+There is some support for incremental collection.  This is
+currently pretty simple-minded.  Pages are protected.  Protection
+faults are caught by a handler installed at the bottom of the handler
+stack.  This is both slow and interacts poorly with a debugger.
+Whenever possible, I recommend adding a call to
+GC_enable_incremental at the last possible moment, after most
+debugging is complete.  Unlike the UNIX versions, no system
+calls are wrapped by the collector itself.  It may be necessary
+to wrap ReadFile calls that use a buffer in the heap, so that the
+call does not encounter a protection fault while it's running.
+(As usual, none of this is an issue unless GC_enable_incremental
+is called.)
+
+Note that incremental collection is disabled with -DSMALL_CONFIG.
+
+Threads
+-------
+
+James Clark has contributed the necessary code to support win32 threads
+with the collector in a DLL.
+Use NT_THREADS_MAKEFILE (a.k.a gc.mak) instead of NT_MAKEFILE
+to build this version.  Note that this requires some files whose names
+are more than 8 + 3 characters long.  Thus you should unpack the tar file
+so that long file names are preserved.  To build the garbage collector
+test with VC++ from the command line, use
+
+nmake /F ".\gc.mak" CFG="gctest - Win32 Release"
+
+This requires that the subdirectory gctest\Release exist.
+The test program and DLL will reside in the Release directory.
+
+This version relies on the collector residing in a dll.
+
+This version currently supports incremental collection only if it is
+enabled before any additional threads are created.
+
+Since 6.3alpha2, threads are also better supported in static library builds
+with Microsoft tools (use NT_STATIC_THREADS_MAKEFILE) and with the GNU
+tools.  In all cases,the collector must be built with GC_WIN32_THREADS
+defined, even if the Cygwin pthreads interface is used.
+(NT_STATIC_THREADS_MAKEFILE does this implicitly.  Under Cygwin,
+./configure --enable-threads=posix defines GC_WIN32_THREADS.)  Threads must be
+created with GC_CreateThread.  This can be accomplished by
+including gc.h and then calling CreateThread, which is redefined
+by gc.h.
+
+For the statically linked versions, it is required that GC_init()
+be called before other GC calls, since there seems to be no implicit way
+to initialize the allocation lock.  The easiest way to ensure this in
+portable code is to call GC_INIT() from the main executable (not
+a dynamic library) before calling any other GC_ routines.
+
+We strongly advise against using the TerminateThread() win32 API call,
+especially with the garbage collector.  Any use is likely to provoke a
+crash in the GC, since it makes it impossible for the collector to
+correctly track threads.
+
+
+Watcom compiler
+---------------
+
+Ivan V. Demakov's README for the Watcom port:
+
+The collector has been compiled with Watcom C 10.6 and 11.0.
+It runs under win32, win32s, and even under msdos with dos4gw
+dos-extender. It should also run under OS/2, though this isn't
+tested. Under win32 the collector can be built either as dll
+or as static library.
+
+Note that all compilations were done under Windows 95 or NT.
+For unknown reason compiling under Windows 3.11 for NT (one
+attempt has been made) leads to broken executables.
+
+Incremental collection is not supported.
+
+cord is not ported.
+
+Before compiling you may need to edit WCC_MAKEFILE to set target
+platform, library type (dynamic or static), calling conventions, and
+optimization options.
+
+To compile the collector and testing programs use the command:
+    wmake -f WCC_MAKEFILE
+
+All programs using gc should be compiled with 4-byte alignment.
+For further explanations on this see comments about Borland.
+
+If the gc is compiled as dll, the macro ``GC_DLL'' should be defined before
+including "gc.h" (for example, with -DGC_DLL compiler option). It's
+important, otherwise resulting programs will not run.
+
+Ivan Demakov (email: ivan@tgrad.nsk.su)
+
+Win32S
+------
+
+[The following is probably obsolete.  The win32s support is still in the
+collector, but I doubt anyone cares, or has tested it recently.]
+
+The collector runs under both win32s and win32, but with different semantics.
+Under win32, all writable pages outside of the heaps and stack are
+scanned for roots.  Thus the collector sees pointers in DLL data
+segments.  Under win32s, only the main data segment is scanned.
+(The main data segment should always be scanned.  Under some
+versions of win32s, other regions may also be scanned.)
+Thus all accessible objects should be accessible from local variables
+or variables in the main data segment.  Alternatively, other data
+segments (e.g. in DLLs) may be registered with the collector by
+calling GC_init() and then GC_register_root_section(a), where
+a is the address of some variable inside the data segment.  (Duplicate
+registrations are ignored, but not terribly quickly.)
+
+(There are two reasons for this.  We didn't want to see many 16:16
+pointers.  And the VirtualQuery call has different semantics under
+the two systems, and under different versions of win32s.)
+
