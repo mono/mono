@@ -3,6 +3,8 @@
 	* AppDomainTest.cs: Un-ignore tests that unloaded the appdomain (they
 	previously displayed a lot of GC warnings). SetAppDomainPolicy_Dual is
 	fixed (i.e. it throws the excepted exception) in 2.0 (Dec CTP).
+	* BitConverterTest.cs: Exception thrown only for 1.0/1.1 - an empty 
+	string is returned in 2.0.
 
 2005-01-08  Miguel de Icaza  <miguel@ximian.com>
 

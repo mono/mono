@@ -561,6 +561,9 @@ public class BitConverterTest : Assertion {
 	}
 
 	[Test]
+#if !NET_2_0
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+#endif
 	public void ToString_Empty ()
 	{
 		byte[] empty = new byte [0];
