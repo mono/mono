@@ -1,0 +1,5 @@
+
+Wed Aug 7 15:51:54 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* monoresgen.cs: added the Mono implementation of resgen.
+
