@@ -571,8 +571,8 @@ namespace Mono.CSharp {
 			if (e is MethodGroupExpr) {
 				MethodGroupExpr mg = (MethodGroupExpr) e;
 
-				for (int i = 0; i < mg.Methods.Length; ++i) {
-					delegate_method  = Delegate.VerifyMethod (ec, type, mg.Methods [i], Location);
+				foreach (MethodInfo mi in mg.Methods){
+					delegate_method  = Delegate.VerifyMethod (ec, type, mi, Location);
 
 					if (delegate_method != null)
 						break;
@@ -667,10 +667,7 @@ namespace Mono.CSharp {
 				return null;
 			
 			if (Arguments != null){
-				for (int i = Arguments.Count; i > 0;){
-					--i;
-					Argument a = (Argument) Arguments [i];
-					
+				foreach (Argument a in Arguments){
 					if (!a.Resolve (ec, Location))
 						return null;
 				}

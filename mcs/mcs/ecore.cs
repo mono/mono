@@ -987,9 +987,8 @@ namespace Mono.CSharp {
 
 			if (priv_fmet_param == null)
 				priv_fmet_param = new EmptyExpression ();
-					
-			for (int i = 0; i < types.Count; ++i) {
-				Type t = (Type) types [i];
+
+			foreach (Type t in types){
 				priv_fmet_param.SetType (t);
 				
 				if (best == null) {
@@ -1021,10 +1020,8 @@ namespace Mono.CSharp {
 
 			if (priv_fmee_ret == null)
 				priv_fmee_ret = new EmptyExpression ();
-			
-			for (int i = 0; i < types.Count; ++i ) {
-				
-				Type t = (Type) types [i];
+
+			foreach (Type t in types){
 				priv_fmee_ret.SetType (best);
 
 				if (best == null) {
@@ -1061,10 +1058,7 @@ namespace Mono.CSharp {
 			//
 			// If any operator converts from S then Sx = S
 			//
-			for (int i = me.Methods.Length; i > 0; ) {
-				i--;
-
-				MethodBase mb = me.Methods [i];
+			foreach (MethodBase mb in me.Methods){
 				ParameterData pd = Invocation.GetParameterData (mb);
 				Type param_type = pd.ParameterType (0);
 
@@ -1102,12 +1096,9 @@ namespace Mono.CSharp {
 			// Explicit Conv rules
 			//
 			if (apply_explicit_conv_rules) {
-
 				ArrayList candidate_set = new ArrayList ();
 
-				for (int i = 0; i < src_types_set.Count; ++i) {
-					Type param_type = (Type) src_types_set [i];
-
+				foreach (Type param_type in src_types_set){
 					priv_fms_expr.SetType (source_type);
 					
 					if (StandardConversionExists (priv_fms_expr, param_type))
@@ -1147,10 +1138,7 @@ namespace Mono.CSharp {
 			//
 			// If any operator converts to T then Tx = T
 			//
-			for (int i = me.Methods.Length; i > 0; ) {
-				i--;
-				
-				MethodInfo mi = (MethodInfo) me.Methods [i];
+			foreach (MethodInfo mi in me.Methods){
 				Type ret_type = mi.ReturnType;
 
 				if (ret_type == target)
@@ -1159,8 +1147,9 @@ namespace Mono.CSharp {
 				if (apply_explicit_conv_rules) {
 					//
 					// From the spec :
-					// Find the set of applicable user-defined conversion operators, U.  This set
-					// consists of the
+					// Find the set of applicable user-defined conversion operators, U.
+					//
+					// This set consists of the
 					// user-defined implicit or explicit conversion operators declared by
 					// the classes or structs in D that convert from a type encompassing
 					// or encompassed by S to a type encompassing or encompassed by T
@@ -1187,12 +1176,9 @@ namespace Mono.CSharp {
 			// Explicit conv rules
 			//
 			if (apply_explicit_conv_rules) {
-
 				ArrayList candidate_set = new ArrayList ();
-				
-				for (int i = 0; i < tgt_types_set.Count; ++i) {
-					Type ret_type = (Type) tgt_types_set [i];
-					
+
+				foreach (Type ret_type in tgt_types_set){
 					priv_fmt_expr.SetType (ret_type);
 					
 					if (StandardConversionExists (priv_fmt_expr, target))
@@ -1323,6 +1309,13 @@ namespace Mono.CSharp {
 			
 			Type most_specific_source, most_specific_target;
 
+#if BLAH
+			foreach (MethodBase m in union.Methods){
+				Console.WriteLine ("Name: " + m.Name);
+				Console.WriteLine ("    : " + ((MethodInfo)m).ReturnType);
+			}
+#endif
+			
 			most_specific_source = FindMostSpecificSource (union, source_type, look_for_explicit, loc);
 			if (most_specific_source == null)
 				return null;
@@ -1331,14 +1324,12 @@ namespace Mono.CSharp {
 			if (most_specific_target == null) 
 				return null;
 			
+			Console.WriteLine ("S:T" + most_specific_source + ":" + most_specific_target);
 			int count = 0;
-			
-			for (int i = union.Methods.Length; i > 0;) {
-				i--;
-				
-				MethodBase mb = union.Methods [i];
+
+			foreach (MethodBase mb in union.Methods){
 				ParameterData pd = Invocation.GetParameterData (mb);
-				MethodInfo mi = (MethodInfo) union.Methods [i];
+				MethodInfo mi = (MethodInfo) mb;
 				
 				if (pd.ParameterType (0) == most_specific_source &&
 				    mi.ReturnType == most_specific_target) {
@@ -3435,12 +3426,8 @@ namespace Mono.CSharp {
 		bool RemoveMethods (bool keep_static)
 		{
 			ArrayList smethods = new ArrayList ();
-			int top = Methods.Length;
-			int i;
-			
-			for (i = 0; i < top; i++){
-				MethodBase mb = Methods [i];
 
+			foreach (MethodBase mb in Methods){
 				if (mb.IsStatic == keep_static)
 					smethods.Add (mb);
 			}
@@ -3684,9 +3671,9 @@ namespace Mono.CSharp {
 			Accessors = TypeManager.GetAccessors (pi);
 
 			if (Accessors != null)
-				for (int i = 0; i < Accessors.Length; i++){
-					if (Accessors [i] != null)
-						if (Accessors [i].IsStatic)
+				foreach (MethodInfo mi in Accessors){
+					if (mi != null)
+						if (mi.IsStatic)
 							IsStatic = true;
 				}
 			else

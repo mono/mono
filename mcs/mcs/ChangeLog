@@ -1,3 +1,23 @@
+2002-05-10  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (IsParamsMethodApplicable): use foreach.
+	(Invocation.DoResolve): ditto.
+	(New.DoResolve): ditto.
+	(ArrayCreation.DoResolve): ditto.
+
+	* ecore.cs (FindMostEncompassingType): use foreach.
+
+	* delegate.cs (NewDelegate.DoResolve): Use foreach
+
+	* ecore.cs (Expression.FindMostSpecificSource): Use foreach.
+	(RemoveMethods): use foreach.
+
+	* expression.cs (Invocation.MakeUnionSet): Optimization: Use two
+	nested foreach statements instead of for, and also break out of
+	the inner loop once a match is found.
+	
+	(Invocation.OverloadResolve): Use foreach, simplify the code. 
+
 2002-05-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* cfold.cs (BinaryFold): During an enumeration evaluation context,

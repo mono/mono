@@ -403,6 +403,7 @@ public class TypeManager {
         {
                 string sig = "(";
                 InternalParameters iparams = LookupParametersByBuilder(mb);
+
                 for (int i = 0; i < iparams.Count; i++) {
                         if (i > 0) {
                                 sig += ", ";

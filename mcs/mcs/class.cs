@@ -2523,10 +2523,7 @@ namespace Mono.CSharp {
 			Type t;
 			
 			if (argument_list != null){
-				for (int i = argument_list.Count; i > 0; ){
-					--i;
-
-					Argument a = (Argument) argument_list [i];
+				foreach (Argument a in argument_list){
 					if (!a.Resolve (ec, location))
 						return false;
 				}

@@ -3221,22 +3221,25 @@ namespace Mono.CSharp {
 			length2 = right_set.Methods.Length;
 			
 			ArrayList common = new ArrayList ();
-			
-			for (int i = 0; i < left_set.Methods.Length; i++) {
-				for (int j = 0; j < right_set.Methods.Length; j++) {
-					if (left_set.Methods [i] == right_set.Methods [j]) 
-						common.Add (left_set.Methods [i]);
+
+			foreach (MethodBase l in left_set.Methods){
+				foreach (MethodBase r in right_set.Methods){
+					if (l != r)
+						continue;
+					common.Add (r);
+					break;
 				}
 			}
 			
 			miset = new MemberInfo [length1 + length2 - common.Count];
 			left_set.Methods.CopyTo (miset, 0);
 			
-			int k = 0;
-			
-			for (int j = 0; j < right_set.Methods.Length; j++)
-				if (!common.Contains (right_set.Methods [j]))
-					miset [length1 + k++] = right_set.Methods [j];
+			int k = length1;
+
+			foreach (MemberInfo mi in right_set.Methods){
+				if (!common.Contains (mi))
+					miset [k++] = mi;
+			}
 			
 			union = new MethodGroupExpr (miset, loc);
 			
@@ -3306,9 +3309,7 @@ namespace Mono.CSharp {
 
 			Type element_type = pd.ParameterType (pd_count - 1).GetElementType ();
 
-			for (int i = pd_count - 1; i < arg_count; i++) {
-				Argument a = (Argument) arguments [i];
-				
+			foreach (Argument a in arguments){
 				if (!StandardConversionExists (a.Expr, element_type))
 					return false;
 			}
@@ -3389,14 +3390,12 @@ namespace Mono.CSharp {
 							  ArrayList Arguments, Location loc)
 		{
 			ArrayList afm = new ArrayList ();
-			int best_match_idx = -1;
 			MethodBase method = null;
 			int argument_count;
 			ArrayList candidates = new ArrayList ();
+			
 
-			for (int i = me.Methods.Length; i > 0; ){
-				i--;
-				MethodBase candidate  = me.Methods [i];
+			foreach (MethodBase candidate in me.Methods){
 				int x;
 
 				// Check if candidate is applicable (section 14.4.2.1)
@@ -3408,10 +3407,7 @@ namespace Mono.CSharp {
 				
 				if (x == 0)
 					continue;
-				else {
-					best_match_idx = i;
-					method = me.Methods [best_match_idx];
-				}
+				method = candidate;
 			}
 
 			if (Arguments == null)
@@ -3426,12 +3422,9 @@ namespace Mono.CSharp {
 			//
 			bool chose_params_expanded = false;
 			
-			if (best_match_idx == -1) {
+			if (method == null) {
 				candidates = new ArrayList ();
-				for (int i = me.Methods.Length; i > 0; ) {
-					i--;
-					MethodBase candidate = me.Methods [i];
-
+				foreach (MethodBase candidate in me.Methods){
 					if (!IsParamsMethodApplicable (Arguments, candidate))
 						continue;
 
@@ -3441,11 +3434,8 @@ namespace Mono.CSharp {
 
 					if (x == 0)
 						continue;
-					else {
-						best_match_idx = i;
-						method = me.Methods [best_match_idx];
-						chose_params_expanded = true;
-					}
+					method = candidate; 
+					chose_params_expanded = true;
 				}
 			}
 
@@ -3457,9 +3447,7 @@ namespace Mono.CSharp {
 			// should be better than all the others
 			//
 
- 			for (int i = 0; i < candidates.Count; ++i) {
- 				MethodBase candidate = (MethodBase) candidates [i];
-
+			foreach (MethodBase candidate in candidates){
  				if (candidate == method)
  					continue;
 
@@ -3510,7 +3498,8 @@ namespace Mono.CSharp {
 				Expression a_expr = a.Expr;
 				Type parameter_type = pd.ParameterType (j);
 
-				if (pd.ParameterModifier (j) == Parameter.Modifier.PARAMS && chose_params_expanded)
+				if (pd.ParameterModifier (j) == Parameter.Modifier.PARAMS &&
+				    chose_params_expanded)
 					parameter_type = parameter_type.GetElementType ();
 
 				if (a.Type != parameter_type){
@@ -3600,10 +3589,7 @@ namespace Mono.CSharp {
 			// Next, evaluate all the expressions in the argument list
 			//
 			if (Arguments != null){
-				for (int i = Arguments.Count; i > 0;){
-					--i;
-					Argument a = (Argument) Arguments [i];
-
+				foreach (Argument a in Arguments){
 					if (!a.Resolve (ec, loc))
 						return null;
 				}
@@ -3931,10 +3917,7 @@ namespace Mono.CSharp {
 
 			if (ml != null) {
 				if (Arguments != null){
-					for (int i = Arguments.Count; i > 0;){
-						--i;
-						Argument a = (Argument) Arguments [i];
-						
+					foreach (Argument a in Arguments){
 						if (!a.Resolve (ec, loc))
 							return null;
 					}
@@ -4267,9 +4250,7 @@ namespace Mono.CSharp {
 				arg_count = 0;
 			else {
 				arg_count = Arguments.Count;
-				for (int i = 0; i < arg_count; i++){
-					Argument a = (Argument) Arguments [i];
-					
+				foreach (Argument a in Arguments){
 					if (!a.Resolve (ec, loc))
 						return null;
 
@@ -4344,12 +4325,8 @@ namespace Mono.CSharp {
 
 				ArrayList args = new ArrayList ();
 				if (Arguments != null){
-					for (int i = arg_count; i > 0;){
-						--i;
-						Argument a = (Argument) Arguments [i];
-						
+					for (int i = 0; i < arg_count; i++)
 						args.Add (TypeManager.int32_type);
-					}
 				}
 				
 				Type [] arg_types = null;
@@ -5271,10 +5248,7 @@ namespace Mono.CSharp {
 			if (Arguments == null)
 				return false;
 
-			for (int i = Arguments.Count; i > 0;){
-				--i;
-				Argument a = (Argument) Arguments [i];
-				
+			foreach (Argument a in Arguments){
 				if (!a.Resolve (ec, loc))
 					return false;
 			}
