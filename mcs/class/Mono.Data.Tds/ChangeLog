@@ -1,3 +1,30 @@
+2002-11-26  Tim Coleman <tim@timcoleman.com>
+	* list:
+	* Mono.Data.Tds/TdsMetaParameter.cs:
+	* Mono.Data.Tds/TdsMetaParameterCollection.cs:
+	* Mono.Data.Tds/TdsParameterDirection.cs:
+	* Mono.Data.Tds.Protocol/ITds.cs:
+	* Mono.Data.Tds.Protocol/Tds.cs:
+	* Mono.Data.Tds.Protocol/Tds50.cs:
+	* Mono.Data.Tds.Protocol/Tds70.cs:
+	* Mono.Data.Tds.Protocol/Tds80.cs:
+	* Mono.Data.Tds.Protocol/TdsColumnType.cs:
+	* Mono.Data.Tds.Protocol/TdsComm.cs:
+	* Mono.Data.Tds.Protocol/TdsPacketColumnInfoResult.cs:
+	* Mono.Data.Tds.Protocol/TdsPacketColumnNamesResult.cs:
+	* Mono.Data.Tds.Protocol/TdsPacketColumnOrderResult.cs:
+	* Mono.Data.Tds.Protocol/TdsPacketSubType.cs:
+	* Mono.Data.Tds.Protocol/TdsPacketType.cs:
+		Restructuring around making Sybase and SQL Server
+		support both work with same interface.  In particular,
+		the bulk of parameter work is moved into the meta
+		parameter objects from the native objects.  The
+		Sybase TDS50 stuff needs intimate access to the parameters.
+		This will also allow me to eventually plonk output values
+		directly into parameters rather than through the current
+		klugey interface.
+	
+
 2002-11-24  Tim Coleman <tim@timcoleman.com>
 	* Mono.Data.Tds.Protocol/Tds.cs: Change error/
 		message conditions because they were

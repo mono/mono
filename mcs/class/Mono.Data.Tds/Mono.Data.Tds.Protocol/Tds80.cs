@@ -7,6 +7,7 @@
 // Copyright (C) 2002 Tim Coleman
 //
 
+using Mono.Data.Tds;
 using System;
 
 namespace Mono.Data.Tds.Protocol {

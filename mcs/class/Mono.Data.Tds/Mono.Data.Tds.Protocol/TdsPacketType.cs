@@ -18,6 +18,6 @@ namespace Mono.Data.Tds.Protocol {
 		Cancel = 0x6,
 		Logon70 = 0x10,
 		Logoff = 0x71,
-		Capability = 0xe2
+		Normal = 0x0f
 	}
 }

@@ -13,7 +13,7 @@ namespace Mono.Data.Tds.Protocol {
 		#region Constructors
 
 		public TdsPacketColumnOrderResult ()
-			: base (TdsPacketSubType.Order)
+			: base (TdsPacketSubType.ColumnOrder)
 		{
 		}
 

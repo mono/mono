@@ -21,7 +21,7 @@ namespace Mono.Data.Tds.Protocol {
 		#region Constructors
 
 		public TdsPacketColumnNamesResult ()
-			: base (TdsPacketSubType.ColumnNameToken)
+			: base (TdsPacketSubType.ColumnName)
 		{
 			this.list = new ArrayList ();
 		}

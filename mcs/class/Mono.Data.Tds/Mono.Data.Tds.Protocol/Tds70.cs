@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Text;
 
 namespace Mono.Data.Tds.Protocol {
         public class Tds70 : Tds
@@ -33,6 +34,71 @@ namespace Mono.Data.Tds.Protocol {
 		#endregion // Constructors
 
 		#region Methods
+
+		private string BuildExec (string sql)
+		{
+			if (Parameters != null && Parameters.Count > 0)
+				return BuildProcedureCall (String.Format ("sp_executesql N'{0}', N'{1}', ", sql, BuildPreparedParameters ()));
+			else
+				return BuildProcedureCall (String.Format ("sp_executesql N'{0}'", sql));
+		}
+
+		private string BuildParameters ()
+		{
+			StringBuilder result = new StringBuilder ();
+			foreach (TdsMetaParameter p in Parameters) {
+				if (result.Length > 0)
+					result.Append (", ");
+				result.Append (FormatParameter (p));
+			}
+			return result.ToString ();
+		}
+
+		private string BuildPreparedParameters ()
+		{
+			StringBuilder parms = new StringBuilder ();
+			foreach (TdsMetaParameter p in Parameters) {
+				if (parms.Length > 0)
+					parms.Append (", ");
+				parms.Append (p.Prepare ());
+				if (p.Direction == TdsParameterDirection.Output)
+					parms.Append (" output");
+			}
+			return parms.ToString ();
+		}
+
+		private string BuildPreparedQuery (string id)
+		{
+			return BuildProcedureCall (String.Format ("sp_execute {0},", id));
+		}
+
+		private string BuildProcedureCall (string procedure)
+		{
+			StringBuilder declare = new StringBuilder ();
+			StringBuilder select = new StringBuilder ();
+			StringBuilder set = new StringBuilder ();
+			int count = 0;
+			if (Parameters != null) {
+				foreach (TdsMetaParameter p in Parameters) {
+					if (p.Direction == TdsParameterDirection.Output) {
+						declare.Append (String.Format ("declare {0}\n", p.Prepare ()));
+						if (count == 0)
+							select.Append ("select ");
+						else
+							select.Append (", ");
+							
+						set.Append (String.Format ("set {0}=NULL\n", p.ParameterName));
+						select.Append (p.ParameterName);
+						count += 1;
+					}
+				}
+			}
+			string exec = String.Empty;
+			if (count > 0)
+				exec = "exec ";
+
+			return String.Format ("{0}{1}{2}{3} {4}\n{5}", declare.ToString (), set.ToString (), exec, procedure, BuildParameters (), select.ToString ());	
+		}
 
 		public override bool Connect (TdsConnectionParameters connectionParameters)
 		{
@@ -168,6 +234,27 @@ namespace Mono.Data.Tds.Protocol {
 			return new String (chars);
 		}
 
+		public override void ExecPrepared (string commandText, TdsMetaParameterCollection parameters, int timeout, bool wantResults)
+		{
+			Parameters = parameters;
+			ExecuteQuery (BuildPreparedQuery (commandText), timeout, wantResults);
+		}
+			
+		public override void ExecProc (string commandText, TdsMetaParameterCollection parameters, int timeout, bool wantResults)
+		{
+			Parameters = parameters;
+			ExecuteQuery (BuildProcedureCall (commandText), timeout, wantResults);
+		}
+
+		public override void Execute (string commandText, TdsMetaParameterCollection parameters, int timeout, bool wantResults)
+		{
+			Parameters = parameters;
+			string sql = commandText;
+			if (wantResults || (Parameters != null && Parameters.Count > 0))
+				sql = BuildExec (commandText);
+			ExecuteQuery (sql, timeout, wantResults);
+		}
+
                 private bool IsBlobType (TdsColumnType columnType)
 		{
 			return (columnType == TdsColumnType.Text || columnType == TdsColumnType.Image || columnType == TdsColumnType.NText);
@@ -177,7 +264,63 @@ namespace Mono.Data.Tds.Protocol {
 		{
 			return (columnType == TdsColumnType.NChar || (byte) columnType > 128);
 		}
-	
+
+		private string FormatParameter (TdsMetaParameter parameter)
+		{
+			if (parameter.Direction == TdsParameterDirection.Output)
+				return String.Format ("{0} output", parameter.ParameterName);
+
+			if (parameter.Value == null)
+				return "NULL";
+
+			switch (parameter.TypeName) {
+			case "bigint":
+			case "decimal":
+			case "float":
+			case "int":
+			case "money":
+			case "real":
+			case "smallint":
+			case "smallmoney":
+			case "tinyint":
+				return parameter.Value.ToString ();
+			case "nvarchar":
+			case "nchar":
+				return String.Format ("N'{0}'", parameter.Value.ToString ().Replace ("'", "''"));
+			case "uniqueidentifier":
+				return String.Format ("0x{0}", ((Guid) parameter.Value).ToString ("N"));
+			case "bit":
+				if (parameter.Value.GetType () == typeof (bool))
+					return (((bool) parameter.Value) ? "0x1" : "0x0");
+				return parameter.Value.ToString ();
+			case "image":
+			case "binary":
+			case "varbinary":
+				return String.Format ("0x{0}", BitConverter.ToString ((byte[]) parameter.Value).Replace ("-", "").ToLower ());
+			default:
+				return String.Format ("'{0}'", parameter.Value.ToString ().Replace ("'", "''"));
+			}
+		}
+
+		public override string Prepare (string commandText, TdsMetaParameterCollection parameters)
+		{
+			Parameters = parameters;
+
+			TdsMetaParameterCollection parms = new TdsMetaParameterCollection ();
+			TdsMetaParameter parm = new TdsMetaParameter ("@P1", "int", null);
+			parm.Direction = TdsParameterDirection.Output;
+			parms.Add (parm);
+
+			parms.Add (new TdsMetaParameter ("@P2", "nvarchar", BuildPreparedParameters ()));
+			parms.Add (new TdsMetaParameter ("@P3", "nvarchar", commandText));
+
+			ExecProc ("sp_prepare", parms, 0, true);
+			if (!NextResult () || !NextRow () || ColumnValues [0] == null)
+				throw new TdsInternalException ();
+			SkipToEnd ();	
+			return ColumnValues [0].ToString ();
+		}
+
 		protected override TdsPacketColumnInfoResult ProcessColumnInfo ()
 		{
 			TdsPacketColumnInfoResult result = new TdsPacketColumnInfoResult ();
@@ -251,6 +394,13 @@ namespace Mono.Data.Tds.Protocol {
 			}
 
 			return result;
+		}
+
+		public override void Unprepare (string statementId)
+		{
+			TdsMetaParameterCollection parms = new TdsMetaParameterCollection ();
+			parms.Add (new TdsMetaParameter ("@P1", "int", Int32.Parse (statementId)));
+			ExecProc ("sp_unprepare", parms, 0, false);
 		}
 
 		#endregion // Methods

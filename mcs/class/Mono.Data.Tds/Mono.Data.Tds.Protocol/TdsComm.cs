@@ -112,6 +112,33 @@ namespace Mono.Data.Tds.Protocol {
 		
 		#region Methods
 
+		public void Append (object o)
+		{
+			switch (o.GetType ().ToString ()) {
+			case "System.Byte":
+				Append ((byte) o);
+				return;
+			case "System.Byte[]":
+				Append ((byte[]) o);
+				return;
+			case "System.Int16":
+				Append ((short) o);
+				return;
+			case "System.Int32":
+				Append ((int) o);
+				return;
+			case "System.String":
+				Append ((string) o);
+				return;
+			case "System.Double":
+				Append ((double) o);
+				return;
+			case "System.Int64":
+				Append ((long) o);
+				return;
+			}
+		}
+
 		public void Append (byte b)
 		{
 			if (nextOutBufferIndex == outBufferLength) {
@@ -139,24 +166,12 @@ namespace Mono.Data.Tds.Protocol {
 
 		public void Append (short s)
 		{
-			if (tdsVersion < TdsVersion.tds70) {
-				Append ((byte) (((byte) (s >> 8)) & 0xff));
-				Append ((byte) (((byte) (s >> 0)) & 0xff));
-			}
-			else
-				Append (BitConverter.GetBytes (s));
+			Append (BitConverter.GetBytes (s));
 		}
 
 		public void Append (int i)
 		{
-			if (tdsVersion < TdsVersion.tds70) {
-				Append ((byte) (((byte) (i >> 24)) & 0xff));
-				Append ((byte) (((byte) (i >> 16)) & 0xff));
-				Append ((byte) (((byte) (i >> 8)) & 0xff));
-				Append ((byte) (((byte) (i >> 0)) & 0xff));
-			} 
-			else
-				Append (BitConverter.GetBytes (i));
+			Append (BitConverter.GetBytes (i));
 		}
 
 		public void Append (string s)
@@ -434,16 +449,7 @@ namespace Mono.Data.Tds.Protocol {
 		public void StartPacket (TdsPacketType type)
 		{
 			if (type != TdsPacketType.Cancel && inBufferIndex != inBufferLength)
-			{
-				// SAfe It's ok to throw this exception so that we will know there
-				//      is a design flaw somewhere, but we should empty the buffer
-				//      however. Otherwise the connection will never close (e.g. if
-				//      SHOWPLAN_ALL is ON, a resultset will be returned by commit
-				//      or rollback and we will never get rid of it). It's true
-				//      that we should find a way to actually process these packets
-				//      but for now, just dump them (we have thrown an exception).
 				inBufferIndex = inBufferLength;
-			}
 
 			packetType = type;
 			nextOutBufferIndex = headerLength;

@@ -9,7 +9,10 @@
 
 namespace Mono.Data.Tds.Protocol {
 	public enum TdsPacketSubType {
-		EnvChange = 0xe3,
+		Capability = 0xe2,
+		Dynamic = 0xe7,
+		Dynamic2 = 0xa3,
+		EnvironmentChange = 0xe3,
 		Error = 0xaa,
 		Info = 0xab,
 		EED = 0xe5,
@@ -20,16 +23,18 @@ namespace Mono.Data.Tds.Protocol {
 		Done = 0xfd,
 		DoneProc = 0xfe,
 		DoneInProc = 0xff,
-		ColumnNameToken = 0xa0,
-		ColumnInfoToken = 0xa1,
+		ColumnName = 0xa0,
+		ColumnInfo = 0xa1,
 		ColumnDetail = 0xa5,
-		Unknown0xA7 = 0xa7,
-		Unknown0xA8 = 0xa8,
+		AltName = 0xa7,
+		AltFormat = 0xa8,
 		TableName = 0xa4,
-		Order = 0xa9,
+		ColumnOrder = 0xa9,
 		Control = 0xae,
 		Row = 0xd1,
 		ColumnMetadata = 0x81,
-		RowFormat = 0xee
+		RowFormat = 0xee,
+		ParamFormat = 0xec,
+		Parameters = 0xd7
 	}
 }

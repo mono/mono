@@ -7,40 +7,73 @@
 // Copyright (C) 2002 Tim Coleman
 //
 
+using Mono.Data.Tds;
 using System;
+using System.Text;
 
 namespace Mono.Data.Tds.Protocol {
+	[MonoTODO ("FIXME: Can packetsize be anything other than 512?")]
         public class Tds50 : Tds
 	{
 		#region Fields
 
 		public static readonly TdsVersion Version = TdsVersion.tds50;
+		int packetSize;
 
 		#endregion // Fields
 
 		#region Constructors
 
 		public Tds50 (string server, int port)
-			: this (server, port, 8192, 15)
+			: this (server, port, 512, 15)
 		{
 		}
 
 		public Tds50 (string server, int port, int packetSize, int timeout)
 			: base (server, port, packetSize, timeout, Version)
 		{
+			this.packetSize = packetSize;
 		}
 
 		#endregion // Constructors
 	
 		#region Methods
 
+		public string BuildExec (string sql)
+		{
+			if (Parameters == null || Parameters.Count == 0) 
+				return sql;
+
+			StringBuilder select = new StringBuilder ();
+			StringBuilder set = new StringBuilder ();
+			StringBuilder declare = new StringBuilder ();
+			int count = 0;
+			foreach (TdsMetaParameter p in Parameters) {	
+				declare.Append (String.Format ("declare {0}\n", p.Prepare ()));
+				set.Append (String.Format ("select {0}=", p.ParameterName));
+				if (p.Direction == TdsParameterDirection.Input)
+					set.Append (FormatParameter (p));
+				else {
+					set.Append ("NULL");
+					select.Append (p.ParameterName);
+					if (count == 0)
+						select.Append ("select ");
+					else
+						select.Append (", ");
+					count += 1;
+				}
+				set.Append ("\n");
+			}	
+			return String.Format ("{0}{1}{2}\n{3}", declare.ToString (), set.ToString (), sql, select.ToString ());
+		}
+
 		public override bool Connect (TdsConnectionParameters connectionParameters)
 		{
 			if (IsConnected)
 				throw new InvalidOperationException ("The connection is already open.");
 
-			// some voodoo magic here.
-			byte[] capabilities = {0x01,0x07,0x03,109,127,0xFF,0xFF,0xFF,0xFE,0x02,0x07,0x00,0x00,0x0A,104,0x00,0x00,0x00};
+			byte[] capabilityRequest = {0x03, 0xef, 0x65, 0x41, 0xff, 0xff, 0xff, 0xd6};
+			byte[] capabilityResponse = {0x00, 0x00, 0x00, 0x06, 0x48, 0x00, 0x00, 0x08};
 
 			SetCharset (connectionParameters.Charset);
 			SetLanguage (connectionParameters.Language);
@@ -210,9 +243,12 @@ namespace Mono.Data.Tds.Protocol {
 			//Comm.Append (empty, 4, pad);
 
 			// Capabilities
-			//Comm.Append ((byte) TdsPacketType.Capability);
-			//Comm.Append ((short) 18);
-			//Comm.Append (capabilities, 18, pad);
+			Comm.Append ((byte) TdsPacketSubType.Capability);
+			Comm.Append ((short) 20);
+			Comm.Append ((byte) 0x01); // TDS_CAP_REQUEST
+			Comm.Append (capabilityRequest);
+			Comm.Append ((byte) 0x02);
+			Comm.Append (capabilityResponse);
 
 			Comm.SendPacket ();
 
@@ -222,6 +258,109 @@ namespace Mono.Data.Tds.Protocol {
 				done = (result is TdsPacketEndTokenResult);
 			}
 			return IsConnected;
+		}
+
+		public override void ExecPrepared (string id, TdsMetaParameterCollection parameters, int timeout, bool wantResults)
+		{
+			Parameters = parameters;
+			bool hasParameters = (Parameters != null && Parameters.Count > 0);
+
+			Comm.StartPacket (TdsPacketType.Normal);
+
+			Comm.Append ((byte) TdsPacketSubType.Dynamic);
+			Comm.Append ((short) (id.Length + 5));
+			Comm.Append ((byte) 0x02);                  // TDS_DYN_EXEC
+			Comm.Append ((byte) (hasParameters ? 0x01 : 0x00));
+			Comm.Append ((byte) id.Length);
+			Comm.Append (id);
+			Comm.Append ((short) 0);
+
+			if (hasParameters) {
+				SendParamFormat ();
+				SendParams ();
+			}
+
+			MoreResults = true;
+			Comm.SendPacket ();
+			CheckForData (timeout);
+			if (!wantResults)
+				SkipToEnd ();
+		}
+
+		public override void Execute (string sql, TdsMetaParameterCollection parameters, int timeout, bool wantResults)
+		{
+			Parameters = parameters;
+			ExecuteQuery (BuildExec (sql), timeout, wantResults);
+		}
+
+		private string FormatParameter (TdsMetaParameter parameter)
+		{
+			if (parameter.Direction == TdsParameterDirection.Output)
+				return String.Format ("{0} output", parameter.ParameterName);
+		
+			if (parameter.Value == null)
+				return "NULL";
+		
+			switch (parameter.TypeName) {
+			case "bigint":
+			case "decimal":
+			case "float":
+			case "int":
+			case "money":
+			case "real":
+			case "smallint":
+			case "smallmoney":
+			case "tinyint":
+				return parameter.Value.ToString ();
+			case "nvarchar":
+			case "nchar":
+				return String.Format ("N'{0}'", parameter.Value.ToString ().Replace ("'", "''"));
+			case "uniqueidentifier":
+				return String.Format ("0x{0}", ((Guid) parameter.Value).ToString ("N"));
+			case "bit":
+				if (parameter.Value.GetType () == typeof (bool))
+					return (((bool) parameter.Value) ? "0x1" : "0x0");
+				return parameter.Value.ToString ();
+			case "image":
+			case "binary":
+			case "varbinary":
+				return String.Format ("0x{0}", BitConverter.ToString ((byte[]) parameter.Value).Replace ("-", "").ToLower ());
+			default:
+				return String.Format ("'{0}'", parameter.Value.ToString ().Replace ("'", "''"));
+			}
+		}
+
+		public override string Prepare (string sql, TdsMetaParameterCollection parameters)
+		{
+			Parameters = parameters;
+
+			Random rand = new Random ();
+			StringBuilder idBuilder = new StringBuilder ();
+			for (int i = 0; i < 25; i += 1)
+				idBuilder.Append ((char) (rand.Next (26) + 65));
+			string id = idBuilder.ToString ();
+
+			StringBuilder declare = new StringBuilder ();
+
+		
+			sql = String.Format ("create proc {0} as\n{1}", id, sql);
+			short len = (short) ((id.Length) + sql.Length + 5);
+
+			Comm.StartPacket (TdsPacketType.Normal);
+			Comm.Append ((byte) TdsPacketSubType.Dynamic);
+			Comm.Append (len);
+			Comm.Append ((byte) 0x1); // PREPARE
+			Comm.Append ((byte) 0x0); // UNUSED
+			Comm.Append ((byte) id.Length);
+			Comm.Append (id);
+			Comm.Append ((short) sql.Length);
+			Comm.Append (sql);
+
+			Comm.SendPacket ();
+			MoreResults = true;
+			SkipToEnd ();
+
+			return id;
 		}
 
 		protected override TdsPacketColumnInfoResult ProcessColumnInfo ()
@@ -257,7 +396,8 @@ namespace Mono.Data.Tds.Protocol {
 				else if (IsFixedSizeColumn (columnType))
 					bufLength = LookupBufferSize (columnType);
 				else
-					bufLength = Comm.GetTdsShort ();
+					//bufLength = Comm.GetTdsShort ();
+					bufLength = Comm.GetByte ();
 
 				if (columnType == TdsColumnType.Decimal || columnType == TdsColumnType.Numeric) {
 					precision = Comm.GetByte ();
@@ -282,6 +422,84 @@ namespace Mono.Data.Tds.Protocol {
 				result[index]["ColumnType"] = columnType;
 			}
 			return result;
+		}
+
+		private void SendParamFormat ()
+		{
+			Comm.Append ((byte) TdsPacketSubType.ParamFormat);
+
+			int len = 2 + (8 * Parameters.Count);
+			TdsColumnType metaType;
+			foreach (TdsMetaParameter p in Parameters) {
+				metaType = p.GetMetaType ();
+				if (!IsFixedSizeColumn (metaType))
+					len += 1;
+				if (metaType == TdsColumnType.Numeric || metaType == TdsColumnType.Decimal)
+					len += 2;
+			}
+
+			Comm.Append ((short) len);
+			Comm.Append ((short) Parameters.Count);
+
+			foreach (TdsMetaParameter p in Parameters) {
+				string locale = String.Empty;
+				string parameterName = String.Empty;
+				int userType = 0;
+
+				byte status = 0x00;
+				if (p.IsNullable)
+					status |= 0x20;
+				if (p.Direction == TdsParameterDirection.Output)
+					status |= 0x01;
+
+				metaType = p.GetMetaType ();
+
+				Comm.Append ((byte) parameterName.Length);
+				Comm.Append (parameterName);
+				Comm.Append (status);        
+				Comm.Append (userType);
+				Comm.Append ((byte) metaType);    
+
+				if (!IsFixedSizeColumn (metaType))
+					Comm.Append ((byte) p.Size);         // MAXIMUM SIZE
+				if (metaType == TdsColumnType.Numeric || metaType == TdsColumnType.Decimal) {
+					Comm.Append (p.Precision);
+					Comm.Append (p.Scale);
+				}
+				Comm.Append ((byte) locale.Length);
+				Comm.Append (locale);
+			}
+		}
+
+		private void SendParams ()
+		{
+			Comm.Append ((byte) TdsPacketSubType.Parameters);
+
+			TdsColumnType metaType;
+			foreach (TdsMetaParameter p in Parameters) {
+				metaType = p.GetMetaType ();
+				bool isNull = (p.Value == DBNull.Value || p.Value == null);
+				if (!IsFixedSizeColumn (metaType))
+					Comm.Append ((byte) p.GetActualSize ());
+				if (!isNull)
+					Comm.Append (p.Value);
+			}
+		}
+
+		public override void Unprepare (string statementId)
+		{
+			Comm.StartPacket (TdsPacketType.Normal);
+			Comm.Append ((byte) TdsPacketSubType.Dynamic);
+			Comm.Append ((short) (3 + statementId.Length));
+			Comm.Append ((byte) 0x04);
+			Comm.Append ((byte) 0x00);
+			Comm.Append ((byte) statementId.Length);
+			Comm.Append (statementId);
+			//Comm.Append ((short) 0);
+
+			MoreResults = true;
+			Comm.SendPacket ();
+			SkipToEnd ();
 		}
 
 		#endregion // Methods

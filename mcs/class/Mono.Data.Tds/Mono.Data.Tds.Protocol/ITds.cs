@@ -7,6 +7,7 @@
 // Copyright (C) 2002 Tim Coleman
 //
 
+using Mono.Data.Tds;
 using System;
 using System.Collections;
 
@@ -57,15 +58,21 @@ namespace Mono.Data.Tds.Protocol {
 		bool Connect (TdsConnectionParameters connectionParameters);
 		void Disconnect ();
 
-		int ExecuteNonQuery (string sql);
-		int ExecuteNonQuery (string sql, int timeout);
+		void Execute (string commandText);
+		void ExecProc (string procedure);
 
-		void ExecuteQuery (string sql);
-		void ExecuteQuery (string sql, int timeout);
+		void Execute (string commandText, TdsMetaParameterCollection parameters, int timeout, bool wantResults);
+		void ExecPrepared (string statementId, TdsMetaParameterCollection parameters, int timeout, bool wantResults);
+		void ExecProc (string procedure, TdsMetaParameterCollection parameters, int timeout, bool wantResults);
 
 		bool NextResult ();
 		bool NextRow ();
+
+		string Prepare (string commandText, TdsMetaParameterCollection parameters);
+
 		void SkipToEnd ();
+
+		void Unprepare (string statementId);
 
 		#endregion
 
