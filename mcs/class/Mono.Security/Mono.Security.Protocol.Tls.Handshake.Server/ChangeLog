@@ -2,3 +2,4 @@
 
 	* TlsClientFinished.cs: Merge from HEAD.
 	* TlsClientKeyExchange.cs: Merge from HEAD.
+	*.cs: Remove duplicate license header so sources matches with HEAD.

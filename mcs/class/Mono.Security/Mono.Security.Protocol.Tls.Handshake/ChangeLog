@@ -1,3 +1,7 @@
+2004-11-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	*.cs: Remove duplicate license header so sources matches with HEAD.
+
 2003-11-17 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls/SslClientStream.cs:

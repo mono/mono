@@ -2,6 +2,7 @@
 
 	* CipherSuiteFactory.cs, Context.cs, RecordProtocol.cs: Merge from 
 	HEAD to add support for ClientHelloV2.
+	*.cs: Remove duplicate license header so sources matches with HEAD.
 
 2004-10-05  Sebastien Pouliot  <sebastien@ximian.com>
 
