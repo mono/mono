@@ -54,7 +54,7 @@ public class StringBuilderTest : TestCase {
 			AssertEquals(String.Empty, sb.ToString());
 			AssertEquals(0, sb.Length);
 			// check that capacity is not less than default
-			AssertEquals(16, sb.Capacity);
+			AssertEquals(10, sb.Capacity);
 
 			sb = new StringBuilder(42);
 			AssertEquals(String.Empty, sb.ToString());
@@ -86,16 +86,9 @@ public class StringBuilderTest : TestCase {
 		}
 
 	public void TestConstructor5() {
-		// check for exception in ctor that prevents null 'value'
-		try {
-			String someString = null;
-			sb = new StringBuilder(someString);
-		}
-		catch (ArgumentNullException) {
-			return;
-		}
-		// if we didn't catch an exception, then we have a problem Houston.
-		NUnit.Framework.Assertion.Fail("Value not allowed to be null.");
+		String someString = null;
+		sb = new StringBuilder(someString);
+		AssertEquals("Should be empty string", String.Empty, sb.ToString());
 	}
 
 	public void TestConstructor6() {

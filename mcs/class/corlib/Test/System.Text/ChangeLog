@@ -1,0 +1,3 @@
+2002-02-09  Nick Drochak  <ndrochak@gol.com>
+
+	* StringBuilderTest.cs: Fixed tests that were failing against mscorlib. 
