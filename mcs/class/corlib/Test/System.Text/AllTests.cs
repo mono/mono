@@ -22,7 +22,7 @@ namespace MonoTests.System.Text {
                                 TestSuite suite =  new TestSuite();
                                 //suite.AddTest(StringBuilderTest.Suite);
                                 suite.AddTest(ASCIIEncodingTest.Suite);
-				suite.AddTest(UTF8EncodingTest.Suite);
+				//suite.AddTest(UTF8EncodingTest.Suite);
                                 return suite;
                         }
                 }

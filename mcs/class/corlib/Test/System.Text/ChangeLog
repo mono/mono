@@ -1,3 +1,7 @@
+2002-12-12 Jackson Harper <jackson@latitudegeo.com>
+
+	* AllTests.cs: Comment out UTF8... test (it does not exist)
+
 2002-03-17  Mike Kestner  <mkestner@speakeasy.net>
 
 	* ASCIIEncodingTest.cs : New suite for ASCIIEncoding.
