@@ -1,5 +1,16 @@
 2003-02-17  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs: (Indexers.GetIndexersForType): Martin's fix used
+	DeclaredOnly because the parent indexer might have had a different
+	name, but did not loop until the top of the hierarchy was reached.
+
+	The problem this one fixes is 35492: when a class implemented an
+	indexer from an interface, we were getting the interface method
+	(which was abstract) and we were flagging an error (can not invoke
+	abstract method).
+
+	This also keeps bug 33089 functioning, and test-148 functioning.
+
 	* typemanager.cs (IsSpecialMethod): The correct way of figuring
 	out if a method is special is to see if it is declared in a
 	property or event, or whether it is one of the predefined operator

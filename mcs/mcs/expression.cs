@@ -6844,9 +6844,15 @@ namespace Mono.CSharp {
 			if (ix != null)
 				return ix;
 
-			ix = GetIndexersForTypeOrInterface (caller_type, lookup_type);
-			if (ix != null)
-				return ix;
+			Type copy = lookup_type;
+			while (copy != TypeManager.object_type){
+				ix = GetIndexersForTypeOrInterface (caller_type, copy);
+
+				if (ix != null)
+					return ix;
+
+				copy = copy.BaseType;
+			}
 
 			Type [] ifaces = TypeManager.GetInterfaces (lookup_type);
 			if (ifaces != null) {
