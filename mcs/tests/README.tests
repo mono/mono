@@ -383,6 +383,10 @@ test-216.cs:
 ------------
 Accessability bug fix #48710 on events
 
+test-216.cs
+-----------
+
+>= and <= operators; bug #48679
 
 verify-1.cs
 -----------
