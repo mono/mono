@@ -1,3 +1,9 @@
+
+Tue Jun 17 19:02:55 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: disable some optimizations if we can guess they'll cost too
+	much for a given method.
+
 2003-06-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.h mini.c: Rework last patch based on suggestions by Paolo.
