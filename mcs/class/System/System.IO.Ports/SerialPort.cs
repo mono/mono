@@ -602,6 +602,6 @@ namespace System.IO.Ports
 		public event SerialPinChangedEventHandler PinChangedEvent;
 		public event SerialReceivedEventHandler ReceivedEvent;
 	}
-};
+}
 
-#endif /* NET_2_0 */
+#endif
