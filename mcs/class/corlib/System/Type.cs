@@ -19,7 +19,7 @@ namespace System {
 	//
 	
 	public abstract class Type : MemberInfo /* IReflect */ {
-		private RuntimeTypeHandle type_handle;
+		private RuntimeTypeHandle _impl;
 
 		/// <summary>
 		///   The assembly where the type is defined.
@@ -105,7 +105,7 @@ namespace System {
 
 		public RuntimeTypeHandle TypeHandle {
 			get {
-				return type_handle;
+				return _impl;
 			}
 		}
 		

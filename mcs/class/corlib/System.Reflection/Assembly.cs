@@ -18,25 +18,19 @@ namespace System.Reflection {
 
 	public class Assembly : System.Reflection.ICustomAttributeProvider,
 		System.Security.IEvidenceFactory, System.Runtime.Serialization.ISerializable {
+		private IntPtr mono_assembly;
 
-		private string codebase;
-		private string copiedcodebase;
-		private string fullname;
-		private string location;
-		private Evidence evidence;
-		private MethodInfo entrypoint;
-	
-		public virtual string CodeBase { get {return codebase;} }
+		public virtual string CodeBase { get {return null;} }
 
-		public virtual string CopiedCodeBase { get {return copiedcodebase;} } 
+		public virtual string CopiedCodeBase { get {return null;} } 
 
-		public virtual string FullName { get {return fullname;} }
+		public virtual string FullName { get {return null;} }
 
-		public virtual MethodInfo EntryPoint { get {return entrypoint;} }
+		public virtual MethodInfo EntryPoint { get {return null;} }
 
-		public virtual Evidence Evidence { get {return evidence;} }
+		public virtual Evidence Evidence { get {return null;} }
 
-		public virtual String Location { get {return location;} }
+		public virtual String Location { get {return null;} }
 
 		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
 		{

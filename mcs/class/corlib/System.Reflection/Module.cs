@@ -18,10 +18,11 @@ namespace System.Reflection {
 		public static readonly TypeFilter FilterTypeName;
 		public static readonly TypeFilter FilterTypeNameIgnoreCase;
 
-		private Assembly assembly;
-		private string fqname;
-		private string name;
-		private string scopename;
+		private IntPtr _impl; /* a pointer to a MonoImage */
+		internal Assembly assembly;
+		internal string fqname;
+		internal string name;
+		internal string scopename;
 
 		public Assembly Assembly {get {return assembly;}}
 		public virtual string FullyQualifiedName {get {return fqname;}}

@@ -14,8 +14,6 @@ namespace System.Reflection {
 
 	public abstract class MethodBase: MemberInfo {
 
-		private CallingConventions call_conv;
-	
 		public static MethodBase GetCurrentMethod()
 		{
 			return null;
@@ -42,7 +40,7 @@ namespace System.Reflection {
 
 		public abstract RuntimeMethodHandle MethodHandle { get; }
 		public abstract MethodAttributes Attributes { get; }
-		public virtual CallingConventions CallingConvention { get {return call_conv;} }
+		public virtual CallingConventions CallingConvention { get {return CallingConventions.Standard;} }
 		public Boolean IsPublic { 
 			get {
 				int attr = (int)Attributes;

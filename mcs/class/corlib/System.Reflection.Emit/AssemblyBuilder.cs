@@ -19,8 +19,22 @@ using System.Runtime.CompilerServices;
 namespace System.Reflection.Emit {
 
 	public sealed class AssemblyBuilder : Assembly {
-		private IntPtr _impl;
+		private IntPtr dynamic_assembly;
 		private MethodInfo entry_point;
+		private ModuleBuilder[] modules;
+		internal string name;
+		private int[] table_indexes;
+
+		internal int get_next_table_index (int table, bool inc) {
+			if (table_indexes == null) {
+				table_indexes = new int [64];
+				for (int i=0; i < 64; ++i)
+					table_indexes [i] = 1;
+			}
+			if (inc)
+				return table_indexes [table]++;
+			return table_indexes [table];
+		}
 
 		public override string CodeBase {
 			get {
@@ -48,30 +62,36 @@ namespace System.Reflection.Emit {
 		{
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern ModuleBuilder defineModule (AssemblyBuilder ab,
-								  string name,
-								  string filename);
-		
 		public override ModuleBuilder DefineDynamicModule (string name)
 		{
-			return null;
+			return DefineDynamicModule (name, name, false);
 		}
 
 		public override ModuleBuilder DefineDynamicModule (string name, bool emitSymbolInfo)
 		{
-			return null;
+			return DefineDynamicModule (name, name, emitSymbolInfo);
 		}
 
 		public ModuleBuilder DefineDynamicModule(string name, string fileName)
 		{
-			return defineModule (this, name, fileName);
+			return DefineDynamicModule (name, fileName, false);
 		}
 
 		public ModuleBuilder DefineDynamicModule (string name, string fileName,
 							  bool emitSymbolInfo)
 		{
-			return null;
+			ModuleBuilder r = new ModuleBuilder (this, name, fileName);
+
+			if (modules != null) {
+				ModuleBuilder[] new_modules = new ModuleBuilder [modules.Length + 1];
+				System.Array.Copy(modules, new_modules, modules.Length);
+				new_modules [modules.Length] = r;
+				modules = new_modules;
+			} else {
+				modules = new ModuleBuilder [1];
+				modules [0] = r;
+			}
+			return r;
 		}
 
 		public IResourceWriter DefineResource (string name, string description, string fileName)

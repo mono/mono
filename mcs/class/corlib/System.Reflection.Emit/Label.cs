@@ -9,14 +9,18 @@
 
 namespace System.Reflection.Emit {
 	public struct Label {
-		public int label;
+		internal int label;
 
+		internal Label (int val) {
+			label = val;
+		}
 		public override bool Equals (object obj) {
+			/* FIXME */
 			return false;
 		}
 
 		public override int GetHashCode () {
-			return label;
+			return label.GetHashCode ();
 		}
 	}
 }

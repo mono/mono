@@ -924,6 +924,7 @@ namespace System {
 			int i = this.length;
 			if (i == 0)
 				return -1;
+			--i;
 			for (; i >= 0; i--) {
 				if (this.c_str[i] == value)
 					return i;
@@ -1323,7 +1324,6 @@ namespace System {
 			str = new char [len + 1];
 			for (i = startIndex; i < this.length; i++)
 				str[i - startIndex] = this.c_str[i];
-			str[i] = '\0';
 
 			return new String (str);
 		}

@@ -1,4 +1,21 @@
 
+Fri Nov 2 18:29:36 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* AmbiguousMatchException.cs, 
+	* Assembly.cs, Module.cs: updates.
+	* FieldInfo.cs: better compliance to the spec.
+	* MethodBase.cs: move call_conv out of the way.
+	* AssemblyBuilder.cs:  don't use internalcalls, more stuff supported.
+	* FieldBuilder.cs: implemented.
+	* ILGenerator.cs: implemented some opcode handling.
+	* Label.cs: add constructor.
+	* LocalBuilder.cs: implemented.
+	* MethodBuilder.cs: don't use internalcalls, more implemented stuff.
+	* ModuleBuilder.cs: don't use internalcalls, more meat here, too.
+	* ParameterBuilder.cs: implemented.
+	* PropertyBuilder.cs: implemented.
+	* TypeBuilder.cs: don't use internalcalls, more stuff working.
+
 Tue Sep 25 16:48:50 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* ConstructorInfo.cs, MemberFilter.cs, Module.cs: added.

@@ -1,4 +1,8 @@
 
+Fri Nov 2 18:27:58 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* DirectoryNotFoundException.cs: implemented.
+
 Tue Sep 25 18:54:06 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* File.cs: fix signatures of the Open() and OpenRead() functions

@@ -1,3 +1,13 @@
+
+Fri Nov 2 18:23:15 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* String.cs: fix a couple of bugs.
+	* AppDomain.cs: use new AppBuilder constructor.
+	* Buffer.cs, GC.cs, NonSerializedAttribute.cs,
+	NotImplementedException.cs, ObjectDisposedException.cs,
+	UnauthorizedAccessException.cs: add implementation.
+	* OverflowException.cs: fix class name.
+
 2001-10-28  Jeffrey Stedfast  <fejj@ximian.com>
 
 	* String.cs: Don't use a terminating nil char for our internal

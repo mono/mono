@@ -9,19 +9,19 @@
 
 namespace System {
 
-	public class OverflowExceptionException : ArithmeticException {
+	public class OverflowException : ArithmeticException {
 		// Constructors
-		public OverflowExceptionException ()
+		public OverflowException ()
 			: base ("Number overflow")
 		{
 		}
 
-		public OverflowExceptionException (string message)
+		public OverflowException (string message)
 			: base (message)
 		{
 		}
 
-		public OverflowExceptionException (string message, Exception inner)
+		public OverflowException (string message, Exception inner)
 			: base (message, inner)
 		{
 		}
