@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.6 $
+// $Revision: 1.7 $
 // $Modtime: $
 // $Log: Form.cs,v $
+// Revision 1.7  2004/08/23 22:10:02  pbartok
+// - Fixed handling of WM_CLOSE message
+// - Removed debug output
+//
 // Revision 1.6  2004/08/22 21:10:30  pbartok
 // - Removed OverlappedWindow style from Control, instead it's default
 //   now is child
@@ -62,11 +66,13 @@ namespace System.Windows.Forms {
 		#region Local Variables
 		private static bool	autoscale;
 		private static Size	autoscale_base_size;
+		internal bool		closing;
+		
 		#endregion	// Local Variables
 
 		#region Public Constructor & Destructor
 		public Form() {
-			Console.WriteLine("Form Constructor called");			
+			closing = false;
 			//XplatUI.Version();
 		}
 		#endregion	// Public Constructor & Destructor
@@ -137,7 +143,7 @@ namespace System.Windows.Forms {
 		protected override void WndProc(ref Message m) {
 			switch((Msg)m.Msg) {
 				case Msg.WM_CLOSE: {
-					CancelEventArgs args = new CancelEventArgs(false);
+					CancelEventArgs args = new CancelEventArgs(true);
 
 					OnClosing(args);
 
@@ -146,6 +152,8 @@ namespace System.Windows.Forms {
 						base.WndProc(ref m);
 						break;
 					}
+
+					closing = true;
 					break;
 				}
 
