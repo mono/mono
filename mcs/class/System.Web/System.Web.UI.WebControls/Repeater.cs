@@ -309,23 +309,26 @@ namespace System.Web.UI.WebControls
 			if (headerTemplate != null)
 				CreateItem (-1, ListItemType.Header, useDataSource, null);
 
-			bool even = true;
 			int index = 0;
-			foreach (object item in ds){
-				if (separatorTemplate != null && index > 0)
-					CreateItem (index - 1, ListItemType.Separator, useDataSource, null);
+			if (ds != null) {
+				bool even = true;
+				foreach (object item in ds){
+					if (separatorTemplate != null && index > 0)
+						CreateItem (index - 1, ListItemType.Separator,
+							    useDataSource, null);
 
-				RepeaterItem repeaterItem;
-				ListItemType lType;
-				if (!even && alternatingItemTemplate != null)
-					lType = ListItemType.AlternatingItem;
-				else
-					lType = ListItemType.Item;
+					RepeaterItem repeaterItem;
+					ListItemType lType;
+					if (!even && alternatingItemTemplate != null)
+						lType = ListItemType.AlternatingItem;
+					else
+						lType = ListItemType.Item;
 
-				repeaterItem = CreateItem (index, lType, useDataSource, item);
-				itemsArrayList.Add (repeaterItem);
-				index++;
-				even = !even;
+					repeaterItem = CreateItem (index, lType, useDataSource, item);
+					itemsArrayList.Add (repeaterItem);
+					index++;
+					even = !even;
+				}
 			}
 
 			if (footerTemplate != null)
