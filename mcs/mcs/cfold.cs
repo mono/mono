@@ -196,8 +196,8 @@ namespace Mono.CSharp {
 					right = ((EnumConstant) right).Child;
 			}
 
-			Type wrap_as = null;
-
+			Type wrap_as;
+			Constant result = null;
 			switch (oper){
 			case Binary.Operator.BitwiseOr:
 				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
@@ -335,7 +335,6 @@ namespace Mono.CSharp {
 				break;
 
 			case Binary.Operator.Addition:
-				Constant result;
 				bool left_is_string = left is StringConstant;
 				bool right_is_string = right is StringConstant;
 
@@ -344,6 +343,7 @@ namespace Mono.CSharp {
 				// one is a string, and the other is not, then defer
 				// to runtime concatenation
 				//
+				wrap_as = null;
 				if (left_is_string || right_is_string){
 					if (left_is_string && right_is_string)
 						return new StringConstant (
@@ -463,6 +463,7 @@ namespace Mono.CSharp {
 				// handle "E operator - (Y y, E x)"
 				// handle "U operator - (E x, E y)"
 				//
+				wrap_as = null;
 				if (left is EnumConstant){
 					if (right is EnumConstant){
 						if (left.Type == right.Type)
@@ -480,7 +481,6 @@ namespace Mono.CSharp {
 					wrap_as = right.Type;
 				}
 
-				result = null;
 				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
 				if (left == null || right == null)
 					return null;
