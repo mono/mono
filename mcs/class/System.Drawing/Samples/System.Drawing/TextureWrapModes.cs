@@ -11,6 +11,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
 namespace MonoSamples.System.Drawing
 {
@@ -77,7 +78,7 @@ namespace MonoSamples.System.Drawing
 		public void SaveDrawing ()
 		{
 			// save the bmp
-			bmp.Save ("TextureWrapModes.bmp");
+			bmp.Save ("TextureWrapModes.png", ImageFormat.Png);
 		}
 		
 		// Main to draw the things
@@ -87,7 +88,7 @@ namespace MonoSamples.System.Drawing
 			// sufficient to hold all the test results.
 			// TextureWrapModes (imgName, width, height, top, spacing)
 
-			TextureWrapModes twm = new TextureWrapModes ("horse.bmp", 650,
+			TextureWrapModes twm = new TextureWrapModes ("horse.png", 650,
 									1850, 0, 50);
  			
  			// Draw different wrapmodes
