@@ -15,9 +15,9 @@ System.Xml/XmlAdapter.cs
 System.Xml/XmlUpdateEventArgs.cs
 System.Xml.Query/SqlQueryOptions.cs
 System.Xml.Query/SqlQueryPlan.cs
-System.Xml.Query/XmlViewSchema.cs
-System.Xml.Query/XmlViewSchemaDictionary.cs
-System.Xml.Query/XQueryProcessor.cs
+System.Xml.Query/XmlMapping.cs
+System.Xml.Query/XmlMappingDictionary.cs
+System.Xml.Query/XQueryCommand.cs
 System.Data.Mapping/ConditionCollection.cs
 System.Data.Mapping/Condition.cs
 System.Data.Mapping/DataSourceCollection.cs
