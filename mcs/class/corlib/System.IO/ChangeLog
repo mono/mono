@@ -1,3 +1,9 @@
+2003-02-17  Dick Porter  <dick@ximian.com>
+
+	* FileStream.cs: Don't close the handle if the stream doesn't own
+	it.  Patch from Raymond Penners (raymond@dotsphinx.com), bug
+	35623.
+
 2003-02-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* FileStream.cs (Write): flush after writing the last segment as well.

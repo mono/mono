@@ -356,7 +356,7 @@ namespace System.IO
 		}
 
 		protected virtual void Dispose (bool disposing) {
-			if (handle != MonoIO.InvalidHandle) {
+			if (owner && handle != MonoIO.InvalidHandle) {
 				FlushBuffer ();
 
 				MonoIOError error;
