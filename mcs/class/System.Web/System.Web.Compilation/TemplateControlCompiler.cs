@@ -938,6 +938,9 @@ namespace System.Web.Compilation
 
 				if (c.IsKnownColor){
 					CodeFieldReferenceExpression expr = new CodeFieldReferenceExpression ();
+					if (c.IsSystemColor)
+						type = typeof (SystemColors);
+
 					expr.TargetObject = new CodeTypeReferenceExpression (type);
 					expr.FieldName = c.Name;
 					return expr;
