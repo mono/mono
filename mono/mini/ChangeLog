@@ -1,3 +1,7 @@
+2004-09-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* exceptions-ppc.c (mono_arch_find_jit_info): Fix memory leak.
+
 2004-09-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* inssel-amd64.brg: Remove leftover 32 bit rule.
