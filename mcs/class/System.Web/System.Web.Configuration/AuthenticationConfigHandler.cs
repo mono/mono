@@ -42,22 +42,26 @@ namespace System.Web.Configuration
 #if NET_1_1
 					string att = AttValue ("requireSSL", child);
 					if (att != null) {
-						if (att == "true")
+						if (att == "true") {
 							config.RequireSSL = true;
-
-						if (att != "false")
+						} else if (att == "false") {
+							config.RequireSSL = false;
+						} else {
 							HandlersUtil.ThrowException
 								("Invalid value for RequireSSL", child);
+						}
 					}
 
 					att = AttValue ("slidingExpiration", child);
 					if (att != null) {
-						if (att == "true")
+						if (att == "true") {
 							config.SlidingExpiration = true;
-
-						if (att != "false")
+						} else if (att == "false") {
+							config.SlidingExpiration = false;
+						} else {
 							HandlersUtil.ThrowException
 								("Invalid value for SlidingExpiration", child);
+						}
 					}
 #endif
 
