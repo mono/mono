@@ -18,7 +18,7 @@ $(symlinks):
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 
 # The write check is to foil 'make distcheck'
-all-local: $(symlinks) mono-wrapper
+all-local: $(symlinks) mono-wrapper wrapper-config
 	if test -w $(mcs_topdir); then :; else chmod -R +w $(mcs_topdir); fi
 	d=`pwd`; cd $(mcs_topdir) && $(MAKE) RUNTIME=$$d/mono-wrapper PROFILES='$(build_profiles)' all-profiles
 
@@ -54,9 +54,9 @@ clean-local:
 	-rm -fr $(symlinks) $(tmpinst) .wapi
 
 if INSTALL_2_0
-TEST_SUPPORT_FILES = $(tmpinst)/config $(tmpinst)/bin/mono $(tmpinst)/bin/mcs $(tmpinst)/bin/mbas $(tmpinst)/bin/ilasm $(tmpinst)/bin/gmcs
+TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/mcs $(tmpinst)/bin/mbas $(tmpinst)/bin/ilasm $(tmpinst)/bin/gmcs
 else
-TEST_SUPPORT_FILES = $(tmpinst)/config $(tmpinst)/bin/mono $(tmpinst)/bin/mcs $(tmpinst)/bin/mbas $(tmpinst)/bin/ilasm
+TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/mcs $(tmpinst)/bin/mbas $(tmpinst)/bin/ilasm
 endif
 
 # List of NUnit testcases that should be 100% pass
@@ -84,32 +84,31 @@ mcs-do-test-profiles:
 
 mcs-do-run-test-profiles: test-support-files
 	d=`pwd`; PATH=$$d/$(tmpinst)/bin:$$PATH ; export PATH ; \
-	( cd $(mcs_topdir) && $(MAKE) RUNTIME=$$d/$(tmpinst)/bin/mono PROFILES='$(build_profiles)' run-test-profiles ) || ret=false ; \
+	( cd $(mcs_topdir) && $(MAKE) RUNTIME=$$d/mono-wrapper PROFILES='$(build_profiles)' run-test-profiles ) || ret=false ; \
 	rm -fr $(tmpinst); $$ret
 
 # Use --compile-all as a poor man's PEVerify to detect invalid IL
-mcs-compileall: test-support-files
+mcs-compileall: mono-wrapper wrapper-config
 	save_MONO_PATH=$$MONO_PATH; mcs_topdir=`cd $(mcs_topdir) && pwd`; ret=:; \
 	for profile in $(build_profiles); do \
 	  MONO_PATH="$$mcs_topdir/class/lib/$$profile:$$save_MONO_PATH"; export MONO_PATH; \
 	  for i in $(mcs_topdir)/class/lib/$$profile/*.dll $(mcs_topdir)/class/lib/$$profile/*.exe; do \
-	    if ./$(tmpinst)/bin/mono --compile-all $$i; then \
+	    if ./mono-wrapper --compile-all $$i; then \
 	      echo $$i verified OK; \
 	    else \
 	      echo $$i verification failed; ret=false; \
 	    fi; done; done; \
-	rm -fr $(tmpinst); $$ret
+	$$ret
 
 check-local: mcs-compileall mcs-do-test-profiles
 	$(MAKE) $(test_select) mcs-do-run-test-profiles
 
-$(tmpinst)/config: ../data/config
+wrapper-config: ../data/config
 	d=`cd ../support && pwd`; \
 	sed 's,target="libMonoPosixHelper[^"]*",target="'$$d/libMonoPosixHelper.la'",' ../data/config > $@
 
-$(tmpinst)/bin/mono: mono-wrapper $(tmpinst)/config
-	sed 's,/data/config",/runtime/$(tmpinst)/config",' mono-wrapper > $@
-	chmod +x $@
+$(tmpinst)/bin/mono: mono-wrapper wrapper-config
+	cp mono-wrapper $@
 
 $(tmpinst)/bin/mcs:
 	$(MAKE) test-support-file target=$@ file=class/lib/default/mcs.exe
