@@ -7,20 +7,21 @@ DIRS =	corlib				\
 	System.XML			\
 	System.Drawing			\
 	System.EnterpriseServices	\
-	#System.Data			\
+	Mono.Data.Tds			\
+	System.Data			\
 	System.Web			\
 	System.Web.Services		\
 	System.Runtime.Remoting		\
 	System.Runtime.Serialization.Formatters.Soap \
 	System.Configuration.Install 	\
 	Mono.CSharp.Debugger		\
-	#Mono.Data.MySql			\
-	#Mono.Data.SqliteClient		\
+	Mono.Data.MySql			\
+	Mono.Data.SqliteClient		\
+	Mono.Data.SybaseClient		\
+	Mono.Data.TdsClient		\
 	Mono.PEToolkit			\
 	Accessibility			\
-	Microsoft.VisualBasic
-
-#	Mono.Data.TdsClient		
+	Microsoft.VisualBasic		
 
 default: all
 
