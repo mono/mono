@@ -37,7 +37,7 @@ using System.IO;
 
 namespace System.Runtime.Remoting.Messaging 
 {
-	public class ReturnMessage : IMethodReturnMessage, IMethodMessage, IInternalMessage 
+	public class ReturnMessage : IMethodReturnMessage, IMethodMessage, IMessage, IInternalMessage 
 	{
 		object[] _outArgs;
 		object[] _args;
