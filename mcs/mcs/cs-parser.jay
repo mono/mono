@@ -568,7 +568,8 @@ attribute
 	  }
 	  opt_attribute_arguments
 	  {
-		if (current_attr_target == "assembly" || current_attr_target == "module")
+		if (current_attr_target == "assembly" || current_attr_target == "module"
+		    || (global_attrs_enabled && current_attr_target == null))
 			$$ = new GlobalAttribute (current_container, current_attr_target, (string) ($1).ToString (), (ArrayList) $3, (Location) $2);
 		else
 			$$ = new Attribute (current_attr_target, (string) ($1).ToString (), (ArrayList) $3, (Location) $2);

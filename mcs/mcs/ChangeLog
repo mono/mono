@@ -1,3 +1,33 @@
+2004-05-19  Raja R Harinath  <rharinath@novell.com>
+
+	* cs-parser.jay (attribute): Create a GlobalAttribute for the case
+	of a top-level attribute without an attribute target.
+	* attribute.cs (Attribute.Error_AttributeConstructorMismatch): 
+	Make non-static.
+	(Attribute.Conditional_GetConditionName), 
+	(Attribute.Obsolete_GetObsoleteMessage): Update.
+	(Attribute.IndexerName_GetIndexerName): New.  Attribute-specific
+	part of ScanForIndexerName.
+	(Attribute.CanIgnoreInvalidAttribute): New function.
+	(Attribute.ScanForIndexerName): Move to ...
+	(Attributes.ScanForIndexerName): ... here.
+	(Attributes.Attrs): Rename from now-misnamed AttributeSections.
+	(Attributes.Search): New internal variant that can choose not to
+	complain if types aren't resolved.  The original signature now
+	complains.
+	(Attributes.GetClsCompliantAttribute): Use internal variant, with
+	complaints suppressed.
+	(GlobalAttribute.CheckAttributeType): Overwrite ds.NamespaceEntry
+	only if it not useful.
+	(CanIgnoreInvalidAttribute): Ignore assembly attribute errors at
+	top-level for attributes that are shared between the assembly
+	and a top-level class.
+	* parameter.cs (ImplicitParameter): Rename from ParameterAtribute.
+	* class.cs: Update to reflect changes.
+	(DefineIndexers): Fuse loops.
+	* codegen.cs (GetAssemblyName): Update to reflect changes.  Accept
+	a couple more variants of attribute names.
+
 2004-05-18  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix bug #52585 (Implemented explicit attribute declaration)

@@ -427,7 +427,7 @@ namespace Mono.CSharp {
 			}
 			
 			base.ApplyAttributeBuilder (a, cb);
-			} 
+		} 
 
 		public override AttributeTargets AttributeTargets {
 			get {
@@ -1001,12 +1001,6 @@ namespace Mono.CSharp {
 
 			// Invariant maintained by AddIndexer(): All explicit interface indexers precede normal indexers
 			bool seen_normal_indexers = false;
-			foreach (Indexer i in Indexers) {
-				if (i.ExplicitInterfaceName == null)
-					seen_normal_indexers = true;
-				else if (seen_normal_indexers)
-					throw new Exception ("Internal Error: 'Indexers' array not sorted properly.");
-			}
 
 			foreach (Indexer i in Indexers) {
 				string name;
@@ -1015,20 +1009,19 @@ namespace Mono.CSharp {
 
 				name = i.IndexerName;
 
-				if (i.InterfaceType != null)
-					continue;
-
-				if (class_indexer_name == null){
-					class_indexer_name = name;
+				if (i.InterfaceType != null) {
+					if (seen_normal_indexers)
+						throw new Exception ("Internal Error: 'Indexers' array not sorted properly.");
 					continue;
 				}
-				
-				if (name == class_indexer_name)
-					continue;
-				
-				Report.Error (
-					668, "Two indexers have different names, " +
-					" you should use the same name for all your indexers");
+
+				seen_normal_indexers = true;
+
+				if (class_indexer_name == null)
+					class_indexer_name = name;
+				else if (name != class_indexer_name)
+					Report.Error (668, "Two indexers have different names, " +
+						      " you should use the same name for all your indexers");
 			}
 
 			if (seen_normal_indexers && class_indexer_name == null)
@@ -3495,10 +3488,10 @@ namespace Mono.CSharp {
 
 		public virtual bool ApplyAttributes (Attributes opt_attrs, bool is_method, DeclSpace ds)
 		{
-			if ((opt_attrs == null) || (opt_attrs.AttributeSections == null))
+			if ((opt_attrs == null) || (opt_attrs.Attrs == null))
 				return true;
 
-			foreach (Attribute a in opt_attrs.AttributeSections) {
+			foreach (Attribute a in opt_attrs.Attrs) {
 					Type attr_type = a.ResolveType (ds, true);
 					if (attr_type == TypeManager.conditional_attribute_type) {
 						if (!ApplyConditionalAttribute (a))
@@ -4676,7 +4669,7 @@ namespace Mono.CSharp {
 		public class SetMethod: PropertyMethod {
 
 			static string[] attribute_targets = new string [] { "method", "param", "return" };
-			ParameterAtribute param_attr;
+			ImplicitParameter param_attr;
 
 			public SetMethod (MethodCore method, Accessor accessor):
 				base (method, accessor)
@@ -4687,7 +4680,7 @@ namespace Mono.CSharp {
 			{
 				if (a.Target == "param") {
 					if (param_attr == null)
-						param_attr = new ParameterAtribute (method_data.MethodBuilder);
+						param_attr = new ImplicitParameter (method_data.MethodBuilder);
 
 					param_attr.ApplyAttributeBuilder (a, cb);
 					return;
@@ -5422,7 +5415,7 @@ namespace Mono.CSharp {
 			protected MethodData method_data;
 			Block block;
 			ReturnParameter return_attributes;
-			ParameterAtribute param_attr;
+			ImplicitParameter param_attr;
 
 			static string[] attribute_targets = new string [] { "method", "param", "return" };
 
@@ -5451,7 +5444,7 @@ namespace Mono.CSharp {
 
 				if (a.Target == "param") {
 					if (param_attr == null)
-						param_attr = new ParameterAtribute (method_data.MethodBuilder);
+						param_attr = new ImplicitParameter (method_data.MethodBuilder);
 
 					param_attr.ApplyAttributeBuilder (a, cb);
 					return;
@@ -5822,7 +5815,9 @@ namespace Mono.CSharp {
 			if (!DoDefine (container))
 				return false;
 
-			IndexerName = Attribute.ScanForIndexerName (ec, OptAttributes);
+			if (OptAttributes != null)
+				IndexerName = OptAttributes.ScanForIndexerName (ec);
+
 			if (IndexerName == null)
 				IndexerName = "Item";
 			else {
@@ -5833,9 +5828,7 @@ namespace Mono.CSharp {
 				
 				if (IsExplicitImpl) {
 					Report.Error (592, Location,
-						      "Attribute 'IndexerName' is not valid on explicit " +
-						      "implementations.");
-					
+						      "Attribute 'IndexerName' is not valid on explicit implementations.");
 					return false;
 				}
 			}
