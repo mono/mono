@@ -1,3 +1,7 @@
+2005-02-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* pinvoke2.cs: Fix char array marshalling test so it works under MS.NET.
+
 2005-02-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Makefile.am (libtest_la_LDFLAGS): Add -Wl,--kill-at so the names exported from the DLL
