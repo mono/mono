@@ -21,8 +21,28 @@ namespace Mono.Xml.Schema
 		Collapse
 	}
 
+	public enum XsdOrderedFacet
+	{
+		False,
+		Partial,
+		Total
+	}
+
+	public abstract class XsdAnySimpleType : XmlSchemaDatatype
+	{
+		// Fundamental Facets
+		public abstract bool Bounded { get; }
+
+		public abstract bool Finite { get; }
+
+		public abstract bool Numeric { get; }
+
+		public abstract XsdOrderedFacet Ordered { get; }
+
+	}
+
 	// xs:string
-	public class XsdString : XmlSchemaDatatype
+	public class XsdString : XsdAnySimpleType
 	{
 		internal XsdString ()
 		{
@@ -43,17 +63,17 @@ namespace Mono.Xml.Schema
 		}
 
 		// Fundamental Facets
-		public virtual bool Bounded {
+		public override bool Bounded {
 			get { return false; }
 		}
-		public virtual bool Finite {
+		public override bool Finite {
 			get { return false; }
 		}
-		public virtual bool Numeric {
+		public override bool Numeric {
 			get { return false; }
 		}
-		public virtual bool Ordered {
-			get { return false; }
+		public override XsdOrderedFacet Ordered {
+			get { return XsdOrderedFacet.False; }
 		}
 
 		// Constraining Facets
@@ -287,7 +307,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:NOTATION
-	public class XsdNotation : XmlSchemaDatatype
+	public class XsdNotation : XsdAnySimpleType
 	{
 		internal XsdNotation ()
 		{
@@ -308,17 +328,17 @@ namespace Mono.Xml.Schema
 		}
 
 		// Fundamental Facets
-		public virtual bool Bounded {
+		public override bool Bounded {
 			get { return false; }
 		}
-		public virtual bool Finite {
+		public override bool Finite {
 			get { return false; }
 		}
-		public virtual bool Numeric {
+		public override bool Numeric {
 			get { return false; }
 		}
-		public virtual bool Ordered {
-			get { return false; }
+		public override XsdOrderedFacet Ordered {
+			get { return XsdOrderedFacet.False; }
 		}
 
 		// Constraining Facets
@@ -332,13 +352,190 @@ namespace Mono.Xml.Schema
 		public ICollection Enumeration;
 	}
 
-	// xs:unsignedByte
-	public class XsdUnsignedByte : XmlSchemaDatatype
+	// xs:decimal
+	public class XsdDecimal : XsdAnySimpleType
 	{
+		internal XsdDecimal ()
+		{
+		}
+
 		public override XmlTokenizedType TokenizedType {
 			get { return XmlTokenizedType.CDATA; }
 		}
 
+		public override Type ValueType {
+			get { return typeof (decimal); }
+		}
+
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return XmlConvert.ToDecimal (this.Normalize (s));
+		}
+
+		// Fundamental Facets
+		public override bool Bounded {
+			get { return false; }
+		}
+		public override bool Finite {
+			get { return false; }
+		}
+		public override bool Numeric {
+			get { return true; }
+		}
+		public override XsdOrderedFacet Ordered {
+			get { return XsdOrderedFacet.Total; }
+		}
+
+		// Constraining Facets
+		public bool HasLengthFacet;
+		public bool HasMaxLengthFacet;
+		public bool HasMinLengthFacet;
+		public int Length;
+		public int MaxLength;
+		public int MinLength;
+		public string Pattern;
+		public ICollection Enumeration;
+	}
+
+	// xs:integer
+	public class XsdInteger : XsdDecimal
+	{
+		// Here it may be bigger than int's (or long's) MaxValue.
+		public override Type ValueType {
+			get { return typeof (decimal); }
+		}
+
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return XmlConvert.ToDecimal (Normalize (s));
+		}
+	}
+
+	// xs:Long
+	public class XsdLong : XsdNonNegativeInteger
+	{
+		public override Type ValueType {
+			get { return typeof (long); }
+		}
+
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return XmlConvert.ToInt64 (Normalize (s));
+		}
+	}
+
+	// xs:Int
+	public class XsdInt : XsdLong
+	{
+		public override Type ValueType {
+			get { return typeof (int); }
+		}
+
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return XmlConvert.ToInt32 (Normalize (s));
+		}
+	}
+
+
+	// xs:Short
+	public class XsdShort : XsdInt
+	{
+		public override Type ValueType {
+			get { return typeof (short); }
+		}
+
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return XmlConvert.ToInt16 (Normalize (s));
+		}
+	}
+
+	// xs:Byte
+	public class XsdByte : XsdShort
+	{
+		public override Type ValueType {
+			get { return typeof (byte); }
+		}
+
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return XmlConvert.ToByte (Normalize (s));
+		}
+	}
+
+	// xs:nonNegativeInteger
+	[CLSCompliant (false)]
+	public class XsdNonNegativeInteger : XsdInteger
+	{
+		public override Type ValueType {
+			get { return typeof (decimal); }
+		}
+
+		[CLSCompliant (false)]
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return XmlConvert.ToDecimal (Normalize (s));
+		}
+	}
+
+	// xs:unsignedLong
+	[CLSCompliant (false)]
+	public class XsdUnsignedLong : XsdNonNegativeInteger
+	{
+		public override Type ValueType {
+			get { return typeof (ulong); }
+		}
+
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return XmlConvert.ToUInt64 (Normalize (s));
+		}
+	}
+
+	// xs:unsignedInt
+	[CLSCompliant (false)]
+	public class XsdUnsignedInt : XsdUnsignedLong
+	{
+		public override Type ValueType {
+			get { return typeof (uint); }
+		}
+
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return XmlConvert.ToUInt32 (Normalize (s));
+		}
+	}
+
+
+	// xs:unsignedShort
+	[CLSCompliant (false)]
+	public class XsdUnsignedShort : XsdUnsignedInt
+	{
+		public override Type ValueType {
+			get { return typeof (ushort); }
+		}
+
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return XmlConvert.ToUInt16 (Normalize (s));
+		}
+	}
+
+	// xs:unsignedByte
+	[CLSCompliant (false)]
+	public class XsdUnsignedByte : XsdUnsignedShort
+	{
 		public override Type ValueType {
 			get { return typeof (byte); }
 		}
@@ -347,6 +544,50 @@ namespace Mono.Xml.Schema
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
 			return XmlConvert.ToByte(Normalize (s));
+		}
+	}
+
+	// xs:positiveInteger
+	public class XsdPositiveInteger : XsdNonNegativeInteger
+	{
+		// It returns decimal, instead of int or long.
+		// Maybe MS developers thought about big integer...
+		public override Type ValueType {
+			get { return typeof (decimal); }
+		}
+
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return XmlConvert.ToDecimal (Normalize (s));
+		}
+	}
+
+	// xs:nonPositiveInteger
+	public class XsdNonPositiveInteger : XsdInteger
+	{
+		public override Type ValueType {
+			get { return typeof (decimal); }
+		}
+
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return XmlConvert.ToDecimal (Normalize (s));
+		}
+	}
+
+	// xs:negativeInteger
+	public class XsdNegativeInteger : XsdNonPositiveInteger
+	{
+		public override Type ValueType {
+			get { return typeof (decimal); }
+		}
+
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return XmlConvert.ToDecimal (Normalize (s));
 		}
 	}
 

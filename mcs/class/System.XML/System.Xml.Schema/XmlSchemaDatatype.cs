@@ -55,12 +55,11 @@ namespace System.Xml.Schema
 		}
 
 		//TODO: This should return all appropriate inbuilt type
-		internal static XmlSchemaDatatype GetType (XmlQualifiedName qname)
+		internal static XmlSchemaDatatype FromName (XmlQualifiedName qname)
 		{
-			if (qname.Namespace == "http://www.w3.org/2001/XMLSchema" ||
-				qname.Namespace == String.Empty)
-				return FromName (qname.Name);
-			throw new NotImplementedException ();
+			if (qname.Namespace != XmlSchema.Namespace)
+				throw new InvalidOperationException ("Namespace " + XmlSchema.Namespace + " is required.");
+			return FromName (qname.Name);
 		}
 
 		//TODO: This should return all appropriate inbuilt type
@@ -95,8 +94,34 @@ namespace System.Xml.Schema
 				return datatypeEntities;
 			case "NOTATION":
 				return datatypeNotation;
+			case "decimal":
+				return datatypeDecimal;
+			case "integer":
+				return datatypeInteger;
+			case "long":
+				return datatypeLong;
+			case "int":
+				return datatypeInt;
+			case "short":
+				return datatypeShort;
+			case "byte":
+				return datatypeByte;
+			case "nonPositiveInteger":
+				return datatypeNonPositiveInteger;
+			case "negativeInteger":
+				return datatypeNegativeInteger;
+			case "nonNegativeInteger":
+				return datatypeNonNegativeInteger;
+			case "unsignedLong":
+				return datatypeUnsignedLong;
+			case "unsignedInt":
+				return datatypeUnsignedInt;
+			case "unsignedShort":
+				return datatypeUnsignedShort;
 			case "unsignedByte":
-				return datatypeUnsignedBye;
+				return datatypeUnsignedByte;
+			case "positiveInteger":
+				return datatypePositiveInteger;
 			default:
 				throw new NotImplementedException ("Unknown type: " + localName);
 			}
@@ -116,7 +141,19 @@ namespace System.Xml.Schema
 		private static XsdEntity datatypeEntity = new XsdEntity ();
 		private static XsdEntities datatypeEntities = new XsdEntities ();
 		private static XsdNotation datatypeNotation = new XsdNotation ();
-		private static XsdUnsignedByte datatypeUnsignedBye = new XsdUnsignedByte ();
-		
+		private static XsdDecimal datatypeDecimal = new XsdDecimal ();
+		private static XsdInteger datatypeInteger = new XsdInteger ();
+		private static XsdLong datatypeLong = new XsdLong ();
+		private static XsdInt datatypeInt = new XsdInt ();
+		private static XsdShort datatypeShort = new XsdShort ();
+		private static XsdByte datatypeByte = new XsdByte ();
+		private static XsdNonNegativeInteger datatypeNonNegativeInteger = new XsdNonNegativeInteger ();
+		private static XsdPositiveInteger datatypePositiveInteger = new XsdPositiveInteger ();
+		private static XsdUnsignedLong datatypeUnsignedLong = new XsdUnsignedLong ();
+		private static XsdUnsignedInt datatypeUnsignedInt = new XsdUnsignedInt ();
+		private static XsdUnsignedShort datatypeUnsignedShort = new XsdUnsignedShort ();
+		private static XsdUnsignedByte datatypeUnsignedByte = new XsdUnsignedByte ();
+		private static XsdNonPositiveInteger datatypeNonPositiveInteger = new XsdNonPositiveInteger ();
+		private static XsdNegativeInteger datatypeNegativeInteger = new XsdNegativeInteger ();
 	}
 }

@@ -1,3 +1,9 @@
+2003-07-19  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* BuiltInDatatypes.cs, XmlSchemaDatatype.cs :
+	  Added decimal and its derived datatypes.
+	  Added abstract XsdAnySimpleType.
+
 2003-07-15  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* BuiltInDatatype.cs,
