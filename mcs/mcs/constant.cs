@@ -680,7 +680,12 @@ namespace Mono.CSharp {
 
 		static public void EmitLong (ILGenerator ig, long l)
 		{
-			ig.Emit (OpCodes.Ldc_I8, l);
+			if ((l >> 32) == 0){
+				IntLiteral.EmitInt (ig, unchecked ((int) l));
+				ig.Emit (OpCodes.Conv_I8);
+			} else {
+				ig.Emit (OpCodes.Ldc_I8, l);
+			}
 		}
 
 		public override string AsString ()
