@@ -83,6 +83,7 @@ namespace System.Windows.Forms {
 		private static int		wm_no_taskbar;		// X Atom
 		private static int		wm_state_above;		// X Atom
 		private static int		atom;			// X Atom
+		private static int		wm_state_modal;		// X Atom
 		private static int		net_wm_state;		// X Atom
 		private static int		async_method;
 		private static int		post_message;
@@ -359,6 +360,8 @@ namespace System.Windows.Forms {
 				net_wm_state=XInternAtom(display_handle, "_NET_WM_STATE", false);
 				wm_no_taskbar=XInternAtom(display_handle, "_NET_WM_STATE_NO_TASKBAR", false);
 				wm_state_above=XInternAtom(display_handle, "_NET_WM_STATE_ABOVE", false);
+				wm_state_modal = XInternAtom(display_handle, "_NET_WM_STATE_MODAL", false);
+
 				atom=XInternAtom(display_handle, "ATOM", false);
 				async_method = XInternAtom(display_handle, "_SWF_AsyncAtom", false);
 				post_message = XInternAtom (display_handle, "_SWF_PostMessageAtom", false);
@@ -691,8 +694,18 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SetModal(IntPtr handle, bool Modal) {
-			// We need to use the Motif window manager hints to build modal stuff; see freedesktop.org
-			throw new NotImplementedException("Finish me");
+			XEvent	xevent = new XEvent();
+
+			xevent.ClientMessageEvent.type = XEventName.ClientMessage;
+			xevent.ClientMessageEvent.serial = 0;
+			xevent.ClientMessageEvent.send_event = true;
+			xevent.ClientMessageEvent.window = handle;
+			xevent.ClientMessageEvent.message_type = (IntPtr) net_wm_state;
+			xevent.ClientMessageEvent.format = 32;
+			xevent.ClientMessageEvent.ptr1 = (IntPtr) (Modal ? NetWindowManagerState.Add : NetWindowManagerState.Remove);
+			xevent.ClientMessageEvent.ptr2 = (IntPtr) wm_state_modal;
+
+			XSendEvent(DisplayHandle, root_window, false, EventMask.SubstructureRedirectMask | EventMask.SubstructureNotifyMask, ref xevent);
 		}
 
 		internal override void Invalidate (IntPtr handle, Rectangle rc, bool clear) {
