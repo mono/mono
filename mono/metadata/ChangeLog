@@ -1,3 +1,15 @@
+2004-07-12  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.c (mono_debug_init): Don't take a `MonoDomain *'.
+	This function must be called before initializing the runtime.
+	(mono_debug_init_1): New function; call this after initializing
+	the runtime, but before loading the assembly.  It tells the
+	debugger to load corlib and the builtin types.
+
+	* mono-debug-debugger.c: Did some larger changes in the debugging
+	code; support recursive class declarations, make sure we actually
+	add all classes.
+
 2004-07-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* debug-helpers.c: undo my previous patch and fixed the real issue in
