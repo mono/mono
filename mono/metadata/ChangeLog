@@ -1,11 +1,17 @@
+2005-02-06  Miguel de Icaza  <miguel@novell.com>
+
+	* loader.c (method_from_memberref): Improve error reporting,
+	produce the class name instead of the typeref/typedef index. 
+
 2005-02-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_marshal_get_stfld_remote_wrapper): Fix wrapper type.
 
 2005-02-05  Zoltan Varga  <vargaz@freemail.hu>
 
-	* loader.c (mono_lookup_pinvoke_call): Allow for combination of stdcall and charset name mangling.
-	Reorganize the code and add some tracing stuff.
+	* loader.c (mono_lookup_pinvoke_call): Allow for combination of
+	stdcall and charset name mangling.  Reorganize the code and add
+	some tracing stuff.
 
 2005-02-05  Ben Maurer  <bmaurer@ximian.com>
 
