@@ -11,7 +11,7 @@ using System.ComponentModel;
 
 namespace Microsoft.VisualBasic {
 	[EditorBrowsable(EditorBrowsableState.Never)] 
-	[StructLayoutAttribute(LayoutKind.Sequential)] 
+	[MonoTODO]
 	public struct TabInfo {
 		// Declarations
 		public System.Int16 Column;

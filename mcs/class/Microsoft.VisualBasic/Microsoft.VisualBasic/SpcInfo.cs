@@ -8,7 +8,7 @@
 //
 namespace Microsoft.VisualBasic {
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
-	[System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Sequential)] 
+	[MonoTODO]
 	public struct SpcInfo {
 		// Declarations
 		public System.Int16 Count;
