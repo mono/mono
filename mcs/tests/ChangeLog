@@ -1,5 +1,9 @@
 2004-06-11  Martin Baulig  <martin@ximian.com>
 
+	* gen-56.cs: New test from #58307.
+
+2004-06-11  Martin Baulig  <martin@ximian.com>
+
 	* test-269.cs: Another varargs test.
 
 2004-06-11  Raja R Harinath  <rharinath@novell.com>
