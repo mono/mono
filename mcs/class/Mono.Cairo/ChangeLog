@@ -1,0 +1,6 @@
+2003-08-09  Duncan Mak  <duncan@ximian.com>
+
+	* Mono.Cairo.Cairo.cs:
+	* Mono.Cairo.CairoObject.cs:
+	* Mono.Cairo.CairoMatrixObject.cs: 
+	* Mono.Cairo.CairoSurfaceObject.cs: Added Cairo binding.
