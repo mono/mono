@@ -265,7 +265,7 @@ namespace System {
 
 		public bool IsNotPublic {
 			get {
-				return !IsPublic;
+				return (Attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NotPublic;
 			}
 		}
 

@@ -1,3 +1,10 @@
+2003-12-24 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* Type.cs (IsNotPublic): One would normally assume that
+	IsNotPublic == !IsPublic, but this is not the case (note to MS,
+	make better names ;-). Fixes #52547, `Type.IsNotPublic not 
+	correct for Nested types'
+
 2003-12-24  Nick Drochak  <ndrochak@ieee.org>
 
 	* Array.cs (CreateInstance): Throw NullRef exception like .NET 1.1, 
