@@ -1,3 +1,8 @@
+2005-03-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* dis-cil.c, dump.c: Add mono-compiler.h header to allow/ease 
+	compilation with non-GCC compilers.
+
 2005-03-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* get.c (dis_stringify_marshal_spec): Fix this after recent runtime
