@@ -1,3 +1,9 @@
+2003-08-10 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Create an empty array list for empty type
+	lists. Start phasing out INT32 because the tokenizer will no
+	longer create this token.
+		
 2003-08-03 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Use new sentinel type. Create valuetypes.

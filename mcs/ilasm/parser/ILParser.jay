@@ -1501,6 +1501,9 @@ sig_arg			: param_attr type
 			;
 
 type_list               : /* EMPTY */
+                          {
+                                $$ = new ArrayList (0);
+                          }
                         | ELLIPSIS
                           {
                                 ArrayList type_list = new ArrayList ();
@@ -2299,8 +2302,7 @@ comp_qstring		: QSTRING
 			| comp_qstring PLUS QSTRING 	{ $$ = String.Format ("{0}{1}", $1, $3); }
 			;
 
-int32			: INT32
-                        | INT64
+int32			: INT64
                           {
                                 long l = (long) $1;
                                 byte[] intb = BitConverter.GetBytes (l);
@@ -2309,10 +2311,6 @@ int32			: INT32
 			;
 
 int64		        : INT64
-                        | INT32
-                          {
-                                $$ = Convert.ToInt64 ($1);
-                          }
 			;
 
 float64			: FLOAT64
@@ -2341,7 +2339,7 @@ float64			: FLOAT64
 			;
 
 hexbyte			: HEXBYTE
-                        | INT32         { $$ = Convert.ToByte ($1); }
+                        | INT64         { $$ = Convert.ToByte ($1); }
                         | ID
                           {
                                 $$ = Byte.Parse ((string) $1, NumberStyles.HexNumber);
