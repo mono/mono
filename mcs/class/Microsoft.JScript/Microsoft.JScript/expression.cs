@@ -640,9 +640,9 @@ namespace Microsoft.JScript {
 				member_exp.Emit (ec);
 				setup_late_call_args (ec);
 				ig.Emit (OpCodes.Call, typeof (LateBinding).GetMethod ("CallValue"));
-				if (no_effect)
-					ec.ig.Emit (OpCodes.Pop);
 			}
+			if (no_effect)
+				ec.ig.Emit (OpCodes.Pop);
 		}
 
 		internal void get_global_scope_or_this (ILGenerator ig)
@@ -1225,6 +1225,25 @@ namespace Microsoft.JScript {
 				exp.Emit (ec);
 			if (args != null)
 				emit_args (ec);
+			emit_create_instance (ec);
+		}
+		
+		void emit_create_instance (EmitContext ec)
+		{
+			if (exp is Identifier) {
+				ILGenerator ig = ec.ig;
+				Type type = null;
+				switch ((exp as Identifier).name) {
+				case "Array":					
+					type = typeof (ArrayConstructor);
+					break;
+				case "Date":
+					type = typeof (DateConstructor);
+					break;
+				}
+				if (type != null)
+					ig.Emit (OpCodes.Call, type.GetMethod ("CreateInstance"));
+			}
 		}
 		
 		void emit_args (EmitContext ec)
@@ -1240,8 +1259,6 @@ namespace Microsoft.JScript {
 				args.get_element (i).Emit (ec);
 				ig.Emit (OpCodes.Stelem_Ref);
 			}
-
-			ig.Emit (OpCodes.Call, typeof (ArrayConstructor).GetMethod ("CreateInstance"));
 		}
 	}
 	
@@ -1357,7 +1374,6 @@ namespace Microsoft.JScript {
 				break;
 			case "Date":
 				ig.Emit (OpCodes.Call, go.GetProperty ("Date").GetGetMethod ());
-				throw new NotImplementedException ();
 				break;
 			case "RegExp":
 				ig.Emit (OpCodes.Call, go.GetProperty ("RegExp").GetGetMethod ());

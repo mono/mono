@@ -1,3 +1,9 @@
+2004-11-10  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* expression.cs (emit_late_call): Pop after Call or CallValue when
+	needed. (New.Emit) add emit_create_instance.
+	
+
 2004-11-08  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* expression.cs (class New): add new operator support. Add
