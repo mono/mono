@@ -1,4 +1,4 @@
-2002-11-06 Jackson Harper <jackson@latitudegeo.com>
+2002-11-11 Jackson Harper <jackson@latitudegeo.com>
 
 	* CompilerErrorTest.cs AllTests.cs: Added tests for the Microsoft.CSharp.CompilerError class
 
