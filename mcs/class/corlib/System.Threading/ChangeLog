@@ -1,3 +1,7 @@
+2003-10-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Thread.cs: Add locking to AllocateNamedDataSlot and 
+	FreeNamedDataSlot.
 
 Wed Aug 20 12:01:36 CEST 2003 Paolo Molaro <lupus@ximian.com>
 

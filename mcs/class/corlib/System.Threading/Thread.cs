@@ -114,29 +114,33 @@ namespace System.Threading
 		}
 		
 		public static LocalDataStoreSlot AllocateNamedDataSlot(string name) {
-			if (datastorehash == null)
-				InitDataStoreHash ();
-			LocalDataStoreSlot slot = (LocalDataStoreSlot)datastorehash[name];
-			if(slot!=null) {
-				// This exception isnt documented (of
-				// course) but .net throws it
-				throw new ArgumentException("Named data slot already added");
-			}
+			lock (typeof (Thread)) {
+				if (datastorehash == null)
+					InitDataStoreHash ();
+				LocalDataStoreSlot slot = (LocalDataStoreSlot)datastorehash[name];
+				if(slot!=null) {
+					// This exception isnt documented (of
+					// course) but .net throws it
+					throw new ArgumentException("Named data slot already added");
+				}
 			
-			slot = new LocalDataStoreSlot();
+				slot = new LocalDataStoreSlot();
 
-			datastorehash.Add(name, slot);
-			
-			return(slot);
+				datastorehash.Add(name, slot);
+
+				return(slot);
+			}
 		}
 
 		public static void FreeNamedDataSlot(string name) {
-			if (datastorehash == null)
-				InitDataStoreHash ();
-			LocalDataStoreSlot slot=(LocalDataStoreSlot)datastorehash[name];
+			lock (typeof (Thread)) {
+				if (datastorehash == null)
+					InitDataStoreHash ();
+				LocalDataStoreSlot slot=(LocalDataStoreSlot)datastorehash[name];
 
-			if(slot!=null) {
-				datastorehash.Remove(slot);
+				if(slot!=null) {
+					datastorehash.Remove(slot);
+				}
 			}
 		}
 
