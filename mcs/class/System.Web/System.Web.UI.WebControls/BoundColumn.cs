@@ -22,7 +22,7 @@ namespace System.Web.UI.WebControls
 	{
 		public static readonly string thisExpr = "!";
 
-		private bool boundFieldDesciptionValid;
+		private bool boundFieldDescriptionValid;
 		private string boundField;
 		private string formatting;
 		
@@ -39,7 +39,7 @@ namespace System.Web.UI.WebControls
 			desc       = null;
 			boundField = DataField;
 			formatting = DataFormatString;
-			boundFieldDesciptionValid = false;
+			boundFieldDescriptionValid = false;
 		}
 
 		public override void InitializeCell(TableCell cell, int columnIndex, ListItemType itemType)
@@ -80,7 +80,7 @@ namespace System.Web.UI.WebControls
 			DataGridItem item  = (DataGridItem)senderCtrl.NamingContainer;
 			object       data  = item.DataItem;
 
-			if(!boundFieldDesciptionValid)
+			if(!boundFieldDescriptionValid)
 			{
 				if(boundField != BoundColumn.thisExpr)
 				{
@@ -91,7 +91,7 @@ namespace System.Web.UI.WebControls
 						          HttpRuntime.FormatResourceString("File_Not_Found",
 						                                           boundField));
 					}
-					boundFieldDesciptionValid = true;
+					boundFieldDescriptionValid = true;
 				}
 			}
 			object value = data;

@@ -994,7 +994,7 @@ namespace System.Web.UI.WebControls
 				resolvedDS = DataSourceHelper.GetResolvedDataSource(DataSource, DataMember);
 				if(resolvedDS != null)
 				{
-					collResolvedDS = (ICollection) resolvedDS;
+					collResolvedDS = resolvedDS as ICollection;
 					if(pagedDataSource.IsPagingEnabled && !pagedDataSource.IsCustomPagingEnabled
 					   && collResolvedDS == null)
 					{
@@ -1027,8 +1027,7 @@ namespace System.Web.UI.WebControls
 				int currentSourceIndex;
 				if(colCount > 0)
 				{
-					cols = new DataGridColumn[colCount];
-					columns.CopyTo(cols, 0);
+					cols = (DataGridColumn []) columns.ToArray (typeof (DataGridColumn));
 					foreach(DataGridColumn current in cols)
 					{
 						current.Initialize();
@@ -1322,7 +1321,7 @@ namespace System.Web.UI.WebControls
 				l_columns = null;
 				if(useDataSource)
 				{
-					auto_columns = AutoCreateCoumns(source);
+					auto_columns = AutoCreateColumns(source);
 					autoGenColsArrayList = auto_columns;
 				} else
 				{
@@ -1344,7 +1343,7 @@ namespace System.Web.UI.WebControls
 		/// This method is called by CreateColumnSet when dataSource
 		/// is to be used and columns need to be generated automatically.
 		/// </summary>
-		private ArrayList AutoCreateCoumns(PagedDataSource source)
+		private ArrayList AutoCreateColumns(PagedDataSource source)
 		{
 			if(source != null)
 			{

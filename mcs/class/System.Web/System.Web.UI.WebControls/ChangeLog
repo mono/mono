@@ -1,3 +1,10 @@
+2003-01-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BoundColumn.cs: typo.
+	* DataGrid.cs: use 'as' instead of casting. Typo.
+	* HyperLinkColumn.cs: call OnColumnChanged when any property change.
+	Mono-stylized.
+
 2003-01-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HyperLink.cs: fixes bug #36336.
