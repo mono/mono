@@ -1,5 +1,5 @@
 thisdir = tools
-SUBDIRS = cilc corcompare ictool mono-xsd security
+SUBDIRS = cilc corcompare ictool mono-xsd security wsdl
 DIST_ONLY_SUBDIRS = SqlSharp
 include ../build/rules.make
 
@@ -51,4 +51,3 @@ EnumCheck.exe: EnumCheck.cs EnumCheckAssemblyCollection.cs
 
 IFaceDisco.exe: IFaceDisco.cs XMLUtil.cs
 	$(CSCOMPILE) /target:exe /out:$@ $^
-
