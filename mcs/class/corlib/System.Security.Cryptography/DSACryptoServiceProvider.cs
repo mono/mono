@@ -42,6 +42,8 @@ namespace System.Security.Cryptography {
 			set { }
 		}
 		
+		protected override void Dispose (bool disposing) {}
+
 		public override byte[] CreateSignature (byte[] rgb) {
 			return null;
 		}

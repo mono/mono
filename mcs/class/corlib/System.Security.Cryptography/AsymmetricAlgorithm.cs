@@ -1,29 +1,32 @@
 //
-// System.Security.Cryptography AsymmetricAlgorithm Class implementation
+// System.Security.Cryptography.AsymmetricAlgorithm Class implementation
 //
 // Authors:
 //   Thomas Neidhart (tome@sbox.tugraz.at)
+//   Sebastien Pouliot (spouliot@motus.com)
+//
+// Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System;
+using System.Xml;
 
 namespace System.Security.Cryptography {
-	
+
 	/// <summary>
 	/// Abstract base class for all cryptographic asymmetric algorithms.
 	/// Available algorithms include:
 	/// RSA, DSA
 	/// </summary>
-	public abstract class AsymmetricAlgorithm {
+	public abstract class AsymmetricAlgorithm : IDisposable	{
+
 		protected int KeySizeValue; // The size of the secret key used by the symmetric algorithm in bits. 
 		protected KeySizes[] LegalKeySizesValue; // Specifies the key sizes that are supported by the symmetric algorithm. 
 
 		/// <summary>
 		/// Called from constructor of derived class.
 		/// </summary>
-		protected AsymmetricAlgorithm () {
-		  throw new CryptographicException();
-		}
+		protected AsymmetricAlgorithm () {}
 		
 		/// <summary>
 		/// Gets the key exchange algorithm
@@ -59,6 +62,27 @@ namespace System.Security.Cryptography {
 		/// </summary>
 		public abstract string SignatureAlgorithm {get;}
 
+		void System.IDisposable.Dispose() 
+		{
+		}
+
+		public void Clear() 
+		{
+//			Dispose();
+		}
+
+		protected abstract void Dispose (bool disposing);
+
+		// helper function for FromXmlString (used in RSA and DSA)
+		protected byte[] GetElement (XmlDocument xml, string tag) 
+		{
+			XmlNodeList xnl = xml.GetElementsByTagName (tag);
+			if (xnl.Count > 0)
+				return Convert.FromBase64String (xnl[0].InnerText);
+			else
+				return null;
+		}
+
 		/// <summary>
 		/// Reconstructs the AsymmetricAlgorithm Object from an XML-string
 		/// </summary>
@@ -69,7 +93,8 @@ namespace System.Security.Cryptography {
 		/// </summary>
 		public abstract string ToXmlString(bool includePrivateParameters);		
 		
-		private bool IsLegalKeySize(KeySizes[] LegalKeys, int Size) {
+		private bool IsLegalKeySize(KeySizes[] LegalKeys, int Size) 
+		{
 			foreach (KeySizes LegalKeySize in LegalKeys) {
 				for (int i=LegalKeySize.MinSize; i<=LegalKeySize.MaxSize; i+=LegalKeySize.SkipSize) {
 					if (i == Size)
@@ -83,25 +108,26 @@ namespace System.Security.Cryptography {
 		/// Checks wether the given keyLength is valid for the current algorithm
 		/// </summary>
 		/// <param name="bitLength">the given keyLength</param>
-		public bool ValidKeySize(int bitLength) {
+		public bool ValidKeySize(int bitLength) 
+		{
 			return IsLegalKeySize(LegalKeySizesValue, bitLength);
 		}
 		
 		/// <summary>
 		/// Creates the default implementation of the default asymmetric algorithm (RSA).
 		/// </summary>
-		public static AsymmetricAlgorithm Create () {
-			return RSA.Create();
+		public static AsymmetricAlgorithm Create () 
+		{
+			return Create ("System.Security.Cryptography.AsymmetricAlgorithm");
 		}
 	
 		/// <summary>
 		/// Creates a specific implementation of the given asymmetric algorithm.
 		/// </summary>
-		/// <param name="algName">the given algorithm</param>
-		[MonoTODO]
-		public static AsymmetricAlgorithm Create (string algName) {
-			// TODO: use reflection to create a new instance of the given algorithm
-			return null;
+		/// <param name="algo">Specifies which derived class to create</param>
+		public static AsymmetricAlgorithm Create (string algName) 
+		{
+			return (AsymmetricAlgorithm) CryptoConfig.CreateFromName (algName);
 		}
 	}
 }
