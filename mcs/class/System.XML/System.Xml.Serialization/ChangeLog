@@ -1,4 +1,12 @@
 2003-12-15  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlSchemaExporter.cs: AddSchemaElement, use XmlTypeMapElementInfo.IsPrimitive
+	  to check if a type is primitive, instead of Type.IsPrimitive, since CLR
+	  primitive types are not the same as XML primitive types. Patch proposed
+	  by Mordechai Taitelman. This fixes bug #52228.
+	* XmlSerializationWriter.cs: Fixes in WriteNullTagEncoded and WriteNullTagLiteral.
+
+2003-12-15  Lluis Sanchez Gual <lluis@ximian.com>
 	
 	* XmlReflectionImporter.cs: Little fix.
 	

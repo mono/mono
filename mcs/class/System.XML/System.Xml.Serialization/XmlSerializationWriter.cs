@@ -494,9 +494,9 @@ namespace System.Xml.Serialization {
 
 		protected void WriteNullTagEncoded (string name, string ns)
 		{
-			WriteStartElement (name, ns);
-			WriteAttribute ("xsi","null", XmlSchema.InstanceNamespace, "1");
-			WriteEndElement ();
+			Writer.WriteStartElement (name, ns);
+			Writer.WriteAttributeString ("null", XmlSchema.InstanceNamespace, "1");
+			Writer.WriteEndElement ();
 		}
 
 		protected void WriteNullTagLiteral (string name)
@@ -506,9 +506,9 @@ namespace System.Xml.Serialization {
 
 		protected void WriteNullTagLiteral (string name, string ns)
 		{
-			WriteStartElement (name, ns);
-			WriteAttribute ("xsi","nil", XmlSchema.InstanceNamespace, "true");
-			WriteEndElement ();
+			Writer.WriteStartElement (name, ns);
+			Writer.WriteAttributeString ("nil", XmlSchema.InstanceNamespace, "true");
+			Writer.WriteEndElement ();
 		}
 
 		protected void WritePotentiallyReferencingElement (string n, string ns, object o)

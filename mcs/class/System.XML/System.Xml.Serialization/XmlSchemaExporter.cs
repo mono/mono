@@ -338,7 +338,7 @@ namespace System.Xml.Serialization {
 				selem.MaxOccurs = 1;
 				selem.MinOccurs = einfo.IsNullable ? 1 : 0;
 				
-				if ((einfo.TypeData.Type.IsPrimitive && einfo.TypeData.Type != typeof(string)) ||
+				if ((einfo.IsPrimitive && einfo.TypeData.Type != typeof(string)) ||
 					einfo.TypeData.Type.IsEnum || encodedFormat) 
 					selem.MinOccurs = 1;
 			}
