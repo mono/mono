@@ -294,7 +294,7 @@ namespace Mono.Tools
 				WriteAssemblyInfo (fullPath + "__AssemblyInfo__", assemInfo);
 				Console.WriteLine ("RefCount of assembly '" + an.Name + "' increased by one.");
 				if (File.Exists (config_path))
-					File.Copy (args[0], fullPath + an.Name + ".dll" + ".config", force);
+					File.Copy (config_path, fullPath + an.Name + ".dll" + ".config", force);
 				return 0;
 			}
 
@@ -305,7 +305,7 @@ namespace Mono.Tools
 
 			File.Copy (args[0], fullPath + an.Name + ".dll", force);
 			if (File.Exists (config_path))
-				File.Copy (args[0], fullPath + an.Name + ".dll" + ".config", force);
+				File.Copy (config_path, fullPath + an.Name + ".dll" + ".config", force);
 
 			Hashtable info = new Hashtable ();
 
