@@ -34,6 +34,7 @@ namespace System.Web.UI {
 		string Name { get; }
 		string NavigateUrl { get; }
 		string Value { get; }	 
+		string Description { get; }
 	}
 }
 #endif

@@ -1,3 +1,12 @@
+2005-02-10  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Page.cs: Added support for validation groups. Some fixes in
+	SavePageControlState().
+	* IFilterResolutionService.cs: Removed extra field.
+	* INavigateUIData.cs: Added missing field.
+	* ICheckBoxControl.cs, IStaticTextControl.cs, ITextControl.cs:
+	Implemented new interfaces.
+
 2005-02-04  Lluis Sanchez Gual <lluis@novell.com>
 
 	* Page.cs: Implemented support for cross page postback. Implemented

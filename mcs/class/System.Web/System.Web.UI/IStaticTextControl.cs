@@ -1,10 +1,10 @@
 //
-// System.Web.UI.IFilterResolutionService.cs
+// System.Web.UI.IStaticTextControl.cs
 //
 // Authors:
-//      Sanjay Gupta (gsanjay@novell.com)
+//	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2005 Novell, Inc (http://www.novell.com)
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -33,10 +33,9 @@ using System;
 
 namespace System.Web.UI
 {
-	public interface IFilterResolutionService
+	public interface IStaticTextControl
 	{
-		int CompareFilters (string filter1, string filter2);
-		bool EvaluateFilter (string filterName);
+		string Text { get; set; }
 	}
 }
 #endif

@@ -99,6 +99,7 @@ public class Page : TemplateControl, IHttpHandler
 	Page previousPage;
 	bool isCrossPagePostBack;
 	ArrayList requireStateControls;
+	Hashtable _validatorsByGroup;
 #endif
 
 	#region Constructor
@@ -1104,13 +1105,18 @@ public class Page : TemplateControl, IHttpHandler
 
 	public virtual void Validate ()
 	{
-		if (_validators == null || _validators.Count == 0){
+		ValidateCollection (_validators);
+	}
+	
+	void ValidateCollection (ValidatorCollection validators)
+	{
+		if (validators == null || validators.Count == 0){
 			_isValid = true;
 			return;
 		}
 
 		bool all_valid = true;
-		foreach (IValidator v in _validators){
+		foreach (IValidator v in validators){
 			v.Validate ();
 			if (v.IsValid == false)
 				all_valid = false;
@@ -1311,6 +1317,33 @@ public class Page : TemplateControl, IHttpHandler
 		requireStateControls.Add (control);
 	}
 	
+	public ValidatorCollection GetValidators (string validationGroup)
+	{
+		if (validationGroup == null || validationGroup == "")
+			return Validators;
+
+		if (_validatorsByGroup == null) _validatorsByGroup = new Hashtable ();
+		ValidatorCollection col = _validatorsByGroup [validationGroup] as ValidatorCollection;
+		if (col == null) {
+			col = new ValidatorCollection ();
+			_validatorsByGroup [validationGroup] = col;
+		}
+		return col;
+	}
+	
+	public virtual void Validate (string validationGroup)
+	{
+		if (validationGroup == null || validationGroup == "")
+			ValidateCollection (_validators);
+		else {
+			if (_validatorsByGroup != null) {
+				ValidateCollection (_validatorsByGroup [validationGroup] as ValidatorCollection);
+			} else {
+				_isValid = true;
+			}
+		}
+	}
+	
 	object SavePageControlState ()
 	{
 		if (requireStateControls == null) return null;
@@ -1330,9 +1363,10 @@ public class Page : TemplateControl, IHttpHandler
 		if (requireStateControls == null) return;
 
 		object[] state = (object[]) data;
-		for (int n=0; n<state.Length && n < requireStateControls.Count; n++) {
+		int max = Math.Min (requireStateControls.Count, state != null ? state.Length : requireStateControls.Count);
+		for (int n=0; n < max; n++) {
 			Control ctl = (Control) requireStateControls [n];
-			ctl.LoadControlState (state [n]);
+			ctl.LoadControlState (state != null ? state [n] : null);
 		}
 	}
 
