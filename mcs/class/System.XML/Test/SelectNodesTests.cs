@@ -223,5 +223,16 @@ namespace MonoTests.System.Xml
 			AssertEquals (1, nodes.Count);
 			AssertSame (document.DocumentElement, nodes [0]);
 		}
+
+
+		public void TestNamespaceSelect()
+		{
+			XmlDocument document = new XmlDocument ();
+			document.LoadXml ("<root xmlns=\"urn:foo1:foo2\"/>");
+			XmlNamespaceManager nsmgr = new XmlNamespaceManager(document.NameTable);
+			nsmgr.AddNamespace("foons", "urn:foo1:foo2");
+			XmlNodeList nodes = document.SelectNodes ("/foons:root", nsmgr);
+			AssertEquals (1, nodes.Count);
+		}
 	}
 }

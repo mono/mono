@@ -1,3 +1,7 @@
+2003-02-09  Piers Haken	<piersh@friskit.com>
+
+	* SelectNodesTests.cs: added TestNamespaceSelect (from Jerome Laban)
+
 2003-02-02  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlTextReaderTests.cs : added TestQuoteChar.
@@ -44,7 +48,7 @@
 
 	* XmlTextReaderTests.cs : test for attribute value bugfix.
 
-2002-01-02  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+2003-01-02  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* SelectNodesTests.cs : added TestAlphabetDigitMixedName.
 
