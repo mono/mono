@@ -1,3 +1,7 @@
+2004-11-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* mini.c: Fix pointer overwrite in mini_method_compile.
+
 2004-11-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* trace.c (get_spec): Allow tracing of classes without a namespace.
