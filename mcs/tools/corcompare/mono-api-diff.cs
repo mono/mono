@@ -258,7 +258,7 @@ namespace Mono.AssemblyCompare
 			}
 
 			AddAttribute (parent, "error", "warning");
-			XmlNode warning = document.CreateElement ("warnings", null);
+			XmlNode warning = document.CreateElement ("warning", null);
 			AddAttribute (warning, "text", String.Format (fmt, args));
 			warnings.AppendChild (warning);
 		}

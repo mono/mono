@@ -1,3 +1,7 @@
+2004-06-19  Atsushi Enomoto <atsushi@ximian.com>
+
+	* mono-api-diff.cs : tiny fix on warning output.
+
 2004-06-14  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* mono-api-diff.cs: now also check charset, layout and 
