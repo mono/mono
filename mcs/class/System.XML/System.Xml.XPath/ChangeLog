@@ -1,3 +1,8 @@
+2002-03-26  Jason Diamond  <jason@injektilo.org>
+
+	* XPathScanner.cs: Now handles name tests with wildacards. Abbreviated 
+	steps. Both absolution and relative abbreviated location paths.
+
 2002-03-25  Jason Diamond  <jason@injektilo.org>
 
 	* XPathScanner.cs: Added new file. This class is supposed to be internal

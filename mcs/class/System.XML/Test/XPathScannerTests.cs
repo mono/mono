@@ -19,7 +19,7 @@ namespace Ximian.Mono.Tests
 		public XPathScannerTests () : base ("Ximian.Mono.Tests.XPathScannerTests testsuite") { }
 		public XPathScannerTests (string name) : base (name) { }
 
-		public void TestLocationPathWithOneNameTest()
+		public void TestLocationPathWithOneNameTest ()
 		{
 			XPathScanner scanner = new XPathScanner ("foo");
 			AssertEquals (XPathTokenType.NameTest, scanner.Scan ());
@@ -28,7 +28,7 @@ namespace Ximian.Mono.Tests
 			AssertNull (scanner.Value);
 		}
 
-		public void TestLocationPathWithTwoNameTests()
+		public void TestLocationPathWithTwoNameTests ()
 		{
 			XPathScanner scanner = new XPathScanner ("foo/bar");
 			AssertEquals (XPathTokenType.NameTest, scanner.Scan ());
@@ -41,7 +41,7 @@ namespace Ximian.Mono.Tests
 			AssertNull (scanner.Value);
 		}
 
-		public void TestLocationPathWithOneQualifiedNameTest()
+		public void TestLocationPathWithOneQualifiedNameTest ()
 		{
 			XPathScanner scanner = new XPathScanner ("foo:bar");
 			AssertEquals (XPathTokenType.NameTest, scanner.Scan ());
@@ -50,7 +50,7 @@ namespace Ximian.Mono.Tests
 			AssertNull (scanner.Value);
 		}
 
-		public void TestLocationPathWithTwoQualifiedNameTests()
+		public void TestLocationPathWithTwoQualifiedNameTests ()
 		{
 			XPathScanner scanner = new XPathScanner ("foo:bar/baz:quux");
 			AssertEquals (XPathTokenType.NameTest, scanner.Scan ());
@@ -63,7 +63,7 @@ namespace Ximian.Mono.Tests
 			AssertNull (scanner.Value);
 		}
 
-		public void TestLocationPathWithOneNameTestWithAxisName()
+		public void TestLocationPathWithOneNameTestWithAxisName ()
 		{
 			XPathScanner scanner = new XPathScanner ("child::foo");
 			AssertEquals (XPathTokenType.AxisName, scanner.Scan ());
@@ -76,7 +76,7 @@ namespace Ximian.Mono.Tests
 			AssertNull (scanner.Value);
 		}
 
-		public void TestLocationPathWithTwoNameTestsWithAxisNames()
+		public void TestLocationPathWithTwoNameTestsWithAxisNames ()
 		{
 			XPathScanner scanner = new XPathScanner ("child::foo/preceding-sibling::bar");
 			AssertEquals (XPathTokenType.AxisName, scanner.Scan ());
@@ -97,7 +97,7 @@ namespace Ximian.Mono.Tests
 			AssertNull (scanner.Value);
 		}
 
-		public void TestCommentNodeType()
+		public void TestCommentNodeType ()
 		{
 			XPathScanner scanner = new XPathScanner ("comment()");
 			AssertEquals (XPathTokenType.NodeType, scanner.Scan ());
@@ -110,7 +110,7 @@ namespace Ximian.Mono.Tests
 			AssertNull (scanner.Value);
 		}
 
-		public void TestNodeNodeType()
+		public void TestNodeNodeType ()
 		{
 			XPathScanner scanner = new XPathScanner ("node()");
 			AssertEquals (XPathTokenType.NodeType, scanner.Scan ());
@@ -123,7 +123,7 @@ namespace Ximian.Mono.Tests
 			AssertNull (scanner.Value);
 		}
 
-		public void TestProcessingInstructionNodeType()
+		public void TestProcessingInstructionNodeType ()
 		{
 			XPathScanner scanner = new XPathScanner ("processing-instruction()");
 			AssertEquals (XPathTokenType.NodeType, scanner.Scan ());
@@ -136,7 +136,7 @@ namespace Ximian.Mono.Tests
 			AssertNull (scanner.Value);
 		}
 
-		public void TestTextNodeType()
+		public void TestTextNodeType ()
 		{
 			XPathScanner scanner = new XPathScanner ("text()");
 			AssertEquals (XPathTokenType.NodeType, scanner.Scan ());
@@ -149,7 +149,7 @@ namespace Ximian.Mono.Tests
 			AssertNull (scanner.Value);
 		}
 
-		public void TestFunctionName()
+		public void TestFunctionName ()
 		{
 			XPathScanner scanner = new XPathScanner ("foo()");
 			AssertEquals (XPathTokenType.FunctionName, scanner.Scan ());
@@ -162,7 +162,7 @@ namespace Ximian.Mono.Tests
 			AssertNull (scanner.Value);
 		}
 
-		public void TestQualifiedFunctionName()
+		public void TestQualifiedFunctionName ()
 		{
 			XPathScanner scanner = new XPathScanner ("foo:bar()");
 			AssertEquals (XPathTokenType.FunctionName, scanner.Scan ());
@@ -171,6 +171,168 @@ namespace Ximian.Mono.Tests
 			AssertEquals ("(", scanner.Value);
 			AssertEquals (XPathTokenType.RightParen, scanner.Scan ());
 			AssertEquals (")", scanner.Value);
+			AssertEquals (XPathTokenType.End, scanner.Scan ());
+			AssertNull (scanner.Value);
+		}
+
+		public void TestWildcardNameTest ()
+		{
+			XPathScanner scanner = new XPathScanner ("*");
+			AssertEquals (XPathTokenType.NameTest, scanner.Scan ());
+			AssertEquals ("*", scanner.Value);
+			AssertEquals (XPathTokenType.End, scanner.Scan ());
+			AssertNull (scanner.Value);
+		}
+
+		public void TestQualifiedWildcardNameTest ()
+		{
+			XPathScanner scanner = new XPathScanner ("foo:*");
+			AssertEquals (XPathTokenType.NameTest, scanner.Scan ());
+			AssertEquals ("foo:*", scanner.Value);
+			AssertEquals (XPathTokenType.End, scanner.Scan ());
+			AssertNull (scanner.Value);
+		}
+
+		public void TestTwoWildcardNameTests ()
+		{
+			XPathScanner scanner = new XPathScanner ("*/*");
+			AssertEquals (XPathTokenType.NameTest, scanner.Scan ());
+			AssertEquals ("*", scanner.Value);
+			AssertEquals (XPathTokenType.Operator, scanner.Scan ());
+			AssertEquals ("/", scanner.Value);
+			AssertEquals (XPathTokenType.NameTest, scanner.Scan ());
+			AssertEquals ("*", scanner.Value);
+			AssertEquals (XPathTokenType.End, scanner.Scan ());
+			AssertNull (scanner.Value);
+		}
+
+		public void TestTwoQualifiedWildcardNameTests ()
+		{
+			XPathScanner scanner = new XPathScanner ("foo:*/bar:*");
+			AssertEquals (XPathTokenType.NameTest, scanner.Scan ());
+			AssertEquals ("foo:*", scanner.Value);
+			AssertEquals (XPathTokenType.Operator, scanner.Scan ());
+			AssertEquals ("/", scanner.Value);
+			AssertEquals (XPathTokenType.NameTest, scanner.Scan ());
+			AssertEquals ("bar:*", scanner.Value);
+			AssertEquals (XPathTokenType.End, scanner.Scan ());
+			AssertNull (scanner.Value);
+		}
+
+		public void TestAttributeNameTest ()
+		{
+			XPathScanner scanner = new XPathScanner ("@foo");
+			AssertEquals (XPathTokenType.At, scanner.Scan ());
+			AssertEquals ("@", scanner.Value);
+			AssertEquals (XPathTokenType.NameTest, scanner.Scan ());
+			AssertEquals ("foo", scanner.Value);
+			AssertEquals (XPathTokenType.End, scanner.Scan ());
+			AssertNull (scanner.Value);
+		}
+
+		public void TestNameTestAndAttributeNameTest ()
+		{
+			XPathScanner scanner = new XPathScanner ("foo/@bar");
+			AssertEquals (XPathTokenType.NameTest, scanner.Scan ());
+			AssertEquals ("foo", scanner.Value);
+			AssertEquals (XPathTokenType.Operator, scanner.Scan ());
+			AssertEquals ("/", scanner.Value);
+			AssertEquals (XPathTokenType.At, scanner.Scan ());
+			AssertEquals ("@", scanner.Value);
+			AssertEquals (XPathTokenType.NameTest, scanner.Scan ());
+			AssertEquals ("bar", scanner.Value);
+			AssertEquals (XPathTokenType.End, scanner.Scan ());
+			AssertNull (scanner.Value);
+		}
+
+		public void TestAttributeAxis ()
+		{
+			XPathScanner scanner = new XPathScanner ("attribute::foo");
+			AssertEquals (XPathTokenType.AxisName, scanner.Scan ());
+			AssertEquals ("attribute", scanner.Value);
+			AssertEquals (XPathTokenType.ColonColon, scanner.Scan ());
+			AssertEquals ("::", scanner.Value);
+			AssertEquals (XPathTokenType.NameTest, scanner.Scan ());
+			AssertEquals ("foo", scanner.Value);
+			AssertEquals (XPathTokenType.End, scanner.Scan ());
+			AssertNull (scanner.Value);
+		}
+
+		public void TestNameTestAndAttributeAxis ()
+		{
+			XPathScanner scanner = new XPathScanner ("foo/attribute::bar");
+			AssertEquals (XPathTokenType.NameTest, scanner.Scan ());
+			AssertEquals ("foo", scanner.Value);
+			AssertEquals (XPathTokenType.Operator, scanner.Scan ());
+			AssertEquals ("/", scanner.Value);
+			AssertEquals (XPathTokenType.AxisName, scanner.Scan ());
+			AssertEquals ("attribute", scanner.Value);
+			AssertEquals (XPathTokenType.ColonColon, scanner.Scan ());
+			AssertEquals ("::", scanner.Value);
+			AssertEquals (XPathTokenType.NameTest, scanner.Scan ());
+			AssertEquals ("bar", scanner.Value);
+			AssertEquals (XPathTokenType.End, scanner.Scan ());
+			AssertNull (scanner.Value);
+		}
+
+		public void TestRoot ()
+		{
+			XPathScanner scanner = new XPathScanner ("/");
+			AssertEquals (XPathTokenType.Operator, scanner.Scan ());
+			AssertEquals ("/", scanner.Value);
+			AssertEquals (XPathTokenType.End, scanner.Scan ());
+			AssertNull (scanner.Value);
+		}
+
+		public void TestAbsoluteNameTest ()
+		{
+			XPathScanner scanner = new XPathScanner ("/foo");
+			AssertEquals (XPathTokenType.Operator, scanner.Scan ());
+			AssertEquals ("/", scanner.Value);
+			AssertEquals (XPathTokenType.NameTest, scanner.Scan ());
+			AssertEquals ("foo", scanner.Value);
+			AssertEquals (XPathTokenType.End, scanner.Scan ());
+			AssertNull (scanner.Value);
+		}
+
+		public void TestAbbreviatedAbsoluteLocationPathWithNameTest ()
+		{
+			XPathScanner scanner = new XPathScanner ("//foo");
+			AssertEquals (XPathTokenType.Operator, scanner.Scan ());
+			AssertEquals ("//", scanner.Value);
+			AssertEquals (XPathTokenType.NameTest, scanner.Scan ());
+			AssertEquals ("foo", scanner.Value);
+			AssertEquals (XPathTokenType.End, scanner.Scan ());
+			AssertNull (scanner.Value);
+		}
+
+		public void TestAbbreviatedRelativeLocationPathWithNameTest ()
+		{
+			XPathScanner scanner = new XPathScanner ("foo//bar");
+			AssertEquals (XPathTokenType.NameTest, scanner.Scan ());
+			AssertEquals ("foo", scanner.Value);
+			AssertEquals (XPathTokenType.Operator, scanner.Scan ());
+			AssertEquals ("//", scanner.Value);
+			AssertEquals (XPathTokenType.NameTest, scanner.Scan ());
+			AssertEquals ("bar", scanner.Value);
+			AssertEquals (XPathTokenType.End, scanner.Scan ());
+			AssertNull (scanner.Value);
+		}
+
+		public void TestAbbreviatedStepSelf ()
+		{
+			XPathScanner scanner = new XPathScanner (".");
+			AssertEquals (XPathTokenType.Dot, scanner.Scan ());
+			AssertEquals (".", scanner.Value);
+			AssertEquals (XPathTokenType.End, scanner.Scan ());
+			AssertNull (scanner.Value);
+		}
+
+		public void TestAbbreviatedStepParent ()
+		{
+			XPathScanner scanner = new XPathScanner ("..");
+			AssertEquals (XPathTokenType.DotDot, scanner.Scan ());
+			AssertEquals ("..", scanner.Value);
 			AssertEquals (XPathTokenType.End, scanner.Scan ());
 			AssertNull (scanner.Value);
 		}

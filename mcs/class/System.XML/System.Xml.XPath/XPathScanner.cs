@@ -151,6 +151,12 @@ namespace System.Xml.XPath
 							builder.Append ((char) Read ());
 						}
 						tokenType = XPathTokenType.NameTest;
+					} else if (Peek () == '*') {
+						builder.Append (':');
+						builder.Append ((char) Read ());
+						tokenType = XPathTokenType.NameTest;
+						value = builder.ToString ();
+						return tokenType;
 					} else {
 						tokenType = XPathTokenType.Error;
 						return tokenType;
@@ -196,15 +202,18 @@ namespace System.Xml.XPath
 					tokenType = XPathTokenType.RightBracket;
 					break;
 				case '.':
-					if (Peek () != '.')
+					if (Peek () != '.') {
 						tokenType = XPathTokenType.Dot;
-					else {
+						value = ".";
+					} else {
 						Read ();
 						tokenType = XPathTokenType.DotDot;
+						value = "..";
 					}
 					break;
 				case '@':
 					tokenType = XPathTokenType.At;
+					value = "@";
 					break;
 				case ',':
 					tokenType = XPathTokenType.Comma;
@@ -218,7 +227,7 @@ namespace System.Xml.XPath
 						tokenType = XPathTokenType.Error;
 					break;
 				case '*':
-					if (precedingTokenType != XPathTokenType.Error &&
+					if (precedingTokenType != XPathTokenType.Start &&
 						precedingTokenType != XPathTokenType.At &&
 						precedingTokenType != XPathTokenType.ColonColon &&
 						precedingTokenType != XPathTokenType.LeftParen &&
@@ -226,12 +235,20 @@ namespace System.Xml.XPath
 						precedingTokenType != XPathTokenType.Operator) {
 						tokenType = XPathTokenType.Operator;
 						value = "*";
+					} else {
+						tokenType = XPathTokenType.NameTest;
+						value = "*";
 					}
 					break;
 				default:
 					if (c == '/') {
 						tokenType = XPathTokenType.Operator;
-						value = "/";
+						if (Peek () != '/')
+							value = "/";
+						else {
+							Read ();
+							value = "//";
+						}
 					}
 					break;
 				}
