@@ -351,7 +351,7 @@ namespace System.Windows.Forms
 
 			//Console.WriteLine ("MenuItem.Created:" + Text + " parent:" + Parent.menu_handle/* + " " +
 			//	Environment.StackTrace*/);
-			index = MenuAPI.InsertMenuItem (Parent.menu_handle, -1, true, this, ref hSubMenu);
+			index = MenuAPI.InsertMenuItem (Parent.Handle, -1, true, this, ref hSubMenu);
 
 			if (IsPopup) {
 				//Console.WriteLine ("MenuItem.Create Popup:" + hSubMenu);
