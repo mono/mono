@@ -1,3 +1,7 @@
+2003-07-21  Jerome Laban <jlaban@wanadoo.fr>
+
+	* object.c: Renamed mono_metadata_section to metadata_section.
+
 2003-07-27  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* icall.c: in MS.NET ves_icall_Type_GetInterfaces returns an
