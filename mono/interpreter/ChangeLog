@@ -1,3 +1,8 @@
+2003-9-22  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* interp.c: use mono_marshal_get_delegate_invoke to get delegate 
+	invocation order consistent. Fix THROW_EX, fix ip in overflow 
+	exceptions.
 
 Fri Sep 12 10:42:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
