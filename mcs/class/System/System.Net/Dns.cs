@@ -64,7 +64,7 @@ namespace System.Net {
                 private extern static bool GetHostByAddr_internal(string addr, out string h_name, out string[] h_aliases, out string[] h_addr_list);
                 
                 [MethodImplAttribute(MethodImplOptions.InternalCall)]
-                private extern static bool GetHostName_internal(string addr);
+                private extern static bool GetHostName_internal(out string h_name);
 		
                 private static IPHostEntry hostent_to_IPHostEntry(string h_name, string[] h_aliases, string[] h_addrlist) {
                         IPHostEntry he = new IPHostEntry();
@@ -126,10 +126,9 @@ namespace System.Net {
                 /// This method returns the host name associated with the local host.
                 /// </summary>
                 public static string GetHostName() {
-
-                        string hostName = "";
+                        string hostName;
                         
-                        bool ret = GetHostName_internal(hostName);
+                        bool ret = GetHostName_internal(out hostName);
                         
 			if (ret == false)
                                 throw new SocketException(11001);
