@@ -1,3 +1,8 @@
+2003-08-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityManagerTest.cs: More policy resolution tests when using host
+	or assembly provided evidences.
+
 2003-08-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityManagerTest.cs: Added more unit tests.

@@ -82,8 +82,53 @@ namespace MonoTests.System.Security {
 			Assert.IsNotNull (e, "PolicyHierarchy");
 		}
 
+		private void ResolveEvidenceHost (SecurityZone zone, bool unrestricted, bool empty)
+		{
+			string prefix = zone.ToString () + "-";
+			Evidence e = new Evidence ();
+			e.AddHost (new Zone (zone));
+			PermissionSet ps = SecurityManager.ResolvePolicy (e);
+			Assert.IsTrue (ps.Count > 0, prefix + "Count");
+			Assert.AreEqual (empty, ps.IsEmpty (), prefix + "IsEmpty");
+			Assert.AreEqual (unrestricted, ps.IsUnrestricted (), prefix + "IsUnrestricted");
+			Assert.IsNotNull (ps.GetPermission (typeof (ZoneIdentityPermission)), prefix + "GetPermission(ZoneIdentityPermission)");
+		}
+
 		[Test]
-		public void ResolvePolicy_Evidence_Null () 
+		public void ResolvePolicy_Evidence_Host_Zone () 
+		{
+			ResolveEvidenceHost (SecurityZone.Internet, false, false);
+			ResolveEvidenceHost (SecurityZone.Intranet, false, false);
+			ResolveEvidenceHost (SecurityZone.MyComputer, true, false);
+			ResolveEvidenceHost (SecurityZone.Trusted, false, false);
+			ResolveEvidenceHost (SecurityZone.Untrusted, false, false);
+			ResolveEvidenceHost (SecurityZone.NoZone, false, true);
+		}
+
+		private void ResolveEvidenceAssembly (SecurityZone zone)
+		{
+			string prefix = zone.ToString () + "-";
+			Evidence e = new Evidence ();
+			e.AddAssembly (new Zone (zone));
+			PermissionSet ps = SecurityManager.ResolvePolicy (e);
+			Assert.AreEqual (0, ps.Count, prefix + "Count");
+			Assert.IsTrue (ps.IsEmpty (), prefix + "IsEmpty");
+			Assert.IsFalse (ps.IsUnrestricted (), prefix + "IsUnrestricted");
+		}
+
+		[Test]
+		public void ResolvePolicy_Evidence_Assembly_Zone ()
+		{
+			ResolveEvidenceAssembly (SecurityZone.Internet);
+			ResolveEvidenceAssembly (SecurityZone.Intranet);
+			ResolveEvidenceAssembly (SecurityZone.MyComputer);
+			ResolveEvidenceAssembly (SecurityZone.Trusted);
+			ResolveEvidenceAssembly (SecurityZone.Untrusted);
+			ResolveEvidenceAssembly (SecurityZone.NoZone);
+		}
+
+		[Test]
+		public void ResolvePolicy_Evidence_Null ()
 		{
 			Evidence e = null;
 			PermissionSet ps = SecurityManager.ResolvePolicy (e);
