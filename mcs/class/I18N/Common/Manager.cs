@@ -122,6 +122,8 @@ public class Manager
 							e = Instantiate (alias) as Encoding;
 					}
 				}
+				if (e == null)
+					return null;
 
 				// e.g. Neither euc_jp nor shift-jis not allowed (Normalize() badness)
 				if (orgName.IndexOf ('_') > 0 && e.WebName.IndexOf ('-') > 0)
