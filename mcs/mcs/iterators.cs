@@ -136,12 +136,18 @@ namespace Mono.CSharp {
 		Type [] param_types;
 		InternalParameters parameters;
 
+		protected enum State {
+			Uninitialized	= -2,
+			After,
+			Running
+		}
+
 		static int proxy_count;
 
 		public void EmitYieldBreak (ILGenerator ig)
 		{
 			ig.Emit (OpCodes.Ldarg_0);
-			IntConstant.EmitInt (ig, -1);
+			IntConstant.EmitInt (ig, (int) State.After);
 			ig.Emit (OpCodes.Stfld, pc_field.FieldBuilder);
 			ig.Emit (OpCodes.Br, move_next_error);
 		}
@@ -438,7 +444,7 @@ namespace Mono.CSharp {
 				block.AddStatement (new StatementExpression (assign, Location));
 			}
 
-			int initial = is_enumerable ? -2 : 0;
+			State initial = is_enumerable ? State.Uninitialized : State.Running;
 			block.AddStatement (new SetState (this, initial, Location));
 		}
 
@@ -512,8 +518,8 @@ namespace Mono.CSharp {
 				"CompareExchange", Location);
 
 			Expression pc = new FieldExpression (pc_field);
-			Expression before = new IntLiteral (0);
-			Expression uninitialized = new IntLiteral (-2);
+			Expression before = new IntLiteral ((int) State.Running);
+			Expression uninitialized = new IntLiteral ((int) State.Uninitialized);
 
 			ArrayList args = new ArrayList ();
 			args.Add (new Argument (pc, Argument.AType.Ref));
@@ -651,9 +657,9 @@ namespace Mono.CSharp {
 		protected class SetState : Statement
 		{
 			Iterator iterator;
-			int state;
+			State state;
 
-			public SetState (Iterator iterator, int state, Location loc)
+			public SetState (Iterator iterator, State state, Location loc)
 			{
 				this.iterator = iterator;
 				this.state = state;
@@ -668,7 +674,7 @@ namespace Mono.CSharp {
 			protected override void DoEmit (EmitContext ec)
 			{
 				ec.ig.Emit (OpCodes.Ldarg_0);
-				IntConstant.EmitInt (ec.ig, state);
+				IntConstant.EmitInt (ec.ig, (int) state);
 				ec.ig.Emit (OpCodes.Stfld, iterator.pc_field.FieldBuilder);
 			}
 		}
@@ -694,7 +700,7 @@ namespace Mono.CSharp {
 			AddMethod (dispose);
 
 			dispose.Block = new Block (null);
-			dispose.Block.AddStatement (new SetState (this, -1, Location));
+			dispose.Block.AddStatement (new SetState (this, State.After, Location));
 			dispose.Block.AddStatement (new Return (null, Location));
 		}
 
