@@ -1,3 +1,9 @@
+2003-10-10  Martin Baulig  <martin@ximian.com>
+
+	* class.c (inflate_generic_type): If we're inflating for a generic
+	type instance (and not for a generic method), return
+	MONO_TYPE_MVAR unchanged.
+
 2003-10-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* string-icalls.c: Join ignores null strings in the source array.
