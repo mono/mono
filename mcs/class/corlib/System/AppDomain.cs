@@ -677,7 +677,7 @@ namespace System {
 			return null;
 		}
 
-		private Assembly DoTypeResolve (Object name_or_tb)
+		internal Assembly DoTypeResolve (Object name_or_tb)
 		{
 			if (TypeResolve == null)
 				return null;
