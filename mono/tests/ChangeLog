@@ -1,3 +1,7 @@
+2004-05-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* setenv.cs: Fix this after marshalling changes.
+
 2004-05-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* pinvoke3.cs libtest.c: Add tests for fnptr->delegate marshalling.
