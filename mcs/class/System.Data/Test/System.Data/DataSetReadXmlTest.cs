@@ -28,6 +28,7 @@ namespace MonoTests.System.Data
 		const string xml6 = "<root><test>1</test></root>";
 		const string xml7 = "<root><test>1</test><test2>a</test2></root>";
 		const string xml8 = "<dataset><table><col1>foo</col1><col2>bar</col2></table></dataset>";
+		const string xml29 = @"<PersonalSite><License Name='Sum Wang' Email='sumwang@somewhere.net' Mode='Trial' StartDate='01/01/2004' Serial='aaa' /></PersonalSite>";
 
 		const string diff1 = @"<diffgr:diffgram xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1'>
   <NewDataSet>
@@ -593,6 +594,13 @@ namespace MonoTests.System.Data
 
 		}
 
+		[Test] // based on bug case
+		public void ReadComplexElementDocument ()
+		{
+			DataSet ds = new DataSet ();
+			ds.ReadXml (new StringReader (xml29));
+		}
+
 		[Test]
 		public void IgnoreSchemaShouldFillData ()
 		{
@@ -607,7 +615,7 @@ namespace MonoTests.System.Data
 			ds.Tables.Add (dt);
 			dt.Columns.Add ("col");
 			ds.ReadXml (new StringReader (xml1), XmlReadMode.IgnoreSchema);
-			AssertEquals ("NewDataSet", ds.DataSetName); // don't overwrite
+			AssertDataSet ("ds", ds, "NewDataSet", 1, 0);
 			AssertEquals ("wrapper element", 1, dt.Rows.Count);
 			dt.Clear ();
 

@@ -44,7 +44,9 @@ namespace MonoTests.System.Data
     <el4 attr4='val4' attrD='valD'>4</el4>
   </el2>
 </el1>";
+		// mixed content
 		string xml10 = "<root>Here is a <b>mixed</b> content.</root>";
+		// xml:space support
 		string xml11 = @"<root xml:space='preserve'>
    <child_after_significant_space />
 </root>";
@@ -56,7 +58,10 @@ namespace MonoTests.System.Data
 		//   2) <root>simple <!-- comment -->string.</root>
 		// The same applies to PI.
 //		string xml13 = "<root><tab><col>test <!-- out --> comment</col></tab></root>";
+
+		// simple namespace/prefix support
 		string xml14 = "<p:root xmlns:p='urn:foo'>test string</p:root>";
+		// two tables that have the same content type.
 		string xml15 = @"<root>
 <table1>
         <col1_1>test1</col1_1>
@@ -67,6 +72,7 @@ namespace MonoTests.System.Data
         <col2_2>test2</col2_2>
 </table2>
 </root>";
+		// foo cannot be both table chikd and root child
 		string xml16 = @"<root>
 <table>
         <foo>
@@ -78,7 +84,9 @@ namespace MonoTests.System.Data
 <foo></foo>
 <bar />
 </root>";
+		// simple namespace support
 		string xml17 = @"<root xmlns='urn:foo' />";
+		// conflict between simple and complex type element col
 		string xml18 = @"<set>
 <table>
 <col>
@@ -87,6 +95,7 @@ namespace MonoTests.System.Data
 <col>simple text here.</col>
 </table>
 </set>";
+		// variant of xml18: complex column appeared latter
 		string xml19 =@"<set>
 <table>
 <col>simple text</col><!-- ignored -->
@@ -95,6 +104,7 @@ namespace MonoTests.System.Data
 </col>
 </table>
 </set>";
+		// conflict check (actually it is not conflict) on two "col" tables
 		string xml20 = @"<set>
 <table>
 <col>
@@ -103,6 +113,7 @@ namespace MonoTests.System.Data
 <col attr='value' />
 </table>
 </set>";
+		// conflict between the attribute and the child element
 		string xml21 = @"<set>
 <table>
 <col data='value'>
@@ -110,7 +121,30 @@ namespace MonoTests.System.Data
 </col>
 </table>
 </set>";
+		// simple nest
 		string xml22 = "<set><table><col><descendant/></col></table><table2><col2>v2</col2></table2></set>";
+		// simple diffgram
+		string xml23 = @"<set>
+  <xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+    <xs:element name='table'>
+      <xs:complexType>
+      <xs:choice>
+        <xs:any />
+      </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <diffgr:diffgram
+        xmlns:msdata='urn:schemas-microsoft-com:xml-msdata'
+        xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1'>
+    <table>
+      <col>1</col>
+    </table>
+  </diffgr:diffgram>
+</set>";
+		// just deep table
+		string xml24 = "<p1><p2><p3><p4><p5><p6/></p5></p4></p3></p2></p1>";
+
 
 		private DataSet GetDataSet (string xml, string [] nss)
 		{
@@ -218,32 +252,32 @@ namespace MonoTests.System.Data
 			DataTable dt = ds.Tables [0];
 
 			AssertDataTable ("dt", dt, "el1", 3, 0, 0, 1);
-			AssertDataColumn ("el1_Id", dt.Columns [0], "el1_Id", false, true, 0, 1, "el1_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, true);
-			AssertDataColumn ("el1_attr1", dt.Columns [1], "attr1", true, false, 0, 1, "attr1", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
-			AssertDataColumn ("el1_attrA", dt.Columns [2], "attrA", true, false, 0, 1, "attrA", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 2, String.Empty, false, false);
+			AssertDataColumn ("el1_Id", dt.Columns ["el1_Id"], "el1_Id", false, true, 0, 1, "el1_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, true);
+			AssertDataColumn ("el1_attr1", dt.Columns ["attr1"], "attr1", true, false, 0, 1, "attr1", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
+			AssertDataColumn ("el1_attrA", dt.Columns ["attrA"], "attrA", true, false, 0, 1, "attrA", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 2, String.Empty, false, false);
 
 			dt = ds.Tables [1];
 			AssertDataTable ("dt", dt, "el2", 6, 0, 1, 2);
-			AssertDataColumn ("el2_Id", dt.Columns [0], "el2_Id", false, true, 0, 1, "el2_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, true);
-			AssertDataColumn ("el2_col2", dt.Columns [1], "column2", true, false, 0, 1, "column2", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
-			AssertDataColumn ("el2_col3", dt.Columns [2], "column3", true, false, 0, 1, "column3", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 2, String.Empty, false, false);
-			AssertDataColumn ("el2_attr2", dt.Columns [3], "attr2", true, false, 0, 1, "attr2", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 3, String.Empty, false, false);
-			AssertDataColumn ("el2_attrB", dt.Columns [4], "attrB", true, false, 0, 1, "attrB", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 4, String.Empty, false, false);
-			AssertDataColumn ("el2_el1Id", dt.Columns [5], "el1_Id", true, false, 0, 1, "el1_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 5, String.Empty, false, false);
+			AssertDataColumn ("el2_Id", dt.Columns ["el2_Id"], "el2_Id", false, true, 0, 1, "el2_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, true);
+			AssertDataColumn ("el2_col2", dt.Columns ["column2"], "column2", true, false, 0, 1, "column2", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
+			AssertDataColumn ("el2_col3", dt.Columns ["column3"], "column3", true, false, 0, 1, "column3", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 2, String.Empty, false, false);
+			AssertDataColumn ("el2_attr2", dt.Columns ["attr2"], "attr2", true, false, 0, 1, "attr2", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 3, String.Empty, false, false);
+			AssertDataColumn ("el2_attrB", dt.Columns ["attrB"], "attrB", true, false, 0, 1, "attrB", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 4, String.Empty, false, false);
+			AssertDataColumn ("el2_el1Id", dt.Columns ["el1_Id"], "el1_Id", true, false, 0, 1, "el1_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 5, String.Empty, false, false);
 
 			dt = ds.Tables [2];
 			AssertDataTable ("dt", dt, "el3", 4, 0, 1, 0);
-			AssertDataColumn ("el3_attr3", dt.Columns [0], "attr3", true, false, 0, 1, "attr3", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
-			AssertDataColumn ("el3_attrC", dt.Columns [1], "attrC", true, false, 0, 1, "attrC", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
-			AssertDataColumn ("el3_Text", dt.Columns [2], "el3_Text", true, false, 0, 1, "el3_Text", MappingType.SimpleContent, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 2, String.Empty, false, false);
-			AssertDataColumn ("el3_el2Id", dt.Columns [3], "el2_Id", true, false, 0, 1, "el2_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 3, String.Empty, false, false);
+			AssertDataColumn ("el3_attr3", dt.Columns ["attr3"], "attr3", true, false, 0, 1, "attr3", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
+			AssertDataColumn ("el3_attrC", dt.Columns ["attrC"], "attrC", true, false, 0, 1, "attrC", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
+			AssertDataColumn ("el3_Text", dt.Columns ["el3_Text"], "el3_Text", true, false, 0, 1, "el3_Text", MappingType.SimpleContent, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 2, String.Empty, false, false);
+			AssertDataColumn ("el3_el2Id", dt.Columns ["el2_Id"], "el2_Id", true, false, 0, 1, "el2_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 3, String.Empty, false, false);
 
 			dt = ds.Tables [3];
 			AssertDataTable ("dt", dt, "el4", 4, 0, 1, 0);
-			AssertDataColumn ("el3_attr4", dt.Columns [0], "attr4", true, false, 0, 1, "attr4", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
-			AssertDataColumn ("el4_attrD", dt.Columns [1], "attrD", true, false, 0, 1, "attrD", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
-			AssertDataColumn ("el4_Text", dt.Columns [2], "el4_Text", true, false, 0, 1, "el4_Text", MappingType.SimpleContent, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 2, String.Empty, false, false);
-			AssertDataColumn ("el4_el2Id", dt.Columns [3], "el2_Id", true, false, 0, 1, "el2_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 3, String.Empty, false, false);
+			AssertDataColumn ("el3_attr4", dt.Columns ["attr4"], "attr4", true, false, 0, 1, "attr4", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
+			AssertDataColumn ("el4_attrD", dt.Columns ["attrD"], "attrD", true, false, 0, 1, "attrD", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
+			AssertDataColumn ("el4_Text", dt.Columns ["el4_Text"], "el4_Text", true, false, 0, 1, "el4_Text", MappingType.SimpleContent, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 2, String.Empty, false, false);
+			AssertDataColumn ("el4_el2Id", dt.Columns ["el2_Id"], "el2_Id", true, false, 0, 1, "el2_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 3, String.Empty, false, false);
 		}
 
 		[Test]
@@ -267,8 +301,8 @@ namespace MonoTests.System.Data
 			AssertDataSet ("ds", ds, "NewDataSet", 1, 0);
 			DataTable dt = ds.Tables [0];
 			AssertDataTable ("dt", dt, "root", 2, 0, 0, 0);
-			AssertDataColumn ("element", dt.Columns [0], "child_after_significant_space", true, false, 0, 1, "child_after_significant_space", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
-			AssertDataColumn ("xml:space", dt.Columns [1], "space", true, false, 0, 1, "space", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, "http://www.w3.org/XML/1998/namespace", 1, "xml", false, false);
+			AssertDataColumn ("element", dt.Columns ["child_after_significant_space"], "child_after_significant_space", true, false, 0, 1, "child_after_significant_space", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
+			AssertDataColumn ("xml:space", dt.Columns ["space"], "space", true, false, 0, 1, "space", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, "http://www.w3.org/XML/1998/namespace", 1, "xml", false, false);
 		}
 
 		[Test]
@@ -337,7 +371,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void TwoElementTable3 ()
+		public void ConflictSimpleComplexColumns ()
 		{
 			DataSet ds = GetDataSet (xml18, null);
 			AssertDataSet ("ds", ds, "set", 2, 1);

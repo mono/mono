@@ -62,24 +62,53 @@ namespace MonoTests.System.Data
 			// But also note that there is another test named
 			// LocaleOnRootWithoutIsDataSet(), that tests if locale on
 			// the (mere) data table modifies *DataSet's* locale.
+
+			// Moreover, when the schema contains another element
+			// (regardless of its schema type), the elements will
+			// never be treated as a DataSet.
 			string xsbase = @"<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' id='hoge'>
 	<xs:element name='Root'> <!-- When simple, it becomes table. When complex, it becomes DataSet -->
 		<xs:complexType>
-			<xs:choice maxOccurs='unbounded'>
+			<xs:choice>
+				{0}
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>";
+
+			string xsbase2 = @"<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' id='hoge'>
+	<xs:element name='Root'> <!-- When simple, it becomes table. When complex, it becomes DataSet -->
+		<xs:complexType>
+			<xs:choice>
 				{0}
 			</xs:choice>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name='more' type='xs:string' />
 </xs:schema>";
+
 			string simple = "<xs:element name='Child' type='xs:string' />";
 			string complex = @"<xs:element name='Child'>
-					<xs:complexType>
-						<xs:attribute name='a1' />
-						<xs:attribute name='a2' type='xs:integer'/>
-					</xs:complexType>
-				</xs:element>";
+	<xs:complexType>
+		<xs:attribute name='a1' />
+		<xs:attribute name='a2' type='xs:integer' />
+	</xs:complexType>
+</xs:element>";
 			string elref = "<xs:element ref='more' />";
+
+			string xs2 = @"<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' id='hoge'>
+	<xs:element name='Root' type='RootType' />
+	<xs:complexType name='RootType'>
+		<xs:choice>
+			<xs:element name='Child'>
+				<xs:complexType>
+					<xs:attribute name='a1' />
+					<xs:attribute name='a2' type='xs:integer' />
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+</xs:schema>";
 
 			DataSet ds = new DataSet ();
 
@@ -88,8 +117,16 @@ namespace MonoTests.System.Data
 			AssertDataSet ("simple", ds, "hoge", 1, 0);
 			AssertDataTable ("simple", ds.Tables [0], "Root", 1, 0, 0, 0);
 
+			// reference to global complex type
 			ds = new DataSet ();
-			xs = String.Format (xsbase, complex);
+			ds.ReadXmlSchema (new StringReader (xs2));
+			AssertDataSet ("external complexType", ds, "hoge", 2, 1);
+			AssertDataTable ("external Tab1", ds.Tables [0], "Root", 1, 0, 0, 1);
+			AssertDataTable ("external Tab2", ds.Tables [1], "Child", 3, 0, 1, 0);
+
+			// xsbase2 + complex -> datatable
+			ds = new DataSet ();
+			xs = String.Format (xsbase2, complex);
 			ds.ReadXmlSchema (new StringReader (xs));
 			AssertDataSet ("complex", ds, "hoge", 2, 1);
 			AssertDataTable ("complex", ds.Tables [0], "Root", 1, 0, 0, 1);
@@ -99,8 +136,14 @@ namespace MonoTests.System.Data
 			AssertDataColumn ("a2", dt.Columns ["a2"], "a2", true, false, 0, 1, "a2", MappingType.Attribute, typeof (long), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
 			AssertDataColumn ("Root_Id", dt.Columns ["Root_Id"], "Root_Id", true, false, 0, 1, "Root_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 2, String.Empty, false, false);
 
+			// xsbase + complex -> dataset
 			ds = new DataSet ();
-			xs = String.Format (xsbase, elref);
+			xs = String.Format (xsbase, complex);
+			ds.ReadXmlSchema (new StringReader (xs));
+			AssertDataSet ("complex", ds, "Root", 1, 0);
+
+			ds = new DataSet ();
+			xs = String.Format (xsbase2, elref);
 			ds.ReadXmlSchema (new StringReader (xs));
 			AssertDataSet ("complex", ds, "hoge", 1, 0);
 			AssertDataTable ("complex", ds.Tables [0], "Root", 1, 0, 0, 0);
