@@ -1,3 +1,7 @@
+2004-05-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SingleTest.cs: New. Unit tests for Single (adapted from Double).
+
 2004-05-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AppDomainTest.cs: Renamed Unload to TearDown (like it's attribute)
