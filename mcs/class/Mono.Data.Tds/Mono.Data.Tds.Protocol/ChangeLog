@@ -1,0 +1,12 @@
+2002-10-17  Tim Coleman (tim@timcoleman.com)
+	* ChangeLog:
+		New changelog added
+	* TdsCommandInternal.cs:
+	* TdsConnectionInternal.cs:
+	* TdsPacketTypeInternal.cs:
+	* TdsServerTypeInternal.cs:
+	* TdsTransactionInternal.cs:
+	* TdsVersionInternal.cs:
+		New classes added.  These are the
+		internal implementations, meant for
+		"wrapping" from other locations.
