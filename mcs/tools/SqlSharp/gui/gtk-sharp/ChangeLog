@@ -1,5 +1,23 @@
 2002-11-16  Daniel Morgan <danmorg@sc.rr.com>
 
+	* DataGrid.cs: made this a GTK# widget and
+	  removed any references to System.Data
+	  
+	* DbProvider.cs: added DbDataAdpter class
+	
+	* SqlEditorSharp.cs: made this an actual GTK# widget and
+	  added a few more SQL keywords
+	  
+	* sqlsharpgtk.cs: use the GTK# DataGrid for results by
+	  using a DbDataAdapter to Fill a DataTable and then
+	  data bind that DataTable to the DataGrid
+	  
+	* win32.make: added DataGrid.cs to build
+	
+	* DataGrid.Makefile.win32: removed file
+	
+2002-11-16  Daniel Morgan <danmorg@sc.rr.com>
+
 	* DataGrid.cs
 	* DataGrid.Makefile.win32: DataGrid demo based on the
 	TreeViewDemo in GTK#.  It works on GTK# Win32.

@@ -25,7 +25,7 @@ GTK_SHARP_LIBS = -r $(CLR_LIBS_PATH)/glib-sharp.dll -r $(CLR_LIBS_PATH)/pango-sh
 
 SQLSHARP_GTK_LIBS = $(GTK_SHARP_LIBS) -r $(CLR_LIBS_PATH)/System.Data.dll
 
-MODULES = sqlsharpgtk.cs SqlEditorSharp.cs LoginDialog.cs DbProvider.cs DbProviderCollection.cs
+MODULES = sqlsharpgtk.cs SqlEditorSharp.cs LoginDialog.cs DbProvider.cs DbProviderCollection.cs DataGrid.cs
 
 all : $(PROJECT)
 

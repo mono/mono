@@ -30,12 +30,11 @@ namespace SqlEditorSharp {
 	/// <summary> SqlEditor Class</summary>
 	/// <remarks>
 	/// </remarks>
-	public class SqlEditorSharp {
+	public class SqlEditorSharp : Gtk.VBox {
 
 		// Fields
 
-		private VBox editor;
-
+		// text tags for TextTagTable in TextBuffer
 		private TextTag freecomment_tag;
 		private TextTag linecomment_tag; 
 		private TextTag singlequotedconstant_tag;
@@ -52,24 +51,21 @@ namespace SqlEditorSharp {
 		private string family;
 
 		// widgets
-		private Widget scroll;
+		private ScrolledWindow scroll;
 		private TextView sqlTextView;
 		private TextBuffer sqlTextBuffer;
 
 		// Constructors
 
-		public SqlEditorSharp () {
-
-			editor = new VBox (false, 4);	
-
-			ScrolledWindow scroll;
+		public SqlEditorSharp() : base(false, 4) {
+			 
 			scroll = new ScrolledWindow (
 				new Adjustment (0.0, 0.0, 0.0, 0.0, 0.0, 0.0), 
 				new Adjustment (0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
 			scroll.HscrollbarPolicy = Gtk.PolicyType.Automatic;
 			scroll.VscrollbarPolicy = Gtk.PolicyType.Automatic;
 			scroll.ShadowType = Gtk.ShadowType.In;
-			editor.PackStart (scroll, true, true, 0);
+			this.PackStart (scroll, true, true, 0);
 
 			// default font famly for SQL editor
 			family = "courier";
@@ -135,12 +131,6 @@ namespace SqlEditorSharp {
 		}
 
 		// Public Properties
-
-		public VBox Editor {
-			get {
-				return editor;
-			}
-		}
 
 		public TextBuffer Buffer {
 			get {
@@ -659,6 +649,11 @@ namespace SqlEditorSharp {
 					     "ROLLBACK",
 					     "EXISTS",
 					     "IN",
+					     "LIKE",
+					     "GRANT",
+					     "REVOKE",
+					     "ON",
+					     "TO",
 					     String.Empty
 				     };
 	}

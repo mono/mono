@@ -29,12 +29,7 @@ namespace Gtk.Controls {
 	using Gtk;
 	using GtkSharp;
 
-	// FIXME: these don't belong here
 	using System.Runtime.InteropServices;
-	using System.Data;
-	using System.Data.Common;
-	using System.Data.SqlClient;
-	using Mono.Data.PostgreSqlClient;
 
 	public class DataGridColumn {
 		private string columnName;
@@ -47,18 +42,39 @@ namespace Gtk.Controls {
 				columnName = value;
 			}
 		}
+
+
+		private TreeViewColumn treeViewColumn;
+
+		public TreeViewColumn TreeViewColumn {
+			get {
+				return treeViewColumn;
+			}
+			set {
+				treeViewColumn = value;
+			}
+		}
 	}
 
-	public class DataGrid {
+	public class DataGrid : Gtk.VBox {
 
-		// FIXME: this don't belong here
-		public static DataTable dataTable = null;
+		private ListStore store = null;
+		private Dialog dialog = null;
+		private Label dialog_label = null;
+		private TreeView treeView = null;
 
-		private static ListStore store = null;
-		private static Dialog dialog = null;
-		private static Label dialog_label = null;
+		public DataGridColumn[] gridColumns = null;
 
-		public static DataGridColumn[] gridColumns;
+		public DataGrid () : base(false, 4) {		
+
+			ScrolledWindow sw = new ScrolledWindow ();
+			this.PackStart (sw, true, true, 0);
+
+			treeView = new TreeView (store);
+			treeView.HeadersVisible = true;
+
+			sw.Add (treeView);
+		}
 
 		// FIXME: need to place in a base class
 		//        the DataSource, DataMember, DataBind()
@@ -66,11 +82,11 @@ namespace Gtk.Controls {
 		//        maybe we can call the base class
 		//        BaseDataList for GTK#?
 
-		private static object dataSource = null;
+		private object dataSource = null;
 
-		private static string dataMember = "";
+		private string dataMember = "";
 
-		public static object DataSource {
+		public object DataSource {
 			get {
 				return dataSource;
 			}
@@ -79,7 +95,7 @@ namespace Gtk.Controls {
 			}
 		}
 
-		private static string DataMember {
+		public string DataMember {
 			get {
 				return dataMember;
 			}
@@ -88,14 +104,8 @@ namespace Gtk.Controls {
 			}
 		}
 
-		private static void DataBind () 
-		{
-			AppendText ("Data binding...");
-			
-			UpdateDialog ("Data binding {0}", "...");	
-
-			if (store != null)
-				return;
+		public void DataBind () {
+			Clear ();
 
 			System.Object o = null;
 			o = GetResolvedDataSource (DataSource, DataMember);
@@ -104,15 +114,13 @@ namespace Gtk.Controls {
 
 			// FIXME: does not belong in this base method
 			TreeIter iter = new TreeIter();
-			// create list store for treeview
-			store = new ListStore ((int)TypeFundamentals.TypeString);	
-			
+									
 			PropertyDescriptorCollection pdc = tlist.GetItemProperties(new PropertyDescriptor[0]);
+
 			gridColumns = new DataGridColumn[pdc.Count];
 
 			// define the columns in the treeview store
 			// based on the schema of the result
-			Console.WriteLine("pdc.Count: " + pdc.Count.ToString());
 			int[] theTypes = new int[pdc.Count];
 			for(int col = 0; col < pdc.Count; col++) {
 				theTypes[col] = (int)TypeFundamentals.TypeString;
@@ -124,22 +132,7 @@ namespace Gtk.Controls {
 			foreach(PropertyDescriptor pd in pdc) {
 				colndx ++;
 				gridColumns[colndx] = new DataGridColumn();
-				gridColumns[colndx].ColumnName = pd.Name;
-				
-				AppendText("DisplayName: " + pd.DisplayName);
-				AppendText("Name: " + pd.Name);
-				AppendText("Type: " + pd.GetType().ToString());
-				AppendText("PropertyType: " + pd.PropertyType.ToString());
-				AppendText("ComponentType: " + pd.ComponentType.ToString());				
-
-				// DataView
-				AppendText("o is " + o.GetType().ToString());
-
-				// System.ComponentModel.PropertyDescriptorCollection
-				AppendText("pdc is " + pdc.GetType().ToString());
-
-				// System.Data.DataColumnPropertyDescriptor
-				AppendText("pd is " + pd.GetType().ToString());										
+				gridColumns[colndx].ColumnName = pd.Name;				
 			}
 
 			foreach(System.Object obj in ie) {
@@ -152,17 +145,16 @@ namespace Gtk.Controls {
 				int cv = 0;
 				foreach(PropertyDescriptor property in properties) {
 					string propValue = property.GetValue (obj).ToString();
-					Console.WriteLine("   PropertyDescriptor Name: " + property.Name);
-					Console.WriteLine("                     Value: " + propValue.ToString());
 					SetColumnValue (iter, cv, propValue);
 					cv++;
 				}
 			}
-			AppendText("Data Binding Done.");
+			treeView.Model = store;
+			AutoCreateTreeViewColumns (treeView);
 		}
 
 		// borrowed from Mono's System.Web implementation
-		public static IEnumerable GetResolvedDataSource(object source, string member) {
+		public IEnumerable GetResolvedDataSource(object source, string member) {
 			if(source != null && source is IListSource) {
 				IListSource src = (IListSource)source;
 				IList list = src.GetList();
@@ -197,28 +189,45 @@ namespace Gtk.Controls {
 			return null;
 		}
 
+		private void Clear () {
+			if (store != null)
+				store.Clear ();
+			else
+				store = new ListStore ((int)TypeFundamentals.TypeString);	
+
+			if(gridColumns != null) {
+				for(int c = 0; c < gridColumns.Length; c++) {
+					if(gridColumns[c] != null) {
+						treeView.RemoveColumn(gridColumns[c].TreeViewColumn);
+						gridColumns[c].TreeViewColumn = null;
+						gridColumns[c] = null;
+					}
+				}
+			}
+			gridColumns = null;
+		}
+
 		// FIXME: temporarily here until ListStore.SetColumTypes() is fixed
 		[DllImport("libgtk-win32-2.0-0.dll")]
 		static extern void gtk_list_store_set_column_types(IntPtr raw, int n_columns, int[] types);
-		public static void SetColumnTypes(int[] types) {
+		public void SetColumnTypes(int[] types) {
 			gtk_list_store_set_column_types(((IWrapper)store).Handle, types.Length, types);
 		}
 
 		// for DEBUG only
-		public static void AppendText (string text) {
-			Console.WriteLine (text);
+		public void AppendText (string text) {
+			Console.WriteLine ("DataGrid DEBUG:" + text);
 			Console.Out.Flush ();
 		}
 
-		public static TreeIter NewRow () { 
+		public TreeIter NewRow () { 
 			TreeIter rowTreeIter = new TreeIter();
 			store.Append (out rowTreeIter);
 			return rowTreeIter;
 		}
 
-		public static void AddRow (object[] columnValues) {	
-			TreeIter iter = NewRow ();
-			
+		public void AddRow (object[] columnValues) {	
+			TreeIter iter = NewRow ();			
 			for(int col = 0; col < columnValues.Length; col++) {
 
 				string cellValue = columnValues[col].ToString ();
@@ -226,105 +235,18 @@ namespace Gtk.Controls {
 			}
 		}
 
-		private static void PopulateStore () {
-			if (store != null)
-				return;
+		public void SetColumnValue (TreeIter iter, int column, string value) {
+			GLib.Value cell = new GLib.Value (value);
+			store.SetValue (iter, column, cell);	
+		}
 
-			TreeIter iter = new TreeIter();
-
-			// create list store for treeview
-			store = new ListStore ((int)TypeFundamentals.TypeString);
+		private void AutoCreateTreeViewColumns (TreeView theTreeView) {
 			
-			// define the columns in the treeview store
-			// based on the schema of the result
-			int[] theTypes = new int[dataTable.Columns.Count];
-			for(int col = 0; col < dataTable.Columns.Count; col++) {
-				theTypes[col] = (int)TypeFundamentals.TypeString;
-				Console.WriteLine("Column: " + dataTable.Columns[col].ColumnName);
-			}
-			SetColumnTypes (theTypes);
-
-			// set data in result to tree view store		
-			for(int row = 0; row < dataTable.Rows.Count; row++) {
-				UpdateDialog ("Loading Row {0}", row.ToString ());			
-                                				
-				DataRow dataRow = dataTable.Rows[row];
-				iter = NewRow ();
-				
-				for(int cv = 0; cv < dataTable.Columns.Count; cv++) {
-					string columnValue = dataRow[dataTable.Columns[cv]].ToString();
-					SetColumnValue (iter, cv, columnValue);
-				}				
-			}
-		}
-
-		public static void SetColumnValue (TreeIter iter, int y, string cellValue) {
-			GLib.Value cell = new GLib.Value (cellValue);
-			store.SetValue (iter, y, cell);	
-		}
-
-		// FIXME; this don't belong here
-		public static void GetDataFromDatabase () {		
-			string connection;
-			string sql;
-			connection = "Server=DANPC;Database=pubs;User ID=danmorg;Password=freetds";
-			sql = "select fname, lname, emp_id, hire_date from employee";
-			SqlDataAdapter adapter;
-			DataSet dataSet = null;
-			adapter = new SqlDataAdapter (sql, connection);
-			dataSet = new DataSet ();
-			string table = "employee";
-			adapter.Fill (dataSet, "employee");
-			dataTable = dataSet.Tables["employee"];
-		}
-
-		// FIXME: this don't belong
-		public static void Main (string[] args) {
-			// FIXME: this don't belong here
-			GetDataFromDatabase ();
-
-			Application.Init ();
-			Idle.Add (new IdleHandler (IdleCB));
-			Application.Run ();
-		}
-
-		public static bool IdleCB () {
-			
-			// data binding DataTable to DataGird
-			DataSource = dataTable;
-			DataBind ();
-
-			// PopulateStore ();
-			Window win = new Window ("GTK# DataGrid Demo");
-			win.DeleteEvent += new DeleteEventHandler (DeleteCB);
-			win.DefaultSize = new Size (640,480);
-
-			ScrolledWindow sw = new ScrolledWindow ();
-			win.Add (sw);
-
-			TreeView tv = new TreeView (store);
-			tv.HeadersVisible = true;
-
-			AutoCreateTreeViewColumns (tv);
-
-			sw.Add (tv);
-			
-			dialog.Destroy ();
-			dialog = null;
-
-			win.ShowAll ();
-			return false;
-		}
-
-		private static void AutoCreateTreeViewColumns (TreeView theTreeView) {
-			Console.WriteLine("AutoCreateTreeViewColumns BEGIN");
-
-			//for(int col = 0; col < dataTable.Columns.Count; col++) {
 			for(int col = 0; col < gridColumns.Length; col++) {
 				// escape underscore _ because it is used
 				// as the underline in menus and labels
 				StringBuilder name = new StringBuilder ();
-				//foreach(char ch in dataTable.Columns[col].ColumnName) {
+				
 				foreach(char ch in gridColumns[col].ColumnName) {
 					if (ch == '_')
 						name.Append ("__");
@@ -336,13 +258,16 @@ namespace Gtk.Controls {
 				tvc = CreateColumn(theTreeView, col, name.ToString());
 				theTreeView.AppendColumn (tvc);
 			}
-			Console.WriteLine("AutoCreateTreeViewColumns END");
 		}
 
-		private static TreeViewColumn CreateColumn (TreeView theTreeView, int col, string columnName) {
+		// TODO: maybe need to create 
+		// a DataGridColumnCollection of DataGridColumn
+		// and a DataGridColumn contain a TreeViewColumn
+		private TreeViewColumn CreateColumn (TreeView theTreeView, int col, string columnName) {
 			Console.WriteLine("CreateColumn BEGIN");
 
-			TreeViewColumn NameCol = new TreeViewColumn ();
+			gridColumns[col].TreeViewColumn = new TreeViewColumn ();
+			TreeViewColumn NameCol = gridColumns[col].TreeViewColumn;
 			CellRenderer NameRenderer = new CellRendererText ();
 
 			NameCol.Title = columnName;
@@ -352,42 +277,6 @@ namespace Gtk.Controls {
 			Console.WriteLine("CreateColumn END");
 
 			return NameCol;
-		}
-
-		private static void DeleteCB (System.Object o, DeleteEventArgs args) {
-			Application.Quit ();
-			args.RetVal = true;
-		}
-
-		private static void UpdateDialog (string format, params object[] args) {
-			string text = String.Format (format, args);
-
-			if (dialog == null) {
-				dialog = new Dialog ();
-				dialog.Title = "Loading data...";
-				dialog.AddButton (Stock.Cancel, 1);
-				dialog.Response += new ResponseHandler (ResponseCB);
-				dialog.DefaultSize = new Size (480, 100);
-					
-				VBox vbox = dialog.VBox;
-				HBox hbox = new HBox (false, 4);
-				vbox.PackStart (hbox, true, true, 0);
-				
-				Gtk.Image icon = new Gtk.Image (Stock.DialogInfo, IconSize.Dialog);
-				hbox.PackStart (icon, false, false, 0);
-				dialog_label = new Label (text);
-				hbox.PackStart (dialog_label, false, false, 0);
-				dialog.ShowAll ();
-			} else {
-				dialog_label.Text = text;
-				while (Application.EventsPending ())
-					Application.RunIteration ();
-			}
-		}
-
-		private static void ResponseCB (object obj, ResponseArgs args) {
-			Application.Quit ();
-			System.Environment.Exit (0);
 		}
 	}
 }

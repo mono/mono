@@ -33,6 +33,7 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 	using System.Reflection;
 	using System.Runtime.Remoting;
 	using System.Diagnostics;
+	using Gtk.Controls;
 
 	public class SqlSharpGtk {
 		// these will be moved once a SqlSharpWindow has been created
@@ -46,18 +47,20 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 		private ScrolledWindow swin;
 		private Statusbar statusBar;
 		private Toolbar toolbar;
+		private DataGrid grid;
+		private Window win;
 
 		public DbProviderCollection providerList;
 
 		public SqlSharpGtk () {
 
-			CreateGui();
-			LoadProviders();
+			CreateGui ();
+			LoadProviders ();
 		}
 
 		public void CreateGui() {
 
-			Window win = new Window ("SQL# For GTK#");
+			win = new Window ("SQL# For GTK#");
 			win.DeleteEvent += new DeleteEventHandler (Window_Delete);
 			win.BorderWidth = 4;
 			win.DefaultSize = new Size (450, 300);
@@ -66,7 +69,7 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			win.Add (vbox);
 			
 			// Menu Bar
-			MenuBar mb = CreateMenuBar();
+			MenuBar mb = CreateMenuBar ();
 			vbox.PackStart(mb, false, false, 0);
 
 			// Tool Bar
@@ -74,32 +77,19 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			vbox.PackStart (toolbar, false, false, 0);
 			
 			// Panels
-			VPaned paned = new VPaned();
+			VPaned paned = new VPaned ();
 			vbox.PackStart (paned, true, true, 0);
 
 			// SQL Editor (top TextView)
-			editor = new SqlEditorSharp();
-			paned.Add1 (editor.Editor);
+			editor = new SqlEditorSharp ();
+			paned.Add1 (editor);
 
-			// Output Results (TextView)
-			swin = new ScrolledWindow (new Adjustment (0.0, 0.0, 0.0, 0.0, 0.0, 0.0), new Adjustment (0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-			swin.HscrollbarPolicy = Gtk.PolicyType.Automatic;
-			swin.VscrollbarPolicy = Gtk.PolicyType.Automatic;
-			swin.ShadowType = Gtk.ShadowType.In;
-			paned.Add2 (swin);
+			// Output Results (bottom TextView)
+			swin = CreateOutputResultsTextView ();
+			//paned.Add2 (swin);
 
-			// create text tag table for font "courier"
-			// to be applied to the output TextView
-			TextTagTable textTagTable = new TextTagTable();
-			textTag = new TextTag("normaltext");
-			textTag.Family = "courier";
-			textTag.Foreground = "black";
-			textTagTable.Add(textTag);
-
-			buf = new TextBuffer (textTagTable);
-			textView = new TextView (buf);
-			textView.Editable = false;
-			swin.Add (textView);		
+			grid = CreateOutputResultsDataGrid ();
+			paned.Add2 (grid);
 
 			statusBar = new Statusbar ();
 			vbox.PackEnd (statusBar, false, false, 0);
@@ -107,10 +97,44 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			win.ShowAll ();
 		}
 
+		DataGrid CreateOutputResultsDataGrid () {
+			DataGrid dataGrid = null;
+
+			dataGrid = new DataGrid ();
+
+			return dataGrid;
+		}
+
+		ScrolledWindow CreateOutputResultsTextView () {
+			ScrolledWindow sw;
+			sw = new ScrolledWindow (
+				new Adjustment (0.0, 0.0, 0.0, 0.0, 0.0, 0.0), 
+				new Adjustment (0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+			sw.HscrollbarPolicy = Gtk.PolicyType.Automatic;
+			sw.VscrollbarPolicy = Gtk.PolicyType.Automatic;
+			sw.ShadowType = Gtk.ShadowType.In;
+			
+			// create text tag table for font "courier"
+			// to be applied to the output TextView
+			TextTagTable textTagTable = new TextTagTable ();
+			textTag = new TextTag ("normaltext");
+			textTag.Family = "courier";
+			textTag.Foreground = "black";
+			textTagTable.Add (textTag);
+
+			buf = new TextBuffer (textTagTable);
+			textView = new TextView (buf);
+			textView.Editable = false;
+			sw.Add (textView);		
+
+			return sw;
+		}
+
 		Toolbar CreateToolbar () {
 			Toolbar toolbar = new Toolbar ();
 
-			toolbar.AppendItem ("Execute", "Execute SQL Commands.", String.Empty,
+			toolbar.AppendItem ("Execute", 
+				"Execute SQL Commands.", String.Empty,
 				new Gtk.Image (Stock.Execute, IconSize.LargeToolbar),
 				new SignalFunc (execute_func));	
 
@@ -121,82 +145,90 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			return toolbar;
 		}
 
-		public void LoadProviders() {
-			providerList = new DbProviderCollection();
+		public void LoadProviders () {
+			providerList = new DbProviderCollection ();
 			
-			providerList.Add (new DbProvider(
+			providerList.Add (new DbProvider (
 				"MYSQL",
 				"MySQL",
 				"Mono.Data.MySql",
 				"Mono.Data.MySql.MySqlConnection",
+				"Mono.Data.MySql.MySqlAdapter",
 				false ));
-			providerList.Add (new DbProvider(
+			providerList.Add (new DbProvider (
 				"POSTGRESQL",
 				"PostgreSQL",
 				"Mono.Data.PostgreSqlClient",
 				"Mono.Data.PostgreSqlClient.PgSqlConnection",
+				"Mono.Data.PostgreSqlClient.PgSqlAdapter",
 				false ));
-			providerList.Add (new DbProvider(
+			providerList.Add (new DbProvider (
 				"SQLCLIENT",
 				"Microsoft SQL Server",
 				"",
 				"",
+				"",
 				true ));
-			providerList.Add (new DbProvider(
+			providerList.Add (new DbProvider (
 				"TDS",
 				"TDS Generic",
 				"Mono.Data.TdsClient",
 				"Mono.Data.TdsClient.TdsConnection",
+				"Mono.Data.TdsClient.TdsAdapter",
 				false ));
-			providerList.Add (new DbProvider(
+			providerList.Add (new DbProvider (
 				"ODBC",
 				"ODBC",
+				"",
 				"",
 				"",
 				true ));
-			providerList.Add (new DbProvider(
+			providerList.Add (new DbProvider (
 				"SQLITE",
 				"SQL Lite",
 				"Mono.Data.SqliteClient",
 				"Mono.Data.SqliteClient.SqliteConnection",
+				"Mono.Data.SqliteClient.SqliteAdapter",
 				false ));
-			providerList.Add (new DbProvider(
+			providerList.Add (new DbProvider (
 				"ORACLE",
 				"Oracle 8i/9i",
 				"System.Data.OracleClient",
 				"System.Data.OracleClient.OracleConnection",
+				"System.Data.OracleClient.OracleAdapter",
 				false ));
-			providerList.Add (new DbProvider(
+			providerList.Add (new DbProvider (
 				"SYBASE",
 				"Sybase",
 				"Mono.Data.SybaseClient",
 				"Mono.Data.SybaseClient.SybaseConnection",
+				"Mono.Data.SybaseClient.SybaseAdapter",
 				false ));
 
 		}
 
-		public MenuBar CreateMenuBar() {
+		public MenuBar CreateMenuBar () {
 
 			MenuBar mb = new MenuBar ();
 			Menu file_menu = new Menu ();
 
-			MenuItem connect_item = new MenuItem("Connect");
+			MenuItem connect_item = new MenuItem ("Connect");
 			connect_item.Activated += new EventHandler (connect_cb);
 			file_menu.Append (connect_item);
 
-			MenuItem disconnect_item = new MenuItem("Disconnect");
+			MenuItem disconnect_item = new MenuItem ("Disconnect");
 			disconnect_item.Activated += new EventHandler (disconnect_cb);
 			file_menu.Append (disconnect_item);
 
-			MenuItem execute_item = new MenuItem("Execute");
+			MenuItem execute_item = new MenuItem ("Execute");
 			execute_item.Activated += new EventHandler (execute_cb);
 			file_menu.Append (execute_item);
 
-			MenuItem exit_item = new MenuItem("Exit");
+			MenuItem exit_item = new MenuItem ("Exit");
 			exit_item.Activated += new EventHandler (exit_cb);
 			file_menu.Append (exit_item);
 
-			MenuItem file_item = new MenuItem("File");
+			MenuItem file_item = new MenuItem ("File");
 			file_item.Submenu = file_menu;
 			mb.Append (file_item);
 
@@ -205,52 +237,52 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 
 		// WriteLine() to output text to bottom TextView
 		// for displaying result sets and messages
-		public void AppendText(TextBuffer buffer, string text)	{
+		public void AppendText (TextBuffer buffer, string text)	{
 		
 			TextIter iter;
 			int char_count = 0;
 
 			// if text not empty, output text
-			if(!text.Equals("")) {				
+			if (!text.Equals ("")) {				
 				char_count = buffer.CharCount;
-				char_count = Math.Max(0, char_count - 1);
-				buffer.GetIterAtOffset(out iter, char_count);
-				buffer.Insert(iter, text, -1);
+				char_count = Math.Max (0, char_count - 1);
+				buffer.GetIterAtOffset (out iter, char_count);
+				buffer.Insert (iter, text, -1);
 			}
 			// output a new line
 			char_count = buffer.CharCount;
-			char_count = Math.Max(0, char_count - 1);
-			buffer.GetIterAtOffset(out iter, char_count);
-			buffer.Insert(iter, "\n", -1);
+			char_count = Math.Max (0, char_count - 1);
+			buffer.GetIterAtOffset (out iter, char_count);
+			buffer.Insert (iter, "\n", -1);
 
 			// format text to "courier" font family
 			TextIter start_iter, end_iter;
-			buffer.GetIterAtOffset(out start_iter, 0);
+			buffer.GetIterAtOffset (out start_iter, 0);
 			char_count = buffer.CharCount;
-			char_count = Math.Max(0, char_count - 1);
-			buffer.GetIterAtOffset(out end_iter, char_count);
-			buffer.ApplyTagByName("normaltext", start_iter, end_iter);
+			char_count = Math.Max (0, char_count - 1);
+			buffer.GetIterAtOffset (out end_iter, char_count);
+			buffer.ApplyTagByName ("normaltext", start_iter, end_iter);
 
 			// scroll text into view
 			TextMark mark;
 			mark = buf.InsertMark;
-			textView.ScrollMarkOnscreen(mark);
+			textView.ScrollMarkOnscreen (mark);
 		}
 
-		public bool LoadExternalProvider(string providerAssembly,
+		public bool LoadExternalProvider (string providerAssembly,
 			string providerConnectionClass) {
 			
 			try {
 				SqlSharpGtk.DebugWriteLine ("Loading external provider...");
 				
-				Assembly ps = Assembly.Load(providerAssembly);
-				Type typ = ps.GetType(providerConnectionClass);
-				conn = (IDbConnection) Activator.CreateInstance(typ);
+				Assembly ps = Assembly.Load (providerAssembly);
+				Type typ = ps.GetType (providerConnectionClass);
+				conn = (IDbConnection) Activator.CreateInstance (typ);
 								
 				SqlSharpGtk.DebugWriteLine ("External provider loaded.");
 			}
-			catch(Exception f) {
-				string errorMessage = String.Format(
+			catch (Exception f) {
+				string errorMessage = String.Format (
 					"Error: unable to load the assembly of the provider: {1} because: {2}", 
 					providerAssembly,
 					f.Message);
@@ -264,7 +296,7 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			Application.Quit ();
 		}
 
-		static void exit_func(Gtk.Object o) {
+		static void exit_func (Gtk.Object o) {
 			Application.Quit ();
 		}
 
@@ -274,32 +306,33 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 
 		void connect_cb (object o, EventArgs args) {
 			
-			LoginDialog login = new LoginDialog(this);
+			LoginDialog login = new LoginDialog (this);
 			login = null;
 		}
 
 		void disconnect_cb (object o, EventArgs args) {
 			AppendText(buf, "Disconnecting...");
 			try {
-				conn.Close();
+				conn.Close ();
 				conn = null;
 			}
-			catch(Exception e) {
-				Console.WriteLine("Error: Unable to disconnect." + e.Message);
+			catch (Exception e) {
+				Console.WriteLine ("Error: Unable to disconnect." + 
+					e.Message);
 				conn = null;
 				return;
 			}
-			AppendText(buf, "Disconnected.");
+			AppendText (buf, "Disconnected.");
 		}
 
-		void execute_func(Gtk.Object o) {
-			ExecuteSQL();
+		void execute_func (Gtk.Object o) {
+			ExecuteSQL ();
 		}
 
 		// Execute SQL Commands
-		void ExecuteSQL() {
-			if(conn == null) {
-				AppendText(buf, "Error: Not Connected.");
+		void ExecuteSQL () {
+			if (conn == null) {
+				AppendText (buf, "Error: Not Connected.");
 				return;
 			}
 
@@ -308,12 +341,12 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 
 			IDbCommand cmd;
 			try {
-				cmd = conn.CreateCommand();
-
+				cmd = conn.CreateCommand ();
 			}
-			catch(Exception ec) {
-				AppendText(buf, "Error: Unable to create command to execute: " + 
-					ec. Message);
+			catch (Exception ec) {
+				AppendText (buf, 
+					"Error: Unable to create command to execute: " + 
+					ec.Message);
 				return;
 			}
 
@@ -330,8 +363,9 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 				exeBuff.GetIterAtOffset(out end_iter, char_count);
 				sql = exeBuff.GetText(start_iter, end_iter, false);
 			}
-			catch(Exception et) {
-				AppendText(buf, "Error: Unable to get text from SQL editor: " + 
+			catch (Exception et) {
+				AppendText (buf, 
+					"Error: Unable to get text from SQL editor: " + 
 					et.Message);
 				return;
 			}
@@ -339,43 +373,52 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			try {
 				cmd.CommandText = sql;
 			}
-			catch(Exception e) {
-				AppendText(buf, "Error: Unable to set SQL text to command.");
+			catch (Exception e) {
+				AppendText (buf, 
+					"Error: Unable to set SQL text to command.");
 			}
 			
-
 			IDataReader reader = null;
 			SqlSharpGtk.DebugWriteLine ("Executing SQL: " + sql);
 
+			/*
 			try {
-				reader = cmd.ExecuteReader();
+				reader = cmd.ExecuteReader ();
 			}
-			catch(Exception e) {
+			catch (Exception e) {
 				msg = "SQL Execution Error: " + e.Message;
-				Error(msg);
+				Error (msg);
 				return;
 			}
 			
-			if(reader == null) {
+			if (reader == null) {
 				Error("Error: reader is null");
 				return;
 			}
-
+			*/
 			Error("Display Data...");
 			try {
-				DisplayData(reader);
+				// DisplayData (reader);
+
+				DataTable dataTable = LoadDataTable (cmd);
+				grid.DataSource = dataTable;
+				grid.DataBind ();
+				grid.ResizeChildren ();
+				grid.Show ();
+				grid.ShowAll ();
+				win.ShowAll ();
 			} 
-			catch(Exception e) {
+			catch (Exception e) {
 				msg = "Error Displaying Data: " + e.Message;
-				Error(msg);
+				Error (msg);
 			}
 		}
 
 		void execute_cb (object o, EventArgs args) {
-			ExecuteSQL();
+			ExecuteSQL ();
 		}
 
-		public void DisplayResult(IDataReader reader, DataTable schemaTable) {
+		public void DisplayResult (IDataReader reader, DataTable schemaTable) {
 
 			const string zero = "0";
 			StringBuilder column = null;
@@ -396,29 +439,29 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			string dataTypeName; // native Database type
 			DataRow row; // schema row
 
-			line = new StringBuilder();
-			hdrUnderline = new StringBuilder();
+			line = new StringBuilder ();
+			hdrUnderline = new StringBuilder ();
 
 			try {
-				OutputLine("Fields in Query Result: " + 
+				OutputLine ("Fields in Query Result: " + 
 					reader.FieldCount);
 			}
 			catch(Exception e){
-				Console.WriteLine("Error: Unable to get FieldCount: " +
+				Console.WriteLine ("Error: Unable to get FieldCount: " +
 					e.Message);
 				return;
 			}
 			
-			OutputLine("");
+			OutputLine ("");
 			
 			for(c = 0; c < reader.FieldCount; c++) {
 				try {			
 					DataRow schemaRow = schemaTable.Rows[c];
-					string columnHeader = reader.GetName(c);
-					if(columnHeader.Equals(""))
+					string columnHeader = reader.GetName (c);
+					if (columnHeader.Equals (""))
 						columnHeader = "column";
-					if(columnHeader.Length > 32)
-						columnHeader = columnHeader.Substring(0,32);											
+					if (columnHeader.Length > 32)
+						columnHeader = columnHeader.Substring (0,32);
 					
 					// spacing
 					columnSize = (int) schemaRow["ColumnSize"];
@@ -783,7 +826,6 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 
 			string providerKey = dbProvider.Key;
 			switch (providerKey.ToUpper ()) {
-			case "SYBASE":
 			case "ORACLE":
 				msg = "Error: Provider not currently supported.";
 				Error(msg);
@@ -795,6 +837,36 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 				break;
 			}
 			return success;
+		}
+
+		public DbDataAdapter CreateDbDataAdapter () {
+			string msg = "";
+			DbDataAdapter adapter = null;
+			if (dbProvider.InternalProvider == true) {
+				string providerKey = dbProvider.Key;
+				switch (providerKey.ToUpper ()) {
+				case "SQLCLIENT":
+					try {
+						adapter = new SqlDataAdapter ();
+					}
+					catch (Exception e) {
+						msg = "Error: unable to create adapter: " +
+							e.Message;
+						Error (msg);
+						return null;
+					}
+					break;
+				}
+			}
+			return adapter;
+		}
+
+		public DataTable LoadDataTable (IDbCommand cmd) {
+			DbDataAdapter adapter = CreateDbDataAdapter ();
+			((IDbDataAdapter) adapter).SelectCommand = cmd;
+			DataTable dataTable = new DataTable ();
+			adapter.Fill (dataTable);
+			return dataTable;
 		}
 
 		public bool OpenDataSource () {
