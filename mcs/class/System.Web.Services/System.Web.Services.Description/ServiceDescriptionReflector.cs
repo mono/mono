@@ -18,12 +18,16 @@ namespace System.Web.Services.Description {
 	public class ServiceDescriptionReflector {
 
 		ProtocolReflector reflector;
-		
+		ServiceDescriptionCollection serviceDescriptions;
+		Types types;
+
 		#region Constructors
 	
 		public ServiceDescriptionReflector ()
 		{
 			reflector = new SoapProtocolReflector ();
+			types = new Types ();
+			serviceDescriptions = new ServiceDescriptionCollection ();
 		}
 		
 		#endregion // Constructors
@@ -31,11 +35,11 @@ namespace System.Web.Services.Description {
 		#region Properties
 
 		public XmlSchemas Schemas {
-			get { return reflector.Schemas; }
+			get { return types.Schemas; }
 		}
 
 		public ServiceDescriptionCollection ServiceDescriptions {
-			get { return reflector.ServiceDescriptions; }
+			get { return serviceDescriptions; }
 		}
 
 
@@ -45,7 +49,24 @@ namespace System.Web.Services.Description {
 
 		public void Reflect (Type type, string url)
 		{
-			reflector.Reflect (type, url);
+			reflector.Reflect (this, type, url);
+			
+			if (serviceDescriptions.Count == 1)
+				serviceDescriptions[0].Types = types;
+			else
+			{
+				foreach (ServiceDescription d in serviceDescriptions)
+				{
+					d.Types = new Types();
+					for (int n=0; n<types.Schemas.Count; n++)
+						ProtocolReflector.AddImport (d, types.Schemas[n].TargetNamespace, GetSchemaUrl (url, n));
+				}
+			}
+		}
+		
+		string GetSchemaUrl (string baseUrl, int id)
+		{
+			return baseUrl + "?schema=" + id;
 		}
 		
 		

@@ -1,3 +1,9 @@
+2003-10-01  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ProtocolReflector.cs: Adapted to the changes in TypeStubInfo. Moved some
+	  common code to ServiceDescriptionReflector.
+	* ServiceDescriptionReflector.cs: Moved some code from ProtocolReflector.cs
+
 2003-09-28  Lluis Sanchez Gual  <lluis@ximian.com>
 	
 	* ExtensionManager.cs: Read extension types from the configuration file.
