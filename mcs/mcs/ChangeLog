@@ -1,3 +1,8 @@
+2005-04-01  Ben Maurer  <bmaurer@ximian.com>
+
+	* rootcontext.cs: Allow mcs to bootstrap with the compilation
+	resetting thingy.
+
 2005-04-01  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #74232 and cs0208-3.cs.
