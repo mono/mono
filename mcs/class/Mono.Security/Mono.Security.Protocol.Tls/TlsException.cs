@@ -39,7 +39,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Properties
 
-		public Alert Alert
+		internal Alert Alert
 		{
 			get { return this.alert; }
 		}
