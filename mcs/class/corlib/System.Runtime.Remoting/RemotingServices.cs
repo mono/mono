@@ -241,7 +241,8 @@ namespace System.Runtime.Remoting
 
 		static string NewUri ()
 		{
-			return app_id + Environment.TickCount + "_" + next_id++;
+			int n = Interlocked.Increment (ref next_id);
+			return app_id + Environment.TickCount + "_" + n;
 		}
 
 		public static RealProxy GetRealProxy (object proxy)

@@ -1,3 +1,7 @@
+2003-10-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* RemotingServices.cs: (NewUri) use Interlocked.Increment on next_id.
+
 2003-10-09  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ObjRef.cs: Added new constructor to support CAD channel.
