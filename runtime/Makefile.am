@@ -47,11 +47,11 @@ assembliesdir = $(libdir)
 monobinsdir = $(bindir)
 
 $(assemblies_DATA):
-	cp $(top_srcdir)/../mcs/class/lib/$@ . || cp $(assembliesdir)/$@ . 
+	-cp $(top_srcdir)/../mcs/class/lib/$@ . || cp $(assembliesdir)/$@ . 
 
 $(monobins_DATA):
-	cp $(top_srcdir)/../mcs/mcs/mcs.exe . || cp $(monobinsdir)/$@ . 
-	cp $(top_srcdir)/../mcs/monoresgen/monoresgen.exe . || cp $(monobinsdir)/$@ . 
+	-cp $(top_srcdir)/../mcs/mcs/mcs.exe . || cp $(monobinsdir)/$@ . 
+	-cp $(top_srcdir)/../mcs/monoresgen/monoresgen.exe . || cp $(monobinsdir)/$@ . 
 
 dist-hook:
 	for i in $(monobins_DATA) $(assemblies_DATA); do	\
