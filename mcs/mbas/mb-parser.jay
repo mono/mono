@@ -132,11 +132,11 @@ namespace Mono.MonoBASIC
 		ArrayList current_rank_specifiers;
 
 		//To handle the End of a block 
-		// We use grammer, priority, strings, and an integer called Parenta
-		//
-		// FIX ME: Need to implement some better method than this and in 
-		// some cases parser will come out without proceding further
-		// if it comes acorss error.
+               // We use grammer, priority, strings, and an integer called Parenta
+               //
+               // FIX ME: Need to implement some better method than this and in
+               // some cases parser will come out without proceeding further
+               // if it comes acorss error.
 
                 public string[] end_blocks = {"Nothing", "Next", "Loop", "End If", "End Sub", "End Module", "End Namespace", "End Class", "End Function", "End Structure", "End Enum", "End Interface", "End Property", "End With", "End Synclock", "End Try", "End While", "End Select", "End Set", "End Get"};
                 
@@ -3074,8 +3074,16 @@ foreach_statement
                 if(Parent==1)
                         Parent=0;
           }
-	   opt_identifier
+	   _mark_ opt_identifier
 	  {
+			string s = $3.ToString();
+			string s1 = "";
+			if ($14 != null)
+				s1 = $14.ToString();		
+			if (s1 != "" && s != s1)
+				{		
+					Report.Error(30070, (Location)$13, "Next Control Variable '"+s1+"' does not match with For Loop control variable '"+s+"'");    
+				}
 		LocalVariableReference v = (LocalVariableReference) oob_stack.Pop ();
 		Block foreach_block = end_block();
 
@@ -3491,8 +3499,17 @@ for_statement
                 if(Parent==1)
                         Parent=0;
   	  }
-          opt_identifier 
+          _mark_ opt_identifier 
 	  {
+			string s = $3.ToString();
+			string s1 = "";
+			if ($16 != null)
+				s1 = $16.ToString();		
+			if (s1 != "" && s != s1)
+				{		
+					Report.Error(30070, (Location)$15, "Next Control Variable '"+s1+"' does not match with For Loop control variable '"+s+"'");    
+				}
+
 			Block inner_statement = end_block();
 			Location l = (Location)$2;
 			Expression for_var = (Expression) DecomposeQI ((string)$3, l);
@@ -4398,7 +4415,8 @@ primary_expression
 	| new_expression
 	| cast_expression
 	| /*empty*/ _mark_ 
-					     { Report.Error(30201,(Location)$1,"Expression expected"); }
+					     { Report.Error(30201,(Location)$1,"Expression expected"); $$ = (Expression)null;}
+                             
 	;
 
 literal
@@ -4597,8 +4615,6 @@ variable_reference
 		
 expression
 	: conditional_xor_expression { $$ = $1; } 
-	| /*empty*/ _mark_
-					     { Report.Error(30201,(Location)$1,"Expression expected"); }
 	/*| assignment_expression*/
 	;
 
@@ -4651,12 +4667,10 @@ cast_operator
 	;
 
 get_type_expression
-	: GETTYPE _mark_ OPEN_PARENS type CLOSE_PARENS
+	: GETTYPE OPEN_PARENS _mark_ type CLOSE_PARENS
 	  {
-		$$ = new TypeOf ((Expression) $4, (Location)$2);
+		$$ = new TypeOf ((Expression) $4, (Location)$3);
   	  }
-	| /*empty*/ _mark_
-					     { Report.Error(30201,(Location)$1,"Expression expected"); }
 	;
 	
 exponentiation_expression
@@ -4665,8 +4679,6 @@ exponentiation_expression
 	  {
 		$$ = new Exponentiation ((Location)$3, (Expression) $1, (Expression) $4);
 	  }			  	
-	| /*empty*/ _mark_
-					     { Report.Error(30201,(Location)$1,"Expression expected"); }
 	;
 	
 prefixed_unary_expression
@@ -4681,137 +4693,121 @@ prefixed_unary_expression
 	  	//FIXME: Is this rule correctly defined ?
 		$$ = new Unary (Unary.Operator.UnaryNegation, (Expression) $3, (Location)$2);
 	  }
-	| /*empty*/ _mark_  
-					     { Report.Error(30201,(Location)$1,"Expression expected"); }
 	;
 
 multiplicative_expression
 	: prefixed_unary_expression
-	| multiplicative_expression _mark_ STAR prefixed_unary_expression
+	| multiplicative_expression STAR _mark_ prefixed_unary_expression
 	  {
 		$$ = new Binary (Binary.Operator.Multiply,
-			         (Expression) $1, (Expression) $4, (Location)$2);
+			         (Expression) $1, (Expression) $4, (Location)$3);
 	  }
-	| multiplicative_expression _mark_ DIV prefixed_unary_expression
+	| multiplicative_expression DIV _mark_ prefixed_unary_expression
 	  {
 		$$ = new Binary (Binary.Operator.Division,
-			         (Expression) $1, (Expression) $4, (Location)$2);
+			         (Expression) $1, (Expression) $4, (Location)$3);
 	  }
-	| /*empty*/ _mark_ 
-					     { Report.Error(30201,(Location)$1,"Expression expected"); }
 	;
 
 integer_division_expression
 	: multiplicative_expression
-	| integer_division_expression _mark_ OP_IDIV multiplicative_expression
+	| integer_division_expression OP_IDIV _mark_ multiplicative_expression
           {
 	  	//FIXME: Is this right ?
 		$$ = new Binary (Binary.Operator.IntDivision,
-			   (Expression) $1, (Expression) $4, (Location)$2);
+			   (Expression) $1, (Expression) $4, (Location)$3);
           }
-	| /*empty*/ _mark_ 
-					     { Report.Error(30201,(Location)$1,"Expression expected"); }
 	;
 
 mod_expression
 	: integer_division_expression
-	| mod_expression _mark_ MOD integer_division_expression
+	| mod_expression MOD _mark_ integer_division_expression
 	  {
 	      $$ = new Binary (Binary.Operator.Modulus,
-			       (Expression) $1, (Expression) $4, (Location)$2);
+			       (Expression) $1, (Expression) $4, (Location)$3);
 	  }
-	| /*empty*/ _mark_  
-					     { Report.Error(30201,(Location)$1,"Expression expected"); }
 	;
 	
 additive_expression
 	: mod_expression
-	| additive_expression _mark_ PLUS mod_expression
+	| additive_expression PLUS _mark_ mod_expression
 	  {
 		$$ = new Binary (Binary.Operator.Addition,
-			         (Expression) $1, (Expression) $4, (Location)$2);
+			         (Expression) $1, (Expression) $4, (Location)$3);
 	  }
-	| additive_expression _mark_ MINUS mod_expression
+	| additive_expression MINUS _mark_ mod_expression
 	  {
 		$$ = new Binary (Binary.Operator.Subtraction,
-			         (Expression) $1, (Expression) $4, (Location)$2);
+			         (Expression) $1, (Expression) $4, (Location)$3);
 	  }
-	| /*empty*/ _mark_  
-					     { Report.Error(30201,(Location)$1,"Expression expected"); }
 	;
 
 concat_expression
 	: additive_expression
-	| concat_expression _mark_ OP_CONCAT additive_expression
+	| concat_expression OP_CONCAT _mark_ additive_expression
           {
 	      // FIXME: This should only work for String expressions
 	      // We probably need to use something from the runtime
-	      $$ = new StringConcat((Location)$2,
+	      $$ = new StringConcat((Location)$3,
 			       (Expression) $1, (Expression) $4);
 	  }	
-	| /*empty*/ _mark_ 
-					     { Report.Error(30201,(Location)$1,"Expression expected"); }
 	;
 
 
 shift_expression
 	: concat_expression
-	| shift_expression _mark_ OP_SHIFT_LEFT concat_expression
+	| shift_expression OP_SHIFT_LEFT _mark_ concat_expression
 	  {
-	  	$$ = new Binary(Binary.Operator.LeftShift, (Expression) $1, (Expression) $4, (Location)$2);
+	  	$$ = new Binary(Binary.Operator.LeftShift, (Expression) $1, (Expression) $4, (Location)$3);
 	  }
-	| shift_expression _mark_ OP_SHIFT_RIGHT concat_expression
+	| shift_expression OP_SHIFT_RIGHT _mark_ concat_expression
 	  {
-	  	$$ = new Binary(Binary.Operator.RightShift, (Expression) $1, (Expression) $4, (Location)$2);
+	  	$$ = new Binary(Binary.Operator.RightShift, (Expression) $1, (Expression) $4, (Location)$3);
 	  }
-	| /*empty*/ _mark_  
-					     { Report.Error(30201,(Location)$1,"Expression expected"); }
 	;
 
 relational_expression
 	: shift_expression
-	| relational_expression _mark_ ASSIGN shift_expression
+	| relational_expression ASSIGN _mark_ shift_expression
 	  {
 		$$ = new Binary (Binary.Operator.Equality,
-			         (Expression) $1, (Expression) $4, (Location)$2);
+			         (Expression) $1, (Expression) $4, (Location)$3);
 	  }
-	| relational_expression _mark_ OP_NE shift_expression
+	| relational_expression OP_NE _mark_ shift_expression
 	  {
 		$$ = new Binary (Binary.Operator.Inequality, 
-			         (Expression) $1, (Expression) $4, (Location)$2);
+			         (Expression) $1, (Expression) $4, (Location)$3);
 	  }	  
-	| relational_expression _mark_ OP_LT shift_expression
+	| relational_expression OP_LT _mark_ shift_expression
 	  {
 		$$ = new Binary (Binary.Operator.LessThan,
-			         (Expression) $1, (Expression) $4, (Location)$2);
+			         (Expression) $1, (Expression) $4, (Location)$3);
 	  }
-	| relational_expression _mark_ OP_GT shift_expression
+	| relational_expression OP_GT _mark_ shift_expression
 	  {
 		$$ = new Binary (Binary.Operator.GreaterThan,
-			         (Expression) $1, (Expression) $4, (Location)$2);
+			         (Expression) $1, (Expression) $4, (Location)$3);
 	  }
-	| relational_expression _mark_ OP_LE shift_expression
+	| relational_expression OP_LE _mark_ shift_expression
 	  {
 		$$ = new Binary (Binary.Operator.LessThanOrEqual,
-			         (Expression) $1, (Expression) $4, (Location)$2);
+			         (Expression) $1, (Expression) $4, (Location)$3);
 	  }
-	| relational_expression _mark_ OP_GE shift_expression
+	| relational_expression OP_GE _mark_ shift_expression
 	  {
 		$$ = new Binary (Binary.Operator.GreaterThanOrEqual,
-			         (Expression) $1, (Expression) $4, (Location)$2);
+			         (Expression) $1, (Expression) $4, (Location)$3);
 	  }
-	| relational_expression _mark_ IS shift_expression
+	| relational_expression IS _mark_ shift_expression
 	  {
 		$$ = new Binary (Binary.Operator.Is,
-			         (Expression) $1, (Expression) $4, (Location)$2);
+			         (Expression) $1, (Expression) $4, (Location)$3);
 	  }
-	| TYPEOF _mark_ shift_expression IS type
+	| TYPEOF shift_expression _mark_ IS type
 	  {
 		//FIXME: Is this rule correctly defined ?
-		$$ = new Is ((Expression) $3, (Expression) $5, (Location)$2);
+		$$ = new Is ((Expression) $2, (Expression) $5, (Location)$3);
 	  }
-	| /*empty*/ _mark_ 
-					     { Report.Error(30201,(Location)$1,"Expression expected"); }
 	;
 
 negation_expression
@@ -4821,124 +4817,116 @@ negation_expression
 	  	//FIXME: Is this rule correctly defined ?
 		$$ = new Unary (Unary.Operator.LogicalNot, (Expression) $3, (Location)$2);
 	  }
-	| /*empty*/ _mark_  
-					     { Report.Error(30201,(Location)$1,"Expression expected"); }
 	;
 	
 conditional_and_expression
 	: negation_expression
-	| conditional_and_expression _mark_ AND negation_expression
+	| conditional_and_expression AND _mark_ negation_expression
 	  {
 		$$ = new Binary (Binary.Operator.BitwiseAnd,
-			         (Expression) $1, (Expression) $4, (Location)$2);
+			         (Expression) $1, (Expression) $4, (Location)$3);
 	  }
-	| conditional_and_expression _mark_ ANDALSO negation_expression
+	| conditional_and_expression ANDALSO _mark_ negation_expression
 	  {	// FIXME: this is likely to be broken
 		$$ = new Binary (Binary.Operator.LogicalAnd,
-			         (Expression) $1, (Expression) $4, (Location)$2);
+			         (Expression) $1, (Expression) $4, (Location)$3);
 	  }
-	| /*empty*/ _mark_  
-					     { Report.Error(30201,(Location)$1,"Expression expected"); }
 	;
 
 conditional_or_expression
 	: conditional_and_expression
-	| conditional_or_expression _mark_ OR conditional_and_expression
+	| conditional_or_expression OR _mark_ conditional_and_expression
 	  {
 		$$ = new Binary (Binary.Operator.BitwiseOr,
-			         (Expression) $1, (Expression) $4, (Location)$2);
+			         (Expression) $1, (Expression) $4, (Location)$3);
 	  }
-	| conditional_or_expression _mark_ ORELSE conditional_and_expression
+	| conditional_or_expression ORELSE _mark_ conditional_and_expression
 	  {	// FIXME: this is likely to be broken
 		$$ = new Binary (Binary.Operator.LogicalOr,
-			         (Expression) $1, (Expression) $4, (Location)$2);
+			         (Expression) $1, (Expression) $4, (Location)$3);
 	  }
-	| /*empty*/ _mark_  
-					     { Report.Error(30201,(Location)$1,"Expression expected"); }
 	;
 
 conditional_xor_expression
 	: conditional_or_expression
-	| conditional_xor_expression _mark_ XOR conditional_or_expression
+	| conditional_xor_expression XOR _mark_ conditional_or_expression
 	{
    	      $$ = new Binary (Binary.Operator.ExclusiveOr,
-			       (Expression) $1, (Expression) $4, (Location)$2);
+			       (Expression) $1, (Expression) $4, (Location)$3);
 	}
-	| /* empty */ _mark_
-					     { Report.Error(30201,(Location)$1,"Expression expected"); }
 	;
 
 assignment_expression
-	: prefixed_unary_expression _mark_ ASSIGN expression
+	: prefixed_unary_expression ASSIGN _mark_ expression
 	  { 
-		$$ = new Assign ((Expression) $1, (Expression) $4, (Location)$2);
+		$$ = new Assign ((Expression) $1, (Expression) $4, (Location)$3);
 	  }
-	| prefixed_unary_expression _mark_ STAR ASSIGN expression
+	| prefixed_unary_expression STAR ASSIGN _mark_ expression
 	  {
-		Location l = (Location)$2;
+		Location l = (Location)$4;
 
 		$$ = new CompoundAssign (
 			Binary.Operator.Multiply, (Expression) $1, (Expression) $5, l);
 	  }
-	| prefixed_unary_expression _mark_ DIV ASSIGN expression
+	| prefixed_unary_expression DIV ASSIGN _mark_ expression
 	  {
-		Location l = (Location)$2;
+		Location l = (Location)$4;
 
 		$$ = new CompoundAssign (
 			Binary.Operator.Division, (Expression) $1, (Expression) $5, l);
 	  }
-	| prefixed_unary_expression _mark_ PLUS ASSIGN expression
+	| prefixed_unary_expression PLUS ASSIGN _mark_ expression
 	  {
-		Location l = (Location)$2;
+		Location l = (Location)$4;
 
 		$$ = new CompoundAssign (
 			Binary.Operator.Addition, (Expression) $1, (Expression) $5, l);
 	  }
-	| prefixed_unary_expression _mark_ MINUS ASSIGN expression
+	| prefixed_unary_expression MINUS ASSIGN _mark_ expression
 	  {
-		Location l = (Location)$2;
+		Location l = (Location)$4;
 
 		$$ = new CompoundAssign (
 			Binary.Operator.Subtraction, (Expression) $1, (Expression) $5, l);
 	  }
-	| prefixed_unary_expression _mark_ OP_SHIFT_LEFT ASSIGN expression
+	| prefixed_unary_expression OP_SHIFT_LEFT ASSIGN _mark_ expression
 	  {
-		Location l = (Location)$2;
+		Location l = (Location)$4;
 
 		$$ = new CompoundAssign (
 			Binary.Operator.LeftShift, (Expression) $1, (Expression) $5, l);
 	  }
-	| prefixed_unary_expression _mark_ OP_SHIFT_RIGHT ASSIGN expression
+	| prefixed_unary_expression OP_SHIFT_RIGHT ASSIGN _mark_ expression
 	  {
-		Location l = (Location)$2;
+		Location l = (Location)$4;
 
 		$$ = new CompoundAssign (
 			Binary.Operator.RightShift, (Expression) $1, (Expression) $5, l);
 	  }
-	| prefixed_unary_expression _mark_ OP_CONCAT ASSIGN expression
+	| prefixed_unary_expression OP_CONCAT ASSIGN _mark_ expression
 	  {
-		Location l = (Location)$2;
+		Location l = (Location)$4;
 
 		// FIXME should be strings only
 		$$ = new CompoundAssign (
 			Binary.Operator.Addition, (Expression) $1, (Expression) $5, l);
 	  }
-	| prefixed_unary_expression _mark_ OP_EXP ASSIGN expression
+	| prefixed_unary_expression OP_EXP ASSIGN _mark_ expression
 	  {
-		/*Location l = (Location)$2;
+		/*Location l = (Location)$4;
 
 		 TODO: $$ = new CompoundAssign (
 			Binary.Operator.ExclusiveOr, (Expression) $1, (Expression) $5, l); */
 	  }
-	| prefixed_unary_expression _mark_ ASSIGN ADDRESSOF expression
+	| prefixed_unary_expression ASSIGN ADDRESSOF _mark_ expression
 	  { 
 	    ArrayList args = new ArrayList();
 		Argument arg = new Argument ((Expression) $5, Argument.AType.Expression);
 		args.Add (arg);
 		
-		New n = new New ((Expression) $1, (ArrayList) args, (Location)$2);
+		New n = new New ((Expression) $1, (ArrayList) args, (Location)$4);
 		n.isDelegate = true;
-		$$ = new Assign ((Expression) $1, (Expression) n, (Location)$2);
+		$$ = new Assign ((Expression) $1, (Expression) n, (Location)$4);
 	  }
 	;
 

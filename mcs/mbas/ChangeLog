@@ -1,3 +1,8 @@
+2005-03-18 Manjula GHM <mmanjula@novell.com>
+           Sudharsan V <vsudharsan@novell.com>
+          * mb-parser.jay:
+              Some more fixes related to displaying correct line number
+
 2005-03-17 Manjula GHM <mmanjula@novell.com>
 	*ecore.cs : rounding the double values before converting to Integer types
 
