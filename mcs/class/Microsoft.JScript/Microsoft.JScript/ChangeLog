@@ -1,3 +1,34 @@
+2003-10-10  cesar lopez nataren <cesar@ciencias.unam.mx>
+
+	* jscript-lexer-parser.g: Rewrote the EcmaScript grammar. Now we
+	can parse a little bit more useful programs like:
+
+	function factorial (i)
+	{
+		var k;
+
+		if (i <= 0)
+			return 1;
+		else {
+			k = factorial (i - 1);
+			return i * k;
+		}
+	}
+
+	var x;
+	x = factorial (4); 
+	print (x);
+
+	As you can see, it's not the classical factorial function
+	definition, I still have to make some tricks like storing the
+	result from the recursive call and then multiply. But this new
+	grammar it's easier to alter than the old one. Also we got support
+	for for-in statements, for statements, global expressions, support
+	for object accesors or better known as the "dot" operator. Too
+	rules are on the eye: left_hand_size_expr and call_expr, in order
+	to finish the parsing grammar and fix the bugs.
+
+
 2003-09-29    <cesar@ciencias.unam.mx>
 
 	* Added: VsaGlobalItem.cs, VsaReferenceItem.cs, VsaCodeItem.cs
