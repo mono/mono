@@ -1,6 +1,7 @@
 2002-04-23  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (mono_analyze_stack): only use MB_TERM_CHECKTHIS when necessary
+	(mono_analyze_stack): don't store constants in temp. variables for CEE_DUP
 
 	* x86.brg (stmt): removed stmt: STIND_I4 (addr, coni4) rule
 	because it slows down performance.
