@@ -1,3 +1,8 @@
+2002-03-20  Dietmar Maurer  <dietmar@ximian.com>
+
+	* delegate.c (async_invoke_thread): support for domains
+	(async_invoke_thread): create workers only when needed
+
 2002-03-19  Dietmar Maurer  <dietmar@ximian.com>
 
 	* delegate.c (async_invoke_thread): initial support for BeginInvoke/EndInvoke
