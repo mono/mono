@@ -1,3 +1,8 @@
+2005-02-11  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.c (DATA_TABLE_CHUNK_SIZE): Increase to 131072.
+	(mono_debug_add_method): Silently ignore the method if it's too big.
+	(mono_debug_add_type): Likewise.
 
 Fri Feb 11 16:22:10 CET 2005 Paolo Molaro <lupus@ximian.com>
 
