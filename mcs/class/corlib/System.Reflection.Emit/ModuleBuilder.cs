@@ -1,3 +1,13 @@
+
+//
+// System.Reflection.Emit/ModuleBuilder.cs
+//
+// Author:
+//   Paolo Molaro (lupus@ximian.com)
+//
+// (C) 2001 Ximian, Inc.  http://www.ximian.com
+//
+
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
