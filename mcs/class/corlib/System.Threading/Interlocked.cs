@@ -2,11 +2,14 @@
 // System.Threading.Interlocked.cs
 //
 // Author:
+//	  Patrik Torstensson (patrik.torstensson@labs2.com)
 //   Dick Porter (dick@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
+using System;
+using System.Runtime.CompilerServices;
 
 namespace System.Threading
 {
@@ -14,92 +17,35 @@ namespace System.Threading
 	{
 		private Interlocked () {}
 
-		public static int CompareExchange(ref int location1, int value, int comparand) {
-			// lock
-			if(comparand==location1) {
-				int ret;
-				
-				ret=location1;
-				location1=value;
-				return(ret);
-			}
-			return(location1);
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static int CompareExchange(ref int location1, int value, int comparand);
 
-		public static object CompareExchange(ref object location1, object value, object comparand) {
-			// lock
-			if(comparand==location1) {
-				object ret;
-				
-				ret=location1;
-				location1=value;
-				return(ret);
-			}
-			return(location1);
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static object CompareExchange(ref object location1, object value, object comparand);
 
-		public static float CompareExchange(ref float location1, float value, float comparand) {
-			// lock
-			if(comparand==location1) {
-				float ret;
-				
-				ret=location1;
-				location1=value;
-				return(ret);
-			}
-			return(location1);
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static float CompareExchange(ref float location1, float value, float comparand);
 
-		public static int Decrement(ref int location) {
-			// lock
-			location--;
-			return(location);
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static int Decrement(ref int location);
 
-		public static long Decrement(ref long location) {
-			// lock
-			location--;
-			return(location);
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static long Decrement(ref long location);
 
-		public static int Exchange(ref int location1, int value) {
-			// lock
-			int ret;
-			
-			ret=location1;
-			location1=value;
-			return(ret);
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static int Increment(ref int location);
 
-		public static object Exchange(ref object location1, object value) {
-			// lock
-			object ret;
-			
-			ret=location1;
-			location1=value;
-			return(ret);
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static long Increment(ref long location);
 
-		public static float Exchange(ref float location1, float value) {
-			// lock
-			float ret;
-			
-			ret=location1;
-			location1=value;
-			return(ret);
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static int Exchange(ref int location1, int value);
 
-		public static int Increment(ref int location) {
-			// lock
-			location++;
-			return(location);
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static object Exchange(ref object location1, object value);
 
-		public static long Increment(ref long location) {
-			// lock
-			location++;
-			return(location);
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static float Exchange(ref float location1, float value);
 	}
 }
 

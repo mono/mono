@@ -1,3 +1,7 @@
+2002-04-14 Patrik Torstensson <patrik.torstensson@labs2.com>
+
+	* Interlocked.cs: made all methods icalls.
+
 2002-04-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* IOCompletionCallback.cs: added attributes to the delegate
