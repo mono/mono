@@ -1,3 +1,14 @@
+2002-08-27  Martin Baulig  <martin@gnome.org>
+
+	* debug.c (MonoDebugHandle): Moved the method hash into the
+	AssemblyDebugInfo struct since we need to use a separate hash for each
+	MonoImage.
+
+	* debug.c: Added special undocumented command line argument to create a
+	symbol file for IL files on-the-fly.  In this case, we also need to create
+	the IL files and parse them.
+	(mono_debugger_internal_get_symbol_files): Return something more reasonable.
+
 2002-08-26  Martin Baulig  <martin@gnome.org>
 
 	* debug.c (mono_debugger_internal_free_symbol_files): New function.
