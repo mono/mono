@@ -1,3 +1,8 @@
+2004-10-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* loader.c (mono_lookup_pinvoke_call): Try the dllname prefixed with
+	'lib' too. Fixes #63130.
+
 2004-10-06  Jackson Harper  <jackson@ximian.com>
 
 	* culture-info-tables.h: regenerated.
