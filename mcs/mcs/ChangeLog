@@ -1,7 +1,14 @@
 2004-09-07  Miguel de Icaza  <miguel@ximian.com>
 
-	* expression.cs: Return false if we fail to resolve the inner
-	expression. 
+	* literal.cs: The type of the null-literal is the null type;  So
+	we use a placeholder type (literal.cs:System.Null, defined here)
+	for it.
+
+	* expression.cs (Conditional.DoResolve): Remove some old code that
+	is no longer needed, conversions have been fixed.
+
+	(ArrayCreationExpression.DoResolve): Return false if we fail to
+	resolve the inner expression.
 
 2004-09-07  Raja R Harinath  <rharinath@novell.com>
 

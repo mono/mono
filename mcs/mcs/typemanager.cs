@@ -828,7 +828,7 @@ public class TypeManager {
 			@"^System\." +
 			@"(Int32|UInt32|Int16|UInt16|Int64|UInt64|" +
 			@"Single|Double|Char|Decimal|Byte|SByte|Object|" +
-			@"Boolean|String|Void)" +
+			@"Boolean|String|Void|Null)" +
 			@"(\W+|\b)", 
 			new MatchEvaluator (CSharpNameMatch));
 	}	

@@ -3466,14 +3466,6 @@ namespace Mono.CSharp {
 				Type true_type = trueExpr.Type;
 				Type false_type = falseExpr.Type;
 
-				if (trueExpr is NullLiteral){
-					type = false_type;
-					return this;
-				} else if (falseExpr is NullLiteral){
-					type = true_type;
-					return this;
-				}
-				
 				//
 				// First, if an implicit conversion exists from trueExpr
 				// to falseExpr, then the result type is of type falseExpr.Type

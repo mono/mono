@@ -22,6 +22,18 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 
+//
+// I put System.Null just so we do not have to special case it on 
+// TypeManager.CSharpName
+//
+namespace System {
+	//
+	// Represents the Null Type, just used as a placeholder for the type in NullLiteral
+	//
+	public class Null {
+	}
+}
+	
 namespace Mono.CSharp {
 
 	public class NullLiteral : Constant {
@@ -49,7 +61,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			type = TypeManager.object_type;
+			type = typeof (System.Null); 
 			return this;
 		}
 
