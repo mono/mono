@@ -1,3 +1,8 @@
+2004-09-18  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.c, debug-mono-symfile.c: Merged my locking changes
+	from HEAD.
+
 2004-09-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* loader.c (mono_lookup_pinvoke_call): Add support for stdcall name
