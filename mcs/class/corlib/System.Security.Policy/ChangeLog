@@ -1,3 +1,8 @@
+2005-01-07  Raja R Harinath  <rharinath@novell.com>
+
+	* IMembershipCondition.cs (Equals,ToString): Disable when building
+	with older mcs.
+
 2005-01-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeGroup.cs: Removed FIXME as this was fixed (when?) in [g]mcs.
