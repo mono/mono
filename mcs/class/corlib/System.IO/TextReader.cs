@@ -58,14 +58,17 @@ namespace System.IO {
 		
 		public virtual int ReadBlock ([In, Out] char [] buffer, int index, int count)
 		{
-			int read_count = 0;
-			do {
-				read_count = Read (buffer, index, count);
-				index += read_count;
-				count -= read_count;
-			} while (read_count != 0 && count > 0);
+			int total_read_count = 0;
+                        int current_read_count = 0;
 
-			return read_count;
+			do {
+				current_read_count = Read (buffer, index, count);
+				index += current_read_count;
+				total_read_count += current_read_count;
+				count -= current_read_count;
+			} while (current_read_count != 0 && count > 0);
+
+			return total_read_count;
 		}
 
 		public virtual string ReadLine()

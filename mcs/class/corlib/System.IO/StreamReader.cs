@@ -16,42 +16,42 @@ namespace System.IO {
 	[Serializable]
 	public class StreamReader : TextReader {
 
-		private const int DefaultBufferSize = 1024;
-		private const int DefaultFileBufferSize = 4096;
-		private const int MinimumBufferSize = 128;
+		const int DefaultBufferSize = 1024;
+		const int DefaultFileBufferSize = 4096;
+		const int MinimumBufferSize = 128;
 
 		//
 		// The input buffer
 		//
-		private byte [] input_buffer;
+		byte [] input_buffer;
 
 		//
 		// The decoded buffer from the above input buffer
 		//
-		private char [] decoded_buffer;
+		char [] decoded_buffer;
 
 		//
 		// Decoded bytes in decoded_buffer.
 		//
-		private int decoded_count;
+		int decoded_count;
 
 		//
 		// Current position in the decoded_buffer
 		//
-		private int pos;
+		int pos;
 
 		//
 		// The buffer size that we are using
 		//
-		private int buffer_size;
+		int buffer_size;
 
 		int do_checks;
 		
-		private Encoding encoding;
-		private Decoder decoder;
+		Encoding encoding;
+		Decoder decoder;
 
-		private Stream base_stream;
-		private bool mayBlock;
+		Stream base_stream;
+		bool mayBlock;
 
 		private class NullStreamReader : StreamReader {
 			public override int Peek ()
@@ -289,6 +289,8 @@ namespace System.IO {
 
 		public override int Peek ()
 		{
+			if (base_stream == null)
+				throw new ObjectDisposedException ("StreamReader", "Cannot read from a closed StreamReader");
 			if (pos >= decoded_count && (mayBlock || ReadBuffer () == 0))
 				return -1;
 
@@ -297,6 +299,8 @@ namespace System.IO {
 
 		public override int Read ()
 		{
+			if (base_stream == null)
+				throw new ObjectDisposedException ("StreamReader", "Cannot read from a closed StreamReader");
 			if (pos >= decoded_count && ReadBuffer () == 0)
 				return -1;
 
@@ -305,6 +309,9 @@ namespace System.IO {
 
 		public override int Read (char[] dest_buffer, int index, int count)
 		{
+			if (base_stream == null)
+				throw new ObjectDisposedException ("StreamReader", "Cannot read from a closed StreamReader");
+
 			if (dest_buffer == null)
 				throw new ArgumentException ();
 
@@ -332,6 +339,9 @@ namespace System.IO {
 
 		public override string ReadLine()
 		{
+			if (base_stream == null)
+				throw new ObjectDisposedException ("StreamReader", "Cannot read from a closed StreamReader");
+			
 			bool foundCR = false;
 			StringBuilder text = new StringBuilder ();
 
@@ -372,6 +382,9 @@ namespace System.IO {
 
 		public override string ReadToEnd()
 		{
+			if (base_stream == null)
+				throw new ObjectDisposedException ("StreamReader", "Cannot read from a closed StreamReader");
+
 			StringBuilder text = new StringBuilder ();
 
 			int size = decoded_buffer.Length;
