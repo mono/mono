@@ -1,3 +1,12 @@
+2004-08-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* cpu-amd64.md: sreg1 of div instructions must be %rax.
+
+	* mini-amd64.c: Register allocator fixes.
+
+	* mini.c: Add an optimization to emit_state to avoid allocation of new
+	registers on some platforms.
+
 2004-08-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* inssel-x86.brg inssel-amd64: Add yet another missing tree->dreg assignment.
