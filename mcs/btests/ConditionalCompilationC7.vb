@@ -7,7 +7,7 @@ Module ConditionalCompilation
 	Sub Main()
 		Console.WriteLine("Hello World 1")
 	End Sub
-#Else If False
+#ElseIf False
 	Sub R()
 		Console.WriteLine("Hello World 2")
 	End Sub
