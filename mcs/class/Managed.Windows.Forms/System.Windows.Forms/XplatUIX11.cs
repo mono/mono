@@ -291,7 +291,6 @@ namespace System.Windows.Forms {
 
 		internal override void DestroyWindow(IntPtr handle) {
 			lock (this) {
-				XDestroyWindow(DisplayHandle, handle);
 				HandleData data = (HandleData) handle_data [handle];
 				if (data != null) {
 					data.Dispose ();
