@@ -1,3 +1,9 @@
+2002-05-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* test-28.cs: Improved test: before we were failing on abstract
+	indexers invoked in the same class (as the accessor would have no
+	body).
+
 2002-05-02  Ravi Pratap  <ravi@ximian.com>
 
 	* test-113.cs : Another test for overload resolution ;-)

@@ -1,5 +1,10 @@
 abstract class A {
-        protected abstract int this [int a] { get; } 
+        protected abstract int this [int a] { get; }
+
+	public int EmulateIndexer (int a)
+	{
+		return this [a];
+	}
 }
 
 class B : A {
@@ -33,7 +38,6 @@ class X {
 	static int Main ()
 	{
 		X x = new X ();
-		int b;
 
 		x [0] = 1;
 		if (x.v1 != 1)
@@ -41,6 +45,11 @@ class X {
 
 		if (x [0] != 1)
 			return 2;
+
+		B bb = new B ();
+
+		if (bb.EmulateIndexer (10) != 10)
+			return 3;
 
 		return new B ().M ();
 	}
