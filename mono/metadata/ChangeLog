@@ -1,3 +1,24 @@
+2003-12-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_get_enum_info): Update after changes to 
+	mono_metadata_get_constant_index ().
+
+	* icall.c: Get rid of get_type_info icall, use a separate icall for
+	each type property to avoid needless memory allocations. Fixes #51514.
+
+	* metadata.c (mono_metadata_get_constant_index): Add a 'hint' parameter
+	to avoid needless binary searches.
+
+	* class.c (class_compute_field_layout): Move the initialization of
+	field->def_value to mono_class_vtable ().
+
+	* class.c (mono_class_layout_fields): Enable GC aware auto layout for
+	non-corlib types.
+
+	* object.c (mono_object_allocate): Make it inline.
+
+	* object.c (mono_object_allocate_spec): Make it inline.
+	
 2003-12-02  Dick Porter  <dick@ximian.com>
 
 	* locales.c (create_NumberFormat): NumberFormatInfo construction.
