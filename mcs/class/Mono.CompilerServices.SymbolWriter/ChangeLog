@@ -1,3 +1,8 @@
+2005-02-10  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolFile.cs (MonoDebuggerSupport.GetMethodIndex): New
+	public method.
+
 2004-11-23  Ben Maurer  <bmaurer@ximian.com>
 
 	* MonoSymbolFile.cs (CreateSymbolFile): Take a filestream to
