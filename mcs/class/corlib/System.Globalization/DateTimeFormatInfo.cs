@@ -8,17 +8,12 @@
 // (C) Martin Weindel (martin.weindel@t-online.de)
 
 using System;
-
 using System.Threading;
 
-
-namespace System.Globalization 
+namespace System.Globalization
 {
-
 	[Serializable]
-	
 	public sealed class DateTimeFormatInfo : ICloneable, IFormatProvider {
-
 		private static readonly string MSG_READONLY = "This instance is read only";
 		private static readonly string MSG_ARRAYSIZE_MONTH = "An array with exactly 13 elements is needed";
 		private static readonly string MSG_ARRAYSIZE_DAY = "An array with exactly 7 elements is needed";
@@ -34,182 +29,104 @@ namespace System.Globalization
 		internal static DateTimeFormatInfo theInvariantDateTimeFormatInfo;
 
 		private bool readOnly;
-		
 		private string _AMDesignator;
-		
 		private string _PMDesignator;
-		
 		private string _DateSeparator;
-		
 		private string _TimeSeparator;
-		
 		private string _ShortDatePattern;
-		
 		private string _LongDatePattern;
-		
 		private string _ShortTimePattern;
-		
 		private string _LongTimePattern;
-		
 		private string _MonthDayPattern;
-		
 		private string _YearMonthPattern;
-		
 		private string _FullDateTimePattern;
-		
 		private string _RFC1123Pattern;
-		
 		private string _SortableDateTimePattern;
-		
 		private string _UniversalSortableDateTimePattern;
-		
 		private DayOfWeek _FirstDayOfWeek;
-		
 		private Calendar _Calendar;
-		
 		private CalendarWeekRule _CalendarWeekRule;
-		
 		private string[] _AbbreviatedDayNames;
-		
 		private string[] _DayNames;
-		
 		private string[] _MonthNames;
-		
 		private string[] _AbbreviatedMonthNames;
 
-		
 		public DateTimeFormatInfo()
-		
 		{
-			
 			readOnly = false;
-			
 			_AMDesignator = "AM";
-			
 			_PMDesignator = "PM";
-			
 			_DateSeparator = "/";
-			
 			_TimeSeparator = ":";
-			
 			_ShortDatePattern = "MM/dd/yyyy";
-			
 			_LongDatePattern = "dddd, dd MMMM yyyy";
-			
 			_ShortTimePattern = "HH:mm";
-			
 			_LongTimePattern = "HH:mm:ss";
-			
 			_MonthDayPattern = "MMMM dd";
-			
 			_YearMonthPattern = "yyyy MMMM";
-			
 			_FullDateTimePattern = "dddd, dd MMMM yyyy HH:mm:ss";
 
-			// FIXME for the following three pattern:  "The default value of this property is 
-			//derived from the calendar that is set for CultureInfo.CurrentCulture or the default 
-			//calendar of CultureInfo.CurrentCulture."
-			
+			// FIXME for the following three pattern: "The
+			// default value of this property is derived
+			// from the calendar that is set for
+			// CultureInfo.CurrentCulture or the default
+			// calendar of CultureInfo.CurrentCulture."
+
 			_RFC1123Pattern = "ddd, dd MMM yyyy HH':'mm':'ss 'GMT'"; 
-			
 			_SortableDateTimePattern = "yyyy'-'MM'-'dd'T'HH':'mm':'ss";
-			
 			_UniversalSortableDateTimePattern = "yyyy'-'MM'-'dd HH':'mm':'ss'Z'";
 
-			
-
 			_FirstDayOfWeek = DayOfWeek.Sunday;
-			
 			_Calendar = new GregorianCalendar();
-			
 			_CalendarWeekRule = CalendarWeekRule.FirstDay;
 
-			
 			_AbbreviatedDayNames = INVARIANT_ABBREVIATED_DAY_NAMES;
-			
 			_DayNames = INVARIANT_DAY_NAMES;
-			
 			_AbbreviatedMonthNames = INVARIANT_ABBREVIATED_MONTH_NAMES;
-			
 			_MonthNames = INVARIANT_MONTH_NAMES;
-		
 		}
 				
-		
-		
 		// LAMESPEC: this is not in ECMA specs
-		
 		public static DateTimeFormatInfo GetInstance(IFormatProvider provider)
-		
 		{
-			
 			if (provider != null) {
-				
 				DateTimeFormatInfo dtfi;
-				
 				dtfi = (DateTimeFormatInfo)provider.GetFormat(typeof(DateTimeFormatInfo));
-				
 				if (dtfi != null)
-					
 					return dtfi;
-			
 			}
-			
 			
 			return CurrentInfo;
-		
 		}
 
-		
-		
 		public bool IsReadOnly {
-			
 			get {
-				
 				return readOnly;
-			
 			}
-		
 		}
 
-		
-		
 		public static DateTimeFormatInfo ReadOnly(DateTimeFormatInfo dtfi)
-		
 		{
-			
 			DateTimeFormatInfo copy = (DateTimeFormatInfo)dtfi.Clone();
-			
 			copy.readOnly = true;
-			
 			return copy;
-		
 		}			
 
-		
-		
 		public object Clone () 
-		
 		{
-			
 			DateTimeFormatInfo clone = (DateTimeFormatInfo) MemberwiseClone();
-			
 			// clone is not read only
-			
 			clone.readOnly = false;
-			
 			return clone;
-		
 		}
 
-		
-		
 		public object GetFormat(Type formatType)
 		{
 			return (formatType == GetType()) ? this : null;
 		}
 
-		public string GetAbbreviatedEraName(int era) 
+		[MonoTODO]
+		public string GetAbbreviatedEraName(int era)
 		{
 			if (era < _Calendar.Eras.Length || era >= _Calendar.Eras.Length)
 				throw new ArgumentOutOfRangeException();
@@ -218,12 +135,13 @@ namespace System.Globalization
 			return null;
 		}
 
-		public string GetAbbreviatedMonthName(int month) 
+		public string GetAbbreviatedMonthName(int month)
 		{
 			if (month < 1 || month > 13) throw new ArgumentOutOfRangeException();
 			return _AbbreviatedMonthNames[month-1];
 		}
 
+		[MonoTODO]
 		public int GetEra(string eraName)
 		{
 			if (eraName == null) throw new ArgumentNullException();
@@ -233,6 +151,7 @@ namespace System.Globalization
 			return -1;
 		}
 
+		[MonoTODO]
 		public string GetEraName(int era)
 		{
 			if (era < _Calendar.Eras.Length || era >= _Calendar.Eras.Length)
@@ -250,11 +169,10 @@ namespace System.Globalization
 
 		public string[] AbbreviatedDayNames
 		{
-			get 
+			get
 			{
 				return (string[]) _AbbreviatedDayNames.Clone();
 			}
-			
 			set
 			{
 				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
@@ -262,15 +180,14 @@ namespace System.Globalization
 				if (value.GetLength(0) != 7) throw new ArgumentException(MSG_ARRAYSIZE_DAY);
 				_AbbreviatedDayNames = (string[]) value.Clone();
 			}
-		} 
+		}
 
 		public string[] AbbreviatedMonthNames
 		{
-			get 
+			get
 			{
 				return (string[]) _AbbreviatedMonthNames.Clone();
 			}
-			
 			set
 			{
 				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
@@ -278,15 +195,14 @@ namespace System.Globalization
 				if (value.GetLength(0) != 13) throw new ArgumentException(MSG_ARRAYSIZE_MONTH);
 				_AbbreviatedMonthNames = (string[]) value.Clone();
 			}
-		} 
+		}
 
 		public string[] DayNames
 		{
-			get 
+			get
 			{
 				return (string[]) _DayNames.Clone();
 			}
-			
 			set
 			{
 				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
@@ -294,15 +210,14 @@ namespace System.Globalization
 				if (value.GetLength(0) != 7) throw new ArgumentException(MSG_ARRAYSIZE_DAY);
 				_DayNames = (string[]) value.Clone();
 			}
-		} 
+		}
 
 		public string[] MonthNames
 		{
-			get 
+			get
 			{
 				return (string[]) _MonthNames.Clone();
 			}
-			
 			set
 			{
 				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
@@ -310,172 +225,165 @@ namespace System.Globalization
 				if (value.GetLength(0) != 13) throw new ArgumentException(MSG_ARRAYSIZE_MONTH);
 				_MonthNames = (string[]) value.Clone();
 			}
-		} 
+		}
 
 		public string AMDesignator
 		{
-			get 
+			get
 			{
 				return _AMDesignator;
 			}
-			
 			set
 			{
 				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
 				if (value == null) throw new ArgumentNullException();
 				_AMDesignator = value;
 			}
-		} 
+		}
 
 		public string PMDesignator
 		{
-			get 
+			get
 			{
 				return _PMDesignator;
 			}
-			
 			set
 			{
 				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
 				if (value == null) throw new ArgumentNullException();
 				_PMDesignator = value;
 			}
-		} 
+		}
 
 		public string DateSeparator
 		{
-			get 
+			get
 			{
 				return _DateSeparator;
 			}
-			
 			set
 			{
 				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
 				if (value == null) throw new ArgumentNullException();
 				_DateSeparator = value;
 			}
-		} 
+		}
 
 		public string TimeSeparator
 		{
-			get 
+			get
 			{
 				return _TimeSeparator;
 			}
-			
 			set
 			{
 				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
 				if (value == null) throw new ArgumentNullException();
 				_TimeSeparator = value;
 			}
-		} 
+		}
 
 		public string LongDatePattern
 		{
-			get 
+			get
 			{
 				return _LongDatePattern;
 			}
-			
 			set
 			{
 				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
 				if (value == null) throw new ArgumentNullException();
 				_LongDatePattern = value;
 			}
-		} 
+		}
 
 		public string ShortDatePattern
 		{
-			get 
+			get
 			{
 				return _ShortDatePattern;
 			}
-			
 			set
 			{
 				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
 				if (value == null) throw new ArgumentNullException();
 				_ShortDatePattern = value;
 			}
-		} 
+		}
 
 		public string ShortTimePattern
 		{
-			get 
+			get
 			{
 				return _ShortTimePattern;
 			}
-			
 			set
 			{
 				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
 				if (value == null) throw new ArgumentNullException();
 				_ShortTimePattern = value;
 			}
-		} 
+		}
 
 		public string LongTimePattern
 		{
-			get 
+			get
 			{
 				return _LongTimePattern;
 			}
-			
 			set
 			{
 				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
 				if (value == null) throw new ArgumentNullException();
 				_LongTimePattern = value;
 			}
-		} 
+		}
 
-		public string MonthDayPattern 
+		public string MonthDayPattern
 		{
-			get 
+			get
 			{
 				return _MonthDayPattern;
 			}
-			
 			set
 			{
 				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
 				if (value == null) throw new ArgumentNullException();
 				_MonthDayPattern = value;
 			}
-		} 
+		}
 
-		public string YearMonthPattern 
+		public string YearMonthPattern
 		{
-			get 
+			get
 			{
 				return _YearMonthPattern;
 			}
-			
 			set
 			{
 				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
 				if (value == null) throw new ArgumentNullException();
 				_YearMonthPattern = value;
 			}
-		} 
+		}
 
 		public string FullDateTimePattern
 		{
-			get 
+			get
 			{
-				return _FullDateTimePattern;
+				if(_FullDateTimePattern!=null) {
+					return _FullDateTimePattern;
+				} else {
+					return(_LongDatePattern + " " + _LongTimePattern);
+				}
 			}
-			
 			set
 			{
 				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
 				if (value == null) throw new ArgumentNullException();
 				_FullDateTimePattern = value;
 			}
-		} 
+		}
 
 		public static DateTimeFormatInfo CurrentInfo
 		{
@@ -483,7 +391,7 @@ namespace System.Globalization
 			{
 				return Thread.CurrentThread.CurrentCulture.DateTimeFormat;
 			}
-		} 
+		}
 
 		public static DateTimeFormatInfo InvariantInfo
 		{
@@ -496,7 +404,7 @@ namespace System.Globalization
 				}
 				return theInvariantDateTimeFormatInfo;
 			}
-		} 
+		}
 
 		// LAMESPEC: this is not in ECMA specs
 		public DayOfWeek FirstDayOfWeek
@@ -514,7 +422,7 @@ namespace System.Globalization
 		}
 
 		// LAMESPEC: this is not in ECMA specs
-		public Calendar Calendar 
+		public Calendar Calendar
 		{
 			get
 			{
@@ -528,7 +436,7 @@ namespace System.Globalization
 			}
 		}
 
-		public CalendarWeekRule CalendarWeekRule 
+		public CalendarWeekRule CalendarWeekRule
 		{
 			get
 			{
@@ -567,8 +475,9 @@ namespace System.Globalization
 				return _UniversalSortableDateTimePattern;
 			}
 		}
-
+		
 		// LAMESPEC: this is not in ECMA specs
+		[MonoTODO]
 		public string[] GetAllDateTimePatterns()
 		{
 			notImplemented();
@@ -577,6 +486,7 @@ namespace System.Globalization
 		}
 
 		// LAMESPEC: this is not in ECMA specs
+		[MonoTODO]
 		public string[] GetAllDateTimePatterns(char format)
 		{
 			notImplemented();
@@ -605,5 +515,4 @@ namespace System.Globalization
 			throw new Exception("Not implemented");
 		}
 	}
-
 }
