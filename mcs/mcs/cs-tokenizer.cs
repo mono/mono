@@ -497,7 +497,7 @@ namespace Mono.CSharp
 
 		bool is_hex (char e)
 		{
-			return Char.IsDigit (e) || (e >= 'A' && e <= 'F');
+			return Char.IsDigit (e) || (e >= 'A' && e <= 'F') || (e >= 'a' && e <= 'f');
 		}
 		
 		void hex_digits (int c)
