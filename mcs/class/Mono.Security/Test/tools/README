@@ -15,6 +15,9 @@ Here are some test tools for Mono.Security assembly.
 	SSL3/TLS1 tool to post a buffer to a web server and check that it
 	was echoed back correctly. Requires a script on the server side.
 
+- npdbtest
+	Npgsql-based tool to test the SSL implementation. Requires PostgreSQL
+	installed.
 
 Sebastien Pouliot
 sebastien@ximian.com
