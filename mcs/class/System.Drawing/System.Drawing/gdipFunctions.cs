@@ -3,7 +3,7 @@
 //
 // Authors: 
 // Alexandre Pigolkine (pigolkine@gmx.de)
-// Jordi Mas i Hernàndez (jordi@ximian.com)
+// Jordi Mas i Hernandez (jordi@ximian.com)
 // Sanjay Gupta (gsanjay@novell.com)
 // Ravindra (rkumar@novell.com)
 //
@@ -15,7 +15,9 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 
-namespace System.Drawing {
+namespace System.Drawing {	
+	
+	
 	/// <summary>
 	/// GDI+ API Functions
 	/// </summary>
@@ -23,6 +25,8 @@ namespace System.Drawing {
 		
 		public const int FACESIZE = 32;
 		public const int LANG_NEUTRAL = 0;
+		
+		
 		
 		#region gdiplus.dll functions
 
@@ -746,6 +750,7 @@ namespace System.Drawing {
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipDrawImage (IntPtr graphics, IntPtr image, float x, float y);
 		
+		
 		[DllImport("gdiplus.dll")]	
 		internal static extern Status GdipBeginContainer (IntPtr graphics,  RectangleF dstrect,
                    RectangleF srcrect, GraphicsUnit unit, out int  state);
@@ -768,13 +773,34 @@ namespace System.Drawing {
 		internal static extern Status GdipDrawImageRectRectI (IntPtr graphics, IntPtr image,
                                 int dstx, int dsty, int dstwidth, int dstheight,
                        		int srcx, int srcy, int srcwidth, int srcheight,
-                       		GraphicsUnit srcUnit, IntPtr imageattr, IntPtr callback, int callbackData);                      		
+                       		GraphicsUnit srcUnit, IntPtr imageattr, Graphics.DrawImageAbort callback, IntPtr callbackData);                      		
+
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipDrawImageRectRect (IntPtr graphics, IntPtr image,
+                                float dstx, float dsty, float dstwidth, float dstheight,
+                       		float srcx, float srcy, float srcwidth, float srcheight,
+                       		GraphicsUnit srcUnit, IntPtr imageattr, Graphics.DrawImageAbort callback, IntPtr callbackData);                      		                       		
+                
+                [DllImport("gdiplus.dll")]
+		internal static extern Status GdipDrawImagePointsRectI (IntPtr graphics, IntPtr image,
+                         Point [] destPoints, int count, int srcx, int srcy, int srcwidth, int srcheight,
+                         GraphicsUnit srcUnit, IntPtr imageattr, Graphics.DrawImageAbort callback, IntPtr callbackData);
+                         
+                [DllImport("gdiplus.dll")]
+		internal static extern Status GdipDrawImagePointsRect (IntPtr graphics, IntPtr image,
+                         PointF [] destPoints, int count, float srcx, float srcy, float srcwidth, float srcheight,
+                         GraphicsUnit srcUnit, IntPtr imageattr, Graphics.DrawImageAbort callback, IntPtr callbackData);
                        		
 		[DllImport("gdiplus.dll")]                       		
 		internal static extern Status GdipDrawImageRect(IntPtr graphics, IntPtr image, float x, float y, float width, float height);
 		[DllImport("gdiplus.dll")]                       		
 		internal static extern Status GdipDrawImagePointRect(IntPtr graphics, IntPtr image, float x,
                                 float y, float srcx, float srcy, float srcwidth, float srcheight, GraphicsUnit srcUnit);
+                
+                [DllImport("gdiplus.dll")]                       		
+		internal static extern Status GdipDrawImagePointRectI(IntPtr graphics, IntPtr image, int x,
+                                int y, int srcx, int srcy, int srcwidth,
+                                int srcheight, GraphicsUnit srcUnit);                           
                                 
 		[DllImport("gdiplus.dll")]                       		
 		internal static extern Status GdipCreateStringFormat(StringFormatFlags formatAttributes,  int language, out IntPtr native);

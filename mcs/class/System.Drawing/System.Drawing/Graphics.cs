@@ -30,8 +30,8 @@ namespace System.Drawing
 							    IntPtr data,
 							    PlayRecordCallback callbackData);
 		
-		public delegate bool DrawImageAbort (IntPtr callbackData);
-
+		public delegate bool DrawImageAbort (IntPtr callbackData);		
+		
 		private Graphics (IntPtr nativeGraphics)
 		{
 			if (nativeGraphics == IntPtr.Zero)
@@ -246,10 +246,11 @@ namespace System.Drawing
 			
 		}
 		
-		[MonoTODO]
+		
 		public void DrawCurve (Pen pen, PointF [] points, int offset, int numberOfSegments)
 		{
-			
+			GDIPlus.GdipDrawCurve3 (nativeObject, pen.nativeObject, points, points.Length,
+                        	offset, numberOfSegments, 0.5f);
 		}
 
 		public void DrawCurve (Pen pen, Point [] points, int offset, int numberOfSegments, float tension)
@@ -351,35 +352,48 @@ namespace System.Drawing
 			GDIPlus.GdipDrawImage (nativeObject, image.NativeObject, x, y);
 		}
 
-		[MonoTODO]
+		
 		public void DrawImage (Image image, Rectangle destRect, Rectangle srcRect, GraphicsUnit srcUnit)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawImageRectRectI (nativeObject, image.NativeObject,                                                            
+				destRect.X, destRect.Y, destRect.Width, destRect.Height,
+				srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height,
+				srcUnit, IntPtr.Zero, null, IntPtr.Zero);
 		}
-
-		[MonoTODO]
+		
 		public void DrawImage (Image image, RectangleF destRect, RectangleF srcRect, GraphicsUnit srcUnit)
-		{
-			throw new NotImplementedException ();
+		{			
+			GDIPlus.GdipDrawImageRectRect (nativeObject, image.NativeObject,                                                            
+				destRect.X, destRect.Y, destRect.Width, destRect.Height,
+				srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height,
+				srcUnit, IntPtr.Zero, null, IntPtr.Zero);
 		}
 
-		[MonoTODO]
+		
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawImagePointsRectI (nativeObject, image.NativeObject,
+				destPoints, destPoints.Length , srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height,
+				srcUnit, IntPtr.Zero, null, IntPtr.Zero);
+                
 		}
 
-		[MonoTODO]
+		
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit)
 		{
-			throw new NotImplementedException ();
+			
+			GDIPlus.GdipDrawImagePointsRect (nativeObject, image.NativeObject,
+				destPoints, destPoints.Length , srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height,
+				srcUnit, IntPtr.Zero, null, IntPtr.Zero);
 		}
 
-		[MonoTODO]
+		
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, 
                                 ImageAttributes imageAttr)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawImagePointsRectI (nativeObject, image.NativeObject,
+				destPoints, destPoints.Length , srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height,
+				srcUnit, imageAttr.NativeObject , null, IntPtr.Zero);
 		}
 		
 		public void DrawImage (Image image, float x, float y, float width, float height)
@@ -388,17 +402,20 @@ namespace System.Drawing
                            width, height);
 		}
 
-		[MonoTODO]
+		
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, 
                                 ImageAttributes imageAttr)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawImagePointsRect (nativeObject, image.NativeObject,
+				destPoints, destPoints.Length , srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height,
+				srcUnit, imageAttr.NativeObject, null, IntPtr.Zero);
 		}
 
-		[MonoTODO]
+		
 		public void DrawImage (Image image, int x, int y, Rectangle srcRect, GraphicsUnit srcUnit)
-		{
-			throw new NotImplementedException ();
+		{			
+			GDIPlus.GdipDrawImagePointRectI(nativeObject, image.NativeObject, x, y,
+                                srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height, srcUnit);
 		}
 		
 		public void DrawImage (Image image, int x, int y, int width, int height)
@@ -407,57 +424,76 @@ namespace System.Drawing
 		}
 
 		public void DrawImage (Image image, float x, float y, RectangleF srcRect, GraphicsUnit srcUnit)
-		{
-			GDIPlus.GdipDrawImagePointRect(nativeObject, image.nativeObject, x, y, srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height, srcUnit);                                                            
+		{			
+			GDIPlus.GdipDrawImagePointRect(nativeObject, 	image.nativeObject, x, y, srcRect.X, srcRect.Y, 
+				srcRect.Width, srcRect.Height, srcUnit);                                                            			
 		}
 
-		[MonoTODO]
+		
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, 
                                 ImageAttributes imageAttr, DrawImageAbort callback)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawImagePointsRect (nativeObject, image.NativeObject,
+				destPoints, destPoints.Length , srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height,
+				srcUnit, imageAttr.NativeObject, callback, IntPtr.Zero);
 		}
 
-		[MonoTODO]
+		
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, 
                                 ImageAttributes imageAttr, DrawImageAbort callback)
 		{
-			throw new NotImplementedException ();
+			
+			GDIPlus.GdipDrawImagePointsRectI (nativeObject, image.NativeObject,
+				destPoints, destPoints.Length , srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height,
+				srcUnit, imageAttr.NativeObject, callback, IntPtr.Zero);
 		}
 
-		[MonoTODO]
+		
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, 
                                 ImageAttributes imageAttr, DrawImageAbort callback, int callbackData)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawImagePointsRectI (nativeObject, image.NativeObject,
+				destPoints, destPoints.Length , srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height,
+				srcUnit, imageAttr.NativeObject, callback, (IntPtr) callbackData);
 		}
 
-		[MonoTODO]
+		
 		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, 
                                 GraphicsUnit srcUnit)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawImageRectRect (nativeObject, image.NativeObject,
+                                destRect.X, destRect.Y, destRect.Width, destRect.Height,
+                       		srcX, srcY, srcWidth, srcHeight, srcUnit, IntPtr.Zero, 
+                       		null, IntPtr.Zero);                      					
 		}
-
-		[MonoTODO]
+		
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, 
                                 ImageAttributes imageAttr, DrawImageAbort callback, int callbackData)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawImagePointsRect (nativeObject, image.NativeObject,
+				destPoints, destPoints.Length , srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height,
+				srcUnit, imageAttr.NativeObject, callback, (IntPtr) callbackData);
 		}
 
-		[MonoTODO]
+		
 		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, 
                                 GraphicsUnit srcUnit)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawImageRectRectI (nativeObject, image.NativeObject,
+                                destRect.X, destRect.Y, destRect.Width, destRect.Height,
+                       		srcX, srcY, srcWidth, srcHeight, srcUnit, IntPtr.Zero, 
+                       		null, IntPtr.Zero);                      					
 		}
 
-		[MonoTODO]
+		
 		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, 
                                 GraphicsUnit srcUnit, ImageAttributes imageAttrs)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawImageRectRect (nativeObject, image.NativeObject,
+                                destRect.X, destRect.Y, destRect.Width, destRect.Height,
+                       		srcX, srcY, srcWidth, srcHeight, srcUnit, imageAttrs.NativeObject, 
+                       		null, IntPtr.Zero);                      		
+			
 		}
 		
 		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, 
@@ -465,36 +501,47 @@ namespace System.Drawing
 		{			
 			GDIPlus.GdipDrawImageRectRectI (nativeObject, image.NativeObject, 
                                         destRect.X, destRect.Y, destRect.Width, destRect.Height,
-                                        srcX, srcY, srcWidth, srcHeight, srcUnit, imageAttr.NativeObject, IntPtr.Zero, 0);
+                                        srcX, srcY, srcWidth, srcHeight, srcUnit, imageAttr.NativeObject, 
+                                        null, IntPtr.Zero);
  
 		}
-
-		[MonoTODO]
+		
 		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight,
                                 GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawImageRectRectI (nativeObject, image.NativeObject, 
+                                        destRect.X, destRect.Y, destRect.Width, destRect.Height,
+                                        srcX, srcY, srcWidth, srcHeight, srcUnit, imageAttr.NativeObject, 
+                                        callback, IntPtr.Zero);
 		}
-
-		[MonoTODO]
+		
 		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight,
-                                GraphicsUnit srcUnit, ImageAttributes imageAttrs, DrawImageAbort callback)
+                                GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawImageRectRect (nativeObject, image.NativeObject, 
+                                        destRect.X, destRect.Y, destRect.Width, destRect.Height,
+                                        srcX, srcY, srcWidth, srcHeight, srcUnit, imageAttr.NativeObject, 
+                                        callback, IntPtr.Zero);
 		}
 
-		[MonoTODO]
+		
 		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight,
-                                GraphicsUnit srcUnit, ImageAttributes imageAttrs, DrawImageAbort callback, IntPtr callbackData)
+                                GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback, IntPtr callbackData)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawImageRectRect (nativeObject, image.NativeObject, 
+				destRect.X, destRect.Y, destRect.Width, destRect.Height,
+				srcX, srcY, srcWidth, srcHeight, srcUnit, imageAttr.NativeObject, 
+				callback, callbackData);
 		}
 
-		[MonoTODO]
+		
 		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, 
-                                GraphicsUnit srcUnit, ImageAttributes imageAttrs, DrawImageAbort callback, IntPtr callbackData)
+                                GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback, IntPtr callbackData)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawImageRectRect (nativeObject, image.NativeObject, 
+                       		destRect.X, destRect.Y, destRect.Width, destRect.Height,
+				srcX, srcY, srcWidth, srcHeight, srcUnit, imageAttr.NativeObject, 
+				callback, callbackData);
 		}		
 		
 		public void DrawImageUnscaled (Image image, Point point)
