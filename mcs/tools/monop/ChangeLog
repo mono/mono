@@ -1,5 +1,9 @@
 2004-03-15 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* monop.cs: Add buffering, makes output way, way faster.
+
+2004-03-15 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* outline.cs: add support for events.
 
 2004-03-15 Ben Maurer  <bmaurer@users.sourceforge.net>

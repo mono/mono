@@ -12,6 +12,7 @@ using System;
 using System.Reflection;
 using System.Collections;
 using System.CodeDom.Compiler;
+using System.IO;
 
 class MonoP {
 	static string assembly;
@@ -116,7 +117,12 @@ class MonoP {
 			return;
 		}
 	found:
-		new Outline (t, Console.Out).OutlineType ();
+		//
+		// This gets us nice buffering
+		//
+		StreamWriter sw = new StreamWriter (Console.OpenStandardOutput (), Console.Out.Encoding);
+		new Outline (t, sw).OutlineType ();
+		sw.Flush ();
 	}
 }
 
