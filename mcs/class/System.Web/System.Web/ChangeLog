@@ -1,3 +1,9 @@
+2002-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplicationFactory.cs: get the events from the application class,
+	fire Application/Session Start/End and add the others as application
+	events.
+
 2002-11-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplicationFactory.cs: compile global.asax file if it exists.

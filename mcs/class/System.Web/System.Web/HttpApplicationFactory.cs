@@ -2,7 +2,10 @@
 // System.Web.HttpApplicationFactory
 //
 // Author:
-//   Patrik Torstensson (ptorsten@hotmail.com)
+// 	Patrik Torstensson (ptorsten@hotmail.com)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//
+// (c) 2002 Ximian, Inc. (http://www.ximian.com)
 //
 using System;
 using System.Collections;
@@ -29,11 +32,36 @@ namespace System.Web {
 		static private int	_appMaxFreePublicInstances = 32;
 
 		private HttpApplicationState _state;
-		MethodInfo [] appTypeEventHandlers;
+		Hashtable appTypeEventHandlers;
+		static Hashtable appEventNames;
+
 		static IHttpHandler custApplication;
 
 		static private HttpApplicationFactory s_Factory = new HttpApplicationFactory();
 
+		static HttpApplicationFactory ()
+		{
+			appEventNames = new Hashtable ();
+			appEventNames.Add ("Application_Start", null);
+			appEventNames.Add ("Application_End", null);
+			appEventNames.Add ("Application_BeginRequest", null);
+			appEventNames.Add ("Application_AuthenticateRequest", null);
+			appEventNames.Add ("Application_AuthorizeRequest", null);
+			appEventNames.Add ("Application_ResolveRequestCache", null);
+			appEventNames.Add ("Application_AcquireRequestState", null);
+			appEventNames.Add ("Application_PreRequestHandlerExecute", null);
+			appEventNames.Add ("Application_PostRequestHandlerExecute", null);
+			appEventNames.Add ("Application_ReleaseRequestState", null);
+			appEventNames.Add ("Application_UpdateRequestCache", null);
+			appEventNames.Add ("Application_EndRequest", null);
+			appEventNames.Add ("Application_PreSendRequestHeaders", null);
+			appEventNames.Add ("Application_PreSendRequestContent", null);
+			appEventNames.Add ("Application_Disposed", null);
+			appEventNames.Add ("Application_Error", null);
+			appEventNames.Add ("Session_Start", null);
+			appEventNames.Add ("Session_End", null);
+		}
+		
 		public HttpApplicationFactory() {
 			_appInitialized = false;
 			_appFiredEnd = false;
@@ -46,10 +74,9 @@ namespace System.Web {
 			return Path.Combine(context.Request.PhysicalApplicationPath, "global.asax");
 		}
 
-		[MonoTODO("CompileApp(HttpContext context)")]
 		private void CompileApp(HttpContext context) {
 			if (File.Exists(_appFilename)) {
-				// Setup filemonitor for all filedepend also.
+				// Setup filemonitor for all filedepend also. CacheDependency?
 
 				_appType = GlobalAsaxCompiler.CompileApplicationType (_appFilename);
 				if (_appType == null)
@@ -64,7 +91,9 @@ namespace System.Web {
 
 		private bool IsEventHandler (MethodInfo m)
 		{
-			//Anything else?
+			if (m.ReturnType != typeof (void))
+				return false;
+
 			ParameterInfo [] pi = m.GetParameters ();
 			if (pi.Length != 2)
 				return false;
@@ -72,62 +101,80 @@ namespace System.Web {
 			if (pi [0].ParameterType != typeof (object) ||
 			    pi [1].ParameterType != typeof (EventArgs))
 				return false;
-				
-			if (m.Name != "Application_OnStart" &&
-			    m.Name != "Application_OnEnd" &&
-			    m.Name != "Session_OnStart" &&
-			    m.Name != "Session_OnEnd")
-				return false;
-
-			return true;
-
+			
+			return appEventNames.ContainsKey (m.Name);
 		}
 
+		void AddEvent (MethodInfo method)
+		{
+			string name = method.Name;
+			ArrayList list;
+			list = appTypeEventHandlers [name] as ArrayList;
+			if (list == null) {
+				list = new ArrayList ();
+				appTypeEventHandlers [name] = list;
+			}
+			list.Add (method);
+		}
+		
 		private void GetApplicationTypeEvents ()
 		{
+			appTypeEventHandlers = new Hashtable ();
 			ArrayList evtMethods = new ArrayList ();
 			BindingFlags flags = BindingFlags.Public    |
 					     BindingFlags.NonPublic | 
-					     BindingFlags.DeclaredOnly;
+					     BindingFlags.DeclaredOnly |
+					     BindingFlags.Instance |
+					     BindingFlags.Static;
 
 			MethodInfo [] methods = _appType.GetMethods (flags);
 			foreach (MethodInfo m in methods) {
 				if (IsEventHandler (m))
-					evtMethods.Add (m);
+					AddEvent (m);
 			}
 
 			Type baseType = _appType.BaseType;
-			if (baseType != typeof (HttpApplication)) {
-				flags = BindingFlags.NonPublic |
-				        BindingFlags.Static    | 
-				        BindingFlags.Instance;
+			if (baseType == typeof (HttpApplication))
+				return;
 
-				methods = _appType.GetMethods (flags);
-				foreach (MethodInfo m in methods) {
-					if (IsEventHandler (m))
-						evtMethods.Add (m);
-				}
+			flags = BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
+
+			methods = _appType.GetMethods (flags);
+			foreach (MethodInfo m in methods) {
+				if (IsEventHandler (m))
+					AddEvent (m);
 			}
-
-			appTypeEventHandlers = (MethodInfo []) evtMethods.ToArray (typeof (MethodInfo));
 		}
 
-		[MonoTODO("FireOnAppStart(HttpContext context)")]
-		private void FireOnAppStart(HttpContext context) {
-			// TODO: Fire ProcessRequest (need to have the compile in place first of the app object)
-		}
+		void FireEvents (string method_name, object state_context, object [] args)
+		{
+			//TODO: anything to do with the context or state?
+			ArrayList methods = appTypeEventHandlers [method_name] as ArrayList;
+			if (methods == null || methods.Count == 0)
+				return;
 
-		[MonoTODO("FireOnAppEnd(HttpContext context)")]
-		private void FireOnAppEnd() {
-			// TODO: Fire ProcessRequest (need to have the compile in place first of the app object)
-		}
-
-		[MonoTODO("FireOnSessionStart")]
-		private void FireOnSessionStart(HttpSessionState state, object source, EventArgs args) {
+			foreach (MethodInfo method in methods)
+				method.Invoke (this, args);
 		}
 		
-		[MonoTODO("FireOnSessionEnd")]
-		private void FireOnSessionEnd(HttpSessionState state, object source, EventArgs args) {
+		void FireOnAppStart (HttpContext context)
+		{
+			FireEvents ("Application_Start", context, new object [] {this, EventArgs.Empty});
+		}
+
+		void FireOnAppEnd ()
+		{
+			FireEvents ("Application_End", null, new object [] {this, EventArgs.Empty});
+		}
+
+		void FireOnSessionStart (HttpSessionState state, object source, EventArgs args)
+		{
+			FireEvents ("Session_Start", state, new object [] {source, args});
+		}
+		
+		void FireOnSessionEnd (HttpSessionState state, object source, EventArgs args)
+		{
+			FireEvents ("Session_End", state, new object [] {source, args});
 		}
 	
 		private void InitializeFactory(HttpContext context) {
@@ -187,6 +234,30 @@ namespace System.Web {
 			s_Factory.RecyclePublicInstance(app);
 		}
 
+		void AttachEvents (HttpApplication app)
+		{
+			foreach (string key in appTypeEventHandlers.Keys) {
+				if (key == "Application_Start" || key == "Application_End" ||
+				    key == "Sesssion_Start"    || key == "Session_End")
+				    continue;
+
+				int pos = key.IndexOf ('_');
+				if (pos == -1 || key.Length <= pos + 1)
+					continue;
+
+				EventInfo evt = _appType.GetEvent (key.Substring (pos + 1));
+				if (evt == null)
+					continue;
+			
+				ArrayList list = appTypeEventHandlers [key] as ArrayList;
+				if (list == null || list.Count == 0)
+					continue;
+
+				foreach (MethodInfo method in list)
+					evt.AddEventHandler (app, Delegate.CreateDelegate (typeof (EventHandler), method));
+			}
+		}
+
 		private IHttpHandler GetPublicInstance(HttpContext context) {
 			HttpApplication app = null;
 
@@ -201,7 +272,7 @@ namespace System.Web {
 				// Create non-public object
 				app = (HttpApplication) HttpRuntime.CreateInternalObject(_appType);
 
-				// TODO: Attach functions in global.asax to correct modules/app
+				AttachEvents (app);
 				app.Startup(context, HttpApplicationFactory.ApplicationState);
 			}
 
