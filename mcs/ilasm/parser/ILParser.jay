@@ -610,6 +610,9 @@ class_ref		: OPEN_BRACKET slashed_name CLOSE_BRACKET slashed_name
                                 }
                           }
 			| OPEN_BRACKET D_MODULE slashed_name CLOSE_BRACKET slashed_name
+                          {
+                                
+                          }
 			| slashed_name
                           {
                                 PrimitiveTypeRef prim = PrimitiveTypeRef.GetPrimitiveType ((string) $1);
@@ -1760,6 +1763,9 @@ type_spec		: class_ref
                                 // assembly. This is not supported in the MS version of ilasm
                           }
 			| OPEN_BRACKET D_MODULE slashed_name CLOSE_BRACKET
+                          {
+
+                          }
 			| type
 			;
 
@@ -2355,7 +2361,12 @@ sec_action		: K_REQUEST
 			;
 
 module_head		: D_MODULE
+                          {
+                          }
 			| D_MODULE comp_name
+                          {
+                                codegen.SetModuleName ((string) $2);
+                          }
 			| D_MODULE K_EXTERN comp_name
 			;
 
