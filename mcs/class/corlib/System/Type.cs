@@ -478,11 +478,14 @@ namespace System {
 
 		public virtual bool IsAssignableFrom (Type c)
 		{
+			if (c == null)
+				return false;
+
 			if (Equals (c))
 				return true;
 
 			if (type_is_subtype_of (c, this, true))
-				return true;;
+				return true;
 
 			if (!IsInterface)
 				return false;

@@ -796,9 +796,13 @@ namespace System
 			Type src_type = this.GetType ().GetElementType ();
 			Type dst_type = array.GetType ().GetElementType ();
 
-			if (! dst_type.IsAssignableFrom (src_type)) {
-				throw new ArrayTypeMismatchException();
-			}
+			// if either type is Object then ok, otherwise
+			// if both types are base types then ok, otherwise
+			// if src is not assignable to dst then throw an exception.
+			if ( src_type != typeof (Object) && dst_type != typeof (Object) && 
+				!(src_type.IsPrimitive && dst_type.IsPrimitive) &&
+				!dst_type.IsAssignableFrom (src_type))
+				throw new ArrayTypeMismatchException ();
 
 			Copy (this, this.GetLowerBound (0), array, index, this.GetLength (0));
 		}
