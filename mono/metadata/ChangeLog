@@ -1,3 +1,8 @@
+Thu Jul  5 22:34:21 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* metatada.c: fix bugs computing table sizes. Spew a
+	warning when index in string heap is out of bounds.
+
 2001-07-04  Miguel de Icaza  <miguel@ximian.com>
 
 	* metadata.h: Add a couple of macros to manipulate tokens. 
