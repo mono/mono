@@ -1,5 +1,8 @@
 2002-10-30  Miguel de Icaza  <miguel@ximian.com>
 
+	* cs-tokenizer.cs: Fix bug where floating point values with an
+	exponent where a sign was missing was ignored.
+
 	* driver.cs: Allow multiple assemblies to be specified in a single
 	/r: argument
 

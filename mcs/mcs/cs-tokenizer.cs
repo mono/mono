@@ -760,11 +760,16 @@ namespace Mono.CSharp
 				number_builder.Append ("e");
 				c = getChar ();
 				
-				if (c == '+')
+				if (c == '+'){
 					number_builder.Append ((char) c);
-				else if (c == '-')
+					c = -1;
+				} else if (c == '-') {
 					number_builder.Append ((char) c);
-				decimal_digits (-1);
+					c = -1;
+				} else 
+					number_builder.Append ('+');
+					
+				decimal_digits (c);
 				c = getChar ();
 			}
 
