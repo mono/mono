@@ -13,7 +13,7 @@ using System.Security.Permissions;
 namespace System.Security.Permissions {
 
 	[Serializable]
-	public class ResourcePermissionBase 
+	public abstract class ResourcePermissionBase 
 		: CodeAccessPermission, IUnrestrictedPermission {
 
 		[MonoTODO]
@@ -28,11 +28,8 @@ namespace System.Security.Permissions {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public const string Any = "any?";
-
-		[MonoTODO]
-		public const string Local = "local?";
+		public const string Any = "*";
+		public const string Local = ".";
 
 		[MonoTODO]
 		protected Type PermissionAccessType {
