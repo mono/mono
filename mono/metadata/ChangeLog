@@ -1,3 +1,9 @@
+2003-10-08  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* icall.c (ves_icall_System_CurrentTimeZone_GetTimeZoneData):
+	get daylight change dates better on Windows, fix handling
+	of platforms without tm_gmtoff.
+
 2003-10-06  Martin Baulig  <martin@ximian.com>
 
 	* class.c (inflate_generic_method): Renamed to
