@@ -1,3 +1,9 @@
+2004-08-22  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* Microsoft.JScript.dll.sources: added In.cs, Token.cs,
+	TokenStream.cs and Parser.cs to the build. Don't build
+	JScriptLexer.cs and JScriptParser.cs
+
 2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Microsoft.JScript.dll.sources: Added Assembly/AssemblyInfo.cs and

@@ -63,6 +63,7 @@ Microsoft.JScript/IRedirectOutput.cs
 Microsoft.JScript/IVsaScriptScope.cs
 Microsoft.JScript/InstanceOf.cs
 Microsoft.JScript/Import.cs
+Microsoft.JScript/In.cs
 Microsoft.JScript/JSBuiltIn.cs
 Microsoft.JScript/JSConstructor.cs
 Microsoft.JScript/JSError.cs
@@ -80,8 +81,6 @@ Microsoft.JScript/JSToken.cs
 Microsoft.JScript/JSVariableField.cs
 Microsoft.JScript/JScriptCodeProvider.cs
 Microsoft.JScript/JScriptException.cs
-Microsoft.JScript/JScriptLexer.cs
-Microsoft.JScript/JScriptParser.cs
 Microsoft.JScript/JScriptParserTokenTypes.cs
 Microsoft.JScript/LateBinding.cs
 Microsoft.JScript/LenientArrayPrototype.cs
@@ -260,3 +259,6 @@ Microsoft.JScript/VsaGlobalItem.cs
 Microsoft.JScript/VsaReferenceItem.cs
 Microsoft.JScript/VsaScriptScope.cs
 Microsoft.JScript/expression.cs
+Microsoft.JScript/Token.cs
+Microsoft.JScript/TokenStream.cs
+Microsoft.JScript/Parser.cs
