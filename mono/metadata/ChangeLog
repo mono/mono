@@ -1,5 +1,16 @@
 2004-04-06  Martin Baulig  <martin@ximian.com>
 
+	* row-indexes.h
+	(MONO_GENERICPARAM_DEPRECATED_CONSTRAINT): Removed.
+
+	* metadata.c (GenericParamSchema): Removed "DeprecatedConstraint".
+
+	* reflection.c (build_compressed_metadata): If we have any entries
+	in the GenericParam, MethodSpec or GenericParamConstraint tables,
+	set the header version to 1.1.
+
+2004-04-06  Martin Baulig  <martin@ximian.com>
+
 	* class.c (mono_class_init): If we're a generic instance,
 	initialize our nested classes, too.
 	(_mono_class_get_instantiation_name): Deal with the new `!%d'
