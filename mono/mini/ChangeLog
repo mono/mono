@@ -1,3 +1,7 @@
+2003-06-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.h mini.c mini-x86.c: Added instruction level coverage 
+	info collection support.
 
 Mon Jun 16 18:13:29 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
