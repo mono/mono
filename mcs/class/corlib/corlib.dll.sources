@@ -954,6 +954,7 @@ System.Security.Principal/WindowsAccountType.cs
 System.Security.Principal/WindowsBuiltInRole.cs
 System.Security.Principal/WindowsIdentity.cs
 System.Security.Principal/WindowsImpersonationContext.cs
+System.Security.Principal/WindowsPrincipal.cs
 System.Text/ASCIIEncoding.cs
 System.Text/Decoder.cs
 System.Text/Encoder.cs

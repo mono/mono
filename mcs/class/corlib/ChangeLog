@@ -1,3 +1,7 @@
+2003-12-25  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* corlib.dll.sources: Added WindowsPrincipal to build.
+
 2003-12-15  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* corlib_test.dll.sources: Added unit tests PaddingMode and X509 
