@@ -58,7 +58,7 @@ namespace System.Data {
 		[DataSysDescription ("Indicates the name of this constraint.")]
 		[DefaultValue ("")]
 		public virtual string ConstraintName {
-			get{ return "" + _constraintName; } 
+			get{ return _constraintName == null ? "" : _constraintName; } 
 			set{
 				//This should only throw an exception when it
 				//is a member of a ConstraintCollection which
@@ -189,7 +189,7 @@ namespace System.Data {
 		/// </summary>
 		public override string ToString () 
 		{
-			return "" + _constraintName;
+			return _constraintName == null ? "" : _constraintName;
 		}
 
 	}

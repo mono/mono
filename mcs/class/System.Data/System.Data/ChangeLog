@@ -1,6 +1,11 @@
+2004-04-25  Boris Kirzner <borisk@mainsoft.com>
+
+	* Constraint.cs : Small perfomance fix (avoid unnesessary string concatenation).
+
 2004-04-23 Umadevi S (sumadevi@novell.com)
 	*  DataRow.cs: Checked BeginEdit,EndEdit,CancelEdit and Delete methods
 	   - Added error handling to the above methods
+	   
 2004-04-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSet.cs : Data should be read when mode is IgnoreSchema (well,
