@@ -2,9 +2,9 @@
 // Microsoft.CSharp.* Test Cases
 //
 // Authors:
-// 	Eric Lindvall (eric@5stops.com)
+// 	Erik LeBel (eriklebel@yahoo.ca)
 //
-// (c) 2003 Eric Lindvall
+// (c) 2003 Erik LeBel
 //
 using System;
 using System.IO;
