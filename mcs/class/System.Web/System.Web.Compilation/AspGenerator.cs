@@ -115,11 +115,6 @@ namespace System.Web.Compilation
 
 			BaseCompiler compiler = GetCompilerFromType ();
 
-			/*
-			IndentedTextWriter tw = new IndentedTextWriter (Console.Out, "    ");
-			generator.GenerateCodeFromCompileUnit (unit, tw, new CodeGeneratorOptions());
-			tw.Close ();
-			*/
 			return compiler.GetCompiledType ();
 		}
 
@@ -191,6 +186,14 @@ namespace System.Web.Compilation
 
 		void TextParsed (ILocation location, string text)
 		{
+			if (text.IndexOf ("<%") != -1) {
+				if (this.text.Length > 0)
+					FlushText ();
+				CodeRenderParser r = new CodeRenderParser (text, stack.Builder);
+				r.AddChildren ();
+				return;
+			}
+
 			this.text.Append (text);
 			//PrintLocation (location);
 		}
@@ -293,6 +296,54 @@ namespace System.Web.Compilation
 
 		public ILocation Location {
 			get { return location; }
+		}
+
+		// Used to get CodeRender tags in attribute values
+		class CodeRenderParser
+		{
+			string str;
+			ControlBuilder builder;
+
+			public CodeRenderParser (string str, ControlBuilder builder)
+			{
+				this.str = str;
+				this.builder = builder;
+			}
+
+			public void AddChildren ()
+			{
+				int index = str.IndexOf ("<%");
+				if (index > 0) {
+					TextParsed (null, str.Substring (0, index));
+					str = str.Substring (index);
+				}
+
+				AspParser parser = new AspParser ("@@inner_string@@", new StringReader (str));
+				parser.Error += new ParseErrorHandler (ParseError);
+				parser.TagParsed += new TagParsedHandler (TagParsed);
+				parser.TextParsed += new TextParsedHandler (TextParsed);
+				parser.Parse ();
+			}
+
+			void TagParsed (ILocation location, TagType tagtype, string tagid, TagAttributes attributes)
+			{
+				if (tagtype == TagType.CodeRender)
+					builder.AppendSubBuilder (new CodeRenderBuilder (tagid, false, location));
+				else if (tagtype == TagType.CodeRenderExpression)
+					builder.AppendSubBuilder (new CodeRenderBuilder (tagid, true, location));
+				else
+					builder.AppendLiteralString (location.PlainText);
+			}
+
+			void TextParsed (ILocation location, string text)
+			{
+				builder.AppendLiteralString (text);
+			}
+
+			void ParseError (ILocation location, string message)
+			{
+				throw new ParseException (location, message);
+			}
 		}
 	}
 }

@@ -14,6 +14,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
+using System.Web;
 using System.Web.UI;
 
 namespace System.Web.Compilation
@@ -766,7 +767,7 @@ namespace System.Web.Compilation
 		void CreateApplicationInstance ()
 		{
 			CodeMemberProperty prop = new CodeMemberProperty ();
-			Type appType = typeof (HttpApplication);//FIXME: uncomment HttpApplicationFactory.AppType;
+			Type appType = typeof (HttpApplication);
 			prop.Type = new CodeTypeReference (appType);
 			prop.Name = "ApplicationInstance";
 			prop.Attributes = MemberAttributes.Family | MemberAttributes.Final;

@@ -27,7 +27,7 @@ namespace System.Web.Compilation
 		string fileText;
 		string verbatimID;
 
-		public AspParser (string filename, StreamReader input)
+		public AspParser (string filename, TextReader input)
 		{
 			this.filename = filename;
 			fileText = input.ReadToEnd ();

@@ -1,5 +1,13 @@
 2003-04-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* AspGenerator.cs: handle code render syntax in tag attributes.
+
+	* AspParser.cs: the constructor now takes a TextReader.
+
+	* TemplateControlCompiler.cs: removed comment.
+
+2003-04-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* TemplateControlCompiler.cs: added support for data bound properties.
 
 2003-04-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
