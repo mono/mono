@@ -26,6 +26,7 @@ namespace System.Xml.Xsl
 
 		XmlResolver xmlResolver;
 		IntPtr stylesheet;
+		Hashtable extensionObjectCache = new Hashtable();
 
 		#endregion
 
@@ -221,35 +222,57 @@ namespace System.Xml.Xsl
 					foreach (string ns in extobjects.Keys) {
 						object ext = extobjects[ns];
 
-						System.Type type;
-						System.Collections.IEnumerable methods;
+						if (extensionObjectCache.ContainsKey(ext)) {
+							foreach (ExtensionFunctionHolder ef in (ArrayList)extensionObjectCache[ext]) {
+								int ret = xsltRegisterExtFunction(context, ef.name, ef.ns, ef.func);
+								if (ret != 0) throw new XmlException("Could not reregister extension function " + ef.name + " in " + ef.ns);
+							}
 
-						// As an added bonus, if the extension object is a UseStaticMethods object
-						// (defined below), then add the static methods of the specified type.
-						if (ext is UseStaticMethods) {
-							type = ((UseStaticMethods)ext).Type;
-							methods = type.GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
-							ext = null;
 						} else {
-							type = ext.GetType();
-							methods = type.GetMethods();
-						}
-
-						Hashtable alreadyadded = new Hashtable ();
-						foreach (System.Reflection.MethodInfo mi in methods) {
-							if (alreadyadded.ContainsKey(mi.Name)) continue; // don't add twice
-							alreadyadded[mi.Name] = 1;
-
-							// Simple extension function delegate
-							ExtensionFunction func = new ExtensionFunction(new ReflectedExtensionFunction(type, ext, mi.Name).Function);
-
-							// Delegate for libxslt library call
-							libxsltXPathFunction libfunc = new libxsltXPathFunction(new ExtensionFunctionWrapper(func).Function);
+							object extsrc;
 	
-							int ret = xsltRegisterExtFunction(context, mi.Name, ns, libfunc);
-							if (ret != 0) throw new XmlException("Could not register extension function " + mi.DeclaringType.FullName + "." + mi.Name + " in " + ns);
+							System.Type type;
+							System.Collections.IEnumerable methods;
+	
+							// As an added bonus, if the extension object is a UseStaticMethods object
+							// (defined below), then add the static methods of the specified type.
+							if (ext is UseStaticMethods) {
+								type = ((UseStaticMethods)ext).Type;
+								methods = type.GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
+								extsrc = null;
+							} else {
+								extsrc = ext;
+								type = ext.GetType();
+								methods = type.GetMethods();
+							}
+
+							ArrayList functionstocache = new ArrayList();
+	
+							Hashtable alreadyadded = new Hashtable ();
+							foreach (System.Reflection.MethodInfo mi in methods) {
+								if (alreadyadded.ContainsKey(mi.Name)) continue; // don't add twice
+								alreadyadded[mi.Name] = 1;
+
+								// Simple extension function delegate
+								ExtensionFunction func = new ExtensionFunction(new ReflectedExtensionFunction(type, extsrc, mi.Name).Function);
+	
+								// Delegate for libxslt library call
+								libxsltXPathFunction libfunc = new libxsltXPathFunction(new ExtensionFunctionWrapper(func).Function);
+		
+								int ret = xsltRegisterExtFunction(context, mi.Name, ns, libfunc);
+								if (ret != 0) throw new XmlException("Could not register extension function " + mi.DeclaringType.FullName + "." + mi.Name + " in " + ns);
+
+								ExtensionFunctionHolder efh;
+								efh.name = mi.Name;
+								efh.ns = ns;
+								efh.func = libfunc;
+								functionstocache.Add(efh);
+							}
+
+							extensionObjectCache[ext] = functionstocache;
+
 						}
-					
+						
 					}
 	
 					result = xsltApplyStylesheetUser(stylesheet, doc, argArr, null, IntPtr.Zero, context);
@@ -552,14 +575,21 @@ namespace System.Xml.Xsl
 
 		internal delegate object ExtensionFunction(object[] args);
 
+		private struct ExtensionFunctionHolder {
+			public libxsltXPathFunction func;
+			public string ns, name;
+		}
+
 		// Wraps an ExtensionFunction into a function that is callable from the libxslt library.
 		private unsafe class ExtensionFunctionWrapper {
-			ExtensionFunction func;
+			private readonly ExtensionFunction func;
 
-			public ExtensionFunctionWrapper(ExtensionFunction func) { this.func = func; }
-			
+			public ExtensionFunctionWrapper(ExtensionFunction func) {
+				if ((object)func == null) throw new ArgumentNullException("func");
+				this.func = func;
+			}
+
 			public unsafe void Function(IntPtr xpath_ctxt, int nargs) {
-
 				// Convert XPath arguments into "managed" arguments
 				System.Collections.ArrayList args = new System.Collections.ArrayList();
 				for (int i = 0; i < nargs; i++) {
@@ -570,7 +600,7 @@ namespace System.Xml.Xsl
 						args.Add( xmlXPathCastToNumber(aptr));
 					else if (aptr->type == 4) // Strings
 						args.Add( xmlXPathCastToString(aptr));
-					else if (aptr->type == 1) { // Node Sets ==> ArrayList of strings
+					else if (aptr->type == 1 && aptr->nodesetptr != null) { // Node Sets ==> ArrayList of strings
 						System.Collections.ArrayList a = new System.Collections.ArrayList();
 						for (int ni = 0; ni < aptr->nodesetptr->count; ni++) {
 							xpathobject *n = xmlXPathNewNodeSet(aptr->nodesetptr->nodes[ni]);
@@ -589,19 +619,19 @@ namespace System.Xml.Xsl
 					xmlXPathFreeObject(aptr);
 				}
 
-				// Call function
 				args.Reverse();
+
 				object ret = func(args.ToArray());
 
 				// Convert the result back to an XPath object
 				if (ret == null) // null => ""
 					valuePush(xpath_ctxt, xmlXPathNewCString(""));
-				else if (ret is Boolean) // Booleans
+				else if (ret is bool) // Booleans
 					valuePush(xpath_ctxt, xmlXPathNewBoolean((bool)ret ? 1 : 0));
 				else if (ret is int || ret is long || ret is double || ret is float || ret is decimal)
 					// Numbers
 					valuePush(xpath_ctxt, xmlXPathNewFloat((double)ret));
-				else // Strings
+				else // Everything else => String
 					valuePush(xpath_ctxt, xmlXPathNewCString(ret.ToString()));
 
 			}
@@ -617,7 +647,7 @@ namespace System.Xml.Xsl
 			public ReflectedExtensionFunction(System.Type type, object src, string methodname) { this.type = type; this.src = src; this.methodname = methodname; }
 		
 			public object Function(object[] args) {
-				// Construct arg type array, stringified version in case of problem
+				// Construct arg type array, and a stringified version in case of problem
 				System.Type[] argtypes = new System.Type[args.Length];
 				string argtypelist = null;
 				for (int i = 0; i < args.Length; i++) {
@@ -633,6 +663,8 @@ namespace System.Xml.Xsl
 
 				// No method?
 				if (mi == null) throw new XmlException("No applicable function for " + methodname + " takes (" + argtypelist + ")");
+
+				if (!mi.IsStatic && src == null) throw new XmlException("Attempt to call static method without instantiated extension object.");
 
 				// Invoke
 				return mi.Invoke(src, args);

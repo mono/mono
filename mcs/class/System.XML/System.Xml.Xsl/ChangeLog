@@ -1,3 +1,8 @@
+2003-06-01  Joshua Tauberer <tauberer@for.net>
+
+	* XslTransform.cs: Cache extension object delegates
+	between calls to Transform.
+
 2003-05-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XslTransform.cs: fixed NullReferenceExceptions after the last
