@@ -3854,8 +3854,7 @@ namespace Mono.CSharp {
 					return false;
 
 				foreach (Attribute a in attrs) {
-					string condition = a.GetConditionalAttributeValue (
-						Parent);
+					string condition = a.GetConditionalAttributeValue (Parent.EmitContext);
 					if (RootContext.AllDefines.Contains (condition))
 						return false;
 				}
