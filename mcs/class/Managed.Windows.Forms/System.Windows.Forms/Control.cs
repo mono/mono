@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.5 $
+// $Revision: 1.6 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.6  2004/07/19 19:09:42  jordi
+// label control re-written: added missing functionlity, events, and properties
+//
 // Revision 1.5  2004/07/19 16:49:23  jordi
 // fixes SetBounds logic
 //
@@ -1059,19 +1062,19 @@ namespace System.Windows.Forms
 		}
 
 		public void SetBounds(int x, int y, int width, int height, BoundsSpecified bounds_specified) {
-			if ((bounds_specified & BoundsSpecified.X)!=0) {
+			if ((bounds_specified & BoundsSpecified.X) != BoundsSpecified.X) {
 				x = Left;
 			}
 
-			if ((bounds_specified & BoundsSpecified.Y)!=0) {
+			if ((bounds_specified & BoundsSpecified.Y) != BoundsSpecified.Y) {
 				y = Top;
 			}
 
-			if ((bounds_specified & BoundsSpecified.Width)!=0) {
+			if ((bounds_specified & BoundsSpecified.Width)!= BoundsSpecified.Width) {
 				width = Width;
 			}
 
-			if ((bounds_specified & BoundsSpecified.Height)!=0) {
+			if ((bounds_specified & BoundsSpecified.Height) != BoundsSpecified.Height) {
 				height = Height;
 			}
 

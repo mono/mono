@@ -1,59 +1,164 @@
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
 //
-// System.Windows.Forms.Label.cs
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
 //
-// Author:
-//   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
-//	  implemented for Gtk+ by Rachel Hestilow (hestilow@ximian.com)
-//	Dennis Hayes (dennish@raytek.com)
-//   WineLib implementation started by John Sohn (jsohn@columbus.rr.com)
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// (C) 2002/3 Ximian, Inc
+// Copyright (c) 2004 Novell, Inc.
 //
+// Authors:
+//	Jordi Mas i Hernandez, jordi@ximian.com
+//	Peter Bartok, pbartok@novell.com
+//
+// TODO:
+//		- The AutoSize functionality needs missing control functions to be implemented
+//		- Draw BorderStyle and FlatStyle
+//
+// Based on work by:
+//	Daniel Carrera, dcarrera@math.toronto.edu (stubbed out)
+//
+// INCOMPLETE
 
-namespace System.Windows.Forms {
-    	using System.ComponentModel;
-    	using System.Drawing;
-    	using System.Drawing.Text;
-	
-    	public class Label : Control {
-    		Image background_image;
-    		BorderStyle border_style;
-    		bool autoSize;
-    		Image image;
-    		ContentAlignment image_align;
-		StringFormat	string_format;
-//    		ImeMode default_ime_mode;
-    		bool render_transparent;
-    		FlatStyle flat_style;
-    		int preferred_height;
-    		int preferred_width;
-    		bool tab_stop;
-    		ContentAlignment text_align;
-    		bool use_mnemonic;
-    
+using System.Drawing;
+using System.Drawing.Text;
+using System.Drawing.Imaging;
+
+namespace System.Windows.Forms
+{
+	#region ThemePainter support
+
+	/* TrackBar Theme painter class*/
+
+	internal class ThemePainter_Label
+	{
+		static private Color last_fore_color;
+		static private Color last_back_color;
+		static private SolidBrush br_fore_color;
+		static private SolidBrush br_back_color;
+		static private Pen pen_3D = new Pen (Color.Yellow);
+		static private Pen pen_single = new Pen (Color.Pink);
+
+		static public void DefaultColors (Label label)
+		{
+			label.BackColor = Color.FromArgb (255, 236, 233, 216);
+			label.ForeColor = Color.Black;
+		}				
+		
+		static public void DrawLabel (Graphics dc, Rectangle area, BorderStyle border_style, string text, 
+			Color fore_color, Color back_color, Font font, StringFormat string_format, bool Enabled)
+
+		{			
+
+			if (last_fore_color != fore_color) {
+				last_fore_color = fore_color;
+				br_fore_color = new SolidBrush (last_fore_color);
+			}
+
+			if (last_back_color != back_color) {
+				last_back_color = back_color;
+				br_back_color = new SolidBrush (last_back_color);
+			}
+
+			dc.FillRectangle (br_back_color, area);						
+
+			if (Enabled)
+				dc.DrawString (text, font, br_fore_color, area, string_format);
+			else
+				ControlPaint.DrawStringDisabled (dc, text, font, fore_color, area, string_format);		
+
+		}
+	}
+
+	#endregion // ThemePainter support
+
+    	public class Label : Control
+    	{
+    		private Image background_image;
+    		private BorderStyle border_style;
+    		private bool autoSize;
+    		private Image image;
+    		private ContentAlignment image_align;
+		private StringFormat string_format;    		
+    		private bool render_transparent;
+    		private FlatStyle flat_style;
+    		private int preferred_height;
+    		private int preferred_width;
+    		private bool tab_stop;
+    		private ContentAlignment text_align;
+    		private bool use_mnemonic;
+    		private int image_index = -1;
+    		private ImageList image_list;
+    		private Bitmap bmp_mem;
+		private Graphics dc_mem;
+		private Rectangle paint_area;
+
+    		#region Events
+    		public event EventHandler autosizechanged_event;
+    		public event EventHandler textalignchanged_event;
+
+    		public void add_AutoSizeChanged (System.EventHandler value)
+		{
+			autosizechanged_event = value;
+		}
+
+		public void add_TextAlignChanged (System.EventHandler value)
+		{
+			textalignchanged_event = value;
+		}
+
+		#endregion
+
     		public Label () : base ()
     		{
 			// Defaults in the Spec
 			autoSize = false;
-			border_style = BorderStyle.None;
-//			base.TabStop = false;
-			text_align = ContentAlignment.TopLeft;
-//			SetStyle (ControlStyles.Selectable, false);
-//			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
+			border_style = BorderStyle.None;			
 			string_format = new StringFormat();
-			string_format.HotkeyPrefix=HotkeyPrefix.Show;
+			TextAlign = ContentAlignment.TopLeft;
+			image = null;
+			bmp_mem = null;
+			dc_mem = null;
+			UseMnemonic = true;		
+			image_list = null;
+			paint_area = new Rectangle ();
+			image_align = ContentAlignment.MiddleCenter;
+			set_usemnemonic (UseMnemonic);
+
+			ThemePainter_Label.DefaultColors (this);
+
+			autosizechanged_event = null;
+    			textalignchanged_event = null;
     		}
 
-#region Properties
+		#region Public Properties
+
     		public virtual bool AutoSize {
-    			get {
-    				return autoSize;
-    			}
+    			get { return autoSize; }
     			set {
-    				autoSize = value;
+    				if (autoSize == value)
+    					return;
+    					
+    				autoSize = value;    				
+    				CalcAutoSize ();
+
+    				if (autosizechanged_event != null)
+    					autosizechanged_event (this, new EventArgs ());
     			}
     		}
-    
+
     		public override Image BackgroundImage {
     			get {
     				return background_image;
@@ -63,7 +168,7 @@ namespace System.Windows.Forms {
 				Refresh ();
     			}
     		}
-    
+
     		public virtual BorderStyle BorderStyle {
     			get {
     				return border_style;
@@ -71,356 +176,383 @@ namespace System.Windows.Forms {
     			set {
 				if (border_style == value)
 					return;
-				
+
     				border_style = value;
 				RecreateHandle ();
     			}
     		}
-    
-    
+
+
     		public FlatStyle FlatStyle {
     			get {
     				return flat_style;
     			}
     			set {
+    				if (flat_style == value)
+					return;
+					
     				flat_style = value;
 				Refresh ();
     			}
     		}
-    
+
     		public Image Image {
     			get {
     				return image;
     			}
     			set {
+    				if (image == value)
+					return;
+					
     				image = value;
 				Refresh ();
     			}
     		}
-    
+
     		public ContentAlignment ImageAlign {
     			get {
     				return image_align;
     			}
     			set {
+    				if (image_align == value)
+    					return;
+    				
     				image_align = value;
+    				Refresh ();
     			}
     		}
-    
-    
-    		[MonoTODO]
+
     		public int ImageIndex {
-    			get {
-    				throw new NotImplementedException ();
-    			}
+    			get { return image_index;}
     			set {
-					//FIXME:
+    				if (image_index == value)
+					return;	
+					
+				image_index = value;
+    					
+    				Refresh ();
 			}
     		}
-#if nodef    
-    		[MonoTODO]
+
+
     		public ImageList ImageList {
-    			get {
-    				throw new NotImplementedException ();
-    			}
+    			get { return image_list;}
     			set {
-					//FIXME:
-    			}
+    				if (image_list == value)
+					return;	
+    					
+    				Refresh ();
+			}
     		}
-#endif
-    
-    		protected override ImeMode DefaultImeMode {
-    			get {
-    				return ImeMode.Disable;
-    			}
-    		}
-    
+
+    		
     		public virtual int PreferredHeight {
-    			get {
-    				return preferred_height;
-    			}
+    			get {return preferred_height; }
     		}
-    
+
     		public virtual int PreferredWidth {
-    			get {
-    				return preferred_width;
-    			}
+    			get {return preferred_width; }
     		}
-    
-    		public new bool TabStop {
-    			get {
-    				return tab_stop;
-    			}
-    			set {
-    				tab_stop = value;
-    			}
+
+    		public bool TabStop {
+    			get { return tab_stop; }
+    			set { tab_stop = value; }
     		}
-    
- 		//Compact Framework
+
     		public virtual ContentAlignment TextAlign {
-    			get {
-    				return text_align;
-    			}
+    			get { return text_align; }
 
     			set {
-    				text_align = value;
+    				if (text_align != value) {
 
-				// Calculate vertical alignment
-				if ((value == ContentAlignment.BottomLeft) || (value == ContentAlignment.BottomCenter) || (value == ContentAlignment.BottomRight)) {
-					string_format.LineAlignment=StringAlignment.Far;
-				} else  if ((value == ContentAlignment.TopLeft) || (value == ContentAlignment.TopCenter) || (value == ContentAlignment.TopRight)) {
-					string_format.LineAlignment=StringAlignment.Near;
-				} else {
-					string_format.LineAlignment=StringAlignment.Center;
-				}
+	    				text_align = value;
 
-				// Calculate horizontal alignment
-				if ((value == ContentAlignment.TopLeft) || (value == ContentAlignment.MiddleLeft) || (value == ContentAlignment.BottomLeft)) {
-					string_format.Alignment=StringAlignment.Near;
-				} else  if ((value == ContentAlignment.TopRight) || (value == ContentAlignment.MiddleRight) || (value == ContentAlignment.BottomRight)) {
-					string_format.LineAlignment=StringAlignment.Far;
-				} else {
-					string_format.LineAlignment=StringAlignment.Center;
+	    				switch (value) {
+
+	    				case ContentAlignment.BottomLeft:
+	    					string_format.LineAlignment = StringAlignment.Far;
+	    					string_format.Alignment = StringAlignment.Near;
+	    					break;
+	    				case ContentAlignment.BottomCenter:
+	    					string_format.LineAlignment = StringAlignment.Far;
+	    					string_format.Alignment = StringAlignment.Center;
+	    					break;
+	    				case ContentAlignment.BottomRight:
+	    					string_format.LineAlignment = StringAlignment.Far;
+						string_format.Alignment = StringAlignment.Far;
+						break;
+					case ContentAlignment.TopLeft:
+						string_format.LineAlignment = StringAlignment.Near;
+						string_format.Alignment = StringAlignment.Near;
+						break;
+					case ContentAlignment.TopCenter:
+						string_format.LineAlignment = StringAlignment.Near;
+						string_format.Alignment = StringAlignment.Center;
+						break;
+					case ContentAlignment.TopRight:
+						string_format.LineAlignment = StringAlignment.Near;
+						string_format.Alignment = StringAlignment.Far;
+						break;
+					case ContentAlignment.MiddleLeft:
+						string_format.LineAlignment = StringAlignment.Center;
+						string_format.Alignment = StringAlignment.Near;
+						break;
+	    				case ContentAlignment.MiddleRight:
+	    					string_format.LineAlignment = StringAlignment.Center;
+	    					string_format.Alignment = StringAlignment.Far;
+	    					break;
+	    				case ContentAlignment.MiddleCenter:
+	    					string_format.LineAlignment = StringAlignment.Center;
+	    					string_format.Alignment = StringAlignment.Center;
+						break;
+					default:
+						break;
+					}
+
+					if (textalignchanged_event != null)
+    						textalignchanged_event (this, new EventArgs ());
+
+    					Refresh();
 				}
 			}
     		}
-    
+    		
+    		
     		public bool UseMnemonic {
-    			get {
-    				return use_mnemonic;
-    			}
-    			set {
-    				use_mnemonic = value;
+    			get { return use_mnemonic; }
+   			set {
+    				if (use_mnemonic != value) {
+					use_mnemonic = value;
+					set_usemnemonic (use_mnemonic);
+	    				Refresh ();
+    				}
     			}
     		}
-		
+
+    		#endregion
+
     		protected override CreateParams CreateParams {
     			get {
 				CreateParams createParams = base.CreateParams;
-
 				createParams.ClassName = XplatUI.DefaultClassName;
-
-				int bs = 0;
-#if notyet
-				if (border_style == BorderStyle.FixedSingle)
-					bs |= (int) WindowStyles.WS_BORDER;
-				else if (border_style == BorderStyle.Fixed3D)
-					bs |= (int) WindowStyles.WS_BORDER | (int) SS_Static_Control_Types.SS_SUNKEN;
-					
-				createParams.Style = (int) (
-					(int)WindowStyles.WS_CHILD | 
-					(int)WindowStyles.WS_VISIBLE | 
-					(int)SS_Static_Control_Types.SS_LEFT |
-					(int)WindowStyles.WS_CLIPCHILDREN |
-					(int)WindowStyles.WS_CLIPSIBLINGS |
-					(int)SS_Static_Control_Types.SS_OWNERDRAW |
-					bs);
-#else
 				createParams.Style = (int)WindowStyles.WS_CHILD | (int)WindowStyles.WS_VISIBLE |(int)WindowStyles.WS_CLIPCHILDREN | (int)WindowStyles.WS_CLIPSIBLINGS;
-#endif
-
-
 				return createParams;
     			}
     		}
-    
-    		protected override Size DefaultSize {
-    			get {
-    				return new Size(100,23);//Correct value
-    			}
-    		}
-    
-			protected virtual bool RenderTransparent {
-				get {
-					return render_transparent;
-				}
-				set {
-					//FIXME:
-				}
-			}
-#if nodef
-    		protected override ImeMode DefaultImeMode {
-    			get {
-				//FIXME:
-				return default_ime_mode;
-    			}
-    		}
-#endif
-    
-#endregion
 
-#region Methods
+    		protected override Size DefaultSize {
+    			get {return new Size (100,23);}
+    		}
+
+		protected virtual bool RenderTransparent {
+			get { return render_transparent; }
+			set { render_transparent = value;}
+		}
+
+    		protected override ImeMode DefaultImeMode {
+    			get { return ImeMode.Disable;}    			
+    		}
+
+		#region  Methods		
+		
 
     		public override string ToString()
     		{
 			//FIXME: add name of lable, as well as text. would adding base.ToString work?
     			return "Label: " + base.Text;
     		}
+    		
+		protected override void Dispose(bool disposing)
+		{			
+			base.Dispose (disposing);
+		}
 
-    		[MonoTODO]
-			protected override void Dispose(bool disposing){
-				base.Dispose(disposing);
+    		
+    		protected Rectangle CalcImageRenderBounds (Image image, Rectangle area, ContentAlignment img_align)
+    		{
+    			Rectangle rcImageClip = area;	
+			rcImageClip.Inflate (-2,-2);
+
+			int X = area.X;
+			int Y = area.Y;
+
+			if (img_align == ContentAlignment.TopCenter ||
+				img_align == ContentAlignment.MiddleCenter ||
+				img_align == ContentAlignment.BottomCenter) {
+				X += (area.Width - image.Width) / 2;
+			}
+			else if (img_align == ContentAlignment.TopRight ||
+				img_align == ContentAlignment.MiddleRight||
+				img_align == ContentAlignment.BottomRight) {
+				X += (area.Width - image.Width);
 			}
 
-    		[MonoTODO]
-    		protected Rectangle CalcImageRenderBounds (
-    			Image image, Rectangle r, ContentAlignment align)
-    		{
-    			throw new NotImplementedException ();
+			if( img_align == ContentAlignment.BottomCenter ||
+				img_align == ContentAlignment.BottomLeft ||
+				img_align == ContentAlignment.BottomRight) {
+				Y += area.Height - image.Height;
+			}
+			else if(img_align == ContentAlignment.MiddleCenter ||
+					img_align == ContentAlignment.MiddleLeft ||
+					img_align == ContentAlignment.MiddleRight) {
+				Y += (area.Height - image.Height) / 2;
+			}
+			
+			rcImageClip.X = X;
+			rcImageClip.Y = Y;
+			rcImageClip.Width = image.Width;
+			rcImageClip.Height = image.Height;
+			
+			return rcImageClip;
     		}
-    
-      		[MonoTODO]
+
+      		
       		protected  override AccessibleObject CreateAccessibilityInstance()
-      		{
-				//FIXME:
-				return base.CreateAccessibilityInstance();
+      		{				
+			return base.CreateAccessibilityInstance();
       		}
 
-    		[MonoTODO]
-    		protected  void DrawImage (Graphics g, Image image, 
-    					   Rectangle r, ContentAlignment align)
+    		
+    		protected  void DrawImage (Graphics g, Image image,   Rectangle area, ContentAlignment img_align)
     		{
-				//FIXME:
-			}
-    
+ 			if (image == null || g == null)
+				return;
+				
+			Rectangle rcImageClip = CalcImageRenderBounds (image, area, img_align);		
+			g.DrawImage (image, rcImageClip.X, rcImageClip.Y, rcImageClip.Width, rcImageClip.Height);
+		}
+
     		protected virtual void OnAutoSizeChanged (EventArgs e)
 		{
-    			if (AutoSizeChanged != null) AutoSizeChanged (this, e);
+    			if (autosizechanged_event != null)
+    				autosizechanged_event (this, e);
     		}
-    
+
     		protected override void OnEnabledChanged (EventArgs e)
-    		{
-				//FIXME:
-				base.OnEnabledChanged (e);
+    		{				
+			base.OnEnabledChanged (e);
     		}
-    
+
     		protected override void OnFontChanged (EventArgs e)
-    		{
-				//FIXME:
-				base.OnFontChanged (e);
+    		{			
+			base.OnFontChanged (e);
     		}
-    
-    		protected override void OnPaint (PaintEventArgs e)
+    		
+    		private void CalcAutoSize ()
     		{
-				Rectangle paintBounds = ClientRectangle;
-				Bitmap bmp = new Bitmap( paintBounds.Width, paintBounds.Height,e.Graphics);
-				Graphics paintOn = Graphics.FromImage(bmp);
-			
-				Color controlColor = BackColor; //SystemColors.Control;
-				Color textColor = ForeColor; // SystemColors.ControlText;
-				if (BackColor == System.Drawing.Color.Red) {
-					Color t = System.Drawing.Color.Red;
-				}
-			
-				Rectangle rc = paintBounds;
-				Rectangle rcImageClip = paintBounds;
-				rcImageClip.Inflate(-2,-2);
+    			if (IsHandleCreated == false)
+    				return;    				    			
+    			
+    			SizeF size;    			
+    		 	size = dc_mem.MeasureString (Text, Font, new SizeF (paint_area.Width,
+    		 		paint_area.Height), string_format);
+    		 	
+    		 	Width = Size.Width;
+    		 	Height = Size.Height;
+    		 	
+    		 	Invalidate ();
+    		 	
+    		 	Console.WriteLine ("CalcAutoSize () after " + Size);
+    		}
 
-				SolidBrush sb = new SolidBrush( controlColor);
-				paintOn.FillRectangle(sb, rc);
-				sb.Dispose();
+    		private void draw ()
+		{
+			ThemePainter_Label.DrawLabel (dc_mem, paint_area, BorderStyle, Text, 
+				ForeColor, BackColor, Font, string_format, Enabled);
 				
-				// Do not place Text and Images on the borders 
-				paintOn.Clip = new Region(rcImageClip);
-				if(Image != null) {
-					int X = rc.X;
-					int Y = rc.Y;
+			DrawImage (dc_mem, Image, paint_area, image_align);
+		}
+		
+		private void set_usemnemonic (bool use)
+    		{    			
+			if (use)
+				string_format.HotkeyPrefix = HotkeyPrefix.Show;
+			else
+				string_format.HotkeyPrefix = HotkeyPrefix.None;
+    		}
 
-					if( ImageAlign == ContentAlignment.TopCenter ||
-						ImageAlign == ContentAlignment.MiddleCenter ||
-						ImageAlign == ContentAlignment.BottomCenter) {
-						X += (rc.Width - Image.Width) / 2;
-					}
-					else if(ImageAlign == ContentAlignment.TopRight ||
-						ImageAlign == ContentAlignment.MiddleRight||
-						ImageAlign == ContentAlignment.BottomRight) {
-						X += (rc.Width - Image.Width);
-					}
 
-					if( ImageAlign == ContentAlignment.BottomCenter ||
-						ImageAlign == ContentAlignment.BottomLeft ||
-						ImageAlign == ContentAlignment.BottomRight) {
-						Y += rc.Height - Image.Height;
-					}
-					else if(ImageAlign == ContentAlignment.MiddleCenter ||
-							ImageAlign == ContentAlignment.MiddleLeft ||
-							ImageAlign == ContentAlignment.MiddleRight) {
-						Y += (rc.Height - Image.Height) / 2;
-					}
-					paintOn.DrawImage(Image, X, Y, Image.Width, Image.Height);
-				}
+    		protected override void OnPaint (PaintEventArgs pevent)
+    		{
+			if (Width <= 0 || Height <=  0 || Visible == false)
+    				return;
 
-				if (Enabled) {
-					SolidBrush  brush;
+			/* Copies memory drawing buffer to screen*/
+			UpdateArea ();
+			draw();
+			pevent.Graphics.DrawImage (bmp_mem, 0, 0);
 
-					brush=new SolidBrush(textColor);
-					paintOn.DrawString(Text, Font, brush, rc, string_format);
-					brush.Dispose();
-				}
-				else {
-					ControlPaint.DrawStringDisabled(paintOn, Text, Font, textColor, rc, string_format);
-				}
+		}
 
-				e.Graphics.DrawImage(bmp, 0, 0, paintBounds.Width, paintBounds.Height);
-				paintOn.Dispose ();
-				bmp.Dispose();
-			}
-    
-  			//Compact Framework
     		protected override void OnParentChanged (EventArgs e)
     		{
     			base.OnParentChanged (e);
     		}
-    
-    		protected virtual void OnTextAlignChanged (EventArgs e) {
-    			if (TextAlignChanged != null) TextAlignChanged (this, e);
+
+    		protected virtual void OnTextAlignChanged (EventArgs e)
+    		{
+
+    			if (textalignchanged_event != null)
+    				textalignchanged_event (this, e);
     		}
-    
- 			//Compact Framework
-    		protected override void OnTextChanged (EventArgs e) {
-				base.OnTextChanged (e);
-				Invalidate ();
-				Refresh ();
+
+    		protected override void OnTextChanged (EventArgs e)
+    		{
+			base.OnTextChanged (e);
+			Invalidate ();
+			Refresh ();
     		}
-    
+
     		protected override void OnVisibleChanged (EventArgs e)
     		{
     			base.OnVisibleChanged (e);
     		}
-    
+
     		protected override bool ProcessMnemonic(char charCode)
     		{
     			return base.ProcessMnemonic (charCode);
     		}
-    
-//    		[MonoTODO]
-//    		protected new ContentAlignment RtlTranslateAlignment (
-//    			ContentAlignment alignment)
-//    		{
-//    			throw new NotImplementedException ();
-//    		}
-//    
-//    		[MonoTODO]
-//    		protected new HorizontalAlignment RtlTranslateAlignment (
-//    			HorizontalAlignment alignment)
-//    		{
-//    			throw new NotImplementedException ();
-//    		}
-//    		
-//    		[MonoTODO]
-//    		protected new LeftRightAlignment RtlTranslateAlignment (
-//    			LeftRightAlignment align)
-//    		{
-//    			throw new NotImplementedException ();
-//    		}
-//    
-//    		[MonoTODO]
-//    		protected new virtual void Select (bool directed, bool forward)
-//    		{
-//				//FIXME:
-//			}
 
-#if nodef    
+    		protected override void OnHandleCreated (EventArgs e)
+		{
+			base.OnHandleCreated(e);
+			//Console.WriteLine ("OnHandleCreated");
+
+			UpdateArea ();
+
+			bmp_mem = new Bitmap (Width, Height, PixelFormat.Format32bppArgb);
+			dc_mem = Graphics.FromImage (bmp_mem);
+			
+			if (AutoSize)
+				CalcAutoSize ();
+		}
+
+		private void UpdateArea ()
+		{			
+			paint_area.X = 	paint_area.Y = 0;
+			paint_area.Width = Width;
+			paint_area.Height = Height;			
+		}
+
+
+		protected override void OnResize (EventArgs e)
+    		{
+    			//Console.WriteLine ("OnResize");
+    			base.OnResize (e);
+
+    			if (Width <= 0 || Height <= 0)
+    				return;
+
+    			UpdateArea ();
+
+			/* Area for double buffering */
+			bmp_mem = new Bitmap (Width, Height, PixelFormat.Format32bppArgb);
+			dc_mem = Graphics.FromImage (bmp_mem);
+    		}
+
+
+
+#if nodef
     		protected override void SetBoundsCore (
     			int x, int y, int width, int height,
     			BoundsSpecified specified)
@@ -428,45 +560,21 @@ namespace System.Windows.Forms {
     			base.SetBoundsCore (x, y, width, height, specified);
     		}
 #endif
-    
-//    		protected new void UpdateBounds()
-//    		{
-//    			base.UpdateBounds ();
-//    		}
-//    
-//    		protected new void UpdateBounds (int x, int y,
-//    					     int width, int height)
-//    		{
-//    			base.UpdateBounds (x, y, width, height);
-//    		}
-//    
-//    
-//    		protected new void UpdateBounds (int x, int y, int width,
-//						 int height, int clientWidth,
-//						 int clientHeight)
-//		{
-//    			base.UpdateBounds (x, y, width, height, clientWidth, clientHeight);
-//		}
+
 
     		protected override void WndProc(ref Message m)
     		{
-				switch ((Msg) m.Msg) {
-					case Msg.WM_DRAWITEM: {
-						m.Result = (IntPtr)1;
-					}
-						break;
-					default:
-						base.WndProc (ref m);
-						break;
+			switch ((Msg) m.Msg) {
+				case Msg.WM_DRAWITEM: {
+					m.Result = (IntPtr)1;
 				}
+					break;
+				default:
+					base.WndProc (ref m);
+					break;
+			}
     		}
 #endregion
 
-#region Events
-    		public event EventHandler AutoSizeChanged;
-   
-    		public event EventHandler TextAlignChanged;
-#endregion
-		
     	}
     }
