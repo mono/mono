@@ -1,0 +1,5 @@
+Wed Aug 8 15:30:05 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* x86/x86-codegen.h, x86/test.c: added x86 code emitter with
+	test.
+
