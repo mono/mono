@@ -56,7 +56,7 @@ namespace System.Windows.Forms
 			
 			fontDialogPanel = new FontDialogPanel( this );
 			
-			form.Controls.Add( fontDialogPanel );
+			
 		}
 		#endregion	// Public Constructors
 		
@@ -111,6 +111,8 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		protected override bool RunDialog( IntPtr hwndOwner )
 		{
+			form.Controls.Add( fontDialogPanel );
+			
 			return true;
 		}
 		#endregion	// Protected Instance Methods
@@ -144,6 +146,8 @@ namespace System.Windows.Forms
 		private Label scriptLabel;
 		
 		private GroupBox exampleGroupBox;
+		
+		private ComboBox colorComboBox;
 		
 		private FontFamily[] fontFamilies;
 		
@@ -191,6 +195,8 @@ namespace System.Windows.Forms
 			underlinedCheckBox = new CheckBox( );
 			strikethroughCheckBox = new CheckBox( );
 			scriptComboBox = new ComboBox( );
+			
+			colorComboBox = new ComboBox( );
 			
 			examplePanel = new Panel( );
 			
@@ -242,6 +248,7 @@ namespace System.Windows.Forms
 			// effectsGroupBox
 			effectsGroupBox.Controls.Add( underlinedCheckBox );
 			effectsGroupBox.Controls.Add( strikethroughCheckBox );
+			effectsGroupBox.Controls.Add( colorComboBox );
 			effectsGroupBox.FlatStyle = FlatStyle.System;
 			effectsGroupBox.Location = new Point( 16, 158 );
 			effectsGroupBox.Size = new Size( 140, 116 );
@@ -253,7 +260,29 @@ namespace System.Windows.Forms
 			strikethroughCheckBox.Location = new Point( 8, 16 );
 			strikethroughCheckBox.TabIndex = 0;
 			strikethroughCheckBox.Text = "Strikethrough";
-			// schriftgradLabel
+			// colorComboBox
+			colorComboBox.Location = new Point( 8, 70 );
+			colorComboBox.Size = new Size( 130, 21 );
+			colorComboBox.DrawItem += new DrawItemEventHandler( OnDrawItem );
+			colorComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+			colorComboBox.DrawMode = DrawMode.OwnerDrawFixed;
+			colorComboBox.Items.Add( new ColorComboBoxItem( Color.Black, "Black" ) );
+			colorComboBox.Items.Add( new ColorComboBoxItem( Color.DarkRed, "Dark-Red" ) );
+			colorComboBox.Items.Add( new ColorComboBoxItem( Color.Green, "Green" ) );
+			colorComboBox.Items.Add( new ColorComboBoxItem( Color.Olive, "Olive-Green" ) ); // not correct
+			colorComboBox.Items.Add( new ColorComboBoxItem( Color.Aquamarine, "Aquamarine" ) ); // not correct
+			colorComboBox.Items.Add( new ColorComboBoxItem( Color.Crimson, "Crimson" ) );
+			colorComboBox.Items.Add( new ColorComboBoxItem( Color.Cyan, "Cyan" ) );
+			colorComboBox.Items.Add( new ColorComboBoxItem( Color.Gray, "Gray" ) );
+			colorComboBox.Items.Add( new ColorComboBoxItem( Color.Silver, "Silver" ) );
+			colorComboBox.Items.Add( new ColorComboBoxItem( Color.Red, "Red" ) );
+			colorComboBox.Items.Add( new ColorComboBoxItem( Color.YellowGreen, "Yellow-Green" ) );
+			colorComboBox.Items.Add( new ColorComboBoxItem( Color.Yellow, "Yellow" ) );
+			colorComboBox.Items.Add( new ColorComboBoxItem( Color.Blue, "Blue" ) );
+			colorComboBox.Items.Add( new ColorComboBoxItem( Color.Purple, "Purple" ) );
+			colorComboBox.Items.Add( new ColorComboBoxItem( Color.Aquamarine, "Aquamarine" ) );
+			colorComboBox.Items.Add( new ColorComboBoxItem( Color.White, "White" ) );
+			// sizeLabel
 			sizeLabel.Location = new Point( 284, 10 );
 			sizeLabel.Size = new Size( 100, 16 );
 			sizeLabel.TabIndex = 2;
@@ -408,11 +437,13 @@ namespace System.Windows.Forms
 		
 		void OnClickCancelButton( object sender, EventArgs e )
 		{
+			fontDialog.form.Controls.Remove( this );
 			fontDialog.form.DialogResult = DialogResult.Cancel;
 		}
 		
 		void OnClickOkButton( object sender, EventArgs e )
 		{
+			fontDialog.form.Controls.Remove( this );
 			fontDialog.Font = currentFont;
 			fontDialog.form.DialogResult = DialogResult.OK;
 		}
@@ -509,12 +540,69 @@ namespace System.Windows.Forms
 			UpdateExamplePanel( );
 		}
 		
+		void OnDrawItem( object sender, DrawItemEventArgs e )
+		{
+			if ( e.Index == -1 )
+				return;
+			
+			ColorComboBoxItem ccbi = colorComboBox.Items[ e.Index ] as ColorComboBoxItem;
+			
+			if ( ( e.State & DrawItemState.Selected ) == DrawItemState.Selected )
+			{
+				e.Graphics.FillRectangle( new SolidBrush( Color.Blue ), e.Bounds ); // bot blue
+				e.Graphics.DrawRectangle( new Pen( Color.Black ), 2, 2, 18, 10 );
+				e.Graphics.FillRectangle( new SolidBrush( ccbi.Color ), 3, 3, 17, 9 );
+				e.Graphics.DrawString( ccbi.Name, this.Font, new SolidBrush( Color.Black ), e.Bounds );
+			}
+			else
+			{
+				e.Graphics.FillRectangle( new SolidBrush( Color.White ), e.Bounds );
+				e.Graphics.DrawRectangle( new Pen( Color.Black ), 2, 2, 18, 10 );
+				e.Graphics.FillRectangle( new SolidBrush( ccbi.Color ), 3, 3, 17, 9 );
+				e.Graphics.DrawString( ccbi.Name, this.Font, new SolidBrush( Color.Black ), e.Bounds );
+			}
+		}
+		
 		private void UpdateExamplePanel( )
 		{
 			currentFont = new Font( currentFamily, currentSize, currentFontStyle );
 			
 			examplePanel.Invalidate( );
 			examplePanel.Update( );
+		}
+		
+		internal class ColorComboBoxItem
+		{
+			private Color color;
+			private string name;
+			
+			public ColorComboBoxItem( Color color, string name )
+			{
+				this.color = color;
+				this.name = name;
+			}
+			
+			public Color Color
+			{
+				set {
+					color = value;
+				}
+				
+				get {
+					return color;
+				}
+			}
+			
+			public string Name
+			{
+				set {
+					name = value;
+				}
+				
+				get {
+					return name;
+				}
+			}
 		}
 	}
 }
