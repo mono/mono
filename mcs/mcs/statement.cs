@@ -3871,14 +3871,9 @@ namespace Mono.CSharp {
 		bool EmitCollectionForeach (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			VariableStorage enumerator, disposable;
+			VariableStorage enumerator;
 
 			enumerator = new VariableStorage (ec, hm.enumerator_type);
-			if (hm.is_disposable)
-				disposable = new VariableStorage (ec, TypeManager.idisposable_type);
-			else
-				disposable = null;
-
 			enumerator.EmitThis ();
 			//
 			// Instantiate the enumerator
@@ -3934,20 +3929,20 @@ namespace Mono.CSharp {
 			// Now the finally block
 			//
 			if (hm.is_disposable) {
-				Label end_finally = ig.DefineLabel ();
+				Label call_dispose = ig.DefineLabel ();
 				ig.BeginFinallyBlock ();
-
-				disposable.EmitThis ();
+				
 				enumerator.EmitThis ();
 				enumerator.EmitLoad ();
 				ig.Emit (OpCodes.Isinst, TypeManager.idisposable_type);
-				disposable.EmitStore ();
-				disposable.EmitLoad ();
-				ig.Emit (OpCodes.Brfalse, end_finally);
-				disposable.EmitThis ();
-				disposable.EmitLoad ();
+				ig.Emit (OpCodes.Dup);
+				ig.Emit (OpCodes.Brtrue_S, call_dispose);
+				ig.Emit (OpCodes.Pop);
+				ig.Emit (OpCodes.Endfinally);
+				
+				ig.MarkLabel (call_dispose);
 				ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
-				ig.MarkLabel (end_finally);
+				
 
 				// The runtime generates this anyways.
 				// ig.Emit (OpCodes.Endfinally);

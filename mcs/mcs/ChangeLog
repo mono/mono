@@ -1,5 +1,10 @@
 2004-03-23 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* statement.cs: Shorter form for foreach, eliminates
+	a local variable. r=Martin.
+
+2004-03-23 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* constant.cs, ecore.cs, literal.cs: New prop IsZeroInteger that
 	checks if we can use brtrue/brfalse to test for 0.
 	* expression.cs: use the above in the test for using brtrue/brfalse.
