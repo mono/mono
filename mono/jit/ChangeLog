@@ -1,3 +1,14 @@
+2001-11-09  Dietmar Maurer  <dietmar@ximian.com>
+
+	* testjit.c (mono_analyze_stack): finished array support
+
+2001-11-08  Dietmar Maurer  <dietmar@ximian.com>
+
+	* testjit.c (MAKE_STELEM, MAKE_LDELEM): we build a tree which
+	represents the address of the element. This way we can emit highly
+	optimized x86 instructions to access elements (using base+index+offset
+	adressing mode)
+
 2001-11-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* mempool.c: Include string.h to kill warning.
