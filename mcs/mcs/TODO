@@ -19,8 +19,6 @@ BUGS
 	}
 
 
-* Implenment Array Initialization
-
 * FindMembers
 
 	Move our utility FindMembers from TypeContainer to Decl, because interfaces
@@ -243,6 +241,8 @@ OPTIMIZATIONS
 	this pointer (consider Property++ or Indexer++)
 
 
+* Add a cache for the various GetArrayMethod operations.
+  
 RECOMMENDATIONS
 ---------------
 

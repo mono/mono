@@ -194,5 +194,10 @@ namespace Mono.CSharp {
 		///   Whether we are inside a loop and break/continue are possible.
 		/// </summary>
 		public bool  InLoop;
+
+		/// <summary>
+		///   Whether we are inside a switch and a break is possible
+		/// </summary>
+		public bool  InSwitch;
 	}
 }

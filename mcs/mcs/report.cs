@@ -49,7 +49,7 @@ namespace Mono.CSharp {
 		static public void Error (int code, Location l, string text)
 		{
 			string msg = l.Name + "(" + l.Row + 
-				"): Error CS"+code+": " + text;
+				"): error CS"+code+": " + text;
 
 			RealError (msg);
 			Check (code);
@@ -58,14 +58,14 @@ namespace Mono.CSharp {
 		static public void Warning (int code, Location l, string text)
 		{
 			Console.WriteLine (l.Name + "(" + l.Row + 
-					   "): Warning CS"+code+": " + text);
+					   "): warning CS"+code+": " + text);
 			warnings++;
 			Check (code);
 		}
 		
 		static public void Error (int code, string text)
 		{
-			string msg = "Error CS"+code+": "+text;
+			string msg = "error CS"+code+": "+text;
 
 			RealError (msg);
 			Check (code);
@@ -73,7 +73,7 @@ namespace Mono.CSharp {
 
 		static public void Warning (int code, string text)
 		{
-			Console.WriteLine ("Warning CS"+code+": "+text);
+			Console.WriteLine ("warning CS"+code+": "+text);
 			warnings++;
 			Check (code);
 		}

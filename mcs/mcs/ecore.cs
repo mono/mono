@@ -271,6 +271,14 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Returns a literalized version of a literal FieldInfo
 		/// </summary>
+		///
+		/// <remarks>
+		///   The possible return values are:
+		///      IntLiteral, UIntLiteral
+		///      LongLiteral, ULongLiteral
+		///      FloatLiteral, DoubleLiteral
+		///      StringLiteral
+		/// </remarks>
 		public static Expression Literalize (object v, Type t)
 		{
 			if (t == TypeManager.int32_type)
@@ -1698,6 +1706,155 @@ namespace Mono.CSharp {
 			//Console.WriteLine ("Calling reduce");
 			return e.Reduce (ec);
 		}
+
+		static void error31 (Location l, string val, Type t)
+		{
+			Report.Error (31, l, "Constant value `" + val + "' cannot be converted to " +
+				      TypeManager.CSharpName (t));
+		}
+		
+		/// <summary>
+		///   Converts the IntLiteral, UIntLiteral, LongLiteral or
+		///   ULongLiteral into the integral target_type.
+		///
+		///   This is used by the switch statement, so the domain
+		///   of work is restricted to the literals above, and the
+		///   targets are int32, uint32, char, byte, sbyte, ushort,
+		///   short, uint64 and int64
+		/// </summary>
+		public static Literal ConvertIntLiteral (Literal l, Type target_type, Location loc)
+		{
+			string s = "";
+
+			if (l.Type == target_type)
+				return l;
+
+			//
+			// Make into one of the literals we handle, we dont really care
+			// about this value as we will just return a few limited types
+			// 
+			if (l is EnumLiteral)
+				l = ((EnumLiteral)l).WidenToCompilerLiteral ();
+
+			if (l is IntLiteral){
+				int v = ((IntLiteral) l).Value;
+				
+				if (target_type == TypeManager.uint32_type){
+					if (v >= 0)
+						return new UIntLiteral ((uint) v);
+				} else if (target_type == TypeManager.char_type){
+					if (v >= Char.MinValue && v <= Char.MaxValue)
+						return l;
+				} else if (target_type == TypeManager.byte_type){
+					if (v >= Byte.MinValue && v <= Byte.MaxValue)
+						return l;
+				} else if (target_type == TypeManager.sbyte_type){
+					if (v >= SByte.MinValue && v <= SByte.MaxValue)
+						return l;
+				} else if (target_type == TypeManager.short_type){
+					if (v >= Int16.MinValue && v <= UInt16.MaxValue)
+						return l;
+				} else if (target_type == TypeManager.ushort_type){
+					if (v >= UInt16.MinValue && v <= UInt16.MaxValue)
+						return l;
+				} else if (target_type == TypeManager.int64_type)
+					return new LongLiteral (v);
+			        else if (target_type == TypeManager.uint64_type){
+					if (v > 0)
+						return new ULongLiteral ((ulong) v);
+				}
+
+				s = v.ToString ();
+			} else if (l is	UIntLiteral){
+				uint v = ((UIntLiteral) l).Value;
+
+				if (target_type == TypeManager.int32_type){
+					if (v <= Int32.MaxValue)
+						return new IntLiteral ((int) v);
+				} else if (target_type == TypeManager.char_type){
+					if (v >= Char.MinValue && v <= Char.MaxValue)
+						return l;
+				} else if (target_type == TypeManager.byte_type){
+					if (v <= Byte.MaxValue)
+						return l;
+				} else if (target_type == TypeManager.sbyte_type){
+					if (v <= SByte.MaxValue)
+						return l;
+				} else if (target_type == TypeManager.short_type){
+					if (v <= UInt16.MaxValue)
+						return l;
+				} else if (target_type == TypeManager.ushort_type){
+					if (v <= UInt16.MaxValue)
+						return l;
+				} else if (target_type == TypeManager.int64_type)
+					return new LongLiteral (v);
+			        else if (target_type == TypeManager.uint64_type)
+					return new ULongLiteral (v);
+				s = v.ToString ();
+			} else if (l is	LongLiteral){ 
+				long v = ((LongLiteral) l).Value;
+
+				if (target_type == TypeManager.int32_type){
+					if (v >= UInt32.MinValue && v <= UInt32.MaxValue)
+						return new IntLiteral ((int) v);
+				} else if (target_type == TypeManager.uint32_type){
+					if (v >= 0 && v <= UInt32.MaxValue)
+						return new UIntLiteral ((uint) v);
+				} else if (target_type == TypeManager.char_type){
+					if (v >= Char.MinValue && v <= Char.MaxValue)
+						return new IntLiteral ((int) v);
+				} else if (target_type == TypeManager.byte_type){
+					if (v >= Byte.MinValue && v <= Byte.MaxValue)
+						return new IntLiteral ((int) v);
+				} else if (target_type == TypeManager.sbyte_type){
+					if (v >= SByte.MinValue && v <= SByte.MaxValue)
+						return new IntLiteral ((int) v);
+				} else if (target_type == TypeManager.short_type){
+					if (v >= Int16.MinValue && v <= UInt16.MaxValue)
+						return new IntLiteral ((int) v);
+				} else if (target_type == TypeManager.ushort_type){
+					if (v >= UInt16.MinValue && v <= UInt16.MaxValue)
+						return new IntLiteral ((int) v);
+			        } else if (target_type == TypeManager.uint64_type){
+					if (v > 0)
+						return new ULongLiteral ((ulong) v);
+				}
+				s = v.ToString ();
+			} else if (l is	ULongLiteral){
+				ulong v = ((ULongLiteral) l).Value;
+
+				if (target_type == TypeManager.int32_type){
+					if (v <= Int32.MaxValue)
+						return new IntLiteral ((int) v);
+				} else if (target_type == TypeManager.uint32_type){
+					if (v <= UInt32.MaxValue)
+						return new UIntLiteral ((uint) v);
+				} else if (target_type == TypeManager.char_type){
+					if (v >= Char.MinValue && v <= Char.MaxValue)
+						return new IntLiteral ((int) v);
+				} else if (target_type == TypeManager.byte_type){
+					if (v >= Byte.MinValue && v <= Byte.MaxValue)
+						return new IntLiteral ((int) v);
+				} else if (target_type == TypeManager.sbyte_type){
+					if (v <= (int) SByte.MaxValue)
+						return new IntLiteral ((int) v);
+				} else if (target_type == TypeManager.short_type){
+					if (v <= UInt16.MaxValue)
+						return new IntLiteral ((int) v);
+				} else if (target_type == TypeManager.ushort_type){
+					if (v <= UInt16.MaxValue)
+						return new IntLiteral ((int) v);
+			        } else if (target_type == TypeManager.int64_type){
+					if (v <= Int64.MaxValue)
+						return new LongLiteral ((long) v);
+				}
+				s = v.ToString ();
+			} 
+			
+			error31 (loc, s, target_type);
+			return null;
+		}
+			
 	}
 
 	/// <summary>
@@ -1784,6 +1941,36 @@ namespace Mono.CSharp {
 		public override object GetValue ()
 		{
 			return ((Literal) Child).GetValue ();
+		}
+
+		//
+		// Converts from one of the valid underlying types for an enumeration
+		// (int32, uint32, int64, uint64, short, ushort, byte, sbyte) to
+		// one of the internal compiler literals: Int/UInt/Long/ULong Literals.
+		//
+		public Literal WidenToCompilerLiteral ()
+		{
+			Type t = Child.Type.UnderlyingSystemType;
+			object v = ((Literal) Child).GetValue ();;
+			
+			if (t == TypeManager.int32_type)
+				return new IntLiteral ((int) v);
+			if (t == TypeManager.uint32_type)
+				return new UIntLiteral ((uint) v);
+			if (t == TypeManager.int64_type)
+				return new LongLiteral ((long) v);
+			if (t == TypeManager.uint64_type)
+				return new ULongLiteral ((ulong) v);
+			if (t == TypeManager.short_type)
+				return new IntLiteral ((short) v);
+			if (t == TypeManager.ushort_type)
+				return new UIntLiteral ((ushort) v);
+			if (t == TypeManager.byte_type)
+				return new UIntLiteral ((byte) v);
+			if (t == TypeManager.sbyte_type)
+				return new IntLiteral ((sbyte) v);
+
+			throw new Exception ("Invalid enumeration underlying type: " + t);
 		}
 
 		public override string AsString ()

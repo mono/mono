@@ -392,8 +392,8 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 
-			if (!ec.InLoop){
-				Report.Error (139, loc, "No enclosing loop to continue to");
+			if (!(ec.InLoop || ec.InSwitch)){
+				Report.Error (139, loc, "No enclosing loop or switch to continue to");
 				return false;
 			}
 			
@@ -765,7 +765,8 @@ namespace Mono.CSharp {
 	}
 
 	public class SwitchLabel {
-		Expression label, converted;
+		Expression label;
+		Literal converted;
 		public Location loc;
 		
 		//
@@ -783,7 +784,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public Expression Converted {
+		public Literal Converted {
 			get {
 				return converted;
 			}
@@ -803,15 +804,22 @@ namespace Mono.CSharp {
 			if (e == null)
 				return false;
 
-			label = label.Reduce (ec);
+			label = e.Reduce (ec);
 
 			if (!(label is Literal)){
+				Console.WriteLine ("Value is: " + label);
 				Report.Error (150, loc,
 					      "A constant value is expected");
 				return false;
 			}
-			
-			converted = Expression.ConvertImplicitRequired (ec, label, required_type, loc);
+
+			if (label is StringLiteral)
+				if (required_type == TypeManager.string_type){
+					converted = (Literal) label;
+					return true;
+				}
+
+			converted = Expression.ConvertIntLiteral ((Literal) label, required_type, loc);
 			if (converted == null)
 				return false;
 			
@@ -844,7 +852,7 @@ namespace Mono.CSharp {
 		
 		public Switch (Expression e, ArrayList sects, Location l)
 		{
-			expr = expr;
+			expr = e;
 			sections = sects;
 			loc = l;
 		}
@@ -921,21 +929,90 @@ namespace Mono.CSharp {
 			return converted;
 		}
 
+		void error152 (string n)
+		{
+			Report.Error (
+				152, "The label `" + n + ":' " +
+				"is already present on this switch statement");
+		}
+		
+		//
+		// Performs the basic sanity checks on the switch statement
+		// (looks for duplicate keys and non-constant expressions).
+		//
+		// It also returns a hashtable with the keys that we will later
+		// use to compute the switch tables
+		//
 		Hashtable CheckSwitch (EmitContext ec, Type switch_type)
 		{
-			bool is_string = switch_type == TypeManager.string_type;
-			bool error = false;
+			bool error = false, got_default = false;
 			Hashtable elements = new Hashtable ();
 				
 			foreach (SwitchSection ss in sections){
 				foreach (SwitchLabel sl in ss.Labels){
+					if (sl.Label == null){
+						if (got_default){
+							error152 ("default");
+							error = true;
+						}
+						got_default = true;
+						continue;
+					}
+					
 					if (!sl.ResolveAndReduce (ec, switch_type)){
 						error = true;
 						continue;
 					}
 
-					Literal l = (Literal) sl.Label;
-//					Expression conv = ImplicitNumericConversion (
+					Literal key = sl.Converted;
+
+					//
+					// We can do this because ConvertIntLiteral
+					// will only return the following 4 kinds literals and
+					// they will be consistent. 
+					//
+					string lname = null;
+					if (switch_type == TypeManager.uint64_type){
+						ulong v = ((ULongLiteral) key).Value;
+
+						if (elements.Contains (v))
+							lname = v.ToString ();
+						else
+							elements.Add (v, key);
+					} else if (switch_type == TypeManager.int64_type){
+						long v = ((LongLiteral) key).Value;
+
+						if (elements.Contains (v))
+							lname = v.ToString ();
+						else
+							elements.Add (v, key);
+					} else if (switch_type == TypeManager.uint32_type){
+						uint v = ((UIntLiteral) key).Value;
+
+						if (elements.Contains (v))
+							lname = v.ToString ();
+						else
+							elements.Add (v, key);
+					} else if (switch_type == TypeManager.string_type){
+						string s = ((StringLiteral) key).Value;
+
+						if (elements.Contains (s))
+							lname = s;
+						else
+							elements.Add (s, key);
+					} else {
+						int v = ((IntLiteral) key).Value;
+
+						if (elements.Contains (v))
+							lname = v.ToString ();
+						else
+							elements.Add (v, key);
+					}
+
+					if (lname != null){
+						error152 ("case + " + lname);
+						error = true;
+					}
 				}
 			}
 			if (error)
@@ -944,6 +1021,59 @@ namespace Mono.CSharp {
 			return elements;
 		}
 
+		//
+		// This simple emit switch works, but does not take advantage of the
+		// `switch' opcode.  The swithc opcode uses a jump table that we are not
+		// computing at this point
+		//
+		bool SimpleSwitchEmit (EmitContext ec, LocalBuilder val, Type switch_type)
+		{
+			ILGenerator ig = ec.ig;
+			Label default_target = ig.DefineLabel ();
+			Label end_of_switch = ig.DefineLabel ();
+			Label next_test = ig.DefineLabel ();
+			bool default_found = false;
+			bool first_test = true;
+			bool pending_goto_end = false;
+			bool last_is_ret = false;
+
+			foreach (SwitchSection ss in sections){
+				Label sec_begin = ig.DefineLabel ();
+
+				if (pending_goto_end)
+					ig.Emit (OpCodes.Br, end_of_switch);
+
+				foreach (SwitchLabel sl in ss.Labels){
+					if (!first_test){
+						ig.MarkLabel (next_test);
+						next_test = ig.DefineLabel ();
+					}
+					//
+					// If we are the default target
+					//
+					if (sl.Label == null){
+						ig.MarkLabel (default_target);
+						default_found = true;
+					} else {
+						ig.Emit (OpCodes.Ldloc, val);
+						sl.Converted.Emit (ec);
+						ig.Emit (OpCodes.Ceq);
+						ig.Emit (OpCodes.Brtrue, sec_begin);
+						ig.Emit (OpCodes.Br, next_test);
+					}
+				}
+				ig.MarkLabel (sec_begin);
+				last_is_ret = ss.Block.Emit (ec);
+				pending_goto_end = true;
+				first_test = false;
+			}
+			if (!default_found)
+				ig.MarkLabel (default_target);
+			ig.MarkLabel (next_test);
+			ig.MarkLabel (end_of_switch);
+			return last_is_ret;
+		}
+		
 		public override bool Emit (EmitContext ec)
 		{
 			expr = expr.Resolve (ec);
@@ -955,11 +1085,33 @@ namespace Mono.CSharp {
 				Report.Error (151, loc, "An integer type or string was expected for switch");
 				return false;
 			}
+
+			// Validate switch.
 			
-			if (CheckSwitch (ec, new_expr.Type) == null)
+			Type switch_type = new_expr.Type;
+			if (CheckSwitch (ec, switch_type) == null)
 				return false;
+
+			// Store variable for comparission purposes
+			LocalBuilder value = ec.ig.DeclareLocal (switch_type);
+			new_expr.Emit (ec);
+			ec.ig.Emit (OpCodes.Stloc, value);
+
+			// Setup break is enabled. 
+			ILGenerator ig = ec.ig;
+			Label old_end = ec.LoopEnd;
+			ec.LoopEnd = ig.DefineLabel ();
+			bool old_in_switch = ec.InSwitch;
+
+			// Emit Code.
+			bool ret_at_end =  SimpleSwitchEmit (ec, value, switch_type);
+
+			// Restore context state. 
+			ig.MarkLabel (ec.LoopEnd);
+			ec.InSwitch = old_in_switch;
+			ec.LoopEnd = old_end;
 			
-			return false;
+			return ret_at_end;
 		}
 	}
 
@@ -1519,9 +1671,7 @@ namespace Mono.CSharp {
 
 				return EmitCollectionForeach (ec, var_type, get_enum);
 			}
-
 		}
-
 	}
 }
 

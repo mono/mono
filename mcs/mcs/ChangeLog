@@ -1,3 +1,18 @@
+2001-11-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (Switch): Catch double defaults
+
+	(Switch): More work on the switch() statement
+	implementation.  It works for integral values now, need to finish
+	string support.
+
+
+2001-11-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (Expression.ConvertIntLiteral): New function to convert
+	integer literals into other integer literals.  To be used by
+	switch. 
+
 2001-11-24  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (ArrayCreation): Get rid of ArrayExprs : we save
