@@ -26,13 +26,15 @@ namespace Mono.Xml.Xsl.Operations {
 		{
 			c.AssertAttribute ("select");
 			select = c.CompileExpression (c.GetAttribute ("select"));
-			
-			// TODO get bool attr
+			disableOutputEscaping = c.ParseYesNoAttribute ("disable-output-escaping", false);
 		}
 		
 		public override void Evaluate (XslTransformProcessor p)
 		{
-			p.Out.WriteString (p.EvaluateString (select));
+			if (!disableOutputEscaping)
+				p.Out.WriteString (p.EvaluateString (select));
+			else
+				p.Out.WriteRaw (p.EvaluateString (select));
 		}
 	}
 }
