@@ -1,3 +1,7 @@
+2003-09-19 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* XmlConvert.cs: NaN.ToString () != INF.
+
 2003-09-14  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* XmlTextWriter.cs: Attributes that have a namespace must be always
