@@ -948,8 +948,6 @@ method_header
 
 		MemberName name = (MemberName) $4;
 
-		Report.Debug (64, "METHOD HEADER", name, name.TypeArguments, $9 != null);
-
 		if ($9 != null && name.TypeArguments == null)
 			Report.Error (80, lexer.Location,
 				      "Contraints are not allowed on non-generic declarations");
