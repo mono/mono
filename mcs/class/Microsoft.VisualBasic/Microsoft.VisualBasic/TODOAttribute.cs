@@ -7,7 +7,9 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
-namespace System {
+using System;
+
+namespace Microsoft.VisualBasic {
 
 	/// <summary>
 	///   The TODO attribute is used to flag all incomplete bits in our class libraries
