@@ -1,5 +1,10 @@
 2004-06-19  Jackson Harper  <jackson@ximian.com>
 
+	* InstrTable.cs: Add undocumented brnull opcode. This is really
+	just an alias for brfalse.
+	
+2004-06-19  Jackson Harper  <jackson@ximian.com>
+
 	* MethodDef.cs: Add a method to create vararg signatures from a
 	list of typerefs that matches the algorithm for creating vararg
 	signatures from paramdefs. This is used when creating methodref

@@ -259,6 +259,7 @@ namespace Mono.ILASM {
 
                         inst_table["br"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.br);
                         inst_table["brfalse"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.brfalse);
+                        inst_table["brnull"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.brfalse);
                         inst_table["brtrue"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.brtrue);
                         inst_table["beq"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.beq);
                         inst_table["bge"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.bge);
