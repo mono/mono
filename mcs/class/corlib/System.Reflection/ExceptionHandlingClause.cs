@@ -36,6 +36,9 @@ namespace System.Reflection {
 
 	public sealed class ExceptionHandlingClause {
 
+		internal ExceptionHandlingClause () {
+		}
+
 		[MonoTODO]
 		public Type CatchType {
 			get {
