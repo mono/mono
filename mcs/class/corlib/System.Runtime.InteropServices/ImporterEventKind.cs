@@ -10,8 +10,8 @@ namespace System.Runtime.InteropServices
 {
 	[Serializable] public enum ImporterEventKind
 	{
-		NOTIF_TYPECONVERED = 0,
+		NOTIF_TYPECONVERTED = 0,
 		NOTIF_CONVERTWARNING = 1,
-		ERROR_REFTOINVALIDTYPELID = 2,	      
+		ERROR_REFTOINVALIDTYPELIB = 2,	      
 	}
 }

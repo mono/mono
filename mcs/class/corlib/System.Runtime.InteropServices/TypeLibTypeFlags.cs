@@ -19,7 +19,8 @@ namespace System.Runtime.InteropServices {
 		FOleAutomation = 256,
 		FRestricted = 512,
 		FAggregatable = 1024,
-		FDispatchable = 2048,
-		FReverseBind = 4096,
+		FReplaceable = 2048,
+		FDispatchable = 4096,
+		FReverseBind = 8192,
 	}
 }

@@ -1,5 +1,10 @@
 2002-04-22  Duncan Mak  <duncan@ximian.com>
 
+	* ImporterEventKind.cs: 
+	* TypeLibFuncFlags.cs:
+	* TypeLibTypeFlags.cs:
+	* TypeLibVarFlags.cs: Fixed various typos and added missing elements.
+
 	* ComConventionLossAttribute.cs: Removed, there's a typo.
 	* ComConversionLossAttribute.cs: Same attribute, slight change of name.
 

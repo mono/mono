@@ -19,7 +19,7 @@ namespace System.Runtime.InteropServices {
 		FRestricted = 128,
 		FDefaultCollelem = 256,
 		FUiDefault = 512,
-		FNonBrowable = 1024,
+		FNonBrowsable = 1024,
 		FReplaceable = 2048,
 		FImmediateBind = 4096,
 	}
