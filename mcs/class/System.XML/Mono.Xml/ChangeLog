@@ -1,3 +1,7 @@
+2003-08-07  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* added IHasXmlParserContext.cs.
+
 2003-07-29 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Initial Checkin
