@@ -1,0 +1,12 @@
+2003-06-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* BitmapEditor.cs
+	* FontEditor.cs
+	* FontNameEditor.cs
+	* IconEditor.cs
+	* ImageEditor.cs
+	* MetafileEditor.cs: Implemented
+	
+	* ColorEditor.cs
+	* ContentAlignmentEditor.cs
+	* CursorEditor.cs: Partially implemented
