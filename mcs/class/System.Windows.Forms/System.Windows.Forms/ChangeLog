@@ -1,3 +1,8 @@
+2003-06-30 Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* Cursors.cs : VSplit, HSplit cursors
+	* Form.cs: WindowState ( not finished ), changes to Form.Close
+	* Splitter.cs, Toolbar.cs : started implementation
+
 2003-06-26 Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* TreeNode.cs
 	* TreeNodeCollection.cs

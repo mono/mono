@@ -78,6 +78,7 @@
 		bool      topMost;
 		SizeGripStyle sizeGripStyle;
 		FormStartPosition formStartPosition;
+		FormWindowState   formWindowState;
 
 		public Form () : base ()
     		{
@@ -99,6 +100,7 @@
 			minimumSize = Size.Empty;
 			formStartPosition = FormStartPosition.WindowsDefaultLocation;
 			visible = false;
+			formWindowState = FormWindowState.Normal;
     		}
     		
     		static Form ()
@@ -566,27 +568,18 @@
     		}
     
     
-	  		//Compact Framework
+	  	//Compact Framework
     		[MonoTODO]
     		public FormWindowState WindowState {
-    			get {
-					WINDOWPLACEMENT placement = new WINDOWPLACEMENT();
-
-    				//bool ReturnValue = Win32.GetWindowPlacement(Handle, ref placement ) ;
-					//if(placement.showCmd == SW_MINIMIZE){
-					//	return FormWindowState.Minimized;
-					//}
-					//if(placement.showCmd == SW_MAXIMIZE){
-					//	return FormWindowState.Maximized;
-					//}
-					return FormWindowState.Normal;
-					//Other options such as hide are possible in win32, but not in this part of .NET
-					// also this may not work because it looks like showCmd is for setting, and might not be set
-					// by win32 in a get.
-				}
+    			get { return formWindowState; }
     			set {
-					//FIXME:
-				}
+				if ( !Enum.IsDefined ( typeof( FormWindowState ), value ) )
+					throw new InvalidEnumArgumentException( "WindowState",
+						(int)value,
+						typeof( FormWindowState ) );
+
+				formWindowState = value;
+			}
     		}
     
     		
@@ -607,7 +600,7 @@
     		{
     			//Win32.DestroyWindow (Handle);
 			if ( IsHandleCreated )
-				Win32.SendMessage ( Handle, Msg.WM_CLOSE, 0, 0 );
+				Win32.PostMessage ( Handle, Msg.WM_CLOSE, 0, 0 );
     		}
     
     		public void LayoutMdi (MdiLayout value)

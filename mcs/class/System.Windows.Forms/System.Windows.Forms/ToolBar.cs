@@ -9,6 +9,8 @@
 //
 using System.Drawing;
 using System.Collections;
+using System.ComponentModel;
+
 namespace System.Windows.Forms {
 
 	// <summary>
@@ -16,6 +18,9 @@ namespace System.Windows.Forms {
 	// </summary>
 
     public class ToolBar : Control {
+		private Size buttonSize;
+		private bool dropDownArrows;
+		private bool showToolTips;
 
 		//
 		//  --- Public Constructors
@@ -23,7 +28,10 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public ToolBar() 
 		{
-			
+			Dock = DockStyle.Top;
+			buttonSize = new Size ( 24, 22 );
+			dropDownArrows = false;
+			showToolTips = false;
 		}
 		//
 		// --- Public Properties
@@ -46,24 +54,19 @@ namespace System.Windows.Forms {
 				//FIXME:
 			}
 		}
-		[MonoTODO]
+
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override Color BackColor {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return base.BackColor;  }
+			set { base.BackColor = value; }
 		}
-		[MonoTODO]
+
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override Image BackgroundImage{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return base.BackgroundImage;  }
+			set { base.BackgroundImage = value; }
 		}
+
 		[MonoTODO]
 		public BorderStyle BorderStyle{
 			get {
@@ -82,10 +85,13 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public Size ButtonSize {
 			get {
-				throw new NotImplementedException ();
+				return buttonSize;
 			}
 			set {
-				throw new NotImplementedException ();
+				if ( value.Width < 0 || value.Height < 0 )
+					throw new ArgumentOutOfRangeException( "value" );
+
+				buttonSize = value;
 			}
 		}
 		[MonoTODO]
@@ -100,14 +106,15 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override DockStyle Dock{
 			get {
-				throw new NotImplementedException ();
+				if ( base.Dock == DockStyle.Fill )
+					return DockStyle.Top;
+				return base.Dock;
 			}
 			set {
-				throw new NotImplementedException ();
+				base.Dock = value;
 			}
 		}
 
-		internal bool dropDownArrows; //FIXME: Just to get it to run
 		[MonoTODO]
 		public bool DropDownArrows {
 			get {
@@ -117,14 +124,11 @@ namespace System.Windows.Forms {
 				dropDownArrows = value;
 			}
 		}
-		[MonoTODO]
+
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override Color ForeColor {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return base.ForeColor;  }
+			set { base.ForeColor = value; }
 		}
 		[MonoTODO]
 		public ImageList ImageList {
@@ -160,7 +164,6 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		internal bool showToolTips;//FIXME: just to get it to run
 		[MonoTODO]
 		public bool ShowToolTips {
 			get {
@@ -220,10 +223,8 @@ namespace System.Windows.Forms {
 			get {
 				CreateParams createParams = base.CreateParams;
 
-				createParams.ClassName = "TOOLBAR";
-				createParams.Style = (int) (
-					WindowStyles.WS_CHILD | 
-					WindowStyles.WS_VISIBLE);
+				createParams.ClassName = Win32.TOOLBAR_CLASS;
+				createParams.Style |= (int) WindowStyles.WS_CHILD;
 				return createParams;
 			}		
 		}
@@ -236,7 +237,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override Size DefaultSize {
 			get {
-				throw new NotImplementedException ();
+				return new Size ( 100, 22 );
 			}
 		}
 		
@@ -245,6 +246,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void CreateHandle() 
 		{
+			initCommonControlsLibrary ( );
 			base.CreateHandle();
 		}
 
@@ -266,23 +268,32 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void OnHandleCreated(EventArgs e) 
 		{
-			//FIXME:
+			base.OnHandleCreated ( e );
+			UpdateBounds ( );
 		}
 		[MonoTODO]
 		protected override void OnResize(EventArgs e) 
 		{
-			//FIXME:
+			base.OnResize ( e );
 		}
 		[MonoTODO]
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) 
 		{
-			//FIXME:
+			base.SetBoundsCore ( x, y, width, height, specified );
 		}
 		[MonoTODO]
 		protected override void WndProc(ref Message m) 
 		{
-			//FIXME:
 		}
+
+		private void initCommonControlsLibrary ( ) {
+			if ( !RecreatingHandle ) {
+				INITCOMMONCONTROLSEX	initEx = new INITCOMMONCONTROLSEX();
+				initEx.dwICC = CommonControlInitFlags.ICC_TAB_CLASSES;
+				Win32.InitCommonControlsEx(initEx);
+			}
+		}
+
 		public class ToolBarButtonCollection : IList, ICollection, IEnumerable {
 			//
 			// --- Public Constructor

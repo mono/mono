@@ -49,9 +49,7 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		public static Cursor HSplit {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return Cursors.SizeNS; }
 		}
 		
 		public static Cursor IBeam {
@@ -165,9 +163,7 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		public static Cursor VSplit {
-			get {
-				throw new NotImplementedException (); 
-			}
+			get { return Cursors.SizeWE; }
 		}
 		
 		public static Cursor WaitCursor {

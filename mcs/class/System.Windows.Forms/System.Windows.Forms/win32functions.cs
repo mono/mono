@@ -57,6 +57,8 @@ namespace System.Windows.Forms{
 		internal const string TABCONTROL = "SysTabControl32";
 		internal const string DEFAULT_WINDOW_CLASS = "mono_scrollable_control";
 		internal const string TREEVIEW_CLASS = "SysTreeView32";
+		internal const string TOOLBAR_CLASS = "ToolbarWindow32";
+
 		#endregion
 
 		#region CallBacks

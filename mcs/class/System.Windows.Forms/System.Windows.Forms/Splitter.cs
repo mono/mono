@@ -15,7 +15,9 @@ namespace System.Windows.Forms {
 	// </summary>
 
     public class Splitter : Control, IMessageFilter {
-
+		BorderStyle borderStyle;
+		int minSize;
+		int minExtra;
 		//
 		//  --- Constructor
 		//
@@ -23,90 +25,100 @@ namespace System.Windows.Forms {
 		public Splitter()
 		{
 			SetStyle ( ControlStyles.Selectable, false );
+			borderStyle = BorderStyle.None;
+			Dock = DockStyle.Left;
+			minSize = 25;
+			minExtra = 25;
+
+			Application.AddMessageFilter ( this );
 		}
 
+		~Splitter ( ) 
+		{
+			Application.RemoveMessageFilter ( this );
+		}
 		//
 		//  --- Public Properties
 		//
 		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override  bool AllowDrop {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return base.AllowDrop;  }
+			set { base.AllowDrop = value; }
 		}
-		[MonoTODO]
+
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override  AnchorStyles Anchor {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return base.Anchor;  }
+			set { base.Anchor = value; }
 		}
-		[MonoTODO]
+
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override  Image BackgroundImage {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return base.BackgroundImage;  }
+			set { base.BackgroundImage = value; }
 		}
-		[MonoTODO]
+
 		public BorderStyle BorderStyle {
-			get {
-				throw new NotImplementedException ();
-			}
+			get {   return borderStyle; }
 			set {
-				throw new NotImplementedException ();
+				if ( !Enum.IsDefined ( typeof(BorderStyle), value ) )
+					throw new InvalidEnumArgumentException( "BorderStyle",
+						(int)value,
+						typeof(BorderStyle));
+				
+				if ( borderStyle != value ) {
+					int oldStyle = getBorderStyle ( borderStyle );
+					int oldExStyle = getBorderExStyle ( borderStyle );
+					borderStyle = value;
+
+					if ( IsHandleCreated ) {
+						Win32.UpdateWindowStyle ( Handle, oldStyle, getBorderStyle ( borderStyle ) );
+						Win32.UpdateWindowExStyle ( Handle, oldExStyle, getBorderExStyle ( borderStyle ) );
+					}
+				}
 			}
 		}
-		[MonoTODO]
+
 		public override DockStyle Dock {
-			get {
-				return base.Dock;
-			}
+			get { return base.Dock; }
 			set {
+				if ( value == DockStyle.None || value == DockStyle.Fill )
+					throw new ArgumentException ( "A splitter control must be docked left, right, top or bottom.", "value" );
+
 				base.Dock = value;
+
+				Cursor = Vertical ? Cursors.VSplit : Cursors.HSplit;
 			}
 		}
-		[MonoTODO]
+
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Font Font {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return base.Font;  }
+			set { base.Font = value; }
 		}
-		[MonoTODO]
+
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Color ForeColor {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return base.ForeColor;  }
+			set { base.ForeColor = value; }
 		}
 		[MonoTODO]
 		public int MinExtra {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return minExtra; }
 			set {
-				throw new NotImplementedException ();
+				minExtra = value;
+				if ( minExtra < 0 )
+					minExtra = 0;
 			}
 		}
 		[MonoTODO]
 		public int MinSize {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return minSize; }
 			set {
-				throw new NotImplementedException ();
+				minSize = value;
+				if ( minSize < 0 )
+					minSize = 0;
 			}
 		}
 		[MonoTODO]
@@ -127,14 +139,11 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-		[MonoTODO]
+
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override string Text {
-			get {
-				return base.Text;
-			}
-			set {
-				base.Text = value;
-			}
+			get { return base.Text;  }
+			set { base.Text = value; }
 		}
 
 		
@@ -154,10 +163,12 @@ namespace System.Windows.Forms {
 			get {
 				CreateParams createParams = base.CreateParams;
 
-				createParams.ClassName = "SPLITTER";
-				createParams.Style = (int) (
-					WindowStyles.WS_CHILD | 
-					WindowStyles.WS_VISIBLE);
+				createParams.ClassName = Win32.DEFAULT_WINDOW_CLASS;
+				createParams.Style |= (int) WindowStyles.WS_CHILD;
+
+				createParams.Style   |= getBorderStyle   ( BorderStyle );
+				createParams.ExStyle |= getBorderExStyle ( BorderStyle );
+
 				return createParams;
 			}		
 		}
@@ -170,7 +181,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override Size DefaultSize {
 			get {
-				return new System.Drawing.Size(10,500);
+				return new System.Drawing.Size(3, 3);
 			}
 		}
 
@@ -201,10 +212,61 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void SetBoundsCore( int x, int y, int width, int height, BoundsSpecified specified)
 		{
-			throw new NotImplementedException ();
+			Control ctrl = getDockedControl ( );
+			if ( ctrl != null ) {
+				switch ( Dock ) {
+				case DockStyle.Left:
+					x = ctrl.Right;
+					height = ctrl.Height;
+					specified |=  ( BoundsSpecified.X | BoundsSpecified.Height );
+				break;
+				case DockStyle.Right:
+				break;
+				case DockStyle.Top:
+				break;
+				case DockStyle.Bottom:
+				break;
+				}
+			}
+			base.SetBoundsCore ( x, y, width, height, specified );
 		}
 		bool IMessageFilter.PreFilterMessage(ref Message m){
-			throw new NotImplementedException ();
+			return false;
+		}
+
+		private int getBorderStyle ( BorderStyle style )
+		{
+			if ( style == BorderStyle.FixedSingle )
+				return (int) WindowStyles.WS_BORDER;
+
+			return 0;
+		}
+
+		private int getBorderExStyle ( BorderStyle style )
+		{
+			if ( style == BorderStyle.Fixed3D )
+				return (int) (int)WindowExStyles.WS_EX_CLIENTEDGE;
+
+			return 0;
+		}
+
+		Control getDockedControl ( ) {
+			if ( Parent != null ) {
+				int index = Parent.Controls.GetChildIndex ( this, false );
+				if ( index != - 1 ) {
+					for ( int i = index + 1; i < Parent.Controls.Count; i++ ) {
+						Control ctrl = Parent.Controls [ i ];
+						if ( ctrl.Dock == this.Dock )
+							return ctrl;
+					}
+				}
+				return Parent;
+			}
+			return null;
+		}
+
+		private bool Vertical {
+			get { return ( Dock == DockStyle.Left || Dock == DockStyle.Right ); }
 		}
 	 }
 }
