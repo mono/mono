@@ -175,7 +175,6 @@ namespace Mono.MonoBASIC
 		
 		public class IfElseStateMachine {
 			
-			[Flags]
 			public enum State {
 			START,
 			IF_SEEN,
@@ -185,7 +184,6 @@ namespace Mono.MonoBASIC
 			MAX
 			}
 		
-			[Flags]
 			public enum Token {
 			START,
 			IF,
