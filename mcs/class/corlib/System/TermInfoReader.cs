@@ -31,6 +31,46 @@
 using System.IO;
 using System.Text;
 namespace System {
+	// This class reads data from a byte array or file containing the terminfo capabilities
+	// information for any given terminal. The maximum allowed size is 4096 bytes.
+	//
+	// Terminfo database files are divided in the following sections:
+	//
+	//	Header
+	//	Terminal names
+	//	Boolean capabilities
+	//	Numeric capabilities
+	//	Offset of string capabilities
+	//	String capabilities
+	//
+	// The header is as follows:
+	//
+	//	Magic number (0x1 and 0x1A)
+	//	Terminal names size
+	//	Boolean section size
+	//	Numeric section size
+	//	String offsets section size
+	//	Strings size
+	//
+	// After the header, there's a NUL terminated string containing terminal names separated
+	// by the character '|'. The last one is the terminal description.
+	//
+	// The boolean capabilities section has bytes that are set to 1 if the capability is supported
+	// and 0 otherwise. If the index of a capability is greater than the section size, 0 is assumed.
+	//
+	// The numeric capabilities section holds 2-byte integers in little endian format. No negative
+	// values are allowed and the absence of a capability is marked as two 0xFF.
+	//
+	// The string offsets section contains 2-byte integer offsets into the string capabilies section.
+	// If the capability is not supported, the index will be two 0xFF bytes.
+	//
+	// The string capabilities section contains NUL terminated strings starting at the offsets found
+	// in the previous section.
+	//
+	// Terminal capabilities indexes are found in /usr/include/term.h file and described in
+	// 'man 5 terminfo'.
+	//
+
 	class TermInfoReader {
 		short nameSize;
 		short boolSize;

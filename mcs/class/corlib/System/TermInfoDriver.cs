@@ -115,8 +115,6 @@ namespace System {
 				reader = new TermInfoReader (term, KnownTerminals.xterm);
 			} else if (term == "linux") {
 				reader = new TermInfoReader (term, KnownTerminals.linux);
-			} else if (term == "cygwin") {
-				reader = new TermInfoReader (term, KnownTerminals.cygwin);
 			} else {
 				string filename = SearchTerminfo (term);
 				if (filename != null)
