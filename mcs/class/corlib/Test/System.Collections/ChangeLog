@@ -1,3 +1,7 @@
+2003-12-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* QueueTest.cs: added more tests. Patch from Carlos Barcenilla.
+
 2003-11-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* StackTest.cs: Applied patch from Carlos A. Barcenilla to fix minor
