@@ -1,8 +1,11 @@
 //
 // Mono.CSharp CSharpCodeCompiler Class implementation
 //
-// Author:
-//   Sean Kasun (seank@users.sf.net)
+// Authors:
+//	Sean Kasun (seank@users.sf.net)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//
+// Copyright (c) Novell, Inc. (http://www.novell.com)
 //
 
 namespace Mono.CSharp
@@ -62,22 +65,16 @@ namespace Mono.CSharp
 				f.Close();
 				i++;
 			}
-			return CompileAssemblyFromFileBatch (options, fileNames, true);
+			return CompileAssemblyFromFileBatch (options, fileNames);
 		}
 		
 		public CompilerResults CompileAssemblyFromFile (
 			CompilerParameters options,string fileName)
 		{
-			return CompileAssemblyFromFileBatch (options, new string []{fileName}, false);
+			return CompileAssemblyFromFileBatch (options, new string []{fileName});
 		}
 
 		public CompilerResults CompileAssemblyFromFileBatch (CompilerParameters options, string[] fileNames)
-		{
-			return CompileAssemblyFromFileBatch (options, fileNames, false);
-		}
-		
-		CompilerResults CompileAssemblyFromFileBatch (CompilerParameters options, string [] fileNames,
-							      bool removeFiles)
 		{
 			if (null == options)
 				throw new ArgumentNullException("options");
@@ -119,13 +116,6 @@ namespace Mono.CSharp
 			else
 				results.CompiledAssembly=null;
 
-			if (removeFiles && Environment.GetEnvironmentVariable ("MONO_CODEDOM_NODELETE") == null) {
-				foreach (string fi in fileNames) {
-					FileInfo info = new FileInfo (fi);
-					info.Delete ();
-				}
-			}
-			
 			return results;
 		}
 		public CompilerResults CompileAssemblyFromSource (
@@ -147,7 +137,7 @@ namespace Mono.CSharp
 				f.Close();
 				i++;
 			}
-			return CompileAssemblyFromFileBatch (options, fileNames, true);
+			return CompileAssemblyFromFileBatch (options, fileNames);
 		}
 		private static string BuildArgs(
 			CompilerParameters options,string[] fileNames)
