@@ -1,12 +1,11 @@
 //
 // System.Security.Permissions.StrongNameIdentityPermissionAttribute.cs
 //
-// Duncan Mak <duncan@ximian.com>
+// Authors:
+//	Duncan Mak <duncan@ximian.com>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Ximian, Inc.			http://www.ximian.com
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -29,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.Globalization;
 
 namespace System.Security.Permissions {
 
@@ -45,23 +44,23 @@ namespace System.Security.Permissions {
 		private string version;
 		
 		// Constructor
-		public StrongNameIdentityPermissionAttribute (SecurityAction action) : base (action) {}
+		public StrongNameIdentityPermissionAttribute (SecurityAction action) 
+			: base (action)
+		{
+		}
 		
 		// Properties
-		public string Name
-		{
+		public string Name {
 			get { return name; }
 			set { name = value; }
 		}
 
-		public string PublicKey
-		{
+		public string PublicKey {
 			get { return key; }
 			set { key = value; }
 		}
 
-		public string Version
-		{
+		public string Version {
 			get { return version; }
 			set { version = value; }
 		}
@@ -69,27 +68,25 @@ namespace System.Security.Permissions {
 		// Methods
 		public override IPermission CreatePermission ()
 		{
-			if (this.Unrestricted)
-				throw new ArgumentException ("Unsupported PermissionState.Unrestricted");
+			if (this.Unrestricted) {
+				throw new ArgumentException (Locale.GetText (
+					"Unsupported PermissionState.Unrestricted"));
+			}
 
 			StrongNameIdentityPermission perm = null;
 			if ((name == null) && (key == null) && (version == null))
 				perm = new StrongNameIdentityPermission (PermissionState.None);
 			else {
-				if (key == null)
-					throw new ArgumentException ("PublicKey is required");
+				if (key == null) {
+					throw new ArgumentException (Locale.GetText (
+						"PublicKey is required"));
+				}
 
-				byte[] keyblob = Convert.FromBase64String (key);
-				StrongNamePublicKeyBlob blob = new StrongNamePublicKeyBlob (keyblob);
+				StrongNamePublicKeyBlob blob = StrongNamePublicKeyBlob.FromString (key);
 				
 				Version v = null;
 				if (version != null)
 					v = new Version (version);
-				else
-					v = new Version ();
-
-				if (name == null)
-					name = String.Empty;
 
 				perm = new StrongNameIdentityPermission (blob, name, v);
 			}

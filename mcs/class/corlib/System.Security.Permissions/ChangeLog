@@ -1,5 +1,10 @@
 2004-08-17  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* StrongNameIdentityPermission.cs: Update to use the common template.
+	Completed TODOs	and now pass all unit tests.
+	* StrongNamePermissionAttribute.cs: Fixed public key convertion (as it
+	wasn't base64 encoded).
+	* StrongNamePublicKeyBlob.cs: Made static FromString() more robust.
 	* ZoneIdentityPermission.cs: Update to use the common template. Now 
 	pass all unit tests.
 

@@ -2,12 +2,9 @@
 // StrongNamePublicKeyBlob.cs: Strong Name Public Key Blob
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -50,6 +47,9 @@ public sealed class StrongNamePublicKeyBlob {
 
 	internal static StrongNamePublicKeyBlob FromString (string s)
 	{
+		if ((s == null) || (s.Length == 0))
+			return null;
+
 		int length = s.Length / 2;
 	
 		byte [] array = new byte [length];
