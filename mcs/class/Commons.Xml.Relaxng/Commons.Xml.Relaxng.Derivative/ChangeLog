@@ -1,5 +1,10 @@
 2004-12-06  Atsushi Enomoto <atsushi@ximian.com>
 
+	* Util.cs : trivial debug string fix.
+	* RdpPattern.cs : trivial formatting fix.
+
+2004-12-06  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RdpPattern.cs : The last attribute stuff broke usual validation wrt
 	  global attributes.
 

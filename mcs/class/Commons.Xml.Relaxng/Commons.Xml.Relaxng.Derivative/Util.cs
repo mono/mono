@@ -53,7 +53,7 @@ namespace Commons.Xml.Relaxng.Derivative
 			case RdpNameClassType.NsName:
 				return "<nsName ns='" + ((RdpNsName)n).NamespaceURI + "'/>\n";
 			default:
-				return "<" + n.NameClassType.ToString () + "/>";
+				return "<" + n.NameClassType.ToString () + "/>\n";
 			}
 		}
 

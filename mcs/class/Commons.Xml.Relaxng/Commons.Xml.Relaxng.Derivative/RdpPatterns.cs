@@ -1624,7 +1624,7 @@ namespace Commons.Xml.Relaxng.Derivative
 			throw new InvalidOperationException ();
 		}
 
-		internal override bool ContainsText()
+		internal override bool ContainsText ()
 		{
 			throw new InvalidOperationException ();
 		}
