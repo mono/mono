@@ -15,12 +15,5 @@ namespace System.Runtime.InteropServices {
 		public OutAttribute ()
 		{
 		}
-		
-		public override object TypeId {
-			get {
-				// TODO: Implement me
-				return null;
-			}
-		}
 	}
 }
