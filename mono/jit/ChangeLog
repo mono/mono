@@ -1,3 +1,7 @@
+2001-11-28  Dietmar Maurer  <dietmar@ximian.com>
+
+	* jit.c (mono_analyze_stack): record the cli_address for later use
+	with gdb.
 
 Tue Nov 27 16:32:41 CET 2001 Paolo Molaro <lupus@ximian.com>
 
