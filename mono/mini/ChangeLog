@@ -1,4 +1,11 @@
-2003-04-07  Martin Baulig  <martin@ximian.com>
+2003-04-07  Dietmar Maurer  <dietmar@ximian.com>
+
+	* mono/mini/mini.c (mono_save_args): always copy arguments to keep
+	correct sematics.
+
+	* mono/mini/ssa.c (mono_ssa_avoid_copies): don't optimize calls
+
+22003-04-07  Martin Baulig  <martin@ximian.com>
 
 	* Makefile.am: Added Makefile.am.
 
