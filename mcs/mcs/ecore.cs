@@ -405,6 +405,11 @@ namespace Mono.CSharp {
 			return MemberLookup (ec, t, name, AllMemberTypes, AllBindingFlags, loc);
 		}
 
+		public static Expression MethodLookup (EmitContext ec, Type t, string name, Location loc)
+		{
+			return MemberLookup (ec, t, name, MemberTypes.Method, AllBindingFlags, loc);
+		}
+
 		/// <summary>
 		///   This is a wrapper for MemberLookup that is not used to "probe", but
 		///   to find a final definition.  If the final definition is not found, we
@@ -436,6 +441,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 		
+		static EmptyExpression MyEmptyExpr;
 		static public Expression ImplicitReferenceConversion (Expression expr, Type target_type)
 		{
 			Type expr_type = expr.Type;
@@ -914,7 +920,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		static EmptyExpression MyEmptyExpr;
+		static EmptyExpression priv_ice_EmptyExpr;
 		/// <summary>
 		///   Tells whether an implicit conversion exists from expr_type to
 		///   target_type
@@ -923,12 +929,20 @@ namespace Mono.CSharp {
 						      Location l)
 		{
 			if (MyEmptyExpr == null)
-				MyEmptyExpr = new EmptyExpression (expr_type);
+				priv_ice_EmptyExpr = new EmptyExpression (expr_type);
 			else
-				MyEmptyExpr.SetType (expr_type);
+				priv_ice_EmptyExpr.SetType (expr_type);
 
-			return ConvertImplicit (ec, MyEmptyExpr, target_type, l) != null;
+			return ConvertImplicit (ec, priv_ice_EmptyExpr, target_type, l) != null;
 		}
+
+		//
+		// Used internally by FindMostEncompassedType, this is used
+		// to avoid creating lots of objects in the tight loop inside
+		// FindMostEncompassedType
+		//
+		static EmptyExpression priv_fmet_source;
+		static EmptyExpression priv_fmet_param;
 		
 		/// <summary>
 		///  Finds "most encompassed type" according to the spec (13.4.2)
@@ -938,6 +952,12 @@ namespace Mono.CSharp {
 		static Type FindMostEncompassedType (MethodGroupExpr me, Type source_type)
 		{
 			Type best = null;
+
+			if (priv_fmet_param == null){
+				priv_fmet_param = new EmptyExpression (source_type);
+				priv_fmet_source = new EmptyExpression (source_type);
+			} else 
+				priv_fmet_source.SetType (source_type);
 			
 			for (int i = me.Methods.Length; i > 0; ) {
 				i--;
@@ -945,21 +965,26 @@ namespace Mono.CSharp {
 				MethodBase mb = me.Methods [i];
 				ParameterData pd = Invocation.GetParameterData (mb);
 				Type param_type = pd.ParameterType (0);
-
-				Expression source = new EmptyExpression (source_type);
-				Expression param = new EmptyExpression (param_type);
-
-				if (StandardConversionExists (source, param_type)) {
+				priv_fmet_param.SetType (param_type);
+				
+				if (StandardConversionExists (priv_fmet_source, param_type)) {
 					if (best == null)
 						best = param_type;
 					
-					if (StandardConversionExists (param, best))
+					if (StandardConversionExists (priv_fmet_param, best))
 						best = param_type;
 				}
 			}
 
 			return best;
 		}
+
+		//
+		// Used internally by FindMostEncompassingType, this is used
+		// to avoid creating lots of objects in the tight loop inside
+		// FindMostEncompassingType
+		//
+		static EmptyExpression priv_fmee_ret;
 		
 		/// <summary>
 		///  Finds "most encompassing type" according to the spec (13.4.2)
@@ -969,6 +994,9 @@ namespace Mono.CSharp {
 		static Type FindMostEncompassingType (MethodGroupExpr me, Type target)
 		{
 			Type best = null;
+
+			if (priv_fmee_ret == null)
+				priv_fmee_ret = new EmptyExpression (target);
 			
 			for (int i = me.Methods.Length; i > 0; ) {
 				i--;
@@ -976,13 +1004,12 @@ namespace Mono.CSharp {
 				MethodInfo mi = (MethodInfo) me.Methods [i];
 				Type ret_type = mi.ReturnType;
 
-				Expression ret = new EmptyExpression (ret_type);
-				
-				if (StandardConversionExists (ret, target)) {
+				priv_fmee_ret.SetType (ret_type);
+				if (StandardConversionExists (priv_fmee_ret, target)) {
 					if (best == null)
 						best = ret_type;
 
-					if (!StandardConversionExists (ret, best))
+					if (!StandardConversionExists (priv_fmee_ret, best))
 						best = ret_type;
 				}
 				
@@ -1010,45 +1037,44 @@ namespace Mono.CSharp {
 		{
 			return UserDefinedConversion (ec, source, target, loc, true);
 		}
-		
+
 		/// <summary>
-		///   User-defined conversions
+		///   Computes the MethodGroup for the user-defined conversion
+		///   operators from source_type to target_type.  `look_for_explicit'
+		///   controls whether we should also include the list of explicit
+		///   operators
 		/// </summary>
-		static public Expression UserDefinedConversion (EmitContext ec, Expression source,
-								Type target, Location loc,
-								bool look_for_explicit)
+		static MethodGroupExpr GetConversionOperators (EmitContext ec,
+							       Type source_type, Type target_type,
+							       Location loc, bool look_for_explicit)
 		{
 			Expression mg1 = null, mg2 = null;
 			Expression mg5 = null, mg6 = null, mg7 = null, mg8 = null;
-			Expression e;
-			MethodBase method = null;
-			Type source_type = source.Type;
-
 			string op_name;
 			
 			// If we have a boolean type, we need to check for the True operator
 
 			// FIXME : How does the False operator come into the picture ?
 			// FIXME : This doesn't look complete and very correct !
-			if (target == TypeManager.bool_type)
+			if (target_type == TypeManager.bool_type)
 				op_name = "op_True";
 			else
 				op_name = "op_Implicit";
-
+			
 #if old
 			//
 			// FIXME: This whole process can be optimized to check if the
 			// return is non-null and make the union as we go.
 			//
-			mg1 = MemberLookup (ec, source_type, op_name, loc);
+			mg1 = MethodLookup (ec, source_type, op_name, loc);
 
 			if (source_type.BaseType != null)
-				mg2 = MemberLookup (ec, source_type.BaseType, op_name, loc);
+				mg2 = MethodLookup (ec, source_type.BaseType, op_name, loc);
 			
-			mg3 = MemberLookup (ec, target, op_name, loc);
+			mg3 = MemberLookup (ec, target_type, op_name, loc);
 
 			if (target.BaseType != null)
-				mg4 = MemberLookup (ec, target.BaseType, op_name, loc);
+				mg4 = MethodLookup (ec, target.BaseType, op_name, loc);
 
 			MethodGroupExpr union1 = Invocation.MakeUnionSet (mg1, mg2, loc);
 			MethodGroupExpr union2 = Invocation.MakeUnionSet (mg3, mg4, loc);
@@ -1057,9 +1083,9 @@ namespace Mono.CSharp {
 #else
 			MethodGroupExpr union3;
 			
-			mg1 = MemberLookup (ec, source_type, op_name, loc);
+			mg1 = MethodLookup (ec, source_type, op_name, loc);
 			if (source_type.BaseType != null)
-				mg2 = MemberLookup (ec, source_type.BaseType, op_name, MemberTypes.Method, AllBindingFlags, loc);
+				mg2 = MethodLookup (ec, source_type.BaseType, op_name, loc);
 
 			if (mg1 == null)
 				union3 = (MethodGroupExpr) mg2;
@@ -1068,15 +1094,15 @@ namespace Mono.CSharp {
 			else
 				union3 = Invocation.MakeUnionSet (mg1, mg2, loc);
 
-			mg1 = MemberLookup (ec, target, op_name, MemberTypes.Method, AllBindingFlags, loc);
+			mg1 = MethodLookup (ec, target_type, op_name, loc);
 			if (mg1 != null){
 				if (union3 != null)
 					union3 = Invocation.MakeUnionSet (union3, mg1, loc);
 				else
 					union3 = (MethodGroupExpr) mg1;
 			}
-			if (target.BaseType != null)
-				mg1 = MemberLookup (ec, target.BaseType, op_name, MemberTypes.Method, AllBindingFlags, loc);
+			if (target_type.BaseType != null)
+				mg1 = MethodLookup (ec, target_type.BaseType, op_name, loc);
 			
 			if (mg1 != null){
 				if (union3 != null)
@@ -1094,12 +1120,12 @@ namespace Mono.CSharp {
 				mg5 = MemberLookup (ec, source_type, op_name, loc);
 
 				if (source_type.BaseType != null)
-					mg6 = MemberLookup (ec, source_type.BaseType, op_name, loc);
+					mg6 = MethodLookup (ec, source_type.BaseType, op_name, loc);
 				
-				mg7 = MemberLookup (ec, target, op_name, loc);
+				mg7 = MemberLookup (ec, target_type, op_name, loc);
 				
-				if (target.BaseType != null)
-					mg8 = MemberLookup (ec, target.BaseType, op_name, loc);
+				if (target_type.BaseType != null)
+					mg8 = MethodLookup (ec, target_type.BaseType, op_name, loc);
 				
 				MethodGroupExpr union5 = Invocation.MakeUnionSet (mg5, mg6, loc);
 				MethodGroupExpr union6 = Invocation.MakeUnionSet (mg7, mg8, loc);
@@ -1107,70 +1133,78 @@ namespace Mono.CSharp {
 				union4 = Invocation.MakeUnionSet (union5, union6, loc);
 			}
 			
-			MethodGroupExpr union = Invocation.MakeUnionSet (union3, union4, loc);
+			return Invocation.MakeUnionSet (union3, union4, loc);
+		}
+		
+		/// <summary>
+		///   User-defined conversions
+		/// </summary>
+		static public Expression UserDefinedConversion (EmitContext ec, Expression source,
+								Type target, Location loc,
+								bool look_for_explicit)
+		{
+			MethodGroupExpr union;
+			Type source_type = source.Type;
+			MethodBase method = null;
+			
+			union = GetConversionOperators (ec, source_type, target, loc, look_for_explicit);
+			if (union == null)
+				return null;
+			
+			Type most_specific_source, most_specific_target;
 
-			if (union != null) {
-
-				Type most_specific_source, most_specific_target;
-
-				most_specific_source = FindMostEncompassedType (union, source_type);
-				if (most_specific_source == null)
-					return null;
-
-				most_specific_target = FindMostEncompassingType (union, target);
-				if (most_specific_target == null) 
-					return null;
+			most_specific_source = FindMostEncompassedType (union, source_type);
+			if (most_specific_source == null)
+				return null;
+			
+			most_specific_target = FindMostEncompassingType (union, target);
+			if (most_specific_target == null) 
+				return null;
+			
+			int count = 0;
+			
+			for (int i = union.Methods.Length; i > 0;) {
+				i--;
 				
-				int count = 0;
+				MethodBase mb = union.Methods [i];
+				ParameterData pd = Invocation.GetParameterData (mb);
+				MethodInfo mi = (MethodInfo) union.Methods [i];
 				
-				for (int i = union.Methods.Length; i > 0;) {
-					i--;
-
-					MethodBase mb = union.Methods [i];
-					ParameterData pd = Invocation.GetParameterData (mb);
-					MethodInfo mi = (MethodInfo) union.Methods [i];
-
-					if (pd.ParameterType (0) == most_specific_source &&
-					    mi.ReturnType == most_specific_target) {
-						method = mb;
-						count++;
-					}
+				if (pd.ParameterType (0) == most_specific_source &&
+				    mi.ReturnType == most_specific_target) {
+					method = mb;
+					count++;
 				}
-
-				if (method == null || count > 1) {
-					Report.Error (-11, loc, "Ambiguous user defined conversion");
-					return null;
-				}
-				
-				//
-				// This will do the conversion to the best match that we
-				// found.  Now we need to perform an implict standard conversion
-				// if the best match was not the type that we were requested
-				// by target.
-				//
-				if (look_for_explicit)
-					source = ConvertExplicitStandard (ec, source, most_specific_source, loc);
-				else
-					source = ConvertImplicitStandard (ec, source,
-									  most_specific_source, loc);
-
-				if (source == null)
-					return null;
-
-				e =  new UserCast ((MethodInfo) method, source);
-				
-				if (e.Type != target){
-					if (!look_for_explicit)
-						e = ConvertImplicitStandard (ec, e, target, loc);
-					else
-						e = ConvertExplicitStandard (ec, e, target, loc);
-
-					return e;
-				} else
-					return e;
 			}
 			
-			return null;
+			if (method == null || count > 1) {
+				Report.Error (-11, loc, "Ambiguous user defined conversion");
+				return null;
+			}
+			
+			//
+			// This will do the conversion to the best match that we
+			// found.  Now we need to perform an implict standard conversion
+			// if the best match was not the type that we were requested
+			// by target.
+			//
+			if (look_for_explicit)
+				source = ConvertExplicitStandard (ec, source, most_specific_source, loc);
+			else
+				source = ConvertImplicitStandard (ec, source, most_specific_source, loc);
+
+			if (source == null)
+				return null;
+
+			Expression e;
+			e =  new UserCast ((MethodInfo) method, source);
+			if (e.Type != target){
+				if (!look_for_explicit)
+					e = ConvertImplicitStandard (ec, e, target, loc);
+				else
+					e = ConvertExplicitStandard (ec, e, target, loc);
+			} 
+			return e;
 		}
 		
 		/// <summary>

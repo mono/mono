@@ -1,3 +1,12 @@
+2002-05-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (FindMostEncompassedType): Use statically initialized
+	EmptyExpressions()s like we do elsewhere to avoid creating useless
+	objects (and we take this out of the tight loop).
+
+	(GetConversionOperators): Move the code to extract the actual
+	operators to a separate routine to clean things up.
+
 2002-05-04  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (FieldExpr): Remove un-needed tests for null, since now
