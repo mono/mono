@@ -140,7 +140,18 @@ namespace Mono.Xml
 			get { return linePosition; }
 			set { linePosition = value; }
 		}
-		
+
+		internal XmlSchema CreateXsdSchema ()
+		{
+			XmlSchema s = new XmlSchema ();
+			s.SourceUri = BaseURI;
+			s.LineNumber = LineNumber;
+			s.LinePosition = LinePosition;
+			foreach (DTDElementDeclaration el in ElementDecls.Values)
+				s.Items.Add (el.CreateXsdElement ());
+			return s;
+		}
+
 		public string ResolveEntity (string name)
 		{
 			DTDEntityDeclaration decl = EntityDecls [name] 
@@ -426,6 +437,40 @@ namespace Mono.Xml
 			return compiledAutomata;
 		}
 
+		internal XmlSchemaParticle CreateXsdParticle ()
+		{
+			XmlSchemaParticle p = null;
+			if (ElementName != null) {
+				XmlSchemaElement el = new XmlSchemaElement ();
+				SetLineInfo (el);
+				el.RefName = new XmlQualifiedName (ElementName);
+				return el;
+			} else {
+				XmlSchemaGroupBase gb = 
+					(OrderType == DTDContentOrderType.Seq) ?
+						(XmlSchemaGroupBase)
+						new XmlSchemaSequence () :
+						new XmlSchemaChoice ();
+				SetLineInfo (gb);
+				foreach (DTDContentModel cm in ChildModels.Items)
+					gb.Items.Add (cm.CreateXsdParticle ());
+				p = gb;
+			}
+			switch (Occurence) {
+			case DTDOccurence.Optional:
+				p.MinOccurs = 0;
+				break;
+			case DTDOccurence.OneOrMore:
+				p.MaxOccursString = "unbounded";
+				break;
+			case DTDOccurence.ZeroOrMore:
+				p.MinOccurs = 0;
+				p.MaxOccursString = "unbounded";
+				break;
+			}
+			return p;
+		}
+
 		private DTDAutomata CompileInternal ()
 		{
 			if (ElementDecl.IsAny)
@@ -491,7 +536,6 @@ namespace Mono.Xml
 		{
 			return l.MakeChoice (r);
 		}
-
 	}
 
 	internal class DTDContentModelCollection
@@ -500,6 +544,10 @@ namespace Mono.Xml
 
 		public DTDContentModelCollection ()
 		{
+		}
+
+		public IList Items {
+			get { return contentModel; }
 		}
 
 		public DTDContentModel this [int i] {
@@ -564,6 +612,13 @@ namespace Mono.Xml
 		{
 			return new XmlException (this as IXmlLineInfo, BaseURI, message);
 		}
+
+		public void SetLineInfo (XmlSchemaObject obj)
+		{
+			obj.SourceUri = BaseURI;
+			obj.LineNumber = LineNumber;
+			obj.LinePosition = LinePosition;
+		}
 	}
 
 	internal class DTDElementDeclaration : DTDNode
@@ -611,6 +666,32 @@ namespace Mono.Xml
 			get {
 				return Root.AttListDecls [Name];
 			}
+		}
+
+		internal XmlSchemaElement CreateXsdElement ()
+		{
+			XmlSchemaElement el = new XmlSchemaElement ();
+			SetLineInfo (el);
+			el.Name = Name;
+			if (IsEmpty) {
+				el.SchemaType = new XmlSchemaComplexType ();
+				SetLineInfo (el.SchemaType);
+			}
+			else if (IsAny)
+				el.SchemaTypeName = new XmlQualifiedName (
+					"anyType", XmlSchema.Namespace);
+			else {
+				XmlSchemaComplexType ct = new XmlSchemaComplexType ();
+				SetLineInfo (ct);
+				foreach (DTDAttributeDefinition a in
+					Attributes.Definitions)
+					ct.Attributes.Add (a.CreateXsdAttribute ());
+				if (IsMixedContent)
+					ct.IsMixed = true;
+				ct.Particle = ContentModel.CreateXsdParticle ();
+				el.SchemaType = ct;
+			}
+			return el;
 		}
 	}
 
@@ -703,6 +784,62 @@ namespace Mono.Xml
 					this.UnresolvedDefaultValue [0] :
 					'"';
 			}
+		}
+
+		internal XmlSchemaAttribute CreateXsdAttribute ()
+		{
+			XmlSchemaAttribute a = new XmlSchemaAttribute ();
+			SetLineInfo (a);
+			a.Name = Name;
+			a.DefaultValue = resolvedNormalizedDefaultValue;
+
+			XmlQualifiedName qname = XmlQualifiedName.Empty;
+			ArrayList enumeration = null;
+			if (enumeratedNotations != null && enumeratedNotations.Count > 0) {
+				qname = new XmlQualifiedName ("NOTATION", XmlSchema.Namespace);
+				enumeration = enumeratedNotations;
+			}
+			else if (enumeratedLiterals != null)
+				enumeration = enumeratedLiterals;
+			else {
+				switch (Datatype.TokenizedType) {
+				case XmlTokenizedType.ID:
+					qname = new XmlQualifiedName ("ID", XmlSchema.Namespace); break;
+				case XmlTokenizedType.IDREF:
+					qname = new XmlQualifiedName ("IDREF", XmlSchema.Namespace); break;
+				case XmlTokenizedType.IDREFS:
+					qname = new XmlQualifiedName ("IDREFS", XmlSchema.Namespace); break;
+				case XmlTokenizedType.ENTITY:
+					qname = new XmlQualifiedName ("ENTITY", XmlSchema.Namespace); break;
+				case XmlTokenizedType.ENTITIES:
+					qname = new XmlQualifiedName ("ENTITIES", XmlSchema.Namespace); break;
+				case XmlTokenizedType.NMTOKEN:
+					qname = new XmlQualifiedName ("NMTOKEN", XmlSchema.Namespace); break;
+				case XmlTokenizedType.NMTOKENS:
+					qname = new XmlQualifiedName ("NMTOKENS", XmlSchema.Namespace); break;
+				case XmlTokenizedType.NOTATION:
+					qname = new XmlQualifiedName ("NOTATION", XmlSchema.Namespace); break;
+				}
+			}
+
+			if (enumeration != null) {
+				XmlSchemaSimpleType st = new XmlSchemaSimpleType ();
+				SetLineInfo (st);
+				XmlSchemaSimpleTypeRestriction r =
+					new XmlSchemaSimpleTypeRestriction ();
+				SetLineInfo (r);
+				r.BaseTypeName = qname;
+				foreach (string name in enumeratedNotations) {
+					XmlSchemaEnumerationFacet f =
+						new XmlSchemaEnumerationFacet ();
+					SetLineInfo (f);
+					r.Facets.Add (f);
+					f.Value = name;
+				}
+			}
+			else if (qname != XmlQualifiedName.Empty)
+				a.SchemaTypeName = qname;
+			return a;
 		}
 
 		internal string ComputeDefaultValue ()
