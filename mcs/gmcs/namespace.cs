@@ -627,7 +627,7 @@ namespace Mono.CSharp {
 						continue;
 					}
 
-					error246 (entry.Location, entry.Alias.GetPartialName ());
+					error246 (entry.Location, entry.Alias.GetTypeName ());
 				}
 			}
 		}

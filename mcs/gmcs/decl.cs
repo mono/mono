@@ -90,26 +90,9 @@ namespace Mono.CSharp {
 		public string GetMethodName ()
 		{
 			if (Left != null)
-				return Left.GetPartialName () + "." + Name;
+				return Left.GetTypeName () + "." + Name;
 			else
 				return Name;
-		}
-
-		///
-		/// This returns exclusively the name as seen on the source code
-		/// it is not the fully qualifed type after resolution
-		///
-		public string GetPartialName ()
-		{
-			string full_name;
-			if (TypeArguments != null)
-				full_name = Name + "<" + TypeArguments + ">";
-			else
-				full_name = Name;
-			if (Left != null)
-				return Left.GetPartialName () + "." + full_name;
-			else
-				return full_name;
 		}
 
 		public static string MakeName (string name, TypeArguments args)

@@ -1,3 +1,7 @@
+2004-11-15  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (MemberName.GetPartialName): Removed, use GetTypeName() instead.
+
 2004-11-11  Martin Baulig  <martin@ximian.com>
 
 	* typemanager.cs (TypeManager.GetMethodName): New method.
