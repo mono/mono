@@ -29,9 +29,6 @@ namespace System.Data.Odbc
 		}
 
 		[MonoTODO]
-#if NET_1_1
-               [Obsolete ("use OdbcPermission(PermissionState.None)", true)]
-#endif
 		public OdbcPermission (PermissionState state)
 			: base (state)
 		{
@@ -39,6 +36,9 @@ namespace System.Data.Odbc
 		}
 
 		[MonoTODO]
+#if NET_1_1
+		[Obsolete ("use OdbcPermission(PermissionState.None)", true)]
+#endif
 		public OdbcPermission (PermissionState state, bool allowBlankPassword)
 			: base (state, allowBlankPassword, true)
 		{
