@@ -43,7 +43,7 @@ namespace System.Runtime.Serialization
 					throw new SerializationException (
 							String.Format ("members [{0}] is not a field.", i));
 
-				FieldInfo fi = member as FieldInfo; //FIXME: Can fi be null?
+				FieldInfo fi = member as FieldInfo; // members must be fields
 				result [i] = fi.GetValue (obj);
 			}
 
@@ -136,7 +136,7 @@ namespace System.Runtime.Serialization
 					throw new SerializationException (
 							String.Format ("members [{0}] is not a field.", i));
 
-				FieldInfo fi = member as FieldInfo; //FIXME: can fi be null?
+				FieldInfo fi = member as FieldInfo; // members must be fields
 				fi.SetValue (obj, data [i]);
 			}
 
