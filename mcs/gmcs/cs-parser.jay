@@ -3128,7 +3128,11 @@ opt_type_parameter_constraints_clauses
 	;
 
 type_parameter_constraints_clauses
-	: type_parameter_constraints_clause
+	: type_parameter_constraints_clause {
+		ArrayList constraints = new ArrayList (1);
+		constraints.Add ($1);
+		$$ = constraints;
+	  }
 	| type_parameter_constraints_clauses type_parameter_constraints_clause {
 		ArrayList constraints = (ArrayList) $1;
 
@@ -3139,9 +3143,7 @@ type_parameter_constraints_clauses
 
 type_parameter_constraints_clause
 	: WHERE type_parameter COLON type_parameter_constraints {
-		ArrayList constraints = new ArrayList (1);
-		constraints.Add (new Constraints ((string) $2, (ArrayList) $4, lexer.Location));
-		$$ = constraints;
+		$$ = new Constraints ((string) $2, (ArrayList) $4, lexer.Location);
 	  }
 	; 
 
