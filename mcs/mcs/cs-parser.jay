@@ -1085,6 +1085,16 @@ fixed_parameter
 		CheckIdentifierToken (yyToken);
 		$$ = null;
 	  }
+	| opt_attributes
+	  opt_parameter_modifier
+	  type
+	  IDENTIFIER
+	  ASSIGN
+	  constant_expression
+	   {
+		 Report.Error (241, lexer.Location, "Default parameter specifiers are not permitted");
+		 $$ = null;
+	   }
 	;
 
 opt_parameter_modifier
