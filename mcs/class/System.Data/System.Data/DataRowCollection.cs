@@ -178,6 +178,16 @@ namespace System.Data
 			if (table.PrimaryKey.Length == 0)
 				throw new MissingPrimaryKeyException ("Table doesn't have a primary key.");
 
+			 if (keys == null)
+                                throw new ArgumentException ("Expecting " + table.PrimaryKey.Length +" value(s) for the key being indexed, but received 0 value(s).");
+                                                                                                                             if (table.PrimaryKey.Length != keys.Length)
+                                throw new ArgumentException ("Expecting " + table.PrimaryKey.Length +" value(s) for the key being indexed, but received " + keys.Length +  " value(s).");
+                                                                                                    
+                        foreach (object key in keys)
+                                if (key == null)
+                                        return null;
+
+			
 			string  [] primColumnNames = new string [table.PrimaryKey.Length];
 			
 			for (int i = 0; i < primColumnNames.Length; i++)
@@ -196,13 +206,6 @@ namespace System.Data
 					
 						object primValue = row [primColumnNames [i]];
 						object keyValue = keys [i];
-						if (keyValue == null) 
-						{
-							if (primValue == null)
-								return row;
-							else 
-								continue;
-						}
 								       
 						newKey = Convert.ChangeType (keyValue, Type.GetTypeCode(primValue.GetType ()));
 
