@@ -8,9 +8,9 @@ INCLUDES = \
 	$(GLIB_CFLAGS) \
 	-I$(top_srcdir)
 
-MPH_H = mph.h
-
 MPH_SOURCE = \
+	mph.h \
+	map.h \
 	dirent.c \
 	errno.c \
 	fcntl.c \
@@ -39,9 +39,6 @@ libMonoPosixHelper_la_SOURCES = $(MPH_SOURCE)
 endif
 
 libMonoPosixHelper_la_LDFLAGS = -no-undefined -version-info 1:0:1
-
-EXTRA_DIST = \
-	$(MPH_H)
 
 # 
 # Use this target to refresh the values in map.[ch]
