@@ -477,10 +477,8 @@ namespace System.Windows.Forms {
 					menu.SetForm (this);
 					MenuAPI.SetMenuBarWindow (menu.Handle, this);
 					
-					//TODO: Force Msg.WM_NCCALCSIZE
-
-					// Trigger calculations
-					OnResize(EventArgs.Empty);
+					// Force Msg.WM_NCCALCSIZE
+					SetBoundsCore (0, 0,0,0, BoundsSpecified.None);					
 				}
 			}
 		}
@@ -953,7 +951,9 @@ namespace System.Windows.Forms {
 						Rectangle	rect;
 
 						hdc = XplatUI.GetMenuDC(window.Handle, m.WParam);
-						rect = new Rectangle (0, ThemeEngine.Current.CaptionHeight, Width, 0);
+						rect = new Rectangle (0, ThemeEngine.Current.CaptionHeight + 
+						ThemeEngine.Current.FixedFrameBorderSize.Height, Width, 0);
+						
 						MenuAPI.DrawMenuBar (hdc, menu.Handle, rect);						
 						XplatUI.ReleaseMenuDC(window.Handle, hdc);
 					}
