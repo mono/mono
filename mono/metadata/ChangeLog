@@ -1,3 +1,13 @@
+2003-12-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* assembly.h assembly.c (mono_assembly_loaded): New public function to
+	search the list of loaded assemblies.
+
+	* reflection.c (mono_reflection_type_from_name): Use 
+	mono_assembly_loaded instead of mono_image_loaded.
+
+	* reflection.c: Fix warnings.
+
 2003-12-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* image.h (MonoImage): Add a new 'dynamic' field to denote that the image 
