@@ -21,6 +21,13 @@ public class StringTest : TestCase
 	{
 	}
 
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void CtrExceptions ()
+	{
+		String s = new String ((char[])null, 0, 0);
+	}
+
 	public void TestConstructors ()
 	{
 		AssertEquals ("", new String ((char[])null));
@@ -38,7 +45,6 @@ public class StringTest : TestCase
 
 		char[] arr = new char [3] { 'A', 'B', 'C' };
 		AssertEquals ("BC", new String (arr, 1, 2));
-		AssertEquals ("", new String ((char[])null, 0, 0));
 		try {
 			new String ((char[])null, 1, 0);
 			Fail ();
