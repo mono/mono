@@ -58,7 +58,7 @@ namespace Mono.CSharp {
 			builder = null;
 		}
 		
-		Public LocalTemporary (LocalBuilder b, Type t)
+		public LocalTemporary (LocalBuilder b, Type t)
 		{
 			type = t;
 			eclass = ExprClass.Value;
