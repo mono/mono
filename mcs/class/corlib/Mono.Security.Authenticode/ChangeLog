@@ -1,3 +1,8 @@
+2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthenticodeDeformatter.cs: Don't hide the SecurityException (e.g. 
+	file access).
+
 2004-09-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthenticodeDeformatter.cs: Fixed warning (l4) for unused variables.
