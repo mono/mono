@@ -53,7 +53,6 @@ namespace System.Xml.Schema
 		public XmlSchemaCollection (XmlNameTable nameTable)
 			: this (new XmlSchemaSet (nameTable))
 		{
-			this.schemaSet.SchemaCollection = this;
 		}
 
 		internal XmlSchemaCollection (XmlSchemaSet schemaSet)
@@ -75,7 +74,16 @@ namespace System.Xml.Schema
 		}
 
 		public XmlSchema this [ string ns ] { 
-			get { return schemaSet.Get (ns); }
+			get {
+				ICollection col = schemaSet.Schemas (ns);
+				if (col == null)
+					return null;
+				IEnumerator e = col.GetEnumerator ();
+				if (e.MoveNext ())
+					return (XmlSchema) e.Current;
+				else
+					return null;
+			}
 		}
 
 		// Events
@@ -87,14 +95,14 @@ namespace System.Xml.Schema
 			return Add (ns, reader, new XmlUrlResolver ());
 		}
 
-#if NET_1_0
-		internal XmlSchema Add (string ns, XmlReader reader, XmlResolver resolver)
-#else
+#if NET_1_1
 		public XmlSchema Add (string ns, XmlReader reader, XmlResolver resolver)
+#else
+		internal XmlSchema Add (string ns, XmlReader reader, XmlResolver resolver)
 #endif
 		{
 			XmlSchema schema = XmlSchema.Read (reader, ValidationEventHandler);
-			schema.Compile (ValidationEventHandler, this, resolver);
+			schema.Compile (ValidationEventHandler, schemaSet, resolver);
 			lock (schemaSet) {
 				return schemaSet.Add (schema);
 			}
@@ -119,13 +127,16 @@ namespace System.Xml.Schema
 
 			// XmlSchemaCollection.Add() compiles, while XmlSchemaSet.Add() does not
 			if (!schema.IsCompiled)
-				schema.Compile (ValidationEventHandler, this, resolver);
+				schema.Compile (ValidationEventHandler, schemaSet, resolver);
+			// compilation error -> returns null (and don't add to the collection).
+			if (!schema.IsCompiled)
+				return null;
 
 			string ns = GetSafeNs (schema.TargetNamespace);
 			lock (schemaSet) {
-				if (schemaSet.Contains (ns))
-					schemaSet.Remove (schemaSet.Get (ns));
-				return schemaSet.Add (schema);
+				// consider imported schemas.
+				schemaSet.Add (schema.Schemas);
+				return schema;
 			}
 		}
 
@@ -139,16 +150,6 @@ namespace System.Xml.Schema
 			if (schema == null)
 				throw new ArgumentNullException ("schema");
 
-			/*
-			foreach (XmlSchema s in schema) {
-				string ns = GetSafeNs (s.TargetNamespace);
-				lock (schemaSet) {
-					if (schemaSet.Contains (ns))
-						schemaSet.Remove (schemaSet.Get (ns));
-					schemaSet.Add (s);
-				}
-			}
-			*/
 			lock (schemaSet) {
 				schemaSet.Add (schema.schemaSet);
 			}
@@ -179,7 +180,7 @@ namespace System.Xml.Schema
 		{
 			return new XmlSchemaCollectionEnumerator (this);
 		}
-		
+
 		// interface Methods
 		void ICollection.CopyTo (Array array, int index)
 		{
@@ -195,28 +196,12 @@ namespace System.Xml.Schema
 
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			return schemaSet.GetEnumerator ();
+			return this.GetEnumerator ();
 		}
 
 		Object ICollection.SyncRoot
 		{
 			get { return this; }
-		}
-
-		// Internal Methods
-		internal XmlSchemaAttribute FindAttribute (XmlQualifiedName qname)
-		{
-			return (XmlSchemaAttribute) schemaSet.GlobalAttributes [qname];
-		}
-
-		internal XmlSchemaElement FindElement (XmlQualifiedName qname)
-		{
-			return (XmlSchemaElement) schemaSet.GlobalElements [qname];
-		}
-
-		internal object FindSchemaType (XmlQualifiedName qname)
-		{
-			return schemaSet.GlobalTypes [qname];
 		}
 
 		internal void OnValidationError (object o, ValidationEventArgs e)

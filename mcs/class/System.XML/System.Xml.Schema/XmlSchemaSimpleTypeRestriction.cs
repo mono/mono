@@ -383,7 +383,8 @@ namespace System.Xml.Schema
 				actualBaseSchemaType = type;
 			} else if (baseTypeName == XmlSchemaComplexType.AnyTypeName) {
 				actualBaseSchemaType = XmlSchemaSimpleType.AnySimpleType;
-			} else if (baseTypeName.Namespace == XmlSchema.Namespace) {
+			} else if (baseTypeName.Namespace == XmlSchema.Namespace ||
+				baseTypeName.Namespace == XmlSchema.XdtNamespace) {
 				actualBaseSchemaType = XmlSchemaDatatype.FromName (baseTypeName);
 				if (actualBaseSchemaType == null)
 					if (validate)
@@ -611,7 +612,7 @@ namespace System.Xml.Schema
 
 		private bool ValidateListValueWithFacets (string value, XmlNameTable nt)
 		{
-			string [] list = ((XsdAnySimpleType) XmlSchemaDatatype.FromName ("anySimpleType")).ParseListValue (value, nt);
+			string [] list = ((XsdAnySimpleType) XmlSchemaDatatype.FromName ("anySimpleType", XmlSchema.Namespace)).ParseListValue (value, nt);
 
 			// pattern
 			if (this.patternFacetValues != null) {

@@ -1,5 +1,29 @@
 2004-08-10  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchema.cs : Replace XmlSchemaCollection with XmlSchemaSet that
+	  used to maintain compiled schema state.
+	  Simplified code a bit (Include processing).
+	  Set IsCompiled = true only when successfully compiled.
+	* XmlSchemaCollection.cs : Now it totally delegates its processing
+	  to XmlSchemaSet. Removed unused methods.
+	* XmlSchemaElement.cs : Added post-compiled information initializer
+	  method, and call it before (re)Compile().
+	* XmlSchemaSet.cs :
+	  - Replaced internal store from Dictionary to List, since schema
+	    resources for one target namespace can be more than one (that's why
+	  - Schemas(string targetNamespace) returns ICollection).
+	  - Now global schemaset members are added per schema addition (it is
+	    more MS compatible than before).
+	  - Use GetSafeNs() to do targetNamespace comparison correctly.
+
+	  XmlSchemaSet looks still unstable, so it will be changed again.
+
+	* XmlSchemaSimpleTypeRestriction.cs,
+	  XmlSchemaSimpleTypeUnion.cs,
+	* XmlSchemaUtil.cs : Consider xdt namespace.
+
+2004-08-10  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaCollection.cs : replaced CRLF to LF (they were mixed).
 
 2004-08-10  Atsushi Enomoto <atsushi@ximian.com>

@@ -129,7 +129,8 @@ namespace System.Xml.Schema
 						type = xstype;
 					} else if (memberTypeName == XmlSchemaComplexType.AnyTypeName) {
 						type = XmlSchemaSimpleType.AnySimpleType;
-					} else if (memberTypeName.Namespace == XmlSchema.Namespace) {
+					} else if (memberTypeName.Namespace == XmlSchema.Namespace ||
+						memberTypeName.Namespace == XmlSchema.XdtNamespace) {
 						type = XmlSchemaDatatype.FromName (memberTypeName);
 						if (type == null)
 							error (h, "Invalid schema type name was specified: " + memberTypeName);

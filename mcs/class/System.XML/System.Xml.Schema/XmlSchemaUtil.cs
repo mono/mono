@@ -57,20 +57,20 @@ namespace System.Xml.Schema
 				// but much more complex stuff.
 				if (obj.isRedefineChild) {	// take precedence.
 					if (obj.redefinedObject != null)
-						obj.error (h, "Named item " + qname + " was already contained in the schema object table.");
+						obj.error (h, String.Format ("Named item {0} was already contained in the schema object table.", qname));
 					else
 						obj.redefinedObject = table [qname];
 					table.Set (qname, obj);
 				}
 				else if (table [qname].isRedefineChild) {
 					if (table [qname].redefinedObject != null)
-						obj.error (h, "Named item " + qname + " was already contained in the schema object table.");
+						obj.error (h, String.Format ("Named item {0} was already contained in the schema object table.", qname));
 					else
 						table [qname].redefinedObject = obj;
 					return;	// never add to the table.
 				}
 				else
-					obj.error (h, "Named item " + qname + " was already contained in the schema object table.");
+					obj.error (h, String.Format ("Named item {0} was already contained in the schema object table.", qname));
 			}
 			else
 				table.Set (qname, obj);
@@ -135,6 +135,17 @@ namespace System.Xml.Schema
 
 		public static bool IsBuiltInDatatypeName (XmlQualifiedName qname)
 		{
+			if (qname.Namespace == XmlSchema.XdtNamespace) {
+				switch (qname.Name) {
+				case "anyAtomicType":
+				case "untypedAtomic":
+				case "dayTimeDuration":
+				case "yearMonthDuration":
+					return true;
+				default:
+					return false;
+				}
+			}
 			if (qname.Namespace != XmlSchema.Namespace)
 				return false;
 			switch (qname.Name) {

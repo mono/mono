@@ -48,10 +48,13 @@ namespace System.Xml.Schema
 		XmlNameTable nameTable;
 		XmlResolver xmlResolver;
 
-		ListDictionary schemas;
+		ArrayList schemas;
 		XmlSchemaObjectTable attributes;
 		XmlSchemaObjectTable elements;
 		XmlSchemaObjectTable types;
+		XmlSchemaObjectTable attributeGroups;
+		XmlSchemaObjectTable groups;
+		
 		XmlSchemaCollection col;
 		ValidationEventHandler handler;
 
@@ -71,8 +74,11 @@ namespace System.Xml.Schema
 				throw new ArgumentNullException ("nameTable");
 
 			this.nameTable = nameTable;
-			schemas = new ListDictionary ();
+			schemas = new ArrayList ();
 			CompilationId = Guid.NewGuid ();
+			elements = new XmlSchemaObjectTable ();
+			attributes = new XmlSchemaObjectTable ();
+			types = new XmlSchemaObjectTable ();
 		}
 
 		public event ValidationEventHandler ValidationEventHandler;
@@ -82,45 +88,15 @@ namespace System.Xml.Schema
 		}
 
 		public XmlSchemaObjectTable GlobalAttributes {
-			get {
-				if (attributes == null) {
-					lock (this) {
-						attributes = new XmlSchemaObjectTable ();
-						foreach (XmlSchema s in schemas.Values)
-							foreach (XmlSchemaAttribute a in s.Attributes.Values)
-								attributes.Add (a.QualifiedName, a);
-					}
-				}
-				return attributes;
-			}
+			get { return attributes; }
 		}
 
 		public XmlSchemaObjectTable GlobalElements {
-			get {
-				if (elements == null) {
-					lock (this) {
-						elements = new XmlSchemaObjectTable ();
-						foreach (XmlSchema s in schemas.Values)
-							foreach (XmlSchemaElement e in s.Elements.Values)
-								elements.Add (e.QualifiedName, e);
-					}
-				}
-				return elements;
-			}
+			get { return elements; }
 		}
 
 		public XmlSchemaObjectTable GlobalTypes { 
-			get {
-				if (types == null) {
-					lock (this) {
-						types = new XmlSchemaObjectTable ();
-						foreach (XmlSchema s in schemas.Values)
-							foreach (XmlSchemaType t in s.SchemaTypes.Values)
-								types.Add (t.QualifiedName, t);
-					}
-				}
-				return types;
-			}
+			get { return types; }
 		}
 
 		public bool IsCompiled { 
@@ -133,16 +109,25 @@ namespace System.Xml.Schema
 
 		// This is mainly used for event delegating
 		internal XmlSchemaCollection SchemaCollection {
-			get { return col; }
-			set { col = value; }
+			get {
+				if (col == null) {
+					lock (this) {
+						col = new XmlSchemaCollection ();
+						foreach (XmlSchema s in schemas)
+							col.Add (s);
+					}
+				}
+				return col;
+			}
 		}
 
-		public XmlResolver XmlResolver { 
+		public XmlResolver XmlResolver {
 			set { xmlResolver = value; }
 		}
 
 		public XmlSchema Add (string targetNamespace, string url)
 		{
+			targetNamespace = GetSafeNs (targetNamespace);
 			XmlTextReader r = null;
 			try {
 				r = new XmlTextReader (url);
@@ -153,53 +138,78 @@ namespace System.Xml.Schema
 			}
 		}
 
-		// LAMESPEC? MS.NET allows multiple chameleon schema addition,
-		// while rejects namespace-targeted schema.
+		[MonoTODO ("It has weird namespace duplication check that is different from Add(XmlSchema).")]
 		public XmlSchema Add (string targetNamespace, XmlReader reader)
 		{
 			XmlSchema schema = XmlSchema.Read (reader, handler);
 			if (targetNamespace != null)
 				schema.TargetNamespace = targetNamespace;
-			XmlSchema existing = schemas [GetSafeNs (schema.TargetNamespace)] as XmlSchema;
-			if (existing != null)
-				throw new ArgumentException (String.Format ("Item has been already added. Target namespace is \"{0}\"", schema.TargetNamespace));
-			return Add (schema);
-		}
-
-		[MonoTODO ("Check the exact behavior when namespaces are in conflict")]
-		public void Add (XmlSchemaSet schemaSet)
-		{
-			foreach (XmlSchema schema in schemaSet.schemas)
-				Add (schema);
-		}
-
-		[MonoTODO ("Currently no way to identify if the argument schema is error-prone or not.")]
-		public XmlSchema Add (XmlSchema schema)
-		{
-			schemas [GetSafeNs (schema.TargetNamespace)] = schema;
+			Add (schema);
 			return schema;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Check the exact behavior when namespaces are in conflict (but it would be preferable to wait for 2.0 RTM).")]
+		public void Add (XmlSchemaSet schemaSet)
+		{
+			ArrayList al = new ArrayList ();
+			foreach (XmlSchema schema in schemaSet.schemas) {
+				if (!schemas.Contains (schema))
+					al.Add (schema);
+				else
+					AddGlobalComponents (schema);
+			}
+			foreach (XmlSchema schema in al)
+				Add (schema);
+		}
+
+		[MonoTODO ("We need to research more about the expected behavior")]
+		public XmlSchema Add (XmlSchema schema)
+		{
+			schemas.Add (schema);
+			AddGlobalComponents (schema);
+			return schema;
+		}
+
+		[MonoTODO ("It should be the actual compilation engine.")]
 		public void Compile ()
 		{
-			foreach (XmlSchema schema in schemas.Values)
-				schema.Compile (handler, col, xmlResolver);
+			foreach (XmlSchema schema in schemas) {
+				if (!schema.IsCompiled) {
+					schema.Compile (handler, this, xmlResolver);
+					AddGlobalComponents (schema);
+				}
+			}
 			isCompiled = true;
-			attributes = elements = types = null;
+		}
+
+		private void AddGlobalComponents (XmlSchema schema)
+		{
+			foreach (XmlSchemaElement el in schema.Elements.Values)
+				elements.Add (el.QualifiedName, el);
+			foreach (XmlSchemaAttribute a in schema.Attributes.Values)
+				attributes.Add (a.QualifiedName, a);
+			foreach (XmlSchemaType t in schema.SchemaTypes.Values)
+				types.Add (t.QualifiedName, t);
 		}
 
 		public bool Contains (string targetNamespace)
 		{
-			return schemas.Contains (targetNamespace);
+			targetNamespace = GetSafeNs (targetNamespace);
+			foreach (XmlSchema schema in schemas)
+				if (GetSafeNs (schema.TargetNamespace) == targetNamespace)
+					return true;
+			return false;
 		}
 
 		public bool Contains (XmlSchema targetNamespace)
 		{
-			return schemas.Contains (targetNamespace);
+			foreach (XmlSchema schema in schemas)
+				if (schema == targetNamespace)
+					return true;
+			return false;
 		}
 
-		public void CopyTo (XmlSchema[] array, int index)
+		public void CopyTo (XmlSchema [] array, int index)
 		{
 			schemas.CopyTo (array, index);
 		}
@@ -207,16 +217,6 @@ namespace System.Xml.Schema
 		internal void CopyTo (Array array, int index)
 		{
 			schemas.CopyTo (array, index);
-		}
-
-		internal XmlSchema Get (string ns)
-		{
-			return (XmlSchema) schemas [GetSafeNs (ns)];
-		}
-
-		internal IEnumerator GetEnumerator ()
-		{
-			return schemas.GetEnumerator ();
 		}
 
 		string GetSafeNs (string ns)
@@ -255,13 +255,26 @@ namespace System.Xml.Schema
 
 		public ICollection Schemas ()
 		{
-			return new ArrayList (schemas.Values);
+			return schemas;
 		}
 
 		[MonoTODO]
 		public ICollection Schemas (string targetNamespace)
 		{
-			throw new NotImplementedException ();
+			targetNamespace = GetSafeNs (targetNamespace);
+			ArrayList al = new ArrayList ();
+			foreach (XmlSchema schema in schemas)
+				if (GetSafeNs (schema.TargetNamespace) == targetNamespace)
+					al.Add (schema);
+			return al;
+		}
+
+		internal bool MissedSubComponents (string targetNamespace)
+		{
+			foreach (XmlSchema s in Schemas (targetNamespace))
+				if (s.missedSubComponents)
+					return true;
+			return false;
 		}
 	}
 }

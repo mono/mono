@@ -40,33 +40,34 @@ namespace System.Xml.Schema
 	public class XmlSchemaElement : XmlSchemaParticle
 	{
 		private XmlSchemaDerivationMethod block;
-		private XmlSchemaDerivationMethod blockResolved;
 		private XmlSchemaObjectCollection constraints;
 		private string defaultValue;
 		private object elementType;
 		private XmlSchemaDerivationMethod final;
-		private XmlSchemaDerivationMethod finalResolved;
 		private string fixedValue;
 		private XmlSchemaForm form;
 		private bool isAbstract;
 		private bool isNillable;
 		private string name;
-		private XmlQualifiedName qName;
 		private XmlQualifiedName refName;
 		private XmlSchemaType schemaType;
 		private XmlQualifiedName schemaTypeName;
 		private XmlQualifiedName substitutionGroup;
+
+		// Post compilation items.
+		XmlSchema schema;
 		internal bool parentIsSchema = false;
-		private string validatedDefaultValue;
-		private string validatedFixedValue;
+		private XmlQualifiedName qName;
+		private XmlSchemaDerivationMethod blockResolved;
+		private XmlSchemaDerivationMethod finalResolved;
+		private XmlSchemaParticle substChoice;
+		private XmlSchemaElement referencedElement;
+		private ArrayList substitutingElements = new ArrayList ();
+		private XmlSchemaElement substitutionGroupElement;
 		private bool actualIsAbstract;
 		private bool actualIsNillable;
-		private XmlSchemaElement substitutionGroupElement;
-		private ArrayList substitutingElements = new ArrayList ();
-		private XmlSchemaElement referencedElement;
-
-		// Post compilation items. It should be added on all schema components.
-		XmlSchema schema;
+		private string validatedDefaultValue;
+		private string validatedFixedValue;
 
 		const string xmlname = "element";
 
@@ -75,10 +76,27 @@ namespace System.Xml.Schema
 			block = XmlSchemaDerivationMethod.None;
 			final = XmlSchemaDerivationMethod.None;
 			constraints = new XmlSchemaObjectCollection();
-			qName = XmlQualifiedName.Empty;
 			refName = XmlQualifiedName.Empty;
 			schemaTypeName = XmlQualifiedName.Empty;
 			substitutionGroup = XmlQualifiedName.Empty;
+			InitPostCompileInformations ();
+		}
+
+		private void InitPostCompileInformations ()
+		{
+			qName = XmlQualifiedName.Empty;
+			schema = null;
+//			parentIsSchema = false; ... it is set in Schema's Compile()
+			blockResolved = XmlSchemaDerivationMethod.None;
+			finalResolved = XmlSchemaDerivationMethod.None;
+			substChoice = null;
+			referencedElement = null;
+			substitutingElements.Clear ();
+			substitutionGroupElement = null;
+			actualIsAbstract = false;
+			actualIsNillable = false;
+			validatedDefaultValue = null;
+			validatedFixedValue = null;
 		}
 
 		#region Attributes
@@ -301,8 +319,6 @@ namespace System.Xml.Schema
 
 		#endregion
 
-		private XmlSchemaParticle substChoice;
-
 		/// <remarks>
 		/// a) If Element has parent as schema:
 		///		1. name must be present and of type NCName.
@@ -333,6 +349,7 @@ namespace System.Xml.Schema
 			// If this is already compiled this time, simply skip.
 			if (this.IsComplied (schema.CompilationId))
 				return 0;
+			InitPostCompileInformations ();
 			this.schema = schema;
 
 			if(this.defaultValue != null && this.fixedValue != null)
@@ -628,7 +645,6 @@ namespace System.Xml.Schema
 				elementType = schemaType;
 			else if (SchemaTypeName != XmlQualifiedName.Empty) {
 				XmlSchemaType type = schema.SchemaTypes [SchemaTypeName] as XmlSchemaType;
-				// If el is null, then it is missing sub components .
 				if (type != null) {
 					type.Validate (h, schema);
 					elementType = type;
