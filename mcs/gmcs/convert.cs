@@ -123,11 +123,7 @@ namespace Mono.CSharp {
  					}
 
 					if (TypeManager.ImplementsInterface (expr_type, target_type)){
-						if (expr_type.IsGenericParameter)
-							return new BoxedCast (expr, target_type);
-						else if (expr_type.IsClass)
-							return new EmptyCast (expr, target_type);
-						else if (TypeManager.IsValueType (expr_type))
+						if (expr_type.IsGenericParameter || TypeManager.IsValueType (expr_type))
 							return new BoxedCast (expr, target_type);
 						else
 							return new EmptyCast (expr, target_type);
