@@ -1,3 +1,8 @@
+
+Sat Mar 16 19:13:57 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* dump.c: handle TypeSpec token in memberref table dump.
+
 2002-03-08  Nick Drochak  <ndrochak@gol.com>
 
 	* monodis.1: Add info about new parameter
