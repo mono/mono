@@ -346,7 +346,6 @@ namespace System.Web.Services.Configuration
 					ThrowException ("Only elements allowed", child);
 				
 				string name = child.Name;
-				string error;
 				if (name == "add") {
 					string seType = AttValue ("type", child, false);
 					string priority = AttValue ("priority", child);
@@ -390,7 +389,6 @@ namespace System.Web.Services.Configuration
 					ThrowException ("Only elements allowed", child);
 				
 				string name = child.Name;
-				string error;
 				if (name == "add") {
 					string typeName = AttValue ("name", child, false);
 					if (child.Attributes != null && child.Attributes.Count != 0)

@@ -1,3 +1,7 @@
+2004-06-01  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* WebServicesConfigurationSectionHandler.cs: removed unused variables
+
 2004-02-05  Alon Gazit <along@mainsoft.com>
 
 	* XmlFormatExtensionAttribute.cs:
