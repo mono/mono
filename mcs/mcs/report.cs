@@ -15,6 +15,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace Mono.CSharp {
 
@@ -309,11 +310,14 @@ namespace Mono.CSharp {
 
 		static public void SymbolRelatedToPreviousError (Type type)
 		{
-			DeclSpace temp_ds = TypeManager.LookupDeclSpace (type);
-			if (temp_ds == null)
-				SymbolRelatedToPreviousError (type.Assembly.Location, TypeManager.CSharpName (type));
-			else 
+			if (type is TypeBuilder) {
+				DeclSpace temp_ds = TypeManager.LookupDeclSpace (type);
 				SymbolRelatedToPreviousError (temp_ds.Location, TypeManager.CSharpName (type));
+			} else if (type.HasElementType) {
+				SymbolRelatedToPreviousError (type.GetElementType ());
+			} else {
+				SymbolRelatedToPreviousError (type.Assembly.Location, TypeManager.CSharpName (type));
+			}
 		}
 
 		static void SymbolRelatedToPreviousError (string loc, string symbol)

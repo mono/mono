@@ -1,3 +1,7 @@
+2005-02-28  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0053-2.cs: New test from #73052.
+
 2005-02-23  Raja R Harinath  <rharinath@novell.com>
 
 	* cs0122-10.cs, CS0122-10-lib.cs: New tests based on #57851.

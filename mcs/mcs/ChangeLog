@@ -1,3 +1,9 @@
+2005-02-28  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #73052.
+	* report.cs (Report.SymbolRelatedToPreviousError): Handle
+	non-simple types (array, pointer, reference).
+
 2005-02-28  Marek Safar  <marek.safar@seznam.cz>
 
 	* cs-parser.jay: Add errors 1617, 650, 1007, 531, 547, 548
