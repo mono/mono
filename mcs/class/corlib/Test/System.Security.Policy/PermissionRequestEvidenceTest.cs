@@ -18,12 +18,21 @@ namespace MonoTests.System.Security.Policy {
 	[TestFixture]
 	public class PermissionRequestEvidenceTest : Assertion {
 
+		private string AdjustNewLine (string s) 
+		{
+			if (Environment.NewLine != "\r\n")
+				s = s.Replace ("\r\n", Environment.NewLine);
+			return s;
+		}
+
 		[Test]
 		public void NullConstructor () {
 			PermissionRequestEvidence pre = new PermissionRequestEvidence (null, null, null);
 			AssertNull ("Requested", pre.RequestedPermissions);
 			AssertNull ("Optional", pre.OptionalPermissions);
 			AssertNull ("Denied", pre.DeniedPermissions);
+			string expected = AdjustNewLine ("<System.Security.Policy.PermissionRequestEvidence version=\"1\"/>\r\n");
+			AssertEquals ("ToString", expected, pre.ToString ());
 		}
 
 		[Test]
@@ -33,6 +42,8 @@ namespace MonoTests.System.Security.Policy {
 			Assert ("Requested", !pre.RequestedPermissions.IsUnrestricted ());
 			Assert ("Optional", !pre.OptionalPermissions.IsUnrestricted ());
 			Assert ("Denied", !pre.DeniedPermissions.IsUnrestricted ());
+			string expected = AdjustNewLine ("<System.Security.Policy.PermissionRequestEvidence version=\"1\">\r\n   <Request>\r\n      <PermissionSet class=\"System.Security.PermissionSet\"\r\n                     version=\"1\"/>\r\n   </Request>\r\n   <Optional>\r\n      <PermissionSet class=\"System.Security.PermissionSet\"\r\n                     version=\"1\"/>\r\n   </Optional>\r\n   <Denied>\r\n      <PermissionSet class=\"System.Security.PermissionSet\"\r\n                     version=\"1\"/>\r\n   </Denied>\r\n</System.Security.Policy.PermissionRequestEvidence>\r\n");
+			AssertEquals ("ToString", expected, pre.ToString ());
 		}
 
 		[Test]
@@ -42,6 +53,8 @@ namespace MonoTests.System.Security.Policy {
 			Assert ("Requested", pre.RequestedPermissions.IsUnrestricted ());
 			Assert ("Optional", pre.OptionalPermissions.IsUnrestricted ());
 			Assert ("Denied", pre.DeniedPermissions.IsUnrestricted ());
+			string expected = AdjustNewLine ("<System.Security.Policy.PermissionRequestEvidence version=\"1\">\r\n   <Request>\r\n      <PermissionSet class=\"System.Security.PermissionSet\"\r\n                     version=\"1\"\r\n                     Unrestricted=\"true\"/>\r\n   </Request>\r\n   <Optional>\r\n      <PermissionSet class=\"System.Security.PermissionSet\"\r\n                     version=\"1\"\r\n                     Unrestricted=\"true\"/>\r\n   </Optional>\r\n   <Denied>\r\n      <PermissionSet class=\"System.Security.PermissionSet\"\r\n                     version=\"1\"\r\n                     Unrestricted=\"true\"/>\r\n   </Denied>\r\n</System.Security.Policy.PermissionRequestEvidence>\r\n");
+			AssertEquals ("ToString", expected, pre.ToString ());
 		}
 
 		[Test]
@@ -52,6 +65,8 @@ namespace MonoTests.System.Security.Policy {
 			Assert ("Requested", !pre.RequestedPermissions.IsUnrestricted ());
 			Assert ("Optional", pre.OptionalPermissions.IsUnrestricted ());
 			Assert ("Denied", !pre.DeniedPermissions.IsUnrestricted ());
+			string expected = AdjustNewLine ("<System.Security.Policy.PermissionRequestEvidence version=\"1\">\r\n   <Request>\r\n      <PermissionSet class=\"System.Security.PermissionSet\"\r\n                     version=\"1\"/>\r\n   </Request>\r\n   <Optional>\r\n      <PermissionSet class=\"System.Security.PermissionSet\"\r\n                     version=\"1\"\r\n                     Unrestricted=\"true\"/>\r\n   </Optional>\r\n   <Denied>\r\n      <PermissionSet class=\"System.Security.PermissionSet\"\r\n                     version=\"1\"/>\r\n   </Denied>\r\n</System.Security.Policy.PermissionRequestEvidence>\r\n");
+			AssertEquals ("ToString", expected, pre.ToString ());
 		}
 
 		[Test]
@@ -62,6 +77,8 @@ namespace MonoTests.System.Security.Policy {
 			Assert ("Requested", pre.RequestedPermissions.IsUnrestricted ());
 			Assert ("Optional", !pre.OptionalPermissions.IsUnrestricted ());
 			Assert ("Denied", pre.DeniedPermissions.IsUnrestricted ());
+			string expected = AdjustNewLine ("<System.Security.Policy.PermissionRequestEvidence version=\"1\">\r\n   <Request>\r\n      <PermissionSet class=\"System.Security.PermissionSet\"\r\n                     version=\"1\"\r\n                     Unrestricted=\"true\"/>\r\n   </Request>\r\n   <Optional>\r\n      <PermissionSet class=\"System.Security.PermissionSet\"\r\n                     version=\"1\"/>\r\n   </Optional>\r\n   <Denied>\r\n      <PermissionSet class=\"System.Security.PermissionSet\"\r\n                     version=\"1\"\r\n                     Unrestricted=\"true\"/>\r\n   </Denied>\r\n</System.Security.Policy.PermissionRequestEvidence>\r\n");
+			AssertEquals ("ToString", expected, pre.ToString ());
 		}
 
 		[Test]
@@ -73,6 +90,9 @@ namespace MonoTests.System.Security.Policy {
 			Assert ("Requested", pre2.RequestedPermissions.IsUnrestricted ());
 			Assert ("Optional", !pre2.OptionalPermissions.IsUnrestricted ());
 			Assert ("Denied", pre2.DeniedPermissions.IsUnrestricted ());
+			string expected = AdjustNewLine ("<System.Security.Policy.PermissionRequestEvidence version=\"1\">\r\n   <Request>\r\n      <PermissionSet class=\"System.Security.PermissionSet\"\r\n                     version=\"1\"\r\n                     Unrestricted=\"true\"/>\r\n   </Request>\r\n   <Optional>\r\n      <PermissionSet class=\"System.Security.PermissionSet\"\r\n                     version=\"1\"/>\r\n   </Optional>\r\n   <Denied>\r\n      <PermissionSet class=\"System.Security.PermissionSet\"\r\n                     version=\"1\"\r\n                     Unrestricted=\"true\"/>\r\n   </Denied>\r\n</System.Security.Policy.PermissionRequestEvidence>\r\n");
+			AssertEquals ("ToString", expected, pre.ToString ());
+			AssertEquals ("ToString-Copy", pre.ToString (), pre2.ToString ());
 		}
-} // class
+	} // class
 } // namespace

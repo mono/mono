@@ -1,3 +1,11 @@
+2004-01-28  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* PermissionRequestEvidenceTest.cs: Added ToString () assertions
+	to existing tests.
+	* PublisherMembershipConditionTest.cs: Replaced "\r\n" with 
+	Environment.NewLine.
+	* StrongNameTest.cs: Replaced "\r\n" with Environment.NewLine.
+
 2004-01-26  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CodeGroupTest.cs: Replaced "\r\n" with Environment.NewLine.
