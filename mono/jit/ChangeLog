@@ -1,3 +1,13 @@
+2002-11-28  Dietmar Maurer  <dietmar@ximian.com>
+
+	* exception.c (x86_unwind_native_frame): support exceptions inside
+	native code using gcc generated exception tables (-fexception).
+
+2002-11-19  Dietmar Maurer  <dietmar@ximian.com>
+
+	* exception.c: include some code from Zoltan Varga, but modified
+	it slightly.
+
 2002-11-27  Dietmar Maurer  <dietmar@ximian.com>
 
 	* exception.c: massive code cleanups. The code is still
