@@ -1,3 +1,8 @@
+
+Tue Jul 16 19:00:57 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: fix buglet in parsing an assembly name.
+
 2002-07-16  Dietmar Maurer  <dietmar@ximian.com>
 
 	* marshal.c (emit_ptr_to_str_conv): first impl.
