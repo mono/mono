@@ -130,7 +130,7 @@ namespace Microsoft.VisualBasic
 			if(Blue > 255) 
 				Blue = 255;
 
-			return (((Red & 0xFF) << 16) | ((Green & 0xFF) << 8) | ((Blue & 0xFF) << 0));
+			return (((Blue & 0xFF) << 16) | ((Green & 0xFF) << 8) | ((Red & 0xFF) << 0));
 		}
 
 

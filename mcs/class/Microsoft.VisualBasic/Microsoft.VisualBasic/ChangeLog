@@ -1,3 +1,7 @@
+2005-03-27 Trent Lloyd <lathiat@bur.st>, Shane Mitchell <shane@extadi.com>
+
+	   * Information.cs(RGB): Change colour ordering, its BGR not RGB
+
 2005-03-17 Manjula GHM <mmanjula@novell.com>
 	   Ankit Jain <radical@gmail.com>
 	  * Collection.cs:
