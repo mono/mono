@@ -1,5 +1,9 @@
 2004-04-05  Zoltan Varga  <vargaz@freemail.hu>
 
+	* iltests.il: Added new regression test for #56317.
+
+2004-04-05  Zoltan Varga  <vargaz@freemail.hu>
+
 	* mini-x86.c (mono_arch_setup_jit_tls_data): Use pthread_attr_get_np
 	under NetBSD. Fixes #56450.
 
