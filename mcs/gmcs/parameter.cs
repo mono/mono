@@ -16,11 +16,46 @@ using System.Collections;
 
 namespace Mono.CSharp {
 
+	/// <summary>
+	///   Base class for parameters of a method.  Can also be
+	///   used to directly represent the return type of a method
+	/// </summary>
+	public class ParameterBase : Attributable {
+		public ParameterBase (Attributes attrs)
+			: base (attrs)
+		{
+		}
+
+		public override void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb)
+		{
+			ParameterBuilder pb = builder as ParameterBuilder;
+
+			if (a.Type == TypeManager.marshal_as_attr_type) {
+				UnmanagedMarshal marshal = a.GetMarshal ();
+				if (marshal == null)
+					Report.Warning (-24, a.Location,
+							"The Microsoft Runtime cannot set this marshal info. " +
+							"Please use the Mono runtime instead.");
+				else 
+					pb.SetMarshal (marshal);
+			}
+			else { 
+				try {
+					pb.SetCustomAttribute (cb);
+				} catch (System.ArgumentException) {
+					Report.Warning (-24, a.Location,
+							"The Microsoft Runtime cannot set attributes \n" +
+							"on the return type of a method. Please use the \n" +
+							"Mono runtime instead.");
+				}
+			}
+		}
+	}
 
 	/// <summary>
 	///   Represents a single method parameter
 	/// </summary>
-	public class Parameter {
+	public class Parameter : ParameterBase {
 		[Flags]
 		public enum Modifier : byte {
 			NONE    = 0,
@@ -33,17 +68,16 @@ namespace Mono.CSharp {
 
 		public readonly Expression TypeName;
 		public readonly Modifier ModFlags;
-		public Attributes OptAttributes;
 		public readonly string Name;
 		GenericConstraints constraints;
 		Type parameter_type;
 		
 		public Parameter (Expression type, string name, Modifier mod, Attributes attrs)
+			: base (attrs)
 		{
 			Name = name;
 			ModFlags = mod;
 			TypeName = type;
-			OptAttributes = attrs;
 		}
 
 		// <summary>

@@ -237,10 +237,10 @@ namespace Mono.CSharp {
 	}
 
 	/// <summary>
-	///   Base representation for members.  This is only used to keep track
-	///   of Name, Location and Modifier flags.
+	///   Base representation for members.  This is used to keep track
+	///   of Name, Location and Modifier flags, and handling Attributes.
 	/// </summary>
-	public abstract class MemberCore {
+	public abstract class MemberCore : Attributable {
 		/// <summary>
 		///   Public name
 		/// </summary>
@@ -258,11 +258,6 @@ namespace Mono.CSharp {
 		/// </summary>
 		public readonly Location Location;
 
-		/// <summary>
-		///   Attributes for this type
-		/// </summary>
- 		Attributes attributes;
-
 		[Flags]
 		public enum Flags {
 			Obsolete_Undetected = 1,		// Obsolete attribute has not beed detected yet
@@ -278,11 +273,11 @@ namespace Mono.CSharp {
 		protected Flags caching_flags;
 
 		public MemberCore (MemberName name, Attributes attrs, Location loc)
+			: base (attrs)
 		{
 			Name = name.GetName (!(this is GenericMethod) && !(this is Method));
 			MemberName = name;
 			Location = loc;
-			attributes = attrs;
 			caching_flags = Flags.Obsolete_Undetected | Flags.ClsCompliance_Undetected;
 		}
 
@@ -294,16 +289,6 @@ namespace Mono.CSharp {
 		public virtual string GetSignatureForError ()
 		{
 			return Name;
-		}
-
-		public Attributes OptAttributes 
-		{
-			get {
-				return attributes;
-			}
-			set {
-				attributes = value;
-			}
 		}
 
 		/// <summary>
@@ -415,7 +400,8 @@ namespace Mono.CSharp {
 				return true;
 
 			bool error3006 = false;
-			foreach (MemberInfo mi in ml) {
+			for (int i = 0; i < ml.Count; ++i) {
+				MemberInfo mi = ml [i];
 				if (name == mi.Name) {
 					MethodBase method = mi as MethodBase;
 					if (method == null || method == methodBuilder || paramTypes == null || paramTypes.Length == 0)
@@ -444,6 +430,13 @@ namespace Mono.CSharp {
 					MemberCore mc = temp_ds.GetDefinition (tmp_name) as MemberCore;
 					if (!mc.IsClsCompliaceRequired (ds))
 						continue;
+				}
+
+				for (int ii = 0; ii < ml.Count; ++ii) {
+					mi = ml [ii];
+					if (name == mi.Name)
+						continue;
+					Report.SymbolRelatedToPreviousError (mi);
 				}
 
 				if (error3006)
@@ -1338,9 +1331,11 @@ namespace Mono.CSharp {
 						continue;
 
 					if (String.Compare (Name, type_name, true) == 0 && 
-						AttributeTester.IsClsCompliant (TypeManager.all_imported_types [type_name] as Type))
+						AttributeTester.IsClsCompliant (TypeManager.all_imported_types [type_name] as Type)) {
+						Report.SymbolRelatedToPreviousError ((Type)TypeManager.all_imported_types [type_name]);
 						return false;
 				}
+			}
 			}
 
 			// Seek through generated types
@@ -1354,9 +1349,11 @@ namespace Mono.CSharp {
 						continue;
 					
 					DeclSpace found_ds = RootContext.Tree.Decls[name] as DeclSpace;
-					if (found_ds.IsClsCompliaceRequired (found_ds.Parent))
+					if (found_ds.IsClsCompliaceRequired (found_ds.Parent)) {
+						Report.SymbolRelatedToPreviousError (found_ds.Location, found_ds.GetSignatureForError ());
 						return false;
 				}
+			}
 			}
 
 			return true;
@@ -1773,8 +1770,6 @@ namespace Mono.CSharp {
 		protected Hashtable member_hash;
 		protected Hashtable method_hash;
 		
-		Hashtable interface_hash;
-
 		/// <summary>
 		///   Create a new MemberCache for the given IMemberContainer `container'.
 		/// </summary>
@@ -1791,7 +1786,6 @@ namespace Mono.CSharp {
 			// TypeManager.object_type), we deep-copy its MemberCache here.
 			if (Container.IsInterface) {
 				MemberCache parent;
-				interface_hash = new Hashtable ();
 				
 				if (Container.Parent != null)
 					parent = Container.Parent.MemberCache;
@@ -1836,15 +1830,20 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Add the contents of `new_hash' to `hash'.
 		/// </summary>
-		void AddHashtable (Hashtable hash, Hashtable new_hash)
+		void AddHashtable (Hashtable hash, MemberCache cache)
 		{
+			Hashtable new_hash = cache.member_hash;
 			IDictionaryEnumerator it = new_hash.GetEnumerator ();
 			while (it.MoveNext ()) {
 				ArrayList list = (ArrayList) hash [it.Key];
-				if (list != null)
-					list.AddRange ((ArrayList) it.Value);
-				else
-					hash [it.Key] = ((ArrayList) it.Value).Clone ();
+				if (list == null)
+					hash [it.Key] = list = new ArrayList ();
+
+				foreach (CacheEntry entry in (ArrayList) it.Value) {
+					if (entry.Container != cache.Container)
+						break;
+					list.Add (entry);
+				}
 			}
 		}
 
@@ -1861,23 +1860,12 @@ namespace Mono.CSharp {
 			foreach (TypeExpr iface in ifaces) {
 				Type itype = iface.Type;
 
-				if (interface_hash.Contains (itype))
-					continue;
-				
-				interface_hash [itype] = null;
-
 				IMemberContainer iface_container =
 					TypeManager.LookupMemberContainer (itype);
 
 				MemberCache iface_cache = iface_container.MemberCache;
 
-				AddHashtable (hash, iface_cache.member_hash);
-				
-				if (iface_cache.interface_hash == null)
-					continue;
-				
-				foreach (Type parent_contains in iface_cache.interface_hash.Keys)
-					interface_hash [parent_contains] = null;
+				AddHashtable (hash, iface_cache);
 			}
 
 			return hash;
@@ -2153,7 +2141,7 @@ namespace Mono.CSharp {
 				applicable = (ArrayList) method_hash [name];
 			else
 				applicable = (ArrayList) member_hash [name];
-			
+
 			if (applicable == null)
 				return emptyMemberInfo;
 
@@ -2172,6 +2160,7 @@ namespace Mono.CSharp {
 			EntryType type = GetEntryType (mt, bf);
 
 			IMemberContainer current = Container;
+
 
 			// `applicable' is a list of all members with the given member name `name'
 			// in the current class and all its parent classes.  The list is sorted in

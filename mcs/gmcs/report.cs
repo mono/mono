@@ -12,6 +12,7 @@
 using System;
 using System.Text;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -58,6 +59,11 @@ namespace Mono.CSharp {
 		// Keeps track of the warnings that we are ignoring
 		//
 		static Hashtable warning_ignore_table;
+
+		/// <summary>
+		/// List of symbols related to reported error/warning. You have to fill it before error/warning is reported.
+		/// </summary>
+		static StringCollection related_symbols = new StringCollection ();
 		
 		struct WarningData {
 			public WarningData (int level, string text) {
@@ -159,14 +165,51 @@ namespace Mono.CSharp {
 			return sb.ToString ();
 		}
 		
-		static public void LocationOfPreviousError (Location loc) {
+		[Obsolete ("Use SymbolRelatedToPreviousError for better error description")]
+		static public void LocationOfPreviousError (Location loc)
+		{
 			Console.WriteLine (String.Format ("{0}({1}) (Location of symbol related to previous error)", loc.Name, loc.Row));
+		}                
+
+		/// <summary>
+                /// In most error cases is very useful to have information about symbol that caused the error.
+                /// Call this method before you call Report.Error when it makes sense.
+		/// </summary>
+		static public void SymbolRelatedToPreviousError (Location loc, string symbol)
+		{
+			SymbolRelatedToPreviousError (String.Format ("{0}({1})", loc.Name, loc.Row), symbol);
+		}
+
+		static public void SymbolRelatedToPreviousError (MemberInfo mi)
+		{
+			DeclSpace temp_ds = TypeManager.LookupDeclSpace (mi.DeclaringType);
+			if (temp_ds == null) {
+				SymbolRelatedToPreviousError (mi.DeclaringType.Assembly.Location, TypeManager.GetFullNameSignature (mi));
+			} else {
+				string name = String.Concat (temp_ds.Name, ".", mi.Name);
+				MemberCore mc = temp_ds.GetDefinition (name) as MemberCore;
+				SymbolRelatedToPreviousError (mc.Location, mc.GetSignatureForError ());
+			}
+		}
+
+		static public void SymbolRelatedToPreviousError (Type type)
+		{
+			SymbolRelatedToPreviousError (type.Assembly.Location, TypeManager.CSharpName (type));
+		}
+
+		static void SymbolRelatedToPreviousError (string loc, string symbol)
+		{
+			related_symbols.Add (String.Format ("{0}: ('{1}' name of symbol related to previous error)", loc, symbol));
 		}
 
 		static public void RealError (string msg)
 		{
 			Errors++;
 			Console.WriteLine (msg);
+
+			foreach (string s in related_symbols)
+				Console.WriteLine (s);
+			related_symbols.Clear ();
 
 			if (Stacktrace)
 				Console.WriteLine (FriendlyStackTrace (new StackTrace (true)));
@@ -182,10 +225,10 @@ namespace Mono.CSharp {
 		static public void Warning (int code, Location loc, params object[] args)
 		{
 			WarningData warning = GetWarningMsg (code);
-			if (!warning.IsEnabled ())
-				return;
+			if (warning.IsEnabled ())
+				Warning (code, loc, warning.Format (args));
 
-			Warning (code, loc, warning.Format (args));
+			related_symbols.Clear ();
 		}
 
 		/// <summary>
@@ -231,8 +274,10 @@ namespace Mono.CSharp {
 				code = 8000-code;
 			
 			if (warning_ignore_table != null){
-				if (warning_ignore_table.Contains (code))
+				if (warning_ignore_table.Contains (code)) {
+					related_symbols.Clear ();
 					return;
+				}
 			}
 			
 			if (WarningsAreErrors)
@@ -250,6 +295,11 @@ namespace Mono.CSharp {
 //					"{0}({1}) warning CS{2}: {3}",
 					l.Name,  row, code, text));
 				Warnings++;
+
+				foreach (string s in related_symbols)
+					Console.WriteLine (s);
+				related_symbols.Clear ();
+
 				Check (code);
 
 				if (Stacktrace)

@@ -1,3 +1,126 @@
+2004-04-29  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs (TypeManager.CheckStructCycles): Fixed.
+
+2004-04-29  Martin Baulig  <martin@ximian.com>
+
+	Applying a patch from Benjamin Jemlich <pcgod@gmx.net>.
+
+	* ecore.cs (FieldExpr.AddressOf): Make this work for valuetypes.
+
+2004-04-29  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (ConstructorInitializer.Resolve): Check whether the
+	parent .ctor is accessible.  Fixes #52146.
+
+2004-04-29  Martin Baulig  <martin@ximian.com>
+
+	Applying a patch from Benjamin Jemlich <pcgod@gmx.net>.
+
+	* statement.cs (Using.EmitLocalVariableDecls): Use
+	TypeManager.idisposable_type, not typeof (IDisposable).
+	(Foreach.EmitCollectionForeach): Added support for valuetypes.
+
+2004-04-29  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (Event.Define): Don't emit the field and don't set
+	RTSpecialName and SpecialName for events on interfaces.  Fixes
+	#57703.	
+
+2004-04-29  Raja R Harinath  <rharinath@novell.com>
+
+	Refactor Attribute.ApplyAttributes.
+	* attribute.cs (Attributable): New base class for objects that can
+	have Attributes applied on them.
+	(Attribute): Make AttributeUsage fields public.
+	(Attribute.GetFieldValue, Attribute.GetMarshal): Make non-static.
+	(Attribute.IsInternalCall): New property.
+	(Attribute.UsageAttr): Convert to a public read-only property.
+	(Attribute.CheckAttributeType): Use a DeclSpace, not an	EmitContext.
+	(Attribute.ResolveType, Attribute.Resolve)
+	(Attribute.ScanForIndexerName): Update to reflect changes.
+	(Attribute.CheckAttributeTarget): Re-format.
+	(Attribute.ApplyAttributes): Refactor, to various
+	Attributable.ApplyAttributeBuilder methods.
+	* decl.cs (MemberCore): Make Attributable.
+	* class.cs (Accessor): Make Attributable.
+	(MethodData.ApplyAttributes): Use proper attribute types, not
+	attribute names.
+	(TypeContainer.LabelParameters): Pass Parameter to ApplyAttributes.
+	(TypeContainer.ApplyAttributeBuilder)
+	(Method.ApplyAttributeBuilder, Constructor.ApplyAttributeBuilder)
+	(Field.ApplyAttributeBuilder, Accessor.ApplyAttributeBuilder)	
+	(PropertyBase.ApplyAttributeBuilder, Event.ApplyAttributeBuilder)
+	(Operator.ApplyAttributeBuilder): New factored-out methods.
+	* const.cs (Const.ApplyAttributeBuilder): Likewise.
+	* delegate.cs (Delegate.ApplyAttributeBuilder): Likewise.
+	* enum.cs (Enum.ApplyAttributeBuilder): Likewise.
+	* parameter.cs (ParameterBase): New Attributable base class
+	that can also represent Return types.
+	(Parameter): Update to the changes.
+
+2004-04-29  Jackson Harper  <jackson@ximian.com>
+
+	* driver.cs: Prefer the corlib system version when looking for
+	assemblies in the GAC. This is still a hack, but its a better hack
+	now.
+	
+2004-04-29  Marek Safar  <marek.safar@seznam.cz>
+
+	* decl.cs, enum.cs: Improved error 3005 reporting.
+  
+	* report.cs (SymbolRelatedToPreviousError): New method for error reporting.
+        (related_symbols): New private member for list of symbols
+	related to reported error/warning.
+        
+	* tree.cs: Do not use now obsolete Report.LocationOfPreviousError.
+
+2004-04-29  Martin Baulig  <martin@ximian.com>
+
+	* ecore.cs (Expression.Constantify): If we're an enum and
+	TypeManager.TypeToCoreType() doesn't give us another type, use
+	t.UnderlyingSystemType.  Fixes #56178.	
+
+2004-04-29  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (MemberCache.SetupCacheForInterface): Look over all our
+	interfaces and for each interface, only add members directly
+	declared in that interface.  Fixes #53255.
+
+2004-04-28  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (ConditionalLogicalOperator): Use a temporary
+	variable for `left' to avoid that we evaluate it more than once;
+	bug #52588.
+
+2004-04-28  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (ComposedCast.DoResolveAsTypeStep): Don't allow
+	`void[]' (CS1547).
+
+2004-04-28  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs (LocalInfo.Resolve): Check whether the type is not
+	void (CS1547).
+
+	* class.cs (MemberBase.CheckParameters, FieldBase.DoDefine): Check
+	whether the type is not void (CS1547).
+
+2004-04-28  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (Unary.DoResolveLValue): Override this and report
+	CS0131 for anything but Operator.Indirection.
+
+2004-04-28  Martin Baulig  <martin@ximian.com>
+
+	Committing a patch from Ben Maurer; see bug #50820.
+
+	* typemanager.cs (TypeManager.FilterWithClosure): Added CS1540
+	check for classes.
+
+	* ecore.cs (Expression.MemberLookupFailed): Added CS1540 check for
+	classes.	
+
 2004-04-28  Martin Baulig  <martin@ximian.com>
 
 	* statement.cs (Block.LookupLabel): Also lookup in implicit child blocks.
@@ -112,7 +235,6 @@
 	for a named field or property, implicity convert it to the correct
 	type.
 
->>>>>>> 1.1450
 2004-04-27  Raja R Harinath  <rharinath@novell.com>
 
 	* statement.cs (Block.Block): Implicit blocks share

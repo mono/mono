@@ -920,6 +920,11 @@ namespace Mono.CSharp {
 				throw new Exception ();
 			}
 		}
+
+		public override void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb)
+		{
+			// FIXME
+		}
 	}
 
 	public class DefaultValueExpression : Expression

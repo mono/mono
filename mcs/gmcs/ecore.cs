@@ -485,7 +485,11 @@ namespace Mono.CSharp {
 			else if (t == TypeManager.bool_type)
 				return new BoolConstant ((bool) v);
 			else if (TypeManager.IsEnumType (t)){
-				Constant e = Constantify (v, TypeManager.TypeToCoreType (v.GetType ()));
+				Type real_type = TypeManager.TypeToCoreType (v.GetType ());
+				if (real_type == t)
+					real_type = real_type.UnderlyingSystemType;
+
+				Constant e = Constantify (v, real_type);
 
 				return new EnumConstant (e, t);
 			} else
@@ -679,7 +683,7 @@ namespace Mono.CSharp {
 			}
 
 			if ((qualifier_type != null) && (qualifier_type != ec.ContainerType) &&
-			    ec.ContainerType.IsSubclassOf (qualifier_type)) {
+			    !qualifier_type.IsSubclassOf (ec.ContainerType)) {
 				// Although a derived class can access protected members of
 				// its base class it cannot do so through an instance of the
 				// base class (CS1540).  If the qualifier_type is a parent of the
@@ -3000,8 +3004,20 @@ namespace Mono.CSharp {
 					IMemoryLocation ml = (IMemoryLocation) instance_expr;
 
 					ml.AddressOf (ec, AddressOp.LoadStore);
-				} else
+				} else {
 					instance_expr.Emit (ec);
+
+					if (instance_expr.Type.IsValueType) {
+						LocalBuilder local = ig.DeclareLocal (instance_expr.Type);
+						ig.Emit(OpCodes.Stloc, local);
+						ig.Emit(OpCodes.Ldloca, local);
+						ig.Emit(OpCodes.Ldfld, FieldInfo);
+						LocalBuilder local2 = ig.DeclareLocal(type);
+						ig.Emit(OpCodes.Stloc, local2);
+						ig.Emit(OpCodes.Ldloca, local2);
+						return;
+					}
+				}
 				ig.Emit (OpCodes.Ldflda, FieldInfo);
 			}
 		}

@@ -568,6 +568,16 @@ namespace Mono.CSharp {
 			return ResolveOperator (ec);
 		}
 
+		public override Expression DoResolveLValue (EmitContext ec, Expression right)
+		{
+			if (Oper == Operator.Indirection)
+				return base.DoResolveLValue (ec, right);
+
+			Error (131, "The left-hand side of an assignment must be a " +
+			       "variable, property or indexer");
+			return null;
+		}
+
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
@@ -2969,7 +2979,7 @@ namespace Mono.CSharp {
 				ig.MarkLabel (end);
 				return;
 			}
-			
+
 			left.Emit (ec);
 			right.Emit (ec);
 
@@ -3347,6 +3357,7 @@ namespace Mono.CSharp {
 		}
 
 		Expression op_true, op_false, op;
+		LocalTemporary left_temp;
 
 		public override Expression DoResolve (EmitContext ec)
 		{
@@ -3359,8 +3370,10 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			left_temp = new LocalTemporary (ec, type);
+
 			ArrayList arguments = new ArrayList ();
-			arguments.Add (new Argument (left, Argument.AType.Expression));
+			arguments.Add (new Argument (left_temp, Argument.AType.Expression));
 			arguments.Add (new Argument (right, Argument.AType.Expression));
 			method = Invocation.OverloadResolve (
 				ec, (MethodGroupExpr) operator_group, arguments, false, loc)
@@ -3372,8 +3385,8 @@ namespace Mono.CSharp {
 
 			op = new StaticCallExpr (method, arguments, loc);
 
-			op_true = GetOperatorTrue (ec, left, loc);
-			op_false = GetOperatorFalse (ec, left, loc);
+			op_true = GetOperatorTrue (ec, left_temp, loc);
+			op_false = GetOperatorFalse (ec, left_temp, loc);
 			if ((op_true == null) || (op_false == null)) {
 				Error218 ();
 				return null;
@@ -3390,8 +3403,11 @@ namespace Mono.CSharp {
 
 			ig.Emit (OpCodes.Nop);
 
-			(is_and ? op_false : op_true).EmitBranchable (ec, false_target, false);
 			left.Emit (ec);
+			left_temp.Store (ec);
+
+			(is_and ? op_false : op_true).EmitBranchable (ec, false_target, false);
+			left_temp.Emit (ec);
 			ig.Emit (OpCodes.Br, end_target);
 			ig.MarkLabel (false_target);
 			op.Emit (ec);
@@ -8645,6 +8661,12 @@ namespace Mono.CSharp {
 			Type ltype = ec.DeclSpace.ResolveType (left, false, loc);
 			if (ltype == null)
 				return null;
+
+			if ((ltype == TypeManager.void_type) && (dim != "*")) {
+				Report.Error (1547, Location,
+					      "Keyword 'void' cannot be used in this context");
+				return null;
+			}
 
 			int pos = 0;
 			while ((pos < dim.Length) && (dim [pos] == '[')) {
