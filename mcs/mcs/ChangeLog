@@ -1,6 +1,24 @@
 2002-10-04  Miguel de Icaza  <miguel@ximian.com>
 
-	* expression.cs (Conditional.Emit): Use the EmitBoolExpression to
+	* typemanager.cs (Typemanager.LookupTypeDirect): This new function
+	is a version of LookupTypeReflection that includes the type-name
+	cache.  This can be used as a fast path for functions that know
+	the fully qualified name and are only calling into *.GetType() to
+	obtain a composed type.
+
+	This is also used by TypeManager.LookupType during its type
+	composition.
+
+	(LookupType): We now also track the real type name, as sometimes
+	we can get a quey for the real type name from things like
+	ComposedCast.  This fixes bug 31422.
+	
+	* expression.cs (ComposedCast.Resolve): Since we are obtaining a
+	complete type fullname, it does not have to go through the type
+	resolution system to obtain the composed version of the type (for
+	obtaining arrays or pointers).
+	
+	(Conditional.Emit): Use the EmitBoolExpression to
 	generate nicer code, as requested by Paolo.
 
 	(ArrayCreation.CheckIndices): Use the patch from

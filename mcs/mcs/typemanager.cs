@@ -456,7 +456,10 @@ public class TypeManager {
 		modules = n;
 	}
 
-	public static Type LookupTypeReflection (string name)
+	//
+	// Low-level lookup, cache-less
+	//
+	static Type LookupTypeReflection (string name)
 	{
 		Type t;
 		
@@ -468,10 +471,33 @@ public class TypeManager {
 
 		foreach (ModuleBuilder mb in modules) {
 			t = mb.GetType (name);
-			if (t != null)
+			if (t != null){
 				return t;
+			}
 		}
 		return null;
+	}
+
+	//
+	// This function is used when you want to avoid the lookups, and want to go
+	// directly to the source.  This will use the cache.
+	//
+	// Notice that bypassing the cache is bad, because on Microsoft.NET runtime
+	// GetType ("DynamicType[]") != GetType ("DynamicType[]"), and there is no
+	// way to test things other than doing a fullname compare
+	//
+	public static Type LookupTypeDirect (string name)
+	{
+		Type t = (Type) types [name];
+		if (t != null)
+			return t;
+
+		t = LookupTypeReflection (name);
+		if (t == null)
+			return null;
+
+		types [name] = t;
+		return t;
 	}
 	
 	/// <summary>
@@ -491,9 +517,14 @@ public class TypeManager {
 		if (t != null)
 			return t;
 
+		//
+		// Optimization: ComposedCast will work with an existing type, and might already have the
+		// full name of the type, so the full system lookup can probably be avoided.
+		//
+		
 		string [] elements = name.Split ('.');
 		int count = elements.Length;
-		
+
 		for (int n = 1; n <= count; n++){
 			string top_level_type = String.Join (".", elements, 0, n);
 
@@ -507,13 +538,12 @@ public class TypeManager {
 			if (count == n){
 				types [name] = t;
 				return t;
-			}
+			} 
 			
-			string rest = String.Join ("+", elements, n, count - n);
-
-			t = LookupTypeReflection (top_level_type + "+" + rest);
+			string newt = top_level_type + "+" + String.Join ("+", elements, n, count - n);
+			t = LookupTypeDirect (newt);
 			if (t != null)
-				types [name] = t;
+				types [newt] = t;
 			return t;
 		}
 		return null;

@@ -6689,10 +6689,15 @@ namespace Mono.CSharp {
 			if (ltype == null)
 				return null;
 
-			type = RootContext.LookupType (
-				ec.DeclSpace, ltype.FullName + dim, false, loc);
-			if (type == null)
+			//
+			// ltype.Fullname is already fully qualified, so we can skip
+			// a lot of probes, and go directly to TypeManager.LookupType
+			//
+			type = TypeManager.LookupTypeDirect (ltype.FullName + dim);
+			if (type == null){
+				Report.Error (-99, loc, "This should not happen");
 				return null;
+			}
 
 			if (!ec.ResolvingTypeTree){
 				//

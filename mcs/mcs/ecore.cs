@@ -1759,7 +1759,7 @@ namespace Mono.CSharp {
 					      "Double literal cannot be implicitly converted to " +
 					      "float type, use F suffix to create a float literal");
 			}
-			
+
 			Error_CannotConvertImplicit (loc, source.Type, target_type);
 
 			return null;
