@@ -1,5 +1,7 @@
 2004-11-12  Martin Baulig  <martin@ximian.com>
 
+	* Wrappers.cs: Added workaround for #69082.
+
 	* linkedlists/LinkedList.cs: Added workaround for bug #57747.
 
 2004-08-16  Martin Baulig  <martin@ximian.com>

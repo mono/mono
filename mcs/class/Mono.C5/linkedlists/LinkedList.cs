@@ -493,7 +493,7 @@ namespace C5
 				for (tmp = pred.first.prev.taggroup; (tmp.first != null) && ((tmp.tag & himask) == target);)
 				{ count++; pred = tmp; }
 
-				for (tmp = succ.last.next.taggroup; (tmp..last != null) && ((tmp.tag & himask) == target);)
+				for (tmp = succ.last.next.taggroup; (tmp.last != null) && ((tmp.tag & himask) == target);)
 				{ count++; succ = tmp; }
 #endif
 

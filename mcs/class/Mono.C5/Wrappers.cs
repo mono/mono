@@ -561,7 +561,11 @@ namespace C5
 		/// </summary>
 		/// <returns>The mirrored collection</returns>
 		public IDirectedCollectionValue<T> Backwards()
+#if FIXME
 		{ return new GuardedDirectedCollectionValue<T>(sequenced.Backwards()); }
+#else
+		{ throw new NotImplementedException(); }
+#endif
 
 		#endregion
 
