@@ -1,3 +1,10 @@
+2004-09-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (mono_image_get_methodref_token): Do not emit unmanaged
+	calling conventions in method refs. Fixes #65352.
+
+	* reflection.c: Fix warnings.
+
 2004-09-06 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* object.c: When allocating an array, we have to throw
