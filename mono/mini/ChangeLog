@@ -1,3 +1,7 @@
+2005-02-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* jit-icalls.c (mono_ldvirtfn): Explicitly check for a NULL obj here.
+
 2005-02-17  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* mini.h: Moved MONO_EXCEPTION_* enum to metadata/class-internals.h so
