@@ -285,9 +285,12 @@ namespace Mono.CSharp
 
 		void define (string def)
 		{
-			if (RootContext.AllDefines.Contains (def))
+			if (!RootContext.AllDefines.Contains (def)){
+				RootContext.AllDefines [def] = true;
+			}
+			if (defines.Contains (def))
 				return;
-			RootContext.AllDefines [def] = true;
+			defines [def] = true;
 		}
 		
 		public Tokenizer (System.IO.Stream input, string fname, ArrayList defs)

@@ -1,3 +1,9 @@
+2002-07-04  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-tokenizer.cs (define): We also have to track locally the
+	defines.  AllDefines is just used for the Conditional Attribute,
+	but we also need the local defines for the current source code. 
+
 2002-07-03  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs (While, For, Do): These loops can exit through a
@@ -192,7 +198,6 @@ Mon Jul 1 12:26:12 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* namespace.cs: Use Report.Error instead of GenericParser.error
 
-	
 2002-06-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (TypeContainer.AddMethod, TypeContainer.AddIndexer,
