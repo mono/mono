@@ -175,6 +175,22 @@ namespace MonoTests.System.Collections {
 			}
 		}
 		
+		public void DequeueTest() {
+			Queue queue = new Queue();
+			string[] tmp = new string[50];
+			int i;
+			for (i=0;i<50;i++) {
+				tmp[i] = "Data #" + i;
+				queue.Enqueue(tmp[i]);
+			}
+
+			while(queue.Count>0){
+				i--;
+				string z = (string) queue.Dequeue();
+				AssertEquals (tmp[i], tmp[i], z);
+			}
+		}
+
 		// TODO: test Syncronized operation
 
 	}
