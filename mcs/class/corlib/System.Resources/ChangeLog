@@ -1,0 +1,37 @@
+2001-12-11  Duncan Mak  <duncan@ximian.com>
+
+	* Checked in to CVS.
+
+2001-12-10  Duncan Mak  <duncan@ximian.com>
+
+	* ResourceManager.cs (GetNeutralResourcesLanguage):
+	(GetSatelliteContractVersion): Implemented.
+	
+2001-12-09  Duncan Mak  <duncan@ximian.com>
+
+	* ResXResourceReader.cs: Initial attempt.
+
+	* ResXFileRef.cs: Initial attempt.
+
+	* ResourceWriter.cs: Initial attempt.
+
+	* ResourceSet.cs (ReadResources): Implemented, with help from Radek Doulik.
+
+2001-11-28  Duncan Mak <duncan@ximian.com>	
+
+	* ResourceManager.cs: First attempt.
+
+2001-11-27  Duncan Mak <duncan@ximian.com>
+
+	* ResourceSet.cs:
+	First attempt, can't continue until ResourceReader and ResourceWriter are implemented.
+		
+	* SatelliteContractVersionAttribute.cs: First attempt. The spec is quite amibiguous here.
+
+	* NeutralResoucesLanguageAttribute.cs: Complete.
+
+	* MissingManifestResourceException.cs: Complete.
+
+	* IResourceReader.cs: Complete.
+
+	* IResourceWriter.cs: Complete.
