@@ -1,3 +1,8 @@
+2005-03-14  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* EnvironmentCas.cs: Fixed failures under MS for NET_1_1.
+	* ExceptionCas.cs: Fixed failures under MS for NET_1_1.
+
 2005-03-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeTest.cs: Add tests for bug #73432.

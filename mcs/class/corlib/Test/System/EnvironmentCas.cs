@@ -212,6 +212,10 @@ namespace MonoCasTests.System {
 
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "PLEASE_NEVER_DEFINE_THIS_VARIABLE")]
+#if !NET_2_0
+		// Before 2.0 this required Unrestricted EnvironmentPermission
+		[ExpectedException (typeof (SecurityException))]
+#endif
 		public void GetEnvironmentVariables_Pass ()
 		{
 			// this will work as long as PLEASE_NEVER_DEFINE_THIS_VARIABLE
@@ -413,7 +417,11 @@ namespace MonoCasTests.System {
 
 		[Test]
 #if WINDOWS
+#if NET_2_0
 		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "C:\\")]
+#else
+		[FileIOPermission (SecurityAction.Deny, Read = "C:\\")]
+#endif
 		[ExpectedException (typeof (SecurityException))]
 #endif
 		public void SystemDirectory ()

@@ -92,14 +92,26 @@ namespace MonoCasTests.System {
 			Assert.AreEqual ("message", e.Message, "Message");
 			Assert.IsNotNull (e.InnerException, "InnerException");
 			Assert.IsNotNull (e.ToString (), "ToString");
-#if NET_2_0
-			Assert.IsNotNull (e.Data, "Data");
-#endif
 			Assert.IsNull (e.HelpLink, "HelpLink");
 			Assert.IsNull (e.Source, "Source");
 			Assert.IsNull (e.StackTrace, "StackTrace");
+#if NET_2_0
+			Assert.IsNotNull (e.Data, "Data");
+			// throws under 1.x
+			Assert.IsNull (e.TargetSite, "TargetSite");
+#endif
+		}
+
+#if !NET_2_0
+		[Test]
+		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
+		[ExpectedException (typeof (SecurityException))]
+		public void FullRestriction_TargetSite ()
+		{
+			Exception e = new Exception ("message", new Exception ("inner message"));
 			Assert.IsNull (e.TargetSite, "TargetSite");
 		}
+#endif
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
@@ -111,12 +123,13 @@ namespace MonoCasTests.System {
 			catch (Exception e) {
 				Assert.AreEqual ("message", e.Message, "Message");
 				Assert.IsNotNull (e.InnerException, "InnerException");
-#if NET_2_0
-				Assert.IsNotNull (e.Data, "Data");
-#endif
 				Assert.IsNull (e.HelpLink, "HelpLink");
 				Assert.IsNotNull (e.Source, "Source");
+#if NET_2_0
+				Assert.IsNotNull (e.Data, "Data");
+				// throws under 1.x
 				Assert.IsNotNull (e.TargetSite, "TargetSite");
+#endif
 			}
 		}
 
@@ -126,13 +139,16 @@ namespace MonoCasTests.System {
 #else
 		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "/")]
 #endif
+#if NET_2_0
 		[ExpectedException (typeof (Exception))]
+#endif
 		public void Throw_FullRestriction_Fail_StackTrace ()
 		{
 			try {
 				throw new Exception ("message");
 			}
 			catch (Exception e) {
+				// throws only under 2.x
 				string s = e.StackTrace;
 			}
 		}
@@ -143,13 +159,16 @@ namespace MonoCasTests.System {
 #else
 		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "/")]
 #endif
+#if NET_2_0
 		[ExpectedException (typeof (Exception))]
+#endif
 		public void Throw_FullRestriction_Fail_ToString ()
 		{
 			try {
 				throw new Exception ("message");
 			}
 			catch (Exception e) {
+				// throws only under 2.x
 				string s = e.ToString ();
 			}
 		}
