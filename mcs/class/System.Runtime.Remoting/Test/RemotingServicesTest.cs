@@ -66,7 +66,6 @@ namespace MonoTests.System.Runtime.Remoting.RemotingServicesInternal
 		{
 			try
 			{
-				Console.WriteLine ("IIII");
 				if(msg is IConstructionCallMessage)
 				{
 					IActivator remActivator = (IActivator) RemotingServices.Connect(typeof(IActivator), "tcp://localhost:1234/RemoteActivationService.rem");
@@ -416,7 +415,7 @@ namespace MonoTests.Remoting
 				Assert("#A10.2", !MarshalObject.IsMethodOneWay);
 				objRem.Method3();
 				Thread.Sleep(20);
-				Assert("#A10.2", MarshalObject.IsMethodOneWay);
+				Assert("#A10.3", MarshalObject.IsMethodOneWay);
 			}
 			finally
 			{

@@ -10,6 +10,7 @@ using System;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Lifetime;
 using System.Collections;
+using NUnit.Framework;
 
 namespace MonoTests.Remoting
 {
@@ -26,23 +27,27 @@ namespace MonoTests.Remoting
 
 		public ServerList()
 		{
+			Assert.IsTrue (RemotingServices.IsTransparentProxy(this));
 			CallSeq.Add ("List created");
 		}
 
 		public void Dispose()
 		{
+			Assert.IsTrue (RemotingServices.IsTransparentProxy(this));
 			CallSeq.Add ("List disposed");
 
 		}
 
 		public void Add (ServerObject v)
 		{
+			Assert.IsTrue (RemotingServices.IsTransparentProxy(this));
 			values.Add (v);
 			CallSeq.Add ("Added " + v.Name);
 		}
 
 		public void ProcessItems ()
 		{
+			Assert.IsTrue (RemotingServices.IsTransparentProxy(this));
 			CallSeq.Add ("Processing");
 
 			int total = 0;
@@ -54,22 +59,26 @@ namespace MonoTests.Remoting
 
 		public void Clear()
 		{
+			Assert.IsTrue (RemotingServices.IsTransparentProxy(this));
 			CallSeq.Add ("Clearing");
 			values.Clear();
 		}
 
 		public void ParameterTest1 (int a, out string b)
 		{
+			Assert.IsTrue (RemotingServices.IsTransparentProxy(this));
 			b = "adeu " + a;
 		}
 		
 		public void ParameterTest2 (int a, out int b)
 		{
+			Assert.IsTrue (RemotingServices.IsTransparentProxy(this));
 			b = a+1;
 		}
 		
 		public ServerObject NewItem(string name)
 		{
+			Assert.IsTrue (RemotingServices.IsTransparentProxy(this));
 			ServerObject obj = new ServerObject(name);
 			Add (obj);
 			return obj;
@@ -77,6 +86,7 @@ namespace MonoTests.Remoting
 
 		public ServerObject CreateItem(string name, int val)
 		{
+			Assert.IsTrue (RemotingServices.IsTransparentProxy(this));
 			ServerObject obj = new ServerObject(name);
 			obj.SetValue (val);
 			return obj;
@@ -84,6 +94,7 @@ namespace MonoTests.Remoting
 
 		public ComplexData SetComplexData (ComplexData data)
 		{
+			Assert.IsTrue (RemotingServices.IsTransparentProxy(this));
 			CallSeq.Add ("Showing content of ComplexData");
 			data.Dump ();
 			return data;
@@ -91,6 +102,7 @@ namespace MonoTests.Remoting
 
 		public override ObjRef CreateObjRef (Type type)
 		{
+			Assert.IsTrue (RemotingServices.IsTransparentProxy(this));
 			CallSeq.Add ("### ServerList.CreateObjRef");
 			return base.CreateObjRef (type);
 		}
