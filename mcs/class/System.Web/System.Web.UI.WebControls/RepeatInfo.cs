@@ -6,7 +6,7 @@
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
- * Status:  90%
+ * Status:  100%
  *
  * (C) Gaurav Vaish (2002)
  */
@@ -259,9 +259,114 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private void DoHorizontalRendering(HtmlTextWriter writer, IRepeatInfoUser user, Style controlStyle, WebControl baseControl)
+		private void DoHorizontalRendering (HtmlTextWriter writer,
+						    IRepeatInfoUser user,
+						    Style controlStyle,
+						    WebControl baseControl)
 		{
+			/* Based on DoVerticalRendering */
+			int total = user.RepeatedItemCount;
+			int colsCount = repeatColumns;
+			int rowsCount = 0;
 
+			if (colsCount == 0)
+				colsCount = total;
+			WebControl ctrl = null;
+			bool isTable = true;
+			bool hasSeps = user.HasSeparators;
+			if (!outerTableImp){
+				isTable = (RepeatLayout == RepeatLayout.Table);
+				ctrl = (isTable) ? new Table () : new WebControl (HtmlTextWriterTag.Span);
+				ctrl.ID = baseControl.ClientID;
+				ctrl.CopyBaseAttributes (baseControl);
+				ctrl.ApplyStyle (controlStyle);
+				ctrl.RenderBeginTag (writer);
+			}
+
+			Style itemStyle;
+			int colSpan = 0;
+			if (user.HasHeader){
+				if (isTable){
+					writer.RenderBeginTag (HtmlTextWriterTag.Tr);
+					if (rowsCount != 1){
+						colSpan = rowsCount;
+						if (hasSeps)
+							colSpan += rowsCount;
+						writer.AddAttribute (HtmlTextWriterAttribute.Colspan,
+						     colSpan.ToString (NumberFormatInfo.InvariantInfo));
+					}
+					itemStyle = user.GetItemStyle (ListItemType.Header, -1);
+					if (itemStyle != null)
+						itemStyle.AddAttributesToRender (writer);
+					writer.RenderBeginTag (HtmlTextWriterTag.Td);
+				}
+
+				user.RenderItem (ListItemType.Header, -1, this, writer);
+				
+				if (isTable){
+					writer.RenderEndTag();
+					writer.RenderEndTag();
+				} else if (!outerTableImp)
+						writer.WriteFullBeginTag ("br");
+			}
+
+			for (int index = 0; index < total; index++){
+				if (isTable && index == 0)
+					writer.RenderBeginTag (HtmlTextWriterTag.Tr);
+
+				if (isTable){
+					itemStyle = user.GetItemStyle (ListItemType.Item, index);
+					if (itemStyle != null)
+						itemStyle.AddAttributesToRender(writer);
+					writer.RenderBeginTag(HtmlTextWriterTag.Td);
+				}
+
+				user.RenderItem(ListItemType.Item, index, this, writer);
+				if (isTable)
+					writer.RenderEndTag ();
+
+				if (hasSeps && index != (total - 1)){
+					if (isTable){
+						itemStyle = user.GetItemStyle (ListItemType.Separator, index);
+						if (itemStyle != null)
+							itemStyle.AddAttributesToRender (writer);
+						writer.RenderBeginTag (HtmlTextWriterTag.Td);
+					}
+					user.RenderItem (ListItemType.Separator, index, this, writer);
+					if (isTable)
+						writer.RenderEndTag ();
+				}
+				rowsCount++;
+				if (rowsCount == total || index == (total - 1)) {
+					if (isTable)
+						writer.RenderEndTag ();
+					else if (rowsCount < total)
+						writer.WriteFullBeginTag ("br");
+					rowsCount = 0;
+				}
+			}
+
+			if (user.HasFooter){
+				if (isTable){
+					writer.RenderBeginTag (HtmlTextWriterTag.Tr);
+					if (colsCount != 1)
+						writer.AddAttribute (HtmlTextWriterAttribute.Colspan,
+							colSpan.ToString(NumberFormatInfo.InvariantInfo));
+
+					itemStyle = user.GetItemStyle (ListItemType.Footer, -1);
+					if(itemStyle != null)
+						itemStyle.AddAttributesToRender (writer);
+					writer.RenderBeginTag (HtmlTextWriterTag.Td);
+				}
+				user.RenderItem (ListItemType.Footer, -1, this, writer);
+				if (isTable){
+					writer.RenderEndTag ();
+					writer.RenderEndTag ();
+				}
+			}
+
+			if (ctrl != null)
+				ctrl.RenderEndTag(writer);
 		}
 	}
 }

@@ -1,3 +1,8 @@
+2002-06-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* RadioButtonList.cs: implemented IRepeatInfoUser.RenderItem.
+	* RepeatInfo.cs: implemented DoHorizontalRendering.
+
 2002-06-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebControl.cs:

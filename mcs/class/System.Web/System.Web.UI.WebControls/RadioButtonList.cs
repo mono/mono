@@ -13,6 +13,7 @@
 
 using System;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Web;
 using System.Web.UI;
 
@@ -186,10 +187,25 @@ namespace System.Web.UI.WebControls
 			return null;
 		}
 
-		[MonoTODO("RadioButtonList_RenderItem")]
-		void IRepeatInfoUser.RenderItem(System.Web.UI.WebControls.ListItemType itemType, int repeatIndex, RepeatInfo repeatInfo, HtmlTextWriter writer)
+		void IRepeatInfoUser.RenderItem (System.Web.UI.WebControls.ListItemType itemType,
+						 int repeatIndex,
+						 RepeatInfo repeatInfo,
+						 HtmlTextWriter writer)
 		{
-			throw new NotImplementedException();
+			/* Create a new RadioButton as if it was defined in the page and render it */
+			RadioButton button = new RadioButton ();
+			button.GroupName = UniqueID;
+			button.TextAlign = TextAlign;
+			button.AutoPostBack = AutoPostBack;
+			button.ID = ClientID + "_" + repeatIndex.ToString (NumberFormatInfo.InvariantInfo);;
+			object view_state = ViewState ["TabIndex"];
+			if (view_state != null)
+				button.TabIndex = (short) view_state;
+			ListItem current = Items [repeatIndex];
+			button.Text = current.Text;
+			button.Attributes ["value"] = current.Value;
+			button.Checked = current.Selected;
+			button.RenderControl (writer);
 		}
 
 		bool IRepeatInfoUser.HasFooter
