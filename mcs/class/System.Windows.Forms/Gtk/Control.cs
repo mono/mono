@@ -21,6 +21,14 @@ namespace System.Windows.Forms {
 		string text;
 		int left, top, width, height;
 
+		static int init_me;
+		
+		static Control ()
+		{
+			init_me = 1;
+			Console.WriteLine ("MEEEEEEEEEEEEEEEEEEEEEE");
+		}
+		
 		public Control () : this ("")
 		{
 		}
@@ -74,6 +82,16 @@ namespace System.Windows.Forms {
 		public void Hide ()
 		{
 			Widget.EmitHide ();
+		}
+
+		public bool Visible {
+			get {
+				return Widget.Visible;
+			}
+
+			set {
+				Widget.Visible = value;
+			}
 		}
 	}
 }

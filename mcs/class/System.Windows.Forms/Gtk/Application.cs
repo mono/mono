@@ -20,5 +20,18 @@ namespace System.Windows.Forms {
 		{
 			Gtk.Application.Run ();
 		}
+
+		static void terminate_event_loop (object o, EventArgs args)
+		{
+			Gtk.Application.Quit ();
+		}
+		
+		public static void Run (Form form)
+		{
+			form.Visible = true;
+			form.Closed += new EventHandler (terminate_event_loop);
+				
+			Gtk.Application.Run ();
+		}
 	}
 }

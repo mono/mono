@@ -23,10 +23,24 @@ namespace System.Windows.Forms {
 		{
 		}
 
+		void delete_cb (object o, EventArgs args)
+		{
+                        SignalArgs sa = (SignalArgs) args;
+
+			//if (Closing != null)
+			//Closing (o, args);
+			
+			if (Closed != null)
+				Closed (o, args);
+			
+			sa.RetVal = false;
+		}
+		
 		internal override Widget CreateWidget ()
 		{
 			win = new Window (WindowType.Toplevel);
 
+			win.DeleteEvent += new EventHandler (delete_cb);
 			win.Title = Text;
 			return (Widget) win;
 		}
@@ -493,24 +507,11 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public event EventHandrel Closed {
-		//	add {
-		//		throw new NotImplementedException ();
-		//	}
-		//	remove {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		// [MonoTODO]
-		// public event CancelEventHandler Closing {
-		//	add {
-		//		throw new NotImplementedException ();
-		//	}
-		//	remove {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		
+		public event EventHandler Closed;
+		
+		// public event CancelEventHandler Closing;
+		
 		// [MonoTODO]
 		// public event EventHandler Deactivate {
 		//	add {
