@@ -50,7 +50,7 @@ namespace System.Web.Mail {
 	}
 	
 	public void WriteMailFrom( string from ) {
-	    command = "MAIL FROM: " + from;
+	    command = "MAIL FROM: <" + from + ">";
 	    WriteLine( command );
 	    ReadResponse();
 	    CheckForStatusCode( 250 );
@@ -58,7 +58,7 @@ namespace System.Web.Mail {
 	}
 	
 	public void WriteRcptTo( string to ) {
-	    command = "RCPT TO: " + to;  
+	    command = "RCPT TO: <" + to + ">";  
 	    WriteLine( command );
 	    ReadResponse();
 	    CheckForStatusCode( 250 );
