@@ -13,7 +13,7 @@ using System.IO;
 namespace System.Xml
 {
 
-	public delegate void XmlNodeChangedEventHandler (XmlNodeChangedEventArgs args);	
+	public delegate void XmlNodeChangedEventHandler (XmlNodeChangedEventArgs args);
 
 	/// <summary>
 	/// Abstract class XmlNodeList.
@@ -38,13 +38,13 @@ namespace System.Xml
 		public event XmlNodeChangedEventHandler NodeRemoving;
 
 		// public properties
-		
+
 		/// <summary>
 		/// Get the base URI for this document (the location from where the document was loaded)
 		/// </summary>
-		/// <example>If a document was loaded with doc.Load("c:\tmp\mydoc.xml"), 
+		/// <example>If a document was loaded with doc.Load("c:\tmp\mydoc.xml"),
 		/// then BaseURI would hold "c:\tmp\mydoc.xml"</example>
-		public override string BaseURI 
+		public override string BaseURI
 		{
 			get
 			{
@@ -56,19 +56,26 @@ namespace System.Xml
 		/// <summary>
 		/// Get the root element for the document.  If no root exists, null is returned.
 		/// </summary>
-		public XmlElement DocumentElement 
+		public XmlElement DocumentElement
 		{
 			get
 			{
-				// TODO - implement XmlDocument.Documentelement {get;}
-				throw new NotImplementedException("XmlDocument.DocumentElement not implemented");
+				XmlNode node = FirstChild;
+
+				while (node != null) {
+					if (node is XmlElement)
+						break;
+					node = node.NextSibling;
+				}
+
+				return node != null ? node as XmlElement : null;
 			}
 		}
 
 		/// <summary>
 		/// Gets the node containing the DOCTYPE declaration.
 		/// </summary>
-		public virtual XmlDocumentType DocumentType 
+		public virtual XmlDocumentType DocumentType
 		{
 			get
 			{
@@ -81,7 +88,7 @@ namespace System.Xml
 		/// <summary>
 		/// Get the XmlImplemenation for the current document.
 		/// </summary>
-		public XmlImplementation Implementation 
+		public XmlImplementation Implementation
 		{
 			get
 			{
@@ -94,7 +101,7 @@ namespace System.Xml
 		/// <summary>
 		/// Get/Set the markup representing the children of the document.
 		/// </summary>
-		public override string InnerXml 
+		public override string InnerXml
 		{
 			get
 			{
@@ -111,12 +118,11 @@ namespace System.Xml
 		/// <summary>
 		/// Get a value indicating if the document is read-only.
 		/// </summary>
-		public override bool IsReadOnly 
+		public override bool IsReadOnly
 		{
 			get
 			{
-				// TODO - implement XmlDocument.IsReadOnly {get;}
-				throw new NotImplementedException("IsReadOnly get not implemented");
+				return false;
 			}
 		}
 
@@ -133,7 +139,7 @@ namespace System.Xml
 		/// <summary>
 		/// Get the qualified name of the node.  For documents, returns "#document"
 		/// </summary>
-		public override string Name 
+		public override string Name
 		{
 			get
 			{
@@ -141,7 +147,7 @@ namespace System.Xml
 			}
 		}
 
-		public XmlNameTable NameTable 
+		public XmlNameTable NameTable
 		{
 			get
 			{
@@ -151,7 +157,7 @@ namespace System.Xml
 		}
 
 
-		public override XmlNodeType NodeType 
+		public override XmlNodeType NodeType
 		{
 			get
 			{
@@ -162,7 +168,7 @@ namespace System.Xml
 		/// <summary>
 		/// Returns OwnerDocument.  For an XmlDocument, this property is always null.
 		/// </summary>
-		public override XmlDocument OwnerDocument 
+		public override XmlDocument OwnerDocument
 		{
 			get
 			{
@@ -170,7 +176,7 @@ namespace System.Xml
 			}
 		}
 
-		public bool PreserveWhitespace 
+		public bool PreserveWhitespace
 		{
 			get
 			{
@@ -184,7 +190,7 @@ namespace System.Xml
 			}
 		}
 
-		public XmlResolver XmlResolver 
+		public XmlResolver XmlResolver
 		{
 			set
 			{
@@ -274,8 +280,7 @@ namespace System.Xml
 			string namespaceURI
 			)
 		{
-			// TODO - implement XmlDocument.CreateElement(prefix, localName, namespaceURI)
-			throw new NotImplementedException("XmlDocument.CreateElement(prefix, localName, namespaceURI) not implemented.");
+			return new XmlElement(prefix, localName, namespaceURI, this);
 		}
 
 
@@ -500,7 +505,7 @@ namespace System.Xml
 		public XmlDocument() : base(null)
 		{
 		}
-		
+
 
 	}
 }

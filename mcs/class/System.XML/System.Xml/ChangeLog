@@ -1,3 +1,11 @@
+2002-02-25  Jason Diamond <jason@injektilo.org>
+
+	* XmlDocument.cs, XmlElement.cs, XmlNode.xs, XmlNodeList.cs,
+	XmlNodeListAsArrayList.cs: Multiple fixes necessary to get
+	simple test to pass. The existing code is really shitty so I'll
+	probably start writing tests and refactoring before much else 
+	can get done.
+
 2002-02-25  Duncan Mak  <duncan@ximian.com>
 
 	* XmlDeclaration.cs: It should inherit from XmlLinkedNode, not XmlNode.

@@ -336,7 +336,8 @@ namespace System.Xml
 		/// <returns></returns>
 		public virtual XmlNode AppendChild (XmlNode newChild)
 		{
-			return InsertBefore(newChild, null);
+			_childNodes.Add(newChild);
+			return newChild;
 		}
 
 		/// <summary>
@@ -545,14 +546,13 @@ namespace System.Xml
 			}
 			else
 			{
-				FOwnerDocument.onNodeInserting(newChild, this);
+				newChild.OwnerDocument.onNodeInserting(newChild, this);
 				_childNodes.data.Insert(refNodeIndex, newChild);
 				newChild.setParent(this);
-				FOwnerDocument.onNodeInserted(newChild, this);
+				newChild.OwnerDocument.onNodeInserted(newChild, this);
 			}
 
 			return retval;
-			
 		}
 
 		/// <summary>
@@ -696,10 +696,7 @@ namespace System.Xml
 		/// <param name="newParent">new parent node.</param>
 		internal void setParent( XmlNode newParent)
 		{
-			if (newParent.OwnerDocument.Equals( FOwnerDocument) )
-				_parent = newParent;
-			else
-				throw new ArgumentException("New parent node owner does not match");
+			_parent = newParent;
 		}
 		
 		//======= Protected methods    ==============================================
@@ -719,21 +716,22 @@ namespace System.Xml
 			if (newChild.Equals(this))
 				throw new ArgumentException("Cannot insert node onto itself");
 
-			if (! FOwnerDocument.Equals( newChild.OwnerDocument) )
+			if (NodeType != XmlNodeType.Document && !FOwnerDocument.Equals( newChild.OwnerDocument) )
 				throw new ArgumentException("Reference node has different owner document than this node");
 		
-			if ( FOwnerDocument.IsReadOnly )
+			XmlDocument ownerDocument = newChild.OwnerDocument;
+
+			if (ownerDocument.IsReadOnly )
 				throw new ArgumentException("Operation not supported - tree is read-only");
 
 			//Check that insert node is not in our path to the root
 			XmlNode curParent = _parent;
-			while ( (curParent != null) & (! FOwnerDocument.Equals(curParent) ))
+			while ( (curParent != null) & (! ownerDocument.Equals(curParent) ))
 			{
 				if (curParent.Equals(newChild) )
 					throw new ArgumentException("Cannot insert ancestor a node");
 				curParent = curParent.ParentNode;
 			}
-
 		}
 
 		// Constructors

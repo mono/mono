@@ -16,7 +16,7 @@ namespace System.Xml
 		{
 			get
 			{
-				throw new NotImplementedException("XmlNodeList indexer must be implemented by derived class.");
+				return Item(i);
 			}
 		}
 

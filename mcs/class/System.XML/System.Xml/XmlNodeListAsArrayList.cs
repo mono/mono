@@ -36,10 +36,14 @@ namespace System.Xml
 			return _items.GetEnumerator();
 		}
 
+		public void Add(XmlNode node)
+		{
+			_items.Add(node);
+		}
 
 		public override XmlNode Item(int index)
 		{
-			if ((index > 0) & ( index < _items.Count - 1))
+			if ((index >= 0) & (index < _items.Count))
 				return _items[index] as XmlNode;
 			else
 				return null;

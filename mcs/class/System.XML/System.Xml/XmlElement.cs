@@ -16,13 +16,17 @@ namespace System.Xml
 		//===========================================================================
 		private XmlAttributeCollection _attributes;
 
+		private string prefix;
+		private string localName;
+		private string namespaceURI;
+
 		// Public Properties
 		//===========================================================================
 
 		/// <summary>
 		/// Return the XmlAttributeCollection on the Element
 		/// </summary>
-		public override XmlAttributeCollection Attributes 
+		public override XmlAttributeCollection Attributes
 		{
 			get
 			{
@@ -34,13 +38,13 @@ namespace System.Xml
 		/// <summary>
 		/// Get/Set the value for this node
 		/// </summary>
-		public override string Value 
+		public override string Value
 		{
 			get
 			{
 				return null;
 			}
-			
+
 			set
 			{
 				// Do nothing, can't set value on XmlElement...
@@ -50,7 +54,7 @@ namespace System.Xml
 		// Implement abstract methods of XmlNode
 		//=====================================================================
 		/// <summary>
-		/// Remove all children and attributes.  If 
+		/// Remove all children and attributes.  If
 		/// </summary>
 		public override void RemoveAll()
 		{
@@ -64,7 +68,7 @@ namespace System.Xml
 			//	appropriate namespace, baseURI, name, localName
 			// TODO - implement adding default attributes back in XmlElement.RemoveAll()
 		}
-		
+
 		/// <summary>
 		/// Return a clone of the node
 		/// </summary>
@@ -100,12 +104,10 @@ namespace System.Xml
 		/// Returns the local name of the node with qualifiers removed
 		/// LocalName of ns:elementName = "elementName"
 		/// </summary>
-		public override string LocalName 
+		public override string LocalName
 		{
-			get
-			{
-				// TODO - implement LocalName
-				throw new NotImplementedException();
+			get {
+				return localName;
 			}
 		}
 
@@ -115,20 +117,35 @@ namespace System.Xml
 		/// derived classes must implement as behavior varies
 		/// by tag type.
 		/// </summary>
-		public override string Name 
-		{ 
+		public override string Name
+		{
 			get
 			{
-				// TODO - implement Name
-				throw new NotImplementedException();
+				return prefix != String.Empty ? prefix + ":" + localName : localName;
 			}
 		}
 
-		public override XmlNodeType NodeType 
+		public override string NamespaceURI
+		{
+			get
+			{
+				return namespaceURI;
+			}
+		}
+
+		public override XmlNodeType NodeType
 		{
 			get
 			{
 				return XmlNodeType.Element;
+			}
+		}
+
+		public override string Prefix
+		{
+			get
+			{
+				return prefix;
 			}
 		}
 
@@ -137,9 +154,13 @@ namespace System.Xml
 
 		// Constructors
 		// ==========================================================================
-		internal XmlElement( XmlDocument aOwnerDoc, string elementName ) : base(aOwnerDoc)
+		protected internal XmlElement(string prefix, string localName, string namespaceURI, XmlDocument doc) : base(doc)
 		{
-			_attributes = new XmlAttributeCollection(aOwnerDoc, this, null);
+			this.prefix = prefix;
+			this.localName = localName;
+			this.namespaceURI = namespaceURI;
+
+			_attributes = new XmlAttributeCollection(doc, this, null);
 		}
 
 

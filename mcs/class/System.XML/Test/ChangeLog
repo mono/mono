@@ -1,3 +1,7 @@
+2002-02-25  Jason Diamond <jason@injektilo.org>
+
+	* XmlDocumentTests.cs: Added file.
+	
 2002-02-23  Jason Diamond <jason@injektilo.org>
 
 	* XmlTextReaderTests.cs: Added tests for qualified attributes.
