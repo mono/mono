@@ -1,3 +1,6 @@
+2005-03-29 Manjula GHM <mmanjula@novell.com>
+	*assign.cs: Disallow New Date assignment with types other than date and object type
+
 2005-03-25:3 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* AssemblyInfo.cs: Small increment in the version number to publicize --codepage support
 

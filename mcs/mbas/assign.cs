@@ -1,4 +1,4 @@
-//
+
 // assign.cs: Assignments.
 //
 // Authors:
@@ -267,7 +267,6 @@ namespace Mono.MonoBASIC {
 
 			Type target_type = target.Type;
 			Type source_type = real_source.Type;
-
 			// If we're an embedded assignment, our parent will reuse our source as its
 			// source, it won't read from our target.
 			if (is_embedded)
@@ -347,6 +346,15 @@ namespace Mono.MonoBASIC {
 					source = e.Resolve (ec);
 					return this;
 				}
+				if (source_type == TypeManager.date_type && (source_type!=target_type)) {
+					if( target_type != TypeManager.object_type) {
+						Report.Error (30311, loc,
+					      		" Value of type " + source_type +
+							" cannot be converted to " + target_type);
+						return null;
+					}
+					
+				}
 				if (target_type.IsValueType) {
 					New n = (New) source;
 					n.ValueTypeVariable = target;
@@ -414,7 +422,6 @@ namespace Mono.MonoBASIC {
 				Invocation i = (Invocation) target;
 				return i;
 			}
-
 			source = ConvertImplicitRequired (ec, source, target_type, loc);
 			if (source == null)
 				return null;
