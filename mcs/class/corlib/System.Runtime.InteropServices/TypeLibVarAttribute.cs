@@ -33,7 +33,7 @@ using System;
 
 namespace System.Runtime.InteropServices {
 
-	[AttributeUsage (AttributeTargets.Method, Inherited=false)]
+	[AttributeUsage (AttributeTargets.Field, Inherited=false)]
 	public sealed class TypeLibVarAttribute : Attribute
 	{
 		TypeLibVarFlags flags;

@@ -1,3 +1,8 @@
+2005-02-10  Marek Safar  <marek.safar@seznam.cz>
+
+	* TypeLibVarAttribute.cs,
+	* TypeLibTypeAttribute.cs,
+	* ComSourceInterfacesAttribute.cs: Fix AttributeUsage flags.
 
 Sat Jan 29 12:48:03 CET 2005 Paolo Molaro <lupus@ximian.com>
 

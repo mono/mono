@@ -33,7 +33,7 @@ using System.Runtime.Serialization;
 
 namespace System.Runtime.InteropServices
 {
-	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Assembly, 
+	[AttributeUsage (AttributeTargets.Class, 
 			 AllowMultiple = false, Inherited = false)]
 	public sealed class ComSourceInterfacesAttribute : Attribute
 	{
