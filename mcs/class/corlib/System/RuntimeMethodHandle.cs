@@ -9,6 +9,7 @@
 
 using System.Runtime.Serialization;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace System {
 
@@ -30,10 +31,7 @@ namespace System {
 			throw new NotImplementedException ();
                 }
 
-		[MonoTODO]
-		public IntPtr GetFunctionPointer ()
-		{
-			throw new NotImplementedException ();
-		}
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		public extern IntPtr GetFunctionPointer ();
 	}
 }

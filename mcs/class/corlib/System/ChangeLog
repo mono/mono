@@ -1,3 +1,8 @@
+
+Sat Sep 7 10:16:52 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* RuntimeMethodHandle.cs: implemented GetFunctionPointer().
+
 2002-09-06  Miguel de Icaza  <miguel@ximian.com>
 
 	* Console.cs: Specify an encoder, otherwise we will get the UTF8
