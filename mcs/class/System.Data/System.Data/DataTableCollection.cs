@@ -12,6 +12,7 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace System.Data {
 	/// <summary>
@@ -23,7 +24,6 @@ namespace System.Data {
 	public class DataTableCollection : InternalDataCollectionBase
 	{
 		DataSet dataSet;
-		const string defaultTableName = "Table1";
 		
 		#region Constructors 
 
@@ -62,11 +62,16 @@ namespace System.Data {
 
 		public virtual DataTable Add () 
 		{
-			return this.Add (defaultTableName);
+			DataTable Table = new DataTable ();
+			Add (Table);
+			return Table;
 		}
 
 		public virtual void Add (DataTable table) 
 		{
+			if (table.TableName == null || table.TableName == string.Empty)
+				NameTable (table);
+				
 			list.Add (table);
 			table.dataSet = dataSet;
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, table));
@@ -149,6 +154,23 @@ namespace System.Data {
 		}
 
 		#endregion
+
+		#region Private methods
+		
+		/// <summary>
+		/// gives name to Table (Table1, Table2, Table3,...)
+		/// </summary>
+		private void NameTable (DataTable Table)
+		{
+			string Name = "Table";
+			int i = 1;
+			while (Contains (Name + i))
+				i++;
+
+			Table.TableName = Name + i;			       
+		}
+
+		#endregion // Private methods
 
 		#region Events
 
