@@ -1,5 +1,10 @@
 2004-08-15  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.h mini.c mini-amd64.h mini-amd64.c: Throw the correct exception
+	on integer overflow.
+
+	* mini-amd64.c: Reorganize function call code.
+
 	* mini-amd64.c (peephole_pass): Merge changes from mini-x86.c.
 
 2004-08-14 Ben Maurer  <bmaurer@ximian.com>
