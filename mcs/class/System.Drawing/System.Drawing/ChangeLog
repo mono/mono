@@ -1,3 +1,9 @@
+2005-01-27  Peter Bartok  <pbartok@novell.com>
+
+	* Color.cs (GetBrightness, GetSaturation, GetHue): Fixed calculations
+	  of HSV numbers. Previous implementation returned wrong numbers and NaN
+	  on achromatic colors
+
 2005-01-27  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* PointConverter.cs, ImageFormatConverter.cs, RectangleConverter.cs,

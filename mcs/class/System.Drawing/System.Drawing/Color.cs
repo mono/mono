@@ -48,6 +48,8 @@ namespace System.Drawing
 	[Serializable]
 	public struct Color
 	{
+		private const float	RGBMax = 255;
+		private const float	HLSMax = 240;
 		private static Hashtable namedColors;
 		private static Hashtable systemColors;
 		static Color [] knownColors;
@@ -287,22 +289,76 @@ namespace System.Drawing
 			return ((colorA.a != colorB.a) || (colorA.r != colorB.r)
 			|| (colorA.g != colorB.g) || (colorA.b != colorB.b));
 		}
-		
+
+		// This gives the right results, but the floats don't exactly match MS
+		// Should we cache those? Getting all three numbers will have us do a few calcs 3 times
 		public float GetBrightness (){
-			// Intensity is the normalized sum of the three RGB values.;
-			return ((float)(r + g + b))/(255*3);
+			float	cMax;
+			float	cMin;
+
+			cMax = Math.Max(Math.Max(r, g), b);
+			cMin = Math.Min(Math.Min(r, g), b);
+
+			return (((cMax+cMin)*HLSMax)+RGBMax)/(2*RGBMax) / HLSMax;
 		}
+
 		public float GetSaturation (){
-			// S = 1 - I * Min(r,g,b)
-			return (255 - 
-				(((float)(r + g +b))/3)*Math.Min(r,Math.Min(g,b))
-				)/255;
+			float	cMax;
+			float	cMin;
+			float	l;
+
+			cMax = Math.Max(Math.Max(r, g), b);
+			cMin = Math.Min(Math.Min(r, g), b);
+
+			if (cMax==cMin) {		// Achromatic
+				return 0;
+			}
+
+			l = (((cMax+cMin)*HLSMax)+RGBMax)/(2*RGBMax);
+
+			if (l<=(HLSMax/2)) {
+				return (((cMax-cMin)*HLSMax)+((cMax+cMin)/2))/(cMax+cMin) / HLSMax;
+			} else {
+				return (((cMax-cMin)*HLSMax)+((2*RGBMax-cMax-cMin)/2))/(2*RGBMax-cMax-cMin) / HLSMax;
+			}
 		}
 
 		public float GetHue (){
-			float top = ((float)(2*r-g-b))/(2*255);
-			float bottom = (float)Math.Sqrt(((r-g)*(r-g) + (r-b)*(g-b))/255);
-			return (float)Math.Acos(top/bottom);
+			float	cMax;
+			float	cMin;
+			float	rDelta;
+			float	gDelta;
+			float	bDelta;
+			float	h;
+
+			cMax = Math.Max(Math.Max(r, g), b);
+			cMin = Math.Min(Math.Min(r, g), b);
+
+			if (cMax==cMin) {		// Achromatic
+				return 0;
+			}
+
+			rDelta=(((cMax-r)*(HLSMax/6))+((cMax-cMin)/2))/(cMax-cMin);
+			gDelta=(((cMax-g)*(HLSMax/6))+((cMax-cMin)/2))/(cMax-cMin);
+			bDelta=(((cMax-b)*(HLSMax/6))+((cMax-cMin)/2))/(cMax-cMin);
+
+			if (r == cMax) {
+				h=bDelta - gDelta;
+			} else if (g == cMax) {
+				h=(HLSMax/3) + rDelta - bDelta;
+			} else { /* B == cMax */
+				h=((2*HLSMax)/3) + gDelta - rDelta;
+			}
+
+			if (h<0) {
+				h+=HLSMax;
+			}
+
+			if (h>HLSMax) {
+				h-=HLSMax;
+			}
+
+			return h * 360 / HLSMax;
 		}
 		
 		// -----------------------
