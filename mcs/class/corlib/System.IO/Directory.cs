@@ -340,24 +340,6 @@ namespace System.IO
 				throw new ArgumentException ("Path contains invalid chars");
 		}
 
-		//
-		// Returns true if it is the empty string, or contains
-		// only whitespace characters
-		//
-		private static bool IsEmptyString (string s)
-		{
-			if (s == "")
-				return true;
-			
-			int length = s.Length;
-
-			for (int i = 0; i < length; i++)
-				if (!Char.IsWhiteSpace (s, i))
-					return false;
-
-			return true;
-		}
-
 		private static string [] GetFileSystemEntries (string path, string pattern, FileAttributes mask, FileAttributes attrs)
 		{
 			MonoIOStat stat;
@@ -369,7 +351,7 @@ namespace System.IO
 			if (pattern == String.Empty)
 				return new string [] {};
 			
-			if (IsEmptyString (path))
+			if (path.Trim () == "")
 				throw new ArgumentException ("The Path does not have a valid format");
 
 			string wild = Path.Combine (path, pattern);
