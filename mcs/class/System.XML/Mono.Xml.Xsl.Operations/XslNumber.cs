@@ -380,7 +380,7 @@ namespace Mono.Xml.Xsl.Operations {
 				{
 					if (num < 1 || num > 4999) {
 						b.Append (num);
-						return
+						return;
 					}
 					
 					for (int i = 0; i < decValues.Length; i++) {
