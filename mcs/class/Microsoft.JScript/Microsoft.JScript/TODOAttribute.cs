@@ -7,7 +7,8 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
-namespace System.Runtime.Serialization.Formatters.Soap {
+namespace Microsoft.JScript {
+	using System;
 
 	/// <summary>
 	///   The TODO attribute is used to flag all incomplete bits in our class libraries
@@ -15,7 +16,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 	///
 	/// <remarks>
 	///   Use this to decorate any element which you think is not complete
-	/// </remarks>
+	/// </remarks>	
 	[AttributeUsage (AttributeTargets.All, AllowMultiple=true)]
 	public class MonoTODOAttribute : Attribute {
 
