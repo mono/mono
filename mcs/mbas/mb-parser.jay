@@ -121,6 +121,14 @@ namespace Mono.MonoBASIC
 		//
 		Stack switch_stack;
 		
+		// Expression stack for nested ifs
+		Stack expr_stack; 
+		
+		Stack tmp_blocks;
+	    Stack statement_stack;
+
+
+		
 		static public bool InitialOptionExplicit = false;
 		static public bool InitialOptionStrict = false;
 		static public bool InitialOptionCompareBinary = true;
@@ -1399,12 +1407,14 @@ interface_event_declaration
 	;
 
 property_declaration
-	  : opt_access_specifier PROPERTY identifier opt_property_parameters AS type opt_implement_clause EOL
+	  : opt_access_specifier opt_modifiers PROPERTY identifier opt_property_parameters AS type opt_implement_clause EOL
 	  {
-		get_implicit_value_parameter_type = (Expression) $6;
-		get_implicit_value_parameter_name = (string) $3;
+		get_implicit_value_parameter_type = (Expression) $7;
+		get_implicit_value_parameter_name = (string) $4;
 		
-		current_local_parameters = (Parameters) $4;
+		current_modifiers = (int) $2; 
+		
+		current_local_parameters = (Parameters) $5;
 		if (current_local_parameters != Parameters.EmptyReadOnlyParameters) { 
 			get_parameters = current_local_parameters.Copy (lexer.Location);
 			set_parameters = current_local_parameters.Copy (lexer.Location);
@@ -1424,7 +1434,7 @@ property_declaration
 		lexer.PropertyParsing = false;
 
 		Property prop;
-		Pair pair = (Pair) $10;
+		Pair pair = (Pair) $11;
 		Accessor get_block = (Accessor) pair.First;
 		Accessor set_block = (Accessor) pair.Second;
 
@@ -1434,9 +1444,9 @@ property_declaration
 		if ((current_container is Struct) && (current_modifiers == 0))
 			current_modifiers = Modifiers.PUBLIC;				
 			
-		prop = new Property ((Expression) $6, (string) $3, current_modifiers, get_block, set_block,
+		prop = new Property ((Expression) $7, (string) $4, current_modifiers, get_block, set_block,
 				     current_attributes, loc, set_implicit_value_parameter_name, 
-				     get_parameters, set_parameters, (Expression) $7);
+				     get_parameters, set_parameters, (Expression) $8);
 		
 		CheckDef (current_container.AddProperty (prop), prop.Name, loc);
 		get_implicit_value_parameter_type = null;
@@ -2352,12 +2362,22 @@ if_statement
 	  {
 		$$ = $3;
 	  }
-	| if_statement_open THEN embedded_statement
+	| if_statement_open THEN pre_embedded_statement
 	  {
-	  	Location l = (Location) oob_stack.Pop ();
-	  	$$ = new If ((Expression) tmp_expr, end_block(), l);
+		Location l = (Location) oob_stack.Pop ();
+		tmp_expr = (Expression)expr_stack.Pop(); 
+		$$ = new If ((Expression) tmp_expr, end_block(), l);
 	  }
 	;
+
+pre_embedded_statement
+	: embedded_statement 
+	  {
+		Statement s = (Statement) $1;
+
+		current_block.AddStatement ((Statement) $1);
+	  } 
+	;	
 	
 if_statement_open
 	: IF boolean_expression 
@@ -2365,6 +2385,7 @@ if_statement_open
 	   	oob_stack.Push (lexer.Location);
 	   	start_block();
 	   	tmp_expr = (Expression) $2;
+	   	expr_stack.Push(tmp_expr);
 	  }
 	 ;
 
@@ -2379,28 +2400,94 @@ if_statement_rest
 	  END IF
 	  { 
 		Location l = (Location) oob_stack.Pop ();
-
-		$$ = new If ((Expression) tmp_expr, (Statement) end_block(), l);
-
+                Expression expr = (Expression)expr_stack.Pop(); 
+		$$ = new If ((Expression) expr, (Statement) end_block(), l);
 	  }	  
 	| end_of_stmt
 	  opt_statement_list
 	  ELSE end_of_stmt 
 	  { 
-	  	tmp_block = end_block();
+	  	Block bl = end_block(); 
+ 	        tmp_blocks.Push(bl); 
 	  	start_block();
 	  }
 	  opt_statement_list
 	  END IF	
 	  {
 		Location l = (Location) oob_stack.Pop ();
-
+                tmp_expr = (Expression)expr_stack.Pop(); 
+                tmp_block = (Block) tmp_blocks.Pop(); 
 		$$ = new If ((Expression) tmp_expr, (Statement) tmp_block, (Statement) end_block(), l);
 	  }	
 	| end_of_stmt
 	  opt_statement_list 
 	  ELSEIF boolean_expression opt_then 
-	  if_statement_rest 	     
+	  { 
+    	        tmp_expr = (Expression) $4;                                                  
+                expr_stack.Push(tmp_expr);                                                 
+	  	tmp_block = end_block();
+                tmp_blocks.Push(tmp_block);
+	  	start_block();
+	  }
+	  else_if_statement_rest 
+	  {
+		Statement stmt = (Statement) statement_stack.Pop();
+                Block bl = (Block) tmp_blocks.Pop();  
+	   	Expression expr =  (Expression)expr_stack.Pop();  
+		Location l = (Location) oob_stack.Pop ();
+                $$ = (Statement) new If ((Expression) expr, (Statement) bl , stmt , l); 
+	  }
+	;
+	
+	
+else_if_statement_rest
+	: end_of_stmt
+	  opt_statement_list 
+	  END IF
+	  { 
+		Location l = (Location) oob_stack.Pop ();
+		oob_stack.Push (l);
+	   	Expression expr = (Expression)expr_stack.Pop(); 
+                Statement stmt = (Statement) new If ((Expression) expr, (Statement)  end_block(), l);
+                statement_stack.Push(stmt);
+	  }
+	| end_of_stmt
+	  opt_statement_list
+	  ELSE end_of_stmt 
+	  { 
+	  	Block bl = end_block();
+                tmp_blocks.Push(bl);
+	  	start_block();
+	  }
+	  opt_statement_list
+	  END IF	
+	  {
+		Location l = (Location) oob_stack.Pop ();
+		oob_stack.Push (l);
+	   	Expression expr = (Expression)expr_stack.Pop(); 
+	   	Block bl = (Block)tmp_blocks.Pop(); 
+                Statement stmt = (Statement) new If ((Expression) expr,  (Statement) bl , (Statement)  end_block(), l);
+                statement_stack.Push(stmt);
+	  }	
+ 	| end_of_stmt
+	  opt_statement_list 
+	  ELSEIF boolean_expression opt_then 
+	  { 
+                expr_stack.Push((Expression) $4);                                                 
+	  	Block bl = end_block();
+                tmp_blocks.Push(bl);
+	  	start_block();
+	  }
+	  else_if_statement_rest 
+	  {
+		Location l = (Location) oob_stack.Pop ();
+		oob_stack.Push (l);
+		Statement tmp_stmt = (Statement)statement_stack.Pop();
+                Block bl = (Block) tmp_blocks.Pop();  
+	   	Expression expr =  (Expression)expr_stack.Pop();  
+		Statement stmt = (Statement) new If ((Expression) expr, (Statement) bl, tmp_stmt , l);
+                statement_stack.Push(stmt);
+	  }	     
 	;
 	
 select_statement
@@ -3980,6 +4067,9 @@ public override int parse ()
 	current_container.Namespace = current_namespace;
 	oob_stack = new Stack ();
 	switch_stack = new Stack ();
+	expr_stack = new Stack ();	
+	tmp_blocks = new Stack(); 
+	statement_stack = new Stack(); 	
 	
 	UseExtendedSyntax = name.EndsWith(".mbs");
 	OptionExplicit = InitialOptionExplicit || UseExtendedSyntax;
@@ -4008,4 +4098,3 @@ public override int parse ()
 
 /* end end end */
 }
-
