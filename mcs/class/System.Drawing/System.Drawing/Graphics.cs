@@ -146,7 +146,8 @@ namespace System.Drawing
 		public void Clear (Color color)
 		{
 			Status status;
- 			status = GDIPlus.GdipGraphicsClear (nativeObject, color.ToArgb ()); 				GDIPlus.CheckStatus (status);
+ 			status = GDIPlus.GdipGraphicsClear (nativeObject, color.ToArgb ());
+ 			GDIPlus.CheckStatus (status);
 		}
 
 		public void Dispose ()
