@@ -1,3 +1,7 @@
+2004-09-03  Tim Coleman <tim@timcoleman.com>
+	* System.Security.dll.sources: 
+		Add new System.Security.Cryptography.X509Certificates classes
+
 2004-09-02  Tim Coleman <tim@timcoleman.com>
 	* System.Security.dll.sources: 
 		Add new System.Security.Cryptography.Xml classes

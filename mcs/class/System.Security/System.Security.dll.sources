@@ -60,11 +60,13 @@ System.Security.Cryptography.X509Certificates/X509ExtensionEnumerator.cs
 System.Security.Cryptography.X509Certificates/X509FindType.cs
 System.Security.Cryptography.X509Certificates/X509IncludeOption.cs
 System.Security.Cryptography.X509Certificates/X509KeyUsageFlags.cs
+System.Security.Cryptography.X509Certificates/X509KeyUsageExtension.cs
 System.Security.Cryptography.X509Certificates/X509NameType.cs
 System.Security.Cryptography.X509Certificates/X509RevocationFlag.cs
 System.Security.Cryptography.X509Certificates/X509RevocationMode.cs
 System.Security.Cryptography.X509Certificates/X509SelectionFlag.cs
 System.Security.Cryptography.X509Certificates/X509Store.cs
+System.Security.Cryptography.X509Certificates/X509SubjectKeyIdentifierExtension.cs
 System.Security.Cryptography.X509Certificates/X509VerificationFlags.cs
 System.Security.Cryptography.Xml/CipherData.cs
 System.Security.Cryptography.Xml/CipherReference.cs
