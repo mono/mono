@@ -4191,7 +4191,7 @@ namespace Mono.CSharp {
 
 		public bool IsGeneral {
 			get {
-				return type == null;
+				return type_expr == null;
 			}
 		}
 
