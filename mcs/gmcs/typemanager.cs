@@ -2406,14 +2406,14 @@ public class TypeManager {
 		ArrayList new_ifaces = new ArrayList ();
 		
 		foreach (TypeExpr iface in base_interfaces){
-			Type itype = iface.ResolveType (ec);
-			if (itype == null)
+			TypeExpr texpr = iface.ResolveAsTypeTerminal (ec);
+			if (texpr == null)
 				return null;
 
-			if (!new_ifaces.Contains (itype))
-				new_ifaces.Add (itype);
+			if (!new_ifaces.Contains (texpr.Type))
+				new_ifaces.Add (texpr.Type);
 			
-			Type [] implementing = itype.GetInterfaces ();
+			Type [] implementing = texpr.Type.GetInterfaces ();
 			
 			foreach (Type imp in implementing){
 				if (!new_ifaces.Contains (imp))

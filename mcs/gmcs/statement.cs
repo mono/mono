@@ -1027,9 +1027,7 @@ namespace Mono.CSharp {
 				if (texpr == null)
 					return false;
 				
-				VariableType = texpr.ResolveType (ec);
-			if (VariableType == null)
-					return false;
+				VariableType = texpr.Type;
 			}
 
 			if (VariableType == TypeManager.void_type) {
@@ -3293,7 +3291,7 @@ namespace Mono.CSharp {
 			if (texpr == null)
 				return false;
 
-			expr_type = texpr.ResolveType (ec);
+			expr_type = texpr.Type;
 
 			CheckObsolete (expr_type);
 
@@ -3562,7 +3560,7 @@ namespace Mono.CSharp {
 				if (te == null)
 					return false;
 
-				type = te.ResolveType (ec);
+				type = te.Type;
 
 				CheckObsolete (type);
 
@@ -3768,7 +3766,7 @@ namespace Mono.CSharp {
 			if (texpr == null)
 				return false;
 
-			expr_type = texpr.ResolveType (ec);
+			expr_type = texpr.Type;
 
 			//
 			// The type must be an IDisposable or an implicit conversion
@@ -4043,7 +4041,7 @@ namespace Mono.CSharp {
 			if (texpr == null)
 				return false;
 			
-			var_type = texpr.ResolveType (ec);
+			var_type = texpr.Type;
 
 			//
 			// We need an instance variable.  Not sure this is the best

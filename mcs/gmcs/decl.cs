@@ -687,8 +687,12 @@ namespace Mono.CSharp {
 				else
 					args = TypeParameters;
 
-				ConstructedType ctype = new ConstructedType (t, args, loc);
-				t = ctype.ResolveType (ec);
+				TypeExpr ctype = new ConstructedType (t, args, loc);
+				ctype = ctype.ResolveAsTypeTerminal (ec);
+				if (ctype == null)
+					return null;
+
+				t = ctype.Type;
 			}
 
 			return t;

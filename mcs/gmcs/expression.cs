@@ -1034,7 +1034,7 @@ namespace Mono.CSharp {
 			TypeExpr texpr = ProbeType.ResolveAsTypeTerminal (ec);
 			if (texpr == null)
 				return null;
-			probe_type = texpr.ResolveType (ec);
+			probe_type = texpr.Type;
 
 			CheckObsoleteAttribute (probe_type);
 
@@ -1772,7 +1772,7 @@ namespace Mono.CSharp {
 			if (target == null)
 				return null;
 			
-			type = target.ResolveType (ec);
+			type = target.Type;
 
 			CheckObsoleteAttribute (type);
 
@@ -6003,7 +6003,7 @@ namespace Mono.CSharp {
 			if (texpr == null)
 				return null;
 			
-			type = texpr.ResolveType (ec);
+			type = texpr.Type;
 			if (type == null)
 				return null;
 			
@@ -6540,7 +6540,7 @@ namespace Mono.CSharp {
 			if (array_type_expr == null)
 				return false;
 
-			type = array_type_expr.ResolveType (ec);
+			type = array_type_expr.Type;
 
 			if (!type.IsArray) {
 				Error (622, "Can only use array initializer expressions to assign to array types. Try using a new expression instead.");
@@ -7040,7 +7040,7 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Variable;
 
 			if (ec.TypeContainer.CurrentType != null)
-				type = ec.TypeContainer.CurrentType.ResolveType (ec);
+				type = ec.TypeContainer.CurrentType.Type;
 			else
 				type = ec.ContainerType;
 
@@ -7259,7 +7259,7 @@ namespace Mono.CSharp {
 			if (texpr == null)
 				return null;
 
-			typearg = texpr.ResolveType (ec);
+			typearg = texpr.Type;
 
 			if (typearg == TypeManager.void_type) {
 				Error (673, "System.Void cannot be used from C# - " +
@@ -7338,7 +7338,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			type_queried = texpr.ResolveType (ec);
+			type_queried = texpr.Type;
 
 			CheckObsoleteAttribute (type_queried);
 
@@ -7639,7 +7639,7 @@ namespace Mono.CSharp {
 
 			Type expr_type;
 			if (expr is TypeExpr){
-				expr_type = ((TypeExpr) expr).ResolveType (ec);
+				expr_type = expr.Type;
 
 				if (!ec.DeclSpace.CheckAccessLevel (expr_type)){
 					Report.Error (122, loc, "'{0}' is inaccessible due to its protection level", expr_type);
@@ -7809,9 +7809,11 @@ namespace Mono.CSharp {
 				return new_expr.ResolveAsTypeStep (ec);
 			}
 
-			Type expr_type = ((TypeExpr) new_expr).ResolveType (ec);
-			if (expr_type == null)
+			TypeExpr tnew_expr = new_expr.ResolveAsTypeTerminal (ec);
+			if (tnew_expr == null)
 				return null;
+
+			Type expr_type = tnew_expr.Type;
 
 			if (expr_type.IsPointer){
 				Error (23, "The `.' operator can not be applied to pointer operands (" +
@@ -7831,8 +7833,8 @@ namespace Mono.CSharp {
 			if (texpr == null)
 				return null;
 
-			Type t = texpr.ResolveType (ec);
-			if (t == null)
+			texpr = texpr.ResolveAsTypeTerminal (ec);
+			if (texpr == null)
 				return null;
 
 			TypeArguments the_args = args;
@@ -7850,7 +7852,7 @@ namespace Mono.CSharp {
 			}
 
 			if (the_args != null) {
-				ConstructedType ctype = new ConstructedType (t, the_args, loc);
+				ConstructedType ctype = new ConstructedType (texpr.Type, the_args, loc);
 				return ctype.ResolveAsTypeStep (ec);
 			}
 
@@ -8985,7 +8987,7 @@ namespace Mono.CSharp {
 			if (lexpr == null)
 				return null;
 
-			Type ltype = lexpr.ResolveType (ec);
+			Type ltype = lexpr.Type;
 
 			if ((ltype == TypeManager.void_type) && (dim != "*")) {
 				Report.Error (1547, Location,
@@ -9042,9 +9044,11 @@ namespace Mono.CSharp {
 				if (texpr == null)
 					return null;
 
-				type = texpr.ResolveType (ec);
-				if (type == null)
+				texpr = texpr.ResolveAsTypeTerminal (ec);
+				if (texpr == null)
 					return null;
+
+				type = texpr.Type;
 			}
 
 			if (!ec.InUnsafe && type.IsPointer){
@@ -9176,9 +9180,7 @@ namespace Mono.CSharp {
 			if (texpr == null)
 				return null;
 
-			otype = texpr.ResolveType (ec);
-			if (otype == null)
-				return null;
+			otype = texpr.Type;
 
 			if (!TypeManager.VerifyUnManaged (otype, loc))
 				return null;

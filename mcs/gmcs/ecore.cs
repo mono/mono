@@ -2375,15 +2375,6 @@ namespace Mono.CSharp {
 
 		public abstract TypeExpr DoResolveAsTypeStep (EmitContext ec);
 
-		public Type ResolveType (EmitContext ec)
-		{
-			TypeExpr t = ResolveAsTypeTerminal (ec);
-			if (t == null)
-				return null;
-
-			return t.Type;
-		}
-
 		public abstract string Name {
 			get;
 		}
@@ -2464,9 +2455,11 @@ namespace Mono.CSharp {
 				if (texpr == null)
 					return null;
 
-				type = texpr.ResolveType (ec);
-				if (type == null)
+				texpr = texpr.ResolveAsTypeTerminal (ec);
+				if (texpr == null)
 					return null;
+
+				type = texpr.Type;
 			}
 
 			return this;
@@ -2518,10 +2511,7 @@ namespace Mono.CSharp {
 			if (texpr == null)
 				return null;
 
-			Type type = texpr.ResolveType (ec);
-			if (type == null)
-				return null;
-
+			Type type = texpr.Type;
 			int num_args = TypeManager.GetNumberOfTypeArguments (type);
 
 			if (args != null) {
@@ -2996,7 +2986,7 @@ namespace Mono.CSharp {
 				Type ctype;
 				if (!is_field_initializer &&
 				    (ec.TypeContainer.CurrentType != null))
-					ctype = ec.TypeContainer.CurrentType.ResolveType (ec);
+					ctype = ec.TypeContainer.CurrentType.Type;
 				else
 					ctype = ec.ContainerType;
 

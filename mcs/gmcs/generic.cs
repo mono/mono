@@ -269,46 +269,39 @@ namespace Mono.CSharp {
 			ArrayList list = new ArrayList ();
 
 			foreach (TypeExpr iface_constraint in iface_constraints) {
-				Type resolved = iface_constraint.ResolveType (ec);
-				if (resolved == null)
-					return false;
-
 				foreach (Type type in list) {
-					if (!type.Equals (resolved))
+					if (!type.Equals (iface_constraint.Type))
 						continue;
 
 					Report.Error (405, loc,
 						      "Duplicate constraint `{0}' for type " +
-						      "parameter `{1}'.", resolved, name);
+						      "parameter `{1}'.", iface_constraint.Type,
+						      name);
 					return false;
 				}
 
-				list.Add (resolved);
+				list.Add (iface_constraint.Type);
 			}
 
 			foreach (TypeParameterExpr expr in type_param_constraints) {
-				Type resolved = expr.ResolveType (ec);
-				if (resolved == null)
-					return false;
-
 				foreach (Type type in list) {
-					if (!type.Equals (resolved))
+					if (!type.Equals (expr.Type))
 						continue;
 
 					Report.Error (405, loc,
 						      "Duplicate constraint `{0}' for type " +
-						      "parameter `{1}'.", resolved, name);
+						      "parameter `{1}'.", expr.Type, name);
 					return false;
 				}
 
-				list.Add (resolved);
+				list.Add (expr.Type);
 			}
 
 			iface_constraint_types = new Type [list.Count];
 			list.CopyTo (iface_constraint_types, 0);
 
 			if (class_constraint != null) {
-				class_constraint_type = class_constraint.ResolveType (ec);
+				class_constraint_type = class_constraint.Type;
 				if (class_constraint_type == null)
 					return false;
 
@@ -961,13 +954,8 @@ namespace Mono.CSharp {
 				}
 				if (te is TypeParameterExpr)
 					has_type_args = true;
-				atypes [i] = te.ResolveType (ec);
 
-				if (atypes [i] == null) {
-					Report.Error (246, Location, "Cannot find type `{0}'",
-						      te.Name);
-					ok = false;
-				}
+				atypes [i] = te.Type;
 			}
 			return ok;
 		}
@@ -1072,9 +1060,10 @@ namespace Mono.CSharp {
 					new_args.Add (new TypeExpression (t, loc));
 				}
 
-				ctype = new ConstructedType (ctype, new_args, loc).ResolveType (ec);
-				if (ctype == null)
+				TypeExpr ct = new ConstructedType (ctype, new_args, loc);
+				if (ct.ResolveAsTypeTerminal (ec) == null)
 					return false;
+				ctype = ct.Type;
 			}
 
 			return Convert.ImplicitStandardConversionExists (ec, expr, ctype);
@@ -1424,10 +1413,7 @@ namespace Mono.CSharp {
 			if (texpr == null)
 				return null;
 
-			type = texpr.ResolveType (ec);
-			if (type == null)
-				return null;
-
+			type = texpr.Type;
 			if (type.IsGenericParameter || TypeManager.IsValueType (type))
 				temp_storage = new LocalTemporary (ec, type);
 

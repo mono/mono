@@ -1212,6 +1212,8 @@ namespace Mono.CSharp {
 
 			TypeManager.AddUserType (Name, TypeBuilder, this);
 
+			TypeExpr current_type = null;
+
 			if (IsGeneric) {
 				string[] param_names = new string [TypeParameters.Length];
 				for (int i = 0; i < TypeParameters.Length; i++)
@@ -1234,7 +1236,7 @@ namespace Mono.CSharp {
 				for (int i = offset; i < gen_params.Length; i++)
 					CurrentTypeParameters [i - offset].DefineConstraints ();
 
-				CurrentType = new ConstructedType (Name, TypeParameters, Location);
+				current_type = new ConstructedType (Name, TypeParameters, Location);
 			}
 
 			if (IsGeneric) {
@@ -1271,18 +1273,14 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ConstructedType constructed = parent_type as ConstructedType;
-			if ((constructed == null) && (parent_type != null))
-				ptype = parent_type.ResolveType (ec);
-			else
-				ptype = null;
-
-			if (constructed != null) {
-				ptype = constructed.ResolveType (ec);
-				if (ptype == null) {
+			if (parent_type != null) {
+				parent_type = parent_type.ResolveAsTypeTerminal (ec);
+				if (parent_type == null) {
 					error = true;
 					return null;
 				}
+
+				ptype = parent_type.Type;
 			}
 
 			if (!CheckRecursiveDefinition ()) {
@@ -1330,6 +1328,14 @@ namespace Mono.CSharp {
 						error = true;
 						return null;
 					}
+			}
+
+			if (current_type != null) {
+				CurrentType = current_type.ResolveAsTypeTerminal (ec);
+				if (CurrentType == null) {
+					error = true;
+					return null;
+				}
 			}
 
 			//
@@ -1523,7 +1529,7 @@ namespace Mono.CSharp {
 			DefineContainerMembers (delegates);
 
 			if (CurrentType != null) {
-				GenericType = CurrentType.ResolveType (ec);
+				GenericType = CurrentType.Type;
 
 				ec.ContainerType = GenericType;
 			}
@@ -4855,7 +4861,7 @@ namespace Mono.CSharp {
 				return false;
 
 			if (container.CurrentType != null)
-				declaring_type = container.CurrentType.ResolveType (ec);
+				declaring_type = container.CurrentType.Type;
 			else
 				declaring_type = container.TypeBuilder;
 
@@ -5239,9 +5245,7 @@ namespace Mono.CSharp {
 			if (texpr == null)
 				return false;
 
-			MemberType = texpr.ResolveType (ec);
-			if (MemberType == null)
-				return false;
+			MemberType = texpr.Type;
 
 			if ((Parent.ModFlags & Modifiers.SEALED) != 0){
 				if ((ModFlags & (Modifiers.VIRTUAL|Modifiers.ABSTRACT)) != 0){
@@ -5290,9 +5294,7 @@ namespace Mono.CSharp {
 				if (iface_texpr == null)
 					return false;
 
-				InterfaceType = iface_texpr.ResolveType (ec);
-				if (InterfaceType == null)
-					return false;
+				InterfaceType = iface_texpr.Type;
 
 				if (InterfaceType.IsClass) {
 					Report.Error (538, Location, "'{0}' in explicit interface declaration is not an interface", ExplicitInterfaceName);
@@ -5561,13 +5563,11 @@ namespace Mono.CSharp {
 			bool old_unsafe = ec.InUnsafe;
 			ec.InUnsafe = InUnsafe;
 			TypeExpr texpr = Type.ResolveAsTypeTerminal (ec);
+			ec.InUnsafe = old_unsafe;
 			if (texpr == null)
 				return false;
 			
-			MemberType = texpr.ResolveType (ec);
-			ec.InUnsafe = old_unsafe;
-			if (MemberType == null)
-				return false;
+			MemberType = texpr.Type;
 
 			if (!CheckBase ())
 				return false;

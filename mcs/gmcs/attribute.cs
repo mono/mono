@@ -179,9 +179,9 @@ namespace Mono.CSharp {
 				return null;
 			}
 			if (t1 != null)
-				return t1.ResolveType (ec);
+				return t1.Type;
 			if (t2 != null)
-				return t2.ResolveType (ec);
+				return t2.Type;
 			if (err0616 != null) {
 				Report.Error (616, Location, err0616);
 				return null;

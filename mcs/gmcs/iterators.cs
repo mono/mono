@@ -399,7 +399,7 @@ namespace Mono.CSharp {
 			}
 
 			if (container.CurrentType != null)
-				this_type = container.CurrentType.ResolveType (ec);
+				this_type = container.CurrentType.Type;
 			else
 				this_type = container.TypeBuilder;
 

@@ -1,3 +1,11 @@
+2004-11-18  Martin Baulig  <martin@ximian.com>
+
+	* ecore.cs (TypeExpr.ResolveType): Removed.
+	(Expression.ResolveAsTypeTerminal): We always return a fully
+	resolved `TypeExpr', so we can just access its `Type'.
+
+	* class.cs (TypeContainer.DefineType): Resolve `CurrentType' here.
+
 2004-11-17  Martin Baulig  <martin@ximian.com>
 
 	* ecore.cs (IAlias.Type): Replaced with ResolveAsType() to make
