@@ -30,6 +30,8 @@ namespace System.Runtime.Remoting {
 			TypeName = typeName;
 			Assembly a = Assembly.Load (assemblyName);
 			obj_type = a.GetType (typeName);
+			if (obj_type == null) 
+				throw new RemotingException ("Type not found: " + typeName + ", " + assemblyName);
 		}
 		
 		public IContextAttribute [] ContextAttributes {

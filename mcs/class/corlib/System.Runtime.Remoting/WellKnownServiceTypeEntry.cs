@@ -36,6 +36,8 @@ namespace System.Runtime.Remoting {
 			obj_type = a.GetType (typeName);
 			obj_uri = objectUri;
 			obj_mode = mode;
+			if (obj_type == null) 
+				throw new RemotingException ("Type not found: " + typeName + ", " + assemblyName);
 		}
 
 		public IContextAttribute [] ContextAttributes {
@@ -57,7 +59,7 @@ namespace System.Runtime.Remoting {
 
 		public override string ToString ()
 		{
-			return TypeName + AssemblyName + ObjectUri;
+			return TypeName + ", " + AssemblyName + " " + ObjectUri;
 		}
 	}
 }

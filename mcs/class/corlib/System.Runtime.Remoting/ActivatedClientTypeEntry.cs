@@ -7,6 +7,7 @@
 //
 
 using System;
+using System.Reflection;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Contexts;
 
@@ -30,6 +31,10 @@ namespace System.Runtime.Remoting {
 			AssemblyName = assemblyName;
 			TypeName = typeName;
 			applicationUrl = appUrl;
+			Assembly a = Assembly.Load (assemblyName);
+			obj_type = a.GetType (typeName);
+			if (obj_type == null)
+				throw new RemotingException ("Type not found: " + typeName + ", " + assemblyName);
 		}
 
 		public string ApplicationUrl {

@@ -6,7 +6,6 @@
 //
 // (C) 2002, Jaime Anguiano Olarra
 //
-// FIXME: This is just the skeleton for practical purposes
 
 using System;
 using System.IO;
@@ -14,6 +13,7 @@ using System.Reflection;
 using System.Collections;
 using System.Runtime.Remoting.Activation;
 using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting.Lifetime;
 using Mono.Xml;
 
 namespace System.Runtime.Remoting
@@ -25,11 +25,16 @@ namespace System.Runtime.Remoting
 		static string configFile = "";
 		static MiniParser parser = null; 
 		static string processGuid = null;
+		static bool defaultConfigRead = false;
 
 		static Hashtable wellKnownClientEntries = new Hashtable();
 		static Hashtable activatedClientEntries = new Hashtable();
 		static Hashtable wellKnownServiceEntries = new Hashtable();
 		static Hashtable activatedServiceEntries = new Hashtable();
+		
+		static Hashtable channelTemplates = new Hashtable ();
+		static Hashtable clientProviderTemplates = new Hashtable ();
+		static Hashtable serverProviderTemplates = new Hashtable ();
 		
 		// public properties
 		// At this time the ID will be the application name 
@@ -72,15 +77,32 @@ namespace System.Runtime.Remoting
 		
 		public static void Configure (string filename) 
 		{
-			RConfigurator cftor;
-			cftor = new RConfigurator (filename,
-						   wellKnownClientEntries,
-						   activatedClientEntries,
-						   wellKnownServiceEntries,
-						   activatedServiceEntries);
+			if (!defaultConfigRead)
+			{
+				ReadConfigFile (Environment.GetMachineConfigPath ());
+				defaultConfigRead = true;
+			}
+			
+			if (filename != null)
+				ReadConfigFile (filename);
 		}
 
-		public static ActivatedClientTypeEntry[] GetRegisteredActivatedClientTypes () 
+		private static void ReadConfigFile (string filename)
+		{
+			try
+			{
+				MiniParser parser = new MiniParser ();
+				RReader rreader = new RReader (filename);
+				ConfigHandler handler = new ConfigHandler ();
+				parser.Parse (rreader, handler);
+			}
+			catch (Exception ex)
+			{
+				throw new RemotingException ("Configuration file '" + filename + "' could not be loaded: " + ex.Message);
+			}
+		}
+	
+		private static ActivatedClientTypeEntry[] GetRegisteredActivatedClientTypes () 
 		{
 			ActivatedClientTypeEntry[] entries = new ActivatedClientTypeEntry[activatedClientEntries.Count];
 			activatedClientEntries.Values.CopyTo (entries,0);
@@ -187,50 +209,77 @@ namespace System.Runtime.Remoting
 			wellKnownServiceEntries [entry.ObjectUri] = entry;
 			RemotingServices.CreateWellKnownServerIdentity (entry.ObjectType, entry.ObjectUri, entry.Mode);
 		}
+
+		internal static void RegisterChannelTemplate (ChannelData channel)
+		{
+			channelTemplates [channel.Id] = channel;
+		}
+		
+		internal static void RegisterClientProviderTemplate (ProviderData prov)
+		{
+			clientProviderTemplates [prov.Id] = prov;
+		}
+		
+		internal static void RegisterServerProviderTemplate (ProviderData prov)
+		{
+			serverProviderTemplates [prov.Id] = prov;
+		}
+		
+		internal static void RegisterChannels (ArrayList channels)
+		{
+			foreach (ChannelData channel in channels)
+			{
+				if (channel.Ref != null)
+				{
+					ChannelData template = (ChannelData) channelTemplates [channel.Ref];
+					if (template == null) throw new RemotingException ("Channel template '" + channel.Ref + "' not found");
+					channel.CopyFrom (template);
+				}
+				
+				foreach (ProviderData prov in channel.ServerProviders)
+				{
+					if (prov.Ref != null)
+					{
+						ProviderData template = (ProviderData) serverProviderTemplates [prov.Ref];
+						if (template == null) throw new RemotingException ("Provider template '" + prov.Ref + "' not found");
+						prov.CopyFrom (template);
+					}
+				}
+				
+				foreach (ProviderData prov in channel.ClientProviders)
+				{
+					if (prov.Ref != null)
+					{
+						ProviderData template = (ProviderData) clientProviderTemplates [prov.Ref];
+						if (template == null) throw new RemotingException ("Provider template '" + prov.Ref + "' not found");
+						prov.CopyFrom (template);
+					}
+				}
+				
+				ChannelServices.RegisterChannelConfig (channel);
+			}
+		}
+		
+		internal static void RegisterTypes (ArrayList types)
+		{
+			foreach (TypeEntry type in types)
+			{
+				if (type is ActivatedClientTypeEntry)
+					RegisterActivatedClientType ((ActivatedClientTypeEntry)type);
+				else if (type is ActivatedServiceTypeEntry)
+					RegisterActivatedServiceType ((ActivatedServiceTypeEntry)type);
+				else if (type is WellKnownClientTypeEntry)
+					RegisterWellKnownClientType ((WellKnownClientTypeEntry)type);
+				else if (type is WellKnownServiceTypeEntry)
+					RegisterWellKnownServiceType ((WellKnownServiceTypeEntry)type);
+			}
+		}
 	}
 
 	/***************************************************************
 	 * Internal classes used by RemotingConfiguration.Configure () *
 	 ***************************************************************/
-	internal class RConfigurator {
-		// As the Configure method is just an alternative to the hardcoded configuration,
-		// we will be using the same hashtables.
-		internal RConfigurator (string filename,
-				 Hashtable wellKnownClientEntries,
-				 Hashtable activatedClientEntries,
-				 Hashtable wellKnownServiceEntries,
-				 Hashtable activatedServiceEntries)
-		{
-			MiniParser parser1 = new MiniParser ();
-			MiniParser parser2 = new MiniParser ();
-
-			RReader rreader1 = new RReader (GetMachineConfigPath());
-			RReader rreader2 = new RReader (filename);
-			MHandler mhandler = new MHandler (wellKnownClientEntries,
-							  activatedClientEntries,
-							  wellKnownServiceEntries,
-							  activatedServiceEntries);
-			RHandler rhandler = new RHandler (wellKnownClientEntries,
-							  activatedClientEntries,
-							  wellKnownServiceEntries,
-							  activatedServiceEntries);
-			// We first read the machine.config file
-			parser1.Parse (rreader1, mhandler);
-			// Then we read the file specified by the user
-			// ** WARNING **
-			// if any other file, as web.config or app.config must be read,
-			// before that specified by the user, we have to do it here.
-			// Using the same RReader class is OK for reading, just the
-			// IHandler class needs to be changed for different file schemas.
-			parser2.Parse (rreader2, rhandler);
-		}
-		// FIXME: this is hardcoded now
-		private static string GetMachineConfigPath ()
-		{
-			return "/etc/mono/machine.config";
-		}
-	}
-	
+	 
 	internal class RReader : MiniParser.IReader {
 		private string xml; // custom remoting config file
 		private int pos;
@@ -256,387 +305,491 @@ namespace System.Runtime.Remoting
 			}
 		}
 	}
-
-	internal class MHandler : MiniParser.IHandler {
-		Hashtable wellKnownClientEntries;
-		Hashtable activatedClientEntries;
-		Hashtable wellKnownServiceEntries;
-		Hashtable activatedServiceEntries;
-		Hashtable channels = null;
-		Hashtable formatters = null;
-		bool declaresChannels = false;
-		bool declaresFormatters = false;
-		long pos = 0;
+	
+	internal class ConfigHandler : MiniParser.IHandler 
+	{
+		ArrayList typeEntries = new ArrayList ();
+		ArrayList channelInstances = new ArrayList ();
+		
+		ChannelData currentChannel = null;
+		Stack currentProviderData = null;
+		
+		string currentClientUrl = null;
 		string appName;
 		
-		public MHandler (Hashtable wellKnownClientEntries,
-				 Hashtable activatedClientEntries,
-				 Hashtable wellKnownServiceEntries,
-				 Hashtable activatedServiceEntries)
+		string currentXmlPath = "";
+		
+		public ConfigHandler ()
 		{
-			this.wellKnownClientEntries = wellKnownClientEntries;
-			this.activatedClientEntries = activatedClientEntries;
-			this.wellKnownServiceEntries = wellKnownServiceEntries;
-			this.activatedServiceEntries = activatedServiceEntries;
 		}
+		
+		void ValidatePath (string element, params string[] paths)
+		{
+			foreach (string path in paths)
+				if (CheckPath (path)) return;
+				
+			throw new RemotingException ("Element " + element + " not allowed in this context");
+		}
+		
+		bool CheckPath (string path)
+		{
+			if (path.StartsWith ("/"))
+				return path == currentXmlPath;
+			else
+				return currentXmlPath.EndsWith (path);
+		}
+		
 		public void OnStartParsing (MiniParser parser) {}
+		
 		public void OnStartElement (string name, MiniParser.IAttrList attrs)
 		{
-			string _ref, dn, id, type, version, culture, pkt;
-			switch (name) {
-			case "configuration":
-				if (pos++ != 0)
-					throw new Exception ();
-				break;
-			case "system.runtime.remoting":
-				break;
-			case "application":
-				if (attrs.Names.Length > 0)
-					appName = attrs.Values[0];
-				break;
-			case "lifetime":
-				if (pos++ < 3)
-					throw new Exception ();
-				for (int i=0; i < attrs.Names.Length; ++i) {
-					switch (attrs.Names[i]) {
-					case "leaseTime":
-						break;
-					case "sponsorShipTimeOut":
-						break;
-					case "renewOnCallTime":
-						break;
-					case "leaseManagerPollTime":
-						break;
-					default:
-						throw new Exception ();
-					}
-				}
-				break;
-			case "channels":
-				break;
-			case "channel":
-				declaresChannels = true;
-				channel_data channel;
-				_ref = dn = id = type = version = culture = pkt = null;
-				bool dl = false; // <-- FIX that
-				for (int i=0; i < attrs.Names.Length; ++i) {
-					switch (attrs.Names[i]) {
-					case "ref":
-						_ref = attrs.Values[i];
-						break;
-					case "displayName":
-						dn = attrs.Values[i];
-						break;
-					case "delayLoadAsClientChannel":
-						dl = Convert.ToBoolean(attrs.Values[i]);
-						break;
-					case "id":
-						id = attrs.Values[i];
-						break;
-					case "type":
-						type = attrs.Values[i];
-						break;
-					case "Version":
-						version = attrs.Values[i];
-						break;
-					case "Culture":
-						culture = attrs.Values[i];
-						break;
-					case "PublicKeyToken":
-						pkt = attrs.Values[i];
-						break;
-					default:
-						throw new Exception ();
-					}
-				}
-				if (!declaresChannels) {
-					declaresChannels = true;
-					channels = new Hashtable ();
-				}
-				if (_ref != null) {
-					channel = new channel_data (_ref, dn, dl);
-					// This kind of channels are added by Ref reference
-					channels.Add (_ref, channel);
-				} else {
-					channel = new channel_data (id, type, version, culture, pkt);
-					// This kind of channels are added by PublicKeyToken reference
-					channels.Add (pkt, channel);
-				}
-				break;
-			case "serverProviders":
-				break;
-			case "provider":
-				break;
-			case "formatter":
-				formatter_data formatter;
-				id = type = version = culture = pkt = null;
-				for (int i=0; i < attrs.Names.Length; ++i) {
-					switch (attrs.Names[i]) {
-					case "id":
-						id = attrs.Values[i];
-						break;
-					case "type":
-						type = attrs.Values[i];
-						break;
-					case "Version":
-						version = attrs.Values[i];
-						break;
-					case "Culture":
-						culture = attrs.Values[i];
-						break;
-					case "PublicKeyToken":
-						pkt = attrs.Values[i];
-						break;
-					default:
-						throw new Exception ();
-					}
-				}
-				if (!declaresFormatters) {
-					declaresFormatters = true;
-					formatters = new Hashtable ();
-				}
-				formatter = new formatter_data (id, type, version, culture, pkt);
-				// Formatters are add by PublicKeyToken reference
-				formatters.Add (pkt, formatter);
-				break;
-			case "client":
-				break;
-			case "service":
-				break;
-			case "wellknown":
-				break;
-			case "activated":
-				break;
-			default:
-				break;
+			try
+			{
+				if (currentXmlPath.StartsWith ("/configuration/system.runtime.remoting"))
+					ParseElement (name, attrs);
+					
+				currentXmlPath += "/" + name;
+			}
+			catch (Exception ex)
+			{
+				throw new RemotingException ("Error in element " + name + ": " + ex.Message);
 			}
 		}
-		public void OnEndElement (string name) {}
+		
+		public void ParseElement (string name, MiniParser.IAttrList attrs)
+		{
+			if (currentProviderData != null)
+			{
+				ReadCustomProviderData (name, attrs);
+				return;
+			}
+			
+			switch (name) 
+			{
+				case "application":
+					ValidatePath (name, "system.runtime.remoting");
+					if (attrs.Names.Length > 0)
+						appName = attrs.Values[0];
+					break;
+					
+				case "lifetime":
+					ValidatePath (name, "application");
+					ReadLifetine (attrs);
+					break;
+					
+				case "channels":
+					ValidatePath (name, "system.runtime.remoting", "application");
+					break;
+					
+				case "channel":
+					ValidatePath (name, "channels");
+					if (currentXmlPath.IndexOf ("application") != -1)
+						ReadChannel (attrs, false);
+					else
+						ReadChannel (attrs, true);
+					break;
+					
+				case "serverProviders":
+					ValidatePath (name, "channelSinkProviders", "channel");
+					break;
+					
+				case "clientProviders":
+					ValidatePath (name, "channelSinkProviders", "channel");
+					break;
+					
+				case "provider":
+				case "formatter":
+					ProviderData prov;
+					
+					if (CheckPath ("application/channels/channel/serverProviders") ||
+						CheckPath ("channels/channel/serverProviders"))
+					{
+						prov = ReadProvider (name, attrs, false);
+						currentChannel.ServerProviders.Add (prov);
+					}
+					else if (CheckPath ("application/channels/channel/clientProviders") ||
+						CheckPath ("channels/channel/clientProviders"))
+					{
+						prov = ReadProvider (name, attrs, false);
+						currentChannel.ClientProviders.Add (prov);
+					}
+					else if (CheckPath ("channelSinkProviders/serverProviders"))
+					{
+						prov = ReadProvider (name, attrs, true);
+						RemotingConfiguration.RegisterServerProviderTemplate (prov);
+					}
+					else if (CheckPath ("channelSinkProviders/clientProviders"))
+					{
+						prov = ReadProvider (name, attrs, true);
+						RemotingConfiguration.RegisterClientProviderTemplate (prov);
+					}
+					else 
+						ValidatePath (name);
+					break;
+					
+				case "client":
+					ValidatePath (name, "application");
+					currentClientUrl = attrs.GetValue ("url");
+					break;
+					
+				case "service":
+					ValidatePath (name, "application");
+					break;
+					
+				case "wellknown":
+					ValidatePath (name, "client", "service");
+					if (CheckPath ("client"))
+						ReadClientWellKnown (attrs);
+					else
+						ReadServiceWellKnown (attrs);
+					break;
+					
+				case "activated":
+					ValidatePath (name, "client", "service");
+					if (CheckPath ("client"))
+						ReadClientActivated (attrs);
+					else
+						ReadServiceActivated (attrs);
+					break;
+					
+				case "soapInterop":
+					ValidatePath (name, "application");
+					break;
+					
+				case "interopXmlType":
+					ValidatePath (name, "soapInterop");
+					break;
+					
+				case "interopXmlElement":
+					ValidatePath (name, "soapInterop");
+					break;
+					
+				case "preLoad":
+					ValidatePath (name, "soapInterop");
+					break;
+					
+				case "debug":
+					ValidatePath (name, "system.runtime.remoting");
+					break;
+					
+				case "channelSinkProviders":
+					ValidatePath (name, "system.runtime.remoting");
+					break;
+					
+				default:
+					throw new RemotingException ("Element '" + name + "' is not valid in system.remoting.configuration section");
+			}
+		}
+		
+		public void OnEndElement (string name)
+		{
+			if (currentProviderData != null)
+			{
+				currentProviderData.Pop ();
+				if (currentProviderData.Count > 0) return;
+				currentProviderData = null;
+			}
+			
+			currentXmlPath = currentXmlPath.Substring (0, currentXmlPath.Length - name.Length - 1);
+		}
+		
+		void ReadCustomProviderData (string name, MiniParser.IAttrList attrs)
+		{
+			SinkProviderData parent = (SinkProviderData) currentProviderData.Peek ();
+			
+			SinkProviderData data = new SinkProviderData (name);
+			for (int i=0; i < attrs.Names.Length; ++i) 
+				data.Properties [attrs.Names[i]] = attrs.GetValue (i);
+				
+			parent.Children.Add (data);
+			currentProviderData.Push (data);
+		}
+
+		void ReadLifetine (MiniParser.IAttrList attrs)
+		{
+			for (int i=0; i < attrs.Names.Length; ++i) {
+				switch (attrs.Names[i]) {
+				case "leaseTime":
+					LifetimeServices.LeaseTime = ParseTime (attrs.GetValue(i));
+					break;
+				case "sponsorShipTimeOut":
+					LifetimeServices.SponsorshipTimeout = ParseTime (attrs.GetValue(i));
+					break;
+				case "renewOnCallTime":
+					LifetimeServices.RenewOnCallTime = ParseTime (attrs.GetValue(i));
+					break;
+				case "leaseManagerPollTime":
+					LifetimeServices.LeaseManagerPollTime = ParseTime (attrs.GetValue(i));
+					break;
+				default:
+					throw new RemotingException ("Invalid attribute: " + attrs.Names[i]);
+				}
+			}
+		}
+		
+		TimeSpan ParseTime (string s)
+		{
+			if (s == "" || s == null) throw new RemotingException ("Invalid time value");
+			
+			int i = s.IndexOfAny (new char[] { 'D','H','M','S' });
+			
+			string unit;
+			if (i == -1) 
+				unit = "S";
+			else { 
+				unit = s.Substring (i);
+				s = s.Substring (0,i);
+			}
+			double val;
+			
+			try {
+				val = double.Parse (s);
+			}
+			catch {
+				throw new RemotingException ("Invalid time value: " + s);
+			}
+			
+			if (unit == "D") return TimeSpan.FromDays (val);
+			if (unit == "H") return TimeSpan.FromHours (val);
+			if (unit == "M") return TimeSpan.FromMinutes (val);
+			if (unit == "S") return TimeSpan.FromSeconds (val);
+			if (unit == "MS") return TimeSpan.FromMilliseconds (val);
+			throw new RemotingException ("Invalid time unit: " + unit);
+		}
+		
+		void ReadChannel (MiniParser.IAttrList attrs, bool isTemplate)
+		{
+			ChannelData channel = new ChannelData ();
+			
+			for (int i=0; i < attrs.Names.Length; ++i) 
+			{
+				string at = attrs.Names[i];
+				string val = attrs.Values[i];
+				
+				if (at == "ref" && !isTemplate)
+					channel.Ref = val;
+				else if (at == "delayLoadAsClientChannel")
+					channel.DelayLoadAsClientChannel = val;
+				else if (at == "id" && isTemplate)
+					channel.Id = val;
+				else if (at == "type")
+					channel.Type = val;
+				else
+					channel.CustomProperties.Add (at, val);
+			}
+			
+			if (isTemplate)
+			{
+				if (channel.Id == null) throw new RemotingException ("id attribute is required");
+				if (channel.Type == null) throw new RemotingException ("id attribute is required");
+				RemotingConfiguration.RegisterChannelTemplate (channel);
+			}
+			else
+				channelInstances.Add (channel);
+				
+			currentChannel = channel;
+		}
+		
+		ProviderData ReadProvider (string name, MiniParser.IAttrList attrs, bool isTemplate)
+		{
+			ProviderData prov = (name == "provider") ? new ProviderData () : new FormatterData ();
+			SinkProviderData data = new SinkProviderData ("root");
+			prov.CustomData = data.Children;
+			
+			currentProviderData = new Stack ();
+			currentProviderData.Push (data);
+			
+			for (int i=0; i < attrs.Names.Length; ++i) 
+			{
+				string at = attrs.Names[i];
+				string val = attrs.Values[i];
+				
+				if (at == "id" && isTemplate)
+					prov.Id = val;
+				if (at == "type")
+					prov.Type = val;
+				if (at == "ref" && !isTemplate)
+					prov.Ref = val;
+				else
+					prov.CustomProperties.Add (at, val);
+			}
+			
+			if (prov.Id == null && isTemplate) throw new RemotingException ("id attribute is required");
+			return prov;
+		}
+		
+		void ReadClientActivated (MiniParser.IAttrList attrs)
+		{
+			string type = GetNotNull (attrs, "type");
+			string assm = ExtractAssembly (ref type);
+			
+			if (currentClientUrl == null || currentClientUrl == "") 
+				throw new RemotingException ("url attribute is required in client element when it contains activated entries");
+
+			typeEntries.Add (new ActivatedClientTypeEntry (type, assm, currentClientUrl));
+		}
+		
+		void ReadServiceActivated (MiniParser.IAttrList attrs)
+		{
+			string type = GetNotNull (attrs, "type");
+			string assm = ExtractAssembly (ref type);
+			
+			typeEntries.Add (new ActivatedServiceTypeEntry (type, assm));
+		}
+		
+		void ReadClientWellKnown (MiniParser.IAttrList attrs)
+		{
+			string url = GetNotNull (attrs, "url");
+			string type = GetNotNull (attrs, "type");
+			string assm = ExtractAssembly (ref type);
+			
+			typeEntries.Add (new WellKnownClientTypeEntry (type, assm, url));
+		}
+		
+		void ReadServiceWellKnown (MiniParser.IAttrList attrs)
+		{
+			string objectUri = GetNotNull (attrs, "objectUri");
+			string smode = GetNotNull (attrs, "mode");
+			string type = GetNotNull (attrs, "type");
+			string assm = ExtractAssembly (ref type);
+			
+			WellKnownObjectMode mode;
+			if (smode == "SingleCall") mode = WellKnownObjectMode.SingleCall;
+			else if (smode == "Singleton") mode = WellKnownObjectMode.Singleton;
+			else throw new RemotingException ("wellknown object mode '" + smode + "' is invalid");
+			
+			typeEntries.Add (new WellKnownServiceTypeEntry (type, assm, objectUri, mode));
+		}
+		
+		string GetNotNull (MiniParser.IAttrList attrs, string name)
+		{
+			string value = attrs.GetValue (name);
+			if (value == null || value == "") 
+				throw new RemotingException (name + " attribute is required");
+			return value;
+		}
+		
+		string ExtractAssembly (ref string type)
+		{
+			int i = type.IndexOf (",");
+			if (i == -1) return "";
+			
+			string asm = type.Substring (i+1).Trim();
+			type = type.Substring (0, i).Trim();
+			return asm;
+		}
+		
 		public void OnChars (string ch) {}
+		
 		public void OnEndParsing (MiniParser parser)
 		{
-			// Here we register all the appropiate channels and formatters
-			// except those channels that have the attribute
-			// "delayLoadAsClientChannel" set to 'true'
-			if (declaresChannels) {
-				foreach (channel_data cd in channels)
-				{
-					IChannel channel = null;
-					switch (cd.Type) {
-					case "System.Runtime.Remoting.Channels.Tcp.TcpChannel":
-						break;
-					case "System.Runtime.Remoting.Channels.TcpClientChannel":
-						break;
-					case "System.Runtime.Remoting.Channels.TcpServerChannel":
-						break;
-					case "System.Runtime.Remoting.Channels.HttpChannel":
-						break;
-					case "System.Runtime.Remoting.Channels.HttpClientChannel":
-						break;
-					case "System.Runtime.Remoting.Channels.HttpServerChannel":
-						break;
-					}
-					// ChannelServices.RegisterChannel ();
-				}
-			}
-			if (declaresFormatters) {
-				foreach (formatter_data fd in formatters)
-				{
-					switch (fd.Type) {
-					case "System.Runtime.Remoting.Channels.SoapClientFormatterSinkProvider":
-						break;
-					case "System.Runtime.Remoting.Channels.BinaryClientFormatterSinkProvider":
-						break;
-					case "System.Runtime.Remoting.Channels.SoapServerFormatterSinkProvider":
-						break;
-					case "System.Runtime.Remoting.Channels.BinaryServerFormatterSinkProvider":
-						break;
-					case "System.Runtime.Remoting.MetadataServices.SdlChannelSinkProvider":
-						break;
-					}
-				}
-			}
+			RemotingConfiguration.RegisterChannels (channelInstances);
+			RemotingConfiguration.RegisterTypes (typeEntries);
 		}
 	}
 
-	internal class RHandler : MiniParser.IHandler {
-		Hashtable wellKnownClientEntries;
-		Hashtable activatedClientEntries;
-		Hashtable wellKnownServiceEntries;
-		Hashtable activatedServiceEntries;
-		long pos = 0;
-		string appName;
-		
-		public RHandler (Hashtable wellKnownClientEntries,
-				 Hashtable activatedClientEntries,
-				 Hashtable wellKnownServiceEntries,
-				 Hashtable activatedServiceEntries)
-		{
-			this.wellKnownClientEntries = wellKnownClientEntries;
-			this.activatedClientEntries = activatedClientEntries;
-			this.wellKnownServiceEntries = wellKnownServiceEntries;
-			this.activatedServiceEntries = activatedServiceEntries;
-		}
-		public void OnStartParsing (MiniParser parser) {}
-		public void OnStartElement (string name, MiniParser.IAttrList attrs)
-		{
-			switch (name) {
-			case "configuration":
-				if (pos++ != 0)
-					throw new Exception ();
-				break;
-			case "system.runtime.remoting":
-				if (pos++ != 1)
-					throw new Exception ();
-				break;
-			case "application":
-				if (pos++ != 2)
-					throw new Exception ();
-				if (attrs.Names.Length > 0)
-					appName = attrs.Values[0];
-				break;
-			case "lifetime":
-				if (pos++ < 3)
-					throw new Exception ();
-				for (int i=0; i < attrs.Names.Length; ++i) {
-					switch (attrs.Names[i]) {
-					case "leaseTime":
-						break;
-					case "sponsorShipTimeOut":
-						break;
-					case "renewOnCallTime":
-						break;
-					case "leaseManagerPollTime":
-						break;
-					default:
-						throw new Exception ();
-					}
-				}
-				break;
-			case "channels":
-				break;
-			case "channel":
-				break;
-			case "serverProviders":
-				break;
-			case "provider":
-				break;
-			case "formatter":
-				break;
-			case "client":
-				break;
-			case "service":
-				break;
-			case "wellknown":
-				break;
-			case "activated":
-				break;
-			default:
-				Console.WriteLine ("Not supported element " + name);
-				break;
-			}
-		}
-		public void OnEndElement (string name) {}
-		public void OnChars (string ch) {}
-		public void OnEndParsing (MiniParser parser) {}
-	}
 
 		/*******************************************************************
-         * Internal data structures used by MHandler, RHandler... to store *
+         * Internal data structures used by ConfigHandler, to store             *
          * machine.config's remoting related data.                         *
          * If having them implemented this way, makes configuration too    *
          * slow, we can use string arrays.                                 *
          *******************************************************************/
-	internal struct channel_data {
-		private string _ref;
-		private string id;
-		private string displayName;
-		private bool delayLoadAsClientChannel;
-		private string type;
-		private string _namespace;
-		private string version;
-		private string culture;
-		private string publicKeyToken;
-
-		public channel_data (string _ref,
-				     string displayName,
-				     bool delayLoadAsClientChannel)
-		{
-			this._ref = _ref;
-			this.id = null;
-			this.displayName = displayName;
-			this.delayLoadAsClientChannel = delayLoadAsClientChannel;
-			this.type = null;
-			this._namespace = null;
-			this.version = null;
-			this.culture = null;
-			this.publicKeyToken = null;
+		 
+	internal class ChannelData {
+		internal string Ref;
+		internal string Type;
+		internal string Id;
+		internal string DelayLoadAsClientChannel;
+		
+		ArrayList _serverProviders = new ArrayList ();
+		ArrayList _clientProviders = new ArrayList ();
+		Hashtable _customProperties = new Hashtable ();
+		
+		internal ArrayList ServerProviders {
+			get {
+				if (_serverProviders == null) _serverProviders = new ArrayList ();
+				return _serverProviders;
+			}
 		}
-
-		public channel_data (string id,
-				     string type,
-				     string version,
-				     string culture,
-				     string publicKeyToken)
-		{
-			string[] t_ns = type.Split (',');
-			this._ref = null;
-			this.id = id;
-			this.displayName = null;
-			this.delayLoadAsClientChannel = false; // value does not matter
-			this.type = t_ns[0];
-			// FIXME: 
-			// Check wether or not the user enters an space between the
-			// ',' and the namespace. Check behavior in MS.NET.
-			this._namespace = t_ns[1];
-			this.version = version;
-			this.culture = culture;
-			this.publicKeyToken = publicKeyToken;
+		
+		public ArrayList ClientProviders {
+			get {
+				if (_clientProviders == null) _clientProviders = new ArrayList ();
+				return _clientProviders;
+			}
 		}
-
-		internal string Ref { get { return _ref; } }
-		internal string Id { get { return id; } }
-		internal string DisplayName { get { return displayName; } }
-		internal bool DelayLoadAsClientChannel { get { return delayLoadAsClientChannel; } }
-		internal string Type { get { return type; } }
-		internal string Namespace { get { return _namespace; } }
-		internal string Version { get { return version; } }
-		internal string Culture { get { return culture; } }
-		internal string PublicKeyToken { get { return publicKeyToken; } }
-	}
-
-	internal struct formatter_data {
-		private string id;
-		private string type;
-		private string _namespace;
-		private string version;
-		private string culture;
-		private string publicKeyToken;
-
-		public formatter_data (string id,
-				       string type,
-				       string version,
-				       string culture,
-				       string publicKeyToken)
+		
+		public Hashtable CustomProperties {
+			get {
+				if (_customProperties == null) _customProperties = new Hashtable ();
+				return _customProperties;
+			}
+		}
+		
+		public void CopyFrom (ChannelData other)
 		{
-			string[] t_ns = type.Split (',');
-			this.id = id;
+			if (Ref == null) Ref = other.Ref;
+			if (Id == null) Id = other.Id;
+			if (Type == null) Type = other.Type;
+			if (DelayLoadAsClientChannel == null) DelayLoadAsClientChannel = other.DelayLoadAsClientChannel;
+
+			if (other._customProperties != null)
+			{
+				foreach (DictionaryEntry entry in other._customProperties)
+					if (!CustomProperties.ContainsKey (entry.Key))
+						CustomProperties [entry.Key] = entry.Value;
+			}
 			
-			this.type = t_ns[0];
-			// FIXME: 
-			// Check wether or not the user enters an space between the
-			// ',' and the namespace. Check behavior in MS.NET.
-			this._namespace = t_ns[1];
-			this.version = version;
-			this.culture = culture;
-			this.publicKeyToken = publicKeyToken;
+			if (_serverProviders == null && other._serverProviders != null)
+			{
+				foreach (ProviderData prov in other._serverProviders)
+				{
+					ProviderData np = new ProviderData();
+					np.CopyFrom (prov);
+					ServerProviders.Add (np);
+				}
+			}
+			
+			if (_clientProviders == null && other._clientProviders != null)
+			{
+				foreach (ProviderData prov in other._clientProviders)
+				{
+					ProviderData np = new ProviderData();
+					np.CopyFrom (prov);
+					ClientProviders.Add (np);
+				}
+			}
 		}
-
-		internal string Id { get { return id; } }
-		internal string Type { get { return type; } }
-		internal string Namespace { get { return _namespace; } }
-		internal string Version { get { return version; } }
-		internal string Culture { get { return culture; } }
-		internal string PublicKeyToken { get { return publicKeyToken; } }
 	}
+	
+	internal class ProviderData {
+		internal string Ref;
+		internal string Type;
+		internal string Id;
+		
+		internal Hashtable CustomProperties = new Hashtable ();
+		internal IList CustomData;
+		
+		public void CopyFrom (ProviderData other)
+		{
+			if (Ref == null) Ref = other.Ref;
+			if (Id == null) Id = other.Id;
+			if (Type == null) Type = other.Type;
+			
+			foreach (DictionaryEntry entry in other.CustomProperties)
+				if (!CustomProperties.ContainsKey (entry.Key))
+					CustomProperties [entry.Key] = entry.Value;
+					
+			if (other.CustomData != null)
+			{
+				if (CustomData == null) CustomData = new ArrayList ();
+				foreach (SinkProviderData data in other.CustomData)
+					CustomData.Add (data);
+			}
+		}
+	}
+	
+	internal class FormatterData: ProviderData {
+	}	
 }
