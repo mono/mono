@@ -1,13 +1,15 @@
 //
 // System.Uri
 //
-// Author:
+// Authors:
 //    Lawrence Pit (loz@cable.a2000.nl)
-//
-// Author:
 //    Garrett Rooney (rooneg@electricjellyfish.net)
+//    Ian MacLean (ianm@activestate.com)
+//    Ben Maurer (bmaurer@users.sourceforge.net)
 //
 // (C) 2001 Garrett Rooney
+// (C) 2003 Ian MacLean
+// (C) 2003 Ben Maurer
 //
 
 using System.Net;
@@ -713,7 +715,9 @@ namespace System
 
 			if (pos == len)
 				throw new UriFormatException ("The format of the URI could not be determined.");
-				
+			
+			bool isUnixFilepath = false;
+			
 			// 2 scheme
 			if (c == ':') {				
 				if (pos == 1) {
@@ -725,8 +729,13 @@ namespace System
 					
 				scheme = uriString.Substring (0, pos).ToLower ();
 				uriString = uriString.Remove (0, pos + 1);
-			} else 
-				scheme = "file";			
+			} else if ((c == '/') && (pos == 0)) {
+				// unix bare filepath
+				scheme = "file";
+				uriString = "//" + uriString;	
+				isUnixFilepath = true;
+			} else
+				scheme = "file";
 						
 			// 3
 			if ((uriString.Length >= 2) && 
@@ -799,6 +808,9 @@ namespace System
 
 			if (host.Length == 2 && host [1] == ':') {
 				// windows filepath
+				path = host + path;
+				host = String.Empty;
+			} else if (isUnixFilepath) {
 				path = host + path;
 				host = String.Empty;
 			} else if (host.Length == 0) {

@@ -4,8 +4,10 @@
 // Authors:
 //   Lawrence Pit (loz@cable.a2000.nl)
 //   Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Ben Maurer (bmaurer@users.sourceforge.net)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Ben Maurer
 //
 
 using NUnit.Framework;
@@ -201,7 +203,13 @@ namespace MonoTests.System
 			Assertion.AssertEquals ("#5b", "c:\\cygwin\\tmp\\hello.txt", uri.LocalPath);
 			Assertion.AssertEquals ("#5c", "file", uri.Scheme);
 			Assertion.AssertEquals ("#5d", "", uri.Host);
-			Assertion.AssertEquals ("#5e", "c:/cygwin/tmp/hello.txt", uri.AbsolutePath);			
+			Assertion.AssertEquals ("#5e", "c:/cygwin/tmp/hello.txt", uri.AbsolutePath);
+		}
+		
+		[Test]
+		public void UnixPath () {
+			if (!isWin32)
+				Assertion.AssertEquals ("#6a", "file://cygwin/tmp/hello.txt", new Uri ("/cygwin/tmp/hello.txt").ToString ());
 		}
 		
 		[Test]

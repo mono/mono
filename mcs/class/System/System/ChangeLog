@@ -1,3 +1,7 @@
+2003-05-07  Ben Maurer <bmaurer@users.sourceforge.net>
+	* Uri.cs: Checked in code to fix bug #41998. Some
+	code from Ian MacLean.
+	
 2003-03-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Uri.cs: reworked Segment. Small fix in MakeRelative. Throw exception

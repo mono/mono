@@ -1,3 +1,7 @@
+2003-05-07  Ben Maurer <bmaurer@users.sourceforge.net>
+
+	* UriTest.cs: added tests for UNIX file paths.
+	
 2003-03-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UriTest.cs: moved a couple of test to their own method as they fail
