@@ -1,3 +1,8 @@
+2001-11-30  Dietmar Maurer  <dietmar@ximian.com>
+
+	* emit-x86.c (tree_preallocate_regs): improved register allocation
+
+	* x86.brg: impl. ISINST, CASTCLASS
 
 Fri Nov 30 12:02:24 CET 2001 Paolo Molaro <lupus@ximian.com>
 

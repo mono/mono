@@ -1,3 +1,11 @@
+2001-11-30  Dietmar Maurer  <dietmar@ximian.com>
+
+	* class.c (mono_install_runtime_class_init): impl.
+	(mono_class_init): renamed mono_class_metadata_init to
+	mono_class_init, also removed the metadata_inited flag
+
+	* object.c (mono_object_isinst): use faster algorithm
+
 2001-11-30  Radek Doulik  <rodo@ximian.com>
 
 	* mono-endian.h: reverted last change
