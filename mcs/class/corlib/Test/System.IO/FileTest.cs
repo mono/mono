@@ -20,25 +20,11 @@ namespace MonoTests.System.IO
 	{
 		protected override void SetUp ()
 		{
-                	Thread.CurrentThread.CurrentCulture = new CultureInfo ("EN-us");
-			DeleteFile ("resources" + Path.DirectorySeparatorChar + "creationTime");                	
-                	DeleteFile ("resources" + Path.DirectorySeparatorChar + "lastAccessTime");
-                	DeleteFile ("resources" + Path.DirectorySeparatorChar + "lastWriteTime");                	
-
-		        File.Delete ("resources" + Path.DirectorySeparatorChar + "baz");
-		        File.Delete ("resources" + Path.DirectorySeparatorChar + "bar");
-		        File.Delete ("resources" + Path.DirectorySeparatorChar + "foo");
+                        Thread.CurrentThread.CurrentCulture = new CultureInfo ("EN-us");
 		}
 
 		protected override void TearDown ()
 		{
-			DeleteFile ("resources" + Path.DirectorySeparatorChar + "creationTime");
-                	DeleteFile ("resources" + Path.DirectorySeparatorChar + "lastAccessTime");
-                	DeleteFile ("resources" + Path.DirectorySeparatorChar + "lastWriteTime");                        
-
-		        File.Delete ("resources" + Path.DirectorySeparatorChar + "baz");
-		        File.Delete ("resources" + Path.DirectorySeparatorChar + "bar");
-		        File.Delete ("resources" + Path.DirectorySeparatorChar + "foo");
 		}
 
 		public void TestExists ()
@@ -289,126 +275,75 @@ namespace MonoTests.System.IO
 			Assert ("File resources" + Path.DirectorySeparatorChar + "foo should not exist after File.Delete", !File.Exists ("resources" + Path.DirectorySeparatorChar + "foo"));
 		}
 
+		[Test]
+		[ExpectedException(typeof (ArgumentNullException))]
+		public void MoveException1 ()
+		{
+	                File.Move (null, "b");
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentNullException))]
+		public void MoveException2 ()
+		{
+			File.Move ("a", null);
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void MoveException3 ()
+		{
+                	File.Move ("", "b");
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void MoveException4 ()
+		{
+                	File.Move ("a", "");
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void MoveException5 ()
+		{
+                        File.Move (" ", "b");			
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void MoveException6 ()
+		{
+                	File.Move ("a", " ");
+		}
+
+		[Test]
+		[ExpectedException(typeof (FileNotFoundException))]
+		public void MoveException7 ()
+		{
+                       	DeleteFile ("doesnotexist");
+                        File.Move ("doesnotexist", "b");
+		}
+
+		[Test]
+		[ExpectedException(typeof (DirectoryNotFoundException))]
+		public void MoveException8 ()
+		{
+                        DeleteFile ("resources" + Path.DirectorySeparatorChar + "foo");
+                        File.Copy("resources" + Path.DirectorySeparatorChar + "AFile.txt", "resources" + Path.DirectorySeparatorChar + "foo", true);
+                        DeleteFile ("doesnotexist" + Path.DirectorySeparatorChar + "b");
+                        File.Move ("resources" + Path.DirectorySeparatorChar + "foo", "doesnotexist" + Path.DirectorySeparatorChar + "b");
+		}
+
+		[Test]
+		[ExpectedException(typeof (IOException))]
+		public void MoveException9 ()
+		{
+                	File.Move ("resources" + Path.DirectorySeparatorChar + "foo", "resources");		
+		}
 
 		public void TestMove ()
 		{
-			/* exception test: File.Move(null, b) */
-			try {
-				File.Move (null, "b");
-				Fail ("File.Move(null, 'b') should throw ArgumentNullException");
-			} catch (ArgumentNullException) {
-				// do nothing, this is what we expect
-			} catch (Exception e) {
-				Fail ("File.Move(null, 'b') unexpected exception caught: e=" + e.ToString());
-			}
-
-			/* exception test: File.Move(a, null) */
-			try {
-				File.Move ("a", null);
-				Fail ("File.Move('a', null) should throw ArgumentNullException");
-			} catch (ArgumentNullException) {
-				// do nothing, this is what we expect
-			} catch (Exception e) {
-				Fail ("File.Move('a', null) unexpected exception caught: e=" + e.ToString());
-			}
-
-
-			/* exception test: File.Move("", b) */
-			try {
-				File.Move ("", "b");
-				Fail ("File.Move('', 'b') should throw ArgumentException");
-			} catch (ArgumentException) {
-				// do nothing, this is what we expect
-			} catch (Exception e) {
-				Fail ("File.Move('', 'b') unexpected exception caught: e=" + e.ToString());
-			}
-
-			/* exception test: File.Move(a, "") */
-			try {
-				File.Move ("a", "");
-				Fail ("File.Move('a', '') should throw ArgumentException");
-			} catch (ArgumentException) {
-				// do nothing, this is what we expect
-			} catch (Exception e) {
-				Fail ("File.Move('a', '') unexpected exception caught: e=" + e.ToString());
-			}
-
-
-			/* exception test: File.Move(" ", b) */
-			try {
-				File.Move (" ", "b");
-				Fail ("File.Move(' ', 'b') should throw ArgumentException");
-			} catch (ArgumentException) {
-				// do nothing, this is what we expect
-			} catch (Exception e) {
-				Fail ("File.Move(' ', 'b') unexpected exception caught: e=" + e.ToString());
-			}
-
-			/* exception test: File.Move(a, " ") */
-			try {
-				File.Move ("a", " ");
-				Fail ("File.Move('a', ' ') should throw ArgumentException");
-			} catch (ArgumentException) {
-				// do nothing, this is what we expect
-			} catch (Exception e) {
-				Fail ("File.Move('a', ' ') unexpected exception caught: e=" + e.ToString());
-			}
-
-
-			/* exception test: File.Move(doesnotexist, b) */
-			try {
-				File.Move ("doesnotexist", "b");
-				Fail ("File.Move('doesnotexist', 'b') should throw FileNotFoundException");
-			} catch (FileNotFoundException) {
-				// do nothing, this is what we expect
-			} catch (Exception e) {
-				Fail ("File.Move('doesnotexist', 'b') unexpected exception caught: e=" + e.ToString());
-			}
-
-			/* exception test: File.Move(resources/foo, doesnotexist/b) */
-			File.Copy("resources" + Path.DirectorySeparatorChar + "AFile.txt", "resources" + Path.DirectorySeparatorChar + "foo", true);
-			try {
-				File.Move ("resources" + Path.DirectorySeparatorChar + "foo", "doesnotexist" + Path.DirectorySeparatorChar + "b");
-				Fail ("File.Move('resources/foo', 'b') should throw DirectoryNotFoundException");
-			} catch (DirectoryNotFoundException) {
-				// do nothing, this is what we expect
-			} catch (FileNotFoundException) {
-				// LAMESPEC
-				// do nothing, this is (kind of) what we expect
-			} catch (Exception e) {
-				Fail ("File.Move('resources/foo', 'doesnotexist/b') unexpected exception caught: e=" + e.ToString());
-			}
-
-			/* exception test: File.Move(doesnotexist/foo, b) */
-			try {
-				File.Move ("doesnotexist" + Path.DirectorySeparatorChar + "foo", "b");
-				Fail ("File.Move('doesnotexist/foo', 'b') should throw DirectoryNotFoundException");
-			} catch (DirectoryNotFoundException) {
-				// do nothing, this is what we expect
-			} catch (FileNotFoundException) {
-				// LAMESPEC
-				// do nothing, this is (kind of) what we expect
-			} catch (Exception e) {
-				Fail ("File.Move('doesnotexist/foo', 'b') unexpected exception caught: e=" + e.ToString());
-			}
-
-			/* exception test: File.Move(resources/foo, resources) */
-			try {
-				File.Move ("resources" + Path.DirectorySeparatorChar + "foo", "resources");
-				Fail ("File.Move('resources/foo', 'resources') should throw IOException");
-			} catch (IOException) {
-				// do nothing, this is what we expect
-			} catch (Exception e) {
-				Fail ("File.Move('resources/foo', 'resources') unexpected exception caught: e=" + e.ToString());
-			}
-
-			/* positive test: File.Move(a, a) shouldn't throw exception */
-			try {
-				File.Move ("resources" + Path.DirectorySeparatorChar + "foo", "resources" + Path.DirectorySeparatorChar + "foo");
-			} catch (Exception e) {
-				Fail ("File.Move('doesnotexist/foo', 'b') unexpected exception caught: e=" + e.ToString());
-			}
-
 			if (!File.Exists ("resources" + Path.DirectorySeparatorChar + "bar")) {
 				FileStream f = File.Create("resources" + Path.DirectorySeparatorChar + "bar");
 				f.Close();
@@ -440,19 +375,89 @@ namespace MonoTests.System.IO
 			}
 		}
 
-		[ExpectedException(typeof(IOException))]
+                [Test]
+                public void Open () 
+                {
+			FileStream stream = File.Open ("resources" + Path.DirectorySeparatorChar + "AFile.txt", FileMode.Open);
+                	
+                	Assertion.AssertEquals ("test#01", true, stream.CanRead);
+                	Assertion.AssertEquals ("test#02", true, stream.CanSeek);
+                	Assertion.AssertEquals ("test#03", true, stream.CanWrite);
+                	stream.Close ();
+                	
+                	stream = File.Open ("resources" + Path.DirectorySeparatorChar + "AFile.txt", FileMode.Open, FileAccess.Write);
+                	Assertion.AssertEquals ("test#04", false, stream.CanRead);
+                	Assertion.AssertEquals ("test#05", true, stream.CanSeek);
+                	Assertion.AssertEquals ("test#06", true, stream.CanWrite);
+                	stream.Close ();
+		                	
+                	stream = File.Open ("resources" + Path.DirectorySeparatorChar + "AFile.txt", FileMode.Open, FileAccess.Read);
+                	Assertion.AssertEquals ("test#04", true, stream.CanRead);
+                	Assertion.AssertEquals ("test#05", true, stream.CanSeek);
+                	Assertion.AssertEquals ("test#06", false, stream.CanWrite);
+                	stream.Close ();
+                }
+                
+                [Test]
+                [ExpectedException(typeof(ArgumentException))]
+                public void OpenException1 ()
+                {
+                	// CreateNew + Read throws an exceptoin
+                	File.Open ("resources" + Path.DirectorySeparatorChar + "AFile.txt", FileMode.CreateNew, FileAccess.Read);
+                }
+
+                [Test]
+                [ExpectedException(typeof(ArgumentException))]
+                public void OpenException2 ()
+                {
+                	// Append + Read throws an exceptoin
+                	File.Open ("resources" + Path.DirectorySeparatorChar + "AFile.txt", FileMode.Append, FileAccess.Read);
+                }
+                
+                [Test]
+                public void OpenRead ()
+                {
+			FileStream stream = File.OpenRead ("resources" + Path.DirectorySeparatorChar + "AFile.txt");
+                	Assertion.AssertEquals ("test#01", true, stream.CanRead);
+                	Assertion.AssertEquals ("test#02", true, stream.CanSeek);
+                	Assertion.AssertEquals ("test#03", false, stream.CanWrite);
+                	stream.Close ();                				                	
+                }
+
+                [Test]
+                public void OpenWrite ()
+                {
+			FileStream stream = File.OpenWrite ("resources" + Path.DirectorySeparatorChar + "AFile.txt");
+                	Assertion.AssertEquals ("test#01", false, stream.CanRead);
+                	Assertion.AssertEquals ("test#02", true, stream.CanSeek);
+                	Assertion.AssertEquals ("test#03", true, stream.CanWrite);
+                	stream.Close ();                				                	
+                }
+
 		public void TestGetCreationTime ()
 		{
-			string path = "resources" + Path.DirectorySeparatorChar + "baz";
-			FileStream stream = File.Create (path);
-			Assert ("GetCreationTime incorrect", (DateTime.Now - File.GetCreationTime (path)).TotalSeconds < 10);
-
-			// Test nonexistent files
-			string path2 = "resources" + Path.DirectorySeparatorChar + "filedoesnotexist";
-
-			// should throw an exception
-			File.GetCreationTime (path2);
+                        string path = "resources" + Path.DirectorySeparatorChar + "baz";
+                	DeleteFile (path);
+                	
+			File.Create (path).Close();
+                	DateTime time = File.GetCreationTime (path);
+                	time = time.ToLocalTime ();
+                        Assert ("GetCreationTime incorrect", (DateTime.Now - time).TotalSeconds < 10);
+                	DeleteFile (path);
 		}
+
+                [Test]
+                [ExpectedException(typeof(IOException))]
+                public void TestGetCreationTimeException ()
+                {
+                        // Test nonexistent files
+                        string path2 = "resources" + Path.DirectorySeparatorChar + "filedoesnotexist";
+			DeleteFile (path2);
+                        // should throw an exception
+                        File.GetCreationTime (path2);
+                }
+                
+
 
                 [Test]
                 public void CreationTime ()
@@ -798,6 +803,26 @@ namespace MonoTests.System.IO
 		{
 			File.GetLastAccessTimeUtc (Path.InvalidPathChars [0].ToString ());
 		}		
+
+		[Test]
+		[ExpectedException(typeof(IOException))]
+		public void FileStreamCloseException ()
+		{
+			string path = "resources" + Path.DirectorySeparatorChar + "FileStreamCloseException";
+			DeleteFile (path);			
+			FileStream stream = File.Create (path);
+			File.Delete (path);
+		}
+
+		[Test]
+		public void FileStreamClose ()
+		{
+			string path = "resources" + Path.DirectorySeparatorChar + "FileStreamClose";
+			FileStream stream = File.Create (path);
+			stream.Close ();
+			File.Delete (path);
+		}
+		
 
 		private void DeleteFile (string path)
 		{
