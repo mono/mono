@@ -88,9 +88,9 @@ namespace System.Runtime.Remoting.Channels.Tcp
 				ITransportHeaders responseHeaders;
 
 				// Read the response, blocking if necessary
-				MessageType type = TcpMessageIO.ReceiveMessageType (connection.Stream);
+				MessageStatus status = TcpMessageIO.ReceiveMessageStatus (connection.Stream);
 
-				if (type != MessageType.MethodMessage)
+				if (status != MessageStatus.MethodMessage)
 					throw new RemotingException ("Unknown response message from server");
 
 				Stream responseStream = TcpMessageIO.ReceiveMessageStream (connection.Stream, out responseHeaders, connection.Buffer);
@@ -138,9 +138,9 @@ namespace System.Runtime.Remoting.Channels.Tcp
 				if (!RemotingServices.IsOneWay (((IMethodMessage)msg).MethodBase)) 
 				{
 					// Reads the response
-					MessageType type = TcpMessageIO.ReceiveMessageType (connection.Stream);
+					MessageStatus status = TcpMessageIO.ReceiveMessageStatus (connection.Stream);
 
-					if (type != MessageType.MethodMessage)
+					if (status != MessageStatus.MethodMessage)
 						throw new RemotingException ("Unknown response message from server");
 
 					responseStream = TcpMessageIO.ReceiveMessageStream (connection.Stream, out responseHeaders, connection.Buffer);

@@ -1,3 +1,11 @@
+2003-02-05  Alvaro del Castillo <acs@barrapunto.com>
+
+	* System.Runtime.Remoting.Channels.Tcp/TcpClientTransportSink.cs:
+	* System.Runtime.Remoting.Channels.Tcp/TcpMessageIO.cs:
+	* System.Runtime.Remoting.Channels.Tcp/TcpServerChannel.cs:
+	Change MessageType to MessageStatus so the code is
+	more clear
+
 2002-12-29  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* TcpServerChannel.cs: Changed management of listener threads.

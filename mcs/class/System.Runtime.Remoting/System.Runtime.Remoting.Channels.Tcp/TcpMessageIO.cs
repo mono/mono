@@ -12,7 +12,7 @@ using System.Net.Sockets;
 
 namespace System.Runtime.Remoting.Channels.Tcp 
 {
-	enum MessageType { MethodMessage = 0, CancelSignal = 1, Unknown = 10}
+	enum MessageStatus { MethodMessage = 0, CancelSignal = 1, Unknown = 10}
 
 	internal class TcpMessageIO
 	{
@@ -25,7 +25,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		public static int DefaultStreamBufferSize = 1000;
 
 		// Identifies an incoming message
-		public static MessageType ReceiveMessageType (Stream networkStream)
+		public static MessageStatus ReceiveMessageStatus (Stream networkStream)
 		{
 			try
 			{
@@ -42,17 +42,17 @@ namespace System.Runtime.Remoting.Channels.Tcp
 						if (i > 0 && !isOnTrack[n]) continue;
 
 						isOnTrack[n] = (c == _msgHeaders[n][i]);
-						if (isOnTrack[n] && (i == _msgHeaders[n].Length-1)) return (MessageType)n;
+						if (isOnTrack[n] && (i == _msgHeaders[n].Length-1)) return (MessageStatus) n;
 						atLeastOneOnTrack = atLeastOneOnTrack || isOnTrack[n];
 					}
 					i++;
 				}
-				return MessageType.Unknown;
+				return MessageStatus.Unknown;
 			}
 			catch (IOException)
 			{
 				// Stream closed
-				return MessageType.CancelSignal;
+				return MessageStatus.CancelSignal;
 			}
 		}
 
@@ -61,7 +61,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			if (buffer == null) buffer = new byte[DefaultStreamBufferSize];
 
 			// Writes the message start header
-			byte[] dotnetHeader = _msgHeaders[(int)MessageType.MethodMessage];
+			byte[] dotnetHeader = _msgHeaders[(int) MessageStatus.MethodMessage];
 			networkStream.Write(dotnetHeader, 0, dotnetHeader.Length);
 
 			// Writes the length of the stream being sent (not including the headers)

@@ -246,15 +246,15 @@ namespace System.Runtime.Remoting.Channels.Tcp
 				bool end = false;
 				while (!end)
 				{
-					MessageType type = TcpMessageIO.ReceiveMessageType (_stream);
+					MessageStatus type = TcpMessageIO.ReceiveMessageStatus (_stream);
 
 					switch (type)
 					{
-						case MessageType.MethodMessage:
+						case MessageStatus.MethodMessage:
 							_sink.InternalProcessMessage (this);
 							break;
 
-						case MessageType.CancelSignal:
+						case MessageStatus.CancelSignal:
 							end = true;
 							break;
 					}
