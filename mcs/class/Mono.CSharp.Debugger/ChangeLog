@@ -1,3 +1,8 @@
+2003-02-08  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolFile.cs (GetMethodSource): New public method.
+	(FindMethod): Return the correct index.
+
 2003-02-07  Martin Baulig  <martin@ximian.com>
 
 	* MonoSymbolFile.cs (Methods, Sources): New public properties.

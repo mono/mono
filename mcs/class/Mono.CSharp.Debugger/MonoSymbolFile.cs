@@ -175,6 +175,7 @@ namespace Mono.CSharp.Debugger
 		ArrayList methods = new ArrayList ();
 		ArrayList sources = new ArrayList ();
 		Hashtable source_hash = new Hashtable ();
+		Hashtable method_source_hash = new Hashtable ();
 		Hashtable type_hash = new Hashtable ();
 
 		OffsetTable ot;
@@ -428,6 +429,28 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
+		public MethodSourceEntry GetMethodSource (int index)
+		{
+			if ((index < 1) || (index > ot.MethodCount))
+				throw new ArgumentException ();
+			if (reader == null)
+				throw new InvalidOperationException ();
+
+			object entry = method_source_hash [index];
+			if (entry != null)
+				return (MethodSourceEntry) entry;
+
+			MethodEntry method = GetMethod (index);
+			foreach (MethodSourceEntry source in method.SourceFile.Methods) {
+				if (source.Index == index) {
+					method_source_hash.Add (index, source);
+					return source;
+				}
+			}
+
+			throw new MonoSymbolFileException ("Internal error.");
+		}
+
 		public int FindMethod (string full_name)
 		{
 			if (reader == null)
@@ -443,7 +466,7 @@ namespace Mono.CSharp.Debugger
 					int name_offset = reader.ReadInt32 ();
 					string name = ReadString (name_offset);
 
-					method_name_hash.Add (name, i);
+					method_name_hash.Add (name, i + 1);
 				}
 			}
 
