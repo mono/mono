@@ -19,7 +19,6 @@ using System.Globalization;
 using System.Reflection;
 using System.Collections;
 using System.Runtime.CompilerServices;
-using Microsoft.Win32;
 namespace System.Windows.Forms {
 
 	/// <summary>
