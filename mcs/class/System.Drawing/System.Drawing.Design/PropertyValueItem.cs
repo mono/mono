@@ -1,68 +1,60 @@
+//
 // System.Drawing.Design.PropertyValueItem.cs
 // 
-// Author:
-//     Alejandro Sánchez Acosta  <raciel@es.gnu.org>
+// Authors:
+//  Alejandro Sánchez Acosta  <raciel@es.gnu.org>
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 // 
 // (C) Alejandro Sánchez Acosta
+// (C) 2003 Andreas Nahr
 // 
 
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.ComponentModel;
 
 namespace System.Drawing.Design
 {
 	public class PropertyValueUIItem
 	{
-		[MonoTODO]
+
+		private Image uiItemImage;
+		private PropertyValueUIItemInvokeHandler handler;
+		private string tooltip;
+
 		public PropertyValueUIItem (Image uiItemImage,
-				      PropertyValueUIItemInvokeHandler handler,
-				      string tooltip)
+			PropertyValueUIItemInvokeHandler handler, string tooltip)
 		{
-			throw new NotImplementedException ();
+			this.uiItemImage = uiItemImage;
+			this.handler = handler;
+			this.tooltip = tooltip;
 		}
 
-		[MonoTODO]
 		public virtual Image Image 
 		{
 			get
 			{
-				throw new NotImplementedException ();
+				return uiItemImage;
 			}
 		}
 
-		[MonoTODO]
 		public virtual PropertyValueUIItemInvokeHandler InvokeHandler
 		{
 			get
 			{
-				throw new NotImplementedException ();
-			}
-
-			set
-			{
-				throw new NotImplementedException ();
+				return handler;
 			}
 		}
 
-		[MonoTODO]
 		public virtual string ToolTip 
 		{
 			get
 			{
-				throw new NotImplementedException ();
-			}
-
-			set
-			{
-				throw new NotImplementedException ();
+				return tooltip;
 			}
 		}
 
-		[MonoTODO]
 		public virtual void Reset()
 		{
-			throw new NotImplementedException ();
+			// To be overriden in child classes
 		}
 	}
 }

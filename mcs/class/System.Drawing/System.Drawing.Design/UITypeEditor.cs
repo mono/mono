@@ -1,66 +1,60 @@
+//
 // System.Drawing.Design.UITypeEditor.cs
 // 
-// Author:
-//     Alan Tam Siu Lung <Tam@SiuLung.com>
+// Authors:
+//  Alan Tam Siu Lung <Tam@SiuLung.com>
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 // 
 // (C) 2003 Alan Tam Siu Lung <Tam@SiuLung.com>
+// (C) 2003 Andreas Nahr
 // 
-
 using System;
 using System.ComponentModel;
-
 namespace System.Drawing.Design
 {
-	/// <summary>
-	/// Summary description for UITypeEditor.
-	/// </summary>
 	public class UITypeEditor
 	{
-		[MonoTODO]
+
 		public UITypeEditor()
 		{
 		}
 
-		[MonoTODO]
-		public virtual object EditValue(ITypeDescriptorContext context,
-						IServiceProvider provider, object value)
+		public virtual object EditValue (ITypeDescriptorContext context,
+			IServiceProvider provider, object value)
 		{
-			throw new NotImplementedException ();
+			// We already stated that we can't edit ;)
+			return value;
 		}
-
 		public object EditValue(IServiceProvider provider, object value)
 		{
-			throw new NotImplementedException ();
+			return EditValue (null, provider, value);
 		}
-
-		[MonoTODO]
-		public virtual UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
+		public virtual UITypeEditorEditStyle GetEditStyle (ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException ();
+			return UITypeEditorEditStyle.None;
 		}
-
-		[MonoTODO]
-		public UITypeEditorEditStyle GetEditStyle()
+		public UITypeEditorEditStyle GetEditStyle ()
 		{
-			throw new NotImplementedException ();
+			return GetEditStyle (null);
 		}
-
-		[MonoTODO]
-		public virtual bool GetPaintValueSupported(ITypeDescriptorContext context)
+		public bool GetPaintValueSupported ()
 		{
-			throw new NotImplementedException ();
+			return GetPaintValueSupported (null);
 		}
-
-		[MonoTODO]
-		public void PaintValue(object value, Graphics canvas, Rectangle rectangle)
+		public virtual bool GetPaintValueSupported (ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
-
-		[MonoTODO]
-		public virtual void PaintValue(PaintValueEventArgs e)
+		public void PaintValue (object value, Graphics canvas, Rectangle rectangle)
 		{
-			throw new NotImplementedException ();
+			PaintValue (new PaintValueEventArgs (null, value, canvas, rectangle));
+		}
+		public virtual void PaintValue (PaintValueEventArgs e)
+		{
+			// LAMESPEC: Did not find info in the docs if this should do something here.
+			// Usually you would expect, that this class gets inherited and this overridden, 
+			// but on the other hand the class is not abstract. Could never observe it did paint anything
+			return;
 		}
 	}
 }

@@ -1,12 +1,17 @@
+//
 // System.Drawing.Design.ToolboxItem.cs
 //
-// Author:
+// Authors:
 //	Alejandro Sánchez Acosta
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Alejandro Sánchez Acosta
+// (C) 2003 Andreas Nahr
+//
 
 using System.Collections;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Drawing;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -19,19 +24,16 @@ namespace System.Drawing.Design
 
 		private AssemblyName assembly;
 		private Bitmap bitmap;
-		private ICollection filter;
-		private string displayname;
-		private bool locked;
-		private string name;
+		private ICollection filter = new ToolboxItemFilterAttribute[0];
+		private string displayname = "";
+		private bool locked = false;
+		private string name = "";
 		
-		[MonoTODO]
 		public ToolboxItem() {
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public ToolboxItem (Type toolType) {
-			throw new NotImplementedException ();
+			Initialize (toolType);
 		}
 
 		public AssemblyName AssemblyName {
@@ -40,6 +42,7 @@ namespace System.Drawing.Design
 			}
 
 			set {
+				CheckUnlocked ();
 				assembly = value;
 			}
 		}
@@ -50,6 +53,7 @@ namespace System.Drawing.Design
 			}
 			
 			set {
+				CheckUnlocked ();
 				bitmap = value;
 			}
 		}
@@ -60,6 +64,7 @@ namespace System.Drawing.Design
 			}
 			
 			set {
+				CheckUnlocked ();
 				displayname = value;
 			}
 		}
@@ -70,6 +75,7 @@ namespace System.Drawing.Design
 			}
 			
 			set {
+				CheckUnlocked ();
 				filter = value;
 			}
 		}
@@ -77,10 +83,6 @@ namespace System.Drawing.Design
 		protected bool Locked {
 			get {
 				return locked;
-			}
-
-			set {
-				locked = value;
 			}
 		}
 
@@ -90,26 +92,27 @@ namespace System.Drawing.Design
 			}
 
 			set {
+				CheckUnlocked ();
 				name = value;
 			}
 		}
 		
-		[MonoTODO]
 		protected void CheckUnlocked ()
 		{
-			throw new NotImplementedException ();
+			throw new InvalidOperationException ("The ToolboxItem is locked");
 		}
 
-		[MonoTODO]
 		public IComponent[] CreateComponents () 
 		{
-			throw new NotImplementedException ();
+			return CreateComponents (null);
 		}
 
-		[MonoTODO]
 		public IComponent[] CreateComponents (IDesignerHost host)
 		{
-			throw new NotImplementedException ();
+			OnComponentsCreating (new ToolboxComponentsCreatingEventArgs (host));
+			IComponent[] Comp = CreateComponentsCore (host);
+			OnComponentsCreated ( new ToolboxComponentsCreatedEventArgs (Comp));
+			return Comp;
 		}
 
 		[MonoTODO]
@@ -124,16 +127,24 @@ namespace System.Drawing.Design
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override bool Equals (object obj)
 		{
-			throw new NotImplementedException ();
+			// FIXME: too harsh??
+			if (!(obj is ToolboxItem))
+				return false;
+			if (obj == this)
+				return true;
+			return ((ToolboxItem) obj).AssemblyName.Equals (assembly) &&
+				((ToolboxItem) obj).Locked.Equals (locked) &&
+				((ToolboxItem) obj).TypeName.Equals (name) &&
+				((ToolboxItem) obj).DisplayName.Equals (displayname) &&
+				((ToolboxItem) obj).Bitmap.Equals (bitmap);
 		}
 		
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
+			// FIXME: other algorithm?
+			return string.Concat (name, displayname).GetHashCode ();
 		}
 
 		[MonoTODO]
@@ -145,6 +156,14 @@ namespace System.Drawing.Design
 		[MonoTODO]
 		public virtual void Initialize (Type type) 
 		{
+			// assembly = // FIXME we need to get the AssemblyName data from somewhere or create a new one
+			displayname = type.Name;
+			name = type.FullName;
+			// seems to be a right place to create the bitmap
+			bitmap = new Bitmap (16, 16); // FIXME set some default bitmap !?
+
+			filter = type.GetCustomAttributes (typeof (ToolboxItemFilterAttribute), true);
+
 			throw new NotImplementedException ();
 		}
 		
@@ -154,22 +173,19 @@ namespace System.Drawing.Design
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void Lock ()
 		{
-			throw new NotImplementedException ();
+			locked = true;
 		}
 
-		[MonoTODO]
 		protected virtual void OnComponentsCreated (ToolboxComponentsCreatedEventArgs args)
 		{
-			throw new NotImplementedException ();
+			this.ComponentsCreated (this, args);
 		}
 
-		[MonoTODO]
 		protected virtual void OnComponentsCreating (ToolboxComponentsCreatingEventArgs args)
 		{
-			throw new NotImplementedException ();
+			this.ComponentsCreating (this, args);
 		}
 
 		[MonoTODO]
@@ -178,10 +194,13 @@ namespace System.Drawing.Design
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override string ToString()
 		{
-			throw new NotImplementedException ();
+			return displayname;
 		}
+
+		public event ToolboxComponentsCreatedEventHandler ComponentsCreated;
+
+		public event ToolboxComponentsCreatingEventHandler ComponentsCreating;
 	}
 }

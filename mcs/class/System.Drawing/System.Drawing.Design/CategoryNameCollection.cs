@@ -1,9 +1,12 @@
+//
 // System.Drawing.Design.CategoryNameCollection.cs
 //
-// Author:
+// Authors:
 // 	Alejandro Sánchez Acosta
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Alejandro Sánchez Acosta
+// (C) 2003 Andreas Nahr
 // 
 
 using System.Collections;
@@ -12,46 +15,34 @@ namespace System.Drawing.Design
 {
 	public sealed class CategoryNameCollection : ReadOnlyCollectionBase
 	{
-		private int index;
 		
-		[MonoTODO]
 		public CategoryNameCollection (CategoryNameCollection value) {
-			throw new NotImplementedException ();
+			InnerList.AddRange (value);
 		}
 
-		[MonoTODO]
 		public CategoryNameCollection(string[] value) {
-			throw new NotImplementedException ();
+			InnerList.AddRange (value);
 		}
 
-		[MonoTODO]
 		public string this[int index] {
 			get {
-				throw new NotImplementedException ();
-			}
-
-			set {
-				throw new NotImplementedException ();
+				return (string) InnerList[index];
 			}
 		}
 
-		[MonoTODO]
 		public bool Contains (string value)
 		{
-			throw new NotImplementedException ();
+			return InnerList.Contains (value);
 		}
 		
-
-		[MonoTODO]
 		public void CopyTo (string[] array, int index)
 		{
-			throw new NotImplementedException ();
+			InnerList.CopyTo (array, index);
 		}
 		
-		[MonoTODO]
 		public int IndexOf (string value)
 		{
-			throw new NotImplementedException ();
+			return InnerList.IndexOf (value);
 		}
 	}
 }

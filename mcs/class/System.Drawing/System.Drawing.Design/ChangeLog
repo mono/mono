@@ -1,3 +1,19 @@
+2003-06-18  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+	* CategoryNameCollection.cs
+	* ToolboxItemCollection.cs: Implemented
+
+	* PropertyValueItem.cs: Implemented
+	* IDesignerHost.cs: Deleted (not defined in this namespace)
+	
+	* IToolboxService.cs: Fixed missing imports, added missing interface declarations
+	* ToolboxComponentsCreatingEventArgs.cs: Fixed missing imports
+
+	* ToolboxItem.cs: Fixed missing imports, Partially implemented
+
+	* UITypeEditor.cs: Implemented
+
+	* UITypeEditorEditStyle.cs: Fixed incorrect values
+
 2003-03-31  Alan Tam <Tam@SiuLung.com>
 
 	* UITypeEditor.cs: Added

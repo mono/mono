@@ -1,3 +1,4 @@
+//
 // System.Drawing.Design.ToolboxComponentsCreatingEventArgs.cs
 // 
 // Author:
@@ -5,6 +6,8 @@
 // 
 // (C) Alejandro Sánchez Acosta
 // 
+
+using System.ComponentModel.Design;
 
 namespace System.Drawing.Design
 {

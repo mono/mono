@@ -1,10 +1,12 @@
 //
-// System.Drawing.Design.ToolboxItemCollection
+// System.Drawing.Design.ToolboxItemCollection.cs
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 using System.Collections;
@@ -13,42 +15,34 @@ namespace System.Drawing.Design
 {
 	public sealed class ToolboxItemCollection : ReadOnlyCollectionBase
 	{
-		[MonoTODO]
+
 		public ToolboxItemCollection (ToolboxItem[] value)
 		{
+			InnerList.AddRange (value);
 		}
 
-		[MonoTODO]
 		public ToolboxItemCollection (ToolboxItemCollection value)
 		{
+			InnerList.AddRange (value);
 		}
 
 		public ToolboxItem this [int index] {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return (ToolboxItem) InnerList[index]; }
 		}
 
-		[MonoTODO]
 		public bool Contains (ToolboxItem value)
 		{
-			throw new NotImplementedException();
+			return InnerList.Contains (value);
 		}
 
-		[MonoTODO]
 		public void CopyTo (ToolboxItem[] array, int index)
 		{
-			throw new NotImplementedException();
+			InnerList.CopyTo (array, index);
 		}
 
-		[MonoTODO]
 		public int IndexOf (ToolboxItem value)
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~ToolboxItemCollection()
-		{
+			return InnerList.IndexOf (value);
 		}
 	}
 }
