@@ -4150,6 +4150,11 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if ((instance_expr == null) && ec.IsStatic && !is_static) {
+				SimpleName.Error_ObjectRefRequired (ec, loc, PropertyInfo.Name);
+				return null;
+			}
+
 			return this;
 		}
 
