@@ -59,6 +59,11 @@ namespace System.Runtime.Remoting.Channels.Http
 			Sink = sink;
 		}
 		
+		public void Process ()
+		{
+			HttpServer.ProcessRequest (this);
+		}
+		
 		public Stream InputStream;
 		public Stream OutputStream;
 		public HttpServerTransportSink Sink;
@@ -66,13 +71,8 @@ namespace System.Runtime.Remoting.Channels.Http
 
 	internal sealed class HttpServer
 	{
-		public static void ProcessRequest (object reqInfo)
+		public static void ProcessRequest (RequestArguments reqArg)
 		{
-			if(reqInfo as RequestArguments == null)
-				return;
-
-			RequestArguments reqArg = (RequestArguments)reqInfo;
-		
 			//Step (1) Start Reciceve the header
 			ArrayList  Headers = RecieveHeader (reqArg);
 				

@@ -1,3 +1,9 @@
+2005-01-14  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* HttpServerChannel.cs: Use the new RemotingThreadPool to manage threads.
+	  Fixed some warnings.
+	* HttpServer.cs: Minor fix.
+
 2004-12-17  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* HttpHelper.cs: Removed unused method. Optimized CopyStream method.

@@ -74,8 +74,8 @@ namespace System.Runtime.Remoting.Channels.Http
 		private TcpListener _tcpListener;
 		private Thread      _listenerThread;
 		private bool        _bListening = false; // are we listening at the moment?
-		//   to start listening, that will get set here.
-		private AutoResetEvent  _waitForStartListening = new AutoResetEvent(false);
+
+		RemotingThreadPool threadPool;
 
 		public HttpServerChannel() : base()
 		{
@@ -184,18 +184,20 @@ namespace System.Runtime.Remoting.Channels.Http
 			while(true)
 			{
 				Socket socket = _tcpListener.AcceptSocket();
-				RequestArguments reqArg = new RequestArguments (socket, _transportSink);
-				ThreadPool.QueueUserWorkItem (new WaitCallback (HttpServer.ProcessRequest), reqArg);
+				RequestArguments request = new RequestArguments (socket, _transportSink);
+				threadPool.RunThread (new ThreadStart (request.Process));
 			}
-
-		} 
+		}
+		
 
 		public void StartListening (Object data)
 		{
-			_tcpListener = new TcpListener (_bindToAddr, _port);
+			if (_bListening) return;
 			
-			if(!_bListening)
-				_tcpListener.Start();
+			threadPool = RemotingThreadPool.GetSharedPool ();
+			
+			_tcpListener = new TcpListener (_bindToAddr, _port);
+			_tcpListener.Start();
 
 			if (_port == 0) {
 				_port = ((IPEndPoint)_tcpListener.LocalEndpoint).Port;
@@ -222,6 +224,7 @@ namespace System.Runtime.Remoting.Channels.Http
 			{
 				_listenerThread.Abort ();
 				_tcpListener.Stop();
+				threadPool.Free ();
 			}
 
 			_bListening = false;
@@ -302,8 +305,6 @@ namespace System.Runtime.Remoting.Channels.Http
 		
 		public void AddHookChannelUri (String channelUri)
 		{
-			string [] uris = _channelData.ChannelUris;
-			
 			string [] newUris = new string[1] { channelUri };
 			_channelData.ChannelUris = newUris;
 			_wantsToListen = false;
@@ -366,7 +367,6 @@ namespace System.Runtime.Remoting.Channels.Http
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine (ex);
 			}
 		}
 
