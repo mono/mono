@@ -1,3 +1,8 @@
+2004-11-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: use memmove in BlockCopyInternal when the source and
+	destination arrays are the same.
+
 2004-11-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* assembly.c (mono_assembly_names_equal): Allow a match if one of
