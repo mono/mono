@@ -344,7 +344,7 @@ namespace Mono.AssemblyInfo
 		public static bool MustDocumentMethod(MethodBase method)
 		{
 			// All other methods
-			return (method.IsPublic || method.IsFamily || method.IsFamilyOrAssembly);
+			return (method.IsPublic || method.IsFamily);
 		}
 
 		static string GetClassType (Type t)
@@ -374,7 +374,7 @@ namespace Mono.AssemblyInfo
 					continue;
 
 				// we're only interested in public or protected members
-				if (!field.IsPublic && !field.IsFamily && !field.IsFamilyOrAssembly)
+				if (!field.IsPublic && !field.IsFamily)
 					continue;
 
 				list.Add (field);
@@ -442,7 +442,7 @@ namespace Mono.AssemblyInfo
 			ConstructorInfo[] ctors = type.GetConstructors (flags);
 			foreach (ConstructorInfo constructor in ctors) {
 				// we're only interested in public or protected members
-				if (!constructor.IsPublic && !constructor.IsFamily && !constructor.IsFamilyOrAssembly)
+				if (!constructor.IsPublic && !constructor.IsFamily)
 					continue;
 
 				list.Add (constructor);
