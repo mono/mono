@@ -1,3 +1,7 @@
+2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* mono-api-info.cs: ignore non-public attributes
+
 2004-06-11  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (PROGRAM_INSTALL_DIR): New define.

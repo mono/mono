@@ -685,17 +685,21 @@ namespace Mono.AssemblyInfo
 			XmlNode natts = document.CreateElement ("attributes", null);
 			parent.AppendChild (natts);
 
-			Type [] types = new Type [atts.Length];
+			ArrayList typeList = new ArrayList (atts.Length);
 			string comment = null;
 			for (int i = atts.Length - 1; i >= 0; i--) {
-				types [i] = atts [i].GetType ();
-				if (types [i].Name.EndsWith ("TODOAttribute")) {
-					PropertyInfo prop = types [i].GetProperty ("Comment");
+				Type attType = atts [i].GetType ();
+				if (!MustDocumentAttribute (attType))
+					continue;
+				typeList.Add (attType);
+				if (attType.Name.EndsWith ("TODOAttribute")) {
+					PropertyInfo prop = attType.GetProperty ("Comment");
 					if (prop != null)
 						comment = (string) prop.GetValue (atts [i], null);
 				}
 			}
 
+			Type[] types = (Type[]) typeList.ToArray (typeof (Type));
 			Array.Sort (types, TypeComparer.Default);
 			foreach (Type t in types) {
 				XmlNode node = document.CreateElement ("attribute");
@@ -711,6 +715,12 @@ namespace Mono.AssemblyInfo
 		{
 			AttributeData ad = new AttributeData (doc, parent, attributes);
 			ad.DoOutput ();
+		}
+
+		private static bool MustDocumentAttribute (Type attributeType)
+		{
+			// only document public attributes
+			return attributeType.IsPublic;
 		}
 	}
 
