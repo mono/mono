@@ -472,7 +472,8 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (Name[0] == '_') {
+			int index = Name.LastIndexOf ('.');
+			if (Name [index > 0 ? index + 1 : 0] == '_') {
 				Report.Error_T (3008, Location, GetSignatureForError () );
 			}
 

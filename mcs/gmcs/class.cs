@@ -2914,7 +2914,7 @@ namespace Mono.CSharp {
 			Modifiers.EXTERN;
 
 		const int AllowedInterfaceModifiers =
-			Modifiers.NEW;
+			Modifiers.NEW | Modifiers.UNSAFE;
 
 		//
 		// return_type can be "null" for VOID values.
@@ -4515,7 +4515,7 @@ namespace Mono.CSharp {
 			if (IsInterface) {
 				ModFlags = Modifiers.PUBLIC |
 					Modifiers.ABSTRACT |
-					Modifiers.VIRTUAL;
+					Modifiers.VIRTUAL | (ModFlags & Modifiers.UNSAFE);
 
 				flags = MethodAttributes.Public |
 					MethodAttributes.Abstract |
