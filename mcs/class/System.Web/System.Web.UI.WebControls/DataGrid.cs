@@ -641,10 +641,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[MonoTODO]
 		protected override bool OnBubbleEvent(object source, EventArgs e)
 		{
-			/*
 			bool retVal = false;
 			if(e is DataGridCommandEventArgs)
 			{
@@ -652,19 +650,40 @@ namespace System.Web.UI.WebControls
 				retVal = true;
 				OnItemCommand(ea);
 				string cmd = ea.CommandName;
-				if(cmd == "Select")
+				if(String.Compare(cmd, "select", true) == 0)
 				{
 					SelectedIndex = ea.Item.SelectedIndex;
 					OnSelectedIndexChanged(EventArgs.Empty);
-				} else if(cmd == "Page")
+				} else if(String.Compare(cmd,"page", true) == 0)
 				{
-					throw new NotImplementedException();
-					// Next; Prev; Sort etc
+					int    cIndex = CurrentPageIndex;
+					string cea = (string) ea.CommandArgument;
+					if(String.Compare(cea, "prev", true) == 0)
+					{
+						cIndex--;
+					} else if(String.Compare(cea, "next", true) == 0)
+					{
+						cIndex++;
+					}
+					OnPageIndexChanged(new DataGridPageChangedEventArgs(source, cIndex));
+				} else if(String.Compare(cmd, "sort", true) == 0)
+				{
+					OnSortCommand(new DataGridSortCommandEventArgs(source, ea));
+				} else if(String.Compare(cmd, "edit", true) == 0)
+				{
+					OnEditCommand(ea);
+				} else if(String.Compare(cmd, "update", true) == 0)
+				{
+					OnUpdateCommand(ea);
+				} else if(String.Compare(cmd, "cancel", true) == 0)
+				{
+					OnCancelCommand(ea);
+				} else if(String.Compare(cmd, "delete", true) == 0)
+				{
+					OnDeleteCommand(ea);
 				}
 			}
-			*/
-			throw new NotImplementedException();
-			//return retVal;
+			return retVal;
 		}
 
 		protected virtual void OnCancelCommand(DataGridCommandEventArgs e)
