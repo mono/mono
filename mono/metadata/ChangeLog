@@ -1,3 +1,8 @@
+2003-02-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* object.c: make the first argument in main_args contain the absolute
+	path to the assembly. Fixes bug #37511.
+
 2003-02-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: get correct UTC offset for countries not using daylight
