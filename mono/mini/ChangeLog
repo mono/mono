@@ -1,5 +1,8 @@
 2004-05-26  Zoltan Varga  <vargaz@freemail.hu>
 
+	* driver.c mini.h mini.c mini-x86.c: Revert most of the previous patch
+	since driver.c is in libmono too, so the optimization was useless.
+
 	* driver.c mini.h mini.c mini-x86.c: Moved the mono_lmf_addr TLS 
 	variable to driver.c so the compiler can emit more efficient code to
 	access them.
