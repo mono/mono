@@ -1,8 +1,8 @@
 EXTRA_DIST = mcs.in mbas.in ilasm.in cilc.in monoresgen.in secutil.in sqlsharp.in xsd.in wsdl.in
 
-bin_SCRIPTS = mcs mbas ilasm cilc monoresgen secutil sqlsharp xsd wsdl
+bin_SCRIPTS = mcs mbas ilasm cilc monoresgen secutil sqlsharp xsd wsdl genxs
 
-CLEANFILES = mcs mbas ilasm cilc monoresgen secutil sqlsharp xsd wsdl
+CLEANFILES = mcs mbas ilasm cilc monoresgen secutil sqlsharp xsd wsdl genxs
 
 if X86
 MONO_INTERP = mono
@@ -46,3 +46,7 @@ xsd: xsd.in
 wsdl: wsdl.in
 	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' < $(srcdir)/wsdl.in > wsdl.tmp \
 	&& mv wsdl.tmp wsdl
+
+genxs: genxs.in
+	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' < $(srcdir)/genxs.in > genxs.tmp \
+	&& mv genxs.tmp genxs

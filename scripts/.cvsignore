@@ -8,3 +8,5 @@ monoresgen
 secutil
 sqlsharp
 xsd
+wsdl
+genxs
