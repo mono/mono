@@ -44,12 +44,9 @@ namespace System.Web.Security
 			string cookiePath = config.CookiePath;
 			string loginPage = config.LoginUrl;
 
-			string appVPath = context.Request.ApplicationPath;
-			string reqPath = context.Request.Path;
-			if (reqPath.StartsWith (appVPath))
-				reqPath = reqPath.Substring (appVPath.Length);
-
-			context.SkipAuthorization = (reqPath == loginPage);
+			string reqPath = context.Request.PhysicalPath;
+			string loginPath = context.Request.MapPath (loginPage);
+			context.SkipAuthorization = (reqPath == loginPath);
 			
 			FormsAuthenticationEventArgs formArgs = new FormsAuthenticationEventArgs (context);
 			if (Authenticate != null)
