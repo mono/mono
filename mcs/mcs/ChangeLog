@@ -1,3 +1,8 @@
+2001-09-28  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (ConvertImplicit): Use a cache for conversions
+	already found. Check level of recursion and bail out if necessary.
+	
 2001-09-28  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs (string_concat_string_string, string_concat_object_object):

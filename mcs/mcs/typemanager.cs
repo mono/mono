@@ -70,7 +70,7 @@ public class TypeManager {
 		assemblies = new ArrayList ();
 		user_types = new ArrayList ();
 		types = new Hashtable ();
-		typecontainers = new Hashtable ();
+		typecontainers = new Hashtable ();    
 	}
 
 	public void AddUserType (string name, TypeBuilder t, TypeContainer tc)

@@ -340,7 +340,8 @@ namespace CIR {
 		}
 
 		static int level = 0;
-		
+
+		static Hashtable conversion_cache;
 		// <summary>
 		//   Converts implicitly the resolved expression `expr' into the
 		//   `target_type'.  It returns a new expression that can be used
@@ -351,11 +352,19 @@ namespace CIR {
 		{
 			Type expr_type = expr.Type;
 
-			if (level != 0)
-				throw new Exception ("Lame Loop Detector Triggered");
-			
+			Console.WriteLine ("ConvertImplicit " + expr_type + " => " + target_type);
+
 			if (expr_type == target_type)
 				return expr;
+			
+			if (level != 0) {
+				if (conversion_cache == null)
+					conversion_cache = new Hashtable ();
+				
+				Expression conv = (Expression) conversion_cache [expr_type + "=>" + target_type];
+
+				return conv;
+			}
 			
 			//
 			// Step 1: Built-in conversions.
@@ -500,9 +509,15 @@ namespace CIR {
 			level++;
 			e = UserImplicitCast.CanConvert (tc, expr, target_type);
 			level--;
-			if (e != null)
+
+			if (e != null) {
+
+				if (conversion_cache == null)
+					conversion_cache = new Hashtable ();
+				
+				conversion_cache.Add (expr_type.ToString () + "=>" + target_type.ToString (), e);
 				return e;
-			
+			}
 			//
 			//  Could not find an implicit cast.
 			//
@@ -2824,11 +2839,15 @@ namespace CIR {
 					return 0;
 
 			}
-			
-			if (ConversionExists (tc, p, q) == true &&
-			    ConversionExists (tc, q, p) == false)
+
+			Expression p_tmp, q_tmp;
+
+			p_tmp = ConvertImplicit (tc, argument_expr, p);
+			q_tmp = ConvertImplicit (tc, argument_expr, q);
+
+			if (p_tmp != null && q_tmp == null)
 				return 1;
-			
+
 			if (p == TypeManager.sbyte_type)
 				if (q == TypeManager.byte_type || q == TypeManager.ushort_type ||
 				    q == TypeManager.uint32_type || q == TypeManager.uint64_type)
