@@ -21,4 +21,5 @@
 <manpage name="setreg" page="setreg.1" />
 <manpage name="certmgr" page="certmgr.1" />
 <manpage name="xsd" page="xsd.1" />
+<manpage name="caspol" page="caspol.1" />
 </manpages>
