@@ -1,3 +1,9 @@
+
+Fri May 14 14:28:22 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: handle issue with the low-level implementation of
+	some long opcodes (bug #54209).
+
 2004-05-13 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* basic.cs: test for my new cmov stuff.
