@@ -23,10 +23,11 @@ namespace Mono.CSharp {
 	public class Parameter {
 		[Flags]
 		public enum Modifier : byte {
-			NONE   = 0,
-			REF    = 1,
-			OUT    = 2,
-			PARAMS = 4,
+			NONE    = 0,
+			REF     = 1,
+			OUT     = 2,
+			PARAMS  = 4,
+			ISBYREF = OUT|REF
 		}
 
 		public readonly Expression TypeName;
@@ -372,9 +373,9 @@ namespace Mono.CSharp {
 		///   Note that the returned type will not contain any dereference in this
 		///   case (ie, you get "int" for a ref int instead of "int&"
 		/// </summary>
-		public Type GetParameterInfo (DeclSpace ds, int idx, out bool is_out)
+		public Type GetParameterInfo (DeclSpace ds, int idx, out Parameter.Modifier mod)
 		{
-			is_out = false;
+			mod = Parameter.Modifier.NONE;
 			
 			if (!VerifyArgs ()){
 				FixedParameters = null;
@@ -385,25 +386,21 @@ namespace Mono.CSharp {
 				return null;
 			
 			if (types == null)
-				if (ComputeParameterTypes (ds) == false){
-					is_out = false;
+				if (ComputeParameterTypes (ds) == false)
 					return null;
-				}
 
 			//
 			// If this is a request for the variable lenght arg.
 			//
 			int array_idx = (FixedParameters != null ? FixedParameters.Length : 0);
-			if (idx == array_idx){
-				is_out = false;
+			if (idx == array_idx)
 				return types [idx];
-			} 
 
 			//
 			// Otherwise, it is a fixed parameter
 			//
 			Parameter p = FixedParameters [idx];
-			is_out = ((p.ModFlags & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0);
+			mod = p.ModFlags;
 
 			return p.ParameterType;
 		}

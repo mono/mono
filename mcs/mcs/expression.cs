@@ -2837,6 +2837,7 @@ namespace Mono.CSharp {
 		String name;
 		int idx;
 		public bool is_ref;
+		Parameter.Modifier mod;
 		Location loc;
 		
 		public ParameterReference (Parameters pars, int idx, string name, Location loc)
@@ -2862,7 +2863,8 @@ namespace Mono.CSharp {
 		//
 		public override Expression DoResolve (EmitContext ec)
 		{
-			type = pars.GetParameterInfo (ec.DeclSpace, idx, out is_ref);
+			type = pars.GetParameterInfo (ec.DeclSpace, idx, out mod);
+			is_ref = (mod & Parameter.Modifier.ISBYREF) != 0;
 			eclass = ExprClass.Variable;
 
 			return this;
