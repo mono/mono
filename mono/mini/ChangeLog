@@ -1,5 +1,7 @@
 2004-04-16  Zoltan Varga  <vargaz@freemail.hu>
 
+	* exceptions.cs: Add regression test for bug #56782.
+
 	* exceptions-*.c (mono_arch_handle_exception): Do not overwrite the
 	original stack trace if an exception is rethrown. Fixes #56782. Oh,
 	the beauty of fixing the same thing in 5 different files...
