@@ -1,3 +1,8 @@
+2003-08-22  Duncan Mak  <duncan@ximian.com>
+
+	* strtod.c: 64-bit related fixes from Laurent Morichetti
+	<l_m@pacbell.net>. Patch approval from Miguel.
+
 Fri Jun 6 19:09:51 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mono-logger.h, mono-logger.c, Makefile.am: added
