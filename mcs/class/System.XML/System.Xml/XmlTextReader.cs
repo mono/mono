@@ -2058,6 +2058,7 @@ namespace System.Xml
 							goto LOOPBACK;
 						} else {
 							TryExpandPERef ();
+							SkipWhitespace ();
 							if (XmlChar.IsNameChar (PeekChar ()))
 							ReadParameterEntityDecl ();
 							else
@@ -2158,6 +2159,7 @@ namespace System.Xml
 			SkipWhitespace ();
 			// This expanding is only allowed as a non-validating parser.
 			TryExpandPERef ();
+			SkipWhitespace ();
 			Expect ('>');
 			return decl;
 		}
@@ -2182,6 +2184,7 @@ namespace System.Xml
 				ReadChar ();
 				SkipWhitespace ();
 				TryExpandPERef ();
+				SkipWhitespace ();
 				if(PeekChar () == '#') {
 					// Mixed Contents. "#PCDATA" must appear first.
 					decl.IsMixedContent = true;
@@ -2201,6 +2204,7 @@ namespace System.Xml
 						model.ChildModels.Add (elem);
 						SkipWhitespace ();
 						TryExpandPERef ();
+						SkipWhitespace ();
 					}
 					Expect (')');
 					if (model.ChildModels.Count > 0)
@@ -2271,6 +2275,7 @@ namespace System.Xml
 		{
 			DTDContentModel model = null;
 			TryExpandPERef ();
+			SkipWhitespace ();
 			if(PeekChar () == '(') {
 				model = new DTDContentModel (DTD, elem.Name);
 				ReadChar ();
@@ -2312,6 +2317,7 @@ namespace System.Xml
 			else {
 				TryExpandPERef ();
 				model = new DTDContentModel (DTD, elem.Name);
+				SkipWhitespace ();
 				model.ElementName = ReadName ();
 			}
 
@@ -2483,6 +2489,7 @@ namespace System.Xml
 			SkipWhitespace ();
 			// This expanding is only allowed as a non-validating parser.
 			TryExpandPERef ();
+			SkipWhitespace ();
 			Expect ('>');
 			return decl;
 		}
@@ -2514,8 +2521,8 @@ namespace System.Xml
 					break;
 				}
 			}
-			string value = Dereference (currentTag.ToString (start, currentTag.Length - start), false);
-//			string value = CreateValueString ();
+//			string value = Dereference (currentTag.ToString (start, currentTag.Length - start), false);
+			string value = Dereference (CreateValueString (), false);
 			ClearValueBuffer ();
 
 			Expect (quoteChar);
@@ -2553,6 +2560,7 @@ namespace System.Xml
 			SkipWhitespace ();
 			// This expanding is only allowed as a non-validating parser.
 			TryExpandPERef ();
+			SkipWhitespace ();
 			Expect ('>');
 			return decl;
 		}
@@ -2733,6 +2741,7 @@ namespace System.Xml
 				throw new XmlException ("public or system declaration required for \"NOTATION\" declaration.");
 			// This expanding is only allowed as a non-validating parser.
 			TryExpandPERef ();
+			SkipWhitespace ();
 			Expect ('>');
 			return decl;
 		}
