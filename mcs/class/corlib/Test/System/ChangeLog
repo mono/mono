@@ -1,3 +1,7 @@
+2004-11-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* StringTest.cs: Add new tests for (sbyte*, Encoding) ctor.
+
 2004-10-27  Ben Maurer  <bmaurer@ximian.com>
 
 	* DateTimeTest.cs (TestToString): Remove test C28.

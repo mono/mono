@@ -64,6 +64,66 @@ public class StringTest : Assertion
 		}
 		catch (ArgumentOutOfRangeException) {
 		}
+
+		unsafe {
+			AssertEquals (String.Empty, new String ((sbyte*)null, 0, 10, System.Text.Encoding.ASCII));
+		}
+
+		unsafe {
+			sbyte[] s1 = new sbyte [10];
+			fixed (sbyte* s2 = &s1[0]) {
+				AssertEquals (String.Empty, new String (s2, 0, 0, System.Text.Encoding.ASCII));
+			}
+		}
+
+		unsafe {
+			sbyte[] s1 = new sbyte [10];
+			fixed (sbyte* s2 = &s1[0]) {
+				try {
+					new String (s2, 0, 10, null);
+					Fail ();
+				}
+				catch (ArgumentNullException) {
+				}
+			}
+		}
+
+		unsafe {
+			sbyte[] s1 = new sbyte [10];
+			fixed (sbyte* s2 = &s1[0]) {
+				try {
+					new String (s2, -1, 10, System.Text.Encoding.ASCII);
+					Fail ();
+				}
+				catch (ArgumentOutOfRangeException) {
+				}
+			}
+		}
+
+		unsafe {
+			sbyte[] s1 = new sbyte [10];
+			fixed (sbyte* s2 = &s1[0]) {
+				try {
+					new String (s2, 0, -1, System.Text.Encoding.ASCII);
+					Fail ();
+				}
+				catch (ArgumentOutOfRangeException) {
+				}
+			}
+		}
+
+		unsafe {    
+			String s = "Hello, World!";
+			byte[] bytes = System.Text.Encoding.ASCII.GetBytes (s);
+			sbyte[] s1 = new sbyte [bytes.Length];
+			for (int i = 0; i < s1.Length; ++i)
+				s1 [i] = (sbyte)bytes [i];
+			fixed (sbyte* s2 = &s1[0]) {
+				string res = new String(s2, 0, s1.Length,
+											System.Text.Encoding.ASCII);
+				AssertEquals (s, res);
+			}    
+		}    
 	}
 
 	public void TestLength ()
