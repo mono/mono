@@ -1,4 +1,4 @@
-DIRS=jay mcs class nunit monoresgen
+DIRS=jay mcs class nunit monoresgen ilasm
 DIST=monocharge-`date -u +%Y%m%d`
 
 #nant doesn't work yet
