@@ -1,5 +1,7 @@
 2004-05-22  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c exceptions-x86.c: Remove MONO_USE_EXC_TABLES stuff.
+	
 	* mini.c (inline_method): Allways inline some wrappers even if the cost
 	is too large. Fixes #58785.
 
