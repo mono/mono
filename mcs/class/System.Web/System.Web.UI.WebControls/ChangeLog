@@ -1,5 +1,5 @@
 
-2002-10-28      Gaurav Vaish <gvaish_mono@lycos.com>
+2002-10-29      Gaurav Vaish <gvaish_mono@lycos.com>
 
 	* BaseCompareValidator.cs - Fixed operator bug in 
 	                            Compare(string, string, ...)
