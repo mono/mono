@@ -35,7 +35,7 @@ Test cases listed by Category:
 
 * Invocation and Casts
 
-  test-153.cs test-163.c test-207.cs test-210.cs test-211.cs
+  test-153.cs test-163.c test-207.cs test-210.cs test-211.cs test-223.cs
 
 * Flow Analysis
 
@@ -411,6 +411,12 @@ Test for correct scanning for base properties.
 test-222.cs:
 ------------
 Compilation test to check overload resolution. We should prefer int->uint over int->ulong.
+
+test-223.cs:
+------------
+This tests that conversions from Enum and ValueType to structs
+are treated as unboxing conversions, and the `unbox' opcode
+is emitted. #52569.
 
 verify-1.cs
 -----------
