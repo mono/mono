@@ -82,6 +82,16 @@ namespace System.Security {
 			}
 		}
 
+		internal PermissionSet (string xml)
+			: this ()
+		{
+			state = PermissionState.None;
+			if (xml != null) {
+				SecurityElement se = SecurityElement.FromString (xml);
+				FromXml (se);
+			}
+		}
+
 		// methods
 
 		public virtual IPermission AddPermission (IPermission perm)
@@ -112,9 +122,23 @@ namespace System.Security {
 			return perm;
 		}
 
-		[MonoTODO()]
+		[MonoTODO ("unmanaged side is incomplete")]
 		public virtual void Assert ()
 		{
+			new SecurityPermission (SecurityPermissionFlag.Assertion).Demand ();
+
+			// we (current frame) must have the permission to assert it to others
+			// otherwise we don't assert (but we don't throw an exception)
+			foreach (IPermission p in list) {
+				// note: we ignore non-CAS permissions
+				if (p is IStackWalk) {
+					if (!SecurityManager.IsGranted (p)) {
+						return;
+					}
+				}
+			}
+
+			CodeAccessPermission.SetCurrentFrame (CodeAccessPermission.StackModifier.Assert, this.Copy ());
 		}
 
 		internal void Clear () 
@@ -148,50 +172,42 @@ namespace System.Security {
 		[MonoTODO ("Assert, Deny and PermitOnly aren't yet supported")]
 		public virtual void Demand ()
 		{
+			if (IsEmpty ())
+				return;
+
+			PermissionSet cas = this;
+			// avoid copy (if possible)
+			if (ContainsNonCodeAccessPermissions ()) {
+				// non CAS permissions (e.g. PrincipalPermission) do not requires a stack walk
+				cas = this.Copy ();
+				foreach (IPermission p in list) {
+					Type t = p.GetType ();
+					if (!t.IsSubclassOf (typeof (CodeAccessPermission))) {
+						p.Demand ();
+						// we wont have to process this one in the stack walk
+						cas.RemovePermission (t);
+					}
+				}
+
+				// don't start the walk if the permission set only contains non CAS permissions
+				if (cas.Count == 0)
+					return;
+			}
+
+			// Note: SecurityEnabled only applies to CAS permissions
 			if (!SecurityManager.SecurityEnabled)
 				return;
 
-			// non CAS permissions (e.g. PrincipalPermission) do not requires a stack walk
-			PermissionSet cas = this.Copy ();
-			foreach (IPermission p in list) {
-				Type t = p.GetType ();
-				if (!t.IsSubclassOf (typeof (CodeAccessPermission))) {
-					p.Demand ();
-					// we wont have to process this one in the stack walk
-					cas.RemovePermission (t);
-				}
-			}
-			// don't start the walk if the permission set only contains non CAS permissions
-			if (cas.Count == 0)
-				return;
-
-			Assembly a = null;
-			StackTrace st = new StackTrace (1); // skip ourself
-			StackFrame[] frames = st.GetFrames ();
-			foreach (StackFrame sf in frames) {
-				MethodBase mb = sf.GetMethod ();
-				// declarative security checks, when present, must be checked
-				// for each stack frame
-				if ((MethodAttributes.HasSecurity & mb.Attributes) == MethodAttributes.HasSecurity) {
-					// TODO
-				}
-				// however the "final" grant set is resolved by assembly, so
-				// there's no need to check it every time (just when we're 
-				// changing assemblies between frames).
-				Assembly af = mb.ReflectedType.Assembly;
-				if (a != af) {
-					a = af;
-					if (!a.Demand (cas)) {
-						// TODO add more details
-						throw new SecurityException ("Demand failed");
-					}
-				}
+			// FIXME: optimize
+			foreach (IPermission p in cas.list) {
+				p.Demand ();
 			}
 		}
 
-		[MonoTODO()]
+		[MonoTODO ("unmanaged side is incomplete")]
 		public virtual void Deny ()
 		{
+			CodeAccessPermission.SetCurrentFrame (CodeAccessPermission.StackModifier.Deny, this.Copy ());
 		}
 
 		[MonoTODO ("adjust class version with current runtime - unification")]
@@ -272,9 +288,10 @@ namespace System.Security {
 			return true;
 		}
 
-		[MonoTODO()]
+		[MonoTODO ("unmanaged side is incomplete")]
 		public virtual void PermitOnly ()
 		{
+			CodeAccessPermission.SetCurrentFrame (CodeAccessPermission.StackModifier.PermitOnly, this.Copy ());
 		}
 
 		public bool ContainsNonCodeAccessPermissions () 
@@ -420,21 +437,9 @@ namespace System.Security {
 				return true;
 			// the set may include some empty permissions
 			foreach (IPermission p in list) {
-				// an empty permission only has a class and/or version attributes
-				SecurityElement se = p.ToXml ();
-				int n = se.Attributes.Count;
-				if (n <= 2) {
-					if (se.Attribute ("class") != null)
-						n--;
-					if (se.Attribute ("version") != null)
-						n--;
-					if (n > 0)
-						return false;	// not class or version - then not empty
-				}
-				else {
-					// too much attributes - then not empty
+				// empty == fully restricted == IsSubsetOg(null) == true
+				if (!p.IsSubsetOf (null))
 					return false;
-				}
 			}
 			return true;
 		}
@@ -589,6 +594,37 @@ namespace System.Security {
 		internal PolicyLevel Resolver {
 			get { return _policyLevel; }
 			set { _policyLevel = value; }
+		}
+
+
+		internal void ImmediateCallerDemand ()
+		{
+			if (!SecurityManager.SecurityEnabled)
+				return;
+			if (IsEmpty ())
+				return;
+
+			StackTrace st = new StackTrace (1); // skip ourself
+			StackFrame sf = st.GetFrame (0);
+			MethodBase mb = sf.GetMethod ();
+			Assembly af = mb.ReflectedType.Assembly;
+			if (!af.Demand (this)) {
+				Type t = this.GetType ();
+				// TODO add more details
+				throw new SecurityException ("LinkDemand failed", t);
+			}
+		}
+
+		// Note: Non-CAS demands aren't affected by SecurityManager.SecurityEnabled
+		internal void ImmediateCallerNonCasDemand ()
+		{
+			if (IsEmpty ())
+				return;
+
+			// non CAS permissions (e.g. PrincipalPermission) requires direct call to Demand
+			foreach (IPermission p in list) {
+				p.Demand ();
+			}
 		}
 	}
 }

@@ -35,6 +35,7 @@ using System.IO;
 using System.Reflection;
 using System.Security.Permissions;
 using System.Security.Policy;
+using System.Text;
 
 using Mono.Xml;
 
@@ -49,6 +50,7 @@ namespace System.Security {
 		private static bool securityEnabled;
 		private static object _lockObject;
 		private static ArrayList _hierarchy;
+		private static PermissionSet _fullTrust; // for [AllowPartiallyTrustedCallers]
 
 		static SecurityManager () 
 		{
@@ -278,9 +280,11 @@ namespace System.Security {
 
 		private static IEnumerator Hierarchy {
 			get {
+				// double-lock pattern
 				if (_hierarchy == null) {
 					lock (_lockObject) {
-						InitializePolicyHierarchy ();
+						if (_hierarchy == null)
+							InitializePolicyHierarchy ();
 					}
 				}
 				return _hierarchy.GetEnumerator ();
@@ -303,6 +307,130 @@ namespace System.Security {
 				Path.Combine (userPolicyPath, "security.config")));
 
 			_hierarchy = ArrayList.Synchronized (al);
+		}
+
+		private static PermissionSet Decode (byte[] encodedPermissions)
+		{
+			switch (encodedPermissions [0]) {
+			case 60:
+				// Fx 1.0/1.1 declarative security permissions metadata is in Unicode-encoded XML
+				string xml = Encoding.Unicode.GetString (encodedPermissions);
+				return new PermissionSet (xml);
+			case 0x2E:
+				// TODO: Fx 2.0
+				throw new SecurityException ("Unsupported 2.0 metadata format.");
+			default:
+				throw new SecurityException ("Unknown metadata format.");
+			}
+		}
+
+		private static PermissionSet Union (byte[] classPermissions, byte[] methodPermissions)
+		{
+			if (classPermissions != null) {
+				PermissionSet ps = Decode (classPermissions);
+				if (methodPermissions != null) {
+					ps = ps.Union (Decode (methodPermissions));
+				}
+				return ps;
+			}
+
+			return Decode (methodPermissions);
+		}
+
+		// internal - get called by JIT generated code
+
+		private static void LinkDemand (
+			byte[] classPermissions, byte[] classNonCasPermissions,
+			byte[] methodPermissions, byte[] methodNonCasPermissions,
+			bool allowPartiallyTrustedCallers)
+		{
+			PermissionSet ps = null;
+
+			if (classPermissions != null) {
+				ps = Decode (classPermissions);
+				if (ps != null)
+					ps.ImmediateCallerDemand ();
+			}
+			if (classNonCasPermissions != null) {
+				ps = Decode (classNonCasPermissions);
+				if (ps != null)
+					ps.ImmediateCallerNonCasDemand ();
+			}
+
+			if (methodPermissions != null) {
+				ps = Decode (methodPermissions);
+				if (ps != null)
+					ps.ImmediateCallerDemand ();
+			}
+			if (methodNonCasPermissions != null) {
+				ps = Decode (methodNonCasPermissions);
+				if (ps != null)
+					ps.ImmediateCallerNonCasDemand ();
+			}
+
+			if (allowPartiallyTrustedCallers) {
+				// double-lock pattern
+				if (_fullTrust == null) {
+					lock (_lockObject) {
+						if (_fullTrust == null)
+							_fullTrust = new NamedPermissionSet ("FullTrust");
+					}
+				}
+				_fullTrust.ImmediateCallerDemand ();
+			}
+		}
+
+		// Called when
+		// - class inheritance
+		// - method overrides
+		private static void InheritanceDemand (byte[] permissions, byte[] nonCasPermissions)
+		{
+			if (permissions != null) {
+				PermissionSet ps = Decode (permissions);
+				if (ps != null)
+					ps.ImmediateCallerDemand ();
+			}
+			if (nonCasPermissions != null) {
+				PermissionSet ps = Decode (nonCasPermissions);
+				if (ps != null)
+					ps.ImmediateCallerNonCasDemand ();
+			}
+		}
+
+		private static void InternalDemand (byte[] classPermissions, byte[] methodPermissions)
+		{
+			PermissionSet ps = Union (classPermissions, methodPermissions);
+			ps.Demand ();
+		}
+
+		private static void InternalDemandChoice (byte[] classPermissions, byte[] methodPermissions)
+		{
+#if NET_2_0
+			PermissionSet ps = Union (classPermissions, methodPermissions);
+#else
+			throw new SecurityException ("SecurityAction.DemandChoice is only possible in 2.0");
+#endif
+		}
+
+		private static void InternalAssert (byte[] classPermissions, byte[] methodPermissions)
+		{
+			PermissionSet ps = Union (classPermissions, methodPermissions);
+			// note: Calling PermissionSet.Assert would have produced an unrequired copy of the PermissionSet
+			CodeAccessPermission.SetCurrentFrame (CodeAccessPermission.StackModifier.Assert, ps);
+		}
+
+		private static void InternalDeny (byte[] classPermissions, byte[] methodPermissions)
+		{
+			PermissionSet ps = Union (classPermissions, methodPermissions);
+			// note: Calling PermissionSet.Deny would have produced an unrequired copy of the PermissionSet
+			CodeAccessPermission.SetCurrentFrame (CodeAccessPermission.StackModifier.Deny, ps);
+		}
+
+		private static void InternalPermitOnly (byte[] classPermissions, byte[] methodPermissions)
+		{
+			PermissionSet ps = Union (classPermissions, methodPermissions);
+			// note: Calling PermissionSet.PermitOnly would have produced an unrequired copy of the PermissionSet
+			CodeAccessPermission.SetCurrentFrame (CodeAccessPermission.StackModifier.PermitOnly, ps);
 		}
 	}
 }

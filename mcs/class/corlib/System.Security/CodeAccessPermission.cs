@@ -34,51 +34,58 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Security.Permissions;
-using System.Text;
 
 namespace System.Security {
 
 	[Serializable]
 	public abstract class CodeAccessPermission : IPermission, ISecurityEncodable, IStackWalk {
 
+		internal enum StackModifier {
+			Assert = 1,
+			Deny = 2,
+			PermitOnly = 3
+		}
+
 		protected CodeAccessPermission ()
 		{
 		}
 
 		// LAMESPEC: Documented as virtual
-		[MonoTODO]
+		[MonoTODO ("unmanaged side is incomplete")]
 		public void Assert ()
 		{
 			// Not everyone can assert freely so we must check for
 			// System.Security.Permissions.SecurityPermissionFlag.Assertion
 			new SecurityPermission (SecurityPermissionFlag.Assertion).Demand ();
 
-			// TODO: Only one Assert can be active in a stack frame
-			// throw new SecurityException (Locale.GetText (
-			//	"Only one Assert can be active in a stack frame"));
+			// we must have the permission to assert it to others
+			if (SecurityManager.IsGranted (this)) {
+				SetCurrentFrame (StackModifier.Assert, this.Copy ());
+			}
 		}
 
 #if NET_2_0
-		public 
+		public virtual
 #else
 		internal
 #endif
-		virtual bool CheckAssert (CodeAccessPermission asserted)
+		bool CheckAssert (CodeAccessPermission asserted)
 		{
 			if (asserted == null)
 				return false;
-			if (asserted.GetType() != this.GetType ())
+			if (asserted.GetType () != this.GetType ())
 				return false;
 			return IsSubsetOf (asserted);
 		}
 
 #if NET_2_0
-		public 
+		public virtual
 #else
 		internal
 #endif
-		virtual bool CheckDemand (CodeAccessPermission target)
+		bool CheckDemand (CodeAccessPermission target)
 		{
 			if (target == null)
 				return false;
@@ -88,11 +95,11 @@ namespace System.Security {
 		}
 
 #if NET_2_0
-		public 
+		public virtual
 #else
 		internal
 #endif
-		virtual bool CheckDeny (CodeAccessPermission denied)
+		bool CheckDeny (CodeAccessPermission denied)
 		{
 			if (denied == null)
 				return true;
@@ -124,34 +131,118 @@ namespace System.Security {
 			if (!SecurityManager.SecurityEnabled)
 				return;
 
+			// Order is:
+			// 1. CheckDemand (current frame)
+			//	note: for declarative attributes directly calls IsSubsetOf
+
 			Assembly a = null;
 			StackTrace st = new StackTrace (1); // skip ourself
 			StackFrame[] frames = st.GetFrames ();
 			foreach (StackFrame sf in frames) {
 				MethodBase mb = sf.GetMethod ();
-				// declarative security checks, when present, must be checked
-				// for each stack frame
-				if ((MethodAttributes.HasSecurity & mb.Attributes) == MethodAttributes.HasSecurity) {
-					// TODO
-				}
 				// however the "final" grant set is resolved by assembly, so
 				// there's no need to check it every time (just when we're 
 				// changing assemblies between frames).
 				Assembly af = mb.ReflectedType.Assembly;
+				CodeAccessPermission cap = null;
 				if (a != af) {
 					a = af;
-					if (!a.Demand (this)) {
-						Type t = this.GetType ();
-						throw new SecurityException ("Demand failed", t);
+					if (a.GrantedPermissionSet != null)
+						cap = (CodeAccessPermission) a.GrantedPermissionSet.GetPermission (this.GetType ());
+					else
+						cap = null;
+
+					// CheckDemand will always return false in case cap is null
+					if ((cap == null) || !CheckDemand (cap)) {
+						if (a.DeniedPermissionSet != null) {
+							cap = (CodeAccessPermission) a.DeniedPermissionSet.GetPermission (this.GetType ());
+						}
+						else
+							cap = null;
+
+						// IsSubsetOf "should" always return false if cap is null
+						if ((cap != null) && IsSubsetOf (cap)) {
+							Type t = this.GetType ();
+							// TODO add more details
+							throw new SecurityException ("ReqRefuse", t);
+						}
+					}
+					else {
+						throw new SecurityException ("Demand failed", a.GetName (),
+							a.GrantedPermissionSet, a.DeniedPermissionSet, (MethodInfo) mb, 
+							SecurityAction.Demand, this, cap, a.Evidence);
+					}
+				}
+				object[] perms = GetFramePermissions ();
+				if (perms == null)
+					continue;
+
+				// 2. CheckPermitOnly
+				object o = perms [(int)StackModifier.PermitOnly];
+				if (o != null) {
+					cap = (o as CodeAccessPermission);
+					if (cap != null) {
+						if (!CheckPermitOnly (cap))
+							throw new SecurityException ("PermitOnly");
+					}
+					else {
+						PermissionSet ps = (o as PermissionSet);
+						foreach (IPermission p in ps) {
+							if (p is CodeAccessPermission) {
+								if (!CheckPermitOnly (p as CodeAccessPermission))
+									throw new SecurityException ("PermitOnly");
+							}
+						}
+					}
+				}
+
+				// 3. CheckDeny
+				o = perms [(int)StackModifier.Deny];
+				if (o != null) {
+					cap = (o as CodeAccessPermission) ;
+					if (cap != null) {
+						if (!CheckDeny (cap))
+							throw new SecurityException ("Deny");
+					}
+					else {
+						PermissionSet ps = (o as PermissionSet);
+						foreach (IPermission p in ps) {
+							if (p is CodeAccessPermission) {
+								if (!CheckPermitOnly (p as CodeAccessPermission))
+									throw new SecurityException ("Deny");
+							}
+						}
+					}
+				}
+
+				// 4. CheckAssert
+				o = perms [(int)StackModifier.Assert];
+				if (o != null) {
+					cap = (o as CodeAccessPermission);
+					if (cap != null) {
+						if (CheckAssert (cap)) {
+							return; // stop the stack walk
+						}
+					}
+					else {
+						PermissionSet ps = (o as PermissionSet);
+						foreach (IPermission p in ps) {
+							if (p is CodeAccessPermission) {
+								if (!CheckPermitOnly (p as CodeAccessPermission)) {
+									return; // stop the stack walk
+								}
+							}
+						}
 					}
 				}
 			}
 		}
 
 		// LAMESPEC: Documented as virtual
-		[MonoTODO]
+		[MonoTODO ("unmanaged side is incomplete")]
 		public void Deny ()
 		{
+			SetCurrentFrame (StackModifier.Deny, this.Copy ());
 		}
 
 #if NET_2_0
@@ -197,30 +288,69 @@ namespace System.Security {
 		}
 
 		// LAMESPEC: Documented as virtual
-		[MonoTODO]
+		[MonoTODO ("unmanaged side is incomplete")]
 		public void PermitOnly ()
 		{
+			SetCurrentFrame (StackModifier.PermitOnly, this.Copy ());
 		}
 
-		[MonoTODO]
+		[MonoTODO ("unmanaged side is incomplete")]
 		public static void RevertAll ()
 		{
+			if (!ClearFramePermissions ()) {
+				string msg = Locale.GetText ("No security frame present to be reverted.");
+				throw new ExecutionEngineException (msg);
+			}
 		}
 
-		[MonoTODO]
+		[MonoTODO ("unmanaged side is incomplete")]
 		public static void RevertAssert ()
 		{
+			RevertCurrentFrame (StackModifier.Assert);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("unmanaged side is incomplete")]
 		public static void RevertDeny ()
 		{
+			RevertCurrentFrame (StackModifier.Deny);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("unmanaged side is incomplete")]
 		public static void RevertPermitOnly ()
 		{
+			RevertCurrentFrame (StackModifier.PermitOnly);
 		}
+
+		// Internal calls
+#if false
+		// see mono/mono/metadata/cas.c for implementation
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern bool ClearFramePermissions ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern object[] GetFramePermissions ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern bool SetFramePermissions (int index, object permissions);
+#else
+		// icalls are not yet commited so...
+
+		static bool ClearFramePermissions () 
+		{
+			return true;
+		}
+
+		static object[] GetFramePermissions () 
+		{
+			return null;
+		}
+
+		static bool SetFramePermissions (int index, object permissions)
+		{
+			return true;
+		}
+#endif
 
 		// Internal helpers methods
 
@@ -305,6 +435,22 @@ namespace System.Security {
 			string msg = Locale.GetText ("Invalid permission type '{0}', expected type '{1}'.");
 			msg = String.Format (msg, target.GetType (), expected);
 			throw new ArgumentException (msg, "target");
+		}
+
+		internal static void SetCurrentFrame (StackModifier stackmod, object permissions)
+		{
+			if (!SetFramePermissions ((int)stackmod, permissions)) {
+				string msg = Locale.GetText ("An {0} modifier is already present on the current stack frame.");
+				throw new SecurityException (String.Format (msg, stackmod));
+			}
+		}
+
+		internal static void RevertCurrentFrame (StackModifier stackmod)
+		{
+			if (!SetFramePermissions ((int)stackmod, null)) {
+				string msg = Locale.GetText ("No {0} modifier is present on the current stack frame.");
+				throw new ExecutionEngineException (String.Format (msg, stackmod));
+			}
 		}
 	}
 }

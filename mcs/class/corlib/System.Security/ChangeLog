@@ -1,5 +1,21 @@
 2004-10-15  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* CodeAccessPermission.cs: Implemented stubs (soon to be icalls) to
+	get/set/clear the current security frame on the stack. Implemented
+	Assert, Deny and PermitOnly with the new methods. Changed Demand to
+	use the CheckAssert, CheckDeny, CheckPermitOnly and CheckDemand 
+	introduced in 2.0.
+	* PermissionSet.cs: Fixed IsEmpty using documentation from 2.0 beta 1.
+	Implemented immediate (i.e. no stack walk) caller demand (CAS and 
+	non-CAS) required for LinkDemand and InheritanceDemand. Implemented
+	Assert, Deny and PermitOnly using CodeAccessPermission new methods.
+	Re-implement Demand to separate CAS and non-CAS permissions.
+	* SecurityManager.cs: Added new private static methods that will 
+	either be called by the JIT (linkdemand), runtime (inheritancedemand)
+	or by code emitted by the JIT (demand, assert, deny and permitonly).
+
+2004-10-15  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* SecurityException.cs: Provide more details when a security exception
 	is raised (to help debugging).
 
