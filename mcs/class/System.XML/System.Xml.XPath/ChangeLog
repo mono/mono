@@ -1,5 +1,12 @@
 2004-05-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DefaultContext.cs : Add XPathNavigator input support for ToBoolean()
+	  and ToNavigator().
+	* Expression.cs : In Equality comparison, evaluate XPathNavigator in
+	  the same as well as NodeSet. This fixes bug #59134.
+
+2004-05-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XPathAtomicValue.cs : missed NET_2_0.
 
 2004-05-22  Atsushi Enomoto  <atsushi@ximian.com>

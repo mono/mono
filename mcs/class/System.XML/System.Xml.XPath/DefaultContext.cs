@@ -35,6 +35,10 @@ namespace System.Xml.XPath
 				BaseIterator iter = (BaseIterator) arg;
 				return iter.MoveNext ();
 			}
+			if (arg is XPathNavigator)
+			{
+				return ToBoolean (((XPathNavigator) arg).SelectChildren (XPathNodeType.All));
+			}
 			throw new ArgumentException ();
 		}
 
@@ -75,6 +79,10 @@ namespace System.Xml.XPath
 					return "";
 				return iter.Current.Value;
 			}
+			if (arg is XPathNavigator)
+			{
+				return ((XPathNavigator) arg).Value;
+			}
 			throw new ArgumentException ();
 		}
 
@@ -82,7 +90,7 @@ namespace System.Xml.XPath
 		{
 			if (arg == null)
 				throw new ArgumentNullException ();
-			if (arg is BaseIterator)
+			if (arg is BaseIterator || arg is XPathNavigator)
 				arg = ToString (arg);	// follow on
 			if (arg is string) {
 				string s = arg as string;

@@ -595,6 +595,12 @@ namespace System.Xml.XPath
 			if (typeR == XPathResultType.Any)
 				typeR = GetReturnType (_right.Evaluate (iter));
 
+			// Regard RTF as nodeset
+			if (typeL == XPathResultType.Navigator)
+				typeL = XPathResultType.NodeSet;
+			if (typeR == XPathResultType.Navigator)
+				typeR = XPathResultType.NodeSet;
+
 			if (typeL == XPathResultType.NodeSet || typeR == XPathResultType.NodeSet)
 			{
 				Expression left, right;
