@@ -193,6 +193,14 @@ namespace System.Windows.Forms {
 			Console.WriteLine("XplatUIX11.Exit");
 		}
 
+		internal override void GetDisplaySize(out Size size) {
+			XWindowAttributes	attributes=new XWindowAttributes();
+
+			XGetWindowAttributes(DisplayHandle, XRootWindow(DisplayHandle, 0), ref attributes);
+
+			size = new Size(attributes.width, attributes.height);
+		}
+
 		internal override void EnableThemes() {
 			themes_enabled=true;
 		}
@@ -815,7 +823,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal override void GrabInfo(ref IntPtr hWnd, ref bool GrabConfined, ref Rectangle GrabArea) {
+		internal override void GrabInfo(out IntPtr hWnd, out bool GrabConfined, out Rectangle GrabArea) {
 			hWnd = grab_hwnd;
 			GrabConfined = grab_confined;
 			GrabArea = grab_area;

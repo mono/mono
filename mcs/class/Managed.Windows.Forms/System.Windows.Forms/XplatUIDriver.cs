@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.17 $
+// $Revision: 1.18 $
 // $Modtime: $
 // $Log: XplatUIDriver.cs,v $
+// Revision 1.18  2004/08/21 20:51:27  pbartok
+// - Added method to get default display size
+//
 // Revision 1.17  2004/08/21 20:23:56  pbartok
 // - Added method to query current grab state
 // - Added argument to allow confining a grab to a window
@@ -147,6 +150,8 @@ namespace System.Windows.Forms {
 
 		internal abstract void EnableThemes();
 
+		internal abstract void GetDisplaySize(out Size size);
+
 		internal abstract IntPtr CreateWindow(CreateParams cp);
 		internal abstract IntPtr CreateWindow(IntPtr Parent, int X, int Y, int Width, int Height);
 		internal abstract void DestroyWindow(IntPtr handle);
@@ -180,7 +185,7 @@ namespace System.Windows.Forms {
 		internal abstract void ScreenToClient(IntPtr handle, ref int x, ref int y);
 
 		internal abstract void GrabWindow(IntPtr hWnd, IntPtr ConfineToHwnd);
-		internal abstract void GrabInfo(ref IntPtr hWnd, ref bool GrabConfined, ref Rectangle GrabArea);
+		internal abstract void GrabInfo(out IntPtr hWnd, out bool GrabConfined, out Rectangle GrabArea);
 		internal abstract void ReleaseWindow(IntPtr hWnd);
 
 		internal abstract void SendAsyncMethod (AsyncMethodData method);

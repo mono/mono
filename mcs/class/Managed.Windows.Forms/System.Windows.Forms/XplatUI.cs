@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.17 $
+// $Revision: 1.18 $
 // $Modtime: $
 // $Log: XplatUI.cs,v $
+// Revision 1.18  2004/08/21 20:51:27  pbartok
+// - Added method to get default display size
+//
 // Revision 1.17  2004/08/21 20:23:56  pbartok
 // - Added method to query current grab state
 // - Added argument to allow confining a grab to a window
@@ -184,6 +187,10 @@ namespace System.Windows.Forms {
 			driver.Exit();
 		}
 
+		internal static void GetDisplaySize(out Size size) {
+			driver.GetDisplaySize(out size);
+		}
+
 		internal static void EnableThemes() {
 			driver.EnableThemes();
 		}
@@ -288,8 +295,8 @@ namespace System.Windows.Forms {
 			driver.GrabWindow(hWnd, ConfineToHwnd);
 		}
 
-		internal static void GrabInfo(ref IntPtr hWnd, ref bool GrabConfined, ref Rectangle GrabArea) {
-			driver.GrabInfo(ref hWnd, ref GrabConfined, ref GrabArea);
+		internal static void GrabInfo(out IntPtr hWnd, out bool GrabConfined, out Rectangle GrabArea) {
+			driver.GrabInfo(out hWnd, out GrabConfined, out GrabArea);
 		}
 
 		internal static void ReleaseWindow(IntPtr hWnd) {

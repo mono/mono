@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.26 $
+// $Revision: 1.27 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.27  2004/08/21 20:51:27  pbartok
+// - Added method to get default display size
+//
 // Revision 1.26  2004/08/21 20:23:56  pbartok
 // - Added method to query current grab state
 // - Added argument to allow confining a grab to a window
@@ -622,6 +625,14 @@ namespace System.Windows.Forms {
 			Win32PostQuitMessage(0);
 		}
 
+		internal override void GetDisplaySize(out Size size) {
+			RECT	rect;
+
+			Win32GetWindowRect(Win32GetDesktopWindow(), out rect);
+
+			size = new Size(rect.right - rect.left, rect.bottom - rect.top);
+		}
+
 		internal override void EnableThemes() {
 			themes_enabled=true;
 		}
@@ -945,7 +956,7 @@ namespace System.Windows.Forms {
 			Win32SetCapture(hWnd);
 		}
 
-		internal override void GrabInfo(ref IntPtr hWnd, ref bool GrabConfined, ref Rectangle GrabArea) {
+		internal override void GrabInfo(out IntPtr hWnd, out bool GrabConfined, out Rectangle GrabArea) {
 			hWnd = grab_hwnd;
 			GrabConfined = grab_confined;
 			GrabArea = grab_area;
@@ -1133,6 +1144,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="GetKeyState", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static short Win32GetKeyState(VirtualKeys nVirtKey);
+
+		[DllImport ("user32.dll", EntryPoint="GetDesktopWindow", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32GetDesktopWindow();
 		#endregion
 
 	}
