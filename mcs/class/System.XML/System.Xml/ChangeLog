@@ -1,3 +1,8 @@
+2003-01-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XmlTextReader.cs:
+	(ReadOuterXml): use Depth property which return elementDepth, not depth.
+
 2003-01-11  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlElement.cs : (by ville) XmlElement.set_InnerText event bugfix.

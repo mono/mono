@@ -602,12 +602,12 @@ namespace System.Xml
 			} else {
    				saveToXmlBuffer = true;
 				xmlBuffer.Append (currentTag.ToString ());
-				int startDepth = depth;
+				int startDepth = Depth;
 				readState = ReadState.Interactive;
 
 				do {
 					ReadContent ();
-				} while (depth > startDepth);
+				} while (Depth > startDepth);
 
 				saveToXmlBuffer = false;
 				string OuterXml = xmlBuffer.ToString ();
