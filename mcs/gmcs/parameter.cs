@@ -35,6 +35,7 @@ namespace Mono.CSharp {
 		public readonly Modifier ModFlags;
 		public Attributes OptAttributes;
 		public readonly string Name;
+		GenericConstraints constraints;
 		Type parameter_type;
 		
 		public Parameter (Expression type, string name, Modifier mod, Attributes attrs)
@@ -50,7 +51,15 @@ namespace Mono.CSharp {
 		// </summary>
 		public bool Resolve (DeclSpace ds, Location l)
 		{
-			parameter_type = ds.ResolveType (TypeName, false, l);
+			TypeExpr texpr = ds.ResolveTypeExpr (TypeName, false, l);
+			if (texpr == null)
+				return false;
+
+			TypeParameterExpr tparam = texpr as TypeParameterExpr;
+			if (tparam != null)
+				constraints = tparam.TypeParameter.Constraints;
+
+			parameter_type = ds.ResolveType (texpr, l);
 
 			if (parameter_type == TypeManager.void_type){
 				Report.Error (1536, l, "`void' parameter is not permitted");
@@ -71,6 +80,12 @@ namespace Mono.CSharp {
 		public Type ParameterType {
 			get {
 				return parameter_type;
+			}
+		}
+
+		public GenericConstraints GenericConstraints {
+			get {
+				return constraints;
 			}
 		}
 		

@@ -457,6 +457,11 @@ namespace Mono.CSharp {
 			if (d == null)
 				return null;
 
+			return ResolveType (d, loc);
+		}
+
+		public Type ResolveType (TypeExpr d, Location loc)
+		{
 			if (!d.CheckAccessLevel (this)) {
 				Report.	Error (122, loc,  "`" + d.Name + "' " +
 				       "is inaccessible because of its protection level");

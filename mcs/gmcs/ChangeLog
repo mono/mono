@@ -1,5 +1,20 @@
 2004-03-29  Martin Baulig  <martin@ximian.com>
 
+	* class.cs (MethodBase.CheckGenericOverride): New abstract method.
+	(MethodCore.CheckGenericOverride): When overriding a generic
+	method, check whether the constraints match.
+
+	* support.cs (GenericConstraints): New public interface.
+	(ParameterData.GenericConstraints): New public method.
+
+	* parameter.cs (Parameter.Resolve): Check whether we're a generic
+	method parameter and compute our constraints if appropriate.
+	(Parameter.GenericConstraints): New public property.
+
+	* generic.cs (Constraints): Implement GenericConstraints.
+
+2004-03-29  Martin Baulig  <martin@ximian.com>
+
 	* decl.cs (MemberCache.FindMemberToOverride): Use
 	`paramTypes [j].Equals (cmpAttrs [j])' instead of `=='.
 

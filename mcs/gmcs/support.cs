@@ -18,8 +18,14 @@ using System.Globalization;
 
 namespace Mono.CSharp {
 
+	public interface GenericConstraints {
+		bool HasConstructor { get; }
+		Type[] Types { get; }
+	}
+
 	public interface ParameterData {
 		Type ParameterType (int pos);
+		GenericConstraints GenericConstraints (int pos);
 		bool HasArrayParameter { get; }
 		int  Count { get; }
 		string ParameterName (int pos);
@@ -30,11 +36,12 @@ namespace Mono.CSharp {
 	public class ReflectionParameters : ParameterData {
 		ParameterInfo [] pi;
 		bool last_arg_is_params = false;
+		ParameterData gpd;
 		
 		public ReflectionParameters (MethodBase method)
 		{
 			object [] attrs;
-			
+
 			this.pi = method.GetParameters ();
 			int count = pi.Length-1;
 
@@ -43,7 +50,7 @@ namespace Mono.CSharp {
 
 			if (method.HasGenericParameters) {
 				MethodInfo generic = method.GetGenericMethodDefinition ();
-				ParameterData gpd = Invocation.GetParameterData (generic);
+				gpd = Invocation.GetParameterData (generic);
 
 				last_arg_is_params = gpd.HasArrayParameter;
 			} else {
@@ -71,6 +78,18 @@ namespace Mono.CSharp {
 
 				return t;
 			}
+		}
+
+		public GenericConstraints GenericConstraints (int pos)
+		{
+			if (gpd != null)
+				return gpd.GenericConstraints (pos);
+
+			Type t = ParameterType (pos);
+			if (!t.IsGenericParameter)
+				return null;
+
+			return ReflectionConstraints.Create (t);
 		}
 
 		public string ParameterName (int pos)
@@ -130,7 +149,49 @@ namespace Mono.CSharp {
 				return pi.Length;
 			}
 		}
-		
+
+		protected class ReflectionConstraints : GenericConstraints
+		{
+			bool has_ctor;
+			Type[] types;
+
+			protected ReflectionConstraints (bool has_ctor, Type[] types)
+			{
+				this.has_ctor = has_ctor;
+				this.types = types;
+			}
+
+			public static GenericConstraints Create (Type t)
+			{
+				Type[] types;
+				Type[] ifaces = t.GetInterfaces ();
+				if (t.BaseType != null) {
+					types = new Type [ifaces.Length + 1];
+					types [0] = t.BaseType;
+					ifaces.CopyTo (types, 1);
+				} else {
+					types = new Type [ifaces.Length];
+					ifaces.CopyTo (types, 0);
+				}
+
+				if (types.Length == 0)
+					return null;
+
+				return new ReflectionConstraints (false, types);
+			}
+
+			public bool HasConstructor {
+				get {
+					return has_ctor;
+				}
+			}
+
+			public Type[] Types {
+				get {
+					return types;
+				}
+			}
+		}
 	}
 
 	public class InternalParameters : ParameterData {
@@ -182,6 +243,13 @@ namespace Mono.CSharp {
 			return GetParameter (pos).ExternalType ();
 		}
 
+		public GenericConstraints GenericConstraints (int pos)
+		{
+			if (param_types == null)
+				return null;
+
+			return GetParameter (pos).GenericConstraints;
+		}
 
 		public string ParameterName (int pos)
 		{

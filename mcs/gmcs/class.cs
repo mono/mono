@@ -2550,6 +2550,58 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		void error_425 (Type old, Type t, string name)
+		{
+			Report.Error (425, Location,
+				      "The constraints of type parameter `{0}' " +
+				      "of method `{1}' must match the constraints for " +
+				      "type parameter `{2}' of method `{3}'",
+				      TypeManager.CSharpName (old), Name,
+				      TypeManager.CSharpName (t), name);
+		}
+
+		protected override bool CheckGenericOverride (MethodInfo method, string name)
+		{
+			ParameterData pd = Invocation.GetParameterData (method);
+
+			for (int i = 0; i < ParameterTypes.Length; i++) {
+				GenericConstraints ogc = pd.GenericConstraints (i);
+				GenericConstraints gc = ParameterInfo.GenericConstraints (i);
+
+				if ((gc == null) && (ogc == null))
+					continue;
+
+				Type ot = pd.ParameterType (i);
+				Type t = ParameterTypes [i];
+
+				if (!((gc != null) && (ogc != null))) {
+					error_425 (ot, t, name);
+					return false;
+				}
+
+				if (gc.HasConstructor != ogc.HasConstructor) {
+					error_425 (ot, t, name);
+					return false;
+				}
+
+				Type[] oct = ogc.Types;
+				Type[] ct = gc.Types;
+
+				if (oct.Length != ct.Length) {
+					error_425 (ot, t, name);
+					return false;
+				}
+
+				for (int j = 0; j < oct.Length; j++)
+					if (!oct [j].Equals (ct [j])) {
+						error_425 (ot, t, name);
+						return false;
+					}
+			}
+
+			return true;
+		}
+
 		protected bool IsDuplicateImplementation (TypeContainer tc, MethodCore method)
 		{
 			if ((method == this) || (method.Name != Name))
@@ -4000,6 +4052,8 @@ namespace Mono.CSharp {
 				": can't change the access modifiers when overriding inherited " +
 				"member `" + name + "'");
 		}
+
+		protected abstract bool CheckGenericOverride (MethodInfo method, string name);
 		
 		//
 		// Performs various checks on the MethodInfo `mb' regarding the modifier flags
@@ -4039,6 +4093,15 @@ namespace Mono.CSharp {
 							      "' because it is sealed.");
 					ok = false;
 				}
+
+				//
+				// Check that the constraints match when overriding a
+				// generic method.
+				//
+
+				if (!CheckGenericOverride (mb, name))
+					ok = false;
+
 				//
 				// Check that the permissions are not being changed
 				//
@@ -4301,6 +4364,11 @@ namespace Mono.CSharp {
 		// Private.
 		Expression init_expr;
 		bool init_expr_initialized = false;
+
+		protected override bool CheckGenericOverride (MethodInfo method, string name)
+		{
+			return true;
+		}
 
 		//
 		// Resolves and returns the field initializer.
@@ -5411,6 +5479,11 @@ namespace Mono.CSharp {
 				SecondArgType + ")";
 		}
 		
+		protected override bool CheckGenericOverride (MethodInfo method,  string name)
+		{
+			return true;
+		}
+
 		public override bool Define (TypeContainer container)
 		{
 			int length = 1;

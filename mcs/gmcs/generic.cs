@@ -18,7 +18,7 @@ namespace Mono.CSharp {
 	//
 	// Tracks the constraints for a type parameter
 	//
-	public class Constraints {
+	public class Constraints : GenericConstraints {
 		string type_parameter;
 		ArrayList constraints;
 		Location loc;
@@ -52,6 +52,7 @@ namespace Mono.CSharp {
 		ArrayList iface_constraints;
 		TypeExpr[] constraint_types;
 		int num_constraints;
+		Type[] types;
 
 		public bool HasConstructorConstraint {
 			get { return has_ctor_constraint; }
@@ -99,12 +100,27 @@ namespace Mono.CSharp {
 
 		public Type[] ResolveTypes (EmitContext ec)
 		{
-			Type [] types = new Type [constraint_types.Length];
+			types = new Type [constraint_types.Length];
 
 			for (int i = 0; i < constraint_types.Length; i++)
 				types [i] = constraint_types [i].ResolveType (ec);
 
 			return types;
+		}
+
+		bool GenericConstraints.HasConstructor {
+			get {
+				return has_ctor_constraint;
+			}
+		}
+
+		Type[] GenericConstraints.Types {
+			get {
+				if (types == null)
+					throw new InvalidOperationException ();
+
+				return types;
+			}
 		}
 	}
 
