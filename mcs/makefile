@@ -1,4 +1,4 @@
-DIRS=jay mcs class tools
+DIRS=jay nant mcs class tools
 
 all: linux
 

@@ -14,7 +14,7 @@ using System.Globalization;
 namespace System.Resources {
 	   public class ResourceManager {
 			 public static readonly int HeaderVersionNumber;
-			 public static readonly int MagicNumber = 0xBEEFCACE;
+		   // public static readonly int MagicNumber = 0xBEEFCACE;
 
 			 protected string BaseNameField;
 			 protected Assembly MainAssembly;
@@ -34,7 +34,7 @@ namespace System.Resources {
 				    MainAssembly = resourceSource.Assembly;
 
 				    ignoreCase = false;
-				    resourceSetType = typeof (resourceSource);
+				    resourceSetType = resourceSource;
 			 }
 
 			 public ResourceManager (string baseName, Assembly assembly) {
@@ -52,7 +52,7 @@ namespace System.Resources {
 						  throw new ArgumentNullException ("The arguments are null.");
 
 				    BaseNameField = baseName;
-				    Assembly = assembly;
+				    MainAssembly = assembly;
 
 				    if (usingResourceSet == null) // defaults resourceSet type.
 						  resourceSetType = typeof (ResourceSet);
@@ -60,7 +60,6 @@ namespace System.Resources {
 						  if (!usingResourceSet.IsSubclassOf (typeof (ResourceSet)))
 								throw new ArgumentException ("Type must be from ResourceSet.");
 						  
-						  resourceSetType = typeof (usingResourceSet); // must be a subclass of ResourceSet
 				    }
 			 }
 
@@ -131,8 +130,8 @@ namespace System.Resources {
 			 [MonoTODO]
 			 protected static CultureInfo GetNeutralResourcesLanguage (Assembly a) {
 				    foreach (Attribute attribute in a.GetCustomAttributes (false)) {
-						  if (attribute is NeutralResourcesLanguageAttribute)
-								return new CultureInfo (attribute.CultureName);
+//						  if (attribute is NeutralResourcesLanguageAttribute)
+//								return new CultureInfo (attribute.CultureName);
 				    }
 				    return null;
 			 }
