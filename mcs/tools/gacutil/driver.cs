@@ -129,6 +129,7 @@ namespace Mono.Tools {
 				gacdir = GetGacDir ();
 				libdir = GetLibDir ();
 			} else {
+				gacdir = EnsureLib (gacdir);
 				libdir = Path.Combine (gacdir, "mono");
 				gacdir = Path.Combine (libdir, "gac");
 			}
@@ -597,6 +598,14 @@ namespace Mono.Tools {
 			string sep = (a.EndsWith (dsc) ? String.Empty : dsc);
 			string end = (b.StartsWith (dsc) ? b.Substring (1) : b);
 			return String.Concat (a, sep, end);
+		}
+
+		private static string EnsureLib (string dir)
+		{
+			DirectoryInfo d = new DirectoryInfo (dir);
+			if (d.Name == "lib")
+				return dir;
+			return Path.Combine (dir, "lib");
 		}
 
 		private static void WriteLine ()

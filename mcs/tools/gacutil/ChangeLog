@@ -1,3 +1,10 @@
+2004-06-15  Jackson Harper  <jackson@ximian.com>
+
+	* driver.cs: Ensure that the -gacdir ends with /lib if it does not
+	appened one. The reason for this is that the runtime expects it,
+	and existing makefiles user -gacdir $(destdir)/$(libdir) so auto
+	appending it without checking would break many things.
+	
 2004-06-10  Jackson Harper  <jackson@ximian.com>
 
 	* driver.cs: We don't need to check if the canidate is a file in
