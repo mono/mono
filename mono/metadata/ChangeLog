@@ -1,4 +1,8 @@
 
+Wed Jun 23 18:36:58 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: fixed minor standard compliance issues.
+
 Wed Jun 23 17:59:29 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: fixed issue with encoding some custom attributes
