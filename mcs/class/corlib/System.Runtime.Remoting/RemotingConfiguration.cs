@@ -826,6 +826,8 @@ namespace System.Runtime.Remoting
 		public void OnEndParsing (MiniParser parser)
 		{
 			RemotingConfiguration.RegisterChannels (channelInstances, onlyDelayedChannels);
+			if (appName != null) RemotingConfiguration.ApplicationName = appName;
+			
 			if (!onlyDelayedChannels)
 				RemotingConfiguration.RegisterTypes (typeEntries);
 		}

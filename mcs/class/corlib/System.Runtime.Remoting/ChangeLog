@@ -1,3 +1,7 @@
+2004-06-15  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* RemotingConfiguration.cs: Read application name from configuraation file.
+
 2004-06-01  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* RemotingServices.cs: Added missing Conditional attribute and
