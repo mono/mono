@@ -1,3 +1,7 @@
+2002-03-10  Martin Baulig  <martin@gnome.org>
+
+	* Int32.cs (Parse): Correctly parse negative numbers.
+
 2002-03-08  Martin Baulig  <martin@gnome.org>
 
 	* String.cs (Split): Really fix it this time. Also adding several new

@@ -74,7 +74,7 @@ namespace System {
 			if (c == '+')
 				i++;
 			else if (c == '-'){
-				sign = 1;
+				sign = -1;
 				i++;
 			}
 			
