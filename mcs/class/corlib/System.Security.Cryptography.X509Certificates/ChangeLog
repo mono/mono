@@ -1,3 +1,11 @@
+2002-12-27  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ASN1.cs: New. Updated ASN1 classes for X509Certificate that can
+	now be reused for other tools (like Cert2Spc). Classes are marked
+	internal so they cannot be reused from outside corlib (for 
+	compatibility with MS implementation).
+	* X509Certificate.cs: Removed all ASN1 classes from file.	
+
 2002-12-26  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* X509Certificate.cs: Fixed the date issue (again). Time was 

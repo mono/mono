@@ -8,209 +8,36 @@
 //
 
 using System;
-using System.Collections;
+//using System.Collections;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using Mono.Security.ASN1;
 
 namespace System.Security.Cryptography.X509Certificates {
 
 // References:
 // a.	Internet X.509 Public Key Infrastructure Certificate and CRL Profile
 //	http://www.ietf.org/rfc/rfc2459.txt
-// b.	ITU ASN.1 standards (free download)
-//	http://www.itu.int/ITU-T/studygroups/com17/languages/
-
-internal class ASN1 {
-	protected byte m_nTag;
-	protected byte[] m_aValue;
-	protected ArrayList elist;
-
-	public ASN1 ()
-	{
-		elist = new ArrayList ();
-	}
-
-	public ASN1 (byte anTag, byte[] aValue) 
-	{
-		m_nTag = anTag;
-		m_aValue = aValue;
-		elist = new ArrayList ();
-	}
-
-	public ASN1 (byte[] data)
-	{
-		elist = new ArrayList ();
-		m_nTag = data [0];
-
-		int nLenLength = 0;
-		int nLength = data [1];
-
-		if (nLength > 0x80) {
-			// composed length
-			nLenLength = nLength - 0x80;
-			nLength = 0;
-			for (int i = 0; i < nLenLength; i++) {
-				nLength *= 256;
-				nLength += data [i + 2];
-			}
-		}
-
-		m_aValue = new byte [nLength];
-		Array.Copy (data, (2 + nLenLength), m_aValue, 0, nLength);
-	
-		int nStart = 0;
-		Decode (data, ref nStart, data.Length);
-	}
-
-	public byte Tag {
-		get { return m_nTag; }
-	}
-
-	public int Length {
-		get { 
-			if (m_aValue != null)
-				return m_aValue.Length; 
-			else
-				return 0;
-		}
-	}
-
-	public byte[] Value {
-		get { return (byte[]) m_aValue.Clone (); }
-		set { 
-			if (value != null)
-			      m_aValue = (byte[]) value.Clone (); 
-		}
-	}
-
-	public bool CompareValue (byte[] aValue)
-	{
-		bool bResult = (m_aValue.Length == aValue.Length);
-		if (bResult) {
-			for (int i = 0; i < m_aValue.Length; i++) {
-				if (m_aValue[i] != aValue[i])
-					return false;
-			}
-		}
-		return bResult;
-	}
-
-	public virtual byte[] GetDER ()
-	{
-		byte[] der;
-		int nLengthLen = 0;
-		if (m_aValue != null) {
-			int nLength = m_aValue.Length;
-			// special for length > 127
-			if (nLength > 127) {
-				if (nLength < 256) {
-					der = new byte [3 + nLength];
-					Array.Copy (m_aValue, 0, der, 3, nLength);
-					nLengthLen += 0x81;
-					der[2] = (byte)(nLength);
-				}
-				else {
-					der = new byte [4 + nLength];
-					Array.Copy (m_aValue, 0, der, 4, nLength);
-					nLengthLen += 0x82;
-					der[2] = (byte)(nLength / 256);
-					der[3] = (byte)(nLength % 256);
-				}
-			}
-			else {
-				der = new byte [2 + nLength];
-				Array.Copy (m_aValue, 0, der, 2, nLength);
-				nLengthLen = nLength;
-			}
-		}
-		else
-			der = new byte[2];
-
-		der[0] = m_nTag;
-		der[1] = (byte)nLengthLen;
-	
-		return der;
-	}
-
-	// Note: Recursive
-	protected void Decode (byte[] asn1, ref int anPos, int anLength)
-	{
-		byte nTag;
-		int nLength;
-		byte[] aValue;
-
-		// minimum is 2 bytes (tag + length of 0)
-		while (anPos < anLength - 1) {
-			int nPosOri = anPos;
-			DecodeTLV (asn1, ref anPos, out nTag, out nLength, out aValue);
-
-			ASN1 elm = new ASN1 (nTag, aValue);
-			elist.Add (elm);
-
-			if ((nTag & 0x20) == 0x20) {
-				int nConstructedPos = anPos;
-				elm.Decode (asn1, ref nConstructedPos, nConstructedPos + nLength);
-			}
-			anPos += nLength; // value length
-		}
-	}
-
-	// TLV : Tag - Length - Value
-	protected void DecodeTLV (byte[] asn1, ref int anPos, out byte anTag, out int anLength, out byte[] aValue)
-	{
-		anTag = asn1 [anPos++];
-		anLength = asn1 [anPos++];
-
-		// special case where L contains the Length of the Length + 0x80
-		if ((anLength & 0x80) == 0x80) {
-			int nLengthLen = anLength & 0x7F;
-			anLength = 0;
-			for (int i = 0; i < nLengthLen; i++) {
-				anLength = anLength * 256 + asn1 [anPos++];
-			}
-		}
-
-		aValue = new byte [anLength];
-		Array.Copy (asn1, anPos, aValue, 0, anLength);
-	}
-
-	public ASN1 Element (int index)
-	{
-		try {
-			return (ASN1) elist [index];
-		}
-		catch {
-			return null;
-		}
-	}
-
-	public ASN1 Element (int anIndex, byte anTag)
-	{
-		try {
-			ASN1 elm = (ASN1) elist [anIndex];
-			if (elm.Tag == anTag)
-				return elm;
-			else
-				return null;
-		}
-		catch {
-			return null;
-		}
-	}
-
-	public int Count {
-		get { return elist.Count; }
-	}
-}
-
 
 // LAMESPEC: the MSDN docs always talks about X509v3 certificates
 // and/or Authenticode certs. However this class works with older
 // X509v1 certificates and non-authenticode (code signing) certs.
 [Serializable]
-public class X509Certificate 
-{
+public class X509Certificate {
+
+	static private byte[] countryName = { 0x55, 0x04, 0x06 };
+	static private byte[] organizationName = { 0x55, 0x04, 0x0A };
+	static private byte[] organizationalUnitName = { 0x55, 0x04, 0x0B };
+	static private byte[] commonName = { 0x55, 0x04, 0x03 };
+	static private byte[] localityName = { 0x55, 0x04, 0x07 };
+	static private byte[] stateOrProvinceName = { 0x55, 0x04, 0x08 };
+	static private byte[] streetAddress = { 0x55, 0x04, 0x09 };
+	static private byte[] serialNumber = { 0x55, 0x04, 0x05 };
+	static private byte[] domainComponent = { 0x09, 0x92, 0x26, 0x89, 0x93, 0xF2, 0x2C, 0x64, 0x01, 0x19 };
+	static private byte[] userid = { 0x09, 0x92, 0x26, 0x89, 0x93, 0xF2, 0x2C, 0x64, 0x01, 0x01 };
+	static private byte[] email = { 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x09, 0x01 };
+
 	private byte[] m_encodedcert;
 	private byte[] m_certhash;
 	private DateTime m_from;
@@ -244,18 +71,6 @@ public class X509Certificate
 	/// <returns>The relative distingued name (RDN) as a string</returns>
 	private string RDNToString (ASN1 seq)
 	{
-		byte[] countryName = { 0x55, 0x04, 0x06 };
-		byte[] organizationName = { 0x55, 0x04, 0x0A };
-		byte[] organizationalUnitName = { 0x55, 0x04, 0x0B };
-		byte[] commonName = { 0x55, 0x04, 0x03 };
-		byte[] localityName = { 0x55, 0x04, 0x07 };
-		byte[] stateOrProvinceName = { 0x55, 0x04, 0x08 };
-		byte[] streetAddress = { 0x55, 0x04, 0x09 };
-		byte[] serialNumber = { 0x55, 0x04, 0x05 };
-		byte[] domainComponent = { 0x09, 0x92, 0x26, 0x89, 0x93, 0xF2, 0x2C, 0x64, 0x01, 0x19 };
-		byte[] userid = { 0x09, 0x92, 0x26, 0x89, 0x93, 0xF2, 0x2C, 0x64, 0x01, 0x01 };
-		byte[] email = { 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x09, 0x01 };
-
 		StringBuilder sb = new StringBuilder ();
 		for (int i = 0; i < seq.Count; i++) {
 			ASN1 entry = seq.Element (i);
@@ -445,7 +260,7 @@ public class X509Certificate
 			// parameters ANY DEFINED BY algorithm OPTIONAL
 			// so we dont ask for a specific (Element) type and return DER
 			ASN1 parameters = algorithm.Element (1);
-			m_keyalgoparams = parameters.GetDER ();
+			m_keyalgoparams = parameters.GetBytes ();
 	
 			ASN1 subjectPublicKey = subjectPublicKeyInfo.Element (1, 0x03); 
 			// we must drop th first byte (which is the number of unused bits
@@ -557,13 +372,12 @@ public class X509Certificate
 		// this is a big bad ASN.1 structure
 		// Reference: http://www.cs.auckland.ac.nz/~pgut001/pubs/authenticode.txt
 		// next we must find the last certificate inside the structure
-		ASN1 sign = new ASN1 (signature);
 		try {
+			ASN1 sign = new ASN1 (signature);
 			// we don't have to understand much of it to get the certificate
 			ASN1 certs = sign.Element(0).Element(1).Element(0).Element(3);
-			byte[] lastCert = certs.Element(certs.Count - 1).GetDER();
-			X509Certificate x509 = new X509Certificate (lastCert);
-			return x509;
+			byte[] lastCert = certs.Element(certs.Count - 1).GetBytes();
+			return new X509Certificate (lastCert);
 		}
 		catch {
 			return null;
