@@ -100,7 +100,7 @@ namespace System.Collections {
 				throw new ArgumentNullException ();
 
 			return new ArrayList (list.ToArray (), list.Count, list.Capacity,
-					      true, list.IsReadOnly, this.IsSynchronized);
+					      true, list.IsReadOnly, list.IsSynchronized);
 		}
 
 		public static IList FixedSize (IList list)
