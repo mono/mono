@@ -211,8 +211,12 @@ namespace System.Windows.Forms
 		{
 			MSG msg = new MSG();
 
-			while (Win32.PeekMessageA (ref msg, (IntPtr) 0,  0, 0,
-				(uint)PeekMessageFlags.PM_REMOVE) != 0);
+			while (Win32.PeekMessageA (ref msg, (IntPtr) 0,  0, 0, (uint)PeekMessageFlags.PM_REMOVE) != 0) {
+				if (msg.message==Msg.WM_PAINT) {
+					Win32.TranslateMessage(ref msg);
+					Win32.DispatchMessageA(ref msg);
+				}
+			}
 		}
 
 		//Compact Framework	
