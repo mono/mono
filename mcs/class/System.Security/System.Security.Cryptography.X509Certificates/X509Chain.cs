@@ -5,7 +5,8 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell Inc. (http://www.novell.com)//
+// Copyright (C) 2004-2005 Novell Inc. (http://www.novell.com)
+//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -27,8 +28,6 @@
 //
 
 #if NET_2_0
-
-using System;
 
 namespace System.Security.Cryptography.X509Certificates {
 
@@ -52,7 +51,17 @@ namespace System.Security.Cryptography.X509Certificates {
 			_policy = new X509ChainPolicy ();
 		}
 
+		public X509Chain (IntPtr chainContext)
+		{
+			// CryptoAPI compatibility (unmanaged handle)
+			throw new NotSupportedException ();
+		}
+
 		// properties
+
+		public IntPtr ChainContext {
+			get { return IntPtr.Zero; }
+		}
 
 		public X509ChainElementCollection ChainElements {
 			get { return _elements; }
@@ -60,7 +69,8 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public X509ChainPolicy ChainPolicy {
 			get { return _policy; }
-		} 
+			set { _policy = value; }
+		}
 
 		public X509ChainStatus[] ChainStatus {
 			get { 

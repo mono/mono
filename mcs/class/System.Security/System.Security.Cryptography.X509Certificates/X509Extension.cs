@@ -7,7 +7,7 @@
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) Tim Coleman, 2004
-// Copyright (C) 2004 Novell Inc. (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,7 +31,7 @@
 
 #if NET_2_0
 
-using System;
+using System.Text;
 
 namespace System.Security.Cryptography.X509Certificates {
 
@@ -46,18 +46,26 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 		public X509Extension (AsnEncodedData encodedExtension, bool critical)
-			: base (encodedExtension)
 		{
+// Match MS		if (encodedExtension == null)
+//				throw new ArgumentNullException ("encodedExtension");
+			if (encodedExtension.Oid == null)
+				throw new ArgumentNullException ("encodedExtension.Oid");
+
+			Oid = encodedExtension.Oid;
+			RawData = encodedExtension.RawData;
 			_critical = critical;
 		}
 
 		public X509Extension (Oid oid, byte[] rawData, bool critical)
-			: base (oid, rawData)
 		{
+			if (oid == null)
+				throw new ArgumentNullException ("oid");
+			Oid = oid;
+			RawData = rawData;
 			_critical = critical;
 		}
 
-		[MonoTODO]
 		public X509Extension (string oid, byte[] rawData, bool critical)
 			: base (oid, rawData)
 		{
@@ -68,15 +76,36 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public bool Critical {
 			get { return _critical; }
+			set { _critical = value; }
 		}
 
 		// methods
 
-		[MonoTODO ("decode with Mono.Security")]
 		public override void CopyFrom (AsnEncodedData asnEncodedData) 
 		{
-			if (asnEncodedData == null)
-				throw new ArgumentNullException ("asnEncodedData");
+			// note: null isn't directly checked here - so it throws the ArgumentException
+			X509Extension ex = (asnEncodedData as X509Extension);
+			if (ex == null)
+				throw new ArgumentException (Locale.GetText ("Expected a X509Extension instance."));
+
+			base.CopyFrom (asnEncodedData);
+			// and we deal with critical
+			_critical = ex.Critical;
+		}
+
+		// internal stuff
+
+		// this version doesn't includes spaces between bytes and use uppercase hexadecimal values
+		internal string FormatUnkownData (byte[] data)
+		{
+			if ((data == null) || (data.Length == 0))
+				return String.Empty;
+
+			StringBuilder sb = new StringBuilder ();
+			for (int i=0; i < data.Length; i++) {
+				sb.Append (data [i].ToString ("X2"));
+			}
+			return sb.ToString ();
 		}
 	}
 }

@@ -7,7 +7,7 @@
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) Tim Coleman, 2004
-// Copyright (C) 2004 Novell Inc. (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,7 +31,6 @@
 
 #if NET_2_0
 
-using System;
 using System.Collections;
 
 namespace System.Security.Cryptography.X509Certificates {
@@ -40,7 +39,9 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		private ArrayList _list;
 
-		internal X509ExtensionCollection ()
+		// constructors
+
+		public X509ExtensionCollection ()
 		{
 			_list = new ArrayList ();
 		}

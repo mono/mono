@@ -2,11 +2,10 @@
 // X509ChainPolicy.cs - System.Security.Cryptography.X509Certificates.X509ChainPolicy
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
+// Copyright (C) 2005 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,12 +29,7 @@
 
 #if NET_2_0
 
-using System;
-using System.Security.Cryptography;
-
 namespace System.Security.Cryptography.X509Certificates {
-
-	// Note: Match the definition of framework version 1.2.3400.0 on http://longhorn.msdn.microsoft.com
 
 	public sealed class X509ChainPolicy {
 
@@ -50,8 +44,7 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		// constructors
 
-		// only accessible from X509Chain
-		internal X509ChainPolicy () 
+		public X509ChainPolicy () 
 		{
 			Reset ();
 		}

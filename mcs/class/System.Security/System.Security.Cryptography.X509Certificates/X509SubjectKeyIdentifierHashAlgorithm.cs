@@ -1,10 +1,10 @@
 //
-// System.Security.Cryptography.X509Certificates.X500DistinguishedNameFlags
+// System.Security.Cryptography.X509Certificates.X509SubjectKeyIdentifierHashAlgorithm
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004-2005 Novell Inc. (http://www.novell.com)
+// Copyright (C) 2005 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,19 +30,11 @@
 
 namespace System.Security.Cryptography.X509Certificates {
 
-	[Flags]
 	[Serializable]
-	public enum X500DistinguishedNameFlags {
-		None = 0,
-		Reversed = 1,
-		UseSemicolons = 16,
-		DoNotUsePlusSign = 32,
-		DoNotUseQuotes = 64,
-		UseCommas = 128,
-		UseNewLines = 256,
-		UseUTF8Encoding = 4096,
-		UseT61Encoding = 8192,
-		ForceUTF8Encoding = 16384
+	public enum X509SubjectKeyIdentifierHashAlgorithm {
+		Sha1 = 0,
+		ShortSha1 = 1,
+		CapiSha1 = 2
 	}
 }
 

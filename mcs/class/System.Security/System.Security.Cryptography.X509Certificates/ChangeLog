@@ -1,3 +1,18 @@
+2005-01-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509BasicConstraintsExtension.cs: Completed implementation.
+	* X509Chain.cs: Updated to Dec CTP definitions.
+	* X509ChainPolicy.cs: Updated to Dec CTP definitions.
+	* X500DistinguishedNameFlags.cs: Added new ForceUTF8Encoding.
+	* X509EnhancedKeyUsageExtension.cs: New. Complete implementation.
+	* X509Extension.cs: Completed implementation.
+	* X509ExtensionCollection.cs: Updated to Dec CTP definitions.
+	* X509KeyUsageExtension.cs: Completed implementation.
+	* X509RevocationFlag.cs: Minus 1 on each member.
+	* X509SubjectKeyIdentifierExtension.cs: Completed implementation 
+	except for the new constructor accepting a public key.
+	* X509SubjectKeyIdentifierHashAlgorithm.cs: New enum.
+
 2004-09-03  Tim Coleman <tim@timcoleman.com>
 	* X509KeyUsageExtension.cs: New stub class
 	* X509SubjectKeyIdentifierExtension.cs: New stub class
