@@ -10,6 +10,8 @@ namespace CIR {
 	using System.Collections;
 	using System.Diagnostics;
 	using System;
+	using System.Reflection;
+	using System.Reflection.Emit;
 
 	// <remarks>
 	//   The ExprClass class contains the is used to pass the 
@@ -52,8 +54,8 @@ namespace CIR {
 			}
 		}
 
-		public abstract void Resolve (TypeContainer tc);
-		public abstract void Emit    (EmitContext ec);
+		public abstract Expression Resolve (TypeContainer tc);
+		public abstract void Emit (EmitContext ec);
 		
 		// <summary>
 		//   Protected constructor.  Only derivate types should
@@ -66,13 +68,81 @@ namespace CIR {
 			type = null;
 		}
 
-		static public Expression ResolveSimpleName (TypeContainer tc, string name)
+		// 
+		// Returns a fully formed expression after a MemberLookup
+		//
+		static Expression ExprClassFromMemberInfo (MemberInfo mi)
 		{
+			if (mi is EventInfo){
+				// FIXME: Implement
+				return null;
+			} else if (mi is FieldInfo){
+				// FIXME: Implement
+				return null;
+			} else if (mi is PropertyInfo){
+				// FIXME: implement
+				return null;
+			} else if (mi is Type)
+				return new TypeExpr ((Type) mi);
+
 			return null;
 		}
+		
+		//
+		// FIXME: Probably implement a cache for (t,name,current_access_set)?
+		//
+		// FIXME: We need to cope with access permissions here, or this wont
+		// work!
+		//
+		// This code could use some optimizations, but we need to do some
+		// measurements.  For example, we could use a delegate to `flag' when
+		// something can not any longer be a method-group (because it is something
+		// else).
+		//
+		// Return values:
+		//     If the return value is an Array, then it is an array of
+		//     MethodInfos
+		//   
+		//     If the return value is an MemberInfo, it is anything, but a Method
+		//
+		//     null on error.
+		//
+		static Expression MemberLookup (Report r, Type t, string name, bool same_type)
+		{
+			MemberTypes mt =
+				// MemberTypes.Constructor |
+				MemberTypes.Event       |
+				MemberTypes.Field       |
+				MemberTypes.Method      |
+				MemberTypes.NestedType  |
+				MemberTypes.Property;
+			
+			BindingFlags bf =
+				BindingFlags.Public |
+				BindingFlags.Static |
+				BindingFlags.Instance;
+			
+			if (same_type)
+				bf |= BindingFlags.NonPublic;
+			
+			MemberInfo [] mi = t.FindMembers (mt, bf, Type.FilterName, name);
 
+			if (mi.Length == 1 && !(mi [0] is MethodInfo))
+				return Expression.ExprClassFromMemberInfo (mi [0]);
+
+			for (int i = 0; i < mi.Length; i++)
+				if (!(mi [i] is MethodInfo)){
+					r.Error (-5, "Do not know how to reproduce this case: Methods and non-Method with the same name, report this please");
+					
+				}
+
+			return new MethodGroupExpr (mi);
+		}
+		
 		// <summary>
 		//   Resolves the E in `E.I' side for a member_access
+		//
+		// This is suboptimal and should be merged with ResolveMemberAccess
 		static Expression ResolvePrimary (TypeContainer tc, string name)
 		{
 			int dot_pos = name.LastIndexOf (".");
@@ -82,25 +152,47 @@ namespace CIR {
 
 			if (dot_pos != -1){
 			} else {
+				Type t = tc.LookupType (name, false);
+
+				if (t != null)
+					return new TypeExpr (t);
 			}
 
 			return null;
 		}
 			
-		static public Expression ResolveName (TypeContainer tc, string name)
+		static public Expression ResolveMemberAccess (TypeContainer tc, string name)
 		{
+			Expression left_e;
 			int dot_pos = name.LastIndexOf (".");
-			
-			if (dot_pos == -1){
-				return ResolveSimpleName (tc, name);
-			} else {
-				Expression left_e;
-				string left = name.Substring (0, dot_pos);
-				string right = name.Substring (dot_pos + 1);
+			string left = name.Substring (0, dot_pos);
+			string right = name.Substring (dot_pos + 1);
 
-				left_e = ResolvePrimary (tc, left);
+			left_e = ResolvePrimary (tc, left);
+			if (left_e == null)
+				return null;
+
+			switch (left_e.ExprClass){
+			case ExprClass.Type:
+				return  MemberLookup (tc.RootContext.Report,
+						      left_e.Type, right,
+						      left_e.Type == tc.TypeBuilder);
+				
+			case ExprClass.Namespace:
+			case ExprClass.PropertyAccess:
+			case ExprClass.IndexerAccess:
+			case ExprClass.Variable:
+			case ExprClass.Value:
+			case ExprClass.Nothing:
+			case ExprClass.EventAccess:
+			case ExprClass.MethodGroup:
+			case ExprClass.Invalid:
+				tc.RootContext.Report.Error (-1000,
+							     "Internal compiler error, should have " +
+							     "got these handled before");
+				break;
 			}
-
+			
 			return null;
 		}
 		
@@ -142,9 +234,10 @@ namespace CIR {
 			}
 		}
 
-		public override void Resolve (TypeContainer tc)
+		public override Expression Resolve (TypeContainer tc)
 		{
 			// FIXME: Implement;
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -186,9 +279,10 @@ namespace CIR {
 			}
 		}
 
-		public override void Resolve (TypeContainer tc)
+		public override Expression Resolve (TypeContainer tc)
 		{
 			// FIXME: Implement;
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -221,9 +315,10 @@ namespace CIR {
 			}
 		}
 		
-		public override void Resolve (TypeContainer tc)
+		public override Expression Resolve (TypeContainer tc)
 		{
 			// FIXME: Implement;
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -282,8 +377,10 @@ namespace CIR {
 			}
 		}
 
-		public override void Resolve (TypeContainer tc)
+		public override Expression Resolve (TypeContainer tc)
 		{
+			// FIXME: implement me
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -319,9 +416,10 @@ namespace CIR {
 			}
 		}
 
-		public override void Resolve (TypeContainer tc)
+		public override Expression Resolve (TypeContainer tc)
 		{
 			// FIXME: Implement;
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -343,15 +441,23 @@ namespace CIR {
 			}
 		}
 
+		Expression ResolveSimpleName (TypeContainer tc)
+		{
+			return this;
+		}
+		
 		//
 		// SimpleName needs to handle a multitude of cases:
 		//
 		// simple_names and qualified_identifiers are placed on
 		// the tree equally.
 		//
-		public override void Resolve (TypeContainer tc)
+		public override Expression Resolve (TypeContainer tc)
 		{
-			ResolveName (tc, name);
+			if (name.IndexOf (".") != -1)
+				return ResolveMemberAccess (tc, name);
+			else
+				return ResolveSimpleName (tc);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -381,9 +487,10 @@ namespace CIR {
 			}
 		}
 
-		public override void Resolve (TypeContainer tc)
+		public override Expression Resolve (TypeContainer tc)
 		{
 			// FIXME: Implement;
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -407,9 +514,10 @@ namespace CIR {
 			}
 		}
 
-		public override void Resolve (TypeContainer tc)
+		public override Expression Resolve (TypeContainer tc)
 		{
 			// FIXME: Implement;
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -441,6 +549,17 @@ namespace CIR {
 				return expr;
 			}
 		}
+
+		public bool Resolve (TypeContainer tc)
+		{
+			expr = expr.Resolve (tc);
+			return expr != null;
+		}
+
+		public void Emit (EmitContext ec)
+		{
+			expr.Emit (ec);
+		}
 	}
 
 	// <summary>
@@ -449,7 +568,8 @@ namespace CIR {
 	public class Invocation : Expression {
 		public readonly ArrayList Arguments;
 		Expression expr;
-
+		MethodInfo method = null;
+		
 		//
 		// arguments is an ArrayList, but we do not want to typecast,
 		// as it might be null.
@@ -469,12 +589,117 @@ namespace CIR {
 			}
 		}
 
-		public override void Resolve (TypeContainer tc)
+		/// <summary>
+		///   Computes whether Argument `a' and the ParameterInfo `pi' are
+		///   compatible, and if so, how good is the match (in terms of
+		///   "better conversions" (7.4.2.3).
+		///
+		///   0   is the best possible match.
+		///   -1  represents a type mismatch.
+		///   -2  represents a ref/out mismatch.
+		/// </summary>
+		static int Badness (Argument a, ParameterInfo pi)
 		{
+			if (pi.ParameterType == a.Expr.Type)
+				return 0;
+
+			// FIXME: Implement implicit conversions here.
+			// FIXME: Implement better conversion here.
+			
+			return -1;
+		}
+		
+		public override Expression Resolve (TypeContainer tc)
+		{
+			//
+			// First, resolve the expression that is used to
+			// trigger the invocation
+			//
+			this.expr = expr.Resolve (tc);
+			if (this.expr == null)
+				return null;
+
+			if (!(this.expr is MethodGroupExpr)){
+				tc.RootContext.Report.Error (118,
+				       "Denotes an " + this.expr.ExprClass + " while a method was expected");
+				return null;
+			}
+
+			//
+			// Next, evaluate all the expressions in the argument list
+			//
+			if (Arguments != null){
+				for (int i = Arguments.Count; i > 0;){
+					--i;
+					Argument a = (Argument) Arguments [i];
+
+					if (!a.Resolve (tc))
+						return null;
+				}
+			}
+
+			//
+			// Find the Applicable Function Members (7.4.2.1)
+			//
+			MethodGroupExpr me = (MethodGroupExpr) this.expr;
+			ArrayList afm = new ArrayList ();
+			int best_match = 10000;
+			int best_match_idx = -1;
+			
+			for (int i = me.Methods.Length; i > 0; ){
+				i--;
+				ParameterInfo [] pi = me.Methods [i].GetParameters ();
+
+				//
+				// Compute how good this is
+				//
+				if (pi.Length == Arguments.Count){
+					int badness = 0;
+					
+					for (int j = Arguments.Count; j > 0;){
+						int x;
+						j--;
+
+						Argument a = (Argument) Arguments [j];
+
+						x = Badness (a, pi [j]);
+
+						if (x < 0){
+							// FIXME: report nice error.
+						} else
+							badness += x;
+					}
+
+					if (badness < best_match){
+						best_match = badness;
+						method = me.Methods [i];
+						best_match_idx = i;
+					}
+				}
+			}
+
+			if (method == null){
+				tc.RootContext.Report.Error (-6,
+				"Figure out error: Can not find a good function for this argument list");
+				return null;
+			}
+
+			Console.WriteLine ("Found a method! " + method);
+
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
+			int top = Arguments.Count;
+
+			for (int i = 0; i < top; i++){
+				Argument a = (Argument) Arguments [i];
+
+				a.Emit (ec);
+			}
+
+			ec.ig.Emit (OpCodes.Call, (MethodInfo) method);
 		}
 	}
 
@@ -510,9 +735,10 @@ namespace CIR {
 			NewType       = NType.Array;
 		}
 		
-		public override void Resolve (TypeContainer tc)
+		public override Expression Resolve (TypeContainer tc)
 		{
 			// FIXME: Implement;
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -521,9 +747,10 @@ namespace CIR {
 	}
 
 	public class This : Expression {
-		public override void Resolve (TypeContainer tc)
+		public override Expression Resolve (TypeContainer tc)
 		{
 			// FIXME: Implement;
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -539,9 +766,10 @@ namespace CIR {
 			QueriedType = queried_type;
 		}
 
-		public override void Resolve (TypeContainer tc)
+		public override Expression Resolve (TypeContainer tc)
 		{
 			// FIXME: Implement;
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -557,9 +785,10 @@ namespace CIR {
 			this.QueriedType = queried_type;
 		}
 
-		public override void Resolve (TypeContainer tc)
+		public override Expression Resolve (TypeContainer tc)
 		{
 			// FIXME: Implement;
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -583,9 +812,10 @@ namespace CIR {
 			}
 		}
 		
-		public override void Resolve (TypeContainer tc)
+		public override Expression Resolve (TypeContainer tc)
 		{
 			// FIXME: Implement;
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -610,12 +840,58 @@ namespace CIR {
 			eclass = ExprClass.Namespace;
 		}
 
-		public override void Resolve (TypeContainer tc)
+		public override Expression Resolve (TypeContainer tc)
 		{
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
+		}
+	}
+
+	// <summary>
+	//   Fully resolved expression that evaluates to a type
+	// </summary>
+	public class TypeExpr : Expression {
+		public TypeExpr (Type t)
+		{
+			Type = t;
+			eclass = ExprClass.Type;
+		}
+
+		override public Expression Resolve (TypeContainer tc)
+		{
+			return this;
+		}
+
+		override public void Emit (EmitContext ec)
+		{
+			
+		}
+	}
+
+	// <summary>
+	//   Fully resolved expression that evaluates to a type
+	// </summary>
+	public class MethodGroupExpr : Expression {
+		public readonly MethodInfo [] Methods;
+		
+		public MethodGroupExpr (MemberInfo [] mi)
+		{
+			Methods = new MethodInfo [mi.Length];
+			mi.CopyTo (Methods, 0);
+			eclass = ExprClass.MethodGroup;
+		}
+
+		override public Expression Resolve (TypeContainer tc)
+		{
+			return this;
+		}
+
+		override public void Emit (EmitContext ec)
+		{
+			
 		}
 	}
 	
@@ -630,18 +906,15 @@ namespace CIR {
 			Method = method;
 		}
 
-		public override void Resolve (TypeContainer tc)
+		public override Expression Resolve (TypeContainer tc)
 		{
 			// FIXME: Implement;
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
 		}
 	}
+
 }
-
-
-
-
-

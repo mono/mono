@@ -37,9 +37,10 @@ namespace CIR {
 			}
 		}
 
-		public override void Resolve (TypeContainer tc)
+		public override Expression Resolve (TypeContainer tc)
 		{
 			// FIXME: Implement;
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)

@@ -23,6 +23,11 @@ namespace CIR
 	/// </summary>
 	public class Driver
 	{
+
+		enum Target {
+			Library, Exe, Module, WinExe
+		};
+		
 		//
 		// Assemblies references to be linked.   Initialized with
 		// mscorlib.dll here.
@@ -37,6 +42,10 @@ namespace CIR
 
 		int error_count = 0;
 
+		string first_source;
+
+		Target target = Target.Exe;
+		
 		public int parse (string input_file)
 		{
 			CSharpParser parser;
@@ -70,6 +79,8 @@ namespace CIR
 				"-o         Specifies output file\n" +
 				"-L         Specifies path for loading assemblies\n" +
 				"--nostdlib Does not load core libraries\n" +
+				"--target   Specifies the target (exe, winexe, library, module)\n" +
+				"--dumper   Specifies a tree dumper\n" +
 				"-r         References an assembly\n");
 			
 		}
@@ -178,7 +189,7 @@ namespace CIR
 						continue;
 					}
 
-					if (arg.StartsWith ("-t")){
+					if (arg.StartsWith ("--dumper")){
 						generator = lookup_dumper (args [++i]);
 						continue;
 					}
@@ -199,6 +210,28 @@ namespace CIR
 						continue;
 					}
 
+					if (arg.StartsWith ("--target")){
+						string type = args [++i];
+
+						switch (type){
+						case "library":
+							target = Target.Library;
+							break;
+							
+						case "exe":
+							target = Target.Exe;
+							break;
+
+						case "winexe":
+							target = Target.WinExe;
+							break;
+							
+						case "module":
+							target = Target.Module;
+							break;
+						}
+					}
+					
 					if (arg.StartsWith ("-r")){
 						references.Add (args [++i]);
 						continue;
@@ -219,14 +252,23 @@ namespace CIR
 				}
 				
 				if (!arg.EndsWith (".cs")){
+						
 					error ("Do not know how to compile " + arg);
 					errors++;
 					continue;
 				}
 
+				if (first_source == null)
+					first_source = arg;
+				
 				errors += parse (arg);
 			}
 
+			if (first_source == null){
+				context.Report.Error (2008, "No files to compile were specified");
+				return;
+			}
+			
 			//
 			// Load Core Library for default compilation
 			//
@@ -283,8 +325,11 @@ namespace CIR
 			//
 			// Quick hack
 			//
-			if (output_file == null)
-				output_file = "a.exe";
+			if (output_file == null){
+				int pos = first_source.LastIndexOf (".");
+
+				output_file = first_source.Substring (0, pos) + ".exe";
+			}
 
 			context.CodeGen = new CodeGen (output_file, output_file);
 
@@ -312,6 +357,28 @@ namespace CIR
 			}
 			
 			context.CloseTypes ();
+
+			PEFileKinds k = PEFileKinds.ConsoleApplication;
+				
+			if (target == Target.Library || target == Target.Module)
+				k = PEFileKinds.Dll;
+			else if (target == Target.Exe)
+				k = PEFileKinds.ConsoleApplication;
+			else if (target == Target.WinExe)
+				k = PEFileKinds.WindowApplication;
+
+			if (target == Target.Exe || target == Target.WinExe){
+				MethodInfo ep = context.EntryPoint;
+
+				Console.WriteLine ("Setting entry point!");
+				if (ep == null){
+					context.Report.Error (5001, "Program " + output_file +
+							      " does not have an entry point defined");
+					return;
+				}
+				
+				context.CodeGen.AssemblyBuilder.SetEntryPoint (ep, k);
+			}
 			
 			context.CodeGen.Save (output_file);
 
@@ -320,6 +387,3 @@ namespace CIR
 
 	}
 }
-
-
-

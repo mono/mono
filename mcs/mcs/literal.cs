@@ -8,6 +8,8 @@
 //
 
 using System;
+using System.Reflection;
+using System.Reflection.Emit;
 
 namespace CIR {
 	public abstract class Literal : Expression {
@@ -66,10 +68,12 @@ namespace CIR {
 			return "null";
 		}
 
-		public override void Resolve (TypeContainer tc)
+		public override Expression Resolve (TypeContainer tc)
 		{
 			eclass = ExprClass.Value;
 			type = TypeManager.object_type;
+
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -91,10 +95,12 @@ namespace CIR {
 			return val ? "true" : "false";
 		}
 
-		public override void Resolve (TypeContainer tc)
+		public override Expression Resolve (TypeContainer tc)
 		{
 			eclass = ExprClass.Value;
 			type = bool_type;
+
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -115,10 +121,12 @@ namespace CIR {
 			return "\"" + descape (c) + "\"";
 		}
 
-		public override void Resolve (TypeContainer tc)
+		public override Expression Resolve (TypeContainer tc)
 		{
 			eclass = ExprClass.Value;
 			type = TypeManager.char_type;
+
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -139,10 +147,12 @@ namespace CIR {
 			return i.ToString ();
 		}
 
-		public override void Resolve (TypeContainer tc)
+		public override Expression Resolve (TypeContainer tc)
 		{
 			eclass = ExprClass.Value;
 			type = TypeManager.int32_type;
+
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -163,10 +173,12 @@ namespace CIR {
 			return f.ToString ();
 		}
 
-		public override void Resolve (TypeContainer tc)
+		public override Expression Resolve (TypeContainer tc)
 		{
 			eclass = ExprClass.Value;
 			type = TypeManager.float_type;
+
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -187,10 +199,12 @@ namespace CIR {
 			return d.ToString ();
 		}
 
-		public override void Resolve (TypeContainer tc)
+		public override Expression Resolve (TypeContainer tc)
 		{
 			eclass = ExprClass.Value;
 			type = TypeManager.double_type;
+
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -211,10 +225,12 @@ namespace CIR {
 			return d.ToString ();
 		}
 
-		public override void Resolve (TypeContainer tc)
+		public override Expression Resolve (TypeContainer tc)
 		{
 			eclass = ExprClass.Value;
 			type = TypeManager.decimal_type;
+
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -236,14 +252,17 @@ namespace CIR {
 			return "\"" + s + "\"";
 		}
 
-		public override void Resolve (TypeContainer tc)
+		public override Expression Resolve (TypeContainer tc)
 		{
 			eclass = ExprClass.Value;
 			type = TypeManager.string_type;
+
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
+			ec.ig.Emit (OpCodes.Ldstr, s);
 		}
 	}
 }

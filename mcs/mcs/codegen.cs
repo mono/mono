@@ -51,7 +51,7 @@ namespace CIR {
 
 	public struct EmitContext {
 		TypeContainer parent;
-		ILGenerator   ig;
+		public ILGenerator   ig;
 
 		// FIXME: FIXME: FIXME!
 		// This structure has to be kept small.  We need to figure
@@ -215,7 +215,8 @@ namespace CIR {
 
 		void EmitInvocation (Invocation inv)
 		{
-			inv.Expr.Resolve (parent);
+			inv.Resolve (parent);
+			inv.Emit (this);
 		}
 
 		void EmitStatementExpression (StatementExpression s)

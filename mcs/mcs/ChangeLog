@@ -1,3 +1,40 @@
+2001-09-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (Method::Define): Track the "static Main" definition to
+	create an entry point. 
+
+	* rootcontext.cs (RootContext::EntryPoint): MethodInfo that holds the
+	EntryPoint if we find it. 
+
+	* codegen.cs (EmitContext::EmitInvocation): Emit invocations.
+	(EmitContext::ig): Make this variable public.
+
+	* driver.cs: Make the default output file be the first file name
+	with the .exe extension.  
+
+	Detect empty compilations
+
+	Handle various kinds of output targets.  Handle --target and
+	rename -t to --dumper.
+
+	* expression.cs, literal.cs, assign.cs, constant.cs: All `Resolve'
+	methods inherited from Expression return now an Expression.  This
+	will is used during the tree rewriting as we resolve them during
+	semantic analysis.
+
+	(Expression::MemberLookup): Implements the MemberLookup (7.3) from
+	the spec.  Missing entirely is the information about
+	accessability of elements of it.
+
+	(Expression::ExprClassFromMemberInfo): New constructor for
+	Expressions that creates a fully initialized Expression based on
+	a MemberInfo that is one of Eventinfo, FieldINfo, PropertyInfo or
+	a Type.
+
+	(Invocation::Resolve): Begin implementing resolution of invocations.
+	
+	* literal.cs (StringLiteral):  Implement Emit.
+
 2001-09-05  Ravi Pratap  <ravi@ximian.com>
 
 	* cs-parser.jay (error): Add new modifier because we are hiding an inherited

@@ -844,6 +844,17 @@ namespace CIR {
 				ret_type, parameters);
 
 			//
+			// This is used to track the Entry Point,
+			//
+			// FIXME: Allow pluggable entry point, check arguments, etc.
+			//
+			if (Name == "Main"){
+				if ((ModFlags & Modifiers.STATIC) != 0){
+					parent.RootContext.EntryPoint = MethodBuilder;
+				}
+			}
+			
+			//
 			// Define each type attribute (in/out/ref) and
 			// the argument names.
 			//
