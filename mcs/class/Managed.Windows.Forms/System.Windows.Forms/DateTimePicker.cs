@@ -40,7 +40,9 @@ namespace System.Windows.Forms {
 
 		#region Public variables
 		
-		public static readonly DateTime MaxDateTime = DateTime.Parse ("31 December 9998");//, 23:59:59");
+		// this class has to have the specified hour, minute and second, as it says in msdn
+		//public static readonly DateTime MaxDateTime = DateTime.Parse ("31 December 9998");//, 23:59:59");
+		public static readonly DateTime MaxDateTime = new DateTime (9998, 12, 31, 23, 59, 59);
 		public static readonly DateTime MinDateTime = new DateTime (1753, 1, 1);
 		
 		#endregion 	// Public variables
