@@ -9,9 +9,9 @@ namespace System.Xml
 
 	/*
 	 * Section 2.5 of the XML spec says...
-	[Definition: Comments may appear anywhere in a document outside other markup; 	in addition, they may appear within the document type declaration at places	allowed by the grammar. They are not part of the document's character data; 	an XML processor may, but need not, make it possible for an application to retrieve 	the text of comments. For compatibility, the string "--" (double-hyphen)	must not occur within comments.] Parameter entity references are not recognized	within comments.
+	[Definition: Comments may appear anywhere in a document outside other markup; 	in addition, they may appear within the document type declaration at places	allowed by the grammar. They are not part of the document's character data; 	an XML processor may, but need not, make it possible for an application to retrieve 	the text of comments. For compatibility, the string "--" (double-hyphen)	must not occur within comments.] Parameter entity references are not recognized	within comments.
 	
-	Note that the grammar does not allow a comment ending in --->.
+	Note that the grammar does not allow a comment ending in --->.
 	Comment ::=   '<!--' ((Char - '-') | ('-' (Char	- '-')))* '-->'
 	*/
 	public class XmlComment : XmlCharacterData
