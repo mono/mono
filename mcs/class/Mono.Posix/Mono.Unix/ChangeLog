@@ -1,3 +1,9 @@
+2005-01-13  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Stdlib.cs: Use Stdlib.LIBC instead of "libc".
+	* StdioFileStream.cs: Add FilePosition property (not that I expect anyone to
+	  use it) and Rewind() method.
+
 2005-01-05  Jonathan Pryor <jonpryor@vt.edu>
 
 	* StdioFileStream.cs: Added; System.IO.Stream wrapper for C FILE struct.

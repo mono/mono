@@ -123,6 +123,21 @@ namespace Mono.Unix {
 			}
 		}
 
+		public FilePosition FilePosition {
+			get {
+				FilePosition pos = new FilePosition ();
+				int r = Stdlib.fgetpos (file, pos);
+				UnixMarshal.ThrowExceptionForLastErrorIf (r);
+				return pos;
+			}
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("value");
+				int r = Stdlib.fsetpos (file, value);
+				UnixMarshal.ThrowExceptionForLastErrorIf (r);
+			}
+		}
+
 		public override void Flush ()
 		{
 			int r = Stdlib.fflush (file);
@@ -162,6 +177,11 @@ namespace Mono.Unix {
 				throw new ArgumentException ("destination offset is beyond array size");
 			if (offset > (buffer.Length - count))
 				throw new ArgumentException ("would overrun buffer");
+		}
+
+		public void Rewind ()
+		{
+			Stdlib.rewind (file);
 		}
 
 		public override long Seek (long offset, SeekOrigin origin)

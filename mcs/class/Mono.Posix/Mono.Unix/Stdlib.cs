@@ -97,17 +97,17 @@ namespace Mono.Unix {
 
 		static XPrintfFunctions ()
 		{
-			CdeclFunction _printf = new CdeclFunction ("libc", "printf", typeof(int));
+			CdeclFunction _printf = new CdeclFunction (Stdlib.LIBC, "printf", typeof(int));
 			printf = new XPrintf (_printf.Invoke);
 
-			CdeclFunction _fprintf = new CdeclFunction ("libc", "fprintf", typeof(int));
+			CdeclFunction _fprintf = new CdeclFunction (Stdlib.LIBC, "fprintf", typeof(int));
 			fprintf = new XPrintf (_fprintf.Invoke);
 
-			CdeclFunction _snprintf = new CdeclFunction ("MonoPosixHelper", 
+			CdeclFunction _snprintf = new CdeclFunction (Stdlib.MPH, 
 					"Mono_Posix_Stdlib_snprintf", typeof(int));
 			snprintf = new XPrintf (_snprintf.Invoke);
 
-			CdeclFunction _syslog = new CdeclFunction ("libc", "syslog", typeof(void));
+			CdeclFunction _syslog = new CdeclFunction (Stdlib.LIBC, "syslog", typeof(void));
 			syslog = new XPrintf (_syslog.Invoke);
 		}
 	}
