@@ -1,5 +1,10 @@
 2004-04-29  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataRowCollection.cs : .NET 1.1 throws InvalidConstaintException,
+	  not ArgumentException (maybe changed after 1.1).
+
+2004-04-29  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataRow.cs : When Column was added and it was AutoIncrement column,
 	  it extended the item object array incorrectly.
 	  (Plus tiny comment and incorrect indentation fix.)

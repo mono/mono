@@ -109,7 +109,11 @@ namespace System.Data
 						if (c is ForeignKeyConstraint)
 						{
 							if (((ForeignKeyConstraint) c).RelatedTable.Equals(this.table))
-								throw new InvalidConstraintException("Cannot clear table Parent because ForeignKeyConstraint " + c.ConstraintName + " enforces Child.");
+#if NET_1_1
+								throw new InvalidConstraintException (String.Format ("Cannot clear table Parent because ForeignKeyConstraint {0} enforces Child.", c.ConstraintName));
+#else
+								throw new ArgumentException (String.Format ("Cannot clear table Parent because ForeignKeyConstraint {0} enforces Child.", c.ConstraintName));
+#endif
 						}
 					}
 				}
