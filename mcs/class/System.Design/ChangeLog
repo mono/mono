@@ -1,3 +1,8 @@
+2003-03-31  Alan Tam <Tam@SiuLung.com>
+
+	* System.Design.build: added reference to System.Windows.Forms
+	and System.Drawing assemblies
+
 2003-03-29  Martin Willemoes Hansen
 
 	* Stubed System.ComponentModel.Design
