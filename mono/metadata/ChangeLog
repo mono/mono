@@ -1,5 +1,8 @@
 2003-05-21  Zoltan Varga  <vargaz@freemail.hu>
 
+	* icall.c (ves_icall_System_Reflection_Module_GetGlobalType): New icall
+	to return the invisible global type for a module.
+
 	* reflection.c (mono_image_build_metadata): Emit global fields too.
 
 2003-05-20  Peter Williams  <peterw@ximian.com>
