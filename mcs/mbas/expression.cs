@@ -3,6 +3,7 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Manjula GHM (mmanjula@novell.com)
 //
 // (C) 2001 Ximian, Inc.
 //
@@ -2155,6 +2156,7 @@ namespace Mono.MonoBASIC {
 
 			// deal with objects and reference types first
 			if (l == TypeManager.object_type || r == TypeManager.object_type) {
+
 	                        //
                                 // operator != (object a, object b)
                                 // operator == (object a, object b)
@@ -2255,8 +2257,24 @@ namespace Mono.MonoBASIC {
 						e = new Binary (oper, e.Resolve(ec), new IntConstant (0), loc);
 					}
 					return e.Resolve (ec);
-				}
+				} else if (!l.IsValueType || !r.IsValueType) {
 
+			 // If one of the operands are reference types and other is object, support for 'Is' operator
+                                if (oper == Operator.Is) {
+                                        eclass = ExprClass.Value;
+                                        type = TypeManager.bool_type;
+                                        return this;
+                                }
+			}
+		} else if (!l.IsValueType && !r.IsValueType) {
+
+			 // If both the operands are reference types, support for 'Is' operator
+                                if (oper == Operator.Is) {
+                                        eclass = ExprClass.Value;
+                                        type = TypeManager.bool_type;
+                                        return this;
+                                }
+		
 			} else if (!l.IsValueType || !r.IsValueType) {
 				// Either of the operands are reference types
 				if (l.IsSubclassOf (TypeManager.delegate_type) && 
@@ -2382,7 +2400,7 @@ namespace Mono.MonoBASIC {
 					}
 				} else {
 					// Both are not of type string
-					if (oper == Operator.Equality || oper == Operator.Inequality) {
+					if (oper == Operator.Equality || oper == Operator.Inequality || oper == Operator.Is) {
 						if (l.IsValueType || r.IsValueType) {
 							Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
 							return null;
@@ -2679,7 +2697,7 @@ namespace Mono.MonoBASIC {
 			// but on top of that we want for == and != to use a special path
 			// if we are comparing against null
 			//
-			if (oper == Operator.Equality || oper == Operator.Inequality){
+			if (oper == Operator.Equality || oper == Operator.Inequality || oper == Operator.Is){
 				bool my_on_true = oper == Operator.Inequality ? onTrue : !onTrue;
 				
 				if (left is NullLiteral){

@@ -1,3 +1,7 @@
+2005-03-10 Manjula GHM <mmanjula@novell.com>
+	*expression.cs :
+		Support 'Is' for all reference types
+
 2005-03-10 Satya Sudha K <sathyasudha@novell.com>
 	* mb-parser.jay :
 	* expression.cs :
