@@ -9,6 +9,7 @@
 //
 
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Collections;
 using System.Runtime.CompilerServices;
 using System.Globalization;
@@ -19,13 +20,7 @@ namespace System.Reflection
 	internal class MonoGenericInst : MonoType
 	{
 		protected Type generic_type;
-		private MonoGenericInst[] interfaces;
-		private MethodInfo[] methods;
-		private ConstructorInfo[] ctors;
-		private FieldInfo[] fields;
-		private int first_method;
-		private int first_ctor;
-		private int first_field;
+		bool initialized;
 
 		[MonoTODO]
 		internal MonoGenericInst ()
@@ -36,63 +31,34 @@ namespace System.Reflection
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern MethodInfo inflate_method (MonoGenericInst declaring, MonoGenericInst reflected, MethodInfo method);
-	
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern ConstructorInfo inflate_ctor (MonoGenericInst declaring, MonoGenericInst reflected, ConstructorInfo ctor);
+		protected extern void initialize (MethodInfo[] methods, ConstructorInfo[] ctors, FieldInfo[] fields);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern FieldInfo inflate_field (MonoGenericInst declaring, MonoGenericInst reflected, FieldInfo field);
+		protected extern MethodInfo[] GetMethods_internal (Type reflected_type);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		protected extern ConstructorInfo[] GetConstructors_internal (Type reflected_type);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		protected extern FieldInfo[] GetFields_internal (Type reflected_type);
 
 		private const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic |
 		BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
-		protected void inflate (MonoGenericInst reflected,
-					ArrayList mlist, ArrayList clist, ArrayList flist)
-		{
-			MonoGenericInst parent = GetParentType ();
-			MonoGenericInst[] interfaces = GetInterfaces_internal ();
-			if (parent != null)
-				parent.inflate (reflected, mlist, clist, flist);
-			else if (generic_type.BaseType != null) {
-				mlist.AddRange (generic_type.BaseType.GetMethods (flags));
-				clist.AddRange (generic_type.BaseType.GetConstructors (flags));
-				flist.AddRange (generic_type.BaseType.GetFields (flags));
-			} else if (interfaces != null) {
-				foreach (MonoGenericInst iface in interfaces) {
-					if (iface != null)
-						iface.inflate (reflected, mlist, clist, flist);
-				}
-			}
-
-			first_method = mlist.Count;
-			first_ctor = clist.Count;
-			first_field = flist.Count;
-
-			foreach (MethodInfo m in generic_type.GetMethods (flags))
-				mlist.Add (inflate_method (this, reflected, m));
-			foreach (ConstructorInfo c in generic_type.GetConstructors (flags))
-				clist.Add (inflate_ctor (this, reflected, c));
-			foreach (FieldInfo f in generic_type.GetFields (flags))
-				flist.Add (inflate_field (this, reflected, f));
-		}
-
 		void initialize ()
 		{
-			ArrayList mlist = new ArrayList ();
-			ArrayList clist = new ArrayList ();
-			ArrayList flist = new ArrayList ();
+			if (initialized)
+				return;
 
-			inflate (this, mlist, clist, flist);
+			MonoGenericInst parent = GetParentType ();
+			if (parent != null)
+				parent.initialize ();
 
-			methods = new MethodInfo [mlist.Count];
-			mlist.CopyTo (methods, 0);
+			initialize (generic_type.GetMethods (flags),
+				    generic_type.GetConstructors (flags),
+				    generic_type.GetFields (flags));
 
-			ctors = new ConstructorInfo [clist.Count];
-			clist.CopyTo (ctors, 0);
-
-			fields = new FieldInfo [flist.Count];
-			flist.CopyTo (fields, 0);
+			initialized = true;
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -119,54 +85,49 @@ namespace System.Reflection
 
 		protected override bool IsValueTypeImpl ()
 		{
-			if (BaseType == null)
-				return false;
-			if (BaseType == typeof (Enum) || BaseType == typeof (ValueType))
-				return true;
-
-			return BaseType.IsSubclassOf (typeof (ValueType));
+			return generic_type.IsValueType;
 		}
 
-		public override MethodInfo[] GetMethods (BindingFlags bindingAttr)
+		public override MethodInfo[] GetMethods (BindingFlags bf)
 		{
-			if (methods == null)
-				initialize ();
-
-			return GetMethods_impl (bindingAttr);
+			initialize ();
+			return GetMethods_impl (bf, this);
 		}
 
-		protected MethodInfo[] GetMethods_impl (BindingFlags bindingAttr)
+		protected MethodInfo[] GetMethods_impl (BindingFlags bf, Type reftype)
 		{
 			ArrayList l = new ArrayList ();
 			bool match;
 			MethodAttributes mattrs;
 
-			int start;
-			if ((bindingAttr & BindingFlags.DeclaredOnly) != 0)
-				start = first_method;
-			else
-				start = 0;
+			if ((bf & BindingFlags.DeclaredOnly) == 0) {
+				MonoGenericInst parent = GetParentType ();
+				if (parent != null)
+					l.AddRange (parent.GetMethods_impl (bf, reftype));
+			}
 
-			for (int i = start; i < methods.Length; i++) {
+			MethodInfo[] methods = GetMethods_internal (reftype);
+
+			for (int i = 0; i < methods.Length; i++) {
 				MethodInfo c = methods [i];
 
 				match = false;
 				mattrs = c.Attributes;
 				if ((mattrs & MethodAttributes.MemberAccessMask) == MethodAttributes.Public) {
-					if ((bindingAttr & BindingFlags.Public) != 0)
+					if ((bf & BindingFlags.Public) != 0)
 						match = true;
 				} else {
-					if ((bindingAttr & BindingFlags.NonPublic) != 0)
+					if ((bf & BindingFlags.NonPublic) != 0)
 						match = true;
 				}
 				if (!match)
 					continue;
 				match = false;
 				if ((mattrs & MethodAttributes.Static) != 0) {
-					if ((bindingAttr & BindingFlags.Static) != 0)
+					if ((bf & BindingFlags.Static) != 0)
 						match = true;
 				} else {
-					if ((bindingAttr & BindingFlags.Instance) != 0)
+					if ((bf & BindingFlags.Instance) != 0)
 						match = true;
 				}
 				if (!match)
@@ -178,46 +139,46 @@ namespace System.Reflection
 			return result;
 		}
 
-		public override ConstructorInfo[] GetConstructors (BindingFlags bindingAttr)
+		public override ConstructorInfo[] GetConstructors (BindingFlags bf)
 		{
-			if (ctors == null)
-				initialize ();
-
-			return GetConstructors_impl (bindingAttr);
+			initialize ();
+			return GetConstructors_impl (bf, this);
 		}
 
-		protected ConstructorInfo[] GetConstructors_impl (BindingFlags bindingAttr)
+		protected ConstructorInfo[] GetConstructors_impl (BindingFlags bf, Type reftype)
 		{
 			ArrayList l = new ArrayList ();
 			bool match;
 			MethodAttributes mattrs;
 
-			int start;
-			if ((bindingAttr & BindingFlags.DeclaredOnly) != 0)
-				start = first_ctor;
-			else
-				start = 0;
+			if ((bf & BindingFlags.DeclaredOnly) == 0) {
+				MonoGenericInst parent = GetParentType ();
+				if (parent != null)
+					l.AddRange (parent.GetConstructors_impl (bf, reftype));
+			}
 
-			for (int i = start; i < ctors.Length; i++) {
+			ConstructorInfo[] ctors = GetConstructors_internal (reftype);
+
+			for (int i = 0; i < ctors.Length; i++) {
 				ConstructorInfo c = ctors [i];
 
 				match = false;
 				mattrs = c.Attributes;
 				if ((mattrs & MethodAttributes.MemberAccessMask) == MethodAttributes.Public) {
-					if ((bindingAttr & BindingFlags.Public) != 0)
+					if ((bf & BindingFlags.Public) != 0)
 						match = true;
 				} else {
-					if ((bindingAttr & BindingFlags.NonPublic) != 0)
+					if ((bf & BindingFlags.NonPublic) != 0)
 						match = true;
 				}
 				if (!match)
 					continue;
 				match = false;
 				if ((mattrs & MethodAttributes.Static) != 0) {
-					if ((bindingAttr & BindingFlags.Static) != 0)
+					if ((bf & BindingFlags.Static) != 0)
 						match = true;
 				} else {
-					if ((bindingAttr & BindingFlags.Instance) != 0)
+					if ((bf & BindingFlags.Instance) != 0)
 						match = true;
 				}
 				if (!match)
@@ -229,46 +190,46 @@ namespace System.Reflection
 			return result;
 		}
 
-		public override FieldInfo[] GetFields (BindingFlags bindingAttr)
+		public override FieldInfo[] GetFields (BindingFlags bf)
 		{
-			if (fields == null)
-				initialize ();
-
-			return GetFields_impl (bindingAttr);
+			initialize ();
+			return GetFields_impl (bf, this);
 		}
 
-		protected FieldInfo[] GetFields_impl (BindingFlags bindingAttr)
+		protected FieldInfo[] GetFields_impl (BindingFlags bf, Type reftype)
 		{
 			ArrayList l = new ArrayList ();
 			bool match;
 			FieldAttributes fattrs;
 
-			int start;
-			if ((bindingAttr & BindingFlags.DeclaredOnly) != 0)
-				start = first_field;
-			else
-				start = 0;
+			if ((bf & BindingFlags.DeclaredOnly) == 0) {
+				MonoGenericInst parent = GetParentType ();
+				if (parent != null)
+					l.AddRange (parent.GetFields_impl (bf, reftype));
+			}
 
-			for (int i = start; i < fields.Length; i++) {
+			FieldInfo[] fields = GetFields_internal (reftype);
+
+			for (int i = 0; i < fields.Length; i++) {
 				FieldInfo c = fields [i];
 
 				match = false;
 				fattrs = c.Attributes;
 				if ((fattrs & FieldAttributes.FieldAccessMask) == FieldAttributes.Public) {
-					if ((bindingAttr & BindingFlags.Public) != 0)
+					if ((bf & BindingFlags.Public) != 0)
 						match = true;
 				} else {
-					if ((bindingAttr & BindingFlags.NonPublic) != 0)
+					if ((bf & BindingFlags.NonPublic) != 0)
 						match = true;
 				}
 				if (!match)
 					continue;
 				match = false;
 				if ((fattrs & FieldAttributes.Static) != 0) {
-					if ((bindingAttr & BindingFlags.Static) != 0)
+					if ((bf & BindingFlags.Static) != 0)
 						match = true;
 				} else {
-					if ((bindingAttr & BindingFlags.Instance) != 0)
+					if ((bf & BindingFlags.Instance) != 0)
 						match = true;
 				}
 				if (!match)
