@@ -75,7 +75,7 @@ $(PROGRAM) : $(PROGRAM_FILES)
 
 # Pick the appropriate GUI Toolkit...
 # Fall back on console-only if nothing else compiles.
-gui: 
+gui: $(PROGRAM_FILES) $(GUI_GTK_FILES) $(GUI_GTK_GLADE_FILE) $(PROGRAM_FILES) $(GUI_SWF_FILES)
 	$(MAKE_INVOKE) gui-all || $(MAKE_INVOKE) gtk || $(MAKE_INVOKE) swf || $(MAKE_INVOKE) console
 
 # Compile in support for all GUI front-ends (Gtk#, Swf, and anything else...)

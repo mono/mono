@@ -1,3 +1,16 @@
+2003-01-12  Jonathan Pryor <jonpryor@vt.edu>
+	* makefile.core: Add dependencies to `gui' target so it doesn't rebuild when
+	  it doesn't need to.  Reported by gonzalo.
+
+2003-01-10  Jonathan Pryor <jonpryor@vt.edu>
+	* CSharpNodeFormatter.cs: New properties required by LanguageNodeFormatter
+	* LanguageNodeFormatter.cs: Allow more declarative control over generation
+	  of Property members.
+	* ReflectionNodeFinder.cs: Make sure the instance is appropriate.  This
+	  allows us to view static property values when using the
+	  ReflectionNodeFinder.
+	* VBNodeFormatter.cs: New properties required by LanguageNodeFormatter
+
 2003-01-10  Jonathan Pryor <jonpryor@vt.edu>
 	- General: Specify the order of displayers to use in the .config file.  This
 	  allows us to have "intelligent" defaults, so that (by default) GUI
