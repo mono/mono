@@ -1,3 +1,7 @@
+2005-02-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* threads.c (start_wrapper): Remove #ifdef PLATFORM_WIN32 probably left
+	in by mistake.
 
 Mon Feb 14 16:48:24 CET 2005 Paolo Molaro <lupus@ximian.com>
 
