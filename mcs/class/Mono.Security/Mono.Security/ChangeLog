@@ -1,3 +1,8 @@
+2004-06-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StrongName.cs: Synch with corlib (the new code isn't even compiled)
+	in Mono.Security assembly.
+
 2004-05-19  Jesper Pedersen  <jep@itplus.dk>
 
 	* PKCS7.cs: Added SignedData.VerifySignature(AsymmetricAlgorithm aa).

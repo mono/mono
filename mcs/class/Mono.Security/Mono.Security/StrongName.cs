@@ -425,9 +425,22 @@ namespace Mono.Security {
 		}
 
 #if INSIDE_CORLIB
+		static object lockObject = new object ();
+		static bool initialized = false;
+
 		// We don't want a dependency on StrongNameManager in Mono.Security.dll
 		static public bool IsAssemblyStrongnamed (string assemblyName) 
 		{
+			if (!initialized) {
+				lock (lockObject) {
+					if (!initialized) {
+						string config = Environment.GetMachineConfigPath ();
+						StrongNameManager.LoadConfig (config);
+						initialized = true;
+					}
+				}
+			}
+
 			try {
 				// this doesn't load the assembly (well it unloads it ;)
 				// http://weblogs.asp.net/nunitaddin/posts/9991.aspx
