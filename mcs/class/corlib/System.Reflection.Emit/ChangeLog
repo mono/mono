@@ -1,3 +1,7 @@
+2003-03-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ILGenerator.cs: Propagate maxstack info along branches.
+
 2003-03-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ILGenerator.cs (Emit): Do not pop the arguments off the stack for

@@ -128,6 +128,7 @@ namespace System.Reflection.Emit {
 		private int num_token_fixups;
 		private ILTokenInfo[] token_fixups;
 		private int[] label_to_addr;
+		private int[] label_to_max_stack;
 		private int num_labels;
 		private LabelFixup[] fixups;
 		private int num_fixups;
@@ -147,6 +148,7 @@ namespace System.Reflection.Emit {
 			cur_stack = max_stack = 0;
 			num_fixups = num_labels = 0;
 			label_to_addr = new int [8];
+			label_to_max_stack = new int [8];
 			fixups = new LabelFixup [8];
 			token_fixups = new ILTokenInfo [8];
 			num_token_fixups = 0;
@@ -336,9 +338,13 @@ namespace System.Reflection.Emit {
 			if (num_labels >= label_to_addr.Length) {
 				int[] new_l = new int [label_to_addr.Length * 2];
 				System.Array.Copy (label_to_addr, new_l, label_to_addr.Length);
+				int[] new_s = new int [label_to_addr.Length * 2];
+				System.Array.Copy (label_to_max_stack, new_s, label_to_addr.Length);
 				label_to_addr = new_l;
+				label_to_max_stack = new_s;
 			}
 			label_to_addr [num_labels] = -1;
+			label_to_max_stack [num_labels] = 0;
 			return new Label (num_labels++);
 		}
 		public virtual void Emit (OpCode opcode) {
@@ -414,6 +420,8 @@ namespace System.Reflection.Emit {
 			int tlen = target_len (opcode);
 			make_room (6);
 			ll_emit (opcode);
+			if (cur_stack > label_to_max_stack [label.label])
+				label_to_max_stack [label.label] = cur_stack;
 			if (num_fixups >= fixups.Length) {
 				LabelFixup[] newf = new LabelFixup [fixups.Length + 16];
 				System.Array.Copy (fixups, newf, fixups.Length);
@@ -432,6 +440,11 @@ namespace System.Reflection.Emit {
 			int count = labels.Length;
 			make_room (6 + count * 4);
 			ll_emit (opcode);
+
+			for (int i = 0; i < count; ++i)
+				if (cur_stack > label_to_max_stack [labels [i].label])
+					label_to_max_stack [labels [i].label] = cur_stack;
+
 			int switch_base = code_len + count*4;
 			emit_int (count);
 			if (num_fixups + count >= fixups.Length) {
@@ -620,6 +633,8 @@ namespace System.Reflection.Emit {
 			if (label_to_addr [loc.label] >= 0)
 				throw new System.ArgumentException ("The label was already defined");
 			label_to_addr [loc.label] = code_len;
+			if (label_to_max_stack [loc.label] > cur_stack)
+				cur_stack = label_to_max_stack [loc.label];
 		}
 		public virtual void MarkSequencePoint (ISymbolDocumentWriter document, int startLine,
 						       int startColumn, int endLine, int endColumn) {
