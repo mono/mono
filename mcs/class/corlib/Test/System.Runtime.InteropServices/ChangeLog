@@ -1,3 +1,7 @@
+2004-09-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MarshalTest.cs: Add test for AllocHGlobal and zero size.
+
 2004-08-31  Nick Drochak <ndrochak@gol.com>
 
 	* MarshalTest.cs: Make tests pass on .NET 1.1.

@@ -117,6 +117,13 @@ namespace MonoTests.System.Runtime.InteropServices
 			IntPtr ptr = Marshal.UnsafeAddrOfPinnedArrayElement (sarr, 2);
 			AssertEquals (3, *(short*)ptr.ToPointer ());
 		}
+
+		[Test]
+		public void AllocHGlobalZeroSize () {
+			IntPtr ptr = Marshal.AllocHGlobal (0);
+			Assert (ptr != IntPtr.Zero);
+			Marshal.FreeHGlobal (ptr);
+		}
 	}
 }
 
