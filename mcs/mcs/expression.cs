@@ -403,6 +403,27 @@ namespace CIR {
 		}
 
 		// <summary>
+		//   Attemptes to implicityly convert `target' into `type', using
+		//   ConvertImplicit.  If there is no implicit conversion, then
+		//   an error is signaled
+		// </summary>
+		static public Expression ConvertImplicitRequired (TypeContainer tc, Expression target,
+								  Type type, Location l)
+		{
+			Expression e;
+			
+			e = ConvertImplicit (target, type);
+			if (e == null){
+				string msg = "Can not convert implicity from `"+
+					TypeManager.CSharpName (target.Type) + "' to `" +
+					TypeManager.CSharpName (type) + "'";
+
+				tc.RootContext.Report.Error (29, l, msg);
+			}
+			return e;
+		}
+		
+		// <summary>
 		//   Performs an explicit conversion of the expression `expr' whose
 		//   type is expr.Type to `target_type'.
 		// </summary>
@@ -694,8 +715,9 @@ namespace CIR {
 				Arguments.Add (new Argument (expr, Argument.AType.Expression));
 				
 				method = Invocation.OverloadResolve ((MethodGroupExpr) mg, Arguments, tc, location);
-				if (method != null)
+				if (method != null){
 					return this;
+				}
 			}
 
 			//
@@ -708,14 +730,14 @@ namespace CIR {
 			if (expr_type == null)
 				return null;
 			
-			if (oper == Operator.Negate && expr_type != TypeManager.bool_type) {
-				report23 (tc.RootContext.Report, expr.Type);
-				return null;
-			} else {
-				expr = ForceConversion (expr, TypeManager.int32_type);
-				type = TypeManager.int32_type;
+			if (oper == Operator.Negate){
+				if (expr_type != TypeManager.bool_type) {
+					report23 (tc.RootContext.Report, expr.Type);
+					return null;
+				} else
+					type = TypeManager.bool_type;
 			}
-			
+
 			if (oper == Operator.BitComplement) {
 				if (!((expr_type == TypeManager.int32_type) ||
 				      (expr_type == TypeManager.uint32_type) ||
@@ -725,7 +747,7 @@ namespace CIR {
 					report23 (tc.RootContext.Report, expr.Type);
 					return null;
 				}
-				
+				type = expr_type;
 				return this;
 			}
 
@@ -736,26 +758,94 @@ namespace CIR {
 				return expr;
 			}
 
+			//
+			// Deals with -literals
+			// int     operator- (int x)
+			// long    operator- (long x)
+			// float   operator- (float f)
+			// double  operator- (double d)
+			// decimal operator- (decimal d)
+			//
 			if (oper == Operator.Subtract){
 				//
-				// Fold -Constant into a negative constant
-				
+				// Fold a "- Constant" into a negative constant
+				//
 			
 				Expression e = null;
-				
+
+				//
+				// Is this a constant? 
+				//
 				if (expr is IntLiteral)
 					e = new IntLiteral (-((IntLiteral) expr).Value);
 				else if (expr is LongLiteral)
 					e = new LongLiteral (-((LongLiteral) expr).Value);
 				else if (expr is FloatLiteral)
 					e = new FloatLiteral (-((FloatLiteral) expr).Value);
-
+				else if (expr is DoubleLiteral)
+					e = new DoubleLiteral (-((DoubleLiteral) expr).Value);
+				else if (expr is DecimalLiteral)
+					e = new DecimalLiteral (-((DecimalLiteral) expr).Value);
+				
 				if (e != null){
 					e = e.Resolve (tc);
 					return e;
 				}
 
-				report23 (tc.RootContext.Report, expr.Type);
+				//
+				// Not a constant we can optimize, perform numeric 
+				// promotions to int, long, double.
+				//
+				//
+				// The following is inneficient, because we call
+				// ConvertImplicit too many times.
+				//
+				// It is also not clear if we should convert to Float
+				// or Double initially.
+				//
+				if (expr_type == TypeManager.uint32_type){
+					//
+					// FIXME: handle exception to this rule that
+					// permits the int value -2147483648 (-2^31) to
+					// bt written as a decimal interger literal
+					//
+					type = TypeManager.int64_type;
+					expr = ConvertImplicit (expr, type);
+					return this;
+				}
+
+				if (expr_type == TypeManager.uint64_type){
+					//
+					// FIXME: Handle exception of `long value'
+					// -92233720368547758087 (-2^63) to be written as
+					// decimal integer literal.
+					//
+					report23 (tc.RootContext.Report, expr_type);
+					return null;
+				}
+
+				e = ConvertImplicit (expr, TypeManager.int32_type);
+				if (e != null){
+					expr = e;
+					type = e.Type;
+					return this;
+				} 
+
+				e = ConvertImplicit (expr, TypeManager.int64_type);
+				if (e != null){
+					expr = e;
+					type = e.Type;
+					return this;
+				}
+
+				e = ConvertImplicit (expr, TypeManager.double_type);
+				if (e != null){
+					expr = e;
+					type = e.Type;
+					return this;
+				}
+
+				report23 (tc.RootContext.Report, expr_type);
 				return null;
 			}
 
@@ -768,8 +858,10 @@ namespace CIR {
 			    oper == Operator.PostDecrement || oper == Operator.PostIncrement){
 				if (expr.ExprClass == ExprClass.Variable){
 					if (IsIncrementableNumber (expr_type) ||
-					    expr_type == TypeManager.decimal_type)
+					    expr_type == TypeManager.decimal_type){
+						type = expr_type;
 						return this;
+					}
 				} else if (expr.ExprClass == ExprClass.IndexerAccess){
 					//
 					// FIXME: Verify that we have both get and set methods
@@ -811,8 +903,9 @@ namespace CIR {
 
 				// Note that operators are static anyway
 				
-				if (Arguments != null) 
+				if (Arguments != null) {
 					Invocation.EmitArguments (ec, method, Arguments);
+				}
 				
 				if (method is MethodInfo)
 					ig.Emit (OpCodes.Call, (MethodInfo) method);
@@ -827,7 +920,9 @@ namespace CIR {
 				throw new Exception ("This should be caught by Resolve");
 
 			case Operator.Subtract:
-				throw new Exception ("THis should have been caught by Resolve");
+			        expr.Emit (ec);
+				ig.Emit (OpCodes.Neg);
+				break;
 				
 			case Operator.Negate:
 				expr.Emit (ec);
@@ -1887,6 +1982,10 @@ namespace CIR {
 			get {
 				return expr;
 			}
+
+			set {
+				expr = value;
+			}
 		}
 
 		public bool Resolve (TypeContainer tc)
@@ -2362,7 +2461,8 @@ namespace CIR {
 			for (int j = argument_count; j > 0;) {
 				j--;
 				Argument a = (Argument) Arguments [j];
-
+				Expression a_expr = a.Expr;
+				
 				Expression conv = ConvertImplicit (a.Expr, pd.ParameterType (j));
 
 				if (conv == null) {
@@ -2375,6 +2475,12 @@ namespace CIR {
 					       + "' to '" + TypeManager.CSharpName (pd.ParameterType (j)) + "'");
 					return null;
 				}
+
+				//
+				// Update the argument with the implicit conversion
+				//
+				if (a_expr != conv)
+					a.Expr = conv;
 			}
 			
 			return method;

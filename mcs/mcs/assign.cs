@@ -13,11 +13,13 @@ using System.Reflection.Emit;
 namespace CIR {
 	public class Assign : Expression {
 		Expression target, source;
+		Location l;
 		
-		public Assign (Expression target, Expression source)
+		public Assign (Expression target, Expression source, Location l)
 		{
 			this.target = target;
 			this.source = source;
+			this.l = l;
 		}
 
 		public Expression Target {
@@ -48,9 +50,19 @@ namespace CIR {
 			if (target == null || source == null)
 				return null;
 
+			Type target_type = target.Type;
+			Type source_type = source.Type;
+			
+			if (target_type != source_type){
+				source = ConvertImplicitRequired (tc, source, target_type, l);
+				if (source == null)
+					return null;
+			}
+			
 			if (!(target is LValue)){
 				tc.RootContext.Report.Error (131, "Left hand of an assignment must be a variable, a property or an indexer");
 			}
+			type = target_type;
 			return this;
 		}
 

@@ -886,7 +886,7 @@ namespace CIR
 		}
 	}
 
-	public struct Location {
+	public class Location {
 		public readonly string Name;
 		public readonly int    Col;
 		public readonly int    Row;

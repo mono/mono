@@ -1,3 +1,23 @@
+2001-09-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* assign.cs: track location.
+	(Resolve): Use implicit conversions on assignment.
+
+	* literal.cs: Oops.  Not good, Emit of short access values should
+	pass (Bytes) or the wrong argument will be selected.
+
+	* expression.cs (Unary::Emit): Emit code for -expr.
+	
+	(Unary::ResolveOperator): Handle `Substract' for non-constants
+	(substract from zero from the non-constants).
+	Deal with Doubles as well. 
+	
+	(Expression::ConvertImplicitRequired): New routine that reports an
+	error if no implicit conversion exists. 
+
+	(Invocation::OverloadResolve): Store the converted implicit
+	expressions if we make them
+	
 2001-09-24  Ravi Pratap  <ravi@ximian.com>
 
 	* class.cs (ConstructorInitializer): Take a Location argument.

@@ -82,3 +82,10 @@
 
 	And we can also make sure that we dont generate extra pops.
 
+* ConvertImplicit
+
+	Currently ConvertImplicit will not catch things like:
+
+	- IntLiteral in a float context to generate a -FloatLiteral.
+	Instead it will perform an integer load followed by a conversion.
+

@@ -215,15 +215,45 @@ namespace CIR {
 				break;
 
 			default:
-				if (i < 255)
-					ig.Emit (OpCodes.Ldc_I4_S, i);
-				else
+				if (i > 0 && i < 127){
+					ig.Emit (OpCodes.Ldc_I4_S, (sbyte) i);
+				} else
 					ig.Emit (OpCodes.Ldc_I4, i);
 				break;
 			}
 		}
 	}
 
+	public class UIntLiteral : Literal {
+		public readonly uint Value;
+
+		public UIntLiteral (uint l)
+		{
+			Value = l;
+		}
+
+		override public string AsString ()
+		{
+			return Value.ToString ();
+		}
+
+		public override Expression Resolve (TypeContainer tc)
+		{
+			type = TypeManager.uint32_type;
+
+			return this;
+		}
+
+		public override bool Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+
+			IntLiteral.EmitInt (ig, unchecked ((int) Value));
+			return true;
+		}
+
+	}
+	
 	public class LongLiteral : Literal {
 		public readonly long Value;
 
@@ -316,16 +346,16 @@ namespace CIR {
 	}
 
 	public class DecimalLiteral : Literal {
-		decimal d;
+		public readonly decimal Value;
 
 		public DecimalLiteral (decimal d)
 		{
-			this.d = d;
+			Value = d;
 		}
 
 		override public string AsString ()
 		{
-			return d.ToString ();
+			return Value.ToString ();
 		}
 
 		public override Expression Resolve (TypeContainer tc)

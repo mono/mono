@@ -2050,77 +2050,97 @@ conditional_expression
 assignment_expression
 	: unary_expression ASSIGN expression
 	  {
-		$$ = new Assign ((Expression) $1, (Expression) $3);
+		$$ = new Assign ((Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	| unary_expression OP_MULT_ASSIGN expression
 	  {
+		Location l = lexer.Location;
+
 		$$ = new Assign ((Expression) $1,
 				 new Binary (Binary.Operator.Multiply, 
 					     (Expression) $1,
-					     (Expression) $3, lexer.Location));
+					     (Expression) $3, l), l);
 	  }
 	| unary_expression OP_DIV_ASSIGN expression
 	  {
+		Location l = lexer.Location;
+
 		$$ = new Assign ((Expression) $1,
 				 new Binary (Binary.Operator.Divide, 
 					     (Expression) $1,
-					     (Expression) $3, lexer.Location));
+					     (Expression) $3, l), l);
 	  }
 	| unary_expression OP_MOD_ASSIGN expression
 	  {
+		Location l = lexer.Location;
+
 		$$ = new Assign ((Expression) $1,
 				 new Binary (Binary.Operator.Modulo, 
 					     (Expression) $1,
-					     (Expression) $3, lexer.Location));
+					     (Expression) $3, l), l);
 	  }
 	| unary_expression OP_ADD_ASSIGN expression
 	  {
+		Location l = lexer.Location;
+
 		$$ = new Assign ((Expression) $1,
 				 new Binary (Binary.Operator.Add, 
 					     (Expression) $1,
-					     (Expression) $3, lexer.Location));
+					     (Expression) $3, l), l);
 	  }
 	| unary_expression OP_SUB_ASSIGN expression
 	  {
+		Location l = lexer.Location;
+
 		$$ = new Assign ((Expression) $1,
 				 new Binary (Binary.Operator.Subtract, 
 					     (Expression) $1,
-					     (Expression) $3, lexer.Location));
+					     (Expression) $3, l), l);
 	  }
 	| unary_expression OP_SHIFT_LEFT_ASSIGN expression
 	  {
+		Location l = lexer.Location;
+
 		$$ = new Assign ((Expression) $1,
 				 new Binary (Binary.Operator.ShiftLeft, 
 					     (Expression) $1,
-					     (Expression) $3, lexer.Location));
+					     (Expression) $3, l), l);
 	  }
 	| unary_expression OP_SHIFT_RIGHT_ASSIGN expression
 	  {
+		Location l = lexer.Location;
+
 		$$ = new Assign ((Expression) $1,
 				 new Binary (Binary.Operator.ShiftRight, 
 					     (Expression) $1,
-					     (Expression) $3, lexer.Location));
+					     (Expression) $3, l), l);
 	  }
 	| unary_expression OP_AND_ASSIGN expression
 	  {
+		Location l = lexer.Location;
+
 		$$ = new Assign ((Expression) $1,
 				 new Binary (Binary.Operator.BitwiseAnd, 
 					     (Expression) $1,
-					     (Expression) $3, lexer.Location));
+					     (Expression) $3, l), l);
 	  }
 	| unary_expression OP_OR_ASSIGN expression
 	  {
+		Location l = lexer.Location;
+
 		$$ = new Assign ((Expression) $1,
 				 new Binary (Binary.Operator.BitwiseOr, 
 					     (Expression) $1,
-					     (Expression) $3, lexer.Location));
+					     (Expression) $3, l), l);
 	  }
 	| unary_expression OP_XOR_ASSIGN expression
 	  {
+		Location l = lexer.Location;
+
 		$$ = new Assign ((Expression) $1,
 				 new Binary (Binary.Operator.ExclusiveOr, 
 					     (Expression) $1,
-					     (Expression) $3, lexer.Location));
+					     (Expression) $3, l), l);
 	  }
 	;
 
@@ -2599,7 +2619,7 @@ foreach_statement
 		assign_e = new Assign (new LocalVariableReference (foreach_block, temp_id), 
 				       new Invocation (
 						new MemberAccess ((Expression) $6, "GetEnumerator"), 
-						null, lexer.Location));
+						null, lexer.Location), lexer.Location);
 		current_block.AddStatement (new StatementExpression (assign_e));
 		ma = new MemberAccess (new LocalVariableReference (foreach_block, temp_id), "MoveNext");
 		child_block = new Block (current_block);
@@ -2610,7 +2630,8 @@ foreach_statement
 				new Cast (
 					(string) $3, 
 					new MemberAccess (
-						new LocalVariableReference (foreach_block, temp_id), "Current"))));
+				new LocalVariableReference (foreach_block, temp_id), "Current")), 
+				lexer.Location));
 
 		child_block.AddStatement (getcurrent);
 		child_block.AddStatement ((Statement) $8);
@@ -3017,7 +3038,9 @@ Block declare_local_variables (string type, ArrayList variable_declarators)
 			Expression expr = (Expression) decl.expression_or_array_initializer;
 			Assign assign;
 			
-			assign = new Assign (new LocalVariableReference (implicit_block, decl.identifier), expr);
+			assign = new Assign (new LocalVariableReference (
+						implicit_block, decl.identifier), 
+					     expr, lexer.Location);
 			implicit_block.AddStatement (new StatementExpression (assign));
 		} else {
 			Console.WriteLine ("Not handling Array initializers yet");
