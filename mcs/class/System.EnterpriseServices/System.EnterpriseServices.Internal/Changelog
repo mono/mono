@@ -1,0 +1,5 @@
+2002-11-20: Alejandro Sánchez Acosta  <raciel@es.gnu.org>
+
+	* IClrObjectFactory.cs added.
+	* IComManagedImportUtil.cs added.
+	* IComSoapPublisher.cs added.
