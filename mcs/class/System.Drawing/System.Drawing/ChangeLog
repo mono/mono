@@ -1,3 +1,8 @@
+2005-01-26  Peter Bartok  <pbartok@novell.com>
+
+	* Icon.cs (ToBitmap): Now sets transparency in according to
+	  icon AND mask
+
 2004-01-22 Jordi Mas i Hernandez <jordi@ximian.com>
 
         * gdipFunctions.cs: Fixes GdipGet* function signatures

@@ -372,11 +372,13 @@ namespace System.Drawing
 		public Bitmap ToBitmap ()
 		{
 			Bitmap bmp;
+
 			if (imageData != null) {
 
 				// select active icon from the iconDirEntry
 				IconImage ii = imageData [this.id];
 				MemoryStream stream = new MemoryStream ();
+
 				BinaryWriter writer = new BinaryWriter (stream);
 
 				try {
@@ -428,6 +430,19 @@ namespace System.Drawing
 
 					// create bitmap from stream and return
 					bmp = new Bitmap (stream);
+
+					// This hack is so ugly, it's embarassing. 
+					// But icons are small, so it should be ok for now
+					for (int y = 0; y < bih.biHeight/2; y++) {
+						for (int x = 0; x < bih.biWidth / 8; x++) {
+							for (int bit = 7; bit >= 0; bit--) {
+								if (((ii.iconAND[y * bih.biWidth / 8 +x] >> bit) & 1) != 0) {
+									bmp.SetPixel(x*8 + 7-bit, bih.biHeight/2 - y - 1, Color.Transparent);
+								}
+							}
+						}
+					}
+
 				} catch (Exception e) {
 					throw e;
 				} finally {
