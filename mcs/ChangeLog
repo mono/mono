@@ -1,3 +1,11 @@
+2004-06-22  Todd Berman  <tberman@off.net>
+
+	* configure: Patch from Mariano Suárez-Alvarez 
+	<msuarezalvarez@arnet.com.ar> to make configure accept jhbuild style
+	/prefix /usr options, and to continue past unknown options. Currently
+	this patch is a bit spammy with multiple unknown options, anyone
+	who is interested is welcome to fix this.
+
 2004-06-14  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (all-profiles, clean-profiles): Simplify slightly.

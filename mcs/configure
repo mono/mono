@@ -12,29 +12,47 @@ help()
 prefix=/usr/local
 profile=default
 
-for a in $*; do
-	case $a in
-		--help)
-			help
-			exit 0
-			;;
-		--prefix=*)
-			prefix=`echo $a | sed 's/--prefix=//'`;
-			;;
-		--profile=*)
-			profile=`echo $a | sed 's/--profile=//'`;
-			if test ! -f build/profiles/$profile.make; then
-				echo ""
-				echo Error, profile $profile does not exist
-				help
-				exit 1;
-			fi
-			;;
-		*)
-			echo Unknown option: $a
-			help
-			exit 1
-	esac
+while [ $# -ne 0 ]; do
+  case $1 in
+    --help)  
+    	help
+    	exit 0
+	;;
+    --prefix=*)
+    	prefix=`echo $1 | sed 's/--prefix=//'`;
+	shift
+	;;
+    --prefix)
+        shift
+	prefix="$1"
+	shift
+	;;
+    --profile=*)
+	profile=`echo $1 | sed 's/--profile=//'`
+	shift
+	if test ! -f build/profiles/$profile.make; then
+	    echo ""
+	    echo Error, profile $profile does not exist
+	    help
+	    exit 1;
+	fi
+	;;
+    --profile)
+	shift
+	profile="$1"
+	shift
+	if test ! -f build/profiles/$profile.make; then
+	    echo ""
+	    echo Error, profile $profile does not exist
+	    help
+	    exit 1;
+	fi
+	;;
+    *)
+	echo Unknown option: $1
+	help
+	shift
+  esac
 done
 
 echo "prefix=$prefix" > build/config.make
