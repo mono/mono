@@ -21,11 +21,7 @@ namespace System.Drawing {
 	[ComVisible (true)]
 	[Editor ("System.Drawing.Design.BitmapEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
 	public sealed class Bitmap : Image {
-		//
-		// This one holds the actual memory buffer at the PixelFormat/height/width
-		//
-		IntPtr buffer;
-		
+				
 		#region constructors
 		// constructors
 		public Bitmap (int width, int height) : this (width, height, PixelFormat.Format32bppArgb)
@@ -50,13 +46,15 @@ namespace System.Drawing {
 			int bpp = 32;
 			int stride = ((bpp * width) / 8);
 			stride = (stride + 3) & ~3;
-			int bmp_size = stride * height;
+			int bmp_size = stride * height;			
 			
-			buffer = Marshal.AllocHGlobal (bmp_size);
 			int bmp = 0;
-			Status s = GDIPlus.GdipCreateBitmapFromScan0 (width, height, stride, PixelFormat.Format32bppArgb, buffer, out bmp);
+			Status s = GDIPlus.GdipCreateBitmapFromScan0 (width, height, stride, PixelFormat.Format32bppArgb, IntPtr.Zero, 
+				out bmp);
+				
 			if (s != Status.Ok)
 				throw new ArgumentException ("Could not allocate the GdiPlus image: " + s);
+				
 			nativeObject = (IntPtr)bmp;
 		}
 
@@ -95,7 +93,7 @@ namespace System.Drawing {
 			pixel_format = bd.PixelFormat;
 
 			int bmp = 0;
-			buffer = bd.Scan0;
+			//buffer = bd.Scan0;
 			Console.WriteLine ("Stride: {0} ", bd.Stride);
 			Console.WriteLine ("Scan0: {0:x}" , (long) bd.Scan0);
 			Status s = GDIPlus.GdipCreateBitmapFromScan0 (bd.Width, bd.Height, bd.Stride, bd.PixelFormat, bd.Scan0, out bmp);
@@ -139,12 +137,23 @@ namespace System.Drawing {
 		#endregion
 		// methods
 		public Color GetPixel (int x, int y) {
-			throw new NotImplementedException ();
+			
+			int argb;				
+			
+			Status s = GDIPlus.GdipBitmapGetPixel(nativeObject, x, y, out argb);
+								
+			if (s != Status.Ok)
+				throw new Exception ("Unable to GetPixel: " + x +":" +y + ";status: " + s);					
+			
+			return Color.FromArgb(argb);		
 		}
 
 		public void SetPixel (int x, int y, Color color)
-		{
-			throw new NotImplementedException ();
+		{									
+			Status s = GDIPlus.GdipBitmapSetPixel(nativeObject, x, y, color.ToArgb());
+								
+			if (s != Status.Ok)
+				throw new Exception ("Unable to SetPixel: " + x +":" +y + ";status: " + s);									
 		}
 
 		public Bitmap Clone (Rectangle rect,PixelFormat format)
@@ -184,34 +193,28 @@ namespace System.Drawing {
 
 		public BitmapData LockBits (Rectangle rect, ImageLockMode flags, PixelFormat format)
 		{
-			GpRect rc = new GpRect ();
-			rc.left = rect.Left;
-			rc.right = rect.Right;
-			rc.top = rect.Top;
-			rc.bottom = rect.Bottom;
+			Console.WriteLine("Bitmap.LockBits");
 			
+			GpRect rc = new GpRect (rect);			
 			BitmapData result = new BitmapData();
 
-			//
-			// What follows is a workaround until we fix 50083
-			//
-			int w = 0, h = 0, s = 0, f = 0, res = 0;
-			IntPtr sc = (IntPtr) 0xdeadcafe;
-
 			if (nativeObject == (IntPtr) 0)
-				throw new Exception ("nativeObject is null");
+				throw new Exception ("nativeObject is null");			
 			
-			Status status = GDIPlus.____BitmapLockBits (nativeObject, ref rc, flags, format, ref w, ref h, ref s, ref f, ref res, ref sc);
-			result.Width = w;
-			result.Height = h;
-			result.Stride = s;
-			result.PixelFormat = (PixelFormat) f;
-			result.Reserved = res;
-			result.Scan0 = sc;
+			IntPtr lfBuffer = Marshal.AllocHGlobal(Marshal.SizeOf(result));
+     		Marshal.StructureToPtr(result, lfBuffer, false);						
+     		
+			Status status = GDIPlus.GdipBitmapLockBits (nativeObject, ref rc, flags, format,  lfBuffer);
+			
+			result = (BitmapData) Marshal.PtrToStructure(lfBuffer,  typeof(BitmapData));											
+			Marshal.FreeHGlobal (lfBuffer);
 			
 			if (status != Status.Ok)
 				throw new Exception ("Could not lock bits: " + status);
-			return result;
+							
+			Console.WriteLine("Bitmap.LockBits->height "+ result.height+ " scan"+ result.address);
+							
+			return  result;
 		}
 
 		public void MakeTransparent ()
@@ -243,10 +246,7 @@ namespace System.Drawing {
 		protected override void DisposeResources ()
 		{
 			base.DisposeResources ();
-			if (buffer != (IntPtr) 0){
-				Marshal.FreeHGlobal (buffer);
-				buffer = (IntPtr) 0;
-			}
+			
 		}
 	}
 }

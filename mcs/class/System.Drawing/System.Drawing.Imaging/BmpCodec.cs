@@ -14,6 +14,7 @@ namespace System.Drawing.Imaging {
 	using System.IO;
 	using System.Drawing.Imaging;
 	using System.Runtime.InteropServices;
+	
 
 	internal struct BITMAPFILEHEADER {      // File info header
 		public ushort bfType;      			// Specifies the type of file. This member must be BM.
@@ -37,6 +38,7 @@ namespace System.Drawing.Imaging {
 		BI_BITFIELDS  = 3
 	}
 
+	
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct BITMAPINFOHEADER_FLAT {
 		internal int      biSize;
@@ -105,11 +107,14 @@ namespace System.Drawing.Imaging {
 			biYPelsPerMeter = 0;
 			biClrUsed = 0;
 			biClrImportant = 0;
+			
 		}
 	}
 
 	internal class BMPCodec {
 		
+		static  int BITMAPINFOHEADER_SIZE = 40;
+			
 		internal BMPCodec() {
 		}
 		
@@ -169,7 +174,7 @@ namespace System.Drawing.Imaging {
 				bmih.biClrImportant = bs.ReadInt32();
 				
 				// Currently only BITMAPINFOHEADER
-				if (bmih.biSize != 40) return false;
+				if (bmih.biSize != BITMAPINFOHEADER_SIZE) return false;
 				
 				bmih.FixBitmapInfo();
 
@@ -196,8 +201,9 @@ namespace System.Drawing.Imaging {
 		
 		internal bool Decode (Image image, Stream stream, BitmapData info)
 		{
+								
 #if false
-			if (stream.Length < 14 + 40/* sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER)*/)
+			if (stream.Length < 14 + BITMAPINFOHEADER_SIZE/* sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER)*/)
 				return false;
 			long startPosition = stream.Position;
 			
@@ -274,7 +280,7 @@ namespace System.Drawing.Imaging {
 			BITMAPFILEHEADER bmfh = new BITMAPFILEHEADER();
 			bmfh.bfReserved1 = bmfh.bfReserved2 = 0;
 			bmfh.bfType = (ushort)BitmapFileType.BFT_BITMAP;
-			bmfh.bfOffBits = (uint)(14 + 40 + image.Palette.Entries.Length * 4);
+			bmfh.bfOffBits = (uint)(14 + BITMAPINFOHEADER_SIZE + image.Palette.Entries.Length * 4);
 			int line_size = info.Stride;
 			bmfh.bfSize = (uint)(bmfh.bfOffBits + info.Height * line_size);
 					     
@@ -299,15 +305,30 @@ namespace System.Drawing.Imaging {
 			bw.Write(bmih.biClrUsed);
 			bw.Write(bmih.biClrImportant);
 			Console.WriteLine ("FIXME: BmpCodec: Write palette here");
+			
+			Console.WriteLine ("biWidth ->" + bmih.biWidth);
+			Console.WriteLine ("Height->" + bmih.biHeight);			
+			Console.WriteLine ("LineSize ->" + line_size);
+			Console.WriteLine ("Address ->" + info.Scan0.ToInt32());
+			Console.WriteLine ("Stride ->" + info.Stride);
+			Console.WriteLine ("Planes ->" + bmih.biPlanes);						
 
 			byte [] line_buffer = new byte [line_size];
 			int stride = info.Stride;
-			int start = 0;
-			for (int line = 0; line < info.Height; line++){
+			int offset = (info.Height-1) * stride;						
+			int baseadr = info.Scan0.ToInt32();
+			
+			Console.WriteLine ("Offset ->" + offset);				
+			
+			//	DIB are stored upside down. That means that the uppest row which 
+			//	appears on the screen actually is the lowest row stored in the 
+			//	bitmap.							
+			while(offset>=0){				
 				//FIXME: not an optimal way to specify starting address
-				Marshal.Copy ((IntPtr)( info.Scan0.ToInt32() + start), line_buffer, 0, line_size);
+				//FIXME: Bitmaps are stored in DWORD alignments
+				Marshal.Copy ((IntPtr)( baseadr + offset), line_buffer, 0, line_size);
 				stream.Write(line_buffer, 0, line_size);
-				start += stride;
+				offset -= stride;					
 			}
 			return true;
 		}

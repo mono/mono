@@ -608,12 +608,18 @@ namespace System.Drawing
 		[MonoTODO("This ignores the font")]
 		public void DrawString (string s, Font font, Brush brush, float x, float y)
 		{
+			Console.WriteLine("DrawString!");
 			GpRectF rc = new GpRectF ();
 			rc.left = x;
 			rc.top = y;
 			rc.right = 0;
 			rc.bottom = 0;
-			GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, ref rc, IntPtr.Zero, brush.nativeObject);
+			
+			Status status = GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, 
+				ref rc, IntPtr.Zero, brush.nativeObject);
+			
+			if (status != Status.Ok)
+				throw new Exception ("Cannot DrawString (string s, Font font, Brush brush, float x, float y):");
 		}
 
 		[MonoTODO]

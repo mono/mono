@@ -169,7 +169,7 @@ GdipCreateBitmapFromScan0 (int width, int height, int stride, int format, void *
 
 	if (stride == 0)
 		return InvalidParameter;
-	if (scan0 == NULL)
+	if (scan0 == NULL)				//FIXME: Win32 GDIPlus accepts NULL as a value for the scan0 parameter. Jordi,
 		return InvalidParameter;
 			
 	switch (format) {

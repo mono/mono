@@ -234,12 +234,20 @@ namespace System.Drawing {
 		internal static extern Status GdipCreateBitmapFromGraphics (int width, int height, IntPtr target, out int bitmap);
 
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipBitmapLockBits (IntPtr bmp, ref GpRect rc, ImageLockMode flags, PixelFormat format, [In, Out] BitmapData bmpData);
-		[DllImport("gdiplus.dll")]
-		internal static extern Status ____BitmapLockBits (IntPtr bmp, ref GpRect  rc, ImageLockMode flags, PixelFormat format, ref int width, ref int height, ref int stride, ref int format2, ref int reserved, ref IntPtr scan0);
+		internal static extern Status GdipBitmapLockBits (IntPtr bmp, ref GpRect rc, ImageLockMode flags, PixelFormat format, [In, Out] IntPtr bmpData);
+		
+		// This an internal GDIPlus Cairo function, not part GDIPlus interface
+		//[DllImport("gdiplus.dll")]
+		//(internal static extern Status ____BitmapLockBits (IntPtr bmp, ref GpRect  rc, ImageLockMode flags, PixelFormat format, ref int width, ref int height, ref int stride, ref int format2, ref int reserved, ref IntPtr scan0);
 		
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipBitmapUnlockBits (IntPtr bmp, [In,Out] BitmapData bmpData);
+		
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipBitmapGetPixel(IntPtr bmp, int x, int y, out int argb); 
+		
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipBitmapSetPixel(IntPtr bmp, int x, int y, int argb);
 
 		// Image functions
 		[DllImport("gdiplus.dll")]
