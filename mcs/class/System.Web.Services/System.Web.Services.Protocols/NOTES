@@ -17,10 +17,6 @@ Notes on the Soap Client
 	Url property of it (to point to the right server) and then
 	invoking the stubs. 
 
-	The stub will call SoapHttpClientProtocol.Invoke.  Our
-	implementation walks the stack to find the invoker and extract
-	the attributes that control the processing
-
 	SoapHttpClientProtocol will create a SoapClientMessage based
 	on this information.  The SoapClientMessage class is used to
 	pass the information to hooks or extensions in the .NET
@@ -51,41 +47,35 @@ Notes on the Soap Client
 
 * Metadata
 
-	We need to extract various pieces of information from a given
-	MethodInfo.  Currently this is done in CreateMessage, but it
-	should be moved elsewhere as there is plenty more that we will
-	need to extract, and we are currently just passing all that
-	information to SoapClientMessage as internal data.
+	Methods.cs extracts class and method information: it basically
+	pulls all the attributes that can be applied to the class and
+	methods, and stores them into TypeStubInfo and MethodStubInfo.
 
-	This new structure will also keep a cache of the
-	XmlSerializers that we need for encoding the arguments. 
+	Also, serializers for input and output types are created and
+	stored into the MethodStubInfo.
 
-	This should contain information extracted from the method
-	attributes, at least the following play a role:
+	There is a cache managed by TypeStubManager (it has to be
+	threadsafe, as SoapHttpClientProtocol will call this and will
+	require thread safe semantics). 
 
-		SoapDocumentMethodAttribute
-		WebMethodAttribute
-
+	The cache tracks types, and types track their methods.  This
+	information needs to be computed ahead of time, due to the
+	possible name-clash resolution that VisualStudio uses. 
 
 * Current shortcomings and problems.
-
-	* Need to find a list of all attributes that apply to a
-	  method.
 
 	* Need a cache that maps (type, method-name) to the
 	  precomputed MethodMetadata.  The type has to be a derived
 	  class from SoapHttpClientProtocol.
 
-	* Since we know that WebService names are *unique* we can
-	  pull the MethodMetadata based on this key, so it would be:
+	* We do not support SoapExtensions.
 
-			(type, unique-name) -> MethodMetadata
+	* We do not support extracting the parameter information and
+	  pass the result attribute names to the XmlSerializer, as specified in
+	  `Customizing SOAP Messages/Customizing the SOAP Message with XML Serialization'
 
-	* We probably need to compute all the MethodMetadata structs
-	  in one pass for a type, as the unique-name can not be
-	  discovered unless we do a query on all the attributes
-	  attached to methods (see the sample at the end)
-
+	* We do not pass the SoapClientMessage as we should to any
+	  extensions
 
 * Other notes.
 

@@ -20,8 +20,12 @@ namespace System.Web.Services.Protocols {
 		SoapHttpClientProtocol client;
 		string url;
 		LogicalMethodInfo client_method;
-		SoapDocumentMethodAttribute sma;
-		object [] parameters;
+		internal MethodStubInfo MethodStubInfo;
+
+		//
+		// Expose this one internally
+		//
+		internal object [] Parameters;
 		#endregion
 
 		#region Constructors
@@ -29,14 +33,13 @@ namespace System.Web.Services.Protocols {
 		//
 		// Constructs the SoapClientMessage
 		//
-		internal SoapClientMessage (SoapHttpClientProtocol client, SoapDocumentMethodAttribute sma,
-					    LogicalMethodInfo client_method, bool one_way, string url, object [] parameters)
+		internal SoapClientMessage (SoapHttpClientProtocol client, MethodStubInfo msi, string url, object [] parameters)
 		{
-			this.sma = sma;
+			this.MethodStubInfo = msi;
 			this.client = client;
 			this.client_method = client_method;
 			this.url = url;
-			this.parameters = parameters;
+			Parameters = parameters;
 		}
 
 		#endregion 
@@ -44,7 +47,7 @@ namespace System.Web.Services.Protocols {
 		#region Properties
 
 		public override string Action {
-			get { return sma.Action; }
+			get { return MethodStubInfo.Action; }
 		}
 
 		public SoapHttpClientProtocol Client {
@@ -56,7 +59,7 @@ namespace System.Web.Services.Protocols {
 		}
 
 		public override bool OneWay {
-			get { return sma.OneWay; }
+			get { return MethodStubInfo.OneWay; }
 		}
 
 		public override string Url {

@@ -22,13 +22,15 @@ using System.Web.Services.Description;
 
 namespace System.Web.Services.Protocols {
 	public class SoapHttpClientProtocol : HttpWebClientProtocol {
-
+		TypeStubInfo type_info;
+		
 		#region Constructors
 
 		public SoapHttpClientProtocol () 
 		{
+			type_info = TypeStubManager.GetTypeStub (this.GetType ());
 		}
-		
+
 		#endregion // Constructors
 
 		#region Methods
@@ -72,69 +74,6 @@ namespace System.Web.Services.Protocols {
 			}
 		}
 		
-		//
-		// The `method_name' should be the name of our invoker, this is only used
-		// for sanity checks, nothing else
-		//
-		[MethodImplAttribute(MethodImplOptions.NoInlining)]
-		MethodInfo GetCallerMethod (string method_name)
-		{
-			MethodInfo mi;
-#if StackFrameWorks
-			StackFrame stack_trace = new StackFrame (5, false);
-			mi = (MethodInfo) stack_frame.GetMethod ();
-
-#else
-			//
-			// Temporary hack: look for a type which is not this type
-			//
-			StackTrace st = new StackTrace ();
-			mi = null;
-			for (int i = 0; i < st.FrameCount; i++){
-				StackFrame sf = st.GetFrame (i);
-				mi = (MethodInfo) sf.GetMethod ();
-				if (mi.DeclaringType != typeof (SoapHttpClientProtocol))
-					break;
-			}
-#endif
-			//
-			// A few sanity checks, just in case the code moves around later
-			//
-			if (!mi.DeclaringType.IsSubclassOf (typeof (System.Web.Services.Protocols.SoapHttpClientProtocol)))
-				throw new Exception ("We are pointing to the wrong method (T=" + mi.DeclaringType + ")");
-
-			if (mi.DeclaringType == typeof (System.Web.Services.Protocols.SoapHttpClientProtocol))
-				throw new Exception ("We are pointing to the wrong method (we are pointing to our Invoke)");
-
-			if (mi.Name != method_name)
-				throw new Exception ("The method we point to is: " + mi.Name);
-
-			return mi;
-		}
-		
-		[MethodImplAttribute(MethodImplOptions.NoInlining)]
-		SoapClientMessage CreateMessage (string method_name, object [] parameters)
-		{
-			MethodInfo mi = GetCallerMethod (method_name);
-			object [] attributes = mi.GetCustomAttributes (typeof (System.Web.Services.Protocols.SoapDocumentMethodAttribute), false);
-			SoapDocumentMethodAttribute sma = (SoapDocumentMethodAttribute) attributes [0];
-
-			Console.WriteLine ("SMAA:    " + sma.Action);
-			Console.WriteLine ("Binding: " + sma.Binding);
-			Console.WriteLine ("OneWay:  " + sma.OneWay);
-			Console.WriteLine ("PStyle:  " + sma.ParameterStyle);
-			Console.WriteLine ("REN:     " + sma.RequestElementName);
-			Console.WriteLine ("REN:     " + sma.RequestElementName);
-
-			if (sma.Use != SoapBindingUse.Literal)
-				throw new Exception ("Soap Section 5 Encoding not supported");
-			
-			SoapClientMessage message = new SoapClientMessage (
-				this, sma, new LogicalMethodInfo (mi), sma.OneWay, Url, parameters);
-
-			return message;
-		}
-
 		const string soap_envelope = "http://schemas.xmlsoap.org/soap/envelope/";
 		
 		void WriteSoapEnvelope (XmlTextWriter xtw)
@@ -146,7 +85,7 @@ namespace System.Web.Services.Protocols {
 			xtw.WriteAttributeString ("xmlns", "xsd", null, "http://www.w3.org/2001/XMLSchema");
 		}
 		
-		void SendMessage (WebRequest request, SoapClientMessage message)
+		void SendRequest (WebRequest request, SoapClientMessage message)
 		{
 			WebHeaderCollection headers = request.Headers;
 			headers.Add ("SOAPAction", message.Action);
@@ -156,28 +95,105 @@ namespace System.Web.Services.Protocols {
 			using (Stream s = request.GetRequestStream ()){
 				// serialize arguments
 
-				XmlTextWriter xtw = new XmlTextWriter (s, Encoding.UTF8);
+				// What a waste of UTF8encoders, but it has to be thread safe.
+				
+				XmlTextWriter xtw = new XmlTextWriter (s, new UTF8Encoding (false));
+				xtw.Formatting = Formatting.Indented;
 				WriteSoapEnvelope (xtw);
 				xtw.WriteStartElement ("soap", "Body", soap_envelope);
-				
-				// Serialize arguments here
-				
+
+				// Serialize arguments.
+				message.MethodStubInfo.RequestSerializer.Serialize (xtw, message.Parameters);
 				xtw.WriteEndElement ();
 				xtw.WriteEndElement ();
+				
 				xtw.Flush ();
 				xtw.Close ();
 			 }
 		}
+
+		void GetContentTypeProperties (string cts, out string encoding, out string content_type)
+		{
+			encoding = "utf-8";
+			int start = 0;
+			int idx = cts.IndexOf (';');
+			if (idx == -1)
+				encoding = cts;
+			content_type = cts.Substring (0, idx);
+			for (start = idx + 1; idx != -1;){
+				idx = cts.IndexOf (";", start);
+				string body;
+				if (idx == -1)
+					body = cts.Substring (start);
+				else {
+					body = cts.Substring (start, idx);
+					start = idx + 1;
+				}
+				if (body.StartsWith ("charset=")){
+					encoding = body.Substring (8);
+				}
+			}
+		}
 		
-		[MethodImplAttribute(MethodImplOptions.NoInlining)]
+		//
+		// TODO:
+		//    Handle other web responses (multi-output?)
+		//    
+		object [] ReceiveResponse (WebResponse response, SoapClientMessage message)
+		{
+			HttpWebResponse http_response = (HttpWebResponse) response;
+			HttpStatusCode code = http_response.StatusCode;
+			MethodStubInfo msi = message.MethodStubInfo;
+			
+			if (!(code == HttpStatusCode.Accepted || code == HttpStatusCode.OK))
+				throw new Exception ("Return code was: " + http_response.StatusCode);
+
+			//
+			// Remove optional encoding
+			//
+			string content_type, encoding_name;
+			GetContentTypeProperties (response.ContentType, out encoding_name, out content_type);
+
+			if (content_type != "text/xml")
+				throw new Exception ("Return value is not XML: " + content_type);
+
+			Encoding encoding = Encoding.GetEncoding (encoding_name);
+			Stream stream = response.GetResponseStream ();
+			StreamReader reader = new StreamReader (stream, encoding, false);
+			XmlTextReader xml_reader = new XmlTextReader (reader);
+
+			//
+			// Handle faults somewhere
+			//
+			xml_reader.MoveToContent ();
+			xml_reader.ReadStartElement ("Envelope", soap_envelope);
+			xml_reader.MoveToContent ();
+			xml_reader.ReadStartElement ("Body", soap_envelope);
+
+			xml_reader.MoveToContent ();
+			xml_reader.ReadStartElement (msi.ResponseName, msi.ResponseNamespace);
+
+			object [] ret = (object []) msi.ResponseSerializer.Deserialize (xml_reader);
+
+			Console.WriteLine ("Returned array elements: " + ret.Length);
+			for (int i = 0; i < ret.Length; i++){
+				Console.WriteLine ("Value-{0}: {1}", i, ret [i]);
+			}
+			return (object []) ret;
+		}
+		
 		protected object[] Invoke (string method_name, object[] parameters)
 		{
-			SoapClientMessage message = CreateMessage (method_name, parameters);
+			MethodStubInfo msi = type_info.GetMethod (method_name);
+			
+			SoapClientMessage message = new SoapClientMessage (
+				this, msi, Url, parameters);
+
 			WebRequest request = GetWebRequest (uri);
-			
-			SendMessage (request, message);
-			
-			return null;
+			SendRequest (request, message);
+
+			WebResponse response = request.GetResponse ();
+			return ReceiveResponse (response, message);
 		}
 
 		#endregion // Methods

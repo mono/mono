@@ -1,3 +1,22 @@
+2003-05-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* SoapHttpClientProtocol.cs (CreateMessage): Kill.  Move
+	functionality to Invoke.
+
+	(Invoke): Use new TypeStubInfo/MethodStubInfo instead.
+
+	* SoapClientMessage.cs: Drop old mechanism, use MethodStubInfo instead.
+
+	* Methods.cs: New file.  Contains the managed for TypeStubs and
+	MethodInfoStubs.   
+
+	A MethodInfoStub contains the serializers we use for the SOAP
+	request. 
+
+	* SoapClientMessage.cs: Drop parameters from the clientmessage, it
+	does not belong here.  Drop oneway, we canextract that from the
+	SoapDocumentMethodAttribute class that we pass.
+
 2003-05-28  Miguel de Icaza  <miguel@ximian.com>
 
 	* LogicalMethodInfo.cs (Create): Implement begin/end method
