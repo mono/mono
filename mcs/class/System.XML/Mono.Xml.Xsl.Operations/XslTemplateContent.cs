@@ -107,7 +107,6 @@ namespace Mono.Xml.Xsl.Operations
 								content.Add (new XslElement (c));
 							break;
 						case "fallback":
-							content.Add (new XslFallback (c));
 							break;
 						case "for-each":
 							content.Add (new XslForEach (c));

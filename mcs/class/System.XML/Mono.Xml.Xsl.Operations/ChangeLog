@@ -1,5 +1,9 @@
 2005-03-04  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XslTemplateContent.cs : inside template, fallback is ignored.
+
+2005-03-04  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XslNotSupportedOperation.cs : Added xsl:fallback support.
 
 2005-03-04  Atsushi Enomoto  <atsushi@ximian.com>
