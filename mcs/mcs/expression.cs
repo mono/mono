@@ -3418,31 +3418,6 @@ namespace CIR {
 		}
 	}
 	
-	public class BuiltinTypeAccess : Expression {
-		public readonly string AccessBase;
-		public readonly string Method;
-		
-		public BuiltinTypeAccess (string type, string method)
-		{
-			System.Console.WriteLine ("DUDE! This type should be fully resolved!");
-			AccessBase = type;
-			Method = method;
-		}
-
-		public override Expression Resolve (TypeContainer tc)
-		{
-			// FIXME: Implement;
-			throw new Exception ("Unimplemented");
-			// return this;
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			throw new Exception ("Unimplemented");
-		}
-	}
-
-
 	//   Fully resolved expression that evaluates to a Field
 	// </summary>
 	public class FieldExpr : Expression, LValue {
@@ -3541,7 +3516,7 @@ namespace CIR {
 	}
 
 	// <summary>
-	//   Fully resolved expression that evaluates to a Property
+	//   Fully resolved expression that evaluates to a Expression
 	// </summary>
 	public class EventExpr : Expression {
 		public readonly EventInfo EventInfo;

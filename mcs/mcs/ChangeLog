@@ -1,6 +1,8 @@
 2001-09-27  Miguel de Icaza  <miguel@ximian.com>
 
-	* expression.cs: Fix the order in which implicit conversions are
+	* expression.cs: Removed BuiltinTypeAccess class
+
+	Fix the order in which implicit conversions are
 	done.  
 
 	The previous fixed dropped support for boxed conversions (adding a
