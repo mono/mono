@@ -186,14 +186,6 @@ namespace MonoTests.System.Net {
 			Assert.AreEqual ("\b(?", a.AcceptPattern, "AcceptPattern");
 			Assert.IsNull (a.ConnectPattern, "ConnectPattern");
 		}
-#else
-		[Test]
-		[ExpectedException (typeof (IndexOutOfRangeException))]
-		public void AcceptPattern ()
-		{
-			WebPermissionAttribute a = new WebPermissionAttribute (SecurityAction.Assert);
-			a.AcceptPattern = "\b(?"; // invalid regex expression
-		}
 #endif
 
 		[Test]
