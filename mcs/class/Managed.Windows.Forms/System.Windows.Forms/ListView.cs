@@ -22,9 +22,12 @@
 // Author:
 //	Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.8 $
+// $Revision: 1.9 $
 // $Modtime: $
 // $Log: ListView.cs,v $
+// Revision 1.9  2004/11/05 14:00:50  ravindra
+// Implemented some methods and fixed scrolling.
+//
 // Revision 1.8  2004/11/04 11:29:38  ravindra
 // 	- Changed default value signatures (prefixed all with ListView).
 // 	- Fixed/implemented layout LargeIcon, SmallIcon and List views for ListView.
@@ -108,9 +111,6 @@ namespace System.Windows.Forms
 		// internal variables
 		internal ImageList large_image_list;
 		internal ImageList small_image_list;
-		// FIXME: find a way to calculate width properly in all the
-		// cases. MS has a value, even if there is no text, no icon
-		// no checkbox. default ht is Font.ht.
 		internal Size text_size = Size.Empty;
 
 		#region Events
@@ -403,7 +403,23 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public ListViewItem TopItem {
-			get { return items [0]; }
+			get {
+				// there is no item
+				if (this.items.Count == 0)
+					return null;
+				// if contents are not scrolled
+				// it is the first item
+				else if (h_marker == 0 && v_marker == 0)
+					return this.items [0];
+				// do a hit test for the scrolled position
+				else {
+					foreach (ListViewItem item in this.items) {
+						if (item.EntireRect.Contains (h_marker, v_marker))
+							return item;
+					}
+					return null;
+				}
+			}
 		}
 
 		[DefaultValue (View.LargeIcon)]
@@ -424,8 +440,12 @@ namespace System.Windows.Forms
 
 		internal void Redraw (bool recalculate)
 		{
+			// Avoid calculations when control is being updated
+			if (this.updating)
+				return;
+
 			if (recalculate)
-				CalculateListView ();
+				CalculateListView (this.alignment);
 
 			redraw = true;
 			Refresh ();
@@ -540,7 +560,7 @@ namespace System.Windows.Forms
 
 		// Sets the location of every item on
 		// the ListView as per the view
-		private void CalculateListView ()
+		private void CalculateListView (ListViewAlignment align)
 		{
 			int current_pos_x = 0; // our x-position marker
 			int current_pos_y = 0; // our y-position marker
@@ -592,7 +612,7 @@ namespace System.Windows.Forms
 					item_wd = items [0].EntireRect.Width;
 
 					// top (default) and snaptogrid alignments are handled same way
-					if (this.alignment == ListViewAlignment.Left) {
+					if (align == ListViewAlignment.Left) {
 						max = this.Height / item_ht;
 						if (max == 0)
 							max = 1; // we draw at least one row
@@ -693,16 +713,26 @@ namespace System.Windows.Forms
 			}
 
 			if (this.scrollable) {
-				if (this.layout_wd > this.Width)
+				// making a scroll bar visible might make
+				// other scroll bar visible
+				if (this.layout_wd > this.Width) {
 					this.h_scroll.Visible = true;
-				if (this.layout_ht > this.Height)
+					this.layout_ht += this.h_scroll.Height;
+					if (this.layout_ht > this.Height) {
+						this.v_scroll.Visible = true;
+						this.layout_wd += this.v_scroll.Width;
+					}
+				}
+				else if (this.layout_ht > this.Height) {
 					this.v_scroll.Visible = true;
+					this.layout_wd += this.v_scroll.Width;
+					if (this.layout_wd > this.Width) {
+						this.h_scroll.Visible = true;
+						this.layout_ht += this.h_scroll.Height;
+					}
+				}
 
-				//if (this.h_scroll.Visible)
-				//	this.layout_ht += ThemeEngine.Current.ListViewScrollBarWidth;
-				//if (this.v_scroll.Visible)
-				//	this.layout_wd += ThemeEngine.Current.ListViewScrollBarWidth;
-
+				// create big enough buffers
 				this.CreateBuffers (this.layout_wd, this.layout_ht);
 
 				if (this.h_scroll.Visible) {
@@ -724,7 +754,7 @@ namespace System.Windows.Forms
 					this.h_scroll.LargeChange = this.Width;
 					this.h_scroll.SmallChange = this.Font.Height;
 					// adjust the maximum value to make the raw max value attainable
-					this.h_scroll.Maximum += this.h_scroll.LargeChange;
+					this.h_scroll.Maximum += this.Width;
 				}
 
 				// vertical scrollbar
@@ -748,7 +778,7 @@ namespace System.Windows.Forms
 					this.v_scroll.SmallChange = this.Font.Height;
 
 					// adjust the maximum value to make the raw max value attainable
-					this.v_scroll.Maximum += this.v_scroll.LargeChange;
+					this.v_scroll.Maximum += this.Height;
 				}
 			}
 			else {
@@ -759,7 +789,8 @@ namespace System.Windows.Forms
 
 		private void ListView_Paint (object sender, PaintEventArgs pe)
 		{
-			if (this.Width <= 0 || this.Height <=  0 || this.Visible == false)
+			if (this.Width <= 0 || this.Height <=  0 ||
+			    this.Visible == false || this.updating == true)
 				return;
 
 			if (redraw) {
@@ -818,21 +849,22 @@ namespace System.Windows.Forms
 
 		private void HorizontalScroller (object sender, ScrollEventArgs se)
 		{
-			Point loc;
-			h_marker = se.NewValue;
-
-			// no need to paint when we reach the end
-			if (se.Type != ScrollEventType.EndScroll)
+			// Avoid unnecessary flickering, when button is
+			// kept pressed at the end
+			if (h_marker != se.NewValue) {
+				h_marker = se.NewValue;
 				this.Refresh ();
+			}
 		}
 
 		private void VerticalScroller (object sender, ScrollEventArgs se)
 		{
-			v_marker = se.NewValue;
-
-			// no need to paint when we reach the end
-			if (se.Type != ScrollEventType.EndScroll)
+			// Avoid unnecessary flickering, when button is
+			// kept pressed at the end
+			if (v_marker != se.NewValue) {
+				v_marker = se.NewValue;
 				this.Refresh ();
+			}
 		}
 		#endregion	// Internal Methods Properties
 
@@ -844,7 +876,7 @@ namespace System.Windows.Forms
 
 		protected override void Dispose (bool disposing)
 		{
-			Clear ();
+			// FIXME: TODO
 		}
 
 		protected override bool IsInputKey (Keys keyData)
@@ -938,14 +970,16 @@ namespace System.Windows.Forms
 		#region Public Instance Methods
 		public void ArrangeIcons ()
 		{
-			ArrangeIcons (ListViewAlignment.Default);
+			ArrangeIcons (this.alignment);
 		}
 
 		public void ArrangeIcons (ListViewAlignment alignment)
 		{
 			// Icons are arranged only if view is set to LargeIcon or SmallIcon
 			if (view == View.LargeIcon || view == View.SmallIcon) {
-				// FIXME: TODO
+				this.CalculateListView (alignment);
+				// we have done the calculations already
+				this.Redraw (false);
 			}
 		}
 
@@ -959,17 +993,49 @@ namespace System.Windows.Forms
 		{
 			columns.Clear ();
 			items.Clear ();
+			this.Redraw (true);
 		}
 
 		public void EndUpdate ()
 		{
 			// flag to avoid painting
 			updating = false;
+
+			// probably, now we need a redraw with recalculations
+			this.Redraw (true);
 		}
 
 		public void EnsureVisible (int index)
 		{
-			// FIXME: TODO
+			if (index < 0 || index >= this.items.Count || this.scrollable == false)
+				return;
+
+			// dimensions of visible area
+			int view_wd = this.Width - (this.v_scroll.Visible ? this.v_scroll.Width : 0);
+			int view_ht = this.Height - (this.h_scroll.Visible ? this.h_scroll.Height : 0);
+			// visible area is decided by the h_marker and v_marker
+			Rectangle view_rect = new Rectangle (h_marker, v_marker, view_wd, view_ht);
+
+			// an item's bounding rect
+			Rectangle rect = this.items [index].EntireRect;
+
+			// we don't need to do anything if item is visible.
+			// visible area is represented by (0,0,view_wd,view_ht)
+			if (view_rect.Contains (rect))
+				return;
+
+			if ((rect.Left < view_rect.Left) || (rect.Top < view_rect.Top)) {
+				if (rect.Left < view_rect.Left)
+					this.h_scroll.Value += (view_rect.Left - rect.Left);
+				if (rect.Top < view_rect.Top)
+					this.v_scroll.Value += (view_rect.Top - rect.Top);
+			}
+			else {
+				if (rect.Right > view_rect.Right)
+					this.h_scroll.Value -= (rect.Right - view_rect.Right);
+				if (rect.Bottom > view_rect.Bottom)
+					this.v_scroll.Value -= (rect.Bottom - view_rect.Bottom);
+			}
 		}
 		
 		public ListViewItem GetItemAt (int x, int y)

@@ -22,9 +22,12 @@
 // Author:
 //      Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.7 $
+// $Revision: 1.8 $
 // $Modtime: $
 // $Log: ListViewItem.cs,v $
+// Revision 1.8  2004/11/05 14:00:50  ravindra
+// Implemented some methods and fixed scrolling.
+//
 // Revision 1.7  2004/11/04 11:29:38  ravindra
 // 	- Changed default value signatures (prefixed all with ListView).
 // 	- Fixed/implemented layout LargeIcon, SmallIcon and List views for ListView.
@@ -315,7 +318,9 @@ namespace System.Windows.Forms
 
 		public virtual void EnsureVisible ()
 		{
-			// FIXME: TODO
+			if (this.owner != null) {
+				owner.EnsureVisible (owner.Items.IndexOf (this));
+			}
 		}
 
 		public Rectangle GetBounds (ItemBoundsPortion portion)
