@@ -53,6 +53,12 @@ namespace System
 
 		public static void BlockCopy (Array src, int srcOffset, Array dest, int destOffset, int count)
 		{
+			if (src == null)
+				throw new ArgumentNullException ("src");
+
+			if (dest == null)
+				throw new ArgumentNullException ("dest");
+
 			if (srcOffset < 0)
 				throw new ArgumentOutOfRangeException ("srcOffset", Locale.GetText(
 					"Non-negative number required."));
@@ -70,8 +76,8 @@ namespace System
 			if (!res) {
 				if (srcOffset + count > ByteLength (src) || destOffset + count > ByteLength (dest))
 					throw new ArgumentException (Locale.GetText (
-																 "Offset and length were out of bounds for the array or count is greater than" + 
-																 "the number of elements from index to the end of the source collection."));
+						"Offset and length were out of bounds for the array or count is greater than" + 
+						"the number of elements from index to the end of the source collection."));
 			}
 		}
 

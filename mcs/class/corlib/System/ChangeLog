@@ -1,3 +1,12 @@
+2004-05-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Buffer.cs: Added checks for null source and destination. Fix failing
+	CryptoStream unit test.
+	* Guid.cs: Fixed thread-safety issue. Simplified implementation to use
+	pseudo-random numbers to generate GUIDs (as per section 3.4 of the 
+	spec). This removes the TODO to get the computer MAC address and
+	the chances to get a duplicate GUID (across different machines).
+
 2004-05-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* TimeSpan.cs: Only catch expected exceptions, if we get other exceptions

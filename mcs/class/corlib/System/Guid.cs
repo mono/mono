@@ -1,15 +1,21 @@
 //
 // System.Guid.cs
 //
-// Author:
-//   Duco Fijma (duco@lorentz.xs4all.nl)
+// Authors:
+//	Duco Fijma (duco@lorentz.xs4all.nl)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2002 Duco Fijma
+// Copyright (C) 2004 Novell (http://www.novell.com)
+//
+// References
+// 1.	UUIDs and GUIDs (DRAFT), Section 3.4
+//	http://www.ics.uci.edu/~ejw/authoring/uuid-guid/draft-leach-uuids-guids-01.txt 
 //
 
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
-using System.Runtime.InteropServices;
 
 namespace System
 {
@@ -28,92 +34,6 @@ namespace System
 		private byte _node3;
 		private byte _node4;
 		private byte _node5;
-
-		internal class GuidState
-		{
-			protected Random _prnd; // Pseudo RNG
-			protected RandomNumberGenerator _rnd; // Strong RNG
-			protected bool _usePRnd; // 'true' for pseudo RNG
-			protected ushort _clockSeq;
-			protected ulong _lastTimestamp;
-			protected byte[] _mac;
-
-			public int NextInt(uint x)
-			 {
-				if (_usePRnd) {
-					return _prnd.Next ((int) x);
-				}
-				else {
-					byte[] b = new byte[4];
-					_rnd.GetBytes (b);
-	
-					uint res = BitConverter.ToUInt32 (b, 0);
-					res = (res % x);
-					return (int) res;
-				}
-			}
-
-			public void NextBytes(byte[] b)
-			{
-				if ( _usePRnd ) {
-					_prnd . NextBytes (b);
-				}
-				else {
-					_rnd . GetBytes (b);
-				}
-			}
-
-			[MonoTODO("Get real MAC address")]
-			public GuidState (bool usePRnd)
-			{
-				_usePRnd = usePRnd;
-				if ( _usePRnd ) {
-					_prnd = new Random (unchecked((int) DateTime.Now.Ticks));
-				}
-				else {
-					_rnd = RandomNumberGenerator.Create ();
-				}
-				_clockSeq = (ushort) NextInt (0x4000); // 14 bits
-				_lastTimestamp = 0ul;
-				_mac = new byte[6];
-				NextBytes (_mac);
-				_mac[0] |= 0x80;
-			}
-
-			public ulong NewTimestamp ()
-			{
-				ulong timestamp;
-	
-				do {
-					timestamp = (ulong) (DateTime.UtcNow - new DateTime (1582, 10, 15, 0, 0, 0)).Ticks;
-					if (timestamp < _lastTimestamp) {
-						// clock moved backwards!
-						_clockSeq++;
-						_clockSeq = (ushort) (_clockSeq & 0x3fff);
-						return timestamp;
-					}
-					if (timestamp > _lastTimestamp) {
-						_lastTimestamp = timestamp;
-						return timestamp;
-					}
-				}
-				while (true);
-			}
-	
-			public ushort ClockSeq {
-				get {
-					return _clockSeq;
-				}
-			}
-
-			public byte[] MAC {
-				get {
-					return _mac;
-				}
-				
-			}
-			
-		};
 
 		internal class GuidParser
 		{
@@ -299,7 +219,7 @@ namespace System
 			}
 		}
 	
-		private static GuidState _guidState = new GuidState ( true /* use pseudo RNG? */ );
+		private static RandomNumberGenerator _rng = RandomNumberGenerator.Create ();
 
 		private static void CheckNull (object o)
 		{
@@ -472,51 +392,27 @@ namespace System
 			return res;
 		}
 
-		private static Guid NewTimeGuid ()
-		{
-			ulong timestamp = _guidState.NewTimestamp ();
-
-			// Bit [31..0] (32 bits) for timeLow
-			uint timeLow = (uint) (timestamp & 0x00000000fffffffful);
-			// Bit [47..32] (16 bits) for timeMid
-			ushort timeMid = (ushort) ((timestamp & 0x0000ffff00000000ul) >> 32); 
-			// Bit [59..48] (12 bits) for timeHi
-			ushort timeHi = (ushort) ((timestamp & 0x0fff000000000000ul) >> 48);
-			// Bit [7..0] (8 bits) for clockSeqLo
-			byte clockSeqLow = (byte) (Guid._guidState.ClockSeq & 0x00ffu);
-			// Bit [13..8] (6 bits) for clockSeqHi
-			byte clockSeqHi = (byte) ((Guid._guidState.ClockSeq & 0x3f00u) >> 8);
-			byte[] mac = _guidState.MAC;
-	
-			clockSeqHi = (byte) (clockSeqHi | 0x80u); // Bit[7] = 1, Bit[6] = 0 (Variant)
-			timeHi = (ushort) (timeHi | 0x1000u); // Bit[15..13] = 1 (Guid is time-based)
-	
-			return new Guid (timeLow, timeMid, timeHi, clockSeqHi, clockSeqLow,
-				mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-		}
-	
-		private static Guid NewRandomGuid ()
-		{
-			byte[] b = new byte[16];
-	
-			_guidState.NextBytes (b);
-	
-			Guid res = new Guid(b);
-			// Mask in Variant 1-0 in Bit[7..6]
-			res._clockSeqHiAndReserved = (byte) ((res._clockSeqHiAndReserved & 0x3fu) | 0x80u);
-			// Mask in Version 4 (random based Guid) in Bits[15..13]
-			res._timeHighAndVersion = (ushort) ((res._timeHighAndVersion & 0x0fffu) | 0x4000u);
-			return res;
-		}
-
 		private static char ToHex (int b)
 		{
 			return (char)((b<0xA)?('0' + b):('a' + b - 0xA));
 		}
 
+		// generated as per section 3.4 of the specification
 		public static Guid NewGuid ()
 		{
-			return NewRandomGuid();
+			byte[] b = new byte [16];
+
+			// access the prng
+			lock (_rng) {
+				_rng.GetBytes (b);
+			}
+	
+			Guid res = new Guid (b);
+			// Mask in Variant 1-0 in Bit[7..6]
+			res._clockSeqHiAndReserved = (byte) ((res._clockSeqHiAndReserved & 0x3fu) | 0x80u);
+			// Mask in Version 4 (random based Guid) in Bits[15..13]
+			res._timeHighAndVersion = (ushort) ((res._timeHighAndVersion & 0x0fffu) | 0x4000u);
+			return res;
 		}
 
 		public byte[] ToByteArray ()
