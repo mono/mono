@@ -1,3 +1,7 @@
+2004-06-21  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0592-8.cs: Avoid spurious "unexpected incorrect error".
+
 2004-06-10 Marek Safar <marek.safar@seznam.cz>
 
 	* do-test.pl: --expect-error must be at the

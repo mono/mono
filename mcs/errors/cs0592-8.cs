@@ -9,4 +9,5 @@ public class C
     public void Test (int a)
     {
     }
+    static public void Main () {}
 }
