@@ -64,6 +64,13 @@ namespace System.Web.Utils
 			return String.Empty;
 		}
 		
+		public static bool IsRelativeUrl(string url)
+		{
+			if(url.IndexOf(':') != -1)
+				return !IsRootUrl(url);
+			return true;
+		}
+
 		public static bool IsRootUrl(string url)
 		{
 			if(url!=null)

@@ -6,7 +6,7 @@
  * Maintainer: gvaish@iitk.ac.in
  * Implementation: yes
  * Contact: <gvaish@iitk.ac.in>
- * Status:  75%
+ * Status:  100%
  * 
  * (C) Gaurav Vaish (2001)
  */
@@ -16,6 +16,7 @@ using System.IO;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Web;
+using System.Web.Caching;
 using System.Web.UI;
 using System.Xml;
 using System.Web.Utils;
@@ -26,8 +27,6 @@ namespace System.Web.UI.WebControls
 	{
 
 		private string advertisementFile;
-		private string keywordFilter;
-		private string target;
 		private static readonly object AdCreatedEvent = new object();
 
 		// Will be set values during (On)PreRender-ing
@@ -35,7 +34,7 @@ namespace System.Web.UI.WebControls
 		private string imageUrl;
 		private string navigateUrl;
 
-		private string fileDirctory;
+		private string fileDirectory;
 
 		private class AdRecord
 		{
@@ -125,39 +124,68 @@ namespace System.Web.UI.WebControls
 				}
 			} catch(Excetion e)
 			{
-				throw new HttpException("AdRotator: Unable to parse file" + file);
+				throw new HttpException("AdRotator_Parse_Error" + file);
 			} finally
 			{
 				fStream.close();
 			}
 			if(adsArray == null)
 			{
-				throw new HttpException("AdRotator: No Advertisements Fount");
+				throw new HttpException("AdRotator_No_Advertisements_Found");
 			}
 			return adsArray;
 		}
 		
 		private AdRecord[] GetData(string file)
 		{
-			//TODO: Implement me
-			fileDirectory = UrlUtils.GetDirectory(TemplateSourceDirectory + MapPathSecure(file));
-			throw new NotImplementedException();
-			//TODO: Do I need to check caching?
-			return null;
+			string physPath = MapPathSecure(file);
+			string AdKey = "AdRotatorCache: " + physPath;
+			fileDirectory = UrlUtils.GetDirectory(UrlUtils.Combine(TemplateSourceDirectory, file));
+			CacheInternal ci = HttpRuntime.CacheInternal;
+			AdRecord[] records = (AdRecord[])ci[AdKey];
+			if(!(records))
+			{
+				records = LoadAdFile(physPath);
+				if(!(records))
+				{
+					return null;
+				}
+				ci.Insert(AdKey, records, new CacheDependency(physPath));
+			}
+			return records;
 		}
 		
 		private IDictionary SelectAd()
 		{
-			//TODO: I have to select a Random Ad from the file
 			AdRecord[] records = GetFileData(AdvertisementFile);
-			if(records!=null)
+			if(records!=null && records.Length!=0)
 			{
-				if(records.Length > 0)
+				int impressions = 0;
+				for(int i=0 ; i < records.Length; i++)
 				{
-					//TODO: Implement Me
+					if(IsAdMatching(records[i]))
+						impressions += records[1].hits;
+				}
+				if(impressions!=0)
+				{
+					int rnd = Random.Next(impressions) + 1;
+					int counter = 0;
+					int index = 0;
+					for(int i=0; i < records.Length; i++)
+					{
+						if(IsAdMaching(records[i]))
+						{
+							if(rnd <= (counter + records[i].hits))
+							{
+								index = i;
+								break;
+							}
+							counter += records[i].hits;
+						}
+					}
+					return records[index].adProps;
 				}
 			}
-			throw new NotImplementedException();
 			return null;
 		}
 		
@@ -165,9 +193,6 @@ namespace System.Web.UI.WebControls
 		{
 			if(KeywordFilter!=String.Empty)
 			{
-				/* Perform a case-insensitive keyword filtering
-				 * From the documentation, it looks like there's only one keyword attached.
-				*/
 				if(currAd.keyword.ToLower() == KeywordFilter.ToLower())
 					return false;
 			}
@@ -176,9 +201,16 @@ namespace System.Web.UI.WebControls
 		
 		private string ResolveAdUrl(string relativeUrl)
 		{
-			throw new NotImplementedException();
-			//TODO: Implement me
-			//TODO: Get the full Url from the relativeUrl
+			if(relativeUrl.Length==0 || !UrlUtils.IsRelativeUrl(relativeUrl))
+				return relativeUrl;
+			string fullUrl = String.Empty;
+			if(fileDirectory != null)
+				fullUrl = fileDirectory;
+			if(fullUrl.Length == 0)
+				fullUrl = TemplateSourceDirectory;
+			if(fullUrl.Length == 0)
+				return relativeUrl;
+			return (fullUrl + relativeUrl);
 		}
 		
 		public event AdCreatedEventHandler AdCreated
@@ -197,8 +229,7 @@ namespace System.Web.UI.WebControls
 		{
 			base();
 			advertisementFile = string.Empty;
-			keywordFilter     = string.Empty;
-			target            = string.Empty;
+			fileDirectory     = null;
 		}
 		
 		public string AdvertisementFile
@@ -217,23 +248,30 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return keywordFilter;
+				object o = ViewState["KeywordFilter"];
+				if(o!=null)
+					return (string)o;
+				return String.Empty;
 			}
 			set
 			{
-				keywordFilter = value;
+				if(value!=null)
+					ViewState["KeywordFilter"] = value.Trim();
 			}
 		}
-		
+
 		public string Target
 		{
 			get
 			{
-				return target;
+				object o = ViewState["Target"];
+				if(o!=null)
+					return (string)o;
+				return String.Empty;
 			}
 			set
 			{
-				target = value;
+				ViewState["Target"] = value;
 			}
 		}
 		
@@ -266,12 +304,28 @@ namespace System.Web.UI.WebControls
 		protected override void Render(HtmlTextWriter writer)
 		{
 			HyperLink hLink = new HyperLink();
-			Image     image;
-
-			AttributeCollection attributeColl = base.Attributes;
-			ICollection keys = attributeColl.Keys;
-			IEnumerator iterator = keys.GetEnumerator();
-			throw new NotImplementedException();
+			Image adImage = new Image();
+			foreach(IEnumerable current in Attributes.Keys)
+			{
+				hLink[(string)current] = Attributes[(string)current];
+			}
+			if(ID != null && ID.Length > 0)
+				hLink.ID = ID;
+			hLink.Target    = Target;
+			hLink.AccessKey = AccessKey;
+			hLink.Enabled   = Enabled;
+			hLink.TabIndex  = TabIndex;
+			hLink.RenderBeginTag(writer);
+			if(ControlStyleCreated)
+			{
+				adImage.ApplyStyle(ControlStyle);
+			}
+			if(imageUrl!=null && imageUrl.Length > 0)
+				adImage.ImageUrl = ResolveAdUrl(imageUrl);
+			adImage.AlternateText = alternateText;
+			adImage.ToolTip       = ToolTip;
+			adImage.RenderControl(writer);
+			hLink.RenderEndTag(writer);
 		}
 	}
 }
