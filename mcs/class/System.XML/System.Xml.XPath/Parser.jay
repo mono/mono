@@ -353,7 +353,7 @@ PrimaryExpr
 FunctionCall
 	: FUNCTION_NAME PAREN_OPEN OptionalArgumentList PAREN_CLOSE
 	{
-		$$ = new ExprFunctionCall ((XmlQualifiedName) $1, (FunctionArguments) $3);
+		$$ = ExprFunctionCall.Factory ((XmlQualifiedName) $1, (FunctionArguments) $3);
 	}
 	;
 

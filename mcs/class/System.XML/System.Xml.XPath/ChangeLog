@@ -1,3 +1,9 @@
+2003-09-06 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* DefaultContext.cs, Expresssion.cs, Parser.jay: Rewrite so that
+	system functions are actually expressions. Will allow for some
+	nice optimizations.
+
 2003-08-25 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* XPathNavigator.cs: "Smart" behavior in Matches. Nice 8x speed

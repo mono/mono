@@ -321,7 +321,6 @@ namespace System.Xml.XPath
 	/// </summary>
 	internal abstract class Expression
 	{
-		private static XsltContext _ctxDefault = new DefaultContext ();
 		public Expression ()
 		{
 		}
@@ -341,7 +340,6 @@ namespace System.Xml.XPath
 			}
 			throw new XPathException ("expected nodeset: "+ToString ());
 		}
-		protected static XsltContext DefaultContext { get { return _ctxDefault; } }
 
 		protected static XPathResultType GetReturnType (object obj)
 		{
@@ -1234,6 +1232,17 @@ namespace System.Xml.XPath
 		{
 			get { return _tail; }
 		}
+		
+		public void ToArrayList (ArrayList a)
+		{
+			FunctionArguments cur = this;
+			
+			do {
+				a.Add (cur._arg);
+				cur = cur._tail;
+			} while (cur != null);
+			
+		}
 	}
 
 	internal class ExprFunctionCall : Expression
@@ -1243,12 +1252,47 @@ namespace System.Xml.XPath
 		public ExprFunctionCall (XmlQualifiedName name, FunctionArguments args)
 		{
 			_name = name;
-			while (args != null)
-			{
-				_args.Add (args.Arg);
-				args = args.Tail;
-			}
+			if (args != null)
+				args.ToArrayList (_args);
 		}
+		
+		public static Expression Factory (XmlQualifiedName name, FunctionArguments args)
+		{
+			if (name.Namespace != null && name.Namespace != "")
+				return new ExprFunctionCall (name, args);
+			
+			switch (name.Name) {
+				case "last": return new XPathFunctionLast (args);
+				case "position": return new XPathFunctionPosition (args);
+				case "count": return new XPathFunctionCount (args);
+				case "id": return new XPathFunctionId (args);
+				case "local-name": return new XPathFunctionLocalName (args);
+				case "namespace-uri": return new XPathFunctionNamespaceUri (args);
+				case "name": return new XPathFunctionName (args);
+				case "string": return new XPathFunctionString (args);
+				case "concat": return new XPathFunctionConcat (args);
+				case "starts-with": return new XPathFunctionStartsWith (args);
+				case "contains": return new XPathFunctionContains (args);
+				case "substring-before": return new XPathFunctionSubstringBefore (args);
+				case "substring-after": return new XPathFunctionSubstringAfter (args);
+				case "substring": return new XPathFunctionSubstring (args);
+				case "string-length": return new XPathFunctionStringLength (args);
+				case "normalize-space": return new XPathFunctionNormalizeSpace (args);
+				case "translate": return new XPathFunctionTranslate (args);
+				case "boolean": return new XPathFunctionBoolean (args);
+				case "not": return new XPathFunctionNot (args);
+				case "true": return new XPathFunctionTrue (args);
+				case "false": return new XPathFunctionFalse (args);
+				case "lang": return new XPathFunctionLang (args);
+				case "number": return new XPathFunctionNumber (args);
+				case "sum": return new XPathFunctionSum (args);
+				case "floor": return new XPathFunctionFloor (args);
+				case "ceil": return new XPathFunctionCeil (args);
+				case "round": return new XPathFunctionRound (args);
+			}
+			return new ExprFunctionCall (name, args);
+		}
+		
 		public override String ToString ()
 		{
 			String strArgs = "";
@@ -1267,8 +1311,7 @@ namespace System.Xml.XPath
 			XsltContext context = iter.NamespaceManager as XsltContext;
 			if (context != null)
 				func = context.ResolveFunction (_name.Namespace, _name.Name, GetArgTypes (iter));
-			if (func == null)
-				func = DefaultContext.ResolveFunction (_name.Namespace, _name.Name, GetArgTypes (iter));
+
 			if (func == null)
 				throw new XPathException ("function "+_name.ToString ()+" not found");
 			return func.ReturnType;
@@ -1283,29 +1326,12 @@ namespace System.Xml.XPath
 		}
 		public override object Evaluate (BaseIterator iter)
 		{
-			//special-case the 'last' and 'position' functions
-			if (_args.Count == 0 && _name.Namespace == "")
-			{
-				if (_name.Name == "last")
-				{
-					return (double) iter.Count;
-				}
-				else if (_name.Name == "position")
-				{
-					return (double) iter.CurrentPosition;
-				}
-			}
-
 			XPathResultType [] rgTypes = GetArgTypes (iter);
 			IXsltContextFunction func = null;
 			XsltContext context = iter.NamespaceManager as XsltContext;
 			if (context != null)
 				func = context.ResolveFunction (_name.Namespace, _name.Name, rgTypes);
-			if (func == null)
-			{
-				context = DefaultContext;
-				func = context.ResolveFunction (_name.Namespace, _name.Name, rgTypes);
-			}
+
 			if (func == null)
 				throw new XPathException ("function "+_name.ToString ()+" not found");
 

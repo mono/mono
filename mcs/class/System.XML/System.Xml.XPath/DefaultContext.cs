@@ -15,111 +15,6 @@ using System.Text;
 
 namespace System.Xml.XPath
 {
-	/// <summary>
-	/// Summary description for DefaultContext.
-	/// </summary>
-	internal class DefaultContext : XsltContext
-	{
-		protected static Hashtable _htFunctions = new Hashtable ();
-
-		static DefaultContext()
-		{
-			Add (new XPathFunctionLast ());
-			Add (new XPathFunctionPosition ());
-			Add (new XPathFunctionCount ());
-			Add (new XPathFunctionId ());
-			Add (new XPathFunctionLocalName ());
-			Add (new XPathFunctionNamespaceUri ());
-			Add (new XPathFunctionName ());
-			Add (new XPathFunctionString ());
-			Add (new XPathFunctionConcat ());
-			Add (new XPathFunctionStartsWith ());
-			Add (new XPathFunctionContains ());
-			Add (new XPathFunctionSubstringBefore ());
-			Add (new XPathFunctionSubstringAfter ());
-			Add (new XPathFunctionSubstring ());
-			Add (new XPathFunctionStringLength ());
-			Add (new XPathFunctionNormalizeSpace ());
-			Add (new XPathFunctionTranslate ());
-			Add (new XPathFunctionBoolean ());
-			Add (new XPathFunctionNot ());
-			Add (new XPathFunctionTrue ());
-			Add (new XPathFunctionFalse ());
-			Add (new XPathFunctionLang ());
-			Add (new XPathFunctionNumber ());
-			Add (new XPathFunctionSum ());
-			Add (new XPathFunctionFloor ());
-			Add (new XPathFunctionCeil ());
-			Add (new XPathFunctionRound ());
-		}
-
-		[MonoTODO]
-		public override IXsltContextFunction ResolveFunction (string prefix, string name, XPathResultType[] ArgTypes)
-		{
-			// match the prefix
-			if (prefix != null && prefix != "")	// TODO: should we allow some namespaces here?
-				return null;
-
-			// match the function name
-			XPathFunction fn = (XPathFunction) _htFunctions [name];
-			if (fn == null)
-				return null;
-
-			// check the number of arguments
-			int cArgs = ArgTypes.Length;
-			if (cArgs < fn.Minargs || cArgs > fn.Maxargs)
-				return null;
-
-			// check the types of the arguments
-			XPathResultType [] rgTypes = fn.ArgTypes;
-			if (rgTypes == null)
-			{
-				if (cArgs != 0)
-					return null;
-			}
-			else
-			{
-				int cTypes = rgTypes.Length;
-				XPathResultType [] rgTypesRequested = ArgTypes;
-				for (int iArg = 0; iArg < cArgs; iArg ++)
-				{
-					XPathResultType typeRequested = rgTypesRequested [iArg];
-					XPathResultType typeDefined = (iArg >= cTypes) ? rgTypes [cTypes - 1] : rgTypes [iArg];
-
-					// if the arguments don't match...
-					if (typeDefined != XPathResultType.Any &&
-						typeDefined != typeRequested)
-					{
-						// if the function requires a nodeset
-						// then the arg should be .Any
-						// other conversions are illegal
-						if (typeDefined == XPathResultType.NodeSet &&
-							typeRequested != XPathResultType.Any)
-						{
-							return null;
-						}
-					}
-				}
-			}
-			return fn;
-		}
-		public override IXsltContextVariable ResolveVariable (string prefix, string name)
-		{
-			return null;
-		}
-		[MonoTODO]
-		public override int CompareDocument (string baseUri, string nextBaseUri) { throw new NotImplementedException (); }
-		[MonoTODO]
-		public override bool PreserveWhitespace (XPathNavigator nav) { throw new NotImplementedException (); }
-		[MonoTODO]
-		public override bool Whitespace { get { throw new NotImplementedException (); }}
-		protected static void Add (XPathFunction fn)
-		{
-			_htFunctions.Add (fn.Name, fn);
-		}
-	}
-
-
 	internal class XPathFunctions
 	{
 		public static bool ToBoolean (object arg)
@@ -188,273 +83,366 @@ namespace System.Xml.XPath
 		}
 	}
 
-	internal abstract class XPathFunction : IXsltContextFunction
+	internal abstract class XPathFunction : Expression
 	{
-		public abstract XPathResultType ReturnType { get; }
-		public abstract int Minargs { get; }
-		public abstract int Maxargs { get; }
-		public abstract XPathResultType [] ArgTypes { get; }
-		public object Invoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
-		{
-			return TypesafeInvoke (xsltContext, args, docContext);
-		}
-
-		public abstract string Name { get; }
-		public abstract object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext);
+		public XPathFunction (FunctionArguments args) {}
 	}
 
 
 	internal class XPathFunctionLast : XPathFunction
 	{
-		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
-		public override int Minargs { get { return 0; }}
-		public override int Maxargs { get { return 0; }}
-		public override XPathResultType [] ArgTypes { get { return null; }}
-		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
+		public XPathFunctionLast (FunctionArguments args) : base (args)
 		{
-			throw new NotImplementedException ();	// special-cased
+			if (args != null)
+				throw new XPathException ("last takes 0 args");
 		}
-		public override string Name { get { return "last"; }}
+		
+		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
+
+		public override object Evaluate (BaseIterator iter)
+		{
+			return (double) iter.Count;
+		}
 	}
 
 
 	internal class XPathFunctionPosition : XPathFunction
 	{
-		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
-		public override int Minargs { get { return 0; }}
-		public override int Maxargs { get { return 0; }}
-		public override XPathResultType [] ArgTypes { get { return null; }}
-		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
+		public XPathFunctionPosition (FunctionArguments args) : base (args)
 		{
-			throw new NotImplementedException ();	// special-cased
+			if (args != null)
+				throw new XPathException ("position takes 0 args");
 		}
-		public override string Name { get { return "position"; }}
+		
+		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
+
+		public override object Evaluate (BaseIterator iter)
+		{
+			return (double) iter.CurrentPosition;
+		}
 	}
 
 
 	internal class XPathFunctionCount : XPathFunction
 	{
-		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
-		public override int Minargs { get { return 1; }}
-		public override int Maxargs { get { return 1; }}
-		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.NodeSet }; }}
-		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
+		Expression arg0;
+		
+		public XPathFunctionCount (FunctionArguments args) : base (args)
 		{
-			return (double) ((BaseIterator) args [0]).Count;
+			if (args == null || args.Tail != null)
+				throw new XPathException ("count takes 1 arg");
+			
+			arg0 = args.Arg;
 		}
-		public override string Name { get { return "count"; }}
+
+		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
+		
+		public override object Evaluate (BaseIterator iter)
+		{
+			return (double) arg0.EvaluateNodeSet (iter).Count;
+		}
 	}
 
 
 	internal class XPathFunctionId : XPathFunction
 	{
+		Expression arg0;
+		
+		public XPathFunctionId (FunctionArguments args) : base (args)
+		{
+			if (args == null || args.Tail != null)
+				throw new XPathException ("id takes 1 arg");
+			
+			arg0 = args.Arg;
+		}
+		
 		private static char [] rgchWhitespace = {' ', '\t', '\r', '\n'};
 		public override XPathResultType ReturnType { get { return XPathResultType.NodeSet; }}
-		public override int Minargs { get { return 1; }}
-		public override int Maxargs { get { return 1; }}
-		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.Any }; }}
+
 		[MonoTODO]
-		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
+		public override object Evaluate (BaseIterator iter)
 		{
 			String strArgs;
-			BaseIterator iter = args [0] as BaseIterator;
-			if (iter != null)
+			object val = arg0.Evaluate (iter);
+			
+			BaseIterator valItr = val as BaseIterator;
+			if (valItr != null)
 			{
 				strArgs = "";
-				while (!iter.MoveNext ())
-					strArgs += iter.Current.Value + " ";
+				while (!valItr.MoveNext ())
+					strArgs += valItr.Current.Value + " ";
 			}
 			else
-				strArgs = XPathFunctions.ToString (args [0]);
-			string [] rgstrArgs = strArgs.Split (rgchWhitespace);
+				strArgs = XPathFunctions.ToString (val);
+			
+			XPathNavigator n = iter.Current.Clone ();
 			ArrayList rgNodes = new ArrayList ();
-			foreach (string strArg in rgstrArgs)
+			foreach (string strArg in strArgs.Split (rgchWhitespace))
 			{
-				if (docContext.MoveToId (strArg))
-					rgNodes.Add (docContext.Clone ());
+				if (n.MoveToId (strArg))
+					rgNodes.Add (n.Clone ());
 			}
 			return new EnumeratorIterator (iter, rgNodes.GetEnumerator ());
 		}
-		public override string Name { get { return "id"; }}
 	}
 
 
 	internal class XPathFunctionLocalName : XPathFunction
 	{
-		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
-		public override int Minargs { get { return 0; }}
-		public override int Maxargs { get { return 1; }}
-		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.NodeSet }; }}
-		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
+		Expression arg0;
+		
+		public XPathFunctionLocalName (FunctionArguments args) : base (args)
 		{
-			if (args.Length == 0)
-				return docContext.LocalName;
-			BaseIterator iter = (BaseIterator) args [0];
-			if (iter == null || !iter.MoveNext ())
-				return "";
-			return iter.Current.LocalName;
+			if (args != null) {
+				arg0 = args.Arg;
+				if (args.Tail != null)
+					throw new XPathException ("local-name takes 1 or zero args");
+			}
 		}
-		public override string Name { get { return "local-name"; }}
+		
+		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
+		
+		public override object Evaluate (BaseIterator iter)
+		{
+			if (arg0 == null)
+				return iter.Current.LocalName;
+			
+			BaseIterator argNs = arg0.EvaluateNodeSet (iter);
+			if (argNs == null || !argNs.MoveNext ())
+				return "";
+			return argNs.Current.LocalName;
+		}
 	}
 
 
 	internal class XPathFunctionNamespaceUri : XPathFunction
 	{
-		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
-		public override int Minargs { get { return 0; }}
-		public override int Maxargs { get { return 1; }}
-		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.NodeSet }; }}
-		[MonoTODO]
-		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
+		Expression arg0;
+		
+		public XPathFunctionNamespaceUri (FunctionArguments args) : base (args)
 		{
-			if (args.Length == 0)
-				return docContext.NamespaceURI;
-			BaseIterator iter = (BaseIterator) args [0];
-			if (iter == null || !iter.MoveNext ())
-				return "";
-			return iter.Current.NamespaceURI;	// TODO: should the namespace be expanded wrt. the given context?
+			if (args != null) {
+				arg0 = args.Arg;
+				if (args.Tail != null)
+					throw new XPathException ("namespace-uri takes 1 or zero args");
+			}
 		}
-		public override string Name { get { return "namespace-uri"; }}
+		
+		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
+		
+		public override object Evaluate (BaseIterator iter)
+		{
+			if (arg0 == null)
+				return iter.Current.NamespaceURI;
+			
+			BaseIterator argNs = arg0.EvaluateNodeSet (iter);
+			if (argNs == null || !argNs.MoveNext ())
+				return "";
+			return argNs.Current.NamespaceURI;
+		}
 	}
 
 
 	internal class XPathFunctionName : XPathFunction
 	{
-		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
-		public override int Minargs { get { return 0; }}
-		public override int Maxargs { get { return 1; }}
-		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.NodeSet }; }}
-		[MonoTODO]
-		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
+		Expression arg0;
+		
+		public XPathFunctionName (FunctionArguments args) : base (args)
 		{
-			if (args.Length == 0)
-				return docContext.Name;
-			BaseIterator iter = (BaseIterator) args [0];
-			if (iter == null || !iter.MoveNext ())
-				return "";
-			return iter.Current.Name;
+			if (args != null) {
+				arg0 = args.Arg;
+				if (args.Tail != null)
+					throw new XPathException ("name takes 1 or zero args");
+			}
 		}
-		public override string Name { get { return "name"; }}
+		
+		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
+		
+		public override object Evaluate (BaseIterator iter)
+		{
+			if (arg0 == null)
+				return iter.Current.Name;
+			
+			BaseIterator argNs = arg0.EvaluateNodeSet (iter);
+			if (argNs == null || !argNs.MoveNext ())
+				return "";
+			return argNs.Current.Name;
+		}
 	}
 
 
 	internal class XPathFunctionString : XPathFunction
 	{
-		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
-		public override int Minargs { get { return 0; }}
-		public override int Maxargs { get { return 1; }}
-		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.Any }; }}
-		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
+		Expression arg0;
+		
+		public XPathFunctionString (FunctionArguments args) : base (args)
 		{
-			return XPathFunctions.ToString (args [0]);
+			if (args == null || args.Tail != null)
+				throw new XPathException ("string takes 1 arg");
+			
+			arg0 = args.Arg;
 		}
-		public override string Name { get { return "string"; }}
+		
+		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
+
+		public override object Evaluate (BaseIterator iter)
+		{
+			return arg0.EvaluateString (iter);
+		}
 	}
 
 
 	internal class XPathFunctionConcat : XPathFunction
 	{
+		ArrayList rgs;
+		
+		public XPathFunctionConcat (FunctionArguments args) : base (args)
+		{
+			if (args == null || args.Tail == null)
+				throw new XPathException ("concat takes 2 or more args");
+			
+			args.ToArrayList (rgs = new ArrayList ());
+		}
+		
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
-		public override int Minargs { get { return 2; }}
-		public override int Maxargs { get { return int.MaxValue; }}
-		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.Any, XPathResultType.Any, XPathResultType.Any }; }}
-		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
+		
+		public override object Evaluate (BaseIterator iter)
 		{
 			StringBuilder sb = new StringBuilder ();
-			foreach (object arg in args)
-				sb.Append (XPathFunctions.ToString (arg));
+			
+			foreach (Expression e in rgs)
+				sb.Append (e.EvaluateString (iter));
+			
 			return sb.ToString ();
 		}
-		public override string Name { get { return "concat"; }}
 	}
 
 
 	internal class XPathFunctionStartsWith : XPathFunction
 	{
-		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
-		public override int Minargs { get { return 2; }}
-		public override int Maxargs { get { return 2; }}
-		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.String, XPathResultType.String }; }}
-		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
+		Expression arg0, arg1;
+		
+		public XPathFunctionStartsWith (FunctionArguments args) : base (args)
 		{
-			string str1 = (string) args [0];
-			string str2 = (string) args [1];
-			return str1.StartsWith (str2);
+			if (args == null || args.Tail == null || args.Tail.Tail != null)
+				throw new XPathException ("starts-with takes 2 args");
+			
+			arg0 = args.Arg;
+			arg1 = args.Tail.Arg;
 		}
-		public override string Name { get { return "starts-with"; }}
+		
+		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
+		
+		public override object Evaluate (BaseIterator iter)
+		{
+			return arg0.EvaluateString (iter).StartsWith (arg0.EvaluateString (iter));
+		}
 	}
 
 
 	internal class XPathFunctionContains : XPathFunction
 	{
-		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
-		public override int Minargs { get { return 2; }}
-		public override int Maxargs { get { return 2; }}
-		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.String, XPathResultType.String }; }}
-		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
+		Expression arg0, arg1;
+		
+		public XPathFunctionContains (FunctionArguments args) : base (args)
 		{
-			string str1 = (string) args [0];
-			string str2 = (string) args [1];
-			return str1.IndexOf (str2) != -1;
+			if (args == null || args.Tail == null || args.Tail.Tail != null)
+				throw new XPathException ("contains takes 2 args");
+			
+			arg0 = args.Arg;
+			arg1 = args.Tail.Arg;
 		}
-		public override string Name { get { return "contains"; }}
+		
+		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
+		
+		public override object Evaluate (BaseIterator iter)
+		{
+			return arg0.EvaluateString (iter).IndexOf (arg0.EvaluateString (iter)) != -1;
+		}
 	}
 
 
 	internal class XPathFunctionSubstringBefore : XPathFunction
 	{
-		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
-		public override int Minargs { get { return 2; }}
-		public override int Maxargs { get { return 2; }}
-		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.String, XPathResultType.String }; }}
-		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
+		Expression arg0, arg1;
+		
+		public XPathFunctionSubstringBefore (FunctionArguments args) : base (args)
 		{
-			string str1 = (string) args [0];
-			string str2 = (string) args [1];
+			if (args == null || args.Tail == null || args.Tail.Tail != null)
+				throw new XPathException ("substring-before takes 2 args");
+			
+			arg0 = args.Arg;
+			arg1 = args.Tail.Arg;
+		}
+		
+		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
+		
+		public override object Evaluate (BaseIterator iter)
+		{
+			string str1 = arg0.EvaluateString (iter);
+			string str2 = arg1.EvaluateString (iter);
 			int ich = str1.IndexOf (str2);
 			if (ich <= 0)
 				return "";
 			return str1.Substring (0, ich);
 		}
-		public override string Name { get { return "substring-before"; }}
 	}
 
 
 	internal class XPathFunctionSubstringAfter : XPathFunction
 	{
-		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
-		public override int Minargs { get { return 2; }}
-		public override int Maxargs { get { return 2; }}
-		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.String, XPathResultType.String }; }}
-		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
+		Expression arg0, arg1;
+		
+		public XPathFunctionSubstringAfter (FunctionArguments args) : base (args)
 		{
-			string str1 = (string) args [0];
-			string str2 = (string) args [1];
+			if (args == null || args.Tail == null || args.Tail.Tail != null)
+				throw new XPathException ("substring-after takes 2 args");
+			
+			arg0 = args.Arg;
+			arg1 = args.Tail.Arg;
+		}
+		
+		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
+		
+		public override object Evaluate (BaseIterator iter)
+		{
+			string str1 = arg0.EvaluateString (iter);
+			string str2 = arg1.EvaluateString (iter);
 			int ich = str1.IndexOf (str2);
 			if (ich < 0)
 				return "";
 			return str1.Substring (ich + str2.Length);
 		}
-		public override string Name { get { return "substring-after"; }}
 	}
 
 
 	internal class XPathFunctionSubstring : XPathFunction
 	{
+		Expression arg0, arg1, arg2;
+		
+		public XPathFunctionSubstring (FunctionArguments args) : base (args)
+		{
+			if (args == null || args.Tail == null || (args.Tail.Tail != null && args.Tail.Tail.Tail != null))
+				throw new XPathException ("substring takes 2 or 3 args");
+			
+			arg0 = args.Arg;
+			arg1 = args.Tail.Arg;
+			if (args.Tail.Tail != null)
+				arg2= args.Tail.Tail.Arg;
+		}
+		
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
-		public override int Minargs { get { return 2; }}
-		public override int Maxargs { get { return 3; }}
-		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.String, XPathResultType.Number, XPathResultType.Number }; }}
+		
 		[MonoTODO]
-		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
+		public override object Evaluate (BaseIterator iter)
 		{
 			// TODO: check this, what the hell were they smoking?
-			string str = (string) args [0];
-			double ich = Math.Round ((double) args [1]) - 1;
+			string str = arg0.EvaluateString (iter);
+			double ich = Math.Round (arg1.EvaluateNumber (iter)) - 1;
 			if (Double.IsNaN (ich) || ich >= (double) str.Length)
 				return "";
 
-			if (args.Length == 2)
+			if (arg2 == null)
 			{
 				if (ich < 0)
 					ich = 0.0;
@@ -462,7 +450,7 @@ namespace System.Xml.XPath
 			}
 			else
 			{
-				double cch = Math.Round ((double) args [2]);
+				double cch = Math.Round (arg2.EvaluateNumber (iter));
 				if (Double.IsNaN (cch))
 					return "";
 				if (ich < 0.0 || cch < 0.0) 
@@ -478,43 +466,59 @@ namespace System.Xml.XPath
 				return str.Substring ((int) ich, (int) cch);
 			}
 		}
-		public override string Name { get { return "substring"; }}
 	}
 
 
 	internal class XPathFunctionStringLength : XPathFunction
 	{
+		Expression arg0;
+		
+		public XPathFunctionStringLength (FunctionArguments args) : base (args)
+		{
+			if (args != null) {
+				arg0 = args.Arg;
+				if (args.Tail != null)
+					throw new XPathException ("string-length takes 1 or zero args");
+			}
+		}
+		
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
-		public override int Minargs { get { return 0; }}
-		public override int Maxargs { get { return 1; }}
-		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.String }; }}
-		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
+		
+		public override object Evaluate (BaseIterator iter)
 		{
 			string str;
-			if (args.Length == 1)
-				str = (string) args [0];
+			if (arg0 == null)
+				str = arg0.EvaluateString (iter);
 			else
-				str = docContext.Value;
+				str = iter.Current.Value;
 			return (double) str.Length;
 		}
-		public override string Name { get { return "string-length"; }}
 	}
 
 
 	internal class XPathFunctionNormalizeSpace : XPathFunction
 	{
+		Expression arg0;
+		
+		public XPathFunctionNormalizeSpace (FunctionArguments args) : base (args)
+		{
+			if (args != null) {
+				arg0 = args.Arg;
+				if (args.Tail != null)
+					throw new XPathException ("string-length takes 1 or zero args");
+			}
+		}
+		
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
-		public override int Minargs { get { return 0; }}
-		public override int Maxargs { get { return 1; }}
-		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.String }; }}
+
 		[MonoTODO]
-		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
+		public override object Evaluate (BaseIterator iter)
 		{
 			string str;
-			if (args.Length == 1)
-				str = (string) args [0];
+			if (arg0 == null)
+				str = arg0.EvaluateString (iter);
 			else
-				str = docContext.Value;
+				str = iter.Current.Value;
 			System.Text.StringBuilder sb = new System.Text.StringBuilder ();
 			bool fSpace = false;
 			foreach (char ch in str)
@@ -536,168 +540,229 @@ namespace System.Xml.XPath
 			}
 			return sb.ToString ();
 		}
-		public override string Name { get { return "normalize-space"; }}
 	}
 
 
 	internal class XPathFunctionTranslate : XPathFunction
 	{
+		Expression arg0, arg1, arg2;
+		
+		public XPathFunctionTranslate (FunctionArguments args) : base (args)
+		{
+			if (args == null || args.Tail == null || args.Tail.Tail != null || args.Tail.Tail.Tail != null)
+				throw new XPathException ("translate takes 3 args");
+			
+			arg0 = args.Arg;
+			arg1 = args.Tail.Arg;
+			arg2= args.Tail.Tail.Arg;
+		}
+		
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
-		public override int Minargs { get { return 3; }}
-		public override int Maxargs { get { return 3; }}
-		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.String, XPathResultType.String, XPathResultType.String }; }}
+		
 		[MonoTODO]
-		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
+		public override object Evaluate (BaseIterator iter)
 		{
 			throw new NotImplementedException ();
 		}
-		public override string Name { get { return "translate"; }}
 	}
 
 
 	internal class XPathFunctionBoolean : XPathFunction
 	{
-		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
-		public override int Minargs { get { return 1; }}
-		public override int Maxargs { get { return 1; }}
-		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.Any }; }}
-		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
+		Expression arg0;
+		
+		public XPathFunctionBoolean (FunctionArguments args) : base (args)
 		{
-			return XPathFunctions.ToBoolean (args [0]);
+			arg0 = args.Arg;
+			if (args.Tail != null)
+				throw new XPathException ("boolean takes zero args");
 		}
-		public override string Name { get { return "boolean"; }}
+		
+		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
+
+		public override object Evaluate (BaseIterator iter)
+		{
+			return arg0.EvaluateBoolean (iter);
+		}
 	}
 
 
 	internal class XPathFunctionNot : XPathFunction
 	{
-		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
-		public override int Minargs { get { return 1; }}
-		public override int Maxargs { get { return 1; }}
-		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.Any }; }}
-		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
+		Expression arg0;
+		
+		public XPathFunctionNot (FunctionArguments args) : base (args)
 		{
-			return !(XPathFunctions.ToBoolean (args [0]));
+			if (args == null || args.Tail != null)
+				throw new XPathException ("not takes one arg");
+			arg0 = args.Arg;
 		}
-		public override string Name { get { return "not"; }}
+		
+		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
+
+		public override object Evaluate (BaseIterator iter)
+		{
+			return !arg0.EvaluateBoolean (iter);
+		}
 	}
 
 
 	internal class XPathFunctionTrue : XPathFunction
 	{
+		public XPathFunctionTrue (FunctionArguments args) : base (args)
+		{
+			if (args != null)
+				throw new XPathException ("true takes 0 args");
+		}
+		
 		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
-		public override int Minargs { get { return 0; }}
-		public override int Maxargs { get { return 0; }}
-		public override XPathResultType [] ArgTypes { get { return null; }}
-		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
+
+		public override object Evaluate (BaseIterator iter)
 		{
 			return true;
 		}
-		public override string Name { get { return "true"; }}
 	}
 
 
 	internal class XPathFunctionFalse : XPathFunction
 	{
+		public XPathFunctionFalse (FunctionArguments args) : base (args)
+		{
+			if (args != null)
+				throw new XPathException ("false takes 0 args");
+		}
 		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
-		public override int Minargs { get { return 0; }}
-		public override int Maxargs { get { return 0; }}
-		public override XPathResultType [] ArgTypes { get { return null; }}
-		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
+
+		public override object Evaluate (BaseIterator iter)
 		{
 			return false;
 		}
-		public override string Name { get { return "false"; }}
 	}
 
 
 	internal class XPathFunctionLang : XPathFunction
 	{
-		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
-		public override int Minargs { get { return 1; }}
-		public override int Maxargs { get { return 1; }}
-		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.String }; }}
-		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
+		Expression arg0;
+		
+		public XPathFunctionLang (FunctionArguments args) : base (args)
 		{
-			string lang = ((string)args[0]).ToLower ();
-			string actualLang = docContext.XmlLang.ToLower ();
+			if (args == null || args.Tail != null)
+				throw new XPathException ("lang takes one arg");
+			arg0 = args.Arg;
+		}
+		
+		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
+
+		public override object Evaluate (BaseIterator iter)
+		{
+			string lang = arg0.EvaluateString (iter).ToLower ();
+			string actualLang = iter.Current.XmlLang.ToLower ();
 			
 			return lang == actualLang || lang == (actualLang.Split ('-')[0]);
 		}
-		public override string Name { get { return "lang"; }}
 	}
 
 
 	internal class XPathFunctionNumber : XPathFunction
 	{
-		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
-		public override int Minargs { get { return 0; }}
-		public override int Maxargs { get { return 1; }}
-		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.Any }; }}
-		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
+		Expression arg0;
+		
+		public XPathFunctionNumber (FunctionArguments args) : base (args)
 		{
-			return XPathFunctions.ToNumber (args [0]);
+			if (args == null || args.Tail != null)
+				throw new XPathException ("number takes one arg");
+			arg0 = args.Arg;
 		}
-		public override string Name { get { return "number"; }}
+		
+		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
+
+		public override object Evaluate (BaseIterator iter)
+		{
+			return arg0.EvaluateNumber (iter);
+		}
 	}
 
 
 	internal class XPathFunctionSum : XPathFunction
 	{
+		Expression arg0;
+		
+		public XPathFunctionSum (FunctionArguments args) : base (args)
+		{
+			if (args == null || args.Tail != null)
+				throw new XPathException ("sum takes one arg");
+			arg0 = args.Arg;
+		}
+		
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
-		public override int Minargs { get { return 1; }}
-		public override int Maxargs { get { return 1; }}
-		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.NodeSet }; }}
+
 		[MonoTODO]
-		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
+		public override object Evaluate (BaseIterator iter)
 		{
 			throw new NotImplementedException ();
 		}
-		public override string Name { get { return "sum"; }}
 	}
 
 
 	internal class XPathFunctionFloor : XPathFunction
 	{
-		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
-		public override int Minargs { get { return 1; }}
-		public override int Maxargs { get { return 1; }}
-		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.Number }; }}
-		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
+		Expression arg0;
+		
+		public XPathFunctionFloor (FunctionArguments args) : base (args)
 		{
-			return Math.Floor ((double) args [0]);
+			if (args == null || args.Tail != null)
+				throw new XPathException ("floor takes one arg");
+			arg0 = args.Arg;
 		}
-		public override string Name { get { return "floor"; }}
+		
+		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
+
+		public override object Evaluate (BaseIterator iter)
+		{
+			return Math.Floor (arg0.EvaluateNumber (iter));
+		}
 	}
 
 
 	internal class XPathFunctionCeil : XPathFunction
 	{
-		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
-		public override int Minargs { get { return 1; }}
-		public override int Maxargs { get { return 1; }}
-		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.Number }; }}
-		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
+		Expression arg0;
+		
+		public XPathFunctionCeil (FunctionArguments args) : base (args)
 		{
-			return Math.Ceiling ((double) args [0]);
+			if (args == null || args.Tail != null)
+				throw new XPathException ("ceil takes one arg");
+			arg0 = args.Arg;
 		}
-		public override string Name { get { return "ceil"; }}
+		
+		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
+
+		public override object Evaluate (BaseIterator iter)
+		{
+			return Math.Ceiling (arg0.EvaluateNumber (iter));
+		}
 	}
 
 
 	internal class XPathFunctionRound : XPathFunction
 	{
-		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
-		public override int Minargs { get { return 1; }}
-		public override int Maxargs { get { return 1; }}
-		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.Number }; }}
-		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
+		Expression arg0;
+		
+		public XPathFunctionRound (FunctionArguments args) : base (args)
 		{
-			double arg = (double) args [0];
+			if (args == null || args.Tail != null)
+				throw new XPathException ("round takes one arg");
+			arg0 = args.Arg;
+		}
+		
+		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
+
+		public override object Evaluate (BaseIterator iter)
+		{
+			double arg = arg0.EvaluateNumber (iter);
 			if (arg < -0.5 || arg > 0)
 				return Math.Floor (arg + 0.5);
 			return Math.Round (arg);
 		}
-		public override string Name { get { return "round"; }}
 	}
 }
