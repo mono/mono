@@ -1,5 +1,10 @@
 2004-05-24  Martin Baulig  <martin@ximian.com>
 
+	* const.cs (Const.LookupConstantValue): Added support for
+	EmptyCast's; fixes #55251.
+
+2004-05-24  Martin Baulig  <martin@ximian.com>
+
 	* ecore.cs (SimpleName.SimpleNameResolve): Renamed to
 	DoSimpleNameResolve() and provide a SimpleNameResolve() wrapper
 	which does the CS0135 check.  The reason is that we first need to
