@@ -1,3 +1,9 @@
+2003-09-06  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* Microsoft.Web.Services.dll.sources: Added another shared (and 
+	renamed) file from System.Security assembly (Signature.cs ->
+	SignedXmlSignature.cs).
+
 2003-09-05  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Microsoft.Web.Services.dll.sources: Added stubbed classes from

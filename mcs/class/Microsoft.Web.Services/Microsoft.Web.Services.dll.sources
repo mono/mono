@@ -82,6 +82,7 @@ Microsoft.Web.Services.Security/SignatureKey.cs
 Microsoft.Web.Services.Security/SignatureOptions.cs
 Microsoft.Web.Services.Security/SignedInfo.cs
 Microsoft.Web.Services.Security/SignedXml.cs
+Microsoft.Web.Services.Security/SignedXmlSignature.cs
 Microsoft.Web.Services.Security/SymmetricDecryptionKey.cs
 Microsoft.Web.Services.Security/SymmetricEncryptionKey.cs
 Microsoft.Web.Services.Security/SecurityFault.cs
