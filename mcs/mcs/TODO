@@ -1,3 +1,12 @@
+Iterators
+---------
+
+	* Fix simple case (foreach)
+	* Study side effects with assign
+	* Study TemporaryStorage/LocalStorage -> Merge/rename
+
+	Big issues: try/finally in iterators.
+
 Instance idea
 -------------
 
@@ -381,12 +390,6 @@ OPTIMIZATIONS
 	the same local variable slot can be reused later on.
 
 * Add a cache for the various GetArrayMethod operations.
-
-* TypeManager.FindMembers:
-
-	Instead of having hundreds of builder_to_blah hash table, have
-	a single one that maps a TypeBuilder `t' to a set of classes
-	that implement an interface that supports FindMembers.
 
 * MakeUnionSet Callers
 
