@@ -20,9 +20,20 @@ namespace System.Collections {
 		}
 
 		public ArrayList (ICollection c) {
+			if (null == c) {
+				throw new ArgumentNullException();
+			}
+			dataArray = new object[c.Count];
+			this.capacity = c.Count;
+			foreach(object o in c) {
+				Add(o);
+			}
 		}
 
 		public ArrayList (int capacity) {
+			if (capacity < 0) {
+				throw new ArgumentOutOfRangeException("capacity", capacity, "Value must be greater than or equal to zero.");
+			}
 			dataArray = new object[capacity];
 			this.capacity = capacity;
 		}
@@ -38,26 +49,32 @@ namespace System.Collections {
 			this.synchronized = synchronized;
 		}
 
+		[MonoTODO]
 		public static ArrayList ReadOnly (ArrayList list) {
 			throw new NotImplementedException ("System.Collections.ArrayList.ReadOnly");
 		}
 
+		[MonoTODO]
 		public static ArrayList ReadOnly (IList list) {
 			throw new NotImplementedException ("System.Collections.ArrayList.ReadOnly");
 		}
 
+		[MonoTODO]
 		public static ArrayList Synchronized (ArrayList list) {
 			throw new NotImplementedException ("System.Collections.ArrayList.Synchronized");
 		}
 
+		[MonoTODO]
 		public static ArrayList Synchronized (IList list) {
 			throw new NotImplementedException ("System.Collections.ArrayList.Synchronized");
 		}
 
+		[MonoTODO]
 		public static ArrayList FixedSize (ArrayList list) {
 			throw new NotImplementedException ("System.Collections.ArrayList.FixedSize");
 		}
 
+		[MonoTODO]
 		public static ArrayList FixedSize (IList list) {
 			throw new NotImplementedException ("System.Collections.ArrayList.FixedSize");
 		}
@@ -72,6 +89,7 @@ namespace System.Collections {
 			return al;
 		}
 
+		[MonoTODO]
 		public static ArrayList Adapter (IList list) {
 			throw new NotImplementedException ("System.Collections.ArrayList.Adapter");
 		}
@@ -81,6 +99,9 @@ namespace System.Collections {
 		private bool fixedSize = false;
 		private bool readOnly = false;
 		private bool synchronized = false;
+
+		private long version = 0;
+		private ArrayList source = null;
 
 		private int count = 0;
 		private int capacity = 16;
@@ -163,8 +184,15 @@ namespace System.Collections {
 			}
 		}
 
+		private void CheckSourceVersion() {
+			if (null != this.source && this.version != this.source.version) {
+				throw new InvalidOperationException();
+			}
+		}
+
 		public virtual int Count {
 			get {
+				CheckSourceVersion();
 				return count;
 			}
 		}
@@ -189,6 +217,8 @@ namespace System.Collections {
 
 		public virtual object this[int index] {
 			get {
+				CheckSourceVersion();
+
 				if (index < 0) {
 					throw new ArgumentOutOfRangeException ("index < 0");
 				}
@@ -213,9 +243,11 @@ namespace System.Collections {
 				}
 
 				dataArray[index] = value;
+				version++;
 			}
 		}
 
+		[MonoTODO]
 		public virtual object SyncRoot {
 			get {
 				throw new NotImplementedException ("System.Collections.ArrayList.SyncRoot.get");
@@ -235,6 +267,7 @@ namespace System.Collections {
 			}
 
 			dataArray[count++] = value;
+			version++;
 			return count-1;
 		}
 
@@ -244,16 +277,20 @@ namespace System.Collections {
 				Capacity = cc < count? count * 2: count + cc + 1;
 			c.CopyTo (dataArray, count);
 			count += cc;
+			version++;
 		}
 
+		[MonoTODO]
 		public virtual int BinarySearch (object value) {
 			throw new NotImplementedException ("System.Collections.ArrayList.BinarySearch");
 		}
 
+		[MonoTODO]
 		public virtual int BinarySearch (object value, IComparer comparer) {
 			throw new NotImplementedException ("System.Collections.ArrayList.BinarySearch");
 		}
 
+		[MonoTODO]
 		public virtual int BinarySearch (int index, int count,
 						 object value, IComparer comparer) {
 			throw new NotImplementedException ("System.Collections.ArrayList.BinarySearch");
@@ -262,6 +299,7 @@ namespace System.Collections {
 		public virtual void Clear () {
 			count = 0;
 			setSize(capacity);
+			version++;
 		}
 
 		public virtual object Clone () {
@@ -326,12 +364,36 @@ namespace System.Collections {
 			return new ArrayListEnumerator(0, this.Count, dataArray);
 		}
 
+		private void ValidateRange(int index, int count) {
+			if (index < 0) {
+				throw new ArgumentOutOfRangeException("index", index, "Must be equal to or greater than zero");
+			}
+			if (count < 0) {
+				throw new ArgumentOutOfRangeException("count", count, "Must be equal to or greater than zero");
+			}
+			if (index > this.count - 1) {
+				throw new ArgumentException();
+			}
+			if (index + count > this.count - 1) {
+				throw new ArgumentException();
+			}
+		}
+
 		public virtual IEnumerator GetEnumerator (int index, int count) {
+			ValidateRange(index, count);
 			return new ArrayListEnumerator(index, count, dataArray);
 		}
 
 		public virtual ArrayList GetRange (int index, int count) {
-			return null;
+			ValidateRange(index, count);
+			ArrayList retVal = new ArrayList(count);
+
+			for (int i = index; i < count + index; i++) {
+				retVal.Add(this[i]);
+			}
+			retVal.version = this.version;
+			retVal.source = this;
+			return retVal;
 		}
 
 		public virtual int IndexOf (object value) {
@@ -373,23 +435,30 @@ namespace System.Collections {
 			shiftElements (index, 1);
 			dataArray[index] = value;
 			count++;
+			version++;
 		}
 
+		[MonoTODO]
 		public virtual void InsertRange (int index, ICollection c) {
+			version++;
 		}
 
 		public virtual int LastIndexOf (object value) {
-			return LastIndexOf (value, 0, count);
+			return LastIndexOf (value, count - 1, count);
 		}
 
 		public virtual int LastIndexOf (object value, int startIndex) {
-			return LastIndexOf (value, startIndex, count - startIndex);
+			if (startIndex < 0 || startIndex > count - 1) {
+				throw new ArgumentOutOfRangeException("startIndex", startIndex, "");
+			}
+			return LastIndexOf (value, startIndex, startIndex + 1);
 		}
 
 		public virtual int LastIndexOf (object value, int StartIndex,
 						int count)
 			{
-				for (int i = count - 1; i >= 0; i--) {
+				int EndIndex = StartIndex - count + 1;
+				for (int i = StartIndex; i >= EndIndex; i--) {
 					if (Object.Equals (dataArray[i], value)) {
 						return i;
 					}
@@ -433,6 +502,7 @@ namespace System.Collections {
 
 			shiftElements (index, - count);
 			this.count -= count;
+			version++;
 		}
 
 		public virtual void Reverse () {
@@ -451,8 +521,10 @@ namespace System.Collections {
 			}
 
 			Array.Reverse (dataArray, index, count);
+			version++;
 		}
 
+		[MonoTODO]
 		public virtual void SetRange (int index, ICollection c) {
 		}
 
@@ -476,6 +548,7 @@ namespace System.Collections {
 			}
             
 			Array.Sort (dataArray, index, count, comparer);
+			version++;
 		}
 
 		public virtual object[] ToArray() {
@@ -493,6 +566,7 @@ namespace System.Collections {
 		[MonoTODO]
 		public virtual void TrimToSize () {
 			// FIXME: implement this
+			version++;
 		}
 	}
 }
