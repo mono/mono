@@ -420,6 +420,7 @@ System.Web.UI.WebControls/MenuItemBindingCollection.cs
 System.Web.UI.WebControls/MenuItemCollection.cs
 System.Web.UI.WebControls/MenuItemStyle.cs
 System.Web.UI.WebControls/MenuItemStyleCollection.cs
+System.Web.UI.WebControls/MenuItemTemplateContainer.cs
 System.Web.UI.WebControls/MonthChangedEventArgs.cs
 System.Web.UI.WebControls/MonthChangedEventHandler.cs
 System.Web.UI.WebControls/ObjectDataSourceDisposingEventArgs.cs
@@ -481,6 +482,7 @@ System.Web.UI.WebControls/SqlDataSourceStatusEventArgs.cs
 System.Web.UI.WebControls/SqlDataSourceStatusEventHandler.cs
 System.Web.UI.WebControls/SqlDataSourceView.cs
 System.Web.UI.WebControls/Style.cs
+System.Web.UI.WebControls/SubMenuStyle.cs
 System.Web.UI.WebControls/Table.cs
 System.Web.UI.WebControls/TableCaptionAlign.cs
 System.Web.UI.WebControls/TableCell.cs

@@ -6,6 +6,8 @@ RESOURCE_FILES = \
 	resources/arrow_minus.gif \
 	resources/arrow_noexpand.gif \
 	resources/arrow_plus.gif \
+	resources/arrow_up.gif \
+	resources/arrow_down.gif \
 	resources/box_full.gif \
 	resources/box_empty.gif \
 	resources/box_minus.gif \
