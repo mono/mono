@@ -72,18 +72,18 @@ namespace Mono.Posix {
 	
 	[Flags][Map]
 	public enum FileMode {
-		S_ISUID   = 04000,
-		S_ISGID   = 02000,
-		S_ISVTX   = 01000,
-		S_IRUSR   = 00400,
-		S_IWUSR   = 00200,
-		S_IXUSR   = 00100,
-		S_IRGRP   = 00040,
-		S_IWGRP   = 00020,
-		S_IXGRP   = 00010,
-		S_IROTH   = 00004,
-		S_IWOTH   = 00002,
-		S_IXOTH   = 00001
+		S_ISUID   = 2048,
+		S_ISGID   = 1024,
+		S_ISVTX   = 512,
+		S_IRUSR   = 256,
+		S_IWUSR   = 128,
+		S_IXUSR   = 64,
+		S_IRGRP   = 32,
+		S_IWGRP   = 16,
+		S_IXGRP   = 8,
+		S_IROTH   = 4,
+		S_IWOTH   = 2,
+		S_IXOTH   = 1
 	}
 
 	[Flags][Map]

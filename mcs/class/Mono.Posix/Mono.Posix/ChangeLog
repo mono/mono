@@ -1,3 +1,8 @@
+2004-04-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* Syscall.cs: Use hex values for FileMode, since C# does not have
+	an octal integer mode.
+
 2004-03-30  Joshua Tauberer <tauberer@for.net>
 
 	* Added readlink, strerror, opendir, readdir, closedir
