@@ -267,8 +267,8 @@ namespace System.Data.Odbc
 		private void setBuffer() {
 			// Load buffer with new value
 			if (odbcType == OdbcType.Int)
-				intbuf = (int)ParamValue;
-			else {
+                                intbuf = ParamValue == null ? new int () : (int) ParamValue;
+                        else {
 				string paramValueString = ParamValue.ToString();
 				// Treat everything else as a string
 				// Init string buffer

@@ -1,3 +1,8 @@
+2004-12-03  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* OdbcParameter.cs: Fixed a null reference exception when a
+	parameter is created and its value is not set. #68750.
+
 2004-11-26  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* OdbcParameter.cs: Fixed Parameter Size property as well as
