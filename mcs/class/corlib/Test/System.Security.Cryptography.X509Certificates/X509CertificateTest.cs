@@ -10,18 +10,30 @@
 
 using NUnit.Framework;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading;
 
 namespace MonoTests.System.Security.Cryptography.X509Certificates {
 
 [TestFixture]
 public class X509CertificateTest {
 
+private CultureInfo oldcult;
+
+[SetUp]
+protected void SetUp() {
+	// the current culture determines the result of formatting
+	oldcult = Thread.CurrentThread.CurrentCulture;
+	Thread.CurrentThread.CurrentCulture = new CultureInfo ("");
+}
+
 [TearDown]
 protected void TearDown () {
+	Thread.CurrentThread.CurrentCulture = oldcult;
 	File.Delete("temp.cer");
 	File.Delete("temp.b64");
 }
@@ -74,8 +86,8 @@ public void Certificate1 ()
 	byte[] hash = { 0xD6,0x2F,0x48,0xD0,0x13,0xEE,0x7F,0xB5,0x8B,0x79,0x07,0x45,0x12,0x67,0x0D,0x9C,0x5B,0x3A,0x5D,0xA9 };
 	AssertEquals ("GetCertHash", hash, x509.GetCertHash ());
 	Assertion.AssertEquals ("GetCertHashString", "D62F48D013EE7FB58B79074512670D9C5B3A5DA9", x509.GetCertHashString ());
-	Assertion.AssertEquals ("GetEffectiveDateString", "1996-03-12 10:38:47", x509.GetEffectiveDateString ());
-	Assertion.AssertEquals ("GetExpirationDateString", "1997-03-12 10:38:46", x509.GetExpirationDateString ());
+	Assertion.AssertEquals ("GetEffectiveDateString", "03/12/1996 10:38:47", x509.GetEffectiveDateString ());
+	Assertion.AssertEquals ("GetExpirationDateString", "03/12/1997 10:38:46", x509.GetExpirationDateString ());
 	Assertion.AssertEquals ("GetFormat", "X509", x509.GetFormat ());
 	Assertion.AssertEquals ("GetHashCode", -701544240, x509.GetHashCode ());
 	Assertion.AssertEquals ("GetIssuerName", "C=US, O=\"RSA Data Security, Inc.\", OU=Secure Server Certification Authority", x509.GetIssuerName ());
@@ -133,8 +145,8 @@ public void Certificate2 ()
 	byte[] hash = { 0x9E,0x87,0x80,0x3E,0xC5,0x68,0x9A,0xEF,0xE7,0x7F,0x92,0xF9,0x1A,0xBF,0xA7,0x46,0x7C,0x76,0xED,0x02 };
 	AssertEquals ("GetCertHash", hash, x509.GetCertHash ());
 	Assertion.AssertEquals ("GetCertHashString", "9E87803EC5689AEFE77F92F91ABFA7467C76ED02", x509.GetCertHashString ());
-	Assertion.AssertEquals ("GetEffectiveDateString", "1996-01-18 13:03:52", x509.GetEffectiveDateString ());
-	Assertion.AssertEquals ("GetExpirationDateString", "2001-01-16 13:03:52", x509.GetExpirationDateString ());
+	Assertion.AssertEquals ("GetEffectiveDateString", "01/18/1996 13:03:52", x509.GetEffectiveDateString ());
+	Assertion.AssertEquals ("GetExpirationDateString", "01/16/2001 13:03:52", x509.GetExpirationDateString ());
 	Assertion.AssertEquals ("GetFormat", "X509", x509.GetFormat ());
 	Assertion.AssertEquals ("GetHashCode", -1635286978, x509.GetHashCode ());
 	Assertion.AssertEquals ("GetIssuerName", "C=US, O=AT&T, OU=Directory Services", x509.GetIssuerName ());
@@ -196,8 +208,8 @@ public void Certificate3 ()
 	byte[] hash = { 0x39,0x5F,0xBB,0xFC,0x14,0x89,0x33,0x27,0x76,0x89,0xB7,0x59,0x3A,0x7D,0x1C,0xFF,0xF1,0x56,0xF1,0x62 };
 	AssertEquals ("GetCertHash", hash, x509.GetCertHash ());
 	Assertion.AssertEquals ("GetCertHashString", "395FBBFC148933277689B7593A7D1CFFF156F162", x509.GetCertHashString ());
-	Assertion.AssertEquals ("GetEffectiveDateString", "1996-08-06 16:00:00", x509.GetEffectiveDateString ());
-	Assertion.AssertEquals ("GetExpirationDateString", "1996-08-31 15:59:59", x509.GetExpirationDateString ());
+	Assertion.AssertEquals ("GetEffectiveDateString", "08/06/1996 16:00:00", x509.GetEffectiveDateString ());
+	Assertion.AssertEquals ("GetExpirationDateString", "08/31/1996 15:59:59", x509.GetExpirationDateString ());
 	Assertion.AssertEquals ("GetFormat", "X509", x509.GetFormat ());
 	Assertion.AssertEquals ("GetHashCode", 962575356, x509.GetHashCode ());
 	Assertion.AssertEquals ("GetIssuerName", "C=US, O=CCA - Unique ID, CN=Brand Name:Product Type", x509.GetIssuerName ());
@@ -256,8 +268,8 @@ public void Certificate4 ()
 	byte[] hash = { 0x0D,0x97,0x44,0x61,0x70,0x37,0x13,0xCB,0x74,0x93,0x2D,0x2A,0x75,0xAC,0xBC,0x71,0x4B,0x28,0x12,0x66 };
 	AssertEquals ("GetCertHash", hash, x509.GetCertHash ());
 	Assertion.AssertEquals ("GetCertHashString", "0D974461703713CB74932D2A75ACBC714B281266", x509.GetCertHashString ());
-	Assertion.AssertEquals ("GetEffectiveDateString", "1994-11-09 15:54:17", x509.GetEffectiveDateString ());
-	Assertion.AssertEquals ("GetExpirationDateString", "1999-12-31 15:54:17", x509.GetExpirationDateString ());
+	Assertion.AssertEquals ("GetEffectiveDateString", "11/09/1994 15:54:17", x509.GetEffectiveDateString ());
+	Assertion.AssertEquals ("GetExpirationDateString", "12/31/1999 15:54:17", x509.GetExpirationDateString ());
 	Assertion.AssertEquals ("GetFormat", "X509", x509.GetFormat ());
 	Assertion.AssertEquals ("GetHashCode", 228017249, x509.GetHashCode ());
 	Assertion.AssertEquals ("GetIssuerName", "C=US, O=\"RSA Data Security, Inc.\", OU=Secure Server Certification Authority", x509.GetIssuerName ());
@@ -326,8 +338,8 @@ public void Certificate5 ()
 	byte[] hash = { 0x63,0xDB,0x7A,0x42,0x67,0x39,0x75,0x39,0x2A,0xC6,0xA4,0xFA,0xE3,0xD7,0x84,0x46,0xB4,0x67,0xC3,0x26 };
 	AssertEquals ("GetCertHash", hash, x509.GetCertHash ());
 	Assertion.AssertEquals ("GetCertHashString", "63DB7A42673975392AC6A4FAE3D78446B467C326", x509.GetCertHashString ());
-	Assertion.AssertEquals ("GetEffectiveDateString", "1997-07-14 16:00:00", x509.GetEffectiveDateString ());
-	Assertion.AssertEquals ("GetExpirationDateString", "2004-07-14 16:00:00", x509.GetExpirationDateString ());
+	Assertion.AssertEquals ("GetEffectiveDateString", "07/14/1997 16:00:00", x509.GetEffectiveDateString ());
+	Assertion.AssertEquals ("GetExpirationDateString", "07/14/2004 16:00:00", x509.GetExpirationDateString ());
 	Assertion.AssertEquals ("GetFormat", "X509", x509.GetFormat ());
 	Assertion.AssertEquals ("GetHashCode", 1675328066, x509.GetHashCode ());
 	Assertion.AssertEquals ("GetIssuerName", "C=US, O=SET Root", x509.GetIssuerName ());
@@ -388,8 +400,8 @@ public void Certificate6 ()
 	byte[] hash = { 0x95,0xD4,0xE2,0xEA,0x34,0x0B,0xBF,0x33,0x27,0x1C,0x1F,0xBA,0x8B,0x52,0x9F,0x17,0x72,0x1F,0x8A,0x99 };
 	AssertEquals ("GetCertHash", hash, x509.GetCertHash ());
 	Assertion.AssertEquals ("GetCertHashString", "95D4E2EA340BBF33271C1FBA8B529F17721F8A99", x509.GetCertHashString ());
-	Assertion.AssertEquals ("GetEffectiveDateString", "1996-01-18 13:03:52", x509.GetEffectiveDateString ());
-	Assertion.AssertEquals ("GetExpirationDateString", "2001-01-16 13:03:52", x509.GetExpirationDateString ());
+	Assertion.AssertEquals ("GetEffectiveDateString", "01/18/1996 13:03:52", x509.GetEffectiveDateString ());
+	Assertion.AssertEquals ("GetExpirationDateString", "01/16/2001 13:03:52", x509.GetExpirationDateString ());
 	Assertion.AssertEquals ("GetFormat", "X509", x509.GetFormat ());
 	Assertion.AssertEquals ("GetHashCode", -1781210390, x509.GetHashCode ());
 	Assertion.AssertEquals ("GetIssuerName", "C=US, O=AT&T, OU=Directory Services", x509.GetIssuerName ());
@@ -428,7 +440,7 @@ public void Certificate7 ()
    at System.Security.Cryptography.X509Certificates.X509Certificate.SetX509Certificate(Byte[] data)
    at System.Security.Cryptography.X509Certificates.X509Certificate..ctor(Byte[] data)
    at System.Security.Cryptography.X509Certificates.X509Certificate.CreateFromCertFile(String filename)
-   at vx509.Class1.CreateEntry(String filename) in d:\documents and settings\administrator\my documents\visual studio projects\solution1\vx509\class1.cs:line 71*/
+   at vx509.Class1.CreateEntry(String filename) in d:\documents and settings\administrator\my documents\visual studio projects\solution1\vx509\x509nunitgenerator.cs:line 73*/
 	try {
 	byte[] cert = { 0x30,0x80,0x30,0x82,0x02,0x08,0xA0,0x03,0x02,0x01,0x02,0x02,0x01,0x02,0x30,0x0D,0x06,0x09,0x2A,0x86,0x48,0x86,0xF7,0x0D,0x01,0x01,0x04,0x05,0x00,0x30,0x58,0x31,0x0B,0x30,0x09,0x06,0x03,0x55,0x04,0x06,0x13,0x02,0x45,0x53,0x31,0x12,0x30,0x10,0x06,0x03,0x55,0x04,0x09,0x13,0x09,0x43,0x61,0x74,0x61,0x6C,0x75,0x6E,0x79,0x61,0x31,0x12,0x30,0x10,0x06,0x03,0x55,0x04,0x07,0x13,0x09,0x42,0x61,0x72,0x63,0x65,0x6C,0x6F,0x6E,0x61,0x31,0x0C,0x30,0x0A,0x06,0x03,0x55,0x04,0x0A,0x13,0x03,0x55,0x50,0x43,0x31,0x13,0x30,
 		0x11,0x06,0x03,0x55,0x04,0x0B,0x13,0x0A,0x65,0x73,0x43,0x45,0x52,0x54,0x2D,0x55,0x50,0x43,0x30,0x1E,0x17,0x0D,0x39,0x36,0x30,0x35,0x32,0x31,0x30,0x39,0x35,0x38,0x32,0x36,0x5A,0x17,0x0D,0x39,0x37,0x30,0x35,0x32,0x31,0x30,0x39,0x35,0x38,0x32,0x36,0x5A,0x30,0x70,0x31,0x0B,0x30,0x09,0x06,0x03,0x55,0x04,0x06,0x13,0x02,0x45,0x53,0x31,0x12,0x30,0x10,0x06,0x03,0x55,0x04,0x09,0x13,0x09,0x43,0x61,0x74,0x61,0x6C,0x75,0x6E,0x79,0x61,0x31,0x12,0x30,0x10,0x06,0x03,0x55,0x04,0x07,0x13,0x09,0x42,0x61,0x72,0x63,
@@ -482,8 +494,8 @@ public void Certificate8 ()
 	byte[] hash = { 0xA3,0x0A,0x06,0xB1,0xB0,0xD4,0xF8,0x71,0x67,0x8A,0x60,0xC5,0x4E,0xE4,0xD8,0x66,0x36,0x06,0xCC,0xE6 };
 	AssertEquals ("GetCertHash", hash, x509.GetCertHash ());
 	Assertion.AssertEquals ("GetCertHashString", "A30A06B1B0D4F871678A60C54EE4D8663606CCE6", x509.GetCertHashString ());
-	Assertion.AssertEquals ("GetEffectiveDateString", "2000-10-24 16:00:00", x509.GetEffectiveDateString ());
-	Assertion.AssertEquals ("GetExpirationDateString", "2002-12-31 16:00:00", x509.GetExpirationDateString ());
+	Assertion.AssertEquals ("GetEffectiveDateString", "10/24/2000 16:00:00", x509.GetEffectiveDateString ());
+	Assertion.AssertEquals ("GetExpirationDateString", "12/31/2002 16:00:00", x509.GetExpirationDateString ());
 	Assertion.AssertEquals ("GetFormat", "X509", x509.GetFormat ());
 	Assertion.AssertEquals ("GetHashCode", -1559624015, x509.GetHashCode ());
 	Assertion.AssertEquals ("GetIssuerName", "C=US, O=U.S. Government, OU=DoD, CN=Armed Forces Root", x509.GetIssuerName ());
@@ -570,8 +582,8 @@ public void Certificate9 ()
 	byte[] hash = { 0x52,0xD1,0x84,0x8F,0x6A,0x16,0x1B,0xA5,0xC6,0xC1,0x90,0x07,0xF8,0x16,0x46,0x68,0xF5,0xA3,0xB2,0xCF };
 	AssertEquals ("GetCertHash", hash, x509.GetCertHash ());
 	Assertion.AssertEquals ("GetCertHashString", "52D1848F6A161BA5C6C19007F8164668F5A3B2CF", x509.GetCertHashString ());
-	Assertion.AssertEquals ("GetEffectiveDateString", "1996-08-20 16:00:00", x509.GetEffectiveDateString ());
-	Assertion.AssertEquals ("GetExpirationDateString", "1997-08-20 15:59:59", x509.GetExpirationDateString ());
+	Assertion.AssertEquals ("GetEffectiveDateString", "08/20/1996 16:00:00", x509.GetEffectiveDateString ());
+	Assertion.AssertEquals ("GetExpirationDateString", "08/20/1997 15:59:59", x509.GetExpirationDateString ());
 	Assertion.AssertEquals ("GetFormat", "X509", x509.GetFormat ());
 	Assertion.AssertEquals ("GetHashCode", 1389462671, x509.GetHashCode ());
 	Assertion.AssertEquals ("GetIssuerName", "L=Internet, O=\"VeriSign, Inc.\", OU=VeriSign Class 1 CA - Individual Subscriber", x509.GetIssuerName ());
@@ -631,8 +643,8 @@ public void Certificate10 ()
 	byte[] hash = { 0xE0,0xA0,0x0A,0xBE,0xB2,0xCC,0xA8,0x45,0x40,0xC2,0x1A,0x75,0xE0,0xB3,0xA4,0x06,0xF9,0xA6,0x24,0xAC };
 	AssertEquals ("GetCertHash", hash, x509.GetCertHash ());
 	Assertion.AssertEquals ("GetCertHashString", "E0A00ABEB2CCA84540C21A75E0B3A406F9A624AC", x509.GetCertHashString ());
-	Assertion.AssertEquals ("GetEffectiveDateString", "1996-05-06 16:00:00", x509.GetEffectiveDateString ());
-	Assertion.AssertEquals ("GetExpirationDateString", "1999-05-06 16:00:00", x509.GetExpirationDateString ());
+	Assertion.AssertEquals ("GetEffectiveDateString", "05/06/1996 16:00:00", x509.GetEffectiveDateString ());
+	Assertion.AssertEquals ("GetExpirationDateString", "05/06/1999 16:00:00", x509.GetExpirationDateString ());
 	Assertion.AssertEquals ("GetFormat", "X509", x509.GetFormat ());
 	Assertion.AssertEquals ("GetHashCode", -526382402, x509.GetHashCode ());
 	Assertion.AssertEquals ("GetIssuerName", "C=CA, CN=Keywitness Canada Inc., OID.1.3.6.1.4.1.42.2.11.2.1=keywitness@keywitness.ca", x509.GetIssuerName ());
@@ -693,8 +705,8 @@ public void Certificate11 ()
 	byte[] hash = { 0xA2,0x75,0xE0,0x26,0xAC,0xD8,0x54,0x79,0x4A,0x4A,0xA2,0xCB,0x53,0xF6,0x62,0x33,0x12,0x9C,0x55,0xB6 };
 	AssertEquals ("GetCertHash", hash, x509.GetCertHash ());
 	Assertion.AssertEquals ("GetCertHashString", "A275E026ACD854794A4AA2CB53F66233129C55B6", x509.GetCertHashString ());
-	Assertion.AssertEquals ("GetEffectiveDateString", "1996-02-23 11:15:00", x509.GetEffectiveDateString ());
-	Assertion.AssertEquals ("GetExpirationDateString", "1999-12-31 15:59:00", x509.GetExpirationDateString ());
+	Assertion.AssertEquals ("GetEffectiveDateString", "02/23/1996 11:15:00", x509.GetEffectiveDateString ());
+	Assertion.AssertEquals ("GetExpirationDateString", "12/31/1999 15:59:00", x509.GetExpirationDateString ());
 	Assertion.AssertEquals ("GetFormat", "X509", x509.GetFormat ());
 	Assertion.AssertEquals ("GetHashCode", -1569333210, x509.GetHashCode ());
 	Assertion.AssertEquals ("GetIssuerName", "C=US, O=GTE Corporation, CN=GTE CyberTrust Root", x509.GetIssuerName ());
@@ -759,8 +771,8 @@ public void Certificate12 ()
 	byte[] hash = { 0x28,0x2D,0x98,0x06,0xC3,0xDF,0x73,0x45,0x92,0x9F,0x64,0xF5,0x89,0x5E,0xF2,0xEA,0x4A,0xC2,0x93,0x02 };
 	AssertEquals ("GetCertHash", hash, x509.GetCertHash ());
 	Assertion.AssertEquals ("GetCertHashString", "282D9806C3DF7345929F64F5895EF2EA4AC29302", x509.GetCertHashString ());
-	Assertion.AssertEquals ("GetEffectiveDateString", "2002-05-24 16:55:48", x509.GetEffectiveDateString ());
-	Assertion.AssertEquals ("GetExpirationDateString", "2003-11-24 17:05:48", x509.GetExpirationDateString ());
+	Assertion.AssertEquals ("GetEffectiveDateString", "05/24/2002 16:55:48", x509.GetEffectiveDateString ());
+	Assertion.AssertEquals ("GetExpirationDateString", "11/24/2003 17:05:48", x509.GetExpirationDateString ());
 	Assertion.AssertEquals ("GetFormat", "X509", x509.GetFormat ());
 	Assertion.AssertEquals ("GetHashCode", 674076678, x509.GetHashCode ());
 	Assertion.AssertEquals ("GetIssuerName", "C=US, S=Washington, L=Redmond, O=Microsoft Corporation, OU=Copyright (c) 2000 Microsoft Corp., CN=Microsoft Code Signing PCA", x509.GetIssuerName ());

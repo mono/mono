@@ -1,3 +1,8 @@
+2003-04-21  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* X509CertificateTest.cs: Fixed DateTime issue by setting 
+	CultureInfo to "". Thanks Nick!
+
 2003-04-12  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* X509CertificateTest.cs: Commented ToString() test because of the
