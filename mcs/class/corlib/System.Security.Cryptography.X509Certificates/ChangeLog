@@ -1,3 +1,7 @@
+2004-09-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate.cs: Merge changes from HEAD.
+
 2003-12-15  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* X509Certificate.cs: Removed old (commented) Authenticode stuff.
