@@ -1,7 +1,11 @@
+2004-07-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateControl.cs: don't include private methods of base classes when
+	auto-attaching events. Fixes bug 61569.
+
 2004-07-14 Alon Gazit <along@mainsoft.com>
 
 	* HtmlTextWriter.cs: changed the Hashtables to case insensitive.	 
-
 2004-07-08 Pablo Baena <pbaena@gmail.com>
 
 	* Page.cs: added workaround for __doPostBack script on Netscape 4.xx

@@ -106,6 +106,12 @@ namespace System.Web.UI {
 				if (method == null)
 					continue;
 
+				if (method.DeclaringType != type) {
+					if (!method.IsPublic && !method.IsFamilyOrAssembly &&
+					    !method.IsFamilyAndAssembly && !method.IsFamily)
+						continue;
+				}
+
 				if (method.ReturnType != typeof (void))
 					continue;
 
