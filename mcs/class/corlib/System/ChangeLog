@@ -1,5 +1,9 @@
 2004-10-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DateTime.cs : Removed incorrectly injected HEAD fix.
+
+2004-10-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DateTime.cs : When it it not exact parse, 'Z' is allowed as a suffix
 	  of m/s/t/z. This fixes bug 66723.
 

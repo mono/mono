@@ -1196,11 +1196,11 @@ namespace System
 					case 's':
 					case 'f':
 					case 'z':
-						if (s.Length > valuePos && s [valuePos] == 'Z'
+						if (s.Length > 0 && s [0] == 'Z'
 						    && (pos + 1 == chars.Length
 						    || chars [pos + 1] != 'Z')) {
 							useutc = true;
-							valuePos++;
+							s = s.Substring (1);
 						}
 						break;
 					}
