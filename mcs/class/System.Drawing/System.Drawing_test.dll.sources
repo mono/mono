@@ -9,3 +9,5 @@ System.Drawing/TestSystemBrushes.cs
 System.Drawing/TestSystemPens.cs
 System.Drawing.Drawing2D/TestBlend.cs
 System.Drawing.Drawing2D/TestColorBlend.cs
+System.Drawing/TestRegion.cs
+
