@@ -1,3 +1,7 @@
+2004-03-04  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* Environment.cs: Bump corlib version.
+
 2004-03-04  Jackson Harper  <jackson@ximian.com>
 
 	* Char.cs: New managed implementation. Modified patch by Andreas Nahr.
