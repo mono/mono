@@ -436,8 +436,7 @@ namespace System {
 
 		public static byte ToByte (string value, int fromBase)
 		{
-
-			int retVal = ConvertFromBase (value, fromBase);
+			int retVal = ConvertFromBase (value, fromBase, true);
 
 			if (retVal < (int) Byte.MinValue || retVal > (int) Byte.MaxValue)
 				throw new OverflowException ();
@@ -1035,7 +1034,7 @@ namespace System {
 		
 		public static short ToInt16 (string value, int fromBase)
 		{
-			return Convert.ToInt16 (ConvertFromBase (value, fromBase));
+			return Convert.ToInt16 (ConvertFromBase (value, fromBase, false));
 		}
 
 		[CLSCompliant (false)]
@@ -1176,7 +1175,7 @@ namespace System {
 		
 		public static int ToInt32 (string value, int fromBase)
 		{
-			return ConvertFromBase (value, fromBase);
+			return ConvertFromBase (value, fromBase, false);
 		}
 		
 		[CLSCompliant (false)]
@@ -1312,7 +1311,7 @@ namespace System {
 			if (NotValidBase (fromBase))
 				throw new ArgumentException ("fromBase is not valid.");
 			
-			return ConvertFromBase64 (value, fromBase);
+			return ConvertFromBase64 (value, fromBase, false);
 		}
 
 		[CLSCompliant (false)]
@@ -1473,7 +1472,7 @@ namespace System {
 		[CLSCompliant (false)]
 		public static sbyte ToSByte (string value, int fromBase)
 		{
-			int retVal = ConvertFromBase (value, fromBase);
+			int retVal = ConvertFromBase (value, fromBase, false);
 
 			if (retVal == 255)
 				return (sbyte)-1;
@@ -1959,7 +1958,7 @@ namespace System {
 		[CLSCompliant (false)]
 		public static ushort ToUInt16 (string value, int fromBase) 
 		{
-			return ToUInt16 (ConvertFromBase (value, fromBase));
+			return ToUInt16 (ConvertFromBase (value, fromBase, true));
 		} 
 
 		[CLSCompliant (false)]
@@ -2122,7 +2121,7 @@ namespace System {
 		[CLSCompliant (false)]
 		public static uint ToUInt32 (string value, int fromBase)
 		{
-			return (uint) ConvertFromBase (value, fromBase);
+			return (uint) ConvertFromBase (value, fromBase, true);
 		}
 
 		[CLSCompliant (false)]
@@ -2282,7 +2281,7 @@ namespace System {
 		[CLSCompliant (false)]
 		public static ulong ToUInt64 (string value, int fromBase)
 		{
-			return (ulong) ConvertFromBase (value, fromBase);
+			return (ulong) ConvertFromBase (value, fromBase, true);
 		}					      
 
 		[CLSCompliant (false)]
@@ -2357,7 +2356,7 @@ namespace System {
 			return true;
 		}
 
-		private static int ConvertFromBase (string value, int fromBase)
+		private static int ConvertFromBase (string value, int fromBase, bool unsigned)
 		{
 			if (NotValidBase (fromBase))
 				throw new ArgumentException ("fromBase is not valid.");
@@ -2376,6 +2375,10 @@ namespace System {
 			switch (fromBase) {
 			case 10:
 				if (value[i] == '-') {
+					if (unsigned) {
+						throw new OverflowException (
+							Locale.GetText ("Cannot convert negative to unsigned"));
+					}
 					negative = true;
 					i++;
 				}
@@ -2398,6 +2401,8 @@ namespace System {
 					digitValue = c - '0';
 				else if (Char.IsLetter (c))
 					digitValue = Char.ToLowerInvariant (c) - 'a' + 10;
+				else if (c == '-')
+					throw new ArgumentException ("Negative are valid only for base 10");
 				else
 					throw new FormatException ("This is an invalid string: " + value);
 
@@ -2415,15 +2420,14 @@ namespace System {
 			if (result > Int32.MaxValue || result < Int32.MinValue)
 				throw new OverflowException ("There is an overflow.");
 			
-			if (negative) {
-			  return -result;
-			}
-			else {
-			return result;
-		}
+			if (negative)
+				return -result;
+			else
+				return result;
 		}
 
-		private static long ConvertFromBase64 (string value, int fromBase)
+		// note: this has nothing to do with base64 encoding (just base and Int64)
+		private static long ConvertFromBase64 (string value, int fromBase, bool unsigned)
 		{
 			if (NotValidBase (fromBase))
 				throw new ArgumentException ("fromBase is not valid.");
