@@ -1,3 +1,43 @@
+2002-05-21  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.Data.SqlClient/ParmUtil.cs: added file - to
+	provide utility for conversion of input parameters
+	
+	* System.Data.SqlClient/PostgresTypes.cs: added file - 
+	moved the PostgreHelper class to here.  May eventually
+	move the internal class PostgresTypes that's inside the 
+	SqlConnection to here as well.  
+	Handling of PostgreSQL <-> .NET types need to be though
+	out more. Also, the PostgreHelper has a method to convert
+	from .NET types to a string which can be put into used in
+	an SQL statement to execute against a PostgreSQL database.
+	This is the beginnings of parameters support.  It currently
+	only supports input parameters.  Still need to do output,
+	input/output, and return parameters.
+	
+	* Test/TestSqlParameters.cs: new test to test the input
+	parameters in System.Data.SqlClient against a 
+	PostgreSQL db.
+	
+	* System.Data.SqlClient/PostgresLibrary.cs: moved 
+	PostgresHelper class to file PostgresTypes.cs.  Also 
+	moved struct PostgresType there too.
+	
+	* System.Data.SqlClient/SqlCommand.cs: added input 
+	parameters support
+	
+	* System.Data.SqlClient/SqlParameter.cs: got 
+	SqlParameter to work
+	
+	* System.Data.SqlClient/SqlParameterCollection.cs: got 
+	SqlParameterCollection to work
+	
+	* Test/System.Data_test.build: added files to exclude 
+	from test build
+	
+	* System.Data.SqlClient/SqlConnection.cs: release resources
+	no longer used
+
 2002-05-18  Daniel Morgan <danmorg@sc.rr.com>
 
 	* System.Xml: added directory for classes with namespace

@@ -11,6 +11,7 @@
 using System;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Common;
 using System.Collections;
 
 namespace System.Data.SqlClient
@@ -23,6 +24,10 @@ namespace System.Data.SqlClient
 	// IDataParameterCollection, IList, ICollection, IEnumerable
 	public sealed class SqlParameterCollection : IDataParameterCollection
 	{
+		private ArrayList parameterList = new ArrayList();
+		private Hashtable parameterNames = new Hashtable();
+
+/*
 		[MonoTODO]
 		public void RemoveAt(string parameterName)
 		{
@@ -35,18 +40,13 @@ namespace System.Data.SqlClient
 			throw new NotImplementedException ();
 		}
 
+
 		[MonoTODO]
 		public bool Contains(string parameterName)
 		{
-			throw new NotImplementedException ();
+			return parameterNames.ContainsKey(parameterName);
 		}
-
-		// [MonoTODO]
-		public object this[string parameterName]
-		{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
+*/
 
 		[MonoTODO]
 		public IEnumerator GetEnumerator()
@@ -63,7 +63,9 @@ namespace System.Data.SqlClient
 		[MonoTODO]
 		public SqlParameter Add(SqlParameter value)
 		{
-			throw new NotImplementedException ();
+			parameterList.Add(value);
+			parameterNames.Add(value.ParameterName, parameterList.Add(value));
+			return value;
 		}
 
 		[MonoTODO]
@@ -104,14 +106,12 @@ namespace System.Data.SqlClient
 			throw new NotImplementedException ();
 		}
 
-/*
+
 		[MonoTODO]
 		public bool Contains(string value)
 		{
-			throw new NotImplementedException ();
+			return parameterNames.ContainsKey(value);
 		}
-		
-*/
 
 		[MonoTODO]
 		public void CopyTo(Array array,	int index)
@@ -124,13 +124,13 @@ namespace System.Data.SqlClient
 		{
 			throw new NotImplementedException ();
 		}
-/*
+
 		[MonoTODO]
 		public int IndexOf(string parameterName)
 		{
 			throw new NotImplementedException ();
 		}
-*/
+
 		[MonoTODO]
 		public void Insert(int index, object value)
 		{
@@ -148,60 +148,69 @@ namespace System.Data.SqlClient
 		{
 			throw new NotImplementedException ();
 		}
-/*
+
 		[MonoTODO]
 		public void RemoveAt(string parameterName)
 		{
 			throw new NotImplementedException ();
 		}
-*/		
-/*
- 		[MonoTODO]
-		[Serializable]
-		[ClassInterface(ClassInterfaceType.AutoDual)]
-		~SqlParameterCollection();
-*/
-
+	
 		[MonoTODO]
 		public int Count {
 			get {	
-				throw new NotImplementedException ();
+				return parameterList.Count;
 			}			  
 		}
 
-		// [MonoTODO]
 		object IList.this[int index] {
-			get {	
-				throw new NotImplementedException ();
-			}			  
+			[MonoTODO]
+			get { 
+				return (SqlParameter) this[index];
+			}
 			
-			set {	
-				throw new NotImplementedException ();
-			}			  
+			[MonoTODO]
+			set { 
+				this[index] = (SqlParameter) value;
+			}
 		}
 
-		// [MonoTODO]
 		public SqlParameter this[int index] {
 			get {	
-				throw new NotImplementedException ();
+				return (SqlParameter) parameterList[index];
 			}			  
 			
 			set {	
-				throw new NotImplementedException ();
+				parameterList[index] = (SqlParameter) value;
 			}			  
 		}
-/*
-		[MonoTODO]
+
+		object IDataParameterCollection.this[string parameterName] {
+			[MonoTODO]
+			get { 
+				return (SqlParameter) this[parameterName];
+			}
+			
+			[MonoTODO]
+			set { 
+				this[parameterName] = (SqlParameter) value;
+			}
+		}
+
 		public SqlParameter this[string parameterName] {
 			get {	
-				throw new NotImplementedException ();
+				if(parameterNames.ContainsKey(parameterName))
+					return (SqlParameter) parameterList[(int)parameterNames[parameterName]];
+				else
+					throw new IndexOutOfRangeException("The specified name does not exist: " + parameterName);
 			}			  
 			
 			set {	
-				throw new NotImplementedException ();
+				if(parameterNames.ContainsKey(parameterName))
+					parameterList[(int)parameterNames[parameterName]] = (SqlParameter) value;
+				else
+					throw new IndexOutOfRangeException("The specified name does not exist: " + parameterName);
 			}			  
 		}
-*/
 
 		bool IList.IsFixedSize {
 			get {	
@@ -226,6 +235,5 @@ namespace System.Data.SqlClient
 				throw new NotImplementedException ();
 			}			  
 		}
-
 	}
 }

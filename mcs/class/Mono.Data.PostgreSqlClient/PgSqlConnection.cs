@@ -31,11 +31,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 
 namespace System.Data.SqlClient {
-	// using PGconn = IntPtr; 
-	// PGconn is native C library type in libpq for Postgres Connection
-
-	// using PGressult = IntPtr;
-	// PGresult is native C library type in libpq for Postgres Resultset
 
 	/// <summary>
 	/// Represents an open connection to a SQL data source
@@ -99,23 +94,6 @@ namespace System.Data.SqlClient {
 
 		#region Constructors
 
-		/*
-		[MonoTODO]
-		public SqlConnection () 
-		{
-			this.ConnectionString = null;
-			this.ConnectionTimeout = 0;
-			this.Database = null;
-			this.State = 0;
-		}
-		
-		[MonoTODO]
-		public SqlConnection (string cs) : SqlConnection () 
-		{
-			this.ConnectionString = cs;
-		}
-		
-		*/
 		// A lot of the defaults were initialized in the Fields
 		[MonoTODO]
 		public SqlConnection () {
@@ -670,6 +648,10 @@ namespace System.Data.SqlClient {
 							PQnfields(pgResult);
 
 						BuildTypes (pgResult, nRows, nFields);
+
+						// close result set
+						PostgresLibrary.PQclear (pgResult);
+						pgResult = IntPtr.Zero;
 					}
 					else {
 						String errorMessage;
@@ -679,14 +661,15 @@ namespace System.Data.SqlClient {
 
 						errorMessage += " " + PostgresLibrary.
 							PQresultErrorMessage(pgResult);
-				
+
+						// close result set
+						PostgresLibrary.PQclear (pgResult);
+						pgResult = IntPtr.Zero;
+
 						throw new SqlException(0, 0,
 							errorMessage, 0, "",
 							con.DataSource, "SqlConnection", 0);
 					}
-					// close result set
-					PostgresLibrary.PQclear (pgResult);
-					pgResult = IntPtr.Zero;
 				}
 			}
 

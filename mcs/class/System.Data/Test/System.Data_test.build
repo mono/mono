@@ -23,7 +23,9 @@
 				<excludes name="TestSqlException.cs"/>
 				<excludes name="TestSqlInsert.cs"/>
 				<excludes name="TestSqlIsolationLevel.cs"/>
+				<excludes name="TestSqlDataAdapter.cs"/>
 				<excludes name="PostgresTest.cs"/>
+				<excludes name="TestSqlParameters.cs"/>
 
 			</sources>
 			<references basedir="..\..\..\nunit">
@@ -46,7 +48,8 @@
 				<excludes name="TestSqlInsert.cs"/>
 				<excludes name="TestSqlIsolationLevel.cs"/>
 				<excludes name="PostgresTest.cs"/>
-
+				<excludes name="TestSqlDataAdapter.cs"/>
+				<excludes name="TestSqlParameters.cs"/>
 
 			</sources>
 			<references basedir="..\..\..\nunit">

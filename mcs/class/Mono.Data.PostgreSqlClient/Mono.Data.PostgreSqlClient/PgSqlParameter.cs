@@ -24,31 +24,53 @@ namespace System.Data.SqlClient
 	//	IDbDataParameter, IDataParameter, ICloneable
 	public sealed class SqlParameter : IDbDataParameter, IDataParameter
 	{
+		private string parmName;
+		private SqlDbType dbtype;
+		private DbType    theDbType;
+		private object objValue;
+		private int size;
+		private string sourceColumn;
+		private ParameterDirection direction;
+		private bool isNullable;
+		private byte precision;
+		private byte scale;
+		private DataRowVersion sourceVersion;
+		private int offset;
+
 		[MonoTODO]
 		public SqlParameter () {
-			// FIXME: do this
+		
 		}
 
 		[MonoTODO]
 		public SqlParameter (string parameterName, object value) {
-			// FIXME: do this
+			this.parmName = parameterName;
+			this.objValue = value;
 		}
 		
 		[MonoTODO]
 		public SqlParameter(string parameterName, SqlDbType dbType) {
-			// FIXME: do this
+			this.parmName = parameterName;
+			this.dbtype = dbType;
 		}
 
 		[MonoTODO]
 		public SqlParameter(string parameterName, SqlDbType dbType,
 			int size) {
-			// FIXME: do this
+
+			this.parmName = parameterName;
+			this.dbtype = dbType;
+			this.size = size;
 		}
 		
 		[MonoTODO]
 		public SqlParameter(string parameterName, SqlDbType dbType,
 			int size, string sourceColumn) {
-			// FIXME: do this
+
+			this.parmName = parameterName;
+			this.dbtype = dbType;
+			this.size = size;
+			this.sourceColumn = sourceColumn;
 		}
 			 
 		[MonoTODO]
@@ -57,122 +79,131 @@ namespace System.Data.SqlClient
 			bool isNullable, byte precision,
 			byte scale, string sourceColumn,
 			DataRowVersion sourceVersion, object value) {
-			// FIXME: do this
+			
+			this.parmName = parameterName;
+			this.dbtype = dbType;
+			this.size = size;
+			this.sourceColumn = sourceColumn;
+			this.direction = direction;
+			this.isNullable = isNullable;
+			this.precision = precision;
+			this.scale = scale;
+			this.sourceVersion = sourceVersion;
+			this.objValue = value;
 		}
-
 
 		[MonoTODO]
 		public DbType DbType {
 			get { 
-				throw new NotImplementedException (); 
+				return theDbType;
 			}
 			set { 
-				throw new NotImplementedException (); 
+				theDbType = value;
 			}
 		}
 
 		[MonoTODO]
 		public ParameterDirection Direction {
 			get { 
-				throw new NotImplementedException (); 
+				return direction;
 			}
 			set { 
-				throw new NotImplementedException (); 
+				direction = value;
 			}
 		}
 
 		[MonoTODO]
 		public bool IsNullable	{
 			get { 
-				throw new NotImplementedException (); 
+				return isNullable;
 			}
 		}
 
 		[MonoTODO]
 		public int Offset {
 			get {
-				throw new NotImplementedException (); 
+				return offset;
 			}
 			
 			set {
-				throw new NotImplementedException (); 
+				offset = value;
 			}
 		}
 
 		[MonoTODO]
 		public string ParameterName {
 			get { 
-				throw new NotImplementedException (); 
+				return parmName;
 			}
 
 			set { 
-				throw new NotImplementedException (); 
+				parmName = value;
 			}
 		}
 
 		[MonoTODO]
 		public string SourceColumn {
 			get { 
-				throw new NotImplementedException (); 
+				return sourceColumn;
 			}
 
 			set { 
-				throw new NotImplementedException (); 
+				sourceColumn = value;
 			}
 		}
 
 		[MonoTODO]
 		public DataRowVersion SourceVersion {
 			get { 
-				throw new NotImplementedException (); 
+				return sourceVersion;
 			}
 
 			set { 
-				throw new NotImplementedException (); 
+				sourceVersion = value;
 			}
 		}
 		
 		[MonoTODO]
 		public SqlDbType SqlDbType {
 			get {
-				throw new NotImplementedException (); 
+				return dbtype;
 			}
 			
 			set {
-				throw new NotImplementedException (); 
+				dbtype = value;
 			}
 		}
 
 		[MonoTODO]
 		public object Value {
 			get { 
-				throw new NotImplementedException (); 
+				return objValue;
 			}
 
 			set { 
-				throw new NotImplementedException (); 
+				objValue = value;
 			}
 		}
 
 		[MonoTODO]
 		public byte Precision {
 			get { 
-				throw new NotImplementedException (); 
+				return precision;
 			}
 
 			set { 
-				throw new NotImplementedException (); 
+				precision = value;
 			}
 		}
 
 		[MonoTODO]
                 public byte Scale {
 			get { 
-				throw new NotImplementedException (); 
+				return scale;
 			}
 
 			set { 
-				throw new NotImplementedException (); 
+				scale = value;
 			}
 		}
 
@@ -180,17 +211,17 @@ namespace System.Data.SqlClient
                 public int Size
 		{
 			get { 
-				throw new NotImplementedException (); 
+				return size;
 			}
 
 			set { 
-				throw new NotImplementedException (); 
+				size = value;
 			}
 		}
 
 		[MonoTODO]
 		public override string ToString() {
-			throw new NotImplementedException (); 
+			return parmName;
 		}
 	}
 }

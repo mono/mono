@@ -38,7 +38,6 @@ namespace System.Data.SqlClient {
 	/// </summary>
 	// public sealed class SqlCommand : Component, IDbCommand, ICloneable
 	public sealed class SqlCommand : IDbCommand {
-		// FIXME: Console.WriteLine() is used for debugging throughout
 
 		#region Fields
 
@@ -55,10 +54,12 @@ namespace System.Data.SqlClient {
 			SqlParameterCollection();
 
 		// SqlDataReader state data for ExecuteReader()
-		private SqlDataReader dataReader;
-		private string[] queries; 
+		private SqlDataReader dataReader = null;
+		private string[] queries = null;
 		private int currentQuery;
-		CommandBehavior cmdBehavior;
+		private CommandBehavior cmdBehavior = CommandBehavior.Default;
+
+		private ParmUtil parmUtil = null;
 		
 		#endregion // Fields
 
@@ -141,6 +142,7 @@ namespace System.Data.SqlClient {
 						rowsAffected = int.Parse(rowsAffectedString);
 
 				PostgresLibrary.PQclear (pgResult);
+				pgResult = IntPtr.Zero;
 			}
 			else {
 				String errorMessage;
@@ -150,7 +152,10 @@ namespace System.Data.SqlClient {
 
 				errorMessage += " " + PostgresLibrary.
 					PQresultErrorMessage(pgResult);
-				
+
+				PostgresLibrary.PQclear (pgResult);
+				pgResult = IntPtr.Zero;
+
 				throw new SqlException(0, 0,
 					errorMessage, 0, "",
 					conn.DataSource, "SqlCommand", 0);
@@ -225,8 +230,11 @@ namespace System.Data.SqlClient {
 			string statement = "";
 			StringBuilder td;
 
-			// TODO: need to handle parameters
-			
+#if DEBUG_SqlCommand
+			Console.WriteLine("---------[][] TweakQuery() [][]--------");
+			Console.WriteLine("CommandType: " + commandType + " CommandBehavior: " + cmdBehavior);
+			Console.WriteLine("SQL before command type: " + query);
+#endif						
 			// finish building SQL based on CommandType
 			switch(commandType) {
 			case CommandType.Text:
@@ -237,13 +245,17 @@ namespace System.Data.SqlClient {
 					"SELECT " + query + "()";
 				break;
 			case CommandType.TableDirect:
+				// NOTE: this is for the PostgreSQL provider
+				//       and for OleDb, according to the docs,
+				//       an exception is thrown if you try to use
+				//       this with SqlCommand
 				string[] directTables = query.Split(
 					new Char[] {','});	
 										 
 				td = new StringBuilder("SELECT * FROM ");
 				
 				for(int tab = 0; tab < directTables.Length; tab++) {
-					if(tab > 0 && tab < directTables.Length - 1)
+					if(tab > 0)
 						td.Append(',');
 					td.Append(directTables[tab]);
 					// FIXME: if multipe tables, how do we
@@ -257,6 +269,25 @@ namespace System.Data.SqlClient {
 				statement = query;
 				break;
 			}
+#if DEBUG_SqlCommand			
+			Console.WriteLine("SQL after command type: " + statement);
+#endif
+			// TODO: this parameters utility
+			//       currently only support input variables
+			//       need todo output, input/output, and return.
+#if DEBUG_SqlCommand
+			Console.WriteLine("using ParmUtil in TweakQuery()...");
+#endif
+			parmUtil = new ParmUtil(statement, parmCollection);
+#if DEBUG_SqlCommand
+			Console.WriteLine("ReplaceWithParms...");
+#endif
+
+			statement = parmUtil.ReplaceWithParms();
+
+#if DEBUG_SqlCommand
+			Console.WriteLine("SQL after ParmUtil: " + statement);
+#endif	
 			return statement;
 		}
 
@@ -295,7 +326,10 @@ namespace System.Data.SqlClient {
 
 				errorMessage += " " + PostgresLibrary.
 					PQresultErrorMessage(pgResult);
-				
+
+				PostgresLibrary.PQclear (pgResult);
+				pgResult = IntPtr.Zero;
+
 				throw new SqlException(0, 0,
 					errorMessage, 0, "",
 					conn.DataSource, "SqlCommand", 0);
@@ -305,7 +339,7 @@ namespace System.Data.SqlClient {
 		// since SqlCommand has resources so SqlDataReader
 		// can do Read() and NextResult(), need to free
 		// those resources.  Also, need to allow this SqlCommand
-		// and this SqlConnection to things again.
+		// and this SqlConnection to do things again.
 		internal void CloseReader() {
 			conn.OpenReader = false;
 			dataReader = null;
@@ -417,7 +451,10 @@ namespace System.Data.SqlClient {
 
 				errorMessage += " " + PostgresLibrary.
 					PQresultErrorMessage(pgResult);
-				
+
+				PostgresLibrary.PQclear (pgResult);
+				pgResult = IntPtr.Zero;
+
 				throw new SqlException(0, 0,
 					errorMessage, 0, "",
 					conn.DataSource, "SqlCommand", 0);
@@ -534,7 +571,7 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-		SqlParameterCollection Parameters {
+		public SqlParameterCollection Parameters {
 			get { 
 				return parmCollection;
 			}
