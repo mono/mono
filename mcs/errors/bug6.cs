@@ -1,3 +1,6 @@
+//
+// fixed
+//
 public class X {
 
 	public enum Blah { A }
