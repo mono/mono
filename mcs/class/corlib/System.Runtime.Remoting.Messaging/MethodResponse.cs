@@ -185,7 +185,7 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public int OutArgCount {
 			get { 
-				if (_args.Length == 0) return 0;
+				if (ArgCount == 0) return 0;
 				if (_inArgInfo == null) _inArgInfo = new ArgInfo (MethodBase, ArgInfoType.Out);
 				return _inArgInfo.GetInOutArgCount ();
 			}

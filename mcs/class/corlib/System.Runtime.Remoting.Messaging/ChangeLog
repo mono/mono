@@ -1,3 +1,8 @@
+2004-04-29  Raja R Harinath  <rharinath@novell.com>
+
+	* MethodResponse.cs (MethodResponse.OutArgCount): Make reference
+	to _args null-safe.
+
 2004-04-28  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* CADMessages.cs: Revert last change. It was ok.
