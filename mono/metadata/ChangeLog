@@ -1,5 +1,8 @@
 2004-06-17  Zoltan Varga  <vargaz@freemail.hu>
 
+	* assembly.c (mono_assembly_open): Fix crash when the assembly can't
+	be loaded.
+
 	* threads.c (ves_icall_System_Threading_Thread_Resume): Fix compilation
 	with gcc 2.95.
 
