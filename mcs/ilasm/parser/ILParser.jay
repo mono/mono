@@ -1513,7 +1513,8 @@ instr			: INSTR_NONE
 			| INSTR_I id /* Allow variable names */
 			| INSTR_I8 int64
                           {
-                                
+                                codegen.CurrentMethodDef.AddInstr (new
+                                        IntInstr ((IntOp) $1, (int) $2));
                           }
 			| INSTR_R float64
                           {
@@ -1535,7 +1536,7 @@ instr			: INSTR_NONE
 			| INSTR_R OPEN_PARENS bytes CLOSE_PARENS
 			| INSTR_BRTARGET int32
                           {
-                                
+                                // Need to add this to PEAPI        
                           }
 			| INSTR_BRTARGET id
                           {
@@ -1559,6 +1560,10 @@ instr			: INSTR_NONE
 			| INSTR_SIG call_conv type OPEN_PARENS sig_args CLOSE_PARENS
 			| INSTR_TOK owner_type
 			| INSTR_SWITCH OPEN_PARENS labels CLOSE_PARENS
+                          {
+                                codegen.CurrentMethodDef.AddInstr (new SwitchInstr ((ArrayList) $3,
+                                        codegen.CurrentMethodDef));
+                          }
 			;
 
 method_ref		: call_conv type type_spec DOUBLE_COLON method_name 
@@ -1569,9 +1574,27 @@ method_ref		: call_conv type type_spec DOUBLE_COLON method_name
 
 labels			: /* EMPTY */
 			| id
+                          {
+                                ArrayList label_list = new ArrayList ();
+                                label_list.Add ($1);
+                                $$ = label_list;
+                          }
 			| int32
+                          {
+                                ArrayList label_list = new ArrayList ();
+                                label_list.Add ($1);
+                                $$ = label_list;
+                          }
 			| labels COMMA id
+                          {
+                                ArrayList label_list = (ArrayList) $1;
+                                label_list.Add ($3);
+                          }
 			| labels COMMA int32
+                          {
+                                ArrayList label_list = (ArrayList) $1;
+                                label_list.Add ($3);
+                          }
 			;
 
 owner_type		: type_spec
