@@ -1,3 +1,7 @@
+2004-05-30  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RncTests.cs : fixed test that got impossible to build anymore.
+
 2004-05-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* RelaxngValidatingReaderTests.cs: this compiled with mcs but fails with

@@ -24,7 +24,7 @@ namespace MonoTests.Commons.Xml.Relaxng
 		{
 			RncParser parser = new RncParser (new NameTable ());
 			using (StreamReader sr = new StreamReader ("Test/XmlFiles/relaxng.rnc")) {
-				RelaxngGrammar g = parser.Parse (sr);
+				RelaxngPattern g = parser.Parse (sr);
 				g.Compile ();
 			}
 		}
