@@ -156,7 +156,6 @@ namespace Mono.CSharp {
 		{
 			Expression e = null;
 
-			Console.WriteLine ("trying to reduce: " + expr);
 			if (expr is IntConstant)
 				e = new IntConstant (-((IntConstant) expr).Value);
 			else if (expr is UIntConstant){
