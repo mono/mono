@@ -1,3 +1,8 @@
+2003-06-30  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* XPathDocument.cs : Replaced existing stub class with real
+	  XPathDocument implementation.
+
 2003-04-28  Piers Haken  <piersh@friskit.com>
 
 	* Parser.jay, Tokenizer.cs: more compliant lexical parsing of ambiguous tokens

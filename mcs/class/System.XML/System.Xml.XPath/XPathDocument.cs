@@ -2,55 +2,63 @@
 // System.Xml.XPath.XPathDocument
 //
 // Author:
-//   Tim Coleman (tim@timcoleman.com)
+//	Atsushi Enomoto (ginga@kit.hi-ho.ne.jp)
 //
-// (C) Copyright 2002 Tim Coleman
+// (C) 2003 Atsushi Enomoto
 //
-
+using System;
+using System.Collections;
 using System.IO;
 using System.Xml;
+using System.Xml.Schema;
+using Mono.Xml.XPath;
 
 namespace System.Xml.XPath
 {
-	[MonoTODO]
+
+	public class Driver
+	{
+		public static void Main (string [] args)
+		{
+			XPathDocument pd = new XPathDocument ("test.xml");
+			XPathNavigator nav = pd.CreateNavigator ();
+		}
+	}
+
 	public class XPathDocument : IXPathNavigable
 	{
-		XmlDocument _doc = new XmlDocument ();
+		DTMXPathDocument document;
 
 #region Constructors
 
 		public XPathDocument (Stream stream)
+			: this (new XmlTextReader (stream))
 		{
-			_doc.Load (stream);
 		}
 
 		public XPathDocument (string uri)
+			: this (new XmlTextReader (uri))
 		{
-			_doc.Load (uri);
 		}
 
 		public XPathDocument (TextReader reader)
+			: this (new XmlTextReader (reader))
 		{
-			_doc.Load (reader);
 		}
 
 		public XPathDocument (XmlReader reader)
+			: this (reader, XmlSpace.None)
 		{
-			_doc.Load (reader);
 		}
 
 		public XPathDocument (string uri, XmlSpace space)
+			: this (new XmlTextReader (uri), space)
 		{
-			if (space == XmlSpace.Preserve)
-				_doc.PreserveWhitespace = true;
-			_doc.Load (uri);
 		}
 
 		public XPathDocument (XmlReader reader, XmlSpace space)
 		{
-			if (space == XmlSpace.Preserve)
-				_doc.PreserveWhitespace = true;
-			_doc.Load (reader);
+			document = new DTMXPathDocumentBuilder (reader, space).CreateDocument ();
 		}
 
 #endregion
@@ -59,10 +67,13 @@ namespace System.Xml.XPath
 
 		public XPathNavigator CreateNavigator ()
 		{
-			return _doc.CreateNavigator ();
+			return document.CreateNavigator ();
 		}
 
 #endregion
+
 	}
+
 }
+
 
