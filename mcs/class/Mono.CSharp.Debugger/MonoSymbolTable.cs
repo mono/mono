@@ -453,7 +453,7 @@ namespace Mono.CSharp.Debugger
 		#endregion
 
 		public static int Size {
-			get { return 12; }
+			get { return 8; }
 		}
 
 		public MethodIndexEntry (int offset, int token)
