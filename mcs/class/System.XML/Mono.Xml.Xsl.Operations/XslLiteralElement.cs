@@ -72,10 +72,7 @@ namespace Mono.Xml.Xsl.Operations {
 			p.Out.WriteStartElement (prefix, localname, nsUri);
 
 			foreach (DictionaryEntry de in nsDecls)
-				if ((string)de.Key != "")
-					p.Out.WriteAttributeString ("xmlns", (string)de.Key, null, (string)de.Value);
-				else
-					p.Out.WriteAttributeString ("xmlns", (string)de.Value);
+				p.Out.WriteNamespaceDecl ((string)de.Key, (string)de.Value);
 				
 			foreach (XslLiteralAttribute a in attrs)
 				a.Evaluate (p);

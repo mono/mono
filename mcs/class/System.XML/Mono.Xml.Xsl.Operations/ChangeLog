@@ -1,5 +1,9 @@
 2003-08-19 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* XslCopyOf.cs, XslLiteralElement: Use namespace support in Outputter.
+
+2003-08-19 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* XslVariable.cs: sync to API changes.
 
 2003-08-18 Ben Maurer  <bmaurer@users.sourceforge.net>

@@ -40,10 +40,7 @@ namespace Mono.Xml.Xsl.Operations {
 				if (nav.MoveToFirstNamespace (XPathNamespaceScope.Local))
 				{
 					do {
-						if (nav.Name != "")
-							outputter.WriteAttributeString ("xmlns", nav.Name, null, nav.Value);
-						else 
-							outputter.WriteAttributeString ("xmlns", nav.Value);
+						outputter.WriteNamespaceDecl (nav.Name, nav.Value);
 					} while (nav.MoveToNextNamespace (XPathNamespaceScope.Local));
 					nav.MoveToParent ();
 				}

@@ -1,5 +1,9 @@
 2003-08-19 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* Outputter.cs: Add support for namespaces.
+
+2003-08-19 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* Compiler.cs, XslOutput.cs, XslStylesheet.cs,
 	XslTransformProcessor.cs: move output logic from XslStylesheet to
 	Compiler.
