@@ -1,5 +1,13 @@
 2002-03-16  Martin Baulig  <martin@gnome.org>
 
+	* debug.c (mono_debug_get_type): Recursively call this for all members and
+	parent classes of a class type.
+
+	* debug-dwarf2.c: Added basic support for classes. Set source language to C++
+	since GDB doesn't like Java very much.
+
+2002-03-16  Martin Baulig  <martin@gnome.org>
+
 	* debug-dwarf2.c: Added support for enums.
 
 2002-03-15  Martin Baulig  <martin@gnome.org>
