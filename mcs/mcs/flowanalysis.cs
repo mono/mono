@@ -231,6 +231,13 @@ namespace Mono.CSharp
 				a.throws = AndFlowReturns (a.throws, b.throws);
 				a.barrier = AndFlowReturns (a.barrier, b.barrier);
 
+				if (a_unreachable && b_unreachable)
+					a.barrier = FlowReturns.Always;
+				else if (a_unreachable || b_unreachable)
+					a.barrier = FlowReturns.Sometimes;
+				else
+					a.barrier = FlowReturns.Never;
+
 				a.reachable = AndFlowReturns (a.reachable, b.reachable);
 			}
 
