@@ -1,3 +1,11 @@
+2002-11-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: style.
+	* HttpException.cs: style.
+	* HttpRuntime.cs: only flush the response if there are no errors.
+	Otherwise, write an error output.
+	* HttpWriter.cs: change Unicode to UTF8.
+
 2002-11-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: don't begin the request using ExecuteNextAsync

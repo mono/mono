@@ -98,7 +98,7 @@ namespace System.Web
 					
 			// Quick way of doing cleanup
 			_OutputStream = new MemoryStream (32768);
-			_OutputHelper = new StreamWriter (_OutputStream, Encoding.Unicode);
+			_OutputHelper = new StreamWriter (_OutputStream, WebEncoding.Encoding);
 		}
 
 		internal void SendContent (HttpWorkerRequest Handler)

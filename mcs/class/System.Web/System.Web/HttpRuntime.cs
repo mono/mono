@@ -124,18 +124,22 @@ namespace System.Web {
 		internal void FinishRequest(HttpContext context, Exception error) {
 			HttpWorkerRequest request = context.WorkerRequest;
 
-			try {
-				context.Response.FlushAtEndOfRequest();
-			}
-			catch (Exception obj) {
-				error = obj;
+			if (error == null) {
+				try {
+					context.Response.FlushAtEndOfRequest();
+				} catch (Exception obj) {
+					error = obj;
+				}
 			}
 
 			if (null != error) {
-				Console.WriteLine("Error happened during execution: ");
-				Console.WriteLine(error.Message);
-				Console.WriteLine("Trace: " + error.StackTrace);
-				// TODO: Report runtime error
+				WebTrace.WriteLine (error.ToString ());
+				context.Response.Clear ();
+				if (!(error is HttpException)) {
+					error = new HttpException (String.Empty, error);
+				}
+				context.Response.Write (((HttpException) error).GetHtmlErrorMessage ());
+				context.Response.FinalFlush ();
 			}
 
 			if (!_firstRequestExecuted) {
