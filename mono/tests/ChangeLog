@@ -1,4 +1,12 @@
+2004-04-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* pinvoke3.cs libtest.c: Add test for string marshalling in delegates.
+
 2004-04-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* libtest.c pinvoke2.cs marshal4.cs Makefile.am: Add more tests for 
+	marshalling delegate fields in structs. Merge marshal4.cs into 
+	pinvoke2.cs.
 
 	* libtest.c pinvoke2.cs: Add more tests for unicode marshalling.
 
