@@ -1,3 +1,10 @@
+
+Fri Feb 4 20:24:03 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c, null-gc.c, boehm-gc.c, gc-internal.h: added functions to deal with
+	disappearing link to the GC interface and use them to simplify
+	the gchandles code.
+
 2005-02-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* class-internals.h marshal.c: Add two new wrappers, ldfld_remote and
