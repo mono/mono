@@ -1,3 +1,10 @@
+2003-10-21 Carlos Guzmán Álvarez <carlosga@telefonica.net>
+
+	TlsCipherSuiteFactory.cs: Changed names of private methods.
+
+	TlsSslCipherSuite.cs: Replaced implementations of key generation methods with a throw new NotSupportedException().
+
+
 2003-10-20  Carlos Guzmán Álvarez  <carlosga@telefonica.net>
 
 	TlsCupherSuite.cs: Fixed padding length calculation on record encryption.
