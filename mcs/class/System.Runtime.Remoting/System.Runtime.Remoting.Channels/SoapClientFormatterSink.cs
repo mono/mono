@@ -67,7 +67,7 @@ namespace System.Runtime.Remoting.Channels
 			SerializeMessage(msg, out requestStream, out requestHeaders, out soapMsgFormatter);
 
 			ClientChannelSinkStack stack = new ClientChannelSinkStack(replySink);
-			stack.Push(this, soapMsgFormatter);
+			stack.Push(this, new CallData (msg, soapMsgFormatter));
 
 			_nextChannelSink.AsyncProcessRequest(stack, msg, requestHeaders, requestStream);
 
@@ -88,10 +88,9 @@ namespace System.Runtime.Remoting.Channels
 						  ITransportHeaders headers,
 						  Stream stream)
 		{
-			SoapMessageFormatter soapMsgFormatter = (SoapMessageFormatter)state;
-
-			IMessage replyMessage = (IMessage) DeserializeMessage(stream, headers, (IMethodCallMessage)state, soapMsgFormatter);
-
+			CallData data = (CallData)state;
+			SoapMessageFormatter soapMsgFormatter = data.Formatter;
+			IMessage replyMessage = (IMessage) DeserializeMessage(stream, headers, (IMethodCallMessage)data.Msg, soapMsgFormatter);
 			sinkStack.DispatchReplyMessage(replyMessage);
 			
 		}
@@ -116,7 +115,6 @@ namespace System.Runtime.Remoting.Channels
 			
 		}
 
-//		////[MonoTODO]
 		public IMessage SyncProcessMessage (IMessage msg)
 		{
 			Stream requestStream, responseStream;
@@ -125,7 +123,7 @@ namespace System.Runtime.Remoting.Channels
 			
 			SerializeMessage(msg, out requestStream, out requestHeaders, out soapMsgFormatter);
 			_nextChannelSink.ProcessMessage(msg, requestHeaders, requestStream, out responseHeaders, out responseStream);
-			
+
 			return DeserializeMessage(responseStream, responseHeaders, (IMethodCallMessage)msg, soapMsgFormatter);
 		}
 		
@@ -146,8 +144,6 @@ namespace System.Runtime.Remoting.Channels
 			if(requestStream is MemoryStream){
 				requestStream.Position = 0;
 			}
-
-			
 		}
 		
 		
@@ -157,8 +153,13 @@ namespace System.Runtime.Remoting.Channels
 			object objReturn = _deserializationFormatter.Deserialize(responseStream);
 			
 			return soapMsgFormatter.FormatResponse((ISoapMessage) objReturn, mcm);
-			
-			
+		}
+
+		class CallData
+		{
+			public CallData (IMessage msg, SoapMessageFormatter formatter) { Msg = msg; Formatter = formatter; }
+			public IMessage Msg;
+			public SoapMessageFormatter Formatter;
 		}
 	}
 }

@@ -1,3 +1,9 @@
+2003-08-22  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* SoapClientFormatterSink.cs: Fixed a some bugs to make async calls work.
+	* SoapMessageFormatter.cs: Fixed some problems with out and ref parameters.
+	* SoapServerFormatterSink.cs: Improved catching of exceptions.
+
 2003-07-23  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* SoapMessageFormatter.cs: ParameterInfo.Position is now zero-based.

@@ -80,14 +80,14 @@ namespace System.Runtime.Remoting.Channels {
 				// check if there are *out* parameters
 				foreach(ParameterInfo paramInfo in _methodCallParameters) {
 					
-					if(paramInfo.IsOut) {
+					if(paramInfo.ParameterType.IsByRef) {
 						int index = Array.IndexOf(soapMsg.ParamNames, paramInfo.Name);
 						nbOutParams++;
 						object outParam = soapMsg.ParamValues[index];
 						if(outParam is IConvertible)
 							outParam = Convert.ChangeType(
 									outParam, 
-									paramInfo.ParameterType);
+									paramInfo.ParameterType.GetElementType());
 						outParams.Add(outParam); 
 					}
 //					else outParams.Insert(paramInfo.Position, null);
@@ -148,40 +148,44 @@ namespace System.Runtime.Remoting.Channels {
 		// used by the server
 		internal IMessage BuildMethodCallFromSoapMessage(SoapMessage soapMessage, string uri) {
 			ArrayList headersList = new ArrayList();
-			ArrayList argsList = new ArrayList();
 			
 			headersList.Add(new Header("__Uri", uri));
 			headersList.Add(new Header("__MethodName", soapMessage.MethodName));
 			string typeNamespace, assemblyName;
 			bool b = SoapServices.DecodeXmlNamespaceForClrTypeNamespace(soapMessage.XmlNameSpace, out typeNamespace, out assemblyName);
+
 			_serverType = RemotingServices.GetServerTypeForUri(uri);
+				
 			headersList.Add(new Header("__TypeName", _serverType.FullName, false));
 			_xmlNamespace = soapMessage.XmlNameSpace;
-			
 			RemMessageType messageType;
 			_methodCallInfo = _serverType.GetMethod(soapMessage.MethodName); 
-			
+
 			// the *out* parameters aren't serialized
 			// have to add them here
 			_methodCallParameters = _methodCallInfo.GetParameters();
-			foreach(ParameterInfo paramInfo in _methodCallParameters) {
+			object[] args = new object[_methodCallParameters.Length];
+			
+			foreach(ParameterInfo paramInfo in _methodCallParameters)
+			{
+				Type paramType = (paramInfo.ParameterType.IsByRef ? paramInfo.ParameterType.GetElementType() : paramInfo.ParameterType);
+
 				if(paramInfo.IsOut) {
-					argsList.Insert(paramInfo.Position, null);
+					args [paramInfo.Position] = GetNullValue (paramType);
 				}
 				else{
 					int index = Array.IndexOf(soapMessage.ParamNames, paramInfo.Name);
 					if(soapMessage.ParamValues[index] is IConvertible) 
 						soapMessage.ParamValues[index] = Convert.ChangeType(
 								soapMessage.ParamValues[index],
-								paramInfo.ParameterType);
-					argsList.Insert(paramInfo.Position, soapMessage.ParamValues[index]);
+								paramType);
+					args [paramInfo.Position] = soapMessage.ParamValues[index];
 				}
 			}
 			
-			Object[] args = (Object[])argsList.ToArray(typeof(object));
 			headersList.Add(new Header("__Args", args, false));
 			Header[] headers = (Header[])headersList.ToArray(typeof(Header));
-			
+
 			// build the MethodCall from the headers
 			MethodCall mthCall = new MethodCall(headers);
 			return (IMessage)mthCall;
@@ -224,8 +228,8 @@ namespace System.Runtime.Remoting.Channels {
 			}
 			else {
 				// an Exception was thrown while executing the function
-				responseHeaders["__HttpStatusCode"] = "500";
-				responseHeaders["__HttpReasonPhrase"] = "Internal Server Error";
+				responseHeaders["__HttpStatusCode"] = "400";
+				responseHeaders["__HttpReasonPhrase"] = "Bad Request";
 				// fill the transport headers
 				responseHeaders["Content-Type"] = "text/xml; charset=\"utf-8\"";
 				ServerFault serverFault = CreateServerFault(mrm.Exception);
@@ -262,6 +266,25 @@ namespace System.Runtime.Remoting.Channels {
 			_methodCallParameters = _methodCallInfo.GetParameters();
 		}	
 	
-		
+		object GetNullValue (Type paramType)
+		{
+			switch (Type.GetTypeCode (paramType))
+			{
+				case TypeCode.Boolean: return false;
+				case TypeCode.Byte: return (byte)0;
+				case TypeCode.Char: return '\0';
+				case TypeCode.Decimal: return (decimal)0;
+				case TypeCode.Double: return (double)0;
+				case TypeCode.Int16: return (short)0;
+				case TypeCode.Int32: return (int)0;
+				case TypeCode.Int64: return (long)0;
+				case TypeCode.SByte: return (sbyte)0;
+				case TypeCode.Single: return (float)0;
+				case TypeCode.UInt16: return (ushort)0;
+				case TypeCode.UInt32: return (uint)0;
+				case TypeCode.UInt64: return (ulong)0;
+				default: return null;
+			}
+		}
 	}
 }

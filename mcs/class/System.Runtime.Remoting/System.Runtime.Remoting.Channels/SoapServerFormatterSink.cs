@@ -95,46 +95,50 @@ namespace System.Runtime.Remoting.Channels {
 			responseMsg = null;
 			responseHeaders = null;
 			responseStream = null;
-			
-			string url = (string)requestHeaders[CommonTransportKeys.RequestUri];
-			string uri;
-			_receiver.Parse(url, out uri);
-			if(uri == null)	uri = url;
-			Type serverType = RemotingServices.GetServerTypeForUri(uri);
-			
-			SoapMessage soapMessage = new SoapMessage();
-			_deserializationFormatter.TopObject = soapMessage;
+
+			Exception exception;
 			ServerProcessing sp;
-			object rtnMessageObject;
 			SoapMessageFormatter soapMsgFormatter = new SoapMessageFormatter();
-			requestStream.Position = 0;
-			_deserializationFormatter.Deserialize(requestStream);
-			requestMsg = soapMsgFormatter.BuildMethodCallFromSoapMessage(soapMessage, uri);
-				
 			sinkStack.Push(this, soapMsgFormatter);
 
-			try{
+			try {
+				string url = (string)requestHeaders[CommonTransportKeys.RequestUri];
+				string uri;
+				_receiver.Parse(url, out uri);
+				if(uri == null)	uri = url;
+				Type serverType = RemotingServices.GetServerTypeForUri(uri);
+				if (serverType == null) throw new RemotingException ("No receiver for uri " + uri);
+			
+				SoapMessage soapMessage = new SoapMessage();
+				_deserializationFormatter.TopObject = soapMessage;
+				requestStream.Position = 0;
+				_deserializationFormatter.Deserialize(requestStream);
+
+				requestMsg = soapMsgFormatter.BuildMethodCallFromSoapMessage(soapMessage, uri);
+				
 				sp = next_sink.ProcessMessage(sinkStack, requestMsg, requestHeaders, null, out responseMsg, out responseHeaders, out responseStream);
 				
+				if(sp == ServerProcessing.Complete) {
+					if(responseMsg != null && responseStream == null) {
+
+						object rtnMessageObject = soapMsgFormatter.BuildSoapMessageFromMethodResponse((IMethodReturnMessage) responseMsg, out responseHeaders);
+						responseStream = new MemoryStream();
+						_serializationFormatter.Serialize(responseStream, rtnMessageObject);
+					}
+				}
 			}
-			catch(Exception e) {
+			catch(Exception e)
+			{
 				responseMsg = (IMethodReturnMessage)new ReturnMessage(e, (IMethodCallMessage)requestMsg);
+				object rtnMessageObject = soapMsgFormatter.BuildSoapMessageFromMethodResponse((IMethodReturnMessage) responseMsg, out responseHeaders);
+				responseStream = new MemoryStream();
+				_serializationFormatter.Serialize(responseStream, rtnMessageObject);
 				sp = ServerProcessing.Complete;
 			}
-			
-			if(sp == ServerProcessing.Complete) {
-				if(responseMsg != null && responseStream == null) {
-					
-					rtnMessageObject = soapMsgFormatter.BuildSoapMessageFromMethodResponse((IMethodReturnMessage) responseMsg, out responseHeaders);
-					
-					responseStream = new MemoryStream();
-					
-					_serializationFormatter.Serialize(responseStream, rtnMessageObject);
-				}
 
+			if (sp == ServerProcessing.Complete)
 				sinkStack.Pop(this);
-			}
-			
+
 			return sp;
 			
 		}
