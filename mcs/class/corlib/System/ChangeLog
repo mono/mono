@@ -1,5 +1,7 @@
 2003-12-10  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Type.cs: Make DefaultBindingFlags protected.
+
 	* Environment.cs: Applied patch from Todd Berman (tbermann@gentoo.org).
 	Add new GacPath property + its associated icall.
 

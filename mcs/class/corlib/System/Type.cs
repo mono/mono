@@ -35,7 +35,7 @@ namespace System {
 		public static readonly MemberFilter FilterNameIgnoreCase = new MemberFilter (FilterNameIgnoreCase_impl);
 		public static readonly object Missing;
 
-		private const BindingFlags DefaultBindingFlags =
+		protected const BindingFlags DefaultBindingFlags =
 		BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
 
 		/* implementation of the delegates for MemberFilter */
