@@ -1,3 +1,8 @@
+2004-04-22  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (test-compiler-jit-real): Simplify sed expression.
+	List compiler options in logfile.
+
 2004-04-22  Marek Safar <marek.safar@seznam.cz>
 
 	* Makefile: Add support for custom test compiler options.

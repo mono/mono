@@ -109,11 +109,11 @@ test-compiler-jit-real:
 	logfile="$(TEST_TAG).log" ; \
 	echo 'Running $(TEST_TAG) tests with flags "$(TEST_RUNTIME)" ... ' ; \
 	for i in $(TEST_SOURCES) ; do \
-	    options=`fgrep "// Compiler options:" $$i.cs | sed -e 's/\/\/ Compiler options://'`; \
+	    options=`sed -n 's,^// Compiler options:,,p' $$i.cs`; \
 	    testlogfile="$(TEST_TAG)-$$i.log" ; \
 	    echo -n "$$i: "; \
-	    echo "*** $$i compilation" > $$testlogfile ; \
-	    if $(INTERNAL_MCS) $$i.cs $$options >> $$testlogfile 2>&1 ; then \
+	    echo "*** $(INTERNAL_MCS) $$options $$i.cs" > $$testlogfile ; \
+	    if $(INTERNAL_MCS) $$options $$i.cs >> $$testlogfile 2>&1 ; then \
 		: ; \
 	    else \
 		echo "Exit code: $$?" >> $$testlogfile ; \
@@ -121,7 +121,7 @@ test-compiler-jit-real:
 		echo "FAIL: $$i: compilation" >> $$logfile ; \
 	        echo FAILED COMPILATION ; cat $$testlogfile ; \
 	    fi ; \
-	    echo "*** $$i execution" >> $$testlogfile ; \
+	    echo "*** $(TEST_RUNTIME) ./$$i.exe" >> $$testlogfile ; \
 	    if $(TEST_RUNTIME) ./$$i.exe >> $$testlogfile 2>&1 ; then \
 		echo "PASS: $$i" >> $$logfile ; \
 	        echo OK ; rm -f $$testlogfile ; \
