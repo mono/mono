@@ -7,7 +7,7 @@ namespace System.ComponentModel
 	/// </summary>
 
 	[MonoTODO("Needs testing. DefaultValueAttribute(System.Type type, string value) is not implemented. Value has no description.")]
-	[AttributeUsage(AttributeTargets.Parameter)]
+	[AttributeUsage(AttributeTargets.All)]
 	public sealed class DefaultValueAttribute : Attribute
 	{
 
