@@ -17,6 +17,7 @@ namespace Microsoft.JScript {
 	internal class EmitContext {
 
 		internal TypeBuilder type_builder;
+		internal ILGenerator ig;
 
 		internal EmitContext (TypeBuilder type)
 		{
