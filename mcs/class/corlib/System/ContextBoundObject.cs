@@ -15,7 +15,7 @@ namespace System {
 	///   Base class for all the context-bound classes
 	/// </summary>
 	[MonoTODO]
-	public abstract class ContextBoundObject {
+	public abstract class ContextBoundObject : MarshalByRefObject {
 
 		protected ContextBoundObject ()
 		{

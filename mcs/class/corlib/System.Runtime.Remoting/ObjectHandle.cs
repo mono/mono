@@ -22,7 +22,7 @@ namespace System.Runtime.Remoting {
 		}
 
 		[MonoTODO]
-		public override object InitializeLifeTimeService ()
+		public override object InitializeLifetimeService ()
 		{
 			throw new NotImplementedException ();
 		}

@@ -137,11 +137,10 @@ namespace System.IO
 		}
 
 		[MonoTODO]
-		public virtual int EndWrite (IAsyncResult async_result)
+		public virtual void EndWrite (IAsyncResult async_result)
 		{
 			if (async_result == null)
 				throw new ArgumentNullException ("async_result");
-			return 0;
 		}
 	}
 

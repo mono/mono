@@ -10,7 +10,7 @@
 
 namespace System.Threading
 {
-	public sealed class Timer : IDisposable
+	public sealed class Timer : MarshalByRefObject, IDisposable
 	{
 		[MonoTODO]
 		public Timer(TimerCallback callback, object state, int dueTime, int period) {

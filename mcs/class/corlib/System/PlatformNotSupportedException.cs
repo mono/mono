@@ -14,7 +14,7 @@ using System.Runtime.Serialization;
 namespace System
 {
 	[Serializable]
-	public class PlatformNotSupportedException : MemberAccessException
+	public class PlatformNotSupportedException : NotSupportedException
 	{
 		// Constructors
 		public PlatformNotSupportedException ()

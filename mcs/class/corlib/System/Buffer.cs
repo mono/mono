@@ -29,7 +29,7 @@ namespace System {
 			return length;
 		}
 
-		public static int GetByte (Array array, int index) {
+		public static byte GetByte (Array array, int index) {
 			if (index < 0 || index >= ByteLength (array))
 				throw new ArgumentException ("Index was out of range. Must be non-negative and less than the size of the collection.");
 

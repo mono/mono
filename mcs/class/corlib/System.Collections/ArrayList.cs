@@ -54,7 +54,7 @@ namespace System.Collections {
 		}
 
 		[MonoTODO]
-		public static ArrayList ReadOnly (IList list) {
+		public static IList ReadOnly (IList list) {
 			throw new NotImplementedException ("System.Collections.ArrayList.ReadOnly");
 		}
 
@@ -74,7 +74,7 @@ namespace System.Collections {
 		}
 
 		[MonoTODO]
-		public static ArrayList FixedSize (IList list) {
+		public static IList FixedSize (IList list) {
 			throw new NotImplementedException ("System.Collections.ArrayList.FixedSize");
 		}
 

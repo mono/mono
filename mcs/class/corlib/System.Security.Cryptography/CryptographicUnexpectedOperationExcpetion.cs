@@ -9,7 +9,7 @@ using System;
 
 namespace System.Security.Cryptography {
 
-	public class CryptographicUnexpectedOperationException : SystemException {
+	public class CryptographicUnexpectedOperationException : CryptographicException {
 		// Constructors
 		public CryptographicUnexpectedOperationException ()
 			: base ("Error occured during a cryptographic operation.")

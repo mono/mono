@@ -310,13 +310,7 @@ namespace System {
 		}
 
 		[MonoTODO]
-		public object GetLifetimeService ()
-		{
-			throw new NotImplementedException ();			
-		}
-
-		[MonoTODO]
-		public object InitializeLifetimeService ()
+		public override object InitializeLifetimeService ()
 		{
 			throw new NotImplementedException ();			
 		}

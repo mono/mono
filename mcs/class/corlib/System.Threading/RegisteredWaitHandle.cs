@@ -10,7 +10,7 @@
 
 namespace System.Threading
 {
-	public sealed class RegisteredWaitHandle
+	public sealed class RegisteredWaitHandle : MarshalByRefObject
 	{
 		internal RegisteredWaitHandle () {}
 

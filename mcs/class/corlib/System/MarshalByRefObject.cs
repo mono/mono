@@ -18,22 +18,18 @@ namespace System {
 			return null;
 		}
 
-		public object GetLifeTimeService ()
+		public object GetLifetimeService ()
 		{
 			return null;
 		}
 
-		public virtual object InitializeLifeTimeService ()
+		public virtual object InitializeLifetimeService ()
 		{
 			return null;
 		}
 
 		protected MarshalByRefObject ()
 		{
-		}
-
-		public override string ToString () {
-			return "MarshalByRefObject";
 		}
 	}
 }
