@@ -1765,6 +1765,8 @@ namespace Mono.CSharp {
 			}
 		}
 
+		bool unreachable_shown;
+
 		public override bool Resolve (EmitContext ec)
 		{
 			Block prev_block = ec.CurrentBlock;
@@ -1777,9 +1779,7 @@ namespace Mono.CSharp {
 
 			Report.Debug (4, "RESOLVE BLOCK", StartLocation, ec.CurrentBranching);
 
-			bool unreachable = ec.CurrentBranching.CurrentUsageVector.Reachability.IsUnreachable;
-			bool warning_shown = false;
-
+			bool unreachable = false;
 
 			int statement_count = statements.Count;
 			for (int ix = 0; ix < statement_count; ix++){
@@ -1789,11 +1789,11 @@ namespace Mono.CSharp {
 					if (s == EmptyStatement.Value)
 						s.loc = EndLocation;
 
-					if (!s.ResolveUnreachable (ec, !warning_shown))
+					if (!s.ResolveUnreachable (ec, !unreachable_shown))
 						ok = false;
 
 					if (s != EmptyStatement.Value)
-						warning_shown = true;
+						unreachable_shown = true;
 					else
 						s.loc = Location.Null;
 
@@ -1850,6 +1850,12 @@ namespace Mono.CSharp {
 			}
 
 			return ok;
+		}
+
+		public override bool ResolveUnreachable (EmitContext ec, bool warn)
+		{
+			unreachable_shown = true;
+			return base.ResolveUnreachable (ec, warn);
 		}
 		
 		protected override void DoEmit (EmitContext ec)
@@ -2719,10 +2725,12 @@ namespace Mono.CSharp {
 					// one single section - mark all the others as
 					// unreachable.
 					ec.CurrentBranching.CurrentUsageVector.Goto ();
+					if (!ss.Block.ResolveUnreachable (ec, true))
+						return false;
+				} else {
+					if (!ss.Block.Resolve (ec))
+						return false;
 				}
-
-				if (ss.Block.Resolve (ec) != true)
-					return false;
 			}
 
 			if (!got_default)
