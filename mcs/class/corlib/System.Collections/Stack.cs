@@ -160,15 +160,8 @@ namespace System.Collections {
 		}
 
 		public virtual object Clone() {
-			Stack stack;
-
-			stack = new Stack();
-
+			Stack stack = new Stack (contents);
 			stack.current = current;
-			stack.contents = contents;
-			stack.count = count;
-			stack.capacity = capacity;
-
 			return stack;
 		}
 
