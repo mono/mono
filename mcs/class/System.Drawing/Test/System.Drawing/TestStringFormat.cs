@@ -30,8 +30,22 @@ namespace MonoTests.System.Drawing{
 		public void TestSpecialConstructors() 
 		{				
 			StringFormat smf = StringFormat.GenericDefault;			
-			smf = StringFormat.GenericTypographic;						
+			smf = StringFormat.GenericTypographic;								
+			
 		}	
+		
+		[Test]
+		public void TestClone() 
+		{						
+			StringFormat smf = new StringFormat();						
+			StringFormat smfclone = (StringFormat) smf.Clone();			
+			
+			AssertEquals (smf.LineAlignment, smfclone.LineAlignment);			
+			AssertEquals (smf.FormatFlags, smfclone.FormatFlags);			
+			AssertEquals (smf.LineAlignment, smfclone.LineAlignment);			
+			AssertEquals (smf.Alignment, smfclone.Alignment);			
+			AssertEquals (smf.Trimming, smfclone.Trimming);			
+		}
 			
 		[Test]
 		public void TestAlignment() 
