@@ -92,6 +92,11 @@ namespace Mono.Xml.Xsl {
 			writer.WriteCData (text);
 		}
 
+		public override void WriteWhitespace (string value)
+		{
+			writer.WriteWhitespace (value);
+		}
+
 		public override void Done ()
 		{
 			writer.Flush ();

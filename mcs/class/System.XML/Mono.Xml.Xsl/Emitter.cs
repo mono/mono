@@ -34,5 +34,10 @@ namespace Mono.Xml.Xsl {
 		public abstract void WriteCDataSection (string text);
 		public abstract void WriteRaw (string data);
 		public abstract void Done ();
+
+		public virtual void WriteWhitespace (string text)
+		{
+			WriteString (text);
+		}
 	}
 }

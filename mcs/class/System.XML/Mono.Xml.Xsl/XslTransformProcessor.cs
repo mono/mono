@@ -340,14 +340,25 @@ namespace Mono.Xml.Xsl {
 		
 
 		#region Nodeset Context
-		Stack nodesetStack = new Stack ();
+		ArrayList nodesetStack = new ArrayList ();
 		
 		public XPathNodeIterator CurrentNodeset {
-			get { return (XPathNodeIterator)nodesetStack.Peek (); }
+			get { return (XPathNodeIterator) nodesetStack [nodesetStack.Count - 1]; }
 		}
 		
 		public XPathNavigator CurrentNode {
-			get { return CurrentNodeset.Current; }
+			get {
+				XPathNavigator nav = CurrentNodeset.Current;
+				if (nav != null)
+					return nav;
+				// Inside for-each context, CurrentNodeset.Current may be null
+				for (int i = nodesetStack.Count - 2; i >= 0; i--) {
+					nav = ((XPathNodeIterator) nodesetStack [i]).Current;
+					if (nav != null)
+						return nav;
+				}
+				return null;
+			}
 		}
 		
 		public bool NodesetMoveNext ()
@@ -357,12 +368,12 @@ namespace Mono.Xml.Xsl {
 		
 		public void PushNodeset (XPathNodeIterator itr)
 		{
-			nodesetStack.Push (itr.Clone ());
+			nodesetStack.Add (itr.Clone ());
 		}
 		
 		public void PopNodeset ()
 		{
-			nodesetStack.Pop ();
+			nodesetStack.RemoveAt (nodesetStack.Count - 1);
 		}
 		#endregion
 		

@@ -330,6 +330,13 @@ namespace Mono.Xml.Xsl
 			writer.Write ("]]>");
 		}
 
+		public override void WriteWhitespace (string value)
+		{
+			if (openElement)
+				CloseStartElement ();
+			writer.Write (value);
+		}
+
 		public override void Done ()
 		{
 			writer.Flush ();

@@ -267,7 +267,7 @@ namespace Mono.Xml.Xsl
 		public override void WriteWhitespace (string text)
 		{
 			CheckState ();
-			_emitter.WriteString (text);
+			_emitter.WriteWhitespace (text);
 		}
 
 		public override void Done ()
