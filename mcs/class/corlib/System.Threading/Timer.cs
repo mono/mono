@@ -58,6 +58,8 @@ namespace System.Threading
 					if (disposed)
 						return false;
 				}
+				else
+					callback (state);
 
 				return true;
 			}

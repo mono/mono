@@ -1,3 +1,8 @@
+2004-04-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Timer.cs: Call the callback immediately if dueTime is 0. Fixes
+	#56728.
+
 2004-04-08  Jackson Harper  <jackson@ximian.com>
 
 	* ReaderWriterLock.cs: Fix tyop
