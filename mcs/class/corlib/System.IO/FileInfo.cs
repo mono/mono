@@ -143,7 +143,7 @@ namespace System.IO {
 			if (dest == null)
 				throw new ArgumentNullException ();
 
-                        if (dest == Name || dir == FullName)
+                        if (dest == Name || dest == FullName)
                                 return;
 
 			MonoIOError error;
