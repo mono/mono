@@ -1,4 +1,8 @@
 
+Tue Jun 8 16:37:15 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* inssel-long32.brg: implemented a few missing ulong cast opcodes.
+
 Tue Jun 8 15:36:30 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* Makefile.am: remove the -static hack completely, it links in
