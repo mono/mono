@@ -13,41 +13,43 @@ additional assemblies and mcs, the Mono C# compiler.
 To build this package, you must already have a C# compiler installed.
 Build instructions for *NIX and Microsoft Windows follow.
 
-Building mcs on *NIX
-====================
+Building mcs
+============
 
-mcs provides a set of makefiles which make it easy to build and install
-mcs on *NIX systems like Linux or FreeBSD where mcs is already
-installed.
+These instructions apply to both Unix and Windows.  You need GNU make
+to build the software (on Windows, you will need for example the
+Cygwin environment setup)
 
 To build the compiler and class libraries, run:
-
-    make -f makefile.gnu
-
-The libraries will be placed in the directory class/lib/ and the mcs
-compiler executable in mcs/.
-
-To install them, run the following, where prefix identifies where you
-want the files installed:
-
-    make -f makefile.gnu install prefix=/usr/local
-
-If you are tracking Mono's development, you may sometimes need to share
-the compiled libraries with others. If you want to produce an easily
-distributable tarball, run:
-
-    make -f makefile.gnu dist
-
-Building mcs on Windows
-=======================
-
-It is also possible to build mcs on Windows using the Microsoft .NET
-framework. This may be convenient if you do not have access to a working
-mcs setup. To build the compiler and class libraries, run:
 
     make
 
 The libraries will be placed in the directory class/lib/ and the mcs
-compiler executable in mcs/. They can then be copied to /usr/lib and
-/usr/bin or wherever desired on the target system.
+compiler executable in mcs/.
 
+To install them, run the following:
+
+    make install
+
+The default is /usr/local, to change this configuration option type:
+
+    echo prefix=/your-prefix > build/config.make
+
+If you are tracking Mono's development, you may sometimes need to share
+the compiled libraries with others, you can do:
+
+    make monocharge
+
+Or a light version:
+
+    make monocharge-lite
+
+
+Configuration
+-------------
+
+If you want to change the configuration options for the build process,
+place your configuration options in build/config.make
+
+A list of variables that control the build are listed in the
+build/config-default.make
