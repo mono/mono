@@ -1,3 +1,32 @@
+2004-11-30  Martin Baulig  <martin@ximian.com>
+
+	Generics API cleanup: renamed MonoGenericInst -> MonoGenericClass.
+
+	* metadata-internals.h (MonoImage): Renamed `generic_inst_cache'
+	to `generic_class_cache'.
+
+	* metadata.c
+	(mono_generic_inst_hash): Renamed to mono_generic_class_hash().
+	(mono_generic_inst_equal): Renamed to mono_generic_class_equal().
+	(mono_generic_inst_is_valuetype): Renamed to
+	mono_generic_class_is_valuetype().
+
+	* class-internals.h
+	(MonoGenericInst): Renamed to MonoGenericClass.
+	(MonoDynamicGenericInst): Renamed to MonoDynamicGenericClass.
+	(MonoClass): Renamed `generic_inst' to `generic_class'.
+	(MonoGenericContext): Renamed `ginst' to `gclass'.
+
+	* object-internals.h
+	(MonoReflectionGenericInst): Renamed to MonoReflectionGenericClass.
+
+	* reflection.c (mono_reflection_generic_inst_initialize): Renamed to
+	mono_reflection_generic_class_initialize().
+
+	* icall.c (icall_entries): "System.Reflection.MonoGenericInst" is
+	now known as "System.Reflection.MonoGenericClass".
+	(monogenericinst_icalls): Renamed to monogenericclass_icalls.
+
 2004-11-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* class-internals.h: Added a flag field to MonoClass to cache the
