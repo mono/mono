@@ -185,13 +185,14 @@ namespace Mono.CSharp {
 
 				// We're converting from a type parameter which is known to be a reference type.
 				if ((gc != null) && gc.IsReferenceType) {
-					if (gc.HasClassConstraint &&
-					    TypeManager.IsSubclassOf (gc.ClassConstraint, target_type))
+					if (gc.HasClassConstraint && gc.ClassConstraint.IsSubclassOf (target_type))
 						return new EmptyCast (expr, target_type);
 
-					foreach (Type t in gc.InterfaceConstraints) {
-						if (TypeManager.IsSubclassOf (t, target_type))
-							return new EmptyCast (expr, target_type);
+					if (target_type.IsInterface) {
+						foreach (Type t in gc.InterfaceConstraints) {
+							if (TypeManager.ImplementsInterface (t, target_type))
+								return new EmptyCast (expr, target_type);
+						}
 					}
 				}
 			}
@@ -281,13 +282,14 @@ namespace Mono.CSharp {
 
 				// We're converting from a type parameter which is known to be a reference type.
 				if ((gc != null) && gc.IsReferenceType) {
-					if (gc.HasClassConstraint &&
-					    TypeManager.IsSubclassOf (gc.ClassConstraint, target_type))
+					if (gc.HasClassConstraint && gc.ClassConstraint.IsSubclassOf (target_type))
 						return true;
 
-					foreach (Type t in gc.InterfaceConstraints) {
-						if (TypeManager.IsSubclassOf (t, target_type))
-							return true;
+					if (target_type.IsInterface) {
+						foreach (Type t in gc.InterfaceConstraints) {
+							if (TypeManager.ImplementsInterface (t, target_type))
+								return true;
+						}
 					}
 				}
 			}
