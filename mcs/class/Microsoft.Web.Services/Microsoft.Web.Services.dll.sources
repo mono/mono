@@ -1,5 +1,6 @@
 Assembly/AssemblyInfo.cs
 Assembly/Locale.cs
+Mono.Xml/XmlCanonicalizer.cs
 Microsoft.Web.Services/ChainStream.cs
 Microsoft.Web.Services/UriList.cs
 Microsoft.Web.Services/SoapFormatException.cs
