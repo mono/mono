@@ -1,3 +1,8 @@
+2003-10-21 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* ButtonColumn.cs: Use the DataGridLinkButton, so that we inherit
+	the forground color. bug #49738
+
 2003-10-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Calendar.cs: fixed bug #49727.

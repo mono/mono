@@ -47,7 +47,7 @@ namespace System.Web.UI.WebControls
 					toDisplay = b;
 				} else
 				{
-					LinkButton lb = new LinkButton();
+					LinkButton lb = new DataGridLinkButton();
 					lb.Text = Text;
 					lb.CommandName = CommandName;
 					lb.CausesValidation = false;
