@@ -1,4 +1,9 @@
 
+Mon Apr 29 12:47:36 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c, object.c: take into account that an object may be offset wrt the address
+	returned by GC_malloc().
+
 Mon Apr 29 12:14:39 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* image.c: handle files without entries in the assembly table (modules).
