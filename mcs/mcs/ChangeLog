@@ -1,3 +1,10 @@
+2004-06-17  Ben Maurer  <bmaurer@ximian.com>
+
+	* statement.cs (EmitCollectionForeach): Account for the fact that
+	not all valuetypes are in areas which we can take the address of.
+	For these variables, we store to a temporary variable. Also, make
+	sure that we dont emit a `callvirt' on a valuetype method.
+
 2004-06-15  Marek Safar  <marek.safar@seznam.cz>
 
 	* expression.cs (StackAlloc.DoReSolve): Added test for

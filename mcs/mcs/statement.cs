@@ -3951,22 +3951,30 @@ namespace Mono.CSharp {
 			//
 			// Instantiate the enumerator
 			//
-			if (expr.Type.IsValueType){
-				if (expr is IMemoryLocation){
-					IMemoryLocation ml = (IMemoryLocation) expr;
-
-					Expression ml1 = Expression.MemberLookup(ec, TypeManager.ienumerator_type, expr.Type, "GetEnumerator", Mono.CSharp.Location.Null);
-
-					if (!(ml1 is MethodGroupExpr)) {
-						expr.Emit(ec);
-						ec.ig.Emit(OpCodes.Box, expr.Type);
-					} else {
-						ml.AddressOf (ec, AddressOp.Load);
-					}
-				} else
-					throw new Exception ("Expr " + expr + " of type " + expr.Type +
-							     " does not implement IMemoryLocation");
-				ig.Emit (OpCodes.Callvirt, hm.get_enumerator);
+			if (expr.Type.IsValueType) {
+				IMemoryLocation ml = expr as IMemoryLocation;
+				// Load the address of the value type.
+				if (ml == null) {
+					// This happens if, for example, you have a property
+					// returning a struct which is IEnumerable
+					LocalBuilder t = ec.GetTemporaryLocal (expr.Type);
+					expr.Emit (ec);
+					ig.Emit (OpCodes.Stloc, t);
+					ig.Emit (OpCodes.Ldloca, t);
+					ec.FreeTemporaryLocal (t, expr.Type);
+				} else {
+					ml.AddressOf (ec, AddressOp.Load);
+				}
+				
+				// Emit the call.
+				if (hm.get_enumerator.DeclaringType.IsValueType) {
+					// the method is declared on the value type
+					ig.Emit (OpCodes.Call, hm.get_enumerator);
+				} else {
+					// it is an interface method, so we must box
+					ig.Emit (OpCodes.Box, expr.Type);
+					ig.Emit (OpCodes.Callvirt, hm.get_enumerator);
+				}
 			} else {
 				expr.Emit (ec);
 				ig.Emit (OpCodes.Callvirt, hm.get_enumerator);
