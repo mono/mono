@@ -76,7 +76,7 @@ namespace System.DirectoryServices
 		{
 			get										{
 				if( _Basedn == null)				{
-					Console.WriteLine("Basepath:" + _Bpath);
+//					Console.WriteLine("Basepath:" + _Bpath);
 					LdapUrl lurl=new LdapUrl(_Bpath);
 					string bdn = lurl.getDN();
 					if( bdn != null)
@@ -149,7 +149,7 @@ namespace System.DirectoryServices
 		{
 			m_oValues= new ArrayList();
 			string[] attrs={"objectClass"};
-			Console.WriteLine("BaseDN is:" + Basedn);
+//			Console.WriteLine("BaseDN is:" + Basedn);
 			LdapSearchResults lsc= Conn.Search(	Basedn,
 												LdapConnection.SCOPE_ONE,
 												"objectClass=*",
@@ -162,7 +162,7 @@ namespace System.DirectoryServices
 
 			while (lsc.hasMore())			{
 				LdapEntry nextEntry = null;
-				try							{
+				try					{
 					nextEntry = lsc.next();
 				}
 				catch(LdapException e) 		{
@@ -174,6 +174,7 @@ namespace System.DirectoryServices
 				string eFdn=nextEntry.DN;
 				LdapUrl curl=new LdapUrl(host,port,eFdn);
 				dEntry.Path=curl.ToString();
+				Console.WriteLine("Path:" + eFdn);
 				m_oValues.Add((DirectoryEntry) dEntry);
 			}
 			return m_oValues.GetEnumerator();

@@ -475,7 +475,6 @@ namespace System.DirectoryServices
 									_Properties[attributeName].Mbit=false;
 									//							string attributeVal = attribute.StringValue;
 									//							_Properties[attributeName].Add(attributeVal);
-									//							Console.WriteLine( attributeName + "value:" + attributeVal);
 								}
 							}
 							break;
@@ -796,7 +795,7 @@ namespace System.DirectoryServices
 						modList.Add( new LdapModification(LdapModification.REPLACE, attr));
 						Properties[attribute].Mbit=false;
 					}
-					Console.WriteLine(attribute + "Total no of attr value" + Properties[attribute].Count);
+//					Console.WriteLine(attribute + "Total no of attr value" + Properties[attribute].Count);
 				}
 				LdapModification[] mods = new LdapModification[modList.Count]; 	
 				Type mtype=Type.GetType("System.DirectoryServices.LdapModification");
@@ -810,7 +809,7 @@ namespace System.DirectoryServices
 				while(id.MoveNext())
 				{
 					string attribute=(string)id.Key;
-					Console.WriteLine("attribute:"  + attribute + "Vals:" + Properties[attribute][0]);
+//					Console.WriteLine("attribute:"  + attribute + "Vals:" + Properties[attribute][0]);
 					if(Properties[attribute].Count==1)
 					{
 						String val = (String)Properties[attribute].Value;

@@ -48,52 +48,75 @@ namespace System.DirectoryServices
 			get{return m_oValues.Count;}
 		}
 
-		public bool IsSynchronized
+		bool ICollection.IsSynchronized
 		{
 			get{return m_oValues.IsSynchronized;}
 		}
 
-		public object SyncRoot
+		object ICollection.SyncRoot
 		{
 			get{return m_oValues.SyncRoot;}
 		}
         
-		public void CopyTo(System.Array oArray, int iArrayIndex)
+		void CopyTo(System.Array oArray, int iArrayIndex)
 		{
 			m_oValues.CopyTo(oArray, iArrayIndex);
 		}
 
+		void ICollection.CopyTo(System.Array oArray, int iArrayIndex)
+		{
+			CopyTo(oArray,iArrayIndex);
+		}
 
-		public void Add(object oKey, object oValue)
+		public void CopyTo(PropertyValueCollection[] array, int index)
+		{
+			CopyTo(array,index);
+		}
+
+		void Add(object oKey, object oValue)
 		{
 			m_oKeys.Add(oKey);
 			m_oValues.Add(oKey, oValue);
 		}
 
-		public bool IsFixedSize
+		void IDictionary.Add(object oKey, object oValue){
+			Add(oKey,oValue);
+		}
+		
+		bool IDictionary.IsFixedSize
 		{
 			get{return m_oKeys.IsFixedSize;}
 		}
 
-		public bool IsReadOnly
+		bool IDictionary.IsReadOnly
 		{
 			get{return m_oKeys.IsReadOnly;}
 		}
 
-		public ICollection Keys
+		ICollection IDictionary.Keys
 		{
 			get{return m_oValues.Keys;}
 		}
-        
-		public void Clear()
+       
+		public ICollection PropertyNames
+		{
+			get{return m_oValues.Keys;}
+		}
+ 
+		void IDictionary.Clear()
 		{
 			m_oValues.Clear();
 			m_oKeys.Clear();
 		}
 
-		public bool Contains(object oKey)
+		bool IDictionary.Contains(object oKey)
 		{
 			return m_oValues.Contains(oKey);
+		}
+
+		public bool Contains (string propertyName)
+		{
+			return m_oValues.Contains(propertyName);
 		}
 
 		public bool ContainsKey(object oKey)
@@ -106,13 +129,13 @@ namespace System.DirectoryServices
 			return m_oValues.GetEnumerator();
 		}    
 
-		public void Remove(object oKey)
+		void IDictionary.Remove(object oKey)
 		{
 			m_oValues.Remove(oKey);
 			m_oKeys.Remove(oKey);
 		}
         
-		public object this[object oKey]
+		object IDictionary.this[object oKey]
 		{
 			get{return m_oValues[oKey];}
 			set{m_oValues[oKey] = value;}
