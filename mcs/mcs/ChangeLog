@@ -1,5 +1,10 @@
 2004-06-11  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (Invocation.EmitCall): Use OpCodes.Callvirt for
+	varargs methods if applicable.
+
+2004-06-11  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (Invocation.EmitCall): Don't use
 	`method.CallingConvention == CallingConventions.VarArgs' since the
 	method could also have `CallingConventions.HasThis'.

@@ -5339,9 +5339,15 @@ namespace Mono.CSharp {
 
 			EmitArguments (ec, method, Arguments);
 
+			OpCode call_op;
+			if (is_static || struct_call || is_base || (this_call && !method.IsVirtual))
+				call_op = OpCodes.Call;
+			else
+				call_op = OpCodes.Callvirt;
+
 			if ((method.CallingConvention & CallingConventions.VarArgs) != 0) {
 				Type[] varargs_types = GetVarargsTypes (ec, method, Arguments);
-				ig.EmitCall (OpCodes.Call, (MethodInfo) method, varargs_types);
+				ig.EmitCall (call_op, (MethodInfo) method, varargs_types);
 				return;
 			}
 
@@ -5351,17 +5357,10 @@ namespace Mono.CSharp {
 			// and DoFoo is not virtual, you can omit the callvirt,
 			// because you don't need the null checking behavior.
 			//
-			if (is_static || struct_call || is_base || (this_call && !method.IsVirtual)){
-				if (method is MethodInfo) {
-					ig.Emit (OpCodes.Call, (MethodInfo) method);
-				} else
-					ig.Emit (OpCodes.Call, (ConstructorInfo) method);
-			} else {
-				if (method is MethodInfo)
-					ig.Emit (OpCodes.Callvirt, (MethodInfo) method);
-				else
-					ig.Emit (OpCodes.Callvirt, (ConstructorInfo) method);
-			}
+			if (method is MethodInfo)
+				ig.Emit (call_op, (MethodInfo) method);
+			else
+				ig.Emit (call_op, (ConstructorInfo) method);
 		}
 		
 		public override void Emit (EmitContext ec)
