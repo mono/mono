@@ -1,5 +1,10 @@
 2004-06-24  Marek Safar  <marek.safar@seznam.cz>
 
+	Fix bug #52507
+	* cs-parser.jay: Added error CS0145 test.
+
+2004-06-24  Marek Safar  <marek.safar@seznam.cz>
+
  	* class.cs (Operator.Define): Added test for errors CS0553, CS0554.
 
 2004-06-23  Ben Maurer  <bmaurer@ximian.com>

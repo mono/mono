@@ -789,14 +789,16 @@ constant_declarators
 	: constant_declarator 
 	  {
 		ArrayList constants = new ArrayList (4);
-		constants.Add ($1);
+		if ($1 != null)
+			constants.Add ($1);
 		$$ = constants;
 	  }
 	| constant_declarators COMMA constant_declarator
 	  {
-		ArrayList constants = (ArrayList) $1;
-
-		constants.Add ($3);
+		if ($3 != null) {
+			ArrayList constants = (ArrayList) $1;
+			constants.Add ($3);
+		}
 	  }
 	;
 
@@ -804,6 +806,12 @@ constant_declarator
 	: IDENTIFIER ASSIGN constant_expression
 	  {
 		$$ = new VariableDeclaration ((string) $1, $3, lexer.Location);
+	  }
+	| IDENTIFIER
+	  {
+		// A const field requires a value to be provided
+		Report.Error_T (145, lexer.Location);
+		$$ = null;
 	  }
 	;
 

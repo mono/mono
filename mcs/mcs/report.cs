@@ -89,6 +89,7 @@ namespace Mono.CSharp {
 		{
 			switch (error_no) {
  				case 0122: return "'{0}' is inaccessible due to its protection level";
+				case 0145: return "A const field requires a value to be provided";
 				case 0160: return "A previous catch clause already catches all exceptions of this or a super type '{0}'";
  				case 0243: return "Conditional not valid on '{0}' because it is an override method";
 				case 0247: return "Cannot use a negative size with stackalloc";
