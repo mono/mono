@@ -1,3 +1,7 @@
+2004-08-03  Ben Maurer  <bmaurer@ximian.com>
+
+	* unsafe-9.cs: new test for #62263.
+
 2004-06-24  Raja R Harinath  <rharinath@novell.com>
 
 	* test-252.cs: Avoid reference to System.dll.
