@@ -1,3 +1,8 @@
+2003-08-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CollectionBaseTet.cs: added a few more tests. Now derives from
+	Assertion.
+
 2003-06-20  Nick Drochak  <ndrochak@gol.com>
 
 	* SortedListTest.cs: Make it pass on .NET 1.1.
