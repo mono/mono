@@ -1,3 +1,7 @@
+2003-12-10  Jackson Harper <jackson@ximian.com>
+
+	* ILParser.jay: vtable fixups can be int32s
+	
 2003-11-18  Jackson Harper <jackson@ximian.com>
 
 	* ILParser.jay: Add zeroinit.

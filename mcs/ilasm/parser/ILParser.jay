@@ -434,6 +434,7 @@ vtfixup_decl		: D_VTFIXUP OPEN_BRACKET int32 CLOSE_BRACKET
 			;
 
 vtfixup_attr		: /* EMPTY */
+			| vtfixup_attr int32
 			| vtfixup_attr int64
 			| vtfixup_attr K_FROMUNMANAGED
 			| vtfixup_attr K_CALLMOSTDERIVED
