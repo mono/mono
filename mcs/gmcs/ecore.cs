@@ -3260,6 +3260,8 @@ namespace Mono.CSharp {
 		LocalTemporary temp;
 		bool prepared;
 
+		internal static PtrHashtable AccessorTable = new PtrHashtable (); 
+
 		public PropertyExpr (EmitContext ec, PropertyInfo pi, Location l)
 		{
 			PropertyInfo = pi;
@@ -3343,10 +3345,10 @@ namespace Mono.CSharp {
 				PropertyInfo pi = (PropertyInfo) group [0];
 
 				if (getter == null)
-					getter = pi.GetGetMethod (true);;
+					getter = pi.GetGetMethod (true);
 
 				if (setter == null)
-					setter = pi.GetSetMethod (true);;
+					setter = pi.GetSetMethod (true);
 
 				MethodInfo accessor = getter != null ? getter : setter;
 
@@ -3363,7 +3365,15 @@ namespace Mono.CSharp {
 		{
 			FindAccessors (ec.ContainerType);
 
-			is_static = getter != null ? getter.IsStatic : setter.IsStatic;
+			if (getter != null) {
+				AccessorTable [getter] = PropertyInfo;
+				is_static = getter.IsStatic;
+			}
+
+			if (setter != null) {
+				AccessorTable [setter] = PropertyInfo;
+				is_static = setter.IsStatic;
+			}
 		}
 
 		bool InstanceResolve (EmitContext ec, bool must_do_cs1540_check)

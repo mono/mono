@@ -1,3 +1,30 @@
+2005-01-11  Raja R Harinath  <rharinath@novell.com>
+
+	Fix cs0509.cs, cs1632.cs.
+	* class.cs (TypeContainer.GetNormalBases): Don't assume !IsClass
+	is the same as IsInterface.
+	(TypeContainer.GetClassBases): Likewise.
+	* statement.cs (LabeledStatement.ig): New field.
+	(LabeledStatement.LabelTarget): Save ILGenerator which created the
+	label.
+	(LabeledStatement.DoEmit): Check that the label was created with
+	the same ILGenerator.
+
+2005-01-10  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #71058
+	* attribute.cs (GetMethodObsoleteAttribute): Need to transform
+	accessors to its properties.
+
+	* ecore.cs (PropertyExpr): Add AccessorTable to help track back
+	from accessors to property.
+	
+2005-01-10  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #70722
+	* class.cs (MethodCore.CheckBase): Test base method obsoleteness
+	only for overrides.
+	
 2005-01-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* attribute.cs: Check for null and empty strings.  

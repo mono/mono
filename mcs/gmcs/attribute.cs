@@ -1037,7 +1037,7 @@ namespace Mono.CSharp {
 			if (tmp.Expr is Constant)
 				dll_name = (string) ((Constant) tmp.Expr).GetValue ();
 			else { 
-				Error_AttributeArgumentNotValid ("", Location);
+				Error_AttributeArgumentNotValid (Location);
 				return null;
 			}
 			if (dll_name == null || dll_name == ""){
@@ -1556,6 +1556,10 @@ namespace Mono.CSharp {
 			// compiler generated methods are not registered by AddMethod
 			if (mb.DeclaringType is TypeBuilder)
 				return null;
+
+			PropertyInfo pi = PropertyExpr.AccessorTable [mb] as PropertyInfo;
+			if (pi != null)
+				return GetMemberObsoleteAttribute (pi);
 
 			return GetMemberObsoleteAttribute (mb);
 		}
