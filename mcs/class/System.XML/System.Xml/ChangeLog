@@ -1,3 +1,15 @@
+2003-11-17  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* AsyncXmlTextWriter.cs, IXPathChangeNavigator.cs, IXPathEditor.cs,
+	  IXPathNavigator.cs, IXmlDataEvidence.cs, IXmlNamespaceResolver.cs,
+	  UpdateEventHandler.cs, XPathChangeNavigator.cs, XPathDocument2.cs,
+	  XPathDocument2ChangedEventAction.cs, 
+	  XPathDocument2ChangedEventHandler.cs, XPathEditor.cs,
+	  XPathNavigator2.cs, XmlChangeFilters.cs, XmlInfoItemType.cs,
+	  XmlNamespaceScope.cs, XmlNodeChangeType.cs, XmlQualifiedNameTable,cs,
+	  XmlQueryDialect.cs, XmlUpdateEventArgs.cs
+	  : Added .NET 1.2 classes (for convenience of ObjectSpaces stubbing).
+
 2003-11-02  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlDocumentNavigator.cs : Fixed MoveToFirstChild() and MoveToNext()
