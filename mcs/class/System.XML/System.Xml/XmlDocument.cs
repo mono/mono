@@ -817,6 +817,7 @@ namespace System.Xml
 		public virtual void Save(Stream outStream)
 		{
 			XmlTextWriter xmlWriter = new XmlTextWriter (outStream, Encoding.UTF8);
+			xmlWriter.Formatting = Formatting.Indented;
 			WriteContentTo (xmlWriter);
 			xmlWriter.Close ();
 		}
@@ -824,6 +825,7 @@ namespace System.Xml
 		public virtual void Save (string filename)
 		{
 			XmlTextWriter xmlWriter = new XmlTextWriter (filename, Encoding.UTF8);
+			xmlWriter.Formatting = Formatting.Indented;
 			WriteContentTo (xmlWriter);
 			xmlWriter.Close ();
 		}
@@ -832,6 +834,7 @@ namespace System.Xml
 		public virtual void Save (TextWriter writer)
 		{
 			XmlTextWriter xmlWriter = new XmlTextWriter (writer);
+			xmlWriter.Formatting = Formatting.Indented;
 			WriteContentTo (xmlWriter);
 			xmlWriter.Flush ();
 		}

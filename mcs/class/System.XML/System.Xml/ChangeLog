@@ -1,3 +1,8 @@
+2002-12-28  Ville Palo <vi64pa@koti.soon.fi>
+
+	* XmlDocument.cs: XmlTextWriter.Formatting == Indented when 
+	calling Save () -methods.
+	
 2002-12-28  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlNodeReader.cs : primitive reading implementation.
