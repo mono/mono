@@ -110,13 +110,13 @@ TEST_SOURCES = $(filter-out $(TEST_EXCLUDES_common) $(TEST_EXCLUDES_$(PROFILE)) 
 	$(TEST_SOURCES_common) $(TEST_SOURCES_$(PROFILE)) $(TEST_SOURCES_$(PLATFORM)))
 
 # These tests load User32.dll and/or Kernel32.dll
-TEST_SOURCES_win32 = test-50 test-67
+TEST_SOURCES_win32 = test-67
 
 ## FIXME: Need to audit.  Maybe move to 'TEST_EXCLUDES_linux' and 'TEST_EXCLUDES_win32' as approprate
 # A test is a 'no pass' if it fails on either windows or linux
 # Test 120 does not pass because the MS.NET runtime is buggy.
 
-TEST_NOPASS = test-120 test-132 test-133 a-parameter4.cs 
+TEST_NOPASS = test-50 test-120 test-132 test-133 a-parameter4.cs 
 #	test-28 test-45 test-53 test-91 test-102 test-106 test-107 test-122 test-66 test-177
 
 # The test harness supports running the testcases in parallel.  However, we still need to

@@ -1,3 +1,7 @@
+2004-11-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile: test-50.cs is NO_PASS. See bug #69820.
+
 2004-11-25  Ben Maurer  <bmaurer@ximian.com>
 
 	* test-321.cs: New test for bug 69926
