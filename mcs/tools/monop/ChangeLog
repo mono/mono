@@ -1,7 +1,11 @@
 2004-11-08  Ben Maurer  <bmaurer@ximian.com>
 
-	* outline.cs: Cut the extra whitespace.
+	* outline.cs: If a type is in the namespace that we
+	are looking at right now, dont print out the fullname
+	this cuts down on verbosity
 	
+	* outline.cs: Cut the extra whitespace.
+
 	* outline.cs: Report sealed and abstract
 
 2004-10-27  John Luke  <john.luke@gmail.com>
