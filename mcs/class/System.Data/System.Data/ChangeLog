@@ -1,3 +1,10 @@
+2002-11-29  Ville Palo <vi64pa@koti.soon.fi>
+
+	* DataSystem.Data.DataTableCollection.cs:
+	Removed HashTable. There could be situations where DataTable
+	is added to collection before it hava TableName. So using 
+	HashTable is impossible.
+	
 2002-11-19  Carlos Guzmán Álvarez <carlosga@telefonica.net>
 
 	* DataRow.cs: an object that is equal to null 

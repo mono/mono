@@ -24,15 +24,13 @@ namespace System.Data {
 	{
 		DataSet dataSet;
 		const string defaultTableName = "Table1";
-		Hashtable tables;
-
+		
 		#region Constructors 
 
 		internal DataTableCollection (DataSet dataSet)
 			: base ()
 		{
 			this.dataSet = dataSet;
-			this.tables = new Hashtable ();
 		}
 		
 		#endregion
@@ -44,7 +42,14 @@ namespace System.Data {
 		}
 
 		public DataTable this[string name] {
-			get { return (DataTable)(tables[name]); }
+			get { 
+				foreach (DataTable dt in list) {
+					if (DataTable.TableName == name)
+						return dt;
+				}
+				
+				return null;
+			}			
 		}
 
 		protected override ArrayList List {
@@ -63,8 +68,7 @@ namespace System.Data {
 		public virtual void Add (DataTable table) 
 		{
 			list.Add (table);
-			table.dataSet = dataSet;
-			tables[table.TableName] = table;
+			table.dataSet = dataSet;						
 		}
 
 		public virtual DataTable Add (string name) 
@@ -89,12 +93,16 @@ namespace System.Data {
 		public void Clear () 
 		{
 			list.Clear ();
-			tables.Clear ();
 		}
 
 		public bool Contains (string name) 
 		{
-			return tables.Contains (name);
+			foreach (DataTable dt in list) {
+				if (dt.TableName == name)
+					return true;
+			}
+
+			return false;
 		}
 
 		public virtual int IndexOf (DataTable table) 
@@ -104,7 +112,7 @@ namespace System.Data {
 
 		public virtual int IndexOf (string name) 
 		{
-			return list.IndexOf (tables[name]);
+			return list.IndexOf (this [name]);
 		}
 
 		public void Remove (DataTable table) 
@@ -114,13 +122,11 @@ namespace System.Data {
 
 		public void Remove (string name) 
 		{
-			list.Remove (tables[name]);
-			tables.Remove (name);
+			list.Remove (this [name]);
 		}
 
 		public void RemoveAt (int index) 
 		{
-			tables.Remove (((DataTable)(list[index])).TableName);
 			list.RemoveAt (index);
 		}
 
