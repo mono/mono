@@ -1,4 +1,9 @@
 
+Thu Jun 5 20:11:29 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c: add intrins to the default optimizations to get wider
+	exposure.
+
 Wed Jun 4 19:47:57 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini.h: some large basic blocks will overflow a 16-bit
