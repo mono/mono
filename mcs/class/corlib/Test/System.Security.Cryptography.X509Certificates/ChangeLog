@@ -1,3 +1,8 @@
+2002-12-15  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* X509CertificateTest.cs: Uncommented the GetEffectiveDateString and 
+	GetExpirationDateString tests. Added a test for ToString(true).
+
 2002-11-03  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AllTests.cs: New. Include all (1) tests files for X509Certificates.
