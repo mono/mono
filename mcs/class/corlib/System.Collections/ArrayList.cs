@@ -62,7 +62,7 @@ namespace System.Collections
 				m_Count = count;
 				m_Pos = m_Index - 1;
 				m_Current = null;
-				m_ExpectedStateChanges = list.m_StateChanges;
+				m_ExpectedStateChanges = list._version;
 			}
 
 			public object Current 
@@ -79,7 +79,7 @@ namespace System.Collections
 
 			public bool MoveNext() 
 			{
-				if (m_List.m_StateChanges != m_ExpectedStateChanges) 
+				if (m_List._version != m_ExpectedStateChanges) 
 				{
 					throw new InvalidOperationException("List has changed.");
 				}
@@ -1610,7 +1610,7 @@ namespace System.Collections
 			{
 				m_InnerIndex = index;
 				m_InnerCount = count;
-				m_InnerStateChanges = innerList.m_StateChanges;
+				m_InnerStateChanges = innerList._version;
 			}
 
 			#region Indexers
@@ -1682,7 +1682,7 @@ namespace System.Collections
 
 			private void VerifyStateChanges() 
 			{
-				if (m_InnerStateChanges != m_InnerArrayList.m_StateChanges) 
+				if (m_InnerStateChanges != m_InnerArrayList._version) 
 				{
 					throw new InvalidOperationException
 						("ArrayList view is invalid because the underlying ArrayList was modified.");
@@ -1695,7 +1695,7 @@ namespace System.Collections
 
 				m_InnerArrayList.Insert(m_InnerIndex + m_InnerCount, value);
 
-				m_InnerStateChanges = m_InnerArrayList.m_StateChanges;
+				m_InnerStateChanges = m_InnerArrayList._version;
 
 				return ++m_InnerCount;
 			}
@@ -1707,7 +1707,7 @@ namespace System.Collections
 				m_InnerArrayList.RemoveRange(m_InnerIndex, m_InnerCount);
 				m_InnerCount = 0;
 
-				m_InnerStateChanges = m_InnerArrayList.m_StateChanges;
+				m_InnerStateChanges = m_InnerArrayList._version;
 			}
 
 			public override bool Contains(object value) 
@@ -1813,7 +1813,7 @@ namespace System.Collections
 
 				m_InnerCount++;
 
-				m_InnerStateChanges = m_InnerArrayList.m_StateChanges;
+				m_InnerStateChanges = m_InnerArrayList._version;
 			}
 
 			public override void InsertRange(int index, ICollection c) 
@@ -1830,7 +1830,7 @@ namespace System.Collections
 
 				m_InnerCount += c.Count;
 
-				m_InnerStateChanges = m_InnerArrayList.m_StateChanges;
+				m_InnerStateChanges = m_InnerArrayList._version;
 			}
 
 			public override void Remove(object value) 
@@ -1844,7 +1844,7 @@ namespace System.Collections
 					RemoveAt(x);
 				}
 
-				m_InnerStateChanges = m_InnerArrayList.m_StateChanges;
+				m_InnerStateChanges = m_InnerArrayList._version;
 			}
 
 			public override void RemoveAt(int index) 
@@ -1860,7 +1860,7 @@ namespace System.Collections
 				m_InnerArrayList.RemoveAt(m_InnerIndex + index);
 
 				m_InnerCount--;
-				m_InnerStateChanges = m_InnerArrayList.m_StateChanges;
+				m_InnerStateChanges = m_InnerArrayList._version;
 			}
 
 			public override void RemoveRange(int index, int count) 
@@ -1873,7 +1873,7 @@ namespace System.Collections
 
 				m_InnerCount -= count;
 
-				m_InnerStateChanges = m_InnerArrayList.m_StateChanges;
+				m_InnerStateChanges = m_InnerArrayList._version;
 			}
 
 			public override void Reverse() 
@@ -1889,7 +1889,7 @@ namespace System.Collections
 
 				m_InnerArrayList.Reverse(m_InnerIndex + index, count);
 
-				m_InnerStateChanges = m_InnerArrayList.m_StateChanges;
+				m_InnerStateChanges = m_InnerArrayList._version;
 			}
 
 			public override void SetRange(int index, ICollection c) 
@@ -1904,7 +1904,7 @@ namespace System.Collections
 
 				m_InnerArrayList.SetRange(m_InnerIndex + index, c);
 
-				m_InnerStateChanges = m_InnerArrayList.m_StateChanges;
+				m_InnerStateChanges = m_InnerArrayList._version;
 			}
 
 			public override void CopyTo(System.Array array) 
@@ -1944,7 +1944,7 @@ namespace System.Collections
 
 				m_InnerCount += c.Count;
 
-				m_InnerStateChanges = m_InnerArrayList.m_StateChanges;
+				m_InnerStateChanges = m_InnerArrayList._version;
 			}
 
 			public override int BinarySearch(object value) 
@@ -1999,7 +1999,7 @@ namespace System.Collections
 
 				m_InnerArrayList.Sort(m_InnerIndex + index, count, comparer);
 
-				m_InnerStateChanges = m_InnerArrayList.m_StateChanges;
+				m_InnerStateChanges = m_InnerArrayList._version;
 			}
 
 			public override object[] ToArray() 
@@ -2439,17 +2439,17 @@ namespace System.Collections
 		/// <summary>
 		/// Number of items in the list.
 		/// </summary>
-		private int m_Count;
+		private int _size;
 
 		/// <summary>
 		/// Array to store the items.
 		/// </summary>
-		private object[] m_Data;
-
+		private object[] _items;
+		
 		/// <summary>
 		/// Total number of state changes.
 		/// </summary>
-		private int m_StateChanges;
+		private int _version;
 
 		#endregion
 		
@@ -2461,7 +2461,7 @@ namespace System.Collections
 		/// </summary>
 		public ArrayList()
 		{
-			m_Data = new object[DefaultInitialCapacity];
+			_items = new object[DefaultInitialCapacity];
 		}		
 
 		/// <summary>
@@ -2491,7 +2491,7 @@ namespace System.Collections
 				throw new RankException();
 			}
 
-			m_Data = new object[c.Count];
+			_items = new object[c.Count];
 
 			AddRange(c);
 		}
@@ -2518,7 +2518,7 @@ namespace System.Collections
 			{
 				initialCapacity = DefaultInitialCapacity;
 			}
-			m_Data = new object[initialCapacity];
+			_items = new object[initialCapacity];
 		}
 
 		/// <summary>
@@ -2528,7 +2528,7 @@ namespace System.Collections
 		{
 			if (forceZeroSize) 
 			{				
-				m_Data = null;
+				_items = null;
 			}
 			else 
 			{
@@ -2543,20 +2543,20 @@ namespace System.Collections
 		/// <param name="array"></param>
 		private ArrayList(object[] array, int index, int count) 
 		{
-			m_Data = new object[count];
+			_items = new object[count];
 
 			if (count == 0) 
 			{
-				m_Data = new object[DefaultInitialCapacity];
+				_items = new object[DefaultInitialCapacity];
 			}
 			else 
 			{
-				m_Data = new object[count];
+				_items = new object[count];
 			}
 
-			Array.Copy(array, index, m_Data, 0, count);
+			Array.Copy(array, index, _items, 0, count);
 
-			m_Count = count;
+			_size = count;
 		}
 
 		#endregion
@@ -2573,25 +2573,25 @@ namespace System.Collections
 		{
 			get 
 			{
-				if (index < 0 || index >= m_Count) 
+				if (index < 0 || index >= _size) 
 				{
 					throw new ArgumentOutOfRangeException("index", index,
 						"Index is less than 0 or more than or equal to the list count.");
 				}
 
-				return m_Data[index];
+				return _items[index];
 			}
 
 			set 
 			{
-				if (index < 0 || index >= m_Count) 
+				if (index < 0 || index >= _size) 
 				{
 					throw new ArgumentOutOfRangeException("index", index,
 						"Index is less than 0 or more than or equal to the list count.");
 				}
 
-				m_Data[index] = value;
-				m_StateChanges++;
+				_items[index] = value;
+				_version++;
 			}
 		}
 
@@ -2606,7 +2606,7 @@ namespace System.Collections
 		{
 			get 
 			{				
-				return m_Count;
+				return _size;
 			}
 		}
 
@@ -2623,12 +2623,12 @@ namespace System.Collections
 		{
 			get 
 			{
-				return m_Data.Length;
+				return _items.Length;
 			}
 
 			set 
 			{
-				if (value < m_Count) 
+				if (value < _size) 
 				{
 					throw new ArgumentOutOfRangeException("Capacity", value,
 						"Must be more than count.");
@@ -2638,9 +2638,9 @@ namespace System.Collections
 
 				newArray = new object[value];
 
-				Array.Copy(m_Data, 0, newArray, 0, m_Count);
+				Array.Copy(_items, 0, newArray, 0, _size);
 
-				m_Data = newArray;
+				_items = newArray;
 			}
 		}
 
@@ -2699,7 +2699,7 @@ namespace System.Collections
 		/// </remarks>
 		private void EnsureCapacity(int count) 
 		{
-			if (count <= m_Data.Length) 
+			if (count <= _items.Length) 
 			{
 				return;
 			}
@@ -2707,7 +2707,7 @@ namespace System.Collections
 			int newLength;
 			object[] newData;
 
-			newLength = m_Data.Length << 1;
+			newLength = _items.Length << 1;
 			if (newLength == 0)
 				newLength = DefaultInitialCapacity;
 
@@ -2718,9 +2718,9 @@ namespace System.Collections
 
 			newData = new object[newLength];
 
-			Array.Copy(m_Data, 0, newData, 0, m_Data.Length);
+			Array.Copy(_items, 0, newData, 0, _items.Length);
 
-			m_Data = newData;
+			_items = newData;
 		}
 		
 		/// <summary>
@@ -2736,28 +2736,28 @@ namespace System.Collections
 		{
 			if (count > 0) 
 			{
-				if (m_Count + count > m_Data.Length) 
+				if (_size + count > _items.Length) 
 				{
 					int newLength;
 					object[] newData;
 					
-					newLength = m_Data.Length << 1;
+					newLength = _items.Length << 1;
 
-					while (newLength < m_Count + count) 
+					while (newLength < _size + count) 
 					{
 						newLength <<= 1;
 					}
 					
 					newData = new object[newLength];
 
-					Array.Copy(m_Data, 0, newData, 0, index);
-					Array.Copy(m_Data, index, newData, index + count, m_Count - index);
+					Array.Copy(_items, 0, newData, 0, index);
+					Array.Copy(_items, index, newData, index + count, _size - index);
 
-					m_Data = newData;
+					_items = newData;
 				}
 				else 
 				{
-					Array.Copy(m_Data, index, m_Data, index + count, m_Count - index);
+					Array.Copy(_items, index, _items, index + count, _size - index);
 				}
 			}
 			else if (count < 0) 
@@ -2766,7 +2766,7 @@ namespace System.Collections
 
 				int x = index - count ;
 
-				Array.Copy(m_Data, x, m_Data, index, m_Count - x);
+				Array.Copy(_items, x, _items, index, _size - x);
 			}
 		}
 
@@ -2774,31 +2774,31 @@ namespace System.Collections
 		{
 			// Do a check here in case EnsureCapacity isn't inlined.
 
-			if (m_Data.Length <= m_Count /* same as m_Data.Length < m_Count + 1) */) 
+			if (_items.Length <= _size /* same as _items.Length < _size + 1) */) 
 			{
-				EnsureCapacity(m_Count + 1);
+				EnsureCapacity(_size + 1);
 			}
 
-			m_Data[m_Count] = value;
+			_items[_size] = value;
 			
-			m_StateChanges++;
+			_version++;
 
-			return m_Count++;
+			return _size++;
 		}
 
 		public virtual void Clear() 
 		{
 			// Keep the array but null all members so they can be garbage collected.
 
-			Array.Clear(m_Data, 0, m_Count);
+			Array.Clear(_items, 0, _size);
 
-			m_Count = 0;
-			m_StateChanges++;
+			_size = 0;
+			_version++;
 		}
 
 		public virtual bool Contains(object value) 
 		{
-			return IndexOf(value, 0, m_Count) > -1;
+			return IndexOf(value, 0, _size) > -1;
 		}
 
 		internal virtual bool Contains(object value, int startIndex, int count) 
@@ -2813,12 +2813,12 @@ namespace System.Collections
 
 		public virtual int IndexOf(object value, int startIndex) 
 		{
-			return IndexOf(value, startIndex, m_Count - startIndex);
+			return IndexOf(value, startIndex, _size - startIndex);
 		}
 
 		public virtual int IndexOf(object value, int startIndex, int count) 
 		{
-			if (startIndex < 0 || startIndex > m_Count) 
+			if (startIndex < 0 || startIndex > _size) 
 			{
 				throw new ArgumentOutOfRangeException("startIndex", startIndex,
 					"Does not specify valid index.");
@@ -2830,7 +2830,7 @@ namespace System.Collections
 					"Can't be less than 0.");
 			}
 
-			if (startIndex + count > m_Count) 
+			if (startIndex + count > _size) 
 			{
 				// LAMESPEC: Every other method throws ArgumentException
 
@@ -2838,12 +2838,12 @@ namespace System.Collections
 					"Start index and count do not specify a valid range.");
 			}
 
-			return Array.IndexOf(m_Data, value, startIndex, count);
+			return Array.IndexOf(_items, value, startIndex, count);
 		}
 
 		public virtual int LastIndexOf(object value) 
 		{
-			return LastIndexOf(value, m_Count - 1);
+			return LastIndexOf(value, _size - 1);
 		}
 
 		public virtual int LastIndexOf(object value, int startIndex) 
@@ -2853,7 +2853,7 @@ namespace System.Collections
 
 		public virtual int LastIndexOf(object value, int startIndex, int count) 
 		{
-			if (startIndex < 0 || startIndex > m_Count - 1) 
+			if (startIndex < 0 || startIndex > _size - 1) 
 			{
 				throw new ArgumentOutOfRangeException("startIndex", startIndex,
 					"index must be within the list.");
@@ -2869,12 +2869,12 @@ namespace System.Collections
 				throw new ArgumentOutOfRangeException("count", count, "count too large.");
 			}
 
-			return Array.LastIndexOf(m_Data, value, startIndex, count);
+			return Array.LastIndexOf(_items, value, startIndex, count);
 		}
 
 		public virtual void Insert(int index, object value) 
 		{
-			if (index < 0 || index > m_Count) 
+			if (index < 0 || index > _size) 
 			{
 				throw new ArgumentOutOfRangeException("index", index,
 					"Index must be >= 0 and <= Count.");
@@ -2882,9 +2882,9 @@ namespace System.Collections
 
 			Shift(index, 1);
 
-			m_Data[index] = value;
-			m_Count++;
-			m_StateChanges++;
+			_items[index] = value;
+			_size++;
+			_version++;
 		}
 
 		public virtual void InsertRange(int index, ICollection c) 
@@ -2896,7 +2896,7 @@ namespace System.Collections
 				throw new ArgumentNullException("c");
 			}
 
-			if (index < 0 || index > m_Count) 
+			if (index < 0 || index > _size) 
 			{
 				throw new ArgumentOutOfRangeException("index", index,
 					"Index must be >= 0 and <= Count.");
@@ -2906,14 +2906,14 @@ namespace System.Collections
 			
 			// Do a check here in case EnsureCapacity isn't inlined.
 
-			if (m_Data.Length < m_Count + i) 
+			if (_items.Length < _size + i) 
 			{
-				EnsureCapacity(m_Count + i);
+				EnsureCapacity(_size + i);
 			}
 
-			if (index < m_Count) 
+			if (index < _size) 
 			{
-				Array.Copy(m_Data, index, m_Data, index + i, m_Count - index);
+				Array.Copy(_items, index, _items, index + i, _size - index);
 			}
 		
 			// Handle inserting a range from a list to itself specially.
@@ -2922,19 +2922,19 @@ namespace System.Collections
 			{
 				// Copy range before the insert point.
 
-				Array.Copy(m_Data, 0, m_Data, index, index);
+				Array.Copy(_items, 0, _items, index, index);
 
 				// Copy range after the insert point.
 
-				Array.Copy(m_Data, index + i, m_Data, index << 1, m_Count - index);
+				Array.Copy(_items, index + i, _items, index << 1, _size - index);
 			}
 			else 
 			{
-				c.CopyTo(m_Data, index);
+				c.CopyTo(_items, index);
 			}
 		
-			m_Count += c.Count;
-			m_StateChanges++;
+			_size += c.Count;
+			_version++;
 		}
 
 		public virtual void Remove(object value) 
@@ -2948,53 +2948,53 @@ namespace System.Collections
 				RemoveAt(x);
 			}
 
-			m_StateChanges++;
+			_version++;
 		}
 
 		public virtual void RemoveAt(int index) 
 		{
-			if (index < 0 || index >= m_Count) 
+			if (index < 0 || index >= _size) 
 			{
 				throw new ArgumentOutOfRangeException("index", index,
 					"Less than 0 or more than list count.");
 			}
 
 			Shift(index, -1);
-			m_Count--;
-			m_StateChanges++;
+			_size--;
+			_version++;
 		}
 
 		public virtual void RemoveRange(int index, int count) 
 		{
-			ArrayList.CheckRange(index, count, m_Count);
+			ArrayList.CheckRange(index, count, _size);
 						
 			Shift(index, -count);
-			m_Count -= count;
-			m_StateChanges++;			
+			_size -= count;
+			_version++;			
 		}
 
 		public virtual void Reverse() 
 		{
-			Array.Reverse(m_Data, 0, m_Count);
-			m_StateChanges++;
+			Array.Reverse(_items, 0, _size);
+			_version++;
 		}
 
 		public virtual void Reverse(int index, int count) 
 		{
-			ArrayList.CheckRange(index, count, m_Count);
+			ArrayList.CheckRange(index, count, _size);
 
-			Array.Reverse(m_Data, index, count);
-			m_StateChanges++;
+			Array.Reverse(_items, index, count);
+			_version++;
 		}
 
 		public virtual void CopyTo(System.Array array) 
 		{
-			Array.Copy(m_Data, array, m_Count);
+			Array.Copy(_items, array, _size);
 		}
 
 		public virtual void CopyTo(System.Array array, int index) 
 		{			
-			CopyTo(0, array, index, m_Count);
+			CopyTo(0, array, index, _size);
 		}
 
 		public virtual void CopyTo(int index, System.Array array, int arrayIndex, int count) 
@@ -3012,7 +3012,7 @@ namespace System.Collections
 				throw new ArgumentException("Must have only 1 dimensions.", "array");
 			}
 
-			Array.Copy(m_Data, index, array, arrayIndex, count);
+			Array.Copy(_items, index, array, arrayIndex, count);
 		}
 
 		public virtual IEnumerator GetEnumerator() 
@@ -3022,21 +3022,21 @@ namespace System.Collections
 
 		public virtual IEnumerator GetEnumerator(int index, int count) 
 		{
-			ArrayList.CheckRange(index, count, m_Count);
+			ArrayList.CheckRange(index, count, _size);
 
 			return new ArrayListEnumerator(this, index, count);
 		}
 
 		public virtual void AddRange(ICollection c) 
 		{
-			InsertRange(m_Count, c);
+			InsertRange(_size, c);
 		}
 
 		public virtual int BinarySearch(object value) 
 		{
 			try 
 			{
-				return Array.BinarySearch(m_Data, 0, m_Count, value);
+				return Array.BinarySearch(_items, 0, _size, value);
 			}
 			catch (InvalidOperationException e) 
 			{
@@ -3048,7 +3048,7 @@ namespace System.Collections
 		{
 			try 
 			{
-				return Array.BinarySearch(m_Data, 0, m_Count, value, comparer);
+				return Array.BinarySearch(_items, 0, _size, value, comparer);
 			}
 			catch (InvalidOperationException e) 
 			{
@@ -3060,7 +3060,7 @@ namespace System.Collections
 		{
 			try 
 			{
-				return Array.BinarySearch(m_Data, index, count, value, comparer);
+				return Array.BinarySearch(_items, index, count, value, comparer);
 			}
 			catch (InvalidOperationException e) 
 			{
@@ -3069,7 +3069,7 @@ namespace System.Collections
 		}
 		public virtual ArrayList GetRange(int index, int count) 
 		{
-			ArrayList.CheckRange(index, count, m_Count);
+			ArrayList.CheckRange(index, count, _size);
 
 			if (this.IsSynchronized)
 			{
@@ -3090,61 +3090,61 @@ namespace System.Collections
 				throw new ArgumentNullException("c");
 			}
 
-			if (index < 0 || index + c.Count > m_Count) 
+			if (index < 0 || index + c.Count > _size) 
 			{
 				throw new ArgumentOutOfRangeException("index");
 			}
 
-			c.CopyTo(m_Data, index);
+			c.CopyTo(_items, index);
 
-			m_StateChanges++;
+			_version++;
 		}
 
 		public virtual void TrimToSize() 
 		{
-			if (m_Data.Length > m_Count) 
+			if (_items.Length > _size) 
 			{
 				object[] newArray;
 
-				if (m_Count == 0) 
+				if (_size == 0) 
 				{
 					newArray = new object[DefaultInitialCapacity];
 				}
 				else 
 				{
-					newArray = new object[m_Count];
+					newArray = new object[_size];
 				}
 								
-				Array.Copy(m_Data, 0, newArray, 0, m_Count);
+				Array.Copy(_items, 0, newArray, 0, _size);
 
-				m_Data = newArray;
+				_items = newArray;
 			}
 		}
 
 		public virtual void Sort() 
 		{
-			Array.Sort(m_Data, 0, m_Count);
+			Array.Sort(_items, 0, _size);
 
-			m_StateChanges++;
+			_version++;
 		}
 
 		public virtual void Sort(IComparer comparer) 
 		{
-			Array.Sort(m_Data, 0, m_Count, comparer);
+			Array.Sort(_items, 0, _size, comparer);
 		}
 
 		public virtual void Sort(int index, int count, IComparer comparer) 
 		{
-			ArrayList.CheckRange(index, count, m_Count);
+			ArrayList.CheckRange(index, count, _size);
 
-			Array.Sort(m_Data, index, count, comparer);
+			Array.Sort(_items, index, count, comparer);
 		}
 
 		public virtual object[] ToArray() 
 		{
 			object[] retval;
 
-			retval = new object[m_Count];
+			retval = new object[_size];
 
 			CopyTo(retval);
 			
@@ -3155,7 +3155,7 @@ namespace System.Collections
 		{
 			Array retval;
 			
-			retval = Array.CreateInstance(elementType, m_Count);
+			retval = Array.CreateInstance(elementType, _size);
 
 			CopyTo(retval);
 
@@ -3164,7 +3164,7 @@ namespace System.Collections
 
 		public virtual object Clone() 
 		{
-			return new ArrayList(this.m_Data, 0, this.m_Count);
+			return new ArrayList(this._items, 0, this._size);
 		}
 
 		#endregion

@@ -1,3 +1,9 @@
+2003-12-23  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ArrayList.cs: Renamed private fields m_Count, m_Data and m_StateChanges to
+	_size, _items and _version, to make it compatible with MS.NET (needed for
+	remoting interoperability). This fixes bug #52438.
+
 2003-12-01  Dick Porter  <dick@ximian.com>
 
 	* CaseInsensitiveComparer.cs: Construct the default comparers when
