@@ -1,3 +1,8 @@
+2005-02-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FormsAuthentication.cs: make the string to be stored in a config.
+	file uppercase... See bug #72557.
+
 2005-02-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FormsAuthentication.cs: fixed typo when getting the hash for the 

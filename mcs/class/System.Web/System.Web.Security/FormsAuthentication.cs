@@ -222,7 +222,7 @@ namespace System.Web.Security
 		{
 			StringBuilder result = new StringBuilder (bytes.Length * 2);
 			foreach (byte b in bytes)
-				result.AppendFormat ("{0:x2}", (int) b);
+				result.AppendFormat ("{0:X2}", (int) b);
 
 			return result.ToString ();
 		}
