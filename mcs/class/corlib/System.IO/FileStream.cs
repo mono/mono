@@ -58,7 +58,7 @@ namespace System.IO
 			this.owner = ownsHandle;
 			this.async = isAsync;
 
-			if (isAsync)
+			if (isAsync && MonoIO.SupportsAsync)
 				ThreadPool.BindHandle (handle);
 
 			InitBuffer (bufferSize, noBuffering);
@@ -138,7 +138,8 @@ namespace System.IO
 
 			MonoIOError error;
 
-			this.handle = MonoIO.Open (name, mode, access, share, isAsync, out error);
+			bool openAsync = (isAsync && MonoIO.SupportsAsync);
+			this.handle = MonoIO.Open (name, mode, access, share, openAsync, out error);
 			if (handle == MonoIO.InvalidHandle) {
 				throw MonoIO.GetException (name, error);
 			}
@@ -151,7 +152,7 @@ namespace System.IO
 			if (MonoIO.GetFileType (handle, out error) == MonoFileType.Disk) {
 				this.canseek = true;
 				this.async = isAsync;
-				if (isAsync)
+				if (openAsync)
 					ThreadPool.BindHandle (handle);
 			} else {
 				this.canseek = false;
@@ -848,12 +849,9 @@ namespace System.IO
 			MonoIOError error;
 			int amount = 0;
 
-			if (async) {
-				// DO SOMETHING!!!
-				error = 0;
-			} else {
-				amount = MonoIO.Read (handle, buf, offset, count, out error);
-			}
+			/* when async == true, if we get here we don't suport AIO or it's disabled
+			 * and we're using the threadpool */
+			amount = MonoIO.Read (handle, buf, offset, count, out error);
 			
 			/* Check for read error */
 			if(amount == -1) {

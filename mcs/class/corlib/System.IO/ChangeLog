@@ -1,3 +1,8 @@
+2004-04-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FileStream.cs: only pass the async flag set to true when opening the
+	file and AIO is supported by the underlying system. Fixes bug #56883.
+
 2004-04-12  Gert Driesen (drieseng@users.sourceforge.net)
 
 	* FileSystemInfo.cs: Implemented ISerializable, corrected COM 
