@@ -163,10 +163,6 @@ namespace Npgsql
 	  public DataTable GetSchemaTable()
 	  {
 	  	NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetSchemaTable");
-	    //throw new NotImplementedException();
-	  	
-	  	if (!CanRead())
-	  		return null; //[FIXME] Should we return null or throw an exception??
 	  	
 	  	if(_currentResultsetSchema == null)
 	  		_currentResultsetSchema = GetResultsetSchema();
