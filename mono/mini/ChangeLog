@@ -1,4 +1,9 @@
 
+Thu Apr 24 17:09:03 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: install the program with the 'mono' name and
+	the library as libmono instead of mini and libmini.
+
 Thu Apr 24 17:08:07 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* driver.c: provide the APIs for the embedding interface of the old jit.
