@@ -1,3 +1,7 @@
+2002-01-16  Andrei Zmievski <andrei@php.net>
+
+	* Boolean.cs: implemented IConvertible interface
+
 2002-01-15  Nick Drochak  <ndrochak@gol.com>
 
 	* ResolveEventArgs.cs: class should derive from EventArgs.
