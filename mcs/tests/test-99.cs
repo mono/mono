@@ -1,3 +1,7 @@
+//
+// Tests the resulting value of operator + (U x, E y)
+// as well as implicit conversions in the above operator.
+//
 using System;
 class X {
 	enum A : int {
