@@ -127,11 +127,23 @@ namespace System.Reflection.Emit {
 
 	public class ILGenerator: Object {
 		private struct LabelFixup {
-			public int size;
-			public int pos;			// the location of the fixup
-			public int label_base;	// the base address for this fixup
-			public int label_idx;
+			public int offset;    // The number of bytes between pos and the
+							      // offset of the jump
+			public int pos;	      // Where offset of the label is placed
+			public int label_idx; // The label to jump to
 		};
+		
+		struct LabelData {
+			public LabelData (int addr, int maxStack)
+			{
+				this.addr = addr;
+				this.maxStack = maxStack;
+			}
+			
+			public int addr;
+			public int maxStack; 
+		}
+		
 		static Type void_type = typeof (void);
 		#region Sync with reflection.h
 		private byte[] code;
@@ -142,18 +154,21 @@ namespace System.Reflection.Emit {
 		private ILExceptionInfo[] ex_handlers;
 		private int num_token_fixups;
 		private ILTokenInfo[] token_fixups;
-		private int[] label_to_addr;
-		private int[] label_to_max_stack;
+		#endregion
+		
+		private LabelData [] labels;
 		private int num_labels;
 		private LabelFixup[] fixups;
 		private int num_fixups;
-		#endregion
 		internal Module module;
 		internal IMonoSymbolWriter sym_writer;
 		private Stack scopes;
 		private int cur_block;
 		private Stack open_blocks;
 		private TokenGenerator token_gen;
+		
+		const int defaultFixupSize = 8;
+		const int defaultLabelsSize = 8;
 
 		internal ILGenerator (Module m, TokenGenerator token_gen, int size)
 		{
@@ -163,9 +178,6 @@ namespace System.Reflection.Emit {
 			code = new byte [size];
 			cur_stack = max_stack = 0;
 			num_fixups = num_labels = 0;
-			label_to_addr = new int [8];
-			label_to_max_stack = new int [8];
-			fixups = new LabelFixup [8];
 			token_fixups = new ILTokenInfo [8];
 			num_token_fixups = 0;
 			module = m;
@@ -372,16 +384,16 @@ namespace System.Reflection.Emit {
 		
 		public virtual Label DefineLabel ()
 		{
-			if (num_labels >= label_to_addr.Length) {
-				int[] new_l = new int [label_to_addr.Length * 2];
-				System.Array.Copy (label_to_addr, new_l, label_to_addr.Length);
-				int[] new_s = new int [label_to_addr.Length * 2];
-				System.Array.Copy (label_to_max_stack, new_s, label_to_addr.Length);
-				label_to_addr = new_l;
-				label_to_max_stack = new_s;
+			if (labels == null)
+				labels = new LabelData [defaultLabelsSize];
+			else if (num_labels >= labels.Length) {
+				LabelData [] t = new LabelData [labels.Length * 2];
+				Array.Copy (labels, t, labels.Length);
+				labels = t;
 			}
-			label_to_addr [num_labels] = -1;
-			label_to_max_stack [num_labels] = 0;
+			
+			labels [num_labels] = new LabelData (-1, 0);
+			
 			return new Label (num_labels++);
 		}
 		
@@ -477,16 +489,18 @@ namespace System.Reflection.Emit {
 			int tlen = target_len (opcode);
 			make_room (6);
 			ll_emit (opcode);
-			if (cur_stack > label_to_max_stack [label.label])
-				label_to_max_stack [label.label] = cur_stack;
-			if (num_fixups >= fixups.Length) {
+			if (cur_stack > labels [label.label].maxStack)
+				labels [label.label].maxStack = cur_stack;
+			
+			if (fixups == null)
+				fixups = new LabelFixup [defaultFixupSize]; 
+			else if (num_fixups >= fixups.Length) {
 				LabelFixup[] newf = new LabelFixup [fixups.Length + 16];
 				System.Array.Copy (fixups, newf, fixups.Length);
 				fixups = newf;
 			}
-			fixups [num_fixups].size = tlen;
+			fixups [num_fixups].offset = tlen;
 			fixups [num_fixups].pos = code_len;
-			fixups [num_fixups].label_base = code_len;
 			fixups [num_fixups].label_idx = label.label;
 			num_fixups++;
 			code_len += tlen;
@@ -501,20 +515,35 @@ namespace System.Reflection.Emit {
 			ll_emit (opcode);
 
 			for (int i = 0; i < count; ++i)
-				if (cur_stack > label_to_max_stack [labels [i].label])
-					label_to_max_stack [labels [i].label] = cur_stack;
+				if (cur_stack > this.labels [labels [i].label].maxStack)
+					this.labels [labels [i].label].maxStack = cur_stack;
 
-			int switch_base = code_len + count*4;
 			emit_int (count);
-			if (num_fixups + count >= fixups.Length) {
+			if (fixups == null)
+				fixups = new LabelFixup [defaultFixupSize + count]; 
+			else if (num_fixups + count >= fixups.Length) {
 				LabelFixup[] newf = new LabelFixup [fixups.Length + count + 16];
 				System.Array.Copy (fixups, newf, fixups.Length);
 				fixups = newf;
 			}
-			for (int i = 0; i < count; ++i) {
-				fixups [num_fixups].size = 4;
+			
+			// ECMA 335, Partition III, p94 (7-10)
+			//
+			// The switch instruction implements a jump table. The format of 
+			// the instruction is an unsigned int32 representing the number of targets N,
+			// followed by N int32 values specifying jump targets: these targets are
+			// represented as offsets (positive or negative) from the beginning of the 
+			// instruction following this switch instruction.
+			//
+			// We must make sure it gets an offset from the *end* of the last label
+			// (eg, the beginning of the instruction following this).
+			//
+			// remaining is the number of bytes from the current instruction to the
+			// instruction that will be emitted.
+			
+			for (int i = 0, remaining = count * 4; i < count; ++i, remaining -= 4) {
+				fixups [num_fixups].offset = remaining;
 				fixups [num_fixups].pos = code_len;
-				fixups [num_fixups].label_base = switch_base;
 				fixups [num_fixups].label_idx = labels [i].label;
 				num_fixups++;
 				code_len += 4;
@@ -749,11 +778,11 @@ namespace System.Reflection.Emit {
 		{
 			if (loc.label < 0 || loc.label >= num_labels)
 				throw new System.ArgumentException ("The label is not valid");
-			if (label_to_addr [loc.label] >= 0)
+			if (labels [loc.label].addr >= 0)
 				throw new System.ArgumentException ("The label was already defined");
-			label_to_addr [loc.label] = code_len;
-			if (label_to_max_stack [loc.label] > cur_stack)
-				cur_stack = label_to_max_stack [loc.label];
+			labels [loc.label].addr = code_len;
+			if (labels [loc.label].maxStack > cur_stack)
+				cur_stack = labels [loc.label].maxStack;
 		}
 
 		public virtual void MarkSequencePoint (ISymbolDocumentWriter document, int startLine,
@@ -787,15 +816,16 @@ namespace System.Reflection.Emit {
 
 		internal void label_fixup ()
 		{
-			int i;
-			for (i = 0; i < num_fixups; ++i) {
-				int diff = label_to_addr [fixups [i].label_idx] - fixups [i].label_base;
-				if (fixups [i].size == 1) {
-					code [fixups [i].pos] = (byte)((sbyte) diff - 1);
+			for (int i = 0; i < num_fixups; ++i) {
+				
+				// Diff is the offset from the end of the jump instruction to the address of the label
+				int diff = labels [fixups [i].label_idx].addr - (fixups [i].pos + fixups [i].offset);
+				if (fixups [i].offset == 1) {
+					code [fixups [i].pos] = (byte)((sbyte) diff);
 				} else {
 					int old_cl = code_len;
 					code_len = fixups [i].pos;
-					emit_int (diff - 4);
+					emit_int (diff);
 					code_len = old_cl;
 				}
 			}

@@ -1,3 +1,9 @@
+2003-12-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ILGenerator.cs: Applied patch from Ben Maurer 
+	(bmaurer@users.sourceforge.net). Allocate arrays holding label data
+	lazily and reduce their size.
+
 2003-12-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyBuilder.cs (MonoResource): New 'offset' field used by the
