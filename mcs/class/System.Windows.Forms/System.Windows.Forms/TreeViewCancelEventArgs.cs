@@ -3,43 +3,38 @@
 //
 // Author:
 //   stubbed out by Jackson Harper (jackson@latitudegeo.com)
-//
+//	Partially completed by Dennis Hayes (dennish@raytek.com)
 // (C) 2002 Ximian, Inc
 //
-
+using System.ComponentModel;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
-        //public class TreeViewCancelEventArgs : CancelEventArgs {
-
+    public class TreeViewCancelEventArgs : CancelEventArgs {
+		private TreeNode node;
+		private TreeViewaction action;
 		//
 		//  --- Public Constructors
 		//
-		//[MonoTODO]
-		//public TreeViewCancelEventArgs(TreeNode node, bool cancel, TreeViewAction action)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		public TreeViewCancelEventArgs(TreeNode node, bool cancel, TreeViewAction action) : base(cancel)
+		{
+			this.node = node;
+			this.action = action;
+		}
 		//
 		// --- Public Properties
 		//
-		//[MonoTODO]
-		//public TreeViewAction Action {
-		//	get
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public TreeNode Node {
-		//	get
-		//	{
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-	//}
+		public TreeViewAction Action {
+			get {
+				return action;
+			}
+		}
+		public TreeNode Node {
+			get {
+				return node;
+			}
+		}
+	}
 }

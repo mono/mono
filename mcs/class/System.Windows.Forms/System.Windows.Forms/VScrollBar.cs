@@ -1,16 +1,16 @@
-////
-//// System.Windows.Forms.StructFormat.cs
-////
-//// Author:
-////   John Rebbeck <john@rebent.com>
-//// (C) 2002 Ximian, Inc.  http://www.ximian.com
-////
-//using System;
-//using System.Drawing;
 //
-//namespace System.Windows.Forms {
+// System.Windows.Forms.StructFormat.cs
 //
-//	public class VScrollBar : ScrollBar {
+// Author:
+//   John Rebbeck <john@rebent.com>
+// (C) 2002 Ximian, Inc.  http://www.ximian.com
+//
+using System;
+using System.Drawing;
+
+namespace System.Windows.Forms {
+
+	public class VScrollBar : ScrollBar {
 //
 //		// --- Properties ---
 //		[MonoTODO]
@@ -38,5 +38,5 @@
 //		{
 //			throw new NotImplementedException();
 //		}
-//	}
-//}
+	}
+}

@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class TreeView : Control {
+    public class TreeView : Control {
 
 		//
 		//  --- Public Constructors
@@ -480,5 +480,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	//}
+	}
 }

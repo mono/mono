@@ -13,8 +13,8 @@ namespace System.Windows.Forms {
 	//	This is only a template.  Nothing is implemented yet.
 	//
 	// </summary>
-
-        //public class ToolBarButton : Component {
+using System.ComponentModel;
+    public class ToolBarButton : Component {
 
 		//
 		//  --- Public Constructors
@@ -34,125 +34,103 @@ namespace System.Windows.Forms {
 		//
 		//[MonoTODO]
 		//public Menu DropDownMenu {
-		//	get
-		//	{
+		//	get {
 		//		throw new NotImplementedException ();
 		//	}
-		//	set
-		//	{
+		//	set {
 		//		throw new NotImplementedException ();
 		//	}	
 		//}
 		//[MonoTODO]
 		//public bool Enabled {
-		//	get
-		//	{
+		//	get {
 		//		throw new NotImplementedException ();
 		//	}
-		//	set
-		//	{
+		//	set {
 		//		throw new NotImplementedException ();
 		//	}	
 		//}
 		//[MonoTODO]
 		//public int ImageIndex {
-		//	get
-		//	{
+		//	get {
 		//		throw new NotImplementedException ();
 		//	}
-		//	set
-		//	{
+		//	set {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
 		//[MonoTODO]
 		//public ToolBar Parent {
-		//	get
-		//	{
+		//	get {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
 		//[MonoTODO]
 		//public bool PartialPush {
-		//	get
-		//	{
+		//	get {
 		//		throw new NotImplementedException ();
 		//	}
-		//	set
-		//	{
+		//	set {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
 		//[MonoTODO]
 		//public bool Pushed {
-		//	get
-		//	{
+		//	get {
 		//		throw new NotImplementedException ();
 		//	}
-		//	set
-		//	{
+		//	set {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
 		//[MonoTODO]
 		//public Rectangle Rectangle {
-		//	get
-		//	{
+		//	get {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
 		//[MonoTODO]
 		//public ToolBarButtonStyle Style {
-		//	get
-		//	{
+		//	get {
 		//		throw new NotImplementedException ();
 		//	}
-		//	set
-		//	{
+		//	set {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
 		//[MonoTODO]
 		//public object Tag {
-		//	get
-		//	{
+		//	get {
 		//		throw new NotImplementedException ();
 		//	}
-		//	set
-		//	{
+		//	set {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
 		//[MonoTODO]
 		//public string Text {
-		//	get
-		//	{
+		//	get {
 		//		throw new NotImplementedException ();
 		//	}
-		//	set
-		//	{
+		//	set {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
 		//[MonoTODO]
 		//public string ToolTipText {
-		//	get
-		//	{
+		//	get {
 		//		throw new NotImplementedException ();
 		//	}
-		//	set
-		//	{
+		//	set {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
 		//[MonoTODO]
 		//public bool Visible {
-		//	get
-		//	{
+		//	get {
 		//		throw new NotImplementedException ();
 		//	}
-		//	set
-		//	{
+		//	set {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
@@ -160,17 +138,15 @@ namespace System.Windows.Forms {
 		// --- Public Methods
 		//
 		//[MonoTODO]
-		//public override string ToString()
-		//{
+		//public override string ToString() {
 		//	throw new NotImplementedException ();
 		//}
 		//
 		// --- Protected Methods
 		//
 		//[MonoTODO]
-		//protected override void Dispose(bool disposing)
-		//{
+		//protected override void Dispose(bool disposing) {
 		//	throw new NotImplementedException ();
 		//}
-	//}
+	}
 }

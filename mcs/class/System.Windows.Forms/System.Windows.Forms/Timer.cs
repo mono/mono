@@ -13,8 +13,8 @@ namespace System.Windows.Forms {
 	//	This is only a template.  Nothing is implemented yet.
 	//
 	// </summary>
-
-        //public class Timer : Component {
+using System.ComponentModel;
+    public class Timer : Component {
 
 		//
 		//  --- Public Constructors
@@ -34,23 +34,19 @@ namespace System.Windows.Forms {
 		//
 		//[MonoTODO]
 		//public virtual bool Enabled {
-		//	get
-		//	{
+		//	get {
 		//		throw new NotImplementedException ();
 		//	}
-		//	set
-		//	{
+		//	set {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
 		//[MonoTODO]
 		//public int Interval {
-		//	get
-		//	{
+		//	get {
 		//		throw new NotImplementedException ();
 		//	}
-		//	set
-		//	{
+		//	set {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
@@ -58,18 +54,15 @@ namespace System.Windows.Forms {
 		// --- Public Methods
 		//
 		//[MonoTODO]
-		//public void Start()
-		//{
+		//public void Start() {
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public void Stop()
-		//{
+		//public void Stop() {
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public override string ToString()
-		//{
+		//public override string ToString() {
 		//	throw new NotImplementedException ();
 		//}
 		//
@@ -81,14 +74,12 @@ namespace System.Windows.Forms {
 		// --- Protected Methods
 		//
 		//[MonoTODO]
-		//protected override void Dispose(bool disposing)
-		//{
+		//protected override void Dispose(bool disposing) {
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//protected virtual void OnTick(EventArgs e)
-		//{
+		//protected virtual void OnTick(EventArgs e) {
 		//	throw new NotImplementedException ();
 		//}
-	//}
+	}
 }

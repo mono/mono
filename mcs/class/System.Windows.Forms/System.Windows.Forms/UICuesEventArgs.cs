@@ -8,8 +8,6 @@
 //
 using System;
 
-
-
 namespace Sytem.Windows.Forms
 {
 	// <summary>
@@ -23,22 +21,23 @@ namespace Sytem.Windows.Forms
 	public class UICuesEventArgs : EventArgs
 	{
 //		// Specifies the state of the user interface
-//		public enum UICues {
-//			Changed,		// The state of the focus cues and keyboard cues has changed. 
-//			ChangeFocus,	// The state of the focus cues has changed. 
-//			ChangeKeyboard,	// The state of the keyboard cues has changed. 
-//			None,			// No change was made.
-//			ShowFocus,		// Focus rectangles are displayed after the change.
-//			ShowKeyboard,	// Keyboard cues are underlined after the change. 
-//			Shown			// Focus rectangles are displayed and keyboard cues are underlined 
-//							// after the change. 
-//		};
-//
+		public enum UICues {
+			// FIXME add real enums values
+			Changed,		// The state of the focus cues and keyboard cues has changed. 
+			ChangeFocus,	// The state of the focus cues has changed. 
+			ChangeKeyboard,	// The state of the keyboard cues has changed. 
+			None,			// No change was made.
+			ShowFocus,		// Focus rectangles are displayed after the change.
+			ShowKeyboard,	// Keyboard cues are underlined after the change. 
+			Shown			// Focus rectangles are displayed and keyboard cues are underlined 
+							// after the change. 
+		};
+		UICues uicues;
 //		/// --- Constructor ---
-//		public UICuesEventArgs(UICues uicues) {
-//			throw new NotImplementedException ();
-//		}
-//
+		public UICuesEventArgs(UICues uicues) {
+			this.uicues = uicues;
+		}
+
 //		/// --- Destructor ---
 //		~UICuesEventArgs() {
 //			throw new NotImplementedException ();

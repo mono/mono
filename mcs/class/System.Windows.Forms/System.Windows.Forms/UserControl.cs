@@ -1,10 +1,10 @@
-//using System;
-//using System.Drawing;
-//
-//namespace System.Windows.Forms {
-//
-//	public class UserControl {
-//
+using System;
+using System.Drawing;
+
+namespace System.Windows.Forms {
+
+	public class UserControl {
+
 //		// --- Properties ---
 //		[MonoTODO]
 //		protected override Size DefaultSize {
@@ -54,5 +54,5 @@
 //		// --- Events ---
 //		[MonoTODO]
 //		public event EventHandler Load;
-//	}
-//}
+	}
+}

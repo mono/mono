@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class TreeViewImageIndexConverter : ImageIndexConverter {
+    public class TreeViewImageIndexConverter : ImageIndexConverter {
 
 		//
 		//  --- Public Constructors
@@ -34,5 +34,5 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-	//}
+	}
 }

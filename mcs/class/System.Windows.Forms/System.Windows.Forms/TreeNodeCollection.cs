@@ -14,33 +14,29 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class TreeNodeCollection : IList, ICollection, IEnumerable {
+    public class TreeNodeCollection : IList, ICollection, IEnumerable {
 
 		//
 		//  --- Public Properties
 		//
 		//[MonoTODO]
 		//public int Count {
-		//	get
-		//	{
+		//	get {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
 		//[MonoTODO]
 		//public bool IsReadOnly {
-		//	get
-		//	{
+		//	get {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
 		//[MonoTODO]
 		//public virtual TreeNode this[int index] {
-		//	get
-		//	{
+		//	get	{
 		//		throw new NotImplementedException ();
 		//	}
-		//	set
-		//	{
+		//	set {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
@@ -48,59 +44,48 @@ namespace System.Windows.Forms {
 		// --- Public Methods
 		//
 		//[MonoTODO]
-		//public virtual TreeNode Add(string text)
-		//{
+		//public virtual TreeNode Add(string text) {
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public virtual int Add(TreeNode node)
-		//{
+		//public virtual int Add(TreeNode node) {
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public virtual void AddRange(TreeNode[] nodes)
-		//{
+		//public virtual void AddRange(TreeNode[] nodes) {
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public virtual void Clear()
-		//{
+		//public virtual void Clear() {
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public bool Contains(TreeNode node)
-		//{
+		//public bool Contains(TreeNode node) {
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public void CopyTo(Array dest, int index)
-		//{
+		//public void CopyTo(Array dest, int index) {
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public IEnumerator GetEnumerator()
-		//{
+		//public IEnumerator GetEnumerator() {
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public int IndexOf(TreeNode node)
-		//{
+		//public int IndexOf(TreeNode node) {
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public virtual void Insert(int index, TreeNode node)
-		//{
+		//public virtual void Insert(int index, TreeNode node) {
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public void Remove(TreeNode node)
-		//{
+		//public void Remove(TreeNode node) {
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public virtual void RemoveAt(int index)
-		//{
+		//public virtual void RemoveAt(int index) {
 		//	throw new NotImplementedException ();
 		//}
-	//}
+	}
 }

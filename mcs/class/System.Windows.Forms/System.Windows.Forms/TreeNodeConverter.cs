@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class TreeNodeConverter : TypeConverter {
+    public class TreeNodeConverter : TypeConverter {
 
 		//
 		//  --- Public Constructors
@@ -37,5 +37,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	//}
+	}
 }

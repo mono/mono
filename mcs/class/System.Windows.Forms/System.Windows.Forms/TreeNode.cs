@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class TreeNode : MarshalByRefObject, ICloneable {
+    public class TreeNode : MarshalByRefObject, ICloneable {
 
 		//
 		//  --- Public Constructors
@@ -311,5 +311,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	//}
+	}
 }
