@@ -1,5 +1,11 @@
 2004-03-15  Miguel de Icaza  <miguel@ximian.com>
 
+	* decl.cs (DefineTypeAndParents): New helper method to define a
+	type's containers before the type itself is defined;  This is a
+	bug exposed by the recent changes to Windows.Forms when an
+	implemented interface was defined inside a class that had not been
+	built yet.   
+
 	* modifiers.cs (MethodAttr): All methods in C# are HideBySig.
 
 	(Check): Loop correctly to report errors modifiers
