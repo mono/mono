@@ -1,5 +1,9 @@
 2003-11-25  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs: Make TypeOfVoid derive from TypeOf, so code in
+	attributes for example can not tell the difference between these.
+	The difference was only a syntax feature of the language. 
+
 	* attribute.cs: Apply attributes to delegates.
 
 	* delegate.cs: Call the apply attributes method.

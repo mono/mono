@@ -6426,13 +6426,13 @@ namespace Mono.CSharp {
 			ec.ig.Emit (OpCodes.Ldarg_0);
 		}
 	}
-	
+
 	/// <summary>
 	///   Implements the typeof operator
 	/// </summary>
 	public class TypeOf : Expression {
 		public readonly Expression QueriedType;
-		Type typearg;
+		protected Type typearg;
 		
 		public TypeOf (Expression queried_type, Location l)
 		{
@@ -6472,8 +6472,8 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Implements the `typeof (void)' operator
 	/// </summary>
-	public class TypeOfVoid : Expression {
-		public TypeOfVoid (Location l)
+	public class TypeOfVoid : TypeOf {
+		public TypeOfVoid (Location l) : base (null, l)
 		{
 			loc = l;
 		}
@@ -6481,18 +6481,9 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.type_type;
+			typearg = TypeManager.void_type;
 			eclass = ExprClass.Type;
 			return this;
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			ec.ig.Emit (OpCodes.Ldtoken, TypeManager.void_type);
-			ec.ig.Emit (OpCodes.Call, TypeManager.system_type_get_type_from_handle);
-		}
-
-		public Type TypeArg { 
-			get { return TypeManager.void_type; }
 		}
 	}
 
