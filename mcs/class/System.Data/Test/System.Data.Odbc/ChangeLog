@@ -1,3 +1,9 @@
+2004-06-23  Sureshkumar T <TSureshkumar@novell.com>
+	* Added test to check whether the OdbcConnection.Close method closes
+	  all the handles.
+	* New files:
+		OdbcConnectionTest.cs 	- test suite for OdbcConnection class.
+
 2004-06-16  Sureshkumar T <TSureshkumar@novell.com>
 	* Added Odbc tests using MySql test database
 	* New files:
