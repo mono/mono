@@ -1,3 +1,7 @@
+2004-12-14  Raja R Harinath  <rharinath@novell.com>
+
+	* MethodDef.cs (CreateSignature): Add a space in generated signature.
+
 2004-12-02  Jackson Harper  <jackson@ximian.com>
 
 	* ExternTypeRefInst.cs: When converting to arrays we loose our valuetypedness.

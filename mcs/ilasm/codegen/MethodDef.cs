@@ -545,6 +545,7 @@ namespace Mono.ILASM {
                         StringBuilder builder = new StringBuilder ();
 
 			builder.Append (RetType.FullName);
+			builder.Append (" ");
                         builder.Append (name);
                         builder.Append ('(');
 
