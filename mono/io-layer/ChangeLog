@@ -1,5 +1,9 @@
 2004-04-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* io.[ch]: implemented GetLogicalDriveStrings.
+
+2004-04-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* io.c:
 	* sockets.c: use the field name from configure when accessing sigval
 	pointer field. Makes this work on the Mac.

@@ -1,3 +1,8 @@
+2004-04-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: fix return value of get_global_assembly_cache.  Implemented
+	Environment.GetLogicalDrives.
+
 2004-04-28  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* rand.c: try and talk to egd or prngd
