@@ -1,3 +1,8 @@
+2004-02-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* liveness.c: Make all variables uses in exception clauses volatile, to
+	prevent them from being allocated to registers. Fixes #42136.
+
 2004-02-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-x86.c (mono_arch_regalloc_cost): Revert this change since it
