@@ -8,7 +8,7 @@
 //
 
 using System;
-// using Microsoft.Web.Services.Configuration;
+using Microsoft.Web.Services.Configuration;
 
 namespace Microsoft.Web.Services {
 
