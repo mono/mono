@@ -2,6 +2,7 @@
 // System.Runtime.Remoting.Lifetime.LifetimeServices.cs
 //
 // Author: Duncan Mak  (duncan@ximian.com)
+//         Lluis Sanchez Gual (lluis@ideary.com)
 //
 // 2002 (C) Copyright. Ximian, Inc.
 //
@@ -13,54 +14,61 @@ namespace System.Runtime.Remoting.Lifetime {
 	//LAMESPEC: MS docs don't say that this class is sealed.
 	public sealed class LifetimeServices
 	{
-		[MonoTODO]
+		private static TimeSpan _leaseManagerPollTime;
+		private static TimeSpan _leaseTime;
+		private static TimeSpan _renewOnCallTime;
+		private static TimeSpan _sponsorshipTimeout;
+
 		public LifetimeServices ()
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static TimeSpan LeaseManagerPollTime {
 			get {
-				throw new NotImplementedException ();
+				return _leaseManagerPollTime;
 			}
 
 			set {
-				throw new NotImplementedException ();
+				_leaseManagerPollTime = value;
 			}
 		}
 
-		[MonoTODO]
 		public static TimeSpan LeaseTime {
 			get {
-				throw new NotImplementedException ();
+				return _leaseTime;
 			}
 
 			set {
-				throw new NotImplementedException ();
+				_leaseTime = value;
 			}
 		}
 
-		[MonoTODO]
 		public static TimeSpan RenewOnCallTime {
 			get {
-				throw new NotImplementedException ();
+				return _renewOnCallTime;
 			}
 			
 			set {
-				throw new NotImplementedException ();
+				_renewOnCallTime = value;
 			}
 		}
 
-		[MonoTODO]
 		public static TimeSpan SponsorshipTimeout {
 			get {
-				throw new NotImplementedException ();
+				return _sponsorshipTimeout;
 			}
 
 			set {
-				throw new NotImplementedException ();
+				_sponsorshipTimeout = value;
 			}
+		}
+
+		internal static void TrackLifetime (Identity identity)
+		{
+		}
+
+		internal static void ManageLeases ()
+		{
 		}
 	}
 }

@@ -1,3 +1,7 @@
+2003-01-29  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* LifetimeServices.cs: Implemented some basic properties.
+
 2002-12-20  Lluis Sanchez Gual <lsg@ctv.es>
 
 	* LeaseSink.cs: Added
