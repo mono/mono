@@ -37,7 +37,7 @@ namespace System.Windows.Forms {
 		}
 	
 		[MonoTODO]
-		public abstract Version GetVersionPresent(object o);
+		public abstract Version GetVersionPresent(object feature);
 
 		//
 		// --- Protected Constructors

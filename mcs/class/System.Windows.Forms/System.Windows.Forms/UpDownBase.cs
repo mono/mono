@@ -340,6 +340,9 @@ namespace System.Windows.Forms {
 	
 		/// --- Protected Methods ---
 		#region Protected Methods
+        [MonoTODO]
+		protected virtual void OnChanged(object source, EventArgs e) {
+		}
 
 		// Raises the FontChanged event
 		protected override void OnFontChanged(EventArgs e) 

@@ -35,8 +35,7 @@ namespace System.Windows.Forms {
 		
 		#region Constructors
 		[MonoTODO]
-		public DataGridColumnStyle() 
-		{
+		public DataGridColumnStyle() {
 			alignment=HorizontalAlignment.Left;
 			dataGridTableStyle=null;
 			fontHeight=-1;
@@ -45,8 +44,7 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		public DataGridColumnStyle(PropertyDescriptor prop) : this() 
-		{
+		public DataGridColumnStyle(PropertyDescriptor prop) : this() {
 			propertyDescriptor=prop;
 		}
 		#endregion
@@ -64,10 +62,13 @@ namespace System.Windows.Forms {
 		protected int FontHeight {
 			get { return fontHeight; }
 		}
-		/*
-		 * This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
-		public AccessibleObject HeaderAccessibleObject {get;}
-		*/
+
+		// This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
+		[MonoTODO]		public AccessibleObject HeaderAccessibleObject {
+			get{
+				throw new NotImplementedException ();
+			}
+		}
 		
 		public virtual string HeaderText {
 			get { return headerText; }
@@ -104,35 +105,34 @@ namespace System.Windows.Forms {
 		protected internal abstract void Abort(int rowNum);
 		
 		[MonoTODO]
-		protected void BeginUpdate() 
-		{
+		protected void BeginUpdate() {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected void CheckValidDataSource(CurrencyManager value) 
-		{
+		protected void CheckValidDataSource(CurrencyManager value) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected internal virtual void ColumnStartedEditing(Control editingControl) 
-		{
+		protected internal virtual void ColumnStartedEditing(Control editingControl) {
 			//FIXME:
 		}
 		
 		protected internal abstract bool Commit(CurrencyManager dataSource,int rowNum);
+
 		
 		[MonoTODO]
-		protected internal virtual void ConcedeFocus() 
-		{
+		protected internal virtual void ConcedeFocus() {
 			//FIXME:
 		}
 		
-		/*
-		 * This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
-		protected virtual AccessibleObject CreateHeaderAccessibleObject()
-		 */
+		//This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
+		[MonoTODO]
+		protected virtual AccessibleObject CreateHeaderAccessibleObject(){
+			throw new NotImplementedException ();
+		}
+		 
 		 
 		[MonoTODO]
 		protected internal virtual void Edit(CurrencyManager source) {
@@ -149,20 +149,17 @@ namespace System.Windows.Forms {
 			bool readOnly, string instantText, bool cellIsVisible);
 		
 		[MonoTODO]
-		protected void EndUpdate() 
-		{
+		protected void EndUpdate() {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected internal virtual void EnterNullValue() 
-		{
+		protected internal virtual void EnterNullValue() {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected internal virtual object GetColumnValueAtRow(CurrencyManager source,int rowNum) 
-		{
+		protected internal virtual object GetColumnValueAtRow(CurrencyManager source,int rowNum) {
 			throw new NotImplementedException ();
 		}
 		
@@ -176,14 +173,12 @@ namespace System.Windows.Forms {
 		 * This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
 		 */
 		[MonoTODO]
-		void IDataGridColumnStyleEditingNotificationService.ColumnStartedEditing(Control editingControl) 
-		{
+		void IDataGridColumnStyleEditingNotificationService.ColumnStartedEditing(Control editingControl) {
 			//FIXME:
 		}
 
 		[MonoTODO]
-		protected virtual void Invalidate() 
-		{
+		protected virtual void Invalidate() {
 			//FIXME:
 		}
 		
@@ -198,26 +193,22 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		public void ResetHeaderText() 
-		{
+		public void ResetHeaderText() {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected internal virtual void SetColumnValueAtRow(CurrencyManager source,int rowNum,object value) 
-		{
+		protected internal virtual void SetColumnValueAtRow(CurrencyManager source,int rowNum,object value) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected virtual void SetDataGrid(DataGrid value) 
-		{
+		protected virtual void SetDataGrid(DataGrid value) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected virtual void SetDataGridInColumn(DataGrid value) 
-		{
+		protected virtual void SetDataGridInColumn(DataGrid value) {
 			//FIXME:
 		}
 		
@@ -231,9 +222,9 @@ namespace System.Windows.Forms {
 
 		public event EventHandler AlignmentChanged;
 		
-		/* This member supports the .NET Framework infrastructure and is not intended to be used directly from your code
+		// This member supports the .NET Framework infrastructure and is not intended to be used directly from your code
 		public event EventHandler FontChanged;
-		*/
+		
 		
 		public event EventHandler HeaderTextChanged;
 		public event EventHandler MappingNameChanged;
@@ -246,8 +237,10 @@ namespace System.Windows.Forms {
 		/// sub-classes:
 		/// This type supports the .NET Framework infrastructure and is not intended to be used directly from your code.
 		///
-		/// protected class DataGridColumnStyle.CompModSwitches;
-		/// protected class DataGridColumnStyle.DataGridColumnHeaderAccessibleObject : AccessibleObject;
+		protected class CompModSwitches{
+		}
+		protected class DataGridColumnHeaderAccessibleObject : AccessibleObject{
+		}
 		
 	}
 }

@@ -16,13 +16,21 @@ namespace System.Windows.Forms {
 using System.ComponentModel;
 	public class ErrorProvider : Component, IExtenderProvider {
 		internal string dataMember;
+		ContainerControl parentControl;
 		//
 		//  --- Constructor
 		//
 		[MonoTODO]
-		public ErrorProvider()
+		public ErrorProvider(ContainerControl parentControl)
 		{
 			dataMember = "";
+			this.parentControl = parentControl;
+		}
+
+		[MonoTODO]
+		public ErrorProvider() {
+			dataMember = "";
+			this.parentControl = null;
 		}
 
 		//
@@ -139,12 +147,12 @@ using System.ComponentModel;
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public override object InitializeLifetimeService()
-		{
-			//FIXME:
-			return base.InitializeLifetimeService();
-		}
+//		[MonoTODO]
+//		public override object InitializeLifetimeService()
+//		{
+//			//FIXME:
+//			return base.InitializeLifetimeService();
+//		}
 		[MonoTODO]
 		public void SetError(Control control,string value)
 		{

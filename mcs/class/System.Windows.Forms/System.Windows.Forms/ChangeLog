@@ -1,3 +1,14 @@
+2003-09-28  Dennis Hayes <dennish@raytek.com>
+	* DataGridColumnStyle.cs
+	* DataGridTableStyle.cs
+	* DataGridTextBoxColumn.cs
+	* DateTimePicker.cs
+	* TextBox.cs
+	* DomainUpDown.cs
+	* UpDownBase.cs
+	* ErrorProvider.cs
+	* FeatureSupport.cs
+
 2003-09-27  Dennis Hayes <dennish@raytek.com>
 	* BindingsCollection.cs
 	* ControlBindingsCollection.cs

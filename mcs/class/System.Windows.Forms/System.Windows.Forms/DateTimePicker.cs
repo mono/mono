@@ -135,14 +135,14 @@ namespace System.Windows.Forms {
 			return base.IsInputKey(keyData);
 		}
 
-		protected virtual void OnCloseUp(EventArgs e) {
+		protected virtual void OnCloseUp(EventArgs eventargs) {
 			if ( CloseUp != null ) 
-				CloseUp( this, e );
+				CloseUp( this, eventargs );
 		}
 
-		protected virtual void OnDropDown(EventArgs e)	{
+		protected virtual void OnDropDown(EventArgs eventargs)	{
 			if ( DropDown != null )
-				DropDown( this, e );
+				DropDown( this, eventargs );
 		}
 
 		[MonoTODO]
@@ -165,6 +165,7 @@ namespace System.Windows.Forms {
 			base.OnSystemColorsChanged( e );
 		}
 
+		//FIXME: should be inherated
 		protected override void OnHandleCreated(EventArgs e) {
 			base.OnHandleCreated(e);
 			setControlRange( );
@@ -174,9 +175,9 @@ namespace System.Windows.Forms {
 			setCalendarFont( );
 		}
 
-		protected virtual void OnValueChanged(EventArgs e) {
+		protected virtual void OnValueChanged(EventArgs eventargs) {
 			if (ValueChanged != null) 
-				ValueChanged(this, e);
+				ValueChanged(this, eventargs);
 		}
 
 		[MonoTODO]

@@ -73,6 +73,11 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
+		protected override void OnChanged(object source, EventArgs e) {
+			base.OnChanged(source, e);
+		}
+
+		[MonoTODO]
 		protected override void OnTextBoxKeyDown(object source, KeyEventArgs e)
 		{
 			if ( ReadOnly ) {

@@ -144,13 +144,19 @@ namespace System.Windows.Forms {
 				Win32.SendMessage ( Handle, (int) EditControlMessages.EM_SETPASSWORDCHAR, PasswordChar, 0 );
 		}
 		[MonoTODO]
-		protected override void OnMouseUp(MouseEventArgs e)
+		protected override void OnMouseUp(MouseEventArgs mevent)
 		{
 			//FIXME:
-			base.OnMouseUp(e);
+			base.OnMouseUp(mevent);
 		}
 
-		protected virtual void OnTextAlignChanged(EventArgs e)
+		 [MonoTODO]
+		 protected override void OnGotFocus(EventArgs e) {
+			 //FIXME:
+			 base.OnGotFocus(e);
+		 }
+
+		 protected virtual void OnTextAlignChanged(EventArgs e)
 		{
 			if ( TextAlignChanged != null )
 				TextAlignChanged ( this, EventArgs.Empty );

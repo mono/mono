@@ -23,7 +23,7 @@ namespace System.Windows.Forms {
 
 		#region Fields
 		// This member supports the .NET Framework infrastructure and is not intended to be used directly from your code:
-		// public static DataGridTableStyle DefaultTableStyle;
+		public static DataGridTableStyle DefaultTableStyle;
 		bool allowSorting;
 		Color alternatingBackColor;
 		Color backColor;
@@ -57,7 +57,9 @@ namespace System.Windows.Forms {
 		}
 
 		// This member supports the .NET Framework infrastructure and is not intended to be used directly from your code:
-		// public DataGridTableStyle(bool isDefaultTableStyle);
+		[MonoTODO]
+		public DataGridTableStyle(bool isDefaultTableStyle){
+		}
 		
 		[MonoTODO]
 		public DataGridTableStyle(CurrencyManager listManager) : this() 
@@ -133,7 +135,14 @@ namespace System.Windows.Forms {
 		}
 		
 		// This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
-		// public Color LinkHoverColor {get; set;}
+		[MonoTODO]
+		public Color LinkHoverColor {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+			}
+		}
 		
 		public string MappingName {
 			get { return mappingName; }
@@ -179,7 +188,7 @@ namespace System.Windows.Forms {
 		
 		#region Methods
 		[MonoTODO]
-		public bool BeginEdit(DataGridColumnStyle gridColumn,int rowNumber) 
+		public virtual bool BeginEdit(DataGridColumnStyle gridColumn,int rowNumber) 
 		{
 			throw new NotImplementedException ();
 		}
@@ -204,7 +213,7 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		public bool EndEdit(DataGridColumnStyle gridColumn,int rowNumber,bool shouldAbort) 
+		public virtual bool EndEdit(DataGridColumnStyle gridColumn,int rowNumber,bool shouldAbort) 
 		{
 			throw new NotImplementedException ();
 		}
@@ -378,7 +387,8 @@ namespace System.Windows.Forms {
 		}
 		
 		/// This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
-		// public void ResetLinkHoverColor
+		public void ResetLinkHoverColor(){
+		}
 		
 		[MonoTODO]
 		public void ResetSelectionBackColor() 
@@ -435,7 +445,10 @@ namespace System.Windows.Forms {
 		}
 		
 		/// This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
-		/// protected virtual bool ShouldSerializeLinkHoverColor();
+		[MonoTODO]
+		protected virtual bool ShouldSerializeLinkHoverColor(){
+			throw new NotImplementedException ();
+		}
 		
 		[MonoTODO]
 		protected bool ShouldSerializePreferredRowHeight() 
@@ -470,7 +483,7 @@ namespace System.Windows.Forms {
 		public event EventHandler LinkColorChanged;
 		
 		/// This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
-		/// public event EventHandler LinkHoverColorChanged;
+		public event EventHandler LinkHoverColorChanged;
 		
 		public event EventHandler MappingNameChanged;
 		public event EventHandler PreferredColumnWidthChanged;
