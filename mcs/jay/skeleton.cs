@@ -29,7 +29,7 @@
 .      @param expected vector of acceptable tokens, if available.
 .    */
 .  public void yyerror (string message, string[] expected) {
-.    if ((expected != null) && (expected.Length  > 0)) {
+.    if ((yacc_verbose_flag > 0) && (expected != null) && (expected.Length  > 0)) {
 .      ErrorOutput.Write (message+", expecting");
 .      for (int n = 0; n < expected.Length; ++ n)
 .        ErrorOutput.Write (" "+expected[n]);

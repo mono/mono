@@ -72,7 +72,7 @@ namespace Mono.CSharp
 		///
 		Stack switch_stack;
 
-		public bool yacc_verbose_flag;
+		static public int yacc_verbose_flag;
 
 		// Name of the file we are parsing
 		public string name;
@@ -88,6 +88,7 @@ namespace Mono.CSharp
 		
 		/// assembly and module attribute definition is enabled
 		bool global_attrs_enabled = true;
+
 %}
 
 %token EOF
@@ -4450,7 +4451,7 @@ public CSharpParser (SeekableStreamReader reader, SourceFile file, ArrayList def
 public void parse ()
 {
 	try {
-		if (yacc_verbose_flag)
+		if (yacc_verbose_flag > 1)
 			yyparse (lexer, new yydebug.yyDebugSimple ());
 		else
 			yyparse (lexer);
@@ -4462,7 +4463,7 @@ public void parse ()
 		//
 		// Console.WriteLine (e);
 		Report.Error (-25, lexer.Location, "Parsing error");
-		if (Driver.parser_verbose)
+		if (yacc_verbose_flag > 0)
 			Console.WriteLine (e);
 	}
 }

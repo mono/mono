@@ -1,4 +1,9 @@
+2004-11-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* skeleton.cs: use yacc_verbose_flag to control verbosity.
+
 2004-06-10  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	
 	* skeleton.cs: oops some uses of changed classes/interfaces also need to become internal.
 
 2004-06-10  Atsushi Enomoto <atsushi@ximian.com>

@@ -176,7 +176,6 @@ namespace Mono.CSharp
 			SeekableStreamReader reader = new SeekableStreamReader (input, encoding, using_default_encoder);
 				
 			parser = new CSharpParser (reader, file, defines);
-			parser.yacc_verbose_flag = yacc_verbose;
 			try {
 				parser.parse ();
 			} catch (Exception ex) {
@@ -656,12 +655,8 @@ namespace Mono.CSharp
 		static bool UnixParseOption (string arg, ref string [] args, ref int i)
 		{
 			switch (arg){
-			case "-vv":
-				parser_verbose = true;
-				return true;
-				
 			case "-v":
-				yacc_verbose = true;
+				CSharpParser.yacc_verbose_flag++;
 				return true;
 
 			case "--version":

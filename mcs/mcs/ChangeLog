@@ -1,7 +1,12 @@
+2004-11-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Use verbosity accordingly. 
+
 2004-11-24  Marek Safar  <marek.safar@seznam.cz>
 
 	* expression.cs (Unary.ResolveOperator): Do not report warning;
 	AddressOf reads from variable.
+	
 	(LocalVariableReferences.DoResolveBase): Improved my previous fix.
 
 2004-11-24  Marek Safar  <marek.safar@seznam.cz>
