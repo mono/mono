@@ -15,6 +15,12 @@ using System.Data;
 namespace Mono.Data.SqlExpressions {
 
 	internal class Parser {
+		static Parser ()
+		{
+			if (Environment.GetEnvironmentVariable ("MONO_DEBUG_SQLEXPRESSIONS") != null)
+				yacc_verbose_flag = 2;
+		}
+
 		bool cacheAggregationResults = false;
 		DataRow[] aggregationRows = null;
 		static int yacc_verbose_flag;
@@ -37,7 +43,11 @@ namespace Mono.Data.SqlExpressions {
 		{
 			try {
 				Tokenizer tokenizer = new Tokenizer (sqlExpr);
-				return (IExpression) yyparse (tokenizer);
+				if (yacc_verbose_flag > 1)
+					return (IExpression) yyparse (tokenizer,
+						new yydebug.yyDebugSimple ());
+				else
+					return (IExpression) yyparse (tokenizer);
 			} catch (yyParser.yyException e) {
 				throw new SyntaxErrorException (String.Format ("Expression '{0}' is invalid.", sqlExpr));
 			}
@@ -245,7 +255,9 @@ CalcFunction
 	}
 	| SUBSTRING PAROPEN Expr COMMA NumberLiteral COMMA NumberLiteral PARCLOSE
 	{
-		$$ = new SubstringFunction ((IExpression)$3, (int)$5, (int)$7);
+		long arg1 = (long) $5;
+		long arg2 = (long) $7;
+		$$ = new SubstringFunction ((IExpression)$3, (int) arg1, (int) arg2);
 	}
 	| ISNULL PAROPEN ColumnValue COMMA Expr PARCLOSE
 	{

@@ -1,3 +1,10 @@
+2005-01-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Parser.jay : let's use debug flag when MONO_DEBUG_SQLEXPRESSIONS
+	  environment variable is set.
+	  Fixed substring() function. C# cast does not allow implicit
+	  conversion from object.
+
 2004-07-12 Umadevi S   <sumadevi@novell.com>
         * Tokenizer.cs - read an Int64 from the text instead of Int32. Resolves
 bug 61203
