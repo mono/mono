@@ -1,3 +1,10 @@
+2005-02-12  Geoff Norton  <gnorton@customerdna.com>
+
+	* ResourceReader.cs: If a resource type index is -1 return null 
+	instead of throwing an exception
+	* ResourceWriter.cs: If an object is null; encode it with type index
+	-1 instead of throwing an exception.
+	
 2005-02-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Win32Resources.cs: Fix warning.

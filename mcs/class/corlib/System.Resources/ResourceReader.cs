@@ -241,6 +241,8 @@ namespace System.Resources
 				long data_offset=reader.ReadInt32();
 				reader.BaseStream.Seek(data_offset+dataSectionOffset, SeekOrigin.Begin);
 				int type_index=Read7BitEncodedInt();
+				if (type_index == -1)
+					return null;
 				Type type=types[type_index];
 				
 				if (type==typeof(Byte)) {

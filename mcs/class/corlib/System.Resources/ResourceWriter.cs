@@ -87,9 +87,6 @@ namespace System.Resources
 			if (name == null) {
 				throw new ArgumentNullException ("name is null");
 			}
-			if (value == null) {
-				throw new ArgumentNullException ("value is null");
-			}
 			if(resources==null) {
 				throw new InvalidOperationException ("ResourceWriter has been closed");
 			}
@@ -206,13 +203,6 @@ namespace System.Resources
 			
 			IDictionaryEnumerator res_enum=resources.GetEnumerator();
 			while(res_enum.MoveNext()) {
-				Type type=res_enum.Value.GetType();
-
-				/* Keep a list of unique types */
-				if(!types.Contains(type)) {
-					types.Add(type);
-				}
-
 				/* Hash the name */
 				hashes[count]=GetHash((string)res_enum.Key);
 
@@ -222,6 +212,19 @@ namespace System.Resources
 				/* Write the name section */
 				res_name.Write((string)res_enum.Key);
 				res_name.Write((int)res_data.BaseStream.Position);
+
+				if (res_enum.Value == null) {
+					Write7BitEncodedInt (res_data, -1);
+					count++;
+					continue;
+				}
+				
+				Type type=res_enum.Value.GetType();
+
+				/* Keep a list of unique types */
+				if(!types.Contains(type)) {
+					types.Add(type);
+				}
 
 				/* Write the data section */
 				Write7BitEncodedInt(res_data, types.IndexOf(type));
