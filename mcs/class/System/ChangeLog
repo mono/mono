@@ -1,3 +1,7 @@
+2003-11-18  Todd Berman  <tberman@gentoo.org>
+
+	* System.dll.sources: Added IOrderedDictionary.cs
+
 2003-11-12  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* System.dll.sources: Added some new class files

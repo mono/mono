@@ -121,6 +121,7 @@ System.CodeDom/MemberAttributes.cs
 System.Collections.Specialized/BitVector32.cs
 System.Collections.Specialized/CollectionsUtil.cs
 System.Collections.Specialized/HybridDictionary.cs
+System.Collections.Specialized/IOrderedDictionary.cs
 System.Collections.Specialized/ListDictionary.cs
 System.Collections.Specialized/NameObjectCollectionBase.cs
 System.Collections.Specialized/NameValueCollection.cs
