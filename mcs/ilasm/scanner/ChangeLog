@@ -1,3 +1,7 @@
+2003-07-15 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILTables.cs: Add tokens for generic constraints.
+	
 2003-06-14 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILTables.cs: Add imagebase keyword.
