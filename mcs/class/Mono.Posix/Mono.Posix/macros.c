@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include <pwd.h>
 #include <grp.h>
+#include <errno.h>
+#include <dirent.h>
 
 int wifexited (int status)
 {
@@ -87,3 +89,8 @@ char *helper_Mono_Posix_GetGroupName(int gid) {
 	return p->gr_name;
 }
 
+char *helper_Mono_Posix_readdir(DIR *dir) {
+	struct dirent* e = readdir(dir);
+	if (e == NULL) return NULL;
+	return e->d_name;
+}

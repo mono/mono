@@ -437,6 +437,31 @@ namespace Mono.Posix {
 		public static int lstat(string filename, out Stat stat) {
 			return stat2(filename, true, out stat);
 		}
+		
+		[DllImport ("libc")]
+		private static extern int readlink(string path, byte[] buffer, int buflen);
+
+		public static string readlink(string path) {
+			byte[] buf = new byte[512];
+			int ret = readlink(path, buf, buf.Length);
+			if (ret == -1) return null;
+			char[] cbuf = new char[512];
+			int chars = System.Text.Encoding.Default.GetChars(buf, 0, ret, cbuf, 0);
+			return new String(cbuf, 0, chars);
+		}
+
+		[DllImport ("libc")]
+		public static extern string strerror(int errnum);
+
+		[DllImport ("libc")]
+		public static extern IntPtr opendir(string path);
+
+		[DllImport ("libc")]
+		public static extern int closedir(IntPtr dir);
+		
+		[DllImport ("MonoPosixHelper", EntryPoint="helper_Mono_Posix_readdir")]
+		public static extern string readdir(IntPtr dir);
+		
 	}
 	
 	public enum StatModeMasks {
@@ -484,7 +509,11 @@ namespace Mono.Posix {
 		public readonly DateTime MTime;
 		public readonly DateTime CTime;
 		
-		public static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1).ToLocalTime();	
+		public static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1).ToLocalTime();
+		
+		public static DateTime UnixToDateTime(long unix) {
+			return UnixEpoch.Add(TimeSpan.FromSeconds(unix));
+		}
 
 		internal Stat(
 			int device, int inode, int mode,
@@ -502,15 +531,15 @@ namespace Mono.Posix {
 			BlockSize = blksize;
 			Blocks = blocks;
 			if (atime != 0)
-				ATime = UnixEpoch.Add(TimeSpan.FromSeconds(atime));
+				ATime = UnixToDateTime(atime);
 			else
 				ATime = new DateTime();
 			if (mtime != 0)
-				MTime = UnixEpoch.Add(TimeSpan.FromSeconds(mtime));
+				MTime = UnixToDateTime(mtime);
 			else
 				MTime = new DateTime();
 			if (ctime != 0)
-				CTime = UnixEpoch.Add(TimeSpan.FromSeconds(ctime));
+				CTime = UnixToDateTime(ctime);
 			else
 				CTime = new DateTime();
 		}

@@ -1,3 +1,8 @@
+2004-03-30  Joshua Tauberer <tauberer@for.net>
+
+	* Added readlink, strerror, opendir, readdir, closedir
+	* Added Mono.Posix.Stat.UnixToDateTime(long unixtime) --> DateTime
+
 2004-03-11  Joshua Tauberer <tauberer@for.net>
 
 	* Syscall.cs: Removed argument to getgid that shouldn't be there.
