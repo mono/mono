@@ -427,7 +427,8 @@ namespace System.Net.Sockets
 		private extern static void Select_internal(ref Socket[] read,
 							   ref Socket[] write,
 							   ref Socket[] err,
-							   int timeout);
+							   int timeout,
+							   out int error);
 
 		public static void Select(IList read_list, IList write_list,
 					  IList err_list, int time_us) {
@@ -487,8 +488,14 @@ namespace System.Net.Sockets
 				}
 			}
 
+			int error;
+			
 			Select_internal(ref read_arr, ref write_arr,
-					ref err_arr, time_us);
+					ref err_arr, time_us, out error);
+
+			if(error != 0) {
+				throw new SocketException (error);
+			}
 
 			if(read_list!=null) {
 				read_list.Clear();
@@ -552,7 +559,8 @@ namespace System.Net.Sockets
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern IntPtr Socket_internal(AddressFamily family,
 						      SocketType type,
-						      ProtocolType proto);
+						      ProtocolType proto,
+						      out int error);
 		
 		public Socket(AddressFamily family, SocketType type,
 			      ProtocolType proto) {
@@ -560,7 +568,12 @@ namespace System.Net.Sockets
 			socket_type=type;
 			protocol_type=proto;
 			
-			socket=Socket_internal(family, type, proto);
+			int error;
+			
+			socket=Socket_internal(family, type, proto, out error);
+			if (error != 0) {
+				throw new SocketException (error);
+			}
 		}
 
 		public AddressFamily AddressFamily {
@@ -571,27 +584,44 @@ namespace System.Net.Sockets
 
 		// Returns the amount of data waiting to be read on socket
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static int Available_internal(IntPtr socket);
+		private extern static int Available_internal(IntPtr socket,
+							     out int error);
 		
 		public int Available {
 			get {
 				if (disposed && closed)
 					throw new ObjectDisposedException (GetType ().ToString ());
 
-				return(Available_internal(socket));
+				int ret, error;
+				
+				ret = Available_internal(socket, out error);
+
+				if (error != 0) {
+					throw new SocketException (error);
+				}
+
+				return(ret);
 			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Blocking_internal(IntPtr socket,
-							    bool block);
+							     bool block,
+							     out int error);
 
 		public bool Blocking {
 			get {
 				return(blocking);
 			}
 			set {
-				Blocking_internal(socket, value);
+				int error;
+				
+				Blocking_internal(socket, value, out error);
+
+				if (error != 0) {
+					throw new SocketException (error);
+				}
+				
 				blocking=value;
 			}
 		}
@@ -610,7 +640,7 @@ namespace System.Net.Sockets
 
 		// Returns the local endpoint details in addr and port
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static SocketAddress LocalEndPoint_internal(IntPtr socket);
+		private extern static SocketAddress LocalEndPoint_internal(IntPtr socket, out int error);
 
 		[MonoTODO("Support non-IP endpoints")]
 		public EndPoint LocalEndPoint {
@@ -619,8 +649,13 @@ namespace System.Net.Sockets
 					throw new ObjectDisposedException (GetType ().ToString ());
 
 				SocketAddress sa;
+				int error;
 				
-				sa=LocalEndPoint_internal(socket);
+				sa=LocalEndPoint_internal(socket, out error);
+
+				if (error != 0) {
+					throw new SocketException (error);
+				}
 
 				if(sa.Family==AddressFamily.InterNetwork || sa.Family==AddressFamily.InterNetworkV6) {
 					// Stupidly, EndPoint.Create() is an
@@ -643,7 +678,7 @@ namespace System.Net.Sockets
 
 		// Returns the remote endpoint details in addr and port
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static SocketAddress RemoteEndPoint_internal(IntPtr socket);
+		private extern static SocketAddress RemoteEndPoint_internal(IntPtr socket, out int error);
 
 		[MonoTODO("Support non-IP endpoints")]
 		public EndPoint RemoteEndPoint {
@@ -652,8 +687,13 @@ namespace System.Net.Sockets
 					throw new ObjectDisposedException (GetType ().ToString ());
 
 				SocketAddress sa;
+				int error;
 				
-				sa=RemoteEndPoint_internal(socket);
+				sa=RemoteEndPoint_internal(socket, out error);
+
+				if (error != 0) {
+					throw new SocketException (error);
+				}
 
 				if(sa.Family==AddressFamily.InterNetwork || sa.Family==AddressFamily.InterNetworkV6 ) {
 					// Stupidly, EndPoint.Create() is an
@@ -740,13 +780,19 @@ namespace System.Net.Sockets
 
 		// Creates a new system socket, returning the handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static IntPtr Accept_internal(IntPtr sock);
+		private extern static IntPtr Accept_internal(IntPtr sock,
+							     out int error);
 		
 		public Socket Accept() {
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			IntPtr sock=Accept_internal(socket);
+			int error;
+			IntPtr sock=Accept_internal(socket, out error);
+
+			if (error != 0) {
+				throw new SocketException (error);
+			}
 			
 			return(new Socket(this.AddressFamily, this.SocketType,
 					  this.ProtocolType, sock));
@@ -915,7 +961,8 @@ namespace System.Net.Sockets
 		// Creates a new system socket, returning the handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Bind_internal(IntPtr sock,
-							 SocketAddress sa);
+							 SocketAddress sa,
+							 out int error);
 
 		public void Bind(EndPoint local_end) {
 			if (disposed && closed)
@@ -925,12 +972,20 @@ namespace System.Net.Sockets
 				throw new ArgumentNullException("local_end");
 			}
 			
-			Bind_internal(socket, local_end.Serialize());
+			int error;
+			
+			Bind_internal(socket, local_end.Serialize(),
+				      out error);
+
+			if (error != 0) {
+				throw new SocketException (error);
+			}
 		}
 
 		// Closes the socket
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void Close_internal(IntPtr socket);
+		private extern static void Close_internal(IntPtr socket,
+							  out int error);
 		
 		public void Close() {
 			((IDisposable) this).Dispose ();
@@ -939,7 +994,8 @@ namespace System.Net.Sockets
 		// Connects to the remote address
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Connect_internal(IntPtr sock,
-							    SocketAddress sa);
+							    SocketAddress sa,
+							    out int error);
 
 		public void Connect(EndPoint remote_end) {
 			if (disposed && closed)
@@ -949,7 +1005,15 @@ namespace System.Net.Sockets
 				throw new ArgumentNullException("remote_end");
 			}
 
-			Connect_internal(socket, remote_end.Serialize());
+			int error;
+			
+			Connect_internal(socket, remote_end.Serialize(),
+					 out error);
+
+			if (error != 0) {
+				throw new SocketException (error);
+			}
+			
 			connected=true;
 		}
 		
@@ -1079,21 +1143,33 @@ namespace System.Net.Sockets
 			if (Interlocked.CompareExchange (ref closeDelayed, 0, 1) == 1 &&
 			    Interlocked.CompareExchange (ref pendingEnds, 0, 0) == 0) {
 				closed = true;
-				Close_internal(socket);
+
+				int error;
+				
+				Close_internal(socket, out error);
+
+				if (error != 0) {
+					throw new SocketException (error);
+				}
 			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void GetSocketOption_obj_internal(IntPtr socket, SocketOptionLevel level, SocketOptionName name, out object obj_val);
+		private extern static void GetSocketOption_obj_internal(IntPtr socket, SocketOptionLevel level, SocketOptionName name, out object obj_val, out int error);
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void GetSocketOption_arr_internal(IntPtr socket, SocketOptionLevel level, SocketOptionName name, ref byte[] byte_val);
+		private extern static void GetSocketOption_arr_internal(IntPtr socket, SocketOptionLevel level, SocketOptionName name, ref byte[] byte_val, out int error);
 
 		public object GetSocketOption(SocketOptionLevel level,
 					      SocketOptionName name) {
 			object obj_val;
+			int error;
 			
 			GetSocketOption_obj_internal(socket, level, name,
-						     out obj_val);
+						     out obj_val, out error);
+
+			if (error != 0) {
+				throw new SocketException (error);
+			}
 			
 			if(name==SocketOptionName.Linger) {
 				return((LingerOption)obj_val);
@@ -1109,18 +1185,28 @@ namespace System.Net.Sockets
 					    SocketOptionName name,
 					    byte[] opt_value) {
 			int opt_value_len=opt_value.Length;
+			int error;
 			
 			GetSocketOption_arr_internal(socket, level, name,
-						     ref opt_value);
+						     ref opt_value, out error);
+
+			if (error != 0) {
+				throw new SocketException (error);
+			}
 		}
 
 		public byte[] GetSocketOption(SocketOptionLevel level,
 					      SocketOptionName name,
 					      int length) {
 			byte[] byte_val=new byte[length];
+			int error;
 			
 			GetSocketOption_arr_internal(socket, level, name,
-						     ref byte_val);
+						     ref byte_val, out error);
+
+			if (error != 0) {
+				throw new SocketException (error);
+			}
 
 			return(byte_val);
 		}
@@ -1130,14 +1216,24 @@ namespace System.Net.Sockets
 		// FIONBIO and SIOCATMARK. Anything else will depend on the
 		// system.
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static int WSAIoctl (IntPtr sock, int ioctl_code, byte [] input, byte [] output);
+		extern static int WSAIoctl (IntPtr sock, int ioctl_code,
+					    byte [] input, byte [] output,
+					    out int error);
 
-		public int IOControl (int ioctl_code, byte [] in_value, byte [] out_value)
+		public int IOControl (int ioctl_code, byte [] in_value,
+				      byte [] out_value)
 		{
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			int result = WSAIoctl (socket, ioctl_code, in_value, out_value);
+			int error;
+			int result = WSAIoctl (socket, ioctl_code, in_value,
+					       out_value, out error);
+
+			if (error != 0) {
+				throw new SocketException (error);
+			}
+			
 			if (result == -1)
 				throw new InvalidOperationException ("Must use Blocking property instead.");
 
@@ -1146,10 +1242,17 @@ namespace System.Net.Sockets
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Listen_internal(IntPtr sock,
-							   int backlog);
+							   int backlog,
+							   out int error);
 
 		public void Listen(int backlog) {
-			Listen_internal(socket, backlog);
+			int error;
+			
+			Listen_internal(socket, backlog, out error);
+
+			if (error != 0) {
+				throw new SocketException (error);
+			}
 		}
 
 		/* The docs for Poll() are a bit lightweight too, but
@@ -1158,19 +1261,27 @@ namespace System.Net.Sockets
 		public bool Poll(int time_us, SelectMode mode) {
 			Socket [] socketlist = new Socket []{this};
 			Socket [] n = null;
-
+			int error;
+			
 			switch(mode) {
 			case SelectMode.SelectError:
-				Select_internal (ref n, ref n, ref socketlist, time_us);
+				Select_internal (ref n, ref n, ref socketlist,
+						 time_us, out error);
 				break;
 			case SelectMode.SelectRead:
-				Select_internal (ref socketlist, ref n, ref n, time_us);
+				Select_internal (ref socketlist, ref n, ref n,
+						 time_us, out error);
 				break;
 			case SelectMode.SelectWrite:
-				Select_internal (ref n, ref socketlist, ref n, time_us);
+				Select_internal (ref n, ref socketlist, ref n,
+						 time_us, out error);
 				break;
 			default:
 				throw new NotSupportedException();
+			}
+
+			if (error != 0) {
+				throw new SocketException (error);
 			}
 
 			return (socketlist.Length == 1);
@@ -1193,7 +1304,8 @@ namespace System.Net.Sockets
 							   byte[] buffer,
 							   int offset,
 							   int count,
-							   SocketFlags flags);
+							   SocketFlags flags,
+							   out int error);
 
 		public int Receive(byte[] buf, int offset, int size,
 				   SocketFlags flags) {
@@ -1207,15 +1319,16 @@ namespace System.Net.Sockets
 				throw new ArgumentOutOfRangeException("offset+size exceeds the size of buffer");
 			}
 			
-			int ret;
+			int ret, error;
 			
-			try {
-				ret=Receive_internal(socket, buf, offset,
-						     size, flags);
-			} catch(SocketException) {
+			ret=Receive_internal(socket, buf, offset, size, flags,
+					     out error);
+
+			if(error != 0) {
 				connected=false;
-				throw;
+				throw new SocketException (error);
 			}
+			
 			connected=true;
 
 			return(ret);
@@ -1245,7 +1358,8 @@ namespace System.Net.Sockets
 							    int offset,
 							    int count,
 							    SocketFlags flags,
-							    ref SocketAddress sockaddr);
+							    ref SocketAddress sockaddr,
+							    out int error);
 
 		public int ReceiveFrom(byte[] buf, int offset, int size,
 				       SocketFlags flags,
@@ -1264,15 +1378,15 @@ namespace System.Net.Sockets
 			}
 
 			SocketAddress sockaddr=remote_end.Serialize();
-			int count;
+			int count, error;
 
-			try {
-				count=RecvFrom_internal(socket, buf, offset,
-							size, flags,
-							ref sockaddr);
-			} catch(SocketException) {
+			count=RecvFrom_internal(socket, buf, offset, size,
+						flags, ref sockaddr,
+						out error);
+
+			if (error != 0) {
 				connected=false;
-				throw;
+				throw new SocketException (error);
 			}
 			connected=true;
 			
@@ -1299,7 +1413,8 @@ namespace System.Net.Sockets
 		private extern static int Send_internal(IntPtr sock,
 							byte[] buf, int offset,
 							int count,
-							SocketFlags flags);
+							SocketFlags flags,
+							out int error);
 
 		public int Send (byte[] buf, int offset, int size, SocketFlags flags)
 		{
@@ -1315,13 +1430,14 @@ namespace System.Net.Sockets
 			if (size == 0)
 				return 0;
 
-			int ret;
+			int ret, error;
 
-			try {
-				ret = Send_internal (socket, buf, offset, size, flags);
-			} catch (SocketException) {
+			ret = Send_internal (socket, buf, offset, size, flags,
+					     out error);
+
+			if (error != 0) {
 				connected = false;
-				throw;
+				throw new SocketException (error);
 			}
 			connected = true;
 
@@ -1351,7 +1467,8 @@ namespace System.Net.Sockets
 							  int offset,
 							  int count,
 							  SocketFlags flags,
-							  SocketAddress sa);
+							  SocketAddress sa,
+							  out int error);
 
 		public int SendTo(byte[] buffer, int offset, int size,
 				  SocketFlags flags, EndPoint remote_end) {
@@ -1370,15 +1487,14 @@ namespace System.Net.Sockets
 
 			SocketAddress sockaddr=remote_end.Serialize();
 
-			int ret;
+			int ret, error;
 
-			try {
-				ret=SendTo_internal(socket, buffer, offset,
-						    size, flags, sockaddr);
-			}
-			catch(SocketException) {
+			ret=SendTo_internal(socket, buffer, offset, size,
+					    flags, sockaddr, out error);
+
+			if (error != 0) {
 				connected=false;
-				throw;
+				throw new SocketException (error);
 			}
 			connected=true;
 
@@ -1386,20 +1502,32 @@ namespace System.Net.Sockets
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void SetSocketOption_internal(IntPtr socket, SocketOptionLevel level, SocketOptionName name, object obj_val, byte[] byte_val, int int_val);
+		private extern static void SetSocketOption_internal(IntPtr socket, SocketOptionLevel level, SocketOptionName name, object obj_val, byte[] byte_val, int int_val, out int error);
 
 		public void SetSocketOption(SocketOptionLevel level,
 					    SocketOptionName name,
 					    byte[] opt_value) {
+			int error;
+			
 			SetSocketOption_internal(socket, level, name, null,
-						 opt_value, 0);
+						 opt_value, 0, out error);
+
+			if (error != 0) {
+				throw new SocketException (error);
+			}
 		}
 
 		public void SetSocketOption(SocketOptionLevel level,
 					    SocketOptionName name,
 					    int opt_value) {
+			int error;
+			
 			SetSocketOption_internal(socket, level, name, null,
-						 null, opt_value);
+						 null, opt_value, out error);
+
+			if (error != 0) {
+				throw new SocketException (error);
+			}
 		}
 
 		public void SetSocketOption(SocketOptionLevel level,
@@ -1408,6 +1536,8 @@ namespace System.Net.Sockets
 			if(opt_value==null) {
 				throw new ArgumentNullException();
 			}
+			
+			int error;
 			
 			/* Passing a bool as the third parameter to
 			 * SetSocketOption causes this overload to be
@@ -1421,23 +1551,36 @@ namespace System.Net.Sockets
 				if(bool_val==true) {
 					SetSocketOption_internal(socket, level,
 								 name, null,
-								 null, 1);
+								 null, 1,
+								 out error);
 				} else {
 					SetSocketOption_internal(socket, level,
 								 name, null,
-								 null, 0);
+								 null, 0,
+								 out error);
 				}
 			} else {
 				SetSocketOption_internal(socket, level, name,
-							 opt_value, null, 0);
+							 opt_value, null, 0,
+							 out error);
+			}
+
+			if (error != 0) {
+				throw new SocketException (error);
 			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void Shutdown_internal(IntPtr socket, SocketShutdown how);
+		private extern static void Shutdown_internal(IntPtr socket, SocketShutdown how, out int error);
 		
 		public void Shutdown(SocketShutdown how) {
-			Shutdown_internal(socket, how);
+			int error;
+			
+			Shutdown_internal(socket, how, out error);
+
+			if (error != 0) {
+				throw new SocketException (error);
+			}
 		}
 
 		public override int GetHashCode ()
@@ -1449,17 +1592,28 @@ namespace System.Net.Sockets
 		
 		protected virtual void Dispose(bool explicitDisposing) {
 			if (!disposed) {
+				int error;
+				
 				disposed = true;
 				connected = false;
 				if (!explicitDisposing) {
 					closed = true;
-					Close_internal (socket);
+					Close_internal (socket, out error);
+
+					if (error != 0) {
+						throw new SocketException (error);
+					}
+					
 					return;
 				}
 			
 				if (Interlocked.CompareExchange (ref pendingEnds, 0, 0) == 0) {
 					closed = true;
-					Close_internal (socket);
+					Close_internal (socket, out error);
+
+					if (error != 0) {
+						throw new SocketException (error);
+					}
 				} else {
 					Interlocked.CompareExchange (ref closeDelayed, 1, 0);
 				}

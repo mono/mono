@@ -1,3 +1,8 @@
+2004-04-08  Dick Porter  <dick@ximian.com>
+
+	* Socket.cs: Rearrange the internal calls so that the exceptions
+	are thrown from managed code
+
 2004-03-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: when Dispose (bool) is called from the finalizer, always
