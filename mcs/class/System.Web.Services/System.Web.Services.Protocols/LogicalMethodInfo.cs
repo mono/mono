@@ -81,8 +81,10 @@ namespace System.Web.Services.Protocols {
 		}
 
 		public ParameterInfo AsyncResultParameter {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				ParameterInfo [] pi = end_method_info.GetParameters ();
+				return pi [pi.Length-1];
+			}
 		}
 
 		public ParameterInfo AsyncStateParameter {
@@ -128,13 +130,13 @@ namespace System.Web.Services.Protocols {
 
 		public bool IsAsync {
 			get {
-				return IsBeginMethod (method_info) || IsEndMethod (method_info);
+				return end_method_info != null;
 			}
 		}
 
 		public bool IsVoid {
 			get {
-				return method_info.ReturnType == typeof (void);
+				return ReturnType == typeof (void);
 			}
 		}
 
@@ -152,33 +154,48 @@ namespace System.Web.Services.Protocols {
 
 		void ComputeParameters ()
 		{
-			parameters = method_info.GetParameters ();
-			int out_count = 0;
-			int in_count = 0;
-			
-			foreach (ParameterInfo p in parameters){
-				Type ptype = p.ParameterType;
-				if (ptype.IsByRef){
-					out_count++;
-					if (!p.IsOut)
+			ParameterInfo[] pars = method_info.GetParameters ();
+			if (IsAsync)
+			{
+				parameters = new ParameterInfo [pars.Length - 2];
+				Array.Copy (pars, 0, parameters, 0, pars.Length - 2);
+				in_parameters = new ParameterInfo [parameters.Length];
+				parameters.CopyTo (in_parameters, 0);
+				
+				ParameterInfo[] outPars = end_method_info.GetParameters ();
+				out_parameters = new ParameterInfo [outPars.Length - 1];
+				Array.Copy (outPars, 0, out_parameters, 0, out_parameters.Length);
+			}
+			else
+			{
+				parameters = pars;
+				int out_count = 0;
+				int in_count = 0;
+				
+				foreach (ParameterInfo p in parameters){
+					Type ptype = p.ParameterType;
+					if (ptype.IsByRef){
+						out_count++;
+						if (!p.IsOut)
+							in_count++;
+					} else
 						in_count++;
-				} else
-					in_count++;
-			}
-			out_parameters = new ParameterInfo [out_count];
-			int i = 0;
-			for (int j = 0; j < parameters.Length; j++){
-				if (parameters [j].ParameterType.IsByRef)
-					out_parameters [i++] = parameters [j];
-			}
-			in_parameters = new ParameterInfo [in_count];
-			i = 0;
-			for (int j = 0; j < parameters.Length; j++){
-				if (parameters [j].ParameterType.IsByRef){
-					if (!parameters [j].IsOut)
+				}
+				out_parameters = new ParameterInfo [out_count];
+				int i = 0;
+				for (int j = 0; j < parameters.Length; j++){
+					if (parameters [j].ParameterType.IsByRef)
+						out_parameters [i++] = parameters [j];
+				}
+				in_parameters = new ParameterInfo [in_count];
+				i = 0;
+				for (int j = 0; j < parameters.Length; j++){
+					if (parameters [j].ParameterType.IsByRef){
+						if (!parameters [j].IsOut)
+							in_parameters [i++] = parameters [j];
+					} else
 						in_parameters [i++] = parameters [j];
-				} else
-					in_parameters [i++] = parameters [j];
+				}
 			}
 		}
 		
@@ -200,7 +217,10 @@ namespace System.Web.Services.Protocols {
 
 		public Type ReturnType {
 			get {
-				return method_info.ReturnType;
+				if (IsAsync)
+					return end_method_info.ReturnType;
+				else
+					return method_info.ReturnType;
 			}
 		}
 
@@ -214,10 +234,18 @@ namespace System.Web.Services.Protocols {
 
 		#region Methods
 
-		[MonoTODO]
 		public IAsyncResult BeginInvoke (object target, object[] values, AsyncCallback callback, object asyncState)
 		{
-			throw new NotImplementedException ();
+			int len = (values!=null) ? values.Length : 0;
+			object[] pars = new object [len + 2];
+			
+			if (len > 0)
+				values.CopyTo (pars, 0);
+			
+			pars [len] = callback;
+			pars [len+1] = asyncState;
+				
+			return (IAsyncResult) method_info.Invoke (target, pars);
 		}
 
 		public static LogicalMethodInfo[] Create (MethodInfo[] method_infos)
@@ -280,10 +308,22 @@ namespace System.Web.Services.Protocols {
 			return res;
 		}
 
-		[MonoTODO]
 		public object[] EndInvoke (object target, IAsyncResult asyncResult)
 		{
-			throw new NotImplementedException ();
+			if (parameters == null)
+				ComputeParameters ();
+
+			object[] values = new object [out_parameters.Length + 1];
+			values [values.Length - 1] = asyncResult;
+			object res = end_method_info.Invoke (target, values);
+			
+			int retc = IsVoid ? 0 : 1;
+			object [] ret = new object [retc + out_parameters.Length];
+			
+			if (retc == 1) ret [0] = res;
+			
+			Array.Copy (values, 0, ret, retc, out_parameters.Length);
+			return ret;
 		}
 
 		public object GetCustomAttribute (Type type)

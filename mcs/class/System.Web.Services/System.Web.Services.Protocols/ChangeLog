@@ -1,3 +1,20 @@
+2004-03-10  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* HttpSoapWebServiceHandler.cs: Set the properties ContentType and 
+	  ContentEncoding in SoapServerMessage.
+	* LogicalMethodInfo.cs: Implemented AsyncResultParameter, BeginInvoke and
+	  EndInvoke. Fixed ComputeParameters, so it computes the correct parameters
+	  for async logical methods.
+	* Methods.cs: Check that client proxies have one and only one 
+	  WebServiceBindingAttribute.
+	* PatternMatcher.cs: Implemented (in fact, just moved code from 
+	  TextReturnReader.cs)
+	* SoapDocumentationHandler.cs: Add soap bindings in the generated
+	  discovery document.
+	* SoapHttpClientProtocol.cs: Implemented method Discover().
+	* SoapMessage.cs: Implemented property ContentEncoding.
+	* TextReturnReader.cs: Moved code to PatternMatcher.cs.
+	
 2004-02-27  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Fault.cs: Moved Fault class from Methods.cd to this file. It also includes

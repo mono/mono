@@ -120,13 +120,13 @@ namespace System.Web.Services.Protocols {
 
 			if (OneWay){
 				if (source.ReturnType != typeof (void))
-					throw new Exception ("OneWay methods should not have a return value");
+					throw new Exception ("OneWay methods should not have a return value.");
 				if (source.OutParameters.Length != 0)
-					throw new Exception ("OneWay methods should not have out/ref parameters");
+					throw new Exception ("OneWay methods should not have out/ref parameters.");
 			}
 			
 			BindingInfo binfo = parent.GetBinding (Binding);
-			if (binfo == null) throw new InvalidOperationException ("Type '" + parent.Type + "' is missing WebServiceBinding attribute that defines a binding named '" + Binding + "'");
+			if (binfo == null) throw new InvalidOperationException ("Type '" + parent.Type + "' is missing WebServiceBinding attribute that defines a binding named '" + Binding + "'.");
 			
 			string serviceNamespace = binfo.Namespace;
 				
@@ -162,7 +162,7 @@ namespace System.Web.Services.Protocols {
 			for (int i = 0; i < o.Length; i++) {
 				SoapHeaderAttribute att = (SoapHeaderAttribute) o[i];
 				MemberInfo[] mems = source.DeclaringType.GetMember (att.MemberName);
-				if (mems.Length == 0) throw new InvalidOperationException ("Member " + att.MemberName + " not found in class " + source.DeclaringType.FullName);
+				if (mems.Length == 0) throw new InvalidOperationException ("Member " + att.MemberName + " not found in class " + source.DeclaringType.FullName + ".");
 				
 				Type headerType = (mems[0] is FieldInfo) ? ((FieldInfo)mems[0]).FieldType : ((PropertyInfo)mems[0]).PropertyType;
 				Headers [i] = new HeaderInfo (mems[0], att);
@@ -307,6 +307,19 @@ namespace System.Web.Services.Protocols {
 			object [] o;
 
 			o = Type.GetCustomAttributes (typeof (WebServiceBindingAttribute), false);
+			
+			if (typeof (SoapHttpClientProtocol).IsAssignableFrom (Type))
+			{
+				if (o.Length == 0)
+					throw new InvalidOperationException ("WebServiceBindingAttribute is required on proxy class '" + Type + "'.");
+				if (o.Length > 1)
+					throw new InvalidOperationException ("Only one WebServiceBinding attribute may be specified on type '" + Type + "'.");
+					
+				// Remove the default binding, it is not needed since there is always
+				// a binding attribute.
+				Bindings.Clear ();
+			}
+				
 			foreach (WebServiceBindingAttribute at in o)
 				AddBinding (new BindingInfo (at, LogicalType.WebServiceNamespace));
 

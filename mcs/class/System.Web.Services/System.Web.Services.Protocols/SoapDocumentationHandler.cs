@@ -107,11 +107,27 @@ namespace System.Web.Services.Protocols
 		
 		void GenerateDiscoDocument (HttpContext context)
 		{
+			ServiceDescriptionCollection descs = GetDescriptions ();
+			
 			DiscoveryDocument doc = new DiscoveryDocument ();
 			ContractReference cref = new ContractReference ();
 			cref.Ref = _url + "?wsdl";
 			cref.DocRef = _url;
 			doc.References.Add (cref);
+			
+			foreach (ServiceDescription desc in descs)
+				foreach (Service ser in desc.Services)
+					foreach (Port port in ser.Ports)
+					{
+						SoapAddressBinding sab = port.Extensions.Find (typeof(SoapAddressBinding)) as SoapAddressBinding;
+						if (sab != null)
+						{
+							System.Web.Services.Discovery.SoapBinding dsb = new System.Web.Services.Discovery.SoapBinding ();
+							dsb.Address = sab.Location;
+							dsb.Binding = port.Binding;
+							doc.AdditionalInfo.Add (dsb);
+						}
+					}
 
 			context.Response.ContentType = "text/xml; charset=utf-8";
 			doc.Write (context.Response.OutputStream);

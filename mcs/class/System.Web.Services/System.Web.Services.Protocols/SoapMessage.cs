@@ -17,6 +17,7 @@ namespace System.Web.Services.Protocols {
 		#region Fields
 
 		string content_type = "text/xml";
+		string content_encoding;
 		SoapException exception = null;
 		SoapHeaderCollection headers;
 		SoapMessageStage stage;
@@ -107,11 +108,16 @@ namespace System.Web.Services.Protocols {
 		}
 		
 #if NET_1_1
-		[MonoTODO]
 		public string ContentEncoding
 		{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return content_encoding; }
+			set { content_encoding = value; }
+		}
+#else
+		internal string ContentEncoding
+		{
+			get { return content_encoding; }
+			set { content_encoding = value; }
 		}
 #endif
  

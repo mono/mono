@@ -20,6 +20,7 @@ using System.Web.Services;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Web.Services.Description;
+using System.Web.Services.Discovery;
 using System.Xml.Serialization;
 using System.Xml.Schema;
 using System.Collections;
@@ -138,10 +139,24 @@ namespace System.Web.Services.Protocols {
 			}
 		}
 
-		[MonoTODO]
 		public void Discover ()
 		{
-			throw new NotImplementedException ();
+			BindingInfo bnd = (BindingInfo) type_info.Bindings [0];
+			
+			DiscoveryClientProtocol discoverer = new DiscoveryClientProtocol ();
+			discoverer.Discover (Url);
+			
+			foreach (object info in discoverer.AdditionalInformation)
+			{
+				System.Web.Services.Discovery.SoapBinding sb = info as System.Web.Services.Discovery.SoapBinding;
+				if (sb != null && sb.Binding.Name == bnd.Name && sb.Binding.Namespace == bnd.Namespace) {
+					Url = sb.Address;
+					return;
+				}
+			}
+			
+			string msg = string.Format ("The binding named '{0}' from namespace '{1}' was not found in the discovery document at '{2}'", bnd.Name, bnd.Namespace, Url);
+			throw new Exception (msg);
 		}
 
 		protected override WebRequest GetWebRequest (Uri uri)
@@ -212,6 +227,9 @@ namespace System.Web.Services.Protocols {
 					"Content is not 'text/xml' but '" + response.ContentType + "'",
 					response, encoding);
 
+			message.ContentType = ctype;
+			message.ContentEncoding = encoding.WebName;
+			
 			Stream stream = response.GetResponseStream ();
 
 			if (extensions != null) {

@@ -72,6 +72,8 @@ namespace System.Web.Services.Protocols
 
 				SoapServerMessage message = new SoapServerMessage (request, server, stream);
 				message.SetStage (SoapMessageStage.BeforeDeserialize);
+				message.ContentType = ctype;
+				message.ContentEncoding = encoding.WebName;
 
 				// If the routing style is SoapAction, then we can get the method information now
 				// and set it to the SoapMessage
