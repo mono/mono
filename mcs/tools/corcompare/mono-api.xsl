@@ -110,7 +110,7 @@
 		</xsl:apply-templates>
 	</xsl:template>
 
-	<xsl:template match="assemblies/assembly">
+	<xsl:template match="assembly">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">y</xsl:with-param>
@@ -123,13 +123,13 @@
 
 
 	<!-- namespace -->
-	<xsl:template match="assembly/namespaces">
+	<xsl:template match="namespaces">
 		<xsl:apply-templates select="namespace">
 			<xsl:sort select="@name"/>
 		</xsl:apply-templates>
 	</xsl:template>
 
-	<xsl:template match="namespaces/namespace">
+	<xsl:template match="namespace">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">n</xsl:with-param>
@@ -161,7 +161,7 @@
 
 
 	<!-- class -->
-	<xsl:template match="classes/class[@type='class']">
+	<xsl:template match="class[@type='class']">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">c</xsl:with-param>
@@ -177,7 +177,7 @@
 
 
 	<!-- struct -->
-	<xsl:template match="classes/class[@type='struct'][@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
+	<xsl:template match="class[@type='struct'][@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">s</xsl:with-param>
@@ -229,7 +229,7 @@
 
 
 	<!-- delegate -->
-	<xsl:template match="classes/class[@type='delegate'][@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
+	<xsl:template match="class[@type='delegate'][@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">d</xsl:with-param>
@@ -242,7 +242,7 @@
 
 
 	<!-- enumeration -->
-	<xsl:template match="classes/class[@type='enum'][@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
+	<xsl:template match="class[@type='enum'][@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">en</xsl:with-param>
@@ -261,7 +261,7 @@
 		</xsl:apply-templates>
 	</xsl:template>
 
-	<xsl:template match="methods/method[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
+	<xsl:template match="method[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">m</xsl:with-param>
@@ -280,7 +280,7 @@
 		</xsl:apply-templates>
 	</xsl:template>
 
-	<xsl:template match="properties/property[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
+	<xsl:template match="property[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">p</xsl:with-param>
@@ -299,7 +299,7 @@
 		</xsl:apply-templates>
 	</xsl:template>
 
-	<xsl:template match="events/event[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
+	<xsl:template match="event[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">e</xsl:with-param>
@@ -318,7 +318,7 @@
 		</xsl:apply-templates>
 	</xsl:template>
 
-	<xsl:template match="constructors/constructor[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
+	<xsl:template match="constructor[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">x</xsl:with-param>
@@ -338,7 +338,7 @@
 		</xsl:apply-templates>
 	</xsl:template>
 
-	<xsl:template match="fields/field[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
+	<xsl:template match="field[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">f</xsl:with-param>
@@ -376,7 +376,7 @@
 		</xsl:apply-templates>
 	</xsl:template>
 
-	<xsl:template match="attributes/attribute[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
+	<xsl:template match="attribute[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">r</xsl:with-param>
@@ -404,7 +404,7 @@
 					<xsl:element name="img">
 						<xsl:attribute name="src">cm/se.gif</xsl:attribute>
 						<xsl:attribute name="class">t</xsl:attribute>
-						<xsl:attribute name="title"><xsl:apply-templates select="warnings/warning" mode="hover"/></xsl:attribute>
+						<xsl:attribute name="title"><xsl:call-template name="warning-hover" /></xsl:attribute>
 					</xsl:element>
 				</xsl:when>
 				<xsl:when test="@error = 'todo'">
@@ -476,11 +476,15 @@
 
 	<xsl:template name="toggle">
 		<xsl:choose>
-			<xsl:when test="not(@presence) and .//*[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence] and local-name() != 'assembly'">
-				<IMG src="cm/tp.gif" class="t"/>
-			</xsl:when>
 			<xsl:when test="not(@presence) and .//*[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
-				<IMG src="cm/tm.gif" class="t"/>
+				<xsl:choose>
+					<xsl:when test="local-name() != 'assembly'">
+						<IMG src="cm/tp.gif" class="t"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<IMG src="cm/tm.gif" class="t"/>
+					</xsl:otherwise>
+				</xsl:choose>
 			</xsl:when>
 			<xsl:otherwise>
 				<IMG src="cm/tb.gif"/>
@@ -494,9 +498,11 @@
 		</xsl:if>
 	</xsl:template>
 
-	<xsl:template match="warnings/warning" mode="hover">
-		<xsl:text>WARNING: </xsl:text>
-		<xsl:value-of select="@text"/>
+	<xsl:template name="warning-hover">
+		<xsl:for-each select="warnings/warning">
+			<xsl:text>WARNING: </xsl:text>
+			<xsl:value-of select="@text"/>
+		</xsl:for-each>
 	</xsl:template>
 
 </xsl:stylesheet>
