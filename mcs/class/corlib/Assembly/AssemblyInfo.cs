@@ -34,6 +34,7 @@ using System;
 using System.Reflection;
 using System.Resources;
 using System.Security;
+using System.Security.Permissions;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -66,6 +67,7 @@ using System.Runtime.InteropServices;
 
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: Guid("BED7F4EA-1A96-11D2-8F08-00A0C9A6186D")]
+[assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification=true)]
 
 #if ! BOOTSTRAP_WITH_OLDLIB
 [assembly: AssemblyDelaySign(true)]

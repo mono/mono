@@ -1,3 +1,8 @@
+2005-01-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Add SkipVerification to assembly RequestMinimum
+	security permissions.
+
 2004-11-25  Raja R Harinath  <rharinath@novell.com>
 
 	* Consts.cs (UnmanageType_80) [BOOTSTRAP_WITH_OLDLIB]: Update to
