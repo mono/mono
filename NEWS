@@ -1,10 +1,10 @@
 Hello!
 
-	Version 0.17 of Mon ohas been released.
+	Version 0.17 of Mono has been released.
 
 	There are plenty of new features, bug fixes, new classes, 
 	performance improvements, optimizations and much more
-	available on this release.
+	available in this release.
 
 * Stats
 
@@ -40,7 +40,7 @@ Hello!
 	(15% on mcs bootstrap).
 
 	A lot of the work in the new release of Mono is required for
-	the Mono Debugger (which will be released separatedly).  The
+	the Mono Debugger (which will be released separately).  The
 	Mono debugger is interesting, because it can debug both
 	managed and unmanaged applications, but it only supports the
 	JITer for debugging.
@@ -91,11 +91,11 @@ Hello!
 * ADO.NET:
 
 	New providers are available in this release.  The relentless
-	System.Data team (Brian, Dan, Rodrigo, Tim and Ville) are hacking
-	non-stop on the databse code.  Improving existing providers,
-	and also providing new ones: Oracle, and TDS are the big names
-	on this release.  Many regression tests have been added as
-	well.
+	System.Data team (Brian, Dan, Rodrigo, Tim and Ville) are
+	hacking non-stop on the databse code.  Improving existing
+	providers, and also providing new ones: Oracle, MS SQL, ODBC
+	and Sybase are the big names on this release.  Many regression
+	tests have been added as well.
 
 * System.XML:
 
