@@ -42,6 +42,7 @@ namespace Mono.Data.SqliteClient
 		private string conn_str;
 		private string db_file;
 		private int db_mode;
+		private int db_version;
 		private IntPtr sqlite_handle;
 		private ConnectionState state;
 		
@@ -53,6 +54,7 @@ namespace Mono.Data.SqliteClient
 		{
 			db_file = null;
 			db_mode = 0644;
+			db_version = 3;
 			state = ConnectionState.Closed;
 			sqlite_handle = IntPtr.Zero;
 		}
@@ -88,13 +90,20 @@ namespace Mono.Data.SqliteClient
 			get { return state; }
 		}
 		
+		internal int Version {
+			get { return db_version; }
+		}
+
 		internal IntPtr Handle {
 			get { return sqlite_handle; }
 		}
 		
 		public int LastInsertRowId {
 			get {
-				return Sqlite.sqlite_last_insert_rowid (Handle);
+				if (Version == 3)
+					return Sqlite.sqlite3_last_insert_rowid (Handle);
+				else
+					return Sqlite.sqlite_last_insert_rowid (Handle);
 			}
 		}
 		
@@ -139,6 +148,8 @@ namespace Mono.Data.SqliteClient
 						}
 					} else if (token == "mode") {
 						db_mode = Convert.ToInt32 (tvalue);
+					} else if (token == "version") {
+						db_version = Convert.ToInt32 (tvalue);
 					}
 				}
 				
@@ -193,7 +204,10 @@ namespace Mono.Data.SqliteClient
 			
 			state = ConnectionState.Closed;
 		
-			Sqlite.sqlite_close(sqlite_handle);
+			if (Version == 3)
+				Sqlite.sqlite3_close (sqlite_handle);
+			else 
+				Sqlite.sqlite_close(sqlite_handle);
 			sqlite_handle = IntPtr.Zero;
 		}
 		
@@ -222,11 +236,19 @@ namespace Mono.Data.SqliteClient
 				return;
 			}
 			
-			string errmsg;
-			sqlite_handle = Sqlite.sqlite_open(db_file, db_mode, out errmsg);
+			IntPtr errmsg = IntPtr.Zero;
+			if (Version == 3) {
+				int err = Sqlite.sqlite3_open(db_file, out sqlite_handle);
+				if (err == (int)SqliteError.ERROR)
+					throw new ApplicationException (Sqlite.sqlite3_errmsg (sqlite_handle));
+			} else {
+				sqlite_handle = Sqlite.sqlite_open(db_file, db_mode, out errmsg);
 			
-			if (errmsg != null) {
-				throw new ApplicationException (errmsg);
+				if (errmsg != IntPtr.Zero) {
+					string msg = Marshal.PtrToStringAnsi (errmsg);
+					Sqlite.sqliteFree (errmsg);
+					throw new ApplicationException (msg);
+				}
 			}
 			state = ConnectionState.Open;
 		}

@@ -143,7 +143,10 @@ namespace Mono.Data.SqliteClient
 		
 		internal int NumChanges () 
 		{
-			return Sqlite.sqlite_changes(parent_conn.Handle);
+			if (parent_conn.Version == 3)
+				return Sqlite.sqlite3_changes(parent_conn.Handle);
+			else
+				return Sqlite.sqlite_changes(parent_conn.Handle);
 		}
 		
 		#endregion
@@ -210,47 +213,47 @@ namespace Mono.Data.SqliteClient
 		public SqliteDataReader ExecuteReader (CommandBehavior behavior, bool want_results, out int rows_affected)
 		{
 			SqliteDataReader reader = null;
-			SqliteError err;
+			SqliteError err = SqliteError.OK;
+			IntPtr errMsg = IntPtr.Zero; 
 			
 			parent_conn.StartExec ();
 			
 			string msg = "";
-			unsafe {
-				byte *msg_result;
-				
-				try {
-					if (want_results) {
-						reader = new SqliteDataReader (this);
-						
-						err = Sqlite.sqlite_exec(parent_conn.Handle,
-												sql,
-												new Sqlite.SqliteCallbackFunction (reader.SqliteCallback),
-												IntPtr.Zero, &msg_result);
-						
-						reader.ReadingDone ();
-					} else {
-						err = Sqlite.sqlite_exec(parent_conn.Handle,
-												sql,
-												null,
-												IntPtr.Zero, &msg_result);
-					}
-				} finally {
-					parent_conn.EndExec ();
+
+			try {
+				if (want_results) {
+					IntPtr pVm = IntPtr.Zero;
+					IntPtr pzTail = IntPtr.Zero;
+					if (parent_conn.Version == 3)
+						err = Sqlite.sqlite3_prepare (parent_conn.Handle, sql, sql.Length, out pVm, out pVm);
+					else
+						err = Sqlite.sqlite_compile (parent_conn.Handle, sql, out pzTail, out pVm, out errMsg);
+					if (err == SqliteError.OK)
+						reader = new SqliteDataReader (this, pVm, parent_conn.Version);
+					if (parent_conn.Version == 3)
+						err = Sqlite.sqlite3_finalize (pVm, out errMsg);
+					else
+						err = Sqlite.sqlite_finalize (pVm, out errMsg);
+				} else {
+					if (parent_conn.Version == 3)
+						err = Sqlite.sqlite3_exec (parent_conn.Handle, sql, IntPtr.Zero, IntPtr.Zero, out errMsg);
+					else
+						err = Sqlite.sqlite_exec (parent_conn.Handle, sql, IntPtr.Zero, IntPtr.Zero, out errMsg);
 				}
-				
-				if (msg_result != null) {
-					StringBuilder sb = new StringBuilder ();
-					
-					for (byte *y = msg_result; *y != 0; y++)
-						sb.Append ((char) *y);
-					msg = sb.ToString ();
-					
-					Sqlite.sqliteFree(msg_result);
-				}
+			} finally {			
+				parent_conn.EndExec ();
 			}
-			
-			if (err != SqliteError.OK)
+
+			if (err != SqliteError.OK) {
+				if (errMsg != IntPtr.Zero) {
+					msg = Marshal.PtrToStringAnsi (errMsg);
+					if (parent_conn.Version == 3)
+						Sqlite.sqlite3Free (errMsg);
+					else
+						Sqlite.sqliteFree (errMsg);
+				}
 				throw new ApplicationException ("Sqlite error " + msg);
+			}
 			
 			rows_affected = NumChanges ();
 			
@@ -259,7 +262,10 @@ namespace Mono.Data.SqliteClient
 		
 		public int LastInsertRowID () 
 		{
-			return Sqlite.sqlite_last_insert_rowid(parent_conn.Handle);
+			if (parent_conn.Version == 3)
+				return Sqlite.sqlite3_last_insert_rowid(parent_conn.Handle);
+			else
+				return Sqlite.sqlite_last_insert_rowid(parent_conn.Handle);
 		}
 		
 		#endregion

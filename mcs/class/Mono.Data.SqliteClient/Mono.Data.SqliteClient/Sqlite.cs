@@ -105,13 +105,10 @@ namespace Mono.Data.SqliteClient
 		#region PInvoke Functions
 		
 		[DllImport("sqlite")]
-		internal static extern IntPtr sqlite_open (string dbname, int db_mode, out string errstr);
+		internal static extern IntPtr sqlite_open (string dbname, int db_mode, out IntPtr errstr);
 
 		[DllImport("sqlite")]
 		internal static extern void sqlite_close (IntPtr sqlite_handle);
-
-		[DllImport("sqlite")]
-		internal unsafe static extern SqliteError sqlite_exec (IntPtr handle, string sql, SqliteCallbackFunction callback, IntPtr user_data, byte **errstr_ptr);
 
 		[DllImport("sqlite")]
 		internal static extern int sqlite_changes (IntPtr handle);
@@ -120,15 +117,66 @@ namespace Mono.Data.SqliteClient
 		internal static extern int sqlite_last_insert_rowid (IntPtr sqlite_handle);
 
 		[DllImport ("sqlite")]
-		internal unsafe static extern void sqliteFree (void *ptr);
+		internal static extern void sqliteFree (IntPtr ptr);
 		
+		[DllImport ("sqlite")]
+		internal static extern SqliteError sqlite_compile (IntPtr sqlite_handle, string zSql, out IntPtr pzTail, out IntPtr pVm, out IntPtr errstr);
+
+		[DllImport ("sqlite")]
+		internal static extern SqliteError sqlite_step (IntPtr pVm, out int pN, out IntPtr pazValue, out IntPtr pazColName);
+
+		[DllImport ("sqlite")]
+		internal static extern SqliteError sqlite_finalize (IntPtr pVm, out IntPtr pzErrMsg);
+
+		[DllImport ("sqlite")]
+                internal static extern SqliteError sqlite_exec (IntPtr handle, string sql, IntPtr callback, IntPtr user_data, out IntPtr errstr_ptr);
+		
+		[DllImport("sqlite3")]
+		internal static extern int sqlite3_open (string dbname, out IntPtr handle);
+
+		[DllImport("sqlite3")]
+		internal static extern void sqlite3_close (IntPtr sqlite_handle);
+
+		[DllImport("sqlite3")]
+		internal static extern string sqlite3_errmsg (IntPtr sqlite_handle);
+
+		[DllImport("sqlite3")]
+		internal static extern int sqlite3_changes (IntPtr handle);
+
+		[DllImport("sqlite3")]
+		internal static extern int sqlite3_last_insert_rowid (IntPtr sqlite_handle);
+
+		[DllImport ("sqlite3")]
+		internal static extern void sqlite3Free (IntPtr ptr);
+		
+		[DllImport ("sqlite3")]
+		internal static extern SqliteError sqlite3_prepare (IntPtr sqlite_handle, string zSql, int zSqllen, out IntPtr pVm, out IntPtr pzTail);
+
+		[DllImport ("sqlite3")]
+		internal static extern SqliteError sqlite3_step (IntPtr pVm);
+
+		[DllImport ("sqlite3")]
+		internal static extern SqliteError sqlite3_finalize (IntPtr pVm, out IntPtr pzErrMsg);
+
+		[DllImport ("sqlite3")]
+                internal static extern SqliteError sqlite3_exec (IntPtr handle, string sql, IntPtr callback, IntPtr user_data, out IntPtr errstr_ptr);
+	
+		[DllImport ("sqlite3")]
+		internal static extern IntPtr sqlite3_column_name (IntPtr pVm, int col);
+		[DllImport ("sqlite3")]
+		internal static extern IntPtr sqlite3_column_text (IntPtr pVm, int col);
+		[DllImport ("sqlite3")]
+		internal static extern IntPtr sqlite3_column_blob (IntPtr pVm, int col);
+		[DllImport ("sqlite3")]
+		internal static extern int sqlite3_column_bytes (IntPtr pVm, int col);
+		[DllImport ("sqlite3")]
+		internal static extern int sqlite3_column_count (IntPtr pVm);
+		[DllImport ("sqlite3")]
+		internal static extern int sqlite3_column_type (IntPtr pVm, int col);
+		[DllImport ("sqlite3")]
+		internal static extern Int64 sqlite3_column_int64 (IntPtr pVm, int col);
+		[DllImport ("sqlite3")]
+		internal static extern double sqlite3_column_double (IntPtr pVm, int col);
 		#endregion
-		
-		#region Delegates
-		
-		internal unsafe delegate int SqliteCallbackFunction (ref object o, int argc, sbyte **argv, sbyte **colnames);
-		
-		#endregion
-		
 	}
 }

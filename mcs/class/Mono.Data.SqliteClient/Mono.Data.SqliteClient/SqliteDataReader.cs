@@ -55,7 +55,7 @@ namespace Mono.Data.SqliteClient
 
 		#region Constructors and destructors
 		
-		internal SqliteDataReader (SqliteCommand cmd)
+		internal SqliteDataReader (SqliteCommand cmd, IntPtr pVm, int version)
 		{
 			command = cmd;
 			rows = new ArrayList ();
@@ -64,6 +64,8 @@ namespace Mono.Data.SqliteClient
 			closed = false;
 			current_row = -1;
 			reading = true;
+			ReadpVm (pVm, version);
+			ReadingDone ();
 		}
 		
 		#endregion
@@ -98,29 +100,80 @@ namespace Mono.Data.SqliteClient
 
 		#region Internal Methods
 		
-		internal unsafe int SqliteCallback (ref object o, int argc, sbyte **argv, sbyte **colnames)
+		internal void ReadpVm (IntPtr pVm, int version)
 		{
-			// cache names of columns if we need to
-			if (column_names.Count == 0) {
-				for (int i = 0; i < argc; i++) {
-					string col = new String (colnames[i]);
-					columns.Add (col);
-					column_names[col.ToLower ()] = i;
+			int pN = 0;
+			IntPtr pazValue = IntPtr.Zero;
+			IntPtr pazColName = IntPtr.Zero;
+			SqliteError res;
+			IntPtr errStr = IntPtr.Zero;
+			string msg = "";
+
+			while (true) {
+				if (version == 3) {
+					res = Sqlite.sqlite3_step (pVm);
+					pN = Sqlite.sqlite3_column_count (pVm);
+				} else
+					res = Sqlite.sqlite_step (pVm, out pN, out pazValue, out pazColName);
+				if (res == SqliteError.ERROR) {		
+					throw new ApplicationException ("Sqlite error");
 				}
-			}
-			
-			ArrayList data_row = new ArrayList (argc);
- 			for (int i = 0; i < argc; i++) {
-				if (argv[i] != ((sbyte *)0)) {
-					data_row.Add(new String (argv[i]));
-				} else {
-					data_row.Add(null);
+				if (res == SqliteError.DONE) {
+					break;
 				}
+				// We have some data; lets read it
+				if (column_names.Count == 0) {
+					for (int i = 0; i < pN; i++) {
+						string colName = "";
+						if (version == 2) {
+							IntPtr fieldPtr = (IntPtr)Marshal.ReadInt32 (pazColName, i*IntPtr.Size);
+							colName = Marshal.PtrToStringAnsi (fieldPtr);
+						} else {
+							colName = Marshal.PtrToStringAnsi (Sqlite.sqlite3_column_name (pVm, i));
+						}
+						columns.Add (colName);
+						column_names [colName] = i;
+					}
+				}
+				ArrayList data_row = new ArrayList (pN);
+				for (int i = 0; i < pN; i++) {
+					string colData = "";
+					if (version == 2) {
+						IntPtr fieldPtr = (IntPtr)Marshal.ReadInt32 (pazValue, i*IntPtr.Size);
+						colData = Marshal.PtrToStringAnsi (fieldPtr);
+						data_row.Add (Marshal.PtrToStringAnsi (fieldPtr));
+					} else {
+						switch (Sqlite.sqlite3_column_type (pVm, i)) {
+							case 1:
+								Int64 sqliteint64 = Sqlite.sqlite3_column_int64 (pVm, i);
+								data_row.Add (sqliteint64.ToString ());
+								break;
+							case 2:
+								double sqlitedouble = Sqlite.sqlite3_column_double (pVm, i);
+								data_row.Add (sqlitedouble.ToString ());
+								break;
+							case 3:
+								colData = Marshal.PtrToStringAnsi (Sqlite.sqlite3_column_text (pVm, i));
+								data_row.Add (colData);
+								break;
+							case 4:
+								int blobbytes = Sqlite.sqlite3_column_bytes (pVm, i);
+								IntPtr blobptr = Sqlite.sqlite3_column_blob (pVm, i);
+								byte[] blob = new byte[blobbytes];
+								Marshal.Copy (blobptr, blob, 0, blobbytes);
+								data_row.Add (blob);
+								break;
+							case 5:
+								data_row.Add (null);
+								break;
+							default:
+								throw new ApplicationException ("FATAL: Unknown sqlite3_column_type");
+						}
+					}	
+				}
+				rows.Add (data_row);
 			}
-			rows.Add (data_row);
-			return 0;
 		}
-		
 		internal void ReadingDone ()
 		{
 			records_affected = command.NumChanges ();
