@@ -1,5 +1,10 @@
 2004-03-10  Martin Baulig  <martin@ximian.com>
 
+	* reflection.c (mono_reflection_get_custom_attrs): Use the correct
+	class for properties, fields and events.  Finally fixes #54945.
+
+2004-03-10  Martin Baulig  <martin@ximian.com>
+
 	* metadata.c (mono_metadata_class_equal): New static function;
 	checks whether two generic instances or two generic parameters are
 	equal.
