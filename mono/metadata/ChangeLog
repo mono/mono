@@ -1,4 +1,11 @@
 
+Wed Feb 9 19:34:29 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* image.c, metadata-internals.h: when loading an image from a file,
+	mmap all of it and use the same codepaths as when using a
+	in-memory image: the code is simpler and we use less memory
+	(both writable and readonly).
+
 Wed Feb 9 18:32:51 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* gc-internal.h, null-gc.c, boehm-gc.c: added functions to the GC
