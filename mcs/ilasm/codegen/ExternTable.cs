@@ -19,7 +19,6 @@ namespace Mono.ILASM {
 
                         public PEAPI.AssemblyRef AssemblyRef;
                         protected Hashtable class_table;
-                        protected Hashtable value_table;
                         protected Hashtable typeref_table;
                         protected string name;
 
@@ -33,7 +32,6 @@ namespace Mono.ILASM {
                         {
                                 AssemblyRef = code_gen.PEFile.AddExternAssembly (name);
                                 class_table = new Hashtable ();
-                                value_table = new Hashtable ();
                         }
 
                         public ExternTypeRef GetTypeRef (string full_name, bool is_valuetype)
@@ -57,11 +55,6 @@ namespace Mono.ILASM {
 
                                 if (klass != null)
                                         return klass;
-
-                                klass = value_table [full_name] as PEAPI.ClassRef;
-
-                                if (klass != null)
-                                        return klass;
                                 
                                 klass = (PEAPI.ClassRef) AssemblyRef.AddClass (name_space, name);
                                 class_table[full_name] = klass;
@@ -73,13 +66,13 @@ namespace Mono.ILASM {
                         {
                                 string full_name = String.Format ("{0}.{1}",
                                         name_space, name);
-                                PEAPI.ClassRef klass = value_table[full_name] as PEAPI.ClassRef;
+                                PEAPI.ClassRef klass = class_table[full_name] as PEAPI.ClassRef;
 
                                 if (klass != null) 
                                         return klass;
 
                                 klass = (PEAPI.ClassRef) AssemblyRef.AddValueClass (name_space, name);
-                                value_table[full_name] = klass;
+                                class_table[full_name] = klass;
 
                                 return klass;
                         }
