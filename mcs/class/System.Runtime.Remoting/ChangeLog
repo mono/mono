@@ -1,3 +1,7 @@
+2003-11-13  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* System.Runtime.Remoting.dll.sources: Removed HttpThread.cs
+
 2003-11-11  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* System.Runtime.Remoting_test.dll.sources: Added CrossDomainCalls.cs test file.

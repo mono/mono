@@ -24,7 +24,6 @@
 ./System.Runtime.Remoting.Channels.Http/HttpRemotingHandlerFactory.cs
 ./System.Runtime.Remoting.Channels.Http/HttpServer.cs
 ./System.Runtime.Remoting.Channels.Http/HttpServerChannel.cs
-./System.Runtime.Remoting.Channels.Http/HttpThread.cs
 ./System.Runtime.Remoting.MetadataServices/MetaData.cs
 ./System.Runtime.Remoting.MetadataServices/SdlChannelSinkProvider.cs
 ./System.Runtime.Remoting.MetadataServices/ServiceType.cs
