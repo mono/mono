@@ -1,3 +1,8 @@
+
+Fri Jun 6 11:41:18 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* inssel.brg: fixed memcpy (bug #44219).
+
 2003-06-05  Dick Porter  <dick@ximian.com>
 
 	* driver.c: Set the glib log levels to not abort if g_message
