@@ -263,8 +263,9 @@ namespace Mono.CSharp {
 	
 	public class ConstructedType : Expression {
 		Expression container_type;
-		string name;
+		string name, full_name;
 		TypeArguments args;
+		Type[] gen_params;
 		
 		public ConstructedType (string name, TypeArguments args, Location l)
 		{
@@ -273,6 +274,8 @@ namespace Mono.CSharp {
 			this.name = name;
 			this.args = args;
 			eclass = ExprClass.Type;
+
+			full_name = name + "<" + args.ToString () + ">";
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -284,6 +287,38 @@ namespace Mono.CSharp {
 			// Pretend there are not type parameters, until we get GetType support
 			//
 			return new SimpleName (name, loc).DoResolve (ec);
+		}
+
+		protected bool CheckConstraints (int index)
+		{
+			Type atype = args.Arguments [index];
+			Type ptype = gen_params [index];
+
+			//
+			// First, check parent class.
+			//
+			if ((ptype.BaseType != atype.BaseType) &&
+			    !atype.BaseType.IsSubclassOf (ptype.BaseType)) {
+				Report.Error (-219, loc, "Cannot create constructed type `{0}': " +
+					      "type argument `{1}' must derive from `{2}'.",
+					      full_name, atype, ptype.BaseType);
+				return false;
+			}
+
+			//
+			// Now, check the interfaces.
+			//
+			foreach (Type itype in ptype.GetInterfaces ()) {
+				if (TypeManager.ImplementsInterface (atype, itype))
+					continue;
+
+				Report.Error (-219, loc, "Cannot create constructed type `{0}: " +
+					      "type argument `{1}' must implement interface `{2}'.",
+					      full_name, atype, itype);
+				return false;
+			}
+
+			return true;
 		}
 
 		public override Expression ResolveAsTypeStep (EmitContext ec)
@@ -301,12 +336,17 @@ namespace Mono.CSharp {
 
 			Type gt = resolved.Type.GetGenericTypeDefinition ();
 
-			Type[] gen_params = gt.GetGenericParameters ();
+			gen_params = gt.GetGenericParameters ();
 			if (args.Arguments.Length != gen_params.Length) {
 				Report.Error (-217, loc, "Generic type `" + gt.Name + "' takes " +
 					      gen_params.Length + " type parameters, but specified " +
 					      args.Arguments.Length + ".");
 				return null;
+			}
+
+			for (int i = 0; i < gen_params.Length; i++) {
+				if (!CheckConstraints (i))
+					return null;
 			}
 
 			//
@@ -326,7 +366,7 @@ namespace Mono.CSharp {
 
 		public override string ToString ()
 		{
-			return name + "<" + args.ToString () + ">";
+			return full_name;
 		}
 	}
 }
