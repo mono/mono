@@ -2183,6 +2183,10 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
+		public virtual string Name {
+			get { return Type.Name; }
+		}
+
 		public override Expression ResolveAsTypeStep (EmitContext ec)
 		{
 			return this;
@@ -2215,6 +2219,10 @@ namespace Mono.CSharp {
 		public TypeLookupExpression (string name) : base (null, Location.Null)
 		{
 			this.name = name;
+		}
+
+		public override string Name {
+			get { return name; }
 		}
 
 		public override Expression ResolveAsTypeStep (EmitContext ec)

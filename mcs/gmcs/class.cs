@@ -624,7 +624,7 @@ namespace Mono.CSharp {
 		///   The @parent argument is set to the parent object or null
 		///   if this is `System.Object'. 
 		/// </summary>
-		Type [] GetClassBases (bool is_class, out Type parent, out bool error)
+		Type [] GetClassBases (bool is_class, out TypeExpr parent, out bool error)
 		{
 			ArrayList bases = Bases;
 			int count;
@@ -635,14 +635,14 @@ namespace Mono.CSharp {
 			if (is_class)
 				parent = null;
 			else
-				parent = TypeManager.value_type;
+				parent = new TypeExpr (TypeManager.value_type, Location);
 
 			if (bases == null){
 				if (is_class){
 					if (RootContext.StdLib)
-						parent = TypeManager.object_type;
+						parent = new TypeExpr (TypeManager.object_type, Location);
 					else if (Name != "System.Object")
-						parent = TypeManager.object_type;
+						parent = new TypeExpr (TypeManager.object_type, Location);
 				} else {
 					//
 					// If we are compiling our runtime,
@@ -650,7 +650,7 @@ namespace Mono.CSharp {
 					// parent is `System.Object'.
 					//
 					if (!RootContext.StdLib && Name == "System.ValueType")
-						parent = TypeManager.object_type;
+						parent = new TypeExpr (TypeManager.object_type, Location);
 				}
 
 				return null;
@@ -676,13 +676,21 @@ namespace Mono.CSharp {
 					return null;
 				}
 
+				if (name is ConstructedType){
+					parent = (TypeExpr) name;
+					return null;
+				}
+
 				Type first = name.Type;
+				Type ptype;
 
 				if (first.IsClass){
-					parent = first;
+					parent = (TypeExpr) name;
+					ptype = first;
 					start = 1;
 				} else {
-					parent = TypeManager.object_type;
+					ptype = TypeManager.object_type;
+					parent = new TypeExpr (ptype, Location);
 					start = 0;
 				}
 				if (first.IsSealed){
@@ -691,19 +699,36 @@ namespace Mono.CSharp {
 					if (first.IsValueType)
 						detail = " (a class can not inherit from a struct/enum)";
 					
-					Report.Error (509, "class `"+ Name +
-						      "': Cannot inherit from sealed class `"+
-						      first + "'" + detail);
+					Report.Error (509, Location,"class `{0}': Cannot inherit from " +
+						      "sealed class `{1}'{2}", Name, first, detail);
 					error = true;
 					return null;
 				}
 
-				if (!AsAccessible (parent, ModFlags))
+				if (ptype == TypeManager.enum_type ||
+				    (ptype == TypeManager.value_type && RootContext.StdLib) ||
+				    ptype == TypeManager.delegate_type ||
+				    ptype == TypeManager.array_type){
+					Report.Error (644, Location,
+						      "`{0}' cannot inherit from special class `{1}'",
+						      Name, TypeManager.CSharpName (ptype));
+					error = true;
+					return null;
+				}
+
+				if (IsGeneric && (ptype == TypeManager.attribute_type ||
+						  ptype.IsSubclassOf (TypeManager.attribute_type))){
+					Report.Error (-214, Location,
+						      "Generic type can not derive from Attribute");
+					error = true;
+					return null;
+				}
+
+				if (!AsAccessible (ptype, ModFlags))
 					Report.Error (60, Location,
-						      "Inconsistent accessibility: base class `" +
-						      TypeManager.CSharpName (parent) + "' is less " +
-						      "accessible than class `" +
-						      Name + "'");
+						      "Inconsistent accessibility: base class `{0}' " +
+						      "is less accessible than class `{1}'",
+						      TypeManager.CSharpName (ptype), Name);
 
 			} else {
 				start = 0;
@@ -765,7 +790,7 @@ namespace Mono.CSharp {
 		//
 		public override TypeBuilder DefineType ()
 		{
-			Type parent;
+			TypeExpr parent;
 			bool is_class;
 
 			if (TypeBuilder != null)
@@ -794,25 +819,6 @@ namespace Mono.CSharp {
 			if (error)
 				return null;
 
-			if (is_class && parent != null){
-				if (parent == TypeManager.enum_type ||
-				    (parent == TypeManager.value_type && RootContext.StdLib) ||
-				    parent == TypeManager.delegate_type ||
-				    parent == TypeManager.array_type){
-					Report.Error (
-						644, Location, "`" + Name + "' cannot inherit from " +
-						"special class `" + TypeManager.CSharpName (parent) + "'");
-					error = true;
-					return null;
-				}
-			}
-
-			if (IsGeneric && (parent == TypeManager.attribute_type ||
-					  parent.IsSubclassOf (TypeManager.attribute_type))){
-				Report.Error (-214, Location, "Generic type can not derive from Attribute");
-				return null;
-			}
-			
 			if (IsGeneric) {
 				foreach (TypeParameter type_param in TypeParameters)
 					if (!type_param.Resolve (this)) {
@@ -831,10 +837,10 @@ namespace Mono.CSharp {
 					error = true;
 					return null;
 				}
-				
+
 				ModuleBuilder builder = CodeGen.ModuleBuilder;
 				TypeBuilder = builder.DefineType (
-					Name, type_attributes, parent, ifaces);
+					Name, type_attributes, parent.Type, ifaces);
 				
 			} else {
 				TypeBuilder builder = Parent.DefineType ();
@@ -842,12 +848,21 @@ namespace Mono.CSharp {
 					return null;
 				
 				TypeBuilder = builder.DefineNestedType (
-					Basename, type_attributes, parent, ifaces);
+					Basename, type_attributes, parent.Type, ifaces);
 			}
 
 			if (IsGeneric) {
 				foreach (TypeParameter type_param in TypeParameters)
 					type_param.Define (TypeBuilder);
+			}
+
+			ConstructedType constructed = parent as ConstructedType;
+			if (constructed != null) {
+				Type ptype = constructed.Resolve (ec, TypeBuilder);
+				if (ptype == null)
+					return null;
+
+				TypeBuilder.SetParent (ptype);
 			}
 
 			//
@@ -874,9 +889,9 @@ namespace Mono.CSharp {
 
 			TypeManager.AddUserType (Name, TypeBuilder, this, ifaces);
 
-			if ((parent != null) &&
-			    (parent == TypeManager.attribute_type ||
-			     parent.IsSubclassOf (TypeManager.attribute_type))) {
+			if ((parent != null) && (parent.Type != null) &&
+			    (parent.Type == TypeManager.attribute_type ||
+			     parent.Type.IsSubclassOf (TypeManager.attribute_type))) {
 				RootContext.RegisterAttribute (this);
 				TypeManager.RegisterAttrType (TypeBuilder, this);
 			} else

@@ -190,7 +190,7 @@ namespace Mono.CSharp {
 	public class TypeParameterExpr : TypeExpr {
 		TypeParameter type_parameter;
 
-		public string Name {
+		public override string Name {
 			get {
 				return type_parameter.Name;
 			}
@@ -291,13 +291,15 @@ namespace Mono.CSharp {
 		}
 	}
 	
-	public class ConstructedType : Expression {
+	public class ConstructedType : TypeExpr {
 		Expression container_type;
 		string name, full_name;
 		TypeArguments args;
 		Type[] gen_params, atypes;
+		Type gt;
 		
 		public ConstructedType (string name, TypeArguments args, Location l)
+			: base (null, l)
 		{
 			loc = l;
 			this.container_type = container_type;
@@ -356,9 +358,6 @@ namespace Mono.CSharp {
 
 		public override Expression ResolveAsTypeStep (EmitContext ec)
 		{
-			if (args.Resolve (ec) == false)
-				return null;
-
 			//
 			// First, resolve the generic type.
 			//
@@ -373,7 +372,18 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			Type gt = resolved.Type.GetGenericTypeDefinition ();
+			gt = resolved.Type.GetGenericTypeDefinition ();
+			return this;
+		}
+
+		public Type Resolve (EmitContext ec, TypeBuilder parent)
+		{
+			//
+			// Resolve the arguments.
+			//
+			if (args.Resolve (ec) == false)
+				return null;
+
 			gen_params = gt.GetGenericArguments ();
 			atypes = args.Arguments;
 
@@ -385,7 +395,7 @@ namespace Mono.CSharp {
 			}
 
 			if (args.HasTypeArguments)
-				return new TypeExpr (gt, loc);
+				return parent;
 
 			for (int i = 0; i < gen_params.Length; i++) {
 				if (!CheckConstraints (i))
@@ -395,8 +405,7 @@ namespace Mono.CSharp {
 			//
 			// Now bind the parameters.
 			//
-			Type ntype = gt.BindGenericParameters (args.Arguments);
-			return new TypeExpr (ntype, loc);
+			return gt.BindGenericParameters (args.Arguments);
 		}
 		
 		public override void Emit (EmitContext ec)

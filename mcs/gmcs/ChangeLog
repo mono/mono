@@ -1,3 +1,24 @@
+2003-10-25  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (TypeContainer.GetClassBases): Changed
+	`out Type parent' into `out TypeExpr parent'.  Moved CS0644 and
+	CS8214 reporting here.
+	(TypeContainer.DefineType): GetClassBases() gives us a `TypeExpr'
+	instead of a `Type' for our parent.  In case of a recursive
+	declaration (see tests/gen-23.cs for an example), our parent is a
+	ConstructedType and it doesn't have its type set.  So, first
+	create our own TypeBuilder, then call constructed.Resolve() to get
+	the parent's type and finally TypeBuilder.SetParent() it.
+
+	* ecore.cs (TypeExpr.Name): New public virtual property.
+
+	* generic.cs
+	(ConstructedType): We're now a TypeExpr and not just an Expression.
+	(ConstructedType.ResolveAsTypeStep): Don't resolve our type
+	arguments here; this is done later.
+	(ConstructedType.Resolve): New public method to resolve the type
+	arguments and bind them.
+
 2003-10-21  Martin Baulig  <martin@ximian.com>
 
 	* convert.cs: Use `TypeManager.IsValueType' instead of
