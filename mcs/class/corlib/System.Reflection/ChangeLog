@@ -1,3 +1,10 @@
+2003-11-02  Martin Baulig  <martin@ximian.com>
+
+	* MonoGenericInst.cs (MonoInflatedMethod, MonoInflatedCtor): Added
+	`Type declaring_type' field and override the `DeclaringType' and
+	`ReflectedType' properties.
+	(MonoGenericInst.IsValueTypeImpl): Override this.
+
 2003-10-31  Martin Baulig  <martin@ximian.com>
 
 	* MonoGenericInst.cs (MonoInflatedField): New internal class.

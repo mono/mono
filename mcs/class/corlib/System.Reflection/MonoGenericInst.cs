@@ -64,6 +64,14 @@ namespace System.Reflection
 			get { return parent != null ? parent : generic_type.BaseType; }
 		}
 
+		protected override bool IsValueTypeImpl ()
+		{
+			if (BaseType == typeof (Enum) || BaseType == typeof (ValueType))
+				return true;
+
+			return BaseType.IsSubclassOf (typeof (ValueType));
+		}
+
 		public override MethodInfo[] GetMethods (BindingFlags bindingAttr)
 		{
 			if (methods == null)
@@ -242,6 +250,19 @@ namespace System.Reflection
 	internal class MonoInflatedMethod : MonoMethod
 	{
 		private readonly MethodInfo declaring;
+		private readonly Type declaring_type;
+
+		public override Type DeclaringType {
+			get {
+				return declaring_type != null ? declaring_type : base.DeclaringType;
+			}
+		}
+
+		public override Type ReflectedType {
+			get {
+				return declaring_type != null ? declaring_type : base.ReflectedType;
+			}
+		}
 
 		public override bool IsDefined (Type attributeType, bool inherit)
 		{
@@ -263,6 +284,19 @@ namespace System.Reflection
 	internal class MonoInflatedCtor : MonoCMethod
 	{
 		private readonly ConstructorInfo declaring;
+		private readonly Type declaring_type;
+
+		public override Type DeclaringType {
+			get {
+				return declaring_type != null ? declaring_type : base.DeclaringType;
+			}
+		}
+
+		public override Type ReflectedType {
+			get {
+				return declaring_type != null ? declaring_type : base.ReflectedType;
+			}
+		}
 
 		public override bool IsDefined (Type attributeType, bool inherit)
 		{
