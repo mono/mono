@@ -1,3 +1,7 @@
+2002-07-31  Rodrigo Moya <rodrigo@ximian.com>
+
+	* unix.args: added new files from System.Runtime.Remoting.Channels.
+
 2002-07-31  Duncan Mak  <duncan@ximian.com>
 
 	* unix.args: Added interfaces and enumerations from
