@@ -1,3 +1,8 @@
+2004-09-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FAMWatcher.cs: s/fam/libfam.so.0/ so that g_module finds it even
+	when the development package is not installed.
+
 2004-08-06  Geoff Norton <gnorton@customerdna.com>
 
 	* FileSystemWatcher.cs: Use the new KeventWatcher if its supported
