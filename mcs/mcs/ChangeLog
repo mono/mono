@@ -1,3 +1,9 @@
+2005-01-24  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #71649
+	* class.cs (StaticClass.DefineContainerMembers): Enable enums and
+	delegates in static class.
+
 2005-01-24  Martin Baulig  <martin@ximian.com>
 
 	* flowanalysis.cs (FlowBranching.UsageVector.MergeChild): If we're
