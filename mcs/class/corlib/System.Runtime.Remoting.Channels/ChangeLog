@@ -5,6 +5,9 @@
 
 2002-08-01  Duncan Mak  <duncan@ximian.com>
 
+	* IChannel.cs:
+	(Parse): Added.
+
 	* BinaryServerFormatterSink.cs: 
 	* SoapServerFormatterSink.cs: Fixed typo.
 
