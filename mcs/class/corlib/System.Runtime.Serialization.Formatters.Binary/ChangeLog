@@ -1,3 +1,8 @@
+2004-11-29  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* CodeGenerator.cs: Addded EnumToUnderlying method to get the underlying
+	type of an enum. This fixes bug #69753.
+
 2004-07-02  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* BinaryCommon.cs: Added CheckSerializable method.

@@ -250,7 +250,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				if (t == typeof(Enum))
 					ig.Emit (OpCodes.Ldind_Ref);
 				else
-					LoadFromPtr (ig, t.UnderlyingSystemType);
+					LoadFromPtr (ig, EnumToUnderlying (t));
 			} else if (t.IsValueType)
 				ig.Emit (OpCodes.Ldobj, t);
 			else
@@ -358,6 +358,40 @@ namespace System.Runtime.Serialization.Formatters.Binary
 						throw new NotSupportedException ("Unsupported primitive type: " + type.FullName);
 					break;
 			}
+		}
+		
+		//
+		// This is needed, because enumerations from assemblies
+		// do not report their underlyingtype, but they report
+		// themselves
+		//
+		public static Type EnumToUnderlying (Type t)
+		{
+			TypeCode tc = Type.GetTypeCode (t);
+	
+			switch (tc){
+			case TypeCode.Boolean:
+				return typeof (bool);
+			case TypeCode.Byte:
+				return typeof (byte);
+			case TypeCode.SByte:
+				return typeof (sbyte);
+			case TypeCode.Char:
+				return typeof (char);
+			case TypeCode.Int16:
+				return typeof (short);
+			case TypeCode.UInt16:
+				return typeof (ushort);
+			case TypeCode.Int32:
+				return typeof (int);
+			case TypeCode.UInt32:
+				return typeof (uint);
+			case TypeCode.Int64:
+				return typeof (long);
+			case TypeCode.UInt64:
+				return typeof (ulong);
+			}
+			throw new Exception ("Unhandled typecode in enum " + tc + " from " + t.AssemblyQualifiedName);
 		}
 	}
  }
