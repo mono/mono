@@ -1,3 +1,8 @@
+2005-01-10  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* BinaryCommon.cs: IntPtr is not a primitive type in the serialization
+	world. This fixes bug #70757.
+
 2004-12-15  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ObjectReader.cs: Use GetField instead of GetMembers. Properties can't

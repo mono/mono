@@ -91,7 +91,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 		public static bool IsPrimitive (Type type)
 		{
-			return type.IsPrimitive || 
+			return (type.IsPrimitive && type != typeof (IntPtr)) || 
 				type == typeof (DateTime) || 
 				type == typeof (TimeSpan) || 
 				type == typeof (Decimal);
