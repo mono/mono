@@ -1,3 +1,6 @@
+2004-12-23  Ben Maurer  <bmaurer@ximian.com>
+
+	* strtod.c: add `cosnt' to some arrays to get them on shareable pages.
 
 Tue Dec 7 17:53:01 CET 2004 Paolo Molaro <lupus@ximian.com>
 
