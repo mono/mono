@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Data.ObjectSpaces.dll
 LIB_MCS_FLAGS = /r:$(corlib),System.dll,System.Data.dll,System.Xml.dll,System.Data.SqlXml.dll
-NO_TEST = yes
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES =
 

@@ -14,13 +14,19 @@ namespace System.Data.ObjectSpaces
         public abstract class ObjectContext
         {
                 [MonoTODO]
-                protected ObjectContext () {}
+                protected ObjectContext () 
+		{
+		}
+                
+                public virtual void Add (object obj) 
+		{
+			Add (obj, (ObjectState) (-1));
+		}
                 
                 [MonoTODO]
-                public virtual void Add (object obj) {}
-                
-                [MonoTODO]
-                public virtual void Add (object obj, ObjectState state) {}
+                public virtual void Add (object obj, ObjectState state) 
+		{
+		}
 
                 public abstract void Delete (object obj);
                 public abstract ValueRecord GetCurrentValueRecord (object obj);

@@ -20,16 +20,15 @@ namespace System.Data.ObjectSpaces
                 public DbObjectReader (IDataReader dataReader, Type type, MappingSchema map) 
                 {
                         if (dataReader == null || type == null || map == null)
-                                throw ObjectException.CreateObjectException ();
+                                throw new ObjectException ();
                         
                 }
                         
                 [MonoTODO]                        
-                public DbObjectReader(IDataReader dataReader, Type type, MappingSchema map,
-                        ObjectContext context)
+                public DbObjectReader (IDataReader dataReader, Type type, MappingSchema map, ObjectContext context)
                 {
                         if (dataReader == null || type == null || map == null || context == null)
-                                throw ObjectException.CreateObjectException (); 
+                                throw new ObjectException (); 
                 }
 
 		[MonoTODO]

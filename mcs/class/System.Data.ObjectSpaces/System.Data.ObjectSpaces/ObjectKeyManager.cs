@@ -3,25 +3,25 @@
 //
 // Author:
 //   Mark Easton (mark.easton@blinksoftware.co.uk)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) BLiNK Software Ltd.  http://www.blinksoftware.co.uk
+// Copyright (C) Tim Coleman, 2003
 //
 
 #if NET_1_2
 
-namespace System.Data.ObjectSpaces
-{
-        [MonoTODO]
-        public class ObjectKeyManager 
+namespace System.Data.ObjectSpaces {
+        public abstract class ObjectKeyManager 
         {
                 [MonoTODO]
-                public override int GetHashCode() 
+                public override bool Equals (object obj) 
 		{
 			throw new NotImplementedException ();
 		}
-                
+
                 [MonoTODO]
-                public override bool Equals(object obj) 
+                public override int GetHashCode () 
 		{
 			throw new NotImplementedException ();
 		}

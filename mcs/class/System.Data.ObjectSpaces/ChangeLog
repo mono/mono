@@ -1,3 +1,32 @@
+2003-11-26  Tim Coleman <tim@timcoleman.com>
+	* System.Data.ObjectSpaces_test.dll.sources:
+	* Makefile:
+		Add stuff for tests
+	* System.Data.ObjectSpaces/PersistenceError.cs:
+	* System.Data.ObjectSpaces/PersistenceException.cs:
+	* System.Data.ObjectSpaces.Schema/ExtendedProperty.cs:
+	* System.Data.ObjectSpaces.Schema/ExtendedPropertyCollection.cs:
+	* System.Data.ObjectSpaces.Schema/ObjectRelationship.cs:
+	* System.Data.ObjectSpaces.Schema/ObjectRelationshipCollection.cs:
+	* System.Data.ObjectSpaces.Schema/ObjectRelationshipType.cs:
+	* System.Data.ObjectSpaces.Schema/SchemaClass.cs:
+	* System.Data.ObjectSpaces.Schema/SchemaClassCollection.cs:
+	* System.Data.ObjectSpaces.Schema/SchemaMember.cs:
+	* System.Data.ObjectSpaces.Schema/SchemaMemberCollection.cs:
+	* System.Data.ObjectSpaces.dll.sources:
+		New class stubs added
+	* System.Data.ObjectSpaces/CommonObjectContext.cs:
+	* System.Data.ObjectSpaces/ContextException.cs:
+	* System.Data.ObjectSpaces/DbObjectReader.cs:
+	* System.Data.ObjectSpaces/ObjectContext.cs:
+	* System.Data.ObjectSpaces/ObjectException.cs:
+	* System.Data.ObjectSpaces/ObjectKeyManager.cs:
+	* System.Data.ObjectSpaces/ObjectList.cs:
+	* System.Data.ObjectSpaces/OneToManyRelationship.cs:
+	* System.Data.ObjectSpaces/OneToOneRelationship.cs:
+	* System.Data.ObjectSpaces.Schema/ObjectSchema.cs:
+		Updates to make more correct
+
 2003-11-25  Tim Coleman <tim@timcoleman.com>
 	* System.Data.ObjectSpaces/PersistenceErrorBehaviour.cs:
 	* System.Data.ObjectSpaces/PersisteneceErrorType.cs:

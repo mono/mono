@@ -9,6 +9,7 @@
 
 #if NET_1_2
 
+using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace System.Data.ObjectSpaces
@@ -16,16 +17,28 @@ namespace System.Data.ObjectSpaces
         public class ContextException : ObjectException
         {
                 [MonoTODO]        
-                protected ContextException () {}
+                public ContextException () 
+			: base (Locale.GetText ("A Context Exception has occurred."))
+		{
+		}
                 
                 [MonoTODO]
-                protected ContextException (SerializationInfo info, StreamingContext context) {}
+                protected ContextException (SerializationInfo info, StreamingContext context) 
+			: base (info, context)
+		{
+		}
                                 
                 [MonoTODO]
-                protected ContextException (string message) {}
+                public ContextException (string message) 
+			: base (message)
+		{
+		}
 
                 [MonoTODO]
-                protected ContextException (string message, Exception innerException) {}
+                public ContextException (string message, Exception innerException) 
+			: base (message, innerException)
+		{
+		}
         }
 }
 

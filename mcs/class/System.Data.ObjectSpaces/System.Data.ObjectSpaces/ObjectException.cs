@@ -10,6 +10,7 @@
 #if NET_1_2
 
 using System;
+using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace System.Data.ObjectSpaces
@@ -23,27 +24,21 @@ namespace System.Data.ObjectSpaces
 		}
 
 		[MonoTODO()]
-		protected ObjectException ()
-			: base ("An object exception has occurred.")
+		public ObjectException ()
+			: base (Locale.GetText ("An object exception has occurred."))
 		{
 		}
 
 		[MonoTODO()]
-		protected ObjectException (String s)
+		public ObjectException (String s)
 			: base (s)
 		{
 		}
 
 		[MonoTODO()]
-		protected ObjectException (String s, Exception innerException)
+		public ObjectException (String s, Exception innerException)
 			: base (s, innerException)
 		{
-		}
-
-		[MonoTODO ("Placeholder")]
-		internal static ObjectException CreateObjectException ()
-		{
-			return new ObjectException ();
 		}
 	}
 }

@@ -24,7 +24,7 @@ namespace System.Data.ObjectSpaces
                 public ObjectList (Type type, object[] parameters)
                 {
                         if (type == null || !(type is IList))
-                                throw ObjectException.CreateObjectException ();
+                                throw new ObjectException ();
                 }
 
                 [MonoTODO]

@@ -1,4 +1,6 @@
 TODOAttribute.cs
+Assembly/AssemblyInfo.cs
+Assembly/Locale.cs
 System.Data.ObjectSpaces/ASTBaseParser.cs
 System.Data.ObjectSpaces/AstKeywords.cs
 System.Data.ObjectSpaces/CommonObjectContext.cs
@@ -28,14 +30,15 @@ System.Data.ObjectSpaces/ObjectSpace.cs
 System.Data.ObjectSpaces/ObjectState.cs
 System.Data.ObjectSpaces/OneToManyRelationship.cs
 System.Data.ObjectSpaces/OneToOneRelationship.cs
+System.Data.ObjectSpaces/PersistenceError.cs
 System.Data.ObjectSpaces/PersistenceErrorBehavior.cs
 System.Data.ObjectSpaces/PersistenceErrorType.cs
+System.Data.ObjectSpaces/PersistenceException.cs
 System.Data.ObjectSpaces/PersistenceOptions.cs
 System.Data.ObjectSpaces/UpdateErrorType.cs
 System.Data.ObjectSpaces/ValueRecord.cs
 System.Data.ObjectSpaces/ValueRecordMergeEventArgs.cs
 System.Data.ObjectSpaces/ValueRecordMergeEventHandler.cs
-System.Data.ObjectSpaces.Schema/ObjectSchema.cs
 System.Data.ObjectSpaces.Query/ASTQueryParser.cs
 System.Data.ObjectSpaces.Query/Axis.cs
 System.Data.ObjectSpaces.Query/Binary.cs
@@ -65,3 +68,13 @@ System.Data.ObjectSpaces.Query/TypeCast.cs
 System.Data.ObjectSpaces.Query/TypeConversion.cs
 System.Data.ObjectSpaces.Query/TypeFilter.cs
 System.Data.ObjectSpaces.Query/Unary.cs
+System.Data.ObjectSpaces.Schema/SchemaClass.cs
+System.Data.ObjectSpaces.Schema/ObjectRelationship.cs
+System.Data.ObjectSpaces.Schema/ObjectRelationshipCollection.cs
+System.Data.ObjectSpaces.Schema/ObjectRelationshipType.cs
+System.Data.ObjectSpaces.Schema/ObjectSchema.cs
+System.Data.ObjectSpaces.Schema/SchemaMemberCollection.cs
+System.Data.ObjectSpaces.Schema/SchemaMember.cs
+System.Data.ObjectSpaces.Schema/SchemaClassCollection.cs
+System.Data.ObjectSpaces.Schema/ExtendedProperty.cs
+System.Data.ObjectSpaces.Schema/ExtendedPropertyCollection.cs
