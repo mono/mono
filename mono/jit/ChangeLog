@@ -1,3 +1,8 @@
+
+Wed Jul 24 13:02:50 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* jit.c, jit.h, exception.c: implemented stack walking function.
+
 2002-07-24  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg (ARG_OBJ): removed zero sized object warning 
