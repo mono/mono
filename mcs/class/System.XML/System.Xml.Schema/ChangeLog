@@ -1,3 +1,7 @@
+2004-07-28  Atsushi Enomoto <atsushi@ximian.com>
+
+	* BuiltInDatatype.cs : use XmlQualifiedName.Parse().
+
 2004-07-23  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchema.cs : Added internal XdtNamespace constant. don't fill

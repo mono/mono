@@ -1503,12 +1503,10 @@ namespace Mono.Xml.Schema
 				throw new ArgumentNullException ("name table");
 			if (nsmgr == null)
 				throw new ArgumentNullException ("namespace manager");
-			int colonAt = s.IndexOf (':');
-			string localName = colonAt < 0 ? s : s.Substring (colonAt + 1);
-//			string localName = nameTable.Add (colonAt < 0 ? s : s.Substring (colonAt + 1));
-			return new XmlQualifiedName (localName, nsmgr.LookupNamespace (
-				colonAt < 0 ? "" : s.Substring (0, colonAt - 1),
-				false));
+			XmlQualifiedName name = XmlQualifiedName.Parse (s, nsmgr);
+			nameTable.Add (name.Name);
+			nameTable.Add (name.Namespace);
+			return name;
 		}
 
 		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
