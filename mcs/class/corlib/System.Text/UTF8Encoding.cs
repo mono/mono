@@ -149,7 +149,7 @@ public class UTF8Encoding : Encoding
 		}
 
 		// Return the final length to the caller.
-		return length + (emitIdentifier ? 3 : 0);
+		return length;
 	}
 
 	// Internal version of "GetBytes" which can handle a rolling

@@ -1,3 +1,8 @@
+
+Tue Nov 19 13:03:27 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* UTF8Encoding.cs: fix GetByteCount (), too.
+
 2002-11-19  Miguel de Icaza  <miguel@ximian.com>
 
 	* UnicodeEncoding.cs: the bytemark should only be used to return
