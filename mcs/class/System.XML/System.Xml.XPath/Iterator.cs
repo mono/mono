@@ -36,7 +36,10 @@ namespace System.Xml.XPath
 		
 		public override string ToString ()
 		{
-			return Current.NodeType.ToString () + "[" + CurrentPosition + "] : " + Current.Name + " = " + Current.Value;
+			if (Current != null)
+				return Current.NodeType.ToString () + "[" + CurrentPosition + "] : " + Current.Name + " = " + Current.Value;
+			else
+				return this.GetType().ToString () + "[" + CurrentPosition + "]";
 		}
 	}
 
@@ -462,7 +465,13 @@ namespace System.Xml.XPath
 			_pos ++;
 			return true;
 		}
-		public override XPathNavigator Current { get { return _iterRight.Current; }}
+		public override XPathNavigator Current { 
+			get { 
+				if (_iterRight == null) return null;
+				
+				return _iterRight.Current;
+			}
+		}
 		public override int CurrentPosition { get { return _pos; }}
 	}
 
