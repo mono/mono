@@ -17,7 +17,7 @@ sources, you should go into the `mono' sibling directory and issue the
 make fullbuild command, like this:
 
 	  cd ../mono
-	  ./autogen --prefix=/usr/local
+	  ./autogen.sh --prefix=/usr/local
 	  make fullbuild
 
 That will build and install the code in a single pass.  The

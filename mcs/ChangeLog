@@ -1,3 +1,7 @@
+2004-01-14  Martin Willemoes Hansen  <mwh@sysrq.dk>
+
+	* INSTALL.txt: Fixed, autogen should be autogen.sh
+
 2003-12-01  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* Added dirs mcs/jtest and mcs/jerrors.
