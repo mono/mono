@@ -1,3 +1,8 @@
+2003-06-17  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* mics.c: fix bug in _wapi_calc_timeout. It gave wrong values for
+	  high ms values (there was an overflow).
+
 2003-06-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* system.h (struct _WapiSystemInfo ): Fix warnings when using gcc-3.3.
