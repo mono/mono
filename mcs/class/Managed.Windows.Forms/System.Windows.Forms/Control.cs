@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.6 $
+// $Revision: 1.7 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.7  2004/07/27 10:38:17  jordi
+// changes to be able to run winforms samples
+//
 // Revision 1.6  2004/07/19 19:09:42  jordi
 // label control re-written: added missing functionlity, events, and properties
 //
@@ -52,7 +55,7 @@
 //
 //
 
-// NOT COMPLETE
+// NOT COMPLETE 
 
 using System;
 using System.Drawing;
@@ -98,8 +101,10 @@ namespace System.Windows.Forms
 		internal Control[]		children;		// our children
 		internal AccessibleObject	accessibility_object;	// object that contains accessibility information about our control
 		internal AnchorStyles		anchor_style;		// TODO
+		internal DockStyle		dock_style;		// TODO
 		internal BindingContext		binding_context;	// TODO
 		internal RightToLeft		right_to_left;		// drawing direction for control
+		internal int			layout_suspended;
 		#endregion	// Local Variables
 
 		#region Private Classes
@@ -442,6 +447,7 @@ namespace System.Windows.Forms
 			is_disposed = false;
 			is_enabled = true;
 			has_focus = false;
+			layout_suspended = 0;
 
 			parent = null;
 			background_image = null;
@@ -752,12 +758,13 @@ namespace System.Windows.Forms
 		}
 
 		public virtual DockStyle Dock {
-			get {
-				throw new NotImplementedException();
-			}
+			get { return dock_style;}
 
 			set {
-				throw new NotImplementedException();
+				if (dock_style == value)
+					return;
+
+				dock_style = value;
 			}
 		}
 
@@ -767,7 +774,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				throw new NotImplementedException();
+				is_enabled = value;
 			}
 		}
 
@@ -1206,16 +1213,26 @@ namespace System.Windows.Forms
 			return result;
 		}
 
-		public void ResumeLayout() {
-			ResumeLayout(true);
+		public void ResumeLayout() 
+		{
+			ResumeLayout (true);
 		}
 
-		public void ResumeLayout(bool peformLayout) {
-			throw new NotImplementedException();
+		[MonoTODO]
+		public void ResumeLayout(bool peformLayout) 
+		{
+			layout_suspended--;
+			
+			if (layout_suspended > 0 || peformLayout == false)
+				return;
+
+			// PerformLayout and fire event			
 		}
 
-		public void SuspendLayout() {
-			throw new NotImplementedException();
+		
+		public void SuspendLayout() 
+		{
+			layout_suspended++;
 		}
 
 		[MonoTODO]
