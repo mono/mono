@@ -796,11 +796,7 @@ namespace System.Diagnostics {
 					cmdline = startInfo.FileName + " " + startInfo.Arguments.Trim ();
 			} else {
 				appname = startInfo.FileName;
-				// FIXME: There seems something wrong in process.c. We should not require extraneous command line
-				if (Path.DirectorySeparatorChar == '\\')
-					cmdline = appname + " " + startInfo.Arguments.Trim ();
-				else
-					cmdline = startInfo.Arguments.Trim ();
+				cmdline = startInfo.Arguments.Trim ();
 			}
 
 			ret=Start_internal(appname,

@@ -1,3 +1,7 @@
+2004-12-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Process.cs: always pass the same arguments to the runtime.
+
 2004-09-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* EventLogPermission.cs: Completed implementation.
