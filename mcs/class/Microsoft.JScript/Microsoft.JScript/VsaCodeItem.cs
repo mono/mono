@@ -19,11 +19,8 @@ namespace Microsoft.JScript {
 		private string sourceText;
 
 		internal VsaCodeItem (VsaEngine engine, string name, VsaItemFlag flag)
+			: base (engine, name, VsaItemType.Code, flag)
 		{
-			this.engine = engine;
-			this.itemType = VsaItemType.Code;
-			this.itemFlag = flag;
-			this.name = name;
 			this.dirty = true;
 		}
 		

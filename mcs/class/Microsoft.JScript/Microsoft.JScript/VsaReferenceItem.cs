@@ -15,14 +15,11 @@ namespace Microsoft.JScript {
 
 	internal class VsaReferenceItem : VsaItem, IVsaReferenceItem {
 
-		private string assemblyName;
+		private string assembly_name;
 
 		internal VsaReferenceItem (VsaEngine engine, string name, VsaItemFlag flag)
+			: base (engine, name, VsaItemType.Reference, flag)
 		{
-			this.engine = engine;
-			this.name = name;
-			this.itemType = VsaItemType.Reference;	
-			this.itemFlag = flag;
 			this.dirty = true;
 		}
 
@@ -35,10 +32,10 @@ namespace Microsoft.JScript {
 				else if (engine.Busy)
 					throw new VsaException (VsaError.EngineBusy);
 
-				throw new NotImplementedException ();
+				return assembly_name;
 			}
 
-			set { throw new NotImplementedException (); }
+			set { assembly_name = value; }
 		}		
 	}
 }

@@ -16,11 +16,19 @@ namespace Microsoft.JScript {
 	public abstract class VsaItem : IVsaItem {
 
 		protected bool dirty;
-		protected VsaItemType itemType;
-		protected VsaItemFlag itemFlag;
+		protected VsaItemType type;
+		protected VsaItemFlag flag;
 		protected string name;
 		protected VsaEngine engine;
-		
+
+		internal VsaItem (VsaEngine engine, string name, VsaItemType type, VsaItemFlag flag)
+		{
+			this.engine = engine;
+			this.name = name;
+			this.type = type;
+			this.flag = flag;						
+		}
+
 		public virtual bool IsDirty {
 			get {
 				if (engine.Closed)
@@ -60,7 +68,7 @@ namespace Microsoft.JScript {
 			get {
 				if (engine.Closed)
 					throw new VsaException (VsaError.EngineClosed);
-				else return itemType;
+				else return type;
 			}
 		}
 

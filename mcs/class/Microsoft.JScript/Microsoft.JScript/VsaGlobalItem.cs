@@ -16,14 +16,10 @@ namespace Microsoft.JScript {
 	internal class VsaGlobalItem : VsaItem, IVsaGlobalItem {
 
 		internal VsaGlobalItem (VsaEngine engine, string name, VsaItemFlag flag)
+			: base (engine, name, VsaItemType.AppGlobal, flag)
 		{
-			this.engine = engine;
-			this.name = name;
-			this.itemType = VsaItemType.AppGlobal;
-			this.itemFlag = flag;	
 			this.dirty = true;
 		}
-
 
 		//
 		// Still not implemented on .Net 1.1
@@ -42,7 +38,7 @@ namespace Microsoft.JScript {
 				else if (engine.Busy)
 					throw new VsaException (VsaError.EngineBusy);
 
-				return System.Enum.GetName (typeof (VsaItemType), itemType);
+				return System.Enum.GetName (typeof (VsaItemType), type);
 			}
 
 			set {
@@ -53,8 +49,7 @@ namespace Microsoft.JScript {
 				else if (engine.Busy)
 					throw new VsaException (VsaError.EngineBusy);
 				
-				itemType = (VsaItemType) System.Enum.Parse (typeof (VsaItemType),
-									    value);
+				type = (VsaItemType) System.Enum.Parse (typeof (VsaItemType), value);
 			}
 		}
 	}

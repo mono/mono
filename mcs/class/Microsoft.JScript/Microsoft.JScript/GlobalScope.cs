@@ -16,8 +16,12 @@ namespace Microsoft.JScript {
 	public class GlobalScope : ActivationObject, IExpando {
 
 		public GlobalScope (GlobalScope parent, VsaEngine engine)
+			: this (parent, engine, engine != null)
 		{
-			throw new NotImplementedException ();
+		}
+
+		internal GlobalScope (GlobalScope parent, VsaEngine engine, bool is_comp_scope)
+		{			
 		}
 
 		public FieldInfo AddField (string name)

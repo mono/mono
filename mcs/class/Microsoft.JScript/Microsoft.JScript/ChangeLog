@@ -1,5 +1,11 @@
 2004-01-16  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* Microsoft.JScript/VsaReferenceItem.cs: renamed field, reuse parent's ctr.
+	* Microsoft.JScript/VsaItem.cs: renamed some fields, added ctr, 
+	* Microsoft.JScript/VsaGlobalItem.cs: reuse parent ctr.
+	* Microsoft.JScript/VsaCodeItem.cs: reuse parent ctr.
+	* Microsoft.JScript/GlobalScope.cs: reuse constructors from parent.
+
 	* UnaryOp.cs: inherit from Exp now.
 	* Plus.cs: Don't throw the exception when calling constructor, let
 	it build the default handler. Return a new object when calling
