@@ -161,23 +161,22 @@ namespace Mono.PEToolkit {
 
 		/// <summary>
 		/// </summary>
-		unsafe public void Read(BinaryReader reader)
+		public void Read(BinaryReader reader)
 		{
-			sbyte* pName = stackalloc sbyte [8];
-			sbyte* p = pName;
+			char[] pName = new char[8];
+			int len = 0;
 
-			for (int i = 8; --i >=0;) {
+			for (len = 0; len<8; len++) {
 				sbyte c = reader.ReadSByte();
-				if (c == 0) break;
-				*p++ = c;
+				if (c == 0) 
+					break;
+				pName[len] = (char) c;
 			}
 
-			int len = (int) (p - pName);
-			if (len != 0) {
-				name = PEUtils.GetString (pName, 0, len, Encoding.ASCII);
-			} else {
+			if (len == 0)
 				name = String.Empty;
-			}
+			else
+				name = new String (pName);			
 
 			reader.BaseStream.Position += 8 - len - 1;
 

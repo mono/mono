@@ -1,5 +1,9 @@
 2003-02-21 Jackson Harper <jackson@latitudegeo.com>
 
+	* Section.cs: Make Read method safe
+
+2003-02-21 Jackson Harper <jackson@latitudegeo.com>
+
 	* Section.cs: Convert Header to a class and lowers it accesability.
 
 2003-02-17  Jackson Harper <jackson@latitudegeo.com>
