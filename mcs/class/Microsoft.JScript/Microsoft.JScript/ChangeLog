@@ -1,3 +1,34 @@
+2004-01-23  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* jscript-lexer-parser.g: formal_param_list receives a parent too.
+
+	* SymbolTable.cs: added size and current_symbols properties.
+
+	* JSLocalField.cs: don't throw not ImplementedException from
+	constructor (same reason, testing purposes, must get implemented
+	for real).
+
+	* IdentificationTable.cs: added num_of_locals and current_locals properties.
+
+	* FunctionDeclaration.cs: added a LocalBuilder and DictionaryEntry
+	as fields. Not throw NotImplementedException for
+	JScriptFunctionDeclaration (testing purposes, must get implemeted
+	for real). Let's build our function closures! Added functions:
+	build_closure and build_closure_nested, build_local_fields. Keep
+	track of current parameters and locals defs.
+
+	* FormalParameterList.cs: made FormalParam inherit from
+	AST. Implement the Emit for parameters, yeah!
+
+	* CodeGenerator.cs: added a ModuleBuilder reference. New constructor.	
+
+	* Closure.cs: do not throw the exception (this allow me to run the
+	tests  at mcs/jtests and check that at least i'm not generating
+	invalid CIL). Be aware that this must be really implemented.
+
+	* Block.cs: renamed field, and implement the double pass for
+	nested function declarations code emittion, yeah!.
+
 2004-01-16  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* Microsoft.JScript/VsaReferenceItem.cs: renamed field, reuse parent's ctr.
