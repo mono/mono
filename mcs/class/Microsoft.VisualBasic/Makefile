@@ -9,18 +9,18 @@ TEST_MCS_FLAGS = -codepage:65001
 
 LIB_MCS_FLAGS_RESOURCES = $(LIB_MCS_FLAGS) 
 
-TXT_RESOURCES = Microsoft.VisualBasic/VBUtils.resources
-RESX_RESOURCES = 
+TXT_RES = Microsoft.VisualBasic/VBUtils.resources
+#RESX_RES = 
 
-EXTRA_DISTFILES = $(TXT_RESOURCES:.resources=.txt) $(RESX_RESOURCES:.resources=.resx) Microsoft.VisualBasic.dll.resources
-CLEAN_FILES = $(TXT_RESOURCES) $(RESX_RESOURCES)
+EXTRA_DISTFILES = Microsoft.VisualBasic.dll.resources $(TXT_RES:.resources=.txt) #$(RESX_RES:.resources=.resx)
+CLEAN_FILES = $(TXT_RES) #$(RESX_RES)
 
 include ../../build/library.make
 
-$(the_lib): $(TXT_RESOURCES) $(RESX_RESOURCES)
+$(the_lib): $(TXT_RES) #$(RESX_RES)
 
-$(TXT_RESOURCES): %.resources: %.txt
-	$(RESGEN) $<
+$(TXT_RES): %.resources: %.txt
+	$(RESGEN) `echo $< | $(PLATFORM_CHANGE_SEPARATOR_CMD)`
 
-$(RESX_RESOURCES): %.resources: %.resx
-	$(RESGEN) $<
+#$(RESX_RES): %.resources: %.resx
+#	$(RESGEN) `echo $< | $(PLATFORM_CHANGE_SEPARATOR_CMD)`
