@@ -5,7 +5,7 @@
 mcs_topdir=$(top_srcdir)/../mcs
 gacutil=$(srcdir)/../gacutil.exe
 
-if JIT_SUPPORTED
+if USE_JIT
 mono_runtime = $(top_builddir)/mono/mini/mono
 else
 mono_runtime = $(top_builddir)/mono/interpreter/mint
@@ -68,7 +68,6 @@ corlibdir = $(libdir)
 corlib_DATA = mscorlib.dll
 
 EXTRA_DIST = $(gac_assemblies) $(corlib_DATA)
-
 MAINTAINERCLEANFILES = $(EXTRA_DIST)
 
 #
@@ -86,15 +85,15 @@ install-data-local:
 	  for i in ''$(gac_assemblies); do \
 	    echo "MONO_PATH=$(srcdir) $(mono_runtime) $(gacutil) -i $(srcdir)/$$i /f /package 1.0 /root $(DESTDIR)$(libdir)" ; \
 	    MONO_PATH=$(srcdir) \
-	      $(mono_runtime) --config ../../data/config $(gacutil) -i $(srcdir)/$$i /f /package 1.0 /root $(DESTDIR)$(libdir) || exit 1 ; \
+	      $(LIBTOOL) --mode=execute $(mono_runtime) --config ../../data/config $(gacutil) -i $(srcdir)/$$i /f /package 1.0 /root $(DESTDIR)$(libdir) || exit 1 ; \
 	  done; fi
 
 uninstall-local:
 	@if test -n '$(gac_assemblies_list)'; then \
 	  for i in ''$(gac_assemblies_list); do \
-	    echo "MONO_PATH=$(srcdir) $(mono_runtime) $(gacutil) /u $$i" ; \
+	    echo "MONO_PATH=$(srcdir) $(mono_runtime) $(gacutil) /u $$i /root $(DESTDIR)$(libdir)" ; \
 	    MONO_PATH=$(srcdir) \
-	      $(mono_runtime) $(gacutil) /u $$i /root $(DESTDIR)$(libdir) || true; \
+	      $(LIBTOOL) --mode=execute $(mono_runtime) $(gacutil) /u $$i /root $(DESTDIR)$(libdir) || true ; \
 	  done; fi
 
 copy_dlls:
