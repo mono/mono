@@ -1,3 +1,10 @@
+2004-04-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WindowsIdentityTest.cs: Don't fail on Windows for some contructor 
+	tests (in NET_1_1). Checking for Windows 2003 Server isn't enough as
+	the domain must also be Windows 2003 Server based to work. Also skip
+	the GetRolesViaReflection when running os POSIX systems.
+
 2004-04-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* WindowsIdentityTest.cs: Added reflection and serialization tests.

@@ -28,6 +28,8 @@ namespace MonoTests.System.Security.Principal {
 		// some features works only in Windows 2003 and later
 		private bool IsWin2k3orLater {
 			get {
+				// requires both a W2K3 client and server (domain)
+				// which I don't have access to debug/support
 				OperatingSystem os = Environment.OSVersion;
 				if (os.Platform != PlatformID.Win32NT)
 					return false;
@@ -71,15 +73,15 @@ namespace MonoTests.System.Security.Principal {
 		{
 			WindowsIdentity wi = WindowsIdentity.GetCurrent ();
 			// should fail with ArgumentException unless
-			// - running Windows 2003 or later
+			// - running Windows 2003 or later (both client and domain server)
 			// - running Posix
 			try {
 				WindowsIdentity id = new WindowsIdentity (wi.Name);
-				if (!IsWin2k3orLater && !IsPosix)
-					Fail ("Expected ArgumentException but got none");
+				/*if (!IsWin2k3orLater && !IsPosix)
+					Fail ("Expected ArgumentException but got none");*/
 			}
 			catch (ArgumentException) {
-				if (IsWin2k3orLater || IsPosix)
+				if (/*IsWin2k3orLater ||*/ IsPosix)
 					throw;
 			}
 		}
@@ -97,15 +99,15 @@ namespace MonoTests.System.Security.Principal {
 		{
 			WindowsIdentity wi = WindowsIdentity.GetCurrent ();
 			// should fail with ArgumentException unless
-			// - running Windows 2003 or later
+			// - running Windows 2003 or later (both client and domain server)
 			// - running Posix
 			try {
 				WindowsIdentity id = new WindowsIdentity (wi.Name, null);
-				if (!IsWin2k3orLater && !IsPosix)
-					Fail ("Expected ArgumentException but got none");
+				/*if (!IsWin2k3orLater && !IsPosix)
+					Fail ("Expected ArgumentException but got none");*/
 			}
 			catch (ArgumentException) {
-				if (IsWin2k3orLater || IsPosix)
+				if (/*IsWin2k3orLater ||*/ IsPosix)
 					throw;
 			}
 		}
@@ -115,15 +117,15 @@ namespace MonoTests.System.Security.Principal {
 		{
 			WindowsIdentity wi = WindowsIdentity.GetCurrent ();
 			// should fail with ArgumentException unless
-			// - running Windows 2003 or later
+			// - running Windows 2003 or later (both client and domain server)
 			// - running Posix
 			try {
 				WindowsIdentity id = new WindowsIdentity (wi.Name, wi.AuthenticationType);
-				if (!IsWin2k3orLater && !IsPosix)
-					Fail ("Expected ArgumentException but got none");
+				/*if (!IsWin2k3orLater && !IsPosix)
+					Fail ("Expected ArgumentException but got none");*/
 			}
 			catch (ArgumentException) {
-				if (IsWin2k3orLater || IsPosix)
+				if (/*IsWin2k3orLater ||*/ IsPosix)
 					throw;
 			}
 		}
@@ -193,6 +195,10 @@ namespace MonoTests.System.Security.Principal {
 		[Test]
 		public void GetRolesViaReflection () 
 		{
+			// remove g_warning from being show during unit tests
+			if (IsPosix)
+				return;
+
 			WindowsIdentity wi = WindowsIdentity.GetCurrent ();
 			WindowsPrincipal wp = new WindowsPrincipal (wi);
 			string[] roles = GetWindowsIdentityRoles (wi);
