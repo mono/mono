@@ -41,7 +41,7 @@
 .  /** debugging support, requires the package jay.yydebug.
 .      Set to null to suppress debugging messages.
 .    */
-t  protected yydebug.yyDebug debug;
+t  internal yydebug.yyDebug debug;
 .
  debug			## tables for debugging support
 .
@@ -92,7 +92,7 @@ t  }
 .      @return result of the last reduction, if any.
 .      @throws yyException on irrecoverable parse error.
 .    */
-.  public Object yyparse (yyParser.yyInput yyLex, Object yyd)
+.  internal Object yyparse (yyParser.yyInput yyLex, Object yyd)
 .				 {
 t    this.debug = (yydebug.yyDebug)yyd;
 .    return yyparse(yyLex);
@@ -120,7 +120,7 @@ t    this.debug = (yydebug.yyDebug)yyd;
 .      @return result of the last reduction, if any.
 .      @throws yyException on irrecoverable parse error.
 .    */
-.  public Object yyparse (yyParser.yyInput yyLex)
+.  internal Object yyparse (yyParser.yyInput yyLex)
 .				{
 .    if (yyMax <= 0) yyMax = 256;			// initial size
 .    int yyState = 0;                                   // state stack ptr

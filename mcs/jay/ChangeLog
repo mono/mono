@@ -1,3 +1,6 @@
+2004-06-10  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* skeleton.cs: oops some uses of changed classes/interfaces also need to become internal.
+
 2004-06-10  Atsushi Enomoto <atsushi@ximian.com>
 
 	* skelton.cs: make classes/interfaces internal.
