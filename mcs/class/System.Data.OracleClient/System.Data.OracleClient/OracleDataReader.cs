@@ -11,7 +11,7 @@
 //          Daniel Morgan <danmorg@sc.rr.com>
 //
 // Copyright (C) Tim Coleman, 2003
-// Copyright (C) Daniel Morgan, 2003
+// Copyright (C) Daniel Morgan, 2003, 2005
 //
 // Licensed under the MIT/X11 License.
 //
@@ -22,6 +22,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.Data.OracleClient.Oci;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -220,26 +221,20 @@ namespace System.Data.OracleClient {
 
 		public DateTime GetDateTime (int i)
 		{
-			object value = GetValue (i);
-			if (!(value is DateTime))
-				throw new InvalidCastException ();
-			return (DateTime) value;
+			IConvertible c = (IConvertible) GetValue (i);
+			return c.ToDateTime (CultureInfo.CurrentCulture);
 		}
 
 		public decimal GetDecimal (int i)
 		{
-			object value = GetValue (i);
-			if (!(value is decimal))
-				throw new InvalidCastException ();
-			return (decimal) value;
+			IConvertible c = (IConvertible) GetValue (i);
+			return c.ToDecimal (CultureInfo.CurrentCulture);
 		}
 
 		public double GetDouble (int i)
 		{
-			object value = GetValue (i);
-			if (!(value is double))
-				throw new InvalidCastException ();
-			return (double) value;
+			IConvertible c = (IConvertible) GetValue (i);
+			return c.ToDouble (CultureInfo.CurrentCulture);
 		}
 
 		public Type GetFieldType (int i)
@@ -250,10 +245,8 @@ namespace System.Data.OracleClient {
 
 		public float GetFloat (int i)
 		{
-			object value = GetValue (i);
-			if (!(value is float))
-				throw new InvalidCastException ();
-			return (float) value;
+			IConvertible c = (IConvertible) GetValue (i);
+			return c.ToSingle (CultureInfo.CurrentCulture);
 		}
 
 		public Guid GetGuid (int i)
@@ -268,18 +261,14 @@ namespace System.Data.OracleClient {
 
 		public int GetInt32 (int i)
 		{
-			object value = GetValue (i);
-			if (!(value is int))
-				throw new InvalidCastException ();
-			return (int) value;
+			IConvertible c = (IConvertible) GetValue (i);
+			return c.ToInt32 (CultureInfo.CurrentCulture);
 		}
 
 		public long GetInt64 (int i)
 		{
-			object value = GetValue (i);
-			if (!(value is long))
-				throw new InvalidCastException ();
-			return (long) value;
+			IConvertible c = (IConvertible) GetValue (i);
+			return c.ToInt64 (CultureInfo.CurrentCulture);
 		}
 
 		public string GetName (int i)
@@ -320,7 +309,6 @@ namespace System.Data.OracleClient {
 			return new OracleNumber (GetDecimal (i));
 		}
 
-		[MonoTODO]
 		public OracleDateTime GetOracleDateTime (int i)
 		{
 			if (IsDBNull (i))
@@ -335,7 +323,6 @@ namespace System.Data.OracleClient {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public OracleString GetOracleString (int i)
 		{
 			if (IsDBNull (i))
@@ -344,7 +331,6 @@ namespace System.Data.OracleClient {
 			return new OracleString (GetString (i));
 		}
 
-		[MonoTODO]
 		public object GetOracleValue (int i)
 		{
 			OciDefineHandle defineHandle = (OciDefineHandle) statement.Values [i];
@@ -376,7 +362,6 @@ namespace System.Data.OracleClient {
 			}
 		}
 
-		[MonoTODO]
 		public int GetOracleValues (object[] values)
 		{
 			int len = values.Length;

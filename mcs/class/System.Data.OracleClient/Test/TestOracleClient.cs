@@ -286,8 +286,8 @@ namespace Test.OracleClient
 						sOraDataType = "DBNull.Value";
 					}
 					else {
-						//ovalue = reader.GetValue (f);
-						ovalue = reader.GetOracleValue (f);
+						ovalue = reader.GetValue (f);
+						//ovalue = reader.GetOracleValue (f);
 						object oravalue = null;
 					
 						sDataType = ovalue.GetType ().ToString ();
@@ -305,6 +305,33 @@ namespace Test.OracleClient
 							break;
 						case "System.Data.OracleClient.OracleDateTime":
 							oravalue = ((OracleDateTime) ovalue).Value;
+							break;
+						case "System.Decimal":
+							Console.WriteLine("           *** Get Decimal, Int16, Int32, Int64, Float, Double, ...");
+							decimal dec = reader.GetDecimal (f);
+							Console.WriteLine("             GetDecimal: " + dec.ToString ());
+
+							oravalue = (object) dec;
+
+							try {
+								reader.GetInt16 (f);
+							} catch (NotSupportedException e) {
+								Console.WriteLine ("            ** Expected exception caught for GetInt16: NotSupportedException: " + e.Message);
+							}
+
+							try {
+								long lng = reader.GetInt64 (f);
+								Console.WriteLine("           GetInt64: " + lng.ToString ());
+								int n = reader.GetInt32 (f);
+								Console.WriteLine("           GetInt32: " + n.ToString ());
+								float flt = reader.GetFloat (f);
+								Console.WriteLine("           GetFloat: " + flt.ToString ());
+								double dbl = reader.GetDouble (f);
+								Console.WriteLine("           GetDouble: " + dbl.ToString ());
+							} catch (OverflowException oe1) {
+								Console.WriteLine ("            ** Overflow exception for numbers to big or too small: " + oe1.Message);
+								}
+						
 							break;
 						default:
 							oravalue = ovalue.ToString ();

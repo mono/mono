@@ -1,5 +1,14 @@
 2005-02-20  Daniel Morgan <danielmorgan@verizon.net>
 
+	* System.Data.OracleClient/OracleDataReader.cs: use ICovertible
+	to convert data types for GetDateTime, GetInt64, GetInt32, GetFloat,
+	GetDouble, GetDecimal.  Fixes bug #53391.
+	
+	* Test/TestOracleClient.cs: updated OracleClient tests for
+	these functions
+
+2005-02-20  Daniel Morgan <danielmorgan@verizon.net>
+
 	* System.Data.OracleClient/OracleCommand.cs: fix bug #72407
 	ExecuteNonQuery with a SELECT SQL statement caused an error
 
