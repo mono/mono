@@ -475,7 +475,7 @@ public class Page : TemplateControl, IHttpHandler
 			} else if (!second) {
 				if (secondPostData == null)
 					secondPostData = new NameValueCollection ();
-				secondPostData.Add (real_id, null);
+				secondPostData.Add (real_id, data [id]);
 			}
 		}
 	}
