@@ -1,3 +1,9 @@
+2002-01-20  Dick Porter  <dick@ximian.com>
+
+	* threads.h:
+	* threads.c: Replaced all instances of WapiHandle * with HANDLE,
+	so it compiles on w32.
+
 2002-01-17  Dietmar Maurer  <dietmar@ximian.com>
 
 	* metadata.c (mono_type_stack_size): impl.
