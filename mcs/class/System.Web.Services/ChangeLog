@@ -1,3 +1,8 @@
+2003-08-01  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* System.Web.Services.dll.sources: Added ExtensionManager.cs, 
+	  ServiceDescriptionSerializerBase.cs
+
 2003-08-28  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* System.Web.Services.dll.sources: Added System.Web.Services.Protocols.SoapDocumentationHandler

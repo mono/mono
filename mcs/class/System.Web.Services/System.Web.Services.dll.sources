@@ -64,7 +64,9 @@ System.Web.Services.Description/ServiceDescriptionFormatExtensionCollection.cs
 System.Web.Services.Description/ServiceDescriptionImportStyle.cs
 System.Web.Services.Description/ServiceDescriptionImportWarnings.cs
 System.Web.Services.Description/ServiceDescriptionImporter.cs
+System.Web.Services.Description/ServiceDescriptionSerializerBase.cs
 System.Web.Services.Description/ServiceDescriptionReflector.cs
+System.Web.Services.Description/ExtensionManager.cs
 System.Web.Services.Description/SoapAddressBinding.cs
 System.Web.Services.Description/SoapBinding.cs
 System.Web.Services.Description/SoapBindingStyle.cs
