@@ -21,10 +21,9 @@ namespace System.Xml.Xsl
 		#endregion
 
 		#region Constructors
-
-		[MonoTODO]
 		public XslTransform ()
 		{
+			stylesheet_file = String.Empty;
 		}
 
 		#endregion

@@ -395,11 +395,17 @@ namespace System.Xml
 		[MonoTODO]
 		public virtual XmlNode ImportNode (XmlNode node, bool deep)
 		{
+			// How to resolve default attribute values?
 			switch(node.NodeType)
 			{
 				case XmlNodeType.Attribute:
-					XmlAttribute a = node as XmlAttribute;
-					return this.CreateAttribute(a.Prefix, a.LocalName, a.NamespaceURI);
+					{
+						XmlAttribute src_att = node as XmlAttribute;
+						XmlAttribute dst_att = this.CreateAttribute(src_att.Prefix, src_att.LocalName, src_att.NamespaceURI);
+						// TODO: resolve default attribute values
+						dst_att.Value = src_att.Value;
+						return dst_att;
+					}
 
 				case XmlNodeType.CDATA:
 					return this.CreateCDataSection(node.Value);
@@ -411,43 +417,54 @@ namespace System.Xml
 					throw new XmlException("Document cannot be imported.");
 
 				case XmlNodeType.DocumentFragment:
-					XmlDocumentFragment df = this.CreateDocumentFragment();
-					if(deep)
 					{
-						foreach(XmlNode n in node.ChildNodes)
+						XmlDocumentFragment df = this.CreateDocumentFragment();
+						if(deep)
 						{
-							df.AppendChild(this.ImportNode(n, deep));
+							foreach(XmlNode n in node.ChildNodes)
+							{
+								df.AppendChild(this.ImportNode(n, deep));
+							}
 						}
+						return df;
 					}
-					return df;
 
 				case XmlNodeType.DocumentType:
 					throw new XmlException("DocumentType cannot be imported.");
 
 				case XmlNodeType.Element:
-					XmlElement src = node as XmlElement;
-					XmlElement dst = this.CreateElement(src.Prefix, src.LocalName, src.NamespaceURI);
-					if(deep)
 					{
-						foreach(XmlNode n in src.ChildNodes)
-							dst.AppendChild(this.ImportNode(n, deep));
+						XmlElement src = (XmlElement)node;
+						XmlElement dst = this.CreateElement(src.Prefix, src.LocalName, src.NamespaceURI);
+						foreach(XmlAttribute attr in src.Attributes)
+						{
+							// TODO: create default attribute values
+							dst.SetAttributeNode((XmlAttribute)this.ImportNode(attr, deep));
+						}
+						if(deep)
+						{
+							foreach(XmlNode n in src.ChildNodes)
+								dst.AppendChild(this.ImportNode(n, deep));
+						}
+						return dst;
 					}
-					return dst;
 
-				//case XmlNodeType.EndElement:
-				//	throw new NotImplementedException ();
-				//case XmlNodeType.EndEntity:
-				//	throw new NotImplementedException ();
-				//case XmlNodeType.Entity:
-				//	throw new NotImplementedException ();
+				case XmlNodeType.EndElement:
+					throw new XmlException ("Illegal ImportNode call for NodeType.EndElement");
+				case XmlNodeType.EndEntity:
+					throw new XmlException ("Illegal ImportNode call for NodeType.EndEntity");
+				case XmlNodeType.Entity:
+					throw new NotImplementedException ();
 
+				// [2002.10.14] CreateEntityReference not implemented.
 				case XmlNodeType.EntityReference:
-					return this.CreateEntityReference(node.Name);
+					throw new NotImplementedException("ImportNode of EntityReference not implemented mainly because CreateEntityReference was implemented in the meantime.");
+//					return this.CreateEntityReference(node.Name);
 
-				//case XmlNodeType.None:
-				//	throw new NotImplementedException ();
-				//case XmlNodeType.Notation:
-				//	throw new NotImplementedException ();
+				case XmlNodeType.None:
+					throw new XmlException ("Illegal ImportNode call for NodeType.None");
+				case XmlNodeType.Notation:
+					throw new NotImplementedException ();
 
 				case XmlNodeType.ProcessingInstruction:
 					XmlProcessingInstruction pi = node as XmlProcessingInstruction;
@@ -462,8 +479,10 @@ namespace System.Xml
 				case XmlNodeType.Whitespace:
 					return this.CreateWhitespace(node.Value);
 
-				//case XmlNodeType.XmlDeclaration:
-				//	throw new NotImplementedException ();
+				// I don't know how to test it...
+				case XmlNodeType.XmlDeclaration:
+				//	return this.CreateNode(XmlNodeType.XmlDeclaration, String.Empty, node.Value);
+					throw new NotImplementedException ();
 
 				default:
 					throw new NotImplementedException ();

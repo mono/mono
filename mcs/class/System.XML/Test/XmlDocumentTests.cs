@@ -744,5 +744,54 @@ namespace MonoTests.System.Xml
 			nextSibling = node.NextSibling;
 			AssertNull ("Expected removed node's next sibling to be null.", nextSibling);
 		}
+
+		// ImportNode
+		public void TestImportNode ()
+		{
+			XmlNode n;
+
+			string xlinkURI = "http://www.w3.org/1999/XLink";
+			string xml1 = "<?xml version='1.0' encoding='utf-8' ?><foo xmlns:xlink='" + xlinkURI + "'><bar a1='v1' xlink:href='#foo'><baz><![CDATA[cdata section.\n\titem 1\n\titem 2\n]]>From here, simple text node.</baz></bar></foo>";
+			document.LoadXml(xml1);
+			XmlDocument newDoc = new XmlDocument();
+			newDoc.LoadXml("<hoge><fuga /></hoge>");
+			XmlElement bar = document.DocumentElement.FirstChild as XmlElement;
+
+			// Attribute
+			n = newDoc.ImportNode(bar.GetAttributeNode("href", xlinkURI), true);
+			AssertEquals("#ImportNode.Attr.NS.LocalName", "href", n.LocalName);
+			AssertEquals("#ImportNode.Attr.NS.NSURI", xlinkURI, n.NamespaceURI);
+			AssertEquals("#ImportNode.Attr.NS.Value", "#foo", n.Value);
+
+			// CDATA
+			n = newDoc.ImportNode(bar.FirstChild.FirstChild, true);
+			AssertEquals("#ImportNode.CDATA", "cdata section.\n\titem 1\n\titem 2\n", n.Value);
+
+			// Element
+			XmlElement e = newDoc.ImportNode(bar, true) as XmlElement;
+			AssertEquals("#ImportNode.Element.Name", "bar", e.Name);
+			AssertEquals("#ImportNode.Element.Attr", "#foo", e.GetAttribute("href", xlinkURI));
+			AssertEquals("#ImportNode.Element.deep", "baz", e.FirstChild.Name);
+
+			// Entity Reference:
+			//   [2002/10/14] CreateEntityReference was not implemented.
+//			document.LoadXml("<!DOCTYPE test PUBLIC 'dummy' [<!ENTITY FOOENT 'foo'>]><root>&FOOENT;</root>");
+//			n = newDoc.ImportNode(document.DocumentElement.FirstChild);
+//			AssertEquals("#ImportNode.EntityReference", "FOOENT", n.Name);
+//			AssertEquals("#ImportNode.EntityReference", "foo_", n.Value);
+
+			// Processing Instruction
+			document.LoadXml("<foo><?xml-stylesheet href='foo.xsl' ?></foo>");
+			XmlProcessingInstruction pi = (XmlProcessingInstruction)newDoc.ImportNode(document.DocumentElement.FirstChild, false);
+			AssertEquals("#ImportNode.ProcessingInstruction.Name", "xml-stylesheet", pi.Name);
+			AssertEquals("#ImportNode.ProcessingInstruction.Data", "href='foo.xsl'", pi.Data.Trim());
+			
+			// Text
+			document.LoadXml(xml1);
+			n = newDoc.ImportNode((XmlText)bar.FirstChild.ChildNodes[1], true);
+			AssertEquals("#ImportNode.Text", "From here, simple text node.", n.Value);
+
+			// Whitespace
+		}
 	}
 }

@@ -1,3 +1,8 @@
+2002-10-18  Duncan Mak  <duncan@ximian.com>
+
+	* XmlDocument.cs: Applied a patch by Atsushi Enomoto
+	<ginga@kit.hi-ho.ne.jp>.
+
 2002-10-12  A.Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlDocument.cs (ImportNode): Implemented
