@@ -1,3 +1,12 @@
+2003-06-11  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AllTests2.cs: Converted tests to NUnit2 format.
+	* RSACryptoServiceProviderTest.cs: Converted tests to NUnit2 format.
+	* RSAPKCS1KeyExchangeDeformatterTest.cs: Converted tests to NUnit2 format.
+	* RSAPKCS1KeyExchangeFormatterTest.cs: Converted tests to NUnit2 format.
+	* RSAPKCS1SignatureDeformatterTest.cs: Converted tests to NUnit2 format.
+	* RSAPKCS1SignatureFormatterTest.cs: Converted tests to NUnit2 format.
+
 2003-05-29  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* PKCS1MaskGenerationMethodTest.cs: Added [Ignore] to vector test

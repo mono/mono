@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
 //
-// (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using NUnit.Framework;
@@ -13,17 +13,17 @@ using System.Security.Cryptography;
 
 namespace MonoTests.System.Security.Cryptography {
 
-public class RSACryptoServiceProviderTest : TestCase {
-	protected RSA rsa;
+[TestFixture]
+public class RSACryptoServiceProviderTest : Assertion {
 
+	protected RSACryptoServiceProvider rsa;
 	private string sha1OID;
 
-	protected override void SetUp () 
+	// one-time initialization
+	public RSACryptoServiceProviderTest () : base ()
 	{
 		sha1OID = CryptoConfig.MapNameToOID ("SHA1");
 	}
-
-	protected override void TearDown () {}
 
 	public void AssertEquals (string msg, byte[] array1, byte[] array2) 
 	{
@@ -45,50 +45,79 @@ public class RSACryptoServiceProviderTest : TestCase {
 		AssertEquals (message + " Exponent", expectedKey.Exponent, actualKey.Exponent);
 	}
 
-	public void TestConstructors () 
+	[Test]
+	public void ConstructorEmpty () 
 	{
-		CspParameters csp = new CspParameters ();
-		RSACryptoServiceProvider rsa1 = new RSACryptoServiceProvider ();
-		RSACryptoServiceProvider rsa2 = new RSACryptoServiceProvider (384);
-//		RSACryptoServiceProvider rsa3 = new RSACryptoServiceProvider (csp);
-//		RSACryptoServiceProvider rsa4 = new RSACryptoServiceProvider (512, csp);
+		// under Mono:: a new key pair isn't generated
+		rsa = new RSACryptoServiceProvider ();
+		// test default key size
+		AssertEquals ("ConstructorEmpty", 1024, rsa.KeySize);
 	}
 
-	public void TestKeyGeneration () 
+	[Test]
+	public void ConstructorKeySize () 
 	{
-		RSACryptoServiceProvider key = new RSACryptoServiceProvider ();
+		int minimalKeySize = 384;
+		rsa = new RSACryptoServiceProvider (minimalKeySize);
+		// test default key size
+		AssertEquals ("ConstructorKeySize", minimalKeySize, rsa.KeySize);
+	}
+
+	[Test]
+	public void ConstructorCspParameters ()
+	{
+		CspParameters csp = new CspParameters (1, null, "Mono1024");
+		// under MS a new keypair will only be generated the first time
+		rsa = new RSACryptoServiceProvider (csp);
+		// test default key size
+		AssertEquals ("ConstructorCspParameters", 1024, rsa.KeySize);
+	}
+
+	[Test]
+	public void ConstructorKeySizeCspParameters ()
+	{
+		int keySize = 512;
+		CspParameters csp = new CspParameters (1, null, "Mono512");
+		rsa = new RSACryptoServiceProvider (keySize, csp);
+		AssertEquals ("ConstructorCspParameters", keySize, rsa.KeySize);
+	}
+
+	[Test]
+	[Ignore ("Much too long (with MS as Mono doesn't generates the keypair unless it need it)")]
+	public void KeyGeneration () 
+	{
 		// Test every valid key size
-		KeySizes LegalKeySize = key.LegalKeySizes[0];
-/*		for (int i = LegalKeySize.MinSize; i <= 1024; i += 64) {
-			key = new RSACryptoServiceProvider (i);
-			AssertEquals ("KeySize", i, key.KeySize);
+		KeySizes LegalKeySize = rsa.LegalKeySizes [0];
+		for (int i = LegalKeySize.MinSize; i <= LegalKeySize.MaxSize; i += LegalKeySize.SkipSize) {
+			rsa = new RSACryptoServiceProvider (i);
+			AssertEquals ("KeySize", i, rsa.KeySize);
 		}
-		key = new RSACryptoServiceProvider (1536);
-		AssertEquals ("KeySize", 1536, key.KeySize);
-		key = new RSACryptoServiceProvider (2048);
-		AssertEquals ("KeySize", 2048, key.KeySize);*/
-		// Test invalid keypair (too small)
-		try {
-			RSACryptoServiceProvider tooSmallKeyPair = new RSACryptoServiceProvider (256);
-			Fail ("Expected CryptographicException but got none");
-		}
-		catch (CryptographicException) {
-			// this is what we expect
-		}
-		catch (Exception e) {
-			Fail ("Expected CryptographicException but got: " + e.ToString ());
-		}
-		// Test invalid keypair (too big)
-		try {
-			RSACryptoServiceProvider tooBigKeyPair = new RSACryptoServiceProvider (32768);
-			Fail ("Expected CryptographicException but got none");
-		}
-		catch (CryptographicException) {
-			// this is what we expect
-		}
-		catch (Exception e) {
-			Fail ("Expected CryptographicException but got: " + e.ToString ());
-		}
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void TooSmallKeyPair () 
+	{
+		rsa = new RSACryptoServiceProvider (256);
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void TooBigKeyPair () 
+	{
+		rsa = new RSACryptoServiceProvider (32768);
+	}
+
+	[Test]
+	public void Properties () 
+	{
+		rsa = new RSACryptoServiceProvider ();
+		AssertEquals ("LegalKeySize", 1, rsa.LegalKeySizes.Length);
+		AssertEquals ("LegalKeySize.MinSize", 384, rsa.LegalKeySizes [0].MinSize);
+		AssertEquals ("LegalKeySize.MaxSize", 16384, rsa.LegalKeySizes [0].MaxSize);
+		AssertEquals ("LegalKeySize.SkipSize", 8, rsa.LegalKeySizes [0].SkipSize);
+		AssertEquals ("KeyExchangeAlgorithm", "RSA-PKCS1-KeyEx", rsa.KeyExchangeAlgorithm);
+		AssertEquals ("SignatureAlgorithm", "http://www.w3.org/2000/09/xmldsig#rsa-sha1", rsa.SignatureAlgorithm);
 	}
 
 	// all keypairs generated by CryptoAPI on Windows
@@ -109,9 +138,10 @@ public class RSACryptoServiceProviderTest : TestCase {
 
 	// import/export XML keypairs
 	// so we know that Mono can use keypairs generated by CryptoAPI
-	public void TestCapiXmlImportExport () 
+	[Test]
+	public void CapiXmlImportExport () 
 	{
-		RSACryptoServiceProvider rsa = new RSACryptoServiceProvider ();
+		rsa = new RSACryptoServiceProvider ();
 
 		rsa.FromXmlString (CapiXml384);
 		AssertEquals ("Capi-Xml384", CapiXml384, rsa.ToXmlString (true));
@@ -173,9 +203,10 @@ public class RSACryptoServiceProviderTest : TestCase {
 	// Validate that we can sign with every keypair and verify the signature
 	// With Mono this means that we can use CAPI keypair to sign and verify.
 	// For Windows this doesn't mean much.
-	public void TestCapiSignature () 
+	[Test]
+	public void CapiSignature () 
 	{
-		RSACryptoServiceProvider rsa = new RSACryptoServiceProvider ();
+		rsa = new RSACryptoServiceProvider ();
 
 		rsa.FromXmlString (CapiXml384);
 		SignAndVerify ("Capi-384", rsa);
@@ -220,10 +251,11 @@ public class RSACryptoServiceProviderTest : TestCase {
 	// Validate that we can verify a signature made with CAPI
 	// With Mono this means that we can verify CAPI signatures.
 	// For Windows this doesn't mean much.
-	public void TestCapiVerify () 
+	[Test]
+	public void CapiVerify () 
 	{
 		byte[] hash = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13 };
-		RSACryptoServiceProvider rsa = new RSACryptoServiceProvider ();
+		rsa = new RSACryptoServiceProvider ();
 
 		rsa.FromXmlString (CapiXml384);
 		byte[] sign384 = { 0x6D, 0x6F, 0xE1, 0x17, 0x28, 0x88, 0x0C, 0x72, 0x9D, 0x17, 0xBD, 0x06, 0x02, 0xBA, 0x6D, 0xF0, 0x16, 0x2A, 0xE6, 0x19, 0x40, 0x1D, 0x58, 0xD3, 0x44, 0x70, 0xDE, 0x57, 0x4C, 0xC8, 0xE5, 0x9C, 0x5D, 0xA1, 0x84, 0x7E, 0xD4, 0xC3, 0x61, 0xAA, 0x21, 0xC3, 0x83, 0x5B, 0xAF, 0x1C, 0xB7, 0x2B };
@@ -321,9 +353,10 @@ public class RSACryptoServiceProviderTest : TestCase {
 
 	// import/export XML keypairs
 	// so we know that Windows (original MS Framework) can use keypairs generated by Mono
-	public void TestMonoXmlImportExport () 
+	[Test]
+	public void MonoXmlImportExport () 
 	{
-		RSACryptoServiceProvider rsa = new RSACryptoServiceProvider ();
+		rsa = new RSACryptoServiceProvider ();
 
 		rsa.FromXmlString (MonoXml384);
 		AssertEquals ("Mono-Xml384", MonoXml384, rsa.ToXmlString (true));
@@ -368,9 +401,10 @@ public class RSACryptoServiceProviderTest : TestCase {
 	// Validate that we can sign with every keypair and verify the signature
 	// With Windows this means that we can use Mono keypairs to sign and verify.
 	// For Mono this doesn't mean much.
-	public void TestMonoSignature () 
+	[Test]
+	public void MonoSignature () 
 	{
-		RSACryptoServiceProvider rsa = new RSACryptoServiceProvider ();
+		rsa = new RSACryptoServiceProvider ();
 
 		rsa.FromXmlString (MonoXml384);
 		SignAndVerify ("Mono-384", rsa);
@@ -415,10 +449,11 @@ public class RSACryptoServiceProviderTest : TestCase {
 	// Validate that we can verify a signature made with Mono
 	// With Windows this means that we can verify Mono signatures.
 	// For Mono this doesn't mean much.
-	public void TestMonoVerify () 
+	[Test]
+	public void MonoVerify () 
 	{
 		byte[] hash = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13 };
-		RSACryptoServiceProvider rsa = new RSACryptoServiceProvider ();
+		rsa = new RSACryptoServiceProvider ();
 
 		rsa.FromXmlString (MonoXml384);
 		byte[] sign384 = { 0x6B, 0xEF, 0x8A, 0x2E, 0x2E, 0xD5, 0xB6, 0x19, 0x2D, 0x9C, 0x48, 0x75, 0xA8, 0x54, 0xAD, 0x61, 0xD1, 0xCC, 0xF3, 0x9A, 0x3E, 0x4E, 0xE2, 0xF1, 0x44, 0x1D, 0xC4, 0x3A, 0x30, 0xF4, 0x9B, 0x2D, 0x88, 0xA7, 0xB8, 0xEC, 0x2D, 0x17, 0x4E, 0x66, 0x6C, 0x4C, 0x5A, 0xB5, 0x44, 0x4B, 0xAF, 0x06 };

@@ -4,21 +4,22 @@
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
 //
-// (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using NUnit.Framework;
 using System;
 using System.Security.Cryptography;
 
-namespace MonoTests.System.Security.Cryptography
-{
+namespace MonoTests.System.Security.Cryptography {
 
-public class RSAPKCS1KeyExchangeFormatterTest : TestCase 
-{
+[TestFixture]
+public class RSAPKCS1KeyExchangeFormatterTest : Assertion {
+
 	protected static RSA key;
 
-	protected override void SetUp () 
+	[SetUp]
+	void SetUp () 
 	{
 		// generating a keypair is REALLY long and the framework
 		// makes sure that we generate one (even if create an object
@@ -29,14 +30,13 @@ public class RSAPKCS1KeyExchangeFormatterTest : TestCase
 		}
 	}
 
-	protected override void TearDown () {}
-
 	public void AssertEquals (string msg, byte[] array1, byte[] array2)
 	{
 		AllTests.AssertEquals (msg, array1, array2);
 	}
 
-	public void TestProperties () 
+	[Test]
+	public void Properties () 
 	{
 		RSAPKCS1KeyExchangeFormatter keyex = new RSAPKCS1KeyExchangeFormatter ();
 		keyex.SetKey (key);
@@ -46,8 +46,18 @@ public class RSAPKCS1KeyExchangeFormatterTest : TestCase
 		AssertEquals("RSAPKCS1KeyExchangeFormatter.ToString()", "System.Security.Cryptography.RSAPKCS1KeyExchangeFormatter", keyex.ToString ());
 	}
 
+	[Test]
+	[ExpectedException (typeof (NullReferenceException))]
+	[Ignore ("Sometime causes System.ExecutionEngineException on MS implementation")]
+	public void KeyExchangeNull ()
+	{
+		AsymmetricKeyExchangeFormatter keyex = new RSAPKCS1KeyExchangeFormatter (key);
+		byte[] EM = keyex.CreateKeyExchange (null);
+	}
+
 	// TestExchangeMin (1)
-	public void TestExchangeMin()
+	[Test]
+	public void KeyExchangeMin ()
 	{
 		AsymmetricKeyExchangeFormatter keyex = new RSAPKCS1KeyExchangeFormatter (key);
 		byte[] M = { 0x01 };
@@ -58,10 +68,9 @@ public class RSAPKCS1KeyExchangeFormatterTest : TestCase
 		AssertEquals ("RSAPKCS1KeyExchangeFormatter 1", M, Mback);
 	}
 
-	// TestExchange64, 128, 192, 256
-
 	// test with a message 128 bits (16 bytes) long
-	public void TestExchange128()
+	[Test]
+	public void KeyExchange128bits ()
 	{
 		AsymmetricKeyExchangeFormatter keyex = new RSAPKCS1KeyExchangeFormatter (key);
 		byte[] M = { 0xd4, 0x36, 0xe9, 0x95, 0x69, 0xfd, 0x32, 0xa7, 0xc8, 0xa0, 0x5b, 0xbc, 0x90, 0xd3, 0x2c, 0x49 };
@@ -73,7 +82,8 @@ public class RSAPKCS1KeyExchangeFormatterTest : TestCase
 	}
 
 	// test with a message 160 bits (20 bytes) long
-	public void TestExchange192() 
+	[Test]
+	public void KeyExchange160bits () 
 	{
 		AsymmetricKeyExchangeFormatter keyex = new RSAPKCS1KeyExchangeFormatter (key);
 		byte[] M = { 0xd4, 0x36, 0xe9, 0x95, 0x69, 0xfd, 0x32, 0xa7, 0xc8, 0xa0, 0x5b, 0xbc, 0x90, 0xd3, 0x2c, 0x49, 0x00, 0x00, 0x00, 0x00 };
@@ -85,7 +95,8 @@ public class RSAPKCS1KeyExchangeFormatterTest : TestCase
 	}
 
 	// Max = k - m - 11
-	public void TestExchangeMax()
+	[Test]
+	public void KeyExchangeMax()
 	{
 		AsymmetricKeyExchangeFormatter keyex = new RSAPKCS1KeyExchangeFormatter (key);
 		byte[] M = new byte [(key.KeySize >> 3)- 11];
@@ -97,20 +108,13 @@ public class RSAPKCS1KeyExchangeFormatterTest : TestCase
 	}
 
 	// TestExchangeTooBig
-	public void TestExchangeTooBig()
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void KeyExchangeTooBig()
 	{
 		AsymmetricKeyExchangeFormatter keyex = new RSAPKCS1KeyExchangeFormatter (key);
 		byte[] M = new byte [(key.KeySize >> 3)- 10];
-		try {
-			byte[] EM = keyex.CreateKeyExchange (M);
-			Fail ("Expected CryptographicException but got none");
-		}
-		catch (CryptographicException) {
-			// this is what we expect
-		}
-		catch (Exception e) {
-			Fail ("Expected CryptographicException but got : " + e.ToString ());
-		}
+		byte[] EM = keyex.CreateKeyExchange (M);
 	}
 }
 

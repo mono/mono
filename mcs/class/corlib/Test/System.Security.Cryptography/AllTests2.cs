@@ -1,11 +1,11 @@
 //
 // TestSuite.System.Security.Cryptography.AllTests.cs
 //
-// Author:
+// Authors:
 //      Thomas Neidhart (tome@sbox.tugraz.at)
 //	Sebastien Pouliot (spouliot@motus.com)
 //
-// Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System;
@@ -16,16 +16,16 @@ namespace MonoTests.System.Security.Cryptography {
         /// <summary>
         ///   Combines all available crypto unit tests into one test suite.
         /// </summary>
-        public class AllTests : TestCase {
+        public class AllTests {
         	// because most crypto stuff works with byte[] buffers
         	static public void AssertEquals (string msg, byte[] array1, byte[] array2)
         	{
         		if ((array1 == null) && (array2 == null))
         			return;
         		if (array1 == null)
-        			Fail (msg + " -> First array is NULL");
+        			Assertion.Fail (msg + " -> First array is NULL");
         		if (array2 == null)
-        			Fail (msg + " -> Second array is NULL");
+        			Assertion.Fail (msg + " -> Second array is NULL");
         
         		bool a = (array1.Length == array2.Length);
         		if (a) {
@@ -38,7 +38,7 @@ namespace MonoTests.System.Security.Cryptography {
         		}
         		msg += " -> Expected " + BitConverter.ToString (array1, 0);
         		msg += " is different than " + BitConverter.ToString (array2, 0);
-        		Assert (msg, a);
+        		Assertion.Assert (msg, a);
         	}
 
 		public static byte[] dsaG = { 0x3D, 0x4F, 0xCC, 0x78, 0x6A, 0x7A, 0x23, 0xF1, 0x41, 0x76, 0xEB, 0xB0, 0x0F, 0xD5, 0x0F, 0x78, 0x21, 0x73, 0x83, 0xC2, 0x1B, 0xF4, 0x7E, 0x68, 0xB2, 0x4B,
