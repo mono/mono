@@ -13,4 +13,6 @@ case 1:
 default:
     print ("blah this is default");
     print ("this is default too ;-)");
+case "afterDefault":
+    print ("matched after default");
 }
