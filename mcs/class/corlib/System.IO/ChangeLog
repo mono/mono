@@ -1,3 +1,8 @@
+2003-05-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* FileStream.cs (FlushBuffer): After a flush, the buffer is
+	advanced by buf_offset bytes, not buf_length bytes.
+
 2003-05-16  Dick Porter  <dick@ximian.com>
 
 	* MonoIO.cs: Implement GetTempPath

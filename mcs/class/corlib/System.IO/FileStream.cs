@@ -566,7 +566,7 @@ namespace System.IO
 					      buf_length, out error);
 			}
 			
-			buf_start += buf_length;
+			buf_start += buf_offset;
 			buf_offset = buf_length = 0;
 			buf_dirty = false;
 		}
