@@ -60,8 +60,10 @@
 ./Mono.Security.Protocol.Ntlm/Type3Message.cs
 ./Mono.Security.Protocol.Tls/CipherAlgorithmType.cs
 ./Mono.Security.Protocol.Tls/CipherSuite.cs
+./Mono.Security.Protocol.Tls/ClientRecordProtocol.cs
 ./Mono.Security.Protocol.Tls/ExchangeAlgorithmType.cs
 ./Mono.Security.Protocol.Tls/HashAlgorithmType.cs
+./Mono.Security.Protocol.Tls/RecordProtocol.cs
 ./Mono.Security.Protocol.Tls/RSASslSignatureDeformatter.cs
 ./Mono.Security.Protocol.Tls/RSASslSignatureFormatter.cs
 ./Mono.Security.Protocol.Tls/SecurityCompressionType.cs
@@ -80,7 +82,6 @@
 ./Mono.Security.Protocol.Tls/TlsStream.cs
 ./Mono.Security.Protocol.Tls.Alerts/TlsAlert.cs
 ./Mono.Security.Protocol.Tls.Alerts/TlsCloseNotifyAlert.cs
-./Mono.Security.Protocol.Tls.Alerts/TlsWarningAlertEventArgs.cs
 ./Mono.Security.Protocol.Tls.Handshake/TlsClientCertificateType.cs
 ./Mono.Security.Protocol.Tls.Handshake/TlsHandshakeMessage.cs
 ./Mono.Security.Protocol.Tls.Handshake/TlsHandshakeType.cs
