@@ -1,3 +1,7 @@
+2002-04-16  Dick Porter  <dick@ximian.com>
+
+	* atomic.h: Explanatory comment about lack of 80386 support
+
 2002-04-15  Dick Porter  <dick@ximian.com>
 
 	* atomic.h: use xaddl for InterlockedIncrement() and
