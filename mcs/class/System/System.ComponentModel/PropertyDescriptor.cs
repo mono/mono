@@ -2,47 +2,49 @@
 // System.ComponentModel.PropertyDescriptor.cs
 //
 // Author:
-//   Miguel de Icaza (miguel@ximian.com)
+//  Miguel de Icaza (miguel@ximian.com)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
+// (C) 2003 Andreas Nahr
 //
 
 using System;
 using System.Collections;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
-namespace System.ComponentModel {
-
-	public abstract class PropertyDescriptor : MemberDescriptor {
-
+namespace System.ComponentModel
+{
+	[ComVisible (true)]
+	public abstract class PropertyDescriptor : MemberDescriptor
+	{
 		protected PropertyDescriptor (MemberDescriptor reference)
-			: base (reference)
+		: base (reference)
 		{
 		}
 
 		protected PropertyDescriptor (MemberDescriptor reference, Attribute [] attrs)
-			: base (reference, attrs)
+		: base (reference, attrs)
 		{
 		}
 
 		protected PropertyDescriptor (string name, Attribute [] attrs)
-			: base (name, attrs)
+		: base (name, attrs)
 		{
 		}
 
 		public abstract Type ComponentType { get; }
 
 		public virtual TypeConverter Converter {
-			get {
-				return TypeDescriptor.GetConverter (PropertyType);
-			}
+			get { return TypeDescriptor.GetConverter (PropertyType); }
 		}
 
 		public virtual bool IsLocalizable {
 			get {
 				foreach (Attribute attr in AttributeArray){
-					if (attr is LocalizableAttribute){
+					if (attr is LocalizableAttribute)
 						return ((LocalizableAttribute) attr).IsLocalizable;
-					}
 				}
 
 				return false;
@@ -55,7 +57,7 @@ namespace System.ComponentModel {
 
 		public DesignerSerializationVisibility SerializationVisibility {
 			get {
-				foreach (Attribute attr in AttributeArray){
+				foreach (Attribute attr in AttributeArray) {
 					if (attr is DesignerSerializationVisibilityAttribute){
 						DesignerSerializationVisibilityAttribute a;
 
@@ -77,7 +79,7 @@ namespace System.ComponentModel {
 		public virtual void AddValueChanged (object component, EventHandler handler)
 		{
 			EventHandler component_notifiers;
-			
+
 			if (component == null)
 				throw new ArgumentNullException ("component");
 
@@ -94,7 +96,13 @@ namespace System.ComponentModel {
 			else
 				notifiers [component] = handler;
 		}
-		
+
+		[MonoTODO]
+		public virtual void RemoveValueChanged(object component, System.EventHandler handler)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected virtual void OnValueChanged (object component, EventArgs e)
 		{
 			if (notifiers == null)
@@ -117,5 +125,62 @@ namespace System.ComponentModel {
 		public abstract bool CanResetValue (object component);
 
 		public abstract bool ShouldSerializeValue (object component);
+
+		protected object CreateInstance(System.Type type)
+		{
+			return Assembly.GetExecutingAssembly ().CreateInstance (type.Name);
+		}
+
+		[MonoTODO ("Not correctly implemented")]
+		public override bool Equals(object obj)
+		{
+			if (!(obj is PropertyDescriptor))
+				return false;
+			if (obj == this)
+				return true;
+			return (((PropertyDescriptor) obj).AttributeArray == this.AttributeArray) &&
+				(((PropertyDescriptor) obj).Attributes == this.Attributes) &&
+				(((PropertyDescriptor) obj).DisplayName == this.DisplayName) &&
+				(((PropertyDescriptor) obj).Name == this.Name);
+		}
+
+		public PropertyDescriptorCollection GetChildProperties()
+		{
+			return GetChildProperties (null, null);
+		}
+
+		public PropertyDescriptorCollection GetChildProperties(object instance)
+		{
+			return GetChildProperties (instance, null);
+		}
+
+		public PropertyDescriptorCollection GetChildProperties(Attribute[] filter)
+		{
+			return GetChildProperties (null, filter);
+		}
+
+		[MonoTODO ("Incorrect implementation")]
+		public override int GetHashCode() 
+		{
+			return Name.GetHashCode ();
+		}
+
+		[MonoTODO]
+		public virtual PropertyDescriptorCollection GetChildProperties(object instance, Attribute[] filter)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public virtual object GetEditor(Type editorBaseType)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected Type GetTypeFromName(string typeName)
+		{
+			return Type.GetType (typeName);
+		}
 	}
 }
+

@@ -2,9 +2,11 @@
 // System.ComponentModel.CultureInfoConverter
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 using System.Globalization;
@@ -13,63 +15,70 @@ namespace System.ComponentModel
 {
 	public class CultureInfoConverter : TypeConverter
 	{
-		[MonoTODO]
+
 		public CultureInfoConverter()
 		{
 		}
 
-		[MonoTODO]
 		public override bool CanConvertFrom (ITypeDescriptorContext context,
-						     Type sourceType)
+			Type sourceType)
 		{
-			throw new NotImplementedException();
+			if (sourceType == typeof (string)) 
+				return true;
+			return base.CanConvertFrom (context, sourceType);
 		}
 
-		[MonoTODO]
 		public override bool CanConvertTo (ITypeDescriptorContext context,
-						   Type destinationType)
+			Type destinationType)
 		{
-			throw new NotImplementedException();
+			if (destinationType == typeof (string))
+				return true;
+			return base.CanConvertTo (context, destinationType);
 		}
 
-		[MonoTODO]
 		public override object ConvertFrom (ITypeDescriptorContext context,
-						    CultureInfo culture,
-						    object value)
+			CultureInfo culture, object value)
 		{
-			throw new NotImplementedException();
+			if (value.GetType() == typeof (string)) {
+				string CultureString = (String) value;
+				try {
+					// try to create a new CultureInfo if form is RFC 1766
+					return new CultureInfo (CultureString);
+				} catch {
+					// try to create a new CultureInfo if form is verbose name
+					foreach (CultureInfo CI in CultureInfo.GetCultures (CultureTypes.AllCultures))
+					// LAMESPEC MS seems to use EnglishName (culture invariant) - check this
+						if (CI.EnglishName.ToString().IndexOf (CultureString) > 0)
+							return CI;
+				}
+				throw new ArgumentException ("Culture incorrect or not available in this environment.", "value");
+			}
+			return base.ConvertFrom (context, culture, value);
 		}
 
-		[MonoTODO]
 		public override object ConvertTo (ITypeDescriptorContext context,
-						  CultureInfo culture,
-						  object value,
-						  Type destinationType)
+						  CultureInfo culture, object value, Type destinationType)
 		{
-			throw new NotImplementedException();
+			if (destinationType == typeof (string) && value != null && (value is CultureInfo))
+				// LAMESPEC MS seems to use EnglishName (culture invariant) - check this
+				return ((CultureInfo) value).EnglishName;
+			return base.ConvertTo (context, culture, value, destinationType);
 		}
 
-		[MonoTODO]
 		public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException();
+			return new StandardValuesCollection (CultureInfo.GetCultures (CultureTypes.AllCultures));
 		}
 
-		[MonoTODO]
 		public override bool GetStandardValuesExclusive (ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException();
+			return false;
 		}
 
-		[MonoTODO]
 		public override bool GetStandardValuesSupported (ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException();
+			return true;
 		}
 
-		[MonoTODO]
-		~CultureInfoConverter()
-		{
-		}
 	}
 }

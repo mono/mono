@@ -2,9 +2,11 @@
 // System.ComponentModel.RefreshPropertiesAttribute.cs
 //
 // Author:
-//   Tim Coleman (tim@timcoleman.com)
+//  Tim Coleman (tim@timcoleman.com)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // Copyright (C) Tim Coleman, 2002
+// (C) 2003 Andreas Nahr
 //
 //
 
@@ -41,16 +43,18 @@ namespace System.ComponentModel {
 
 		#region Methods
 
-		[MonoTODO]
 		public override bool Equals (object obj)
 		{
-			throw new NotImplementedException ();
+			if (!(obj is RefreshPropertiesAttribute))
+				return false;
+			if (obj == this)
+				return true;
+			return ((RefreshPropertiesAttribute) obj).RefreshProperties == refresh;
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
+			return refresh.GetHashCode ();
 		}
 
 		public override bool IsDefaultAttribute ()

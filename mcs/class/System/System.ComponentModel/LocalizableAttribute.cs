@@ -2,9 +2,11 @@
 // System.ComponentModel.LocalizableAttribute.cs
 //
 // Author:
-//   Miguel de Icaza (miguel@ximian.com)
+//  Miguel de Icaza (miguel@ximian.com)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
+// (C) 2003 Andreas Nahr
 //
 //
 
@@ -13,17 +15,15 @@ using System;
 namespace System.ComponentModel {
 
 	[AttributeUsage (AttributeTargets.Property)]
-	public sealed class LocalizableAttribute : Attribute {
-		bool localizable;
-		
-		public static readonly LocalizableAttribute No;
-		public static readonly LocalizableAttribute Yes;
+	public sealed class LocalizableAttribute : Attribute
+	{
 
-		static LocalizableAttribute ()
-		{
-			No = new LocalizableAttribute (false);
-			Yes = new LocalizableAttribute (false);
-		}
+		private bool localizable;
+		
+		public static readonly LocalizableAttribute Default = new LocalizableAttribute (false);
+		public static readonly LocalizableAttribute No = new LocalizableAttribute (false);
+		public static readonly LocalizableAttribute Yes = new LocalizableAttribute (true);
+
 		
 		public LocalizableAttribute (bool localizable)
 		{
@@ -35,6 +35,25 @@ namespace System.ComponentModel {
 				return localizable;
 			}
 		}
-		
+
+		public override bool Equals (object obj)
+		{
+			if (!(obj is LocalizableAttribute))
+				return false;
+			if (obj == this)
+				return true;
+			return ((LocalizableAttribute) obj).IsLocalizable == localizable;
+		}
+
+		public override int GetHashCode ()
+		{
+			return localizable.GetHashCode ();
+		}
+
+		public override bool IsDefaultAttribute ()
+		{
+			return localizable == LocalizableAttribute.Default.IsLocalizable;
+		}
 	}
 }
+

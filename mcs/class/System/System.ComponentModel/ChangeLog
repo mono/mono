@@ -1,5 +1,75 @@
 2003-06-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* AmbientValueAttribute.cs:
+	* ArrayConverter.cs:
+	* BaseNumberConverter.cs:
+	* BindableAttribute.cs:
+	* BooleanConverter.cs:
+	* BrowsableAttribute.cs:
+	* ByteConverter.cs:
+	* CategoryAttribute.cs:
+	* CharConverter.cs:
+	* CollectionConverter.cs:
+	* Component.cs:
+	* ComponentCollection.cs:
+	* ComponentEditor.cs:
+	* Container.cs:
+	* CultureInfoConverter.cs:
+	* DateTimeConverter.cs:
+	* DecimalConverter.cs:
+	* DefaultEventAttribute.cs:
+	* DefaultPropertyAttribute.cs:
+	* DefaultValueAttribute.cs:
+	* DescriptionAttribute.cs:
+	* DesignOnlyAttribute.cs:
+	* DesignTimeVisibleAttribute.cs:
+	* DesignerCategoryAttribute.cs:
+	* DesignerSerializationVisibilityAttribute.cs:
+	* DoubleConverter.cs:
+	* EditorBrowsableAttribute.cs:
+	* EventDescriptor.cs:
+	* EventDescriptorCollection.cs:
+	* ExpandableObjectConverter.cs:
+	* ExtenderProvidedPropertyAttribute.cs: New file.
+	* GuidConverter.cs:
+	* IComNativeDescriptorHandler.cs:
+	* IComponent.cs:
+	* ImmutableObjectAttribute.cs:
+	* InheritanceAttribute.cs:
+	* InheritanceLevel.cs:
+	* InstallerTypeAttribute.cs:
+	* Int16Converter.cs:
+	* Int32Converter.cs:
+	* Int64Converter.cs:
+	* InvalidEnumArgumentException.cs:
+	* LicenseProviderAttribute.cs:
+	* LocalizableAttribute.cs:
+	* MarshalByValueComponent.cs:
+	* MemberDescriptor.cs:
+	* MergablePropertyAttribute.cs:
+	* NotifyParentPropertyAttribute.cs:
+	* ParenthesizePropertyNameAttribute.cs:
+	* PropertyDescriptor.cs:
+	* PropertyDescriptorCollection.cs:
+	* PropertyTabAttribute.cs:
+	* ProvidePropertyAttribute.cs:
+	* RecommendedAsConfigurableAttribute.cs:
+	* RefreshPropertiesAttribute.cs:
+	* SByteConverter.cs:
+	* SingleConverter.cs:
+	* TimeSpanConverter.cs:
+	* ToolboxItemFilterAttribute.cs:
+	* TypeConverter.cs:
+	* TypeConverterAttribute.cs:
+	* TypeDescriptor.cs:
+	* TypeListConverter.cs:
+	* UInt16Converter.cs:
+	* UInt32Converter.cs:
+	* UInt64Converter.cs: implementation and fixes by Andreas Nahr
+	(A-Soft@A-SoftTech.com).
+
+2003-06-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* IExtenderProvider.cs: mono-stylized.
 	* IComNativeDescriptorHandler.cs:
 	* SyntaxCheck.cs: new files from Andreas Nahr.

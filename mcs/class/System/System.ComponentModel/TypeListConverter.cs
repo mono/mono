@@ -2,9 +2,11 @@
 // System.ComponentModel.TypeListConverter
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 using System.Collections;
@@ -12,65 +14,60 @@ using System.Globalization;
 
 namespace System.ComponentModel
 {
-        public abstract class TypeListConverter : TypeConverter
+	public abstract class TypeListConverter : TypeConverter
 	{
-		[MonoTODO]
+		private Type[] types;
+
 		protected TypeListConverter (Type[] types)
 		{
+			this.types = types;
 		}
 
-		[MonoTODO]
-		public override bool CanConvertFrom (ITypeDescriptorContext context,
-						     Type sourceType)
+		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 		{
-			throw new NotImplementedException();
+			if (sourceType == typeof (string)) 
+				return true;
+			return base.CanConvertFrom (context, sourceType);
 		}
 
-		[MonoTODO]
-		public override bool CanConvertTo (ITypeDescriptorContext context,
-						   Type destinationType)
+		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
 		{
-			throw new NotImplementedException();
+			if (destinationType == typeof (string))
+				return true;
+			return base.CanConvertTo (context, destinationType);
 		}
 
-		[MonoTODO]
-		public override object ConvertFrom (ITypeDescriptorContext context,
-						    CultureInfo culture,
-						    object value)
+		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
-			throw new NotImplementedException();
+			// LAMESPEC also it delivers true for CanConvertFrom (string)
+			// it fails in the actual conversion (MS implementation)
+			return base.ConvertFrom (context, culture, value);
 		}
 
-		[MonoTODO]
-		public override object ConvertTo (ITypeDescriptorContext context,
-						  CultureInfo culture,
-						  object value,
-						  Type destinationType)
+		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture,
+						  object value, Type destinationType)
 		{
-			throw new NotImplementedException();
+			if (destinationType == typeof (string) && value != null && value.GetType() == typeof (Type)) {
+				return ((Type) value).ToString();
+			}
+			// LAMESPEC MS throws InvalidCastException here
+			throw new InvalidCastException("Cannot cast to System.Type");
 		}
 
-		[MonoTODO]
 		public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException();
+			return new StandardValuesCollection (types);
 		}
 
-		[MonoTODO]
 		public override bool GetStandardValuesExclusive (ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException();
+			return true;
 		}
 
-		[MonoTODO]
 		public override bool GetStandardValuesSupported (ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~TypeListConverter()
-		{
+			return true;
 		}
 	}
 }
+

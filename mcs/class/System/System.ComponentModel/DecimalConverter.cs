@@ -2,41 +2,33 @@
 // System.ComponentModel.DecimalConverter
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 using System.Globalization;
 
 namespace System.ComponentModel
 {
-        public class DecimalConverter : BaseNumberConverter
+    public class DecimalConverter : BaseNumberConverter
 	{
-		[MonoTODO]
 		public DecimalConverter()
 		{
 		}
 
-		[MonoTODO]
 		public override bool CanConvertTo (ITypeDescriptorContext context,
-						   Type destinationType)
+			Type destinationType)
 		{
-			throw new NotImplementedException();
+			return base.CanConvertTo (context, destinationType);
 		}
 		
-		[MonoTODO]
 		public override object ConvertTo (ITypeDescriptorContext context,
-						  CultureInfo culture,
-						  object value,
-						  Type destinationType)
+			CultureInfo culture, object value, Type destinationType)
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~DecimalConverter()
-		{
+			return base.ConvertTo(context, culture, value, destinationType);
 		}
 	}
 }

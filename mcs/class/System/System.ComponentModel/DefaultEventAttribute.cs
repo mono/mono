@@ -3,8 +3,10 @@
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
+// (C) 2003 Andreas Nahr
 //
 
 using System;
@@ -15,6 +17,8 @@ namespace System.ComponentModel
 	public sealed class DefaultEventAttribute : Attribute
 	{
 		private string eventName;
+
+		public static readonly DefaultEventAttribute Default = new DefaultEventAttribute (null);
 
 		public DefaultEventAttribute (string name)
 		{

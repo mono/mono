@@ -2,7 +2,10 @@
 // System.ComponentModel.DesignerCategoryAttribute.cs
 //
 // Author:
-//   Alan Tam Siu Lung (Tam@SiuLung.com)
+//  Alan Tam Siu Lung (Tam@SiuLung.com)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) 2003 Andreas Nahr
 //
 
 namespace System.ComponentModel {
@@ -17,11 +20,12 @@ namespace System.ComponentModel {
 	[AttributeUsage(AttributeTargets.Class)]
 		public sealed class DesignerCategoryAttribute : Attribute
 		{
-			string category;
-			public static readonly DesignerCategoryAttribute Component;
-			public static readonly DesignerCategoryAttribute Form;
-			public static readonly DesignerCategoryAttribute Generic;
-			static readonly DesignerCategoryAttribute Default;
+			private string category;
+
+			public static readonly DesignerCategoryAttribute Component = new DesignerCategoryAttribute ("Component");
+			public static readonly DesignerCategoryAttribute Form = new DesignerCategoryAttribute ("Form");
+			public static readonly DesignerCategoryAttribute Generic = new DesignerCategoryAttribute ("Designer");
+			public static readonly DesignerCategoryAttribute Default = new DesignerCategoryAttribute ("");
 			
 			public DesignerCategoryAttribute ()
 			{
@@ -51,7 +55,7 @@ namespace System.ComponentModel {
 					return false;
 				if (obj == this)
 					return true;
-				return ((DesignerCategoryAttribute) obj).category == category;
+				return ((DesignerCategoryAttribute) obj).Category == category;
 			}
 			
 			public override int GetHashCode ()
@@ -61,7 +65,7 @@ namespace System.ComponentModel {
 			
 			public override bool IsDefaultAttribute ()
 			{
-				return category == DesignerCategoryAttribute.Default.Category; // FIXME
+				return category == DesignerCategoryAttribute.Default.Category;
 			}
 		}
 }

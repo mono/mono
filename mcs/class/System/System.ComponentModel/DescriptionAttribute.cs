@@ -2,26 +2,30 @@
 // System.ComponentModel.DescriptionAttribute.cs
 //
 // Author:
-//   Miguel de Icaza (miguel@ximian.com)
+//  Miguel de Icaza (miguel@ximian.com)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
+// (C) 2003 Andreas Nahr
 //
 //
 
 namespace System.ComponentModel {
 
-	[AttributeUsage (AttributeTargets.Property | AttributeTargets.Event)]
+	[AttributeUsage (AttributeTargets.All)]
 	public class DescriptionAttribute : Attribute {
-		string desc;
-			
-		public DescriptionAttribute (string name)
-		{
-			desc = name;
-		}
+		private string desc;
 
+		public static readonly DescriptionAttribute Default = new DescriptionAttribute ();
+			
 		public DescriptionAttribute ()
 		{
 			desc = "";
+		}
+
+		public DescriptionAttribute (string name)
+		{
+			desc = name;
 		}
 
 		public virtual string Description {
@@ -42,5 +46,20 @@ namespace System.ComponentModel {
 				desc = value;
 			}
 		}
+
+		public override bool Equals (object obj)
+		{
+			if (!(obj is DescriptionAttribute))
+				return false;
+			if (obj == this)
+				return true;
+			return ((DescriptionAttribute) obj).Description == desc;
+		}
+			
+		public override int GetHashCode ()
+		{
+			return desc.GetHashCode ();
+		}
 	}
 }
+

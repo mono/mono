@@ -2,46 +2,48 @@
 // System.ComponentModel.InstallerTypeAttribute
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 namespace System.ComponentModel
 {
 	[AttributeUsage(AttributeTargets.Class)]
-        public class InstallerTypeAttribute : Attribute
+	public class InstallerTypeAttribute : Attribute
 	{
-		[MonoTODO]
+		private Type installer;
+
 		public InstallerTypeAttribute (string typeName)
 		{
+			// MS behavior
+			this.installer = Type.GetType (typeName, false);
 		}
 
-		[MonoTODO]
 		public InstallerTypeAttribute (Type installerType)
 		{
+			this.installer = installerType;
 		}
 
 		public virtual Type InstallerType {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return installer; }
 		}
 
-		[MonoTODO]
 		public override bool Equals (object obj)
 		{
-			throw new NotImplementedException();
+			if (!(obj is InstallerTypeAttribute))
+				return false;
+			if (obj == this)
+				return true;
+			return ((InstallerTypeAttribute) obj).InstallerType == installer;
 		}
 
-		[MonoTODO]
 		public override int GetHashCode()
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~InstallerTypeAttribute()
-		{
+			return installer.GetHashCode ();
 		}
 	}
 }
+

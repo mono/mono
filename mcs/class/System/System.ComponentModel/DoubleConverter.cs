@@ -2,23 +2,18 @@
 // System.ComponentModel.DoubleConverter
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
-// (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 namespace System.ComponentModel
 {
-        public class DoubleConverter : BaseNumberConverter
-	{
-		[MonoTODO]
-		public DoubleConverter()
-		{
-		}
-
-		[MonoTODO]
-		~DoubleConverter()
-		{
-		}
-	}
+    public class DoubleConverter : BaseNumberConverter
+    {
+        public DoubleConverter()
+        {
+            InnerType = typeof (Double);
+        }
+    }
 }

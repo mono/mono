@@ -2,50 +2,53 @@
 // System.ComponentModel.ImmutableObjectAttribute
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 namespace System.ComponentModel
 {
 	[AttributeUsage(AttributeTargets.All)]
-        public sealed class ImmutableObjectAttribute : Attribute
+	public sealed class ImmutableObjectAttribute : Attribute
 	{
-		public static readonly ImmutableObjectAttribute No;
-		public static readonly ImmutableObjectAttribute Yes;
 
-		[MonoTODO]
+		private bool immutable;
+
+		public static readonly ImmutableObjectAttribute Default = new ImmutableObjectAttribute (false);
+		public static readonly ImmutableObjectAttribute No = new ImmutableObjectAttribute (false);
+		public static readonly ImmutableObjectAttribute Yes = new ImmutableObjectAttribute (true);
+
+
 		public ImmutableObjectAttribute (bool immutable)
 		{
+			this.immutable=immutable;
 		}
 
 		public bool Immutable {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return this.immutable; }
 		}
 
-		[MonoTODO]
 		public override bool Equals (object obj)
 		{
-			throw new NotImplementedException();
+			if (!(obj is ImmutableObjectAttribute))
+				return false;
+			if (obj == this)
+				return true;
+			return ((ImmutableObjectAttribute) obj).Immutable == immutable;
 		}
 
-		[MonoTODO]
 		public override int GetHashCode()
 		{
-			throw new NotImplementedException();
+			return immutable.GetHashCode ();
 		}
 
-		[MonoTODO]
 		public override bool IsDefaultAttribute()
 		{
-			throw new NotImplementedException();
+			return immutable == ImmutableObjectAttribute.Default.Immutable;
 		}
 
-		[MonoTODO]
-		~ImmutableObjectAttribute()
-		{
-		}
 	}
 }

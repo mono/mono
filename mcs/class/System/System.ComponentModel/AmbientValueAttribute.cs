@@ -2,91 +2,99 @@
 // System.ComponentModel.AmbientValueAttribute
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 namespace System.ComponentModel
 {
 	[AttributeUsage(AttributeTargets.All)]
-        public sealed class AmbientValueAttribute : Attribute
+	public sealed class AmbientValueAttribute : Attribute
 	{
-		[MonoTODO]
+
+		private object AmbientValue;
+
 		public AmbientValueAttribute (bool value)
 		{
+			AmbientValue = value;
 		}
 
-		[MonoTODO]
 		public AmbientValueAttribute (byte value)
 		{
+			AmbientValue = value;
 		}
 
-		[MonoTODO]
 		public AmbientValueAttribute (char value)
 		{
+			AmbientValue = value;
 		}
 
-		[MonoTODO]
 		public AmbientValueAttribute (double value)
 		{
+			AmbientValue = value;
 		}
 
-		[MonoTODO]
-	        public AmbientValueAttribute (short value)
+		public AmbientValueAttribute (short value)
 		{
+			AmbientValue = value;
 		}
 
-		[MonoTODO]
 		public AmbientValueAttribute (int value)
 		{
+			AmbientValue = value;
 		}
 
-		[MonoTODO]
 		public AmbientValueAttribute (long value)
 		{
+			AmbientValue = value;
 		}
 
-		[MonoTODO]
 		public AmbientValueAttribute (object value)
 		{
+			AmbientValue = value;
 		}
 
-		[MonoTODO]
 		public AmbientValueAttribute (float value)
 		{
+			AmbientValue = value;
 		}
 
-		[MonoTODO]
 		public AmbientValueAttribute (string value)
 		{
+			AmbientValue = value;
 		}
 
 		[MonoTODO]
 		public AmbientValueAttribute (Type type, string value)
 		{
+			try {
+				AmbientValue = Convert.ChangeType (value, type);
+			} catch {
+				AmbientValue = null;
+			}
 		}
 
 		public object Value {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return AmbientValue; }
 		}
 
-		[MonoTODO]
 		public override bool Equals (object obj)
 		{
-			throw new NotImplementedException();
+			if (!(obj is AmbientValueAttribute))
+				return false;
+
+			if (obj == this)
+				return true;
+
+			return ((AmbientValueAttribute) obj).Value == AmbientValue;
 		}
 
-		[MonoTODO]
 		public override int GetHashCode()
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~AmbientValueAttribute()
-		{
+			return AmbientValue.GetHashCode ();
 		}
 	}
 }

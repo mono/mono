@@ -2,50 +2,51 @@
 // System.ComponentModel.MergablePropertyAttribute
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 namespace System.ComponentModel
 {
 	[AttributeUsage(AttributeTargets.All)]
-        public sealed class MergablePropertyAttribute : Attribute
+	public sealed class MergablePropertyAttribute : Attribute
 	{
-		public static readonly MergablePropertyAttribute No;
-		public static readonly MergablePropertyAttribute Yes;
 
-		[MonoTODO]
+		private bool mergable;
+
+		public static readonly MergablePropertyAttribute Default = new MergablePropertyAttribute (true);
+		public static readonly MergablePropertyAttribute No = new MergablePropertyAttribute (false);
+		public static readonly MergablePropertyAttribute Yes = new MergablePropertyAttribute (true);
+
 		public MergablePropertyAttribute (bool allowMerge)
 		{
+			this.mergable = allowMerge;
 		}
 
 		public bool AllowMerge {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return mergable; }
 		}
 
-		[MonoTODO]
 		public override bool Equals (object obj)
 		{
-			throw new NotImplementedException();
+			if (!(obj is MergablePropertyAttribute))
+				return false;
+			if (obj == this)
+				return true;
+			return ((MergablePropertyAttribute) obj).AllowMerge == mergable;
 		}
 
-		[MonoTODO]
 		public override int GetHashCode()
 		{
-			throw new NotImplementedException();
+			return mergable.GetHashCode ();
 		}
 
-		[MonoTODO]
 		public override bool IsDefaultAttribute()
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~MergablePropertyAttribute()
-		{
+			return mergable == MergablePropertyAttribute.Default.AllowMerge;
 		}
 	}
 }

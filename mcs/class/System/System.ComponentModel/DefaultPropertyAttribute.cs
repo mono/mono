@@ -3,8 +3,10 @@
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
+// (C) 2003 Andreas Nahr
 //
 
 using System;
@@ -15,6 +17,8 @@ namespace System.ComponentModel
 	public sealed class DefaultPropertyAttribute : Attribute
 	{
 		private string property_name;
+
+		public static readonly DefaultPropertyAttribute Default = new DefaultPropertyAttribute (null);
 
 		public DefaultPropertyAttribute (string name)
 		{

@@ -1,50 +1,46 @@
 //
 // System.ComponentModel.CharConverter
 //
-// Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+// Author:
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
-// (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 using System.Globalization;
 
 namespace System.ComponentModel
 {
-        public class CharConverter : TypeConverter  
+	public class CharConverter : TypeConverter  
 	{
-		[MonoTODO]
-		public CharConverter()
+		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 		{
+			if (sourceType == typeof (string)) 
+				return true;
+			return base.CanConvertFrom (context, sourceType);
 		}
 
-		[MonoTODO]
-		public override bool CanConvertFrom (ITypeDescriptorContext context,
-						     Type sourceType)
+		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
-			throw new NotImplementedException();
+			if (value.GetType() == typeof (string)) {
+				string Test = (String) value;
+				if (Test.Length != 1)
+				// LAMESPEC: MS does throw FormatException here
+					throw new FormatException ("String has to be exactly one char long");
+				return Test[0];
+			}
+			return base.ConvertFrom (context, culture, value);
 		}
 
-		[MonoTODO]
-		public override object ConvertFrom (ITypeDescriptorContext context,
-						    CultureInfo culture,
-						    object value)
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
 		public override object ConvertTo (ITypeDescriptorContext context,
-						  CultureInfo culture,
-						  object value,
-						  Type destinationType)
+						  CultureInfo culture, object value, Type destinationType)
 		{
-			throw new NotImplementedException();
-		}
+			if (destinationType == typeof (string))
+			if (value != null && value is char)
+				return new string ((char) value, 1);
 
-		[MonoTODO]
-		~CharConverter()
-		{
+			return base.ConvertTo (context, culture, value, destinationType);
 		}
 	}
 }
+

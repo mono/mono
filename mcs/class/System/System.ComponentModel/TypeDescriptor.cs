@@ -3,13 +3,16 @@
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
+// (C) 2003 Andreas Nahr
 //
 
 using System;
 using System.Collections;
 using System.Reflection;
+using System.ComponentModel.Design;
 
 namespace System.ComponentModel
 {
@@ -25,6 +28,12 @@ public sealed class TypeDescriptor
 
 	[MonoTODO]
 	public static void AddEditorTable (Type editorBaseType, Hashtable table)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static IDesigner CreateDesigner(IComponent component, Type designerBaseType)
 	{
 		throw new NotImplementedException ();
 	}
@@ -74,37 +83,63 @@ public sealed class TypeDescriptor
 
 	public static AttributeCollection GetAttributes (object component)
 	{
-		return GetAttributes (component.GetType ());
+		return GetAttributes (component, false);
 	}
 
 	[MonoTODO]
 	public static AttributeCollection GetAttributes (object component, bool noCustomTypeDesc)
 	{
-		throw new NotImplementedException ();
+		if (component == null)
+		    return AttributeCollection.Empty;
+
+		// FIXME: implementation correct?
+		if (noCustomTypeDesc == false && component is ICustomTypeDescriptor) {
+		    return ((ICustomTypeDescriptor) component).GetAttributes ();
+		} else {
+		    // FIXME: wrong implementation (we need to check the Attributes of the real instance?
+		    // not of the type?
+		    object [] atts = component.GetType ().GetCustomAttributes (false);
+		    return new AttributeCollection ((Attribute []) atts);
+		}
 	}
 
-	[MonoTODO]
 	public static string GetClassName (object component)
 	{
-		throw new NotImplementedException ();
+		return GetClassName (component, false);
 	}
 
-	[MonoTODO]
 	public static string GetClassName (object component, bool noCustomTypeDesc)
 	{
-		throw new NotImplementedException ();
+		if (component == null)
+		    throw new ArgumentNullException ("component", "component cannot be null");
+
+		// FIXME: implementation correct?
+		if (noCustomTypeDesc == false && component is ICustomTypeDescriptor) {
+		    return ((ICustomTypeDescriptor) component).GetClassName ();
+		} else {
+		    return component.GetType ().FullName;
+		}
 	}
 
-	[MonoTODO]
 	public static string GetComponentName (object component)
 	{
-		throw new NotImplementedException ();
+		return GetComponentName (component, false);
 	}
 
-	[MonoTODO]
 	public static string GetComponentName (object component, bool noCustomTypeDesc)
 	{
-		throw new NotImplementedException ();
+		if (component == null)
+		    throw new ArgumentNullException ("component", "component cannot be null");
+
+		// FIXME: implementation correct?
+		if (noCustomTypeDesc == false && component is ICustomTypeDescriptor) {
+		    return ((ICustomTypeDescriptor) component).GetComponentName ();
+		} else {
+		    if (((IComponent) component).Site == null)
+			return null;
+		    else
+			return ((IComponent) component).Site.Name;
+		}
 	}
 
 	public static TypeConverter GetConverter (object component)
@@ -171,25 +206,18 @@ public sealed class TypeDescriptor
 	}
 
 	[MonoTODO]
-	public static EventDescriptor GetDefaultEvent (object component)
-	{
-		throw new NotImplementedException ();
-	}
-
-	[MonoTODO]
 	public static EventDescriptor GetDefaultEvent (Type componentType)
 	{
 		throw new NotImplementedException ();
 	}
 
-	[MonoTODO]
-	public static EventDescriptor GetDefaultEvent (object component, bool noCustomTypeDesc)
+	public static EventDescriptor GetDefaultEvent (object component)
 	{
-		throw new NotImplementedException ();
+		return GetDefaultEvent (component, false);
 	}
 
 	[MonoTODO]
-	public static PropertyDescriptor GetDefaultProperty (object component)
+	public static EventDescriptor GetDefaultEvent (object component, bool noCustomTypeDesc)
 	{
 		throw new NotImplementedException ();
 	}
@@ -200,14 +228,13 @@ public sealed class TypeDescriptor
 		throw new NotImplementedException ();
 	}
 
-	[MonoTODO]
-	public static PropertyDescriptor GetDefaultProperty (object component, bool noCustomTypeDesc)
+	public static PropertyDescriptor GetDefaultProperty (object component)
 	{
-		throw new NotImplementedException ();
+		return GetDefaultProperty (component, false);
 	}
 
 	[MonoTODO]
-	public static object GetEditor (object component, Type editorBaseType)
+	public static PropertyDescriptor GetDefaultProperty (object component, bool noCustomTypeDesc)
 	{
 		throw new NotImplementedException ();
 	}
@@ -216,6 +243,11 @@ public sealed class TypeDescriptor
 	public static object GetEditor (Type componentType, Type editorBaseType)
 	{
 		throw new NotImplementedException ();
+	}
+
+	public static object GetEditor (object component, Type editorBaseType)
+	{
+		return GetEditor (component, editorBaseType, false);
 	}
 
 	[MonoTODO]
@@ -294,6 +326,12 @@ public sealed class TypeDescriptor
 		throw new NotImplementedException ();
 	}
 
+	[MonoTODO]
+	public static PropertyDescriptorCollection GetProperties (object component, Attribute [] attributes, bool noCustomTypeDesc)
+	{
+		throw new NotImplementedException ();
+	}
+
 	[MonoTODO("noCustomTypeDesc")]
 	public static PropertyDescriptorCollection GetProperties (object component, bool noCustomTypeDesc)
 	{
@@ -317,6 +355,18 @@ public sealed class TypeDescriptor
 								  bool noCustomTypeDesc)
 	{
 		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static void SortDescriptorArray(IList infos)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static IComNativeDescriptorHandler ComNativeDescriptorHandler {
+		get{ throw new NotImplementedException (); }
+		set{ throw new NotImplementedException (); }
 	}
 
 	[MonoTODO]

@@ -2,12 +2,16 @@
 // System.ComponentModel.MarshalByValueComponent.cs
 //
 // Author:
-//   Rodrigo Moya (rodrigo@ximian.com)
+//  Rodrigo Moya (rodrigo@ximian.com)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Ximian, Inc
+// (C) 2003 Andreas Nahr
 //
 
 using System;
+using System.ComponentModel;
+using System.ComponentModel.Design;
 
 namespace System.ComponentModel
 {
@@ -16,7 +20,9 @@ namespace System.ComponentModel
 	/// </summary>
 	public class MarshalByValueComponent : IComponent, IDisposable, IServiceProvider
 	{
-		EventHandlerList eventList;
+		private EventHandlerList eventList;
+		private ISite mySite;
+		private object disposedEvent = new object ();
 
 		public MarshalByValueComponent ()
 		{
@@ -49,31 +55,35 @@ namespace System.ComponentModel
 			return null;
 		}
 		
+		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual IContainer Container {
-			[MonoTODO]
 			get {
-				return null;
+				if (mySite == null)
+					return null;
+				return mySite.Container;
 			}
 		}
 
+		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual bool DesignMode {
-			[MonoTODO]
 			get {
-				return false;
+				if (mySite == null)
+					return false;
+				return mySite.DesignMode;
 			}
 		}
 
+		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual ISite Site {
-			[MonoTODO]
-			get {
-				// TODO: need to get Site
-				return null;
-			}
+			get { return mySite; }
+			set { mySite = value; }
+		}
 
-			[MonoTODO]
-			set {
-				// TODO: need to set Site
-			}
+		public override string ToString ()
+		{
+			if (mySite == null)
+				return GetType ().ToString ();
+			return String.Format ("{0} [{1}]", mySite.Name, GetType ().ToString ());
 		}
 
 		protected EventHandlerList Events {
@@ -85,6 +95,11 @@ namespace System.ComponentModel
 			}
 		}
 		
-		public event EventHandler Disposed;
+		public event EventHandler Disposed
+		{
+			add { Events.AddHandler (disposedEvent, value); }
+			remove { Events.RemoveHandler (disposedEvent, value); }
+		}
 	}
 }
+

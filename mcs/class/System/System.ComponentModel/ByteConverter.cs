@@ -2,23 +2,19 @@
 // System.ComponentModel.ByteConverter
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
-// (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 namespace System.ComponentModel
 {
-        public class ByteConverter : BaseNumberConverter
+	public class ByteConverter : BaseNumberConverter
 	{
-		[MonoTODO]
 		public ByteConverter()
 		{
-		}
-
-		[MonoTODO]
-		~ByteConverter()
-		{
+			InnerType = typeof (Byte);
 		}
 	}
 }
+

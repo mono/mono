@@ -2,9 +2,11 @@
 // System.ComponentModel.NotifyParentPropertyAttribute.cs
 //
 // Author:
-//   Tim Coleman (tim@timcoleman.com)
+//  Tim Coleman (tim@timcoleman.com)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // Copyright (C) Tim Coleman, 2002
+// (C) 2003 Andreas Nahr
 //
 //
 
@@ -14,13 +16,13 @@ namespace System.ComponentModel {
 
 		#region Fields
 
-		bool notifyParent;
+		private bool notifyParent;
 
 		#endregion // Fields
 		
+		public static readonly NotifyParentPropertyAttribute Default = new NotifyParentPropertyAttribute (false);
 		public static readonly NotifyParentPropertyAttribute No = new NotifyParentPropertyAttribute (false);
 		public static readonly NotifyParentPropertyAttribute Yes = new NotifyParentPropertyAttribute (true);
-		public static readonly NotifyParentPropertyAttribute Default = new NotifyParentPropertyAttribute (false);
 
 		#region Constructors
 
@@ -41,22 +43,23 @@ namespace System.ComponentModel {
 
 		#region Methods
 
-		[MonoTODO]
 		public override bool Equals (object obj)
 		{
-			throw new NotImplementedException ();
+			if (!(obj is NotifyParentPropertyAttribute))
+				return false;
+			if (obj == this)
+				return true;
+			return ((NotifyParentPropertyAttribute) obj).NotifyParent == notifyParent;
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
+			return notifyParent.GetHashCode ();
 		}
 
-		[MonoTODO]
 		public override bool IsDefaultAttribute ()
 		{
-			throw new NotImplementedException ();
+			return notifyParent == NotifyParentPropertyAttribute.Default.NotifyParent;
 		}
 
 		#endregion // Methods

@@ -25,7 +25,8 @@ namespace System.ComponentModel {
 		#region Methods
 
 		[MonoTODO]
-		public override PropertyDescriptorCollection GetProperties (ITypeDescriptorContext context, object value, Attribute[] attributes)
+		public override PropertyDescriptorCollection GetProperties (ITypeDescriptorContext context,
+									    object value, Attribute[] attributes)
 		{
 			throw new NotImplementedException ();
 		}

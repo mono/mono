@@ -1,15 +1,20 @@
 //
 // System.ComponentModel.EventDescriptorCollection.cs
 //
-// Author: Rodrigo Moya (rodrigo@ximian.com)
+// Authors: 
+//  Rodrigo Moya (rodrigo@ximian.com)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Ximian, Inc.
+// (C) 2003 Andreas Nahr
 //
 
 using System.Collections;
+using System.Runtime.InteropServices;
 
 namespace System.ComponentModel
 {
+	[ComVisible (true)]
 	public class EventDescriptorCollection : IList, ICollection, IEnumerable
 	{
 		private ArrayList eventList;
@@ -33,9 +38,13 @@ namespace System.ComponentModel
 			return eventList.Contains (value);
 		}
 
-		[MonoTODO]
-		public virtual EventDescriptor Find (string name, bool ignoreCase) {
-			throw new NotImplementedException ();
+		public virtual EventDescriptor Find (string name, bool ignoreCase) 
+		{
+			foreach (EventDescriptor e in eventList) {
+				if (0 == String.Compare (name, e.Name, ignoreCase))
+					return e;
+			}
+			return null;
 		}
 
 		public IEnumerator GetEnumerator () {
@@ -58,15 +67,14 @@ namespace System.ComponentModel
 			eventList.RemoveAt (index);
 		}
 
-
-		[MonoTODO]
 		public virtual EventDescriptorCollection Sort () {
-			throw new NotImplementedException ();
+			eventList.Sort ();
+			return this;
 		}
 
-		[MonoTODO]
 		public virtual EventDescriptorCollection Sort (IComparer comparer) {
-			throw new NotImplementedException ();
+			eventList.Sort (comparer);
+			return this;
 		}
 
 		[MonoTODO]
@@ -75,8 +83,7 @@ namespace System.ComponentModel
 		}
 
 		[MonoTODO]
-		public virtual EventDescriptorCollection Sort (string[] order,
-							       IComparer comparer) {
+		public virtual EventDescriptorCollection Sort (string[] order, IComparer comparer) {
 			throw new NotImplementedException ();
 		}
 
@@ -97,10 +104,7 @@ namespace System.ComponentModel
 		}
 
 		 public virtual EventDescriptor this[string name] {
-			 [MonoTODO]
-			 get {
-				 throw new NotImplementedException ();
-			 }
+			 get { return Find (name, false); }
 		 }
 
 		public virtual EventDescriptor this[int index] {

@@ -2,23 +2,18 @@
 // System.ComponentModel.SByteConverter
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
-// (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 namespace System.ComponentModel
 {
 	public class SByteConverter : BaseNumberConverter
 	{
-		[MonoTODO]
 		public SByteConverter()
 		{
-		}
-
-		[MonoTODO]
-		~SByteConverter()
-		{
+			InnerType = typeof (SByte);
 		}
 	}
 }

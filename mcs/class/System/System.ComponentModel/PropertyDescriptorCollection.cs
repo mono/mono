@@ -4,23 +4,22 @@
 // Authors:
 // 	Rodrigo Moya (rodrigo@ximian.com)
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Rodrigo Moya, 2002
 // (c) 2002 Ximian, Inc. (http://www.ximian.com)
+// (C) 2003 Andreas Nahr
 //
-
 using System.Collections;
-
 namespace System.ComponentModel
 {
 	/// <summary>
 	/// Represents a collection of PropertyDescriptor objects.
 	/// </summary>
+	//[DefaultMember ("Item")]
 	public class PropertyDescriptorCollection : IList, ICollection, IEnumerable, IDictionary
 	{
-		public static readonly PropertyDescriptorCollection Empty =
-						new PropertyDescriptorCollection (null);
-
+		public static readonly PropertyDescriptorCollection Empty = new PropertyDescriptorCollection (null);
 		ArrayList properties;
 		bool readOnly;
 
@@ -49,7 +48,7 @@ namespace System.ComponentModel
 		{
 			Add ((PropertyDescriptor) value);
 		}
-		
+
 		public void Clear ()
 		{
 			properties.Clear ();
@@ -115,10 +114,8 @@ namespace System.ComponentModel
 			return IndexOf ((PropertyDescriptor) value);
 		}
 
-		[MonoTODO]
 		public void Insert (int index, PropertyDescriptor value)
-		{
-			throw new NotImplementedException ();
+		{            Insert (index, value);
 		}
 
 		void IList.Insert (int index, object value)
@@ -151,14 +148,26 @@ namespace System.ComponentModel
 			RemoveAt (index);
 		}
 
-		[MonoTODO]
 		public virtual PropertyDescriptorCollection Sort ()
+		{
+			properties.Sort ();
+			return this;
+		}
+
+		public virtual PropertyDescriptorCollection Sort (IComparer comparer)
+		{
+			properties.Sort (comparer);
+			return this;
+		}
+
+		[MonoTODO]
+		public virtual PropertyDescriptorCollection Sort (string[] order) 
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual PropertyDescriptorCollection Sort (IComparer ic)
+		public virtual PropertyDescriptorCollection Sort (string[] order, IComparer comparer) 
 		{
 			throw new NotImplementedException ();
 		}
@@ -174,7 +183,7 @@ namespace System.ComponentModel
 		{
 			throw new NotImplementedException ();
 		}
-		
+
 		bool IDictionary.IsFixedSize
 		{
 			get {
@@ -216,7 +225,7 @@ namespace System.ComponentModel
 				return null;
 			}
 		}
-		
+
 		ICollection IDictionary.Keys
 		{
 			get {
@@ -227,14 +236,14 @@ namespace System.ComponentModel
 				return keys;
 			}
 		}
-		
+
 		ICollection IDictionary.Values
 		{
 			get {
 				return (ICollection) properties.Clone ();
 			}
 		}
-		
+
 		object IDictionary.this [object key]
 		{
 			get {
@@ -245,15 +254,14 @@ namespace System.ComponentModel
 			set {
 				if (!(key is string) || (value as PropertyDescriptor) == null)
 					throw new ArgumentException ();
-
 				int idx = properties.IndexOf (value);
 				if (idx == -1)
 					Add ((PropertyDescriptor) value);
 				else
 					properties [idx] = value;
-
 			}
 		}
+
 		public virtual PropertyDescriptor this [string s]
 		{
 			get {
@@ -266,7 +274,6 @@ namespace System.ComponentModel
 			get {
 				return properties [index];
 			}
-
 			set {
 				properties [index] = value;
 			}

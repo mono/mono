@@ -2,23 +2,18 @@
 // System.ComponentModel.UInt32Converter
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
-// (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 namespace System.ComponentModel
 {
 	public class UInt32Converter : BaseNumberConverter
 	{
-		[MonoTODO]
 		public UInt32Converter()
 		{
-		}
-
-		[MonoTODO]
-		~UInt32Converter()
-		{
+			InnerType = typeof (UInt32);
 		}
 	}
 }

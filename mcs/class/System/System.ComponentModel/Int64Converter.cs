@@ -2,23 +2,18 @@
 // System.ComponentModel.Int64Converter
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
-// (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 namespace System.ComponentModel
 {
-        public class Int64Converter : BaseNumberConverter
+	public class Int64Converter : BaseNumberConverter
 	{
-		[MonoTODO]
 		public Int64Converter()
 		{
-		}
-
-		[MonoTODO]
-		~Int64Converter()
-		{
+			InnerType = typeof (Int64);
 		}
 	}
 }

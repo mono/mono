@@ -2,58 +2,62 @@
 // System.ComponentModel.ProvidePropertyAttribute
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 namespace System.ComponentModel
 {
 	[AttributeUsage(AttributeTargets.Class)]
-        public sealed class ProvidePropertyAttribute : Attribute
+	public sealed class ProvidePropertyAttribute : Attribute
 	{
-		[MonoTODO]
-		public ProvidePropertyAttribute (string propertyName,
-						 string receiverTypeName)
+
+		private string Property;
+		private string Receiver;
+
+		public ProvidePropertyAttribute (string propertyName, string receiverTypeName)
 		{
+			Property = propertyName;
+			Receiver = receiverTypeName;
 		}
 
-		[MonoTODO]
-		public ProvidePropertyAttribute (string propertyName, 
-						 Type receiverType)
+		public ProvidePropertyAttribute (string propertyName, Type receiverType)
 		{
+			Property = propertyName;
+			Receiver = receiverType.AssemblyQualifiedName;
 		}
 
 		public string PropertyName {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return Property; }
 		}
 
 		public string ReceiverTypeName {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return Receiver; }
 		}
 
 		public override object TypeId {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { 
+				// seems to be MS implementation
+				return base.TypeId + Property; 
+			}
 		}
 
-		[MonoTODO]
 		public override bool Equals (object obj)
 		{
-			throw new NotImplementedException();
+			if (!(obj is ProvidePropertyAttribute))
+				return false;
+			if (obj == this)
+				return true;
+			return (((ProvidePropertyAttribute) obj).PropertyName == Property) &&
+				(((ProvidePropertyAttribute) obj).ReceiverTypeName == Receiver);
 		}
 
-		[MonoTODO]
 		public override int GetHashCode()
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~ProvidePropertyAttribute()
-		{
+			return (Property + Receiver).GetHashCode ();
 		}
 	}
 }

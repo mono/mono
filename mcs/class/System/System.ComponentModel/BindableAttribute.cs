@@ -2,9 +2,11 @@
 // System.ComponentModel.BindableAttribute.cs
 //
 // Author:
-//   Tim Coleman (tim@timcoleman.com)
+//  Tim Coleman (tim@timcoleman.com)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // Copyright (C) Tim Coleman, 2002
+// (C) 2003 Andreas Nahr
 //
 //
 
@@ -14,8 +16,8 @@ namespace System.ComponentModel {
 
 		#region Fields
 
-		BindableSupport flags;
-		bool bindable;
+		//BindableSupport flags;
+		private bool bindable;
 
 		#endregion // Fields
 		
@@ -27,8 +29,12 @@ namespace System.ComponentModel {
 
 		public BindableAttribute (BindableSupport flags)
 		{
-			this.flags = flags;
-			this.bindable = false;
+			//this.flags = flags;
+			if (flags == BindableSupport.No)
+				this.bindable = false;
+				
+			if (flags == BindableSupport.Yes || flags == BindableSupport.Default)
+				this.bindable = true;
 		}
 
 		public BindableAttribute (bool bindable)
@@ -48,24 +54,28 @@ namespace System.ComponentModel {
 
 		#region Methods
 
-		[MonoTODO]
 		public override bool Equals (object obj)
 		{
-			throw new NotImplementedException ();
+			if (!(obj is BindableAttribute))
+				return false;
+
+			if (obj == this)
+				return true;
+
+			return ((BindableAttribute) obj).Bindable == bindable;
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
+			return bindable.GetHashCode ();
 		}
 
-		[MonoTODO]
 		public override bool IsDefaultAttribute ()
 		{
-			throw new NotImplementedException ();
+			return bindable == BindableAttribute.Default.Bindable;
 		}
 
 		#endregion // Methods
 	}
 }
+

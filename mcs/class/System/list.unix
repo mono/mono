@@ -153,6 +153,7 @@ System.ComponentModel/EventDescriptorCollection.cs
 System.ComponentModel/EventDescriptor.cs
 System.ComponentModel/EventHandlerList.cs
 System.ComponentModel/ExpandableObjectConverter.cs
+System.ComponentModel/ExtenderProvidedPropertyAttribute.cs
 System.ComponentModel/IBindingList.cs
 System.ComponentModel/IComponent.cs
 System.ComponentModel/IComNativeDescriptorHandler.cs

@@ -2,54 +2,56 @@
 // System.ComponentModel.ParenthesizePropertyNameAttribute
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 namespace System.ComponentModel
 {
 	[AttributeUsage(AttributeTargets.All)]
-        public sealed class ParenthesizePropertyNameAttribute : Attribute
+	public sealed class ParenthesizePropertyNameAttribute : Attribute
 	{
-		public static readonly ParenthesizePropertyNameAttribute Default;
 
-		[MonoTODO]
+        private bool parenthesis;
+
+		public static readonly ParenthesizePropertyNameAttribute Default = new ParenthesizePropertyNameAttribute();
+
+
 		public ParenthesizePropertyNameAttribute()
 		{
+			this.parenthesis = false;
 		}
 
-		[MonoTODO]
 		public ParenthesizePropertyNameAttribute (bool needParenthesis)
 		{
+			this.parenthesis = needParenthesis;
 		}
 
 		public bool NeedParenthesis {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return parenthesis; }
 		}
 
-		[MonoTODO]
 		public override bool Equals (object o)
 		{
-			throw new NotImplementedException();
+			if (!(o is ParenthesizePropertyNameAttribute))
+				return false;
+			if (o == this)
+				return true;
+			return ((ParenthesizePropertyNameAttribute) o).NeedParenthesis == parenthesis;
 		}
 
-		[MonoTODO]
 		public override int GetHashCode()
 		{
-			throw new NotImplementedException();
+			return parenthesis.GetHashCode ();
 		}
 
-		[MonoTODO]
 		public override bool IsDefaultAttribute()
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~ParenthesizePropertyNameAttribute()
-		{
+			return parenthesis == ParenthesizePropertyNameAttribute.Default.NeedParenthesis;
 		}
 	}
 }
+

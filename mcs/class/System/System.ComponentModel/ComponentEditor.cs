@@ -2,32 +2,28 @@
 // System.ComponentModel.ComponentEditor
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 namespace System.ComponentModel
 {
 	public abstract class ComponentEditor
 	{
-		[MonoTODO]
 		protected ComponentEditor()
 		{
 		}
 
-		[MonoTODO]
 		public bool EditComponent (object component)
 		{
-			throw new NotImplementedException();
+			return EditComponent (null, component);
 		}
 		
-		public abstract bool EditComponent (ITypeDescriptorContext context,
-						    object component);
+		public abstract bool EditComponent (ITypeDescriptorContext context, object component);
 
-		[MonoTODO]
-		~ComponentEditor()
-		{
-		}
 	}
 }
+

@@ -2,59 +2,61 @@
 // System.ComponentModel.LicenseProviderAttribute
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 namespace System.ComponentModel
 {
 	[AttributeUsage(AttributeTargets.Class)]
-        public sealed class LicenseProviderAttribute : Attribute
+	public sealed class LicenseProviderAttribute : Attribute
 	{
-		[MonoTODO]
+		private Type Provider;
+
+		public static readonly LicenseProviderAttribute Default = new LicenseProviderAttribute ();
+
 		public LicenseProviderAttribute()
 		{
+			this.Provider = null;
 		}
 
-		[MonoTODO]
 		public LicenseProviderAttribute (string typeName)
 		{
-			throw new NotImplementedException();
+			this.Provider = Type.GetType (typeName, false);
 		}
 
-		[MonoTODO]
 		public LicenseProviderAttribute (Type type)
 		{
-			throw new NotImplementedException();
+			this.Provider = type;
 		}
 
-		[MonoTODO]
 		public Type LicenseProvider {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return Provider; }
 		}
-		
+
 		public override object TypeId {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+		get {
+			// Seems to be MS implementation
+			return (base.ToString() + Provider.ToString());
+			}
 		}
 
-		[MonoTODO]
-		public override bool Equals (object value)
+		public override bool Equals (object obj)
 		{
-			throw new NotImplementedException();
+			if (!(obj is LicenseProviderAttribute))
+				return false;
+			if (obj == this)
+				return true;
+			return ((LicenseProviderAttribute) obj).LicenseProvider == Provider;
 		}
 
-		[MonoTODO]
 		public override int GetHashCode()
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~LicenseProviderAttribute()
-		{
+			return Provider.GetHashCode ();
 		}
 	}
 }
+

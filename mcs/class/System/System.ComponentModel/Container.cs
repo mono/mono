@@ -2,10 +2,14 @@
 // System.ComponentModel.Container.cs
 //
 // Author:
-//   Miguel de Icaza (miguel@ximian.com)
+//  Miguel de Icaza (miguel@ximian.com)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
+// (C) 2003 Andreas Nahr
 //
+
+using System.Collections;
 
 namespace System.ComponentModel {
 
@@ -17,7 +21,9 @@ namespace System.ComponentModel {
 	//   
 	// </remarks>
 	public class Container : IContainer, IDisposable {
-		ComponentCollection cc;
+
+		private ArrayList c = new ArrayList ();
+		//ComponentCollection cc;
 
 		// <summary>
 		//   Auxiliary class to support the default behaviour of CreateSite
@@ -31,9 +37,9 @@ namespace System.ComponentModel {
 		// </remarks>
 		
 		class DefaultSite : ISite {
-			IComponent component;
-			IContainer container;
-			string     name;
+			private IComponent component;
+			private IContainer container;
+			private string     name;
 			
 			public DefaultSite (string name, IComponent component, IContainer container)
 			{
@@ -89,27 +95,28 @@ namespace System.ComponentModel {
 		}
 
 		public virtual ComponentCollection Components {
-			get {
-				return cc;
+			get 
+            {
+                Array a = c.ToArray(typeof (IComponent));
+				return new ComponentCollection((IComponent[]) a);
 			}
 		}
 
 		// <summary>
 		//   Adds an IComponent to the Container
 		// </summary>
-		[MonoTODO]
 		public virtual void Add (IComponent component)
 		{
-			// FIXME: Add this component to the ComponentCollection.cc
+			Add (component, null);
 		}
 
 		// <summary>
 		//   Adds an IComponent to the Container.  With a name binding.
 		// </summary>
-		[MonoTODO]
 		public virtual void Add (IComponent component, string name)
 		{
-			// FIXME: Add this component to the ComponentCollection.cc
+			component.Site = CreateSite (component, name);
+			c.Add (component);
 		}
 
 		// <summary>
@@ -117,6 +124,12 @@ namespace System.ComponentModel {
 		// <summary>
 		protected virtual ISite CreateSite (IComponent component, string name)
 		{
+			foreach (IComponent Comp in c) {
+				if (Comp.Site != null)
+				if (Comp.Site.Name == name)
+					throw new ArgumentException ("duplicate component name", "name");
+			}
+
 			return new DefaultSite (name, component, this);
 		}
 
@@ -138,7 +151,7 @@ namespace System.ComponentModel {
 				//??
 			}
 
-			cc = null;
+			c = null;
 		}
 
 		~Container ()
@@ -154,10 +167,9 @@ namespace System.ComponentModel {
 			return null;
 		}
 
-		[MonoTODO]
 		public virtual void Remove (IComponent component)
 		{
-			// FIXME: Add this component to the ComponentCollection.cc
+			c.Remove (component);
 		}
 	}
 	

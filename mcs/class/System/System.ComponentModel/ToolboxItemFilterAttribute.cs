@@ -2,64 +2,66 @@
 // System.ComponentModel.ToolboxItemFilterAttribute
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 namespace System.ComponentModel
 {
 	[AttributeUsage(AttributeTargets.Class)]
 	[Serializable]
-        public sealed class ToolboxItemFilterAttribute : Attribute
+	public sealed class ToolboxItemFilterAttribute : Attribute
 	{
-		[MonoTODO]
+		private string Filter;
+		private ToolboxItemFilterType ItemFilterType;
+
 		public ToolboxItemFilterAttribute (string filterString)
 		{
+			Filter = filterString;
+			ItemFilterType = ToolboxItemFilterType.Allow;
 		}
 
-		[MonoTODO]
-		public ToolboxItemFilterAttribute (string filterString,
-						   ToolboxItemFilterType filterType)
+		public ToolboxItemFilterAttribute (string filterString, ToolboxItemFilterType filterType)
 		{
+			Filter = filterString;
+			ItemFilterType = filterType;
 		}
 
 		public string FilterString {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return Filter; }
 		}
 
 		public ToolboxItemFilterType FilterType {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return ItemFilterType; }
 		}
 
 		public override object TypeId {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return base.TypeId + Filter; }
 		}
 
-		[MonoTODO]
 		public override bool Equals (object obj)
 		{
-			throw new NotImplementedException();
+			if (!(obj is ToolboxItemFilterAttribute))
+				return false;
+			if (obj == this)
+				return true;
+			return (((ToolboxItemFilterAttribute) obj).FilterString == Filter) &&
+				(((ToolboxItemFilterAttribute) obj).FilterType == ItemFilterType);
 		}
 
-		[MonoTODO]
 		public override int GetHashCode()
 		{
-			throw new NotImplementedException();
+			return (Filter + ItemFilterType.ToString()).GetHashCode ();
 		}
 
-		[MonoTODO]
 		public override bool Match (object obj)
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~ToolboxItemFilterAttribute()
-		{
+			if (!(obj is ToolboxItemFilterAttribute))
+				return false;
+			return ((ToolboxItemFilterAttribute) obj).FilterString == Filter;
 		}
 	}
 }

@@ -1,10 +1,10 @@
 //
 // System.ComponentModel.GuidConverter
 //
-// Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+// Author:
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
-// (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 using System.Globalization;
@@ -13,45 +13,46 @@ namespace System.ComponentModel
 {
 	public class GuidConverter : TypeConverter
 	{
-		[MonoTODO]
+
 		public GuidConverter()
 		{
 		}
 
-				[MonoTODO]
-		public override bool CanConvertFrom (ITypeDescriptorContext context,
-						     Type sourceType)
+		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 		{
-			throw new NotImplementedException();
+			if (sourceType == typeof (string)) 
+				return true;
+			return base.CanConvertFrom (context, sourceType);
 		}
 
-		[MonoTODO]
-		public override bool CanConvertTo (ITypeDescriptorContext context,
-						   Type destinationType)
+		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
 		{
-			throw new NotImplementedException();
+			if (destinationType == typeof (string))
+				return true;
+			return base.CanConvertTo (context, destinationType);
 		}
 
-		[MonoTODO]
 		public override object ConvertFrom (ITypeDescriptorContext context,
-						    CultureInfo culture,
-						    object value)
+						    CultureInfo culture, object value)
 		{
-			throw new NotImplementedException();
+			if (value.GetType() == typeof (string)) {
+				string GuidString = (string) value;
+				try {
+					return new Guid (GuidString);
+				} catch {
+					throw new FormatException (GuidString + "is not a valid GUID.");
+				}
+			}
+			return base.ConvertFrom (context, culture, value);
 		}
 
-		[MonoTODO]
 		public override object ConvertTo (ITypeDescriptorContext context,
-						  CultureInfo culture,
-						  object value,
-						  Type destinationType)
+						  CultureInfo culture, object value, Type destinationType)
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~GuidConverter()
-		{
+			if (destinationType == typeof (string) && value != null &&value.GetType() == typeof (Guid))
+				// LAMESPEC MS seems to always parse "D" type
+				return ((Guid) value).ToString("D");
+			return base.ConvertTo (context, culture, value, destinationType);
 		}
 	}
 }
