@@ -244,11 +244,15 @@ namespace MonoTests.System
 			uri = new Uri (@"\\server\share\filename.ext");			
 			Assertion.Assert ("#6", uri.IsUnc);
 
-			uri = new Uri ("/home/user/dir/filename.ext");
-			Assertion.Assert ("#7", !uri.IsUnc);
-
 			uri = new Uri (@"a:\dir\filename.ext");
 			Assertion.Assert ("#8", !uri.IsUnc);
+		}
+
+		[Test, ExpectedException (typeof (UriFormatException))]
+		public void UncFail ()
+		{
+			Uri uri = new Uri ("/home/user/dir/filename.ext");
+			Assertion.Assert ("#7", !uri.IsUnc);
 		}
 
 		[Test]
