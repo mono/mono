@@ -140,7 +140,7 @@ namespace Npgsql
             state = NpgsqlClosedState.Instance;
             connection_string = ConnectionString;
             connection_string_values = new ListDictionary();
-            connection_encoding = Encoding.Default;
+            connection_encoding = Encoding.UTF8;
             _backendProtocolVersion = ProtocolVersion.Version3;
 
             _mediator = new NpgsqlMediator();
@@ -357,7 +357,7 @@ namespace Npgsql
             if (connection_string_values[MIN_POOL_SIZE] == null)
                 connection_string_values[MIN_POOL_SIZE] = "1";
             if (connection_string_values[MAX_POOL_SIZE] == null)
-                connection_string_values[MAX_POOL_SIZE] = "-1";
+                connection_string_values[MAX_POOL_SIZE] = "20";
                 
             try
             {
@@ -447,6 +447,13 @@ namespace Npgsql
                 
                 ProcessServerVersion();
                 _oidToNameMapping = NpgsqlTypesHelper.LoadTypesMapping(this);
+                
+                /*NpgsqlCommand commandEncoding = new NpgsqlCommand("show client_encoding", this);
+                String serverEncoding = (String)commandEncoding.ExecuteScalar();
+
+                if (serverEncoding.Equals("UNICODE"))
+                  connection_encoding = Encoding.UTF8;*/
+                
 
             }
 
