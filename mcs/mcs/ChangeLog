@@ -35,6 +35,10 @@
 
 	* cs-parser.jay, class.cs (DefineDefaultConstructor): Fixed ModFlags
         setting for default constructors.
+	For default constructors are almost every time set wrong Modifier. The
+	generated IL code has been alright. But inside mcs this values was
+	wrong and this was reason why several of my CLS Compliance tests
+	failed.
 
 2004-01-22  Martin Baulig  <martin@ximian.com>
 
