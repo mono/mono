@@ -1452,6 +1452,9 @@ namespace Mono.MonoBASIC {
 			if ((mt & MemberTypes.Constructor) != 0){
 				if (((bf & BindingFlags.Instance) != 0) && (instance_constructors != null)){
 					foreach (Constructor c in instance_constructors){
+						if ((c.ModFlags & modflags) == 0)
+							continue;
+
 						ConstructorBuilder cb = c.ConstructorBuilder;
 						if (cb != null)
 							if (filter (cb, criteria) == true)
@@ -1459,13 +1462,14 @@ namespace Mono.MonoBASIC {
 					}
 				}
 
-				if (((bf & BindingFlags.Static) != 0) && (default_static_constructor != null)){
+				if (((bf & BindingFlags.Static) != 0) && (default_static_constructor != null) &&
+					((default_static_constructor.ModFlags & modflags) != 0)){
 					ConstructorBuilder cb =
 						default_static_constructor.ConstructorBuilder;
 					
 					if (cb != null)
-					if (filter (cb, criteria) == true)
-						members.Add (cb);
+						if (filter (cb, criteria) == true)
+							members.Add (cb);
 				}
 			}
 
@@ -1473,8 +1477,10 @@ namespace Mono.MonoBASIC {
 			// Lookup members in parent if requested.
 			//
 			if (((bf & BindingFlags.DeclaredOnly) == 0) && (TypeBuilder.BaseType != null)) {
-				MemberList list = FindMembers (TypeBuilder.BaseType, mt, bf, filter, criteria);
-				members.AddRange (list);
+				if ((mt & ~MemberTypes.Constructor) != 0) {
+					MemberList list = FindMembers (TypeBuilder.BaseType, mt & ~MemberTypes.Constructor, bf, filter, criteria);
+					members.AddRange (list);
+				}
 			}
 
 			Timer.StopTimer (TimerType.TcFindMembers);
