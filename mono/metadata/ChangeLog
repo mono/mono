@@ -1,4 +1,11 @@
 
+Sat Jun 1 13:46:54 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* pedump.c, appdomain.c, appdomain.h, assembly.c, domain.c,
+	gc.c, icall.c, image.c, mono-config.c, reflection.c: killed
+	warnings and compilation fixes from Dennis Haney (davh@davh.dk)
+	and myself.
+
 Fri May 31 16:58:36 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* debug-symfile.c, sysmath.c: yet more compilation fixes.
