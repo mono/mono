@@ -1,4 +1,7 @@
 2004-06-03 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: RaiseEvent grammar fixed to get it working
+
+2004-06-03 Anirban Bhattacharjee <banirban@novell.com>
 	* driver.cs: fixed bug - 59540
 
 2004-06-01 Anirban Bhattacharjee <banirban@novell.com>

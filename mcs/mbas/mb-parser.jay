@@ -1245,7 +1245,6 @@ event_declaration
 	  {
 		string delName = (string) $2;
 		delName = delName + "EventHandler";
-		Console.WriteLine(delName);
 	    Mono.MonoBASIC.Delegate del = new Mono.MonoBASIC.Delegate 
 						(current_container, TypeManager.system_void_expr, 
 					     (int) current_modifiers, MakeName(delName), (Parameters) $3, 
@@ -2042,9 +2041,9 @@ statement :
 	   {
 	   	AddHandler ((Expression) $2, (string) $5);
 	   }
-	  | RAISEEVENT identifier OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
+	  | RAISEEVENT identifier opt_raise_event_args  //OPEN_PARENS opt_argument_list CLOSE_PARENS
 	    {
-	    	RaiseEvent ((string) $2, (ArrayList) $4);
+	    	RaiseEvent ((string) $2, (ArrayList) $3);
 	    }
 	  /* | array_handling_statement */
 	  /* | empty_statement */
@@ -2055,6 +2054,14 @@ statement :
 		current_block.AddStatement ((Statement) $1);
 	    }	  
 	  ;	
+	  
+opt_raise_event_args 
+	: /* empty */	{ $$ = null; }
+	| OPEN_PARENS opt_argument_list CLOSE_PARENS
+	  {
+		$$ = $2;
+	  }
+	;
 
 labeled_statement
 	: identifier COLON end_of_stmt 
