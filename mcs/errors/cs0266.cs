@@ -1,3 +1,6 @@
+// cs0266.cs: Cannot implicitly convert type 'Foo.MyEnumType' to 'uint'. An explicit conversion exists (are you missing a cast?)
+// Line: 10
+
 public class Foo {
   enum MyEnumType { MyValue }
 

@@ -1,4 +1,4 @@
-// cs1604.cs: m is a readonly variable
+// cs1656.cs: Cannot assign to 'm' because it is a 'using variable'
 // line: 10
 using System.IO;
 

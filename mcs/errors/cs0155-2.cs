@@ -4,8 +4,7 @@ class X {
 	static void Main ()
 	{
 		try {
-			;
-		} catch (int e) {
+		} catch (object e) {
 			throw;
 		}
 	}

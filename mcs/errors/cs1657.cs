@@ -1,4 +1,4 @@
-// cs1605.cs: Cannot pass 'i' as a ref or out argument because it is read-only
+// cs1657.cs: Cannot pass 'i' as a ref or out argument because it is a 'foreach iteration variable'
 // Line: 9
 
 class E

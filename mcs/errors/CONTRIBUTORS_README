@@ -75,7 +75,9 @@ Mono MCS Errors.
 	Here is a list of errors reported by csc 1.0, 1.1 and not supported by Mono.
         Please add comment for every error.
 
+	CS0134: not supported by csc 2.0
 	CS0576: not supported by csc 2.0
         CS0580: Included in error CS1501 (not supported by csc 2.0)
         CS0581: Included in error CS0117 (not supported by csc 2.0)
 	CS0654: not supported by csc 2.0
+

@@ -1,7 +1,7 @@
 // cs0123.cs: Method 'MainClass.Delegate()' does not match delegate 'void TestDelegate()'
 // Line: 12
 
-delegate void TestDelegate();
+delegate int TestDelegate(bool b);
 
 public class MainClass {
         public static int Delegate() {

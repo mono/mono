@@ -3,7 +3,7 @@
 
 using System;
 
-protected interface IFoo {
+interface IFoo {
 }
 
 public interface IBar : IFoo {

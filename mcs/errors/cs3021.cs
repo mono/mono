@@ -1,5 +1,6 @@
 // cs3021.cs: 'I' does not need a CLSCompliant attribute because the assembly does not have a CLSCompliant attribute
 // Line: 9
+// Compiler options: -warn:2 -warnaserror
 
 using System;
 

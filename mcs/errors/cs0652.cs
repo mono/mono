@@ -1,5 +1,6 @@
 // cs0652.cs: Comparison to integral constant is useless; the constant is outside the range of type 'type'
 // Line: 9
+// Compiler options: -warnaserror -warn:2
 
 class X
 {

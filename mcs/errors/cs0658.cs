@@ -1,5 +1,6 @@
 // cs0658.cs : Invalid attribute location "blah"
 // Line : 8
+// Compiler options: -warnaserror -warn:1
 
 public class MyClass {
 
