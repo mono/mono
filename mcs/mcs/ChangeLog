@@ -1,5 +1,12 @@
 2003-05-11  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs (MethodData.Define): Do not set the `newslot' on
+	interface members, if they are also flagged as "override".
+
+	* expression.cs (UnaryMutator.EmitCode): Simple workaround to emit
+	better code for ++i and i++.  This only works for static fields
+	and local variables.
+
 	* typemanager.cs (LookupDeclSpace): Add new method, sometimes we
 	want to pull the DeclSpace out of the builder_to_declspace instead
 	of the TypeBuilder (like in TypeContainer.FindMembers).

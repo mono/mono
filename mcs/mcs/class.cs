@@ -3083,11 +3083,13 @@ namespace Mono.CSharp {
 			//
 			if (implementing != null){
 				//
-				// When implementing interface methods, set NewSlot.
+				// When implementing interface methods, set NewSlot
+				// unless, we are overwriting a method.
 				//
-				if (implementing.DeclaringType.IsInterface)
-					flags |= MethodAttributes.NewSlot;
-
+				if (implementing.DeclaringType.IsInterface){
+					if ((modifiers & Modifiers.OVERRIDE) == 0)
+						flags |= MethodAttributes.NewSlot;
+				}
 				flags |=
 					MethodAttributes.Virtual |
 					MethodAttributes.HideBySig;

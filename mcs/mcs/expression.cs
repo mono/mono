@@ -914,6 +914,8 @@ namespace Mono.CSharp {
 			
 		}
 
+		static EmptyExpression empty_expr;
+		
 		void EmitCode (EmitContext ec, bool is_expr)
 		{
 			ILGenerator ig = ec.ig;
@@ -922,8 +924,45 @@ namespace Mono.CSharp {
 
 			ia.CacheTemporaries (ec);
 
-			if (temp_storage == null)
+			if (temp_storage == null){
+				//
+				// Temporary improvement: if we are dealing with something that does
+				// not require complicated instance setup, avoid using a temporary
+				//
+				// For now: only localvariables when not remapped
+				//
+
+				if (method == null && 
+				    (expr is LocalVariableReference && ec.RemapToProxy == false) ||
+				    (expr is FieldExpr && ((FieldExpr) expr).FieldInfo.IsStatic)){
+					if (empty_expr == null)
+						empty_expr = new EmptyExpression ();
+					
+					switch (mode){
+					case Mode.PreIncrement:
+					case Mode.PreDecrement:
+						expr.Emit (ec);
+					
+						LoadOneAndEmitOp (ec, expr_type);
+						if (is_expr)
+							ig.Emit (OpCodes.Dup);
+						ia.EmitAssign (ec, empty_expr);
+						break;
+						
+					case Mode.PostIncrement:
+					case Mode.PostDecrement:
+						expr.Emit (ec);
+						if (is_expr)
+							ig.Emit (OpCodes.Dup);
+						
+						LoadOneAndEmitOp (ec, expr_type);
+						ia.EmitAssign (ec, empty_expr);
+						break;
+					}
+					return;
+				}
 				temp_storage = new LocalTemporary (ec, expr_type);
+			}
 			
 			switch (mode){
 			case Mode.PreIncrement:
