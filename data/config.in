@@ -1,21 +1,20 @@
 <configuration>
 	<dllmap dll="cygwin1.dll" target="@LIBC@" />
 	<dllmap dll="libc" target="@LIBC@" />
-	<dllmap dll="libxslt.dll" target="libxslt.so" />
-	<dllmap dll="libmySQL.dll" target="libmysqlclient.so" />
-	<dllmap dll="odbc32.dll" target="libodbc.so" />
-	<dllmap dll="libglib-2.0-0.dll" target="libglib-2.0.so" />
-	<dllmap dll="libgobject-2.0-0.dll" target="libgobject-2.0.so" />
-	<dllmap dll="libgthread-2.0-0.dll" target="libgthread-2.0.so" />
-	<dllmap dll="libpango-1.0-0.dll" target="libpango-1.0.so" />
-	<dllmap dll="libatk-1.0-0.dll" target="libatk-1.0.so" />
-	<dllmap dll="libgdk-win32-2.0-0.dll" target="libgdk-x11-2.0.so" />
-	<dllmap dll="libgdk_pixbuf-2.0-0.dll" target="libgdk_pixbuf-2.0.so" />
-	<dllmap dll="libgtk-win32-2.0-0.dll" target="libgtk-x11-2.0.so" />
-	<dllmap dll="libgtk-win32-2.0-0.dll" target="libgtk-x11-2.0.so" />
-	<dllmap dll="libglade-2.0-0.dll" target="libglade-2.0.so" />
+	<dllmap dll="libxslt.dll" target="libxslt@libsuffix@" />
+	<dllmap dll="libmySQL.dll" target="libmysqlclient@libsuffix@" />
+	<dllmap dll="odbc32.dll" target="libodbc@libsuffix@" />
+	<dllmap dll="libglib-2.0-0.dll" target="libglib-2.0@libsuffix@" />
+	<dllmap dll="libgobject-2.0-0.dll" target="libgobject-2.0@libsuffix@" />
+	<dllmap dll="libgthread-2.0-0.dll" target="libgthread-2.0@libsuffix@" />
+	<dllmap dll="libpango-1.0-0.dll" target="libpango-1.0@libsuffix@" />
+	<dllmap dll="libatk-1.0-0.dll" target="libatk-1.0@libsuffix@" />
+	<dllmap dll="libgdk-win32-2.0-0.dll" target="libgdk-x11-2.0@libsuffix@" />
+	<dllmap dll="libgdk_pixbuf-2.0-0.dll" target="libgdk_pixbuf-2.0@libsuffix@" />
+	<dllmap dll="libgtk-win32-2.0-0.dll" target="libgtk-x11-2.0@libsuffix@" />
+	<dllmap dll="libglade-2.0-0.dll" target="libglade-2.0@libsuffix@" />
 	<dllmap dll="oci" target="clntsh" />
-	<dllmap dll="gtkhtml-3.0" target="libgtkhtml-3.0.so" />
-	<dllmap dll="db2cli" target="libdb2_36.so"/>
-	<dllmap dll="gstreamer" target="libgstreamer-0.6.so" />
+	<dllmap dll="gtkhtml-3.0" target="libgtkhtml-3.0@libsuffix@" />
+	<dllmap dll="db2cli" target="libdb2_36@libsuffix@"/>
+	<dllmap dll="gstreamer" target="libgstreamer-0.6@libsuffix@" />
 </configuration>
