@@ -863,6 +863,8 @@ namespace System.Xml.XPath
 		{
 			_iterLeft = iter;
 			_expr = expr;
+			if (_iterLeft.RequireSorting || _expr.RequireSorting)
+				CollectResults ();
 		}
 
 		private SlashIterator (SlashIterator other) : base (other)
@@ -885,14 +887,8 @@ namespace System.Xml.XPath
 		{
 			if (_finished)
 				return false;
-			if (RequireSorting) {
-				if (_navStore == null) {
-					CollectResults ();
-					if (_navStore.Count == 0) {
-						_finished = true;
-						return false;
-					}
-				}
+			if (_navStore != null) {
+				// Which requires sorting::
 				if (_navStore.Count < CurrentPosition + 1) {
 					_finished = true;
 					return false;
@@ -906,91 +902,91 @@ namespace System.Xml.XPath
 				}
 
 				return true;
-			} else {
-				if (_iterRight == null) { // First time
-					if (!_iterLeft.MoveNext ())
-						return false;
-					_iterRight = _expr.EvaluateNodeSet (_iterLeft);
-					_iterList = new SortedList (XPathIteratorComparer.Instance);
-				}
+			}
+			// Which does not require sorting::
+			
+			if (_iterRight == null) { // First time
+				if (!_iterLeft.MoveNext ())
+					return false;
+				_iterRight = _expr.EvaluateNodeSet (_iterLeft);
+				_iterList = new SortedList (XPathIteratorComparer.Instance);
+			}
 
-				while (true) {
-					while (!_iterRight.MoveNext ()) {
-						if (_iterList.Count > 0) {
-							int last = _iterList.Count - 1;
-							BaseIterator tmpIter = (BaseIterator) _iterList.GetByIndex (last);
-							_iterList.RemoveAt (last);
-							switch (tmpIter.Current.ComparePosition (_iterRight.Current)) {
-							case XmlNodeOrder.Same:
-							case XmlNodeOrder.Before:
-								_iterRight = tmpIter;
-								continue;
-							default:
-								_iterRight = tmpIter;
+			while (true) {
+				while (!_iterRight.MoveNext ()) {
+					if (_iterList.Count > 0) {
+						int last = _iterList.Count - 1;
+						BaseIterator tmpIter = (BaseIterator) _iterList.GetByIndex (last);
+						_iterList.RemoveAt (last);
+						switch (tmpIter.Current.ComparePosition (_iterRight.Current)) {
+						case XmlNodeOrder.Same:
+						case XmlNodeOrder.Before:
+							_iterRight = tmpIter;
+							continue;
+						default:
+							_iterRight = tmpIter;
+							break;
+						}
+						break;
+					} else if (_nextIterRight != null) {
+						_iterRight = _nextIterRight;
+						_nextIterRight = null;
+						break;
+					} else if (!_iterLeft.MoveNext ()) {
+						_finished = true;
+						return false;
+					}
+					else
+						_iterRight = _expr.EvaluateNodeSet (_iterLeft);
+				}
+				bool loop = true;
+				while (loop) {
+					loop = false;
+					if (_nextIterRight == null) {
+						bool noMoreNext = false;
+						while (_nextIterRight == null || !_nextIterRight.MoveNext ()) {
+							if(_iterLeft.MoveNext ())
+								_nextIterRight = _expr.EvaluateNodeSet (_iterLeft);
+							else {
+								noMoreNext = true;
 								break;
 							}
-							break;
-						} else if (_nextIterRight != null) {
+						}
+						if (noMoreNext)
+							_nextIterRight = null; // FIXME: More efficient code. Maybe making noMoreNext class scope would be better.
+					}
+					if (_nextIterRight != null) {
+						switch (_iterRight.Current.ComparePosition (_nextIterRight.Current)) {
+						case XmlNodeOrder.After:
+							_iterList.Add (_iterList.Count, _iterRight);
 							_iterRight = _nextIterRight;
 							_nextIterRight = null;
+							loop = true;
 							break;
-						} else if (!_iterLeft.MoveNext ()) {
-							_finished = true;
-							return false;
-						}
-						else
-							_iterRight = _expr.EvaluateNodeSet (_iterLeft);
-					}
-					bool loop = true;
-					while (loop) {
-						loop = false;
-						if (_nextIterRight == null) {
-							bool noMoreNext = false;
-							while (_nextIterRight == null || !_nextIterRight.MoveNext ()) {
-								if(_iterLeft.MoveNext ())
-									_nextIterRight = _expr.EvaluateNodeSet (_iterLeft);
-								else {
-									noMoreNext = true;
-									break;
-								}
-							}
-							if (noMoreNext)
-								_nextIterRight = null; // FIXME: More efficient code. Maybe making noMoreNext class scope would be better.
-						}
-						if (_nextIterRight != null) {
-							switch (_iterRight.Current.ComparePosition (_nextIterRight.Current)) {
-							case XmlNodeOrder.After:
-								_iterList.Add (_iterList.Count, _iterRight);
-								_iterRight = _nextIterRight;
+						case XmlNodeOrder.Same:
+							if (!_nextIterRight.MoveNext ())
 								_nextIterRight = null;
-								loop = true;
-								break;
-							case XmlNodeOrder.Same:
-								if (!_nextIterRight.MoveNext ())
-									_nextIterRight = null;
 
-								else {
-									int last = _iterList.Count;
-									if (last > 0) {
-										_iterList.Add (last, _nextIterRight);
-										_nextIterRight = (BaseIterator) _iterList.GetByIndex (last);
-										_iterList.RemoveAt (last);
-									}
+							else {
+								int last = _iterList.Count;
+								if (last > 0) {
+									_iterList.Add (last, _nextIterRight);
+									_nextIterRight = (BaseIterator) _iterList.GetByIndex (last);
+									_iterList.RemoveAt (last);
 								}
-
-								loop = true;
-								break;
 							}
+
+							loop = true;
+							break;
 						}
 					}
-					return true;
 				}
+				return true;
 			}
 		}
+
 		private void CollectResults ()
 		{
-			if (_navStore != null)
-				return;
 			_navStore = new ArrayList ();
 			while (true) {
 				while (_iterRight == null || !_iterRight.MoveNext ()) {
@@ -1008,7 +1004,7 @@ namespace System.Xml.XPath
 		public override XPathNavigator Current { 
 			get {
 				if (CurrentPosition <= 0) return null;
-				if (RequireSorting) {
+				if (_navStore != null) {
 					return (XPathNavigator) _navStore [CurrentPosition - 1];
 				} else {
 					return _iterRight.Current;
@@ -1017,9 +1013,8 @@ namespace System.Xml.XPath
 		}
 
 		public override bool RequireSorting {
-			get {
-				return _iterLeft.RequireSorting || _expr.RequireSorting;
-			}
+			// It always does not need to be sorted.
+			get { return false; }
 		}
 
 		public override int Count { get { return _navStore == null ? base.Count : _navStore.Count; } }
@@ -1081,7 +1076,7 @@ namespace System.Xml.XPath
 			get { return _iter.ReverseAxis; }
 		}
 
-		public override bool RequireSorting { get { return true; } }
+		public override bool RequireSorting { get { return _iter.RequireSorting || _pred.RequireSorting; } }
 	}
 
 	internal class ListIterator : BaseIterator

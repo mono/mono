@@ -1,5 +1,13 @@
 2004-11-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Iterator.cs : SlashIterator.RequireSorting is always false. Whether
+	  it has to collect nodes in prior or not and whether it might return
+	  nodes in inconsistent order is different matter.
+	  (It still needs to store nodes when either of branches requires
+	  sorting, because they might return the same node later.)
+
+2004-11-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Iterator.cs : reduced some extraneous ComparePosition() that could
 	  be written as IsSamePosition(). ParentIterator doesn't have to be
 	  RequireSorting.
