@@ -143,7 +143,7 @@ namespace System.Windows.Forms {
 
 			/* Clear the button background */
 			Brush br = new SolidBrush(controlColor);
-			pevent.Graphics.FillRectangle(br, pevent.ClipRectangle);
+			paintOn.FillRectangle(br, pevent.ClipRectangle);
 			br.Dispose();
 
 			if( FlatStyle == FlatStyle.Flat) {
