@@ -1,3 +1,11 @@
+2002-04-27  Martin Baulig  <martin@gnome.org>
+
+	* jit.h (MonoFlowGrap): Renamed `epilogue_begin' to `epilogue_end',
+	there's already `epilog' so we don't need `epilogue_begin'.
+
+	* debug.c (mono_debug_add_method): Use `cfg->epilogue_end' to get the
+	size of the method's code.
+
 2002-04-25  Martin Baulig  <martin@gnome.org>
 
 	* debug-dwarf2.c (dwarf2_write_string_type): Reflect latest MonoString
