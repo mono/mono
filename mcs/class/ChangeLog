@@ -1,3 +1,11 @@
+2002-11-26  Daniel morgan <danmorg@sc.rr.com>
+
+	* makefile.gnu: add Mono.Data.PostgreSqlClient 
+	to Linux build
+	
+	* library.build: add Mono.Data.PostgreSqlClient
+	to Windows build
+
 2002-11-20  Nick Drochak <ndrochak@gol.com>
 
 	* library.make: for .response allow white space at the end of
