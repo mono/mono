@@ -1,3 +1,9 @@
+2003-05-16  Martin Baulig  <martin@ximian.com>
+
+	* debug-mini.c (mono_init_debugger): New function to initialize
+	the debugger.  This is not in the debugger since it needs to
+	access some of mini's internals.
+
 2003-05-16  Dietmar Maurer  <dietmar@ximian.com>
 
 	* mini.c (mono_method_to_ir): inlining fixes/cleanups
