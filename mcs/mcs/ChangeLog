@@ -1,3 +1,8 @@
+2002-04-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs: Fix the case where the argument to params if the
+	type of the params.  I omitted handling this before.   Fixed
+
 2002-04-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs: Call BootCorlib_PopulateCoreType

@@ -3611,7 +3611,7 @@ namespace Mono.CSharp {
 			Type t = a.expr.Type;
 			string array_type = t.FullName + "[]";
 			LocalBuilder array;
-			
+
 			array = ig.DeclareLocal (Type.GetType (array_type));
 			IntConstant.EmitInt (ig, count);
 			ig.Emit (OpCodes.Newarr, t);
@@ -3669,7 +3669,14 @@ namespace Mono.CSharp {
 
 				if (pd != null){
 					if (pd.ParameterModifier (i) == Parameter.Modifier.PARAMS){
-						EmitParams (ec, i, arguments);
+						//
+						// Special case if we are passing the same data as the
+						// params argument, do not put it in an array.
+						//
+						if (pd.ParameterType (i) == a.Type)
+							a.Emit (ec);
+						else
+							EmitParams (ec, i, arguments);
 						return;
 					}
 				}
