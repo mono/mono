@@ -73,11 +73,11 @@ namespace Microsoft.Web.Services.Routing {
 			set { ; }
 		}
 
-		[MonoTODO]
+/*		[MonoTODO]
 		public RoutingFault Fault {
 			get { return null; }
 			set { ; }
-		}
+		}*/
 
 #if !WSE1	
 		[Obsolete]

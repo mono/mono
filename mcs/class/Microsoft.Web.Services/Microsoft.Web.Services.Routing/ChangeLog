@@ -1,3 +1,14 @@
+2003-09-07  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* Path.cs: Constructors are internal and Clone is non virtual in WSE1
+	(corcompare). Added missing properties (many are obsolete in WSE2).
+	* RoutingInputFilter.cs: Added missing TODO.
+	* RoutingOutputFilter.cs: Added missing TODO.
+	* Via.cs: Removed virtual from Clone for WSE1 (corcompare).
+	* ViaCollection.cs: Removed virtual from Clone/GetEnumerator/CopyTo/
+	SyncRoot for WSE1 (corcompare).
+	* WSRouting.cs: New. Routing constant strings.
+
 2003-09-06  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* RoutingInputFilter.cs: Stubbed for compilation (configuration).
