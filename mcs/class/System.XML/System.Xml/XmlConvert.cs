@@ -60,25 +60,25 @@ namespace System.Xml {
 
 		public static char ToChar(string s)
 		{
-			return char.Parse(s);
+			return Char.Parse(s);
 		}
 
-		[MonoTODO]
 		public static DateTime ToDateTime(string s)
 		{
-			throw new NotImplementedException();
+			return DateTime.Parse(s);
 		}
 
-		[MonoTODO]
 		public static DateTime ToDateTime(string s, string format)
 		{
-			throw new NotImplementedException();
+			DateTimeFormatInfo d = new DateTimeFormatInfo();
+			d.FullDateTimePattern = format;
+			return DateTime.Parse(s, d);
 		}
-		
+
 		[MonoTODO]
 		public static DateTime ToDateTime(string s, string[] formats)
 		{
-			throw new NotImplementedException();
+			return DateTime.Parse(s);
 		}
 		
 		public static Decimal ToDecimal(string s)

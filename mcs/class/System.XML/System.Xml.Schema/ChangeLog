@@ -1,3 +1,8 @@
+2002-07-23  Duncan Mak  <duncan@ximian.com>
+
+	* XmlSchemaException.cs: Partiall implement the ISerializable
+	methods. It's not clear now SourceSchemaObject should be deserialized.
+
 2002-07-22  Tim Coleman  <tim@timcoleman.com>
 	* XmlSchema.cs: Removed isCompiled which is defined as internal
 		in XmlSchemaObject.

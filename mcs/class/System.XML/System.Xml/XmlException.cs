@@ -32,6 +32,7 @@ namespace System.Xml
 		}
 
 		protected XmlException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
 		{
 			this.lineNumber = info.GetInt32 ("lineNumber");
 			this.linePosition = info.GetInt32 ("linePosition");

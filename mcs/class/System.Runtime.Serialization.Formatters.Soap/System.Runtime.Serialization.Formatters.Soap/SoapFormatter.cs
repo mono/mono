@@ -8,11 +8,14 @@ using System;
 using System.Reflection;
 using System.Xml;
 using System.IO;
+using System.Runtime.Remoting.Messaging;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters;
+
 
 namespace System.Runtime.Serialization.Formatters.soap
 {
-	public class SoapFormatter
+	public class SoapFormatter : IFormatter, IRemoteFormatter
 	{
 		private ObjectSerializer   ObjSerializer;	
 		private ObjectDeserializer ObjDeserializer;

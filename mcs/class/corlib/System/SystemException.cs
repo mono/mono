@@ -27,7 +27,8 @@ namespace System {
 		}
 
 		protected SystemException(SerializationInfo info, StreamingContext context)
-			: base (info, context) {
+			: base (info, context)
+		{
 		}
 		
 		public SystemException (string message, Exception inner)

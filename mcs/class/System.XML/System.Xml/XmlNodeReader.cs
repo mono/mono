@@ -19,6 +19,7 @@ namespace System.Xml
 
 		XmlNode current;
 		ReadState state = ReadState.Initial;
+		int depth;
 
 		public XmlNodeReader (XmlNode node)
 		{
@@ -43,9 +44,8 @@ namespace System.Xml
 			get { return false; }
 		}
 
-		[MonoTODO]
 		public override int Depth {
-			get { return 0; }
+			get { return depth; }
 		}
 
 		[MonoTODO]
@@ -88,6 +88,7 @@ namespace System.Xml
 			}
 		}
 
+		[MonoTODO]
 		public override bool IsEmptyElement {
 			get {
 				if (current.NodeType == XmlNodeType.Entity &&

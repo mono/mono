@@ -1,0 +1,3 @@
+2002-07-23  Duncan Mak  <duncan@ximian.com>
+
+	* SoapFormatter.cs: This implements IFormatter and IRemoteFormatter.

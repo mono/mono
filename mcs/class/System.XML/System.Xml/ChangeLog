@@ -1,3 +1,13 @@
+2002-07-23  Duncan Mak  <duncan@ximian.com>
+
+	* XmlConvert.cs: Implement the ToDateTime method. ToDateTime
+	(string, string []) is particularly strange.
+
+	* XmlException.cs: Remember to call the base serialization
+	constructor.
+
+	* XmlNodeReader.cs: Keep a new variable to store the Depth. 
+
 2002-07-14  Jason Diamond  <jason@injektilo.org>
 
 	* XmlAttribute.cs: Removed ownerElement field since we can reuse 
