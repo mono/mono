@@ -1,3 +1,8 @@
+2004-09-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (mono_reflection_create_runtime_class): Initialize
+	klass->nested_classes. Fixes #61224.
+
 2004-09-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (mono_param_get_objects): Initialize the default value
