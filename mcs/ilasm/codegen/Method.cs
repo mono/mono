@@ -185,20 +185,12 @@ namespace Mono.ILASM {
 			instructions.Add (instr);
 		}
 
-		public void AddLocal (string type)
+		public void AddLocal (DictionaryEntry local)
 		{
-			Types types = new Types ();
-			Type local_type = types.Lookup (type);
-
-			if (local_type == null) {
-				Console.WriteLine ("Type not found: {0}", type);
-				return;
-			}
-
 			if (local_list == null)
 				local_list = new ArrayList ();
 
-			local_list.Add (local_type);
+			local_list.Add (local);
 	
 		}
 
@@ -241,13 +233,19 @@ namespace Mono.ILASM {
 				ILGenerator ilgen = method_builder.GetILGenerator ();
 
 				if (local_list != null) {
-					foreach (Type local in local_list)
-						ilgen.DeclareLocal (local);
+					foreach (DictionaryEntry local in local_list) {
+						Type local_type = host.CodeGen.TypeManager[(string)local.Key];
+						if (local_type == null) {
+							Console.WriteLine ("Could not find type: {0}", local);
+							return;
+						}
+						ilgen.DeclareLocal (local_type);
+					}
 				}
 
 				if (instructions != null) {
 					foreach (InstrBase instr in instructions)
-						instr.Emit (ilgen);
+						instr.Emit (ilgen, host.CodeGen);
 				}
 			}
 		}

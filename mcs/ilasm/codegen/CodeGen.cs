@@ -14,6 +14,7 @@ namespace Mono.ILASM {
 		private string output_file;
 		private AssemblyBuilder asmbld;
 		private ModuleBuilder modbld;
+		private TypeManager type_manager;
 		
 		private Types refTypes = new Types (); // FIXME: postpone init
 
@@ -26,6 +27,7 @@ namespace Mono.ILASM {
 		public CodeGen (string output_file)
 		{
 			this.output_file = output_file;
+			this.type_manager = new TypeManager ();
 		}
 
 
@@ -77,6 +79,11 @@ namespace Mono.ILASM {
 			}
 		}
 
+		public TypeManager TypeManager {
+			get {
+				return type_manager;
+			}
+		}
 
 		/// <summary>
 		/// </summary>

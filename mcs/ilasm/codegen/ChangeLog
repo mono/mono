@@ -1,5 +1,14 @@
 2003-02-08 Jackson Harper <jackson@latitudegeo.com>
 
+	* TypeManager.cs: Add file
+	* CodeGen.cs: Add TypeManager attribute
+	* InstrBase.cs: Take a CodeGen in Emit method
+	* Instructions.cs: Take a CodeGen in Emit method, handle arg lists better
+	* Method.cs: Handle local variables better
+	
+
+2003-02-08 Jackson Harper <jackson@latitudegeo.com>
+
 	* Method.cs: Add functionality to define local variables
 	* Instructions.cs: Add newobj instruction, cleanup call instruction
 

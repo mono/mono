@@ -46,6 +46,6 @@ namespace Mono.ILASM {
 		/// <summary>
 		/// </summary>
 		/// <param name="gen"></param>
-		public abstract void Emit (ILGenerator ilgen);
+		public abstract void Emit (ILGenerator ilgen, CodeGen code_gen);
 	}
 }
