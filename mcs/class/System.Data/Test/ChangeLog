@@ -1,3 +1,10 @@
+2002-05-11  Daniel Morgan <danmorg@sc.rr.com>
+
+	* AllTests.cs: needed a using for System.Data and System.Data.SqlClient,
+	changed SqlTypes.AllTests.Suite to System.Data.SqlTypes.AllTests.Suite
+	
+	* System.Data/DataColumnTest.cs: changed typeof to DataColumnTest 
+
 2002-05-10  Rodrigo Moya <rodrigo@ximian.com>
 
         * TestDataColumn.cs: removed.

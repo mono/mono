@@ -23,7 +23,7 @@ namespace MonoTests.System.Data
 
 		public static ITest Suite {
 			get { 
-				return new TestSuite (typeof (DataColumn)); 
+				return new TestSuite (typeof (DataColumnTest)); 
 			}
 		}
 	}
