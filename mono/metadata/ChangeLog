@@ -1,3 +1,7 @@
+2003-08-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: added a couple of icalls for System.Web.
+
 2003-08-28  Martin Baulig  <martin@ximian.com>
 
 	* icall.c (ves_icall_Type_BindGenericParameters): Use
