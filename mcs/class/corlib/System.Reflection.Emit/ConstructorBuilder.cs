@@ -65,7 +65,8 @@ namespace System.Reflection.Emit {
 		public string Signature {
 			get {return "constructor signature";}
 		}
-		
+
+		[MonoTODO]
 		public bool InitLocals { /* FIXME */
 			get {return false;} 
 			set {return;}
@@ -74,7 +75,9 @@ namespace System.Reflection.Emit {
 		public void AddDeclarativeSecurity( SecurityAction action, PermissionSet pset) {
 		}
 
-		public ParameterBuilder DefineParameter(int iSequence, ParameterAttributes attributes, string strParamName) {
+		[MonoTODO]
+		public ParameterBuilder DefineParameter(int iSequence, ParameterAttributes attributes, string strParamName)
+		{
 			ParameterBuilder pb = new ParameterBuilder (this, iSequence, attributes, strParamName);
 			/* FIXME: add it to pinfo */
 			return pb;

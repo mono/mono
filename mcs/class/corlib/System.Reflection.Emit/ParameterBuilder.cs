@@ -54,9 +54,11 @@ namespace System.Reflection.Emit {
 			return new ParameterToken (0x08 | table_idx);
 		}
 
+		[MonoTODO]
 		public virtual void SetConstant( object defaultValue) {
 			/* FIXME */
 		}
+		
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
 		}
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {

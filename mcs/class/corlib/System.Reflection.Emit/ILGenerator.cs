@@ -248,6 +248,8 @@ namespace System.Reflection.Emit {
 			ll_emit (opcode);
 			code [code_len++] = (byte)val;
 		}
+
+		[MonoTODO]
 		public virtual void Emit (OpCode opcode, SignatureHelper shelper) {
 			int token = 0; // FIXME: request a token from the modulebuilder
 			make_room (6);

@@ -93,7 +93,8 @@ namespace System.Reflection.Emit {
 		public override object[] GetCustomAttributes(Type attributeType, bool inherit) {
 			return null;
 		}
-		
+
+		[MonoTODO]
 		public TypeBuilder DefineNestedType (string name) {
 			// FIXME: LAMESPEC: what other attributes should we use here as default?
 			return DefineNestedType (name, TypeAttributes.Public, typeof(object), null);

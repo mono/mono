@@ -14,6 +14,8 @@ namespace System.Reflection.Emit {
 		internal Label (int val) {
 			label = val;
 		}
+
+		[MonoTODO]
 		public override bool Equals (object obj) {
 			/* FIXME */
 			return false;
