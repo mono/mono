@@ -12,7 +12,12 @@ using System.Security.Cryptography;
 
 namespace Mono.Security.Cryptography {
 
-	public class CryptoConvert {
+#if INSIDE_CORLIB
+	internal
+#else
+	public
+#endif
+	class CryptoConvert {
 
 		static private byte[] Trim (byte[] array) 
 		{
@@ -190,8 +195,8 @@ namespace Mono.Security.Cryptography {
 				return null;
 			// ALGID (CALG_RSA_SIGN, CALG_RSA_KEYX, ...)
 			int algId = BitConverter.ToInt32 (blob, 4);
-			// DWORD magic = RSA2
-			if (BitConverter.ToUInt32 (blob, 8) != 0x32415352)
+			// DWORD magic = RSA1
+			if (BitConverter.ToUInt32 (blob, 8) != 0x31415352)
 				return null;
 			// DWORD bitlen
 			int bitLen = BitConverter.ToInt32 (blob, 12);
@@ -230,10 +235,10 @@ namespace Mono.Security.Cryptography {
 			blob [1] = 0x02;	// Version - Always CUR_BLOB_VERSION (0x02)
 			// [2], [3]		// RESERVED - Always 0
 			blob [5] = 0x24;	// ALGID - Always 00 24 00 00 (for CALG_RSA_SIGN)
-			blob [8] = 0x52;	// Magic - RSA2 (ASCII in hex)
+			blob [8] = 0x51;	// Magic - RSA1 (ASCII in hex)
 			blob [9] = 0x53;
 			blob [10] = 0x41;
-			blob [11] = 0x32;
+			blob [11] = 0x31;
 
 			byte[] bitlen = BitConverter.GetBytes (keyLength << 3);
 			blob [12] = bitlen [0];	// bitlen
@@ -242,12 +247,12 @@ namespace Mono.Security.Cryptography {
 			blob [15] = bitlen [3];
 
 			// public exponent (DWORD)
-			blob [16] = p.Exponent [2];
-			blob [17] = p.Exponent [1];
-			blob [18] = p.Exponent [0];
-			blob [19] = 0x00;
+			int pos = 16;
+			int n = p.Exponent.Length;
+			while (n > 0)
+				blob [pos++] = p.Exponent [--n];
 			// modulus
-			int pos = 20;
+			pos = 20;
 			byte[] part = p.Modulus;
 			int len = part.Length;
 			Array.Reverse (part, 0, len);

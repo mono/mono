@@ -1,3 +1,8 @@
+2003-10-30  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CryptoConvert.cs: Fixed strongname generation for small exponents 
+	(like 17). Part of the fixed for bug #50341.
+
 2003-06-19  Nick Drochak <ndrochak@gol.com>
 
 	* CryptoConvert.cs: Work around for mcs? bug 45127.
