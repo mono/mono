@@ -7,12 +7,12 @@
 // (C) 2001 Ximian, Inc.
 //
 
+using System.CodeDom;
+using System.Reflection;
+using System.IO;
+	
 namespace System.CodeDom.Compiler {
 
-	using System.CodeDom;
-	using System.Reflection;
-	using System.IO;
-	
 	public abstract class CodeGenerator : ICodeGenerator {
 		protected TextWriter output;
 		
