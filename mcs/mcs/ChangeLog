@@ -1,3 +1,26 @@
+2002-06-08  Martin Baulig  <martin@gnome.org>
+
+	* enum.cs (Enum.ChangeEnumType): This is a custom version of
+	Convert.ChangeType() which works with TypeBuilder created types.
+	(Enum.LookupEnumValue, Enum.Define): Use it here.
+
+	* class.cs (TypeContainer.RegisterRequiredImplementations): Added
+	`TypeBuilder.BaseType != null' check.
+	(TypeContainer.FindMembers): Only lookup parent members if we
+	actually have a parent.
+	(Method.EmitDestructor): Added `ec.ContainerType.BaseType != null' check.
+	(ConstructorInitializer.Resolve): Likewise.
+
+	* interface.cs (Interface.FindMembers): Added
+	`TypeBuilder.BaseType != null' check.
+
+	* rootcontext.cs (RootContext.ResolveCore): Added
+	"System.Runtime.CompilerServices.IndexerNameAttribute" to
+	classes_second_stage.
+
+	* typemanager.cs (TypeManager.InitCoreTypes): Don't initialize
+	debug_type and trace_type when compiling with --nostdlib.	
+
 2002-06-07  Martin Baulig  <martin@gnome.org>
 
 	* class.cs (TypeContainer): Added `have_nonstatic_fields' field.
