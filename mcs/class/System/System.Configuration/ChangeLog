@@ -1,5 +1,13 @@
+2001-08-28  Christopher Podurgiel <cpodurgiel@msn.com>
+	* IConfigurationSectionHandler.cs: Added reference to System.Xml.
+	
+	* SingleTagSectionHandler.cs: Added Implementation of Create() method.
+	
+	* NameValueSectionHandler.cs: Added Implementation of Create() method.
+	
+	* ConfigurationException.cs: Now returns proper message rather than "System Exception".
+
 2001-08-26  Christopher Podurgiel <cpodurgiel@msn.com>
 
-	* ConfigurationSettings.cs: No longer references the NameValueSectionHandler directly.  Instead
-	  it uses System.Reflection to call the Create() method for the appropriate SectionHandler as defined in the .config file.
+	* ConfigurationSettings.cs: No longer references the NameValueSectionHandler 	  directly.  Instead it uses System.Reflection to call the Create() method 		  for the appropriate SectionHandler as defined in the .config file.
 
