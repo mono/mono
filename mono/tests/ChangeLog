@@ -1,5 +1,8 @@
 2004-12-02  Zoltan Varga  <vargaz@freemail.hu>
 
+	* appdomain-unload.cs: Add tests for unloading an appdomain from inside
+	the appdomain.
+	
 	* appdomain-unload.cs: Stop the foreground thread created by one of the
 	tests.
 
