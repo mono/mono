@@ -619,15 +619,6 @@ namespace Mono.CSharp
 				Environment.Exit (1);
 			}
 			RootContext.WarningLevel = level;
-			TestWarningConflict ();
-		}
-
-		static void TestWarningConflict ()
-		{
-			if (RootContext.WarningLevel == 0 && Report.WarningsAreErrors) {
-				Report.Error (1901, "Conflicting options specified: Warning level 0; Treat warnings as errors");
-				Environment.Exit (1);
-			}
 		}
 
 		static void SetupV2 ()
@@ -812,7 +803,6 @@ namespace Mono.CSharp
 				
 			case "--werror":
 				Report.WarningsAreErrors = true;
-				TestWarningConflict();
 				return true;
 				
 			case "--nowarn":
@@ -1164,7 +1154,6 @@ namespace Mono.CSharp
 			case "/warnaserror":
 			case "/warnaserror+":
 				Report.WarningsAreErrors = true;
-				TestWarningConflict();
 				return true;
 
 			case "/warnaserror-":

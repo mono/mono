@@ -364,12 +364,6 @@ namespace_declaration
 
 		MemberName name = (MemberName) $3;
 
-		if ((current_namespace.Parent != null) && (name.Left != null)) {
-			Report.Error (134, lexer.Location,
-				      "Cannot use qualified namespace names in nested " +
-				      "namespace declarations");
-		}
-
 		current_namespace = new NamespaceEntry (
 			current_namespace, file, name.GetName (), lexer.Location);
 	  } 
