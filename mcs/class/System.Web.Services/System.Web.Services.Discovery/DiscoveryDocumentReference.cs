@@ -106,10 +106,17 @@ namespace System.Web.Services.Discovery {
 			DiscoveryDocument doc = document;
 			foreach (DiscoveryReference re in doc.References)
 			{
-				if (re is DiscoveryDocumentReference)
-					((DiscoveryDocumentReference)re).ResolveAll ();
-				else
-					re.Resolve ();
+				try
+				{
+					if (re is DiscoveryDocumentReference)
+						((DiscoveryDocumentReference)re).ResolveAll ();
+					else
+						re.Resolve ();
+				}
+				catch (Exception ex)
+				{
+					ReportError (re.Url, ex);
+				}
 			}
 		}
 		

@@ -154,8 +154,10 @@ namespace System.Web.Services.Discovery {
 				references.Add (re.Url, re);
 			}
 			
-			foreach (object info in doc.AdditionalInfo)
-				additionalInformation.Add (info);
+			if (doc.AdditionalInfo != null) {
+				foreach (object info in doc.AdditionalInfo)
+					additionalInformation.Add (info);
+			}
 		}
 		
 		public Stream Download (ref string url)
@@ -211,10 +213,21 @@ namespace System.Web.Services.Discovery {
 			ArrayList list = new ArrayList (References.Values);
 			foreach (DiscoveryReference re in list)
 			{
-				if (re is DiscoveryDocumentReference)
-					((DiscoveryDocumentReference)re).ResolveAll ();
-				else
-					re.Resolve ();
+				try
+				{
+					if (re is DiscoveryDocumentReference)
+						((DiscoveryDocumentReference)re).ResolveAll ();
+					else
+						re.Resolve ();
+				}
+				catch (DiscoveryException ex)
+				{
+					Errors [ex.Url] = ex.Exception;	
+				}
+				catch (Exception ex)
+				{
+					Errors [re.Url] = ex;	
+				}
 			}
 		}
 		
@@ -301,6 +314,19 @@ namespace System.Web.Services.Discovery {
 			
 			#endregion // Properties
 		}
+		
 		#endregion // Classes
+	}
+		
+	internal class DiscoveryException : Exception
+	{
+		public string Url;
+		public Exception Exception;
+		
+		public DiscoveryException (string url, Exception origin)
+		{
+			Url = url;
+			Exception = origin;
+		}
 	}
 }

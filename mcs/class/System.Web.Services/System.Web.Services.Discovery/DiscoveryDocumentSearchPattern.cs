@@ -3,6 +3,7 @@
 //
 // Author:
 //   Dave Bettin (javabettin@yahoo.com)
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // Copyright (C) Dave Bettin, 2002
 //
@@ -18,10 +19,8 @@ namespace System.Web.Services.Discovery {
 
 		#region Constructors
 
-		[MonoTODO]
 		public DiscoveryDocumentSearchPattern () 
 		{
-			throw new NotImplementedException ();
 		}
 		
 		#endregion // Constructors
@@ -36,10 +35,12 @@ namespace System.Web.Services.Discovery {
 
 		#region Methods
 
-		[MonoTODO]
 		public override DiscoveryReference GetDiscoveryReference (string filename)
 		{
-			throw new NotImplementedException ();
+			DiscoveryDocumentReference refe = new DiscoveryDocumentReference ();
+			refe.Url = filename;
+			refe.Ref = filename;
+			return refe;
 		}
 
 		#endregion // Methods

@@ -3,18 +3,19 @@
 //
 // Author:
 //   Dave Bettin (javabettin@yahoo.com)
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // Copyright (C) Dave Bettin, 2002
 //
 
 using System.Collections;
 
-namespace System.Web.Services.Discovery {
-	public sealed class DiscoveryExceptionDictionary : DictionaryBase {
-
+namespace System.Web.Services.Discovery 
+{
+	public sealed class DiscoveryExceptionDictionary : DictionaryBase 
+	{
 		#region Constructors
 
-		[MonoTODO]
 		public DiscoveryExceptionDictionary () 
 		{
 		}
@@ -24,43 +25,39 @@ namespace System.Web.Services.Discovery {
 		#region Properties
 
 		public Exception this[string url] {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-			
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			get { return (Exception) InnerHashtable [url]; }
+			set { 
+				if (url == null)
+					throw new ArgumentNullException ();
+				InnerHashtable [url] = value; 
+			}
 		}
 		
 		public ICollection Keys {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return InnerHashtable.Keys; }
 		}
 		
 		public ICollection Values {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return InnerHashtable.Values; }
 		}
 		
 		#endregion // Properties
 
 		#region Methods
 
-		[MonoTODO]
 		public void Add (string url, Exception value)
 		{
-                        throw new NotImplementedException ();
+			InnerHashtable.Add (url, value);
 		}
 
-		[MonoTODO]
 		public bool Contains (string url)
 		{
-                        throw new NotImplementedException ();
+			return InnerHashtable.Contains (url);
 		}
 		
-		[MonoTODO]
 		public void Remove (string url)
 		{
-                        throw new NotImplementedException ();
+			InnerHashtable.Remove (url);
 		}
 
 		#endregion // Methods

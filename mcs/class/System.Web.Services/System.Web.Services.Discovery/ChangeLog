@@ -1,5 +1,17 @@
 2004-03-10  Lluis Sanchez Gual  <lluis@ximian.com>
 
+	* ContractReference.cs, DiscoveryDocumentReference.cs: Delegate handling 
+	  of errors to the base class.
+	* ContractSearchPattern.cs, DiscoveryDocumentLinksPattern.cs, 
+	  DiscoveryDocumentSearchPattern.cs, XmlSchemaSearchPattern.cs: Implemented.
+	* DiscoveryClientProtocol.cs: Do not throw exceptions in ResolveAll method,
+	  rather add them to the errors list.
+	* DiscoveryReference.cs: Generate DiscoveryException where needed, so
+	  DiscoveryClientProtocol can get the url for which an exception was thrown.
+	* DiscoveryExceptionDictionary.cs: Implemented.
+
+2004-03-10  Lluis Sanchez Gual  <lluis@ximian.com>
+
 	* DiscoveryClientProtocol.cs: Read additional information (such as soap
 	  bindings) from the discovery documents.
 	* DiscoveryDocument.cs: Added support for additional discovery information.

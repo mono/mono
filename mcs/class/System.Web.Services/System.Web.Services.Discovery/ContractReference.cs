@@ -116,36 +116,43 @@ namespace System.Web.Services.Discovery {
 			{
 				if (prot.Documents.Contains (import.Location)) 	// Already resolved
 					continue;
-					
+				
 				string url = import.Location;
-				string contentType = null;
-				Stream stream = prot.Download (ref url, ref contentType);
-				XmlTextReader reader = new XmlTextReader (stream);
-				reader.MoveToContent ();
-				
-				DiscoveryReference refe;
-				if (ServiceDescription.CanRead (reader))
+				try
 				{
-					ServiceDescription refWsdl = ServiceDescription.Read (reader);
-					refe = new ContractReference ();
-					refe.ClientProtocol = prot;
-					refe.Url = url;
-					((ContractReference)refe).ResolveInternal (prot, refWsdl);
-					prot.Documents.Add (url, refWsdl);
-				}
-				else
-				{
-					XmlSchema schema = XmlSchema.Read (reader, null);
-					refe = new SchemaReference ();
-					refe.ClientProtocol = prot;
-					refe.Url = url;
-					prot.Documents.Add (url, schema);
-				}
-				
-				if (!prot.References.Contains (url))
-					prot.References.Add (refe);
+					string contentType = null;
+					Stream stream = prot.Download (ref url, ref contentType);
+					XmlTextReader reader = new XmlTextReader (stream);
+					reader.MoveToContent ();
 					
-				reader.Close ();
+					DiscoveryReference refe;
+					if (ServiceDescription.CanRead (reader))
+					{
+						ServiceDescription refWsdl = ServiceDescription.Read (reader);
+						refe = new ContractReference ();
+						refe.ClientProtocol = prot;
+						refe.Url = url;
+						((ContractReference)refe).ResolveInternal (prot, refWsdl);
+						prot.Documents.Add (url, refWsdl);
+					}
+					else
+					{
+						XmlSchema schema = XmlSchema.Read (reader, null);
+						refe = new SchemaReference ();
+						refe.ClientProtocol = prot;
+						refe.Url = url;
+						prot.Documents.Add (url, schema);
+					}
+					
+					if (!prot.References.Contains (url))
+						prot.References.Add (refe);
+						
+					reader.Close ();
+				}
+				catch (Exception ex)
+				{
+					ReportError (url, ex);
+				}
 			}
 		}
                 

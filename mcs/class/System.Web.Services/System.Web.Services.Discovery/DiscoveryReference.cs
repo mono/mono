@@ -81,21 +81,34 @@ namespace System.Web.Services.Discovery {
 		public void Resolve () 
 		{
 			if (clientProtocol == null) 
-				throw new InvalidOperationException ("The ClientProtocol property is a null reference");
+				throw new InvalidOperationException ("The ClientProtocol property is a null reference.");
 			
 			if (clientProtocol.Documents.Contains (Url)) 	// Already resolved
 				return;
 			
-			string contentType = null;
-			string url = Url;
-			Stream stream = clientProtocol.Download (ref url, ref contentType);
-			Resolve (contentType, stream);
+			try
+			{
+				string contentType = null;
+				string url = Url;
+				Stream stream = clientProtocol.Download (ref url, ref contentType);
+				Resolve (contentType, stream);
+			}
+			catch (Exception ex)
+			{
+				ReportError (Url, ex);
+			}
 		}
                 
 		protected internal abstract void Resolve (string contentType, Stream stream);
 		
-		public abstract void WriteDocument (object document, Stream stream);		
+		public abstract void WriteDocument (object document, Stream stream);
 
+		internal void ReportError (string url, Exception ex)
+		{
+			if (ex is DiscoveryException) throw ex;
+			else throw new DiscoveryException (url, ex);
+		}
+		
 		#endregion // Methods
 	}
 }
