@@ -1,4 +1,10 @@
 
+Wed May 15 15:59:55 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.h, metadata.c, class.c: mono_metadata_field_info ()
+	returns the RVA, not the direct pointer to the data. Handle the case
+	when the class size is fixed.
+
 Tue May 14 16:59:44 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: fix some endianess issues.
