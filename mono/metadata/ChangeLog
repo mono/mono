@@ -1,4 +1,8 @@
 
+Sat Jul 13 19:32:19 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: update the parameter table index.
+
 Sat Jul 13 17:34:23 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* domain.c: don't include the mark byte in the string hash.
