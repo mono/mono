@@ -1,5 +1,11 @@
 2002-10-10  Martin Baulig  <martin@gnome.org>
 
+	* expression.cs (ArrayAccess.EmitStoreOpcode): Reverted the patch
+	from bug #31834, see the bug report for a testcase which is
+	miscompiled.
+
+2002-10-10  Martin Baulig  <martin@gnome.org>
+
 	* codegen.cs (EmitContext.Breaks): Removed, we're now using the
 	flow analysis code for this.
 
