@@ -1,5 +1,7 @@
 2002-06-17  Dietmar Maurer  <dietmar@ximian.com>
 
+	* jit.c (mono_analyze_stack): impl. STARG
+
 	* exception.c (arch_handle_exception): correctly restore register
 	values when unwinding the stack (fixes bug 25698)
 
