@@ -1,3 +1,7 @@
+2004-06-20  Jackson Harper  <jackson@ximian.com>
+
+	* dis-cil.c: Handle switch statements with no labels.
+	
 2004-06-19  Jackson Harper  <jackson@ximian.com>
 
 	* dump.c/h: New function to dump the contents of the blob
