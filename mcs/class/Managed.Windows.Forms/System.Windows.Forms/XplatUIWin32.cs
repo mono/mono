@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.41 $
+// $Revision: 1.42 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.42  2004/10/20 03:58:05  pbartok
+// - Small sanity check
+//
 // Revision 1.41  2004/10/18 05:17:32  pbartok
 // - Removed VirtualKeys to XplatUIStructs
 // - Implemented SetTopMost method
@@ -718,8 +721,10 @@ namespace System.Windows.Forms {
 			}
 
 			//paint_event.Graphics.Dispose();
-			ps = (PAINTSTRUCT)data.DeviceContext;
-			Win32EndPaint(handle, ref ps);
+			if (data.DeviceContext != null) {
+				ps = (PAINTSTRUCT)data.DeviceContext;
+				Win32EndPaint(handle, ref ps);
+			}
 		}
 
 
