@@ -10,17 +10,18 @@
 using System;
 using System.Text;
 using System.Collections;
+using System.Reflection;
 using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
-
+	
 	public abstract class Exp : AST {
 		internal bool no_effect;
 		internal abstract bool Resolve (IdentificationTable context, bool no_effect);
 	}
-
+	
 	public class Unary : UnaryOp {
-
+		
 		internal Unary (AST parent, AST operand, JSToken oper)
 		{			
 			this.parent = parent;
@@ -34,7 +35,7 @@ namespace Microsoft.JScript {
 			
 			if (oper != JSToken.None)
 				sb.Append (oper + " ");
-
+			
 			if (operand != null)
 				sb.Append (operand.ToString ());
 			
@@ -44,6 +45,7 @@ namespace Microsoft.JScript {
 		internal override bool Resolve (IdentificationTable context)
 		{
 			bool r = false;		       
+			
 			if (operand is Exp)
 				if (oper != JSToken.Increment && oper != JSToken.Decrement)
 					r = ((Exp) operand).Resolve (context, no_effect);
@@ -73,16 +75,15 @@ namespace Microsoft.JScript {
 			this.right = right;
 			this.current_op = op;	
 		}
-
+		
 		public override string ToString ()
 		{
 			StringBuilder sb = new StringBuilder ();
-
 			sb.Append (left.ToString () + " ");
-
+			
 			if (current_op != JSToken.None)
 				sb.Append (current_op + " ");
-
+			
 			if (right != null)
 				sb.Append (right.ToString ());
 
@@ -107,11 +108,8 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			ILGenerator ig;
-			if (parent == null)
-				ig = ec.gc_ig;
-			else
-				ig = ec.ig;
+			ILGenerator ig = ec.ig;
+
 			if (current_op != JSToken.None)
 				emit_operator (ig);
 			if (left != null)
@@ -119,6 +117,7 @@ namespace Microsoft.JScript {
 			if (right != null)
 				right.Emit (ec);			       
 			emit_op_eval (ig);
+
 			if (no_effect)
 				ig.Emit (OpCodes.Pop);
 		}
@@ -203,34 +202,41 @@ namespace Microsoft.JScript {
 
 	public class Conditional : Exp {
 
-		AST cond_expr, trueExpr, falseExpr;
+		AST cond_exp, true_exp, false_exp;
 
 		internal Conditional (AST parent, AST expr, AST  trueExpr, AST falseExpr)
 		{
-			this.cond_expr = expr;
-			this.trueExpr = trueExpr;
-			this.falseExpr = falseExpr;
+			this.cond_exp = expr;
+			this.true_exp = trueExpr;
+			this.false_exp = falseExpr;
 		}
-
+		
 		public override string ToString ()
 		{
 			StringBuilder sb = new StringBuilder ();
 
-			if (cond_expr != null)
-				sb.Append (cond_expr.ToString () + " ");
-			if (trueExpr != null)
-				sb.Append (trueExpr.ToString () + " ");
-			if (falseExpr != null)
-				sb.Append (falseExpr.ToString ());
+			if (cond_exp != null)
+				sb.Append (cond_exp.ToString () + " ");
+			if (true_exp != null)
+				sb.Append (true_exp.ToString () + " ");
+			if (false_exp != null)
+				sb.Append (false_exp.ToString ());
 
 			return sb.ToString ();
 		}
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			throw new NotImplementedException ();
+			bool r = true;
+			if (cond_exp != null)
+				r &= cond_exp.Resolve (context);
+			if (true_exp != null)
+				r &= true_exp.Resolve (context);
+			if (false_exp != null)
+				r &= false_exp.Resolve (context);
+			return r;
 		}
-		
+
 		internal override bool Resolve (IdentificationTable context, bool no_effect)
 		{
 			this.no_effect = no_effect;
@@ -312,9 +318,9 @@ namespace Microsoft.JScript {
 		{
 			if (name == "print")
 				return SemanticAnalyser.print;
-
-			Decl bind = (Decl) context.Contains (name);
 			
+			Decl bind = (Decl) context.Contains (name);
+
 			if (bind == null)
 				throw new Exception ("variable not found: " +  name);
 			else
@@ -340,9 +346,11 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			ILGenerator ig;
-			if (parent == null) {
-				ig = ec.gc_ig;
+			ILGenerator ig = ec.ig;
+			FieldInfo field_info = binding.field_info;
+			LocalBuilder local_builder = binding.local_builder;
+			
+			if (field_info != null) {
 				if (assign)
 					ig.Emit (OpCodes.Stsfld, binding.field_info);
 				else {
@@ -350,15 +358,14 @@ namespace Microsoft.JScript {
 					if (no_effect)
 						ig.Emit (OpCodes.Pop);
 				}
-			} else {
-				ig = ec.ig;
+			} else if (local_builder != null) {
 				if (assign)
 					ig.Emit (OpCodes.Stloc, binding.local_builder);
 				else {
 					ig.Emit (OpCodes.Ldloc, binding.local_builder);
 					if (no_effect)
 						ig.Emit (OpCodes.Pop);
-				}
+				}				
 			}
 		}
 	}
@@ -395,12 +402,13 @@ namespace Microsoft.JScript {
 		}
 	}
 
-	public class Expression : AST {
+	public class Expression : Exp {
 
 		internal ArrayList exprs;
 
-		internal Expression ()
+		internal Expression (AST parent)
 		{
+			this.parent = parent;
 			exprs = new ArrayList ();
 		}
 
@@ -427,21 +435,33 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			int i, n = exprs.Count;
+			int i, n;
 			object e;
 			bool r = true;
+			
+			n = exprs.Count - 1;
 
 			for (i = 0; i < n; i++) {
 				e = exprs [i];
 				if (e is Exp)
-					if (e is Assign)
-						r &= ((Assign) e).Resolve (context);
-					else
-						r &= ((Exp) e).Resolve (context, true);	
+					r &= ((Exp) e).Resolve (context, true);
 				else
-					r &= ((AST) e).Resolve (context);				
+					r &= ((AST) e).Resolve (context);
 			}
+			e = exprs [n];
+
+			if (e is Exp)
+				if (e is Assign)
+					r &= ((Assign) e).Resolve (context);
+				else
+					r &= ((Exp) e).Resolve (context, no_effect);
 			return r;
+		}
+
+			internal override bool Resolve (IdentificationTable context, bool no_effect)
+		{
+			this.no_effect = no_effect;
+			return Resolve (context);
 		}
 
 		internal override void Emit (EmitContext ec)
@@ -476,8 +496,10 @@ namespace Microsoft.JScript {
 				r = ((IAssignable) left).ResolveAssign (context);
 			else 
 				return false;
+
 			if (right is Exp)
 				r &=((Exp) right).Resolve (context, false);
+
 			return r;
 		}
 
@@ -488,11 +510,8 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			ILGenerator ig;
-			if (parent == null)
-				ig = ec.gc_ig;
-			else
-				ig = ec.ig;			
+			ILGenerator ig = ec.ig;
+
 			if (is_embedded) {
 				Console.WriteLine ("embedded assignments not supported yet");
 				Environment.Exit (-1);
@@ -509,7 +528,7 @@ namespace Microsoft.JScript {
 			return l + " " + r;			
 		}
 	}
-
+	
 	internal interface IAssignable {
 		bool ResolveAssign (IdentificationTable context);
 	}
