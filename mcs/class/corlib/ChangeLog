@@ -1,3 +1,9 @@
+2005-02-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib_test.dll.sources : Added new 2.0 unit tests for X.509 
+	certificates in System.Security.Cryptography.X509Certificates/
+	X509Cert20Test.cs to the build.
+
 2005-02-21  Michal Moskal  <malekith@pld-linux.org>
 
 	* Makefile (LIBRARY_INSTALL_DIR): Define in terms of $(libdir).

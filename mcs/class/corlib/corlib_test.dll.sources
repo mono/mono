@@ -173,6 +173,7 @@ System.Security.Cryptography/ToBase64TransformTest.cs
 System.Security.Cryptography/TripleDESTest.cs
 System.Security.Cryptography.X509Certificates/X509CapiTest.cs
 System.Security.Cryptography.X509Certificates/X509CertificateTest.cs
+System.Security.Cryptography.X509Certificates/X509Cert20Test.cs
 System.Security.Cryptography.X509Certificates/X509SpcTest.cs
 System.Security/HostSecurityManagerTest.cs
 System.Security/NamedPermissionSetTest.cs
