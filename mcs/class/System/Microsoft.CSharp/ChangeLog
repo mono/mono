@@ -1,3 +1,8 @@
+2004-01-19  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* CSharpCodeGenerator.cs: Do not generate access and scope modifiers for
+	interface methods.
+
 2004-01-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CSharpCodeCompiler.cs: when generating files from DOM, set the

@@ -504,11 +504,11 @@ namespace Mono.CSharp
 
 			MemberAttributes attributes = method.Attributes;
 
-			if (method.PrivateImplementationType == null)
-			{
+			if (method.PrivateImplementationType == null && !declaration.IsInterface)
 				OutputMemberAccessModifier( attributes );
-			};
-			OutputMemberScopeModifier( attributes );
+
+			if (!declaration.IsInterface)
+				OutputMemberScopeModifier( attributes );
 
 			OutputType( method.ReturnType );
 
