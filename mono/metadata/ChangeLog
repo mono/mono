@@ -1,3 +1,14 @@
+2003-12-06  Dick Porter  <dick@ximian.com>
+
+	* verify.c: 
+	* object.h:
+	* icall.c:
+	* locales.c: Use C structs to access class fields.  Don't do a
+	conversion between MonoString and UChar because both are
+	platform-endian UTF-16.  Compare now takes startindex and count
+	parameters.  Add a char overload for IndexOf.  Speed up the
+	invariant string IndexOf.
+
 2003-12-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Makefile.am (monosn_LDADD): Fix parallel build.
