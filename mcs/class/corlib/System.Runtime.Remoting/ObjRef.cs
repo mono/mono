@@ -112,7 +112,7 @@ namespace System.Runtime.Remoting {
 						marshalledValue = false;
 					break;
 				case "objrefFlags":
-					flags = (int) en.Value;
+					flags = Convert.ToInt32 (en.Value);
 					break;
 				default:
 					throw new NotSupportedException ();

@@ -1,5 +1,9 @@
 2003-04-10  Lluis Sanchez Gual <lluis@ideary.com>
 
+	* ObjRef.cs: Fixed bug #43187, based on the patch by Jean-Marc Andre
+
+2003-04-10  Lluis Sanchez Gual <lluis@ideary.com>
+
 	* ObjRef.cs: Renamed ChannelInfoStore to ChannelInfo (match MS.NET)
 	* RemotingServices.cs: Added method to help support Async messages.
 	* RemotingConfiguration.cs: Implemented property ProcessID.
