@@ -1,3 +1,10 @@
+2003-03-03  Miguel de Icaza  <miguel@ximian.com>
+
+	* NameValueCollection.cs: Uncoment constructor, an old MCS bug
+	prevented this from working.  Removed test for nullitude of col,
+	as it would have aborted anyways on the dereference in the base
+	constructor call. 
+
 2003-01-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* StringCollection.cs: fixed range checks in CopyTo.

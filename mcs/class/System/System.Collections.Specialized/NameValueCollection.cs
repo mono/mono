@@ -68,14 +68,12 @@ namespace System.Collections.Specialized{
 		/// TODO: uncomment constructor below after it will be possible to compile NameValueCollection and
 		/// NameObjectCollectionBase to the same assembly 
 		
-/*		public NameValueCollection( int capacity, NameValueCollection col )
-			: base(capacity, col.get_HashCodeProvider(),col.Comparer)
+		public NameValueCollection( int capacity, NameValueCollection col )
+			: base(capacity, col.HashCodeProvider, col.Comparer)
 		{
-			if (col==null)
-				throw new ArgumentNullException("Null argument is not allowed");
 			Add(col);			
 		}
-*/		
+
 		/// <summary>
 		/// SDK: Initializes a new instance of the NameValueCollection class that is serializable
 		/// and uses the specified System.Runtime.Serialization.SerializationInfo and 
