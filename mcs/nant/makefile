@@ -1,9 +1,9 @@
 all: nant.exe
 linux: nant.exe
+	-cp NAnt.exe nant.exe
 windows: nant.exe
 
 nant.exe: NAnt.exe
-	-cp NAnt.exe nant.exe
 
 NAnt.exe: makefile src/*.cs src/Attributes/*.cs src/Tasks/*.cs src/Util/*.cs
 	csc /out:NAnt.exe /recurse:*.cs 
