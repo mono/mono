@@ -1,3 +1,13 @@
+2002-07-03  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (While, For, Do): These loops can exit through a
+	Break statement, use this information to tell whether the
+	statement is the last piece of code.
+
+	(Break): Flag that we break.
+
+	* codegen.cs (EmitContexts): New `Breaks' state variable.
+
 2002-07-03  Martin Baulig  <martin@gnome.org>
 
 	* class.cs (TypeContainer.MethodModifiersValid): Allow override
