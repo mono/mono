@@ -1,3 +1,8 @@
+2004-11-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* GlobalizationConfigurationHandler.cs: fixed stupid typo (uiculture ->
+	uiCulture). Closes bug #69524.
+
 2004-10-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConfigurationSettings.cs: use CurrentExecutionFilePath instead of
