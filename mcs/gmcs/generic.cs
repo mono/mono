@@ -639,6 +639,13 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public override string DocCommentHeader {
+			get {
+				throw new InvalidOperationException (
+					"Unexpected attempt to get doc comment from " + this.GetType () + ".");
+			}
+		}
+
 		//
 		// MemberContainer
 		//
@@ -1436,6 +1443,10 @@ namespace Mono.CSharp {
 			get {
 				return AttributeTargets.Method | AttributeTargets.ReturnValue;
 			}
+		}
+
+		public override string DocCommentHeader {
+			get { return "M:"; }
 		}
 	}
 
