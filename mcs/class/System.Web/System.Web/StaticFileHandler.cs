@@ -37,7 +37,7 @@ namespace System.Web
 			}
 		}
 
-		public virtual bool IsReusable
+		public bool IsReusable
 		{
 			get {
 				return true;

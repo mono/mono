@@ -1,3 +1,12 @@
+2002-10-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpMethodNotAllowedHandler.cs:
+	* HttpRuntime.cs:
+	* StaticFileHandler.cs: Modified file.
+
+	* HttpUtility.cs: implemented all missing methods.
+
+
 2002-09-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Web/HttpApplication.cs: use the static file handler.

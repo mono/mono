@@ -11,13 +11,13 @@ namespace System.Web
 {
 	class HttpMethodNotAllowedHandler : IHttpHandler
 	{
-		public virtual void ProcessRequest (HttpContext context)
+		public void ProcessRequest (HttpContext context)
 		{
 			throw new HttpException (405, "Forbidden");
 		}
 
 
-		public virtual bool IsReusable
+		public bool IsReusable
 		{
 			get {
 				return true;

@@ -16,7 +16,6 @@ using System.Web.Caching;
 
 namespace System.Web {
 
-	[MonoTODO ("Make corrent right now this is a simple impl to give us a base for testing... the methods here are not complete or valid")]	
 	public sealed class HttpRuntime {
 
 		// Security permission helper objects
@@ -28,6 +27,10 @@ namespace System.Web {
 		private static IStackWalk reflectionStackWalk;
 
 		private static HttpRuntime _runtime;
+		private static string appDomainAppId;
+		private static string appDomainId;
+		private static string appDomainAppPath;
+		private static string appDomainAppVirtualPath;
 		private Cache _cache;
 
 		private int _activeRequests;
@@ -237,31 +240,39 @@ namespace System.Web {
 			}
 		}      
 
-		[MonoTODO]
 		public static string AppDomainAppId {
 			get {
-				throw new NotImplementedException ();
+				if (appDomainAppId == null)
+					appDomainAppId = (string) AppDomain.CurrentDomain.GetData (".appId");
+
+				return appDomainAppId;
 			}
 		}
 
-		[MonoTODO]
 		public static string AppDomainAppPath {
 			get {
-				throw new NotImplementedException ();
+				if (appDomainAppPath == null)
+					appDomainAppPath = (string) AppDomain.CurrentDomain.GetData (".appPath");
+
+				return appDomainAppPath;
 			}
 		}
 
-		[MonoTODO]
 		public static string AppDomainAppVirtualPath {
 			get {
-				throw new NotImplementedException ();
+				if (appDomainAppVirtualPath == null)
+					appDomainAppPath = (string) AppDomain.CurrentDomain.GetData (".appVPath");
+
+				return appDomainAppVirtualPath;
 			}
 		}
 
-		[MonoTODO]
 		public static string AppDomainId {
 			get {
-				throw new NotImplementedException ();
+				if (appDomainId == null)
+					appDomainId = (string) AppDomain.CurrentDomain.GetData (".domainId");
+
+				return appDomainId;
 			}
 		}
 
