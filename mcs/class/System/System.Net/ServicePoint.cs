@@ -72,11 +72,19 @@ namespace System.Net
 		}
 
 		public int CurrentConnections {
-			get { return currentConnections; }
+			get {
+				lock (this) {
+					return currentConnections;
+				}
+			}
 		}
 
 		public DateTime IdleSince {
-			get { return idleSince; }
+			get {
+				lock (this) {
+					return idleSince;
+				}
+			}
 		}
 		
 		public int MaxIdleTime {
@@ -186,10 +194,29 @@ namespace System.Net
 			
 			lock (this) {
 				WebConnectionGroup cncGroup = GetConnectionGroup (groupName);
-				cnc = cncGroup.GetConnection (groupName);
+				cnc = cncGroup.GetConnection ();
 			}
 			
 			return cnc.SendRequest (request);
+		}
+
+		internal void IncrementConnection ()
+		{
+			lock (this) {
+				currentConnections++;
+				idleSince = DateTime.Now.AddMilliseconds (1000000);
+				Console.WriteLine ("+CurerntCnc: {0} {1}", Address, currentConnections);
+			}
+		}
+
+		internal void DecrementConnection ()
+		{
+			lock (this) {
+				currentConnections--;
+				if (currentConnections == 0)
+					idleSince = DateTime.Now;
+				Console.WriteLine ("-CurerntCnc: {0} {1}", Address, currentConnections);
+			}
 		}
 	}
 }

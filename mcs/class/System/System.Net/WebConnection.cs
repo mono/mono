@@ -44,7 +44,7 @@ namespace System.Net
 		AutoResetEvent waitForContinue;
 		AutoResetEvent goAhead;
 		bool waitingForContinue;
-		int queued;
+		Queue queue;
 		
 		public WebConnection (WebConnectionGroup group, ServicePoint sPoint)
 		{
@@ -56,6 +56,7 @@ namespace System.Net
 			initConn = new WaitOrTimerCallback (InitConnection);
 			abortHandler = new EventHandler (Abort);
 			goAhead = new AutoResetEvent (true);
+			queue = new Queue (1);
 		}
 
 		public void Connect ()
@@ -114,7 +115,6 @@ namespace System.Net
 		void HandleError (WebExceptionStatus st, Exception e)
 		{
 			status = st;
-			Close ();
 			lock (this) {
 				busy = false;
 				if (st == WebExceptionStatus.RequestCanceled)
@@ -134,7 +134,7 @@ namespace System.Net
 			if (Data != null && Data.request != null)
 				Data.request.SetResponseError (st, e);
 
-			goAhead.Set ();
+			Close (true);
 		}
 		
 		internal bool WaitForContinue (byte [] headers, int offset, int size)
@@ -167,8 +167,7 @@ namespace System.Net
 			WebConnectionData data = cnc.Data;
 			NetworkStream ns = cnc.nstream;
 			if (ns == null) {
-				cnc.busy = false;
-				cnc.goAhead.Set ();
+				cnc.Close (true);
 				return;
 			}
 
@@ -240,9 +239,12 @@ namespace System.Net
 				cnc.chunkStream.Write (cnc.buffer, pos, nread);
 			}
 
-			int more = Interlocked.Decrement (ref cnc.queued);
+			bool more = false;
+			lock (cnc) {
+				more = (cnc.queue.Count > 0);
+			}
 
-			if (more > 0)
+			if (more)
 				stream.ReadAll ();
 
 			data.stream = stream;
@@ -357,6 +359,7 @@ namespace System.Net
 				Data.Init ();
 				goAhead.Set ();
 				aborted = false;
+				SendNext ();
 				return;
 			}
 
@@ -366,18 +369,14 @@ namespace System.Net
 
 			Connect ();
 			if (status != WebExceptionStatus.Success) {
-				busy = false;
 				request.SetWriteStreamError (status);
-				Close ();
-				goAhead.Set ();
+				Close (true);
 				return;
 			}
 			
 			if (!CreateStream (request)) {
-				busy = false;
 				request.SetWriteStreamError (status);
-				Close ();
-				goAhead.Set ();
+				Close (true);
 				return;
 			}
 
@@ -389,18 +388,31 @@ namespace System.Net
 		internal EventHandler SendRequest (HttpWebRequest request)
 		{
 			lock (this) {
-				Interlocked.Increment (ref queued);
 				if (prevStream != null && socket != null && socket.Connected) {
 					prevStream.ReadAll ();
 					prevStream = null;
 				}
 
-				ThreadPool.RegisterWaitForSingleObject (goAhead, initConn, request, -1, true);
+				if (!busy) {
+					ThreadPool.RegisterWaitForSingleObject (goAhead, initConn,
+										request, -1, true);
+				} else {
+					queue.Enqueue (request);
+				}
 			}
 
 			return abortHandler;
 		}
 		
+		void SendNext ()
+		{
+			lock (this) {
+				if (queue.Count > 0) {
+					prevStream = null;
+					SendRequest ((HttpWebRequest) queue.Dequeue ());
+				}
+			}
+		}
 		internal void NextRead ()
 		{
 			lock (this) {
@@ -415,10 +427,14 @@ namespace System.Net
 
 				if ((socket != null && !socket.Connected) ||
 				   (!keepAlive || (cncHeader != null && cncHeader.IndexOf ("close") != -1))) {
-					Close ();
+					Close (false);
 				}
 
 				goAhead.Set ();
+				if (queue.Count > 0) {
+					prevStream = null;
+					SendRequest ((HttpWebRequest) queue.Dequeue ());
+				}
 			}
 		}
 		
@@ -561,9 +577,10 @@ namespace System.Net
 			}
 		}
 
-		void Close ()
+		void Close (bool sendNext)
 		{
 			lock (this) {
+				busy = false;
 				if (nstream != null) {
 					try {
 						nstream.Close ();
@@ -576,6 +593,11 @@ namespace System.Net
 						socket.Close ();
 					} catch {}
 					socket = null;
+				}
+
+				if (sendNext) {
+					goAhead.Set ();
+					SendNext ();
 				}
 			}
 		}
@@ -591,7 +613,7 @@ namespace System.Net
 		
 		~WebConnection ()
 		{
-			Close ();
+			Close (false);
 		}
 	}
 }

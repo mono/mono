@@ -8,6 +8,8 @@
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Configuration;
+using System.Net.Configuration;
 using System.Security.Cryptography.X509Certificates;
 
 //
@@ -56,7 +58,16 @@ namespace System.Net
 		
 		public const int DefaultNonPersistentConnectionLimit = 4;
 		public const int DefaultPersistentConnectionLimit = 2;
+
+		const string configKey = "system.net/connectionManagement";
+		static Hashtable config;
 		
+		static ServicePointManager ()
+		{
+			ConnectionManagementData manager;
+			manager = (ConnectionManagementData) ConfigurationSettings.GetConfig (configKey);
+			config = manager.Data;
+		}
 		// Constructors
 		private ServicePointManager ()
 		{
@@ -141,7 +152,12 @@ namespace System.Net
 				if (maxServicePoints > 0 && servicePoints.Count >= maxServicePoints)
 					throw new InvalidOperationException ("maximum number of service points reached");
 
-				sp = new ServicePoint (address, defaultConnectionLimit, maxServicePointIdleTime);
+				string addr = address.ToString ();
+				int limit = defaultConnectionLimit;
+				if (config.Contains (addr))
+					limit = (int) config [addr];
+				
+				sp = new ServicePoint (address, limit, maxServicePointIdleTime);
 				sp.UsesProxy = usesProxy;
 				servicePoints.Add (address, sp);
 			}
@@ -160,6 +176,7 @@ namespace System.Net
 					ServicePoint sp = (ServicePoint) e.Value;
 					if (sp.AvailableForRecycling) {
 						toRemove.Add (e.Key);
+						Console.WriteLine ("Reciclo: {0}", e.Key);
 					}
 				}
 				

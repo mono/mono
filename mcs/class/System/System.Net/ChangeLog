@@ -1,3 +1,11 @@
+2003-10-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ServicePoint.cs: preparing for recycling. Not yet finished.
+	* ServicePointManager.cs: this is the one that reads config.
+	* WebConnectionGroup.cs: don't read config here.
+	* WebConnection.cs: added the queue again. Launch queued requests on
+	error.
+
 2003-10-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnection.cs: the queue is now handled by the threadpool.

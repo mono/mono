@@ -9,7 +9,6 @@
 
 using System;
 using System.Collections;
-using System.Configuration;
 using System.Net.Configuration;
 using System.Net.Sockets;
 
@@ -21,24 +20,16 @@ namespace System.Net
 		string name;
 		ArrayList connections;
 		static ConnectionManagementData manager;
-		const string configKey = "system.net/connectionManagement";
-		int maxConnections;
 		Random rnd;
-
-		static WebConnectionGroup ()
-		{
-			manager = (ConnectionManagementData) ConfigurationSettings.GetConfig (configKey);
-		}
 
 		public WebConnectionGroup (ServicePoint sPoint, string name)
 		{
 			this.sPoint = sPoint;
 			this.name = name;
 			connections = new ArrayList (1);
-			maxConnections = (int) manager.GetMaxConnections (sPoint.Address.Host);
 		}
 
-		public WebConnection GetConnection (string name)
+		public WebConnection GetConnection ()
 		{
 			WebConnection cnc = null;
 			lock (connections) {
@@ -76,7 +67,7 @@ namespace System.Net
 			WeakReference cncRef;
 
 			int count = connections.Count;
-			if (maxConnections > count) {
+			if (sPoint.ConnectionLimit > count) {
 				cnc = new WebConnection (this, sPoint);
 				connections.Add (new WeakReference (cnc));
 				return cnc;

@@ -1,3 +1,7 @@
+2003-10-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ConnectionManagementHandler.cs: the hashtable is case insensitive now.
+
 2003-10-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ConnectionManagementHandler.cs: added GetMaxConnections to return the 
