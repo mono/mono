@@ -1,5 +1,15 @@
 2004-03-23 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* expression.cs: Rewrite string concat stuff. Benefits:
+
+	- "a" + foo + "b" + "c" becomes "a" + foo + "bc"
+	- "a" + foo + "b" + bar + "c" + baz ... uses concat (string []).
+	rather than a concat chain.
+
+	* typemanager.cs: Add lookups for more concat overloads.
+
+2004-03-23 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* expression.cs: Emit shorter il code for array init.
 
 	newarr

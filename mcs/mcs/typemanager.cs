@@ -135,7 +135,10 @@ public class TypeManager {
 	static public MethodInfo string_concat_string_string;
 	static public MethodInfo string_concat_string_string_string;
 	static public MethodInfo string_concat_string_string_string_string;
+	static public MethodInfo string_concat_string_dot_dot_dot;
 	static public MethodInfo string_concat_object_object;
+	static public MethodInfo string_concat_object_object_object;
+	static public MethodInfo string_concat_object_dot_dot_dot;
 	static public MethodInfo string_isinterneted_string;
 	static public MethodInfo system_type_get_type_from_handle;
 	static public MethodInfo object_getcurrent_void;
@@ -1132,10 +1135,19 @@ public class TypeManager {
 		Type [] string_string_string_string = { string_type, string_type, string_type, string_type };
 		string_concat_string_string_string_string = GetMethod (
 			string_type, "Concat", string_string_string_string);
+		Type[] params_string = { TypeManager.LookupType ("System.String[]") };
+		string_concat_string_dot_dot_dot = GetMethod (
+			string_type, "Concat", params_string);
 
 		Type [] object_object = { object_type, object_type };
 		string_concat_object_object = GetMethod (
 			string_type, "Concat", object_object);
+		Type [] object_object_object = { object_type, object_type, object_type };
+		string_concat_object_object_object = GetMethod (
+			string_type, "Concat", object_object_object);
+		Type[] params_object = { TypeManager.LookupType ("System.Object[]") };
+		string_concat_object_dot_dot_dot = GetMethod (
+			string_type, "Concat", params_object);
 
 		Type [] string_ = { string_type };
 		string_isinterneted_string = GetMethod (

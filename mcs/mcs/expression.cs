@@ -2334,93 +2334,25 @@ namespace Mono.CSharp {
 				// If any of the arguments is a string, cast to string
 				//
 				
-				if (l == TypeManager.string_type){
-					MethodBase method;
-					
-					if (r == TypeManager.void_type) {
+				// Simple constant folding
+				if (left is StringConstant && right is StringConstant)
+					return new StringConstant (((StringConstant) left).Value + ((StringConstant) right).Value);
+				
+				if (l == TypeManager.string_type || r == TypeManager.string_type) {
+
+					if (r == TypeManager.void_type || l == TypeManager.void_type) {
 						Error_OperatorCannotBeApplied ();
 						return null;
 					}
 					
-					if (r == TypeManager.string_type){
-						if (left is Constant && right is Constant){
-							StringConstant ls = (StringConstant) left;
-							StringConstant rs = (StringConstant) right;
-							
-							return new StringConstant (
-								ls.Value + rs.Value);
-						}
-
-						if (left is BinaryMethod){
-							BinaryMethod b = (BinaryMethod) left;
-
-							//
-							// Call String.Concat (string, string, string) or
-							// String.Concat (string, string, string, string)
-							// if possible.
-							//
-							if (b.method == TypeManager.string_concat_string_string ||
-							     b.method == TypeManager.string_concat_string_string_string){
-								int count = b.Arguments.Count;
-								
-								if (count == 2){
-									ArrayList bargs = new ArrayList (3);
-									bargs.AddRange (b.Arguments);
-									bargs.Add (new Argument (right, Argument.AType.Expression));
-									return new BinaryMethod (
-										TypeManager.string_type,
-										TypeManager.string_concat_string_string_string, bargs);
-								} else if (count == 3){
-									ArrayList bargs = new ArrayList (4);
-									bargs.AddRange (b.Arguments);
-									bargs.Add (new Argument (right, Argument.AType.Expression));
-									return new BinaryMethod (
-										TypeManager.string_type,
-										TypeManager.string_concat_string_string_string_string, bargs);
-								}
-							}
-						}
-
-						// string + string
-						method = TypeManager.string_concat_string_string;
-					} else {
-						// string + object
-						method = TypeManager.string_concat_object_object;
-						right = Convert.ImplicitConversion (
-							ec, right, TypeManager.object_type, loc);
-						if (right == null){
-							Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
-							return null;
-						}
-					}
-
-					//
-					// Cascading concats will hold up to 2 arguments, any extras will be
-					// reallocated above.
-					//
-					ArrayList args = new ArrayList (2);
-					args.Add (new Argument (left, Argument.AType.Expression));
-					args.Add (new Argument (right, Argument.AType.Expression));
-
-					return new BinaryMethod (TypeManager.string_type, method, args);
-				} else if (r == TypeManager.string_type){
-					// object + string
-
-					if (l == TypeManager.void_type) {
-						Error_OperatorCannotBeApplied ();
-						return null;
+					// try to fold it in on the left
+					if (left is StringConcat) {
+						((StringConcat) left).Append (ec, right);
+						return left.Resolve (ec);
 					}
 					
-					left = Convert.ImplicitConversion (ec, left, TypeManager.object_type, loc);
-					if (left == null){
-						Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
-						return null;
-					}
-					ArrayList args = new ArrayList (2);
-					args.Add (new Argument (left, Argument.AType.Expression));
-					args.Add (new Argument (right, Argument.AType.Expression));
-
-					return new BinaryMethod (TypeManager.string_type, TypeManager.string_concat_object_object, args);
+					// Otherwise, start a new concat expression
+					return new StringConcat (ec, loc, left, right).Resolve (ec);
 				}
 
 				//
@@ -3169,6 +3101,136 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Call, (MethodInfo) method);
 			else
 				ig.Emit (OpCodes.Call, (ConstructorInfo) method);
+		}
+	}
+	
+	//
+	// Represents the operation a + b [+ c [+ d [+ ...]]], where a is a string
+	// b, c, d... may be strings or objects.
+	//
+	public class StringConcat : Expression {
+		ArrayList operands;
+		bool invalid = false;
+		
+		
+		public StringConcat (EmitContext ec, Location loc, Expression left, Expression right)
+		{
+			this.loc = loc;
+			type = TypeManager.string_type;
+			eclass = ExprClass.Value;
+		
+			operands = new ArrayList (2);
+			Append (ec, left);
+			Append (ec, right);
+		}
+		
+		public override Expression DoResolve (EmitContext ec)
+		{
+			if (invalid)
+				return null;
+			
+			return this;
+		}
+		
+		public void Append (EmitContext ec, Expression operand)
+		{
+			//
+			// Constant folding
+			//
+			if (operand is StringConstant && operands.Count != 0) {
+				StringConstant last_operand = operands [operands.Count - 1] as StringConstant;
+				if (last_operand != null) {
+					operands [operands.Count - 1] = new StringConstant (last_operand.Value + ((StringConstant) operand).Value);
+					return;
+				}
+			}
+			
+			//
+			// Conversion to object
+			//
+			if (operand.Type != TypeManager.string_type) {
+				operand = Convert.ImplicitConversion (ec, operand, TypeManager.object_type, loc);
+				
+				if (operand == null) {
+					Binary.Error_OperatorCannotBeApplied (loc, "+", TypeManager.string_type, operand.Type);
+					invalid = true;
+				}
+			}
+			
+			operands.Add (operand);
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			MethodInfo concat_method = null;
+			
+			//
+			// Are we also concating objects?
+			//
+			bool is_strings_only = true;
+			
+			//
+			// Do conversion to arguments; check for strings only
+			//
+			for (int i = 0; i < operands.Count; i ++) {
+				Expression e = (Expression) operands [i];
+				is_strings_only &= e.Type == TypeManager.string_type;
+			}
+			
+			for (int i = 0; i < operands.Count; i ++) {
+				Expression e = (Expression) operands [i];
+				
+				if (! is_strings_only && e.Type == TypeManager.string_type) {
+					// need to make sure this is an object, because the EmitParams
+					// method might look at the type of this expression, see it is a
+					// string and emit a string [] when we want an object [];
+					
+					e = Convert.ImplicitConversion (ec, e, TypeManager.object_type, loc);
+				}
+				operands [i] = new Argument (e, Argument.AType.Expression);
+			}
+			
+			//
+			// Find the right method
+			//
+			switch (operands.Count) {
+			case 1:
+				//
+				// This should not be possible, because simple constant folding
+				// is taken care of in the Binary code.
+				//
+				throw new Exception ("how did you get here?");
+			
+			case 2:
+				concat_method = is_strings_only ? 
+					TypeManager.string_concat_string_string :
+					TypeManager.string_concat_object_object ;
+				break;
+			case 3:
+				concat_method = is_strings_only ? 
+					TypeManager.string_concat_string_string_string :
+					TypeManager.string_concat_object_object_object ;
+				break;
+			case 4:
+				//
+				// There is not a 4 param overlaod for object (the one that there is
+				// is actually a varargs methods, and is only in corlib because it was
+				// introduced there before.).
+				//
+				if (!is_strings_only)
+					goto default;
+				
+				concat_method = TypeManager.string_concat_string_string_string_string;
+				break;
+			default:
+				concat_method = is_strings_only ? 
+					TypeManager.string_concat_string_dot_dot_dot :
+					TypeManager.string_concat_object_dot_dot_dot ;
+				break;
+			}
+			
+			Invocation.EmitArguments (ec, concat_method, operands);
+			ec.ig.Emit (OpCodes.Call, concat_method);
 		}
 	}
 
