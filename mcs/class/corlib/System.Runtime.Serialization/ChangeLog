@@ -1,9 +1,13 @@
+2003-01-27  Lluis Sanchez Gual  <lluis@ideary.com>
+
+	* ObjectManager.cs: Corrected a problem with IObjectReferece objects.
+
 2003-01-24  Martin Baulig  <martin@ximian.com>
 
 	* ObjectManager.cs (RaiseDeserializationEvent): Walk the object
 	list in the correct order.
 
-2003-01-16  Lluis Sanchez Gual  <lsg@ctv.es>
+2003-01-16  Lluis Sanchez Gual  <lluis@ideary.com>
 
 	* ObjectManager.cs: Implemented and added file
 	* SurrogateSelector.cs: completed implementation.

@@ -41,23 +41,33 @@ namespace System.Runtime.Serialization
 				if (_registeredObjectsCount < _objectRecords.Count)
 					throw new SerializationException ("There are some fixups that refer to objects that have not been registered");
 
+
+				ObjectRecord last = _lastObjectRecord;
+				bool firstCicle = true;
+
 				// Solve al pending fixups of all objects
 
 				ObjectRecord record = _objectRecordChain;
 				while (record != null)
 				{
-					if ( record.DoFixups (true, this, true) && 
-						 record.LoadData(this, _selector, _context))
+					bool ready = !(record.IsUnsolvedObjectReference && firstCicle);
+					if (ready) ready = record.DoFixups (true, this, true);
+					if (ready) ready = record.LoadData(this, _selector, _context);
+
+					ObjectRecord next;
+
+					if (ready)
 					{
-						_deserializedRecords.Add (record);
-						record = record.Next;
+						if (record.OriginalObject is IDeserializationCallback)
+							_deserializedRecords.Add (record);
+						next = record.Next;
 					}
 					else
 					{
 						// There must be an unresolved IObjectReference instance.
 						// Chain the record at the end so it is solved later
 
-						if (record.ObjectInstance is IObjectReference)
+						if ((record.ObjectInstance is IObjectReference) && !firstCicle)
 						{
 							if (record.Status == ObjectRecordStatus.ReferenceSolvingDelayed)
 								throw new SerializationException ("The object with ID " + record.ObjectID + " could not be resolved");
@@ -65,13 +75,18 @@ namespace System.Runtime.Serialization
 								record.Status = ObjectRecordStatus.ReferenceSolvingDelayed;
 						}
 
-						// _deserializedRecords.Add (record);
-						ObjectRecord next = record.Next;
-						record.Next = null;
-						_lastObjectRecord.Next = record;
-						_lastObjectRecord = record;
-						record = next;
+						if (record != _lastObjectRecord) {
+							next = record.Next;
+							record.Next = null;
+							_lastObjectRecord.Next = record;
+							_lastObjectRecord = record;
+						}
+						else
+							next = record;
 					}
+
+					if (record == last) firstCicle = false;
+					record = next;
 				}
 			}
 			finally
@@ -493,7 +508,8 @@ namespace System.Runtime.Serialization
 					ObjectInstance = ((IObjectReference)ObjectInstance).GetRealObject(context);
 					Status = ObjectRecordStatus.ReferenceSolved;
 				}
-				catch {
+				catch (NullReferenceException) {
+					// Give a second chance
 					return false;
 				}
 			}
