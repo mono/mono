@@ -1,3 +1,8 @@
+2003-07-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlValidatingReaderTests.cs : added TestValidationEvent() and
+	  some code refactory.
+
 2003-07-12  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlValidatingReaderTests.cs : added TestNonDeterministicContent() and
