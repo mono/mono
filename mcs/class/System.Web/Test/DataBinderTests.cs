@@ -50,9 +50,11 @@ namespace MonoTests.System.Web.UI
 #endif
 			instance = new ClassInstance ("instance");
 			instance.another = new ClassInstance ("another");
+			echo = new StringEcho();
 		}
 
 		static ClassInstance instance;
+		static StringEcho echo;
 
 		public void TestEval1 ()
 		{
@@ -94,6 +96,22 @@ namespace MonoTests.System.Web.UI
 			// MS gets fooled with this!!!
 			//AssertEquals ("Eval2 #4", DataBinder.Eval (instance, "Another[\"hi] there!\"]"), o);
 		}
+
+		public void TestEval3 ()
+		{
+			try {
+				DataBinder.Eval (echo, "[0]");
+				Fail ("Eval3 #1 didn't throw exception");
+			} catch (ArgumentException) {
+			}
+
+			AssertEquals ("Eval3 #2", DataBinder.Eval (echo, "[test]"), "test");
+			AssertEquals ("Eval3 #3", DataBinder.Eval (echo, "[\"test\"]"), "test");
+			AssertEquals ("Eval3 #4", DataBinder.Eval (echo, "['test']"), "test");
+			AssertEquals ("Eval3 #5", DataBinder.Eval (echo, "['test\"]"), "'test\"");
+			AssertEquals ("Eval3 #6", DataBinder.Eval (echo, "[\"test']"), "\"test'");
+		}
+
 
 #if !NUNIT
 		void Assert (string msg, bool result)
@@ -175,6 +193,13 @@ namespace MonoTests.System.Web.UI
 			get {
 				return another;
 			}
+		}
+	}
+
+	class StringEcho
+	{
+		public object this [string msg] {
+			get { return msg; }
 		}
 	}
 }
