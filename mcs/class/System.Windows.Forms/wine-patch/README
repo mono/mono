@@ -3,16 +3,11 @@ System.Windows.Forms wine-patch README
 After applying the patch to wine, run "autoconf configure.ac" and then 
 ./configure in the wine directory and 'make && make depend && make install'.
 
-For now the patch assumes that the prefix_dir is /usr/local.
-
 Also, once the install is done you will need to create symbolic links for
 all the dlls you plan on using in System.Windows.Forms:
 
 cd /usr/local/lib
-for i in wine/*dll.so; do ln -s $i lib$i; done
-
-I still need to work out how to teach mono to load the libs from the wine 
-directory and without the lib prefix.
+for i in wine/*dll.so; do ln -s $i lib`basename $i`; done
 
 Peter
 pbartok@novell.com
