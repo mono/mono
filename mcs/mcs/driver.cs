@@ -1270,6 +1270,16 @@ namespace Mono.CSharp
 
 			CodeGen.Init (output_file, output_file, want_debugging_support);
 
+			if (target == Target.Module) {
+				PropertyInfo module_only = typeof (AssemblyBuilder).GetProperty ("IsModuleOnly", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
+				if (module_only == null) {
+					Report.Error (0, new Location (-1), "Cannot use /target:module on this runtime: try the Mono runtime instead.");
+					Environment.Exit (1);
+				}
+
+				module_only.SetValue (CodeGen.AssemblyBuilder, true, null);
+			}
+
 			TypeManager.AddModule (CodeGen.ModuleBuilder);
 
 			DateTime start = DateTime.Now;
