@@ -534,22 +534,34 @@ namespace Mono.CSharp
 
 			public bool IsAssigned (VariableInfo var)
 			{
+				if (!var.IsParameter && Reachability.IsUnreachable)
+					return true;
+
 				return var.IsAssigned (var.IsParameter ? parameters : locals);
 			}
 
 			public void SetAssigned (VariableInfo var)
 			{
+				if (!var.IsParameter && Reachability.IsUnreachable)
+					return;
+
 				IsDirty = true;
 				var.SetAssigned (var.IsParameter ? parameters : locals);
 			}
 
 			public bool IsFieldAssigned (VariableInfo var, string name)
 			{
+				if (!var.IsParameter && Reachability.IsUnreachable)
+					return true;
+
 				return var.IsFieldAssigned (var.IsParameter ? parameters : locals, name);
 			}
 
 			public void SetFieldAssigned (VariableInfo var, string name)
 			{
+				if (!var.IsParameter && Reachability.IsUnreachable)
+					return;
+
 				IsDirty = true;
 				var.SetFieldAssigned (var.IsParameter ? parameters : locals, name);
 			}

@@ -1,10 +1,5 @@
 2004-04-27  Martin Baulig  <martin@ximian.com>
 
-	* flowanalysis.cs: Also track initializations in unreachable
-	code.  Fixes #56439.
-
-2004-04-27  Martin Baulig  <martin@ximian.com>
-
 	* flowanalysis.cs (FlowBranchingLoop): New class.
 	(FlowBranching.UsageVector.MergeJumpOrigins): Take a list of
 	UsageVector's instead of an ArrayList.
