@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ldml>
+	<numbers>
+		<percentFormats>
+			<percentFormatLength >
+				<percentFormat >
+					<pattern>#,##0 %</pattern>
+				</percentFormat>
+			</percentFormatLength >
+		</percentFormats>
+	</numbers>
 	<dates>
 		<calendars>
 			<calendar type="gregorian">
