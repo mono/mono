@@ -27,7 +27,7 @@ namespace System {
 			if (n > 2)
 				build = int.Parse (vals [2]);
 			if (n > 3)
-				build = int.Parse (vals [3]);
+				revision = int.Parse (vals [3]);
 		}
 		
 		public Version (int major, int minor)
