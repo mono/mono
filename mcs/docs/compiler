@@ -264,7 +264,17 @@
 	struct) that map each input source line to a linear number.
 	As new files are parsed, the Location manager is informed of
 	the new file, to allow it to map back from an int constant to
-	a file + line number. 
+	a file + line number.
+
+	Prior to parsing/tokenizing any source files, the compiler
+	generates a list of all the source files and then reserves the
+	low N bits of the location to hold the source file, where N is
+	large enough to hold at least twice as many source files as were
+	specified on the command line (to allow for a #line in each file).
+	The upper 32-N bits are the line number in that file.
+
+	The token 0 is reserved for ``anonymous'' locations, ie. if we
+	don't know the location (Location.Null).
 
 	The tokenizer also tracks the column number for a token, but
 	this is currently not being used or encoded.  It could
