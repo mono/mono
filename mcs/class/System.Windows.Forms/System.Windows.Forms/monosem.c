@@ -1,3 +1,11 @@
+//
+// System.Windows.Forms
+//
+// Author:
+//   Alexandre Pigolkine (pigolkine@gmx.de)
+//
+// (C) 2002/3 Ximian, Inc
+//
 #include <windows.h>
 #include <stdio.h>
 #include <semaphore.h>
@@ -108,8 +116,9 @@ int pthread_cond_init(pthread_cond_t *cond, const pthread_condattr_t *cond_attr)
 static void pthread_cond_real_init(pthread_cond_t *cond)
 {
   struct wine_cond_type  dummy;
+  pwine_cond_type data = 0;
   initialize_cond_wait_section();
-  pwine_cond_type data = (pwine_cond_type)malloc(sizeof(dummy));
+  data = (pwine_cond_type)malloc(sizeof(dummy));
   data->event = CreateEvent(0,1,0,0);
   data->waiters = 0;
   data->to_release = 0;
@@ -213,6 +222,7 @@ int pthread_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex, const s
 {
   int result = 0;
   unsigned long milliseconds = INFINITE;
+  wine_cond_t wcond = 0;
   int  do_loop = 1;
 
   if (!((wine_cond_t)cond)->data)
@@ -253,7 +263,7 @@ int pthread_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex, const s
     }
   }
   pthread_mutex_unlock(mutex);
-  wine_cond_t wcond = (wine_cond_t)cond;
+  wcond = (wine_cond_t)cond;
   InterlockedIncrement(&(wcond->data->waiters));
   do_loop = 1;
   do {
