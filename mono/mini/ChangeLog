@@ -1,4 +1,9 @@
 
+Tue Aug 10 19:23:47 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* dominators.c, mini.h, mini-x86.c: fix loop alignment with
+	fall-through blocks.
+
 Tue Aug 10 16:18:22 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* driver.c: enable loop by default again and include abcrem in -O=all.
