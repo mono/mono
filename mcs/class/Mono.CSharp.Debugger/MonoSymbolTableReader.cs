@@ -17,6 +17,8 @@ namespace Mono.CSharp.Debugger
 
 	public class MonoSymbolTableReader
 	{
+		public readonly MethodEntry[] Methods;
+
 		public MonoSymbolTableReader (BinaryReader reader)
 		{
 			//
@@ -48,6 +50,9 @@ namespace Mono.CSharp.Debugger
 					throw new SymbolTableException ("Can't read method table");
 				}
 			}
+
+			Methods = new MethodEntry [methods.Count];
+			methods.CopyTo (Methods);
 		}
 	}
 }
