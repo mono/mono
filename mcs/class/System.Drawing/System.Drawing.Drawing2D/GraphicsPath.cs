@@ -42,7 +42,6 @@ namespace System.Drawing.Drawing2D
         public sealed class GraphicsPath : MarshalByRefObject, ICloneable, IDisposable {
 
                 internal IntPtr nativePath = IntPtr.Zero;
-		private PathData data = null;
 
                 GraphicsPath (IntPtr ptr)
                 {
