@@ -12,6 +12,8 @@ public class Blah {
 
 		Blah [,][] l = new Blah [3,4][];
 
+		Uri [] uri = new Uri [4];
+
 		Console.WriteLine ("All arrays successfully created");
 
 		return 0;
