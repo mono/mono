@@ -55,7 +55,7 @@ GENERIC_SOURCES = \
 	        gen-32  gen-33  gen-34  gen-35  gen-36  gen-37  gen-38  gen-39  gen-40 \
 	gen-41  gen-42  gen-43  gen-44  gen-45  gen-46          gen-48  gen-49  gen-50 \
 	gen-51  gen-52  gen-53  gen-54  gen-55  gen-56          gen-58  gen-59  gen-60 \
-	        gen-62  gen-63  gen-64
+	        gen-62  gen-63  gen-64          gen-66  gen-67  gen-68
 
 
 #
