@@ -323,7 +323,6 @@ namespace System.Xml
 		public virtual void SetAttribute (string name, string value)
 		{
 			XmlAttribute attribute = OwnerDocument.CreateAttribute (name);
-			attribute.SetOwnerElement(this);
 			attribute.Value = value;
 			Attributes.SetNamedItem (attribute);
 		}
@@ -348,7 +347,6 @@ namespace System.Xml
 				throw new InvalidOperationException (
 					"Specified attribute is already an attribute of another element.");
 
-			newAttr.SetOwnerElement(this);
 			XmlNode oldAttr = Attributes.SetNamedItem(newAttr);
 			return oldAttr != null ? oldAttr as XmlAttribute : null;
 		}

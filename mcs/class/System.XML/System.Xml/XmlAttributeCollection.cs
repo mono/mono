@@ -176,6 +176,7 @@ namespace System.Xml
 					attr.AppendChild (child);
 				this.SetNamedItem (attr);
 			}
+			retAttr.SetOwnerElement (null);
 			return retAttr;
 		}
 
@@ -203,6 +204,10 @@ namespace System.Xml
 			if(IsReadOnly)
 				throw new XmlException ("this AttributeCollection is read only.");
 
+			XmlAttribute attr = node as XmlAttribute;
+			if (attr.OwnerElement != null)
+				throw new InvalidOperationException ("This attribute is already set to another element.");
+			attr.SetOwnerElement (ownerElement);
 			return AdjustIdenticalAttributes (node as XmlAttribute, base.SetNamedItem (node, -1) as XmlAttribute);
 		}
 
@@ -249,7 +254,7 @@ namespace System.Xml
 
 		}
 
-		private XmlNode AdjustIdenticalAttributes (XmlNode node, XmlNode existing)
+		private XmlNode AdjustIdenticalAttributes (XmlAttribute node, XmlNode existing)
 		{
 			// If owner element is not appended to the document,
 			// ID table should not be filled.
@@ -272,7 +277,7 @@ namespace System.Xml
 			if (ownerDocument.GetIdenticalAttribute (node.Value) != null)
 				throw new XmlException (String.Format (
 					"ID value {0} already exists in this document.", node.Value));
-			ownerDocument.AddIdenticalAttribute (node as XmlAttribute);
+			ownerDocument.AddIdenticalAttribute (node);
 
 			return existing;
 		}

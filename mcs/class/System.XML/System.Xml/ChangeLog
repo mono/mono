@@ -1,3 +1,9 @@
+2003-12-12  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* XmlAttributeCollection.cs,
+	  XmlElement.cs : Fixed bug #51415.
+	  When adding attribute to an element using Attributes, it failed.
+
 2003-12-11  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* XmlDocument.cs : Fixed ReadNode() to call AppendChild() to document
