@@ -1,3 +1,7 @@
+2003-06-05  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* added System.Xml.Serialization/ReflectionHelper.cs to list.unix
+
 2003-05-27  Joshua Tauberer <tauberer@for.net>
 
 	* XslTransform.cs: Initial support for extension objects.

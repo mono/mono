@@ -165,6 +165,7 @@ System.Xml.Serialization/AssemblyInfo.cs
 System.Xml.Serialization/CodeIdentifier.cs
 System.Xml.Serialization/CodeIdentifiers.cs
 System.Xml.Serialization/IXmlSerializable.cs
+System.Xml.Serialization/ReflectionHelper.cs
 System.Xml.Serialization/SchemaTypes.cs
 System.Xml.Serialization/SoapAttributeAttribute.cs
 System.Xml.Serialization/SoapAttributeOverrides.cs
