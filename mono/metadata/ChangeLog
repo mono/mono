@@ -1,7 +1,10 @@
 2005-03-01  Zoltan Varga  <vargaz@freemail.hu>
 
-	* marshal.c (emit_marshal_array): Emit native->managed marshalling of blittable arrays.
+	* marshal.c (mono_marshal_get_managed_wrapper): Fix handling of methods
+	with hasthis set.
 	
+	* marshal.c (emit_marshal_array): Emit native->managed marshalling of blittable arrays.
+
 	* marshal.c: Reorganize native->managed marshalling code to also use
 	the emit_marshal_... functions.
 
