@@ -1,4 +1,8 @@
 
+Wed Nov 26 19:59:09 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, mini-sparc.c, cpu-g4.md: more bug fixes.
+
 Wed Nov 26 19:18:29 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini.h, inssel.brg, mini-x86.c, mini-ppc.c, mini-sparc.c: move
