@@ -854,7 +854,7 @@ namespace System.Net
 			writeStream = stream;
 			if (bodyBuffer != null) {
 				webHeaders.RemoveInternal ("Transfer-Encoding");
-				contentLength = bodyBuffer.Length;
+				contentLength = bodyBufferLength;
 				writeStream.SendChunked = false;
 			}
 			
