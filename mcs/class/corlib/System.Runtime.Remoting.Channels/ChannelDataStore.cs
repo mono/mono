@@ -11,6 +11,7 @@ using System.Collections;
 
 namespace System.Runtime.Remoting.Channels
 {
+	[Serializable]
 	public class ChannelDataStore : IChannelDataStore
 	{
 		string[] channelUris;

@@ -13,6 +13,7 @@ using System.Runtime.Remoting.Messaging;
 
 namespace System.Runtime.Remoting.Channels
 {
+	[Serializable]
 	internal class ChannelInfoStore : IChannelInfo
 	{
 		object [] data = null;
@@ -47,14 +48,22 @@ namespace System.Runtime.Remoting.Channels
 			// Locate a channel that can parse the url. This channel will be used to
 			// create the sink chain.
 
+			object[] channelDataArray = (object[])remoteChannelData;
+
 			foreach (IChannel c in registeredChannels) 
 			{
 				IChannelSender sender = c as IChannelSender;
-				
-				if (sender != null) 
-				{
-					IMessageSink sink = sender.CreateMessageSink (url, remoteChannelData, out objectUri);
+				if (c == null) continue;
+
+				if (channelDataArray == null) {
+					IMessageSink sink = sender.CreateMessageSink (url, null, out objectUri);
 					if (sink != null) return sink;		// URL is ok, this is the channel and the sink
+				}
+				else {
+					foreach (object data in channelDataArray) {
+						IMessageSink sink = sender.CreateMessageSink (url, data, out objectUri);
+						if (sink != null) return sink;		
+					}
 				}
 			}
 			objectUri = null;
@@ -97,16 +106,14 @@ namespace System.Runtime.Remoting.Channels
 			IMessage msg,
 			out IMessage replyMsg)
 		{
-			// TODO: put Identity in message
 			// TODO: Async processing
 
-			IMethodMessage call = (IMethodMessage)msg;
-			Identity identity = RemotingServices.GetIdentityForUri(call.Uri);
-			if (identity == null) throw new RemotingException ("No receiver for uri " + call.Uri);
+			replyMsg = SyncDispatchMessage (msg);
 
-			replyMsg = identity.Context.GetServerContextSinkChain().SyncProcessMessage (msg);
-
-			return ServerProcessing.Complete;
+			if (RemotingServices.IsOneWay (((IMethodMessage) msg).MethodBase))
+				return ServerProcessing.OneWay;
+			else
+				return ServerProcessing.Complete;
 		}
 
 		[MonoTODO]
@@ -145,7 +152,13 @@ namespace System.Runtime.Remoting.Channels
 		[MonoTODO]
 		public static IMessage SyncDispatchMessage (IMessage msg)
 		{
-			throw new NotImplementedException ();
+			// TODO: put Identity in message
+
+			IMethodMessage call = (IMethodMessage)msg;
+			Identity identity = RemotingServices.GetIdentityForUri(call.Uri);
+			if (identity == null) throw new RemotingException ("No receiver for uri " + call.Uri);
+
+			return identity.Context.GetServerContextSinkChain().SyncProcessMessage (msg);
 		}
 
 		public static void UnregisterChannel (IChannel chnl)

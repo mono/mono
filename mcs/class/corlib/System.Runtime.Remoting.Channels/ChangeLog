@@ -1,4 +1,9 @@
-2002-12-20  Lluis Sanchez Gual  <lsg@ctv.es>
+2002-12-26  Lluis Sanchez Gual  <lluis@ideary.com>
+
+	* ChannelServices.cs: small correction in CreateClientChannelSinkChain.
+	* ChannelDataStore.cs: added Serializable attribute.
+
+2002-12-20  Lluis Sanchez Gual  <lluis@ideary.com>
 
 	* ChannelServices.cs: added internal method for creating client 
 	  channel sink. Implemented some other methods.
