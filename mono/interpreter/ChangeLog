@@ -1,8 +1,9 @@
 2003-10-30  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* interp.c: (ves_exec_method_with_context)
-	we need to lookup internal calls now
-	don't free type in CEE_SIZEOF
+	we need to lookup internal calls now.
+	don't free type in CEE_SIZEOF.
+	fix CEE_NEWOBJ inside wrapper methods
 
 2003-10-24  Zoltan Varga  <vargaz@freemail.hu>
 
