@@ -4,8 +4,10 @@
 // Author:
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //   (partially based on CSharpCodeGenerator)
+//   Jochen Wezel (jwezel@compumaster.de)
 //
 // (C) 2003 Andreas Nahr
+// (C) 2003 Jochen Wezel
 //
 
 using System;
@@ -619,10 +621,10 @@ namespace Microsoft.VisualBasic
 			OutputMemberScopeModifier (attributes);
 
 			if (property.HasGet && (property.HasSet = false))
-				output.Write ("ReadOnly" );
+				output.Write ("ReadOnly " );
 
 			if (property.HasSet && (property.HasGet = false))
-				output.Write ("WriteOnly" );
+				output.Write ("WriteOnly " );
 
 			output.Write ("Property" );
 			
@@ -951,7 +953,7 @@ namespace Microsoft.VisualBasic
 				output.Write ("Protected ");
 				break;
 			case TypeAttributes.NestedFamORAssem:
-				output.Write ("Protected Friend");
+				output.Write ("Protected Friend ");
 				break;
 			case TypeAttributes.NestedFamANDAssem:
 				output.Write ("Friend ");
@@ -990,11 +992,46 @@ namespace Microsoft.VisualBasic
 			Output.Write (GetTypeOutput (type));
 		}
 
-		[MonoTODO ("not implemented")]
 		protected override string QuoteSnippetString (string value)
 		{
-			// FIXME: escape ASCII chars that are not code compatible (e.g. vbcrlf)
-			return value;
+			StringBuilder mySBuilder = new StringBuilder(value.Length);
+			mySBuilder.Append ("\"");
+			bool inQuotes = true;
+			for (int MyCounter = 0; MyCounter < value.Length; MyCounter++)
+			{
+				if (value[MyCounter] == 34) //quotation mark
+				{
+					if (!inQuotes)
+					{
+						mySBuilder.Append ("&\"");
+						inQuotes = true;
+					}
+					mySBuilder.Append (value[MyCounter]);
+					mySBuilder.Append (value[MyCounter]);
+				}
+				else if (value[MyCounter] >= 32) //standard ansi/unicode characters
+				{
+					if (!inQuotes)
+					{
+						mySBuilder.Append ("&\"");
+						inQuotes = true;
+					}
+					mySBuilder.Append (value[MyCounter]);
+				}
+				else //special chars, e.g. line break
+				{
+					if (inQuotes)
+					{ 
+						mySBuilder.Append ("\"");
+						inQuotes = false;
+					}
+					mySBuilder.Append ("&Microsoft.VisualBasic.ChrW(");
+					mySBuilder.Append ((int)value[MyCounter]); 
+					mySBuilder.Append (")");
+				}			
+			}
+			mySBuilder.Append ("\"");
+			return mySBuilder.ToString();
 		}
 
 		private void GenerateDeclaration (CodeTypeReference type, string name, CodeExpression initExpression)

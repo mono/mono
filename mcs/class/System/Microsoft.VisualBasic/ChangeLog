@@ -1,11 +1,20 @@
+2003-11-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* VBCodeGenerator.cs: some corrections regarding missing spaces in
+	generated code (e. g. "Property "). QuoteSnippetString implemented.
+	Patch by Jochen Wezel (jwezel@compumaster.de).
+
 2003-10-17  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 
-	* Microsoft.VisualBasic/VBCodeGenerator.cs: Sub or Function generation is switched by method.ReturnType being "System.Void"
+	* Microsoft.VisualBasic/VBCodeGenerator.cs: Sub or Function generation
+	is switched by method.ReturnType being "System.Void"
 
 2003-10-17  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 
-	* Microsoft.VisualBasic/VBCodeCompiler.cs: Inserts "--" before file names block
-	* Microsoft.VisualBasic/VBCodeGenerator.cs: Indexer should be ".Item(xx)"
+	* Microsoft.VisualBasic/VBCodeCompiler.cs: Inserts "--" before file
+	names block
+	* Microsoft.VisualBasic/VBCodeGenerator.cs: Indexer should be
+	".Item(xx)"
 
 2003-10-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
