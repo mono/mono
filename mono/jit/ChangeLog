@@ -1,3 +1,7 @@
+2003-04-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* jit.c (check_inlining): honor the NOINLING atttribute.
+
 2003-03-31  Martin Baulig  <martin@ximian.com>
 
 	* debug.h (MonoDebuggerEvent): Removed
