@@ -214,6 +214,11 @@ namespace System {
 		{
 			return Boolean.Parse (value);
 		}
+
+		public static bool ToBoolean (string value, IFormatProvider provider)
+		{
+			return Boolean.Parse (value); // provider is ignored.
+		}
 	
 		public static bool ToBoolean (uint value) 
 		{ 
@@ -233,6 +238,11 @@ namespace System {
 		public static bool ToBoolean (object value)
 		{
 			return (bool) ChangeType (value, typeof (System.Boolean));
+		}
+
+		public static bool ToBoolean (object value, IFormatProvider provider)
+		{
+			return (bool) ChangeType (value, typeof (System.Boolean), provider);
 		}
 
 		// ========== Byte Conversions ========== //
@@ -255,8 +265,13 @@ namespace System {
 
 			return (byte)value;
 		}
+
+		public static byte ToByte (DateTime value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
+		}
 	
-		public static byte ToByte (decimal value) 
+		public static byte ToByte (decimal value)
 		{ 
 			if (value > Byte.MaxValue || value < Byte.MinValue)
 				throw new OverflowException (Locale.GetText (
@@ -377,8 +392,18 @@ namespace System {
 			return (byte) ChangeType (value, typeof (System.Byte));
 		}
 
+		public static byte ToByte (object value, IFormatProvider provider)
+		{
+			return (byte) ChangeType (value, typeof (System.Byte), provider);
+		}
+
 		// ========== Char Conversions ========== //
-	
+
+		public static char ToChar (bool value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
+		}
+		
 		public static char ToChar (byte value) 
 		{ 
 			return (char)value;
@@ -389,6 +414,21 @@ namespace System {
 			return value;
 		}
 
+		public static char ToChar (DateTime value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
+		}
+
+		public static char ToChar (decimal value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
+		}
+
+		public static char ToChar (double value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
+		}
+		
 		public static char ToChar (int value) 
 		{ 
 			if (value > Char.MaxValue || value < Char.MinValue)
@@ -405,6 +445,11 @@ namespace System {
 					"Value is greater than Char.MaxValue or less than Char.MinValue"));
 	  
 			return (char)value; 
+		}
+
+		public static char ToChar (float value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
 		}
 
 		public static char ToChar (sbyte value) 
@@ -428,6 +473,11 @@ namespace System {
 		public static char ToChar (string value) 
 		{
 			return Char.Parse (value);
+		}
+
+		public static char ToChar (string value, IFormatProvider provider)
+		{
+			return Char.Parse (value); // provider is ignored.
 		}
 	
 		public static char ToChar (uint value) 
@@ -460,6 +510,14 @@ namespace System {
 		public static char ToChar (object value)
 		{
 			return (char) ChangeType (value, typeof (System.Char));
+		}
+
+		public static char ToChar (object value, IFormatProvider provider)
+		{
+			if (value == null)
+				return Char.MinValue;
+			else
+				return (char) ChangeType (value, typeof (System.Char), provider);
 		}
 
 		// ========== DateTime Conversions ========== //
@@ -515,6 +573,11 @@ namespace System {
 		}
 
 		public static DateTime ToDateTime (long value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
+		}
+
+		public static DateTime ToDateTime (float value)
 		{
 			throw new InvalidCastException ("This conversion is not supported.");
 		}
@@ -847,9 +910,6 @@ namespace System {
 		
 		public static short ToInt16 (string value, int fromBase)
 		{
-			if (NotValidBase (fromBase))
-				throw new ArgumentException ("fromBase is not valid.");
-			
 			return (short) ConvertFromBase (value, fromBase);
 		}
 
@@ -983,9 +1043,6 @@ namespace System {
 		
 		public static int ToInt32 (string value, int fromBase)
 		{
-			if (NotValidBase (fromBase))
-				throw new ArgumentException ("fromBase is not valid.");
-			
 			return ConvertFromBase (value, fromBase);
 		}
 		
@@ -1064,7 +1121,7 @@ namespace System {
 					"Value is greater than Int64.MaxValue or less than Int64.MinValue"));
 	  
 			// Returned Even-Rounded
-			return (long)(Math.Round (value));	  
+			return (long)(Math.Round (value));
 		}
  
 		public static long ToInt64 (float value) 
@@ -1267,9 +1324,6 @@ namespace System {
 		[CLSCompliant (false)]
 		public static sbyte ToSByte (string value, int fromBase)
 		{
-			if (NotValidBase (fromBase))
-				throw new ArgumentException ("fromBase is not valid.");
-			
 			return (sbyte) ConvertFromBase (value, fromBase);
 		}
 		
@@ -1325,6 +1379,11 @@ namespace System {
 		public static float ToSingle (byte value) 
 		{ 
 			return (float)value; 
+		}
+
+		public static float ToSingle (Char value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
 		}
 
 		public static float ToSingle (DateTime value)
@@ -1418,6 +1477,11 @@ namespace System {
 		{ 
 			return value.ToString (); 
 		}
+
+		public static string ToString (bool value, IFormatProvider provider)
+		{
+			return value.ToString (); // the same as ToString (bool).
+		}
 	
 		public static string ToString (byte value) 
 		{ 
@@ -1432,6 +1496,11 @@ namespace System {
 		public static string ToString (char value) 
 		{ 
 			return value.ToString (); 
+		}
+
+		public static string ToString (char value, IFormatProvider provider)
+		{
+			return value.ToString (); // the same as ToString (char)
 		}
 
 		public static string ToString (DateTime value) 
@@ -1479,6 +1548,11 @@ namespace System {
 			return value.ToString (); 
 		}
 
+		public static string ToString (int value, int fromBase)
+		{
+			return (ConvertFromBase (value.ToString (), fromBase)).ToString ();
+		}
+
 		public static string ToString (int value, IFormatProvider provider) 
 		{ 
 			return value.ToString (provider); 
@@ -1487,6 +1561,11 @@ namespace System {
 		public static string ToString (long value) 
 		{ 
 			return value.ToString (); 
+		}
+
+		public static string ToString (long value, int fromBase)
+		{
+			return (ConvertFromBase (value.ToString (), fromBase)).ToString ();
 		}
 
 		public static string ToString (long value, IFormatProvider provider) 
@@ -1519,6 +1598,11 @@ namespace System {
 			return value.ToString (); 
 		}
 
+		public static string ToString (short value, int fromBase)
+		{
+			return (ConvertFromBase (value.ToString (), fromBase)).ToString ();
+		}
+
 		public static string ToString (short value, IFormatProvider provider) 
 		{ 
 			return value.ToString (provider); 
@@ -1527,6 +1611,11 @@ namespace System {
 		public static string ToString (string value) 
 		{
 			return value;
+		}
+
+		public static string ToString (string value, IFormatProvider provider)
+		{
+			return value; // provider is ignored.
 		}
 
 		[CLSCompliant (false)]
@@ -1679,9 +1768,6 @@ namespace System {
 		[CLSCompliant (false)]
 		public static ushort ToUInt16 (string value, int fromBase) 
 		{
-			if (NotValidBase (fromBase))
-				throw new ArgumentException ("fromBase is not valid.");
-			
 			return (ushort) ConvertFromBase (value, fromBase);
 		} 
 
@@ -1835,6 +1921,12 @@ namespace System {
 		}
 
 		[CLSCompliant (false)]
+		public static uint ToUInt32 (string value, int fromBase)
+		{
+			return (uint) ConvertFromBase (value, fromBase);
+		}
+
+		[CLSCompliant (false)]
 		public static uint ToUInt32 (uint value) 
 		{ 
 			return value; 
@@ -1890,7 +1982,7 @@ namespace System {
 		}
 
 		[CLSCompliant (false)]
-		public static ulong ToUint64 (DateTime value)
+		public static ulong ToUInt64 (DateTime value)
 		{
 			throw new InvalidCastException ("The conversion is not supported.");
 		}
@@ -1981,11 +2073,8 @@ namespace System {
 		}
 
 		[CLSCompliant (false)]
-		public static ulong ToUint64 (string value, int fromBase)
+		public static ulong ToUInt64 (string value, int fromBase)
 		{
-			if (NotValidBase (fromBase))
-				throw new ArgumentException ("fromBase is not valid.");
-
 			return (ulong) ConvertFromBase (value, fromBase);
 		}					      
 
@@ -2020,7 +2109,7 @@ namespace System {
 		}		
 		
 
-		// ========== Conversion / Helper Fucntions ========== //
+		// ========== Conversion / Helper Functions ========== //
 
 		public static object ChangeType (object value, Type conversionType)
 		{
@@ -2059,6 +2148,9 @@ namespace System {
 
 		private static int ConvertFromBase (string value, int fromBase)
 		{
+			if (NotValidBase (fromBase))
+				throw new ArgumentException ("fromBase is not valid.");
+			
 			int result = 0;
 
 			foreach (char c in value) {
