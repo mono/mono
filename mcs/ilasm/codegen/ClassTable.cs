@@ -86,14 +86,23 @@ namespace Mono.ILASM {
 			TypeAttr attr, Location location) 
 		{
 			string full_name = String.Format ("{0}.{1}", name_space, name);
-			ClassTableItem item = table[full_name] as ClassTableItem;
 			
-			if ((item != null) && (item.Defined)) {
-				throw new Exception (String.Format ("Class: {0} defined in multiple locations.", 
-					full_name));
-			}
-			
+			CheckExists (full_name);				
+
 			ClassDef klass = pefile.AddClass (attr, name_space, name);
+			AddDefined (full_name, klass, location);
+
+			return klass;
+		}
+
+		public ClassDef AddDefinition (string name_space, string name, 
+			TypeAttr attr, Class parent, Location location) 
+		{
+			string full_name = String.Format ("{0}.{1}", name_space, name);
+
+			CheckExists (full_name);				
+
+			ClassDef klass = pefile.AddClass (attr, name_space, name, parent);
 			AddDefined (full_name, klass, location);
 
 			return klass;
@@ -110,6 +119,19 @@ namespace Mono.ILASM {
 				if (table_item.Defined)
 					continue;
 				throw new Exception (String.Format ("Type: {0} is not defined.", dic_entry.Key));
+			}
+		}
+
+		/// <summary>
+		///  If a type is allready defined throw an Error
+		/// </summary>
+		protected void CheckExists (string full_name) 
+		{
+			ClassTableItem item = table[full_name] as ClassTableItem;
+			
+			if ((item != null) && (item.Defined)) {
+				throw new Exception (String.Format ("Class: {0} defined in multiple locations.", 
+					full_name));
 			}
 		}
 

@@ -1,5 +1,9 @@
 2003-03-06 Jackson Harper <jackson@latitudegeo.com>
 
+	* ClassTable.cs, CodeGen.cs: Add methods to allow types to inherit from another type.
+
+2003-03-06 Jackson Harper <jackson@latitudegeo.com>
+
 	* ClassTable.cs: Add method to check for undefined types
 
 2003-03-06 Jackson Harper <jackson@latitudegeo.com>
