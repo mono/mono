@@ -5748,6 +5748,9 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return null;
 
+			if (Expr is Constant)
+				return Expr;
+			
 			eclass = Expr.eclass;
 			type = Expr.Type;
 			return this;
@@ -5791,6 +5794,9 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return null;
 
+			if (Expr is Constant)
+				return Expr;
+			
 			eclass = Expr.eclass;
 			type = Expr.Type;
 			return this;

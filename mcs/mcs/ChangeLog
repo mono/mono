@@ -1,3 +1,8 @@
+2002-09-12  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (CheckedExpr, UnCheckedExpr): If we have a
+	constant inside, return it.
+
 2002-09-12  Martin Baulig  <martin@gnome.org>
 
 	* typemanager.cs (TypeManager.IsNestedChildOf): New method.
