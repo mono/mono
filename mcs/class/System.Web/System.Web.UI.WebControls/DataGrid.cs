@@ -652,7 +652,7 @@ namespace System.Web.UI.WebControls
 				string cmd = ea.CommandName;
 				if(String.Compare(cmd, "select", true) == 0)
 				{
-					SelectedIndex = ea.Item.SelectedIndex;
+					SelectedIndex = ea.Item.ItemIndex;
 					OnSelectedIndexChanged(EventArgs.Empty);
 				} else if(String.Compare(cmd,"page", true) == 0)
 				{
