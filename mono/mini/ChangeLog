@@ -6,6 +6,9 @@
 	mono_type_create_from_typespec, since it is put into an internal cache
 	by the function. Fixes pointer.exe.
 
+	* mini.c tramp-x86.c tramp-sparc.c tramp-ppc.c: Use the normal 
+	trampolines for icalls and pinvokes as well. Fixes #33569.
+
 2003-10-24  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c: Update after appdomain changes.
