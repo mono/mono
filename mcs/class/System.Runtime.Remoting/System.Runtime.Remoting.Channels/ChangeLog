@@ -1,3 +1,18 @@
+2003-11-16  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* BinaryClientFormatterSink.cs, BinaryClientFormatterSinkProvider.cs,
+	  BinaryServerFormatterSink.cs, BinaryServerFormatterSinkProvider.cs:
+	  Moved formatter code to BinaryCore. This adds support for the properties
+	  "includeVersion" and "strictBinding" to the binary formatter.
+	* BinaryCore.cs: New file. Contains some code used by the binary formatter sinks.
+	* SoapClientFormatterSink.cs, SoapClientFormatterSinkProvider.cs,
+	  SoapServerFormatterSink.cs, SoapServerFormatterSinkProvider.cs
+	  Moved formatter code to BinaryCore. This adds support for the properties
+	  "includeVersion" and "strictBinding" to the soap formatter.
+	* SoapCore.cs: New file. Contains some code used by the soap formatter sinks.
+	* ChannelCore.cs: New file. Implements a simple type binder used by the
+	  formatter sinks.
+
 2003-11-12  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* BinaryServerFormatterSink.cs: Removed fixme.

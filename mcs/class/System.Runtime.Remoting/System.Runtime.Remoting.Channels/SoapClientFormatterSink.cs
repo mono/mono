@@ -21,16 +21,17 @@ namespace System.Runtime.Remoting.Channels
 		IMessageSink, IClientChannelSink, IChannelSinkBase
 	{
 		private IClientChannelSink _nextChannelSink;
-		private SoapFormatter _serializationFormatter;
-		private SoapFormatter _deserializationFormatter;
-		
+		private SoapCore _soapCore = SoapCore.DefaultInstance;
+
 		public SoapClientFormatterSink (IClientChannelSink sink)
 		{
 			_nextChannelSink = sink;
-			RemotingSurrogateSelector surrogateSelector = new RemotingSurrogateSelector();
-			StreamingContext context = new StreamingContext(StreamingContextStates.Remoting);
-			_serializationFormatter = new SoapFormatter(surrogateSelector, context);
-			_deserializationFormatter = new SoapFormatter(null, context);
+		}
+		
+		internal SoapCore SoapCore
+		{
+			get { return _soapCore; }
+			set { _soapCore = value; }
 		}
 		
 		// IClientChannelSink
@@ -139,7 +140,7 @@ namespace System.Runtime.Remoting.Channels
 			if(requestStream == null) requestStream = new MemoryStream();
 			
 			// Serialize the message into the stream
-			_serializationFormatter.Serialize(requestStream, soapMsg, null);
+			_soapCore.Serializer.Serialize(requestStream, soapMsg, null);
 			
 			if(requestStream is MemoryStream){
 				requestStream.Position = 0;
@@ -147,10 +148,12 @@ namespace System.Runtime.Remoting.Channels
 		}
 		
 		
-		private IMessage DeserializeMessage(Stream responseStream, ITransportHeaders responseHeaders,IMethodCallMessage mcm, SoapMessageFormatter soapMsgFormatter) {
+		private IMessage DeserializeMessage(Stream responseStream, ITransportHeaders responseHeaders,IMethodCallMessage mcm, SoapMessageFormatter soapMsgFormatter) 
+		{
+			SoapFormatter fm = _soapCore.GetSafeDeserializer ();
 			SoapMessage rtnMessage = new SoapMessage();
-			_deserializationFormatter.TopObject = rtnMessage;
-			object objReturn = _deserializationFormatter.Deserialize(responseStream);
+			fm.TopObject = rtnMessage;
+			object objReturn = fm.Deserialize(responseStream);
 			
 			return soapMsgFormatter.FormatResponse((ISoapMessage) objReturn, mcm);
 		}

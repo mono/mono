@@ -14,15 +14,17 @@ namespace System.Runtime.Remoting.Channels
 		IServerFormatterSinkProvider, IServerChannelSinkProvider
 	{
 		IServerChannelSinkProvider next = null;
+		BinaryCore _binaryCore;
 
 		public BinaryServerFormatterSinkProvider ()
 		{
+			_binaryCore = BinaryCore.DefaultInstance;
 		}
 
-		[MonoTODO]
 		public BinaryServerFormatterSinkProvider (IDictionary properties,
 							  ICollection providerData)
 		{
+			_binaryCore = new BinaryCore (properties);
 		}
 
 		public IServerChannelSinkProvider Next
@@ -47,11 +49,11 @@ namespace System.Runtime.Remoting.Channels
 			result = new BinaryServerFormatterSink (BinaryServerFormatterSink.Protocol.Other,
 								next_sink, channel);
 
-			// set properties on result
-			
+			result.BinaryCore = _binaryCore;
 			return result;
 		}
 
+		[MonoTODO]
 		public void GetChannelData (IChannelDataStore channelData)
 		{
 			// no idea why we need this

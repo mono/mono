@@ -24,22 +24,12 @@ namespace System.Runtime.Remoting.Channels {
 			Other = 1,
 		}
 
-		static BinaryFormatter _serializationFormatter;
-		static BinaryFormatter _deserializationFormatter;
+		BinaryCore _binaryCore = BinaryCore.DefaultInstance;
 
 		IServerChannelSink next_sink;
 		Protocol protocol;
 		IChannelReceiver receiver;
 
-		static BinaryServerFormatterSink()
-		{
-			RemotingSurrogateSelector surrogateSelector = new RemotingSurrogateSelector ();
-			StreamingContext context = new StreamingContext(StreamingContextStates.Remoting, null);
-
-			_serializationFormatter = new BinaryFormatter (surrogateSelector, context);
-			_deserializationFormatter = new BinaryFormatter (null, context);
-		}
-		
 		public BinaryServerFormatterSink (BinaryServerFormatterSink.Protocol protocol,
 						  IServerChannelSink nextSink,
 						  IChannelReceiver receiver)
@@ -49,6 +39,12 @@ namespace System.Runtime.Remoting.Channels {
 			this.receiver = receiver;
 		}
 
+		internal BinaryCore BinaryCore
+		{
+			get { return _binaryCore; }
+			set { _binaryCore = value; }
+		}
+		
 		public IServerChannelSink NextChannelSink {
 			get {
 				return next_sink;
@@ -69,7 +65,7 @@ namespace System.Runtime.Remoting.Channels {
 			if (sinkStack != null) stream = sinkStack.GetResponseStream (message, responseHeaders);
 			if (stream == null) stream = new MemoryStream();
 
-			_serializationFormatter.Serialize (stream, message, null);
+			_binaryCore.Serializer.Serialize (stream, message, null);
 			if (stream is MemoryStream) stream.Position = 0;
 
 			sinkStack.AsyncProcessResponse (message, responseHeaders, stream);
@@ -96,7 +92,7 @@ namespace System.Runtime.Remoting.Channels {
 				if (uri == null) uri = url;
 
 				MethodCallHeaderHandler mhh = new MethodCallHeaderHandler(uri);
-				requestMsg = (IMessage) _deserializationFormatter.Deserialize (requestStream, new HeaderHandler(mhh.HandleHeaders));
+				requestMsg = (IMessage) _binaryCore.Deserializer.Deserialize (requestStream, new HeaderHandler(mhh.HandleHeaders));
 
 				res = next_sink.ProcessMessage (sinkStack, requestMsg, requestHeaders, null, out responseMsg, out responseHeaders, out responseStream);
 			}
@@ -116,7 +112,7 @@ namespace System.Runtime.Remoting.Channels {
 				if (sinkStack != null) responseStream = sinkStack.GetResponseStream (responseMsg, responseHeaders);
 				if (responseStream == null) responseStream = new MemoryStream();
 
-				_serializationFormatter.Serialize (responseStream, responseMsg);
+				_binaryCore.Serializer.Serialize (responseStream, responseMsg);
 				if (responseStream is MemoryStream) responseStream.Position = 0;
 
 				sinkStack.Pop (this);

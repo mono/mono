@@ -8,21 +8,21 @@ namespace System.Runtime.Remoting.Channels {
 		IClientChannelSinkProvider 
 	{
 		private IClientChannelSinkProvider _nextClientChannelSinkProvider;
-		private IDictionary _properties;
-		private ICollection _providerData;
+		SoapCore _soapCore;
 		
-		public SoapClientFormatterSinkProvider() {
-			
+		public SoapClientFormatterSinkProvider() 
+		{
+			_soapCore = SoapCore.DefaultInstance;
 		}
 		
 		public SoapClientFormatterSinkProvider(IDictionary properties,
 		                                       ICollection providerData)
 		{
-			_properties = properties;
-			_providerData = providerData;
+			_soapCore = new SoapCore (properties);
 		}
 		
-		public virtual IClientChannelSinkProvider Next {
+		public virtual IClientChannelSinkProvider Next 
+		{
 			get { return _nextClientChannelSinkProvider;}
 			set { _nextClientChannelSinkProvider = value;}
 		}
@@ -33,9 +33,9 @@ namespace System.Runtime.Remoting.Channels {
 		{
 			IClientChannelSink _nextSink = _nextClientChannelSinkProvider.CreateSink(channel, url, remoteChannelData);
 			
-			IClientChannelSink scfs = new SoapClientFormatterSink(_nextSink); 
+			SoapClientFormatterSink scfs = new SoapClientFormatterSink(_nextSink); 
+			scfs.SoapCore = _soapCore;
 			return scfs;
-			
 		}
 	}
 }

@@ -14,20 +14,17 @@ namespace System.Runtime.Remoting.Channels
 		IClientFormatterSinkProvider, IClientChannelSinkProvider
 	{
 		IClientChannelSinkProvider next = null;
+		BinaryCore _binaryCore;
 
-		// add any sink properties here (private fields)
-		
 		public BinaryClientFormatterSinkProvider ()
 		{
-			// nothing to do
+			_binaryCore = BinaryCore.DefaultInstance;
 		}
 
 		public BinaryClientFormatterSinkProvider (IDictionary properties,
 							  ICollection providerData)
-	        {
-			// copy the contained properties to private fields
-			
-			// add a check that there is no providerData 
+		{
+			_binaryCore = new BinaryCore (properties);
 		}
 
 		public IClientChannelSinkProvider Next
@@ -52,8 +49,7 @@ namespace System.Runtime.Remoting.Channels
 				next_sink = next.CreateSink (channel, url, remoteChannelData);
 			
 			result = new BinaryClientFormatterSink (next_sink);
-
-			// set properties on the newly creates sink
+			result.BinaryCore = _binaryCore;
 
 			return result;
 		}		

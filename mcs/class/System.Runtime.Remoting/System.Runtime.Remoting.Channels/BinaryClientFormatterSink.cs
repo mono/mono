@@ -19,30 +19,24 @@ namespace System.Runtime.Remoting.Channels
 	public class BinaryClientFormatterSink : IClientFormatterSink,
 		IMessageSink, IClientChannelSink, IChannelSinkBase
 	{
-		static BinaryFormatter _serializationFormatter;
-		static BinaryFormatter _deserializationFormatter;
+		BinaryCore _binaryCore = BinaryCore.DefaultInstance;
+		IClientChannelSink _nextInChain;
 
-		IClientChannelSink nextInChain;
-
-		static BinaryClientFormatterSink ()
-		{
-			RemotingSurrogateSelector surrogateSelector = new RemotingSurrogateSelector ();
-			StreamingContext context = new StreamingContext(StreamingContextStates.Remoting, null);
-
-			_serializationFormatter = new BinaryFormatter (surrogateSelector, context);
-			_deserializationFormatter = new BinaryFormatter (null, context);
-		}
-
-		
 		public BinaryClientFormatterSink (IClientChannelSink nextSink)
 		{
-			nextInChain = nextSink;
+			_nextInChain = nextSink;
+		}
+
+		internal BinaryCore BinaryCore
+		{
+			get { return _binaryCore; }
+			set { _binaryCore = value; }
 		}
 
 		public IClientChannelSink NextChannelSink
 		{
 			get {
-				return nextInChain;
+				return _nextInChain;
 			}
 		}
 
@@ -76,7 +70,7 @@ namespace System.Runtime.Remoting.Channels
 						  ITransportHeaders headers,
 						  Stream stream)
 		{
-			IMessage replyMessage = (IMessage)_deserializationFormatter.DeserializeMethodResponse (stream, null, (IMethodCallMessage)state);
+			IMessage replyMessage = (IMessage)_binaryCore.Deserializer.DeserializeMethodResponse (stream, null, (IMethodCallMessage)state);
 			sinkStack.DispatchReplyMessage (replyMessage);
 		}
 
@@ -104,16 +98,16 @@ namespace System.Runtime.Remoting.Channels
 			ITransportHeaders transportHeaders = new TransportHeaders();
 			transportHeaders[CommonTransportKeys.RequestUri] = ((IMethodCallMessage)msg).Uri;
 
-			Stream stream = nextInChain.GetRequestStream(msg, transportHeaders);
+			Stream stream = _nextInChain.GetRequestStream(msg, transportHeaders);
 			if (stream == null) stream = new MemoryStream ();
 
-			_serializationFormatter.Serialize (stream, msg, null);
+			_binaryCore.Serializer.Serialize (stream, msg, null);
 			if (stream is MemoryStream) stream.Position = 0;
 
 			ClientChannelSinkStack stack = new ClientChannelSinkStack(replySink);
 			stack.Push (this, msg);
 
-			nextInChain.AsyncProcessRequest (stack, msg, transportHeaders, stream);
+			_nextInChain.AsyncProcessRequest (stack, msg, transportHeaders, stream);
 
 			// FIXME: No idea about how to implement IMessageCtrl
 			return null;	
@@ -127,23 +121,23 @@ namespace System.Runtime.Remoting.Channels
 				call_headers[CommonTransportKeys.RequestUri] = ((IMethodCallMessage)msg).Uri;
 				call_headers["Content-Type"] = "application/octet-stream";
 
-				Stream call_stream = nextInChain.GetRequestStream(msg, call_headers);
+				Stream call_stream = _nextInChain.GetRequestStream(msg, call_headers);
 				if (call_stream == null) call_stream = new MemoryStream ();
 
 				// Serialize msg to the stream
 
-				_serializationFormatter.Serialize (call_stream, msg, null);
+				_binaryCore.Serializer.Serialize (call_stream, msg, null);
 				if (call_stream is MemoryStream) call_stream.Position = 0;
 
 				Stream response_stream;
 				ITransportHeaders response_headers;
 
-				nextInChain.ProcessMessage (msg, call_headers, call_stream, out response_headers,
+				_nextInChain.ProcessMessage (msg, call_headers, call_stream, out response_headers,
 							    out response_stream);
 
 				// Deserialize response_stream
 
-				return (IMessage) _deserializationFormatter.DeserializeMethodResponse (response_stream, null, (IMethodCallMessage)msg);
+				return (IMessage) _binaryCore.Deserializer.DeserializeMethodResponse (response_stream, null, (IMethodCallMessage)msg);
 				
 			} catch (Exception e) {
 				 return new ReturnMessage (e, (IMethodCallMessage)msg);

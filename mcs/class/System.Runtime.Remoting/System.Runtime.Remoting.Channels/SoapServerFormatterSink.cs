@@ -30,8 +30,7 @@ namespace System.Runtime.Remoting.Channels {
 	{
 		IServerChannelSink next_sink;
 		IChannelReceiver _receiver;
-		private SoapFormatter _serializationFormatter;
-		private SoapFormatter _deserializationFormatter;
+		private SoapCore _soapCore = SoapCore.DefaultInstance;
 		
 		public SoapServerFormatterSink (SoapServerFormatterSink.Protocol protocol,
 						IServerChannelSink nextSink,
@@ -39,12 +38,14 @@ namespace System.Runtime.Remoting.Channels {
 		{
 			this.next_sink = nextSink;
 			_receiver = receiver;
-			RemotingSurrogateSelector surrogateSelector = new RemotingSurrogateSelector();
-			StreamingContext context = new StreamingContext(StreamingContextStates.Other);
-			_serializationFormatter = new SoapFormatter(surrogateSelector, context);
-			_deserializationFormatter = new SoapFormatter(null, context);
 		}
 
+		internal SoapCore SoapCore
+		{
+			get { return _soapCore; }
+			set { _soapCore = value; }
+		}
+		
 		/// <summary>
 		//	Gets the next channel sink in the channel sink chain
 		//  </summary>
@@ -76,7 +77,7 @@ namespace System.Runtime.Remoting.Channels {
 
 			SoapMessage soapMessage = (SoapMessage) soapMsgFormatter.BuildSoapMessageFromMethodResponse((IMethodReturnMessage)msg, out responseHeaders);
 
-			_serializationFormatter.Serialize(stream, soapMessage, null);
+			_soapCore.Serializer.Serialize(stream, soapMessage, null);
 
 			if(stream is MemoryStream) stream.Position = 0;
 		}
@@ -109,10 +110,11 @@ namespace System.Runtime.Remoting.Channels {
 				Type serverType = RemotingServices.GetServerTypeForUri(uri);
 				if (serverType == null) throw new RemotingException ("No receiver for uri " + uri);
 			
+				SoapFormatter fm = _soapCore.GetSafeDeserializer ();
 				SoapMessage soapMessage = new SoapMessage();
-				_deserializationFormatter.TopObject = soapMessage;
+				fm.TopObject = soapMessage;
 				requestStream.Position = 0;
-				_deserializationFormatter.Deserialize(requestStream);
+				fm.Deserialize(requestStream);
 
 				requestMsg = soapMsgFormatter.BuildMethodCallFromSoapMessage(soapMessage, uri);
 				
@@ -123,7 +125,7 @@ namespace System.Runtime.Remoting.Channels {
 
 						object rtnMessageObject = soapMsgFormatter.BuildSoapMessageFromMethodResponse((IMethodReturnMessage) responseMsg, out responseHeaders);
 						responseStream = new MemoryStream();
-						_serializationFormatter.Serialize(responseStream, rtnMessageObject);
+						_soapCore.Serializer.Serialize(responseStream, rtnMessageObject);
 					}
 				}
 			}
@@ -132,7 +134,7 @@ namespace System.Runtime.Remoting.Channels {
 				responseMsg = (IMethodReturnMessage)new ReturnMessage(e, (IMethodCallMessage)requestMsg);
 				object rtnMessageObject = soapMsgFormatter.BuildSoapMessageFromMethodResponse((IMethodReturnMessage) responseMsg, out responseHeaders);
 				responseStream = new MemoryStream();
-				_serializationFormatter.Serialize(responseStream, rtnMessageObject);
+				_soapCore.Serializer.Serialize(responseStream, rtnMessageObject);
 				sp = ServerProcessing.Complete;
 			}
 

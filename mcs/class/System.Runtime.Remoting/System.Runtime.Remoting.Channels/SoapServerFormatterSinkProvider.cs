@@ -14,32 +14,31 @@ namespace System.Runtime.Remoting.Channels
 		IServerFormatterSinkProvider, IServerChannelSinkProvider
 	{
 		private IServerChannelSinkProvider _next;
+		SoapCore _soapCore;
 
 		public SoapServerFormatterSinkProvider ()
 		{
+			_soapCore = SoapCore.DefaultInstance;
 		}
 
-		[MonoTODO]
 		public SoapServerFormatterSinkProvider (IDictionary properties,
 							ICollection providerData)
 		{
+			_soapCore = new SoapCore (properties);
 		}
 
 		public IServerChannelSinkProvider Next
 		{
-			get {
-				return _next;
-			}
+			get { return _next;	}
 
-			set {
-				_next = value;
-			}
+			set { _next = value; }
 		}
 
 		public IServerChannelSink CreateSink (IChannelReceiver channel)
 		{
 			IServerChannelSink chain = _next.CreateSink(channel);
-			IServerChannelSink sinkFormatter = new SoapServerFormatterSink(SoapServerFormatterSink.Protocol.Http, chain, channel);
+			SoapServerFormatterSink sinkFormatter = new SoapServerFormatterSink(SoapServerFormatterSink.Protocol.Http, chain, channel);
+			sinkFormatter.SoapCore = _soapCore;
 			
 			return sinkFormatter;
 		}
