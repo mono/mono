@@ -1,0 +1,5 @@
+2005-01-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile.am os.c jni.h jni.c: New files. This is a copy of the
+	'native' module in IKVM CVS, placed here so IKVM users don't need to
+	copy/install the native library.
