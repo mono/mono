@@ -15,14 +15,6 @@
  * 	./test-invoke invoke.exe
  */
 
-typedef struct
-{
-	MonoDomain *domain;
-	const char *file;
-	int argc;
-	char **argv;
-} MainThreadArgs;
-
 static void
 access_valuetype_field (MonoObject *obj)
 {
@@ -298,17 +290,15 @@ create_object (MonoDomain *domain, MonoImage *image)
 	more_methods (domain);
 }
 
-static void main_thread_handler (gpointer user_data)
+static void main_function (MonoDomain *domain, const char *file, int argc, char **argv)
 {
-	MainThreadArgs *main_args=(MainThreadArgs *)user_data;
 	MonoAssembly *assembly;
 
 	/* Loading an assembly makes the runtime setup everything
 	 * needed to execute it. If we're just interested in the metadata
 	 * we'd use mono_image_load (), instead and we'd get a MonoImage*.
 	 */
-	assembly = mono_domain_assembly_open (main_args->domain,
-					      main_args->file);
+	assembly = mono_domain_assembly_open (domain, file);
 	if (!assembly)
 		exit (2);
 	/*
@@ -316,10 +306,9 @@ static void main_thread_handler (gpointer user_data)
 	 * The return value needs to be looked up from
 	 * System.Environment.ExitCode.
 	 */
-	mono_jit_exec (main_args->domain, assembly, main_args->argc,
-		       main_args->argv);
+	mono_jit_exec (domain, assembly, argc, argv);
 
-	create_object (main_args->domain, mono_assembly_get_image (assembly));
+	create_object (domain, mono_assembly_get_image (assembly));
 }
 
 int 
@@ -327,7 +316,6 @@ main (int argc, char* argv[]) {
 	MonoDomain *domain;
 	const char *file;
 	int retval;
-	MainThreadArgs main_args;
 	
 	if (argc < 2){
 		fprintf (stderr, "Please provide an assembly to load\n");
@@ -340,15 +328,9 @@ main (int argc, char* argv[]) {
 	 */
 	domain = mono_jit_init (file);
 
-	main_args.domain=domain;
-	main_args.file=file;
-	main_args.argc=argc-1;
-	main_args.argv=argv+1;
-	
-	mono_runtime_exec_managed_code (domain, main_thread_handler,
-					&main_args);
-	
-	retval=mono_environment_exitcode_get ();
+	main_function (domain, file, argc - 1, argv + 1);
+
+	retval = mono_environment_exitcode_get ();
 	
 	mono_jit_cleanup (domain);
 	return retval;
