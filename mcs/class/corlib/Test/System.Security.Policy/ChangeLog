@@ -1,3 +1,8 @@
+2003-07-03  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ZoneTest.cs: New. Test everything except the unimplemented static 
+	CreateFromUrl method.
+
 2003-04-23  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* PublisherTest.cs: Updated to NUnit2 style.
