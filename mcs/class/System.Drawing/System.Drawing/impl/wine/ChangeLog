@@ -1,3 +1,6 @@
+2003-08-24 Alexandre Pigolkine
+	* Graphics.cs 			Clear, DrawImage functions
+
 2003-08-23 Alexandre Pigolkine
 	* Bitmap.cs 			set ImageFormat and PixelFormat in contstuctors
 	* win32Enums.cs		

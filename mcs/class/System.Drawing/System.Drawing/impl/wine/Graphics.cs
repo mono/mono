@@ -104,7 +104,18 @@ namespace System.Drawing
 			[MonoTODO]
 			void IGraphics.Clear (Color color)
 			{
-				throw new NotImplementedException ();
+				Size sz = new Size(0, 0);
+				switch(type_) {
+					case GraphicsType.fromHwnd:
+						//FIXME: get window size
+						break;
+					case GraphicsType.fromHdc:
+						break;
+					case GraphicsType.fromImage:
+						sz = ((IImage)initializedFromImage_).Size;
+						break;
+				}
+				FillRectangle (new SolidBrush (color), 0, 0, sz.Width, sz.Height);
 			}
 
 			[MonoTODO]
@@ -370,7 +381,20 @@ namespace System.Drawing
 			[MonoTODO]
 			void IGraphics.DrawImage (System.Drawing.Image image, Rectangle destRect, Rectangle srcRect, GraphicsUnit srcUnit)
 			{
-				throw new NotImplementedException ();
+				Image wineImage = ConvertImage(image);
+				Graphics imageGraphics = wineImage.selectedIntoGraphics_;
+				if( imageGraphics == null) {
+					IntPtr tempDC = Win32.CreateCompatibleDC (hdc_);
+					IntPtr oldBmp = Win32.SelectObject (tempDC, wineImage.nativeObject_);
+					Win32.StretchBlt(hdc_, destRect.X, destRect.Y, destRect.Width, destRect.Height, 
+						tempDC, srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height, PatBltTypes.SRCCOPY);
+					Win32.SelectObject (tempDC, oldBmp);
+					Win32.DeleteDC (tempDC);
+				}
+				else {
+					Win32.StretchBlt(hdc_, destRect.X, destRect.Y, destRect.Width, destRect.Height, 
+						imageGraphics.hdc_, srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height, PatBltTypes.SRCCOPY);
+				}
 			}
 
 			[MonoTODO]
