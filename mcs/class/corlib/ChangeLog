@@ -1,3 +1,11 @@
+2004-07-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib.dll.sources: Added new files for NET_2_0: 
+		System.Runtime.InteropServices/_Exception.cs
+		System.Security.Cryptography/RijndaelManagedTransform.cs
+		System.Security.Cryptography/RIPEMD160.cs
+		System.Security.Cryptography/RIPEMD160Managed.cs
+
 2004-07-02  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (LIBRARY_USE_INTERMEDIATE_FILE): Define.

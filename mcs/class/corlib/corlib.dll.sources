@@ -452,6 +452,7 @@ System.Runtime.CompilerServices/MethodImplOptions.cs
 System.Runtime.CompilerServices/NewConstraintAttribute.cs
 System.Runtime.CompilerServices/RequiredAttributeAttribute.cs
 System.Runtime.CompilerServices/RuntimeHelpers.cs
+System.Runtime.InteropServices/_Exception.cs
 System.Runtime.InteropServices/ArrayWithOffset.cs
 System.Runtime.InteropServices/AssemblyRegistrationFlags.cs
 System.Runtime.InteropServices/AutomationProxyAttribute.cs
@@ -875,6 +876,9 @@ System.Security.Cryptography/RC2CryptoServiceProvider.cs
 System.Security.Cryptography/Rfc2898DeriveBytes.cs
 System.Security.Cryptography/Rijndael.cs
 System.Security.Cryptography/RijndaelManaged.cs
+System.Security.Cryptography/RijndaelManagedTransform.cs
+System.Security.Cryptography/RIPEMD160.cs
+System.Security.Cryptography/RIPEMD160Managed.cs
 System.Security.Cryptography/RNGCryptoServiceProvider.cs
 System.Security.Cryptography/RSA.cs
 System.Security.Cryptography/RSACryptoServiceProvider.cs
