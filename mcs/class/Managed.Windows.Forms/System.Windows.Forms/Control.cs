@@ -29,9 +29,14 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.39 $
+// $Revision: 1.40 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.40  2004/08/21 19:21:50  pbartok
+// - Implemented CanFocus
+// - Implemented CanSelect
+// - Implemented Capture
+//
 // Revision 1.39  2004/08/21 16:54:11  jackson
 // Implement EndInvoke
 //
@@ -202,6 +207,7 @@ namespace System.Windows.Forms
 		internal bool			is_visible;		// true if control is visible
 		internal bool			is_entered;		// is the mouse inside the control?
 		internal bool			is_enabled;		// true if control is enabled (usable/not grayed out)
+		internal bool			is_captured;		// tracks if the control has captured the mouse
 		internal int			tab_index;		// position in tab order of siblings
 		internal bool			tab_stop = true;
 		internal bool			is_disposed;		// has the window already been disposed?
@@ -510,6 +516,7 @@ namespace System.Windows.Forms
 			anchor_style = AnchorStyles.Top | AnchorStyles.Left;
 
 			is_visible = true;
+			is_captured = false;
 			is_disposed = false;
 			is_enabled = true;
 			is_entered = false;
@@ -746,23 +753,48 @@ namespace System.Windows.Forms
 
 		public bool CanFocus {
 			get {
-				throw new NotImplementedException();
+				if (is_visible && is_enabled && GetStyle(ControlStyles.Selectable)) {
+					return true;
+				}
+				return false;
 			}
 		}
 
 		public bool CanSelect {
 			get {
-				throw new NotImplementedException();
+				Control	parent;
+
+				if (!GetStyle(ControlStyles.Selectable) || this.parent == null) {
+					return false;
+				}
+
+				parent = this.parent;
+				while (parent != null) {
+					if (!parent.is_visible || !parent.is_enabled) {
+						return false;
+					}
+
+					parent = parent.parent;
+				}
+				return true;
 			}
 		}
 
 		public bool Capture {
 			get {
-				throw new NotImplementedException();
+				return this.is_captured;
 			}
 
 			set {
-				throw new NotImplementedException();
+				if (this.IsHandleCreated) {
+					if (value && !is_captured) {
+						is_captured = true;
+						XplatUI.GrabWindow(this.window.Handle);
+					} else if (!value && is_captured) {
+						XplatUI.ReleaseWindow(this.window.Handle);
+						is_captured = false;
+					}
+				}
 			}
 		}
 
