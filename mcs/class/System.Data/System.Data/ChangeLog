@@ -1,5 +1,19 @@
 2004-06-17  Boris Kirzner  <borisk@mainsoft.com>
 
+	* DataRow.cs : 
+	  - Changed access of original, current and proposed indexes to internal.
+	  - ColumnErrors reviewed : now column errors stored in ArrayList and allocated on demand only.
+	  - Added new DataRow constructor that creates uninitialized DataRow (used in DataTable.Copy).
+	  - Use DataContainer.CopyValue and default values row for faster set of default values in row.
+	  - SetColumnValue become CheckValue. Now it does not changes the value, but only checks for its correctness.
+	  Care about Null and DBNull values is now in DataContainer.
+	  - Use DataColumn.AutoIncrementValue and GetInt64 for faster set of autoincrement value.
+	  - Use Datacontainer.CopyValue and default values row to speed up CheckChildRows.
+	  - Fix in CopyState : clone column errors.
+	  - Removed CollectionChanged and onColumnRemoved since we are not using both of them anymore.
+
+2004-06-17  Boris Kirzner  <borisk@mainsoft.com>
+
 	* DataColumnCollection.cs : 
 	  - Fix : Add()	now delegates to Add(DataColumn).
 	  - autoIncrement list holds DataColumn objects, and not just column names.
