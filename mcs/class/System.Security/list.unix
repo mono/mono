@@ -19,4 +19,5 @@
 ./System.Security.Cryptography.Xml/XmlDsigEnvelopedSignatureTransform.cs
 ./System.Security.Cryptography.Xml/XmlDsigXPathTransform.cs
 ./System.Security.Cryptography.Xml/XmlDsigXsltTransform.cs
+./System.Security.Cryptography.Xml/XmlSignature.cs
 ./System.Security.Cryptography.Xml/TODOAttribute.cs
