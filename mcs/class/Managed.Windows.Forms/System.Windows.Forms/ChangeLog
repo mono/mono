@@ -1,3 +1,10 @@
+2004-11-24  John BouAntoun <jba-mono@optusnet.com.au>
+
+	* ThemeWin32Classic.cs: 
+		- Fixed Drawing Last month in grid (sometimes not showing)
+	* MonthCalendar.cs:
+		- Fixed title width calculation bug (makeing title small)
+
 2004-11-23  Peter Bartok <pbartok@novell.com>
 
 	* XplatUIX11.cs: 

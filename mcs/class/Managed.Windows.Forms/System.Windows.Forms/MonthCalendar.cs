@@ -469,8 +469,8 @@ namespace System.Windows.Forms {
 				int row_count = 7;		// not including the today date
 
 				// set the date_cell_size and the title_size
-				title_size = new Size ((int) Math.Ceiling (2.5 * multiplier * column_count), 3 * multiplier);
 				date_cell_size = new Size ((int) Math.Ceiling (2.5 * multiplier), (int) Math.Ceiling (1.5 * multiplier));
+				title_size = new Size ((date_cell_size.Width * column_count), 3 * multiplier);
 
 				return new Size (column_count * date_cell_size.Width, row_count * date_cell_size.Height + title_size.Height);
 			}
@@ -1088,20 +1088,16 @@ namespace System.Windows.Forms {
 
 		// determine if date is allowed to be drawn in month
 		internal bool IsValidWeekToDraw (DateTime month, DateTime date, int row, int col) {
-			if (month.Year == date.Year && month.Month == date.Month) {
+			DateTime tocheck = month.AddMonths (-1);
+			if ((month.Year == date.Year && month.Month == date.Month) ||
+				(tocheck.Year == date.Year && tocheck.Month == date.Month)) {
 				return true;
 			}
 
-			// check start border regions
-			if (row == 0 && col == 0) {
-				DateTime tocheck = month.AddMonths (-1);
-				return (tocheck.Year == date.Year && tocheck.Month == date.Month);
-			}
-
-			// check end border region
+			// check the railing dates (days in the month after the last month in grid)
 			if (row == CalendarDimensions.Height - 1 && col == CalendarDimensions.Width - 1) {
-				DateTime tocheck = month.AddMonths (1);
-				return (tocheck.Year == date.Year && tocheck.Month == date.Month);
+				tocheck = month.AddMonths (1);
+				return (tocheck.Year == date.Year && tocheck.Month == date.Month) ;
 			}
 
 			return false;			
