@@ -1,3 +1,7 @@
+2002-07-31  Nick Drochak  <ndrochak@gol.com>
+
+	* BufferTest.cs: Fixed noisy compiler warnings about unused vars.
+
 2002-07-22  Cesar Octavio Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* BufferTest.cs: Added this file to test the System.Buffer class 

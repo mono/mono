@@ -55,7 +55,7 @@ namespace MonoTests.System
 		
 			try {
 				Buffer.ByteLength (null);	
-			} catch (ArgumentNullException e) {
+			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
 			Assert ("TestByteLength: ArgumentNullException not thrown", errorThrown);
@@ -77,7 +77,7 @@ namespace MonoTests.System
 		
 			try {
 				Buffer.GetByte (null, 5);
-			} catch (ArgumentNullException e) {
+			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
 			Assert ("TestGetByte: ArgumentNullException not thrown",
@@ -87,7 +87,7 @@ namespace MonoTests.System
 		
 			try {
 				Buffer.GetByte (byteArray, -1);
-			} catch (ArgumentOutOfRangeException e) {
+			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			}
 			Assert ("TestGetByte: ArgumentOutOfRangeException (negative index) not implemented",
@@ -97,7 +97,7 @@ namespace MonoTests.System
 		
 			try {
 				Buffer.GetByte (byteArray, 12); 
-			} catch (ArgumentOutOfRangeException e) {
+			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			}
 			Assert ("TestGetByte: ArgumentOutOfRangeException (index bigger/equal than array's size not thrown", errorThrown);
@@ -116,7 +116,7 @@ namespace MonoTests.System
 		
 			try {
 				Buffer.SetByte (null, 5, 12);
-			} catch (ArgumentNullException e) {
+			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
 			Assert ("TestSetByte: ArgumentNullException not thrown", errorThrown);
@@ -124,7 +124,7 @@ namespace MonoTests.System
 		
 			try {
 				Buffer.SetByte (byteArray, -1, 32);
-			} catch (ArgumentOutOfRangeException e) {
+			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			}
 			Assert ("TestSetByte: ArgumentOutOfRangeException (case: negative index) not thrown",
@@ -133,7 +133,7 @@ namespace MonoTests.System
 		
 			try {
 				Buffer.SetByte (byteArray, 12, 43);
-			} catch (ArgumentOutOfRangeException e) {
+			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			}
 			Assert ("TestSetByte: ArgumentOutOfRangeException (case: index bigger/equal than array'size",
