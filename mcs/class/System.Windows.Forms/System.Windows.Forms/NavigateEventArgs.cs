@@ -3,10 +3,13 @@
 //
 // Author:
 //   stubbed out by Paul Osman (paul.osman@sympatico.ca)
-//	Partially completed by Dennis Hayes (dennish@raytek.com)
+//	 Partially completed by Dennis Hayes (dennish@raytek.com)
+//	 Gianandrea Terzi (gianandrea.terzi@lario.com)
 //
 // (C) 2002 Ximian, Inc
 //
+
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 
@@ -16,68 +19,110 @@ namespace System.Windows.Forms {
 	// </summary>
 
         public class NavigateEventArgs : EventArgs {
+			
+			#region Fields
+			
 			private bool isforward;
-		//
-		//  --- Constructor
-		//
-		public NavigateEventArgs(bool isForward)
-		{
-			isforward = isForward;
-		}
 
-		//
-		//  --- Public Properties
-		//
-		public bool Forward {
-			get {
-				return isforward;
+			#endregion
+
+			//
+			//  --- Constructor
+			//
+			public NavigateEventArgs(bool isForward)
+			{
+				isforward = isForward;
 			}
-		}
 
-		//
-		//  --- Public Methods
-		//
-		[MonoTODO]
-		public override bool Equals(object o)
-		{
-			throw new NotImplementedException ();
-		}
-		//inherited
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+			#region Public Properties
+
+			[ComVisible(true)]
+			public bool Forward 
+			{
+				get {
+					return isforward;
+				}
+			}
+			#endregion
+
+
+			#region Public Methods
+
+			/// <summary>
+			///	Equality Operator
+			/// </summary>
+			///
+			/// <remarks>
+			///	Compares two NavigateEventArgs objects.
+			///	The return value is based on the equivalence of
+			///	Forward Property
+			///	of the two NavigateEventArgs.
+			/// </remarks>
+			public static bool operator == (NavigateEventArgs NavigateEventArgsA, NavigateEventArgs NavigateEventArgsB) 
+			{
+				return (NavigateEventArgsA.Forward == NavigateEventArgsB.Forward);
+			}
+		
+			/// <summary>
+			///	Inequality Operator
+			/// </summary>
+			///
+			/// <remarks>
+			///	Compares two NavigateEventArgs objects.
+			///	The return value is based on the equivalence of
+			///	Forward Property
+			///	of the two NavigateEventArgs.
+			/// </remarks>
+			public static bool operator != (NavigateEventArgs NavigateEventArgsA, NavigateEventArgs NavigateEventArgsB) 
+			{
+				return (NavigateEventArgsA.Forward != NavigateEventArgsB.Forward);
+				}
+
+			/// <summary>
+			///	Equals Method
+			/// </summary>
+			///
+			/// <remarks>
+			///	Checks equivalence of this
+			///	PropertyTabChangedEventArgs and another
+			///	object.
+			/// </remarks>
+			public override bool Equals (object obj) 
+			{
+				if (!(obj is NavigateEventArgs))return false;
+				return (this == (NavigateEventArgs) obj);
+			}
+
+			/// <summary>
+			///	GetHashCode Method
+			/// </summary>
+			///
+			/// <remarks>
+			///	Calculates a hashing value.
+			/// </remarks>
 			[MonoTODO]
-			public override int GetHashCode() {
-				//FIXME add our proprities
+			public override int GetHashCode () 
+			{
+				//FIXME: add class specific stuff;
 				return base.GetHashCode();
 			}
-		//inherited
-		//public Type GetType()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		[MonoTODO]
-		public override string ToString()
-		{
-			throw new NotImplementedException ();
-		}
 
-		//
-		//  --- Protected Methods
-		//
-		//inherited
-		//protected object MemberwiseClone()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//  --- DeConstructor
-		//
-		[MonoTODO]
-		~NavigateEventArgs()
-		{
-			throw new NotImplementedException ();
-		}
+			/// <summary>
+			///	ToString Method
+			/// </summary>
+			///
+			/// <remarks>
+			///	Formats the object as a string.
+			/// </remarks>
+			[MonoTODO]
+			public override string ToString () 
+			{
+				//FIXME: add class specific stuff;
+				return base.ToString();
+			}
+
+		#endregion
+
+
 	 }
 }

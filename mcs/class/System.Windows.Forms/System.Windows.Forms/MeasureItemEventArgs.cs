@@ -4,6 +4,7 @@
 // Author:
 //   stubbed out by Paul Osman (paul.osman@sympatico.ca)
 //	Partially completed by Dennis Hayes (dennish@raytek.com)
+//	Gianandrea Terzi (gianandrea.terzi@lario.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -21,15 +22,19 @@ namespace System.Windows.Forms  {
 	/// </summary>
 
 	public class MeasureItemEventArgs : EventArgs {
+
+		#region Fields
+
 		private Graphics graphics;
 		private int index;
-		private int itemheight;
-		private int itemwidth;
+		private int itemheight = -1;
+		private int itemwidth = -1;
+
+		#endregion
 
 		//
 		//  --- Constructors
 		//
-		
 		public MeasureItemEventArgs(Graphics graphics, int index)
 		{
 			this.index = index;
@@ -42,83 +47,134 @@ namespace System.Windows.Forms  {
 			this.graphics = graphics;
 			itemheight = ItemHeight;
 		}
-		
-		//
-		// -- Public Methods
-		//
 
-//		public virtual bool Equals(object o) 
-//		{
-//			throw new NotImplementedException();
-//		}
-//
-//		public static bool Equals(object o, object o)
-//		{
-//			throw new NotImplementedException();
-//		}
-//
-//		public virtual int GetHashCode()
-//		{
-//			throw new NotImplementedException();
-//		}
-//
-//		public Type GetType()
-//		{
-//			throw new NotImplementedException();
-//		}
-//
-//		public virtual string ToString()
-//		{
-//			throw new NotImplementedException();
-//		}
-//
-//		//
-//		// -- Protected Methods
-//		//
-//
-//		~MeasureItemEventArgs() 
-//		{
-//			throw new NotImplementedException();
-//		}
-//
-//		protected object MemberwiseClone() 
-//		{
-//			throw new NotImplementedException();
-//		}
+		#region Public Properties
 
-		//
-		// -- Public Properties
-		//
-
-		public Graphics Graphics  {
-			get { 
+		public Graphics Graphics  
+		{
+			get 
+			{ 
 				return graphics;
 			}
 		}
 
-		public int Index  {
-			get {
+		public int Index  
+		{
+			get 
+			{
 				return index;
 			}
 		}
 
-		public int ItemHeight  {
-			get {
+		public int ItemHeight  
+		{
+			get 
+			{
 				return itemheight;
 			}
-			set {
+			set 
+			{
 				itemheight = value;
 			}
 		}
 
-		public int ItemWidth  {
-			get {
+		public int ItemWidth  
+		{
+			get 
+			{
 				return itemwidth;
 			}
-			set {
+			set 
+			{
 				itemwidth = value;
 			}
 		}
+
+		#endregion
+		
+		#region Public Methods
+
+		/// <summary>
+		///	Equality Operator
+		/// </summary>
+		///
+		/// <remarks>
+		///	Compares two MeasureItemEventArgs objects.
+		///	The return value is based on the equivalence of
+		///	graphics, index, itemheight and itemwidth Property
+		///	of the two MeasureItemEventArgs.
+		/// </remarks>
+		public static bool operator == (MeasureItemEventArgs MeasureItemEventArgsA, MeasureItemEventArgs MeasureItemEventArgsB) 
+		{
+			return (MeasureItemEventArgsA.Graphics == MeasureItemEventArgsB.Graphics) && 
+				   (MeasureItemEventArgsA.Index == MeasureItemEventArgsB.Index) &&
+				   (MeasureItemEventArgsA.ItemHeight == MeasureItemEventArgsB.ItemHeight) &&
+				   (MeasureItemEventArgsA.ItemWidth == MeasureItemEventArgsB.ItemWidth);
+		}
+		
+		/// <summary>
+		///	Inequality Operator
+		/// </summary>
+		///
+		/// <remarks>
+		///	Compares two MeasureItemEventArgs objects.
+		///	The return value is based on the equivalence of
+		///	graphics, index, itemheight and itemwidth Property
+		///	of the two MeasureItemEventArgs.
+		/// </remarks>
+		public static bool operator != (MeasureItemEventArgs MeasureItemEventArgsA, MeasureItemEventArgs MeasureItemEventArgsB) 
+		{
+			return (MeasureItemEventArgsA.Graphics != MeasureItemEventArgsB.Graphics) || 
+				   (MeasureItemEventArgsA.Index != MeasureItemEventArgsB.Index) ||
+				   (MeasureItemEventArgsA.ItemHeight != MeasureItemEventArgsB.ItemHeight) ||
+				   (MeasureItemEventArgsA.ItemWidth != MeasureItemEventArgsB.ItemWidth);
+		}
+
+		/// <summary>
+		///	Equals Method
+		/// </summary>
+		///
+		/// <remarks>
+		///	Checks equivalence of this
+		///	PropertyTabChangedEventArgs and another
+		///	object.
+		/// </remarks>
+		public override bool Equals (object obj) 
+		{
+			if (!(obj is PropertyTabChangedEventArgs))return false;
+			return (this == (PropertyTabChangedEventArgs) obj);
+		}
+
+		/// <summary>
+		///	GetHashCode Method
+		/// </summary>
+		///
+		/// <remarks>
+		///	Calculates a hashing value.
+		/// </remarks>
+		[MonoTODO]
+		public override int GetHashCode () 
+		{
+			//FIXME: add class specific stuff;
+			return base.GetHashCode();
+		}
+
+		/// <summary>
+		///	ToString Method
+		/// </summary>
+		///
+		/// <remarks>
+		///	Formats the object as a string.
+		/// </remarks>
+		[MonoTODO]
+		public override string ToString () 
+		{
+			//FIXME: add class specific stuff;
+			return base.ToString();
+		}
+
+		#endregion
+
 	}
 }
 		

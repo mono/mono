@@ -3,7 +3,8 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
-//	Partially completed by Dennis Hayes (dennish@raytek.com)
+//	 Partially completed by Dennis Hayes (dennish@raytek.com)
+//   Gianandrea Terzi (gianandrea.terzi@lario.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -15,10 +16,14 @@ namespace System.Windows.Forms {
 
     [ComVisible(true)]
 	public class SplitterEventArgs : EventArgs {
+
+		#region Fields
 		private int x;
 		private int y;
 		private int splitx;
 		private int splity;
+		#endregion
+
 		//
 		//  --- Constructor
 		//
@@ -29,9 +34,8 @@ namespace System.Windows.Forms {
 			splitx = splitX;
 			splity = splitY;
 		}
-		//
-		//  --- Public Properties
-		//
+
+		#region Public Properties
 		[ComVisible(true)]
 		public int SplitX {
 			get {
@@ -62,23 +66,83 @@ namespace System.Windows.Forms {
 				return y;
 			}
 		}
+		#endregion
 
-		//
-		//  --- Public Methods
-		//
-		[MonoTODO]
-		public override bool Equals(object o)
+		#region Public Methods
+
+		/// <summary>
+		///	Equality Operator
+		/// </summary>
+		///
+		/// <remarks>
+		///	Compares two SplitterEventArgs objects.
+		///	The return value is based on the equivalence of
+		///	SplitX, SplitY, X, Y Property
+		///	of the two SplitterEventArgs.
+		/// </remarks>
+		public static bool operator == (SplitterEventArgs SplitterEventArgsA, SplitterEventArgs SplitterEventArgsB) 
 		{
-			throw new NotImplementedException ();
+			return (SplitterEventArgsA.SplitX == SplitterEventArgsB.SplitX) && (SplitterEventArgsA.SplitY == SplitterEventArgsB.SplitY) && (SplitterEventArgsA.X == SplitterEventArgsB.X) && (SplitterEventArgsA.Y == SplitterEventArgsB.Y);
 		}
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		
+		/// <summary>
+		///	Inequality Operator
+		/// </summary>
+		///
+		/// <remarks>
+		///	Compares two SplitterEventArgs objects.
+		///	The return value is based on the equivalence of
+		///	SplitX, SplitY, X, Y Property
+		///	of the two SplitterEventArgs.
+		/// </remarks>
+		public static bool operator != (SplitterEventArgs SplitterEventArgsA, SplitterEventArgs SplitterEventArgsB) 
+		{
+			return (SplitterEventArgsA.SplitX != SplitterEventArgsB.SplitX) || (SplitterEventArgsA.SplitY != SplitterEventArgsB.SplitY) || (SplitterEventArgsA.X != SplitterEventArgsB.X) || (SplitterEventArgsA.Y != SplitterEventArgsB.Y);
+		}
+
+		/// <summary>
+		///	Equals Method
+		/// </summary>
+		///
+		/// <remarks>
+		///	Checks equivalence of this
+		///	UICuesEventArgs and another
+		///	object.
+		/// </remarks>
+		public override bool Equals (object obj) 
+		{
+			if (!(obj is SplitterEventArgs))return false;
+			return (this == (SplitterEventArgs) obj);
+		}
+
+		/// <summary>
+		///	GetHashCode Method
+		/// </summary>
+		///
+		/// <remarks>
+		///	Calculates a hashing value.
+		/// </remarks>
 		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
+		public override int GetHashCode () 
+		{
+			//FIXME: add class specific stuff;
 			return base.GetHashCode();
-		}	 
+		}
+
+		/// <summary>
+		///	ToString Method
+		/// </summary>
+		///
+		/// <remarks>
+		///	Formats the SplitterEventArgs as a string.
+		/// </remarks>
+		[MonoTODO]
+		public override string ToString () 
+		{
+			//FIXME: add class specific stuff;
+			return base.ToString();
+		}
+
+		#endregion
 	}
 }

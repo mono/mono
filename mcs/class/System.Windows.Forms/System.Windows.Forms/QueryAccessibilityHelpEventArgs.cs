@@ -3,10 +3,13 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
-//	Partially completed by Dennis Hayes (dennish@raytek.com)
+//	 Partially completed by Dennis Hayes (dennish@raytek.com)
+//   Gianandrea Terzi (gterzi@lario.com)
 //
 // (C) 2002 Ximian, Inc
 //
+
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 
@@ -16,24 +19,31 @@ namespace System.Windows.Forms {
 	// </summary>
 
 	public class QueryAccessibilityHelpEventArgs : EventArgs {
+
+		#region Fields
+
 		string helpnamespace;
 		string helpstring;
 		string helpkeyword;
+		
+		#endregion
 		//
 		//  --- Constructor
 		//
-		public QueryAccessibilityHelpEventArgs() {
-			//
+		public QueryAccessibilityHelpEventArgs() 
+		{
+			this.helpkeyword = "";
+			this.helpnamespace = "";
+			this.helpstring = "";
 		}
 		public QueryAccessibilityHelpEventArgs(string helpNamespace, string helpString, string helpKeyword) {
-			helpkeyword = helpKeyword;
-			helpnamespace = helpNamespace;
-			helpstring =helpString;
+			this.helpkeyword = helpKeyword;
+			this.helpnamespace = helpNamespace;
+			this.helpstring =helpString;
 		}
 
-		//
-		//  --- Public Properties
-		//
+
+		#region Public Properties
 		[ComVisible(true)] 
 		public string HelpKeyword {
 			get {
@@ -61,22 +71,86 @@ namespace System.Windows.Forms {
 				helpstring = value;
 			}
 		}
+		#endregion
 
-		//
-		//  --- Public Methods
-		//
-		[MonoTODO]
-		public override bool Equals(object o) {
-			throw new NotImplementedException ();
+		#region Public Methods
+
+		/// <summary>
+		///	Equality Operator
+		/// </summary>
+		///
+		/// <remarks>
+		///	Compares two QueryAccessibilityHelpEventArgs objects.
+		///	The return value is based on the equivalence of
+		///	helpkeyword, helpnamespace and helpstring Property
+		///	of the two QueryAccessibilityHelpEventArgs.
+		/// </remarks>
+		public static bool operator == (QueryAccessibilityHelpEventArgs QueryAccessibilityHelpEventArgsA, QueryAccessibilityHelpEventArgs QueryAccessibilityHelpEventArgsB) 
+		{
+			return ((QueryAccessibilityHelpEventArgsA.HelpKeyword == QueryAccessibilityHelpEventArgsB.HelpKeyword) && (QueryAccessibilityHelpEventArgsA.HelpNamespace == QueryAccessibilityHelpEventArgsB.HelpNamespace) && (QueryAccessibilityHelpEventArgsA.HelpString == QueryAccessibilityHelpEventArgsB.HelpString));
+		}
+		
+		/// <summary>
+		///	Inequality Operator
+		/// </summary>
+		///
+		/// <remarks>
+		///	Compares two QueryAccessibilityHelpEventArgs objects.
+		///	The return value is based on the equivalence of
+		///	helpkeyword, helpnamespace and helpstring Property
+		///	of the two QueryAccessibilityHelpEventArgs.
+		/// </remarks>
+		public static bool operator != (QueryAccessibilityHelpEventArgs QueryAccessibilityHelpEventArgsA, QueryAccessibilityHelpEventArgs QueryAccessibilityHelpEventArgsB) 
+		{
+			return ((QueryAccessibilityHelpEventArgsA.HelpKeyword != QueryAccessibilityHelpEventArgsB.HelpKeyword) || (QueryAccessibilityHelpEventArgsA.HelpNamespace != QueryAccessibilityHelpEventArgsB.HelpNamespace) || (QueryAccessibilityHelpEventArgsA.HelpString != QueryAccessibilityHelpEventArgsB.HelpString));
 		}
 
-		//public static bool Equals(object o1, object o2) {
-		//	throw new NotImplementedException ();
-		//}
+
+		/// <summary>
+		///	Equals Method
+		/// </summary>
+		///
+		/// <remarks>
+		///	Checks equivalence of this
+		///	QueryAccessibilityHelpEventArgs and another
+		///	object.
+		/// </remarks>
+		public override bool Equals (object obj) 
+		{
+			if (!(obj is QueryAccessibilityHelpEventArgs))return false;
+			return (this == (QueryAccessibilityHelpEventArgs) obj);
+		}
+
+		/// <summary>
+		///	GetHashCode Method
+		/// </summary>
+		///
+		/// <remarks>
+		///	Calculates a hashing value.
+		/// </remarks>
 		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
+		public override int GetHashCode () 
+		{
+			//FIXME: add class specific stuff;
 			return base.GetHashCode();
-		}	 
+		}
+
+		/// <summary>
+		///	ToString Method
+		/// </summary>
+		///
+		/// <remarks>
+		///	Formats the object as a string.
+		/// </remarks>
+		[MonoTODO]
+		public override string ToString () 
+		{
+			//FIXME: add class specific stuff;
+			return base.ToString();
+		}
+
+
+		#endregion
+
 	}
 }

@@ -4,6 +4,7 @@
 // Author:
 //   stubbed out by Paul Osman (paul.osman@sympatico.ca)
 //	Dennis Hayes (dennish@raytek.com)
+//  Gianandrea Terzi (gianandrea.terzi@lario.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -16,86 +17,130 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        public class PaintEventArgs : EventArgs, IDisposable {
+	public class PaintEventArgs : EventArgs, IDisposable {
 
-		//
-		//  --- Constructor
-		//
-		[MonoTODO]
-		public PaintEventArgs()
+		#region Fields
+
+			private Graphics mgraphics;
+			private Rectangle mclipRect;
+
+		#endregion
+
+
+		public PaintEventArgs(Graphics graphics, Rectangle clipRect )
 		{
-			throw new NotImplementedException ();
+				this.mgraphics = graphics;
+				this.mclipRect = clipRect;
 		}
 
-		//
-		//  --- Public Properties
-		//
-		[MonoTODO]
-		public Rectangle ClipRectangle {
+		
+		#region Public Properties
+		public Rectangle ClipRectangle 
+		{
 			get {
-				throw new NotImplementedException ();
+				return mclipRect;
 			}
 		}
-		[MonoTODO]
+		
 		public Graphics Graphics {
 			get {
-				throw new NotImplementedException ();
+				return mgraphics;
 			}
 		}
+		#endregion
 
-		//
-		//  --- Public Methods
-		//
+		#region Public Methods
+
+		[MonoTODO]
 		public void Dispose()
 		{
 			throw new NotImplementedException ();
 		}
+
+		/// <summary>
+		///	Equality Operator
+		/// </summary>
+		///
+		/// <remarks>
+		///	Compares two PaintEventArgs objects.
+		///	The return value is based on the equivalence of
+		///	Graphics and ClipRectangle Property
+		///	of the two PaintEventArgs.
+		/// </remarks>
+		public static bool operator == (PaintEventArgs PaintEventArgsA, PaintEventArgs PaintEventArgsB) 
+		{
+			return (PaintEventArgsA.Graphics == PaintEventArgsB.Graphics) && (PaintEventArgsA.ClipRectangle == PaintEventArgsB.ClipRectangle);
+		}
+		
+		/// <summary>
+		///	Inequality Operator
+		/// </summary>
+		///
+		/// <remarks>
+		///	Compares two PaintEventArgs objects.
+		///	The return value is based on the equivalence of
+		///	Graphics and ClipRectangle Property
+		///	of the two PaintEventArgs.
+		/// </remarks>
+		public static bool operator != (PaintEventArgs PaintEventArgsA, PaintEventArgs PaintEventArgsB) 
+		{
+			return (PaintEventArgsA.Graphics != PaintEventArgsB.Graphics) || (PaintEventArgsA.ClipRectangle != PaintEventArgsB.ClipRectangle);
+		}
+
+		/// <summary>
+		///	Equals Method
+		/// </summary>
+		///
+		/// <remarks>
+		///	Checks equivalence of this
+		///	PaintEventArgs and another
+		///	object.
+		/// </remarks>
+		public override bool Equals (object obj) 
+		{
+			if (!(obj is PaintEventArgs))return false;
+			return (this == (PaintEventArgs) obj);
+		}
+
+		/// <summary>
+		///	GetHashCode Method
+		/// </summary>
+		///
+		/// <remarks>
+		///	Calculates a hashing value.
+		/// </remarks>
 		[MonoTODO]
-		public override bool Equals(object o)
+		public override int GetHashCode () 
+		{
+			//FIXME: add class specific stuff;
+			return base.GetHashCode();
+		}
+
+		/// <summary>
+		///	ToString Method
+		/// </summary>
+		///
+		/// <remarks>
+		///	Formats the object as a string.
+		/// </remarks>
+		[MonoTODO]
+		public override string ToString () 
+		{
+			//FIXME: add class specific stuff;
+			return base.ToString();
+		}
+
+		#endregion
+
+		#region Protected Methods
+
+		[MonoTODO]
+		protected virtual void Dispose(bool disposing)
 		{
 			throw new NotImplementedException ();
 		}
+		
+		#endregion
 
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-			[MonoTODO]
-			public override int GetHashCode() {
-				//FIXME add our proprities
-				return base.GetHashCode();
-			}
-
-		//public Type GetType()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		[MonoTODO]
-		public override string ToString()
-		{
-			throw new NotImplementedException ();
-		}
-
-		//
-		//  --- Protected Methods
-		//
-		//inherited
-		//protected virtual void Dispose(bool disposing)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected object MemberwiseClone()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-		//
-		//  --- Destructor
-		//
-		[MonoTODO]
-		~PaintEventArgs()
-		{
-			throw new NotImplementedException ();
-		}
 	 }
 }

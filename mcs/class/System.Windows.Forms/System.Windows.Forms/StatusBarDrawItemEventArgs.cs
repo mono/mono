@@ -3,7 +3,7 @@
 //
 // Author:
 //   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
-//	Partially completed by Dennis Hayes (dennish@raytek.com)
+//	 Partially completed by Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -22,13 +22,17 @@ namespace System.Windows.Forms {
 		: base(g, font, r, itemId, itemState) {
 			this.panel = panel;
 		}
-		/// --- Properties ---
-		public StatusBarPanel Panel {
+		
+		#region Public Properties
+		public StatusBarPanel Panel 
+		{
 			get {
 				return panel;
 			}
 		}
+		#endregion
 
+		#region Public Methods
 		/// <summary>
 		///	Equality Operator
 		/// </summary>
@@ -101,5 +105,7 @@ namespace System.Windows.Forms {
 		{
 			return base.ToString() + panel.ToString();
 		}
+		#endregion
+
 	}
 }

@@ -3,7 +3,8 @@
 //
 // Author:
 //   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
-//	Partially completed by Dennis Hayes (dennish@raytek.com)
+//	 Partially completed by Dennis Hayes (dennish@raytek.com)
+//   Gianandrea Terzi (gianandrea.terzi@lario.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -23,13 +24,41 @@ namespace System.Windows.Forms {
 			this.panel = panel;
 		}
 
-		/// --- Properties ---
-		public StatusBarPanel StatusBarPanel {
+		#region Public Properties
+		
+		/// <summary>
+		///	StatusBarPanel Property
+		/// </summary>
+		///
+		/// <remarks>
+		///	Gets the StatusBarPanel to draw.
+		/// </remarks>
+		public StatusBarPanel StatusBarPanel 
+		{
 			get {
 				return panel;
 			}
 		}
 
+		/// <summary>
+		///	StatusBarPanel Property
+		/// </summary>
+		///
+		/// <remarks>
+		///	Gets the StatusBarPanel to draw.
+		/// </remarks>
+		public StatusBarPanel StatusBarPanel 
+		{
+			get 
+			{
+				return panel;
+			}
+		}
+
+
+		#endregion
+
+		#region Public Methods
 		/// <summary>
 		///	Equality Operator
 		/// </summary>
@@ -100,5 +129,7 @@ namespace System.Windows.Forms {
 			//FIXME: add class specific stuff;
 			return base.ToString();
 		}
+		#endregion
+
 	}
 }

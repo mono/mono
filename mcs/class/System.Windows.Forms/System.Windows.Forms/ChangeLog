@@ -1,4 +1,35 @@
 2002-8-1  DennisHayes <dennish@raytek.com>
+* Checked in for Ginandrea Terzi (gterzi@lario.com)
+
+* KeyEventArgs.cs
+* KeyPressEventArgs.cs
+* LabelEditEventArgs.cs
+* LayoutEventArgs.cs
+* LinkClickedEventArgs.cs
+* LinkLabelLinkClickedEventArgs.cs
+* MeasureItemEventArgs.cs
+* MouseEventArgs.cs
+* NavigateEventArgs.cs
+* NodeLabelEditEventArgs.cs
+* PaintEventArgs.cs
+* PropertyTabChangedEventArgs.cs
+* PropertyValueChangedEventArgs.cs
+* QueryAccessibilityHelpEventArgs.cs
+* QueryContinueDragEventArgs.cs
+* ScrollEventArgs.cs
+* SelectedGridItemChangedEventArgs.cs
+* SplitterEventArgs.cs
+* StatusBarDrawItemEventArgs.cs
+* StatusBarPanelClickEventArgs.cs
+* ToolBarButtonClickEventArgs.cs
+* TreeViewCancelEventArgs.cs
+* UICuesEventArgs.cs
+* UpDownEventArgs.cs
+* Corrected, cleaned up/ completed some *args.cs classes.
+* May break build, but should be easy to fix, will verifiy
+*   tonight and check in any needed fixes.
+
+2002-8-1  DennisHayes <dennish@raytek.com>
 * MonthCalendar.cs
 * ButtonBase.cs
 * Form.cs

@@ -3,10 +3,13 @@
 //
 // Author:
 //   stubbed out by Paul Osman (paul.osman@sympatico.ca)
-//	Partially completed by Dennis Hayes (dennish@raytek.com)
+//	 Partially completed by Dennis Hayes (dennish@raytek.com)
+//	 Gianandrea Terzi (gianandrea.terzi@lario.com)   
 //
 // (C) 2002 Ximian, Inc
 //
+
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 
@@ -16,11 +19,16 @@ namespace System.Windows.Forms {
 	// </summary>
 
     public class MouseEventArgs : EventArgs {
+
+		#region Fields
+
 		private MouseButtons button;
 		private int clicks;
 		private int x;
 		private int y;
 		private int delta;
+		
+		#endregion
 
 		public MouseEventArgs(MouseButtons button, int clicks, int x, int y, int delta)
 		{
@@ -31,80 +39,130 @@ namespace System.Windows.Forms {
 			this.delta = delta;
 		}
 
-		//
-		//  --- Public Properties
-		//
-		public MouseButtons Button {
+		#region Public Properties
+
+		[ComVisible(true)]
+		public MouseButtons Button 
+		{
 			get {
 				return button;
 			}
 		}
+
+		[ComVisible(true)]
 		public int Clicks {
 			get {
 				return clicks;
 			}
 		}
+
+		[ComVisible(true)]
 		public int Delta {
 			get {
 				return delta;
 			}
 		}
+
+		[ComVisible(true)]
 		public int X {
 			get {
 				return x;
 			}
 		}
+
+		[ComVisible(true)]
 		public int Y {
 			get {
 				return y;
 			}
 		}
+		#endregion
 
-		//
-		//  --- Public Methods
-		//
-		[MonoTODO]
-		public override bool Equals(object o)
+		#region Public Methods
+
+		/// <summary>
+		///	Equality Operator
+		/// </summary>
+		///
+		/// <remarks>
+		///	Compares two MouseEventArgs objects.
+		///	The return value is based on the equivalence of
+		///	X, Y, Clicks, Delta and Button  Property
+		///	of the two MouseEventArgs.
+		/// </remarks>
+		public static bool operator == (MouseEventArgs MouseEventArgsA, MouseEventArgs MouseEventArgsB) 
 		{
-			throw new NotImplementedException ();
+			return (MouseEventArgsA.X == MouseEventArgsB.X) && 
+				   (MouseEventArgsA.Y == MouseEventArgsB.Y) && 
+				   (MouseEventArgsA.Clicks == MouseEventArgsB.Clicks) && 
+				   (MouseEventArgsA.Delta == MouseEventArgsB.Delta) &&
+				   (MouseEventArgsA.Button == MouseEventArgsB.Button);
 		}
-		//inherited
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		
+		/// <summary>
+		///	Inequality Operator
+		/// </summary>
+		///
+		/// <remarks>
+		///	Compares two MouseEventArgs objects.
+		///	The return value is based on the equivalence of
+		///	X, Y, Clicks, Delta and Button  Property
+		///	of the two MouseEventArgs.
+		/// </remarks>
+		public static bool operator != (MouseEventArgs MouseEventArgsA, MouseEventArgs MouseEventArgsB) 
+		{
+			return (MouseEventArgsA.X != MouseEventArgsB.X) || 
+				   (MouseEventArgsA.Y != MouseEventArgsB.Y) || 
+				   (MouseEventArgsA.Clicks != MouseEventArgsB.Clicks) || 
+				   (MouseEventArgsA.Delta != MouseEventArgsB.Delta) ||
+				   (MouseEventArgsA.Button != MouseEventArgsB.Button);
+		}
+
+		/// <summary>
+		///	Equals Method
+		/// </summary>
+		///
+		/// <remarks>
+		///	Checks equivalence of this
+		///	MouseEventArgs and another
+		///	object.
+		/// </remarks>
+		public override bool Equals (object obj) 
+		{
+			if (!(obj is MouseEventArgs))return false;
+			return (this == (MouseEventArgs) obj);
+		}
+
+		/// <summary>
+		///	GetHashCode Method
+		/// </summary>
+		///
+		/// <remarks>
+		///	Calculates a hashing value.
+		/// </remarks>
 		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
+		public override int GetHashCode () 
+		{
+			//FIXME: add class specific stuff;
 			return base.GetHashCode();
 		}
-		//inherited
-		//public Type GetType()
-		//{
-		//	throw new NotImplementedException ();
-		//}
+
+		/// <summary>
+		///	ToString Method
+		/// </summary>
+		///
+		/// <remarks>
+		///	Formats the object as a string.
+		/// </remarks>
 		[MonoTODO]
-		public override string ToString()
+		public override string ToString () 
 		{
-			throw new NotImplementedException ();
+			//FIXME: add class specific stuff;
+			return base.ToString();
 		}
 
-		//
-		//  --- Protected Methods
-		//
-		//inherited
-		//protected object MemberwiseClone()
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		#endregion
 
-		//
-		//  --- Destructor
-		//
-		[MonoTODO]
-		~MouseEventArgs()
-		{
-			throw new NotImplementedException ();
-		}
+
 	 }
 }

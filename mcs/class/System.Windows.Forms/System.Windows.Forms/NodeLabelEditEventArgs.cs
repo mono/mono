@@ -3,7 +3,8 @@
 //
 // Author:
 //   stubbed out by Paul Osman (paul.osman@sympatico.ca)
-//	Partially completed by Dennis Hayes (dennish@raytek.com)
+//	 Partially completed by Dennis Hayes (dennish@raytek.com)
+//   Gianandrea Terzi (gianandrea.terzi@lario.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -16,88 +17,128 @@ namespace System.Windows.Forms {
 	// </summary>
 
         public class NodeLabelEditEventArgs : EventArgs {
+
+			#region Fields
+
 			private TreeNode node;
-			private string label;
-		//
-		//  --- Constructor
-		//
-		public NodeLabelEditEventArgs(TreeNode node)
-		{
-			this.node = node;
-		}
-		public NodeLabelEditEventArgs(TreeNode node, string label)
-		{
-			this.node = node;
-			this.label = label;
-		}
+			private string label = "";
+			private bool canceledit = false;
+			
+			#endregion
 
-		//
-		//  --- Public Properties
-		//
-//		[MonoTODO]
-//		public bool CancelEdit {
-//			get {
-//				throw new NotImplementedException ();
-//			}
-//			set {
-//				throw new NotImplementedException ();
-//			}
-//		}
-		public string Label {
-			get {
-				return label;
+			//
+			//  --- Constructor
+			//
+			public NodeLabelEditEventArgs(TreeNode node)
+			{
+				this.node = node;
 			}
-		}
-		public TreeNode Node {
-			get {
-				return node;
+			public NodeLabelEditEventArgs(TreeNode node, string label)
+			{
+				this.node = node;
+				this.label = label;
 			}
-		}
 
-		//
-		//  --- Public Methods
-		//
-		[MonoTODO]
-		public override bool Equals(object o)
-		{
-			throw new NotImplementedException ();
-		}
-		//inherited
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+			#region Public Properties
+
+			public bool CancelEdit {
+				get {
+					return canceledit;
+				}
+				set {
+					canceledit = value;
+				}
+			}
+			public string Label 
+			{
+				get {
+					return label;
+				}
+			}
+			public TreeNode Node {
+				get {
+					return node;
+				}
+			}
+
+			#endregion
+
+			#region Public Methods
+
+			/// <summary>
+			///	Equality Operator
+			/// </summary>
+			///
+			/// <remarks>
+			///	Compares two NodeLabelEditEventArgs objects.
+			///	The return value is based on the equivalence of
+			///	label, Node and CancelEdit Property
+			///	of the two NodeLabelEditEventArgs.
+			/// </remarks>
+			public static bool operator == (NodeLabelEditEventArgs NodeLabelEditEventArgsA, NodeLabelEditEventArgs NodeLabelEditEventArgsB) 
+			{
+				return (NodeLabelEditEventArgsA.Label == NodeLabelEditEventArgsB.Label) && (NodeLabelEditEventArgsA.Node == NodeLabelEditEventArgsB.Node) && (NodeLabelEditEventArgsA.CancelEdit == NodeLabelEditEventArgsB.CancelEdit);
+			}
+		
+			/// <summary>
+			///	Inequality Operator
+			/// </summary>
+			///
+			/// <remarks>
+			///	Compares two NodeLabelEditEventArgs objects.
+			///	The return value is based on the equivalence of
+			///	label, Node and CancelEdit Property
+			///	of the two NodeLabelEditEventArgs.
+			/// </remarks>
+			public static bool operator != (NodeLabelEditEventArgs NodeLabelEditEventArgsA, NodeLabelEditEventArgs NodeLabelEditEventArgsB) 
+			{
+				return (NodeLabelEditEventArgsA.Label != NodeLabelEditEventArgsB.Label) || (NodeLabelEditEventArgsA.Node != NodeLabelEditEventArgsB.Node) || (NodeLabelEditEventArgsA.CancelEdit != NodeLabelEditEventArgsB.CancelEdit);
+			}
+
+			/// <summary>
+			///	Equals Method
+			/// </summary>
+			///
+			/// <remarks>
+			///	Checks equivalence of this
+			///	PropertyTabChangedEventArgs and another
+			///	object.
+			/// </remarks>
+			public override bool Equals (object obj) 
+			{
+				if (!(obj is NodeLabelEditEventArgs))return false;
+				return (this == (NodeLabelEditEventArgs) obj);
+			}
+
+			/// <summary>
+			///	GetHashCode Method
+			/// </summary>
+			///
+			/// <remarks>
+			///	Calculates a hashing value.
+			/// </remarks>
 			[MonoTODO]
-			public override int GetHashCode() {
-				//FIXME add our proprities
+			public override int GetHashCode () 
+			{
+				//FIXME: add class specific stuff;
 				return base.GetHashCode();
 			}
-		//inherited
-		//public Type GetType(){
-		//	throw new NotImplementedException ();
-		//}
-		[MonoTODO]
-		public override string ToString()
-		{
-			throw new NotImplementedException ();
-		}
 
-		//
-		//  --- Protected Methods
-		//
-		//inheited
-		//protected object MemberwiseClone()
-		//{
-		//	throw new NotImplementedException ();
-		//}
+			/// <summary>
+			///	ToString Method
+			/// </summary>
+			///
+			/// <remarks>
+			///	Formats the object as a string.
+			/// </remarks>
+			[MonoTODO]
+			public override string ToString () 
+			{
+				//FIXME: add class specific stuff;
+				return base.ToString();
+			}
 
-		//
-		//  --- DeConstructor
-		//
-		[MonoTODO]
-		~NodeLabelEditEventArgs()
-		{
-			throw new NotImplementedException ();
-		}
+		#endregion
+
 	 }
 }

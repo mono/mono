@@ -4,96 +4,205 @@
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //	Partially completed by Dennis Hayes (dennish@raytek.com)
+//  Gianandrea Terzi (gianandrea.terzi@lario.com)
 //
 // (C) 2002 Ximian, Inc
 //
 
+using System.Runtime.InteropServices;
+
 namespace System.Windows.Forms {
 
 	// <summary>
+	// just a template
 	// </summary>
 
     public class KeyEventArgs : EventArgs {
+
+		#region Fields
+		
 		private Keys keydata;
+		private Keys keycode;			
+		private Keys modifiers;
+
+		private bool alt = false;
+		private bool control = false;
+		private bool handled = false;
+		private bool shift = false;
+		
+		private int keyvalue = -1;
+		
+		#endregion
 		//
 		//  --- Constructor
 		//
-		public KeyEventArgs ( Keys keyData)
+		public KeyEventArgs (Keys keyData)
 		{
 			keydata = keyData;
 		}
 
-		//
-		//  --- Public Properties
-		//
-		[MonoTODO]
-		public virtual bool Alt {
+		#region Public Properties
+
+		[ComVisible(true)]
+		public virtual bool Alt 
+		{
 			get {
-				throw new NotImplementedException ();
+				return alt;
 			}
 		}
-		[MonoTODO]
-		public bool Control {
+		
+		[ComVisible(true)]
+		public bool Control 
+		{
 			get {
-				throw new NotImplementedException ();
+				return control;
 			}
 		}
-		[MonoTODO]
-		public bool Handled {
+		
+		[ComVisible(true)]
+		public bool Handled 
+		{
 			get {
-				throw new NotImplementedException ();
+				return handled;
 			}
 			set {
-				throw new NotImplementedException ();
+				handled = value;
 			}
 		}
-		[MonoTODO]
-		public Keys KeyCode {
+		
+		[ComVisible(true)]
+		public Keys KeyCode 
+		{
 			get {
-				throw new NotImplementedException ();
+				return keycode;
 			}
 		}
-		[MonoTODO]
-		public Keys KeyData {
+		
+		[ComVisible(true)]
+		public Keys KeyData 
+		{
 			get {
-				throw new NotImplementedException ();
+				return keydata;
 			}
 		}
-		[MonoTODO]
-		public int KeyValue {
+		
+		[ComVisible(true)]
+		public int KeyValue 
+		{
 			get {
-				throw new NotImplementedException ();
+				return keyvalue;
 			}
 		}
-		[MonoTODO]
-		public Keys Modifiers {
+		
+		[ComVisible(true)]
+		public Keys Modifiers 
+		{
 			get {
-				throw new NotImplementedException ();
+				return modifiers;
 			}
 		}
-		[MonoTODO]
-		public bool Shift {
+		
+		[ComVisible(true)]
+		public bool Shift 
+		{
 			get {
-				throw new NotImplementedException ();
+				return shift;
 			}
+		}
+		#endregion
+
+		#region Public Methods
+
+		/// <summary>
+		///	Equality Operator
+		/// </summary>
+		///
+		/// <remarks>
+		///	Compares two KeyEventArgs objects.
+		///	The return value is based on the equivalence of
+		///	alt, control, handled, keycode, keydata, keyvalue, modifiers, shift Property
+		///	of the two KeyEventArgs.
+		/// </remarks>
+		public static bool operator == (KeyEventArgs KeyEventArgsA, KeyEventArgs KeyEventArgsB) 
+		{
+			return (KeyEventArgsA.Alt == KeyEventArgsB.Alt) &&
+				   (KeyEventArgsA.Control == KeyEventArgsB.Control) &&
+				   (KeyEventArgsA.Handled == KeyEventArgsB.Handled) &&
+				   (KeyEventArgsA.KeyCode == KeyEventArgsB.KeyCode) &&
+				   (KeyEventArgsA.KeyData == KeyEventArgsB.KeyData) &&
+				   (KeyEventArgsA.KeyValue == KeyEventArgsB.KeyValue) &&
+				   (KeyEventArgsA.Modifiers == KeyEventArgsB.Modifiers) &&
+				   (KeyEventArgsA.Shift == KeyEventArgsB.Shift);
+
+		}
+		
+		/// <summary>
+		///	Inequality Operator
+		/// </summary>
+		///
+		/// <remarks>
+		///	Compares two KeyEventArgs objects.
+		///	The return value is based on the equivalence of
+		///	alt, control, handled, keycode, keydata, keyvalue, modifiers, shift Property
+		///	of the two KeyEventArgs.
+		/// </remarks>
+		public static bool operator != (KeyEventArgs KeyEventArgsA, KeyEventArgs KeyEventArgsB) 
+		{
+			return (KeyEventArgsA.Alt != KeyEventArgsB.Alt) ||
+				(KeyEventArgsA.Control != KeyEventArgsB.Control) ||
+				(KeyEventArgsA.Handled != KeyEventArgsB.Handled) ||
+				(KeyEventArgsA.KeyCode != KeyEventArgsB.KeyCode) ||
+				(KeyEventArgsA.KeyData != KeyEventArgsB.KeyData) ||
+				(KeyEventArgsA.KeyValue != KeyEventArgsB.KeyValue) ||
+				(KeyEventArgsA.Modifiers != KeyEventArgsB.Modifiers) ||
+				(KeyEventArgsA.Shift != KeyEventArgsB.Shift);
+
 		}
 
-		//
-		//  --- Public Methods
-		//
-		[MonoTODO]
-		public override bool Equals(object o)
+		/// <summary>
+		///	Equals Method
+		/// </summary>
+		///
+		/// <remarks>
+		///	Checks equivalence of this
+		///	KeyEventArgs and another
+		///	object.
+		/// </remarks>
+		public override bool Equals (object obj) 
 		{
-			throw new NotImplementedException ();
+			if (!(obj is KeyEventArgs))return false;
+			return (this == (KeyEventArgs) obj);
 		}
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+
+		/// <summary>
+		///	GetHashCode Method
+		/// </summary>
+		///
+		/// <remarks>
+		///	Calculates a hashing value.
+		/// </remarks>
 		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
+		public override int GetHashCode () 
+		{
+			//FIXME: add class specific stuff;
 			return base.GetHashCode();
 		}
+
+		/// <summary>
+		///	ToString Method
+		/// </summary>
+		///
+		/// <remarks>
+		///	Formats the object as a string.
+		/// </remarks>
+		[MonoTODO]
+		public override string ToString () 
+		{
+			//FIXME: add class specific stuff;
+			return base.ToString();
+		}
+
+
+		#endregion
 	}
 }

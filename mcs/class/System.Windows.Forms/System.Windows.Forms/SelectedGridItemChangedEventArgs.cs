@@ -3,12 +3,14 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
-//	Partially completed by Dennis Hayes (dennish@raytek.com)
+//	 Partially completed by Dennis Hayes (dennish@raytek.com)
+//   Gianandrea Terzi (gianandrea.terzi@lario.com)
 //
 // (C) 2002 Ximian, Inc
 //
 
-namespace System.Windows.Forms {
+namespace System.Windows.Forms 
+{
 
 	// <summary>
 	// </summary>
@@ -25,10 +27,9 @@ namespace System.Windows.Forms {
 			this.old = old;
 		}
 
-		//
-		//  --- Public Properties
-		//
-		public GridItem NewSelection {
+		#region Public Properties
+		public GridItem NewSelection 
+		{
 			get {
 				return newGridItem;
 			}
@@ -38,22 +39,83 @@ namespace System.Windows.Forms {
 				return old;
 			}
 		}
+		#endregion
 
-		//
-		//  --- Public Methods
-		//
-		[MonoTODO]
-		public override bool Equals(object o) {
-			throw new NotImplementedException ();
+		#region Public Methods
+
+		/// <summary>
+		///	Equality Operator
+		/// </summary>
+		///
+		/// <remarks>
+		///	Compares two SelectedGridItemChangedEventArgs objects.
+		///	The return value is based on the equivalence of
+		///	NewSelection and OldSelection Property
+		///	of the two SelectedGridItemChangedEventArgs.
+		/// </remarks>
+		public static bool operator == (SelectedGridItemChangedEventArgs SelectedGridItemChangedEventArgsA, SelectedGridItemChangedEventArgs SelectedGridItemChangedEventArgsB) 
+		{
+			return (SelectedGridItemChangedEventArgsA.NewSelection == SelectedGridItemChangedEventArgsB.NewSelection) && (SelectedGridItemChangedEventArgsA.OldSelection == SelectedGridItemChangedEventArgsB.OldSelection);
+		}
+		
+		/// <summary>
+		///	Inequality Operator
+		/// </summary>
+		///
+		/// <remarks>
+		///	Compares two UICuesEventArgs objects.
+		///	The return value is based on the equivalence of
+		///	Changed Property
+		///	of the two UICuesEventArgs.
+		/// </remarks>
+		public static bool operator != (SelectedGridItemChangedEventArgs SelectedGridItemChangedEventArgsA, SelectedGridItemChangedEventArgs SelectedGridItemChangedEventArgsB) 
+		{
+			return (SelectedGridItemChangedEventArgsA.NewSelection != SelectedGridItemChangedEventArgsB.NewSelection) || (SelectedGridItemChangedEventArgsA.OldSelection != SelectedGridItemChangedEventArgsB.OldSelection);
 		}
 
-		//public static bool Equals(object o1, object o2) {
-		//	throw new NotImplementedException ();
-		//}
+		/// <summary>
+		///	Equals Method
+		/// </summary>
+		///
+		/// <remarks>
+		///	Checks equivalence of this
+		///	SelectedGridItemChangedEventArgs and another
+		///	object.
+		/// </remarks>
+		public override bool Equals (object obj) 
+		{
+			if (!(obj is SelectedGridItemChangedEventArgs))return false;
+			return (this == (SelectedGridItemChangedEventArgs) obj);
+		}
+
+		/// <summary>
+		///	GetHashCode Method
+		/// </summary>
+		///
+		/// <remarks>
+		///	Calculates a hashing value.
+		/// </remarks>
 		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
+		public override int GetHashCode () 
+		{
+			//FIXME: add class specific stuff;
 			return base.GetHashCode();
-		}	 
+		}
+
+		/// <summary>
+		///	ToString Method
+		/// </summary>
+		///
+		/// <remarks>
+		///	Formats the SelectedGridItemChangedEventArgs as a string.
+		/// </remarks>
+		[MonoTODO]
+		public override string ToString () 
+		{
+			//FIXME: add class specific stuff;
+			return base.ToString();
+		}
+
+		#endregion  
 	}
 }
