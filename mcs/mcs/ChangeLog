@@ -1,5 +1,12 @@
 2001-10-07  Miguel de Icaza  <miguel@ximian.com>
 
+	* codegen.cs: Added support for try/catch/finalize and throw.
+
+	* cs-parser.jay: Added support for try/catch/finalize.
+
+	* class.cs: Catch static methods having the flags override,
+	virtual or abstract.
+
 	* expression.cs (UserCast): This user cast was not really doing
 	what it was supposed to do.  Which is to be born in fully resolved
 	state.  Parts of the resolution were being performed at Emit time! 

@@ -4446,7 +4446,6 @@ namespace CIR {
 	public class UserCast : Expression {
 		MethodBase method;
 		Expression source;
-		bool       is_explicit;
 		
 		public UserCast (MethodInfo method, Expression source)
 		{

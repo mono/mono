@@ -70,11 +70,11 @@ namespace CIR
 				else
 					det = "";
 				
-				//return "Line:     "+line+" Col: "+col + "\n" +
+				// return "Line:     "+line+" Col: "+col + "\n" +
 				//       "VirtLine: "+ref_line +
 				//       " Token: "+current_token + " " + det;
 
-				return ref_name + " " + "(" + line + "," + col + ")";
+				return ref_name + " " + "(" + line + "," + col + "), Token:" + current_token + " " + det;
 			}
 		}
 

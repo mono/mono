@@ -437,6 +437,62 @@ namespace CIR {
 			}
 		}
 
+		void EmitTry (Try t)
+		{
+			Label end = ig.BeginExceptionBlock ();
+			Label finish = ig.DefineLabel ();
+			EmitBlock (t.Block);
+
+			ig.Emit (OpCodes.Leave, finish);
+			
+			foreach (Catch c in t.Specific){
+				Type catch_type = parent.LookupType (c.Type, false);
+				VariableInfo vi;
+				
+				if (catch_type == null)
+					return;
+
+				ig.BeginCatchBlock (catch_type);
+
+				if (c.Name != null){
+					vi = c.Block.GetVariableInfo (c.Name);
+					if (vi == null){
+						Console.WriteLine ("This should not happen! variable does not exist in this block");
+						Environment.Exit (0);
+					}
+				
+					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+				} else
+					ig.Emit (OpCodes.Pop);
+				
+				EmitBlock (c.Block);
+			}
+
+			if (t.General != null){
+				ig.BeginCatchBlock (TypeManager.object_type);
+				ig.Emit (OpCodes.Pop);
+			}
+
+			ig.MarkLabel (finish);
+			if (t.Fini != null){
+				ig.BeginFinallyBlock ();
+				EmitBlock (t.Fini);
+			}
+			
+			ig.EndExceptionBlock ();
+		}
+
+		void EmitThrow (Throw t)
+		{
+			Expression e = t.Expr.Resolve (parent);
+
+			if (e == null)
+				return;
+
+			e.Emit (this);
+			ig.Emit (OpCodes.Throw);
+		}
+		
 		//
 		// Emits the statemets `s'.
 		//
@@ -469,6 +525,10 @@ namespace CIR {
 				EmitStatementExpression ((StatementExpression) s);
 			else if (s is Foreach)
 				EmitForeach ((Foreach) s);
+			else if (s is Try)
+				EmitTry ((Try) s);
+			else if (s is Throw)
+				EmitThrow ((Throw) s);
 			else if (s is EmptyStatement) {
 
 			} else {

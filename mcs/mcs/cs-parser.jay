@@ -2604,7 +2604,13 @@ opt_for_initializer
 	;
 
 for_initializer
-	: local_variable_declaration
+	: local_variable_declaration 
+	  {
+		if ((Block) $1 != current_block){
+			current_block.AddStatement ((Statement) $1);
+			current_block = (Block) $1;
+		}
+	  }
 	| statement_expression_list
 	;
 
@@ -2770,18 +2776,43 @@ opt_identifier
 	;
 
 catch_clause 
-	: CATCH opt_catch_args block
+	: CATCH opt_catch_args 
 	{
-		string type = null;
-		string id = null;
+		string type = null, id = null;
 		
 		if ($2 != null) {
 			DictionaryEntry cc = (DictionaryEntry) $2;
 			type = (string) cc.Key;
 			id   = (string) cc.Value;
+
+			if (id != null){
+				ArrayList one = new ArrayList ();
+				one.Add (new VariableDeclaration (id, null, lexer.Location));
+
+				$1 = current_block;
+				current_block = new Block (current_block);
+				Block b = declare_local_variables (type, one);
+				current_block = b;
+
+				
+			}
+		}
+	} block {
+		string type = null, id = null;
+
+		if ($2 != null){
+			DictionaryEntry cc = (DictionaryEntry) $2;
+			type = (string) cc.Key;
+			id   = (string) cc.Value;
+
+			if ($1 != null){
+				while (current_block != (Block) $1)
+					current_block = current_block.Parent;
+			}
 		}
 
-		$$ = new Catch (type, id, (Block) $3);
+
+		$$ = new Catch (type, id , (Block) $4);
 	}
         ;
 
@@ -2825,6 +2856,9 @@ using_statement
 
 resource_acquisition
 	: local_variable_declaration
+	  {
+		// FIXME: Add the current block chaining for local_variable_decl
+	  }
 	  expression
 	  // finishme
 	;
@@ -3035,7 +3069,7 @@ Block declare_local_variables (string type, ArrayList variable_declarators)
 	if (current_block.Used)
 		implicit_block = new Block (current_block, true);
 	else
-		implicit_block = new Block (current_block, true);
+		implicit_block = current_block;
 
 	foreach (VariableDeclaration decl in variable_declarators){
 		if (implicit_block.AddVariable (type, decl.identifier, decl.Location)){
@@ -3194,7 +3228,7 @@ public override int parse ()
 		// Console.WriteLine ("Fatal error: " + name);
 		// Console.WriteLine (lexer.location);
 
-		Console.WriteLine (lexer.location + "  : Parsing error");
+		Console.WriteLine (lexer.location + "  : Parsing error ");
 		Console.WriteLine (e);
 		global_errors++;
 	}

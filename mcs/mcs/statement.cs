@@ -164,11 +164,11 @@ namespace CIR {
 	}
 
 	public class Throw : Statement {
-		Expression expr;
+		public readonly Expression Expr;
 		
 		public Throw (Expression expr)
 		{
-			this.expr = expr;
+			Expr = expr;
 		}
 	}
 
@@ -406,6 +406,11 @@ namespace CIR {
 				return used;
 			}
 		}
+
+		public void Use ()
+		{
+			used = true;
+		}
 		
 		// <summary>
 		//   Creates a compiler-internal identifier, this is
@@ -613,9 +618,9 @@ namespace CIR {
 	}
 
 	public class Try : Statement {
-		Block fini, block;
-		ArrayList specific;
-		Catch general;
+		public readonly Block Fini, Block;
+		public readonly ArrayList Specific;
+		public readonly Catch General;
 		
 		//
 		// specific, general and fini might all be null.
@@ -626,65 +631,23 @@ namespace CIR {
 				Console.WriteLine ("CIR.Try: Either specific or general have to be non-null");
 			}
 			
-			this.block = block;
-			this.specific = specific;
-			this.general = general;
-			this.fini = fini;
-		}
-
-		public Block Block {
-			get {
-				return block;
-			}
-		}
-
-		public ArrayList Specific {
-			get {
-				return specific;
-			}
-		}
-
-		public Catch General {
-			get {
-				return general;
-			}
-		}
-
-		public Block Fini {
-			get {
-				return fini;
-			}
+			this.Block = block;
+			this.Specific = specific;
+			this.General = general;
+			this.Fini = fini;
 		}
 	}
 	
 	public class Catch {
-		string type;
-		string name;
-		Block block;
+		public readonly string Type;
+		public readonly string Name;
+		public readonly Block  Block;
 		
 		public Catch (string type, string name, Block block)
 		{
-			this.type = type;
-			this.name = name;
-			this.block = block;
-		}
-
-		public Block Block {
-			get {
-				return block;
-			}
-		}
-
-		public string Name {
-			get {
-				return name;
-			}
-		}
-
-		public string Type {
-			get {
-				return type;
-			}
+			Type = type;
+			Name = name;
+			Block = block;
 		}
 	}
 

@@ -1368,6 +1368,7 @@ namespace CIR {
 			// Catch invalid uses of virtual and abtract modifiers
 			//
 			const int va = (Modifiers.VIRTUAL | Modifiers.ABSTRACT);
+			const int vao = (Modifiers.VIRTUAL | Modifiers.ABSTRACT | Modifiers.OVERRIDE);
 			const int nv = (Modifiers.NEW | Modifiers.VIRTUAL);
 
 			if ((ModFlags & va) == va){
@@ -1395,6 +1396,16 @@ namespace CIR {
 				error = true;
 			}
 
+			if ((ModFlags & Modifiers.STATIC) != 0){
+				if ((ModFlags & vao) != 0){
+					Report.Error (
+						112, Location, "static method " + MakeName (parent) +
+						" can not be marked as virtual, abstract or override");
+
+					error = true;
+				}
+			}
+			
 			if ((ModFlags & Modifiers.OVERRIDE) != 0 && ((ModFlags & nv) != 0)){
 				Report.Error (
 					113, Location, MakeName (parent) +
