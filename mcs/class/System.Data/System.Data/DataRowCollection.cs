@@ -140,5 +140,22 @@ namespace System.Data
 			list.RemoveAt (index);
 		}
 
+		///<summary>
+		///Internal method used to validate a given DataRow with respect
+		///to the DataRowCollection
+		///</summary>
+		[MonoTODO]
+		internal void ValidateDataRowInternal(DataRow row)
+		{
+			//FIXME: this validates constraints in the order they appear
+			//in the collection. Most probably we need to do it in a 
+			//specific order like unique/primary keys first, then Foreignkeys, etc
+			foreach(Constraint constraint in table.Constraints)
+			{
+				constraint.AssertConstraint(row);
+			}
+
+		}
+
 	}
 }

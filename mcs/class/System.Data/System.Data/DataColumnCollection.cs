@@ -113,6 +113,7 @@ namespace System.Data
 		/// Creates and adds the specified DataColumn object to the DataColumnCollection.
 		/// </summary>
 		/// <param name="column">The DataColumn to add.</param>
+		[MonoTODO]
 		public void Add(DataColumn column)
 		{	
 			//FIXME:
@@ -126,6 +127,17 @@ namespace System.Data
 				
 				column.SetTable( parentTable);
 				base.List.Add(column);
+				
+				//add constraints if neccesary
+
+				if(column.Unique)
+				{
+					UniqueConstraint uc = new UniqueConstraint(column);
+					parentTable.Constraints.Add(uc);
+				}
+				
+				//TODO: add missing constraints. i.e. Primary/Foreign keys
+
 				OnCollectionChanged(e);
 				return;
 			}

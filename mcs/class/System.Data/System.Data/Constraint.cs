@@ -104,10 +104,8 @@ namespace System.Data
 		internal virtual void RemoveFromConstraintCollectionCleanup( 
 			ConstraintCollection collection){}
 
-
-		//Call to Validate the constraint
-		//Will throw if constraint is violated
 		internal virtual void AssertConstraint(){}
 		
+		internal virtual void AssertConstraint(DataRow row){}
 	}
 }

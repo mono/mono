@@ -1,3 +1,22 @@
+2002-10-06  Luis Fernandez <luifer@onetel.net.uk>
+
+	* System.Data/Constraint.cs (AssertConstraint): added overloaded
+	method.
+
+	* System.Data/DataColumnCollection.cs: added constraints when needed.
+
+	* System.Data/DataRow.cs: validate UniqueConstraint's.
+
+	* System.Data/DataRowCollection.cs (ValidateDataRowInternal): new
+	internal method to validate a given DataRow with respect to the
+	DataRowCollection.
+
+	* System.Data/ForeignKeyConstraint.cs (AssertConstraint): stubs for
+	new overloaded method.
+
+	* System.Data/UniqueConstraint.cs: added implementation.
+	(AseertConstraint): implemented new overloaded method.
+	
 2002-10-01  Rodrigo Moya <rodrigo@ximian.com>
 
 	* System.Data.OleDb/OleDbConnection.cs (Open): commented code from

@@ -394,7 +394,11 @@ namespace System.Data
 			if (HasVersion (DataRowVersion.Proposed))
 			{
 				rowState = DataRowState.Modified;
-				//TODO: Validate Constraints, Events
+				
+				//Calling next method validates UniqueConstraints
+				//and ForeignKeys.
+				_table.Rows.ValidateDataRowInternal(this);
+				
 				Array.Copy (proposed, current, _table.Columns.Count);
 				
 				//FIXME: MS implementation assigns the proposed values to

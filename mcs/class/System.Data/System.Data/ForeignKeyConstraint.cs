@@ -371,6 +371,13 @@ namespace System.Data
 			
 		}
 		
+		[MonoTODO]
+		internal override void AssertConstraint(DataRow row)
+		{
+			//Implement: this should be used to validate ForeignKeys constraints 
+			//when modifiying the DataRow values of a DataTable.
+		}
+		
 		#endregion // Methods
 	}
 

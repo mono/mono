@@ -362,8 +362,7 @@ namespace System.Data
 				return unique;
 			}
 			set {
-				//TODO: create UniqueConstraint
-				//if Table == null then the constraint is 
+				//if Table == null then the UniqueConstraint is
 				//created on addition to the collection
 				
 				//FIXME?: need to check if value is the same

@@ -312,7 +312,7 @@ namespace System.Data
 			return hash ;
 		}
 		
-	
+		[MonoTODO]
 		internal override void AddToConstraintCollectionSetup(
 				ConstraintCollection collection)
 		{
@@ -332,6 +332,9 @@ namespace System.Data
 
 			}
 					
+			//FIXME: ConstraintCollection calls AssertContraint() again rigth after calling
+			//this method, so that it is executed twice. Need to investigate which
+			// call to remove as that migth affect other parts of the classes.
 			AssertConstraint();
 		}
 					
@@ -352,9 +355,82 @@ namespace System.Data
 			//Unique?	
 			DataTable tbl = _dataTable;
 
-			//TODO: validate no dups	
+			//TODO: Investigate other ways of speeding up the validation work below.
+			//FIXME: This only works when only one DataColumn has been specified.
+
+			//validate no duplicates exists.
+			//Only validate when there are at least 2 rows
+			//so that a duplicate migth exist.
+			if(tbl.Rows.Count > 1)
+			{
+
+
+				//get copy of rows collection first so that we do not modify the
+				//original.
+				ArrayList clonedDataList = (ArrayList)tbl.Rows.List.Clone();
+
+				ArrayList newDataList = new ArrayList();
+
+				//copy to array list only the column we are interested in.
+				foreach (DataRow row in clonedDataList)
+				{
+					newDataList.Add(row[this._dataColumns[0]]);
+				}
+				
+				//sort ArrayList and check adjacent values for duplicates.
+				newDataList.Sort();
+
+				for( int i = 0 ; i < newDataList.Count - 1 ; i++)
+				{
+					if( newDataList[i].Equals(newDataList[i+1]) )
+					{
+						string msg = "Column '" + this._dataColumns[0] + "' contains non-unique values";
+						throw new InvalidConstraintException( msg );
+					}
+				}
+			}
+
 
 		}
+
+		[MonoTODO]
+		internal override void AssertConstraint(DataRow row)
+		{
+
+			if (_dataTable == null) return; //???
+			if (_dataColumns == null) return; //???
+
+
+			//Unique?
+			DataTable tbl = _dataTable;
+
+			foreach(DataRow compareRow in tbl.Rows)
+			{
+				//skip if it is the same row to be validated
+				if(!row.Equals(compareRow))
+				{
+					if(compareRow.HasVersion (DataRowVersion.Original))
+					{
+						//FIXME: should we compare to compareRow[DataRowVersion.Current]?
+						//FIXME: We need to compare to all columns the constraint is set to.
+						if(row[_dataColumns[0], DataRowVersion.Proposed].Equals( compareRow[_dataColumns[0], DataRowVersion.Current]))
+						{
+							string ExceptionMessage;
+							ExceptionMessage = "Column '" + _dataColumns[0].ColumnName + "' is constrained to be unique.";
+							ExceptionMessage += " Value '" + row[_dataColumns[0], DataRowVersion.Proposed].ToString();
+							ExceptionMessage += "' is already present.";
+
+							throw new ConstraintException (ExceptionMessage);
+						}
+
+					}
+
+		}
+
+			}
+
+		}
+
 		#endregion // Methods
 	}
 }
