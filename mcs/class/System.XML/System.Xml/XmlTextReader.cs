@@ -678,10 +678,9 @@ namespace System.Xml
 			return ReadStringInternal ();
 		}
 
-		[MonoTODO]
 		public void ResetState ()
 		{
-			throw new NotImplementedException ();
+			Init ();
 		}
 
 		public override void ResolveEntity ()
