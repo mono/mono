@@ -34,8 +34,13 @@ using System.Collections.Specialized;
 using System.Text;
 using System.Xml;
 
-namespace System.Web.UI.WebControls {
-	public sealed class XmlDataSourceView : DataSourceView {
+namespace System.Web.UI.WebControls
+{
+	public sealed class XmlDataSourceView : DataSourceView
+	{
+		string name;
+		ArrayList nodes;
+	
 		public XmlDataSourceView (XmlDataSource owner, string name, XmlNodeList nodes)
 		{
 			// Why do they pass owner?
@@ -48,24 +53,19 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
-		[MonoTODO]
 		public IEnumerable Select (DataSourceSelectArguments arguments)
 		{
-			return nodes;
+			return ExecuteSelect (arguments);
 		}
 		
 		public override string Name { 
 			get { return name; }
 		}
 		
-		string name;
-		ArrayList nodes;
-	
 		[MonoTODO]
-		protected internal override IEnumerable ExecuteSelect (
-						DataSourceSelectArguments arguments)
+		protected internal override IEnumerable ExecuteSelect (DataSourceSelectArguments arguments)
 		{
-			throw new NotImplementedException ();
+			return nodes;
 		}		
 	}
 }

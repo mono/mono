@@ -154,7 +154,7 @@ namespace System.Web.UI.WebControls {
 			if (viewName == "")
 				viewName = "DefaultView";
 			
-			return new XmlDataSourceView (this, viewName, GetXmlDataDocument ().SelectNodes (XPath != "" ? XPath : "."));
+			return new XmlDataSourceView (this, viewName, GetXmlDataDocument ().DocumentElement.SelectNodes (XPath != "" ? XPath : "./*"));
 		}
 		
 		ICollection IDataSource.GetViewNames ()

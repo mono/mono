@@ -228,7 +228,16 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
 		bool IPostBackDataHandler.LoadPostData(string postDataKey, NameValueCollection postCollection)
+		{
+			LoadPostData (postDataKey, postCollection);
+		}
+		
+		protected virtual bool LoadPostData(string postDataKey, NameValueCollection postCollection)
+#else
+		bool IPostBackDataHandler.LoadPostData(string postDataKey, NameValueCollection postCollection)
+#endif
 		{
 			if (!Enabled)
 				return false;
@@ -251,12 +260,30 @@ namespace System.Web.UI.WebControls
 			return false;
 		}
 
+#if NET_2_0
 		void IPostBackDataHandler.RaisePostDataChangedEvent()
+		{
+			RaisePostDataChangedEvent ();
+		}
+		
+		protected virtual void RaisePostDataChangedEvent()
+#else
+		void IPostBackDataHandler.RaisePostDataChangedEvent()
+#endif
 		{
 			OnSelectedIndexChanged(EventArgs.Empty);
 		}
 
+
+#if NET_2_0
+		bool IRepeatInfoUser.HasFooter {
+			get { return HasFooter; }
+		}
+		
+		protected virtual bool HasFooter
+#else
 		bool IRepeatInfoUser.HasFooter
+#endif
 		{
 			get
 			{
@@ -264,7 +291,15 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+		bool IRepeatInfoUser.HasHeader {
+			get { return HasHeader; }
+		}
+		
+		protected virtual bool HasHeader
+#else
 		bool IRepeatInfoUser.HasHeader
+#endif
 		{
 			get
 			{
@@ -272,7 +307,15 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+		bool IRepeatInfoUser.HasSeparators {
+			get { return HasSeparators; }
+		}
+		
+		protected virtual bool HasSeparators
+#else
 		bool IRepeatInfoUser.HasSeparators
+#endif
 		{
 			get
 			{
@@ -280,7 +323,15 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+		int IRepeatInfoUser.RepeatedItemCount {
+			get { return RepeatedItemCount; }
+		}
+		
+		protected virtual int RepeatedItemCount
+#else
 		int IRepeatInfoUser.RepeatedItemCount
+#endif
 		{
 			get
 			{
@@ -288,12 +339,30 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
 		Style IRepeatInfoUser.GetItemStyle(ListItemType itemType, int repeatIndex)
+		{
+			return GetItemStyle (itemType, repeatIndex);
+		}
+		
+		protected virtual Style GetItemStyle(ListItemType itemType, int repeatIndex)
+#else
+		Style IRepeatInfoUser.GetItemStyle(ListItemType itemType, int repeatIndex)
+#endif
 		{
 			return null;
 		}
 
+#if NET_2_0
 		void IRepeatInfoUser.RenderItem(ListItemType itemType, int repeatIndex, RepeatInfo repeatInfo, HtmlTextWriter writer)
+		{
+			RenderItem (itemType, repeatIndex, repeatInfo, writer);
+		}
+		
+		protected virtual void RenderItem(ListItemType itemType, int repeatIndex, RepeatInfo repeatInfo, HtmlTextWriter writer)
+#else
+		void IRepeatInfoUser.RenderItem(ListItemType itemType, int repeatIndex, RepeatInfo repeatInfo, HtmlTextWriter writer)
+#endif
 		{
 			checkBoxRepeater.ID = repeatIndex.ToString(NumberFormatInfo.InvariantInfo);
 			checkBoxRepeater.Text = Items[repeatIndex].Text;

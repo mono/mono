@@ -45,6 +45,23 @@ namespace System.Web.UI.WebControls
 			this.day  = day;
 		}
 		
+#if NET_2_0
+
+		string selectUrl;
+		
+		public DayRenderEventArgs(TableCell cell, CalendarDay day, string selectUrl)
+		{
+			this.cell = cell;
+			this.day  = day;
+			this.selectUrl = selectUrl;
+		}
+		
+		public string SelectUrl {
+			get { return selectUrl; }
+		}
+		
+#endif
+		
 		public TableCell Cell
 		{
 			get

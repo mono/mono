@@ -268,9 +268,15 @@ namespace System.Web.UI.WebControls
 		}
 		
 		protected virtual void RaisePostBackEvent (string eventArgument)
+		{
+			if (CausesValidation)
+				Page.Validate (ValidationGroup);
+
+			OnClick (EventArgs.Empty);
+			OnCommand (new CommandEventArgs (CommandName, CommandArgument));
+		}
 #else
 		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
-#endif
 		{
 			if (CausesValidation)
 				Page.Validate ();
@@ -278,6 +284,7 @@ namespace System.Web.UI.WebControls
 			OnClick (EventArgs.Empty);
 			OnCommand (new CommandEventArgs (CommandName, CommandArgument));
 		}
+#endif
 		
 #if NET_2_0
 		protected virtual PostBackOptions GetPostBackOptions ()

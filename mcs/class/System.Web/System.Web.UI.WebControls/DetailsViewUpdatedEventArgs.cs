@@ -62,7 +62,7 @@ namespace System.Web.UI.WebControls
 			set { exceptionHandled = value; }
 		}
 	
-		public bool KeepInEdittMode {
+		public bool KeepInEditMode {
 			get { return keepEditMode; }
 			set { keepEditMode = value; }
 		}

@@ -788,7 +788,7 @@ namespace System.Web.UI.WebControls
 			object bstate = base.SaveControlState ();
 			object mstate = selectedItemPath;
 			
-			if (bstate != null && mstate != null)
+			if (bstate != null || mstate != null)
 				return new object[] { bstate, mstate };
 			else
 				return null;

@@ -1,3 +1,23 @@
+2005-02-10  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Button.cs: Use validation group when validating page.
+	* XmlDataSourceView.cs: Implemented ExecuteSelect.
+	* Menu.cs: Minor fix.
+	* CheckBox.cs: Added 2.0 properties and methods.
+	* BaseDataList.cs: Always databind the control if view state
+	is not enabled.
+	* DataList.cs: In 2.0, use control state to save the selected index.
+	* DetailsViewUpdatedEventArgs.cs: Fix typo.
+	* CustomValidator.cs: Implement IStaticTextControl interface.
+	* CheckBoxList.cs: Added missing 2.0 methods.
+	* DropDownList.cs: Added missing 2.0 methods. Implemented ITextControl
+	interface.
+	* XmlDataSource.cs: Return childs of DocumentElement, not the root
+	document.
+	* DayRenderEventArgs.cs, CompareValidator.cs, DataListItem.cs:
+	Implemented 2.0 API.
+	
+
 2005-02-04  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* Button.cs: Implemented all missing 2.0 features.

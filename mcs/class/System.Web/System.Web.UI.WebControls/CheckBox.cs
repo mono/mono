@@ -51,9 +51,19 @@ namespace System.Web.UI.WebControls
 	[DataBindingHandler("System.Web.UI.Design.TextDataBindingHandler, " + Consts.AssemblySystem_Design)]
 	[Designer ("System.Web.UI.Design.WebControls.CheckBoxDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	public class CheckBox : WebControl, IPostBackDataHandler
+#if NET_2_0
+		, ICheckBoxControl
+#endif
 	{
 		private static readonly object CheckedChangedEvent = new object();
 		AttributeCollection commonAttrs;
+		
+#if NET_2_0
+		AttributeCollection inputAttributes;
+		StateBag inputAttributesState;
+		AttributeCollection labelAttributes;
+		StateBag labelAttributesState;
+#endif
 		
 		public CheckBox(): base(HtmlTextWriterTag.Input)
 		{
@@ -135,6 +145,72 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+    	[ThemeableAttribute (false)]
+		[DefaultValue (false), WebCategory ("Behavior")]
+		public bool CausesValidation
+		{
+			get
+			{
+				Object cv = ViewState["CausesValidation"];
+				if(cv!=null)
+					return (Boolean)cv;
+				return false;
+			}
+			set
+			{
+				ViewState["CausesValidation"] = value;
+			}
+		}
+		
+		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public AttributeCollection InputAttributes
+		{
+			get {
+				if (inputAttributes == null) {
+					if (inputAttributesState == null) {
+						inputAttributesState = new StateBag (true);
+						if (IsTrackingViewState)
+							inputAttributesState.TrackViewState();
+					}
+					inputAttributes = new AttributeCollection (inputAttributesState);
+				}
+				return inputAttributes;
+			}
+		}
+		
+		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public AttributeCollection LabelAttributes
+		{
+			get {
+				if (labelAttributes == null) {
+					if (labelAttributesState == null) {
+						labelAttributesState = new StateBag (true);
+						if (IsTrackingViewState)
+							labelAttributesState.TrackViewState();
+					}
+					labelAttributes = new AttributeCollection (labelAttributesState);
+				}
+				return labelAttributes;
+			}
+		}
+
+		[DefaultValueAttribute ("")]
+		[ThemeableAttribute (false)]
+		[WebCategoryAttribute ("Behavior")]
+		public string ValidationGroup {
+			get {
+				string text = (string)ViewState["ValidationGroup"];
+				if (text!=null) return text;
+				return String.Empty;
+			}
+			set {
+				ViewState["ValidationGroup"] = value;
+			}
+		}
+		
+#endif
+
 		[WebCategory ("Action")]
 		[WebSysDescription ("Raised when the control is checked or unchecked.")]
 		public event EventHandler CheckedChanged
@@ -152,6 +228,60 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+#if NET_2_0
+		protected override void TrackViewState ()
+		{
+			base.TrackViewState();
+			if (inputAttributesState != null)
+				inputAttributesState.TrackViewState ();
+			if (labelAttributesState != null)
+				labelAttributesState.TrackViewState ();
+		}
+
+		protected override object SaveViewState ()
+		{
+			object baseView = base.SaveViewState ();
+			object inputAttrView = null;
+			object labelAttrView = null;
+			
+			if (inputAttributesState != null)
+				inputAttrView = inputAttributesState.SaveViewState ();
+			
+			if (labelAttributesState != null)
+				labelAttrView = labelAttributesState.SaveViewState ();
+			
+			if (baseView == null && inputAttrView == null && labelAttrView == null)
+				return null;
+
+			return new Triplet (baseView, inputAttrView, labelAttrView);
+		}
+
+		protected override void LoadViewState (object savedState)
+		{
+			if (savedState == null)
+				return;
+
+			Triplet saved = (Triplet) savedState;
+			base.LoadViewState (saved.First);
+			
+			if (saved.Second != null) {
+				if (inputAttributesState == null) {
+					inputAttributesState = new StateBag(true);
+					inputAttributesState.TrackViewState ();
+				}
+				inputAttributesState.LoadViewState (saved.Second);
+			}
+			
+			if (saved.Third != null) {
+				if (labelAttributesState == null) {
+					labelAttributesState = new StateBag(true);
+					labelAttributesState.TrackViewState ();
+				}
+				labelAttributesState.LoadViewState (saved.Third);
+			}
+		}
+#endif
+
 		protected override void OnPreRender(EventArgs e)
 		{
 			if (Page != null && Enabled) {
@@ -218,6 +348,13 @@ namespace System.Web.UI.WebControls
 			Attributes.AddAttributes (writer);
 		}
 
+#if NET_2_0
+		protected override void AddAttributesToRender (HtmlTextWriter writer)
+		{
+			base.AddAttributesToRender (writer);
+		}
+#endif
+		
 		protected override void Render (HtmlTextWriter writer)
 		{
 			bool hasBeginRendering = false;
@@ -252,6 +389,10 @@ namespace System.Web.UI.WebControls
 						commonAttrs.AddAttributes (writer);
 					RenderInputTag (writer, ClientID);
 				}
+#if NET_2_0
+				if (labelAttributes != null)
+					labelAttributes.AddAttributes (writer);
+#endif
 				writer.AddAttribute (HtmlTextWriterAttribute.For, ClientID);
 				writer.RenderBeginTag (HtmlTextWriterTag.Label);
 				writer.Write (Text);
@@ -273,6 +414,10 @@ namespace System.Web.UI.WebControls
 		
 		internal virtual void RenderInputTag (HtmlTextWriter writer, string clientId)
 		{
+#if NET_2_0
+			if (inputAttributes != null)
+				inputAttributes.AddAttributes (writer);
+#endif
 			if (!Enabled)
 				writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
 
@@ -299,7 +444,16 @@ namespace System.Web.UI.WebControls
 			writer.RenderEndTag ();
 		}
 		
+#if NET_2_0
 		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
+		{
+			return LoadPostData (postDataKey, postCollection);
+		}
+		
+		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
+#else
+		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
+#endif
 		{
 			string postedVal = postCollection [postDataKey];			
 			bool haveData = ((postedVal != null)&& (postedVal.Length > 0));
@@ -308,9 +462,24 @@ namespace System.Web.UI.WebControls
 			return diff ;
 		}
 		
+#if NET_2_0
+		void IPostBackDataHandler.RaisePostDataChangedEvent()
+		{
+			RaisePostDataChangedEvent ();
+		}
+		
+		protected virtual void RaisePostDataChangedEvent()
+		{
+			if (CausesValidation)
+				Page.Validate (ValidationGroup);
+
+			OnCheckedChanged (EventArgs.Empty);
+		}
+#else
 		void IPostBackDataHandler.RaisePostDataChangedEvent()
 		{
 			OnCheckedChanged (EventArgs.Empty);
 		}
+#endif
 	}
 }

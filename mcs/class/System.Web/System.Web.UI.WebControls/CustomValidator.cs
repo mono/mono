@@ -42,6 +42,9 @@ namespace System.Web.UI.WebControls
 	             + "ErrorMessage=\"CustomValidator\">"
 	             + "</{0}:CustomValidator>")]
 	public class CustomValidator : BaseValidator
+#if NET_2_0
+		, IStaticTextControl
+#endif
 	{
 		private static readonly object ServerValidateEvent = new object();
 

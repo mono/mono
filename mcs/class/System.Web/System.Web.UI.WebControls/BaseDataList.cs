@@ -322,7 +322,7 @@ namespace System.Web.UI.WebControls
 			{
 				base.OnInit(e);
 				inited = true;
-				if (!Page.IsPostBack)
+				if (!Page.IsPostBack || !EnableViewState)
 					RequiresDataBinding = true;
 			}
 			

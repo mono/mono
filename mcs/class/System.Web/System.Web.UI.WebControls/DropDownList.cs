@@ -41,7 +41,14 @@ namespace System.Web.UI.WebControls
 {
 	[ValidationProperty("SelectedItem")]
 	public class DropDownList : ListControl, IPostBackDataHandler
+#if NET_2_0
+		, ITextControl
+#endif
 	{
+#if NET_2_0
+		private static readonly object TextChangedEvent = new object();
+#endif
+		
 		public DropDownList(): base()
 		{
 		}
@@ -105,6 +112,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if !NET_2_0
 		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Bindable (false), EditorBrowsable (EditorBrowsableState.Never)]
 		public override string ToolTip
@@ -116,6 +124,56 @@ namespace System.Web.UI.WebControls
 			set {
 			}
 		}
+#endif
+
+#if NET_2_0
+
+		[MonoTODO ("Make sure that the following attributes are correct")]
+		[DefaultValue (null)]
+		[ThemeableAttribute (false)]
+		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public string Text {
+			get {
+				if (SelectedItem != null) return SelectedItem.Text;
+				else return null;
+			}
+			set {
+				for (int n=0; n < Items.Count; n++) {
+					if (Items[n].Text == value) {
+						SelectedIndex = n;
+						return;
+					}
+				}
+				SelectedIndex = -1;
+			}
+		}
+		
+		[WebCategory ("Action")]
+		public event EventHandler TextChanged
+		{
+			add {
+				Events.AddHandler (TextChangedEvent, value);
+			}
+			remove {
+				Events.RemoveHandler (TextChangedEvent, value);
+			}
+		}
+		
+		protected override void OnSelectedIndexChanged (EventArgs e)
+		{
+			base.OnSelectedIndexChanged (e);
+			OnTextChanged (e);
+		}
+		
+		protected virtual void OnTextChanged (EventArgs e)
+		{
+			if (Events != null) {
+				EventHandler eh = (EventHandler)(Events[TextChangedEvent]);
+				if (eh != null)
+					eh (this, e);
+			}
+		}
+#endif
 
 		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
@@ -164,7 +222,16 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		bool IPostBackDataHandler.LoadPostData(string postDataKey, NameValueCollection postCollection)
+#if NET_2_0
+		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
+		{
+			return LoadPostData (postDataKey, postCollection);
+		}
+		
+		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
+#else
+		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
+#endif
 		{
 			string[] vals = postCollection.GetValues(postDataKey);
 			if(vals != null)
@@ -179,7 +246,16 @@ namespace System.Web.UI.WebControls
 			return false;
 		}
 
+#if NET_2_0
 		void IPostBackDataHandler.RaisePostDataChangedEvent()
+		{
+			RaisePostDataChangedEvent ();
+		}
+		
+		protected virtual void RaisePostDataChangedEvent()
+#else
+		void IPostBackDataHandler.RaisePostDataChangedEvent()
+#endif
 		{
 			OnSelectedIndexChanged(EventArgs.Empty);
 		}

@@ -43,6 +43,9 @@ namespace System.Web.UI.WebControls
 {
 	[ToolboxItem(false)]
 	public class DataListItem : WebControl, INamingContainer
+#if NET_2_0
+		, IDataItemContainer
+#endif
 	{
 		int itemIndex;
 		ListItemType itemType;

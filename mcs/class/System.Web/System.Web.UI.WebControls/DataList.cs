@@ -81,6 +81,10 @@ namespace System.Web.UI.WebControls
 		DataListItemCollection items;
 
 		bool extractTemplateRows;
+		
+#if NET_2_0
+		int selectedIndex = -1;
+#endif
 
 		public DataList ()
 		{
@@ -352,11 +356,15 @@ namespace System.Web.UI.WebControls
 		[WebSysDescription ("The currently selected item index number.")]
 		public virtual int SelectedIndex {
 			get {
+#if NET_2_0
+				return selectedIndex;
+#else
 				object o = ViewState ["SelectedIndex"];
 				if (o != null)
 					return (int) o;
 
 				return -1;
+#endif
 			}
 			set {
 				//FIXME: Looks like a bug in Microsoft's specs.
@@ -366,7 +374,11 @@ namespace System.Web.UI.WebControls
 					throw new ArgumentOutOfRangeException("value");
 
 				int prevSel = SelectedIndex;
+#if NET_2_0
+				selectedIndex = value;
+#else
 				ViewState ["SelectedIndex"] = value;
+#endif
 				DataListItem prevSelItem;
 				ListItemType liType;
 
@@ -607,6 +619,35 @@ namespace System.Web.UI.WebControls
 			if (separatorStyle != null)
 				separatorStyle.TrackViewState ();
 		}
+
+#if NET_2_0
+		protected override void OnInit (EventArgs e)
+		{
+			Page.RegisterRequiresControlState (this);
+			base.OnInit (e);
+		}
+		
+		protected internal override void LoadControlState (object ob)
+		{
+			if (ob == null) return;
+			Pair state = (Pair) ob;
+			base.LoadControlState (state.First);
+			
+			if (state.Second != null)
+				SelectedIndex = (int) state.Second;
+		}
+		
+		protected internal override object SaveControlState ()
+		{
+			object bstate = base.SaveControlState ();
+			object mstate = SelectedIndex != -1 ? (object) SelectedIndex : null;
+			
+			if (bstate != null || mstate != null)
+				return new Pair (bstate, mstate);
+			else
+				return null;
+		}
+#endif
 
 		protected override bool OnBubbleEvent (object source, EventArgs e)
 		{
