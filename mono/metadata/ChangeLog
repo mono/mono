@@ -1,3 +1,15 @@
+2004-12-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* object-internals.h (MonoThread): Remove unused 'unmanaged' field.
+
+	* object-internals.h (MonoReflectionAssembly): Sync object layout with
+	managed side.
+
+	* appdomain.c: Bump corlib version.
+
+	* appdomain.c (ves_icall_System_AppDomain_GetAssemblies): Skip
+	internal assemblies. Fixes #69181.
+
 2004-12-05  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_class_inflate_generic_signature): Make this a
