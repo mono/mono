@@ -1,3 +1,9 @@
+2003-04-22  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* BigInteger.cs: New, much faster, version by Ben Maurer. 
+	Warning: this version requires "unsafe" compilation switch
+	(which isn't a problem in corlib but may be elsewhere)
+
 2003-02-08  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* BigInteger.cs: Renamed namespace to match new location.
