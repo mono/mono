@@ -20,14 +20,18 @@ public class cilc
 
 	public static int Main (string[] args)
 	{
-		if (args.Length != 2) {
+		if (args.Length < 1 || args.Length > 2) {
 			Console.WriteLine ("Mono CIL-to-C binding generator");
 			Console.WriteLine ("Usage: cilc [options] assembly target");
 			return 1;
 		}
 
 		ns = "Unnamed";
-		Generate (args[0], args[1]);
+
+		if (args.Length == 1)
+			Generate (args[0], Path.GetFileNameWithoutExtension (args[0]));
+		else
+			Generate (args[0], args[1]);
 
 		return 0;
 	}
