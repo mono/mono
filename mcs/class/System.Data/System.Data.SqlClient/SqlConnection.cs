@@ -411,11 +411,10 @@ namespace System.Data.SqlClient {
                                                 dataSource = ""; // default dataSource
                                                 ConnectionString = null;
                                         }
-                                        disposed = true;
                                 } finally {
+                                        disposed = true;
                                         base.Dispose (disposing);
                                 }
-                                
 			}
 		}
 
@@ -453,6 +452,11 @@ namespace System.Data.SqlClient {
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);
+		}
+
+		~SqlConnection ()
+		{
+			Dispose (false);
 		}
 
 		public 

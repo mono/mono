@@ -1,5 +1,10 @@
 2005-03-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* SqlConnection.cs: added a finalizer for correct implementation of the
+	IDisposable pattern.
+
+2005-03-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* SqlException.cs: make it serialization-compatible with MS. Patch by
 	Aleksandar Dezelin. Closes bug #73596.
 
