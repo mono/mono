@@ -49,4 +49,19 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 	}
+
+	public class NumericLiteral : Literal {
+
+		double val;
+
+		internal NumericLiteral (double val)
+		{
+			this.val = val;
+		}
+
+		public override string ToString ()
+		{
+			return val.ToString ();
+		}
+	}
 }

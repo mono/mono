@@ -842,7 +842,9 @@ object_literal
 	;
 
 literal returns [Literal l]
-{l = null; }
+{
+	l = null; 
+}
 	: "null"
 	| "true"
 	  {
@@ -859,7 +861,7 @@ literal returns [Literal l]
 		  StringLiteral str = new StringLiteral (s.getText ());
 		  l = str;
 	  }      
-	| n:numeric_literal
+	| l = numeric_literal
 	;
 
 property_name_and_value_list
@@ -874,8 +876,11 @@ array_literal
 	: OPEN_BRACKET (primary_expr (COMMA primary_expr)* | ) CLOSE_BRACKET
 	;	
 
-numeric_literal
-	: DECIMAL_LITERAL
+numeric_literal returns [NumericLiteral num_lit]
+{
+	num_lit = null;
+}
+	: d:DECIMAL_LITERAL { num_lit = new NumericLiteral (Convert.ToSingle (d.getText ())); }
 	| HEX_INTEGER_LITERAL
 	;
 

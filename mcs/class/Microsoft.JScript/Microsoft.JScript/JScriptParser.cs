@@ -3670,7 +3670,9 @@ _loop139_breakloop:					;
 		Literal l;
 		
 		Token  s = null;
-		l = null;
+		
+			l = null; 
+		
 		
 		switch ( LA(1) )
 		{
@@ -3719,7 +3721,7 @@ _loop139_breakloop:					;
 		case DECIMAL_LITERAL:
 		case HEX_INTEGER_LITERAL:
 		{
-			numeric_literal();
+			l=numeric_literal();
 			break;
 		}
 		default:
@@ -3813,15 +3815,25 @@ _loop149_breakloop:					;
 		}
 	}
 	
-	public void numeric_literal() //throws RecognitionException, TokenStreamException
+	public NumericLiteral  numeric_literal() //throws RecognitionException, TokenStreamException
 {
+		NumericLiteral num_lit;
+		
+		Token  d = null;
+		
+			num_lit = null;
 		
 		
 		switch ( LA(1) )
 		{
 		case DECIMAL_LITERAL:
 		{
+			d = LT(1);
 			match(DECIMAL_LITERAL);
+			if (0==inputState.guessing)
+			{
+				num_lit = new NumericLiteral (Convert.ToSingle (d.getText ()));
+			}
 			break;
 		}
 		case HEX_INTEGER_LITERAL:
@@ -3834,6 +3846,7 @@ _loop149_breakloop:					;
 			throw new NoViableAltException(LT(1), getFilename());
 		}
 		 }
+		return num_lit;
 	}
 	
 	public void property_name_and_value_list() //throws RecognitionException, TokenStreamException
