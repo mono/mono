@@ -720,14 +720,14 @@ namespace Mono.Languages
 		{
 			bool hasSWF = false, isForm = false;
 			string mainclass = GetFQMainClass();
-			
+
 			foreach (string r in references) {
 				if (r.IndexOf ("System.Windows.Forms") >= 0) {
 					hasSWF = true;
 					break;	
 				}	
-			}	
-			if (mainclass != ".") {
+			}
+			if ((mainclass != ".") && (mainclass != "")) {
 				Type t = TypeManager.LookupType(mainclass);
 				if (t != null) 
 					isForm = t.IsSubclassOf (TypeManager.LookupType("System.Windows.Forms.Form"));
@@ -736,11 +736,15 @@ namespace Mono.Languages
 		}
 		
 		string GetFQMainClass()
-		{	
-			if (RootContext.RootNamespace != "")
-				return RootContext.RootNamespace + "." + RootContext.MainClass;
+		{
+			if (RootContext.MainClass != null) {
+				if (RootContext.RootNamespace != "")
+					return RootContext.RootNamespace + "." + RootContext.MainClass;
+				else
+					return RootContext.MainClass;
+			}
 			else
-				return RootContext.MainClass;			
+				return "";
 		}
 		
 		void FixEntryPoint()
