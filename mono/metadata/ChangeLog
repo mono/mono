@@ -1,5 +1,11 @@
 2005-04-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* locales.c,
+	  icall.c : removed InternalToUpper_Comp() and
+	  InternalToLower_Comp().
+
+2005-04-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* char-conversions.h : The tables were incorrectly generated. Should
 	  be generated against invariant culture.
 
