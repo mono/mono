@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.37 $
+// $Revision: 1.38 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.38  2004/10/02 19:08:38  pbartok
+// - Added Win32EnableWindow method (test for implementing modal dialogs)
+// - Added ClientToScreen method and imports
+//
 // Revision 1.37  2004/09/21 04:14:29  pbartok
 // - Fixed accessibility level for Idle handler
 //
@@ -1079,6 +1083,10 @@ namespace System.Windows.Forms {
 			Win32SetCursorPos(x, y);
 		}
 
+internal static void EnableWindow(IntPtr handle, bool Enabled) {
+	Win32EnableWindow(handle, Enabled);
+}
+
 		internal override void GetCursorPos(IntPtr handle, out int x, out int y) {
 			POINT	pt;
 
@@ -1099,6 +1107,17 @@ namespace System.Windows.Forms {
 			pnt.x = x;
 			pnt.y = y;
 			Win32ScreenToClient (handle, ref pnt);
+
+			x = pnt.x;
+			y = pnt.y;
+		}
+
+		internal override void ClientToScreen(IntPtr handle, ref int x, ref int y) {
+			POINT pnt;			
+
+			pnt.x = x;
+			pnt.y = y;
+			Win32ClientToScreen(handle, ref pnt);
 
 			x = pnt.x;
 			y = pnt.y;
@@ -1234,6 +1253,9 @@ namespace System.Windows.Forms {
 		[DllImport ("user32.dll", EntryPoint="ScreenToClient", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32ScreenToClient(IntPtr hWnd, ref POINT pt);
 
+		[DllImport ("user32.dll", EntryPoint="ClientToScreen", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static bool Win32ClientToScreen(IntPtr hWnd, ref POINT pt);
+
 		[DllImport ("user32.dll", EntryPoint="GetParent", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32GetParent(IntPtr hWnd);
 
@@ -1290,6 +1312,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="ShowWindow", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32ShowWindow(IntPtr hwnd, WindowPlacementFlags nCmdShow);
+
+		[DllImport ("user32.dll", EntryPoint="EnableWindow", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32EnableWindow(IntPtr hwnd, bool Enabled);
 		#endregion
 
 	}
