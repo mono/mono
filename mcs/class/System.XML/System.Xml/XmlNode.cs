@@ -9,17 +9,17 @@
 
 using System;
 using System.Collections;
+using System.Xml.XPath;
 
 namespace System.Xml 
 {
 	public abstract class XmlNode : ICloneable, IEnumerable, IXPathNavigable 
 	{
 		//======= Private data members ==============================================
-		protected XmlNodeList _childNodes;
-		protected XmlNode FOwnerNode;
+		private XmlNodeListAsArrayList _childNodes;
+		protected XmlDocument FOwnerDocument;
+		protected XmlNode _parent;
 		
-		// ICloneable
-
 		/// <summary>
 		/// Return a clone of this node
 		/// </summary>
@@ -67,7 +67,7 @@ namespace System.Xml
 				if (_childNodes == null)
 					_childNodes = new XmlNodeListAsArrayList();
 
-				return _childNodes;
+				return _childNodes as XmlNodeList;
 			}
 		}
 		
@@ -242,8 +242,7 @@ namespace System.Xml
 		{
 			get
 			{
-				// TODO - implement OwnerDocument {get;}
-				throw new NotImplementedException();
+				return FOwnerDocument;
 			}
 		}
 
@@ -255,8 +254,7 @@ namespace System.Xml
 		{
 			get
 			{
-				// TODO - implement ParentNode[get;}
-				throw new NotImplementedException();
+				return _parent;
 			}
 		}
 		
@@ -338,29 +336,6 @@ namespace System.Xml
 		}
 
 		/// <summary>
-		/// Return true if self = obj || self.outerXml == obj.outerXml
-		/// </summary>
-		/// <param name="obj"></param>
-		/// <returns></returns>
-		public virtual bool Equals(object obj)
-		{
-			// TODO - implement Equals(obj)
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
-		/// Return true if objA = objB || objA.outXml == objB.outerXml
-		/// </summary>
-		/// <param name="objA"></param>
-		/// <param name="objB"></param>
-		/// <returns></returns>
-		public static bool Equals(object objA, object objB)
-		{
-			// TODO - implement equals(objA, objB)
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
 		/// Provide support for "for each" 
 		/// </summary>
 		/// <returns></returns>
@@ -370,16 +345,6 @@ namespace System.Xml
 			throw new NotImplementedException();
 		}
 
-		/// <summary>
-		/// Return a hash value for this node
-		/// </summary>
-		/// <returns></returns>
-		public virtual int GetHashCode()
-		{
-			// TODO - implement GetHashCode()
-			throw new NotImplementedException();
-		}
-		
 		/// <summary>
 		/// Look up the closest namespace for this node that is in scope for the given prefix
 		/// </summary>
@@ -404,25 +369,92 @@ namespace System.Xml
 		}
 		
 		/// <summary>
-		/// Get the type of the current node
+		/// Insert newChild directly after the reference node.
+		/// If refChild is null, newChild is inserted at the beginning of childnodes.
+		/// If newChild is a document fragment, all nodes are inserted after refChild.
+		/// If newChild is already in the tree, it is first removed.
 		/// </summary>
-		/// <returns></returns>
-		public Type GetType()
-		{
-			// TODO - implement GetType()
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
-		/// Insert newChild directlly after the reference node
-		/// </summary>
-		/// <param name="newChild"></param>
-		/// <param name="refChild"></param>
+		/// <exception cref="ArgumentException">NewChild was created from differant document.
+		/// RefChild not a child of this node or null.
+		/// Node is read-only</exception>
+		/// <exception cref="InvalidOperationException">Node is of type that does not have children
+		/// Node to insert is an ancestor of this node.</exception>
+		/// <param name="newChild">Child node to insert.</param>
+		/// <param name="refChild">Reference node to insert after</param>
 		/// <returns></returns>
 		public virtual XmlNode InsertAfter(XmlNode newChild, XmlNode refChild)
 		{
-			// TODO - implement InsertAfter();
-			throw new NotImplementedException();
+			if (newChild == null)
+				throw new ArgumentNullException("Null newNode passed to InsertAfter()");
+
+			if (! FOwnerDocument.Equals( newChild.OwnerDocument) )
+				throw new ArgumentException("Reference node has different owner document than this node");
+		
+			if ( FOwnerDocument.IsReadOnly )
+				throw new ArgumentException("Operation not supported - tree is read-only");
+
+			// Scan the node list, looking for refChild and seeing if newChild is in the list
+			// Note that if refNode is null (prepend), we don't want to do the .Equals(null)
+			XmlNode retval = null;
+			int refNodeIndex = -1;
+			
+			if (refChild == null)
+			{
+				for (int i = 0; i < _childNodes.Count; i++)
+				{
+					XmlNode e = _childNodes.data[i] as XmlNode;
+					if (e.Equals(newChild))
+					{
+						retval = e;
+						FOwnerDocument.onNodeRemoving(newChild, newChild.ParentNode);
+						_childNodes.data.RemoveAt(i);
+						newChild.setParent(null);
+						FOwnerDocument.onNodeRemoved(newChild, null);
+
+					}
+				}
+			}
+			else
+			{
+				for (int i = 0; i < _childNodes.Count; i++)
+				{
+					XmlNode e = _childNodes.data[i] as XmlNode;
+					if (e.Equals(newChild))
+					{
+						retval = e;
+						FOwnerDocument.onNodeRemoving(newChild, this);
+						_childNodes.data.RemoveAt(i);
+						// break out if we've found the refChild, otherwise keep looking
+						if (refNodeIndex != -1)
+							break;
+					}
+
+					if ( e.Equals(refChild) )
+					{
+						refNodeIndex = i;
+
+						if (retval != null)
+							break;
+					}
+				}
+			}
+
+			if ( ( refNodeIndex == -1 ) & (refChild != null) )
+				throw new ArgumentException("Reference node not found (and not null) in call to XmlNode.InsertAfter()");
+
+			FOwnerDocument.onNodeInserting(newChild, this);
+
+			if (refChild == null)
+				_childNodes.data.Insert(0, newChild);
+			else
+				_childNodes.data.Insert(refNodeIndex, newChild);
+
+			FOwnerDocument.onNodeInserted(newChild, this);
+
+			newChild.setParent(this);
+
+			return retval;
+
 		}
 		
 		/// <summary>
@@ -542,7 +574,7 @@ namespace System.Xml
 		/// Returns a string representation of the current node and it's children
 		/// </summary>
 		/// <returns></returns>
-		public virtual string ToString()
+		public override string ToString()
 		{
 			// TODO - implement ToString()
 			throw new NotImplementedException();
@@ -561,9 +593,30 @@ namespace System.Xml
 		public abstract void WriteTo(XmlWriter w);
 
 		//======= Internal methods    ===============================================
+		/// <summary>
+		/// accessor {set;} for parentNode only visible internally.
+		/// </summary>
+		/// <param name="newParent">new parent node.</param>
+		internal void setParent( XmlNode newParent)
+		{
+			if (newParent.OwnerDocument.Equals( FOwnerDocument) )
+				_parent = newParent;
+			else
+				throw new ArgumentException("New parent node owner does not match");
+		}
+		
+
 		//======= Protected methods    ==============================================
 
-		//======= Private Methods ==================
+		//======= Private Methods ===================================================
+		// Constructors
+		//===========================================================================
+		//When we're first created, we won't know parent, etc.
+		internal XmlNode( XmlDocument aOwnerDoc )
+		{
+			// Don't create childnodes object, since not all derived classes have children
+			FOwnerDocument = aOwnerDoc;
+		}
 
 	}	// XmlNode
 }	// using namespace System.Xml
