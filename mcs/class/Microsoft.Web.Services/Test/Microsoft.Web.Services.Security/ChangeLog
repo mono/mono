@@ -1,0 +1,14 @@
+2003-09-16  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AllTests.cs: New. Common methods to get DSA/RSA keypairs.
+	* AsymmetricDecryptionKeyTest.cs: New. Unit tests for AsymmetricDecryptionKey.
+	* AsymmetricEncryptionKeyTest.cs: New. Unit tests for AsymmetricEncryptionKey.
+	* AuthenticationKeyTest.cs: New. Unit tests for AuthenticationKey.
+	* BinarySecurityTokenTest.cs: New. Unit tests for BinarySecurityToken.
+	* SignatureKeyTest.cs: New. Unit tests for SignatureKey.
+	* SymmetricDecryptionKeyTest.cs: New. Unit tests for SymmetricDecryptionKey.
+	* SymmetricEncryptionKeyTest.cs: New. Unit tests for SymmetricEncryptionKey.
+	* UsernameTokenTest.cs: New. Unit tests for UsernameToken.
+	* WSSecurityTest.cs: New. Unit tests for WSSecurity.
+	* XmlEncryptionTest.cs: New. Unit tests for XmlEncryption.
+	* XmlSignatureTest.cs: New. Unit tests for XmlSignature.
