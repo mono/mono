@@ -1,33 +1,77 @@
 //
 // System.Web.Hosting.ApplicationHost
 //
-// Author:
-//   Patrik Torstensson (Patrik.Torstensson@labs2.com)
-//   (class signature from Bob Smith <bob@thestuff.net> (C) )
+// Authors:
+// 	Patrik Torstensson (Patrik.Torstensson@labs2.com)
+// 	(class signature from Bob Smith <bob@thestuff.net> (C) )
+// 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-
 using System;
+using System.Collections;
+using System.IO;
 using System.Runtime.Remoting;
 
-namespace System.Web.Hosting {
-   public sealed class ApplicationHost {
-      [MonoTODO("object CreateApplicationHost() Implement (dummy implementation right now)")]
-      public static object CreateApplicationHost(Type HostType, string VirtualPath, string PhysicalPath) {
-         // Construct and own AppDomain via DomainFactory? Can be good to have control over the web appdomain
-         // Dummy impl: just return a init object..
+namespace System.Web.Hosting
+{
+	public sealed class ApplicationHost
+	{
+		class ConfigInitHelper
+		{
+			public void InitConfig ()
+			{
+			}
+		}
+		
+		public static object CreateApplicationHost (Type hostType,
+							    string virtualDir,
+							    string physicalDir)
+		{
+			if (hostType == null)
+				throw new ArgumentException ("hostType");
 
-         // TODO: Save in the created app domain....
-         System.Threading.Thread.GetDomain().SetData(".ASP.Net.App.VirtualPath", VirtualPath);
-         System.Threading.Thread.GetDomain().SetData(".ASP.Net.App.Path", PhysicalPath);
-         
-         // TODO: Set to the install path of the runtime engine....
-         System.Threading.Thread.GetDomain().SetData(".ASP.Net.App.InstallPath", "");
+			if (virtualDir == null || virtualDir.Length == 0)
+				throw new ArgumentException ("virtualDir");
+			
+			if (physicalDir == null || physicalDir.Length == 0)
+				throw new ArgumentException ("physicalDir");
 
-         // TODO: Create a name and id for the application...
-         // TODO: Copy all of the domain info to our new domain
+			if (physicalDir [physicalDir.Length - 1] != Path.DirectorySeparatorChar)
+				physicalDir += Path.DirectorySeparatorChar;
 
-         ObjectHandle obj = System.Threading.Thread.GetDomain().CreateInstance(HostType.Module.Assembly.FullName, HostType.FullName);
-         return obj.Unwrap();
-      }
-   }
+			int nowInt = DateTime.Now.ToString ().GetHashCode ();
+			string nowHash = nowInt.ToString ("x");
+			nowInt += physicalDir.GetHashCode ();
+			string sum = nowInt.ToString ("x");
+			Hashtable hTable = new Hashtable ();
+			AppDomainSetup domainSetup = new AppDomainSetup();
+
+			AppDomainFactory.PopulateDomainBindings (nowHash,
+								 sum,
+								 sum,
+								 physicalDir,
+								 virtualDir,
+								 domainSetup,
+								 hTable);
+			
+			AppDomain domain = AppDomain.CreateDomain (nowHash, null, domainSetup);
+			foreach (string key in hTable.Keys)
+				domain.SetData (key, (string) hTable [key]);
+
+			domain.SetData (".hostingVirtualPath", virtualDir);
+			//domain.SetData(".hostingInstallDir", ?????);
+			InitConfigInNewAppDomain (domain);
+			ObjectHandle o = domain.CreateInstance (hostType.Module.Assembly.FullName,
+								hostType.FullName);
+			return o.Unwrap();
+		}
+
+		private static void InitConfigInNewAppDomain (AppDomain appDomain)
+		{
+			Type t = typeof (ConfigInitHelper);
+			ObjectHandle o = appDomain.CreateInstance (t.Module.Assembly.FullName, t.FullName);
+			ConfigInitHelper helper = (ConfigInitHelper) o.Unwrap();
+			helper.InitConfig ();
+		}
+	}
 }
+

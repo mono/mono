@@ -1,9 +1,16 @@
+2002-08-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AppDomainFactory.cs: implemented.
+	* ApplicationHost.cs: implemented.
+	* SimpleWorkerRequest.cs: a few little fixes and reformatted. It's now
+	fully implemented.
+
 2002-07-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* System.Web.Hosting/AppDomainFactory.cs:
-	* System.Web.Hosting/IAppDomainFactory.cs:
-	* System.Web.Hosting/IISAPIRuntime.cs:
-	* System.Web.Hosting/ISAPIRuntime.cs: make them compile.
+	* AppDomainFactory.cs:
+	* IAppDomainFactory.cs:
+	* IISAPIRuntime.cs:
+	* ISAPIRuntime.cs: make them compile.
 
 2002-04-10  Patrik Torstensson <patrik.torstensson@labs2.com>
 
