@@ -3,6 +3,7 @@
 	* dump.c/h: New function to dump the contents of the blob
 	stream. I found it useful for debugging so I will share.
 	* main.c: Add --blob switch to dump the blob stream.
+	* monodis.1: Document --blob
 	
 2004-06-19  Jackson Harper  <jackson@ximian.com>
 
