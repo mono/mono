@@ -322,10 +322,10 @@ System.Windows.Forms/win32Interfaces.cs
 System.Windows.Forms/win32RegistryUtil.cs
 System.Windows.Forms/win32Structs.cs
 System.Windows.Forms/win32functions.cs
-System.Windows.Forms.Design/ComponentEditor.cs
 System.Windows.Forms.Design/ComponentEditorForm.cs
+System.Windows.Forms.Design/ComponentEditorPage.cs
 System.Windows.Forms.Design/EventsTab.cs
 System.Windows.Forms.Design/IUIService.cs
 System.Windows.Forms.Design/IWindowsformsEditorService.cs
 System.Windows.Forms.Design/PropertyTab.cs
-
+System.Windows.Forms.Design/WindowsFormsComponentEditor.cs
