@@ -145,13 +145,9 @@ namespace MonoTests.System.Text {
 		AssertEquals( expected, sb.ToString());
 	}
 
+	[ExpectedException(typeof(ArgumentOutOfRangeException))]
 	public void TestConstructor11 () {
-		try {
-			new StringBuilder (-1);
-			Fail ("capacity can be negative");
-		}
-		catch (ArgumentException ex) {
-		}
+		new StringBuilder (-1);
 	}
 		
 	public void TestAppend() {

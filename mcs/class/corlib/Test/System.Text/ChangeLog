@@ -1,3 +1,8 @@
+2003-02-05  Nick Drochak  <ndrochak@gol.com>
+
+	* StringBuilderTest.cs: Test for specific exception using Nunit verson
+	2 style Attribute.
+
 2003-01-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* StringBuilderTest.cs: added test for passing a negative capacity to
