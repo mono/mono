@@ -117,7 +117,12 @@ public class AsyncResult : IAsyncResult, IMessageSink {
 
 		completed = true;
 		NativeEventCalls.SetEvent_internal (handle.Handle);
-		// TODO: invoke callback
+		
+		if (async_delegate != null)
+		{
+			AsyncCallback ac = (AsyncCallback) async_delegate;
+			ac (this);
+		}
 
 		return null;
 	}

@@ -1,3 +1,8 @@
+2003-12-10  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* AsyncResult.cs: Call delegate on async call completion.
+	* CADMessages.cs: Removed TODO.
+
 2003-11-28  Dick Porter  <dick@ximian.com>
 
 	* MethodCall.cs: Use the char form of IndexOf, so that the

@@ -286,7 +286,6 @@ namespace System.Runtime.Remoting.Messaging {
 			return new CADMethodCallMessage (msg);
 		}
 
-		// todo
 		internal CADMethodCallMessage (IMethodCallMessage callMsg) {
 			_methodName = callMsg.MethodName;
 			_typeName = callMsg.TypeName;
