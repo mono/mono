@@ -66,6 +66,9 @@ namespace System
 		}
 
 		bool IList.Contains (object value) {
+			if (this.Rank > 1)
+				throw new RankException ("Only single dimension arrays are supported.");
+
 			int length = this.Length;
 			for (int i = 0; i < length; i++) {
 				if (value.Equals (this.GetValueImpl (i)))

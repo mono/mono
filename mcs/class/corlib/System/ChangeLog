@@ -1,3 +1,8 @@
+2002-04-27  Nick Drochak  <ndrochak@gol.com>
+
+	* Array.cs (IList.Contains): Should throw a RankException if this is called
+	on a Rank > 1 array. Not in the docs, but this is what the MS.NET does.
+
 2002-04-26  Duncan Mak  <duncan@ximian.com>
 
 	* MissingMemberException.cs: Made the message variable 'protected'
