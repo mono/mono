@@ -1,3 +1,5 @@
+CSC=//c/winnt/microsoft.net/framework/v1.0.2914/csc.exe
+
 VERSION=0.13
 
 COMMON_SOURCES = cs-parser.cs cs-tokenizer.cs errors.cs tree.cs  
@@ -26,23 +28,23 @@ COMPILER_SOURCES = \
 TEST_TOKENIZER_SOURCES = test-token.cs $(COMMON_SOURCES)
 
 all:
-	-rm compiler.exe
-	csc /target:exe /r:System.dll /debug+ /debug:full /out:compiler.exe $(COMPILER_SOURCES)
+	-rm -f compiler.exe
+	$(CSC) /target:exe /r:System.dll /debug+ /debug:full /out:compiler.exe $(COMPILER_SOURCES)
 
 opt:
 	-rm compiler.exe
-	csc /optimize+ /target:exe /r:System.dll /debug+ /debug:full /out:compiler.exe $(COMPILER_SOURCES)
+	$(CSC) /optimize+ /target:exe /r:System.dll /debug+ /debug:full /out:compiler.exe $(COMPILER_SOURCES)
 
 old: test-tokenizer.exe
 test-tokenizer.exe: $(TEST_TOKENIZER_SOURCES)
-	csc /target:exe /out:test-tokenizer.exe $(TEST_TOKENIZER_SOURCES)
+	$(CSC) /target:exe /out:test-tokenizer.exe $(TEST_TOKENIZER_SOURCES)
 
 bison:
 	perl -pe 's/\015//' < cs-parser.jay > x.y
 	bison --debug --verbose x.y
 
 parser:
-	./jay -tv cs-parser.jay > cs-parser.cs
+	../jay/jay.$(OSTYPE) -ctv < ../jay/skeleton.cs cs-parser.jay > cs-parser.cs
 
 migparser:
 	jay -tv cs-parser.jay > cs-parser.cs
