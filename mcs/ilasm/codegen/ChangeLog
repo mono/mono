@@ -1,3 +1,8 @@
+2003-02-08 Jackson Harper <jackson@latitudegeo.com>
+
+	* Method.cs: Add functionality to define local variables
+	* Instructions.cs: Add newobj instruction, cleanup call instruction
+
 2003-02-03 Jackson Harper <jackson@latitudegeo.com>
 
 	* AssemblyNameStore.cs: Added file

@@ -78,7 +78,7 @@ namespace Mono.ILASM {
 		private bool entry_point = false;
 
 		private ArrayList instructions;
-
+		private ArrayList local_list;
 
 		/// <summary>
 		/// </summary>
@@ -185,6 +185,22 @@ namespace Mono.ILASM {
 			instructions.Add (instr);
 		}
 
+		public void AddLocal (string type)
+		{
+			Types types = new Types ();
+			Type local_type = types.Lookup (type);
+
+			if (local_type == null) {
+				Console.WriteLine ("Type not found: {0}", type);
+				return;
+			}
+
+			if (local_list == null)
+				local_list = new ArrayList ();
+
+			local_list.Add (local_type);
+	
+		}
 
 		/// <summary>
 		/// </summary>
@@ -223,14 +239,20 @@ namespace Mono.ILASM {
 				Type rt = host.CodeGen.RefTypes.Lookup (RetType);
 				method_builder = tb.DefineMethod (Name, Attrs, CallConv, rt, null);
 				ILGenerator ilgen = method_builder.GetILGenerator ();
+
+				if (local_list != null) {
+					foreach (Type local in local_list)
+						ilgen.DeclareLocal (local);
+				}
+
 				if (instructions != null) {
-					foreach (InstrBase instr in instructions) {
+					foreach (InstrBase instr in instructions)
 						instr.Emit (ilgen);
-					}
 				}
 			}
 		}
 
 	}
 
+	
 }
