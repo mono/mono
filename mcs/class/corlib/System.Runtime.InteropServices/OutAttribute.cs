@@ -9,12 +9,13 @@
 
 namespace System.Runtime.InteropServices {
 
+	[MonoTODO]
 	public sealed class OutAttribute : Attribute {
 
 		public OutAttribute ()
 		{
 		}
-
+		
 		public override object TypeId {
 			get {
 				// TODO: Implement me
