@@ -1,3 +1,7 @@
+2002-06-10  Rachel Hestilow  <hestilow@ximian.com>
+
+	* unsafe-3.cs: New test for address-of-pointer.
+	
 2002-06-09  Martin Baulig  <martin@gnome.org>
 
 	* test-130.cs: New test for constants and casts.

@@ -1184,7 +1184,7 @@ public class TypeManager {
 	/// </summary>
 	public static bool VerifyUnManaged (Type t, Location loc)
 	{
-		if (t.IsValueType){
+		if (t.IsValueType || t.IsPointer){
 			//
 			// FIXME: this is more complex, we actually need to
 			// make sure that the type does not contain any

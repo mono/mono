@@ -19,7 +19,7 @@ TEST_SOURCES = \
 	test-121 test-122 test-123          test-125 test-126 test-127 test-128 test-129 test-130
 
 UNSAFE_SOURCES = \
-	unsafe-1 unsafe-2
+	unsafe-1 unsafe-2 unsafe-3
 
 TEST_NOPASS = \
 	test-29 test-38 \

@@ -1,3 +1,8 @@
+2002-06-10  Rachel Hestilow  <hestilow@ximian.com>
+
+	* typemanager.cs (TypeManager.VerifyUnManaged): Allow
+	address-of operator on both value types and pointers.
+	
 2002-06-10  Martin Baulig  <martin@gnome.org>
 
 	* interface.cs (Interface.PopulateIndexer): Add the indexer's
