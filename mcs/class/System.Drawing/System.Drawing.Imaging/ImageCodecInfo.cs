@@ -1,19 +1,22 @@
 //
 // System.Drawing.Imaging.ImageCodecInfo.cs
 //
-// (C) 2002 Ximian, Inc.  http://www.ximian.com
-// Author: Everaldo Canuto
-// eMail: everaldo.canuto@bol.com.br
-// Dennis Hayes (dennish@raytek.com)
-// Alexandre Pigolkine (pigolkine@gmx.de)
+// Authors:
+//   Everaldo Canuto (everaldo.canuto@bol.com.br)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Dennis Hayes (dennish@raytek.com)
 //
+// (C) 2002 Ximian, Inc.  http://www.ximian.com
+//
+
 using System;
+using System.Runtime.InteropServices;
 using System.Collections;
 using System.IO;
 
 namespace System.Drawing.Imaging {
 
-	//[ComVisible(false)]
+	[ComVisible (false)]
 	public sealed class ImageCodecInfo {
 
 		Guid	clsid;
@@ -36,6 +39,10 @@ namespace System.Drawing.Imaging {
 			allCodecs.Add(PNGCodec.CodecInfo);
 		}
 
+		internal ImageCodecInfo()
+		{
+		}
+
 		internal delegate void DecodeFromStream (Image image, Stream stream, BitmapData info);
 		internal DecodeFromStream decode;
 
@@ -44,7 +51,6 @@ namespace System.Drawing.Imaging {
 
 		// methods
 		[MonoTODO]
-		//[ComVisible(false)]
 		public static ImageCodecInfo[] GetImageDecoders() {
 			ArrayList decoders = new ArrayList();
 			foreach( ImageCodecInfo info in allCodecs) {
@@ -58,7 +64,6 @@ namespace System.Drawing.Imaging {
 		}
 		
 		[MonoTODO]
-		//[ComVisible(false)]
 		public static ImageCodecInfo[] GetImageEncoders() {
 			ArrayList encoders = new ArrayList();
 			foreach( ImageCodecInfo info in allCodecs) {
@@ -73,56 +78,48 @@ namespace System.Drawing.Imaging {
 
 		// properties
 		[MonoTODO]
-		//[ComVisible(false)]
 		public Guid Clsid {
 			get { return clsid; }
 			set { clsid = value; }
 		}
 
 		[MonoTODO]
-		//[ComVisible(false)]
 		public string CodecName {
 			get { return codecName; }
 			set { codecName = value; }
 		}
 
 		[MonoTODO]
-		//[ComVisible(false)]
 		public string DllName {
 			get { return dllName; }
 			set { dllName = value; }
 		}
 
 		[MonoTODO]
-		//[ComVisible(false)]
 		public string FilenameExtension {
 			get { return filenameExtension; }
 			set { filenameExtension = value; }
 		}
 
 		[MonoTODO]
-		//[ComVisible(false)]
 		public ImageCodecFlags Flags {
 			get { return flags; }
 			set { flags = value; }
 		}
 
 		[MonoTODO]
-		//[ComVisible(false)]
 		public string FormatDescription {
 			get { return formatDescription; }
 			set { formatDescription = value; }
 		}
 
 		[MonoTODO]
-		//[ComVisible(false)]
 		public Guid FormatID {
 			get { return formatID; }
 			set { formatID = value; }
 		}
 
 		[MonoTODO]
-		//[ComVisible(false)]
 		public string MimeType {
 			get { return mimeType; }
 			set { mimeType = value; }
@@ -130,7 +127,6 @@ namespace System.Drawing.Imaging {
 
 		[MonoTODO]
 		[CLSCompliant(false)]
-		//[ComVisible(false)]
 		public byte[][] SignatureMasks {
 			get { return signatureMasks; }
 			set { signatureMasks = value; }
@@ -138,14 +134,12 @@ namespace System.Drawing.Imaging {
 
 		[MonoTODO]
 		[CLSCompliant(false)]
-		//[ComVisible(false)]
 		public byte[][] SignaturePatterns {
 			get { return signaturePatterns; }
 			set { signaturePatterns = value; }
 		}
 
 		[MonoTODO]
-		//[ComVisible(false)]
 		public int Version {
 			get { return version; }
 			set { version = value; }

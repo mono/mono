@@ -1,40 +1,44 @@
 //
 // System.Drawing.Imaging.PropertyItem.cs
 //
-// (C) 2002 Ximian, Inc.  http://www.ximian.com
-// Author: Everaldo Canuto
-// eMail: everaldo.canuto@bol.com.br
-// Dennis Hayes (dennish@raytek.com)
+// Authors:
+//   Everaldo Canuto (everaldo.canuto@bol.com.br)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Dennis Hayes (dennish@raytek.com)
 //
+// (C) 2002 Ximian, Inc.  http://www.ximian.com
+//
+
 using System;
 
 namespace System.Drawing.Imaging {
 
 	public sealed class PropertyItem {
 
+		int id;
+		int len;
+		short type;
+		byte[] value;
+
 		// properties
-		[MonoTODO]
 		public int Id {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return id; }
+			set { id = value; }
 		}
 
-		[MonoTODO]
 		public int Len {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return len; }
+			set { len = value; }
 		}
 
-		[MonoTODO]
 		public short Type {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return type; }
+			set { type = value; }
 		}
 
-		[MonoTODO]
 		public byte[] Value {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return this.value; }
+			set { this.value = value; }
 		}
 
 	}

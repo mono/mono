@@ -1,11 +1,14 @@
 //
 // System.Drawing.Imaging.ColorMap.cs
 //
-// (C) 2002 Ximian, Inc.  http://www.ximian.com
-// Author: Everaldo Canuto
-// eMail: everaldo.canuto@bol.com.br
-// Dennis Hayes (dennish@raytek.com)
+// Authors:
+//   Everaldo Canuto (everaldo.canuto@bol.com.br)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Dennis Hayes (dennish@raytek.com)
 //
+// (C) 2002 Ximian, Inc.  http://www.ximian.com
+//
+
 using System;
 using System.IO;
 using System.Reflection;
@@ -14,23 +17,22 @@ namespace System.Drawing.Imaging {
 
 	public sealed class ColorMap {
 
+		private Color newColor;
+		private Color oldColor;
+
 		// constructors
-		[MonoTODO]
 		public ColorMap() {
-			throw new NotImplementedException ();
 		}
 
 		// properties
-		[MonoTODO]
 		public Color NewColor {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return newColor; }
+			set { newColor = value; }
 		}
 
-		[MonoTODO]
 		public Color OldColor {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return oldColor; }
+			set { oldColor = value; }
 		}
 	}
 

@@ -7,6 +7,7 @@
 using System;
 namespace System.Drawing.Imaging
 {
+	[Flags]
 	public enum ImageCodecFlags {
 		BlockingDecode = 32,
 		Builtin = 65536,

@@ -1,21 +1,25 @@
 //
 // System.Drawing.Imaging.ImageFormat.cs
 //
-// (C) 2002 Ximian, Inc.  http://www.ximian.com
-// Author: Everaldo Canuto
-// eMail: everaldo.canuto@bol.com.br
-// Dennis Hayes (dennish@raytek.com)
+// Authors:
+//   Everaldo Canuto (everaldo.canuto@bol.com.br)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Dennis Hayes (dennish@raytek.com)
 //
+// (C) 2002 Ximian, Inc.  http://www.ximian.com
+//
+
 using System;
+using System.ComponentModel;
 
 namespace System.Drawing.Imaging {
 
+	[TypeConverter (typeof (ImageFormatConverter))]
 	public sealed class ImageFormat {
 
 		Guid	guid;
 
 		// constructors
-		[MonoTODO]
 		public ImageFormat(Guid guid) {
 			this.guid = guid;
 		}
@@ -33,67 +37,63 @@ namespace System.Drawing.Imaging {
 		
 		[MonoTODO]
 		public override string ToString() {
+			// FIXME returns a string for the format like "Png"
 			return String.Format("ImageFormat.Guid {0}", guid);
 		}
 
 		// properties
-		static ImageFormat BmpImageFormat = new ImageFormat (new Guid ("DFB9AC7D-498D-4bd8-9D42-E23E541964B1"));
+		public Guid Guid {
+			get { return guid; }
+		}
 
-		[MonoTODO]
+		static ImageFormat BmpImageFormat = new ImageFormat (new Guid ("b96b3cab-0728-11d3-9d7b-0000f81ef32e"));
 		public static ImageFormat Bmp {
 			get { return BmpImageFormat; }
 		}
 		
-		[MonoTODO]
+		static ImageFormat EmfImageFormat = new ImageFormat (new Guid ("b96b3cac-0728-11d3-9d7b-0000f81ef32e"));
 		public static ImageFormat Emf {
-			get { throw new NotImplementedException (); }
+			get { return EmfImageFormat; }
 		}
 		
-		[MonoTODO]
+		static ImageFormat ExifImageFormat = new ImageFormat (new Guid ("b96b3cb2-0728-11d3-9d7b-0000f81ef32e"));
 		public static ImageFormat Exif {
-			get { throw new NotImplementedException (); }
+			get { return ExifImageFormat; }
 		}
 		
-		[MonoTODO]
+		static ImageFormat GifImageFormat = new ImageFormat (new Guid ("b96b3cb0-0728-11d3-9d7b-0000f81ef32e"));
 		public static ImageFormat Gif {
-			get { throw new NotImplementedException (); }
+			get { return GifImageFormat; }
 		}
 		
-		[MonoTODO]
-		public Guid Guid {
-			get { return guid; }
-		}
-		
-		[MonoTODO]
+		static ImageFormat IconImageFormat = new ImageFormat (new Guid ("b96b3cb5-0728-11d3-9d7b-0000f81ef32e"));
 		public static ImageFormat Icon {
-			get { throw new NotImplementedException (); }
+			get { return IconImageFormat; }
 		}
 		
-		[MonoTODO] 
-		static ImageFormat JpegImageFormat = new ImageFormat(new Guid("83BFFDF8-398F-407f-BA33-A7993D11B2DA"));
+		static ImageFormat JpegImageFormat = new ImageFormat(new Guid("b96b3cae-0728-11d3-9d7b-0000f81ef32e"));
 		public static ImageFormat Jpeg {
 			get { return JpegImageFormat; }
 		}
 		
-		[MonoTODO]
+		static ImageFormat MemoryBmpImageFormat = new ImageFormat (new Guid ("b96b3caa-0728-11d3-9d7b-0000f81ef32e"));
 		public static ImageFormat MemoryBmp {
-			get { throw new NotImplementedException (); }
+			get { return MemoryBmpImageFormat; }
 		}
 		
-		[MonoTODO]
-		static ImageFormat PngImageFormat = new ImageFormat(new Guid("33CDFD76-3463-4273-BA28-A7993D11B2DA"));
+		static ImageFormat PngImageFormat = new ImageFormat(new Guid("b96b3caf-0728-11d3-9d7b-0000f81ef32e"));
 		public static ImageFormat Png {
 			get { return PngImageFormat; }
 		}
 		
-		[MonoTODO]
+		static ImageFormat TiffImageFormat = new ImageFormat (new Guid ("b96b3cb1-0728-11d3-9d7b-0000f81ef32e"));
 		public static ImageFormat Tiff {
-			get { throw new NotImplementedException (); }
+			get { return TiffImageFormat; }
 		}
 		
-		[MonoTODO]
+		static ImageFormat WmfImageFormat = new ImageFormat (new Guid ("b96b3cad-0728-11d3-9d7b-0000f81ef32e"));
 		public static ImageFormat Wmf {
-			get { throw new NotImplementedException (); }
+			get { return WmfImageFormat; }
 		}
 		
 	}

@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.FormBorderStyle.cs
+// System.Drawing.Imaging.ImageAttributes.cs
 //
 // Author:
 //   Dennis Hayes (dennish@raytek.com)
@@ -14,7 +14,7 @@ namespace System.Drawing.Imaging
 	/// <summary>
 	/// Summary description for ImageAttributes.
 	/// </summary>
-	public class ImageAttributes {
+	public sealed class ImageAttributes {
 		public ImageAttributes() {
 		}
 

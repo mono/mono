@@ -1,3 +1,16 @@
+2003-11-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* ColorMap.cs: Implemented
+	* ColorMatrix.cs: Implemented, Removed unneccesary members
+	* ImageAttributes.cs: Fixed signature
+	* ImageCodecInfo.cs: Added missing attribure, hide constructor
+	* ImageFormat.cs: Implemented, Added attribute
+	* MetaHeader.cs: Implemented
+	* PropertyItem.cs: Implemented
+	* ImageFlags.cs: Added Attribute
+	* ImageCodecFlags.cs: Added Attribute
+	* EmfPlusRecordType.cs: Added missing members
+
 2003-11-12  Alexandre Pigolkine <pigolkine@gmx.de>
 	* BitmapData.cs		new function to convert BRG to RGB
 	* JPEGCodec.cs		convert BRG to RBG

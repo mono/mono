@@ -1,64 +1,67 @@
 //
 // System.Drawing.Imaging.MetaHeader.cs
 //
-// (C) 2002 Ximian, Inc.  http://www.ximian.com
-// Author: Everaldo Canuto
-// eMail: everaldo.canuto@bol.com.br
-// Dennis Hayes (dennish@raytek.com)
+// Authors:
+//   Everaldo Canuto (everaldo.canuto@bol.com.br)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Dennis Hayes (dennish@raytek.com)
 //
+// (C) 2002 Ximian, Inc.  http://www.ximian.com
+//
+
 using System;
 
 namespace System.Drawing.Imaging {
 
 	public sealed class MetaHeader {
 
+		short headerSize;
+		int maxRecord;
+		short noObjects;
+		short noParameters;
+		int size;
+		short type;
+		short version;
+
 		// constructors
-		[MonoTODO]
-		public MetaHeader() {
-			throw new NotImplementedException ();
+		public MetaHeader()
+		{
 		}
 
 		// properties
-		[MonoTODO]
 		public short HeaderSize {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return headerSize; }
+			set { headerSize = value; }
 		}
 		
-		[MonoTODO]
 		public int MaxRecord {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return maxRecord; }
+			set { maxRecord = value; }
 		}
 		
-		[MonoTODO]
 		public short NoObjects {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return noObjects; }
+			set { noObjects = value; }
 		}
 		
-		[MonoTODO]
 		public short NoParameters {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return noParameters; }
+			set { noParameters = value; }
 		}
 		
-		[MonoTODO]
 		public int Size {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return size; }
+			set { size = value; }
 		}
 
-		[MonoTODO]
 		public short Type {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return type; }
+			set { type = value; }
 		}
 
-		[MonoTODO]
 		public short Version {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return version; }
+			set { version = value; }
 		}
 		
 	}

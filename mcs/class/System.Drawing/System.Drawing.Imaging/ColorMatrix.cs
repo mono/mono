@@ -1,304 +1,179 @@
 //
-// System.Drawing.Imaging.xxx.cs
+// System.Drawing.Imaging.ColorMatrix.cs
+//
+// Authors:
+//   Everaldo Canuto (everaldo.canuto@bol.com.br)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
-// Author: Everaldo Canuto
-// eMail: everaldo.canuto@bol.com.br
-// Dennis Hayes (dennish@raytek.com)
 //
+
 using System;
 
 namespace System.Drawing.Imaging {
 
 	public sealed class ColorMatrix {
 
+		float[] colors;
+
 		// constructors
-		[MonoTODO]
-		public ColorMatrix() {
-			throw new NotImplementedException ();
+		public ColorMatrix() 
+		{
+			colors = new float[25];
+			// Set identity matrix by default
+			colors[0]  = 1;
+			colors[6]  = 1;
+			colors[12] = 1;
+			colors[18] = 1;
+			colors[24] = 1;
 		}
 		
-		[MonoTODO]
 		[CLSCompliant(false)]
-		public ColorMatrix(float[][] newColorMatrix) {
-			throw new NotImplementedException ();
+		public ColorMatrix(float[][] newColorMatrix)
+		{
+			colors = new float[25];
+			for (int x = 0; x < 5; x++) {
+				for (int y = 0; y < 5; y++) {
+					colors[x * 5 + y] = newColorMatrix[x][y];
+				}
+			}
 		}
 		
 		// properties
-		[MonoTODO]
 		public float this[int row, int column] {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return colors[row * 5 + column]; }
+			set { colors[row * 5 + column] = value; }
 		}
 		
-		[MonoTODO]
+
 		public float Matrix00 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return colors[0]; }
+			set { colors[0] = value; }
 		}
 
-		[MonoTODO]
 		public float Matrix01 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return colors[1]; }
+			set { colors[1] = value; }
 		}
 
-		[MonoTODO]
 		public float Matrix02 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return colors[2]; }
+			set { colors[2] = value; }
 		}
 
-		[MonoTODO]
 		public float Matrix03 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return colors[3]; }
+			set { colors[3] = value; }
 		}
 
-		[MonoTODO]
 		public float Matrix04 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return colors[4]; }
+			set { colors[4] = value; }
 		}
 
-		[MonoTODO]
-		public float Matrix05 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
 
-		[MonoTODO]
-		public float Matrix06 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public float Matrix07 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public float Matrix08 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public float Matrix09 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
 		public float Matrix10 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return colors[5]; }
+			set { colors[5] = value; }
 		}
 
-		[MonoTODO]
 		public float Matrix11 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return colors[6]; }
+			set { colors[6] = value; }
 		}
 
-		[MonoTODO]
 		public float Matrix12 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return colors[7]; }
+			set { colors[7] = value; }
 		}
 
-		[MonoTODO]
 		public float Matrix13 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return colors[8]; }
+			set { colors[8] = value; }
 		}
 
-		[MonoTODO]
 		public float Matrix14 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return colors[9]; }
+			set { colors[9] = value; }
 		}
 
-		[MonoTODO]
-		public float Matrix15 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
 
-		[MonoTODO]
-		public float Matrix16 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public float Matrix17 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public float Matrix18 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public float Matrix19 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-		
-		[MonoTODO]
 		public float Matrix20 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return colors[10]; }
+			set { colors[10] = value; }
 		}
 
-		[MonoTODO]
 		public float Matrix21 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return colors[11]; }
+			set { colors[11] = value; }
 		}
 
-		[MonoTODO]
 		public float Matrix22 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return colors[12]; }
+			set { colors[12] = value; }
 		}
 
-		[MonoTODO]
 		public float Matrix23 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return colors[13]; }
+			set { colors[13] = value; }
 		}
 
-		[MonoTODO]
 		public float Matrix24 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return colors[14]; }
+			set { colors[14] = value; }
 		}
 
-		[MonoTODO]
-		public float Matrix25 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
 
-		[MonoTODO]
-		public float Matrix26 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public float Matrix27 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public float Matrix28 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public float Matrix29 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
 		public float Matrix30 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return colors[15]; }
+			set { colors[15] = value; }
 		}
 
-		[MonoTODO]
 		public float Matrix31 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return colors[16]; }
+			set { colors[16] = value; }
 		}
 
-		[MonoTODO]
 		public float Matrix32 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return colors[17]; }
+			set { colors[17] = value; }
 		}
 
-		[MonoTODO]
 		public float Matrix33 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return colors[18]; }
+			set { colors[18] = value; }
 		}
 
-		[MonoTODO]
 		public float Matrix34 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return colors[19]; }
+			set { colors[19] = value; }
 		}
 
-		[MonoTODO]
-		public float Matrix35 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
 
-		[MonoTODO]
-		public float Matrix36 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public float Matrix37 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public float Matrix38 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public float Matrix39 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
 		public float Matrix40 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return colors[20]; }
+			set { colors[20] = value; }
 		}
 
-		[MonoTODO]
 		public float Matrix41 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return colors[21]; }
+			set { colors[21] = value; }
 		}
 
-		[MonoTODO]
 		public float Matrix42 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return colors[22]; }
+			set { colors[22] = value; }
 		}
 
-		[MonoTODO]
 		public float Matrix43 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return colors[23]; }
+			set { colors[23] = value; }
 		}
 
-		[MonoTODO]
 		public float Matrix44 {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return colors[24]; }
+			set { colors[24] = value; }
 		}
 
 	}
