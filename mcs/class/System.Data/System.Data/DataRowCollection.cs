@@ -19,7 +19,7 @@ namespace System.Data
 	[Serializable]
 	public class DataRowCollection : InternalDataCollectionBase {
 
-		private ArrayList rows = null;
+		private ArrayList rows = new ArrayList ();
 
 		// Item indexer
 		public DataRow this[int index] {

@@ -152,7 +152,7 @@ namespace System.Data.Common
                                         dataReader.GetValues (itemArray);
                                         thisRow = table.NewRow ();
                                         thisRow.ItemArray = itemArray;
-                                        table.ImportRow (thisRow);
+					table.Rows.Add (thisRow);
 					
 					if (AcceptChangesDuringFill) thisRow.AcceptChanges ();
 

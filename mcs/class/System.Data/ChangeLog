@@ -1,3 +1,10 @@
+2002-05-15  Tim Coleman <tim@timcoleman.com>
+	* System.Data.Common/DbDataAdapter.cs:
+		Use table.Rows.Add (thisRow) instead of 
+		table.ImportRow (thisRow)
+	* System.Data/DataRowCollection.cs:
+		Construct the ArrayList before using it
+
 2002-05-16  Tim Coleman <tim@timcoleman.com>
 	* System.Data/DataTable.cs:
 		Construct the DataRowCollection in the DataTable
