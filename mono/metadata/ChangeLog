@@ -1,4 +1,10 @@
 
+Fri May 31 15:58:22 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* appdomain.c, class.c, class.h, debug-symfile.c, decimal.c,
+	domain.c, loader.c, object.c, object.h, reflection.c, string-icalls.h,
+	unicode.c: warning and compiler compatibility fixes.
+
 Fri May 31 15:36:53 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.h, metadata.c: fixed warnings/compilation errors.
