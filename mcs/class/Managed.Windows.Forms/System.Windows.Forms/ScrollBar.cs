@@ -26,9 +26,12 @@
 //	Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.6 $
+// $Revision: 1.7 $
 // $Modtime: $
 // $Log: ScrollBar.cs,v $
+// Revision 1.7  2004/08/19 22:25:31  jordi
+// theme enhancaments
+//
 // Revision 1.6  2004/08/18 15:56:12  jordi
 // fixes to scrollbar: steps and multiple timers
 //
@@ -103,6 +106,11 @@ namespace System.Windows.Forms
 
 			holdclick_timer.Elapsed += new ElapsedEventHandler (OnHoldClickTimer);
 			firstclick_timer.Elapsed += new ElapsedEventHandler (OnFirstClickTimer);
+
+			if (ThemeEngine.Current.WriteToWindow == true)
+				double_buffering = false;
+			else
+				double_buffering = true;
 						
 			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
@@ -260,11 +268,10 @@ namespace System.Windows.Forms
 		
 		private void Draw ()
 		{					
-			ThemeEngine.Current.DrawScrollBar (DeviceContext, paint_area, thumb_pos,
+			ThemeEngine.Current.DrawScrollBar (DeviceContext, paint_area, this, thumb_pos,
 				ref first_arrow_area, ref second_arrow_area,
 				firstbutton_state, secondbutton_state, 
-				ref scrollbutton_width, ref scrollbutton_height,
-				Enabled, vert);
+				ref scrollbutton_width, ref scrollbutton_height, vert);
 			
 		}
 				
@@ -283,8 +290,7 @@ namespace System.Windows.Forms
 				else {
 					double per =  ((double)LargeChange / (double)((1 + Maximum - Minimum)));
 					thumb_size = 1 + (int) (thumb_area.Height * per);
-					//Console.WriteLine ("size: {0} {1} {2}", thumb_size, thumb_area.Height, per);
-					
+	
 					if (thumb_size < thumb_min_size)
 						thumb_size = thumb_min_size; 					
 				}
@@ -351,14 +357,19 @@ namespace System.Windows.Forms
 										
 			/* Copies memory drawing buffer to screen*/		
 			Draw ();
-			pevent.Graphics.DrawImage (ImageBuffer, 0, 0);			
+
+			if (double_buffering)
+				pevent.Graphics.DrawImage (ImageBuffer, 0, 0);			
 
 		}	
 		
 		/* Disable background painting to avoid flickering, since we do our painting*/
+
+
 		protected override void OnPaintBackground (PaintEventArgs pevent) 
     		{
-    			// None
+    			if (!double_buffering)
+				base.OnPaintBackground (pevent);
     		}		
 		
     		protected override void OnClick (EventArgs e)
@@ -458,9 +469,8 @@ namespace System.Windows.Forms
 				Refresh ();
 			}			
 
-			if (thumb_pressed == true) {/* && ((vert == true && thumb_pos.Contains (thumb_pos.X, e.Y))
-				|| (vert == false && thumb_pos.Contains (e.X, thumb_pos.Y))))  {*/
-			
+			if (thumb_pressed == true) {
+
     				int pixel_pos;
     				
     				if (vert)

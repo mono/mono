@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.32 $
+// $Revision: 1.33 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.33  2004/08/19 22:25:31  jordi
+// theme enhancaments
+//
 // Revision 1.32  2004/08/17 21:25:12  pbartok
 // - Drawing improvement; don't call UpdateBounds if we are not visible (or
 //   have been minimized)
@@ -207,6 +210,7 @@ namespace System.Windows.Forms
 		internal BindingContext		binding_context;	// TODO
 		internal RightToLeft		right_to_left;		// drawing direction for control
 		internal int			layout_suspended;
+		protected bool			double_buffering;
 
 		private Graphics		dc_mem;			// Graphics context for double buffering
 		private Bitmap			bmp_mem;		// Bitmap for double buffering control
@@ -488,7 +492,8 @@ namespace System.Windows.Forms
 			is_disposed = false;
 			is_enabled = true;
 			has_focus = false;
-			layout_suspended = 0;
+			layout_suspended = 0;		
+			double_buffering = true;
 
 			parent = null;
 			background_image = null;
@@ -1089,6 +1094,9 @@ namespace System.Windows.Forms
 
 		internal void CreateBuffers (int width, int height)
 		{
+			if (double_buffering == false)
+				return;
+
 			if (dc_mem != null)
 				dc_mem.Dispose ();
 			if (bmp_mem != null)

@@ -23,28 +23,44 @@
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: ThemeEngine.cs,v $
+// Revision 1.2  2004/08/19 22:25:31  jordi
+// theme enhancaments
+//
 // Revision 1.1  2004/07/26 17:42:03  jordi
 // Theme support
 //
 //
 
+using System;
+
 namespace System.Windows.Forms
 {
 	internal class ThemeEngine
 	{
-		static private ITheme theme = null;
+		static private Theme theme = null;
 		
 		static ThemeEngine ()
-		{
-			/* Hardcoded for now */
-			theme = new ThemeWin32Classic ();
+		{	
+			string theme_var;
+
+			theme_var = Environment.GetEnvironmentVariable("MONO_THEME");
+
+			if (theme_var == null)
+				theme_var = "win32";
+
+			theme_var.ToLower ();
+
+			if (theme_var == "gtk")
+				theme = new ThemeGtk ();
+			else
+				theme = new ThemeWin32Classic ();
 		}	
 		
 			
-		public static ITheme Current {
+		public static Theme Current {
 			get { return theme; }
 		}
 		

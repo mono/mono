@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.23 $
+// $Revision: 1.24 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.24  2004/08/19 22:25:31  jordi
+// theme enhancaments
+//
 // Revision 1.23  2004/08/18 19:16:53  jordi
 // Move colors to a table
 //
@@ -105,9 +108,11 @@ using System.Drawing.Imaging;
 
 namespace System.Windows.Forms
 {
-	internal class ThemeWin32Classic : ITheme
+
+	internal class ThemeWin32Classic : Theme
 	{		
 
+		/* Default colors for Win32 classic theme */
 		uint [] theme_colors = {							/* AARRGGBB */
 			(uint) XplatUIWin32.GetSysColorIndex.COLOR_SCROLLBAR,			0xffc0c0c0,
 			(uint) XplatUIWin32.GetSysColorIndex.COLOR_BACKGROUND,			0xff008080,
@@ -137,37 +142,37 @@ namespace System.Windows.Forms
 		  
 		};
 
-		static private Array syscolors;
-		static private Pen pen_ticks;
-		static private Pen pen_disabled;
-		static private SolidBrush br_arrow;
-		static private SolidBrush br_disabled;
-		static private HatchBrush br_focus;		
-		static private SolidBrush br_progressbarblock;		
-		static private Pen pen_arrow;
+		
+		static protected Pen pen_ticks;
+		static protected Pen pen_disabled;
+		static protected SolidBrush br_arrow;
+		static protected SolidBrush br_disabled;
+		static protected HatchBrush br_focus;		
+		static protected SolidBrush br_progressbarblock;		
+		static protected Pen pen_arrow;
 
-		static private SolidBrush br_buttonface;
-		static private SolidBrush br_buttonshadow;
-		static private SolidBrush br_buttondkshadow;
-		static private SolidBrush br_buttonhilight;
-		static private SolidBrush br_buttontext;
-		static private SolidBrush br_menutext;
+		static protected SolidBrush br_buttonface;
+		static protected SolidBrush br_buttonshadow;
+		static protected SolidBrush br_buttondkshadow;
+		static protected SolidBrush br_buttonhilight;
+		static protected SolidBrush br_buttontext;
+		static protected SolidBrush br_menutext;
 
-		static private Pen pen_buttonshadow;
-		static private Pen pen_buttondkshadow;
-		static private Pen pen_buttonhilight;
-		static private Pen pen_buttonface;
-		static private Pen pen_buttontext;
-		static private Pen pen_windowframe;
+		static protected Pen pen_buttonshadow;
+		static protected Pen pen_buttondkshadow;
+		static protected Pen pen_buttonhilight;
+		static protected Pen pen_buttonface;
+		static protected Pen pen_buttontext;
+		static protected Pen pen_windowframe;
 
-		static private Font default_font;
+		
 
 		/* Cache */
-		private SolidBrush label_br_fore_color;
-		private SolidBrush label_br_back_color;		
-		private HatchBrush br_scrollbar_backgr;
-		private HatchBrush br_trackbar_thumbhili;
-		private SolidBrush br_trackbarbg;
+		protected SolidBrush label_br_fore_color;
+		protected SolidBrush label_br_back_color;		
+		protected HatchBrush br_scrollbar_backgr;
+		protected HatchBrush br_trackbar_thumbhili;
+		protected SolidBrush br_trackbarbg;
 
 		public ThemeWin32Classic ()
 		{
@@ -201,141 +206,15 @@ namespace System.Windows.Forms
 			pen_buttontext = new Pen (ColorButtonText);
 			pen_windowframe = new Pen (ColorWindowFrame);
 
+			defaultWindowBackColor = Color.FromArgb (255, 10, 10, 10);
+			defaultWindowForeColor = ColorButtonText;
 			default_font =	new Font (FontFamily.GenericSansSerif, 8.25f);
+		}	
+
+		public override bool WriteToWindow {
+			get {return false; }
 		}
-
-		public Color GetColor (XplatUIWin32.GetSysColorIndex idx)
-		{
-			return (Color) syscolors.GetValue ((int)idx);
-		}
-
-		public void SetColor (XplatUIWin32.GetSysColorIndex idx, Color color)
-		{
-			syscolors.SetValue (color, (int) idx);
-		}
-
-		/* Windows System Colors. Based on Wine */
-		public Color ColorScrollbar {
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_SCROLLBAR);}
-		}
-
-		public Color ColorBackground{
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_BACKGROUND);}
-		}
-
-		public Color ColorActiveTitle{
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_ACTIVECAPTION);}
-		}
-
-		public Color ColorInactiveTitle{
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_INACTIVECAPTION);}
-		}
-
-		public Color ColorMenu{
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_MENU);}
-		}
-
-		public Color ColorWindow{
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_WINDOW);}
-		}
-
-		public Color ColorWindowFrame{
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_WINDOWFRAME);}
-		}
-
-		public Color ColorMenuText{
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_MENUTEXT);}
-		}
-
-		public Color ColorWindowText{
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_WINDOWTEXT);}
-		}
-
-		public Color ColorTitleText{
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_CAPTIONTEXT);}
-		}
-
-		public Color ColorActiveBorder{
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_ACTIVEBORDER);}
-		}
-
-		public Color ColorInactiveBorder{
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_INACTIVEBORDER);}
-		}
-
-		public Color ColorAppWorkSpace{
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_APPWORKSPACE);}
-		}
-
-		public Color ColorHilight{
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_HIGHLIGHT);}
-		}
-
-		public Color ColorHilightText{
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_HIGHLIGHTTEXT);}
-		}
-
-		public Color ColorButtonFace{
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_BTNFACE);}
-		}
-
-		public Color ColorButtonShadow{
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_BTNSHADOW);}
-		}
-
-		public Color ColorGrayText{
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_GRAYTEXT);}
-		}
-
-		public Color ColorButtonText{
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_BTNTEXT);}
-		}
-
-		public Color ColorInactiveTitleText{
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_INACTIVECAPTIONTEXT);}
-		}
-
-		public Color ColorButtonHilight{
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_BTNHIGHLIGHT);}
-		}
-
-		public Color ColorButtonDkShadow{
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_3DDKSHADOW);}
-		}
-
-		public Color ColorButtonLight{
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_3DLIGHT);}
-		}
-
-		public Color ColorInfoText{
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_INFOTEXT);}
-		}
-
-		public Color ColorInfoWindow{
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_INFOBK);}
-		}
-
-
-		public Color DefaultControlBackColor {
-			get { return ColorButtonFace; }
-		}
-
-		public Color DefaultControlForeColor {
-			get { return ColorButtonText; }
-		}
-
-		public Font DefaultFont {
-			get { return default_font; }
-		}
-
-		public Color DefaultWindowBackColor {
-			get { return Color.FromArgb (255, 10, 10, 10); }
-		}
-
-		public Color DefaultWindowForeColor {
-			get { return ColorButtonText; }
-		}
-
+		
 		public int SizeGripWidth {
 			get { return 15; }
 		}
@@ -1150,21 +1029,22 @@ namespace System.Windows.Forms
 			brush.Dispose();
 		}
 
+		
 		/*
 			Methods that draw complex controls
 		*/
 
-		public void DrawScrollBar (Graphics dc, Rectangle area, Rectangle thumb_pos,
-			ref Rectangle first_arrow_area, ref Rectangle second_arrow_area,
-			ButtonState first_arrow, ButtonState second_arrow,
-			ref int scrollbutton_width, ref int scrollbutton_height,
-			bool enabled, bool vertical)
+
+		public override void DrawScrollBar (Graphics dc, Rectangle area, ScrollBar bar,
+			Rectangle thumb_pos, ref Rectangle first_arrow_area, ref Rectangle second_arrow_area, 
+			ButtonState first_arrow, ButtonState second_arrow, ref int scrollbutton_width, 
+			ref int scrollbutton_height, bool vert)
 		{
 
 			if (br_scrollbar_backgr == null)
 				br_scrollbar_backgr = new HatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace);
 
-			if (vertical) {		
+			if (vert) {		
 
 				first_arrow_area.X = first_arrow_area. Y = 0;
 				first_arrow_area.Width = scrollbutton_width;
@@ -1204,7 +1084,7 @@ namespace System.Windows.Forms
 			}
 
 			/* Thumbail */
-			if (enabled)
+			if (bar.Enabled)
 				DrawScrollButtonPrimitive (dc, thumb_pos, ButtonState.Normal);			
 		}
 
@@ -2490,14 +2370,14 @@ namespace System.Windows.Forms
 			
 		}
 
-		private SolidBrush GetControlBackBrush (Color c)
+		protected SolidBrush GetControlBackBrush (Color c)
 		{
 			if (c == DefaultControlBackColor)
 				return br_buttonface;
 			return new SolidBrush (c);
 		}
 
-		private SolidBrush GetControlForeBrush (Color c)
+		protected SolidBrush GetControlForeBrush (Color c)
 		{
 			if (c == DefaultControlForeColor)
 				return br_buttontext;
