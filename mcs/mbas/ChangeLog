@@ -1,3 +1,7 @@
+2004-10-21  Jambunathan K  <kjambunathan@novell.com>
+	* driver.cs (MainDriver): Made the warning message a little less
+	scary and more inviting for first time users.
+
 2004-10-19 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: Enhanced For Each...Next statement grammar
 

@@ -983,7 +983,7 @@ namespace Mono.Languages
 		int MainDriver(string [] args)
 		{
 			Console.WriteLine ("--------");
-			Console.WriteLine ("MonoBASIC: THIS IS STILL ALPHA AND UNSUPPORTED SOFTWARE, USE AT YOUR OWN RISK.");
+			Console.WriteLine ("MonoBASIC: THIS IS AN ALPHA SOFTWARE.");
 			Console.WriteLine ("--------");
 			SetupDefaultDefines();	
 			
