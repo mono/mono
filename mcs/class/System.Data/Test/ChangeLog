@@ -1,3 +1,12 @@
+2003-02-16  Daniel Morgan <danmorg@sc.rr.com>
+
+	* TestSqlConnection.cs: added test file
+	to test SqlClient, SybaseClient, and TdsClient
+	and connections
+
+	* System.Data_test.build: excluded
+	TestSqlConnection.cs from NUnit tests
+
 2003-01-13  Ville Palo <vi64pa@koti.soon.fi>
 
 	* data_linux_test.args: Added some classes

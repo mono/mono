@@ -28,6 +28,7 @@
 				<excludes name="TestSqlParameters.cs"/>
 				<excludes name="SqlSharpCli.cs"/>
 				<excludes name="OdbcTest.cs"/>
+				<excludes name="TestSqlConnection.cs"/>
 
 			</sources>
 			<references basedir="..\..\..\nunit">
@@ -54,6 +55,7 @@
 				<excludes name="TestSqlDataAdapter.cs"/>
 				<excludes name="TestSqlParameters.cs"/>
 				<excludes name="OdbcTest.cs"/>
+				<excludes name="TestSqlConnection.cs"/>
 
 			</sources>
 			<references basedir="..\..\..\nunit">
