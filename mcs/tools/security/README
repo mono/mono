@@ -1,21 +1,15 @@
 Mono's Security Tools - README
-Last updated: February 24, 2004 (post mono 0.30)
+Last updated: January 20, 2005
 
 * General notes
 
 - This directory contains clones for .NET security tools;
-- All tools are 100% managed code with no dependency to the Mono's runtime.
+- All tools are 100% managed code with no dependency to the Mono's runtime,
+  except permview (which wouldn't be possible in managed code in Fx 1.0/1.1).
 - A much as possible the same command line arguments as the original are used;
 - Documentation (man) is available for most tools;
-- All tools, except secutil.exe, requires the Mono.Security.dll assembly.
 - Authenticode(r) support is MINIMAL - there are still many missing
   validations.
-
-
-* Known bugs
-
-- If signcode.exe is executed more than once on a assembly, the signature 
-becomes invalid (but the assembly can still be executed).
 
 
 * Authenticode tutorial

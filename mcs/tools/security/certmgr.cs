@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 
 using System;
@@ -18,11 +18,12 @@ using SSCX = System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 using Mono.Security.Authenticode;
+using Mono.Security.Cryptography;
 using Mono.Security.X509;
 using Mono.Security.Protocol.Tls;
 
 [assembly: AssemblyTitle ("Mono Certificate Manager")]
-[assembly: AssemblyDescription ("Add/Remove certificates and CRL from stores")]
+[assembly: AssemblyDescription ("Manage X.509 certificates and CRL from stores.")]
 
 namespace Mono.Tools {
 
@@ -35,12 +36,16 @@ namespace Mono.Tools {
 
 		static private void Help () 
 		{
-			Console.WriteLine ("Usage: certmgr [action] [object type] [options] store [filename]", Environment.NewLine);
-			Console.WriteLine ("   or: certmgr -ssl [options] url{0}", Environment.NewLine);
+			Console.WriteLine ("Usage: certmgr [action] [object type] [options] store [filename]");
+			Console.WriteLine ("   or: certmgr -list [object type] [options] store");
+			Console.WriteLine ("   or: certmgr -del [object type] [options] store certhash");
+			Console.WriteLine ("   or: certmgr -ssl [options] url");
+			Console.WriteLine ();
 			Console.WriteLine ("actions");
 			Console.WriteLine ("\t-add\tAdd a certificate, CRL or CTL to specified store");
 			Console.WriteLine ("\t-del\tRemove a certificate, CRL or CTL to specified store");
 			Console.WriteLine ("\t-put\tCopy a certificate, CRL or CTL from a store to a file");
+			Console.WriteLine ("\t-list\tList certificates, CRL ot CTL in the specified store.");
 			Console.WriteLine ("\t-ssl\tDownload and add certificates from an SSL session");
 			Console.WriteLine ("object types");
 			Console.WriteLine ("\t-c\tadd/del/put certificates");
@@ -76,6 +81,7 @@ namespace Mono.Tools {
 			Add,
 			Delete,
 			Put,
+			List,
 			Ssl
 		}
 
@@ -87,10 +93,15 @@ namespace Mono.Tools {
 					action = Action.Add;
 					break;
 				case "DEL":
+				case "DELETE":
 					action = Action.Delete;
 					break;
 				case "PUT":
 					action = Action.Put;
+					break;
+				case "LST":
+				case "LIST":
+					action = Action.List;
 					break;
 				case "SSL":
 				case "TLS":
@@ -243,18 +254,23 @@ namespace Mono.Tools {
 			}
 		}
 
-		static void Delete (ObjectType type, X509Store store, string file, bool verbose) 
+		static void Delete (ObjectType type, X509Store store, string hash, bool verbose) 
 		{
-			throw new NotImplementedException ("Delete not yet supported");
-/*			switch (type) {
+			switch (type) {
 				case ObjectType.Certificate:
+					foreach (X509Certificate x509 in store.Certificates) {
+						if (hash == CryptoConvert.ToHex (x509.Hash)) {
+							store.Remove (x509);
+							Console.WriteLine ("Certificate removed from store.");
+							return;
+						}
+					}
 					break;
 				case ObjectType.CRL:
-					// TODO
-					break;
+					throw new NotImplementedException ("Delete not yet supported");
 				default:
 					throw new NotSupportedException (type.ToString ());
-			}*/
+			}
 		}
 
 		static void Put (ObjectType type, X509Store store, string file, bool verbose) 
@@ -269,6 +285,44 @@ namespace Mono.Tools {
 				default:
 					throw new NotSupportedException (type.ToString ());
 			}*/
+		}
+
+		static void DisplayCertificate (X509Certificate x509, bool verbose)
+		{
+			Console.WriteLine ("{0}X.509 v{1} Certificate", (x509.IsSelfSigned ? "Self-signed " : String.Empty), x509.Version);
+			Console.WriteLine ("  Serial Number: {0}", CryptoConvert.ToHex (x509.SerialNumber));
+			Console.WriteLine ("  Issuer Name:   {0}", x509.IssuerName);
+			Console.WriteLine ("  Subject Name:  {0}", x509.SubjectName);
+			Console.WriteLine ("  Valid From:    {0}", x509.ValidFrom);
+			Console.WriteLine ("  Valid Until:   {0}", x509.ValidUntil);
+			Console.WriteLine ("  Unique Hash:   {0}", CryptoConvert.ToHex (x509.Hash));
+			if (verbose) {
+				Console.WriteLine ("  Key Algorithm:        {0}", x509.KeyAlgorithm);
+				Console.WriteLine ("  Algorithm Parameters: {0}", (x509.KeyAlgorithmParameters == null) ? "None" :
+					CryptoConvert.ToHex (x509.KeyAlgorithmParameters));
+				Console.WriteLine ("  Public Key:           {0}", CryptoConvert.ToHex (x509.PublicKey));
+				Console.WriteLine ("  Signature Algorithm:  {0}", x509.SignatureAlgorithm);
+				Console.WriteLine ("  Algorithm Parameters: {0}", (x509.SignatureAlgorithmParameters == null) ? "None" :
+					CryptoConvert.ToHex (x509.SignatureAlgorithmParameters));
+				Console.WriteLine ("  Signature:            {0}", CryptoConvert.ToHex (x509.Signature));
+			}
+			Console.WriteLine ();
+		}
+
+		static void List (ObjectType type, X509Store store, string file, bool verbose) 
+		{
+			switch (type) {
+				case ObjectType.Certificate:
+					foreach (X509Certificate x509 in store.Certificates) {
+						DisplayCertificate (x509, verbose);
+					}
+					break;
+				case ObjectType.CRL:
+					// TODO
+					break;
+				default:
+					throw new NotSupportedException (type.ToString ());
+			}
 		}
 
 		static X509CertificateCollection GetCertificatesFromSslSession (string url) 
@@ -461,7 +515,7 @@ namespace Mono.Tools {
 				}
 			}
 
-			string file = args [n];
+			string file = (n < args.Length) ? args [n] : null;
 
 			// now action!
 			try {
@@ -475,6 +529,9 @@ namespace Mono.Tools {
 				case Action.Put:
 					Put (type, store, file, verbose);
 					break;
+				case Action.List:
+					List (type, store, file, verbose);
+					break;
 				case Action.Ssl:
 					Ssl (file, machine, verbose);
 					break;
@@ -482,9 +539,12 @@ namespace Mono.Tools {
 					throw new NotSupportedException (action.ToString ());
 				}
 			}
-			catch (UnauthorizedAccessException) {
+			catch (UnauthorizedAccessException uae) {
 				Console.WriteLine ("Access to the {0} '{1}' certificate store has been denied.", 
 					(machine ? "machine" : "user"), storeName);
+				if (verbose) {
+					Console.WriteLine (uae);
+				}
 			}
 		}
 	}

@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell Inc. (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell Inc. (http://www.novell.com)
 //
 
 using System;
@@ -17,7 +17,7 @@ using System.Text;
 
 [assembly: AssemblyCompany("Motus Technologies, Novell")]
 [assembly: AssemblyProduct("Mono Security Tools")]
-[assembly: AssemblyCopyright("Copyright 2002, 2003 Motus Technologies. Copyright 2004 Novell. BSD licensed.")]
+[assembly: AssemblyCopyright("Copyright 2002, 2003 Motus Technologies. Copyright 2004-2005 Novell. BSD licensed.")]
 [assembly: AssemblyVersion("1.1.4.0")]
 
 //[assembly: AssemblyConfiguration("")]

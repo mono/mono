@@ -1,3 +1,9 @@
+2005-01-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Updated copyrights to 2005.
+	* certmgr.cs: Added --list and implemented -del options. Fix bug 70717
+	* README: Updated to reflect current situation.
+
 2005-01-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* permview.cs: Fixed case for empty, but unrestricted, permission 
