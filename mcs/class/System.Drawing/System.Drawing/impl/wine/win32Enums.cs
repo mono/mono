@@ -2394,4 +2394,9 @@ namespace System.Drawing.Win32Impl {
 		ETO_RTLREADING      =0x0080,
 		ETO_IGNORELANGUAGE  =0x1000
 	}
+	
+	internal enum DibUsage : uint {
+		DIB_RGB_COLORS = 0,
+		DIB_PAL_COLORS = 1
+	}
 }

@@ -29,6 +29,8 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Drawing.Imaging;
 
 namespace System.Drawing.Win32Impl {
 	/// <summary>
@@ -52,6 +54,9 @@ namespace System.Drawing.Win32Impl {
 		[DllImport("gdi32.dll")]
 		static internal extern IntPtr CreateCompatibleBitmap(IntPtr hDC, int Width, int Heigth);
 		[DllImport("gdi32.dll")]
+		internal static extern IntPtr CreateDIBSection(IntPtr hdc, ref BITMAPINFO_FLAT bmi, 
+			DibUsage iUsage, out IntPtr ppvBits, IntPtr hSection, int dwOffset);
+		[DllImport("gdi32.dll")]
 		static internal extern IntPtr SelectObject(IntPtr hDC, IntPtr hObject);
 		[DllImport("gdi32.dll")]
 		static internal extern bool BitBlt(IntPtr hDCDest, int XOriginDest, int YOriginDest, int WidthDest, int HeightDest,
@@ -68,11 +73,8 @@ namespace System.Drawing.Win32Impl {
 		static internal extern int SetMapMode(IntPtr hDC, int fnMapMode);
 		[DllImport("gdi32.dll")]
 		static internal extern int GetObjectType(IntPtr handle);
-		[DllImport("gdi32.dll")]
-		internal static extern IntPtr CreateDIBSection(IntPtr hdc, ref BITMAPINFO_FLAT bmi, 
-			int iUsage, ref int ppvBits, IntPtr hSection, int dwOffset);
-		[DllImport("gdi32.dll")]
-		internal static extern int GetDIBits(IntPtr hDC, IntPtr hbm, int StartScan, int ScanLines, int lpBits, BITMAPINFOHEADER bmi, int usage);
+		//[DllImport("gdi32.dll")]
+		//internal static extern int GetDIBits(IntPtr hDC, IntPtr hbm, int StartScan, int ScanLines, int lpBits, BITMAPINFOHEADER bmi, int usage);
 		[DllImport("gdi32.dll")]
 		internal static extern int GetDIBits(IntPtr hdc, IntPtr hbm, int StartScan, int ScanLines, int lpBits, ref BITMAPINFO_FLAT bmi, int usage);
 		[DllImport("gdi32.dll")]
@@ -136,7 +138,12 @@ namespace System.Drawing.Win32Impl {
 			 CallingConvention = CallingConvention.StdCall, 
 			 CharSet = CharSet.Ansi)]
 		internal static extern int Polyline(IntPtr hdc, POINT[] lppt, int cPoints);
-	
+
+		[DllImport ("gdi32.dll", 
+			 CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Ansi)]
+		internal static extern int GdiFlush();
+		
 		#endregion
 		
 		#region User32.dll functions
@@ -149,6 +156,25 @@ namespace System.Drawing.Win32Impl {
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		internal static extern int ReleaseDC(IntPtr hwnd, IntPtr hdc);
 		
+		#endregion
+		
+		#region Kernel32.dll functions
+		[DllImport ("kernel32.dll", CallingConvention = CallingConvention.StdCall,
+			 CharSet = CharSet.Auto)]
+		internal extern static uint GetLastError ();
+		
+		[DllImport ("kernel32.dll", CallingConvention = CallingConvention.StdCall,
+			 CharSet = CharSet.Auto, EntryPoint = "FormatMessageW")]
+		internal extern static uint  FormatMessage (
+			uint flags, IntPtr lpSource,uint messageId, uint languageId,
+			StringBuilder lpBuffer, int nSize, IntPtr Arguments);
+				
+		internal static string FormatMessage(uint error) {
+			StringBuilder sb = new StringBuilder(2048);
+			Win32.FormatMessage( (uint)(FM_.FORMAT_MESSAGE_FROM_SYSTEM | FM_.FORMAT_MESSAGE_IGNORE_INSERTS),
+				IntPtr.Zero, error, 0, sb, sb.Capacity, IntPtr.Zero);
+			return sb.ToString();
+		}
 		#endregion
 	}
 

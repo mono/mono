@@ -29,6 +29,7 @@ namespace System.Drawing {
 			internal System.Drawing.Win32Impl.Graphics selectedIntoGraphics_ = null;
 
 			protected Size imageSize_;
+			protected ImageFormat imageFormat_;
 			// constructor
 			public Image () {}
     
@@ -108,6 +109,13 @@ namespace System.Drawing {
 			{
 				// Fixme: implement me
 				throw new NotImplementedException ();
+			}
+
+			protected InternalImageInfo createdFrom_ = null;
+			public InternalImageInfo ConvertToInternalImageInfo() {
+				InternalImageInfo result = new InternalImageInfo();
+				//nativeObject_;Win32.GetDIBits();
+				return createdFrom_;
 			}
 
 			public void Save (string filename)
@@ -204,8 +212,17 @@ namespace System.Drawing {
 				}
 			}
 	
-			//public PropertyItem[] PropertyItems {get;}
-			//public ImageFormat RawFormat {get;}
+			public PropertyItem[] PropertyItems {
+				get {
+					throw new NotImplementedException();
+				}
+			}
+
+			public ImageFormat RawFormat {
+				get{
+					return imageFormat_;
+				}
+			}
 
 			public Size Size 
 			{

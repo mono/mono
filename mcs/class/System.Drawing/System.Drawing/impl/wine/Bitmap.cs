@@ -9,6 +9,8 @@
 //
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Drawing.Imaging;
 
 namespace System.Drawing {
 	namespace Win32Impl {
@@ -80,10 +82,8 @@ namespace System.Drawing {
 				//this.stream = stream;
 			}
 
-			public Bitmap (string filename) 
+			public Bitmap (string filename) : this(filename, false)
 			{
-				throw new NotImplementedException ();
-				//this.filename = filename;
 			}
 
 			public Bitmap (Image original, Size newSize) 
@@ -93,18 +93,54 @@ namespace System.Drawing {
 				//this.newSize = newSize;
 			}
 
+			void InitFromStream( Stream stream) {
+				InternalImageInfo info = System.Drawing.Image.Decode(stream);
+				if (info != null) {
+					createdFrom_ = info;
+					IntPtr memDC = Win32.CreateCompatibleDC(IntPtr.Zero);
+					IntPtr dibBits;
+					BITMAPINFO_FLAT bmi = new BITMAPINFO_FLAT();
+					bmi.bmiHeader_biSize = 40;
+					bmi.bmiHeader_biWidth = info.Size.Width;
+					bmi.bmiHeader_biHeight = info.Size.Height;
+					bmi.bmiHeader_biPlanes = 1;
+					bmi.bmiHeader_biBitCount = (short)System.Drawing.Image.GetPixelFormatSize(info.Format);
+					bmi.bmiHeader_biCompression = (int)BitmapCompression.BI_RGB;
+					bmi.bmiHeader_biSizeImage = (int)info.RawImageBytes.Length;
+					bmi.bmiHeader_biXPelsPerMeter = 0;
+					bmi.bmiHeader_biYPelsPerMeter = 0;
+					bmi.bmiHeader_biClrUsed = 0;
+					bmi.bmiHeader_biClrImportant = 0;
+					int palIdx = 0;
+					foreach( Color col in info.Palette.Entries) {
+						bmi.bmiColors[palIdx++] = col.B;
+						bmi.bmiColors[palIdx++] = col.G;
+						bmi.bmiColors[palIdx++] = col.R;
+						bmi.bmiColors[palIdx++] = col.A;
+					}
+
+					//byte[] bmpInfoBytes = CreateBITMAPINFOArray( info);
+					nativeObject_ = Win32.CreateDIBSection(memDC, ref bmi, DibUsage.DIB_RGB_COLORS, out dibBits, IntPtr.Zero, 0);
+					if (nativeObject_ == IntPtr.Zero) {
+						Console.WriteLine("Error creating Win32 DIBSection {0}", Win32.FormatMessage(Win32.GetLastError()));
+					}
+					Marshal.Copy(info.RawImageBytes, 0, dibBits, info.RawImageBytes.Length);
+					Win32.DeleteDC(memDC);
+					imageSize_ = info.Size;
+					imageFormat_ = info.RawFormat;
+				}
+			}
+			
 			public Bitmap (Stream stream, bool useIcm) 
 			{
-				throw new NotImplementedException ();
-				//this.stream = stream;
-				//this.useIcm = useIcm;
+				InitFromStream(stream);
 			}
 
 			public Bitmap (string filename, bool useIcm) 
 			{
-				throw new NotImplementedException ();
-				//this.filename = filename;
-				//this.useIcm = useIcm;
+				FileStream file = new FileStream(filename, FileMode.Open);
+				InitFromStream(file);
+				file.Close();
 			}
 
 			public Bitmap (Type type, string resource) 

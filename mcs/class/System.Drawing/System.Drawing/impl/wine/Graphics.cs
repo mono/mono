@@ -386,11 +386,16 @@ namespace System.Drawing
 			{
 				System.Drawing.Win32Impl.Image wineImage = image.implementation_ as System.Drawing.Win32Impl.Image;
 				Graphics imageGraphics = wineImage.selectedIntoGraphics_;
-				if( imageGraphics == null) 
-				{
-					// FIXME: select image into temporary DC
+				if( imageGraphics == null) {
+					IntPtr tempDC = Win32.CreateCompatibleDC (hdc_);
+					IntPtr oldBmp = Win32.SelectObject (tempDC, wineImage.nativeObject_);
+					Win32.BitBlt(hdc_, x, y, width, height, tempDC, 0, 0, PatBltTypes.SRCCOPY);
+					Win32.SelectObject (tempDC, oldBmp);
+					Win32.DeleteDC (tempDC);
 				}
-				Win32.BitBlt(hdc_, x, y, width, height, imageGraphics.hdc_, 0, 0, PatBltTypes.SRCCOPY);
+				else {
+					Win32.BitBlt(hdc_, x, y, width, height, imageGraphics.hdc_, 0, 0, PatBltTypes.SRCCOPY);
+				}
 			}
 
 			[MonoTODO]
@@ -1116,13 +1121,13 @@ namespace System.Drawing
 			[MonoTODO]
 			void IGraphics.Flush ()
 			{
-				throw new NotImplementedException ();
+				((IGraphics)this).Flush(FlushIntention.Flush);
 			}
 
 			[MonoTODO]
 			void IGraphics.Flush (FlushIntention intention)
 			{
-				throw new NotImplementedException ();
+				Win32.GdiFlush ();
 			}
 
 			[MonoTODO]

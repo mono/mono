@@ -1,3 +1,12 @@
+2003-06-15  Alexandre Pigolkine <pigolkine@gmx.de>
+	* Graphics.cs	image painting
+	* Bitmap.cs		
+	* Image.cs
+			InternalImageInfo, image read/write
+			
+	* win32Enums.cs
+	* win32functions.cs
+	
 2003-05-26  Alexandre Pigolkine <pigolkine@gmx.de>
 	* Bitmap.cs
 	* Image.cs
