@@ -442,9 +442,9 @@ namespace System {
 			return base.GetType ();
 		}
 		
-		[MonoTODO]
 		public override object InitializeLifetimeService ()
 		{
+			return null;
 		}
 
 		[MonoTODO]
