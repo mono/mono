@@ -403,6 +403,7 @@ namespace System.Net.Sockets
 		private int pendingEnds;
 		private int closeDelayed;
 
+		delegate void SocketAsyncCall ();
 		/*
 		 *	These two fields are looked up by name by the runtime, don't change
 		 *  their name without also updating the runtime code.
@@ -761,9 +762,8 @@ namespace System.Net.Sockets
 			SocketAsyncResult req=new SocketAsyncResult(state);
 			Worker worker=new Worker(this, callback, req);
 			req.Worker=worker;
-			Thread child=new Thread(new ThreadStart(worker.Accept));
-			child.IsBackground = true;
-			child.Start();
+			SocketAsyncCall sac = new SocketAsyncCall (worker.Accept);
+			sac.BeginInvoke (null, null);
 			return(req);
 		}
 
@@ -782,9 +782,8 @@ namespace System.Net.Sockets
 			Worker worker=new Worker(this, end_point, callback,
 						 req);
 			req.Worker=worker;
-			Thread child=new Thread(new ThreadStart(worker.Connect));
-			child.IsBackground = true;
-			child.Start();
+			SocketAsyncCall sac = new SocketAsyncCall (worker.Connect);
+			sac.BeginInvoke (null, null);
 			return(req);
 		}
 
@@ -814,9 +813,8 @@ namespace System.Net.Sockets
 			Worker worker=new Worker(this, buffer, offset, size,
 						 socket_flags, callback, req);
 			req.Worker=worker;
-			Thread child=new Thread(new ThreadStart(worker.Receive));
-			child.IsBackground = true;
-			child.Start();
+			SocketAsyncCall sac = new SocketAsyncCall (worker.Receive);
+			sac.BeginInvoke (null, null);
 			return(req);
 		}
 
@@ -847,9 +845,8 @@ namespace System.Net.Sockets
 						 socket_flags, remote_end,
 						 callback, req);
 			req.Worker=worker;
-			Thread child=new Thread(new ThreadStart(worker.ReceiveFrom));
-			child.IsBackground = true;
-			child.Start();
+			SocketAsyncCall sac = new SocketAsyncCall (worker.ReceiveFrom);
+			sac.BeginInvoke (null, null);
 			return(req);
 		}
 
@@ -878,9 +875,8 @@ namespace System.Net.Sockets
 			Worker worker=new Worker(this, buffer, offset, size,
 						 socket_flags, callback, req);
 			req.Worker=worker;
-			Thread child=new Thread(new ThreadStart(worker.Send));
-			child.IsBackground = true;
-			child.Start();
+			SocketAsyncCall sac = new SocketAsyncCall (worker.Send);
+			sac.BeginInvoke (null, null);
 			return(req);
 		}
 
@@ -911,9 +907,8 @@ namespace System.Net.Sockets
 						 socket_flags, remote_end,
 						 callback, req);
 			req.Worker=worker;
-			Thread child=new Thread(new ThreadStart(worker.SendTo));
-			child.IsBackground = true;
-			child.Start();
+			SocketAsyncCall sac = new SocketAsyncCall (worker.SendTo);
+			sac.BeginInvoke (null, null);
 			return(req);
 		}
 

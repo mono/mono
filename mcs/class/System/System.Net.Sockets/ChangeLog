@@ -1,3 +1,8 @@
+2004-02-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: use the threadpool for asynchronous calls instead of
+	creating new threads.
+
 2004-02-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: added locks around waithandle assign and comparison in
