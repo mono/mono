@@ -1,3 +1,7 @@
+2003-01-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: fixed bug #36037.
+
 2002-12-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BaseParser.cs: a couple of path fixes to make it work

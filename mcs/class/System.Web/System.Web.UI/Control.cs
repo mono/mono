@@ -349,13 +349,15 @@ namespace System.Web.UI
 			control._parent = this;
 			control._page = Page;
 
-			// Without this, DataBoundLiteralControl crashes in OnDataBound event.
-			Control namingContainer = NamingContainer;
-			if (namingContainer != null)
-				control._namingContainer = namingContainer;
+			if (_isNamingContainer)
+				control._namingContainer = this;
 			
 			if (control.AutoID == true && control.ID == null)
 				control.ID = ID + "_ctrl_" + defaultNumberID++;
+
+			control.InitRecursive (_isNamingContainer ? this : NamingContainer);
+			control.LoadRecursive ();
+			control.PreRenderRecursiveInternal ();
 		}
 
                 protected virtual void AddParsedSubObject(object obj) //DIT
