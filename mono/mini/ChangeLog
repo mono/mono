@@ -1,3 +1,10 @@
+
+Thu Feb 24 15:22:30 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini.h: make mono_lmf_addr a fast-access thread var.
+	* mini-x86.c: remove unreliable __thread var offset detection,
+	use the correct accessors and enable by default.
+
 2005-02-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_jit_free_method): Fix memory leak.
