@@ -1,5 +1,18 @@
 2002-03-23  Martin Baulig  <martin@gnome.org>
 
+	* x86.brg (lreg: CONV_I8 (reg)): X86_XOR modifies the flags, so we need
+	to do it before the X86_CMP.
+	(reg: CLT (lreg, lreg)): Use correct x86_branch8() targets.
+	(reg: CLT (lreg, lreg)): Likewise.
+	(reg: CLT_UN (lreg, lreg)): Likewise.
+	(reg: CLT_UN (lreg, lreg)): Likewise.
+	(reg: CGT (lreg, lreg)): Likewise.
+	(reg: CGT (lreg, lreg)): Likewise.
+	(reg: CGT_UN (lreg, lreg)): Likewise.
+	(reg: CGT_UN (lreg, lreg)): Likewise.
+
+2002-03-23  Martin Baulig  <martin@gnome.org>
+
 	* debug-private.h (AssemblyDebugInfo): Added `_priv'.
 
 	* debug-dwarf2-plus.c
