@@ -1,3 +1,8 @@
+2002-01-31  Dietmar Maurer  <dietmar@ximian.com>
+
+	* class.c (class_compute_field_layout): do not consider static
+	fields to compute alignment
+
 2002-01-25  Dietmar Maurer  <dietmar@ximian.com>
 
 	* appdomain.c (mono_appdomain_get): impl.
