@@ -144,7 +144,7 @@ public class Int32Test : TestCase
 			Fail ("#C17: Should raise a System.OverflowException");
 		}
 		catch (Exception e) {
-			Assert ("#C18", typeof (OverflowException) == e.GetType());
+			AssertEquals ("#C18", typeof (OverflowException), e.GetType());
 		}
 		//test Parse(string s, NumberStyles style)
 		AssertEquals ("#C19", 42, Int32.Parse (" $42 ", NumberStyles.Currency));
