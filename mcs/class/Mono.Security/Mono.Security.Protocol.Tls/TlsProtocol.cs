@@ -29,6 +29,6 @@ namespace Mono.Security.Protocol.Tls
 	public enum TlsProtocol : short
 	{
 		Tls1 = (0x03 << 8) | 0x01,
-		// Ssl3 = (0x03 << 8) | 0x00
+		Ssl3 = (0x03 << 8) | 0x00
 	}
 }
