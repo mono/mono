@@ -6,9 +6,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -832,8 +830,9 @@ namespace Mono.Security {
 				}
 
 				// digestEncryptionAlgorithm DigestEncryptionAlgorithmIdentifier
-				ASN1 digestEncryptionAlgorithm = asn1 [0][n++];
-				string digestEncryptionAlgorithmOid = ASN1Convert.ToOid (digestEncryptionAlgorithm [0]);
+				n++;
+				// ASN1 digestEncryptionAlgorithm = asn1 [0][n++];
+				// string digestEncryptionAlgorithmOid = ASN1Convert.ToOid (digestEncryptionAlgorithm [0]);
 
 				// encryptedDigest EncryptedDigest
 				ASN1 encryptedDigest = asn1 [0][n++];
