@@ -5,88 +5,68 @@
 // Authors: 
 //   Marcin Szczepanski (marcins@zipworld.com.au)
 //   Paolo Molaro (lupus@ximian.com)
+//   Patrik Torstensson
 //
-// TODO: Make sure the coding complies to the ECMA draft, there's some
-// variable names that probably don't (like sString)
+// NOTE: In the case the buffer is only filled by 50% a new string
+//       will be returned by ToString() is cached in the '_cached_str'
+//		 cache_string will also control if a string has been handed out
+//		 to via ToString(). If you are chaning the code make sure that
+//		 if you modify the string data set the cache_string to null.
 //
-// NOTE: the string returned by ToString() is cached in the 'thestring'
-// member: if you change/add a method that modifies the stringbuilder, make
-// sure thestring is set to null (to invalidate the cache).
 using System.Runtime.CompilerServices;
 
 namespace System.Text {
 	
 	[Serializable]
-	public sealed class StringBuilder {
+	public sealed class StringBuilder 
+	{
+		private int _length;
+		private string _str = null;
+		private string _cached_str = null;
+		
+		private int _maxCapacity = Int32.MaxValue;
+		private const int constDefaultCapacity = 16;
 
-		private const int defaultCapacity = 16;
-
-		private int sCapacity;
-		private int sLength;
-		private char[] sString;
-		private int sMaxCapacity = Int32.MaxValue;
-		string thestring;
-
-		public StringBuilder(string value, int startIndex, int length, int capacity) {
+		public StringBuilder(string value, int startIndex, int length, int capacity) 
+		{
 			// first, check the parameters and throw appropriate exceptions if needed
-			if(null==value)
+			if (null == value)
 				value = "";
 
 			// make sure startIndex is zero or positive
-			if(startIndex < 0) {
-				throw new System.ArgumentOutOfRangeException("startIndex", startIndex, "StartIndex cannot be less than zero.");
-			}
+			if (startIndex < 0)
+				throw new System.ArgumentOutOfRangeException ("startIndex", startIndex, "StartIndex cannot be less than zero.");
 
 			// make sure length is zero or positive
-			if(length < 0) {
-				throw new System.ArgumentOutOfRangeException("length", length, "Length cannot be less than zero.");
-			}
+			if(length < 0)
+				throw new System.ArgumentOutOfRangeException ("length", length, "Length cannot be less than zero.");
 
 			if (capacity < 0)
 				throw new System.ArgumentOutOfRangeException ("capacity", capacity, "capacity must be greater than zero.");
 
 			// make sure startIndex and length give a valid substring of value
-			if(startIndex + (length -1) > (value.Length - 1) ) {
-				throw new System.ArgumentOutOfRangeException("startIndex", startIndex, "StartIndex and length must refer to a location within the string.");
-			}
-			
+			if (startIndex + (length -1) > (value.Length - 1) )
+				throw new System.ArgumentOutOfRangeException ("startIndex", startIndex, "StartIndex and length must refer to a location within the string.");
+
 			if (capacity == 0)
-				sCapacity = defaultCapacity;
-			else
-				sCapacity = capacity;
+				capacity = constDefaultCapacity;
 
-			// LAMESPEC: what to do if capacity is too small to hold the substring?
-			// Like the MS implementation, double the capacity until it is large enough
-			while (sCapacity < length) {
-				// However, take care not to double if that would make the number
-				// larger than what an int can hold
-				if (sCapacity <= Int32.MaxValue / 2) {
-					sCapacity *= 2;
-				}
-				else{
-					sCapacity = Int32.MaxValue;
-				}
-			}
-
-			sString = new char[sCapacity];
-			sLength = length;
-
-			// if the length is not zero, then we have to copy some characters
-			if (sLength > 0) {
-				// Copy the correct number of characters into the internal array
-				value.CopyTo (startIndex, sString, 0, sLength);
-			}
+			_str = String.InternalAllocateStr ((length > capacity) ? length : capacity);
+			if (length > 0)
+				String.InternalStrcpy(_str, 0, value, startIndex, length);
+			
+			_length = length;
 		}
 
-		public StringBuilder () : this(String.Empty, 0, 0, 0) {}
+		public StringBuilder () : this (String.Empty, 0, 0, 0) {}
 
-		public StringBuilder( int capacity ) : this(String.Empty, 0, 0, capacity) {}
+		public StringBuilder(int capacity) : this (String.Empty, 0, 0, capacity) {}
 
-		public StringBuilder( int capacity, int maxCapacity ) : this(String.Empty, 0, 0, capacity) {
-			if(capacity > maxCapacity) {
-				throw new System.ArgumentOutOfRangeException("capacity", "Capacity exceeds maximum capacity.");
-			}
-			sMaxCapacity = maxCapacity;
+		public StringBuilder(int capacity, int maxCapacity) : this (String.Empty, 0, 0, capacity) {
+			if (capacity > maxCapacity)
+				throw new System.ArgumentOutOfRangeException ("capacity", "Capacity exceeds maximum capacity.");
+
+			_maxCapacity = maxCapacity;
 		}
 
 		public StringBuilder( string value ) : this(value, 0, value == null ? 0 : value.Length, value == null? 0 : value.Length) {
@@ -97,399 +77,349 @@ namespace System.Text {
 		public int MaxCapacity {
 			get {
 				// MS runtime always returns Int32.MaxValue.
-				return sMaxCapacity;
+				return _maxCapacity;
 			}
 		}
 
 		public int Capacity {
 			get {
-				return sCapacity;
+				return _str.Length;
 			}
 
 			set {
-				if( value < sLength ) {
-					throw new ArgumentException( "Capacity must be > length" );
-				} else {
-					char[] tString = new char[value];	       
-					Array.Copy( sString, tString, sLength );
-					sString = tString;
-					sCapacity = sString.Length;
-				}
+				if (value < _length)
+					throw new ArgumentException( "Capacity must be larger than length" );
+
+				InternalEnsureCapacity(value);
 			}
 		}
 
-
 		public int Length {
 			get {
-				return sLength;
+				return _length;
 			}
 
 			set {
-				if( value < 0 || value > MaxCapacity) {
+				if( value < 0 || value > _maxCapacity)
 					throw new ArgumentOutOfRangeException();
-				} else {
 
-					if( value < sLength ) {
-						// Truncate current string at value
+				if (value == _length)
+					return;
 
-						// LAMESPEC:  The spec is unclear as to what to do
-						// with the capacity when truncating the string.
-						//
-						// Don't change the capacity, as this is what
-						// the MS implementation does.
+				if( value < _length ) 
+				{
+					// LAMESPEC:  The spec is unclear as to what to do
+					// with the capacity when truncating the string.
 
-						sLength = value;
-						thestring = null;
-					} else {
-						// Expand the capacity to the new length and
-						// pad the string with spaces.
-						
-						// LAMESPEC: The spec says to put the spaces on the
-						// left of the string however the MS implementation
-						// puts them on the right.  We'll do that for 
-						// compatibility (!)
-
-						char[] tString = new char[ value ];
-						int padLength = value - sLength;
-						
-						string padding = new String( ' ', padLength );
-						Array.Copy( sString, tString, sLength );
-						padding.CopyTo (0, tString, sLength, padLength);
-						sString = tString;
-						sLength = sString.Length;
-						sCapacity = value;
-					}
+					// Do as MS, keep the capacity
+					_length = value;
+				} else 
+				{
+					// Expand the capacity to the new length and
+					// pad the string with spaces.
+					
+					// LAMESPEC: The spec says to put the spaces on the
+					// left of the string however the MS implementation
+					// puts them on the right.  We'll do that for 
+					// compatibility (!)
+					Append(' ', value - _length);
 				}
 			}
 		}
 
 		[IndexerName("Chars")]
-		public char this[ int index ] {
+		public char this [int index] {
 			get {
-
-				if( index >= sLength || index < 0 ) {
+				if (index >= _length || index < 0)
 					throw new IndexOutOfRangeException();
-				}
-				return sString[ index ];
+
+				return _str [index];
 			} 
 
 			set {
-				if( index >= sLength || index < 0 ) {
+				if (index >= _length || index < 0)
 					throw new IndexOutOfRangeException();
-				}
-				sString[ index ] = value;
-				thestring = null;
+
+				if (null != _cached_str)
+					InternalEnsureCapacity (_length);
+				
+				_str.InternalSetChar (index, value);
 			}
 		}
 
-		public override string ToString() {
-			if (thestring != null)
-				return thestring;
-			return (thestring = ToString(0, sLength));
+		public override string ToString () 
+		{
+			if (_length == 0)
+				return String.Empty;
+
+			if (null != _cached_str)
+				return _cached_str;
+
+			// If we only have a half-full buffer we return a new string.
+			if (_length < (_str.Length >> 1)) 
+			{
+				_cached_str = _str.Substring(0, _length);
+				return _cached_str;
+			}
+
+			_cached_str = _str;
+			_str.InternalSetLength(_length);
+
+			return _str;
 		}
 
-		public string ToString( int startIndex, int length ) {
-			if( startIndex < 0 || length < 0 || startIndex + length > sLength ) {
+		public string ToString (int startIndex, int length) 
+		{
+			if( startIndex < 0 || length < 0 || startIndex + length > _length )
 				throw new ArgumentOutOfRangeException();
-			}
-	
-			return new String( sString, startIndex, length );
+
+			return _str.Substring (startIndex, length);
 		}
 
-		public int EnsureCapacity( int capacity ) {
-			if( capacity < 0 ) {
-				throw new ArgumentOutOfRangeException( 
-					"Capacity must be greater than 0." );
-			}
+		public int EnsureCapacity (int capacity) 
+		{
+			if (capacity < 0)
+				throw new ArgumentOutOfRangeException ("Capacity must be greater than 0." );
 
-			if( capacity <= sCapacity ) {
-				return sCapacity;
-			} else {
-				Capacity = capacity;
-				return sCapacity;
-			}
+			if( capacity <= _str.Length )
+				return _str.Length;
+
+			InternalEnsureCapacity (capacity);
+
+			return _str.Length;
 		}
 
-		public bool Equals( StringBuilder sb ) {
-			if(sLength == sb.Length && this.ToString() == sb.ToString() ) {
+		public bool Equals (StringBuilder sb) 
+		{
+			if (_length == sb.Length && _str == sb._str )
 				return true;
-			} else {
-				return false;
-			}
+
+			return false;
 		}
 
 		public StringBuilder Remove (int startIndex, int length)
 		{
-			if( startIndex < 0 || length < 0 || startIndex + length > sLength )
+			if( startIndex < 0 || length < 0 || startIndex + length > _length )
 				throw new ArgumentOutOfRangeException();
+
+			if (null != _cached_str)
+				InternalEnsureCapacity (_str.Length);
 
 			// Copy everything after the 'removed' part to the start 
 			// of the removed part and truncate the sLength
 
-			Array.Copy (sString, startIndex + length, sString, startIndex,
-				    sLength - (startIndex + length));
+			if (_length - (startIndex + length) > 0)
+				String.InternalStrcpy (_str, startIndex + length, _str, startIndex, _length - (startIndex + length));
 
-			sLength -= length;
-			thestring = null;
+			_length -= length;
+
 			return this;
 		}			       
 
-		public StringBuilder Replace( char oldChar, char newChar ) {
-		
-			return Replace( oldChar, newChar, 0, sLength);
+		public StringBuilder Replace (char oldChar, char newChar) 
+		{
+			return Replace( oldChar, newChar, 0, _length);
 		}
 
-		public StringBuilder Replace( char oldChar, char newChar, int startIndex, int count ) {
-			if( startIndex + count > sLength || startIndex < 0 || count < 0 ) {
+		public StringBuilder Replace (char oldChar, char newChar, int startIndex, int count) 
+		{
+			if( startIndex + count > _length || startIndex < 0 || count < 0 )
 				throw new ArgumentOutOfRangeException();
+
+			if (null != _cached_str)
+				InternalEnsureCapacity (_str.Length);
+
+			for (int replaceIterate = startIndex; replaceIterate < startIndex + count; replaceIterate++ ) {
+				if( _str [replaceIterate] == oldChar )
+					_str.InternalSetChar (replaceIterate, newChar);
 			}
 
-			for( int replaceIterate = startIndex; replaceIterate < startIndex + count; replaceIterate++ ) {
-				if( this[replaceIterate] == oldChar ) {
-					this[replaceIterate] = newChar;
-				}
-			}
-
-			thestring = null;
 			return this;
 		}
 
 		public StringBuilder Replace( string oldValue, string newValue ) {
-			return Replace( oldValue, newValue, 0, sLength );
+			return Replace (oldValue, newValue, 0, _length);
 		}
 
-		public StringBuilder Replace( string oldValue, string newValue, int startIndex, int count ) {
-			string startString = this.ToString();
-			StringBuilder newStringB = new StringBuilder();
+		public StringBuilder Replace( string oldValue, string newValue, int startIndex, int count ) 
+		{
+			if (oldValue == null)
+				throw new ArgumentNullException ("The old value cannot be null.");
 
-			if( oldValue == null ) { 
-				throw new ArgumentNullException(
-					"The old value cannot be null.");
-			}
+			if (startIndex < 0 || count < 0 || startIndex + count > _length)
+				throw new ArgumentOutOfRangeException ();
 
-			if( startIndex < 0 || count < 0 || startIndex + count > sLength ) {
-				throw new ArgumentOutOfRangeException();
-			}
+			if (oldValue.Length == 0)
+				throw new ArgumentException ("The old value cannot be zero length.");
 
-			if( oldValue.Length == 0 ) {
-				throw new ArgumentException(
-					"The old value cannot be zero length.");
-			}
+			// TODO: OPTIMIZE!
+			string replace = _str.Substring(startIndex, count).Replace(oldValue, newValue);
 
-			int nextIndex = startIndex; // Where to start the next search
-			int lastIndex = startIndex;  // Where the last search finished
+			InternalEnsureCapacity (replace.Length + (_length - count));
 
-			while( nextIndex != -1 ) {
-				nextIndex = startString.IndexOf( oldValue, lastIndex);				  
-				if( nextIndex != -1 ) {
-					// The MS implementation won't replace a substring 
-					// if that substring goes over the "count"
-					// boundary, so we'll make sure the behaviour 
-					// here is the same.
+			String.InternalStrcpy (_str, startIndex, replace);
+			
+			_length = replace.Length + (_length - count);
 
-					if( nextIndex + oldValue.Length <= startIndex + count ) {
-
-						// Add everything to the left of the old 
-						// string
-						if (lastIndex == startIndex) // don't lose the beginning
-							lastIndex = 0;
-
-						newStringB.Append( startString.Substring( lastIndex, nextIndex - lastIndex ) );
-	
-						// Add the replacement string
-						newStringB.Append( newValue );
-						
-						// Set the next start point to the 
-						// end of the last match
-						lastIndex = nextIndex + oldValue.Length;
-					} else {
-						// We're past the "count" we're supposed to replace within
-						nextIndex = -1;
-						newStringB.Append( 
-							startString.Substring( lastIndex ) );
-					}
-
-				} else {
-					// Append everything left over
-					newStringB.Append( startString.Substring( lastIndex ) );
-				}
-			} 
-
-			sCapacity = newStringB.sCapacity;
-			sString = newStringB.sString;
-			sLength = newStringB.sLength;
-			thestring = null;
 			return this;
 		}
 
 		      
 		/* The Append Methods */
+		public StringBuilder Append (char[] value) 
+		{
+			int needed_cap = _length + value.Length;
+			if (null != _cached_str || _str.Length < needed_cap)
+				InternalEnsureCapacity (needed_cap);
+			
+			for (int i = 0; i != value.Length; i++)
+				_str.InternalSetChar (i + _length - 1, value[i]);		
 
-		public StringBuilder Append( char[] value ) {
-			if( sLength + value.Length > sCapacity ) {
-				// Need more capacity, double the capacity StringBuilder 
-				// and make sure we have at least enough for the value 
-				// if that's going to go over double. 
-					 
-				Capacity = value.Length + ( sCapacity + sCapacity);
-			}
+			_length += value.Length;
 
-			Array.Copy( value, 0, sString, sLength, value.Length );
-			sLength += value.Length;
-
-			thestring = null;
 			return this;
 		} 
 		
-		public StringBuilder Append( string value ) {
-			if( value != null ) {
-				int new_size = sLength + value.Length;
-				if (new_size > sCapacity)
-					Capacity = value.Length + sCapacity * 2;
+		public StringBuilder Append (string value) 
+		{
+			int needed_cap = _length + value.Length;
+			if (null != _cached_str || _str.Length < needed_cap)
+				InternalEnsureCapacity (needed_cap);
 
-				value.CopyTo (0, sString, sLength, value.Length);
-				sLength = new_size;
-				thestring = null;
-				return this;
-			} else {
-				return null;
+			if (value != null) 
+			{
+				String.InternalStrcpy (_str, _length, value);
+				_length += value.Length;
 			}
+
+			return this;
 		}
 
-		public StringBuilder Append( bool value ) {
+		public StringBuilder Append (bool value) {
 			return Append (value.ToString());
 		}
 		
-		public StringBuilder Append( byte value ) {
+		public StringBuilder Append (byte value) {
 			return Append (value.ToString());
 		}
 
-		public StringBuilder Append( decimal value ) {
+		public StringBuilder Append (decimal value) {
 			return Append (value.ToString());
 		}
 
-		public StringBuilder Append( double value ) {
+		public StringBuilder Append (double value) {
 			return Append (value.ToString());
 		}
 
-		public StringBuilder Append( short value ) {
+		public StringBuilder Append (short value) {
 			return Append (value.ToString());
 		}
 
-		public StringBuilder Append( int value ) {
+		public StringBuilder Append (int value) {
 			return Append (value.ToString());
 		}
 
-		public StringBuilder Append( long value ) {
+		public StringBuilder Append (long value) {
 			return Append (value.ToString());
 		}
 
-		public StringBuilder Append( object value ) {
-			return Append (value.ToString());
-		}
-
-		[CLSCompliant(false)]
-		public StringBuilder Append( sbyte value ) {
-			return Append (value.ToString());
-		}
-
-		public StringBuilder Append( float value ) {
+		public StringBuilder Append (object value) {
 			return Append (value.ToString());
 		}
 
 		[CLSCompliant(false)]
-		public StringBuilder Append( ushort value ) {
+		public StringBuilder Append (sbyte value) {
+			return Append (value.ToString());
+		}
+
+		public StringBuilder Append (float value) {
+			return Append (value.ToString());
+		}
+
+		[CLSCompliant(false)]
+		public StringBuilder Append (ushort value) {
 			return Append (value.ToString());
 		}	
 		
 		[CLSCompliant(false)]
-		public StringBuilder Append( uint value ) {
+		public StringBuilder Append (uint value) {
 			return Append (value.ToString());
 		}
 
 		[CLSCompliant(false)]
-		public StringBuilder Append( ulong value ) {
+		public StringBuilder Append (ulong value) {
 			return Append (value.ToString());
 		}
 
-		public StringBuilder Append( char value ) {
-			if( sLength + 1 > sCapacity ) {
-				// Need more capacity, double the capacity StringBuilder 
-				// and make sure we have at least enough for the value 
-				// if that's going to go over double. 
-					 
-				Capacity = 1 + ( sCapacity + sCapacity);
-			}
-			sString [sLength] = value;
-			sLength++;
-			thestring = null;
+		public StringBuilder Append (char value) 
+		{
+			int needed_cap = _length + 1;
+			if (null != _cached_str || _str.Length < needed_cap)
+				InternalEnsureCapacity (needed_cap);
+
+			_str.InternalSetChar(_length, value);
+			_length++;
 
 			return this;
 		}
 
-		public StringBuilder Append( char value, int repeatCount ) {
-			if( repeatCount < 0 ) {
+		public StringBuilder Append (char value, int repeatCount) 
+		{
+			if( repeatCount < 0 )
 				throw new ArgumentOutOfRangeException();
-			}
-			
-			if( sLength + repeatCount > sCapacity ) {
-				// Need more capacity, double the capacity StringBuilder 
-				// and make sure we have at least enough for the value 
-				// if that's going to go over double. 
-					 
-				Capacity = repeatCount + ( sCapacity + sCapacity);
-			}
+
+			InternalEnsureCapacity (_length + repeatCount);
 			
 			for (int i = 0; i < repeatCount; i++)
-				sString [sLength++] = value;
-			
-			thestring = null;
+				_str.InternalSetChar (_length++, value);
+
 			return this;
 		}
 
-		public StringBuilder Append( char[] value, int startIndex, int charCount ) {
-
-			if( (charCount < 0 || startIndex < 0) || 
-				( charCount + startIndex > value.Length ) ) {
+		public StringBuilder Append( char[] value, int startIndex, int charCount ) 
+		{
+			if ((charCount < 0 || startIndex < 0) || (charCount + startIndex > value.Length)) 
 				throw new ArgumentOutOfRangeException();
-			}
 			
-			if( value == null ) {
-				if( !(startIndex == 0 && charCount == 0) ) {
+			if (value == null) 
+			{
+				if (!(startIndex == 0 && charCount == 0))
 					throw new ArgumentNullException();
-				} else {
-					return this;
-				}
-			} else {
-				char[] appendChars = new char[ charCount ];
-			
-				Array.Copy( value, startIndex, appendChars, 0, charCount );
-				return Append( appendChars );
-			}
-		}
 
-		public StringBuilder Append( string value, int startIndex, int count ) {
-			if( (count < 0 || startIndex < 0) || 
-				( startIndex + count > value.Length ) ) { 
-				throw new ArgumentOutOfRangeException();
+				return this;
 			}
 			
-			int new_size = sLength + count;
-			if (new_size > sCapacity)
-				Capacity = count + sCapacity * 2;
+			InternalEnsureCapacity (_length + charCount);
+			
+			int endPos = charCount + startIndex;
+			for (int i = startIndex; i != endPos; i++)
+				_str.InternalSetChar (_length++, value[i]);
 
-			value.CopyTo (startIndex, sString, sLength, count);
-			sLength = new_size;
-			thestring = null;
 			return this;
 		}
 
-		public StringBuilder AppendFormat (string format, object arg0 )
+		public StringBuilder Append (string value, int startIndex, int count) 
+		{
+			if ((count < 0 || startIndex < 0) || (startIndex + count > value.Length))
+				throw new ArgumentOutOfRangeException();
+			
+			int needed_cap = _length + count;
+			if (null != _cached_str || _str.Length < needed_cap)
+				InternalEnsureCapacity (needed_cap);
+
+			String.InternalStrcpy (_str, _length, value, startIndex, count);
+			
+			_length += count;
+
+			return this;
+		}
+
+		public StringBuilder AppendFormat (string format, object arg0)
 		{
 			return AppendFormat (null, format, new object [] { arg0 });
 		}
 
-		public StringBuilder AppendFormat (string format, params object[] args )
+		public StringBuilder AppendFormat (string format, params object[] args)
 		{
 			return AppendFormat (null, format, args);
 		}
@@ -502,168 +432,189 @@ namespace System.Text {
 			return this;
 		}
 
-		public StringBuilder AppendFormat (string format, object arg0, object arg1 )
+		public StringBuilder AppendFormat (string format, object arg0, object arg1)
 		{
 			return AppendFormat (null, format, new object [] { arg0, arg1 });
 		}
 
-		public StringBuilder AppendFormat (string format, object arg0, object arg1, object arg2 )
+		public StringBuilder AppendFormat (string format, object arg0, object arg1, object arg2)
 		{
 			return AppendFormat (null, format, new object [] { arg0, arg1, arg2 });
 		}
 
 		/*  The Insert Functions */
 		
-		public StringBuilder Insert( int index, char[] value ) {
-			if( index > sLength || index < 0) {
+		public StringBuilder Insert (int index, char[] value) 
+		{
+			if( index > _length || index < 0)
 				throw new ArgumentOutOfRangeException();
-			}
-
-			if( value == null || value.Length == 0 ) {
-				return this;
-			} else {
-				// Check we have the capacity to insert this array
-				if( sCapacity < sLength + value.Length ) {
-					Capacity = value.Length + ( sCapacity + sCapacity );
-				}
-
-				// Move everything to the right of the insert point across
-				Array.Copy( sString, index, sString, index + value.Length, sLength - index);
-				
-				// Copy in stuff from the insert buffer
-				Array.Copy( value, 0, sString, index, value.Length );
-				
-				sLength += value.Length;
-				thestring = null;
-				return this;
-			}
-		}
-				
-		public StringBuilder Insert( int index, string value ) {
-			if (index > sLength || index < 0)
-				throw new ArgumentOutOfRangeException ("index");
 
 			if (value == null || value.Length == 0)
 				return this;
 
-			int len = value.Length;
-			// Check we have the capacity to insert this array
-			if (sCapacity < sLength + len)
-				Capacity = len + ( sCapacity + sCapacity );
+			InternalEnsureCapacity (_length + value.Length);
 
 			// Move everything to the right of the insert point across
-			Array.Copy (sString, index, sString, index + len, sLength - index);
+			String.InternalStrcpy (_str, index + value.Length, _str, index, _length - index);
 			
-			value.CopyTo (0, sString, index, len);
+			// Copy in stuff from the insert buffer
+			String.InternalStrcpy (_str, index, value.ToString());
 			
-			sLength += len;
-			thestring = null;
+			_length += value.Length;
+
+			return this;
+		}
+				
+		public StringBuilder Insert (int index, string value) 
+		{
+			if( index > _length || index < 0)
+				throw new ArgumentOutOfRangeException();
+
+			if (value == null || value.Length == 0)
+				return this;
+
+			InternalEnsureCapacity (_length + value.Length);
+
+			// Move everything to the right of the insert point across
+			String.InternalStrcpy (_str, index + value.Length, _str, index, _length - index);
+			
+			// Copy in stuff from the insert buffer
+			String.InternalStrcpy (_str, index, value);
+			
+			_length += value.Length;
+
 			return this;
 		}
 
 		public StringBuilder Insert( int index, bool value ) {
-			return Insert( index, value.ToString());
+			return Insert (index, value.ToString());
 		}
 		
 		public StringBuilder Insert( int index, byte value ) {
-			return Insert( index, value.ToString());
+			return Insert (index, value.ToString());
 		}
 
-		public StringBuilder Insert( int index, char value) {
-			if (index > sLength || index < 0)
+		public StringBuilder Insert( int index, char value) 
+		{
+			if (index > _length || index < 0)
 				throw new ArgumentOutOfRangeException ("index");
-			// Check we have the capacity to insert this array
-			if( sCapacity < sLength + 1) {
-				Capacity = 1 + ( sCapacity + sCapacity );
-			}
+
+			InternalEnsureCapacity (_length + 1);
 			
 			// Move everything to the right of the insert point across
-			Array.Copy( sString, index, sString, index + 1, sLength - index);
+			String.InternalStrcpy (_str, index + 1, _str, index, _length - index);
 			
-			sString [index] = value;
-			sLength += 1;
-			thestring = null;
+			_str.InternalSetChar (index, value);
+			_length++;
+
 			return this;
 		}
 
 		public StringBuilder Insert( int index, decimal value ) {
-			return Insert( index, value.ToString() );
+			return Insert (index, value.ToString());
 		}
 
 		public StringBuilder Insert( int index, double value ) {
-			return Insert( index, value.ToString() );
+			return Insert (index, value.ToString());
 		}
 		
 		public StringBuilder Insert( int index, short value ) {
-			return Insert( index, value.ToString() );
+			return Insert (index, value.ToString());
 		}
 
 		public StringBuilder Insert( int index, int value ) {
-			return Insert( index, value.ToString() );
+			return Insert (index, value.ToString());
 		}
 
 		public StringBuilder Insert( int index, long value ) {
-			return Insert( index, value.ToString() );
+			return Insert (index, value.ToString());
 		}
 	
 		public StringBuilder Insert( int index, object value ) {
-			return Insert( index, value.ToString() );
+			return Insert (index, value.ToString());
 		}
 		
 		[CLSCompliant(false)]
 		public StringBuilder Insert( int index, sbyte value ) {
-			return Insert( index, value.ToString() );
+			return Insert (index, value.ToString() );
 		}
 
-		public StringBuilder Insert( int index, float value ) {
-			return Insert( index, value.ToString() );
-		}
-
-		[CLSCompliant(false)]
-		public StringBuilder Insert( int index, ushort value ) {
-			return Insert( index, value.ToString() );
+		public StringBuilder Insert (int index, float value) {
+			return Insert (index, value.ToString() );
 		}
 
 		[CLSCompliant(false)]
-		public StringBuilder Insert( int index, uint value ) {
-			return Insert( index, value.ToString() );
+		public StringBuilder Insert (int index, ushort value) {
+			return Insert (index, value.ToString() );
+		}
+
+		[CLSCompliant(false)]
+		public StringBuilder Insert (int index, uint value) {
+			return Insert ( index, value.ToString() );
 		}
 		
 		[CLSCompliant(false)]
-		public StringBuilder Insert( int index, ulong value ) {
-			return Insert( index, value.ToString() );
+		public StringBuilder Insert (int index, ulong value) {
+			return Insert ( index, value.ToString() );
 		}
 
-		public StringBuilder Insert( int index, string value, int count ) {
-			if ( count < 0 ) {
+		public StringBuilder Insert (int index, string value, int count) 
+		{
+			if ( count < 0 )
 				throw new ArgumentOutOfRangeException();
-			}
 
 			if( value != null ) {
-				if( value != "" ) {
+				if( value != String.Empty ) {
 					for( int insertCount = 0; insertCount < count; 
 						insertCount++ ) {
 						Insert( index, value );	   
 					}
 				}
 			}
+
 			return this;
 		}
 
-		public StringBuilder Insert( int index, char[] value, int startIndex, 
-			int charCount ) {
-
-			if( value != null ) {
-				if( charCount < 0 || startIndex < 0 || startIndex + charCount > value.Length ) {
+		public StringBuilder Insert( int index, char[] value, int startIndex, int charCount ) {
+			if (value != null) 
+			{
+				if( charCount < 0 || startIndex < 0 || startIndex + charCount > value.Length )
 					throw new ArgumentOutOfRangeException();
-				}
-					
+
 				char[] insertChars = new char[ charCount  ];
 				Array.Copy( value, startIndex, insertChars, 0, charCount );
+
 				return Insert( index, insertChars );
-			} else {
-				return this;
 			}
+
+			return this;
+		}
+	
+		private void InternalEnsureCapacity (int size) 
+		{
+			if (size > _str.Length || _cached_str == _str) 
+			{
+				int capacity = _str.Length;
+
+				// Try double buffer, if that doesn't work, set the length as capacity
+				if (size > capacity) 
+				{
+					capacity = capacity << 1;
+					if (size > capacity)
+						capacity = size;
+
+					if (capacity >= Int32.MaxValue || capacity < 0)
+						capacity = Int32.MaxValue;
+				}
+
+				string tmp = String.InternalAllocateStr (capacity);
+				if (_length > 0)
+					String.InternalStrcpy (tmp, 0, _str, 0, _length);
+
+				_str = tmp;
+			}
+
+			_cached_str = null;
 		}
 	}
 }       

@@ -1,3 +1,8 @@
+2004-01-12  Patrik Torstensson
+
+	* StringBuilder.cs: new implementation that uses
+	string as a buffer instead of a array of chars.
+
 2003-12-07 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* UTF8Encoding.cs (GetBytes string): Do not call base
