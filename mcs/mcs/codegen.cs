@@ -469,7 +469,7 @@ namespace Mono.CSharp {
 					    (reachability.Reachable == FlowBranching.FlowReturns.Never))
 						has_ret = true;
 				}
-			    } catch {
+			    } catch (Exception e) {
 					Console.WriteLine ("Exception caught by the compiler while compiling:");
 					Console.WriteLine ("   Block that caused the problem begin at: " + loc);
 					
@@ -477,7 +477,11 @@ namespace Mono.CSharp {
 						Console.WriteLine ("                     Block being compiled: [{0},{1}]",
 								   CurrentBlock.StartLocation, CurrentBlock.EndLocation);
 					}
-					throw;
+					
+					Console.WriteLine (e.GetType ().FullName + ": " + e.Message);
+					Console.WriteLine (Report.FriendlyStackTrace (e));
+					
+					Environment.Exit (1);
 			    }
 			}
 

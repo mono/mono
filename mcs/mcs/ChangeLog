@@ -1,5 +1,10 @@
 2003-12-31 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* report.cs, codegen.cs: Give the real stack trace to
+	the error when an exception is thrown.
+
+2003-12-31 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* decl.cs: only allocate hashtables for ifaces if 
 	it is an iface!
 

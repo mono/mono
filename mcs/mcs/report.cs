@@ -69,10 +69,14 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		static string FriendlyStackTrace ()
+		public static string FriendlyStackTrace (Exception e)
+		{
+			return FriendlyStackTrace (new StackTrace (e, true));
+		}
+		
+		static string FriendlyStackTrace (StackTrace t)
 		{		
 			StringBuilder sb = new StringBuilder ();
-			StackTrace t = new StackTrace (true);
 			
 			bool foundUserCode = false;
 			
@@ -112,7 +116,7 @@ namespace Mono.CSharp {
 			Console.WriteLine (msg);
 
 			if (Stacktrace)
-				Console.WriteLine (FriendlyStackTrace ());
+				Console.WriteLine (FriendlyStackTrace (new StackTrace (true)));
 			
 			if (Fatal)
 				throw new Exception (msg);
