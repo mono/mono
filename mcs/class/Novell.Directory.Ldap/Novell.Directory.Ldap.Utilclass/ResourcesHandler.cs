@@ -187,11 +187,10 @@ namespace Novell.Directory.Ldap.Utilclass
 					// Default Locale
 					if (defaultResultCodes == null)
 					{
-						System.Threading.Thread.CurrentThread.CurrentUICulture = defaultLocale;
+//						System.Threading.Thread.CurrentThread.CurrentUICulture = defaultLocale;
 						defaultResultCodes = System.Resources.ResourceManager.CreateFileBasedResourceManager(pkg + "ResultCodeMessages", "", null);
 					}
 					messages = defaultResultCodes;
-//					Console.WriteLine("Test Message.." + pkg + "ResultCodeMessages" );
 				}
 				else
 				{
@@ -210,8 +209,6 @@ namespace Novell.Directory.Ldap.Utilclass
 		static ResourcesHandler()
 		{
 //			defaultLocale = System.Globalization.CultureInfo.CurrentCulture;
-			defaultLocale=new System.Globalization.CultureInfo("en-US");
-
 		}
 	} //end class ResourcesHandler
 }
