@@ -1,5 +1,7 @@
 2004-07-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (handle_stack_args): Remove some more debugging code.
+	
 	* mini.c (handle_stack_args): Remove debug output left in by mistake.
 
 	* driver.c mini.h aot.c: Allow additional options to be specified with
