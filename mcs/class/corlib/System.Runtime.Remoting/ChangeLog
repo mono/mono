@@ -1,3 +1,7 @@
+2002-11-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SoapServices.cs: fix error CS3005.
+
 2002-09-03  Dietmar Maurer  <dietmar@ximian.com>
 
 	* RemotingServices.cs: add an unique app_id string used to generate

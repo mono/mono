@@ -222,7 +222,7 @@ namespace System.Runtime.Remoting {
 		}
 			
 		[MonoTODO]
-		protected object MemberWiseClone ( ) {	
+		protected object MemberwiseClone ( ) {	
 			throw new NotImplementedException (); 
 		}
 
