@@ -1,3 +1,10 @@
+2005-01-03  Martin Baulig  <martin@ximian.com>
+
+	* MonoGenericMethod.cs
+	(MonoGenericMethod.get_reflected_type): Removed.
+	(MonoGenericMethod.ReflectedType): Make this an icall.
+	(MonoGenericCMethod.ReflectedType): Likewise.	
+
 2004-12-29  Martin Baulig  <martin@ximian.com>
 
 	* MonoGenericMethod.cs: New file.

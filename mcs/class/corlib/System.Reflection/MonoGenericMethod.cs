@@ -43,13 +43,9 @@ namespace System.Reflection
 			throw new InvalidOperationException ();
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern Type get_reflected_type (IntPtr handle);
-
-		public override Type ReflectedType {
-			get {
-				return get_reflected_type (mhandle);
-			}
+		public override extern Type ReflectedType {
+			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+			get;
 		}
 	}
 
@@ -61,10 +57,9 @@ namespace System.Reflection
 			throw new InvalidOperationException ();
 		}
 
-		public override Type ReflectedType {
-			get {
-				return MonoGenericMethod.get_reflected_type (mhandle);
-			}
+		public override extern Type ReflectedType {
+			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+			get;
 		}
 	}
 }
