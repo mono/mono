@@ -1,4 +1,8 @@
 
+Mon Aug 9 14:41:45 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* opcodes.c, opcodes.h: reduce runtime relocations.
+
 Mon Aug 9 13:30:53 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* culture-info.h, locales.c: fixes and chages to sue the new
