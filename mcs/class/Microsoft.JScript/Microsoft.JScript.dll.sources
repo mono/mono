@@ -76,6 +76,7 @@ Microsoft.JScript/JSMethodInfo.cs
 Microsoft.JScript/JSObject.cs
 Microsoft.JScript/JSParser.cs
 Microsoft.JScript/JSPrototypeObject.cs
+Microsoft.JScript/JSPropertyInfo.cs
 Microsoft.JScript/JSScanner.cs
 Microsoft.JScript/JSToken.cs
 Microsoft.JScript/JSVariableField.cs

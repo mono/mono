@@ -1,3 +1,7 @@
+2004-12-10  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* Microsoft.JScript.dll.sources: add JSPropertyInfo.cs
+
 2004-10-11  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* Microsoft.JScript.dll.sources: add TypeMananger.cs
