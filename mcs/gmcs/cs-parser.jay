@@ -1101,7 +1101,7 @@ parameter_array
 member_name 
 	: IDENTIFIER
 	| member_name DOT IDENTIFIER {
-		$$ = String.Concat ((string) $1, $3);
+		$$ = String.Concat ((string) $1, ".", $3);
 	  }
 	;
 
@@ -1856,7 +1856,7 @@ indexer_declarator
 
 		$$ = new IndexerDeclaration ((Expression) $1, null, pars);
 	  }
-	| type namespace_or_type_name DOT THIS OPEN_BRACKET opt_formal_parameter_list CLOSE_BRACKET
+	| type member_name DOT THIS OPEN_BRACKET opt_formal_parameter_list CLOSE_BRACKET
 	  {
 		Parameters pars = (Parameters) $6;
 
