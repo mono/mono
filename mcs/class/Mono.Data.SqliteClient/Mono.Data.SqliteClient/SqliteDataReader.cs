@@ -323,7 +323,7 @@ namespace Mono.Data.SqliteClient
 
 		public int GetValues (object[] values)
                 {
-                        int num_to_fill = Math.Min (values.Length, columns.Count);
+                        int num_to_fill = System.Math.Min (values.Length, columns.Count);
                         for (int i = 0; i < num_to_fill; i++) {
                                 if (((ArrayList) rows[current_row])[i] != null) {
                                         values[i] = ((ArrayList) rows[current_row])[i];
