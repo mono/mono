@@ -1,3 +1,8 @@
+
+Fri Jul 18 14:42:42 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* MonoIO.cs: 64bit fix from Bernie Solomon <bernard@ugsolutions.com>.
+
 2003-07-16  Dick Porter  <dick@ximian.com>
 
 	* FileInfo.cs: Update path info when a file is moved.  Patch by

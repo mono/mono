@@ -18,7 +18,7 @@ namespace System.IO
 			InvalidFileAttributes = (FileAttributes)(-1);
 
 		public static readonly IntPtr
-			InvalidHandle = (IntPtr)(-1);
+			InvalidHandle = (IntPtr)(-1L);
 
 		// error methods
 
