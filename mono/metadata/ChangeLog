@@ -1,3 +1,10 @@
+2004-05-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* appdomain.cs: Bumped MONO_CORLIB_VERSION to 20.
+	* icall.c: Modified icalls for RNG.
+	* rand.c|h: Changed RNG interface to allow thread-safe usage under 
+	Windows (CryptoAPI).
+
 2004-05-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* locales.c: Fix build.
