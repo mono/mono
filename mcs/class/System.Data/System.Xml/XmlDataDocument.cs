@@ -201,8 +201,7 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO]
-		public override XmlNode CloneNode(bool deep) 
+		public override XmlNode CloneNode (bool deep) 
 		{
 			XmlDataDocument Document;
 			if (deep)
@@ -317,7 +316,6 @@ namespace System.Xml
 		}
 
 		// Invoked when XmlNode is changed colum is changed
-		[MonoTODO]
 		private void OnNodeChanged (object sender, XmlNodeChangedEventArgs args)
 		{
 			if (!raiseDocumentEvents)
@@ -337,12 +335,9 @@ namespace System.Xml
 				if (!row.Table.Columns.Contains (args.Node.ParentNode.Name))
 					return;
 
-				row.Table.ColumnChanged -= columnChanged;
-
 				if (row [args.Node.ParentNode.Name].ToString () != args.Node.InnerText)		
 					row [args.Node.ParentNode.Name] = args.Node.InnerText;		
 
-				row.Table.ColumnChanged += columnChanged;
 			} finally {
 				raiseDataSetEvents = escapedRaiseDataSetEvents;
 			}
@@ -358,7 +353,6 @@ namespace System.Xml
 		}
 		
 		// Invoked when XmlNode is removed
-		[MonoTODO]
 		private void OnNodeRemoved (object sender, XmlNodeChangedEventArgs args)
 		{
 			if (!raiseDocumentEvents)
@@ -367,22 +361,28 @@ namespace System.Xml
 			raiseDataSetEvents = false;
 
 			try {
-				// FIXME: This code is obsolete one.
-
 				if (args.OldParent == null)
 					return;
 
-				if (!(args.OldParent is XmlElement))
+				XmlElement oldParentElem = args.OldParent as XmlElement;
+				if (oldParentElem == null)
 					return;
 				
-				DataRow row = GetRowFromElement ((XmlElement)args.OldParent);
+				// detach child row (if exists)
+				XmlElement childElem = args.Node as XmlElement;
+				if (childElem != null) {
+					DataRow childRow = GetRowFromElement (childElem);
+					if (childRow != null)
+						childRow.Table.Rows.Remove (childRow);
+				}
+
+				DataRow row = GetRowFromElement (oldParentElem);
 				
 				if (row == null)
 					return ;
 
 				row [args.Node.Name] = null;
 
-				// FIXME: Should we detach rows and descendants as well?
 			} finally {
 				raiseDataSetEvents = escapedRaiseDataSetEvents;
 			}
@@ -522,8 +522,7 @@ namespace System.Xml
 		}
 
 		// If column has changed 
-		[MonoTODO]			
-		private void OnDataTableColumnChanged(object sender, 
+		private void OnDataTableColumnChanged (object sender, 
 							     DataColumnChangeEventArgs eventArgs)
 		{
 			if (!raiseDataSetEvents)
@@ -568,8 +567,7 @@ namespace System.Xml
 			}
 		}
 	
-		[MonoTODO]
-		private void OnDataTableRowDeleted(object sender,
+		private void OnDataTableRowDeleted (object sender,
 							  DataRowChangeEventArgs eventArgs)
 		{
 			if (!raiseDataSetEvents)
@@ -583,28 +581,18 @@ namespace System.Xml
 				DataRow deletedRow = null;
 				deletedRow = eventArgs.Row;
 
-				if (eventArgs.Row.XmlRowID == 0)
+				XmlElement el = GetElementFromRow (eventArgs.Row);
+				if (el == null)
 					return;
-				
-				int rowIndex = dataRowIDList.IndexOf (eventArgs.Row.XmlRowID);
-				if (rowIndex == -1 || eventArgs.Row.XmlRowID == 0 || 
-				rowIndex > GetElementsByTagName (deletedRow.Table.TableName).Count - 1)
-					return;
-				
-				// Remove element from xmldocument and row indexlist
-				// FIXME: this is one way to do this, but i hope someday i find out much better way.
-				XmlNode p = GetElementsByTagName (deletedRow.Table.TableName) [rowIndex].ParentNode;
-				if (p != null) {
-					p.RemoveChild (GetElementsByTagName (deletedRow.Table.TableName) [rowIndex]);
-					dataRowIDList.RemoveAt (rowIndex);
-				}
+
+				el.ParentNode.RemoveChild (el);
 			} finally {
 				raiseDocumentEvents = escapedRaiseDocumentEvents;
 			}
 		}
 		
-		[MonoTODO]
-		private void OnDataTableRowChanged(object sender, DataRowChangeEventArgs eventArgs)
+		[MonoTODO ("Need to handle hidden columns? - see comments on each private method")]
+		private void OnDataTableRowChanged (object sender, DataRowChangeEventArgs eventArgs)
 		{
 			if (!raiseDataSetEvents)
 				return;
@@ -633,8 +621,7 @@ namespace System.Xml
 			}
 		}
 
-		// Added
-		[MonoTODO]
+		// Added - see FillNodeChildrenFromRow comment
 		private void OnDataTableRowAdded (DataRowChangeEventArgs args)
 		{
 			if (!raiseDataSetEvents)
@@ -708,7 +695,7 @@ namespace System.Xml
 		}
 
 		// Rollback
-		[MonoTODO]
+		[MonoTODO ("It does not look complete.")]
 		private void OnDataTableRowRollback (DataRowChangeEventArgs args)
 		{
 			if (!raiseDataSetEvents)
@@ -717,25 +704,38 @@ namespace System.Xml
 			raiseDocumentEvents = false;
 
 			try {
-				// This code is obsolete XmlDataDocument one.
-
-				DataRow row = args.Row;			
-				int rowid = dataRowIDList.IndexOf (row.XmlRowID);
-
-				// find right element in xmldocument
-				if (rowid == 0 || rowid >= GetElementsByTagName (row.Table.TableName).Count)
+				DataRow r = args.Row;
+				XmlElement el = GetElementFromRow (r);
+				if (el == null)
 					return;
-
-				XmlNode node = GetElementsByTagName (row.Table.TableName) [rowid];
-				
-				int rowValue = 0;
-				for (int i = 0; i < node.ChildNodes.Count; i++) {
-					
-					XmlNode child = node.ChildNodes [i];
-					if (child.NodeType != XmlNodeType.Whitespace) {
-						child.InnerText = (string)row [rowValue++];
+				DataTable tab = r.Table;
+				ArrayList al = new ArrayList ();
+				foreach (XmlAttribute attr in el.Attributes) {
+					DataColumn col = tab.Columns [attr.LocalName];
+					if (col != null) {
+						if (r.IsNull (col))
+							// should be removed
+							al.Add (attr);
+						else
+							attr.Value = r [col].ToString ();
 					}
 				}
+				foreach (XmlAttribute attr in al)
+					el.RemoveAttributeNode (attr);
+				al.Clear ();
+				foreach (XmlNode child in el.ChildNodes) {
+					if (child.NodeType == XmlNodeType.Element) {
+						DataColumn col = tab.Columns [child.LocalName];
+						if (col != null) {
+							if (r.IsNull (col))
+								al.Add (child);
+							else
+								child.InnerText = r [col].ToString ();
+						}
+					}
+				}
+				foreach (XmlNode n in al)
+					el.RemoveChild (n);
 			} finally {
 				raiseDocumentEvents = escapedRaiseDocumentEvents;
 			}
