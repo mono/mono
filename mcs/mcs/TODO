@@ -59,14 +59,6 @@ BUGS
 	Method registration should only be used to register methodbuilders,
 	we need an alternate method of checking for duplicates.
 
-* We need to catch:
-
-	extern string Property {
-		get { } 
-	}
-
-	The get there should only have a semicolon
-	
 *
 > // CSC sets beforefieldinit
 > class X {
@@ -121,9 +113,6 @@ PENDING TASKS
 OPTIMIZATIONS
 -------------
 
-* There is too much unshared code between MemberAccess.Resolve and SimpleName
-  resolve.  
- 
 * User Defined Conversions is doing way too many calls to do union sets that are not needed
 
 * Add test case for destructors
