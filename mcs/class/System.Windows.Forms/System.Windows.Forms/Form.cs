@@ -105,8 +105,13 @@
 				cancelButton = null;
 			}
     		
-			static Form () {
+			// Initialization for Wine
+			// FIXME - Should not use absolute path
+			[DllImport ("/usr/local/lib/wine/mono-winelib.exe.so", EntryPoint="MonoWineInit")]
+			extern static int MonoWineInit();
 
+			static Form () {
+				MonoWineInit();
 			}
     		
 			//  --- Public Properties

@@ -1248,12 +1248,16 @@ namespace System.Windows.Forms{
 			
 			IntPtr hdc = paintOn.GetHdc();
 			int prevColor = Win32.SetTextColor(hdc, RGB(color));
+#if ToHfontIsWorking
 			IntPtr prevFont = Win32.SelectObject(hdc, font.ToHfont());
+#endif
 			BackgroundMode prevBkMode = Win32.SetBkMode(hdc, BackgroundMode.TRANSPARENT);
 			Win32.DrawText(hdc, text, text.Length, ref rc, 
 			       DrawTextFormatFlags.DT_SINGLELINE | Win32.ContentAlignment2DrawTextFormat(alignment));
 			Win32.SetBkMode(hdc, prevBkMode);
+#if ToHfontIsWorking
 			Win32.SelectObject(hdc, prevFont);
+#endif
 			Win32.SetTextColor(hdc, prevColor);
 			paintOn.ReleaseHdc(hdc);
 		}
@@ -1288,12 +1292,9 @@ namespace System.Windows.Forms{
 			return 0;
 		}
 
-
-		[DllImport ("libwinnt.dll.so", EntryPoint="PROCESS_InitWine")]
-		extern static void PROCESS_InitWine (int argc, string [] args);
-
-		[DllImport ("libwinnt.dll.so", EntryPoint="LoadLibraryA")]
-		extern static void NTDLL_LoadLibraryA (string s);
+		// FIXME - should not use absolute path
+		[DllImport ("/usr/local/lib/wine/mono-winelib.exe.so", EntryPoint="WineLoadLibrary")]
+		extern static void WineLoadLibrary(string s);
 
 		static string[] WinColors = 	{
 									"COLOR_SCROLLBAR",
@@ -1382,21 +1383,11 @@ namespace System.Windows.Forms{
 			if (!RunningOnUnix)
 				return;
 			
-			string new_mode = Environment.GetEnvironmentVariable ("SWF");
-			if (new_mode == null || new_mode == "1"){
-				Console.WriteLine ("MonoWin32: Initializing WineLib");
-			} else {
-				Console.WriteLine ("MonoWin32: Needs Wine MonoStub");				
-				return;
-			}
-				
-			string [] args = new string [1];
-			args [0] = "mono";
-
-			PROCESS_InitWine (0, args);
-			NTDLL_LoadLibraryA ("kernel32.dll");
-			NTDLL_LoadLibraryA ("user32.dll");
-			NTDLL_LoadLibraryA ("comctl32.dll");
+			WineLoadLibrary("gdi32.dll");
+			WineLoadLibrary("kernel32.dll");
+			WineLoadLibrary("comctl32.dll");
+			WineLoadLibrary("user32.dll");
+			WineLoadLibrary("advapi32.dll");
 
 			string gtk_colors = Environment.GetEnvironmentVariable ("SWF_GTK_COLORS");
 			if (gtk_colors == "1") {
