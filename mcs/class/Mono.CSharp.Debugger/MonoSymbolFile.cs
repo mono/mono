@@ -529,6 +529,7 @@ namespace Mono.CSharp.Debugger
 			if (reader == null)
 				throw new InvalidOperationException ();
 
+			ArrayList list;
 			if (method_name_hash == null) {
 				method_name_hash = new Hashtable ();
 
@@ -539,7 +540,7 @@ namespace Mono.CSharp.Debugger
 					int pos = full_name.IndexOf ('(');
 					string name = full_name.Substring (0, pos);
 
-					ArrayList list = method_name_hash [name] as ArrayList;
+					list = method_name_hash [name] as ArrayList;
 					if (list == null) {
 						list = new ArrayList ();
 						method_name_hash.Add (name, list);
@@ -549,7 +550,7 @@ namespace Mono.CSharp.Debugger
 				}
 			}
 
-			ArrayList list = method_name_hash [query] as ArrayList;
+			list = method_name_hash [query] as ArrayList;
 			if (list == null)
 				return new int [0];
 
