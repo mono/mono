@@ -1,3 +1,9 @@
+2003-12-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Uri.cs : Several fixes, including Unc problem, Host and LocalPath
+	  fixes, null reference check for .ctor(Uri, string). This fixes
+	  bug #51844.
+
 2003-12-04  John Luke  <jluke@cfl.rr.com>
 	
 	* Uri.cs: applied patch from Chris Masters <neeeeeep@bigpond.com>

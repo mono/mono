@@ -33,7 +33,9 @@ namespace System
 		// o  fragment is empty or starts with # char
 		// o  all class variables are in escaped format when they are escapable,
 		//    except cachedToString.
-		
+		// o  UNC is supported, as starts with "\\" for windows,
+		//    or "//" with unix (Mono only)
+
 		private string scheme = String.Empty;
 		private string host = String.Empty;
 		private int port = -1;
@@ -43,6 +45,7 @@ namespace System
 		private string userinfo = String.Empty;
 		private bool is_root_path = false;
 		private bool is_wins_dir = true;
+		private bool isUnc = false;
 
 		private string [] segments;
 		
@@ -98,6 +101,9 @@ namespace System
 
 		public Uri (Uri baseUri, string relativeUri, bool dontEscape) 
 		{
+			if (baseUri == null)
+				throw new NullReferenceException ("baseUri");
+
 			// See RFC 2396 Par 5.2 and Appendix C
 
 			userEscaped = dontEscape;
@@ -106,7 +112,8 @@ namespace System
 			this.host = baseUri.host;
 			this.port = baseUri.port;
 			this.userinfo = baseUri.userinfo;
-			
+			this.isUnc = baseUri.isUnc;
+
 			if (relativeUri == null)
 				throw new NullReferenceException ("relativeUri");
 
@@ -290,8 +297,11 @@ namespace System
 			} 
 		}
 
-		public bool IsUnc { 
-			get { return (scheme == Uri.UriSchemeFile); } 
+		public bool IsUnc {
+			// rule: This should be true only if
+			//   - uri string starts from "\\", or
+			//   - uri string starts from "//" (Samba way)
+			get { return isUnc; } 
 		}
 
 		public string LocalPath { 
@@ -302,7 +312,7 @@ namespace System
 				// support *nix and W32 styles
 				if (path.Length > 1 && path [1] == ':')
 					return Unescape (path.Replace ('/', '\\'));
-					
+
 				if (System.IO.Path.DirectorySeparatorChar == '\\')
 					return "\\\\" + Unescape (host + path.Replace ('/', '\\'));
 				else 
@@ -771,20 +781,21 @@ namespace System
 			} else if ((c == '/') && (pos == 0)) {
 				// unix bare filepath
 				scheme = Uri.UriSchemeFile;
-				uriString = "//" + uriString;
-				isUnixFilepath = true;
+				if (uriString.Length > 1 && uriString [1] != '/')
+					isUnixFilepath = true;
 			} else
 				scheme = Uri.UriSchemeFile;
 						
 			// 3
 			if ((uriString.Length >= 2) && 
-			    ((uriString [0] == '/') || (uriString [0] == '\\')) &&
-			    ((uriString [1] == '/') || (uriString [1] == '\\'))) 
+			    ((uriString [0] == '/') && (uriString [1] == '/')) ||
+			    ((uriString [0] == '\\') || (uriString [1] == '\\')))  {
+				isUnc = true;
 				if (scheme == Uri.UriSchemeFile) 
-					uriString = uriString.TrimStart (new char [] {'/', '\\'});			    	
+					uriString = uriString.TrimStart (new char [] {'/', '\\'});
 				else
 				    	uriString = uriString.Remove (0, 2);
-			    	
+			}
 			// 8 fragment
 			pos = uriString.IndexOf ('#');
 			if (pos != -1) {
@@ -851,7 +862,8 @@ namespace System
 				path = host + path;
 				host = String.Empty;
 			} else if (isUnixFilepath) {
-				// leave it alone
+				uriString = "//" + uriString;
+				host = String.Empty;
 			} else if (host.Length == 0) {
 				throw new UriFormatException ("Invalid URI: The hostname could not be parsed");
 			}
