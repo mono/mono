@@ -1,3 +1,8 @@
+2004-09-01  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathNavigatorReader.cs : on GetAttributeNavigator(int), namespace
+	  node could be this XmlReader's attribute node.
+
 2004-08-02  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathDocument2.cs : new IXPathNavigable implementation

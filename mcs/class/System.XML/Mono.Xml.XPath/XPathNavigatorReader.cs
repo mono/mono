@@ -219,6 +219,7 @@ namespace Mono.Xml.XPath
 			XPathNavigator backup = current.Clone ();
 			try {
 				switch (current.NodeType) {
+				case XPathNodeType.Namespace:
 				case XPathNodeType.Attribute:
 					this.MoveToElement ();
 					goto case XPathNodeType.Element;
