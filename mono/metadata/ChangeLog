@@ -1,5 +1,8 @@
 2003-03-17  Zoltan Varga  <vargaz@freemail.hu>
 
+	* icall.c (ves_icall_System_Reflection_FieldInfo_internal_from_handle):
+	New icall.
+
 	* object.c (mono_class_vtable): fix warning.
 
 2003-03-17  Zoltan Varga  <vargaz@freemail.hu>	
