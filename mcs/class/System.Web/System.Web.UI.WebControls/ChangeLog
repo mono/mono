@@ -1,3 +1,8 @@
+2003-02-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* RangeValidator.cs: fixed bug #37577. Thanks to Stephane Tombeur
+	for reporting the bug and providing the fix.
+
 2003-01-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataGrid.cs: AutoGenerateColumns defaults to true. Fixed

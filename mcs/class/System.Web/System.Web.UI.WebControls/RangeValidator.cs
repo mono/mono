@@ -113,11 +113,11 @@ namespace System.Web.UI.WebControls
 				return true;
 			}
 			bool retVal = Compare(ctrl, MinimumValue, ValidationCompareOperator.GreaterThanEqual,
-			                     ValidationDataType.String);
-			if(!retVal)
+			                     this.Type);
+			if(retVal)
 			{
 				retVal = Compare(ctrl, MaximumValue, ValidationCompareOperator.LessThanEqual,
-				                 ValidationDataType.String);
+				                 this.Type);
 			}
 			return retVal;
 		}
