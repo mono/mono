@@ -6,7 +6,7 @@
 #
 
 all:
-	mcs *.cs /target:library /out:../NUnit.Framework.dll
+	mcs *.cs /resource:Transform.resources,NUnit.Framework.Transform.resources /target:library /out:../NUnit.Framework.dll
 
 clean:
 	rm -f ../NUnit.Framework.dll

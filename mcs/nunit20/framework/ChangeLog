@@ -1,3 +1,8 @@
+
+2003-01-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* makefile.gnu: added resource file.
+
 2002-12-15  Nick Drochak  <ndrochak@gol.com>
 
 	* Transform.resources: Add file.  This is technically a generated file,
