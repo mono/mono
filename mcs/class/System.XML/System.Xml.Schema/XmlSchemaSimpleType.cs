@@ -47,6 +47,60 @@ namespace System.Xml.Schema
 		private bool recursed;
 		private XmlSchemaDerivationMethod variety;
 
+#if NET_2_0
+		// predefined simple types
+		internal static readonly XmlSchemaSimpleType XsAnySimpleType;
+		internal static readonly XmlSchemaSimpleType XsString;
+		internal static readonly XmlSchemaSimpleType XsBoolean;
+		internal static readonly XmlSchemaSimpleType XsDecimal;
+		internal static readonly XmlSchemaSimpleType XsFloat;
+		internal static readonly XmlSchemaSimpleType XsDouble;
+		internal static readonly XmlSchemaSimpleType XsDuration;
+		internal static readonly XmlSchemaSimpleType XsDateTime;
+		internal static readonly XmlSchemaSimpleType XsTime;
+		internal static readonly XmlSchemaSimpleType XsDate;
+		internal static readonly XmlSchemaSimpleType XsGYearMonth;
+		internal static readonly XmlSchemaSimpleType XsGYear;
+		internal static readonly XmlSchemaSimpleType XsGMonthDay;
+		internal static readonly XmlSchemaSimpleType XsGDay;
+		internal static readonly XmlSchemaSimpleType XsGMonth;
+		internal static readonly XmlSchemaSimpleType XsHexBinary;
+		internal static readonly XmlSchemaSimpleType XsBase64Binary;
+		internal static readonly XmlSchemaSimpleType XsAnyUri;
+		internal static readonly XmlSchemaSimpleType XsQName;
+		internal static readonly XmlSchemaSimpleType XsNotation;
+		internal static readonly XmlSchemaSimpleType XsNormalizedString;
+		internal static readonly XmlSchemaSimpleType XsToken;
+		internal static readonly XmlSchemaSimpleType XsLanguage;
+		internal static readonly XmlSchemaSimpleType XsNMToken;
+		internal static readonly XmlSchemaSimpleType XsNMTokens;
+		internal static readonly XmlSchemaSimpleType XsName;
+		internal static readonly XmlSchemaSimpleType XsNCName;
+		internal static readonly XmlSchemaSimpleType XsID;
+		internal static readonly XmlSchemaSimpleType XsIDRef;
+		internal static readonly XmlSchemaSimpleType XsIDRefs;
+		internal static readonly XmlSchemaSimpleType XsEntity;
+		internal static readonly XmlSchemaSimpleType XsEntities;
+		internal static readonly XmlSchemaSimpleType XsInteger;
+		internal static readonly XmlSchemaSimpleType XsNonPositiveInteger;
+		internal static readonly XmlSchemaSimpleType XsNegativeInteger;
+		internal static readonly XmlSchemaSimpleType XsLong;
+		internal static readonly XmlSchemaSimpleType XsInt;
+		internal static readonly XmlSchemaSimpleType XsShort;
+		internal static readonly XmlSchemaSimpleType XsByte;
+		internal static readonly XmlSchemaSimpleType XsNonNegativeInteger;
+		internal static readonly XmlSchemaSimpleType XsUnsignedLong;
+		internal static readonly XmlSchemaSimpleType XsUnsignedInt;
+		internal static readonly XmlSchemaSimpleType XsUnsignedShort;
+		internal static readonly XmlSchemaSimpleType XsUnsignedByte;
+		internal static readonly XmlSchemaSimpleType XsPositiveInteger;
+		// xdt:*
+		internal static readonly XmlSchemaSimpleType XdtUntypedAtomic;
+		internal static readonly XmlSchemaSimpleType XdtAnyAtomicType;
+		internal static readonly XmlSchemaSimpleType XdtYearMonthDuration;
+		internal static readonly XmlSchemaSimpleType XdtDayTimeDuration;
+#endif
+
 		static XmlSchemaSimpleType ()
 		{
 			// This is not used in the meantime.
@@ -57,7 +111,81 @@ namespace System.Xml.Schema
 			st.BaseXmlSchemaTypeInternal = null;
 			st.variety = XmlSchemaDerivationMethod.List;
 			schemaLocationType = st;
+
+#if NET_2_0
+			// Built-In schema types
+			XsAnySimpleType = BuildSchemaType ("anySimpleType", null);
+			XsString = BuildSchemaType ("string", "anySimpleType");
+			XsBoolean = BuildSchemaType ("boolean", "anySimpleType");
+			XsDecimal = BuildSchemaType ("decimal", "anySimpleType");
+			XsFloat = BuildSchemaType ("float", "anySimpleType");
+			XsDouble = BuildSchemaType ("double", "anySimpleType");
+			XsDuration = BuildSchemaType ("duration", "anySimpleType");
+			XsDateTime = BuildSchemaType ("dateTime", "anySimpleType");
+			XsTime = BuildSchemaType ("time", "anySimpleType");
+			XsDate = BuildSchemaType ("date", "anySimpleType");
+			XsGYearMonth = BuildSchemaType ("gYearMonth", "anySimpleType");
+			XsGYear = BuildSchemaType ("gYear", "anySimpleType");
+			XsGMonthDay = BuildSchemaType ("gMonthDay", "anySimpleType");
+			XsGDay = BuildSchemaType ("gDay", "anySimpleType");
+			XsGMonth = BuildSchemaType ("gMonth", "anySimpleType");
+			XsHexBinary = BuildSchemaType ("hexBinary", "anySimpleType");
+			XsBase64Binary = BuildSchemaType ("base64Binary", "anySimpleType");
+			XsAnyUri = BuildSchemaType ("anyURI", "anySimpleType");
+			XsQName = BuildSchemaType ("QName", "anySimpleType");
+			XsNotation = BuildSchemaType ("NOTATION", "anySimpleType");
+			// derived types
+			XsNormalizedString = BuildSchemaType ("normalizedString", "string");
+			XsToken = BuildSchemaType ("token", "normalizedString");
+			XsLanguage = BuildSchemaType ("language", "token");
+			XsNMToken = BuildSchemaType ("NMTOKEN", "token");
+
+			XsID = BuildSchemaType ("ID", "NCName");
+			XsIDRef = BuildSchemaType ("IDREF", "NCName");
+			XsEntity = BuildSchemaType ("ENTITY", "NCName");
+
+			XsInteger = BuildSchemaType ("integer", "decimal");
+			XsNonPositiveInteger = BuildSchemaType ("nonPositiveInteger", "integer");
+			XsNegativeInteger = BuildSchemaType ("negativeInteger", "nonPositiveInteger");
+			XsLong = BuildSchemaType ("long", "integer");
+			XsInt = BuildSchemaType ("int", "long");
+			XsShort = BuildSchemaType ("short", "int");
+			XsByte = BuildSchemaType ("byte", "short");
+			XsNonNegativeInteger = BuildSchemaType ("nonNegativeInteger", "integer");
+			XsUnsignedLong = BuildSchemaType ("unsignedLong", "nonNegativeInteger");
+			XsUnsignedInt = BuildSchemaType ("unsignedInt", "unsignedLong");
+			XsUnsignedShort = BuildSchemaType ("unsignedShort ", "unsignedInt");
+			XsUnsignedByte = BuildSchemaType ("unsignedByte", "unsignedByte");
+			XsPositiveInteger = BuildSchemaType ("positiveInteger", "nonNegativeInteger");
+
+			// xdt:*
+			XdtAnyAtomicType = BuildSchemaType ("anyAtomicType", "anySimpleType", true, false);
+			XdtUntypedAtomic = BuildSchemaType ("untypedAtomic", "anyAtomicType", true, true);
+			XdtDayTimeDuration = BuildSchemaType ("dayTimeDuration", "duration", true, false);
+			XdtYearMonthDuration = BuildSchemaType ("yearMonthDuration", "duration", true, false);
+
+			// NMTOKENS, IDREFS, ENTITIES - lists
+#endif
 		}
+
+#if NET_2_0
+		private static XmlSchemaSimpleType BuildSchemaType (string name, string baseName)
+		{
+			return BuildSchemaType (name, baseName, false, false);
+		}
+
+		private static XmlSchemaSimpleType BuildSchemaType (string name, string baseName, bool xdt, bool baseXdt)
+		{
+			string ns = xdt ? "http://www.w3.org/2003/11/xpath-datatypes" : XmlSchema.Namespace;
+			string ns2 = baseXdt ? "http://www.w3.org/2003/11/xpath-datatypes" : XmlSchema.Namespace;
+			XmlSchemaSimpleType st = new XmlSchemaSimpleType ();
+			st.QNameInternal = new XmlQualifiedName (name, ns);
+			if (baseName != null)
+				st.BaseXmlSchemaTypeInternal = XmlSchemaType. GetBuiltInSimpleType (new XmlQualifiedName (baseName, ns2));
+			st.DatatypeInternal = XmlSchemaDatatype.FromName (st.QualifiedName);
+			return st;
+		}
+#endif
 
 		internal static XsdAnySimpleType AnySimpleType {
 			get { return XsdAnySimpleType.Instance; }
@@ -67,7 +195,7 @@ namespace System.Xml.Schema
 			get { return schemaLocationType; }
 		}
 
-		public XmlSchemaSimpleType()
+		public XmlSchemaSimpleType ()
 		{
 		}
 

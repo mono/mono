@@ -29,6 +29,7 @@
 using System;
 using System.Xml;
 using System.ComponentModel;
+using Mono.Xml.Schema;
 using System.Xml.Serialization;
 #if NET_2_0_in_the_future
 using MS.Internal.Xml;
@@ -45,7 +46,9 @@ namespace System.Xml.Schema
 		private bool isMixed;
 		private string name;
 		bool recursed;
-
+#if NET_2_0
+		private XmlTypeCode typeCodeForPredefinedTypes;
+#endif
 		internal XmlQualifiedName BaseSchemaTypeName;
 		internal XmlSchemaType BaseXmlSchemaTypeInternal;
 		internal XmlSchemaDatatype DatatypeInternal;
@@ -101,6 +104,13 @@ namespace System.Xml.Schema
 		}
 
 		[XmlIgnore]
+		[MonoTODO ("This property works as always returning a valid schema type.")]
+		// In .NET 2.0, all schema types used in schema documents must
+		// be XmlSchemaType, even if it is primitive type, in terms of
+		// non-obsolete System.Xml.Schema members.
+		
+		// To modify this property, we have to make sure that it does
+		// not affect to any compilation/validation logic.
 #if NET_2_0
 		public XmlSchemaType BaseXmlSchemaType {
 #else
@@ -127,8 +137,18 @@ namespace System.Xml.Schema
 
 #if NET_2_0
 		[MonoTODO]
+		// LAMESPEC: for IDREFS it returns Idref. for ENTITIES 
+		// it returns Entity. for NMTOKENS it returns NmToken.
 		public XmlTypeCode TypeCode {
-			get { throw new NotImplementedException (); }
+			get {
+				if (typeCodeForPredefinedTypes != XmlTypeCode.None) // anySimpleType, anyType etc.
+					return typeCodeForPredefinedTypes;
+				if (DatatypeInternal != null)
+					return DatatypeInternal.TypeCode;
+				if (this == XmlSchemaComplexType.AnyType)
+					return XmlTypeCode.None;
+				return BaseXmlSchemaType.TypeCode;
+			}
 		}
 #endif
 		#endregion
@@ -149,7 +169,237 @@ namespace System.Xml.Schema
 		[MonoTODO]
 		public static XmlSchemaSimpleType GetBuiltInSimpleType (XmlQualifiedName qualifiedName)
 		{
-			throw new NotImplementedException ();
+			// FIXME:
+			if (qualifiedName.Namespace == "http://www.w3.org/2003/11/xpath-datatypes") {
+				switch (qualifiedName.Name) {
+				case "untypedAtomic":
+					return XmlSchemaSimpleType.XdtUntypedAtomic;
+				case "anyAtomicType":
+					return XmlSchemaSimpleType.XdtAnyAtomicType;
+				case "yearMonthDuration":
+					return XmlSchemaSimpleType.XdtYearMonthDuration;
+				case "dayTimeDuration":
+					return XmlSchemaSimpleType.XdtDayTimeDuration;
+				}
+				return null;
+			}
+			else if (qualifiedName.Namespace != XmlSchema.Namespace)
+				return null;
+			switch (qualifiedName.Name) {
+			case "anySimpleType":
+				return XmlSchemaSimpleType.XsAnySimpleType;
+			case "string":
+				return XmlSchemaSimpleType.XsString;
+			case "boolean":
+				return XmlSchemaSimpleType.XsBoolean;
+			case "decimal":
+				return XmlSchemaSimpleType.XsDecimal;
+			case "float":
+				return XmlSchemaSimpleType.XsFloat;
+			case "double":
+				return XmlSchemaSimpleType.XsDouble;
+			case "duration":
+				return XmlSchemaSimpleType.XsDuration;
+			case "dateTime":
+				return XmlSchemaSimpleType.XsDateTime;
+			case "time":
+				return XmlSchemaSimpleType.XsTime;
+			case "date":
+				return XmlSchemaSimpleType.XsDate;
+			case "gYearMonth":
+				return XmlSchemaSimpleType.XsGYearMonth;
+			case "gYear":
+				return XmlSchemaSimpleType.XsGYear;
+			case "gMonthDay":
+				return XmlSchemaSimpleType.XsGMonthDay;
+			case "gDay":
+				return XmlSchemaSimpleType.XsGDay;
+			case "gMonth":
+				return XmlSchemaSimpleType.XsGMonth;
+			case "hexBinary":
+				return XmlSchemaSimpleType.XsHexBinary;
+			case "base64Binary":
+				return XmlSchemaSimpleType.XsBase64Binary;
+			case "anyURI":
+				return XmlSchemaSimpleType.XsAnyUri;
+			case "QName":
+				return XmlSchemaSimpleType.XsQName;
+			case "NOTATION":
+				return XmlSchemaSimpleType.XsNotation;
+			case "normalizedString":
+				return XmlSchemaSimpleType.XsNormalizedString;
+			case "token":
+				return XmlSchemaSimpleType.XsToken;
+			case "language":
+				return XmlSchemaSimpleType.XsLanguage;
+			case "NMTOKEN":
+				return XmlSchemaSimpleType.XsNMToken;
+			case "NMTOKENS":
+				return XmlSchemaSimpleType.XsNMTokens;
+			case "Name":
+				return XmlSchemaSimpleType.XsName;
+			case "NCName":
+				return XmlSchemaSimpleType.XsNCName;
+			case "ID":
+				return XmlSchemaSimpleType.XsID;
+			case "IDREF":
+				return XmlSchemaSimpleType.XsIDRef;
+			case "IDREFS":
+				return XmlSchemaSimpleType.XsIDRefs;
+			case "ENTITY":
+				return XmlSchemaSimpleType.XsEntity;
+			case "ENTITIES":
+				return XmlSchemaSimpleType.XsEntities;
+			case "integer":
+				return XmlSchemaSimpleType.XsInteger;
+			case "nonPositiveInteger":
+				return XmlSchemaSimpleType.XsNonPositiveInteger;
+			case "negativeInteger":
+				return XmlSchemaSimpleType.XsNegativeInteger;
+			case "long":
+				return XmlSchemaSimpleType.XsLong;
+			case "int":
+				return XmlSchemaSimpleType.XsInt;
+			case "short":
+				return XmlSchemaSimpleType.XsShort;
+			case "byte":
+				return XmlSchemaSimpleType.XsByte;
+			case "nonNegativeInteger":
+				return XmlSchemaSimpleType.XsNonNegativeInteger;
+			case "positiveInteger":
+				return XmlSchemaSimpleType.XsPositiveInteger;
+			case "unsignedLong":
+				return XmlSchemaSimpleType.XsUnsignedLong;
+			case "unsignedInt":
+				return XmlSchemaSimpleType.XsUnsignedInt;
+			case "unsingedShort":
+				return XmlSchemaSimpleType.XsUnsignedShort;
+			case "unsignedByte":
+				return XmlSchemaSimpleType.XsUnsignedByte;
+			}
+			return null;
+		}
+
+		internal static XmlSchemaSimpleType GetBuiltInSimpleType (XmlSchemaDatatype type)
+		{
+			if (type is XsdEntities)
+				return XmlSchemaSimpleType.XsEntities;
+			else if (type is XsdNMTokens)
+				return XmlSchemaSimpleType.XsNMTokens;
+			else if (type is XsdIDRefs)
+				return XmlSchemaSimpleType.XsIDRefs;
+			else
+				return GetBuiltInSimpleType (type.TypeCode);
+		}
+
+		[MonoTODO]
+		// Don't use this method to cover all XML Schema datatypes.
+		public static XmlSchemaSimpleType GetBuiltInSimpleType (XmlTypeCode type)
+		{
+			switch (type) {
+			case XmlTypeCode.None:
+			case XmlTypeCode.Item:
+			case XmlTypeCode.Node:
+			case XmlTypeCode.Document: // node
+			case XmlTypeCode.Element: // node
+			case XmlTypeCode.Attribute: // node
+			case XmlTypeCode.Namespace: // node
+			case XmlTypeCode.ProcessingInstruction: // node
+			case XmlTypeCode.Comment: // node
+			case XmlTypeCode.Text:	// node
+				return null;
+			case XmlTypeCode.AnyAtomicType:
+				return XmlSchemaSimpleType.XdtAnyAtomicType;
+			case XmlTypeCode.UntypedAtomic:
+				return XmlSchemaSimpleType.XdtUntypedAtomic;
+			case XmlTypeCode.String:
+				return XmlSchemaSimpleType.XsString;
+			case XmlTypeCode.Boolean:
+				return XmlSchemaSimpleType.XsBoolean;
+			case XmlTypeCode.Decimal:
+				return XmlSchemaSimpleType.XsDecimal;
+			case XmlTypeCode.Float:
+				return XmlSchemaSimpleType.XsFloat;
+			case XmlTypeCode.Double:
+				return XmlSchemaSimpleType.XsDouble;
+			case XmlTypeCode.Duration:
+				return XmlSchemaSimpleType.XsDuration;
+			case XmlTypeCode.DateTime:
+				return XmlSchemaSimpleType.XsDateTime;
+			case XmlTypeCode.Time:
+				return XmlSchemaSimpleType.XsTime;
+			case XmlTypeCode.Date:
+				return XmlSchemaSimpleType.XsDate;
+			case XmlTypeCode.GYearMonth:
+				return XmlSchemaSimpleType.XsGYearMonth;
+			case XmlTypeCode.GYear:
+				return XmlSchemaSimpleType.XsGYear;
+			case XmlTypeCode.GMonthDay:
+				return XmlSchemaSimpleType.XsGMonthDay;
+			case XmlTypeCode.GDay:
+				return XmlSchemaSimpleType.XsGDay;
+			case XmlTypeCode.GMonth:
+				return XmlSchemaSimpleType.XsGMonth;
+			case XmlTypeCode.HexBinary:
+				return XmlSchemaSimpleType.XsHexBinary;
+			case XmlTypeCode.Base64Binary:
+				return XmlSchemaSimpleType.XsBase64Binary;
+			case XmlTypeCode.AnyUri:
+				return XmlSchemaSimpleType.XsAnyUri;
+			case XmlTypeCode.QName:
+				return XmlSchemaSimpleType.XsQName;
+			case XmlTypeCode.Notation:
+				return XmlSchemaSimpleType.XsNotation;
+			case XmlTypeCode.NormalizedString:
+				return XmlSchemaSimpleType.XsNormalizedString;
+			case XmlTypeCode.Token:
+				return XmlSchemaSimpleType.XsToken;
+			case XmlTypeCode.Language:
+				return XmlSchemaSimpleType.XsLanguage;
+			case XmlTypeCode.NmToken: // NmTokens is not primitive
+				return XmlSchemaSimpleType.XsNMToken;
+			case XmlTypeCode.Name:
+				return XmlSchemaSimpleType.XsName;
+			case XmlTypeCode.NCName:
+				return XmlSchemaSimpleType.XsNCName;
+			case XmlTypeCode.Id:
+				return XmlSchemaSimpleType.XsID;
+			case XmlTypeCode.Idref: // Idrefs is not primitive
+				return XmlSchemaSimpleType.XsIDRef;
+			case XmlTypeCode.Entity: // Entities is not primitive
+				return XmlSchemaSimpleType.XsEntity;
+			case XmlTypeCode.Integer:
+				return XmlSchemaSimpleType.XsInteger;
+			case XmlTypeCode.NonPositiveInteger:
+				return XmlSchemaSimpleType.XsNonPositiveInteger;
+			case XmlTypeCode.NegativeInteger:
+				return XmlSchemaSimpleType.XsNegativeInteger;
+			case XmlTypeCode.Long:
+				return XmlSchemaSimpleType.XsLong;
+			case XmlTypeCode.Int:
+				return XmlSchemaSimpleType.XsInt;
+			case XmlTypeCode.Short:
+				return XmlSchemaSimpleType.XsShort;
+			case XmlTypeCode.Byte:
+				return XmlSchemaSimpleType.XsByte;
+			case XmlTypeCode.NonNegativeInteger:
+				return XmlSchemaSimpleType.XsNonNegativeInteger;
+			case XmlTypeCode.UnsignedLong:
+				return XmlSchemaSimpleType.XsUnsignedLong;
+			case XmlTypeCode.UnsignedInt:
+				return XmlSchemaSimpleType.XsUnsignedInt;
+			case XmlTypeCode.UnsignedShort:
+				return XmlSchemaSimpleType.XsUnsignedShort;
+			case XmlTypeCode.UnsignedByte:
+				return XmlSchemaSimpleType.XsUnsignedByte;
+			case XmlTypeCode.PositiveInteger:
+				return XmlSchemaSimpleType.XsPositiveInteger;
+			case XmlTypeCode.YearMonthDuration:
+				return XmlSchemaSimpleType.XdtYearMonthDuration;
+			case XmlTypeCode.DayTimeDuration:
+				return XmlSchemaSimpleType.XdtDayTimeDuration;
+			}
+			return null;
 		}
 
 		[MonoTODO]

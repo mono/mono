@@ -162,6 +162,22 @@ namespace System.Xml.Schema
 			}
 		}
 
+#if NET_2_0
+		[XmlIgnore]
+		public XmlSchemaSimpleType AttributeSchemaType
+		{
+			get {
+				if (referencedAttribute != null)
+					return referencedAttribute.AttributeSchemaType;
+				XmlSchemaDatatype dt = attributeType as XmlSchemaDatatype;
+				if (dt != null)
+					return XmlSchemaType.GetBuiltInSimpleType (dt);
+				else
+					return attributeType as XmlSchemaSimpleType;
+			}
+		}
+#endif
+
 		// Post compilation default value (normalized)
 		internal string ValidatedDefaultValue
 		{

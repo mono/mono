@@ -205,6 +205,22 @@ namespace System.Xml.Schema
 			}
 		}
 
+#if NET_2_0
+		[XmlIgnore]
+		public XmlSchemaType ElementSchemaType
+		{
+			get {
+				if (referencedElement != null)
+					return referencedElement.ElementSchemaType;
+				XmlSchemaDatatype dt = elementType as XmlSchemaDatatype;
+				if (dt != null)
+					return XmlSchemaType.GetBuiltInSimpleType (dt);
+				else
+					return elementType as XmlSchemaType;
+			}
+		}
+#endif
+
 		[XmlIgnore]
 		public XmlSchemaDerivationMethod BlockResolved 
 		{

@@ -143,13 +143,26 @@ namespace System.Xml.Schema
 
 		internal static XmlSchemaDatatype FromName (XmlQualifiedName qname)
 		{
-			if (qname.Namespace != XmlSchema.Namespace)
-				throw new InvalidOperationException ("Namespace " + XmlSchema.Namespace + " is required.");
-			return FromName (qname.Name);
+			return FromName (qname.Name, qname.Namespace);
 		}
 
 		internal static XmlSchemaDatatype FromName (string localName)
 		{
+			return FromName (localName, XmlSchema.Namespace);
+		}
+
+		internal static XmlSchemaDatatype FromName (string localName, string ns)
+		{
+			switch (ns) {
+			case XmlSchema.Namespace:
+				break;
+			case XmlSchema.XdtNamespace:
+				return null; // FIXME: implement
+			default:
+				// Maybe invalid name was specified. In such cases, let processors handle them.
+				return null;
+			}
+
 			switch (localName) {
 			case "anySimpleType":
 				return datatypeAnySimpleType;

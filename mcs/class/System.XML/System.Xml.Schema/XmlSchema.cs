@@ -44,6 +44,7 @@ namespace System.Xml.Schema
                 //public constants
                 public const string Namespace = "http://www.w3.org/2001/XMLSchema";
                 public const string InstanceNamespace = "http://www.w3.org/2001/XMLSchema-instance";
+                internal const string XdtNamespace = "http://www.w3.org/2003/11/xpath-datatypes";
 
                 //private fields
                 private XmlSchemaForm attributeFormDefault ;
@@ -491,8 +492,8 @@ namespace System.Xml.Schema
                                         errorCount += numerr;
                                         if(numerr == 0)
                                         {
-						if (!attr.IsComplied (this.CompilationId))
-							schemas.SchemaSet.GlobalAttributes.Add (attr.QualifiedName, attr);
+//						if (!attr.IsComplied (this.CompilationId))
+//							schemas.SchemaSet.GlobalAttributes.Add (attr.QualifiedName, attr);
                                                 XmlSchemaUtil.AddToTable (Attributes, attr, attr.QualifiedName, handler);
                                         }
                                 }
@@ -514,8 +515,8 @@ namespace System.Xml.Schema
                                         errorCount += numerr;
                                         if(numerr == 0)
                                         {
-						if (!ctype.IsComplied (this.CompilationId))
-	                                                schemas.SchemaSet.GlobalTypes.Add (ctype.QualifiedName, ctype);
+//						if (!ctype.IsComplied (this.CompilationId))
+//	                                                schemas.SchemaSet.GlobalTypes.Add (ctype.QualifiedName, ctype);
                                                 XmlSchemaUtil.AddToTable (schemaTypes, ctype, ctype.QualifiedName, handler);
                                         }
                                 }
@@ -527,8 +528,8 @@ namespace System.Xml.Schema
                                         errorCount += numerr;
                                         if(numerr == 0)
                                         {
-						if (!stype.IsComplied (this.CompilationId))
-	                                                schemas.SchemaSet.GlobalTypes.Add (stype.QualifiedName, stype);
+//						if (!stype.IsComplied (this.CompilationId))
+//	                                                schemas.SchemaSet.GlobalTypes.Add (stype.QualifiedName, stype);
                                                 XmlSchemaUtil.AddToTable (SchemaTypes, stype, stype.QualifiedName, handler);
                                         }
                                 }
@@ -540,8 +541,8 @@ namespace System.Xml.Schema
                                         errorCount += numerr;
                                         if(numerr == 0)
                                         {
-						if (!elem.IsComplied (this.CompilationId))
-							schemas.SchemaSet.GlobalElements.Add (elem.QualifiedName, elem);
+//						if (!elem.IsComplied (this.CompilationId))
+//							schemas.SchemaSet.GlobalElements.Add (elem.QualifiedName, elem);
                                                 XmlSchemaUtil.AddToTable (Elements, elem, elem.QualifiedName, handler);
                                         }
                                 }

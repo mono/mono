@@ -1,3 +1,14 @@
+2004-07-23  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchema.cs : Added internal XdtNamespace constant. don't fill
+	  schemaset compoenents here.
+	* XmlSchemaAttribute.cs : Implemented AttributeSchemaType.
+	* XmlSchemaElement.cs : Implemented ElementSchemaType.
+	* XmlSchemaSimpleType.cs : Added predefined simple types
+	* XmlSchemaType.cs : Implemented GetBuiltInSimpleType().
+	* XmlSchemaDatatype.cs : Allow Xdt namespaces too (not completed;
+	  quick fix for GetBuiltInSimpleType()).
+
 2004-07-21  Atsushi Enomoto <atsushi@ximian.com>
 
 	* BUGS-MS.txt : updated including answer excerpts from MS team.
