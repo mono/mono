@@ -27,9 +27,9 @@ namespace System
 		 * making changes to this interface (by changing the layout
 		 * of classes the runtime knows about, changing icall semantics etc),
 		 * increment this variable. Also increment the
-		 * pair of this variable in the runtime in metadata/verify.c.
+		 * pair of this variable in the runtime in metadata/appdomain.c.
 		 */
-		private int mono_corlib_version = 1;
+		private static int mono_corlib_version = 1;
 
 		private Environment () {}
 
