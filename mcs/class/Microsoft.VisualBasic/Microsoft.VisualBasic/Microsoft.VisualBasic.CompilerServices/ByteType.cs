@@ -8,10 +8,10 @@
     //
     //	(C) copyright 2002 Chris J Breisch
     //	2002 Tipic, Inc (http://www.tipic.com)
-    //	2004 Novell
     //
      /*
       * Copyright (c) 2002-2003 Mainsoft Corporation.
+      * Copyright (C) 2004 Novell, Inc (http://www.novell.com)
       *
       * Permission is hereby granted, free of charge, to any person obtaining a
       * copy of this software and associated documentation files (the "Software"),
