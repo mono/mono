@@ -101,9 +101,7 @@ namespace Microsoft.VisualBasic
 				if (obj == null)
 				{
 					String message = VBUtils.GetResourceString(52);
-					throw (IOException)VBUtils.VBException(
-									       new IOException(message),
-									       52);
+					throw (IOException)VBUtils.VBException(new IOException(message), 52);
 				}
 				String fileName = null;
 				if (obj is VBFile)
@@ -131,17 +129,13 @@ namespace Microsoft.VisualBasic
 
 		{
 			if (!isFileNumberFree(fileNumber))
-				throw (IOException) ExceptionUtils.VbMakeException(
-										   VBErrors.FileAlreadyOpen);
+				throw ExceptionUtils.VbMakeException(VBErrors.FileAlreadyOpen);
 			if (fileNumber < 0 || fileNumber > 255)
-				throw (IOException) ExceptionUtils.VbMakeException(
-										   VBErrors.BadFileNameOrNumber);
+				throw ExceptionUtils.VbMakeException(VBErrors.BadFileNameOrNumber);
 			if (recordLength != -1 && recordLength <= 0)
-				throw (ArgumentException) ExceptionUtils.VbMakeException(
-											 VBErrors.IllegalFuncCall);
+				throw ExceptionUtils.VbMakeException(VBErrors.IllegalFuncCall);
 			if (share != OpenShare.Shared && _fileNameIdMap.ContainsKey(Path.GetFullPath(string.Intern(fileName))))
-				throw (IOException) ExceptionUtils.VbMakeException(
-										   VBErrors.FileAlreadyOpen);
+				throw ExceptionUtils.VbMakeException(VBErrors.FileAlreadyOpen);
 			if (mode == OpenMode.Input)
 			{
 				VBFile vbFile = new InputVBFile(fileName, (FileAccess) access,(recordLength == -1)? 4096:recordLength);
@@ -421,7 +415,7 @@ namespace Microsoft.VisualBasic
 		}
 
 		public static void FileGet(int fileNumber,
-					   ref object value,
+					   ref string value,
 					   [System.Runtime.InteropServices.Optional]
 					   [System.ComponentModel.DefaultValue(-1)] long recordNumber,
 					   [System.Runtime.InteropServices.Optional]
@@ -996,7 +990,9 @@ namespace Microsoft.VisualBasic
 			Type type = value.GetType();
 
 			if (type == null || value is string) {
-				vbFile.get(ref value,recordNumber,false);
+				string tmp = null;
+				vbFile.get(ref tmp, recordNumber, false);
+				value = tmp;
 			}
 			else if ( value is bool) {
 				bool tmp;
@@ -1048,8 +1044,12 @@ namespace Microsoft.VisualBasic
 				vbFile.get(out tmp,recordNumber);
 				value = tmp;
 			}
-			else if (type.IsArray)
-				vbFile.get(value,recordNumber,true,false);
+			else if (type.IsArray) {
+				// need to figure out how to convert from Object& to Array&
+				// vbFile.get(out value, recordNumber,true,false);
+				// value = tmp;
+				throw new NotImplementedException();
+			}
 			else
 				throw new NotSupportedException();
 		}
@@ -1065,15 +1065,14 @@ namespace Microsoft.VisualBasic
 			vbFile.get(out value,recordNumber);
 		}
 
-		public static void FileGet(int fileNumber,
-					   ValueType value,
-					   long recordNumber) /*throws NotImplementedException*/
+		[MonoTODO]
+		public static void FileGet(int fileNumber, out ValueType value, long recordNumber) 
 		{
 			throw new NotImplementedException();
 		}
 
 		public static void FileGet(int fileNumber,
-					   ref Object value,
+					   ref Array value,
 					   [System.Runtime.InteropServices.Optional] 
 					   [System.ComponentModel.DefaultValue(-1)] long recordNumber, 
 					   [System.Runtime.InteropServices.Optional] 
@@ -1085,7 +1084,7 @@ namespace Microsoft.VisualBasic
 		{
 			checkRecordNumber(recordNumber,true);
 			VBFile vbFile = getVBFile(fileNumber);
-			vbFile.get(value,recordNumber,arrayIsDynamic,stringIsFixedLength);
+			vbFile.get(ref value,recordNumber,arrayIsDynamic,stringIsFixedLength);
 		}
 
 		public static void FilePutObject(int fileNumber,
@@ -1138,6 +1137,11 @@ namespace Microsoft.VisualBasic
 
 		}
 
+		private const string obsoleteMsg1 = "Use FilePutObject to write Object types, or";
+		private const string obsoleteMsg2 = "coerce FileNumber and RecordNumber to Integer for writing non-Object types";
+		private const string obsoleteMsg = obsoleteMsg1 + obsoleteMsg2; 
+
+		[System.ObsoleteAttribute(obsoleteMsg, false)] 
 		public static void FilePut(Object FileNumber,
 					   Object Value,
 					   [System.Runtime.InteropServices.Optional]
@@ -1146,6 +1150,7 @@ namespace Microsoft.VisualBasic
 			throw new ArgumentException(Utils.GetResourceString("UseFilePutObject"));
 		}
 
+		[MonoTODO]
 		public static void FilePut(int FileNumber,
 					   ValueType Value,
 					   [System.Runtime.InteropServices.Optional]
@@ -1156,7 +1161,7 @@ namespace Microsoft.VisualBasic
 		}
 
 		public static void FilePut(int fileNumber,
-					   Object value,
+					   Array value,
 					   [System.Runtime.InteropServices.Optional]
 					   [System.ComponentModel.DefaultValue(-1)] long recordNumber,
 					   [System.Runtime.InteropServices.Optional]
@@ -1180,68 +1185,68 @@ namespace Microsoft.VisualBasic
 			vbFile.put(value,recordNumber);
 		}
 
-		public static void Input(int fileNumber, out bool Value)
+		public static void Input(int fileNumber, ref bool Value)
 		{
 
 			VBFile vbFile = getVBFile(fileNumber);
 			vbFile.Input(out Value);
 		}
 
-		public static void Input(int fileNumber, out byte Value)
+		public static void Input(int fileNumber, ref byte Value)
 		{
 			VBFile vbFile = getVBFile(fileNumber);
 			vbFile.Input(out Value);
 		}
 
-		public static void Input(int fileNumber, out short Value)
+		public static void Input(int fileNumber, ref short Value)
 		{
 			VBFile vbFile = getVBFile(fileNumber);
 			vbFile.Input(out Value);
 		}
 
-		public static void Input(int fileNumber, out int Value)
+		public static void Input(int fileNumber, ref int Value)
 		{
 			VBFile vbFile = getVBFile(fileNumber);
 			vbFile.Input(out Value);
 		}
 
-		public static void Input(int fileNumber, out long Value)
+		public static void Input(int fileNumber, ref long Value)
 		{
 			VBFile vbFile = getVBFile(fileNumber);
 			vbFile.Input(out Value);
 		}
 
-		public static void Input(int fileNumber, out char Value)
+		public static void Input(int fileNumber, ref char Value)
 		{
 			VBFile vbFile = getVBFile(fileNumber);
 			vbFile.Input(out Value);
 		}
 
-		public static void Input(int fileNumber, out float Value)
+		public static void Input(int fileNumber, ref float Value)
 		{
 			VBFile vbFile = getVBFile(fileNumber);
 			vbFile.Input(out Value);
 		}
 
-		public static void Input(int fileNumber, out double Value)
+		public static void Input(int fileNumber, ref double Value)
 		{
 			VBFile vbFile = getVBFile(fileNumber);
 			vbFile.Input(out Value);
 		}
 
-		public static void Input(int fileNumber, out Decimal Value)
+		public static void Input(int fileNumber, ref Decimal Value)
 		{
 			VBFile vbFile = getVBFile(fileNumber);
 			vbFile.Input(out Value);
 		}
 
-		public static void Input(int fileNumber, out DateTime Value)
+		public static void Input(int fileNumber, ref DateTime Value)
 		{
 			VBFile vbFile = getVBFile(fileNumber);
 			vbFile.Input(out Value);
 		}
 
-		public static void Input(int fileNumber, out string Value)
+		public static void Input(int fileNumber, ref string Value)
 		{
 			VBFile vbFile = getVBFile(fileNumber);
 			vbFile.Input(out Value);
@@ -1254,31 +1259,37 @@ namespace Microsoft.VisualBasic
 		// 		vbFile.Input(Value,false);
 		// 	}
 
+		[MonoTODO]
 		public static void Lock(int fileNumber) 
 		{
 			throw new NotImplementedException("The method Lock in class FileSystem is not supported");
 		}
 
+		[MonoTODO]
 		public static void Lock(int FileNumber, long Record) 
 		{
 			throw new NotImplementedException("The method Lock in class FileSystem is not supported");
 		}
 
+		[MonoTODO]
 		public static void Lock(int FileNumber, long FromRecord, long ToRecord) 
 		{
 			throw new NotImplementedException("The method Lock in class FileSystem is not supported");
 		}
 
+		[MonoTODO]
 		public static void Unlock(int FileNumber) 
 		{
 			throw new NotImplementedException("The method Unlock in class FileSystem is not supported");
 		}
 
+		[MonoTODO]
 		public static void Unlock(int FileNumber, long Record) 
 		{
 			throw new NotImplementedException("The method Unlock in class FileSystem is not supported");
 		}
 
+		[MonoTODO]
 		public static void Unlock(int FileNumber, long FromRecord, long ToRecord) 
 		{
 			throw new NotImplementedException("The method Unlock in class FileSystem is not supported");

@@ -28,38 +28,35 @@ namespace Microsoft.VisualBasic {
 		// Methods
 		//[MonoTODO]
 		public static System.Int32 Shell (System.String Pathname, 
-			[System.Runtime.InteropServices.Optional] 
-			[System.ComponentModel.DefaultValue(2)] 
-			Microsoft.VisualBasic.AppWinStyle Style, 
-			[System.Runtime.InteropServices.Optional] 
-			[System.ComponentModel.DefaultValue(false)] 
-			System.Boolean Wait, 
-			[System.Runtime.InteropServices.Optional] 
-			[System.ComponentModel.DefaultValue(-1)] 
-			System.Int32 Timeout)
+						  [System.Runtime.InteropServices.Optional] 
+						  [System.ComponentModel.DefaultValue(2)] Microsoft.VisualBasic.AppWinStyle Style, 
+						  [System.Runtime.InteropServices.Optional] 
+						  [System.ComponentModel.DefaultValue(false)] System.Boolean Wait, 
+						  [System.Runtime.InteropServices.Optional] 
+						  [System.ComponentModel.DefaultValue(-1)] System.Int32 Timeout)
 		{ 
 			Process prcs = new Process();
 
 			ProcessWindowStyle PWinStyle = 0;
 			switch (Style){
-				case AppWinStyle.Hide:
-					PWinStyle = ProcessWindowStyle.Hidden;
-					break;
-				case AppWinStyle.NormalFocus:
-					PWinStyle = ProcessWindowStyle.Normal;
-					break;
-				case AppWinStyle.MinimizedFocus:
-					PWinStyle = ProcessWindowStyle.Minimized;
-					break;
-				case AppWinStyle.MaximizedFocus:
-					PWinStyle = ProcessWindowStyle.Maximized;
-					break;
-				case AppWinStyle.NormalNoFocus:
-					PWinStyle = ProcessWindowStyle.Normal; //ToDo: no focus is not set
-					break;
-				case AppWinStyle.MinimizedNoFocus:
-					PWinStyle = ProcessWindowStyle.Minimized; //ToDo: no focus is not set
-					break;
+			case AppWinStyle.Hide:
+				PWinStyle = ProcessWindowStyle.Hidden;
+				break;
+			case AppWinStyle.NormalFocus:
+				PWinStyle = ProcessWindowStyle.Normal;
+				break;
+			case AppWinStyle.MinimizedFocus:
+				PWinStyle = ProcessWindowStyle.Minimized;
+				break;
+			case AppWinStyle.MaximizedFocus:
+				PWinStyle = ProcessWindowStyle.Maximized;
+				break;
+			case AppWinStyle.NormalNoFocus:
+				PWinStyle = ProcessWindowStyle.Normal; //ToDo: no focus is not set
+				break;
+			case AppWinStyle.MinimizedNoFocus:
+				PWinStyle = ProcessWindowStyle.Minimized; //ToDo: no focus is not set
+				break;
 			}
 
 			prcs.StartInfo.FileName = Pathname;
@@ -83,7 +80,7 @@ namespace Microsoft.VisualBasic {
 			}
 			catch (System.ComponentModel.Win32Exception e){
 				throw new System.IO.FileNotFoundException (
-					Utils.GetResourceString(53));
+									   Utils.GetResourceString(53));
 			}
 		}
 			
@@ -120,13 +117,13 @@ namespace Microsoft.VisualBasic {
 
 			if (start < 0)
 				throw new ArgumentException(
-					Utils.GetResourceString("Argument_InvalidValue1", "Start"));
+							    Utils.GetResourceString("Argument_InvalidValue1", "Start"));
 			if (stop <= start)
 				throw new ArgumentException(
-					Utils.GetResourceString("Argument_InvalidValue1", "Stop"));
+							    Utils.GetResourceString("Argument_InvalidValue1", "Stop"));
 			if (interval < 1)
 				throw new ArgumentException(
-					Utils.GetResourceString("Argument_InvalidValue1", "Interval"));
+							    Utils.GetResourceString("Argument_InvalidValue1", "Interval"));
 
 			if (number < start)
 				endNumber = start - 1;
@@ -176,7 +173,7 @@ namespace Microsoft.VisualBasic {
 
 			if (counter % 2 != 0)
 				throw new ArgumentException(
-					Utils.GetResourceString("Argument_InvalidValue1", "VarExpr"));
+							    Utils.GetResourceString("Argument_InvalidValue1", "VarExpr"));
 
 			do {
 				if((bool)VarExpr[index])
@@ -247,7 +244,7 @@ namespace Microsoft.VisualBasic {
 
 				if(userCallType == CallType.Method) {
 					Console.WriteLine("Method");
-						methodInfo = objType.GetMethod(name, argsType);
+					methodInfo = objType.GetMethod(name, argsType);
 				}
 				else if(userCallType == CallType.Get) {
 					Console.WriteLine("GetMethod");
@@ -290,7 +287,7 @@ namespace Microsoft.VisualBasic {
 			int index = 0;
 			Exception e;
 
-	//		Console.WriteLine("Coming Here"+Expression);
+			//		Console.WriteLine("Coming Here"+Expression);
 
 			IDictionary envVars = Environment.GetEnvironmentVariables();
 
@@ -302,7 +299,7 @@ namespace Microsoft.VisualBasic {
 						return String.Concat(de.Key, "=" , de.Value);
 				}
 			}
-	//		Console.WriteLine("Exiting the loop");
+			//		Console.WriteLine("Exiting the loop");
 
 			return "";
 
@@ -346,101 +343,101 @@ namespace Microsoft.VisualBasic {
 									 [System.ComponentModel.DefaultValue(null)] System.Object Title)
 		{ 
 			throw new NotImplementedException ();
-		/*	//MessageButtons msgBoxButtons = 0;
-			MessageBoxIcon msgBoxIcon = 0;
-			MessageBoxDefaultButton msgBoxDefaultButton = 0;
-			MessageBoxOptions msgBoxOptions = 0;
+			/*	//MessageButtons msgBoxButtons = 0;
+				MessageBoxIcon msgBoxIcon = 0;
+				MessageBoxDefaultButton msgBoxDefaultButton = 0;
+				MessageBoxOptions msgBoxOptions = 0;
 			
 
-			int IconsMask = MsgBoxStyle.Critical | MsgBoxStyle.Question | MsgBoxStyle.Exclamation | MsgBoxStyle.Information;
+				int IconsMask = MsgBoxStyle.Critical | MsgBoxStyle.Question | MsgBoxStyle.Exclamation | MsgBoxStyle.Information;
 
-			int ButtonsMask = MsgBoxStyle.OKOnly |MsgBoxStyle.OKCancel | MsgBoxStyle.AbortRetryIgnore |
-						MsgBoxStyle.YesNoCancel |
-						MsgBoxStyle.YesNo | MsgBoxStyle.RetryCancel;
+				int ButtonsMask = MsgBoxStyle.OKOnly |MsgBoxStyle.OKCancel | MsgBoxStyle.AbortRetryIgnore |
+				MsgBoxStyle.YesNoCancel |
+				MsgBoxStyle.YesNo | MsgBoxStyle.RetryCancel;
 
-			int DefaultButtonMask = MsgBoxStyle.DeafultButton1 | MsgBoxStyle.DefaultButton2 | 
-						MsgBoxStyle.DefaultButton3;
+				int DefaultButtonMask = MsgBoxStyle.DeafultButton1 | MsgBoxStyle.DefaultButton2 | 
+				MsgBoxStyle.DefaultButton3;
 
-			int OptionsMask =  MsgBoxStyle.MsgBoxRight | MsgBoxStyle.MsgBoxRtlReading;
+				int OptionsMask =  MsgBoxStyle.MsgBoxRight | MsgBoxStyle.MsgBoxRtlReading;
 
 
-			switch(Buttons & IconMask) {
-			case MsgBoxStyle.OKOnly:
+				switch(Buttons & IconMask) {
+				case MsgBoxStyle.OKOnly:
 				msgBoxButtons = MessageBoxButtons.OK;
 				break;
 
-			case MsgBoxStyle.OKCancel:
+				case MsgBoxStyle.OKCancel:
 				msgBoxButtons = MessageBoxButtons.OK;
 				break;
 
-			case MsgBoxStyle.AbortRetryIgnore:
+				case MsgBoxStyle.AbortRetryIgnore:
 				msgBoxButtons = MessageBoxButtons.OKCancel;
 				break;
 
-			case MsgBoxStyle.YesNoCancel:
+				case MsgBoxStyle.YesNoCancel:
 				msgBoxButtons = MessageBoxButtons.YesNoCancel;
 				break;
 
-			case MsgBoxStyle.YesNo:
+				case MsgBoxStyle.YesNo:
 				msgBoxButtons = MessageBoxButtons.YesNo;
 				break;
 
-			case MsgBoxStyle.RetryCancel:
+				case MsgBoxStyle.RetryCancel:
 				msgBoxButtons = MessageBoxButtons.RetryCancel;
 				break;
 
-			default:
+				default:
 				// handle error
 				break;
-			}
+				}
 
 
 
-			switch(Buttons & IconMask) {
+				switch(Buttons & IconMask) {
 
-			case MsgBoxStyle.Critical:
+				case MsgBoxStyle.Critical:
 				msgBoxIcon = MessageBoxIcon.Error;
 				break;
 
-			case MsgBoxStyle.Question:
+				case MsgBoxStyle.Question:
 				msgBoxIcon = MessageBoxIcon.Question;
 				break;
 
-			case MsgBoxStyle.Exclamation:
+				case MsgBoxStyle.Exclamation:
 				msgBoxIcon = MessageBoxIcon.Exclamation;
 				break;
 
-			case MsgBoxStyle.Information:
+				case MsgBoxStyle.Information:
 				msgBoxIcon = MessageBoxIcon.Information;
 				break;
 
-			default:
+				default:
 				// handle error
 				break;
-			}
+				}
 
-			switch(Buttons & DefaultButtonMask) {
-			case MsgBoxStyle.DefaultButton1:
+				switch(Buttons & DefaultButtonMask) {
+				case MsgBoxStyle.DefaultButton1:
 				msgBoxDefaultButton = MessageBoxDefaultButton.Button1;
 				break;
-			case MsgBoxStyle.DefaultButton2:
+				case MsgBoxStyle.DefaultButton2:
 				msgBoxDefaultButton = MessageBoxDefaultButton.Button2;
 				break;
-			case MsgBoxStyle.DefaultButton3:
+				case MsgBoxStyle.DefaultButton3:
 				msgBoxDefaultButton = MessageBoxDefaultButton.Button3;
 				break;
-			default:
+				default:
 				//handle error
 				break;
-			}
+				}
 
-			switch(Buttons & OptionsMask) {
-			default:
+				switch(Buttons & OptionsMask) {
+				default:
 				break;
 				
 
 			
-			}	*/	
+				}	*/	
 		}
 	}
 }

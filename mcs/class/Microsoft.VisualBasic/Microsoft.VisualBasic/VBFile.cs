@@ -54,10 +54,10 @@ interface VBFile
     
 	void get(out DateTime value,long recordNumber);
     
-	void get(object Value,long RecordNumber,bool  ArrayIsDynamic,
+	void get(ref Array Value,long RecordNumber,bool  ArrayIsDynamic,
 		 bool  StringIsFixedLength); 
 
-	void get(ref object value,long recordNumber,bool  bIgnored); 
+	void get(ref string value,long recordNumber,bool  bIgnored); 
 
 	void get(ref object value,long recordNumber);    
   

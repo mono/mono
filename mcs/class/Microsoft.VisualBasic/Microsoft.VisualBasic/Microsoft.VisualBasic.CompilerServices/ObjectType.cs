@@ -906,13 +906,11 @@ namespace Microsoft.VisualBasic.CompilerServices {
 					Utils.VBFriendlyName(obj2)));
 		}
 
-		//checked + string
-		public static object CTypeHelper(object obj, TypeCode toType) {
+		internal static object CTypeHelper(object obj, TypeCode toType) {
 			return CTypeHelper(obj, toType.GetType());//toType.getValue));
 		}
 
-		//checked + string
-		public static object CTypeHelper(object obj, int toType) {
+		internal static object CTypeHelper(object obj, int toType) {
 			if (obj == null)
 				return null;
 			switch (toType) {
@@ -992,7 +990,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 
 		//checked + string//make typecode
 		[MonoTODO]
-		public static TypeCode GetWidestType(TypeCode type1, TypeCode type2) {
+		internal static TypeCode GetWidestType(TypeCode type1, TypeCode type2) {
 			int index1 = getVTypeFromTypeCode(type1);
 			int index2 = getVTypeFromTypeCode(type2);
 			//return getTypeCodeFromVType(WiderType(index1,index2));
@@ -1001,7 +999,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			//return (TypeCode)getTypeCodeFromVType((int)WiderType[(int)type1,(int)type2]);
 		}
     
-		public static TypeCode GetWidestType(object obj1, TypeCode typeCode2) {
+		internal static TypeCode GetWidestType(object obj1, TypeCode typeCode2) {
 			if (obj1 == null)
 				return typeCode2;
 			TypeCode tc1 = getTypeCode(obj1);     
@@ -1032,8 +1030,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			return typeCode;
 		}
 
-		//checked + string
-		public static TypeCode GetWidestType(object obj1, object obj2, bool IsAdd) {
+		internal static TypeCode GetWidestType(object obj1, object obj2, bool IsAdd) {
 			TypeCode typeCode1 = getTypeCode(obj1);
 			TypeCode typeCode2 = getTypeCode(obj1);
         
@@ -1280,15 +1277,14 @@ namespace Microsoft.VisualBasic.CompilerServices {
 
 		}
 
-		//checked
-		public static bool IsTypeOf(Type typSrc, Type typParent) {
+
+		internal static bool IsTypeOf(Type typSrc, Type typParent) {
 			if (typSrc == typParent)
 				return true;
 			return typSrc.IsSubclassOf(typParent);
 		}
 
-		//checked
-		public static bool IsWideningConversion(Type FromType, Type ToType) {
+		internal static bool IsWideningConversion(Type FromType, Type ToType) {
 			TypeCode typeCode1 = Type.GetTypeCode(FromType);
 			TypeCode typeCode2 = Type.GetTypeCode(ToType);
 			if (typeCode1 == TypeCode.Object) {
@@ -1339,7 +1335,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 
 		//checked
 		[MonoTODO]
-		public static bool IsWiderNumeric(Type Type1, Type Type2) {
+		internal  static bool IsWiderNumeric(Type Type1, Type Type2) {
 			TypeCode typeCode1 = Type.GetTypeCode(Type1);
 			TypeCode typeCode2 = Type.GetTypeCode(Type2);
 			if (!Utils.IsNumericType(Type1) || !Utils.IsNumericType(Type2)) {
@@ -2248,12 +2244,11 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		}
 
 
-		//checked
-		public static Type TypeFromTypeCode(TypeCode vartype) {
+		internal static Type TypeFromTypeCode(TypeCode vartype) {
 			return TypeFromTypeCode((int)vartype);
 		}
-		//checked
-		public static Type TypeFromTypeCode(int vartype) {
+
+		internal static Type TypeFromTypeCode(int vartype) {
 			return tblTypeFromTypeCode[vartype];
 		}
 

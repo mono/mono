@@ -190,24 +190,25 @@ public class RandomVBFile : BaseVBFile
 		value = tmp;
 	}
 
-	public override void get(ref object value,long recordNumber,bool bIgnored)
+	public override void get(ref string str, long recordNumber, bool bIgnored)
 	{
 		checkReadPermision();
 		int strLen = 0;
-		String str = (string) value;
 		if (str == null || str.Length == 0)
 			strLen = _binaryReader.ReadInt16();
 		else
 			strLen = str.Length;   
-		String val = new String(_binaryReader.ReadChars(strLen));
-		value = val;
+		str = new String(_binaryReader.ReadChars(strLen));
 	} 
 
 	public override void get(ref object value,long recordNumber)
 	{
 		checkReadPermision();
-		if (value.GetType().IsArray)
-			get(value,recordNumber,false,false); 
+		if (value.GetType().IsArray) {
+			// need to figure out how to convert from Object& to Array &
+			// get(value,recordNumber,false,false); 
+			throw new NotImplementedException();
+		}
 		else
 		{        
 			setRecord(recordNumber);           
@@ -215,24 +216,16 @@ public class RandomVBFile : BaseVBFile
 		}        
 	}
     
-	public override void get(
-				 object value,
-				 long recordNum,
-				 bool arrIsDynamic,
-				 bool strIsFixedLen)
+	public override void get(ref Array value, long recordNum, bool arrIsDynamic, bool strIsFixedLen)
 	{
 		checkReadPermision();
 		Object arr = value;
-		if (arr == null)
-		{
-			throw new ArgumentException(
-						    Utils.GetResourceString("Argument_ArrayNotInitialized"));
-		}
+
 		Type type = arr.GetType().GetElementType();
 		int  rank = (arr as Array).Rank;
 		if (rank == 0 || rank > 2)
-			throw new ArgumentException(
-						    Utils.GetResourceString("Argument_UnsupportedArrayDimensions"));
+			throw new ArgumentException(Utils.GetResourceString("Argument_UnsupportedArrayDimensions"));
+
 		if (getPosition() >= getLength())
 		{
 			return;

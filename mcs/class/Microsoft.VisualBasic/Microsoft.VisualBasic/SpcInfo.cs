@@ -15,7 +15,7 @@ namespace Microsoft.VisualBasic {
 		// Declarations
 		public short Count;
 
-		public SpcInfo(short value)
+		internal SpcInfo(short value)
 		{
 			Count = value;
 		}

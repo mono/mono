@@ -313,7 +313,7 @@ namespace Microsoft.VisualBasic.CompilerServices
 		 * @param ary the given array
 		 * @return IEnumerator the array's Enumerator
 		 */
-		public static IEnumerator ForEachInArr(object ary) {// throws java.lang.Exception
+		public static IEnumerator ForEachInArr(Array ary) {// throws java.lang.Exception
 			IEnumerator iEnumerator = (IEnumerator)ary;//is ArrayStaticWrapper.GetEnumerator(ary); in java code.
 			if (iEnumerator != null)
 				return iEnumerator;

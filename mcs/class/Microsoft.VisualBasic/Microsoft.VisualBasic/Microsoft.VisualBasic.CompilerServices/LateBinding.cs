@@ -355,6 +355,8 @@ namespace Microsoft.VisualBasic.CompilerServices {
 
 
 
+		[System.Diagnostics.DebuggerHiddenAttribute]
+		[System.Diagnostics.DebuggerStepThroughAttribute]
 		public static void LateIndexSet(
 			object o,
 			object[] args,

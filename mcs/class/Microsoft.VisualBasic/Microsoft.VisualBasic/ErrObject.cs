@@ -35,7 +35,7 @@ namespace Microsoft.VisualBasic
 		private bool HelpFileIsSet = false;
 		private bool HelpContextIsSet = false;
 
-		public ErrObject()
+		internal ErrObject()
 	        {
 			Clear();
 		}
@@ -60,7 +60,7 @@ namespace Microsoft.VisualBasic
 			ClearOnCapture = true;
 		}
 
-		public void CaptureException (Exception ex)
+		internal void CaptureException (Exception ex)
 		{
 			if(ex == pException)
 				return;
@@ -72,13 +72,13 @@ namespace Microsoft.VisualBasic
 			pException = ex;
 		}
 
-		public void CaptureException (Exception ex, int lErl)
+		internal void CaptureException (Exception ex, int lErl)
 		{
 			CaptureException(ex);
 			pErl = lErl;
 		}
 
-		public Exception CreateException (int Number, String Description)
+		internal Exception CreateException (int Number, String Description)
 		{
 			Exception ex;
 
@@ -197,7 +197,7 @@ namespace Microsoft.VisualBasic
 			}
 		}
 
-		public int MapErrorNumber (int Number)
+		internal int MapErrorNumber (int Number)
 		{
 			if(Number > 65535)
 				throw new ArgumentException(VBUtils.GetResourceString("Argument_InvalidValue1", "Number"));
@@ -266,7 +266,7 @@ namespace Microsoft.VisualBasic
 			throw e;
 		} 
 
-		public void SetUnmappedError (int Number)
+		internal void SetUnmappedError (int Number)
 		{
 			Clear();
 			this.Number = Number;

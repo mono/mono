@@ -31,90 +31,90 @@ namespace Microsoft.VisualBasic.CompilerServices {
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
 	[System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Auto)] 
-	sealed public class ExceptionUtils {
+	sealed abstract public class ExceptionUtils {
 
-		public const int E_NOTIMPL = -2147467263;
-		public const int E_NOINTERFACE = -2147467262;
-		public const int E_ABORT = -2147467260;
-		public const int DISP_E_UNKNOWNINTERFACE = -2147352575;
-		public const int DISP_E_MEMBERNOTFOUND = -2147352573;
-		public const int DISP_E_PARAMNOTFOUND = -2147352572;
-		public const int DISP_E_TYPEMISMATCH = -2147352571;
-		public const int DISP_E_UNKNOWNNAME = -2147352570;
-		public const int DISP_E_NONAMEDARGS = -2147352569;
-		public const int DISP_E_BADVARTYPE = -2147352568;
-		public const int DISP_E_OVERFLOW = -2147352566;
-		public const int DISP_E_BADINDEX = -2147352565;
-		public const int DISP_E_UNKNOWNLCID = -2147352564;
-		public const int DISP_E_ARRAYISLOCKED = -2147352563;
-		public const int DISP_E_BADPARAMCOUNT = -2147352562;
-		public const int DISP_E_PARAMNOTOPTIONAL = -2147352561;
-		public const int DISP_E_NOTACOLLECTION = -2147352559;
-		public const int DISP_E_DIVBYZERO = -2147352558;
-		public const int TYPE_E_BUFFERTOOSMALL = -2147319786;
-		public const int TYPE_E_INVDATAREAD = -2147319784;
-		public const int TYPE_E_UNSUPFORMAT = -2147319783;
-		public const int TYPE_E_REGISTRYACCESS = -2147319780;
-		public const int TYPE_E_LIBNOTREGISTERED = -2147319779;
-		public const int TYPE_E_UNDEFINEDTYPE = -2147319769;
-		public const int TYPE_E_QUALIFIEDNAMEDISALLOWED = -2147319768;
-		public const int TYPE_E_INVALIDSTATE = -2147319767;
-		public const int TYPE_E_WRONGTYPEKIND = -2147319766;
-		public const int TYPE_E_ELEMENTNOTFOUND = -2147319765;
-		public const int TYPE_E_AMBIGUOUSNAME = -2147319764;
-		public const int TYPE_E_NAMECONFLICT = -2147319763;
-		public const int TYPE_E_UNKNOWNLCID = -2147319762;
-		public const int TYPE_E_DLLFUNCTIONNOTFOUND = -2147319761;
-		public const int TYPE_E_BADMODULEKIND = -2147317571;
-		public const int TYPE_E_SIZETOOBIG = -2147317563;
-		public const int TYPE_E_TYPEMISMATCH = -2147316576;
-		public const int TYPE_E_OUTOFBOUNDS = -2147316575;
-		public const int TYPE_E_IOERROR = -2147316574;
-		public const int TYPE_E_CANTCREATETMPFILE = -2147316573;
-		public const int TYPE_E_CANTLOADLIBRARY = -2147312566;
-		public const int TYPE_E_INCONSISTENTPROPFUNCS = -2147312509;
-		public const int TYPE_E_CIRCULARTYPE = -2147312508;
-		public const int STG_E_INVALIDFUNCTION = -2147287039;
-		public const int STG_E_FILENOTFOUND = -2147287038;
-		public const int STG_E_PATHNOTFOUND = -2147287037;
-		public const int STG_E_TOOMANYOPENFILES = -2147287036;
-		public const int STG_E_ACCESSDENIED = -2147287035;
-		public const int STG_E_INVALIDHANDLE = -2147287034;
-		public const int STG_E_INSUFFICIENTMEMORY = -2147287032;
-		public const int STG_E_NOMOREFILES = -2147287022;
-		public const int STG_E_DISKISWRITEPROTECTED = -2147287021;
-		public const int STG_E_SEEKERROR = -2147287015;
-		public const int STG_E_WRITEFAULT = -2147287011;
-		public const int STG_E_READFAULT = -2147287010;
-		public const int STG_E_SHAREVIOLATION = -2147287008;
-		public const int STG_E_LOCKVIOLATION = -2147287007;
-		public const int STG_E_FILEALREADYEXISTS = -2147286960;
-		public const int STG_E_MEDIUMFULL = -2147286928;
-		public const int STG_E_INVALIDHEADER = -2147286789;
-		public const int STG_E_INVALIDNAME = -2147286788;
-		public const int STG_E_UNKNOWN = -2147286787;
-		public const int STG_E_UNIMPLEMENTEDFUNCTION = -2147286786;
-		public const int STG_E_INUSE = -2147286784;
-		public const int STG_E_NOTCURRENT = -2147286783;
-		public const int STG_E_REVERTED = -2147286782;
-		public const int STG_E_CANTSAVE = -2147286781;
-		public const int STG_E_OLDFORMAT = -2147286780;
-		public const int STG_E_OLDDLL = -2147286779;
-		public const int STG_E_SHAREREQUIRED = -2147286778;
-		public const int STG_E_NOTFILEBASEDSTORAGE = -2147286777;
-		public const int STG_E_EXTANTMARSHALLINGS = -2147286776;
-		public const int CLASS_E_NOTLICENSED = -2147221230;
-		public const int REGDB_E_CLASSNOTREG = -2147221164;
-		public const int MK_E_UNAVAILABLE = -2147221021;
-		public const int MK_E_INVALIDEXTENSION = -2147221018;
-		public const int MK_E_CANTOPENFILE = -2147221014;
-		public const int CO_E_CLASSSTRING = -2147221005;
-		public const int CO_E_APPNOTFOUND = -2147221003;
-		public const int CO_E_APPDIDNTREG = -2147220994;
-		public const int E_ACCESSDENIED = -2147024891;
-		public const int E_OUTOFMEMORY = -2147024882;
-		public const int E_INVALIDARG = -2147024809;
-		public const int CO_E_SERVER_EXEC_FAILURE = -2146959355;
+		internal const int E_NOTIMPL = -2147467263;
+		internal const int E_NOINTERFACE = -2147467262;
+		internal const int E_ABORT = -2147467260;
+		internal const int DISP_E_UNKNOWNINTERFACE = -2147352575;
+		internal const int DISP_E_MEMBERNOTFOUND = -2147352573;
+		internal const int DISP_E_PARAMNOTFOUND = -2147352572;
+		internal const int DISP_E_TYPEMISMATCH = -2147352571;
+		internal const int DISP_E_UNKNOWNNAME = -2147352570;
+		internal const int DISP_E_NONAMEDARGS = -2147352569;
+		internal const int DISP_E_BADVARTYPE = -2147352568;
+		internal const int DISP_E_OVERFLOW = -2147352566;
+		internal const int DISP_E_BADINDEX = -2147352565;
+		internal const int DISP_E_UNKNOWNLCID = -2147352564;
+		internal const int DISP_E_ARRAYISLOCKED = -2147352563;
+		internal const int DISP_E_BADPARAMCOUNT = -2147352562;
+		internal const int DISP_E_PARAMNOTOPTIONAL = -2147352561;
+		internal const int DISP_E_NOTACOLLECTION = -2147352559;
+		internal const int DISP_E_DIVBYZERO = -2147352558;
+		internal const int TYPE_E_BUFFERTOOSMALL = -2147319786;
+		internal const int TYPE_E_INVDATAREAD = -2147319784;
+		internal const int TYPE_E_UNSUPFORMAT = -2147319783;
+		internal const int TYPE_E_REGISTRYACCESS = -2147319780;
+		internal const int TYPE_E_LIBNOTREGISTERED = -2147319779;
+		internal const int TYPE_E_UNDEFINEDTYPE = -2147319769;
+		internal const int TYPE_E_QUALIFIEDNAMEDISALLOWED = -2147319768;
+		internal const int TYPE_E_INVALIDSTATE = -2147319767;
+		internal const int TYPE_E_WRONGTYPEKIND = -2147319766;
+		internal const int TYPE_E_ELEMENTNOTFOUND = -2147319765;
+		internal const int TYPE_E_AMBIGUOUSNAME = -2147319764;
+		internal const int TYPE_E_NAMECONFLICT = -2147319763;
+		internal const int TYPE_E_UNKNOWNLCID = -2147319762;
+		internal const int TYPE_E_DLLFUNCTIONNOTFOUND = -2147319761;
+		internal const int TYPE_E_BADMODULEKIND = -2147317571;
+		internal const int TYPE_E_SIZETOOBIG = -2147317563;
+		internal const int TYPE_E_TYPEMISMATCH = -2147316576;
+		internal const int TYPE_E_OUTOFBOUNDS = -2147316575;
+		internal const int TYPE_E_IOERROR = -2147316574;
+		internal const int TYPE_E_CANTCREATETMPFILE = -2147316573;
+		internal const int TYPE_E_CANTLOADLIBRARY = -2147312566;
+		internal const int TYPE_E_INCONSISTENTPROPFUNCS = -2147312509;
+		internal const int TYPE_E_CIRCULARTYPE = -2147312508;
+		internal const int STG_E_INVALIDFUNCTION = -2147287039;
+		internal const int STG_E_FILENOTFOUND = -2147287038;
+		internal const int STG_E_PATHNOTFOUND = -2147287037;
+		internal const int STG_E_TOOMANYOPENFILES = -2147287036;
+		internal const int STG_E_ACCESSDENIED = -2147287035;
+		internal const int STG_E_INVALIDHANDLE = -2147287034;
+		internal const int STG_E_INSUFFICIENTMEMORY = -2147287032;
+		internal const int STG_E_NOMOREFILES = -2147287022;
+		internal const int STG_E_DISKISWRITEPROTECTED = -2147287021;
+		internal const int STG_E_SEEKERROR = -2147287015;
+		internal const int STG_E_WRITEFAULT = -2147287011;
+		internal const int STG_E_READFAULT = -2147287010;
+		internal const int STG_E_SHAREVIOLATION = -2147287008;
+		internal const int STG_E_LOCKVIOLATION = -2147287007;
+		internal const int STG_E_FILEALREADYEXISTS = -2147286960;
+		internal const int STG_E_MEDIUMFULL = -2147286928;
+		internal const int STG_E_INVALIDHEADER = -2147286789;
+		internal const int STG_E_INVALIDNAME = -2147286788;
+		internal const int STG_E_UNKNOWN = -2147286787;
+		internal const int STG_E_UNIMPLEMENTEDFUNCTION = -2147286786;
+		internal const int STG_E_INUSE = -2147286784;
+		internal const int STG_E_NOTCURRENT = -2147286783;
+		internal const int STG_E_REVERTED = -2147286782;
+		internal const int STG_E_CANTSAVE = -2147286781;
+		internal const int STG_E_OLDFORMAT = -2147286780;
+		internal const int STG_E_OLDDLL = -2147286779;
+		internal const int STG_E_SHAREREQUIRED = -2147286778;
+		internal const int STG_E_NOTFILEBASEDSTORAGE = -2147286777;
+		internal const int STG_E_EXTANTMARSHALLINGS = -2147286776;
+		internal const int CLASS_E_NOTLICENSED = -2147221230;
+		internal const int REGDB_E_CLASSNOTREG = -2147221164;
+		internal const int MK_E_UNAVAILABLE = -2147221021;
+		internal const int MK_E_INVALIDEXTENSION = -2147221018;
+		internal const int MK_E_CANTOPENFILE = -2147221014;
+		internal const int CO_E_CLASSSTRING = -2147221005;
+		internal const int CO_E_APPNOTFOUND = -2147221003;
+		internal const int CO_E_APPDIDNTREG = -2147220994;
+		internal const int E_ACCESSDENIED = -2147024891;
+		internal const int E_OUTOFMEMORY = -2147024882;
+		internal const int E_INVALIDARG = -2147024809;
+		internal const int CO_E_SERVER_EXEC_FAILURE = -2146959355;
 
 		private static Hashtable _dotNetToVBMap = new Hashtable();
 		private static Hashtable _vbToDotNetClassMap = new Hashtable();
@@ -279,13 +279,13 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			_dotNetToVBMap.Add(-2147024894,VBErrors.FileNotFound);//FileNotFoundException     
 		}
 
-		public static int getVBFromDotNet(int number) 
+		internal static int getVBFromDotNet(int number) 
 		{
 			return (int) _dotNetToVBMap[number];
 		}
 
-		public static int fromDotNetToVB(int number) {
-
+		internal static int fromDotNetToVB(int number) 
+		{
 			if (number > 0)
 				return 0;
 
@@ -299,7 +299,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 				return number;
 		}
 
-		public static Exception BuildException(int number, string description, ref bool VBDefinedError) 
+		internal static Exception BuildException(int number, string description, ref bool VBDefinedError) 
 		{
 			if (number != 0) {
 				VBDefinedError = true;
@@ -337,7 +337,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		 * @param param1 parameter of message string
 		 */
 		
-		public static void ThrowException1(int hr, string param1) {
+		internal static void ThrowException1(int hr, string param1) {
 			//TODO: delete or convert???
 			//string str = "";
 
@@ -354,7 +354,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		 * @param hr
 		 * @return java.lang.Exception
 		 */
-		public static Exception VbMakeException(int hr) 
+		internal static Exception VbMakeException(int hr) 
 		{
 			string str = "";
 
@@ -367,7 +367,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			return VbMakeExceptionEx(hr, str);
 		}
 
-		public static Exception VbMakeException(Exception ex, int hr)
+		internal static Exception VbMakeException(Exception ex, int hr)
 		{
 			Information.Err().SetUnmappedError(hr);
 			return ex;
@@ -380,7 +380,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		 * @return java.lang.Exception
 		 */
 
-		public static Exception VbMakeExceptionEx(int number, string msg) {
+		internal static Exception VbMakeExceptionEx(int number, string msg) {
 			bool Bool = false; 
 			Exception exp;
 		

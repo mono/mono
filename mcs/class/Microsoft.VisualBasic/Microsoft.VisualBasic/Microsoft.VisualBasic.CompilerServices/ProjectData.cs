@@ -56,25 +56,16 @@ namespace Microsoft.VisualBasic.CompilerServices
 			pErr.CaptureException(ex, lErl);
 		}
  
-
-		
-		/*
-		[MonoTODO]
 		public static void EndApp()
 		{
-			//FIXME
+			//FileSystem.CloseAllFiles(Assembly.GetCallingAssembly());
+			Environment.Exit(0);
 		}
-		*/
 
-		/*
 		[MonoTODO]
 		protected static void Finalize()
 		{
-			//FIXME
+			throw new NotImplementedException();
 		}
-		*/
-
-		
-
 	}
 }

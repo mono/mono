@@ -16,7 +16,7 @@ namespace Microsoft.VisualBasic {
 		// Declarations
 		public short Column;
 
-		public TabInfo(short value)
+		internal TabInfo(short value)
 		{
 			Column = value;
 		}

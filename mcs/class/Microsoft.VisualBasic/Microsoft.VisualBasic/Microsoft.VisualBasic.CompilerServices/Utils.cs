@@ -49,33 +49,33 @@ using System.Resources;
 namespace Microsoft.VisualBasic.CompilerServices {
 	[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)] 
 	[Microsoft.VisualBasic.CompilerServices.StandardModule] 
-	 public class Utils {
-		 public const int SEVERITY_ERROR = Int32.MinValue;
-		 public const int FACILITY_CONTROL = 655360;
-		 public const int FACILITY_RPC = 65536;
-		 public const int FACILITY_ITF = 262144;
-		 public const int SCODE_FACILITY = 536805376;
-		 public const char chPeriod = '.';
-		 public const char chSpace = ' ';
-		 public const char chIntlSpace = '\u3000';
-		 public const char chZero = '0';
-		 public const char chHyphen = '-';
-		 public const char chPlus = '+';
-		 public const char chNull = '\0';
-		 public const char chLetterA = 'A';
-		 public const char chLetterZ = 'Z';
-		 public const char chColon = ':';
-		 public const char chSlash = '/';
-		 public const char chBackslash = '\\';
-		 public const char chTab = '\t';
-		 public const char chCharH0A = '\n';
-		 public const char chCharH0B = '\t';
-		 public const char chCharH0C = '\f';
-		 public const char chCharH0D = '\r';
-		 public const char chLineFeed = '\n';
-		 public const char chDblQuote = '\"';
+	 public sealed class Utils {
+		 internal const int SEVERITY_ERROR = Int32.MinValue;
+		 internal const int FACILITY_CONTROL = 655360;
+		 internal const int FACILITY_RPC = 65536;
+		 internal const int FACILITY_ITF = 262144;
+		 internal const int SCODE_FACILITY = 536805376;
+		 internal const char chPeriod = '.';
+		 internal const char chSpace = ' ';
+		 internal const char chIntlSpace = '\u3000';
+		 internal const char chZero = '0';
+		 internal const char chHyphen = '-';
+		 internal const char chPlus = '+';
+		 internal const char chNull = '\0';
+		 internal const char chLetterA = 'A';
+		 internal const char chLetterZ = 'Z';
+		 internal const char chColon = ':';
+		 internal const char chSlash = '/';
+		 internal const char chBackslash = '\\';
+		 internal const char chTab = '\t';
+		 internal const char chCharH0A = '\n';
+		 internal const char chCharH0B = '\t';
+		 internal const char chCharH0C = '\f';
+		 internal const char chCharH0D = '\r';
+		 internal const char chLineFeed = '\n';
+		 internal const char chDblQuote = '\"';
 		 //TODO: why is this static, should it be const?
-		 public static char[] m_achIntlSpace = new char[] { ' ', '\u3000' };
+		 internal static char[] m_achIntlSpace = new char[] { ' ', '\u3000' };
 
 		 private const  String FILE_NAME = "Microsoft.VisualBasic.VBUtils";
 		 private static ResourceManager RESOURCE_BUNDLE = new ResourceManager(FILE_NAME, Assembly.GetExecutingAssembly()) ;
@@ -85,7 +85,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		 //        throw new NotImplementedException("The method get_VBAResourceManager in class VisualBasic.CompilerServices.Utils is not supported");
 		 //    }
 
-		 public static string GetResourceString(string key) 
+		 internal static string GetResourceString(string key) 
 		 {
 			 string str = null;
 			 try {
@@ -98,19 +98,19 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			 return str;
 		 }
 
-		 public static string GetResourceString(string key, bool notUsed) 
+		 internal static string GetResourceString(string key, bool notUsed) 
 		 {
 			 return GetResourceString(key);
 		 }
 
-		 public static string GetResourceString (string key,string paramValue) 
+		 internal static string GetResourceString (string key,string paramValue) 
 		 {
 			 StringBuilder sb = new StringBuilder(GetResourceString(key));
 			 sb.Replace("|1", paramValue);
 			 return sb.ToString();
 		 }
 
-		 public static string GetResourceString (string key, string paramValue1, string paramValue2) 
+		 internal static string GetResourceString (string key, string paramValue1, string paramValue2) 
 		 {
 			 StringBuilder sb = new StringBuilder(GetResourceString(key));
 			 sb.Replace("|1", paramValue1);
@@ -118,7 +118,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			 return sb.ToString();
 		 }
 
-		 public static string GetResourceString (string key, string param1, string param2, string param3) 
+		 internal static string GetResourceString (string key, string param1, string param2, string param3) 
 		 {
 			 StringBuilder sb = new StringBuilder(GetResourceString(key));
 			 sb.Replace("|1", param1);
@@ -128,7 +128,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		 }
 
 
-		 public static string GetResourceString (string key, string param1, string param2, string param3,
+		 internal static string GetResourceString (string key, string param1, string param2, string param3,
 							 string param4) 
 		 {
 			 StringBuilder sb = new StringBuilder(GetResourceString(key));
@@ -139,7 +139,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			 return sb.ToString();
 		 }
 
-		 public static string GetResourceString (int ResourceId) 
+		 internal static string GetResourceString (int ResourceId) 
 		 {
 			 string str = "ID" + ResourceId.ToString();
 			 return GetResourceString(str);
@@ -150,13 +150,13 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			 throw ExceptionUtils.VbMakeException(hr);
 		 }
 
-		 public static bool IsNumericType (Type tc) 
+		 internal static bool IsNumericType (Type tc) 
 		 {
 			 TypeCode typeCode = Type.GetTypeCode(tc);
 			 return IsNumericTypeCode((int)typeCode);
 		 }
     
-		 public static bool IsNumericTypeCode (int i) 
+		 internal static bool IsNumericTypeCode (int i) 
 		 {
 			 switch (i) {
 			 case (int)TypeCode.Boolean:
@@ -206,7 +206,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			 return sb.ToString();
 		 }
     
-		 public static string VBFriendlyName (object obj) 
+		 internal static string VBFriendlyName (object obj) 
 		 {
 			 if (obj == null)
 				 return "Nothing";
@@ -214,7 +214,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			 return VBFriendlyName(type,obj);
 		 }
 
-		 public static string VBFriendlyName (Type type) 
+		 internal static string VBFriendlyName (Type type) 
 		 {
 			 return VBFriendlyNameOfTypeName(type.Name);
 		 }
@@ -242,7 +242,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		 * @param typename the given type name.
 		 * @return string the vb presentation of the type name
 		 */
-		 public static string VBFriendlyNameOfTypeName (string typename) 
+		 internal static string VBFriendlyNameOfTypeName (string typename) 
 		 {
 			 string tmpStr = null;
 			 int bracketIndex = 0;
@@ -283,7 +283,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		 * @param s the string that need to be changed
 		 * @return string the updated string. 
 		 */
-		public static string StdFormat(string s) {
+		internal static string StdFormat(string s) {
 			string separator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
 
 			int index = s.IndexOf(separator);
@@ -314,7 +314,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		 * @param Val the given long value
 		 * @return string the Octal string representation
 		 */
-		public static string OctFromLong(long Val) {
+		internal static string OctFromLong(long Val) {
 			return Convert.ToString(Val, 8);
 		}
 
@@ -327,7 +327,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		}
 
 		//TODO:
-		public static DateTimeFormatInfo GetDateTimeFormatInfo() {
+		internal static DateTimeFormatInfo GetDateTimeFormatInfo() {
 			return CultureInfo.CurrentCulture.DateTimeFormat;
 		}
 
@@ -336,11 +336,11 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		 * @param lNumber the exception constant
 		 * @return int the exception message id in the resource file
 		 */
-		public static int MapHRESULT(int lNumber) {
+		internal static int MapHRESULT(int lNumber) {
 			return ExceptionUtils.fromDotNetToVB(lNumber);
 		}
 
-		public static CultureInfo GetCultureInfo() {
+		internal static CultureInfo GetCultureInfo() {
 			return CultureInfo.CurrentCulture;
 		}
 
@@ -352,15 +352,15 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			return currentCulture;
 		}
 
-		public static CultureInfo GetInvariantCultureInfo() {
+		internal static CultureInfo GetInvariantCultureInfo() {
 			return CultureInfo.InvariantCulture;
 		}
 
-		public static Encoding GetFileIOEncoding() {
+		internal static Encoding GetFileIOEncoding() {
 			return Encoding.Default;
 		}
 
-		public static int GetLocaleCodePage() {
+		internal static int GetLocaleCodePage() {
 			return CultureInfo.CurrentCulture.TextInfo.ANSICodePage;
 		}
 //mono implmentation
@@ -457,11 +457,11 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		}
 
 		[MonoTODO]
-		public static string FieldToString(FieldInfo fieldinfo) {
+		internal static string FieldToString(FieldInfo fieldinfo) {
 			throw new NotImplementedException("The method FieldToString in class VisualBasic.CompilerServices.Utils is not supported");
 		}
 
-		public static string MemberToString(MemberInfo memberinfo) {
+		internal static string MemberToString(MemberInfo memberinfo) {
 			switch (memberinfo.MemberType) {
 				case MemberTypes.Method :
 					return MethodToString((MethodInfo)memberinfo);

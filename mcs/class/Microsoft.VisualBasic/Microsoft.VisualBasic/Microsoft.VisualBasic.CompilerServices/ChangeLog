@@ -1,3 +1,14 @@
+2004-06-23  Jambunathan K  <kjambunathan@novell.com>
+	* ExceptionUtils.cs: 
+	* FlowControl.cs: 
+	* IVbHost.cs: 
+	* LateBinding.cs: 
+	* ObjectType.cs: 
+	* ProjectData.cs: 
+	* StringType.cs: 
+	* Utils.cs: 
+	* VBBinder.cs: corcompare based fixes
+
 2004-06-15  Jambunathan K  <kjambunathan@novell.com>
 	* ExceptionUtils.cs: Trivial changes
 

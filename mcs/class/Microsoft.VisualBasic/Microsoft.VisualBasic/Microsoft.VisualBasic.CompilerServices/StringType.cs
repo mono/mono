@@ -266,18 +266,12 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		 * @param sInsert the string from which the character should be taken
 		 */
 
-		public static void MidStmtStr(
-			//ObjectRefWrapper strDesRef,
-			ref object strDesRef,
-			int startPosition,
-			int maxInsertLength,
-			string sInsert) {
+		public static void MidStmtStr(ref string strDesRef, int startPosition, int maxInsertLength, string sInsert) 
+		{
 			int destLen = 0;
-			//int count;
 			int insertLen = 0;
-			string dest = (string)strDesRef;
-			//StringBuilder sb;
-
+			string dest = strDesRef;
+		
 			if (dest != null)
 				destLen = dest.Length;
 			if (sInsert != null)

@@ -1,3 +1,14 @@
+2004-06-23  Jambunathan K  <kjambunathan@novell.com>
+	* VBFixedStringAttribute.cs: 
+	* VBFile.cs: 
+	* TabInfo.cs: 
+	* SpcInfo.cs: 
+	* RandomVBFile.cs: 
+	* Interaction.cs: 
+	* FileSystem.cs: 
+	* ErrObject.cs: 
+	* BaseVBFile.cs: corcompare based fixes
+	
 2004-06-23 Sachin Kumar <skumar1@novell.com>
 	* Conversion.cs: Trivial Fixes
 	* Strings.cs: Trivial Fixes

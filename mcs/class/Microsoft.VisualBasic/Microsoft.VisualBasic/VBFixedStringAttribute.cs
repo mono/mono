@@ -39,7 +39,7 @@ using Microsoft.VisualBasic.CompilerServices;
 		// Declarations
 		private int _length; 
 		// Constructors
-		VBFixedStringAttribute(System.Int32 Length) { 
+		public VBFixedStringAttribute(System.Int32 Length) { 
 			if ((Length < 1) || (Length > 32767)) {
 				throw new ArgumentException(
 					Utils.GetResourceString("Invalid_VBFixedString"));

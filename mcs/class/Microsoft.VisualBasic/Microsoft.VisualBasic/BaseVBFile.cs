@@ -139,13 +139,13 @@ public abstract class BaseVBFile : VBFile
 		throw (IOException)ExceptionUtils.VbMakeException(VBErrors.BadFileMode);
 	}
     
-	public virtual void get(object Value,long RecordNumber,bool ArrayIsDynamic,
+	public virtual void get(ref Array Value,long RecordNumber,bool ArrayIsDynamic,
 			bool StringIsFixedLength)
 	{
 		throw (IOException)ExceptionUtils.VbMakeException(VBErrors.BadFileMode);
 	}  
 
-	public virtual void get(ref object value,long recordNumber,bool bIgnored)
+	public virtual void get(ref string value,long recordNumber,bool bIgnored)
 	{
 		throw (IOException)ExceptionUtils.VbMakeException(VBErrors.BadFileMode);
 	} 
