@@ -43,7 +43,7 @@ namespace Mono.Security {
 			get {
 				// if none then we create a new keypair
 				if (rsa == null)
-					rsa = RSA.Create ();
+					rsa = (RSA)RSA.Create ();
 				return rsa; 
 			}
 			set { 
