@@ -109,7 +109,7 @@ namespace MonoTests.System.Security.Policy {
 
 		[Test]
 #if !NET_2_0
-		[Category ("NotWorking")] // Current hashing is compatible with Fx 2.0 but not with Fx 1.0/1.1
+		[Category ("NotDotNet")] // Current hashing is compatible with Fx 2.0 but not with Fx 1.0/1.1
 #endif
 		public void MD5_Property ()
 		{
@@ -119,7 +119,7 @@ namespace MonoTests.System.Security.Policy {
 
 		[Test]
 #if !NET_2_0
-		[Category ("NotWorking")] // Current hashing is compatible with Fx 2.0 but not with Fx 1.0/1.1
+		[Category ("NotDotNet")] // Current hashing is compatible with Fx 2.0 but not with Fx 1.0/1.1
 #endif
 		public void SHA1_Property ()
 		{
@@ -129,7 +129,7 @@ namespace MonoTests.System.Security.Policy {
 
 		[Test]
 #if !NET_2_0
-		[Category ("NotWorking")] // Current hashing is compatible with Fx 2.0 but not with Fx 1.0/1.1
+		[Category ("NotDotNet")] // Current hashing is compatible with Fx 2.0 but not with Fx 1.0/1.1
 #endif
 		public void GenerateHash_MD5 ()
 		{
@@ -140,7 +140,7 @@ namespace MonoTests.System.Security.Policy {
 
 		[Test]
 #if !NET_2_0
-		[Category ("NotWorking")] // Current hashing is compatible with Fx 2.0 but not with Fx 1.0/1.1
+		[Category ("NotDotNet")] // Current hashing is compatible with Fx 2.0 but not with Fx 1.0/1.1
 #endif
 		public void GenerateHash_SHA1 ()
 		{
@@ -151,7 +151,7 @@ namespace MonoTests.System.Security.Policy {
 
 		[Test]
 #if !NET_2_0
-		[Category ("NotWorking")] // Current hashing is compatible with Fx 2.0 but not with Fx 1.0/1.1
+		[Category ("NotDotNet")] // Current hashing is compatible with Fx 2.0 but not with Fx 1.0/1.1
 #endif
 		public void GenerateHash_SHA256 ()
 		{
@@ -162,7 +162,7 @@ namespace MonoTests.System.Security.Policy {
 
 		[Test]
 #if !NET_2_0
-		[Category ("NotWorking")] // Current hashing is compatible with Fx 2.0 but not with Fx 1.0/1.1
+		[Category ("NotDotNet")] // Current hashing is compatible with Fx 2.0 but not with Fx 1.0/1.1
 #endif
 		public void GenerateHash_SHA384 ()
 		{
@@ -173,7 +173,7 @@ namespace MonoTests.System.Security.Policy {
 
 		[Test]
 #if !NET_2_0
-		[Category ("NotWorking")] // Current hashing is compatible with Fx 2.0 but not with Fx 1.0/1.1
+		[Category ("NotDotNet")] // Current hashing is compatible with Fx 2.0 but not with Fx 1.0/1.1
 #endif
 		public void GenerateHash_SHA512 ()
 		{
