@@ -1021,6 +1021,18 @@ namespace System {
 			}
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern GenericParameterAttributes GetGenericParameterAttributes ();
+
+		public virtual GenericParameterAttributes GenericParameterAttributes {
+			get {
+				if (!IsGenericParameter)
+					throw new InvalidOperationException ();
+
+				return GetGenericParameterAttributes ();
+			}
+		}
+
 		public abstract MethodInfo DeclaringMethod {
 			get;
 		}

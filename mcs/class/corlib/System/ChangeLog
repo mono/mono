@@ -1,5 +1,9 @@
 2004-09-23  Martin Baulig  <martin@ximian.com>
 
+	* Type.cs (Type.GenericParameterAttributes): New public property.
+
+2004-09-23  Martin Baulig  <martin@ximian.com>
+
 	* GenericParameterAttributes.cs: New file.
 
 2004-09-22  Zoltan Varga  <vargaz@freemail.hu>
