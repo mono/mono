@@ -1,3 +1,9 @@
+2004-03-09  Jackson Harper  <jackson@ximian.com>
+
+	* AssemblyBuilderAccessTest.cs:
+	* CustomAttributeBuilderTest.cs: New test cases
+	from nvineeth_mono@yahoo.com.
+
 2004-02-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MethodBuilderTest.cs: Fix test so it runs under MS.
