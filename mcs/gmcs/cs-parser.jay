@@ -681,10 +681,14 @@ struct_declaration
 					 (int) $2, (Attributes) $1, lexer.Location);
 		current_container = new_struct;
 		RootContext.Tree.RecordDecl (full_struct_name, new_struct);
+		lexer.ConstraintsParsing = true;
 	  }
 	  opt_type_parameter_list
 	  opt_class_base
 	  opt_type_parameter_constraints_clauses
+	  {
+		lexer.ConstraintsParsing = false;
+	  }
 	  struct_body
 	  opt_semicolon
 	  {
@@ -911,9 +915,13 @@ method_header
 	  member_name
 	  opt_type_parameter_list
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
+	  {
+		lexer.ConstraintsParsing = true;
+	  }
 	  opt_type_parameter_constraints_clauses
 	  {
-		if ($9 != null && $5 == null)
+		lexer.ConstraintsParsing = false;
+		if ($10 != null && $5 == null)
 			Report.Error (-200, lexer.Location,
 				      "Type parameter constraints only valid if there is a type parameter list");
 
@@ -923,7 +931,7 @@ method_header
 			generic = new GenericMethod (current_namespace, current_container,
 						     (string) $4, lexer.Location);
 
-			CheckDef (generic.SetParameterInfo ((ArrayList) $5, (ArrayList) $9), generic.Name, generic.Location);
+			CheckDef (generic.SetParameterInfo ((ArrayList) $5, (ArrayList) $10), generic.Name, generic.Location);
 			method = new Method (generic, (Expression) $3, (int) $2, (string) $4,
 					     (Parameters) $7, (Attributes) $1, lexer.Location);
 		} else
@@ -940,9 +948,13 @@ method_header
 	  member_name
 	  opt_type_parameter_list
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
+	  {
+		lexer.ConstraintsParsing = true;
+	  }
 	  opt_type_parameter_constraints_clauses
 	  {
-		if ($9 != null && $5 == null)
+		lexer.ConstraintsParsing = false;
+		if ($10 != null && $5 == null)
 			Report.Error (-200, lexer.Location,
 				      "Type parameter constraints only valid if there is a type parameter list");
 
@@ -952,7 +964,7 @@ method_header
 			generic = new GenericMethod (current_namespace, current_container,
 						     (string) $4, lexer.Location);
 
-			CheckDef (generic.SetParameterInfo ((ArrayList) $5, (ArrayList) $9), generic.Name, generic.Location);
+			CheckDef (generic.SetParameterInfo ((ArrayList) $5, (ArrayList) $10), generic.Name, generic.Location);
 
 			method = new Method (generic, TypeManager.system_void_expr, (int) $2,
 					    (string) $4, (Parameters) $7, (Attributes) $1,
@@ -1193,10 +1205,14 @@ interface_declaration
 		}
 		current_interface = new_interface;
 		RootContext.Tree.RecordDecl (full_interface_name, new_interface);
+		lexer.ConstraintsParsing = true;
 	  }
 	  opt_type_parameter_list
 	  opt_interface_base
 	  opt_type_parameter_constraints_clauses
+	  {
+		lexer.ConstraintsParsing = false;
+	  }
 	  interface_body opt_semicolon
 	  { 
 		Interface new_interface = (Interface) current_interface;
@@ -2904,10 +2920,15 @@ class_declaration
 				       (Attributes) $1, lexer.Location);
 		current_container = new_class;
 		RootContext.Tree.RecordDecl (name, new_class);
+
+		lexer.ConstraintsParsing = true;
 	  }
 	  opt_type_parameter_list
 	  opt_class_base
 	  opt_type_parameter_constraints_clauses
+	  {
+		lexer.ConstraintsParsing = false;
+	  }
 	  class_body 
 	  opt_semicolon 
 	  {
@@ -2929,6 +2950,9 @@ class_declaration
 	| opt_attributes
 	  opt_modifiers
 	  CLASS IDENTIFIER
+	  {
+		lexer.ConstraintsParsing = true;
+	  }
 	  WHERE {
 		Report.Error (-200, lexer.Location,
 			"Type parameter constraints only valid if there is a type parameter list");

@@ -40,6 +40,7 @@ namespace Mono.CSharp
 		bool handle_get_set = false;
 		bool handle_remove_add = false;
 		bool handle_assembly = false;
+		bool handle_constraints = false;
 
 		//
 		// Whether tokens have been seen on this line
@@ -130,6 +131,16 @@ namespace Mono.CSharp
 
 			set {
 				handle_remove_add = value;
+			}
+		}
+
+		public bool ConstraintsParsing {
+			get {
+				return handle_constraints;
+			}
+
+			set {
+				handle_constraints = value;
 			}
 		}
 		
@@ -314,6 +325,8 @@ namespace Mono.CSharp
 			if (handle_remove_add == false && (res == Token.REMOVE || res == Token.ADD))
 				return -1;
 			if (handle_assembly == false && res == Token.ASSEMBLY)
+				return -1;
+			if (handle_constraints == false && res == Token.WHERE)
 				return -1;
 			return res;
 			

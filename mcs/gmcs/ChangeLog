@@ -1,3 +1,9 @@
+2003-12-08  Martin Baulig  <martin@ximian.com>
+
+	* cs-parser.jay, cs-tokenizer.cs: `where' is not a keyword, it
+	just has some special meaning in some situations.  For instance,
+	it is allowed to use `where' as the name of a variable etc.
+
 2003-12-04  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (ComposedCast.DoResolveAsTypeStep): Use
