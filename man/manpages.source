@@ -1,4 +1,4 @@
 <?xml version="1.0"?>
 <monodoc>
-  <source provider="man" basefile="tree" path="Man Pages"/>
+  <source provider="man" basefile="tree" path="manpages"/>
 </monodoc>
