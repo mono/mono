@@ -1,3 +1,8 @@
+
+Wed Feb 13 23:00:21 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* decimal.c: remove _MSC_VER conditional.
+
 2002-02-13  Dick Porter  <dick@ximian.com>
 
 	* socket-io.c: 
