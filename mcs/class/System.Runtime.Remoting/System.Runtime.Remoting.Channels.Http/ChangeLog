@@ -1,3 +1,8 @@
+2005-01-25  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* HttpServer.cs: Use a single stream for in an out stream, since they
+	where the same. Set IPAddress and ConnectionId transport headers.
+
 2005-01-14  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* HttpServerChannel.cs: Use the new RemotingThreadPool to manage threads.

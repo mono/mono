@@ -51,11 +51,15 @@ namespace System.Runtime.Remoting.Channels.Http
 
 	internal class RequestArguments
 	{
+		static int count;
+		Socket socket;
+		
 		public RequestArguments (Socket socket, HttpServerTransportSink sink)
 		{
+			Id = count++;
 			NetworkStream ns = new NetworkStream (socket);
-			InputStream = ns;
-			OutputStream = ns;
+			this.Stream = ns;
+			this.socket = socket;
 			Sink = sink;
 		}
 		
@@ -64,8 +68,17 @@ namespace System.Runtime.Remoting.Channels.Http
 			HttpServer.ProcessRequest (this);
 		}
 		
-		public Stream InputStream;
-		public Stream OutputStream;
+		public IPAddress ClientAddress
+		{
+			get {
+				IPEndPoint ep = socket.RemoteEndPoint as IPEndPoint;
+				if (ep != null) return ep.Address;
+				else return null;
+			}
+		}
+		
+		public int Id;
+		public Stream Stream;
 		public HttpServerTransportSink Sink;
 	}
 
@@ -111,7 +124,7 @@ namespace System.Runtime.Remoting.Channels.Http
 			byte[] buffer = new byte[1024];
 			ArrayList  Headers = new ArrayList();
 			
-			Stream ist = reqArg.InputStream;
+			Stream ist = reqArg.Stream;
 
 			int index =0;
 			while (!bLastLine)
@@ -198,7 +211,7 @@ namespace System.Runtime.Remoting.Channels.Http
 			{
 				int nr = 0;
 				while (nr < buffer.Length)
-					nr += reqArg.InputStream.Read (buffer, nr, buffer.Length - nr);
+					nr += reqArg.Stream.Read (buffer, nr, buffer.Length - nr);
 			}
 			catch (SocketException e)
 			{
@@ -233,6 +246,8 @@ namespace System.Runtime.Remoting.Channels.Http
 			THeaders[CommonTransportKeys.UserAgent] = HeaderFields["user-agent"];
 			THeaders[CommonTransportKeys.Host] = HeaderFields["host"];
 			THeaders[CommonTransportKeys.SoapAction] = HeaderFields["SOAPAction"];
+			THeaders[CommonTransportKeys.IPAddress] = reqArg.ClientAddress;
+			THeaders[CommonTransportKeys.ConnectionId] = reqArg.Id;
 
 			foreach(DictionaryEntry DictEntry in CustomHeaders)
 			{
@@ -302,10 +317,10 @@ namespace System.Runtime.Remoting.Channels.Http
 		   	headersBuffer = Encoding.ASCII.GetBytes (responseStr.ToString());
 
 			//send headersBuffer
-			reqArg.OutputStream.Write (headersBuffer, 0, headersBuffer.Length);
+			reqArg.Stream.Write (headersBuffer, 0, headersBuffer.Length);
 
 			if (entityBuffer != null)
-				reqArg.OutputStream.Write (entityBuffer, 0, entityBuffer.Length);
+				reqArg.Stream.Write (entityBuffer, 0, entityBuffer.Length);
 		}
 
 		internal static string GetReasonPhrase (int HttpStatusCode)
