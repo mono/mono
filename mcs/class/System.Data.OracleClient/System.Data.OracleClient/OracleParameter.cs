@@ -217,6 +217,7 @@ namespace System.Data.OracleClient {
 			OciDataType bindType = ociType;
 			IntPtr bindValue = IntPtr.Zero;
 			int bindSize = size;
+			int rsize = 0;
 
 			if (value == DBNull.Value) {
 				indicator = 0;
@@ -225,10 +226,7 @@ namespace System.Data.OracleClient {
 			}
 			else {
 				// TODO: do other data types and oracle data types
-				// such as, blobs, clobs, etc...  
 				// should I be using IConvertible to convert?
-				// blobs and clobs may need a OracleLob's OciLobLocator
-
 				if (oracleType == OracleType.DateTime) {
 					string oraDateFormat = connection.GetSessionDateFormat ();
 					string sysDateFormat = OracleDateTime.ConvertOracleDateFormatToSystemDateTime (oraDateFormat);
@@ -253,36 +251,62 @@ namespace System.Data.OracleClient {
 						throw new NotImplementedException (); // ?
 
 					sDate = dt.ToString (sysDateFormat);
+					rsize = 0;
+			
+					// Get size of buffer
+					OciCalls.OCIUnicodeToCharSet (statement.Parent, null, sDate, out rsize);
+			
+					// Fill buffer
+					bytes = new byte[rsize];
+					OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, sDate, out rsize);
 					
 					bindType = OciDataType.VarChar2; 
-					bindValue = Marshal.StringToHGlobalAnsi (sDate);
+					//bindValue = Marshal.StringToHGlobalAnsi (sDate);
 					bindSize = sDate.Length;
 				}
 				else if (oracleType == OracleType.Blob) {
-					// FIXME: BLOBs not working. do i need a lob locator?
 					bytes = (byte[]) value;
-					bindType = OciDataType.Long;
+					bindType = OciDataType.LongRaw;
 					bindSize = bytes.Length;
 				}
 				else if (oracleType == OracleType.Clob) {
-					// FIXME: CLOBs not working. do i need a lob locator?
-					string v = "";
-					v = (string) value;
-
-					UnicodeEncoding encoding = new UnicodeEncoding ();
-					bytes = encoding.GetBytes (v);
+					string v = (string) value;
+					rsize = 0;
+			
+					// Get size of buffer
+					OciCalls.OCIUnicodeToCharSet (statement.Parent, null, v, out rsize);
+			
+					// Fill buffer
+					bytes = new byte[rsize];
+					OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, v, out rsize);
 
 					bindType = OciDataType.Long;
 					bindSize = bytes.Length;
 				}
+				else if (oracleType == OracleType.Raw) {
+					byte[] val = value as byte[];
+					bindValue = Marshal.AllocHGlobal (val.Length);
+					Marshal.Copy (val, 0, bindValue, val.Length);
+					bindSize = val.Length;
+				}
 				else {
-					bindValue = Marshal.StringToHGlobalAnsi (value.ToString ());
+					string svalue = value.ToString ();
+					rsize = 0;
+			
+					// Get size of buffer
+					OciCalls.OCIUnicodeToCharSet (statement.Parent, null, svalue, out rsize);
+			
+					// Fill buffer
+					bytes = new byte[rsize];
+					OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, svalue, out rsize);
+
+					//bindValue = Marshal.StringToHGlobalAnsi (value.ToString ());
 					bindType = OciDataType.VarChar2;
 					bindSize = value.ToString ().Length;
 				}
 			}
 
-			if (oracleType == OracleType.Blob || oracleType == OracleType.Clob) {
+			if (bytes != null) {
 				status = OciCalls.OCIBindByNameBytes (statement,
 					out tmpHandle,
 					connection.ErrorHandle,
@@ -345,7 +369,7 @@ namespace System.Data.OracleClient {
 			case "System.String":
 				SetOracleType (OracleType.VarChar);
 				break;
-			case "System.DataType":
+			case "System.DateTime":
 				SetOracleType (OracleType.DateTime);
 				break;
 			case "System.Decimal":

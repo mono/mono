@@ -306,6 +306,9 @@ namespace Test.OracleClient
 						case "System.Data.OracleClient.OracleDateTime":
 							oravalue = ((OracleDateTime) ovalue).Value;
 							break;
+						case "System.Byte[]":
+							oravalue = GetHexString((byte[])ovalue);
+							break;
 						case "System.Decimal":
 							Console.WriteLine("           *** Get Decimal, Int16, Int32, Int64, Float, Double, ...");
 							decimal dec = reader.GetDecimal (f);

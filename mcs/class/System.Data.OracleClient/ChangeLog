@@ -1,3 +1,19 @@
+2005-02-25  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.OracleClient/OracleParameter.cs: modified 
+	  - fix for input parameters for strings, dates,
+	    CLOBs, and other types 
+	    to use OCIUnicodeToCharSet to convert
+	    the string to bytes that are in Oracle's character set
+	  - fix for input parameters for BLOBs to 
+	    use OciDataType.LongRaw instead of Long
+	  - fix for Raw data type 
+	    thanks to coneto@shaw.ca (Curtis) which fixes bug #72416
+	    and also fix "System.DataType" 
+	    to "System.DateTime" in InferOracleType
+	    
+	* Test/TestOracleClient.cs: handle byte[] from OracleDataReader.GetValue()
+
 2005-02-20  Daniel Morgan <danielmorgan@verizon.net>
 
 	* System.Data.OracleClient/OracleDataReader.cs: use ICovertible
