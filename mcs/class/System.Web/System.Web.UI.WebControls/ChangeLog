@@ -1,3 +1,23 @@
+
+2002-10-28      Gaurav Vaish <gvaish_mono@lycos.com>
+
+	* DataList.cs          - RenderContents(HtmlTextWriter)  : Implemented.
+	                       - GetItem(ListItemType, int)      : Removed TODO.
+	                       - CreateControlHierarchy(bool)    : Implemented.
+	                       - CreateItem(int, ListItemType)   : Implemented.
+	                       - CreateItem(int, ListItemType,
+	                               bool, object)             : Implemented.
+	                       - InitializeItem(DataItem)        : Implemented.
+	* DataGrid.cs          - CreateControlHierarchy(bool)    : Bug fix.
+	                    The ViewState["_!ItemCount"],
+	                        ViewState["_!DataSource_ItemCount"]
+	                          are shared by DataList and DataGrid, and hence
+	                          should share the same name.
+	                       - ResolveDataSource(object, string)
+	                             : Removed. Use System.Web.UI.Utils.DataSourceHelper
+	                               ::GetResolvedDataSource(object, string).
+
+
 2002-09-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataGrid.cs: fixed compilation

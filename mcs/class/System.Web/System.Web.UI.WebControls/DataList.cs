@@ -16,6 +16,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Web;
 using System.Web.UI;
+using System.Web.Util;
 
 namespace System.Web.UI.WebControls
 {
@@ -700,13 +701,38 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[MonoTODO]
 		protected override void RenderContents(HtmlTextWriter writer)
 		{
-			throw new NotImplementedException();
+			if(Controls.Count > 0)
+			{
+				RepeatInfo repeater       = new RepeatInfo();
+				Table      templateTable  = null;
+				if(extractTemplateRows)
+				{
+					repeater.RepeatDirection = RepeatDirection.Vertical;
+					repeater.RepeatLayout    = RepeatLayout.Flow;
+					repeater.RepeatColumns   = 1;
+					repeater.OuterTableImplied = true;
+					
+					templateTable = new Table();
+					templateTable.ID = ClientID;
+					templateTable.CopyBaseAttributes(this);
+					templateTable.ApplyStyle(ControlStyle);
+					templateTable.RenderBeginTag(writer);
+				} else
+				{
+					repeater.RepeatDirection = RepeatDirection;
+					repeater.RepeatLayout    = RepeatLayout;
+					repeater.RepeatColumns   = RepeatColumns;
+				}
+				repeater.RenderRepeater(writer, this, ControlStyle, this);
+				if(templateTable != null)
+				{
+					templateTable.RenderEndTag(writer);
+				}
+			}
 		}
 
-		[MonoTODO]
 		private DataListItem GetItem(ListItemType itemType, int repeatIndex)
 		{
 			DataListItem retVal = null;
@@ -733,25 +759,117 @@ namespace System.Web.UI.WebControls
 		/// <summary>
 		/// Undocumented
 		/// </summary>
-		[MonoTODO]
-		protected override void CreateControlHierarchy(bool create)
+		protected override void CreateControlHierarchy(bool useDataSource)
 		{
-			throw new NotImplementedException();
+			IEnumerable source = null;
+			ArrayList          dkeys   = DataKeysArray;
+			if(itemsArray != null)
+				itemsArray.Clear();
+			else
+				itemsArray = new ArrayList();
+			extractTemplateRows = ExtractTemplateRows;
+			if(!useDataSource)
+			{
+				int count = (int)ViewState["_!ItemCount"];
+				if(count != -1)
+				{
+					source = new DataSourceInternal(count);
+					itemsArray.Capacity = count;
+				}
+			} else
+			{
+				dkeys.Clear();
+				source = DataSourceHelper.GetResolvedDataSource(DataSource, DataMember);
+				if(source != null && source is ICollection)
+				{
+					dkeys.Capacity = ((ICollection)source).Count;
+					itemsArray.Capacity = ((ICollection)source).Count;
+				}
+			}
+			IEnumerator listEnumerator = null;
+			int         itemCount      = 0;
+			if(source != null)
+			{
+				int index          = 0;
+				int editIndex      = EditItemIndex;
+				int selIndex       = SelectedIndex;
+				string dataKey     = DataKeyField;
+				
+				bool useDB = (useDataSource ? (dataKey.Length != 0) : false);
+				
+				if(headerTemplate != null)
+				{
+					CreateItem(-1, 0, useDataSource, null);
+				}
+				listEnumerator = source.GetEnumerator();
+				try
+				{
+					while(listEnumerator.MoveNext())
+					{
+						object current = listEnumerator.Current;
+						if(useDB)
+						{
+							dkeys.Add(DataBinder.GetPropertyValue(current, dataKey));
+						}
+						ListItemType type = ListItemType.Item;
+						if(index == editIndex)
+						{
+							type = ListItemType.EditItem;
+						} else if(index == selIndex)
+						{
+							type = ListItemType.SelectedItem;
+						} else if((index % 2) != 0)
+						{
+							type = ListItemType.AlternatingItem;
+						}
+						itemsArray.Add(CreateItem(index, type, useDataSource, current));
+						if(separatorTemplate != null)
+							CreateItem(index, ListItemType.Separator, useDataSource, null);
+						itemCount++;
+						index++;
+					}
+				} finally
+				{
+					if(listEnumerator is IDisposable)
+					{
+						((IDisposable)listEnumerator).Dispose();
+					}
+				}
+				if(footerTemplate != null)
+					CreateItem(-1, ListItemType.Footer, useDataSource, null);
+			}
+			if(useDataSource)
+			{
+				ViewState["_!ItemCount"] = (listEnumerator != null ? itemCount : -1);
+			}
 		}
 
 		/// <summary>
 		/// Undocumented
 		/// </summary>
-		[MonoTODO]
 		protected virtual DataListItem CreateItem(int itemIndex, ListItemType itemType)
 		{
-			throw new NotImplementedException();
+			return new DataListItem(itemIndex, itemType);
 		}
 
-		[MonoTODO]
 		private DataListItem CreateItem(int itemIndex, ListItemType itemType, bool dataBind, object dataItem)
 		{
-			throw new NotImplementedException();
+			DataListItem retVal = CreateItem(itemIndex, itemType);
+			DataListItemEventArgs e = new DataListItemEventArgs(retVal);
+			InitializeItem(retVal);
+			if(dataBind)
+			{
+				retVal.DataItem = dataItem;
+			}
+			OnItemCreated(e);
+			Controls.Add(retVal);
+			if(dataBind)
+			{
+				retVal.DataBind();
+				OnItemDataBound(e);
+				retVal.DataItem = null;
+			}
+			return retVal;
 		}
 
 		/// <summary>
@@ -760,16 +878,51 @@ namespace System.Web.UI.WebControls
 		[MonoTODO]
 		protected override void PrepareControlHierarchy()
 		{
-			throw new NotImplementedException();
 		}
 
 		/// <summary>
 		/// Undocumented
 		/// </summary>
-		[MonoTODO]
 		protected virtual void InitializeItem(DataListItem item)
 		{
-			throw new NotImplementedException();
+			ListItemType type = item.ItemType;
+			ITemplate    template = itemTemplate;
+			switch(type)
+			{
+				case ListItemType.Header : template = headerTemplate;
+				                           break;
+				case ListItemType.Footer : template = footerTemplate;
+				                           break;
+				case ListItemType.AlternatingItem
+				                         : if(alternatingItemTemplate != null)
+				                           	template = alternatingItemTemplate;
+				                           break;
+				case ListItemType.SelectedItem
+				                         : if(selectedItemTemplate != null)
+				                           {
+				                           	template = selectedItemTemplate;
+				                           	break;
+				                           }
+				                           if((item.ItemIndex % 2) != 0)
+				                           	goto case ListItemType.AlternatingItem;
+				                           break;
+				case ListItemType.EditItem
+				                         : if(editItemTemplate != null)
+				                           {
+				                           	template = editItemTemplate;
+				                           	break;
+				                           }
+				                           if(item.ItemIndex == SelectedIndex)
+				                           	goto case ListItemType.SelectedItem;
+				                           if((item.ItemIndex % 2) != 0)
+				                           	goto case ListItemType.AlternatingItem;
+				                           break;
+				case ListItemType.Separator
+				                         : template = separatorTemplate;
+				                           break;
+			}
+			if(itemTemplate != null)
+				itemTemplate.InstantiateIn(this);
 		}
 
 		bool IRepeatInfoUser.HasFooter

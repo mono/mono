@@ -15,6 +15,7 @@ using System;
 using System.Collections;
 using System.Web;
 using System.Web.UI;
+using System.Web.Util;
 using System.ComponentModel;
 using System.Reflection;
 
@@ -971,8 +972,8 @@ namespace System.Web.UI.WebControls
 			}
 			if(!useDataSource)
 			{
-				itemCount    = (int) ViewState["_DataGrid_ItemCount"];
-				pageDSCount  = (int) ViewState["_DataGrid_DataSource_Count"];
+				itemCount    = (int) ViewState["_!ItemCount"];
+				pageDSCount  = (int) ViewState["_!DataSource_ItemCount"];
 				if(itemCount != -1)
 				{
 					if(pagedDataSource.IsCustomPagingEnabled)
@@ -989,7 +990,7 @@ namespace System.Web.UI.WebControls
 			} else
 			{
 				dataKeys.Clear();
-				resolvedDS = ResolveDataSource(DataSource, DataMember);
+				resolvedDS = DataSourceHelper.GetResolvedDataSource(DataSource, DataMember);
 				if(resolvedDS != null)
 				{
 					collResolvedDS = (ICollection) resolvedDS;
@@ -1099,6 +1100,9 @@ namespace System.Web.UI.WebControls
 						currentSourceIndex++;
 					}
 
+					CreateItem(-1, -1, ListItemType.Footer, useDataSource, null,
+					           cols, deployRows, null);
+
 					if(pgEnabled)
 					{
 						CreateItem(-1, -1, ListItemType.Pager, false, null, cols, deployRows,
@@ -1110,71 +1114,25 @@ namespace System.Web.UI.WebControls
 				{
 					if(pageSourceEnumerator != null)
 					{
-						ViewState["_DataGrid_ItemCount"] = itemCount;
+						ViewState["_!ItemCount"] = itemCount;
 						if(pagedDataSource.IsPagingEnabled)
 						{
 							ViewState["PageCount"] = pagedDataSource.PageCount;
-							ViewState["DataGrid_DataSource_Count"] = pagedDataSource.DataSourceCount;
+							ViewState["_!DataSource_ItemCount"] = pagedDataSource.DataSourceCount;
 						} else
 						{
 							ViewState["PageCount"] = 1;
-							ViewState["DataGrid_DataSource_Count"] = itemCount;
+							ViewState["_!DataSource_ItemCount"] = itemCount;
 						}
 					} else
 					{
-						ViewState["_DataGrid_ItemCount"] = -1;
-						ViewState["DataGrid_DataSource_Count"] = -1;
+						ViewState["_!ItemCount"] = -1;
+						ViewState["_!DataSource_ItemCount"] = -1;
 						ViewState["PageCount"] = 0;
 					}
 				}
 			}
 			pagedDataSource = null;
-		}
-
-		private IEnumerable ResolveDataSource(object source, string member)
-		{
-			if(source != null && source is IListSource)
-			{
-				IListSource src = (IListSource)source;
-				IList list = src.GetList();
-				if(!src.ContainsListCollection)
-				{
-					return list;
-				}
-				if(list != null && list is ITypedList)
-				{
-					ITypedList tlist = (ITypedList)list;
-					PropertyDescriptorCollection pdc = tlist.GetItemProperties(new PropertyDescriptor[0]);
-					if(pdc != null && pdc.Count > 0)
-					{
-						PropertyDescriptor pd = null;
-						if(member != null && member.Length > 0)
-						{
-							pd = pdc.Find(member, true);
-						} else
-						{
-							pd = pdc[0];
-						}
-						if(pd != null)
-						{
-							object rv = pd.GetValue(list[0]);
-							if(rv != null && rv is IEnumerable)
-							{
-								return (IEnumerable)rv;
-							}
-						}
-						throw new HttpException(
-						      HttpRuntime.FormatResourceString("ListSource_Missing_DataMember", member));
-					}
-					throw new HttpException(
-					      HttpRuntime.FormatResourceString("ListSource_Without_DataMembers"));
-				}
-			}
-			if(source is IEnumerable)
-			{
-				return (IEnumerable)source;
-			}
-			return null;
 		}
 
 		[MonoTODO]
@@ -1218,7 +1176,6 @@ namespace System.Web.UI.WebControls
 			return new DataGridItem(itemIndex, dataSourceIndex, itemType);
 		}
 
-		[MonoTODO]
 		protected virtual void InitializeItem(DataGridItem item, DataGridColumn[] columns)
 		{
 			TableCellCollection cells = item.Cells;
