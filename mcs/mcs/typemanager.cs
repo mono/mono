@@ -444,12 +444,17 @@ public class TypeManager {
 	// for anything which is dynamic, and we need this in a number of places,
 	// we register this information here, and use it afterwards.
 	//
-	static public void RegisterMethod (MethodBase mb, Type [] args)
+	static public bool RegisterMethod (MethodBase mb, Type [] args)
 	{
 		string s;
 		
 		s = GetSig (mb);
+
+		if (method_arguments.Contains (s))
+			return false;
+		
 		method_arguments.Add (s, args);
+		return true;
 	}
 
 	// <summary>
@@ -481,12 +486,17 @@ public class TypeManager {
 
 	static Hashtable properties;
 	
-	static public void RegisterProperty (PropertyBuilder pb, MethodBase get, MethodBase set)
+	static public bool RegisterProperty (PropertyBuilder pb, MethodBase get, MethodBase set)
 	{
 		if (properties == null)
 			properties = new Hashtable ();
 
+		if (properties.Contains (pb))
+			return false;
+
 		properties.Add (pb, new DictionaryEntry (get, set));
+
+		return true;
 	}
 	
 	static public MethodInfo [] GetAccessors (PropertyInfo pi)

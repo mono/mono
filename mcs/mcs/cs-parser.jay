@@ -78,7 +78,12 @@ namespace CIR
 		// </summary>
 		Tree tree;
 
-		RootContext rc; 
+		RootContext rc;
+
+		// <summary>
+		//  Used to temporarily hold the lexer's location for storage later
+		// </summary>
+		Location temporary_loc;
 
 %}
 
@@ -825,6 +830,7 @@ property_declaration
 		implicit_value_parameter_type = (string) $3;
 
 		lexer.properties = true;
+		temporary_loc = lexer.Location;
 	  }
 	  accessor_declarations 
 	  {
@@ -842,7 +848,8 @@ property_declaration
 		if (pair.Value != null)
 			set_block = (Block) pair.Value;
 
-		prop = new Property ((string) $3, (string) $4, (int) $2, get_block, set_block, (Attributes) $1);
+		prop = new Property ((string) $3, (string) $4, (int) $2, get_block, set_block,
+				     (Attributes) $1, temporary_loc);
 		
 		CheckDef (current_container.AddProperty (prop), prop.Name);
 		implicit_value_parameter_type = null;
@@ -1268,7 +1275,7 @@ event_declaration
 
 			// FIXME : Is this right ?
 			Event e = new Event ((string) $4, var.identifier, var.expression_or_array_initializer,
-					     (int) $2, null, null, (Attributes) $1);
+					     (int) $2, null, null, (Attributes) $1, lexer.Location);
 
 			CheckDef (current_container.AddEvent (e), e.Name);
 				       
@@ -1288,7 +1295,8 @@ event_declaration
 		if (pair.Value != null)
 			rem_block = (Block) pair.Value;
 		
-		Event e = new Event ((string) $4, (string) $5, null, (int) $2, add_block, rem_block, (Attributes) $1);
+		Event e = new Event ((string) $4, (string) $5, null, (int) $2, add_block, rem_block,
+				     (Attributes) $1, lexer.Location);
 		
 		CheckDef (current_container.AddEvent (e), e.Name);
 	}
@@ -1328,6 +1336,7 @@ indexer_declaration
 		implicit_value_parameter_type = decl.type;
 		
 		lexer.properties = true;
+		temporary_loc = lexer.Location;
 		parsing_indexer  = true;
 		
 		indexer_parameters = decl.param_list;
@@ -1354,7 +1363,7 @@ indexer_declaration
 			set_block = (Block) pair.Value;
 
 		indexer = new Indexer (decl.type, decl.interface_type, (int) $2, decl.param_list,
-				       get_block, set_block, (Attributes) $1);
+				       get_block, set_block, (Attributes) $1, temporary_loc);
 
 		// Note that there is no equivalent of CheckDef for this case
 		// We shall handle this in semantic analysis

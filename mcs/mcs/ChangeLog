@@ -1,5 +1,29 @@
 2001-10-31  Ravi Pratap  <ravi@ximian.com>
 
+	* typemanager.cs (RegisterMethod): Check if we already have an existing key
+	and bale out if necessary by returning a false.
+
+	(RegisterProperty): Ditto.
+
+	* class.cs (everywhere): Check the return value from TypeManager.RegisterMethod
+	and print out appropriate error messages.
+
+	* interface.cs (everywhere): Ditto.
+
+	* cs-parser.jay (property_declaration, event_declaration, indexer_declaration): Pass
+	location to constructor.
+
+	* class.cs (Property, Event, Indexer): Update accordingly.
+
+	* ../errors/cs111.cs : Added.
+
+	* expression.cs (Invocation::IsApplicable): New static method to determine applicability
+	of a method, as laid down by the spec.
+
+	(Invocation::OverloadResolve): Use the above method.
+
+2001-10-31  Ravi Pratap  <ravi@ximian.com>
+
 	* support.cs (InternalParameters): Get rid of crap taking in duplicate info. We
 	now take a TypeContainer and a Parameters object.
 

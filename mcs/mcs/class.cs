@@ -1769,7 +1769,12 @@ namespace CIR {
 			//
 			// HACK because System.Reflection.Emit is lame
 			//
-			TypeManager.RegisterMethod (MethodBuilder, parameters);
+			if (!TypeManager.RegisterMethod (MethodBuilder, parameters)) {
+				Report.Error (111, Location,
+					      "Class `" + parent.Name + "' already contains a definition with the " +
+					      "same return value and parameter types for method `" + Name + "'");
+				return null;
+			}
 			
 			ParameterInfo = new InternalParameters (parent, Parameters);
 
@@ -1951,7 +1956,13 @@ namespace CIR {
 			//
 			// HACK because System.Reflection.Emit is lame
 			//
-			TypeManager.RegisterMethod (ConstructorBuilder, parameters);
+			if (!TypeManager.RegisterMethod (ConstructorBuilder, parameters)) {
+				Report.Error (111, Location,
+					      "Class `" + parent.Name + "' already contains a definition with the " +
+					      "same return value and parameter types for constructor `" + Name + "'");
+				return null;
+			}
+				
 
 			ParameterInfo = new InternalParameters (parent, Parameters);
 
@@ -2042,6 +2053,8 @@ namespace CIR {
 		public Attributes OptAttributes;
 		MethodBuilder GetBuilder, SetBuilder;
 
+		Location Location;
+
 		//
 		// The type, once we compute it.
 		
@@ -2059,7 +2072,8 @@ namespace CIR {
 			Modifiers.ABSTRACT |
 			Modifiers.VIRTUAL;
 		
-		public Property (string type, string name, int mod_flags, Block get_block, Block set_block, Attributes attrs)
+		public Property (string type, string name, int mod_flags, Block get_block, Block set_block,
+				 Attributes attrs, Location loc)
 		{
 			Type = type;
 			Name = name;
@@ -2067,6 +2081,7 @@ namespace CIR {
 			Get = get_block;
 			Set = set_block;
 			OptAttributes = attrs;
+			Location = loc;
 		}
 
 		public void Define (TypeContainer parent)
@@ -2095,7 +2110,15 @@ namespace CIR {
 				//
 				// HACK because System.Reflection.Emit is lame
 				//
-				TypeManager.RegisterMethod (GetBuilder, null);
+				if (!TypeManager.RegisterMethod (GetBuilder, null)) {
+					Report.Error (111, Location,
+					       "Class `" + parent.Name + "' already contains a definition with the " +
+					       "same return value and parameter types as the " +
+					       "'get' method of property `" + Name + "'");
+					return;
+				}
+				
+				
 			}
 			
 			if (Set != null)
@@ -2107,20 +2130,33 @@ namespace CIR {
 				//
 				// HACK because System.Reflection.Emit is lame
 				//
-				TypeManager.RegisterMethod (SetBuilder, parameters);
+				if (!TypeManager.RegisterMethod (SetBuilder, parameters)) {
+					Report.Error (111, Location,
+					       "Class `" + parent.Name + "' already contains a definition with the " +
+					       "same return value and parameter types as the " +
+					       "'set' method of property `" + Name + "'");
+					return;
+				}
+				
+				//
+				// HACK for the reasons exposed above
+				//
+				if (!TypeManager.RegisterProperty (PropertyBuilder, GetBuilder, SetBuilder)) {
+					Report.Error (111, Location,
+					       "Class `" + parent.Name + "' already contains a definition for the " +
+					       " property `" + Name + "'");
+					return;
+				}
+					
 			}
 
-			//
-			// HACK for the reasons exposed above
-			//
-			TypeManager.RegisterProperty (PropertyBuilder, GetBuilder, SetBuilder);
 		}
-
+		
 		public void Emit (TypeContainer tc)
 		{
 			ILGenerator ig;
 			EmitContext ec;
-
+			
 			if (Get != null){
 				ig = GetBuilder.GetILGenerator ();
 				ec = new EmitContext (tc, ig, PropertyType, ModFlags);
@@ -2159,9 +2195,11 @@ namespace CIR {
 		public readonly Block     Remove;
 		public EventBuilder       EventBuilder;
 		public Attributes         OptAttributes;
+
+		Location Location;
 		
 		public Event (string type, string name, Object init, int flags, Block add_block, Block rem_block,
-			      Attributes attrs)
+			      Attributes attrs, Location loc)
 		{
 			Type = type;
 			Name = name;
@@ -2170,6 +2208,7 @@ namespace CIR {
 			Add = add_block;
 			Remove = rem_block;
 			OptAttributes = attrs;
+			Location = loc;
 		}
 
 		public void Define (TypeContainer parent)
@@ -2194,7 +2233,13 @@ namespace CIR {
 				//
 				// HACK because System.Reflection.Emit is lame
 				//
-				TypeManager.RegisterMethod (mb, parameters);
+				if (!TypeManager.RegisterMethod (mb, parameters)) {
+					Report.Error (111, Location,
+					       "Class `" + parent.Name + "' already contains a definition with the " +
+					       "same return value and parameter types for the " +
+					       "'add' method of event `" + Name + "'");
+					return;
+				}
 			}
 
 			if (Remove != null) {
@@ -2206,7 +2251,13 @@ namespace CIR {
 				//
 				// HACK because System.Reflection.Emit is lame
 				//
-				TypeManager.RegisterMethod (mb, parameters);
+				if (!TypeManager.RegisterMethod (mb, parameters)) {
+					Report.Error (111, Location,	
+				       "Class `" + parent.Name + "' already contains a definition with the " +
+					       "same return value and parameter types for the " +
+					       "'remove' method of event `" + Name + "'");
+					return;
+				}
 			}
 		}
 		
@@ -2245,9 +2296,11 @@ namespace CIR {
 		public MethodBuilder       SetBuilder;
 		public PropertyBuilder PropertyBuilder;
 	        public Type IndexerType;
+
+		Location Location;
 			
 		public Indexer (string type, string int_type, int flags, Parameters parms,
-				Block get_block, Block set_block, Attributes attrs)
+				Block get_block, Block set_block, Attributes attrs, Location loc)
 		{
 
 			Type = type;
@@ -2257,6 +2310,7 @@ namespace CIR {
 			Get = get_block;
 			Set = set_block;
 			OptAttributes = attrs;
+			Location = loc;
 		}
 
 		public void Define (TypeContainer parent)
@@ -2276,9 +2330,17 @@ namespace CIR {
 			if (Get != null){
 				GetBuilder = parent.TypeBuilder.DefineMethod (
 					"get_Item", attr, IndexerType, parameters);
-				TypeManager.RegisterMethod (GetBuilder, parameters);
+
+				if (!TypeManager.RegisterMethod (GetBuilder, parameters)) {
+					Report.Error (111, Location,
+					       "Class `" + parent.Name + "' already contains a definition with the " +
+					       "same return value and parameter types for the " +
+					       "'get' indexer");
+					return;
+				}
+					
 				TypeContainer.RegisterParameterForBuilder (
-					GetBuilder, new InternalParameters (parent, FormalParameters));
+					      GetBuilder, new InternalParameters (parent, FormalParameters));
 			}
 			
 			if (Set != null){
@@ -2298,7 +2360,15 @@ namespace CIR {
 				
 				SetBuilder = parent.TypeBuilder.DefineMethod (
 					"set_Item", attr, null, set_pars);
-				TypeManager.RegisterMethod (SetBuilder, set_pars);
+
+				if (!TypeManager.RegisterMethod (SetBuilder, set_pars)) {
+					Report.Error (111, Location,
+					       "Class `" + parent.Name + "' already contains a definition with the " +
+					       "same return value and parameter types for the " +
+					       "'set' indexer");
+					return;
+				}
+
 				TypeContainer.RegisterParameterForBuilder (
 					SetBuilder, new InternalParameters (parent, set_formal_params));
 			}

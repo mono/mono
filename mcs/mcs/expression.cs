@@ -3965,6 +3965,53 @@ namespace CIR {
 		}
 
 		// <summary>
+		//  Determines if the candidate method is applicable (section 14.4.2.1)
+		//  to the given set of arguments
+		// </summary>
+		static bool IsApplicable (ArrayList arguments, MethodBase candidate)
+		{
+			int arg_count;
+
+			if (arguments == null)
+				arg_count = 0;
+			else
+				arg_count = arguments.Count;
+
+			ParameterData pd = GetParameterData (candidate);
+
+			int pd_count = pd.Count;
+
+			if (arg_count != pd.Count)
+				return false;
+
+			for (int i = arg_count; i > 0; ) {
+				i--;
+
+				Argument a = (Argument) arguments [i];
+
+				Parameter.Modifier a_mod = a.GetParameterModifier ();
+				Parameter.Modifier p_mod = pd.ParameterModifier (i);
+
+				if (a_mod == p_mod) {
+					
+					if (a_mod == Parameter.Modifier.NONE)
+						if (!StandardConversionExists (a.Type, pd.ParameterType (i)))
+							return false;
+					
+					if (a_mod == Parameter.Modifier.REF ||
+					    a_mod == Parameter.Modifier.OUT)
+						if (pd.ParameterType (i) != a.Type)
+							return false;
+				} else
+					return false;
+			}
+
+			return true;
+		}
+		
+		
+
+		// <summary>
 		//   Find the Applicable Function Members (7.4.2.1)
 		//
 		//   me: Method Group expression with the members to select.
@@ -3996,6 +4043,10 @@ namespace CIR {
 				i--;
 				MethodBase candidate  = me.Methods [i];
 				int x;
+
+				// Check if candidate is applicable (section 14.4.2.1)
+				if (!IsApplicable (Arguments, candidate))
+					continue;
 
 				x = BetterFunction (ec, Arguments, candidate, method, use_standard, loc);
 				

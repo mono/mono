@@ -222,18 +222,21 @@ namespace CIR {
 			}
 		}
 		
-		void Error111 (InterfaceMethod im)
+		void Error111 (InterfaceMemberBase ib)
 		{
 			Report.Error (
 				111,
 				"Interface `" + Name + "' already contains a definition with the " +
-				"same return value and paramenter types for method `" + im.Name + "'");
+				"same return value and parameter types for member `" + ib.Name + "'");
 		}
 
-		void RegisterMethod (MethodBase mb, Type [] types)
+		bool RegisterMethod (MethodBase mb, Type [] types)
 		{
-			TypeManager.RegisterMethod (mb, types);
+			if (!TypeManager.RegisterMethod (mb, types))
+				return false;
+
 			method_builders.Add (mb);
+			return true;
 		}
 
 		public MethodInfo [] GetMethods ()
@@ -295,7 +298,10 @@ namespace CIR {
 				im.Name, interface_method_attributes,
 				return_type, arg_types);
 			
-			RegisterMethod (mb, arg_types);
+			if (!RegisterMethod (mb, arg_types)) {
+				Error111 (im);
+				return;
+			}
 			
 			//
 			// Define each type attribute (in/out/ref) and
@@ -339,7 +345,10 @@ namespace CIR {
 				//
 				// HACK because System.Reflection.Emit is lame
 				//
-				RegisterMethod (mb, null);
+				if (!RegisterMethod (mb, null)) {
+					Error111 (ip);
+					return;
+				}
 				
 				pb.SetGetMethod (mb);
 			}
@@ -357,7 +366,10 @@ namespace CIR {
 				//
 				// HACK because System.Reflection.Emit is lame
 				//
-				RegisterMethod (mb, setter_args);
+				if (!RegisterMethod (mb, setter_args)) {
+					Error111 (ip);
+					return;
+				}
 			}
 
 			property_builders.Add (pb);
@@ -413,7 +425,10 @@ namespace CIR {
 				//
 				// HACK because System.Reflection.Emit is lame
 				//
-				RegisterMethod (get_item, arg_types);
+				if (!RegisterMethod (get_item, arg_types)) {
+					Error111 (ii);
+					return;
+				}
 
 				if (p != null){
 					for (int i = 0; i < p.Length; i++)
@@ -434,7 +449,10 @@ namespace CIR {
 				//
 				// HACK because System.Reflection.Emit is lame
 				//
-				RegisterMethod (set_item, value_arg_types);
+				if (!RegisterMethod (set_item, value_arg_types)) {
+					Error111 (ii);
+					return;
+				}
 
 				if (p != null){
 					for (; i < p.Length; i++)
