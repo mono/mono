@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<assemblies>
+	<assembly name="corlib" missing="1753" todo="2312" complete="8">
+		<namespaces>
+			<namespace name="System" missing="267" todo="453" complete="21">
+				<classes>
+					<class name="System.Byte" status="missing"/>
+					<class name="System.Array" status="todo" missing="5" todo="6" complete="45">
+						<methods>
+							<method name="ToString" status="todo" note="this is the note from MonoTODO"/>
+							<method name="Equals" status="missing"/>
+						</methods>
+						<properties>
+							<property name="Count" status="todo" note="another note"/>
+						</properties>
+					</class>
+				</classes>
+			</namespace>
+		</namespaces>
+	</assembly>
+</assemblies>
