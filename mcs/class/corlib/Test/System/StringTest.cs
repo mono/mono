@@ -687,6 +687,30 @@ public class StringTest : Assertion
 		"Mono".IndexOfAny (new char [1] { 'o' }, 1, Int32.MaxValue);
 	}
 
+#if NET_2_0
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void Contains_Null () {
+		"ABC".Contains (null);
+	}
+
+	[Test]
+	public void TestContains () {
+		Assert ("ABC".Contains (""));
+		Assert ("ABC".Contains ("ABC"));
+		Assert ("ABC".Contains ("AB"));
+		Assert (!"ABC".Contains ("AD"));
+	}
+
+	[Test]
+	public void TestIsNullOrEmpty () {
+		Assert (String.IsNullOrEmpty (null));
+		Assert (String.IsNullOrEmpty (String.Empty));
+		Assert (String.IsNullOrEmpty (""));
+		Assert (!String.IsNullOrEmpty ("A"));
+	}
+#endif
+
 	public void TestInsert() {
 		string s1 = "original";
 		
@@ -1164,6 +1188,26 @@ public class StringTest : Assertion
 	{
 		"Mono".Remove (1, Int32.MaxValue);
 	}
+
+#if NET_2_0
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void TestRemove1_NegativeStartIndex () {
+		"ABC".Remove (-1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void TestRemove1_StartIndexOverflow () {
+		"ABC".Remove (3);
+	}
+
+	[Test]
+	public void TestRemove1 () {
+		AssertEquals ("AB", "ABC".Remove (2));
+		AssertEquals ("", "ABC".Remove (0));
+	}
+#endif
 
 	public void TestReplace() {
 		string s1 = "original";

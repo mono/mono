@@ -1,3 +1,9 @@
+2005-03-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* StringTest.cs: Added tests for new methods.
+
+	* ModuleHandleTest.cs: Fix warning.
+
 2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ActivatorCas.cs: New. CAS unit tests for Activator.

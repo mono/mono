@@ -37,8 +37,6 @@ public class ModuleHandleTest : Assertion
 		}
 	}
 
-	public event EventHandler baz;
-
 	public ModuleHandleTest () {
 	}
 
