@@ -48,6 +48,7 @@ namespace System.Reflection.Emit {
 		private ParameterAttributes attrs;
 		private int position;
 		private int table_idx;
+		object def_value;
 		
 		internal ParameterBuilder (MethodBase mb, int pos, ParameterAttributes attributes, string strParamName) {
 			name = strParamName;
@@ -80,9 +81,10 @@ namespace System.Reflection.Emit {
 			return new ParameterToken (0x08 | table_idx);
 		}
 
-		[MonoTODO]
-		public virtual void SetConstant( object defaultValue) {
-			/* FIXME */
+		public virtual void SetConstant (object defaultValue)
+		{
+			def_value = defaultValue;
+			attrs |= ParameterAttributes.HasDefault;
 		}
 		
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {

@@ -1,4 +1,8 @@
 
+Thu Jun 24 15:33:04 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* ParameterBuilder.cs: implement SetConstant ().
+
 Wed Jun 23 15:40:48 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* TypeBuilder.cs: handle properly the case when SetParent() 
