@@ -42,6 +42,13 @@ namespace Mono.Util.CorCompare {
 				AddFlagWarning (fiMono.IsStatic, fiMS.IsStatic, "static");
 				AddFlagWarning (fiMono.IsLiteral, fiMS.IsLiteral, "const");
 				AddFlagWarning (fiMono.IsInitOnly, fiMS.IsInitOnly, "readonly");
+
+				string strTypeMono = fiMono.FieldType.FullName;
+				string strTypeMS   =   fiMS.FieldType.FullName;
+				if (strTypeMono != strTypeMS)
+				{
+					Status.AddWarning ("Invalid type: is '"+strTypeMono+"', should be '"+strTypeMS+"'");
+				}
 			}
 			return m_nodeStatus;
 		}

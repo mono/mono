@@ -98,17 +98,6 @@ namespace Mono.Util.CorCompare {
 					{
 						htMono.Remove (t.FullName);
 						mt = new MissingType (tMono, t);
-						/*						if (ciType.cTodo != 0 || ciType.cMissing != 0)
-												{
-													rgTodo.Add (tdt);
-													m_nodeStatus.cTodo ++;
-												}
-												else
-												{
-													//							rgTodo.Add (tdt);
-													m_nodeStatus.cComplete ++;
-												}
-						*/
 					}
 					if (mt != null)
 					{
@@ -121,22 +110,13 @@ namespace Mono.Util.CorCompare {
 			// do any mono types that aren't in microsoft's namespace
 			foreach (Type tMono in htMono.Values)
 			{
-				MissingType tdt = new MissingType (tMono, null);
-				NodeStatus nsType = tdt.Analyze ();
-				m_nodeStatus.AddChildren (nsType);
-				rgTypes.Add (tdt);
-/*
-				if (ciType.cTodo != 0 || ciType.cMissing != 0)
+				if (tMono.IsPublic)
 				{
-					rgTodo.Add (tdt);
-					m_nodeStatus.cTodo ++;
+					MissingType tdt = new MissingType (tMono, null);
+					NodeStatus nsType = tdt.Analyze ();
+					m_nodeStatus.AddChildren (nsType);
+					rgTypes.Add (tdt);
 				}
-				else
-				{
-					//					rgTodo.Add (tdt);
-					m_nodeStatus.cComplete ++;
-				}
-*/
 			}
 			return m_nodeStatus;
 		}

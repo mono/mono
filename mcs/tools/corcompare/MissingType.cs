@@ -51,7 +51,13 @@ namespace Mono.Util.CorCompare
 
 		public override string Name 
 		{
-			get { return TypeInfoBest.Name; }
+			get
+			{
+				Type type = TypeInfoBest;
+				if (type.DeclaringType != null)
+					return type.DeclaringType.Name + "+" + type.Name;
+				return type.Name;
+			}
 		}
 
 		public override string Type

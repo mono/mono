@@ -26,5 +26,11 @@ namespace Mono.Util.CorCompare {
 				return "nestedType";
 			}
 		}
+
+		public override string Name 
+		{
+			get { return Info.DeclaringType.Name + "+" + Info.Name; }
+		}
+
 	}
 }

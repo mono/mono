@@ -67,6 +67,15 @@ namespace Mono.Util.CorCompare {
 				mmSet = new MissingMethod (miSetMono, miSetMS);
 				m_nodeStatus.AddChildren (mmSet.Analyze ());
 			}
+
+			if (piMono != null && piMS != null)
+			{
+				string strTypeMono = piMono.PropertyType.FullName;
+				string strTypeMS   =   piMS.PropertyType.FullName;
+				if (strTypeMono != strTypeMS)
+					Status.AddWarning ("Invalid type: is '"+strTypeMono+"', should be '"+strTypeMS+"'");
+			}
+
 			return m_nodeStatus;
 		}
 

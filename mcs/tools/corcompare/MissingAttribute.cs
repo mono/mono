@@ -24,6 +24,18 @@ namespace Mono.Util.CorCompare
 		// e.g. <attribute name="Equals" status="missing"/>
 		Object attributeMono;
 		Object attributeMS;
+		static Hashtable htIgnore;
+
+		static MissingAttribute ()
+		{
+			htIgnore = new Hashtable ();
+			htIgnore.Add ("System.Runtime.InteropServices.ClassInterfaceAttribute", null);
+			htIgnore.Add ("System.Diagnostics.DebuggerHiddenAttribute", null);
+			htIgnore.Add ("System.Diagnostics.DebuggerStepThroughAttribute", null);
+			htIgnore.Add ("System.Runtime.InteropServices.GuidAttribute", null);
+			htIgnore.Add ("System.Runtime.InteropServices.InterfaceTypeAttribute", null);
+			htIgnore.Add ("System.Runtime.InteropServices.ComVisibleAttribute", null);
+		}
 
 		public MissingAttribute (Object _attributeMono, Object _attributeMS) 
 		{
@@ -67,7 +79,7 @@ namespace Mono.Util.CorCompare
 				if (attribute != null)
 				{
 					string strName = attribute.ToString ();
-					if (!map.Contains (strName))
+					if (!map.Contains (strName) && !htIgnore.Contains (strName))
 						map.Add (strName, attribute);
 				}
 			}
