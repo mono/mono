@@ -668,6 +668,7 @@ MonoDomain* mini_init                      (const char *filename);
 void        mini_cleanup                   (MonoDomain *domain);
 
 /* helper methods */
+void *    mono_global_codeman_reserve       (int size);
 MonoJumpInfoToken * mono_jump_info_token_new (MonoMemPool *mp, MonoImage *image, guint32 token);
 MonoInst* mono_find_spvar_for_region        (MonoCompile *cfg, int region);
 void      mono_precompile_assemblies        (void);

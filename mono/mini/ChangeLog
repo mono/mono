@@ -1,3 +1,8 @@
+2005-01-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.h mini.c exceptions-x86.c tramp-x86.c: Port global codeman
+	changes from HEAD. Fixes #71615.
+
 2005-01-13  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (clean-local): Rename from 'clean' so as not to step

@@ -129,6 +129,8 @@ static int mini_verbose = 0;
 
 static CRITICAL_SECTION trampoline_hash_mutex;
 
+static MonoCodeManager *global_codeman = NULL;
+
 static GHashTable *class_init_hash_addr = NULL;
 
 static GHashTable *jump_trampoline_hash = NULL;
@@ -198,6 +200,28 @@ gboolean mono_method_same_domain (MonoJitInfo *caller, MonoJitInfo *callee)
 	}
 
 	return TRUE;
+}
+
+/*
+ * mono_global_codeman_reserve:
+ *
+ *  Allocate code memory from the global code manager.
+ */
+void *mono_global_codeman_reserve (int size)
+{
+	void *ptr;
+
+	if (!global_codeman) {
+		/* This can happen during startup */
+		global_codeman = mono_code_manager_new ();
+		return mono_code_manager_reserve (global_codeman, size);
+	}
+	else {
+		EnterCriticalSection (&trampoline_hash_mutex);
+		ptr = mono_code_manager_reserve (global_codeman, size);
+		LeaveCriticalSection (&trampoline_hash_mutex);
+		return ptr;
+	}
 }
 
 MonoJumpInfoToken *
