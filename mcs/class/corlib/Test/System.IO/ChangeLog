@@ -1,3 +1,7 @@
+2004-04-01  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* BufferedStreamTest.cs: Added test for Position.
+
 2003-04-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* PathTest.cs : Added more patterns on TestChangeExtension().

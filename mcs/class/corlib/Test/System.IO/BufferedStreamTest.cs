@@ -415,5 +415,44 @@ public class BufferedStreamTest : Assertion {
 		stream.SetLength (1);	 	
 	 }
 	 
+	 [Test]
+	 public void Position ()
+	 {
+		mem = new MemoryStream ();
+		BufferedStream stream = new BufferedStream (mem,5);
+		stream.Write (new byte [] {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, 0, 16);
+	 	
+		stream.Position = 0;
+		AssertEquals ("test#01", 0, stream.Position);		
+		AssertEquals ("test#02", 0, stream.ReadByte ());		
+		
+		stream.Position = 5;
+		AssertEquals ("test#01", 5, stream.Position);		
+		AssertEquals ("test#02", 5, stream.ReadByte ());		
+		
+		// Should not need to read from the underlying stream:
+		stream.Position = 7;
+		AssertEquals ("test#01", 7, stream.Position);		
+		AssertEquals ("test#02", 7, stream.ReadByte ());		
+		
+		// Should not need to read from the underlying stream:
+		stream.Position = 5;
+		AssertEquals ("test#01", 5, stream.Position);		
+		AssertEquals ("test#02", 5, stream.ReadByte ());		
+				
+		// Should not need to read from the underlying stream:
+		stream.Position = 9;
+		AssertEquals ("test#01", 9, stream.Position);
+		AssertEquals ("test#02", 9, stream.ReadByte ());
+		
+		stream.Position = 10;
+		AssertEquals ("test#01", 10, stream.Position);		
+		AssertEquals ("test#02", 10, stream.ReadByte ());		
+		
+		stream.Position = 9;
+		AssertEquals ("test#01", 9, stream.Position);		
+		AssertEquals ("test#02", 9, stream.ReadByte ());		
+	 }
+	 
 }
 }
