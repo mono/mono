@@ -117,6 +117,14 @@ namespace System.Reflection.Emit {
 		public int code_pos;
 	}
 
+	internal interface TokenGenerator {
+		int GetToken (string str);
+
+		int GetToken (MemberInfo member);
+
+		int GetToken (SignatureHelper helper);
+	}		
+
 	public class ILGenerator: Object {
 		private struct LabelFixup {
 			public int size;
@@ -125,8 +133,8 @@ namespace System.Reflection.Emit {
 			public int label_idx;
 		};
 		static Type void_type = typeof (void);
+		#region Sync with reflection.h
 		private byte[] code;
-		private MethodBase mbuilder; /* a MethodBuilder or ConstructorBuilder */
 		private int code_len;
 		private int max_stack;
 		private int cur_stack;
@@ -139,19 +147,20 @@ namespace System.Reflection.Emit {
 		private int num_labels;
 		private LabelFixup[] fixups;
 		private int num_fixups;
-		internal ModuleBuilder module;
+		#endregion
+		internal Module module;
 		internal IMonoSymbolWriter sym_writer;
 		private Stack scopes;
 		private int cur_block;
 		private Stack open_blocks;
+		private TokenGenerator token_gen;
 
-		internal ILGenerator (MethodBase mb, int size)
+		internal ILGenerator (Module m, TokenGenerator token_gen, int size)
 		{
 			if (size < 0)
 				size = 128;
 			code_len = 0;
 			code = new byte [size];
-			mbuilder = mb;
 			cur_stack = max_stack = 0;
 			num_fixups = num_labels = 0;
 			label_to_addr = new int [8];
@@ -159,13 +168,11 @@ namespace System.Reflection.Emit {
 			fixups = new LabelFixup [8];
 			token_fixups = new ILTokenInfo [8];
 			num_token_fixups = 0;
-			if (mb is MethodBuilder) {
-				module = (ModuleBuilder)((MethodBuilder)mb).TypeBuilder.Module;
-			} else if (mb is ConstructorBuilder) {
-				module = (ModuleBuilder)((ConstructorBuilder)mb).TypeBuilder.Module;
-			}
-			sym_writer = module.symbol_writer;
+			module = m;
+			if (module is ModuleBuilder)
+				sym_writer = ((ModuleBuilder)module).symbol_writer;
 			open_blocks = new Stack ();
+			this.token_gen = token_gen;
 		}
 
 		private void add_token_fixup (MemberInfo mi)
@@ -393,7 +400,7 @@ namespace System.Reflection.Emit {
 		
 		public virtual void Emit (OpCode opcode, ConstructorInfo constructor)
 		{
-			int token = module.GetToken (constructor);
+			int token = token_gen.GetToken (constructor);
 			make_room (6);
 			ll_emit (opcode);
 			if (constructor.DeclaringType.Module == module)
@@ -428,7 +435,7 @@ namespace System.Reflection.Emit {
 		
 		public virtual void Emit (OpCode opcode, FieldInfo field)
 		{
-			int token = module.GetToken (field);
+			int token = token_gen.GetToken (field);
 			make_room (6);
 			ll_emit (opcode);
 			if (field.DeclaringType.Module == module)
@@ -578,7 +585,7 @@ namespace System.Reflection.Emit {
 			if (method == null)
 				throw new ArgumentNullException ("method");
 
-			int token = module.GetToken (method);
+			int token = token_gen.GetToken (method);
 			make_room (6);
 			ll_emit (opcode);
 			if (method.DeclaringType.Module == module)
@@ -601,7 +608,7 @@ namespace System.Reflection.Emit {
 
 		public virtual void Emit (OpCode opcode, SignatureHelper shelper)
 		{
-			int token = module.GetToken (shelper);
+			int token = token_gen.GetToken (shelper);
 			make_room (6);
 			ll_emit (opcode);
 			emit_int (token);
@@ -625,7 +632,7 @@ namespace System.Reflection.Emit {
 
 		public virtual void Emit (OpCode opcode, string val)
 		{
-			int token = module.GetToken (val);
+			int token = token_gen.GetToken (val);
 			make_room (6);
 			ll_emit (opcode);
 			emit_int (token);
@@ -635,7 +642,7 @@ namespace System.Reflection.Emit {
 		{
 			make_room (6);
 			ll_emit (opcode);
-			emit_int (module.GetToken (type));
+			emit_int (token_gen.GetToken (type));
 		}
 
 		[MonoTODO ("Do something about varargs method")]

@@ -167,7 +167,7 @@ namespace System.Reflection.Emit {
 				throw new InvalidOperationException ("Method body should not exist.");
 			if (ilgen != null)
 				return ilgen;
-			ilgen = new ILGenerator (this, size);
+			ilgen = new ILGenerator (type.Module, ((ModuleBuilder)type.Module).GetTokenGenerator (), size);
 			return ilgen;
 		}
 		

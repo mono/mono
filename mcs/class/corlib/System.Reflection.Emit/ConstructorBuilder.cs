@@ -127,7 +127,7 @@ namespace System.Reflection.Emit {
 			return GetILGenerator (64);
 		}
 		internal ILGenerator GetILGenerator (int size) {
-			ilgen = new ILGenerator (this, size);
+			ilgen = new ILGenerator (type.Module, ((ModuleBuilder)type.Module).GetTokenGenerator (), size);
 			return ilgen;
 		}
 

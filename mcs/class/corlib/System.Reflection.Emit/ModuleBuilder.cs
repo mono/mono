@@ -35,6 +35,7 @@ namespace System.Reflection.Emit {
 		Hashtable us_string_cache = new Hashtable ();
 		private int[] table_indexes;
 		bool transient;
+		ModuleBuilderTokenGenerator token_gen;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (ModuleBuilder ab);
@@ -397,6 +398,12 @@ namespace System.Reflection.Emit {
 			return getToken (this, helper);
 		}
 
+		internal TokenGenerator GetTokenGenerator () {
+			if (token_gen == null)
+				token_gen = new ModuleBuilderTokenGenerator (this);
+			return token_gen;
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void build_metadata (ModuleBuilder mb);
 
@@ -453,6 +460,27 @@ namespace System.Reflection.Emit {
 			set {
 				is_main = value;
 			}
+		}
+	}
+
+	internal class ModuleBuilderTokenGenerator : TokenGenerator {
+
+		private ModuleBuilder mb;
+
+		public ModuleBuilderTokenGenerator (ModuleBuilder mb) {
+			this.mb = mb;
+		}
+
+		public int GetToken (string str) {
+			return mb.GetToken (str);
+		}
+
+		public int GetToken (MemberInfo member) {
+			return mb.GetToken (member);
+		}
+
+		public int GetToken (SignatureHelper helper) {
+			return mb.GetToken (helper);
 		}
 	}
 }
