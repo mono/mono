@@ -98,9 +98,6 @@ namespace System.Data {
 			//Set Constraint Name
 			base.ConstraintName = name;
 
-			//set unique
-			column.Unique = true;
-
 			//keep reference 
 			_dataColumns = new DataColumn [] {column};
 			
@@ -114,22 +111,17 @@ namespace System.Data {
 		//helpter ctor	
 		private void _uniqueConstraint(string name, DataColumn[] columns, bool isPrimaryKey) 
 		{
-
 			//validate
 			_validateColumns (columns, out _dataTable);
 
 			//Set Constraint Name
 			base.ConstraintName = name;
 
-			//set unique
-			if (columns.Length == 1) columns[0].Unique = true;
-
 			//keep reference
 			_dataColumns = columns;
 
 			//PK?
 			_isPrimaryKey = isPrimaryKey;
-
 		}
 		
 		#endregion // Constructors
@@ -157,7 +149,7 @@ namespace System.Data {
 			DataTable compareTable = columns[0].Table;
 			//foreach
 			foreach (DataColumn col in columns){
-			
+				
 				//check individual column rules
 				_validateColumn (col);
 				

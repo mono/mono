@@ -137,6 +137,11 @@ namespace System.Data {
 					if (pc == cc)
 						throw new InvalidOperationException("Parent and child columns can't be the same column.");
 
+					foreach (DataColumn c2 in childColumns) {
+						if (!Object.ReferenceEquals (c2.Table, cc.Table))
+							throw new InvalidConstraintException ("Cannot create a Key from Columns thath belong to different tables.");
+					}
+
 					if (! pc.DataType.Equals(cc.DataType))
 					{
 						//LAMESPEC: spec says throw InvalidConstraintException
@@ -186,16 +191,16 @@ namespace System.Data {
 					"ParentColumns can't be null");
 
 			UniqueConstraint uc = null;
-
+			
 			//see if unique constraint already exists
 			//if not create unique constraint
 			uc = UniqueConstraint.GetUniqueConstraintForColumnSet(collection, parentColumns);
 
 			if (null == uc)	uc = new UniqueConstraint(parentColumns, false); //could throw
-			
+
 			//keep reference
 			_parentUniqueConstraint = uc;
-
+			parentColumns [0].Table.Constraints.Add (uc);
 			//if this unique constraint is attempted to be removed before us
 			//we can fail the validation
 			collection.ValidateRemoveConstraint += new DelegateValidateRemoveConstraint(

@@ -1,3 +1,9 @@
+2003-01-24  Ville Palo <vi64pa@koti.soon.fi>
+
+	* UniqueConstraint.cs: Do not set columns Unique property true 
+	as a default.
+	* ForeignKeyConstraint.cs: Add UniqueConstraint to parent Table
+	
 2003-01-18  Ville Palo <vi64pa@koti.soon.fi>
 
 	* DataTableCollection.cs: Now names new DataTable if it doesn't 
