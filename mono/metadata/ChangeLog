@@ -1,3 +1,7 @@
+2005-02-16  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.c (mono_debug_open_image): Ignore dynamic images.
+
 2005-02-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (emit_marshal_array): Only marshal unicode char arrays as [Out].
