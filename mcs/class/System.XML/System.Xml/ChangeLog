@@ -1,3 +1,7 @@
+2004-11-10  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlParserContext.cs : PushScope() was accessing list out of range.
+
 2004-11-09  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDValidatingReader.cs, XmlTextReader.cs :
