@@ -1,5 +1,7 @@
 2005-02-13  Zoltan Varga  <vargaz@freemail.hu>
 
+	* libtest.c (NameManglingAuto): Fix test. Fixes #72559.
+	
 	* libtest.c: Applied patch from robertj@gmx.net (Robert Jordan). Work around gcc-2.95.3 
 	bugs.
 
