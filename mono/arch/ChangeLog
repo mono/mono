@@ -1,4 +1,8 @@
 
+Mon Aug 27 09:29:00 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* x86/x86-codegen.h: fix x86_call_code (). x86_mov_regp_reg () added.
+
 Sat Aug 18 12:40:32 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* x86/x86-codegen.h: fix a couple of buglets and add x86_regp_emit().
