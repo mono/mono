@@ -38,6 +38,11 @@ namespace System.Xml
 			this.namespaceURI = namespaceURI;
 
 			attributes = new XmlAttributeCollection (this);
+
+			// Adds default attributes
+			if(doc.DocumentType != null)
+			{
+			}
 		}
 
 		#endregion
@@ -259,6 +264,7 @@ namespace System.Xml
 			attributes.RemoveAll ();
 		}
 
+		[MonoTODO ("Don't remove default attributes.")]
 		public virtual void RemoveAllAttributes ()
 		{
 			attributes.RemoveAll ();
@@ -321,7 +327,7 @@ namespace System.Xml
 		public virtual XmlAttribute SetAttributeNode (string localName, string namespaceURI)
 		{
 			XmlDocument xmlDoc = this.OwnerDocument;
-			XmlAttribute xmlAttribute = new XmlAttribute (String.Empty, localName, namespaceURI, xmlDoc);	
+			XmlAttribute xmlAttribute = new XmlAttribute (String.Empty, localName, namespaceURI, xmlDoc);
 			return this.attributes.Append (xmlAttribute);
 		}
 
