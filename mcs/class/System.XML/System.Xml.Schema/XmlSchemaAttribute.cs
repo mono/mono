@@ -321,7 +321,11 @@ namespace System.Xml.Schema
 			// {value constraint}
 
 			// First, fill type information for type reference
-			if (SchemaTypeName != null && SchemaTypeName != XmlQualifiedName.Empty)
+			if (SchemaType != null) {
+				SchemaType.Validate (h, schema);
+				attributeType = SchemaType;
+			}
+			else if (SchemaTypeName != null && SchemaTypeName != XmlQualifiedName.Empty)
 			{
 				// If type is null, then it is missing sub components .
 				XmlSchemaType type = schema.SchemaTypes [SchemaTypeName] as XmlSchemaType;

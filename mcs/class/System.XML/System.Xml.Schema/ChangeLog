@@ -1,3 +1,10 @@
+2004-04-27  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaAttribute.cs : When type was inline simple type, it is not
+	  validated correctly.
+	* XmlSchemaSimpleType.cs : When Content was restriction, DataType was
+	  not indicating base type's Datatype correctly.
+
 2004-04-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaDatatype.cs : optimized Normalize() not to create

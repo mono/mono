@@ -177,7 +177,10 @@ namespace System.Xml.Schema
 			if (Content is XmlSchemaSimpleTypeRestriction) {
 				object o = ((XmlSchemaSimpleTypeRestriction) Content).GetActualType (h, schema, false);
 				BaseXmlSchemaTypeInternal = o as XmlSchemaSimpleType;
-				DatatypeInternal = o as XmlSchemaDatatype;
+				if (BaseXmlSchemaTypeInternal != null)
+					DatatypeInternal = BaseXmlSchemaTypeInternal.Datatype;
+				else
+					DatatypeInternal = o as XmlSchemaDatatype;
 			}
 			// otherwise, actualBaseSchemaType is null
 			else
