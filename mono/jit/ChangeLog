@@ -1,3 +1,27 @@
+2003-03-05  Martin Baulig  <martin@ximian.com>
+
+	* debug-jit.c, debug-jit.h: New files.  Moved all JIT-specific
+	stuff here.
+
+	* debug.c (mono_debug_add_method): Moved to debug-jit.c.
+	(mono_debug_handle, mono_debug_initialized): Made them global.
+	(replace_suffix): Removed, this isn't used anymore.
+	(record_line_number): Moved to debug-jit.c.
+	(debug_generate_method_lines): Moved to debug-jit.c
+	(generate_line_number): Renamed to
+	_mono_debug_generate_line_number() and made it global.
+	(debug_update_il_offsets): Moved to debug-jit.c
+	(mono_debug_get_image): Renamed to _mono_debug_get_image() and made
+	it global.
+	(address_from_il_offset): Renamed to
+	_mono_debug_address_from_il_offset() and made it global.
+	(il_offset_from_position): Moved to debug-jit.c
+	(lookup_method): Renamed to _mono_debug_lookup_method() and made
+	it global.
+	(mono_debug_add_method): Moved to debug-jit.c.
+	(mono_debug_create_notification_function): Use two new functions
+	mono_debug_codegen_breakpoint() and mono_debug_codegen_ret()
+	instead of x86_breakpoint() and x86_ret().	
 
 Sat Mar 1 12:36:45 CET 2003 Paolo Molaro <lupus@ximian.com>
 
