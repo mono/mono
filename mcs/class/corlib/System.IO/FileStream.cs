@@ -8,7 +8,7 @@
 //
 using System;
 using System.Runtime.InteropServices;
-using Unix;
+using System.Private;
 
 // fixme: I do not know how to handle errno when calling PInvoke functions
 // fixme: emit the correct exceptions everywhere
