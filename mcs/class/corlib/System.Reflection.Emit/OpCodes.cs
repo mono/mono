@@ -36,7 +36,9 @@ namespace System.Reflection.Emit {
   		public static readonly OpCode Bne_Un;
   		public static readonly OpCode Bne_Un_S;
   		public static readonly OpCode Box;
+#if NET_1_0
 [Obsolete]	public static readonly OpCode Boxval = new OpCode("boxval", 1, OpCodeType.Primitive, OperandType.InlineType, StackBehaviour.Pop1, StackBehaviour.Pushref, FlowControl.Next, 0xFF, 0x8C);
+#endif
   		public static readonly OpCode Br;
   		public static readonly OpCode Br_S;
   		public static readonly OpCode Break;
