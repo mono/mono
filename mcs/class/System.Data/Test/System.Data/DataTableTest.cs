@@ -1161,18 +1161,21 @@ namespace MonoTests.System.Data
 				table.Reset ();
 				Fail ("#A01");
 			}
-                        catch (ArgumentException) {
+                        catch (InvalidConstraintException) {
 			}
 			try {
 				table.Clear ();
-#if NET_1_1
-#else
+//#if NET_1_1
+//#else
 				Fail ("#A03");
-#endif
+//#endif
 			}
 			catch (Exception e) {
+
 #if NET_1_1
-				throw e;
+				
+				AssertEquals ("#A04", "Cannot clear table Parent because ForeignKeyConstraint DR enforces Child.", e.Message);
+				AssertEquals ("#A11", typeof (InvalidConstraintException), e.GetType());
 #else
 				if (e.GetType () != typeof (AssertionException)) {
 					// FIXME: Don't depend on localizable error messages.
@@ -1189,11 +1192,11 @@ namespace MonoTests.System.Data
 			table.Clear ();
 			AssertEquals ("#A08", 0, table.Rows.Count);
 #if NET_1_1
-			AssertEquals ("#A09", 0, table.Constraints.Count);
+			AssertEquals ("#A09", 1, table.Constraints.Count);
 #else
 			AssertEquals ("#A09", 1, table.Constraints.Count);
 #endif
-			AssertEquals ("#A05", 0, table.ChildRelations.Count);
+			AssertEquals ("#A10", 0, table.ChildRelations.Count);
 		}
 
 		[Test]
