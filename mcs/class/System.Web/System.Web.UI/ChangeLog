@@ -1,3 +1,7 @@
+2004-07-08 Pablo Baena <pbaena@gmail.com>
+
+	* Page.cs: added workaround for __doPostBack script on Netscape 4.xx
+	
 2004-07-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs: added additional checks for saving/displaying trace data.
