@@ -1,5 +1,10 @@
 2003-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpWebRequest.cs: when building the redirect URI, use the previous
+	one as the base URI, which makes relative URIs work.
+
+2003-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* DigestClient.cs: merged in code from Sebastien Pouliot and Greg
 	Reinacker that Supports cnonce and preauthentication.
 

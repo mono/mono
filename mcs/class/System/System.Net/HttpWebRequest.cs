@@ -763,7 +763,7 @@ namespace System.Net
 				throw e;
 
 			string host = actualUri.Host;
-			actualUri = new Uri (uriString);
+			actualUri = new Uri (actualUri, uriString);
 			hostChanged = (actualUri.Host != host);
 			return true;
 		}
