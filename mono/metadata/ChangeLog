@@ -1,3 +1,7 @@
+2002-06-24  Dietmar Maurer  <dietmar@ximian.com>
+
+	* icall.c (ves_icall_System_Runtime_InteropServices_Marshal_copy_to_unmanaged): impl.
+	(ves_icall_System_Runtime_InteropServices_Marshal_copy_from_unmanaged): impl.
 
 Sat Jun 22 11:37:25 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
