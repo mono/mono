@@ -1641,7 +1641,8 @@ namespace Mono.CSharp {
 					e = ConvertImplicitStandard (ec, e, target, loc);
 				else
 					e = ConvertExplicitStandard (ec, e, target, loc);
-			} 
+			}
+
 			return e;
 		}
 		
@@ -1718,13 +1719,16 @@ namespace Mono.CSharp {
 					// t1 == t2, we have to compare their element types.
 					//
 					if (target_type.IsPointer){
-						if (target_type.GetElementType()==expr_type.GetElementType())
+						if (target_type.GetElementType() == expr_type.GetElementType())
 							return expr;
 					}
 				}
 				
-				if (target_type.IsPointer){
+				if (target_type.IsPointer) {
 					if (expr is NullLiteral)
+						return new EmptyCast (expr, target_type);
+
+					if (expr_type == TypeManager.void_ptr_type)
 						return new EmptyCast (expr, target_type);
 				}
 			}
