@@ -29,6 +29,7 @@ namespace System.Windows.Forms {
 		MenuMerge mergeType;
 		Shortcut  shortcut;
 		bool      mdiList;
+		bool      showShortcut;
 		//
 		// - Constructor
 		//
@@ -36,6 +37,7 @@ namespace System.Windows.Forms {
 			shortcut = Shortcut.None;
 			mergeType = MenuMerge.Add; // FIXME: what is default
 			mdiList = false;
+			showShortcut = true;
 		}
 
 		public MenuItem(string s) : this(){
@@ -360,12 +362,20 @@ namespace System.Windows.Forms {
 		}
 
 		public Shortcut Shortcut {
-
 			get {
-				throw new NotImplementedException ();
+				return shortcut;
 			}
 			set {
-				throw new NotImplementedException ();
+				shortcut = value;
+			}
+		}
+
+		public bool ShowShortcut {
+			get {
+				return showShortcut;
+			}
+			set {
+				showShortcut = value;
 			}
 		}
 

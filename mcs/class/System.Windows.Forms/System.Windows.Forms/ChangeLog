@@ -1,3 +1,6 @@
+2003-08-12 Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* MenuItem.cs : added missing properties, so menu sample app can be compiled
+
 2003-08-11 Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* Control.cs : MouseButtons, PointToClient, PointToScreen were implemented.
 			removed unnecessary check from UpdateBounds
