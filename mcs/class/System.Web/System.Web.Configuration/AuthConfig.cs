@@ -25,6 +25,10 @@ namespace System.Web.Configuration
 		FormsAuthPasswordFormat pwdFormat;
 		Hashtable credentialUsers;
 		bool has_parent;
+#if NET_1_1
+		bool requireSSL;
+		bool slidingExpiration;
+#endif
 
 		internal AuthConfig (object parent)
 		{
@@ -38,6 +42,10 @@ namespace System.Web.Configuration
 				protection = p.protection;
 				timeout = p.timeout;
 				pwdFormat = p.pwdFormat;
+#if NET_1_1
+				requireSSL = p.requireSSL;
+				slidingExpiration = p.slidingExpiration;
+#endif
 				credentialUsers = new Hashtable (p.CredentialUsers);
 			}
 		}
@@ -170,6 +178,18 @@ namespace System.Web.Configuration
 				return credentialUsers;
 			}
 		}
+
+#if NET_1_1
+		internal bool RequireSSL {
+			get { return requireSSL; }
+			set { requireSSL = value; }
+		}
+
+		internal bool SlidingExpiration {
+			get { return slidingExpiration; }
+			set { slidingExpiration = value; }
+		}
+#endif
 	}
 }
 

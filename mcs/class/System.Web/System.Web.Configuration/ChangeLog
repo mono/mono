@@ -1,3 +1,12 @@
+2004-01-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AuthConfig.cs:
+	* AuthenticationConfigHandler.cs: added RequireSSL and
+	SlidingExpiration.
+
+	* HandlerFactoryProxy.cs: not public.
+	* HandlerItem.cs: not public.
+
 2004-01-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConfigurationSettings.cs: fix location path lookup. Closes bug

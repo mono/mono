@@ -40,12 +40,33 @@ namespace System.Web.Configuration
 					config.LoginUrl = AttValue ("loginUrl", child);
 					config.SetProtection (AttValue ("protection", child));
 					config.SetTimeout (AttValue ("timeout", child));
+#if NET_1_1
+					string att = AttValue ("requireSSL", child);
+					if (att != null) {
+						if (att == "true")
+							config.RequireSSL = true;
+
+						if (att != "false")
+							HandlersUtil.ThrowException
+								("Invalid value for RequireSSL", child);
+					}
+
+					att = AttValue ("slidingExpiration", child);
+					if (att != null) {
+						if (att == "true")
+							config.SlidingExpiration = true;
+
+						if (att != "false")
+							HandlersUtil.ThrowException
+								("Invalid value for SlidingExpiration", child);
+					}
+#endif
+
 					ReadCredentials (child.ChildNodes, config);
 					continue;
 				}
 
 				if (child.Name == "passport") {
-					Console.WriteLine ("**WARNING**: Passport not supported! Ignoring section.");
 					continue;
 				}
 

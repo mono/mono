@@ -8,7 +8,7 @@ using System;
 
 namespace System.Web.Configuration {
 	[MonoTODO]
-	public class HandlerFactoryProxy {
+	class HandlerFactoryProxy {
 		public HandlerFactoryProxy() {
 		}
 	}

@@ -14,7 +14,7 @@ using System.Text.RegularExpressions;
 
 namespace System.Web.Configuration
 {
-	public class HandlerItem
+	class HandlerItem
 	{
 		private Type _type;
 		private string _typeName;
