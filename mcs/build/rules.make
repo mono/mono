@@ -77,14 +77,14 @@ include $(topdir)/build/profiles/$(PROFILE).make
 # Simple rules
 
 %-recursive:
-	@for d in $(SUBDIRS) ; do \
+	@list='$(SUBDIRS)'; for d in $$list ; do \
 	    (cd $$d && $(MAKE) $*) || exit 1 ; \
 	done
 
 # note: dist-local dep, extra subdirs, $* has become $@
 
 dist-recursive: dist-local
-	@for d in $(SUBDIRS) $(DIST_ONLY_SUBDIRS) ; do \
+	@list='$(SUBDIRS) $(DIST_ONLY_SUBDIRS)'; for d in $$list ; do \
 	    (cd $$d && $(MAKE) $@) || exit 1 ; \
 	done
 

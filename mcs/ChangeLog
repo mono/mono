@@ -1,3 +1,9 @@
+2003-07-14  Peter Williams  <peter@newton.cx>
+
+	* build/rules.make (dist-recursive): Fix recursive rules
+	to work on HP/UX /bin/sh. Patch from Bernie Solomon
+	<bernard@ugsolutions.com>.
+
 2003-05-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* makefile:
