@@ -1,5 +1,10 @@
 2003-12-11  Nick Drochak  <ndrochak@ieee.org>
 
+	* VBCodeProviderTest.cs: Console.WriteLine's don't really belong in 
+	unit tests.
+
+2003-12-11  Nick Drochak  <ndrochak@ieee.org>
+
 	* VBCodeProviderTest.cs: Fixed subtle namespace issues preventing
 	build with csc.
 

@@ -32,9 +32,6 @@ namespace MonoTests.System.Microsoft.VisualBasic
 			MyVBCodeProvider = new VBCodeProvider(); 
 		}
 
-		[TearDown]
-		public void Clean() {}
-
 		[Test]
 		public void FileExtension ()
 		{
@@ -51,12 +48,12 @@ namespace MonoTests.System.Microsoft.VisualBasic
 		public void CreateCompiler()
 		{
 			// Prepare the compilation
-			Console.WriteLine("#J30.pre1 - CreateCompiler");
+			//Console.WriteLine("#J30.pre1 - CreateCompiler");
 			ICodeCompiler MyVBCodeCompiler;
 			MyVBCodeCompiler = MyVBCodeProvider.CreateCompiler();
 			AssertNotNull ("#JW30 - CreateCompiler", MyVBCodeCompiler);
 			CompilerResults MyVBCodeCompilerResults;
-			Console.WriteLine("#J30.post1 - CreateCompiler");
+			//Console.WriteLine("#J30.post1 - CreateCompiler");
 
 			CompilerParameters options = new CompilerParameters();
 			options.GenerateExecutable = true;
@@ -75,9 +72,8 @@ namespace MonoTests.System.Microsoft.VisualBasic
 			{
 				MyOutStr += MyStr + Environment.NewLine + Environment.NewLine;
 			}
-			if (MyOutStr != "")
-				Console.WriteLine ("Error compiling VB.NET Hello world test application" + Environment.NewLine + Environment.NewLine + MyOutStr);
-			AssertEquals ("#JW31 - Hello world compilation", 0, MyVBCodeCompilerResults.Errors.Count);
+
+			AssertEquals ("#JW31 - Hello world compilation: " + MyOutStr, 0, MyVBCodeCompilerResults.Errors.Count);
 
 			try
 			{
