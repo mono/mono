@@ -1,3 +1,8 @@
+2004-11-19  Marek Safar  <marek.safar@seznam.cz>
+
+	* statement.cs (ForeachHelperMethods): Add location member and
+	error 202 detection.
+
 2004-11-19  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (EXTRA_DISTFILES): Remove mcs.exe.config.  It's

@@ -4074,8 +4074,12 @@ namespace Mono.CSharp {
 				if (hm == null){
 					error1579 (expr.Type);
 					return false;
-				}			
+				}
 
+				// When ProbeCollection reported error
+				if (hm.move_next == null)
+					return false;
+	
 				array_type = expr.Type;
 				element_type = hm.element_type;
 
@@ -4212,10 +4216,12 @@ namespace Mono.CSharp {
 			public Type element_type;
 			public Type enumerator_type;
 			public bool is_disposable;
+			public readonly Location Location;
 
-			public ForeachHelperMethods (EmitContext ec)
+			public ForeachHelperMethods (EmitContext ec, Location loc)
 			{
 				this.ec = ec;
+				this.Location = loc;
 				this.element_type = TypeManager.object_type;
 				this.enumerator_type = TypeManager.ienumerator_type;
 				this.is_disposable = true;
@@ -4290,6 +4296,16 @@ namespace Mono.CSharp {
 
 			} else {
 
+				if (return_type.IsPointer || return_type.IsArray) {
+					Report.SymbolRelatedToPreviousError (mi);
+					Type t = return_type.GetElementType ();
+					Report.SymbolRelatedToPreviousError (t);
+					Report.Error (202, hm.Location, "foreach requires that the return type '{0}' of '{1}' must have a suitable public MoveNext method and public Current property", 
+						TypeManager.CSharpName (return_type), TypeManager.GetFullNameSignature (m));
+					hm.get_enumerator = mi;
+					return false;
+				}
+
 				//
 				// Ok, so they dont return an IEnumerable, we will have to
 				// find if they support the GetEnumerator pattern.
@@ -4354,7 +4370,7 @@ namespace Mono.CSharp {
 		//
 		ForeachHelperMethods ProbeCollectionType (EmitContext ec, Type t)
 		{
-			ForeachHelperMethods hm = new ForeachHelperMethods (ec);
+			ForeachHelperMethods hm = new ForeachHelperMethods (ec, loc);
 
 			for (Type tt = t; tt != null && tt != TypeManager.object_type;){
 				if (TryType (tt, hm))
