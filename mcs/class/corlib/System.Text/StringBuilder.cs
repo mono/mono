@@ -41,6 +41,7 @@ using System.Runtime.CompilerServices;
 namespace System.Text {
 	
 	[Serializable]
+	[MonoTODO ("Fix serialization compatibility with MS.NET")]
 	public sealed class StringBuilder 
 	{
 		private int _length;

@@ -53,6 +53,7 @@ namespace System.Text
 using System;
 
 [Serializable]
+[MonoTODO ("Fix serialization compatibility with MS.NET")]
 #if ECMA_COMPAT
 internal
 #else

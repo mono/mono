@@ -1,3 +1,11 @@
+2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* ASCIIEncoding.cs: added TODO for serialization
+	* StringBuilder.cs: added TODO for serialization
+	* UnicodeEncoding.cs: added TODO for serialization
+	* UTF7Encoding.cs: added TODO for serialization
+	* UTF8Encoding.cs: added TODO for serialization
+
 2004-06-10  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* Encoding.cs: Marked protected internal field as internal to

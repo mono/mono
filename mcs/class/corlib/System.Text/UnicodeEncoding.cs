@@ -53,6 +53,7 @@ namespace System.Text
 using System;
 
 [Serializable]
+[MonoTODO ("Fix serialization compatibility with MS.NET")]
 public class UnicodeEncoding : Encoding
 {
 	// Magic numbers used by Windows for Unicode.

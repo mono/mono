@@ -51,6 +51,7 @@ namespace System.Text
 using System;
 
 [Serializable]
+[MonoTODO ("Fix serialization compatibility with MS.NET")]
 public class UTF8Encoding : Encoding
 {
 	// Magic number used by Windows for UTF-8.

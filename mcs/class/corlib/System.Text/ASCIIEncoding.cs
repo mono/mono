@@ -52,6 +52,7 @@ namespace System.Text
 using System;
 
 [Serializable]
+[MonoTODO ("Fix serialization compatibility with MS.NET")]
 public class ASCIIEncoding : Encoding
 {
 	// Magic number used by Windows for "ASCII".
