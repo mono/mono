@@ -97,16 +97,19 @@ namespace System {
 			}
 		}
 
+		[MonoTODO]
 		public void AppendPrivatePath (string path)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public void ClearPrivatePath ()
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public void ClearShadowCopyPath ()
 		{
 			throw new NotImplementedException ();
@@ -125,6 +128,7 @@ namespace System {
 					       null, null, null, activationAttributes, null);
 		}
 		
+		[MonoTODO]
 		public ObjectHandle CreateInstance (string assemblyName,
 						    string typeName,
 						    bool ignoreCase,
@@ -151,6 +155,7 @@ namespace System {
 						   null, null, null, activationAttributes, null);
 		}
 		
+		[MonoTODO]
 		public ObjectHandle CreateInstanceFrom (string assemblyName,
 							string typeName,
 							bool ignoreCase,
@@ -261,6 +266,7 @@ namespace System {
 		}
 
 
+		[MonoTODO]
 		public void DoCallBack (CrossAppDomainDelegate theDelegate)
 		{
 			throw new NotImplementedException ();
@@ -290,6 +296,7 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern Assembly [] GetAssemblies ();
 
+		[MonoTODO]
 		public object GetDate (string name)
 		{
 			throw new NotImplementedException ();			
@@ -300,11 +307,13 @@ namespace System {
 			return (int)_mono_app_domain;
 		}
 
+		[MonoTODO]
 		public object GetLifetimeService ()
 		{
 			throw new NotImplementedException ();			
 		}
 
+		[MonoTODO]
 		public object InitializeLifetimeService ()
 		{
 			throw new NotImplementedException ();			
@@ -349,11 +358,13 @@ namespace System {
 			return Load (rawAssembly, rawSymbolStore, new Evidence ());
 		}
 
+		[MonoTODO]
 		public Assembly Load (byte[] rawAssembly, byte[] rawSymbolStore, Evidence securityEvidence)
 		{
 			throw new NotImplementedException ();
 		}
 			
+		[MonoTODO]
 		public void SetAppDomainPolicy (PolicyLevel domainPolicy)
 		{
 			throw new NotImplementedException ();
@@ -364,16 +375,19 @@ namespace System {
 			SetupInformation.CachePath = s;
 		}
 		
+		[MonoTODO]
 		public void SetPrincipalPolicy (PrincipalPolicy policy)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public void SetShadowCopyPath (string s)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public void SetThreadPrincipal (IPrincipal principal)
 		{
 			throw new NotImplementedException ();
@@ -433,6 +447,7 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern void SetData (string name, object data);
 
+		[MonoTODO]
 		public static int GetCurrentThreadId ()
 		{
 			throw new NotImplementedException ();
