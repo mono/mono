@@ -1,3 +1,7 @@
+2002-10-17  Dietmar Maurer  <dietmar@ximian.com>
+
+	* monoburg.y: added missing semicolon
+
 2002-10-11  Dietmar Maurer  <dietmar@ximian.com>
 
 	* monoburg.c (emit_tree_match): omit unnecessary compare
