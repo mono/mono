@@ -1,0 +1,10 @@
+2002-07-24  Duncan Mak  <duncan@ximian.com>
+
+	* SoapAttribute.cs: 
+	* SoapFieldAttribute.cs: 
+	* SoapMethodAttribute.cs: 
+	* SoapParameterAttribute.cs: 
+	* SoapTypeAttribute.cs: Stubbed out.
+
+	* SoapOption.cs: 
+	* XmlFieldOrderOption.cs: Moved here from System.Runtime.Remoting

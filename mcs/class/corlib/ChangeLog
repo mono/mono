@@ -1,17 +1,16 @@
 2002-07-24  Duncan Mak  <duncan@ximian.com>
 
-	* System.Runtime.Remoting.Activation/UrlAttribute.cs: Add to CVS.
+	* unix.args: Added files from Remoting.Lifetime and
+	Remoting.Metadata.
 
-	* System.Runtime.Remoting.Activation/IConstructionCallMessage.cs:
-	This implements IMessage, IMethodCallMessage and IMethodMessage.
+	* ChangeLog: Moved entries from System.Runtime.Remoting.Activation
+	and System.Runtime.Remoting.Proxy to their own ChangeLog.
 
 2002-07-23  Duncan Mak  <duncan@ximian.com>
 
 	* list: 
 	* unix.args: Added new Attributes in
 	System.Runtime.CompilerServices and System.Runtime.Remoting.Messaging.
-
-	* System.Runtime.Remoting.Proxies/ProxyAttribute.cs: Added.
 
 2002-07-22  Tim Coleman <tim@timcoleman.com>
 	* list:

@@ -1,0 +1,6 @@
+2002-07-24  Duncan Mak  <duncan@ximian.com>	
+
+	* System.Runtime.Remoting.Activation/UrlAttribute.cs: Add to CVS.
+
+	* System.Runtime.Remoting.Activation/IConstructionCallMessage.cs:
+	This implements IMessage, IMethodCallMessage and IMethodMessage.

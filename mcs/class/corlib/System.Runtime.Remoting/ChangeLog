@@ -1,3 +1,10 @@
+2002-07-24  Duncan Mak  <duncan@ximian.com>
+
+	* LeaseState.cs: Moved to System.Runtime.Remoting.Lifetime.
+
+	* SoapMethodOption.cs: 
+	* SoapOption.cs: Removed and merged into System.Runtime.Remoting.Metadata.SoapOption.
+
 2002-07-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* IObjectHandle.cs: New file.

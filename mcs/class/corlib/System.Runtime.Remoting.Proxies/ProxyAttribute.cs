@@ -14,7 +14,7 @@ using System.Runtime.Remoting.Contexts;
 namespace System.Runtime.Remoting.Proxies {
 
 	[AttributeUsage (AttributeTargets.Class)]
-	public class ProxyAttribute : Attribute
+	public class ProxyAttribute : IContextAttribute
 	{
 		public ProxyAttribute ()
 		{
@@ -33,8 +33,9 @@ namespace System.Runtime.Remoting.Proxies {
 		}
 
 		[MonoTODO]
-		public void GetPropertiesForNewContext (IConstructionCallMessage mesg)
+		public void GetPropertiesForNewContext (IConstructionCallMessage msg)
 		{
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]

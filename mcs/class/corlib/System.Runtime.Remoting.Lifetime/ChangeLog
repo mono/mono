@@ -1,0 +1,11 @@
+2002-07-24  Duncan Mak  <duncan@ximian.com>
+
+	* LeaseState.cs: Moved here from System.Runtime.Remoting.
+
+	* ClientSponsor.cs: 
+	* LifetimeServices.cs: Stubbed out
+
+	* ILease.cs: 
+	* ISponsor.cs: Added to CVS.
+	
+

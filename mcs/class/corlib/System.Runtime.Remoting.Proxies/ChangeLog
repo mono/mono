@@ -1,0 +1,8 @@
+2002-07-24  Duncan Mak  <duncan@ximian.com>
+	
+	* System.Runtime.Remoting.Proxies/ProxyAttribute.cs: This
+	implements IContextAttribute.
+
+2002-07-23  Duncan Mak  <duncan@ximian.com>	
+	
+	* System.Runtime.Remoting.Proxies/ProxyAttribute.cs: Added.

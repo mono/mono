@@ -1,3 +1,7 @@
+2002-07-24  Duncan Mak  <duncan@ximian.com>
+
+	* OneWayAttribute.cs: Added to CVS.
+
 2002-07-23  Duncan Mak  <duncan@ximian.com>
 
 	* HeaderHandler.cs: Added.
