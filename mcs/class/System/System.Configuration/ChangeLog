@@ -1,13 +1,3 @@
-2003-10-01  Lluis Sanchez Gual <lluis@ximian.com>
-
-	* ConfigurationSettings.cs: Added null check for fileCache in GetCOnfig.
-	  It can be null if the ConfigurationData instance failed to Load.
-
-2003-10-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
-
-	* ConfigurationSettings.cs: patch by Eric Lindvall (eric@5stops.com)
-	that improves performance by not reading the file more than once.
-
 2003-07-15  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* ConfigurationSettings.cs: Removed unused exception variable, fixes
