@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.42 $
+// $Revision: 1.43 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.43  2004/10/07 14:56:51  jordi
+// Removes deletion of cached brushes
+//
 // Revision 1.42  2004/10/06 09:59:05  jordi
 // removes warnings from compilation
 //
@@ -2377,8 +2380,7 @@ namespace System.Windows.Forms
 				}
 			}
 			graphics.FillRectangle(sb, rectangle);
-			graphics.DrawRectangle(pen, rectangle);
-			sb.Dispose();
+			graphics.DrawRectangle(pen, rectangle);			
 			pen.Dispose();
 		}
 
@@ -2493,8 +2495,8 @@ namespace System.Windows.Forms
 			Rectangle	rect;
 			int			lineWidth;
 
-			// MS seems to draw the background white
-			graphics.FillRectangle(ResPool.GetSolidBrush (ColorButtonText), rectangle);
+			// MS draws always the background white
+			graphics.FillRectangle(ResPool.GetSolidBrush (Color.White), rectangle);
 
 			switch(glyph) {
 			case MenuGlyph.Arrow: {
@@ -2530,14 +2532,12 @@ namespace System.Windows.Forms
 			}
 
 			case MenuGlyph.Bullet: {
-				SolidBrush	sb;
-
+				
 				lineWidth=Math.Max(2, rectangle.Width/3);
 				rect=new Rectangle(rectangle.X+lineWidth, rectangle.Y+lineWidth, rectangle.Width-lineWidth*2, rectangle.Height-lineWidth*2);
-
-				sb=ResPool.GetSolidBrush (ColorButtonText);
-				graphics.FillEllipse(sb, rect);
-				sb.Dispose();
+				
+				graphics.FillEllipse(ResPool.GetSolidBrush (ColorButtonText), rect);
+				
 				return;
 			}
 
