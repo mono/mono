@@ -1,5 +1,7 @@
 2004-01-23  Zoltan Varga  <vargaz@freemail.hu>
 
+	* profiler.c (merge_methods): Fix merging of profile info. Fixes #53010.
+
 	* loader.c (mono_lookup_pinvoke_call): Strip .dll from library names.
 	Fixes #22532.
 
