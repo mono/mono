@@ -2746,7 +2746,7 @@ namespace Mono.CSharp {
 			foreach (MemberInfo m in move_next_list){
 				MethodInfo mi = (MethodInfo) m;
 				Type [] args;
-				
+
 				args = TypeManager.GetArgumentTypes (mi);
 				if (args != null && args.Length == 0)
 					return mi;
@@ -2788,7 +2788,7 @@ namespace Mono.CSharp {
 			}
 			ForeachHelperMethods hm = (ForeachHelperMethods) criteria;
 			EmitContext ec = hm.ec;
-			
+
 			//
 			// Check whether GetEnumerator is accessible to us
 			//
@@ -2824,8 +2824,10 @@ namespace Mono.CSharp {
 			// Ok, we can access it, now make sure that we can do something
 			// with this `GetEnumerator'
 			//
-			if (mi.ReturnType == TypeManager.ienumerator_type || 
-			    TypeManager.ienumerator_type.IsAssignableFrom (mi.ReturnType)){
+
+			if (mi.ReturnType == TypeManager.ienumerator_type ||
+			    TypeManager.ienumerator_type.IsAssignableFrom (mi.ReturnType) ||
+			    (!RootContext.StdLib && TypeManager.ImplementsInterface (mi.ReturnType, TypeManager.ienumerator_type))) {
 				hm.move_next = TypeManager.bool_movenext_void;
 				hm.get_current = TypeManager.object_getcurrent_void;
 				return true;

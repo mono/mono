@@ -1,3 +1,9 @@
+2002-07-17  Martin Baulig  <martin@gnome.org>
+
+	* statement.cs (Foreach.GetEnumeratorFilter): When compiling corlib,
+	check whether mi.ReturnType implements the IEnumerator interface; the
+	`==' and the IsAssignableFrom() will fail in this situation.
+
 2002-07-16  Ravi Pratap  <ravi@ximian.com>
 
 	* ecore.cs (SimpleName.SimpleNameResolve) : Apply Gonzalo's fix 
