@@ -41,6 +41,11 @@ namespace MonoTests.System
 		{
 			int numBytes;	
 			float [] floatArray = new float [10];
+			float [,] floatArray2 = new float [10,10];
+			float [,,] floatArray3 = new float [10,10,10];
+			float [,,,] floatArray4 = new float [10,0,10,10];
+			float [,,,] floatArray5 = new float [0,0,0,0];
+			float [] floatArray6 = new float [0];
 			TestCase [] someArray = new TestCase [3];
 		
 			try {
@@ -62,7 +67,22 @@ namespace MonoTests.System
 			}
 		
 			numBytes = Buffer.ByteLength (floatArray);
-			AssertEquals ("TestByteLength: wrong byteLength", 40, numBytes);
+			AssertEquals ("TestByteLength: wrong byteLength for floatArray", 40, numBytes);
+
+			numBytes = Buffer.ByteLength (floatArray2);
+			AssertEquals ("TestByteLength: wrong byteLength for floatArray2", 400, numBytes);
+
+			numBytes = Buffer.ByteLength (floatArray3);
+			AssertEquals ("TestByteLength: wrong byteLength for floatArray3", 4000, numBytes);
+
+			numBytes = Buffer.ByteLength (floatArray4);
+			AssertEquals ("TestByteLength: wrong byteLength for floatArray4", 0, numBytes);
+
+			numBytes = Buffer.ByteLength (floatArray5);
+			AssertEquals ("TestByteLength: wrong byteLength for floatArray5", 0, numBytes);
+
+			numBytes = Buffer.ByteLength (floatArray6);
+			AssertEquals ("TestByteLength: wrong byteLength for floatArray6", 0, numBytes);
 		}
 		
 		public void TestGetByte () 
