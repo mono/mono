@@ -1,5 +1,10 @@
 2004-01-26  Duncan Mak  <duncan@ximian.com>
 
+	* graphics.c (GdipDrawPath): Doh! Added stupid breaks inside the
+	switch, so we can draw simple paths (lines) now. For more complex
+	curves, the array is holding some NaNs, so I'll need to look into
+	that.
+
 	* bitmap.c:
 	(GdipCreateBitmapFromScan0): Set allocate memory for scan0 if it
 	is NULL. Thanks to Jordi for fixing this, we can now write out to

@@ -595,9 +595,9 @@ GdipDrawPath (GpGraphics *graphics, GpPen *pen, GpPath *path)
         int length = path->count;
         int i;
 
-        gdip_pen_setup (graphics, pen);        
-        
-        for (i = 0; i < length; i ++) {
+        gdip_pen_setup (graphics, pen);
+
+        for (i = 0; i < length; ++i) {
                 GpPointF pt = g_array_index (path->points, GpPointF, i);
                 byte type = g_array_index (path->types, byte, i);
                 GpPointF pts [3];
@@ -606,9 +606,11 @@ GdipDrawPath (GpGraphics *graphics, GpPen *pen, GpPath *path)
                 switch (type) {
                 case PathPointTypeStart:
                         cairo_move_to (graphics->ct, pt.X, pt.Y);
+                        break;
 
                 case PathPointTypeLine:
                         cairo_line_to (graphics->ct, pt.X, pt.Y);
+                        break;
 
                 case PathPointTypeBezier:
                         if (idx < 3) {
@@ -622,6 +624,8 @@ GdipDrawPath (GpGraphics *graphics, GpPen *pen, GpPath *path)
                                                 pts [2].X, pts [2].Y);
                                 idx = 0;
                         }
+                        break;
+                        
                 default:
                         return NotImplemented;
                 }
