@@ -25,8 +25,9 @@ Mono.Data.TdsClient.Internal/TdsColumnStatus.cs
 Mono.Data.TdsClient.Internal/TdsColumnType.cs
 Mono.Data.TdsClient.Internal/TdsComm.cs
 Mono.Data.TdsClient.Internal/TdsConnectionParameters.cs
-Mono.Data.TdsClient.Internal/TdsContext.cs
 Mono.Data.TdsClient.Internal/TdsEnvPacketSubType.cs
+Mono.Data.TdsClient.Internal/TdsInternalError.cs
+Mono.Data.TdsClient.Internal/TdsInternalErrorCollection.cs
 Mono.Data.TdsClient.Internal/TdsInternalErrorMessageEventArgs.cs
 Mono.Data.TdsClient.Internal/TdsInternalErrorMessageEventHandler.cs
 Mono.Data.TdsClient.Internal/TdsInternalException.cs
