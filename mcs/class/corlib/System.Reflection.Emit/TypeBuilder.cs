@@ -64,6 +64,7 @@ namespace System.Reflection.Emit {
 	private ModuleBuilder pmodule;
 	private int class_size;
 	private PackingSize packing_size;
+	private IntPtr generic_container;
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 	private	GenericTypeParameterBuilder[] generic_params;
 #else

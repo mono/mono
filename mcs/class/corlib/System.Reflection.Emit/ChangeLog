@@ -1,3 +1,13 @@
+2004-10-11  Martin Baulig  <martin@ximian.com>
+
+	* TypeBuilder.cs (TypeBuilder.generic_container): New private field.
+
+	* MethodBuilder.cs (MethodBuilder.generic_container): New private field.
+
+	* GenericTypeParameterBuilder.cs
+	(GenericTypeParameterBuilder.GetGenericTypeParameterConstraints):
+	Return `Type.EmptyTypes' instead of an array of `typeof (object)'.	
+
 2004-10-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ModuleBuilder.cs: Create global type after creation.

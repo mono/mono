@@ -343,7 +343,7 @@ namespace System.Reflection.Emit
 				if (iface_constraints != null)
 					return iface_constraints;
 
-				return new Type[] { typeof (object) };
+				return Type.EmptyTypes;
 			}
 
 			if (iface_constraints == null)
