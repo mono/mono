@@ -62,6 +62,9 @@ namespace System.Reflection.Emit {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void setup_generic_class (TypeBuilder tb);
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern EventInfo get_event_info (EventBuilder eb);
+
 		internal TypeBuilder (ModuleBuilder mb, TypeAttributes attr) {
 			this.parent = null;
 			this.attrs = attr;
@@ -689,6 +692,53 @@ namespace System.Reflection.Emit {
 			// FIXME: Under MS.NET, this throws a NotImplementedException
 			// But mcs calls this method. How can that be?
 			return new EventInfo [0];
+		}
+
+		// This is only used from MonoGenericInst.initialize().
+		internal EventInfo[] GetEvents_internal (BindingFlags bindingAttr)
+		{
+			if (events == null)
+				return new EventInfo [0];
+			ArrayList l = new ArrayList ();
+			bool match;
+			MethodAttributes mattrs;
+			MethodInfo accessor;
+
+			foreach (EventBuilder eb in events) {
+				if (eb == null)
+					continue;
+				EventInfo c = get_event_info (eb);
+				match = false;
+				accessor = c.GetAddMethod (true);
+				if (accessor == null)
+					accessor = c.GetRemoveMethod (true);
+				if (accessor == null)
+					continue;
+				mattrs = accessor.Attributes;
+				if ((mattrs & MethodAttributes.MemberAccessMask) == MethodAttributes.Public) {
+					if ((bindingAttr & BindingFlags.Public) != 0)
+						match = true;
+				} else {
+					if ((bindingAttr & BindingFlags.NonPublic) != 0)
+						match = true;
+				}
+				if (!match)
+					continue;
+				match = false;
+				if ((mattrs & MethodAttributes.Static) != 0) {
+					if ((bindingAttr & BindingFlags.Static) != 0)
+						match = true;
+				} else {
+					if ((bindingAttr & BindingFlags.Instance) != 0)
+						match = true;
+				}
+				if (!match)
+					continue;
+				l.Add (c);
+			}
+			EventInfo[] result = new EventInfo [l.Count];
+			l.CopyTo (result);
+			return result;
 		}
 
 		public override FieldInfo GetField( string name, BindingFlags bindingAttr) {
