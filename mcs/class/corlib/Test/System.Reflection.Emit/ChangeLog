@@ -1,3 +1,8 @@
+2004-03-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* CustomAttributeBuilderTest.cs: Call GetCustomAttributes with false
+	so custom attributes on Object do not screw the results.
+
 2004-03-15  Nick Drochak <ndrochak@ieee.org>
 
 	* CustomAttributeBuilderTest.cs: Force test to pass if we are running

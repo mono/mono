@@ -206,7 +206,7 @@ namespace MonoTests.System.Reflection.Emit
 			object testInstance = Activator.CreateInstance (myType);
 
 			//check the validity of the attribute associated with Print method 
-			object [] customAttrs = myType.GetCustomAttributes (true);
+			object [] customAttrs = myType.GetCustomAttributes (false);
 			AssertEquals ("#TestType has exactly one attribute", customAttrs.Length, 1);
 
 			//Custom Attributes of TestType
@@ -265,7 +265,7 @@ namespace MonoTests.System.Reflection.Emit
 			object testInstance = Activator.CreateInstance (myType);
 
 			//check the validity of the attribute associated with Print method 
-			object [] customAttrs = myType.GetCustomAttributes (true);
+			object [] customAttrs = myType.GetCustomAttributes (false);
 			AssertEquals ("#TestType has exactly one attribute", customAttrs.Length , 1);
 
 			//Custom Attributes of TestType
@@ -325,7 +325,7 @@ namespace MonoTests.System.Reflection.Emit
 			object testInstance = Activator.CreateInstance (myType);
 
 			//check the validity of the attribute associated with Print method 
-			object [] customAttrs = myType.GetCustomAttributes (true);
+			object [] customAttrs = myType.GetCustomAttributes (false);
 			AssertEquals("#TestType has exactly one attribute",customAttrs.Length , 1);
 
 			//Custom Attributes of TestType
