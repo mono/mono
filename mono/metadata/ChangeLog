@@ -1,5 +1,10 @@
 2004-07-21  Bernie Solomon  <bernard@ugsolutions.com>
 
+	* reflection.c (type_get_fully_qualified_name): 
+	insert cast to get type checking of ?: with non-gcc compilers
+
+2004-07-21  Bernie Solomon  <bernard@ugsolutions.com>
+
 	* rand.c: use g_getenv for both lookups of
 	MONO_EGD_SOCKET
 
