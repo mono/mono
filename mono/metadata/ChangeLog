@@ -1,3 +1,9 @@
+2002-03-18  Dan Lewis <dihlewis@yahoo.co.uk>
+
+	* sysmath.c, sysmath.h, icall.c, Makefile.am: math routines now
+	handled by runtime as icall rather than dllimport from libm.so
+	* file-io.c, file-io.h: fixed handle argument type.
+
 2002-03-18  Dick Porter  <dick@ximian.com>
 
 	* reflection.c (mono_image_get_type_info): rename interface to
