@@ -132,7 +132,7 @@ namespace MonoTests.System.Threading
 				rwlock.ReleaseWriterLock ();
 				throw new Exception ("Should not get writer lock");
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
 			}
 		}
@@ -151,7 +151,7 @@ namespace MonoTests.System.Threading
 				rwlock.ReleaseReaderLock ();
 				throw new Exception ("Should not get reader lock");
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
 			}
 		}
