@@ -555,20 +555,18 @@ namespace System.Data {
 		/// <summary>
 		/// Gets the child rows of this DataRow using the specified DataRelation.
 		/// </summary>
-		[MonoTODO]
 		public DataRow[] GetChildRows (DataRelation relation) 
 		{
-			throw new NotImplementedException ();
+			return GetChildRows (relation, DataRowVersion.Current);
 		}
 
 		/// <summary>
 		/// Gets the child rows of a DataRow using the specified RelationName of a
 		/// DataRelation.
 		/// </summary>
-		[MonoTODO]
 		public DataRow[] GetChildRows (string relationName) 
 		{
-			throw new NotImplementedException ();
+			return GetChildRows (Table.DataSet.Relations[relationName]);
 		}
 
 		/// <summary>
@@ -578,17 +576,32 @@ namespace System.Data {
 		[MonoTODO]
 		public DataRow[] GetChildRows (DataRelation relation, DataRowVersion version) 
 		{
-			throw new NotImplementedException ();
+			// TODO: Caching for better preformance
+			ArrayList rows = new ArrayList();
+			DataColumn[] parentColumns = relation.ParentColumns;
+			DataColumn[] childColumns = relation.ChildColumns;
+			int numColumn = parentColumns.Length;
+			foreach (DataRow row in relation.ChildTable.Rows) {
+				bool allColumnsMatch = true;
+				for (int columnCnt = 0; columnCnt < numColumn; ++columnCnt) {
+					if (!this [parentColumns[columnCnt], version].Equals(
+					    row[childColumns[columnCnt], version])) {
+						allColumnsMatch = false;
+						break;
+					}
+				}
+				if (allColumnsMatch) rows.Add(row);
+			}
+			return rows.ToArray(typeof(DataRow)) as DataRow[];
 		}
 
 		/// <summary>
 		/// Gets the child rows of a DataRow using the specified RelationName of a
 		/// DataRelation, and DataRowVersion.
 		/// </summary>
-		[MonoTODO]
 		public DataRow[] GetChildRows (string relationName, DataRowVersion version) 
 		{
-			throw new NotImplementedException ();
+			return GetChildRows (Table.DataSet.Relations[relationName], version);
 		}
 
 		/// <summary>

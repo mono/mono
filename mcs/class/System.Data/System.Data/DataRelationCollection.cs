@@ -5,6 +5,7 @@
 //   Christopher Podurgiel (cpodurgiel@msn.com)
 //   Daniel Morgan <danmorg@sc.rr.com>
 //   Tim Coleman (tim@timcoleman.com)
+//   Alan Tam Siu Lung <Tam@SiuLung.com>
 //
 // (C) Chris Podurgiel
 // (C) 2002 Daniel Morgan
@@ -23,6 +24,135 @@ namespace System.Data {
 	[Serializable]
 	public abstract class DataRelationCollection : InternalDataCollectionBase
 	{
+		/// <summary>
+		/// Summary description for DataTableRelationCollection.
+		/// </summary>
+		internal class DataSetRelationCollection : DataRelationCollection
+		{
+			private DataSet dataSet;
+			
+			/// <summary>
+			/// Initializes a new instance of the DataSetRelationCollection class.
+			/// </summary>
+			internal DataSetRelationCollection (DataSet dataSet)
+			{
+				this.dataSet = dataSet;
+			}
+
+			/// <summary>
+			/// Gets the DataRelation object specified by name.
+			/// </summary>
+			public override DataRelation this [string name]
+			{
+				get {
+					foreach (DataRelation dataRelation in List)
+						if (dataRelation.RelationName == name) return dataRelation;
+					return null;
+				}
+			}
+
+			/// <summary>
+			/// Gets the DataRelation object at the specified index.
+			/// </summary>
+			[MonoTODO]
+			public override DataRelation this [int index]
+			{
+				get {
+					return List [index] as DataRelation;
+				}
+			}
+
+			protected override DataSet GetDataSet()
+			{
+				return dataSet;
+			}
+
+			/// <summary>
+			/// Performs verification on the table.
+			/// </summary>
+			/// <param name="relation">The relation to check.</param>
+			[MonoTODO]
+			protected override void AddCore (DataRelation relation)
+			{
+				base.AddCore (relation);
+				if (relation.ChildTable.DataSet != this.dataSet || relation.ParentTable.DataSet != this.dataSet)
+					throw new DataException ();
+				List.Add (relation);
+				relation.ParentTable.ChildRelations.Add (relation);
+				relation.ChildTable.ParentRelations.Add (relation);
+				ForeignKeyConstraint foreignKeyConstraint = null;
+				if (relation.createConstraints) {
+					foreignKeyConstraint = new ForeignKeyConstraint (relation.ParentColumns, relation.ChildColumns);
+					relation.ChildTable.Constraints.Add (foreignKeyConstraint);
+				}
+				UniqueConstraint uniqueConstraint = null;
+				foreach (object o in List) {
+					if (o is UniqueConstraint) {
+						UniqueConstraint uc = (UniqueConstraint) o;
+						if (uc.Columns.Length == relation.ParentColumns.Length) {
+							bool allColumnsEqual = true;
+							for (int columnCnt = 0; columnCnt < uc.Columns.Length; ++columnCnt) {
+								if (uc.Columns[columnCnt] != relation.ParentColumns[columnCnt]) {
+									allColumnsEqual = false;
+									break;
+								}
+							}
+							if (allColumnsEqual) {
+								uniqueConstraint = uc;
+								break;
+							}
+						}
+					}
+				}
+				relation.SetParentKeyConstraint (uniqueConstraint);
+				relation.SetChildKeyConstraint (foreignKeyConstraint);
+			}
+		}
+
+		/// <summary>
+		/// Summary description for DataTableRelationCollection.
+		/// </summary>
+		internal class DataTableRelationCollection : DataRelationCollection
+		{
+			private DataTable dataTable;
+			
+			/// <summary>
+			/// Initializes a new instance of the DataTableRelationCollection class.
+			/// </summary>
+			internal DataTableRelationCollection (DataTable dataTable)
+			{
+				this.dataTable = dataTable;
+			}
+
+			/// <summary>
+			/// Gets the DataRelation object specified by name.
+			/// </summary>
+			public override DataRelation this [string name]
+			{
+				get {
+					foreach (DataRelation dataRelation in List)
+						if (dataRelation.RelationName == name) return dataRelation;
+					return null;
+				}
+			}
+
+			/// <summary>
+			/// Gets the DataRelation object at the specified index.
+			/// </summary>
+			[MonoTODO]
+			public override DataRelation this [int index]
+			{
+				get {
+					return List [index] as DataRelation;
+				}
+			}
+
+			protected override DataSet GetDataSet()
+			{
+				return dataTable.DataSet;
+			}
+		}
+
 		private int defaultNameIndex;
 		private bool inTransition;
 		
@@ -55,6 +185,7 @@ namespace System.Data {
 		[MonoTODO]
 		public void Add(DataRelation relation)
 		{
+			this.AddCore (relation);
 			if(List != null)
 			{
 				//CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
@@ -76,7 +207,6 @@ namespace System.Data {
 		[MonoTODO]
 		public virtual DataRelation Add(DataColumn parentColumn, DataColumn childColumn)
 		{	
-			
 			if(parentColumn == null)
 			{
 				throw new ArgumentNullException("parentColumn");
@@ -95,6 +225,7 @@ namespace System.Data {
 			*/
 			
 			DataRelation dataRelation = new DataRelation("Relation" + defaultNameIndex.ToString(), parentColumn, childColumn);
+			this.AddCore (dataRelation);
 			//CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
 			List.Add(dataRelation);
 			//OnCollectionChanged(e);
@@ -115,6 +246,7 @@ namespace System.Data {
 		public virtual DataRelation Add(DataColumn[] parentColumns, DataColumn[] childColumns)
 		{
 			DataRelation dataRelation = new DataRelation("Relation" + defaultNameIndex.ToString(), parentColumns, childColumns);
+			this.AddCore (dataRelation);
 			List.Add(dataRelation);
 			defaultNameIndex++;
 			return dataRelation;
@@ -142,6 +274,7 @@ namespace System.Data {
 			}
 
 			DataRelation dataRelation = new DataRelation(name, parentColumn, childColumn);
+			this.AddCore (dataRelation);
 			List.Add(dataRelation);
 			return dataRelation;
 		}
@@ -164,6 +297,7 @@ namespace System.Data {
 			}
 
 			DataRelation dataRelation = new DataRelation(name, parentColumns, childColumns);
+			this.AddCore (dataRelation);
 			List.Add(dataRelation);
 			return dataRelation;
 		}
@@ -191,6 +325,7 @@ namespace System.Data {
 			}
 
 			DataRelation dataRelation = new DataRelation(name, parentColumn, childColumn, createConstraints);
+			this.AddCore (dataRelation);
 			List.Add(dataRelation);
 			return dataRelation;
 		}
@@ -215,7 +350,7 @@ namespace System.Data {
 			}
 
 			DataRelation dataRelation = new DataRelation(name, parentColumns, childColumns, createConstraints);
-			AddCore(dataRelation);
+			AddCore (dataRelation);
 			List.Add(dataRelation);
 			return dataRelation;
 		}
@@ -316,7 +451,7 @@ namespace System.Data {
 
 		public void Remove (DataRelation relation)
 		{
-			RemoveCore (relation);
+			// TODO: RemoveCore (relation);
 			List.Remove (relation);
 			OnCollectionChanged (CreateCollectionChangeEvent (CollectionChangeAction.Remove));
 		}

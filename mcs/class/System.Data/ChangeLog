@@ -1,3 +1,23 @@
+2003-02-18  Daniel Morgan <danmorg@sc.rr.com>
+
+	* DataTableRelationCollection.cs: removed file
+	because its internally in file DataRelationCollection.cs
+
+2003-02-18  Alan Tam <Tam@SiuLung.com>
+
+	* DataRelation.cs: Added storage required to hold the relations.
+	  Checking of constraints are not implemented yet.
+	* DataRelationCollection.cs: Implemented DataSetRelationCollection
+	  and DataTableRelationCollection, both as inner class of the abstract class
+	  DataRelationCollection (like Microsoft although not documented in ECMA).
+	* DataRow.cs: Implemented GetChildRows in a extremely slow way.
+	  Need to implement caching like Microsoft later.
+	* DataSet.cs: Uncomment DataRelation related members. Uncomment
+	  code for Nested XML. Implemented WriteTable(XmlWriter, DataRow[],
+	  XmlWriteMode) for use of Nested XML. Fixed a wrong modifier in
+	  GetSerializationData.
+	* DataTable.cs: Uncomment DataRelation related members.
+
 2003-02-11  Tim Coleman <tim@timcoleman.com>
 	* System.Data.SqlClient/SqlConnection.cs:
 		Close the data reader properly, and be sure

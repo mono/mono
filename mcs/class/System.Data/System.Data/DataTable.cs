@@ -40,9 +40,8 @@ namespace System.Data {
 		private CultureInfo _locale;
 		private int _minimumCapacity;
 		private string _nameSpace;
-		// FIXME: temporarily commented
-		// private DataTableRelationCollection _childRelations; 
-		// private DataTableRelationCollection _parentRelations;
+		private DataRelationCollection _childRelations; 
+		private DataRelationCollection _parentRelations;
 		private string _prefix;
 		private DataColumn[] _primaryKey;
 		private DataRowCollection _rows;
@@ -73,9 +72,8 @@ namespace System.Data {
 			//LAMESPEC: spec says 25 impl does 50
 			_minimumCapacity = 50;
 			
-			// FIXME: temporaily commented DataTableRelationCollection
-			// _childRelations = new DataTableRelationCollection();
-			// _parentRelations = new DataTableRelationCollection();
+			_childRelations = new DataRelationCollection.DataTableRelationCollection (this);
+			_parentRelations = new DataRelationCollection.DataTableRelationCollection (this);
 
 		
 			_defaultView = new DataView(this);
@@ -146,13 +144,7 @@ namespace System.Data {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataRelationCollection ChildRelations {
 			get {
-				// FIXME: temporarily commented to compile
-				// return (DataRelationCollection)_childRelations;
-				
-				//We are going to have to Inherit a class from 
-				//DataRelationCollection because DRC is abstract
-				
-				throw new NotImplementedException ();
+				return _childRelations;
 			}
 		}
 
@@ -275,9 +267,7 @@ namespace System.Data {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataRelationCollection ParentRelations {
 			get {	
-				// FIXME: temporarily commented to compile
-				// return _parentRelations;
-				throw new NotImplementedException ();
+				return _parentRelations;
 			}
 		}
 

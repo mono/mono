@@ -37,7 +37,7 @@ namespace System.Data {
 		private bool caseSensitive;
 		private bool enforceConstraints = true;
 		private DataTableCollection tableCollection;
-		// private DataTableRelationCollection relationCollection;
+		private DataRelationCollection relationCollection;
 		private PropertyCollection properties;
 		private DataViewManager defaultView;
 		private CultureInfo locale;
@@ -52,7 +52,7 @@ namespace System.Data {
 		public DataSet(string name) {
 			dataSetName = name;
 			tableCollection = new DataTableCollection (this);
-			//relationCollection = new DataTableRelationCollection ();
+			relationCollection = new DataRelationCollection.DataSetRelationCollection (this);
 		}
 
 		[MonoTODO]
@@ -201,10 +201,8 @@ namespace System.Data {
 		[DataSysDescription ("The collection that holds the relations for this DatSet.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataRelationCollection Relations {
-			[MonoTODO]
-			get{
-				//return relationCollection;		
-				throw new NotImplementedException ();		
+			get {
+				return relationCollection;		
 			}
 		}
 
@@ -389,10 +387,8 @@ namespace System.Data {
 			//Write out each table in order, providing it is not
 			//part of another table structure via a nested parent relationship
 			foreach( DataTable table in Tables )
-			{		
+			{
 				bool isTopLevel = true;
-				//FIXME: Uncomment this when Parentrelations is implemented
-				/*
 				foreach( DataRelation rel in table.ParentRelations )
 				{
 					if( rel.Nested )
@@ -401,7 +397,6 @@ namespace System.Data {
 						break;
 					}
 				}
-				*/
 				
 				if( isTopLevel )
 				{
@@ -599,7 +594,7 @@ namespace System.Data {
 		#endregion
 		
 		#region Protected Methods
-		protected virtual void GetSerializationData(SerializationInfo info, StreamingContext context)
+		protected void GetSerializationData(SerializationInfo info, StreamingContext context)
 		{
 			string s = info.GetValue ("XmlDiffGram", typeof (String)) as String;
 			if (s != null) ReadXmlSerializable (new XmlTextReader(new StringReader(s)));
@@ -630,15 +625,24 @@ namespace System.Data {
 	
 		private void WriteTable( XmlWriter writer, DataTable table, XmlWriteMode mode )
 		{
+			DataRow[] rows = new DataRow [table.Rows.Count];
+			table.Rows.CopyTo (rows, 0);
+			WriteTable (writer, rows, mode);
+		}
+
+		private void WriteTable( XmlWriter writer, DataRow[] rows, XmlWriteMode mode )
+		{
 			//The columns can be attributes, hidden, elements, or simple content
 			//There can be 0-1 simple content cols or 0-* elements
 			System.Collections.ArrayList atts;
 			System.Collections.ArrayList elements;
 			DataColumn simple = null;
 
+			if (rows.Length == 0) return;
+			DataTable table = rows[0].Table;
 			SplitColumns( table, out atts, out elements, out simple );
 
-			foreach( DataRow row in table.Rows )
+			foreach( DataRow row in rows )
 			{
 				//sort out the namespacing
 				string nspc = table.Namespace.Length > 0 ? table.Namespace : Namespace;
@@ -692,7 +696,11 @@ namespace System.Data {
 					}
 				}
 				
-				//TODO write out the nested child relations
+				foreach (DataRelation relation in table.ChildRelations) {
+					if (relation.Nested) {
+						WriteTable (writer, row.GetChildRows(relation), mode);
+					}
+				}
 				
 				writer.WriteEndElement();
 			}
@@ -788,12 +796,9 @@ namespace System.Data {
 			
 			//Write out schema for each table in order, providing it is not
 			//part of another table structure via a nested parent relationship
-			//TODO - is this correct? should I be using nested objects?
 			foreach( DataTable table in Tables )
 			{		
 				bool isTopLevel = true;
-				//FIXME: Uncomment this when ParentRelations class is implemented
-				/*
 				foreach( DataRelation rel in table.ParentRelations )
 				{
 					if( rel.Nested )
@@ -802,7 +807,6 @@ namespace System.Data {
 						break;
 					}
 				}
-				*/
 				
 				if( isTopLevel )
 				{

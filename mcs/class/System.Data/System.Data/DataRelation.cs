@@ -3,6 +3,7 @@
 //
 // Author:
 //   Daniel Morgan <danmorg@sc.rr.com>
+//   Alan Tam Siu Lung <Tam@SiuLung.com>
 //
 // (C) 2002 Daniel Morgan
 // (C) 2002 Ximian, Inc.
@@ -21,32 +22,56 @@ namespace System.Data
 	[DefaultProperty ("RelationName")]
 	[Serializable]
 	public class DataRelation {
+		private DataSet dataSet;
+		private string relationName;
+		private UniqueConstraint parentKeyConstraint;
+		private ForeignKeyConstraint childKeyConstraint;
+		private DataColumn[] parentColumns;
+		private DataColumn[] childColumns;
+		private bool nested;
+		internal bool createConstraints;
+		private PropertyCollection extendedProperties;
+		private PropertyChangedEventHandler onPropertyChangingDelegate;
 
 		#region Constructors
 
-		[MonoTODO]
 		public DataRelation (string relationName, DataColumn parentColumn, DataColumn childColumn) 
+		: this(relationName, parentColumn, childColumn, true)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public DataRelation (string relationName, DataColumn[] parentColumns, DataColumn[] childColumns) 
+		: this(relationName, parentColumns, childColumns, true)
 		{
-
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public DataRelation (string relationName, DataColumn parentColumn, DataColumn childColumn, bool createConstraints) 
+		public DataRelation (string relationName, DataColumn parentColumn, DataColumn childColumn, bool createConstraints)
+		: this(relationName, new DataColumn[] { parentColumn }, new DataColumn[] { childColumn }, createConstraints)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public DataRelation (string relationName, DataColumn[] parentColumns, DataColumn[] childColumns, bool createConstraints) 
 		{
-			throw new NotImplementedException ();
+			this.extendedProperties = new PropertyCollection();
+			if (relationName == null) relationName = "Relation";
+			this.relationName = relationName;
+			if (parentColumns == null) throw new ArgumentNullException ();
+			this.parentColumns = parentColumns;
+			if (childColumns == null) throw new ArgumentNullException ();
+			this.childColumns = childColumns;
+			this.createConstraints = createConstraints;
+			if (parentColumns.Length != childColumns.Length)
+				throw new InvalidConstraintException ();
+			DataTable parentTable = parentColumns[0].Table;
+			DataTable childTable = childColumns[0].Table;
+			if (parentTable.DataSet != childTable.DataSet)
+				throw new InvalidConstraintException ();
+			foreach (DataColumn column in parentColumns)
+				if (column.Table != parentTable)
+					throw new InvalidConstraintException ();
+			foreach (DataColumn column in childColumns)
+				if (column.Table != childTable)
+					throw new InvalidConstraintException ();
 		}
 
 		[MonoTODO]
@@ -63,32 +88,32 @@ namespace System.Data
 		[DataCategory ("Data")]
 		[DataSysDescription ("Indicates the child columns of this relation.")]
 		public virtual DataColumn[] ChildColumns {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return childColumns;
 			}
 		}
 
 		public virtual ForeignKeyConstraint ChildKeyConstraint {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return childKeyConstraint;
 			}
 		}
 
+		internal void SetChildKeyConstraint(ForeignKeyConstraint foreignKeyConstraint) {
+			childKeyConstraint = foreignKeyConstraint;
+		}
+
 		public virtual DataTable ChildTable {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return childColumns[0].Table;
 			}
 		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual DataSet DataSet {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return childColumns[0].Table.DataSet;
 			}
 		}
 
@@ -96,9 +121,10 @@ namespace System.Data
 		[DataCategory ("Data")]
 		[DataSysDescription ("The collection that holds custom user information.")]
 		public PropertyCollection ExtendedProperties {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				if (extendedProperties == null)
+					extendedProperties = new PropertyCollection();
+				return extendedProperties;
 			}
 		}
 
@@ -106,37 +132,36 @@ namespace System.Data
 		[DataSysDescription ("Indicates whether relations are nested.")]
 		[DefaultValue (false)]
 		public virtual bool Nested {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return nested;
 			} 
 			
-			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				nested = value;
 			}
 		}
 
 		[DataCategory ("Data")]
 		[DataSysDescription ("Indicates the parent columns of this relation.")]
 		public virtual DataColumn[] ParentColumns {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return parentColumns;
 			}
 		}
 
 		public virtual UniqueConstraint ParentKeyConstraint {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return parentKeyConstraint;
 			}
 		}
 
+		internal void SetParentKeyConstraint(UniqueConstraint uniqueConstraint) {
+			parentKeyConstraint = uniqueConstraint;
+		}
+
 		public virtual DataTable ParentTable {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return parentColumns[0].Table;
 			}
 		}
 
@@ -144,14 +169,12 @@ namespace System.Data
 		[DataSysDescription ("The name used to look up this relation in the Relations collection of a DataSet.")]
 		[DefaultValue ("")]
 		public virtual string RelationName {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return relationName;
 			}
 			
-			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				relationName = value;
 			}
 		}
 
@@ -159,28 +182,36 @@ namespace System.Data
 
 		#region Methods
 
-		[MonoTODO]
 		protected void CheckStateForProperty () 
 		{
-			throw new NotImplementedException ();
+			// TODO: check consistency of constraints
+			DataTable parentTable = parentColumns[0].Table;
+			DataTable childTable = parentColumns[0].Table;
+			if (parentTable.DataSet != childTable.DataSet)
+				throw new DataException ();
+			bool allColumnsEqual = false;
+			for (int colCnt = 0; colCnt < parentColumns.Length; ++colCnt) {
+				if (!parentColumns [colCnt].DataType.Equals (childColumns [colCnt].DataType))
+					throw new DataException ();
+				if (parentColumns [colCnt] != childColumns [colCnt]) allColumnsEqual = false;
+			}
+			if (allColumnsEqual) throw new DataException ();
 		}
-	
-		[MonoTODO]
+
 		protected internal void OnPropertyChanging (PropertyChangedEventArgs pcevent)
 		{
-			throw new NotImplementedException ();
+			if (onPropertyChangingDelegate != null)
+				onPropertyChangingDelegate.Invoke(this, pcevent);
 		}
 
-		[MonoTODO]
 		protected internal void RaisePropertyChanging (string name)
 		{
-			throw new NotImplementedException ();
+			OnPropertyChanging(new PropertyChangedEventArgs(name));
 		}
 
-		[MonoTODO]
 		public override string ToString () 
 		{
-			throw new NotImplementedException ();
+			return relationName;
 		}
 
 		#endregion // Methods
