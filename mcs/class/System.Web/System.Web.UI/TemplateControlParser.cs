@@ -88,14 +88,18 @@ namespace System.Web.UI
 				if (!src.EndsWith (".ascx"))
 					ThrowParseException ("Source file extension for controls must be .ascx");
 
+				string realpath = MapPath (src);
+				if (!File.Exists (realpath))
+					throw new ParseException (Location, "Could not find file \"" 
+						+ realpath + "\".");
+
 				try {
-					AddDependency (MapPath (src));
+					AddDependency (realpath);
 				} catch (Exception e) {
 					throw new ParseException (Location, e.Message);
 				}
 
 				string vpath = UrlUtils.Combine (BaseVirtualDir, src);
-				string realpath = MapPath (src);
 				Type type = UserControlParser.GetCompiledType (vpath, realpath, Context);
 				AddAssembly (type.Assembly, true);
 				RootBuilder.Foundry.RegisterFoundry (tagprefix, tagname, type);

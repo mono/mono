@@ -1,3 +1,8 @@
+2003-12-31  Jackson Harper <jackson@ximian.com>
+
+	* TemplateControlParser.cs: When registering tag prefixs make sure
+	the file exists and throw the correct error if it does not.
+	
 2003-12-25  Jackson Harper <jackson@ximian.com>
 
 	* Page.cs: Throw error if the session is accessed when sessions
