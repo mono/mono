@@ -56,6 +56,7 @@ namespace System.IO {
 		private Decoder decoder;
 
 		private Stream base_stream;
+		private bool mayBlock;
 
 		private class NullStreamReader : StreamReader {
 			public override int Peek ()
@@ -268,6 +269,7 @@ namespace System.IO {
 				if (cbEncoded == 0)
 					return 0;
 
+				mayBlock = (cbEncoded < buffer_size);
 				if (do_checks > 0){
 					Encoding old = encoding;
 					parse_start = DoChecks (cbEncoded);
@@ -287,10 +289,7 @@ namespace System.IO {
 
 		public override int Peek ()
 		{
-			if (!base_stream.CanSeek)
-				return -1;
-
-			if (pos >= decoded_count && ReadBuffer () == 0)
+			if (pos >= decoded_count && (mayBlock || ReadBuffer () == 0))
 				return -1;
 
 			return decoded_buffer [pos];

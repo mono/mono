@@ -1,5 +1,9 @@
 2003-03-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* StreamReader.cs: fixed bug #39280.
+
+2003-03-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Directory.cs: readded mkdir -p behavior. Thanks to kiwnix for
 	pointing it out.
 
