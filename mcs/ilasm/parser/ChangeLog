@@ -1,3 +1,7 @@
+2003-07-30 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Create branch instructions with explicit offsets
+	
 2003-07-29 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Use new labeling system for handler blocks.

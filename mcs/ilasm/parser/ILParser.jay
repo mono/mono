@@ -1796,7 +1796,10 @@ instr			: INSTR_NONE
 			| INSTR_R OPEN_PARENS bytes CLOSE_PARENS
 			| INSTR_BRTARGET int32
                           {
-                                // Need to add this to PEAPI        
+				int target = (int) $2;
+				codegen.CurrentMethodDef.AddLabel ((uint) target);
+                                codegen.CurrentMethodDef.AddInstr (new BranchInstr ((BranchOp) $1,
+								   (uint) target));  
                           }
 			| INSTR_BRTARGET id
                           {
