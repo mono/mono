@@ -318,9 +318,8 @@ class PoResourceReader : IResourceReader {
 						msgid = null;
 						msgstr = null;
 					}
-					
-					continue;
 				}
+				continue;
 			}
 			
 			if (line.StartsWith ("msgid ")) {
