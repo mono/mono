@@ -1,3 +1,7 @@
+2004-09-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TraceContext.cs: when IsEnabled has not been set, return the value
+	from the TraceManager. Fixes bug #63469.
 
 2004-08-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

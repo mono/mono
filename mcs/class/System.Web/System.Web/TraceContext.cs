@@ -42,7 +42,7 @@ namespace System.Web {
       private TraceMode _Mode;
       private TraceData data;
       private bool data_saved;
-      private bool _haveTrace = false;
+      private bool _haveTrace;
            
       public TraceContext(HttpContext Context) {
 	 _Context = Context;
@@ -58,6 +58,8 @@ namespace System.Web {
 
       public bool IsEnabled {
 	 get {
+	    if (!_haveTrace)
+	        return HttpRuntime.TraceManager.Enabled;
 	    return _Enabled;
 	 }
 
@@ -104,7 +106,7 @@ namespace System.Web {
       }
 
       private void Write(string category, string msg, Exception error, bool Warning) {
-	      if (!_Enabled)
+	      if (!IsEnabled)
 		      return;
               if (data == null)
                       data = new TraceData ();
