@@ -38,13 +38,16 @@ namespace System.Security.Permissions {
 
 		private string url;
 
-		public UrlIdentityPermission (PermissionState state) : base ()
+		public UrlIdentityPermission (PermissionState state)
 		{
 			// false == do not allow Unrestricted for Identity Permissions
 			CheckPermissionState (state, false);
+#if NET_2_0
+			url = String.Empty;
+#endif
 		}
 
-		public UrlIdentityPermission (string site) : base ()
+		public UrlIdentityPermission (string site)
 		{
 			if (site == null)
 				throw new ArgumentNullException ("site");
@@ -53,16 +56,25 @@ namespace System.Security.Permissions {
 
 		public string Url { 
 			get { 
+#if !NET_2_0
 				if (url == null)
 					throw new NullReferenceException ("Url");
+#endif
 				return url; 
 			}
-			set { url = value; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("Url");
+				url = value;
+			}
 		}
 
 		public override IPermission Copy () 
 		{
-			return new UrlIdentityPermission (url);
+			if (url == null)
+				return new UrlIdentityPermission (PermissionState.None);
+			else
+				return new UrlIdentityPermission (url);
 		}
 
 		public override void FromXml (SecurityElement esd)
@@ -72,42 +84,58 @@ namespace System.Security.Permissions {
 			// Note: we do not (yet) care about the return value 
 			// as we only accept version 1 (min/max values)
 
-			url = esd.Attribute ("Url");
+			string u = esd.Attribute ("Url");
+			if (u == null)
+				url = String.Empty;
+			else
+				Url = u;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("do not support wildcard")]
 		public override IPermission Intersect (IPermission target) 
 		{
 			// if one permission is null (object or url) then there's no intersection
 			// if both are null then intersection is null
 			UrlIdentityPermission uip = Cast (target);
-			if ((uip == null) || (url == null))
+			if ((uip == null) || (IsEmpty ()))
 				return null;
-
-			if (uip.Url == null)
-				return null;
-
-			// TODO
+			if (url == uip.url)
+				return Copy ();
 			return null;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("do not support wildcard")]
 		public override bool IsSubsetOf (IPermission target) 
 		{
-			return false;
+			UrlIdentityPermission uip = Cast (target);
+			if (uip == null)
+				return IsEmpty ();
+			return (url == uip.url);
 		}
 
 		public override SecurityElement ToXml () 
 		{
 			SecurityElement se = Element (version);
-			se.AddAttribute ("Url", url);
+			if (!IsEmpty ())
+				se.AddAttribute ("Url", url);
 			return se;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("do not support wildcard")]
 		public override IPermission Union (IPermission target) 
 		{
-			return null;
+			UrlIdentityPermission uip = Cast (target);
+			if (uip == null)
+				return Copy ();
+			if (IsEmpty () && uip.IsEmpty ())
+				return null;
+			if (uip.IsEmpty () || (url == uip.url))
+				return Copy ();
+			if (IsEmpty ())
+				return uip.Copy ();
+
+			throw new ArgumentException (Locale.GetText (
+				"Cannot union two different urls."), "target");
 		}
 
 		// IBuiltInPermission
@@ -117,6 +145,11 @@ namespace System.Security.Permissions {
 		}
 
 		// helpers
+
+		private bool IsEmpty ()
+		{
+			return ((url == null) || (url.Length == 0));
+		}
 
 		private UrlIdentityPermission Cast (IPermission target)
 		{

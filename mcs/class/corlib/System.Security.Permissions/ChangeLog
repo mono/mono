@@ -2,6 +2,8 @@
 
 	* SiteIdentityPermission.cs: Basic (without wildcards) implementation
 	for Intersect, IsSubsetOf and Union. Fixed to pass all new unit tests.
+	* UrlIdentityPermission.cs: Basic (without wildcards) implementation
+	for Intersect, IsSubsetOf and Union. Fixed to pass all new unit tests.
 
 2004-08-19  Sebastien Pouliot  <sebastien@ximian.com>
 
