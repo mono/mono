@@ -29,8 +29,17 @@ namespace Mono.Xml.Xsl {
 	internal class XsltCompiledContext : XsltContext {
 		protected static Hashtable xsltFunctions = new Hashtable ();
 
-		static XsltCompiledContext() {
-			// todo init xslt functions
+		static XsltCompiledContext ()
+		{
+			xsltFunctions.Add ("current", new XsltCurrent ());
+			xsltFunctions.Add ("document", new XsltDocument ());
+			xsltFunctions.Add ("element-available", new XsltElementAvailable ());
+			xsltFunctions.Add ("format-number", new XsltFormatNumber ());
+			xsltFunctions.Add ("function-available", new XsltFunctionAvailable ());
+			xsltFunctions.Add ("generate-id", new XsltGenerateId ());
+			xsltFunctions.Add ("key", new XsltKey ());
+			xsltFunctions.Add ("system-property", new XsltSystemProperty ());
+			xsltFunctions.Add ("unparsed-entity-uri", new XsltUnparsedEntityUri ());
 		}
 			
 		XslTransformProcessor p;
@@ -181,68 +190,13 @@ namespace Mono.Xml.Xsl.Functions {
 		public int Maxargs { get { return this.maxargs; }}
 		public XPathResultType ReturnType { get { return this.returnType; }}
 		public XPathResultType [] ArgTypes { get { return this.argTypes; }}
-		public abstract object Invoke (XsltContext xsltContext, object [] args, XPathNavigator docContext);
-			
-		// HELPERS
-		public static XPathNodeIterator ToIterator (object argument)
+		public object Invoke (XsltContext xsltContext, object [] args, XPathNavigator docContext)
 		{
-			XPathNodeIterator it = argument as XPathNodeIterator;
-			
-			if (it == null)
-				throw new Exception ("Unable to convert to node set");
-			return it;
+			return Invoke ((XsltCompiledContext)xsltContext, args, docContext);
 		}
-
-		public static XPathNavigator ToNavigator (object argument) {
-			// what about IXPathNavigable
-			XPathNavigator nav = argument as XPathNavigator;
-			if (nav == null)
-				throw new Exception ("Unable to convert to node");
-			return nav;
-		}
-
-		public static string ToString (object argument)
-		{
-			XPathNodeIterator it = argument as XPathNodeIterator;
-			if (it != null) {
-				if (it.MoveNext ())
-					return it.Current.Value;
-			
-				return String.Empty;
-			} else
-				return argument.ToString ();
-		}
-
-		public static bool ToBoolean (object argument)
-		{
-			XPathNodeIterator it = argument as XPathNodeIterator;
-			if (it != null)
-				return Convert.ToBoolean (ToString (it));
-			else
-				return Convert.ToBoolean (argument);
-		}
-
-		static object ToNumeric (object argument, TypeCode typeCode) {
-			try {
-				XPathNodeIterator it = argument as XPathNodeIterator;
-				return Convert.ChangeType (it != null ? ToString (it) : argument, typeCode);
-			} catch {
-				return Double.NaN;
-			}		 
-		}
-
-		public static object ConvertToXPathType (object val, XPathResultType xt, TypeCode typeCode)
-		{
-			switch (xt) {
-			case XPathResultType.String             : return ToString (val);
-			case XPathResultType.Number             : return ToNumeric (val, typeCode);
-			case XPathResultType.Boolean            : return ToBoolean (val);
-			case XPathResultType.NodeSet            : return ToIterator (val);
-			case XPathResultType.Any                : 
-			case XPathResultType.Error              : return val;
-			default                                 : throw new Exception ("unsuported node type");
-			}
-		}
+		
+		public abstract object Invoke (XsltCompiledContext xsltContext, object [] args, XPathNavigator docContext);
+		
 		public static XPathResultType GetXPathType (Type type) {
 			switch (Type.GetTypeCode(type)) {
 			case TypeCode.String:
@@ -293,13 +247,11 @@ namespace Mono.Xml.Xsl.Functions {
 						canBeOpt = false;
 				}
 			}
-			base.Init(minArgs, maxArgs, GetXPathType (method.ReturnType), argTypes);
+			base.Init (minArgs, maxArgs, GetXPathType (method.ReturnType), argTypes);
 		}
 
-		public override object Invoke (XsltContext xsltContext, object [] args, XPathNavigator docContext) {
-			for (int i = 0; i < args.Length; i++)
-				args [i] = ConvertToXPathType(args [i], this.ArgTypes [i], this.typeCodes [i]);
-
+		public override object Invoke (XsltCompiledContext xsltContext, object [] args, XPathNavigator docContext)
+		{
 			try {
 				object result = method.Invoke(extension, args);
 				IXPathNavigable navigable = result as IXPathNavigable;
@@ -312,5 +264,85 @@ namespace Mono.Xml.Xsl.Functions {
 				return "";
 			}
 		}
+	}
+		
+	class XsltCurrent : XPFuncImpl {
+		public XsltCurrent () : base (0, 0, XPathResultType.NodeSet, null) {}
+		
+		public override object Invoke (XsltCompiledContext xsltContext, object [] args, XPathNavigator docContext)
+		{
+			throw new NotImplementedException ();
+		}
+	}
+	
+	class XsltDocument : XPFuncImpl {
+		public XsltDocument () : base (1, 2, XPathResultType.NodeSet, new XPathResultType [] { XPathResultType.Any, XPathResultType.NodeSet }) {}
+		
+		public override object Invoke (XsltCompiledContext xsltContext, object [] args, XPathNavigator docContext)
+		{
+			throw new NotImplementedException ();
+		}
+	}
+	
+	class XsltElementAvailable : XPFuncImpl {
+		public XsltElementAvailable () : base (1, 1, XPathResultType.Boolean, new XPathResultType [] { XPathResultType.String }) {}
+		
+		public override object Invoke (XsltCompiledContext xsltContext, object [] args, XPathNavigator docContext)
+		{
+			throw new NotImplementedException ();
+		}
+	}
+
+	class XsltFormatNumber : XPFuncImpl {
+		public XsltFormatNumber () : base (2, 3, XPathResultType.String , new XPathResultType [] { XPathResultType.Number, XPathResultType.String, XPathResultType.String }) {}
+		
+		public override object Invoke (XsltCompiledContext xsltContext, object [] args, XPathNavigator docContext)
+		{
+			throw new NotImplementedException ();
+		}
+	}
+	
+	class XsltFunctionAvailable : XPFuncImpl {
+		public XsltFunctionAvailable () : base (1, 1, XPathResultType.Boolean, new XPathResultType [] { XPathResultType.String }) {}
+		
+		public override object Invoke (XsltCompiledContext xsltContext, object [] args, XPathNavigator docContext)
+		{
+			throw new NotImplementedException ();
+		}
 	} 
+
+	class XsltGenerateId : XPFuncImpl {
+		public XsltGenerateId () : base (0, 1, XPathResultType.String , new XPathResultType [] { XPathResultType.NodeSet }) {}
+		public override object Invoke (XsltCompiledContext xsltContext, object [] args, XPathNavigator docContext)
+		{
+			throw new NotImplementedException ();
+		}
+	} 
+	
+	class XsltKey : XPFuncImpl {
+		public XsltKey () : base (2, 2, XPathResultType.NodeSet, new XPathResultType [] { XPathResultType.String, XPathResultType.Any }) {}
+		
+		public override object Invoke (XsltCompiledContext xsltContext, object [] args, XPathNavigator docContext)
+		{
+			throw new NotImplementedException ();
+		}
+	}
+	
+	class XsltSystemProperty : XPFuncImpl {
+		public XsltSystemProperty () : base (1, 1, XPathResultType.String , new XPathResultType [] { XPathResultType.String }) {}
+		
+		public override object Invoke (XsltCompiledContext xsltContext, object [] args, XPathNavigator docContext)
+		{
+			throw new NotImplementedException ();
+		}
+	} 
+
+	class XsltUnparsedEntityUri : XPFuncImpl {
+		public XsltUnparsedEntityUri () : base (1, 1, XPathResultType.String , new XPathResultType [] { XPathResultType.String }) {}
+		
+		public override object Invoke (XsltCompiledContext xsltContext, object [] args, XPathNavigator docContext)
+		{
+			throw new NotImplementedException ();
+		}
+	}
 }

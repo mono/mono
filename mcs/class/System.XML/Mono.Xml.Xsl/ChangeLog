@@ -1,5 +1,10 @@
 2003-07-31 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* XsltCompiledContext.cs: Remove excess conversion stuff. It is
+	done in XPath. Add stubs for XSLT functions.
+
+2003-07-31 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* Compiler.cs: To resolve a variable you now need to pass the
 	processor, so that it can be passed to IsEvaluated. A local will
 	only be resolved if it has already been evaluated.
