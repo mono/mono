@@ -37,17 +37,17 @@ namespace System.Xml.Serialization {
 
 		internal static string FromDate (DateTime value)
 		{
-			return XmlConvert.ToString (value, "HH':'mm':'ss'.'fffffffzzz");
+			return XmlConvert.ToString (value, "yyyy-MM-dd");
 		}
 
 		internal static string FromDateTime (DateTime value)
 		{
-			return XmlConvert.ToString (value, "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffffffzzz");
+			return XmlConvert.ToString (value, "yyyy-MM-ddTHH:mm:ss.fffffffzzz");
 		}
 
 		internal static string FromTime (DateTime value)
 		{
-			return XmlConvert.ToString (value, "yyyy'-'MM'-'dd");
+			return XmlConvert.ToString (value, "HH:mm:ss.fffffffzzz");
 		}
 
 		internal static string FromEnum (long value, string[] values, long[] ids)
@@ -88,52 +88,44 @@ namespace System.Xml.Serialization {
 			return output.ToString ();
 		}
 
-		[MonoTODO]
 		internal static char ToChar (string value)
 		{
-			throw new NotImplementedException ();
+			return (char) XmlConvert.ToUInt16 (value);
 		}
 
-		[MonoTODO]
 		internal static DateTime ToDate (string value)
 		{
-			throw new NotImplementedException ();
+			return ToDateTime (value);
 		}
 
-		[MonoTODO]
 		internal static DateTime ToDateTime (string value)
 		{
-			throw new NotImplementedException ();
+			return XmlConvert.ToDateTime (value);
 		}
 
-		[MonoTODO]
 		internal static DateTime ToTime (string value)
 		{
-			throw new NotImplementedException ();
+			return ToDateTime (value);
 		}
 
-		[MonoTODO]
 		internal static string ToXmlName (string value)
 		{
-			throw new NotImplementedException ();
+			return XmlConvert.DecodeName (value);
 		}
 
-		[MonoTODO]
 		internal static string ToXmlNCName (string value)
 		{
-			throw new NotImplementedException ();
+			return ToXmlName (value);
 		}
 
-		[MonoTODO]
 		internal static string ToXmlNmToken (string value)
 		{
-			throw new NotImplementedException ();
+			return ToXmlName (value);
 		}
 
-		[MonoTODO]
 		internal static string ToXmlNmTokens (string value)
 		{
-			throw new NotImplementedException ();
+			return ToXmlName (value);
 		}
 
 		#endregion // Methods

@@ -22,8 +22,10 @@ namespace System.Xml.Serialization {
 		XmlReader reader;
 		ArrayList fixups;
 		ArrayList collFixups;
-		Hashtable readCallbacks = new Hashtable ();
-		Hashtable typesCallbacks = new Hashtable ();
+		Hashtable readCallbacks;
+		Hashtable typesCallbacks;
+		ArrayList noIDTargets;
+		Hashtable targets;
 
 		string w3SchemaNS;
 		string w3SchemaNS2000;
@@ -62,6 +64,20 @@ namespace System.Xml.Serialization {
 			InitIDs ();
 		}
 			
+		private ArrayList EnsureArrayList (ArrayList list)
+		{
+			if (list == null)
+				list = new ArrayList ();
+			return list;
+		}
+		
+		private Hashtable EnsureHashtable (Hashtable hash)
+		{
+			if (hash == null)
+				hash = new Hashtable ();
+			return hash;
+		}
+		
 		protected XmlSerializationReader ()
 		{
 		}
@@ -84,15 +100,13 @@ namespace System.Xml.Serialization {
 
 		protected void AddFixup (CollectionFixup fixup)
 		{
-			if (collFixups == null)
-				collFixups = new ArrayList();
+			collFixups = EnsureArrayList (collFixups);
 			collFixups.Add(fixup);
 		}
 
 		protected void AddFixup (Fixup fixup)
 		{
-			if (fixups == null)
-				fixups = new ArrayList();
+			fixups = EnsureArrayList (fixups);
 			fixups.Add(fixup);
 		}
 
@@ -100,31 +114,64 @@ namespace System.Xml.Serialization {
 		{
 			XmlNameTable nt = reader.NameTable;
 			XmlQualifiedName xqn = new XmlQualifiedName (nt.Add (name), nt.Add (ns));
+			readCallbacks = EnsureHashtable (readCallbacks);
 			readCallbacks.Add (xqn, read);
+			typesCallbacks = EnsureHashtable (typesCallbacks);
 			typesCallbacks.Add (xqn, type);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void AddTarget (string id, object o)
 		{
-			throw new NotImplementedException ();
+			if (id != null) {
+				targets = EnsureHashtable (targets);
+				if (targets [id] == null)
+					targets.Add (id, o);
+			} else {
+				if (o != null)
+					return;
+				noIDTargets = EnsureArrayList (noIDTargets);
+				noIDTargets.Add (o);
+			}
 		}
 
-		[MonoTODO ("Implement")]
+		private string CurrentTag ()
+		{
+			switch (reader.NodeType) {
+			case XmlNodeType.None:
+				return String.Format ("<{0} xmlns='{1}'>", reader.LocalName,
+									   reader.NamespaceURI);
+			case XmlNodeType.Attribute:
+				return reader.Value;
+			case XmlNodeType.Text:
+				return "CDATA";
+			case XmlNodeType.ProcessingInstruction:
+				return "<--";
+			case XmlNodeType.Entity:
+				return "<?";
+			case XmlNodeType.EndElement:
+				return ">";
+			default:
+				return "(unknown)";
+			}
+		}
+
 		protected Exception CreateAbstractTypeException (string name, string ns)
 		{
-			throw new NotImplementedException ();
+			string message = "Error at " + name + " " + ns + ":" + CurrentTag ();
+			return new InvalidOperationException (message);
 		}
 
 		protected Exception CreateInvalidCastException (Type type, object value)
 		{
-			string message = String.Format ("Cannot assign object of type {0} to an object of type {1}.", value.GetType (), type);
+			string message = String.Format ("Cannot assign object of type {0} to an object of " +
+							"type {1}.", value.GetType (), type);
 			return new InvalidCastException (message);
 		}
 
 		protected Exception CreateReadOnlyCollectionException (string name)
 		{
-			string message = String.Format ("Could not serialize {0}. Default constructors are required for collections and enumerators.", name);
+			string message = String.Format ("Could not serialize {0}. Default constructors are " +
+							"required for collections and enumerators.", name);
 			return new InvalidOperationException (message);
 		}
 
@@ -134,16 +181,16 @@ namespace System.Xml.Serialization {
 			return new InvalidOperationException (message);
 		}
 
-		[MonoTODO ("Implement")]
 		protected Exception CreateUnknownNodeException ()
 		{
-			throw new NotImplementedException ();
+			string message = "Unknown xml node -> " + CurrentTag ();
+			return new InvalidOperationException (message);
 		}
 
-		[MonoTODO ("Implement")]
 		protected Exception CreateUnknownTypeException (XmlQualifiedName type)
 		{
-			throw new NotImplementedException ();
+			string message = "Unknown type " + type.Namespace + ":" + type.Name + " " + CurrentTag ();
+			return new InvalidOperationException (message);
 		}
 
 		protected Array EnsureArrayIndex (Array a, int index, Type elementType)
@@ -224,10 +271,16 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected XmlQualifiedName ReadElementQualifiedName ()
 		{
-			throw new NotImplementedException ();
+			if (reader.IsEmptyElement) {
+				reader.Skip();
+				return ToXmlQualifiedName (String.Empty);
+			}
+
+			XmlQualifiedName xqn = ToXmlQualifiedName(reader.ReadString ());
+			reader.ReadEndElement ();
+			return xqn;
 		}
 
 		protected void ReadEndElement ()
@@ -242,62 +295,100 @@ namespace System.Xml.Serialization {
 			}
 		}
 
-		[MonoTODO ("Implement")]
 		protected bool ReadNull ()
 		{
-			throw new NotImplementedException ();
+			if (!GetNullAttr ())
+				return false;
+
+			if (reader.IsEmptyElement) {
+				reader.Skip();
+				return true;
+			}
+
+			reader.ReadStartElement();
+			while (reader.NodeType != XmlNodeType.EndElement)
+				UnknownNode (null);
+			ReadEndElement ();
+			return true;
 		}
 
-		[MonoTODO ("Implement")]
 		protected XmlQualifiedName ReadNullableQualifiedName ()
 		{
-			throw new NotImplementedException ();
+			if (ReadNull ())
+				return null;
+
+			return ReadElementQualifiedName ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected string ReadNullableString ()
 		{
-			throw new NotImplementedException ();
+			if (ReadNull ())
+				return null;
+
+			return reader.ReadElementString ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected bool ReadReference (out string fixupReference)
 		{
-			throw new NotImplementedException ();
+			string href = reader.GetAttribute ("href");
+			if (href == null) {
+				fixupReference = null;
+				return false;
+			}
+
+			if (href [0] != '#')
+				throw new InvalidOperationException("href not found: " + href);
+
+			fixupReference = href.Substring (1);
+			if (!reader.IsEmptyElement) {
+				reader.ReadStartElement ();
+				ReadEndElement ();
+			} else {
+				reader.Skip ();
+			}
+			return true;
 		}
 
-		[MonoTODO ("Implement")]
 		protected object ReadReferencedElement ()
 		{
-			throw new NotImplementedException ();
+			return ReadReferencedElement (null, null);
 		}
 
-		[MonoTODO ("Implement")]
 		protected object ReadReferencedElement (string name, string ns)
 		{
-			throw new NotImplementedException ();
+			string unused;
+			return ReadReferencingElement (name, ns, false, out unused);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void ReadReferencedElements ()
 		{
-			throw new NotImplementedException ();
+			string unused;
+
+			reader.MoveToContent();
+			XmlNodeType nt = reader.NodeType;
+			while (nt != XmlNodeType.EndElement && nt != XmlNodeType.None) {
+				ReadReferencingElement (null, null, true, out unused);
+				reader.MoveToContent ();
+				nt = reader.NodeType;
+			}
 		}
 
 		[MonoTODO ("Implement")]
 		protected object ReadReferencingElement (out string fixupReference)
 		{
-			throw new NotImplementedException ();
+			return ReadReferencingElement (null, null, false, out fixupReference);
 		}
 
-		[MonoTODO ("Implement")]
 		protected object ReadReferencingElement (string name, string ns, out string fixupReference)
 		{
-			throw new NotImplementedException ();
+			return ReadReferencingElement (name, ns, false, out fixupReference);
 		}
 
-		[MonoTODO ("Implement")]
-		protected object ReadReferencingElement (string name, string ns, bool elementCanBeType, out string fixupReference)
+		[MonoTODO]
+		protected object ReadReferencingElement (string name,
+							 string ns,
+							 bool elementCanBeType,
+							 out string fixupReference)
 		{
 			throw new NotImplementedException ();
 		}
@@ -322,10 +413,9 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected XmlNode ReadXmlNode (bool wrapped)
 		{
-			throw new NotImplementedException ();
+			return document.ReadNode (reader);
 		}
 
 		[MonoTODO ("Implement")]
@@ -410,10 +500,25 @@ namespace System.Xml.Serialization {
 			return XmlCustomFormatter.ToXmlNmTokens (value);
 		}
 
-		[MonoTODO ("Implement")]
 		protected XmlQualifiedName ToXmlQualifiedName (string value)
 		{
-			throw new NotImplementedException ();
+			string name;
+			string ns;
+			int lastColon = value.LastIndexOf (':');
+			string decodedValue = XmlConvert.DecodeName (value);
+			if (lastColon < 0) {
+				name = reader.NameTable.Add (decodedValue);
+				ns = reader.LookupNamespace (String.Empty);
+			} else {
+				string prefix = value.Substring (0, lastColon);
+				ns = reader.LookupNamespace (prefix);
+				if (ns == null)
+					throw new InvalidOperationException ("namespace " + prefix + "not defined");
+
+				name = reader.NameTable.Add (value.Substring (lastColon + 1));
+			}
+
+			return new XmlQualifiedName (name, ns);
 		}
 
 		[MonoTODO ("Implement")]
