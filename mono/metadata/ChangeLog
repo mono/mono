@@ -1,3 +1,7 @@
+2002-09-22  Martin Baulig  <martin@gnome.org>
+
+	* debug-mono-symfile.c: Started to work on the type table.
+
 2002-09-21  Martin Baulig  <martin@gnome.org>
 
 	* debug-mono-symfile.c: Largely reworked the symbol table format.
