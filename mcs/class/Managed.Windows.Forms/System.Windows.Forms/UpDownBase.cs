@@ -36,6 +36,12 @@ TODO:
 
 	- Add defaults with [DefautValue ]
 
+	- Audit every place where ChangingText is used, whose meaning is
+	  `Me, the library is changing the text'.  Kind of hack to deal with
+	  loops on events.
+
+	- Hook up the keyboard events.
+
 */
 using System;
 using System.Drawing;
@@ -232,6 +238,7 @@ namespace System.Windows.Forms {
 		int border;
 		int scrollbar_button_size = ThemeEngine.Current.ScrollBarButtonSize;
 		bool changing_text = false;
+		bool user_edit = false;
 		
 		public UpDownBase () : base ()
 		{
@@ -373,6 +380,7 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnTextBoxTextChanged (object source, EventArgs e)
 		{
+			OnChanged (source, e);
 		}
 
 		protected virtual void ValidateEditText ()
@@ -480,6 +488,15 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		protected bool UserEdit {
+			get {
+				return user_edit;
+			}
+
+			set {
+				user_edit = value;
+			}
+		}
 		
 #endregion
 		

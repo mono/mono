@@ -1,3 +1,9 @@
+2005-01-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* UpDownBase.cs: Added some new properties.
+
+	* DomainUpDown.cs: Implement a lot to get my test working. 
+
 2005-01-19  Geoff Norton  <gnorton@customerdna.com>
 
 	* XplatUIOSX.cs: Fix a minor bug to bring the close box back
