@@ -89,6 +89,10 @@ all-local: $(gac_assemblies)
 
 if INSTALL_2_0
 install-data-local:
+	@if test -f $(srcdir)/mscorlib.dll.mdb; then \
+	  echo $(INSTALL_DATA) $(srcdir)/mscorlib.dll.mdb $(corlibdir)/mscorlib.dll.mdb; \
+	  $(INSTALL_DATA) $(srcdir)/mscorlib.dll.mdb $(corlibdir)/mscorlib.dll.mdb; \
+	fi
 	@if test -n '$(gac_assemblies)'; then \
 	  for i in ''$(gac_assemblies); do \
 	    echo "MONO_PATH=$(srcdir)/../net_1_1 $(mono_runtime) --config ../../data/config $(gacutil) /i $(srcdir)/$$i /f /package $(framework_version) /root $(DESTDIR)$(libdir)" ; \
