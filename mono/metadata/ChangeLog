@@ -1,3 +1,8 @@
+2004-06-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_Type_GetEvents_internal): Handle the case when
+	the event has no add and remove methods. Fixes #59629.
+
 2004-06-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* object.c: Fixed possible integer overflow when allocating large
