@@ -10,6 +10,8 @@ mono_DATA =  config \
 	     DefaultWsdlHelpGenerator.aspx \
 	     browscap.ini
 
+CLEANFILES = browscap.ini
+
 browscap.ini: browscap.ini.gz
 	gunzip -c $^ > $@
 
