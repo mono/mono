@@ -6,6 +6,7 @@
 	First stab at return values, and associated updates to the demo.
 	Consider types registered ByVal but not in main registry as unregistered.
 	Mark out some more ByVal types.
+	Initial support for namespaceless assemblies.
 
 2004-12-11  Alp Toker  <alp@atoker.com>
 

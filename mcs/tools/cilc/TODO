@@ -7,13 +7,15 @@ HIGH PRIORITY
 Don't generate GObjects by default, said to be too heavy. Might need to clean
 up the generator to make this easier.
 
-For GObject generation, tie in generated code with Gtk+ etc. hierarchy
+For GObject generation, tie in generated code with Gtk+ etc. hierarchy -- validate this and provide examples.
+
+Consider moving the suffix underscore into NsToC (ns) to better handle namespaceless assemblies.
 
 Handle nested classes
 
-Generate enums and structs
+Generate structs
 
-Support return values and ref/out parameters
+Better support for return values and ref/out parameters
 
 Support more primitive types
 

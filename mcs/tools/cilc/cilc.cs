@@ -298,10 +298,12 @@ public class cilc
 			if (t.IsEnum)
 				RegisterByVal (t);
 
-			if (!ns_types.Contains (t.Namespace))
-				ns_types[t.Namespace] = new ArrayList ();
+			string tns = t.Namespace == null ? "" : t.Namespace;
 
-			((ArrayList) ns_types[t.Namespace]).Add (t);
+			if (!ns_types.Contains (tns))
+				ns_types[tns] = new ArrayList ();
+
+			((ArrayList) ns_types[tns]).Add (t);
 		}
 
 		namespaces = (string[]) (new ArrayList (ns_types.Keys)).ToArray (typeof (string));
@@ -1072,6 +1074,9 @@ public class cilc
 
 	static string NsToFlat (string s)
 	{
+		if (s == null)
+			return "";
+
 		s = s.Replace (".", "");
 		return s;
 	}
