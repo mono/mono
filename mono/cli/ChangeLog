@@ -1,3 +1,9 @@
+Fri Jul 27 11:46:09 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* loader.c: implemented lookup of methods in a different MonoImage
+	(needed to call the Syste.Object constructor, for example). Fixed the cache
+	code to only check for methods defined in the image.
+
 Thu Jul 26 15:31:01 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* loader.c: forgot to insert the method in the cache, not nice
