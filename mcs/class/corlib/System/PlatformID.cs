@@ -45,7 +45,7 @@ namespace System
 		WinCE = 3,
 #endif
 #if NET_2_0
-		Unix = 3
+		Unix = 4
 #endif
 	}
 }
