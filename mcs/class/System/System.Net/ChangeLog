@@ -1,3 +1,20 @@
+2004-08-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Cookie.cs: don't fail when using default constructor. Fixes bug
+	#62890.
+
+2004-08-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebResponse.cs: set-cookie and set-cookie2 can be present more
+	than once and have multiple values. Don't rely on string.split when
+	parsing cookie values.
+
+	* WebHeaderCollection.cs: same thing for set-cookie and set-cookie2.
+	Fixed GetValues (it was splitting values that contained a comma) and
+	changed SetInternal to handle multi-value headers.
+
+	Fixes bug #62744.
+
 2004-07-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebProxy.cs: fix scheme detection. Patch by Konstantin Triger

@@ -96,6 +96,10 @@ namespace System.Net
 			multiValue.Add ("vary", true);
 			multiValue.Add ("via", true);
 			multiValue.Add ("warning", true);
+
+			// Extra
+			multiValue.Add ("set-cookie", true);
+			multiValue.Add ("set-cookie2", true);
 		}
 		
 		// Constructors
@@ -151,25 +155,16 @@ namespace System.Net
 				throw new ArgumentException ("invalid header value: " + headerValue, "headerValue");
 			base.Add (headerName, headerValue);			
 		}
-		
+
 		public override string [] GetValues (string header)
 		{
 			if (header == null)
 				throw new ArgumentNullException ("header");
+
 			string [] values = base.GetValues (header);
-			if (values == null || values.Length == 0) 
+			if (values == null || values.Length == 0)
 				return null;
-			if (!IsMultiValue (header))
-				return values;
-			StringCollection col = new StringCollection ();
-			for (int i = 0; i < values.Length; i++) {
-				string [] s = values [i].Split (new char [] {','});
-				for (int j = 0; j < s.Length; j++) 
-					s [j] = s [j].Trim ();
-				col.AddRange (s);
-			}
-			values = new string [col.Count];
-			col.CopyTo (values, 0);
+
 			return values;
 		}
 
@@ -265,8 +260,12 @@ namespace System.Net
 			if (!IsHeaderValue (value))
 				throw new ArgumentException ("invalid header value");
 
-			base.Remove (name);
-			base.Set (name, value);	
+			if (IsMultiValue (name)) {
+				base.Add (name, value);
+			} else {
+				base.Remove (name);
+				base.Set (name, value);	
+			}
 		}
 		
 		internal void RemoveInternal (string name)
