@@ -102,10 +102,8 @@ public partial class TypeManager {
 	/// 
 	/// .NET 2.0
 	///
-#if NET_2_0
 	static internal Type compiler_generated_attr_type;
 	static internal Type fixed_buffer_attr_type;
-#endif
 
 	//
 	// An empty array of types
@@ -199,10 +197,8 @@ public partial class TypeManager {
 	///
 	/// A new in C# 2.0
 	/// 
-#if NET_2_0
 	static internal CustomAttributeBuilder compiler_generated_attr;
 	static internal ConstructorInfo fixed_buffer_attr_ctor;
-#endif
 
 	// <remarks>
 	//   Holds the Array of Assemblies that have been loaded
@@ -1182,10 +1178,8 @@ public partial class TypeManager {
 		//
 		// .NET 2.0
 		//
-#if NET_2_0
 		compiler_generated_attr_type = CoreLookupType ("System.Runtime.CompilerServices.CompilerGeneratedAttribute");
 		fixed_buffer_attr_type = CoreLookupType ("System.Runtime.CompilerServices.FixedBufferAttribute");
-#endif
 		//
 		// When compiling corlib, store the "real" types here.
 		//
@@ -1412,13 +1406,11 @@ public partial class TypeManager {
 		//
 		// .NET 2.0 types
 		//
-#if NET_2_0
 		compiler_generated_attr = new CustomAttributeBuilder (
 			GetConstructor (compiler_generated_attr_type, void_arg), new object[0]);
 
 		Type[] type_int_arg = { type_type, int32_type };
 		fixed_buffer_attr_ctor = GetConstructor (fixed_buffer_attr_type, type_int_arg);
-#endif
 
 		// Object
 		object_ctor = GetConstructor (object_type, void_arg);
@@ -2003,6 +1995,9 @@ public partial class TypeManager {
 	//
 	static public FieldBase GetField (FieldInfo fb)
 	{
+		if (fb.DeclaringType.IsGenericInstance)
+			fb = fb.Mono_GetGenericFieldDefinition ();
+
 		return (FieldBase) fieldbuilders_to_fields [fb];
 	}
 	

@@ -1,5 +1,13 @@
 2005-03-22  Martin Baulig  <martin@ximian.com>
 
+	* typemanager.cs (TypeManager.GetField): Add support for generic
+	instances.
+
+	* attribute.cs, typemanager.cs: Removed the `#if NET_2_0'
+	conditionals.	
+
+2005-03-22  Martin Baulig  <martin@ximian.com>
+
 	* decl.cs (MemberCache.DeepCopy): Manually copy the entries and
 	clear the `BindingFlags.DeclaredOnly'.
 	(MemberCache.AddMethods): Add `BindingFlags.DeclaredOnly'.
