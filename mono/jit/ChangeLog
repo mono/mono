@@ -1,3 +1,6 @@
+2002-04-09  Dietmar Maurer  <dietmar@ximian.com>
+
+	* delegate.c (arch_end_invoke): restore output arguments
 
 Mon Apr 8 17:16:40 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
