@@ -148,7 +148,8 @@ namespace System.Web.Configuration
 			string lower = Path.Combine (realpath, "web.config");
 			string upper = Path.Combine (realpath, "Web.config");
 			bool isUpper = File.Exists (upper);
-			bool isLower = File.Exists (lower);
+			// '\\' checks whether environment is Windows or not
+			bool isLower = (Path.DirectorySeparatorChar == '\\') false : File.Exists (lower);
 			if (isUpper && isLower && Directory.GetFiles (realpath, "Web.config").Length < 2)
 				throw new ConfigurationException ("Both web.config and Web.config exist for " + dir);
 

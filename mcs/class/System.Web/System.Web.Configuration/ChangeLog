@@ -1,3 +1,7 @@
+2004-04-12  Atsushi Enomoto <atsushi@ximian.com>
+
+	* WebConfigurationSettings.cs : On Windows "Web.config" is "web.config".
+
 2004-04-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConfigurationSettings.cs: "/" is the virtual root directory of
