@@ -111,6 +111,25 @@ namespace MonoTests.System.Text.RegularExpressions
             		Regex r = new Regex(@"^[\s\0]*$");
 			AssertEquals ("E0-1", true, r.Match(" \0").Success);
 		}
+
+        	[Test()]
+        	public void MultipleMatches()
+        	{
+            		Regex regex = new Regex (@"^(?'path'.*(\\|/)|(/|\\))(?'file'.*)$");
+            		Match match = regex.Match (@"d:\Temp\SomeDir\SomeDir\bla.xml");
+                                                                                           
+            		AssertEquals ("MM #01", 5, match.Groups.Count);
+                                                                                           
+            		AssertEquals ("MM #02", "1", regex.GroupNameFromNumber(1));
+            		AssertEquals ("MM #03", "2", regex.GroupNameFromNumber(2));
+            		AssertEquals ("MM #04", "path", regex.GroupNameFromNumber(3));
+            		AssertEquals ("MM #05", "file", regex.GroupNameFromNumber(4));
+                                                                                           
+            		AssertEquals ("MM #06", "\\", match.Groups[1].Value);
+            		AssertEquals ("MM #07", "", match.Groups[2].Value);
+            		AssertEquals ("MM #08", @"d:\Temp\SomeDir\SomeDir\", match.Groups[3].Value);
+            		AssertEquals ("MM #09", "bla.xml", match.Groups[4].Value);
+        	}
 	}
 }
 

@@ -1,3 +1,7 @@
+2004-03-22  Jackson Harper  <jackson@ximian.com>
+
+	* RegexBugs.cs: Add test case for multiple matches.
+	
 2004-03-17  Francois Beauchemin <beauche@softhome.net>
  	* PerlTrials.cs : Added many test for RightToLeft
  	* PerlTest.cs, RegexTrial : Modified version of regextrial to 
