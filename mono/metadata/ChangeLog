@@ -1,5 +1,19 @@
 2003-11-02  Martin Baulig  <martin@ximian.com>
 
+	* reflection.h
+	(MonoReflectionInflatedMethod, MonoReflectionInflatedField): Added
+	`MonoReflectionGenericInst *declaring_type' and
+	`MonoReflectionGenericInst *reflected_type' fields.
+
+	* reflection.c (mono_reflection_inflate_method_or_ctor): Take a
+	`MonoReflectionGenericInst *declaring_type' and a
+	`MonoReflectionGenericInst *reflected_type' argument instead of a
+	single `MonoReflectionGenericInst *type' one.  Set
+	`res->declaring_type' and `res->reflected_type' from them.
+	(mono_reflection_inflate_field): Likewise.	
+
+2003-11-02  Martin Baulig  <martin@ximian.com>
+
 	* class.c (mono_class_setup_vtable): Don't store generic methods
 	in the vtable.	
 
@@ -8,11 +22,8 @@
 	* reflection.h (MonoReflectionGenericInst): Added
 	`MonoReflectionType *declaring_type'.
 
-	* reflection.c (inflated_method_get_object): Added
-	`MonoReflectionType *decl_type' argument; set
-	`res->declaring_type' from it.
-	(mono_reflection_bind_generic_parameters): Use `if (tb->parent)'
-	instead of `klass->parent'.
+	* reflection.c (mono_reflection_bind_generic_parameters): Use
+	`if (tb->parent)' instead of `klass->parent'.
 
 2003-11-01  Zoltan Varga  <vargaz@freemail.hu>
 
