@@ -1,3 +1,8 @@
+
+Tue Jun 18 10:21:56 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* x86/tramp.c: marshal simple arrays correctly.
+
 2002-05-27  Miguel de Icaza  <miguel@ximian.com>
 
 	* x86/x86-codegen.h: Set the standard header format.
