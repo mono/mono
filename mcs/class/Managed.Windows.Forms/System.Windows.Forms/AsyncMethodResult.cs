@@ -74,6 +74,7 @@ namespace System.Windows.Forms {
 		public void Complete (object result)
 		{
 			lock (this) {
+				handle.WaitOne ();
 				completed = true;
 				return_value = result;
 				handle.ReleaseMutex ();
