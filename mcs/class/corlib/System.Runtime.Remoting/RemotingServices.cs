@@ -285,8 +285,17 @@ namespace System.Runtime.Remoting
 
 		public static bool IsOneWay(MethodBase method)
 		{
+			// TODO: use internal call for better performance
 			object[] atts = method.GetCustomAttributes (typeof (OneWayAttribute), false);
 			return atts.Length > 0;
+		}
+
+		public static bool IsAsyncMessage(IMessage msg)
+		{
+			if (! (msg is MonoMethodMessage)) return false;
+			else if (((MonoMethodMessage)msg).IsAsync) return true;
+			else if (IsOneWay (((MonoMethodMessage)msg).MethodBase)) return true;
+			else return false;
 		}
 
 		public static void SetObjectUriForMarshal(MarshalByRefObject obj, string uri)

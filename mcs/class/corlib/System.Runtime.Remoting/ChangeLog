@@ -1,3 +1,9 @@
+2003-04-10  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* ObjRef.cs: Renamed ChannelInfoStore to ChannelInfo (match MS.NET)
+	* RemotingServices.cs: Added method to help support Async messages.
+	* RemotingConfiguration.cs: Implemented property ProcessID.
+
 2003-03-24  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* RemotingServices.cs: Fixed bug #39915

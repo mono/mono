@@ -21,9 +21,9 @@ namespace System.Runtime.Remoting
 	{
 		static string applicationID = null;
 		static string applicationName = null;
-		static string processId = null;
 		static string configFile = "";
 		static MiniParser parser = null; 
+		static string processGuid = null;
 
 		static Hashtable wellKnownClientEntries = new Hashtable();
 		static Hashtable activatedClientEntries = new Hashtable();
@@ -58,11 +58,14 @@ namespace System.Runtime.Remoting
 		
 		public static string ProcessId 
 		{
-			get { 
-				processId = AppDomain.CurrentDomain.SetupInformation.ApplicationName;
-				return processId; 
+			get {
+				if (processGuid == null)
+					processGuid = AppDomain.GetProcessGuid ();
+
+				return processGuid;
 			}
 		}
+
 
 		// public methods
 		

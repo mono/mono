@@ -74,7 +74,7 @@ namespace System.Runtime.Remoting {
 			typeInfo = new TypeInfo(type);
 
 			if (remoteChannelData != null)
-				channel_info = new ChannelInfoStore (remoteChannelData);
+				channel_info = new ChannelInfo (remoteChannelData);
 
 			flags |= WellKnowObjectRef;
 		}
@@ -208,7 +208,7 @@ namespace System.Runtime.Remoting {
 
 		internal void UpdateChannelInfo()
 		{
-			channel_info = new ChannelInfoStore ();
+			channel_info = new ChannelInfo ();
 		}
 
 		internal Type ServerType
