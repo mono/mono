@@ -447,9 +447,16 @@ namespace System
 
 		// private methods
 
-		private static string GacPath
-		{
-			get { return Path.Combine (Path.Combine (internalGetGacPath (), "mono"), "gac"); }
+		private static string GacPath {
+			get {
+				if ((int) Platform != 128) {
+					/* On windows, we don't know the path where mscorlib.dll will be installed */
+					string corlibDir = Path.GetDirectoryName (typeof (int).Assembly.Location);
+					return Path.Combine (Path.Combine (corlibDir, "mono"), "gac");
+				}
+
+				return Path.Combine (Path.Combine (internalGetGacPath (), "mono"), "gac");
+			}
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
