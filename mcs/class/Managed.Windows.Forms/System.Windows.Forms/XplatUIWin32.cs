@@ -465,7 +465,7 @@ namespace System.Windows.Forms {
 
 			// Prepare 'our' window class
 			wnd_proc = new WndProc(NativeWindow.WndProc);
-			wndClass.style = (int)ClassStyle.CS_OWNDC;
+			wndClass.style = (int)(ClassStyle.CS_OWNDC | ClassStyle.CS_DBLCLKS);
 			wndClass.lpfnWndProc = wnd_proc;
 			wndClass.cbClsExtra = 0;
 			wndClass.cbWndExtra = 0;
