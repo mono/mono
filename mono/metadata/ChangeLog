@@ -1,3 +1,18 @@
+2003-10-25  Martin Baulig  <martin@ximian.com>
+
+	* icall.c (ves_icall_Type_BindGenericParameters): Return a
+	`MonoReflectionGenericInst *' instead of a `MonoReflectionType *'.
+	("System.Reflection.MonoGenericInst::inflate_method"): New interncall.
+	("System.Reflection.MonoGenericInst::inflate_ctor"): New interncall.
+
+	* reflection.c (my_mono_class_from_mono_type): Added MONO_TYPE_GENERICINST.
+	(create_typespec): Likewise.
+	(mono_reflection_bind_generic_parameters): Return a
+	`MonoReflectionGenericInst *' instead of a `MonoClass *'.
+	(mono_reflection_inflate_method_or_ctor): New public function.
+
+	* reflection.h (MonoReflectionGenericInst): New typedef.	
+
 2003-10-24  Zoltan Varga  <vargaz@freemail.hu>
 
 	* object.c (mono_class_proxy_vtable): Run the whole vtable construction
