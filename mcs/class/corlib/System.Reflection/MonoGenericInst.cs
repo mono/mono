@@ -34,30 +34,52 @@ namespace System.Reflection
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern MethodInfo inflate_method (MethodInfo method);
+		private static extern MethodInfo inflate_method (MonoGenericInst declaring, MonoGenericInst reflected, MethodInfo method);
 	
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern ConstructorInfo inflate_ctor (ConstructorInfo ctor);
+		private static extern ConstructorInfo inflate_ctor (MonoGenericInst declaring, MonoGenericInst reflected, ConstructorInfo ctor);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern FieldInfo inflate_field (FieldInfo field);
+		private static extern FieldInfo inflate_field (MonoGenericInst declaring, MonoGenericInst reflected, FieldInfo field);
 
 		private const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic |
 		BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
+		protected void inflate (MonoGenericInst reflected,
+					ArrayList mlist, ArrayList clist, ArrayList flist)
+		{
+			if (parent != null)
+				parent.inflate (reflected, mlist, clist, flist);
+			else {
+				mlist.AddRange (generic_type.BaseType.GetMethods (flags));
+				clist.AddRange (generic_type.BaseType.GetConstructors (flags));
+				flist.AddRange (generic_type.BaseType.GetFields (flags));
+			}
+
+			foreach (MethodInfo m in generic_type.GetMethods (flags))
+				mlist.Add (inflate_method (this, reflected, m));
+			foreach (ConstructorInfo c in generic_type.GetConstructors (flags))
+				clist.Add (inflate_ctor (this, reflected, c));
+			foreach (FieldInfo f in generic_type.GetFields (flags))
+				flist.Add (inflate_field (this, reflected, f));
+		}
+
 		void initialize ()
 		{
-			methods = generic_type.GetMethods (flags);
-			for (int i = 0; i < methods.Length; i++)
-				methods [i] = inflate_method (methods [i]);
+			ArrayList mlist = new ArrayList ();
+			ArrayList clist = new ArrayList ();
+			ArrayList flist = new ArrayList ();
 
-			ctors = generic_type.GetConstructors (flags);
-			for (int i = 0; i < ctors.Length; i++)
-				ctors [i] = inflate_ctor (ctors [i]);
+			inflate (this, mlist, clist, flist);
 
-			fields = generic_type.GetFields (flags);
-			for (int i = 0; i < fields.Length; i++)
-				fields [i] = inflate_field (fields [i]);
+			methods = new MethodInfo [mlist.Count];
+			mlist.CopyTo (methods, 0);
+
+			ctors = new ConstructorInfo [clist.Count];
+			clist.CopyTo (ctors, 0);
+
+			fields = new FieldInfo [flist.Count];
+			flist.CopyTo (fields, 0);
 		}
 
 		public override Type BaseType {
@@ -77,22 +99,7 @@ namespace System.Reflection
 			if (methods == null)
 				initialize ();
 
-			ArrayList list = new ArrayList ();
-			BindingFlags new_bf = bindingAttr | BindingFlags.DeclaredOnly;
-
-			if ((bindingAttr & BindingFlags.DeclaredOnly) == 0) {
-				Type current = BaseType;
-				while (current != null) {
-					list.AddRange (current.GetMethods (new_bf));
-					current = current.BaseType;
-				}
-			}
-
-			list.AddRange (GetMethods_impl (new_bf));
-
-			MethodInfo[] res = new MethodInfo [list.Count];
-			list.CopyTo (res, 0);
-			return res;
+			return GetMethods_impl (bindingAttr);
 		}
 
 		protected MethodInfo[] GetMethods_impl (BindingFlags bindingAttr)
@@ -135,22 +142,7 @@ namespace System.Reflection
 			if (ctors == null)
 				initialize ();
 
-			ArrayList list = new ArrayList ();
-			BindingFlags new_bf = bindingAttr | BindingFlags.DeclaredOnly;
-
-			if ((bindingAttr & BindingFlags.DeclaredOnly) == 0) {
-				Type current = BaseType;
-				while (current != null) {
-					list.AddRange (current.GetConstructors (new_bf));
-					current = current.BaseType;
-				}
-			}
-
-			list.AddRange (GetConstructors_impl (new_bf));
-
-			ConstructorInfo[] res = new ConstructorInfo [list.Count];
-			list.CopyTo (res, 0);
-			return res;
+			return GetConstructors_impl (bindingAttr);
 		}
 
 		protected ConstructorInfo[] GetConstructors_impl (BindingFlags bindingAttr)
@@ -193,22 +185,7 @@ namespace System.Reflection
 			if (fields == null)
 				initialize ();
 
-			ArrayList list = new ArrayList ();
-			BindingFlags new_bf = bindingAttr | BindingFlags.DeclaredOnly;
-
-			if ((bindingAttr & BindingFlags.DeclaredOnly) == 0) {
-				Type current = BaseType;
-				while (current != null) {
-					list.AddRange (current.GetFields (new_bf));
-					current = current.BaseType;
-				}
-			}
-
-			list.AddRange (GetFields_impl (new_bf));
-
-			FieldInfo[] res = new FieldInfo [list.Count];
-			list.CopyTo (res, 0);
-			return res;
+			return GetFields_impl (bindingAttr);
 		}
 
 		protected FieldInfo[] GetFields_impl (BindingFlags bindingAttr)
@@ -250,7 +227,8 @@ namespace System.Reflection
 	internal class MonoInflatedMethod : MonoMethod
 	{
 		private readonly MethodInfo declaring;
-		private readonly Type declaring_type;
+		private readonly MonoGenericInst declaring_type;
+		private readonly MonoGenericInst reflected_type;
 
 		public override Type DeclaringType {
 			get {
@@ -260,7 +238,7 @@ namespace System.Reflection
 
 		public override Type ReflectedType {
 			get {
-				return declaring_type != null ? declaring_type : base.ReflectedType;
+				return reflected_type != null ? reflected_type : base.ReflectedType;
 			}
 		}
 
@@ -284,7 +262,8 @@ namespace System.Reflection
 	internal class MonoInflatedCtor : MonoCMethod
 	{
 		private readonly ConstructorInfo declaring;
-		private readonly Type declaring_type;
+		private readonly MonoGenericInst declaring_type;
+		private readonly MonoGenericInst reflected_type;
 
 		public override Type DeclaringType {
 			get {
@@ -294,7 +273,7 @@ namespace System.Reflection
 
 		public override Type ReflectedType {
 			get {
-				return declaring_type != null ? declaring_type : base.ReflectedType;
+				return reflected_type != null ? reflected_type : base.ReflectedType;
 			}
 		}
 
@@ -318,5 +297,19 @@ namespace System.Reflection
 	internal class MonoInflatedField : MonoField
 	{
 		private readonly IntPtr dhandle;
+		private readonly MonoGenericInst declaring_type;
+		private readonly MonoGenericInst reflected_type;
+
+		public override Type DeclaringType {
+			get {
+				return declaring_type != null ? declaring_type : base.DeclaringType;
+			}
+		}
+
+		public override Type ReflectedType {
+			get {
+				return reflected_type != null ? reflected_type : base.ReflectedType;
+			}
+		}
 	}
 }

@@ -1,9 +1,16 @@
 2003-11-02  Martin Baulig  <martin@ximian.com>
 
-	* MonoGenericInst.cs (MonoInflatedMethod, MonoInflatedCtor): Added
-	`Type declaring_type' field and override the `DeclaringType' and
-	`ReflectedType' properties.
-	(MonoGenericInst.IsValueTypeImpl): Override this.
+	* MonoGenericInst.cs (MonoGenericInst.initialize): Include members
+	from our parent classes in the `methods', `ctors' and `fields'
+	arrays.  When inflating them, reflection now sets their
+	`declaring_type' and `reflected_type' fields.
+	(MonoInflatedMethod, MonoInflatedCtor): Added
+	`MonoGenericInst declaring_type' and `MonoGenericInst reflected_type'
+	fields and override the `DeclaringType' and `ReflectedType' properties.
+
+2003-11-02  Martin Baulig  <martin@ximian.com>
+
+	* MonoGenericInst.cs (MonoGenericInst.IsValueTypeImpl): Override this.
 
 2003-10-31  Martin Baulig  <martin@ximian.com>
 
