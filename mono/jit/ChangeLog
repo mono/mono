@@ -1,3 +1,7 @@
+2002-06-09  Martin Baulig  <martin@gnome.org>
+
+	* debug.c (mono_debug_open_image): For MONO_DEBUG_FORMAT_DWARF2_PLUS,
+	the `%s-debug.s' file is in the same directory than its assembly.
 
 Sat Jun 1 13:24:01 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
