@@ -1,3 +1,21 @@
+2002-10-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ConfigHelper.cs: New file. Contains some
+	helper functions for getting key-value collections from the config file.
+	
+	* ConfigXmlDocument.cs: wrapper around xml elements to provide line
+	number and file name info.
+	* IConfigXmlNode.cs: used in ConfigXmlDocument and
+	ConfigurationException.
+
+	* ConfigurationException.cs: get file name and line
+	number from the wrapped XmlNode. Display this info in Message.
+
+	* NameValueFileSectionHandler.cs: new handler.
+	* DictionarySectionHandler.cs:
+	* NameValueSectionHandler.cs: modified to use the helper methods in
+	ConfigHelper.
+
 2002-10-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AppSettingsReader.cs: New file.

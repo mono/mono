@@ -103,23 +103,32 @@ namespace System.Configuration
 
 		public override string Message
 		{
-			get { return filename + " " + line; }
+			get {
+				string baseMsg = base.Message;
+				string f = (filename == null) ? String.Empty : filename;
+				string l = (line == 0) ? String.Empty : (" line " + line);
+
+				return baseMsg + "(" + f + l + ")";
+			}
 		}
 
 		//
 		// Methods
 		//
-		[MonoTODO]
-		// Not sure if that's the correct return value.
 		public static string GetXmlNodeFilename (XmlNode node)
 		{
-			return node.OwnerDocument.Name;
+			if (!(node is IConfigXmlNode))
+				return String.Empty;
+
+			return ((IConfigXmlNode) node).Filename;
 		}
 
-		[MonoTODO]
 		public static int GetXmlNodeLineNumber (XmlNode node)
 		{
-			return 0;
+			if (!(node is IConfigXmlNode))
+				return 0;
+
+			return ((IConfigXmlNode) node).LineNumber;
 		}
 
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)

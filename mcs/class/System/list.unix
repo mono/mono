@@ -235,12 +235,16 @@ System/UriBuilder.cs
 System/UriHostNameType.cs
 System/Uri.cs
 System.Configuration/AppSettingsReader.cs
+System.Configuration/ConfigHelper.cs
 System.Configuration/IConfigurationSectionHandler.cs
 System.Configuration/IConfigurationSystem.cs
+System.Configuration/IConfigXmlNode.cs
 System.Configuration/IgnoreSectionHandler.cs
+System.Configuration/NameValueFileSectionHandler.cs
 System.Configuration/NameValueSectionHandler.cs
 System.Configuration/ConfigurationException.cs
 System.Configuration/ConfigurationSettings.cs
+System.Configuration/ConfigXmlDocument.cs
 System.Configuration/DictionarySectionHandler.cs
 System.Configuration/SingleTagSectionHandler.cs
 System.Diagnostics/BooleanSwitch.cs
