@@ -27,7 +27,7 @@
 			<!-- cor compare dies with these currently -->
 			<!--<arg value="/nostdlib"/>--> 	<!-- don't reference mscorlib -->
 			<!--<arg value="/r:corlib.dll"/>-->
-			<arg value="/r:System.dll"/>
+			<arg value="/r:.\System.dll"/>
 			<arg value="/r:.\Microsoft.VisualBasic.dll"/>
 		</csc>
 
