@@ -42,7 +42,9 @@ namespace Microsoft.JScript {
 		}
 
 		internal GlobalScope (GlobalScope parent, VsaEngine engine, bool is_comp_scope)
-		{			
+		{
+			this.parent = parent;
+			this.engine = engine;
 		}
 
 		public FieldInfo AddField (string name)
@@ -67,7 +69,7 @@ namespace Microsoft.JScript {
 
 		public override Object GetDefaultThisObject ()
 		{
-			throw new NotImplementedException ();
+			return this;
 		}
 
 		public override FieldInfo GetField (string name, int lexLevel)

@@ -37,6 +37,7 @@ namespace Microsoft.JScript {
 	public abstract class ScriptObject : IReflect {
 
 		public VsaEngine engine;
+		protected GlobalScope parent;
 
 		public FieldInfo GetField (string name, BindingFlags bindFlags)
 		{

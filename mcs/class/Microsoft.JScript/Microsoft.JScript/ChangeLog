@@ -1,3 +1,10 @@
+2005-03-29  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* GlobalScope.cs: Set parent and engine in ctr. Return 'this' for
+	GetDefaultThisObject.
+	* ScriptObject.cs: Added protected 'parent' field of type
+	GlobalScope.
+
 2005-03-16  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* FunctionExpression.cs: Update to TypeManager new API.
