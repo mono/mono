@@ -7,7 +7,8 @@ class EntryPoint {
 	static event EventHandler FooEvent;
 	static void bar_f (object sender) {}
 	static void Main () {
-		FooEvent (null);
+		if (FooEvent != null)
+			FooEvent (null);
 		object bar = new EventHandler (bar_f);
 	}
 }
