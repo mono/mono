@@ -64,6 +64,7 @@ namespace System {
 
 			len = s.Length;
 
+			// look for the first non-whitespace character
 			char c;
 			for (i = 0; i < len; i++){
 				c = s [i];
@@ -71,21 +72,26 @@ namespace System {
 					break;
 			}
 			
+			// if it's all whitespace, then throw exception
 			if (i == len)
 				throw new FormatException ();
 
+			// look for the optional '+' sign
 			if (s [i] == '+')
 				i++;
 
+			// we should just have numerals followed by whitespace now
 			for (; i < len; i++){
 				c = s [i];
 
 				if (c >= '0' && c <= '9'){
+					// shift left and accumulate every time we find a numeral
 					byte d = (byte) (c - '0');
 					
 					val = checked ((byte) (val * 10 + d));
 					digits_seen = true;
 				} else {
+					// after the last numeral, only whitespace is allowed
 					if (Char.IsWhiteSpace (c)){
 						for (i++; i < len; i++){
 							if (!Char.IsWhiteSpace (s [i]))
@@ -96,6 +102,8 @@ namespace System {
 						throw new FormatException ();
 				}
 			}
+
+			// if all we had was a '+' sign, then throw exception
 			if (!digits_seen)
 				throw new FormatException ();
 			
