@@ -140,7 +140,7 @@ namespace System.Windows.Forms {
 			get { return bounds; }
 		}
 
-                public Rectangle PlusMinusBounds {
+                internal Rectangle PlusMinusBounds {
                         get { return plus_minus_bounds; }
                 }
 

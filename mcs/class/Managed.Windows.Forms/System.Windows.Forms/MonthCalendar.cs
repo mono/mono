@@ -823,7 +823,7 @@ namespace System.Windows.Forms {
 							} else if (time > calendar_month && i == CalendarDimensions.Width*CalendarDimensions.Height - 1) {
 								return new HitTestInfo(HitArea.NextMonthDate, point, time);
 							}
-							return new HitTestInfo(HitArea.NoWhere, point, time);
+							return new HitTestInfo(HitArea.Nowhere, point, time);
 						}
 						return new HitTestInfo(HitArea.Date, point, time);
 					}
@@ -1732,7 +1732,7 @@ namespace System.Windows.Forms {
 
 		// enumeration about what type of area on the calendar was hit 
 		public enum HitArea {
-			NoWhere,
+			Nowhere,
 			TitleBackground,
 			TitleMonth,
 			TitleYear,
@@ -1756,7 +1756,7 @@ namespace System.Windows.Forms {
 
 			// default constructor
 			internal HitTestInfo () {
-				hit_area = HitArea.NoWhere;
+				hit_area = HitArea.Nowhere;
 				point = new Point (0, 0);
 				time = DateTime.Now;
 			}
