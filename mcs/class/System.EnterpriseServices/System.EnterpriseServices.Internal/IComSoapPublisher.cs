@@ -5,6 +5,7 @@
 //
 // (C) Alejandro Sánchez Acosta
 //
+using System;
 
 using System.Runtime.InteropServices;
 

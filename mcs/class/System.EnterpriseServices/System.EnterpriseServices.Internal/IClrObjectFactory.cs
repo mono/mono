@@ -5,7 +5,7 @@
 //
 // (C) Alejandro Sánchez Acosta
 //
-
+using System;
 using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices.Internal
