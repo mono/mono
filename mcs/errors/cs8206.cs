@@ -8,7 +8,7 @@ class X {
 		if (a == 0)
 			yield return 1;
 		else
-			return 2;
+			return null;
 	}
 
 	static void Main ()
