@@ -27,7 +27,6 @@
 
 //
 // TODO:
-//  - detect numlock
 //  - dead chars are not translated properly
 //  - There is a lot of potential for optimmization in here
 // 
@@ -466,7 +465,6 @@ namespace System.Windows.Forms {
 		public void DetectLayout ()
 		{
 			XDisplayKeycodes (display, out min_keycode, out max_keycode);
-
 			IntPtr ksp = XGetKeyboardMapping (display, (byte) min_keycode,
 					max_keycode + 1 - min_keycode, out keysyms_per_keycode);
 			XplatUIX11.XFree (ksp);
@@ -476,6 +474,26 @@ namespace System.Windows.Forms {
 				Console.Error.WriteLine ("{0} keysymbols per a keycode is not supported, setting to 4", syms);
 				syms = 2;
 			}
+
+			IntPtr	modmap_unmanaged;
+			XModifierKeymap xmk = new XModifierKeymap ();
+
+			modmap_unmanaged = XGetModifierMapping (display);
+			xmk = (XModifierKeymap) Marshal.PtrToStructure (modmap_unmanaged, typeof (XModifierKeymap));
+
+			int mmp = 0;
+			for (int i = 0; i < 8; i++) {
+				for (int j = 0; j < xmk.max_keypermod; j++, mmp++) {
+					byte b = Marshal.ReadByte (xmk.modifiermap, mmp);
+					if (b != 0) {
+						for (int k = 0; k < keysyms_per_keycode; k++) {
+							if ((int) XKeycodeToKeysym (display, b, k) == (int) MiscKeys.XK_Num_Lock)
+								NumLockMask = 1 << i;
+						}
+					}
+				}
+			}
+			XFreeModifiermap (modmap_unmanaged);
 
 			int [] ckey = new int [4];
 			bool vk_set = false;
@@ -575,6 +593,12 @@ namespace System.Windows.Forms {
 		[DllImport ("libX11")]
 		private static extern int XKeysymToKeycode (IntPtr display, int keysym);
 
+		[DllImport ("libX11")]
+		internal extern static IntPtr XGetModifierMapping (IntPtr display);
+
+		[DllImport ("libX11")]
+		internal extern static int XFreeModifiermap (IntPtr modmap);
+		
 	}
 
 }
