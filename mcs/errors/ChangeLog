@@ -1,3 +1,7 @@
+2004-01-04 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* cs157-{2,3,4}: test cases we fail.
+
 2003-11-01  Marek Safar <marek.safar@seznam.cz>
 
         * makefile: Added "// Compiler options:" handling
