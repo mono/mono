@@ -1126,14 +1126,6 @@ public class TypeBuilderTest : Assertion
 	}
 
 	[Test]
-	[ExpectedException (typeof(NotSupportedException))]
-	public void TestGetCustomAttributesOfNullTypeIncomplete ()
-	{
-		TypeBuilder tb = module.DefineType (genTypeName ());
-		tb.GetCustomAttributes (null, false);
-	}
-
-	[Test]
 	[ExpectedException (typeof(ArgumentNullException))]
 	public void TestGetCustomAttributesOfNullTypeComplete ()
 	{
@@ -1705,6 +1697,28 @@ public class TypeBuilderTest : Assertion
 		// their corresponding behaviors, "get" and "set" respectively. 
 		propertyBuilder.SetGetMethod (getMethodBuilder);
 		propertyBuilder.SetSetMethod (setMethodBuilder);
+	}
+
+	static int handler_called = 0;
+
+	[Test]
+	public void TestTypeResolve () {
+		string typeName = genTypeName ();
+
+		ResolveEventHandler handler = new ResolveEventHandler (TypeResolve);
+        AppDomain.CurrentDomain.TypeResolve += handler;
+		handler_called = 0;
+		Type t = Type.GetType (typeName);
+		AssertEquals (typeName, t.Name);
+		AssertEquals (1, handler_called);
+        AppDomain.CurrentDomain.TypeResolve -= handler;
+	}
+    
+    Assembly TypeResolve (object sender, ResolveEventArgs args) {
+		TypeBuilder tb = module.DefineType (args.Name, TypeAttributes.Public);
+		tb.CreateType ();
+		handler_called ++;
+		return tb.Assembly;
 	}
 }
 }
