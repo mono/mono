@@ -28,7 +28,10 @@ namespace System.Runtime.Remoting.Proxies
 		}
 
 		public abstract IMessage Invoke (IMessage msg);
-		
+
+		public virtual object GetTransparentProxy () {
+			throw new NotImplementedException ();
+		}
 	}
 
 }
