@@ -1,5 +1,9 @@
 2004-04-24  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlComment.cs. XmlProcessingInstruction.cs : missing commits.
+
+2004-04-24  Atsushi Enomoto <atsushi@ximian.com>
+
 	W3C DOM compliant read-only check support (buggy part in MS.NET).
 	* XmlAttribute.cs,
 	  XmlCDataSection.cs,

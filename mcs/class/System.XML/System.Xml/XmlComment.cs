@@ -50,7 +50,10 @@ namespace System.Xml
 		public override XmlNode CloneNode (bool deep)
 		{
 			// discard deep because Comments have no children.
-			return new XmlComment(Value, OwnerDocument); 
+			XmlNode n = new XmlComment(Value, OwnerDocument); 
+			if (IsReadOnly)
+				n.SetReadOnly ();
+			return n;
 		}
 
 		public override void WriteContentTo (XmlWriter w) { }

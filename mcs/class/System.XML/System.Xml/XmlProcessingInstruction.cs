@@ -21,6 +21,7 @@ namespace System.Xml
 
 		protected internal XmlProcessingInstruction (string target, string data, XmlDocument doc) : base(doc)
 		{
+			XmlConvert.VerifyName (target);
 			if (data == null)
 				data = String.Empty;
 
@@ -88,7 +89,10 @@ namespace System.Xml
 
 		public override XmlNode CloneNode (bool deep)
 		{
-			return new XmlProcessingInstruction (target, data, OwnerDocument);
+			XmlNode n = new XmlProcessingInstruction (target, data, OwnerDocument);
+			if (IsReadOnly)
+				n.SetReadOnly ();
+			return n;
 		}
 
 		public override void WriteContentTo (XmlWriter w) { }
