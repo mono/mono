@@ -1973,10 +1973,16 @@ int64		        : INT64
                         | INT32
 			;
 
-float64			: FLOAT64
-			| K_FLOAT32 OPEN_PARENS int32 CLOSE_PARENS
-			| K_FLOAT64 OPEN_PARENS int64 CLOSE_PARENS
-			;
+float64                 : FLOAT64
+                        | K_FLOAT32 OPEN_PARENS int32 CLOSE_PARENS
+                          {
+                                $$ = Convert.ToDouble ($3);
+                          }
+                        | K_FLOAT64 OPEN_PARENS int64 CLOSE_PARENS
+                           {
+                                $$ = Convert.ToDouble ($3);
+                           }
+                        ;
 
 hexbyte			: HEXBYTE
                         | INT32         { $$ = Convert.ToByte ($1); }
