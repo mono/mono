@@ -1135,8 +1135,6 @@ namespace System.Drawing
                 [DllImport ("gdiplus.dll")]                                                
                 internal static extern Status GdipSetPathFillMode (IntPtr path, FillMode fillMode);
                 [DllImport ("gdiplus.dll")]                                                
-                internal static extern Status GdipGetPathData (IntPtr path, out IntPtr pathData);
-                [DllImport ("gdiplus.dll")]                                                
                 internal static extern Status GdipStartPathFigure (IntPtr path);
                 [DllImport ("gdiplus.dll")]                                                
                 internal static extern Status GdipClosePathFigure (IntPtr path);

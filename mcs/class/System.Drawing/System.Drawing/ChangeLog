@@ -1,3 +1,7 @@
+2004-07-15  Ravindra <rkumar@novell.com>
+
+	* gdipFunctions.cs: Removed GdipGetPathData P/Invoke. It is redundant.
+
 2004-07-13  Ravindra <rkumar@novell.com>
 
 	* gdipFunctions.cs: Removed GdipGetPathGradientRectI P/Invoke.
