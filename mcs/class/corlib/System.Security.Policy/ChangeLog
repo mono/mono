@@ -1,6 +1,15 @@
+2002-01-30  Nick Drochak  <ndrochak@gol.com>
+
+	* CodeGroup.cs: New file.  Not nearly done with this, but saving it
+	in cvs just in case.
+	* PolicyLevel.cs: Sarted just a bit on this then relized i need CodeGroup
+	first (among others).  Checking in for disaster recovery.
+
 2002-01-29  Nick Drochak  <ndrochak@gol.com>
 
 	* PolicyStatementAttribute.cs: New file.
+	* PolicyException.cs: Use correct namespace
+	* PolicyLevel.cs: Add [Serializable] to class
 
 2002-01-19  Duncan Mak  <duncan@ximian.com>
 
