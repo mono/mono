@@ -32,6 +32,8 @@ namespace Mono.CSharp {
 		static int global_count;
 		static int module_base;
 
+		public readonly static Location Null;
+		
 		static Location ()
 		{
 			map = new Hashtable ();
@@ -39,6 +41,7 @@ namespace Mono.CSharp {
 			sym_docs = new Hashtable ();
 			global_count = 0;
 			module_base = 0;
+			Null.token = -1;
 		}
 
 		static public void Push (string name)
@@ -71,12 +74,6 @@ namespace Mono.CSharp {
 		static public bool IsNull (Location l)
 		{
 			return l.token == -1;
-		}
-
-		static public Location Null {
-			get {
-				return new Location (-1);
-			}
 		}
 
 		public string Name {
