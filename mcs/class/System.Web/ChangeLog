@@ -1,3 +1,15 @@
+2005-03-04  Lluis Sanchez Gual <lluis@novell.com>
+
+	* System.Web.dll.sources: Added more files to the build:
+		System.Web.UI.WebControls/ChildTable.cs
+		System.Web.UI.WebControls/DataKey.cs
+		System.Web.UI.WebControls/DataKeyArray.cs
+		System.Web.UI.WebControls/GridViewCommandEventArgs.cs
+		System.Web.UI.WebControls/GridViewCommandEventHandler.cs
+		System.Web.UI.WebControls/GridViewRowEventArgs.cs
+		System.Web.UI.WebControls/GridViewRowEventHandler.cs
+		System.Web.UI.WebControls/StringArrayConverter.cs
+
 2005-02-25  Lluis Sanchez Gual <lluis@novell.com>
 
 	* System.Web.dll.sources: Added new files:
