@@ -4089,7 +4089,7 @@ namespace Mono.CSharp {
 			// Protect the code in a try/finalize block, so that
 			// if the beast implement IDisposable, we get rid of it
 			//
-			if (emit_finally)
+			if (hm.is_disposable && emit_finally)
 				ig.BeginExceptionBlock ();
 			
 			Label end_try = ig.DefineLabel ();
@@ -4117,9 +4117,11 @@ namespace Mono.CSharp {
 			//
 			// Now the finally block
 			//
-			DoEmitFinally (ec);
-			if (emit_finally)
-				ig.EndExceptionBlock ();
+			if (hm.is_disposable) {
+				DoEmitFinally (ec);
+				if (emit_finally)
+					ig.EndExceptionBlock ();
+			}
 
 			ig.MarkLabel (ec.LoopEnd);
 			return false;
