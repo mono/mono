@@ -48,6 +48,51 @@
 	* statement.cs (LocalInfo.Resolve): Don't access the TypeExpr's
 	`Type' directly, but call ResolveType() on it.
 
+2004-10-17  John Luke  <john.luke@gmail.com>
+
+	* class.cs (Operator.GetSignatureForError): use CSharpName
+
+	* parameter.cs (Parameter.GetSignatureForError): Returns
+	correct name even if was not defined.
+
+2004-10-13  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #65816.
+	* class.cs (TypeContainer.EmitContext): New property.
+	(DefineNestedTypes): Create an emitcontext for each part.
+	(MethodCore.DoDefineParameters): Use container's emitcontext.
+	Pass type array to InternalParameters.
+	(MemberBase.DoDefine): Use container's emitcontext.
+	(FieldMember.Define): Likewise.
+	(Event.Define): Likewise.
+	(SetMethod.GetParameterInfo): Change argument to EmitContext.
+	Pass type array to InternalParameters.
+	(SetIndexerMethod.GetParameterInfo): Likewise.
+	(SetMethod.Define): Pass emitcontext to GetParameterInfo.
+	* delegate.cs (Define): Pass emitcontext to
+	ComputeAndDefineParameterTypes and GetParameterInfo.  Pass type
+	array to InternalParameters.
+	* expression.cs (ParameterReference.DoResolveBase): Pass
+	emitcontext to GetParameterInfo.
+	(ComposedCast.DoResolveAsTypeStep): Remove check on
+	ec.ResolvingTypeTree.
+	* parameter.cs (Parameter.Resolve): Change argument to
+	EmitContext.  Use ResolveAsTypeTerminal.
+	(Parameter.GetSignature): Change argument to EmitContext.
+	(Parameters.ComputeSignature): Likewise.
+	(Parameters.ComputeParameterTypes): Likewise.
+	(Parameters.GetParameterInfo): Likewise.
+	(Parameters.ComputeAndDefineParameterTypes): Likewise.
+	Re-use ComputeParameterTypes.  Set ec.ResolvingTypeTree.
+	* support.cs (InternalParameters..ctor): Remove variant that takes
+	a DeclSpace.
+	* typemanager.cs (system_intptr_expr): New.
+	(InitExpressionTypes): Initialize it.
+
+2004-10-12  Chris Toshok  <toshok@ximian.com>
+
+	* cs-parser.jay: fix location for try_statement and catch_clause.
+
 2004-10-11  Martin Baulig  <martin@ximian.com>
 
 	* report.cs: Don't make --fatal abort on warnings, we have
