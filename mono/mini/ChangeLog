@@ -1,3 +1,6 @@
+2004-04-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c: Add support for STRWLPARRAY marshalling convention.
 
 Wed Apr 14 18:15:55 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
