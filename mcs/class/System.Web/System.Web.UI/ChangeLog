@@ -1,3 +1,13 @@
+2003-10-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BaseParser.cs: added CompilationConfig property.
+
+	* TemplateParser.cs:
+	* SimpleWebHandlerParser.cs: added CompilationConfig property.
+	Don't hardcode assembly names any more, assemblies in bin are added
+	depending on the configuration. The default language is also taken
+	from the configuration.
+
 2003-10-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* LosFormatter.cs: fixed bug #49604. Patch by yaronsh@mainsoft.com.

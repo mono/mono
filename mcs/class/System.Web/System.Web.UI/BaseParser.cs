@@ -13,6 +13,7 @@ using System.Collections;
 using System.IO;
 using System.Web;
 using System.Web.Compilation;
+using System.Web.Configuration;
 using System.Web.Util;
 
 namespace System.Web.UI
@@ -23,6 +24,7 @@ namespace System.Web.UI
 		string baseDir;
 		string baseVDir;
 		ILocation location;
+		CompilationConfiguration compilationConfig;
 
 		internal string MapPath (string path)
 		{
@@ -110,6 +112,15 @@ namespace System.Web.UI
 			}
 
 			set { baseVDir = value; }
+		}
+
+		internal CompilationConfiguration CompilationConfig {
+			get {
+				if (compilationConfig == null)
+					compilationConfig = CompilationConfiguration.GetInstance (context);
+
+				return compilationConfig;
+			}
 		}
 	}
 }

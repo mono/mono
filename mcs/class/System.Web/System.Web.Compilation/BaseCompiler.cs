@@ -14,8 +14,7 @@ using System.Collections;
 using System.Reflection;
 using System.Text;
 using System.Web.UI;
-//temp:
-using Microsoft.CSharp;
+using System.Web.Configuration;
 using System.IO;
 
 namespace System.Web.Compilation
@@ -150,14 +149,24 @@ namespace System.Web.Compilation
 					return a.GetType (mainClassExpr.Type.BaseType, true);
 			}
 
-			//TODO: get the compiler and default options from system.web/compileroptions
-			provider = new CSharpCodeProvider ();
+			string lang = parser.Language;
+			CompilationConfiguration config;
+
+			config = CompilationConfiguration.GetInstance (parser.Context);
+			provider = config.GetProvider (lang);
+			if (provider == null)
+				throw new HttpException ("Configuration error. Language not supported: " +
+							  lang, 500);
+
 			compiler = provider.CreateCompiler ();
 
 			CreateMethods ();
 			compilerParameters.IncludeDebugInformation = parser.Debug;
 			CompilerResults results = CachingCompiler.Compile (this);
 			CheckCompilerErrors (results);
+			if (results.CompiledAssembly == null)
+				throw new CompilationException (parser.InputFile, results.Errors,
+					"No assembly returned after compilation!?");
 
 			return results.CompiledAssembly.GetType (mainClassExpr.Type.BaseType, true);
 		}

@@ -55,12 +55,11 @@ namespace System.Web.UI
 			imports.Add ("System.Web.UI.HtmlControls");
 
 			assemblies = new ArrayList ();
-			assemblies.Add ("System.dll");
-			assemblies.Add ("System.Drawing.dll");
-			assemblies.Add ("System.Data.dll");
-			assemblies.Add ("System.Web.dll");
-			assemblies.Add ("System.Xml.dll");
-			AddAssembliesInBin ();
+			assemblies.AddRange (CompilationConfig.Assemblies);
+			if (CompilationConfig.AssembliesInBin)
+				AddAssembliesInBin ();
+
+			language = CompilationConfig.DefaultLanguage;
 		}
 
 		protected abstract Type CompileIntoType ();
@@ -282,10 +281,7 @@ namespace System.Web.UI
 
 			debug = GetBool (atts, "Debug", true);
 			compilerOptions = GetString (atts, "CompilerOptions", null);
-			language = GetString (atts, "Language", "C#");
-			if (String.Compare (language, "c#", true) != 0)
-				ThrowParseException ("Only C# supported.");
-
+			language = GetString (atts, "Language", CompilationConfig.DefaultLanguage);
 			string src = GetString (atts, "Src", null);
 			Assembly srcAssembly = null;
 			if (src != null)

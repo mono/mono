@@ -1,3 +1,14 @@
+2003-10-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CompilationConfiguration.cs:
+	* CompilationConfigurationHandler.cs:
+	* CompilerCollection.cs:
+	* WebCompiler.cs: new files that process and store
+	system.web/compilation info (compilers + assemblies).
+
+	* HttpHandlersSectionHandler.cs: added option for an attribute to be
+	empty.
+
 2003-10-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebControlsSectionHandler.cs: new file to handle <webControls>

@@ -15,6 +15,7 @@ using System.Reflection;
 using System.Text;
 using System.Web;
 using System.Web.Compilation;
+using System.Web.Configuration;
 using System.Web.Util;
 
 namespace System.Web.UI
@@ -36,6 +37,7 @@ namespace System.Web.UI
 		string privateBinPath;
 		string baseDir;
 		string baseVDir;
+		CompilationConfiguration compilationConfig;
 
 		protected SimpleWebHandlerParser (HttpContext context, string virtualPath, string physicalPath)
 		{
@@ -45,13 +47,11 @@ namespace System.Web.UI
 			AddDependency (physicalPath);
 
 			assemblies = new ArrayList ();
-			assemblies.Add ("System.dll");
-			assemblies.Add ("System.Drawing.dll");
-			assemblies.Add ("System.Data.dll");
-			assemblies.Add ("System.Web.dll");
-			assemblies.Add ("System.Web.Services.dll");
-			assemblies.Add ("System.Xml.dll");
-			AddAssembliesInBin ();
+			assemblies.AddRange (CompilationConfig.Assemblies);
+			if (CompilationConfig.AssembliesInBin)
+				AddAssembliesInBin ();
+
+			language = CompilationConfig.DefaultLanguage;
 
 			GetDirectivesAndContent ();
 		}
@@ -146,10 +146,8 @@ namespace System.Web.UI
 			}
 
 			language = GetAndRemove (attributes, "language");
-			if (language != null) {
-				if (0 != String.Compare (language, "C#", true))
-					throw new ParseException (null, "Only C# language is supported by now.");
-			}
+			if (language == null)
+				language = CompilationConfig.DefaultLanguage;
 
 			codeBehind = GetAndRemove (attributes, "codebehind");
 			if (attributes.Count > 0)
@@ -397,6 +395,15 @@ namespace System.Web.UI
 					baseVDir = UrlUtils.GetDirectory (context.Request.FilePath);
 
 				return baseVDir;
+			}
+		}
+
+		internal CompilationConfiguration CompilationConfig {
+			get {
+				if (compilationConfig == null)
+					compilationConfig = CompilationConfiguration.GetInstance (context);
+
+				return compilationConfig;
 			}
 		}
 	}

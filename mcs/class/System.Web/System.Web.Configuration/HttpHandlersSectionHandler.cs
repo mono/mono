@@ -97,6 +97,12 @@ namespace System.Web.Configuration
 			
 		static internal string ExtractAttributeValue (string attKey, XmlNode node, bool optional)
 		{
+			return ExtractAttributeValue (attKey, node, optional, false);
+		}
+		
+		static internal string ExtractAttributeValue (string attKey, XmlNode node, bool optional,
+							      bool allowEmpty)
+		{
 			if (node.Attributes == null) {
 				if (optional)
 					return null;
@@ -112,7 +118,7 @@ namespace System.Web.Configuration
 			}
 
 			string value = att.Value;
-			if (value == String.Empty) {
+			if (!allowEmpty && value == String.Empty) {
 				string opt = optional ? "Optional" : "Required";
 				ThrowException (opt + " attribute is empty: " + attKey, node);
 			}

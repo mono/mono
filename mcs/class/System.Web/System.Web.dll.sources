@@ -88,6 +88,9 @@ System.Web.Compilation/TemplateControlCompiler.cs
 System.Web.Configuration/AuthConfig.cs
 System.Web.Configuration/AuthenticationMode.cs
 System.Web.Configuration/ClientTargetSectionHandler.cs
+System.Web.Configuration/CompilationConfiguration.cs
+System.Web.Configuration/CompilationConfigurationHandler.cs
+System.Web.Configuration/CompilerCollection.cs
 System.Web.Configuration/FormsAuthPasswordFormat.cs
 System.Web.Configuration/FormsProtectionEnum.cs
 System.Web.Configuration/GlobalizationConfiguration.cs
@@ -106,6 +109,7 @@ System.Web.Configuration/AuthenticationConfigHandler.cs
 System.Web.Configuration/MachineKeyConfig.cs
 System.Web.Configuration/AuthorizationConfig.cs
 System.Web.Configuration/GlobalizationConfigurationHandler.cs
+System.Web.Configuration/WebCompiler.cs
 System.Web.Configuration/WebControlsSectionHandler.cs
 System.Web.Handlers/TraceHandler.cs
 System.Web.Hosting/AppDomainFactory.cs
