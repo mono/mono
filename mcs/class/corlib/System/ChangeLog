@@ -1,3 +1,10 @@
+2002-05-21  Nick Drochak  <ndrochak@gol.com>
+
+	* Math.cs 
+		(Ceiling): Check for "special" values
+		(Floor): Check for "special" values
+		(Round): Fix off-by-one error on decimal shifting
+
 2002-05-20  Lawrence Pit  <loz@cable.a2000.nl>
 
 	* DateTime.cs: ToString () using "G" format specifier 

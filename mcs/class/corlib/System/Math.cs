@@ -62,11 +62,35 @@ namespace System
 
                 public static double Ceiling(double a)
                 {
-                        double b = (double)((long)a);
+			if (Double.IsNaN(a)){
+				return Double.NaN;
+			}
+
+			if (Double.IsNegativeInfinity(a)){
+				return Double.NegativeInfinity;
+			}
+
+			if (Double.IsPositiveInfinity(a)){
+				return Double.PositiveInfinity;
+			}
+
+			double b = (double)((long)a);
                         return (b < a)? b+1: b;
                 }
                 public static double Floor(double d) {
-                        double b = (double)((long)d);
+			if (Double.IsNaN(d)){
+				return Double.NaN;
+			}
+
+			if (Double.IsNegativeInfinity(d)){
+				return Double.NegativeInfinity;
+			}
+
+			if (Double.IsPositiveInfinity(d)){
+				return Double.PositiveInfinity;
+			}
+
+			double b = (double)((long)d);
 			return (d < 0 && d != b) ? --b : b;
                 }
                 public static double IEEERemainder(double x, double y)
@@ -203,7 +227,7 @@ namespace System
                 }
                 public static decimal Round(decimal d, int decimals)
                 {
-                        long p = 10;
+                        long p = 1;
                         int c;
                         decimal retval = d;
                         if (decimals < 0 || decimals > 15)
@@ -230,7 +254,7 @@ namespace System
                         }
                 }
                 public static double Round(double value, int digits) {
-                        long p = 10;
+                        long p = 1;
                         int c;
                         double retval = value;
                         if (digits < 0 || digits > 15)
