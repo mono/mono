@@ -150,9 +150,9 @@ namespace System.Web.Compilation
 			options.AppendFormat ("/out:{0} ", compiler.TargetFile);
 			options.Append (compiler.SourceFile);
 
-			//Console.WriteLine ("mcs {0}", options);
+			/7Console.WriteLine ("mcs {0}", options);
 			Process proc = new Process ();
-			if (System.IO.Path.DirectorySeparatorChar == '\\')
+			if (Path.DirectorySeparatorChar == '\\')
 				proc.StartInfo.FileName = "mcs.bat";
 			else
 				proc.StartInfo.FileName = "mcs";
@@ -162,7 +162,17 @@ namespace System.Web.Compilation
 			proc.StartInfo.RedirectStandardOutput = true;
 
 			WebTrace.WriteLine ("{0} {1}", proc.StartInfo.FileName, options.ToString ());
-			proc.Start ();
+			try {
+				proc.Start ();
+			} catch (Exception e) {
+				if (Path.DirectorySeparatorChar == '\\') {
+					proc.StartInfo.FileName = "mcs";
+					proc.Start ();
+				} else {
+					throw e;
+				}
+			}
+
 			string poutput = proc.StandardOutput.ReadToEnd();
 			proc.WaitForExit ();
 			result.ExitCode = proc.ExitCode;

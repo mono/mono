@@ -1,5 +1,10 @@
 2003-03-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* BaseCompiler.cs: fixed the hack to work under windows.
+	* CachingCompiler.cs: under windows, try 'mcs.bat' and then 'mcs'.
+
+2003-03-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* BaseCompiler.cs: hacks to work-around our buggy System.Uri.
 
 2003-03-17 George Kodinov <gkodinov@openlinksw.co.uk>

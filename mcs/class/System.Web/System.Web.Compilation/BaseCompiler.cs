@@ -67,8 +67,11 @@ namespace System.Web.Compilation
 				string privatePath = AppDomain.CurrentDomain.SetupInformation.PrivateBinPath;
 				string appBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
 				//HACK: we should use Uri (appBase).LocalPath once Uri works fine.
-				if (appBase.StartsWith ("file://"))
+				if (appBase.StartsWith ("file://")) {
 					appBase = appBase.Substring (7);
+					if (Path.DirectorySeparatorChar == '\\')
+						appBase = appBase.Replace ('/', '\\');
+				}
 
 				privatePath = Path.Combine (appBase, privatePath);
 
