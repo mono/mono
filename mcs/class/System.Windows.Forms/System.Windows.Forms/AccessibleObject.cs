@@ -81,17 +81,17 @@ namespace System.Windows.Forms {
 	
 		public virtual AccessibleObject Parent {
 			get { return parent; }
-			set { parent = value; }
+			//set { parent = value; } //get only
 		}
 		
 		public virtual AccessibleRole Role {
 			get { return role; }
-			set { role = value; }
+			//set { role = value; } //get only
 		}
 	
 		public virtual AccessibleStates State {
 			get { return state; }
-			set { state = value; }
+			//set { state = value; } //get only
 		}
 
 		// --- Methods ---
