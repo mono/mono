@@ -25,6 +25,14 @@ Test cases listed by Category:
 
   test-150.cs
 
+* Switch blocks
+
+  test-152.cs
+
+* Member Access & Simple Names
+
+  test-151.cs
+
 Test cases listed by Number:
 ============================
 
@@ -49,6 +57,18 @@ test-150.cs
 -----------
 Test for folding of UIntConstants.  See bug #28106.
 FIXME:  We should all all possible test cases to this test.
+
+test-151.cs
+-----------
+
+  A.Iface b;
+  void doit (Object A) {
+    b = (A.Iface)A;
+ }
+
+test-152.cs
+-----------
+Scope of variables declared inside a switch case.
 
 verify-1.cs
 -----------

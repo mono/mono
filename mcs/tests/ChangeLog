@@ -1,3 +1,9 @@
+2002-07-26  Martin Baulig  <martin@gnome.org>
+
+	* test-152.cs: New test for bug #24007.
+
+	* makefile: Disabled test-151.cs since it isn't fixed yet.
+
 2002-07-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* test-151.cs: New test. See bug #22119.
