@@ -2446,7 +2446,9 @@ namespace System {
 
 			int chars = 0;
 			int digitValue = -1;
-			long result = 0;
+			uint Base = (uint) fromBase;
+			ulong result = 0;
+			bool negative = false;
 
 			foreach (char c in value) {
 				if (Char.IsNumber (c))
@@ -2456,7 +2458,7 @@ namespace System {
 				else if ((c == '-') && (!unsigned)) {
 					if (fromBase != 10)
 						throw new ArgumentException ("Negative are valid only for base 10");
-					result = -result;
+					negative = true;
 					continue;
 				}
 				else
@@ -2465,14 +2467,17 @@ namespace System {
 				if (digitValue >= fromBase)
 					throw new FormatException ("the digits are invalid.");
 
-				result = (fromBase) * result + digitValue;
+				result = (ulong) (Base * result + (uint)digitValue);
 				chars ++;
 			}
 
 			if (chars == 0)
 				throw new FormatException ("Could not find any digits.");
 
-			return result;
+			if (negative)
+				return -1 * (long) result;
+			else
+				return (long) result;
 		}
 
 		private static string ConvertToBase (int value, int toBase)

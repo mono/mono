@@ -1,7 +1,8 @@
 2004-05-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Convert.cs: Fixed integer parsing for special cases (0x, 0X for base
-	16), non-base 10 negative numbers ... see new unit tests.
+	16), non-base 10 negative numbers ... see new unit tests. Fixed the 
+	case when we parse Int64.MinValue (positive doesn't fit a signed long).
 
 2004-05-28  Jackson Harper  <jackson@ximian.com>
 
