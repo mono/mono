@@ -1,6 +1,8 @@
 2004-09-20  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
-	* Microsoft.JScript.dll.sources: drop antlr dependency.
+	* Antlr.Runtime/[antlr, antlr.collections, antlr.collections.impl,
+	antlr.debug, antlr.debug.misc]: Good bye antlr.
+	* Microsoft.JScript.dll.sources: dropped antlr dependency.
 	
 2004-08-22  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
