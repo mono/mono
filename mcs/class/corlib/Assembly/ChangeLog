@@ -1,3 +1,7 @@
+2003-08-06  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* Locale.cs: Added
+
 2003-07-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* AssemblyInfo.cs: Added
