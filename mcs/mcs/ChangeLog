@@ -1,3 +1,9 @@
+2004-08-27  Martin Baulig  <martin@ximian.com>
+
+	* class.cs
+	(TC.OperatorArrayList.OperatorEntry.CheckPairedOperators): Don't
+	crash here.	
+
 2004-08-26  Marek Safar  <marek.safar@seznam.cz>
 
 	* ecore.cs (Constantify): Get underlying type via
