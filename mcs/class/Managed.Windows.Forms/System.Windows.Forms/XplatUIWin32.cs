@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.32 $
+// $Revision: 1.33 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.33  2004/09/11 00:57:35  pbartok
+// - Added method to retrieve text from window
+//
 // Revision 1.32  2004/08/25 18:33:08  pbartok
 // - Fixed timer handling, now seems to work
 // - Improved error message for window creation
@@ -143,6 +146,7 @@ using System.ComponentModel;
 using System.Collections;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text;
 
 /// Win32 Version
 namespace System.Windows.Forms {
@@ -949,6 +953,15 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
+		internal override bool GetText(IntPtr handle, out string text) {
+			StringBuilder sb;
+
+			sb = new StringBuilder(256);
+			Win32GetWindowText(handle, sb, sb.Capacity);
+			text = sb.ToString();
+			return true;
+		}
+
 		internal override bool SetVisible(IntPtr handle, bool visible) {
 			Console.WriteLine("Setting window visibility: {0}", visible);
 			return true;
@@ -1097,6 +1110,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="SetWindowTextA", CallingConvention=CallingConvention.StdCall)]
 		internal extern static bool Win32SetWindowText(IntPtr hWnd, string lpString);
+
+		[DllImport ("user32.dll", EntryPoint="GetWindowTextA", CallingConvention=CallingConvention.StdCall)]
+		internal extern static bool Win32GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
 		[DllImport ("user32.dll", EntryPoint="SetParent", CallingConvention=CallingConvention.StdCall)]
 		internal extern static IntPtr Win32SetParent(IntPtr hWnd, IntPtr hParent);

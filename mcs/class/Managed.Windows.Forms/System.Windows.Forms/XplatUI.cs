@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.20 $
+// $Revision: 1.21 $
 // $Modtime: $
 // $Log: XplatUI.cs,v $
+// Revision 1.21  2004/09/11 00:57:35  pbartok
+// - Added method to retrieve text from window
+//
 // Revision 1.20  2004/08/24 11:29:44  jackson
 // Move timers to the driver level. On X they are queued by the driver and checked on idle.
 //
@@ -203,6 +206,10 @@ namespace System.Windows.Forms {
 
 		internal static bool Text(IntPtr hWnd, string text) {
 			return driver.Text(hWnd, text);
+		}
+
+		internal static bool GetText(IntPtr hWnd, out string text) {
+			return driver.GetText(hWnd, out text);
 		}
 
 		internal static bool SetVisible(IntPtr hWnd, bool visible) {

@@ -105,7 +105,6 @@ namespace System.Windows.Forms {
 		}
 
 		#region Constructor & Destructor
-
                 // This is always called from a locked context
 		private XplatUIX11() {
 			// Handle singleton stuff first
@@ -804,6 +803,24 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
+		internal override bool GetText(IntPtr handle, out string text) {
+			IntPtr	textptr;
+
+			textptr = IntPtr.Zero;
+
+			lock (this) {
+				XFetchName(DisplayHandle, handle, ref textptr);
+			}
+			if (textptr != IntPtr.Zero) {
+				text = Marshal.PtrToStringAnsi(textptr);
+				XFree(textptr);
+				return true;
+			} else {
+				text = "";
+				return false;
+			}
+		}
+
 		internal override bool SetVisible(IntPtr handle, bool visible) {
 			lock (this) {
 				if (visible) {
@@ -1070,6 +1087,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11.so", EntryPoint="XStoreName")]
 		internal extern static int XStoreName(IntPtr display, IntPtr window, string window_name);
+
+		[DllImport ("libX11.so", EntryPoint="XFetchName")]
+		internal extern static int XFetchName(IntPtr display, IntPtr window, ref IntPtr window_name);
 
 		[DllImport ("libX11.so", EntryPoint="XSendEvent")]
 		internal extern static int XSendEvent(IntPtr display, IntPtr window, bool propagate, EventMask event_mask, ref XEvent send_event);

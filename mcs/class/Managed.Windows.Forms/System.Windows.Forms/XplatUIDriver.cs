@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.20 $
+// $Revision: 1.21 $
 // $Modtime: $
 // $Log: XplatUIDriver.cs,v $
+// Revision 1.21  2004/09/11 00:57:35  pbartok
+// - Added method to retrieve text from window
+//
 // Revision 1.20  2004/08/24 11:29:44  jackson
 // Move timers to the driver level. On X they are queued by the driver and checked on idle.
 //
@@ -162,6 +165,7 @@ namespace System.Windows.Forms {
 		internal abstract IntPtr CreateWindow(IntPtr Parent, int X, int Y, int Width, int Height);
 		internal abstract void DestroyWindow(IntPtr handle);
 
+		internal abstract bool GetText(IntPtr handle, out string text);
 		internal abstract bool Text(IntPtr handle, string text);
 		internal abstract bool SetVisible(IntPtr handle, bool visible);
 		internal abstract bool IsVisible(IntPtr handle);
