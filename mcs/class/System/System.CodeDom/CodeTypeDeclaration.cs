@@ -9,6 +9,7 @@
 //
 
 using System.Runtime.InteropServices;
+using System.Reflection;
 
 namespace System.CodeDom
 {
@@ -20,14 +21,14 @@ namespace System.CodeDom
 	{
 		private CodeTypeReferenceCollection baseTypes;
 		private CodeTypeMemberCollection members;
-		private bool isClass;
+		private TypeAttributes typeAttributes;
 		private bool isEnum;
-		private bool isInterface;
 		private bool isStruct;
 
 		//
 		// Constructors
 		//
+
 		public CodeTypeDeclaration()
 		{
 		}
@@ -37,6 +38,8 @@ namespace System.CodeDom
 			this.Name = name;
 		}
 
+		/* by default, it's a class */
+
 		//
 		// Properties
 		//
@@ -44,7 +47,8 @@ namespace System.CodeDom
 			get {
 				if ( baseTypes == null ) {
 					baseTypes = new CodeTypeReferenceCollection();
-					PopulateBaseTypes( this, EventArgs.Empty );
+					if ( PopulateBaseTypes != null )
+						PopulateBaseTypes( this, EventArgs.Empty );
 				}
 				return baseTypes;
 			}
@@ -52,10 +56,20 @@ namespace System.CodeDom
 
 		public bool IsClass {
 			get {
-				return isClass;
+				if ( (typeAttributes & TypeAttributes.Interface) != 0 )
+					return false;
+				if ( isEnum )
+					return false;
+				if ( isStruct )
+					return false;
+				return true;
 			}
 			set {
-				isClass = value;
+				if ( value ) {
+					typeAttributes &= ~TypeAttributes.Interface;
+					isEnum = false;
+					isStruct = false;
+				}
 			}
 		}
 		
@@ -64,16 +78,24 @@ namespace System.CodeDom
 				return isEnum;
 			}
 			set {
-				isEnum = value;
+				if ( value ) {
+					typeAttributes &= ~TypeAttributes.Interface;
+					isEnum = true;
+					isStruct = false;
+				}
 			}
 		}
 
 		public bool IsInterface {
 			get {
-				return isInterface;
+				return (typeAttributes & TypeAttributes.Interface) != 0;
 			}
 			set {
-				isInterface = value;
+				if ( value ) {
+					typeAttributes |= TypeAttributes.Interface;
+					isEnum = false;
+					isStruct = false;
+				}
 			}
 		}
 
@@ -82,7 +104,11 @@ namespace System.CodeDom
 				return isStruct;
 			}
 			set {
-				isStruct = value;
+				if ( value ) {
+					typeAttributes &= ~TypeAttributes.Interface;
+					isEnum = false;
+					isStruct = true;
+				}
 			}
 		}
 
@@ -90,9 +116,26 @@ namespace System.CodeDom
 			get {
 				if ( members == null ) {
 					members = new CodeTypeMemberCollection();
-					PopulateMembers( this, EventArgs.Empty );
+					if ( PopulateMembers != null )
+						PopulateMembers( this, EventArgs.Empty );
 				}
 				return members;
+			}
+		}
+
+		public TypeAttributes TypeAttributes {
+			get {
+				return typeAttributes;
+			}
+			set {
+				typeAttributes = value;
+#if FALSE
+				/* MS does not seem to do this, so don't I */
+				if ( (typeAttributes & TypeAttributes.Interface) != 0 ) {
+					isEnum = false;
+					isStruct = false;
+				}
+#endif
 			}
 		}
 

@@ -51,9 +51,9 @@ namespace System.CodeDom
 		//
 		// Methods
 		//
-		public void Add (CodeNamespace value)
+		public int Add (CodeNamespace value)
 		{
-			List.Add( value );
+			return List.Add( value ); 
 		}
 
 		public void AddRange (CodeNamespace [] value )

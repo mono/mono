@@ -52,9 +52,9 @@ namespace System.CodeDom
 		//
 		// Methods
 		//
-		public void Add (CodeAttributeArgument value)
+		public int Add (CodeAttributeArgument value)
 		{
-			List.Add( value );
+			return List.Add( value );
 		}
 
 		public void AddRange (CodeAttributeArgument [] value )

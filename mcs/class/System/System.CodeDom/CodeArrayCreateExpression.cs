@@ -39,7 +39,7 @@ namespace System.CodeDom {
 		}
 
 		public CodeArrayCreateExpression (CodeTypeReference createType, 
-						  params CodeExpression[] inializers )
+						  params CodeExpression[] initializers )
 		{
 			this.createType = createType;
 			this.Initializers.AddRange( initializers );
@@ -132,6 +132,12 @@ namespace System.CodeDom {
 			}
 			set {
 				size = value;
+				// NOTE: Setting Size in ms.Net does
+				// not supersede SizeExpression
+				// values. Instead, the CodeGenerator
+				// seems to always prefer
+				// SizeExpression if set to a value !=
+				// null.
 			}
 		}
 	}

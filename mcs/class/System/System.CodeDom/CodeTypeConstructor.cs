@@ -14,7 +14,7 @@ namespace System.CodeDom
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.AutoDispatch)]
 	[ComVisible(true)]
-	public class CodeType
+	public class CodeTypeConstructor
 		: CodeMemberMethod
 	{
 	}

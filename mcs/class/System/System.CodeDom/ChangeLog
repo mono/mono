@@ -1,3 +1,46 @@
+2002-05-28  Daniel Stodden  <stodden@in.tum.de>
+
+	* CodeArrayCreateExpression.cs: typo + comments
+
+	* CodeAttributeArgumentCollection.cs: Add() signature fixed
+
+	* CodeAttributeDeclarationCollection.cs: Add() signature fixed
+
+	* CodeCatchClause.cs: ctor signature fixed
+
+	* CodeCatchClauseCollection.cs: Add() signature fixed
+
+	* CodeCommentStatementCollection.cs: Add() signature fixed
+
+	* CodeConstructor.cs: ctor added
+
+	* CodeExpressionCollection.cs: Populate* events: nullref checks
+	added
+
+	* CodeNamespace.cs: Populate* events: nullref checks added
+
+	* CodeNamespaceCollection.cs: Add() signature fixed
+
+	* CodeParameterDeclarationExpressionCollection.cs: Add() signature
+	fixed
+
+	* CodeStatementCollection.cs: Add() signature fixed, missing
+	overload added
+
+	* CodeTypeConstructor.cs: class name typo :P
+
+	* CodeTypeDeclaration.cs: finally figured out how TypeAttributes
+	work.
+
+	* CodeTypeDeclarationCollection.cs: Add() signature fixed
+
+	* CodeTypeReference.cs: added MonoTODOs. some corrections on array
+	type behavior.
+
+	* CodeTypeReferenceCollection.cs: Add() signature fixed
+
+	* MemberAttributes.cs: just comments
+	
 2002-05-11  Daniel Stodden  <stodden@in.tum.de>
 
 	* CodeAttributeArgumentCollection.cs: inherits CollectionBase

@@ -42,7 +42,7 @@ namespace System.CodeDom
 
 		public CodeCatchClause ( string localName,
 					 CodeTypeReference catchExceptionType,
-					 CodeStatement[] statements )
+					 params CodeStatement[] statements )
 		{
 			this.localName = localName;
 			this.catchExceptionType = catchExceptionType;

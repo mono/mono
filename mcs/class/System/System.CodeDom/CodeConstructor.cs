@@ -20,7 +20,14 @@ namespace System.CodeDom
 	{
 		private CodeExpressionCollection baseConstructorArgs;
 		private CodeExpressionCollection chainedConstructorArgs;
-		
+
+		//
+		// Constructors
+		//
+		public CodeConstructor()
+		{
+		}
+
 		//
 		// Properties
 		//

@@ -18,7 +18,7 @@ namespace System.CodeDom
 		: CodeObject
 	{
 		private string baseType;
-		private CodeTypeReference elementType;
+		private CodeTypeReference arrayType;
 		private int rank;
 
 		//
@@ -35,13 +35,16 @@ namespace System.CodeDom
 		}
 
 		// FIXME: probably broken
-		public CodeTypeReference( CodeTypeReference baseType, int rank )
+		[MonoTODO]
+		public CodeTypeReference( CodeTypeReference arrayType, int rank )
 		{
-			this.baseType = typeof(System.Array).Name;
+			this.arrayType = arrayType;
+			this.baseType = arrayType.BaseType;
 			this.rank = rank;
 		}
 
 		// FIXME: probably broken
+		[MonoTODO]
 		public CodeTypeReference( string baseType, int rank )
 		{
 			this.baseType = baseType;
@@ -52,24 +55,36 @@ namespace System.CodeDom
 		//
 		// Properties
 		//
+
 		// FIXME: probably broken
+		[MonoTODO]
 		public CodeTypeReference ArrayElementType
 		{
 			get {
-				return elementType;;
+				return arrayType;
 			}
 			set {
-				elementType = value;
+				arrayType = value;
 			}
 		}
 		
 		// FIXME: probably broken
+		[MonoTODO]
 		public int ArrayRank {
 			get {
 				return rank;
 			}
 			set {
 				rank = value;
+			}
+		}
+
+		public string BaseType {
+			get {
+				return baseType;
+			}
+			set {
+				baseType = value;
 			}
 		}
 	}

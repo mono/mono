@@ -51,9 +51,9 @@ namespace System.CodeDom
 		//
 		// Methods
 		//
-		public void Add (CodeTypeMember value)
+		public int Add (CodeTypeMember value)
 		{
-			List.Add( value );
+			return List.Add( value );
 		}
 
 		public void AddRange (CodeTypeMember [] value )

@@ -42,7 +42,8 @@ namespace System.CodeDom
 			get {
 				if ( comments == null ) {
 					comments = new CodeCommentStatementCollection();
-					PopulateComments( this, EventArgs.Empty );
+					if ( PopulateComments != null )
+						PopulateComments( this, EventArgs.Empty );
 				}
 				return comments;
 			}
@@ -52,7 +53,8 @@ namespace System.CodeDom
 			get {
 				if ( imports == null ) {
 					imports = new CodeNamespaceImportCollection();
-					PopulateImports( this, EventArgs.Empty );
+					if ( PopulateImports != null )
+						PopulateImports( this, EventArgs.Empty );
 				}
 				return imports;
 			}
@@ -71,7 +73,8 @@ namespace System.CodeDom
 			get {
 				if ( types == null ) {
 					types = new CodeTypeDeclarationCollection();
-					PopulateTypes( this, EventArgs.Empty );
+					if ( PopulateTypes != null )
+						PopulateTypes( this, EventArgs.Empty );
 				}
 				return types;
 			}

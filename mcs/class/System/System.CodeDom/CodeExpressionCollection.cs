@@ -52,9 +52,9 @@ namespace System.CodeDom
 		//
 		// Methods
 		//
-		public void Add (CodeExpression value)
+		public int Add (CodeExpression value)
 		{
-			List.Add( value );
+			return List.Add( value );
 		}
 
 		public void AddRange (CodeExpression [] value )

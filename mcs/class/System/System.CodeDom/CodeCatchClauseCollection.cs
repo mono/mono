@@ -50,9 +50,9 @@ namespace System.CodeDom
 		//
 		// Methods
 		//
-		public void Add (CodeCatchClause value)
+		public int Add (CodeCatchClause value)
 		{
-			List.Add (value);
+			return List.Add (value);
 		}
 
 		public void AddRange (CodeCatchClause [] value)

@@ -28,7 +28,7 @@ namespace System.CodeDom {
 		Overloaded =		0x00000100,
 
 		Assembly =		0x00001000, // internal
-		FamilyAndAssembly =	0x00002000,
+		FamilyAndAssembly =	0x00002000, // protected AND internal
 		Family =		0x00003000, // protected
 		FamilyOrAssembly =	0x00004000, // protected internal
 		Private =		0x00005000, // private

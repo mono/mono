@@ -3,28 +3,51 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Daniel Stodden (stodden@in.tum.de)
 //
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDom.Compiler {
+namespace System.CodeDom.Compiler
+{
 	using System.CodeDom;
 	using System.IO;
 
-	public interface ICodeGenerator {
+	public interface ICodeGenerator
+	{
+		//
+		// Methods
+		//
+		string CreateEscapedIdentifier( string value );
 
-	
-		// <summary>
-		//   Generates code for @expression on @output
-		// </summary>
-		void GenerateCodeFromExpression (TextWriter output, CodeExpression expression);
+		string CreateValidIdentifier( string value );
 
-		void GenerateCodeFromNamespace (TextWriter output, CodeExpression expression);
+		void GenerateCodeFromCompileUnit( CodeCompileUnit compileUnit,
+						  TextWriter output,
+						  CodeGeneratorOptions options );
 
-		void GenerateCodeFromStatement (TextWriter output, CodeStatement expression);
+		void GenerateCodeFromExpression( CodeExpression expression,
+						 TextWriter output, 
+						 CodeGeneratorOptions options );
 
-		bool IsValidIdentifier (string value);
+		void GenerateCodeFromNamespace( CodeNamespace ns,
+						TextWriter output, 
+						CodeGeneratorOptions options );
 
-		void ValidateIdentifier (string value);
+		void GenerateCodeFromStatement( CodeStatement statement,
+						TextWriter output, 
+						CodeGeneratorOptions options );
+
+		void GenerateCodeFromType( CodeTypeDeclaration typeDeclaration,
+					   TextWriter output,
+					   CodeGeneratorOptions options );
+
+		string GetTypeOutput( CodeTypeReference type );
+
+		bool IsValidIdentifier( string value );
+
+		bool Supports( GeneratorSupport supports );
+ 
+		void ValidateIdentifier( string value );
 	}
 }

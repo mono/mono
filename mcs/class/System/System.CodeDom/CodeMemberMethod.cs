@@ -39,7 +39,8 @@ namespace System.CodeDom
 			get {
 				if ( implementationTypes == null ) {
 					implementationTypes = new CodeTypeReferenceCollection();
-					PopulateImplementationTypes( this, EventArgs.Empty );
+					if ( PopulateImplementationTypes != null )
+						PopulateImplementationTypes( this, EventArgs.Empty );
 				}
 				return implementationTypes;
 			}
@@ -49,7 +50,8 @@ namespace System.CodeDom
 			get {
 				if ( parameters == null ) {
 					parameters = new CodeParameterDeclarationExpressionCollection();
-					PopulateParameters( this, EventArgs.Empty );
+					if ( PopulateParameters != null )
+						PopulateParameters( this, EventArgs.Empty );
 				}
 				return parameters;
 			}
@@ -66,6 +68,8 @@ namespace System.CodeDom
 
 		public CodeTypeReference ReturnType {
 			get {
+				if ( returnType == null )
+					return new CodeTypeReference( typeof(void) );
 				return returnType;
 			}
 			set {
@@ -77,7 +81,8 @@ namespace System.CodeDom
 			get {
 				if ( statements == null ) {
 					statements = new CodeStatementCollection();
-					PopulateStatements( this, EventArgs.Empty );
+					if ( PopulateStatements != null )
+						PopulateStatements( this, EventArgs.Empty );
 				}
 				return statements;
 			}

@@ -52,18 +52,23 @@ namespace System.CodeDom
 		//
 		// Methods
 		//
-		public void Add (CodeStatement value)
+		public int Add (CodeStatement value)
 		{
-			List.Add( value );
+			return List.Add( value );
 		}
 
-		public void AddRange (CodeStatement [] value )
+		public int Add (CodeExpression value)
 		{
-			foreach ( CodeStatement elem in value )
+			return Add( new CodeExpressionStatement( value ) );
+		}
+
+		public void AddRange (CodeStatement [] statements )
+		{
+			foreach ( CodeStatement elem in statements )
 				Add( elem );
 		}
 		
-		public void AddRange (CodeStatementCollection value)
+		public void AddRange( CodeStatementCollection value )
 		{
 			foreach ( CodeStatement elem in value )
 				Add( elem );
