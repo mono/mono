@@ -1,3 +1,10 @@
+2004-06-16  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* AspNetHostingPermission.cs: marked serialiable, renamed field to 
+	match MS.NET
+	* AspNetHostingPermissionAttribute.cs: marked serializable, renamed
+	field to match MS.NET
+
 2003-11-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* AspNetHostingPermissionAttribute.cs: Accidentially set to wrong value

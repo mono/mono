@@ -12,39 +12,40 @@ using System.Security.Permissions;
 
 namespace System.Web
 {
+	[Serializable]
 	public sealed class AspNetHostingPermission : CodeAccessPermission, IUnrestrictedPermission
 	{
-		AspNetHostingPermissionLevel level;
+		AspNetHostingPermissionLevel _level;
 
 		public AspNetHostingPermission (AspNetHostingPermissionLevel level)
 		{
-			this.level = level;
+			_level = level;
 		}
 		public AspNetHostingPermission (PermissionState state)
 		{
 			switch (state) {
 				case PermissionState.None:
-					level = AspNetHostingPermissionLevel.None;
+					_level = AspNetHostingPermissionLevel.None;
 					break;
 				case PermissionState.Unrestricted:
-					level = AspNetHostingPermissionLevel.Unrestricted;
+					_level = AspNetHostingPermissionLevel.Unrestricted;
 					break;
 			}
 		}
 
 		public AspNetHostingPermissionLevel Level {
-			get { return level; }
-			set { level = value; }
+			get { return _level; }
+			set { _level = value; }
 		}
 
 		public bool IsUnrestricted ()
 		{
-			return (level == AspNetHostingPermissionLevel.Unrestricted);
+			return (_level == AspNetHostingPermissionLevel.Unrestricted);
 		}
 
 		public override IPermission Copy ()
 		{
-			return new AspNetHostingPermission (level);
+			return new AspNetHostingPermission (_level);
 		}
 
 		[MonoTODO ("implement")]

@@ -12,16 +12,17 @@ using System.Security.Permissions;
 
 namespace System.Web
 {
+	[Serializable]
 	[AttributeUsage (AttributeTargets.All, AllowMultiple = true, Inherited = false)]
 	public sealed class AspNetHostingPermissionAttribute : CodeAccessSecurityAttribute
 	{
-		AspNetHostingPermissionLevel level;
+		AspNetHostingPermissionLevel _level;
 
 		public AspNetHostingPermissionAttribute (SecurityAction action)
 			: base (action)
 		{
 			// LAMESPEC: seems to initialize to None
-			level = AspNetHostingPermissionLevel.None;
+			_level = AspNetHostingPermissionLevel.None;
 		}
 
 		[MonoTODO("implement")]
@@ -31,8 +32,8 @@ namespace System.Web
 		}
 
 		public AspNetHostingPermissionLevel Level {
-			get { return level; }
-			set { level = value; }
+			get { return _level; }
+			set { _level = value; }
 		}
 	}
 }
