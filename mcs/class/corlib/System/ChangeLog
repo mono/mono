@@ -1,3 +1,9 @@
+2004-01-18  David Sheldon <dave-mono@earth.li>
+
+	* Array.cs (GetValue/SetValue): Throw NullRef exception like .NET 1.1, 
+	even though docs say it should be an ArgumentNull. Two test cases now
+  pass. See also nickd's commit of 2003-12-24.
+
 2004-01-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Environment.cs: increased corlib version.

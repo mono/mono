@@ -473,16 +473,22 @@ namespace System
 		[ComVisible (false)]
 		public object GetValue (long [] indices)
 		{
-			if (indices == null)
-				throw new ArgumentNullException ("indices");
+			if (indices == null) {
+				// LAMESPEC: Docs say we should throw a ArgumentNull, but .NET
+				// 1.1 actually throws a NullReference.
+				throw new NullReferenceException ("'indices' cannot be null");
+			}
 			return GetValue (GetIntArray (indices));
 		}
 
 		[ComVisible (false)]
 		public void SetValue (object value, long [] indices)
 		{
-			if (indices == null)
-				throw new ArgumentNullException ("indices");
+			if (indices == null) {
+				// LAMESPEC: Docs say we should throw a ArgumentNull, but .NET
+				// 1.1 actually throws a NullReference.
+				throw new NullReferenceException ("'indices' cannot be null");
+			}
 			SetValue (value, GetIntArray (indices));
 		}
 #endif
