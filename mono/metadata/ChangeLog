@@ -1,3 +1,7 @@
+2003-04-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* reflection.c: fix from Jaak <jaak@zd.com.pl>.
+
 2003-04-10  Lluis Sanchez Gual  <lluis@ideary.com>
 
 	* appdomain.c,appdomain.h,icall.c: Added internal method that returns the process guid
