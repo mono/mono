@@ -1604,7 +1604,18 @@ instr			: INSTR_NONE
                                         (IMethodRef) $2));
                           }
 			| INSTR_FIELD type type_spec DOUBLE_COLON id
+                          {
+                                IClassRef owner = (IClassRef) $3;
+                                IFieldRef fieldref = owner.GetFieldRef ((ITypeRef) $2, (string) $5);
+
+                                codegen.CurrentMethodDef.AddInstr (new FieldInstr ((FieldOp) $1, fieldref));
+                          }
 			| INSTR_FIELD type id
+                          {
+                                GlobalFieldRef fieldref = new GlobalFieldRef ((ITypeRef) $2, (string) $3);
+
+                                codegen.CurrentMethodDef.AddInstr (new FieldInstr ((FieldOp) $1, fieldref));
+                          }
 			| INSTR_TYPE type_spec
                           {
                                 codegen.CurrentMethodDef.AddInstr (new TypeInstr ((TypeOp) $1,
