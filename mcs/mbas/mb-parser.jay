@@ -855,7 +855,7 @@ module_declaration
 		current_container.Namespace = current_namespace;
 		RootContext.Tree.RecordDecl(name, new_module);
 	  }
-	  opt_class_member_declarations
+	  opt_module_member_declarations
 	  END MODULE EOL
 	  {
 		Module new_module = (Module)current_container;
@@ -1627,6 +1627,7 @@ constructor_declaration
 
 		Location l = (Location) oob_stack.Pop ();
 		$$ = new Constructor ((string) "New", (Parameters) $4, (ConstructorInitializer) null, l);
+		$1 = $$;
 	  }
 	  opt_statement_list
 	  { 
