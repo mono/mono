@@ -1,3 +1,8 @@
+2002-07-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* ILGenerator.cs (ILGenerator.Emit): For doubles and floats, swap
+	the bytes on big endian systems. 
+
 2002-07-03  Martin Baulig  <martin@gnome.org>
 
 	* AssemblyBuilder.cs (corlib_object_type, corlib_value_type): Moved

@@ -353,12 +353,23 @@ namespace System.Reflection.Emit {
 			if (mparams != null)
 				cur_stack -= mparams.Length;
 		}
-		public virtual void Emit (OpCode opcode, Double val) {
+		public virtual void Emit (OpCode opcode, double val) {
 			byte[] s = System.BitConverter.GetBytes (val);
 			make_room (10);
 			ll_emit (opcode);
-			System.Array.Copy (s, 0, code, code_len, 8);
-			code_len += 8;
+			if (BitConverter.IsLittleEndian){
+				System.Array.Copy (s, 0, code, code_len, 8);
+				code_len += 8;
+			} else {
+				code [code_len++] = s [7];
+				code [code_len++] = s [6];
+				code [code_len++] = s [5];
+				code [code_len++] = s [4];
+				code [code_len++] = s [3];
+				code [code_len++] = s [2];
+				code [code_len++] = s [1];
+				code [code_len++] = s [0];				
+			}
 		}
 		public virtual void Emit (OpCode opcode, FieldInfo field) {
 			int token = abuilder.GetToken (field);
@@ -374,12 +385,12 @@ namespace System.Reflection.Emit {
 			code [code_len++] = (byte) (val & 0xFF);
 			code [code_len++] = (byte) ((val >> 8) & 0xFF);
 		}
-		public virtual void Emit (OpCode opcode, Int32 val) {
+		public virtual void Emit (OpCode opcode, int val) {
 			make_room (6);
 			ll_emit (opcode);
 			emit_int (val);
 		}
-		public virtual void Emit (OpCode opcode, Int64 val) {
+		public virtual void Emit (OpCode opcode, long val) {
 			make_room (10);
 			ll_emit (opcode);
 			code [code_len++] = (byte) (val & 0xFF);
@@ -513,8 +524,15 @@ namespace System.Reflection.Emit {
 			byte[] s = System.BitConverter.GetBytes (val);
 			make_room (6);
 			ll_emit (opcode);
-			System.Array.Copy (s, 0, code, code_len, 4);
-			code_len += 4;
+			if (BitConverter.IsLittleEndian){
+				System.Array.Copy (s, 0, code, code_len, 4);
+				code_len += 4;
+			} else {
+				code [code_len++] = s [3];
+				code [code_len++] = s [2];
+				code [code_len++] = s [1];
+				code [code_len++] = s [0];				
+			}
 		}
 		public virtual void Emit (OpCode opcode, string val) {
 			int token = abuilder.GetToken (val);
