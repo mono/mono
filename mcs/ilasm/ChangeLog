@@ -1,3 +1,7 @@
+2004-06-19  Jackson Harper  <jackson@ximian.com>
+
+	* ilasm.exe.sources: Add MethodPointerTypeRef.cs to the build.
+	
 2004-06-14  Jackson Harper  <jackson@ximian.com>
 
 	* ilasm.exe.sources: Add FileRef.cs
