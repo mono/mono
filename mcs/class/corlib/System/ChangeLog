@@ -1,3 +1,8 @@
+2003-12-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Buffer.cs:
+	(BlockCopy): make the exception thrown helpful.
+
 2003-12-03  Dick Porter  <dick@ximian.com>
 
 	* String.cs: Calling Replace on an empty string returns itself.

@@ -43,9 +43,16 @@ namespace System {
 			SetByteInternal (array, index, value);
 		}
 
-		public static void BlockCopy (Array src, int src_offset, Array dest, int dest_offset, int count) {
-			if (src_offset < 0 || dest_offset < 0 || count < 0)
-				throw new ArgumentOutOfRangeException ("Non-negative number required.");
+		public static void BlockCopy (Array src, int src_offset, Array dest, int dest_offset, int count)
+		{
+			if (src_offset < 0)
+				throw new ArgumentOutOfRangeException ("src_offset", "Non-negative number required.");
+
+			if (dest_offset < 0)
+				throw new ArgumentOutOfRangeException ("dest_offset", "Non-negative number required.");
+
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count", "Non-negative number required.");
 
 			if (src_offset + count > ByteLength (src) || dest_offset + count > ByteLength (dest))
 				throw new ArgumentException ("Offset and length were out of bounds for the array or count is greater than the number of elements from index to the end of the source collection.");
