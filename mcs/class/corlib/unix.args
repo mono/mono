@@ -541,6 +541,7 @@ System.Runtime.Remoting.Proxies/RealProxy.cs
 System.Runtime.Remoting.Proxies/ProxyAttribute.cs
 System.Runtime.Remoting.Services/ITrackingHandler.cs
 System.Runtime.Serialization/FormatterConverter.cs
+System.Runtime.Serialization/FormatterServices.cs
 System.Runtime.Serialization/IDeserializationCallback.cs
 System.Runtime.Serialization/IFormatter.cs
 System.Runtime.Serialization/IFormatterConverter.cs
