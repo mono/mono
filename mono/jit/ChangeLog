@@ -1,3 +1,20 @@
+2002-03-21  Martin Baulig  <martin@gnome.org>
+
+	* debug.h (MonoDebugFormat): Added MONO_DEBUG_FORMAT_DWARF2_PLUS.
+
+	* debug-dwarf2-plus.c: This debugging format reads a symbol file which has
+	been created by MCS and fills in all machine dependent stuff.
+
+	* debug-private.h (DebugMethodInfo): Added `MonoDebugMethodInfo method_info',
+	removed everything which is already in MonoDebugMethodInfo.
+
+	* debug.c (debug_generate_method_lines): Generate the MonoILOffsetInfo array.
+	(mono_debug_make_symbols): Don't open the file or call as, this is done in the
+	backend code.
+
+	* jit.c (main): Added "--dwarf-plus" command line option to use the new
+	MONO_DEBUG_FORMAT_DWARF2_PLUS debugging format.
+
 2002-03-21  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (usage): new option to specify maximum number of worker threads
