@@ -1,3 +1,7 @@
+2004-04-29  Jackson Harper  <jackson@ximian.com>
+
+	* AssemblyInfo.cs: Add 2.0 version attributes.
+	
 2004-02-22  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* AssemblyInfo.cs: Added missing attribute, commented
