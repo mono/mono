@@ -55,7 +55,7 @@
 
 		MonoAssembly *assembly;
 
-		assembly = mono_domain_assembly_open ("file.dll");
+		assembly = mono_domain_assembly_open (domain, "file.dll");
 		if (!assembly)
 			error ();
 
