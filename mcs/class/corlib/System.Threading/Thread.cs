@@ -61,10 +61,13 @@ namespace System.Threading
 		public static IPrincipal CurrentPrincipal {
 			get {
 				IPrincipal p = null;
-				lock (typeof (Thread)) {
-					p = CurrentThread._principal;
-					if (p == null)
+				Thread th = CurrentThread;
+				lock (th) {
+					p = th._principal;
+					if (p == null) {
 						p = GetDomain ().DefaultPrincipal;
+						th._principal = p;
+					}
 				}
 				return p;
 			}

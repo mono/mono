@@ -1,3 +1,9 @@
+2004-06-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Thread.cs:
+	(CurrentPrincipal): lock on CurrentThread, not typeof (Thread) and set
+	the thread IPrincipal if we get it from the AppDomain.
+
 2004-06-09  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CompressedStack.cs: Added finalizer to match public API of
