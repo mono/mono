@@ -1,3 +1,8 @@
+2003-04-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile.am: Link with -export-dynamic so shared libs loaded by
+	the runtime can call mono API functions.
+
 2003-04-27  Martin Baulig  <martin@ximian.com>
 
 	* debug-mini.c (mono_debug_init_method): Added
