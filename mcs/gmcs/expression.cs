@@ -7313,7 +7313,7 @@ namespace Mono.CSharp {
 
 			if (member_lookup is FieldExpr){
 				FieldExpr fe = (FieldExpr) member_lookup;
-				FieldInfo fi = fe.FieldInfo;
+				FieldInfo fi = fe.FieldInfo.Mono_GetGenericFieldDefinition ();
 				Type decl_type = fi.DeclaringType;
 
 				if (fi is FieldBuilder) {
