@@ -1,4 +1,10 @@
 
+Mon Aug 27 20:13:49 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* dis-cil.c, get.c: some endian fixes.
+	* main.c: colon-separate version numbers. Print also namespace
+	when outputting class information.
+
 Fri Aug 24 16:10:12 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* get.c, main.c, get.h: updates for MonoParam merge in MonoType.
