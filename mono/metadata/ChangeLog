@@ -1,4 +1,8 @@
 
+2003-01-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: throw parse exception if strtod fails or the string is empty.
+
 Fri Jan 31 16:09:48 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* marshal.c: handle object type separately from defined
