@@ -2,6 +2,8 @@
 
 	* mini.c: Add support for new stringbuilder marshalling conventions.
 
+	* mini.c (mono_method_to_ir): Fix stack management of generic CEE_BOX.
+
 2004-02-01  Martin Baulig  <martin@ximian.com>
 
 	* mini.c (MTYPE_PARAM_TO_TYPE): Method type arguments are stored
