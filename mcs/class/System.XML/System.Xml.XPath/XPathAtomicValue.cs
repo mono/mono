@@ -6,6 +6,9 @@
 //
 // (C)2004 Novell Inc.
 //
+
+#if NET_2_0
+
 using System.Collections;
 using System.Xml;
 using System.Xml.Schema;
@@ -164,3 +167,5 @@ namespace System.Xml.XPath
 		#endregion
 	}
 }
+
+#endif
