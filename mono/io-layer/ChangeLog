@@ -1,3 +1,15 @@
+2001-11-22  Dick Porter  <dick@ximian.com>
+
+	* handles.c (SignalObjectAndWait): Implement
+
+	* wait.c (WaitForSingleObject): Fix case where timeout == 0
+
+	* threads.c:
+	* semaphores.c:
+	* mutexes.c:
+	* io.c:
+	* events.c: Support for SignalObjectAndWait
+	
 2001-11-21  Dick Porter  <dick@ximian.com>
 
 	* events.c:
