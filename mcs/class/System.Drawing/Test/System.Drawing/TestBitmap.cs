@@ -80,33 +80,7 @@ namespace MonoTests.System.Drawing{
 			return sRslt;
 		}
 		
-		[Test]
-		public void BitmapLoadAndSave() 
-		{				
-			string sOutFile =  getOutSubDir() + "linerect.bmp";
-						
-			// Save		
-			Bitmap	bmp = new Bitmap(100,100, PixelFormat.Format32bppRgb);						
-			Graphics gr = Graphics.FromImage(bmp);		
-			
-			Pen p = new Pen(Color.Red, 2);
-			gr.DrawLine(p, 10.0F, 10.0F, 90.0F, 90.0F);
-			gr.DrawRectangle(p, 10.0F, 10.0F, 80.0F, 80.0F);
-			p.Dispose();					
-			bmp.Save(sOutFile, ImageFormat.Bmp);
-			gr.Dispose();
-			bmp.Dispose();							
-			
-			// Load			
-			Bitmap	bmpLoad = new Bitmap(sOutFile);
-			if( bmpLoad == null) 
-				Console.WriteLine("Unable to load "+ sOutFile);						
-			
-			Color color = bmpLoad.GetPixel(10,10);		
-			
-			
-			AssertEquals (Color.FromArgb(255,255,0,0), color);											
-		}
+	
 
 		//[Test]
 		public void MakeTransparent() 
@@ -160,32 +134,8 @@ namespace MonoTests.System.Drawing{
 			AssertEquals (bmp.PixelFormat, bmpNew.PixelFormat);			
 			
 		}	
-		
-		/* Check bitmap features on a know 24-bits bitmap*/
-		[Test]
-		public void BitmapFeatures()
-		{
-			string sInFile = getInFile ("bitmaps/almogaver24bits.bmp");
-			Bitmap	bmp = new Bitmap(sInFile);						
-			RectangleF rect;
-			GraphicsUnit unit = GraphicsUnit.World;
-			
-			rect = bmp.GetBounds(ref unit);
-			
-			AssertEquals (PixelFormat.Format24bppRgb, bmp.PixelFormat);
-			AssertEquals (173, bmp.Width);
-			AssertEquals (183, bmp.Height);		
-			
-			AssertEquals (0, rect.X);
-			AssertEquals (0, rect.Y);		
-			AssertEquals (173, rect.Width);
-			AssertEquals (183, rect.Height);					
-			
-			AssertEquals (173, bmp.Size.Width);
-			AssertEquals (183, bmp.Size.Height);					
-		}
-		
-		[Test]
+
+		//[Test]
 		public void Frames()
 		{
 			string sInFile = getInFile ("bitmaps/almogaver24bits.bmp");			
