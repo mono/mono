@@ -1,3 +1,29 @@
+2002-07-24  Martin Baulig  <martin@gnome.org>
+
+	* class.cs (MethodBase): New abstract class.  This is now a base
+	class for Property, Indexer and Event to avoid some code duplication
+	in their Define() and DefineMethods() methods.
+	(MethodBase.DoDefine, MethodBase.DefineAccessor): Provide virtual
+	generic methods for Define() and DefineMethods().
+	(FieldBase): Derive from MemberBase, not MemberCore.
+	(Property): Derive from MemberBase, not MemberCore.
+	(Property.DefineMethod): Moved all the code from this method to the
+	new MethodBase.DefineAccessor(), just call it with appropriate
+	argumetnts.
+	(Property.Define): Call the new Property.DoDefine(), this does some
+	sanity checks and we don't need to duplicate the code everywhere.
+	(Event): Derive from MemberBase, not MemberCore.
+	(Event.Define): Use the new MethodBase.DefineAccessor() to define the
+	accessors, this will also make them work with interface events.
+	(Indexer): Derive from MemberBase, not MemberCore.
+	(Indexer.DefineMethod): Removed, call MethodBase.DefineAccessor() insstead.
+	(Indexer.Define): Use the new MethodBase functions.
+
+	* interface.cs (InterfaceEvent.InterfaceEvent): Added `Location loc'
+	argument to the constructor.
+	(Interface.FindMembers): Added support for interface events.
+	(Interface.PopluateEvent): Implemented.
+
 2002-07-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (TypeContainer.AddMethod): Adding methods do not use IsValid,
