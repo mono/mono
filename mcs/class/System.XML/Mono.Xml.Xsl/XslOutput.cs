@@ -172,7 +172,15 @@ namespace Mono.Xml.Xsl
 
 			att = nav.GetAttribute ("encoding", "");
 			if (att != String.Empty)
-				this.encoding = System.Text.Encoding.GetEncoding (att);
+				try {
+					this.encoding = System.Text.Encoding.GetEncoding (att);
+				}
+				catch (ArgumentException) {
+					// MS.NET just leaves the default encoding when encoding is unknown
+				}
+				catch (NotSupportedException) {
+					// Workaround for a bug in System.Text, it throws invalid exception
+				}
 
 			att = nav.GetAttribute ("standalone", "");
 			if (att != String.Empty)

@@ -1,5 +1,10 @@
 2005-02-08  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XslOutput.cs : MS.NET recovers from unknown encoding according to
+	  XSLT spec 16.1. Patch by Andrew Skiba.
+
+2005-02-08  Atsushi Enomoto <atsushi@ximian.com>
+
 	* HtmlEmitter.cs : patch by Andrew Skiba.
 	  Remove extra element prefix output. simplify attribute prefix output.
 	  Attribute output might have resulted in invalid element stack peek.
