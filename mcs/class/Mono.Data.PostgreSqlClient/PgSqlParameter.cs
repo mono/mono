@@ -130,7 +130,17 @@ namespace System.Data.SqlClient
 			}
 		}
 
-		[MonoTODO]
+		
+		string IDataParameter.ParameterName {
+			get { 
+				return parmName;
+			}
+
+			set { 
+				parmName = value;
+			}
+		}
+		
 		public string ParameterName {
 			get { 
 				return parmName;

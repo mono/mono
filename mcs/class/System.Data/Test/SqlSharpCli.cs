@@ -336,6 +336,38 @@ namespace Mono.Data.SqlSharp {
 			}
 		}
 
+		public void BuildParameters(IDbCommand cmd) {
+			ParametersBuilder parmsBuilder = 
+				new ParametersBuilder(cmd, 
+				BindVariableCharacter.Semicolon);
+			
+			Console.WriteLine("GetParms...");
+			parmsBuilder.ParseParameters();
+			IList parms = (IList) cmd.Parameters;
+		
+			Console.WriteLine("Print each parm...");
+			for(int p = 0; p < parms.Count; p++) {
+				string theParmName;
+
+				IDataParameter prm = (IDataParameter) parms[p];
+				theParmName = prm.ParameterName;
+				
+				string inValue = "";
+				bool found;
+				found = GetInternalVariable(theParmName, out inValue);
+				if(found == true) {
+					prm.Value = inValue;
+				}
+				else {
+					Console.Write("Enter Parameter " + (p + 1).ToString() +
+						": " + theParmName + ": ");
+					inValue = Console.ReadLine();
+					prm.Value = inValue;
+				}
+			}
+			parmsBuilder = null;
+		}
+
 		// ExecuteSql - Execute the SQL Command(s) and/or Query(ies)
 		public void ExecuteSql(string sql) {
 			
@@ -350,6 +382,8 @@ namespace Mono.Data.SqlSharp {
 			cmd.CommandType = CommandType.Text;
 			cmd.CommandText = sql;
 			cmd.Connection = conn;
+
+			BuildParameters(cmd);
 
 			try {
 				reader = cmd.ExecuteReader();
@@ -386,6 +420,8 @@ namespace Mono.Data.SqlSharp {
 			cmd.CommandText = sql;
 			cmd.Connection = conn;
 
+			BuildParameters(cmd);
+
 			try {
 				rowsAffected = cmd.ExecuteNonQuery();
 				cmd = null;
@@ -412,6 +448,8 @@ namespace Mono.Data.SqlSharp {
 			cmd.CommandType = CommandType.Text;
 			cmd.CommandText = sql;
 			cmd.Connection = conn;
+
+			BuildParameters(cmd);
 
 			try {
 				retrievedValue = (string) cmd.ExecuteScalar().ToString();
@@ -698,7 +736,7 @@ namespace Mono.Data.SqlSharp {
 				Console.WriteLine("Error: wrong number of parameters.");
 				return;
 			}
-			string parm = parms[1].ToUpper();
+			string parm = parms[1];
 			StringBuilder ps = new StringBuilder();
 			
 			for(int i = 2; i < parms.Length; i++)
@@ -712,7 +750,7 @@ namespace Mono.Data.SqlSharp {
 				Console.WriteLine("Error: wrong number of parameters.");
 				return;
 			}
-			string parm = parms[1].ToUpper();
+			string parm = parms[1];
 
 			try {
 				internalVariables.Remove(parm);
@@ -730,7 +768,7 @@ namespace Mono.Data.SqlSharp {
 				return;
 			}
 						
-			string parm = parms[1].ToUpper();
+			string parm = parms[1];
 
 			if(GetInternalVariable(parm, out internalVariableValue) == true)
 				Console.WriteLine("Internal Variable - Name: " + 
@@ -1070,6 +1108,100 @@ namespace Mono.Data.SqlSharp {
 			CloseDataSource();
 			if(outputFilestream != null)
 				outputFilestream.Close();
+		}
+	}
+
+	enum BindVariableCharacter {
+		Semicolon,    // ';'
+		At,           // '@'
+		QuestionMark  // '?'
+	}
+
+	public class ParametersBuilder {
+
+		private BindVariableCharacter bindCharSetting;
+		private char bindChar;
+		private IDataParameterCollection parms;
+		private string sql;
+		private IDbCommand cmd;
+			
+		private void SetBindCharacter() {
+			switch(bindCharSetting) {
+			case BindVariableCharacter.Semicolon:
+				bindChar = ':';
+				break;
+			case BindVariableCharacter.At:
+				bindChar = '@';
+				break;
+			case BindVariableCharacter.QuestionMark:
+				bindChar = '?';
+				break;
+			}
+		}
+
+		public ParametersBuilder(IDbCommand command, BindVariableCharacter bindVarChar) {
+			cmd = command;
+			sql = cmd.CommandText;
+			parms = cmd.Parameters;
+			bindCharSetting = bindVarChar;
+			SetBindCharacter();
+		}	
+
+		public int ParseParameters() {	
+
+			int numParms = 0;
+
+			IDataParameterCollection parms = cmd.Parameters;
+
+			char[] chars = sql.ToCharArray();
+			bool bStringConstFound = false;
+
+			for(int i = 0; i < chars.Length; i++) {
+				if(chars[i] == '\'') {
+					if(bStringConstFound == true)
+						bStringConstFound = false;
+					else
+						bStringConstFound = true;
+				}
+				else if(chars[i] == bindChar && 
+					bStringConstFound == false) {
+					StringBuilder parm = new StringBuilder();
+					i++;
+					while(i <= chars.Length) {
+						char ch;
+						if(i == chars.Length)
+							ch = ' '; // a space
+						else
+							ch = chars[i];
+
+						if(Char.IsLetterOrDigit(ch)) {
+							parm.Append(ch);
+						}
+						else {
+
+							string p = parm.ToString();
+							AddParameter(p);
+							numParms ++;
+							break;
+						}
+						i++;
+					}
+					i--;
+				}			
+			}
+			return numParms;
+		}
+
+		public void AddParameter (string p) {
+			Console.WriteLine("Add Parameter: " + p);
+			if(parms.Contains(p) == false) {
+				IDataParameter prm = cmd.CreateParameter();
+				prm.ParameterName = p;
+				prm.Direction = ParameterDirection.Input;
+				prm.DbType = DbType.String; // default
+				prm.Value = ""; // default
+				cmd.Parameters.Add(prm);
+			}
 		}
 	}
 

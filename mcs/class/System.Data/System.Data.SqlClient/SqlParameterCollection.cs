@@ -22,31 +22,10 @@ namespace System.Data.SqlClient
 	/// </summary>
 	// public sealed class SqlParameterCollection : MarshalByRefObject,
 	// IDataParameterCollection, IList, ICollection, IEnumerable
-	public sealed class SqlParameterCollection : IDataParameterCollection
+	public sealed class SqlParameterCollection : IDataParameterCollection,
+		IList
 	{
 		private ArrayList parameterList = new ArrayList();
-		private Hashtable parameterNames = new Hashtable();
-
-/*
-		[MonoTODO]
-		public void RemoveAt(string parameterName)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public int IndexOf(string parameterName)
-	        {
-			throw new NotImplementedException ();
-		}
-
-
-		[MonoTODO]
-		public bool Contains(string parameterName)
-		{
-			return parameterNames.ContainsKey(parameterName);
-		}
-*/
 
 		[MonoTODO]
 		public IEnumerator GetEnumerator()
@@ -70,7 +49,6 @@ namespace System.Data.SqlClient
 		public SqlParameter Add(SqlParameter value)
 		{
 			parameterList.Add(value);
-			parameterNames.Add(value.ParameterName, parameterList.Add(value));
 			return value;
 		}
 
@@ -134,7 +112,11 @@ namespace System.Data.SqlClient
 		[MonoTODO]
 		public bool Contains(string value)
 		{
-			return parameterNames.ContainsKey(value);
+			for(int p = 0; p < parameterList.Count; p++) {
+				if(((SqlParameter)parameterList[p]).ParameterName.Equals(value))
+					return true;
+			}
+			return false;
 		}
 
 		[MonoTODO]
@@ -154,7 +136,13 @@ namespace System.Data.SqlClient
 		
 		public int IndexOf(string parameterName)
 		{
-			return parameterList.IndexOf(parameterName);
+			int p = -1;
+
+			for(p = 0; p < parameterList.Count; p++) {
+				if(((SqlParameter)parameterList[p]).ParameterName.Equals(parameterName))
+					return p;
+			}
+			return p;
 		}
 
 		[MonoTODO]
@@ -213,28 +201,31 @@ namespace System.Data.SqlClient
 		object IDataParameterCollection.this[string parameterName] {
 			[MonoTODO]
 			get { 
-				return (SqlParameter) this[parameterName];
+				return this[parameterName];
 			}
 			
 			[MonoTODO]
 			set { 
+				CheckType(value);
 				this[parameterName] = (SqlParameter) value;
 			}
 		}
 
 		public SqlParameter this[string parameterName] {
 			get {	
-				if(parameterNames.ContainsKey(parameterName))
-					return (SqlParameter) parameterList[(int)parameterNames[parameterName]];
-				else
-					throw new IndexOutOfRangeException("The specified name does not exist: " + parameterName);
-			}			  
+				for(int p = 0; p < parameterList.Count; p++) {
+					if(parameterName.Equals(((SqlParameter)parameterList[p]).ParameterName))
+						return (SqlParameter) parameterList[p];
+				}
+				throw new IndexOutOfRangeException("The specified name does not exist: " + parameterName);
+			}	  
 			
 			set {	
-				if(parameterNames.ContainsKey(parameterName))
-					parameterList[(int)parameterNames[parameterName]] = (SqlParameter) value;
-				else
-					throw new IndexOutOfRangeException("The specified name does not exist: " + parameterName);
+				for(int p = 0; p < parameterList.Count; p++) {
+					if(parameterName.Equals(((SqlParameter)parameterList[p]).ParameterName))
+						parameterList[p] = value;
+				}
+				throw new IndexOutOfRangeException("The specified name does not exist: " + parameterName);
 			}			  
 		}
 
