@@ -357,24 +357,40 @@ namespace System {
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern Type internal_from_handle (RuntimeTypeHandle handle);
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern Type internal_from_name (string name);
 		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern Type internal_from_name (string name, bool throwOnError, bool ignoreCase);
+
 		public static Type GetType(string typeName)
 		{
-			return internal_from_name (typeName);
+			if (typeName == null)
+				throw new ArgumentNullException ("typeName");
+
+			return internal_from_name (typeName, false, false);
 		}
 
 		public static Type GetType(string typeName, bool throwOnError)
 		{
-			// LAMESPEC: what kinds of errors cause exception to be thrown?
-			return internal_from_name (typeName);
+			if (typeName == null)
+				throw new ArgumentNullException ("typeName");
+
+			Type type = internal_from_name (typeName, throwOnError, false);
+			if (throwOnError && type == null)
+				throw new TypeLoadException ("Error loading '" + typeName + "'");
+
+			return type;
 		}
 
-		[MonoTODO]
 		public static Type GetType(string typeName, bool throwOnError, bool ignoreCase)
 		{
-			throw new NotImplementedException ();
+			if (typeName == null)
+				throw new ArgumentNullException ("typeName");
+
+			Type t = internal_from_name (typeName, throwOnError, ignoreCase);
+			if (throwOnError && t == null)
+				throw new TypeLoadException ("Error loading '" + typeName + "'");
+
+			return t;
 		}
 
 		public static Type[] GetTypeArray (object[] args) {
@@ -457,11 +473,18 @@ namespace System {
 			return type_is_subtype_of (this, c, false);
 		}
 
-		[MonoTODO]
 		public virtual Type[] FindInterfaces (TypeFilter filter, object filterCriteria)
 		{
-			// FIXME
-			throw new NotImplementedException ();
+			if (filter == null)
+				throw new ArgumentNullException ("filter");
+
+			ArrayList ifaces = new ArrayList ();
+			foreach (Type iface in GetInterfaces ()) {
+				if (filter (iface, filterCriteria))
+					ifaces.Add (iface);
+			}
+
+			return (Type []) ifaces.ToArray (typeof (Type));
 		}
 		
 		public Type GetInterface (string name) {

@@ -1,3 +1,9 @@
+2002-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Type.cs: changed the signature of internal_from_name. Modified
+	the overloads of GetType to use it and check the typeName argument.
+	Implemented FindInterfaces.
+
 2002-11-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MarshalByRefObject.cs: undo latest changes. It breaks the build by
