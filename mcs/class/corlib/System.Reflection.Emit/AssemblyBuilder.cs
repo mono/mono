@@ -367,8 +367,6 @@ namespace System.Reflection.Emit {
 		}
 
 		private void DefineVersionInfoResourceImpl (string fileName) {
-			int res_index;
-
 			// Add missing info
 			version_res.FileVersion = version;
 			version_res.OriginalFilename = fileName;
