@@ -1,5 +1,10 @@
 2002-02-14  Jeffrey Stedfast  <fejj@ximian.com>
 
+	* io-layer.h: conditionally include sys/filio.h and sys/sockio.h
+	for FIONBIO, FIONREAD, and SIOCATMARK.
+
+2002-02-14  Jeffrey Stedfast  <fejj@ximian.com>
+
 	* sockets.c: conditionally include sys/filio.h and sys/sockio.h
 	for FIONBIO, FIONREAD, and SIOCATMARK.
 
