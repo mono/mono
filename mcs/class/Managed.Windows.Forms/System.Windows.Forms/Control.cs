@@ -29,9 +29,14 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.45 $
+// $Revision: 1.46 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.46  2004/08/22 21:10:30  pbartok
+// - Removed OverlappedWindow style from Control, instead it's default
+//   now is child
+// - Made form windows OverlappedWindow by default
+//
 // Revision 1.45  2004/08/21 22:19:30  pbartok
 // - Signature fixes
 //
@@ -1222,7 +1227,7 @@ namespace System.Windows.Forms
 					create_params.Parent = parent.Handle;
 				}
 
-				create_params.Style = (int)WindowStyles.WS_OVERLAPPED | (int)WindowStyles.WS_CLIPCHILDREN | (int)WindowStyles.WS_CLIPSIBLINGS;
+				create_params.Style = (int)WindowStyles.WS_CHILD | (int)WindowStyles.WS_CLIPCHILDREN | (int)WindowStyles.WS_CLIPSIBLINGS;
 
 				if (is_visible) {
 					create_params.Style |= (int)WindowStyles.WS_VISIBLE;
@@ -1988,6 +1993,7 @@ namespace System.Windows.Forms
 		}
 
 		protected virtual void OnCreateControl() {
+			// Override me!
 		}
 
 		protected virtual void OnCursorChanged(EventArgs e) {

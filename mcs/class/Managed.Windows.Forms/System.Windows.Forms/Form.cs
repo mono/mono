@@ -23,9 +23,14 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.5 $
+// $Revision: 1.6 $
 // $Modtime: $
 // $Log: Form.cs,v $
+// Revision 1.6  2004/08/22 21:10:30  pbartok
+// - Removed OverlappedWindow style from Control, instead it's default
+//   now is child
+// - Made form windows OverlappedWindow by default
+//
 // Revision 1.5  2004/08/19 21:30:37  pbartok
 // - Added handling of WM_CLOSE
 //
@@ -120,7 +125,7 @@ namespace System.Windows.Forms {
 				create_params.Width = Width;
 				create_params.Height = Height;
 				
-				create_params.Style |= (int)WindowStyles.WS_OVERLAPPEDWINDOW;
+				create_params.Style = (int)WindowStyles.WS_OVERLAPPEDWINDOW;
 				create_params.Style |= (int)WindowStyles.WS_VISIBLE;
 
 				return create_params;
