@@ -6,7 +6,9 @@
 	flicker.
 	- Only refresh if the tabs need to be shifted, otherwise only
 	invalidate the slider button.
-
+	- On windows the tabs are not filled to right if the slider is
+	visible.
+	
 2005-01-27  Jackson Harper  <jackson@ximian.com>
 
 	* TabControl.cs: Only refresh on mouseup if we are showing the

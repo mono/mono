@@ -650,7 +650,7 @@ namespace System.Windows.Forms {
 						ypos, item_size.Height - 2, width);
 
 				if (page.Row != prev_row) {
-					if (SizeMode == TabSizeMode.FillToRight) {
+					if (SizeMode == TabSizeMode.FillToRight && !ShowSlider) {
 						FillRowV (begin_prev, i - 1, ((row_width - TabPages [i - 1].TabBounds.Bottom) / (i - begin_prev)), spacing);
 					}
 					begin_prev = i;
@@ -660,7 +660,7 @@ namespace System.Windows.Forms {
 				prev_row = page.Row;
 			}
 
-			if (SizeMode == TabSizeMode.FillToRight) {
+			if (SizeMode == TabSizeMode.FillToRight && !ShowSlider) {
 				FillRowV (begin_prev, TabPages.Count - 1,
 						((row_width - TabPages [TabPages.Count - 1].TabBounds.Bottom) / (TabPages.Count - begin_prev)), spacing);
 			}
@@ -703,7 +703,7 @@ namespace System.Windows.Forms {
 						width, item_size.Height);
 				
 				if (page.Row != prev_row) {
-					if (SizeMode == TabSizeMode.FillToRight) {
+					if (SizeMode == TabSizeMode.FillToRight && !ShowSlider) {
 						FillRow (begin_prev, i - 1, ((row_width - TabPages [i - 1].TabBounds.Right) / (i - begin_prev)), spacing);
 					}
 					begin_prev = i;
@@ -713,7 +713,7 @@ namespace System.Windows.Forms {
 				prev_row = page.Row;				    
 			}
 
-			if (SizeMode == TabSizeMode.FillToRight) {
+			if (SizeMode == TabSizeMode.FillToRight && !ShowSlider) {
 				FillRow (begin_prev, TabPages.Count - 1,
 						((row_width - TabPages [TabPages.Count - 1].TabBounds.Right) / (TabPages.Count - begin_prev)), spacing);
 			}
