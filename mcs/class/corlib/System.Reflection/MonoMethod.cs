@@ -156,14 +156,14 @@ namespace System.Reflection {
 			for (int i = 0; i < p.Length; ++i) {
 				if (i > 0)
 					parms = parms + ", ";
-				if (p[i].ParameterType.IsClass)
-					parms = parms + p[i].ParameterType.Namespace + "." + p[i].ParameterType.Name;
+				Type pt = p[i].ParameterType;
+				if (pt.IsClass && pt.Namespace != "")
+					parms = parms + pt.Namespace + "." + pt.Name;
 				else
-					parms = parms + p[i].ParameterType.Name;
+					parms = parms + pt.Name;
 			}
-			if (ReturnType.IsClass) {
+			if (ReturnType.IsClass && ReturnType.Namespace != "")
 				return ReturnType.Namespace + "." + ReturnType.Name + " " + Name + "(" + parms + ")";
-			}
 			return ReturnType.Name + " " + Name + "(" + parms + ")";
 		}
 
