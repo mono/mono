@@ -8,7 +8,7 @@ Imports System
 Imports Nunit.Framework
 
 <TestFixture> _
-Public Class LikeOperator2
+Public Class LikeOperator3
 		  <Test, ExpectedException (GetType (System.Exception))> _
 	Public Sub TestForException ()
 		dim a as boolean

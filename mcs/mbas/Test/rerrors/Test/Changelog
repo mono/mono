@@ -1,4 +1,11 @@
 
+2005-03-21  Ritvik Mayank  <mritvik@novell.com>
+	* LikeOperator3.vb : 
+	* Variables1.vb : 
+	* LikeOperator2.vb : 
+	* Variables2.vb : 
+               Renamed the class name to avoiding the conflict and removed ^M
+
 2004-12-20  Ritvik Mayank  <mritvik@novell.com>
                                                                                 
         *ArithmeticOperators1.vb :Changed Class name as name of this test case
