@@ -37,7 +37,7 @@ namespace System.CodeDom.Compiler
 		public override string ToString ()
 		{
 			string type = isWarning ? "warning" : "error";
-			return String.Format ("{0}({1},{2} : {3} {4}: {5}", fileName, line, column, type,
+			return String.Format ("{0}({1},{2}) : {3} {4}: {5}", fileName, line, column, type,
 									    errorNumber, errorText);
 		}
 
