@@ -156,6 +156,7 @@ System.Xml.Serialization\\SoapElementAttribute.cs
 System.Xml.Serialization\\SoapEnumAttribute.cs
 System.Xml.Serialization\\SoapIgnoreAttribute.cs
 System.Xml.Serialization\\SoapIncludeAttribute.cs
+System.Xml.Serialization\\SoapSchemaExporter.cs
 System.Xml.Serialization\\SoapTypeAttribute.cs
 System.Xml.Serialization\\UnreferencedObjectEventArgs.cs
 System.Xml.Serialization\\XmlAnyAttributeAttribute.cs

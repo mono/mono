@@ -10,6 +10,8 @@
 	* XmlSerializerNamespaces.cs: some class status based fixed and
 	implemented a couple of methods.
 
+	* SoapSchemaExporter.cs: stubbed out.
+
 2002-08-24  Tim Coleman <tim@timcoleman.com>
 	* SoapCodeExporter.cs:
 		Fix return value of ExportTypeMapping.

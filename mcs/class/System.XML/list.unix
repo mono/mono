@@ -169,6 +169,7 @@ System.Xml.Serialization/SoapEnumAttribute.cs
 System.Xml.Serialization/SoapIgnoreAttribute.cs
 System.Xml.Serialization/SoapIncludeAttribute.cs
 System.Xml.Serialization/SoapSchemaImporter.cs
+System.Xml.Serialization/SoapSchemaExporter.cs
 System.Xml.Serialization/SoapSchemaMember.cs
 System.Xml.Serialization/SoapReflectionImporter.cs
 System.Xml.Serialization/SoapTypeAttribute.cs
