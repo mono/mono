@@ -204,27 +204,22 @@ namespace System {
 			if (inner_exception != null) 
 			{
 				result += " ---> " + inner_exception.ToString ();
-				result += "--- End of inner exception stack trace ---\n";
+				result += "--- End of inner exception stack trace ---";
+				result += Environment.NewLine;
 			}
 
-			return result + "\n" + stack_trace;
+			if (stack_trace != null)
+				result += Environment.NewLine + stack_trace;
+			return result;
 		}
 
 		internal Exception FixRemotingException()
 		{
-			String tmp = null;
-
-			if (0 == remote_stack_index)
-			{
-				tmp = "\n\nServer stack trace: \n"
-					+ StackTrace 
-					+ "\n\nException rethrown at [" + remote_stack_index + "]: \n";
-			}
-			else
-			{
-				tmp = StackTrace 
-					+ "\n\nException rethrown at [" + remote_stack_index + "]: \n";
-			}
+			string message = (0 == remote_stack_index) ?
+				"{0}{0}Server stack trace: {0}{1}{0}{0}Exception rethrown at [{2}]: {0}" :
+				"{1}{0}{0}Exception rethrown at [{2}]: {0}";
+			string tmp = String.Format (message, Environment.NewLine, 
+				StackTrace, remote_stack_index);
 
 			remote_stack_trace = tmp;
 			remote_stack_index++;
