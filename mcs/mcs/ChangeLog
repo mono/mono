@@ -1,3 +1,24 @@
+2001-11-23  Ravi Pratap  <ravi@ximian.com>
+
+	* typemanager.cs (IsDelegateType, IsEnumType): Fix logic to determine
+	the same. 
+	
+	* expression.cs (ArrayCreation::CheckIndices): Get rid of the require_constant
+	parameter. Apparently, any expression is allowed. 
+
+	(ValidateInitializers): Update accordingly.
+
+	(CheckIndices): Fix some tricky bugs thanks to recursion.
+
+	* delegate.cs (NewDelegate::DoResolve): Re-write large portions as 
+	I was being completely brain-dead.
+
+	(VerifyMethod, VerifyApplicability, VerifyDelegate): Make static
+	and re-write acordingly.
+
+	(DelegateInvocation): Re-write accordingly.
+
+	
 2001-11-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs (If.Emit): Fix a bug that generated incorrect code

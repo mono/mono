@@ -503,24 +503,20 @@ public class TypeManager {
 
 	public static bool IsDelegateType (Type t)
 	{
-		Delegate del = (Delegate) builder_to_delegate [t];
-
-		if (del != null)
+		if (t.IsSubclassOf (TypeManager.delegate_type))
 			return true;
 		else
 			return false;
 	}
-
+	
 	public static bool IsEnumType (Type t)
 	{
-		Enum en = (Enum) builder_to_enum [t];
-
-		if (en != null)
+		if (t.IsSubclassOf (TypeManager.enum_type))
 			return true;
 		else
 			return false;
 	}
-
+	
 	public static bool IsInterfaceType (Type t)
 	{
 		Interface iface = (Interface) builder_to_interface [t];
@@ -552,6 +548,21 @@ public class TypeManager {
 			return mb.ReflectedType.FullName + ":" + mb;
 		else
 			return mb.MethodHandle.ToString ();
+	}
+
+	static Hashtable delegate_to_data;
+	
+	public static void RegisterDelegateData (Type del_type, DictionaryEntry de)
+	{
+		if (delegate_to_data == null)
+			delegate_to_data = new Hashtable ();
+
+		delegate_to_data.Add (del_type, de);
+	}
+	
+	public static DictionaryEntry GetDelegateData (Type t)
+	{
+		return (DictionaryEntry) delegate_to_data [t];
 	}
 	
 	//

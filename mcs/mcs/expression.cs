@@ -3038,57 +3038,53 @@ namespace Mono.CSharp {
 			Report.Error (178, loc, "Incorrectly structured array initializer");
 		}
 		
-		public bool CheckIndices (EmitContext ec, ArrayList probe, int idx,
-					  bool require_constant, bool specified_dims)
+		public bool CheckIndices (EmitContext ec, ArrayList probe, int idx, bool specified_dims)
 		{
+			if (specified_dims) { 
+				Argument a = (Argument) Arguments [idx];
+				
+				if (!a.Resolve (ec, loc))
+					return false;
+				
+				Expression e = Expression.Reduce (ec, a.Expr);
+				
+				if (!(e is Literal)) {
+					Report.Error (150, loc, "A constant value is expected");
+					return false;
+				}
+				
+				int value = (int) ((Literal) e).GetValue ();
+				
+				if (value != probe.Count) {
+					error178 ();
+					return false;
+				}
+			}
+			
 			foreach (object o in probe) {
 
 				if (o is ArrayList) {
-
-					if (specified_dims) { 
-						Argument a = (Argument) Arguments [idx];
-						
-						if (!a.Resolve (ec, loc))
-							return false;
-						
-						Expression e = Expression.Reduce (ec, a.Expr);
-						
-						if (!(e is Literal) && require_constant) {
-							Report.Error (150, loc, "A constant value is expected");
-							return false;
-						}
-						
-						int value = (int) ((Literal) e).GetValue ();
-						
-						if (value != probe.Count) {
-							error178 ();
-							return false;
-						}
-					}
-
-					bool ret = CheckIndices (ec, (ArrayList) o, ++idx,
-								 require_constant, specified_dims);
+					bool ret = CheckIndices (ec, (ArrayList) o, idx + 1, specified_dims);
 					if (!ret)
 						return false;
 					
 				} else {
-
 					Expression tmp = (Expression) o;
 					tmp = tmp.Resolve (ec);
 					tmp = Expression.Reduce (ec, tmp);
+
+					// Handle initialization from vars, fields etc.
 					
-					if (!(tmp is Literal) && require_constant) {
-						Report.Error (150, loc, "A constant value is expected");
-						return false;
-					}
-					
-					Expression conv = ConvertImplicitRequired (ec, tmp,
-										   underlying_type, loc);
+					Expression conv = ConvertImplicitRequired (ec, tmp, underlying_type, loc);
 					
 					if (conv == null) 
 						return false;
 
-					ArrayData.Add (((Literal) tmp).GetValue ());
+					if (tmp is Literal)
+						ArrayData.Add (((Literal) tmp).GetValue ());
+					else
+						ArrayData.Add ((object) 0);
+
 				}
 			}
 
@@ -3131,13 +3127,13 @@ namespace Mono.CSharp {
 			bool ret;
 
 			if (Arguments != null) {
-				ret = CheckIndices (ec, Initializers, 0, true, true);
+				ret = CheckIndices (ec, Initializers, 0, true);
 				return ret;
 				
 			} else {
 				Arguments = new ArrayList ();
 
-				ret = CheckIndices (ec, Initializers, 0, true, false);
+				ret = CheckIndices (ec, Initializers, 0, false);
 				
 				if (!ret)
 					return false;
