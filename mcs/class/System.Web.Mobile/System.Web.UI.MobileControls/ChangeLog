@@ -1,6 +1,12 @@
 
 2003-10-08	Gaurav Vaish <gvaish_mono AT lycos.com>
 
+	* SelectionList.cs       : Initial implementation.
+	* ListDataHelper.cs      : Initial implementation.
+	* TextBox.cs             : Dummy implmentation.
+
+2003-10-08	Gaurav Vaish <gvaish_mono AT lycos.com>
+
 	* Style.cs               : ApplyTo(WebControl)        - Stubbed.
 
 2003-08-14	Gaurav Vaish <gvaish_mono AT lycos.com>
