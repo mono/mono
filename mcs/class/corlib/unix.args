@@ -652,7 +652,7 @@ System.Security.Cryptography/SymmetricAlgorithm.cs
 System.Security.Cryptography/ToBase64Transform.cs
 System.Security.Cryptography/TripleDES.cs
 System.Security.Cryptography/TripleDESCryptoServiceProvider.cs
-System.Security.Cryptography/X509Certificates.cs
+System.Security.Cryptography.X509Certificates/X509Certificate.cs
 System.Security.Cryptography/RSACryptoServiceProvider.cs
 System.Security.Cryptography/RSAOAEPKeyExchangeDeformatter.cs
 System.Security.Cryptography/RSAOAEPKeyExchangeFormatter.cs
