@@ -1,3 +1,9 @@
+2004-06-14  Raja R Harinath  <rharinath@novell.com>
+
+	* Console.cs (Console.Write, Console.WriteLine): Disable __arglist
+	version with BOOTSTRAP_WITH_OLDLIB.
+	* String.cs (STring.Concat): Likewise.
+
 2004-06-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* FloatingPointFormatter.cs :
