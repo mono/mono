@@ -1,4 +1,9 @@
 
+Wed Jul 3 17:43:52 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* verify.c: fixes to make it more usable.
+	* pedump.c: added --verify code to verify IL code in an assembly.
+
 Tue Jul 2 20:40:56 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: turn errors into warnings to allow compiling corlib.
