@@ -1,3 +1,7 @@
+2003-05-16  Dick Porter  <dick@ximian.com>
+
+	* MonoIO.cs: Implement GetTempPath
+
 2003-05-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DirectoryInfo.cs: fixed bug #42991.

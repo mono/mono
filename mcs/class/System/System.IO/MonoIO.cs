@@ -47,6 +47,9 @@ namespace System.IO
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static bool CreatePipe (out IntPtr read_handle, out IntPtr write_handle);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static int GetTempPath(out string path);
 	}
 }
 
