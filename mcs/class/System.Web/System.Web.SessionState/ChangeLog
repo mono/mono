@@ -1,3 +1,7 @@
+2004-08-04  Sanjay Gupta <gsanjay@novell.com>
+
+	* SessionStateActionFlags.cs: Added enumeration.
+
 2004-07-07  Juraj Skripsky <juraj@hotfeet.ch>
 
 	* SessionStateModule.cs: set path in session cookie to application
