@@ -208,7 +208,7 @@ namespace System.Collections.Specialized{
 		/// <summary> SDK: Copies the entire NameValueCollection to a compatible one-dimensional Array,
 		/// starting at the specified index of the target array.</summary>
 		
-		public void CopyTo( Array dest, int index )
+		override public void CopyTo( Array dest, int index )
 		{
 			if (dest==null)
 				throw new ArgumentNullException("Null argument - dest");

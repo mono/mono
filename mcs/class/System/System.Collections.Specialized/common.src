@@ -4,3 +4,4 @@ NameValueCollection.cs
 StringCollection.cs
 StringDictionary.cs
 StringEnumerator.cs
+NameObjectCollectionBase.cs
