@@ -1,3 +1,22 @@
+2003-11-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c loader.c reflection.c: Use ModuleBuilder->dynamic_image 
+	instead of AssemblyBuilder->dynamic_assembly in the appropriate places.
+
+	* reflection.c (resolution_scope_from_image): Emit a moduleref if
+	neccesary.
+
+	* reflection.c (mono_image_build_metadata): Emit metadata only for the
+	current module. Emit the manifest only for the main module.
+
+	* reflection.c (mono_image_create_token): Add assertion when a 
+	memberref needs to be created.
+
+	* reflection.c reflection.h (MonoDynamicAssembly): Remove unused fields.
+
+	* reflection.c (mono_reflection_get_custom_attrs_blob): Allocate a 
+	larger buffer for the custom attribute blob. Fixes #50637.
+	
 2003-11-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threadpool.c: notify listener on async processing handles after
