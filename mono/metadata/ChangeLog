@@ -1,3 +1,13 @@
+2003-03-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (mono_reflection_get_type): Return the resolved type
+	only if it is in the assembly we searched.
+
+	* reflection.c (ensure_runtime_vtable): Initialize method slots.
+
+	* class.c (mono_class_setup_vtable): Set the slot of the overriding
+	method.
+
 2003-03-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* appdomain.c:
