@@ -1,3 +1,10 @@
+2002-12-26  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* X509Certificate.cs: Fixed the date issue (again). Time was 
+	converted to local time then ajusted to Pacific time. Now time
+	is kept (internally) as UTC and correct (-8) to Pacific when shown.
+	Changed Authenticode signature detection and removed debugging code.
+
 2002-12-22  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* X509Certificate.cs: Completed CreateFromSignedFile. Added a new 

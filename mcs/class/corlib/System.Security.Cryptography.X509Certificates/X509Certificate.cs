@@ -373,7 +373,7 @@ public class X509Certificate
 		case 15: mask = "yyyyMMddHHmmssZ"; // GeneralizedTime
 			break;
 		}
-		return DateTime.ParseExact (t, mask, null);
+		return DateTime.ParseExact (t, mask, null).ToUniversalTime ();
 	}
 
 	// that's were the real job is!
@@ -479,38 +479,79 @@ public class X509Certificate
 		return new X509Certificate (data);
 	}
 
+	static private int ReadWord (Stream s) 
+	{
+		int word = s.ReadByte ();
+		word = (s.ReadByte () << 8) + word;
+		return word;
+	}
+
+	static private int ReadDWord (Stream s) 
+	{
+		int b1 = s.ReadByte ();
+		int b2 = s.ReadByte ();
+		int b3 = s.ReadByte ();
+		int b4 = s.ReadByte ();
+		return (b4 << 24) + (b3 << 16) + (b2 << 8) + b1;
+	}
+
+	// http://www.mycgiserver.com/~ultraschall/files/pefile.htm
+	static private byte[] GetAuthenticodeSignature (string fileName) 
+	{
+		FileStream fs = new FileStream (fileName, FileMode.Open, FileAccess.Read);
+		try {
+			// MZ - DOS header
+			if (ReadWord (fs) != 0x5a4d)
+				return null;
+			// find offset of PE header
+			fs.Seek (60, SeekOrigin.Begin);
+			int peOffset = ReadDWord (fs);
+
+			// PE - NT header
+			fs.Seek (peOffset, SeekOrigin.Begin);
+			if (ReadWord (fs) != 0x4550)
+				return null;
+
+			fs.Seek (150, SeekOrigin.Current);
+
+			// IMAGE_DIRECTORY_ENTRY_SECURITY
+			int secOffset = ReadDWord (fs);
+			if (secOffset == 0)
+				return null;
+			int secSize = ReadDWord (fs);
+			if (secSize == 0)
+				return null;
+
+			// Authenticode signature
+			fs.Seek (secOffset, SeekOrigin.Begin);
+			if (ReadDWord (fs) != secSize)
+				return null;
+			if (ReadDWord (fs) != 0x00020200)
+				return null;
+			
+			byte[] signature = new byte [secSize - 8];
+			fs.Read (signature, 0, signature.Length);
+			fs.Close ();
+			return signature;
+		}
+		catch {
+			fs.Close ();
+			return null;
+		}
+	}
+
 	// LAMESPEC: How does it differ from CreateFromCertFile ?
 	// It seems to get the certificate inside a PE file (maybe a CAB too ?)
 	public static X509Certificate CreateFromSignedFile (string filename)
 	{
-		FileStream fs = new FileStream (filename, FileMode.Open, FileAccess.Read);
-
-		// first we must find the start of the signature structure
-		// we read the last 16k of the file at try to find the signature
-		int length = (int) Math.Min (fs.Length, 16384);
-		byte[] last16k = new byte [length];
-
-		fs.Seek (-length, SeekOrigin.End);
-		fs.Read (last16k, 0, length);
-		fs.Close ();
-
-		// quick to code but a long way from optimal
-		string s = BitConverter.ToString (last16k);
-		int pos = s.IndexOf ("00-3C-00-3C-00-3C-00-4F-00-62-00-73-00-6F-00-6C-00-65-00-74-00-65-00-3E-00-3E-00-3E");
-		if (pos == -1)
-			return null;
-		pos = (pos / 3) - 93;
-		int signLength = BitConverter.ToInt32 (last16k, pos);
-		int signFlags = BitConverter.ToInt32 (last16k, pos + 4);
-		if (signFlags != 0x00020200)
-			return null;
-		byte[] signature = new byte [signLength - 8];
-		Array.Copy (last16k, pos+8, signature, 0, signature.Length);
+		byte[] signature = GetAuthenticodeSignature (filename);
+		if (signature == null)
+			return null;	// file isn't signed
 
 		// \/ for debugging only \/
-		FileStream debug = new FileStream (@"d:\debug.sig", FileMode.Create);
-		debug.Write (signature, 0, signature.Length);
-		debug.Close ();
+//		FileStream debug = new FileStream (@"d:\debug.sig", FileMode.Create);
+//		debug.Write (signature, 0, signature.Length);
+//		debug.Close ();
 		// /\ for debugging only /\
 
 		// this is a big bad ASN.1 structure
