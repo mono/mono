@@ -292,9 +292,6 @@ namespace System.Web.Caching
 				if (objEntry.ExpiresIndex == CacheEntry.NoIndexInBucket) return;
 				if (_arrEntries.Length < objEntry.ExpiresIndex) return;
 
-				_arrEntries[objEntry.ExpiresIndex]._ticksExpires = ticksExpires;
-				_arrEntries[objEntry.ExpiresIndex]._objEntry.Expires = ticksExpires;
-
 				// Proceed to update.
 				_lock.UpgradeToWriterLock(0);
 				_arrEntries[objEntry.ExpiresIndex]._ticksExpires = ticksExpires;

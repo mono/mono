@@ -1,5 +1,9 @@
 2004-02-09  Jackson Harper <jackson@ximian.com>
 
+	* ExpiresBucket.cs: Remove duplicate code. Fixes bug #54031.
+	
+2004-02-09  Jackson Harper <jackson@ximian.com>
+
 	* Cache.cs: Close entries that are removed.
 	* CacheDependency.cs: Use FileSystemWatcher instead of custom
 	Watcher for file dependencies.
