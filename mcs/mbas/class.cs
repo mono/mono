@@ -256,7 +256,7 @@ namespace Mono.CSharp {
 
 		public AdditionResult AddConstructor (Constructor c)
 		{
-			if (c.Name != Basename) 
+			if (c.Name != "New") 
 				return AdditionResult.NotAConstructor;
 
 			bool is_static = (c.ModFlags & Modifiers.STATIC) != 0;
