@@ -1,3 +1,7 @@
+2002-02-26  Duncan Mak  <duncan@ximian.com>
+
+	* ImporterEventKind.cs: Added to CVS.
+
 2002-01-24  Miguel de Icaza  <miguel@ximian.com>
 
 	* StructLayoutAttribute.cs: Flag attribute as targetting structs
