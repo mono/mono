@@ -942,6 +942,16 @@ ExprSequence // returns ExprSequence
 	}
 	;
 
+#XPath2Start
+ExprSingle // returns ExprSingle 
+	: ForExpr
+	| QuantifiedExpr
+	| TypeswitchExpr
+	| IfExpr
+	| OrExpr
+	;
+#XPath2End
+#XQueryStart
 ExprSingle // returns ExprSingle 
 	: FLWORExpr
 	| QuantifiedExpr
@@ -949,6 +959,7 @@ ExprSingle // returns ExprSingle
 	| IfExpr
 	| OrExpr
 	;
+#XQueryEnd
 
 
 /* -------------------------------------

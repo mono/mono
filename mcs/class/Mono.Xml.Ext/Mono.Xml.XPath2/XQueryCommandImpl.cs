@@ -63,7 +63,7 @@ namespace Mono.Xml.XPath2
 
 		public void Compile (TextReader input, Evidence evidence, object xqueryCommand)
 		{
-			staticContext = XQueryASTCompiler.Compile (XQueryParser.Parse (input), null, evidence, this);
+			staticContext = XQueryASTCompiler.Compile (Mono.Xml.XQuery.Parser.Parser.Parse (input), null, evidence, this);
 			this.xqueryCommand = xqueryCommand;
 			// FIXME: generate executable assembly, and load it with evidence.
 		}

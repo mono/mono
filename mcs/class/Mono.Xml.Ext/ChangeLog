@@ -1,3 +1,10 @@
+2005-03-18  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Makefile:
+	  build XPath2/XQuery parsers/tokenizers from common codebase.
+	* Mono.Xml.Ext.dll:
+	  removed built sources.
+
 2004-11-19  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Mono.Xml.Ext.dll.sources : added XPathNavigatorReader.cs.

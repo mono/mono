@@ -17,9 +17,43 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 EXTRA_DISTFILES = \
 	Mono.Xml.XPath2/XQueryParser.jay
 
-Mono.Xml.XPath2/XQueryParser.cs: Mono.Xml.XPath2/XQueryParser.jay Mono.Xml.XPath2/skeleton-2.0.cs
-	$(topdir)/jay/jay -ct < Mono.Xml.XPath2/skeleton-2.0.cs $< >$@
+SKELETON = $(topdir)/jay/skeleton.cs
 
-CLEAN_FILES = Mono.Xml.Ext.pdb Mono.Xml.XPath2/XQueryParser.cs y.output
+Mono.Xml.XPath2/XPath2Parser.jay: Mono.Xml.XPath2/ParserBase.jay $(SKELETON)
+	sed "s/%start Module/%start Expr/" $< | sed "/\#XQueryStart/,/\#XQueryEnd/d" | sed "/\#XPath2Start/d" | sed "/\#XPath2End/d" >$@
+
+Mono.Xml.XPath2/XQueryParser.jay: Mono.Xml.XPath2/ParserBase.jay $(SKELETON)
+	sed "/\#XPath2Start/,/\#XPath2End/d" $< | sed "/\#XQueryStart/d" | sed "/\#XQueryEnd/d" >$@
+
+Mono.Xml.XPath2/XPath2Parser.cs: Mono.Xml.XPath2/XPath2Parser.jay
+	echo "#define XPATH2_PARSER" > $@
+	echo "#if NET_2_0" >> $@
+	$(topdir)/jay/jay -ct < $(SKELETON) $< >>$@
+	echo "#endif" >> $@
+
+Mono.Xml.XPath2/XQueryParser.cs: Mono.Xml.XPath2/XQueryParser.jay $(SKELETON)
+	echo "#define XQUERY_PARSER" > $@
+	echo "#if NET_2_0" >> $@
+	$(topdir)/jay/jay -ct < $(SKELETON) $< >>$@
+	echo "#endif" >> $@
+
+Mono.Xml.XPath2/XPath2Tokenizer.cs: Mono.Xml.XPath2/TokenizerBase.cs
+	echo "#define XPATH2_PARSER" > $@
+	cat $< >>$@
+
+Mono.Xml.XPath2/XQueryTokenizer.cs: Mono.Xml.XPath2/TokenizerBase.cs
+	echo "#define XQUERY_PARSER" > $@
+	cat $< >>$@
+
+BUILT_SOURCES = Mono.Xml.XPath2/XPath2Parser.cs \
+	Mono.Xml.XPath2/XPath2Tokenizer.cs \
+	Mono.Xml.XPath2/XQueryParser.cs \
+	Mono.Xml.XPath2/XQueryTokenizer.cs
+
+CLEAN_FILES = Mono.Xml.Ext.pdb \
+	Mono.Xml.XPath2/XPath2Parser.jay \
+	Mono.Xml.XPath2/XPath2Parser.cs \
+	Mono.Xml.XPath2/XQueryParser.cs \
+	y.output
 
 include ../../build/library.make

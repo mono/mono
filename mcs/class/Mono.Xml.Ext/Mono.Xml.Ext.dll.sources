@@ -23,9 +23,7 @@ Mono.Xml.XPath2/XQueryFunctionCliImpl.cs
 Mono.Xml.XPath2/XQueryFunctionContextAttribute.cs
 Mono.Xml.XPath2/XQueryFunctionTable.cs
 Mono.Xml.XPath2/XQueryModuleProlog.cs
-Mono.Xml.XPath2/XQueryParser.cs
 Mono.Xml.XPath2/XQueryStaticContext.cs
-Mono.Xml.XPath2/XQueryTokenizer.cs
 Mono.Xml.XPath2/XmlArgumentList.cs
 Mono.Xml.XPath2/XmlQueryCompileException.cs
 Mono.Xml.XPath2/XmlQueryException.cs

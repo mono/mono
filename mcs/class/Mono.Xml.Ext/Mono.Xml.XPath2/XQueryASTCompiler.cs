@@ -127,7 +127,7 @@ namespace Mono.Xml.XPath2
 			foreach (ModuleImport modimp in p.ModuleImports) {
 				foreach (string uri in modimp.Locations) {
 					Stream s = res.GetEntity (res.ResolveUri (null, uri), null, typeof (Stream)) as Stream;
-					XQueryLibraryModule ext = XQueryParser.Parse (new StreamReader (s)) as XQueryLibraryModule;
+					XQueryLibraryModule ext = Mono.Xml.XQuery.Parser.Parser.Parse (new StreamReader (s)) as XQueryLibraryModule;
 					if (ext == null)
 						throw new XmlQueryCompileException (String.Format ("External module {0} is resolved as a main module, while it should be a library module."));
 					XQueryStaticContext sctx = new XQueryASTCompiler (ext, options, compileContext, evidence, commandImpl).Compile ();

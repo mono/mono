@@ -1,3 +1,15 @@
+2005-03-18  Atsushi Enomoto <atsushi@ximian.com>
+
+	* skeleton-2.0.cs,
+	  XQueryParser.jay,
+	  XQueryTokenizer.cs : removed.
+	* ParserBase.jay,
+	  TokenizerBase.cs : added, used to create both XQuery parser and
+	  XPath2 parser.
+	* XQueryASTCompiler.cs,
+	  XQueryCommandImpl.cs : updated in reflection to XQuery parser change.
+	* SequenceType.cs : added namespace axis.
+
 2004-11-20  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XQueryParser.jay : don't output parser error by default.

@@ -370,7 +370,7 @@ namespace Mono.Xml.XPath2
 		static XPathAxis child, descendant, attribute, self, 
 			descendantOrSelf, followingSibling, following, 
 			parent, ancestor, precedingSibling, preceding, 
-			ancestorOrSelf;
+			ancestorOrSelf, namespaceAxis;
 
 		static XPathAxis ()
 		{
@@ -386,6 +386,7 @@ namespace Mono.Xml.XPath2
 			precedingSibling = new XPathAxis (XPathAxisType.PrecedingSibling);
 			preceding = new XPathAxis (XPathAxisType.Preceding);
 			ancestorOrSelf = new XPathAxis (XPathAxisType.AncestorOrSelf);
+			namespaceAxis = new XPathAxis (XPathAxisType.Namespace);
 		}
 
 		public static XPathAxis Child {
@@ -414,6 +415,10 @@ namespace Mono.Xml.XPath2
 
 		public static XPathAxis Following {
 			get { return following; }
+		}
+
+		public static XPathAxis NamespaceAxis {
+			get { return namespaceAxis; }
 		}
 
 		public static XPathAxis Parent {

@@ -1,4 +1,3 @@
-#define XQUERY_PARSER
 //
 // XQueryTokenizer.cs
 //
