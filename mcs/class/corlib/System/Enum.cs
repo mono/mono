@@ -120,10 +120,9 @@ namespace System {
 			return Convert.ToSingle (get_value (), provider);
 		}
 
-		[MonoTODO]
 		object IConvertible.ToType (Type conversionType, IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return Convert.ToType (get_value (), conversionType, provider);
 		}
 		
     		[CLSCompliant(false)]
