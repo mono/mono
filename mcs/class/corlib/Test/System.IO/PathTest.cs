@@ -6,8 +6,6 @@
 // TODO: Add a more thorough workout for some
 // of the "trickier" functions.
 
-#define WINDOWS
-
 using NUnit.Framework;
 using System.IO;
 using System;
@@ -32,27 +30,20 @@ public class PathTest : TestCase {
 	public PathTest( string name ): base(name) { }
 
         protected override void SetUp() {
-                
-                #if WINDOWS
-                
-                path1 = "c:\\foo\\test.txt";
-                path2 = "c:\\winnt";
-                path3 = "system32";
+		if ('/' == Path.VolumeSeparatorChar){
+			path1 = "/foo/test.txt";
+			path2 = "/etc";
+			path3 = "init.d";
+		} else {
+			path1 = "c:\\foo\\test.txt";
+			path2 = "c:\\winnt";
+			path3 = "system32";
+		}
 
-                #elif UNIX
-                
-                path1 = "/foo/test.txt";
-                path2 = "/etc";
-                path3 = "init.d"
-                
-                #elif MAC
-                
-                path1 = "foo:test.txt";
-                path2 = "foo";
-                path3 = "bar";
-
-                #endif
-
+		// For Mac.  Figure this out when we need it
+		//path1 = "foo:test.txt";
+		//path2 = "foo";
+		//path3 = "bar";
         }
 
 
@@ -121,17 +112,21 @@ public class PathTest : TestCase {
         
         public void TestGetTempPath() {
                 string getTempPath = Path.GetTempPath();
-                AssertEquals( Environment.GetEnvironmentVariable( "TEMP" ) + '\\',  getTempPath );
+                Assert ("Temp Path should not be empty",  getTempPath != String.Empty);
         }
 
-        /*
-        // Not sure what's an appropriate test for this function?  Maybe just
-        // check if the temp file exists as advertised
-        //
         public void TestGetTempFileName() {
-                string getTempFileName = Path.GetTempFileName();
-                //Console.WriteLine( getTempFileName );
-        }*/
+		string getTempFileName = "";
+		try {
+			getTempFileName = Path.GetTempFileName();
+			Assert ("Temp file name should not be empty", getTempFileName != String.Empty);
+			Assert ("File should exist", File.Exists(getTempFileName));
+		} finally {
+			if (getTempFileName != null && getTempFileName != String.Empty){
+				File.Delete(getTempFileName);
+			}
+		}
+        }
 
         public void TestHasExtension() {
                 AssertEquals( true, Path.HasExtension( "foo.txt" ) );
@@ -141,8 +136,8 @@ public class PathTest : TestCase {
         }
 
         public void TestRooted() {
-                AssertEquals( true, Path.IsPathRooted( "c:\\winnt\\" ) );
-                AssertEquals( false, Path.IsPathRooted( "system32\\drivers\\" ) );
+                Assert ("Path should be rooted", Path.IsPathRooted(path2));
+                Assert ("Path should NOT be rooted", !Path.IsPathRooted(path3));
         }
 }
 

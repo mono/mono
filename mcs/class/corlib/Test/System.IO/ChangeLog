@@ -1,3 +1,8 @@
+2002-05-12  Nick Drochak  <ndrochak@gol.com>
+
+	* StringTest.cs: Add a couple more tests.
+	* PathTest.cs: Make tests work a bit better on W32 and Linux.
+
 2002/05/10  Nick Drochak <ndrochak@gol.com>
 
 	* StreamWriterTest.cs: Use "resources" directory and use OS friendly
