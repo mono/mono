@@ -1,3 +1,8 @@
+2003-12-10  Mark Crichton  <crichton@gimp.org>
+
+	* RNGCryptoServiceProvider.cs: Removed icall to GetNonZeroBytes. Now
+	done with managed code.
+
 2003-11-13  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ProtectedData.cs: Added exceptions - core is still TODO.

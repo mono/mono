@@ -52,9 +52,6 @@ namespace System.Security.Cryptography {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void InternalGetBytes (byte[] data);
 		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern void InternalGetNonZeroBytes (byte[] data);
-
 		public override void GetBytes (byte[] data) 
 		{
 			InternalGetBytes (data);
@@ -62,7 +59,18 @@ namespace System.Security.Cryptography {
 		
 		public override void GetNonZeroBytes (byte[] data) 
 		{
-			InternalGetNonZeroBytes (data);
+        		byte[] random = new byte [data.Length * 2];
+        		int i = 0;
+        		// one pass should be enough but hey this is random ;-)
+        		while (i < data.Length) {
+                		GetBytes (random);
+                		for (int j=0; j < random.Length; j++) {
+                        		if (i == data.Length)
+                                		break;
+                        		if (random [j] != 0)
+                                		data [i++] = random [j];
+                		}
+        		}
 		}
 		
 		~RNGCryptoServiceProvider () 
