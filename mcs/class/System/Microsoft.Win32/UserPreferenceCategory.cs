@@ -19,7 +19,7 @@ namespace Microsoft.Win32 {
 		Keyboard = 6,
 		Menu = 7,
 		Mouse = 8,
-		Policy = 0,
+		Policy = 9,
 		Power = 10,
 		Screensaver = 11,
 		Window = 12,

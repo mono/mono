@@ -10,7 +10,7 @@
 namespace Microsoft.Win32 {
 	/// <summary>
 	/// </summary>
-public sealed class SystemEvents : System.EventArgs{
+public sealed class SystemEvents {
 
 	[MonoTODO]
 	public static void InvokeOnEventsThread(System.Delegate method)
