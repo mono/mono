@@ -13,6 +13,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Xml;
+using System.Xml.Schema;
 using System.Xml.XPath;
 
 using NUnit.Framework;
@@ -169,6 +170,15 @@ namespace MonoTests.System.Xml
 			document.LoadXml (xml);
 			xnr = new XmlNodeReader (document);
 			method (xnr);
+
+#if NET_2_0
+/*
+			// XPathNavigatorReader tests
+			System.Xml.XPath.XPathDocument doc = new System.Xml.XPath.XPathDocument (new StringReader (xml));
+			XmlReader xpr = doc.CreateNavigator ().ReadSubtree ();
+			method (xpr);
+*/
+#endif
 		}
 
 
@@ -1395,12 +1405,37 @@ namespace MonoTests.System.Xml
 			RunTest (xml, new TestMethod (ReadInnerXmlOnEndElement));
 		}
 
-		public void ReadInnerXmlOnEndElement (XmlReader xmlReader)
+		private void ReadInnerXmlOnEndElement (XmlReader xmlReader)
 		{
 			xmlReader.Read ();
 			xmlReader.Read ();
 			xmlReader.Read ();
 			AssertEquals (String.Empty, xmlReader.ReadInnerXml ());
 		}
+
+#if NET_2_0
+		[Test]
+		public void ReadAsObject ()
+		{
+			string xml = "<root><foo><bar><foo/></bar></foo></root>";
+			XmlReader xr = XmlReader.Create (new StringReader (xml));
+			xr.MoveToContent ();
+			AssertEquals (typeof (XmlDocument), xr.ReadAsObject (typeof (XmlDocument)).GetType ());
+			string xs = "<xs:schema xmlns:xs='" + XmlSchema.Namespace + "'/>";
+			xr = XmlReader.Create (new StringReader (xs));
+			xr.MoveToContent ();
+			AssertEquals (typeof (XmlSchema), xr.ReadAsObject (typeof (XmlSchema)).GetType ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void ReadAsObjectError ()
+		{
+			string xs = "<xs:schema xmlns:xs='" + XmlSchema.Namespace + "'/>";
+			XmlReader xr = XmlReader.Create (new StringReader (xs));
+			xr.MoveToContent ();
+			xr.ReadAsObject (typeof (XmlSchemaElement));
+		}
+#endif
 	}
 }

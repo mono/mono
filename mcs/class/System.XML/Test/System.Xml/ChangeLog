@@ -1,5 +1,9 @@
 2004-09-07  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlReaderCommonTests.cs : Added tests for ReadAsObject().
+
+2004-09-07  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlNamespaceManagerTests.cs : Added test for duplicate addition,
 	  atomization, complex RemoveNamespace() and GetNamespacesInScope().
 
