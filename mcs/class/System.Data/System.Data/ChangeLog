@@ -1,3 +1,11 @@
+2005-01-19  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* ConstraintCollection.cs: Donot throw exception if constraints
+	are null in AddRange method. Check for null before using the
+	argument.
+
+	fixes bug #69381.
+
 2004-01-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlDataInferenceLoader.cs,
