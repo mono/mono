@@ -335,6 +335,7 @@ System.Web.UI.WebControls/DataListItemCollection.cs
 System.Web.UI.WebControls/DataListItemEventArgs.cs
 System.Web.UI.WebControls/DataListItemEventHandler.cs
 System.Web.UI.WebControls/Xml.cs
+System.Web.UI.WebControls/XmlBuilder.cs
 System.Web.UI.WebControls/DayNameFormat.cs
 System.Web.UI.WebControls/DayRenderEventArgs.cs
 System.Web.UI.WebControls/DayRenderEventHandler.cs
