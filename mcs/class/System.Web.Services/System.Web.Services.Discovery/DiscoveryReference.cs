@@ -54,6 +54,15 @@ namespace System.Web.Services.Discovery {
 
 		protected static string FilenameFromUrl (string url)
 		{
+			if (url.ToLower().EndsWith ("/wsdl"))
+				url = url.Substring (0,url.Length-5);
+			else if (url.ToLower().EndsWith ("/soap"))
+				url = url.Substring (0,url.Length-5);
+			else if (url.ToLower().EndsWith ("/wsdl.jsp"))
+				url = url.Substring (0,url.Length-9);
+			else if (url.ToLower().EndsWith ("/soap.wsdl"))
+				url = url.Substring (0,url.Length-10);
+			
 			int i = url.LastIndexOf ("/");
 			if (i != -1) url = url.Substring (i+1);
 			

@@ -1,3 +1,8 @@
+2003-12-12  Lluis Sanchez Gual <lluis@ximian.com>
+	
+	* DiscoveryReference.cs: In FilenameFromUrl(), improved name generation
+	  for some common cases.
+	  
 2003-11-11  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* DiscoveryDocumentSerializer.cs: The class must be internal.
