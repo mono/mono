@@ -1,5 +1,11 @@
 2003-12-19  Martin Baulig  <martin@ximian.com>
 
+	* convert.cs (Convert.ImplicitReferenceConversion,
+	Convert.ImplicitReferenceConversionExists): Add support for
+	generic type declarations; see gen-36.cs.
+
+2003-12-19  Martin Baulig  <martin@ximian.com>
+
 	* pending.cs (Pending.InterfaceMethod): Use
 	`Type.IsAssignableFrom()' instead of `=='.
 

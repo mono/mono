@@ -39,7 +39,7 @@ namespace Mono.CSharp {
 
 			if (expr_type == TypeManager.void_type)
 				return null;
-			
+
 			//
 			// notice that it is possible to write "ValueType v = 1", the ValueType here
 			// is an abstract class, and not really a value type, so we apply the same rules.
@@ -140,6 +140,25 @@ namespace Mono.CSharp {
 				    expr_type.IsSubclassOf (TypeManager.delegate_type))
 					if (target_type == TypeManager.icloneable_type)
 						return new EmptyCast (expr, target_type);
+
+				// from a generic type definition to a generic instance.
+				if ((expr_type is TypeBuilder) && expr_type.IsGenericTypeDefinition &&
+				    target_type.IsGenericInstance) {
+					if (expr_type != target_type.GetGenericTypeDefinition ())
+						return null;
+
+					Type[] gparams = expr_type.GetGenericArguments ();
+					Type[] tparams = target_type.GetGenericArguments ();
+
+					if (gparams.Length != tparams.Length)
+						return null;
+
+					for (int i = 0; i < gparams.Length; i++)
+						if (gparams [i] != tparams [i])
+							return null;
+
+					return new EmptyCast (expr, target_type);
+				}
 				
 				return null;
 
@@ -221,7 +240,25 @@ namespace Mono.CSharp {
 				if (expr is NullLiteral && !target_type.IsValueType &&
 				    !TypeManager.IsEnumType (target_type))
 					return true;
-				
+
+				// from a generic type definition to a generic instance.
+				if ((expr_type is TypeBuilder) && expr_type.IsGenericTypeDefinition &&
+				    target_type.IsGenericInstance) {
+					if (expr_type != target_type.GetGenericTypeDefinition ())
+						return false;
+
+					Type[] gparams = expr_type.GetGenericArguments ();
+					Type[] tparams = target_type.GetGenericArguments ();
+
+					if (gparams.Length != tparams.Length)
+						return false;
+
+					for (int i = 0; i < gparams.Length; i++)
+						if (gparams [i] != tparams [i])
+							return false;
+
+					return true;
+				}
 			}
 			return false;
 		}
