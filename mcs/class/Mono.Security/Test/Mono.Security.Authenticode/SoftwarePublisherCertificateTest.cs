@@ -427,7 +427,7 @@ namespace MonoTests.Mono.Security.Authenticode {
 			WriteBuffer (certonly);
 			SoftwarePublisherCertificate spc = SoftwarePublisherCertificate.CreateFromFile (testfile);
 			AssertEquals ("certonly.Certificates", 1, spc.Certificates.Count);
-			AssertEquals ("certonly.CRL", 0, spc.CRLs.Count);
+			AssertEquals ("certonly.Crl", 0, spc.Crls.Count);
 		}
 	
 		[Test]
@@ -442,7 +442,7 @@ namespace MonoTests.Mono.Security.Authenticode {
 	
 			SoftwarePublisherCertificate newerspc = new SoftwarePublisherCertificate (newcertonly);
 			AssertEquals ("certonly.Certificates", 1, newerspc.Certificates.Count);
-			AssertEquals ("certonly.CRL", 0, newerspc.CRLs.Count);
+			AssertEquals ("certonly.Crl", 0, newerspc.Crls.Count);
 		}
 	
 		[Test]
@@ -451,7 +451,7 @@ namespace MonoTests.Mono.Security.Authenticode {
 			WriteBuffer (crlonly);
 			SoftwarePublisherCertificate spc = SoftwarePublisherCertificate.CreateFromFile (testfile);
 			AssertEquals ("crlonly.Certificates", 0, spc.Certificates.Count);
-			AssertEquals ("crlonly.CRL", 1, spc.CRLs.Count);
+			AssertEquals ("crlonly.Crl", 1, spc.Crls.Count);
 		}
 	
 		[Test]
@@ -460,13 +460,13 @@ namespace MonoTests.Mono.Security.Authenticode {
 			WriteBuffer (crlonly);
 			SoftwarePublisherCertificate spc = SoftwarePublisherCertificate.CreateFromFile (testfile);
 			SoftwarePublisherCertificate newspc = new SoftwarePublisherCertificate ();
-			newspc.CRLs.Add (spc.CRLs [0]);
+			newspc.Crls.Add (spc.Crls [0]);
 			byte[] newcrlonly = newspc.GetBytes ();
 			AssertEquals ("crlonly.compare", crlonly, newcrlonly);
 	
 			SoftwarePublisherCertificate newerspc = new SoftwarePublisherCertificate (newcrlonly);
 			AssertEquals ("crlonly.Certificates", 0, newerspc.Certificates.Count);
-			AssertEquals ("crlonly.CRL", 1, newerspc.CRLs.Count);
+			AssertEquals ("crlonly.Crl", 1, newerspc.Crls.Count);
 		}
 	
 		[Test]
@@ -475,7 +475,7 @@ namespace MonoTests.Mono.Security.Authenticode {
 			WriteBuffer (navy);
 			SoftwarePublisherCertificate spc = SoftwarePublisherCertificate.CreateFromFile (testfile);
 			AssertEquals ("navy.Certificates", 3, spc.Certificates.Count);
-			AssertEquals ("navy.CRL", 2, spc.CRLs.Count);
+			AssertEquals ("navy.Crl", 2, spc.Crls.Count);
 		}
 	
 		[Test]
@@ -486,14 +486,14 @@ namespace MonoTests.Mono.Security.Authenticode {
 			SoftwarePublisherCertificate newspc = new SoftwarePublisherCertificate ();
 			foreach (MSX.X509Certificate x in spc.Certificates)
 				newspc.Certificates.Add (x);
-			foreach (byte[] crl in spc.CRLs)
-				newspc.CRLs.Add (crl);
+			foreach (byte[] crl in spc.Crls)
+				newspc.Crls.Add (crl);
 			byte[] newnavy = newspc.GetBytes ();
 			AssertEquals ("navy.compare", navy, newnavy);
 	
 			SoftwarePublisherCertificate newerspc = new SoftwarePublisherCertificate (newnavy);
 			AssertEquals ("navy.Certificates", 3, newerspc.Certificates.Count);
-			AssertEquals ("navy.CRL", 2, newerspc.CRLs.Count);
+			AssertEquals ("navy.Crl", 2, newerspc.Crls.Count);
 		}
 	}
 }

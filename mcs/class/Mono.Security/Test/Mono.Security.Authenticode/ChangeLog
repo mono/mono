@@ -1,3 +1,8 @@
+2004-04-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SoftwarePublisherCertificateTest.cs: Ajusted to changes in the
+	assembly.
+
 2003-10-11  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* SoftwarePublisherCertificateTest.cs: Repaired test build.
