@@ -1,3 +1,9 @@
+
+Thu Jan 20 12:00:45 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, cfold.c, basic-calls.cs: preserve side effects
+	on cond branch optimization (fixes bug# 71515).
+
 2005-1-20  Massimiliano Mantione  <massi@ximian.com>
 
 	abcremoval.c: Fixed bug 71062.
