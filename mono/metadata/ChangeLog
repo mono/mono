@@ -1,4 +1,9 @@
 
+Thu Apr 4 11:35:37 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: move initialization of properties, events and nested
+	classes, so that they happen for interfaces, too.
+
 Wed Apr 3 20:03:32 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: cleanup some ugly casts in Array_SetValue*.
