@@ -1,3 +1,8 @@
+2003-11-25  Jackson Harper <jackson@ximian.com>
+
+	* HttpStaticObjectsCollection.cs: Add methods for serialization
+	and conversion to/from byte arrays.
+	
 2003-11-21  Jackson Harper <jackson@ximian.com>
 
 	* HttpResponse.cs: When caching data set the content length in the
