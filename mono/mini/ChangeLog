@@ -1,5 +1,13 @@
 2004-12-19  Ben Maurer  <bmaurer@ximian.com>
 
+	* mini.c (type_to_eval_stack_type): Make this handle the void type
+	(mono_emit_call_args): set the call->type with type_to_eval_stack_type
+	(emit_tree): use ip_in_bb to special case some common idioms
+	Update all callers to pass in the IP.
+	(mono_method_to_ir): Make CEE_CALL* do the above as well.
+
+	This gives us a nice 2% speedup in mcs bootstrap.
+
 	* mini-x86.c (peephole_pass): Peephole pass to make
 	mov  [foo], eax
 	push [foo]
