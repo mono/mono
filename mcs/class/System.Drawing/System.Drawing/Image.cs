@@ -74,24 +74,6 @@ public abstract class Image : MarshalByRefObject, ICloneable, IDisposable /*, IS
 	}
 
 	// non-static
-	public object Clone ()
-	{
-		// Fixme: implement me
-		throw new NotImplementedException ();
-	}
-		
-	public void Dispose ()
-	{
-		// Fixme: implement me
-		throw new NotImplementedException ();
-	}
-
-	protected virtual void Dispose (bool disposing)
-	{
-		// Fixme: implement me
-		throw new NotImplementedException ();
-	}
-	
 	public RectangleF GetBounds (ref GraphicsUnit pageUnit)
 	{
 		// Fixme: implement me

@@ -14,25 +14,28 @@
 //C:\cygwin\usr\local\mcs\class\System.Drawing\System.Drawing\Bitmap.cs(49,18): warning CS0649: Field 'System.Drawing.RGBQUAD.rgbRed' is never assigned to, and will always have its default value 0
 //C:\cygwin\usr\local\mcs\class\System.Drawing\System.Drawing\Bitmap.cs(50,18): warning CS0649: Field 'System.Drawing.RGBQUAD.rgbReserved' is never assigned to, and will always have its default value 0
 //C:\cygwin\usr\local\mcs\class\System.Drawing\System.Drawing\Bitmap.cs(54,20): warning CS0649: Field 'System.Drawing.BITMAPINFO.colorpalette' is never assigned to, and will always have its default value null
+// 2002-03-27  Christian Meyer  <Christian.Meyer@cs.tum.edu>
+// I'll have a closer look at it next week.
+//
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 
 namespace System.Drawing {
-	struct BITMAPFILEHEADER	{ // File info header
-		public uint bfType; // Specifies the type of file. This member must be BM.
-		public uint bfSize; // Specifies the size of the file, in bytes.
+	struct BITMAPFILEHEADER {        // File info header
+		public uint bfType;      // Specifies the type of file. This member must be BM.
+		public uint bfSize;      // Specifies the size of the file, in bytes.
 		public uint bfReserved1; // Reserved; must be set to zero.
 		public uint bfReserved2; // Reserved; must be set to zero.
-		public uint bfOffBits; // Specifies the byte offset from the BITMAPFILEHEADER
-						// structure to the actual bitmap data in the file.
+		public uint bfOffBits;   // Specifies the byte offset from the BITMAPFILEHEADER
+                                         // structure to the actual bitmap data in the file.
 	}
-	struct BITMAPINFOHEADER { // bitmap info header
+	struct BITMAPINFOHEADER {        // bitmap info header
 		public uint   biSize;
 		public int    biWidth;
 		public int    biHeight;
-		public ushort    biPlanes;
-		public ushort   biBitCount;
+		public ushort biPlanes;
+		public ushort biBitCount;
 		public uint   biCompression;
 		public uint   biSizeImage;
 		public int    biXPelsPerMeter;
@@ -42,12 +45,12 @@ namespace System.Drawing {
 	}
 
 	struct RGBQUAD {
-		public byte    rgbBlue;
-		public byte    rgbGreen;
-		public byte    rgbRed;
-		public byte    rgbReserved;
+		public byte rgbBlue;
+		public byte rgbGreen;
+		public byte rgbRed;
+		public byte rgbReserved;
 	}
-	struct BITMAPINFO { // bitmap info 
+	struct BITMAPINFO {              // bitmap info
 		public BITMAPINFOHEADER bitmapinfoheader;
 		public RGBQUAD[] colorpalette;
 	}
@@ -55,23 +58,23 @@ namespace System.Drawing {
 	// Is layout packed attribute needed here?
 	struct bitmapstruct {
 		//placed in a struct to keep all 3 (4 including the color table) contugious in memory.)
-		public BITMAPFILEHEADER	fileheader;		//File info header
+		public BITMAPFILEHEADER fileheader;     //File info header
 		//bitmapinfo includes the color table
-		public BITMAPINFO	info;		//bitmap info
-		public byte[,]		bits;		// Actual bitmap bits
+		public BITMAPINFO       info;           //bitmap info
+		public byte[,]          bits;           //Actual bitmap bits
 	}
 	public sealed class Bitmap : Image {
 		// TODO: add following to an enum  with BI_RLE4 and BI_RLE8
-		const int BI_RGB = 0;//? 0 is from example;
+		const int BI_RGB = 0;                   //? 0 is from example;
 		bitmapstruct bitmap = new bitmapstruct();
-		private void CommonInit(int width, int height){
+		private void CommonInit (int width, int height) {
 			// Init BITMAPFILEHANDLE
 			// document I am working from says tyoe must allways be "BM",
 			// the example has this set to 19778.
 			// TODO: verify magic number 19778 for "BM" bfType
 			bitmap.fileheader.bfType = 19778;
 			// TODO: is this the correct file size?
-			bitmap.fileheader.bfSize =(uint) 
+			bitmap.fileheader.bfSize = (uint)
 				//bitmap
 				(width * height * 4)
 				//add color table, 0 for now
@@ -87,7 +90,7 @@ namespace System.Drawing {
 			// Also I force 32 bit color for first pass, so for now there is no color table (24 bit or greater)
 			// TODO: verify magic number 124 for bfOffBits
 			// TODO: Could also be sizeof(fileheader and bitmapinfo)
-			bitmap.fileheader.bfOffBits = 60;//14 * 4 for ints + 2 * 2 for words.
+			bitmap.fileheader.bfOffBits = 60; //14 * 4 for ints + 2 * 2 for words.
 
 			// Init BITMAPINFO HEADER
 			// TODO: document on bitmaps shows only 1, 4, 8, 24 as valid pixel depths
@@ -125,27 +128,28 @@ namespace System.Drawing {
 			// TODO: support pels per meter
 			bitmap.info.bitmapinfoheader.biXPelsPerMeter = 0;
 			bitmap.info.bitmapinfoheader.biYPelsPerMeter = 0;
-			bitmap.bits = new byte[width*4,height];
+			bitmap.bits = new byte[width*4, height];
 		}
 		#region constructors
 		// constructors
 		public Bitmap (int width, int height) {
-			CommonInit(width, height);
+			CommonInit (width, height);
 		}
 
 		public Bitmap (int width, int height, Graphics g) {
 			//TODO: Error check X,Y
-			CommonInit(width,height);
+			CommonInit (width,height);
 			//TODO: use graphics to set vertial and horzontal resolution.
 			//TODO: that is all the spec requires or desires
 		}
-//
+
 		public Bitmap (int width, int heigth, PixelFormat format) {
-			if((int)format != BI_RGB){
+			if ((int)format != BI_RGB) {
 				throw new NotImplementedException ();
 			}
-			CommonInit(width, heigth);
+			CommonInit (width, heigth);
 		}
+
 		public Bitmap (Image origial) {
 			throw new NotImplementedException ();
 			//this.original = original;
@@ -167,12 +171,11 @@ namespace System.Drawing {
 			//this.newSize = newSize;
 		}
 
-
 		public Bitmap (Stream stream, bool useIcm) {
 			throw new NotImplementedException ();
 			//this.stream = stream;
 			//this.useIcm = useIcm;
-		} 
+		}
 
 		public Bitmap (string filename, bool useIcm) {
 			throw new NotImplementedException ();
@@ -195,7 +198,7 @@ namespace System.Drawing {
 
 
 		public Bitmap (int width, int height, int stride,
-						PixelFormat format, IntPtr scan0) {
+			       PixelFormat format, IntPtr scan0) {
 			throw new NotImplementedException ();
 			//this.width = width;
 			//this.heigth = heigth;
@@ -203,19 +206,19 @@ namespace System.Drawing {
 			//this.format = format;
 			//this.scan0 = scan0;
 		}
-		#endregion 
+		#endregion
 		// methods
 		public Color GetPixel (int x, int y) {
 			//TODO: Error check X,Y
-			return Color.FromArgb(bitmap.bits[x,y],bitmap.bits[x+1,y],bitmap.bits[x+2,y],bitmap.bits[x+3,y]);
+			return Color.FromArgb (bitmap.bits[x,y], bitmap.bits[x+1,y], bitmap.bits[x+2,y], bitmap.bits[x+3,y]);
 		}
 
 		public void SetPixel (int x, int y, Color color) {
 			//TODO: Error check X,Y
-			bitmap.bits[x, y]		= color.A;
-			bitmap.bits[x + 1, y]	= color.R;
-			bitmap.bits[x + 2, y]	= color.G;
-			bitmap.bits[x + 2, y]	= color.B;
+			bitmap.bits[x, y]     = color.A;
+			bitmap.bits[x + 1, y] = color.R;
+			bitmap.bits[x + 2, y] = color.G;
+			bitmap.bits[x + 2, y] = color.B;
 		}
 
 		public Bitmap Clone (Rectangle rect,PixelFormat format) {
@@ -229,45 +232,45 @@ namespace System.Drawing {
 		public static Bitmap FromHicon (IntPtr hicon) {
 			throw new NotImplementedException ();
 		}
-		
+
 		public static Bitmap FromResource (IntPtr hinstance,
 		                                   string bitmapName) {
 			throw new NotImplementedException ();
 		}
-		
+
 		public IntPtr GetHbitmap () {
 			throw new NotImplementedException ();
 		}
-		
+
 		public IntPtr GetHbitmap (Color background) {
 			throw new NotImplementedException ();
 		}
-		
+
 		public IntPtr GetHicon () {
 			throw new NotImplementedException ();
 		}
-		
+
 		public BitmapData LockBits (Rectangle rect, ImageLockMode flags,
 		                            PixelFormat format) {
 			throw new NotImplementedException ();
-		} 
-		
+		}
+
 		public void MakeTransparent () {
 			throw new NotImplementedException ();
 		}
-		
+
 		public void MakeTransparent (Color transparentColor) {
 			throw new NotImplementedException ();
 		}
-		
+
 		public void SetResolution (float xDpi, float yDpi) {
 			throw new NotImplementedException ();
 		}
-		
+
 		public void UnlockBits (BitmapData bitmapdata) {
 			throw new NotImplementedException ();
 		}
-		
+
 		// properties
 		// needs to be done ###FIXME###
 	}
