@@ -1,3 +1,8 @@
+2004-12-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml.dll.sources : added XmlSchemaValidator.cs,
+	  XmlValueGetter.cs and XmlSchemaValidationFlags.cs.
+
 2004-12-06  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (lib_file): New autodetecting define.

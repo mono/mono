@@ -293,13 +293,13 @@ namespace System.Xml
 			if (xvr != null)
 				xvr.SetSchemas (settings.Schemas);
 
-			if (settings.IgnoreIdentityConstraints)
+			if ((settings.ValidationFlags & XmlSchemaValidationFlags.IgnoreIdentityConstraints) != 0)
 				throw new NotImplementedException ();
-			if (!settings.IgnoreInlineSchema)
+			if ((settings.ValidationFlags & XmlSchemaValidationFlags.IgnoreInlineSchema) == 0)
 				throw new NotImplementedException ();
-			if (!settings.IgnoreSchemaLocation)
+			if ((settings.ValidationFlags & XmlSchemaValidationFlags.IgnoreSchemaLocation) == 0)
 				throw new NotImplementedException ();
-			if (!settings.IgnoreValidationWarnings)
+			if ((settings.ValidationFlags & XmlSchemaValidationFlags.IgnoreValidationWarnings) == 0)
 				throw new NotImplementedException ();
 
 			return xvr != null ? xvr : reader;

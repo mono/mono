@@ -35,6 +35,8 @@ using System.IO;
 using System.Net;
 using System.Xml.Schema;
 
+using XsValidationFlags = System.Xml.Schema.XmlSchemaValidationFlags;
+
 namespace System.Xml
 {
 	public class XmlReaderSettings
@@ -44,11 +46,7 @@ namespace System.Xml
 		private ConformanceLevel conformance;
 		private bool dtdValidate;
 		private bool ignoreComments;
-		private bool ignoreIdentityConstraints;
-		private bool ignoreInlineSchema;
 		private bool ignoreProcessingInstructions;
-		private bool ignoreSchemaLocation;
-		private bool ignoreValidationWarnings;
 		private bool ignoreWhitespace;
 		private int lineNumberOffset;
 		private int linePositionOffset;
@@ -56,6 +54,7 @@ namespace System.Xml
 		private XmlNameTable nameTable;
 		private XmlSchemaSet schemas;
 		private bool xsdValidate;
+		private XsValidationFlags validationFlags;
 
 		public XmlReaderSettings ()
 		{
@@ -69,18 +68,14 @@ namespace System.Xml
 			conformance = org.conformance;
 			dtdValidate = org.dtdValidate;
 			ignoreComments = org.ignoreComments;
-			ignoreIdentityConstraints = 
-				org.ignoreIdentityConstraints;
-			ignoreInlineSchema = org.ignoreInlineSchema;
 			ignoreProcessingInstructions = 
 				org.ignoreProcessingInstructions;
-			ignoreSchemaLocation = org.ignoreSchemaLocation;
-			ignoreValidationWarnings = org.ignoreValidationWarnings;
 			ignoreWhitespace = org.ignoreWhitespace;
 			lineNumberOffset = org.lineNumberOffset;
 			linePositionOffset = org.linePositionOffset;
 			prohibitDtd = org.prohibitDtd;
 			schemas = org.schemas;
+			validationFlags = org.validationFlags;
 			xsdValidate = org.xsdValidate;
 			nameTable = org.NameTable;
 		}
@@ -99,16 +94,16 @@ namespace System.Xml
 			conformance = ConformanceLevel.Document;
 			dtdValidate = false;
 			ignoreComments = false;
-			ignoreIdentityConstraints = false; // ? not documented
-			ignoreInlineSchema = true;
 			ignoreProcessingInstructions = false;
-			ignoreSchemaLocation = true;
-			ignoreValidationWarnings = true;
 			ignoreWhitespace = false;
 			lineNumberOffset = 0;
 			linePositionOffset = 0;
 			prohibitDtd = false; // ? not documented
 			schemas = new XmlSchemaSet ();
+			validationFlags =
+				XsValidationFlags.IgnoreValidationWarnings
+				| XsValidationFlags.IgnoreSchemaLocation
+				| XsValidationFlags.IgnoreInlineSchema;
 			xsdValidate = false;
 		}
 
@@ -137,29 +132,9 @@ namespace System.Xml
 			set { ignoreComments = value; }
 		}
 
-		public bool IgnoreIdentityConstraints {
-			get { return ignoreIdentityConstraints ; }
-			set { ignoreIdentityConstraints = value; }
-		}
-
-		public bool IgnoreInlineSchema {
-			get { return ignoreInlineSchema; }
-			set { ignoreInlineSchema = value; }
-		}
-
 		public bool IgnoreProcessingInstructions {
 			get { return ignoreProcessingInstructions; }
 			set { ignoreProcessingInstructions = value; }
-		}
-
-		public bool IgnoreSchemaLocation {
-			get { return ignoreSchemaLocation; }
-			set { ignoreSchemaLocation = value; }
-		}
-
-		public bool IgnoreValidationWarnings {
-			get { return ignoreValidationWarnings; }
-			set { ignoreValidationWarnings = value; }
 		}
 
 		public bool IgnoreWhitespace {
@@ -196,6 +171,11 @@ namespace System.Xml
 			set {
 				throw new XmlException ("XmlReaderSettings.Schemas is read-only and cannot be set.");
 			}
+		}
+
+		public XsValidationFlags ValidationFlags {
+			get { return validationFlags; }
+			set { validationFlags = value; }
 		}
 
 		public bool XsdValidate {

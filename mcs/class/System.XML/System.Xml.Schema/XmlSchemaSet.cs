@@ -132,6 +132,9 @@ namespace System.Xml.Schema
 
 		public XmlResolver XmlResolver {
 			set { xmlResolver = value; }
+#if NET_2_0
+			internal get { return xmlResolver; }
+#endif
 		}
 
 		public XmlSchema Add (string targetNamespace, string url)

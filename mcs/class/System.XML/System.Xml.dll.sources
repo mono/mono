@@ -256,6 +256,7 @@ System.Xml.Schema/XmlSchemaTotalDigitsFacet.cs
 System.Xml.Schema/XmlSchemaType.cs
 System.Xml.Schema/XmlSchemaUnique.cs
 System.Xml.Schema/XmlSchemaUse.cs
+System.Xml.Schema/XmlSchemaValidator.cs
 System.Xml.Schema/XmlSchemaValidity.cs
 System.Xml.Schema/XmlSchemaValidationException.cs
 System.Xml.Schema/XmlSchemaWhiteSpaceFacet.cs
@@ -264,8 +265,10 @@ System.Xml.Schema/XmlSeverityType.cs
 System.Xml.Schema/ValidationHandler.cs
 System.Xml.Schema/XmlSchemaUtil.cs
 System.Xml.Schema/XmlSchemaReader.cs
+System.Xml.Schema/XmlSchemaValidationFlags.cs
 System.Xml.Schema/XmlTypeCode.cs
 System.Xml.Schema/XmlValueConverter.cs
+System.Xml.Schema/XmlValueGetter.cs
 System.Xml.Serialization/IXmlSerializerImplementation.cs
 System.Xml.Serialization/IXmlTextParser.cs
 System.Xml.Serialization/CodeExporter.cs

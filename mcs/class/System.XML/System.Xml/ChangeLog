@@ -1,3 +1,9 @@
+2004-12-08  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlException.cs : added SecurityPermissionAttributes.
+	* XmlReaderSettings.cs,
+	  XmlReader.cs : added ValidationFlags and removed obsolete ones.
+
 2004-12-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlWriter.cs : WriteQualifiedNameInternal() should consider the case
