@@ -1,3 +1,8 @@
+2003-01-26  Daniel Morgan <danmorg@sc.rr.com>
+
+	* sqlsharpgtk.cs: added support for providers:
+	 MySQLNet, Npgsql, DB2Client, and Oracle
+
 2002-12-30  Daniel Morgan <danmorg@sc.rr.com>
 
 	* LoginDialog.cs

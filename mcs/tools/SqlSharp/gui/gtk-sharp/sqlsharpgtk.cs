@@ -5,7 +5,7 @@
 // Author:
 //     Daniel Morgan <danmorg@sc.rr.com>
 //
-// (C)Copyright 2002 by Daniel Morgan
+// (C)Copyright 2002, 2003 by Daniel Morgan
 //
 // To be included with Mono as a SQL query tool licensed under the GPL license.
 //
@@ -253,17 +253,31 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp
 			
 			providerList.Add (new DbProvider (
 				"MYSQL",
-				"MySQL",
+				"MySQL (Mono)",
 				"Mono.Data.MySql",
 				"Mono.Data.MySql.MySqlConnection",
 				"Mono.Data.MySql.MySqlDataAdapter",
 				false ));
 			providerList.Add (new DbProvider (
+				"MYSQLNET",
+				"MySQL (ByteFX)",
+				"ByteFX.Data",
+				"ByteFX.Data.MySQLClient.MySQLConnection",
+				"ByteFX.Data.MySQLClient.MySQLDataAdapter",
+				false ));
+			providerList.Add (new DbProvider (
 				"POSTGRESQL",
-				"PostgreSQL",
+				"PostgreSQL (Mono)",
 				"Mono.Data.PostgreSqlClient",
 				"Mono.Data.PostgreSqlClient.PgSqlConnection",
 				"Mono.Data.PostgreSqlClient.PgSqlDataAdapter",
+				false ));
+			providerList.Add (new DbProvider (
+				"NPGSQL",
+				"PostgreSQL (Npgsql)",
+				"Npgsql",
+				"Npgsql.NpgsqlConnection",
+				"Npgsql.NpgsqlDataAdapter",
 				false ));
 			providerList.Add (new DbProvider (
 				"SQLCLIENT",
@@ -306,6 +320,20 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp
 				"Mono.Data.SybaseClient",
 				"Mono.Data.SybaseClient.SybaseConnection",
 				"Mono.Data.SybaseClient.SybaseDataAdapter",
+				false ));
+			providerList.Add (new DbProvider (
+				"DB2",
+				"IBM DB2",
+				"Mono.Data.DB2Client",
+				"Mono.Data.DB2Client.DB2ClientConnection",
+				"Mono.Data.DB2Client.DB2ClientDataAdapter",
+				false ));
+			providerList.Add (new DbProvider (
+				"ORACLE",
+				"Oracle",
+				"Mono.Data.OracleClient",
+				"Mono.Data.OracleClient.OracleConnection",
+				"Mono.Data.OracleClient.OracleDataAdapter",
 				false ));
 		}
 		
@@ -791,7 +819,8 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp
 					reader = cmd.ExecuteReader ();
 				}
 				catch (Exception e) {
-					msg = "SQL Execution Error: " + e.Message;
+					//msg = "SQL Execution Error: " + e.Message;
+					msg = "SQL Execution Error: " + e;
 					Error (msg);
 					return;
 				}
@@ -872,7 +901,8 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp
 				}
 			}
 			catch (Exception e) {
-				msg = "Error Displaying Data: " + e.Message;
+				//msg = "Error Displaying Data: " + e.Message;
+				msg = "Error Displaying Data: " + e;
 				Error (msg);
 			}
 		}
