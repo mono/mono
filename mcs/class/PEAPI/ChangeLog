@@ -1,3 +1,8 @@
+2003-10-18 Jackson Harper <jackson@ximian.com>
+
+	* PEAPI.cs: Add proper support for short instructions, removing
+	PEAPI's auto selection of short/long branch operations feature.
+	
 2003-10-10 Jackson Harper <jackson@ximian.com>
 
 	* PEAPI.cs: New GenericMethodSig class for creating generic method

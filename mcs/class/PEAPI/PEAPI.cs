@@ -643,8 +643,15 @@ namespace PEAPI
   /// <summary>
   /// CIL branch instructions
   /// </summary>
-  public enum BranchOp {br = 0x2B, brfalse, brtrue, beq, bge, bgt, ble, blt,
-    bne_un, bge_un, bgt_un, ble_un, blt_un, leave = 0xDE }
+  public enum BranchOp {
+          // short branches
+          br_s = 0x2B, brfalse_s, brtrue_s, beq_s, bge_s, bgt_s,
+          ble_s, blt_s, bne_un_s, bge_un_s, bgt_un_s, ble_un_s, blt_un_s,
+          // long branches
+          br = 0x38, brfalse, brtrue, beq, bge, bgt, ble, blt,
+          bne_un, bge_un, bgt_un, ble_un, blt_un,
+
+          leave = 0xDD, leave_s }
 
   /// <summary>
   /// Index for all the tables in the meta data
@@ -3940,17 +3947,15 @@ if (rsrc != null)
       dest = dst;
       dest.AddBranch(this);
       size++;
+
+      if (inst >= (int) BranchOp.br && inst != (int) BranchOp.leave_s) {
+              shortVer = false;
+              size += 3;
+      }
     }
 
     internal sealed override bool Check(MetaData md) {
       target = (int)dest.GetLabelOffset() - (int)(offset + size);
-      if (shortVer && ((target < minByteVal) || (target > maxByteVal))) {
-        if (instr < (int)BranchOp.leave) instr += longInstrOffset;
-        else instr--;
-        shortVer = false;
-        size += 3;
-        return true;
-      }
       return false;
     }
 
