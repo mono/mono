@@ -30,7 +30,7 @@ namespace System.Collections {
 		private ArrayList (object[] dataArray, int count, int capacity,
 				   bool fixedSize, bool readOnly, bool synchronized)
 		{
-			this.dataArray = dataArray;
+			this.dataArray = (object[])dataArray.Clone();
 			this.count = count;
 			this.capacity = capacity;
 			this.fixedSize = fixedSize;

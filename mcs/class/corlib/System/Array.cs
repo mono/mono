@@ -286,24 +286,8 @@ namespace System
 			}
 		}
 
-		public virtual object Clone ()
-		{
-			// Array is abstract -- Array a = new Array();
-			Array a = (Array)this.Clone();
-
-			// I don't know how to handle this ?
-			if (this.Rank > 1)
-				throw new RankException ();
-
-			for (int i = 0; i < this.GetLength (0); i++)
-			{
-				int index = this.GetLowerBound (0) + i;
-
-				a.SetValue(this.GetValue(index), index);
-			}
-
-			return a;
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public virtual extern object Clone ();
 
 		public static void Copy (Array source, Array dest, int length)
 		{
