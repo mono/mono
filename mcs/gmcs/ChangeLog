@@ -1,5 +1,11 @@
 2004-03-16  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (MemberAccess.DoResolve): If `expr' resolved to a
+	ConstructedType, call ResolveType() on it to get the type rather
+	than just using `expr.Type'.
+
+2004-03-16  Martin Baulig  <martin@ximian.com>
+
 	* generics.cs (ConstructedType.GetMemberAccess): Take the
 	EmitContext instead on the TypeExpr and use
 	ec.TypeContainer.CurrentType/ec.ContainerType.

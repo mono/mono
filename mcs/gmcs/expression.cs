@@ -6845,8 +6845,10 @@ namespace Mono.CSharp {
 			// it will fail to find any members at all
 			//
 
-			Type expr_type = expr.Type;
+			Type expr_type;
 			if (expr is TypeExpr){
+				expr_type = ((TypeExpr) expr).ResolveType (ec);
+
 				if (!ec.DeclSpace.CheckAccessLevel (expr_type)){
 					Error (122, "`" + expr_type + "' " +
 					       "is inaccessible because of its protection level");
@@ -6865,7 +6867,8 @@ namespace Mono.CSharp {
 						}
 					}
 				}
-			}
+			} else
+				expr_type = expr.Type;
 			
 			if (expr_type.IsPointer){
 				Error (23, "The `.' operator can not be applied to pointer operands (" +
