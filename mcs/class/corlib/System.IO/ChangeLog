@@ -1,3 +1,8 @@
+2004-06-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BufferedStream.cs: fixed typo that prevented Read() from working.
+	This went out with beta 2. Closes bug #59534.
+
 2004-05-31  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Directory.cs, File.cs : Fixed Exists() that raised 

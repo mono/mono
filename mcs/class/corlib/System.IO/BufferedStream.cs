@@ -156,7 +156,7 @@ namespace System.IO {
 			if (array == null)
 				throw new ArgumentNullException ("array");
 			CheckObjectDisposedException ();
-			if (!m_stream.CanWrite) {
+			if (!m_stream.CanRead) {
 				throw new NotSupportedException (
 					Locale.GetText ("Cannot read from stream"));
 			}
