@@ -23,7 +23,7 @@ namespace System.Web
 #endif
 	public class HttpException : ExternalException
 	{
-		int http_code;
+		int http_code = 500;
 		int hr;
 		string fileName;
 
