@@ -21,14 +21,20 @@ namespace System.Reflection
 		protected ParameterInfo () {
 		}
 
-		internal ParameterInfo (ParameterBuilder pb, Type type, MemberInfo member) {
+		internal ParameterInfo (ParameterBuilder pb, Type type, MemberInfo member, int position) {
 			this.ClassImpl = type;
 			this.MemberImpl = member;
-			this.NameImpl = pb.Name;
-			this.PositionImpl = pb.Position;
-			this.AttrsImpl = (ParameterAttributes) pb.Attributes;
+			if (pb != null) {
+				this.NameImpl = pb.Name;
+				this.PositionImpl = pb.Position;
+				this.AttrsImpl = (ParameterAttributes) pb.Attributes;
+			} else {
+				this.NameImpl = "";
+				this.PositionImpl = position;
+				this.AttrsImpl = ParameterAttributes.None;
+			}
 		}
-	
+
 		/* to build a ParameterInfo for the return type of a method */
 		internal ParameterInfo (Type type, MemberInfo member) {
 			this.ClassImpl = type;

@@ -90,17 +90,13 @@ namespace System.Reflection.Emit {
 			return iattrs;
 		}
 		public override ParameterInfo[] GetParameters() {
-			if ((parameters == null) || (pinfo == null))
+			if (parameters == null)
 				return null;
 
 			ParameterInfo[] retval = new ParameterInfo [parameters.Length];
-			for (int i = 1; i < parameters.Length + 1; i++) {
-				if (pinfo [i] == null)
-					return null;
-
-				retval [i - 1] = new ParameterInfo (pinfo [i], parameters [i - 1], this);
+			for (int i = 0; i < parameters.Length; i++) {
+				retval [i] = new ParameterInfo (pinfo == null ? null : pinfo [i + 1], parameters [i], this, i + 1);
 			}
-
 			return retval;
 		}
 		

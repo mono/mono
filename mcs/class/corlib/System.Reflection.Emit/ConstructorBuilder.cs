@@ -29,7 +29,7 @@ namespace System.Reflection.Emit {
 		private bool init_locals = true;
 
 		internal ConstructorBuilder (TypeBuilder tb, MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes) {
-			attrs = attributes;
+			attrs = attributes | MethodAttributes.SpecialName;
 			call_conv = callingConvention;
 			if (parameterTypes != null) {
 				this.parameters = new Type [parameterTypes.Length];
@@ -52,15 +52,12 @@ namespace System.Reflection.Emit {
 			return iattrs;
 		}
 		public override ParameterInfo[] GetParameters() {
-			if ((parameters == null) || (pinfo == null))
+			if (parameters == null)
 				return null;
 
 			ParameterInfo[] retval = new ParameterInfo [parameters.Length];
 			for (int i = 0; i < parameters.Length; i++) {
-				if (pinfo [i+1] == null)
-					return null;
-
-				retval [i] = new ParameterInfo (pinfo [i+1], parameters [i], this);
+				retval [i] = new ParameterInfo (pinfo == null ? null : pinfo [i+1], parameters [i], this, i + 1);
 			}
 
 			return retval;
