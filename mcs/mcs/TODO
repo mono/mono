@@ -1,3 +1,46 @@
+* Reorganization
+
+	There is a mess right now between SimpleName,
+	ResolveMemberAccess and Invocation.
+
+	Nested things like:
+
+	class X {
+		X Prop () {  get ... }
+	}
+
+	class Y {
+		void a (X x)
+		{
+			x.Prop.Prop.Prop.Prop.method ();
+		}
+	}
+
+	Are valid, and our current recursive-less implementation wont
+	address these.  
+
+	We need to make sure that SimpleNames (which are a horrible
+	name, as they are really CompoundNames right now) will be remapped
+	to the propper MemberAccess after parsing. 
+
+* Reorganization: calling structure methods
+
+	Structure methods do not expect a `this' pointer, they expect
+	an address on the stack.  We can probably use all the LValue members
+	to do this.
+
+	Now, for cases like:
+
+		struct A { void M ();}
+		class B { A Func () {}}
+
+	When we do:
+		b.Func ().M ()
+
+	A temporary is created by the compiler to store the result from 
+	b.Func, we could then use this LocalVariable to invoke the
+	AddressOf on it.
+
 * FindMembers
 
 	Move our utility FindMembers from TypeContainer to Decl, because interfaces
