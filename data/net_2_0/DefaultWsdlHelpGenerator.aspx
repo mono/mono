@@ -344,7 +344,9 @@ string GetTestResult ()
 	
 	try
 	{
-		WebRequest req = WebRequest.Create (location + "/" + CurrentOperationName + "?" + qs);
+		string url = location + "/" + CurrentOperationName;
+		Uri uri = new Uri (url);
+		WebRequest req = WebRequest.Create (url + "?" + qs);
 		HttpCookieCollection cookies = Request.Cookies;
 		int last = cookies.Count;
 		if (last > 0) {
@@ -352,7 +354,7 @@ string GetTestResult ()
 			for (int i = 0; i < last; i++) {
 				HttpCookie hcookie = cookies [i];
 				Cookie cookie = new Cookie (hcookie.Name, hcookie.Value, hcookie.Path, hcookie.Domain);
-				container.Add (cookie);
+				container.Add (uri, cookie);
 			}
 			((HttpWebRequest) req).CookieContainer = container;
 		}
