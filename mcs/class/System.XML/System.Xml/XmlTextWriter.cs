@@ -26,7 +26,6 @@ namespace System.Xml
 		bool nullEncoding = false;
 		bool openWriter = true;
 		bool openStartElement = false;
-		bool openStartAttribute = false;
 		bool documentStarted = false;
 		bool namespaces = true;
 		bool openAttribute = false;
@@ -46,11 +45,8 @@ namespace System.Xml
 		bool openXmlSpace = false;
 		string openElementPrefix;
 		string openElementNS;
-		bool openElementNsAdded;
 		bool hasRoot = false;
-		Hashtable writtenAttributes = new Hashtable ();
 		ArrayList newAttributeNamespaces = new ArrayList ();
-		bool checkMultipleAttributes = false;
 
 		XmlNamespaceManager namespaceManager = new XmlNamespaceManager (new NameTable ());
 		string savingAttributeValue = String.Empty;
@@ -206,26 +202,25 @@ namespace System.Xml
 				string formatXmlns = String.Empty;
 				if (ns != String.Empty)
 				{
-					if (prefix == String.Empty)
-						prefix = namespaceManager.LookupPrefix (ns);
+					string existingPrefix = namespaceManager.LookupPrefix (ns);
 
-					if (openElementNsAdded)
+					if (existingPrefix != prefix)
 					{
 						if (prefix != string.Empty)
-							formatXmlns = String.Format (" xmlns:{0}={1}{2}{1}", prefix, quoteChar, ns);
+							formatXmlns = String.Format ("xmlns:{0}={1}{2}{1}", prefix, quoteChar, ns);
 						else
-							formatXmlns = String.Format (" xmlns={0}{1}{0}", quoteChar, ns);
+							formatXmlns = String.Format ("xmlns={0}{1}{0}", quoteChar, ns);
+						namespaceManager.AddNamespace (prefix, ns);
 					}
 				} 
 				else if ((prefix == String.Empty) && (namespaceManager.LookupNamespace (prefix) != ns)) 
 				{
 					namespaceManager.AddNamespace (prefix, ns);
-					formatXmlns = String.Format (" xmlns={0}{0}", quoteChar);
+					formatXmlns = String.Format ("xmlns={0}{0}", quoteChar);
 				}
 				if(formatXmlns != String.Empty) {
-					string xmlns = formatXmlns.Trim ();
-					if (checkMultipleAttributes && !writtenAttributes.Contains (xmlns.Substring (0, xmlns.IndexOf ('='))))
-						w.Write(formatXmlns);
+					w.Write (' ');
+					w.Write(formatXmlns);
 				}
 			}
 
@@ -234,11 +229,8 @@ namespace System.Xml
 				string ans = (string)newAttributeNamespaces[n];
 				string aprefix = namespaceManager.LookupPrefix (ans);
 
-				if(checkMultipleAttributes && !writtenAttributes.Contains ("xmlns:" + aprefix))
-				{
-					string formatXmlns = String.Format (" xmlns:{0}={1}{2}{1}", aprefix, quoteChar, ans);
-					w.Write(formatXmlns);
-				}
+				string formatXmlns = String.Format (" xmlns:{0}={1}{2}{1}", aprefix, quoteChar, ans);
+				w.Write(formatXmlns);
 			}
 			newAttributeNamespaces.Clear ();
 		}
@@ -291,14 +283,11 @@ namespace System.Xml
 			ws = WriteState.Content;
 			openStartElement = false;
 			attributeWrittenForElement = false;
-			checkMultipleAttributes = false;
-			writtenAttributes.Clear ();
 			newAttributeNamespaces.Clear ();
 		}
 
 		public override void Flush ()
 		{
-//			CloseOpenAttributeAndElements ();
 			w.Flush ();
 		}
 
@@ -479,7 +468,12 @@ namespace System.Xml
 					WriteEndAttribute ();
 				if (fullEndElement) {
 					w.Write ("></");
-					w.Write (((XmlTextWriterOpenElement)openElements.Peek ()).Name);
+					XmlTextWriterOpenElement el = (XmlTextWriterOpenElement) openElements.Peek ();
+					if (el.Prefix != String.Empty) {
+						w.Write (el.Prefix);
+						w.Write (':');
+					}
+					w.Write (el.LocalName);
 					w.Write ('>');
 				} else
 					w.Write (" />");
@@ -489,7 +483,12 @@ namespace System.Xml
 			} else {
 				w.Write (indentFormatting);
 				w.Write ("</");
-				w.Write (openElements.Pop ());
+				XmlTextWriterOpenElement el = (XmlTextWriterOpenElement) openElements.Pop ();
+				if (el.Prefix != String.Empty) {
+					w.Write (el.Prefix);
+					w.Write (':');
+				}
+				w.Write (el.LocalName);
 				w.Write ('>');
 			}
 
@@ -619,18 +618,11 @@ namespace System.Xml
 			if (openStartElement || attributeWrittenForElement)
 				formatSpace = " ";
 
-			// If already written, then break up.
-//			if (checkMultipleAttributes &&
-//				writtenAttributes.Contains (formatPrefix + localName))
-//				return;
-
 			w.Write (formatSpace);
 			w.Write (formatPrefix);
 			w.Write (localName);
 			w.Write ('=');
 			w.Write (quoteChar);
-			if (checkMultipleAttributes)
-				writtenAttributes.Add (formatPrefix + localName, formatPrefix + localName);
 
 			openAttribute = true;
 			attributeWrittenForElement = true;
@@ -696,40 +688,29 @@ namespace System.Xml
 			hasRoot = true;
 			CheckState ();
 			CloseStartElement ();
-			writtenAttributes.Clear ();
 			newAttributeNamespaces.Clear ();
-			checkMultipleAttributes = true;
 
 			if (prefix == null)
 				prefix = namespaceManager.LookupPrefix (ns);
 			if (prefix == null)
 				prefix = String.Empty;
 
-			string formatName = localName;
-
-			if (ns != null && prefix != String.Empty)
-					formatName = prefix + ":" + localName;
-			
 			w.Write (indentFormatting);
 			w.Write ('<');
-			w.Write (formatName);
+			if (prefix != String.Empty) {
+				w.Write (prefix);
+				w.Write (':');
+			}
+			w.Write (localName);
 
-			openElements.Push (new XmlTextWriterOpenElement (formatName));
+			openElements.Push (new XmlTextWriterOpenElement (prefix, localName));
 			ws = WriteState.Element;
 			openStartElement = true;
 			openElementNS = ns;
 			openElementPrefix = prefix;
-			openElementNsAdded = false;
 
 			namespaceManager.PushScope ();
 			indentLevel++;
-
-			if (ns != null && ns != string.Empty && namespaceManager.LookupPrefix (ns) == null)
-			{
-				namespaceManager.AddNamespace (prefix, ns);
-				openElementNsAdded = true;
-			}
-
 		}
 
 		public override void WriteString (string text)

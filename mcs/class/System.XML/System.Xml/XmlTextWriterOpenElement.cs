@@ -17,7 +17,8 @@ namespace System.Xml
 	{
 		#region Fields
 
-		string name;
+		string prefix;
+		string localName;
 		string xmlLang;
 		XmlSpace xmlSpace;
 		bool indentingOverriden = false;
@@ -26,45 +27,37 @@ namespace System.Xml
 
 		#region Constructors
 
-		public XmlTextWriterOpenElement (string name)
+		public XmlTextWriterOpenElement (string prefix, string localName)
 		{
-			this.name = name;
+			this.prefix = prefix;
+			this.localName = localName;
 		}
 
 		#endregion
 
 		#region Properties
 
-		public string Name 
-		{
-			get { return name; }
+		public string LocalName {
+			get { return localName; }
 		}
 
-		public bool IndentingOverriden 
-		{
+		public string Prefix {
+			get { return prefix; }
+		}
+
+		public bool IndentingOverriden {
 			get { return indentingOverriden; }
 			set { indentingOverriden = value; }
 		}
 
-		public string XmlLang
-		{
+		public string XmlLang {
 			get { return xmlLang; }
 			set { xmlLang = value; }
 		}
 
-		public XmlSpace XmlSpace
-		{
+		public XmlSpace XmlSpace {
 			get { return xmlSpace; }
 			set { xmlSpace = value; }
-		}
-
-		#endregion
-
-		#region Methods
-
-		public override string ToString ()
-		{
-			return name;
 		}
 
 		#endregion

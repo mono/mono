@@ -1,3 +1,14 @@
+2003-09-13  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlTextWriterOpenElement.cs : Changed to receive prefix and localName
+	  in .ctor().
+	* XmlTextWriter.cs : Changed to use above XmlTextWriterOpenElement.
+	  Changed xmlns adding scheme. In detail, 1) WriteStartElement does not
+	  add Namespaces immediately, but adds at AddMissingElementXmlns so 
+	  that we don't have to have extra check than namespaceManager's
+	  LookupPrefix(). 2) Removed writtenAttributes for performance reason
+	  since it is no more required.
+
 2003-09-10  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlDocument.cs : patch by Jonathan Hogg. Fixed CreateAttribute()
