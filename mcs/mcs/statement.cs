@@ -3004,10 +3004,22 @@ namespace Mono.CSharp {
 				foreach (DictionaryEntry de in variables){
 					string name = (string) de.Key;
 					VariableInfo vi = (VariableInfo) de.Value;
-
+					
 					if (vi.VariableType == null)
 						continue;
 
+					Type variable_type = vi.VariableType;
+
+					if (variable_type.IsPointer){
+						//
+						// Am not really convinced that this test is required (Microsoft does it)
+						// but the fact is that you would not be able to use the pointer variable
+						// *anyways*
+						//
+						if (!TypeManager.VerifyUnManaged (variable_type.GetElementType (), vi.Location))
+							continue;
+					}
+					
 					vi.LocalBuilder = ig.DeclareLocal (vi.VariableType);
 
 					if (CodeGen.SymbolWriter != null)
