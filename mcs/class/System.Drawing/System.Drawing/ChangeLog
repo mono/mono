@@ -1,0 +1,4 @@
+2001-08-16  Mike Kestner <mkestner@speakeasy.net>
+
+	* Point.cs : New. Implementation of System.Drawing.Point struct.
+
