@@ -17,14 +17,10 @@ namespace System
 	internal struct MonoTypeInfo {
 		public string name;
 		public string name_space;
-		public Type parent;
 		public Type etype;
 		public Type nested_in;
 		public Assembly assembly;
-		public TypeAttributes attrs;
 		public int rank;
-		public bool isbyref;
-		public bool ispointer;
 		public bool isprimitive;
 	}
 
@@ -195,26 +191,16 @@ namespace System
 			return type_is_subtype_of (this, typeof (System.Array), false) && this != typeof (System.Array);
 		}
 
-		protected override bool IsByRefImpl ()
-		{
-			MonoTypeInfo info;
-
-			get_type_info (_impl, out info);
-			return info.isbyref;
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		protected extern override bool IsByRefImpl ();
 
 		protected override bool IsCOMObjectImpl ()
 		{
 			return false;
 		}
 
-		protected override bool IsPointerImpl ()
-		{
-			MonoTypeInfo info;
-
-			get_type_info (_impl, out info);
-			return info.ispointer;
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		protected extern override bool IsPointerImpl ();
 
 		protected override bool IsPrimitiveImpl ()
 		{
@@ -268,12 +254,9 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern string getFullName();
 
-		public override Type BaseType {
-			get {
-				MonoTypeInfo info;
-				get_type_info (_impl, out info);
-				return info.parent;
-			}
+		public extern override Type BaseType {
+			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+			get;
 		}
 
 		public override string FullName {
