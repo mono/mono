@@ -1,3 +1,6 @@
+2005-02-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* monograph.c: Fix warnings.
 
 Mon May 24 13:36:53 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
