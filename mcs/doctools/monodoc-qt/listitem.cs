@@ -26,14 +26,16 @@ namespace Mono.Document.Editor {
 		public ListItem (QListViewItem parent, string text, DocMember member) : base (parent, text)
 		{
 			this.member = member;
-			if (member.IsCtor || member.IsMethod || member.IsDtor)
+			if (member.IsConstructor || member.IsMethod)
 				SetPixmap (0, Global.IMethod);
-			else if (member.IsField)
-				SetPixmap (0, Global.IField);
-			else if (member.IsProperty)
-				SetPixmap (0, Global.IProperty);
 			else if (member.IsEvent)
 				SetPixmap (0, Global.IEvent);
+			else if (member.IsField)
+				SetPixmap (0, Global.IField);
+			else if (member.IsOperator)
+				SetPixmap (0, Global.IOperator);
+			else if (member.IsProperty)
+				SetPixmap (0, Global.IProperty);
 
 		}
 
@@ -42,14 +44,14 @@ namespace Mono.Document.Editor {
 			this.type = type;
 			if (type.IsClass)
 				SetPixmap (0, Global.IClass);
-			else if (type.IsStructure)
-				SetPixmap (0, Global.IStructure);
-			else if (type.IsInterface)
-				SetPixmap (0, Global.IInterface);
 			else if (type.IsDelegate)
 				SetPixmap (0, Global.IDelegate);
 			else if (type.IsEnum)
 				SetPixmap (0, Global.IEnum);
+			else if (type.IsInterface)
+				SetPixmap (0, Global.IInterface);
+			else if (type.IsStructure)
+				SetPixmap (0, Global.IStructure);
 		}
 
 		public IEditForm BuildEditForm ()

@@ -39,12 +39,12 @@ namespace Mono.Document.Editor {
 					type.Language = "en";
 					progress.SetProgress (i++);
 					ListItem typeitem = new ListItem (GetNamespaceItem (type.Namespace), type.Name, type);
-					ProcessMember (type.Dtors, typeitem);
-					ProcessMember (type.Events, typeitem);
-					ProcessMember (type.Fields, typeitem);
 					ProcessMember (type.Properties, typeitem);
+					ProcessMember (type.Operators, typeitem);
 					ProcessMember (type.Methods, typeitem);
-					ProcessMember (type.Ctors, typeitem);
+					ProcessMember (type.Fields, typeitem);
+					ProcessMember (type.Events, typeitem);
+					ProcessMember (type.Constructors, typeitem);
 				}
 				SetUpdatesEnabled (true);
 				Repaint ();

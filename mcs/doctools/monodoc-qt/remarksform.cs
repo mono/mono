@@ -19,7 +19,7 @@ namespace Mono.Document.Editor {
 		{
 			this.document = document;
 			new QLabel (Global.Remarks, this);
-			edit = new QTextEdit (this);
+			edit = new Edit (this);
 			Connect (parent, SIGNAL ("Sync ()"), this, SLOT ("OnSync ()"));
 			Connect (parent, SIGNAL ("Flush ()"), this, SLOT ("OnFlush ()"));
 		}
@@ -30,6 +30,23 @@ namespace Mono.Document.Editor {
 		public void OnFlush ()
 		{
 			document.Remarks = edit.Text ();
+		}
+		
+		private class Edit : QTextEdit {
+
+			TagContext context;
+
+			public Edit (QWidget parent) : base (parent)
+			{
+				mousePressEvent += new MousePressEvent (pressEvent);
+				context = new TagContext (this);
+			}
+
+			public void pressEvent (QMouseEvent e)
+			{
+				if (e.Button () == ButtonState.RightButton)
+				context.Popup (e.GlobalPos ());
+			}
 		}
 	}
 }
