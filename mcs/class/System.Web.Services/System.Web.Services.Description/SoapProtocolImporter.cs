@@ -112,20 +112,31 @@ namespace System.Web.Services.Description {
 			if (sab != null) location = sab.Location;
 			string url = GetServiceUrl (location); 
 
-			CodeTypeReference ctr = new CodeTypeReference ("System.Web.Services.Protocols.SoapHttpClientProtocol");
-			codeClass.BaseTypes.Add (ctr);
+			if (Style == ServiceDescriptionImportStyle.Client) {
+				CodeTypeReference ctr = new CodeTypeReference ("System.Web.Services.Protocols.SoapHttpClientProtocol");
+				codeClass.BaseTypes.Add (ctr);
+			}
+			else {
+				CodeTypeReference ctr = new CodeTypeReference ("System.Web.Services.WebService");
+				codeClass.BaseTypes.Add (ctr);
+				CodeAttributeDeclaration attws = new CodeAttributeDeclaration ("System.Web.Services.WebServiceAttribute");
+				attws.Arguments.Add (GetArg ("Namespace", Port.Binding.Namespace));
+				AddCustomAttribute (codeClass, attws, true);
+			}
 			
 			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Web.Services.WebServiceBinding");
 			att.Arguments.Add (GetArg ("Name", Port.Name));
 			att.Arguments.Add (GetArg ("Namespace", Port.Binding.Namespace));
 			AddCustomAttribute (codeClass, att, true);
 	
-			CodeConstructor cc = new CodeConstructor ();
-			cc.Attributes = MemberAttributes.Public;
-			CodeExpression ce = new CodeFieldReferenceExpression (new CodeThisReferenceExpression(), "Url");
-			CodeAssignStatement cas = new CodeAssignStatement (ce, new CodePrimitiveExpression (url));
-			cc.Statements.Add (cas);
-			codeClass.Members.Add (cc);
+			if (Style == ServiceDescriptionImportStyle.Client) {
+				CodeConstructor cc = new CodeConstructor ();
+				cc.Attributes = MemberAttributes.Public;
+				CodeExpression ce = new CodeFieldReferenceExpression (new CodeThisReferenceExpression(), "Url");
+				CodeAssignStatement cas = new CodeAssignStatement (ce, new CodePrimitiveExpression (url));
+				cc.Statements.Add (cas);
+				codeClass.Members.Add (cc);
+			}
 			
 			memberIds = new CodeIdentifiers ();
 			headerVariables = new Hashtable ();
@@ -419,42 +430,48 @@ namespace System.Web.Services.Description {
 				}
 			}
 			
-			// Invoke call
-			
-			CodeThisReferenceExpression ethis = new CodeThisReferenceExpression();
-			CodePrimitiveExpression varMsgName = new CodePrimitiveExpression (messageName);
-			CodeMethodInvokeExpression inv;
-			CodeVariableDeclarationStatement dec;
-
-			inv = new CodeMethodInvokeExpression (ethis, "Invoke", varMsgName, methodParams);
-			if (outputMembers != null && outputMembers.Count > 0)
+			if (Style == ServiceDescriptionImportStyle.Client) 
 			{
-				dec = new CodeVariableDeclarationStatement (typeof(object[]), varResults, inv);
-				method.Statements.Add (dec);
-				method.Statements.AddRange (outAssign);
+				// Invoke call
+				
+				CodeThisReferenceExpression ethis = new CodeThisReferenceExpression();
+				CodePrimitiveExpression varMsgName = new CodePrimitiveExpression (messageName);
+				CodeMethodInvokeExpression inv;
+				CodeVariableDeclarationStatement dec;
+	
+				inv = new CodeMethodInvokeExpression (ethis, "Invoke", varMsgName, methodParams);
+				if (outputMembers != null && outputMembers.Count > 0)
+				{
+					dec = new CodeVariableDeclarationStatement (typeof(object[]), varResults, inv);
+					method.Statements.Add (dec);
+					method.Statements.AddRange (outAssign);
+				}
+				else
+					method.Statements.Add (inv);
+				
+				// Begin Invoke Call
+				
+				CodeExpression expCallb = new CodeVariableReferenceExpression (varCallback);
+				CodeExpression expAsyncs = new CodeVariableReferenceExpression (varAsyncState);
+				inv = new CodeMethodInvokeExpression (ethis, "BeginInvoke", varMsgName, methodParams, expCallb, expAsyncs);
+				methodBegin.Statements.Add (new CodeMethodReturnStatement (inv));
+				
+				// End Invoke call
+				
+				CodeExpression varAsyncr = new CodeVariableReferenceExpression (varAsyncResult);
+				inv = new CodeMethodInvokeExpression (ethis, "EndInvoke", varAsyncr);
+				if (outputMembers != null && outputMembers.Count > 0)
+				{
+					dec = new CodeVariableDeclarationStatement (typeof(object[]), varResults, inv);
+					methodEnd.Statements.Add (dec);
+					methodEnd.Statements.AddRange (outAssign);
+				}
+				else
+					methodEnd.Statements.Add (inv);
 			}
-			else
-				method.Statements.Add (inv);
-			
-			// Begin Invoke Call
-			
-			CodeExpression expCallb = new CodeVariableReferenceExpression (varCallback);
-			CodeExpression expAsyncs = new CodeVariableReferenceExpression (varAsyncState);
-			inv = new CodeMethodInvokeExpression (ethis, "BeginInvoke", varMsgName, methodParams, expCallb, expAsyncs);
-			methodBegin.Statements.Add (new CodeMethodReturnStatement (inv));
-			
-			// End Invoke call
-			
-			CodeExpression varAsyncr = new CodeVariableReferenceExpression (varAsyncResult);
-			inv = new CodeMethodInvokeExpression (ethis, "EndInvoke", varAsyncr);
-			if (outputMembers != null && outputMembers.Count > 0)
-			{
-				dec = new CodeVariableDeclarationStatement (typeof(object[]), varResults, inv);
-				methodEnd.Statements.Add (dec);
-				methodEnd.Statements.AddRange (outAssign);
+			else {
+				method.Attributes = MemberAttributes.Public | MemberAttributes.Abstract;
 			}
-			else
-				methodEnd.Statements.Add (inv);
 			
 			// Attributes
 			
@@ -462,7 +479,7 @@ namespace System.Web.Services.Description {
 			
 			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Web.Services.WebMethodAttribute");
 			if (messageName != method.Name) att.Arguments.Add (GetArg ("MessageName",messageName));
-			AddCustomAttribute (method, att, false);
+			AddCustomAttribute (method, att, (Style == ServiceDescriptionImportStyle.Server));
 			
 			if (style == SoapBindingStyle.Rpc)
 			{
@@ -500,8 +517,11 @@ namespace System.Web.Services.Description {
 			AddCustomAttribute (method, att, true);
 			
 			CodeTypeDeclaration.Members.Add (method);
-			CodeTypeDeclaration.Members.Add (methodBegin);
-			CodeTypeDeclaration.Members.Add (methodEnd);
+			
+			if (Style == ServiceDescriptionImportStyle.Client) {
+				CodeTypeDeclaration.Members.Add (methodBegin);
+				CodeTypeDeclaration.Members.Add (methodEnd);
+			}
 			
 			return method;
 		}

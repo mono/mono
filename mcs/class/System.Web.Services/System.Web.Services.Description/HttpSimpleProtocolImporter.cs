@@ -280,6 +280,27 @@ namespace System.Web.Services.Description
 			
 			return method;
 		}		
+
+#if NET_2_0
+		internal override CodeExpression BuildInvokeAsync (string messageName, CodeArrayCreateExpression paramsArray, CodeExpression delegateField, CodeExpression userStateVar)
+		{
+			HttpOperationBinding httpOper = OperationBinding.Extensions.Find (typeof (HttpOperationBinding)) as HttpOperationBinding;
+			
+			CodeThisReferenceExpression ethis = new CodeThisReferenceExpression();
+			
+			CodeExpression thisURlExp = new CodeFieldReferenceExpression (ethis, "Url");
+			CodePrimitiveExpression metUrl = new CodePrimitiveExpression (httpOper.Location);
+			CodeBinaryOperatorExpression expMethodLocation = new CodeBinaryOperatorExpression (thisURlExp, CodeBinaryOperatorType.Add, metUrl);
+			
+			CodeMethodInvokeExpression inv2 = new CodeMethodInvokeExpression (ethis, "InvokeAsync");
+			inv2.Parameters.Add (new CodePrimitiveExpression (messageName));
+			inv2.Parameters.Add (expMethodLocation);
+			inv2.Parameters.Add (paramsArray);
+			inv2.Parameters.Add (delegateField);
+			inv2.Parameters.Add (userStateVar);
+			return inv2;
+		}
+#endif
 		
 		protected virtual Type GetInMimeFormatter ()
 		{

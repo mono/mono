@@ -65,6 +65,10 @@ namespace System.Web.Services.Description {
 		ImportInfo iinfo;
 		XmlSchemas xmlSchemas;
 		XmlSchemas soapSchemas;
+		
+#if NET_2_0
+		ArrayList asyncTypes = new ArrayList ();
+#endif
 
 		#endregion // Fields
 
@@ -261,12 +265,16 @@ namespace System.Web.Services.Description {
 				if (service.Documentation != null && service.Documentation != "")
 					AddComments (codeClass, service.Documentation);
 
-				CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Diagnostics.DebuggerStepThroughAttribute");
-				AddCustomAttribute (codeClass, att, true);
-
-				att = new CodeAttributeDeclaration ("System.ComponentModel.DesignerCategoryAttribute");
-				att.Arguments.Add (GetArg ("code"));
-				AddCustomAttribute (codeClass, att, true);
+				if (Style == ServiceDescriptionImportStyle.Client) {
+					CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Diagnostics.DebuggerStepThroughAttribute");
+					AddCustomAttribute (codeClass, att, true);
+	
+					att = new CodeAttributeDeclaration ("System.ComponentModel.DesignerCategoryAttribute");
+					att.Arguments.Add (GetArg ("code"));
+					AddCustomAttribute (codeClass, att, true);
+				}
+				else
+					codeClass.TypeAttributes = System.Reflection.TypeAttributes.Abstract | System.Reflection.TypeAttributes.Public;
 
 				if (binding.Operations.Count == 0) {
 					warnings |= ServiceDescriptionImportWarnings.NoMethodsGenerated;
@@ -297,8 +305,17 @@ namespace System.Web.Services.Description {
 						methodName = method.Name;
 						if (operation.Documentation != null && operation.Documentation != "")
 							AddComments (method, operation.Documentation);
+#if NET_2_0
+						if (Style == ServiceDescriptionImportStyle.Client)
+							AddAsyncMembers (method.Name, method);
+#endif
 					}
 				}
+				
+#if NET_2_0
+			if (Style == ServiceDescriptionImportStyle.Client)
+				AddAsyncTypes ();
+#endif
 				
 				EndClass ();
 			}
@@ -483,6 +500,196 @@ namespace System.Web.Services.Description {
 			}
 			return false;
 		}
+		
+#if NET_2_0
+
+		void AddAsyncTypes ()
+		{
+			foreach (CodeTypeDeclaration type in asyncTypes)
+				codeNamespace.Types.Add (type);
+			asyncTypes.Clear ();
+		}
+
+		void AddAsyncMembers (string messageName, CodeMemberMethod method)
+		{
+			CodeThisReferenceExpression ethis = new CodeThisReferenceExpression();
+			CodePrimitiveExpression enull = new CodePrimitiveExpression (null);
+			
+			CodeMemberField codeField = new CodeMemberField (typeof(System.Threading.SendOrPostCallback), messageName + "OperationCompleted");
+			codeField.Attributes = MemberAttributes.Private;
+			CodeTypeDeclaration.Members.Add (codeField);
+			
+			// Event arguments class
+			
+			string argsClassName = classNames.AddUnique (messageName + "CompletedEventArgs", null);
+			CodeTypeDeclaration argsClass = new CodeTypeDeclaration (argsClassName);
+			argsClass.BaseTypes.Add (new CodeTypeReference ("System.ComponentModel.AsyncCompletedEventArgs"));
+
+			CodeMemberField resultsField = new CodeMemberField (typeof(object[]), "results");
+			resultsField.Attributes = MemberAttributes.Private;
+			argsClass.Members.Add (resultsField);
+			
+			CodeConstructor cc = new CodeConstructor ();
+			cc.Attributes = MemberAttributes.Assembly;
+			cc.Parameters.Add (new CodeParameterDeclarationExpression (typeof(object[]), "results"));
+			cc.Parameters.Add (new CodeParameterDeclarationExpression (typeof(System.Exception), "exception"));
+			cc.Parameters.Add (new CodeParameterDeclarationExpression (typeof(bool), "cancelled"));
+			cc.Parameters.Add (new CodeParameterDeclarationExpression (typeof(object), "userState"));
+			cc.BaseConstructorArgs.Add (new CodeVariableReferenceExpression ("exception"));
+			cc.BaseConstructorArgs.Add (new CodeVariableReferenceExpression ("cancelled"));
+			cc.BaseConstructorArgs.Add (new CodeVariableReferenceExpression ("userState"));
+			CodeExpression thisResults = new CodeFieldReferenceExpression (ethis, "results");
+			cc.Statements.Add (new CodeAssignStatement (thisResults, new CodeVariableReferenceExpression ("results")));
+			argsClass.Members.Add (cc);
+			
+			int ind = 0;
+			
+			if (method.ReturnType.BaseType != "System.Void")
+				argsClass.Members.Add (CreateArgsProperty (method.ReturnType, "Result", ind++));
+			
+			foreach (CodeParameterDeclarationExpression par in method.Parameters) 
+			{
+				if (par.Direction == FieldDirection.Out || par.Direction == FieldDirection.Ref)
+					argsClass.Members.Add (CreateArgsProperty (par.Type, par.Name, ind++));
+			}
+			
+			bool needsArgsClass = (ind > 0);
+			if (needsArgsClass)
+				asyncTypes.Add (argsClass);
+			else
+				argsClassName = "System.ComponentModel.AsyncCompletedEventArgs";
+			
+			// Event delegate type
+			
+			CodeTypeDelegate delegateType = new CodeTypeDelegate (messageName + "CompletedEventHandler");
+			delegateType.Parameters.Add (new CodeParameterDeclarationExpression (typeof(object), "sender"));
+			delegateType.Parameters.Add (new CodeParameterDeclarationExpression (argsClassName, "args"));
+			
+			// Event member
+			
+			CodeMemberEvent codeEvent = new CodeMemberEvent ();
+			codeEvent.Name = messageName + "Completed";
+			codeEvent.Type = new CodeTypeReference (delegateType.Name);
+			CodeTypeDeclaration.Members.Add (codeEvent);
+			
+			// Async method (without user state param)
+			
+			CodeMemberMethod am = new CodeMemberMethod ();
+			am.Attributes = MemberAttributes.Public | MemberAttributes.Final;
+			am.Name = method.Name + "Async";
+			am.ReturnType = new CodeTypeReference (typeof(void));
+			CodeMethodInvokeExpression inv;
+			inv = new CodeMethodInvokeExpression (ethis, am.Name);
+			am.Statements.Add (inv);
+			
+			// On...Completed method
+			
+			CodeMemberMethod onCompleted = new CodeMemberMethod ();
+			onCompleted.Name = "On" + messageName + "Completed";
+			onCompleted.Attributes = MemberAttributes.Private | MemberAttributes.Final;
+			onCompleted.ReturnType = new CodeTypeReference (typeof(void));
+			onCompleted.Parameters.Add (new CodeParameterDeclarationExpression (typeof(object), "arg"));
+			
+			CodeConditionStatement anIf = new CodeConditionStatement ();
+			
+			CodeExpression eventField = new CodeEventReferenceExpression (ethis, codeEvent.Name);
+			anIf.Condition = new CodeBinaryOperatorExpression (eventField, CodeBinaryOperatorType.IdentityInequality, enull);
+			CodeExpression castedArg = new CodeCastExpression (typeof(System.Web.Services.Protocols.InvokeCompletedEventArgs), new CodeVariableReferenceExpression ("arg"));
+			CodeStatement invokeArgs = new CodeVariableDeclarationStatement (typeof(System.Web.Services.Protocols.InvokeCompletedEventArgs), "invokeArgs", castedArg);
+			anIf.TrueStatements.Add (invokeArgs);
+			
+			CodeDelegateInvokeExpression delegateInvoke = new CodeDelegateInvokeExpression ();
+			delegateInvoke.TargetObject = eventField;
+			delegateInvoke.Parameters.Add (ethis);
+			CodeObjectCreateExpression argsInstance = new CodeObjectCreateExpression (argsClassName);
+			CodeExpression invokeArgsVar = new CodeVariableReferenceExpression ("invokeArgs");
+			if (needsArgsClass) argsInstance.Parameters.Add (new CodeFieldReferenceExpression (invokeArgsVar, "Results"));
+			argsInstance.Parameters.Add (new CodeFieldReferenceExpression (invokeArgsVar, "Error"));
+			argsInstance.Parameters.Add (new CodeFieldReferenceExpression (invokeArgsVar, "Cancelled"));
+			argsInstance.Parameters.Add (new CodeFieldReferenceExpression (invokeArgsVar, "UserState"));
+			delegateInvoke.Parameters.Add (argsInstance);
+			anIf.TrueStatements.Add (delegateInvoke);
+			
+			onCompleted.Statements.Add (anIf);
+			
+			// Async method
+			
+			CodeMemberMethod asyncMethod = new CodeMemberMethod ();
+			asyncMethod.Attributes = MemberAttributes.Public | MemberAttributes.Final;
+			asyncMethod.Name = method.Name + "Async";
+			asyncMethod.ReturnType = new CodeTypeReference (typeof(void));
+			
+			CodeExpression delegateField = new CodeFieldReferenceExpression (ethis, codeField.Name);
+			anIf = new CodeConditionStatement ();
+			anIf.Condition = new CodeBinaryOperatorExpression (delegateField, CodeBinaryOperatorType.IdentityEquality, enull);;
+			CodeExpression delegateRef = new CodeMethodReferenceExpression (ethis, onCompleted.Name);
+			CodeExpression newDelegate = new CodeObjectCreateExpression (typeof(System.Threading.SendOrPostCallback), delegateRef);
+			CodeAssignStatement cas = new CodeAssignStatement (delegateField, newDelegate);
+			anIf.TrueStatements.Add (cas);
+			asyncMethod.Statements.Add (anIf);
+			
+			CodeArrayCreateExpression paramsArray = new CodeArrayCreateExpression (typeof(object));
+			
+			// Assign parameters
+			
+			CodeIdentifiers paramsIds = new CodeIdentifiers ();
+			
+			foreach (CodeParameterDeclarationExpression par in method.Parameters) 
+			{
+				paramsIds.Add (par.Name, null);
+				if (par.Direction == FieldDirection.In || par.Direction == FieldDirection.Ref) {
+					CodeParameterDeclarationExpression inpar = new CodeParameterDeclarationExpression (par.Type, par.Name);
+					am.Parameters.Add (inpar);
+					asyncMethod.Parameters.Add (inpar);
+					inv.Parameters.Add (new CodeVariableReferenceExpression (par.Name));
+					paramsArray.Initializers.Add (new CodeVariableReferenceExpression (par.Name));
+				}
+			}
+
+
+			inv.Parameters.Add (enull);
+			
+			string userStateName = paramsIds.AddUnique ("userState", null);
+			asyncMethod.Parameters.Add (new CodeParameterDeclarationExpression (typeof(object), userStateName));
+			
+			CodeExpression userStateVar = new CodeVariableReferenceExpression (userStateName);
+			asyncMethod.Statements.Add (BuildInvokeAsync (messageName, paramsArray, delegateField, userStateVar));
+			
+			CodeTypeDeclaration.Members.Add (am);
+			CodeTypeDeclaration.Members.Add (asyncMethod);
+			CodeTypeDeclaration.Members.Add (onCompleted);
+			
+			asyncTypes.Add (delegateType);
+		}
+		
+		CodeMemberProperty CreateArgsProperty (CodeTypeReference type, string name, int ind)
+		{
+			CodeMemberProperty prop = new CodeMemberProperty ();
+			prop.Attributes = MemberAttributes.Public | MemberAttributes.Final;
+			prop.HasGet = true;
+			prop.HasSet = false;
+			prop.Name = name;
+			prop.Type = type;
+			CodeThisReferenceExpression ethis = new CodeThisReferenceExpression();
+			CodeExpression thisResults = new CodeFieldReferenceExpression (ethis, "results");
+			prop.GetStatements.Add (new CodeMethodInvokeExpression (ethis, "RaiseExceptionIfNecessary"));
+			CodeArrayIndexerExpression arrValue = new CodeArrayIndexerExpression (thisResults, new CodePrimitiveExpression (ind));
+			CodeExpression retval = new CodeCastExpression (type, arrValue);
+			prop.GetStatements.Add (new CodeMethodReturnStatement (retval));
+			return prop;
+		}
+		
+		internal virtual CodeExpression BuildInvokeAsync (string messageName, CodeArrayCreateExpression paramsArray, CodeExpression delegateField, CodeExpression userStateVar)
+		{
+			CodeThisReferenceExpression ethis = new CodeThisReferenceExpression();
+			CodeMethodInvokeExpression inv2 = new CodeMethodInvokeExpression (ethis, "InvokeAsync");
+			inv2.Parameters.Add (new CodePrimitiveExpression (messageName));
+			inv2.Parameters.Add (paramsArray);
+			inv2.Parameters.Add (delegateField);
+			inv2.Parameters.Add (userStateVar);
+			return inv2;
+		}
+#endif
 		
 		[MonoTODO]
 		public void AddExtensionWarningComments (CodeCommentStatementCollection comments, ServiceDescriptionFormatExtensionCollection extensions) 

@@ -189,13 +189,11 @@ namespace System.Web.Services.Description {
 			
 			foreach (WebReference reference in webReferences) 
 			{
-				if (reference.AppSettingUrlKey != null && reference.AppSettingUrlKey == string.Empty && style == ServiceDescriptionImportStyle.Server)
-					throw new InvalidOperationException ("Cannot set appSettingUrlKey if Style is Server");
-				
 				ServiceDescriptionImporter importer = new ServiceDescriptionImporter ();
 				importer.CodeGenerator = codeGenerator;
 				importer.CodeGenerationOptions = options;
 				importer.Context = context;
+				importer.Style = style;
 				importer.ProtocolName = reference.ProtocolName;
 				
 				importer.AddReference (reference);

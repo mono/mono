@@ -1,3 +1,14 @@
+2004-07-26  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* HttpSimpleProtocolImporter.cs: Implemented internal method to support
+	  the new asyc model.
+	* ProtocolImporter.cs: Generate code for the new async model.
+	  Added support for generating server skeletons in addition to client
+	  proxies.
+	* ServiceDescriptionImporter.cs: Removed unneded check.
+	* SoapProtocolImporter.cs: Added support for generating server skeletons in
+	  addition to client proxies.
+
 2004-07-23  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ServiceDescriptionImporter.cs: Fixed bug when getting documents from a
