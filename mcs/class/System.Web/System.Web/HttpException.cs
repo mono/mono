@@ -10,6 +10,7 @@
 //
 using System;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Web.Compilation;
@@ -17,10 +18,11 @@ using System.Web.Util;
 
 namespace System.Web
 {
+	[Serializable]
 	public class HttpException : ExternalException
 	{
-		int _HttpCode;
-		int _HR;
+		int http_code;
+		int hr;
 		string fileName;
 
 		public HttpException () : base ()
@@ -38,26 +40,37 @@ namespace System.Web
 
 		public HttpException (int iHttpCode, string sMessage) : base (sMessage)
 		{
-			_HttpCode = iHttpCode;
+			http_code = iHttpCode;
+		}
+
+		protected HttpException (SerializationInfo info, StreamingContext sc) : base (info, sc)
+		{
+			http_code = info.GetInt32 ("_httpCode");
 		}
 
 		public HttpException (int iHttpCode, string sMessage, int iHR) : base (sMessage)
 		{
-			_HttpCode = iHttpCode;
-			_HR = iHR;
+			http_code = iHttpCode;
+			hr = iHR;
 		}
 
 		public HttpException (string sMessage, int iHR) : base (sMessage)
 		{
-			_HR = iHR;
+			hr = iHR;
 		}
 
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			base.GetObjectData (info, context);
+			info.AddValue ("_httpCode", http_code);
+		}
+		
 		public HttpException (int iHttpCode,
 				      string sMessage,
 				      Exception InnerException)
 			: base (sMessage, InnerException)
 		{
-			_HttpCode = iHttpCode;
+			http_code = iHttpCode;
 		}
 
 		internal HttpException (string message, string fileName)
@@ -236,7 +249,7 @@ namespace System.Web
 		[MonoTODO("Check error type and Set the correct error code")]
 		public int GetHttpCode ()
 		{
-			return _HttpCode;
+			return http_code;
 		}
 
 		public static HttpException CreateFromLastError (string message)
