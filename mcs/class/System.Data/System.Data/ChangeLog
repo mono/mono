@@ -1,3 +1,12 @@
+2005-02-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaWriter.cs : new file for outputting XmlSchema.
+	* DataSet.cs : removed rewritten code in XmlSchemaWriter.
+	* XmlConstants.cs : added UseCurrentCulture constant.
+	* DataTable.cs :
+	  Use new Xml Schema writer.
+	  Use XmlSchemaDataImporter as we use in DataSet.
+
 2005-02-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataView.cs, DataRowView.cs : Fixed bug #72421. CreateChildView()

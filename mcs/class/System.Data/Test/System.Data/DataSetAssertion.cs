@@ -90,7 +90,7 @@ namespace MonoTests.System.Data
 					el.GetAttributeNode (name)));
 			foreach (XmlAttribute a in al)
 				// Exclude xmlns="" here.
-				if (a.Name != "xmlns" || a.Value != String.Empty)
+				if (a.Name != "xmlns")// || a.Value != String.Empty)
 					el.SetAttributeNode (a);
 		}
 

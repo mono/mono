@@ -98,6 +98,9 @@ internal class XmlConstants
 	public const string PrimaryKey = "PrimaryKey";
 	public const string ColumnName = "ColumnName";
 	public const string ReadOnly = "ReadOnly";
+#if NET_2_0
+	public const string UseCurrentCulture = "UseCurrentCulture";
+#endif
 
 	public static XmlQualifiedName QnString = new XmlQualifiedName ("string", XmlSchema.Namespace);
 	public static XmlQualifiedName QnShort = new XmlQualifiedName ("short", XmlSchema.Namespace);

@@ -976,14 +976,14 @@ namespace System.Data {
 			
 			StringWriter sw = new StringWriter ();
 			XmlTextWriter tw = new XmlTextWriter (sw);
+			tw.Formatting = Formatting.Indented;
 			dset.WriteIndividualTableContent (tw, this, XmlWriteMode.DiffGram);
 			tw.Close ();
 			
 			StringWriter sw2 = new StringWriter ();
 			DataTableCollection tables = new DataTableCollection (dset);
 			tables.Add (this);
-			XmlSchema schema = dset.BuildSchema (tables, null);
-			schema.Write (sw2);
+			XmlSchemaWriter.WriteXmlSchema (dset, new XmlTextWriter (sw2), tables, null);
 			sw2.Close ();
 			
 			info.AddValue ("XmlSchema", sw2.ToString(), typeof(string));
@@ -1177,27 +1177,42 @@ namespace System.Data {
 
 		public void ReadXmlSchema (Stream stream)
 		{
-			XmlSchemaMapper mapper = new XmlSchemaMapper (this);
-			mapper.Read (new XmlTextReader(stream));
+			ReadXmlSchema (new XmlTextReader (stream));
 		}
 
 		public void ReadXmlSchema (TextReader reader)
 		{
-			XmlSchemaMapper mapper = new XmlSchemaMapper (this);
-			mapper.Read (new XmlTextReader(reader));
+			ReadXmlSchema (new XmlTextReader (reader));
 		}
 
 		public void ReadXmlSchema (string fileName)
 		{
-			StreamReader reader = new StreamReader (fileName);
-			ReadXmlSchema (reader);
-			reader.Close ();
+			XmlTextReader reader = null;
+			try {
+				reader = new XmlTextReader (fileName);
+				ReadXmlSchema (reader);
+			} finally {
+				if (reader != null)
+					reader.Close ();
+			}
 		}
 
 		public void ReadXmlSchema (XmlReader reader)
 		{
-			XmlSchemaMapper mapper = new XmlSchemaMapper (this);
-			mapper.Read (reader);
+			DataSet ds = new DataSet ();
+			new XmlSchemaDataImporter (ds, reader).Process ();
+			DataTable target = null;
+			if (TableName == String.Empty) {
+				if (ds.Tables.Count > 0)
+					target = ds.Tables [0];
+			}
+			else {
+				target = ds.Tables [TableName];
+				if (target == null)
+					throw new ArgumentException (String.Format ("DataTable '{0}' does not match to any DataTable in source.", TableName));
+			}
+			if (target != null)
+				target.CopyProperties (this);
 		}
 #endif
 
@@ -1421,40 +1436,41 @@ namespace System.Data {
 		}
 
 #if NET_2_0
-		[MonoTODO]
+		private XmlWriterSettings GetWriterSettings ()
+		{
+			XmlWriterSettings s = new XmlWriterSettings ();
+			s.Indent = true;
+			return s;
+		}
+
 		public void WriteXml (Stream stream)
 		{
-			throw new NotImplementedException ();
+			WriteXml (stream, XmlWriteMode.IgnoreSchema);
 		}
 
-		[MonoTODO]
 		public void WriteXml (TextWriter writer)
 		{
-			throw new NotImplementedException ();
+			WriteXml (writer, XmlWriteMode.IgnoreSchema);
 		}
 
-		[MonoTODO]
 		public void WriteXml (XmlWriter writer)
 		{
-			throw new NotImplementedException ();
+			WriteXml (writer, XmlWriteMode.IgnoreSchema);
 		}
 
-		[MonoTODO]
 		public void WriteXml (string fileName)
 		{
-			throw new NotImplementedException ();
+			WriteXml (fileName, XmlWriteMode.IgnoreSchema);
 		}
 
-		[MonoTODO]
 		public void WriteXml (Stream stream, XmlWriteMode mode)
 		{
-			throw new NotImplementedException ();
+			WriteXml (XmlWriter.Create (stream, GetWriterSettings ()), mode);
 		}
 
-		[MonoTODO]
 		public void WriteXml (TextWriter writer, XmlWriteMode mode)
 		{
-			throw new NotImplementedException ();
+			WriteXml (XmlWriter.Create (writer, GetWriterSettings ()), mode);
 		}
 
 		[MonoTODO]
@@ -1463,34 +1479,56 @@ namespace System.Data {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void WriteXml (string fileName, XmlWriteMode mode)
 		{
-			throw new NotImplementedException ();
+			XmlWriter xw = null;
+			try {
+				xw = XmlWriter.Create (fileName, GetWriterSettings ());
+				WriteXml (xw, mode);
+			} finally {
+				if (xw != null)
+					xw.Close ();
+			}
 		}
 
-		[MonoTODO]
 		public void WriteXmlSchema (Stream stream)
 		{
-			throw new NotImplementedException ();
+			WriteXmlSchema (XmlWriter.Create (stream, GetWriterSettings ()));
 		}
 
-		[MonoTODO]
 		public void WriteXmlSchema (TextWriter writer)
 		{
-			throw new NotImplementedException ();
+			WriteXmlSchema (XmlWriter.Create (writer, GetWriterSettings ()));
 		}
 
-		[MonoTODO]
 		public void WriteXmlSchema (XmlWriter writer)
 		{
-			throw new NotImplementedException ();
+			DataSet ds = DataSet;
+			DataSet tmp = null;
+			try {
+				if (ds == null) {
+					tmp = ds = new DataSet ();
+					ds.Tables.Add (this);
+				}
+				DataTableCollection col = new DataTableCollection (ds);
+				col.Add (this);
+				XmlSchemaWriter.WriteXmlSchema (ds, writer, col, null);
+			} finally {
+				if (tmp != null)
+					ds.Tables.Remove (this);
+			}
 		}
 
-		[MonoTODO]
 		public void WriteXmlSchema (string fileName)
 		{
-			throw new NotImplementedException ();
+			XmlWriter xw = null;
+			try {
+				xw = XmlWriter.Create (fileName, GetWriterSettings ());
+				WriteXmlSchema (xw);
+			} finally {
+				if (xw != null)
+					xw.Close ();
+			}
 		}
 #endif
 		

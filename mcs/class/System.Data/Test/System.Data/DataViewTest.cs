@@ -182,10 +182,9 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Ignore("Test code not implemented")]
 		public void RowStateFilter ()
 		{
-			// TODO 			
+			dataView.RowStateFilter = DataViewRowState.Deleted;
 			AssertEquals ("test#01",ListChangedType.Reset,listChangedArgs.ListChangedType);
 		}
 

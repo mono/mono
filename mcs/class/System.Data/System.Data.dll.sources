@@ -314,8 +314,8 @@ System.Data.SqlClient/SqlTransaction.cs
 System.Data.SqlClient/SqlXmlTextReader.cs
 System.Data.SqlClient/SQLDebugging.cs
 System.Data/XmlDataLoader.cs
-System.Data/XmlSchemaMapper.cs
 System.Data/XmlSchemaDataImporter.cs
+System.Data/XmlSchemaWriter.cs
 System.Xml/XmlDataDocument.cs
 System.Data.ProviderBase/DbCommandBase.cs
 System.Data.ProviderBase/DbConnectionBase.cs

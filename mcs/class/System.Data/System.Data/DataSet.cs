@@ -768,10 +768,8 @@ namespace System.Data {
 			XmlTextWriter xwriter = new XmlTextWriter (writer);
 			try {
 				xwriter.Formatting = Formatting.Indented;
-//				xwriter.WriteStartDocument ();
 				WriteXmlSchema (xwriter);
 			} finally {
-//				xwriter.WriteEndDocument ();
 				xwriter.Close ();
 			}
 		}
@@ -1261,7 +1259,7 @@ namespace System.Data {
 			return XmlReadMode.ReadSchema;
 		}
 
-		private string WriteObjectXml (object o)
+		internal static string WriteObjectXml (object o)
 		{
 			switch (Type.GetTypeCode (o.GetType ())) {
 				case TypeCode.Boolean:
@@ -1326,7 +1324,10 @@ namespace System.Data {
 			WriteTable (writer, rows, mode, version, true);
 		}
 
-		private void WriteTable (XmlWriter writer, DataRow[] rows, XmlWriteMode mode, DataRowVersion version, bool skipIfNested)
+		private void WriteTable (XmlWriter writer,
+			DataRow [] rows,
+			XmlWriteMode mode,
+			DataRowVersion version, bool skipIfNested)
 		{
 			//The columns can be attributes, hidden, elements, or simple content
 			//There can be 0-1 simple content cols or 0-* elements
@@ -1484,8 +1485,6 @@ namespace System.Data {
 		
 		internal void WriteIndividualTableContent (XmlWriter writer, DataTable table, XmlWriteMode mode)
 		{
-			((XmlTextWriter)writer).Formatting = Formatting.Indented;
-
 			if (mode == XmlWriteMode.DiffGram) {
 				SetTableRowsID (table);
 				WriteDiffGramElement (writer);
@@ -1507,528 +1506,19 @@ namespace System.Data {
 			}
 			writer.WriteEndElement (); // DataSet name or diffgr:diffgram
 		}
-		
-
-		private void CheckNamespace (string prefix, string ns, XmlNamespaceManager nsmgr, XmlSchema schema)
-		{
-			if (ns == String.Empty)
-				return;
-			if (ns != nsmgr.DefaultNamespace) {
-				if (nsmgr.LookupNamespace (nsmgr.NameTable.Get (prefix)) != ns) {
-					for (int i = 1; i < int.MaxValue; i++) {
-						string p = nsmgr.NameTable.Add ("app" + i);
-						if (!nsmgr.HasNamespace (p)) {
-							nsmgr.AddNamespace (p, ns);
-							HandleExternalNamespace (p, ns, schema);
-							break;
-						}
-					}
-				}
-			}
-		}
-		
-		XmlSchema BuildSchema ()
-		{
-			return BuildSchema (Tables, Relations);
-		}
-		
-		internal XmlSchema BuildSchema (DataTableCollection tables, DataRelationCollection relations)
-		{
-			string constraintPrefix = "";
-			XmlSchema schema = new XmlSchema ();
-			XmlNamespaceManager nsmgr = new XmlNamespaceManager (new NameTable ());
-			
-			if (Namespace != "") {
-				schema.AttributeFormDefault = XmlSchemaForm.Qualified;
-				schema.ElementFormDefault = XmlSchemaForm.Qualified;
-				schema.TargetNamespace = Namespace;
-				constraintPrefix = XmlConstants.TnsPrefix + ":";
-			}
-
-			// set the schema id
-			schema.Id = DataSetName;
-			XmlDocument doc = new XmlDocument ();
-			XmlAttribute attr = null;
-			ArrayList atts = new ArrayList ();
-
-			attr = doc.CreateAttribute ("", "xmlns", XmlConstants.XmlnsNS);
-			atts.Add (attr);
-
-			nsmgr.AddNamespace ("xs", XmlSchema.Namespace);
-			nsmgr.AddNamespace (XmlConstants.MsdataPrefix, XmlConstants.MsdataNamespace);
-			if (Namespace != "") {
-				nsmgr.AddNamespace (XmlConstants.TnsPrefix, Namespace);
-				nsmgr.AddNamespace (String.Empty, Namespace);
-			}
-			if (CheckExtendedPropertyExists (tables, relations))
-				nsmgr.AddNamespace (XmlConstants.MspropPrefix, XmlConstants.MspropNamespace);
-
-			if (atts.Count > 0)
-				schema.UnhandledAttributes = atts.ToArray (typeof (XmlAttribute)) as XmlAttribute [];
-
-			XmlSchemaElement elem = new XmlSchemaElement ();
-			elem.Name = XmlConvert.EncodeName (DataSetName);
-
-			// Add namespaces used in DataSet components (tables, columns, ...)
-			foreach (DataTable dt in tables) {
-				foreach (DataColumn col in dt.Columns)
-					CheckNamespace (col.Prefix, col.Namespace, nsmgr, schema);
-				CheckNamespace (dt.Prefix, dt.Namespace, nsmgr, schema);
-			}
-
-			// Attributes for DataSet element
-			atts.Clear ();
-			attr = doc.CreateAttribute (XmlConstants.MsdataPrefix,  XmlConstants.IsDataSet, XmlConstants.MsdataNamespace);
-			attr.Value = "true";
-			atts.Add (attr);
-
-			attr = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.Locale, XmlConstants.MsdataNamespace);
-			attr.Value = locale.Name;
-			atts.Add (attr);
-
-			elem.UnhandledAttributes = atts.ToArray (typeof (XmlAttribute)) as XmlAttribute [];
-
-			AddExtendedPropertyAttributes (elem, ExtendedProperties, doc);
-
-			XmlSchemaComplexType complex = new XmlSchemaComplexType ();
-			elem.SchemaType = complex;
-
-			XmlSchemaChoice choice = new XmlSchemaChoice ();
-			complex.Particle = choice;
-			choice.MaxOccursString = XmlConstants.Unbounded;
-			
-			//Write out schema for each table in order
-			foreach (DataTable table in tables) {		
-				bool isTopLevel = true;
-				foreach (DataRelation rel in table.ParentRelations) {
-					if (rel.Nested) {
-						isTopLevel = false;
-						break;
-					}
-				}
-				
-				if (isTopLevel) {
-					if (table.Namespace != SafeNS (schema.TargetNamespace)) {
-						XmlSchemaElement extElem = new XmlSchemaElement ();
-						extElem.RefName = new XmlQualifiedName (table.TableName, table.Namespace);
-						choice.Items.Add (extElem);
-					}
-					else
-						choice.Items.Add (GetTableSchema (doc, table, schema, nsmgr));
-				}
-			}
-
-			schema.Items.Add (elem);
-			
-			AddConstraintsToSchema (elem, constraintPrefix, tables, relations, doc);
-			foreach (string prefix in nsmgr) {
-				string ns = nsmgr.LookupNamespace (nsmgr.NameTable.Get (prefix));
-				if (prefix != "xmlns" && prefix != "xml" && ns != null && ns != String.Empty)
-					schema.Namespaces.Add (prefix, ns);
-			}
-
-			return schema;
-		}
-
-		private bool CheckExtendedPropertyExists (
-			DataTableCollection tables,
-			DataRelationCollection relations)
-		{
-			if (ExtendedProperties.Count > 0)
-				return true;
-			foreach (DataTable dt in tables) {
-				if (dt.ExtendedProperties.Count > 0)
-					return true;
-				foreach (DataColumn col in dt.Columns)
-					if (col.ExtendedProperties.Count > 0)
-						return true;
-				foreach (Constraint c in dt.Constraints)
-					if (c.ExtendedProperties.Count > 0)
-						return true;
-			}
-			if (relations == null)
-				return false;
-			foreach (DataRelation rel in relations)
-				if (rel.ExtendedProperties.Count > 0)
-					return true;
-			return false;
-		}
-
-		// Add all constraints in all tables to the schema.
-		private void AddConstraintsToSchema (XmlSchemaElement elem, string constraintPrefix, DataTableCollection tables, DataRelationCollection relations, XmlDocument doc) 
-		{
-			// first add all unique constraints.
-			Hashtable uniqueNames = AddUniqueConstraints (elem, constraintPrefix, tables, doc);
-			// Add all foriegn key constraints.
-			AddForeignKeys (uniqueNames, elem, constraintPrefix, relations, doc);
-		}
-		
-		// Add unique constaraints to the schema.
-		// return hashtable with the names of all XmlSchemaUnique elements we created.
-		private Hashtable AddUniqueConstraints (XmlSchemaElement elem, string constraintPrefix, DataTableCollection tables, XmlDocument doc)
-		{
-			Hashtable uniqueNames = new Hashtable();
-			foreach (DataTable table in tables) {
-				
-				foreach (Constraint constraint in table.Constraints) {
-					
-					if (constraint is UniqueConstraint) {
-						ArrayList attrs = new ArrayList ();
-						XmlAttribute attrib;
-						UniqueConstraint uqConst = (UniqueConstraint) constraint;
-						XmlSchemaUnique uniq = new XmlSchemaUnique ();
-						
-						// if column of the constraint is hidden do not write the constraint.
-						bool isHidden = false;
-						foreach (DataColumn column in uqConst.Columns) {
-							if (column.ColumnMapping == MappingType.Hidden) {
-								isHidden = true;
-								break;
-							}
-						}
-
-						if (isHidden)
-							continue;
-
-						// if constaraint name do not exist in the hashtable we can use it.
-						if (!uniqueNames.ContainsKey (uqConst.ConstraintName)) {
-							uniq.Name = uqConst.ConstraintName;
-						}
-						// generate new constraint name for the XmlSchemaUnique element.
-						else {
-							uniq.Name = uqConst.Table.TableName + "_" + uqConst.ConstraintName;
-							attrib = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.ConstraintName, XmlConstants.MsdataNamespace);
-							attrib.Value = uqConst.ConstraintName;
-							attrs.Add (attrib);
-						}
-						if (uqConst.IsPrimaryKey) {
-							attrib = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.PrimaryKey, XmlConstants.MsdataNamespace);
-							attrib.Value = "true";
-							attrs.Add (attrib);
-						}
-		
-						uniq.UnhandledAttributes = (XmlAttribute[])attrs.ToArray (typeof (XmlAttribute));
-
-						uniq.Selector = new XmlSchemaXPath();
-						uniq.Selector.XPath = ".//"+constraintPrefix + uqConst.Table.TableName;
-						XmlSchemaXPath field;
-						foreach (DataColumn column in uqConst.Columns) {
-				 			field = new XmlSchemaXPath();
-							string typePrefix = column.ColumnMapping == MappingType.Attribute ? "@" : "";
-							field.XPath = typePrefix + constraintPrefix+column.ColumnName;
-							uniq.Fields.Add(field);
-						}
-				
-						AddExtendedPropertyAttributes (uniq, constraint.ExtendedProperties, doc);
-
-						elem.Constraints.Add (uniq);
-						uniqueNames.Add (uniq.Name, null);
-					}
-				}
-			}
-			return uniqueNames;
-		}
-		
-		// Add the foriegn keys to the schema.
-		private void AddForeignKeys (Hashtable uniqueNames, XmlSchemaElement elem, string constraintPrefix, DataRelationCollection relations, XmlDocument doc)
-		{
-			if (relations == null) return;
-			
-			foreach (DataRelation rel in relations) {
-				
-				if (rel.ParentKeyConstraint == null || rel.ChildKeyConstraint == null)
-					continue;
-
-				bool isHidden = false;
-				foreach (DataColumn col in rel.ParentColumns) {
-					if (col.ColumnMapping == MappingType.Hidden) {
-						isHidden = true;
-						break;
-					}
-				}
-				foreach (DataColumn col in rel.ChildColumns) {
-					if (col.ColumnMapping == MappingType.Hidden) {
-						isHidden = true;
-						break;
-					}
-				}
-				if (isHidden)
-					continue;
-				
-				ArrayList attrs = new ArrayList ();
-				XmlAttribute attrib;
-				XmlSchemaKeyref keyRef = new XmlSchemaKeyref();
-				keyRef.Name = rel.RelationName;
-				ForeignKeyConstraint fkConst = rel.ChildKeyConstraint;
-				UniqueConstraint uqConst = rel.ParentKeyConstraint;
-				
-				string concatName = rel.ParentTable.TableName + "_" + uqConst.ConstraintName;
-				// first try to find the concatenated name. If we didn't find it - use constraint name.
-				if (uniqueNames.ContainsKey (concatName)) {
-					keyRef.Refer = new XmlQualifiedName(concatName);
-				}
-				else {
-					keyRef.Refer = new XmlQualifiedName(uqConst.ConstraintName);
-				}
-
-				if (rel.Nested)	{
-					attrib = doc.CreateAttribute (XmlConstants.MsdataPrefix,  XmlConstants.IsNested, XmlConstants.MsdataNamespace);
-					attrib.Value = "true";
-					attrs.Add (attrib);
-				}
-
-				keyRef.Selector = new XmlSchemaXPath();
-				keyRef.Selector.XPath = ".//" + constraintPrefix + rel.ChildTable.TableName;
-				XmlSchemaXPath field;
-				foreach (DataColumn column in rel.ChildColumns)	{
-				 	field = new XmlSchemaXPath();
-					string typePrefix = column.ColumnMapping == MappingType.Attribute ? "@" : "";
-					field.XPath = typePrefix + constraintPrefix + column.ColumnName;
-					keyRef.Fields.Add(field);
-				}
-
-				keyRef.UnhandledAttributes = (XmlAttribute[])attrs.ToArray (typeof (XmlAttribute));
-				AddExtendedPropertyAttributes (keyRef, rel.ExtendedProperties, doc);
-
-				elem.Constraints.Add (keyRef);
-			}
-		}
-
-		private XmlSchemaElement GetTableSchema (XmlDocument doc, DataTable table, XmlSchema schemaToAdd, XmlNamespaceManager nsmgr)
-		{
-			ArrayList elements;
-			ArrayList atts;
-			DataColumn simple;
-
-			ArrayList xattrs = new ArrayList();
-			XmlAttribute xattr;
-
-			SplitColumns (table, out atts, out elements, out simple);
-
-			XmlSchemaElement elem = new XmlSchemaElement ();
-			elem.Name = table.TableName;
-
-			XmlSchemaComplexType complex = new XmlSchemaComplexType ();
-			elem.SchemaType = complex;
-
-			XmlSchemaObjectCollection schemaAttributes = null;
-
-			if (simple != null) {
-				// add simpleContent
-				XmlSchemaSimpleContent simpleContent = new XmlSchemaSimpleContent();
-				complex.ContentModel = simpleContent;
-
-				// add column name attribute
-				XmlAttribute[] xlmAttrs = new XmlAttribute [2];
-				xlmAttrs[0] = doc.CreateAttribute (XmlConstants.MsdataPrefix,  XmlConstants.ColumnName, XmlConstants.MsdataNamespace);
-				xlmAttrs[0].Value = simple.ColumnName;
-				
-				// add ordinal attribute
-				xlmAttrs[1] = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.Ordinal, XmlConstants.MsdataNamespace);
-				xlmAttrs[1].Value = XmlConvert.ToString (simple.Ordinal);
-				simpleContent.UnhandledAttributes = xlmAttrs;
-				
-			        
-				// add extension
-				XmlSchemaSimpleContentExtension extension = new XmlSchemaSimpleContentExtension();
-				simpleContent.Content = extension;
-				extension.BaseTypeName = MapType (simple.DataType);
-				schemaAttributes = extension.Attributes;
-			} else {
-				schemaAttributes = complex.Attributes;
-				//A sequence of element types or a simple content node
-				//<xs:sequence>
-				XmlSchemaSequence seq = new XmlSchemaSequence ();
-
-				foreach (DataColumn col in elements) {
-					
-					// Add element for the column.
-					XmlSchemaElement colElem = new XmlSchemaElement ();
-					colElem.Name = col.ColumnName;
-				
-					if (col.ColumnName != col.Caption && col.Caption != String.Empty) {
-						xattr = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.Caption, XmlConstants.MsdataNamespace);
-						xattr.Value = col.Caption;
-						xattrs.Add (xattr);
-					}
-
-					if (col.AutoIncrement == true) {
-						xattr = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.AutoIncrement, XmlConstants.MsdataNamespace);
-						xattr.Value = "true";
-						xattrs.Add (xattr);
-					}
-
-					if (col.AutoIncrementSeed != 0) {
-						xattr = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.AutoIncrementSeed, XmlConstants.MsdataNamespace);
-						xattr.Value = XmlConvert.ToString (col.AutoIncrementSeed);
-						xattrs.Add (xattr);
-					}
-
-					if (col.DefaultValue.ToString () != String.Empty)
-						colElem.DefaultValue = WriteObjectXml (col.DefaultValue);
-
-					if (col.ReadOnly) {
-						xattr = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.ReadOnly, XmlConstants.MsdataNamespace);
-						xattr.Value = "true";
-						xattrs.Add (xattr);
-					}
-
-					if (col.MaxLength < 0)
-						colElem.SchemaTypeName = MapType (col.DataType);
-					
-					if (colElem.SchemaTypeName == XmlConstants.QnString && col.DataType != typeof (string) 
-						&& col.DataType != typeof (char)) {
-						xattr = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.DataType, XmlConstants.MsdataNamespace);
-						xattr.Value = col.DataType.AssemblyQualifiedName;
-						xattrs.Add (xattr);
-					}
-
-					if (col.AllowDBNull) {
-						colElem.MinOccurs = 0;
-					}
-
-					//writer.WriteAttributeString (XmlConstants.MsdataPrefix, 
-					//                            XmlConstants.Ordinal, 
-					//                            XmlConstants.MsdataNamespace, 
-					//                            col.Ordinal.ToString ());
-
-					// Write SimpleType if column have MaxLength
-					if (col.MaxLength > -1) {
-						colElem.SchemaType = GetTableSimpleType (doc, col);
-					}
-					
-					colElem.UnhandledAttributes = (XmlAttribute[])xattrs.ToArray(typeof (XmlAttribute));
-					xattrs.Clear ();
-					AddExtendedPropertyAttributes (colElem, col.ExtendedProperties, doc);
-					seq.Items.Add (colElem);
-				}
-
-				foreach (DataRelation rel in table.ChildRelations) {
-					if (rel.Nested) {
-						if (rel.ChildTable.Namespace != SafeNS (schemaToAdd.TargetNamespace)) {
-							XmlSchemaElement el = new XmlSchemaElement ();
-							el.RefName = new XmlQualifiedName (rel.ChildTable.TableName, rel.ChildTable.Namespace);
-						} else {
-							XmlSchemaElement el = GetTableSchema (doc, rel.ChildTable, schemaToAdd, nsmgr);
-							el.MinOccurs = 0;
-							el.MaxOccursString = "unbounded";
-							XmlSchemaComplexType ct = (XmlSchemaComplexType) el.SchemaType;
-							ct.Name = el.Name;
-							el.SchemaType = null;
-							el.SchemaTypeName = new XmlQualifiedName (ct.Name, schemaToAdd.TargetNamespace);
-							schemaToAdd.Items.Add (ct);
-							seq.Items.Add (el);
-						}
-					}
-				}
-
-				if (seq.Items.Count > 0)
-					complex.Particle = seq;
-			}
-
-			//Then a list of attributes
-			foreach (DataColumn col in atts) {
-				//<xs:attribute name=col.ColumnName form="unqualified" type=MappedType/>
-				XmlSchemaAttribute att = new XmlSchemaAttribute ();
-				att.Name = col.ColumnName;
-				if (col.Namespace != String.Empty) {
-					att.Form = XmlSchemaForm.Qualified;
-					string prefix = col.Prefix == String.Empty ? "app" + schemaToAdd.Namespaces.Count : col.Prefix;
-					att.Name = prefix + ":" + col.ColumnName;
-					// FIXME: Handle prefix mapping correctly.
-					schemaToAdd.Namespaces.Add (prefix, col.Namespace);
-				}
-				if (!col.AllowDBNull)
-					att.Use = XmlSchemaUse.Required;
-				if (col.DefaultValue.ToString () != String.Empty)
-					att.DefaultValue = WriteObjectXml (col.DefaultValue);
-
-				if (col.ReadOnly) {
-					xattr = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.ReadOnly, XmlConstants.MsdataNamespace);
-					xattr.Value = "true";
-					xattrs.Add (xattr);
-				}
-
-				att.UnhandledAttributes = xattrs.ToArray (typeof (XmlAttribute)) as XmlAttribute [];
-				xattrs.Clear ();
-
-				if (col.MaxLength > -1)
-					att.SchemaType = GetTableSimpleType (doc, col);
-				else
-					att.SchemaTypeName = MapType (col.DataType);
-				// FIXME: what happens if extended properties are set on attribute columns??
-				schemaAttributes.Add (att);
-			}
-
-			AddExtendedPropertyAttributes (elem, table.ExtendedProperties, doc);
-
-			return elem;
-		}
-
-		private void AddExtendedPropertyAttributes (XmlSchemaAnnotated xsobj, PropertyCollection props, XmlDocument doc)
-		{
-			ArrayList attList = new ArrayList ();
-			XmlAttribute xmlAttr;
-
-			if (xsobj.UnhandledAttributes != null)
-				attList.AddRange (xsobj.UnhandledAttributes);
-
-			// add extended properties to xs:element
-			foreach (DictionaryEntry de in props) {
-				xmlAttr = doc.CreateAttribute (XmlConstants.MspropPrefix, XmlConvert.EncodeName (de.Key.ToString ()), XmlConstants.MspropNamespace);
-				xmlAttr.Value = de.Value != null ? WriteObjectXml (de.Value) : String.Empty;
-				attList.Add (xmlAttr);
-			}
-			if (attList.Count > 0)
-				xsobj.UnhandledAttributes = attList.ToArray (typeof (XmlAttribute)) as XmlAttribute [];
-		}
-
-		private string SafeNS (string ns)
-		{
-			return ns != null ? ns : String.Empty;
-		}
-
-		private void HandleExternalNamespace (string prefix, string ns, XmlSchema schema)
-		{
-			foreach (XmlSchemaExternal ext in schema.Includes) {
-				XmlSchemaImport imp = ext as XmlSchemaImport;
-				if (imp != null && imp.Namespace == ns)
-					return; // nothing to do
-			}
-			XmlSchemaImport i = new XmlSchemaImport ();
-			i.Namespace = ns;
-			i.SchemaLocation = "_" + prefix + ".xsd";
-			schema.Includes.Add (i);
-		}
-
-		private XmlSchemaSimpleType GetTableSimpleType (XmlDocument doc, DataColumn col)
-		{
-			// SimpleType
-			XmlSchemaSimpleType simple = new XmlSchemaSimpleType ();
-
-			// Restriction
-			XmlSchemaSimpleTypeRestriction restriction = new XmlSchemaSimpleTypeRestriction ();
-			restriction.BaseTypeName = MapType (col.DataType);
-			
-			// MaxValue
-			XmlSchemaMaxLengthFacet max = new XmlSchemaMaxLengthFacet ();
-			max.Value = XmlConvert.ToString (col.MaxLength);
-			restriction.Facets.Add (max);
-			
-			simple.Content = restriction;
-			return simple;
-		}
 
 		private void DoWriteXmlSchema (XmlWriter writer)
 		{
-			BuildSchema ().Write (writer);
+			if (writer.WriteState == WriteState.Start)
+				writer.WriteStartDocument ();
+			XmlSchemaWriter.WriteXmlSchema (this, writer);
 		}
 		
 		///<summary>
 		/// Helper function to split columns into attributes elements and simple
 		/// content
 		/// </summary>
-		private void SplitColumns (DataTable table, 
+		internal static void SplitColumns (DataTable table, 
 			out ArrayList atts, 
 			out ArrayList elements, 
 			out DataColumn simple)
@@ -2081,40 +1571,6 @@ namespace System.Data {
 				dataRowID++;
 			}
 		}
-
-		
-		private XmlQualifiedName MapType (Type type)
-		{
-			switch (Type.GetTypeCode (type)) {
-				case TypeCode.String: return XmlConstants.QnString;
-				case TypeCode.Int16: return XmlConstants.QnShort;
-				case TypeCode.Int32: return XmlConstants.QnInt;
-				case TypeCode.Int64: return XmlConstants.QnLong;
-				case TypeCode.Boolean: return XmlConstants.QnBoolean;
-				case TypeCode.Byte: return XmlConstants.QnUnsignedByte;
-				//case TypeCode.Char: return XmlConstants.QnChar;
-				case TypeCode.DateTime: return XmlConstants.QnDateTime;
-				case TypeCode.Decimal: return XmlConstants.QnDecimal;
-				case TypeCode.Double: return XmlConstants.QnDouble;
-				case TypeCode.SByte: return XmlConstants.QnSbyte;
-				case TypeCode.Single: return XmlConstants.QnFloat;
-				case TypeCode.UInt16: return XmlConstants.QnUsignedShort;
-				case TypeCode.UInt32: return XmlConstants.QnUnsignedInt;
-				case TypeCode.UInt64: return XmlConstants.QnUnsignedLong;
-			}
-			
-			if (typeof (TimeSpan) == type)
-				return XmlConstants.QnDuration;
-			else if (typeof (System.Uri) == type)
-				return XmlConstants.QnUri;
-			else if (typeof (byte[]) == type)
-				return XmlConstants.QnBase64Binary;
-			else if (typeof (XmlQualifiedName) == type)
-				return XmlConstants.QnXmlQualifiedName;
-			else
-				return XmlConstants.QnString;
-		}
-
 		#endregion //Private Xml Serialisation
 	}
 }

@@ -1,3 +1,11 @@
+2005-02-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSetAssertion.cs : don't exclude those attribute whose namespace
+	  URI is not empty from sort target.
+	* DataSetTest.cs : removed GetNormalizedSchema() dependency from some
+	  tests (i.e. DataSet now emits more MS-closer schemas).
+	* DataViewTest.cs : implemented test for RowFilter.
+
 2005-02-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSetTest.cs : WriteDifferentNamespaceSchema() is NotWorking.
