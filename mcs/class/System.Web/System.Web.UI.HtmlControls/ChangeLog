@@ -1,3 +1,8 @@
+2002-06-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlForm.cs:
+	(RenderChildren): use OnFormRender and OnFormPostRender.
+
 2002-06-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlSelect.cs:

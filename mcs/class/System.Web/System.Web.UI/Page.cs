@@ -42,8 +42,8 @@ public class Page : TemplateControl, IHttpHandler
 	private HttpContext _context;
 	private ValidatorCollection _validators;
 	private bool _visible;
-	private string _responseEncoding;
-	private HttpSessionState _session;
+	private bool _renderingForm;
+	private bool _hasForm;
 
 	#region Fields
 	 	protected const string postEventArgumentID = ""; //FIXME
@@ -59,10 +59,9 @@ public class Page : TemplateControl, IHttpHandler
 
 	#region Properties
 
-	[MonoTODO]
 	public HttpApplicationState Application
 	{
-		get { throw new NotImplementedException (); }
+		get { return _context.Application; }
 	}
 
 	bool AspCompatMode
@@ -70,16 +69,14 @@ public class Page : TemplateControl, IHttpHandler
 		set { throw new NotImplementedException (); }
 	}
 
-	[MonoTODO]
 	bool Buffer
 	{
-		set { throw new NotImplementedException (); }
+		set { Response.BufferOutput = value; }
 	}
 
-	[MonoTODO]
 	public Cache Cache
 	{
-		get { throw new NotImplementedException (); }
+		get { return _context.Cache; }
 	}
 
 	[MonoTODO]
@@ -173,7 +170,7 @@ public class Page : TemplateControl, IHttpHandler
 
 	string ResponseEncoding
 	{
-		set { _responseEncoding = value; }
+		set { Response.ContentEncoding = Encoding.GetEncoding (value); }
 	}
 
 	public HttpServerUtility Server
@@ -183,7 +180,7 @@ public class Page : TemplateControl, IHttpHandler
 
 	public virtual HttpSessionState Session
 	{
-		get { return _session; }
+		get { return _context.Session; }
 	}
 
 	public bool SmartNavigation
@@ -366,6 +363,21 @@ public class Page : TemplateControl, IHttpHandler
 		}
 	}
 
+	internal void OnFormRender (HtmlTextWriter writer, string formUniqueID)
+	{
+		if (_hasForm)
+			throw new HttpException ("Only 1 HtmlForm is allowed per page.");
+
+		_renderingForm = true;
+		_hasForm = true;
+	}
+
+	internal void OnFormPostRender (HtmlTextWriter writer, string formUniqueID)
+	{
+		_renderingForm = false;
+	}
+
+
 	private void _Page_Init (object sender, EventArgs e)
 	{
 		InvokeEventMethod ("Page_Init", sender, e);
@@ -462,6 +474,12 @@ public class Page : TemplateControl, IHttpHandler
 		throw new NotImplementedException ();
 	}
 	
+	[MonoTODO]
+	void SavePageViewState ()
+	{
+		throw new NotImplementedException ();
+	}
+
 	public virtual void Validate ()
 	{
 		bool all_valid = true;
@@ -475,10 +493,11 @@ public class Page : TemplateControl, IHttpHandler
 			_isValid = true;
 	}
 
-	[MonoTODO]
 	public virtual void VerifyRenderingInServerForm (Control control)
 	{
-		return;
+		if (!_renderingForm)
+			throw new HttpException ("Control '" + control.ClientID + 
+						 "' must be rendered within a HtmlForm");
 	}
 
 	#endregion

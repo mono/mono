@@ -63,10 +63,11 @@ namespace System.Web.UI.HtmlControls{
 			base.Render(output);
 		}
 		
-		protected override void RenderChildren(HtmlTextWriter writer){
-			// Page.OnFormRender(writer,ClientID);
-			base.RenderChildren(writer);
-			// Page.OnFormPostRender(writer,ClientID);
+		protected override void RenderChildren (HtmlTextWriter writer)
+		{
+			Page.OnFormRender (writer,ClientID);
+			base.RenderChildren (writer);
+			Page.OnFormPostRender (writer,ClientID);
 		}
 		
 		protected override void OnInit(EventArgs e){
