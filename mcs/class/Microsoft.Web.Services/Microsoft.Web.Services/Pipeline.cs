@@ -64,7 +64,7 @@ namespace Microsoft.Web.Services {
 		public void ProcessOutputMessage (SoapEnvelope envelope) 
 		{
 			// in reverse order - see reference [1]
-			for (int x=output.Count - 1; x >= 0; x++)
+			for (int x=output.Count - 1; x >= 0; x--)
 				output [x].ProcessMessage (envelope);
 		}
 	}

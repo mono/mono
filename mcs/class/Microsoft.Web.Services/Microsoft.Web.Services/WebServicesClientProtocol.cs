@@ -66,8 +66,8 @@ namespace Microsoft.Web.Services {
 
 		protected override WebResponse GetWebResponse (WebRequest request) 
 		{
-			SoapWebResponse response = (SoapWebResponse) request.GetResponse ();
-			response.SoapContext.CopyTo (ResponseSoapContext);
+			WebResponse response = request.GetResponse ();
+			//response.SoapContext.CopyTo (ResponseSoapContext);
 			return response;
 		}
 

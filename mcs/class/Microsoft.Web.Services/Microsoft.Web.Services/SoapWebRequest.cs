@@ -18,6 +18,7 @@ namespace Microsoft.Web.Services {
 		private Uri uri;
 		private SoapContext context;
 		private Pipeline pipeline;
+		private WebRequest request;
 
 		public SoapWebRequest (string uri) : this (new Uri (uri)) {}
 
@@ -27,69 +28,60 @@ namespace Microsoft.Web.Services {
 			context = new SoapContext (null);
 		}
 
-		[MonoTODO("incomplete - only call base class")]
 		public override IAsyncResult BeginGetRequestStream (AsyncCallback cb, object state) 
 		{
-			return base.BeginGetRequestStream (cb, state);
+			return Request.BeginGetRequestStream (cb, state);
 		}
 		
-		[MonoTODO("incomplete - only call base class")]
 		public override IAsyncResult BeginGetResponse (AsyncCallback cb, object state) 
 		{
-			return base.BeginGetResponse (cb, state);
+			return Request.BeginGetResponse (cb, state);
 		}
 		
-		[MonoTODO("incomplete - only call base class")]
 		public override Stream EndGetRequestStream (IAsyncResult asyncResult) 
 		{
-			return base.EndGetRequestStream (asyncResult);
+			return Request.EndGetRequestStream (asyncResult);
 		}
 		
-		[MonoTODO("incomplete - only call base class")]
 		public override WebResponse EndGetResponse (IAsyncResult asyncResult) 
 		{
-			return base.EndGetResponse (asyncResult);
+			return Request.EndGetResponse (asyncResult);
 		}
 
-		[MonoTODO("incomplete - only call base class")]
 		public override Stream GetRequestStream () 
 		{
-			return base.GetRequestStream ();
+			Stream s = Request.GetRequestStream ();
+			SoapEnvelope env = new SoapEnvelope (context);
+			return new ChainStream (s, env, Pipeline);
 		}
 
-		[MonoTODO("incomplete - only call base class")]
 		public override WebResponse GetResponse () 
 		{
-			return base.GetResponse ();
+			return Request.GetResponse ();
 		}
 
-		[MonoTODO("incomplete - only call base class")]
 		public override string ConnectionGroupName {
-			get { return base.ConnectionGroupName; }
-			set { base.ConnectionGroupName = value; }
+			get { return Request.ConnectionGroupName; }
+			set { Request.ConnectionGroupName = value; }
 		}
 
-		[MonoTODO("incomplete - only call base class")]
 		public override string ContentType { 
-			get { return base.ContentType; }
-			set { base.ContentType = value; } 
+			get { return Request.ContentType; }
+			set { Request.ContentType = value; } 
 		}
 
-		[MonoTODO("incomplete - only call base class")]
 		public override ICredentials Credentials { 
-			get { return base.Credentials; }
-			set { base.Credentials = value; } 
+			get { return Request.Credentials; }
+			set { Request.Credentials = value; } 
 		}
 
-		[MonoTODO("incomplete - only call base class")]
 		public override WebHeaderCollection Headers { 
-			get { return base.Headers; }
+			get { return Request.Headers; }
 		}
 
-		[MonoTODO("incomplete - only call base class")]
 		public override string Method { 
-			get { return base.Method; } 
-			set { base.Method = value; }
+			get { return Request.Method; } 
+			set { Request.Method = value; }
 		}
 
 		public Pipeline Pipeline { 
@@ -102,14 +94,17 @@ namespace Microsoft.Web.Services {
 			set { pipeline = value; }
 		}
 
-		[MonoTODO("incomplete - only call base class")]
 		public override bool PreAuthenticate { 
-			get { return base.PreAuthenticate; }
-			set { base.PreAuthenticate = value; }
+			get { return Request.PreAuthenticate; }
+			set { Request.PreAuthenticate = value; }
 		}
 
 		public WebRequest Request { 
-			get { return null; } 
+			get { 
+				if (request == null)
+					request = WebRequest.Create (uri);
+				return request;
+			} 
 		}
 
 		public override Uri RequestUri { 
@@ -120,10 +115,9 @@ namespace Microsoft.Web.Services {
 			get { return context; }
 		}
 
-		[MonoTODO("incomplete - only call base class")]
 		public override int Timeout { 
-			get { return base.Timeout; }
-			set { base.Timeout = value; }
+			get { return Request.Timeout; }
+			set { Request.Timeout = value; }
 		}
 	}
 }

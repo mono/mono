@@ -16,6 +16,11 @@ namespace Microsoft.Web.Services {
 
 		public SoapInputFilterCollection () {}
 
+		internal SoapInputFilterCollection (ArrayList list) 
+		{
+			InnerList.AddRange (list);
+		}
+
 		public SoapInputFilter this [int index] {
 			get { return (SoapInputFilter) InnerList [index]; }
 		}
@@ -42,7 +47,7 @@ namespace Microsoft.Web.Services {
 		// LAMESPEC: Shallow (implemented) or deep clone (todo)
 		public object Clone () 
 		{
-			return InnerList.Clone ();
+			return new SoapInputFilterCollection ((ArrayList) InnerList.Clone ());
 		}
 
 		public bool Contains (SoapInputFilter filter) 

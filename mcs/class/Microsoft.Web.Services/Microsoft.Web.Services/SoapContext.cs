@@ -12,9 +12,6 @@ using Microsoft.Web.Services.Referral;
 using Microsoft.Web.Services.Routing;
 using Microsoft.Web.Services.Security;
 using Microsoft.Web.Services.Timestamp;
-#if !WSE1
-using Microsoft.Web.Services.Addressing;
-#endif
 
 using System;
 using System.Collections;
@@ -28,11 +25,11 @@ namespace Microsoft.Web.Services {
 		private Microsoft.Web.Services.Timestamp.Timestamp timestamp;
 		private Microsoft.Web.Services.Security.Security security;
 		private Hashtable table;
-		
-		#if !WSE1
-		private AddressingHeaders addressingHeaders;
-		#endif
-		
+		private DimeAttachmentCollection attachments;
+		private string contentType;
+		private SecurityCollection extendedSecurity;
+		private ReferralCollection referrals;
+
 		internal SoapContext () 
 		{
 			timestamp = new Microsoft.Web.Services.Timestamp.Timestamp ();
@@ -50,29 +47,16 @@ namespace Microsoft.Web.Services {
 			get { return actor; }
 		}
 
-
-		#if !WSE1
-		public Action Action {
-			get { return addressingHeaders.Action; }
-			set { addressingHeaders.Action = value; }
-		}
-
-		public ReplyTo ReplyTo {
-			get { return addressingHeaders.ReplyTo; }
-			set { addressingHeaders.ReplyTo = value; }
-		}
-
-		public To To {
-			get { return addressingHeaders.To; }
-		}
-		#endif
-
 		public DimeAttachmentCollection Attachments { 
-			get { return null; }
+			get { 
+				if (attachments == null)
+					attachments = new DimeAttachmentCollection ();
+				return attachments; 
+			}
 		}
 
 		public string ContentType { 
-			get { return null; }
+			get { return contentType; }
 		}
 
 		public SoapEnvelope Envelope { 
@@ -80,7 +64,7 @@ namespace Microsoft.Web.Services {
 		}
 
 		public SecurityCollection ExtendedSecurity {
-			get { return null; }
+			get { return extendedSecurity; }
 		}
 
 		public object this [string key] { 
@@ -98,13 +82,17 @@ namespace Microsoft.Web.Services {
 		}
 
 		public ReferralCollection Referrals { 
-			get { return null; }
+			get { return referrals; }
 		}
 
 		public Microsoft.Web.Services.Security.Security Security { 
 			get { 
-				if ((security == null) && (actor != null))
-					security = new Microsoft.Web.Services.Security.Security (actor.ToString ());
+				if (security == null) {
+					if (actor != null)
+						security = new Microsoft.Web.Services.Security.Security (actor.ToString ());
+					else
+						security = new Microsoft.Web.Services.Security.Security ();
+				}
 				return security; 
 			}
 		}
@@ -165,6 +153,20 @@ namespace Microsoft.Web.Services {
 		{
 			if (context == null)
 				throw new ArgumentNullException ("context");
+			context.actor = this.actor;
+			foreach (DimeAttachment da in Attachments) {
+				context.Attachments.Add (da);
+			}
+			context.contentType = contentType;
+			context.envelope = envelope;
+			context.extendedSecurity = ExtendedSecurity;
+			context.Path = Path;
+			context.referrals = Referrals;
+			context.security = security;
+			context.timestamp = timestamp;
+			foreach (DictionaryEntry de in table) {
+				context.table.Add (de.Key, de.Value);
+			}
 		}
 
 		public IDictionaryEnumerator GetEnumerator () 

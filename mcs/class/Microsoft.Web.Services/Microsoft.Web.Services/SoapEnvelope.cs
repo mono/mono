@@ -26,6 +26,11 @@ namespace Microsoft.Web.Services {
 			AppendChild (envelope);
 		}
 
+		internal SoapEnvelope (SoapContext context) : this ()
+		{
+			this.context = context;
+		}
+
 		public XmlElement Body {
 			get {
 				if (body == null) {
