@@ -1,5 +1,9 @@
 2004-05-09  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs: The logic for allowing operator &, | and ^ worked
+	was wrong, it worked before because we did not report an error in
+	an else branch.  Fixes 57895
+
 	* class.cs: Applied patch from iain@mccoy.id.au Iain McCoy to
 	allow volatile fields to be reference types.
 
