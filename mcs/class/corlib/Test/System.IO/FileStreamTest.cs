@@ -769,6 +769,18 @@ namespace MonoTests.System.IO
 			if (File.Exists (path))
 				File.Delete (path);
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Read_OffsetNegative ()
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
+			DeleteFile (path);
+
+			using (FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Read)) {
+				stream.Read (new byte[0], -1, 1);
+			}
+		}
 			
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
@@ -779,6 +791,18 @@ namespace MonoTests.System.IO
 
 			using (FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Read)) {
 				stream.Read (new byte[0], Int32.MaxValue, 1);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Read_CountNegative ()
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
+			DeleteFile (path);
+
+			using (FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Read)) {
+				stream.Read (new byte[0], 1, -1);
 			}
 		}
 
@@ -795,6 +819,18 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Write_OffsetNegative ()
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
+			DeleteFile (path);
+
+			using (FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Write)) {
+				stream.Write (new byte[0], -1, 1);
+			}
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void Write_OffsetOverflow ()
 		{
@@ -803,6 +839,18 @@ namespace MonoTests.System.IO
 
 			using (FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Write)) {
 				stream.Write (new byte[0], Int32.MaxValue, 1);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Write_CountNegative ()
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
+			DeleteFile (path);
+
+			using (FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Write)) {
+				stream.Write (new byte[0], 1, -1);
 			}
 		}
 
@@ -827,6 +875,105 @@ namespace MonoTests.System.IO
 
 			using (FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Read)) {
 				stream.Seek (0, (SeekOrigin) (-1));
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Constructor_InvalidFileHandle () 
+		{
+			new FileStream ((IntPtr)(-1), FileAccess.Read);
+		}
+
+		[Test]
+		public void PositionAfterSetLength () 
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
+			DeleteFile (path);
+
+			using (FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Write)) {
+				stream.SetLength (32);
+				stream.Position = 32;
+				stream.SetLength (16);
+				AssertEquals ("Position==16", 16, stream.Position);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void SetLength_Disposed () 
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
+			DeleteFile (path);
+			FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Write);
+			stream.Close ();
+			stream.SetLength (16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Position_Disposed () 
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
+			DeleteFile (path);
+			FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Read);
+			stream.Close ();
+			stream.Position = 0;
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void BeginRead_Disposed () 
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
+			DeleteFile (path);
+			FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Read);
+			stream.Close ();
+			stream.EndRead (stream.BeginRead (new byte[8], 0, 8, null, null));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void BeginWrite_Disposed () 
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
+			DeleteFile (path);
+			FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Write);
+			stream.Close ();
+			stream.EndWrite (stream.BeginWrite (new byte[8], 0, 8, null, null));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Lock_Disposed () 
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
+			DeleteFile (path);
+			FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Write);
+			stream.Close ();
+			stream.Lock (0,1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Unlock_Disposed () 
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
+			DeleteFile (path);
+			FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Write);
+			stream.Close ();
+			stream.Unlock (0,1);
+		}
+
+		[Test]
+		public void ReadBytePastEndOfStream () 
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
+			DeleteFile (path);
+			using (FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Read)) {
+				stream.Seek (0, SeekOrigin.End);
+				AssertEquals ("ReadByte", -1, stream.ReadByte ());
+				stream.Close ();
 			}
 		}
         }
