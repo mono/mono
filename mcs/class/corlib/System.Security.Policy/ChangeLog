@@ -1,3 +1,8 @@
+2004-03-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PublisherMembershipCondition.cs: Now use CryptoConvert for 
+	Hexadecimal convertions.
+
 2004-01-28  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* StrongName.cs: XML now use Type.Name (instead of Type.FullName) to 

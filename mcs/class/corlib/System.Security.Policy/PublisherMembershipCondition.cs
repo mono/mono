@@ -2,15 +2,18 @@
 // PublisherMembershipCondition.cs: Publisher Membership Condition
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
 using System.Collections;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+
+using Mono.Security.Cryptography;
 
 namespace System.Security.Policy {
 
@@ -26,7 +29,7 @@ namespace System.Security.Policy {
 			if (certificate == null)
 				throw new ArgumentNullException ("certificate");
 			// needed to match MS implementation
-			if (certificate.GetRawCertData() == null)
+			if (certificate.GetRawCertData () == null)
 				throw new NullReferenceException ("certificate");
 			x509 = certificate;
 		}
@@ -70,15 +73,6 @@ namespace System.Security.Policy {
 			FromXml (e, null);
 		}
 	
-		private byte FromHexChar (char c) 
-		{
-			if ((c >= 'A') && (c <= 'F'))
-				return (byte) (c - 'A' + 10);
-			if ((c >= '0') && (c <= '9'))
-				return (byte) (c - '0');
-			throw new ArgumentException ("invalid hex char");
-		}
-
 		public void FromXml (SecurityElement e, PolicyLevel level) 
 		{
 			if (e == null)
@@ -88,13 +82,7 @@ namespace System.Security.Policy {
 			// PolicyLevel isn't used as there's no need to resolve NamedPermissionSet references
 			string cert = e.Attribute ("X509Certificate");
 			if (cert != null) {
-				byte[] rawcert = new byte [cert.Length >> 1];
-				int n = 0;
-				int i = 0;
-				while (n < rawcert.Length) {
-					rawcert [n] = (byte) (FromHexChar (cert[i++]) << 4);
-					rawcert [n++] += FromHexChar (cert[i++]);
-				}
+				byte[] rawcert = CryptoConvert.FromHex (cert);
 				x509 = new X509Certificate (rawcert);
 			}
 		}
