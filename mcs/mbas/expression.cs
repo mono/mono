@@ -2032,7 +2032,14 @@ namespace Mono.MonoBASIC {
 						Error_OperatorCannotBeApplied ();
 						return null;
 					}
-					
+					if (r == TypeManager.date_type) {
+						right = ConvertImplicit (ec, right, l, loc);
+						if (right == null){
+							Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+							return null;
+						}
+						return ResolveOperator(ec);
+					}	
 					if (r == TypeManager.string_type){
 						if (left is Constant && right is Constant){
 							StringConstant ls = (StringConstant) left;
@@ -2069,6 +2076,14 @@ namespace Mono.MonoBASIC {
 						Error_OperatorCannotBeApplied ();
 						return null;
 					}
+					if (l == TypeManager.date_type) {
+						left = ConvertImplicit (ec, left, r, loc);
+						if (left == null){
+							Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+							return null;
+						}
+						return ResolveOperator(ec);
+					}	
 					type = TypeManager.string_type;
 					
                                         right = ConvertImplicit(ec, right, l, loc);
