@@ -1,3 +1,9 @@
+
+Fri Jan 31 11:51:43 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c, reflection.h, icall.c: setup the reflection
+	handle cache for ModuleBuilders and AssemblyBuilders.
+
 2003-01-30  Dietmar Maurer  <dietmar@ximian.com>
 
 	* reflection.c (reflection_methodbuilder_to_mono_method): set
