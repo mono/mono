@@ -1,3 +1,7 @@
+2002-01-02  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* SelectNodesTests.cs : added TestAlphabetDigitMixedName.
+
 2002-12-28  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlDocumentTests.cs : Test for bugzilla #34743 (whitespace handling)

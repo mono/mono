@@ -214,5 +214,14 @@ namespace MonoTests.System.Xml
 			AssertEquals (1, nodes.Count);	// bug #27548
 			AssertSame (document.DocumentElement, nodes [0]);
 		}
+
+		public void TestAlphabetDigitMixedName ()
+		{
+			XmlDocument document = new XmlDocument ();
+			document.LoadXml ("<foo1 />");
+			XmlNodeList nodes = document.SelectNodes ("/foo1");
+			AssertEquals (1, nodes.Count);
+			AssertSame (document.DocumentElement, nodes [0]);
+		}
 	}
 }
