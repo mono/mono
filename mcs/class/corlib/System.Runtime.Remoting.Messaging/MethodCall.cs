@@ -162,7 +162,12 @@ namespace System.Runtime.Remoting.Messaging {
 		}
 		
 		public MethodBase MethodBase {
-			get { return _methodBase; }
+			get {
+				if (_methodBase == null)
+					ResolveMethod ();
+					
+				return _methodBase;
+			}
 		}
 
 		public string MethodName {

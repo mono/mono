@@ -1,3 +1,8 @@
+2003-02-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MethodCall.cs:
+	(MethodBase): resolve the method if it's not already done.
+
 2003-02-18  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* IInternalMessage.cs: Added. Provides some useful methods for method messages.
