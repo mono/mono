@@ -3,6 +3,13 @@ Assembly/Consts.cs
 Assembly/Locale.cs
 System.Resources/ResXResourceReader.cs
 System.Resources/ResXResourceWriter.cs
+System.Windows.Forms.Design/ComponentEditorForm.cs
+System.Windows.Forms.Design/ComponentEditorPage.cs
+System.Windows.Forms.Design/EventsTab.cs
+System.Windows.Forms.Design/IUIService.cs
+System.Windows.Forms.Design/IWindowsFormsEditorService.cs
+System.Windows.Forms.Design/PropertyTab.cs
+System.Windows.Forms.Design/WindowsFormsComponentEditor.cs
 System.Windows.Forms/AccessibleNavigation.cs
 System.Windows.Forms/AccessibleObject.cs
 System.Windows.Forms/AccessibleRole.cs
@@ -35,6 +42,7 @@ System.Windows.Forms/CheckBox.cs
 System.Windows.Forms/CheckedListBox.cs
 System.Windows.Forms/CheckState.cs
 System.Windows.Forms/ColorDepth.cs
+System.Windows.Forms/ColorDialog.cs
 System.Windows.Forms/ColumnClickEventArgs.cs
 System.Windows.Forms/ColumnClickEventHandler.cs
 System.Windows.Forms/ColumnHeader.cs
@@ -53,6 +61,10 @@ System.Windows.Forms/ConvertEventArgs.cs
 System.Windows.Forms/ConvertEventHandler.cs
 System.Windows.Forms/CreateParams.cs
 System.Windows.Forms/Cursor.cs
+System.Windows.Forms/DataGrid.cs
+System.Windows.Forms/DataGridLineStyle.cs
+System.Windows.Forms/DataGridParentRowsLabelStyle.cs
+System.Windows.Forms/DataGridTableStyle.cs
 System.Windows.Forms/DateRangeEventArgs.cs
 System.Windows.Forms/DateRangeEventHandler.cs
 System.Windows.Forms/Day.cs
@@ -67,6 +79,8 @@ System.Windows.Forms/DrawItemEventHandler.cs
 System.Windows.Forms/DrawItemState.cs
 System.Windows.Forms/DrawMode.cs
 System.Windows.Forms/FlatStyle.cs
+System.Windows.Forms/FontDialog.cs
+System.Windows.Forms/FileDialog.cs
 System.Windows.Forms/Form.cs
 System.Windows.Forms/FormBorderStyle.cs
 System.Windows.Forms/FormStartPosition.cs
@@ -74,12 +88,16 @@ System.Windows.Forms/FormWindowState.cs
 System.Windows.Forms/FrameStyle.cs
 System.Windows.Forms/GiveFeedbackEventArgs.cs
 System.Windows.Forms/GiveFeedbackEventHandler.cs
+System.Windows.Forms/GridColumnStylesCollection.cs
+System.Windows.Forms/GridTableStylesCollection.cs
+System.Windows.Forms/GroupBox.cs
 System.Windows.Forms/HandleData.cs
 System.Windows.Forms/HelpEventArgs.cs
 System.Windows.Forms/HelpEventHandler.cs
 System.Windows.Forms/HorizontalAlignment.cs
 System.Windows.Forms/HScrollBar.cs
 System.Windows.Forms/IButtonControl.cs
+System.Windows.Forms/IComponentEditorPageSite.cs
 System.Windows.Forms/IContainerControl.cs
 System.Windows.Forms/IDataObject.cs
 System.Windows.Forms/ImageIndexConverter.cs
@@ -131,7 +149,6 @@ System.Windows.Forms/ListView.cs
 System.Windows.Forms/ListViewAlignment.cs
 System.Windows.Forms/ListViewItem.cs
 System.Windows.Forms/ListViewItemConverter.cs
-System.Windows.Forms/GroupBox.cs
 System.Windows.Forms/MonthCalendar.cs
 System.Windows.Forms/MainMenu.cs
 System.Windows.Forms/MeasureItemEventHandler.cs
@@ -154,6 +171,7 @@ System.Windows.Forms/NativeWindow.cs
 System.Windows.Forms/NumericUpDown.cs
 System.Windows.Forms/NodeLabelEditEventArgs.cs
 System.Windows.Forms/NodeLabelEditEventHandler.cs
+System.Windows.Forms/OpenFileDialog.cs
 System.Windows.Forms/OpenTreeNodeEnumerator.cs
 System.Windows.Forms/Orientation.cs
 System.Windows.Forms/OwnerDrawPropertyBag.cs
@@ -181,6 +199,9 @@ System.Windows.Forms/ScrollEventType.cs
 System.Windows.Forms/Shortcut.cs
 System.Windows.Forms/SizeGripStyle.cs
 System.Windows.Forms/SortOrder.cs
+System.Windows.Forms/Splitter.cs
+System.Windows.Forms/SplitterEventArgs.cs
+System.Windows.Forms/SplitterEventHandler.cs
 System.Windows.Forms/StatusBar.cs
 System.Windows.Forms/StatusBarDrawItemEventArgs.cs
 System.Windows.Forms/StatusBarDrawItemEventHandler.cs
@@ -198,6 +219,7 @@ System.Windows.Forms/TabControl.cs
 System.Windows.Forms/TabDrawMode.cs
 System.Windows.Forms/TabPage.cs
 System.Windows.Forms/TabSizeMode.cs
+System.Windows.Forms/TextBox.cs
 System.Windows.Forms/TextBoxBase.cs
 System.Windows.Forms/TextControl.cs
 System.Windows.Forms/Theme.cs

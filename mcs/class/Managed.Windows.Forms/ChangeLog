@@ -1,3 +1,25 @@
+2004-12-27  Peter Bartok  <pbartok@novell.com>
+
+	* System.Windows.Forms.dll.Sources: Added
+	  System.Windows.Forms.Design/ComponentEditorForm.cs,
+	  System.Windows.Forms.Design/ComponentEditorPage.cs,
+	  System.Windows.Forms.Design/EventsTab.cs,
+	  System.Windows.Forms.Design/IUIService.cs,
+	  System.Windows.Forms.Design/IWindowsFormsEditorService.cs,
+	  System.Windows.Forms.Design/PropertyTab.cs,
+	  System.Windows.Forms.Design/WindowsFormsComponentEditor.cs,
+	  ColorDialog.cs, ComboBox.cs, ComboBoxStyle.cs, DataGrid.cs,
+	  DataGridLineStyle.cs, DataGridParentRowsLabelStyle.cs,
+	  DataGridTableStyle.cs, FontDialog.cs, FileDialog.cs,
+	  GridColumnStylesCollection.cs, GridTableStylesCollection.cs,
+	  IComponentEditorPageSite.cs, OpenFileDialog, Splitter.cs,
+	  SplitterEventArgs.cs, SplitterEventHandler.cs, TextBox.cs
+
+2004-12-24  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* System.Windows.Forms.dll.Sources: Added ComboBox.cs and 
+	  ComboBoxStyle.cs
+
 2004-12-20  Peter Bartok  <pbartok@novell.com>
 
 	* System.Windows.Forms.dll.Sources: Added CommonDialog.cs
