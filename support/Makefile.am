@@ -70,5 +70,5 @@ libMonoPosixHelper_la_LDFLAGS = -no-undefined -version-info 1:0:1
 # Use this target to refresh the values in map.[ch]
 #
 refresh:
-	$(top_builddir)/runtime/mono-wrapper $(mcs_topdir)/class/Mono.Posix/Mono.Posix/make-map.exe $(mcs_topdir)/class/lib/Mono.Posix.dll map
+	$(top_builddir)/runtime/mono-wrapper $(mcs_topdir)/class/Mono.Posix/Mono.Unix/make-map.exe $(mcs_topdir)/class/lib/default/Mono.Posix.dll map
 
