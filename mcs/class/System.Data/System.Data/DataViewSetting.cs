@@ -4,13 +4,15 @@
 // Authors:
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Tim Coleman (tim@timcoleman.com)
+//   Atsushi Enomoto (atsushi@ximian.com)
 //
 // (C) Ximian, Inc. 2002
 // Copyright (C) Tim Coleman, 2002
+// Copyright (C) 2005 Novell Inc,
 //
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-05 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -47,17 +49,19 @@ namespace System.Data
 
 		bool applyDefaultSort;
 		DataViewManager dataViewManager;
-		string rowFilter;
-		DataViewRowState rowStateFilter;
-		string sort;
+		string rowFilter = String.Empty;
+		DataViewRowState rowStateFilter = DataViewRowState.CurrentRows;
+		string sort = String.Empty;
 		DataTable dataTable;
 
 		#endregion // Fields
 
 		#region Constructors
 
-		internal DataViewSetting ()
+		internal DataViewSetting (DataViewManager manager, DataTable table)
 		{
+			dataViewManager = manager;
+			dataTable = table;
 		}
 
 		#endregion // Constructors

@@ -4,9 +4,11 @@
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Tim Coleman (tim@timcoleman.com)
+//   Atsushi Enomoto (atsushi@ximian.com)
 //
 // (C) Ximian, Inc. 2002
 // Copyright (C) Tim Coleman, 2002
+// Copyright (C) 2005 Novell Inc,
 //
 
 //
@@ -35,6 +37,8 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.IO;
+using System.Xml;
 
 namespace System.Data
 {
@@ -49,19 +53,22 @@ namespace System.Data
 
 		DataSet dataSet;
 		DataViewManagerListItemTypeDescriptor descriptor;
+		DataViewSettingCollection settings;
+		string xml;
 
 		#endregion // Fields
 
 		#region Constructors
 
-		public DataViewManager () 
+		public DataViewManager ()
+			: this (null)
 		{
-			dataSet = null;
 		}
 
-		public DataViewManager (DataSet ds) 
+		public DataViewManager (DataSet ds)
 		{
-			dataSet = ds;
+			// Null argument is allowed here.
+			SetDataSet (ds);
 		}
 
 		#endregion // Constructors
@@ -72,25 +79,33 @@ namespace System.Data
 		[DefaultValue (null)]
 		public DataSet DataSet {
 			get { return dataSet; }
-			set { dataSet = value; }
+			set {
+				if (value == null)
+					throw new DataException ("Cannot set null DataSet.");
+				SetDataSet (value);
+			}
 		}
 
-		[MonoTODO]
 		public string DataViewSettingCollectionString {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return xml; }
+			set {
+				try {
+					ParseSettingString (value);
+					xml = BuildSettingString ();
+				} catch (XmlException ex) {
+					throw new DataException ("Cannot set DataViewSettingCollectionString.", ex);
+				}
+			}
 		}
 
-		[MonoTODO]
 		[DataSysDescription ("Indicates the sorting/filtering/state settings for any table in the corresponding DataSet.")]
                 [DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataViewSettingCollection DataViewSettings {
-			get { throw new NotImplementedException (); }
+			get { return settings; }
 		}
 
 		int ICollection.Count {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return settings.Count; }
 		}
 
 		bool ICollection.IsSynchronized {
@@ -170,11 +185,91 @@ namespace System.Data
 		#endregion // Properties
 
 		#region Methods
+		private void SetDataSet (DataSet ds)
+		{
+			dataSet = ds;
+			settings = new DataViewSettingCollection (this);
+			xml = BuildSettingString ();
+		}
 
-		[MonoTODO]
+		private void ParseSettingString (string source)
+		{
+			XmlTextReader xtr = new XmlTextReader (source,
+				XmlNodeType.Element, null);
+
+			xtr.ReadStartElement ("DataViewSettingCollectionString");
+			if (xtr.IsEmptyElement)
+				return; // MS does not change the value.
+
+			ArrayList result = new ArrayList ();
+			xtr.Read ();
+			do {
+				xtr.MoveToContent ();
+				if (xtr.NodeType == XmlNodeType.EndElement)
+					break;
+				if (xtr.NodeType == XmlNodeType.Element)
+					ReadTableSetting (xtr);
+				else
+					xtr.Skip ();
+			} while (!xtr.EOF);
+			if (xtr.NodeType == XmlNodeType.EndElement)
+				xtr.ReadEndElement ();
+		}
+
+		private void ReadTableSetting (XmlReader reader)
+		{
+			// Namespace is ignored BTW.
+			DataTable dt = DataSet.Tables [XmlConvert.DecodeName (
+				reader.LocalName)];
+			// The code below might result in NullReference error.
+			DataViewSetting s = settings [dt];
+			string sort = reader.GetAttribute ("Sort");
+			if (sort != null)
+				s.Sort = sort.Trim ();
+			string ads = reader.GetAttribute ("ApplyDefaultSort");
+			if (ads != null && ads.Trim () == "true")
+				s.ApplyDefaultSort = true;
+			string rowFilter = reader.GetAttribute ("RowFilter");
+			if (rowFilter != null)
+				s.RowFilter = rowFilter.Trim ();
+			string rsf = reader.GetAttribute ("RowStateFilter");
+			if (rsf != null)
+				s.RowStateFilter = (DataViewRowState)
+					Enum.Parse (typeof (DataViewRowState), 
+					rsf.Trim ());
+
+			reader.Skip ();
+		}
+
+		private string BuildSettingString ()
+		{
+			if (dataSet == null)
+				return String.Empty;
+
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter xw = new XmlTextWriter (sw);
+			xw.WriteStartElement (
+				"DataViewSettingCollectionString");
+			foreach (DataViewSetting s in DataViewSettings) {
+				xw.WriteStartElement (XmlConvert.EncodeName (
+						s.Table.TableName));
+				xw.WriteAttributeString ("Sort", s.Sort);
+				// LAMESPEC: MS.NET does not seem to handle this property as expected.
+				if (s.ApplyDefaultSort)
+					xw.WriteAttributeString ("ApplyDefaultSort", "true");
+				xw.WriteAttributeString ("RowFilter", s.RowFilter);
+				xw.WriteAttributeString ("RowStateFilter", s.RowStateFilter.ToString ());
+				xw.WriteEndElement ();
+			}
+			xw.WriteFullEndElement ();
+			xw.Flush ();
+			return sw.ToString ();
+		}
+
 		public DataView CreateDataView (DataTable table) 
 		{
-			return new DataView (table);
+			DataViewSetting s = settings [table];
+			return new DataView (table, s.Sort, s.RowFilter, s.RowStateFilter);
 		}
 
 		[MonoTODO]

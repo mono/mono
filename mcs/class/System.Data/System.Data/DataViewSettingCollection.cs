@@ -5,9 +5,11 @@
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Miguel de Icaza (miguel@gnome.org)
 //   Tim Coleman (tim@timcoleman.com)
+//   Atsushi Enomoto (atsushi@ximian.com)
 //
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 // Copyright (C) Tim Coleman, 2002
+// Copyright (C) 2005 Novell Inc,
 //
 
 //
@@ -55,6 +57,11 @@ namespace System.Data {
 
 		internal DataViewSettingCollection (DataViewManager manager)
 		{
+			settingList = new ArrayList ();
+			if (manager.DataSet != null)
+				foreach (DataTable dt in manager.DataSet.Tables)
+					settingList.Add (new DataViewSetting (
+						manager, dt));
 		}
 
 		#endregion // Constructors
