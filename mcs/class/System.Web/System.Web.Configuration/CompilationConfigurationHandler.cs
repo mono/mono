@@ -91,13 +91,16 @@ namespace System.Web.Configuration
 				if (child.Name != "compiler")
 					ThrowException ("Unexpected element", child);
 
-				WebCompiler compiler = new WebCompiler ();
-				compiler.Languages = AttValue ("language", child);
-				compiler.Extension = AttValue ("extension", child);
+				Compiler compiler = new Compiler ();
+#if !NET_2_0
+// Removing this for 2.0 is a hack until the whole config. system is migrated to 2.0
+				compiler.Language  = AttValue ("language", child);
+				compiler.Extension  = AttValue ("extension", child);
 				compiler.Type = AttValue ("type", child);
 				compiler.CompilerOptions = AttValue ("compilerOptions", child, true, true);
 				compiler.WarningLevel = AttUIntValue ("warningLevel", child, 0);
-				config.Compilers [compiler.Languages] = compiler;
+#endif
+				config.Compilers [compiler.Language] = compiler;
 			}
 		}
 

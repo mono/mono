@@ -1,10 +1,10 @@
 //
-// System.Web.Configuration.WebCompiler
+// System.Web.Configuration.ExpressionBuilder
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2003 Ximian, Inc (http://www.ximian.com)
+// (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -27,30 +27,45 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+#if NET_2_0
 using System;
 using System.Collections;
-using System.CodeDom.Compiler;
+using System.Configuration;
 
 namespace System.Web.Configuration
 {
-	class WebCompiler
+	public sealed class ExpressionBuilder : ConfigurationElement
 	{
-		public string Languages;
-		public string Extension;
-		public string Type;
-		public int WarningLevel;
-		public string CompilerOptions;
-		public CodeDomProvider Provider;
+		static ConfigurationPropertyCollection props;
+		static ConfigurationProperty expressionPrefix;
+		static ConfigurationProperty type;
 
-		public override string ToString ()
+		static ExpressionBuilder ()
 		{
-			return "Languages: " + Languages + "\n" +
-				"Extension: " + Extension + "\n" +
-				"Type: " + Type + "\n" +
-				"WarningLevel: " + WarningLevel + "\n" +
-				"CompilerOptions: " + CompilerOptions + "\n";
+			ConfigurationPropertyFlags flags = ConfigurationPropertyFlags.Required | ConfigurationPropertyFlags.IsKey;
+			type = new NonEmptyStringConfigurationProperty ("type", "", flags);
+			flags = ConfigurationPropertyFlags.Required;
+			expressionPrefix = new NonEmptyStringConfigurationProperty ("expressionPrefix", "", flags);
+
+			props = new ConfigurationPropertyCollection ();
+			props.Add (type);
+			props.Add (expressionPrefix);
+		}
+
+		public string ExpressionPrefix {
+			get { return (string) this [expressionPrefix]; }
+			set { this [expressionPrefix] = value; }
+		}
+
+		public string Type {
+			get { return (string) this [type]; }
+			set { this [type] = value; }
+		}
+
+		protected override ConfigurationPropertyCollection Properties {
+			get { return props; }
 		}
 	}
 }
+#endif // NET_2_0
 

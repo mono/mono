@@ -1,3 +1,20 @@
+2005-03-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CodeSubDirectoriesCollection.cs:
+	* ExpressionBuilderCollection.cs:
+	* BuildProviderCollection.cs:
+	* CompilerCollection.cs:
+	* CompilationConfigurationHandler.cs:
+	* ExpressionBuilder.cs:
+	* Compiler.cs:
+	* CompilationSection.cs:
+	* CompilationConfiguration.cs:
+	* CodeSubDirectory.cs: added and implemented
+	most of these files that are used when reading configuration files in
+	NET_2_0.
+
+	* WebCompiler.cs: renamed to Compiler.cs
+
 2004-12-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConfigurationSettings.cs: correctly detect web.config changes.

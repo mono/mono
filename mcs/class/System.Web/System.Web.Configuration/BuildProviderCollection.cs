@@ -1,10 +1,10 @@
 //
-// System.Web.Configuration.CompilerCollection
+// System.Web.Configuration.BuildProviderCollection
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2003,2005 Novell, Inc (http://www.novell.com)
+// (c) Copyright 2005 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -27,92 +27,59 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+#if NET_2_0
 using System;
 using System.Collections;
 using System.Configuration;
 
 namespace System.Web.Configuration
 {
-#if !NET_2_0
-	sealed class CompilerCollection
-	{
-		Hashtable compilers;
-
-		public CompilerCollection () : this (null) {}
-
-		public CompilerCollection (CompilerCollection parent)
-		{
-			compilers = new Hashtable (CaseInsensitiveHashCodeProvider.Default,
-						   CaseInsensitiveComparer.Default);
-
-			if (parent != null && parent.compilers != null) {
-				foreach (DictionaryEntry entry in parent.compilers)
-					compilers [entry.Key] = entry.Value;
-			}
-		}
-
-		public Compiler this [string language] {
-			get { return compilers [language] as Compiler; }
-			set {
-				compilers [language] = value;
-				string [] langs = language.Split (';');
-				foreach (string s in langs) {
-					string x = s.Trim ();
-					if (x != "")
-						compilers [x] = value;
-				}
-			}
-		}
-	}
-#else // NET_2_0
-	public sealed class CompilerCollection : ConfigurationElementCollection
+	public sealed class BuildProviderCollection : ConfigurationElementCollection
 	{
 		static ConfigurationPropertyCollection props;
 
-		static CompilerCollection ()
+		static BuildProviderCollection ()
 		{
 			//FIXME: add properties
 			props = new ConfigurationPropertyCollection ();
 		}
 
-		public string [] AllKeys {
-			get { return BaseGetAllKeys (); }
+		public BuildProvider this [int index] {
+			get { return (BuildProvider) BaseGet (index); }
+			set {
+				if (BaseGet (index) != null)
+					BaseRemoveAt (index);
+
+				BaseAdd (index, value);
+			}
 		}
 
-		public Compiler this [int index] {
-			get { return (Compiler) BaseGet (index); }
-		}
-
-		public new Compiler this [string language] {
-			get { return (Compiler) BaseGet (language); }
-		}
-
-		protected override ConfigurationElementCollectionType CollectionType {
-			get { return ConfigurationElementCollectionType.AddRemoveClearMap; }
-		}
-
-		protected override string ElementName {
-			get { return "compiler"; }
+		public new BuildProvider this [string name] {
+			get { return (BuildProvider) BaseGet (name); }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
 			get { return props; }
 		}
 
-		public Compiler Get (int index)
+		public void Add (BuildProvider buildProvider)
 		{
-			return (Compiler) BaseGet (index);
+			BaseAdd (buildProvider);
 		}
 
-		public Compiler Get (string language)
+		public void Clear ()
 		{
-			return (Compiler) BaseGet (language);
+			BaseClear ();
 		}
 
-		public string GetKey (int index)
+		public void Remove (string name)
 		{
-			return BaseGetKey (index);
+			BaseRemove (name);
+		}
+
+		public void RemoveAt (int index)
+		{
+			BaseRemoveAt (index);
 		}
 
 		protected override bool CompareKeys (object key1, object key2)
@@ -122,15 +89,15 @@ namespace System.Web.Configuration
 
 		protected override ConfigurationElement CreateNewElement ()
 		{
-			return new Compiler ();
+			return new BuildProvider ();
 		}
 
 		protected override object GetElementKey (ConfigurationElement element)
 		{
-			Compiler c = (Compiler) element;
-			return c.Language;
+			BuildProvider prov = (BuildProvider) element;
+			return prov.Extension;
 		}
 	}
-#endif
 }
+#endif // NET_2_0
 

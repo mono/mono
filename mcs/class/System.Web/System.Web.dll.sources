@@ -48,12 +48,19 @@ System.Web.Configuration/AuthorizationConfigHandler.cs
 System.Web.Configuration/AuthorizationRuleAction.cs
 System.Web.Configuration/BuildProvider.cs
 System.Web.Configuration/BuildProviderAppliesTo.cs
+System.Web.Configuration/BuildProviderCollection.cs
 System.Web.Configuration/ClientTargetSectionHandler.cs
+System.Web.Configuration/CodeSubDirectoriesCollection.cs
+System.Web.Configuration/CodeSubDirectory.cs
 System.Web.Configuration/CompilationConfiguration.cs
 System.Web.Configuration/CompilationConfigurationHandler.cs
+System.Web.Configuration/CompilationSection.cs
+System.Web.Configuration/Compiler.cs
 System.Web.Configuration/CompilerCollection.cs
 System.Web.Configuration/CustomErrorsConfigHandler.cs
 System.Web.Configuration/CustomErrorsMode.cs
+System.Web.Configuration/ExpressionBuilder.cs
+System.Web.Configuration/ExpressionBuilderCollection.cs
 System.Web.Configuration/FormsAuthenticationConfiguration.cs
 System.Web.Configuration/FormsAuthPasswordFormat.cs
 System.Web.Configuration/FormsProtectionEnum.cs
@@ -88,7 +95,6 @@ System.Web.Configuration/SiteMapSection.cs
 System.Web.Configuration/TraceConfig.cs
 System.Web.Configuration/TraceConfigurationHandler.cs
 System.Web.Configuration/TraceDisplayMode.cs
-System.Web.Configuration/WebCompiler.cs
 System.Web.Configuration/WebConfigurationSettings.cs
 System.Web.Configuration/WebControlsSectionHandler.cs
 System.Web.Handlers/AssemblyResourceLoader.cs

@@ -1,3 +1,7 @@
+2005-03-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Web.dll.sources: added new files in System.Web.Configuration.
+
 2005-03-11  Lluis Sanchez Gual <lluis@novell.com>
 
 	* Makefile: Added new resource file: GridView.js.
