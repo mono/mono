@@ -225,28 +225,19 @@ namespace System.Reflection.Emit {
 			// required to reuse AddDeclarativeSecurity support 
 			// already present in the runtime
 			if (required != null) {
-				int i = 0;
-				permissions_minimum = new RefEmitPermissionSet [required.Count];
-				foreach (IPermission p in required) {
-					permissions_minimum [i++] = new RefEmitPermissionSet (
-						SecurityAction.RequestMinimum, p.ToXml ().ToString ());
-				}
+				permissions_minimum = new RefEmitPermissionSet [1];
+				permissions_minimum [0] = new RefEmitPermissionSet (
+					SecurityAction.RequestMinimum, required.ToXml ().ToString ());
 			}
 			if (optional != null) {
-				int i = 0;
-				permissions_optional = new RefEmitPermissionSet [optional.Count];
-				foreach (IPermission p in optional) {
-					permissions_optional [i++] = new RefEmitPermissionSet (
-						SecurityAction.RequestOptional, p.ToXml ().ToString ());
-				}
+				permissions_optional = new RefEmitPermissionSet [1];
+				permissions_optional [0] = new RefEmitPermissionSet (
+					SecurityAction.RequestOptional, optional.ToXml ().ToString ());
 			}
 			if (refused != null) {
-				int i = 0;
-				permissions_refused = new RefEmitPermissionSet [refused.Count];
-				foreach (IPermission p in refused) {
-					permissions_refused [i++] = new RefEmitPermissionSet (
-						SecurityAction.RequestRefuse, p.ToXml ().ToString ());
-				}
+				permissions_refused = new RefEmitPermissionSet [1];
+				permissions_refused [0] = new RefEmitPermissionSet (
+					SecurityAction.RequestRefuse, refused.ToXml ().ToString ());
 			}
 		}
 

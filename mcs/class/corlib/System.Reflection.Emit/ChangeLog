@@ -1,3 +1,9 @@
+2004-09-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyBuilder.cs: Fixed assembly-level permissions. I don't know 
+	why I splitted them all into individual entries when only a single set
+	is accepted for each security action :(.
+
 2004-09-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* CustomAttributeBuilder.cs: Applied patch from Marcus Urban (mathpup@mylinuxisp.com). Add support for defining custom marshallers by calling SetCustomAttribute.
