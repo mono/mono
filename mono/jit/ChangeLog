@@ -1,5 +1,7 @@
 2002-07-23  Dietmar Maurer  <dietmar@ximian.com>
 
+	* jit.c (mono_allocate_excvar): mark excvar as volatile
+
 	* emit-x86.c (enter_method): use arch_get_argument_info to get
 	stack layout.
 
