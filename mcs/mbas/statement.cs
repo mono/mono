@@ -4627,12 +4627,11 @@ namespace Mono.MonoBASIC {
 		protected override bool DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			//Label end;
 			Label finish = ig.DefineLabel ();;
 			bool returns;
 
 			ec.TryCatchLevel++;
-			//end = ig.BeginExceptionBlock ();
+			ig.BeginExceptionBlock ();
 			bool old_in_try = ec.InTry;
 			ec.InTry = true;
 			returns = Block.Emit (ec);
