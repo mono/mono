@@ -18,7 +18,6 @@ System.Drawing.Drawing2D/CoordinateSpace.cs
 System.Drawing.Drawing2D/CustomLineCap.cs
 System.Drawing.Drawing2D/DashCap.cs
 System.Drawing.Drawing2D/DashStyle.cs
-System.Drawing.Drawing2D/Enums.cs
 System.Drawing.Drawing2D/FillMode.cs
 System.Drawing.Drawing2D/FlushIntention.cs
 System.Drawing.Drawing2D/GraphicsContainer.cs
@@ -37,7 +36,6 @@ System.Drawing.Drawing2D/MatrixOrder.cs
 System.Drawing.Drawing2D/PathData.cs
 System.Drawing.Drawing2D/PathGradientBrush.cs
 System.Drawing.Drawing2D/PathPointType.cs
-System.Drawing.Drawing2D/PenAligment.cs
 System.Drawing.Drawing2D/PenAlignment.cs
 System.Drawing.Drawing2D/PenType.cs
 System.Drawing.Drawing2D/PixelOffsetMode.cs

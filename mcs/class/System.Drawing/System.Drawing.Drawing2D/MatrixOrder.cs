@@ -9,7 +9,7 @@
 //
 using System;
 
-namespace System.Drawing.Drawing2d {
+namespace System.Drawing.Drawing2D {
 	/// <summary>
 	/// Summary description for MatrixOrder.
 	/// </summary>
