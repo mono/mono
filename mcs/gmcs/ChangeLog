@@ -1,5 +1,10 @@
 2004-08-24  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (MemberAccess.DoResolve): When resolving ourselves
+	as a SimpleName, include the generic arity.
+
+2004-08-24  Martin Baulig  <martin@ximian.com>
+
 	* class.cs (Method.Define): Set MethodAttributes.SpecialName and
 	MethodAttributes.HideBySig for operators.
 
