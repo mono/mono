@@ -3,7 +3,8 @@
 	* XmlElement.cs: Reformatted.
 	(CloneNode) Corrected.
 
-	* XmlDocument.cs (CreateWhitespace): Implemented.
+	* XmlDocument.cs (CreateWhitespace):
+	(CreateSignificantWhitespace): Implemented.
 
 	* XmlAttribute.cs (CloneNode): Changed the child's CloneNode to
 	true, because Attributes have ChildNodes.

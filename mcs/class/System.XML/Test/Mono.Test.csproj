@@ -131,6 +131,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "XmlSignificantWhitespaceTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "XmlTextReaderTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

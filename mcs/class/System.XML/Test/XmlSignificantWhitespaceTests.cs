@@ -14,21 +14,21 @@ using NUnit.Framework;
 
 namespace Ximian.Mono.Tests
 {
-	public class XmlWhitespaceTests : TestCase
+	public class XmlSignificantWhitespaceTests : TestCase
 	{
 		XmlDocument document;
-		XmlWhitespace whitespace;
-		XmlWhitespace broken;
+		XmlSignificantWhitespace whitespace;
+		XmlSignificantWhitespace broken;
                 XmlNode original;
                 XmlNode deep;
                 XmlNode shallow;
 		
-		public XmlWhitespaceTests ()
+		public XmlSignificantWhitespaceTests ()
 			: base ("Ximian.Mono.Tests.XmlWhitespaceTests testsuite")
 		{
 		}
 
-		public XmlWhitespaceTests (string name)
+		public XmlSignificantWhitespaceTests (string name)
 			: base (name)
 		{
 		}
@@ -38,7 +38,7 @@ namespace Ximian.Mono.Tests
 			document = new XmlDocument ();
 			document.LoadXml ("<root><foo></foo></root>");
 			XmlElement element = document.CreateElement ("foo");
-			whitespace = document.CreateWhitespace ("\r\n");
+			whitespace = document.CreateSignificantWhitespace ("\r\n");
 			element.AppendChild (whitespace);
 		}
 
@@ -53,48 +53,48 @@ namespace Ximian.Mono.Tests
                         Assert ("Copies, not pointers", !Object.ReferenceEquals (original,cloned));
 		}
 
-		public void TestXmlWhitespaceBadConstructor ()
+		public void TestXmlSignificantWhitespaceBadConstructor ()
 		{
 			try {
-				broken = document.CreateWhitespace ("black");				
+				broken = document.CreateSignificantWhitespace ("black");				
 			} catch (Exception e) {
 				AssertEquals ("Incorrect Exception thrown",
 					      e.GetType (), Type.GetType ("System.ArgumentException"));
 			}
 		}
 
-		public void TestXmlWhitespaceConstructor ()
+		public void TestXmlSignificantWhitespaceConstructor ()
 		{
 			AssertEquals ("whitespace char didn't get copied right",
 				      "\r\n", whitespace.Data);
 		}
 		
 	       
-		public void TestXmlWhitespaceName ()
+		public void TestXmlSignificantWhitespaceName ()
 		{
 			AssertEquals (whitespace.NodeType + " Name property broken",
-				      whitespace.Name, "#whitespace");
+				      whitespace.Name, "#significant-whitespace");
 		}
 
-		public void TestXmlWhitespaceLocalName ()
+		public void TestXmlSignificantWhitespaceLocalName ()
 		{
 			AssertEquals (whitespace.NodeType + " LocalName property broken",
-				      whitespace.LocalName, "#whitespace");
+				      whitespace.LocalName, "#significant-whitespace");
 		}
 
-		public void TestXmlWhitespaceNodeType ()
+		public void TestXmlSignificantWhitespaceNodeType ()
 		{
-			AssertEquals ("XmlWhitespace NodeType property broken",
-				      whitespace.NodeType.ToString (), "Whitespace");
+			AssertEquals ("XmlSignificantWhitespace NodeType property broken",
+				      whitespace.NodeType.ToString (), "SignificantWhitespace");
 		}
 
-		public void TestXmlWhitespaceIsReadOnly ()
+		public void TestXmlSignificantWhitespaceIsReadOnly ()
 		{
-			AssertEquals ("XmlWhitespace IsReadOnly property broken",
+			AssertEquals ("XmlSignificantWhitespace IsReadOnly property broken",
 				      whitespace.IsReadOnly, false);
 		}
 
-		public void TestXmlWhitespaceCloneNode ()
+		public void TestXmlSignificantWhitespaceCloneNode ()
 		{
 			original = whitespace;
 
@@ -102,7 +102,7 @@ namespace Ximian.Mono.Tests
 			TestXmlNodeBaseProperties (original, shallow);
 						
 			deep = whitespace.CloneNode (true); // deep
-			TestXmlNodeBaseProperties (original, deep);			
+			TestXmlNodeBaseProperties (original, deep); 
 
                         AssertEquals ("deep cloning differs from shallow cloning",
 				      deep.OuterXml, shallow.OuterXml);

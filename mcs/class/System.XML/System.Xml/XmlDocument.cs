@@ -296,10 +296,13 @@ namespace System.Xml
 			return new XmlProcessingInstruction (target, data, this);
 		}
 
-		[MonoTODO]
 		public virtual XmlSignificantWhitespace CreateSignificantWhitespace (string text)
 		{
-			throw new NotImplementedException ();
+			foreach (char c in text.ToCharArray ())
+				if ((c != ' ') && (c != '\r') && (c != '\n') && (c != '\t'))
+				    throw new ArgumentException ("Invalid whitespace characters.");
+			 
+			return new XmlSignificantWhitespace (text, this);
 		}
 
 		public virtual XmlText CreateTextNode (string text)

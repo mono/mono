@@ -12,6 +12,8 @@
 	* XmlElementTests.cs: Reformatted.
 	(TestCloneNode): Added.
 
+	* XmlSignificantWhitespaceTests.cs: Added to CVS.
+
 	* XmlWhiteSpaceTests.cs: Added to CVS.
 		
 2002-03-21  Kral Ferch <kral_ferch@hotmail.com>
