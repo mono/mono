@@ -80,7 +80,7 @@ namespace System.Runtime.Remoting
 		{
 			ReturnMessage result;
 			
-			MonoMethod method = (MonoMethod) target.GetType().GetMethod(reqMsg.MethodName, BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance, null, (Type[]) reqMsg.MethodSignature, null);
+			MonoMethod method = (MonoMethod) reqMsg.MethodBase;
 			object oldContext = CallContext.SetCurrentCallContext (reqMsg.LogicalCallContext);
 			
 			try 

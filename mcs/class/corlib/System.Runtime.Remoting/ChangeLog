@@ -1,3 +1,8 @@
+2004-09-11 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* RemotingServices.cs: use MethodBase rather than looking
+	for the method ourselves. It has higher perf in x-ad calls.
+
 2004-09-05 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* RemotingServices.cs (IsMethodOverloaded): use the internal
