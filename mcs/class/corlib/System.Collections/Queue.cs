@@ -121,8 +121,8 @@ namespace System.Collections {
 			modCount++;
 			head = 0;
 			count = 0;
-			// FIXME: Should allocate a new contents array? 
-			//        Should null the current array?
+			for (int length = contents.Length - 1; length >= 0; length--)
+				contents [length] = null;
 		}
 
 		public virtual bool Contains (object obj) {

@@ -1,3 +1,7 @@
+2003-10-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Queue.cs: nullify the array in Clear.
+
 2003-09-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Hashtable.cs: Remove empty static constructor since it prevents this
