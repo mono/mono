@@ -1,3 +1,8 @@
+2003-07-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* PKCS1.cs DSAManaged.cs: Changed strange characters in comments to 
+	human-readable ones, since they break XML export in monocov.
+
 2003-06-15  Sebastien Pouliot <spouliot@motus.com>
 
 	* RSAManaged.cs: Now includes CRT (Chinese Remainder Theorem) 

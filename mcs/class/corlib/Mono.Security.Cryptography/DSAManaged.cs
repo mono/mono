@@ -297,7 +297,7 @@ namespace Mono.Security.Cryptography {
 			// (c) Compute k -1 mod q (e.g., using Algorithm 2.142).
 			// (d) Compute s = k -1 fh(m) +arg mod q.
 			BigInteger s = (k.modInverse (q) * (m + x * r)) % q;
-			// (e) As signature for m is the pair (r; s).
+			// (e) A's signature for m is the pair (r; s).
 			byte[] signature = new byte [40];
 			byte[] part1 = r.getBytes ();
 			byte[] part2 = s.getBytes ();

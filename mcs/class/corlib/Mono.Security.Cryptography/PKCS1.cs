@@ -318,7 +318,7 @@ namespace Mono.Security.Cryptography {
 		// PKCS #1 v.2.1, Section B.2.1
 		public static byte[] MGF1 (HashAlgorithm hash, byte[] mgfSeed, int maskLen) 
 		{
-			// 1. If maskLen > 2^32 hLen, output mask too long and stop.
+			// 1. If maskLen > 2^32 hLen, output "mask too long" and stop.
 			// easy - this is impossible by using a int (31bits) as parameter ;-)
 			// BUT with a signed int we do have to check for negative values!
 			if (maskLen < 0)
@@ -334,7 +334,7 @@ namespace Mono.Security.Cryptography {
 	
 			byte[] toBeHashed = new byte [mgfSeedLength + 4];
 			int pos = 0;
-			// 3. For counter from 0 to (maskLen / hLen)  1, do the following:
+			// 3. For counter from 0 to \ceil (maskLen / hLen) - 1, do the following:
 			for (int counter = 0; counter < iterations; counter++) {
 				// a.	Convert counter to an octet string C of length 4 octets
 				byte[] C = I2OSP (counter, 4); 
