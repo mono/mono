@@ -388,7 +388,7 @@ namespace System.Drawing {
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipSetLineSigmaBlend (IntPtr brush, float focus, float scale);
 		[DllImport("gdiplus.dll")]
-		static internal extern Status GdipMultiplyLineTransform (IntPtr texture, IntPtr matrix, MatrixOrder order);
+		static internal extern Status GdipMultiplyLineTransform (IntPtr brush, IntPtr matrix, MatrixOrder order);
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipResetLineTransform (IntPtr brush);
 		[DllImport("gdiplus.dll")]

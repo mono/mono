@@ -15,7 +15,11 @@ namespace System.Drawing
 	public sealed class Brushes 
 	{
 		private Brushes () { }
-		
+	
+		// MS allows to modify brush objects created by this class.
+		// Seems to be a bug in MS, because if we modify a such object,
+		// MS starts returning the modified object.
+
 		public static Brush AliceBlue {
 			get {
 				return new SolidBrush (Color.AliceBlue);

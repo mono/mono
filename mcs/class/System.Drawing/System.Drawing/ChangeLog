@@ -1,3 +1,10 @@
+2004-04-22  Ravindra <rkumar@novell.com>
+
+	* SizeConverter.cs: Implemented some of the functions.
+	* PointConveter.cs: Implemented.
+	* gdipFunctions.cs: Corrected one typo.
+	* Brushes.cs: Added a comment.
+
 2004-04-22  Vladimir Vukicevic  <vladimir@pobox.com>
 
 	* gdipFunctions.cs: Fix StreamGetBytesImpl to handle
