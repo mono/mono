@@ -1243,7 +1243,9 @@ namespace System.Drawing
 			//return implementation.Save();
 			GraphicsState state = new GraphicsState();
 			state.matrix = Transform.Clone();
-			GDIPlus.GdipSaveGraphics (nativeObject, out state.nativeState);
+			uint saveState;
+			GDIPlus.GdipSaveGraphics (nativeObject, out saveState);
+			state.nativeState = saveState;
 			return state;
 		}
 
