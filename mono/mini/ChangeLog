@@ -1,5 +1,7 @@
 2004-03-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* driver.c: Print SIGSEGV handling method.
+
 	* mini-x86.c (mono_arch_free_jit_tls_data): Add missing ifdef.
 
 	* mini.c (setup_jit_tls_data): Handle case when this is called
