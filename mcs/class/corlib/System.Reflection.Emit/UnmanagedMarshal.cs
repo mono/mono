@@ -19,6 +19,10 @@ namespace System.Reflection.Emit {
 		private int count;
 		private UnmanagedType t;
 		private UnmanagedType tbase;
+		string guid;
+		string mcookie;
+		string marshaltype;
+		Type marshaltyperef;
 		
 		private UnmanagedMarshal (UnmanagedType maint, int cnt) {
 			count = cnt;
@@ -48,7 +52,7 @@ namespace System.Reflection.Emit {
 		}
 
 		public Guid IIDGuid {
-			get {return Guid.Empty;}
+			get {return new Guid (guid);}
 		}
 
 		public static UnmanagedMarshal DefineByValArray( int elemCount) {
@@ -70,6 +74,19 @@ namespace System.Reflection.Emit {
 		public static UnmanagedMarshal DefineUnmanagedMarshal( UnmanagedType unmanagedType) {
 			return new UnmanagedMarshal (unmanagedType, unmanagedType);
 		}
-		
+
+		/* this one is missing from the MS implementation */
+		public static UnmanagedMarshal DefineCustom (Type typeref, string cookie, string mtype, Guid id) {
+			UnmanagedMarshal res = new UnmanagedMarshal (UnmanagedType.CustomMarshaler, UnmanagedType.CustomMarshaler);
+			res.mcookie = cookie;
+			res.marshaltype = mtype;
+			res.marshaltyperef = typeref;
+			if (id == Guid.Empty)
+				res.guid = "";
+			else
+				res.guid = id.ToString ();
+			return res;
+		}
+
 	}
 }
