@@ -1,3 +1,9 @@
+2004-08-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextWriter.cs : In CheckState(), don't create indentation string
+	  at every time. WriteIndent() now handles the indentation without
+	  recomputation.
+
 2004-08-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlElement.cs : set_InnerText was removing children incompletely.
