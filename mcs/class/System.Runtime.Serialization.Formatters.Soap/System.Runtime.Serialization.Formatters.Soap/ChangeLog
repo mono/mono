@@ -1,3 +1,7 @@
+2004-06-10  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SoapWriter.cs: In SerializeArray, consider 1 a valid id.
+
 2004-05-26  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SoapFormatter.cs: Added headers parameter to SoapWriter call.

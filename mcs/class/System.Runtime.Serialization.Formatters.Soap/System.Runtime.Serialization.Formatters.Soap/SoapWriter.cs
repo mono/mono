@@ -426,7 +426,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			Type arrayType = currentArray.GetType().GetElementType();
 			Element xmlArrayType = _mapper[arrayType];
 			_xmlWriter.WriteStartElement(element.Prefix, element.LocalName, element.NamespaceURI);
-			if(currentArrayId > 1) Id(currentArrayId);
+			if(currentArrayId > 0) Id(currentArrayId);
 
 			if(_xmlWriter.LookupPrefix(xmlArrayType.NamespaceURI) == null)
 			{
