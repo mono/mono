@@ -1,4 +1,9 @@
 
+Thu Mar 4 15:46:20 PST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mono-codeman.c: add a define to force the use of malloc
+	instead of mmap.
+
 Tue Feb 17 21:45:12 CET 2004 Paolo Molaro <lupus@ximian.com>
 
 	* mono-codeman.c, mono-codeman.h: allocate extra room in memory close
