@@ -2953,10 +2953,25 @@ variable_initializer_list
 	  }
 	;
 
+void_pointer_expression
+	: void_pointer_expression STAR
+	  {
+		$$ = new ComposedCast ((Expression) $1, "*", lexer.Location);
+	  }
+	| VOID STAR
+	  {
+		$$ = new ComposedCast (TypeManager.system_void_expr, "*", lexer.Location);;
+	  }
+	;
+
 typeof_expression
 	: TYPEOF OPEN_PARENS VOID CLOSE_PARENS
 	  {
 		$$ = new TypeOfVoid (lexer.Location);
+	  }
+	| TYPEOF OPEN_PARENS void_pointer_expression CLOSE_PARENS
+	  {
+		$$ = new TypeOf ((Expression) $3, lexer.Location);
 	  }
 	| TYPEOF OPEN_PARENS
 	  {

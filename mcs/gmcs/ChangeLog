@@ -1,5 +1,11 @@
 2004-12-08  Martin Baulig  <martin@ximian.com>
 
+	* cs-parser.jay
+	(void_pointer_expression): New rule for `void*', `void**' etc.
+	(typeof_expression): Add `void_pointer_expression'; fixes #66846.	
+
+2004-12-08  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (Invocation.InferType): Removed the hack for
 	MethodCore.MayUnify().	
 
