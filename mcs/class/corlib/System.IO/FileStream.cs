@@ -205,7 +205,7 @@ namespace System.IO
 		
 			switch (origin) {
 			case SeekOrigin.End:
-				pos = Length - offset;
+				pos = Length + offset;
 				break;
 			
 			case SeekOrigin.Current:

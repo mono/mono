@@ -1,3 +1,9 @@
+2002-10-18  Dick Porter  <dick@ximian.com>
+
+	* FileStream.cs: SeekOrigin.End still calculates the offset from
+	the end of the file with positive values extending the length.
+	Fixes bug 32471.
+
 2002-10-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Path.cs: some cleanup. Thanks to Martin Aliger.
