@@ -1670,7 +1670,7 @@ namespace System
 					if (tokLen <= 2)
 						ZeroPad (result, dfi.Calendar.GetYear (this) % 100, tokLen);
 					else
-						result.Append (dfi.Calendar.GetYear (this).ToString ("D" + (tokLen == 3 ? 3 : 4)));
+						ZeroPad (result, dfi.Calendar.GetYear (this), (tokLen == 3 ? 3 : 4));
 
 					break;
 				case 'g':
@@ -1760,9 +1760,22 @@ namespace System
 			throw new FormatException("Un-ended quote");
 		}
 		
-		static void ZeroPad (StringBuilder output, int digits, int padding)
+		static unsafe void ZeroPad (StringBuilder output, int digits, int len)
 		{
-			output.Append (digits.ToString (new string ('0', padding)));
+			// more than enough for an int
+			char* buffer = stackalloc char [16];
+			int pos = 16;
+			
+			do {
+				buffer [-- pos] = (char) ('0' + digits % 10);
+				digits /= 10;
+				len --;
+			} while (digits > 0);
+			
+			while (len -- > 0)
+				buffer [-- pos] = '0';
+			
+			output.Append (new string (buffer, pos, 16 - pos));
 		}
 
 		public string ToString (string format, IFormatProvider fp)

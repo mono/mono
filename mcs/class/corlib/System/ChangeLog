@@ -1,3 +1,10 @@
+2004-10-17  Ben Maurer  <bmaurer@ximian.com>
+
+	* DateTime.cs (ZeroPad): Use unsafe code to speed this up. We
+	avoid entering slow integer formatting code.
+
+	(_ToString): Use ZeroPad here when possible, as it is faster.
+
 2004-10-11  Martin Baulig  <martin@ximian.com>
 
 	* Environment.cs: Bump corlib version to 28.
