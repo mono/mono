@@ -1,3 +1,9 @@
+2004-10-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSet.cs, XmlConstant.cs, XmlSchemaDataImporter.cs:
+	  DataColumn.ReadOnly was not handled. This fixes bug #68005.
+	  Attribute defaultValue was not handled too.
+
 2004-10-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSet.cs :

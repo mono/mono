@@ -1636,7 +1636,10 @@ namespace System.Data {
 			ArrayList elements;
 			ArrayList atts;
 			DataColumn simple;
-			
+
+			ArrayList xattrs = new ArrayList();
+			XmlAttribute xattr;
+
 			SplitColumns (table, out atts, out elements, out simple);
 
 			XmlSchemaElement elem = new XmlSchemaElement ();
@@ -1678,8 +1681,6 @@ namespace System.Data {
 					
 					// Add element for the column.
 					XmlSchemaElement colElem = new XmlSchemaElement ();
-					ArrayList xattrs = new ArrayList();
-					XmlAttribute xattr;
 					colElem.Name = col.ColumnName;
 				
 					if (col.ColumnName != col.Caption && col.Caption != String.Empty) {
@@ -1702,7 +1703,13 @@ namespace System.Data {
 
 					if (col.DefaultValue.ToString () != String.Empty)
 						colElem.DefaultValue = WriteObjectXml (col.DefaultValue);
-					
+
+					if (col.ReadOnly) {
+						xattr = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.ReadOnly, XmlConstants.MsdataNamespace);
+						xattr.Value = "true";
+						xattrs.Add (xattr);
+					}
+
 					if (col.MaxLength < 0)
 						colElem.SchemaTypeName = MapType (col.DataType);
 					
@@ -1769,6 +1776,16 @@ namespace System.Data {
 				}
 				if (!col.AllowDBNull)
 					att.Use = XmlSchemaUse.Required;
+				if (col.DefaultValue.ToString () != String.Empty)
+					att.DefaultValue = WriteObjectXml (col.DefaultValue);
+
+				if (col.ReadOnly) {
+					xattr = doc.CreateAttribute (XmlConstants.MsdataPrefix, XmlConstants.ReadOnly, XmlConstants.MsdataNamespace);
+					xattr.Value = "true";
+					xattrs.Add (xattr);
+				}
+
+				att.UnhandledAttributes = xattrs.ToArray (typeof (XmlAttribute)) as XmlAttribute [];
 
 				if (col.MaxLength > -1)
 					att.SchemaType = GetTableSimpleType (doc, col);
