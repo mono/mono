@@ -567,7 +567,7 @@ namespace System.Web.UI.WebControls
 				object[] states = (object[])savedState;
 				if(states != null)
 				{
-					LoadViewState(states[0]);
+					base.LoadViewState(states[0]);
 					if(columns != null)
 						((IStateManager)columns).LoadViewState(states[1]);
 					if(pagerStyle != null)
@@ -605,7 +605,7 @@ namespace System.Web.UI.WebControls
 
 		protected override void TrackViewState()
 		{
-			TrackViewState();
+			base.TrackViewState();
 			if(alternatingItemStyle != null)
 			{
 				alternatingItemStyle.TrackViewState();

@@ -21,6 +21,8 @@ namespace System.Web.UI.WebControls
 {
 	[DefaultEvent("SelectedIndexChanged")]
 	[DefaultProperty("DataSource")]
+	[ParseChildren(true)]
+	[PersistChildren(false)]
 	//TODO: [Designer("??")]
 	public abstract class BaseDataList: WebControl
 	{
@@ -46,7 +48,7 @@ namespace System.Web.UI.WebControls
 			get
 			{
 				EnsureChildControls();
-				return Controls;
+				return base.Controls;
 			}
 		}
 
