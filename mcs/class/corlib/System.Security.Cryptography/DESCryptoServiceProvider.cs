@@ -254,7 +254,7 @@ namespace System.Security.Cryptography {
 	
 		private static void Permutation (byte [] input, byte [] _output, int [] permTab, bool preSwap)
 		{
-			if (preSwap) BSwap (input);
+			if (preSwap && BitConverter.IsLittleEndian) BSwap (input);
 	
 			byte [] output = _output;
 	
@@ -275,7 +275,7 @@ namespace System.Security.Cryptography {
 				d2 |= permTab [offs1]   | permTab [offs2];
 			}
 	
-			if (preSwap) {
+			if (preSwap || !BitConverter.IsLittleEndian) {
 				output [0] = (byte) (d1);
 				output [1] = (byte) (d1 >> 8);
 				output [2] = (byte) (d1 >> 16);
