@@ -426,16 +426,7 @@ namespace System.Data {
 		/// <param name="column">The DataColumn to remove.</param>
 		public void Remove(DataColumn column)
 		{
-			
-			bool found = false;
-			foreach (DataColumn Col in List) {
-				if (Object.ReferenceEquals (Col, column)) {
-					found = true;
-					break;
-				}
-			}
-
-			if (!found)
+			if (IndexOf (column) == -1)
 				throw new ArgumentException ("Cannot remove a column that doesn't belong to this table.");
 
 			//TODO: can remove first with exceptions
