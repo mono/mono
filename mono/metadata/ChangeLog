@@ -1,3 +1,8 @@
+2003-12-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (mono_marshal_method_from_wrapper): Remove assert so this
+	function works on all methods.
+
 2003-12-07  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* domain.c, loader.h: Added IRemotingTypeInfo interface in MonoDefaults.
