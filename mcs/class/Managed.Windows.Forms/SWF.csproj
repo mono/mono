@@ -244,6 +244,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\ColumnHeader.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\ColumnHeaderStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -494,6 +499,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\ItemActivation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\ItemBoundsPortion.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -629,7 +639,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\ListView.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\ListViewAlignment.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\ListViewItem.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\ListViewItemConverter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -785,6 +810,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ScrollEventType.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\SortOrder.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
