@@ -1,3 +1,8 @@
+﻿2004-04-16  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* TcpClientChannel.cs: Initialize the sink provider in the default
+	  constructor.
+
 ﻿2004-03-04  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* TcpServerChannel.cs: In the ProcessMessages() loop, moved the closing of

@@ -24,6 +24,8 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		
 		public TcpClientChannel ()
 		{
+			_sinkProvider = new BinaryClientFormatterSinkProvider ();
+			_sinkProvider.Next = new TcpClientTransportSinkProvider ();
 		}
 
 		public TcpClientChannel (IDictionary properties, IClientChannelSinkProvider sinkProvider)
