@@ -1,4 +1,8 @@
 
+Wed Jul 24 13:02:12 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: implemented stack walking function.
+
 Fri Jul 19 14:21:18 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: fix float boxing on LE systems.
