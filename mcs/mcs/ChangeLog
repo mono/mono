@@ -1,3 +1,15 @@
+2002-02-13  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (BetterFunction): Put back in what Miguel commented out
+	since it is the correct fix. The problem is elsewhere ;-)
+
+	(IsParamsMethodApplicable): Fix bug where we were not checking that the fixed
+	parameters of the parms method are themselves compatible or not !
+
+	(StandardConversionExists): Fix very dangerous bug where we were forgetting
+	to check that a class implements an interface before saying that an implicit
+	conversion was allowed. Use ImplementsInterface to do the checking.
+
 2002-02-13  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (Method.Define): Track whether we are an explicit

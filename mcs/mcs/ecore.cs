@@ -546,6 +546,12 @@ namespace Mono.CSharp {
 			} else if (expr_type.IsSubclassOf (target_type)) {
 				return new EmptyCast (expr, target_type);
 			} else {
+
+				// This code is kind of mirrored inside StandardConversionExists
+				// with the small distinction that we only probe there
+				//
+				// Always ensure that the code here and there is in sync
+				
 				// from the null type to any reference-type.
 				if (expr is NullLiteral && !target_type.IsValueType)
 					return new EmptyCast (expr, target_type);
@@ -916,9 +922,14 @@ namespace Mono.CSharp {
 				return true;
 				
 			} else {
+				// Please remember that all code below actuall comes
+				// from ImplicitReferenceConversion so make sure code remains in sync
+				
 				// from any class-type S to any interface-type T.
-				if (expr_type.IsClass && target_type.IsInterface)
-					return true;
+				if (expr_type.IsClass && target_type.IsInterface) {
+					if (TypeManager.ImplementsInterface (expr_type, target_type))
+						return true;
+				}
 				
 				// from any interface type S to interface-type T.
 				// FIXME : Is it right to use IsAssignableFrom ?

@@ -2887,8 +2887,7 @@ namespace Mono.CSharp {
 				y = BetterConversion (ec, a, bt, ct, loc);
 
 				if (x < y)
-					break;
-//					return 0;
+					return 0;
 				
 				rating1 += x;
 				rating2 += y;
@@ -3018,13 +3017,33 @@ namespace Mono.CSharp {
 
 			//
 			// If we have come this far, the case which remains is when the number of parameters
-			// is less than or equal to the argument count. So, we now check if the element type
-			// of the params array is compatible with each argument type
-			//
+			// is less than or equal to the argument count.
+
+			for (int i = 0; i < pd_count - 1; ++i) {
+
+				Argument a = (Argument) arguments [i];
+
+				Parameter.Modifier a_mod = a.GetParameterModifier ();
+				Parameter.Modifier p_mod = pd.ParameterModifier (i);
+
+				if (a_mod == p_mod) {
+					
+					if (a_mod == Parameter.Modifier.NONE)
+						if (!StandardConversionExists (a.Type, pd.ParameterType (i)))
+							return false;
+										
+					if (a_mod == Parameter.Modifier.REF ||
+					    a_mod == Parameter.Modifier.OUT)
+						if (pd.ParameterType (i) != a.Type)
+							return false;
+				} else
+					return false;
+				
+			}
 
 			Type element_type = pd.ParameterType (pd_count - 1).GetElementType ();
 
-			for (int i = pd_count - 1; i < arg_count - 1; i++) {
+			for (int i = pd_count - 1; i < arg_count; i++) {
 				Argument a = (Argument) arguments [i];
 				
 				if (!StandardConversionExists (a.Type, element_type))
@@ -3205,9 +3224,9 @@ namespace Mono.CSharp {
 				// number of arguments, then the expanded params method is never applicable
 				// so we debar the params method.
 				//
-				if (IsParamsMethodApplicable (Arguments, candidate) &&
-				    IsApplicable (Arguments, method))
-					continue;
+				//if (IsParamsMethodApplicable (Arguments, candidate) &&
+				//    IsApplicable (Arguments, method))
+				//	continue;
 
 				int x = BetterFunction (ec, Arguments, method, candidate,
 							chose_params_expanded, loc);
