@@ -1,5 +1,7 @@
 2005-01-30  Zoltan Varga  <vargaz@freemail.hu>
 
+	* TestDriver.cs: Add --verbose flags.
+
 	* graph.c ssa.c: Fix 64 bit warnings.
 	
 	* abcremoval.h ssapre.h abcremoval.c ssapre.c mini.c tramp-amd64.c 
