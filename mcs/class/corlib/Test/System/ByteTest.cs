@@ -173,7 +173,7 @@ public class ByteTest : TestCase
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert("Exception is the wrong type", typeof(FormatException) == e.GetType());
+			AssertEquals("Exception is the wrong type", typeof(FormatException), e.GetType());
 		}
 		
 	}

@@ -1,3 +1,7 @@
+2002-04-09  Nick Drochak  <ndrochak@gol.com>
+
+	* ByteTest.cs: Use AssertEquals() for better diagnostic message.
+
 2002-04-08  Nick Drochak  <ndrochak@gol.com>
 
 	* EnumTest.cs: Add a few tests for differently underlying types and
