@@ -1,3 +1,6 @@
+2001-09-26  Mads Pultz <mpultz@get2net.dk>
+	* Dns.cs: Initial work on BeginGetHostByName and EndGetHostByName implemented.
+
 2001-09-24  Mads Pultz <mpultz@get2net.dk>
 
 	* Dns.cs: Minor changes (some print statements removed)

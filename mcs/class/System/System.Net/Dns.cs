@@ -8,15 +8,87 @@ using System;
 using System.Net.Sockets;
 using System.Text;
 using System.Collections;
+using System.Threading;
 using System.Runtime.InteropServices;
+using System.Runtime.Remoting.Messaging;
 
 namespace System.Net {
 
 	public sealed class Dns {
 		
 		/// <summary>
-		///     This class conforms to the C structure <c>hostent</c> and is used
-		///     by the Dns class when doing native calls.
+		/// Helper class
+		/// </summary>
+		private sealed class DnsAsyncResult: IAsyncResult {
+			private object state;
+			private WaitHandle waitHandle;
+			private bool completedSync, completed;
+			private Worker worker;
+		
+			public DnsAsyncResult(object state) {
+				this.state = state;
+				waitHandle = new ManualResetEvent(false);
+				completedSync = completed = false;
+			}	
+			public object AsyncState {
+				get { return state; }
+			}
+			public WaitHandle AsyncWaitHandle {
+				set { waitHandle = value; }
+				get { return waitHandle; }
+			}
+			public bool CompletedSynchronously {
+				get { return completedSync; }
+			}
+			public bool IsCompleted {
+				set { completed = value; }
+				get { return completed; }
+			}
+			public Worker Worker {
+				set { worker = value; }
+				get { return worker; }
+			}
+		}
+
+		/// <summary>
+		/// Helper class for asynchronous calls to DNS server
+		/// </summary>
+		private sealed class Worker {
+			private AsyncCallback reqCallback;
+			private DnsAsyncResult reqRes;
+			private string req;
+			private IPHostEntry result;
+			
+			public Worker(string req, AsyncCallback reqCallback, DnsAsyncResult reqRes) {
+				this.req = req;
+				this.reqCallback = reqCallback;
+				this.reqRes = reqRes;
+			}
+			private void End() {
+				reqCallback(reqRes);
+				((ManualResetEvent)reqRes.AsyncWaitHandle).Set();
+				reqRes.IsCompleted = true;
+			}
+			public void GetHostByName() {
+				lock(reqRes) {
+					result = Dns.GetHostByName(req);
+					End();
+				}
+			}
+			public void Resolve() {
+				lock(reqRes) {
+					result = Dns.Resolve(req);
+					End();
+				}
+			}
+			public IPHostEntry Result {
+				get { return result; }
+			}
+		}
+		
+		/// <summary>
+		/// This class conforms to the C structure <c>hostent</c> and is used
+		/// by the Dns class when doing native calls.
 		/// </summary>
 		[StructLayout(LayoutKind.Sequential)]
 		private unsafe class Hostent {
@@ -30,8 +102,11 @@ namespace System.Net {
 		public static IAsyncResult BeginGetHostByName(string hostName,
                                                   AsyncCallback requestCallback,
                                                   object stateObject) {
-			// TODO
-			throw new NotImplementedException();
+                        DnsAsyncResult requestResult = new DnsAsyncResult(stateObject);
+                        Worker worker = new Worker(hostName, requestCallback, requestResult);
+			Thread child = new Thread(new ThreadStart(worker.GetHostByName));
+                        child.Start();
+                        return requestResult;
 		}
 		
 		public static IAsyncResult BeginResolve(string hostName,
@@ -42,8 +117,7 @@ namespace System.Net {
 		}
 		
 		public static IPHostEntry EndGetHostByName(IAsyncResult asyncResult) {
-			// TODO
-			throw new NotImplementedException();
+			return ((DnsAsyncResult)asyncResult).Worker.Result;
 		}
 		
 		public static IPHostEntry EndResolve(IAsyncResult asyncResult) {
@@ -52,13 +126,13 @@ namespace System.Net {
 		}
 		
 		/// <param name=hostName>
-		///		IP address in network byte order (e.g. Big-Endian).
-		///	</param>
+		/// IP address in network byte order (e.g. Big-Endian).
+		/// </param>
 		/// <param name=length>
-		///		Length of IP address
+		/// Length of IP address.
 		/// </param>
 		/// <param name=type>
-		///		Type (should be 2, equals AF_INET)
+		/// Type (should be 2, equals AF_INET).
 		/// </param>
 		[DllImport("cygwin1", EntryPoint="gethostbyaddr")]
 		private static extern IntPtr _GetHostByAddress(byte[] hostName,
@@ -66,7 +140,7 @@ namespace System.Net {
 							       short type);
 		
 		/// <param name=address>
-		///		IP address in network byte order (e.g. Big-Endian).
+		/// IP address in network byte order (e.g. Big-Endian).
 		/// </param>
 		private static IPHostEntry GetHostByAddress(long address) {
 			short length = 4;
@@ -98,11 +172,6 @@ namespace System.Net {
 			return GetHostByAddress(CreateAddress(address));
 		}
 		
-/*
-    [DllImport("cygwin1", EntryPoint="h_errno")]
-	private static extern int _h_errno;
-*/
-
 		[DllImport("cygwin1", EntryPoint="gethostbyname")]
 		private static extern IntPtr _GetHostByName(string hostName);
 		
@@ -119,7 +188,7 @@ namespace System.Net {
 		}
 		
 		/// <summary>
-		///	This method returns the host name associated with the local host.
+		/// This method returns the host name associated with the local host.
 		/// </summary>
 		public static string GetHostName() {
 			IPHostEntry h = GetHostByAddress("127.0.0.1");
@@ -127,10 +196,10 @@ namespace System.Net {
 		}
 		
 		/// <param name=address>
-		///	IP address in Little-Endian byte order.
+		/// IP address in Little-Endian byte order.
 		/// </param>
 		/// <returns>
-		///	IP address in dotted notation form.
+		/// IP address in dotted notation form.
 		/// </returns>
 		public static string IpToString(int address) {
 			address = IPAddress.HostToNetworkOrder(address);
@@ -145,12 +214,12 @@ namespace System.Net {
 		}
 		
 		/// <summary>
-		///	This method resovles a DNS-style host name or IP
-		///	address.
+		/// This method resovles a DNS-style host name or IP
+		/// address.
 		/// </summary>
 		/// <param name=hostName>
-		///	A string containing either a DNS-style host name (e.g.
-		///	www.go-mono.com) or IP address (e.g. 129.250.184.233).
+		/// A string containing either a DNS-style host name (e.g.
+		/// www.go-mono.com) or IP address (e.g. 129.250.184.233).
 		/// </param>
 		public static IPHostEntry Resolve(string hostName) {
 			if (hostName == null)
@@ -166,11 +235,11 @@ namespace System.Net {
 		}
 		
 		/// <summary>
-		/// 	Utility method. This method converts a Hostent instance to a
-		/// 	IPHostEntry instance.
+		/// Utility method. This method converts a Hostent instance to a
+		/// IPHostEntry instance.
 		/// </summary>
 		/// <param name=h>
-		///	Object which should be mapped to a IPHostEntry instance.
+		/// Object which should be mapped to a IPHostEntry instance.
 		/// </param>
 		private static unsafe IPHostEntry ToIPHostEntry(Hostent h) {
 			IPHostEntry res = new IPHostEntry();
@@ -206,8 +275,8 @@ namespace System.Net {
 		}
 		
 		/// <summary>
-		///	Utility method. Convert IP address in dotted notation
-		///	to IP address.
+		/// Utility method. Convert IP address in dotted notation
+		/// to IP address.
 		/// </summary>
 		private static long CreateAddress(string address) {
 			string[] tokens = address.Split('.');
@@ -225,13 +294,13 @@ namespace System.Net {
 		}
 	
 		/// <summary>
-		///	Utility method. This method creates a IP address.
+		/// Utility method. This method creates a IP address.
 		/// </summary>
 		/// <param name=addr>
-		/// 	IP address in network byte order (e.g. Big-Endian).
+		/// IP address in network byte order (e.g. Big-Endian).
 		/// </param>
 		/// <param name=length>
-		///	Length of IP address (4 or 8 bytes).
+		/// Length of IP address (4 or 8 bytes).
 		/// </param>
 		private static unsafe IPAddress CreateIPAddress(byte* addr, short length) {
 			byte* p = addr;
