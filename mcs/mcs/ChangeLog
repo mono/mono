@@ -1,5 +1,23 @@
 2001-12-27  Miguel de Icaza  <miguel@ximian.com>
 
+	* driver.cs: Add --timestamp, to see where the compiler spends
+	most of its time.
+
+	* ecore.cs (SimpleName.DoResolve): Do not create an implicit
+	`this' in static code.
+
+	(SimpleName.DoResolve): Implement in terms of a helper function
+	that allows static-references to be passed upstream to
+	MemberAccess.
+
+	(Expression.ResolveWithSimpleName): Resolve specially simple
+	names when called by MemberAccess to implement the special
+	semantics. 
+
+	(Expression.ImplicitReferenceConversion): Handle conversions from
+	Null to reference types before others, as Null's type is
+	System.Object. 
+
 	* expression.cs (Invocation.EmitCall): Handle the special case of
 	calling methods declared on a reference type from a ValueType
 	(Base classes System.Object and System.Enum)

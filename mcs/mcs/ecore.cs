@@ -175,7 +175,12 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public Expression ResolveWithSimpleName (EmitContext ec)
 		{
-			Expression e = DoResolve (ec);
+			Expression e;
+
+			if (this is SimpleName)
+				e = ((SimpleName) this).DoResolveAllowStatic (ec);
+			else 
+				e = DoResolve (ec);
 
 			if (e != null){
 				if (e is SimpleName)
@@ -486,6 +491,10 @@ namespace Mono.CSharp {
 			} else if (expr_type.IsSubclassOf (target_type)) {
 				return new EmptyCast (expr, target_type);
 			} else {
+				// from the null type to any reference-type.
+				if (expr is NullLiteral && !target_type.IsValueType)
+					return new EmptyCast (expr, target_type);
+
 				// from any class-type S to any interface-type T.
 				if (expr_type.IsClass && target_type.IsInterface) {
 					if (TypeManager.ImplementsInterface (expr_type, target_type))
@@ -532,10 +541,6 @@ namespace Mono.CSharp {
 					if (target_type == TypeManager.icloneable_type)
 						return new EmptyCast (expr, target_type);
 				
-				// from the null type to any reference-type.
-				if (expr is NullLiteral)
-					return new EmptyCast (expr, target_type);
-
 				return null;
 
 			}
@@ -2663,13 +2668,34 @@ namespace Mono.CSharp {
 			return e;
 		}
 		
-		// <remarks>
-		//   7.5.2: Simple Names. 
-		//
-		//   Local Variables and Parameters are handled at
-		//   parse time, so they never occur as SimpleNames.
-		// </remarks>
 		public override Expression DoResolve (EmitContext ec)
+		{
+			return SimpleNameResolve (ec, false);
+		}
+
+		public Expression DoResolveAllowStatic (EmitContext ec)
+		{
+			return SimpleNameResolve (ec, true);
+		}
+
+		/// <remarks>
+		///   7.5.2: Simple Names. 
+		///
+		///   Local Variables and Parameters are handled at
+		///   parse time, so they never occur as SimpleNames.
+		///
+		///   The `allow_static' flag is used by MemberAccess only
+		///   and it is used to inform us that it is ok for us to 
+		///   avoid the static check, because MemberAccess might end
+		///   up resolving the Name as a Type name and the access as
+		///   a static type access.
+		///
+		///   ie: Type Type; .... { Type.GetType (""); }
+		///
+		///   Type is both an instance variable and a Type;  Type.GetType
+		///   is the static method not an instance method of type.
+		/// </remarks>
+		Expression SimpleNameResolve (EmitContext ec, bool allow_static)
 		{
 			Expression e;
 
@@ -2679,7 +2705,7 @@ namespace Mono.CSharp {
 
 			//
 			// Stage 2: Lookup members 
-			// 
+			//
 			e = MemberLookup (ec, ec.TypeContainer.TypeBuilder, Name, true, Location);
 			if (e == null){
 				//
@@ -2723,9 +2749,13 @@ namespace Mono.CSharp {
 
 			if (e is FieldExpr){
 				FieldExpr fe = (FieldExpr) e;
-				
-				if (!fe.FieldInfo.IsStatic){
-					This this_expr = new This (Mono.CSharp.Location.Null);
+
+				//
+				// If we are not in static code (ec.IsStatic) and this
+				// field is not static, set the instance to `this'.
+				//
+				if (!fe.FieldInfo.IsStatic && !ec.IsStatic){
+					This this_expr = new This (Location);
 
 					fe.InstanceExpression = this_expr.DoResolve (ec);
 				}
@@ -2741,6 +2771,8 @@ namespace Mono.CSharp {
 						return Constantify (real_value, fi.FieldType);
 					}
 				}
+
+				return e;
 			} 				
 
 			if (e is EventExpr) {
@@ -2750,8 +2782,9 @@ namespace Mono.CSharp {
 				//
 				EventExpr ee = (EventExpr) e;
 
-				Expression ml = MemberLookup (ec, ec.TypeContainer.TypeBuilder, ee.EventInfo.Name,
-							      true, MemberTypes.Event, AllBindingFlags, Location);
+				Expression ml = MemberLookup (
+					ec, ec.TypeContainer.TypeBuilder, ee.EventInfo.Name,
+					true, MemberTypes.Event, AllBindingFlags, Location);
 
 				if (ml != null) {
 					MemberInfo mi = ec.TypeContainer.GetFieldFromEvent ((EventExpr) ml);
@@ -2792,9 +2825,12 @@ namespace Mono.CSharp {
 			}
 				
 			
-			if (ec.IsStatic)
+			if (ec.IsStatic){
+				if (allow_static)
+					return e;
+				
 				return MemberStaticCheck (e);
-			else
+			} else
 				return e;
 		}
 

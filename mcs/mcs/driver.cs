@@ -48,9 +48,28 @@ namespace Mono.CSharp
 		static string target_ext = ".exe";
 
 		static bool parse_only = false;
+		static bool timestamps = false;
 
+		//
+		// An array of the defines from the command line
+		//
 		static ArrayList defines;
 
+		//
+		// Last time we took the time
+		//
+		static DateTime last_time;
+		static void ShowTime (string msg)
+		{
+			DateTime now = DateTime.Now;
+			TimeSpan span = now - last_time;
+			last_time = now;
+			
+			Console.WriteLine (
+				"[{0:00}:{1:000}] {2}",
+				span.Seconds, span.Milliseconds, msg);
+		}
+		
 		static int tokenize_file (string input_file)
 		{
 			Stream input;
@@ -123,6 +142,7 @@ namespace Mono.CSharp
 				"   --probe X L     Probes for the source to generate code X on line L\n" +
 				"   --target KIND   Specifies the target (KIND is one of: exe, winexe, " +
 				                    "library, module)\n" +
+				"   --timestamp     Displays time stamps of various compiler events\n" +
 				"   --unsafe        Allows unsafe code\n" +
 				"   --werror        Treat warnings as errors\n" +
 				"   --wlevel LEVEL  Sets warning level (the highest is 4, the default)\n" +
@@ -461,6 +481,11 @@ namespace Mono.CSharp
 					case "--about":
 						About ();
 						return;
+
+					case "--timestamp":
+						timestamps = true;
+						last_time = DateTime.Now;
+						continue;
 						
 					default:
 						Usage (true);
@@ -480,8 +505,9 @@ namespace Mono.CSharp
 					}
 					if (tokenize)
 						tokenize_file (f);
-					else 
+					else {
 						errors += parse (f);
+					}
 				}
 			}
 
@@ -515,8 +541,12 @@ namespace Mono.CSharp
 			//
 			// Load assemblies required
 			//
+			if (timestamps)
+				ShowTime ("Loading references");
 			errors += LoadReferences ();
-
+			if (timestamps)
+				ShowTime ("   References loaded");
+			
 			if (errors > 0){
 				error ("Could not load one or more assemblies");
 				return;
@@ -543,14 +573,22 @@ namespace Mono.CSharp
 			// types emitted from the user defined types
 			// or from the system ones.
 			//
+			if (timestamps)
+				ShowTime ("Initializing Core Types");
 			RootContext.TypeManager.InitCoreTypes ();
+			if (timestamps)
+				ShowTime ("   Core Types done");
 
 			RootContext.TypeManager.AddModule (RootContext.CodeGen.ModuleBuilder);
 			
 			//
 			// The second pass of the compiler
 			//
+			if (timestamps)
+				ShowTime ("Resolving tree");
 			RootContext.ResolveTree ();
+			if (timestamps)
+				ShowTime ("Populate tree");
 			RootContext.PopulateTypes ();
 			
 			if (Report.Errors > 0){
@@ -561,12 +599,19 @@ namespace Mono.CSharp
 			//
 			// The code generator
 			//
+			if (timestamps)
+				ShowTime ("Emitting code");
 			RootContext.EmitCode ();
+			if (timestamps)
+				ShowTime ("   done");
 			
 			if (Report.Errors > 0){
 				error ("Compilation failed");
 				return;
 			}
+
+			if (timestamps)
+				ShowTime ("Closing types");
 			
 			RootContext.CloseTypes ();
 
@@ -592,6 +637,8 @@ namespace Mono.CSharp
 			}
 			
 			RootContext.CodeGen.Save (output_file);
+			if (timestamps)
+				ShowTime ("Saved output");
 
 			if (Report.Errors > 0){
 				error ("Compilation failed");
