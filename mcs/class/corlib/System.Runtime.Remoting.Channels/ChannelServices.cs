@@ -3,7 +3,7 @@
 //
 // Author: Rodrigo Moya (rodrigo@ximian.com)
 //         Dietmar Maurer (dietmar@ximian.com)
-//         Lluis Sanchez Gual (lsg@ctv.es)
+//         Lluis Sanchez Gual (lluis@ideary.com)
 //
 // 2002 (C) Copyright, Ximian, Inc.
 //
@@ -156,7 +156,7 @@ namespace System.Runtime.Remoting.Channels
 
 			IMethodMessage call = (IMethodMessage)msg;
 			Identity identity = RemotingServices.GetIdentityForUri(call.Uri);
-			if (identity == null) throw new RemotingException ("No receiver for uri " + call.Uri);
+			if (identity == null) return new ReturnMessage (new RemotingException ("No receiver for uri " + call.Uri), (IMethodCallMessage) msg);
 
 			return identity.Context.GetServerContextSinkChain().SyncProcessMessage (msg);
 		}
