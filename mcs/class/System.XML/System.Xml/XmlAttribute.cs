@@ -41,10 +41,13 @@ namespace System.Xml
 			if (namespaceURI == null)
 				namespaceURI = String.Empty;
 
-			// I think prefix "xml" should be checked as same, but
-			// MS.NET ignores such case.
+			// Prefix "xml" should be also checked (http://www.w3.org/XML/xml-names-19990114-errata#NE05)
+			// but MS.NET ignores such case.
 			if (prefix == "xmlns" || (prefix == "" && localName == "xmlns"))
-				if (namespaceURI != "http://www.w3.org/2000/xmlns/")
+				if (namespaceURI != XmlNamespaceManager.XmlnsXmlns)
+					throw new ArgumentException ("Invalid attribute namespace for namespace declaration.");
+			else if (prefix == "xml" || (prefix == "" && localName == "xml"))
+				if (namespaceURI != XmlNamespaceManager.XmlnsXml)
 					throw new ArgumentException ("Invalid attribute namespace for namespace declaration.");
 
 			// There are no means to identify the DOM is namespace-

@@ -17,6 +17,8 @@ namespace System.Xml
 
 		private XmlNameTable nameTable;
 		private NamespaceScope currentScope;
+		internal const string XmlnsXml = "http://www.w3.org/XML/1998/namespace";
+		internal const string XmlnsXmlns = "http://www.w3.org/2000/xmlns/";
 
 		#endregion
 
@@ -29,13 +31,13 @@ namespace System.Xml
 			nameTable.Add ("xmlns");
 			nameTable.Add ("xml");
 			nameTable.Add (String.Empty);
-			nameTable.Add ("http://www.w3.org/2000/xmlns/");
-			nameTable.Add ("http://www.w3.org/XML/1998/namespace");
+			nameTable.Add (XmlnsXmlns);
+			nameTable.Add (XmlnsXml);
 
 			PushScope ();
 			currentScope.Namespaces = new Hashtable ();
-			currentScope.Namespaces.Add ("xml", "http://www.w3.org/XML/1998/namespace");
-			currentScope.Namespaces.Add ("xmlns", "http://www.w3.org/2000/xmlns/");
+			currentScope.Namespaces.Add ("xml", XmlnsXml);
+			currentScope.Namespaces.Add ("xmlns", XmlnsXmlns);
 		}
 
 		#endregion
@@ -62,8 +64,7 @@ namespace System.Xml
 			if (uri == null)
 				throw new ArgumentNullException ("uri", "Value cannot be null.");
 
-			if (prefix.Length > 2 && prefix.Substring (0, 3).ToLower () == "xml")
-				throw new ArgumentException ( "Prefixes beginning with \"xml\" (regardless " + "of whether the characters are uppercase, lowercase, or some combination thereof) are reserved for use by XML.", "prefix");
+			IsValidDeclaration (prefix, uri, true);
 
 			if (currentScope.Namespaces == null)
 				currentScope.Namespaces = new Hashtable ();
@@ -71,6 +72,23 @@ namespace System.Xml
 			if (prefix != String.Empty)
 				nameTable.Add (prefix);
 			currentScope.Namespaces [prefix] = nameTable.Add (uri);
+		}
+
+		internal static string IsValidDeclaration (string prefix, string uri, bool throwException)
+		{
+			string message = null;
+			if (prefix == "xml" && uri != XmlnsXml)
+				message = String.Format ("Prefix \"xml\" is only allowed to the fixed uri \"{0}\"", XmlnsXml);
+			else if (uri == XmlnsXml)
+				message = String.Format ("Namespace URI \"{0}\" can only be declared with the fixed prefix \"xml\"", XmlnsXml);
+			if (message == null && prefix == "xmlns")
+				message = "Declaring prefix named \"xmlns\" is not allowed to any namespace.";
+			if (message == null && uri == XmlnsXmlns)
+				message = String.Format ("Namespace URI \"{0}\" cannot be declared with any namespace.", XmlnsXmlns);
+			if (message != null && throwException)
+				throw new ArgumentException (message);
+			else
+				return message;
 		}
 
 		public virtual IEnumerator GetEnumerator ()
@@ -98,9 +116,9 @@ namespace System.Xml
 
 			switch (prefix) {
 			case "xmlns":
-				return nameTable.Get ("http://www.w3.org/2000/xmlns/");
+				return nameTable.Get (XmlnsXmlns);
 			case "xml":
-				return nameTable.Get ("http://www.w3.org/XML/1998/namespace");
+				return nameTable.Get (XmlnsXml);
 			case "":
 				return nameTable.Get (String.Empty);
 			}

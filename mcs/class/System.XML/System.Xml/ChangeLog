@@ -1,3 +1,16 @@
+2003-07-15  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlAttribute.cs :
+	  .ctor() should reject xml- or xmlns-prefixed node.
+	* XmlNamespaceManager.cs :
+	  added some xmlns validity check.
+	* XmlNode.cs :
+	  optimized GetNamespaceOfPrefix() and GetPrefixOfNamespace() by
+	  avoiding XmlNamespaceManager creation.
+	* XmlNodeReader.cs :
+	  doctype node should return PUBLIC and SYSTEM for its indexer, 
+	  and Value should be internal subset,
+
 2003-07-12  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* DTDObjectModel.cs,

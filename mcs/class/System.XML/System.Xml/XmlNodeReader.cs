@@ -195,6 +195,18 @@ namespace System.Xml
 			return null;
 		}
 
+		private string GetDocumentTypeAttribute (string name)
+		{
+			XmlDocumentType doctype = current as XmlDocumentType;
+			switch (name) {
+			case "PUBLIC":
+				return doctype.PublicId;
+			case "SYSTEM":
+				return doctype.SystemId;
+			}
+			return null;
+		}
+
 		public override string this [string name] {
 			get {
 				// This is MS.NET bug which returns attributes in spite of EndElement.
@@ -203,6 +215,8 @@ namespace System.Xml
 
 				if (NodeType == XmlNodeType.XmlDeclaration)
 					return GetXmlDeclarationAttribute (name);
+				else if (NodeType == XmlNodeType.DocumentType)
+					return GetDocumentTypeAttribute (name);
 
 				XmlAttribute attr = ownerElement.Attributes [name];
 				if (attr == null)
@@ -308,7 +322,10 @@ namespace System.Xml
 
 		public override string Value {
 			get {
-				return HasValue ? current.Value : String.Empty;
+				if (NodeType == XmlNodeType.DocumentType)
+					return ((XmlDocumentType) current).InternalSubset;
+				else
+					return HasValue ? current.Value : String.Empty;
 			}
 		}
 
@@ -633,13 +650,6 @@ namespace System.Xml
 		{
 			if (NodeType == XmlNodeType.EndElement)
 				return String.Empty;
-/*
-			if (current.NodeType != XmlNodeType.Attribute &&
-			    current.NodeType != XmlNodeType.Element)
-				return String.Empty;
-			else
-				return current.OuterXml;
-*/
 			XmlNode initial = current;
 
 			switch (NodeType) {

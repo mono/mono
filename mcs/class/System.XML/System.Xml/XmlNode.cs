@@ -261,19 +261,57 @@ namespace System.Xml
 			return new XmlNodeListChildren (this).GetEnumerator ();
 		}
 
-		[MonoTODO("performance problem.")]
 		public virtual string GetNamespaceOfPrefix (string prefix)
 		{
-			XmlNamespaceManager nsmgr = ConstructNamespaceManager ();
-			return nsmgr.LookupNamespace (prefix);
+			XmlNode node;
+			switch (NodeType) {
+			case XmlNodeType.Attribute:
+				node = ((XmlAttribute) this).OwnerElement;
+				break;
+			case XmlNodeType.Element:
+				node = this;
+				break;
+			default:
+				node = ParentNode;
+				break;
+			}
+
+			while (node.NodeType != XmlNodeType.Document) {
+				foreach (XmlAttribute attr in node.Attributes) {
+					if (prefix == attr.LocalName && attr.Prefix == "xmlns"
+						|| attr.Name == "xmlns" && prefix == String.Empty)
+						return attr.Value;
+				}
+				node = node.ParentNode;
+			}
+			return null;
 		}
 
-		[MonoTODO("performance problem.")]
 		public virtual string GetPrefixOfNamespace (string namespaceURI)
 		{
-			XmlNamespaceManager nsmgr = ConstructNamespaceManager ();
-			string ns = nsmgr.LookupPrefix (namespaceURI);
-			return (ns != null) ? ns : String.Empty;
+			XmlNode node;
+			switch (NodeType) {
+			case XmlNodeType.Attribute:
+				node = ((XmlAttribute) this).OwnerElement;
+				break;
+			case XmlNodeType.Element:
+				node = this;
+				break;
+			default:
+				node = ParentNode;
+				break;
+			}
+
+			while (node.NodeType != XmlNodeType.Document) {
+				foreach (XmlAttribute attr in node.Attributes) {
+					if (attr.Prefix == "xmlns" && attr.Value == namespaceURI)
+						return attr.LocalName;
+					else if (attr.Name == "xmlns" && attr.Value == namespaceURI)
+						return String.Empty;
+				}
+				node = node.ParentNode;
+			}
+			return String.Empty;
 		}
 
 		object ICloneable.Clone ()
