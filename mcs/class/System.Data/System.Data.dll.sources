@@ -3,12 +3,14 @@ Assembly/Consts.cs
 Assembly/Locale.cs
 System.Data/AcceptRejectRule.cs
 System.Data/AdapterMappingException.cs
+System.Data/ColumnTypeConverter.cs
 System.Data/CommandBehavior.cs
 System.Data/CommandType.cs
 System.Data/ConnectionState.cs
 System.Data/ConflictOptions.cs
 System.Data/Constraint.cs
 System.Data/ConstraintCollection.cs
+System.Data/ConstraintConverter.cs
 System.Data/ConstraintException.cs
 System.Data/DataAdapterException.cs
 System.Data/DataCategoryAttribute.cs
@@ -44,6 +46,7 @@ System.Data/DataViewSettingCollection.cs
 System.Data/DBConcurrencyException.cs
 System.Data/DbMetaData.cs
 System.Data/DbType.cs
+System.Data/DefaultValueTypeConverter.cs
 System.Data/DeletedRowInaccessibleException.cs
 System.Data/DuplicateNameException.cs
 System.Data/EvaluateException.cs
@@ -128,8 +131,10 @@ System.Data.Common/ComparerFactory.cs
 System.Data.Common/DataAdapter.cs
 System.Data.Common/DataColumnMappingCollection.cs
 System.Data.Common/DataColumnMapping.cs
+System.Data.Common/DataColumnMappingConverter.cs
 System.Data.Common/DataTableMappingCollection.cs
 System.Data.Common/DataTableMapping.cs
+System.Data.Common/DataTableMappingConverter.cs
 System.Data.Common/DbCommandBuilder.cs
 System.Data.Common/DbCommand.cs
 System.Data.Common/DbCommandOptionalFeatures.cs

@@ -1,3 +1,7 @@
+2004-03-12  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* System.Data.dll.sources : added classes
+
 2004-03-04 Eran Domb <erand@mainsoft.com>
 
 	* System.Data.dll.sources : added Node.cs, ComparerFactory.cs.
