@@ -20,7 +20,7 @@ class Top {
 		int get_two ();
 	}
 
-	class XA : A {
+	public class XA : A {
 		public int get_one () { return 1; }
 	}
 
@@ -41,7 +41,22 @@ class Top {
 			return 2;
 		if (b.get_two () != 2)
 			return 3;
+
+		XB [] xb = null;
+
 		return 0;
 	}
 }
+
+//
+// The following tests that the compiler will actually properly
+// find the types that are requested (they are nested types)
+//
+class Other {
+	public void X ()
+	{
+		Top.XA xa = null;
+		Top.XA [] xb = null;
+	}
+}	
 		
