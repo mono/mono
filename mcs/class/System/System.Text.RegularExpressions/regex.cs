@@ -123,7 +123,7 @@ namespace System.Text.RegularExpressions {
 		}
 
 		public static string[] Split (string input, string pattern, RegexOptions options) {
-			Regex re = new Regex (input, options);
+			Regex re = new Regex (pattern, options);
 			return re.Split (input);
 		}
 

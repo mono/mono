@@ -1,3 +1,7 @@
+2002-12-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* regex.cs: fixed little mistake (closes #35860).
+
 2002-11-12 Jackson Harper <jackson@latitudegeo.com>
 
 	* arch.cs compiler.cs regex.cs: Added mapping attribute to MachineFactories
