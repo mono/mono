@@ -129,7 +129,9 @@ namespace System.Data.Common {
 
 		object ICloneable.Clone ()
 		{
-			return new DataTableMapping (SourceTable, DataSetTable);
+			DataColumnMapping [] arr = new DataColumnMapping [columnMappings.Count];
+			columnMappings.CopyTo (arr, 0);
+			return new DataTableMapping (SourceTable, DataSetTable, arr);
 		}
 
 		public override string ToString ()
