@@ -1,3 +1,8 @@
+2004-09-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* libtest.c (mono_test_stdcall_name_mangling): Add test for stdcall 
+	name mangling on windows.
+
 2004-09-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* pinvoke2.cs libtest.c: Add test for stdcall name mangling on windows.
