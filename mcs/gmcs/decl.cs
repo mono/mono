@@ -2287,7 +2287,7 @@ namespace Mono.CSharp {
  							// Does exist easier way how to detect indexer ?
  							if ((entry.EntryType & EntryType.Property) != 0) {
  								Type[] arg_types = TypeManager.GetArgumentTypes ((PropertyInfo)entry.Member);
- 								if (arg_types.Length == 1)
+ 								if (arg_types.Length > 0)
  									continue;
  							}
  						}

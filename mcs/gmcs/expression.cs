@@ -3642,7 +3642,7 @@ namespace Mono.CSharp {
 			if (variable_info != null)
 				variable_info.SetAssigned (ec);
 
-			Expression e = DoResolve (ec, true);
+			Expression e = DoResolve (ec, right_side != EmptyExpression.Null);
 
 			if (e == null)
 				return null;
@@ -4034,7 +4034,7 @@ namespace Mono.CSharp {
 				}
 				Expr = Expr.ResolveLValue (ec, Expr);
 			} else if (ArgType == AType.Out)
-				Expr = Expr.ResolveLValue (ec, new EmptyExpression ());
+				Expr = Expr.ResolveLValue (ec, EmptyExpression.Null);
 			else
 				Expr = Expr.Resolve (ec);
 
@@ -8755,6 +8755,9 @@ namespace Mono.CSharp {
 	///   is needed (the `New' class).
 	/// </summary>
 	public class EmptyExpression : Expression {
+		public static readonly EmptyExpression Null = new EmptyExpression ();
+
+		// TODO: should be protected
 		public EmptyExpression ()
 		{
 			type = TypeManager.object_type;
