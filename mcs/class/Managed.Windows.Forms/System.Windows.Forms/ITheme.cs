@@ -24,11 +24,11 @@
 //
 //
 //
-// $Revision: 1.4 $
+// $Revision: 1.5 $
 // $Modtime: $
 // $Log: ITheme.cs,v $
-// Revision 1.4  2004/08/09 15:53:58  jackson
-// Themes now handle default control properties
+// Revision 1.5  2004/08/09 17:01:02  jackson
+// The theme engine now controls default window properties
 //
 // Revision 1.3  2004/08/08 22:54:21  jordi
 // Label BorderStyles
@@ -58,10 +58,12 @@ namespace System.Windows.Forms
 		Color ColorShadow {get;}	
 		Color ColorLightTop {get;}
 
-		/* Default Control properties */
-		Color DefaultBackColor {get;}
-		Color DefaultForeColor {get;}
+		/* Default properties */
+		Color DefaultControlBackColor {get;}
+		Color DefaultControlForeColor {get;}
 		Font DefaultFont {get;}
+		Color DefaultWindowForeColor {get;}
+		Color DefaultWindowBackColor {get;}
 
 		/* Windows System Colors. Based on Wine */
 		Color ColorScrollbar {get;} 		//COLOR_SCROLLBAR
