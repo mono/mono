@@ -1,5 +1,7 @@
 2004-11-05  Zoltan Varga  <vargaz@freemail.hu>
 
+	* tramp-sparc.c (mono_arch_create_jit_trampoline): Fix sparc build.
+
 	* tramp-amd64.c (mono_arch_create_jit_trampoline): Fix amd64 build.
 
 	* mini.h mini.c tramp-*.c: Moved xp parts of JIT trampoline creation
