@@ -140,7 +140,6 @@ namespace System.Reflection.Emit {
 		private LabelFixup[] fixups;
 		private int num_fixups;
 		private ModuleBuilder module;
-		private AssemblyBuilder abuilder;
 		private IMonoSymbolWriter sym_writer;
 		private Stack scopes;
 		private int cur_block;
@@ -165,7 +164,6 @@ namespace System.Reflection.Emit {
 			} else if (mb is ConstructorBuilder) {
 				module = (ModuleBuilder)((ConstructorBuilder)mb).TypeBuilder.Module;
 			}
-			abuilder = (AssemblyBuilder)module.Assembly;
 			sym_writer = module.symbol_writer;
 			open_blocks = new Stack ();
 		}

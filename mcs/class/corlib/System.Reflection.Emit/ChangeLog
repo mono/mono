@@ -1,3 +1,7 @@
+2003-11-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ILGenerator.cs: Remove unused abuilder member.
+
 2003-11-19  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* OpCodes.cs: Remove Boxval for v1.1+
