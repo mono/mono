@@ -1,5 +1,12 @@
 2002-06-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* StringConverter.cs: stubbed out.
+	* TypeConverter.cs: stubbed the rest out and added some implementation.
+
+	Five errors left when compiling System.Web in linux.
+
+2002-06-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* TypeConverterAttribute.cs: attribute used by 
 	TypeDescriptor.Getconverter ().
 
