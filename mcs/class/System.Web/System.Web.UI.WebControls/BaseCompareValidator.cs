@@ -21,7 +21,7 @@ namespace System.Web.UI.WebControls
 	{
 		protected BaseCompareValidator(): base()
 		{
-			//TODO: Init work
+			super();
 		}
 		
 		/*[
@@ -32,7 +32,7 @@ namespace System.Web.UI.WebControls
 
 		public static bool CanConvert(string text, ValidationDataType type)
 		{
-			//text = null;
+			//TODO: Implement me
 			return false;
 		}
 		
@@ -50,7 +50,6 @@ namespace System.Web.UI.WebControls
 				if(!System.Enum.IsDefined(typeof(ValidationDataType), value))
 					throw new ArgumentException();
 				ViewState["Type"] = value;
-				// Else the function itself throws the exception
 			}
 		}
 		
@@ -64,9 +63,7 @@ namespace System.Web.UI.WebControls
 
 		protected static int GetFullYear(int shortYear)
 		{
-			DateTime dt = DateTime.Today;
-			int year = dt.Year;
-			return 0; //TODO: Get the values. This is just to ensure that the code compiles
+			//TODO: Implement me
 		}
 		
 		protected override void AddAttributesToRender(HtmlTextWriter writer)

@@ -11,8 +11,11 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
+using System.Text;
 using System.Web;
 using System.Web.UI;
+using System.Drawing;
 
 namespace System.Web.UI.WebControls
 {
@@ -22,6 +25,7 @@ namespace System.Web.UI.WebControls
 		
 		private TableItemStyle          dayHeaderStyle;
 		private TableItemStyle          dayStyle;
+		private TableItemStyle          nextPrevStyle;
 		private TableItemStyle          otherMonthDayStyle;
 		private SelectedDatesCollection selectedDates;
 		private ArrayList               selectedDatesList;
@@ -31,8 +35,12 @@ namespace System.Web.UI.WebControls
 		private TableItemStyle          todayDayStyle;
 		private TableItemStyle          weekendDayStyle;
 
-		private static readonly object DayRenderEvent        = new object();
-		private static readonly object SelectionChangedEvent = new object();
+		private static readonly object DayRenderEvent           = new object();
+		private static readonly object SelectionChangedEvent    = new object();
+		private static readonly object VisibleMonthChangedEvent = new object();
+		
+		private Color defaultTextColor;
+		private System.Globalization.Calendar globCal;
 
 		public Calendar(): base()
 		{
@@ -154,6 +162,16 @@ namespace System.Web.UI.WebControls
 				if(!System.Enum.IsDefined(typeof(NextPrevFormat), value))
 					throw new ArgumentException();
 				ViewState["NextPrevFormat"] = value;
+			}
+		}
+		
+		public TableItemStyle NextPrevStyle
+		{
+			get
+			{
+				if(nextPrevStyle == null)
+					nextPrevStyle = new TableItemStyle();
+				return nextPrevStyle;
 			}
 		}
 		
@@ -446,6 +464,18 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		public event MonthChangedEventHandler VisibleMonthChanged
+		{
+			add
+			{
+				Events.AddHandler(VisibleMonthChangedEvent, value);
+			}
+			remove
+			{
+				Events.RemoveHandler(VisibleMonthChangedEvent, value);
+			}
+		}
+		
 		protected virtual void OnDayRender(TableCell cell, CalendarDay day)
 		{
 			if(Events!=null)
@@ -466,17 +496,229 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		protected virtual void OnVisibleMonthChanged(DateTime newDate, DateTime prevDate)
+		{
+			if(Events!=null)
+			{
+				MonthChangedEventHandler mceh = (MonthChangedEventHandler)(Events[VisibleMonthChangedEvent]);
+				if(mceh!=null)
+					mceh(this, new MonthChangedEventArgs(newDate, prevDate));
+			}
+		}
+		
 		public void RaisePostBackEvent(string eventArgument)
 		{
-			//TODO: THE LOST WORLD
+			//TODO: Implement Me
 			// Written to keep compile get going
 		}
 		
 		protected override void Render(HtmlTextWriter writer)
 		{
-			//TODO: Ofcourse, I have to override this function
+			//TODO: Implement me
+			globCal = DateTimeFormatInfo.CurrentInfo.Calendar;
+			SetFirstCalendarDay(GetEffectiveVisibleDate());
+			/*
+			 * ForeColor else defaultTextColor
+			 * Draw a table
+			 * if(ControlStyleCreated())
+			 * 	then
+			 * {
+			 *	 ApplyStyle(ControlStyle)
+			 * }
+			 * GridLines?
+			 * RenderBeginTag(writer)
+			 * RenderTitle(writer, visibleDate from GetEffectiveVisibleDate, this.SelectionMode, IsEnabled)
+			 * if(ShowHeader)
+			 *  RenderHeader(writer, visibleDate, SelectionMode, IsEnabled, 
+			 * RenderAllDays
+			 * RenderEndTag(writer)
+			 */
+		}
+		
+		protected override ControlCollection CreateControlCollection()
+		{
+			return new EmptyControlCollection(this);
+		}
+		
+		protected override void LoadViewState(object savedState)
+		{
+			if(savedState!=null)
+			{
+				//TODO: Implement me
+				//object[] states = (object[]) savedState;
+				//loadViewState of all the states/styles
+			}
+		}
+		
+		protected override object SaveViewState()
+		{
+			//TODO: Implement me
+			// SaveViewState of all the styles
+		}
+		
+		protected override void TrackViewState()
+		{
+			base.TrackViewState();
+			if(titleStyle!=null)
+			{
+				titleStyle.TrackViewState();
+			}
+			if(nextPrevStyle!=null)
+			{
+				nextPrevStyle.TrackViewState();
+			}
+			if(dayStyle!=null)
+			{
+				dayStyle.TrackViewState();
+			}
+			if(dayHeaderStyle!=null)
+			{
+				dayHeaderStyle.TrackViewState();
+			}
+			if(todayDayStyle!=null)
+			{
+				todayDayStyle.TrackViewState();
+			}
+			if(weekendDayStyle!=null)
+			{
+				weekendDayStyle.TrackViewState();
+			}
+			if(otherMonthStyle!=null)
+			{
+				otherMonthStyle.TrackViewState();
+			}
+			if(selectedDayStyle!=null)
+			{
+				selectedDayStyle.TrackViewState();
+			}
+			if(selectorStyle!=null)
+			{
+				selectorStyle.TrackViewState();
+			}
 		}
 		
 		//TODO: Recheck, I am through with all the functions?
+		
+		private void RenderAllDays(HtmlTextWriter writer, DateTime firstDay, DateTime activeDate, CalendarSelectionMode mode, bool isActive, bool isDownLevel)
+		{
+			//TODO: Implement me
+			/*
+			 * "<tr>"
+			 * "</tr>"
+			 */
+		}
+		
+		private void RenderHeader(HtmlTextWriter writer, DateTime firstDay, CalendarSelectionMode mode, bool isActive, bool isDownLevel)
+		{
+			//TODO: Implement Me
+			/*
+			 * "<tr>"
+			 * "</tr>"
+			 */
+		}
+		
+		private void RenderTitle(HtmlTextWriter writer, DateTime visibleDate, CalendarSelectionMode mode, bool isActive)
+		{
+			//TODO: Implement me
+			/*
+			 * Make a row with the following contents: "<tr>"
+			 * Draw a table, with cell having the following properties
+			 * if(mode==CalendarSelectionMode.DayWeek || mode==CalendarSelectionMode.DayWeekMonth)
+			 *	then draw a column with colspan=8
+			 * else
+			 *	draw with colspan=7
+			 * set gridlines?
+			 * set width
+			 * set cellspacing
+			 * ApplyStyleToTitle(table, cell, style)
+			 * RenderBeginTag(writer)
+			 * RenderBeginTag(writer)
+			 * "<tr>"
+			 * -> The next/previous months things
+			 * GetCalendarText("previousMonth", PrevMonthText, NextPrevStyle.ForeColor, isActive)
+			 * RenderCalendarCell(writer, cell, ^^^)
+			 * ..
+			 * ..
+			 * Then for NextMonthText
+			 * "</tr>"
+			 * "</tr>"
+			 */
+		}
+		
+		private void ApplyStyleToTitle(Table table, TableCell cell, TableItemStyle style)
+		{
+			//TODO: Implement me
+			/*
+			 * Font
+			 * Background color
+			 * Foreground color
+			 * Border color
+			 * Border width
+			 * Border style
+			 * Vertical alignment
+			 */
+		}
+		
+		private void RenderCalendarCell(HtmlTextWriter writer, TableCell cell, string text)
+		{
+			cell.RenderBeginTag(writer);
+			writer.Write(text);
+			cell.RenderEndTag(writer);
+		}
+		
+		private DateTime SetFirstCalendarDay(DateTime visibleDate)
+		{
+			globCal = visibleDate;
+			//TODO: Implement me
+		}
+		
+		private DateTime GetEffectiveVisibleDate()
+		{
+			DateTime dt = VisibleDate;
+			if(dt.Equals(DateTime.MinValue))
+			{
+				dt = TodaysDate;
+			}
+			return new DateTime(globCal.GetYear(dt), globCal.GetMonth(dt), globCal.GetDayOfMonth(dt), globCal);
+		}
+		
+		/*
+		 * Creates text to be displayed, with all attributes if to be
+		 * shown as a hyperlink
+		 */
+		private string GetCalendarText(string eventArg, string text, Color foreground, bool isLink)
+		{
+			if(isLink)
+			{
+				StringBuilder dispVal = new StringBuilder();
+				dispVal.Append("<a href=\"");
+				dispVal.Append(Page.GetPostBackClientHyperlink(this, eventArg));
+				dispVal.Append("\" style=\"color: ");
+				if(foreground.IsEmpty)
+				{
+					dispVal.Append(ColorTranslater.ToHtml(defaultTextColor);
+				} else
+				{
+					dispVal.Append(ColorTranslater.ToHtml(foreground);
+				}
+				dispVal.Append("\">");
+				dispVal.Append(text);
+				dispVal.Append("</a>");
+				return dispVal.ToString();
+			}
+			return text;
+		}
+
+		private string GetHtmlForCell(TableCell cell, bool showLinks)
+		{
+			StringWriter sw = new StringWriter();
+			HtmlTextWriter htw = new HtmlTextWriter(sw);
+			RenderBeginTag(htw);
+			if(showLinks)
+			{
+				//sw.Write(GetCalendarText(,,true, ForeColor));
+				//TODO: Implement me
+			}
+		}
 	}
 }
