@@ -1,3 +1,8 @@
+
+Fri Jul 19 14:20:10 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* main.c: handle null parent.
+
 2002-07-02  Martin Baulig  <martin@gnome.org>
 
 	* get.c (dis_stringify_object_with_class): New static function to
