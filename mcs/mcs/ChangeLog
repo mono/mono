@@ -1,3 +1,31 @@
+2004-04-14  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (This.Emit): Use EmitContext.EmitThis to emit our
+	instance variable.
+
+	(This.EmitAssign): Ditto.
+
+	* ecore.cs (FieldExpr.Emit): Remove RemapToProxy special
+	codepaths, we will move all the functionality into
+	Mono.CSharp.This 
+
+	(FieldExpr.EmitAssign): Ditto.
+
+	This fixes several hidden bugs that I uncovered while doing a code
+	review of this today.
+
+	* codegen.cs (EmitThis): reworked so the semantics are more clear
+	and also support value types "this" instances.
+
+	* iterators.cs: Changed so that for iterators in value types, we
+	do not pass the value type as a parameter.  
+
+	Initialization of the enumerator helpers is now done in the caller
+	instead of passing the parameters to the constructors and having
+	the constructor set the fields.
+
+	The fields have now `assembly' visibility instead of private.
+
 2004-04-11  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Argument.Resolve): Check if fields passed as ref

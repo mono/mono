@@ -6521,8 +6521,8 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			
-			ig.Emit (OpCodes.Ldarg_0);
+
+			ec.EmitThis ();
 			if (ec.TypeContainer is Struct)
 				ig.Emit (OpCodes.Ldobj, type);
 		}
@@ -6532,7 +6532,7 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			
 			if (ec.TypeContainer is Struct){
-				ig.Emit (OpCodes.Ldarg_0);
+				ec.EmitThis ();
 				source.Emit (ec);
 				ig.Emit (OpCodes.Stobj, type);
 			} else {
@@ -6543,7 +6543,7 @@ namespace Mono.CSharp {
 
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
-			ec.ig.Emit (OpCodes.Ldarg_0);
+			ec.EmitThis ();
 
 			// FIMXE
 			// FIGURE OUT WHY LDARG_S does not work

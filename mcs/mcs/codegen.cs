@@ -731,14 +731,17 @@ namespace Mono.CSharp {
 		//
 		public void EmitThis ()
 		{
-			ig.Emit (OpCodes.Ldarg_0);
-
-			if (!IsStatic){
-				if (InIterator)
-					ig.Emit (OpCodes.Ldfld, IteratorHandler.Current.this_field);
-				else
-					throw new Exception ("EmitThis for an unknown state");
-			}
+			if (InIterator){
+				ig.Emit (OpCodes.Ldarg_0);
+				if (!IsStatic){
+					FieldBuilder this_field = IteratorHandler.Current.this_field;
+					if (TypeManager.IsValueType (this_field.FieldType))
+						ig.Emit (OpCodes.Ldflda, this_field);
+					else
+						ig.Emit (OpCodes.Ldfld, this_field);
+				} 
+			} else
+				ig.Emit (OpCodes.Ldarg_0);
 		}
 
 		public Expression GetThis (Location loc)
