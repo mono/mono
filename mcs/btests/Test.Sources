@@ -165,7 +165,8 @@ ShiftOperatorsA \
 ArithmeticOperators \
 ArithmeticOperatorsA \
 LikeOperator \
-LikeOperatorA 
+LikeOperatorA \
+GetType
 
 # All negetive test cases which should
 # fail during compilation goes here
