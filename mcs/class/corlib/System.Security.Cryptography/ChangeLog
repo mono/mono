@@ -1,3 +1,10 @@
+2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConfig.cs: Added LinkDemand for unrestricted to CreateFromName
+	when used to create instance with object[] parameters.
+	* CryptoAPITransform.cs: Added Demand for UnmanagedCode to KeyHandle 
+	property.
+
 2005-03-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MD5CryptoServiceProvider.cs: Fixed #73404 to return right results

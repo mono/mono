@@ -5,7 +5,7 @@
 //	Thomas Neidhart (tome@sbox.tugraz.at)
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,6 +28,7 @@
 //
 
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
 
 namespace System.Security.Cryptography {
 
@@ -63,6 +64,7 @@ namespace System.Security.Cryptography {
 		}
 
 		public IntPtr KeyHandle {
+			[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 			get { return IntPtr.Zero; }
 		}
 

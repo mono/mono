@@ -34,6 +34,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Security.Permissions;
 using System.Text;
 
 using Mono.Xml;
@@ -425,6 +426,7 @@ public class CryptoConfig {
 		return CreateFromName (name, null);
 	}
 
+	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	public static object CreateFromName (string name, object[] args)
 	{
 		if (name == null)
