@@ -1,5 +1,10 @@
 2004-06-14  Jackson Harper  <jackson@ximian.com>
 
+	* CodeGen.cs: Allow file refs to be added.
+	* FileRef.cs: New file - represents a file ref.
+	
+2004-06-14  Jackson Harper  <jackson@ximian.com>
+
 	* CodeGen.cs: Allow adding module refs.
 	* ExternTable.cs: Add ExternModule refs.
 	* ExternTypeRef.cs: Take an ExternRef which can be either an

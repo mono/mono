@@ -44,7 +44,8 @@ namespace Mono.ILASM {
                 private Hashtable global_field_table;
                 private Hashtable global_method_table;
                 private ArrayList data_list;
-
+                private FileRef file_ref;
+                
                 private ArrayList defcont_list;
 
                 private int sub_system;
@@ -139,6 +140,11 @@ namespace Mono.ILASM {
                 public void SetModuleName (string module_name)
                 {
                         this.module_name = module_name;
+                }
+
+                public void SetFileRef (FileRef file_ref)
+                {
+                        this.file_ref = file_ref;
                 }
 
                 public bool IsThisAssembly (string name)
@@ -287,6 +293,9 @@ namespace Mono.ILASM {
                         try {
                                 out_stream = new FileStream (output_file, FileMode.Create, FileAccess.Write);
                                 pefile = new PEFile (assembly_name, module_name, is_dll, is_assembly, out_stream);
+
+                                if (file_ref != null)
+                                        file_ref.Resolve (this);
 
                                 extern_table.Resolve (this);
                                 type_manager.DefineAll ();
