@@ -6,61 +6,75 @@
 //
 // TODO: Implement the AppendFormat methods.  Wasn't sure how
 // best to do this at this early stage, might want to see
-// how the String class and the IFormatProvide / IFormattable interfaces
+// how the String class and the IFormatProvider / IFormattable interfaces
 // pan out first.
 //  
 // TODO: Make sure the coding complies to the ECMA draft, there's some
 // variable names that probably don't (like sString)
 //
-
 namespace System.Text {
 	public sealed class StringBuilder {
 
-		const int defaultCapacity = 16;
+		private const int defaultCapacity = 16;
 
 		private int sCapacity;
 		private int sLength;
 		private char[] sString;
+		private int sMaxCapacity = Int32.MaxValue;
 
-		public StringBuilder() {
+		public StringBuilder(string str, int startIndex, int length, int capacity) {
+			// the capacity must be at least as big as the default capacity
+			// LAMESPEC: what to do if capacity is too small to hold the substring?
+			// For now, truncate the substring to "capacity" characters
+			sCapacity = Math.Max(capacity, defaultCapacity);
+			sString = new char[sCapacity];
 
-			// The MS Implementation uses the default
-			// capacity for a StringBuilder.  The spec
-			// says it's up to the implementer, but 
-			// we'll do it the MS way just in case.
-				
-			sString = new char[ defaultCapacity ];
-			sCapacity = defaultCapacity;
-			sLength = 0;
-		}
-
-		public StringBuilder( int capacity ) {
-			if( capacity < defaultCapacity ) {
-					// The spec says that the capacity
-					// has to be at least the default capacity
-				capacity = defaultCapacity;
+			// LAMESPEC: what to do if startIndex is too big?  Throw an exception?  Which one?
+			// For now, if the startIndex is beyond the end of the string, create an empty StringBuilder
+			// Also, if str is null, then create an empty StringBuilder
+			if (null == str || startIndex > str.Length - 1) 
+			{
+				sLength = 0;
+			}
+			else
+			{
+				// LAMESPEC: what if the length specified would take us past the end of the string?
+				// For now, copy to the end of the string
+				// First find out how many characters we can actually copy
+				sLength = Math.Min(length, str.Length - startIndex);
+				// Then limit the length to the capacity if necessary.  See LAMESPEC above.
+				sLength = Math.Min(sLength, capacity);
 			}
 
-			sString = new char[capacity];
-			sCapacity = capacity;
-			sLength = 0;
-		}
-
-		public StringBuilder( string str ) {
-		
-			if( str.Length < defaultCapacity ) {    
-				char[] tString = str.ToCharArray();
-				sString = new char[ defaultCapacity ];
-				Array.Copy( tString, sString, str.Length );
-				sLength = str.Length;
-				sCapacity = defaultCapacity;
-			} else {
-				sString = str.ToCharArray();
-				sCapacity = sString.Length;
-				sLength = sString.Length;
+			// if the length is not going to be zero, then we have to copy some characters
+			if (sLength > 0) {
+				// Copy the correct number of characters into the internal array
+				char[] tString = str.ToCharArray(startIndex, sLength);
+				Array.Copy( tString, sString, sLength);
 			}
 		}
+
+		public StringBuilder() : this(null, 0, 0, 0) {}
+
+		public StringBuilder( int capacity ) : this(null, 0, 0, capacity) {}
+
+		public StringBuilder( int capacity, int maxCapacity ) : this(null, 0, 0, capacity) {
+			sMaxCapacity = maxCapacity;
+		}
+
+		public StringBuilder( string str ) : this(str, 0, str.Length, str.Length) {}
 	
+		public StringBuilder( string str, int capacity) : this(str, 0, str.Length, capacity) {}
+	
+		public int MaxCapacity 
+		{
+			get 
+			{
+				// TODO: Need to look at the memory of the system to return a useful value here
+				return sMaxCapacity;
+			}
+		}
+
 		public int Capacity {
 			get {
 				return sCapacity;
