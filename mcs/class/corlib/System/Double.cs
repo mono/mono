@@ -323,6 +323,7 @@ namespace System {
 				result = Parse (s, style, provider);
 				return true;
 			} catch {
+				result = 0;
 				return false;
 			}
 		}
