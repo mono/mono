@@ -1,3 +1,7 @@
+2003-02-08 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Handle .local and newobj
+
 2003-02-06 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Allow assembly names to have lots of dashes.

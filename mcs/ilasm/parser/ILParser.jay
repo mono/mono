@@ -95,6 +95,7 @@ namespace Mono.ILASM {
 %token INSTR_R
 %token INSTR_BRTARGET
 %token INSTR_METHOD
+%token INSTR_NEWOBJ
 %token INSTR_FIELD
 %token INSTR_TYPE
 %token INSTR_STRING
@@ -706,15 +707,18 @@ implAttr                : /* empty */
 			| implAttr K_NOINLINING 
 			;
 
-localsHead              : D_LOCALS 
+localsHead              : D_LOCALS
 			;
 
-
+					
 methodDecl              : D_EMITBYTE int32 
 			| sehBlock 
 			| D_MAXSTACK int32 	
 			| localsHead OPEN_PARENS sigArgs0 CLOSE_PARENS 
 			| localsHead K_INIT OPEN_PARENS sigArgs0 CLOSE_PARENS  
+				{
+					method.AddLocal ((string)$4);
+				}
 			| D_ENTRYPOINT          {method.IsEntryPoint = true;}
 			| D_ZEROINIT 
 			| dataDecl
@@ -877,16 +881,26 @@ instr                   : INSTR_NONE		{currentInstr = new InstrNone ((OpCode) $1
 			| instr_r_head bytes CLOSE_PARENS 
 			| INSTR_BRTARGET int32  
 			| INSTR_BRTARGET id 
-			| INSTR_METHOD callConv type assembly_name name1 DOUBLE_COLON ID OPEN_PARENS signature_args CLOSE_PARENS 
+			| INSTR_METHOD binding_flags type assembly_name name1 DOUBLE_COLON call_name OPEN_PARENS signature_args CLOSE_PARENS 
 						{
-							currentInstr = new InstrCall ((OpCode) $1, (string)$3, (string)$4, 
-								(string)$5, (string)$7, (string)$9);
+							if (OpCodes.Call.Equals ((OpCode)$1) || OpCodes.Callvirt.Equals ((OpCode)$1)) {
+								currentInstr = new InstrCall ((OpCode) $1, (string)$2, (string)$3, (string)$4,  
+									(string)$5, (string)$7, (string)$9);
+							} else if (OpCodes.Newobj.Equals ((OpCode)$1)) {
+								currentInstr = new InstrNewobj ((OpCode) $1, (string)$2, (string)$3, (string)$4, 
+									(string)$5, (string)$7, (string)$9);
+							}
+								
 						}
 
 					
 			| INSTR_METHOD callConv type methodName OPEN_PARENS sigArgs0 CLOSE_PARENS 
 						{
 		
+						}
+			| INSTR_NEWOBJ callConv type assembly_name name1 DOUBLE_COLON call_name OPEN_PARENS signature_args CLOSE_PARENS
+						{ 
+							Console.WriteLine ("new newobj.");	
 						}
 			| INSTR_FIELD type typeSpec DOUBLE_COLON id 
 			| INSTR_FIELD type id 
@@ -913,6 +927,9 @@ signature_args		: /* EMPTY */
 			| type COMMA signature_args
 			;
 
+binding_flags		: /* EMPTY */
+			| K_INSTANCE
+			;
 
 sigArgs0                : /* EMPTY */ 
 			| sigArgs1 
@@ -924,7 +941,7 @@ sigArgs1                : sigArg
 
 sigArg                  : ELLIPSIS 
 			| paramAttr type 
-			| paramAttr type id 
+			| paramAttr type id { $$ = $2; }
 			| paramAttr type K_MARSHAL OPEN_PARENS nativeType CLOSE_PARENS 
 			| paramAttr type K_MARSHAL OPEN_PARENS nativeType CLOSE_PARENS id 
 sint			;
@@ -939,6 +956,12 @@ name1                   : id
 			| name1 DOT name1
 			;
 
+call_name		: 
+			| id
+			| D_CTOR
+			| D_CCTOR
+			;
+			
 assembly_ref		: id
 			| id DASH id {$$ = String.Format ("{0}-{1}", $1, $3);}
 			| id DASH assembly_ref {$$ = String.Format ("{0}-{1}", $1, $3);}
@@ -971,7 +994,7 @@ callKind                : /* EMPTY */
 			| K_DEFAULT		{currentCallConv |= CallingConventions.Standard;}
 			| K_VARARG		{currentCallConv |= CallingConventions.VarArgs;}
 			| K_UNMANAGED K_CDECL 
-			| K_UNMANAGED K_STDCALL 
+			| K_UNMANAGED K_STALL 
 			| K_UNMANAGED K_THISCALL 
 			| K_UNMANAGED K_FASTCALL 
 			;
