@@ -10,6 +10,10 @@ using System;
 namespace System.Web {
 	public sealed class HttpCachePolicy {
 
+		internal HttpCachePolicy ()
+		{
+		}
+
 		#region Fields
 
 		HttpCacheVaryByHeaders varyByHeaders;

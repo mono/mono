@@ -38,10 +38,6 @@ namespace System.Web {
          }
       }
 
-      override public string ToString() {
-         return Name + ": " + Value;
-      }
-
       internal void SendContent(HttpWorkerRequest WorkerRequest) {
          if (null != _sHeader) {
             WorkerRequest.SendUnknownResponseHeader(_sHeader, _sValue);

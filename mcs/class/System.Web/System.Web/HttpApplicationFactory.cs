@@ -15,7 +15,7 @@ namespace System.Web {
 	/// TODO: We need to compile the global.asax into a type inherited from HttpApplication
 	/// </summary>
 	[MonoTODO]
-	public class HttpApplicationFactory {
+	class HttpApplicationFactory {
 		private string _appFilename;
 		private Type _appType;
 
@@ -182,7 +182,7 @@ namespace System.Web {
 			s_Factory.FireOnSessionStart(state, source, args);
 		}
 
-		static public void EndSession(HttpSessionState state, object source, EventArgs args) {
+		static void EndSession(HttpSessionState state, object source, EventArgs args) {
 			s_Factory.FireOnSessionEnd(state, source, args);
 		}
 	}

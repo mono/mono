@@ -11,7 +11,7 @@ namespace System.Web {
    /// <summary>
    /// Used to detect if there is a valid filter proxy.
    /// </summary>
-   public class HttpResponseStreamProxy : HttpResponseStream {
+   class HttpResponseStreamProxy : HttpResponseStream {
       bool _FilteringActive;
 	   
       internal HttpResponseStreamProxy(HttpWriter Writer) : base(Writer) {

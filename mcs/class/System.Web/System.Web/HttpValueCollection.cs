@@ -12,7 +12,7 @@ using System.Text;
 namespace System.Web {
 
    [Serializable]
-   public class HttpValueCollection : NameValueCollection {
+   class HttpValueCollection : NameValueCollection {
       private bool	_bHeaders;
 
       internal HttpValueCollection() {

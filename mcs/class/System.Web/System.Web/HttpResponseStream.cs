@@ -11,7 +11,7 @@ namespace System.Web {
    /// <summary>
    /// Simple wrapper around HttpWriter to support the Stream interface
    /// </summary>
-   public class HttpResponseStream : Stream {
+   class HttpResponseStream : Stream {
       private HttpWriter _Writer;
 	   
       internal HttpResponseStream(HttpWriter Writer) {

@@ -1,3 +1,18 @@
+2002-08-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplicationFactory.cs:
+	* HttpCachePolicy.cs:
+	* HttpResponseHeader.cs:
+	* HttpResponseStream.cs:
+	* HttpResponseStreamProxy.cs:
+	* HttpValueCollection.cs: misc. fixes based on class status page.
+
+	* IHttpMapPath.cs: New file.
+
+	* HttpRequest.cs: implemented ContentEncoding.
+	* HttpWorkerRequest.cs: mono-stylized and implemented
+	SendResponseFromMemory.
+
 2002-08-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpContext.cs: reformatted.

@@ -1,9 +1,13 @@
 // 
 // System.Web.HttpRequest
 //
-// Author:
-//   Patrik Torstensson (Patrik.Torstensson@labs2.com)
-//
+// Authors:
+//   	Patrik Torstensson (Patrik.Torstensson@labs2.com)
+//   	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+// 
+// (c) 2001, 2002 Patrick Torstensson
+// (c) 2002 Ximian, Inc. (http://www.ximian.com)
+// 
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -287,13 +291,43 @@ namespace System.Web {
 			}
 		}
 
-		[MonoTODO("Get content encoding from Syste.Web.Configuration namespace")]
-		public Encoding ContentEncoding {
+		private string GetValueFromHeader (string header, string attr)
+		{
+			int where = header.IndexOf (attr + '=');
+			if (where == -1)
+				return null;
+
+			where += attr.Length + 1;
+			int max = header.Length;
+			if (where >= max)
+				return String.Empty;
+
+			char ending = header [where];
+			if (ending != '"')
+				ending = ' ';
+
+			int end = header.Substring (where + 1).IndexOf (ending);
+			if (end == -1)
+				return (ending == '"') ? null : header.Substring (where);
+
+			return header.Substring (where, end);
+		}
+		
+		public Encoding ContentEncoding
+		{
 			get {
 				if (_oContentEncoding == null) {
-					// TODO: Get from config what is the default encoding
-					// TODO: Should we get encoding from HttpHeaders? Just get charset from ContentType and the get encoding..
-					_oContentEncoding = Encoding.Default;
+					if (!_WorkerRequest.HasEntityBody () || ContentType != String.Empty)
+						return null;
+
+					string charset = GetValueFromHeader (_sContentType, "charset");
+					if (charset == null)
+						return null;
+
+					try {
+						_oContentEncoding = Encoding.GetEncoding (charset);
+					} catch {
+					}
 				}
 
 				return _oContentEncoding;
