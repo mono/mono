@@ -444,6 +444,11 @@ public class TypeManager {
 		
 		n [top] = a;
 		assemblies = n;
+
+		foreach(Type type in a.GetTypes()) {
+			if (type.IsPublic ) // && type. attributed as standard module
+				AddStandardModule(type);
+		}
 	}
 
 	/// <summary>
@@ -458,6 +463,58 @@ public class TypeManager {
 			modules.CopyTo (n, 0);
 		n [top] = mb;
 		modules = n;
+	}
+
+
+	private class StandardModule {
+		public readonly string Namespace;
+		public readonly string Name;
+		public StandardModule(string _namespace, string name) { Namespace = _namespace; Name = name; }
+	}
+
+	private static StandardModule[] standardModules;
+
+	/// <summary>
+	///  Registers a new 'standard module' to lookup short-qualified or unqualified members
+	/// </summary>
+	internal static void AddStandardModule(Module module)
+	{
+		int top = standardModules != null ? standardModules.Length : 0;
+		StandardModule [] n = new StandardModule [top + 1];
+
+		if (standardModules != null)
+			standardModules.CopyTo (n, 0);
+		n [top] = new StandardModule(module.Namespace.Name, module.Name) ;
+		standardModules = n;
+	}
+
+	/// 
+	///  Registers a existing 'standard module' to lookup short-qualified or unqualified members
+	/// 
+	private static void AddStandardModule(Type type)
+	{
+		int top = standardModules != null ? standardModules.Length : 0;
+		StandardModule [] n = new StandardModule [top + 1];
+
+		if (standardModules != null)
+			standardModules.CopyTo (n, 0);
+		n [top] = new StandardModule(type.Namespace, type.Name) ;
+		standardModules = n;
+	}
+
+	//
+	// 
+	//
+	public static Type[] GetPertinentStandardModules(string[] namespaces)
+	{
+		ArrayList list = new ArrayList();
+		foreach(string Namespace in namespaces)
+		{ 
+			for(int i = 0; i < standardModules.Length; i++)
+				if (standardModules[i].Namespace == Namespace)
+					list.Add(LookupType(Namespace + "." + standardModules[i].Name));
+		}
+		return (Type[])list.ToArray(typeof(Type));
 	}
 
 	//

@@ -302,14 +302,16 @@ namespace Mono.MonoBASIC {
 			bool old_do_flow_analysis = ec.DoFlowAnalysis;
 			if ((flags & ResolveFlags.DisableFlowAnalysis) != 0)
 				ec.DoFlowAnalysis = false;
-
+			
 			Expression e;
-			if (this is SimpleName)
-				e = ((SimpleName) this).DoResolveAllowStatic (ec);
-			else 
-				e = DoResolve (ec);
-
-			ec.DoFlowAnalysis = old_do_flow_analysis;
+			try {
+				if (this is SimpleName)
+					e = ((SimpleName) this).DoResolveAllowStatic (ec);
+				else 
+					e = DoResolve (ec);
+			} finally {
+				ec.DoFlowAnalysis = old_do_flow_analysis;
+			}
 
 			if (e == null)
 				return null;
@@ -3703,6 +3705,17 @@ namespace Mono.MonoBASIC {
 				
 			if (e == null && ec.ContainerType != null)
 				e = MemberLookup (ec, ec.ContainerType, Name, loc);
+
+// #52067 - Start - Trying to solve
+
+			if (e == null)
+				foreach(Type type in TypeManager.GetPertinentStandardModules(new string[] {"Microsoft.VisualBasic"})) {
+					e = MemberLookup(ec, type, Name, loc);
+					if (e != null) // FIXME! Must Output Ambiguity Error Messages
+						break;
+				}
+
+// #52067 - End
 
 			if (e == null)
 				return DoResolveType (ec);
