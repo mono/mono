@@ -21,6 +21,7 @@ System.Xml/XmlTextReaderTests.cs
 System.Xml/XmlTextTests.cs
 System.Xml/XmlTextWriterTests.cs
 System.Xml/XmlUrlResolverTests.cs
+System.Xml/XmlValidatingReaderTests.cs
 System.Xml/XmlWhiteSpaceTests.cs
 System.Xml/XmlWriterTests.cs
 System.Xml.Schema/XmlSchemaTests.cs
