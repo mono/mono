@@ -87,9 +87,6 @@ namespace System.Reflection {
 
 		public override object GetValue (object obj)
 		{
-			if (obj == null)
-				throw new ArgumentNullException ("obj");
-
 			return GetValueInternal (obj);
 		}
 
