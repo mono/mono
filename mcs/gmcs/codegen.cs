@@ -75,9 +75,9 @@ namespace Mono.CSharp {
 		//
 		// Initializes the symbol writer
 		//
-		static void InitializeSymbolWriter ()
+		static void InitializeSymbolWriter (string filename)
 		{
-			SymbolWriter = SymbolWriter.GetSymbolWriter (Module.Builder);
+			SymbolWriter = SymbolWriter.GetSymbolWriter (Module.Builder, filename);
 
 			//
 			// If we got an ISymbolWriter instance, initialize it.
@@ -145,10 +145,10 @@ namespace Mono.CSharp {
 			// load the default symbol writer.
 			//
 			Module.Builder = Assembly.Builder.DefineDynamicModule (
-				Basename (name), Basename (output), want_debugging_support);
+				Basename (name), Basename (output), false);
 
 			if (want_debugging_support)
-				InitializeSymbolWriter ();
+				InitializeSymbolWriter (output);
 		}
 
 		static public void Save (string name)
@@ -168,6 +168,9 @@ namespace Mono.CSharp {
 			catch (System.IO.IOException io) {
 				Report.Error (16, "Could not write to file `"+name+"', cause: " + io.Message);
 			}
+
+			if (SymbolWriter != null)
+				SymbolWriter.WriteSymbolFile ();
 		}
 	}
 
@@ -607,7 +610,15 @@ namespace Mono.CSharp {
 			if (check_file && (CurrentFile != loc.File))
 				return;
 
-			ig.MarkSequencePoint (null, loc.Row, 0, 0, 0);
+			CodeGen.SymbolWriter.MarkSequencePoint (ig, loc.Row, 0);
+		}
+
+		public void DefineLocalVariable (string name, LocalBuilder builder)
+		{
+			if (CodeGen.SymbolWriter == null)
+				return;
+
+			CodeGen.SymbolWriter.DefineLocalVariable (name, builder);
 		}
 
 		/// <summary>

@@ -1,3 +1,32 @@
+2004-07-30  Martin Baulig  <martin@ximian.com>
+
+	* Makefile (EXTRA_SOURCES): List the symbol writer's sources here.
+
+	* class.cs (SourceMethod): New public class, derive from the
+	symbol writer's ISourceMethod.
+	(Method): Use the new symbol writer API.
+
+	* codegen.cs (CodeGen.InitializeSymbolWriter): Take the filename
+	as argument and use the new symbol writer.
+
+	* location.cs
+	(SourceFile): Implement the symbol writer's ISourceFile.
+	(Location.SymbolDocument): Removed.
+	(Location.SourceFile): New public property.
+
+	* symbolwriter.cs: Use the new symbol writer API.
+
+2004-07-30  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (install-local): Remove.  Functionality moved to
+	executable.make.
+
+2004-07-28  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* Makefile: Install mcs.exe.config file together with mcs.exe.
+	* mcs.exe.config: Added supportedRuntime entry to make sure it runs in the
+	correct runtime version.
+	
 2004-07-25  Martin Baulig  <martin@ximian.com>
 
 	* class.cs

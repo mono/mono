@@ -36,7 +36,10 @@ COMPILER_SOURCES = \
 	typemanager.cs			\
 	symbolwriter.cs			\
 	tree.cs				\
-	CryptoConvert.cs
+	CryptoConvert.cs		\
+	$(topdir)/class/Mono.CSharp.Debugger/MonoSymbolFile.cs	\
+	$(topdir)/class/Mono.CSharp.Debugger/MonoSymbolTable.cs	\
+	$(topdir)/class/Mono.CSharp.Debugger/MonoSymbolWriter.cs
 
 all_sources = $(COMPILER_SOURCES) cs-parser.cs
 

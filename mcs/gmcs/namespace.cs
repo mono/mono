@@ -525,7 +525,11 @@ namespace Mono.CSharp {
 			}
 
 			int parent_id = parent != null ? parent.symfile_id : 0;
-			symfile_id = symwriter.DefineNamespace (ns.Name, file, using_list, parent_id);
+			if (file.SourceFileEntry == null)
+				return;
+
+			symfile_id = symwriter.DefineNamespace (
+				ns.Name, file.SourceFileEntry, using_list, parent_id);
 		}
 
 		public int SymbolFileID {

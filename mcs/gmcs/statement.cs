@@ -1884,7 +1884,7 @@ namespace Mono.CSharp {
 						if (vi.LocalBuilder == null)
 							continue;
 
-						vi.LocalBuilder.SetLocalSymInfo (name);
+						ec.DefineLocalVariable (name, vi.LocalBuilder);
 					}
 				}
 			}

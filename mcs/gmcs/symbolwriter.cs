@@ -11,33 +11,44 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Diagnostics.SymbolStore;
+
+using Mono.CompilerServices.SymbolWriter;
 
 namespace Mono.CSharp {
-	public class SymbolWriter {
-		ISymbolWriter symwriter;
-		MethodInfo define_namespace;
-		MethodInfo open_method;
+	public class SymbolWriter : MonoSymbolWriter {
+		delegate int GetILOffsetFunc (ILGenerator ig);
+		delegate Guid GetGuidFunc (ModuleBuilder mb);
 
-		protected SymbolWriter (ISymbolWriter symwriter)
+		GetILOffsetFunc get_il_offset_func;
+		GetGuidFunc get_guid_func;
+
+		ModuleBuilder module_builder;
+
+		protected SymbolWriter (ModuleBuilder module_builder, string filename)
+			: base (filename)
 		{
-			this.symwriter = symwriter;
+			this.module_builder = module_builder;
 		}
 
 		bool Initialize ()
 		{
-			Type type = symwriter.GetType ();
-			define_namespace = type.GetMethod ("DefineNamespace", new Type[] {
-				typeof (string), typeof (ISymbolDocumentWriter),
-				typeof (string []), typeof (int) });
-			if (define_namespace == null)
+			MethodInfo mi = typeof (ILGenerator).GetMethod (
+				"Mono_GetCurrentOffset",
+				BindingFlags.Static | BindingFlags.NonPublic);
+			if (mi == null)
 				return false;
 
-			open_method = type.GetMethod ("OpenMethod", new Type[] {
-				typeof (ISymbolDocumentWriter), typeof (int), typeof (int),
-				typeof (int), typeof (int), typeof (MethodBase), typeof (int) });
-			if (open_method == null)
+			get_il_offset_func = (GetILOffsetFunc) System.Delegate.CreateDelegate (
+				typeof (GetILOffsetFunc), mi);
+
+			mi = typeof (ModuleBuilder).GetMethod (
+				"Mono_GetGuid",
+				BindingFlags.Static | BindingFlags.NonPublic);
+			if (mi == null)
 				return false;
+
+			get_guid_func = (GetGuidFunc) System.Delegate.CreateDelegate (
+				typeof (GetGuidFunc), mi);
 
 			Location.DefineSymbolDocuments (this);
 			Namespace.DefineNamespaces (this);
@@ -45,41 +56,32 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public ISymbolDocumentWriter DefineDocument (string path)
+		public void DefineLocalVariable (string name, LocalBuilder builder)
 		{
-			return symwriter.DefineDocument (
-				path, SymLanguageType.CSharp, SymLanguageVendor.Microsoft,
-				SymDocumentType.Text);
+			SignatureHelper sighelper = SignatureHelper.GetLocalVarSigHelper (
+				module_builder);
+			sighelper.AddArgument (builder.LocalType);
+			byte[] signature = sighelper.GetSignature ();
+
+			DefineLocalVariable (name, signature);
 		}
 
-		public int DefineNamespace (string name, SourceFile file, string[] using_list, int parent)
+		public void MarkSequencePoint (ILGenerator ig, int row, int column)
 		{
-			if (file.SymbolDocument == null)
-				return 0;
-			return (int) define_namespace.Invoke (symwriter, new object[] {
-				name, file.SymbolDocument, using_list, parent });
+			int offset = get_il_offset_func (ig);
+			MarkSequencePoint (offset, row, column);
 		}
 
-		public void OpenMethod (TypeContainer parent, MethodBase method, Location start, Location end)
+		public void WriteSymbolFile ()
 		{
-			int ns_id = parent.NamespaceEntry.SymbolFileID;
-			open_method.Invoke (symwriter, new object[] {
-				start.SymbolDocument, start.Row, 0, end.Row, 0, method, ns_id });
+			Guid guid = get_guid_func (module_builder);
+			WriteSymbolFile (guid);
 		}
 
-		public void CloseMethod ()
+		public static SymbolWriter GetSymbolWriter (ModuleBuilder module,
+							    string filename)
 		{
-			symwriter.CloseMethod ();
-		}
-
-		public static SymbolWriter GetSymbolWriter (ModuleBuilder module)
-		{
-			ISymbolWriter symwriter = module.GetSymWriter ();
-
-			if (symwriter == null)
-				return null;
-
-			SymbolWriter writer = new SymbolWriter (symwriter);
+			SymbolWriter writer = new SymbolWriter (module, filename);
 			if (!writer.Initialize ())
 				return null;
 
