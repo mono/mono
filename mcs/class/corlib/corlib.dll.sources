@@ -1019,6 +1019,7 @@ System.Threading/NativeOverlapped.cs
 System.Threading/Overlapped.cs
 System.Threading/ReaderWriterLock.cs
 System.Threading/RegisteredWaitHandle.cs
+System.Threading/SendOrPostCallback.cs
 System.Threading/SynchronizationLockException.cs
 System.Threading/Thread.cs
 System.Threading/ThreadAbortException.cs

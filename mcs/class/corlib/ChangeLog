@@ -1,3 +1,7 @@
+2004-07-10  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* corlib.dll.sources: Added System.Threading.SendOrPostCallback.cs.
+
 2004-07-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Added new files for NET_2_0: 
