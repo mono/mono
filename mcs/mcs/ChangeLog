@@ -1,5 +1,11 @@
 2002-05-26  Miguel de Icaza  <miguel@ximian.com>
 
+	* typemanager.cs: Temporary hack until we get attributes in
+	interfaces (Ravi is working on that) and we get IndexerName
+	support in interfaces.
+
+	* interface.cs: Register the indexers as properties.
+
 	* attribute.cs (Attribute.Resolve): Catch the error, and emit a
 	warning, I have verified that this is a bug in the .NET runtime
 	(JavaScript suffers of the same problem).

@@ -449,9 +449,9 @@ namespace Mono.CSharp {
 			pb = TypeBuilder.DefineProperty (
 				"Item", PropertyAttributes.None,
 				prop_type, arg_types);
-
+			
+			MethodBuilder set_item = null, get_item = null;
 			if (ii.HasGet){
-				MethodBuilder get_item;
 				Parameter [] p = ii.Parameters.FixedParameters;
 				
 				get_item = TypeBuilder.DefineMethod (
@@ -478,7 +478,6 @@ namespace Mono.CSharp {
 
 			if (ii.HasSet){
 				Parameter [] p = ii.Parameters.FixedParameters;
-				MethodBuilder set_item;
 				int i = 0;
 				
 				set_item = TypeBuilder.DefineMethod (
@@ -504,6 +503,8 @@ namespace Mono.CSharp {
 				
 				set_item.DefineParameter (i + 1, ParameterAttributes.None, "value");
 			}
+			TypeManager.RegisterProperty (pb, get_item, set_item);
+			property_builders.Add (pb);
 		}
 
 		/// <summary>

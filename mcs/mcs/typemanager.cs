@@ -1156,6 +1156,14 @@ public class TypeManager {
 		if (t is TypeBuilder) {
 			TypeContainer tc = (TypeContainer) builder_to_container [t];
 
+			//
+			// FIXME: Temporary hack, until we deploy the IndexerName
+			// property code (and attributes) in the interface code.
+			//
+			if (tc == null){
+				return "Item";
+			}
+			
 			return tc.IndexerName;
 		}
 		
