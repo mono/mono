@@ -1,3 +1,8 @@
+2004-07-29  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* marshal.c (mono_marshal_init): make managed
+	signatures match native ones better for 64bits.
+
 2004-07-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* appdomain.c: hack to build correctly the private bin path on windows.
