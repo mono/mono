@@ -1,5 +1,11 @@
 2003-02-07  Martin Baulig  <martin@ximian.com>
 
+	* MonoSymbolFile.cs (MonoSymbolFile.ReadSymbolFile): New public
+	static method, returns null (without throwing an exception) if the
+	assembly doesn't have any debugging info.
+
+2003-02-07  Martin Baulig  <martin@ximian.com>
+
 	* MonoSymbolWriter.cs (MonoSymbolWriter.Initialize): Removed the
 	custom initialization function.
 

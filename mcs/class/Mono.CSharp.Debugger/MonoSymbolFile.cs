@@ -316,7 +316,7 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		Stream stream;
+		// Stream stream;
 		BinaryReader reader;
 		Hashtable method_hash;
 		Hashtable source_file_hash;
@@ -324,13 +324,8 @@ namespace Mono.CSharp.Debugger
 		Hashtable method_name_hash;
 		Hashtable source_name_hash;
 
-		public MonoSymbolFile (Assembly assembly)
+		protected MonoSymbolFile (Stream stream)
 		{
-			stream = assembly.GetManifestResourceStream ("MonoSymbolFile");
-			if (stream == null)
-				throw new MonoSymbolFileException (
-					"Assembly doesn't contain any debugging info.");
-
 			reader = new BinaryReader (stream);
 
 			try {
@@ -345,6 +340,15 @@ namespace Mono.CSharp.Debugger
 
 			method_hash = new Hashtable ();
 			source_file_hash = new Hashtable ();
+		}
+
+		public static MonoSymbolFile ReadSymbolFile (Assembly assembly)
+		{
+			Stream stream = assembly.GetManifestResourceStream ("MonoSymbolFile");
+			if (stream == null)
+				return null;
+
+			return new MonoSymbolFile (stream);
 		}
 
 		public int SourceCount {
@@ -463,10 +467,6 @@ namespace Mono.CSharp.Debugger
 		protected virtual void Dispose (bool disposing)
 		{
 			if (disposing) {
-				if (stream != null) {
-					stream.Close ();
-					stream = null;
-				}
 				if (reader != null) {
 					reader.Close ();
 					reader = null;
