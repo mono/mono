@@ -32,7 +32,7 @@ namespace Mono.CSharp.Debugger
 		protected string symbol_file = null;
 
 		public bool timestamps = true;
-		public bool use_gnu_extensions = false;
+		public bool use_gnu_extensions = true;
 
 		// Write a generic file which contains no machine dependant stuff but
 		// only function and type declarations.
@@ -1433,59 +1433,16 @@ namespace Mono.CSharp.Debugger
 				new DieMember (this, typeof (MonoString), "Length",
 					       (int) MRI_string.offset_length, length_die);
 
-				if (dw.use_gnu_extensions) {
-					Die string_die = new DieInternalString (DieCompileUnit);
+				Die vector_die = new DieInternalArray (DieCompileUnit, typeof (char));
+				new DieSubRangeType (vector_die, typeof (int), 0, -1);
 
-					new DieMember (this, typeof (MonoString), "String",
-						       (int) MRI_string.offset_chars, string_die);
-				} else {
-					Die vector_die = new DieInternalArray (DieCompileUnit, typeof (char));
-					new DieSubRangeType (vector_die, typeof (int), 0, -1);
-
-					new DieMember (this, typeof (MonoString), "Chars",
-						       (int) MRI_string.offset_chars, vector_die);
-				}
+				new DieMember (this, typeof (MonoString), "Chars",
+					       (int) MRI_string.offset_chars, vector_die);
 			}
 
 			public DieStringType (DieCompileUnit parent_die, Type type)
 				: base (parent_die, typeof (MonoString))
 			{ }
-		}
-
-		public class DieInternalString : Die
-		{
-			private static int my_abbrev_id;
-
-			static DieInternalString ()
-			{
-				AbbrevEntry[] entries = {
-					new AbbrevEntry (DW_AT.AT_string_length, DW_FORM.FORM_data4),
-					new AbbrevEntry (DW_AT.AT_byte_size, DW_FORM.FORM_data4),
-					new AbbrevEntry (DW_AT.AT_data_location, DW_FORM.FORM_data4)
-				};
-
-				AbbrevDeclaration decl = new AbbrevDeclaration (
-					DW_TAG.TAG_string_type, false, entries);
-
-				my_abbrev_id = RegisterAbbrevDeclaration (decl);
-			}
-
-			public DieInternalString (Die parent_die)
-				: base (parent_die, my_abbrev_id)
-			{ }
-
-			public override void DoEmit ()
-			{
-				dw.AddRelocEntry_TypeFieldOffset (typeof (MonoString),
-								  (int) MRI_string.offset_length);
-				aw.WriteInt32 (0);
-				dw.AddRelocEntry_TypeFieldSize (typeof (MonoString),
-								(int) MRI_string.offset_length);
-				aw.WriteInt32 (0);
-				dw.AddRelocEntry_TypeFieldOffset (typeof (MonoString),
-								  (int) MRI_string.offset_chars);
-				aw.WriteInt32 (0);
-			}
 		}
 
 		protected class DieInternalArray : Die

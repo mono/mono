@@ -1,6 +1,10 @@
+2002-04-26  Martin Baulig  <martin@gnome.org>
+
+	* MonoDwarfFileWriter.cs (DieInternalString): Removed.
+
 2002-04-25  Martin Baulig  <martin@gnome.org>
 
-	* MonoDwarfFileWriterCs: Reflect latest MonoString changes.
+	* MonoDwarfFileWriter.cs: Reflect latest MonoString changes.
 
 2002-04-13  Martin Baulig  <martin@gnome.org>
 
