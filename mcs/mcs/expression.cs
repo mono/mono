@@ -4232,9 +4232,30 @@ namespace Mono.CSharp {
 				argument_count = args.Count;
 
 			int cand_count = candidate_pd.Count;
-
+			
+			//
+			// If there is no best method, than this one
+			// is better, however, if we already found a
+			// best method, we cant tell. This happens
+			// if we have:
+			// 
+			//
+			//	interface IFoo {
+			//		void DoIt ();
+			//	}
+			//	
+			//	interface IBar {
+			//		void DoIt ();
+			//	}
+			//	
+			//	interface IFooBar : IFoo, IBar {}
+			//
+			// We cant tell if IFoo.DoIt is better than IBar.DoIt
+			//
+			// However, we have to consider that
+			// Trim (); is better than Trim (params char[] chars);
 			if (cand_count == 0 && argument_count == 0)
-				return 1;
+				return best == null || best_params ? 1 : 0;
 
 			if (candidate_pd.ParameterModifier (cand_count - 1) != Parameter.Modifier.PARAMS)
 				if (cand_count != argument_count)
