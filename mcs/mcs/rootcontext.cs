@@ -649,19 +649,27 @@ namespace Mono.CSharp {
 
 
 			if (type_container_resolve_order != null){
-				foreach (TypeContainer tc in type_container_resolve_order) {
-					// When compiling corlib, these types have already been
-					// populated from BootCorlib_PopulateCoreTypes ().
-					if (!RootContext.StdLib &&
-					    ((tc.Name == "System.Object") ||
-					     (tc.Name == "System.Attribute") ||
-					     (tc.Name == "System.ValueType")))
+				if (RootContext.StdLib){
+					foreach (TypeContainer tc in type_container_resolve_order) {
+						// When compiling corlib, these types have already been
+						// populated from BootCorlib_PopulateCoreTypes ().
+						if (((tc.Name == "System.Object") ||
+						     (tc.Name == "System.Attribute") ||
+						     (tc.Name == "System.ValueType")))
 						continue;
 
-					if ((tc.ModFlags & Modifiers.NEW) == 0)
-						tc.DefineMembers (root);
-					else
-						Report1530 (tc.Location);
+						if ((tc.ModFlags & Modifiers.NEW) == 0)
+							tc.DefineMembers (root);
+						else
+							Report1530 (tc.Location);
+					}
+				} else {
+					foreach (TypeContainer tc in type_container_resolve_order) {
+						if ((tc.ModFlags & Modifiers.NEW) == 0)
+							tc.DefineMembers (root);
+						else
+							Report1530 (tc.Location);
+					}
 				}
 			}
 

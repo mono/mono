@@ -67,7 +67,7 @@ namespace Mono.CSharp {
 				if (pname == "")
 					return name;
 				else
-					return parent.Name + "." + name;
+					return String.Concat (parent.Name, ".", name);
 			}
 		}
 
@@ -91,6 +91,9 @@ namespace Mono.CSharp {
 				return;
 			}
 
+			if (ns == Name)
+				return;
+			
 			if (using_clauses == null)
 				using_clauses = new ArrayList ();
 

@@ -160,9 +160,14 @@ namespace Mono.CSharp
 		//
 		Stack ifstack;
 
-		static System.Text.StringBuilder id_builder;
 		static System.Text.StringBuilder string_builder;
-		static System.Text.StringBuilder number_builder;
+
+		const int max_id_size = 512;
+		static char [] id_builder = new char [max_id_size];
+
+		const int max_number_size = 128;
+		static char [] number_builder = new char [max_number_size];
+		static int number_pos;
 		
 		//
 		// Details about the error encoutered by the tokenizer
@@ -284,9 +289,7 @@ namespace Mono.CSharp
 			csharp_format_info = NumberFormatInfo.InvariantInfo;
 			styles = NumberStyles.Float;
 			
-			id_builder = new System.Text.StringBuilder ();
 			string_builder = new System.Text.StringBuilder ();
-			number_builder = new System.Text.StringBuilder ();
 		}
 
 		int GetKeyword (string name)
@@ -517,21 +520,31 @@ namespace Mono.CSharp
 			return Token.ERROR;
 		}
 
+		void Error_NumericConstantTooLong ()
+		{
+			Report.Error (1021, Location, "Numeric constant too long");			
+		}
+		
 		bool decimal_digits (int c)
 		{
 			int d;
 			bool seen_digits = false;
 			
-			if (c != -1)
-				number_builder.Append ((char) c);
-
+			if (c != -1){
+				if (number_pos == max_number_size)
+					Error_NumericConstantTooLong ();
+				number_builder [number_pos++] = (char) c;
+			}
+			
 			//
 			// We use peekChar2, because decimal_digits needs to do a 
 			// 2-character look-ahead (5.ToString for example).
 			//
 			while ((d = peekChar2 ()) != -1){
 				if (d >= '0' && d <= '9'){
-					number_builder.Append ((char) d);
+					if (number_pos == max_number_size)
+						Error_NumericConstantTooLong ();
+					number_builder [number_pos++] = (char) d;
 					getChar ();
 					seen_digits = true;
 				} else
@@ -551,14 +564,8 @@ namespace Mono.CSharp
 			int d;
 
 			if (c != -1)
-				number_builder.Append ((char) c);
-			while ((d = peekChar ()) != -1){
-				if (is_hex (d)){
-					number_builder.Append ((char) d);
-					getChar ();
-				} else
-					break;
-			}
+				number_builder [number_pos++] = (char) c;
+			
 		}
 		
 		int real_type_suffix (int c)
@@ -668,8 +675,21 @@ namespace Mono.CSharp
 		int adjust_int (int c)
 		{
 			try {
-				ulong ul = System.UInt64.Parse (number_builder.ToString ());
-				return integer_type_suffix (ul, c);
+				if (number_pos > 9){
+					ulong ul = (uint) (number_builder [0] - '0');
+
+					for (int i = 1; i < number_pos; i++){
+						ul = checked ((ul * 10) + number_builder [i] - '0');
+					}
+					return integer_type_suffix (ul, c);
+				} else {
+					uint ui = (uint) (number_builder [0] - '0');
+
+					for (int i = 1; i < number_pos; i++){
+						ui = checked ((ui * 10) + number_builder [i] - '0');
+					}
+					return integer_type_suffix (ui, c);
+				}
 			} catch (OverflowException) {
 				error_details = "Integral constant is too large";
 				Report.Error (1021, Location, error_details);
@@ -680,7 +700,7 @@ namespace Mono.CSharp
 		
 		int adjust_real (int t)
 		{
-			string s = number_builder.ToString ();
+			string s = new String (number_builder, 0, number_pos);
 
 			switch (t){
 			case Token.LITERAL_DECIMAL:
@@ -717,6 +737,32 @@ namespace Mono.CSharp
 			return t;
 		}
 
+		int handle_hex ()
+		{
+			int d;
+			ulong ul;
+			
+			getChar ();
+			while ((d = peekChar ()) != -1){
+				if (is_hex (d)){
+					if (number_pos == 16){
+						Report.Error (1021, Location, "Integral constant too large");
+						return Token.ERROR;
+					}
+					number_builder [number_pos++] = (char) d;
+					getChar ();
+				} else
+					break;
+			}
+			
+			string s = new String (number_builder, 0, number_pos);
+			if (number_pos <= 8)
+				ul = System.UInt32.Parse (s, NumberStyles.HexNumber);
+			else
+				ul = System.UInt64.Parse (s, NumberStyles.HexNumber);
+			return integer_type_suffix (ul, peekChar ());
+		}
+
 		//
 		// Invoked if we know we have .digits or digits
 		//
@@ -725,18 +771,14 @@ namespace Mono.CSharp
 			bool is_real = false;
 			int type;
 
-			number_builder.Length = 0;
+			number_pos = 0;
 
 			if (c >= '0' && c <= '9'){
-				if (c == '0' && peekChar () == 'x' || peekChar () == 'X'){
-					ulong ul;
-					getChar ();
-					hex_digits (-1);
+				if (c == '0'){
+					int peek = peekChar ();
 
-					string s = number_builder.ToString ();
-
-					ul = System.UInt64.Parse (s, NumberStyles.HexNumber);
-					return integer_type_suffix (ul, peekChar ());
+					if (peek == 'x' || peek == 'X')
+						return handle_hex ();
 				}
 				decimal_digits (c);
 				c = getChar ();
@@ -752,24 +794,33 @@ namespace Mono.CSharp
 					c = getChar ();
 				} else {
 					putback ('.');
-					number_builder.Length -= 1;
+					number_pos--;
 					return adjust_int (-1);
 				}
 			}
 			
 			if (c == 'e' || c == 'E'){
 				is_real = true;
-				number_builder.Append ("e");
+				if (number_pos == max_number_size)
+					Error_NumericConstantTooLong ();
+				number_builder [number_pos++] = 'e';
 				c = getChar ();
 				
 				if (c == '+'){
-					number_builder.Append ((char) c);
+					if (number_pos == max_number_size)
+						Error_NumericConstantTooLong ();
+					number_builder [number_pos++] = '+';
 					c = -1;
 				} else if (c == '-') {
-					number_builder.Append ((char) c);
+					if (number_pos == max_number_size)
+						Error_NumericConstantTooLong ();
+					number_builder [number_pos++] = '-';
 					c = -1;
-				} else 
-					number_builder.Append ('+');
+				} else {
+					if (number_pos == max_number_size)
+						Error_NumericConstantTooLong ();
+					number_builder [number_pos++] = '+';
+				}
 					
 				decimal_digits (c);
 				c = getChar ();
@@ -1456,15 +1507,21 @@ namespace Mono.CSharp
 			return Token.EOF;
 		}
 
-		private int consume_identifier (int c, bool quoted) 
+		private int consume_identifier (int s, bool quoted) 
 		{
-			id_builder.Length = 0;
-
-			id_builder.Append ((char) c);
+			int pos = 1;
+			int c;
+			
+			id_builder [0] = (char) s;
 					
 			while ((c = reader.Read ()) != -1) {
 				if (is_identifier_part_character ((char) c)){
-					id_builder.Append ((char)c);
+					if (pos == max_id_size){
+						Report.Error (645, Location, "Identifier too long (limit is 512 chars)");
+						return Token.ERROR;
+					}
+					
+					id_builder [pos++] = (char) c;
 					putback_char = -1;
 					col++;
 				} else {
@@ -1472,21 +1529,19 @@ namespace Mono.CSharp
 					break;
 				}
 			}
-					
-			string ids = id_builder.ToString ();
-			int keyword = GetKeyword (ids);
-			
-			if (keyword == -1 || quoted){
-				val = ids;
-				if (ids.Length > 512){
-					Report.Error (
-						645, Location,
-						"Identifier too long (limit is 512 chars)");
-				}
-				return Token.IDENTIFIER;
-			}
 
-			return keyword;
+			string ids = new String (id_builder, 0, pos);
+
+			if (s >= 'a'){
+				int keyword = GetKeyword (ids);
+				if (keyword == -1 || quoted){
+					val = ids;
+					return Token.IDENTIFIER;
+				}
+				return keyword;
+			}
+			val = ids;
+			return Token.IDENTIFIER;
 		}
 		
 		public int xtoken ()
