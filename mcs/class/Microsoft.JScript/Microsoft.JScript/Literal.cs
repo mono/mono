@@ -53,12 +53,7 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			ILGenerator ig;
-			
-			if (parent == null)
-				ig = ec.gc_ig;
-			else
-				ig = ec.ig;
+			ILGenerator ig = ec.ig;
 
 			if (val)
 				ig.Emit (OpCodes.Ldc_I4_1);
@@ -97,14 +92,10 @@ namespace Microsoft.JScript {
 			this.no_effect = no_effect;
 			return true;
 		}
-		
+
 		internal override void Emit (EmitContext ec)
 		{
-			ILGenerator ig;
-			if (parent == null)
-				ig = ec.gc_ig;
-			else
-				ig = ec.ig;
+			ILGenerator ig = ec.ig;
 			ig.Emit (OpCodes.Ldc_I4, (int) val);
 			ig.Emit (OpCodes.Box, typeof (System.Int32));
 			if (no_effect)
