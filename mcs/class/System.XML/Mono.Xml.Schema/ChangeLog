@@ -1,3 +1,9 @@
+2004-06-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdValidatingReader.cs : Identity check didn't work fine when
+	  reference node appeared in front of the target key node.
+	  This fixes bug #59889.
+
 2004-06-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdValidatingReader.cs : Close XmlTextReader more strictly. Exception

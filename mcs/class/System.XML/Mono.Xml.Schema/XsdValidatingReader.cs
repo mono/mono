@@ -1130,20 +1130,18 @@ namespace Mono.Xml.Schema
 					HandleError ("Duplicate ID value was found.");
 				else
 					idList.Add (normalized, normalized);
-				break;
-			case XmlTokenizedType.IDREF:
 				if (missingIDReferences.Contains (normalized))
 					missingIDReferences.Remove (normalized);
-				else
+				break;
+			case XmlTokenizedType.IDREF:
+				if (!idList.Contains (normalized))
 					missingIDReferences.Add (normalized);
 				break;
 			case XmlTokenizedType.IDREFS:
 				string [] idrefs = (string []) parsedValue;
 				for (int i = 0; i < idrefs.Length; i++) {
 					string id = idrefs [i];
-					if (missingIDReferences.Contains (id))
-						missingIDReferences.Remove (id);
-					else
+					if (!idList.Contains (id))
 						missingIDReferences.Add (id);
 				}
 				break;
