@@ -6080,8 +6080,8 @@ namespace Mono.CSharp {
 		{
 			t = TypeManager.TypeToCoreType (t);
 			if (TypeManager.IsEnumType (t) && t != TypeManager.enum_type)
-				t = TypeManager.EnumToUnderlying (t);
-			if (t == TypeManager.byte_type || t == TypeManager.sbyte_type ||
+				StoreFromPtr (ig, t);
+			else if (t == TypeManager.byte_type || t == TypeManager.sbyte_type ||
 			    t == TypeManager.bool_type)
 				ig.Emit (OpCodes.Stelem_I1);
 			else if (t == TypeManager.short_type || t == TypeManager.ushort_type || t == TypeManager.char_type)

@@ -1,5 +1,8 @@
 2002-10-08  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs: Use StoreFromPtr instead of extracting the type
+	and then trying to use Stelem.  Patch is from hwang_rob@yahoo.ca
+
 	* ecore.cs (ImplicitReferenceConversion): It is possible to assign
 	an enumeration value to a System.Enum, but System.Enum is not a
 	value type, but an class type, so we need to box.
