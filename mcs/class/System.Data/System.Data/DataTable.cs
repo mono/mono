@@ -767,7 +767,7 @@ namespace System.Data {
 		{
 			//LAMESPEC: spec says concat the two. impl puts a 
 			//plus sign infront of DisplayExpression
-			return TableName + " " + DisplayExpression;
+			return TableName + " + " + DisplayExpression;
 		}
 
 		

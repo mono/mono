@@ -1,5 +1,9 @@
 2003-03-27  Ville Palo <vi64pa@kolumbus.fi>
 
+	* DataTable.cs: Tiny fix to ToString () -method
+	
+2003-03-27  Ville Palo <vi64pa@kolumbus.fi>
+
 	* ConstraintCollection.cs: Little fix.
 	* DataColumn.cs: Added new internal method SetUnique()
 	* UniqueConstraint.cs: some little fixes
