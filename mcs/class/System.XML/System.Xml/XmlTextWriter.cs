@@ -42,6 +42,7 @@ namespace System.Xml
 		bool openXmlSpace = false;
 		string openElementPrefix;
 		string openElementNS;
+		bool hasRoot = false;
 
 		#endregion
 
@@ -389,10 +390,11 @@ namespace System.Xml
 		{
 			CloseOpenAttributeAndElements ();
 
-			if ((ws == WriteState.Start) || (ws == WriteState.Prolog))
+			if (!hasRoot)
 				throw new ArgumentException ("This document does not have a root element.");
 
 			ws = WriteState.Start;
+			hasRoot = false;
 		}
 
 		public override void WriteEndElement ()
@@ -561,6 +563,11 @@ namespace System.Xml
 		{
 			if (documentStarted == true)
 				throw new InvalidOperationException("WriteStartDocument should be the first call.");
+
+			if (hasRoot)
+				throw new XmlException ("WriteStartDocument called twice.");
+
+			hasRoot = true;
 
 			CheckState ();
 
