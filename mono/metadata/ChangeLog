@@ -1,11 +1,15 @@
 2003-09-04  Martin Baulig  <martin@ximian.com>
 
+	* reflection.c (mono_reflection_define_generic_parameter): Generic
+	parameters start with zero.
+
+2003-09-04  Martin Baulig  <martin@ximian.com>
+
 	* metadata.c (mono_type_size): Added MONO_TYPE_VAR and MONO_TYPE_MVAR.
 
 	* reflection.h (MonoReflectionGenericParam): New typedef.
-	(MonoReflectionTypeBuilder): Added `num_generic_params' and
-	`generic_params' fields to get the generic parameters from the
-	managed TypeBuilder.
+	(MonoReflectionTypeBuilder): Added `generic_params' fields to get
+	the generic parameters from the managed TypeBuilder.
 
 	* reflection.c (mono_reflection_define_generic_parameter): New function.
 	(mono_reflection_create_runtime_class): Encode generic parameters.
