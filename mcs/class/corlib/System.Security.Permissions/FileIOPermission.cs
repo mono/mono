@@ -10,13 +10,12 @@
 //------------------------------------------------------------------------------
 
 using System.Collections;
-using System.Text;
-using System.Security.Permissions;
 using System.IO;
+using System.Text;
 
 namespace System.Security.Permissions {
 
-	[SerializableAttribute()]
+	[Serializable]
 	public sealed class FileIOPermission
                 : CodeAccessPermission, IBuiltInPermission, IUnrestrictedPermission {
 
@@ -37,7 +36,11 @@ namespace System.Security.Permissions {
 			}
 		}
 
-		public FileIOPermission(FileIOPermissionAccess access, string path){
+		public FileIOPermission(FileIOPermissionAccess access, string path)
+		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
+
 			if ((FileIOPermissionAccess.AllAccess & access) != access){
 				throw new ArgumentException("Illegal enum value: "+access.ToString()+".");
 			}
@@ -49,7 +52,11 @@ namespace System.Security.Permissions {
 			AddPathList(access, path);
 		}
 
-		public FileIOPermission(FileIOPermissionAccess access, string[] pathList){
+		public FileIOPermission(FileIOPermissionAccess access, string[] pathList)
+		{
+			if (pathList == null)
+				throw new ArgumentNullException ("pathList");
+
 			if ((FileIOPermissionAccess.AllAccess & access) != access){
 				throw new ArgumentException("Illegal enum value: "+access.ToString()+".");
 			}
@@ -413,7 +420,5 @@ namespace System.Security.Permissions {
 		{
 			return 2;
 		}
-                
-
 	}
 }
