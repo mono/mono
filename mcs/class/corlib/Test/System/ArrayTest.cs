@@ -1453,16 +1453,29 @@ public class ArrayTest : TestCase
 
 		for (int i = 0; i < c3.Length; i++)
 			c4.SetValue (c3 [i], i);
-		c3.CopyTo (c4, 0);
+
+		try {
+			c3.CopyTo (c4, 0);
+		} catch (Exception e) {
+			Fail ("c3.CopyTo(): e=" + e);
+		}
 		for (int i = 0; i < c3.Length; i++)
 			Assert ("#M05(" + i + ")", c3[i] == c4[i]);
 
 		Object[] c5 = new Object [3];
 		long[] c6 = new long [3];
 
-		c4.CopyTo (c5, 0);
+		try {
+			c4.CopyTo (c5, 0);
+		} catch (Exception e) {
+			Fail ("c4.CopyTo(): e=" + e);
+		}
 
-		c5.CopyTo (c6, 0);
+		try {
+			c5.CopyTo (c6, 0);
+		} catch (Exception e) {
+			Fail ("c5.CopyTo(): e=" + e);
+		}
 		// for (int i = 0; i < c5.Length; i++)
 		// Assert ("#M06(" + i + ")", c5[i] == c6[i]);
 	}
