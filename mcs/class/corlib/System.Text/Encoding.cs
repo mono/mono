@@ -233,7 +233,7 @@ namespace System.Text {
 
                 public virtual byte[] GetBytes(char[] chars, int index, int count)
 		{
-			int bc = GetMaxByteCount (count - index);
+			int bc = GetMaxByteCount (count);
 			byte [] bytes = new byte [bc];
 			
 			int len = GetBytes (chars, index, count, bytes, 0);
@@ -244,8 +244,8 @@ namespace System.Text {
 			return res;
                 }
 
-                public int GetBytes (char[] chars, int charIndex, int charCount,
-				     byte[] bytes, int byteIndex)
+                public virtual int GetBytes (char[] chars, int charIndex, int charCount,
+					     byte[] bytes, int byteIndex)
 		{
 			return iconv_encoder.GetBytes (chars, charIndex, charCount, bytes, byteIndex, true);
 		}
@@ -273,7 +273,7 @@ namespace System.Text {
 
                 public virtual char[] GetChars (byte[] bytes, int index, int count)
 		{
-			int cc = GetMaxCharCount (count - index);
+			int cc = GetMaxCharCount (count);
 			char [] chars = new char [cc];
 
 			int len = GetChars (bytes, index, count, chars, 0);

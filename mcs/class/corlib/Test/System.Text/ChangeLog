@@ -1,3 +1,8 @@
+2002-03-17  Mike Kestner  <mkestner@speakeasy.net>
+
+	* ASCIIEncodingTest.cs : New suite for ASCIIEncoding.
+	* AllTests.cs : Add the new suite.
+
 2002-02-10  Nick Drochak  <ndrochak@gol.com>
 
 	* AllTests.cs: Remove StringBuilderTest suite.  There's a major failure

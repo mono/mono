@@ -21,6 +21,7 @@ namespace MonoTests.System.Text {
                         {
                                 TestSuite suite =  new TestSuite();
                                 //suite.AddTest(StringBuilderTest.Suite);
+                                suite.AddTest(ASCIIEncodingTest.Suite);
                                 return suite;
                         }
                 }
