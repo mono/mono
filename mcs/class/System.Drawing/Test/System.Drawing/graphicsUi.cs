@@ -6,28 +6,20 @@
 //
 
 using System;
-using System.Collections;
-using System.Windows.Forms;
+using System.Drawing.Imaging;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
 //
-public class TestForm : System.Windows.Forms.Form
+public class graphicsUI
 {	
 	
-	public static void Main(string[] args)
+    public static void Main( ) 
 	{
-		Application.Run(new TestForm());
-	}
-	
-	public TestForm()
-	{
-		InitializeComponent();
-	}
-	
-	protected override void OnPaint(PaintEventArgs e)
-	{
-		Graphics dc = CreateGraphics();
+
+        Bitmap bmp = new Bitmap(500, 250);
+        Graphics dc = Graphics.FromImage(bmp);
+        
 		Pen BluePen = new Pen(Color.Blue, 3);
 		Pen GreenPen = new Pen(Color.Green, 3);
 		Pen RedPen = new Pen(Color.Red, 3);
@@ -37,8 +29,7 @@ public class TestForm : System.Windows.Forms.Form
 		int x=0;
 		int y=0;
 		
-		this.Show();	
-
+		
 		/* First Row*/
 		dc.DrawRectangle(BluePen, x,y,50,50);
 		x+=50;		
@@ -73,10 +64,10 @@ public class TestForm : System.Windows.Forms.Form
 		PointF point40 = new PointF(x+10.0F, y+30.0F);
 		PointF[] points = {point10, point20, point30, point40};		
 		FillMode newFillMode = FillMode.Winding;				
-		e.Graphics.FillClosedCurve(redBrush, points, newFillMode, tension);
+		dc.FillClosedCurve(redBrush, points, newFillMode, tension);
 					
 		// Fill pie to screen.
-		e.Graphics.FillPie(blueBrush, x, 0, 200.0F, 100.0f, 300.0F, 45.0F);
+		dc.FillPie(blueBrush, x, 0, 200.0F, 100.0f, 300.0F, 45.0F);
 		
 		/* second row*/
 		y+=80;
@@ -112,18 +103,12 @@ public class TestForm : System.Windows.Forms.Form
 		dc.TranslateTransform(40.0F, 30.0F);		
 		dc.TransformPoints(CoordinateSpace.Page,CoordinateSpace.World,ptstrans);		
 		dc.ResetTransform();		
-		dc.DrawLine(RedPen,	ptstrans[0], ptstrans[1]);			
+		dc.DrawLine(RedPen,	ptstrans[0], ptstrans[1]);
+
+        bmp.Save("graphicsui.bmp", ImageFormat.Bmp);		
 		
 	}
 	
-	private void InitializeComponent()
-	{			
-		Text = "Test application for the graphic class implementation";			
-		ClientSize = new System.Drawing.Size(500, 250);				
-		
-		
-    	return;     
-	}
 
 }
 
