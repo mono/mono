@@ -1,3 +1,8 @@
+2004-03-15  Atsushi Enomoto <atsushi@ximian.com>
+
+	* reverted the latest XmlSchemaUnique.cs change (MS.NET looks fine to
+	  reject incorrect schemas ;-)
+
 2004-03-04  Alon Gazit <along@mainsoft.com>
 
 	* XmlSchemaUnique.cs : Changed Read implementation.
