@@ -567,7 +567,8 @@ namespace Mono.Xml.Xsl {
 			if (colon > 0)
 				return new QName (name.Substring (colon, name.Length - colon), current.GetNamespace (name.Substring (0, colon)));
 			else if (colon < 0)
-				return new QName (name, current.GetNamespace (""));
+				// Default namespace is not used for unprefixed names.
+				return new QName (name, "");
 			else
 				throw new ArgumentException ("Invalid name: " + name);
 		}
@@ -578,7 +579,8 @@ namespace Mono.Xml.Xsl {
 			if (colon > 0)
 				return new QName (name.Substring (colon, name.Length - colon), ctx.LookupNamespace (name.Substring (0, colon)));
 			else if (colon < 0)
-				return new QName (name, ctx.LookupNamespace (""));
+				// Default namespace is not used for unprefixed names.
+				return new QName (name, "");
 			else
 				throw new ArgumentException ("Invalid name: " + name);
 		}

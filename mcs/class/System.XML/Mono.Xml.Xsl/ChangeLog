@@ -1,3 +1,8 @@
+2003-08-19 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* Compiler.cs : Fixed XslNameUtil.FromString() so that unprefixed name
+	  won't have default namespace. See http://www.w3.org/TR/xslt#qname
+
 2003-08-19 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* XslTransformProcessor.cs: add support for resolving documents.
