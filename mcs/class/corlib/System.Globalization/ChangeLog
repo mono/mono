@@ -1,3 +1,7 @@
+2002-06-07  Nick Drochak  <ndrochak@gol.com>
+
+	* NumberFormatInfo.cs: Make InvariantInfo.NumberNegativePattern = 1
+
 2002-05-07  Rodrigo Moya <rodrigo@ximian.com>
 
 	* CompareInfo.cs: new basic stub (compiles on Linux, so I assume

@@ -270,6 +270,7 @@ namespace System.Globalization {
 			get {
 				// This uses invariant info, which is same as in the constructor
 				NumberFormatInfo nfi = new NumberFormatInfo ();
+				nfi.NumberNegativePattern = 1;
 				nfi.readOnly = true;
 				return nfi;
 			}		       
