@@ -1,3 +1,7 @@
+2003-01-03  Dietmar Maurer  <dietmar@ximian.com>
+
+	* marshal.c (mono_marshal_get_ptr_to_struct): code cleanups
+
 2003-01-03  Martin Baulig  <martin@ximian.com>
 
 	* debug-mono-symfile.h: Increment MONO_SYMBOL_FILE_DYNAMIC_VERSION.
