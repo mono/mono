@@ -517,7 +517,7 @@ namespace Mono.CSharp {
 
 			Type parent = ptype.BaseType;
 			if ((parent != null) && (parent != TypeManager.object_type)) {
-				if (!Convert.ImplicitConversionExists (ec, aexpr, parent)) {
+				if (!Convert.ImplicitStandardConversionExists (aexpr, parent)) {
 					Report.Error (309, loc, "The type `{0}' must be " +
 						      "convertible to `{1}' in order to " +
 						      "use it as parameter `{2}' in the " +
@@ -531,7 +531,7 @@ namespace Mono.CSharp {
 			// Now, check the interface constraints.
 			//
 			foreach (Type itype in ptype.GetInterfaces ()) {
-				if (!Convert.ImplicitConversionExists (ec, aexpr, itype)) {
+				if (!Convert.ImplicitStandardConversionExists (aexpr, itype)) {
 					Report.Error (309, loc, "The type `{0}' must be " +
 						      "convertible to `{1}' in order to " +
 						      "use it as parameter `{2}' in the " +

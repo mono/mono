@@ -1,3 +1,9 @@
+2004-04-01  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (ConstructedType.CheckConstraints): Use
+	Convert.ImplicitStandardConversionExists(); user-defined implicit
+	conversions are not allowed according to the spec.
+
 2004-03-30  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (New): Added support for type parameters.
