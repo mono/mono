@@ -190,7 +190,10 @@ namespace System.Runtime.Remoting.Messaging
 		{
 			string keyStr = (string)key;
 			for (int n=0; n<_methodKeys.Length; n++)
-				if (_methodKeys[n] == keyStr) SetMethodProperty (keyStr, value);
+				if (_methodKeys[n] == keyStr) {
+					SetMethodProperty (keyStr, value);
+					return;
+				}
 
 			if (_internalProperties == null) _internalProperties = AllocInternalProperties();
 			_internalProperties[key] = value;
