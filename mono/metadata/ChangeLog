@@ -1,3 +1,10 @@
+
+Thu Jul 17 13:39:32 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c: fixed size for TypedByRef.
+	* loader.c: when searching for a method, consider the vararg amrker.
+	* unicode.c, decimal.c: constify some arrays.
+
 2003-07-15  Dick Porter  <dick@ximian.com>
 
 	* socket-io.c: Fixed compilation for gcc < 3.2.
