@@ -1,3 +1,9 @@
+
+Fri Jan 10 15:58:09 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* profiler.c: made the output more readable (and sorted). 
+	Added caller information for the allocation profiler.
+
 2003-01-09  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* icall.c, rand.c, rand.h: Prepended RNG functions with Internal.
