@@ -41,12 +41,6 @@ Microsoft.Web.Services.Referral/If.cs
 Microsoft.Web.Services.Referral/Desc.cs
 Microsoft.Web.Services.Referral/ReferralInputfilter.cs
 Microsoft.Web.Services.Referral/ReferralOutputFilter.cs
-Microsoft.Web.Services.Policy/PolicyEnforcementException.cs
-Microsoft.Web.Services.Messaging/ISoapFormatter.cs
-Microsoft.Web.Services.Messaging/ISoapTransport.cs
-Microsoft.Web.Services.Messaging/SoapPort.cs
-Microsoft.Web.Services.Messaging/SoapReceiver.cs
-Microsoft.Web.Services.Messaging/SoapReceivers.cs
 Microsoft.Web.Services.Dime/DimeAttachment.cs
 Microsoft.Web.Services.Dime/DimeAttachmentCollection.cs
 Microsoft.Web.Services.Dime/DimeReader.cs

@@ -3,6 +3,9 @@
 	* Microsoft.Web.Services.Diagnostics: Added new namespace with 
 	internal TraceFilter.cs and public TraceInputFilter.cs and
 	TraceOutputFilter.cs
+	* Microsoft.Web.Services.dll.sources: Removed classes from 
+	Microsoft.Web.Services.Policy and Microsoft.Web.Services.Messaging
+	from the WSE 1.0 build (extra - corcompare).
 
 2003-10-05  Todd Berman <tberman@gentoo.org>
 
