@@ -21,8 +21,11 @@ namespace System.Runtime.Remoting.Channels.Tcp
 	{
 		int port = 0;
 		string name = "tcp";
-		string host;
+		string host = null;
 		int priority = 1;
+		bool supressChannelData = false;
+		bool useIpAddress = false;
+		
 		IPAddress bindAddress = IPAddress.Any;
 		Thread server_thread = null;
 		TcpListener listener;
@@ -31,6 +34,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		int _maxConcurrentConnections = 100;
 		ArrayList _activeConnections = new ArrayList();
 		
+		
 		void Init (IServerChannelSinkProvider serverSinkProvider) 
 		{
 			if (serverSinkProvider == null) 
@@ -38,7 +42,16 @@ namespace System.Runtime.Remoting.Channels.Tcp
 				serverSinkProvider = new BinaryServerFormatterSinkProvider ();
 			}
 
-			host = Dns.GetHostByName(Dns.GetHostName()).HostName;
+			if (host == null)
+			{
+				if (useIpAddress) {
+					IPHostEntry he = Dns.Resolve (Dns.GetHostName());
+					if (he.AddressList.Length == 0) throw new RemotingException ("IP address could not be determined for this host");
+					host = he.AddressList [0].ToString ();
+				}
+				else
+					host = Dns.GetHostByName(Dns.GetHostName()).HostName;
+			}
 			
 			string [] uris = null;
 			
@@ -89,6 +102,15 @@ namespace System.Runtime.Remoting.Channels.Tcp
 						if(Convert.ToBoolean(properties["rejectRemoteRequests"]))
 							bindAddress = IPAddress.Loopback;
 						break;
+					case "supressChannelData":
+						supressChannelData = Convert.ToBoolean (property.Value);
+						break;
+					case "useIpAddress":
+						useIpAddress = Convert.ToBoolean (property.Value);
+						break;
+					case "machineName":
+						host = property.Value as string;
+						break;
 				}
 			}			
 			Init (serverSinkProvider);
@@ -112,7 +134,8 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		public object ChannelData
 		{
 			get {
-				return channel_data;
+				if (supressChannelData) return null;
+				else return channel_data;
 			}
 		}
 
@@ -279,8 +302,10 @@ namespace System.Runtime.Remoting.Channels.Tcp
 					}
 				}
 			}
-			catch
-			{}
+			catch (Exception ex)
+			{
+				Console.WriteLine (ex);
+			}
 
 			_stream.Close();
 			_serverChannel.ReleaseConnection (Thread.CurrentThread);

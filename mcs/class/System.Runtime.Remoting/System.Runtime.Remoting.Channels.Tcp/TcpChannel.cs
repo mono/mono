@@ -33,7 +33,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 		public void Init (IDictionary properties, IClientChannelSinkProvider clientSink, IServerChannelSinkProvider serverSink)
 		{
-			_clientChannel = new TcpClientChannel(properties,clientSink);
+			_clientChannel = new TcpClientChannel (properties,clientSink);
 
 			if(properties["port"] != null)
 				_serverChannel = new TcpServerChannel(properties, serverSink);

@@ -28,8 +28,12 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 		public TcpClientChannel (IDictionary properties, IClientChannelSinkProvider sinkProvider)
 		{
-			priority = 1;
-
+			object val = properties ["name"];
+			if (val != null) name = val as string;
+			
+			val = properties ["priority"];
+			if (val != null) priority = Convert.ToInt32 (val);
+			
 			if (sinkProvider != null)
 			{
 				_sinkProvider = sinkProvider;
@@ -52,7 +56,6 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 		public TcpClientChannel (string name, IClientChannelSinkProvider sinkProvider)
 		{
-			priority = 1;		
 			this.name = name;
 			_sinkProvider = sinkProvider;
 

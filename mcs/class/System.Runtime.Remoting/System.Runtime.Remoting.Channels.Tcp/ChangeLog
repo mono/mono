@@ -1,3 +1,10 @@
+2003-11-16  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* TcpClientChannel.cs: Added support for name and priority properties.
+	* TcpServerChannel.cs: Added support for priority, bindTo, useIpAddress,
+	  machineName and supressChannelData properties.
+	* TcpChannel.cs, TcpServerTransportSink.cs: Formatting change.
+		  
 2003-11-13  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* TcpChannel.cs: take into account name and priority properties.
