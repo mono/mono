@@ -222,7 +222,7 @@ namespace Mono.CSharp {
 	public class Do : Statement {
 		public Expression expr;
 		public readonly Statement  EmbeddedStatement;
-		bool infinite, may_return;
+		bool infinite;
 		
 		public Do (Statement statement, Expression boolExpr, Location l)
 		{
@@ -251,8 +251,7 @@ namespace Mono.CSharp {
 			}
 
 			ec.CurrentBranching.Infinite = infinite;
-			FlowBranching.Reachability reachability = ec.EndFlowBranching ();
-			may_return = reachability.Returns != FlowBranching.FlowReturns.Never;
+			ec.EndFlowBranching ();
 
 			return ok;
 		}
@@ -298,7 +297,7 @@ namespace Mono.CSharp {
 	public class While : Statement {
 		public Expression expr;
 		public readonly Statement Statement;
-		bool may_return, empty, infinite;
+		bool empty, infinite;
 		
 		public While (Expression boolExpr, Statement statement, Location l)
 		{
@@ -342,8 +341,7 @@ namespace Mono.CSharp {
 				ec.KillFlowBranching ();
 			else {
 				ec.CurrentBranching.Infinite = infinite;
-				FlowBranching.Reachability reachability = ec.EndFlowBranching ();
-				may_return = reachability.Returns != FlowBranching.FlowReturns.Never;
+				ec.EndFlowBranching ();
 			}
 
 			return ok;
@@ -404,7 +402,7 @@ namespace Mono.CSharp {
 		readonly Statement InitStatement;
 		readonly Statement Increment;
 		readonly Statement Statement;
-		bool may_return, infinite, empty;
+		bool infinite, empty;
 		
 		public For (Statement initStatement,
 			    Expression test,
@@ -460,8 +458,7 @@ namespace Mono.CSharp {
 				ec.KillFlowBranching ();
 			else {
 				ec.CurrentBranching.Infinite = infinite;
-				FlowBranching.Reachability reachability = ec.EndFlowBranching ();
-				may_return = reachability.Returns != FlowBranching.FlowReturns.Never;
+				ec.EndFlowBranching ();
 			}
 
 			return ok;
@@ -675,7 +672,6 @@ namespace Mono.CSharp {
 
 	public class LabeledStatement : Statement {
 		public readonly Location Location;
-		string label_name;
 		bool defined;
 		bool referenced;
 		Label label;
@@ -684,7 +680,6 @@ namespace Mono.CSharp {
 		
 		public LabeledStatement (string label_name, Location l)
 		{
-			this.label_name = label_name;
 			this.Location = l;
 		}
 

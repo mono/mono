@@ -20,7 +20,7 @@ namespace Mono.CSharp {
 		static Hashtable namespaces_map = new Hashtable ();
 		
 		Namespace parent;
-		string name, fullname;
+		string fullname;
 		ArrayList entries;
 		Hashtable namespaces;
 		Hashtable defined_names;
@@ -32,7 +32,6 @@ namespace Mono.CSharp {
 		/// </summary>
 		public Namespace (Namespace parent, string name)
 		{
-			this.name = name;
 			this.parent = parent;
 
 			string pname = parent != null ? parent.Name : "";

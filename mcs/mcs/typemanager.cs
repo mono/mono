@@ -1179,8 +1179,6 @@ public class TypeManager {
 
 	const BindingFlags instance_and_static = BindingFlags.Static | BindingFlags.Instance;
 
-	static Hashtable type_hash = new Hashtable ();
-
 	/// <remarks>
 	///   This is the "old", non-cache based FindMembers() function.  We cannot use
 	///   the cache here because there is no member name argument.
@@ -2227,11 +2225,6 @@ public class TypeManager {
 #region MemberLookup implementation
 	
 	//
-	// Name of the member
-	//
-	static string   closure_name;
-
-	//
 	// Whether we allow private members in the result (since FindMembers
 	// uses NonPublic for both protected and private), we need to distinguish.
 	//
@@ -2241,7 +2234,6 @@ public class TypeManager {
 	// Who is invoking us and which type is being queried currently.
 	//
 	static Type     closure_invocation_type;
-	static Type     closure_queried_type;
 	static Type     closure_qualifier_type;
 
 	//
@@ -2438,7 +2430,6 @@ public class TypeManager {
 		bool skip_iface_check = true, used_cache = false;
 		bool always_ok_flag = false;
 
-		closure_name = name;
 		closure_invocation_type = invocation_type;
 		closure_invocation_assembly = invocation_type != null ? invocation_type.Assembly : null;
 		closure_qualifier_type = qualifier_type;
@@ -2483,7 +2474,6 @@ public class TypeManager {
 				bf = original_bf;
 
 			closure_private_ok = (original_bf & BindingFlags.NonPublic) != 0;
-			closure_queried_type = current_type;
 
 			Timer.StopTimer (TimerType.MemberLookup);
 

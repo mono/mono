@@ -377,7 +377,6 @@ namespace Mono.CSharp {
 	}
 
 	public class DoubleHash {
-		Hashtable l = new Hashtable ();
 		const int DEFAULT_INITIAL_BUCKETS = 100;
 		
 		public DoubleHash () : this (DEFAULT_INITIAL_BUCKETS) {}

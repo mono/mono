@@ -4616,8 +4616,6 @@ namespace Mono.CSharp {
 		//
 		// Are we implementing an interface ?
 		//
-		bool IsImplementing = false;
-		
 		public Indexer (DeclSpace ds, Expression type, string int_type, int flags,
 				Parameters parameters, Accessor get_block, Accessor set_block,
 				Attributes attrs, Location loc)
@@ -4743,11 +4741,6 @@ namespace Mono.CSharp {
 						i + 1, array_param.Attributes, array_param.Name);
 				}
 			}
-
-			if (GetData != null)
-				IsImplementing = GetData.IsImplementing;
-			else if (SetData != null)
-				IsImplementing = SetData.IsImplementing;
 
 			//
 			// Define the PropertyBuilder if one of the following conditions are met:

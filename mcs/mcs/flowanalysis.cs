@@ -425,7 +425,6 @@ namespace Mono.CSharp
 			//
 			MyBitVector locals, parameters;
 			Reachability reachability;
-			bool is_finally;
 
 			static int next_id = 0;
 			int id;
@@ -721,8 +720,6 @@ namespace Mono.CSharp
 
 					Reachability.And (ref reachability, vector.Reachability, true);
 				}
-
-				is_finally = true;
 
 				Report.Debug (1, "  MERGING FINALLY ORIGIN DONE", this);
 			}
@@ -1121,7 +1118,6 @@ namespace Mono.CSharp
 	public class FlowBranchingException : FlowBranching
 	{
 		UsageVector current_vector;
-		UsageVector try_vector;
 		UsageVector catch_vectors;
 		UsageVector finally_vector;
 		UsageVector finally_origins;
@@ -1133,7 +1129,6 @@ namespace Mono.CSharp
 		protected override void AddSibling (UsageVector sibling)
 		{
 			if (sibling.Type == SiblingType.Try) {
-				try_vector = sibling;
 				sibling.Next = catch_vectors;
 				catch_vectors = sibling;
 			} else if (sibling.Type == SiblingType.Catch) {
