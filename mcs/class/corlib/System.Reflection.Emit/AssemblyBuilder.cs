@@ -22,8 +22,12 @@ namespace System.Reflection.Emit {
 		private IntPtr dynamic_assembly;
 		private MethodInfo entry_point;
 		private ModuleBuilder[] modules;
-		internal string name;
+		private string name;
 		private int[] table_indexes;
+
+		internal AssemblyBuilder (AssemblyName n, AssemblyBuilderAccess access) {
+			name = n.Name;
+		}
 
 		internal int get_next_table_index (int table, bool inc) {
 			if (table_indexes == null) {

@@ -1,3 +1,8 @@
+
+Tue Nov 6 09:11:43 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* AppDomain.cs: use an internal constructor for AssemblyBuilder.
+
 2001-11-05  Miguel de Icaza  <miguel@ximian.com>
 
 	* NonSerializedAttribute.cs: Add AttributeUsage rules for this

@@ -1,3 +1,8 @@
+
+Tue Nov 6 09:13:45 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* AssemblyBuilder.cs: define an internal constructor.
+
 2001-10-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* AssemblyBuilder.cs: Reformatted.

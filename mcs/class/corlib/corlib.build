@@ -32,6 +32,7 @@
 				<excludes name="System/Array.cs"/>
 				<excludes name="System/String.cs"/>
 				<excludes name="System/Console.cs"/>
+				<excludes name="System/AppDomain.cs"/>
 				<excludes name="System.Reflection.Emit/**"/>
 				<excludes name="System/RuntimeTypeHandle.cs"/>
 				<excludes name="System.PAL/IOperatingSystem.cs"/>

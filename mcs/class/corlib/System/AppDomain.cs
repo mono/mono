@@ -1,3 +1,13 @@
+
+//
+// System/AppDomain.cs
+//
+// Author:
+//   Paolo Molaro (lupus@ximian.com)
+//
+// (C) 2001 Ximian, Inc.  http://www.ximian.com
+//
+
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -15,14 +25,9 @@ namespace System {
 			get { return getCurDomain ();}
 		}
 		public AssemblyBuilder DefineDynamicAssembly( AssemblyName name, AssemblyBuilderAccess access) {
-			AssemblyBuilder ab = new AssemblyBuilder ();
-			ab.name = name.Name;
+			AssemblyBuilder ab = new AssemblyBuilder (name, access);
 			return ab;
 		}
 
-
-	
 	}
-
-
 }
