@@ -30,7 +30,7 @@ namespace Mono.CSharp
 
 	public class Tokenizer : yyParser.yyInput
 	{
-		StreamReader reader;
+		SeekableStreamReader reader;
 		public SourceFile ref_name;
 		public SourceFile file_name;
 		public int ref_line = 1;
@@ -334,7 +334,7 @@ namespace Mono.CSharp
 			defines [def] = true;
 		}
 		
-		public Tokenizer (StreamReader input, SourceFile file, ArrayList defs)
+		public Tokenizer (SeekableStreamReader input, SourceFile file, ArrayList defs)
 		{
 			this.ref_name = file;
 			this.file_name = file;
@@ -390,11 +390,9 @@ namespace Mono.CSharp
 				--deambiguate_close_parens;
 
 				// Save current position and parse next token.
-				reader.DiscardBufferedData ();
-				long old = reader.BaseStream.Position;
+				int old = reader.Position;
 				int new_token = token ();
-				reader.DiscardBufferedData ();
-				reader.BaseStream.Position = old;
+				reader.Position = old;
 				putback_char = -1;
 
 				if (new_token == Token.OPEN_PARENS)

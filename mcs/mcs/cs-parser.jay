@@ -4116,7 +4116,7 @@ public Tokenizer Lexer {
 	}
 }		   
 
-public CSharpParser (StreamReader reader, SourceFile file, ArrayList defines)
+public CSharpParser (SeekableStreamReader reader, SourceFile file, ArrayList defines)
 {
 	current_namespace = new NamespaceEntry (null, file, null);
 	this.name = file.Name;

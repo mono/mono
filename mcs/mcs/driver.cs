@@ -140,7 +140,7 @@ namespace Mono.CSharp
 			}
 
 			using (input){
-				StreamReader reader = new StreamReader (input, encoding, using_default_encoder);
+				SeekableStreamReader reader = new SeekableStreamReader (input, encoding, using_default_encoder);
 				Tokenizer lexer = new Tokenizer (reader, file, defines);
 				int token, tokens = 0, errors = 0;
 
@@ -169,7 +169,7 @@ namespace Mono.CSharp
 				return;
 			}
 
-			StreamReader reader = new StreamReader (input, encoding, using_default_encoder);
+			SeekableStreamReader reader = new SeekableStreamReader (input, encoding, using_default_encoder);
 				
 			parser = new CSharpParser (reader, file, defines);
 			parser.yacc_verbose = yacc_verbose;

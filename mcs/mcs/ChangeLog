@@ -1,3 +1,10 @@
+2003-08-06  Martin Baulig  <martin@ximian.com>
+
+	* support.cs (SeekableStreamReader.cs): New public class.
+
+	* cs-tokenizer.cs, cs-parser.jay, driver.cs: Use the new
+	SeekableStreamReader instead of the normal StreamReader.
+
 2003-08-04  Martin Baulig  <martin@ximian.com>
 
 	* cs-parser.jay (CLOSE_PARENS_CAST, CLOSE_PARENS_NO_CAST,
