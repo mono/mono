@@ -29,6 +29,7 @@
 				<excludes name="System.Data/DataViewManager.cs"/>
 				<excludes name="System.Data/DataViewSetting.cs"/>
 				<excludes name="System.Data/DataSet.cs"/>
+				<excludes name="System.Data/MergeFailedEventArgs.cs"/>
 				<excludes name="Test/**"/>
 				<excludes name="System.Data.Common/*"/>
 				<excludes name="System.Data.SqlClient/SqlDataAdapter.cs"/>
