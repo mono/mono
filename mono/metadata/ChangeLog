@@ -1,3 +1,7 @@
+2002-08-01  Dietmar Maurer  <dietmar@ximian.com>
+
+	* marshal.c (mono_marshal_get_managed_wrapper): added return type
+	conversions.
 
 Wed Jul 31 16:49:29 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

@@ -3,6 +3,8 @@
 	* interp.c (stackval_from_data): add pinvoke argument
 	(stackval_to_data): add pinvoke argument. We need consider the
 	fact that unmanages structures may have different sizes.
+	(ves_pinvoke_method): do not call stackval_from_data if the result
+	is a value type.
 
 Wed Jul 31 17:47:11 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

@@ -2,6 +2,9 @@
 
 	* x86/tramp.c (mono_create_method_pointer): allocate space for
 	value types.
+	(mono_create_trampoline): also push the value type pointer for
+	methods returning value types.
+	(mono_create_method_pointer): support valuetype returns.
 
 2002-07-31  Dietmar Maurer  <dietmar@ximian.com>
 
