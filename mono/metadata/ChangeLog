@@ -1,3 +1,6 @@
+2003-06-08  Martin Baulig  <martin@ximian.com>
+
+	* Makefile.am (libmetadata_la_LIBADD): Added LIBGC_LIBS.
 
 Thu Jun 5 19:51:49 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
