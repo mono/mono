@@ -124,7 +124,7 @@ namespace System
 		{
 			if (m_value == value)
 				return 0;
-			return m_value ? -1 : 1;
+			return !m_value ? -1 : 1;
 		}
 
 		public bool Equals (bool value)
