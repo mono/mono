@@ -402,6 +402,40 @@ namespace System {
 			return v.GetHashCode ();
 		}
 
+		private static string FormatSpecifier_X (Type enumType, object value)
+		{
+			// FIXME: Not sure if padding should always be with precision
+			// 8, if it's culture specific, or what.  This works for me.
+			const string format = "x8";
+
+			switch (Type.GetTypeCode(enumType)) {
+				case TypeCode.Char:
+					// Char doesn't support ToString(format), so convert to an int and
+					// use that...
+					char v = (char) value;
+					return Convert.ToInt32(v).ToString(format);
+				case TypeCode.SByte:
+					return ((sbyte)value).ToString(format);
+				case TypeCode.Byte:
+					return ((byte)value).ToString(format);
+				case TypeCode.Int16:
+					return ((short)value).ToString(format);
+				case TypeCode.UInt16:
+					return ((ushort)value).ToString(format);
+				case TypeCode.Int32:
+					return ((int)value).ToString(format);
+				case TypeCode.UInt32:
+					return ((uint)value).ToString(format);
+				case TypeCode.Int64:
+					return ((long)value).ToString(format);
+				case TypeCode.UInt64:
+					return ((ulong)value).ToString(format);
+				default:
+					throw new Exception ("invalid type code for enumeration");
+					break;
+			}
+		}
+
 		[MonoTODO]
 		public static string Format (Type enumType, object value, string format)
 		{
@@ -439,11 +473,7 @@ namespace System {
 				break;
 			    case 'X':
 			    case 'x':
-				retVal = value.ToString();
-				long xValue = Int64.Parse(retVal);
-				// FIXME: Not sure if padding should always be with precision
-				// 8, if it's culture specific, or what.  This works for me.
-				retVal = xValue.ToString("x8");
+				retVal = FormatSpecifier_X (enumType, value);
 				break;
 			    case 'D':
 			    case 'd':
