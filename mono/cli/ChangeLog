@@ -1,3 +1,8 @@
+2001-07-31  Dietmar Maurer  <dietmar@ximian.com>
+
+	* cli.h: added pinvoke flags to MonoMethodPInvoke, moved method
+	implementation flags to MonoMethod
+
 Mon Jul 30 20:05:23 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* cli.h, loader.c: usa a char *name field in MonoMethod instead
