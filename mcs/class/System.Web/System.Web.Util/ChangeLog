@@ -1,3 +1,8 @@
+2003-12-30  Alon Gazit <along@mainsoft.com>
+
+	* UrlUtils.cs: fix typo in IsRelativeUrl().
+	fix cases when the path is absolute path like "www.go-mono.com".
+
 2003-12-03  Jackson Harper <jackson@ximian.com>
 
 	* UrlUtils.cs: Some methods for working with session ids in urls.
