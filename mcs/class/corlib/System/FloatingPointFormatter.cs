@@ -45,6 +45,12 @@ namespace System {
 		}
 
 		private string NumberToString () {
+			if (format == null) {
+				format = "G";
+			}
+			if (nfi == null) {
+				nfi = NumberFormatInfo.CurrentInfo;
+			}
 			if (Double.IsNaN(value)) {
 				return nfi.NaNSymbol;
 			}
@@ -53,12 +59,6 @@ namespace System {
 			}
 			if (Double.IsPositiveInfinity(value)) {
 				return nfi.PositiveInfinitySymbol;
-			}
-			if (format == null) {
-				format = "G";
-			}
-			if (nfi == null) {
-				nfi = NumberFormatInfo.CurrentInfo;
 			}
 			char specifier;
 			int precision;

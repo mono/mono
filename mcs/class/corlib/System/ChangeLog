@@ -1,8 +1,13 @@
-2003-05-17  Ben Maurer <bmaurer@users.sourceforge.net>
+2003-05-18  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
-	* Array.cs Fixed SyncRoot to behave like MS (return this). Removed 
-	MonoTODO from SyncRoot (because fixed) and IsSynchronized (it was behaving
-	correctly).
+	* FloatingPointFormatter.cs: Fixed NullReferenceException bug I've
+	introduced the last change I've done.
+
+2003-05-17  Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* Array.cs: Fixed SyncRoot to behave like MS (return this). Removed 
+	MonoTODO from SyncRoot (because fixed) and IsSynchronized (it was
+	behaving correctly).
 	
 2003-05-17  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
