@@ -1,3 +1,8 @@
+2002-8-1  DennisHayes <dennish@raytek.com>
+* Getopt.cs
+* removed, file contained only trash, not needed.
+
+
 2002-7-30  DennisHayes <dennish@raytek.com>
 
 * AccessibleNavigation.cs
