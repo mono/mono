@@ -9,6 +9,7 @@ DIRS=	\
 	System.Runtime.CompilerServices			\
 	System.Runtime.InteropServices			\
 	System.Runtime.Serialization			\
+	System.Security.Cryptography			\
 	System.Security.Permissions			\
 	System.Text					\
 	System.Threading
