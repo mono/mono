@@ -123,9 +123,9 @@ namespace System.Web
 			Flush (true);
 		}
 
-		internal void DoFilter ()
+		internal void DoFilter (bool really)
 		{
-			if (null != _Writer) 
+			if (really && null != _Writer) 
 				_Writer.FilterData (true);
 
 			filtered = true;

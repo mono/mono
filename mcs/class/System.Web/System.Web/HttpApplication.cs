@@ -454,7 +454,7 @@ namespace System.Web
 
 			public void Execute ()
 			{
-				_app.Context.Response.DoFilter ();
+				_app.Context.Response.DoFilter (true);
 			}
 
 			public bool CompletedSynchronously {
@@ -610,11 +610,11 @@ namespace System.Web
 							}
 
 							// Check if request flow is to be stopped
-							if (_app.GetLastError () != null || _app._CompleteRequest) {
-								if (_currentStateIdx >= _endRequestStateIdx)
-									break;
-
+							if ((_app.GetLastError () != null || _app._CompleteRequest) &&
+							    _currentStateIdx < _endRequestStateIdx) {
 								_currentStateIdx = _endRequestStateIdx;
+								// MS does not filter on error
+								_app._Context.Response.DoFilter (false);
 							} else if (_currentStateIdx < _endStateIdx) {
 								// Get next state handler
 								_currentStateIdx++;

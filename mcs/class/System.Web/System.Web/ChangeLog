@@ -1,3 +1,10 @@
+2003-08-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: ensure we do all the EndRequest steps. Don't
+	filter the output on error.
+	
+	* HttpResponse.cs: modified DoFilter to allow bypassing filtering.
+
 2003-08-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: when the request is completed or an
