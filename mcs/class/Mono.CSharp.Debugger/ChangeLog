@@ -1,5 +1,11 @@
 2003-02-08  Martin Baulig  <martin@ximian.com>
 
+	* MonoSymbolDocumentWriter.cs: Removed.
+
+	* MonoSymbolWriter.cs (SourceFile): Implement ISymbolDocumentWriter.
+
+2003-02-08  Martin Baulig  <martin@ximian.com>
+
 	* MonoSymbolFile.cs (GetMethodSource): New public method.
 	(FindMethod): Return the correct index.
 

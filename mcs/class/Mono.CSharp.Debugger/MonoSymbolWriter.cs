@@ -20,7 +20,7 @@ using System.IO;
 	
 namespace Mono.CSharp.Debugger
 {
-	internal class SourceFile
+	internal class SourceFile : ISymbolDocumentWriter
 	{
 		private ArrayList _methods = new ArrayList ();
 		private string _file_name;
@@ -52,6 +52,16 @@ namespace Mono.CSharp.Debugger
 		public void AddMethod (SourceMethod method)
 		{
 			_methods.Add (method);
+		}
+
+		void ISymbolDocumentWriter.SetCheckSum (Guid algorithmId, byte[] checkSum)
+		{
+			throw new NotSupportedException ();
+		}
+
+		void ISymbolDocumentWriter.SetSource (byte[] source)
+		{
+			throw new NotSupportedException ();
 		}
 	}
 
@@ -387,7 +397,9 @@ namespace Mono.CSharp.Debugger
 							     Guid languageVendor,
 							     Guid documentType)
 		{
-			return new MonoSymbolDocumentWriter (url);
+			SourceFile source_info = new SourceFile (url);
+			sources.Add (url, source_info);
+			return source_info;
 		}
 
 		public void DefineField (
@@ -491,26 +503,15 @@ namespace Mono.CSharp.Debugger
 		{
 			if (current_method == null)
 				return;
-
 			if ((startDoc == null) || (endDoc == null))
 				throw new NullReferenceException ();
-
-			if (!(startDoc is MonoSymbolDocumentWriter) || !(endDoc is MonoSymbolDocumentWriter))
-				throw new NotSupportedException ("both startDoc and endDoc must be of type "
-								 + "MonoSymbolDocumentWriter");
-
+			if (!(startDoc is SourceFile) || !(endDoc is SourceFile))
+				throw new ArgumentException ("both startDoc and endDoc must be created " +
+							     "with DefineDocument()");
 			if (!startDoc.Equals (endDoc))
-				throw new NotSupportedException ("startDoc and endDoc must be the same");
+				throw new ArgumentException ("startDoc and endDoc must be the same");
 
-			string source_file = ((MonoSymbolDocumentWriter) startDoc).FileName;
-			SourceFile source_info;
-
-			if (sources.ContainsKey (source_file))
-				source_info = (SourceFile) sources [source_file];
-			else {
-				source_info = new SourceFile (source_file);
-				sources.Add (source_file, source_info);
-			}
+			SourceFile source_info = (SourceFile) startDoc;
 
 			current_method.SetSourceRange (source_info, startLine, startColumn,
 						       endLine, endColumn);
