@@ -83,6 +83,7 @@ System.Runtime.Serialization/FormatterServicesTests.cs
 System.Runtime.Serialization/ObjectIDGeneratorTests.cs
 System.Runtime.Serialization/SerializationTest.cs
 System/SByteTest.cs
+System.Security/CodeAccessPermissionTest.cs
 System.Security.Cryptography/AllTests2.cs
 System.Security.Cryptography/AsymmetricAlgorithmTest.cs
 System.Security.Cryptography/CryptoConfigTest.cs
@@ -157,12 +158,17 @@ System.Security.Permissions/UrlIdentityPermissionAttributeTest.cs
 System.Security.Permissions/ZoneIdentityPermissionAttributeTest.cs
 System.Security.Policy/CodeGroupTest.cs
 System.Security.Policy/EvidenceTest.cs
+System.Security.Policy/FileCodeGroupTest.cs 
+System.Security.Policy/FirstMatchCodeGroupTest.cs 
+System.Security.Policy/NetCodeGroupTest.cs 
 System.Security.Policy/PermissionRequestEvidenceTest.cs 
+System.Security.Policy/PolicyLevelTest.cs 
 System.Security.Policy/PublisherMembershipConditionTest.cs
 System.Security.Policy/PublisherTest.cs
 System.Security.Policy/SiteMembershipConditionTest.cs
 System.Security.Policy/SiteTest.cs
 System.Security.Policy/StrongNameTest.cs
+System.Security.Policy/UnionCodeGroupTest.cs
 System.Security.Policy/ZoneTest.cs
 System.Security.Principal/GenericIdentityTest.cs
 System.Security.Principal/GenericPrincipalTest.cs
