@@ -280,9 +280,17 @@ namespace Mono.CSharp
 		static string GetSystemDir ()
 		{
 			Assembly [] assemblies = AppDomain.CurrentDomain.GetAssemblies ();
-			string s = assemblies [0].CodeBase;
-			
-			return s.Substring (0, s.LastIndexOf ("/"));
+
+			foreach (Assembly a in assemblies){
+				if (a.FullName.EndsWith ("corlib.dll")){
+					string s = a.CodeBase;
+				
+					return s.Substring (0, s.LastIndexOf ("/"));
+				}
+			}
+
+			Report.Error (-15, "Can not compute my system path");
+			return "";
 		}
 		
 		/// <summary>

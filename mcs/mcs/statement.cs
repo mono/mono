@@ -1732,7 +1732,7 @@ namespace Mono.CSharp {
 				Expression e = (Expression) p.Second;
 
 				//
-				// The rules for the possible declarators are narrow,
+				// The rules for the possible declarators are pretty wise,
 				// but the production on the grammar is more concise.
 				//
 				// So we have to enforce these rules here
@@ -1756,7 +1756,6 @@ namespace Mono.CSharp {
 					if (!TypeManager.VerifyUnManaged (e.Type, loc))
 						continue;
 
-					
 				}
 				
 				e = e.Resolve (ec);
