@@ -1,3 +1,22 @@
+
+Fri Nov 2 19:37:51 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* class.h, class.c: include name in MonoClassField.
+	* class.c: fix fundamental type of System.Object and System.String.
+	Set the right fundamental type for SZARRAY, too. Handle TypeSpec
+	tokens in ldtoken.
+	* icall.c: remove internalcalls for the Reflection stuff that is now
+	done in C# code.
+	* loader.c: mono_field_from_memberref () implementation.
+	* mono-endian.c: thinko (s/struct/union/g).
+	* object.c, object.h: make the mono_string_* prototypes actually use
+	MonoString instead of MonoObject.
+	* reflection.c, reflection.h: updates for changes in the reflection
+	code in corlib: we use C structures that map to the actual C# classes.
+	Handle SZARRAYs when encoding types. Handle locals in methods. Use a
+	fat method header if needed and use the info from the ILGenerator for
+	methods. Handle fields in types. Misc fixes.
+
 2001-10-17  Dietmar Maurer  <dietmar@ximian.com>
 
 	* class.c (mono_class_metadata_init): bug fix: always allocate

@@ -1,3 +1,9 @@
+
+Fri Nov 2 19:06:54 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: hanlde field refs. Throw an exception on NULL references.
+	Check consistency of corlib types with the C struct representation.
+
 2001-10-25  Dietmar Maurer  <dietmar@ximian.com>
 
 	* interp.c (ves_exec_method): use relative numbering for runtime
