@@ -1,4 +1,9 @@
 
+Fri Aug 23 15:54:09 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: fixes assertion failure caused by multiple ExecuteAssembly
+	calls for same domain (patch by Tomi Pakarinen <Tomi.Pakarinen@iki.fi>).
+
 Fri Aug 23 12:14:45 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* string-icalls.[ch]: make helper methods static.
