@@ -58,6 +58,22 @@ namespace Novell.Directory.Ldap.Extensions
 	public class GetReplicationFilterRequest:LdapExtendedOperation
 	{
 		
+		static GetReplicationFilterRequest() 
+		{
+			/*
+				* Register the extendedresponse class which is returned by the
+				* server in response to a ListReplicasRequest
+				*/
+			try
+			{
+				LdapExtendedResponse.register(ReplicationConstants.GET_REPLICATION_FILTER_RES, System.Type.GetType("Novell.Directory.Ldap.Extensions.GetReplicationFilterResponse"));
+			}
+			catch (System.Exception e)
+			{
+				System.Console.Error.WriteLine("Could not register Extended Response -" + " Class not found");
+			}
+		}
+
 		/// <summary> 
 		/// Constructs an extended operations object which contains the ber encoded
 		/// replication filter.

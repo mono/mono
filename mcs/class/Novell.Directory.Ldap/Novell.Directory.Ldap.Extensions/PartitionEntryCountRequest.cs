@@ -59,6 +59,22 @@ namespace Novell.Directory.Ldap.Extensions
 	/// </summary>
 	public class PartitionEntryCountRequest:LdapExtendedOperation
 	{
+
+		static PartitionEntryCountRequest() 
+		{
+			/*
+				* Register the extendedresponse class which is returned by the
+				* server in response to a ListReplicasRequest
+				*/
+			try
+			{
+				LdapExtendedResponse.register(ReplicationConstants.NAMING_CONTEXT_COUNT_RES, System.Type.GetType("Novell.Directory.Ldap.Extensions.PartitionEntryCountResponse"));
+			}
+			catch (System.Exception e)
+			{
+				System.Console.Error.WriteLine("Could not register Extended Response -" + " Class not found");
+			}
+		}
 		
 		/// <summary>  Constructs an extended operation object for counting entries
 		/// in a naming context.

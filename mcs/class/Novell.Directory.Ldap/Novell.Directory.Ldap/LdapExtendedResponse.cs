@@ -32,6 +32,7 @@
 using System;
 using Novell.Directory.Ldap.Rfc2251;
 using Novell.Directory.Ldap.Asn1;
+using RespExtensionSet = Novell.Directory.Ldap.Utilclass.RespExtensionSet;
 
 namespace Novell.Directory.Ldap
 {
@@ -61,6 +62,23 @@ namespace Novell.Directory.Ldap
 			}
 			
 		}
+
+		static LdapExtendedResponse()
+		{
+			registeredResponses = new RespExtensionSet();
+		}
+
+		public static RespExtensionSet RegisteredResponses
+		{
+			/* package */
+			
+			get
+			{
+				return registeredResponses;
+			}
+			
+		}
+
 		/// <summary> Returns the value part of the response in raw bytes.
 		/// 
 		/// </summary>
@@ -79,6 +97,7 @@ namespace Novell.Directory.Ldap
 			}
 			
 		}
+		private static RespExtensionSet registeredResponses;
 		
 		/// <summary> Creates an LdapExtendedResponse object which encapsulates
 		/// a server response to an asynchronous extended operation request.
@@ -90,5 +109,25 @@ namespace Novell.Directory.Ldap
 		public LdapExtendedResponse(RfcLdapMessage message):base(message)
 		{
 		}
+
+		/// <summary> Registers a class to be instantiated on receipt of a extendedresponse
+		/// with the given OID.
+		/// 
+		/// <p>Any previous registration for the OID is overridden. The 
+		/// extendedResponseClass object MUST be an extension of 
+		/// LDAPExtendedResponse. </p>
+		/// 
+		/// </summary>
+		/// <param name="oid">           The object identifier of the control.
+		/// </param>
+		/// <param name="extendedResponseClass"> A class which can instantiate an 
+		/// LDAPExtendedResponse.
+		/// </param>
+		public static void  register(System.String oid, System.Type extendedResponseClass)
+		{
+			registeredResponses.registerResponseExtension(oid, extendedResponseClass);
+			return ;
+		}
+
 	}
 }

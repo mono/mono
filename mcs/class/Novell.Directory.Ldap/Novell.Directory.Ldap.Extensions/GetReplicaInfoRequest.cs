@@ -60,6 +60,22 @@ namespace Novell.Directory.Ldap.Extensions
 	public class GetReplicaInfoRequest:LdapExtendedOperation
 	{
 		
+		static GetReplicaInfoRequest() 
+		{
+			/*
+				* Register the extendedresponse class which is returned by the
+				* server in response to a ListReplicasRequest
+				*/
+			try
+			{
+				LdapExtendedResponse.register(ReplicationConstants.GET_REPLICA_INFO_RES, System.Type.GetType("Novell.Directory.Ldap.Extensions.GetReplicaInfoResponse"));
+			}
+			catch (System.Exception e)
+			{
+				System.Console.Error.WriteLine("Could not register Extended Response -" + " Class not found");
+			}
+		}
+
 		/// <summary> 
 		/// Constructs an extended operations object for reading replica information.
 		/// 

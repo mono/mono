@@ -54,7 +54,22 @@ namespace Novell.Directory.Ldap.Extensions
 	/// </summary>
 	public class ListReplicasRequest:LdapExtendedOperation
 	{
-		
+		static ListReplicasRequest() 
+		{
+			/*
+				* Register the extendedresponse class which is returned by the
+				* server in response to a ListReplicasRequest
+				*/
+			try
+			{
+				LdapExtendedResponse.register(ReplicationConstants.LIST_REPLICAS_RES, System.Type.GetType("Novell.Directory.Ldap.Extensions.ListReplicasResponse"));
+			}
+			catch (System.Exception e)
+			{
+				System.Console.Error.WriteLine("Could not register Extended Response -" + " Class not found");
+			}
+		}
+
 		/// <summary>  Constructs an extended operation object for listing replicas.
 		/// 
 		/// </summary>
@@ -66,7 +81,6 @@ namespace Novell.Directory.Ldap.Extensions
 		/// </exception>
 		public ListReplicasRequest(System.String serverName):base(ReplicationConstants.LIST_REPLICAS_REQ, null)
 		{
-			
 			try
 			{
 				

@@ -56,6 +56,22 @@ namespace Novell.Directory.Ldap.Extensions
 	/// </summary>
 	public class GetBindDNRequest:LdapExtendedOperation
 	{
+
+		static GetBindDNRequest() 
+		{
+			/*
+				* Register the extendedresponse class which is returned by the
+				* server in response to a ListReplicasRequest
+				*/
+			try
+			{
+				LdapExtendedResponse.register(ReplicationConstants.GET_IDENTITY_NAME_RES, System.Type.GetType("Novell.Directory.Ldap.Extensions.GetBindDNResponse"));
+			}
+			catch (System.Exception e)
+			{
+				System.Console.Error.WriteLine("Could not register Extended Response -" + " Class not found");
+			}
+		}
 		
 		/// <summary>   Constructs an extended operation object for retrieving the bind dn.
 		/// 

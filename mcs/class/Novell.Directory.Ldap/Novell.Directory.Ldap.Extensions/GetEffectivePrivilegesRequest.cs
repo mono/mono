@@ -61,6 +61,21 @@ namespace Novell.Directory.Ldap.Extensions
 	/// </summary>
 	public class GetEffectivePrivilegesRequest:LdapExtendedOperation
 	{
+		static GetEffectivePrivilegesRequest() 
+		{
+			/*
+				* Register the extendedresponse class which is returned by the
+				* server in response to a ListReplicasRequest
+				*/
+			try
+			{
+				LdapExtendedResponse.register(ReplicationConstants.GET_EFFECTIVE_PRIVILEGES_RES, System.Type.GetType("Novell.Directory.Ldap.Extensions.GetEffectivePrivilegesResponse"));
+			}
+			catch (System.Exception e)
+			{
+				System.Console.Error.WriteLine("Could not register Extended Response -" + " Class not found");
+			}
+		}
 		
 		/// <summary> Constructs an extended operation object for checking effective rights.
 		/// 

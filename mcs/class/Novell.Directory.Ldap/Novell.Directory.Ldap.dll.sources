@@ -1,7 +1,9 @@
 Novell.Directory.Ldap/AssemblyInfo.cs
+Novell.Directory.Ldap/SupportClass.cs
 Novell.Directory.Ldap.Utilclass/Base64.cs
 Novell.Directory.Ldap.Utilclass/DN.cs
 Novell.Directory.Ldap.Utilclass/RDN.cs
+Novell.Directory.Ldap.Utilclass/RespExtensionSet.cs
 Novell.Directory.Ldap.Utilclass/BindProperties.cs
 Novell.Directory.Ldap.Utilclass/ReferralInfo.cs
 Novell.Directory.Ldap.Utilclass/ArrayEnumeration.cs
@@ -81,7 +83,6 @@ Novell.Directory.Ldap.Rfc2251/RfcLdapMessage.cs
 Novell.Directory.Ldap.Rfc2251/RfcUnbindRequest.cs
 Novell.Directory.Ldap.Rfc2251/RfcExtendedRequest.cs
 Novell.Directory.Ldap.Rfc2251/RfcExtendedResponse.cs
-Novell.Directory.Ldap/SupportClass.cs
 Novell.Directory.Ldap/LdapConnection.cs
 Novell.Directory.Ldap/LdapAuthHandler.cs
 Novell.Directory.Ldap/LdapBindHandler.cs
@@ -92,6 +93,7 @@ Novell.Directory.Ldap/LdapCompareAttrNames.cs
 Novell.Directory.Ldap/LdapCompareRequest.cs
 Novell.Directory.Ldap/LdapModification.cs
 Novell.Directory.Ldap/LdapAddRequest.cs
+Novell.Directory.Ldap/LdapDSConstants.cs
 Novell.Directory.Ldap/LdapResponseQueue.cs
 Novell.Directory.Ldap/LdapDeleteRequest.cs
 Novell.Directory.Ldap/LdapLocalException.cs
