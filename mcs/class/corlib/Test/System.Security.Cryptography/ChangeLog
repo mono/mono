@@ -1,3 +1,9 @@
+2002-10-16  Nick Drochak  <ndrochak@gol.com>
+
+	* AllTests.cs: Disable tests that use components were are excluding
+	from corlib.
+	* SHA1Test.cs: same
+
 2002-10-14  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AllTests.cs: Added suite for PKCS1MaskGenerationMethod

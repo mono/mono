@@ -40,7 +40,7 @@ public class SHA1Test : HashAlgorithmTest
 		}
 	}
 
-	public void AssertEquals (string msg, byte[] array1, byte[] array2) 
+	public new void AssertEquals (string msg, byte[] array1, byte[] array2) 
 	{
 		AllTests.AssertEquals (msg, array1, array2);
 	}
