@@ -2828,21 +2828,39 @@ selection_statement
 	; 
 
 if_statement
-	: IF OPEN_PARENS boolean_expression CLOSE_PARENS 
+	: if_statement_open if_statement_rest
+	  {
+		$$ = $2;
+	  }
+	;
+
+if_statement_open
+	: IF OPEN_PARENS 
+	  {
+	   	oob_stack.Push (lexer.Location);
+	  }
+	;
+
+if_statement_rest
+	: boolean_expression CLOSE_PARENS 
 	  embedded_statement
 	  { 
-		$$ = new If ((Expression) $3, (Statement) $5);
+		Location l = (Location) oob_stack.Pop ();
+
+		$$ = new If ((Expression) $1, (Statement) $3, l);
 
 		if (RootContext.WarningLevel >= 3){
-			if ($5 is EmptyStatement)
+			if ($3 is EmptyStatement)
 				Report.Warning (642, lexer.Location, "Possibly mistaken empty statement");
 		}
 
 	  }
-	| IF OPEN_PARENS boolean_expression CLOSE_PARENS
+	| boolean_expression CLOSE_PARENS
 	  embedded_statement ELSE embedded_statement
 	  {
-		$$ = new If ((Expression) $3, (Statement) $5, (Statement) $7);
+		Location l = (Location) oob_stack.Pop ();
+
+		$$ = new If ((Expression) $1, (Statement) $3, (Statement) $5, l);
 	  }
 	;
 
@@ -2941,12 +2959,17 @@ iteration_statement
 	;
 
 while_statement
-	: WHILE OPEN_PARENS boolean_expression CLOSE_PARENS embedded_statement
+	: WHILE OPEN_PARENS 
 	{
-		$$ = new While ((Expression) $3, (Statement) $5);
+		oob_stack.Push (lexer.Location);
+	}
+	boolean_expression CLOSE_PARENS embedded_statement
+	{
+		Location l = (Location) oob_stack.Pop ();
+		$$ = new While ((Expression) $4, (Statement) $6, l);
 	
 		if (RootContext.WarningLevel >= 3){
-			if ($5 is EmptyStatement)
+			if ($6 is EmptyStatement)
 				Report.Warning (642, lexer.Location, "Possibly mistaken empty statement");
 		}
 	}
@@ -2956,7 +2979,7 @@ do_statement
 	: DO embedded_statement 
 	  WHILE OPEN_PARENS boolean_expression CLOSE_PARENS SEMICOLON
 	  {
-		$$ = new Do ((Statement) $2, (Expression) $5);
+		$$ = new Do ((Statement) $2, (Expression) $5, lexer.Location);
 	  }
 	;
 
@@ -3011,12 +3034,15 @@ for_statement
 			
 			$3 = null;
 		} 
+		oob_stack.Push (lexer.Location);
 	  } 
 	  opt_for_condition SEMICOLON
 	  opt_for_iterator CLOSE_PARENS 
 	  embedded_statement
 	  {
-		For f = new For ((Statement) $3, (Expression) $6, (Statement) $8, (Statement) $10);
+		Location l = (Location) oob_stack.Pop ();
+
+		For f = new For ((Statement) $3, (Expression) $6, (Statement) $8, (Statement) $10, l);
 
 		if (RootContext.WarningLevel >= 3){
 			if ($10 is EmptyStatement)

@@ -27,20 +27,21 @@ namespace Mono.CSharp {
 		///    Emits a bool expression.
 		/// </remarks>
 		public static Expression EmitBoolExpression (EmitContext ec, Expression e,
-							     Label l, bool isTrue)
+							     Label target, bool isTrue, Location loc)
 		{
 			e = e.Resolve (ec);
 
 			if (e == null)
 				return null;
 
-			if (e.Type != TypeManager.bool_type)
+			if (e.Type != TypeManager.bool_type){
 				e = Expression.ConvertImplicit (ec, e, TypeManager.bool_type,
 								new Location (-1));
+			}
 
 			if (e == null){
 				Report.Error (
-					31, "Can not convert the expression to a boolean");
+					31, loc, "Can not convert the expression to a boolean");
 				return null;
 			}
 
@@ -60,14 +61,14 @@ namespace Mono.CSharp {
 
 			if (isTrue){
 				if (invert)
-					ec.ig.Emit (OpCodes.Brfalse, l);
+					ec.ig.Emit (OpCodes.Brfalse, target);
 				else
-					ec.ig.Emit (OpCodes.Brtrue, l);
+					ec.ig.Emit (OpCodes.Brtrue, target);
 			} else {
 				if (invert)
-					ec.ig.Emit (OpCodes.Brtrue, l);
+					ec.ig.Emit (OpCodes.Brtrue, target);
 				else
-					ec.ig.Emit (OpCodes.Brfalse, l);
+					ec.ig.Emit (OpCodes.Brfalse, target);
 			}
 			
 			return e;
@@ -86,20 +87,24 @@ namespace Mono.CSharp {
 		public readonly Expression  Expr;
 		public readonly Statement   TrueStatement;
 		public readonly Statement   FalseStatement;
+		Location loc;
 		
-		public If (Expression expr, Statement trueStatement)
+		public If (Expression expr, Statement trueStatement, Location l)
 		{
 			Expr = expr;
 			TrueStatement = trueStatement;
+			loc = l;
 		}
 
 		public If (Expression expr,
 			   Statement trueStatement,
-			   Statement falseStatement)
+			   Statement falseStatement,
+			   Location l)
 		{
 			Expr = expr;
 			TrueStatement = trueStatement;
 			FalseStatement = falseStatement;
+			loc = l;
 		}
 
 		public override bool Emit (EmitContext ec)
@@ -109,7 +114,7 @@ namespace Mono.CSharp {
 			Label end;
 			bool is_true_ret, is_false_ret;
 			
-			if (EmitBoolExpression (ec, Expr, false_target, false) == null)
+			if (EmitBoolExpression (ec, Expr, false_target, false, loc) == null)
 				return false;
 			
 			is_true_ret = TrueStatement.Emit (ec);
@@ -141,11 +146,13 @@ namespace Mono.CSharp {
 	public class Do : Statement {
 		public readonly Expression Expr;
 		public readonly Statement  EmbeddedStatement;
+		Location loc;
 		
-		public Do (Statement statement, Expression boolExpr)
+		public Do (Statement statement, Expression boolExpr, Location l)
 		{
 			Expr = boolExpr;
 			EmbeddedStatement = statement;
+			loc = l;
 		}
 
 		public override bool Emit (EmitContext ec)
@@ -164,7 +171,7 @@ namespace Mono.CSharp {
 			ig.MarkLabel (loop);
 			EmbeddedStatement.Emit (ec);
 			ig.MarkLabel (ec.LoopBegin);
-			e = EmitBoolExpression (ec, Expr, loop, true);
+			e = EmitBoolExpression (ec, Expr, loop, true, loc);
 			ig.MarkLabel (ec.LoopEnd);
 
 			ec.LoopBegin = old_begin;
@@ -188,11 +195,13 @@ namespace Mono.CSharp {
 	public class While : Statement {
 		public readonly Expression Expr;
 		public readonly Statement Statement;
+		Location loc;
 		
-		public While (Expression boolExpr, Statement statement)
+		public While (Expression boolExpr, Statement statement, Location l)
 		{
 			Expr = boolExpr;
 			Statement = statement;
+			loc = l;
 		}
 
 		public override bool Emit (EmitContext ec)
@@ -208,7 +217,7 @@ namespace Mono.CSharp {
 			ec.InLoop = true;
 			
 			ig.MarkLabel (ec.LoopBegin);
-			e = EmitBoolExpression (ec, Expr, ec.LoopEnd, false);
+			e = EmitBoolExpression (ec, Expr, ec.LoopEnd, false, loc);
 			Statement.Emit (ec);
 			ig.Emit (OpCodes.Br, ec.LoopBegin);
 			ig.MarkLabel (ec.LoopEnd);
@@ -235,16 +244,19 @@ namespace Mono.CSharp {
 		public readonly Expression Test;
 		public readonly Statement Increment;
 		public readonly Statement Statement;
+		Location loc;
 		
 		public For (Statement initStatement,
 			    Expression test,
 			    Statement increment,
-			    Statement statement)
+			    Statement statement,
+			    Location l)
 		{
 			InitStatement = initStatement;
 			Test = test;
 			Increment = increment;
 			Statement = statement;
+			loc = l;
 		}
 
 		public override bool Emit (EmitContext ec)
@@ -271,7 +283,7 @@ namespace Mono.CSharp {
 			// an infinite loop
 			//
 			if (Test != null)
-				e = EmitBoolExpression (ec, Test, ec.LoopEnd, false);
+				e = EmitBoolExpression (ec, Test, ec.LoopEnd, false, loc);
 		
 			Statement.Emit (ec);
 			ig.MarkLabel (ec.LoopBegin);

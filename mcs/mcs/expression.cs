@@ -1602,6 +1602,7 @@ namespace Mono.CSharp {
 				method = Invocation.OverloadResolve (ec, union, Arguments, loc);
 				if (method != null) {
 					MethodInfo mi = (MethodInfo) method;
+
 					type = mi.ReturnType;
 					return this;
 				} else {
@@ -1879,9 +1880,6 @@ namespace Mono.CSharp {
 			object l = ((Constant) left).GetValue ();
 			object r = ((Constant) right).GetValue ();
 			
-			if (l is string && r is string)
-				return new StringConstant ((string) l + (string) r);
-
 			Type result_type = null;
 
 			//
@@ -1915,6 +1913,11 @@ namespace Mono.CSharp {
 					else
 						return new EnumConstant (v, result_type);
 				}
+				break;
+
+			case Operator.Addition:
+				if (l is string && r is string)
+					return new StringConstant ((string) l + (string) r);
 				break;
 			}
 					

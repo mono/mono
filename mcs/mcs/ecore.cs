@@ -2473,7 +2473,6 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			Console.WriteLine ("Emitting boxed");
 			base.Emit (ec);
 			
 			ec.ig.Emit (OpCodes.Box, child.Type);

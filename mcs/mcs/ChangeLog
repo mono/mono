@@ -1,5 +1,15 @@
 2002-02-26  Miguel de Icaza  <miguel@ximian.com>
 
+	* cs-parser.jay (if_statement): Rewrote so that we can track the
+	location for the if statement.
+
+	* expression.cs (Binary.ConstantFold): Only concat strings when
+	the operation is "+", not everything ;-)
+
+	* statement.cs (Statement.EmitBoolExpression): Take a location
+	argument. 
+	(If, While, Do): Track location.
+
 	* expression.cs (Binary.ResolveOperator): In the object + string
 	case, I was missing a call to ConvertImplicit
 
