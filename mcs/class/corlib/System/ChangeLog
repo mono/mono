@@ -1,3 +1,8 @@
+2002-03-04  Nick Drochak  <ndrochak@gol.com>
+
+	* IServiceProvider.cs: Add missing attribute: ComVisible(false)
+	* Attribute.cs: Add missing attributes: Serializable and
+	AttributeUsage(AttributeTargets.All)
 
 Mon Mar 4 11:26:49 CET 2002 Paolo Molaro <lupus@ximian.com>
 

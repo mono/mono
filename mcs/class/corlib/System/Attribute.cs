@@ -13,6 +13,8 @@ using System.Globalization;
 
 namespace System {
 
+	[AttributeUsage(AttributeTargets.All)]
+	[Serializable]
 	public abstract class Attribute {
 
 		protected Attribute ()
