@@ -1,3 +1,7 @@
+2005-02-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* inssel-x86.brg (reg): Align the allocation size in the localloc(imm) case too.
+
 2005-01-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.h mini.c exceptions-x86.c tramp-x86.c: Port global codeman
