@@ -24,7 +24,7 @@ namespace LearnToCreateSqlDataReader
 			object obj = null;
 
 			switch(oid) {
-			case 1023: // varchar
+			case 1043: // varchar
 				Console.WriteLine("oid 1023 varchar ==> String found");
 				obj = (object) String.Copy(value); // String
 				break;
@@ -61,6 +61,36 @@ namespace LearnToCreateSqlDataReader
 
 			return obj;
 		}
+
+		public static Type OidToType (int oid) {
+			Type typ = null;
+
+			switch(oid) {
+			case 1043: // varchar
+			case 25: // text
+			case 18: // char
+				typ = typeof(String);
+				break;
+			case 16: // bool
+				typ = typeof(Boolean);
+				break;
+			case 21: // int2
+				typ = typeof(Int16);
+				break;
+			case 23: // int4
+				typ = typeof(Int32);
+				break;
+			case 20: // int8
+				typ = typeof(Int64);
+				break;
+			default:
+				throw new NotImplementedException(
+					"PGNI2: PostgreSQL oid type " + oid +
+					" not mapped to .NET System Type.");
+			}
+			return typ;
+		}
+
 	}
 
 	sealed public class PostgresLibrary {
@@ -93,6 +123,7 @@ namespace LearnToCreateSqlDataReader
 			PGRES_NONFATAL_ERROR,
 			PGRES_FATAL_ERROR
 		}
+
 
 		[DllImport("pq")]
 		public static extern string PQerrorMessage (IntPtr conn);
@@ -525,6 +556,20 @@ namespace LearnToCreateSqlDataReader
 			Test();
 
 			TestExecuteScalar();
+
+			Type t;
+			int oid;
+
+			oid = 1043;
+			t = PostgresHelper.OidToType(oid); // varchar ==> String
+			Console.WriteLine("OidToType varchar oid: " + oid +
+				" ==> t: " + t.ToString());
+
+			oid = 23;
+			t = PostgresHelper.OidToType(oid);  // int4 ==> Int32
+			Console.WriteLine("OidToType int4 oid: " + oid +
+				" ==> t: " + t.ToString());
+
 		}
 	}
 }

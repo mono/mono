@@ -57,7 +57,13 @@ namespace System.Data.SqlClient
 
 	sealed internal class PostgresHelper {
 
-		public static object OidTypeToSystem (int oid, String value) {
+		/// <summary>
+		/// Convert a PostgreSQL Type to a .NET System type.
+		/// </summary>
+		/// <param name="oid"></param>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		public static object ConvertPgTypeToSystem (int oid, String value) {
 			object obj = null;
 
 			// FIXME: more types need 
@@ -66,10 +72,10 @@ namespace System.Data.SqlClient
 			//        to .NET System.<type>
 
 			switch(oid) {
-			case 1023: // varchar
+			case 1043: // varchar
 			case 25: // text
 			case 18: // char
-				obj = (object) value; // String
+				obj = (object) String.Copy(value); 
 				break;
 			case 16: // bool
 				obj = (object) Boolean.Parse(value);
@@ -83,11 +89,53 @@ namespace System.Data.SqlClient
 			case 20: // int8
 				obj = (object) Int64.Parse(value);
 				break;
+			default:
+				throw new NotImplementedException(
+					"PGNI1: PostgreSQL oid data type " + oid +
+					" not mapped to .NET System data type.");
 			}
 
 			return obj;
 		}
+		
+		/// <summary>
+		/// Convert the PostgreSQL Type oid to the .NET System.Type.
+		/// </summary>
+		/// <param name="oid"></param>
+		/// <returns></returns>
+		public static Type OidToType (int oid) {
+			// FIXME: more types need 
+			//        to be mapped
+			//        from PostgreSQL oid type
+			//        to .NET System.<type>
 
+			Type typ = null;
+
+			switch(oid) {
+			case 1043: // varchar
+			case 25: // text
+			case 18: // char
+				typ = typeof(String);
+				break;
+			case 16: // bool
+				typ = typeof(Boolean);
+				break;
+			case 21: // int2
+				typ = typeof(Int16);
+				break;
+			case 23: // int4
+				typ = typeof(Int32);
+				break;
+			case 20: // int8
+				typ = typeof(Int64);
+				break;
+			default:
+				throw new NotImplementedException(
+					"PGNI2: PostgreSQL oid type " + oid +
+					" not mapped to .NET System Type.");
+			}
+			return typ;
+		}
 	}
 
 	sealed internal class PostgresLibrary

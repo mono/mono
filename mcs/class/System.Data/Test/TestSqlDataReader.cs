@@ -35,7 +35,7 @@ namespace TestSystemDataSqlClient
 				"user=danmorg;" +
 				"password=viewsonic";
 
-			sql = 	"select tid, tdesc " + 
+			sql = 	"select tid, tdesc, aint4 " + 
 				"from sometable";
 			
 			con = new SqlConnection(connectionString);
@@ -46,15 +46,38 @@ namespace TestSystemDataSqlClient
 
 			cmd = new SqlCommand(sql, con);
 			rdr = cmd.ExecuteReader();
+
+                        // get the DataTable that holds
+			// the schema
+			DataTable dt = rdr.GetSchemaTable();
 			
-			// rdr.GetInt32(0)  
-			// rdr.GetString(1)
-			while(rdr.Read()) {
-				Console.WriteLine(
-					rdr["fname"].ToString() + 
-					", " + 
-					rdr["lname"].ToString());
+			// number of columns in the table
+			Console.WriteLine("dt.Columns.Count: " +
+				dt.Columns.Count);
+
+			// display the schema
+			for(int c = 0; c < dt.Columns.Count; c++) {
+				Console.WriteLine("* Column Name: " + 
+					dt.Columns[c].ColumnName);
+				Console.WriteLine("         MaxLength: " +
+					dt.Columns[c].MaxLength);
+				Console.WriteLine("         Type: " +
+					dt.Columns[c].DataType);
 			}
+
+			// Read and display the rows
+			while(rdr.Read()) {
+				Console.WriteLine("Row: " +
+					rdr["tid"].ToString() + ", " + 
+					rdr["tdesc"].ToString() + ", " + 
+					rdr["aint4"].ToString()
+					);
+
+				Console.WriteLine("1:" + rdr.GetString(0));
+				Console.WriteLine("1:" + rdr.GetString(1));
+				Console.WriteLine("2:" + rdr.GetInt32(2));
+			}
+			
 			rdr.Close();
 			con.Close();
 		}

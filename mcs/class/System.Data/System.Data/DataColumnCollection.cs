@@ -18,9 +18,6 @@ namespace System.Data
 	/// </summary>
 	public class DataColumnCollection : InternalDataCollectionBase
 	{
-
-		protected new ArrayList list = null;
-		
 		// The defaultNameIndex is used to create a default name for a column if one wasn't given.
 		private int defaultNameIndex;
 
@@ -30,7 +27,6 @@ namespace System.Data
 		// Internal Constructor.  This Class can only be created from other classes in this assembly.
 		internal DataColumnCollection(DataTable table):base()
 		{
-			list = new ArrayList();
 			defaultNameIndex = 1;
 			parentTable = table;
 		}
@@ -44,7 +40,7 @@ namespace System.Data
 		{
 			get
 			{
-				return (DataColumn)list[index];
+				return (DataColumn) base.List[index];
 			}
 		}
 
@@ -55,7 +51,7 @@ namespace System.Data
 		{
 			get
 			{
-				foreach (DataColumn column in list)
+				foreach (DataColumn column in base.List)
 				{
 					if (column.ColumnName == name)
 					{
@@ -76,7 +72,7 @@ namespace System.Data
 		{
 			get
 			{
-				return list;
+				return base.List;
 			}
 		}
 
@@ -88,7 +84,7 @@ namespace System.Data
 		{
 			DataColumn column = new DataColumn("Column" + defaultNameIndex.ToString());
 			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
-			list.Add(column);
+			base.List.Add(column);
 			OnCollectionChanged(e);
 			defaultNameIndex++;
 			return column;
@@ -107,7 +103,7 @@ namespace System.Data
 			else
 			{
 				CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
-				list.Add(column);
+				base.List.Add(column);
 				OnCollectionChanged(e);
 				return;
 			}
@@ -136,7 +132,7 @@ namespace System.Data
 				DataColumn column = new DataColumn(columnName);
 				
 				CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
-				list.Add(column);
+				base.List.Add(column);
 				OnCollectionChanged(e);
 				return column;
 			}
@@ -164,7 +160,7 @@ namespace System.Data
 			{
 				DataColumn column = new DataColumn(columnName, type);
 				CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
-				list.Add(column);
+				base.List.Add(column);
 				OnCollectionChanged(e);
 				return column;
 			}
@@ -193,7 +189,7 @@ namespace System.Data
 			{
 				DataColumn column = new DataColumn(columnName, type, expression);
 				CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
-				list.Add(column);
+				base.List.Add(column);
 				OnCollectionChanged(e);
 				return column;
 			}
@@ -278,7 +274,7 @@ namespace System.Data
 			
 			//Check if another column's expression depends on this column.
 			
-			foreach (DataColumn dataColumn in list)
+			foreach (DataColumn dataColumn in List)
 			{
 				if (dataColumn.Expression.ToString().IndexOf(column.ColumnName) > 0)
 				{
@@ -296,7 +292,7 @@ namespace System.Data
 		public void Clear()
 		{
 			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Refresh, this);
-			list.Clear();
+			base.List.Clear();
 			OnCollectionChanged(e);
 			return;
 		}
@@ -318,7 +314,7 @@ namespace System.Data
 		/// <returns>The index of the column specified by column if it is found; otherwise, -1.</returns>
 		public virtual int IndexOf(DataColumn column)
 		{
-			return list.IndexOf(column);
+			return base.List.IndexOf(column);
 		}
 
 		/// <summary>
@@ -374,7 +370,7 @@ namespace System.Data
 		public void Remove(DataColumn column)
 		{
 			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Remove, this);
-			list.Remove(column);
+			base.List.Remove(column);
 			OnCollectionChanged(e);
 			return;
 		}
@@ -387,7 +383,7 @@ namespace System.Data
 		{
 			DataColumn column = this[name];
 			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Remove, this);
-			list.Remove(column);
+			base.List.Remove(column);
 			OnCollectionChanged(e);
 			return;
 		}
@@ -399,7 +395,7 @@ namespace System.Data
 		public void RemoveAt(int index)
 		{
 			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Remove, this);
-			list.RemoveAt(index);
+			base.List.RemoveAt(index);
 			OnCollectionChanged(e);
 			return;
 		}

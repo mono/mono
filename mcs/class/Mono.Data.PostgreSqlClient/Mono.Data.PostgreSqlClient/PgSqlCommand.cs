@@ -158,7 +158,7 @@ namespace System.Data.SqlClient
 		[MonoTODO]
 		SqlDataReader ExecuteReader ()
 		{
-			throw new NotImplementedException ();	
+			return ExecuteReader(CommandBehavior.Default);
 		}
 
 		[MonoTODO]
@@ -171,7 +171,104 @@ namespace System.Data.SqlClient
 		[MonoTODO]
 		public SqlDataReader ExecuteReader (CommandBehavior behavior)
 		{
-			throw new NotImplementedException ();
+			// FIXME: currently only works for a 
+			//        single result set
+			//        ExecuteReader can be used 
+			//        for multiple result sets
+			SqlDataReader dataReader = null;
+			
+			IntPtr pgResult; // PGresult
+			ExecStatusType execStatus;	
+
+			if(conn.State != ConnectionState.Open)
+				throw new InvalidOperationException(
+					"ConnnectionState is not Open");
+
+			// FIXME: PQexec blocks 
+			// while PQsendQuery is non-blocking
+			// which is better to use?
+			// int PQsendQuery(PGconn *conn,
+			//        const char *query);
+
+			// execute SQL command
+			// uses internal property to get the PGConn IntPtr
+			pgResult = PostgresLibrary.
+				PQexec (conn.PostgresConnection, sql);
+
+			execStatus = PostgresLibrary.
+				PQresultStatus (pgResult);
+			
+			if(execStatus == ExecStatusType.PGRES_TUPLES_OK) {
+				DataTable dt = null;
+				int rows, cols;
+				int[] oids;
+				
+				// FIXME: maybe i should move the
+				//        BuildTableSchema code
+				//        to the SqlDataReader?
+				dt = BuildTableSchema(pgResult, 
+					out rows, out cols, out oids);
+				dataReader = new SqlDataReader(this, dt, pgResult,
+					rows, cols, oids);
+			}
+			else {
+				String errorMessage;
+				
+				errorMessage = PostgresLibrary.
+					PQresStatus(execStatus);
+
+				errorMessage += " " + PostgresLibrary.
+					PQresultErrorMessage(pgResult);
+				
+				throw new SqlException(0, 0,
+					errorMessage, 0, "",
+					conn.DataSource, "SqlCommand", 0);
+			}
+					
+			return dataReader;
+		}
+
+		internal DataTable BuildTableSchema (IntPtr pgResult, 
+					out int nRows, 
+					out int nFields, 
+					out int[] oids) {
+
+			int nCol;
+			
+			DataTable dt = new DataTable();
+
+			nRows = PostgresLibrary.
+				PQntuples(pgResult);
+
+			nFields = PostgresLibrary.
+				PQnfields(pgResult);
+			
+			oids = new int[nFields];
+
+			for(nCol = 0; nCol < nFields; nCol++) {						
+				// get column name
+				String fieldName;
+				fieldName = PostgresLibrary.
+					PQfname(pgResult, nCol);
+
+				// get PostgreSQL data type (OID)
+				oids[nCol] = PostgresLibrary.
+					PQftype(pgResult, nCol);
+
+				int definedSize;
+				// get defined size of column
+				definedSize = PostgresLibrary.
+					PQfsize(pgResult, nCol);
+								
+				// build the data column and add it the table
+				DataColumn dc = new DataColumn(fieldName);
+				dc.DataType = PostgresHelper.OidToType(oids[nCol]);
+				dc.MaxLength = definedSize;
+				dc.SetTable(dt);
+				
+				dt.Columns.Add(dc);
+			}
+			return dt;
 		}
 
 		[MonoTODO]
@@ -247,7 +344,7 @@ namespace System.Data.SqlClient
 						nRow, nCol);
 						
 					obj = PostgresHelper.
-						OidTypeToSystem (oid, value);
+						ConvertPgTypeToSystem (oid, value);
 				}
 
 				// close result set

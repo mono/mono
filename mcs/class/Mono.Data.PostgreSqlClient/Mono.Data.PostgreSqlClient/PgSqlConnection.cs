@@ -74,8 +74,12 @@ namespace System.Data.SqlClient
 		// support SSL. Set to 0 (default) to 
 		// negotiate with server. 
 
-		ConnectionState conState = ConnectionState.Closed;
-
+		private ConnectionState conState = ConnectionState.Closed;
+		private bool dataReaderOpen = false;
+		// FIXME: if true, throw an exception if SqlConnection 
+		//        is used used for anything other than reading
+		//        data using SqlDataReader
+		
 		#endregion // Fields
 
 		#region Constructors

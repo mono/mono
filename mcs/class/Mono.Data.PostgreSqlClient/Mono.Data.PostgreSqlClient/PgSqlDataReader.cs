@@ -26,22 +26,52 @@ namespace System.Data.SqlClient
 	{
 		#region Fields
 
-		private DataTable table = null;
+		private SqlCommand cmd;
+		private DataTable table;
+
+		private object[] fields;
+		private int[] oid; // PostgreSQL Type
+				
+		private bool open = false;
+		IntPtr pgResult; // PGresult
+		private int rows;
+		private int cols;
+
+		private int currentRow = -1; // no Read() has been done yet
 
 		#endregion // Fields
+
+		#region Constructors
+
+		internal SqlDataReader (SqlCommand sqlCmd, 
+			DataTable dataTableSchema, IntPtr pg_result,
+			int rowCount, int fieldCount, int[] oids) {
+
+			cmd = sqlCmd;
+			table = dataTableSchema;
+			pgResult = pg_result;
+			rows = rowCount;
+			cols = fieldCount;
+			oid = oids;
+		}
+
+		#endregion
 
 		#region Public Methods
 
 		[MonoTODO]
 		public void Close()
 		{
-			throw new NotImplementedException ();
+			// close result set
+			PostgresLibrary.PQclear (pgResult);
+
+			// TODO: change busy state on SqlConnection to not busy
 		}
 
 		[MonoTODO]
 		public DataTable GetSchemaTable()
 		{
-			throw new NotImplementedException ();
+			return table;
 		}
 
 		[MonoTODO]
@@ -53,7 +83,38 @@ namespace System.Data.SqlClient
 		[MonoTODO]
 		public bool Read()
 	        {
-			throw new NotImplementedException ();
+			string value;
+			fields = new object[cols]; // re-init row
+
+			if(currentRow < rows - 1)  {
+				currentRow++;
+				int c;
+				for(c = 0; c < cols; c++) {
+
+					// get data value
+					value = PostgresLibrary.
+						PQgetvalue(
+						pgResult,
+						currentRow, c);
+
+					int columnIsNull;
+					// is column NULL?
+					columnIsNull = PostgresLibrary.
+						PQgetisnull(pgResult,
+						currentRow, c);
+
+					int actualLength;
+					// get Actual Length
+					actualLength = PostgresLibrary.
+						PQgetlength(pgResult,
+						currentRow, c);
+						
+					fields[c] = PostgresHelper.
+						ConvertPgTypeToSystem (oid[c], value);
+				}
+				return true;
+			}
+			return false; // EOF
 		}
 
 		[MonoTODO]
@@ -135,25 +196,25 @@ namespace System.Data.SqlClient
 		[MonoTODO]
 		public short GetInt16(int i)
 		{
-			throw new NotImplementedException ();
+			return (short) fields[i];
 		}
 
 		[MonoTODO]
 		public int GetInt32(int i)
 		{
-			throw new NotImplementedException ();
+			return (int) fields[i];
 		}
 
 		[MonoTODO]
 		public long GetInt64(int i)
 		{
-			throw new NotImplementedException ();
+			return (long) fields[i];
 		}
 
 		[MonoTODO]
 		public string GetName(int i)
 		{
-			throw new NotImplementedException ();
+			return table.Columns[i].ColumnName;
 		}
 
 		[MonoTODO]
@@ -165,13 +226,13 @@ namespace System.Data.SqlClient
 		[MonoTODO]
 		public string GetString(int i)
 		{
-			throw new NotImplementedException ();
+			return (string) fields[i];
 		}
 
 		[MonoTODO]
 		public object GetValue(int i)
 		{
-			throw new NotImplementedException ();
+			return fields[i];
 		}
 
 		[MonoTODO]
@@ -237,14 +298,35 @@ namespace System.Data.SqlClient
 		public int FieldCount {
 			[MonoTODO]
 			get { 
-				throw new NotImplementedException ();
+				return cols;
 			}
 		}
 
 		public object this[string name] {
 			[MonoTODO]
 			get { 
-				throw new NotImplementedException ();
+				int i;
+				for(i = 0; i < cols; i ++) {
+					if(table.Columns[i].ColumnName.Equals(name)) {
+						return fields[i];
+					}
+
+				}
+				
+				if(i == cols) {
+					for(i = 0; i < cols; i++) {
+						string ta;
+						string n;
+						
+						ta = table.Columns[i].ColumnName.ToUpper();
+						n = name.ToUpper();
+						
+						if(ta.Equals(n)) {
+							return fields[i];
+						}
+					}
+				}
+				throw new MissingFieldException("Missing field: " + name);
 			}
 		}
 
@@ -252,7 +334,7 @@ namespace System.Data.SqlClient
 			[MonoTODO]
 			get 
 			{ 
-				throw new NotImplementedException ();
+				return fields[i];
 			}
 		}
 

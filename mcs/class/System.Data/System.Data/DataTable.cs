@@ -49,8 +49,6 @@ namespace System.Data
 		private bool _containsListCollection;
 		private string _encodedTableName;
 		
-		
-		
 		/// <summary>
 		/// Initializes a new instance of the DataTable class with no arguments.
 		/// </summary>
@@ -582,7 +580,8 @@ namespace System.Data
 		/// </summary>
 		public DataRow NewRow()
 		{
-			DataRow dataRow = null;
+			DataRow dataRow = new DataRow();
+			dataRow.SetTable(this);
 			return dataRow;
 		}
 

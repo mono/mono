@@ -55,7 +55,6 @@ namespace System.Data
 		public DataColumn(string columnName): this()
 		{
 			ColumnName = columnName;
-			Caption = columnName;
 		}
 
 		public DataColumn(string columnName, Type dataType): this(columnName)

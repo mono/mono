@@ -1,3 +1,39 @@
+2002-05-03  Daniel Morgan <danmorg@sc.rr.com>
+
+	* Test/TestExecuteScalar.cs: added test for 
+	method ExecuteScalar in class SqlCommand.
+	
+	* System.Data/DataColumnCollection.cs - it should
+	inherit properties from base InternalDataCollectionBase
+	and use them instead of overriding them, such as, List.
+	
+	* System.Data/DataColumn.cs
+	* System.Data/DataTable.cs: tweaks to retrieve
+	meta data from the database
+	
+	* System.Data.SqlClient/PostgresLibrary.cs -
+	added method OidToType to convert PostgreSQL oid type 
+	to System.Type.  Renamed method OidTypeToSystem
+	to ConvertPgTypeToSystem for converting the data value
+	from a PostgreSQL type to a .NET System type.
+	
+	* System.Data.SqlClient/SqlCommand.cs: implemented
+	method ExecuteReader which returns a SqlDataReader
+	for a light forward only read only result set. 
+	It works on types int4 ==> Int32 and 
+	varchar ==> String.  Other types
+	will come later.
+	
+	* System.Data.SqlClient/SqlConnection.cs: added comment
+	
+	* System.Data.SqlClient/SqlDataReader.cs: implemented
+	class.  It works, but still lots to do.
+	
+	* Test/ReadPostgresData.cs: stuff
+	
+	* Test/TestSqlDataReader.cs: updated test for SqlDataReader
+	to display meta data and the data
+	
 2002-05-03  Duncan Mak  <duncan@ximian.com>
 
 	* TODO: Took out all the Exceptions. They should be all done now.
