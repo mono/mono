@@ -13,5 +13,6 @@ namespace System.Web.Services {
 	[AttributeUsage(AttributeTargets.All)]
 	internal sealed class WebServicesDescriptionAttribute : DescriptionAttribute 
 	{
+		public WebServicesDescriptionAttribute (string s) {}
 	}
 }

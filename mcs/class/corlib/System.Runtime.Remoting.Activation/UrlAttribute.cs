@@ -39,7 +39,7 @@ namespace System.Runtime.Remoting.Activation {
 		}
 
 		[MonoTODO]
-		public override void GetPropertiesForNewContexts (IConstructionCallMessage ctorMsg)
+		public override void GetPropertiesForNewContext (IConstructionCallMessage ctorMsg)
 		{
 			throw new NotImplementedException ();
 		}
