@@ -55,7 +55,6 @@ namespace System.Xml.Schema
 			}
 		}
 
-		[MonoTODO]
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
@@ -66,7 +65,6 @@ namespace System.Xml.Schema
 			return 0;
 		}
 		
-		[MonoTODO]
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			return 0;

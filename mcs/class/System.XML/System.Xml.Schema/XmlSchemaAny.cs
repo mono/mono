@@ -101,7 +101,6 @@ namespace System.Xml.Schema
 		///		a) ##any or ##other
 		///		b) list of anyURI and ##targetNamespace and ##local
 		/// </remarks>
-		[MonoTODO]
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
@@ -127,7 +126,6 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 		
-		[MonoTODO]
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			return errorCount;

@@ -1,3 +1,10 @@
+2003-12-07  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* BuiltInDatatype.cs : XsdDecimal and XsdInteger defaults whitespace
+	  facet as collapse (patch by David Sheldon).
+	* XmlSchemaAnnotations.cs, XmlSchemaAny.cs : No more MonoTODOs ;-)
+	* XmlSchemaSequence.cs : MapAndSum implementation.
+
 2003-11-17  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* XmlSchemaSet.cs, XmlSchemaBuiltInType.cs : Added .NET 1.2 classes

@@ -425,6 +425,7 @@ namespace Mono.Xml.Schema
 	{
 		internal XsdDecimal ()
 		{
+			this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
 		}
 
 		public override XmlTokenizedType TokenizedType {

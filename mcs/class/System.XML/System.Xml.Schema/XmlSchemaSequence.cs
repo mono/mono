@@ -147,7 +147,9 @@ namespace System.Xml.Schema
 				ValidateNSRecurseCheckCardinality (any, h, schema);
 				return;
 			} else if (choice != null) {
-				// TODO: MapAndSum
+				// MapAndSum
+				// In fact it is not Recurse, but it looks common.
+				ValidateRecurse (choice, h, schema);
 			}
 		}
 
