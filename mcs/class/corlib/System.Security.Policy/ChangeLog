@@ -1,3 +1,8 @@
+2005-04-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Hash.cs: Added Assert for FileIOPermission to GetData so it's 
+	possible to get the Hash evidence under partial trust.
+
 2005-04-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Evidence.cs: Build the default host evidences requires access to the
