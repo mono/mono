@@ -1,4 +1,9 @@
 
+Tue Sep 25 18:54:06 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* File.cs: fix signatures of the Open() and OpenRead() functions
+	(they are static).
+
 Thu Sep 13 18:04:23 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* FileLoadException.cs, FileNotFoundException.cs: added.

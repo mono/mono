@@ -19,6 +19,8 @@ namespace System {
 	
 	public abstract class Type : MemberInfo /* IReflect */ {
 
+		private RuntimeTypeHandle _handle;
+
 		/// <summary>
 		///   The assembly where the type is defined.
 		/// </summary>
@@ -85,6 +87,11 @@ namespace System {
 		public abstract string FullName {
 			get;
 		}
+
+		public static Type GetType(string typeName) {
+			return null;
+		}
+
 
 		public Type GetTypeFromHandle (RuntimeTypeHandle handle) { 
 			

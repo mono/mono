@@ -331,8 +331,8 @@ namespace System.Collections {
 					("Collection is fixed size.");
 			}
 
-			if (index < 0 || index >= count) {
-				throw new ArgumentOutOfRangeException ("index < 0 or index >= count");
+			if (index < 0 || index >= capacity) {
+				throw new ArgumentOutOfRangeException ("index < 0 or index >= capacity");
 			}
 
 			shiftElements (index, 1);

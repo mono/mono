@@ -117,7 +117,7 @@ namespace System.IO
 		/// <summary>
 		/// Open a file for exclusive reading and writing
 		/// </summary>
-		public FileStream Open(string path, FileMode mode)
+		public static FileStream Open(string path, FileMode mode)
 		{	// TODO: research if exclusive is the correct default
 			return getInfo(path).Open(mode, FileAccess.ReadWrite);
 		}
@@ -125,7 +125,7 @@ namespace System.IO
 		/// <summary>
 		/// Open a file for exclusive access specified by mode
 		/// </summary>
-		public FileStream Open(string path, FileMode mode, FileAccess access)
+		public static FileStream Open(string path, FileMode mode, FileAccess access)
 		{	// TODO: research if exclusive is the correct default
 			return getInfo(path).Open(mode, access, FileShare.None);
 		}
@@ -133,7 +133,7 @@ namespace System.IO
 		/// <summary>
 		/// Open a file access specified by mode, sharing specified by share
 		/// </summary>
-		public FileStream Open(string path, FileMode mode, FileAccess access, FileShare share)
+		public static FileStream Open(string path, FileMode mode, FileAccess access, FileShare share)
 		{
 			return getInfo(path).Open(mode, access, share);
 		}
@@ -141,7 +141,7 @@ namespace System.IO
 		/// <summary>
 		/// Open a FileStream for reading and writing
 		/// </summary>
-		public FileStream OpenRead(string path)
+		public static FileStream OpenRead(string path)
 		{	// TODO: find out what default share should be
 			return getInfo(path).OpenRead();
 		}
