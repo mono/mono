@@ -31,7 +31,8 @@ namespace Mono.CSharp {
 	
 	public class Yield : Statement {
 		public Expression expr;
-
+		bool in_exc;
+		
 		public Yield (Expression expr, Location l)
 		{
 			this.expr = expr;
@@ -67,7 +68,7 @@ namespace Mono.CSharp {
 			if (!CheckContext (ec, loc))
 				return false;
 
-			
+			in_exc = ec.CurrentBranching.InTryOrCatch (false);
 			Type iterator_type = IteratorHandler.Current.IteratorType;
 			if (expr.Type != iterator_type){
 				expr = Convert.ImplicitConversionRequired (ec, expr, iterator_type, loc);
@@ -79,7 +80,7 @@ namespace Mono.CSharp {
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			IteratorHandler.Current.MarkYield (ec, expr);
+			IteratorHandler.Current.MarkYield (ec, expr, in_exc);
 		}
 	}
 
@@ -351,7 +352,7 @@ namespace Mono.CSharp {
 		//
 		// Called back from Yield
 		//
-		public void MarkYield (EmitContext ec, Expression expr)
+		public void MarkYield (EmitContext ec, Expression expr, bool in_exc)
 		{
 			ILGenerator ig = ec.ig;
 
@@ -365,10 +366,27 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Ldarg_0);
 			IntConstant.EmitInt (ig, pc);
 			ig.Emit (OpCodes.Stfld, pc_field);
-			
-			// Return ok.
+
+			// Return ok
 			ig.Emit (OpCodes.Ldc_I4_1);
-			ig.Emit (OpCodes.Ret);
+			
+			// Find out how to "leave"
+			if (in_exc || !ec.IsLastStatement){
+				Type old = ec.ReturnType;
+				ec.ReturnType = TypeManager.int32_type;
+				ig.Emit (OpCodes.Stloc, ec.TemporaryReturn ());
+				ec.ReturnType = old;
+			}
+
+			if (in_exc){
+				ec.NeedReturnLabel ();
+				ig.Emit (OpCodes.Leave, ec.ReturnLabel);
+			} else if (ec.IsLastStatement){
+				ig.Emit (OpCodes.Ret);
+			} else {
+				ec.NeedReturnLabel ();
+				ig.Emit (OpCodes.Br, ec.ReturnLabel);
+			}
 			
 			Label resume_point = ig.DefineLabel ();
 			ig.MarkLabel (resume_point);

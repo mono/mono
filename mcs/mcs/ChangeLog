@@ -1,3 +1,15 @@
+2004-04-15  Miguel de Icaza  <miguel@ximian.com>
+
+	* iterators.cs (MarkYield): track whether we are in an exception,
+	and generate code accordingly.  Use a temporary value to store the
+	result for our state.
+
+	I had ignored a bit the interaction of try/catch with iterators
+	since their behavior was not entirely obvious, but now it is
+	possible to verify that our behavior is the same as MS .NET 2.0
+
+	Fixes 54814
+
 2004-04-14  Miguel de Icaza  <miguel@ximian.com>
 
 	* iterators.cs: Avoid creating temporaries if there is no work to
