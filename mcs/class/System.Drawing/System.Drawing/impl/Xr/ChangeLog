@@ -1,0 +1,8 @@
+2003-06-06  Alexandre Pigolkine <pigolkine@gmx.de>
+	* Bitmap.cs
+	* GDKfunctions.cs
+	* Graphics.cs
+	* Image.cs
+	* Pen.cs
+	* Xrfunctions.cs
+			first version of Xr implementations
