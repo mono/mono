@@ -1,0 +1,50 @@
+#!/bin/sh
+
+help()
+{
+	echo ""
+	echo "Usage is: configure [--prefix=PREFIX] [--profile=PROFILE]\n"
+	echo "Profiles available: "
+	(cd build/profiles; ls *.make | sed -e 's/.make//' -e 's/^/	/')
+}
+
+prefix=/usr/local
+profile=default
+
+for a in $*; do
+	case $a in
+		--help)
+			help
+			exit 0
+			;;
+		--prefix=*)
+			prefix=`echo $a | sed 's/--prefix=//'`;
+			;;
+		--profile=*)
+			profile=`echo $a | sed 's/--profile=//'`;
+			if test ! -f build/profiles/$profile.make; then
+				echo ""
+				echo Error, profile $profile does not exist
+				help
+				exit 1;
+			fi
+			;;
+		*)
+			echo Unknown option: $a
+			help
+			exit 1
+	esac
+done
+
+echo "prefix=$prefix" > build/config.make
+echo "PROFILE=$profile" >> build/config.make
+echo "MCS_FLAGS = \$(PLATFORM_DEBUG_FLAGS)" >> build/config.make
+
+echo ""
+echo "MCS module configured"
+echo ""
+echo "     Profile selected: $profile"
+echo "     Prefix:           $prefix"
+echo ""
+
+exit 0;
