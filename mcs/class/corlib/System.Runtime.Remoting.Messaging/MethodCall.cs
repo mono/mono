@@ -43,8 +43,26 @@ namespace System.Runtime.Remoting.Messaging {
 				}
 			}
 
-			_methodBase = RemotingServices.GetMethodBaseFromMethodMessage (this);
+			ResolveMethod ();
 			Init();
+		}
+
+		internal MethodCall (CADMethodCallMessage msg) {
+			_typeName = msg.TypeName;
+			_uri = msg.Uri;
+			_methodName = msg.MethodName;
+			
+			// Get unmarshalled arguments
+			ArrayList args = msg.GetArguments ();
+
+			_args = msg.GetArgs (args);
+			_methodSignature = (Type []) msg.GetMethodSignature (args);
+	
+			ResolveMethod ();
+			Init();
+
+			if (msg.PropertiesCount > 0)
+				CADMessageBase.UnmarshalProperties (Properties, msg.PropertiesCount, args);
 		}
 
 		[MonoTODO]
@@ -100,10 +118,8 @@ namespace System.Runtime.Remoting.Messaging {
 			get { return _methodName; }
 		}
 
-		public object MethodSignature 
-		{
-			get 
-			{ 
+		public object MethodSignature {
+			get { 
 				if (_methodSignature == null && _methodBase != null)
 				{
 					ParameterInfo[] parameters = _methodBase.GetParameters();
@@ -169,10 +185,9 @@ namespace System.Runtime.Remoting.Messaging {
 			InternalProperties = _properties.GetInternalProperties();
 		}
 
-		[MonoTODO]
 		public void ResolveMethod ()
 		{
-			throw new NotImplementedException ();
+			_methodBase = RemotingServices.GetMethodBaseFromMethodMessage (this);
 		}
 
 		[MonoTODO]
