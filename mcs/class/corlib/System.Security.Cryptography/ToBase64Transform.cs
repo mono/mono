@@ -4,8 +4,11 @@
 // Author:
 //   Sergey Chaban (serge@wildwestsoftware.com)
 //
+// (C) 2004 Novell (http://www.novell.com)
+//
 
 using System;
+using System.Globalization;
 
 namespace System.Security.Cryptography {
 
@@ -20,17 +23,14 @@ namespace System.Security.Cryptography {
 		{
 		}
 
+		/* Right now we have nothing to dispose to finalizer isn't required
 		~ToBase64Transform () 
 		{
 			Dispose (false);
-		}
+		}*/
 
-		/// <summary>
-		/// </summary>
 		public bool CanTransformMultipleBlocks {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
 
 		public virtual bool CanReuseTransform {
@@ -44,9 +44,7 @@ namespace System.Security.Cryptography {
 		///  The returned value is always 3.
 		/// </remarks>
 		public int InputBlockSize {
-			get {
-				return 3;
-			}
+			get { return 3; }
 		}
 
 		/// <summary>
@@ -56,9 +54,7 @@ namespace System.Security.Cryptography {
 		///  The value returned by this property is always 4.
 		/// </remarks>
 		public int OutputBlockSize {
-			get {
-				return 4;
-			}
+			get { return 4; }
 		}
 
 		public void Clear() 
@@ -83,18 +79,12 @@ namespace System.Security.Cryptography {
 			}
 		}
 
-		/// <summary>
-		/// </summary>
-		public int TransformBlock (byte [] inputBuffer,
-		                                   int inputOffset,
-		                                   int inputCount,
-		                                   byte [] outputBuffer,
-		                                   int outputOffset)
+		public int TransformBlock (byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
 		{
 			if (inputCount != this.InputBlockSize)
-				throw new CryptographicException();
+				throw new CryptographicException (Locale.GetText ("Invalid input length"));
 
-			byte [] lookup = Base64Table.EncodeTable;
+			byte[] lookup = Base64Constants.EncodeTable;
 
 			int b1 = inputBuffer [inputOffset];
 			int b2 = inputBuffer [inputOffset + 1];
@@ -118,18 +108,14 @@ namespace System.Security.Cryptography {
 		// Anyhow, this implementation just encodes blocks of any size,
 		// like any usual Base64 encoder.
 
-		/// <summary>
-		/// </summary>
-		public byte [] TransformFinalBlock (byte [] inputBuffer,
-		                                            int inputOffset,
-		                                            int inputCount)
+		public byte[] TransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount)
 		{
 			int blockLen = this.InputBlockSize;
 			int outLen = this.OutputBlockSize;
 			int fullBlocks = inputCount / blockLen;
 			int tail = inputCount % blockLen;
 
-			byte [] res = new byte [(inputCount != 0)
+			byte[] res = new byte [(inputCount != 0)
 			                        ? ((inputCount + 2) / blockLen) * outLen
 			                        : 0];
 
@@ -144,10 +130,8 @@ namespace System.Security.Cryptography {
 				outputOffset += outLen;
 			}
 
-
-			byte [] lookup = Base64Table.EncodeTable;
+			byte[] lookup = Base64Constants.EncodeTable;
 			int b1,b2;
-
 
 			// When fewer than 24 input bits are available
 			// in an input group, zero bits are added
@@ -176,64 +160,9 @@ namespace System.Security.Cryptography {
 				// one-byte padding
 				res [outputOffset+3] = (byte)'=';
 				break;
-
-			default:
-				break;
 			}
 
 			return res;
 		}
-	} // ToBase64Transform
-
-
-	[MonoTODO ("Put me in a separate file")]
-	internal sealed class Base64Table {
-
-		static readonly byte[] encodeTable;
-		static readonly byte[] decodeTable;
-
-		static Base64Table ()
-		{
-			// This is the Base64 alphabet as described in RFC 2045
-			// (Table 1, page 25).
-			const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-			int len = ALPHABET.Length;
-
-			encodeTable = new byte [len];
-
-			for (int i=0; i < len; i++) {
-				encodeTable [i] = (byte) ALPHABET [i];
-			}
-
-
-			decodeTable = new byte [1 + (int)'z'];
-
-			for (int i=0; i < decodeTable.Length; i++) {
-				decodeTable [i] = Byte.MaxValue;
-			}
-
-			for (int i=0; i < len; i++) {
-				char ch = ALPHABET [i];
-				decodeTable [(int)ch] = (byte) i;
-			}
-		}
-
-		private Base64Table ()
-		{
-			// Never instantiated.
-		}
-
-		internal static byte [] EncodeTable {
-			get {
-				return encodeTable;
-			}
-		}
-
-		internal static byte [] DecodeTable {
-			get {
-				return decodeTable;
-			}
-		}
-	} // Base64Table
-
-} // System.Security.Cryptography
+	}
+}

@@ -1,3 +1,12 @@
+2004-05-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Base64Constants.cs: New. Convert code into tables for better base64
+	performance.
+	* FromBase64Transform.cs: Updated to use the new tables. Source code
+	cleanup.
+	* ToBase64Transform.cs: Updated to use the new tables. Added 
+	globalization. Commented finalizer as it isn't required in this case.
+
 2004-05-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConfig.cs: Specify version and public key token when loading

@@ -4,8 +4,11 @@
 // Author:
 //   Sergey Chaban (serge@wildwestsoftware.com)
 //
+// (C) 2004 Novell (http://www.novell.com)
+//
 
 using System;
+using System.Globalization;
 
 namespace System.Security.Cryptography {
 
@@ -18,8 +21,8 @@ namespace System.Security.Cryptography {
 	public class FromBase64Transform : ICryptoTransform {
 
 		private FromBase64TransformMode mode;
-		private byte [] accumulator;
-		private byte [] filterBuffer;
+		private byte[] accumulator;
+		private byte[] filterBuffer;
 		private int accPtr;
 		private bool m_disposed;
 
@@ -52,7 +55,6 @@ namespace System.Security.Cryptography {
 			Dispose (false);
 		}
 
-
 		public bool CanTransformMultipleBlocks {
 			get { return false; }
 		}
@@ -68,11 +70,8 @@ namespace System.Security.Cryptography {
 		///  The input block size for Base64 decoder is always 1 byte.
 		/// </remarks>
 		public int InputBlockSize {
-			get {
-				return 1;
-			}
+			get { return 1; }
 		}
-
 
 		/// <summary>
 		///  Returns the output block size for the Base64 decoder.
@@ -81,9 +80,7 @@ namespace System.Security.Cryptography {
 		///  The value returned by this property is always 3.
 		/// </remarks>
 		public int OutputBlockSize {
-			get {
-				return 3;
-			}
+			get { return 3; }
 		}
 
 		public void Clear() 
@@ -100,9 +97,17 @@ namespace System.Security.Cryptography {
 		protected virtual void Dispose (bool disposing) 
 		{
 			if (!m_disposed) {
+				// zeroize data
+				if (accumulator != null)
+					Array.Clear (accumulator, 0, accumulator.Length);
+				if (filterBuffer != null)
+					Array.Clear (filterBuffer, 0, filterBuffer.Length);
+
 				// dispose unmanaged objects
 				if (disposing) {
 					// dispose managed objects
+					accumulator = null;
+					filterBuffer = null;
 				}
 				m_disposed = true;
 			}
@@ -113,7 +118,7 @@ namespace System.Security.Cryptography {
 			int end = offset + count;
 			int len = filterBuffer.Length;
 			int ptr = 0;
-			byte [] filter = this.filterBuffer;
+			byte[] filter = this.filterBuffer;
 
 			for (int i = offset; i < end; i++) {
 				byte b = buffer [i];
@@ -121,7 +126,7 @@ namespace System.Security.Cryptography {
 					if (ptr >= len) {
 						len <<= 1;
 						this.filterBuffer = new byte [len];
-						Array.Copy(filter, 0, this.filterBuffer, 0, len >> 1);
+						Buffer.BlockCopy (filter, 0, this.filterBuffer, 0, len >> 1);
 						filter = this.filterBuffer;
 					}
 					filter [ptr++] = b;
@@ -131,24 +136,29 @@ namespace System.Security.Cryptography {
 			return ptr;
 		}
 
-		private byte [] lookupTable; 
+		private byte[] lookupTable; 
 
-		private byte lookup(byte input) {
-			byte ret;
-			if ((input >= lookupTable.Length) || 
-			    ((ret = lookupTable[input]) == Byte.MaxValue))
-				throw new System.FormatException("Invalid character in a Base-64 string.");
+		private byte lookup (byte input)
+		{
+			if (input >= lookupTable.Length) {
+				throw new FormatException (
+					Locale.GetText ("Invalid character in a Base-64 string."));
+			}
+
+			byte ret = lookupTable [input];
+			if (ret == Byte.MaxValue) {
+				throw new FormatException (
+					Locale.GetText ("Invalid character in a Base-64 string."));
+			}
+
 			return ret;
 		}
 
-		private int DoTransform (byte [] inputBuffer,
-		                         int inputOffset,
-		                         int inputCount,
-		                         byte [] outputBuffer,
-		                         int outputOffset)
+		private int DoTransform (byte [] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
 		{
 			int full = inputCount >> 2;
-			if (full == 0) return 0;
+			if (full == 0)
+				return 0;
 
 			int rem = 0;
 
@@ -157,9 +167,10 @@ namespace System.Security.Cryptography {
 				--full;
 			}
 
-			if (inputBuffer[inputCount - 2] == (byte)'=') ++rem;
+			if (inputBuffer[inputCount - 2] == (byte)'=')
+				++rem;
 
-			lookupTable = Base64Table.DecodeTable;
+			lookupTable = Base64Constants.DecodeTable;
 			int b0,b1,b2,b3;
 
 			for (int i = 0; i < full; i++) {
@@ -192,21 +203,12 @@ namespace System.Security.Cryptography {
 				outputBuffer [outputOffset++] = (byte) ((b0 << 2) | (b1 >> 4));
 				++res;
 				break;
-			default:
-				break;
 			}
 
 			return res;
 		}
 
-
-		/// <summary>
-		/// </summary>
-		public int TransformBlock (byte [] inputBuffer,
-		                                   int inputOffset,
-		                                   int inputCount,
-		                                   byte [] outputBuffer,
-		                                   int outputOffset)
+		public int TransformBlock (byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
 		{
 			if (m_disposed)
 				throw new ObjectDisposedException ("FromBase64Transform");
@@ -226,35 +228,29 @@ namespace System.Security.Cryptography {
 				srcOff = inputOffset;
 			}
 
-
 			int count = accPtr + n;
 
 			if (count < 4) {
-				Array.Copy (src, srcOff, accumulator, accPtr, n);
+				Buffer.BlockCopy (src, srcOff, accumulator, accPtr, n);
 				accPtr = count;
 			} else {
-				byte [] tmpBuff = new byte [count];
-				Array.Copy (accumulator, 0, tmpBuff, 0, accPtr);
-				Array.Copy (src, srcOff, tmpBuff, accPtr, n);
+				byte[] tmpBuff = new byte [count];
+				Buffer.BlockCopy (accumulator, 0, tmpBuff, 0, accPtr);
+				Buffer.BlockCopy (src, srcOff, tmpBuff, accPtr, n);
 				accPtr = count & 3;
-				Array.Copy (src, srcOff + (n - accPtr), accumulator, 0, accPtr);
+				Buffer.BlockCopy (src, srcOff + (n - accPtr), accumulator, 0, accPtr);
 				res = DoTransform (tmpBuff, 0, count & (~3), outputBuffer, outputOffset) ;
 			}
 
 			return res;
 		}
 
-
-		/// <summary>
-		/// </summary>
-		public byte [] TransformFinalBlock (byte [] inputBuffer,
-		                                            int inputOffset,
-		                                            int inputCount)
+		public byte[] TransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount)
 		{
 			if (m_disposed)
 				throw new ObjectDisposedException ("FromBase64Transform");
 
-			byte [] src;
+			byte[] src;
 			int srcOff;
 			int n;
 
@@ -269,34 +265,25 @@ namespace System.Security.Cryptography {
 			}
 
 			int dataLen = accPtr + n;
-			byte [] tmpBuf = new byte [dataLen];
+			byte[] tmpBuf = new byte [dataLen];
 
 			int resLen = ((dataLen) >> 2) * 3;
-			byte [] res = new byte [resLen];
+			byte[] res = new byte [resLen];
 
-			Array.Copy (accumulator, 0, tmpBuf, 0, accPtr);
-			Array.Copy (src, srcOff, tmpBuf, accPtr, n);
+			Buffer.BlockCopy (accumulator, 0, tmpBuf, 0, accPtr);
+			Buffer.BlockCopy (src, srcOff, tmpBuf, accPtr, n);
 			
-			int actLen;
-			try {
-				actLen = DoTransform (tmpBuf, 0, dataLen, res, 0);
-			}
-			catch (System.FormatException e) {
-				throw e; 
-			}
-
+			int actLen = DoTransform (tmpBuf, 0, dataLen, res, 0);
 			accPtr = 0;
 
 			if (actLen < resLen) {
-				byte [] newres = new byte [actLen];
+				byte[] newres = new byte [actLen];
 
-				Array.Copy (res, newres, actLen);
+				Buffer.BlockCopy (res, 0, newres, 0, actLen);
 				return newres;
 			} 
 			else
 				return res;
 		}
-
-	} // FromBase64Transform
-
-} // System.Security.Cryptography
+	}
+}
