@@ -167,5 +167,40 @@ Stubbed and commented out
 * added IMessageFilter
 * Interfaces complete
 
+2002-5-27 DennisHayes <dennish@raytek.com>
+Added structs. All structs in System.Windows.Forms done
+* BindingMemberInfo.cs
+* DataGridCell.cs
+* LinkArea.cs
+* Message.cs
+* Complete execpt for Message.cs GetLParam
+* and
+* BindingMemberInfo needs constructor.
+* All need verification of hashcodes.
+
+2002-5-27 DennisHayes <dennish@raytek.com>
+Added delegates. All delegates in System.Windows.Forms done
+* ColumnClickEventHandler.cs
+* ContentsResizedEventHandler.cs
+* ControlEventHandler.cs
+* ConvertEventHandler.cs
+* DateRangeEventHandler.cs
+* DragEventHandler.cs
+* DrawItemEventHandler.cs
+* GiveFeedbackEventHandler.cs
+* HelpEventHandler.cs
+* InputLanguageChangedEventHandler.cs
+* InputLanguageChangingEventHandler.cs
+* InvalidateEventHandler.cs
+* ItemChangedEventHandler.cs
+* ItemCheckEventHandler.cs
+* ItemDragEventHandler.cs
+* KeyEventHandler.cs
+* LabelEditEventHandler.cs
+* LayoutEventHandler.cs
+* LinkClickedEventHandler.cs
+* LinkLabelLinkClickedEventHandler.cs
+
+
 
 
