@@ -1,4 +1,7 @@
 2004-10-25 Anirban Bhattacharjee <banirban@novell.com>
+	* statement.cs: VB .Net specific exception number
+
+2004-10-25 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: Enhanced catch grammar to accept
 			'When' clause
 	* statement.cs: Changed Catch and Try classes accordingly

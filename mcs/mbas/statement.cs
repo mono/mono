@@ -937,7 +937,7 @@ namespace Mono.MonoBASIC {
 				if ((t != TypeManager.exception_type) &&
 				    !t.IsSubclassOf (TypeManager.exception_type) &&
 				    !(expr is NullLiteral)) {
-					Report.Error (155, loc,
+					Report.Error (30665, loc,
 						      "The type caught or thrown must be derived " +
 						      "from System.Exception");
 					return false;
@@ -4485,7 +4485,7 @@ namespace Mono.MonoBASIC {
 					return false;
 
 				if (type != TypeManager.exception_type && !type.IsSubclassOf (TypeManager.exception_type)){
-					Report.Error (155, Location,
+					Report.Error (30665, Location,
 						      "The type caught or thrown must be derived " +
 						      "from System.Exception");
 					return false;
