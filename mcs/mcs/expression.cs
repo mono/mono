@@ -4877,9 +4877,7 @@ namespace Mono.CSharp {
 				return (new NewDelegate (type, Arguments, loc)).Resolve (ec);
 
 			if (type.IsInterface || type.IsAbstract){
-				Error (
-					144, "It is not possible to create instances of interfaces " +
-					"or abstract classes");
+				Error (144, "It is not possible to create instances of interfaces or abstract classes");
 				return null;
 			}
 			
@@ -4924,10 +4922,10 @@ namespace Mono.CSharp {
 
 			if (method == null) { 
                                 if (!is_struct || Arguments.Count > 0) {
-        				Error (1501,
-	        			       "New invocation: Can not find a constructor for " +
-		        		       "this argument list");
-			        	return null;
+        				Error (1501, String.Format (
+					    "New invocation: Can not find a constructor in `{0}' for this argument list",
+					    TypeManager.CSharpName (type)));
+					return null;
                                 }
 			}
 			return this;

@@ -1,5 +1,8 @@
 2003-04-27  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (New.DoResolve): Provide more context for the user
+	when reporting an error.
+
 	* ecore.cs (Expression.LoadFromPtr): Use ldind_i when loading
 	pointers. 
 
