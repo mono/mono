@@ -4,6 +4,15 @@
 // Zoltan Varga (vargaz@freemail.hu)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
+//
+// TODO:
+//  - implement a mechnanism for easier testing of null argument exceptions
+//  - with overloaded methods like DefineNestedType (), check the defaults
+//    on the shorter versions.
+//  - ToString on enums with the flags attribute set should print all
+//    values which match, e.g. 0 == AutoLayou,AnsiClass,NotPublic
+//
+
 
 using System;
 using System.Threading;
@@ -15,15 +24,20 @@ using NUnit.Framework;
 namespace MonoTests.System.Reflection.Emit
 {
 
-public class TypeBuilderTest : TestCase
+[TestFixture]
+public class TypeBuilderTest : Assertion
 {	
+	private interface AnInterface {
+	}
+
 	private AssemblyBuilder assembly;
 
 	private ModuleBuilder module;
 
 	static string ASSEMBLY_NAME = "MonoTests.System.Reflection.Emit.TypeBuilderTest";
 
-	protected override void SetUp () {
+	[SetUp]
+	protected void SetUp () {
 		AssemblyName assemblyName = new AssemblyName();
 		assemblyName.Name = ASSEMBLY_NAME;
 
@@ -39,6 +53,10 @@ public class TypeBuilderTest : TestCase
 	// Return a unique type name
 	private string genTypeName () {
 		return "t" + (typeIndexer ++);
+	}
+
+	private string nullName () {
+		return String.Format ("{0}", (char)0);
 	}
 
 	public void TestAssembly () {
@@ -526,5 +544,381 @@ public class TypeBuilderTest : TestCase
 						  typeof (int), tb.UnderlyingSystemType);
 		}
 	}
+
+	public void TestAddInterfaceImplementation () {
+		TypeBuilder tb = module.DefineType (genTypeName ());
+		try {
+			tb.AddInterfaceImplementation (null);
+			Fail ();
+		}
+		catch (ArgumentNullException) {
+		}
+
+		tb.AddInterfaceImplementation (typeof (AnInterface));
+		tb.AddInterfaceImplementation (typeof (AnInterface));
+
+		Type t = tb.CreateType ();
+		AssertEquals ("Should merge identical interfaces",
+					  tb.GetInterfaces ().Length, 1);
+
+		// Can not be called on a created type
+		try {
+			tb.AddInterfaceImplementation (typeof (AnInterface));
+			Fail ();
+		}
+		catch (InvalidOperationException) {
+		}
+	}
+
+	public void TestCreateType () {
+		// TODO: LOTS OF TEST SHOULD GO THERE
+		TypeBuilder tb = module.DefineType (genTypeName ());
+		tb.CreateType ();
+
+		// Can not be called on a created type
+		try {
+			tb.CreateType ();
+			Fail ();
+		}
+		catch (InvalidOperationException) {
+		}
+	}
+
+	public void TestDefineConstructor () {
+		TypeBuilder tb = module.DefineType (genTypeName ());
+
+		ConstructorBuilder cb = tb.DefineConstructor (0, 0, null);
+		cb.GetILGenerator ().Emit (OpCodes.Ret);
+		tb.CreateType ();
+
+		// Can not be called on a created type
+		try {
+			tb.DefineConstructor (0, 0, null);
+			Fail ();
+		}
+		catch (InvalidOperationException) {
+		}
+	}
+
+	public void TestDefineDefaultConstructor () {
+		TypeBuilder tb = module.DefineType (genTypeName ());
+
+		tb.DefineDefaultConstructor (0);
+
+		tb.CreateType ();
+
+		// Can not be called on a created type, altough the MSDN docs does not mention this
+		try {
+			tb.DefineDefaultConstructor (0);
+			Fail ();
+		}
+		catch (InvalidOperationException) {
+		}
+	}
+
+	public void TestDefineEvent () {
+		TypeBuilder tb = module.DefineType (genTypeName ());
+
+		// Test invalid arguments
+		try {
+			tb.DefineEvent (null, 0, typeof (int));
+			Fail ();
+		}
+		catch (ArgumentNullException) {
+		}
+
+		try {
+			tb.DefineEvent ("FOO", 0, null);
+			Fail ();
+		}
+		catch (ArgumentNullException) {
+		}
+
+		try {
+			tb.DefineEvent ("", 0, typeof (int));
+			Fail ();
+		}
+		catch (ArgumentException) {
+		}
+
+		tb.CreateType ();
+		// Can not be called on a created type
+		try {
+			tb.DefineEvent ("BAR", 0, typeof (int));
+			Fail ();
+		}
+		catch (InvalidOperationException) {
+		}
+	}
+
+	public void TestDefineField () {
+		TypeBuilder tb = module.DefineType (genTypeName ());
+
+		// Check invalid arguments
+		try {
+			tb.DefineField (null, typeof (int), 0);
+			Fail ();
+		}
+		catch (ArgumentNullException) {
+		}
+
+		try {
+			tb.DefineField ("", typeof (int), 0);
+			Fail ();
+		}
+		catch (ArgumentException) {
+		}
+
+		try {
+			// Strangely, 'A<NULL>' is accepted...
+			string name = String.Format ("{0}", (char)0);
+			tb.DefineField (name, typeof (int), 0);
+			Fail ("Names with embedded nulls should be rejected");
+		}
+		catch (ArgumentException) {
+		}
+
+		try {
+			tb.DefineField ("A", typeof (void), 0);
+			Fail ();
+		}
+		catch (ArgumentException) {
+		}
+
+		tb.CreateType ();
+		// Can not be called on a created type
+		try {
+			tb.DefineField ("B", typeof (int), 0);
+			Fail ();
+		}
+		catch (InvalidOperationException) {
+		}
+	}
+
+	public void TestDefineInitializedData () {
+		TypeBuilder tb = module.DefineType (genTypeName ());
+		
+		// Check invalid arguments
+		try {
+			tb.DefineInitializedData (null, new byte[1], 0);
+			Fail ();
+		}
+		catch (ArgumentNullException) {
+		}
+
+		try {
+			tb.DefineInitializedData ("FOO", null, 0);
+			Fail ();
+		}
+		catch (ArgumentNullException) {
+		}
+
+		try {
+			tb.DefineInitializedData ("", new byte[1], 0);
+			Fail ();
+		}
+		catch (ArgumentException) {
+		}
+
+		// The size of the data is less than or equal to zero ???
+		try {
+			tb.DefineInitializedData ("BAR", new byte[0], 0);
+			Fail ();
+		}
+		catch (ArgumentException) {
+		}
+
+		try {
+			string name = String.Format ("{0}", (char)0);
+			tb.DefineInitializedData (name, new byte[1], 0);
+			Fail ("Names with embedded nulls should be rejected");
+		}
+		catch (ArgumentException) {
+		}
+
+		tb.CreateType ();
+
+		// Can not be called on a created type, altough the MSDN docs does not mention this
+		try {
+			tb.DefineInitializedData ("BAR2", new byte[1], 0);
+			Fail ();
+		}
+		catch (InvalidOperationException) {
+		}
+	}
+
+	public void TestDefineMethod () {
+		TypeBuilder tb = module.DefineType (genTypeName ());
+
+		// Check invalid arguments
+		try {
+			tb.DefineMethod (null, 0, null, null);
+			Fail ();
+		}
+		catch (ArgumentNullException) {
+		}
+
+		try {
+			tb.DefineMethod ("", 0, null, null);
+			Fail ();
+		}
+		catch (ArgumentException) {
+		}
+
+		// Check non-virtual methods on an interface
+		TypeBuilder tb2 = module.DefineType (genTypeName (), TypeAttributes.Interface | TypeAttributes.Abstract);
+		try {
+			tb2.DefineMethod ("FOO", MethodAttributes.Abstract, null, null);
+			Fail ();
+		}
+		catch (ArgumentException) {
+		}
+
+		tb.CreateType ();
+		// Can not be called on a created type
+		try {
+			tb.DefineMethod ("bar", 0, null, null);
+			Fail ();
+		}
+		catch (InvalidOperationException) {
+		}
+	}
+
+	// TODO: DefineMethodOverride
+
+	public void TestDefineNestedType () {
+		TypeBuilder tb = module.DefineType (genTypeName ());
+
+		// Check invalid arguments
+		try {
+			tb.DefineNestedType (null);
+			Fail ("Should reject null name");
+		}
+		catch (ArgumentNullException) {
+		}
+
+		try {
+			tb.DefineNestedType ("");
+			Fail ("Should reject empty name");
+		}
+		catch (ArgumentException) {
+		}
+
+		try {
+			tb.DefineNestedType (nullName ());
+			Fail ("Should reject name with embedded 0s");
+		}
+		catch (ArgumentException) {
+		}
+
+		// If I fix the code so this works then mcs breaks -> how can mcs
+		// works under MS .NET in the first place ???
+		/*
+		try {
+			tb.DefineNestedType ("AA", TypeAttributes.Public, null, null);
+			Fail ("Nested visibility must be specified.");
+		}
+		catch (ArgumentException) {
+		}
+		*/
+
+		try {
+			tb.DefineNestedType ("BB", TypeAttributes.NestedPublic, null,
+								 new Type[1]);
+			Fail ("Should reject empty interface");
+		}
+		catch (ArgumentException) {
+		}
+
+		// I think this should reject non-interfaces, but it does not
+		tb.DefineNestedType ("BB", TypeAttributes.NestedPublic, null,
+							 new Type[1] { typeof (object) });
+
+		// Normal invocation
+		tb.DefineNestedType ("Nest");
+
+		tb.CreateType ();
+
+		// According to the MSDN docs, this cannnot be called after the type
+		// is created, but it works.
+		tb.DefineNestedType ("Nest2");
+
+		// According to the MSDN docs, a Sealed class can't contain nested 
+		// types, but this is not true
+		TypeBuilder tb2 = module.DefineType (genTypeName (), TypeAttributes.Sealed);
+		tb2.DefineNestedType ("AA");
+
+		// According to the MSDN docs, interfaces can only contain interfaces,
+		// but this is not true
+		TypeBuilder tb3 = module.DefineType (genTypeName (), TypeAttributes.Interface | TypeAttributes.Abstract);
+
+		tb3.DefineNestedType ("AA");
+
+		// Check shorter versions
+		{
+			TypeBuilder nested = tb.DefineNestedType ("N1");
+
+			AssertEquals (nested.Name, "N1");
+			AssertEquals (nested.BaseType, typeof (object));
+			AssertEquals (nested.Attributes, TypeAttributes.NestedPrivate);
+			AssertEquals (nested.GetInterfaces ().Length, 0);
+		}
+
+		// TODO:
+	}
+
+	public void TestDefinePInvokeMethod () {
+		TypeBuilder tb = module.DefineType (genTypeName ());
+
+		tb.DefinePInvokeMethod ("A", "B", "C", 0, 0, null, null, 0, 0);
+
+		// Try invalid parameters
+		try {
+			tb.DefinePInvokeMethod (null, "B", "C", 0, 0, null, null, 0, 0);
+			Fail ();
+		}
+		catch (ArgumentNullException) {
+		}
+		// etc...
+
+		// Try invalid attributes
+		try {
+			tb.DefinePInvokeMethod ("A2", "B", "C", MethodAttributes.Abstract, 0, null, null, 0, 0);
+		}
+		catch (ArgumentException) {
+		}
+
+		// Try an interface parent
+		TypeBuilder tb2 = module.DefineType (genTypeName (), TypeAttributes.Interface | TypeAttributes.Abstract);
+
+		try {
+			tb2.DefinePInvokeMethod ("A", "B", "C", 0, 0, null, null, 0, 0);
+		}
+		catch (ArgumentException) {
+		}
+	}
+
+	public void TestDefineProperty () {
+		TypeBuilder tb = module.DefineType (genTypeName ());
+
+		// Check null parameter types
+		try {
+			tb.DefineProperty ("A", 0, null, new Type[1]);
+		}
+		catch (ArgumentNullException) {
+		}
+	}
+
+	public void TestIsDefined () {
+		TypeBuilder tb = module.DefineType (genTypeName ());
+
+		try {
+			tb.IsDefined (typeof (int), true);
+			Fail ();
+		}
+		catch (NotSupportedException) {
+		}
+	}
 }
 }
+
