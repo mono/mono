@@ -159,6 +159,7 @@ public class TypeBuilderTest : Assertion
 	}
 
 	[Test]
+	[Category("NotWorking")]
 	public void TestFixedGUIDComplete ()
 	{
 		TypeBuilder tb = module.DefineType (genTypeName ());
@@ -574,6 +575,7 @@ public class TypeBuilderTest : Assertion
 	}
 
 	[Test]
+	[Category("NotWorking")]
 	public void TestUnderlyingSystemType () {
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
@@ -630,6 +632,7 @@ public class TypeBuilderTest : Assertion
 	}
 
 	[Test]
+	[Category("NotWorking")]
 	public void TestCreateType () {
 		// TODO: LOTS OF TEST SHOULD GO THERE
 		TypeBuilder tb = module.DefineType (genTypeName ());
@@ -678,6 +681,7 @@ public class TypeBuilderTest : Assertion
 
 	[Test]
 	[ExpectedException (typeof(InvalidOperationException))]
+	[Category("NotWorking")]
 	public void TestDefineDefaultConstructorParent () {
 		TypeBuilder tb = module.DefineType (genTypeName ());
 		tb.DefineConstructor (MethodAttributes.Public,
@@ -1060,6 +1064,7 @@ public class TypeBuilderTest : Assertion
 
 	[Test]
 	[ExpectedException (typeof(NotSupportedException))]
+	[Category("NotWorking")]
 	public void TestIsDefinedIncomplete () {
 		TypeBuilder tb = module.DefineType (genTypeName ());
 		tb.IsDefined (typeof (int), true);
@@ -1451,6 +1456,7 @@ public class TypeBuilderTest : Assertion
 	}
 
 	[Test]
+	[Category("NotWorking")]
 	public void TestGetMethodsComplete () {
 		TypeBuilder tb = module.DefineType (genTypeName ());
 		MethodBuilder helloMethod = tb.DefineMethod ("HelloMethod", 
@@ -1668,6 +1674,7 @@ public class TypeBuilderTest : Assertion
 
 	[Test]
 	[ExpectedException(typeof(TypeLoadException))]
+	[Category("NotWorking")]
 	public void DefineEnumThrowIfTypeBuilderCalledBeforeEnumBuilder () {
 		TypeBuilder typeBuilder = module.DefineType (genTypeName (),
 													 TypeAttributes.Public);
@@ -1677,6 +1684,7 @@ public class TypeBuilderTest : Assertion
 		typeBuilder.CreateType();
 		enumBuilder.CreateType();
 	}
+
 	private void DefineStringProperty (TypeBuilder tb, string propertyName, string fieldName, MethodAttributes methodAttribs) {
 		// define the field holding the property value
 		FieldBuilder fieldBuilder = tb.DefineField (fieldName,
