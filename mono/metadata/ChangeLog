@@ -1,3 +1,11 @@
+2004-01-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* loader.c (mono_lookup_pinvoke_call): Strip .dll from library names.
+	Fixes #22532.
+
+	* exception.h exception.c loader.h loader.c icall.c marshal.h marshal.c:
+	Applied patch from Bernie Solomon  <bernard@ugsolutions.com>. Throw
+	proper exceptions on DllImport problems.
 
 Mon Jan 19 17:50:27 CET 2004 Paolo Molaro <lupus@ximian.com>
 
