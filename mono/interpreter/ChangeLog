@@ -1,3 +1,8 @@
+2003-01-23  Dick Porter  <dick@ximian.com>
+
+	* interp.c: Use mono_runtime_exec_managed_code() to run all
+	managed code in a subthread.
+
 2002-11-15  Dick Porter  <dick@ximian.com>
 
 	* interp.c: mono_runtime_init() now has an extra parameter for

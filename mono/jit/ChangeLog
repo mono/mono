@@ -1,3 +1,13 @@
+2003-01-23  Dick Porter  <dick@ximian.com>
+
+	* mono.c: Use mono_runtime_exec_managed_code() to run all managed
+	code in a subthread.
+
+	* jit.c: Changed thread start and attach callbacks to pass the
+	thread ID, not the MonoThread pointer.  Arrange that managed code
+	execution will fail an assertion in the main thread, just to be
+	sure.
+
 2003-01-22  Martin Baulig  <martin@ximian.com>
 
 	* debug.c: Reverted Gonzalo's last change since it is wrong.

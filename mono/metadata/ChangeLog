@@ -1,3 +1,31 @@
+2003-01-23  Dick Porter  <dick@ximian.com>
+
+	* threads.c (start_wrapper): Create a Thread object if needed, so
+	the Main() thread can do the class initialisation in a subthread
+	that has been set up to allow managed code execution.
+
+	Pass the thread ID instead of the MonoThread pointer to the thread
+	start and attach callbacks.  This change is required, because the
+	jit thread start callback must be called _before_ the Thread
+	object can be created.
+	
+	(mono_thread_init): Removed much object creation code that is no
+	longer needed.  No managed code is called from here now.
+
+	* object.c (mono_runtime_exec_managed_code): Create a subthread
+	for Main, and call back to the runtime to use it.
+	Set the exit code when Main exits.
+
+	* gc.c: Make sure domain finalisation happens in a subthread.
+	Re-enable threaded GC, fixing bug 31333 (again).
+
+	* environment.c: System.Environment internall calls (so far just
+	ExitCode is here, the others are still in icall.c)
+
+	* appdomain.c (mono_runtime_cleanup): All threads running managed
+	code should have finished before mono_runtime_cleanup() is
+	reached, so no need to clean up threads.
+
 2003-01-22  Martin Baulig  <martin@ximian.com>
 
 	* appdomain.h (MonoThreadStartCB): Added `MonoThread *thread' and
