@@ -1,7 +1,11 @@
 Assembly/AssemblyInfo.cs
 Assembly/Locale.cs
+Mono.Xml.Schema/XsdIdentityPath.cs
+Mono.Xml.Schema/XsdIdentityState.cs
+Mono.Xml.Schema/XsdKeyTable.cs
 Mono.Xml.Schema/XsdParticleValidationState.cs
 Mono.Xml.Schema/XsdValidatingReader.cs
+Mono.Xml.Schema/XsdWildcard.cs
 Mono.Xml.XPath/DTMXPathDocument.cs
 Mono.Xml.XPath/DTMXPathDocumentBuilder.cs
 Mono.Xml.XPath/DTMXPathNavigator.cs
