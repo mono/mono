@@ -1,5 +1,11 @@
 2004-04-15  Atsushi Enomoto <atsushi@ximian.com>
 
+	* Added DataSetAssertion.cs and DataSetReadXmlSchema.cs.
+	* DataSetReadXmlTest.cs : separate assertion methods into
+	  DataSetAssertion.cs. Added label argument to AssertDataTable.
+
+2004-04-15  Atsushi Enomoto <atsushi@ximian.com>
+
 	* DataSetReadXmlTest.cs : Tests were incorrect. They should be done
 	  against new dataset. So just added another sequential read tests.
 
