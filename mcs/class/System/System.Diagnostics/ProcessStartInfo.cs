@@ -48,7 +48,7 @@ namespace System.Diagnostics {
 		[MonoTODO("Need to read the env block somehow")]
 		public StringDictionary EnvironmentVariables {
 			get {
-				return(null);
+				throw new NotImplementedException();
 			}
 		}
 		private bool error_dialog=false;

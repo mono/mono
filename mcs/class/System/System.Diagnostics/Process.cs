@@ -12,6 +12,7 @@ using System.IO;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Collections;
 
 namespace System.Diagnostics {
 	public class Process : Component {
@@ -126,21 +127,63 @@ namespace System.Diagnostics {
 			}
 		}
 
-		[MonoTODO]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static bool GetWorkingSet_internal(IntPtr handle, out int min, out int max);
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static bool SetWorkingSet_internal(IntPtr handle, int min, int max, bool use_min);
+
+		/* LAMESPEC: why is this an IntPtr not a plain int? */
 		public IntPtr MaxWorkingSet {
 			get {
-				return((IntPtr)0);
+				if(HasExited) {
+					throw new InvalidOperationException("The process " + ProcessName + " (ID " + Id + ") has exited");
+				}
+				
+				int min;
+				int max;
+				bool ok=GetWorkingSet_internal(process_handle, out min, out max);
+				if(ok==false) {
+					throw new Win32Exception();
+				}
+				
+				return((IntPtr)max);
 			}
 			set {
+				if(HasExited) {
+					throw new InvalidOperationException("The process " + ProcessName + " (ID " + Id + ") has exited");
+				}
+				
+				bool ok=SetWorkingSet_internal(process_handle, 0, value.ToInt32(), false);
+				if(ok==false) {
+					throw new Win32Exception();
+				}
 			}
 		}
 
-		[MonoTODO]
 		public IntPtr MinWorkingSet {
 			get {
-				return((IntPtr)0);
+				if(HasExited) {
+					throw new InvalidOperationException("The process " + ProcessName + " (ID " + Id + ") has exited");
+				}
+				
+				int min;
+				int max;
+				bool ok=GetWorkingSet_internal(process_handle, out min, out max);
+				if(ok==false) {
+					throw new Win32Exception();
+				}
+				
+				return((IntPtr)min);
 			}
 			set {
+				if(HasExited) {
+					throw new InvalidOperationException("The process " + ProcessName + " (ID " + Id + ") has exited");
+				}
+				
+				bool ok=SetWorkingSet_internal(process_handle, value.ToInt32(), 0, true);
+				if(ok==false) {
+					throw new Win32Exception();
+				}
 			}
 		}
 
@@ -236,10 +279,37 @@ namespace System.Diagnostics {
 			}
 		}
 
-		[MonoTODO]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static string ProcessName_internal(IntPtr handle);
+		
+		private string process_name=null;
+		
 		public string ProcessName {
 			get {
-				return("this-process");
+				if(process_name==null) {
+					process_name=ProcessName_internal(process_handle);
+					/* If process_name is _still_
+					 * null, assume the process
+					 * has exited
+					 */
+					if(process_name==null) {
+						throw new SystemException("The process has exited");
+					}
+					
+					/* Strip the suffix (if it
+					 * exists) simplistically
+					 * instead of removing any
+					 * trailing \.???, so we dont
+					 * get stupid results on sane
+					 * systems
+					 */
+					if(process_name.EndsWith(".exe") ||
+					   process_name.EndsWith(".bat") ||
+					   process_name.EndsWith(".com")) {
+						process_name=process_name.Substring(0, process_name.Length-4);
+					}
+				}
+				return(process_name);
 			}
 		}
 
@@ -372,44 +442,83 @@ namespace System.Diagnostics {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static IntPtr GetCurrentProcess_internal();
+		private extern static IntPtr GetProcess_internal(int pid);
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static int GetPid_internal();
 
 		public static Process GetCurrentProcess() {
-			return(new Process(GetCurrentProcess_internal(),
-					   GetPid_internal()));
+			int pid=GetPid_internal();
+			IntPtr proc=GetProcess_internal(pid);
+			
+			if(proc==IntPtr.Zero) {
+				throw new SystemException("Can't find current process");
+			}
+
+			return(new Process(proc, pid));
 		}
 
-		[MonoTODO]
 		public static Process GetProcessById(int processId) {
-			return(null);
+			IntPtr proc=GetProcess_internal(processId);
+			
+			if(proc==IntPtr.Zero) {
+				throw new ArgumentException("Can't find process with ID " + processId.ToString());
+			}
+
+			return(new Process(proc, processId));
 		}
 
 		[MonoTODO]
 		public static Process GetProcessById(int processId, string machineName) {
-			return(null);
+			throw new NotImplementedException();
 		}
 
-		[MonoTODO]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static int[] GetProcesses_internal();
+
 		public static Process[] GetProcesses() {
-			return(null);
+			int[] pids=GetProcesses_internal();
+			ArrayList proclist=new ArrayList();
+			
+			for(int i=0; i<pids.Length; i++) {
+				try {
+					proclist.Add(GetProcessById(pids[i]));
+				} catch (SystemException) {
+					/* The process might exit
+					 * between
+					 * GetProcesses_internal and
+					 * GetProcessById
+					 */
+				}
+			}
+
+			return((Process[])proclist.ToArray(typeof(Process)));
 		}
 
 		[MonoTODO]
 		public static Process[] GetProcesses(string machineName) {
-			return(null);
+			throw new NotImplementedException();
 		}
 
-		[MonoTODO]
 		public static Process[] GetProcessesByName(string processName) {
-			return(null);
+			Process[] procs=GetProcesses();
+			ArrayList proclist=new ArrayList();
+			
+			for(int i=0; i<procs.Length; i++) {
+				/* Ignore case */
+				if(String.Compare(processName,
+						  procs[i].ProcessName,
+						  true)==0) {
+					proclist.Add(procs[i]);
+				}
+			}
+
+			return((Process[])proclist.ToArray(typeof(Process)));
 		}
 
 		[MonoTODO]
 		public static Process[] GetProcessesByName(string processName, string machineName) {
-			return(null);
+			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
@@ -425,8 +534,8 @@ namespace System.Diagnostics {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static bool Start_internal(string file,
-							  string args,
+		private extern static bool Start_internal(string cmd,
+							  string dir,
 							  IntPtr stdin,
 							  IntPtr stdout,
 							  IntPtr stderr,
@@ -439,6 +548,10 @@ namespace System.Diagnostics {
 			IntPtr stdout_rd, stdout_wr;
 			IntPtr stderr_rd, stderr_wr;
 			bool ret;
+			
+			if(startInfo.FileName == "") {
+				throw new InvalidOperationException("File name has not been set");
+			}
 			
 			if(startInfo.RedirectStandardInput==true) {
 				ret=MonoIO.CreatePipe(out stdin_rd,
@@ -468,8 +581,9 @@ namespace System.Diagnostics {
 				stderr_wr=MonoIO.ConsoleError;
 			}
 			
-			ret=Start_internal(startInfo.FileName,
+			ret=Start_internal(startInfo.FileName + " " +
 					   startInfo.Arguments,
+					   startInfo.WorkingDirectory,
 					   stdin_rd, stdout_wr, stderr_wr,
 					   ref proc_info);
 
@@ -517,17 +631,18 @@ namespace System.Diagnostics {
 
 		[MonoTODO]
 		public static Process Start(string fileName) {
-			return(null);
+			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
-		public static Process Start(string fileName, string arguments) {
-			return(null);
+		public static Process Start(string fileName,
+					    string arguments) {
+			throw new NotImplementedException();
 		}
 
-		[MonoTODO]
 		public override string ToString() {
-			return("process name");
+			return(base.ToString() +
+			       " (" + this.ProcessName + ")");
 		}
 
 		/* Waits up to ms milliseconds for process 'handle' to

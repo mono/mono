@@ -1,3 +1,11 @@
+2002-09-27  Dick Porter  <dick@ximian.com>
+
+	* Process.cs: Implemented {get_,set_}{Min,Max}WorkingSet,
+	ProcessName, GetProcessById, GetProcesses, GetProcessesByName.
+	Pass the working directory to Start.  Pass the program and args in
+	one string to be used with the second arg of CreateProcess, so it
+	will search the path.
+
 2002-09-19  Nick Drochak <ndrochak@gol.com>
 
 	* TraceImpl.cs: Remove debug prints
