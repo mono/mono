@@ -188,6 +188,9 @@ namespace System.Security.Cryptography {
 		// Using this method to decrypt data IS dangerous (and very slow).
 		public override byte[] DecryptValue (byte[] rgb) 
 		{
+			if (!rsa.IsCrtPossible)
+				throw new CryptographicException ("Incomplete private key - missing CRT.");
+
 			return rsa.DecryptValue (rgb);
 		}
 	

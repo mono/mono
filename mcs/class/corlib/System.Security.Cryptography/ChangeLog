@@ -1,3 +1,8 @@
+2004-12-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RSACryptoServiceProvider.cs: Adjust DecryptValue to the fact that 
+	Mono's RSAManaged support decryption without CRT while MS requires it.
+
 2004-11-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoAPITransform.cs: 
