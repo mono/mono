@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
 //
-// (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System;
@@ -12,7 +12,7 @@ using System.Text;
 
 namespace System.Security.Cryptography {
 
-// Reference:
+// References:
 // a.	PKCS #5 - Password-Based Cryptography Standard 
 //	http://www.rsasecurity.com/rsalabs/pkcs/pkcs-5/index.html
 // b.	IETF RFC2898: PKCS #5: Password-Based Cryptography Specification Version 2.0
@@ -21,13 +21,17 @@ namespace System.Security.Cryptography {
 public class PasswordDeriveBytes : DeriveBytes {
 
 	private string HashNameValue;
-	private string PasswordValue;
 	private byte[] SaltValue;
 	private int IterationsValue;
 
 	private HashAlgorithm hash;
 	private int state;
+	private byte[] password;
+	private byte[] initial;
 	private byte[] output;
+	private int position;
+	private int hashnumber;
+	private int globalPos;
 
 	public PasswordDeriveBytes (string strPassword, byte[] rgbSalt) 
 	{
@@ -55,23 +59,21 @@ public class PasswordDeriveBytes : DeriveBytes {
 	~PasswordDeriveBytes () 
 	{
 		// zeroize buffer
-		if (output != null) {
-			Array.Clear (output, 0, output.Length);
-			output = null;
+		if (initial != null) {
+			Array.Clear (initial, 0, initial.Length);
+			initial = null;
 		}
-		// FIXME: zeroize password - not easy as all string function 
-		// returns a string so we never have direct access to it's
-		// content - the password :-(
-		PasswordValue = null;
+		// zeroize temporary password storage
+		Array.Clear (password, 0, password.Length);
 	}
 
 	private void Prepare (string strPassword, byte[] rgbSalt, string strHashName, int iterations) 
 	{
 		HashNameValue = strHashName;
-		PasswordValue = strPassword;
 		SaltValue = rgbSalt;
 		IterationsValue = iterations;
 		state = 0;
+		password = Encoding.UTF8.GetBytes (strPassword);
 	}
 
 	public string HashName {
@@ -104,7 +106,7 @@ public class PasswordDeriveBytes : DeriveBytes {
 //			if (value != null)
 				SaltValue = (byte[]) value.Clone ();
 //			else
-//				value = null;
+//				SaltValue = null;
 		}
 	}
 
@@ -118,11 +120,11 @@ public class PasswordDeriveBytes : DeriveBytes {
 	}
 
 	// note: Key is returned - we can't zeroize it ourselve :-(
-	[MonoTODO("Doesn't generate keys longer than HashSize")]
 	public override byte[] GetBytes (int cb) 
 	{
-		// must be first (before NotSupportedException) as the Hash
-		// object is created in Reset()
+		if (cb < 1)
+			throw new IndexOutOfRangeException ("cb");
+
 		if (state == 0) {
 			state = 1;
 			// it's now impossible to change the HashName, Salt
@@ -130,40 +132,67 @@ public class PasswordDeriveBytes : DeriveBytes {
 			Reset ();
 		}
 
-		// FIXME: This version can generate a key up to HashSize length
-		// This is normal for PKCS#5 but MS implementation allows longer
-		// keys (note that, in this case, longer keys aren't more secure!)
-		if (cb > hash.HashSize)
-			throw new NotSupportedException ("cb > HashSize");
-
-		hash.Initialize ();
+		byte[] result = new byte [cb];
+		int cpos = 0;
 		// the initial hash (in reset) + at least one iteration
 		int iter = Math.Max (1, IterationsValue - 1);
-		// generate new key material
-		for (int i = 0; i < iter; i++)
-			output = hash.ComputeHash (output);
-		byte[] result = new byte [cb];
-		Array.Copy (output, 0, result, 0, cb);
+
+		// start with the PKCS5 key
+		if (output == null) {
+			// calculate the PKCS5 key
+			output = initial;
+
+			// generate new key material
+			for (int i = 0; i < iter - 1; i++)
+				output = hash.ComputeHash (output);
+		}
+
+		while (cpos < cb) {
+			byte[] output2 = null;
+			if (hashnumber == 0) {
+				// last iteration on output
+				output2 = hash.ComputeHash (output);
+			}
+			else if (hashnumber < 1000) {
+				string n = Convert.ToString (hashnumber);
+				output2 = new byte [output.Length + n.Length];
+				for (int j=0; j < n.Length; j++)
+					output2 [j] = (byte)(n [j]);
+				Array.Copy (output, 0, output2, n.Length, output.Length);
+				// don't update output
+				output2 = hash.ComputeHash (output2);
+			}
+			else
+				throw new CryptographicException ("too long");
+
+			int l = Math.Min (cb - cpos, output2.Length);
+			Array.Copy (output2, position, result, cpos, l);
+			cpos += l;
+			position += l;
+			while (position >= output2.Length) {
+				position -= output2.Length;
+				hashnumber++;
+			}
+			globalPos += l;
+		}
 		return result;
 	}
 
 	public override void Reset () 
 	{
 		// note: Reset doesn't change state
-		byte[] password = Encoding.UTF8.GetBytes (PasswordValue);
-		int len = password.Length;
-		if (SaltValue != null)
-			len += SaltValue.Length;
-		byte[] input = new byte [len];
-
-		Array.Copy (password, 0, input, 0, password.Length);
-		// zeroize temporary password storage
-		Array.Clear (password, 0, password.Length);
-		if (SaltValue != null)
-			Array.Copy (SaltValue, 0, input, password.Length, SaltValue.Length);
+		globalPos = 0;
+		position = 0;
+		hashnumber = 0;
 
 		hash = HashAlgorithm.Create (HashNameValue);
-		output = hash.ComputeHash (input);
+		if (SaltValue != null) {
+			hash.TransformBlock (password, 0, password.Length, password, 0);
+			hash.TransformFinalBlock (SaltValue, 0, SaltValue.Length);
+			initial = hash.Hash;
+		}
+		else
+			initial = hash.ComputeHash (password);
 	}
 } 
 	

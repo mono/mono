@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
 //
-// (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System;
@@ -14,7 +14,7 @@ namespace System.Security.Cryptography {
 public class RSAPKCS1SignatureDeformatter : AsymmetricSignatureDeformatter {
 
 	private RSA rsa;
-	private HashAlgorithm hash;
+	private string hashName;
 
 	public RSAPKCS1SignatureDeformatter () 
 	{
@@ -28,29 +28,26 @@ public class RSAPKCS1SignatureDeformatter : AsymmetricSignatureDeformatter {
 
 	public override void SetHashAlgorithm (string strName) 
 	{
-		hash = HashAlgorithm.Create (strName);
+		if (strName == null)
+			throw new ArgumentNullException ("strName");
+		hashName = strName;
 	}
 
 	public override void SetKey (AsymmetricAlgorithm key) 
 	{
-		if (key != null) {
-			if (key is RSA) {
-				rsa = (RSA)key;
-			}
-			else
-				throw new InvalidCastException ();
-		}
-		// here null is accepted!
+		if (key != null)
+			rsa = (RSA)key;
+		// here null is accepted with an ArgumentNullException!
 	}
 
 	public override bool VerifySignature (byte[] rgbHash, byte[] rgbSignature) 
 	{
-		if ((rsa == null) || (hash == null))
+		if ((rsa == null) || (hashName == null))
 			throw new CryptographicUnexpectedOperationException ();
 		if ((rgbHash == null) || (rgbSignature == null))
 			throw new ArgumentNullException ();
 
-		string oid = CryptoConfig.MapNameToOID (hash.ToString ());
+		string oid = CryptoConfig.MapNameToOID (hashName);
 		return PKCS1.Verify_v15 (rsa, oid, rgbHash, rgbSignature);
 	}
 }

@@ -1,3 +1,10 @@
+2003-02-03  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* PasswordDeriveBytes.cs: Finally got the derivation right. The
+	class can now derive keys up to 1000 * HashSize (same limit as MS).
+	* RSAPKCS1SignatureDeformatter.cs: No need to create the hash object
+	in this class - the OID is enough.
+
 2003-02-01  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AsymmetricSignatureFormatter.cs: Call abstract SetHashAlgorithm
