@@ -768,7 +768,11 @@ namespace System
 
 		private static int compare (object value1, object value2, IComparer comparer)
 		{
-			if (comparer == null)
+			if (value1 == null)
+				return value2 == null ? 0 : -1;
+			else if (value2 == null)
+				return 1;
+			else if (comparer == null)
 				return ((IComparable) value1).CompareTo(value2);
 			else
 				return comparer.Compare(value1, value2);
