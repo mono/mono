@@ -7,6 +7,7 @@ Changes to this file will be lost if the code is regenerated
 
 using System;
 using System.Collections;
+using System.Xml;
 using System.Xml.Serialization;
 using System.Web.Services;
 using System.Web.Services.Protocols;
@@ -48,6 +49,11 @@ namespace WebServiceTests
 		static Hashtable conversionTable;
 		
 		public UserInfo userInfo;
+		
+		public SoapHeader unknown1;
+		public SoapHeader[] unknown2;
+		public SoapUnknownHeader unknown3;
+		public SoapUnknownHeader[] unknown4;
 
 		static ConverterService ()
 		{
@@ -158,6 +164,56 @@ namespace WebServiceTests
 		{
 			d = "iii";
 			return new MyInfo();
+		}
+		
+		[SoapHeaderAttribute ("unknown1")]
+		[WebMethod]
+		public void TestUnknownHeader1 ()
+		{
+			if (unknown1 == null)
+				throw new Exception ("Header is null");
+
+			if (unknown1.Actor != "hi")
+				throw new Exception ("Invalid actor");
+		}
+		
+		[SoapHeaderAttribute ("unknown2")]
+		[WebMethod]
+		public void TestUnknownHeader2 ()
+		{
+			if (unknown2 == null || unknown2.Length != 1)
+				throw new Exception ("Header is null");
+
+			if (unknown2[0].Actor != "hi")
+				throw new Exception ("Invalid actor");
+		}
+		
+		[SoapHeaderAttribute ("unknown3")]
+		[WebMethod]
+		public int TestUnknownHeader3 ()
+		{
+			if (unknown3 == null)
+				throw new Exception ("Header is null");
+
+			if (unknown3.Actor != "hi")
+				throw new Exception ("Invalid actor");
+				
+			XmlElement child = unknown3.Element ["userId"];
+			return int.Parse (child.InnerText);
+		}
+		
+		[SoapHeaderAttribute ("unknown4")]
+		[WebMethod]
+		public int TestUnknownHeader4 ()
+		{
+			if (unknown4 == null || unknown4.Length != 1)
+				throw new Exception ("Header is null");
+
+			if (unknown4[0].Actor != "hi")
+				throw new Exception ("Invalid actor");
+				
+			XmlElement child = unknown4[0].Element ["userId"];
+			return int.Parse (child.InnerText);
 		}
 	}
 

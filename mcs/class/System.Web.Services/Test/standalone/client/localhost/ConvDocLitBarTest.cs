@@ -203,16 +203,71 @@ namespace Localhost.ConvDocLitBarTests
 			el = nods[4] as XmlElement;
 			Assert.AreEqual ("b", el.Name, "t13");
 		}		
+		
+		[Test]
+		public void TestUnknownHeaders ()
+		{
+			ConverterServiceExtraTest et = new ConverterServiceExtraTest ();
+			et.Url = "http://localhost:8080/ConvDocLitBar.asmx";
+			
+			et.myUserInfo = new MyUserInfo ();
+			et.myUserInfo.userId = 5;
+			et.myUserInfo.Actor = "hi";
+			
+			et.TestUnknownHeader1 ();
+			
+			et.TestUnknownHeader2 ();
+			
+			int res = et.TestUnknownHeader3 ();
+			Assert.AreEqual (5, res, "TestUnknownHeader3");
+
+			res = et.TestUnknownHeader4 ();
+			Assert.AreEqual (5, res, "TestUnknownHeader4");
+		}
 	}
 	
 	[System.Web.Services.WebServiceBindingAttribute(Name="ConverterServiceSoap", Namespace="urn:mono-ws-tests")]
 	public class ConverterServiceExtraTest : System.Web.Services.Protocols.SoapHttpClientProtocol
 	{
+		public MyUserInfo myUserInfo;
+		
 		[System.Web.Services.Protocols.SoapDocumentMethodAttribute("urn:mono-ws-tests/GetTestInfo", RequestNamespace="urn:mono-ws-tests", ResponseNamespace="urn:mono-ws-tests" , Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=SoapParameterStyle.Bare)]
 		public object GetTestInfo(string s, out string d) {
 			object[] results = this.Invoke("GetTestInfo", new object[] {s});
 			d = (string) results[1];
 	        return ((object)(results[0]));
 		}
+		
+        [System.Web.Services.Protocols.SoapHeaderAttribute("myUserInfo")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("urn:mono-ws-tests/TestUnknownHeader1",RequestNamespace="urn:mono-ws-tests",ResponseNamespace="urn:mono-ws-tests" , Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=SoapParameterStyle.Bare)]
+        public virtual void TestUnknownHeader1() {
+            this.Invoke("TestUnknownHeader1", new object[0]);
+        }
+
+        [System.Web.Services.Protocols.SoapHeaderAttribute("myUserInfo")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("urn:mono-ws-tests/TestUnknownHeader2",RequestNamespace="urn:mono-ws-tests",ResponseNamespace="urn:mono-ws-tests" , Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=SoapParameterStyle.Bare)]
+        public virtual void TestUnknownHeader2() {
+            this.Invoke("TestUnknownHeader2", new object[0]);
+        }
+
+        [System.Web.Services.Protocols.SoapHeaderAttribute("myUserInfo")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("urn:mono-ws-tests/TestUnknownHeader3",RequestNamespace="urn:mono-ws-tests",ResponseNamespace="urn:mono-ws-tests" , Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=SoapParameterStyle.Bare)]
+        public virtual int TestUnknownHeader3() {
+            System.Object[] results = this.Invoke("TestUnknownHeader3", new object[0]);
+            return ((int)(results[0]));
+        }
+
+        [System.Web.Services.Protocols.SoapHeaderAttribute("myUserInfo")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("urn:mono-ws-tests/TestUnknownHeader4",RequestNamespace="urn:mono-ws-tests",ResponseNamespace="urn:mono-ws-tests" , Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=SoapParameterStyle.Bare)]
+        public virtual int TestUnknownHeader4() {
+            System.Object[] results = this.Invoke("TestUnknownHeader4", new object[0]);
+            return ((int)(results[0]));
+        }		
 	}
+	
+    public class MyUserInfo : System.Web.Services.Protocols.SoapHeader 
+	{
+        public int userId;
+    }
+	
 }

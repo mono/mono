@@ -1,5 +1,11 @@
 2004-07-01  Lluis Sanchez Gual  <lluis@ximian.com>
 
+	* Conv.asmx.template, Conv.cs.template, client/localhost/ConvDoc*,
+	  server/Conv*: Added tests for unknown headers.
+	* proxies.net.xml.gz, wsdlfiles.tar.gz: Updated.
+
+2004-07-01  Lluis Sanchez Gual  <lluis@ximian.com>
+
 	* WebServiceTest.cs, client/external/BankCodeEJBHomeTest.cs, 
 	  client/external/GlobalWeatherTest.cs, client/external/HPcatalogTest.cs,
 	  client/external/IODCODESPOSTAUXTest.cs, 
