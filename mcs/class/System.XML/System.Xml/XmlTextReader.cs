@@ -860,6 +860,8 @@ namespace System.Xml
 			public char QuoteChar;
 			public int LineNumber;
 			public int LinePosition;
+			public int ValueBufferStart;
+			public int ValueBufferEnd;
 
 			public XmlNodeType NodeType;
 
@@ -867,6 +869,11 @@ namespace System.Xml
 				get {
 					if (valueCache != null)
 						return valueCache;
+					if (ValueBufferStart >= 0) {
+//Console.WriteLine (NodeType + " / " + ValueBuffer.Length + " / " + ValueBufferStart + " / " + ValueBufferEnd);
+						valueCache = new string (Reader.valueBuffer, ValueBufferStart, ValueBufferEnd - ValueBufferStart);
+						return valueCache;
+					}
 					switch (NodeType) {
 					case XmlNodeType.Text:
 					case XmlNodeType.SignificantWhitespace:
@@ -884,6 +891,7 @@ namespace System.Xml
 
 			public virtual void Clear ()
 			{
+				ValueBufferStart = -1;
 				valueCache = null;
 				NodeType = XmlNodeType.None;
 				Name = LocalName = Prefix = NamespaceURI = String.Empty;
@@ -910,11 +918,11 @@ namespace System.Xml
 					} else {
 						// This improves speed by at least nearly 5%, but eats more memory at least nearly 0.3%
 						// However, this might be reverted if NameTable got improved.
-						char [] nameArr = Name.ToCharArray ();
-						Prefix = Reader.NameTable.Add (nameArr, 0, indexOfColon);
-						LocalName = Reader.NameTable.Add (nameArr, indexOfColon + 1, nameArr.Length - indexOfColon - 1);
-//						Prefix = Reader.NameTable.Add (Name.Substring (0, indexOfColon));
-//						LocalName = Reader.NameTable.Add (Name.Substring (indexOfColon + 1));
+//						char [] nameArr = Name.ToCharArray ();
+//						Prefix = Reader.NameTable.Add (nameArr, 0, indexOfColon);
+//						LocalName = Reader.NameTable.Add (nameArr, indexOfColon + 1, nameArr.Length - indexOfColon - 1);
+						Prefix = Reader.NameTable.Add (Name.Substring (0, indexOfColon));
+						LocalName = Reader.NameTable.Add (Name.Substring (indexOfColon + 1));
 					}
 
 					// NamespaceURI
@@ -1376,10 +1384,27 @@ namespace System.Xml
 
 					return false;
 				} else {
- 	   				switch ((char) c) {
+ 	   				switch (c) {
 					case '<':
 						ReadChar ();
-						ReadTag ();
+						switch (PeekChar ())
+						{
+						case '/':
+							ReadChar ();
+							ReadEndTag ();
+							break;
+						case '?':
+							ReadChar ();
+							ReadProcessingInstruction ();
+							break;
+						case '!':
+							ReadChar ();
+							ReadDeclaration ();
+							break;
+						default:
+							ReadStartTag ();
+							break;
+						}
 						break;
 					case '\r': goto case ' ';
 					case '\n': goto case ' ';
@@ -1424,29 +1449,6 @@ namespace System.Xml
 
 			returnEntityReference = false;
 			entityReferenceName = String.Empty;
-		}
-
-		// The leading '<' has already been consumed.
-		private void ReadTag ()
-		{
-			switch (PeekChar ())
-			{
-			case '/':
-				ReadChar ();
-				ReadEndTag ();
-				break;
-			case '?':
-				ReadChar ();
-				ReadProcessingInstruction ();
-				break;
-			case '!':
-				ReadChar ();
-				ReadDeclaration ();
-				break;
-			default:
-				ReadStartTag ();
-				break;
-			}
 		}
 
 		// The leading '<' has already been consumed.
@@ -1616,11 +1618,6 @@ namespace System.Xml
 			char [] oldNameBuffer = nameBuffer;
 			nameBuffer = new char [nameCapacity];
 			Array.Copy (oldNameBuffer, nameBuffer, nameLength);
-		}
-
-		private string CreateNameString ()
-		{
-			return parserContext.NameTable.Add (nameBuffer, 0, nameLength);
 		}
 
 		private void AppendValueChar (int ch)
@@ -1858,6 +1855,12 @@ namespace System.Xml
 				ExpectAfterWhitespace ('=');
 				SkipWhitespace ();
 				ReadAttributeValueTokens (-1);
+				// This hack is required for xmldecl which has
+				// both effective attributes and Value.
+				string dummyValue;
+				if (isXmlDecl)
+					dummyValue = currentAttributeToken.Value;
+
 				attributeCount++;
 
 				if (currentAttributeToken.Name == "xmlns")
@@ -1912,7 +1915,6 @@ namespace System.Xml
 
 		private void IncrementAttributeValueToken ()
 		{
-			ClearValueBuffer ();
 			currentAttributeValue++;
 			if (attributeValueTokens.Length == currentAttributeValue) {
 				XmlTokenInfo [] newArray = new XmlTokenInfo [attributeValueTokens.Length * 2];
@@ -1943,6 +1945,7 @@ namespace System.Xml
 			bool isNewToken = true;
 			bool loop = true;
 			int ch = 0;
+			currentAttributeValueToken.ValueBufferStart = valueLength;
 			while (loop) {
 				ch = ReadChar ();
 				if (ch == quoteChar)
@@ -1950,6 +1953,7 @@ namespace System.Xml
 
 				if (incrementToken) {
 					IncrementAttributeValueToken ();
+					currentAttributeValueToken.ValueBufferStart = valueLength;
 					currentAttributeValueToken.LineNumber = line;
 					currentAttributeValueToken.LinePosition = column;
 					incrementToken = false;
@@ -1983,7 +1987,7 @@ namespace System.Xml
 					int predefined = XmlChar.GetPredefinedEntity (entName);
 					if (predefined < 0) {
 						CheckAttributeEntityReferenceWFC (entName);
-						currentAttributeValueToken.Value = CreateValueString ();
+						currentAttributeValueToken.ValueBufferEnd = valueLength;
 						currentAttributeValueToken.NodeType = XmlNodeType.Text;
 						if (!isNewToken)
 							IncrementAttributeValueToken ();
@@ -2005,7 +2009,7 @@ namespace System.Xml
 				isNewToken = false;
 			}
 			if (!incrementToken) {
-				currentAttributeValueToken.Value = CreateValueString ();
+				currentAttributeValueToken.ValueBufferEnd = valueLength;
 				currentAttributeValueToken.NodeType = XmlNodeType.Text;
 			}
 			currentAttributeToken.ValueTokenEndIndex = currentAttributeValue;
@@ -2102,7 +2106,7 @@ namespace System.Xml
 				message = "Invalid Xml Declaration markup was found.";
 			string sa = GetAttribute ("standalone");
 			if (sa != null && sa != "yes" && sa != "no")
-				message = "Only 'yes' or 'no' is allowed for standalone.";
+				message = String.Format ("Only 'yes' or 'no' is allowed for standalone. Value was '{0}'", sa);
 
 			this.isStandalone = (sa == "yes");
 
@@ -2671,7 +2675,7 @@ namespace System.Xml
 				AppendNameChar (ReadChar ());
 			}
 
-			return CreateNameString ();
+			return parserContext.NameTable.Add (nameBuffer, 0, nameLength);
 		}
 
 		// Read the next character and compare it against the

@@ -1,3 +1,9 @@
+2004-10-26  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextReader.cs : Don't create attribute Value string on Read()
+	  (i.e. create string when get_Value() is invoked.) This optimizes
+	  some kind of XmlTextReader usage significantly such as Skip().
+
 2004-10-22  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlConvertDateTimeSerializationMode.cs : added.
