@@ -295,14 +295,7 @@ namespace System
 	public static explicit operator byte (Decimal val)
 	{
 		ulong result = u64 (val);
-// bug #59793 - http://bugzilla.ximian.com/show_bug.cgi?id=59793
-//		return checked ((byte) result);
-
-// manual alternative to bug #59793
-		if (result > Byte.MaxValue || result < Byte.MinValue) {
-			throw new System.OverflowException ();
-		}
-		return (byte) result;
+		return checked ((byte) result);
 	}
 
 	[CLSCompliant (false)]
@@ -315,14 +308,7 @@ namespace System
 	public static explicit operator char (Decimal val) 
 	{
 		ulong result = u64 (val);
-// bug #59793 - http://bugzilla.ximian.com/show_bug.cgi?id=59793
-//		return checked ((char) result);
-
-// manual alternative to bug #59793
-		if (result > Char.MaxValue || result < Char.MinValue) {
-			throw new System.OverflowException ();
-		}
-		return (char) result;
+		return checked ((char) result);
 	}
 
 	public static explicit operator short (Decimal val) 
@@ -335,14 +321,7 @@ namespace System
 	public static explicit operator ushort (Decimal val) 
 	{
 		ulong result = u64 (val);
-// bug #59793 - http://bugzilla.ximian.com/show_bug.cgi?id=59793
-//		return checked ((ushort) result);
-
-// manual alternative to bug #59793
-		if (result > UInt16.MaxValue || result < UInt16.MinValue) {
-			throw new System.OverflowException ();
-		}
-		return (ushort) result;
+		return checked ((ushort) result);
 	}
 
 	public static explicit operator int (Decimal val) 
@@ -482,6 +461,24 @@ namespace System
             return Equals((Decimal) o, this);
         }
 
+	// avoid unmanaged call
+	private bool IsZero () 
+	{
+		return ((ss32 == 0) && (hi32 == 0) && (lo32 == 0) && (mid32 == 0));
+	}
+
+	// avoid unmanaged call
+	private bool IsOne () 
+	{
+		return ((ss32 == 0x80000000) && (hi32 == 0) && (lo32 == 0) && (mid32 == 0));
+	}
+
+	// avoid unmanaged call
+	private bool IsNegative () 
+	{
+		return ((ss32 & 0x80000000) == 0x80000000);
+	}
+
         public static Decimal Floor(Decimal d) 
         {
             decimalFloorAndTrunc(ref d, 1);
@@ -505,48 +502,68 @@ namespace System
             return d;
         }
 
-        public static Decimal Multiply(Decimal d1, Decimal d2) 
+        public static Decimal Multiply (Decimal d1, Decimal d2) 
         {
-            if (decimalMult(ref d1, ref d2) != 0) 
-            {
-                throw new OverflowException();
-            }
+		if (d1.IsZero () || d2.IsZero ())
+			return Decimal.Zero;
 
-            return d1;
+		if (decimalMult (ref d1, ref d2) != 0)
+			throw new OverflowException ();
+		return d1;
         }
 
-        public static Decimal Divide(Decimal d1, Decimal d2) 
+        public static Decimal Divide (Decimal d1, Decimal d2) 
         {
-            if (d1 == 0 && d2 != 0) return 0;
+		if (d2.IsZero ())
+			throw new DivideByZeroException ();
+		if (d2.IsZero ())
+			return Decimal.Zero;
+		if (d1 == d2)
+			return Decimal.One;
 
-            Decimal d3;
-            int rc = decimalDiv(out d3, ref d1, ref d2);
+		d1.ss32 ^= SIGN_FLAG;
+		if (d1 == d2)
+			return Decimal.MinusOne;
+		d1.ss32 ^= SIGN_FLAG;
 
-            if (rc != 0)
-            {
-                if (rc == DECIMAL_DIVIDE_BY_ZERO)
-                    throw new DivideByZeroException();
-                else 
-                    throw new OverflowException();
-            }
+		Decimal result;
+		if (decimalDiv (out result, ref d1, ref d2) != 0)
+			throw new OverflowException ();
 
-            return d3;
+		return result;
         }
 
-        public static Decimal Remainder(Decimal d1, Decimal d2) 
+        public static Decimal Remainder (Decimal d1, Decimal d2) 
         {
-            Decimal d3;
-            int rc = decimalIntDiv(out d3, ref d1, ref d2);
+		if (d2.IsZero ())
+			throw new DivideByZeroException ();
+		if (d1.IsZero ())
+			return Decimal.Zero;
 
-            if (rc != 0)
-            {
-                if (rc == DECIMAL_DIVIDE_BY_ZERO)
-                    throw new DivideByZeroException();
-                else 
-                    throw new OverflowException();
-            }
+		bool negative = d1.IsNegative ();
+		if (negative)
+			d1.ss32 ^= SIGN_FLAG;
+		if (d2.IsNegative ())
+			d2.ss32 ^= SIGN_FLAG;
 
-            return d1 - d3 * d2;
+		Decimal result;
+		if (d1 == d2) {
+			return Decimal.Zero;
+		}
+		else if (d2 > d1) {
+			result = d1;
+		}
+		else {
+			if (decimalIntDiv (out result, ref d1, ref d2) != 0)
+				throw new OverflowException ();
+
+			// FIXME: not really performant here
+			result = d1 - result * d2;
+		}
+
+		if (negative)
+			result.ss32 ^= SIGN_FLAG;
+		return result;
         }
 
         public static int Compare(Decimal d1, Decimal d2) 

@@ -1,3 +1,8 @@
+2004-06-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Decimal.cs: Fixed remainder (and optimized some cases not to call 
+	unmanaged code). Simplified divide. Removed workaround for bug #59793.
+
 2004-06-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTime.cs :
