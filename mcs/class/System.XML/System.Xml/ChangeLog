@@ -1,3 +1,11 @@
+2003-06-30  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlDocumentNavigator.cs : Implemented MoveTo*Namespace() and 
+	  essentially changed most of the property handling (e.g. removed attribute 
+	  enumerator and it now became really cloneable).
+	* XmlNodeReader.cs : ReadInnerXml() changes its state as error
+	  when the method is called at Initial state.
+
 2003-06-25  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlDocumentNavigator.cs : Fixed IsEmptyElement. It treats <foo></foo>
