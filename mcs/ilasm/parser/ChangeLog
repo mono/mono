@@ -1,5 +1,10 @@
 2003-12-10  Jackson Harper <jackson@ximian.com>
 
+	* ILParser.jay: When modifying extern types, clone them and modify
+	the clone.
+	
+2003-12-10  Jackson Harper <jackson@ximian.com>
+
 	* ILParser.jay: Use the extern table for all extern type
 	creations.
 	

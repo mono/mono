@@ -707,42 +707,63 @@ type			: K_CLASS class_ref
 			| type OPEN_BRACKET CLOSE_BRACKET
                           {
                                 ITypeRef base_type = (ITypeRef) $1;
+                                if (base_type is ExternTypeRef)
+                                        base_type = ((ExternTypeRef) base_type).Clone ();
                                 base_type.MakeArray ();
+                                $$ = base_type;
                           }
 			| type OPEN_BRACKET bounds CLOSE_BRACKET
                           {
                                 ITypeRef base_type = (ITypeRef) $1;
+                                if (base_type is ExternTypeRef)
+                                        base_type = ((ExternTypeRef) base_type).Clone ();
                                 ArrayList bound_list = (ArrayList) $3;
                                 base_type.MakeBoundArray (bound_list);
+                                $$ = base_type;
                           }
 			| type AMPERSAND
                           {
                                 ITypeRef base_type = (ITypeRef) $1;
+                                if (base_type is ExternTypeRef)
+                                        base_type = ((ExternTypeRef) base_type).Clone ();
                                 base_type.MakeManagedPointer ();
+                                $$ = base_type;
                           }
 			| type STAR
                           {
                                 ITypeRef base_type = (ITypeRef) $1;
+                                if (base_type is ExternTypeRef)
+                                        base_type = ((ExternTypeRef) base_type).Clone ();
                                 base_type.MakeUnmanagedPointer ();
+                                $$ = base_type;
                           }
 			| type K_PINNED
                           {
                                 ITypeRef base_type = (ITypeRef) $1;
+                                if (base_type is ExternTypeRef)
+                                        base_type = ((ExternTypeRef) base_type).Clone ();
                                 base_type.MakePinned ();
+                                $$ = base_type;
                           }
 			| type K_MODREQ OPEN_PARENS class_ref CLOSE_PARENS
                           {
                                 ITypeRef base_type = (ITypeRef) $1;
+                                if (base_type is ExternTypeRef)
+                                        base_type = ((ExternTypeRef) base_type).Clone ();
                                 IClassRef class_ref = (IClassRef) $4;
                                 base_type.MakeCustomModified (codegen,
-                                        CustomModifier.modopt, class_ref);    
+                                        CustomModifier.modopt, class_ref);
+                                $$ = base_type;
                           }
 			| type K_MODOPT OPEN_PARENS class_ref CLOSE_PARENS
                           {
                                 ITypeRef base_type = (ITypeRef) $1;
+                                if (base_type is ExternTypeRef)
+                                        base_type = ((ExternTypeRef) base_type).Clone ();
                                 IClassRef class_ref = (IClassRef) $4;
                                 base_type.MakeCustomModified (codegen,
-                                        CustomModifier.modopt, class_ref);    
+                                        CustomModifier.modopt, class_ref);
+                                $$ = base_type;
                           }
 			| K_METHOD call_conv type STAR OPEN_PARENS sig_args CLOSE_PARENS
 			| K_TYPEDREF
