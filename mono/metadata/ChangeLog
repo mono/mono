@@ -1,5 +1,12 @@
 2004-05-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* appdomain.c: use g_strncasecmp when looking for 'Culture=' et al.
+	* reflection.c: use g_strncasecmp when looking for 'Culture=' et al.
+	(type_get_fully_qualified_name): Added PublicKeyToken when building a
+	full type name.
+
+2004-05-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* appdomain.c: fixed check for 'neutral' culture and removed warning.
 	* reflection.c: fix bug when parsing a full type name and Version is not
 	the last thing in the string.
