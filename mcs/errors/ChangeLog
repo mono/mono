@@ -2,7 +2,9 @@
 
 	* Makefile (run-generics-tests): Fix quoting to better work in
 	Windows.  Remove some stray code leftover from testing.
-	(DISTFILES): Distribute *.inc files too.
+	(DISTFILES): Distribute *.inc, *.pub, and *.response files too.
+	* cs2023.response: Rename from CS2023.
+	* cs2023.cs: Update.
 
 2005-01-10  Raja R Harinath  <rharinath@novell.com>
 
