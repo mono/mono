@@ -4,7 +4,7 @@ bin_SCRIPTS = mcs mbas ilasm cilc monoresgen resgen secutil sqlsharp xsd wsdl al
 
 CLEANFILES = mcs mbas ilasm cilc monoresgen resgen secutil sqlsharp xsd wsdl al genxs soapsuds chktrust signcode disco sn cert2spc setreg makecert certmgr monop
 
-if X86
+if USE_JIT
 MONO_INTERP = mono
 else
 MONO_INTERP = mint
