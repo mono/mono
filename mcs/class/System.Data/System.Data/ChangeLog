@@ -1,3 +1,7 @@
+2004-04-07  Marek Safar  <marek.safar@seznam.cz>
+
+	* Constraint.cs: changed ClsCompliant to CLSCompliant, build fix.
+
 2004-04-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Constraint.cs:

@@ -49,7 +49,7 @@ namespace System.Data {
 			_properties = new PropertyCollection();
 		}
 
-		[ClsCompliant (false)]
+		[CLSCompliant (false)]
 		protected internal virtual DataSet _DataSet {
 			get { return dataSet; }
 		}
