@@ -17,7 +17,7 @@
 //     function aborts because it requires its argument to be of the same type
 //
 
-namespace Mono.CSharp {
+namespace Mono.MonoBASIC {
 
 	using System;
 	using System.Reflection;
@@ -228,5 +228,3 @@ namespace Mono.CSharp {
 		}
 	}
 }
-
-

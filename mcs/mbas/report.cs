@@ -14,7 +14,7 @@ using System.Text;
 using System.Collections;
 using System.Diagnostics;
 
-namespace Mono.CSharp {
+namespace Mono.MonoBASIC {
 
 	/// <summary>
 	///   This class is used to report errors and warnings t te user.

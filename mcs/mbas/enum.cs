@@ -14,7 +14,7 @@ using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace Mono.CSharp {
+namespace Mono.MonoBASIC {
 
 	/// <summary>
 	///   Enumeration container
@@ -141,7 +141,7 @@ namespace Mono.CSharp {
 				Report.Error (1008, Location,
 					      "Type byte, sbyte, short, ushort, int, uint, " +
 					      "long, or ulong expected (got: " +
-					      TypeManager.CSharpName (UnderlyingType) + ")");
+					      TypeManager.MonoBASIC_Name (UnderlyingType) + ")");
 				return null;
 			}
 
@@ -249,11 +249,11 @@ namespace Mono.CSharp {
 			if (val is Constant)
 				Report.Error (31, loc, "Constant value '" + ((Constant) val).AsString () +
 					      "' cannot be converted" +
-					      " to a " + TypeManager.CSharpName (UnderlyingType));
+					      " to a " + TypeManager.MonoBASIC_Name (UnderlyingType));
 			else 
 				Report.Error (31, loc, "Constant value '" + val +
 					      "' cannot be converted" +
-					      " to a " + TypeManager.CSharpName (UnderlyingType));
+					      " to a " + TypeManager.MonoBASIC_Name (UnderlyingType));
 			return;
 		}
 
@@ -422,7 +422,7 @@ namespace Mono.CSharp {
 				else {
 					for (int i = 0; i < idx; ++i) {
 						string n = (string) ordered_enums [i];
-						Location m_loc = (Mono.CSharp.Location)
+						Location m_loc = (Mono.MonoBASIC.Location)
 							member_to_location [n];
 						in_transit.Add (name, true);
 						default_value = LookupEnumValue (ec, n, m_loc);
@@ -529,7 +529,7 @@ namespace Mono.CSharp {
 				if (member_to_value.Contains (name))
 					continue;
 				
-				Location loc = (Mono.CSharp.Location) member_to_location [name];
+				Location loc = (Mono.MonoBASIC.Location) member_to_location [name];
 
 				if (this [name] != null) {
 					default_value = LookupEnumValue (ec, name, loc);

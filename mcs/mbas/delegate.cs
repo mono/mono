@@ -15,7 +15,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 
-namespace Mono.CSharp {
+namespace Mono.MonoBASIC {
 
 	/// <summary>
 	///   Holds Delegates
@@ -150,7 +150,7 @@ namespace Mono.CSharp {
 				if (!container.AsAccessible (partype, ModFlags)) {
 					Report.Error (59, Location,
 						      "Inconsistent accessibility: parameter type `" +
-						      TypeManager.CSharpName (partype) + "` is less " +
+						      TypeManager.MonoBASIC_Name (partype) + "` is less " +
 						      "accessible than delegate `" + Name + "'");
 					return false;
 				}
@@ -163,7 +163,7 @@ namespace Mono.CSharp {
 			if (!container.AsAccessible (ret_type, ModFlags)) {
 				Report.Error (58, Location,
 					      "Inconsistent accessibility: return type `" +
-					      TypeManager.CSharpName (ret_type) + "` is less " +
+					      TypeManager.MonoBASIC_Name (ret_type) + "` is less " +
 					      "accessible than delegate `" + Name + "'");
 				return false;
 			}
@@ -437,7 +437,7 @@ namespace Mono.CSharp {
 		
 		public static string FullDelegateDesc (Type del_type, MethodBase mb, ParameterData pd)
 		{
-			StringBuilder sb = new StringBuilder (TypeManager.CSharpName (((MethodInfo) mb).ReturnType));
+			StringBuilder sb = new StringBuilder (TypeManager.MonoBASIC_Name (((MethodInfo) mb).ReturnType));
 			
 			sb.Append (" " + del_type.ToString ());
 			sb.Append (" (");
@@ -447,7 +447,7 @@ namespace Mono.CSharp {
 			for (int i = length; i > 0; ) {
 				i--;
 				
-				sb.Append (TypeManager.CSharpName (pd.ParameterType (length - i - 1)));
+				sb.Append (TypeManager.MonoBASIC_Name (pd.ParameterType (length - i - 1)));
 				if (i != 0)
 					sb.Append (", ");
 			}

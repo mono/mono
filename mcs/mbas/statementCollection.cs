@@ -7,7 +7,7 @@
 // (C) 2001 Ximian, Inc.
 //
 
-namespace Mono.CSharp {
+namespace Mono.MonoBASIC {
 
 	using System.Collections;
 	using System;

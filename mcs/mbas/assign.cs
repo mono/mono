@@ -26,7 +26,7 @@ using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace Mono.CSharp {
+namespace Mono.MonoBASIC {
 
 	/// <summary>
 	///   This interface is implemented by expressions that can be assigned to.
@@ -522,7 +522,3 @@ namespace Mono.CSharp {
 		}
 	}
 }
-
-
-
-

@@ -13,7 +13,7 @@ using System.Diagnostics.SymbolStore;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
-using Mono.CSharp ;
+using Mono.MonoBASIC ;
 
 namespace Mono.MonoBASIC
 {
@@ -21,7 +21,7 @@ namespace Mono.MonoBASIC
 	{
 		public static void AddSpecializedAttribute(ref Attributes attrs, string attributeName, ArrayList args, Location loc)
 		{
-			Mono.CSharp.Attribute specialAttr = new Mono.CSharp.Attribute(attributeName, args, loc);
+			Mono.MonoBASIC.Attribute specialAttr = new Mono.MonoBASIC.Attribute(attributeName, args, loc);
 			ArrayList al = new ArrayList();
 			al.Add(specialAttr);
 			AttributeSection asec = new AttributeSection(null, al);
@@ -35,7 +35,7 @@ namespace Mono.MonoBASIC
 	/// <summary>
 	/// Summary description for module.
 	/// </summary>
-	public class Module : Mono.CSharp.Class 
+	public class Module : Mono.MonoBASIC.Class 
 	{
 		// <summary>
 		//   Modifiers allowed in a class declaration

@@ -4,7 +4,7 @@
 using System;
 using System.Reflection;
 
-namespace Mono.CSharp {
+namespace Mono.MonoBASIC {
 	public class Modifiers {
 
 		//

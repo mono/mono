@@ -15,7 +15,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.IO;
 
-namespace Mono.CSharp
+namespace Mono.MonoBASIC
 {
 
 	public interface ITreeDump {

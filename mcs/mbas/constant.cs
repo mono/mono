@@ -8,7 +8,7 @@
 //
 //
 
-namespace Mono.CSharp {
+namespace Mono.MonoBASIC {
 
 	using System;
 	using System.Reflection.Emit;
@@ -970,5 +970,3 @@ namespace Mono.CSharp {
 	}
 
 }
-
-

@@ -14,7 +14,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Diagnostics.SymbolStore;
 
-namespace Mono.CSharp {
+namespace Mono.MonoBASIC {
 
 	/// <summary>
 	///    Code generator class.

@@ -14,7 +14,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Diagnostics;
 
-namespace Mono.CSharp {
+namespace Mono.MonoBASIC {
 
 	public class RootContext {
 
@@ -742,7 +742,7 @@ namespace Mono.CSharp {
 				AssemblyBuilder ab = CodeGen.AssemblyBuilder;
 				TypeContainer dummy = new TypeContainer (null, "", new Location (-1, 0));
 				EmitContext temp_ec = new EmitContext (
-					dummy, Mono.CSharp.Location.Null, null, null, 0, false);
+					dummy, Mono.MonoBASIC.Location.Null, null, null, 0, false);
 			
 				foreach (DictionaryEntry de in global_attributes){
 					Namespace ns = (Namespace) de.Key;

@@ -37,7 +37,7 @@ using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Diagnostics.SymbolStore;
 
-namespace Mono.CSharp {
+namespace Mono.MonoBASIC {
 
 	/// <summary>
 	///   This is the base class for structs and classes.  
@@ -169,7 +169,7 @@ namespace Mono.CSharp {
 			return AdditionResult.Success;
 		}
 
-		public AdditionResult AddEnum (Mono.CSharp.Enum e)
+		public AdditionResult AddEnum (Mono.MonoBASIC.Enum e)
 		{
 			AdditionResult res;
 
@@ -688,7 +688,7 @@ namespace Mono.CSharp {
 				if (!AsAccessible (parent, ModFlags))
 					Report.Error (60, Location,
 						      "Inconsistent accessibility: base class `" +
-						      TypeManager.CSharpName (parent) + "' is less " +
+						      TypeManager.MonoBASIC_Name (parent) + "' is less " +
 						      "accessible than class `" +
 						      Name + "'");
 
@@ -774,7 +774,7 @@ namespace Mono.CSharp {
 			else
 				is_class = false;
 
-			ec = new EmitContext (this, Mono.CSharp.Location.Null, null, null, ModFlags);
+			ec = new EmitContext (this, Mono.MonoBASIC.Location.Null, null, null, ModFlags);
 
 			ifaces = GetClassBases (is_class, out parent, out error); 
 			
@@ -788,7 +788,7 @@ namespace Mono.CSharp {
 				    parent == TypeManager.array_type){
 					Report.Error (
 						644, Location, "`" + Name + "' cannot inherit from " +
-						"special class `" + TypeManager.CSharpName (parent) + "'");
+						"special class `" + TypeManager.MonoBASIC_Name (parent) + "'");
 					return null;
 				}
 			}
@@ -2229,7 +2229,7 @@ namespace Mono.CSharp {
                                 17, location,
                                 "Program `" + CodeGen.FileName +
                                 "'  has more than one entry point defined: `" +
-                                TypeManager.CSharpSignature(b) + "'");
+                                TypeManager.MonoBASIC_Signature(b) + "'");
                 }
 
                 void Report28 (MethodInfo b)
@@ -2239,7 +2239,7 @@ namespace Mono.CSharp {
 				
                         Report.Warning (
                                 28, Location,
-                                "`" + TypeManager.CSharpSignature(b) +
+                                "`" + TypeManager.MonoBASIC_Signature(b) +
                                 "' has the wrong signature to be an entry point");
                 }
 
@@ -3064,13 +3064,13 @@ namespace Mono.CSharp {
 				if ((modifiers & Modifiers.ABSTRACT) != 0)
 					Report.Error (
 						500, Location, "Abstract method `" +
-						TypeManager.CSharpSignature (builder) +
+						TypeManager.MonoBASIC_Signature (builder) +
 						"' can not have a body");
 
 				if ((modifiers & Modifiers.EXTERN) != 0)
 					Report.Error (
 						179, Location, "External method `" +
-						TypeManager.CSharpSignature (builder) +
+						TypeManager.MonoBASIC_Signature (builder) +
 						"' can not have a body");
 
 				return;
@@ -3082,7 +3082,7 @@ namespace Mono.CSharp {
 			if (block == null) {
 				Report.Error (
 					501, Location, "Method `" +
-					TypeManager.CSharpSignature (builder) +
+					TypeManager.MonoBASIC_Signature (builder) +
 					"' must declare a body since it is not marked " +
 					"abstract or extern");
 				return;
@@ -3233,12 +3233,12 @@ namespace Mono.CSharp {
 				if (this is Indexer)
 					Report.Error (55, Location,
 						      "Inconsistent accessibility: parameter type `" +
-						      TypeManager.CSharpName (partype) + "' is less " +
+						      TypeManager.MonoBASIC_Name (partype) + "' is less " +
 						      "accessible than indexer `" + Name + "'");
 				else
 					Report.Error (51, Location,
 						      "Inconsistent accessibility: parameter type `" +
-						      TypeManager.CSharpName (partype) + "' is less " +
+						      TypeManager.MonoBASIC_Name (partype) + "' is less " +
 						      "accessible than method `" + Name + "'");
 				error = true;
 			}
@@ -3266,22 +3266,22 @@ namespace Mono.CSharp {
 				if (this is Property)
 					Report.Error (53, Location,
 						      "Inconsistent accessibility: property type `" +
-						      TypeManager.CSharpName (MemberType) + "' is less " +
+						      TypeManager.MonoBASIC_Name (MemberType) + "' is less " +
 						      "accessible than property `" + Name + "'");
 				else if (this is Indexer)
 					Report.Error (54, Location,
 						      "Inconsistent accessibility: indexer return type `" +
-						      TypeManager.CSharpName (MemberType) + "' is less " +
+						      TypeManager.MonoBASIC_Name (MemberType) + "' is less " +
 						      "accessible than indexer `" + Name + "'");
 				else if (this is Method)
 					Report.Error (50, Location,
 						      "Inconsistent accessibility: return type `" +
-						      TypeManager.CSharpName (MemberType) + "' is less " +
+						      TypeManager.MonoBASIC_Name (MemberType) + "' is less " +
 						      "accessible than method `" + Name + "'");
 				else
 					Report.Error (52, Location,
 						      "Inconsistent accessibility: field type `" +
-						      TypeManager.CSharpName (MemberType) + "' is less " +
+						      TypeManager.MonoBASIC_Name (MemberType) + "' is less " +
 						      "accessible than field `" + Name + "'");
 				return false;
 			}
@@ -3414,7 +3414,7 @@ namespace Mono.CSharp {
 			if (!parent.AsAccessible (t, ModFlags)) {
 				Report.Error (52, Location,
 					      "Inconsistent accessibility: field type `" +
-					      TypeManager.CSharpName (t) + "' is less " +
+					      TypeManager.MonoBASIC_Name (t) + "' is less " +
 					      "accessible than field `" + Name + "'");
 				return false;
 			}
@@ -3452,7 +3452,7 @@ namespace Mono.CSharp {
 						Report.Error (
 							677, Location, parent.MakeName (Name) +
 							" A volatile field can not be of type `" +
-							TypeManager.CSharpName (t) + "'");
+							TypeManager.MonoBASIC_Name (t) + "'");
 						return false;
 					}
 				}
@@ -4440,7 +4440,7 @@ namespace Mono.CSharp {
 			
 			OperatorMethod = new Method (ReturnType, ModFlags, MethodName,
 						     new Parameters (param_list, null, Location),
-						     OptAttributes, Mono.CSharp.Location.Null);
+						     OptAttributes, Mono.MonoBASIC.Location.Null);
 
 			OperatorMethod.IsOperator = true;			
 			OperatorMethod.Define (parent);
@@ -4630,13 +4630,13 @@ namespace Mono.CSharp {
 			if (SecondArgType == null)
 				return String.Format (
 					"{0} operator {1}({2})",
-					TypeManager.CSharpName (return_type),
+					TypeManager.MonoBASIC_Name (return_type),
 					GetName (OperatorType),
 					param_types [0]);
 			else
 				return String.Format (
 					"{0} operator {1}({2}, {3})",
-					TypeManager.CSharpName (return_type),
+					TypeManager.MonoBASIC_Name (return_type),
 					GetName (OperatorType),
 					param_types [0], param_types [1]);
 		}

@@ -14,7 +14,7 @@ using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace Mono.CSharp {
+namespace Mono.MonoBASIC {
 
 	/// <summary>
 	///   Interfaces
@@ -713,7 +713,7 @@ namespace Mono.CSharp {
 				if (!Parent.AsAccessible (t, ModFlags))
 					Report.Error (61, Location,
 						      "Inconsistent accessibility: base interface `" +
-						      TypeManager.CSharpName (t) + "' is less " +
+						      TypeManager.MonoBASIC_Name (t) + "' is less " +
 						      "accessible than interface `" +
 						      Name + "'");
 

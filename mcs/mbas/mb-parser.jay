@@ -19,7 +19,7 @@ namespace Mono.MonoBASIC
 	using System.Reflection;
 	using System.Collections;
 	using Mono.Languages;
-	using Mono.CSharp;
+	using Mono.MonoBASIC;
 
 	/// <summary>
 	///    The MonoBASIC Parser
@@ -650,7 +650,7 @@ attribute
 	  }
 	  opt_attribute_arguments
 	  {
-		$$ = new Mono.CSharp.Attribute ((string) $1, (ArrayList) $3, (Location) $2);
+		$$ = new Mono.MonoBASIC.Attribute ((string) $1, (ArrayList) $3, (Location) $2);
 	  }	  
 	;
 	
@@ -1199,7 +1199,7 @@ enum_declaration
 		if (implicit_modifiers && ((current_modifiers & Modifiers.STATIC) != 0))
 			current_modifiers = (current_modifiers & ~Modifiers.STATIC);
 			
-		Mono.CSharp.Enum e = new Mono.CSharp.Enum (current_container, enum_type, 
+		Mono.MonoBASIC.Enum e = new Mono.MonoBASIC.Enum (current_container, enum_type, 
 					(int) current_modifiers, full_name, 
 				   	(Attributes) current_attributes, enum_location);
 		
@@ -1632,7 +1632,7 @@ delegate_declaration
 		if (implicit_modifiers && ((current_modifiers & Modifiers.STATIC) != 0))
 			current_modifiers = (current_modifiers & ~Modifiers.STATIC);
 					
-		Mono.CSharp.Delegate del = new Mono.CSharp.Delegate (current_container, TypeManager.system_void_expr, 
+		Mono.MonoBASIC.Delegate del = new Mono.MonoBASIC.Delegate (current_container, TypeManager.system_void_expr, 
 					     (int) current_modifiers, 
 		                             MakeName ((string) $3), (Parameters) $5, 
 					     (Attributes) current_attributes, l);
@@ -1646,7 +1646,7 @@ delegate_declaration
 	  CLOSE_PARENS AS type
 	  {
 		Location l = lexer.Location;
-		Mono.CSharp.Delegate del = new Mono.CSharp.Delegate (
+		Mono.MonoBASIC.Delegate del = new Mono.MonoBASIC.Delegate (
 			current_container,
 			(Expression) $8, (int) current_modifiers, MakeName ((string) $3), 
 			(Parameters) $5, (Attributes) current_attributes, l);
@@ -4043,7 +4043,7 @@ private ConstructorInitializer FixConstructorInitializer (ref ArrayList s)
 					s.Remove(0);
 				}
 			}
-			if (i.expr.ToString() == "Mono.CSharp.This..ctor") {
+			if (i.expr.ToString() == "Mono.MonoBASIC.This..ctor") {
 				ci = new ConstructorThisInitializer (i.Arguments, current_local_parameters, lexer.Location); 
 				s.Remove(0);
 			}

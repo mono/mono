@@ -9,7 +9,7 @@
 //
 #define USE_OLD
 
-namespace Mono.CSharp {
+namespace Mono.MonoBASIC {
 	using System;
 	using System.Collections;
 	using System.Reflection;
@@ -64,7 +64,7 @@ namespace Mono.CSharp {
 		{
 			return (a.ArgType == AType.Ref ? "ref " :
 				(a.ArgType == AType.Out ? "out " : "")) +
-				TypeManager.CSharpName (a.Expr.Type);
+				TypeManager.MonoBASIC_Name (a.Expr.Type);
 		}
 
 		public bool ResolveMethodGroup (EmitContext ec, Location loc)

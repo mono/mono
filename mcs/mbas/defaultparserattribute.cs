@@ -13,9 +13,6 @@ namespace Mono.Languages
 {
 	using System;
 	using System.Reflection;
-	using System.Collections;
-	using System.IO;
-	using Mono.CSharp;
 
 	[AttributeUsage(AttributeTargets.Class)]
 	public class DefaultParserAttribute : System.Attribute 

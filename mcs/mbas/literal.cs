@@ -22,7 +22,7 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace Mono.CSharp {
+namespace Mono.MonoBASIC {
 
 	public class NullLiteral : Constant {
 		public static readonly NullLiteral Null;

@@ -15,7 +15,7 @@ using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace Mono.CSharp {
+namespace Mono.MonoBASIC {
 
 	struct TypeAndMethods {
 		public Type          type;

@@ -9,7 +9,7 @@
 //
 #define USE_OLD
 
-namespace Mono.CSharp {
+namespace Mono.MonoBASIC {
 	using System;
 	using System.Collections;
 	using System.Reflection;
@@ -143,7 +143,7 @@ namespace Mono.CSharp {
 			Error (
 				23, "Operator " + OperName (Oper) +
 				" cannot be applied to operand of type '" +
-				TypeManager.CSharpName (t) + "'");
+				TypeManager.MonoBASIC_Name (t) + "'");
 		}
 
 		/// <remarks>
@@ -484,7 +484,7 @@ namespace Mono.CSharp {
 			}
 
 			Error (187, "No such operator '" + OperName (Oper) + "' defined for type '" +
-			       TypeManager.CSharpName (expr_type) + "'");
+			       TypeManager.MonoBASIC_Name (expr_type) + "'");
 			return null;
 		}
 
@@ -692,7 +692,7 @@ namespace Mono.CSharp {
 			Error (
 				23, "Operator " + OperName (mode) + 
 				" cannot be applied to operand of type '" +
-				TypeManager.CSharpName (t) + "'");
+				TypeManager.MonoBASIC_Name (t) + "'");
 		}
 
 		/// <summary>
@@ -781,7 +781,7 @@ namespace Mono.CSharp {
 			}
 
 			Error (187, "No such operator '" + OperName (mode) + "' defined for type '" +
-			       TypeManager.CSharpName (expr_type) + "'");
+			       TypeManager.MonoBASIC_Name (expr_type) + "'");
 			return null;
 		}
 
@@ -1074,13 +1074,13 @@ namespace Mono.CSharp {
 					Warning (
 						183,
 						"The expression is always of type '" +
-						TypeManager.CSharpName (probe_type) + "'");
+						TypeManager.MonoBASIC_Name (probe_type) + "'");
 				else if (warning_never_matches){
 					if (!(probe_type.IsInterface || expr.Type.IsInterface))
 						Warning (
 							184,
 							"The expression is never of type '" +
-							TypeManager.CSharpName (probe_type) + "'");
+							TypeManager.MonoBASIC_Name (probe_type) + "'");
 				}
 			}
 
@@ -1113,8 +1113,8 @@ namespace Mono.CSharp {
 		{
 			Report.Error (
 				39, loc, "as operator can not convert from '" +
-				TypeManager.CSharpName (source) + "' to '" +
-				TypeManager.CSharpName (target) + "'");
+				TypeManager.MonoBASIC_Name (source) + "' to '" +
+				TypeManager.MonoBASIC_Name (target) + "'");
 		}
 		
 		public override Expression DoResolve (EmitContext ec)
@@ -1130,7 +1130,7 @@ namespace Mono.CSharp {
 
 			if (TypeManager.IsValueType (probe_type)){
 				Report.Error (77, loc, "The as operator should be used with a reference type only (" +
-					      TypeManager.CSharpName (probe_type) + " is a value type");
+					      TypeManager.MonoBASIC_Name (probe_type) + " is a value type");
 				return null;
 			
 			}
@@ -1647,8 +1647,8 @@ namespace Mono.CSharp {
 			Report.Error (
 				34, loc, "Operator '" + OperName (oper) 
 				+ "' is ambiguous on operands of type '"
-				+ TypeManager.CSharpName (l) + "' "
-				+ "and '" + TypeManager.CSharpName (r)
+				+ TypeManager.MonoBASIC_Name (l) + "' "
+				+ "and '" + TypeManager.MonoBASIC_Name (r)
 				+ "'");
 		}
 
@@ -1814,8 +1814,8 @@ namespace Mono.CSharp {
 		{
 			Report.Error (19, loc,
 			       "Operator " + name + " cannot be applied to operands of type '" +
-			       TypeManager.CSharpName (l) + "' and '" +
-			       TypeManager.CSharpName (r) + "'");
+			       TypeManager.MonoBASIC_Name (l) + "' and '" +
+			       TypeManager.MonoBASIC_Name (r) + "'");
 		}
 		
 		void Error_OperatorCannotBeApplied ()
@@ -2752,8 +2752,8 @@ namespace Mono.CSharp {
 					if (ConvertImplicit (ec, falseExpr, true_type, loc) != null){
 						Error (172,
 						       "Can not compute type of conditional expression " +
-						       "as '" + TypeManager.CSharpName (trueExpr.Type) +
-						       "' and '" + TypeManager.CSharpName (falseExpr.Type) +
+						       "as '" + TypeManager.MonoBASIC_Name (trueExpr.Type) +
+						       "' and '" + TypeManager.MonoBASIC_Name (falseExpr.Type) +
 						       "' convert implicitly to each other");
 						return null;
 					}
@@ -2765,8 +2765,8 @@ namespace Mono.CSharp {
 				} else {
 					Error (173, "The type of the conditional expression can " +
 					       "not be computed because there is no implicit conversion" +
-					       " from '" + TypeManager.CSharpName (trueExpr.Type) + "'" +
-					       " and '" + TypeManager.CSharpName (falseExpr.Type) + "'");
+					       " from '" + TypeManager.MonoBASIC_Name (trueExpr.Type) + "'" +
+					       " and '" + TypeManager.MonoBASIC_Name (falseExpr.Type) + "'");
 					return null;
 				}
 			}
@@ -3422,7 +3422,7 @@ namespace Mono.CSharp {
 			string ret_type = "";
 
 			if (mb is MethodInfo)
-				ret_type = TypeManager.CSharpName (((MethodInfo) mb).ReturnType) + " ";
+				ret_type = TypeManager.MonoBASIC_Name (((MethodInfo) mb).ReturnType) + " ";
 			
 			StringBuilder sb = new StringBuilder (ret_type + mb.Name);
 			ParameterData pd = GetParameterData (mb);
@@ -5566,7 +5566,7 @@ namespace Mono.CSharp {
 				return null;
 
 			if (!TypeManager.IsUnmanagedType (type_queried)){
-				Report.Error (208, "Cannot take the size of an unmanaged type (" + TypeManager.CSharpName (type_queried) + ")");
+				Report.Error (208, "Cannot take the size of an unmanaged type (" + TypeManager.MonoBASIC_Name (type_queried) + ")");
 				return null;
 			}
 			
@@ -5867,7 +5867,7 @@ namespace Mono.CSharp {
 
 			if (expr_type.IsPointer){
 				Error (23, "The '.' operator can not be applied to pointer operands (" +
-				       TypeManager.CSharpName (expr_type) + ")");
+				       TypeManager.MonoBASIC_Name (expr_type) + ")");
 				return null;
 			}
 
@@ -5908,8 +5908,8 @@ namespace Mono.CSharp {
 						if (lookup != null)
 							Error (1540, "Cannot access protected member '" +
 						       expr_type + "." + Identifier + "' " +
-						       "via a qualifier of type '" + TypeManager.CSharpName (expr_type) + "'; the " +
-						       "qualifier must be of type '" + TypeManager.CSharpName (ec.ContainerType) + "' " +
+						       "via a qualifier of type '" + TypeManager.MonoBASIC_Name (expr_type) + "'; the " +
+						       "qualifier must be of type '" + TypeManager.MonoBASIC_Name (ec.ContainerType) + "' " +
 						       "(or derived from it)");
 						else
 							Error (122, "'" + expr_type + "." + Identifier + "' " +
@@ -6601,7 +6601,7 @@ namespace Mono.CSharp {
 			}
 
 			Report.Error (21, loc,
-				      "Type '" + TypeManager.CSharpName (lookup_type) +
+				      "Type '" + TypeManager.MonoBASIC_Name (lookup_type) +
 				      "' does not have any indexers defined");
 			return null;
 		}
@@ -6705,7 +6705,7 @@ namespace Mono.CSharp {
 			}
 			
 			if (set == null){
-				Error (200, "indexer X.this [" + TypeManager.CSharpName (right_type) +
+				Error (200, "indexer X.this [" + TypeManager.MonoBASIC_Name (right_type) +
 				       "] lacks a 'set' accessor");
 				return null;
 			}
@@ -6763,7 +6763,7 @@ namespace Mono.CSharp {
 
 			if (member_lookup == null) {
 				Error (117,
-					      TypeManager.CSharpName (base_type) + " does not " +
+					      TypeManager.MonoBASIC_Name (base_type) + " does not " +
 					      "contain a definition for '" + member + "'");
 				return null;
 			}

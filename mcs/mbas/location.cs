@@ -12,7 +12,8 @@ using System.IO;
 using System.Collections;
 using System.Diagnostics.SymbolStore;
 
-namespace Mono.CSharp {
+namespace Mono.MonoBASIC {
+
 	/// <summary>
 	///   Keeps track of the location in the program
 	/// </summary>
@@ -157,7 +158,7 @@ namespace Mono.CSharp {
 				else {
 					// Create a new ISymbolDocumentWriter instance and
 					// store it in the hash table.
-					doc = sw.DefineDocument (path, SymLanguageType.CSharp,
+					doc = sw.DefineDocument (path, SymLanguageType.Basic,
 								 SymLanguageVendor.Microsoft,
 								 SymDocumentType.Text);
 

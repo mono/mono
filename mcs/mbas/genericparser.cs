@@ -14,7 +14,7 @@ namespace Mono.Languages
 	using System.Reflection;
 	using System.Collections;
 	using System.IO;
-	using Mono.CSharp;
+	using Mono.MonoBASIC;
 
 	/// <summary>
 	/// Base class to support multiple Jay generated parsers

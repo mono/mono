@@ -15,7 +15,7 @@ using System.Collections;
 using System.Reflection.Emit;
 using System.Globalization;
 
-namespace Mono.CSharp {
+namespace Mono.MonoBASIC {
 
 	public interface ParameterData {
 		Type ParameterType (int pos);
@@ -82,7 +82,7 @@ namespace Mono.CSharp {
 			if (pos >= pi.Length - 1 && last_arg_is_params)
 				sb.Append ("params ");
 			
-			sb.Append (TypeManager.CSharpName (ParameterType (pos)));
+			sb.Append (TypeManager.MonoBASIC_Name (ParameterType (pos)));
 
 			return sb.ToString ();
 			
@@ -183,7 +183,7 @@ namespace Mono.CSharp {
 
 			Type t = ParameterType (pos);
 
-			return tmp + TypeManager.CSharpName (t);
+			return tmp + TypeManager.MonoBASIC_Name (t);
 		}
 
 		public Parameter.Modifier ParameterModifier (int pos)

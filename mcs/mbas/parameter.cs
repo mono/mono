@@ -14,7 +14,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections;
 
-namespace Mono.CSharp {
+namespace Mono.MonoBASIC {
 
 
 	/// <summary>
@@ -532,6 +532,3 @@ namespace Mono.CSharp {
 		}
 	}
 }
-		
-	
-

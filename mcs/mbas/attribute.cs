@@ -18,7 +18,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace Mono.CSharp {
+namespace Mono.MonoBASIC {
 
 	public class Attribute {
 		public readonly string    Name;

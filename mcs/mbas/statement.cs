@@ -14,7 +14,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Diagnostics;
 
-namespace Mono.CSharp {
+namespace Mono.MonoBASIC {
 
 	using System.Collections;
 	
@@ -673,7 +673,7 @@ namespace Mono.CSharp {
 			} else {
 				if (Expr == null){
 					Report.Error (126, loc, "An object of type `" +
-						      TypeManager.CSharpName (ec.ReturnType) + "' is " +
+						      TypeManager.MonoBASIC_Name (ec.ReturnType) + "' is " +
 						      "expected for the return statement");
 					return true;
 				}
@@ -2506,7 +2506,7 @@ namespace Mono.CSharp {
 
 					FieldInfo field = struct_info [i];
 					Report.Error (171, loc,
-						      "Field `" + TypeManager.CSharpName (VariableType) +
+						      "Field `" + TypeManager.MonoBASIC_Name (VariableType) +
 						      "." + field.Name + "' must be fully initialized " +
 						      "before control leaves the constructor");
 					return false;
@@ -3404,7 +3404,7 @@ namespace Mono.CSharp {
 				if (converted != null){
 					Report.Error (-12, loc, "More than one conversion to an integral " +
 						      " type exists for type `" +
-						      TypeManager.CSharpName (Expr.Type)+"'");
+						      TypeManager.MonoBASIC_Name (Expr.Type)+"'");
 					return null;
 				} else
 					converted = e;
@@ -4065,7 +4065,7 @@ namespace Mono.CSharp {
 			if (type.IsValueType){
 				Report.Error (185, loc, "lock statement requires the expression to be " +
 					      " a reference type (type is: `" +
-					      TypeManager.CSharpName (type) + "'");
+					      TypeManager.MonoBASIC_Name (type) + "'");
 				return false;
 			}
 

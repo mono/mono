@@ -9,7 +9,7 @@
 
 using System;
 
-namespace Mono.CSharp {
+namespace Mono.MonoBASIC {
 
 	public class ConstantFold {
 

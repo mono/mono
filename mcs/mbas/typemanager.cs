@@ -18,7 +18,7 @@ using System.Text.RegularExpressions;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
 
-namespace Mono.CSharp {
+namespace Mono.MonoBASIC {
 
 public class TypeManager {
 	//
@@ -581,7 +581,7 @@ public class TypeManager {
 	/// <summary>
 	///   Returns the C# name of a type if possible, or the full type name otherwise
 	/// </summary>
-	static public string CSharpName (Type t)
+	static public string MonoBASIC_Name (Type t)
 	{
 		return Regex.Replace (t.FullName, 
 			@"^System\." +
@@ -589,10 +589,10 @@ public class TypeManager {
 			@"Single|Double|Char|Decimal|Byte|SByte|Object|" +
 			@"Boolean|String|Void)" +
 			@"(\W+|\b)", 
-			new MatchEvaluator (CSharpNameMatch));
+			new MatchEvaluator (MonoBASIC_NameMatch));
 	}	
 	
-	static String CSharpNameMatch (Match match) 
+	static String MonoBASIC_NameMatch (Match match) 
 	{
 		string s = match.Groups [1].Captures [0].Value;
 		return s.ToLower ().
@@ -610,7 +610,7 @@ public class TypeManager {
         /// <summary>
         ///   Returns the signature of the method
         /// </summary>
-        static public string CSharpSignature (MethodBase mb)
+        static public string MonoBASIC_Signature (MethodBase mb)
         {
                 string sig = "(";
 
@@ -1713,7 +1713,7 @@ public class TypeManager {
 		Report.Error (
 			208, loc,
 			"Cannot take the address or size of a variable of a managed type ('" +
-			CSharpName (t) + "')");
+			MonoBASIC_Name (t) + "')");
 		return false;	
 	}
 	
@@ -1862,7 +1862,7 @@ public class TypeManager {
 			if (a.TypeId == TypeManager.obsolete_attribute_type){
 				ObsoleteAttribute oa = (ObsoleteAttribute) a;
 
-				string method_desc = TypeManager.CSharpSignature (mb);
+				string method_desc = TypeManager.MonoBASIC_Signature (mb);
 
 				if (oa.IsError) {
 					Report.Error (619, loc, "Method `" + method_desc +

@@ -8,7 +8,7 @@
 //
 //
 
-namespace Mono.CSharp {
+namespace Mono.MonoBASIC {
 	using System;
 	using System.Collections;
 	using System.Diagnostics;
@@ -241,8 +241,8 @@ namespace Mono.CSharp {
 		static public void Error_CannotConvertType (Location loc, Type source, Type target)
 		{
 			Report.Error (30, loc, "Cannot convert type '" +
-				      TypeManager.CSharpName (source) + "' to '" +
-				      TypeManager.CSharpName (target) + "'");
+				      TypeManager.MonoBASIC_Name (source) + "' to '" +
+				      TypeManager.MonoBASIC_Name (target) + "'");
 		}
 
 		/// <summary>
@@ -1876,8 +1876,8 @@ namespace Mono.CSharp {
 		static public void Error_CannotConvertImplicit (Location loc, Type source, Type target)
 		{
 			string msg = "Cannot convert implicitly from `"+
-				TypeManager.CSharpName (source) + "' to `" +
-				TypeManager.CSharpName (target) + "'";
+				TypeManager.MonoBASIC_Name (source) + "' to `" +
+				TypeManager.MonoBASIC_Name (target) + "'";
 
 			Report.Error (29, loc, msg);
 		}
@@ -2538,7 +2538,7 @@ namespace Mono.CSharp {
 		static void Error_ConstantValueCannotBeConverted (Location l, string val, Type t)
 		{
 			Report.Error (31, l, "Constant value `" + val + "' cannot be converted to " +
-				      TypeManager.CSharpName (t));
+				      TypeManager.MonoBASIC_Name (t));
 		}
 
 		public static void UnsafeError (Location loc)
@@ -4532,4 +4532,4 @@ namespace Mono.CSharp {
 					ec, false, IsStatic, instance_expr, remove_accessor, args, loc);
 		}
 	}
-}	
+}

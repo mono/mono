@@ -15,7 +15,7 @@ using System.Collections;
 using System.Reflection.Emit;
 using System.Reflection;
 
-namespace Mono.CSharp {
+namespace Mono.MonoBASIC {
 
 	/// <summary>
 	///   Base representation for members.  This is only used to keep track

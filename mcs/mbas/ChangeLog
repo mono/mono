@@ -1,3 +1,7 @@
+2003/11/10  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* *.cs, mb-parser.jay: Switched all from defining/using namespace Mono.CSharp to Mono.MonoBASIC 
+    * location.cs: SymbolDocument now returns a SymbolDocumentWriter using the right (SymLanguageType.Basic) GUID
+	
 2003/10/17  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* genericparser.cs: 
 	    Don't print exception when a file is not found to be parsed
