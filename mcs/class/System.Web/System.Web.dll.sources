@@ -565,6 +565,7 @@ System.Web.UI/BaseParser.cs
 System.Web.UI/BasePartialCachingControl.cs
 System.Web.UI/BuildMethod.cs
 System.Web.UI/BuildTemplateMethod.cs
+System.Web.UI/ClientScriptManager.cs
 System.Web.UI/CodeBuilder.cs
 System.Web.UI/CodeRenderBuilder.cs
 System.Web.UI/CollectionBuilder.cs

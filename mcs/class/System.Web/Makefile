@@ -2,10 +2,42 @@ thisdir = class/System.Web
 SUBDIRS = Test
 include ../../build/rules.make
 
+ifeq (net_2_0, $(PROFILE))
 RESOURCE_FILES = \
-	System.Web.UI.WebControls/TreeView_Default_Collapse.gif \
-	System.Web.UI.WebControls/TreeView_Default_Expand.gif \
-	System.Web.UI.WebControls/TreeView_Default_NoExpand.gif
+	resources/arrow_minus.gif \
+	resources/arrow_noexpand.gif \
+	resources/arrow_plus.gif \
+	resources/box_full.gif \
+	resources/box_empty.gif \
+	resources/box_minus.gif \
+	resources/box_noexpand.gif \
+	resources/box_plus.gif \
+	resources/contact.gif \
+	resources/dot_empty.gif \
+	resources/dot_full.gif \
+	resources/dots.gif \
+	resources/inbox.gif \
+	resources/star_empty.gif \
+	resources/star_full.gif \
+	resources/warning.gif \
+	resources/TreeView_noexpand.gif \
+	resources/TreeView_dash.gif \
+	resources/TreeView_dashminus.gif \
+	resources/TreeView_dashplus.gif \
+	resources/TreeView_i.gif \
+	resources/TreeView_l.gif \
+	resources/TreeView_lminus.gif \
+	resources/TreeView_lplus.gif \
+	resources/TreeView_minus.gif \
+	resources/TreeView_plus.gif \
+	resources/TreeView_r.gif \
+	resources/TreeView_rminus.gif \
+	resources/TreeView_rplus.gif \
+	resources/TreeView_t.gif \
+	resources/TreeView_tminus.gif \
+	resources/TreeView_tplus.gif \
+	System.Web.UI.WebControls/TreeView.js
+endif
 
 LIBRARY = System.Web.dll
 LIB_MCS_FLAGS = \
