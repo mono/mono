@@ -1,5 +1,23 @@
 2002-03-24  Martin Baulig  <martin@gnome.org>
 
+	* icall.c (ves_icall_Type_GetFields): Reverse the list before storing
+	it in the array since it was created with g_slist_prepend().
+
+2002-03-24  Martin Baulig  <martin@gnome.org>
+
+	* debug-symfile.c (mono_debug_local_type_from_signature): Renamed
+	to ves_icall_Debugger_MonoSymbolWriter_get_local_type_from_sig().
+	(mono_debug_method_from_token): Renamed to
+	ves_icall_Debugger_MonoSymbolWriter_method_from_token().
+	(ves_icall_Debugger_DwarfFileWriter_get_type_token): New interncall.
+
+	* debug-symfile.c (MRT_type_sizeof, MRT_type_field_offset): New
+	relocation types.
+
+	* debug-symfile.h (MONO_DEBUG_SYMBOL_FILE_VERSION): Increased to 6.
+
+2002-03-24  Martin Baulig  <martin@gnome.org>
+
 	* debug-symfile.c (mono_debug_local_type_from_signature): New func.
 	(mono_debug_method_from_token): New func.
 
