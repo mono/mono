@@ -172,6 +172,7 @@ namespace System.Web {
 				_oServerVariables.Add("LOCAL_ADDR", _WorkerRequest.GetLocalAddress());
 				_oServerVariables.Add("REMOTE_ADDR", UserHostAddress);
 				_oServerVariables.Add("REMOTE_HOST", UserHostName);
+				_oServerVariables.Add("REMOTE_PORT", _WorkerRequest.GetRemotePort ().ToString ());
 				_oServerVariables.Add("REQUEST_METHOD", HttpMethod);
 				_oServerVariables.Add("SERVER_NAME", _WorkerRequest.GetServerName());
 				_oServerVariables.Add("SERVER_PORT", _WorkerRequest.GetLocalPort().ToString());
@@ -647,7 +648,6 @@ namespace System.Web {
 			}
 		}
 
-		[MonoTODO("Add cookie collection to our Params collection via merge")]
 		public NameValueCollection Params {
 			get {
 				if (_oParams == null) {
@@ -656,8 +656,9 @@ namespace System.Web {
 					_oParams.Merge(QueryString);
 					_oParams.Merge(Form);
 					_oParams.Merge(ServerVariables);
-					// TODO: Cookie
-
+					string [] cookies = Cookies.AllKeys;
+					foreach (string k in cookies)
+						_oParams.Add (k, Cookies [k].ToString ());
 					_oParams.MakeReadOnly();
 				}
 

@@ -1,3 +1,8 @@
+2003-06-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: added REMOTE_PORT.
+	* HttpValueCollection.cs: fixed bug #45490.
+
 2003-05-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs:

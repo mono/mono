@@ -92,6 +92,8 @@ namespace System.Web
 		internal void FillFromQueryString (string sData, Encoding encoding)
 		{
 			_bHeaders = false;
+			if (sData == null || sData == "")
+				return;
 
 			string k, v;
 			int eq;
