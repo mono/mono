@@ -3735,11 +3735,11 @@ class FormatParse {
 		// Remove any insignificant zeros we might have at the end
 		// if we never saw any zeros in the format string, leftMostZeroIdx will be -1
 		if (leftMostZeroIdx < 0)
-			while (outputList[outputList.Count-1] == "0")
+			while ((string)outputList[outputList.Count-1] == "0")
 				outputList.RemoveAt (outputList.Count-1);
 		else
 			while (leftMostZeroIdx-- > 0)
-				if (outputList[outputList.Count-1] == "0")
+				if ((string)outputList[outputList.Count-1] == "0")
 					outputList.RemoveAt (outputList.Count-1);
 	}
 

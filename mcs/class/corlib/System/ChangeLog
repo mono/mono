@@ -1,3 +1,7 @@
+2002-10-12  Nick Drochak  <ndrochak@gol.com>
+
+	* IntegerFormatter.cs: Fix compiler warnings.
+
 2002-10-11  Tim Haynes <thaynes@openlinksw.com>
 
 	* Type.cs (GetConstructors): Use the correct flags.
