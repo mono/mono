@@ -598,22 +598,15 @@ namespace Mono.CSharp {
 			if (Expr != null) {
 				Expr.Emit (ec);
 
-				if (in_exc || !ec.IsLastStatement)
+				if (in_exc)
 					ec.ig.Emit (OpCodes.Stloc, ec.TemporaryReturn ());
 			}
 
 			if (in_exc) {
 				ec.NeedReturnLabel ();
 				ec.ig.Emit (OpCodes.Leave, ec.ReturnLabel);
-			} else if (ec.IsLastStatement) {
-				// If we are the last statement in a top-level block, simply
-				// emit a `ret'.
-				ec.ig.Emit (OpCodes.Ret);
 			} else {
-				// Otherwise, we always create a return label and jump to
-				// it.
-				ec.NeedReturnLabel ();
-				ec.ig.Emit (OpCodes.Br, ec.ReturnLabel);
+				ec.ig.Emit (OpCodes.Ret);
 			}
 		}
 	}
