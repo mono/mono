@@ -1,3 +1,10 @@
+2004-10-14 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: For statement is enabled to take
+		optional declaration of the counter variable.
+		E.g. now for statement can be declared as
+		For i as integer = 0 to 5
+		End For
+
 2004/10/08 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* Makefile: added target 'profile', changed some sources in testmbas/ to use for that purpose.
 
