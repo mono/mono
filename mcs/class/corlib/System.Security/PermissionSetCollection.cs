@@ -4,7 +4,7 @@
 // Authors
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,7 +28,6 @@
 
 #if NET_2_0
 
-using System;
 using System.Collections;
 using System.Security.Permissions;
 
@@ -37,6 +36,7 @@ namespace System.Security {
 	[Serializable]
 	public sealed class PermissionSetCollection : ICollection, IEnumerable {
 
+		private static string tagName = "PermissionSetCollection";
 		private IList _list;
 
 		public PermissionSetCollection ()
@@ -73,12 +73,11 @@ namespace System.Security {
 			_list.Add (permSet);
 		}
 
-		[MonoTODO ("check if permission are copied (or just referenced)")]
 		public PermissionSetCollection Copy ()
 		{
 			PermissionSetCollection psc = new PermissionSetCollection ();
 			foreach (PermissionSet ps in _list) {
-				psc._list.Add (ps);
+				psc._list.Add (ps.Copy ());
 			}
 			return psc;
 		}
@@ -95,18 +94,34 @@ namespace System.Security {
 			throw new NotSupportedException ();
 		}
 
-		[MonoTODO]
 		public void Demand ()
 		{
 			// check all collection in a single stack walk
+			PermissionSet superset = new PermissionSet (PermissionState.None);
+			foreach (PermissionSet ps in _list) {
+				foreach (IPermission p in ps) {
+					superset.AddPermission (p);
+				}
+			}
+			superset.Demand ();
 		}
 
-		[MonoTODO]
 		public void FromXml (SecurityElement el) 
 		{
 			if (el == null)
 				throw new ArgumentNullException ("el");
-			// TODO
+			if (el.Tag != tagName) {
+				string msg = String.Format ("Invalid tag {0} expected {1}", el.Tag, tagName);
+				throw new ArgumentException (msg, "el");
+			}
+			_list.Clear ();
+			if (el.Children != null) {
+				foreach (SecurityElement child in el.Children) {
+					PermissionSet ps = new PermissionSet (PermissionState.None);
+					ps.FromXml (child);
+					_list.Add (ps);
+				}
+			}
 		}
 
 		public IEnumerator GetEnumerator ()
@@ -129,10 +144,9 @@ namespace System.Security {
 			return ToXml ().ToString ();
 		}
 
-		[MonoTODO ("verify syntax")]
 		public SecurityElement ToXml ()
 		{
-			SecurityElement se = new SecurityElement ("PermissionSetCollection");
+			SecurityElement se = new SecurityElement (tagName);
 			foreach (PermissionSet ps in _list) {
 				se.AddChild (ps.ToXml ());
 			}

@@ -9,7 +9,7 @@
 // (C) Ximian, Inc. http://www.ximian.com
 // Copyright (C) 2001 Nick Drochak, All Rights Reserved
 // Portions (C) 2004 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -48,19 +48,13 @@ namespace System.Security {
 		{
 		}
 
-		// LAMESPEC: Documented as virtual
 		[MonoTODO ("Imperative mode isn't supported")]
 		public void Assert ()
 		{
 			new PermissionSet (this).Assert ();
 		}
 
-#if NET_2_0
-		public virtual
-#else
-		internal
-#endif
-		bool CheckAssert (CodeAccessPermission asserted)
+		internal bool CheckAssert (CodeAccessPermission asserted)
 		{
 			if (asserted == null)
 				return false;
@@ -69,12 +63,7 @@ namespace System.Security {
 			return IsSubsetOf (asserted);
 		}
 
-#if NET_2_0
-		public virtual
-#else
-		internal
-#endif
-		bool CheckDemand (CodeAccessPermission target)
+		internal bool CheckDemand (CodeAccessPermission target)
 		{
 			if (target == null)
 				return false;
@@ -83,12 +72,7 @@ namespace System.Security {
 			return IsSubsetOf (target);
 		}
 
-#if NET_2_0
-		public virtual
-#else
-		internal
-#endif
-		bool CheckDeny (CodeAccessPermission denied)
+		internal bool CheckDeny (CodeAccessPermission denied)
 		{
 			if (denied == null)
 				return true;
@@ -97,12 +81,7 @@ namespace System.Security {
 			return (Intersect (denied) == null);
 		}
 
-#if NET_2_0
-		public 
-#else
-		internal
-#endif
-		virtual bool CheckPermitOnly (CodeAccessPermission target)
+		internal bool CheckPermitOnly (CodeAccessPermission target)
 		{
 			if (target == null)
 				return false;
@@ -113,8 +92,7 @@ namespace System.Security {
 
 		public abstract IPermission Copy ();
 
-		// LAMESPEC: Documented as virtual
-		[MonoTODO ("Assert, Deny and PermitOnly aren't yet supported")]
+		[MonoTODO ("Imperative Assert, Deny and PermitOnly aren't yet supported")]
 		public void Demand ()
 		{
 			// note: here we're sure it's a CAS demand
@@ -125,7 +103,6 @@ namespace System.Security {
 			new PermissionSet (this).CasOnlyDemand (2);
 		}
 
-		// LAMESPEC: Documented as virtual
 		[MonoTODO ("Imperative mode isn't supported")]
 		public void Deny ()
 		{
@@ -176,7 +153,6 @@ namespace System.Security {
 			return null;
 		}
 
-		// LAMESPEC: Documented as virtual
 		[MonoTODO ("Imperative mode isn't supported")]
 		public void PermitOnly ()
 		{

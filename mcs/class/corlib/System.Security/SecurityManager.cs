@@ -94,8 +94,8 @@ namespace System.Security {
 		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey = "0x00000000000000000400000000000000")]
 		public static void GetZoneAndOrigin (out ArrayList zone, out ArrayList origin) 
 		{
-			zone = null;
-			origin = null;
+			zone = new ArrayList ();
+			origin = new ArrayList ();
 		}
 #endif
 
@@ -177,42 +177,21 @@ namespace System.Security {
 
 		public static PermissionSet ResolvePolicy (Evidence evidence)
 		{
+			PermissionSet ps = new PermissionSet (PermissionState.None);
+
 			// no evidence, no permission
 			if (evidence == null)
-				return new PermissionSet (PermissionState.None);
+				return ps;
 
-			PermissionSet ps = null;
 			// Note: can't call PolicyHierarchy since ControlPolicy isn't required to resolve policies
 			IEnumerator ple = Hierarchy;
 			while (ple.MoveNext ()) {
 				PolicyLevel pl = (PolicyLevel) ple.Current;
-				PolicyStatement pst = pl.Resolve (evidence);
-				if (pst != null) {
-					if (ps == null)
-						ps = pst.PermissionSet;	// for first time only
-					else
-						ps = ps.Intersect (pst.PermissionSet);
-
-					// some permissions returns null, other returns an empty set
-					// sadly we must adjust for every variations :(
-					if (ps == null)
-						ps = new PermissionSet (PermissionState.None);
-
-					if ((pst.Attributes & PolicyStatementAttribute.LevelFinal) == PolicyStatementAttribute.LevelFinal)
-						break;
-				}
+				if (ResolvePolicyLevel (ps, pl, evidence))
+					break;	// i.e. PolicyStatementAttribute.LevelFinal
 			}
 
-			// Only host evidence are used for policy resolution
-			IEnumerator ee = evidence.GetHostEnumerator ();
-			while (ee.MoveNext ()) {
-				IIdentityPermissionFactory ipf = (ee.Current as IIdentityPermissionFactory);
-				if (ipf != null) {
-					IPermission p = ipf.CreateIdentityPermission (evidence);
-					ps.AddPermission (p);
-				}
-			}
-
+			ResolveIdentityPermissions (ps, evidence);
 			return ps;
 		}
 
@@ -230,6 +209,28 @@ namespace System.Security {
 				else
 					ps = ps.Intersect (ResolvePolicy (evidence));
 			}
+			return ps;
+		}
+
+		public static PermissionSet ResolveSystemPolicy (Evidence evidence)
+		{
+			PermissionSet ps = new PermissionSet (PermissionState.None);
+
+			// no evidence, no permission
+			if (evidence == null)
+				return ps;
+
+			// Note: can't call PolicyHierarchy since ControlPolicy isn't required to resolve policies
+			IEnumerator ple = Hierarchy;
+			while (ple.MoveNext ()) {
+				PolicyLevel pl = (PolicyLevel) ple.Current;
+				if (pl.Type == PolicyLevelType.AppDomain)
+					break;
+				if (ResolvePolicyLevel (ps, pl, evidence))
+					break;	// i.e. PolicyStatementAttribute.LevelFinal
+			}
+
+			ResolveIdentityPermissions (ps, evidence);
 			return ps;
 		}
 #endif
@@ -327,6 +328,31 @@ namespace System.Security {
 				Path.Combine (userPolicyPath, "security.config")));
 
 			_hierarchy = ArrayList.Synchronized (al);
+		}
+
+		internal static bool ResolvePolicyLevel (PermissionSet ps, PolicyLevel pl, Evidence evidence)
+		{
+			PolicyStatement pst = pl.Resolve (evidence);
+			if (pst != null) {
+				ps = ps.Intersect (pst.PermissionSet);
+				if ((pst.Attributes & PolicyStatementAttribute.LevelFinal) == PolicyStatementAttribute.LevelFinal)
+					return true;
+			}
+			return false;
+		}
+
+		// TODO: this changes in 2.0 as identity permissions can now be unrestricted
+		internal static void ResolveIdentityPermissions (PermissionSet ps, Evidence evidence)
+		{
+			// Only host evidence are used for policy resolution
+			IEnumerator ee = evidence.GetHostEnumerator ();
+			while (ee.MoveNext ()) {
+				IIdentityPermissionFactory ipf = (ee.Current as IIdentityPermissionFactory);
+				if (ipf != null) {
+					IPermission p = ipf.CreateIdentityPermission (evidence);
+					ps.AddPermission (p);
+				}
+			}
 		}
 
 		internal static PermissionSet Decode (IntPtr permissions, int length)

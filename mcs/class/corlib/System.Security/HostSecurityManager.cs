@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,7 +28,6 @@
 
 #if NET_2_0
 
-using System;
 using System.Reflection;
 using System.Security.Policy;
 
@@ -50,22 +49,33 @@ namespace System.Security {
 			get { return HostSecurityManagerFlags.AllFlags; }
 		}
 
-		public virtual PermissionSet RefusedSet {
-			// always return null - may be overriden
-			get { return null; }
-		}
-
-		public virtual bool DetermineApplicationTrust (ActivationContext activationContext, TrustManagerContext context)
+		[MonoTODO ("incomplete - docs talks about a System.Runtime.Hosting in corlib but it's not there (yet?)")]
+		public virtual bool DetermineApplicationTrust (Evidence applicationEvidence, Evidence activatorEvidence, TrustManagerContext context)
 		{
-			if (activationContext == null)
-				throw new ArgumentNullException ("activationContext");
-			return true;
+			if (applicationEvidence == null)
+				throw new ArgumentNullException ("applicationEvidence");
+			// TODO extract the ActivationContext from the ActivationArguments (inside the applicationEvidence)
+			ActivationContext ac = null;
+			return ApplicationSecurityManager.DetermineApplicationTrust (ac, context);
 		}
 
-		public virtual Evidence ProvideAssemblyEvidence (Assembly loadedAssembly, Evidence evidence)
+		public virtual Evidence ProvideAppDomainEvidence (Evidence inputEvidence)
 		{
 			// no changes - may be overriden
-			return evidence;
+			return inputEvidence;
+		}
+
+		public virtual Evidence ProvideAssemblyEvidence (Assembly loadedAssembly, Evidence inputEvidence)
+		{
+			// no changes - may be overriden
+			return inputEvidence;
+		}
+
+		public virtual PermissionSet ResolvePolicy (Evidence evidence)
+		{
+			if (evidence == null)
+				throw new NullReferenceException ("evidence");
+			return SecurityManager.ResolvePolicy (evidence);
 		}
 	}
 }

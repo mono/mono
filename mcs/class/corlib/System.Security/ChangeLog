@@ -1,3 +1,20 @@
+2005-01-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CodeAccessPermission.cs: CheckAssert, CheckDemand, CheckDeny and
+	CheckPermitOnly are no more publicly avaiable in Fx 2.0 and have been
+	changed to internal for all profiles. Updated comments to reflect the
+	(better) documentation available with 2.0.
+	* HostSecurityManager.cs: Updated to Dec CTP specs. There is missing
+	documentation (and/or classes) to implement completly the 
+	DetermineApplicationTrust method at this point.
+	* PermissionSetCollection.cs: Completed implementation.
+	* PermissionSet.cs: Fix the case where Assert, Deny and PermitOnly 
+	must be ignored for non-CAS permissions.
+	* SecurityManager.cs: Refactored resolve methods to implements 
+	ResolveSystemPolicy (a resolve without the AppDomain policy level).
+	Added a default implementation for GetZoneAndOrigin (empty ArrayList) 
+	which seems to be right (at least) for FullTrust. 
+
 2005-01-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AllowPartiallyTrustedCallersAttribute.cs: Cleanup;

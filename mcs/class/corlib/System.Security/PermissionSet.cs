@@ -7,7 +7,7 @@
 //
 // (C) Nick Drochak
 // Portions (C) 2003, 2004 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -142,6 +142,8 @@ namespace System.Security {
 		{
 			new SecurityPermission (SecurityPermissionFlag.Assertion).Demand ();
 
+			int count = this.Count;
+
 			// we (current frame) must have the permission to assert it to others
 			// otherwise we don't assert (but we don't throw an exception)
 			foreach (IPermission p in list) {
@@ -150,10 +152,13 @@ namespace System.Security {
 					if (!SecurityManager.IsGranted (p)) {
 						return;
 					}
-				}
+				} else
+					count--;
 			}
 
-			throw new NotSupportedException ("Currently only declarative Assert are supported.");
+			// note: we must ignore the stack modifiers for the non-CAS permissions
+			if (count > 0)
+				throw new NotSupportedException ("Currently only declarative Assert are supported.");
 		}
 
 		internal void Clear () 
@@ -241,7 +246,12 @@ namespace System.Security {
 		[MonoTODO ("Imperative mode isn't supported")]
 		public virtual void Deny ()
 		{
-			throw new NotSupportedException ("Currently only declarative Deny are supported.");
+			foreach (IPermission p in list) {
+				// note: we ignore non-CAS permissions
+				if (p is IStackWalk) {
+					throw new NotSupportedException ("Currently only declarative Deny are supported.");
+				}
+			}
 		}
 
 		[MonoTODO ("adjust class version with current runtime - unification")]
@@ -325,7 +335,12 @@ namespace System.Security {
 		[MonoTODO ("Imperative mode isn't supported")]
 		public virtual void PermitOnly ()
 		{
-			throw new NotSupportedException ("Currently only declarative Deny are supported.");
+			foreach (IPermission p in list) {
+				// note: we ignore non-CAS permissions
+				if (p is IStackWalk) {
+					throw new NotSupportedException ("Currently only declarative Deny are supported.");
+				}
+			}
 		}
 
 		public bool ContainsNonCodeAccessPermissions () 
