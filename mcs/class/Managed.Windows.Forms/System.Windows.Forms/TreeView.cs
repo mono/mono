@@ -777,8 +777,8 @@ namespace System.Windows.Forms {
 			int ox = x;
 
 			if (checkboxes) {
-				DrawNodeCheckBox (node, x, y);
-				ox += 14;
+				DrawNodeCheckBox (node, ox, y);
+				ox += 19;
 			}
 
 			if (show_lines)
@@ -786,7 +786,7 @@ namespace System.Windows.Forms {
 
 			if (ImageList != null) {
 				if (visible)
-					DrawNodeImage (node, x, y);
+					DrawNodeImage (node, ox, y);
 				// MS leaves the space for the image if the ImageList is
 				// non null regardless of whether or not an image is drawn
 				ox += ImageList.ImageSize.Width + 3; // leave a little space so the text isn't against the image
@@ -799,6 +799,7 @@ namespace System.Windows.Forms {
 				StringFormat format = new StringFormat ();
 				format.LineAlignment = StringAlignment.Center;
 				r.Y += 2; // we have to adjust this to get nice middle alignment
+				r.X = ox;
 
 				Color text_color = (Focused && SelectedNode == node ? ThemeEngine.Current.ColorHilightText : node.ForeColor);
 				if (Focused) {

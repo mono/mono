@@ -1,5 +1,9 @@
 2005-01-06  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: Draw the image after the checkbox if checkboxes are enabled.
+
+2005-01-06  Jackson Harper  <jackson@ximian.com>
+
 	* ListBox.cs: Don't allow the horizontal scrollbars maximum to be
 	set to less then 0.
 
