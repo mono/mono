@@ -1,5 +1,20 @@
 2005-01-11  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-exceptions.c exceptions-ppc.c aot.c: Cope with MonoJitInfo 
+	changes.
+
+	* mini.h: Bump AOT version.
+
+	* mini.h (MonoCompile): Change exvar to a hash table.
+
+	* mini.c: Allocate a separate exvar for each handler block.
+
+	* mini.c: Get rid of the computation of filter_lengths, its not needed.
+
+	* mini.c inssel.brg: Change OP_THROW_OR_NULL to compare the current
+	ex var with the pending exception and only throw if the two are equal.
+	Fixes #68552.
+	
 	* exceptions.cs: Add tests for rethrow and nested catch clauses.
 
 	* mini-x86.c: Fix warnings.
