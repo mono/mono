@@ -1,3 +1,11 @@
+2002-07-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AllTests.cs: New file.
+	* System.Configuration.Install_test.build: modified randomly until it
+	works.
+
+	Fixes 'make test'.
+
 2002-08-13  Jonathan Pryor <jonpryor@vt.edu>
 	* ChangeLog: Add change log to this directory
 	* System.Configuration.Install_test.build: Add build file to this directory.
