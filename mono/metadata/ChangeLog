@@ -1,3 +1,10 @@
+
+Mon Jan 31 19:01:29 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: make sure we consider all the interfaces
+	when calculating max_interface_id (bug found by
+	Jeroen Frijters running ikvm).
+
 2005-01-31  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_FieldInfo_SetValueInternal): Handle setting of
