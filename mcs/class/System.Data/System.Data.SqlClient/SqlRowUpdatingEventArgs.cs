@@ -17,20 +17,11 @@ using System.Data.Common;
 namespace System.Data.SqlClient {
 	public sealed class SqlRowUpdatingEventArgs : RowUpdatingEventArgs
 	{
-		#region Fields
-
-		SqlCommand command = null;
-
-		#endregion // Fields
-
 		#region Constructors
 
-		[MonoTODO]
 		public SqlRowUpdatingEventArgs (DataRow row, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
 			: base (row, command, statementType, tableMapping)
 		{
-			if (command != null)
-				this.command = (SqlCommand) command;
 		}
 
 		#endregion // Constructors

@@ -1,4 +1,7 @@
 2002-11-12  Tim Coleman <tim@timcoleman.com>
+	* System.Data.SqlClient/SqlRowUpdatedEventArgs.cs:
+	* System.Data.SqlClient/SqlRowUpdatingEventArgs.cs:
+		Complete these classes
 	* System.Data.Common/DbDataAdapter.cs:
 		Experimental support for FillSchema ()
 
