@@ -189,6 +189,11 @@ public class StringTest : Assertion
 		Assert (lower.CompareTo (lower) == 0);
 		Assert (greater.CompareTo (lesser) > 0);
 	}
+	
+	class WeirdToString
+	{
+		public override string ToString () { return null; }
+	}
 
 	public void TestConcat ()
 	{
@@ -197,6 +202,15 @@ public class StringTest : Assertion
 		string concat = "string1string2";
 
 		Assert (String.Concat (string1, string2) == concat);
+		
+		AssertEquals (string1, String.Concat (string1, null));
+		AssertEquals (string1, String.Concat (null, string1));
+		AssertEquals ("", String.Concat (null, null));
+		
+		WeirdToString wts = new WeirdToString ();
+		AssertEquals (string1, String.Concat (string1, wts));
+		AssertEquals (string1, String.Concat (wts, string1));
+		AssertEquals ("", String.Concat (wts, wts));
 	}
 
 	public void TestCopy()
