@@ -26,6 +26,15 @@ namespace Mono.ILASM {
                 public PEAPI.Class PeapiClass {
                         get { return PeapiType as PEAPI.Class; }
                 }
+
+                public PEAPI.ClassRef PeapiClassRef {
+                        get { return PeapiType as PEAPI.ClassRef; }
+                }
+
+                public IMethodRef GetMethodRef (ITypeRef ret_type, string name, ITypeRef[] param)
+                {
+                        return new ExternMethodRef (this, ret_type, name, param);
+                }
         }
 
 }

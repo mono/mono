@@ -15,6 +15,7 @@
 	* TypeDef.cs: Store methods and fields in hashtables so they can
 	be easily retrieved, add method to resolve member methods.
 	* TypeRef.cs: Add method for resolving member methods.
+	* ExternTypeRef.cs: Add methods to get classref and methodrefs
 	
 		
 2003-05-07 Jackson Harper <jackson@latitudegeo.com>
