@@ -1,3 +1,7 @@
+2002-07-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ListItem.cs: there was no code to unset the flags!!!
+
 2002-07-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FontUnit.cs: use a hashtable for mapping size name to value.

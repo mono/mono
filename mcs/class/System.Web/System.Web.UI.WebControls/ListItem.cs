@@ -23,22 +23,18 @@ namespace System.Web.UI.WebControls
 	[ControlBuilder(typeof(ListItemControlBuilder))]
 	public sealed class ListItem : IStateManager, IParserAccessor, IAttributeAccessor
 	{
-		private static int MARKED   = (0x01 << 0);
-		private static int SELECTED = (0x01 << 1);
-		private static int DIRTY_T  = (0x01 << 2);
-		private static int DIRTY_V  = (0x01 << 3);
-
-		private static int selBits;
-
 		private AttributeCollection attributes;
 		private string              text;
 		private string              val;
+		private bool marked;
+		private bool selected;
+		private bool dirty_t;
+		private bool dirty_v;
 
 		public ListItem(string text, string value)
 		{
 			this.text  = text;
 			this.val   = value;
-			selBits    = 0x00;
 			attributes = null;
 		}
 
@@ -67,37 +63,25 @@ namespace System.Web.UI.WebControls
 
 		public bool Selected
 		{
-			get
-			{
-				return IsSet(SELECTED);
+			get {
+				return selected;
 			}
-			set
-			{
-				Set(SELECTED);
+
+			set {
+				selected = value;
 			}
 		}
 
 		internal bool Dirty
 		{
-			get
-			{
-				return (IsSet(DIRTY_T) && IsSet(DIRTY_V));
+			get {
+				return (dirty_t && dirty_v);
 			}
-			set
-			{
-				Set(DIRTY_T);
-				Set(DIRTY_V);
+
+			set {
+				dirty_t = value;
+				dirty_v = value;
 			}
-		}
-
-		private bool IsSet(int bit)
-		{
-			return ( (selBits & bit) != 0x00 );
-		}
-
-		private void Set(int bit)
-		{
-			selBits |= bit;
 		}
 
 		public string Text
@@ -117,34 +101,27 @@ namespace System.Web.UI.WebControls
 			set
 			{
 				text = value;
-				if(IsTrackingViewState)
-				{
-					Set(DIRTY_T);
-				}
+				if (IsTrackingViewState)
+					dirty_t = true;
 			}
 		}
 
 		public string Value
 		{
-			get
-			{
-				if(val!=null)
-				{
+			get {
+				if (val != null)
 					return val;
-				}
-				if(text!=null)
-				{
+
+				if (text != null)
 					return text;
-				}
+
 				return String.Empty;
 			}
 			set
 			{
 				val = value;
 				if(IsTrackingViewState)
-				{
-					Set(DIRTY_V);
-				}
+					dirty_v = true;
 			}
 		}
 
@@ -180,13 +157,13 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return IsSet(MARKED);
+				return marked;
 			}
 		}
 
 		internal void TrackViewState()
 		{
-			Set(MARKED);
+			marked = true;
 		}
 
 		internal void LoadViewState(object state)
@@ -211,18 +188,15 @@ namespace System.Web.UI.WebControls
 
 		internal object SaveViewState()
 		{
-			if(IsSet(DIRTY_T) && IsSet(DIRTY_V))
-			{
+			if (dirty_t && dirty_v)
 				return new Pair(Text, Value);
-			}
-			if(IsSet(DIRTY_T))
-			{
-				return Text;
-			}
-			if(IsSet(DIRTY_V))
-			{
+
+			if (dirty_t)
+				return new Pair (Text, null);
+
+			if (dirty_v)
 				return new Pair(null, Value);
-			}
+
 			return null;
 		}
 
