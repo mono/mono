@@ -23,7 +23,11 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		public void TestNewEmptyKeyNode () 
 		{
 			KeyInfoRetrievalMethod uri1 = new KeyInfoRetrievalMethod ();
+#if NET_1_0
 			AssertEquals ("Empty", "<RetrievalElement xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml));
+#else
+			AssertEquals ("Empty", "<RetrievalMethod xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml));
+#endif
 		}
 
 		[Test]
@@ -44,7 +48,11 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		[Test]
 		public void TestImportKeyNode () 
 		{
+#if NET_1_0
 			string value = "<RetrievalElement URI=\"http://www.go-mono.com/\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />";
+#else
+			string value = "<RetrievalMethod URI=\"http://www.go-mono.com/\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />";
+#endif
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml (value);
 
@@ -78,7 +86,11 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			// no exception is thrown
 			uri1.LoadXml (doc.DocumentElement);
 			// note that URI="" is present (unlike a empty Uri)
+#if NET_1_0
 			AssertEquals("invalid", "<RetrievalElement URI=\"\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml));
+#else
+			AssertEquals("invalid", "<RetrievalMethod URI=\"\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml));
+#endif
 		}
 	}
 }

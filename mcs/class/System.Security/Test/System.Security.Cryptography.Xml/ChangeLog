@@ -1,5 +1,15 @@
+2003-06-02  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* KeyInfoRetrievalMethodTest.cs: Changed RetrievalElement to
+	RetrievalMethod to match W3C specification and framework 1.1.
+
 2003-05-13  Martin Willemoes Hansen <mwh@sysrq.dk>
 	* Tests inherits from Assertion and Assertion. prefix is removed
+
+2003-03-03  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* XmlDsigBase64TransformTest.cs: Simplified some parts when fixing
+	XPath test.
 
 2003-03-02  Sebastien Pouliot  <spouliot@videotron.ca>
 
