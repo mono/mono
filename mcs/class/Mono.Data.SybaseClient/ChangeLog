@@ -1,3 +1,18 @@
+2002-11-21  Tim Coleman <tim@timcoleman.com>
+	* Mono.Data.SybaseClient.build:
+	* Mono.Data.SybaseClient/SybaseCommand.cs:
+	* Mono.Data.SybaseClient/SybaseConnection.cs:
+	* Mono.Data.SybaseClient/SybaseConnectionPool.cs:
+	* Mono.Data.SybaseClient/SybaseDataReader.cs:
+	* Mono.Data.SybaseClient/SybaseException.cs:
+	* Mono.Data.SybaseClient/SybaseInfoMessageEventArgs.cs:
+	* Mono.Data.SybaseClient/SybaseParameter.cs:
+	* Mono.Data.SybaseClient/SybaseTransaction.cs:
+	* Mono.Data.SybaseTypes/SybaseDecimal.cs:
+		Modify to accept new Mono.Data.Tds.Protocol
+		namespace in Mono.Data.Tds assembly, replacing
+		Mono.Data.TdsClient.Internal
+
 2002-11-19  Tim Coleman <tim@timcoleman.com>
 	* Mono.Data.SybaseClient/SybaseCommand.cs:
 		Fix BuildExec to work.

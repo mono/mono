@@ -7,7 +7,6 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
-using Mono.Data.TdsClient;
 using System;
 using System.Data;
 using System.Data.Common;

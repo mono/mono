@@ -2,7 +2,7 @@
 
 <!-- NAnt build file for Mono.Data.SybaseClient.dll -->
 
-<project name="System.Data" default="build">
+<project name="Mono.Data.SybaseClient" default="build">
 	<property name="debug" value="false"/>
 
 	<target name="build">
@@ -19,10 +19,10 @@
 			<arg value="/r:System.Data.dll"/>
 			<arg value="/r:System.EnterpriseServices.dll"/>
 			<arg value="/r:System.Xml.dll"/>
-			<sources basedir="..">
-				<includes name="Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/*.cs"/>
-				<includes name="Mono.Data.SybaseClient/**/*.cs"/> 
-				<excludes name="System.Data/Test/**"/>
+			<arg value="/r:../lib/Mono.Data.Tds.dll"/>
+			<sources>
+				<includes name="**/*.cs"/>
+				<excludes name="Test/**"/>
 			</sources>
 			<references>
 				<includes name="../lib/corlib.dll"/>
@@ -30,15 +30,14 @@
 				<includes name="../lib/System.Data.dll"/>
 				<includes name="../lib/System.EnterpriseServices.dll"/>
 				<includes name="../lib/System.Xml.dll"/>
+				<includes name="../lib/Mono.Data.Tds.dll"/>
 			</references>
 		</csc>
-		<!-- <copy file="../lib/Mono.Data.SybaseClient.dll" tofile="Test/Mono.Data.SybaseClient.dll"/> -->
 	</target>
 	<target name="test" depends="build">
 		<nant basedir="Test" target="test"/>
 	</target>
 	<target name="clean">
 		<delete file="../lib/Mono.Data.SybaseClient.dll" failonerror="false"/>
-		<!-- <delete file="Test/Mono.Data.SybaseClient.dll" failonerror="false"/> -->
 	</target>
 </project>

@@ -12,7 +12,7 @@
 //
 
 using Mono.Data.SybaseTypes;
-using Mono.Data.TdsClient.Internal;
+using Mono.Data.Tds.Protocol;
 using System;
 using System.Collections;
 using System.ComponentModel;
