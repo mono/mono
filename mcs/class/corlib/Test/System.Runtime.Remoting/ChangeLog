@@ -1,3 +1,8 @@
+2003-03-11  Jean-Marc Andre <jean-marc.andre@polymtl.ca>
+
+	* RemotingConfigurationTest.cs: New unit test added
+
+
 2003-03-03  Jean-Marc Andre <jean-marc.andre@polymtl.ca>
 
 	* RemotingServicesTest.cs: New unit test added
