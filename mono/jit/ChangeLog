@@ -1,3 +1,8 @@
+
+Wed Aug 14 17:31:37 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* exception.c: updates for API changes in metadata/.
+
 2002-08-13  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (mono_jit_init): use  ((gpointer)-1) as end_of_stack
