@@ -1,3 +1,14 @@
+2004-07-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ActivationContext.cs: New class in Fx 2.0. Required for 
+	System.Security.Policy.
+	* ApplicationIdentity.cs: New class in Fx 2.0. Required for 
+	System.Security.Policy.
+	* IApplicationDescription.cs: New interface in Fx 2.0. Required for 
+	System.Security.Policy.
+	* IHostContext.cs: New interface in Fx 2.0. Required for 
+	System.Security.Policy.
+
 2004-07-12  Geoff Norton <gnorton@customerdna.com>
 
 	* DateTime.cs: Patch for bug #61112.  Our DateTime wasn't roundtripping over timezone
