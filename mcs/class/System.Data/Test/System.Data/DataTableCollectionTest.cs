@@ -360,5 +360,44 @@ namespace MonoTests.System.Data
 			tbcol.Add("Table3");
 			AssertEquals("test#1","System.Data.DataTableCollection",tbcol.ToString());
 		}
+
+		[Test]
+		public void TableDataSetNamespaces ()
+		{
+			DataTable dt = new DataTable ("dt1");
+			AssertEquals ("#1-1", String.Empty, dt.Namespace);
+			AssertNull ("#1-2", dt.DataSet);
+
+			DataSet ds1 = new DataSet ("ds1");
+			ds1.Tables.Add (dt);
+			AssertEquals ("#2-1", String.Empty, dt.Namespace);
+			AssertEquals ("#2-2", ds1, dt.DataSet);
+
+			ds1.Namespace = "ns1";
+			AssertEquals ("#3", "ns1", dt.Namespace);
+
+			// back to null again
+			ds1.Tables.Remove (dt);
+			AssertEquals ("#4-1", String.Empty, dt.Namespace);
+			AssertNull ("#4-2", dt.DataSet);
+
+			// This table is being added to _already namespaced_
+			// dataset.
+			dt = new DataTable ("dt2");
+
+			ds1.Tables.Add (dt);
+			AssertEquals ("#5-1", "ns1", dt.Namespace);
+			AssertEquals ("#5-2", ds1, dt.DataSet);
+
+			ds1.Tables.Remove (dt);
+			AssertEquals ("#6-1", String.Empty, dt.Namespace);
+			AssertNull ("#6-2", dt.DataSet);
+
+			DataSet ds2 = new DataSet ("ds2");
+			ds2.Namespace = "ns2";
+			ds2.Tables.Add (dt);
+			AssertEquals ("#7-1", "ns2", dt.Namespace);
+			AssertEquals ("#7-2", ds2, dt.DataSet);
+		}
 	}
 }

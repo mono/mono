@@ -1,3 +1,8 @@
+2004-06-20  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DataTableCollectionTest.cs : Added test for DataSet and Namespace
+	  adjustment.
+
 2004-06-18  Atsushi Enomoto <atsushi@ximian.com>
 
 	* TypedDataSetGeneratorTest.cs : [TestFixture] was missing.
