@@ -1,8 +1,13 @@
 2002-10-28 Jackson Harper <jackson@latitudegeo.com>
 
-	* AllMembershipCondition.cs: Made GetHashCode act more like MS version. All AllMembershipCondition
-	instance's will return the same hashcode but this hashcode should still be unique to AllMembership
-	Condition's.
+	* ApplicationDirectory.cs: Added class
+
+2002-10-28 Jackson Harper <jackson@latitudegeo.com>
+
+	* AllMembershipCondition.cs: Made GetHashCode act more like 
+	MS version. All AllMembershipCondition instance's will return 
+	the same hashcode but this hashcode should still be unique to 
+	AllMembership Condition's.
 
 
 2002-08-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
