@@ -164,6 +164,8 @@ public class ArrayListTest : TestCase {
 				ArrayList al1 = ArrayList.Adapter(null);
 			} catch (ArgumentNullException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 1: " + e.ToString());
 			}
 			Assert("null adapter error not thrown", 
 			       errorThrown);
@@ -192,6 +194,8 @@ public class ArrayListTest : TestCase {
 				al1.Add("Hi!");
 			} catch (NotSupportedException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 1: " + e.ToString());
 			}
 			Assert("add to fixed size error not thrown", 
 			       errorThrown);
@@ -204,6 +208,8 @@ public class ArrayListTest : TestCase {
 				al1.Add("Hi!");
 			} catch (NotSupportedException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 2: " + e.ToString());
 			}
 			Assert("add to read only error not thrown", 
 			       errorThrown);
@@ -231,6 +237,8 @@ public class ArrayListTest : TestCase {
 				al1.AddRange(s1);
 			} catch (NotSupportedException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 1: " + e.ToString());
 			}
 			Assert("add to fixed size error not thrown", 
 			       errorThrown);
@@ -244,6 +252,8 @@ public class ArrayListTest : TestCase {
 				al1.AddRange(s1);
 			} catch (NotSupportedException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 2: " + e.ToString());
 			}
 			Assert("add to read only error not thrown", 
 			       errorThrown);
@@ -255,6 +265,8 @@ public class ArrayListTest : TestCase {
 				al1.AddRange(null);
 			} catch (ArgumentNullException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 3: " + e.ToString());
 			}
 			Assert("add to read only error not thrown", 
 			       errorThrown);
@@ -284,6 +296,8 @@ public class ArrayListTest : TestCase {
 			al1.BinarySearch(42);
 		} catch (InvalidOperationException) {
 			errorThrown = true;
+		} catch (Exception e) {
+			Fail ("Incorrect exception thrown at 1: " + e.ToString());
 		}
 		Assert("search-for-wrong-type error not thrown", 
 		       errorThrown);
@@ -401,6 +415,8 @@ public class ArrayListTest : TestCase {
 				al1.CopyTo(null, 2);
 			} catch (ArgumentNullException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 1: " + e.ToString());
 			}
 			Assert("error not thrown", errorThrown);
 		}
@@ -413,6 +429,8 @@ public class ArrayListTest : TestCase {
 				al1.CopyTo(c2, 2);
 			} catch (ArgumentException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 2: " + e.ToString());
 			}
 			Assert("error not thrown", errorThrown);
 		}
@@ -425,6 +443,8 @@ public class ArrayListTest : TestCase {
 				al1.CopyTo(c2, 2);
 			} catch (RankException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 3: " + e.ToString());
 			}
 			Assert("error not thrown", errorThrown);
 		}
@@ -437,6 +457,8 @@ public class ArrayListTest : TestCase {
 				al1.CopyTo(c2, -1);
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 4: " + e.ToString());
 			}
 			Assert("error not thrown", errorThrown);
 		}
@@ -449,6 +471,8 @@ public class ArrayListTest : TestCase {
 				al1.CopyTo(c2, 3);
 			} catch (ArgumentException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 5: " + e.ToString());
 			}
 			Assert("error not thrown", errorThrown);
 		}
@@ -461,6 +485,8 @@ public class ArrayListTest : TestCase {
 				al1.CopyTo(c2, 1);
 			} catch (ArgumentException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 6: " + e.ToString());
 			}
 			Assert("error not thrown", errorThrown);
 		}
@@ -473,6 +499,8 @@ public class ArrayListTest : TestCase {
 				al1.CopyTo(c2, 0);
 			} catch (InvalidCastException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 7: " + e.ToString());
 			}
 			Assert("error not thrown", errorThrown);
 		}
@@ -1204,6 +1232,8 @@ public class ArrayListTest : TestCase {
 				al1.SetRange(0, c);
 			} catch (NotSupportedException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 1: " + e.ToString());
 			}
 			Assert("setrange on read only error not thrown", 
 			       errorThrown);
@@ -1217,6 +1247,8 @@ public class ArrayListTest : TestCase {
 				errorThrown = true;
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 2: " + e.ToString());
 			}
 			Assert("setrange with null error not thrown", 
 			       errorThrown);
@@ -1229,6 +1261,8 @@ public class ArrayListTest : TestCase {
 				al1.SetRange(-1, c);
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 3: " + e.ToString());
 			}
 			Assert("setrange with negative index error not thrown",
 			       errorThrown);
@@ -1241,10 +1275,13 @@ public class ArrayListTest : TestCase {
 				al1.SetRange(2, c);
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 4: " + e.ToString());
 			}
 			Assert("setrange with too much error not thrown",
 			       errorThrown);
 		}
+
 		{
 			char[] c = {'a', 'b', 'c'};
 			ArrayList al1 = ArrayList.Repeat('?', 3);
@@ -1255,7 +1292,7 @@ public class ArrayListTest : TestCase {
 			AssertEquals("should match", c[0], al1[0]);
 			AssertEquals("should match", c[1], al1[1]);
 			AssertEquals("should match", c[2], al1[2]);
-		}		
+		}
 	}
 
 	public void TestSort() {
