@@ -1,3 +1,7 @@
+2004-07-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.Security.dll.sources: Fixed classes to match Fx 2.0 beta 1.
+
 2004-07-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile: Added a reference to Mono.Security because we'll require
