@@ -1,3 +1,8 @@
+2005-01-20  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* class-internals.h: Sun's compiler insists on explicit
+	signed on bit fields to handle then correctly.
+
 2005-01-19  Miguel de Icaza  <miguel@ximian.com>
 
 	* file-io.c (ves_icall_System_IO_MonoIO_get_InvalidPathChars):
