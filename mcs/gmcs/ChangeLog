@@ -1,5 +1,10 @@
 2004-11-18  Martin Baulig  <martin@ximian.com>
 
+	* rootcontext.cs
+	(RootContext.LookupType): Return a `Type', not a `TypeExpr'.
+
+2004-11-18  Martin Baulig  <martin@ximian.com>
+
 	* ecore.cs (TypeExpr.DoResolveAsTypeStep): Make this protected.
 
 2004-11-18  Martin Baulig  <martin@ximian.com>

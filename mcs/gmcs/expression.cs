@@ -9038,17 +9038,9 @@ namespace Mono.CSharp {
 				//
 				// For now, fall back to the full lookup in that case.
 				//
-				TypeExpr texpr = RootContext.LookupType (
-					ec.DeclSpace, cname, false, loc);
-
-				if (texpr == null)
+				type = RootContext.LookupType (ec.DeclSpace, cname, false, loc);
+				if (type == null)
 					return null;
-
-				texpr = texpr.ResolveAsTypeTerminal (ec);
-				if (texpr == null)
-					return null;
-
-				type = texpr.Type;
 			}
 
 			if (!ec.InUnsafe && type.IsPointer){

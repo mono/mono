@@ -157,16 +157,16 @@ namespace Mono.CSharp {
                 /// </summary>
 		protected virtual Type CheckAttributeType (EmitContext ec, bool complain)
 		{
-			TypeExpr t1 = RootContext.LookupType (ec.DeclSpace, Name, true, Location);
+			Type t1 = RootContext.LookupType (ec.DeclSpace, Name, true, Location);
 			// FIXME: Shouldn't do this for quoted attributes: [@A]
-			TypeExpr t2 = RootContext.LookupType (ec.DeclSpace, Name + "Attribute", true, Location);
+			Type t2 = RootContext.LookupType (ec.DeclSpace, Name + "Attribute", true, Location);
 
 			String err0616 = null;
-			if (t1 != null && ! t1.IsAttribute) {
+			if (t1 != null && ! t1.IsSubclassOf (TypeManager.attribute_type)) {
 				t1 = null;
 				err0616 = "'" + Name + "': is not an attribute class";
 			}
-			if (t2 != null && ! t2.IsAttribute) {
+			if (t2 != null && ! t2.IsSubclassOf (TypeManager.attribute_type)) {
 				t2 = null;
 				err0616 = (err0616 != null) 
 					? "Neither '" + Name + "' nor '" + Name + "Attribute' is an attribute class"
@@ -179,9 +179,9 @@ namespace Mono.CSharp {
 				return null;
 			}
 			if (t1 != null)
-				return t1.Type;
+				return t1;
 			if (t2 != null)
-				return t2.Type;
+				return t2;
 			if (err0616 != null) {
 				Report.Error (616, Location, err0616);
 				return null;

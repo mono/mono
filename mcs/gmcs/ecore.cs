@@ -2061,7 +2061,7 @@ namespace Mono.CSharp {
 		{
 			DeclSpace ds = ec.DeclSpace;
 			NamespaceEntry ns = ds.NamespaceEntry;
-			TypeExpr t;
+			Type t;
 			IAlias alias_value;
 
 			//
@@ -2091,18 +2091,18 @@ namespace Mono.CSharp {
 					if (alias_value.IsType)
 						return alias_value.ResolveAsType (ec);
 					if ((t = RootContext.LookupType (ds, alias_value.Name, true, loc)) != null)
-						return t;
+						return new TypeExpression (t, loc);
 				}
 			}
 
 			if ((t = RootContext.LookupType (ds, Name, true, loc)) != null)
-				return t;
+				return new TypeExpression (t, loc);
 
 			if (alias_value != null) {
 				if (alias_value.IsType)
 					return alias_value.ResolveAsType (ec);
 				if ((t = RootContext.LookupType (ds, alias_value.Name, true, loc)) != null)
-					return t;
+					return new TypeExpression (t, loc);
 				
 				// we have alias value, but it isn't Type, so try if it's namespace
 				return new SimpleName (alias_value.Name, loc);
@@ -2450,16 +2450,10 @@ namespace Mono.CSharp {
 		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
 			if (type == null) {
-				TypeExpr texpr = RootContext.LookupType (
+				type = RootContext.LookupType (
 					ec.DeclSpace, name, false, Location.Null);
-				if (texpr == null)
+				if (type == null)
 					return null;
-
-				texpr = texpr.ResolveAsTypeTerminal (ec);
-				if (texpr == null)
-					return null;
-
-				type = texpr.Type;
 			}
 
 			return this;

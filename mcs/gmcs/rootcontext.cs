@@ -488,8 +488,7 @@ namespace Mono.CSharp {
 			return ns.Substring (0, i);
 		}
 
-		static TypeExpr NamespaceLookup (DeclSpace ds, string name,
-						 int num_type_args, Location loc)
+		static Type NamespaceLookup (DeclSpace ds, string name, int num_type_args, Location loc)
 		{
 			//
 			// Try in the current namespace and all its implicit parents
@@ -503,14 +502,17 @@ namespace Mono.CSharp {
 				if (!result.IsType)
 					return null;
 
-				return result.ResolveAsType (ds.EmitContext);
+				TypeExpr texpr = result.ResolveAsType (ds.EmitContext);
+				if (texpr == null)
+					return null;
+
+				return texpr.Type;
 			}
 
 			return null;
 		}
 		
-		static public TypeExpr LookupType (DeclSpace ds, string name, bool silent,
-						   Location loc)
+		static public Type LookupType (DeclSpace ds, string name, bool silent, Location loc)
 		{
 			return LookupType (ds, name, silent, 0, loc);
 		}
@@ -523,13 +525,13 @@ namespace Mono.CSharp {
 		//
 		// Come to think of it, this should be a DeclSpace
 		//
-		static public TypeExpr LookupType (DeclSpace ds, string name, bool silent,
-						   int num_type_params, Location loc)
+		static public Type LookupType (DeclSpace ds, string name, bool silent,
+					       int num_type_params, Location loc)
 		{
-			TypeExpr t;
+			Type t;
 
 			if (ds.Cache.Contains (name)){
-				t = (TypeExpr) ds.Cache [name];
+				t = (Type) ds.Cache [name];
 				if (t != null)
 					return t;
 			} else {
@@ -547,8 +549,7 @@ namespace Mono.CSharp {
 						//
 						Type type = TypeManager.LookupType (current_type.FullName + "." + name);
 						if (type != null){
-							type = ds.ResolveNestedType (type, loc);
-							t = new TypeExpression (type, loc);
+							t = ds.ResolveNestedType (type, loc);
 							ds.Cache [name] = t;
 							return t;
 						}
@@ -576,7 +577,7 @@ namespace Mono.CSharp {
 		//   This is the silent version of LookupType, you can use this
 		//   to `probe' for a type
 		// </summary>
-		static public TypeExpr LookupType (TypeContainer tc, string name, Location loc)
+		static public Type LookupType (TypeContainer tc, string name, Location loc)
 		{
 			return LookupType (tc, name, true, loc);
 		}
