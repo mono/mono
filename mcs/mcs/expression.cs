@@ -5376,11 +5376,15 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			ExprClass eclass = ea.Expr.eclass;
-			
-			if (!(eclass == ExprClass.Variable || eclass == ExprClass.Value)) {
+
+#if false
+			// As long as the type is valid
+			if (!(eclass == ExprClass.Variable || eclass == ExprClass.PropertyAccess ||
+			      eclass == ExprClass.Value)) {
 				report118 (ea.loc, ea.Expr, "variable or value");
 				return null;
 			}
+#endif
 
 			Type t = ea.Expr.Type;
 			if (t.GetArrayRank () != ea.Arguments.Count){
