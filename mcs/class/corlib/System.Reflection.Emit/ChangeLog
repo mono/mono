@@ -1,3 +1,7 @@
+2003-09-06  Martin Baulig  <martin@ximian.com>
+
+	* TypeBuilder.cs (TypeBuilder.IsUnboundGenericParameter): Implemented.
+
 2003-09-04  Martin Baulig  <martin@ximian.com>
 
 	* TypeBuilder.cs (TypeBuilder.MonoGenericParam): Make this nested

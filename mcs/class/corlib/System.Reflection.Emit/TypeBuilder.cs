@@ -991,10 +991,9 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		public override bool IsUnboundGenericParameter {
-			get {
-				throw new NotImplementedException ();
-			}
+		public extern override bool IsUnboundGenericParameter {
+			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+			get;
 		}
 
 		public override int GenericParameterPosition {
