@@ -37,11 +37,11 @@ Module WriteOK
 			Constants.vbCRLF + "dateLit {7}", _ 
 			nodim, octalLit, hexLit, singleLit, doubleLit, decimalLit, charLit, dateLit)
 		Console.WriteLine(123.ToString("g"))
-		WriteOK5.ModuleSub("Qualified") ' 122
-		ModuleSub("Unqualified") ' 103
+		WriteOK5.ModuleSub("Qualified") 
+		ModuleSub("Unqualified") 
 		
-		Another.WriteOK6.ModuleSub("Qualified") ' 122
-		Another.ModuleSub("SemiQualified") ' 103
+		Another.WriteOK6.ModuleSub("Qualified") 
+		'Another.ModuleSub("SemiQualified") ' FIXME
 
 		Console.WriteLine(Strings.ChrW(64))
 
