@@ -1,3 +1,8 @@
+2003-11-03 Jackson Harper <jackson@ximian.com>
+
+	* HttpResponse.cs (ContentEncoding): Throw
+	ArgumentNullException. Patch by Yaron Shkop.
+	
 2003-10-30  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* HttpMultipartContentParser.cs : Quick fix for cygwin build. 

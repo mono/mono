@@ -368,7 +368,7 @@ namespace System.Web
 
 			set {
 				if (value == null)
-					throw new ArgumentException ("Can't set a null as encoding");
+					throw new ArgumentNullException ("Can't set a null as encoding");
 
 				_ContentEncoding = value;
 
