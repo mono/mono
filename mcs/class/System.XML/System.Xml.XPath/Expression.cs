@@ -469,6 +469,8 @@ namespace System.Xml.XPath
 			get { return false; }
 		}
 
+		// For "peer and subtree" optimization. see:
+		// http://idealliance.org/papers/dx_xmle04/papers/02-03-02/02-03-02.html
 		internal virtual bool Peer {
 			get { return false; }
 		}
@@ -1084,6 +1086,8 @@ namespace System.Xml.XPath
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.NodeSet; }}
 
+		// For "peer and subtree" optimization. see:
+		// http://idealliance.org/papers/dx_xmle04/papers/02-03-02/02-03-02.html
 		internal abstract bool Subtree { get; }
 	}
 
@@ -1152,6 +1156,8 @@ namespace System.Xml.XPath
 		public override String ToString () { return left.ToString ()+ "/" + right.ToString (); }
 		public override object Evaluate (BaseIterator iter)
 		{
+			// Peer and subtree optimization. see
+			// http://idealliance.org/papers/dx_xmle04/papers/02-03-02/02-03-02.html
 			BaseIterator iterLeft = left.EvaluateNodeSet (iter);
 			if (left.Peer && right.Subtree && !RequireSorting)
 				return new SimpleSlashIterator (iterLeft, right);
@@ -1196,18 +1202,38 @@ namespace System.Xml.XPath
 		{
 			left = left.Optimize ();
 			right = (NodeSet) right.Optimize ();
+			// Path A//B is equal to 
+			// A/descendant-or-self::node()/child::B, which is
+			// equivalent to A/descendant::B. Unlike '//', '/'
+			// could be optimized by SimpleSlashIterator.
+			NodeTest rnt = right as NodeTest;
+			if (rnt != null && rnt.Axis.Axis == Axes.Child) {
+				NodeNameTest nameTest = rnt as NodeNameTest;
+				if (nameTest != null)
+					return new ExprSLASH (left,
+						new NodeNameTest (nameTest, Axes.Descendant));
+				NodeTypeTest typeTest = rnt as NodeTypeTest;
+				if (typeTest != null)
+					return new ExprSLASH (left,
+						new NodeTypeTest (typeTest, Axes.Descendant));
+			}
 			return this;
 		}
 
 		public override String ToString () { return left.ToString ()+ "//" + right.ToString (); }
 		public override object Evaluate (BaseIterator iter)
 		{
-			return new SlashIterator (
-				new SlashIterator (
-					left.EvaluateNodeSet (iter),
+			BaseIterator il = left.EvaluateNodeSet (iter);
+			if (left.Peer && !left.RequireSorting)
+				il = new SimpleSlashIterator (
+					il, DescendantOrSelfStar);
+			else
+				il = new SlashIterator (il,
 					DescendantOrSelfStar,
-					left.RequireSorting || DescendantOrSelfStar.RequireSorting
-				),
+					left.RequireSorting);
+
+			return new SlashIterator (
+				il,
 				right,
 				DescendantOrSelfStar.RequireSorting || right.RequireSorting
 			);
@@ -1460,6 +1486,14 @@ namespace System.Xml.XPath
 				throw new XPathException ("No argument allowed for "+ToString (type)+"() test");	// TODO: better description
 		}
 
+		// for optimizer use
+		internal NodeTypeTest (NodeTypeTest other, Axes axis)
+			: base (axis)
+		{
+			type = other.type;
+			_param = other._param;
+		}
+
 		public override String ToString ()
 		{
 			String strType = ToString (type);
@@ -1539,8 +1573,17 @@ namespace System.Xml.XPath
 		public NodeNameTest (Axes axis, XmlQualifiedName name, bool resolvedName) : base (axis)
 		{
 			_name = name;
-			resolvedName = resolvedName;
+			this.resolvedName = resolvedName;
 		}
+
+		// for optimized path rewrite
+		internal NodeNameTest (NodeNameTest source, Axes axis)
+			: base (axis)
+		{
+			_name = source._name;
+			resolvedName = source.resolvedName;
+		}
+
 		public override String ToString () { return _axis.ToString () + "::" + _name.ToString (); }
 		
 		public XmlQualifiedName Name { get { return _name; } }

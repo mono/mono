@@ -1,5 +1,11 @@
 2004-03-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Expression.cs : In ExprSLASH2, replace A//B with A/descendant::B if
+	  B is child axis test (thus peer&subtree optimization became possible)
+	  Fixed warning (incorrect variable let).
+
+2004-03-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XPathNavigator.cs : reduced some Clone().
 	  Simplified ComparePosition().
 	* Iterator.cs : some iterators are not actually reverse axis.
