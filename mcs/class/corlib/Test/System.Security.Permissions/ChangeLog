@@ -1,3 +1,13 @@
+2003-06-28  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* EnvironmentPermissionAttributeTest.cs: New.
+	* EnvironmentPermissionTest.cs: New.
+	* FileDialogPermissionAttributeTest.cs: New.
+	* FileDialogPermissionTest.cs: New.
+	* FileIOPermissionAttributeTest.cs: New.
+	* PublisherIdentityPermissionAttributeTest.cs: New.
+	* PublisherIdentityPermissionTest.cs: New.
+
 2002-12-21  Nick Drochak <ndrochak@gol.com>
 
 	* all: make tests build and run under nunit2
