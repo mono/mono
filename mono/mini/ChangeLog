@@ -1,5 +1,7 @@
 2003-05-27  Dietmar Maurer  <dietmar@ximian.com>
 
+	* mini.c (optimize_branches): fix for bug 43586
+
 	* jit-icalls.c (mono_llmult_ovf): added an additional check for
 	overflow (fixes Bug #43639)
 
