@@ -101,7 +101,7 @@ namespace System {
 			CheckParameters (element, attribute_type);
 
 			// Assembly inheritance hierarchies CAN NOT be searched for attributes, so the second
-			// parameter of GetCustomAttributes () is INGNORED.
+			// parameter of GetCustomAttributes () is IGNORED.
 			object[] attributes = element.GetCustomAttributes (attribute_type, inherit);
 
 			return FindAttribute (attributes);
@@ -128,10 +128,8 @@ namespace System {
 			CheckParameters (element, attribute_type);
 
 			// MemberInfo inheritance hierarchies can be searched for attributes, so the second
-			// parameter of GetCustomAttributes () is respected.
-			object[] attributes = element.GetCustomAttributes (attribute_type, inherit);
-
-			return FindAttribute (attributes);
+			// parameter of GetCustomAttribute () is respected.
+			return MonoCustomAttrs.GetCustomAttribute (element, attribute_type, inherit);
 		}
 
 		public static Attribute[] GetCustomAttributes (Assembly element)

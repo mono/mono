@@ -1,3 +1,11 @@
+2003-02-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Attribute.cs:
+	* MonoCustomAttrs.cs: fix for the regression test failure (see bug
+	#38238).
+
+	* IntPtr.cs: added serialization .ctor
+
 2003-02-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AppDomain.cs: check for null in Unload and changed method name.

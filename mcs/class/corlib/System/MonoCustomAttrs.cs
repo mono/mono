@@ -31,6 +31,39 @@ namespace System {
 			return res;
 		}
 
+		internal static Attribute GetCustomAttribute (ICustomAttributeProvider obj,
+							      Type attributeType,
+							      bool inherit)
+		{
+			if (obj == null)
+				throw new ArgumentNullException ("attribute_type"); // argument name in the caller
+
+			object[] res = from_cache (obj);
+			ICustomAttributeProvider btype = obj;
+			Attribute result = null;
+
+			do {
+				foreach (object attr in res) {
+					if (!attributeType.IsAssignableFrom (attr.GetType ()))
+						continue;
+
+					if (result != null) {
+						string msg = "'{0}' has more than one attribute of type '{1}";
+						msg = String.Format (msg, obj, attributeType);
+						throw new AmbiguousMatchException (msg);
+					}
+					result = (Attribute) attr;
+				}
+
+				if (inherit && (btype = GetBase (btype)) != null)
+					res = from_cache (btype);
+
+			// Stop when encounters the first one for a given provider.
+			} while (inherit && result == null && btype != null);
+
+			return result;
+		}
+
 		internal static object[] GetCustomAttributes (ICustomAttributeProvider obj, Type attributeType, bool inherit)
 		{
 			if (obj == null)

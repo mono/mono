@@ -63,6 +63,12 @@ namespace System {
 			value = ptr;
 		}
 
+		private IntPtr (SerializationInfo info, StreamingContext context)
+		{
+			long savedValue = info.GetInt64 ("value");
+			value = (void *) savedValue;
+		}
+
 		public static int Size {
 			get {
 				return sizeof (void *);
