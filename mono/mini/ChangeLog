@@ -1,5 +1,8 @@
 2004-09-02  Zoltan Varga  <vargaz@freemail.hu>
 
+	* exceptions.cs inssel-long32.brg: Handle the OP_LCONV_TO_OVF_I2 case
+	as well.
+	
 	* exceptions.cs: Add array size tests.
 
 	* mini.c: Allocate a separate icall wrapper for each arity of 
