@@ -1,3 +1,24 @@
+2003-09-30  Todd Berman <tberman@gentoo.org>
+	
+	* Ok, this was the beforementioned (on -devel) WSE Makefile edit.
+	
+	Right now, this builds both WSE1 and WSE2, and installs them both, as
+	
+	Microsoft.Web.Services.1.dll and
+	Microsoft.Web.Services.2.dll respectively.
+	
+	It will also install Microsoft.Web.Services.1.dll as
+	Microsoft.Web.Services.dll. This behaviour can be overridden by defining
+	DEFAULT_WSE2
+	
+	This can be defined in config.make or on the commandline (i think).
+	I have tested clean, all, and install, but have not tested dist or test.
+	dist should work, test might or might not. (however, a toplevel make
+	dist wont be affected, because this dir is not being built by default)
+
+	This is pure amateur makefile hackery on my part, anyone who want to
+	improve on this effort, please feel free.
+
 2003-09-29  Todd Berman <tberman@gentoo.org>
 
 	* Microsoft.Web.Services.Addressing/AttributedUriString.cs: stubs
