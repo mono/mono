@@ -1,5 +1,10 @@
 2004-10-12  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (MemberAccess.DoResolve): If we're a SimpleName
+	and have type arguments, create and resolve a ConstructedType.
+
+2004-10-12  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs (Constraints.CheckInterfaceMethod): Do a more relaxed
 	checking for type parameter constraints.
 

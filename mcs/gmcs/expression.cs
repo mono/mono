@@ -7483,9 +7483,13 @@ namespace Mono.CSharp {
 
 			if (expr is SimpleName){
 				SimpleName child_expr = (SimpleName) expr;
-				string id = MemberName.MakeName (Identifier, args);
+				string fqname = DeclSpace.MakeFQN (child_expr.Name, Identifier);
 
-				Expression new_expr = new SimpleName (child_expr.Name, id, loc);
+				Expression new_expr;
+				if (args != null)
+					new_expr = new ConstructedType (fqname, args, loc);
+				else
+					new_expr = new SimpleName (fqname, loc);
 
 				return new_expr.Resolve (ec, flags);
 			}
