@@ -962,37 +962,49 @@ namespace Mono.MonoBASIC {
 					return RTConversionExpression (ec, "BooleanType.FromString" , expr, loc);
 				if (real_target_type == TypeManager.decimal_type)
 					return RTConversionExpression (ec, "DecimalType.FromString" , expr, loc);
+				if (real_target_type == TypeManager.float_type)
+					return RTConversionExpression (ec, "SingleType.FromString" , expr, loc);
+				if (real_target_type == TypeManager.short_type)
+					return RTConversionExpression (ec, "ShortType.FromString" , expr, loc);
+				if (real_target_type == TypeManager.int64_type)
+					return RTConversionExpression (ec, "LongType.FromString" , expr, loc);
+				if (real_target_type == TypeManager.int32_type)
+					return RTConversionExpression (ec, "IntegerType.FromString" , expr, loc);
+				if (real_target_type == TypeManager.double_type)
+					return RTConversionExpression (ec, "DoubleType.FromString" , expr, loc);
+				if (real_target_type == TypeManager.byte_type)
+					return RTConversionExpression (ec, "ByteType.FromString" , expr, loc);
 			} else if (expr_type == TypeManager.float_type){
 				//
 				// float to double
 				//
 				if (real_target_type == TypeManager.decimal_type)
-					return RTConversionExpression (ec, "DecimalType.FromFloat" , expr, loc);
+					return RTConversionExpression (ec, "System.Convert", ".ToDecimal" , expr, loc);
 				if (real_target_type == TypeManager.double_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 
 			} else if (expr_type == TypeManager.double_type){
 
 				if (real_target_type == TypeManager.decimal_type)
-					return RTConversionExpression (ec, "DecimalType.FromDouble" , expr, loc);
+					return RTConversionExpression (ec, "System.Convert", ".ToDecimal" , expr, loc);
 			} else if (expr_type == TypeManager.decimal_type){
 
 				if (real_target_type == TypeManager.bool_type)
 	  				return RTConversionExpression (ec, "BooleanType.FromDecimal" , expr, loc);
 				if (real_target_type == TypeManager.short_type)
-					return RTConversionExpression (ec, "ShortType.FromDecimal" , expr, loc);
+					return RTConversionExpression(ec, "System.Convert", ".ToInt16", expr, loc);
 				if (real_target_type == TypeManager.byte_type)
-					return RTConversionExpression (ec, "ByteType.FromDecimal" , expr, loc);
+					return RTConversionExpression(ec, "System.Convert", ".ToByte", expr, loc);
 				if (real_target_type == TypeManager.int32_type)
-					return RTConversionExpression (ec, "IntegerType.FromDecimal" , expr, loc);
+					return RTConversionExpression(ec, "System.Convert", ".ToInt32", expr, loc);
 				if (real_target_type == TypeManager.int64_type)
-					return RTConversionExpression (ec, "LongType.FromDecimal" , expr, loc);
+					return RTConversionExpression(ec, "System.Convert", ".ToInt64", expr, loc);
 				if (real_target_type == TypeManager.float_type)
-					return RTConversionExpression (ec, "SingleType.FromDecimal" , expr, loc);
+					return RTConversionExpression(ec, "System.Convert", ".ToSingle", expr, loc);
 				if (real_target_type == TypeManager.double_type)
-					return RTConversionExpression (ec, "DoubleType.FromDecimal" , expr, loc);
+					return RTConversionExpression(ec, "System.Convert", ".ToDouble", expr, loc);
 				if (real_target_type == TypeManager.char_type)
-					return RTConversionExpression (ec, "StringType.FromDecimal" , expr, loc);
+					return RTConversionExpression(ec, "System.Convert", ".ToChar", expr, loc);
       			}
 
 			return null;
@@ -1228,6 +1240,7 @@ namespace Mono.MonoBASIC {
 				    (target_type == TypeManager.int64_type) ||
 				    (target_type == TypeManager.float_type) ||
 				    (target_type == TypeManager.double_type) ||
+				    (target_type == TypeManager.string_type) ||
 				    (target_type == TypeManager.decimal_type))
 					return true;
 
