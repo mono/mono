@@ -265,6 +265,12 @@ new and might have some bugs. Basically we recommend Managed XSLT
 solution, but if it contains some blocking bugs, then you can also
 use traditional libxslt. If you want to use msxsl:script, you have
 to select Managed XSLT.
+.TP
+.I "MONO_MANAGED_WATCHER"
+If set to any value, System.IO.FileSystemWatcher will use the default
+managed implementation (slow). If unset, mono will try to use FAM under
+Unix systems and native API calls on Windows, falling back to the
+managed implementation on error.
 .SH FILES
 On Unix assemblies are loaded from the installation lib directory.  If you set
 `prefix' to /usr, the assemblies will be located in /usr/lib.  On
