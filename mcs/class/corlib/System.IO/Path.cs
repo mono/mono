@@ -128,7 +128,6 @@ namespace System.IO
 			CheckArgument.WhitespaceOnly (path);
 			
 			int iExt = findExtension (path);
-			int iLastSep = path.LastIndexOfAny ( PathSeparatorChars );
 
 			if (iExt > -1)
 			{	// okay it has an extension

@@ -1,3 +1,7 @@
+2002-07-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Path.cs: removed unneeded line from GetExtension.
+
 2002-07-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FileStream.cs:
