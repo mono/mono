@@ -35,9 +35,8 @@ using System.Collections;
 using System.Reflection;
 using System.IO;
 
-namespace System.Runtime.Remoting.Messaging {
-
-	[Serializable]
+namespace System.Runtime.Remoting.Messaging 
+{
 	public class ReturnMessage : IMethodReturnMessage, IMethodMessage, IInternalMessage 
 	{
 		object[] _outArgs;
