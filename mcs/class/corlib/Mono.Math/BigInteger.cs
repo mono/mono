@@ -146,10 +146,12 @@
 //************************************************************************************
 
 using System;
+using System.Security.Cryptography;
 
-namespace System.Security.Cryptography {
+namespace Mono.Math {
 
-internal class BigRandom {
+public class BigRandom {
+
 	RandomNumberGenerator rng;
 
 	public BigRandom () 
@@ -157,6 +159,7 @@ internal class BigRandom {
 		rng = RandomNumberGenerator.Create ();
 	}
 
+	[CLSCompliant(false)] 
 	public void Get (uint[] data) 
 	{
 		byte[] random = new byte [4 * data.Length];
