@@ -1,3 +1,7 @@
+2004-07-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* aot.c (mono_aot_load_method): Fix loading of debug info.
+
 2004-07-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* aot.c: Add logging support.
