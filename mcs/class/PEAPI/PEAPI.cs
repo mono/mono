@@ -1708,6 +1708,20 @@ namespace PEAPI
         metaData.AddToTable (MDTable.GenericParam, new GenericParameter (this, index, name));
     }
 
+    public void AddGenericParameter (short index, Type constraint) {
+        GenericParameter gp = new GenericParameter (this, index);
+        metaData.AddToTable (MDTable.GenericParam, gp);
+        metaData.AddToTable (MDTable.GenericParamConstraint,
+            new GenericParamConstraint (gp, constraint));
+    }
+
+    public void AddGenericParameter (short index, string name, Type constraint) {
+        GenericParameter gp = new GenericParameter (this, index, name);
+        metaData.AddToTable (MDTable.GenericParam, gp);
+        metaData.AddToTable (MDTable.GenericParamConstraint,
+            new GenericParamConstraint (gp, constraint));
+    }
+
     /// <summary>
     /// Add a field to this class
     /// </summary>
@@ -4249,7 +4263,7 @@ namespace PEAPI
 		private static readonly uint MetaDataHeaderSize = 20 + (uint)version.Length;
     private static readonly uint TildeHeaderSize = 24;
     private static readonly uint StreamHeaderSize = 8;
-    private static readonly uint numMetaDataTables = (int)MDTable.GenericParam + 1;
+    private static readonly uint numMetaDataTables = (int)MDTable.GenericParamConstraint + 1;
     private static readonly uint tildeHeaderSize = 8 + (uint)tildeName.Length;
 
     MetaDataStream strings, us, guid, blob;
@@ -4603,6 +4617,7 @@ namespace PEAPI
       BuildTable(metaDataTables[(int)MDTable.TypeDef]);
       BuildTable(metaDataTables[(int)MDTable.MemberRef]);
       BuildTable(metaDataTables[(int)MDTable.GenericParam]);
+      BuildTable(metaDataTables[(int)MDTable.GenericParamConstraint]);
       BuildTable(metaDataTables[(int)MDTable.CustomAttribute]);
 /*      for (int i=0; i < metaDataTables.Length; i++) {
         ArrayList table = metaDataTables[i];
