@@ -1,8 +1,12 @@
-2003-08-02  Sebastien Pouliot  <sebastien@ximian.com>
+2004-08-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ZoneMembershipConditionTest.cs: New. Unit tests in NUnit 2.2 format.
+
+2004-08-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* UnionCodeGroupTest.cs: Added tests for ResolveMatchingCodeGroups.
 
-2003-05-20  Sebastien Pouliot  <sebastien@ximian.com>
+2004-05-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PolicyLevelTest.cs, StrongNameTest.cs: SetUp is now public (required
 	for new nunit).
