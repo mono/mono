@@ -41,20 +41,16 @@ namespace Microsoft.JScript {
 			((SymbolTable) stack.Peek ()).Add (id , decl);
 			System.Console.WriteLine ("IdentificationTable::Enter::{0}", id);
 		}
-
-		internal AST Retrieve (string id)
-		{
-			return ((SymbolTable) stack.Peek ()).Retrieve (id);
-		}
-
-		internal bool Contains (string id)
+		
+		//
+		// It'll return the object asociated with the 'id', if found.
+		//
+		internal object Contains (string id)
 		{
 			SymbolTable parent, current_scope = (SymbolTable) stack.Peek ();
-			bool found = current_scope.Contains (id);
+			object found = current_scope.Contains (id);
 
-			if (found)
-				return true;	
-			else {
+			if (found == null) {
 				parent = current_scope.parent;
 
 				if (parent != null)

@@ -56,15 +56,14 @@ namespace Microsoft.JScript {
 
 			for (i = 0; i < size; i++) {
 				tmp_decl = (VariableDeclaration) var_decls [i];
-				init_val = tmp_decl.InitValue;
+				init_val = tmp_decl.val;
 
 				if (init_val != null)
 					res = init_val.Resolve (context);
 
 				if (res)
-					context.Enter (tmp_decl.Id, tmp_decl);
+					context.Enter (tmp_decl.id, tmp_decl);
 			}
-
 			return true;
 		}
 	}

@@ -16,13 +16,9 @@ namespace Microsoft.JScript {
 
 		internal string str;
 
-		public string Str {
-			get { return str; }
-			set { str = value; }
-		}
-
-		internal StringLiteral (string s)
+		internal StringLiteral (AST parent, string s)
 		{
+			this.parent = parent;
 			str = s;
 		}
 
@@ -45,8 +41,7 @@ namespace Microsoft.JScript {
 			else 
 				ig = ec.ig;
 
-			ec.ig.Emit (OpCodes.Ldstr, str);
+			ig.Emit (OpCodes.Ldstr, str);
 		}
 	}
 }
-	

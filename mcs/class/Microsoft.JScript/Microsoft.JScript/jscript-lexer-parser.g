@@ -844,7 +844,7 @@ primary_expr [AST parent] returns [AST prim_exp]
 	| object_literal
 	| id:IDENTIFIER 
 	  { 
-		Identifier ident = new Identifier (id.getText ());
+		Identifier ident = new Identifier (parent, id.getText ());
 		prim_exp = (AST) ident;
 	  }
 	| l = literal [parent] { prim_exp = l; }
@@ -878,7 +878,7 @@ literal [AST parent] returns [AST l]
 	  }
 	| s:STRING_LITERAL
 	  {
-		  StringLiteral str = new StringLiteral (s.getText ());
+		  StringLiteral str = new StringLiteral (parent, s.getText ());
 		  l = str;
 	  }      
 	| l = numeric_literal [parent]

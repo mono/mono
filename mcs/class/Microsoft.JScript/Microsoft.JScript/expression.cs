@@ -202,9 +202,11 @@ namespace Microsoft.JScript {
 	internal class Identifier : AST {
 
 		internal string name;
+		internal Decl binding;
 
-		internal Identifier (string id)
+		internal Identifier (AST parent, string id)
 		{
+			this.parent = parent;
 			this.name = id;
 		}
 
@@ -217,16 +219,30 @@ namespace Microsoft.JScript {
 		{
 			if (name == "print")
 				return SemanticAnalyser.print;
-			else if (context.Contains (name))
-				return true;
-			else throw new Exception ("variable not found: " +  name);
+
+			Decl bind = (Decl) context.Contains (name);
+			
+			if (bind == null)
+				throw new Exception ("variable not found: " +  name);
+			else
+				binding = bind;
+			return true;
 		}
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			ILGenerator ig;
+
+			if (parent == null) {
+				ig = ec.gc_ig;
+				ig.Emit (OpCodes.Ldsfld, binding.field_info);
+			} else {
+				ig = ec.ig;				
+				ig.Emit (OpCodes.Ldloc, binding.local_builder);
+			}
+			ig.Emit (OpCodes.Pop);
 		}
-	}
+	}	
 
 	public class Args : AST {
 

@@ -14,12 +14,17 @@ using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
 
-	public class VariableDeclaration : AST {
+	public abstract class Decl : AST {
+		internal FieldInfo field_info;
+		internal LocalBuilder local_builder;
+	}
 
-		private string id;
-		private Type type;
-		private string type_annot;
-		private AST val;
+	public class VariableDeclaration : Decl {
+
+		internal string id;
+		internal Type type;
+		internal string type_annot;
+		internal AST val;
 
 		internal VariableDeclaration (AST parent, string id, string t, AST init)
 		{
@@ -33,31 +38,14 @@ namespace Microsoft.JScript {
 				// FIXME: resolve the type annotations
 				this.type = typeof (System.Object);
 			}
-
 			this.val = init;
 		}
-
-
-		public string Id {
-			get { return id; }
-			set { id = value; }
-		}
-
-		public AST InitValue {
-			get { return val; }
-		}
-
-		public Type Type {
-			get { return type; }
-			set { type = value; }
-		}
-
 
 		public override string ToString ()
 		{
 			StringBuilder sb = new StringBuilder ();
 
-			sb.Append (Id);
+			sb.Append (id);
 			sb.Append (":" + type_annot);
 			sb.Append (" = ");
 
@@ -73,20 +61,23 @@ namespace Microsoft.JScript {
 				FieldBuilder field;
 				TypeBuilder type  = ec.type_builder;
 				
-				field = type.DefineField (id, Type,
+				field = type.DefineField (id, type,
 							  FieldAttributes.Public |
 							  FieldAttributes.Static);
+				
+				field_info = CodeGenerator.assembly_builder.GetType ("JScript 0").GetField (id);
+
 				if (val != null) {
 					val.Emit (ec);
 					ec.gc_ig.Emit (OpCodes.Stsfld, field);
 				}
 			} else {
 				ILGenerator ig = ec.ig;
-				LocalBuilder lb = ig.DeclareLocal (Type);
+				local_builder = ig.DeclareLocal (type);
 
 				if (val != null) {
 					val.Emit (ec);
-					ig.Emit (OpCodes.Stloc, lb);
+					ig.Emit (OpCodes.Stloc, local_builder);
 				}
 			}
 		}

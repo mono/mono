@@ -17,7 +17,7 @@ namespace Microsoft.JScript {
 
 		internal SymbolTable parent;
 		internal Hashtable symbols;
-
+		
 		internal SymbolTable (SymbolTable parent)
 		{
 			symbols = new Hashtable ();
@@ -29,14 +29,9 @@ namespace Microsoft.JScript {
 			symbols.Add (id, d);
 		}
 
-		internal AST Retrieve (string id)
+		internal object Contains (string id)
 		{
-			return ((AST) symbols [id]);
-		}
-
-		internal bool Contains (string id)
-		{
-			return symbols.ContainsKey (id);
+			return symbols [id];
 		}
 
 		public override string ToString ()
