@@ -1,4 +1,8 @@
 
+Fri Jul 18 11:28:28 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: register function to perform jit shutdown.
+
 Thu Jul 17 16:02:41 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: use a faster allocator if possible.
