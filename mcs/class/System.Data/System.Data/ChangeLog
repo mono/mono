@@ -1,3 +1,19 @@
+2005-01-18  Sureshkumar T  <tsureshkumar@novell.com>
+
+	Fix for bug #66838. This patch is submitted by "Ankit Jain"
+	<radical@corewars.org> and refactored.
+
+	* DataRow.cs: Allows to set a parent row even if the row is in
+	detached state.
+
+	* DataRelation.cs: method "UpdateConstraints" is added to check
+	and create missing keys when adding a relation. This is refactored
+	approach from DataRelationCollection.Add method.
+
+	* DataRelationCollection.cs: AddCore methods of all relation types
+	are synchronized. A Check for existing constraints is
+	done. Relation is added to the list only if all checks are passed.
+
 2004-01-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataColumnCollection.cs : Clear() throws ArgumentException that

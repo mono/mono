@@ -100,61 +100,14 @@ namespace System.Data {
 			/// <param name="relation">The relation to check.</param>
 			protected override void AddCore (DataRelation relation)
 			{
-				 base.AddCore (relation);
-				 if (relation.ChildTable.DataSet != this.dataSet || relation.ParentTable.DataSet != this.dataSet)
-					 throw new DataException ();
+				 if (relation.ChildTable.DataSet != this.dataSet 
+                                     || relation.ParentTable.DataSet != this.dataSet)
+			           throw new DataException ();
 				 relation.SetDataSet (dataSet);
 				 relation.ParentTable.ChildRelations.Add (relation);
 				 relation.ChildTable.ParentRelations.Add (relation);
-				 ForeignKeyConstraint foreignKeyConstraint = null;
-			
-				 if (relation.createConstraints) 
-				 {
-					 
-					 UniqueConstraint uniqueConstraint = null;
-					 ConstraintCollection parentConstrains = relation.ParentTable.Constraints;
-					 // find if the unique constraint already exists in the parent table.
-					 foreach (Constraint o in parentConstrains) 
-					 {
-						 if (o is UniqueConstraint) 
-						 {
-							 UniqueConstraint uc = (UniqueConstraint) o;
-							 if (uc.Columns.Length == relation.ParentColumns.Length) 
-							 {
-								 bool allColumnsEqual = true;
-								 for (int columnCnt = 0; columnCnt < uc.Columns.Length; ++columnCnt) 
-								 {
-									 if (uc.Columns[columnCnt] != relation.ParentColumns[columnCnt]) 
-									 {
-										 allColumnsEqual = false;
-										 break;
-									 }
-								 }
-								 if (allColumnsEqual) 
-								 {
-									 uniqueConstraint = uc;
-									 break;
-								 }
-							 }
-						 }
-					 }
-					 // if we did not find the unique constraint in the parent table.
-					 // we generate new uniqueconastraint and add it to the parent table.
-					 if (uniqueConstraint == null)
-					 {
-						 uniqueConstraint = new UniqueConstraint(relation.ParentColumns, false);
-						 relation.ParentTable.Constraints.Add(uniqueConstraint);
-					 }
-					
-					 foreignKeyConstraint = new ForeignKeyConstraint (relation.RelationName, relation.ParentColumns, relation.ChildColumns);
-					 relation.ChildTable.Constraints.Add (foreignKeyConstraint);
-
-					 relation.SetParentKeyConstraint (uniqueConstraint);
-					 relation.SetChildKeyConstraint (foreignKeyConstraint);
-				 }
-				
-			
-			}
+                                 base.AddCore (relation);
+                        }
 
 			public override void AddRange (DataRelation[] relations)
 			{
@@ -230,11 +183,26 @@ namespace System.Data {
 				return dataTable.DataSet;
 			}
 
+			/// <summary>
+			/// Performs verification on the table.
+			/// </summary>
+			/// <param name="relation">The relation to check.</param>
 			protected override void AddCore (DataRelation relation)
 			{
-				base.AddCore (relation);
-			}
+                                if (dataTable.ParentRelations == this && relation.ChildTable != dataTable)
+                                                throw new ArgumentException ("Cannot add a relation to this table's " +
+                                                                             "ParentRelations where this table is not" +
+                                                                             " the Child table.");
 
+                                if (dataTable.ChildRelations == this && relation.ParentTable != dataTable)   
+                                                throw new ArgumentException("Cannot add a relation to this table's " +
+                                                                            "ChildRelations where this table is not" +
+                                                                            " the Parent table.");
+                                
+                                base.AddCore (relation);
+
+			}
+                        
 			protected override void RemoveCore (DataRelation relation)
 			{
 				base.RemoveCore (relation);
@@ -291,6 +259,25 @@ namespace System.Data {
 		[MonoTODO]
 		public void Add(DataRelation relation)
 		{
+                        if (relation == null) {
+				//TODO: Issue a good exception message.
+				throw new ArgumentNullException();
+			}
+			if(List.IndexOf(relation) != -1) {
+				//TODO: Issue a good exception message.
+				throw new ArgumentException();
+			}
+
+			// check if the collection has a relation with the same name.
+			int tmp = IndexOf(relation.RelationName);
+			// if we found a relation with same name we have to check
+			// that it is the same case.
+			// indexof can return a table with different case letters.
+			if (tmp != -1 &&
+				relation.RelationName == this[tmp].RelationName)
+					throw new DuplicateNameException("A DataRelation named '" + relation.RelationName + "' already belongs to this DataSet.");
+                        
+
 			this.AddCore (relation);
 			if(relation.RelationName == string.Empty)
 				relation.RelationName = GenerateRelationName();
@@ -418,37 +405,17 @@ namespace System.Data {
 		#endregion
 	
 		/// <summary>
-		/// Performs verification on the table.
+		/// Adds to the list
 		/// </summary>
 		/// <param name="relation">The relation to check.</param>
 		[MonoTODO]
 		protected virtual void AddCore(DataRelation relation)
 		{
-			if (relation == null)
-			{
-				//TODO: Issue a good exception message.
-				throw new ArgumentNullException();
-			}
-			if(List.IndexOf(relation) != -1)
-			{
-				//TODO: Issue a good exception message.
-				throw new ArgumentException();
-			}
-
-			// check if the collection has a relation with the same name.
-			int tmp = IndexOf(relation.RelationName);
-			// if we found a relation with same name we have to check
-			// that it is the same case.
-			// indexof can return a table with different case letters.
-			if (tmp != -1)
-			{
-				if(relation.RelationName == this[tmp].RelationName)
-					throw new DuplicateNameException("A DataRelation named '" + relation.RelationName + "' already belongs to this DataSet.");
-			}
+                        relation.UpdateConstraints ();
 			List.Add(relation);
 		}
-
-		/// <summary>
+                
+                /// <summary>
 		/// Copies the elements of the specified DataRelation array to the end of the collection.
 		/// </summary>
 		/// <param name="relations">The array of DataRelation objects to add to the collection.</param>

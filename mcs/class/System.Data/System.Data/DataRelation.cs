@@ -257,6 +257,79 @@ namespace System.Data
 		{
 			return relationName;
 		}
+                
+                internal void UpdateConstraints ()
+                {
+                        if ( ! createConstraints)
+                                return;
+                        
+                        ForeignKeyConstraint    foreignKeyConstraint    = null;
+                        UniqueConstraint        uniqueConstraint        = null;
+                        
+                        foreignKeyConstraint    = FindForeignKey (ChildTable.Constraints);
+                        uniqueConstraint        = FindUniqueConstraint (ParentTable.Constraints); 
+
+                        // if we did not find the unique constraint in the parent table.
+                        // we generate new uniqueConstraint and add it to the parent table.
+                        if (uniqueConstraint == null) {
+                                uniqueConstraint = new UniqueConstraint (ParentColumns, false);
+                                ParentTable.Constraints.Add (uniqueConstraint);
+                        }
+                     
+                        // if we did not find the foreign key constraint in the parent table.
+                        // we generate new foreignKeyConstraint and add it to the parent table.
+                        if (foreignKeyConstraint == null) {
+                                foreignKeyConstraint = new ForeignKeyConstraint (RelationName, 
+                                                                                 ParentColumns, 
+                                                                                 ChildColumns);
+                                ChildTable.Constraints.Add (foreignKeyConstraint);
+                        }
+
+                        SetParentKeyConstraint (uniqueConstraint);
+                        SetChildKeyConstraint (foreignKeyConstraint);
+                }
+
+                private static bool CompareDataColumns (DataColumn [] dc1, DataColumn [] dc2)
+                {
+                        if (dc1.Length != dc2.Length)
+                                return false;
+
+                        for (int columnCnt = 0; columnCnt < dc1.Length; ++columnCnt){
+                                if (dc1 [columnCnt] != dc2 [columnCnt])
+                                         return false;
+                        }
+                        return true;
+                }
+                
+                private ForeignKeyConstraint FindForeignKey (ConstraintCollection cl)
+                {
+                        ForeignKeyConstraint fkc = null; 
+                        foreach (Constraint o in cl) {
+                                if (! (o is ForeignKeyConstraint))
+                                        continue;
+                                fkc = (ForeignKeyConstraint) o;
+                                /* Check ChildColumns & ParentColumns */
+                                if (CompareDataColumns (ChildColumns, fkc.Columns) && 
+                                    CompareDataColumns (ParentColumns, fkc.RelatedColumns))
+                                        return fkc;
+                        }
+                        return null;
+                }
+
+                private UniqueConstraint FindUniqueConstraint (ConstraintCollection cl)
+                {
+                        UniqueConstraint uc = null;
+                        // find if the unique constraint already exists in the parent table.
+                        foreach (Constraint o in cl){
+                                if (! (o is UniqueConstraint))
+                                        continue;
+                                uc = (UniqueConstraint) o;
+                                //Check in ParentColumns
+                                if (CompareDataColumns (ParentColumns, uc.Columns))
+                                        return uc;
+                        }
+                        return null;
+                }
 
 		#endregion // Methods
 	}
