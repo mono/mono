@@ -1,3 +1,8 @@
+2004-05-29  Gert Driesen (drieseng@users.sourceforge.net)
+	
+	* XmlTextReader.cs: Added ProhibitDtd property for NET 1.1 to match
+	public API in MS.NET 1.1
+
 2004-05-27  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlDocument.cs : Save() should indent only when PreserveWhitespace

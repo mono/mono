@@ -252,6 +252,15 @@ namespace System.Xml
 			get { return cursorToken.Prefix; }
 		}
 
+#if NET_1_1
+
+		[MonoTODO ("Not documented in .NET SDK")]
+		public bool ProhibitDtd {
+			get { return prohibitDtd; }
+			set { prohibitDtd = value; }
+		}
+#endif
+
 		public override char QuoteChar {
 			get { return cursorToken.QuoteChar; }
 		}
@@ -946,6 +955,9 @@ namespace System.Xml
 		private WhitespaceHandling whitespaceHandling = WhitespaceHandling.All;
 		private XmlResolver resolver = new XmlUrlResolver ();
 		private bool normalization = false;
+#if NET_1_1
+		private bool prohibitDtd = false;
+#endif
 
 		private void Init ()
 		{
