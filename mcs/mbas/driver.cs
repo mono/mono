@@ -867,6 +867,7 @@ namespace Mono.Languages
 		/// </summary>
 		int MainDriver(string [] args)
 		{
+			Console.WriteLine ("THIS IS ALPHA AND UNSUPPORTED SOFTWARE, USE AT YOUR OWN RISK.");
 			SetupDefaultDefines();	
 			
 			SetupDefaultImports();
