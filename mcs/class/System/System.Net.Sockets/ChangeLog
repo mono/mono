@@ -1,3 +1,10 @@
+2003-10-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* TcpClient.cs: Fix void Dispose (bool disposing) to follow the
+	pattern.  It was shutting down the managed resources even in the
+	finalizer case, it should only do that when called from
+	IDisposable.Dipose.
+
 2003-09-11  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* NetworkStream.cs: Added [In,Out] attributes to Read method.
@@ -12,7 +19,7 @@
 	* UdpClient.cs (Receive): Fix Bug 45633;  We should do a blocking
 	call until a datagram is arrives from the remote host.  This
 	removes the 512 "magic" buffer size when we did not have any data.
-
+ 
 2003-07-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* NetworkStream.cs:

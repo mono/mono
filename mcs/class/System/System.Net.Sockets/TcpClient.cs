@@ -329,20 +329,22 @@ namespace System.Net.Sockets
 			if (disposed)
 				return;
 			disposed = true;
-				
-			// release unmanaged resources
-			NetworkStream s = stream;
-			stream = null;
-			if (s != null) {
-				// This closes the socket as well, as the NetworkStream
-				// owns the socket.
-				s.Close();
-				active = false;
-				s = null;
-			} else if (client != null){
-				client.Close ();
+
+			if (disposing){
+				// release managed resources
+				NetworkStream s = stream;
+				stream = null;
+				if (s != null) {
+					// This closes the socket as well, as the NetworkStream
+					// owns the socket.
+					s.Close();
+					active = false;
+					s = null;
+				} else if (client != null){
+					client.Close ();
+				}
+				client = null;
 			}
-			client = null;
 		}
 		
 		/// <summary>
