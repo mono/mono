@@ -1,3 +1,7 @@
+2003-12-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* monoresgen.cs: ignore entries marked as 'fuzzy' in .po files.
+
 2003-12-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* monoresgen.cs: generate valid .po files. Fixes bug #52106.

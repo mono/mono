@@ -295,20 +295,41 @@ class PoResourceReader : IResourceReader {
 		string line;
 		string msgid = null;
 		string msgstr = null;
+		bool ignoreNext = false;
 
 		while ((line = reader.ReadLine ()) != null) {
 			line_num++;
 			line = line.Trim ();
-			if (line.Length == 0 || line [0] == '#' ||
-			    line [0] == ';')
+			if (line.Length == 0)
 				continue;
+				
+			if (line [0] == '#') {
+				if (line.Length == 1 || line [1] != ',')
+					continue;
 
+				if (line.IndexOf ("fuzzy") != -1) {
+					ignoreNext = true;
+					if (msgid != null) {
+						if (msgstr == null)
+							throw new FormatException ("Error. Line: " + line_num);
+						data.Add (msgid, msgstr);
+						msgid = null;
+						msgstr = null;
+					}
+					
+					continue;
+				}
+			}
+			
 			if (line.StartsWith ("msgid ")) {
 				if (msgid == null && msgstr != null)
 					throw new FormatException ("Found 2 consecutive msgid. Line: " + line_num);
 
 				if (msgstr != null) {
-					data.Add (msgid, msgstr);
+					if (!ignoreNext)
+						data.Add (msgid, msgstr);
+
+					ignoreNext = false;
 					msgid = null;
 					msgstr = null;
 				}
@@ -340,7 +361,8 @@ class PoResourceReader : IResourceReader {
 			if (msgstr == null)
 				throw new FormatException ("Expecting msgstr. Line: " + line_num);
 
-			data.Add (msgid, msgstr);
+			if (!ignoreNext)
+				data.Add (msgid, msgstr);
 		}
 	}
 	
