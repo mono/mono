@@ -1,5 +1,9 @@
 2004-06-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* FileStreamTest.cs : Added some tests on .ctor() without FileShare.
+
+2004-06-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	  FileInfoTest.cs : more '/' and Path.DirectorySeparatorChar fixes
 
 2004-06-21  Atsushi Enomoto  <atsushi@ximian.com>

@@ -326,6 +326,68 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		public void CtorAccess1Read2Read ()
+		{
+			FileStream fs = null;
+			FileStream fs2 = null;
+			try {
+				if (!File.Exists ("temp")) {
+					TextWriter tw = File.CreateText ("temp");
+					tw.Write ("FOO");
+					tw.Close ();
+				}
+				fs = new FileStream ("temp", FileMode.Open, FileAccess.Read);
+				fs2 = new FileStream ("temp", FileMode.Open, FileAccess.Read);
+			} finally {
+				if (fs != null)
+					fs.Close ();
+				if (fs2 != null)
+					fs2.Close ();
+				if (File.Exists ("temp"))
+					File.Delete ("temp");
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (IOException))]
+		public void CtorAccess1Read2Write ()
+		{
+			FileStream fs = null;
+			try {
+				if (!File.Exists ("temp")) {
+					using (TextWriter tw = File.CreateText ("temp")) {
+						tw.Write ("FOO");
+					}
+				}
+				fs = new FileStream ("temp", FileMode.Open, FileAccess.Read);
+				fs = new FileStream ("temp", FileMode.Create, FileAccess.Write);
+			} finally {
+				if (fs != null)
+					fs.Close ();
+				if (File.Exists ("temp"))
+					File.Delete ("temp");
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (IOException))]
+		public void CtorAccess1Write2Write ()
+		{
+			FileStream fs = null;
+			try {
+				if (File.Exists ("temp"))
+					File.Delete ("temp");
+				fs = new FileStream ("temp", FileMode.Create, FileAccess.Write);
+				fs = new FileStream ("temp", FileMode.Create, FileAccess.Write);
+			} finally {
+				if (fs != null)
+					fs.Close ();
+				if (File.Exists ("temp"))
+					File.Delete ("temp");
+			}
+		}
+
+		[Test]
 		public void Write ()
 		{
 			string path = TempFolder + DSC + "FileStreamTest.Write";
