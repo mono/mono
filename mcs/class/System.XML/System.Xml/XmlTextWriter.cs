@@ -367,26 +367,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 				CloseStartElement ();
 			}
 
-			if (index < 0)
-				throw new ArgumentOutOfRangeException ("index", index, "index must be non negative integer.");
-			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count", count, "count must be non negative integer.");
-			if (buffer.Length < index + count)
-				throw new ArgumentOutOfRangeException ("index and count must be smaller than the length of the buffer.");
-
-			for (int i = index; i < count; i++) {
-				int val = buffer [i];
-				int high = val >> 4;
-				int low = val & 15;
-				if (high > 9)
-					w.Write ((char) (high + 55));
-				else
-					w.Write ((char) (high + 0x30));
-				if (low > 9)
-					w.Write ((char) (low + 55));
-				else
-					w.Write ((char) (low + 0x30));
-			}
+			XmlConvert.WriteBinHex (buffer, index, count, w);
 		}
 
 		public override void WriteCData (string text)
@@ -597,18 +578,12 @@ openElements [openElementCount - 1]).IndentingOverriden;
 
 		public override void WriteName (string name)
 		{
-			if (!XmlChar.IsName (name))
-				throw new ArgumentException ("There is an invalid character: '" + name [0] +
-							     "'", "name");
-			w.Write (name);
+			WriteNameInternal (name);
 		}
 
 		public override void WriteNmToken (string name)
 		{
-			if (!XmlChar.IsNmToken (name))
-				throw new ArgumentException ("There is an invalid character: '" + name [0] +
-							     "'", "name");
-			w.Write (name);
+			WriteNmTokenInternal (name);
 		}
 
 		// LAMESPEC: It should reject such name that starts with "x" "m" "l" by XML specification, but
@@ -636,16 +611,11 @@ openElements [openElementCount - 1]).IndentingOverriden;
 
 		public override void WriteQualifiedName (string localName, string ns)
 		{
-			if (localName == null || localName == String.Empty)
-				throw new ArgumentException ();
-
 			CheckState ();
 			if (!openAttribute)
 				CloseStartElement ();
 
-			w.Write (namespaceManager.LookupPrefix (ns, false));
-			w.Write (':');
-			w.Write (localName);
+			WriteQualifiedNameInternal (localName, ns);
 		}
 
 		public override void WriteRaw (string data)

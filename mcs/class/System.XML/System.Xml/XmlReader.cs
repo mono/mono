@@ -662,16 +662,7 @@ namespace System.Xml
 		[MonoTODO]
 		public virtual object ReadValueAs (Type type)
 		{
-			return ReadValueAs (type, null);
-		}
-
-		private XmlQualifiedName ParseQName (string qname, IXmlNamespaceResolver resolver)
-		{
-			int index = qname.IndexOf (':');
-			if (index < 0)
-				return new XmlQualifiedName (qname);
-			else
-				return new XmlQualifiedName (qname.Substring (index + 1), resolver.LookupNamespace (qname.Substring (0, index)));
+			return ReadValueAs (type, this as IXmlNamespaceResolver);
 		}
 
 		[MonoTODO]
@@ -680,7 +671,7 @@ namespace System.Xml
 			string text = ReadString ();
 			try {
 				if (type == typeof (XmlQualifiedName))
-					return ParseQName (text, resolver);
+					return XmlQualifiedName.Parse (text, resolver);
 
 				switch (Type.GetTypeCode (type)) {
 				case TypeCode.Boolean:

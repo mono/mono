@@ -1,3 +1,12 @@
+2004-07-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : Added 2.0 VerifyNMTOKEN() and internal WriteBinHex().
+	* XmlQualifiedName.cs : Added internal static Parse().
+	* XmlReader.cs : use XmlQualifiedName.Parse().
+	* XmlTextWriter.cs : use new XmlWriter.WriteNameInternal() etc.
+	* XmlWriter.cs : Added 2.0 Settings and WriteFromObject().
+	  Implemented 2.0 virtual methods that used to be abstract in 1.x.
+
 2004-07-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlReader.cs : Implemented ReadValueAsXxx() except for

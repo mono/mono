@@ -220,14 +220,28 @@ namespace System.Xml {
 		}
 
 		// LAMESPEC: It has been documented as public, but is marked as internal.
-		internal static string ToBinHexString (byte [] data)
+		internal static string ToBinHexString (byte [] buffer)
 		{
-			if (data == null)
-				throw new ArgumentNullException ("data");
 			StringWriter w = new StringWriter ();
+			WriteBinHex (buffer, 0, buffer.Length, w);
+			return w.ToString ();
+		}
+
+		internal static void WriteBinHex (byte [] buffer, int index, int count, TextWriter w)
+		{
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ("index", index, "index must be non negative integer.");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count", count, "count must be non negative integer.");
+			if (buffer.Length < index + count)
+				throw new ArgumentOutOfRangeException ("index and count must be smaller than the length of the buffer.");
+
 			// Copied from XmlTextWriter.WriteBinHex ()
-			for (int i = 0; i < data.Length; i++) {
-				int val = data [i];
+			int end = index + count;
+			for (int i = index; i < end; i++) {
+				int val = buffer [i];
 				int high = val >> 4;
 				int low = val & 15;
 				if (high > 9)
@@ -239,7 +253,6 @@ namespace System.Xml {
 				else
 					w.Write ((char) (low + 0x30));
 			}
-			return w.ToString ();
 		}
 
 		public static byte ToByte(string s)
@@ -557,23 +570,38 @@ namespace System.Xml {
 
 		public static string VerifyName (string name)
 		{
-			if(name == null)
+			if (name == null)
 				throw new ArgumentNullException("name");
 
-			if(!XmlChar.IsName (name))
+			if (!XmlChar.IsName (name))
 				throw new XmlException("'" + name + "' is not a valid XML Name");
 			return name;
 			
 		}
 
-		public static string VerifyNCName(string ncname)
+		public static string VerifyNCName (string ncname)
 		{
-			if(ncname == null)
+			if (ncname == null)
 				throw new ArgumentNullException("ncname");
 
-			if(!XmlChar.IsNCName (ncname))
+			if (!XmlChar.IsNCName (ncname))
 				throw new XmlException ("'" + ncname + "' is not a valid XML NCName");
 			return ncname;
+		}
+
+#if NET_2_0
+		public static string VerifyNMTOKEN (string name)
+#else
+		internal static string VerifyNMTOKEN (string name)
+#endif
+		{
+			if (name == null)
+				throw new ArgumentNullException("name");
+
+			if (!XmlChar.IsNmToken (name))
+				throw new XmlException("'" + name + "' is not a valid XML NMTOKEN");
+			return name;
+			
 		}
 
 		// It is documented as public method, but in fact it is not.

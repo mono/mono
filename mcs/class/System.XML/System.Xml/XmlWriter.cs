@@ -45,6 +45,10 @@ namespace System.Xml
 	public abstract class XmlWriter
 #endif
 	{
+#if NET_2_0
+		XmlWriterSettings settings;
+#endif
+
 		#region Constructors
 
 		protected XmlWriter () { }
@@ -53,11 +57,32 @@ namespace System.Xml
 
 		#region Properties
 
+#if NET_2_0
+		public XmlWriterSettings Settings {
+			get {
+				if (settings == null)
+					settings = new XmlWriterSettings ();
+				return settings;
+			}
+		}
+#endif
+
 		public abstract WriteState WriteState { get; }
 		
+
+#if NET_2_0
+		public virtual string XmlLang {
+			get { return null; }
+		}
+
+		public virtual XmlSpace XmlSpace {
+			get { return XmlSpace.None; }
+		}
+#else
 		public abstract string XmlLang { get; }
 
 		public abstract XmlSpace XmlSpace { get; }
+#endif
 
 		#endregion
 
@@ -204,7 +229,16 @@ namespace System.Xml
 
 		public abstract void WriteBase64 (byte[] buffer, int index, int count);
 
+#if NET_2_0
+		public virtual void WriteBinHex (byte [] buffer, int index, int count)
+		{
+			StringWriter sw = new StringWriter ();
+			XmlConvert.WriteBinHex (buffer, index, count, sw);
+			WriteString (sw.ToString ());
+		}
+#else
 		public abstract void WriteBinHex (byte[] buffer, int index, int count);
+#endif
 
 		public abstract void WriteCData (string text);
 
@@ -249,9 +283,84 @@ namespace System.Xml
 
 		public abstract void WriteFullEndElement ();
 
+#if NET_2_0
+		public virtual void WriteName (string name)
+		{
+			WriteNameInternal (name);
+		}
+
+		public virtual void WriteNmToken (string name)
+		{
+			WriteNmTokenInternal (name);
+		}
+
+		public virtual void WriteQualifiedName (string localName, string ns)
+		{
+			WriteQualifiedNameInternal (localName, ns);
+		}
+#else
 		public abstract void WriteName (string name);
 
 		public abstract void WriteNmToken (string name);
+
+		public abstract void WriteQualifiedName (string localName, string ns);
+#endif
+
+		internal void WriteNameInternal (string name)
+		{
+#if NET_2_0
+			switch (Settings.ConformanceLevel) {
+			case ConformanceLevel.Document:
+			case ConformanceLevel.Fragment:
+				XmlConvert.VerifyName (name);
+				break;
+			}
+#else
+			XmlConvert.VerifyName (name);
+#endif
+			WriteString (name);
+		}
+
+		internal virtual void WriteNmTokenInternal (string name)
+		{
+#if NET_2_0
+			switch (Settings.ConformanceLevel) {
+			case ConformanceLevel.Document:
+			case ConformanceLevel.Fragment:
+				XmlConvert.VerifyNMTOKEN (name);
+				break;
+			}
+#else
+			XmlConvert.VerifyNMTOKEN (name);
+#endif
+			WriteString (name);
+		}
+
+		internal void WriteQualifiedNameInternal (string localName, string ns)
+		{
+			if (localName == null || localName == String.Empty)
+				throw new ArgumentException ();
+
+#if NET_2_0
+			switch (Settings.ConformanceLevel) {
+			case ConformanceLevel.Document:
+			case ConformanceLevel.Fragment:
+				XmlConvert.VerifyNCName (localName);
+				break;
+			}
+#else
+			XmlConvert.VerifyNCName (localName);
+#endif
+
+			string prefix = LookupPrefix (ns);
+			if (prefix != String.Empty) {
+				WriteString (prefix);
+				WriteString (":");
+				WriteString (localName);
+			}
+			else
+				WriteString (localName);
+		}
 
 		public virtual void WriteNode (XmlReader reader, bool defattr)
 		{
@@ -342,8 +451,6 @@ namespace System.Xml
 
 		public abstract void WriteProcessingInstruction (string name, string text);
 
-		public abstract void WriteQualifiedName (string localName, string ns);
-
 		public abstract void WriteRaw (string data);
 
 		public abstract void WriteRaw (char[] buffer, int index, int count);
@@ -378,6 +485,12 @@ namespace System.Xml
 		public abstract void WriteWhitespace (string ws);
 
 #if NET_2_0
+		[MonoTODO]
+		public virtual void WriteFromObject (object value)
+		{
+			throw new NotImplementedException ();
+		}
+
 		[MonoTODO]
 		public virtual void WriteValue (bool value)
 		{
