@@ -1,3 +1,7 @@
+2003-10-02  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* hacks.h - work round HP 64 bit problem with isunordered
+
 2003-10-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* interp.c (dump_frame): Avoid crash on frames without a method. Patch
