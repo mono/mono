@@ -2910,18 +2910,15 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		MethodInfo GetAccessor (Type invocation_type, MethodInfo accessor)
+		MethodInfo GetAccessor (Type invocation_type, string accessor_name)
 		{
-			if (accessor == null)
-				return null;
-
 			BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic |
 				BindingFlags.Static | BindingFlags.Instance;
 			MemberInfo[] group;
 
 			group = TypeManager.MemberLookup (
 				invocation_type, invocation_type, PropertyInfo.DeclaringType,
-				MemberTypes.Method, flags, accessor.Name);
+				MemberTypes.Method, flags, accessor_name + "_" + PropertyInfo.Name);
 
 			//
 			// The first method is the closest to us
@@ -2990,11 +2987,11 @@ namespace Mono.CSharp {
 		//
 		void ResolveAccessors (EmitContext ec)
 		{
-			getter = GetAccessor (ec.ContainerType, PropertyInfo.GetGetMethod());
+			getter = GetAccessor (ec.ContainerType, "get");
 			if ((getter != null) && getter.IsStatic)
 				is_static = true;
 
-			setter = GetAccessor (ec.ContainerType, PropertyInfo.GetSetMethod());
+			setter = GetAccessor (ec.ContainerType, "set");
 			if ((setter != null) && setter.IsStatic)
 				is_static = true;
 
