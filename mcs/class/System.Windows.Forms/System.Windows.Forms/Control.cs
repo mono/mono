@@ -346,16 +346,16 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		public virtual ContextMenu ContextMenu {
-			get {
-				//return contextMenu;
-				throw new NotImplementedException ();
-			}
-			set {
-				//contextMenu=value;
-				throw new NotImplementedException ();
-			}
-		}
+		//public virtual ContextMenu ContextMenu {
+		//	get {
+		//		//return contextMenu;
+		//		throw new NotImplementedException ();
+		//	}
+		//	set {
+		//		//contextMenu=value;
+		//		throw new NotImplementedException ();
+		//	}
+		//}
 		
 		[MonoTODO]
 		public ControlCollection Controls {

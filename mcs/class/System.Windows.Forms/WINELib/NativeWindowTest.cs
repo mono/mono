@@ -40,7 +40,7 @@ public class NativeWindowTest : NativeWindow {
 		Console.WriteLine ("showing window");
 		Win32.ShowWindow (nw.Handle, (int) Win32.SW_SHOW);
 
-		int msg;
+		int msg = 0;
 
 		while (Win32.GetMessageA (ref msg, 0, 0, 0) != 0) {
 			Win32.TranslateMessage (ref msg);

@@ -57,7 +57,7 @@ namespace System.Windows.Forms {
 
 		public virtual void CreateHandle (CreateParams cp) {
 			IntPtr createdHWnd = (IntPtr) 0;
-			Object lpParam;
+			Object lpParam = new Object();
 
 			windowHandle = Win32.CreateWindowExA ((uint) cp.ExStyle,
 							      cp.ClassName,

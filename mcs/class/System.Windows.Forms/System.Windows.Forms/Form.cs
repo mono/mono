@@ -265,21 +265,21 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
-		public MainMenu Menu {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
+		//public MainMenu Menu {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//	set {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
 
 		[MonoTODO]
-		public MainMenu MergedMenu {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
+		//public MainMenu MergedMenu {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
 
 		[MonoTODO]
 		public bool MinimizeBox {
@@ -896,31 +896,33 @@ namespace System.Windows.Forms {
 
 			switch (m.Msg) {
 			case Win32.WM_CLOSE:
-				EventArgs closeArgs;
+				EventArgs closeArgs = new EventArgs();
 				OnClosed (closeArgs);
 				break;
 				//case ?:
 				//OnCreateControl()
 				//break;
 			case Win32.WM_FONTCHANGE:
-				EventArgs fontChangedArgs;
+				EventArgs fontChangedArgs = new EventArgs();
 				OnFontChanged (fontChangedArgs);
 				break;
 			case Win32.WM_CREATE:
-				EventArgs handleCreatedArgs;
+				EventArgs handleCreatedArgs = new EventArgs(); 
 				OnHandleCreated (handleCreatedArgs);
 				break;
 			case Win32.WM_DESTROY:
-				EventArgs destroyArgs;
+				EventArgs destroyArgs = new EventArgs();
 				OnHandleDestroyed (destroyArgs);
 				break;
 			case Win32.WM_INPUTLANGCHANGE:
-				InputLanguageChangedEventArgs ilChangedArgs;
-				OnInputLanguageChanged (ilChangedArgs);
+				//InputLanguageChangedEventArgs ilChangedArgs =
+				//	new InputLanguageChangedEventArgs();
+				//OnInputLanguageChanged (ilChangedArgs);
 				break;
 			case Win32.WM_INPUTLANGCHANGEREQUEST:
-				InputLanguageChangingEventArgs ilChangingArgs;
-				OnInputLanguagedChanging (ilChangingArgs);
+				//InputLanguageChangingEventArgs ilChangingArgs =
+				//	new InputLanguageChangingEventArgs();
+				//OnInputLanguagedChanging (ilChangingArgs);
 				break;
 				/*
 				  case Win32.WM_SHOWWINDOW:
@@ -935,37 +937,37 @@ namespace System.Windows.Forms {
 				// OnMaximumSizedChanged(EventArgs e)
 				//break;
 			case Win32.WM_MDIACTIVATE:
-				EventArgs mdiActivateArgs;
+				EventArgs mdiActivateArgs = new EventArgs();
 				OnMdiChildActive (mdiActivateArgs);
 				break;
 			case Win32.WM_EXITMENULOOP:
-				EventArgs menuCompleteArgs;
+				EventArgs menuCompleteArgs = new EventArgs();
 				OnMenuComplete (menuCompleteArgs);
 				break;
 			case Win32.WM_ENTERMENULOOP:
-				EventArgs enterMenuLoopArgs;
+				EventArgs enterMenuLoopArgs = new EventArgs();
 				OnMenuStart (enterMenuLoopArgs);
 				break;
 				// case ?:
 				// OnMinimumSizeChanged(EventArgs e)
 				// break;
 			case Win32.WM_PAINT:
-				PaintEventArgs paintArgs;
-				OnPaint (paintArgs);
+				//PaintEventArgs paintArgs = new PaintEventArgs();
+				//OnPaint (paintArgs);
 				break;
 			case Win32.WM_SIZE:
-				EventArgs resizeArgs;
+				EventArgs resizeArgs = new EventArgs();
 				OnResize (resizeArgs);
 				break;
 				//case ?:
 				//OnStyleChanged(EventArgs e)
 				//break;
 			case Win32.WM_SETTEXT:
-				EventArgs textChangedArgs;
+				EventArgs textChangedArgs = new EventArgs();
 				OnTextChanged (textChangedArgs);
 				break;
 			case Win32.WM_SHOWWINDOW:
-				EventArgs visibleChangedArgs;
+				EventArgs visibleChangedArgs = new EventArgs();
 				OnVisibleChanged (visibleChangedArgs);
 				break;
 			}

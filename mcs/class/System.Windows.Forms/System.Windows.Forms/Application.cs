@@ -181,7 +181,7 @@ namespace System.Windows.Forms {
 		// but the verifier says context.
 		{
 			applicationForm = context;
-			int msg;
+			int msg = 0;
 			context.Show ();
 
 			while (Win32.GetMessageA (ref msg, 0, 0, 0) != 0) {
@@ -223,8 +223,8 @@ namespace System.Windows.Forms {
 					return message.Result;
 			}
 
-			if (applicationForm != null)
-				applicationForm.WndProc (ref message);
+			//if (applicationForm != null)
+			//	applicationForm.WndProc (ref message);
 
 			return message.Result;
 		}
