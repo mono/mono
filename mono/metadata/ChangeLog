@@ -1,5 +1,8 @@
 2003-06-10  Zoltan Varga  <vargaz@freemail.hu>
 
+	* gc.c (mono_gc_init): Avoid error message on shutdown when
+	GC_DONT_GC=1 is used.
+
 	* icall.c (ves_icall_System_Reflection_Module_GetGuidInternal): 
 	New icall to return the GUID of a module.
 
