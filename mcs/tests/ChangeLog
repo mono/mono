@@ -1,3 +1,7 @@
+2004-11-16  Martin Baulig  <martin@ximian.com>
+
+	* Makefile: Updated.
+
 2004-11-09  Martin Baulig  <martin@ximian.com>
 
 	* gen-86.cs, gen-87.cs, gen-88.cs, gen-89.cs, gen-90.cs,

@@ -25,16 +25,7 @@ USE_MCS_FLAGS :=
 # Martin Baulig will manually move them into TEST_SOURCES_common after merging the code into GMCS.
 # He may also move some to TEST_EXCLUDE_net_2_0 if some of the merges are inappropriate for GMCS.
 #
-NEW_TEST_SOURCES_common = \
-	test-135 test-297 test-287 test-294 test-299 test-300 \
-	test-301 test-302 test-303 test-304 test-305 test-306 test-307 test-259 test-309 \
-	test-310 test-311 test-312 test-313 test-314 \
-	a-call		a-capture5    a-instance	a-parameter2			\
-	a-capture10	a-capture6    a-nested-anon2  					\
-	a-capture1	a-capture7    a-nested-anon3    				\
-	a-capture2	a-capture8    a-nested-anon4  					\
-	a-capture3	a-capture9    a-nested-anon   	a-simple2				\
-	a-capture4	a-event       a-nested		a-simple
+NEW_TEST_SOURCES_common = test-294 test-304 test-305 test-306 test-307
 
 #
 # Please do _not_ add any tests here - all new tests should go into NEW_TEST_SOURCES_common
@@ -55,7 +46,7 @@ TEST_SOURCES_common = \
 	test-101 test-102 test-103 test-104          test-106 test-107 test-108 test-109 test-110 \
 	test-111 test-112 test-113 test-114 test-115 test-116 test-117 test-118 test-119 	  \
 	test-121 test-122 test-123          test-125 test-126 test-127 test-128 test-129 test-130 \
-	test-131                   test-134	     test-136 test-137 test-138 test-139 test-140 \
+	test-131                   test-134 test-135 test-136 test-137 test-138 test-139 test-140 \
 	test-141 test-142 test-143 test-144 test-145 test-146 test-147 test-148 test-149 test-150 \
 	test-151 test-152 test-153 test-154 test-155 test-156 test-157 test-158 test-159 test-160 \
 	test-161 test-162 test-163 test-164 test-165 test-166 test-167 test-168 test-169 test-170 \
@@ -67,11 +58,13 @@ TEST_SOURCES_common = \
 	test-221 test-222 test-223 test-224 test-225 test-226 test-227          test-229 test-230 \
 	test-231 test-232 test-233 test-234 test-235 test-236 test-237 test-238 test-239 test-240 \
 	test-241 test-242 test-243 test-244 test-245 test-246 test-247 test-248 test-249 test-250 \
-	test-251 test-252 test-253 test-254 test-255 test-256 test-257 test-258          test-260 \
+	test-251 test-252 test-253 test-254 test-255 test-256 test-257 test-258 test-259 test-260 \
 	test-261 test-262 test-263 test-264 test-265 test-266 test-267 test-268 test-269 test-270 \
 	test-271 test-272 test-273 test-274 test-275 test-276 test-277 test-278 test-279 test-280 \
-	test-281 test-282 test-283 test-284 test-285 test-286          test-288 test-289 test-290 \
-	test-291 test-292 test-293          test-295 test-296          test-298 \
+	test-281 test-282 test-283 test-284 test-285 test-286 test-287 test-288 test-289 test-290 \
+	test-291 test-292 test-293          test-295 test-296 test-297 test-298 test-299 test-300 \
+	test-301 test-302 test-303                                              test-309 test-310 \
+	test-311 test-312 test-313 test-314 \
 	cls-test-0 cls-test-1 cls-test-2 cls-test-3 cls-test-5 cls-test-6 cls-test-7 cls-test-10  \
 	cls-test-11 cls-test-14 cls-test-15 cls-test-16 \
 	2test-1  2test-2  2test-3  2test-4  2test-5  2test-6  2test-7  2test-8  2test-9  2test-10 \
@@ -83,7 +76,13 @@ TEST_SOURCES_common = \
 	conv-lib conv-main \
 	vararg-lib vararg-exe \
 	module-1 module-2 module-3 \
-	ns0 ns
+	ns0 ns \
+	a-call		a-capture5    a-instance	a-parameter2			\
+	a-capture10	a-capture6    a-nested-anon2  					\
+	a-capture1	a-capture7    a-nested-anon3    				\
+	a-capture2	a-capture8    a-nested-anon4  					\
+	a-capture3	a-capture9    a-nested-anon   	a-simple2			\
+	a-capture4	a-event       a-nested		a-simple
 
 TEST_EXCLUDES_common = 
 
@@ -100,7 +99,7 @@ TEST_SOURCES_net_2_0 = \
 	        gen-62  gen-63  gen-64          gen-66  gen-67  gen-68  gen-69  gen-70 \
 	gen-71  gen-72  gen-73  gen-74  gen-75  gen-76  gen-77  gen-78  gen-79  gen-80 \
 	gen-81  gen-82  gen-83  gen-84  gen-85  gen-86  gen-87  gen-88  gen-89  gen-90 \
-	gen-91  gen-92  gen-93  gen-94          gen-96  gen-97  gen-98  gen-99  gen-100 \
+	gen-91  gen-92  gen-93  gen-94          gen-96  gen-97  gen-98          gen-100 \
 	gen-101
 
 TEST_EXCLUDES_net_2_0 = test-55 test-289 gen-77
