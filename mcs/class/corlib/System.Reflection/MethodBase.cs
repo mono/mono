@@ -44,7 +44,7 @@ namespace System.Reflection {
 			return pi.Length;
 		}
 		
-#if NET_2_0 | BOOTSTRAP_NET_2_0
+#if BOOTSTRAP_NET_2_0//NET_2_0 | BOOTSTRAP_NET_2_0
 		virtual
 #endif
 		public Object Invoke(Object obj, Object[] parameters) {
@@ -141,7 +141,7 @@ namespace System.Reflection {
 			throw new Exception ("Method is not a builder method");
 		}
 
-#if NET_2_0 | BOOTSTRAP_NET_2_0
+#if BOOTSTRAP_NET_2_0//NET_2_0 | BOOTSTRAP_NET_2_0
 		public virtual MethodInfo BindGenericParameters (Type [] types)
 		{
 			throw new NotSupportedException ();
