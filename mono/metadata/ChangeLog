@@ -1,3 +1,7 @@
+2002-09-27  Martin Baulig  <martin@gnome.org>
+
+	* icall.c ("System.Reflection.Assembly::GetReferencedAssemblies"):
+	New interncall.
 
 Fri Sep 27 15:38:31 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
