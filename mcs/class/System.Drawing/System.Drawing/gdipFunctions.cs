@@ -657,7 +657,7 @@ namespace System.Drawing {
 		internal static extern Status GdipDisposeImage ( IntPtr image );
 
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipGetImageFlags ( IntPtr image, out uint flag );
+		internal static extern Status GdipGetImageFlags(IntPtr image, out int flag);
 
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipImageGetFrameDimensionsCount ( IntPtr image, out uint count );
@@ -720,7 +720,7 @@ namespace System.Drawing {
 		internal static extern Status GdipImageGetFrameCount (IntPtr image, ref Guid guidDimension, out int count );
 		
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipImageSelectActiveFrame ( IntPtr image, ref Guid guidDimension, uint frameIndex );
+		internal static extern Status GdipImageSelectActiveFrame (IntPtr image, ref Guid guidDimension, int frameIndex);
 		
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipGetPropertyItemSize ( IntPtr image, int propertyID, out uint propertySize );

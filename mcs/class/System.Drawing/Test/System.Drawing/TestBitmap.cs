@@ -142,6 +142,20 @@ namespace MonoTests.System.Drawing{
 			AssertEquals (colororg50, colornew50);				
 		}	
 		
+		[Test]
+		public void CloneImage()
+		{
+			string sInFile = getInFile ("bitmaps/almogaver24bits.bmp");			
+			Bitmap	bmp = new Bitmap(sInFile);			
+			
+			Bitmap bmpNew = (Bitmap) bmp.Clone ();			
+			
+			AssertEquals (bmp.Width, bmpNew.Width);
+			AssertEquals (bmp.Height, bmpNew.Height);		
+			AssertEquals (bmp.PixelFormat, bmpNew.PixelFormat);			
+			
+		}	
+		
 		/* Check bitmap features on a know 24-bits bitmap*/
 		[Test]
 		public void BitmapFeatures()
@@ -165,6 +179,18 @@ namespace MonoTests.System.Drawing{
 			AssertEquals (173, bmp.Size.Width);
 			AssertEquals (183, bmp.Size.Height);					
 		}
-	
+		
+		[Test]
+		public void Frames()
+		{
+			string sInFile = getInFile ("bitmaps/almogaver24bits.bmp");			
+			Bitmap	bmp = new Bitmap(sInFile);						
+			int cnt = bmp.GetFrameCount(FrameDimension.Page);			
+			int active = bmp.SelectActiveFrame (FrameDimension.Page, 0);
+			
+			AssertEquals (1, cnt);								
+			AssertEquals (0, active);								
+			
+		}
 	}
 }

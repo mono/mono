@@ -208,7 +208,14 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	
 	public int GetFrameCount(FrameDimension dimension)
 	{
-		throw new NotImplementedException ();
+		int count;
+		Guid guid = dimension.Guid;
+		
+		Status status = GDIPlus.GdipImageGetFrameCount (nativeObject, ref guid, out  count);
+		GDIPlus.CheckStatus (status);		
+		
+		return count;
+		
 	}
 	
 	[MonoTODO]	
@@ -279,16 +286,20 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		Marshal.FreeHGlobal (gdipalette);           					
 	}
 
-	[MonoTODO]	
+	[MonoTODO ("Ignoring EncoderParameters")]	
 	public void Save(Stream stream, ImageCodecInfo encoder, EncoderParameters encoderParams)
 	{
-		throw new NotImplementedException ();
+		encoder.encode(this, stream);
 	}
 	
-	[MonoTODO]	
+	[MonoTODO ("Ignoring EncoderParameters")]	
 	public void Save(string filename, ImageCodecInfo encoder, EncoderParameters encoderParams)
 	{
-		throw new NotImplementedException ();
+		FileStream fs = new FileStream (filename, FileMode.Create);
+		encoder.encode(this, fs);
+		fs.Flush();
+		fs.Close();
+		
 	}
 	
 	[MonoTODO]	
@@ -303,10 +314,15 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		throw new NotImplementedException ();
 	}
 	
-	[MonoTODO]	
+	
 	public int SelectActiveFrame(FrameDimension dimension, int frameIndex)
 	{
-		throw new NotImplementedException ();
+		Guid guid = dimension.Guid;		
+				
+		Status status = GDIPlus.GdipImageSelectActiveFrame (nativeObject, ref guid, frameIndex);			
+		GDIPlus.CheckStatus (status);			
+		
+		return frameIndex;		
 	}
 	
 	[MonoTODO]	
@@ -315,11 +331,14 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		throw new NotImplementedException ();
 	}
 
-	// properties
-	[MonoTODO]	
+	// properties	
 	public int Flags {
 		get {
-			throw new NotImplementedException ();
+			int flags;
+			
+			Status status = GDIPlus.GdipGetImageFlags (nativeObject, out flags);			
+			GDIPlus.CheckStatus (status);						
+			return flags;			
 		}
 	}
 	
@@ -357,8 +376,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			return colorPalette;
 		}
 		set {
-			colorPalette = value;		
-			
+			colorPalette = value;					
 		}
 	}
 	
@@ -370,7 +388,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			Status status = GDIPlus.GdipGetImageDimension (nativeObject, out width, out height);		
 			GDIPlus.CheckStatus (status);			
 			
-			return new SizeF(width,  height);
+			return new SizeF (width, height);
 		}
 	}
 	
@@ -468,15 +486,9 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		}
 	}
 	
-	[MonoTODO]
-	object ICloneable.Clone()
-	{
-		throw new NotImplementedException ();
-	}
-	
 	
 	public virtual object Clone()
-	{		
+	{				
 		IntPtr newimage = IntPtr.Zero;
 		
 		if (!(this is Bitmap)) 
@@ -486,7 +498,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		
 		GDIPlus.CheckStatus (status);			
 		
-		if (!(this is Bitmap))
+		if (this is Bitmap)
 			return new Bitmap (newimage);
 		
 		throw new NotImplementedException (); 

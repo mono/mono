@@ -211,16 +211,12 @@ namespace System.Drawing.Imaging
 			System.GC.SuppressFinalize (this);
 		}
 
-		~ImageAttributes() {
+		~ImageAttributes() 
+		{
 			
 			Dispose (false);
 		}
 
-		[MonoTODO]
-		object ICloneable.Clone()
-		{
-			throw new NotImplementedException ();
-		}
 		
 		
 		public object Clone()

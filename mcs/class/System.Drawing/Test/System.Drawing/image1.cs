@@ -16,8 +16,10 @@ namespace ImageTest1 {
 		public static void Main(string[] argv) {
 			if( argv.Length == 1) {
 				Bitmap bmp = new Bitmap(argv[0]);
-				bmp.Save(argv[0] + ".bmp", ImageFormat.Bmp);
+				
 				Console.WriteLine("Output file " + argv[0] + ".bmp");
+				bmp.Save("output.bmp", ImageFormat.Bmp);
+				
 			}
 			else {
 				Console.WriteLine("usage: image1.exe <filename>");
