@@ -17,8 +17,8 @@ namespace System.Data.SqlTypes
 		#region Fields
 		double value;
 
-		public static readonly SqlDouble MaxValue = new SqlDouble (1.79E+308);
-		public static readonly SqlDouble MinValue = new SqlDouble (-1.79E+308);
+		public static readonly SqlDouble MaxValue = new SqlDouble (1.7976931348623157e308);
+		public static readonly SqlDouble MinValue = new SqlDouble (-1.7976931348623157e308);
 		public static readonly SqlDouble Null;
 		public static readonly SqlDouble Zero = new SqlDouble (0);
 
@@ -122,10 +122,9 @@ namespace System.Data.SqlTypes
 			return (x != y);
 		}
 
-		[MonoTODO]
 		public static SqlDouble Parse (string s)
 		{
-			throw new NotImplementedException ();
+			return new SqlDouble (Double.Parse (s));
 		}
 
 		public static SqlDouble Subtract (SqlDouble x, SqlDouble y)
@@ -272,10 +271,9 @@ namespace System.Data.SqlTypes
 			return x.Value;
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlDouble (SqlString x)
 		{
-			throw new NotImplementedException ();
+			return SqlDouble.Parse (x.Value);
 		}
 
 		public static implicit operator SqlDouble (double x)

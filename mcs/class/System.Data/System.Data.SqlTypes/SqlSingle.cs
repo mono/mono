@@ -18,8 +18,8 @@ namespace System.Data.SqlTypes
 
 		float value;
 
-		public static readonly SqlSingle MaxValue = new SqlSingle (3.40E+38);
-		public static readonly SqlSingle MinValue = new SqlSingle (-3.40E+38);
+		public static readonly SqlSingle MaxValue = new SqlSingle (3.40282346638528859e38);
+		public static readonly SqlSingle MinValue = new SqlSingle (-3.40282346638528859e38);
 		public static readonly SqlSingle Null;
 		public static readonly SqlSingle Zero = new SqlSingle (0);
 
@@ -93,7 +93,6 @@ namespace System.Data.SqlTypes
 			return (x == y);
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
 			return (int)value;
@@ -129,10 +128,9 @@ namespace System.Data.SqlTypes
 			return (x != y);
 		}
 
-		[MonoTODO]
 		public static SqlSingle Parse (string s)
 		{
-			throw new NotImplementedException ();
+			return new SqlSingle (Single.Parse (s));
 		}
 
 		public static SqlSingle Subtract (SqlSingle x, SqlSingle y)
@@ -267,10 +265,9 @@ namespace System.Data.SqlTypes
 			return x.Value;
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlSingle (SqlString x)
 		{
-			throw new NotImplementedException ();
+			return SqlSingle.Parse (x.Value);
 		}
 
 		public static implicit operator SqlSingle (float x)

@@ -1,5 +1,10 @@
 2002-10-23  Ville Palo <vi64pa@koti.soon.fi>
 
+	* System.Data.SqlTypes/SqlDouble.cs:
+	* System.Data.SqlTypes/SqlSingle.cs: Finished
+	
+2002-10-23  Ville Palo <vi64pa@koti.soon.fi>
+	
 	* System.Data.SqlTypes/SqlByte.cs:
 	* System.Data.SqlTypes/SqlBoolean.cs:
 	* System.Data.SqlTypes/SqlInt16.cs:
