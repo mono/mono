@@ -50,6 +50,9 @@ namespace System.Xml.XPath
 #endif
 	{
 		DTMXPathDocument document;
+#if NET_2_0
+		XPathEditableDocument editable;
+#endif
 
 #region Constructors
 
@@ -63,7 +66,7 @@ namespace System.Xml.XPath
 		[MonoTODO]
 		public XPathDocument (XmlNameTable nameTable)
 		{
-			throw new NotImplementedException ();
+			editable = new XPathEditableDocument (new XmlDocument (nameTable));
 		}
 
 		public XPathDocument (Stream stream)
@@ -287,13 +290,18 @@ namespace System.Xml.XPath
 		[MonoTODO]
 		public XPathEditableNavigator CreateEditor ()
 		{
-			throw new NotImplementedException ();
+			if (editable == null)
+				throw new NotImplementedException ();
+			return editable.CreateEditor ();
 		}
 
 		[MonoTODO ("This code is only for compatibility.")]
 		public XPathNavigator CreateNavigator ()
 		{
-			return document.CreateNavigator ();
+			if (editable == null)
+				return document.CreateNavigator ();
+			else
+				return editable.CreateNavigator ();
 		}
 
 		public XmlWriter CreateWriter ()
@@ -316,7 +324,9 @@ namespace System.Xml.XPath
 		[MonoTODO]
 		public bool HasChanges ()
 		{
-			throw new NotImplementedException ();
+			if (editable == null)
+				throw new NotImplementedException ();
+			return editable.HasChanges ();
 		}
 
 		[Obsolete]
@@ -332,13 +342,17 @@ namespace System.Xml.XPath
 		[MonoTODO]
 		public void ReadXml (XmlReader reader)
 		{
-			throw new NotImplementedException ();
+			if (editable == null)
+				throw new NotImplementedException ();
+			editable.ReadXml (reader);
 		}
 
 		[MonoTODO]
 		public void RejectChanges ()
 		{
-			throw new NotImplementedException ();
+			if (editable == null)
+				throw new NotImplementedException ();
+			editable.RejectChanges ();
 		}
 
 		[MonoTODO ("Confirm writer settings etc.")]

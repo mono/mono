@@ -1,5 +1,11 @@
 2004-07-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XPathDocument.cs : for .ctor() and .ctor(XmlNameTable), now it 
+	  creates Mono.Xml.XPath.XPathEditableDocument and thus supports
+	  IXPathEditable.CreateEditor().
+
+2004-07-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XPathEditableNavigator.cs : Implemented InsertAfter() and 
 	  PrependChild(); they are virtual, not abstract.
 	* XPathNavigator.cs :
