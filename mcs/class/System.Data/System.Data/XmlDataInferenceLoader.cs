@@ -182,6 +182,9 @@ namespace System.Data
 			// Read one element. It might be DataSet element.
 			XmlElement el = document.DocumentElement;
 
+			if (el.NamespaceURI == XmlSchema.Namespace)
+				throw new InvalidOperationException ("DataSet is not designed to handle XML Schema as data content. Please use ReadXmlSchema method instead of InferXmlSchema method.");
+
 			if (IsDocumentElementTable ())
 				InferTopLevelTable (el);
 			else {

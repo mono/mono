@@ -1,5 +1,11 @@
 2004-06-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlDataInferenceLoader.cs : Kindly reject xml schema document as a
+	  inference target. For bug #60470. (MS does not support schema
+	  document inference and results in unconsistent dataset structure.)
+
+2004-06-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataTableCollection.cs : reset the table's DataSet to null when
 	  removing a table from this collection.
 	* DataTable.cs : When Namespace is not specified explicitly, its
