@@ -97,6 +97,8 @@ namespace System.IO
 				throw new UnauthorizedAccessException ("Access to the path '" + Path.GetFullPath (name) + "' is denied.");
 			}
 
+			InitBuffer (bufferSize);
+
 			/* Append streams can't be read (see FileMode
 			 * docs)
 			 */
@@ -137,7 +139,6 @@ namespace System.IO
 				this.canseek = false;
 			}
 
-			InitBuffer (bufferSize);
 
 			if (mode==FileMode.Append) {
 				this.Seek (0, SeekOrigin.End);

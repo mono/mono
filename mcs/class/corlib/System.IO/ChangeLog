@@ -1,5 +1,13 @@
 2003-06-09  Ville Palo <vi64pa@kolumbus.fi>
 
+	* FileStream.cs: Check buffer size before append/read -exceptios
+	
+2003-06-09  Ville Palo <vi64pa@kolumbus.fi>
+
+	* FileStream.cs: Check DirectoryNotFound before FileNotFound.
+	
+2003-06-09  Ville Palo <vi64pa@kolumbus.fi>
+
 	* FileStream.cs: Does not anymore flush while writing
 	
 2003-06-02  Nick Drochak <ndrochak@gol.com>
