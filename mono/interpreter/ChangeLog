@@ -1,3 +1,8 @@
+
+Mon Jun 21 14:06:03 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* interp.h: API updates.
+
 2004-05-21  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* transform.c: ignore new LMF opcodes 
