@@ -786,20 +786,39 @@ namespace System.Data {
 			if (r.LocalName == "xml")
 				r.MoveToContent();
 
-			/*\
-			 *  If document is diffgram we will use diffgram
-			\*/
-			if (r.LocalName == "diffgram")
+			// The document can be diffgram if :
+			// 1. The first element is diffgram.
+			if (r.LocalName == "diffgram") {
 				return ReadXml (r, XmlReadMode.DiffGram);
+			}
+
+			bool schemaRead = false;
+			if (r.LocalName == "schema") {
+				ReadXmlSchema (r);
+				r.MoveToContent();
+				schemaRead = true;
+			}
+			
+			// If we read the schema the next element can be a diffgram
+			// that is what happen in web services soap message.
+			if (schemaRead && r.LocalName == "diffgram") {
+				return ReadXml (r, XmlReadMode.DiffGram);
+			}
 			
 			// Get the DataSet name.
+			// if this xml is not diffgram then the first element will be the 
+			// DataSet name.
 			string dataSetName = XmlConvert.DecodeName (r.LocalName);
 			DataSetName = dataSetName;
 			
 			r.ReadStartElement ();
 			r.MoveToContent();
 			
-			bool schemaRead = false;
+			
+			// After reading the dataset name there can be three scenarios:
+			// 1. The next part will be the schema of the dataset.
+			// 2. The next part will be the data of the dataset using diffgram.
+			// 3. The next part will be the data of tha dataset without diffgram.
 			// Check if the current element is the schema
 			if (r.LocalName == "schema") {
 				ReadXmlSchema (r);
@@ -807,17 +826,19 @@ namespace System.Data {
 				schemaRead = true;
 			}
 			
+			// check if the data was written in a diffgram mode.
 			if (r.LocalName == "diffgram") {
 				return ReadXml (r, XmlReadMode.DiffGram);
 			}
 			
-			// If the schema has been read we should read the rest of the document
+			// If the schema has been read we should read the rest data of the dataset
+			// with ignoreschema mode.
 			if (schemaRead) {
 				ReadXml (r, XmlReadMode.IgnoreSchema, false);
 				return XmlReadMode.ReadSchema;
 			}
 			
-			// Read with inferschema.
+			// Read the data of the dataset with inferschema.
 			return ReadXml (r, XmlReadMode.InferSchema, false);
 
 		}
