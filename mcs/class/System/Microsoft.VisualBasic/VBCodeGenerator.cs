@@ -828,11 +828,8 @@ namespace Microsoft.VisualBasic
 		{
 			string name = ns.Name;
 			if (name != null && name != string.Empty) {
-				Output.WriteLine ("'Why is the indentation not working correctly here? --> see in mcs/class/System/Micrisoft.VisualBasic/VBCodeGenerator.cs");
-				Output.WriteLine ("'Indent=" + Indent.ToString());
 				--Indent;
 				Output.WriteLine ("End Namespace");
-				Output.WriteLine ("'Indent=" + Indent.ToString());
 			}
 		}
 
