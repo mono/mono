@@ -154,6 +154,7 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp
 		{
 			SqlEditorSharp editor;
 			editor = new SqlEditorSharp ();
+			editor.UseSyntaxHiLighting = true;
 			editor.View.Show ();
 			editor.View.KeyPressEvent +=
 				new GtkSharp.KeyPressEventHandler(OnKeyPressEventKey);

@@ -74,13 +74,13 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp
 			dialog.VBox.PackStart (frame, true, true, 0);
 
 			Button button = null;
-			button = Button.NewFromStock (Stock.Ok);
+			button = new Button(Stock.Ok);
 			button.Clicked += new EventHandler (Connect_Action);
 			button.CanDefault = true;
 			dialog.ActionArea.PackStart (button, true, true, 0);
 			button.GrabDefault ();
 
-			button = Button.NewFromStock (Stock.Cancel);
+			button = new Button(Stock.Cancel);
 			button.Clicked += new EventHandler (Dialog_Cancel);
 			dialog.ActionArea.PackStart (button, true, true, 0);
 			dialog.Modal = true;

@@ -172,8 +172,9 @@ namespace SqlEditorSharp
 
 			SqlSharpGtk.DebugWriteLine ("[[[[[ Syntax Hi-Light Text BEGIN ]]]]]");
 
-			if (use_hi_lighting == true)
+			if (use_hi_lighting == true) {
 				SyntaxHiLightText ();
+			}
 			
 			SqlSharpGtk.DebugWriteLine ("[[[[[ Syntax Hi-Light Text END   ]]]]]\n");
 		}
@@ -250,7 +251,7 @@ namespace SqlEditorSharp
 			match_start2 = start_iter; // dummy
 			match_end2 = end_iter; // dummy
 
-			while (start_iter.IsEnd() == false) {
+			while (start_iter.IsEnd == false) {
 				// FIXME: match_start1, match_end1, end_iter
 				//        need to be set to have ref in front
 				//        Problem with TextIter's ForwardSearch()
@@ -376,7 +377,7 @@ namespace SqlEditorSharp
 				// look for singled quoted constants 
 				// and keywords
 				if (hyphen < 2) {
-					if (start_iter.IsEnd() == true)
+					if (start_iter.IsEnd == true)
 						break; // break out of for loop
 
 					start_word = -1;
@@ -414,7 +415,7 @@ namespace SqlEditorSharp
 				match_start1 = start_iter;
 				match_end1 = start_iter;
 						
-				if (match_end1.IsEnd () == true)
+				if (match_end1.IsEnd == true)
 					break;
 
 				if (CharHasTag (start_iter, 
