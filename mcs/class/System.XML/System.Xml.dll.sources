@@ -131,6 +131,7 @@ System.Xml/XmlProcessingInstruction.cs
 System.Xml/XmlQualifiedName.cs
 System.Xml/XmlQueryDialect.cs
 System.Xml/XmlReader.cs
+System.Xml/XmlReaderBinarySupport.cs
 System.Xml/XmlReaderSettings.cs
 System.Xml/XmlResolver.cs
 System.Xml/XmlSecureResolver.cs

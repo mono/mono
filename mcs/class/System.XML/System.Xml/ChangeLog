@@ -1,3 +1,21 @@
+2004-12-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReaderBinarySupport.cs : added support class for base64/binhex
+	  reading that mostly automates those reader support.
+	* XmlReader.cs : added CanReadBinaryContent, CanReadValueChunk,
+	  ReadContentAsBase64(), ReadElementContentAsBase64(),
+	  ReadContentAsBinHex(), ReadElementContentAsBinHex() and
+	  ReadValueChunk().
+	* XmlTextReader.cs : Now ReadBase64() and ReadBinHex() implementations
+	  are moved to XmlReaderBinarySupport. Added CanReadBinaryContent and
+	  CanReadValueChunk overrides. Call Binary.Reset() to enable them.
+	* XmlTextReader2.cs : added CanReadBinaryContent, CanReadValueChunk.
+	  Added ReadContentAsBase64(), ReadElementContentAsBase64(),
+	  ReadContentAsBinHex(), ReadElementContentAsBinHex() (just because
+	  they are overriden in MS.NET).
+	* XmlNodeReader.cs : added CanReadBinaryContent and CanReadValueChunk.
+	  Call Binary.Reset() to enable them.
+
 2004-12-16  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlConvert.cs :

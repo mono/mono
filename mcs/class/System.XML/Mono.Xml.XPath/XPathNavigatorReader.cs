@@ -69,6 +69,17 @@ namespace Mono.Xml.XPath
 		bool nextIsEOF;
 
 		#region Properties
+
+#if NET_2_0
+		public override bool CanReadBinaryContent {
+			get { return true; }
+		}
+
+		public override bool CanReadValueChunk {
+			get { return true; }
+		}
+#endif
+
 		public override XmlNodeType NodeType 
 		{
 			get {
@@ -447,6 +458,11 @@ namespace Mono.Xml.XPath
 
 		public override bool Read ()
 		{
+#if NET_2_0
+			if (Binary != null)
+				Binary.Reset ();
+#endif
+
 			switch (ReadState) {
 			case ReadState.EndOfFile:
 			case ReadState.Closed:

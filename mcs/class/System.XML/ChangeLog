@@ -1,3 +1,7 @@
+2004-12-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml.dll.sources : added XmlReaderBinarySupport.cs.
+
 2004-12-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml.dll.sources : added XmlSchemaValidatingReader.

@@ -48,6 +48,7 @@ namespace System.Xml
 #endif
 	{
 		private StringBuilder readStringBuffer;
+		private XmlReaderBinarySupport binary;
 #if NET_2_0
 		private XmlReaderSettings settings;
 #endif
@@ -65,6 +66,45 @@ namespace System.Xml
 		public abstract int AttributeCount { get; }
 
 		public abstract string BaseURI { get; }
+
+		internal XmlReaderBinarySupport Binary {
+			get { return binary; }
+		}
+
+		internal XmlReaderBinarySupport.CharGetter BinaryCharGetter {
+			get { return binary != null ? binary.Getter : null; }
+			set {
+				if (binary == null)
+					binary = new XmlReaderBinarySupport (this);
+				binary.Getter = value;
+			}
+		}
+
+#if NET_2_0
+		// To enable it internally in sys.xml, just insert these
+		// two lines into Read():
+		//
+		//	#if NET_2_0
+		//	if (Binary != null)
+		//		Binary.Reset ();
+		//	#endif
+		//
+		public virtual bool CanReadBinaryContent {
+			get { return false; }
+		}
+
+		public virtual bool CanReadValueChunk {
+			get { return false; }
+		}
+#else
+		internal virtual bool CanReadBinaryContent {
+			get { return false; }
+		}
+
+		internal virtual bool CanReadValueChunk {
+			get { return false; }
+		}
+#endif
 
 		public virtual bool CanResolveEntity
 		{
@@ -959,7 +999,63 @@ namespace System.Xml
 		{
 			return ReadContentString ();
 		}
+
+		public virtual int ReadContentAsBase64 (
+			byte [] buffer, int offset, int length)
+		{
+			CheckSupport ();
+			return binary.ReadContentAsBase64 (
+				buffer, offset, length);
+		}
+
+		public virtual int ReadContentAsBinHex (
+			byte [] buffer, int offset, int length)
+		{
+			CheckSupport ();
+			return binary.ReadContentAsBinHex (
+				buffer, offset, length);
+		}
+
+		public virtual int ReadElementContentAsBase64 (
+			byte [] buffer, int offset, int length)
+		{
+			CheckSupport ();
+			return binary.ReadElementContentAsBase64 (
+				buffer, offset, length);
+		}
+
+		public virtual int ReadElementContentAsBinHex (
+			byte [] buffer, int offset, int length)
+		{
+			CheckSupport ();
+			return binary.ReadElementContentAsBase64 (
+				buffer, offset, length);
+		}
 #endif
+
+#if NET_2_0
+		public virtual int ReadValueChunk (
+			char [] buffer, int offset, int length)
+#else
+		internal virtual int ReadValueChunk (
+			char [] buffer, int offset, int length)
+#endif
+		{
+			if (!CanReadValueChunk)
+				throw new NotSupportedException ();
+			if (binary == null)
+				binary = new XmlReaderBinarySupport (this);
+			return binary.ReadValueChunk (buffer, offset, length);
+		}
+
+		private void CheckSupport ()
+		{
+			// Default implementation expects both.
+			if (!CanReadBinaryContent || !CanReadValueChunk)
+				throw new NotSupportedException ();
+			if (binary == null)
+				binary = new XmlReaderBinarySupport (this);
+		}
 
 		public abstract void ResolveEntity ();
 

@@ -60,6 +60,16 @@ namespace Mono.Xml
 			get { return initial ? 0 : Reader.AttributeCount; }
 		}
 
+#if NET_2_0
+		public override bool CanReadBinaryContent {
+			get { return Reader.CanReadBinaryContent; }
+		}
+
+		public override bool CanReadValueChunk {
+			get { return Reader.CanReadValueChunk; }
+		}
+#endif
+
 		public override int Depth {
 			get { return Reader.Depth - startDepth; }
 		}

@@ -1,3 +1,9 @@
+2004-12-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* SubtreeXmlReader.cs, XmlFilterReader.cs :
+	  added CanReadBinaryContent and CanReadValueChunk.
+	  Call Binary.Reset() to enable them.
+
 2004-12-16  Atsushi Enomoto <atsushi@ximian.com>
 
 	* SubtreeXmlReader.cs, XmlFilterReader.cs :

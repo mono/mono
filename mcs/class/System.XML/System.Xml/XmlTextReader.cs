@@ -156,6 +156,24 @@ namespace System.Xml
 			get { return parserContext.BaseURI; }
 		}
 
+#if NET_2_0
+		public override bool CanReadBinaryContent {
+			get { return true; }
+		}
+
+		public override bool CanReadValueChunk {
+			get { return true; }
+		}
+#else
+		internal override bool CanReadBinaryContent {
+			get { return true; }
+		}
+
+		internal override bool CanReadValueChunk {
+			get { return true; }
+		}
+#endif
+
 		internal bool CharacterChecking {
 			get { return checkCharacters && normalization; }
 			set { checkCharacters = value; }
@@ -511,6 +529,9 @@ namespace System.Xml
 				return true;
 			}
 
+			if (Binary != null)
+				Binary.Reset ();
+
 			bool more = false;
 			readState = ReadState.Interactive;
 			currentLinkedNodeLineNumber = line;
@@ -532,8 +553,6 @@ namespace System.Xml
 				shouldSkipUntilEndTag = false;
 				return ReadUntilEndTag ();
 			}
-
-			base64CacheStartsAt = -1;
 
 			more = ReadContent ();
 
@@ -565,123 +584,28 @@ namespace System.Xml
 				return false;
 		}
 
-		private int SkipIgnorableBase64Chars (char [] chars, int charsLength, int i)
-		{
-			while (chars [i] == '=' || XmlChar.IsWhitespace (chars [i]))
-				if (charsLength == ++i)
-					break;
-			return i;
-		}
-
 		public int ReadBase64 (byte [] buffer, int offset, int length)
 		{
-			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("offset", offset, "Offset must be non-negative integer.");
-			else if (length < 0)
-				throw new ArgumentOutOfRangeException ("length", length, "Length must be non-negative integer.");
-			else if (buffer.Length < offset + length)
-				throw new ArgumentOutOfRangeException ("buffer length is smaller than the sum of offset and length.");
-
-			if (length == 0)	// It does not raise an error.
-				return 0;
-
-			int bufIndex = offset;
-			int bufLast = offset + length;
-
-			if (base64CacheStartsAt >= 0) {
-				for (int i = base64CacheStartsAt; i < 3; i++) {
-					buffer [bufIndex++] = base64Cache [base64CacheStartsAt++];
-					if (bufIndex == bufLast)
-						return bufLast - offset;
-				}
+			BinaryCharGetter = binaryCharGetter;
+			try {
+				return Binary.ReadBase64 (buffer, offset, length);
+			} finally {
+				BinaryCharGetter = null;
 			}
-
-			for (int i = 0; i < 3; i++)
-				base64Cache [i] = 0;
-			base64CacheStartsAt = -1;
-
-			int max = (int) System.Math.Ceiling (4.0 / 3 * length);
-			int additional = max % 4;
-			if (additional > 0)
-				max += 4 - additional;
-			char [] chars = new char [max];
-			int charsLength = ReadChars (chars, 0, max);
-
-			byte b = 0;
-			byte work = 0;
-			for (int i = 0; i < charsLength - 3; i++) {
-				if ((i = SkipIgnorableBase64Chars (chars, charsLength, i)) == charsLength)
-					break;
-				b = (byte) (GetBase64Byte (chars [i]) << 2);
-				if (bufIndex < bufLast)
-					buffer [bufIndex] = b;
-				else {
-					if (base64CacheStartsAt < 0)
-						base64CacheStartsAt = 0;
-					base64Cache [0] = b;
-				}
-				// charsLength mod 4 might not equals to 0.
-				if (++i == charsLength)
-					break;
-				if ((i = SkipIgnorableBase64Chars (chars, charsLength, i))  == charsLength)
-					break;
-				b = GetBase64Byte (chars [i]);
-				work = (byte) (b >> 4);
-				if (bufIndex < bufLast) {
-					buffer [bufIndex] += work;
-					bufIndex++;
-				}
-				else
-					base64Cache [0] += work;
-
-				work = (byte) ((b & 0xf) << 4);
-				if (bufIndex < bufLast) {
-					buffer [bufIndex] = work;
-				}
-				else {
-					if (base64CacheStartsAt < 0)
-						base64CacheStartsAt = 1;
-					base64Cache [1] = work;
-				}
-
-				if (++i == charsLength)
-					break;
-				if ((i = SkipIgnorableBase64Chars (chars, charsLength, i)) == charsLength)
-					break;
-				b = GetBase64Byte (chars [i]);
-				work = (byte) (b >> 2);
-				if (bufIndex < bufLast) {
-					buffer [bufIndex] += work;
-					bufIndex++;
-				}
-				else
-					base64Cache [1] += work;
-
-				work = (byte) ((b & 3) << 6);
-				if (bufIndex < bufLast)
-					buffer [bufIndex] = work;
-				else {
-					if (base64CacheStartsAt < 0)
-						base64CacheStartsAt = 2;
-					base64Cache [2] = work;
-				}
-				if (++i == charsLength)
-					break;
-				if ((i = SkipIgnorableBase64Chars (chars, charsLength, i)) == charsLength)
-					break;
-				work = GetBase64Byte (chars [i]);
-				if (bufIndex < bufLast) {
-					buffer [bufIndex] += work;
-					bufIndex++;
-				}
-				else
-					base64Cache [2] += work;
-			}
-			return System.Math.Min (bufLast - offset, bufIndex - offset);
 		}
 
 		public int ReadBinHex (byte [] buffer, int offset, int length)
 		{
+			BinaryCharGetter = binaryCharGetter;
+			try {
+				return Binary.ReadBinHex (buffer, offset, length);
+			} finally {
+				BinaryCharGetter = null;
+			}
+		}
+
+		public int ReadChars (char [] buffer, int offset, int length)
+		{
 			if (offset < 0)
 				throw new ArgumentOutOfRangeException ("offset", offset, "Offset must be non-negative integer.");
 			else if (length < 0)
@@ -689,16 +613,14 @@ namespace System.Xml
 			else if (buffer.Length < offset + length)
 				throw new ArgumentOutOfRangeException ("buffer length is smaller than the sum of offset and length.");
 
-			if (length == 0)
+			if (IsEmptyElement) {
+				Read ();
+				return 0;
+			}
+
+			if (NodeType != XmlNodeType.Element)
 				return 0;
 
-			char [] chars = new char [length * 2];
-			int charsLength = ReadChars (chars, 0, length * 2);
-			return XmlConvert.FromBinHexString (chars, offset, charsLength, buffer);
-		}
-
-		public int ReadChars (char [] buffer, int offset, int length)
-		{
 			return ReadCharsInternal (buffer, offset, length);
 		}
 
@@ -854,8 +776,6 @@ namespace System.Xml
 					}
 
 					valueCache = tmpBuilder.ToString ();
-//					if (cachedNormalization)
-//						NormalizeSpaces ();
 					return valueCache;
 				}
 
@@ -958,8 +878,7 @@ namespace System.Xml
 
 		// For ReadChars()/ReadBase64()/ReadBinHex()
 		private bool shouldSkipUntilEndTag;
-		private byte [] base64Cache = new byte [3];
-		private int base64CacheStartsAt;
+		XmlReaderBinarySupport.CharGetter binaryCharGetter;
 
 		// These values are never re-initialized.
 		private bool namespaces = true;
@@ -1026,7 +945,7 @@ namespace System.Xml
 			currentState = XmlNodeType.None;
 
 			shouldSkipUntilEndTag = false;
-			base64CacheStartsAt = -1;
+			binaryCharGetter = new XmlReaderBinarySupport.CharGetter (ReadChars);
 
 			checkCharacters = true;
 #if NET_2_0
@@ -2717,45 +2636,9 @@ namespace System.Xml
 			return;
 		}
 
-		// Since ReadBase64() is processed for every 4 chars, it does
-		// not handle '=' here.
-		private byte GetBase64Byte (char ch)
-		{
-			switch (ch) {
-			case '+':
-				return 62;
-			case '/':
-				return 63;
-			default:
-				if (ch >= 'A' && ch <= 'Z')
-					return (byte) (ch - 'A');
-				else if (ch >= 'a' && ch <= 'z')
-					return (byte) (ch - 'a' + 26);
-				else if (ch >= '0' && ch <= '9')
-					return (byte) (ch - '0' + 52);
-				else
-					throw NotWFError ("Invalid Base64 character was found.");
-			}
-		}
-
 		// Returns -1 if it should throw an error.
 		private int ReadCharsInternal (char [] buffer, int offset, int length)
 		{
-			if (IsEmptyElement) {
-				Read ();
-				return 0;
-			}
-
-			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("offset", offset, "Offset must be non-negative integer.");
-			else if (length < 0)
-				throw new ArgumentOutOfRangeException ("length", length, "Length must be non-negative integer.");
-			else if (buffer.Length < offset + length)
-				throw new ArgumentOutOfRangeException ("buffer length is smaller than the sum of offset and length.");
-
-			if (NodeType != XmlNodeType.Element)
-				return 0;
-
 			shouldSkipUntilEndTag = true;
 
 			int bufIndex = offset;
@@ -2796,6 +2679,8 @@ namespace System.Xml
 
 		private bool ReadUntilEndTag ()
 		{
+			if (Depth == 0)
+				currentState = XmlNodeType.EndElement;
 			int ch;
 			do {
 				ch = ReadChar ();

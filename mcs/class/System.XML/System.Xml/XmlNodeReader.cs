@@ -123,6 +123,24 @@ namespace System.Xml
 			}
 		}
 
+#if NET_2_0
+		public override bool CanReadBinaryContent {
+			get { return true; }
+		}
+
+		public override bool CanReadValueChunk {
+			get { return true; }
+		}
+#else
+		internal override bool CanReadBinaryContent {
+			get { return true; }
+		}
+
+		internal override bool CanReadValueChunk {
+			get { return true; }
+		}
+#endif
+
 		public override bool CanResolveEntity {
 			get {
 				return true;
@@ -850,6 +868,11 @@ namespace System.Xml
 		{
 			if (EOF)
 				return false;
+
+#if NET_2_0
+			if (Binary != null)
+				Binary.Reset ();
+#endif
 
 			this.CheckAndResetEntityReaderOnMoveToAttribute ();
 			if (entityReader != null) {

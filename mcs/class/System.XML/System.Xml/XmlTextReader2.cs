@@ -141,9 +141,18 @@ namespace System.Xml
 			get { return Current.BaseURI; }
 		}
 
+		public override bool CanReadBinaryContent {
+			get { return true; }
+		}
+
+		public override bool CanReadValueChunk {
+			get { return true; }
+		}
+
 		public override bool CanResolveEntity {
 			get { return true; }
 		}
+
 		public override int Depth {
 			get {
 				// On EndEntity, depth is the same as that 
@@ -636,6 +645,42 @@ namespace System.Xml
 				return source.ReadChars (buffer, offset, length);
 		}
 
+
+		[MonoTODO ("Check how expanded entity is handled here.")]
+		public override int ReadContentAsBase64 (byte [] buffer, int offset, int length)
+		{
+			if (entity != null)
+				return entity.ReadContentAsBase64 (buffer, offset, length);
+			else
+				return source.ReadContentAsBase64 (buffer, offset, length);
+		}
+
+		[MonoTODO ("Check how expanded entity is handled here.")]
+		public override int ReadContentAsBinHex (byte [] buffer, int offset, int length)
+		{
+			if (entity != null)
+				return entity.ReadContentAsBinHex (buffer, offset, length);
+			else
+				return source.ReadContentAsBinHex (buffer, offset, length);
+		}
+
+		[MonoTODO ("Check how expanded entity is handled here.")]
+		public override int ReadElementContentAsBase64 (byte [] buffer, int offset, int length)
+		{
+			if (entity != null)
+				return entity.ReadElementContentAsBase64 (buffer, offset, length);
+			else
+				return source.ReadElementContentAsBase64 (buffer, offset, length);
+		}
+
+		[MonoTODO ("Check how expanded entity is handled here.")]
+		public override int ReadElementContentAsBinHex (byte [] buffer, int offset, int length)
+		{
+			if (entity != null)
+				return entity.ReadElementContentAsBinHex (buffer, offset, length);
+			else
+				return source.ReadElementContentAsBinHex (buffer, offset, length);
+		}
 		#endregion
 	}
 }

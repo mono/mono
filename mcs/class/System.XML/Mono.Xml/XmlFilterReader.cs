@@ -51,6 +51,17 @@ namespace Mono.Xml
 		}
 
 		#region Properties
+
+#if NET_2_0
+		public override bool CanReadBinaryContent {
+			get { return reader.CanReadBinaryContent; }
+		}
+
+		public override bool CanReadValueChunk {
+			get { return reader.CanReadValueChunk; }
+		}
+#endif
+
 		// This is the only one non-overriden property.
 		public XmlReader Reader {
 			get { return reader; }
