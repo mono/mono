@@ -786,6 +786,7 @@ System.Web/ProcessModelInfo.cs
 System.Web/ProcessShutdownReason.cs
 System.Web/ProcessStatus.cs
 System.Web/QueueManager.cs
+System.Web/ReusableMemoryStream.cs
 System.Web/ServerVariablesCollection.cs
 System.Web/SiteMap.cs
 System.Web/SiteMapNode.cs

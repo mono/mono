@@ -1,3 +1,7 @@
+2004-11-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Web.dll.sources: added ReusableMemoryStream.
+
 2004-11-26  Lluis Sanchez Gual <lluis@novell.com>
 
 	* System.Web.dll.sources: Added new file:

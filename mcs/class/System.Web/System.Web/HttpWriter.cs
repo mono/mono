@@ -40,7 +40,7 @@ namespace System.Web
 
 		HttpResponseStream _ResponseStream;
 
-		MemoryStream _OutputStream;
+		ReusableMemoryStream _OutputStream;
 		StreamWriter _OutputHelper;
 		Encoding _Encoding;	
 
@@ -52,7 +52,7 @@ namespace System.Web
 			_Response = Response;
 
 			_Encoding = _Response.ContentEncoding;
-			_OutputStream = new MemoryStream (MaxBufferSize);
+			_OutputStream = new ReusableMemoryStream (MaxBufferSize);
 			_OutputHelper = new StreamWriter (_OutputStream, _Response.ContentEncoding);
 			_ResponseStream = new HttpResponseStream (this);
 		}  
@@ -116,9 +116,9 @@ namespace System.Web
 
 		internal void Clear ()
 		{
-			// This clears all the buffers that are around
-			_OutputHelper.Flush ();
-			_OutputStream.SetLength (0);
+			_OutputHelper.Close ();
+			_OutputStream = new ReusableMemoryStream (_OutputStream.GetBuffer ());
+			_OutputHelper = new StreamWriter (_OutputStream, _Response.ContentEncoding);
 		}
 
 		internal void SendContent (HttpWorkerRequest Handler)
