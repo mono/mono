@@ -189,7 +189,8 @@ namespace Mono.CSharp
 				"mcs [options] source-files\n" +
 				"   --about            About the Mono C# compiler\n" +
 				"   -checked[+|-]      Set default context to checked\n" +
-				"   -codepage:ID       Sets code page to the one in ID (numer, `utf8' or `reset')" +
+				"   -codepage:ID       Sets code page to the one in ID\n" +
+				"                      (number, `utf8' or `reset')" +
 				"   -define:S1[;S2]    Defines one or more symbols (short: /d:)\n" +
 				"   -debug[+-]         Generate debugging information\n" + 
 				"   -g                 Generate debugging information\n" +
@@ -205,8 +206,6 @@ namespace Mono.CSharp
 				"   --parse            Only parses the source file\n" +
 				"   --expect-error X   Expect that error X will be encountered\n" +
 				"   -recurse:SPEC      Recursively compiles the files in SPEC ([dir]/file)\n" + 
-				"   -linkresource:FILE Links FILE as a resource\n" +
-				"   -resource:FILE     Embed FILE as a resource\n" +
 				"   -reference:ASS     References the specified assembly (-r:ASS)\n" +
 				"   --stacktrace       Shows stack trace at error location\n" +
 				"   -target:KIND       Specifies the target (KIND is one of: exe, winexe, " +
@@ -216,6 +215,11 @@ namespace Mono.CSharp
 				"   -warnaserror[+|-]  Treat warnings as errors\n" +
 				"   -warn:LEVEL        Sets warning level (the highest is 4, the default)\n" +
 				"   -v                 Verbose parsing (for debugging the parser)\n" +
+				"\n" +
+				"Resources:" +
+				"   -linkresource:FILE[,ID] Links FILE as a resource\n" +
+				"   -resource:FILE[,ID]     Embed FILE as a resource\n" +
+				
 #if MCS_DEBUG					       
 				"   --mcs-debug X      Sets MCS debugging level to X\n" +
 #endif						       
@@ -1279,8 +1283,19 @@ namespace Mono.CSharp
 			// Add the resources
 			//
 			if (resources != null){
-				foreach (string file in resources)
-					CodeGen.AssemblyBuilder.AddResourceFile (file, file);
+				foreach (string spec in resources){
+					string file, res;
+					int cp;
+					
+					cp = spec.IndexOf (',');
+					if (cp != -1){
+						file = spec.Substring (0, cp);
+						res = spec.Substring (cp + 1);
+					} else
+						file = res = spec;
+
+					CodeGen.AssemblyBuilder.AddResourceFile (res, file);
+				}
 			}
 			
 			if (embedded_resources != null){
@@ -1291,8 +1306,15 @@ namespace Mono.CSharp
 				if (embed_res == null) {
 					Report.Warning (0, new Location (-1), "Cannot embed resources on this runtime: try the Mono runtime instead.");
 				} else {
-					foreach (string file in embedded_resources) {
-						margs [0] = margs [1] = file;
+					foreach (string spec in embedded_resources) {
+						int cp;
+
+						cp = spec.IndexOf (',');
+						if (cp != -1){
+							margs [0] = spec.Substring (cp + 1);
+							margs [1] = spec.Substring (0, cp);
+						} else
+							margs [0] = margs [1] = file;
 						embed_res.Invoke (CodeGen.AssemblyBuilder, margs);
 					}
 				}

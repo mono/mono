@@ -1,3 +1,8 @@
+2002-09-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.cs: Add support in -linkres and -resource to specify the
+	name of the identifier.
+
 2002-09-16  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (StandardConversionExists): Sync with the conversion
