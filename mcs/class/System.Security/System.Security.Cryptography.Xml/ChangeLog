@@ -1,3 +1,7 @@
+2004-06-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* SignedXml.cs : Fix for bug #59545. Handle #xpointer(/) as document.
+
 2004-05-31  Atsushi Enomoto <atsushi@ximian.com>
 
 	* SignedXml.cs : partial fix for bug #59165 that does not output

@@ -212,7 +212,10 @@ namespace System.Security.Cryptography.Xml {
 				doc = new XmlDocument ();
 				doc.PreserveWhitespace = true;
 
-				if (r.Uri [0] == '#') {
+				if (r.Uri == "#xpointer(/)") {
+					doc = envdoc;
+				}
+				else if (r.Uri [0] == '#') {
 					foreach (DataObject obj in signature.ObjectList) {
 						if ("#" + obj.Id == r.Uri) {
 							XmlElement xel = obj.GetXml ();
@@ -263,7 +266,6 @@ namespace System.Security.Cryptography.Xml {
 					s = ApplyTransform (new XmlDsigC14NTransform (), doc);
 				}
 			}
-
 			HashAlgorithm digest = GetHash (r.DigestMethod);
 			return digest.ComputeHash (s);
 		}
@@ -325,7 +327,6 @@ namespace System.Security.Cryptography.Xml {
 					n.WriteTo (xtw);
 
 				xtw.WriteEndElement ();
-
 				byte [] si = Encoding.UTF8.GetBytes (sw.ToString ());
 
 				MemoryStream ms = new MemoryStream ();
