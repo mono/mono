@@ -1,3 +1,9 @@
+2002-11-17  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (Invocation.BetterConversion): Prefer int over
+	uint; short over ushort; long over ulong for integer literals.
+	Fixes #34165.  Added test-173.cs.
+
 2002-11-16  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (Binary.EmitBranchable): Eliminate comparisions

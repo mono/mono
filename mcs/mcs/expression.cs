@@ -3490,18 +3490,24 @@ namespace Mono.CSharp {
 			if (argument_expr is IntConstant){
 				IntConstant ei = (IntConstant) argument_expr;
 				int value = ei.Value;
-				
+
 				if (p == TypeManager.sbyte_type){
 					if (value >= SByte.MinValue && value <= SByte.MaxValue)
 						return 1;
 				} else if (p == TypeManager.byte_type){
-					if (Byte.MinValue >= 0 && value <= Byte.MaxValue)
+					if (q == TypeManager.sbyte_type &&
+					    value >= SByte.MinValue && value <= SByte.MaxValue)
+						return 0;
+					else if (Byte.MinValue >= 0 && value <= Byte.MaxValue)
 						return 1;
 				} else if (p == TypeManager.short_type){
 					if (value >= Int16.MinValue && value <= Int16.MaxValue)
 						return 1;
 				} else if (p == TypeManager.ushort_type){
-					if (value >= UInt16.MinValue && value <= UInt16.MaxValue)
+					if (q == TypeManager.short_type &&
+					    value >= Int16.MinValue && value <= Int16.MaxValue)
+						return 0;
+					else if (value >= UInt16.MinValue && value <= UInt16.MaxValue)
 						return 1;
 				} else if (p == TypeManager.uint32_type){
 					//
@@ -3515,7 +3521,9 @@ namespace Mono.CSharp {
 					// we can optimize this case: a positive int32
 					// always fits on a uint64
 					//
-					if (value >= 0)
+					if (q == TypeManager.int64_type)
+						return 0;
+					else if (value >= 0)
 						return 1;
 				}
 			} else if (argument_type == TypeManager.int64_type && argument_expr is LongConstant){
