@@ -42,6 +42,7 @@
 
 	<target name="test" depends="assemblies">
 		<exec program="..\..\..\nunit\NUnitConsole" commandline="Ximian.Mono.Tests.AllTests,System.XML_test.dll" failonerror="false"/>
+		<exec program="..\..\..\nunit\NUnitConsole" commandline="Ximian.Mono.Tests.XPathScannerTests,System.XML_test.dll" failonerror="false"/>
 	</target>
 
 	<target name="clean">

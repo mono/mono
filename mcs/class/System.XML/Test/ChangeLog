@@ -1,3 +1,10 @@
+2002-03-26  Jason Diamond  <jason@injektilo.org>
+
+	* AllTests.cs:
+	* Mono.Test.csproj: Removed XPathScanner tests.
+
+	* System.XML_test.build: Test XPathScanner separately.
+
 2002-03-26  Duncan Mak  <duncan@ximian.com>
 
 	* AllTests.cs: 
