@@ -9,7 +9,7 @@
 // (C) 2001 Ximian, Inc (http://www.ximian.com)
 //
 //
-#define CACHE
+#undef BROKEN_RUNTIME
 
 using System;
 using System.Globalization;
@@ -159,7 +159,15 @@ public interface IMemberContainer : ICachingMemberFinder {
 		get;
 	}
 
+	Type Type {
+		get;
+	}
+
 	IMemberContainer Parent {
+		get;
+	}
+
+	bool IsInterface {
 		get;
 	}
 
@@ -2249,11 +2257,17 @@ public class MemberCache {
 		Timer.IncrementCounter (CounterType.MemberCache);
 		Timer.StartTimer (TimerType.CacheInit);
 
+#if BROKEN_RUNTIME
 		IMemberContainer current = Container;
 		do {
 			AddMembers (current);
 			current = current.Parent;
 		} while (current != null);
+#else
+		AddMembers (Container);
+		if (Container.IsInterface)
+			AddMembers (TypeHandle.ObjectType);
+#endif
 
 		Timer.StopTimer (TimerType.CacheInit);
 	}
@@ -2289,6 +2303,11 @@ public class MemberCache {
 				list = new ArrayList ();
 				MemberHash.Add (name, list);
 			}
+
+#if !BROKEN_RUNTIME
+			new_bf = (member.DeclaringType == container.Type) ?
+				bf | BindingFlags.DeclaredOnly : bf;
+#endif
 
 			list.Add (new CacheEntry (container, member, mt, new_bf));
 		}
@@ -2366,16 +2385,20 @@ public class MemberCache {
 	}
 
 	protected struct CacheEntry {
+#if BROKEN_RUNTIME
 		// FIXME: This field is a temporary hack until the Mono runtime is fixed
 		//        and distinguishes between ReflectedType and DeclaringType.
 		public readonly IMemberContainer Container;
+#endif
 		public readonly EntryType EntryType;
 		public readonly MemberInfo Member;
 
 		public CacheEntry (IMemberContainer container, MemberInfo member, MemberTypes mt,
 				   BindingFlags bf)
 		{
+#if BROKEN_RUNTIME
 			this.Container = container;
+#endif
 			this.Member = member;
 			this.EntryType = GetEntryType (mt, bf);
 		}
@@ -2390,6 +2413,7 @@ public class MemberCache {
 		IMemberContainer current = Container;
 
 		foreach (CacheEntry entry in applicable) {
+#if BROKEN_RUNTIME
 			if (entry.Container != current) {
 				current = entry.Container;
 
@@ -2412,6 +2436,10 @@ public class MemberCache {
 				if ((list.Count > 0) && (list [0] is PropertyInfo))
 					break;
 			}
+#else
+			if (declared_only && (entry.Member.DeclaringType != Container.Type))
+				break;
+#endif
 
 			if ((entry.EntryType & type & EntryType.MaskType) == 0)
 				continue;
@@ -2419,8 +2447,25 @@ public class MemberCache {
 			if ((entry.EntryType & type & EntryType.MaskStatic) == 0)
 				continue;
 
-			if (filter (entry.Member, criteria))
+			if (filter (entry.Member, criteria)) {
 				list.Add (entry.Member);
+#if !BROKEN_RUNTIME
+				//
+				// Events and types are returned by both `static' and `instance'
+				// searches, which means that our above FindMembers will
+				// return two copies of the same.
+				//
+				if (list.Count == 1 && !(list [0] is MethodBase))
+					break;
+
+				//
+				// Multiple properties: we query those just to find out the indexer
+				// name
+				//
+				if ((list.Count > 0) && (list [0] is PropertyInfo))
+					break;
+#endif
+			}
 		}
 	}
 
@@ -2457,7 +2502,6 @@ public class MemberCache {
 }
 
 public sealed class TypeHandle : IMemberContainer {
-	public readonly Type Type;
 	public readonly TypeHandle BaseType;
 	public readonly MemberCache MemberCache;
 
@@ -2516,22 +2560,25 @@ public sealed class TypeHandle : IMemberContainer {
 	}
 
 	private static PtrHashtable type_hash = new PtrHashtable ();
-	private static bool initialized = false; //Gonzalo: this field is never used
 
-	static TypeHandle object_type = null;
-	static TypeHandle array_type = null;
+	private static TypeHandle object_type = null;
+	private static TypeHandle array_type = null;
+
+	private Type type;
+	private bool is_interface;
 
 	private TypeHandle (Type type)
 	{
-		this.Type = type;
+		this.type = type;
 		if (type.BaseType != null)
 			BaseType = GetTypeHandle (type.BaseType);
-		else {
+		else if (type != TypeManager.object_type) {
 			//
 			// This happens with interfaces, they have a null
 			// basetype.  Look members up in the Object class.
 			//
 			BaseType = object_type;
+			is_interface = true;
 		}
 		this.MemberCache = new MemberCache (this);
 	}
@@ -2544,16 +2591,32 @@ public sealed class TypeHandle : IMemberContainer {
 		}
 	}
 
+	public Type Type {
+		get {
+			return type;
+		}
+	}
+
 	public IMemberContainer Parent {
 		get {
 			return BaseType;
 		}
 	}
 
+	public bool IsInterface {
+		get {
+			return is_interface;
+		}
+	}
+
 	public MemberList GetMembers (MemberTypes mt, BindingFlags bf)
 	{
+#if BROKEN_RUNTIME
 		return new MemberList (Type.FindMembers (
 			mt, bf | BindingFlags.DeclaredOnly, null, null));
+#else
+		return new MemberList (Type.FindMembers (mt, bf, null, null));
+#endif
 	}
 
 	// IMemberFinder methods

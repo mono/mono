@@ -1,3 +1,19 @@
+2002-08-15  Martin Baulig  <martin@gnome.org>
+
+	* typemanager.cs (IMemberContainer.Type): New property.
+	(IMemberContainer.IsInterface): New property.
+
+	The following changes are conditional to BROKEN_RUNTIME, which is
+	defined at the top of the file.
+
+	* typemanager.cs (MemberCache.MemberCache): Don't add the base
+	class'es members, but add all members from TypeHandle.ObjectType
+	if we're an interface.
+	(MemberCache.AddMembers): Set the Declared flag if member.DeclaringType
+	is the current type.
+	(MemberCache.CacheEntry.Container): Removed this field.
+	(TypeHandle.GetMembers): Include inherited members.
+
 2002-08-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* typemanager.cs: fixed compilation and added a comment on a field that
