@@ -49,7 +49,6 @@ namespace System.Web.Caching {
 		internal CachedRawResponse (HttpCachePolicy policy)
 		{
 			this.policy = policy;
-			this.varyby = varyby;
 			this.buffer = new byte [HttpWriter.MaxBufferSize];
 		}
 
