@@ -1,3 +1,8 @@
+2003-09-22  Bernie Solomon <bernard@ugsolutions.com>
+
+	* handles.c: include <string.h> directly as may
+	not be nested in <sys/un.h> like Linux
+
 2003-09-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* io.c:
