@@ -1,3 +1,8 @@
+2002-03-06  Martin Baulig  <martin@gnome.org>
+
+	* Array.cs (CopyTo): Reverted my last change, it was incorrect.
+	(Copy): Actually allow copying multi-dimensional arrays.
+
 2002-03-05  Duncan Mak  <duncan@ximian.com>
 
 	* Convert.cs:
