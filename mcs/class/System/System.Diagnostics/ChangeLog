@@ -1,3 +1,21 @@
+2005-01-18 Jonathan Pryor  <jonpryor@vt.edu>
+
+	* DiagnosticsConfigurationHandler.cs (DiagnosticsConfiguration): Don't 
+	  read the .config file from the static ctor (again), as if it fails we'll 
+	  get a TypeLoadException -- bad!  Instead, lazy-read the .config file.
+	* DiagnosticsConfigurationHandler.cs (DiagnosticsConfigurationHandler): 
+	  Require that the /switch/add/@value attribute contains only numeric values.
+	* TraceImpl.cs: Don't initialize everything in the static ctor, as if it
+	  fails (due to an invalid .confg file) we get a TypeLoadException, while
+	  .NET generates a ConfigurationException.  Instead, initialize everything
+	  the first time the Listeners property is accessed, which allows the static
+	  ctor to run without chance of failure, avoiding the TypeLoadException.
+	* TraceListenerCollection.cs: This should be thread-safe, as it's accessible
+	  from a static member of TraceImpl (available through the public Debug and 
+	  Trace classes).
+	* Switch.cs: Leave the original switch value alone.  If it isn't valid 
+	  (i.e. numeric), the DiagnosticsConfigurationHandler will catch it.
+
 2005-01-17 Jonathan Pryor  <jonpryor@vt.edu>
 
 	* DiagnosticsConfigurationHandler.cs: The /switch/add/@value attribute 

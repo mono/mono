@@ -15,8 +15,8 @@
       <add name="trace-info" value="3"/>
       <add name="trace-verbose" value="4"/>
 
-      <!-- this should be read in as 0 for Switches -->
-      <add name="string-value" value="string-value"/>
+      <!-- custom switches: -->
+      <add name="custom-switch" value="42"/>
 
       <!-- this causes problems on .NET -->
       <add name="trace-negative" value="-1"/>

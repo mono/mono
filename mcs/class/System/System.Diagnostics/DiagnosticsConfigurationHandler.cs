@@ -41,11 +41,15 @@ namespace System.Diagnostics
 {
 	internal sealed class DiagnosticsConfiguration
 	{
-		private static IDictionary settings = 
-			(IDictionary) ConfigurationSettings.GetConfig ("system.diagnostics");
+		private static object lock_ = new object();
+		private static IDictionary settings;
 
 		public static IDictionary Settings {
 			get {
+				lock (lock_) {
+					if (settings == null)
+						settings = (IDictionary) ConfigurationSettings.GetConfig ("system.diagnostics");
+				}
 				return settings;
 			}
 		}
@@ -150,7 +154,9 @@ namespace System.Diagnostics
 						case "add":
 							name = GetAttribute (attributes, "name", true, child);
 							value = GetAttribute (attributes, "value", true, child);
-							newNodes[name] = AsString (value);
+							value = AsString (value);
+							ValidateIntegralValue (name, value);
+							newNodes [name] = value;
 							break;
 						case "remove":
 							name = GetAttribute (attributes, "name", true, child);
@@ -170,6 +176,20 @@ namespace System.Diagnostics
 			}
 
 			d [node.Name] = newNodes;
+		}
+
+		private static void ValidateIntegralValue (string name, string value)
+		{
+			try {
+				int n = int.Parse (value);
+				// remove warning about unused variable.
+				n = n;
+			}
+			catch {
+				throw new ConfigurationException (string.Format (
+							"Error in '{0}': " + 
+							"The value of a switch must be integral", name));
+			}
 		}
 
 		private void AddTraceNode (IDictionary d, XmlNode node)

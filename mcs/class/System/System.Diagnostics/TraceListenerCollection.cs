@@ -41,7 +41,7 @@ namespace System.Diagnostics {
 
 	public class TraceListenerCollection : IList, ICollection, IEnumerable {
 
-		private ArrayList listeners = new ArrayList ();
+		private ArrayList listeners = ArrayList.Synchronized (new ArrayList (1));
 
 		internal TraceListenerCollection ()
 		{
@@ -54,9 +54,11 @@ namespace System.Diagnostics {
 
 		public TraceListener this [string name] {
 			get {
-				foreach (TraceListener listener in listeners) {
-					if (listener.Name == name)
-						return listener;
+				lock (listeners.SyncRoot) {
+					foreach (TraceListener listener in listeners) {
+						if (listener.Name == name)
+							return listener;
+					}
 				}
 				return null;
 			}
@@ -73,7 +75,9 @@ namespace System.Diagnostics {
 		object IList.this [int index] {
 			get {return listeners[index];}
 			set {
-				this[index] = (TraceListener) value;
+				TraceListener l = (TraceListener) value;
+				InitializeListener (l);
+				this[index] = l;
 			}
 		}
 
@@ -203,18 +207,20 @@ namespace System.Diagnostics {
 		{
 			TraceListener found = null;
 
-			foreach (TraceListener listener in listeners) {
-				if (listener.Name == name) {
-					found = listener;
-					break;
+			lock (listeners.SyncRoot) {
+				foreach (TraceListener listener in listeners) {
+					if (listener.Name == name) {
+						found = listener;
+						break;
+					}
 				}
-			}
 
-			if (found != null)
-				listeners.Remove (found);
-			else
-				throw new ArgumentException (Locale.GetText (
-					"TraceListener " + name + " was not in the collection"));
+				if (found != null)
+					listeners.Remove (found);
+				else
+					throw new ArgumentException (Locale.GetText (
+						"TraceListener " + name + " was not in the collection"));
+			}
 		}
 
 		public void Remove (TraceListener listener)

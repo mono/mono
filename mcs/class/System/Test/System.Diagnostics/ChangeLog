@@ -1,3 +1,11 @@
+2005-01-18  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* DiagnosticsConfigurationHandlerTest.cs: .NET 1.1 requires that the value
+	  attribute be a numeric value; check for that and update the success test
+	  so that they'll actually pass.
+	* SwitchesTest.cs: TestNewSwitch reads "custom-switch" now, and the switches
+	  value is now "42", not "0".  Remove warning about unused variable.
+
 2005-01-17  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* DiagnosticsConfigurationHandlerTest.cs: .NET 1.1 doesn't permit <add/>

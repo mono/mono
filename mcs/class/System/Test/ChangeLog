@@ -1,3 +1,10 @@
+2005-01-18  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* test-config-file: Remove "string-value" switch, as it causes
+	  ConfigurationExceptions under .NET 1.1 (the value attribute can't be
+	  non-numeric), and Mono now follows this behavior.  Add a "custom-switch"
+	  value, which is used in the regression tests.
+
 2005-01-17  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* test-config-file: Remove <add/> elements lacking a value attribute.

@@ -96,6 +96,8 @@ namespace MonoTests.System.Diagnostics {
 				"<add />",
 				"<add name=\"a\"/>",
 				"<add value=\"b\"/>",
+				// non-integral value
+				"<add name=\"string-value\" value=\"string-value\"/>",
 				// too many arguments
 				"<add name=\"a\" value=\"b\" extra=\"c\"/>",
 				// wrong casing
@@ -113,7 +115,8 @@ namespace MonoTests.System.Diagnostics {
 			ValidateExceptions ("#TST:IE:Bad", "<switches>{0}</switches>", badElements);
 
 			string[] goodElements = {
-				"<add name=\"a\" value=\"b\"/>",
+				"<add name=\"a\" value=\"4\"/>",
+				"<add name=\"a\" value=\"-2\"/>",
 				"<remove name=\"a\"/>",
 				"<clear/>"
 			};

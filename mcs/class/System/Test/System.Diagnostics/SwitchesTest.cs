@@ -40,6 +40,8 @@ namespace MonoTests.System.Diagnostics {
 				ops.Append ("get_Value\n");
 				// ensure that the .config file is read in
 				int n = base.SwitchSetting;
+				// remove warning about unused variable
+				n = n;
 				return v;
 			}
 		}
@@ -87,7 +89,7 @@ namespace MonoTests.System.Diagnostics {
 		private static TraceSwitch tsv = new TraceSwitch ("string-value", "");
 		private static TraceSwitch tnegative = new TraceSwitch ("trace-negative", "");
 
-		private static TestNewSwitch tns = new TestNewSwitch ("string-value", "");
+		private static TestNewSwitch tns = new TestNewSwitch ("custom-switch", "");
 
 		[Test]
 		public void BooleanSwitches ()
@@ -131,7 +133,7 @@ namespace MonoTests.System.Diagnostics {
 		[Test]
 		public void NewSwitch ()
 		{
-			AssertEquals ("#NS:Value", "0", tns.Value);
+			AssertEquals ("#NS:Value", "42", tns.Value);
 			Assert ("#NS:Validate", tns.Validate());
 		}
 	}
