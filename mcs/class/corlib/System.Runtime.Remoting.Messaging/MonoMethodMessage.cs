@@ -3,6 +3,7 @@
 //
 // Author:
 //   Dietmar Maurer (dietmar@ximian.com)
+//   Patrik Torstensson
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
@@ -14,6 +15,7 @@ using System.Runtime.CompilerServices;
 
 namespace System.Runtime.Remoting.Messaging {
 	
+	[Serializable]
 	public class MonoMethodMessage : IMethodCallMessage, IMethodReturnMessage {
 
 		MonoMethod method;
@@ -41,7 +43,10 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public MonoMethodMessage (MethodBase method, object [] out_args)
 		{
-			InitMessage ((MonoMethod)method, out_args);			
+			if (method != null)
+				InitMessage ((MonoMethod)method, out_args);
+			else
+				args = null;
 		}
 
 		public MonoMethodMessage (Type type, string method_name, object [] in_args)
@@ -66,6 +71,9 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public int ArgCount {
 			get {
+				if (null == args)
+					return 0;
+
 				return args.Length;
 			}
 		}
@@ -96,6 +104,9 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public string MethodName {
 			get {
+				if (null == method)
+					return String.Empty;
+
 				return method.Name;
 			}
 		}
@@ -114,6 +125,9 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public string TypeName {
 			get {
+				if (null == method)
+					return String.Empty;
+
 				return method.DeclaringType.AssemblyQualifiedName;
 			}
 		}
@@ -130,16 +144,25 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public object GetArg (int arg_num)
 		{
+			if (null == args)
+				return null;
+
 			return args [arg_num];
 		}
 		
 		public string GetArgName (int arg_num)
 		{
+			if (null == args)
+				return String.Empty;
+
 			return names [arg_num];
 		}
 
 		public int InArgCount {
 			get {
+				if (null == args)
+					return 0;
+
 				int count = 0;
 
 				foreach (byte t in arg_types) {
@@ -151,7 +174,7 @@ namespace System.Runtime.Remoting.Messaging {
 		}
 		
 		public object [] InArgs {
-			get {
+			get {                
 				int i, j, count = InArgCount;
 				object [] inargs = new object [count];
 
@@ -200,6 +223,9 @@ namespace System.Runtime.Remoting.Messaging {
 		
 		public int OutArgCount {
 			get {
+				if (null == args)
+					return 0;
+		                
 				int count = 0;
 
 				foreach (byte t in arg_types) {
@@ -212,6 +238,9 @@ namespace System.Runtime.Remoting.Messaging {
 		
 		public object [] OutArgs {
 			get {
+				if (null == args)
+					return null;
+
 				int i, j, count = OutArgCount;
 				object [] outargs = new object [count];
 

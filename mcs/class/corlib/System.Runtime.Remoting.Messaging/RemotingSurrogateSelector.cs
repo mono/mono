@@ -3,6 +3,7 @@
 //
 // Author: Duncan Mak  (duncan@ximian.com)
 //         Lluis Sanchez Gual (lluis@ideary.com)
+//         Patrik Torstensson
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
@@ -14,17 +15,21 @@ namespace System.Runtime.Remoting.Messaging {
 
 	public class RemotingSurrogateSelector : ISurrogateSelector
 	{
-		ISurrogateSelector _next;
+		static Type s_cachedTypeObjRef = typeof(ObjRef);
 		static ObjRefSurrogate _objRefSurrogate = new ObjRefSurrogate();
+		static RemotingSurrogate _objRemotingSurrogate = new RemotingSurrogate();
+
+		Object _rootObj = null;    
+		MessageSurrogateFilter _filter = null;
+		ISurrogateSelector _next;
 
 		public RemotingSurrogateSelector ()
 		{
 		}
 		
-		[MonoTODO]
 		public MessageSurrogateFilter Filter {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return _filter; }
+			set { _filter = value; }
 		}
 
 		public virtual void ChainSelector (ISurrogateSelector selector)
@@ -38,54 +43,44 @@ namespace System.Runtime.Remoting.Messaging {
 			return _next;
 		}
 
-		[MonoTODO]
 		public object GetRootObject ()
 		{
-			throw new NotImplementedException ();
+			return _rootObj;
 		}
 
 		public virtual ISerializationSurrogate GetSurrogate (
 			Type type, StreamingContext context, out ISurrogateSelector ssout)
 		{
-			if (type.IsSubclassOf (typeof(MarshalByRefObject)))
+			if (type.IsMarshalByRef)
+			{
+				ssout = this;
+				return _objRemotingSurrogate;
+			}
+
+			if (s_cachedTypeObjRef.IsAssignableFrom (type))
 			{
 				ssout = this;
 				return _objRefSurrogate;
 			}
+
 			if (_next != null) return _next.GetSurrogate (type, context, out ssout);
 
 			ssout = null;
 			return null;
 		}
 
-		[MonoTODO]
 		public void SetRootObject (object obj)
 		{
 			if (obj == null)
 				throw new ArgumentNullException ();
 			
-			throw new NotImplementedException ();
+			_rootObj = obj;
 		}
 		
 		[MonoTODO]
 		public virtual void UseSoapFormat ()
 		{
 			throw new NotImplementedException ();
-		}
-	}
-
-	public class ObjRefSurrogate : ISerializationSurrogate
-	{
-		public void GetObjectData(object obj, SerializationInfo info, StreamingContext context)
-		{
-			RemotingServices.GetObjectData (obj, info, context);
-			info.AddValue ("fIsMarshalled", 0);
-		}
-
-		public object SetObjectData(object obj, SerializationInfo info, StreamingContext context, ISurrogateSelector selector)
-		{
-			// ObjRef is deserialized using the IObjectReference interface
-			throw new NotSupportedException ("Do not use RemotingSurrogateSelector when deserializating");
 		}
 	}
 }
