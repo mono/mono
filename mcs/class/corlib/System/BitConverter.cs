@@ -83,7 +83,10 @@ namespace System {
 			}
 
 			if (src.Length < start_index + count) {
-				throw new ArgumentOutOfRangeException();
+				// LAMESPEC:
+				// the docs say it should be ArgumentOutOfRangeException, but
+				// the mscorlib throws an ArgumentException.
+				throw new ArgumentException();
 			}
 
 			for (int i = 0; i < count; i++) {

@@ -1,3 +1,8 @@
+2002-03-01  Nick Drochak  <ndrochak@gol.com>
+
+	* BitConverter.cs: Throw ArgumentException like mscorlib, instead of
+	ArgumentOutOfRangeException like the docs say.
+
 2002-03-01  Martin Baulig  <martin@gnome.org>
 
 	* Enum.cs (CompareTo): Correctly override this method from IComparable.
