@@ -752,11 +752,11 @@ namespace System {
 			int start = ptr;
 			while (ptr < format.Length) {
 				char c = format[ptr ++];
-					
+
 				if (c == '{') {
 					result.Append (format, start, ptr - start - 1);
 
-					// check for escaped bracket
+					// check for escaped open bracket
 
 					if (format[ptr] == '{') {
 						start = ptr ++;
@@ -803,6 +803,10 @@ namespace System {
 						result.Append (str);
 
 					start = ptr;
+				}
+				else if (c == '}' && format[ptr] == '}') {
+					result.Append (format, start, ptr - start - 1);
+					start = ptr ++;
 				}
 			}
 
