@@ -5,6 +5,10 @@ Test cases listed by Category:
 
   test-146.cs
 
+* Overloading
+
+  test-147.cs
+
 Test cases listed by Number:
 ============================
 
@@ -12,4 +16,8 @@ test-146.cs
 -----------
 Test for Binary.EmitBrancheable() to ensure we're emitting correct
 unsinged branch targets.
+
+Test-147.cs
+-----------
+Testing `new' modifier.
 

@@ -1,3 +1,7 @@
+2002-07-22  Martin Baulig  <martin@gnome.org>
+
+	* test.147.cs: New test for the `new' modifier.
+
 2002-07-21  Martin Baulig  <martin@gnome.org>
 
 	* test-38.cs: Added a few more test cases to this test.
