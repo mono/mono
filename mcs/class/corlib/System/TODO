@@ -1,0 +1,7 @@
+System.Object:
+	Need a mechanism for getting an object underlying type.
+
+System.ValueType:
+	Need to lock memory and "scan" the actual contents to compute
+	hash code and do comparissions.  Should be simple to do with
+	C#, the problem is figuring out the size of the object.
