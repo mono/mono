@@ -30,6 +30,9 @@ namespace System.IO
 			: this (handle, access, ownsHandle, bufferSize, false) {}
 
 		public FileStream (IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync)
+			: this (handle, access, ownsHandle, bufferSize, isAsync, false) {}
+
+		internal FileStream (IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync, bool noBuffering)
 		{
 			if (access < FileAccess.Read || access > FileAccess.ReadWrite)
 				throw new ArgumentOutOfRangeException ("access");
@@ -49,8 +52,8 @@ namespace System.IO
 			} else {
 				this.canseek = false;
 			}
-			
-			InitBuffer (bufferSize);
+
+			InitBuffer (bufferSize, noBuffering);
 
 			/* Can't set append mode */
 			this.append_startpos=0;
@@ -97,7 +100,7 @@ namespace System.IO
 				throw new UnauthorizedAccessException ("Access to the path '" + Path.GetFullPath (name) + "' is denied.");
 			}
 
-			InitBuffer (bufferSize);
+			InitBuffer (bufferSize, false);
 
 			/* Append streams can't be read (see FileMode
 			 * docs)
@@ -497,16 +500,18 @@ namespace System.IO
 		}
 
 		protected virtual void Dispose (bool disposing) {
-			if (owner && handle != MonoIO.InvalidHandle) {
+			if (handle != MonoIO.InvalidHandle) {
 				lock(this) {
 					FlushBuffer ();
 				}
 
-				MonoIOError error;
+				if (owner) {
+					MonoIOError error;
 				
-				MonoIO.Close (handle, out error);
+					MonoIO.Close (handle, out error);
 
-				handle = MonoIO.InvalidHandle;
+					handle = MonoIO.InvalidHandle;
+				}
 			}
 
 			canseek = false;
@@ -615,15 +620,18 @@ namespace System.IO
 			
 			return(amount);
 		}
-		
-		
-		private void InitBuffer (int size)
+				
+		private void InitBuffer (int size, bool noBuffering)
 		{
-			if (size < 0)
-				throw new ArgumentOutOfRangeException ("Buffer size cannot be negative.");
-			if (size < 8)
-				size = 8;
-		
+			if (noBuffering)
+				size = 0;
+			else {
+				if (size <= 0)
+					throw new ArgumentOutOfRangeException ("bufferSize", "Positive number required.");
+				if (size < 8)
+					size = 8;
+			}
+					
 			buf = new byte [size];
 			buf_size = size;
 			buf_start = 0;

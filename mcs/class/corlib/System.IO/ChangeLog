@@ -1,3 +1,12 @@
+2003-06-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* FileStream.cs (Dispose): Flush the buffer even if we don't own the
+	handle.
+	* FileStream.cs: Add a new constructor parameter to turn off buffering.
+	This is used by the Console.OpenStandard...() methods. Also fix
+	argument checking in InitBuffer(), so a zero buffer size is also 
+	rejected.
+
 2003-06-27  Dietmar Maurer  <dietmar@ximian.com>
 
 	* Stream.cs: use async.delegate invoke 
