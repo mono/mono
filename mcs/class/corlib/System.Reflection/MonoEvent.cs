@@ -11,7 +11,7 @@ using System;
 using System.Reflection;
 
 namespace System.Reflection {
-	public sealed class MonoEvent: EventInfo {
+	internal sealed class MonoEvent: EventInfo {
 		IntPtr klass;
 		IntPtr handle;
 
