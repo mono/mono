@@ -35,7 +35,8 @@ all-local: $(the_lib)
 
 install-local: $(the_lib) $(gacutil)
 	@if test -f Assembly/AssemblyInfo.cs ; then \
-		$(RUNTIME)  $(gacutil) /i $(the_lib) /f || exit 1 ; \
+		echo $(RUNTIME)  $(gacutil) -i $(the_lib) -f /root $(DESTDIR)$(prefix)/lib || exit 1 ; \
+		$(RUNTIME)  $(gacutil) -i $(the_lib) -f -root $(DESTDIR)$(prefix)/lib || exit 1 ; \
 	else \
 		$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib ; \
 		$(INSTALL_LIB) $(the_lib) $(DESTDIR)$(prefix)/lib ; \
