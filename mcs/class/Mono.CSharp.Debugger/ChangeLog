@@ -1,5 +1,10 @@
 2003-02-18  Martin Baulig  <martin@ximian.com>
 
+	* MonoSymbolFile.cs (monoSymbolFile.GetMethod): Added overloaded
+	version which takes a MethodBase.
+
+2003-02-18  Martin Baulig  <martin@ximian.com>
+
 	* MonoSymbolTable.cs (MethodIndexEntry): New public struct.
 
 	* MonoSymbolFile.cs (MonoSymbolFile.GetMethodByToken): New method.

@@ -440,6 +440,14 @@ namespace Mono.CSharp.Debugger
 			return GetMethod ((int) value);
 		}
 
+		public MethodEntry GetMethod (MethodBase method)
+		{
+			if (reader == null)
+				throw new InvalidOperationException ();
+			int token = assembly.MonoDebugger_GetMethodToken (method);
+			return GetMethodByToken (token);
+		}
+
 		public MethodEntry GetMethod (int index)
 		{
 			if ((index < 1) || (index > ot.MethodCount))
