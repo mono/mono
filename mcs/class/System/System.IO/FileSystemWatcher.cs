@@ -122,11 +122,11 @@ namespace System.IO {
 				if (mangledFilter != null)
 					return mangledFilter;
 
-				string mangledFilter = "*.*";
+				string filterLocal = "*.*";
 				if (!(watcher.GetType () == typeof (WindowsWatcher)))
-					mangledFilter = "*";
+					filterLocal = "*";
 
-				return mangledFilter;
+				return filterLocal;
 			}
 		}
 
