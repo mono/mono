@@ -1,3 +1,9 @@
+2004-04-29  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (Event.Define): Don't emit the field and don't set
+	RTSpecialName and SpecialName for events on interfaces.  Fixes
+	#57703.	
+
 2004-04-29  Raja R Harinath  <rharinath@novell.com>
 
 	Refactor Attribute.ApplyAttributes.

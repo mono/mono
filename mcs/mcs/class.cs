@@ -5417,9 +5417,9 @@ namespace Mono.CSharp {
 				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
 				name, init, attrs, loc)
 		{
+			IsInterface = is_iface;
 			Add = new AddDelegateMethod (this, add);
 			Remove = new RemoveDelegateMethod (this, remove);
-			IsInterface = is_iface;
 			this.ds = ds;
 		}
 
@@ -5430,7 +5430,12 @@ namespace Mono.CSharp {
 
 		public override bool Define (TypeContainer container)
 		{
-			EventAttributes e_attr = EventAttributes.RTSpecialName | EventAttributes.SpecialName;
+			EventAttributes e_attr;
+			if (IsInterface)
+				e_attr = EventAttributes.None;
+			else
+				e_attr = EventAttributes.RTSpecialName |
+					EventAttributes.SpecialName;
 
 			if (!DoDefine (container))
 				return false;
@@ -5471,7 +5476,8 @@ namespace Mono.CSharp {
 				EventBuilder = new MyEventBuilder (this,
 					container.TypeBuilder, Name, e_attr, MemberType);
 					
-				if (Add.Accessor == null && Remove.Accessor == null) {
+				if (Add.Accessor == null && Remove.Accessor == null &&
+				    !IsInterface) {
 					FieldBuilder = container.TypeBuilder.DefineField (
 						Name, MemberType,
 						FieldAttributes.Private | ((ModFlags & Modifiers.STATIC) != 0 ? FieldAttributes.Static : 0));
@@ -5502,8 +5508,10 @@ namespace Mono.CSharp {
 				Attribute.ApplyAttributes (ec, EventBuilder, this, OptAttributes);
 			}
 
-			Add.Emit (tc);
-			Remove.Emit (tc);
+			if (!IsInterface) {
+				Add.Emit (tc);
+				Remove.Emit (tc);
+			}
 
 			base.Emit (tc);
 		}
