@@ -1,3 +1,7 @@
+2004-08-17 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* appdomain.c: thread local alloc
+
 2004-08-17  Martin Baulig  <martin@ximian.com>
 
 	* appdomain.c: Bumped MONO_CORLIB_VERSION to 24.
