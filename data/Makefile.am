@@ -1,12 +1,10 @@
+SUBDIRS = net_1_1 net_2_0
+
 monodir = $(sysconfdir)/mono
 
 EXTRA_DIST =  config.in \
-	     machine.config \
-	     DefaultWsdlHelpGenerator.aspx \
 	     browscap.ini
 
 mono_DATA =  config \
-	     machine.config \
-	     DefaultWsdlHelpGenerator.aspx \
 	     browscap.ini
 
