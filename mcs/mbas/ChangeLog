@@ -1,3 +1,13 @@
+2005-02-10 Satya Sudha K <ksathyasudha@novell.com>
+	* expression.cs: 
+		 - Implemented Exponentiation operator (^)
+		 - Fixed the behaviour of strings in arithmatic operations (only addition 
+		   was supported before)
+		 - Fixed Decimal arithmatic with float/double types
+		 - If operation = Division, promoting both operands to double, otherwise
+		   doing numeric promotions
+	* mb-parser.jay : Changes related to the Exponentiation operator
+
 2005-02-10 Manjula GHM <mmanjula@novell.com>
 	* expression.cs: Fixed concat of date and string using '+" operator 
 

@@ -1497,6 +1497,87 @@ namespace Mono.MonoBASIC {
 		}
 	}
 
+        public class Exponentiation : Expression {
+
+		Expression left, right, e;
+		ArrayList Arguments; 
+		protected MethodBase method;
+	
+		public Exponentiation(Location loc, Expression left, Expression right) {
+			this.left = left;
+			this.right = right;
+			this.loc = loc;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			left = left.Resolve (ec);
+			right = right.Resolve (ec);
+
+			if (left == null || right == null)
+				return null;
+
+			if (left.Type == null)
+				throw new Exception (
+					"Resolve returned non null, but did not set the type! (" +
+					left + ") at Line: " + loc.Row);
+			if (right.Type == null)
+				throw new Exception (
+					"Resolve returned non null, but did not set the type! (" +
+					right + ") at Line: "+ loc.Row);
+
+			eclass = ExprClass.Value;
+			
+			Type l = left.Type;
+			Type r = right.Type;
+
+			if (l != TypeManager.double_type) { 
+				left = ConvertImplicit (ec, left, TypeManager.double_type, loc);
+				if (left == null){
+					Error_OperatorCannotBeApplied (loc, "&", l, r);
+					return null;
+				}
+				type = TypeManager.double_type;
+			}
+
+			if (r != TypeManager.double_type) {
+				right = ConvertImplicit (ec, right, TypeManager.double_type, loc);
+				if (right == null){
+					Error_OperatorCannotBeApplied (loc, "&", l, r);
+					return null;
+				}
+                                        
+				type = TypeManager.double_type;
+			}
+
+                        Expression etmp;
+                        ArrayList args;
+                        Argument arg1, arg2;
+                                                                                                               
+                        etmp = Mono.MonoBASIC.Parser.DecomposeQI("System.Math.Pow", loc);
+                        args = new ArrayList();
+                        arg1 = new Argument (left, Argument.AType.Expression);
+                        arg2 = new Argument (right, Argument.AType.Expression);
+                        args.Add (arg1);
+                        args.Add (arg2);
+                        e = (Expression) new Invocation (etmp, args, loc);
+                        return e.Resolve(ec);
+		}
+
+                public override void Emit (EmitContext ec)
+                {
+			throw new Exception ("Should not happen");
+		}
+
+                static public void Error_OperatorCannotBeApplied (Location loc, string name, Type l, Type r)
+                {  
+	                 Report.Error (19, loc,
+                               "Operator " + name + " cannot be applied to operands of type '" +
+                               TypeManager.MonoBASIC_Name (l) + "' and '" +
+                               TypeManager.MonoBASIC_Name (r) + "'");
+                }
+
+        }
         public class StringConcat : Expression {
 
 		Expression left, right;
@@ -1609,6 +1690,7 @@ namespace Mono.MonoBASIC {
 	/// </summary>
 	public class Binary : Expression {
 		public enum Operator : byte {
+			Exponentiation,
 			Multiply, Division, Modulus,
 			Addition, Subtraction,
 			LeftShift, RightShift,
@@ -1703,6 +1785,8 @@ namespace Mono.MonoBASIC {
 		static string OperName (Operator oper)
 		{
 			switch (oper){
+			case Operator.Exponentiation:
+				return "^";
 			case Operator.Multiply:
 				return "*";
 			case Operator.Division:
@@ -2013,7 +2097,7 @@ namespace Mono.MonoBASIC {
 					overload_failed = true;
 				}
 			}	
-			
+
 			//
 			// Step 2: Default operations on CLI native types.
 			//
@@ -2051,15 +2135,7 @@ namespace Mono.MonoBASIC {
 						
 						// string + string
 						method = TypeManager.string_concat_string_string;
-					} else {
-						// string + object
-						left = ConvertImplicit (ec, left, r, loc);
-						if (left == null){
-							Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
-							return null;
-						}
-						return ResolveOperator(ec);
-					}
+					} 
 
 					type = TypeManager.string_type;
 
@@ -2084,15 +2160,6 @@ namespace Mono.MonoBASIC {
 						}
 						return ResolveOperator(ec);
 					}	
-					type = TypeManager.string_type;
-					
-                                        right = ConvertImplicit(ec, right, l, loc);
-                                        if (right == null) {
-						Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
-                                                return null;
-                                        }
-
-					return ResolveOperator(ec);
 				}
 
 				//
@@ -2341,6 +2408,49 @@ namespace Mono.MonoBASIC {
 					return this;
 				}
 			}
+
+			// Arithmatic operations involving decimal
+			if (l == TypeManager.decimal_type) {
+				right = ConvertImplicit(ec, right, l, loc);
+				if (right == null) {
+					Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+					return null;
+				}
+				return ResolveOperator(ec);
+			} else if (r == TypeManager.decimal_type) {
+				left = ConvertImplicit(ec, left, r, loc);
+				if (left == null) {
+					Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+					return null;
+				}
+				return ResolveOperator(ec);
+			}
+		
+			if (l == TypeManager.string_type && r != TypeManager.string_type) {
+
+				type = TypeManager.string_type;
+				
+                                       left = ConvertImplicit(ec, left, TypeManager.double_type, loc);
+                                       if (left == null) {
+					Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+                                               return null;
+                                       }
+
+				return ResolveOperator(ec);
+			}
+			
+			if (r == TypeManager.string_type && l != TypeManager.string_type) {
+
+				type = TypeManager.string_type;
+				
+                                       right = ConvertImplicit(ec, right, TypeManager.double_type, loc);
+                                       if (right == null) {
+					Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+                                               return null;
+                                       }
+
+				return ResolveOperator(ec);
+			}
 			
 			//
 			// We are dealing with numbers
@@ -2353,10 +2463,21 @@ namespace Mono.MonoBASIC {
 			//
 			// This will leave left or right set to null if there is an error
 			//
-			DoNumericPromotions (ec, l, r);
-			if (left == null || right == null){
-				Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
-				return null;
+			if (oper == Operator.Division) {
+				if (l != TypeManager.double_type) {
+					left = ConvertImplicit (ec, left, TypeManager.double_type, loc);
+					type = TypeManager.double_type;
+				}
+				if (r != TypeManager.double_type) {
+					right = ConvertImplicit (ec, right, TypeManager.double_type, loc);
+					type = TypeManager.double_type;
+				}
+			} else {
+				DoNumericPromotions (ec, l, r);
+				if (left == null || right == null){
+					Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+					return null;
+				}
 			}
 
 			//

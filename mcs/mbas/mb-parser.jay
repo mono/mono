@@ -4138,7 +4138,7 @@ exponentiation_expression
 	: primary_expression
 	| exponentiation_expression OP_EXP primary_expression
 	  {
-	  	//TODO
+		$$ = new Exponentiation (lexer.Location, (Expression) $1, (Expression) $3);
 	  }			  	
 	;
 	
