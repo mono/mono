@@ -1,3 +1,7 @@
+2004-02-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* sparc/tramp.c: Fix alignment of structures containing doubles.
+
 2004-02-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* sparc/tramp.c: Implement all floating point argument passing conventions in
