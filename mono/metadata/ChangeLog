@@ -1,4 +1,11 @@
 
+Sat Aug 25 12:52:54 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* class.h, class.c: keep track if a class is also an Enum.
+	* loader.c: Implement a couple more types for use in libffi
+	marshalling. Gives better diagnostics when failing to dlopen
+	a library. Set method->klass for P/Invoke methods, too.
+
 Fri Aug 24 19:30:25 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* class.c, class.h: add a MonoType this_arg to MonoClass that
