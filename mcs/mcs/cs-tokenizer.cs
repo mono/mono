@@ -1902,9 +1902,8 @@ namespace Mono.CSharp
 						getChar ();
 						if (RootContext.Documentation != null && peekChar () == '/') {
 							getChar ();
-							// Allow only ///ws.
 							// Don't allow ////.
-							if ((d = peekChar ()) == ' ' || d == '\t') {
+							if ((d = peekChar ()) != '/') {
 								if (doc_state == XmlCommentState.Allowed)
 									handle_one_line_xml_comment ();
 								else if (doc_state == XmlCommentState.NotAllowed)
