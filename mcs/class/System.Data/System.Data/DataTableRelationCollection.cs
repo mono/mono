@@ -18,8 +18,8 @@ namespace System.Data
 	/// </summary>
 	internal class DataTableRelationCollection : DataRelationCollection
 	{
-		private ArrayList list = null;
-		private int defaultNameIndex;
+		private new ArrayList list = null;
+		private new int defaultNameIndex;
 		private DataTable table;
 		
 
@@ -253,7 +253,7 @@ namespace System.Data
 		/// </summary>
 		/// <param name="relations">The array of DataRelation objects to add to the collection.</param>
 		[MonoTODO]
-		public virtual void AddRange(DataRelation[] relations)
+		public override void AddRange(DataRelation[] relations)
 		{
 			//TODO: Implement.
 
@@ -270,20 +270,20 @@ namespace System.Data
 		}
 
 		[MonoTODO]
-		public virtual bool CanRemove(DataRelation relation)
+		public override bool CanRemove(DataRelation relation)
 		{
 			//TODO: Implement.
 			return false;
 		}
 
 		[MonoTODO]
-		public virtual void Clear()
+		public override void Clear()
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual bool Contains(string name)
+		public override bool Contains(string name)
 		{
 			return false;
 		}
@@ -298,25 +298,25 @@ namespace System.Data
 		*/
 
 		[MonoTODO]
-		public virtual int IndexOf(DataRelation relation)
+		public override int IndexOf(DataRelation relation)
 		{
 			return list.IndexOf(relation);
 		}
 
 		[MonoTODO]
-		public virtual int IndexOf(string relationName)
+		public override int IndexOf(string relationName)
 		{
 			return list.IndexOf(this[relationName]);
 		}
 
 		[MonoTODO]
-		protected virtual void OnCollectionChanged(CollectionChangeEventArgs ccevent)
+		protected override void OnCollectionChanged(CollectionChangeEventArgs ccevent)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected internal virtual void OnCollectionChanging(CollectionChangeEventArgs ccevent)
+		protected internal override void OnCollectionChanging(CollectionChangeEventArgs ccevent)
 		{
 			throw new NotImplementedException ();
 		}
@@ -340,7 +340,7 @@ namespace System.Data
 		}
 
 		[MonoTODO]
-		protected virtual void RemoveCore(DataRelation relation)
+		protected override void RemoveCore(DataRelation relation)
 		{
 			throw new NotImplementedException ();
 		}

@@ -4,6 +4,7 @@
 // Author:
 //   Christopher Podurgiel (cpodurgiel@msn.com)
 //   Daniel Morgan <danmorg@sc.rr.com>
+//   Rodrigo Moya <rodrigo@ximian.com>
 //
 // (C) Chris Podurgiel
 // (C) Ximian, Inc 2002

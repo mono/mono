@@ -19,7 +19,7 @@ namespace System.Data
 	public class DataColumnCollection : InternalDataCollectionBase
 	{
 
-		protected ArrayList list = null;
+		protected new ArrayList list = null;
 		
 		// The defaultNameIndex is used to create a default name for a column if one wasn't given.
 		private int defaultNameIndex;
