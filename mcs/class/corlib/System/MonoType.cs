@@ -8,11 +8,7 @@
 //	Gonzalo Paniagua (gonzalo@ximian.com)
 //
 // (c) 2001-2003 Ximian, Inc.
-// (c) 2003,2004 Novell, Inc. (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2003-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,10 +30,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Globalization;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Globalization;
 using System.Runtime.Serialization;
+using System.Security;
 
 namespace System
 {
@@ -90,7 +87,7 @@ namespace System
 			if (types == null) {
 				if (count > 1)
 					throw new AmbiguousMatchException ();
-				return found;
+				return (ConstructorInfo) CheckMethodSecurity (found);
 			}
 			match = new MethodBase [count];
 			if (count == 1)
@@ -105,7 +102,7 @@ namespace System
 			}
 			if (binder == null)
 				binder = Binder.DefaultBinder;
-			return (ConstructorInfo)binder.SelectMethod (bindingAttr, match, types, modifiers);
+			return (ConstructorInfo) CheckMethodSecurity (binder.SelectMethod (bindingAttr, match, types, modifiers));
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -203,7 +200,7 @@ namespace System
 				return null;
 			
 			if (count == 1 && typesLen == 0) 
-				return found;
+				return (MethodInfo) CheckMethodSecurity (found);
 
 			match = new MethodBase [count];
 			if (count == 1)
@@ -218,12 +215,12 @@ namespace System
 			}
 			
 			if (types == null) 
-				return (MethodInfo) Binder.FindMostDerivedMatch (match);
+				return (MethodInfo) CheckMethodSecurity (Binder.FindMostDerivedMatch (match));
 
 			if (binder == null)
 				binder = Binder.DefaultBinder;
 			
-			return (MethodInfo)binder.SelectMethod (bindingAttr, match, types, modifiers);
+			return (MethodInfo) CheckMethodSecurity (binder.SelectMethod (bindingAttr, match, types, modifiers));
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -583,5 +580,19 @@ namespace System
 			get;
 		}
 #endif
+
+		private MethodBase CheckMethodSecurity (MethodBase mb)
+		{
+			if (!SecurityManager.SecurityEnabled || (mb == null))
+				return mb;
+
+			// Sadly we have no way to know which kind of security action this is
+			// so we must do it the hard way. Actually this isn't so bad 
+			// because we can skip the (mb.Attributes & MethodAttributes.HasSecurity)
+			// icall required (and do it ourselves)
+
+			// this (unlike the Invoke step) is _and stays_ a LinkDemand (caller)
+			return SecurityManager.ReflectedLinkDemandQuery (mb) ? mb : null;
+		}
 	}
 }

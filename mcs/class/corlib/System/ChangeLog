@@ -1,3 +1,9 @@
+2005-03-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MonoType.cs: When the security manager is active, constructors and
+	methods will return null if a linkdemand fails during reflection 
+	query.
+
 2005-03-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Array.cs (Sort): Bail out early if length <= 1. Fixes #72721.
