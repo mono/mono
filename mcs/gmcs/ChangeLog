@@ -1,5 +1,13 @@
 2004-08-12  Martin Baulig  <martin@ximian.com>
 
+	* typemanager.cs (TypeManager.IsNestedChildOf): Use
+	TypeManager.IsEqual() rather than `=='.
+
+	* decl.cs (DeclSpace.CheckAccessLevel): Use `tb.FullName' for
+	generic instances as well.
+
+2004-08-12  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (Invocation.InferType): We can only infer method
 	type parameters.  Fixes #62647.
 

@@ -1882,12 +1882,12 @@ public class TypeManager {
 	//
 	public static bool IsNestedChildOf (Type type, Type parent)
 	{
-		if (type == parent)
+		if (IsEqual (type, parent))
 			return false;
 
 		type = type.DeclaringType;
 		while (type != null) {
-			if (type == parent)
+			if (IsEqual (type, parent))
 				return true;
 
 			type = type.DeclaringType;
@@ -2699,75 +2699,54 @@ public class TypeManager {
 	internal class Closure {
 		internal bool     private_ok;
 
-	// Who is invoking us and which type is being queried currently.
+		// Who is invoking us and which type is being queried currently.
 		internal Type     invocation_type;
 		internal Type     qualifier_type;
 
-	// The assembly that defines the type is that is calling us
+		// The assembly that defines the type is that is calling us
 		internal Assembly invocation_assembly;
 		internal IList almost_match;
 
 		private bool CheckValidFamilyAccess (bool is_static, MemberInfo m)
-	{
+		{
 			if (invocation_type == null)
 				return false;
-
-			Debug.Assert (IsSubclassOrNestedChildOf (invocation_type, m.DeclaringType));
 
 			if (is_static)
 				return true;
 			
-			// A nested class has access to all the protected members visible to its parent.
+			// A nested class has access to all the protected members visible
+			// to its parent.
 			if (qualifier_type != null
 			    && TypeManager.IsNestedChildOf (invocation_type, qualifier_type))
 				return true;
 
 			if (invocation_type == m.DeclaringType
 			    || invocation_type.IsSubclassOf (m.DeclaringType)) {
-				// Although a derived class can access protected members of its base class
-				// it cannot do so through an instance of the base class (CS1540).
-				// => Ancestry should be: declaring_type ->* invocation_type ->*  qualified_type
+				// Although a derived class can access protected members of
+				// its base class it cannot do so through an instance of the
+				// base class (CS1540).
+				// => Ancestry should be: declaring_type ->* invocation_type
+				//      ->*  qualified_type
 				if (qualifier_type == null
 				    || qualifier_type == invocation_type
 				    || qualifier_type.IsSubclassOf (invocation_type))
-		return true;
-	}
+					return true;
+			}
 	
 			if (almost_match != null)
 				almost_match.Add (m);
 			return false;
 		}
-		
-	//
-	// This filter filters by name + whether it is ok to include private
-	// members in the search
-	//
-		internal bool Filter (MemberInfo m, object filter_criteria)
-	{
-		//
-		// Hack: we know that the filter criteria will always be in the `closure'
-		// fields. 
-		//
 
-		if ((filter_criteria != null) && (m.Name != (string) filter_criteria))
-			return false;
-
-		if (((qualifier_type == null) || (qualifier_type == invocation_type)) &&
-		    (invocation_type != null) && IsEqual (m.DeclaringType, invocation_type))
-			return true;
-
-		//
-		// Ugly: we need to find out the type of `m', and depending
-		// on this, tell whether we accept or not
-		//
-		if (m is MethodBase){
-			MethodBase mb = (MethodBase) m;
+		bool Filter (MethodBase mb, object filter_criteria)
+		{
 			MethodAttributes ma = mb.Attributes & MethodAttributes.MemberAccessMask;
 
 			if (ma == MethodAttributes.Private)
 				return private_ok ||
-					IsEqual (invocation_type, m.DeclaringType) ||
-					IsNestedChildOf (invocation_type, m.DeclaringType);
+					IsEqual (invocation_type, mb.DeclaringType) ||
+					IsNestedChildOf (invocation_type, mb.DeclaringType);
 
 			//
 			// FamAndAssem requires that we not only derivate, but we are on the
@@ -2811,14 +2790,14 @@ public class TypeManager {
 			return true;
 		}
 
-		if (m is FieldInfo){
-			FieldInfo fi = (FieldInfo) m;
+		bool Filter (FieldInfo fi, object filter_criteria)
+		{
 			FieldAttributes fa = fi.Attributes & FieldAttributes.FieldAccessMask;
 
 			if (fa == FieldAttributes.Private)
 				return private_ok ||
-					IsEqual (invocation_type, m.DeclaringType) ||
-					IsNestedChildOf (invocation_type, m.DeclaringType);
+					IsEqual (invocation_type, fi.DeclaringType) ||
+					IsNestedChildOf (invocation_type, fi.DeclaringType);
 
 			//
 			// FamAndAssem requires that we not only derivate, but we are on the
@@ -2861,13 +2840,42 @@ public class TypeManager {
 			// Public.
 			return true;
 		}
+		
+		//
+		// This filter filters by name + whether it is ok to include private
+		// members in the search
+		//
+		internal bool Filter (MemberInfo m, object filter_criteria)
+		{
+			//
+			// Hack: we know that the filter criteria will always be in the
+			// `closure' // fields. 
+			//
 
-		//
-		// EventInfos and PropertyInfos, return true because they lack permission
-			// information, so we need to check later on the methods.
-		//
-		return true;
-	}
+			if ((filter_criteria != null) && (m.Name != (string) filter_criteria))
+				return false;
+
+			if (((qualifier_type == null) || (qualifier_type == invocation_type)) &&
+			    (invocation_type != null) &&
+			    IsEqual (m.DeclaringType, invocation_type))
+				return true;
+
+			//
+			// Ugly: we need to find out the type of `m', and depending
+			// on this, tell whether we accept or not
+			//
+			if (m is MethodBase)
+				return Filter ((MethodBase) m, filter_criteria);
+
+			if (m is FieldInfo)
+				return Filter ((FieldInfo) m, filter_criteria);
+
+			//
+			// EventInfos and PropertyInfos, return true because they lack
+			// permission information, so we need to check later on the methods.
+			//
+			return true;
+		}
 	}
 
 	static Closure closure = new Closure ();
