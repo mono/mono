@@ -1,3 +1,21 @@
+2003-11-08  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (DeclSpace.GetTypeResolveEmitContext): Call
+	TypeManager.ResolveExpressionTypes().
+
+	* ecore.cs (Expression.ResolveAsTypeTerminal): Return a TypeExpr
+	instead of an Expression.
+	(TypeExpr): This is now an abstract base class for `TypeExpression'.
+	(TypeExpression): New public class; formerly known as `TypeExpr'.
+
+	* expression.cs (ComposedCast): Derive from TypeExpr.
+
+	* typemanager.cs (TypeManager.system_*_expr): These are now
+	TypExpr's instead of Expression's.
+	(TypeManager.ResolveExpressionTypes): New public static function;
+	called from DeclSpace.GetTypeResolveEmitContext() to resolve all
+	of them.	
+
 2003-11-06  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (New.DoResolve): Do not dereference value that

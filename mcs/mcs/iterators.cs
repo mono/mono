@@ -400,7 +400,7 @@ namespace Mono.CSharp {
 				constructor_types [0] = container.TypeBuilder;
 
 				Parameter THIS = new Parameter (
-					new TypeExpr (container.TypeBuilder, loc), "this", Parameter.Modifier.NONE, null);
+					new TypeExpression (container.TypeBuilder, loc), "this", Parameter.Modifier.NONE, null);
 				pars [0] = THIS;
 				i++;
 			}
@@ -408,7 +408,7 @@ namespace Mono.CSharp {
 			for (int j = 0; j < parameters.Count; j++, i++){
 				Type partype = parameters.ParameterType (j);
 				
-				pars [i] = new Parameter (new TypeExpr (partype, loc),
+				pars [i] = new Parameter (new TypeExpression (partype, loc),
 							  parameters.ParameterName (j),
 							  Parameter.Modifier.NONE, null);
 				constructor_types [i] = partype;

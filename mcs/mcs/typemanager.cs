@@ -89,22 +89,24 @@ public class TypeManager {
 	// An empty array of types
 	//
 	static public Type [] NoTypes;
+	static public TypeExpr [] NoTypeExprs;
 
 
 	// 
 	// Expressions representing the internal types.  Used during declaration
 	// definition.
 	//
-	static public Expression system_object_expr, system_string_expr; 
-	static public Expression system_boolean_expr, system_decimal_expr;
-	static public Expression system_single_expr, system_double_expr;
-	static public Expression system_sbyte_expr, system_byte_expr;
-	static public Expression system_int16_expr, system_uint16_expr;
-	static public Expression system_int32_expr, system_uint32_expr;
-	static public Expression system_int64_expr, system_uint64_expr;
-	static public Expression system_char_expr, system_void_expr;
-	static public Expression system_asynccallback_expr;
-	static public Expression system_iasyncresult_expr;
+	static public TypeExpr system_object_expr, system_string_expr; 
+	static public TypeExpr system_boolean_expr, system_decimal_expr;
+	static public TypeExpr system_single_expr, system_double_expr;
+	static public TypeExpr system_sbyte_expr, system_byte_expr;
+	static public TypeExpr system_int16_expr, system_uint16_expr;
+	static public TypeExpr system_int32_expr, system_uint32_expr;
+	static public TypeExpr system_int64_expr, system_uint64_expr;
+	static public TypeExpr system_char_expr, system_void_expr;
+	static public TypeExpr system_asynccallback_expr;
+	static public TypeExpr system_iasyncresult_expr;
+	static public TypeExpr system_valuetype_expr;
 
 	//
 	// This is only used when compiling corlib
@@ -306,8 +308,32 @@ public class TypeManager {
 		system_void_expr    = new TypeLookupExpression ("System.Void");
 		system_asynccallback_expr = new TypeLookupExpression ("System.AsyncCallback");
 		system_iasyncresult_expr = new TypeLookupExpression ("System.IAsyncResult");
+		system_valuetype_expr  = new TypeLookupExpression ("System.ValueType");
 	}
-	
+
+	public static void ResolveExpressionTypes (EmitContext ec)
+	{
+		system_object_expr.ResolveType (ec);
+		system_string_expr.ResolveType (ec);
+		system_boolean_expr.ResolveType (ec);
+		system_decimal_expr.ResolveType (ec);
+		system_single_expr.ResolveType (ec);
+		system_double_expr.ResolveType (ec);
+		system_sbyte_expr.ResolveType (ec);
+		system_byte_expr.ResolveType (ec);
+		system_int16_expr.ResolveType (ec);
+		system_uint16_expr.ResolveType (ec);
+		system_int32_expr.ResolveType (ec);
+		system_uint32_expr.ResolveType (ec);
+		system_int64_expr.ResolveType (ec);
+		system_uint64_expr.ResolveType (ec);
+		system_char_expr.ResolveType (ec);
+		system_void_expr.ResolveType (ec);
+		system_asynccallback_expr.ResolveType (ec);
+		system_iasyncresult_expr.ResolveType (ec);
+		system_valuetype_expr.ResolveType (ec);
+	}
+
 	static TypeManager ()
 	{
 		assemblies = new Assembly [0];
@@ -326,6 +352,7 @@ public class TypeManager {
 		builder_to_ifaces = new PtrHashtable ();
 		
 		NoTypes = new Type [0];
+		NoTypeExprs = new TypeExpr [0];
 
 		signature_filter = new MemberFilter (SignatureFilter);
 		InitExpressionTypes ();

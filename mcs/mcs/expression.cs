@@ -254,16 +254,16 @@ namespace Mono.CSharp {
 
 					result = null;
 					if (Convert.ImplicitConversionExists (ec, e, TypeManager.int32_type)){
-						result = new Cast (new TypeExpr (TypeManager.int32_type, loc), e, loc);
+						result = new Cast (new TypeExpression (TypeManager.int32_type, loc), e, loc);
 						result = result.Resolve (ec);
 					} else if (Convert.ImplicitConversionExists (ec, e, TypeManager.uint32_type)){
-						result = new Cast (new TypeExpr (TypeManager.uint32_type, loc), e, loc);
+						result = new Cast (new TypeExpression (TypeManager.uint32_type, loc), e, loc);
 						result = result.Resolve (ec);
 					} else if (Convert.ImplicitConversionExists (ec, e, TypeManager.int64_type)){
-						result = new Cast (new TypeExpr (TypeManager.int64_type, loc), e, loc);
+						result = new Cast (new TypeExpression (TypeManager.int64_type, loc), e, loc);
 						result = result.Resolve (ec);
 					} else if (Convert.ImplicitConversionExists (ec, e, TypeManager.uint64_type)){
-						result = new Cast (new TypeExpr (TypeManager.uint64_type, loc), e, loc);
+						result = new Cast (new TypeExpression (TypeManager.uint64_type, loc), e, loc);
 						result = result.Resolve (ec);
 					}
 
@@ -5148,7 +5148,7 @@ namespace Mono.CSharp {
 			//
 			type = ec.DeclSpace.ResolveType (expr, true, loc);
 			if (type != null) {
-				Cast cast = new Cast (new TypeExpr (type, loc), argument, loc);
+				Cast cast = new Cast (new TypeExpression (type, loc), argument, loc);
 				return cast.Resolve (ec);
 			}
 
@@ -5164,7 +5164,7 @@ namespace Mono.CSharp {
 			// Ok, so it's a Cast.
 			//
 			if (expr.eclass == ExprClass.Type) {
-				Cast cast = new Cast (new TypeExpr (expr.Type, loc), argument, loc);
+				Cast cast = new Cast (new TypeExpression (expr.Type, loc), argument, loc);
 				return cast.Resolve (ec);
 			}
 
@@ -6890,7 +6890,7 @@ namespace Mono.CSharp {
 					string full_name = String.Concat (((SimpleName) full_expr.Expr).Name, ".", fname);
 					Type fully_qualified = ec.DeclSpace.FindType (loc, full_name);
 					if (fully_qualified != null)
-						return new TypeExpr (fully_qualified, loc);
+						return new TypeExpression (fully_qualified, loc);
 				}
 
 				full_expr = full_expr.Expr as MemberAccess;
@@ -7564,8 +7564,8 @@ namespace Mono.CSharp {
 
 			Type [] ifaces = TypeManager.GetInterfaces (lookup_type);
 			if (ifaces != null) {
-				foreach (Type itype in ifaces) {
-					MemberInfo [] mi = GetIndexersForTypeOrInterface (caller_type, itype);
+				foreach (Type iface in ifaces) {
+					MemberInfo [] mi = GetIndexersForTypeOrInterface (caller_type, iface);
 					if (mi != null){
 						if (ix == null)
 							ix = new Indexers ();
@@ -7840,7 +7840,7 @@ namespace Mono.CSharp {
 			Expression left;
 			
 			if (ec.IsStatic)
-				left = new TypeExpr (base_type, loc);
+				left = new TypeExpression (base_type, loc);
 			else
 				left = ec.GetThis (loc);
 			
@@ -7976,7 +7976,7 @@ namespace Mono.CSharp {
 	//   the type specification, we just use this to construct the type
 	//   one bit at a time.
 	// </summary>
-	public class ComposedCast : Expression {
+	public class ComposedCast : TypeExpr {
 		Expression left;
 		string dim;
 		
@@ -7987,7 +7987,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public override Expression ResolveAsTypeStep (EmitContext ec)
+		public override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
 			Type ltype = ec.DeclSpace.ResolveType (left, false, loc);
 			if (ltype == null)
@@ -8028,19 +8028,10 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public override Expression DoResolve (EmitContext ec)
-		{
-			return ResolveAsTypeStep (ec);
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			throw new Exception ("This should never be called");
-		}
-
-		public override string ToString ()
-		{
-			return left + dim;
+		public override string Name {
+			get {
+				return left + dim;
+			}
 		}
 	}
 
