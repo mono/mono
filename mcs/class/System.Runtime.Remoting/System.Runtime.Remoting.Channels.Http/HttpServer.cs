@@ -318,11 +318,6 @@ namespace System.Runtime.Remoting.Channels.Http
 				//may be its the client's fault so just return with false
 				return false;
 			}
-			finally
-			{
-				Console.WriteLine ("Closed");
-				reqArg.OutputStream.Close ();
-			}
 
 			return true;
 		}
