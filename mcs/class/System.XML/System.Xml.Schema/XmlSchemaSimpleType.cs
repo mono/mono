@@ -165,6 +165,18 @@ namespace System.Xml.Schema
 			XdtYearMonthDuration = BuildSchemaType ("yearMonthDuration", "duration", true, false);
 
 			// NMTOKENS, IDREFS, ENTITIES - lists
+			XsIDRefs = new XmlSchemaSimpleType ();
+			XmlSchemaSimpleTypeList sl = new XmlSchemaSimpleTypeList ();
+			sl.ItemType = XsIDRef;
+			XsIDRefs.Content = sl;
+			XsEntities = new XmlSchemaSimpleType ();
+			sl = new XmlSchemaSimpleTypeList ();
+			sl.ItemType = XsEntity;
+			XsEntities.Content = sl;
+			XsNMTokens = new XmlSchemaSimpleType ();
+			sl = new XmlSchemaSimpleTypeList ();
+			sl.ItemType = XsNMToken;
+			XsNMTokens.Content = sl;
 #endif
 		}
 

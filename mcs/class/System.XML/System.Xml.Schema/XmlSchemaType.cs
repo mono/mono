@@ -46,9 +46,7 @@ namespace System.Xml.Schema
 		private bool isMixed;
 		private string name;
 		bool recursed;
-#if NET_2_0
-		private XmlTypeCode typeCodeForPredefinedTypes;
-#endif
+
 		internal XmlQualifiedName BaseSchemaTypeName;
 		internal XmlSchemaType BaseXmlSchemaTypeInternal;
 		internal XmlSchemaDatatype DatatypeInternal;
@@ -141,14 +139,18 @@ namespace System.Xml.Schema
 		// it returns Entity. for NMTOKENS it returns NmToken.
 		public XmlTypeCode TypeCode {
 			get {
-				if (typeCodeForPredefinedTypes != XmlTypeCode.None) // anySimpleType, anyType etc.
-					return typeCodeForPredefinedTypes;
-				if (DatatypeInternal != null)
-					return DatatypeInternal.TypeCode;
+				if (this == XmlSchemaComplexType.AnyType)
+					return XmlTypeCode.Item;
 				if (DatatypeInternal == XmlSchemaSimpleType.AnySimpleType)
 					return XmlTypeCode.AnyAtomicType;
-				if (this == XmlSchemaComplexType.AnyType)
-					return XmlTypeCode.None;
+				if (this == XmlSchemaSimpleType.XsIDRefs)
+					return XmlTypeCode.Idref;
+				if (this == XmlSchemaSimpleType.XsEntities)
+					return XmlTypeCode.Entity;
+				if (this == XmlSchemaSimpleType.XsNMTokens)
+					return XmlTypeCode.NmToken;
+				if (DatatypeInternal != null)
+					return DatatypeInternal.TypeCode;
 				return BaseXmlSchemaType.TypeCode;
 			}
 		}

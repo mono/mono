@@ -1,5 +1,11 @@
 2004-08-25  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaSimpleType.cs : Fill list types such as xs:IDREFS.
+	* XmlSchemaType.cs :
+	  Fixed TypeCode more (broken on predefined list types and xs:anyType).
+
+2004-08-25  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaType.cs :
 	  anyType was anonymous, thus GetBuiltInComplexType() didn't work.
 
