@@ -1,3 +1,8 @@
+2002-08-26  Martin Baulig  <martin@gnome.org>
+
+	* loader.c (mono_lookup_pinvoke_call): Include the error message
+	from g_module_error() in the error message.
+
 2002-08-24  Martin Baulig  <martin@gnome.org>
 
 	* rawbuffer.c (mono_raw_buffer_load): Added `int is_shared'
