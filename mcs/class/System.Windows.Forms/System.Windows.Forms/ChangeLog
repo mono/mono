@@ -1,3 +1,7 @@
+2003-04-25  Miguel de Icaza  <miguel@ximian.com>
+
+        * SystemInformation.cs (ComputerName): Bug fix: we need to trim down the size
+
 2003-05-30  Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* GroupBox.cs : take BackColor into account
 

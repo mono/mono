@@ -66,12 +66,17 @@ namespace System.Windows.Forms {
 		static string _gethostname ()
 		{
 			byte [] buf = new byte [256];
+			int count;
 			unsafe {
 				fixed (byte *p = &buf [0]){
+					byte *q = p;
 					gethostname (p, 256);
+					while (*q != 0 && ((int)(p-q) < 256))
+						q++;
+					count = (int) (q - p);
 				}
 			}
-			return new String(Encoding.UTF8.GetChars (buf));
+			return new String(Encoding.UTF8.GetChars (buf, 0, count));
 		}
 	
 		public static string ComputerName {
