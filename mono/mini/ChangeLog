@@ -1,3 +1,9 @@
+2004-09-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (mono_arch_get_argument_info): Fix stack_unwind test.
+
+	* cpu-amd64.md inssel-long.brg inssel-amd64.brg: Small optimizations.
+
 2004-09-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-x86.c: Fix build.
