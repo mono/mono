@@ -1,3 +1,7 @@
+2004-03-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MonoIO.cs: added case for ERROR_FILENAME_EXCED_RANGE.
+
 2004-02-25  Jackson Harper <jackson@ximian.com>
 
 	* File.cs: Report the filename when deleting a file fails. Patch

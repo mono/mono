@@ -50,6 +50,10 @@ namespace System.IO
 				message = String.Format ("Could not create file \"{0}\". File already exists.", path);
 				return new IOException (message);
 
+			case MonoIOError.ERROR_FILENAME_EXCED_RANGE:
+				message = String.Format ("Path is too long. Path: {0}", path); 
+				return new PathTooLongException (message);
+
 			default:
 				message = String.Format ("Win32 IO returned {0}. Path: {1}", error, path);
 				return new IOException (message);
