@@ -6,9 +6,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -549,6 +547,7 @@ namespace Mono.Security {
 			private ArrayList crls;
 			private SignerInfo signerInfo;
 			private bool mda;
+			private bool signed;
 
 			public SignedData () 
 			{
@@ -558,6 +557,7 @@ namespace Mono.Security {
 				crls = new ArrayList ();
 				signerInfo = new SignerInfo ();
 				mda = true;
+				signed = false;
 			}
 
 			public SignedData (byte[] data) 
@@ -712,7 +712,7 @@ namespace Mono.Security {
 				// contentInfo ContentInfo,
 				ASN1 ci = contentInfo.ASN1;
 				signedData.Add (ci);
-				if (hashAlgorithm != null) {
+				if (!signed && (hashAlgorithm != null)) {
 					if (mda) {
 						// Use authenticated attributes for signature
 						
@@ -734,6 +734,7 @@ namespace Mono.Security {
 						byte[] sig = ha.ComputeHash (ci[1][0].Value);
 						signerInfo.Signature = r.CreateSignature (sig);
 					}
+					signed = true;
 				}
 
 				// certificates [0] IMPLICIT ExtendedCertificatesAndCertificates OPTIONAL,
@@ -832,8 +833,9 @@ namespace Mono.Security {
 				}
 
 				// digestEncryptionAlgorithm DigestEncryptionAlgorithmIdentifier
-				ASN1 digestEncryptionAlgorithm = asn1 [0][n++];
-				string digestEncryptionAlgorithmOid = ASN1Convert.ToOid (digestEncryptionAlgorithm [0]);
+				n++;
+				// ASN1 digestEncryptionAlgorithm = asn1 [0][n++];
+				// string digestEncryptionAlgorithmOid = ASN1Convert.ToOid (digestEncryptionAlgorithm [0]);
 
 				// encryptedDigest EncryptedDigest
 				ASN1 encryptedDigest = asn1 [0][n++];
