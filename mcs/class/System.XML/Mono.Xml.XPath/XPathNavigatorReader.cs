@@ -27,7 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 
 using System;
 using System.Text;
@@ -131,7 +130,7 @@ namespace Mono.Xml.XPath
 				if (eof)
 					return String.Empty;
 				else if (current.NodeType == XPathNodeType.Namespace)
-					return XmlNamespaceManager.XmlnsXmlns;
+					return "http://www.w3.org/2000/xmlns/";
 				else
 					return current.NamespaceURI;
 			}
@@ -206,8 +205,12 @@ namespace Mono.Xml.XPath
 
 		public override bool IsDefault {
 			get {
+#if NET_2_0
 				IXmlSchemaInfo si = current as IXmlSchemaInfo;
 				return si != null && si.IsDefault;
+#else
+				return false; // no way to check this.
+#endif
 			}
 		}
 
@@ -677,4 +680,3 @@ namespace Mono.Xml.XPath
 	}
 }
 
-#endif
