@@ -12,14 +12,14 @@ Module NewTest
       
 		Public Sub Add
 			A = Me.y +Me.x
-			if A <> 701 Then 
+			if A <> 700 Then 
 				Throw New Exception ("Unexpected behavior:: A should be equal to Me.X + Me.Y=300+400 = 700 but got A=" &A)
 			End If
-		nd Sub
+		End Sub
 	End Structure
 	
 	Sub Main()
-		im R as New Point (300,400)
+		Dim R as New Point (300,400)
 	      R.Add
 	End Sub	
 End Module
