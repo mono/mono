@@ -1,4 +1,8 @@
 
+Fri Feb 22 15:36:19 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* RuntimeHelpers.cs: added OffsetToStringData() property.
+
 Mon Nov 5 19:50:11 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* RuntimeHelpers.cs: make InitializeArray an internalcall.
