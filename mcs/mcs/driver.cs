@@ -1019,7 +1019,7 @@ namespace Mono.CSharp
 				int cp = -1;
 
 				if (value == "utf8")
-					cp = UTF8Encoding.WindowsCodePage;
+					cp = (new UTF8Encoding()).WindowsCodePage;
 				if (value == "reset"){
 					cp = 28591;
 					using_default_encoder = true;

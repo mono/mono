@@ -1,3 +1,8 @@
+2002-09-08  Nick Drochak  <ndrochak@gol.com>
+
+	* driver.cs: Use an object to get the windows codepage since it's not a
+	static property.
+
 2002-09-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs (For.Emit): for infinite loops (test == null)
