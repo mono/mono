@@ -1,4 +1,10 @@
 
+Fri Mar 29 18:09:08 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: it seems GC_debug_malloc() makes the Boehm GC call the
+	finalizer even though the memory is still referenced (and the chunk of
+	memory is not freed).
+
 Fri Mar 29 17:43:04 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* assembly.c: fix brokeness.
