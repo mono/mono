@@ -5,6 +5,7 @@
 //   Miguel de Icaza (miguel@ximian.com)
 //   Dietmar Maurer (dietmar@ximian.com)
 //   Lluis Sanchez Gual (lluis@ideary.com)
+//   Patrik Torstensson
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
@@ -24,7 +25,7 @@ namespace System.Runtime.Remoting {
 		string uri;
 		IRemotingTypeInfo typeInfo;
 		IEnvoyInfo envoyInfo;
-		[NonSerialized] bool marshalledValue = false;
+		[NonSerialized] bool marshalledValue = true;
 		
 		public ObjRef ()
 		{
@@ -56,7 +57,7 @@ namespace System.Runtime.Remoting {
 			SerializationInfoEnumerator en = si.GetEnumerator();
 			// Info to serialize: uri, objrefFlags, typeInfo, envoyInfo, channelInfo
 
-			marshalledValue = false;
+			marshalledValue = true;
 
 			while (en.MoveNext ()) {
 				switch (en.Name) {
@@ -73,7 +74,15 @@ namespace System.Runtime.Remoting {
 					envoyInfo = (IEnvoyInfo)en.Value;
 					break;
 				case "fIsMarshalled":
-					marshalledValue = true;
+					int status;
+					Object o = en.Value;
+					if (o.GetType().Equals(typeof(String)))
+						status = ((IConvertible) o).ToInt32(null);
+					else
+						status = (int) o;
+
+					if (status == 0)
+						marshalledValue = false;
 					break;
 				case "objrefFlags":		// FIXME: do something with this
 					break;
