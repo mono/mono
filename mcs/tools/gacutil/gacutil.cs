@@ -243,9 +243,7 @@ namespace Mono.Tools
 				Console.WriteLine ("ERROR: assembly has no valid public key token");
 				return;
 			}
-			byte[] pkey = new byte [akey.Length - 12];
-			Buffer.BlockCopy (akey, 12, pkey, 0, pkey.Length);
-			StrongName sn = new StrongName (pkey);
+			StrongName sn = new StrongName (akey);
 			if (!sn.Verify (args[0])) {
 				Console.WriteLine ("ERROR: invalid strongname signature in assembly");
 				return;
