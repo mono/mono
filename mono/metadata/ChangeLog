@@ -1,3 +1,8 @@
+2004-09-01  Martin Baulig  <martin@ximian.com>
+
+	* metadata.c (mono_type_size): If we're a generic instance, call
+	mono_class_value_size() for value types.
+
 2004-08-31  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c: Implement more custom marshalling functionality. Fixes
