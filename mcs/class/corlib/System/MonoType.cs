@@ -175,7 +175,7 @@ namespace System
 				}
 			}
 			
-			if (typesLen == 0) 
+			if (types == null) 
 				return (MethodInfo) Binder.FindMostDerivedMatch (match);
 
 			if (binder == null)

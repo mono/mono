@@ -1,5 +1,9 @@
 2003-12-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* MonoType.cs (GetMethodImpl): Only call FindMostDerivedMatch if the
+	user supplied no parameter info, but not when the user supplied an
+	empty parameter list. This fixes IKVM.
+
 	* Environment.cs: Bump corlib version.
 
 2003-12-19  Dick Porter  <dick@ximian.com>
