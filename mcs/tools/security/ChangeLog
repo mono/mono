@@ -1,3 +1,7 @@
+2003-06-19  Nick Drochak <ndrochak@gol.com>
+
+	* MakeCert.cs: Work around for mcs? bug 45127.
+
 2003-03-15  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AssemblyInfo.cs: Updated version for mono 0.23.
