@@ -1,3 +1,8 @@
+2003-12-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-x86.c (mono_arch_emit_prolog): Fix stack space allocation for
+	methods with large stack frames under Win32.
+
 2003-12-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Makefile.am: Distribute regression tests.
