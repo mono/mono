@@ -286,7 +286,7 @@ namespace System.Data {
 		public string ColumnName
 		{
 			get {
-				return "" + _columnName;
+				return (_columnName == null ? "" : _columnName);
 			}
 			set {
 				//Both are checked after the column is part of the collection
