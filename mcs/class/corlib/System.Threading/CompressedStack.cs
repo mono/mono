@@ -14,5 +14,9 @@ namespace System.Threading
 		internal CompressedStack ()
 		{
 		}
+
+		~CompressedStack ()
+		{
+		}
 	}
 }		

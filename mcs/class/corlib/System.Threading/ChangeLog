@@ -1,3 +1,8 @@
+2004-06-09  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CompressedStack.cs: Added finalizer to match public API of
+	MS.NET
+
 2004-05-19  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* Thread.cs: Some fixes in Abort. Implemented Suspend and Resume.
