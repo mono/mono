@@ -1,11 +1,13 @@
 //
 // System.Drawing.Drawing2D.HatchStyle.cs
 //
-// Author:
+// Authors:
 //   Stefan Maierhofer <sm@cg.tuwien.ac.at>
 //   Dennis Hayes (dennish@Raytek.com)
+//   Ravindra (rkumar@novell.com)
 //
-// (C) 2002/3 Ximian, Inc
+// (C) 2002/3 Ximian, Inc.
+// (C) 2004 Novell, Inc.
 //
 
 using System;
@@ -17,7 +19,7 @@ namespace System.Drawing.Drawing2D {
 	[Serializable]
 	public enum HatchStyle {
 		BackwardDiagonal = 3,
-		Cross = 4,
+		Cross = LargeGrid,
 		DarkDownwardDiagonal = 20,
 		DarkHorizontal = 29,
 		DarkUpwardDiagonal = 21,
@@ -41,7 +43,7 @@ namespace System.Drawing.Drawing2D {
 		LightHorizontal = 25,
 		LightUpwardDiagonal = 19,
 		LightVertical = 24,
-		Max = 4,
+		Max = SolidDiamond,
 		Min = 0,
 		NarrowHorizontal = 27,
 		NarrowVertical = 26,
@@ -70,7 +72,7 @@ namespace System.Drawing.Drawing2D {
 		Wave = 37,
 		Weave = 40,
 		WideDownwardDiagonal = 22,
-		WideUpwardDiagonal = 21,
+		WideUpwardDiagonal = 23,
 		ZigZag = 36
 	}
 }

@@ -1,3 +1,9 @@
+2004-02-05  Ravindra <rkumar@novell.com>
+
+	* HatchBrush.cs: Implemented.
+	* HatchStyle.cs: Corrected enum values. Changed file format
+	from DOS to UNIX.
+
 2004-01-30  Duncan Mak  <duncan@ximian.com>
 
 	* GraphicsPath.cs (AddPie): Corrected arguments sent to
