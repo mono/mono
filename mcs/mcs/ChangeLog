@@ -1,3 +1,10 @@
+2002-07-25  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.cs: Rename --resource to --linkres, because that is what
+	we do currently, we dont support --resource yet.
+
+	* cs-tokenizer.cs: Fix test for reporting endif mismatches.
+
 2002-07-25  Martin Baulig  <martin@gnome.org>
 
 	* class.cs (MethodData): New public class.  This is a `method builder'

@@ -171,7 +171,7 @@ namespace Mono.CSharp
 				"   --parse          Only parses the source file\n" +
 				"   --expect-error X Expect that error X will be encountered\n" +
 				"   --recurse SPEC   Recursively compiles the files in SPEC ([dir]/file)\n" + 
-				"   --resource FILE  Addds FILE as a resource\n" + 
+				"   --linkres FILE   Links FILE as a resource\n" + 
 				"   --stacktrace     Shows stack trace at error location\n" +
 				"   --target KIND    Specifies the target (KIND is one of: exe, winexe, " +
 				                     "library, module)\n" +
@@ -556,10 +556,10 @@ namespace Mono.CSharp
 				Report.Stacktrace = true;
 				return true;
 				
-			case "--resource":
+			case "--linkres":
 				if ((i + 1) >= args.Length){
 					Usage ();
-					Console.WriteLine("Missing argument to --resource"); 
+					Console.WriteLine("Missing argument to --linkres"); 
 					Environment.Exit (1);
 				}
 				if (resources == null)
@@ -778,6 +778,17 @@ namespace Mono.CSharp
 				return true;
 			}
 
+			case "/linkres":
+				if (value == ""){
+					Console.WriteLine ("/recurse requires an argument");
+					Environment.Exit (1);
+				}
+				if (resources == null)
+					resources = new ArrayList ();
+				
+				resources.Add (value);
+				return true;
+				
 			case "/recurse":
 				if (value == ""){
 					Console.WriteLine ("/recurse requires an argument");

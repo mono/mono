@@ -1517,7 +1517,7 @@ namespace Mono.CSharp
 					any_token_seen |= tokens_seen;
 					tokens_seen = false;
 					if (c == -1)
-						Report.Error (1027, Location, "#endif expected");
+						Report.Error (1027, Location, "#endif/#endregion expected");
 					continue;
 				}
 				
@@ -1597,8 +1597,9 @@ namespace Mono.CSharp
 				return Token.ERROR;
 			}
 
-			if (ifstack != null && ifstack.Count > 1)
-				Report.Error (1027, Location, "#endif expected");
+			if (ifstack != null && ifstack.Count >= 1)
+				Report.Error (1027, Location, "#endif/#endregion expected");
+
 			return Token.EOF;
 		}
 	}
