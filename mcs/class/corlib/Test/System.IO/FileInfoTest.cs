@@ -711,8 +711,8 @@ namespace MonoTests.System.IO
 			AssertEquals ("foo", new FileInfo ("foo").ToString ());
 			AssertEquals ("c:/foo", new FileInfo ("c:/foo").ToString ());
 			AssertEquals ("/usr/local/foo", new FileInfo ("/usr/local/foo").ToString ());
-			AssertEquals ("c:\foo", new FileInfo ("c:\\foo").ToString ());
-			AssertEquals ("/usr/local\foo", new FileInfo ("/usr/local\\foo").ToString ());
+			AssertEquals ("c:\\foo", new FileInfo ("c:\\foo").ToString ());
+			AssertEquals ("/usr/local\\foo", new FileInfo ("/usr/local\\foo").ToString ());
 			AssertEquals ("foo/BAR/baz", new FileInfo ("foo/BAR/baz").ToString ());
 			AssertEquals ("c:/documents and settings", new FileInfo ("c:/documents and settings").ToString ());
 			AssertEquals ("c:/docUme~1", new FileInfo ("c:/docUme~1").ToString ());
