@@ -1,6 +1,6 @@
 2004-10-12  Atsushi Enomoto  <atsushi@ximian.com>
 
-	* DataSetTest.cs : now xs:schema contains xmlns="".
+	* DataSet.cs : now xs:schema contains xmlns="".
 	  This fixes bug #68008.
 
 2004-10-12  Atsushi Enomoto  <atsushi@ximian.com>
