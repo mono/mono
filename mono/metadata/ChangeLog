@@ -6,6 +6,9 @@
 	(ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringXXX):
 	impl. PtrToStringXXX methods
 	(ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructure_type): impl.
+	(ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf): impl.
+	(ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi): impl.
+	(ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni): impl.
 
 Tue Jul 16 19:00:57 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
