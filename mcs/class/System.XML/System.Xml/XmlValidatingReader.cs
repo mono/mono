@@ -333,7 +333,7 @@ namespace System.Xml {
 				switch (ValidationType) {
 				case ValidationType.Auto:
 				case ValidationType.DTD:
-					validatingReader = new DTDValidatingReader (sourceReader);
+					validatingReader = new DTDValidatingReader (sourceReader, this);
 					break;
 				case ValidationType.None:
 				case ValidationType.Schema:
@@ -380,6 +380,16 @@ namespace System.Xml {
 			throw new NotImplementedException ();
 		}
 
+		// It should be "protected" as usual "event model"
+		// methods are, but validation event is not exposed,
+		// so it is no other way to make it "internal".
+		internal void OnValidationEvent (object o, ValidationEventArgs e)
+		{
+			if (ValidationEventHandler != null)
+				ValidationEventHandler (o, e);
+			else
+				throw e.Exception;
+		}
 		#endregion // Methods
 
 		#region Events and Delegates

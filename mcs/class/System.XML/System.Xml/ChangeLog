@@ -1,5 +1,15 @@
 2003-07-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* DTDValidatingReader.cs :
+	  changed base class to XmlReader and implemented IXmlLineInfo members.
+	  changed .ctor() argument from event handler to validating reader.
+	  Removed some #if ... #else ... #endif blocks.
+	  Added validation event support for Read() using HandleError().
+	* XmlValidatingReader.cs : added internal OnValidationEvent().
+	* XmlDocument.cs : ReadNode() now checks reader's state more strictly.
+
+2003-07-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlUrlResolver.cs : applied BenM's patch for file uri problem
 	  (bug #46610).
 

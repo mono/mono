@@ -695,8 +695,15 @@ namespace System.Xml
 			XmlNode newNode = null;
 			XmlNode currentNode = null;
 
-			if (reader.ReadState == ReadState.Initial)
+			switch (reader.ReadState) {
+			case ReadState.Interactive:
+				break;
+			case ReadState.Initial:
 				reader.Read ();
+				break;
+			default:
+				return null;
+			}
 
 			int startDepth = reader.Depth;
 			bool ignoredWhitespace;
@@ -704,7 +711,7 @@ namespace System.Xml
 
 			do {
 				ignoredWhitespace = false;
-				if (reader.NodeType == XmlNodeType.None)
+				if (reader.ReadState != ReadState.Interactive)
 					if (reachedEOF)
 						throw new Exception ("XML Reader reached to end while reading node.");
 					else
@@ -812,6 +819,7 @@ namespace System.Xml
 						ignoredWhitespace = true;
 					break;
 				}
+				// Read next, except for reading attribute node.
 				if (!(newNode is XmlAttribute) && !reader.Read ())
 					break;
 			} while (ignoredWhitespace || reader.Depth > startDepth ||
