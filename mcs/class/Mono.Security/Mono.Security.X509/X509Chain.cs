@@ -177,11 +177,13 @@ namespace Mono.Security.X509 {
 
 			// TODO - we should check for CRITICAL but unknown extensions
 			// X509ChainStatusFlags.InvalidExtension
+#if !NET_1_0
 			if (ServicePointManager.CheckCertificateRevocationList) {
 				// TODO - check revocation (CRL, OCSP ...)
 				// X509ChainStatusFlags.RevocationStatusUnknown
 				// X509ChainStatusFlags.Revoked
 			}
+#endif
 			return true;
 		}
 
