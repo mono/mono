@@ -187,10 +187,23 @@ namespace System.Collections {
 			modificationCount = (int) info.GetValue ("Version", typeof(int));
 			comparerRef = (IComparer) info.GetValue ("Comparer", typeof (object));
 			hcpRef = (IHashCodeProvider) info.GetValue ("HashCodeProvider", typeof (object));
-			inUse = (int) info.GetValue ("HashSize", typeof(int));
-			table = (Slot[]) info.GetValue("Table", typeof(Slot[]));
-			threshold = (int) info.GetValue("Treshold", typeof(int));
- 		}
+			int size = (int) info.GetValue ("HashSize", typeof(int));
+			Object [] keys = (Object []) info.GetValue("Keys", typeof(Object [] ));
+			Object [] values = (Object []) info.GetValue("Values", typeof(Object [] ));
+
+			if (keys.Length != values.Length) 
+			  throw new SerializationException("Keys and values of uneven size");
+			 
+			size = ToPrime (size);
+			this.SetTable (new Slot [size]);
+			
+			for(int i=0;i<keys.Length;i++) {
+                           Add(keys[i], values[i]);
+			}
+			
+		
+ 			AdjustThreshold();
+		}
 
 		//
 		// Properties
@@ -422,9 +435,18 @@ namespace System.Collections {
 			info.AddValue ("Version", modificationCount);
 			info.AddValue ("Comparer", comparerRef);
 			info.AddValue ("HashCodeProvider", hcpRef);
-			info.AddValue ("HashSize", inUse);
-			info.AddValue ("Table", table);
-			info.AddValue ("Treshold", threshold);
+			info.AddValue ("HashSize", this.table.Length);
+// Create Keys
+                        Object [] keys = new Object[inUse];
+			CopyToArray(keys, 0, EnumeratorMode.KEY_MODE); 
+  
+// Create Values
+                        Object [] values = new Object[inUse];
+			CopyToArray(values, 0, EnumeratorMode.VALUE_MODE);
+
+			info.AddValue ("Keys", keys);
+			info.AddValue ("Values", values);
+
 		}
 
 		public virtual void OnDeserialization (object sender)

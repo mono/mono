@@ -1,3 +1,9 @@
+2004-03-18  David Sheldon <dave-mono@earth.li>
+
+  * Hashtable.cs: Serialise/Deserialise to two arrays of 
+   keys/values. This will match what MS.NET appears to be
+   doing.
+
 2004-02-12  Jackson Harper  <jackson@ximian.com>
 
 	* SortedList.cs: Only .et 1.0 sets the capacity to a min of
