@@ -122,8 +122,9 @@ namespace System.Drawing {
 					else {
 						throw new NotImplementedException();
 					}
-					// FIXME: Is it safe to free the unmanaged memory block now ?
-					info.Dispose();
+					// FIXME: It is not safe to dispose the info here
+					// Memory leak!!!
+					//info.Dispose();
 				}
 			}
 			

@@ -1,3 +1,7 @@
+2003-08-04  Alexandre Pigolkine <pigolkine@gmx.de>
+	* Bitmap.cs			keep loaded image buffer
+	* Graphics.cs		type conversion removed
+
 2003-07-30  Alexandre Pigolkine <pigolkine@gmx.de>
 	* Bitmap.cs		
 	* GDKfunctions.cs

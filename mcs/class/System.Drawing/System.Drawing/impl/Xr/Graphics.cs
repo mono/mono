@@ -1076,7 +1076,7 @@ namespace System.Drawing
 			[MonoTODO]
 			void IGraphics.FillRectangle (System.Drawing.Brush brush, float x, float y, float width, float height)
 			{
-				FillRectangle (ConvertBrush (brush), (int)x, (int)y, (int)width, (int)height);
+				FillRectangle (ConvertBrush (brush), x, y, width, height);
 			}
 
 			[MonoTODO]
