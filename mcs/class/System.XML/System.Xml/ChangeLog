@@ -1,3 +1,12 @@
+2002-03-08  Jason Diamond  <jason@injektilo.org>
+
+	* XmlAttribute.cs: Attribute nodes are supposed to store their values
+	as child nodes so updated to reflect that.
+
+	* XmlDocument.cs, XmlElement.cs, XmlNode.cs: Moved code that was
+	duplicated in XmlDocument and XmlElement into XmlNode so that it
+	wouldn't have to be duplicated in XmlAttribute, too.
+
 2002-03-08  Kral Ferch <kral_ferch@hotmail.com>
 
 	* XmlNodeList.cs, XmlDocument.cs, XmlLinkedNode.cs,

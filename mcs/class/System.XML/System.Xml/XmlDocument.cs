@@ -17,22 +17,12 @@ namespace System.Xml
 	public class XmlDocument : XmlNode
 	{
 		#region Fields
-		///////////////////////////////////////////////////////////////////////
-		//
-		//	Fields
-		//
-		///////////////////////////////////////////////////////////////////////
 
-		private XmlLinkedNode lastChild;
+		private XmlLinkedNode lastLinkedChild;
 
 		#endregion
 
 		#region Constructors
-		///////////////////////////////////////////////////////////////////////
-		//
-		//	Constructors
-		//
-		///////////////////////////////////////////////////////////////////////
 
 		public XmlDocument () : base (null) { }
 
@@ -51,11 +41,6 @@ namespace System.Xml
 		#endregion
 
 		#region Events
-		///////////////////////////////////////////////////////////////////////
-		//
-		//	Events
-		//
-		///////////////////////////////////////////////////////////////////////
 
 		public event XmlNodeChangedEventHandler NodeChanged;
 
@@ -72,11 +57,6 @@ namespace System.Xml
 		#endregion
 
 		#region Properties
-		///////////////////////////////////////////////////////////////////////
-		//
-		//	Properties
-		//
-		///////////////////////////////////////////////////////////////////////
 
 		[MonoTODO]
 		public override string BaseURI {
@@ -117,41 +97,17 @@ namespace System.Xml
 			get { return false; }
 		}
 
-		internal override XmlLinkedNode LastLinkedChild
-		{
+		internal override XmlLinkedNode LastLinkedChild {
 			get	{
-				return lastChild;
+				return lastLinkedChild;
 			}
-			/// set'er Should only be called by XmlNode.AppendChild().
-			set 
-			{
-				// This is our special case for clearing out all children.
-				// XmlNode.RemoveAll() will call this method passing in
-				// a null node.
-				if (value == null)
-				{
-					// This should allow the GC to collect up our circular list
-					// that we no longer have a reference to.
-					lastChild = null;
-					return;
-				}
 
-				if (LastChild == null) 
-				{
-					lastChild = value;
-					LastLinkedChild.NextLinkedSibling = null;
-				}
-				
-				value.NextLinkedSibling = LastLinkedChild.NextLinkedSibling;
-				LastLinkedChild.NextLinkedSibling = value;
-				lastChild = value;
-
-				SetParentNode(this);
+			set {
+				lastLinkedChild = value;
 			}
 		}
 		
-		public override string LocalName 
-		{
+		public override string LocalName {
 			get { return "#document"; }
 		}
 
@@ -186,11 +142,6 @@ namespace System.Xml
 		#endregion
 
 		#region Methods
-		///////////////////////////////////////////////////////////////////////
-		//
-		//	Methods
-		//
-		///////////////////////////////////////////////////////////////////////
 
 		[MonoTODO]
 		public override XmlNode CloneNode (bool deep)

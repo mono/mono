@@ -1,3 +1,7 @@
+2002-03-08  Jason Diamond <jason@injektilo.org>
+
+	* XmlAttributeTests.cs: Test XmlAttribute child nodes.
+
 2002-03-08  Kral Ferch <kral_ferch@hotmail.com>
 
 	* XmlNodeListTests.cs: New file.

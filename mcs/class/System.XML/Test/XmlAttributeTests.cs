@@ -31,9 +31,32 @@ namespace Ximian.Mono.Tests
 			AssertNull(attr.Attributes);
 		}
 
+		public void TestAttributeWithNoValue ()
+		{
+			XmlAttribute attribute = doc.CreateAttribute ("name");
+			AssertEquals (String.Empty, attribute.Value);
+			Assert (!attribute.HasChildNodes);
+			AssertNull (attribute.FirstChild);
+			AssertNull (attribute.LastChild);
+			AssertEquals (0, attribute.ChildNodes.Count);
+		}
+
+		public void TestAttributeWithValue ()
+		{
+			XmlAttribute attribute = doc.CreateAttribute ("name");
+			attribute.Value = "value";
+			AssertEquals ("value", attribute.Value);
+			Assert (attribute.HasChildNodes);
+			AssertNotNull (attribute.FirstChild);
+			AssertNotNull (attribute.LastChild);
+			AssertEquals (1, attribute.ChildNodes.Count);
+			AssertEquals (XmlNodeType.Text, attribute.ChildNodes [0].NodeType);
+			AssertEquals ("value", attribute.ChildNodes [0].Value);
+		}
+
 		public void TestHasChildNodes()
 		{
-			Assert("Child nodes not allowed", attr.HasChildNodes == false);
+			Assert(attr.HasChildNodes);
 		}
 
 		public void TestName()

@@ -15,11 +15,11 @@ namespace System.Xml
 	{
 		#region Fields
 
+		private XmlElement ownerElement;
+		private XmlLinkedNode lastChild;
 		private string localName;
 		private string namespaceURI;
 		private string prefix;
-		private XmlElement ownerElement;
-		private string data;
 
 		#endregion
 
@@ -132,11 +132,18 @@ namespace System.Xml
 
 		public override string Value {
 			get {
-				return data;
+				XmlNode firstChild = FirstChild;
+				if (firstChild == null)
+					return String.Empty;
+				return firstChild.Value;
 			}
 
 			set {
-				data = value;
+				XmlNode firstChild = FirstChild;
+				if (firstChild == null)
+					AppendChild (OwnerDocument.CreateTextNode (value));
+				else
+					firstChild.Value = value;
 			}
 		}
 
@@ -163,5 +170,15 @@ namespace System.Xml
 		}
 
 		#endregion
+
+		internal override XmlLinkedNode LastLinkedChild {
+			get	{
+				return lastChild;
+			}
+
+			set {
+				lastChild = value;
+			}
+		}
 	}
 }

@@ -16,11 +16,6 @@ namespace System.Xml
 	public abstract class XmlNode : ICloneable, IEnumerable, IXPathNavigable
 	{
 		#region Fields
-		///////////////////////////////////////////////////////////////////////
-		//
-		//	Fields
-		//
-		///////////////////////////////////////////////////////////////////////
 
 		XmlDocument ownerDocument;
 		XmlNode parentNode;
@@ -28,11 +23,6 @@ namespace System.Xml
 		#endregion
 
 		#region Constructors
-		///////////////////////////////////////////////////////////////////////
-		//
-		//	Constructors
-		//
-		///////////////////////////////////////////////////////////////////////
 
 		protected internal XmlNode(XmlDocument ownerDocument)
 		{
@@ -42,11 +32,6 @@ namespace System.Xml
 		#endregion
 
 		#region Properties
-		///////////////////////////////////////////////////////////////////////
-		//
-		//	Properties
-		//
-		///////////////////////////////////////////////////////////////////////
 
 		public virtual XmlAttributeCollection Attributes
 		{
@@ -168,21 +153,21 @@ namespace System.Xml
 		#endregion
 
 		#region Methods
-		///////////////////////////////////////////////////////////////////////
-		//
-		//	Methods
-		//
-		///////////////////////////////////////////////////////////////////////
 
 		public virtual XmlNode AppendChild (XmlNode newChild)
 		{
-			if ((NodeType == XmlNodeType.Document) || (NodeType == XmlNodeType.Element)) {
-				LastLinkedChild = (XmlLinkedNode) newChild;
-				return LastChild;
-			}
-			else {
+			if (NodeType == XmlNodeType.Document || NodeType == XmlNodeType.Element || NodeType == XmlNodeType.Attribute) {
+				XmlLinkedNode newLinkedChild = (XmlLinkedNode)newChild;
+				XmlLinkedNode lastLinkedChild = LastLinkedChild;
+				if (lastLinkedChild != null) {
+					newLinkedChild.NextLinkedSibling = lastLinkedChild.NextLinkedSibling;
+					lastLinkedChild.NextLinkedSibling = newLinkedChild;
+				} else
+					newLinkedChild.NextLinkedSibling = newLinkedChild;
+				LastLinkedChild = newLinkedChild;
+				return newChild;
+			} else
 				throw new InvalidOperationException();
-			}
 		}
 
 		[MonoTODO]
