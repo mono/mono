@@ -1,5 +1,10 @@
 2003-09-04  Lluis Sanchez Gual <lluis@ximian.com>
 
+	* HttpRequest.cs: Url property: use GetLocalAddress() to get the address
+	  (this will get the address from the request headers).
+
+2003-09-04  Lluis Sanchez Gual <lluis@ximian.com>
+
 	* HttpServerUtility.cs: In Transfer(), preserve the query string if
 	  told to do so.
 
