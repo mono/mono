@@ -1,3 +1,8 @@
+2004-11-05 Sanjay Gupta <gsanjay@novell.com>
+	
+	* SqlDataSource.cs: Corrected method calls.
+	* SqlDataSourceView.cs: Partial implementation of few methods.
+
 2004-10-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ListItemCollection.cs: fixed bug when indexing changed elements in

@@ -3,8 +3,10 @@
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Sanjay Gupta (gsanjay@novell.com)
 //
 // (C) 2003 Ben Maurer
+// (C) Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -34,54 +36,90 @@ using System.Collections.Specialized;
 using System.Text;
 using System.Data;
 using System.ComponentModel;
+using System.Data.SqlClient;
 
 namespace System.Web.UI.WebControls {
 	public class SqlDataSourceView : DataSourceView, IStateManager {
+
+		SqlCommand command;
+		SqlConnection connection;
 
 		public SqlDataSourceView (SqlDataSource owner, string name)
 		{
 			this.owner = owner;
 			this.name = name;
+			connection = new SqlConnection (owner.ConnectionString);
 		}
-	
-		public int Delete ()
+
+		public int Delete (IDictionary keys, IDictionary oldValues)
 		{
-			return Delete (null);
+			return ExecuteDelete (keys, oldValues);
 		}
 		
-		[MonoTODO]
-		public int Delete (IDictionary parameters)
+		[MonoTODO ("Handle keys and oldValues and parameters")]
+		protected override int ExecuteDelete(IDictionary keys, IDictionary oldValues)
 		{
-			throw new NotImplementedException ();
+			command = new SqlCommand (this.DeleteCommand, connection);
+			connection.Open ();
+			int result = command.ExecuteNonQuery ();
+			connection.Close ();
+			return result;			
 		}
 		
-		public int Insert ()
-		{
-			return Insert (null);
-		}
-		
-		[MonoTODO]
 		public int Insert (IDictionary values)
 		{
-			throw new NotImplementedException ();
+			return Insert (values);
 		}
 		
-		[MonoTODO]
-		public IEnumerable Select ()
+		[MonoTODO ("Handle values and parameters")]
+		protected override int ExecuteInsert (IDictionary values)
 		{
-			throw new NotImplementedException ();
+			command = new SqlCommand (this.InsertCommand, connection);
+			connection.Open ();
+			int result = command.ExecuteNonQuery ();
+			connection.Close ();
+			return result;
 		}
-		
-		public int Update ()
+				
+		public IEnumerable Select (DataSourceSelectArguments arguments)
 		{
-			return Update (null, null);
+			return ExecuteSelect (arguments);
 		}
-		
-		[MonoTODO]
-		public int Update (IDictionary parameters, IDictionary values)
+
+		[MonoTODO("Extra method to keep things compiling, need to remove later")]
+		public IEnumerable Select()
 		{
-			throw new NotImplementedException ();
+			throw new NotImplementedException ("Not required");
 		}
+
+		[MonoTODO ("Handle arguments")]
+		protected internal override IEnumerable ExecuteSelect (
+						DataSourceSelectArguments arguments)
+		{
+			command = new SqlCommand (this.SelectCommand, connection);
+			connection.Open ();
+			SqlDataReader reader = command.ExecuteReader ();
+			//return reader.GetEnumerator ();
+			throw new NotImplementedException ("SqlDataReader doesnt implements GetEnumerator method yet");
+		}
+
+		public int Update(IDictionary keys, IDictionary values,
+			IDictionary oldValues)
+		{
+			return ExecuteUpdate (keys, values, oldValues);
+		}
+
+		[MonoTODO ("Handle keys, values and oldValues")]
+		protected override int ExecuteUpdate (IDictionary keys,
+					IDictionary values, IDictionary oldValues)
+		{
+			command = new SqlCommand (this.UpdateCommand, connection);
+			connection.Open ();
+			int result = command.ExecuteNonQuery();
+			connection.Close();
+			return result;
+		}
+
 
 		void IStateManager.LoadViewState (object savedState)
 		{
@@ -425,13 +463,7 @@ namespace System.Web.UI.WebControls {
 			remove { Events.RemoveHandler (EventUpdating, value); }
 		}
 		#endregion
-
-		[MonoTODO]
-		protected internal override IEnumerable ExecuteSelect (
-						DataSourceSelectArguments arguments)
-		{
-			throw new NotImplementedException ();
-		}		
+				
 	}
 	
 }

@@ -3,8 +3,10 @@
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Sanjay Gupta (gsanjay@novell.com)
 //
 // (C) 2003 Ben Maurer
+// (C) 2004 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -68,22 +70,22 @@ namespace System.Web.UI.WebControls {
 			
 		public int Insert ()
 		{
-			return View.Insert ();
+			return View.Insert (null);
 		}
 		
 		public int Delete ()
 		{
-			return View.Delete ();
+			return View.Delete (null, null);
 		}
 		
 		public IEnumerable Select ()
 		{
-			return View.Select ();
+			return View.Select (null);
 		}
 		
 		public int Update ()
 		{
-			return View.Update ();
+			return View.Update (null, null, null);
 		}
 			
 		protected override void LoadViewState (object savedState)
