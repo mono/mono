@@ -1,3 +1,17 @@
+2003-11-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* debug-helpers.c (mono_type_full_name): New helper function.
+
+	* image.h (MonoAssembly): Change 'dynamic' to a boolean.
+
+	* image.c (mono_image_load_file_for_image): New public function which
+	is a replacement for the load_file_for_image in class.c.
+
+	* assembly.c (mono_assembly_load_module): A wrapper for the function
+	above which does assembly association and reference loading too.
+
+	* class.c (mono_class_from_name): Call mono_assembly_load_module.
+
 2003-11-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* appdomain.c: not all of the attributes for the full assembly name
