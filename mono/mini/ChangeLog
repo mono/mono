@@ -1,3 +1,8 @@
+
+Tue Mar 2 16:59:40 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: optimize small copies in cpblk.
+
 2004-03-01  Zoltan Varga  <vargaz@freemail.hu>
 
 	* basic-calls.cs basic-float.cs: New regression tests.
