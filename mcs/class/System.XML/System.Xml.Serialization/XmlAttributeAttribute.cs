@@ -1,0 +1,78 @@
+//
+// XmlAttributeAttribute.cs: 
+//
+// Author:
+//   John Donagher (john@webmeta.com)
+//
+// (C) 2002 John Donagher
+//
+
+using System.Xml.Schema;
+using System;
+
+namespace System.Xml.Serialization
+{
+	/// <summary>
+	/// Summary description for XmlAttributeAttribute.
+	/// </summary>
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field
+		 | AttributeTargets.Parameter | AttributeTargets.ReturnValue)]
+	public class XmlAttributeAttribute : Attribute
+	{
+		private string attributeName;
+		private string dataType;
+		private XmlSchemaForm form;
+		private string ns;
+
+		public XmlAttributeAttribute ()
+		{
+		}
+		public XmlAttributeAttribute (string attributeName)
+		{
+			AttributeName = attributeName;
+		}
+		[MonoTODO]
+		public XmlAttributeAttribute (Type type)
+		{
+		}
+		[MonoTODO]
+		public XmlAttributeAttribute (string attributeName, Type type)
+		{
+			AttributeName = attributeName;
+		}
+
+		public string AttributeName {
+			get {
+				return attributeName;
+			}
+			set {
+				attributeName = value;
+			}
+		}
+		public string DataType {
+			get {
+				return dataType;
+			}
+			set {
+				dataType = value;
+			}
+		}
+		public XmlSchemaForm Form {
+			get {
+				return form;
+			}
+			set {
+				form = value;
+			}
+		}
+		public string Namespace {
+			get {
+				return ns;
+			}
+			set {
+				ns = value;
+			}
+		}
+
+	}
+}
