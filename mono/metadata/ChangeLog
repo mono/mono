@@ -1,3 +1,10 @@
+2004-07-09  Dick Porter  <dick@ximian.com>
+
+	* socket-io.h:
+	* socket-io.c
+	(ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal):
+	Add support for SO_PEERCRED if its available.
+
 2004-07-09  Peter Bartok <pbartok@novell.com>
 	* loader.c: winelib.exe.so error message is now only displayed if
 	MONO_DEBUG is set. To help us avoid questions when people are trying
