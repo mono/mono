@@ -1,3 +1,7 @@
+2004-09-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* CustomAttributeBuilder.cs: Applied patch from Marcus Urban (mathpup@mylinuxisp.com). Add support for defining custom marshallers by calling SetCustomAttribute.
+
 2004-09-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyBuilder.cs: Keep a copy of the 3 permission set as an array
