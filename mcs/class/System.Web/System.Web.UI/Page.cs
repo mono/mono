@@ -435,8 +435,8 @@ public class Page : TemplateControl, IHttpHandler
 		case OutputCacheLocation.Server:
 			if (varyByCustom != null)
 				cache.SetVaryByCustom (varyByCustom);
-			
-			if (varyByParam.Length > 0) {
+
+			if (varyByParam != null && varyByParam.Length > 0) {
 				string[] prms = varyByParam.Split (';');
 				foreach (string p in prms)
 					cache.VaryByParams [p.Trim ()] = true;
@@ -445,11 +445,12 @@ public class Page : TemplateControl, IHttpHandler
 				cache.VaryByParams.IgnoreParams = true;
 			}
 			
-			if (varyByHeader != null) {
+			if (varyByHeader != null && varyByHeader.Length > 0) {
 				string[] hdrs = varyByHeader.Split (';');
 				foreach (string h in hdrs)
 					cache.VaryByHeaders [h.Trim ()] = true;
 			}
+                        
                         break;
 		case OutputCacheLocation.None:
 			break;

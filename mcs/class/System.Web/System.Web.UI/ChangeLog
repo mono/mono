@@ -1,3 +1,9 @@
+2004-01-15  Jackson Harper <jackson@ximian.com>
+
+	* TemplateParser.cs: Detect if we are parsing a control or page
+	properly.
+	* Page.cs: vary by params and vary by headers can be null now.
+	
 2004-01-15  Martin Willemoes Hansen  <mwh@sysrq.dk>
 
 	* HtmlTextWriter.cs: Fixed OutputTab routine to generate correct indention.

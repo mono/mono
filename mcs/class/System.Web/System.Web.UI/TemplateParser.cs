@@ -185,26 +185,26 @@ namespace System.Web.UI
 						oc_custom = (string) entry.Value;
 						break;
 					case "location":
-						if (this is TemplateControlParser)
+						if (!(this is PageParser))
 							goto default;
 
 						try {
 							oc_location = (OutputCacheLocation) Enum.Parse (
-								typeof (OutputCacheLocation), (string) entry.Value);
+								typeof (OutputCacheLocation), (string) entry.Value, true);
 						} catch {
 							ThrowParseException ("The 'location' attribute is case sensitive and " +
 									"must be one of the following values: Any, Client, " +
-									"Downstram, Server, None, ServerAndClient.");
+									"Downstream, Server, None, ServerAndClient.");
 						}
 						break;
 					case "varybycontrol":
-						if (!(this is TemplateControlParser))
+						if (this is PageParser)
 							goto default;
 
                                                 oc_controls = (string) entry.Value;
 						break;
 					case "shared":
-						if (!(this is TemplateControlParser))
+						if (this is PageParser)
 							goto default;
 
 						try {
