@@ -1,3 +1,7 @@
+2003-12-04  Martin Baulig  <martin@ximian.com>
+
+	* profiles/generics.make: Use gmcs.
+
 2003-11-12 Jackson Harper <jackson@ximian.com>
 
 	* rules.make: 
