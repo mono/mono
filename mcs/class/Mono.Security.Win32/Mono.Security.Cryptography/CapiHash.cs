@@ -2,9 +2,10 @@
 // Mono.Security.Cryptography.CapiHash
 //
 // Authors:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // Copyright (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -12,28 +13,33 @@ using System.Security.Cryptography;
 
 namespace Mono.Security.Cryptography {
 
-public class CapiHash {
+public class CapiHash : IDisposable {
 
 	private CapiContext context;
 	private IntPtr handle;
 	private uint hashSize;
 
-	public CapiHash (uint hashAlgorithm) 
+	public CapiHash (int hashAlgorithm) 
 	{
 		context = new CapiContext ();
 		Initialize (hashAlgorithm);
 	}
 
-	public CapiHash (CapiContext ctx, uint hashAlgorithm) 
+	public CapiHash (CapiContext ctx, int hashAlgorithm) 
 	{
 		context = ctx;
 		Initialize (hashAlgorithm);
 	}
 
-	public CapiHash (CspParameters cspParams, uint hashAlgorithm) 
+	public CapiHash (CspParameters cspParams, int hashAlgorithm) 
 	{
 		context = new CapiContext (cspParams);
 		Initialize (hashAlgorithm);
+	}
+
+	~CapiHash () 
+	{
+		Dispose ();
 	}
 
 	public IntPtr Handle {
@@ -44,13 +50,14 @@ public class CapiHash {
 		get { return (int) hashSize; }
 	}
 
-	public void Initialize (uint algo) 
+	public void Initialize (int algo) 
 	{
 		if (context != null) {
-			context.InternalResult = CryptoAPI.CryptCreateHash (context.Handle, algo, IntPtr.Zero, 0, ref handle);
+			context.InternalResult = CryptoAPI.CryptCreateHash (context.Handle, (uint)algo, IntPtr.Zero, 0, ref handle);
 			hashSize = 0;
 			if (context.Result)
 				context.InternalResult = CryptoAPI.CryptGetHashParam (handle, CryptoAPI.HP_HASHVAL, null, ref hashSize, 0);
+			GC.KeepAlive (this);
 		}
 	}
 
@@ -58,7 +65,10 @@ public class CapiHash {
 	{
 		if (handle != IntPtr.Zero) {
 			CryptoAPI.CryptDestroyHash (handle);
+			context.Dispose ();
+			GC.KeepAlive (this);
 			handle = IntPtr.Zero;
+			GC.SuppressFinalize (this);
 		}
 	}
 
@@ -74,12 +84,14 @@ public class CapiHash {
 			Array.Copy (data, start, toBeHashed, 0, length);
 		}
 		context.InternalResult = CryptoAPI.CryptHashData (handle, toBeHashed, (uint)length, 0);
+		GC.KeepAlive (this);
 	}
 
 	public byte[] HashFinal () 
 	{
 		byte[] hash = new byte [hashSize];
 		context.InternalResult = CryptoAPI.CryptGetHashParam (handle, CryptoAPI.HP_HASHVAL, hash, ref hashSize, 0);
+		GC.KeepAlive (this);
 		return hash;
 	}
 }

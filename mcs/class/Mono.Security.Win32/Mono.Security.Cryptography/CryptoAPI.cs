@@ -49,10 +49,10 @@ internal class CryptoAPI {
 
 	public static readonly uint HP_HASHVAL           = 0x0002;
 
-	public static readonly uint CALG_MD2  = 0x8001;
-	public static readonly uint CALG_MD4  = 0x8002;
-	public static readonly uint CALG_MD5  = 0x8003;
-	public static readonly uint CALG_SHA1 = 0x8004;
+	public static readonly int CALG_MD2  = 0x8001;
+	public static readonly int CALG_MD4  = 0x8002;
+	public static readonly int CALG_MD5  = 0x8003;
+	public static readonly int CALG_SHA1 = 0x8004;
 
 	// just so we don't have to add System.Runtime.InteropServices
 	// in every file

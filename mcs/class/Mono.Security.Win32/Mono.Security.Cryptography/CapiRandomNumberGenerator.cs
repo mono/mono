@@ -21,7 +21,7 @@ class CapiRandomNumberGenerator : CapiContext {
 	public void GenRandom (byte[] data) 
 	{
 		uint l = (uint) data.Length;
-		lastResult = CryptoAPI.CryptGenRandom (providerHandle, l, data);
+		InternalResult = CryptoAPI.CryptGenRandom (Handle, l, data);
 	}
 }
 
