@@ -193,6 +193,7 @@ System.Web.UI/IPostBackEventHandler.cs
 System.Web.UI/IStateManager.cs
 System.Web.UI/ITagNameToTypeMapper.cs
 System.Web.UI/ITemplate.cs
+System.Web.UI/IUserControlDesignerAccessor.cs
 System.Web.UI/IValidator.cs
 System.Web.UI/ImageClickEventArgs.cs
 System.Web.UI/ImageClickEventHandler.cs

@@ -1,5 +1,9 @@
 2003-07-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* System.Web.UI/IUserControlDesignerAccessor.cs: added
+
+2003-07-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* System.Web.dll.sources:
 	* list: AssemblyInfo.cs added, Consts.cs added
 
