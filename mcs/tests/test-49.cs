@@ -418,6 +418,21 @@ class X {
 			return 4;
 		}	
 	}
+
+	static int test_string_multiple_targets (string s)
+	{
+		switch (s){
+		case "A":
+			return 1;
+		case "B":
+			return 2;
+		case "C":
+		case "D":
+			return 3;
+		}
+		return 0;
+	}
+	
 	static int Main ()
 	{
 		byte b;
@@ -509,7 +524,18 @@ class X {
 	
 		if (test_memberaccess ("one") != 3)
 			return 35;
-	
+
+		if (test_string_multiple_targets ("A") != 1)
+			return 36;
+		if (test_string_multiple_targets ("B") != 2)
+			return 37;
+		if (test_string_multiple_targets ("C") != 3)
+			return 38;
+		if (test_string_multiple_targets ("D") != 3)
+			return 39;
+		if (test_string_multiple_targets ("E") != 0)
+			return 40;
+	       
 		Console.WriteLine ("All tests pass");
 		return 0;
 	}
