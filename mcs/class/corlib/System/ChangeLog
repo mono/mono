@@ -1,3 +1,7 @@
+2004-05-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DateTime.cs: adjust milliseconds for fraction specifier ('f').
+
 2004-05-30  Miguel de Icaza  <miguel@ximian.com>
 
 	* Console.cs: Remove *again* the version of WriteLine with four

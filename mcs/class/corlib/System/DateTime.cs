@@ -962,8 +962,20 @@ namespace System
 						return false;
 					num = Math.Min (num, 6);
 					millisecond = _ParseNumber (s, num+1, true, sloppy_parsing, next_not_digit, out num_parsed);
-					if (millisecond >= 1000)
+					if (num_parsed == -1)
 						return false;
+
+					if (num_parsed != 3) {
+						int k;
+						if (num_parsed > 3) {
+							for (k = num_parsed; k > 3; k--)
+								millisecond /= 10;
+						} else {
+							for (k = num_parsed; k <= 3; k++) {
+								millisecond *= 10;
+							}
+						}
+					}
 					break;
 				case 't':
 					if (ampm != -1)
