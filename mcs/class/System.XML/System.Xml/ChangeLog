@@ -1,3 +1,10 @@
+2005-02-15  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlAttribute.cs : For default attributes, WriteTo() writes nothing
+	  under MS.NET.
+	* DTDValidatingReader.cs : reduced indentation using Linus trick
+	  (it was too deep in nest).
+
 2005-02-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDValidatingReader.cs : Namespaces and prefixes are not properly

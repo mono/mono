@@ -292,6 +292,8 @@ namespace System.Xml
 
 		public override void WriteTo (XmlWriter w)
 		{
+			if (isDefault)
+				return; // Write nothing.
 			w.WriteStartAttribute (name.Prefix, name.LocalName, name.NS);
 			WriteContentTo (w);
 			w.WriteEndAttribute ();
