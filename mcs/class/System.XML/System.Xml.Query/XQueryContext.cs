@@ -121,6 +121,7 @@ namespace Mono.Xml.XPath2
 		{
 			if (sequence == null)
 				throw new ArgumentNullException ();
+			sequence = sequence.Clone ();
 #if SEEMS_CONTEXT_FOR_CURRENT_REQURED
 			contextStack.Push (currentContext);
 			currentsequence = sequence;

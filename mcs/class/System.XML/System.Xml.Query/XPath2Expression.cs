@@ -240,7 +240,8 @@ namespace Mono.Xml.XPath2
 		public FLWORExpr (ForLetClauseCollection forlet, ExprSequence whereClause, OrderSpecList orderBy, ExprSingle ret)
 		{
 			this.fl = forlet;
-			this.whereClause = new ParenthesizedExpr (whereClause);
+			if (whereClause != null)
+				this.whereClause = new ParenthesizedExpr (whereClause);
 			this.orderBy = orderBy;
 			this.ret = ret;
 		}
@@ -293,8 +294,6 @@ namespace Mono.Xml.XPath2
 				}
 			}
 			if (WhereClause != null)
-//				for (int i = 0; i < WhereClause.Count; i++)
-//					WhereClause [i] = WhereClause [i].Compile (compiler);
 				whereClause = whereClause.Compile (compiler);
 			if (OrderBy != null)
 				foreach (OrderSpec os in OrderBy)
@@ -1820,7 +1819,7 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			return new SingleItemIterator (EvaluateAsAtomic (iter), iter);
+			return new SingleItemIterator (EvaluateAsAtomic (iter), iter.Context);
 		}
 #endregion
 	}
@@ -1983,9 +1982,14 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			if (Expr.Count == 0)
+			switch (Expr.Count) {
+			case 0:
 				return new XPathEmptySequence (iter.Context);
-			return new ExprSequenceIterator (iter, Expr);
+			case 1:
+				return Expr [0].Evaluate (iter);
+			default:
+				return new ExprSequenceIterator (iter, Expr);
+			}
 		}
 #endregion
 	}

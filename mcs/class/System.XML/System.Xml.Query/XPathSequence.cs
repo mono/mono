@@ -518,6 +518,7 @@ namespace Mono.Xml.XPath2
 				foreach (ExprSequence expr in filter) {
 					bool doesntPass = true;
 					// Treat as OK if any of expr passed.
+					// FIXME: handle numeric predicate.
 					foreach (ExprSingle single in expr) {
 						if (single.EvaluateAsBoolean (left)) {
 							doesntPass = false;
@@ -1145,6 +1146,7 @@ namespace Mono.Xml.XPath2
 			if (other.iter != null)
 				iter = other.iter.Clone ();
 			expr = other.expr;
+			contextSequence = other.contextSequence;
 			currentExprIndex = other.currentExprIndex;
 		}
 
@@ -1212,62 +1214,62 @@ namespace Mono.Xml.XPath2
 		{
 			if (en == null)
 				en = GetEnumerator ();
-			return !en.MoveNext ();
+			return en.MoveNext ();
 		}
 
 		public override IEnumerator GetEnumerator ()
 		{
-			IEnumerator forLetClauses = expr.ForLetClauses.GetEnumerator ();
-			return EvaluateRemainingForLet (forLetClauses);
+			IEnumerator forLetEnum = expr.ForLetClauses.GetEnumerator ();
+			// FIXME: this invokation seems to result in an Invalid IL error.
+			return EvaluateRemainingForLet (forLetEnum);
 		}
 		
-		private IEnumerator EvaluateRemainingForLet (IEnumerator forLetClauses)
+		private IEnumerator EvaluateRemainingForLet (IEnumerator forLetEnum)
 		{
 			// Prepare iteration stack
-			if (forLetClauses.MoveNext ()) {
-				ForLetClause flc = (ForLetClause) forLetClauses.Current;
+			if (forLetEnum.MoveNext ()) {
+				ForLetClause flc = (ForLetClause) forLetEnum.Current;
 				IEnumerator flsb = flc.GetEnumerator ();
-				IEnumerator items = EvaluateRemainingForLetSingleItem (forLetClauses, flsb);
+				IEnumerator items = EvaluateRemainingSingleItem (forLetEnum, flsb);
 				while (items.MoveNext ())
 					yield return items.Current;
 				yield break;
 			}
-			bool passedFilter = false;
-			if (expr.WhereClause != null)
+
+			bool passedFilter = expr.WhereClause == null;
+			if (!passedFilter)
 				passedFilter = expr.WhereClause.EvaluateAsBoolean (contextSequence);
-			if (passedFilter)
+			if (passedFilter) {
 				foreach (XPathItem item in expr.ReturnExpr.Evaluate (contextSequence))
 					yield return item;
+			}
 		}
 
-		private IEnumerator EvaluateRemainingForLetSingleItem (IEnumerator forLetClauses, IEnumerator singleBodies)
+		private IEnumerator EvaluateRemainingSingleItem (IEnumerator forLetClauses, IEnumerator singleBodies)
 		{
 			if (singleBodies.MoveNext ()) {
 				ForLetSingleBody sb = singleBodies.Current as ForLetSingleBody;
 				ForSingleBody fsb = sb as ForSingleBody;
 				if (fsb != null) {
 					XPathSequence backup = contextSequence;
-					contextSequence = sb.Expression.Evaluate (Context.CurrentSequence);
-					Context.ContextManager.PushCurrentSequence (contextSequence);
-//					Context = Context.ContextManager.CurrentContext;
-					foreach (XPathItem forItem in contextSequence) {
+					Context.ContextManager.PushCurrentSequence (sb.Expression.Evaluate (Context.CurrentSequence));
+					foreach (XPathItem forItem in Context.CurrentSequence) {
 						Context.PushVariable (fsb.PositionalVar, Context.CurrentSequence.Position);
 						Context.PushVariable (sb.VarName, forItem);
 						// recurse here (including following bindings)
 						IEnumerator items = 
-EvaluateRemainingForLetSingleItem (forLetClauses, singleBodies);
+EvaluateRemainingSingleItem (forLetClauses, singleBodies);
 						while (items.MoveNext ())
 							yield return (XPathItem) items.Current;
 						Context.PopVariable ();
 						Context.PopVariable ();
 					}
 					Context.ContextManager.PopCurrentSequence ();
-//					Context = Context.ContextManager.CurrentContext;
 					contextSequence = backup;
 				} else {
 					Context.PushVariable (sb.VarName, sb.Expression.Evaluate (contextSequence));
 					// recurse here (including following bindings)
-					IEnumerator items = EvaluateRemainingForLetSingleItem (forLetClauses, singleBodies);
+					IEnumerator items = EvaluateRemainingSingleItem (forLetClauses, singleBodies);
 					while (items.MoveNext ())
 						yield return (XPathItem) items.Current;
 					Context.PopVariable ();

@@ -1,5 +1,14 @@
 2004-08-30  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPath2Expression.cs : empty ExprSequence should not be allowed for
+	  FLWORExpr.WhereClause. It should be null.
+	* XPathSequence.cs : ExprSequenceIterator.Clone() was missing copy of
+	  the input sequence. FLWORIterator.MoveNext() had incorrect !(not)
+	  and wrong Where test.
+	* XQueryContext.cs : sequence should be cloned when pushed to context.
+
+2004-08-30  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XQueryCommandImpl.cs : dust cleaning :(
 
 2004-08-30  Atsushi Enomoto <atsushi@ximian.com>
