@@ -1,11 +1,10 @@
 // cs0210.cs: You must provide an initializer in a fixed or using statement declaration
-// Line: 8
-
-using System.Resources;
+// Line: 7
+// Compiler options: -unsafe
 
 public class MainClass {
-        static void Main () {
-                using (ResourceReader reader) {
+        unsafe static void Main () {
+                fixed (int* p) {
                 }
         }
 }
