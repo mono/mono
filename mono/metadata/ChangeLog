@@ -1,3 +1,8 @@
+
+Tue Feb 15 11:01:09 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c: cleaned up the code a little.
+
 2005-02-15  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.h (MonoSymbolTable): Allow variable-length chunks in
