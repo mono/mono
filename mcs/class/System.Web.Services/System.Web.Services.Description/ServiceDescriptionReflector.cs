@@ -21,6 +21,7 @@ namespace System.Web.Services.Description {
 		Types types;
 		ServiceDescriptionCollection serviceDescriptions;
 		XmlSchemaExporter schemaExporter;
+		SoapSchemaExporter soapSchemaExporter;
 
 		#endregion // Fields
 
@@ -31,6 +32,7 @@ namespace System.Web.Services.Description {
 			types = new Types ();
 			serviceDescriptions = new ServiceDescriptionCollection ();
 			schemaExporter = new XmlSchemaExporter (types.Schemas);
+			soapSchemaExporter = new SoapSchemaExporter (types.Schemas);
 		}
 		
 		#endregion // Constructors
@@ -152,11 +154,11 @@ namespace System.Web.Services.Description {
 			oper.Documentation = method.Description;
 			
 			OperationInput inOp = new OperationInput ();
-			inOp.Message = ImportMessage (desc, oper.Name + "In", method.InputMembersMapping);
+			inOp.Message = ImportMessage (desc, oper.Name + "In", method.InputMembersMapping, method);
 			oper.Messages.Add (inOp);
 			
 			OperationOutput outOp = new OperationOutput ();
-			outOp.Message = ImportMessage (desc, oper.Name + "Out", method.OutputMembersMapping);
+			outOp.Message = ImportMessage (desc, oper.Name + "Out", method.OutputMembersMapping, method);
 			oper.Messages.Add (outOp);
 			
 			return oper;
@@ -173,32 +175,58 @@ namespace System.Web.Services.Description {
 			oper.Extensions.Add (sob);
 			
 			InputBinding inOp = new InputBinding ();
-			SoapBodyBinding sbbi = new SoapBodyBinding();
-			sbbi.Use = method.Use;
-			inOp.Extensions.Add (sbbi);
+			AddOperationMsgBindings (desc, inOp, method);
 			oper.Input = inOp;
 			
 			OutputBinding outOp = new OutputBinding ();
-			SoapBodyBinding sbbo = new SoapBodyBinding();
-			sbbo.Use = method.Use;
-			outOp.Extensions.Add (sbbo);
+			AddOperationMsgBindings (desc, outOp, method);
 			oper.Output = outOp;
 			
 			return oper;
 		}
 		
-		XmlQualifiedName ImportMessage (ServiceDescription desc, string name, XmlMembersMapping members)
+		void AddOperationMsgBindings (ServiceDescription desc, MessageBinding msg, MethodStubInfo method)
+		{
+			SoapBodyBinding sbbo = new SoapBodyBinding();
+			msg.Extensions.Add (sbbo);
+			sbbo.Use = method.Use;
+			if (method.Use == SoapBindingUse.Encoded)
+			{
+				sbbo.Namespace = desc.TargetNamespace;
+				sbbo.Encoding = "http://schemas.xmlsoap.org/soap/encoding/";
+			}
+		}
+		
+		XmlQualifiedName ImportMessage (ServiceDescription desc, string name, XmlMembersMapping members, MethodStubInfo method)
 		{
 			Message msg = new Message ();
 			msg.Name = name;
 			
-			MessagePart part = new MessagePart ();
-			part.Name = "parameters";
-			part.Element = new XmlQualifiedName (members.ElementName, members.Namespace);
-			msg.Parts.Add (part);
+			if (method.ParameterStyle == SoapParameterStyle.Wrapped)
+			{
+				MessagePart part = new MessagePart ();
+				part.Name = "parameters";
+				part.Element = new XmlQualifiedName (members.ElementName, members.Namespace);
+				msg.Parts.Add (part);
+			}
+			else
+			{
+				for (int n=0; n<members.Count; n++)
+				{
+					MessagePart part = new MessagePart ();
+					part.Name = members[n].MemberName;
+					part.Element = new XmlQualifiedName (members[n].ElementName, members.Namespace);
+					msg.Parts.Add (part);
+				}
+			}
 			
 			desc.Messages.Add (msg);
-			schemaExporter.ExportMembersMapping (members);
+			
+			if (method.Use == SoapBindingUse.Literal)
+				schemaExporter.ExportMembersMapping (members);
+			else
+				soapSchemaExporter.ExportMembersMapping (members);
+			
 			return new XmlQualifiedName (name, members.Namespace);
 		}
 

@@ -239,8 +239,10 @@ namespace System.Web.Services.Description {
 				{
 					object extension = info.Serializer.Deserialize (reader);
 					extensions.Add ((ServiceDescriptionFormatExtension)extension);
+					return;
 				}
 			}
+			reader.Skip ();
 		}
 
 
