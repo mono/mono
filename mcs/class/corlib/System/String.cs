@@ -654,10 +654,10 @@ namespace System {
 				obj1 = String.Empty;
     
 			if (null == obj2)
-				obj1 = String.Empty;
+				obj2 = String.Empty;
     
 			if (null == obj3)
-				obj1 = String.Empty;
+				obj3 = String.Empty;
     
 			return Concat(obj1.ToString(), obj2.ToString(), obj3.ToString());
 		}

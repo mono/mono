@@ -1,6 +1,7 @@
 2002-04-20  Dietmar Maurer  <dietmar@ximian.com>
 
 	* String.cs: use internal constructors
+	buf fix in Concat.
 
 Thu Apr 18 17:16:15 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
