@@ -1,5 +1,9 @@
 2004-04-07  Martin Baulig  <martin@ximian.com>
 
+	* MonoGenericInst.cs (MonoGenericParam): Removed.
+
+2004-04-07  Martin Baulig  <martin@ximian.com>
+
 	* MethodBase.cs
 	(MethodBase.GetGenericParameters): Renamed to GetGenericArguments().
 
