@@ -2296,7 +2296,7 @@ namespace Mono.CSharp {
 			//
 			if (oper == Operator.Equality || oper == Operator.Inequality){
 				bool my_on_true = oper == Operator.Inequality ? onTrue : !onTrue;
-				
+
 				if (left is NullLiteral){
 					right.Emit (ec);
 					if (my_on_true)
@@ -2311,7 +2311,22 @@ namespace Mono.CSharp {
 					else
 						ig.Emit (OpCodes.Brfalse, target);
 					return true;
-				} 
+				} else if (left is BoolConstant){
+					right.Emit (ec);
+					if (my_on_true != ((BoolConstant) left).Value)
+						ig.Emit (OpCodes.Brtrue, target);
+					else
+						ig.Emit (OpCodes.Brfalse, target);
+					return true;
+				} else if (right is BoolConstant){
+					left.Emit (ec);
+					if (my_on_true != ((BoolConstant) right).Value)
+						ig.Emit (OpCodes.Brtrue, target);
+					else
+						ig.Emit (OpCodes.Brfalse, target);
+					return true;
+				}
+
 			} else if (oper == Operator.LogicalAnd){
 				if (left is Binary){
 					Binary left_binary = (Binary) left;

@@ -1,5 +1,10 @@
 2002-11-16  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (Binary.EmitBranchable): Eliminate comparisions
+	with the `true' and `false' literals.  Fixes #33151.
+
+2002-11-16  Martin Baulig  <martin@ximian.com>
+
 	* typemanager.cs (RealMemberLookup): Reverted Miguel's patch from
 	October 22nd; don't do the cs1540 check for static members.
 
