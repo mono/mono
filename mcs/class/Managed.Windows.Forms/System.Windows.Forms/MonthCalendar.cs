@@ -369,6 +369,13 @@ namespace System.Windows.Forms {
 				}
 
 				if (SelectionRange.End != value) {
+					// make sure the end obeys the max selection range count
+					if (value < SelectionRange.Start) {
+						SelectionRange.Start = value;
+					}
+					if (value.AddDays((MaxSelectionCount-1)*-1) > SelectionRange.Start) {
+						SelectionRange.Start = value.AddDays((MaxSelectionCount-1)*-1);
+					}
 					SelectionRange.End = value;
 					this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 					this.Invalidate ();
@@ -383,7 +390,13 @@ namespace System.Windows.Forms {
 		public SelectionRange SelectionRange {
 			set {
 				if (selection_range != value) {
-					selection_range = value;
+					// make sure the end obeys the max selection range count
+					if (value.End.AddDays((MaxSelectionCount-1)*-1) > value.Start) {
+						selection_range = new SelectionRange (value.End.AddDays((MaxSelectionCount-1)*-1), value.End);
+					} else {
+						selection_range = value;
+					}
+
 					SelectionRange visible_range = this.GetDisplayRange(true);
 					if(visible_range.Start > selection_range.End) {
 						current_month = new DateTime (selection_range.Start.Year, selection_range.Start.Month, 1);
@@ -408,9 +421,15 @@ namespace System.Windows.Forms {
 					throw new ArgumentException();
 				}
 
-				if (selection_range.Start != value) {
-					selection_range.Start = value;
-					CurrentMonth = value;
+				if (SelectionRange.Start != value) {
+					// make sure the end obeys the max selection range count
+					if (value > SelectionRange.End) {
+						SelectionRange.End = value;
+					} else if (value.AddDays(MaxSelectionCount-1) < SelectionRange.End) {
+						SelectionRange.End = value.AddDays(MaxSelectionCount-1);
+					}
+					SelectionRange.Start = value;
+					current_month = value;
 					this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 					this.Invalidate ();
 				}
@@ -1022,23 +1041,52 @@ namespace System.Windows.Forms {
 			return new DateTime (date.Year, date.Month, 1).AddMonths(1).AddDays(-1);
 		}
 
-		// attempts to add the date to the selection without throwing exception
-		private void SelectDate (DateTime date, bool add_to_selection) {
-			// try and add the new date to the selction range
-			if (add_to_selection) {
-				SelectionRange new_range;
-				if (date < SelectionStart) {
-					new_range = new SelectionRange (date, SelectionEnd);
-				} else if (clicked_date > SelectionEnd) {
-					new_range = new SelectionRange (date, SelectionStart);
+		// called in response to users seletion with shift key
+		private void AddTimeToSelection (int delta, bool isDays)
+		{
+			DateTime cursor_point;
+			DateTime end_point;
+			// okay we add the period to the date that is not the same as the 
+			// start date when shift was first clicked.
+			if (SelectionStart != shift_select_start_date) {
+				cursor_point = SelectionStart;
+			} else {
+				cursor_point = SelectionEnd;
+			}
+			// add the days
+			if (isDays) {
+				end_point = cursor_point.AddDays (delta);
+			} else {
+				// delta must be months
+				end_point = cursor_point.AddMonths (delta);
+			}
+			// set the new selection range
+			SelectionRange range = new SelectionRange (shift_select_start_date, end_point);
+			if (range.Start.AddDays (MaxSelectionCount-1) < range.End) {
+				// okay the date is beyond what is allowed, lets set the maximum we can
+				if (range.Start != shift_select_start_date) {
+					range.Start = range.End.AddDays ((MaxSelectionCount-1)*-1);
 				} else {
-					// it's inside the selected dates, just ignore
-					new_range = SelectionRange;							
+					range.End = range.Start.AddDays (MaxSelectionCount-1);
 				}
-				// only allow the selection if the range isn't too large
-				if (((TimeSpan)new_range.End.Subtract (new_range.Start)).Days <= MaxSelectionCount) {
-					SelectionRange = new_range;
+			}
+			this.SelectionRange = range;
+		}
+
+		// attempts to add the date to the selection without throwing exception
+		private void SelectDate (DateTime date) {
+			// try and add the new date to the selction range
+			if (is_shift_pressed) {
+				SelectionRange range = new SelectionRange (shift_select_start_date, date);
+				if (range.Start.AddDays (MaxSelectionCount-1) < range.End) {
+					// okay the date is beyond what is allowed, lets set the maximum we can
+					if (range.Start != shift_select_start_date) {
+						range.Start = range.End.AddDays ((MaxSelectionCount-1)*-1);
+					} else {
+						range.End = range.Start.AddDays (MaxSelectionCount-1);
+					}
 				}
+				SelectionRange = range;
 			} else {
 				SelectionRange = new SelectionRange (date, date);
 			}
@@ -1216,12 +1264,15 @@ namespace System.Windows.Forms {
 					break;
 				case HitArea.PrevMonthDate:
 					SetItemClick(hti);
-					this.SelectionRange = new SelectionRange (clicked_date, clicked_date);
+					this.SelectDate (clicked_date);
+					// move the month back one
+					current_month = current_month.AddMonths (-1);
 					this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 					break;
 				case HitArea.NextMonthDate:
 					SetItemClick(hti);
-					this.SelectionRange = new SelectionRange (clicked_date, clicked_date);
+					this.SelectDate (clicked_date);
+					current_month = current_month.AddMonths (-1);
 					this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 					break;
 				case HitArea.TitleMonth:
@@ -1237,11 +1288,9 @@ namespace System.Windows.Forms {
 					this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 					break;
 				case HitArea.Date:
-					// see if user is selecting multiple dates
-					bool add_to_selection = is_date_clicked || is_shift_pressed;
 					SetItemClick(hti);
 					// see if it was a selection
-					this.SelectDate (clicked_date, add_to_selection);
+					this.SelectDate (clicked_date);
 					this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 					break;
 				default:
@@ -1271,11 +1320,11 @@ System.Console.WriteLine ("Key press on calendar with " + e.KeyCode);
 				case Keys.Home:
 					// set the date to the start of the month
 					if (is_shift_pressed) {
-						DateTime date = GetFirstDateInMonth (this.SelectionStart);
-						if (date < this.SelectionStart.AddDays (MaxSelectionCount * -1)) {
-							date = this.SelectionStart.AddDays (MaxSelectionCount * -1);
+						DateTime date = GetFirstDateInMonth (shift_select_start_date);
+						if (date < shift_select_start_date.AddDays ((MaxSelectionCount-1)*-1)) {
+							date = shift_select_start_date.AddDays ((MaxSelectionCount-1)*-1);
 						}
-						this.SetSelectionRange (date, this.SelectionStart);
+						this.SetSelectionRange (date, shift_select_start_date);
 					} else {
 						DateTime date = GetFirstDateInMonth (this.SelectionStart);
 						this.SetSelectionRange (date, date);
@@ -1285,11 +1334,11 @@ System.Console.WriteLine ("Key press on calendar with " + e.KeyCode);
 				case Keys.End:
 					// set the date to the last of the month
 					if (is_shift_pressed) {
-						DateTime date = GetLastDateInMonth (this.SelectionStart);
-						if (date > this.SelectionStart.AddDays (MaxSelectionCount)) {
-							date = this.SelectionStart.AddDays (MaxSelectionCount);
+						DateTime date = GetLastDateInMonth (shift_select_start_date);
+						if (date > shift_select_start_date.AddDays (MaxSelectionCount-1)) {
+							date = shift_select_start_date.AddDays (MaxSelectionCount-1);
 						}
-						this.SetSelectionRange (date, this.SelectionStart);
+						this.SetSelectionRange (date, shift_select_start_date);
 					} else {
 						DateTime date = GetLastDateInMonth (this.SelectionStart);
 						this.SetSelectionRange (date, date);
@@ -1299,11 +1348,7 @@ System.Console.WriteLine ("Key press on calendar with " + e.KeyCode);
 				case Keys.PageUp:
 					// set the date to the last of the month
 					if (is_shift_pressed) {
-						DateTime date = this.SelectionStart.AddMonths (-1);
-						if (date < this.SelectionStart.AddDays (MaxSelectionCount*-1)) {
-							date = this.SelectionStart.AddDays (MaxSelectionCount*-1);
-						}
-						this.SetSelectionRange (date, this.SelectionStart);
+						this.AddTimeToSelection (-1, false);
 					} else {
 						DateTime date = this.SelectionStart.AddMonths (-1);
 						this.SetSelectionRange (date, date);
@@ -1313,11 +1358,7 @@ System.Console.WriteLine ("Key press on calendar with " + e.KeyCode);
 				case Keys.PageDown:
 					// set the date to the last of the month
 					if (is_shift_pressed) {
-						DateTime date = this.SelectionStart.AddMonths (1);
-						if (date > this.SelectionStart.AddDays (MaxSelectionCount)) {
-							date = this.SelectionStart.AddDays (MaxSelectionCount);
-						}
-						this.SetSelectionRange (date, this.SelectionStart);
+						this.AddTimeToSelection (1, false);
 					} else {
 						DateTime date = this.SelectionStart.AddMonths (1);
 						this.SetSelectionRange (date, date);
@@ -1327,21 +1368,8 @@ System.Console.WriteLine ("Key press on calendar with " + e.KeyCode);
 				case Keys.Up:
 					// set the back 1 week
 					if (is_shift_pressed) {
-						DateTime date;
-						// find out if we need to move forward or backward
-						if (SelectionEnd > shift_select_start_date) {
-							date = SelectionEnd.AddDays (-7);
-							if (date >= SelectionStart.AddDays (MaxSelectionCount*-1)) {
-								this.SetSelectionRange (date, SelectionStart);
-								changed = true;
-							} 
-						} else {
-							date = SelectionStart.AddDays (-7);
-							if (date >= SelectionEnd.AddDays (MaxSelectionCount*-1)) {
-								this.SetSelectionRange (date, SelectionEnd);
-								changed = true;
-							}
-						}
+						this.AddTimeToSelection (-7, true);
+						changed = true;
 					} else {
 						DateTime date = this.SelectionStart.AddDays (-7);
 						this.SetSelectionRange (date, date);
@@ -1354,19 +1382,8 @@ System.Console.WriteLine ("Key press on calendar with " + e.KeyCode);
 				case Keys.Down:
 					// set the date forward 1 week
 					if (is_shift_pressed) {
-						DateTime date;
-						// find out if we need to move forward or backward
-						if (SelectionEnd > shift_select_start_date) {
-							date = SelectionEnd.AddDays (7);
-							if (date <= SelectionStart.AddDays (MaxSelectionCount)) {
-								this.SetSelectionRange (date, SelectionStart);
-								changed = true;
-							} 
-						} else {
-							date = SelectionStart.AddDays (7);
-							this.SetSelectionRange (date, SelectionEnd);
-							changed = true;
-						}
+						this.AddTimeToSelection (7, true);
+						changed = true;
 					} else {
 						DateTime date = this.SelectionStart.AddDays (7);
 						this.SetSelectionRange (date, date);
@@ -1379,19 +1396,8 @@ System.Console.WriteLine ("Key press on calendar with " + e.KeyCode);
 				case Keys.Left:
 					// move one left
 					if (is_shift_pressed) {
-						DateTime date;
-						// find out if we need to move forward or backward
-						if (SelectionEnd > shift_select_start_date) {
-							date = SelectionEnd.AddDays (-1);
-							this.SetSelectionRange (date, SelectionStart);
-							changed = true;
-						} else {
-							date = SelectionStart.AddDays (-1);
-							if (date >= SelectionEnd.AddDays (MaxSelectionCount*-1)) {
-								this.SetSelectionRange (date, SelectionEnd);
-								changed = true;
-							}
-						}
+						this.AddTimeToSelection (-1, true);
+						changed = true;
 					} else {
 						DateTime date = this.SelectionStart.AddDays (-1);
 						this.SetSelectionRange (date, date);
@@ -1404,19 +1410,8 @@ System.Console.WriteLine ("Key press on calendar with " + e.KeyCode);
 				case Keys.Right:
 					// move one left
 					if (is_shift_pressed) {
-						DateTime date;
-						// find out if we need to move forward or backward
-						if (SelectionEnd > shift_select_start_date) {
-							date = SelectionEnd.AddDays (1);
-							if (date <= SelectionStart.AddDays (MaxSelectionCount)) {
-								this.SetSelectionRange (date, SelectionStart);
-								changed = true;
-							} 
-						} else {
-							date = SelectionStart.AddDays (1);
-							this.SetSelectionRange (date, SelectionEnd);
-							changed = true;
-						}
+						this.AddTimeToSelection (1, true);
+						changed = true;
 					} else {
 						DateTime date = this.SelectionStart.AddDays (1);
 						this.SetSelectionRange (date, date);
@@ -1444,9 +1439,8 @@ System.Console.WriteLine ("Key press on calendar with " + e.KeyCode);
 
 		// raised by any key up events
 		private void KeyUpHandler (object sender, KeyEventArgs e) {
-			if (e.Shift) {
-				is_shift_pressed = false;
-			}
+System.Console.WriteLine ("e.shift " + e.Shift);
+			is_shift_pressed = e.Shift ;
 			e.Handled = true;
 		}
 
