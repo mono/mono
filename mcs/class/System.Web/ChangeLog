@@ -1,3 +1,7 @@
+2003-11-18  Todd Berman <tberman@gentoo.org>
+
+	* System.Web.dll.sources: Add ParameterCollection.cs
+
 2003-11-13  Jackson Harper  <jackson@ximian.com>
 
 	* System.web.dll.sources: Add System.Web.Util.TimeUtil.cs to the
