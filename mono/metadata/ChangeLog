@@ -1,3 +1,9 @@
+
+Mon Oct 6 15:38:40 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c: report heap_size - free_bytes as total memory allocated
+	(bug#49362).
+
 2003-10-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_System_CurrentTimeZone_GetTimeZoneData): Finally 
