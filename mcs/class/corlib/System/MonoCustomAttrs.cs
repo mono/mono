@@ -23,12 +23,14 @@ namespace System {
 
 		private static object[] from_cache (ICustomAttributeProvider obj)
 		{
-			object[] res = (object []) handle_to_attrs [obj];
-			if (res != null)
+			lock (handle_to_attrs) {
+				object[] res = (object []) handle_to_attrs [obj];
+				if (res != null)
+					return res;
+				res = GetCustomAttributes (obj);
+				handle_to_attrs.Add (obj, res);
 				return res;
-			res = GetCustomAttributes (obj);
-			handle_to_attrs.Add (obj, res);
-			return res;
+			}
 		}
 
 		internal static Attribute GetCustomAttribute (ICustomAttributeProvider obj,
@@ -82,7 +84,7 @@ namespace System {
 				return r;
 			}
 
-			ArrayList a = new ArrayList ();
+			ArrayList a = new ArrayList (res.Length < 16 ? res.Length : 16);
 			ICustomAttributeProvider btype = obj;
 			do {
 				foreach (object attr in res)

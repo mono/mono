@@ -1,3 +1,8 @@
+2003-10-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MonoCustomAttrs.cs: from_cache is now thread-safe. Yeah, I got a
+	duplicate entry exception.
+
 2003-10-08 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* DateTime.cs (ToString): Total rewrite, fixes #49358.
