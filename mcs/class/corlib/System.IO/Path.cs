@@ -44,7 +44,7 @@ namespace System.IO
 
 			int iExt = findExtension (path);
 
-			if (extension != null) {
+			if (extension != null && path.Length != 0) {
 				if (extension [0] != '.')
 					extension = "." + extension;
 			} else
