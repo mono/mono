@@ -3491,6 +3491,13 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		[ExpectedException (typeof (InvalidCastException))]
+		public void ChangeTypeNullToValuetype ()
+		{
+			Convert.ChangeType (null, typeof (int));
+		}
+
+		[Test]
 		public void ToString_MinMax_WithBase () 
 		{
 			AssertEquals ("Byte.MinValue base 2",  "0", Convert.ToString (Byte.MinValue, 2));
