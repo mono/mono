@@ -20,6 +20,7 @@ public class CryptoStream : Stream {
 	private byte[] work;
 	private int workPos;
 	private bool disposed;
+	private bool _flushedFinalBlock;
 	
 	public CryptoStream (Stream stream, ICryptoTransform transform, CryptoStreamMode mode)
 	{
@@ -82,11 +83,11 @@ public class CryptoStream : Stream {
 		if (_mode != CryptoStreamMode.Write)
 			throw new NotSupportedException ();
 
-		byte[] finalBuffer = _transform.TransformFinalBlock (work, 0, workPos);
-		if (_stream != null) {
-			_stream.Write (finalBuffer, 0, finalBuffer.Length);
+		if (!_flushedFinalBlock)
+			FlushFinalBlock ();
+
+		if (_stream != null)
 			_stream.Close ();
-		}
 	}
 
 	public override int Read (byte[] buffer, int offset, int count)
@@ -158,11 +159,18 @@ public class CryptoStream : Stream {
 
 	public void FlushFinalBlock ()
 	{
+		if (_flushedFinalBlock)
+			throw new NotSupportedException ("This method cannot be called twice.");
+
 		if (_mode != CryptoStreamMode.Write)
 			throw new NotSupportedException ("cannot flush a non-writeable CryptoStream");
 
-		if (_stream != null)
+		_flushedFinalBlock = true;
+		byte[] finalBuffer = _transform.TransformFinalBlock (work, 0, workPos);
+		if (_stream != null) {
+			_stream.Write (finalBuffer, 0, finalBuffer.Length);
 			_stream.Flush ();
+		}
 	}
 
 	public override long Seek (long offset, SeekOrigin origin)

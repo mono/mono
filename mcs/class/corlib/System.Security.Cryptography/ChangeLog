@@ -1,5 +1,11 @@
 2003-03-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* CryptoStream.cs: fixed the previous fix. MS throws a NotSupportedExc
+	when FlushFinalBlock is called twice. I've moved a few lines from Close
+	to FlushFinalBlock and added the exception check.
+
+2003-03-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* CryptoStream.cs: don't Close the underlying stream in FlushFinalBlock.
 	Fixes bug #40394.
 
