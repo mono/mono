@@ -151,11 +151,14 @@ namespace System.Runtime.Remoting.Channels
 		private IMessage DeserializeMessage(Stream responseStream, ITransportHeaders responseHeaders,IMethodCallMessage mcm, SoapMessageFormatter soapMsgFormatter) 
 		{
 			SoapFormatter fm = _soapCore.GetSafeDeserializer ();
-			SoapMessage rtnMessage = new SoapMessage();
+			SoapMessage rtnMessage = soapMsgFormatter.CreateSoapMessage (false);
 			fm.TopObject = rtnMessage;
 			object objReturn = fm.Deserialize(responseStream);
-			
-			return soapMsgFormatter.FormatResponse((ISoapMessage) objReturn, mcm);
+
+			if (objReturn is SoapFault) 
+				return soapMsgFormatter.FormatFault ((SoapFault) objReturn, mcm);
+			else
+				return soapMsgFormatter.FormatResponse ((ISoapMessage) objReturn, mcm);
 		}
 
 		class CallData

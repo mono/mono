@@ -45,9 +45,23 @@ namespace System.Runtime.Remoting.Channels {
 			
 		}
 		
+		internal IMessage FormatFault (SoapFault fault, IMethodCallMessage mcm)
+		{
+			ServerFault sf = fault.Detail as ServerFault;
+			Exception e = null;
+			
+			if (sf != null) {
+				if(_serverFaultExceptionField != null)
+					e = (Exception) _serverFaultExceptionField.GetValue(sf);
+			}
+			if (e == null)
+				e = new RemotingException (fault.FaultString);
+
+			return new ReturnMessage((System.Exception)e, mcm);
+		}
+		
 		// used by the client
-		internal IMessage FormatResponse(ISoapMessage soapMsg, 
-		                                        IMethodCallMessage mcm) 
+		internal IMessage FormatResponse(ISoapMessage soapMsg, IMethodCallMessage mcm) 
 		{
 			IMessage rtnMsg;
 			
@@ -64,8 +78,6 @@ namespace System.Runtime.Remoting.Channels {
 			}
 			else {
 				object rtnObject = null;
-				ArrayList outParams = new ArrayList();
-				int nbOutParams = 0;
 				RemMessageType messageType;
 				
 				// Get the output of the function if it is not *void*
@@ -77,28 +89,26 @@ namespace System.Runtime.Remoting.Channels {
 								rtnObject, 
 								_methodCallInfo.ReturnType);
 				}
+				
+				object[] outParams = new object [_methodCallParameters.Length];
+				int n=0;
+				
 				// check if there are *out* parameters
 				foreach(ParameterInfo paramInfo in _methodCallParameters) {
 					
 					if(paramInfo.ParameterType.IsByRef || paramInfo.IsOut) {
 						int index = Array.IndexOf(soapMsg.ParamNames, paramInfo.Name);
-						nbOutParams++;
 						object outParam = soapMsg.ParamValues[index];
 						if(outParam is IConvertible)
-							outParam = Convert.ChangeType(
-									outParam, 
-									paramInfo.ParameterType.GetElementType());
-						outParams.Add(outParam); 
+							outParam = Convert.ChangeType (outParam, paramInfo.ParameterType.GetElementType());
+						outParams[n] = outParam;
 					}
-//					else outParams.Insert(paramInfo.Position, null);
+					else
+						outParams [n] = null;
+					n++;
 				}
 				
-				rtnMsg = new ReturnMessage(
-						rtnObject, 
-						(object[]) outParams.ToArray(typeof(object)), 
-						nbOutParams, 
-						mcm.LogicalCallContext, 
-						mcm);
+				rtnMsg = new ReturnMessage (rtnObject, outParams, outParams.Length, mcm.LogicalCallContext, mcm);
 			}
 			return rtnMsg;
 		}
@@ -124,9 +134,11 @@ namespace System.Runtime.Remoting.Channels {
 			
 			// Add the function parameters to the SoapMessage class
 			foreach(ParameterInfo paramInfo in _methodCallParameters) {
-				if(!paramInfo.IsOut) {
+				if (!(paramInfo.IsOut && paramInfo.ParameterType.IsByRef)) {
+					Type t = paramInfo.ParameterType;
+					if (t.IsByRef) t = t.GetElementType ();
 					paramNames.Add(paramInfo.Name);
-					paramTypes.Add(paramInfo.ParameterType);
+					paramTypes.Add(t);
 					paramValues.Add(mcm.Args[paramInfo.Position]);
 				}
 			}			
@@ -170,7 +182,7 @@ namespace System.Runtime.Remoting.Channels {
 			{
 				Type paramType = (paramInfo.ParameterType.IsByRef ? paramInfo.ParameterType.GetElementType() : paramInfo.ParameterType);
 
-				if(paramInfo.IsOut) {
+				if (paramInfo.IsOut && paramInfo.ParameterType.IsByRef) {
 					args [paramInfo.Position] = GetNullValue (paramType);
 				}
 				else{
@@ -235,6 +247,32 @@ namespace System.Runtime.Remoting.Channels {
 				ServerFault serverFault = CreateServerFault(mrm.Exception);
 				return new SoapFault("Server", String.Format(" **** {0} - {1}", mrm.Exception.GetType().ToString(), mrm.Exception.Message), null, serverFault);
 			}
+		}
+		
+		internal SoapMessage CreateSoapMessage (bool isRequest)
+		{
+			if (isRequest) return new SoapMessage ();
+			
+			int n = 0;
+			Type[] types = new Type [_methodCallParameters.Length + 1];
+			
+			if (_methodCallInfo.ReturnType != typeof(void)) {
+				types[0] = _methodCallInfo.ReturnType;
+				n++;
+			}
+				
+			foreach(ParameterInfo paramInfo in _methodCallParameters)
+			{
+				if (paramInfo.ParameterType.IsByRef || paramInfo.IsOut)
+				{
+					Type t = paramInfo.ParameterType;
+					if (t.IsByRef) t = t.GetElementType();
+					types [n++] = t;
+				}
+			}
+			SoapMessage sm = new SoapMessage ();
+			sm.ParamTypes = types;
+			return sm;
 		}
 		
 		// used by the server when an exception is thrown

@@ -112,7 +112,7 @@ namespace System.Runtime.Remoting.Channels {
 				if (serverType == null) throw new RemotingException ("No receiver for uri " + uri);
 			
 				SoapFormatter fm = _soapCore.GetSafeDeserializer ();
-				SoapMessage soapMessage = new SoapMessage();
+				SoapMessage soapMessage = soapMsgFormatter.CreateSoapMessage (true);
 				fm.TopObject = soapMessage;
 				requestStream.Position = 0;
 				fm.Deserialize(requestStream);
