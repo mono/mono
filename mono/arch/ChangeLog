@@ -1,3 +1,9 @@
+
+Fri Nov 19 17:29:22 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* ppc/ppc-codegen.h: counter reg decrement branch values
+	(patch by Geoff Norton <gnorton@customerdna.com>).
+
 2004-05-07  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* ppc/ppc-codegen.h: remove GCC-ism in ppc_emit32
