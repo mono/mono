@@ -13,8 +13,8 @@ namespace System.ComponentModel
 {
 	public class AttributeCollection : ICollection, IEnumerable
 	{
-		private ArrayList attrList;
-		public static readonly AttributeCollection Empty;
+		private ArrayList attrList = new ArrayList ();
+		public static readonly AttributeCollection Empty = new AttributeCollection (null);
 		
 		public AttributeCollection (Attribute[] attributes) {
 			for (int i = 0; i < attributes.Length; i++)

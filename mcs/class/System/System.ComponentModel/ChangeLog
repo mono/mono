@@ -1,5 +1,14 @@
 2002-07-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* AttributeCollection.cs: initialize member variables.
+
+	* RefreshEventArgs.cs: implemented.
+	* RefreshEventHandler.cs: New file.
+
+	* TypeDescriptor.cs: fully stubbed out the remaining method.
+
+2002-07-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* DefaultPropertyAttribute.cs: New file.
 
 2002-06-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>

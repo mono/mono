@@ -8,13 +8,111 @@
 //
 
 using System;
+using System.Collections;
+using System.Reflection;
 
 namespace System.ComponentModel
 {
 
-[MonoTODO("Only implemented the minimal features needed to use ColorConverter")]
+[MonoTODO]
 public sealed class TypeDescriptor
 {
+	[MonoTODO]
+	public static void AddEditorTable (Type editorBaseType, Hashtable table)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static EventDescriptor CreateEvent (Type componentType,
+						   string name,
+						   Type type,
+						   Attribute [] attributes)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static EventDescriptor CreateEvent (Type componentType,
+						   EventDescriptor oldEventDescriptor,
+						   Attribute [] attributes)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static PropertyDescriptor CreateProperty (Type componentType,
+							 string name,
+							 Type type,
+							 Attribute [] attributes)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static PropertyDescriptor CreateProperty (Type componentType,
+							 PropertyDescriptor oldPropertyDescriptor,
+							 Attribute [] attributes)
+	{
+		throw new NotImplementedException ();
+	}
+
+	public static AttributeCollection GetAttributes (Type componentType)
+	{
+		if (componentType == null)
+			return AttributeCollection.Empty;
+
+		object [] atts = componentType.GetCustomAttributes (false);
+		return new AttributeCollection ((Attribute []) atts);
+	}
+
+	[MonoTODO]
+	public static AttributeCollection GetAttributes (object component)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static AttributeCollection GetAttributes (object component, bool noCustomTypeDesc)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static string GetClassName (object component)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static string GetClassName (object component, bool noCustomTypeDesc)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static string GetComponentName (object component)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static string GetComponentName (object component, bool noCustomTypeDesc)
+	{
+		throw new NotImplementedException ();
+	}
+
+	public static TypeConverter GetConverter (object component)
+	{
+		return GetConverter (component.GetType ());
+	}
+
+	[MonoTODO]
+	public static TypeConverter GetConverter (object component, bool noCustomTypeDesc)
+	{
+		throw new NotImplementedException ();
+	}
+
 	public static TypeConverter GetConverter (Type type)
 	{
 		object [] attrs = type.GetCustomAttributes (false);
@@ -38,6 +136,164 @@ public sealed class TypeDescriptor
 	
 		return converter as TypeConverter;
 	}
+
+	[MonoTODO]
+	public static EventDescriptor GetDefaultEvent (object component)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static EventDescriptor GetDefaultEvent (Type componentType)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static EventDescriptor GetDefaultEvent (object component, bool noCustomTypeDesc)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static PropertyDescriptor GetDefaultProperty (object component)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static PropertyDescriptor GetDefaultProperty (Type componentType)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static PropertyDescriptor GetDefaultProperty (object component, bool noCustomTypeDesc)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static object GetEditor (object component, Type editorBaseType)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static object GetEditor (Type componentType, Type editorBaseType)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static object GetEditor (object component, Type editorBaseType, bool noCustomTypeDesc)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static EventDescriptorCollection GetEvents (object component)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static EventDescriptorCollection GetEvents (Type componentType)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static EventDescriptorCollection GetEvents (object component, Attribute [] attributes)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static EventDescriptorCollection GetEvents (object component, bool noCustomTypeDesc)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static EventDescriptorCollection GetEvents (Type componentType, Attribute [] attributes)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static EventDescriptorCollection GetEvents (object component,
+							   Attribute [] attributes,
+							   bool noCustomTypeDesc)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static PropertyDescriptorCollection GetProperties (object component)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static PropertyDescriptorCollection GetProperties (Type componentType)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static PropertyDescriptorCollection GetProperties (object component, Attribute [] attributes)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static PropertyDescriptorCollection GetProperties (object component, bool noCustomTypeDesc)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static PropertyDescriptorCollection GetProperties (Type componentType,
+								  Attribute [] attributes)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static PropertyDescriptorCollection GetProperties (Type componentType,
+								  Attribute [] attributes,
+								  bool noCustomTypeDesc)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static void Refresh (Assembly assembly)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static void Refresh (Module module)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static void Refresh (object component)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static void Refresh (Type type)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public static event RefreshEventHandler Refreshed;
 }
 }
 
