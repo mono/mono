@@ -25,10 +25,6 @@ namespace System.Configuration.Install
 			get {
 				return savedstate;	
 			}
-
-			set {
-				savedstate = value;
-			}
 		}		
 	}
 }

@@ -12,70 +12,93 @@ namespace System.Configuration.Install
 {
 	public class InstallerCollection : CollectionBase
 	{
-		[MonoTODO]
+		#region Constructors
+
+		internal InstallerCollection(Installer owner)
+		{
+			this.owner = owner;
+		}
+
+		#endregion Constructors
+		
+
 		public Installer this[int index] {
-			get {
-				throw new NotImplementedException ();
+			get 
+			{
+				return (Installer) base.List[index];
 			}
-			
-			set {
-				throw new NotImplementedException ();
+			set 
+			{
+				base.List[index] = value;
 			}
 		}
 
-		[MonoTODO]
 		public int Add (Installer value) {
-			throw new NotImplementedException ();
+			return base.List.Add (value);
 		}
 
-		[MonoTODO]
 		public void AddRange (Installer[] value) {
-			throw new NotImplementedException ();
+			if (value == null) 
+			{
+				throw new ArgumentNullException ("value");
+			}
+
+			for (int counter = 0; counter < value.Length; counter++)
+			{
+				Add (value[counter]);
+			}
 		}
 			
-		[MonoTODO]
 		public void AddRange (InstallerCollection value) {
-			throw new NotImplementedException ();
+			if (value == null)
+			{
+				throw new ArgumentNullException ("value");
+			}
+
+			int itemCount = value.Count;
+			for (int counter = 0; counter < itemCount; counter++)
+			{
+				Add (value[counter]);
+			}
 		}
 
-		[MonoTODO]
 		public bool Contains (Installer value) {
-			throw new NotImplementedException ();
+			return base.List.Contains (value);
 		}		
 
-		[MonoTODO]
 		public void CopyTo (Installer[] array, int index) {
-			throw new NotImplementedException ();
+			base.List.CopyTo (array, index);
 		}
 		
-		[MonoTODO]
 		public int IndexOf (Installer value) {
-			throw new NotImplementedException ();
+			return base.List.IndexOf (value);
 		}
 
-		[MonoTODO]
 		public void Insert (int index, Installer value) {
-			throw new NotImplementedException ();			
+			base.List.Insert (index, value);
 		}
 
-		[MonoTODO]
 		protected override void OnInsert (int index, object value) {
-			throw new NotImplementedException ();
+			((Installer) value).parent = owner;
 		}
 
-		[MonoTODO]
 		protected override void OnRemove (int index, object value) {
-			throw new NotImplementedException ();
+			((Installer) value).parent = null;
 		}
 
-		[MonoTODO]
 		protected override void OnSet (int index, object oldValue, object newValue) {
-			throw new NotImplementedException ();
+			((Installer) oldValue).parent = null;
+			((Installer) newValue).parent = owner;
 		}
 
-		[MonoTODO]
 		public void Remove (Installer value) {
-			throw new NotImplementedException ();
+			base.List.Remove(value);
 		}
+
+		#region Private Instance Fields
+
+		private Installer owner;
+
+		#endregion Private Instance Fields
 	}
 }

@@ -1,3 +1,10 @@
+2004-05-16  Gert Driesen (drieseng@users.sourceforge.net)
+
+	* IManagedInstaller.cs: fixed signature
+	* Installer.cs: marked parent internal to match MS
+	* InstallerCollection.cs: implemented
+	* InstallEventArgs.cs: remove setter for SavedState
+
 2004-05-15  Gert Driesen (drieseng@users.sourceforge.net)
 
 	* InstallContext.cs: removed setter for Parameters

@@ -20,8 +20,8 @@ namespace System.Configuration.Install
 	{
 		private InstallContext context;
 		private string helptext;
-		InstallerCollection installers;
-		Installer parent;
+		private InstallerCollection installers;
+		internal Installer parent;
 		
 		[MonoTODO]
 		public Installer () {
