@@ -164,7 +164,7 @@ namespace System.Xml.Serialization {
 		}
 
 		[MonoTODO]
-		public object Deserialize (XmlSerializationReader reader)
+		public virtual object Deserialize (XmlSerializationReader reader)
 		{
 			throw new NotImplementedException ();
 		}
