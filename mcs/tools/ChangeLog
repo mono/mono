@@ -1,6 +1,7 @@
 2002-01-18  Nick Drochak  <ndrochak@gol.com>
 
 	* makefile: remove path to beta2 csc.exe.  path to csc.exe must be in PATH instead.
+	don't generate xml from corcompare for now.  it throws an error on v1.0 of .NET
 
 2002-01-17  Nick Drochak  <ndrochak@gol.com>
 
