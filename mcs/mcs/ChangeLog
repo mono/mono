@@ -1,7 +1,12 @@
 2004-05-23  Martin Baulig  <martin@ximian.com>
 
+	* flowanalysis.cs (Reachability.Reachable): Compute this
+	on-the-fly rather than storing it as a field.
+
+2004-05-23  Martin Baulig  <martin@ximian.com>
+
 	* flowanalysis.cs (Reachability.And): Manually compute the
-	resulting `barrier' from the reachability.
+	resulting `barrier' from the reachability.	
 
 2004-05-23  Marek Safar  <marek.safar@seznam.cz>
 

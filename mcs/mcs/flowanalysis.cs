@@ -79,7 +79,7 @@ namespace Mono.CSharp
 
 		public sealed class Reachability
 		{
-			FlowReturns returns, breaks, throws, barrier, reachable;
+			FlowReturns returns, breaks, throws, barrier;
 
 			public FlowReturns Returns {
 				get { return returns; }
@@ -93,10 +93,6 @@ namespace Mono.CSharp
 			public FlowReturns Barrier {
 				get { return barrier; }
 			}
-			public FlowReturns Reachable {
-				get { return reachable; }
-			}
-
 			public Reachability (FlowReturns returns, FlowReturns breaks,
 					     FlowReturns throws, FlowReturns barrier)
 			{
@@ -104,15 +100,11 @@ namespace Mono.CSharp
 				this.breaks = breaks;
 				this.throws = throws;
 				this.barrier = barrier;
-
-				update ();
 			}
 
 			public Reachability Clone ()
 			{
-				Reachability cloned = new Reachability (returns, breaks, throws, barrier);
-				cloned.reachable = reachable;
-				return cloned;
+				return new Reachability (returns, breaks, throws, barrier);
 			}
 
 			// <summary>
@@ -237,8 +229,6 @@ namespace Mono.CSharp
 					a.barrier = FlowReturns.Sometimes;
 				else
 					a.barrier = FlowReturns.Never;
-
-				a.reachable = AndFlowReturns (a.reachable, b.reachable);
 			}
 
 			public void Or (Reachability b)
@@ -247,8 +237,6 @@ namespace Mono.CSharp
 				breaks = OrFlowReturns (breaks, b.breaks);
 				throws = OrFlowReturns (throws, b.throws);
 				barrier = OrFlowReturns (barrier, b.barrier);
-
-				update ();
 			}
 
 			public static Reachability Never ()
@@ -258,16 +246,21 @@ namespace Mono.CSharp
 					FlowReturns.Never, FlowReturns.Never);
 			}
 
-			void update ()
-			{
-				if ((returns == FlowReturns.Always) || (breaks == FlowReturns.Always) ||
-				    (throws == FlowReturns.Always) || (barrier == FlowReturns.Always))
-					reachable = FlowReturns.Never;
-				else if ((returns == FlowReturns.Never) && (breaks == FlowReturns.Never) &&
-					 (throws == FlowReturns.Never) && (barrier == FlowReturns.Never))
-					reachable = FlowReturns.Always;
-				else
-					reachable = FlowReturns.Sometimes;
+			public FlowReturns Reachable {
+				get {
+					if ((returns == FlowReturns.Always) ||
+					    (breaks == FlowReturns.Always) ||
+					    (throws == FlowReturns.Always) ||
+					    (barrier == FlowReturns.Always))
+						return FlowReturns.Never;
+					else if ((returns == FlowReturns.Never) &&
+						 (breaks == FlowReturns.Never) &&
+						 (throws == FlowReturns.Never) &&
+						 (barrier == FlowReturns.Never))
+						return FlowReturns.Always;
+					else
+						return FlowReturns.Sometimes;
+				}
 			}
 
 			public bool AlwaysBreaks {
@@ -303,49 +296,42 @@ namespace Mono.CSharp
 			}
 
 			public bool IsUnreachable {
-				get { return reachable == FlowReturns.Never; }
+				get { return Reachable == FlowReturns.Never; }
 			}
 
 			public void SetReturns ()
 			{
 				returns = FlowReturns.Always;
-				update ();
 			}
 
 			public void SetReturnsSometimes ()
 			{
 				returns = FlowReturns.Sometimes;
-				update ();
 			}
 
 			public void SetBreaks ()
 			{
 				breaks = FlowReturns.Always;
-				update ();
 			}
 
 			public void ResetBreaks ()
 			{
 				breaks = FlowReturns.Never;
-				update ();
 			}
 
 			public void SetThrows ()
 			{
 				throws = FlowReturns.Always;
-				update ();
 			}
 
 			public void SetThrowsSometimes ()
 			{
 				throws = FlowReturns.Sometimes;
-				update ();
 			}
 
 			public void SetBarrier ()
 			{
 				barrier = FlowReturns.Always;
-				update ();
 			}
 
 			static string ShortName (FlowReturns returns)
@@ -365,7 +351,7 @@ namespace Mono.CSharp
 				return String.Format ("[{0}:{1}:{2}:{3}:{4}]",
 						      ShortName (returns), ShortName (breaks),
 						      ShortName (throws), ShortName (barrier),
-						      ShortName (reachable));
+						      ShortName (Reachable));
 			}
 		}
 
