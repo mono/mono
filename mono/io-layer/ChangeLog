@@ -1,3 +1,37 @@
+2004-04-22  Dick Porter  <dick@ximian.com>
+
+	* handles.c: 
+	* handles-private.h: Reference the handle when it is locked, so
+	that another thread can't blow it away while we're waiting for it
+	to become signalled.
+	
+	* wait.c: 
+	* timed-thread.c: 
+	* threads.c: 
+	* sockets.c: 
+	* semaphores.c: 
+	* mutexes.c: 
+	* mono-mutex.c: 
+	* io.c: 
+	* handles.c: 
+	* handles-private.h: 
+	* events.c: 
+	* error.c: 
+	* daemon-messages.c: 
+	* critical-sections.c: 
+	* atomic.c: Added pthreads cleanup handlers and error asserts
+
+	* shared.c: 
+	* handles.c: Fixed the gcc "variable might be used uninitialised"
+	warnings.  They can't happen, but gcc doesn't know that
+	g_assert()s don't return.
+
+	Fixed the declaration of _wapi_handle_process_kill() so that it
+	expects the correct type for the pid.
+	
+	* threads.c: Removed the TLS_PTHREAD_MUTEX style locking that
+	hasn't been used in ages and just made the code more complex.
+
 2004-04-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* processes.c: Include <signal.h> for SIGKILL and SIGILL + fix some
