@@ -21,7 +21,6 @@ namespace System
 	public struct DateTime : IComparable , IFormattable  , IConvertible
 	{
 		private TimeSpan ticks;
-		private TimeSpan utcoffset;
 
 		private const int dp400 = 146097;
 		private const int dp100 = 36524;
@@ -123,7 +122,7 @@ namespace System
 			if (local) {
 				TimeZone tz = TimeZone.CurrentTimeZone;
 
-				utcoffset = tz.GetUtcOffset (this);
+				TimeSpan utcoffset = tz.GetUtcOffset (this);
 
 				ticks = ticks + utcoffset;
 			}
@@ -136,7 +135,7 @@ namespace System
 			: this (year, month, day, hour, minute, second, 0)	{}
 
 		public DateTime (int year, int month, int day, int hour, int minute, int second, int millisecond)
-		{
+			{
 			if ( year < 1 || year > 9999 || 
 				month < 1 || month >12  ||
 				day < 1 || day > DaysInMonth(year, month) ||
@@ -146,7 +145,6 @@ namespace System
 				throw new ArgumentOutOfRangeException() ;
 
 			ticks = new TimeSpan (AbsoluteDays(year,month,day), hour, minute, second, millisecond);
-			utcoffset = new TimeSpan (0);
 		}
 
 		public DateTime (int year, int month, int day, Calendar calendar)
@@ -158,9 +156,9 @@ namespace System
 
 
 		public DateTime (int year, int month, int day, int hour, int minute, int second, int millisecond, Calendar calendar)
-			: this(year, month, day, hour, minute, second, millisecond) 
+			: this (year, month, day, hour, minute, second, millisecond) 
 		{
-			if ( calendar == null)
+			if (calendar == null)
 				throw new ArgumentNullException();
 		}
 
@@ -170,8 +168,6 @@ namespace System
 				throw new ArgumentOutOfRangeException ();
 
 			ticks = value;
-
-			utcoffset = new TimeSpan (0);
 		}
 
 		/* Properties  */
@@ -496,27 +492,411 @@ namespace System
 		}
 
 		[MonoTODO]
-		public static DateTime ParseExact(string s,	string format, IFormatProvider provider	)
+		public static DateTime ParseExact (string s, string format, IFormatProvider fp)
 		{
-			// TODO: Implement me
-			return new DateTime (0);
+			return ParseExact (s, format, fp, DateTimeStyles.None);
+		}
+
+		internal static int _ParseNumber (string s, int digits, bool leadingzero, out int num_parsed)
+		{
+			int number = 0, i;
+
+			if (!leadingzero)
+			{
+				int real_digits = 0;
+				for (i = 0; i < digits; i++)
+				{
+					if (!Char.IsDigit (s[i]))
+						break;
+
+					real_digits++;
+				}
+
+				digits = real_digits;
+			}
+
+			for (i = 0; i < digits; i++)
+			{
+				char c = s[i];
+				if (!Char.IsDigit (c))
+				{
+					num_parsed = -1;
+					return 0;
+				}
+
+				number = number * 10 + (byte) (c - '0');
+			}
+
+			num_parsed = digits;
+			return number;
+		}
+
+		internal static int _ParseEnum (string s, string[] values, out int num_parsed)
+		{
+			int i;
+
+			for (i = 0; i < values.Length; i++)
+			{
+				String tmp = s.Substring (0, values[i].Length);
+				if (String.Compare (tmp, values[i], true) == 0)
+				{
+					num_parsed = values[i].Length;
+					return i;
+				}
+			}
+
+			num_parsed = -1;
+			return -1;
+		}
+
+		internal static bool _ParseString (string s, int maxlength, string value, out int num_parsed)
+		{
+			if (maxlength > 0)
+				value = value.Substring (0, maxlength);
+
+			s = s.Substring (0, value.Length);
+
+			if (String.Compare (s, value, true) == 0)
+			{
+				num_parsed = value.Length;
+				return true;
+			}
+
+			num_parsed = -1;
+			return false;
+		}
+
+		internal static bool _DoParse (string s, string format, bool exact,
+					       out DateTime result,
+					       DateTimeFormatInfo dfi,
+					       DateTimeStyles style)
+		{
+			bool useutc = false;
+
+			if (format.Length == 1)
+				format = _GetStandardPattern (format[0], dfi, out useutc);
+
+			char[] chars = format.ToCharArray ();
+			int len = format.Length, pos = 0, num = 0;
+
+			int day = -1, dayofweek = -1, month = -1, year = -1;
+			int hour = -1, minute = -1, second = -1, millisecond = -1;
+			int ampm = -1, century = (Now.Year / 100) * 100;
+			int tzsign = -1, tzoffset = -1, tzoffmin = -1;
+
+			result = new DateTime (0);
+
+			while (pos+num < len)
+			{
+				if (chars[pos] == '\'')
+				{
+					num = 1;
+					s = s.Substring (1);
+					while (pos+num < len)
+					{
+						if (s[0] != chars[pos+num])
+							return false;
+						s = s.Substring (1);
+						if (s.Length == 0)
+							return false;
+
+						if (chars[pos+num] == '\'')
+							break;
+
+						num = num + 1;
+					}
+					if (pos+num > len)
+						return false;
+
+					pos = pos + num + 1;
+					num = 0;
+					continue;
+				}
+				else if (chars[pos] == '\\')
+				{
+					if (pos+1 >= len)
+						return false;
+
+					if (s[0] != chars[pos+num])
+						return false;
+					s = s.Substring (1);
+					if (s.Length == 0)
+						return false;
+
+					pos = pos + 1;
+					continue;
+				}
+				else if (chars[pos] == '%')
+				{
+					pos = pos + 1;
+					continue;
+				}
+
+				if ((pos+num+1 < len) && (chars[pos+num+1] == chars[pos+num]))
+				{
+					num = num + 1;
+					continue;
+				}
+
+				int num_parsed = 0;
+
+				switch (chars[pos])
+				{
+				case 'd':
+					if (day != -1)
+						return false;
+					if (num == 0)
+						day = _ParseNumber (s, 2, false, out num_parsed);
+					else if (num == 1)
+						day = _ParseNumber (s, 2, true, out num_parsed);
+					else if (num == 2)
+						dayofweek = _ParseEnum (s, dfi.AbbreviatedDayNames, out num_parsed);
+					else
+					{
+						dayofweek = _ParseEnum (s, dfi.DayNames, out num_parsed);
+						num = 3;
+					}
+					break;
+				case 'M':
+					if (month != -1)
+						return false;
+					if (num == 0)
+						month = _ParseNumber (s, 2, false, out num_parsed);
+					else if (num == 1)
+						month = _ParseNumber (s, 2, false, out num_parsed);
+					else if (num == 2)
+						month = _ParseEnum (s, dfi.AbbreviatedMonthNames , out num_parsed);
+					else
+					{
+						month = _ParseEnum (s, dfi.MonthNames, out num_parsed);
+						num = 3;
+					}
+					if ((month < 1) || (month > 12))
+						return false;
+					break;
+				case 'y':
+					if (year != -1)
+						return false;
+					if (num == 0)
+						year = _ParseNumber (s, 2, false, out num_parsed) + century;
+					else if (num < 3)
+						year = _ParseNumber (s, 2, true, out num_parsed) + century;
+					else
+					{
+						year = _ParseNumber (s, 4, false, out num_parsed);
+						num = 3;
+					}
+					break;
+				case 'h':
+					if (hour != -1)
+						return false;
+					if (num == 0)
+						hour = _ParseNumber (s, 2, false, out num_parsed);
+					else
+					{
+						hour = _ParseNumber (s, 2, true, out num_parsed);
+						num = 1;
+					}
+					if (hour >= 12)
+						return false;
+					break;
+				case 'H':
+					if ((hour != -1) || (ampm >= 0))
+						return false;
+					if (num == 0)
+						hour = _ParseNumber (s, 2, false, out num_parsed);
+					else
+					{
+						hour = _ParseNumber (s, 2, true, out num_parsed);
+						num = 1;
+					}
+					if (hour >= 24)
+						return false;
+					ampm = -2;
+					break;
+				case 'm':
+					if (minute != -1)
+						return false;
+					if (num == 0)
+						minute = _ParseNumber (s, 2, false, out num_parsed);
+					else
+					{
+						minute = _ParseNumber (s, 2, true, out num_parsed);
+						num = 1;
+					}
+					if (minute >= 60)
+						return false;
+					break;
+				case 's':
+					if (second != -1)
+						throw new FormatException ();
+					if (num == 0)
+						second = _ParseNumber (s, 2, false, out num_parsed);
+					else
+					{
+						second = _ParseNumber (s, 2, true, out num_parsed);
+						num = 1;
+					}
+					if (second >= 60)
+						throw new FormatException (Locale.GetText ("The DateTime represented by the string is out of range."));
+					break;
+				case 'f':
+					if (millisecond != -1)
+						throw new FormatException ();
+					num = Math.Min (num, 6);
+					millisecond = _ParseNumber (s, num+1, true, out num_parsed);
+					break;
+				case 't':
+					if (ampm != -1)
+						throw new FormatException ();
+					if (num == 0)
+					{
+						if (_ParseString (s, 1, dfi.AMDesignator, out num_parsed))
+							ampm = 0;
+						else if (_ParseString (s, 1, dfi.PMDesignator, out num_parsed))
+							ampm = 1;
+						else
+							throw new FormatException ();
+					}
+					else
+					{
+						if (_ParseString (s, 0, dfi.AMDesignator, out num_parsed))
+							ampm = 0;
+						else if (_ParseString (s, 0, dfi.PMDesignator, out num_parsed))
+							ampm = 1;
+						else
+							throw new FormatException ();
+						num = 1;
+					}
+					break;
+				case 'z':
+					if (tzsign != -1)
+						throw new FormatException ();
+					if (s[0] == '+')
+						tzsign = 0;
+					else if (s[0] == '-')
+						tzsign = 1;
+					else
+						throw new FormatException ();
+					s = s.Substring (1);
+					if (num == 0)
+						tzoffset = _ParseNumber (s, 2, false, out num_parsed);
+					else if (num == 1)
+						tzoffset = _ParseNumber (s, 2, true, out num_parsed);
+					else
+					{
+						tzoffset = _ParseNumber (s, 2, true, out num_parsed);
+						if (num_parsed < 0)
+							throw new FormatException ();
+						s = s.Substring (num_parsed);
+						if (!_ParseString (s, 0, dfi.TimeSeparator, out num_parsed))
+							throw new FormatException ();
+						s = s.Substring (num_parsed);
+						tzoffmin = _ParseNumber (s, 2, true, out num_parsed);
+						if (num_parsed < 0)
+							throw new FormatException ();
+						num = 2;
+					}
+					break;
+				case ':':
+					if (!_ParseString (s, 0, dfi.TimeSeparator, out num_parsed))
+						throw new FormatException ();
+					break;
+				case '/':
+					if (!_ParseString (s, 0, dfi.DateSeparator, out num_parsed))
+						throw new FormatException ();
+					break;
+				default:
+					if (s[0] != chars[pos])
+						throw new FormatException ();
+					num = 0;
+					num_parsed = 1;
+					break;
+				}
+
+				if (num_parsed < 0)
+					throw new FormatException ();
+
+				s = s.Substring (num_parsed);
+
+				pos = pos + num + 1;
+				num = 0;
+			}
+
+			if (hour == -1)
+				hour = 0;
+			if (minute == -1)
+				minute = 0;
+			if (second == -1)
+				second = 0;
+			if (millisecond == -1)
+				millisecond = 0;
+			if (day == -1)
+				day = 0;
+			if (month == -1)
+				month = 0;
+			if (year == -1)
+				year = 0;
+
+			if (ampm == 1)
+				hour = hour + 12;
+
+			if (tzoffmin == -1)
+				tzoffmin = 0;
+			if (tzoffset == -1)
+				tzoffset = 0;
+			if (tzsign == 1)
+				tzoffset = -tzoffset;
+
+			TimeSpan utcoffset = new TimeSpan (tzoffset, tzoffmin, 0);
+
+			result = new DateTime (year, month, day-1, hour, minute, second, millisecond);
+
+			if ((dayofweek != -1) && (dayofweek != (int) result.DayOfWeek))
+				throw new FormatException (Locale.GetText ("String was not recognized as valid DateTime because the day of week was incorrect."));
+
+			long newticks = (result.ticks - utcoffset).Ticks;
+
+			result = new DateTime (true, newticks);
+
+			return true;
+		}
+
+
+		[MonoTODO]
+		public static DateTime ParseExact (string s, string format,
+						   IFormatProvider fp, DateTimeStyles style)
+		{
+			string[] formats;
+
+			formats = new string [1];
+			formats[0] = format;
+
+			return ParseExact (s, formats, fp, style);
 		}
 
 		[MonoTODO]
-		public static DateTime ParseExact(string s, string format, IFormatProvider provider, DateTimeStyles style )
+		public static DateTime ParseExact (string s, string[] formats,
+						   IFormatProvider fp,
+						   DateTimeStyles style)
 		{
-			// TODO: Implement me
-			return new DateTime (0);
-		
-		}
+			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance (fp);
 
-		[MonoTODO]
-		public static DateTime ParseExact( string s, string[] formats, IFormatProvider provider,
-						   DateTimeStyles style )
-		{
-			// TODO: Implement me
-			return new DateTime (0);
-		
+			if (s == null)
+				throw new ArgumentNullException (Locale.GetText ("s is null"));
+			if (formats.Length == 0)
+				throw new ArgumentNullException (Locale.GetText ("format is null"));
+
+			int i;
+			for (i = 0; i < formats.Length; i++)
+			{
+				DateTime result;
+
+				if (_DoParse (s, formats[i], true, out result, dfi, style))
+					return result;
+			}
+
+			throw new FormatException ();
 		}
 		
 		public TimeSpan Subtract(DateTime dt)
@@ -583,9 +963,9 @@ namespace System
 			return ToString (format, null);
 		}
 
-		internal string _GetStandardPattern (char format, DateTimeFormatInfo dfi, out bool useutc)
+		internal static string _GetStandardPattern (char format, DateTimeFormatInfo dfi, out bool useutc)
 		{
-			String pattern, f1, f2;
+			String pattern;
 
 			useutc = false;
 
@@ -598,25 +978,16 @@ namespace System
 				pattern = dfi.LongDatePattern;
 				break;
 			case 'f':
-				f1 = dfi.LongDatePattern;
-				f2 = dfi.ShortTimePattern;
-				pattern = String.Concat (f1, " ");
-				pattern = String.Concat (pattern, f2);
+				pattern = dfi.LongDatePattern + " " + dfi.ShortTimePattern;
 				break;
 			case 'F':
 				pattern = dfi.FullDateTimePattern;
 				break;
 			case 'g':
-				f1 = dfi.ShortDatePattern;
-				f2 = dfi.ShortTimePattern;
-				pattern = String.Concat (f1, " ");
-				pattern = String.Concat (pattern, f2);
+				pattern = dfi.ShortDatePattern + " " + dfi.ShortTimePattern;
 				break;
 			case 'G':
-				f1 = dfi.ShortDatePattern;
-				f2 = dfi.LongTimePattern;
-				pattern = String.Concat (f1, " ");
-				pattern = String.Concat (pattern, f2);
+				pattern = dfi.ShortDatePattern + " " + dfi.LongTimePattern;
 				break;
 			case 'm':
 			case 'M':
@@ -640,10 +1011,7 @@ namespace System
 				useutc = true;
 				break;
 			case 'U':
-				f1 = dfi.LongDatePattern;
-				f2 = dfi.LongTimePattern;
-				pattern = String.Concat (f1, " ");
-				pattern = String.Concat (pattern, f2);
+				pattern = dfi.LongDatePattern + " " + dfi.LongTimePattern;
 				useutc = true;
 				break;
 			case 'y':
@@ -655,9 +1023,6 @@ namespace System
 				break;
 			}
 
-			Console.Write ("Pattern: ");
-			Console.WriteLine (pattern);
-
 			return pattern;
 		}
 
@@ -667,46 +1032,40 @@ namespace System
 			char[] chars = format.ToCharArray ();
 			int len = format.Length, pos = 0, num = 0;
 
-			while (pos+num < len)
+			TimeZone tz = TimeZone.CurrentTimeZone;
+			TimeSpan utcoffset = tz.GetUtcOffset (this);
+
+			while (pos < len)
 			{
-				if (chars[pos] == '\'')
-				{
+				if (chars[pos] == '\'') {
 					num = 1;
-					while (pos+num < len)
-					{
+					while (pos+num <= len) {
 						if (chars[pos+num] == '\'')
 							break;
 
-						result = String.Concat (result, chars[pos+num]);
-
-						num = num + 1;
+						result += chars[pos+num];
+						num++;
 					}
 					if (pos+num > len)
 						throw new FormatException (Locale.GetText ("The specified format is invalid"));
 
-					pos = pos + num + 1;
+					pos += num+1;
 					num = 0;
 					continue;
-				}
-				else if (chars[pos] == '\\')
-				{
+				} else if (chars[pos] == '\\') {
 					if (pos+1 >= len)
 						throw new FormatException (Locale.GetText ("The specified format is invalid"));
 
-					result = String.Concat (result, chars[pos]);
-					pos = pos + 1;
+					result += chars[pos+1];
+					pos += 2;
 					continue;
-				}
-				else if (chars[pos] == '%')
-				{
-					pos = pos + 1;
+				} else if (chars[pos] == '%') {
+					pos++;
 					continue;
 				}
 
-
-				if ((pos+num+1 < len) && (chars[pos+num+1] == chars[pos+num]))
-				{
-					num = num + 1;
+				if ((pos+num+1 < len) && (chars[pos+num+1] == chars[pos+num])) {
+					num++;
 					continue;
 				}
 
@@ -719,8 +1078,7 @@ namespace System
 						str = Day.ToString ("d02");
 					else if (num == 2)
 						str = dfi.GetAbbreviatedDayName (DayOfWeek);
-					else
-					{
+					else {
 						str = dfi.GetDayName (DayOfWeek);
 						num = 3;
 					}
@@ -732,26 +1090,19 @@ namespace System
 						str = Month.ToString ("d02");
 					else if (num == 2)
 						str = dfi.GetAbbreviatedMonthName (Month);
-					else
-					{
+					else {
 						str = dfi.GetMonthName (Month);
 						num = 3;
 					}
 					break;
 				case 'y':
-					if (num == 0)
-					{
+					if (num == 0) {
 						int shortyear = Year % 100;
 						str = shortyear.ToString ("d");
-					}
-					else if (num < 3)
-					{
+					} else if (num == 1) {
 						int shortyear = Year % 100;
 						str = shortyear.ToString ("d02");
-						num = 1;
-					}
-					else
-					{
+					} else {
 						str = Year.ToString ("d");
 						num = 3;
 					}
@@ -776,13 +1127,10 @@ namespace System
 
 					break;
 				case 'h':
-					if (num == 0)
-					{
+					if (num == 0) {
 						int shorthour = Hour % 12;
 						str = shorthour.ToString ("d");
-					}
-					else
-					{
+					} else {
 						int shorthour = Hour % 12;
 						str = shorthour.ToString ("d02");
 						num = 1;
@@ -791,8 +1139,7 @@ namespace System
 				case 'H':
 					if (num == 0)
 						str = Hour.ToString ("d");
-					else
-					{
+					else {
 						str = Hour.ToString ("d02");
 						num = 1;
 					}
@@ -800,8 +1147,7 @@ namespace System
 				case 'm':
 					if (num == 0)
 						str = Minute.ToString ("d");
-					else
-					{
+					else {
 						str = Minute.ToString ("d02");
 						num = 1;
 					}
@@ -809,8 +1155,7 @@ namespace System
 				case 's':
 					if (num == 0)
 						str = Second.ToString ("d");
-					else
-					{
+					else {
 						str = Second.ToString ("d02");
 						num = 1;
 					}
@@ -827,22 +1172,17 @@ namespace System
 						num = 1;
 					break;
 				case 'z':
-					if (num == 0)
-					{
+					if (num == 0) {
 						int offset = utcoffset.Hours;
 						str = offset.ToString ("d");
 						if (offset > 0)
 							str = String.Concat ("+", str);
-					}
-					else if (num == 1)
-					{
+					} else if (num == 1) {
 						int offset = utcoffset.Hours;
 						str = offset.ToString ("d02");
 						if (offset > 0)
 							str = String.Concat ("+", str);
-					}
-					else if (num == 2)
-					{
+					} else if (num == 2) {
 						int offhour = utcoffset.Hours;
 						int offminute = utcoffset.Minutes;
 						str = offhour.ToString ("d02");
@@ -855,11 +1195,11 @@ namespace System
 					break;
 				case ':':
 					str = dfi.TimeSeparator;
-					num = 1;
+					num = 0;
 					break;
 				case '/':
 					str = dfi.DateSeparator;
-					num = 1;
+					num = 0;
 					break;
 				default:
 					str = String.Concat (chars [pos]);
@@ -869,14 +1209,13 @@ namespace System
 
 				result = String.Concat (result, str);
 						
-				pos = pos + num + 1;
+				pos += num + 1;
 				num = 0;
 			}
 
 			return result;
 		}
 
-		[MonoTODO]
 		public string ToString (string format, IFormatProvider fp)
 		{
 			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance(fp);
@@ -888,7 +1227,7 @@ namespace System
 
 			if (format.Length == 1) {
 				char fchar = (format.ToCharArray ())[0];
-				format = this._GetStandardPattern (fchar, dfi, out useutc);
+				format = _GetStandardPattern (fchar, dfi, out useutc);
 			}
 
 			if (useutc)
@@ -911,6 +1250,8 @@ namespace System
 			TimeZone tz = TimeZone.CurrentTimeZone;
 
 			TimeSpan offset = tz.GetUtcOffset (this);
+
+			Console.WriteLine (new DateTime (offset.Ticks));
 
 			return new DateTime (true, ticks - offset);
 		}
