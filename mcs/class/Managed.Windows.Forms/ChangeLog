@@ -1,3 +1,10 @@
+2005-02-13  Peter Bartok  <pbartok@novell.com>
+
+	* System.Windows.Forms.dll.sources: Added SelectionRangeConverter.cs,
+	  OpacityConverter.cs, KeysConverter.cs, Hwnd.cs
+	* System.Windows.Forms.dll.resources: Added 
+	* Makefile: Added support for generating resources
+
 2005-02-12  Geoff Norton  <gnorton@customerdna.com>
 
 	* System.Windows.Forms.dll.sources: Added ResXNullRef.cs

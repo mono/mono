@@ -99,6 +99,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Resources\ResXNullRef.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Resources\ResXResourceReader.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -364,6 +369,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\ComponentModel.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\ContainerControl.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -450,6 +460,16 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\DateRangeEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\DateTimePicker.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\DateTimePickerFormat.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -630,6 +650,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\HScrollBar.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\Hwnd.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -815,6 +840,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\Keys.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\KeysConverter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1049,6 +1079,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\OpacityConverter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\OpenFileDialog.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1110,6 +1145,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\PropertyGrid.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\PropertyGridView.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1180,6 +1220,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\SelectionRange.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\SelectionRangeConverter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
