@@ -13,14 +13,64 @@ using System.Reflection;
 
 namespace MonoTests.System.Reflection
 {
-	public class MultiIndexer
+	enum MyEnum {
+		Zero,
+		One,
+		Two
+	}
+	
+	class MultiIndexer
 	{
-		public string this[int i] {
-			get { return i.ToString(); }
+		public Type this[byte i] {
+			get { return i.GetType (); }
 		}
 
-		public string this[double d] {
-			get { return d.ToString(); }
+		public Type this[sbyte i] {
+			get { return i.GetType (); }
+		}
+
+		public Type this[short i] {
+			get { return i.GetType (); }
+		}
+
+		public Type this[ushort i] {
+			get { return i.GetType (); }
+		}
+
+		public Type this[int i] {
+			get { return i.GetType (); }
+		}
+
+		public Type this[uint i] {
+			get { return i.GetType (); }
+		}
+
+		public Type this[long i] {
+			get { return i.GetType (); }
+		}
+
+		public Type this[ulong i] {
+			get { return i.GetType (); }
+		}
+
+		public Type this[float i] {
+			get { return i.GetType (); }
+		}
+
+		public Type this[double i] {
+			get { return i.GetType (); }
+		}
+
+		public Type this[decimal i] {
+			get { return i.GetType (); }
+		}
+
+		public Type this[object i] {
+			get { return i.GetType (); }
+		}
+
+		public Type this[Enum i] {
+			get { return i.GetType (); }
 		}
 	}
 
@@ -51,6 +101,54 @@ namespace MonoTests.System.Reflection
 		{
 			Type type = typeof (MultiIndexer);
 			PropertyInfo pi = type.GetProperty ("Item");
+		}
+
+		[Test]
+		public void SelectAndInvokeAllProperties1 ()
+		{
+			Type type = typeof (MultiIndexer);
+			PropertyInfo [] props = type.GetProperties (BindingFlags.DeclaredOnly |
+								    BindingFlags.Public |
+								    BindingFlags.Instance);
+
+			// These don't cause an AmbiguousMatchException
+			Type [] types = { typeof (byte), typeof (short),
+					  typeof (int), typeof (long),
+					  typeof (MyEnum) };
+
+			/** These do weird things under MS if used together and then in separate arrays *
+			Type [] types = { typeof (ulong), typeof (float), typeof (double),
+					  typeof (decimal), typeof (object) };
+			*/
+
+			MultiIndexer obj = new MultiIndexer ();
+
+			foreach (Type t in types) {
+				PropertyInfo prop = null;
+				try {
+					prop = binder.SelectProperty (0, props, null, new Type [] {t}, null);
+				} catch (Exception e) {
+					throw new Exception ("Type: " + t, e);
+				}
+				Type gotten = (Type) prop.GetValue (obj, new object [] {Activator.CreateInstance (t)});
+				AssertEquals (t.ToString (), t, gotten);
+			}
+		}
+
+		[Test]
+		public void SelectAndInvokeAllProperties2 ()
+		{
+			Type type = typeof (MultiIndexer);
+			PropertyInfo [] props = type.GetProperties (BindingFlags.DeclaredOnly |
+								    BindingFlags.Public |
+								    BindingFlags.Instance);
+
+			Type [] types = { typeof (ushort), typeof (char) };
+
+			MultiIndexer obj = new MultiIndexer ();
+			PropertyInfo prop1 = binder.SelectProperty (0, props, null, new Type [] {types [0]}, null);
+			PropertyInfo prop2 = binder.SelectProperty (0, props, null, new Type [] {types [1]}, null);
+			AssertEquals (prop1, prop2);
 		}
 	}
 }
