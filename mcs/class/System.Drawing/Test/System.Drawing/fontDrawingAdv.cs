@@ -64,8 +64,9 @@ namespace Font1Sample {
 			float width = 700.0F;
 			float height = 600.0F;
 			string str;
-			int charactersFitted = 0;
-			int linesFilled = 0;
+			int chars = 0;
+			int lines = 0;
+			SizeF sz;
             
 			Font f1 = new Font("Arial",12);				
 			Font f2  = new Font("Verdana", 8);			
@@ -129,6 +130,7 @@ namespace Font1Sample {
 			
 			Rectangle rect5 = new Rectangle (400,50,175,175);
 			Rectangle rect6 = new Rectangle (400,300,150,150);			
+			Rectangle rect7 = new Rectangle (550,300, 140,120);			
 			
 			gr.DrawRectangle( new Pen(Color.Yellow), rect3);			
 			gr.DrawRectangle( new Pen(Color.Blue), rect4);			
@@ -141,36 +143,49 @@ namespace Font1Sample {
 			
 			gr.FillEllipse(new SolidBrush(Color.Blue), rect1);
 			gr.DrawRectangle( new Pen(Color.Green), rect2);			
+			gr.DrawRectangle( new Pen(Color.Green), rect7);			
 			
-			str = "Ara que tinc &vint anys, ara que encara tinc força,que no tinc l'ànima morta, i em sento bullir la sang. (" + f1.Name + ")";
-			
+			str = "Ara que tinc &vint anys, ara que encara tinc força,que no tinc l'ànima morta, i em sento bullir la sang. (" + f1.Name + ")";			
 			gr.DrawString( str,	f1, new SolidBrush(Color.White), rect1, strfmt1);						
-			gr.DrawString(flagProcessing(strfmt1), fonttxt, brushtxt, calcRect(rect1), strfmttxt);									                        
-            
-            SizeF sz =  gr.MeasureString (str, f1, new SizeF (rect1.Width, rect1.Height), strfmt1, 
-                                out charactersFitted, out linesFilled);                             			
-                                
-			Console.WriteLine("MeasureString str1 " + sz + ";chars:" + charactersFitted + " lines:" + linesFilled);
-				
-			gr.DrawString("Ara que em sento capaç de cantar si un altre canta. Avui que encara tinc veu i encara puc creure en déus (" + f2.Name + ")", 
-				f2, new SolidBrush(Color.Red),rect2, strfmt2);														
+			gr.DrawString(flagProcessing(strfmt1), fonttxt, brushtxt, calcRect(rect1), strfmttxt);						                                    
+            sz =  gr.MeasureString (str, f1, new SizeF (rect1.Width, rect1.Height), strfmt1, out chars, out lines);                             			                                
+			Console.WriteLine("MeasureString str1 [" + str + "] " + sz + ";chars:" + chars + " lines:" + lines);
+			
+			str = "Ara que em sento capaç de cantar si un altre canta. Avui que encara tinc veu i encara puc creure en déus (" + f2.Name + ")";
+			gr.DrawString(str, f2, new SolidBrush(Color.Red),rect2, strfmt2);														
 			gr.DrawString(flagProcessing(strfmt2), fonttxt, brushtxt, calcRect(rect2), strfmttxt);						
+			sz =  gr.MeasureString (str, f2, new SizeF (rect2.Width, rect2.Height), strfmt2, out chars, out lines);                             			                                			
+			Console.WriteLine("MeasureString str2 [" + str + "] " + sz + ";chars:" + chars + " lines:" + lines);
 			
-			gr.DrawString("Vull cantar a les pedres, la terra, l'aigua, al blat i al camí, que vaig trepitjant. (" + f3.Name + ")", 
-				f3, new SolidBrush(Color.White), rect3, strfmt3);				
+			str = "Vull cantar a les pedres, la terra, l'aigua, al blat i al camí, que vaig trepitjant. (" + f3.Name + ")";
+			gr.DrawString(str,f3, new SolidBrush(Color.White), rect3, strfmt3);				
 			gr.DrawString(flagProcessing(strfmt3), fonttxt, brushtxt, calcRect(rect3), strfmttxt);			
-							
-			gr.DrawString("A la nit, al cel i a aquet mar tan nostre i al vent que al matí ve a besar-me el rostre (" + f4.Name + ")", 
-				f4, new SolidBrush(Color.Red),rect4, strfmt4);
-			gr.DrawString(flagProcessing(strfmt4), fonttxt, brushtxt, calcRect(rect4), strfmttxt);			
+			sz =  gr.MeasureString (str, f3, new SizeF (rect3.Width, rect3.Height), strfmt3, out chars, out lines);                             			                                			
+			Console.WriteLine("MeasureString str3 [" + str + "] " + sz + ";chars:" + chars + " lines:" + lines);
 			
-			gr.DrawString("Vull cantar a les pedres, la terra, l'aigua, al blat i al camí, que vaig trepitjant. (" + f5.Name + ")", 
-				f5, new SolidBrush(Color.White), rect5, strfmt5);
+			str = "A la nit, al cel i a aquet mar tan nostre i al vent que al matí ve a besar-me el rostre (" + f4.Name + ")";				
+			gr.DrawString(str, f4, new SolidBrush(Color.Red),rect4, strfmt4);
+			gr.DrawString(flagProcessing(strfmt4), fonttxt, brushtxt, calcRect(rect4), strfmttxt);			
+			sz =  gr.MeasureString (str, f4, new SizeF (rect4.Width, rect4.Height), strfmt4, out chars, out lines);                             			                                			
+			Console.WriteLine("MeasureString str4 [" + str + "] " + sz + ";chars:" + chars + " lines:" + lines);			
+			
+			str = "Vull cantar a les pedres, la terra, l'aigua, al blat i al camí, que vaig trepitjant. (" + f5.Name + ")";
+			gr.DrawString(str, f5, new SolidBrush(Color.White), rect5, strfmt5);
 			gr.DrawString(flagProcessing(strfmt5), fonttxt, brushtxt, calcRect(rect5), strfmttxt);			
+			sz =  gr.MeasureString (str, f5, new SizeF (rect5.Width, rect5.Height), strfmt5, out chars, out lines);                             			                                			
+			Console.WriteLine("MeasureString str4 [" + str + "] " + sz + ";chars:" + chars + " lines:" + lines);			
 				
-			gr.DrawString("Ve a besar-me el rostre (" + f6.Name + ")", 
-				f6, new SolidBrush(Color.Red),rect6, strfmt6);
+			str = "Ve a besar-me el rostre (" + f6.Name + ")";
+			gr.DrawString(str, 	f6, new SolidBrush(Color.Red),rect6, strfmt6);
 			gr.DrawString(flagProcessing(strfmt6), fonttxt, brushtxt, calcRect(rect6), strfmttxt);						
+			sz =  gr.MeasureString (str, f6, new SizeF (rect6.Width, rect6.Height), strfmt6, out chars, out lines);                             			                                			
+			Console.WriteLine("MeasureString str6 [" + str + "] " + sz + ";chars:" + chars + " lines:" + lines);				
+			
+			str = "Vull plorar amb aquells que es troben tots sols, sense cap amor van passant pel món.. (" + f5.Name + ")";
+			gr.DrawString(str, f5, new SolidBrush(Color.White), rect7, strfmt4);
+			gr.DrawString(flagProcessing(strfmt4), fonttxt, brushtxt, calcRect(rect7), strfmttxt);			
+			sz =  gr.MeasureString (str, f4, new SizeF (rect7.Width, rect7.Height), strfmt5, out chars, out lines);                             			                                			
+			Console.WriteLine("MeasureString str7 [" + str + "] " + sz + ";chars:" + chars + " lines:" + lines);			
 			
 			bmp.Save("fontDrawingAdv.bmp", ImageFormat.Bmp);
 			
