@@ -1,3 +1,8 @@
+2002-03-24  Nick Drochak  <ndrochak@gol.com>
+
+	* ClassInterfaceAttribute.cs:
+	* ClassInterfaceType.cs: New Files.
+
 2002-02-27  Duncan Mak  <duncan@ximian.com>
 
 	* ExporterEventKind.cs:
