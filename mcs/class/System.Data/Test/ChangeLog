@@ -1,3 +1,9 @@
+2002-10-16  Rodrigo Moya <rodrigo@ximian.com>
+
+	* System.Data.SqlTypes/AllTests.cs:
+	* System.Data.SqlTypes/SqlBinary.cs: new test suite for SqlBinary, by
+	Ville Palo (vi64pa@koti.soon.fi).
+
 2002-10-16  Daniel Morgan <danmorg@sc.rr.com>
 
 	* SqlSharpCli.cs: remove file
