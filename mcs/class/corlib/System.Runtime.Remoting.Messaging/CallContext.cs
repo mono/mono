@@ -2,16 +2,18 @@
 // System.Runtime.Remoting.Messaging.CallContext.cs
 //
 // Author: Jaime Anguiano Olarra (jaime@gnome.org)
+//         Lluis Sanchez Gual (lluis@ximian.com)
 //
 // (c) 2002, Jaime Anguiano Olarra
 //
-// FIXME: This is just a skeleton for practical purposes.
 ///<summary>
 ///Provides several properties that come with the execution code path.
 ///This class is sealed.
 ///</summary>
 
 using System;
+using System.Threading;
+using System.Collections;
 
 namespace System.Runtime.Remoting.Messaging 
 {
@@ -20,34 +22,76 @@ namespace System.Runtime.Remoting.Messaging
 	public sealed class CallContext 
 	{
 		// public methods
-		[MonoTODO]
 		public static void FreeNamedDataSlot (string name) 
 		{
-			throw new NotImplementedException ();
+			Datastore.Remove (name);
 		}
 
-		[MonoTODO]
 		public static object GetData (string name) 
 		{
-			throw new NotImplementedException ();
+			return Datastore [name];
 		}
 
-		[MonoTODO]
 		public static Header[] GetHeaders () 
 		{
-			throw new NotImplementedException ();
+			return (Header[]) Datastore ["__Headers"];
 		}
 
-		[MonoTODO]
 		public static void SetData (string name, object data) 
 		{
-			throw new NotImplementedException ();
+			Datastore [name] = data;
 		}
 
-		[MonoTODO]
 		public static void SetHeaders (Header[] headers) 
 		{
-			throw new NotImplementedException ();
+			Datastore ["__Headers"] = headers;
 		}
+
+		internal static LogicalCallContext CreateLogicalCallContext ()
+		{
+			LocalDataStoreSlot ds = Thread.GetNamedDataSlot ("__CallContext");
+			Hashtable res = (Hashtable) Thread.GetData (ds);
+
+			LogicalCallContext ctx = new LogicalCallContext();
+			if (res == null) return ctx;
+
+			foreach (DictionaryEntry entry in res)
+				if (entry.Value is ILogicalThreadAffinative)
+					ctx.SetData ((string)entry.Key, entry.Value);
+
+			return ctx;
+		}
+
+		internal static void SetCurrentCallContext (LogicalCallContext ctx)
+		{
+			Hashtable data = ctx.Datastore;
+			if (data == null) return;
+
+			foreach (DictionaryEntry entry in data)
+				SetData ((string)entry.Key, entry.Value);
+		}
+
+		internal static void ResetCurrentCallContext ()
+		{
+			LocalDataStoreSlot ds = Thread.GetNamedDataSlot ("__CallContext");
+			Thread.SetData (ds, null);
+		}
+
+		private static Hashtable Datastore
+		{
+			get {
+				LocalDataStoreSlot ds = Thread.GetNamedDataSlot ("__CallContext");
+				Hashtable res = (Hashtable) Thread.GetData (ds);
+				if (res == null) {
+					res = new Hashtable ();
+					Thread.SetData (ds, res);
+				}
+				return res;
+			}
+		}
+	}
+
+	public interface ILogicalThreadAffinative
+	{
 	}
 }

@@ -1,3 +1,11 @@
+2003-08-14  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* CADMessages.cs: Enabled smuggeling of primitive type parameters (as suggested
+	  by Patrik).
+	* CallContext.cs: Impplemented.
+	* LogicalCallContext.cs: Implemented.
+	* MonoMethodMessage.cs: Added setter for LogicalCallContext property.
+
 2003-07-25  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ArgInfo.cs: Use Type.IsByRef to check if a parameter is a ref or

@@ -78,18 +78,11 @@ namespace System.Runtime.Remoting.Messaging {
 		// We can ignore marshalling for string and primitive types
 		private static bool IsPossibleToIgnoreMarshal (object obj) {
 
-			// until this is more tested, we disable it....
-			return false;
-
-/*            if (obj is string) 
-				return true;
-
 			Type objType = obj.GetType();
 			if (objType.IsPrimitive || objType == typeof(void))
 				return true;
 			
 			return false;
-*/
 		}
 
 		// Checks an argument if it's possible to pass without marshalling and

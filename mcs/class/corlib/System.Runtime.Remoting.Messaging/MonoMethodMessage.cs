@@ -78,6 +78,7 @@ namespace System.Runtime.Remoting.Messaging {
 			get {
 				if (null == args)
 					return 0;
+//         Lluis Sanchez Gual (lluis@ximian.com)
 
 				return args.Length;
 			}
@@ -98,6 +99,10 @@ namespace System.Runtime.Remoting.Messaging {
 		public LogicalCallContext LogicalCallContext {
 			get {
 				return ctx;
+			}
+
+			set {
+				ctx = value;
 			}
 		}
 
