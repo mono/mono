@@ -1,7 +1,7 @@
 2003-07-29 Ben Maurer  <bmaurer@users.sourceforge.net>
 
-	* FILE: change
-
+	* Iterator.cs: dont throw exceptions on tostring ()
+	
 2003-07-28  Piers Haken	<piersh@friskit.com>
 
 	* DefaultContext.cs: better handling of null argument lists
