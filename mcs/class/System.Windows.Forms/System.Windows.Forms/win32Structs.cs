@@ -1011,8 +1011,13 @@ namespace System.Windows.Forms
 		internal TVITEM    itemNew;
 		internal POINT     ptDrag;
 	}
-	
-	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi,  Pack=1)]
+
+	//
+	// This currently causes corlib to throw an exception
+	//
+	// [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi,  Pack=1)]
+	//
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct PRINTDLG {
 		internal uint			lStructSize;
 		internal IntPtr			hwndOwner;
