@@ -308,18 +308,12 @@ namespace System.Data.Common {
 			ArrayList sourceColumns = new ArrayList ();
 
 			foreach (DataRow schemaRow in reader.GetSchemaTable ().Rows) {
-				string sourceTableName;
-				if (schemaRow ["BaseTableName"].Equals (DBNull.Value))
-					sourceTableName = table.TableName; 
-				else
-					sourceTableName = (string) schemaRow ["BaseTableName"];
-
 				// generate a unique column name in the source table.
 				string sourceColumnName;
-				if (schemaRow ["BaseColumnName"].Equals (DBNull.Value))
+				if (schemaRow ["ColumnName"].Equals (DBNull.Value))
 					sourceColumnName = DefaultSourceColumnName;
 				else 
-					sourceColumnName = (string) schemaRow ["BaseColumnName"];
+					sourceColumnName = (string) schemaRow ["ColumnName"];
 
 				string realSourceColumnName = sourceColumnName;
 
@@ -331,7 +325,7 @@ namespace System.Data.Common {
 				string dsColumnName = realSourceColumnName;
 				DataTableMapping tableMapping = null;
 				if (schemaType == SchemaType.Mapped)
-					tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (TableMappings, sourceTableName, table.TableName, MissingMappingAction.Ignore); 
+					tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (TableMappings, table.TableName, table.TableName, MissingMappingAction.Ignore); 
 				if (tableMapping != null) {
 					table.TableName = tableMapping.DataSetTable;
 
