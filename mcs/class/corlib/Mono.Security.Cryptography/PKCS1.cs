@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
 //
-// (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System;
@@ -61,6 +61,7 @@ namespace Mono.Security.Cryptography {
 		public static byte[] I2OSP (int x, int size) 
 		{
 			byte[] array = BitConverter.GetBytes (x);
+			Array.Reverse (array, 0, array.Length);
 			return I2OSP (array, size);
 		}
 	
@@ -176,7 +177,7 @@ namespace Mono.Security.Cryptography {
 			byte[] DB = xor (maskedDB, dbMask);
 	
 			byte[] lHash = GetEmptyHash (hash);
-			// split DB = lHash || PS || 0x01 || M
+			// split DB = lHash' || PS || 0x01 || M
 			byte[] dbHash = new byte [lHash.Length];
 			Array.Copy (DB, 0, dbHash, 0, dbHash.Length);
 			bool h = Compare (lHash, dbHash);
@@ -375,7 +376,7 @@ namespace Mono.Security.Cryptography {
 			// 3. For counter from 0 to (maskLen / hLen)  1, do the following:
 			for (int counter = 0; counter < iterations; counter++) {
 				// a.	Convert counter to an octet string C of length 4 octets
-				byte[] C = I2OSP (counter, 4);
+				byte[] C = I2OSP (counter, 4); 
 	
 				// b.	Concatenate the hash of the seed mgfSeed and C to the octet string T:
 				//	T = T || Hash (mgfSeed || C)

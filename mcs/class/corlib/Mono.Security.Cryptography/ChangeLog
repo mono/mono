@@ -1,3 +1,8 @@
+2003-05-12  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* PKCS1.cs: Corrected I2OSP to match PKCS#1 v.2.1 test vector
+	and fix the OAEP incompatibility issue.
+
 2003-04-01  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* PKCS1.cs: Corrected fix (partially) for the lame PKCS1 v1.5
