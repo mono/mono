@@ -273,7 +273,7 @@ namespace System.Text {
 				InternalEnsureCapacity (needed_cap);
 			
 			for (int i = 0; i != value.Length; i++)
-				_str.InternalSetChar (i + _length - 1, value[i]);		
+				_str.InternalSetChar (i + _length, value[i]);		
 
 			_length += value.Length;
 
