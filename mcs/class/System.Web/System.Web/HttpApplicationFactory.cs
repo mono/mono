@@ -161,12 +161,23 @@ namespace System.Web {
 		//	FireEvents ("Session_End", state, new object [] {source, args});
 		}
 	
-		private void InitializeFactory(HttpContext context) {
-			// TODO: Should we be impersonating here? We are reading a app file.. security issue?
+		private void InitializeFactory (HttpContext context)
+		{
+			_appFilename = GetAppFilename (context);
 
-			_appFilename = GetAppFilename(context);
+			CompileApp (context);
 
-			CompileApp(context);
+			// Create a application object
+			HttpApplication app = (HttpApplication) HttpRuntime.CreateInternalObject (_appType);
+
+			// Startup
+			app.Startup(context, HttpApplicationFactory.ApplicationState);
+
+			// Fire OnAppStart
+			HttpApplicationFactory.FireOnAppStart (app);
+
+			// Recycle our application instance
+			RecyclePublicInstance(app);
 		}
 
 		private void Dispose() {

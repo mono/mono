@@ -1,3 +1,10 @@
+2003-08-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs:
+	* HttpApplicationFactory.cs: fix duplicate application OnStart events.
+
+	Patch by Patrik Torstensson.
+
 2003-08-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplicationFactory.cs: use the correct Delegate.CreateDelegate
