@@ -32,11 +32,13 @@ namespace System.Windows.Forms {
 		{
 			rightToLeft = RightToLeft.Inherit;
 			sourceControl = null;
+			isPopupMenu   = true;
 		}
 
 		[MonoTODO]
 		public ContextMenu(MenuItem[] menuItems) : base(menuItems)//menu does not have public constructor. Is this a gtk menu?
 		{
+			isPopupMenu   = true;
 		}
 		
 		// --- Properties ---

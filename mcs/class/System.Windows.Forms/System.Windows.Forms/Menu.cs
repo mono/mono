@@ -113,9 +113,14 @@ namespace System.Windows.Forms  {
         protected Menu parent_ = null;
         
 		protected IntPtr menuHandle_ = IntPtr.Zero;
+		protected bool   isPopupMenu = false;
+
 		internal void CreateMenuHandle() {
 			if( menuHandle_ == IntPtr.Zero) {
-				menuHandle_ = Win32.CreateMenu();
+				if ( !isPopupMenu )
+					menuHandle_ = Win32.CreateMenu();
+				else
+					menuHandle_ = Win32.CreatePopupMenu ( );
 				//System.Console.WriteLine("Create menu {0}", menuHandle_);
 				BuildMenuStructure();
 				allMenus_[menuHandle_] = this;
