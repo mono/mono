@@ -218,7 +218,11 @@ namespace Mono.CSharp {
 			if (methods == null)
 				methods = new ArrayList ();
 
-			methods.Add (method);
+			if (method.Name.IndexOf (".") != -1)
+				methods.Insert (0, method);
+			else 
+				methods.Add (method);
+			
 			if (value != null)
 				DefineName (name, method);
 
@@ -324,7 +328,10 @@ namespace Mono.CSharp {
 			if (properties == null)
 				properties = new ArrayList ();
 
-			properties.Add (prop);
+			if (prop.Name.IndexOf (".") != -1)
+				properties.Insert (0, prop);
+			else
+				properties.Add (prop);
 			DefineName (name, prop);
 
 			return AdditionResult.Success;
@@ -352,7 +359,10 @@ namespace Mono.CSharp {
 			if (indexers == null)
 				indexers = new ArrayList ();
 
-			indexers.Add (i);
+			if (i.InterfaceType != null)
+				indexers.Insert (0, i);
+			else
+				indexers.Add (i);
 
 			return AdditionResult.Success;
 		}
