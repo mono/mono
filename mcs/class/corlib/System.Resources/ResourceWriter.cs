@@ -331,5 +331,11 @@ namespace System.Resources
 				value = high;
 			} while(value != 0);
 		}
+
+		internal Stream Stream {
+			get {
+				return stream;
+			}
+		}
 	}
 }

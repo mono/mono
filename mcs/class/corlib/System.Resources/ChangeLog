@@ -1,3 +1,7 @@
+2003-12-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ResourceWriter.cs (Stream): New internal property used by Ref.Emit.
+
 2003-11-28  Dick Porter  <dick@ximian.com>
 
 	* ResourceSet.cs: Do string compares with the Invariant culture.
