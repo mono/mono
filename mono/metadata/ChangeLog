@@ -1,3 +1,8 @@
+2004-08-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* metadata.c (mono_metadata_parse_type): Alloc pinned, byref and
+	custom modifiers to be in any order. Fixes #61990.
+
 2004-08-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* object.c: Register mono_object_new_fast icall.
