@@ -53,6 +53,10 @@ Test cases listed by Category:
 
   test-165.cs
 
+* Labels and goto
+
+  verify-5.cs
+
 Test cases listed by Number:
 ============================
 

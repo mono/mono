@@ -33,6 +33,13 @@ class T {
 			stuff_finally ();
 		}
         }
+	void stuff4 () {
+		try {
+			throw new Exception();
+		} catch {
+			throw;
+		}
+	}
         void stuff_finally () {
         }
         static void Main() {

@@ -1,5 +1,9 @@
 2002-10-10  Martin Baulig  <martin@gnome.org>
 
+	* verify-1.cs: Added testcase from bug #31470.
+
+2002-10-10  Martin Baulig  <martin@gnome.org>
+
 	* verify-5.cs: Added testcase from bug #31541.
 
 2002-10-06  Martin Baulig  <martin@gnome.org>
