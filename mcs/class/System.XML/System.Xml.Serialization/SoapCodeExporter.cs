@@ -104,28 +104,22 @@ namespace System.Xml.Serialization {
 			AddCustomAttribute (codeClass, iatt, true);
 		}
 	
-		protected override void GenerateDefaultAttribute (CodeMemberField codeField, object defaultValue)
-		{
-			AddCustomAttribute (codeField, "System.ComponentModel.DefaultValue", GetArg (defaultValue));
-			codeField.InitExpression = new CodePrimitiveExpression (defaultValue);
-		}
-		
-		protected override void GenerateAttributeMember (CodeMemberField codeField, XmlTypeMapMemberAttribute attinfo, string defaultNamespace)
+		protected override void GenerateAttributeMember (CodeAttributeDeclarationCollection attributes, XmlTypeMapMemberAttribute attinfo, string defaultNamespace, bool forceUseMemberName)
 		{
 			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Xml.Serialization.SoapAttribute");
 			if (attinfo.Name != attinfo.AttributeName) att.Arguments.Add (GetArg (attinfo.AttributeName));
 			if (attinfo.Namespace != defaultNamespace) att.Arguments.Add (GetArg ("Namespace", attinfo.Namespace));
 			if (!TypeTranslator.IsDefaultPrimitiveTpeData(attinfo.TypeData)) att.Arguments.Add (GetArg ("DataType",attinfo.TypeData.XmlType));
-			AddCustomAttribute (codeField, att, true);
+			attributes.Add (att);
 		}
 		
-		protected override void GenerateElementInfoMember (CodeMemberField codeField, XmlTypeMapMemberElement member, XmlTypeMapElementInfo einfo, TypeData defaultType, string defaultNamespace, bool addAlwaysAttr)
+		protected override void GenerateElementInfoMember (CodeAttributeDeclarationCollection attributes, XmlTypeMapMemberElement member, XmlTypeMapElementInfo einfo, TypeData defaultType, string defaultNamespace, bool addAlwaysAttr, bool forceUseMemberName)
 		{
 			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Xml.Serialization.SoapElement");
-			if (einfo.ElementName != member.Name) att.Arguments.Add (GetArg (einfo.ElementName));
+			if (forceUseMemberName || einfo.ElementName != member.Name) att.Arguments.Add (GetArg (einfo.ElementName));
 //			if (einfo.IsNullable) att.Arguments.Add (GetArg ("IsNullable", true));	MS seems to ignore this
 			if (!TypeTranslator.IsDefaultPrimitiveTpeData(einfo.TypeData)) att.Arguments.Add (GetArg ("DataType",einfo.TypeData.XmlType));
-			AddCustomAttribute (codeField, att, addAlwaysAttr);
+			if (addAlwaysAttr || att.Arguments.Count > 0) attributes.Add (att);
 		}
 		
 		protected override void GenerateEnum (XmlTypeMapping map, CodeTypeDeclaration codeEnum)

@@ -153,24 +153,28 @@ namespace System.Xml.Serialization {
 			}
 		}
 
-		CodeMemberField CreateFieldMember (string type, string name, object defaultValue, string comments)
+		CodeMemberField CreateFieldMember (TypeData type, string name, object defaultValue, string comments)
 		{
-			CodeMemberField codeField = new CodeMemberField (type, name);
+			CodeMemberField codeField = new CodeMemberField (type.FullTypeName, name);
 			codeField.Attributes = MemberAttributes.Public;
 			AddComments (codeField, comments);
 
 			if (defaultValue != System.DBNull.Value)
-				GenerateDefaultAttribute (codeField, defaultValue);
+				GenerateDefaultAttribute (codeField, type, defaultValue);
 
 			return codeField;
 		}
 
 		void AddAttributeFieldMember (CodeTypeDeclaration codeClass, XmlTypeMapMemberAttribute attinfo, string defaultNamespace)
 		{
-			CodeMemberField codeField = CreateFieldMember (attinfo.TypeData.FullTypeName, attinfo.Name, attinfo.DefaultValue, attinfo.Documentation);
+			CodeMemberField codeField = CreateFieldMember (attinfo.TypeData, attinfo.Name, attinfo.DefaultValue, attinfo.Documentation);
 			codeClass.Members.Add (codeField);
 
-			GenerateAttributeMember (codeField, attinfo, defaultNamespace);
+			CodeAttributeDeclarationCollection attributes = codeField.CustomAttributes;
+			if (attributes == null) attributes = new CodeAttributeDeclarationCollection ();
+			
+			GenerateAttributeMember (attributes, attinfo, defaultNamespace, false);
+			if (attributes.Count > 0) codeField.CustomAttributes = attributes;
 
 			if (attinfo.MappedType != null)
 				ExportMapCode (attinfo.MappedType);
@@ -183,30 +187,22 @@ namespace System.Xml.Serialization {
 				GenerateSpecifierMember (codeField);
 			}
 		}
+		
+		public void AddAttributeMemberAttributes (XmlTypeMapMemberAttribute attinfo, string defaultNamespace, CodeAttributeDeclarationCollection attributes, bool forceUseMemberName)
+		{
+			GenerateAttributeMember (attributes, attinfo, defaultNamespace, forceUseMemberName);
+		}
 
 		void AddElementFieldMember (CodeTypeDeclaration codeClass, XmlTypeMapMemberElement member, string defaultNamespace)
 		{
-			CodeMemberField codeField = CreateFieldMember (member.TypeData.FullTypeName, member.Name, member.DefaultValue, member.Documentation);
+			CodeMemberField codeField = CreateFieldMember (member.TypeData, member.Name, member.DefaultValue, member.Documentation);
 			codeClass.Members.Add (codeField);
-			TypeData defaultType = member.TypeData;
-			bool addAlwaysAttr = false;
 			
-			if (member is XmlTypeMapMemberFlatList)
-			{
-				defaultType = defaultType.ListItemTypeData;
-				addAlwaysAttr = true;
-			}
-
-			foreach (XmlTypeMapElementInfo einfo in member.ElementInfo)
-			{
-				if (ExportExtraElementAttributes (codeField, einfo, defaultNamespace, defaultType))
-					continue;
-
-				GenerateElementInfoMember (codeField, member, einfo, defaultType, defaultNamespace, addAlwaysAttr);
-				if (einfo.MappedType != null) ExportMapCode (einfo.MappedType);
-			}
-
-			GenerateElementMember (codeField, member);
+			CodeAttributeDeclarationCollection attributes = codeField.CustomAttributes;
+			if (attributes == null) attributes = new CodeAttributeDeclarationCollection ();
+			
+			AddElementMemberAttributes (member, defaultNamespace, attributes, false);
+			if (attributes.Count > 0) codeField.CustomAttributes = attributes;
 			
 			if (member.TypeData.IsValueType && member.IsOptionalValueType)
 			{
@@ -217,15 +213,39 @@ namespace System.Xml.Serialization {
 			}
 		}
 
-		void AddAnyElementFieldMember (CodeTypeDeclaration codeClass, XmlTypeMapMemberElement member, string defaultNamespace)
+		public void AddElementMemberAttributes (XmlTypeMapMemberElement member, string defaultNamespace, CodeAttributeDeclarationCollection attributes, bool forceUseMemberName)
 		{
-			CodeMemberField codeField = CreateFieldMember (member.TypeData.FullTypeName, member.Name, member.DefaultValue, member.Documentation);
-			codeClass.Members.Add (codeField);
-
+			TypeData defaultType = member.TypeData;
+			bool addAlwaysAttr = false;
+			
+			if (member is XmlTypeMapMemberFlatList)
+			{
+				defaultType = defaultType.ListItemTypeData;
+				addAlwaysAttr = true;
+			}
+			
 			foreach (XmlTypeMapElementInfo einfo in member.ElementInfo)
 			{
-				ExportExtraElementAttributes (codeField, einfo, defaultNamespace, einfo.TypeData);
+				if (ExportExtraElementAttributes (attributes, einfo, defaultNamespace, defaultType))
+					continue;
+
+				GenerateElementInfoMember (attributes, member, einfo, defaultType, defaultNamespace, addAlwaysAttr, forceUseMemberName);
+				if (einfo.MappedType != null) ExportMapCode (einfo.MappedType);
 			}
+
+			GenerateElementMember (attributes, member);
+		}
+
+		void AddAnyElementFieldMember (CodeTypeDeclaration codeClass, XmlTypeMapMemberElement member, string defaultNamespace)
+		{
+			CodeMemberField codeField = CreateFieldMember (member.TypeData, member.Name, member.DefaultValue, member.Documentation);
+			codeClass.Members.Add (codeField);
+
+			CodeAttributeDeclarationCollection attributes = new CodeAttributeDeclarationCollection ();
+			foreach (XmlTypeMapElementInfo einfo in member.ElementInfo)
+				ExportExtraElementAttributes (attributes, einfo, defaultNamespace, einfo.TypeData);
+				
+			if (attributes.Count > 0) codeField.CustomAttributes = attributes;
 		}
 
 		bool DefinedInBaseMap (XmlTypeMapping map, XmlTypeMapMember member)
@@ -288,14 +308,14 @@ namespace System.Xml.Serialization {
 			}
 		}
 
-		bool ExportExtraElementAttributes (CodeMemberField codeField, XmlTypeMapElementInfo einfo, string defaultNamespace, TypeData defaultType)
+		bool ExportExtraElementAttributes (CodeAttributeDeclarationCollection attributes, XmlTypeMapElementInfo einfo, string defaultNamespace, TypeData defaultType)
 		{
 			if (einfo.IsTextElement) {
-				GenerateTextElementAttribute (codeField, einfo, defaultType);
+				GenerateTextElementAttribute (attributes, einfo, defaultType);
 				return true;
 			}
 			else if (einfo.IsUnnamedAnyElement) {
-				GenerateUnnamedAnyElementAttribute (codeField, einfo, defaultNamespace);
+				GenerateUnnamedAnyElementAttribute (attributes, einfo, defaultNamespace);
 				return true;
 			}
 			return false;
@@ -412,19 +432,35 @@ namespace System.Xml.Serialization {
 		{
 		}
 		
-		protected virtual void GenerateDefaultAttribute (CodeMemberField codeField, object defaultValue)
+		protected virtual void GenerateDefaultAttribute (CodeMemberField codeField, TypeData typeData, object defaultValue)
+		{
+			if (typeData.Type == null)
+			{
+				// It must be an enumeration defined in the schema.
+				if (typeData.SchemaType != SchemaTypes.Enum) 
+					throw new InvalidOperationException ("Type " + typeData.TypeName + " not supported");
+					
+				CodeFieldReferenceExpression fref = new CodeFieldReferenceExpression (new CodeTypeReferenceExpression (typeData.FullTypeName), defaultValue.ToString());
+				CodeAttributeArgument arg = new CodeAttributeArgument (fref);
+				AddCustomAttribute (codeField, "System.ComponentModel.DefaultValue", arg);
+				codeField.InitExpression = fref;
+			}
+			else
+			{
+				AddCustomAttribute (codeField, "System.ComponentModel.DefaultValue", GetArg (defaultValue));
+				codeField.InitExpression = new CodePrimitiveExpression (defaultValue);
+			}
+		}
+		
+		protected virtual void GenerateAttributeMember (CodeAttributeDeclarationCollection attributes, XmlTypeMapMemberAttribute attinfo, string defaultNamespace, bool forceUseMemberName)
 		{
 		}
 		
-		protected virtual void GenerateAttributeMember (CodeMemberField codeField, XmlTypeMapMemberAttribute attinfo, string defaultNamespace)
+		protected virtual void GenerateElementInfoMember (CodeAttributeDeclarationCollection attributes, XmlTypeMapMemberElement member, XmlTypeMapElementInfo einfo, TypeData defaultType, string defaultNamespace, bool addAlwaysAttr, bool forceUseMemberName)
 		{
 		}
 		
-		protected virtual void GenerateElementInfoMember (CodeMemberField codeField, XmlTypeMapMemberElement member, XmlTypeMapElementInfo einfo, TypeData defaultType, string defaultNamespace, bool addAlwaysAttr)
-		{
-		}
-		
-		protected virtual void GenerateElementMember (CodeMemberField codeField, XmlTypeMapMemberElement member)
+		protected virtual void GenerateElementMember (CodeAttributeDeclarationCollection attributes, XmlTypeMapMemberElement member)
 		{
 		}
 		
@@ -436,11 +472,11 @@ namespace System.Xml.Serialization {
 		{
 		}
 
-		protected virtual void GenerateTextElementAttribute (CodeMemberField codeField, XmlTypeMapElementInfo einfo, TypeData defaultType)
+		protected virtual void GenerateTextElementAttribute (CodeAttributeDeclarationCollection attributes, XmlTypeMapElementInfo einfo, TypeData defaultType)
 		{
 		}
 		
-		protected virtual void GenerateUnnamedAnyElementAttribute (CodeMemberField codeField, XmlTypeMapElementInfo einfo, string defaultNamespace)
+		protected virtual void GenerateUnnamedAnyElementAttribute (CodeAttributeDeclarationCollection attributes, XmlTypeMapElementInfo einfo, string defaultNamespace)
 		{
 		}
 		

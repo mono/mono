@@ -205,7 +205,11 @@ namespace System.Xml.Serialization {
 				case "guid": return XmlConvert.ToGuid (value);
 				case "base64Binary": return Convert.FromBase64String (value);
 				case "anyUri": return new Uri (value);
-				default: return Convert.ChangeType (value, type.Type);
+				default: 
+					if (type.Type != null)
+						return Convert.ChangeType (value, type.Type);
+					else
+						return value;
 			}
 		}
 

@@ -87,25 +87,23 @@ namespace System.Xml.Serialization {
 					}
 				}
 			}
-			else if (memType.SchemaType == SchemaTypes.Array)
+			else if (member.TypeMapMember is XmlTypeMapMemberList)
 			{
 				// Array parameter
-				
 				XmlTypeMapMemberList list = member.TypeMapMember as XmlTypeMapMemberList;
 				ListMap listMap = (ListMap) list.ListTypeMapping.ObjectMap;
 				
 				codeGenerator.AddArrayAttributes (metadata, list, ns, forceUseMemberName);
 				codeGenerator.AddArrayItemAttributes (metadata, listMap, memType.ListItemTypeData, list.Namespace, 0);
 			}
-			else if (!member.Any)
-			{
-				att = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlElement");
-				if (forceUseMemberName || (member.ElementName != member.MemberName)) att.Arguments.Add (MapCodeGenerator.GetArg ("ElementName", member.ElementName));
-				if (member.Namespace != ns) att.Arguments.Add (MapCodeGenerator.GetArg ("Namespace", member.Namespace));
-				if (!TypeTranslator.IsDefaultPrimitiveTpeData (memType)) att.Arguments.Add (MapCodeGenerator.GetArg ("DataType", member.TypeName));
-				if (member.Form == XmlSchemaForm.Unqualified) att.Arguments.Add (MapCodeGenerator.GetEnumArg ("Form", "System.Xml.Schema.XmlSchemaForm", member.Form.ToString()));
-				if (att.Arguments.Count > 0) metadata.Add (att);
+			else if (member.TypeMapMember is XmlTypeMapMemberElement) {
+				codeGenerator.AddElementMemberAttributes ((XmlTypeMapMemberElement) member.TypeMapMember, ns, metadata, forceUseMemberName);
 			}
+			else if (member.TypeMapMember is XmlTypeMapMemberAttribute) {
+				codeGenerator.AddAttributeMemberAttributes ((XmlTypeMapMemberAttribute) member.TypeMapMember, ns, metadata, forceUseMemberName);
+			}
+			else
+				throw new NotSupportedException ("Schema type not supported");
 		}
 
 		public void ExportMembersMapping (XmlMembersMapping xmlMembersMapping)
@@ -153,38 +151,35 @@ namespace System.Xml.Serialization {
 			AddCustomAttribute (codeField, "System.Xml.Serialization.XmlAnyAttribute");
 		}
 		
-		protected override void GenerateDefaultAttribute (CodeMemberField codeField, object defaultValue)
-		{
-			AddCustomAttribute (codeField, "System.ComponentModel.DefaultValue", GetArg (defaultValue));
-			codeField.InitExpression = new CodePrimitiveExpression (defaultValue);
-		}
-		
-		protected override void GenerateAttributeMember (CodeMemberField codeField, XmlTypeMapMemberAttribute attinfo, string defaultNamespace)
+		protected override void GenerateAttributeMember (CodeAttributeDeclarationCollection attributes, XmlTypeMapMemberAttribute attinfo, string defaultNamespace, bool forceUseMemberName)
 		{
 			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlAttribute");
-			if (attinfo.Name != attinfo.AttributeName) att.Arguments.Add (GetArg (attinfo.AttributeName));
+			if (forceUseMemberName || attinfo.Name != attinfo.AttributeName) att.Arguments.Add (GetArg (attinfo.AttributeName));
 			if (attinfo.Namespace != defaultNamespace) att.Arguments.Add (GetArg ("Namespace", attinfo.Namespace));
 			if (attinfo.Form != XmlSchemaForm.None) att.Arguments.Add (GetEnumArg ("Form","System.Xml.Schema.XmlSchemaForm",attinfo.Form.ToString()));
 			if (!TypeTranslator.IsDefaultPrimitiveTpeData(attinfo.TypeData)) att.Arguments.Add (GetArg ("DataType",attinfo.TypeData.XmlType));
-			AddCustomAttribute (codeField, att, true);
+			attributes.Add (att);
 		}
 		
-		protected override void GenerateElementInfoMember (CodeMemberField codeField, XmlTypeMapMemberElement member, XmlTypeMapElementInfo einfo, TypeData defaultType, string defaultNamespace, bool addAlwaysAttr)
+		protected override void GenerateElementInfoMember (CodeAttributeDeclarationCollection attributes, XmlTypeMapMemberElement member, XmlTypeMapElementInfo einfo, TypeData defaultType, string defaultNamespace, bool addAlwaysAttr, bool forceUseMemberName)
 		{
 			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlElement");
-			if (einfo.ElementName != member.Name) att.Arguments.Add (GetArg (einfo.ElementName));
+			if (forceUseMemberName || einfo.ElementName != member.Name) att.Arguments.Add (GetArg (einfo.ElementName));
 			if (einfo.TypeData.FullTypeName != defaultType.FullTypeName) att.Arguments.Add (GetTypeArg ("Type", einfo.TypeData.FullTypeName));
 			if (einfo.Namespace != defaultNamespace) att.Arguments.Add (GetArg ("Namespace", einfo.Namespace));
 			if (einfo.Form == XmlSchemaForm.Unqualified) att.Arguments.Add (GetEnumArg ("Form", "System.Xml.Schema.XmlSchemaForm", einfo.Form.ToString()));
 			if (einfo.IsNullable) att.Arguments.Add (GetArg ("IsNullable", true));
 			if (!TypeTranslator.IsDefaultPrimitiveTpeData(einfo.TypeData)) att.Arguments.Add (GetArg ("DataType",einfo.TypeData.XmlType));
-			AddCustomAttribute (codeField, att, addAlwaysAttr);
+			if (addAlwaysAttr || att.Arguments.Count > 0) attributes.Add (att);
 		}
 		
-		protected override void GenerateElementMember (CodeMemberField codeField, XmlTypeMapMemberElement member)
+		protected override void GenerateElementMember (CodeAttributeDeclarationCollection attributes, XmlTypeMapMemberElement member)
 		{
-			if (member.ChoiceMember != null)
-				AddCustomAttribute (codeField, "System.Xml.Serialization.XmlChoiceIdentifier", GetArg(member.ChoiceMember));
+			if (member.ChoiceMember != null) {
+				CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlChoiceIdentifier");
+				att.Arguments.Add (GetArg(member.ChoiceMember));
+				attributes.Add (att);
+			}
 		}
 		
 		protected override void GenerateArrayElement (CodeAttributeDeclarationCollection attributes, XmlTypeMapMemberElement member, string defaultNamespace, bool forceUseMemberName)
@@ -214,19 +209,19 @@ namespace System.Xml.Serialization {
 			if (att.Arguments.Count > 0) attributes.Add (att);
 		}
 
-		protected override void GenerateTextElementAttribute (CodeMemberField codeField, XmlTypeMapElementInfo einfo, TypeData defaultType)
+		protected override void GenerateTextElementAttribute (CodeAttributeDeclarationCollection attributes, XmlTypeMapElementInfo einfo, TypeData defaultType)
 		{
 			CodeAttributeDeclaration uatt = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlText");
 			if (einfo.TypeData.FullTypeName != defaultType.FullTypeName) uatt.Arguments.Add (GetTypeArg ("Type", einfo.TypeData.FullTypeName));
-			AddCustomAttribute (codeField, uatt, true);
+			attributes.Add (uatt);
 		}
 		
-		protected override void GenerateUnnamedAnyElementAttribute (CodeMemberField codeField, XmlTypeMapElementInfo einfo, string defaultNamespace)
+		protected override void GenerateUnnamedAnyElementAttribute (CodeAttributeDeclarationCollection attributes, XmlTypeMapElementInfo einfo, string defaultNamespace)
 		{
 			CodeAttributeDeclaration uatt = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlAnyElement");
 			if (!einfo.IsUnnamedAnyElement) uatt.Arguments.Add (GetArg ("Name", einfo.ElementName));
 			if (einfo.Namespace != defaultNamespace) uatt.Arguments.Add (GetArg ("Namespace", einfo.Namespace));
-			AddCustomAttribute (codeField, uatt, true);
+			attributes.Add (uatt);
 		}
 		
 		protected override void GenerateEnum (XmlTypeMapping map, CodeTypeDeclaration codeEnum)

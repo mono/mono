@@ -223,6 +223,7 @@ namespace System.Xml.Serialization {
 
 			CodeIdentifiers classIds = new CodeIdentifiers ();
 			ImportParticleComplexContent (refer, cmap, seq, classIds, false);
+			ImportAttributes (refer, cmap, stype.Attributes, stype.AnyAttribute, classIds);
 
 			BuildPendingMaps ();
 
@@ -475,7 +476,7 @@ namespace System.Xml.Serialization {
 					if (refAttr.DefaultValue != null) 
 						member.DefaultValue = XmlCustomFormatter.FromXmlString (member.TypeData, refAttr.DefaultValue);
 					else if (member.TypeData.IsValueType)
-						member.IsOptionalValueType = true;
+						member.IsOptionalValueType = (refAttr.ValidatedUse != XmlSchemaUse.Required);
 						
 					if (member.TypeData.IsComplexType)
 						member.MappedType = GetTypeMapping (member.TypeData);

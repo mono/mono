@@ -200,9 +200,7 @@ namespace System.Xml.Serialization
 
 		void ReadMembers (ClassMap map, object ob, bool isValueList, bool readByOrder)
 		{
-			// A value list cannot have attributes
-
-			if (!isValueList)
+			if (map.AttributeMembers != null)
 			{
 				// Reads attributes
 
@@ -250,7 +248,10 @@ namespace System.Xml.Serialization
 					anyAttributeArray = ShrinkArray ((Array)anyAttributeArray, anyAttributeIndex, anyAttrMember.TypeData.Type.GetElementType(), true);
 					SetMemberValue (anyAttrMember, ob, anyAttributeArray, isValueList);
 				}
-
+			}
+			
+			if (!isValueList)
+			{
 				Reader.MoveToElement();
 				if (Reader.IsEmptyElement) 
 					return;

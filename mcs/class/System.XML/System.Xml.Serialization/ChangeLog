@@ -1,3 +1,17 @@
+2004-02-16  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* MapCodeGenerator.cs: Modified some methods to make them easier to reuse.
+	  Those are basically methods to add custom attributes to element and
+	  attribute members.
+	* SoapCodeExporter.cs: Track changes in MapCodeGenerator.
+	* XmlCodeExporter.cs: Better support for custom attribute generation for
+	  method parameters.
+	* XmlCustomFormatter.cs: Added null check.
+	* XmlSchemaImporter.cs: do not set IsOptionalValueType property to 
+	  attributes that are required.
+	* XmlSerializationReaderInterpreter.cs: Method parameters may be serialized
+	  as attributes.
+
 2004-02-11  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* MapCodeGenerator.cs: Changed some methods to make them easier to reuse.
