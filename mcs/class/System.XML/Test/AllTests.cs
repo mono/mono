@@ -27,6 +27,7 @@ namespace MonoTests.System.Xml
 				suite.AddTest (new TestSuite (typeof (XmlAttributeTests)));
 				suite.AddTest (new TestSuite (typeof (XmlAttributeCollectionTests)));
 				suite.AddTest (new TestSuite (typeof (XmlDocumentTests)));
+				suite.AddTest (new TestSuite (typeof (XmlDocumentFragmentTests)));
 				suite.AddTest (new TestSuite (typeof (NameTableTests)));
 				suite.AddTest (new TestSuite (typeof (XmlElementTests)));
 				suite.AddTest (new TestSuite (typeof (XmlNodeTests)));

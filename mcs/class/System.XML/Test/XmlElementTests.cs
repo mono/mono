@@ -239,6 +239,9 @@ namespace MonoTests.System.Xml
 			AssertNotNull("#Namespaced.Child", el.FirstChild);
 			AssertEquals("#Namespaced.Child.Name", "baz", el.FirstChild.LocalName);
 			AssertEquals("#Namespaced.Child.NSURI", "NS1", el.FirstChild.NamespaceURI);	// important!
+
+			el.InnerXml = "<hoge />";
+			AssertEquals("#Namespaced.VerifyPreviousCleared", "hoge", el.FirstChild.Name);
 		}
 	}
 }

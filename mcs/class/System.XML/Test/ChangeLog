@@ -1,3 +1,10 @@
+2002-10-28  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* added XmlDocumentFragmentTests.cs
+	  (including AllTests.cs and System.XML_linux_test.args)
+	* XmlDocumentTests.cs: added test of XMLDeclaration to TestImportNode()
+	* XmlElementTests.cs: added check removing children of InnerXml
+
 2002-10-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.XML_linux_test.args: added XPathNavigatorEvaluateTests.cs

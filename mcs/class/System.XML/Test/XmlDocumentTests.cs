@@ -791,7 +791,11 @@ namespace MonoTests.System.Xml
 			n = newDoc.ImportNode((XmlText)bar.FirstChild.ChildNodes[1], true);
 			AssertEquals("#ImportNode.Text", "From here, simple text node.", n.Value);
 
-			// Whitespace
+			// XmlDeclaration
+			document.LoadXml(xml1);
+			XmlDeclaration decl = (XmlDeclaration)newDoc.ImportNode(document.FirstChild, false);
+			AssertEquals("#ImportNode.XmlDeclaration.Type", XmlNodeType.XmlDeclaration, decl.NodeType);
+			AssertEquals("#ImportNode.XmlDeclaration.Encoding", "utf-8", decl.Encoding);
 		}
 
 		public void TestNameTable()

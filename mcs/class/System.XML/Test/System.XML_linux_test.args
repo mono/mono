@@ -14,6 +14,7 @@ XmlCharacterDataTests.cs
 XmlCommentTests.cs
 XmlDeclarationTests.cs
 XmlDocumentTests.cs
+XmlDocumentFragmentTests.cs
 XmlDocumentTypeTests.cs
 XmlElementTests.cs
 XmlNamespaceManagerTests.cs
