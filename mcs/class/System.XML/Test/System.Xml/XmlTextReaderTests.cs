@@ -578,6 +578,69 @@ namespace MonoTests.System.Xml
 			AssertEndDocument (xmlReader);
 		}
 
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void XmlDeclAfterWhitespace ()
+		{
+			XmlTextReader xtr = new XmlTextReader (
+				" <?xml version='1.0' ?><root />",
+				XmlNodeType.Document,
+				null);
+			xtr.Read ();	// ws
+			xtr.Read ();	// not-wf xmldecl
+		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void XmlDeclAfterComment ()
+		{
+			XmlTextReader xtr = new XmlTextReader (
+				"<!-- comment --><?xml version='1.0' ?><root />",
+				XmlNodeType.Document,
+				null);
+			xtr.Read ();	// comment
+			xtr.Read ();	// not-wf xmldecl
+		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void XmlDeclAfterProcessingInstruction ()
+		{
+			XmlTextReader xtr = new XmlTextReader (
+				"<?myPI let it go ?><?xml version='1.0' ?><root />",
+				XmlNodeType.Document,
+				null);
+			xtr.Read ();	// PI
+			xtr.Read ();	// not-wf xmldecl
+		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void StartsFromEndElement ()
+		{
+			XmlTextReader xtr = new XmlTextReader (
+				"</root>",
+				XmlNodeType.Document,
+				null);
+			xtr.Read ();
+		}
+
+		[Test]
+		public void ReadAsElementContent ()
+		{
+			XmlTextReader xtr = new XmlTextReader (
+				"<foo /><bar />", XmlNodeType.Element, null);
+			xtr.Read ();
+		}
+
+		[Test]
+		public void ReadAsAttributeContent ()
+		{
+			XmlTextReader xtr = new XmlTextReader (
+				"test", XmlNodeType.Attribute, null);
+			xtr.Read ();
+		}
+
 		[Test] 
 		public void ExternalDocument ()
 		{

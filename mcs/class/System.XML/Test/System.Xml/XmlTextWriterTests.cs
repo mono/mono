@@ -1055,5 +1055,16 @@ namespace MonoTests.System.Xml
 			xtw.WriteWhitespace (" ");
 			AssertEquals ("<foo bar='baz'> ", StringWriterText);
 		}
+
+		[Test]
+		public void DontOutputMultipleXmlns ()
+		{
+			XmlDocument doc = new XmlDocument();
+			doc.LoadXml("<a xmlns:dt=\"b\" dt:dt=\"c\"/>");
+			XmlDocument doc2 = new XmlDocument();
+			doc2.LoadXml(doc.InnerXml);
+			AssertEquals ("<a xmlns:dt=\"b\" dt:dt=\"c\" />",
+				doc2.OuterXml);
+		}
 	}
 }

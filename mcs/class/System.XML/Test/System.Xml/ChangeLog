@@ -1,11 +1,15 @@
-2003-07-06  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
-
-	* added XmlValidatingReaderTests.cs.
-
-2003-07-05  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+2003-07-12  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlNodeReaderTests.cs : Fixed ReadInnerXmlWrongInit() for correct 
 	  ReadState check.
+	* ChangeLog was incorrectly added about above stuff.
+	* XmlTextReaderTests.cs : added some reader's state check tests and
+	  ReadAsElementContent and ReadAsAttributeContent.
+	* XmlTextWriterTests.cs : added DontOutputMultipleXmlns().
+
+2003-07-06  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* added XmlValidatingReaderTests.cs.
 
 2003-07-01  Martin Willemoes Hansen <mwh@sysrq.dk>
 

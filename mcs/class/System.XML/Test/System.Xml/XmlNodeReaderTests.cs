@@ -69,8 +69,8 @@ namespace MonoTests.System.Xml
 			document.LoadXml ("<root>test of <b>mixed</b> string.</root>");
 			XmlNodeReader nrdr = new XmlNodeReader (document);
 			nrdr.ReadInnerXml ();
-			AssertEquals ("initial.ReadState", ReadState.Initial, nrdr.ReadState);
-			AssertEquals ("initial.EOF", false, nrdr.EOF);
+			AssertEquals ("initial.ReadState", ReadState.Error, nrdr.ReadState);
+			AssertEquals ("initial.EOF", true, nrdr.EOF);
 			AssertEquals ("initial.NodeType", XmlNodeType.None, nrdr.NodeType);
 		}
 
