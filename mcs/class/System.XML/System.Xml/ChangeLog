@@ -1,5 +1,25 @@
 2003-09-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlTextReader.cs : 
+	  - Fix for bugzilla #48337 (containing Ben's advice on that).
+	  - Added internal XmlTokenInfo classes. Nodes are now handled as token 
+	    objects (linked node, attributes and attribute values). Most of the
+	    node state properties and iterating methods are changed to refer to
+	    the token classes (except for value builder availability). Removed
+	    fields which are never used. CompileDTDSubset() is changed in
+	    reflection to nodeType field removal.
+	  - Fixed Depth that should vary in moving between attributes and/or
+	    reading attribute values.
+	  - LineNumber and LinePosition now returns more correct location.
+	  - Fixed Value that should still return true if its value is an empty
+	    attribute value string.
+	  - EntityValue is checked WFC constraints even thoug it is not used.
+	  - All .ctor() now initializes ReadState as Initial.
+	  - Read() should be available for attribute value constructor.
+	* XmlAttribute.cs : set_InnerXml() now calls reader's Read().
+
+2003-09-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlNamespaceManager.cs: PopScope() must retain those namespaces which
 	  are added in the scope before PushScope() was called.
 

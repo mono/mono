@@ -95,6 +95,7 @@ namespace System.Xml
 					BaseURI, XmlLang, XmlSpace, null);
 				XmlTextReader xtr = new XmlTextReader (value, XmlNodeType.Attribute, ctx);
 				xtr.XmlResolver = OwnerDocument.Resolver;
+				xtr.Read ();
 				OwnerDocument.ReadAttributeNodeValue (xtr, this);
 			}
 		}

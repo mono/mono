@@ -121,7 +121,7 @@ namespace System.Xml
 
 		public override int AttributeCount
 		{
-			get { return attributes.Count; }
+			get { return attributeCount; }
 		}
 
 		public override string BaseURI
@@ -132,10 +132,10 @@ namespace System.Xml
 		public override int Depth
 		{
 			get {
-				if (NodeType == XmlNodeType.Attribute)
-					return elementDepth + 1;
-				else if (insideAttribute)
+				if (currentAttributeValue >= 0)
 					return elementDepth + 2; // inside attribute value.
+				else if (currentAttribute >= 0)
+					return elementDepth + 1;
 				return elementDepth;
 			}
 		}
@@ -161,7 +161,7 @@ namespace System.Xml
 				if (this.valueBuilderAvailable)
 					return valueBuilder.Length != 0;
 				else
-					return value != String.Empty;
+					return cursorToken.Value != null;
 			}
 		}
 
@@ -176,7 +176,7 @@ namespace System.Xml
 
 		public override bool IsEmptyElement
 		{
-			get { return isEmptyElement; }
+			get { return cursorToken.IsEmptyElement; }
 		}
 
 		public override string this [int i]
@@ -196,22 +196,32 @@ namespace System.Xml
 
 		public int LineNumber
 		{
-			get { return currentInput.LineNumber; }
+			get {
+				if (useProceedingLineInfo)
+					return currentInput.LineNumber;
+				else
+					return cursorToken.LineNumber;
+			}
 		}
 
 		public int LinePosition
 		{
-			get { return currentInput.LinePosition; }
+			get {
+				if (useProceedingLineInfo)
+					return currentInput.LinePosition;
+				else
+					return cursorToken.LinePosition;
+			}
 		}
 
 		public override string LocalName
 		{
-			get { return localName; }
+			get { return cursorToken.LocalName; }
 		}
 
 		public override string Name
 		{
-			get { return name; }
+			get { return cursorToken.Name; }
 		}
 
 		public bool Namespaces
@@ -226,7 +236,7 @@ namespace System.Xml
 
 		public override string NamespaceURI
 		{
-			get { return namespaceURI; }
+			get { return cursorToken.NamespaceURI; }
 		}
 
 		public override XmlNameTable NameTable
@@ -236,7 +246,7 @@ namespace System.Xml
 
 		public override XmlNodeType NodeType
 		{
-			get { return nodeType; }
+			get { return cursorToken.NodeType; }
 		}
 
 		[MonoTODO]
@@ -248,18 +258,12 @@ namespace System.Xml
 
 		public override string Prefix
 		{
-			get { return prefix; }
+			get { return cursorToken.Prefix; }
 		}
 
 		public override char QuoteChar
 		{
-			get {
-				// value string holds attribute quotation char.
-				if (NodeType == XmlNodeType.Attribute)
-					return value [0];
-				else
-					return '"';
-			}
+			get { return cursorToken.QuoteChar; }
 		}
 
 		public override ReadState ReadState
@@ -269,16 +273,7 @@ namespace System.Xml
 
 		public override string Value
 		{
-			get {
-				
-				string v = value;
-				if (valueBuilderAvailable)
-					v = valueBuilder.ToString ();
-				if(NodeType == XmlNodeType.Attribute)
-					return UnescapeAttributeValue(v);
-				else
-					return v;
-			}
+			get { return cursorToken.Value != null ? cursorToken.Value : String.Empty; }
 		}
 
 		public WhitespaceHandling WhitespaceHandling
@@ -312,43 +307,37 @@ namespace System.Xml
 			foreach (XmlParserInput input in parserInputStack.ToArray ())
 				input.Close ();
 			this.currentInput.Close ();
+
+			cursorToken.Clear ();
+			currentToken.Clear ();
+			attributeCount = 0;
 		}
 
 		public override string GetAttribute (int i)
 		{
-			if (i > attributes.Count)
+			if (i > attributeCount)
 				throw new ArgumentOutOfRangeException ("i is smaller than AttributeCount");
-			else
-				return UnescapeAttributeValue (attributes [orderedAttributes [i]] as string);
+			else {
+				return attributeTokens [i].Value;
+			}
 		}
 
-		// MS.NET 1.0 documentation says that this method returns String.Empty for
-		// not-exist attribute, but in fact it returns null.
-		// That description is corrected in MS.NET 1.1 documentation.
+		// MS.NET 1.0 msdn says that this method returns String.Empty
+		// for absent attribute, but in fact it returns null.
+		// This description is corrected in MS.NET 1.1 msdn.
 		public override string GetAttribute (string name)
 		{
-			return UnescapeAttributeValue (attributes [name] as string);
+			for (int i = 0; i < attributeCount; i++)
+				if (attributeTokens [i].Name == name)
+					return attributeTokens [i].Value;
+			return null;
 		}
 
 		private int GetIndexOfQualifiedAttribute (string localName, string namespaceURI)
 		{
-			for(int i = 0; i < orderedAttributes.Count; i++)
-			{
-				string thisName = (string) orderedAttributes [i];
-
-				int indexOfColon = thisName.IndexOf (':');
-
-				if (indexOfColon != -1) {
-					string thisLocalName = thisName.Substring (indexOfColon + 1);
-
-					if (localName == thisLocalName) {
-						string thisPrefix = thisName.Substring (0, indexOfColon);
-						string thisNamespaceURI = LookupNamespace (thisPrefix);
-
-						if (namespaceURI == thisNamespaceURI)
-							return i;
-					}
-				} else if (localName == "xmlns" && namespaceURI == "http://www.w3.org/2000/xmlns/" && thisName == "xmlns")
+			for (int i = 0; i < attributeCount; i++) {
+				XmlAttributeTokenInfo ti = attributeTokens [i];
+				if (ti.LocalName == localName && ti.NamespaceURI == namespaceURI)
 					return i;
 			}
 			return -1;
@@ -364,7 +353,7 @@ namespace System.Xml
 			int idx = this.GetIndexOfQualifiedAttribute (localName, namespaceURI);
 			if (idx < 0)
 				return null;
-			return UnescapeAttributeValue (attributes [orderedAttributes [idx]] as string);
+			return attributeTokens [idx].Value;
 		}
 
 		[MonoTODO]
@@ -385,71 +374,28 @@ namespace System.Xml
 
 		public override void MoveToAttribute (int i)
 		{
-			MoveToElement ();
-
-			if (attributes == null || orderedAttributes.Count < i || i < 0)
+			if (i >= attributeCount)
 				throw new ArgumentOutOfRangeException ("attribute index out of range.");
 
-			if (orderedAttributesPos == -1) {
-				SaveProperties ();
-			}
-
-			orderedAttributesPos = i;
-
-			string name = orderedAttributes [i] as string;
-			string value = attributes [name] as string;
-			SetProperties (
-				XmlNodeType.Attribute, // nodeType
-				name, // name
-				false, // isEmptyElement
-				value, // value
-				false // clearAttributes
-				);
-			insideAttribute = true;
-			attributeValuePos = 0;
+			currentAttribute = i;
+			currentAttributeValue = -1;
+			cursorToken = attributeTokens [i];
 		}
 
 		public override bool MoveToAttribute (string name)
 		{
-			MoveToElement ();
-			bool match = false;
-
-			if (attributes == null)
-				return false;
-
-			if (orderedAttributesPos == -1) {
-				SaveProperties ();
-			}
-
-			for (orderedAttributesPos = 0; orderedAttributesPos < orderedAttributes.Count; orderedAttributesPos++)
-				if (name == orderedAttributes [orderedAttributesPos] as string) {
-					match = true;
-					break;
+			for (int i = 0; i < attributeCount; i++) {
+				XmlAttributeTokenInfo ti = attributeTokens [i];
+				if (ti.Name == name) {
+					MoveToAttribute (i);
+					return true;
 				}
-
-			if (match) {
-				string value = attributes [name] as string;
-				SetProperties (
-					XmlNodeType.Attribute, // nodeType
-					name, // name
-					false, // isEmptyElement
-					value, // value
-					false // clearAttributes
-				);
-				insideAttribute = true;
-				attributeValuePos = 0;
 			}
-
-			return match;
+			return false;
 		}
 
 		public override bool MoveToAttribute (string localName, string namespaceName)
 		{
-			MoveToElement ();
-
-			if (attributes == null)
-				return false;
-
 			int idx = GetIndexOfQualifiedAttribute (localName, namespaceName);
 			if (idx < 0)
 				return false;
@@ -459,56 +405,65 @@ namespace System.Xml
 
 		public override bool MoveToElement ()
 		{
-			if (orderedAttributesPos != -1) {
-				orderedAttributesPos = -1;
-				if (isPropertySaved)
-					RestoreProperties ();
-				insideAttribute = false;
+			if (currentToken == null)	// for attribute .ctor()
+				return false;
+
+			if (currentAttribute >= 0) {
+				currentAttribute = -1;
+				currentAttributeValue = -1;
+				cursorToken = currentToken;
 				return true;
 			}
-
-			return false;
+			else
+				return false;
 		}
 
 		public override bool MoveToFirstAttribute ()
 		{
+			if (attributeCount == 0)
+				return false;
 			MoveToElement ();
 			return MoveToNextAttribute ();
 		}
 
 		public override bool MoveToNextAttribute ()
 		{
-			if (attributes == null)
+			if (currentAttribute == 0 && attributeCount == 0)
 				return false;
-
-			if (orderedAttributesPos == -1)
-				SaveProperties ();
-
-
-			if (++orderedAttributesPos < orderedAttributes.Count) {
-				string name = orderedAttributes [orderedAttributesPos] as string;
-				string value = attributes [name] as string;
-				SetProperties (
-					XmlNodeType.Attribute, // nodeType
-					name, // name
-					false, // isEmptyElement
-					value, // value
-					false // clearAttributes
-				);
-				insideAttribute = true;
-				attributeValuePos = 0;
+			if (currentAttribute + 1 < attributeCount) {
+				currentAttribute++;
+				currentAttributeValue = -1;
+				cursorToken = attributeTokens [currentAttribute];
 				return true;
 			}
-
-			return false;
+			else
+				return false;
 		}
 
 		public override bool Read ()
 		{
+			if (startNodeType == XmlNodeType.Attribute) {
+				if (currentAttribute == 0)
+					return false;	// already read.
+				ClearAttributes ();
+				IncrementAttributeToken ();
+				ReadAttributeValueTokens ('"');
+				cursorToken = attributeTokens [0];
+				currentAttributeValue = -1;
+				readState = ReadState.Interactive;
+				return true;
+			}
+
 			bool more = false;
-			isPropertySaved = false;
 			readState = ReadState.Interactive;
-			insideAttribute = false;
+			currentLinkedNodeLineNumber = currentInput.LineNumber;
+			currentLinkedNodeLinePosition = currentInput.LinePosition;
+			useProceedingLineInfo = true;
+
+			cursorToken = currentToken;
+			attributeCount = 0;
+			currentAttribute = currentAttributeValue = -1;
+			currentToken.Clear ();
 
 			// It was moved from end of ReadStartTag ().
 			if (depthUp)
@@ -525,98 +480,29 @@ namespace System.Xml
 			if (!more && startNodeType == XmlNodeType.Document && currentState != XmlNodeType.EndElement)
 				throw new XmlException ("Document element did not appear.");
 
+			useProceedingLineInfo = false;
 			return more;
 		}
 
 		public override bool ReadAttributeValue ()
 		{
-			// 'attributeString' holds real string value (without their
-			// quotation characters).
-			//
-			// 'attributeValuePos' holds current position
-			// of 'attributeString' while iterating ReadAttribute().
-			// It may be:
-			//   -1 if ReadAttributeValue() has already finished.
-			//    0 if ReadAttributeValue() ready to start reading.
-			//   >0 if ReadAttributeValue() already got 1 or more values
-			//
-			// local 'refPosition' holds the position on the 
-			// attributeString which may be used next time.
-
-			if (attributeValuePos < 0)
-				return false;
-
-			// If not started, then initialize attributeString when parsing is at start.
-			if (attributeValuePos == 0) {
-				attributeString =
-					value.Substring (1, value.Length - 2);
-				// If it has an empty value, this method still returns true.
-				if (attributeString.Length == 0) {
-					attributeValuePos = -1;
-					SetProperties (XmlNodeType.Text,
-						"",
-						false,
-						"",
-						false);
-					return true;
-				}
+			if (readState == ReadState.Initial && startNodeType == XmlNodeType.Attribute) {
+				Read ();
 			}
 
-			// It occurs when attribute dully consists of entity reference.
-			if (attributeValuePos == attributeString.Length)
+			if (currentAttribute < 0)
 				return false;
+			XmlAttributeTokenInfo ti = attributeTokens [currentAttribute];
+			if (currentAttributeValue < 0)
+				currentAttributeValue = ti.ValueTokenStartIndex - 1;
 
-			returnEntityReference = false;
-			value = String.Empty;
-			int refPosition;
-			int loop = 0;
-
-			do {
-				refPosition = attributeString.IndexOf ('&', attributeValuePos);
-				if (refPosition < 0) {
-					// Reached to the end of value string.
-					value += attributeString.Substring (attributeValuePos);
-					attributeValuePos = -1;
-					break;
-				} else if (refPosition == attributeValuePos) {
-					string parsed = ReadAttributeValueReference ();
-					if (parsed != null)
-						value += parsed;
-					else {
-						// Found that an entity reference starts from this point.
-						// reset position to after '&'.
-						attributeValuePos = refPosition;
-						if (value.Length <= 0) {
-							int endNamePos = attributeString.IndexOf (";", attributeValuePos);
-							value = attributeString.Substring (attributeValuePos+1, endNamePos - attributeValuePos - 1);
-							attributeValuePos += value.Length + 2;
-							returnEntityReference = true;
-						}
-						break;
-					}
-				} else {
-					value += attributeString.Substring (attributeValuePos,
-						refPosition - attributeValuePos);
-					attributeValuePos = refPosition;
-					continue;
-				}
-			} while (++loop > 0);
-
-			if (returnEntityReference)
-				SetProperties (XmlNodeType.EntityReference,
-					value,
-					false,
-					String.Empty,
-					false);
+			if (currentAttributeValue < ti.ValueTokenEndIndex) {
+				currentAttributeValue++;
+				cursorToken = attributeValueTokens [currentAttributeValue];
+				return true;
+			}
 			else
-				SetProperties (XmlNodeType.Text,
-					"",
-					false,
-					value,
-					false);
-
-			returnEntityReference = false;
-			return true;
+				return false;
 		}
 
 		[MonoTODO]
@@ -737,6 +623,162 @@ namespace System.Xml
 		#endregion
 
 		#region Privates
+		internal class XmlTokenInfo
+		{
+			public XmlTokenInfo (XmlTextReader xtr)
+			{
+				Reader = xtr;
+				Clear ();
+			}
+
+			string valueCache;
+
+			protected XmlTextReader Reader;
+
+			public string Name;
+			public string LocalName;
+			public string Prefix;
+			public string NamespaceURI;
+			public bool IsEmptyElement;
+			public char QuoteChar;
+			public int LineNumber;
+			public int LinePosition;
+
+			public XmlNodeType NodeType;
+
+			public virtual string Value {
+				get {
+					if (valueCache != null)
+						return valueCache;
+					else if (Reader.valueBuilderAvailable) {
+						valueCache = Reader.valueBuilder.ToString ();
+						return valueCache;
+					}
+					return valueCache;
+				}
+				set {
+					valueCache = value;
+				}
+			}
+
+			public virtual void Clear ()
+			{
+				valueCache = null;
+				NodeType = XmlNodeType.None;
+				Name = LocalName = Prefix = NamespaceURI = String.Empty;
+				IsEmptyElement = false;
+				QuoteChar = '"';
+				LineNumber = LinePosition = 0;
+			}
+
+			internal virtual void FillNames ()
+			{
+				if (Reader.Namespaces) {
+					int indexOfColon = Name.IndexOf (':');
+
+					if (indexOfColon == -1) {
+						Prefix = String.Empty;
+						LocalName = Name;
+					} else {
+						Prefix = Reader.NameTable.Add (Name.Substring (0, indexOfColon));
+						LocalName = Reader.NameTable.Add (Name.Substring (indexOfColon + 1));
+					}
+
+					// NamespaceURI
+					switch (NodeType) {
+					case XmlNodeType.Attribute:
+						if (Prefix == string.Empty)
+							NamespaceURI = string.Empty;
+						else
+							NamespaceURI = Reader.LookupNamespace (Prefix);
+						break;
+
+					case XmlNodeType.Element:
+					case XmlNodeType.EndElement:
+						NamespaceURI = Reader.LookupNamespace (Prefix);
+						break;
+					default:
+						NamespaceURI = "";
+						break;
+					}
+				} else {
+					Prefix = String.Empty;
+					LocalName = Name;
+				}
+			}
+		}
+
+		internal class XmlAttributeTokenInfo : XmlTokenInfo
+		{
+			public XmlAttributeTokenInfo (XmlTextReader reader)
+				: base (reader)
+			{
+				NodeType = XmlNodeType.Attribute;
+			}
+
+			public int ValueTokenStartIndex;
+			public int ValueTokenEndIndex;
+			string valueCache;
+
+			public override string Value {
+				get {
+					if (valueCache != null)
+						return valueCache;
+					// An empty value should return String.Empty.
+					if (ValueTokenStartIndex == ValueTokenEndIndex) {
+						XmlTokenInfo ti = Reader.attributeValueTokens [ValueTokenStartIndex];
+						if (ti.NodeType == XmlNodeType.Text)
+							return ti.Value;
+						valueCache = '&' + ti.Name + ';';
+						return valueCache;
+					}
+
+					StringBuilder sb = new StringBuilder ();
+					for (int i = ValueTokenStartIndex; i <= ValueTokenEndIndex; i++) {
+						XmlTokenInfo ti = Reader.attributeValueTokens [i];
+						if (ti.NodeType == XmlNodeType.Text)
+							sb.Append (ti.Value);
+						else {
+							sb.Append ('&');
+							sb.Append (ti.Name);
+							sb.Append (';');
+						}
+					}
+
+					valueCache = sb.ToString ();
+
+					return valueCache;
+				}
+				set {
+					valueCache = value;
+				}
+			}
+
+			public override void Clear ()
+			{
+				base.Clear ();
+				valueCache = null;
+				NodeType = XmlNodeType.Attribute;
+				ValueTokenStartIndex = ValueTokenEndIndex = 0;
+			}
+
+			internal override void FillNames ()
+			{
+				base.FillNames ();
+				if (Prefix == "xmlns" || Name == "xmlns")
+					NamespaceURI = XmlNamespaceManager.XmlnsXmlns;
+			}
+		}
+
+		private XmlTokenInfo cursorToken;
+		private XmlTokenInfo currentToken;
+		private XmlAttributeTokenInfo currentAttributeToken;
+		private XmlTokenInfo currentAttributeValueToken;
+		private XmlAttributeTokenInfo [] attributeTokens = new XmlAttributeTokenInfo [10];
+		private XmlTokenInfo [] attributeValueTokens = new XmlTokenInfo [10];
+		private int currentAttribute;
+		private int currentAttributeValue;
+		private int attributeCount;
 
 		private XmlParserContext parserContext;
 
@@ -754,29 +796,8 @@ namespace System.Xml
 
 		private bool isStandalone;
 
-		private XmlNodeType nodeType;
-		private string name;
-		private string prefix;
-		private string localName;
-		private string namespaceURI;
-		private bool isEmptyElement;
-		private string value;
 		private StringBuilder valueBuilder;
 		private bool valueBuilderAvailable = false;
-
-		private bool insideAttribute;
-
-		private bool isPropertySaved;
-		private XmlNodeType saveNodeType;
-		private string saveName;
-		private string savePrefix;
-		private string saveLocalName;
-		private string saveNamespaceURI;
-		private bool saveIsEmptyElement;
-
-		private Hashtable attributes;
-		private ArrayList orderedAttributes;
-		private int orderedAttributesPos = -1;
 
 		private bool returnEntityReference;
 		private string entityReferenceName;
@@ -788,18 +809,16 @@ namespace System.Xml
 
 		private StringBuilder valueBuffer;
 
+		private int currentLinkedNodeLineNumber;
+		private int currentLinkedNodeLinePosition;
+		private bool useProceedingLineInfo;
+
 		// A buffer for ReadContent for ReadOuterXml
 		private StringBuilder currentTag {
 			get {
 				return currentInput.CurrentMarkup;
 			}
 		}
-
-		private string attributeString;
-		private int attributeValuePos;
-
-		// This should be only referenced(used) by ReadInnerXml(). Kind of flyweight pattern.
-		private StringBuilder innerXmlBuilder;
 
 		// Parameter entity placeholder
 		private Hashtable parameterEntities;
@@ -814,8 +833,9 @@ namespace System.Xml
 		private XmlNodeType currentState;
 		private int maybeTextDecl;
 
-		// These values are never re-initialized.
 		private XmlResolver resolver = new XmlUrlResolver ();
+
+		// These values are never re-initialized.
 		private bool namespaces = true;
 		private WhitespaceHandling whitespaceHandling = WhitespaceHandling.All;
 		private bool normalization = false;
@@ -833,18 +853,8 @@ namespace System.Xml
 			popScope = false;
 			parserInputStack = new Stack ();
 			elementStack = new Stack();
-
-			nodeType = XmlNodeType.None;
-			name = String.Empty;
-			prefix = String.Empty;
-			localName = string.Empty;
-			isEmptyElement = false;
-			value = String.Empty;
-
-			attributes = new Hashtable ();
-			attributeString = String.Empty;
-			orderedAttributes = new ArrayList ();
-			orderedAttributesPos = -1;
+			currentAttribute = -1;
+			currentAttributeValue = -1;
 
 			returnEntityReference = false;
 			entityReferenceName = String.Empty;
@@ -853,8 +863,11 @@ namespace System.Xml
 			nameLength = 0;
 			nameCapacity = initialNameCapacity;
 			
-			valueBuffer = new StringBuilder (8192);
+			valueBuffer = new StringBuilder (512);
 			parameterEntities = new Hashtable ();
+
+			currentToken = new XmlTokenInfo (this);
+			cursorToken = currentToken;
 		}
 
 		private void InitializeContext (string url, XmlParserContext context, TextReader fragment, XmlNodeType fragType)
@@ -879,7 +892,7 @@ namespace System.Xml
 
 			switch (fragType) {
 			case XmlNodeType.Attribute:
-				value = String.Format ("{0}{1}{0}", "'", fragment.ReadToEnd ().Replace ("'", "&apos;"));
+				fragment = new StringReader (fragment.ReadToEnd ().Replace ("\"", "&quot;"));
 				break;
 			case XmlNodeType.Element:
 				currentState = XmlNodeType.Element;
@@ -892,7 +905,6 @@ namespace System.Xml
 			}
 
 			this.currentInput = new XmlParserInput (fragment, url);
-			StreamReader sr = fragment as StreamReader;
 		}
 
 		// Use this method rather than setting the properties
@@ -907,107 +919,40 @@ namespace System.Xml
 			string value,
 			bool clearAttributes)
 		{
-			this.nodeType = nodeType;
-			this.name = name;
-			this.isEmptyElement = isEmptyElement;
-			this.value = value;
-			this.elementDepth = depth;
 			this.valueBuilderAvailable = false;
+			currentToken.Clear ();
+			currentToken.NodeType = nodeType;
+			currentToken.Name = name;
+			currentToken.IsEmptyElement = isEmptyElement;
+			currentToken.Value = value;
+			currentToken.LineNumber = this.currentLinkedNodeLineNumber;
+			currentToken.LinePosition = this.currentLinkedNodeLinePosition;
+			this.elementDepth = depth;
 
 			if (clearAttributes)
 				ClearAttributes ();
 
-			if (namespaces) {
-				int indexOfColon = name.IndexOf (':');
-
-				if (indexOfColon == -1) {
-					prefix = String.Empty;
-//					prefix = nodeType == XmlNodeType.Attribute ? null : String.Empty;
-					localName = name;
-				} else {
-					prefix = name.Substring (0, indexOfColon);
-					localName = name.Substring (indexOfColon + 1);
-				}
-			} else {
-				prefix = String.Empty;
-				localName = name;
-			}
-
-			switch (nodeType) {
-			case XmlNodeType.Attribute:
-				if (prefix == string.Empty) namespaceURI = string.Empty;
-//				if (prefix == string.Empty || prefix == null) namespaceURI = string.Empty;
-				else namespaceURI = LookupNamespace (prefix);
-				if (localName == "xmlns" && prefix == "")
-					namespaceURI = "http://www.w3.org/2000/xmlns/";
-				break;
-
-			case XmlNodeType.Element:
-			case XmlNodeType.EndElement:
-				namespaceURI = LookupNamespace (prefix);
-				break;
-			default:
-				namespaceURI = "";
-				break;
-			}
+			currentToken.FillNames ();
 		}
-		
+
 		private void SetProperties (
 			XmlNodeType nodeType,
 			string name,
 			bool isEmptyElement,
-			StringBuilder value,
-			bool clearAttributes) {
+			bool clearAttributes,
+			StringBuilder value) {
 			SetProperties (nodeType, name, isEmptyElement, (string)null, clearAttributes);
 			this.valueBuilderAvailable = true;
 			this.valueBuilder = value;
 		}
 
-		private void SaveProperties ()
-		{
-			// If already saved, then return.
-			if (isPropertySaved)
-				return;
-
-			saveNodeType = nodeType;
-			saveName = name;
-			savePrefix = prefix;
-			saveLocalName = localName;
-			saveNamespaceURI = namespaceURI;
-			saveIsEmptyElement = isEmptyElement;
-			// An element's value is always String.Empty.
-			isPropertySaved = true;
-		}
-
-		private void RestoreProperties ()
-		{
-			nodeType = saveNodeType;
-			name = saveName;
-			prefix = savePrefix;
-			localName = saveLocalName;
-			namespaceURI = saveNamespaceURI;
-			isEmptyElement = saveIsEmptyElement;
-			value = String.Empty;
-			isPropertySaved = false;
-		}
-
-		private void AddAttribute (string name, string value)
-		{
-			if (attributes.ContainsKey (name))
-				throw new XmlException (this as IXmlLineInfo,
-					String.Format ("Attribute {0} already exists.", name));
-			attributes.Add (name, value);
-			orderedAttributes.Add (name);
-		}
-
 		private void ClearAttributes ()
 		{
-			if (attributes.Count > 0) {
-				attributes.Clear ();
-				orderedAttributes.Clear ();
-			}
-
-			orderedAttributesPos = -1;
+			for (int i = 0; i < attributeCount; i++)
+				attributeTokens [i].Clear ();
+			attributeCount = 0;
+			currentAttribute = -1;
+			currentAttributeValue = -1;
 		}
 
 		private int PeekChar ()
@@ -1059,10 +1004,10 @@ namespace System.Xml
 						XmlNodeType.None, // nodeType
 						String.Empty, // name
 						false, // isEmptyElement
-						String.Empty, // value
+						(string) null, // value
 						true // clearAttributes
 					);
-					break;
+					return false;
 				default:
 					ReadText (true);
 					break;
@@ -1091,7 +1036,7 @@ namespace System.Xml
 				XmlNodeType.EntityReference, // nodeType
 				entityReferenceName, // name
 				false, // isEmptyElement
-				String.Empty, // value
+				(string) null, // value
 				true // clearAttributes
 			);
 
@@ -1144,6 +1089,19 @@ namespace System.Xml
 			if (XmlChar.IsFirstNameChar (PeekChar ()))
 				ReadAttributes (false);
 
+			// fill namespaces
+			for (int i = 0; i < attributeCount; i++)
+				attributeTokens [i].FillNames ();
+
+			// quick name check
+			for (int i = 0; i < attributeCount; i++)
+				for (int j = i + 1; j < attributeCount; j++)
+					if (Object.ReferenceEquals (attributeTokens [i].Name, attributeTokens [j].Name) ||
+						(Object.ReferenceEquals (attributeTokens [i].LocalName, attributeTokens [j].LocalName) &&
+						Object.ReferenceEquals (attributeTokens [i].NamespaceURI, attributeTokens [j].NamespaceURI)))
+						throw new XmlException (this as IXmlLineInfo,
+							"Attribute name and qualified name must be identical.");
+
 			string baseUri = GetAttribute ("xml:base");
 			if (baseUri != null)
 				parserContext.BaseURI = baseUri;
@@ -1176,7 +1134,7 @@ namespace System.Xml
 				XmlNodeType.Element, // nodeType
 				name, // name
 				isEmptyElement, // isEmptyElement
-				String.Empty, // value
+				(string) null, // value
 				false // clearAttributes
 			);
 		}
@@ -1206,7 +1164,7 @@ namespace System.Xml
 				XmlNodeType.EndElement, // nodeType
 				name, // name
 				false, // isEmptyElement
-				String.Empty, // value
+				(string) null, // value
 				true // clearAttributes
 			);
 
@@ -1297,8 +1255,8 @@ namespace System.Xml
 					nodeType, // nodeType
 					String.Empty, // name
 					false, // isEmptyElement
-					valueBuffer, // value
-					true // clearAttributes
+					true, // clearAttributes
+					valueBuffer // value
 				);
 			}
 		}
@@ -1405,36 +1363,181 @@ namespace System.Xml
 
 		// The reader is positioned on the first character of
 		// the attribute name.
-		private void ReadAttributes (bool allowPIEnd)
+		private void ReadAttributes (bool endsWithQuestion)
 		{
 			int peekChar = -1;
 			bool requireWhitespace = false;
+			currentAttribute = -1;
+			currentAttributeValue = -1;
+
 			do {
 				if (!SkipWhitespace () && requireWhitespace)
 					throw new XmlException ("Unexpected token. Name is required here.");
-				string name = ReadName ();
+
+				IncrementAttributeToken ();
+				currentAttributeToken.LineNumber = currentInput.LineNumber;
+				currentAttributeToken.LinePosition = currentInput.LinePosition;
+
+				currentAttributeToken.Name = ReadName ();
 				SkipWhitespace ();
 				Expect ('=');
 				SkipWhitespace ();
-				string value = ReadAttribute (false);
+				ReadAttributeValueTokens (-1);
+				attributeCount++;
 
-				if (name == "xmlns")
-					parserContext.NamespaceManager.AddNamespace (String.Empty, UnescapeAttributeValue (value));
-				else if (name.StartsWith ("xmlns:"))
-					parserContext.NamespaceManager.AddNamespace (name.Substring (6), UnescapeAttributeValue (value));
-
-				AddAttribute (name, value);
+				if (currentAttributeToken.Name == "xmlns")
+					parserContext.NamespaceManager.AddNamespace (String.Empty, GetAttribute (currentAttribute));
+				else if (currentAttributeToken.Name.StartsWith ("xmlns:")) {
+					string nsPrefix = NameTable.Add (currentAttributeToken.Name.Substring (6));
+					parserContext.NamespaceManager.AddNamespace (nsPrefix, GetAttribute (currentAttribute));
+				}
 
 				if (!SkipWhitespace ())
 					requireWhitespace = true;
 				peekChar = PeekChar ();
-				if (peekChar == '?' && allowPIEnd)
+				if (endsWithQuestion) {
+					if (peekChar == '?')
+						break;
+				}
+				else if (peekChar == '/' || peekChar == '>')
 					break;
-			} while (peekChar != '/' && peekChar != '>' && peekChar != -1);
+			} while (peekChar != -1);
+
+			currentAttribute = -1;
+			currentAttributeValue = -1;
+		}
+
+		private void AddAttribute (string name, string value)
+		{
+			IncrementAttributeToken ();
+			XmlAttributeTokenInfo ati = attributeTokens [currentAttribute];
+			ati.Name = "SYSTEM";
+			ati.FillNames ();
+			IncrementAttributeValueToken ();
+			XmlTokenInfo vti = attributeValueTokens [currentAttributeValue];
+			vti.Value = value;
+			currentToken = vti;
+			SetProperties (XmlNodeType.Text, name, false, value, false);
+			attributeCount++;
+		}
+
+		private void IncrementAttributeToken ()
+		{
+			currentAttribute++;
+			if (attributeTokens.Length == currentAttribute) {
+				XmlAttributeTokenInfo [] newArray = 
+					new XmlAttributeTokenInfo [attributeTokens.Length * 2];
+				attributeTokens.CopyTo (newArray, 0);
+				attributeTokens = newArray;
+			}
+			if (attributeTokens [currentAttribute] == null)
+				attributeTokens [currentAttribute] = new XmlAttributeTokenInfo (this);
+			currentAttributeToken = attributeTokens [currentAttribute];
+			currentAttributeToken.Clear ();
+		}
+
+		private void IncrementAttributeValueToken ()
+		{
+			ClearValueBuffer ();
+			currentAttributeValue++;
+			if (attributeValueTokens.Length == currentAttributeValue) {
+				XmlTokenInfo [] newArray = new XmlTokenInfo [attributeValueTokens.Length * 2];
+				attributeValueTokens.CopyTo (newArray, 0);
+				attributeValueTokens = newArray;
+			}
+			if (attributeValueTokens [currentAttributeValue] == null)
+				attributeValueTokens [currentAttributeValue] = new XmlTokenInfo (this);
+			currentAttributeValueToken = attributeValueTokens [currentAttributeValue];
+			currentAttributeValueToken.Clear ();
+		}
+
+		private void ReadAttributeValueTokens (int dummyQuoteChar)
+		{
+			int quoteChar = (dummyQuoteChar < 0) ? ReadChar () : dummyQuoteChar;
+
+			if (quoteChar != '\'' && quoteChar != '\"')
+				throw new XmlException (this as IXmlLineInfo,"an attribute value was not quoted");
+			currentAttributeToken.QuoteChar = (char) quoteChar;
+
+			IncrementAttributeValueToken ();
+			currentAttributeToken.ValueTokenStartIndex = currentAttributeValue;
+			currentAttributeValueToken.LineNumber = currentInput.LineNumber;
+			currentAttributeValueToken.LinePosition = currentInput.LinePosition;
+
+			bool incrementToken = false;
+			bool isNewToken = true;
+			bool loop = true;
+			while (loop && PeekChar () != quoteChar) {
+				if (incrementToken) {
+					IncrementAttributeValueToken ();
+					currentAttributeValueToken.LineNumber = currentInput.LineNumber;
+					currentAttributeValueToken.LinePosition = currentInput.LinePosition;
+					incrementToken = false;
+					isNewToken = true;
+				}
+
+				int ch = ReadChar ();
+
+				switch (ch)
+				{
+				case '<':
+					throw new XmlException (this as IXmlLineInfo,"attribute values cannot contain '<'");
+				case -1:
+					if (dummyQuoteChar < 0)
+						throw new XmlException (this as IXmlLineInfo,"unexpected end of file in an attribute value");
+					else	// Attribute value constructor.
+						loop = false;
+					break;
+				case '&':
+					int startPosition = currentTag.Length - 1;
+					if (PeekChar () == '#') {
+						ReadChar ();
+						this.ReadCharacterReference ();
+						break;
+					}
+					// Check XML 1.0 section 3.1 WFC.
+					string entName = ReadName ();
+					Expect (';');
+					int predefined = XmlChar.GetPredefinedEntity (entName);
+					if (predefined == 0) {
+						DTDEntityDeclaration entDecl = 
+							DTD == null ? null : DTD.EntityDecls [entName];
+						if (entDecl != null && entDecl.SystemId != null)
+//						if (!startNodeType == XmlNodeType.Attribute && (entDecl == null || entDecl.SystemId != null))
+							throw new XmlException (this as IXmlLineInfo,
+								"Reference to external entities is not allowed in the value of an attribute.");
+						currentAttributeValueToken.Value = CreateValueString ();
+						currentAttributeValueToken.NodeType = XmlNodeType.Text;
+						if (!isNewToken)
+							IncrementAttributeValueToken ();
+						currentAttributeValueToken.Name = entName;
+						currentAttributeValueToken.Value = String.Empty;
+						currentAttributeValueToken.NodeType = XmlNodeType.EntityReference;
+						incrementToken = true;
+					}
+					else
+						AppendValueChar (predefined);
+					break;
+				default:
+					AppendValueChar (ch);
+					break;
+				}
+
+				isNewToken = false;
+			}
+			if (!incrementToken) {
+				currentAttributeValueToken.Value = CreateValueString ();
+				currentAttributeValueToken.NodeType = XmlNodeType.Text;
+				currentAttributeToken.ValueTokenEndIndex = currentAttributeValue;
+			}
+
+			if (dummyQuoteChar < 0)
+				ReadChar (); // quoteChar
 		}
 
 		// The reader is positioned on the quote character.
 		// *Keeps quote char* to value to get_QuoteChar() correctly.
+		// Not it is used only for DTD.
 		private string ReadAttribute (bool isDefaultValue)
 		{
 			ClearValueBuffer ();
@@ -1529,8 +1632,8 @@ namespace System.Xml
 				XmlNodeType.ProcessingInstruction, // nodeType
 				target, // name
 				false, // isEmptyElement
-				valueBuffer, // value
-				true // clearAttributes
+				true, // clearAttributes
+				valueBuffer // value
 			);
 		}
 
@@ -1543,41 +1646,37 @@ namespace System.Xml
 						"XML declaration cannot appear in this state.");
 			}
 			// Is this required?
-//			if (maybeTextDecl != 0)
-//				currentState = XmlNodeType.XmlDeclaration;
+			if (maybeTextDecl != 0)
+				currentState = XmlNodeType.XmlDeclaration;
 
 			ClearAttributes ();
 
 			ReadAttributes (true);	// They must have "version."
-			string version = (string) attributes ["version"];
-			if (version != null)
-				version = version.Substring (1, version.Length - 2);
+			string version = GetAttribute ("version");
 
 			string message = null;
 			if (parserInputStack.Count == 0) {
-				if (maybeTextDecl == 0 && (orderedAttributes [0] as string != "version" || version != "1.0"))
+				if (maybeTextDecl == 0 && (attributeTokens [0].Name != "version" || version != "1.0"))
 					message = "Version 1.0 declaration is required in XML Declaration.";
-				else if (orderedAttributes.Count > 1 &&
-						(orderedAttributes [1] as string != "encoding" &&
-						orderedAttributes [1] as string != "standalone"))
+				else if (attributeCount > 1 &&
+						(attributeTokens [1].Name != "encoding" &&
+						attributeTokens [1].Name != "standalone"))
 					message = "Invalid Xml Declaration markup was found.";
-				else if (orderedAttributes.Count > 2 && orderedAttributes [2] as string != "standalone")
+				else if (attributeCount > 2 && attributeTokens [2].Name != "standalone")
 					message = "Invalid Xml Declaration markup was found.";
-				string sa = attributes ["standalone"] as string;
-				if (sa != null)
-					sa = sa.Substring (1, sa.Length - 2);
+				string sa = GetAttribute ("standalone");
 				if (sa != null && sa != "yes" && sa != "no")
 					message = "Only 'yes' or 'no' is allowed for standalone.";
 
 				this.isStandalone = (sa == "yes");
 			} else {
 				int currentCheck = 0;
-				if (orderedAttributes [0] as string == "version") {
+				if (attributeTokens [0].Name == "version") {
 					if (version != "1.0")
 						message = "Version 1.0 declaration is required in Text Declaration.";
 					currentCheck = 1;
 				}
-				if (orderedAttributes.Count <= currentCheck || orderedAttributes [currentCheck] as string != "encoding")
+				if (attributeCount <= currentCheck || attributeTokens [currentCheck].Name != "encoding")
 					message = "Invalid Text Declaration markup was found. encoding specification is required.";
 			}
 			if (message != null)
@@ -1661,8 +1760,8 @@ namespace System.Xml
 				XmlNodeType.Comment, // nodeType
 				String.Empty, // name
 				false, // isEmptyElement
-				valueBuffer, // value
-				true // clearAttributes
+				true, // clearAttributes
+				valueBuffer // value
 			);
 		}
 
@@ -1704,8 +1803,8 @@ namespace System.Xml
 				XmlNodeType.CDATA, // nodeType
 				String.Empty, // name
 				false, // isEmptyElement
-				valueBuffer, // value
-				true // clearAttributes
+				true, // clearAttributes
+				valueBuffer // value
 			);
 		}
 
@@ -1774,6 +1873,11 @@ namespace System.Xml
 				parserContext.InternalSubset, // value
 				true // clearAttributes
 				);
+
+			if (publicId != null)
+				AddAttribute ("PUBLIC", publicId);
+			if (systemId != null)
+				AddAttribute ("SYSTEM", systemId);
 		}
 
 		internal DTDObjectModel GenerateDTDObjectModel (string name, string publicId,
@@ -1794,14 +1898,15 @@ namespace System.Xml
 			DTD.InternalSubset = internalSubset;
 			DTD.XmlResolver = resolver;
 			int originalParserDepth = parserInputStack.Count;
+			bool more;
 			if (internalSubset != null && internalSubset.Length > 0) {
 				XmlParserInput original = currentInput;
 				currentInput = new XmlParserInput (new StringReader (internalSubset), BaseURI, intSubsetStartLine, intSubsetStartColumn);
 				do {
-					CompileDTDSubset ();
+					more = CompileDTDSubset ();
 					if (PeekChar () == -1 && parserInputStack.Count > 0)
 						PopParserInput ();
-				} while (nodeType != XmlNodeType.None || parserInputStack.Count > originalParserDepth);
+				} while (more || parserInputStack.Count > originalParserDepth);
 				if (dtdIncludeSect != 0)
 					throw new XmlException (this as IXmlLineInfo,"INCLUDE section is not ended correctly.");
 				currentInput = original;
@@ -1809,10 +1914,10 @@ namespace System.Xml
 			if (systemId != null && systemId != String.Empty && resolver != null) {
 				PushParserInput (systemId);
 				do {
-					this.CompileDTDSubset ();
+					more = this.CompileDTDSubset ();
 					if (PeekChar () == -1 && parserInputStack.Count > 1)
 						PopParserInput ();
-				} while (nodeType != XmlNodeType.None || parserInputStack.Count > originalParserDepth + 1);
+				} while (more || parserInputStack.Count > originalParserDepth + 1);
 				PopParserInput ();
 			}
 
@@ -2015,16 +2120,14 @@ namespace System.Xml
 		//   elementdecl, AttlistDecl, EntityDecl, NotationDecl,
 		//   PI, Comment, Parameter Entity, or doctype termination char(']')
 		//
-		// returns a node of some nodeType or null, setting nodeType.
-		//	 (if None then ']' was found.)
-		private void CompileDTDSubset()
+		// Returns true if it may have any more contents, or false if not.
+		private bool CompileDTDSubset()
 		{
 			SkipWhitespace ();
 			switch(PeekChar ())
 			{
 			case -1:
-				nodeType = XmlNodeType.None;
-				break;
+				return false;
 			case '%':
 				// It affects on entity references' well-formedness
 				if (this.parserInputStack.Count == 0)
@@ -2064,15 +2167,15 @@ namespace System.Xml
 				Expect ("]]>");
 				dtdIncludeSect--;
 				SkipWhitespace ();
-				break;
+				return false;
 			default:
 				throw new XmlException (this as IXmlLineInfo,String.Format ("Syntax Error inside doctypedecl markup : {0}({1})", PeekChar (), (char) PeekChar ()));
 			}
+			return true;
 		}
 
 		private void CompileDeclaration ()
 		{
-			nodeType = XmlNodeType.DocumentType;	// Hack!!
 			switch(ReadChar ())
 			{
 			case '-':
@@ -2392,8 +2495,8 @@ namespace System.Xml
 //				throw new NotImplementedException ("External parameter entity reference is not implemented yet.");
 				// read publicId/systemId
 				ReadExternalID ();
-				decl.PublicId = attributes ["PUBLIC"] as string;
-				decl.SystemId = attributes ["SYSTEM"] as string;
+				decl.PublicId = GetAttribute ("PUBLIC");
+				decl.SystemId = GetAttribute ("SYSTEM");
 				SkipWhitespace ();
 				decl.Resolve (resolver);
 			}
@@ -2511,8 +2614,8 @@ namespace System.Xml
 			if (PeekChar () == 'S' || PeekChar () == 'P') {
 				// external entity
 				ReadExternalID ();
-				decl.PublicId = attributes ["PUBLIC"] as string;
-				decl.SystemId = attributes ["SYSTEM"] as string;
+				decl.PublicId = GetAttribute ("PUBLIC");
+				decl.SystemId = GetAttribute ("SYSTEM");
 				if (SkipWhitespace ()) {
 					if (PeekChar () == 'N') {
 						// NDataDecl
@@ -2523,6 +2626,7 @@ namespace System.Xml
 						decl.NotationName = ReadName ();	// ndata_name
 					}
 				}
+				decl.ScanEntityValue (new StringCollection ());
 			}
 			else {
 				// literal entity
@@ -2565,7 +2669,6 @@ namespace System.Xml
 					break;
 				}
 			}
-//			string value = Dereference (currentTag.ToString (start, currentTag.Length - start), false);
 			string value = Dereference (CreateValueString (), false);
 			ClearValueBuffer ();
 
@@ -2792,18 +2895,21 @@ namespace System.Xml
 			return decl;
 		}
 
-		private void ReadExternalID() {
-			switch(PeekChar ()) {
+		private void ReadExternalID () {
+			this.ClearAttributes ();
+			switch (PeekChar ()) {
 			case 'S':
-				attributes ["PUBLIC"] = null;
-				attributes ["SYSTEM"] = ReadSystemLiteral (true);
+				string systemId = ReadSystemLiteral (true);
+				AddAttribute ("SYSTEM", systemId);
 				break;
 			case 'P':
-				attributes ["PUBLIC"] = ReadPubidLiteral ();
+				string publicId = ReadPubidLiteral ();
 				if (!SkipWhitespace ())
 					throw new XmlException (this as IXmlLineInfo,
 						"Whitespace is required between PUBLIC id and SYSTEM id.");
-				attributes ["SYSTEM"] = ReadSystemLiteral (false);
+				systemId = ReadSystemLiteral (false);
+				AddAttribute ("PUBLIC", publicId);
+				AddAttribute ("SYSTEM", systemId);
 				break;
 			}
 		}
@@ -2822,11 +2928,15 @@ namespace System.Xml
 			int quoteChar = ReadChar ();	// apos or quot
 			int startPos = currentTag.Length;
 			int c = 0;
-			while(c != quoteChar) {
+			ClearValueBuffer ();
+			while (c != quoteChar) {
 				c = ReadChar ();
-				if(c < 0) throw new XmlException (this as IXmlLineInfo,"Unexpected end of stream in ExternalID.");
+				if (c < 0)
+					throw new XmlException (this as IXmlLineInfo,"Unexpected end of stream in ExternalID.");
+				if (c != quoteChar)
+					AppendValueChar (c);
 			}
-			return currentTag.ToString (startPos, currentTag.Length - 1 - startPos);
+			return CreateValueString (); //currentTag.ToString (startPos, currentTag.Length - 1 - startPos);
 		}
 
 		private string ReadPubidLiteral()
@@ -2838,14 +2948,17 @@ namespace System.Xml
 			int quoteChar = ReadChar ();
 			int startPos = currentTag.Length;
 			int c = 0;
+			ClearValueBuffer ();
 			while(c != quoteChar)
 			{
 				c = ReadChar ();
 				if(c < 0) throw new XmlException (this as IXmlLineInfo,"Unexpected end of stream in ExternalID.");
 				if(c != quoteChar && !XmlChar.IsPubidChar (c))
 					throw new XmlException (this as IXmlLineInfo,"character '" + (char)c + "' not allowed for PUBLIC ID");
+				if (c != quoteChar)
+					AppendValueChar (c);
 			}
-			return currentTag.ToString (startPos, currentTag.Length - 1 - startPos);
+			return CreateValueString (); //currentTag.ToString (startPos, currentTag.Length - 1 - startPos);
 		}
 
 		// The reader is positioned on the first character
@@ -2936,56 +3049,10 @@ namespace System.Xml
 				SetProperties (XmlNodeType.Whitespace,
 					       String.Empty,
 					       false,
-					       valueBuffer,
-					       true);
+					       true,
+					       valueBuffer);
 
 			return; // (PeekChar () != -1);
-		}
-
-		// read entity reference from attribute string and if parsable then return the value.
-		private string ReadAttributeValueReference ()
-		{
-			int endEntityPosition = attributeString.IndexOf(';',
-				attributeValuePos);
-			if (endEntityPosition < 0)
-				throw new XmlException ("Insufficient markup of entity reference");
-			string entityName = attributeString.Substring (attributeValuePos + 1,
-				endEntityPosition - attributeValuePos - 1);
-
-			attributeValuePos = endEntityPosition + 1;
-
-			if(entityName [0] == '#') {
-				char c;
-				// character entity
-				if(entityName [1] == 'x') {
-					// hexadecimal
-					c = (char) int.Parse ("0" + entityName.Substring (2),
-						System.Globalization.NumberStyles.HexNumber);
-				} else {
-					// decimal
-					c = (char) int.Parse (entityName.Substring (1));
-				}
-				return c.ToString();
-			}
-			else {
-				switch(entityName)
-				{
-				case "lt": return "<";
-				case "gt": return ">";
-				case "amp": return "&";
-				case "quot": return "\"";
-				case "apos": return "'";
-				default: return null;
-				}
-			}
-		}
-
-		private string UnescapeAttributeValue (string unresolved)
-		{
-			if(unresolved == null) return null;
-
-			// trim start/end edge of quotation character.
-			return Dereference (unresolved.Substring (1, unresolved.Length - 2), true);
 		}
 
 		private string Dereference (string unresolved, bool expandPredefined)
