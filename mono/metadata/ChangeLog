@@ -1,3 +1,7 @@
+2005-01-19  Martin Baulig  <martin@ximian.com>
+
+	* loader.c (mono_get_method_constrained): Make this work again.
+
 2005-01-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* object-internals.h (_MonoReflectionMethodBody): Make local_index a 
