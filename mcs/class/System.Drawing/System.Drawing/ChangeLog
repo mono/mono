@@ -1,3 +1,7 @@
+2003-08-08  Duncan Mak  <duncan@ximian.com>
+
+	* Graphics.cs (DrawBezier): Fixed.
+
 2003-08-03  Alexandre Pigolkine <pigolkine@gmx.de>
 	* Graphics.cs  delegate Dispose to implementation
 

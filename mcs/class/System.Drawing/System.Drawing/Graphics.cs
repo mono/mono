@@ -96,17 +96,17 @@ namespace System.Drawing
 
 		public void DrawBezier (Pen pen, PointF pt1, PointF pt2, PointF pt3, PointF pt4)
 		{
-			((IGraphics) this).DrawBezier (pen, pt1.X, pt1.Y, pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
+			DrawBezier (pen, pt1.X, pt1.Y, pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
 		}
 
 		public void DrawBezier (Pen pen, Point pt1, Point pt2, Point pt3, Point pt4)
 		{
-			((IGraphics) this).DrawBezier (pen, pt1.X, pt1.Y, pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
+			DrawBezier (pen, pt1.X, pt1.Y, pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
 		}
 
 		public void DrawBezier (Pen pen, float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
 		{
-			((IGraphics) this).DrawBezier (pen, pt1.X, pt1.Y, pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
+			implementation.DrawBezier (pen, x1, y1, x2, y2, x3, y3, x4, y4);
 		}
 
 		[MonoTODO]
@@ -862,28 +862,24 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void FillEllipse (Brush brush, Rectangle rect)
 		{
-			throw new NotImplementedException ();
+			FillEllipse (brush, rect.X, rect.Y, rect.Width, rect.Height);
 		}
 
-		[MonoTODO]
 		public void FillEllipse (Brush brush, RectangleF rect)
 		{
-			throw new NotImplementedException ();
+			FillEllipse (brush, rect.X, rect.Y, rect.Width, rect.Height);
 		}
 
-		[MonoTODO]
 		public void FillEllipse (Brush brush, float x, float y, float width, float height)
 		{
-			throw new NotImplementedException ();
+			implementation.FillEllipse (brush, x, y, width, height);
 		}
 
-		[MonoTODO]
 		public void FillEllipse (Brush brush, int x, int y, int width, int height)
 		{
-			throw new NotImplementedException ();
+			implementation.FillEllipse (brush, x, y, width, height);
 		}
 
 		[MonoTODO]
