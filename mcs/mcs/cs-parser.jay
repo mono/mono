@@ -1287,26 +1287,26 @@ interface_member_declaration
 	  { 
 		Method m = (Method) $1;
 
-		CheckDef (current_class.AddMethod (m), m.Name, m.Location);
+		CheckDef (current_container.AddMethod (m), m.Name, m.Location);
 	  }
 	| interface_property_declaration	
 	  { 
 		Property p = (Property) $1;
 
-		CheckDef (current_class.AddProperty (p), p.Name, p.Location);
+		CheckDef (current_container.AddProperty (p), p.Name, p.Location);
           }
 	| interface_event_declaration 
           { 
 		if ($1 != null){
 			Event e = (Event) $1;
-			CheckDef (current_class.AddEvent (e), e.Name, lexer.Location);
+			CheckDef (current_container.AddEvent (e), e.Name, lexer.Location);
 		}
 	  }
 	| interface_indexer_declaration
 	  { 
 		Indexer i = (Indexer) $1;
 
-		current_class.AddIndexer (i);
+		current_container.AddIndexer (i);
 	  }
 	;
 

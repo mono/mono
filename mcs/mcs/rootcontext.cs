@@ -46,7 +46,6 @@ namespace Mono.CSharp {
 		// override).
 		//
 		static ArrayList type_container_resolve_order;
-		static ArrayList interface_resolve_order;
 		static ArrayList attribute_types;
 
 		//
@@ -83,7 +82,6 @@ namespace Mono.CSharp {
 		static RootContext ()
 		{
 			tree = new Tree ();
-			interface_resolve_order = new ArrayList ();
 			type_container_resolve_order = new ArrayList ();
 		}
 		
@@ -100,11 +98,6 @@ namespace Mono.CSharp {
 		}
 
 		static public string MainClass;
-		
-		public static void RegisterOrder (Interface iface)
-		{
-			interface_resolve_order.Add (iface);
-		}
 		
 		public static void RegisterOrder (TypeContainer tc)
 		{
@@ -419,9 +412,6 @@ namespace Mono.CSharp {
 				foreach (TypeContainer tc in attribute_types)
 					tc.CloseType ();
 			
-			foreach (Interface iface in interface_resolve_order)
-				iface.CloseType ();
-
 			//
 			// We do this in two passes, first we close the structs,
 			// then the classes, because it seems the code needs it this
@@ -453,7 +443,6 @@ namespace Mono.CSharp {
 			}
 			
 			attribute_types = null;
-			interface_resolve_order = null;
 			type_container_resolve_order = null;
 			helper_classes = null;
 			//tree = null;
@@ -617,15 +606,6 @@ namespace Mono.CSharp {
 				foreach (TypeContainer tc in attribute_types)
 					tc.DefineMembers (root);
 			
-			if (interface_resolve_order != null){
-				foreach (Interface iface in interface_resolve_order)
-					if ((iface.ModFlags & Modifiers.NEW) == 0)
-						iface.DefineMembers (root);
-					else
-						Report1530 (iface.Location);
-			}
-
-
 			if (type_container_resolve_order != null){
 				if (RootContext.StdLib){
 					foreach (TypeContainer tc in type_container_resolve_order)
@@ -693,13 +673,6 @@ namespace Mono.CSharp {
 				foreach (TypeContainer tc in attribute_types)
 					tc.Define ();
 			
-			if (interface_resolve_order != null){
-				foreach (Interface iface in interface_resolve_order)
-					if ((iface.ModFlags & Modifiers.NEW) == 0)
-						iface.Define ();
-			}
-
-
 			if (type_container_resolve_order != null){
 				foreach (TypeContainer tc in type_container_resolve_order) {
 					// When compiling corlib, these types have already been
@@ -744,11 +717,6 @@ namespace Mono.CSharp {
 					e.Emit ();
 			}
 
-			if (interface_resolve_order != null) {
-				foreach (Interface iface in interface_resolve_order)
-					iface.Emit ();
-			}                        
-			
 			if (type_container_resolve_order != null) {
 				foreach (TypeContainer tc in type_container_resolve_order)
 					tc.EmitConstants ();

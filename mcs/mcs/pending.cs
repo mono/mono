@@ -148,12 +148,12 @@ namespace Mono.CSharp {
 			foreach (MissingInterfacesInfo missing in missing_ifaces){
 				MethodInfo [] mi;
 				Type t = missing.Type;
-				
+
 				if (t is TypeBuilder){
-					Interface iface;
+					TypeContainer iface;
 
 					iface = TypeManager.LookupInterface (t);
-					
+
 					mi = iface.GetMethods ();
 				} else 
 					mi = t.GetMethods ();

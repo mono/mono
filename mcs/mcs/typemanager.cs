@@ -498,9 +498,13 @@ public class TypeManager {
 		return TypeHandle.GetTypeHandle (t);
 	}
 
-	public static Interface LookupInterface (Type t)
+	public static TypeContainer LookupInterface (Type t)
 	{
-		return builder_to_declspace [t] as Interface;
+		TypeContainer tc = (TypeContainer) builder_to_declspace [t];
+		if ((tc == null) || (tc.Kind != Kind.Interface))
+			return null;
+
+		return tc;
 	}
 
 	public static Delegate LookupDelegate (Type t)
@@ -1566,12 +1570,11 @@ public class TypeManager {
 	
 	public static bool IsInterfaceType (Type t)
 	{
-		Interface iface = builder_to_declspace [t] as Interface;
-
-		if (iface != null)
-			return true;
-		else
+		TypeContainer tc = (TypeContainer) builder_to_declspace [t];
+		if (tc == null)
 			return false;
+
+		return tc.Kind == Kind.Interface;
 	}
 
 	//
@@ -2264,7 +2267,7 @@ public class TypeManager {
 	{
 		if (t is TypeBuilder) {
 			if (t.IsInterface) {
-				Interface i = LookupInterface (t);
+				TypeContainer i = LookupInterface (t);
 
 				if ((i == null) || (i.IndexerName == null))
 					return "Item";

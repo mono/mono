@@ -84,9 +84,6 @@ namespace Mono.CSharp {
 		// Holds the list of
 		ArrayList interfaces;
 
-		// Holds order in which interfaces must be closed
-		ArrayList interface_order;
-		
 		// Holds the methods.
 		ArrayList methods;
 
@@ -237,7 +234,7 @@ namespace Mono.CSharp {
 			return AdditionResult.Success;
 		}
 		
-		public AdditionResult AddClass (Class c)
+		public AdditionResult AddClass (TypeContainer c)
 		{
 			AdditionResult res;
 			string name = c.Basename;
@@ -251,7 +248,7 @@ namespace Mono.CSharp {
 			return AdditionResult.Success;
 		}
 
-		public AdditionResult AddStruct (Struct s)
+		public AdditionResult AddStruct (TypeContainer s)
 		{
 			AdditionResult res;
 			string name = s.Basename;
@@ -338,11 +335,11 @@ namespace Mono.CSharp {
 			return AdditionResult.Success;
 		}
 		
-		public AdditionResult AddInterface (Interface iface)
+		public AdditionResult AddInterface (TypeContainer iface)
 		{
 			AdditionResult res;
 			string name = iface.Basename;
-			
+
 			if ((res = IsValid (name, iface.Name)) != AdditionResult.Success)
 				return res;
 			
@@ -517,14 +514,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void RegisterOrder (Interface iface)
-		{
-			if (interface_order == null)
-				interface_order = new ArrayList ();
-
-			interface_order.Add (iface);
-		}
-		
 		public ArrayList Types {
 			get {
 				return types;
@@ -1070,7 +1059,7 @@ namespace Mono.CSharp {
 		protected virtual bool DefineNestedTypes ()
 		{
 			if (Interfaces != null) {
-				foreach (Interface iface in Interfaces)
+				foreach (TypeContainer iface in Interfaces)
 					if (iface.DefineType () == null)
 						return false;
 			}
@@ -1251,14 +1240,6 @@ namespace Mono.CSharp {
 				parent_container = TypeManager.LookupMemberContainer (TypeBuilder.BaseType);
 #endif
 
-			if (interface_order != null){
-				foreach (Interface iface in interface_order)
-					if ((iface.ModFlags & Modifiers.NEW) == 0)
-						iface.DefineMembers (this);
-					else
-						Error_KeywordNotAllowed (iface.Location);
-			}
-
 			if (RootContext.WarningLevel > 1){
 				Type ptype;
 
@@ -1399,15 +1380,6 @@ namespace Mono.CSharp {
 
 		public override bool Define ()
 		{
-			if (interface_order != null){
-				foreach (Interface iface in interface_order) {
-					if ((iface.ModFlags & Modifiers.NEW) == 0) {
-						if (!iface.Define ())
-							return false;
-					}
-				}
-			}
-
 			if (parts != null) {
 				foreach (ClassPart part in parts) {
 					if (!part.Define ())
@@ -1828,7 +1800,7 @@ namespace Mono.CSharp {
 				if (interfaces != null) {
 					int len = interfaces.Count;
 					for (int i = 0; i < len; i++) {
-						Interface iface = (Interface) interfaces [i];
+						TypeContainer iface = (TypeContainer) interfaces [i];
 						
 						if ((iface.ModFlags & modflags) == 0)
 							continue;
@@ -2133,11 +2105,6 @@ namespace Mono.CSharp {
 				foreach (Enum en in Enums)
 					en.CloseType ();
 
-			if (interface_order != null){
-				foreach (Interface iface in interface_order)
-					iface.CloseType ();
-			}
-			
 			if (Types != null){
 				foreach (TypeContainer tc in Types)
 					if (tc.Kind == Kind.Struct)
@@ -2165,7 +2132,6 @@ namespace Mono.CSharp {
 			initialized_static_fields = null;
 			constants = null;
 			interfaces = null;
-			interface_order = null;
 			methods = null;
 			events = null;
 			indexers = null;
@@ -2389,7 +2355,7 @@ namespace Mono.CSharp {
 
 		bool IMemberContainer.IsInterface {
 			get {
-				return this is Interface;
+				return Kind == Kind.Interface;
 			}
 		}
 
@@ -2574,6 +2540,7 @@ namespace Mono.CSharp {
 	public class PartialContainer : TypeContainer {
 
 		public readonly Namespace Namespace;
+		public readonly int OriginalModFlags;
 		public readonly int AllowedModifiers;
 		public readonly TypeAttributes DefaultTypeAttributes;
 
@@ -2605,7 +2572,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				if (pc.ModFlags != mod_flags) {
+				if (pc.OriginalModFlags != mod_flags) {
 					Report.Error (
 						262, loc, "Partial declarations of `{0}' " +
 						"have conflicting accessibility modifiers",
@@ -2619,6 +2586,7 @@ namespace Mono.CSharp {
 			pc = new PartialContainer (ns, parent, name, mod_flags, kind, loc);
 			RootContext.Tree.RecordDecl (name, pc);
 			parent.AddType (pc);
+			pc.Register ();
 			return pc;
 		}
 
@@ -2671,10 +2639,20 @@ namespace Mono.CSharp {
 				accmods = Modifiers.PRIVATE;
 
 			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, l);
+			this.OriginalModFlags = mod;
 		}
 
 		public override void Register ()
-		{ }
+		{
+			if (Kind == Kind.Interface)
+				Parent.AddInterface (this);
+			else if (Kind == Kind.Class)
+				Parent.AddClass (this);
+			else if (Kind == Kind.Struct)
+				Parent.AddStruct (this);
+			else
+				throw new InvalidOperationException ();
+		}
 
 		public override PendingImplementation GetPendingImplementations ()
 		{
