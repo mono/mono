@@ -74,6 +74,8 @@ namespace System.CodeDom
 
 		public string Name {
 			get {
+				if (name == null)
+					return String.Empty;
 				return name;
 			}
 			set {

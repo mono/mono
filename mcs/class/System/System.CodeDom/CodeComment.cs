@@ -52,6 +52,8 @@ namespace System.CodeDom
 		
 		public string Text {
 			get {
+				if (text == null)
+					return String.Empty;
 				return text;
 			}
 			set {
