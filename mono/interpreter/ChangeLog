@@ -1,3 +1,7 @@
+2001-08-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* Makefile.am (mint_LDADD): Renamed interpreter to mint.
+
 2001-08-21  Dietmar Maurer  <dietmar@ximian.com>
 
 	* interp.c (get_named_exception): use the right constructor.
