@@ -1,3 +1,7 @@
+2003-02-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Data.OracleClient/OracleMonthSpan.cs: fixed compilation.
+
 2003-02-21  Tim Coleman <tim@timcoleman.com>
 	* System.Data.OracleClient/OracleDateTime.cs:
 	* System.Data.OracleClient/OracleInfoMessageEventArgs.cs:

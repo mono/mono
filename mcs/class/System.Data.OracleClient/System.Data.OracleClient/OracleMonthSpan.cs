@@ -40,8 +40,9 @@ namespace System.Data.OracleClient {
 		}
 
 		public OracleMonthSpan (OracleMonthSpan from)
-			: this (from)
 		{
+			this.notNull = from.notNull;
+			this.value = from.value;
 		}
 
 		public OracleMonthSpan (int years, int months)
@@ -57,10 +58,11 @@ namespace System.Data.OracleClient {
 			get { return !notNull; }
 		}
 
-		public byte[] Value {
+		public int Value {
 			get {
 				if (IsNull)
 					throw new Exception ("Data is null.");
+
 				return value;
 			}
 		}
@@ -98,35 +100,35 @@ namespace System.Data.OracleClient {
 		{
 			if (x.IsNull || y.IsNull)
 				return OracleBoolean.Null;
-			return (x.Value > y.Value);
+			return (x.value > y.value);
 		}
 
 		public static OracleBoolean GreaterThanOrEqual (OracleMonthSpan x, OracleMonthSpan y)
 		{
 			if (x.IsNull || y.IsNull)
 				return OracleBoolean.Null;
-			return (x.Value >= y.Value);
+			return (x.value >= y.value);
 		}
 
 		public static OracleBoolean LessThan (OracleMonthSpan x, OracleMonthSpan y)
 		{
 			if (x.IsNull || y.IsNull)
 				return OracleBoolean.Null;
-			return (x.Value < y.Value);
+			return (x.value < y.value);
 		}
 
 		public static OracleBoolean LessThanOrEqual (OracleMonthSpan x, OracleMonthSpan y)
 		{
 			if (x.IsNull || y.IsNull)
 				return OracleBoolean.Null;
-			return (x.Value <= y.Value);
+			return (x.value <= y.value);
 		}
 
 		public static OracleBoolean NotEquals (OracleMonthSpan x, OracleMonthSpan y)
 		{
 			if (x.IsNull || y.IsNull)
 				return OracleBoolean.Null;
-			return (x.Value != y.Value);
+			return (x.value != y.value);
 		}
 		
 		public static OracleMonthSpan Parse (string s)
@@ -177,7 +179,7 @@ namespace System.Data.OracleClient {
 
 		public static explicit operator int (OracleMonthSpan x)
 		{
-			return x.Value;
+			return x.value;
 		}
 
 		public static explicit operator OracleMonthSpan (string s)
