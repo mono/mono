@@ -828,7 +828,12 @@ namespace Mono.Math {
 
 		#endregion
 
-		public sealed class ModulusRing {
+#if INSIDE_CORLIB
+		internal
+#else
+		public
+#endif
+		sealed class ModulusRing {
 
 			BigInteger mod, constant;
 
