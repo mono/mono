@@ -3,10 +3,11 @@
 //
 // Author: Cesar Octavio Lopez Nataren
 //
-// (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
+// (C) 2003, 2004, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
 using System;
+using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
 
@@ -31,12 +32,15 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			throw new NotImplementedException ();
+			return expression.Resolve (context);
 		}
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			ILGenerator ig = ec.ig;
+			expression.Emit (ec);
+			ig.Emit (OpCodes.Call, typeof (Throw).GetMethod ("JScriptThrow"));
+			ig.Emit (OpCodes.Throw);				
 		}
 	}
 }
