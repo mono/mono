@@ -488,7 +488,7 @@ namespace Mono.CSharp {
 				case 2:
 					ig.Emit (OpCodes.Ldarg_3); break;
 				default:
-					ig.Emit (OpCodes.Ldarg, i - 1); break;
+					ig.Emit (OpCodes.Ldarg, i + 1); break;
 				}
 			}
 			ig.Emit (OpCodes.Call, base_method);
