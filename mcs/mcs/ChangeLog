@@ -1,3 +1,8 @@
+2004-01-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.cs: Allow assemblies without code to be generated, fixes
+	52230.
+
 2004-01-07  Nick Drochak <ndrochak@gol.com>
 
 	* attribute.cs: Remove unneeded catch variables. Eliminates a warning.

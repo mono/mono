@@ -1276,10 +1276,24 @@ namespace Mono.CSharp
 
 			if (tokenize)
 				return true;
-			
-			if (first_source == null){
-				Report.Error (2008, "No files to compile were specified");
-				return false;
+
+			//
+			// If we are an exe, require a source file for the entry point
+			//
+			if (RootContext.Target == Target.Exe || RootContext.Target == Target.WinExe){
+				if (first_source == null){
+					Report.Error (2008, "No files to compile were specified");
+					return false;
+				}
+
+			}
+
+			//
+			// If there is nothing to put in the assembly, and we are not a library
+			//
+			if (first_source == null && embedded_resources == null && resources == null){
+					Report.Error (2008, "No files to compile were specified");
+					return false;
 			}
 
 			if (Report.Errors > 0)
