@@ -65,7 +65,7 @@ namespace Mono.Security.Cryptography {
 		// I2OSP converts a non-negative integer to an octet string of a specified length.
 		public static byte[] I2OSP (int x, int size) 
 		{
-			byte[] array = BitConverter.GetBytes (x);
+			byte[] array = BitConverterLE.GetBytes (x);
 			Array.Reverse (array, 0, array.Length);
 			return I2OSP (array, size);
 		}

@@ -1,3 +1,7 @@
+2004-04-08  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* PKCS1.cs: Use BitConverterLE
+
 2004-04-06  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* CryptoConvert.cs: Add private methods to always
