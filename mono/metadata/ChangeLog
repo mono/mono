@@ -1,4 +1,9 @@
 
+Tue Jul 16 12:39:33 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* object.c, class.h: cache the vtable in the class as suggested by
+	vargaz@freemail.hu (Zoltan Varga).
+
 Tue Jul 16 11:27:57 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.h, loader.c: added mono_field_from_token().
