@@ -3,6 +3,7 @@
 //
 // Authors:
 //   Dietmar Maurer (dietmar@ximian.com)
+//   Lluis Sanchez (lsg@ctv.es)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
@@ -23,7 +24,8 @@ namespace System.Runtime.Remoting.Proxies
 	public abstract class RealProxy {
 
 		Type class_to_proxy;
-		
+		Identity _objectIdentity;
+
 		protected RealProxy ()
 		{
 			throw new NotImplementedException ();
@@ -34,6 +36,12 @@ namespace System.Runtime.Remoting.Proxies
 			this.class_to_proxy = classToProxy;
 		}
 
+		internal RealProxy (Type classToProxy, Identity identity)
+		{
+			this.class_to_proxy = classToProxy;
+			_objectIdentity = identity;
+		}
+
 		protected RealProxy (Type classToProxy, IntPtr stub, object stubData)
 		{
 			throw new NotImplementedException ();
@@ -41,9 +49,14 @@ namespace System.Runtime.Remoting.Proxies
 
 		public virtual ObjRef CreateObjRef (Type requestedType)
 		{
-			throw new NotImplementedException ();
+			return _objectIdentity.CreateObjRef (requestedType);
 		}
-		
+
+		internal Identity ObjectIdentity
+		{
+			get { return _objectIdentity; }
+		}
+
 		public abstract IMessage Invoke (IMessage msg);
 
 		/* this is called from unmanaged code */
@@ -59,7 +72,7 @@ namespace System.Runtime.Remoting.Proxies
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern virtual object GetTransparentProxy ();
-		
+	
 	}
 
 }

@@ -52,19 +52,10 @@ namespace System.Runtime.Remoting.Channels {
 							out ITransportHeaders responseHeaders,
 							out Stream responseStream)
 		{
-			IMethodCallMessage call = (IMethodCallMessage)requestMsg;
-			
-			string uri = (string)requestHeaders ["_requestUri"];
-			
-			MarshalByRefObject svr = RemotingServices.GetServerForUri (uri);
-			if (svr == null)
-				throw new RemotingException ("no registered server for uri " + uri); 
-
-			responseMsg = RemotingServices.ExecuteMessage (svr, call);
 			responseHeaders = null;			
 			responseStream = null;
-			
-			return ServerProcessing.Complete;
+
+			return ChannelServices.DispatchMessage(sinkStack, requestMsg, out responseMsg);
 		}
 	}
 }

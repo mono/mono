@@ -454,6 +454,7 @@ System.Runtime.Remoting/ActivatedClientTypeEntry.cs
 System.Runtime.Remoting/ActivatedServiceTypeEntry.cs
 System.Runtime.Remoting/IObjectHandle.cs
 System.Runtime.Remoting/IChannelInfo.cs
+System.Runtime.Remoting/Identity.cs
 System.Runtime.Remoting/IEnvoyInfo.cs
 System.Runtime.Remoting/IRemotingTypeInfo.cs
 System.Runtime.Remoting/ObjectHandle.cs
@@ -476,6 +477,7 @@ System.Runtime.Remoting.Channels/BaseChannelSinkWithProperties.cs
 System.Runtime.Remoting.Channels/BaseChannelWithProperties.cs
 System.Runtime.Remoting.Channels/ChannelDataStore.cs
 System.Runtime.Remoting.Channels/ChannelServices.cs
+System.Runtime.Remoting.Channels/ChannelSinkStackEntry.cs
 System.Runtime.Remoting.Channels/ClientChannelSinkStack.cs
 System.Runtime.Remoting.Channels/IChannel.cs
 System.Runtime.Remoting.Channels/IChannelDataStore.cs
@@ -512,6 +514,7 @@ System.Runtime.Remoting.Contexts/IDynamicProperty.cs
 System.Runtime.Remoting.Lifetime/ClientSponsor.cs
 System.Runtime.Remoting.Lifetime/ILease.cs
 System.Runtime.Remoting.Lifetime/ISponsor.cs
+System.Runtime.Remoting.Lifetime/LeaseSink.cs
 System.Runtime.Remoting.Lifetime/LeaseState.cs
 System.Runtime.Remoting.Lifetime/LifetimeServices.cs
 System.Runtime.Remoting.Messaging/AsyncResult.cs
@@ -536,6 +539,9 @@ System.Runtime.Remoting.Messaging/MonoMethodMessage.cs
 System.Runtime.Remoting.Messaging/OneWayAttribute.cs
 System.Runtime.Remoting.Messaging/RemotingSurrogateSelector.cs
 System.Runtime.Remoting.Messaging/ReturnMessage.cs
+System.Runtime.Remoting.Messaging/ServerContextTerminatorSink.cs
+System.Runtime.Remoting.Messaging/ServerObjectTerminatorSink.cs
+System.Runtime.Remoting.Messaging/StackBuilderSink.cs
 System.Runtime.Remoting.Metadata/SoapAttribute.cs
 System.Runtime.Remoting.Metadata/SoapFieldAttribute.cs
 System.Runtime.Remoting.Metadata/SoapMethodAttribute.cs

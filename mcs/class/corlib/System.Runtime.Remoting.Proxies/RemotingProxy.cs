@@ -3,6 +3,7 @@
 //
 // Authors:
 //   Dietmar Maurer (dietmar@ximian.com)
+//   Lluis Sanchez Gual (lsg@ctv.es)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
@@ -16,18 +17,18 @@ using System.Runtime.CompilerServices;
 namespace System.Runtime.Remoting.Proxies
 {
 
-	public class RemotingProxy : RealProxy {
+	public class RemotingProxy : RealProxy 
+	{
+		IMessageSink _sink;
 
-		IMessageSink sink;
-		
-		public RemotingProxy (Type type, IMessageSink sink) : base (type)
+		internal RemotingProxy (Type type, Identity identity) : base (type, identity)
 		{
-			this.sink = sink;
+			_sink = identity.ClientSink;
 		}
 
 		public override IMessage Invoke (IMessage request)
 		{
-			return sink.SyncProcessMessage (request);
+			return _sink.SyncProcessMessage (request);
 		}
 
 	}

@@ -1,3 +1,12 @@
+2002-12-20 Lluis Sanchez Gual <lsg@ctv.es>
+
+	* ObjRef.cs: Implementation now based on methods of RemotingServices.
+	* RemotingServices.cs: Remoting information now kept in Identity objects.
+	  All methods adapted to work with identities.
+	  Renamed ExecuteMessage to InternalExecuteMessage. ExecuteMessage should
+	  not make a direct call to the object.
+	* Identity.cs: added.
+
 2002-12-11  Jaime Anguiano Olarra <jaime@gnome.org>
 
 	* RemotingConfiguration.cs: added to the CVS.

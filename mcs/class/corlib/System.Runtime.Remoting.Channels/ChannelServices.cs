@@ -3,6 +3,7 @@
 //
 // Author: Rodrigo Moya (rodrigo@ximian.com)
 //         Dietmar Maurer (dietmar@ximian.com)
+//         Lluis Sanchez Gual (lsg@ctv.es)
 //
 // 2002 (C) Copyright, Ximian, Inc.
 //
@@ -40,6 +41,25 @@ namespace System.Runtime.Remoting.Channels
 		private ChannelServices ()
 		{
 		}
+
+		public static IMessageSink CreateClientChannelSinkChain(string url, object remoteChannelData, out string objectUri)
+		{
+			// Locate a channel that can parse the url. This channel will be used to
+			// create the sink chain.
+
+			foreach (IChannel c in registeredChannels) 
+			{
+				IChannelSender sender = c as IChannelSender;
+				
+				if (sender != null) 
+				{
+					IMessageSink sink = sender.CreateMessageSink (url, remoteChannelData, out objectUri);
+					if (sink != null) return sink;		// URL is ok, this is the channel and the sink
+				}
+			}
+			objectUri = null;
+			return null;
+		}
 		
 		public static IChannel[] RegisteredChannels
 		{
@@ -61,13 +81,13 @@ namespace System.Runtime.Remoting.Channels
 		}
 
 		public static IServerChannelSink CreateServerChannelSinkChain (
-			IServerChannelSinkProvider provider,
-			IChannelReceiver channel)
-	        {
+			IServerChannelSinkProvider provider, IChannelReceiver channel)
+	    {
 			IServerChannelSinkProvider tmp = provider;
 			while (tmp.Next != null) tmp = tmp.Next;
 			tmp.Next = new ServerDispatchSinkProvider ();
 
+			// Every provider has to call CreateSink() of its next provider
 			return  provider.CreateSink (channel);
 		}
 
@@ -77,7 +97,16 @@ namespace System.Runtime.Remoting.Channels
 			IMessage msg,
 			out IMessage replyMsg)
 		{
-			throw new NotImplementedException ();
+			// TODO: put Identity in message
+			// TODO: Async processing
+
+			IMethodMessage call = (IMethodMessage)msg;
+			Identity identity = RemotingServices.GetIdentityForUri(call.Uri);
+			if (identity == null) throw new RemotingException ("No receiver for uri " + call.Uri);
+
+			replyMsg = identity.Context.GetServerContextSinkChain().SyncProcessMessage (msg);
+
+			return ServerProcessing.Complete;
 		}
 
 		[MonoTODO]
@@ -99,9 +128,18 @@ namespace System.Runtime.Remoting.Channels
 		}
 
 		public static void RegisterChannel (IChannel chnl)
-	        {
-			// fixme: sort it by priority
-			registeredChannels.Add ((object) chnl);
+		{
+			// Put the channel in the correct place according to its priority.
+			// Since there are not many channels, a linear search is ok.
+
+			for (int n = 0; n < registeredChannels.Count; n++) {
+				if ( ((IChannel)registeredChannels[n]).ChannelPriority < chnl.ChannelPriority)
+				{
+					registeredChannels.Insert (n, chnl);
+					return;
+				}
+			}
+			registeredChannels.Add (chnl);
 		}
 
 		[MonoTODO]

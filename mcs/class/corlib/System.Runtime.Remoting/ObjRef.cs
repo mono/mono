@@ -4,6 +4,7 @@
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
 //   Dietmar Maurer (dietmar@ximian.com)
+//   Lluis Sanchez Gual (lsg@ctv.es)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
@@ -20,8 +21,8 @@ using System.Runtime.Remoting.Proxies;
 namespace System.Runtime.Remoting {
 
 	[Serializable]
-	public class ObjRef : IObjectReference, ISerializable {
-		MarshalByRefObject mbr;
+	public class ObjRef : IObjectReference, ISerializable 
+	{
 		IChannelInfo channel_info;
 		string uri;
 		Type type;
@@ -39,7 +40,10 @@ namespace System.Runtime.Remoting {
 			if (type == null)
 				throw new ArgumentNullException ("type");
 
-			this.mbr = mbr;
+			// The ObjRef can only be constructed if the given mbr
+			// has already been marshalled using RemotingServices.Marshall
+
+			this.uri = RemotingServices.GetObjectUri(mbr);
 			this.type = type;
 
 			channel_info = new ChannelInfoStore ();
@@ -53,7 +57,6 @@ namespace System.Runtime.Remoting {
 				switch (en.Name) {
 				case "uri":
 					uri = (string)en.Value;
-					mbr = RemotingServices.GetServerForUri (uri);
 					break;
 				case "type":
 					type = (Type)en.Value;
@@ -118,41 +121,18 @@ namespace System.Runtime.Remoting {
 
 		public virtual object GetRealObject (StreamingContext sc)
 		{
-			if (IsFromThisAppDomain ())
-				return mbr;
-
-			object [] channel_data = channel_info.ChannelData;
-			IChannel[] channels = ChannelServices.RegisteredChannels;
-			
-			IMessageSink sink = null;
-
-			foreach (object data in channel_data) {
-				foreach (IChannel channel in channels) {
-					IChannelSender sender = channel as IChannelSender;
-					if (sender == null)
-						continue;
-
-					string object_uri;
-					if ((sink = sender.CreateMessageSink (null, data, out object_uri)) != null)
-						break;
-				}
-				if (sink != null)
-					break;
-			}
-
-			if (sink == null)
-				throw new RemotingException ("Cannot create channel sink");
-
-			RemotingProxy real_proxy = new RemotingProxy (type, sink);
-			
-			return real_proxy.GetTransparentProxy ();
+			return RemotingServices.GetRemoteObject(type, null, channel_info.ChannelData);
 		}
 
 		public bool IsFromThisAppDomain ()
 		{
-			return (mbr != null);
+			Identity identity = RemotingServices.GetIdentityForUri (uri);
+			if (identity == null) return false;		// URI not registered in this domain
+
+			return identity.IsFromThisAppDomain;
 		}
 
+		[MonoTODO]
 		public bool IsFromThisProcess ()
 		{
 			// as yet we do not consider this optimization

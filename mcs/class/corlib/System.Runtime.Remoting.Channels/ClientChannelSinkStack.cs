@@ -2,6 +2,7 @@
 // System.Runtime.Remoting.Channels.ClientChannelSinkStack.cs
 //
 // Author: Rodrigo Moya (rodrigo@ximian.com)
+//         Lluis Sanchez (lsg@ctv.es)
 //
 // 2002 (C) Copyright, Ximian, Inc.
 //
@@ -11,25 +12,31 @@ using System.Runtime.Remoting.Messaging;
 
 namespace System.Runtime.Remoting.Channels
 {
-	public class ClientChannelSinkStack : IClientChannelSinkStack,
-		IClientResponseChannelSinkStack
+	public class ClientChannelSinkStack : IClientChannelSinkStack, IClientResponseChannelSinkStack
 	{
-		private IMessageSink replySink = null;
-		
-		public ClientChannelSinkStack ()
-		{
-		}
+		// The sink where to send the result of the async call
+		private IMessageSink _replySink = null;
 
+		// The stack. It is a chain of ChanelSinkStackEntry.
+		ChanelSinkStackEntry _sinkStack = null;
+		
 		public ClientChannelSinkStack (IMessageSink sink)
 		{
-			replySink = sink;
+			_replySink = sink;
 		}
 
-		[MonoTODO]
-		public void AsyncProcessResponse (ITransportHeaders headers,
-						  Stream stream)
+		public void AsyncProcessResponse (ITransportHeaders headers, Stream stream)
 		{
-			throw new NotImplementedException ();
+			if (_sinkStack == null) throw new RemotingException ("The current sink stack is empty");
+
+			ChanelSinkStackEntry stackEntry = _sinkStack;
+			_sinkStack = _sinkStack.Next;
+
+			((IClientChannelSink)stackEntry.Sink).AsyncProcessResponse (this, stackEntry.State, headers, stream);
+
+			// Do not call AsyncProcessResponse for each sink in the stack.
+			// The sink must recursively call IClientChannelSinkStack.AsyncProcessResponse
+			// after its own processing
 		}
 
 		[MonoTODO]
@@ -38,22 +45,27 @@ namespace System.Runtime.Remoting.Channels
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void DispatchReplyMessage (IMessage msg)
 		{
-			throw new NotImplementedException ();
+			if (_replySink != null) _replySink.SyncProcessMessage(msg);
 		}
 
-		[MonoTODO]
 		public object Pop (IClientChannelSink sink)
 		{
-			throw new NotImplementedException ();
+			// Pops until the sink is found
+
+			while (_sinkStack != null)
+			{
+				ChanelSinkStackEntry stackEntry = _sinkStack;
+				_sinkStack = _sinkStack.Next;
+				if (stackEntry.Sink == sink) return stackEntry.State;
+			}
+			throw new RemotingException ("The current sink stack is empty, or the specified sink was never pushed onto the current stack");
 		}
 
-		[MonoTODO]
 		public void Push (IClientChannelSink sink, object state)
 		{
-			throw new NotImplementedException ();
+			_sinkStack = new ChanelSinkStackEntry (sink, state, _sinkStack);
 		}
 	}
 }

@@ -1,3 +1,13 @@
+2002-12-20  Lluis Sanchez Gual  <lsg@ctv.es>
+
+	* ChannelServices.cs: added internal method for creating client 
+	  channel sink. Implemented some other methods.
+	* ClientChannelSinkStack.cs: implemented most of methods.
+	* ServerChannelSinkStack.cs: implemented most of methods.
+	* ChannelSinkStackEntry.cs: added
+	* ServerDispatchSink.cs: ProcessMessage now forwards messages
+	  to ChannelServices.DispatchMessage
+
 2002-12-06  Duncan Mak  <duncan@ximian.com>
 
 	* BaseChannelObjectWithProperties.cs :

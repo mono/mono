@@ -1,3 +1,8 @@
+2002-12-20  Lluis Sanchez Gual <lsg@ctv.es>
+
+	* Context.cs: Added creation of default server context and
+	  object context sinks.
+
 2002-07-31  Duncan Mak  <duncan@ximian.com>
 
 	* SynchronizationAttribute.cs: Added more interfaces, it

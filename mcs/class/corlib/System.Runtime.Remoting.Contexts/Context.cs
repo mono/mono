@@ -3,16 +3,30 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Lluis Sanchez Gual (lsg@ctv.es)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
 using System.Collections;
+using System.Runtime.Remoting.Messaging;
+using System.Runtime.Remoting.Lifetime;
 
 namespace System.Runtime.Remoting.Contexts {
 
 	public class Context {
 		static Context default_context;
+		static ArrayList domain_contexts = new ArrayList();
+
+		// Default server object sink chain
+		static IMessageSink default_object_sink;
+		
+		// Default server context sink chain
+		static IMessageSink default_context_sink;
+
+		// The sink chain that has to be used by all calls entering the context
+		IMessageSink server_context_sink_chain = null;
+
 		ArrayList context_properties;
 		int context_id;
 		bool frozen;
@@ -20,6 +34,14 @@ namespace System.Runtime.Remoting.Contexts {
 		
 		static Context ()
 		{
+			// Creates the default context sink chain
+			default_context_sink = new ServerContextTerminatorSink();
+
+			// Creates the default object sink chain
+			default_object_sink = new StackBuilderSink();
+			default_object_sink = new ServerObjectTerminatorSink(default_object_sink);
+			default_object_sink = new Lifetime.LeaseSink(default_object_sink);
+
 			default_context = new Context ();
 			default_context.frozen = true;
 		}
@@ -67,6 +89,23 @@ namespace System.Runtime.Remoting.Contexts {
 				context_properties = new ArrayList ();
 
 			context_properties.Add (prop);
+		}
+
+		[MonoTODO("Create sinks from contributor properties")]
+		internal IMessageSink GetServerContextSinkChain()
+		{
+			if (server_context_sink_chain == null)
+			{
+				server_context_sink_chain = default_context_sink;
+			}
+			return server_context_sink_chain;
+		}
+
+
+		[MonoTODO("Create object sinks from contributor properties")]
+		internal IMessageSink CreateServerObjectSinkChain (MarshalByRefObject obj)
+		{
+			return default_object_sink;
 		}
 	}
 }

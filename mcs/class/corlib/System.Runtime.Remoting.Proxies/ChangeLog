@@ -1,3 +1,9 @@
+2002-12-20  Lluis Sanchez Gual <lsg@ctv.es>
+
+	* RealProxy.cs: Added ObjectIdentity property. 
+	  Implemented CrateObjRef.
+	* RemotingProxy.cs: Added Identity parameter to constructor
+
 2002-07-24  Duncan Mak  <duncan@ximian.com>
 
 	* ProxyAttribute.cs: Revert the last commit.
