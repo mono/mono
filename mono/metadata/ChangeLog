@@ -1,4 +1,9 @@
 
+Thu May 29 11:34:55 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c, metadata.h, private.h, tokentype.h, loader.c: make more 
+	data readonly. Buglets and warning fixes. Some MethodSpec support.
+
 Tue May 27 16:34:39 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* class.h, class.c, object.c: remove relative numbering support.
