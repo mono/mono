@@ -227,25 +227,6 @@ server
 
 
 -------------------------
-//server
-file://server
-file://server
-file
-server
-\\server
-
--1
-True
-True
-False
-False
-Dns
-
-
-server
-
-
--------------------------
 file://server
 file://server
 file://server
@@ -776,25 +757,6 @@ Dns
 /c
 test.domain.com
 #bookmark
-
--------------------------
-//localhost/c#
-file://localhost/c%23
-file://localhost/c%23
-file
-localhost
-\\localhost\c#
-
--1
-True
-True
-True
-False
-Dns
-/c%23
-/c%23
-localhost
-
 
 -------------------------
 file://c:/c#

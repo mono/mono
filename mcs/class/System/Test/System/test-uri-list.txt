@@ -41,7 +41,7 @@ c:\foo.txt
 file://c:/foo.txt
 # /usr/local/bin ... doesn't pass. it is critical problem of MS.NET
 \\server
-//server
+# //server ... this test causes different interpretation between Windows and Unix. On Unix the path is condesnsed to /server
 # ///server ... this became UNC server name in MS.NET
 file://server
 file://server/
@@ -93,7 +93,7 @@ http://localhost/c#bookmark
 file://localhost/c#fragment
 file://test.domain.com/c#
 file://test.domain.com/c#bookmark
-//localhost/c#
+# //localhost/c# ... this is commented out as the same reason why //server is also commented out.
 # below should not be allowed ...
 file://c:/c#
 # this passes... it breaks RFC 2396 rule.

@@ -1,3 +1,13 @@
+2004-06-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UriTest.cs : As Unix paths, //foo/bar never means host == foo,
+	  file path == /bar. So on *nix environment, interpret LocalPath of
+	  file://foo/bar as /bar, not //foo/bar.
+	* test-uri-list.txt, tset-uri-props.txt : We cannot test such path
+	  that starts with "//" in automatic one, since on Windows it is
+	  UNC host name but on Unix it is condensed to /foo style abs path.
+	* UriTest2.cs : Test only on windows such path that starts with "\\".
+
 2004-06-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* test-uri-list.txt, test-uri-props.txt, test-uri-props-manual.txt :

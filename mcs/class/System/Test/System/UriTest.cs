@@ -119,7 +119,8 @@ namespace MonoTests.System
 			if (isWin32)
 				AssertEquals ("#n11", @"\\myserver\mydir\mysubdir\myfile.ext", uri.LocalPath);
 			else
-				AssertEquals ("#n11", "//myserver/mydir/mysubdir/myfile.ext", uri.LocalPath);
+				// myserver never could be the part of Unix path.
+				AssertEquals ("#n11", "/mydir/mysubdir/myfile.ext", uri.LocalPath);
 
 			AssertEquals ("#n12", "/mydir/mysubdir/myfile.ext", uri.PathAndQuery);
 			AssertEquals ("#n13", -1, uri.Port);
@@ -249,7 +250,7 @@ namespace MonoTests.System
 			if (isWin32)
 				AssertEquals ("#3b win32", "\\\\cygwin\\tmp\\hello.txt", uri.LocalPath);
 			else
-				AssertEquals ("#3b *nix", "/cygwin/tmp/hello.txt", uri.LocalPath);
+				AssertEquals ("#3b *nix", "/tmp/hello.txt", uri.LocalPath);
 			AssertEquals ("#3c", "file", uri.Scheme);
 			AssertEquals ("#3d", "cygwin", uri.Host);
 			AssertEquals ("#3e", "/tmp/hello.txt", uri.AbsolutePath);
@@ -259,7 +260,7 @@ namespace MonoTests.System
 			if (isWin32)
 				AssertEquals ("#4b win32", "\\\\mymachine\\cygwin\\tmp\\hello.txt", uri.LocalPath);
 			else
-				AssertEquals ("#4b *nix", "/mymachine/cygwin/tmp/hello.txt", uri.LocalPath);
+				AssertEquals ("#4b *nix", "/cygwin/tmp/hello.txt", uri.LocalPath);
 			AssertEquals ("#4c", "file", uri.Scheme);
 			AssertEquals ("#4d", "mymachine", uri.Host);
 			AssertEquals ("#4e", "/cygwin/tmp/hello.txt", uri.AbsolutePath);
@@ -270,13 +271,13 @@ namespace MonoTests.System
 			AssertEquals ("#5c", "file", uri.Scheme);
 			AssertEquals ("#5d", "", uri.Host);
 			AssertEquals ("#5e", "c:/cygwin/tmp/hello.txt", uri.AbsolutePath);
-			
+			// Hmm, they should be regarded just as a host name, since all URIs are base on absolute path.
 			uri = new Uri("file://one_file.txt");
 			AssertEquals("#6a", "file://one_file.txt", uri.ToString());
 			if (isWin32)
 				AssertEquals("#6b", "\\\\one_file.txt", uri.LocalPath);
 			else
-				AssertEquals("#6b", "/one_file.txt", uri.LocalPath);
+				AssertEquals("#6b", "/", uri.LocalPath);
 			AssertEquals("#6c", "file", uri.Scheme);
 			AssertEquals("#6d", "one_file.txt", uri.Host);
 			AssertEquals("#6e", "", uri.AbsolutePath);
