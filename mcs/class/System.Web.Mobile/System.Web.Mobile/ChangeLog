@@ -1,4 +1,8 @@
 
+2003-03-08	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* MobileCapabilities.cs    : Stub-ing methods / properties.
+
 2003-02-23	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* MobileCapabilities.cs    : Initial implementation.
