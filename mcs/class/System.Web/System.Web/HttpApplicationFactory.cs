@@ -72,7 +72,11 @@ namespace System.Web {
 				return false;
 
 			ParameterInfo [] pi = m.GetParameters ();
-			if (pi.Length != 2)
+			int length = pi.Length;
+			if (length == 0)
+				return true;
+
+			if (length != 2)
 				return false;
 
 			if (pi [0].ParameterType != typeof (object) ||
@@ -135,10 +139,13 @@ namespace System.Web {
 		{
 			Hashtable possibleEvents = GetApplicationTypeEvents ((HttpApplication) target);
 			MethodInfo method = possibleEvents [method_name] as MethodInfo;
-			if (possibleEvents [method_name] == null)
+			if (method == null)
 				return;
 
-			method.Invoke (target, args);
+			if (method.GetParameters ().Length == 0)
+				method.Invoke (target, null);
+			else
+				method.Invoke (target, args);
 		}
 		
 		internal static void FireOnAppStart (HttpApplication app)

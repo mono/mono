@@ -1,3 +1,9 @@
+2003-10-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspParser.cs:
+	* TagAttributes.cs: allow duplicated runat=server attributes and display
+	error page when duplicated attributes and runat is specified.
+
 2003-10-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspTokenizer.cs: moved token numbers above unicode.

@@ -244,7 +244,13 @@ namespace System.Web.Compilation
 				break;
 			case Token.IDENTIFIER:
 				id = tokenizer.Value;
-				attributes = GetAttributes ();
+				try {
+					attributes = GetAttributes ();
+				} catch (Exception e) {
+					OnError (e.Message);
+					break;
+				}
+				
 				tagtype = TagType.Tag;
 				if (Eat ('/') && Eat ('>'))
 					tagtype = TagType.SelfClosing;

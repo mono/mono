@@ -48,14 +48,20 @@ namespace System.Web.Compilation
 		{
 			if (key != null && value != null &&
 			    0 == String.Compare ((string) key,  "runat", true)) {
-			    	if (0 == String.Compare ((string) value,  "server", true))
-					MakeHash ();
-				else
+			    	if (0 != String.Compare ((string) value,  "server", true))
 					throw new HttpException ("runat attribute must have a 'server' value");
+
+				if (got_hashed)
+					return; // ignore duplicate runat="server"
+
+				MakeHash ();
 			}
 
 			if (got_hashed) {
-				atts_hash [key] = value;
+				if (atts_hash.ContainsKey (key))
+					throw new HttpException ("Tag contains duplicated '" + key +
+								 "' attributes.");
+				atts_hash.Add (key, value);
 			} else {
 				keys.Add (key);
 				values.Add (value);

@@ -89,7 +89,9 @@ namespace System.Web.UI {
 					continue;
 
 				ParameterInfo [] parms = method.GetParameters ();
-				if (parms.Length != 2 ||
+				int length = parms.Length;
+				bool noParams = (length == 0);
+				if ((!noParams && parms.Length != 2) ||
 				    parms [0].ParameterType != typeof (object) ||
 				    parms [1].ParameterType != typeof (EventArgs))
 				    continue;
@@ -99,8 +101,13 @@ namespace System.Web.UI {
 				if (evt == null)
 					continue;
 
-				evt.AddEventHandler (this, Delegate.CreateDelegate (
+				if (noParams) {
+					NoParamsInvoker npi = new NoParamsInvoker (this, method.Name);
+					evt.AddEventHandler (this, npi.FakeDelegate);
+				} else {
+					evt.AddEventHandler (this, Delegate.CreateDelegate (
 							typeof (EventHandler), this, method.Name));
+				}
 			}
 		}
 
@@ -218,6 +225,29 @@ namespace System.Web.UI {
 				Control template = Activator.CreateInstance (type) as Control;
 				template.SetBindingContainer (false);
 				control.Controls.Add (template);
+			}
+		}
+
+		delegate void NoParamsDelegate ();
+		class NoParamsInvoker
+		{
+			EventHandler faked;
+			NoParamsDelegate real;
+
+			public NoParamsInvoker (object o, string method)
+			{
+				 real = (NoParamsDelegate) Delegate.CreateDelegate (
+				 			typeof (NoParamsDelegate), this, method);
+				 faked = new EventHandler (InvokeNoParams);
+			}
+
+			void InvokeNoParams (object o, EventArgs args)
+			{
+				real ();
+			}
+
+			public EventHandler FakeDelegate {
+				get { return faked; }
 			}
 		}
 	}
