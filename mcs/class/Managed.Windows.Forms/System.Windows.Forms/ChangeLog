@@ -1,3 +1,9 @@
+2005-01-08  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Only set the vbar's Maximum and LargeChange when
+	the node count has changed, this removes to VScroll::Refresh calls
+	when drawing.
+
 2005-01-08  Geoff Norton  <gnorton@customerdna.com>
 
         * XplatUIOSX.cs: Fix GetWindowState & SetWindowState

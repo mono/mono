@@ -84,7 +84,8 @@ namespace System.Windows.Forms {
 		private TreeViewCancelEventHandler on_before_select;
 
 		private Pen dash;
-
+		private int open_node_count = -1;
+		
 		public TreeView ()
 		{
 			base.background_color = ThemeEngine.Current.ColorWindow;
@@ -588,14 +589,16 @@ namespace System.Windows.Forms {
 			if (top_node == null && Nodes.Count > 0)
 				top_node = nodes [0];
 			// Decide if we need a scrollbar
-			int visible_node_count = GetVisibleNodeCount ();
+			int old_open_node_count = open_node_count;
+			open_node_count = GetOpenNodeCount ();
 			int node_count = 0;
 
 			Rectangle fill = ClientRectangle;
 			add_vscroll = false;
 			add_hscroll = false;
-
-			add_vscroll = (visible_node_count * ItemHeight) > ClientRectangle.Height;
+			
+			add_vscroll = (open_node_count * ItemHeight) > ClientRectangle.Height;
+			
 			DeviceContext.FillRectangle (new SolidBrush (BackColor), fill);
 
 			int depth = 0;
@@ -603,6 +606,7 @@ namespace System.Windows.Forms {
 			Font font = Font;
 			int height = ClientRectangle.Height;
 
+			int visible_node_count = 0;
 			foreach (TreeNode node in nodes) {
 				DrawNode (node, clip, ref depth, ref node_count, item_height,
 						font, ref visible_node_count, height);
@@ -615,7 +619,7 @@ namespace System.Windows.Forms {
 			if (add_vscroll)
 				add_hscroll = max_node_width > ClientRectangle.Width - ThemeEngine.Current.VScrollBarDefaultSize.Width;
 			if (add_hscroll)
-				add_vscroll = (visible_node_count * ItemHeight) > ClientRectangle.Height - ThemeEngine.Current.HScrollBarDefaultSize.Width;
+				add_vscroll = (open_node_count * ItemHeight) > ClientRectangle.Height - ThemeEngine.Current.HScrollBarDefaultSize.Width;
 
 			if (add_hscroll) {
 				AddHorizontalScrollBar ();
@@ -625,7 +629,7 @@ namespace System.Windows.Forms {
 			}
 
 			if (add_vscroll) {
-				AddVerticalScrollBar (node_count);
+				AddVerticalScrollBar (open_node_count, old_open_node_count != open_node_count);
 			} else if (vbar != null) {
 				vbar.Visible = false;
 				skipped_nodes = 0;
@@ -829,18 +833,21 @@ namespace System.Windows.Forms {
 
 		}
 
-		private void AddVerticalScrollBar (int total_nodes)
+		private void AddVerticalScrollBar (int total_nodes, bool count_changed)
 		{
-			if (vbar == null)
+			if (vbar == null) {
 				vbar = new VScrollBar ();
+				count_changed = true;
+			}
 
 			vbar.Bounds = new Rectangle (ClientRectangle.Width - vbar.Width,
 				0, vbar.Width, (add_hscroll ? Height - ThemeEngine.Current.HScrollBarDefaultSize.Height : Height));
 
-			vbar.Maximum = total_nodes;
-			int height = ClientRectangle.Height;
-
-			vbar.LargeChange = height / ItemHeight;
+			if (count_changed) {
+				vbar.Maximum = total_nodes;
+				int height = ClientRectangle.Height;
+				vbar.LargeChange = height / ItemHeight;
+			}
 
 			if (!vbar_added) {
 				Controls.Add (vbar);
@@ -898,7 +905,7 @@ namespace System.Windows.Forms {
 			Refresh ();
 		}
 
-		private int GetVisibleNodeCount ()
+		private int GetOpenNodeCount ()
 		{
 
 			if (Nodes.Count < 1)
