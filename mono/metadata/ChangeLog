@@ -1,3 +1,8 @@
+2003-10-28  Dick Porter  <dick@ximian.com>
+
+	* object.c (mono_runtime_run_main): Convert command-line arguments
+	into utf8, falling back to the user's locale encoding to do so.
+
 2003-10-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* loader.c (mono_get_method_from_token): Avoid looking up the icalls

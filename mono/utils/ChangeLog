@@ -1,3 +1,9 @@
+2003-10-28  Dick Porter  <dick@ximian.com>
+
+	* strenc.h:
+	* strenc.c: New files, convert text to and from unicode or utf8,
+	and the user's chosen encoding.
+
 2003-08-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mono-hash.h mono-hash.c (mono_g_hash_table_remap): New function used
