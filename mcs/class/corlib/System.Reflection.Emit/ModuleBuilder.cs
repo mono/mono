@@ -563,6 +563,10 @@ namespace System.Reflection.Emit {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern int getToken (ModuleBuilder mb, object obj);
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern int getMethodToken (ModuleBuilder mb, MethodInfo method,
+							  Type[] opt_param_types);
+
 		internal int GetToken (string str) {
 			if (us_string_cache.Contains (str))
 				return (int)us_string_cache [str];
@@ -573,6 +577,10 @@ namespace System.Reflection.Emit {
 
 		internal int GetToken (MemberInfo member) {
 			return getToken (this, member);
+		}
+
+		internal int GetToken (MethodInfo method, Type[] opt_param_types) {
+			return getMethodToken (this, method, opt_param_types);
 		}
 
 		internal int GetToken (SignatureHelper helper) {
@@ -672,6 +680,10 @@ namespace System.Reflection.Emit {
 
 		public int GetToken (MemberInfo member) {
 			return mb.GetToken (member);
+		}
+
+		public int GetToken (MethodInfo method, Type[] opt_param_types) {
+			return mb.GetToken (method, opt_param_types);
 		}
 
 		public int GetToken (SignatureHelper helper) {

@@ -1,3 +1,13 @@
+2004-06-08  Martin Baulig  <martin@ximian.com>
+
+	* ILGenerator.cs (TokenGenerator.GetToken): Added overloaded
+	version which takes a MethodInfo and a Type[].
+	(IlGenerator.EmitCall): When emitting a call to a varargs method,
+	use the new GetToken() to pass the optional argument types to the
+	runtime.
+
+	* ModuleBuilder.cs (ModuleBuilder.getMethodToken): New interncall.
+
 2004-05-29  Gert Driesen (drieseng@users.sourceforge.net)
 
 	* AssemblyBuilder.cs: removed extra method, fixes public API

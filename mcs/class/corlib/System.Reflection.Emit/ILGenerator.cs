@@ -122,6 +122,8 @@ namespace System.Reflection.Emit {
 
 		int GetToken (MemberInfo member);
 
+		int GetToken (MethodInfo method, Type[] opt_param_types);
+
 		int GetToken (SignatureHelper helper);
 	}		
 
@@ -627,6 +629,20 @@ namespace System.Reflection.Emit {
 				cur_stack -= method.GetParameterCount ();
 		}
 
+		private void Emit (OpCode opcode, MethodInfo method, int token)
+		{
+			make_room (6);
+			ll_emit (opcode);
+			if (method.DeclaringType.Module == module)
+				add_token_fixup (method);
+			emit_int (token);
+			if (method.ReturnType != void_type)
+				cur_stack ++;
+
+			if (opcode.StackBehaviourPop == StackBehaviour.Varpop)
+				cur_stack -= method.GetParameterCount ();
+		}
+
 		[CLSCompliant(false)]
 		public void Emit (OpCode opcode, sbyte val)
 		{
@@ -686,6 +702,10 @@ namespace System.Reflection.Emit {
 				if ((methodinfo.CallingConvention & CallingConventions.VarArgs)  == 0){
 					throw new InvalidOperationException ("Method is not VarArgs method and optional types were passed");
 				}
+
+				int token = token_gen.GetToken (methodinfo, optionalParamTypes);
+				Emit (opcode, methodinfo, token);
+				return;
 			}
 			Emit (opcode, methodinfo);
 		}
