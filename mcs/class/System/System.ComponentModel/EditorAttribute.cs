@@ -62,7 +62,7 @@ namespace System.ComponentModel {
 			}
 		}
 		
-		public override bool Equals (object o)
+		public override bool Equals (object obj)
 		{
 			if (!(obj is EditorAttribute))
 				return false;
