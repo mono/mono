@@ -1,3 +1,8 @@
+2003-01-20  sean kasun <skasun@azstarnet.com>
+
+	* reflection.c (load_cattr_value): Now this handles
+	MONO_TYPE_SZARRAY.  Fixes bug #35629
+
 2003-01-20  Miguel de Icaza  <miguel@ximian.com>
 
 	* marshal.c (emit_struct_conv): Handle MONO_TYPE_PTR as an
