@@ -29,70 +29,17 @@ namespace System.Web.Services.Protocols {
 	public class SoapHttpClientProtocol : HttpWebClientProtocol {
 		SoapTypeStubInfo type_info;
 
-		#region AsyncInfo class
+		#region SoapWebClientAsyncResult class
 
-		internal class AsyncInfo: IAsyncResult
+		internal class SoapWebClientAsyncResult: WebClientAsyncResult
 		{
-			bool _completedSynchronously;
-			bool _done;
-			ManualResetEvent _waitHandle;
-
-			public object AsyncState 
+			public SoapWebClientAsyncResult (WebRequest request, AsyncCallback callback, object asyncState)
+			: base (request, callback, asyncState)
 			{
-				get { return InternalAsyncState; }
 			}
-
-			public WaitHandle AsyncWaitHandle 
-			{
-				get
-				{
-					lock (this) {
-						if (_waitHandle != null) return _waitHandle;
-						_waitHandle = new ManualResetEvent (_done);
-						return _waitHandle;
-					}
-				}
-			}
-
-			public bool CompletedSynchronously 
-			{
-				get { return _completedSynchronously; }
-			}
-
-			public bool IsCompleted 
-			{
-				get { lock (this) { return _done; } }
-			}
-
-			internal void SetCompleted (object[] result, Exception exception, bool async)
-			{
-				lock (this)
-				{
-					Exception = exception;
-					Result = result;
-					_done = true;
-					_completedSynchronously = async;
-					if (_waitHandle != null) _waitHandle.Set ();
-					Monitor.PulseAll (this);
-				}
-				if (Callback != null) Callback (this);
-			}
-
-			internal void WaitForComplete ()
-			{
-				lock (this)
-				{
-					Monitor.Wait (this);
-				}
-			}
-
-			internal object InternalAsyncState;
-			internal AsyncCallback Callback;
-			internal SoapClientMessage Message;
-			internal SoapExtension[] Extensions;
-			internal WebRequest Request;
-			internal object[] Result;
-			internal Exception Exception;
+		
+			public SoapClientMessage Message;
+			public SoapExtension[] Extensions;
 		}
 		#endregion
 
@@ -109,23 +56,26 @@ namespace System.Web.Services.Protocols {
 
 		protected IAsyncResult BeginInvoke (string methodName, object[] parameters, AsyncCallback callback, object asyncState)
 		{
-			AsyncInfo ainfo = new AsyncInfo ();
-
 			SoapMethodStubInfo msi = (SoapMethodStubInfo) type_info.GetMethod (methodName);
-			ainfo.Message = new SoapClientMessage (this, msi, Url, parameters);
-			ainfo.Message.CollectHeaders (this, ainfo.Message.MethodStubInfo.Headers, SoapHeaderDirection.In);
-			ainfo.Extensions = SoapExtension.CreateExtensionChain (type_info.SoapExtensions[0], msi.SoapExtensions, type_info.SoapExtensions[1]);
-			ainfo.InternalAsyncState = asyncState;
-			ainfo.Callback = callback;
 
+			SoapWebClientAsyncResult ainfo = null;
 			try
 			{
-				ainfo.Request = GetRequestForMessage (uri, ainfo.Message);
+				SoapClientMessage message = new SoapClientMessage (this, msi, Url, parameters);
+				message.CollectHeaders (this, message.MethodStubInfo.Headers, SoapHeaderDirection.In);
+				
+				WebRequest request = GetRequestForMessage (uri, message);
+				
+				ainfo = new SoapWebClientAsyncResult (request, callback, asyncState);
+				ainfo.Message = message;
+				ainfo.Extensions = SoapExtension.CreateExtensionChain (type_info.SoapExtensions[0], msi.SoapExtensions, type_info.SoapExtensions[1]);
+
 				ainfo.Request.BeginGetRequestStream (new AsyncCallback (AsyncGetRequestStreamDone), ainfo);
 			}
 			catch (Exception ex)
 			{
-				ainfo.SetCompleted (null, ex, false);
+				if (ainfo != null)
+					ainfo.SetCompleted (null, ex, false);
 			}
 
 			return ainfo;
@@ -133,28 +83,29 @@ namespace System.Web.Services.Protocols {
 
 		void AsyncGetRequestStreamDone (IAsyncResult ar)
 		{
-			AsyncInfo ainfo = (AsyncInfo) ar.AsyncState;
+			SoapWebClientAsyncResult ainfo = (SoapWebClientAsyncResult) ar.AsyncState;
 			try
 			{
 				SendRequest (ainfo.Request.EndGetRequestStream (ar), ainfo.Message, ainfo.Extensions);
-
 				ainfo.Request.BeginGetResponse (new AsyncCallback (AsyncGetResponseDone), ainfo);
 			}
 			catch (Exception ex)
 			{
+				Console.WriteLine ("E1:" + ex);
 				ainfo.SetCompleted (null, ex, true);
 			}
 		}
 
 		void AsyncGetResponseDone (IAsyncResult ar)
 		{
-			AsyncInfo ainfo = (AsyncInfo) ar.AsyncState;
+			SoapWebClientAsyncResult ainfo = (SoapWebClientAsyncResult) ar.AsyncState;
 			WebResponse response = null;
 
 			try {
 				response = GetWebResponse (ainfo.Request, ar);
 			}
 			catch (WebException ex) {
+				Console.WriteLine ("E2:" + ex);
 				response = ex.Response;
 				HttpWebResponse http_response = response as HttpWebResponse;
 				if (http_response == null || http_response.StatusCode != HttpStatusCode.InternalServerError) {
@@ -178,14 +129,14 @@ namespace System.Web.Services.Protocols {
 
 		protected object[] EndInvoke (IAsyncResult asyncResult)
 		{
-			if (!(asyncResult is AsyncInfo)) throw new ArgumentException ("asyncResult is not the return value from BeginInvoke");
+			if (!(asyncResult is SoapWebClientAsyncResult)) throw new ArgumentException ("asyncResult is not the return value from BeginInvoke");
 
-			AsyncInfo ainfo = (AsyncInfo) asyncResult;
+			SoapWebClientAsyncResult ainfo = (SoapWebClientAsyncResult) asyncResult;
 			lock (ainfo)
 			{
 				if (!ainfo.IsCompleted) ainfo.WaitForComplete ();
 				if (ainfo.Exception != null) throw ainfo.Exception;
-				else return ainfo.Result;
+				else return (object[]) ainfo.Result;
 			}
 		}
 

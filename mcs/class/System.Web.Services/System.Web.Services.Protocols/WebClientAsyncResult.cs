@@ -23,9 +23,6 @@ namespace System.Web.Services.Protocols {
 		bool _done;
 		ManualResetEvent _waitHandle;
 		
-		internal SoapClientMessage Message;
-		internal SoapExtension[] Extensions;
-
 		internal object Result;
 		internal Exception Exception;
 		internal WebRequest Request;

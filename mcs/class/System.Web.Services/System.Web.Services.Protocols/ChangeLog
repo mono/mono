@@ -1,3 +1,9 @@
+2003-10-12  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SoapHttpClientProtocol.cs: Replaced AsyncInfo by a new 
+	  SoapWebClientAsyncResult class derived from WebClientAsyncResult.
+	* WebClientAsyncResult.cs: Removed unneeded members.
+
 2003-10-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SoapDocumentationHandler.cs: don't close the response stream here
