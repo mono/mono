@@ -84,12 +84,27 @@
         <Files>
             <Include>
                 <File
+                    RelPath = "Assembly\Consts.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\AccessibleNavigation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\AccessibleObject.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows.Forms\AccessibleRole.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\AccessibleSelection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -204,11 +219,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Assembly\Consts.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Windows.Forms\ContainerControl.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
@@ -314,6 +324,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\FormBorderStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\FormStartPosition.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\FormWindowState.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\FrameStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -326,6 +351,11 @@
                 <File
                     RelPath = "System.Windows.Forms\GiveFeedbackEventHandler.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\GroupBox.cs"
+                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
@@ -365,6 +395,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\IDataObject.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\ImageIndexConverter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -425,6 +460,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\InvalidateEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\ItemBoundsPortion.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -514,6 +554,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\ListViewAlignment.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\MenuGlyph.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -580,6 +625,16 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\PaintEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\PictureBox.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\PictureBoxSizeMode.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -791,6 +846,11 @@
                 <File
                     RelPath = "System.Windows.Forms\UserControl.cs"
                     SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\View.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
