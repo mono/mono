@@ -704,113 +704,120 @@ namespace System.Data {
 		private void DoReadXmlSchema(XmlReader reader)
 		{
 			DataTable dt = new DataTable ();
-			XmlSchema schema = XmlSchema.Read (reader, new ValidationEventHandler (OnXmlSchemaValidation));
-
-			XmlSchemaSequence s;
-			XmlSchemaElement e;
-        	
-			XmlSchemaComplexType t;
-			XmlSchemaChoice c;
-
-			string oldSchemaName = "";
-			string schemaTypeName = "";
-			string tableTypeName = "";
-        
+			XmlSchema schema = XmlSchema.Read (reader, null);
+			XmlSchemaObjectCollection SimpleTypes = new XmlSchemaObjectCollection ();
+			XmlSchemaObjectCollection ComplexTypes = new XmlSchemaObjectCollection ();
+			
+			// Get types
 			for (int i = 0; i < schema.Items.Count; i++) {
 
-				// TODO: other types!
-				if ((e = schema.Items [i] as XmlSchemaElement) != null) {
+				XmlSchemaSimpleType simpleType = null;
+				XmlSchemaComplexType complexType = null;
+				if ((simpleType = schema.Items [i] as XmlSchemaSimpleType) != null) {
+					SimpleTypes.Add (simpleType);
+				} 
+				else if ((complexType = schema.Items [i] as XmlSchemaComplexType) != null) {
+					ComplexTypes.Add (complexType);
+				}
+			}
+			
+			// Get elements
+			XmlSchemaObjectCollection Elements = new XmlSchemaObjectCollection ();
+			for (int i = 0; i < schema.Items.Count; i++) {
 
-					dataSetName = e.Name;
+				XmlSchemaElement element = null;
+				XmlSchemaComplexType complexType = null;
+				if ((element = schema.Items [i] as XmlSchemaElement) != null) {
+
+				        // does element have type defined
+					if (!element.SchemaTypeName.IsEmpty)
+						ReadTypeElement (element, ComplexTypes, ref dt);
+					else if ((complexType = element.SchemaType as XmlSchemaComplexType) != null)
+						ReadColumnsFromSchema (complexType, ComplexTypes, ref dt);
+
+					DataSet.Tables.Add (dt);
+				}
+			}		
+		}
+
+		[MonoTODO]
+		private bool ReadTypeElement (XmlSchemaElement el, XmlSchemaObjectCollection ComplexTypes, 
+					      ref DataTable datatable) 
+		{
+			/*
+			 * reads element's type
+			 */
+
+			bool found = false;
+			
+			if (ComplexTypes.Count <= 0)
+				return found;
+			
+			if (ComplexTypes[0] is XmlSchemaComplexType) {
+
+				foreach (XmlSchemaComplexType c in ComplexTypes) {
 					
-					if (dataSetName != oldSchemaName) {
-						tableCollection.Add (dt);
-						oldSchemaName = e.Name;
-					}
-
-					if ((t = e.SchemaType as XmlSchemaComplexType) != null) {
-
-						if ((c = t.Particle as XmlSchemaChoice) != null) {
-							
-							for (int j = 0; j < c.Items.Count; j++) {
-								if ((e = c.Items [j] as XmlSchemaElement) != null)
-									dt.TableName = e.Name;
-								
-								// TODO: other types
-								if ((t = e.SchemaType as XmlSchemaComplexType) != null) {
-									
-									// TODO: other types
-									if ((s = t.Particle as XmlSchemaSequence) != null)  {
-										
-										// add columns to datatable
-										foreach (XmlSchemaElement el in s.Items)
-											dt.Columns.Add (el.Name);
-									}
-									
-								}
-							}
-						}
-					}
-					else {
-						// If not known type then it's declared after this
-						schemaTypeName = e.SchemaTypeName.ToString ();
+					if (el.SchemaTypeName.ToString () == c.Name.ToString ()) {
 						
-						// FIXME: when xmlschema works correcty this is not needed anymore
-						if (schemaTypeName.StartsWith (":"))
-							schemaTypeName = schemaTypeName.Substring (1);
-					}
-				} // TODO: SimpleType
-				else if ((t = schema.Items [i] as XmlSchemaComplexType) != null) {
-										
-					if (t.Name == schemaTypeName) {
+						found = true;
+						ReadColumnsFromSchema (c, ComplexTypes, ref datatable);
+					}								
+				}
+			} 
 
-						if ((s = t.Particle as XmlSchemaSequence) != null) {
-							
-							for (int j  = 0; j < s.Items.Count; j++) {
-								
-								if ((e = s.Items [j] as XmlSchemaElement) != null)
-									dt.TableName = e.Name;
-								
-								// TODO: other types
-								if ((t = e.SchemaType as XmlSchemaComplexType) != null) {
-									
-									// TODO: other types
-									if ((s = t.Particle as XmlSchemaSequence) != null)  {
-										
-										// Add columns to datatable
-										foreach (XmlSchemaElement el in s.Items)
-											dt.Columns.Add (el.Name);
-									}
-									
-								}
-								else {
-									// If table type is not known it's declared after this
-									tableTypeName = e.SchemaTypeName.ToString ();
+			return found;
+		}
 
-									// FIXME: when XmlSchema works correctly this is not 
-									// needed anymore
-									if (tableTypeName.StartsWith (":"))
-										tableTypeName = tableTypeName.Substring (1);
-								}
-							}	    															
-						}
-					}
-					
-					else if (t.Name == tableTypeName) { // table type declaration
+		[MonoTODO]
+		private void ReadColumnsFromSchema (XmlSchemaComplexType c, XmlSchemaObjectCollection ComplexTypes, 
+						    ref DataTable datatable)
+		{
+			// FIXME: There is so much work to do. And i dont event know is this right way but here it is
+			XmlSchemaSequence seq = null;
+			XmlSchemaChoice choice = null;
+			ArrayList names = new ArrayList ();
 
-						if ((s = t.Particle as XmlSchemaSequence) != null) {
-							
-							for (int j  = 0; j < s.Items.Count; j++) {
-								
-								if ((e = s.Items [j] as XmlSchemaElement) != null)
-									dt.Columns.Add (e.Name);
-							}																	
-						}
-						
+			if ((seq = c.Particle as XmlSchemaSequence) != null) {
+
+				for (int i = 0; i < seq.Items.Count; i++) {
+
+					XmlSchemaElement element = null;
+					if ((element = seq.Items [i] as XmlSchemaElement) != null) {
+
+						// first is table name and after that comes column names
+						if (datatable.TableName == string.Empty)
+							datatable.TableName = element.Name;						
+						else if (i + 1 > datatable.Columns.Count)
+							datatable.Columns.Add (element.Name);
+
+						ReadTypeElement (element, ComplexTypes, ref datatable);
 					}
 				}
 			}
+			else if ((choice = c.Particle as XmlSchemaChoice) != null) {
 
+				foreach (XmlSchemaObject obj in choice.Items) {
+					XmlSchemaElement e = null;
+
+					if ((e = obj as XmlSchemaElement) != null) {
+
+						
+						// if element has type we got to find out what is it
+						if (e.SchemaType != null) {
+							datatable.TableName = e.Name;
+							ReadColumnsFromSchema (e.SchemaType as XmlSchemaComplexType, ComplexTypes, 
+								       ref datatable);
+						}
+						else if (!e.RefName.IsEmpty) {
+							
+							// FIXME: this is wrong way to do. We should find element which is
+							// referenced by e. I do that later
+							dataSetName = e.Name;
+							datatable.TableName = e.RefName.ToString ();
+						}
+					}
+				}
+			}
 		}
 
 		#endregion
@@ -818,7 +825,6 @@ namespace System.Data {
 		[MonoTODO]
 		private void OnXmlSchemaValidation (object sender, ValidationEventArgs args)
 		{
-			;
 		}
 	
 		///<summary>

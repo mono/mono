@@ -1,3 +1,8 @@
+2002-12-06  Ville Palo <vi64pa@koti.soon.fi>
+
+	* DataSet.cs: Clean up to reading xmlschema. This looks much better 
+	now (work better too), but it not working correctly yet.
+	
 2002-12-04  Ville Palo <vi64pa@koti.soon.fi>
 
 	* DataRow.cs: 
