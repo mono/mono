@@ -5,6 +5,7 @@
 	lets us test our corlib tests. On a non-mono-native platform
 	(Windows) we run those tests only; on a mono-native platform, we
 	run the full corlib test suite on our own tests.
+	(clean-local): Forgot $(plattestlib).
 
 	* corlib_plattest.dll.excludes: Add this. (The result of
 	'grep Mono corlib_test.dll.sources')

@@ -64,7 +64,7 @@ install-local: $(corlib)
 	$(INSTALL_LIB) $(corlib) $(DESTDIR)$(prefix)/lib
 
 clean-local:
-	-rm -f $(corlib) $(cmplib) $(testlib) $(reslib) TestResult.xml \
+	-rm -f $(corlib) $(cmplib) $(testlib) $(reslib) $(plattestlib) TestResult.xml \
 	       $(response) $(makefrag) $(stampfile) \
 	       $(test_response) $(test_makefrag) $(test_stampfile) \
 	       $(cmp_response) $(cmp_makefrag) $(cmp_stampfile) \
