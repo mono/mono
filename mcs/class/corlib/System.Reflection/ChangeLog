@@ -1,3 +1,8 @@
+2003-10-30  Martin Baulig  <martin@ximian.com>
+
+	* MonoGenericInst.cs (MonoInflatedMethod, MonoInflatedCtor): New
+	internal classes.
+
 2003-10-25  Martin Baulig  <martin@ximian.com>
 
 	* MonoGenericInst.cs: New internal class.
