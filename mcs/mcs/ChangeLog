@@ -1,3 +1,8 @@
+2003-12-08 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* Makefile: Add a new target `do-time' that does a quick and simple
+	profile, leaving easy to parse output.
+
 2003-12-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* codegen.cs (Init): Create the dynamic assembly with 
