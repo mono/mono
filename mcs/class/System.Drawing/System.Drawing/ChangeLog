@@ -1,3 +1,11 @@
+2004-10-13  Ravindra  <rkumar@novell.com>
+
+	* Graphics.cs: Moved the initialization of 'use_x_drawable'
+	member out of private constructor to class initialization.
+	So that, we get it right even if Graphics is not instantiated.
+	This fixes the problem we face (otherwise) when we make first
+	call to	Graphics.FromHwnd () method.
+
 2004-10-08  Ravindra  <rkumar@novell.com>
 
 	* Image.cs: Suppress finalization in Dispose () method.

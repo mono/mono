@@ -47,8 +47,8 @@ namespace System.Drawing
 		private static float defDpiX = 0;
 		private static float defDpiY = 0;
 		private static IntPtr display = IntPtr.Zero;
-		private static bool use_x_drawable = false;
-	
+		private static bool use_x_drawable = (Environment.OSVersion.Platform == (PlatformID) 128);
+
 		[ComVisible(false)]
 		public delegate bool EnumerateMetafileProc (EmfPlusRecordType recordType,
 							    int flags,
@@ -62,9 +62,6 @@ namespace System.Drawing
 		private Graphics (IntPtr nativeGraphics)
 		{
 			nativeObject = nativeGraphics;
-                        if (Environment.OSVersion.Platform == (PlatformID) 128) {
-				use_x_drawable = true;
-			}
 		}
 		
 		~Graphics ()
