@@ -1,3 +1,8 @@
+
+Mon Nov 15 11:53:46 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini.h: update to keep dynamic code info per-domain.
+
 2004-11-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c mini-*.h: Get rid of MONO_ARCH_HAVE_RETHROW since all architectures support it now.
