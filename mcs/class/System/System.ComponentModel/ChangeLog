@@ -1,3 +1,14 @@
+2002-04-28  Rodrigo Moya <rodrigo@ximian.com>
+
+	* IListSource.cs:
+	* ISupportInitialize.cs:
+	* MarshalByValueComponent.cs: new stubs, needed for System.Data
+	compilation.
+
+	* PropertyChangedEventArgs.cs:
+	* CollectionChangeEventHandler.cs:
+	* CollectionChangeEventArgs.cs: implemented.
+
 2002-04-28  Lawrence Pit <loz@cable.a2000.nl>
 
 	* Added error code 11001 to Win32Exception, used by Dns.c
