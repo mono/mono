@@ -5,6 +5,7 @@
 //   Joe Shaw (joe@ximian.com)
 //   Martin Baulig (martin@gnome.org)
 //   Dietmar Maurer (dietmar@ximian.com)
+//   Duncan Mak (duncan@ximian.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
@@ -15,7 +16,7 @@ using System.Runtime.CompilerServices;
 
 namespace System.Runtime.Remoting.Messaging {
 
-public class AsyncResult : IAsyncResult {
+public class AsyncResult : IAsyncResult, IMessageSink {
 
 	object async_state;
 	WaitHandle handle;
@@ -70,5 +71,35 @@ public class AsyncResult : IAsyncResult {
 		}
 	}
 
+	[MonoTODO]
+	public IMessageSink NextSink {
+		get {
+			throw new NotImplementedException ();
+		}
+	}
+
+	[MonoTODO]
+	public virtual IMessageCtrl AsyncProcessMessage (IMessage msg, IMessageSink replySink)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public virtual IMessage GetReplyMessage()
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public virtual void SetMessageCtrl (IMessageCtrl mc)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO]
+	public virtual IMessage SyncProcessMessage (IMessage msg)
+	{
+		throw new NotImplementedException ();
+	}
 }
 }

@@ -96,6 +96,10 @@ namespace System.Runtime.Remoting.Messaging {
 			get {
 				return msg.Uri;
 			}
+
+			set {
+				msg.Uri = value;
+			}
 		}
 
 		public object GetArg (int arg_num)

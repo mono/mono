@@ -96,6 +96,9 @@ namespace System.Runtime.Remoting.Messaging {
 			get {
 				return null;
 			}
+
+			set {
+			}
 		}
 
 		public object GetArg (int arg_num)

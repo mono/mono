@@ -483,9 +483,16 @@ System.Runtime.Remoting.Messaging/IMethodCallMessage.cs
 System.Runtime.Remoting.Messaging/IMethodMessage.cs
 System.Runtime.Remoting.Messaging/IMethodReturnMessage.cs
 System.Runtime.Remoting.Messaging/IRemotingFormatter.cs
+System.Runtime.Remoting.Messaging/InternalMessageWrapper.cs
 System.Runtime.Remoting.Messaging/LogicalCallContext.cs
+System.Runtime.Remoting.Messaging/MessageSurrogateFilter.cs
+System.Runtime.Remoting.Messaging/MethodCall.cs
+System.Runtime.Remoting.Messaging/MethodCallMessageWrapper.cs
+System.Runtime.Remoting.Messaging/MethodResponse.cs
+System.Runtime.Remoting.Messaging/MethodReturnMessageWrapper.cs
 System.Runtime.Remoting.Messaging/MonoMethodMessage.cs
 System.Runtime.Remoting.Messaging/OneWayAttribute.cs
+System.Runtime.Remoting.Messaging/RemoteSurrogateSelector.cs
 System.Runtime.Remoting.Messaging/ReturnMessage.cs
 System.Runtime.Remoting.Metadata/SoapAttribute.cs
 System.Runtime.Remoting.Metadata/SoapFieldAttribute.cs
