@@ -950,7 +950,7 @@ namespace Mono.AssemblyCompare
 				if (att == null)
 					att = new XMLAttributes ();
 
-				att.CompareTo (document, group, oatt);
+				att.CompareTo (document, parent, oatt);
 				counters.AddPartialToTotal (att.Counters);
 				if (oatt != null && oatt.IsTodo) {
 					counters.Todo++;
