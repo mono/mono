@@ -1,3 +1,9 @@
+2005-01-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityElementTest.cs: Add new tests for 2.0 methods. Adapted 
+	existing tests to deal with the fact that 2.0 doesn't indent the XML
+	attributes and child elements.
+
 2005-01-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HostSecurityManagerTest.cs: New. Unit tests for HostSecurityManager.
