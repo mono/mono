@@ -1,0 +1,1 @@
+class Stack<T> : T { }
