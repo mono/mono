@@ -1,3 +1,10 @@
+2004-02-19  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* helpers.c (mono_disassemble_code): use Sun's dis if not using gcc
+
+	* mini-sparc.c (flushi mono_arch_output_basic_block): make
+	it compile using Sun's compiler.
+
 2004-02-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-ops.h inssel-sparc.brg cpu-sparc.md mini-sparc.h mini-sparc.c tramp-sparc.c exceptions-sparc.c: Sparc port, part I.
