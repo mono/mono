@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.15 $
+// $Revision: 1.16 $
 // $Modtime: $
 // $Log: Form.cs,v $
+// Revision 1.16  2004/10/14 06:17:58  ravindra
+// Fixed class signature. ShowDialog (Control) is not a public method.
+//
 // Revision 1.15  2004/10/08 08:50:29  jordi
 // more menu work
 //
@@ -151,7 +154,7 @@ namespace System.Windows.Forms {
 		#endregion	// Public Constructor & Destructor
 
 		#region Private and Internal Methods
-		public DialogResult ShowDialog(Control owner) {
+		private DialogResult ShowDialog(Control owner) {
 			if (is_modal) {
 				return DialogResult.None;
 			}
