@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
@@ -101,7 +102,7 @@ namespace Mono.Xml.Xsl.Operations {
 				groupingSeparatorChar = this.groupingSeparator.Evaluate (p) [0];
 			
 			if (this.groupingSize != null)
-				groupingSize = int.Parse (this.groupingSize.Evaluate (p));
+				groupingSize = int.Parse (this.groupingSize.Evaluate (p), CultureInfo.InvariantCulture);
 			
 			return new XslNumberFormatter (formatStr, lang, letterValue, groupingSeparatorChar, groupingSize);
 		}
@@ -435,13 +436,13 @@ namespace Mono.Xml.Xsl.Operations {
 			}
 			
 			class DigitItem : FormatItem {
-				System.Globalization.NumberFormatInfo nfi;
+				NumberFormatInfo nfi;
 				int decimalSectionLength;
 				StringBuilder numberBuilder;
 				
 				public DigitItem (string sep, int len, char gpSep, int gpSize) : base (sep)
 				{
-					nfi = new System.Globalization.NumberFormatInfo  ();
+					nfi = new NumberFormatInfo  ();
 					nfi.NumberDecimalDigits = 0;
 					if (gpSep != '\0' && gpSize > 0) {
 						// ignored if either of them doesn't exist.

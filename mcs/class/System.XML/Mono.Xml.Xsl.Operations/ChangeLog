@@ -1,3 +1,7 @@
+2004-06-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslNumber.cs : Globalization. Removed unused code.
+
 2004-05-20 Atsushi Enomoto <atsushi@ximian.com>
 
 	* XslCopyOf.cs : When evaluation result was result tree fragment (i.e.
