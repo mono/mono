@@ -1,3 +1,9 @@
+2002-07-14  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (ParameterReference.AddressOf): Patch from Paolo
+	Molaro: when we are a ref, the value already contains a pointer
+	value, do not take the address of it.
+
 2002-07-14 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* removed mb-parser.jay and mb-tokenizer.cs
 
