@@ -1,3 +1,8 @@
+
+Mon Jul 1 17:11:11 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* opcodes.h: add enum with opcodes in opval order.
+
 2002-07-01  Dick Porter  <dick@ximian.com>
 	
 	* object.h:
