@@ -1,3 +1,7 @@
+2003-01-29  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* WebClient.cs : hacked OpenRead, DownloadData and DownloadFile.
+
 2002-10-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs: applied patch from Tim Haynes

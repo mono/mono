@@ -58,22 +58,43 @@ namespace System.Net
 
 		// Methods
 		
-		[MonoTODO]
+		[MonoTODO("depends on OpenRead")]
 		public byte [] DownloadData (string address)
 		{
-			throw new NotImplementedException ();
+			const int readSize = 4096;
+			Stream networkStream = OpenRead (address);
+			MemoryStream ms = new MemoryStream ();
+			byte[] buf = new byte [readSize];
+			int size = 0;
+			do {
+				size = networkStream.Read (buf, 0, readSize);
+				ms.Write (buf, 0, size);
+			} while (size == readSize);
+			networkStream.Close ();
+			return ms.GetBuffer ();
 		}
 		
-		[MonoTODO]
+		[MonoTODO("depends on DownloadData")]
 		public void DownloadFile (string address, string fileName)
 		{
-			throw new NotImplementedException ();
+			byte[] buf = DownloadData (address);
+			new FileStream (fileName, FileMode.CreateNew).Write (buf, 0, buf.Length);
 		}
 		
-		[MonoTODO]
+		[MonoTODO("some tests are required")]
 		public Stream OpenRead (string address)
 		{
-			throw new NotImplementedException ();
+			Uri uri = new Uri (address);
+			WebRequest request = null;
+
+			if (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)
+				request = new HttpWebRequest (uri);
+			else if(uri.Scheme == Uri.UriSchemeFile)
+				request = new FileWebRequest (uri);
+			else
+				throw new NotImplementedException ();
+
+			return request.GetResponse ().GetResponseStream ();
 		}
 		
 		public Stream OpenWrite (string address)
