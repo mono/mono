@@ -1,5 +1,9 @@
 2004-07-20  Martin Baulig  <martin@ximian.com>
 
+	* Makefile: Enable 2test-7.
+
+2004-07-20  Martin Baulig  <martin@ximian.com>
+
 	* 2test-9.cs: New test for iterators.
 
 2004-07-20  Martin Baulig  <martin@ximian.com>
