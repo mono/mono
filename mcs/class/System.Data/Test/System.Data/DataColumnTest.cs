@@ -16,10 +16,10 @@ using NUnit.Framework;
 using System;
 using System.Data;
 
-namespace MonoTests.System.Data : Assertion
+namespace MonoTests.System.Data 
 {
 	[TestFixture]
-	public class DataColumnTest
+	public class DataColumnTest : Assertion
 	{
 		private DataTable _tbl;
 
