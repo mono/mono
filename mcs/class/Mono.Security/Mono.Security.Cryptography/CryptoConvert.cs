@@ -2,13 +2,15 @@
 // CryptoConvert.cs - Crypto Convertion Routines
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace Mono.Security.Cryptography {
 
@@ -186,29 +188,34 @@ namespace Mono.Security.Cryptography {
 
 		static public RSA FromCapiPublicKeyBlob (byte[] blob) 
 		{
+			return FromCapiPublicKeyBlob (blob, 0);
+		}
+
+		static public RSA FromCapiPublicKeyBlob (byte[] blob, int offset) 
+		{
 			// PUBLICKEYBLOB (0x06)
 			// Version (0x02)
-			if ((blob [0] != 0x06) || (blob [1] != 0x02))
+			if ((blob [offset] != 0x06) || (blob [offset+1] != 0x02))
 				return null;
 			// Reserved (word)
-			if ((blob [2] != 0x00) || (blob [3] != 0x00))
+			if ((blob [offset+2] != 0x00) || (blob [offset+3] != 0x00))
 				return null;
 			// ALGID (CALG_RSA_SIGN, CALG_RSA_KEYX, ...)
-			int algId = BitConverter.ToInt32 (blob, 4);
+			int algId = BitConverter.ToInt32 (blob, offset+4);
 			// DWORD magic = RSA1
-			if (BitConverter.ToUInt32 (blob, 8) != 0x31415352)
+			if (BitConverter.ToUInt32 (blob, offset+8) != 0x31415352)
 				return null;
 			// DWORD bitlen
-			int bitLen = BitConverter.ToInt32 (blob, 12);
+			int bitLen = BitConverter.ToInt32 (blob, offset+12);
 
 			// DWORD public exponent
 			RSAParameters rsap = new RSAParameters ();
 			rsap.Exponent = new byte [3];
-			rsap.Exponent [0] = blob [18];
-			rsap.Exponent [1] = blob [17];
-			rsap.Exponent [2] = blob [16];
+			rsap.Exponent [0] = blob [offset+18];
+			rsap.Exponent [1] = blob [offset+17];
+			rsap.Exponent [2] = blob [offset+16];
 		
-			int pos = 20;
+			int pos = offset+20;
 			// BYTE modulus[rsapubkey.bitlen/8];
 			int byteLen = (bitLen >> 3);
 			rsap.Modulus = new byte [byteLen];
@@ -291,6 +298,44 @@ namespace Mono.Security.Cryptography {
 				return ToCapiPrivateKeyBlob (rsa);
 			else
 				return ToCapiPublicKeyBlob (rsa);
+		}
+
+		static public string ToHex (byte[] input) 
+		{
+			if (input == null)
+				return null;
+
+			StringBuilder sb = new StringBuilder (input.Length * 2);
+			foreach (byte b in input) {
+				sb.Append (b.ToString ("X2"));
+			}
+			return sb.ToString ();
+		}
+
+		static private byte FromHexChar (char c) 
+		{
+			if ((c >= 'a') && (c <= 'f'))
+				return (byte) (c - 'a' + 10);
+			if ((c >= 'A') && (c <= 'F'))
+				return (byte) (c - 'A' + 10);
+			if ((c >= '0') && (c <= '9'))
+				return (byte) (c - '0');
+			throw new ArgumentException ("invalid hex char");
+		}
+
+		static public byte[] FromHex (string hex) 
+		{
+			if (hex == null)
+				return null;
+
+			byte[] result = new byte [hex.Length >> 1];
+			int n = 0;
+			int i = 0;
+			while (n < result.Length) {
+				result [n] = (byte) (FromHexChar (hex [i++]) << 4);
+				result [n++] += FromHexChar (hex [i++]);
+			}
+			return result;
 		}
 	}
 }

@@ -1,3 +1,8 @@
+2004-03-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConvert.cs: Added new methods to convert [From|To]Hex. Added
+	new version of FromCapiPublicKeyBlob with an integer offset.
+
 2004-02-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DSAManaged.cs: Added an event after key generation (so that
