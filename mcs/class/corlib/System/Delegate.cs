@@ -23,6 +23,7 @@ namespace System {
 		protected object m_target;
 		protected string method_name;
 		protected IntPtr method_ptr;
+		protected IntPtr delegate_trampoline;
 		protected MethodInfo method_info;
 
 		protected Delegate (object target, string method)
