@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections;
+using System.IO;
 using System.Text;
 
 namespace Mono.Security {
@@ -263,7 +264,6 @@ namespace Mono.Security {
 			}
 		}
 
-
 		public override string ToString()
 		{
 			string lineSeperator = Environment.NewLine;
@@ -289,6 +289,19 @@ namespace Mono.Security {
 				}
 			}
 			return hexLine.ToString ();
+		}
+
+		public void SaveToFile (string filename)
+		{
+			if (filename == null)
+				throw new ArgumentNullException ("filename");
+
+			using (FileStream fs = File.OpenWrite (filename)) {
+				byte[] data = GetBytes ();
+				fs.Write (data, 0, data.Length);
+				fs.Flush ();
+				fs.Close ();
+			}
 		}
 	}
 }

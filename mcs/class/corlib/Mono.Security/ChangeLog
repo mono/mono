@@ -1,5 +1,7 @@
 2004-04-20  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* ASN1.cs: Added SaveToFile for easier debugging. Patch from
+	Jesper Pedersen.
 	* StrongName.cs: Removed compilation warning (unused variable).
 
 2004-04-08  Bernie Solomon  <bernard@ugsolutions.com>
