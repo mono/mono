@@ -1,3 +1,8 @@
+2004-07-24  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (mono_image_get_type_info): Only write a class
+	layout entry if we actually have a size or a packing size.
+
 2004-07-21  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* reflection.c (type_get_fully_qualified_name): 
