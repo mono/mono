@@ -1,3 +1,8 @@
+
+Wed May 7 16:24:43 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* main.c: output nested types inside their nesting class.
+
 2003-04-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* get.c (dis_stringify_modifiers): Print a space between custom modifers.
