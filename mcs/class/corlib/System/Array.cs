@@ -1495,31 +1495,34 @@ namespace System
 		}
 		
 		[CLSCompliant (false)]
-		public static int BinarySearch <T> (T [] a, T x)
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
+		public static int BinarySearch <T> (T [] array, T value)
 		{
-			if (a == null)
-				throw new ArgumentNullException ("a");
+			if (array == null)
+				throw new ArgumentNullException ("array");
 			
-			return BinarySearch <T> (a, 0, a.Length, x, null);
+			return BinarySearch <T> (array, 0, array.Length, value, null);
 		}
 		
 		[CLSCompliant (false)]
-		public static int BinarySearch <T> (T [] a, T x, IComparer <T> c)
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
+		public static int BinarySearch <T> (T [] array, T value, IComparer <T> comparer)
 		{
-			if (a == null)
-				throw new ArgumentNullException ("a");
+			if (array == null)
+				throw new ArgumentNullException ("array");
 			
-			return BinarySearch <T> (a, 0, a.Length, x, c);
+			return BinarySearch <T> (array, 0, array.Length, value, comparer);
 		}
 		
 		[CLSCompliant (false)]
-		public static int BinarySearch <T> (T [] a, int offset, int length, T x)
+		public static int BinarySearch <T> (T [] array, int offset, int length, T value)
 		{
-			return BinarySearch <T> (a, offset, length, x, null);
+			return BinarySearch <T> (array, offset, length, value, null);
 		}
 		
 		[CLSCompliant (false)]
-		public static int BinarySearch <T> (T [] array, int index, int length, T x, IComparer <T> c)
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
+		public static int BinarySearch <T> (T [] array, int index, int length, T value, IComparer <T> comparer)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
@@ -1533,8 +1536,8 @@ namespace System
 			if (index > array.Length - length)
 				throw new ArgumentException (Locale.GetText (
 					"index and length do not specify a valid range in array."));
-			if (c == null)
-				c = Comparer <T>.Default;
+			if (comparer == null)
+				comparer = Comparer <T>.Default;
 			
 			int iMin = index;
 			int iMax = index + length - 1;
@@ -1542,7 +1545,7 @@ namespace System
 			try {
 				while (iMin <= iMax) {
 					int iMid = (iMin + iMax) / 2;
-					iCmp = c.Compare (x, array [iMid]);
+					iCmp = comparer.Compare (value, array [iMid]);
 
 					if (iCmp == 0)
 						return iMid;
@@ -1660,7 +1663,6 @@ namespace System
 		}
 
 		[CLSCompliant (false)]
-		[MonoTODO]
 		public static IList<T> AsReadOnly<T> (T[] array)
 		{
 			if (array == null)

@@ -1,3 +1,7 @@
+2005-02-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Array.cs: Add missing 2.0 attributes and correct some parameter names.
+
 2005-02-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* AppDomain.cs: Changed GetAssemblies, LoadAssembly, and Load signatures,
