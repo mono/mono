@@ -5,7 +5,7 @@ windows: nant.exe
 nant.exe: NAnt.exe
 	-cp NAnt.exe nant.exe
 
-NAnt.exe: makefile
+NAnt.exe: makefile src/*.cs src/Attributes/*.cs src/Tasks/*.cs src/Util/*.cs
 	csc /out:NAnt.exe /recurse:*.cs 
 
 NAnt_mono.exe: makefile
