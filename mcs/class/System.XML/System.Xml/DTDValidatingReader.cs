@@ -583,7 +583,8 @@ namespace Mono.Xml
 				if (currentAutomata == null)
 					break;
 
-				elem = dtd.ElementDecls [elementStack.Peek () as string];
+				if (elementStack.Count > 0)
+					elem = dtd.ElementDecls [elementStack.Peek () as string];
 				// Here element should have been already validated, so
 				// if no matching declaration is found, simply ignore.
 				if (elem != null && !elem.IsMixedContent && !elem.IsAny) {

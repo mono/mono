@@ -1,3 +1,8 @@
+2005-02-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDValidatingReader.cs : element name stack might be empty when the
+	  input XmlReader contains fragments. Patch by Andrew Skiba.
+
 2005-01-25  Martin Baulig  <martin@ximian.com>
 
 	* XmlNode.cs (XmlNode.SchemaInfo): Mark this as not CLS-compliant
