@@ -94,7 +94,7 @@ namespace Mono.CSharp
 
 				OutputType( createType );
 				
-				output.WriteLine( "{" );
+				output.WriteLine( "[] {" );
 				++Indent;
 				OutputExpressionList( initializers, true );
 				--Indent;
