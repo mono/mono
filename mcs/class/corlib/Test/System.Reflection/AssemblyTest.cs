@@ -164,7 +164,6 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
-		[Ignore ("Not implemented in Mono")]
 		public void GetFiles_True ()
 		{
 			Assembly corlib = typeof (int).Assembly;
@@ -174,6 +173,13 @@ namespace MonoTests.System.Reflection
 			Assembly corlib_test = Assembly.GetExecutingAssembly ();
 			fss = corlib_test.GetFiles ();
 			Assert.IsTrue (fss.Length <= corlib_test.GetFiles (true).Length, "test.GetFiles (true)");
+		}
+
+		[Test]
+		public void LoadWithPartialName ()
+		{
+			Assembly corlib = Assembly.LoadWithPartialName ("corlib_test_default");
+			Assert.IsNotNull (corlib);
 		}
 	}
 }

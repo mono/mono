@@ -1,5 +1,7 @@
 2004-11-05  Zoltan Varga  <vargaz@freemail.hu>
 
+	* AssemblyTest.cs: Reenable GetFiles (true) test. Add a LoadWithPartialName () test.
+
 	* MethodInfoTest.cs: Add test for byref parameters to Invoke ().
 
 2004-09-26  Zoltan Varga  <vargaz@freemail.hu>
