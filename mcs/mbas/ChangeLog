@@ -1,4 +1,7 @@
 2005-02-03  Manjula GHM  <mmanjula@novell.com>
+	*mb-parser.jay : Reports error with correct line number in most of the cases covered by existing testcases. Need to cover in expressions and few more areas. 
+ 
+2005-02-03  Manjula GHM  <mmanjula@novell.com>
 	* mbas.csproj
         * mbas.sln
 	Modified Project and solution files to reflect new changes

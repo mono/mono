@@ -5,6 +5,8 @@
 // Authors: A Rafael D Teixeira (rafaelteixeirabr@hotmail.com)
 //	    Anirban Bhattacharjee (banirban@novell.com)
 //          Jambunathan K (kjambunathan@novell.com)
+//          Manjula GHM (mmanjula@novell.com)
+//          Sudharsan V (vsudharsan@novell.com)
 //
 // Licensed under the terms of the GNU GPL
 //
@@ -12,6 +14,7 @@
 // Copyright (C) 2003, 2004 Novell
 //
 //
+
 
 namespace Mono.MonoBASIC
 {
@@ -123,8 +126,6 @@ namespace Mono.MonoBASIC
 		//   methods (properties and indexers).
 		// </summary>
 		Expression set_implicit_value_parameter_type;		
-		
-		Location member_location;
 		
 		// An out-of-band stack.
 		//
@@ -298,7 +299,6 @@ namespace Mono.MonoBASIC
 			{
 				public bool CanAcceptTokens;
 				public bool CanSelectBlock;
-
 			}
 
 			State currentState;
@@ -620,7 +620,8 @@ end_of_stmt
 	;	
 
 logical_end_of_line
-	: EOL
+	:
+	  EOL 
 	| logical_end_of_line pp_directive 
 	;
 
@@ -735,7 +736,7 @@ declaration
 	  	allow_global_attribs = false;
 	  }
 	  namespace_declaration
-	|declaration_qualifiers
+	|declaration_qualifiers _mark_ 
 	  {
 		  // FIXME: Need to check declaration qualifiers for multi-file compilation
 		  allow_global_attribs = false;
@@ -745,8 +746,8 @@ declaration
 		string name = "";
 		int mod_flags;
 
-		if ($3 is Class || $3 is Struct || $3 is Module ){
-			TypeContainer c = (TypeContainer) $3;
+		if ($4 is Class || $4 is Struct || $4 is Module ){
+			TypeContainer c = (TypeContainer) $4;
 			mod_flags = c.ModFlags;
 			name = c.Name;
 		} else
@@ -754,13 +755,13 @@ declaration
 
 		if ((mod_flags & (Modifiers.PRIVATE)) != 0){
 			Report.Error (
-				31089, lexer.Location, 
+				31089, (Location)$2, 
 				"Namespace elements cannot be explicitly " +
 			        "declared private in '" + name + "'");
 			}
 		else if ((mod_flags & (Modifiers.PROTECTED)) != 0){
 			Report.Error (
-				31047, lexer.Location, 
+				31047, (Location)$2, 
 				"Namespace elements cannot be explicitly " +
 			        "declared protected in '" + name + "'");
 		}
@@ -1126,7 +1127,7 @@ type_spec_declaration
 	;
 
 class_declaration
-	: CLASS identifier end_of_stmt opt_inherits opt_implements
+	: CLASS identifier _mark_ end_of_stmt opt_inherits opt_implements
 	  {
 		// Module members are static by default, but Class *can't* be declared static
 		// so we must fix it, if mbas was the one actually responsible for this
@@ -1139,7 +1140,7 @@ class_declaration
 		
 		name = MakeName ((string) $2);
 		new_class = new Class (current_container, name, current_modifiers, 
-				       (Attributes) current_attributes, lexer.Location);
+				       (Attributes) current_attributes, (Location)$3);
 
 		current_container = new_class;
 		current_container.Namespace = current_namespace;
@@ -1150,9 +1151,9 @@ class_declaration
 	  {
 		Class new_class = (Class) current_container;
 		
-		ArrayList bases = (ArrayList) $4;
+		ArrayList bases = (ArrayList) $5;
 
-		ArrayList ifaces = (ArrayList) $5;
+		ArrayList ifaces = (ArrayList) $6;
 		if (ifaces != null){
 			if (bases != null)	
 				bases.AddRange(ifaces);
@@ -1217,16 +1218,16 @@ modifier
 	;
 
 module_declaration
-	: MODULE identifier logical_end_of_line
+	: MODULE _mark_ identifier logical_end_of_line
 	  { 
 		Module new_module;
 		string name;
-		name = MakeName((string) $2);
+		name = MakeName((string) $3);
 		new_module = new Module(current_container, 
 					name, 
 					current_modifiers, // already checks then
 					(Attributes) current_attributes,
-					lexer.Location);
+					(Location)$2);
 		current_container = new_module;
 		current_container.Namespace = current_namespace;
 		RootContext.Tree.RecordDecl(name, new_module);
@@ -1370,21 +1371,21 @@ must_override_declaration
 	;
 	
 must_override_sub_declaration
-	: MUSTOVERRIDE SUB identifier opt_params opt_implement_clause logical_end_of_line
+	: MUSTOVERRIDE SUB identifier opt_params opt_implement_clause _mark_ logical_end_of_line
 	  {	
 	  	if (current_container is Module)
-	  		Report.Error (30433, "Methods in a Module cannot be declared 'MustOverride'.");
+	  		Report.Error (30433, (Location)$6, "Methods in a Module cannot be declared 'MustOverride'.");
 	  		
 	  	if (current_container is Struct)
-	  		Report.Error (435, "Methods in a Structure cannot be declared 'MustOverride'.");
+	  		Report.Error (435, (Location)$6, "Methods in a Structure cannot be declared 'MustOverride'.");
 	  	
 	  	current_modifiers |= Modifiers.ABSTRACT;
 	  			  	
 	  	Method method = new Method (TypeManager.system_void_expr, (int) current_modifiers, (string) $3,
-					    (Parameters) $4, null, (ArrayList) $5, lexer.Location);
+					    (Parameters) $4, null, (ArrayList) $5, (Location)$6);
 					    
 		if (!(current_container is Class))
-			Report.Error (9999, "THIS SHOULD NEVER HAPPEN!");		
+			Report.Error (9999, (Location)$6, "THIS SHOULD NEVER HAPPEN!");		
 			
 		$$ = method; 			    
 	  }
@@ -1392,60 +1393,59 @@ must_override_sub_declaration
 
 	
 must_override_func_declaration
-	: MUSTOVERRIDE FUNCTION identifier opt_type_character opt_params opt_type_with_ranks opt_implement_clause logical_end_of_line
+	: MUSTOVERRIDE FUNCTION identifier opt_type_character opt_params _mark_ opt_type_with_ranks opt_implement_clause logical_end_of_line
 	  {	
-		Expression ftype = ($6 == null) ? (($4 == null) ? TypeManager.	
-			system_object_expr : (Expression) $4 ) : (Expression) $6;
+		Expression ftype = ($7 == null) ? (($4 == null) ? TypeManager.	
+			system_object_expr : (Expression) $4 ) : (Expression) $7;
 
 	  	if (current_container is Module)
-	  		Report.Error (30433, "Methods in a Module cannot be declared 'MustOverride'.");
+	  		Report.Error (30433, (Location)$6,"Methods in a Module cannot be declared 'MustOverride'.");
 	  		
 	  	if (current_container is Struct)
-	  		Report.Error (435, "Methods in a Structure cannot be declared 'MustOverride'.");
+	  		Report.Error (435, (Location)$6,"Methods in a Structure cannot be declared 'MustOverride'.");
 	  			
 		current_modifiers |= Modifiers.ABSTRACT;
 			  			  	
 	  	Method method = new Method ((Expression) ftype, (int) current_modifiers, 
-						(string) $3,(Parameters) $5, null, (ArrayList) $7, 
-						lexer.Location);
+						(string) $3,(Parameters) $5, null, (ArrayList) $8, 
+						(Location)$6);
 					    
 		if (!(current_container is Class))
-			Report.Error (9999, "THIS SHOULD NEVER HAPPEN!");
+			Report.Error (9999, (Location)$6,"THIS SHOULD NEVER HAPPEN!");
 			
 		$$ = method; 					
 	  }	
 	;
 	
 sub_declaration
-	: SUB identifier opt_params opt_evt_handler opt_implement_clause logical_end_of_line
+	: SUB identifier _mark_ opt_params opt_evt_handler opt_implement_clause logical_end_of_line
 	  { 
-	  	current_local_parameters = (Parameters) $3;
+	  	current_local_parameters = (Parameters) $4;
 		start_block(); 
 
 		// Structure members are Public by default			
 		if ((current_container is Struct) && (current_modifiers == 0))
 			current_modifiers = Modifiers.PUBLIC;		
 
-		member_location = lexer.Location;
 	  }
 	  opt_statement_list 
 	  END SUB logical_end_of_line
 	  {
 		Method method = new Method (TypeManager.system_void_expr, (int) current_modifiers, (string) $2,
 					    (Parameters) current_local_parameters, (Attributes) current_attributes, 
-					    (ArrayList) $5, member_location);
+					    (ArrayList) $6, (Location)$3);
 	
 		method.Block = (Block) end_block();
 		$$ = method;
 
-		if ($4 != null) { 
+		if ($5 != null) { 
 			// we have an event handler to take care of 
 
-		  Expression handles_exp = (Expression) $4;
-		  Location loc = lexer.Location;
+		  Expression handles_exp = (Expression) $5;
+		  Location loc = (Location)$3;
 		  
 		  if (handles_exp is MemberAccess) {
-			string evt_def = ((MemberAccess)$4).ToString();
+			string evt_def = ((MemberAccess)$5).ToString();
 			int pos = evt_def.LastIndexOf (".");
 			string evt_target = evt_def.Substring (0, pos);
 			bool found = false;
@@ -1455,7 +1455,7 @@ sub_declaration
 					if (p.Name == evt_target) {
 						
 
-						Statement addhnd = (Statement) new AddHandler ((Expression) $4, 
+						Statement addhnd = (Statement) new AddHandler ((Expression) $5, 
 											DecomposeQI((string) $2, loc), 
 											loc);
 
@@ -1467,11 +1467,11 @@ sub_declaration
 			}
 			
 			if (!found){
-				Report.Error(30506, lexer.Location,
+				Report.Error(30506, (Location)$3,
 						evt_target + " is not declared with WithEvents");
 			}
 		  } else if (handles_exp is BaseAccess) {
-				Statement addhnd = (Statement) new AddHandler ((Expression) $4, 
+				Statement addhnd = (Statement) new AddHandler ((Expression) $5, 
 											DecomposeQI((string) $2, loc), 
 											loc);	
 											
@@ -1481,16 +1481,16 @@ sub_declaration
 		}	
 	  }	  
 	;
-	
+
+/*Till here*/	
 func_declaration
 	: FUNCTION identifier opt_type_character
-	  opt_params opt_type_with_ranks opt_implement_clause logical_end_of_line
+	  opt_params _mark_ opt_type_with_ranks opt_implement_clause logical_end_of_line
 	  { 
 	  	current_local_parameters = (Parameters) $4;
-	  	member_location = lexer.Location;
 		start_block(); 
 				
-		Expression ftype = ($5 == null) ? (($3 == null) ? TypeManager.system_object_expr : (Expression) $3 ) : (Expression) $5;
+		Expression ftype = ($6 == null) ? (($3 == null) ? TypeManager.system_object_expr : (Expression) $3 ) : (Expression) $6;
 
 		// Structure members are Public by default			
 		if ((current_container is Struct) && (current_modifiers == 0))
@@ -1498,17 +1498,17 @@ func_declaration
 		// Add local var declaration
 		// for return value
 		ArrayList retval = new ArrayList ();
-		retval.Add (new VariableDeclaration ((string) $2, (Expression) ftype, lexer.Location));
-		declare_local_variables ((Expression) ftype, retval, lexer.Location);
+		retval.Add (new VariableDeclaration ((string) $2, (Expression) ftype, (Location)$5));
+		declare_local_variables ((Expression) ftype, retval, (Location)$5);
 	  }	  
 	  opt_statement_list
 	  END FUNCTION logical_end_of_line
 	  {
-		Expression ftype = ($5 == null) ? (($3 == null) ? TypeManager.system_object_expr : (Expression) $3 ) : (Expression) $5;
+		Expression ftype = ($6 == null) ? (($3 == null) ? TypeManager.system_object_expr : (Expression) $3 ) : (Expression) $6;
 
 		Method method = new Method ((Expression) ftype, (int) current_modifiers, (string) $2,
 					    (Parameters) current_local_parameters, (Attributes) current_attributes,/* (Attributes) currx ent_attributes,  */
-					    (ArrayList) $6, member_location);
+					    (ArrayList) $7, (Location)$5);
 		method.Block = end_block();
 		$$ = method;
 	  }	  
@@ -1713,16 +1713,15 @@ enum_member_declaration
 	;
 		
 interface_declaration
-	: INTERFACE identifier logical_end_of_line
+	: INTERFACE _mark_ identifier logical_end_of_line
 	  {
 		Interface new_interface;
-		string full_interface_name = MakeName ((string) $2);
+		string full_interface_name = MakeName ((string) $3);
 
 		new_interface = new Interface (current_container, full_interface_name, (int) current_modifiers,
-					       (Attributes) current_attributes, lexer.Location);
+					       (Attributes) current_attributes, (Location)$2);
 		if (current_interface != null) {
-			Location l = lexer.Location;
-			Report.Error (-2, l, "Internal compiler error: interface inside interface");
+			Report.Error (-2, (Location)$2, "Internal compiler error: interface inside interface");
 		}
 		current_interface = new_interface;
 		new_interface.Namespace = current_namespace;
@@ -1733,8 +1732,8 @@ interface_declaration
 	  { 
 		Interface new_interface = (Interface) current_interface;
 
-		if ($5 != null)
-			new_interface.Bases = (ArrayList) $5;
+		if ($6 != null)
+			new_interface.Bases = (ArrayList) $6;
 
 		current_interface = null;
 		CheckDef (current_container.AddInterface (new_interface),
@@ -1906,16 +1905,16 @@ property_declaration
 	;
 	
 abstract_propery_declaration
-	: MUSTOVERRIDE PROPERTY identifier opt_type_character opt_property_parameters opt_type_with_ranks logical_end_of_line
+	: MUSTOVERRIDE PROPERTY identifier opt_type_character opt_property_parameters _mark_ opt_type_with_ranks logical_end_of_line
 	  {	
-		Expression ftype = ($6 == null) ? (($4 == null) ? 
-				TypeManager.system_object_expr : (Expression) $4 ) : (Expression) $6;
+		Expression ftype = ($7 == null) ? (($4 == null) ? 
+				TypeManager.system_object_expr : (Expression) $4 ) : (Expression) $7;
 
 	  	if (current_container is Module)
-	  		Report.Error (30503, "Properties in a Module cannot be declared 'MustOverride'.");
+	  		Report.Error (30503, (Location) $6 , "Properties in a Module cannot be declared 'MustOverride'.");
 	  		
 	  	if (current_container is Struct)
-	  		Report.Error (435, "Methods in a Structure cannot be declared 'MustOverride'.");
+	  		Report.Error (435, (Location) $6 ,"Methods in a Structure cannot be declared 'MustOverride'.");
 	  			
 		current_modifiers |= Modifiers.ABSTRACT;
 		
@@ -1949,7 +1948,7 @@ abstract_propery_declaration
 					 null, get_parameters, set_parameters, null);
     
 		if (!(current_container is Class))
-			Report.Error (9999, "THIS SHOULD NEVER HAPPEN!");
+			Report.Error (9999, (Location) $6, "THIS SHOULD NEVER HAPPEN!");
 			
 		CheckDef (current_container.AddProperty (prop), prop.Name, lexer.Location);
 		
@@ -1963,13 +1962,18 @@ abstract_propery_declaration
 	
 	
  non_abstract_propery_declaration
-	  : PROPERTY identifier opt_type_character opt_property_parameters opt_type_with_ranks opt_implement_clause logical_end_of_line
+	  : PROPERTY identifier 
+	    opt_type_character  
+	    opt_property_parameters 
+	    _mark_
+	    opt_type_with_ranks
+	    opt_implement_clause 
 	  {
 		if ((current_modifiers & Modifiers.DEFAULT) > 0) {
 			if (current_container.DefaultPropName != null 
 				  && current_container.DefaultPropName != (string) $2)
 				Report.Error (30359, 
-						lexer.Location,
+						(Location) $5,
 						"Type '" + current_container.Name +
 						"' cannot have more than one 'Default Property' ");
 						
@@ -1977,31 +1981,32 @@ abstract_propery_declaration
 		}		
 	  
 		get_implicit_value_parameter_type  = 
-			($5 == null) ? (($3 == null) ? 
-				TypeManager.system_object_expr : (Expression) $3 ) : (Expression) $5;
+			($6 == null) ? (($3 == null) ? 
+				TypeManager.system_object_expr : (Expression) $3 ) : (Expression) $6;
 		get_implicit_value_parameter_name = (string) $2;
 		
 		current_local_parameters = (Parameters) $4;
 		if (current_local_parameters != Parameters.EmptyReadOnlyParameters) { 
-			get_parameters = current_local_parameters.Copy (lexer.Location);
-			set_parameters = current_local_parameters.Copy (lexer.Location);
+			get_parameters = current_local_parameters.Copy ((Location)$5);
+			set_parameters = current_local_parameters.Copy ((Location)$5);
 		}
 		else
 		{
 			get_parameters = Parameters.EmptyReadOnlyParameters;
-			set_parameters = new Parameters (null, null ,lexer.Location);		
+			set_parameters = new Parameters (null, null ,(Location)$5);		
 		}
 		lexer.PropertyParsing = true;
 
-		$$ = lexer.Location;
+		$$ = (Location)$5;
 	  }
+	  logical_end_of_line
 	  accessor_declarations 
 	  END PROPERTY logical_end_of_line
 	  {
 		lexer.PropertyParsing = false;
 
 		Property prop;
-		Pair pair = (Pair) $9;
+		Pair pair = (Pair) $10;
 		
 		Accessor get_block = null;
 		Accessor set_block = null;
@@ -2014,7 +2019,7 @@ abstract_propery_declaration
 			set_block = (Accessor) pair.Second;
 		}
 		
-		Location loc = lexer.Location;
+		Location loc = (Location) $5 ;
 		
 		// Structure members are Public by default			
 		if ((current_container is Struct) && (current_modifiers == 0))
@@ -2023,7 +2028,7 @@ abstract_propery_declaration
 		prop = new Property ((Expression) get_implicit_value_parameter_type, 
 					 (string) $2, current_modifiers, get_block, set_block,
 				     current_attributes, loc, set_implicit_value_parameter_name, 
-				     get_parameters, set_parameters, (ArrayList) $6);
+				     get_parameters, set_parameters, (ArrayList) $7);
 		
 		CheckDef (current_container.AddProperty (prop), prop.Name, loc);
 		get_implicit_value_parameter_type = null;
@@ -2059,8 +2064,8 @@ opt_implement_clause
 implement_clause_list
 	: qualified_identifier
 	  {
-	    ArrayList impl_list = new ArrayList ();
-	    impl_list.Add (DecomposeQI ((string)$1, lexer.Location));
+	   ArrayList impl_list = new ArrayList ();
+	   impl_list.Add (DecomposeQI ((string)$1, lexer.Location));
 	  	$$ = impl_list;
 	  }	
 	| implement_clause_list COMMA qualified_identifier
@@ -2094,10 +2099,10 @@ opt_set_accessor_declaration
 	;
 
 get_accessor_declaration
-	: opt_attributes GET logical_end_of_line
+	: opt_attributes GET _mark_ logical_end_of_line
 	  {
 		if ((current_modifiers & Modifiers.WRITEONLY) != 0)
-	  		Report.Error (30023, "'WriteOnly' properties cannot have a 'Get' accessor");
+	  		Report.Error (30023, (Location)$3, "'WriteOnly' properties cannot have a 'Get' accessor");
 	  
 		current_local_parameters = get_parameters;
 		
@@ -2107,7 +2112,7 @@ get_accessor_declaration
 		// Add local var declaration
 		// for return value
 		ArrayList retval = new ArrayList ();
-		retval.Add (new VariableDeclaration (get_implicit_value_parameter_name, get_implicit_value_parameter_type, lexer.Location));
+		retval.Add (new VariableDeclaration (get_implicit_value_parameter_name, get_implicit_value_parameter_type, (Location)$3));
 		declare_local_variables (get_implicit_value_parameter_type, retval, lexer.Location);	
 	  }
 	  opt_statement_list
@@ -2120,10 +2125,12 @@ get_accessor_declaration
 	;
 
 set_accessor_declaration
-	: opt_attributes SET opt_set_parameter logical_end_of_line
+	: opt_attributes SET opt_set_parameter _mark_ logical_end_of_line
 	  {
         if ((current_modifiers & Modifiers.READONLY) != 0)
-	  		Report.Error (30022, "'ReadOnly' properties cannot have a 'Set' accessor");
+	  		Report.Error (30022,
+				      (Location)$4,
+			              "'ReadOnly' properties cannot have a 'Set' accessor");
 	  		
 		Parameter implicit_value_parameter = new Parameter (
 			set_implicit_value_parameter_type, 
@@ -2565,10 +2572,10 @@ empty_statement
 */
 
 with_statement
-	: WITH expression end_of_stmt /* was : WITH qualified_identifier end_of_stmt */
+	: WITH _mark_ expression end_of_stmt /* was : WITH qualified_identifier end_of_stmt */
 	  {
-	  	// was : Expression e = DecomposeQI ((string) $2, lexer.Location);
-	  	Expression e = (Expression) $2;
+	  	// was : Expression e = DecomposeQI ((string) $3, (Location)$2);
+	  	Expression e = (Expression) $3;
 		with_stack.Push(e);
 		start_block();
 	  }
@@ -2717,24 +2724,21 @@ iteration_statement
 	;
 
 foreach_statement
-	: FOR EACH identifier opt_type_spec IN 
-	  {
-		oob_stack.Push (lexer.Location);
-	  }	  
+	: FOR EACH identifier _mark_ opt_type_spec IN 
 	  expression end_of_stmt
 	  {
-		Location l = lexer.Location;		
+		Location l = (Location)$4;		
 		LocalVariableReference v = null;
 		VariableInfo vi;
 
-		if ($4 != null)	
+		if ($5 != null)	
 		{
 			start_block();
 			VariableDeclaration decl = new VariableDeclaration ((string) $3, 
-					(Expression) $4, null, lexer.Location, null);
+					(Expression) $5, null, (Location)$4, null);
 			
 			vi = current_block.AddVariable (
-				(Expression) $4, decl.identifier, current_local_parameters, decl.Location);
+				(Expression) $5, decl.identifier, current_local_parameters, decl.Location);
 
 			Expression expr;
 			if (decl.expression_or_array_initializer is Expression)
@@ -2744,7 +2748,7 @@ foreach_statement
 			else 
 			{
 				ArrayList init = (ArrayList) decl.expression_or_array_initializer;
-				expr = new ArrayCreation ((Expression) $4, "", init, decl.Location);
+				expr = new ArrayCreation ((Expression) $5, "", init, decl.Location);
 			}
 		
 			v = new LocalVariableReference (current_block, decl.identifier, l);
@@ -2752,7 +2756,7 @@ foreach_statement
 			if (expr != null) 
 			{
 				Assign a = new Assign (v, expr, decl.Location);
-				current_block.AddStatement (new StatementExpression (a, lexer.Location));
+				current_block.AddStatement (new StatementExpression (a, (Location)$4));
 			}
 		}
 		else
@@ -2763,8 +2767,8 @@ foreach_statement
 				// Get a reference to this variable.
 				v = new LocalVariableReference (current_block, (string) $3, l, vi, false);
 			}
-			else
-				Report.Error (451, "Name '" + (string) $3 + "' is not declared.");
+			else 
+				Report.Error (451, (Location)$4,"Name '" + (string) $3 + "' is not declared.");
 		}
 		
 		oob_stack.Push (v);
@@ -2775,13 +2779,12 @@ foreach_statement
 	  {
 		LocalVariableReference v = (LocalVariableReference) oob_stack.Pop ();
 		Block foreach_block = end_block();
-		Location l = (Location) oob_stack.Pop ();
 
 		Foreach f = null;
 		if (v != null)
-			f = new Foreach (null, v, (Expression) $7, foreach_block, l);
+			f = new Foreach (null, v, (Expression) $7, foreach_block, (Location)$4);
 		
-		if ($4 != null)
+		if ($5 != null)
 		{
 			current_block.AddStatement (f);
 			$$ = end_block ();
@@ -2854,11 +2857,13 @@ try_header
 	  	tmp_catch_clauses = (ArrayList) $5;
 	  }
 	;
-					
+	
+
+/*FIXME: Try block without a end try is throwing error at a wrong place*/				
 try_catch
-	: try_header 
+	: try_header 	
 	  END TRY
-	  { 
+	  {
 		Catch g = null;
 		ArrayList s = new ArrayList ();
 
@@ -2936,7 +2941,10 @@ opt_identifier
 
 opt_when
 	: /* empty */	{  $$ = null;  }
-	| WHEN boolean_expression { $$ = $2; }
+	| WHEN boolean_expression 
+		{
+			$$ = $2; 
+		}
 	;
 	
 catch_clause 
@@ -2999,20 +3007,19 @@ catch_args
         
         
 do_statement
-	: DO opt_do_construct end_of_stmt
+	: DO _mark_ opt_do_construct end_of_stmt
 	  {
 		start_block();
-		oob_stack.Push (lexer.Location);
 	  }	
 	  opt_statement_list
-	  LOOP opt_do_construct
+	  LOOP _mark_ opt_do_construct
 	  {
-	  	Expression t_before = (Expression) $2;
-		Expression t_after = (Expression) $7;
+	  	Expression t_before = (Expression) $3;
+		Expression t_after = (Expression) $9;
 		Expression t;
 
 		if  ((t_before != null) && (t_after != null))
-			Report.Error (30238, "'Loop' cannot have a condition if matching 'Do' has one.");
+			Report.Error (30238, (Location)$8, "'Loop' cannot have a condition if matching 'Do' has one.");
 
 		if ((t_before == null) && (t_after == null))
 			t = new BoolLiteral (true);
@@ -3023,9 +3030,9 @@ do_statement
 		
 		if (((do_type == DoOptions.WHILE) && (test_type == DoOptions.TEST_BEFORE)) ||
 		    ((do_type == DoOptions.UNTIL) && (test_type == DoOptions.TEST_AFTER)))
-			 t = new Unary (Unary.Operator.LogicalNot, (Expression) t, lexer.Location);
+			 t = new Unary (Unary.Operator.LogicalNot, (Expression) t, (Location)$2);
 			 
-		$$ = new Do ((Statement) end_block(), (Expression) t, test_type, lexer.Location);
+		$$ = new Do ((Statement) end_block(), (Expression) t, test_type, (Location)$2);
 	  }
 	  ;
 
@@ -3061,40 +3068,39 @@ while_statement
 	;
 	
 for_statement
-	: FOR identifier opt_type_spec ASSIGN expression TO expression opt_step end_of_stmt
+	: FOR _mark_ identifier opt_type_spec ASSIGN expression TO expression opt_step end_of_stmt
 	  {
-		if ($3 != null)
+		if ($4 != null)
 		{
 			start_block();
 			ArrayList VarDeclaration = new ArrayList ();
-			VarDeclaration.Add (new VariableDeclaration ((string) $2, 
-				(Expression) $3, null, lexer.Location, null));
+			VarDeclaration.Add (new VariableDeclaration ((string) $3, 
+				(Expression) $4, null, (Location)$2, null));
 
-			DictionaryEntry de = new DictionaryEntry (DecomposeQI("_local_vars_", lexer.Location), VarDeclaration);
-			Block b = declare_local_variables ((Expression) de.Key, (ArrayList) de.Value, lexer.Location);
+			DictionaryEntry de = new DictionaryEntry (DecomposeQI("_local_vars_", (Location)$2), VarDeclaration);
+			Block b = declare_local_variables ((Expression) de.Key, (ArrayList) de.Value, (Location)$2);
 			current_block = b;
 		}
-		oob_stack.Push (lexer.Location);		
 		start_block();
 	  }
 	  opt_statement_list
 	  NEXT opt_identifier 
 	  {
 			Block inner_statement = end_block();
-			Location l = (Location) oob_stack.Pop ();
-			Expression for_var = (Expression) DecomposeQI ((string)$2, l);
+			Location l = (Location)$2;
+			Expression for_var = (Expression) DecomposeQI ((string)$3, l);
 			
-            Expression assign_expr = new Assign (for_var, (Expression) $5, l);
+            Expression assign_expr = new Assign (for_var, (Expression) $6, l);
             Expression test_expr =  new Binary (Binary.Operator.LessThanOrEqual,
-                                                            for_var, (Expression) $7, l);
+                                                            for_var, (Expression) $8, l);
             Expression step_expr = new Assign (for_var, (Expression) new Binary (Binary.Operator.Addition,
-                                             for_var, (Expression) $8, l), l);
+                                             for_var, (Expression) $9, l), l);
 
             Statement assign_stmt = new StatementExpression ((ExpressionStatement) assign_expr, l);
             Statement step_stmt = new StatementExpression ((ExpressionStatement) step_expr, l);
 
             For f = new For (assign_stmt, test_expr, step_stmt, inner_statement, l);
-			if ($3 != null)
+			if ($4 != null)
 			{
 				current_block.AddStatement (f);
 				$$ = end_block();
@@ -3173,7 +3179,8 @@ else_pre_embedded_statement
 		current_block.AddStatement ((Statement) $2);
 	  } 
 	;	
-	
+
+/*FIXME:if without end if not working. Error line shown is nor correct*/
 if_statement_open
 	: IF boolean_expression 
 	  {
@@ -3284,9 +3291,11 @@ else_if_statement_rest
                 statement_stack.Push(stmt);
 	  }	     
 	;
-	
+
+/*FIXME:Select without an expression is showing a parser error instead of a expression missing error*/	
 select_statement
-	: SELECT opt_case expression end_of_stmt
+	: SELECT 
+	  _mark_ opt_case expression end_of_stmt
 	  { 
 		oob_stack.Push (lexer.Location);
 		switch_stack.Push (current_block);
@@ -3294,8 +3303,8 @@ select_statement
 	  opt_case_sections
 	  END SELECT 
 	  {
-		$$ = new Switch ((Expression) $3, (ArrayList) $6, (Location) oob_stack.Pop ());
 		current_block = (Block) switch_stack.Pop ();
+		$$ = new Switch ((Expression) $4, (ArrayList) $7, (Location) oob_stack.Pop ());
 	  }	  
 	;
 
@@ -3478,12 +3487,12 @@ new_expression
 	;
 
 declaration_statement
-	: local_variable_declaration 
+	: _mark_ local_variable_declaration 
 	  {
-		if ($1 != null){
-			DictionaryEntry de = (DictionaryEntry) $1;
+		if ($2 != null){
+			DictionaryEntry de = (DictionaryEntry) $2;
 
-			$$ = declare_local_variables ((Expression) de.Key, (ArrayList) de.Value, lexer.Location);
+			$$ = declare_local_variables ((Expression) de.Key, (ArrayList) de.Value, (Location)$1);
 		}
 	  }
 	| local_constant_declaration 
@@ -3497,7 +3506,7 @@ declaration_statement
 	;	 
 	
 local_variable_declaration
-	: DIM variable_declarators
+	: DIM variable_declarators 
 	  {
 		$$ = new DictionaryEntry (DecomposeQI("_local_vars_", lexer.Location), $2);		
 	  }
@@ -3534,32 +3543,32 @@ constant_declarators
 	;
 
 constant_declarator
-	: variable_name opt_type_decl opt_variable_initializer
+	: variable_name _mark_ opt_type_decl opt_variable_initializer
 	  {
 		VarName vname = (VarName) $1;
 		string varname = (string) vname.Name;
 		current_rank_specifiers = (ArrayList) vname.Rank;
-		object varinit = $3;
+		object varinit = $4;
 
 		if (varinit == null)
 			Report.Error (
-				30438, lexer.Location, "Constant should have a value"
+				30438, (Location)$2, "Constant should have a value"
 				);
 
-		if (vname.Type != null && $2 != null)
+		if (vname.Type != null && $3 != null)
 			Report.Error (
-				30302, lexer.Location, 
+				30302, (Location)$2, 
 				"Type character cannot be used with explicit type declaration" );
 
-		Expression vartype = ($2 == null) ? ((vname.Type == null) ? TypeManager.system_object_expr : (Expression) vname.Type ) : (Expression) $2;
+		Expression vartype = ($3 == null) ? ((vname.Type == null) ? TypeManager.system_object_expr : (Expression) vname.Type ) : (Expression) $3;
 
 		if (current_rank_specifiers != null) 
 		{
-			Report.Error (30424, lexer.Location, "Constant doesn't support array");
+			Report.Error (30424, (Location)$2, "Constant doesn't support array");
 			$$ = null;
 	  	}
 	  	else
-	  	  	$$ = new VariableDeclaration (varname, vartype, varinit, lexer.Location, null);
+	  	  	$$ = new VariableDeclaration (varname, vartype, varinit, (Location)$2, null);
 	  }
 	;		
 
@@ -4457,12 +4466,12 @@ floating_point_type
 	;
 
 pp_directive
-	: HASH IDENTIFIER OPEN_PARENS LITERAL_STRING COMMA LITERAL_INTEGER CLOSE_PARENS EOL
+	: HASH IDENTIFIER OPEN_PARENS LITERAL_STRING COMMA LITERAL_INTEGER CLOSE_PARENS _mark_ EOL
 	  { 
 	  	if(tokenizerController.IsAcceptingTokens)
 	  	{
 	  		if(in_external_source) 
-				Report.Error (30580, lexer.Location, "#ExternalSource directives may not be nested");
+				Report.Error (30580, (Location)$8, "#ExternalSource directives may not be nested");
 			else {
 	  			in_external_source = true;
 			
@@ -4471,25 +4480,25 @@ pp_directive
 			}
 	  	}
 	  }
-	| HASH IDENTIFIER LITERAL_STRING EOL
+	| HASH IDENTIFIER LITERAL_STRING _mark_ EOL
 	  {
 	  	if(tokenizerController.IsAcceptingTokens) 
 	  	{
 		  	if(!($2 as string).ToLower().Equals("region"))
-				Report.Error (30205, lexer.Location, "Invalid Pre-processor directive");
+				Report.Error (30205, (Location)$4, "Invalid Pre-processor directive");
 			else
 			{
 				++in_marked_region;
 			}
 	  	}
 	  }
-	| HASH END IDENTIFIER EOL
+	| HASH END IDENTIFIER _mark_ EOL
 	  {
 	  	if(tokenizerController.IsAcceptingTokens)
 	  	{
 	  		if( ($3 as string).ToLower().Equals("externalsource")) {
 				if(!in_external_source)
-					Report.Error (30578, lexer.Location, "'#End ExternalSource' must be preceded by a matching '#ExternalSource'");
+					Report.Error (30578, (Location)$4, "'#End ExternalSource' must be preceded by a matching '#ExternalSource'");
 				else {
 					in_external_source = false;
 					lexer.EffectiveSource = lexer.Source;
@@ -4500,21 +4509,22 @@ pp_directive
 				if(in_marked_region > 0)
 					--in_marked_region;
 				else
-					Report.Error (30205, lexer.Location, "'#End Region' must be preceded  by a matching '#Region'");
+					Report.Error (30205, (Location)$4, "'#End Region' must be preceded  by a matching '#Region'");
 			}
 			else {
-				Report.Error (29999, lexer.Location, "Unrecognized Pre-Processor statement");
+				Report.Error (29999, (Location)$4, "Unrecognized Pre-Processor statement");
 			}	
 	  	}
 	  }
-	| HASH CONST IDENTIFIER ASSIGN boolean_literal EOL
+	| HASH CONST IDENTIFIER ASSIGN boolean_literal _mark_ EOL
 	  {
 	  	if(tokenizerController.IsAcceptingTokens)
 	  	{
 			//TODO;
+			//FIXME;
 	  	}
 	  }
-	| HASH IF 
+	| HASH IF _mark_   
 	  {
 	      	IfElseStateMachine.Token tok = IfElseStateMachine.Token.IF;
 
@@ -4522,64 +4532,72 @@ pp_directive
 			ifElseStateMachine.HandleToken(tok);
 		}
 		catch(ApplicationException) {
-			throw new MBASException(ifElseStateMachine.Error, lexer.Location, ifElseStateMachine.ErrString);
+			throw new MBASException(ifElseStateMachine.Error, (Location)$3, ifElseStateMachine.ErrString);
 		}
 	  }
   	   boolean_literal opt_then  EOL 
 	  {
-	  	HandleConditionalDirective(IfElseStateMachine.Token.IF, (BoolLiteral)$4);
+	  	HandleConditionalDirective(IfElseStateMachine.Token.IF, (BoolLiteral)$5);
 	  }
-	| HASH ELSEIF 
+	| HASH ELSEIF _mark_ 
 	  {
 		      IfElseStateMachine.Token tok = IfElseStateMachine.Token.ELSEIF;
 		      try {
 			      ifElseStateMachine.HandleToken(tok);
 		      }
 		      catch(ApplicationException) {
-			      throw new MBASException(ifElseStateMachine.Error, lexer.Location, ifElseStateMachine.ErrString);
+			      throw new MBASException(ifElseStateMachine.Error, (Location)$3, ifElseStateMachine.ErrString);
 		      }
   	  }
 	   boolean_literal opt_then  EOL 
 	  { 
-		  HandleConditionalDirective(IfElseStateMachine.Token.ELSEIF, (BoolLiteral)$4);
+		  HandleConditionalDirective(IfElseStateMachine.Token.ELSEIF, (BoolLiteral)$5);
 	  }
-	| HASH ELSE  
+	| HASH ELSE _mark_ 
   	  {
 		    IfElseStateMachine.Token tok = IfElseStateMachine.Token.ELSE;
 		    try {
 			    ifElseStateMachine.HandleToken(tok);
 		    }
 		    catch(ApplicationException) {
-			    throw new MBASException(ifElseStateMachine.Error, lexer.Location, ifElseStateMachine.ErrString);
+			    throw new MBASException(ifElseStateMachine.Error, (Location)$3, ifElseStateMachine.ErrString);
 		    }
 	  }
 	  EOL 
 	  { 
 	  	HandleConditionalDirective(IfElseStateMachine.Token.ELSE, new BoolLiteral(true));
 	  }
-	| HASH END IF  
+	| HASH END IF _mark_ 
 	  {
+		/*FIXME: IF without ENDIF not working properly. Error line is not diplayed properly*/
+	
 		  IfElseStateMachine.Token tok = IfElseStateMachine.Token.ENDIF;
 		  try {
 			  ifElseStateMachine.HandleToken(tok);
 		  }
 		  catch(ApplicationException) {
-			  throw new MBASException(ifElseStateMachine.Error, lexer.Location, ifElseStateMachine.ErrString);
+			  throw new MBASException(ifElseStateMachine.Error, (Location)$4, ifElseStateMachine.ErrString);
 		  }
 	  }
 	  EOL 
 	  { 
 		HandleConditionalDirective(IfElseStateMachine.Token.ENDIF, new BoolLiteral(false));
 	  }
-	| HASH error EOL	  
+	| HASH error _mark_ EOL	  
 	{
 		if(tokenizerController.IsAcceptingTokens)
-			Report.Error(2999, lexer.Location, "Unrecognized Pre-Processor statement");
+			Report.Error(29999, (Location)$3, "Unrecognized Pre-Processor statement");
 		else
-			Report.Warning (9999, lexer.Location, 	"Unrecognized Pre-Processor statement");
+			Report.Warning (29999, (Location)$3,"Unrecognized Pre-Processor statement");
 	}
 	  
 	;		
+
+// Utility rule to save location information
+_mark_
+        : /* empty */
+        { $$ = lexer.Location; }
+                                                                                                                             
 
 %%
 
@@ -4640,7 +4658,7 @@ Block declare_local_variables (Expression dummy_type, ArrayList variable_declara
 
 	foreach (VariableDeclaration decl in variable_declarators){
 		Expression type = decl.type;
-		if (implicit_block.AddVariable (type, decl.identifier, current_local_parameters, decl.Location) != null) {
+		if (implicit_block.AddVariable (type, decl.identifier, current_local_parameters, loc) != null) {
 			if (decl.expression_or_array_initializer != null){
 				if (inits == null)
 					inits = new ArrayList ();
