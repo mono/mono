@@ -1,5 +1,9 @@
 2004-04-29  Martin Baulig  <martin@ximian.com>
 
+	* test-246.cs, test-247.cs: New tests for #52597.
+
+2004-04-29  Martin Baulig  <martin@ximian.com>
+
 	* dll-2.cs, prog-2.cs: New test for #56178.
 
 2004-04-29  Martin Baulig  <martin@ximian.com>
