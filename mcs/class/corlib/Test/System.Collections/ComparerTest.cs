@@ -48,7 +48,7 @@ namespace MonoTests.System.Collections {
 		{
 			Comparer c = Comparer.DefaultInvariant;
 
-			Assert (c.Compare ("a", "A") > 0);
+			Assert (c.Compare ("a", "A") < 0);
 		}
 		
 				

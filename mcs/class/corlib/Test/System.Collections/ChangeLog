@@ -1,3 +1,7 @@
+2004-08-24 Nick Drochak <ndrochak@ieee.org>
+
+	* ComparerTest.cs: On MS.NET 1.1 Compare("a", "A") returns < 0.
+
 2004-07-28  Dick Porter  <dick@ximian.com>
 
 	* ComparerTest.cs: Test for invariant compares (bug 61458.)
