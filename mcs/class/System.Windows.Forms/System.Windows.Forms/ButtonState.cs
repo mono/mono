@@ -18,6 +18,7 @@ namespace System.Windows.Forms {
 		Flat = 16384,
 		Inactive = 256,
 		Normal = 0,
-		Pushed = 512
+		Pushed = 512,
+		ThreeState = 8
 	}
 }
