@@ -1,3 +1,7 @@
+2003-12-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* auth.xml: sample user/password file for the modules.
+
 2003-12-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* http-get-gzip.cs:

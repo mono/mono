@@ -7,3 +7,6 @@ Mono.Http/NtlmClient.cs
 Mono.Http.Configuration/AcceptEncodingConfig.cs
 Mono.Http.Configuration/AcceptEncodingSectionHandler.cs
 Mono.Http.Modules/AcceptEncodingModule.cs
+Mono.Http.Modules/AuthenticationModule.cs
+Mono.Http.Modules/BasicAuthenticationModule.cs
+Mono.Http.Modules/DigestAuthenticationModule.cs
