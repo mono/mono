@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security.Cryptography.X509Certificates;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace System.Reflection {
 
@@ -64,51 +65,72 @@ namespace System.Reflection {
 			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 		}
 	
-		[MonoTODO]
 		public FieldInfo GetField (string name) 
 		{
-			return null;
+			if (IsResource ())
+				return null;
+
+			return GetGlobalType ().GetField (name, BindingFlags.Public | BindingFlags.Static);
 		}
 	
-		[MonoTODO]
 		public FieldInfo GetField (string name, BindingFlags flags) 
 		{
-			return null;
+			if (IsResource ())
+				return null;
+
+			return GetGlobalType ().GetField (name, flags);
 		}
 	
-		[MonoTODO]
 		public FieldInfo[] GetFields () 
 		{
-			return null;
+			if (IsResource ())
+				return new FieldInfo [0];
+
+			return GetGlobalType ().GetFields (BindingFlags.Public | BindingFlags.Static);
 		}
 	
 		[MonoTODO]
 		public MethodInfo GetMethod (string name) 
 		{
+			if (IsResource ())
+				return null;
+
 			return null;
 		}
 	
 		[MonoTODO]
 		public MethodInfo GetMethod (string name, Type[] types) 
 		{
+			if (IsResource ())
+				return null;
+
 			return null;
 		}
 	
 		[MonoTODO]
 		public MethodInfo GetMethod (string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) 
 		{
+			if (IsResource ())
+				return null;
+
 			return null;
 		}
 	
 		[MonoTODO]
 		protected virtual MethodInfo GetMethodImpl (string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) 
 		{
+			if (IsResource ())
+				return null;
+
 			return null;
 		}
 	
 		[MonoTODO]
 		public MethodInfo[] GetMethods () 
 		{
+			if (IsResource ())
+				return new MethodInfo [0];
+
 			return null;
 		}
 	
@@ -167,5 +189,8 @@ namespace System.Reflection {
 		{
 			return "Reflection.Module: " + name;
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern Type GetGlobalType ();
 	}
 }

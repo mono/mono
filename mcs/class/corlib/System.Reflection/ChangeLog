@@ -1,3 +1,7 @@
+2003-05-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Module.cs: Implement GetField and its friends.
+
 2003-05-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Assembly.cs (GetManifestResourceStream): Moved handling of 
