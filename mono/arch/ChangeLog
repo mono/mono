@@ -1,5 +1,7 @@
 2005-02-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* amd64/amd64-codegen.h: Add xadd instructions.
+	
 	* amd64/amd64-codegen.h (amd64_jump_code_size): Do not emit a rex.
 
 2004-11-25  Zoltan Varga  <vargaz@freemail.hu>
