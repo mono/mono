@@ -1,5 +1,9 @@
 2003-03-31  Alan Tam <Tam@SiuLung.com>
 
+	* makefile.gnu: Added System.Design to build
+
+2003-03-31  Alan Tam <Tam@SiuLung.com>
+
 	* library.build: Added back System.Design to build
 
 2003-03-22  Martin Willemoes Hansen <mwh@sysrq.dk>

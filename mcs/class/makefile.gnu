@@ -32,6 +32,7 @@ DIRS =	corlib				\
 	Microsoft.VisualC		\
 	Cscompmgd			\
 	System.Windows.Forms		\
+	System.Design			\
 	Npgsql				\
 	PEAPI				\
 	Mono.Security			\

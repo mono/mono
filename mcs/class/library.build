@@ -45,7 +45,7 @@
 		<nant basedir="System.Web" target="build" buildfile="System.Web/System.Web.build"/>
 		<nant basedir="System.Web.Services" target="build" buildfile="System.Web.Services/System.Web.Services.build"/>
 		<nant basedir="System.Windows.Forms" target="build" buildfile="System.Windows.Forms/System.Windows.Forms.build"/>
-		<!-- System.Design depends on System.Deawing and System.Windows.Forms -->
+		<!-- System.Design depends on System.Drawing, System.Web and System.Windows.Forms -->
 		<nant basedir="System.Design" target="build" buildfile="System.Design/System.Design.build"/>
 		<nant basedir="System.XML" target="build" buildfile="System.XML/System.XML.build"/>
 		<!-- System.Security depends on System.XML -->
