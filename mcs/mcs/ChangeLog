@@ -1,3 +1,15 @@
+2003-11-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* convert.cs (TryImplicitIntConversion): One line bug fix: we were
+	comparing 0 vs Byte.MinValue, not the value
+
+	(ImplicitConversionRequired): When reporting a conversion error,
+	use error 31 to print out the constant error instead of the
+	simpler 29.
+
+	* expression.cs: Apply fix from l_m@pacbell.net (Laurent Morichetti),  
+	which fixes bug 51347.
+	
 2003-11-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs: Applied patch from gert.driesen@pandora.be (Gert Driesen) 

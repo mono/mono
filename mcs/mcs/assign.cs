@@ -303,7 +303,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 			}
-			
+
 			source = Convert.ImplicitConversionRequired (ec, source, target_type, loc);
 			if (source == null)
 				return null;

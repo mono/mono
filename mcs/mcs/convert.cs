@@ -238,7 +238,7 @@ namespace Mono.CSharp {
 								    Type target_type, Location loc)
 		{
 			Type expr_type = expr.Type;
-			
+
 			//
 			// Attempt to do the implicit constant expression conversions
 
@@ -1087,7 +1087,7 @@ namespace Mono.CSharp {
 				if (value >= SByte.MinValue && value <= SByte.MaxValue)
 					return new SByteConstant ((sbyte) value);
 			} else if (target_type == TypeManager.byte_type){
-				if (Byte.MinValue >= 0 && value <= Byte.MaxValue)
+				if (value >= Byte.MinValue && value <= Byte.MaxValue)
 					return new ByteConstant ((byte) value);
 			} else if (target_type == TypeManager.short_type){
 				if (value >= Int16.MinValue && value <= Int16.MaxValue)
@@ -1158,6 +1158,13 @@ namespace Mono.CSharp {
 					      "float type, use F suffix to create a float literal");
 			}
 
+			if (source is Constant){
+				Constant c = (Constant) source;
+
+				Expression.Error_ConstantValueCannotBeConverted (loc, c.AsString (), target_type);
+				return null;
+			}
+			
 			Error_CannotImplicitConversion (loc, source.Type, target_type);
 
 			return null;

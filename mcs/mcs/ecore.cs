@@ -820,7 +820,7 @@ namespace Mono.CSharp {
 			       "a `" + sb.ToString () + "' was expected");
 		}
 		
-		static void Error_ConstantValueCannotBeConverted (Location l, string val, Type t)
+		static public void Error_ConstantValueCannotBeConverted (Location l, string val, Type t)
 		{
 			Report.Error (31, l, "Constant value `" + val + "' cannot be converted to " +
 				      TypeManager.CSharpName (t));

@@ -2310,7 +2310,7 @@ namespace Mono.CSharp {
 							//
 							if (b.method == TypeManager.string_concat_string_string ||
 							     b.method == TypeManager.string_concat_string_string_string){
-								ArrayList bargs = b.Arguments;
+								ArrayList bargs = new ArrayList (b.Arguments.Count);
 								int count = bargs.Count;
 								
 								if (count == 2){
@@ -2341,9 +2341,10 @@ namespace Mono.CSharp {
 					}
 
 					//
-					// Cascading concats will hold up to 4 arguments
+					// Cascading concats will hold up to 2 arguments, any extras will be
+					// reallocated above.
 					//
-					ArrayList args = new ArrayList (4);
+					ArrayList args = new ArrayList (2);
 					args.Add (new Argument (left, Argument.AType.Expression));
 					args.Add (new Argument (right, Argument.AType.Expression));
 
