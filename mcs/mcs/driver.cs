@@ -290,7 +290,7 @@ namespace Mono.CSharp
 			string total_log = "";
 
 			try {
-				char[] path_chars = { '/', '\\', '.' };
+				char[] path_chars = { '/', '\\' };
 
 				if (assembly.IndexOfAny (path_chars) != -1) {
 					a = Assembly.LoadFrom (assembly);
