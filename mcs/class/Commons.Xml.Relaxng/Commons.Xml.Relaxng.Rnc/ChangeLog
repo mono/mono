@@ -1,3 +1,7 @@
+2005-01-26  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RncWriter.cs : new file. Implements RelaxngPattern.WriteCompact().
+
 2004-06-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RncParser.jay : added MIT license.
