@@ -57,7 +57,19 @@ public class StrongNameKeyPair
 	private void LoadKey (byte[] key) 
 	{
 		try {
-			rsa = CryptoConvert.FromCapiKeyBlob (key);
+			// check for ECMA key
+			if (key.Length == 16) {
+				int i = 0;
+				int sum = 0;
+				while (i < key.Length)
+					sum += key [i++];
+				if (sum == 4) {
+					// it is the ECMA key
+					publicKey = (byte[]) key.Clone ();
+				}
+			}
+			else
+				rsa = CryptoConvert.FromCapiKeyBlob (key);
 		}
 		catch
 		{
@@ -68,10 +80,11 @@ public class StrongNameKeyPair
 
 	public byte[] PublicKey {
 		get { 
-			if (rsa == null)
-				throw new ArgumentException ("invalid keypair");
-
 			if (publicKey == null) {
+				// ECMA "key" is valid but doesn't produce a RSA instance
+				if (rsa == null)
+					throw new ArgumentException ("invalid keypair");
+
 				byte[] blob = CryptoConvert.ToCapiKeyBlob (rsa, false);
 				publicKey = new byte [blob.Length + 12];
 				// The first 12 bytes are documented at:
