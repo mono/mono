@@ -2,9 +2,10 @@
 // RSACryptoServiceProviderTest.cs, NUnit Test Cases for RSACryptoServiceProvider
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -209,6 +210,23 @@ public class RSACryptoServiceProviderTest : Assertion {
 		rsa = new RSACryptoServiceProvider (minKeySize);
 		Stream data = null; // do not confuse compiler
 		rsa.SignData (data, MD5.Create ());
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void SignHashNullValue () 
+	{
+		rsa = new RSACryptoServiceProvider (minKeySize);
+		rsa.SignHash (null, "1.3.14.3.2.26"); // SHA-1
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void SignHashNullOID () 
+	{
+		byte[] hash = new byte [20];
+		rsa = new RSACryptoServiceProvider (minKeySize);
+		rsa.SignHash (hash, null);
 	}
 
 	[Test]
@@ -816,6 +834,59 @@ public class RSACryptoServiceProviderTest : Assertion {
 		string newKeyPair = rsa2.ToXmlString (true);
 
 		Assert ("Key Pair Deleted", (original != newKeyPair));
+	}
+
+#if NET_1_1
+	[Test]
+	public void UseMachineKeyStore_Default ()
+	{
+		Assert ("UseMachineKeyStore(Default)", !RSACryptoServiceProvider.UseMachineKeyStore);
+	}
+
+	[Test]
+	public void UseMachineKeyStore () 
+	{
+		// note only applicable when CspParameters isn't used - which don't
+		// help much as you can't know the generated key container name
+		RSACryptoServiceProvider.UseMachineKeyStore = true;
+		CspParameters csp = new CspParameters (1, null, "UseMachineKeyStore");
+		csp.KeyContainerName = "UseMachineKeyStore";
+		RSACryptoServiceProvider rsa = new RSACryptoServiceProvider (csp);
+		string machineKeyPair = rsa.ToXmlString (true);
+		rsa.Clear ();
+
+		RSACryptoServiceProvider.UseMachineKeyStore = false;
+		csp = new CspParameters (1, null, "UseMachineKeyStore");
+		csp.Flags |= CspProviderFlags.UseMachineKeyStore;
+		rsa = new RSACryptoServiceProvider (csp);
+
+		Assert ("UseMachineKeyStore", machineKeyPair != rsa.ToXmlString (true));
+	}
+#endif
+
+	[Test]
+	public void PKCS1 () 
+	{
+		byte[] data = new byte [8];
+		rsa = new RSACryptoServiceProvider (minKeySize);
+		byte[] encdata = rsa.Encrypt (data, false);
+		byte[] decdata = rsa.Decrypt (encdata, false);
+		AssertEquals ("PKCS1", BitConverter.ToString (data), BitConverter.ToString (decdata));
+	}
+
+	[Test]
+	public void OAEP () 
+	{
+		byte[] data = new byte [8];
+		rsa = new RSACryptoServiceProvider (minKeySize);
+		try {
+			byte[] encdata = rsa.Encrypt (data, true);
+			byte[] decdata = rsa.Decrypt (encdata, true);
+			AssertEquals ("PKCS1", BitConverter.ToString (data), BitConverter.ToString (decdata));
+		}
+		catch (CryptographicException) {
+			// will fail on MS runtime before Windows XP
+		}
 	}
 }
 
