@@ -1,3 +1,11 @@
+2003-04-07  Martin Baulig  <martin@ximian.com>
+
+	* ecore.cs (Expression.ResolveBoolean): Don't call ec.Mark().
+
+	* codegen.cs (EmitContext.EmitTopBlock): Don't call Mark() on the
+	location.  [FIXME: The location argument which gets passed to this
+	method is sometimes wrong!]
+
 2003-04-07  Nick Drochak <ndrochak@gol.com>
 
 	* codegen.cs: Be more verbose when we can't find the symbol writer dll.
