@@ -102,7 +102,7 @@ $(gmcs): $(net20bootstraplib) FORCE
 net20bootstrap_makefrag = $(depsdir)/net_2_0_bootstrap_corlib.dll.makefrag
 
 $(net20bootstraplib): $(net20bootstrap_makefrag) $(response)
-	$(BOOTSTRAP_MCS) $(LOCAL_MCS_FLAGS) /define:NET_1_1 /define:BOOTSTRAP_NET_2_0 $(corlib_flags) /target:library /out:$(net20bootstraplib) @$(response)
+	$(BOOTSTRAP_MCS) $(LOCAL_MCS_FLAGS) $(LIBRARY_FLAGS) /define:NET_1_1 /define:BOOTSTRAP_NET_2_0 $(corlib_flags) /target:library /out:$(net20bootstraplib) @$(response)
 
 $(net20bootstrap_makefrag): $(response)
 	@echo Creating $@ ...
