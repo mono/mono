@@ -1,3 +1,7 @@
+2002-03-07  Ravi Pratap  <ravi@ximian.com>
+
+	* test-82.cs : Add.
+
 2002-03-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* test-52.cs: Expanded test to cover more cases of foreach.
