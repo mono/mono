@@ -1,6 +1,6 @@
 2001-09-22  Dietmar Maurer  <dietmar@ximian.com>
 
-	* monoburg.y (strndup): terminate string with 0 
+	* monoburg.y (strndup): removed, use g_strndup instead
 
 	* monoburg.c (create_term): bug fix: g_strdup strings from the parser
 
