@@ -1,5 +1,11 @@
 2003-12-13  Martin Baulig  <martin@ximian.com>
 
+	* statement.cs (Statement.DoEmit, Statement.Emit): Don't return
+	any value here; we're now using flow analysis to figure out
+	whether a statement/block returns a value.
+
+2003-12-13  Martin Baulig  <martin@ximian.com>
+
 	* flowanalysis.cs (UsageVector.MergeFinallyOrigins): Made this
 	working again.
 	(FlowBranching.MergeFinally): Don't call

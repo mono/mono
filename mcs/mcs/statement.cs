@@ -33,15 +33,15 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Return value indicates whether all code paths emitted return.
 		/// </summary>
-		protected abstract bool DoEmit (EmitContext ec);
+		protected abstract void DoEmit (EmitContext ec);
 
 		/// <summary>
 		///   Return value indicates whether all code paths emitted return.
 		/// </summary>
-		public virtual bool Emit (EmitContext ec)
+		public virtual void Emit (EmitContext ec)
 		{
 			ec.Mark (loc, true);
-			return DoEmit (ec);
+			DoEmit (ec);
 		}
 		
 		/// <remarks>
@@ -106,9 +106,8 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
-		protected override bool DoEmit (EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
-			return false;
 		}
 	}
 	
@@ -116,6 +115,8 @@ namespace Mono.CSharp {
 		Expression expr;
 		public Statement TrueStatement;
 		public Statement FalseStatement;
+
+		bool is_true_ret;
 		
 		public If (Expression expr, Statement trueStatement, Location l)
 		{
@@ -151,6 +152,8 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			is_true_ret = ec.CurrentBranching.CurrentUsageVector.Reachability.IsUnreachable;
+
 			ec.CurrentBranching.CreateSibling (FlowBranching.SiblingType.Conditional);
 
 			if ((FalseStatement != null) && !FalseStatement.Resolve (ec)) {
@@ -165,12 +168,11 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
-		protected override bool DoEmit (EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			Label false_target = ig.DefineLabel ();
 			Label end;
-			bool is_true_ret, is_false_ret;
 
 			//
 			// Dead code elimination
@@ -182,18 +184,20 @@ namespace Mono.CSharp {
 					if (FalseStatement != null){
 						Warning_DeadCodeFound (FalseStatement.loc);
 					}
-					return TrueStatement.Emit (ec);
+					TrueStatement.Emit (ec);
+					return;
 				} else {
 					Warning_DeadCodeFound (TrueStatement.loc);
-					if (FalseStatement != null)
-						return FalseStatement.Emit (ec);
+					if (FalseStatement != null) {
+						FalseStatement.Emit (ec);
+						return;
+					}
 				}
 			}
 			
 			EmitBoolExpression (ec, expr, false_target, false);
 
-			is_true_ret = TrueStatement.Emit (ec);
-			is_false_ret = is_true_ret;
+			TrueStatement.Emit (ec);
 
 			if (FalseStatement != null){
 				bool branch_emitted = false;
@@ -205,16 +209,13 @@ namespace Mono.CSharp {
 				}
 
 				ig.MarkLabel (false_target);
-				is_false_ret = FalseStatement.Emit (ec);
+				FalseStatement.Emit (ec);
 
 				if (branch_emitted)
 					ig.MarkLabel (end);
 			} else {
 				ig.MarkLabel (false_target);
-				is_false_ret = false;
 			}
-
-			return is_true_ret && is_false_ret;
 		}
 	}
 
@@ -256,7 +257,7 @@ namespace Mono.CSharp {
 			return ok;
 		}
 		
-		protected override bool DoEmit (EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			Label loop = ig.DefineLabel ();
@@ -291,11 +292,6 @@ namespace Mono.CSharp {
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
 			ec.InLoop = old_inloop;
-
-			if (infinite)
-				return may_return == false;
-			else
-				return false;
 		}
 	}
 
@@ -353,10 +349,10 @@ namespace Mono.CSharp {
 			return ok;
 		}
 		
-		protected override bool DoEmit (EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
 			if (empty)
-				return false;
+				return;
 
 			ILGenerator ig = ec.ig;
 			Label old_begin = ec.LoopBegin;
@@ -406,8 +402,6 @@ namespace Mono.CSharp {
 			ec.LoopEnd = old_end;
 			ec.InLoop = old_inloop;
 			ec.LoopBeginTryCatchLevel = old_loop_begin_try_catch_level;
-
-			return ret;
 		}
 	}
 
@@ -479,10 +473,10 @@ namespace Mono.CSharp {
 			return ok;
 		}
 		
-		protected override bool DoEmit (EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
 			if (empty)
-				return false;
+				return;
 
 			ILGenerator ig = ec.ig;
 			Label old_begin = ec.LoopBegin;
@@ -530,20 +524,6 @@ namespace Mono.CSharp {
 			ec.LoopEnd = old_end;
 			ec.InLoop = old_inloop;
 			ec.LoopBeginTryCatchLevel = old_loop_begin_try_catch_level;
-			
-			//
- 			// Inform whether we are infinite or not
-			//
-			if (Test != null){
-				if (Test is BoolConstant){
-					BoolConstant bc = (BoolConstant) Test;
-
-					if (bc.Value)
-						return may_return == false;
-				}
-				return false;
-			} else
-				return may_return == false;
 		}
 	}
 	
@@ -562,13 +542,11 @@ namespace Mono.CSharp {
 			return expr != null;
 		}
 		
-		protected override bool DoEmit (EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			
 			expr.EmitStatement (ec);
-
-			return false;
 		}
 
 		public override string ToString ()
@@ -613,24 +591,24 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
-		protected override bool DoEmit (EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
 			if (ec.InFinally){
 				Report.Error (157, loc, "Control can not leave the body of the finally block");
-				return false;
+				return;
 			}
 
 			if (ec.ReturnType == null){
 				if (Expr != null){
 					Report.Error (127, loc, "Return with a value not allowed here");
-					return true;
+					return;
 				}
 			} else {
 				if (Expr == null){
 					Report.Error (126, loc, "An object of type `" +
 						      TypeManager.CSharpName (ec.ReturnType) + "' is " +
 						      "expected for the return statement");
-					return true;
+					return;
 				}
 
 				if (Expr.Type != ec.ReturnType)
@@ -638,7 +616,7 @@ namespace Mono.CSharp {
 						ec, Expr, ec.ReturnType, loc);
 
 				if (Expr == null)
-					return true;
+					return;
 
 				Expr.Emit (ec);
 
@@ -656,8 +634,6 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Ret);
 				ec.NeedExplicitReturn = false;
 			}
-
-			return true; 
 		}
 	}
 
@@ -698,12 +674,10 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override bool DoEmit (EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
 			Label l = label.LabelTarget (ec);
 			ec.ig.Emit (OpCodes.Br, l);
-			
-			return false;
 		}
 	}
 
@@ -761,12 +735,10 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected override bool DoEmit (EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
 			LabelTarget (ec);
 			ec.ig.MarkLabel (label);
-
-			return false;
 		}
 	}
 	
@@ -787,19 +759,18 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected override bool DoEmit (EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
 			if (ec.Switch == null){
 				Report.Error (153, loc, "goto default is only valid in a switch statement");
-				return false;
+				return;
 			}
 
 			if (!ec.Switch.GotDefault){
 				Report.Error (159, loc, "No default target on switch statement");
-				return false;
+				return;
 			}
 			ec.ig.Emit (OpCodes.Br, ec.Switch.DefaultTarget);
-			return false;
 		}
 	}
 
@@ -853,10 +824,9 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected override bool DoEmit (EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
 			ec.ig.Emit (OpCodes.Br, label);
-			return true;
 		}
 	}
 	
@@ -900,7 +870,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 			
-		protected override bool DoEmit (EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
 			if (expr == null){
 				if (ec.InCatch)
@@ -911,14 +881,12 @@ namespace Mono.CSharp {
 						"A throw statement with no argument is only " +
 						"allowed in a catch clause");
 				}
-				return false;
+				return;
 			}
 
 			expr.Emit (ec);
 
 			ec.ig.Emit (OpCodes.Throw);
-
-			return true;
 		}
 	}
 
@@ -935,21 +903,19 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected override bool DoEmit (EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 
 			if (ec.InLoop == false && ec.Switch == null){
 				Report.Error (139, loc, "No enclosing loop or switch to continue to");
-				return false;
+				return;
 			}
 
 			if (ec.InTry || ec.InCatch)
 				ig.Emit (OpCodes.Leave, ec.LoopEnd);
 			else
 				ig.Emit (OpCodes.Br, ec.LoopEnd);
-
-			return false;
 		}
 	}
 
@@ -966,13 +932,13 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected override bool DoEmit (EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
 			Label begin = ec.LoopBegin;
 			
 			if (!ec.InLoop){
 				Report.Error (139, loc, "No enclosing loop to continue to");
-				return false;
+				return;
 			} 
 
 			//
@@ -992,7 +958,6 @@ namespace Mono.CSharp {
 				throw new Exception ("Should never happen");
 			else
 				ec.ig.Emit (OpCodes.Br, begin);
-			return false;
 		}
 	}
 
@@ -1569,6 +1534,12 @@ namespace Mono.CSharp {
 			flags |= Flags.BlockUsed;
 		}
 
+		public bool HasRet {
+			get {
+				return (flags & Flags.HasRet) != 0;
+			}
+		}
+
 		VariableMap param_map, local_map;
 
 		public VariableMap ParameterMap {
@@ -1803,18 +1774,16 @@ namespace Mono.CSharp {
 			return ok;
 		}
 		
-		protected override bool DoEmit (EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
 			int statement_count = statements.Count;
 			for (int ix = 0; ix < statement_count; ix++){
 				Statement s = (Statement) statements [ix];
 				s.Emit (ec);
 			}
-
-			return (flags & Flags.HasRet) != 0;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			Block prev_block = ec.CurrentBlock;
 
@@ -1841,15 +1810,13 @@ namespace Mono.CSharp {
 			}
 
 			ec.Mark (StartLocation, true);
-			bool retval = DoEmit (ec);
+			DoEmit (ec);
 			ec.Mark (EndLocation, true); 
 
 			if (emit_debug_info && is_lexical_block)
 				ec.ig.EndScope ();
 
 			ec.CurrentBlock = prev_block;
-
-			return retval;
 		}
 	}
 
@@ -2281,7 +2248,7 @@ namespace Mono.CSharp {
 		/// <param name="ec"></param>
 		/// <param name="val"></param>
 		/// <returns></returns>
-		bool TableSwitchEmit (EmitContext ec, LocalBuilder val)
+		void TableSwitchEmit (EmitContext ec, LocalBuilder val)
 		{
 			int cElements = Elements.Count;
 			object [] rgKeys = new object [cElements];
@@ -2449,7 +2416,6 @@ namespace Mono.CSharp {
 
 			// now emit the code for the sections
 			bool fFoundDefault = false;
-			bool fAllReturn = true;
 			foreach (SwitchSection ss in Sections)
 			{
 				foreach (SwitchLabel sl in ss.Labels)
@@ -2462,18 +2428,14 @@ namespace Mono.CSharp {
 						fFoundDefault = true;
 					}
 				}
-				bool returns = ss.Block.Emit (ec);
-				fAllReturn &= returns;
+				ss.Block.Emit (ec);
 				//ig.Emit (OpCodes.Br, lblEnd);
 			}
 			
 			if (!fFoundDefault) {
 				ig.MarkLabel (lblDefault);
-				fAllReturn = false;
 			}
 			ig.MarkLabel (lblEnd);
-
-			return fAllReturn;
 		}
 		//
 		// This simple emit switch works, but does not take advantage of the
@@ -2481,7 +2443,7 @@ namespace Mono.CSharp {
 		// TODO: remove non-string logic from here
 		// TODO: binary search strings?
 		//
-		bool SimpleSwitchEmit (EmitContext ec, LocalBuilder val)
+		void SimpleSwitchEmit (EmitContext ec, LocalBuilder val)
 		{
 			ILGenerator ig = ec.ig;
 			Label end_of_switch = ig.DefineLabel ();
@@ -2490,7 +2452,6 @@ namespace Mono.CSharp {
 			bool default_found = false;
 			bool first_test = true;
 			bool pending_goto_end = false;
-			bool all_return = true;
 			bool null_found;
 			
 			ig.Emit (OpCodes.Ldloc, val);
@@ -2558,23 +2519,15 @@ namespace Mono.CSharp {
 				foreach (SwitchLabel sl in ss.Labels)
 					ig.MarkLabel (sl.ILLabelCode);
 
-				bool returns = ss.Block.Emit (ec);
-				if (returns)
-					pending_goto_end = false;
-				else {
-					all_return = false;
-					pending_goto_end = true;
-				}
+				ss.Block.Emit (ec);
+				pending_goto_end = !ss.Block.HasRet;
 				first_test = false;
 			}
 			if (!default_found){
 				ig.MarkLabel (default_target);
-				all_return = false;
 			}
 			ig.MarkLabel (next_test);
 			ig.MarkLabel (end_of_switch);
-
-			return all_return;
 		}
 
 		public override bool Resolve (EmitContext ec)
@@ -2622,7 +2575,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
-		protected override bool DoEmit (EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
 			// Store variable for comparission purposes
 			LocalBuilder value = ec.ig.DeclareLocal (SwitchType);
@@ -2643,11 +2596,10 @@ namespace Mono.CSharp {
 			ec.Switch = this;
 
 			// Emit Code.
-			bool all_return;
 			if (SwitchType == TypeManager.string_type)
-				all_return = SimpleSwitchEmit (ec, value);
+				SimpleSwitchEmit (ec, value);
 			else
-				all_return = TableSwitchEmit (ec, value);
+				TableSwitchEmit (ec, value);
 
 			// Restore context state. 
 			ig.MarkLabel (ec.LoopEnd);
@@ -2657,8 +2609,6 @@ namespace Mono.CSharp {
 			//
 			ec.LoopEnd = old_end;
 			ec.Switch = old_switch;
-			
-			return all_return;
 		}
 	}
 
@@ -2679,7 +2629,7 @@ namespace Mono.CSharp {
 			return Statement.Resolve (ec) && expr != null;
 		}
 		
-		protected override bool DoEmit (EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
 			Type type = expr.Type;
 			bool val;
@@ -2688,7 +2638,7 @@ namespace Mono.CSharp {
 				Report.Error (185, loc, "lock statement requires the expression to be " +
 					      " a reference type (type is: `" +
 					      TypeManager.CSharpName (type) + "'");
-				return false;
+				return;
 			}
 
 			ILGenerator ig = ec.ig;
@@ -2704,7 +2654,7 @@ namespace Mono.CSharp {
 			bool old_in_try = ec.InTry;
 			ec.InTry = true;
 			Label finish = ig.DefineLabel ();
-			val = Statement.Emit (ec);
+			Statement.Emit (ec);
 			ec.InTry = old_in_try;
 			// ig.Emit (OpCodes.Leave, finish);
 
@@ -2715,8 +2665,6 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Ldloc, temp);
 			ig.Emit (OpCodes.Call, TypeManager.void_monitor_exit_object);
 			ig.EndExceptionBlock ();
-			
-			return val;
 		}
 	}
 
@@ -2743,19 +2691,16 @@ namespace Mono.CSharp {
 			return ret;
 		}
 		
-		protected override bool DoEmit (EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
 			bool previous_state = ec.CheckState;
 			bool previous_state_const = ec.ConstantCheckState;
-			bool val;
 			
 			ec.CheckState = false;
 			ec.ConstantCheckState = false;
-			val = Block.Emit (ec);
+			Block.Emit (ec);
 			ec.CheckState = previous_state;
 			ec.ConstantCheckState = previous_state_const;
-
-			return val;
 		}
 	}
 
@@ -2782,19 +2727,16 @@ namespace Mono.CSharp {
 			return ret;
 		}
 
-		protected override bool DoEmit (EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
 			bool previous_state = ec.CheckState;
 			bool previous_state_const = ec.ConstantCheckState;
-			bool val;
 			
 			ec.CheckState = true;
 			ec.ConstantCheckState = true;
-			val = Block.Emit (ec);
+			Block.Emit (ec);
 			ec.CheckState = previous_state;
 			ec.ConstantCheckState = previous_state_const;
-
-			return val;
 		}
 	}
 
@@ -2818,16 +2760,13 @@ namespace Mono.CSharp {
 			return val;
 		}
 		
-		protected override bool DoEmit (EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
 			bool previous_state = ec.InUnsafe;
-			bool val;
 			
 			ec.InUnsafe = true;
-			val = Block.Emit (ec);
+			Block.Emit (ec);
 			ec.InUnsafe = previous_state;
-
-			return val;
 		}
 	}
 
@@ -2840,6 +2779,7 @@ namespace Mono.CSharp {
 		Statement statement;
 		Type expr_type;
 		FixedData[] data;
+		bool has_ret;
 
 		struct FixedData {
 			public bool is_object;
@@ -2985,14 +2925,23 @@ namespace Mono.CSharp {
 				}
 			}
 
-			return statement.Resolve (ec);
+			ec.StartFlowBranching (FlowBranching.BranchingType.Conditional, loc);
+
+			if (!statement.Resolve (ec)) {
+				ec.KillFlowBranching ();
+				return false;
+			}
+
+			FlowBranching.Reachability reachability = ec.EndFlowBranching ();
+			has_ret = reachability.IsUnreachable;
+
+			return true;
 		}
 		
-		protected override bool DoEmit (EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 
-			bool is_ret = false;
 			LocalBuilder [] clear_list = new LocalBuilder [data.Length];
 			
 			for (int i = 0; i < data.Length; i++) {
@@ -3048,10 +2997,11 @@ namespace Mono.CSharp {
 				}
 			}
 
-			is_ret = statement.Emit (ec);
+			statement.Emit (ec);
 
-			if (is_ret)
-				return is_ret;
+			if (has_ret)
+				return;
+
 			//
 			// Clear the pinned variable
 			//
@@ -3067,8 +3017,6 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Stloc, clear_list [i]);
 				}
 			}
-
-			return is_ret;
 		}
 	}
 	
@@ -3233,18 +3181,17 @@ namespace Mono.CSharp {
 			return ok;
 		}
 		
-		protected override bool DoEmit (EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			Label end;
 			Label finish = ig.DefineLabel ();;
-			bool returns;
 
 			ec.TryCatchLevel++;
 			end = ig.BeginExceptionBlock ();
 			bool old_in_try = ec.InTry;
 			ec.InTry = true;
-			returns = Block.Emit (ec);
+			Block.Emit (ec);
 			ec.InTry = old_in_try;
 
 			//
@@ -3269,15 +3216,13 @@ namespace Mono.CSharp {
 				} else
 					ig.Emit (OpCodes.Pop);
 				
-				if (!c.Block.Emit (ec))
-					returns = false;
+				c.Block.Emit (ec);
 			}
 
 			if (General != null){
 				ig.BeginCatchBlock (TypeManager.object_type);
 				ig.Emit (OpCodes.Pop);
-				if (!General.Block.Emit (ec))
-					returns = false;
+				General.Block.Emit (ec);
 			}
 			ec.InCatch = old_in_catch;
 
@@ -3292,8 +3237,6 @@ namespace Mono.CSharp {
 			
 			ig.EndExceptionBlock ();
 			ec.TryCatchLevel--;
-
-			return returns;
 		}
 	}
 
@@ -3500,14 +3443,12 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
-		protected override bool DoEmit (EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
 			if (expression_or_block is DictionaryEntry)
-				return EmitLocalVariableDecls (ec);
+				EmitLocalVariableDecls (ec);
 			else if (expression_or_block is Expression)
-				return EmitExpression (ec);
-
-			return false;
+				EmitExpression (ec);
 		}
 	}
 
@@ -4104,7 +4045,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 		
-		protected override bool DoEmit (EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
 			bool ret_val;
 			
@@ -4127,8 +4068,6 @@ namespace Mono.CSharp {
 			ec.LoopEnd = old_end;
 			ec.InLoop = old_inloop;
 			ec.LoopBeginTryCatchLevel = old_loop_begin_try_catch_level;
-
-			return ret_val;
 		}
 	}
 }
