@@ -2047,12 +2047,12 @@ namespace Mono.CSharp {
 			//
 			Block current_block = ec.CurrentBlock;
 			if (current_block != null){
-				if (is_base && current_block.IsVariableNameUsedInChildBlock(Name)) {
+				LocalInfo vi = current_block.GetLocalInfo (Name);
+				if (is_base && (vi != null) && current_block.IsVariableNameUsedInChildBlock(Name)) {
 					Report.Error (135, Location, "'" + Name + "' has a different meaning in a child block");
 					return null;
 				}
 
-				LocalInfo vi = current_block.GetLocalInfo (Name);
 				if (vi != null){
 					Expression var;
 					

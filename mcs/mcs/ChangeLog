@@ -5,6 +5,12 @@
 
 2004-05-23  Martin Baulig  <martin@ximian.com>
 
+	* ecore.cs (SimpleName.SimpleNameResolve): Only report a CS0135 if
+	the variable also exists in the current block (otherwise, we need
+	to report a CS0103).  Fixes #58670.
+
+2004-05-23  Martin Baulig  <martin@ximian.com>
+
 	* flowanalysis.cs (Reachability.Reachable): Compute this
 	on-the-fly rather than storing it as a field.
 
