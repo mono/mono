@@ -42,6 +42,8 @@ namespace Mono.ILASM {
 			} else if (IsMethodOp (str)) {
 				MethodOp op = GetMethodOp (str);
 				return new ILToken (Token.INSTR_METHOD, op);
+			} else if (IsLdstrOp (str)) {
+				return new ILToken (Token.INSTR_STRING, str);
 			}
 
 			return null;
@@ -49,7 +51,9 @@ namespace Mono.ILASM {
 
 		public static bool IsInstr (string str)
 		{
-			return (IsOp (str) || IsIntOp (str) || IsTypeOp (str) || IsMethodOp (str));
+			return (IsOp (str) || IsIntOp (str) || 
+				IsTypeOp (str) || IsMethodOp (str) ||
+				IsLdstrOp (str));
 		}
 
 		public static bool IsOp (string str)
@@ -70,6 +74,11 @@ namespace Mono.ILASM {
 		public static bool IsMethodOp (string str) 
 		{
 			return method_table.Contains (str);
+		}
+
+		public static bool IsLdstrOp (string str)
+		{
+			return (str == "ldstr");
 		}
 
 		public static Op GetOp (string str)
