@@ -1,3 +1,25 @@
+2002-08-06  Tim Coleman <tim@timcoleman.com>
+	* DescriptionAttribute.cs:
+	* EventClassAttribute.cs:
+	* EventTrackingEnabledAttribute.cs:
+	* ExceptionClassAttribute.cs:
+	* IISIntrinsicsAttribute.cs:
+	* IRegistrationHelper.cs:
+	* IRemoteDispatch.cs:
+	* IServicedComponentInfo.cs:
+	* ITransaction.cs:
+	* InstallationFlags.cs:
+	* InterfaceQueuingAttribute.cs:
+	* JustInTimeActivationAttribute.cs:
+	* LoadBalancingSupportedAttribute.cs:
+	* MustRunInClientContextAttribute.cs:
+	* ObjectPoolingAttribute.cs:
+	* PrivateComponentAttribute.cs:
+	* PropertyLockMode.cs:
+	* PropertyReleaseMode.cs:
+	* XACTTRANSINFO.cs:
+		New stubs added.
+
 2002-08-03  Tim Coleman <tim@timcoleman.com>
 	* AccessChecksLevelOption.cs:
 	* ActivationOption.cs:
