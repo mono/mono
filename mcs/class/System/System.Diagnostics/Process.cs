@@ -568,6 +568,7 @@ namespace System.Diagnostics {
 		protected override void Dispose(bool disposing) {
 			// Check to see if Dispose has already been called.
 			if(this.disposed) {
+				this.disposed=true;
 				// If this is a call to Dispose,
 				// dispose all managed resources.
 				if(disposing) {
@@ -575,7 +576,6 @@ namespace System.Diagnostics {
 				}
 				
 				// Release unmanaged resources
-				this.disposed=true;
 
 				lock(this) {
 					if(process_handle!=IntPtr.Zero) {
@@ -585,12 +585,7 @@ namespace System.Diagnostics {
 					}
 				}
 			}
-		}
-
-		public new void Dispose() {
-			Dispose(true);
-			// Take yourself off the Finalization queue
-			GC.SuppressFinalize(this);
+			base.Dispose (disposing);
 		}
 
 		[MonoTODO]

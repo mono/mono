@@ -48,12 +48,6 @@ namespace System.ComponentModel {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("this probably shouldn't be here.")]
-		public void Dispose ()
-		{
-			throw new NotImplementedException ();
-		}
-
 		#endregion // Methods
 		
 	}

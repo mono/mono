@@ -1,3 +1,14 @@
+2002-08-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.ComponentModel/Component.cs:
+	* System.ComponentModel/ComponentCollection.cs:
+	* System.ComponentModel/Container.cs:
+	* System.ComponentModel/MarshalByValueComponent.cs:
+	* System.Diagnostics/Process.cs:
+	* System.Diagnostics/TextWriterTraceListener.cs:
+	* System.IO/FileSystemWatcher.cs:
+	IDisposable fixes.
+
 2002-08-15  Tim Coleman <tim@timcoleman.com>
 	* list.unix: Added System.IO files.
 

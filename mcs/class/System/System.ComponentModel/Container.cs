@@ -132,13 +132,18 @@ namespace System.ComponentModel {
 		{
 			if (disposed)
 				return;
+			disposed = true;
 
 			if (release_all){
-				cc.Dispose ();
-				cc = null;
+				//??
 			}
 
-			disposed = true;
+			cc = null;
+		}
+
+		~Container ()
+		{
+			Dispose (false);
 		}
 
 		[MonoTODO]

@@ -118,7 +118,10 @@ namespace System.IO {
 		[MonoTODO]
 		protected override void Dispose (bool disposing)
 		{
-			throw new NotImplementedException (); 
+			if (disposing) {
+				// 
+			}
+			base.Dispose (disposing);
 		}
 
 		[MonoTODO]

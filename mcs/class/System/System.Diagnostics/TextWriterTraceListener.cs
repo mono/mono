@@ -81,6 +81,8 @@ namespace System.Diagnostics {
 		{
 			if (disposing)
 				Close ();
+
+			base.Dispose (disposing);
 		}
 
 		public override void Flush ()

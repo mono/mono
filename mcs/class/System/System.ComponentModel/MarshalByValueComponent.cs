@@ -22,16 +22,28 @@ namespace System.ComponentModel
 			//        but do not throw a NotImplementedException
 		}
 
-		[MonoTODO]
-		public void Dispose () {
-			// TODO: need to do, but do not
-			// throw a NotImplementedException
+		public void Dispose ()
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 
 		[MonoTODO]
-		protected virtual void Dispose (bool disposing) {
+		protected virtual void Dispose (bool disposing)
+		{
+			if (disposing) {
+				// free managed objects contained here
+			}
+
+			// Free unmanaged objects
+			// Set fields to null
 		}
 
+		~MarshalByValueComponent ()
+		{
+			Dispose (false);
+		}
+		
 		[MonoTODO]
 		public virtual object GetService (Type service) {
 			return null;

@@ -22,6 +22,7 @@ namespace System.ComponentModel {
 
 		EventHandlerList event_handlers;
 		ISite            mySite;
+		object disposedEvent = new object ();
 
 		// <summary>
 		//   Component Constructor
@@ -72,23 +73,18 @@ namespace System.ComponentModel {
 			}
 		}
 
-		[MonoTODO]
 		~Component()
 		{
-			// FIXME: Not sure this is correct.
-			Dispose(true);
+			Dispose (false);
 		}
 
 		// <summary>
 		//   Dispose resources used by this component
 		// </summary>
-		[MonoTODO]
 		public void Dispose ()
 		{
-			// FIXME: Not sure this is correct.
-			Dispose(false);
-			if (Disposed != null)
-				Disposed(this, EventArgs.Empty);
+			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 
 		// <summary>
@@ -104,6 +100,12 @@ namespace System.ComponentModel {
 		// </remarks>
 		protected virtual void Dispose (bool release_all)
 		{
+			if (release_all) {
+				EventHandler eh = (EventHandler) Events [disposedEvent];
+				if (eh != null)
+					eh (this, EventArgs.Empty);
+			}
+			mySite = null;
 		}
 
 		// <summary>
@@ -123,10 +125,17 @@ namespace System.ComponentModel {
 			return String.Format ("{0} [{1}]", mySite.Name, GetType ().ToString ());
 		}
 		// <summary>
-		//   FIXME: Figure out this one.
+		//   This event is called when the component is explicitly disposed.
 	        // </summary>
-		[MonoTODO ("Figure this out")]
-		public event EventHandler Disposed;
+		public event EventHandler Disposed
+		{
+			add {
+				Events.AddHandler (disposedEvent, value);
+			}
+			remove {
+				Events.RemoveHandler (disposedEvent, value);
+			}
+		}
 	}
 	
 }

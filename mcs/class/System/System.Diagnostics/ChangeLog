@@ -1,3 +1,8 @@
+2002-08-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Process.cs:
+	* TextWriterTraceListener.cs: IDisposable fixes.
+
 2002-08-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Process.cs: class status based fixes.
