@@ -1,3 +1,7 @@
+2003-06-16  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlSerializationWriter.cs : some QName handling fix.
+
 2003-06-13  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlSerializationReader.cs: Fixed error message.

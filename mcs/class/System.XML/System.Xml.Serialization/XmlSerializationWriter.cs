@@ -160,7 +160,8 @@ namespace System.Xml.Serialization {
 
 		protected string FromXmlQualifiedName (XmlQualifiedName xmlQualifiedName)
 		{
-			if (xmlQualifiedName == null) return string.Empty;
+			if (xmlQualifiedName == null || xmlQualifiedName == XmlQualifiedName.Empty)
+				return string.Empty;
 			return GetQualifiedName (xmlQualifiedName.Name, xmlQualifiedName.Namespace);
 		}
 
@@ -188,8 +189,13 @@ namespace System.Xml.Serialization {
 			string prefix = Writer.LookupPrefix (ns);
 			if (prefix == null) 
 			{
-				prefix = String.Format ("q{0}", ++qnameCount);
-				WriteAttribute ("xmlns", prefix, null, ns);
+				if (ns == String.Empty) {
+					prefix = String.Empty;
+					WriteAttribute ("xmlns", String.Empty);
+				} else {
+					prefix = String.Format ("q{0}", ++qnameCount);
+					WriteAttribute ("xmlns", prefix, null, ns);
+				}
 			}
 			return prefix;
 		}
@@ -197,7 +203,11 @@ namespace System.Xml.Serialization {
 		[MonoTODO ("Need to check for namespace conflicts before blindly allocating qN")]
 		private string GetQualifiedName (string name, string ns)
 		{
-			return String.Format ("{0}:{1}", GetNamespacePrefix (ns), name);
+			string prefix = GetNamespacePrefix (ns);
+			if (prefix == String.Empty)
+				return name;
+			else
+				return String.Format ("{0}:{1}", prefix, name);
 		}
 
 		protected abstract void InitCallbacks ();
