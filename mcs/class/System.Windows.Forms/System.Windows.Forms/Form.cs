@@ -877,7 +877,9 @@
 
 			//Compact Framework
 			protected virtual void OnActivated (EventArgs e) {
-				Activated(this,e);
+				if (Activated != null) {
+					Activated(this,e);
+				}
 			}
 
 			//Compact Framework
