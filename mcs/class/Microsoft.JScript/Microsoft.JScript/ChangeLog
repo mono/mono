@@ -1,3 +1,7 @@
+2003-11-10 cesar lopez nataren <cesar@ciencias.unam.mx>
+
+	* Visitor.cs: Deleted.
+
 2003-11-09 cesar lopez nataren <cesar@ciencias.unam.mx>
 
 	* FormalParameterList.cs: Now inherits from AST. Each of the
