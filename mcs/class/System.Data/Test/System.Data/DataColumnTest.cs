@@ -269,5 +269,248 @@ namespace MonoTests.System.Data
 			Type vType = dataRow.ItemArray[0].GetType();
 			Assertion.AssertEquals("DC28: Value from DataRow.Item", v, DBNull.Value);
 		}
+
+                public void TestExpressionFunctions ()
+                {
+                	DataTable T = new DataTable ("test");
+			DataColumn C = new DataColumn ("name");
+			T.Columns.Add (C);
+			C = new DataColumn ("age");
+			C.DataType = typeof (int);
+			T.Columns.Add (C);
+			C = new DataColumn ("id");
+                	C.Expression = "substring (name, 1, 3) + len (name) + age";
+			T.Columns.Add (C);
+			
+			DataSet Set = new DataSet ("TestSet");
+			Set.Tables.Add (T);
+			
+			DataRow Row = null;
+			for (int i = 0; i < 100; i++) {
+				Row = T.NewRow ();
+				Row [0] = "human" + i;
+				Row [1] = i;
+				T.Rows.Add (Row);
+			}
+			
+			Row = T.NewRow ();
+			Row [0] = "h*an";
+			Row [1] = DBNull.Value;
+			T.Rows.Add (Row);
+						
+			AssertEquals ("DC29", "hum710", T.Rows [10] [2]);
+			AssertEquals ("DC30", "hum64", T.Rows [4] [2]);
+                	C = T.Columns [2];
+                	C.Expression = "isnull (age, 'succ[[]]ess')";
+                	AssertEquals ("DC31", "succ[[]]ess", T.Rows [100] [2]);
+                	
+                	C.Expression = "iif (age = 24, 'hurrey', 'boo')";
+                	AssertEquals ("DC32", "boo", T.Rows [50] [2]);
+	               	AssertEquals ("DC33", "hurrey", T.Rows [24] [2]);
+                	
+                	C.Expression = "convert (age, 'System.Boolean')";
+                	AssertEquals ("DC32", Boolean.TrueString, T.Rows [50] [2]);
+                	AssertEquals ("DC32", Boolean.FalseString, T.Rows [0] [2]);
+                	
+                	//
+                	// Exceptions
+                	//
+                	
+                	try {
+                		C.Expression = "iff (age = 24, 'hurrey', 'boo')";
+                		Fail ("DC34");
+                	} catch (Exception e) {
+                		                	
+                		// The expression contains undefined function call iff().
+                		AssertEquals ("DC35", typeof (EvaluateException), e.GetType ());
+                	}
+                	
+                	try {
+                		C.Expression = "iif (nimi = 24, 'hurrey', 'boo')";
+                		Fail ("DC36");
+                	} catch (Exception e) {                		               	
+                		AssertEquals ("DC37", typeof (EvaluateException), e.GetType ());
+                		AssertEquals ("DC38", "Cannot find column [nimi].", e.Message);
+                	}
+                	
+                	try {
+                		C.Expression = "iif (name = 24, 'hurrey', 'boo')";
+                		Fail ("DC39");
+                	} catch (Exception e) {
+                		AssertEquals ("DC40", typeof (EvaluateException), e.GetType ());
+                		AssertEquals ("DC41", "Cannot perform '=' operation on System.String and System.Int32.", e.Message);
+                	}
+                	
+
+                	try {
+                		C.Expression = "convert (age, Boolean)";	
+                		Fail ("DC42");
+                	} catch (Exception e) {
+                		AssertEquals ("DC43", typeof (EvaluateException), e.GetType ());
+                		AssertEquals ("DC44", "Invalid type name 'Boolean'.", e.Message);
+                	}
+                	
+                }
+
+                public void TestExpressionAggregates ()
+                {
+                	DataTable T = new DataTable ("test");
+			DataTable T2 = new DataTable ("test2");
+			
+			DataColumn C = new DataColumn ("name");
+			T.Columns.Add (C);
+			C = new DataColumn ("age");
+			C.DataType = typeof (int);
+			T.Columns.Add (C);
+			C = new DataColumn ("childname");
+			T.Columns.Add (C);
+                	
+			C = new DataColumn ("expression");
+			T.Columns.Add (C);
+
+			DataSet Set = new DataSet ("TestSet");
+			Set.Tables.Add (T);
+			Set.Tables.Add (T2);
+			
+			DataRow Row = null;
+			for (int i = 0; i < 100; i++) {
+				Row = T.NewRow ();
+				Row [0] = "human" + i;
+				Row [1] = i;
+				Row [2] = "child" + i;
+				T.Rows.Add (Row);
+			}
+			
+			Row = T.NewRow ();
+			Row [0] = "h*an";
+			Row [1] = DBNull.Value;
+			T.Rows.Add (Row);
+
+			C = new DataColumn ("name");
+                	T2.Columns.Add (C);
+			C = new DataColumn ("age");
+			C.DataType = typeof (int);
+			T2.Columns.Add (C);
+                	
+			for (int i = 0; i < 100; i++) {
+				Row = T2.NewRow ();
+				Row [0] = "child" + i;
+				Row [1] = i;
+				T2.Rows.Add (Row);
+				Row = T2.NewRow ();
+				Row [0] = "child" + i;
+				Row [1] = i - 2;
+				T2.Rows.Add (Row);
+			}
+                	
+                	DataRelation Rel = new DataRelation ("Rel", T.Columns [2], T2.Columns [0]);
+                	Set.Relations.Add (Rel);
+                	
+                	C = T.Columns [3];
+                	C.Expression = "Sum (Child.age)";
+                	AssertEquals ("DC45", "-2", T.Rows [0] [3]);
+                	AssertEquals ("DC46", "98", T.Rows [50] [3]);
+                	
+			C.Expression = "Count (Child.age)";
+                	AssertEquals ("DC47", "2", T.Rows [0] [3]);
+                	AssertEquals ("DC48", "2", T.Rows [60] [3]);		                	
+		
+			C.Expression = "Avg (Child.age)";
+                	AssertEquals ("DC49", "-1", T.Rows [0] [3]);
+                	AssertEquals ("DC50", "59", T.Rows [60] [3]);		                	
+
+			C.Expression = "Min (Child.age)";
+                	AssertEquals ("DC51", "-2", T.Rows [0] [3]);
+                	AssertEquals ("DC52", "58", T.Rows [60] [3]);		                	
+
+			C.Expression = "Max (Child.age)";
+                	AssertEquals ("DC53", "0", T.Rows [0] [3]);
+                	AssertEquals ("DC54", "60", T.Rows [60] [3]);		                	
+
+			C.Expression = "stdev (Child.age)";
+                	AssertEquals ("DC55", "1,4142135623731", T.Rows [0] [3]);
+                	AssertEquals ("DC56", "1,4142135623731", T.Rows [60] [3]);		                	
+
+			C.Expression = "var (Child.age)";
+                	AssertEquals ("DC57", "2", T.Rows [0] [3]);
+                	AssertEquals ("DC58", "2", T.Rows [60] [3]);		                	
+                }
+
+		public void TestExpressionOperator ()
+		{
+                	DataTable T = new DataTable ("test");
+			DataColumn C = new DataColumn ("name");
+			T.Columns.Add (C);
+			C = new DataColumn ("age");
+			C.DataType = typeof (int);
+			T.Columns.Add (C);
+			C = new DataColumn ("id");
+                	C.Expression = "substring (name, 1, 3) + len (name) + age";
+			T.Columns.Add (C);
+			
+			DataSet Set = new DataSet ("TestSet");
+			Set.Tables.Add (T);
+			
+			DataRow Row = null;
+			for (int i = 0; i < 100; i++) {
+				Row = T.NewRow ();
+				Row [0] = "human" + i;
+				Row [1] = i;
+				T.Rows.Add (Row);
+			}
+			
+			Row = T.NewRow ();
+			Row [0] = "h*an";
+			Row [1] = DBNull.Value;
+			T.Rows.Add (Row);
+			
+                	C = T.Columns [2];
+                	C.Expression = "age + 4";
+			AssertEquals ("DC59", "68", T.Rows [64] [2]);
+			
+			C.Expression = "age - 4";
+			AssertEquals ("DC60", "60", T.Rows [64] [2]);
+			
+			C.Expression = "age * 4";
+			AssertEquals ("DC61", "256", T.Rows [64] [2]);
+			
+			C.Expression = "age / 4";
+			AssertEquals ("DC62", "16", T.Rows [64] [2]);
+			
+			C.Expression = "age % 5";
+			AssertEquals ("DC63", "4", T.Rows [64] [2]);
+			
+			C.Expression = "age in (5, 10, 15, 20, 25)";
+			AssertEquals ("DC64", "False", T.Rows [64] [2]);
+			AssertEquals ("DC65", "True", T.Rows [25] [2]);
+			
+			C.Expression = "name like 'human1%'";
+			AssertEquals ("DC66", "True", T.Rows [1] [2]);
+			AssertEquals ("DC67", "False", T.Rows [25] [2]);
+
+                	C.Expression = "age < 4";
+			AssertEquals ("DC68", "False", T.Rows [4] [2]);
+			AssertEquals ("DC69", "True", T.Rows [3] [2]);
+
+                	C.Expression = "age <= 4";
+			AssertEquals ("DC70", "True", T.Rows [4] [2]);
+			AssertEquals ("DC71", "False", T.Rows [5] [2]);
+
+                	C.Expression = "age > 4";
+			AssertEquals ("DC72", "False", T.Rows [4] [2]);
+			AssertEquals ("DC73", "True", T.Rows [5] [2]);
+
+                	C.Expression = "age >= 4";
+			AssertEquals ("DC74", "True", T.Rows [4] [2]);
+			AssertEquals ("DC75", "False", T.Rows [1] [2]);
+
+                	C.Expression = "age = 4";
+			AssertEquals ("DC76", "True", T.Rows [4] [2]);
+			AssertEquals ("DC77", "False", T.Rows [1] [2]);
+
+                	C.Expression = "age <> 4";
+			AssertEquals ("DC76", "False", T.Rows [4] [2]);
+			AssertEquals ("DC77", "True", T.Rows [1] [2]);
+		}
 	}
 }

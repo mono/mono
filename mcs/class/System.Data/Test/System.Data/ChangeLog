@@ -1,3 +1,7 @@
+2003-04-02  Ville Palo <vi64pa@koti.soon.fi>
+
+	* DataColumnTest.cs: Added tests for Expression property
+	
 2003-03-02  Ville Palo <vi64pa@koti.soon.fi>
 
 	* DataTableTest.cs: More tests for Select
