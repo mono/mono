@@ -1,3 +1,9 @@
+2005-01-07  Geoff Norton  <gnorton@customerdna.com>
+
+	* XplatUIOSX.cs (SetCaretPos):  We need to translate the view
+	coordinates to window space to place the caret properly, FIXED.
+	Implement GetWindowState & SetWindowState
+
 2005-01-06  Peter Bartok <pbartok@novell.com>
 
 	* Form.cs:

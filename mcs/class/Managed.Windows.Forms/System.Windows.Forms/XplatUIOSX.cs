@@ -320,11 +320,33 @@ namespace System.Windows.Forms {
 		}
 
 		internal override FormWindowState GetWindowState(IntPtr hwnd) {
-			throw new NotImplementedException();
+			IntPtr window = GetControlOwner (hwnd);
+
+			if (!IsWindowCollapsed (window))
+				return FormWindowState.Minimized;
+			if (IsWindowInStandardState (window, IntPtr.Zero, IntPtr.Zero))
+				return FormWindowState.Normal;
+
+			return FormWindowState.Maximized;
 		}
 
 		internal override void SetWindowState(IntPtr hwnd, FormWindowState state) {
-			throw new NotImplementedException();
+			IntPtr window = GetControlOwner (hwnd);
+
+			switch (state) {
+				case FormWindowState.Minimized: {
+					CollapseWindow (window, true);
+					break;
+				}
+				case FormWindowState.Normal: {
+					ZoomWindow (window, 8, false);
+					break;
+				}
+				case FormWindowState.Maximized: {
+					ZoomWindow (window, 7, false);
+					break;
+				}
+			}
 		}
 
 		internal override void RefreshWindow(IntPtr handle) {
@@ -932,7 +954,19 @@ namespace System.Windows.Forms {
 			data.IsVisible = visible;
 
 			CheckError (HIViewSetVisible (handle, visible));
-			// We have to manually reset all children as well
+/*
+DEBUG THIS:
+			IntPtr child = HIViewGetFirstSubview (handle);
+			if (child != IntPtr.Zero) {
+				HIViewSetVisible (child, visible);
+				while (true) {
+					child = HIViewGetNextView (child);
+					if (child == IntPtr.Zero)
+						break;
+					HIViewSetVisible (child, visible);
+				}
+			}
+*/
 			
 			return true;
 		}
@@ -1134,10 +1168,14 @@ namespace System.Windows.Forms {
 
 		internal override void SetCaretPos (IntPtr hwnd, int x, int y) {
 			if (caret.hwnd == hwnd) {
+				CGPoint cpt = new CGPoint ();
+				cpt.x = x;
+				cpt.y = y;
+				HIViewConvertPoint (ref cpt, hwnd, IntPtr.Zero);
 				caret.timer.Stop ();
 				HideCaret ();
-				caret.x = x;
-				caret.y = y;
+				caret.x = (int)cpt.x;
+				caret.y = (int)cpt.y-23;
 				if (caret.visible == 1) {
 					ShowCaret ();
 					caret.timer.Start ();
@@ -1350,6 +1388,14 @@ namespace System.Windows.Forms {
 		internal static extern int CGContextClipToRect (IntPtr cgContext, HIRect clip);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern void CreateCGContextForPort (IntPtr port, ref IntPtr cgc);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern bool IsWindowCollapsed (IntPtr hWnd);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern bool IsWindowInStandardState (IntPtr hWnd, IntPtr a, IntPtr b);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern void CollapseWindow (IntPtr hWnd, bool collapse);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern void ZoomWindow (IntPtr hWnd, short partCode, bool front);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern IntPtr GetWindowPort (IntPtr hWnd);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
