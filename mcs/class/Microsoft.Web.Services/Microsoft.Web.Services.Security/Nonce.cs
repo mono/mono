@@ -31,6 +31,8 @@ namespace Microsoft.Web.Services.Security {
 		internal Nonce () : this (16) {}
 		internal Nonce (int size)
 #else
+		//Compilation fix, spoulit please check the authenticity of this.
+		public Nonce () : this (16) {}
 		public Nonce (int size)
 #endif
 		{

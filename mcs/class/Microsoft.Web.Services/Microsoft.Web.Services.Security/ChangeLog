@@ -1,3 +1,7 @@
+2003-10-25  Todd Berman <tberman@gentoo.org>
+
+	* Nonce.cs: WSE2 Compilation fix
+
 2003-10-24  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AsymmetricDecryptionKey.cs: Change to license and line-ends.
