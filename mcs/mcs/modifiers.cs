@@ -110,12 +110,15 @@ namespace Mono.CSharp {
 				fa |= FieldAttributes.Public;
 			if ((mod_flags & PRIVATE) != 0)
 				fa |= FieldAttributes.Private;
-			if ((mod_flags & PROTECTED) != 0 && (mod_flags & INTERNAL) != 0)
-				fa |= FieldAttributes.FamORAssem;
-			if ((mod_flags & PROTECTED) != 0)
-				fa |= FieldAttributes.Family;
-			if ((mod_flags & INTERNAL) != 0)
-				fa |= FieldAttributes.Assembly;
+			if ((mod_flags & PROTECTED) != 0){
+				if ((mod_flags & INTERNAL) != 0)
+					fa |= FieldAttributes.FamORAssem;
+				else 
+					fa |= FieldAttributes.Family;
+			} else {
+				if ((mod_flags & INTERNAL) != 0)
+					fa |= FieldAttributes.Assembly;
+			}
 			
 			if ((mod_flags & STATIC) != 0)
 				fa |= FieldAttributes.Static;

@@ -1,3 +1,9 @@
+
+Wed Jun 19 20:17:59 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* modifiers.cs: produce correct field attributes for protected
+	internal. Easy fix so miguel can work on ther harder stuff:-)
+
 2002-06-18  Miguel de Icaza  <miguel@ximian.com>
 
 	* pending.cs: New file.  Move the code from class.cs here.
