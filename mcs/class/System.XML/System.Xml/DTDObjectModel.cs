@@ -747,7 +747,6 @@ namespace Mono.Xml
 		public string Name;
 		public string PublicId;
 		public string SystemId;
-		public string BaseURI;
 		public string LiteralValue;
 		public bool LoadFailed;
 

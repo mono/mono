@@ -21,21 +21,22 @@ namespace System.Xml {
 
 		EntityHandling entityHandling;
 		XmlReader sourceReader;
+		XmlTextReader xmlTextReader;
 		XmlReader validatingReader;
 		XmlResolver resolver;
 		ValidationType validationType;
 		XmlSchemaCollection schemas;
 		DTDValidatingReader dtdReader;
+		IHasXmlSchemaInfo schemaInfo;
 
 		#endregion // Fields
 
 		#region Constructors
 
-		[MonoTODO]
 		public XmlValidatingReader (XmlReader reader)
-			: base ()
 		{
 			this.sourceReader = reader;
+			this.xmlTextReader = reader as XmlTextReader;
 			entityHandling = EntityHandling.ExpandEntities;
 			validationType = ValidationType.Auto;
 			schemas = new XmlSchemaCollection ();
@@ -56,27 +57,29 @@ namespace System.Xml {
 		#region Properties
 
 		public override int AttributeCount {
-			[MonoTODO]
 			get { return validatingReader == null ? 0 : validatingReader.AttributeCount; }
 		}
 
 		public override string BaseURI {
-			[MonoTODO]
 			get { return validatingReader == null ? sourceReader.BaseURI : validatingReader.BaseURI; }
 		}
 
+		// This property for this class always return true.
 		public override bool CanResolveEntity {
-			get { return validatingReader == null ? false : validatingReader.CanResolveEntity; }
+			get { return true; }
 		}
 
 		public override int Depth { 
-			[MonoTODO]
 			get { return validatingReader == null ? 0 : validatingReader.Depth; }
 		}
 
 		public Encoding Encoding {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				if (xmlTextReader != null)
+					return xmlTextReader.Encoding;
+				else
+					throw new NotSupportedException ("Encoding is supported only for XmlTextReader.");
+			}
 		}
 
 		public EntityHandling EntityHandling {
@@ -85,38 +88,35 @@ namespace System.Xml {
 		}
 
 		public override bool EOF { 
-			[MonoTODO]
 			get { return validatingReader == null ? false : validatingReader.EOF; }
 		}
 
 		public override bool HasValue { 
-			[MonoTODO]
 			get { return validatingReader == null ? false : validatingReader.HasValue; }
 		}
 
 		public override bool IsDefault {
-			[MonoTODO]
 			get { return validatingReader == null ? false : validatingReader.IsDefault; }
 		}
 
 		public override bool IsEmptyElement { 
-			[MonoTODO]
 			get { return validatingReader == null ? false : validatingReader.IsEmptyElement; }
 		}
 
 		public override string this [int i] { 
-			[MonoTODO]
-			get { return validatingReader [i]; }
+			get {
+				if (validatingReader == null)
+					throw new IndexOutOfRangeException ("Reader is not started.");
+				return validatingReader [i];
+			}
 		}
 
 		public override string this [string name] { 
-			[MonoTODO]
-			get { return validatingReader == null ? String.Empty : validatingReader [name]; }
+			get { return validatingReader == null ? null : validatingReader [name]; }
 		}
 
 		public override string this [string localName, string namespaceName] { 
-			[MonoTODO]
-			get { return validatingReader == null ? String.Empty : validatingReader [localName, namespaceName]; }
+			get { return validatingReader == null ? null : validatingReader [localName, namespaceName]; }
 		}
 
 		int IXmlLineInfo.LineNumber {
@@ -134,66 +134,73 @@ namespace System.Xml {
 		}
 
 		public override string LocalName { 
-			[MonoTODO]
-			get { return validatingReader == null ? String.Empty : validatingReader.LocalName; }
+			get {
+				if (validatingReader == null)
+					return String.Empty;
+				else if (Namespaces)
+					return validatingReader.LocalName;
+				else
+					return validatingReader.Name;
+			}
 		}
 
 		public override string Name {
-			[MonoTODO]
 			get { return validatingReader == null ? String.Empty : validatingReader.Name; }
 		}
 
-		[MonoTODO]
 		public bool Namespaces {
 			get {
-				XmlTextReader xtr = sourceReader as XmlTextReader;
-				if (xtr != null)
-					return xtr.Namespaces;
+				if (xmlTextReader != null)
+					return xmlTextReader.Namespaces;
 				else
-					throw new NotImplementedException ();
+					return true;
 			}
 			set {
-				XmlTextReader xtr = sourceReader as XmlTextReader;
-				if (xtr != null)
-					xtr.Namespaces = value;
+				if (ReadState != ReadState.Initial)
+					throw new InvalidOperationException ("Namespaces have to be set before reading.");
+
+				if (xmlTextReader != null)
+					xmlTextReader.Namespaces = value;
 				else
-					throw new NotImplementedException ();
+					throw new NotSupportedException ("Property 'Namespaces' is supported only for XmlTextReader.");
 			}
 		}
 
 		public override string NamespaceURI { 
-			[MonoTODO]
-			get { return validatingReader == null ? String.Empty : validatingReader.NamespaceURI; }
+			get {
+				if (validatingReader == null)
+					return String.Empty;
+				else if (Namespaces)
+					return validatingReader.NamespaceURI;
+				else
+					return String.Empty;
+			}
 		}
 
 		public override XmlNameTable NameTable { 
-			[MonoTODO]
-			get { return validatingReader == null ? null : validatingReader.NameTable; }
+			get { return validatingReader == null ? sourceReader.NameTable : validatingReader.NameTable; }
 		}
 
 		public override XmlNodeType NodeType { 
-			[MonoTODO]
 			get { return validatingReader == null ? XmlNodeType.None : validatingReader.NodeType; }
 		}
 
-		public override string Prefix { 
+		public override string Prefix {
 			[MonoTODO]
 			get { return validatingReader == null ? String.Empty : validatingReader.Prefix; }
 		}
 
 		public override char QuoteChar { 
-			[MonoTODO]
-			get { return validatingReader == null ? '"' : validatingReader.QuoteChar; }
+			get { return validatingReader == null ? sourceReader.QuoteChar : validatingReader.QuoteChar; }
 		}
 
-		[MonoTODO ("confirm which reader should be returned.")]
 		public XmlReader Reader {
 			get { return sourceReader; }
 		}
 
 		public override ReadState ReadState { 
 			[MonoTODO]
-			get { 
+			get {
 				if (validatingReader == null)
 					return ReadState.Initial;
 				return validatingReader.ReadState; 
@@ -229,12 +236,10 @@ namespace System.Xml {
 		}
 
 		public override string Value {
-			[MonoTODO]
 			get { return validatingReader == null ? String.Empty : validatingReader.Value; }
 		}
 
 		public override string XmlLang {
-			[MonoTODO]
 			get { return validatingReader == null ? String.Empty : validatingReader.XmlLang; }
 		}
 
@@ -242,12 +247,12 @@ namespace System.Xml {
 			[MonoTODO]
 			set {
 				resolver = value;
-				DTDValidatingReader dvr = validatingReader as DTDValidatingReader;
-				if (dvr != null)
-					dvr.XmlResolver = value;
 //				XmlSchemaValidatingReader xsvr = validatingReader as XmlSchemaValidatingReader;
 //				if (xsvr != null)
 //					xsvr.XmlResolver = value;
+				DTDValidatingReader dvr = validatingReader as DTDValidatingReader;
+				if (dvr != null)
+					dvr.XmlResolver = value;
 			}
 		}
 
@@ -260,28 +265,27 @@ namespace System.Xml {
 
 		#region Methods
 
-		[MonoTODO]
 		public override void Close ()
 		{
-			validatingReader.Close ();
+			if (validatingReader == null)
+				sourceReader.Close ();
+			else
+				validatingReader.Close ();
 		}
 
-		[MonoTODO]
 		public override string GetAttribute (int i)
 		{
-			return validatingReader.GetAttribute (i);
+			return this [i];
 		}
 
-		[MonoTODO]
 		public override string GetAttribute (string name)
 		{
-			return validatingReader.GetAttribute (name);
+			return this [name];
 		}
 
-		[MonoTODO]
 		public override string GetAttribute (string localName, string namespaceName)
 		{
-			return validatingReader.GetAttribute (localName, namespaceName);
+			return this [localName, namespaceName];
 		}
 
 		internal XmlParserContext GetInternalParserContext ()
@@ -296,45 +300,54 @@ namespace System.Xml {
 			return info != null ? info.HasLineInfo () : false;
 		}
 
-		[MonoTODO]
 		public override string LookupNamespace (string prefix)
 		{
-			return validatingReader.LookupNamespace (prefix);
+			if (validatingReader != null)
+				return sourceReader.LookupNamespace (prefix);
+			else
+				return validatingReader.LookupNamespace (prefix);
 		}
 
-		[MonoTODO]
 		public override void MoveToAttribute (int i)
 		{
-			validatingReader.MoveToAttribute (i);
+			if (validatingReader == null)
+				throw new IndexOutOfRangeException ("Reader is not started.");
+			else
+				validatingReader.MoveToAttribute (i);
 		}
 
-		[MonoTODO]
 		public override bool MoveToAttribute (string name)
 		{
+			if (validatingReader == null)
+				return false;
 			return validatingReader.MoveToAttribute (name);
 		}
 
-		[MonoTODO]
 		public override bool MoveToAttribute (string localName, string namespaceName)
 		{
+			if (validatingReader == null)
+				return false;
 			return validatingReader.MoveToAttribute (localName, namespaceName);
 		}
 
-		[MonoTODO]
 		public override bool MoveToElement ()
 		{
+			if (validatingReader == null)
+				return false;
 			return validatingReader.MoveToElement ();
 		}
 
-		[MonoTODO]
 		public override bool MoveToFirstAttribute ()
 		{
+			if (validatingReader == null)
+				return false;
 			return validatingReader.MoveToFirstAttribute ();
 		}
 
-		[MonoTODO]
 		public override bool MoveToNextAttribute ()
 		{
+			if (validatingReader == null)
+				return false;
 			return validatingReader.MoveToNextAttribute ();
 		}
 
@@ -363,36 +376,61 @@ namespace System.Xml {
 			return validatingReader.Read ();
 		}
 
-		[MonoTODO]
 		public override bool ReadAttributeValue ()
 		{
+			if (validatingReader == null)
+				return false;
 			return validatingReader.ReadAttributeValue ();
 		}
 
 #if NET_1_0
+		// LAMESPEC: MS.NET 1.0 has critical bug here.
+		// After calling these methods, validation does no more work!
 		[MonoTODO]
 		public override string ReadInnerXml ()
 		{
+			if (validatingReader == null)
+				return "";
 			return validatingReader.ReadInnerXml ();
 		}
 
 		[MonoTODO]
 		public override string ReadOuterXml ()
 		{
+			if (validatingReader == null)
+				return "";
 			return validatingReader.ReadOuterXml ();
 		}
 #endif
 
 		[MonoTODO]
+#if NET_1_0
 		public override string ReadString ()
 		{
-			return validatingReader.ReadString ();
+			return base.ReadStringInternal ();
 		}
+#else
+		public override string ReadString ()
+		{
+			return base.ReadString ();
+		}
+#endif
 
 		[MonoTODO]
 		public object ReadTypedValue ()
 		{
-			throw new NotImplementedException ();
+			if (dtdReader == null)
+				return null;
+			XmlSchemaDatatype dt = schemaInfo.SchemaType as XmlSchemaDatatype;
+			if (dt == null)
+				return null;
+			switch (NodeType) {
+			case XmlNodeType.Element:
+				return dt.ParseValue (ReadString (), NameTable, dtdReader.ParserContext.NamespaceManager);
+			case XmlNodeType.Attribute:
+				return dt.ParseValue (Value, NameTable, dtdReader.ParserContext.NamespaceManager);
+			}
+			return null;
 		}
 
 		public override void ResolveEntity ()

@@ -397,7 +397,14 @@ namespace System.Xml
 			Read ();
 		}
 
+#if NET_1_0
 		public abstract string ReadString ();
+#else
+		public virtual string ReadString ()
+		{
+			return ReadStringInternal ();
+		}
+#endif
 
 		internal string ReadStringInternal ()
 		{

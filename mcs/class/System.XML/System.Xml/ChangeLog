@@ -1,3 +1,18 @@
+2003-08-14  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* DTDValidatingReader.cs : Added SchemaType.
+	  Read() Assures to return to element.
+	* DTDObjectModel.cs : Removed DTDEntityDeclaration.BaseURI.
+	* XmlReader.cs : ReadString() should be virtual in NET_1_1.
+	* XmlTextReader.cs : 1) Depth should consider Attribute and its values.
+	  Introduced insideAttribute field to support them.
+	  2) ReadAttributeValue() should consider empty string.
+	* XmlValidatingReader.cs :
+	  Fixed several properties which premised as if it was already read.
+	  Encoding and Namespaces now throws NotSupportedException for other
+	  than XmlTextReader.
+	  Implemented ReadTypedValue() based on IHasXmlSchemaInfo.SchemaType.
+
 2003-08-10  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlInputStream.cs : Reverted CanSeek as to return false anyway.

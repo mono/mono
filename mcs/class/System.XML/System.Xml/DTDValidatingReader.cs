@@ -8,7 +8,7 @@ using System.Xml.Schema;
 
 namespace Mono.Xml
 {
-	public class DTDValidatingReader : XmlReader, IXmlLineInfo, IHasXmlParserContext
+	public class DTDValidatingReader : XmlReader, IXmlLineInfo, IHasXmlParserContext, IHasXmlSchemaInfo
 	{
 		public DTDValidatingReader (XmlReader reader)
 			: this (reader, null)
@@ -520,6 +520,7 @@ namespace Mono.Xml
 				}
 				break;
 			}
+			MoveToElement ();
 			return true;
 		}
 
@@ -965,6 +966,16 @@ namespace Mono.Xml
 				if (reader.ReadState == ReadState.EndOfFile && currentTextValue != null)
 					return ReadState.Interactive;
 				return reader.ReadState;
+			}
+		}
+
+		public object SchemaType {
+			get {
+				if (currentElement == null)
+					return null;
+				DTDAttributeDefinition def =
+					DTD.AttListDecls [currentElement] [currentAttribute];
+				return def.Datatype;
 			}
 		}
 

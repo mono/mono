@@ -16,6 +16,9 @@
 //   Some thought needs to be given to performance. There's too many
 //   strings being allocated.
 //
+//   If current node is on an Attribute, Prefix might be null, and
+//   in several fields which uses XmlReader, it should be considered.
+//
 
 using System;
 using System.Collections;
@@ -99,7 +102,6 @@ namespace System.Xml
 		{
 		}
 
-		[MonoTODO("TODO as same as private XmlTextReader(TextReader, XmlNodeType, XmlParserContext)")]
 		public XmlTextReader (string xmlFragment, XmlNodeType fragType, XmlParserContext context)
 			: this (context != null ? context.BaseURI : String.Empty,
 				new StringReader (xmlFragment),
@@ -108,8 +110,6 @@ namespace System.Xml
 		{
 		}
 
-		// TODO still remains as described at head of this file,
-		// but it might not be TODO of the constructors...
 		XmlTextReader (string url, TextReader fragment, XmlNodeType fragType, XmlParserContext context)
 		{
 			InitializeContext (url, context, fragment, fragType);
@@ -132,6 +132,10 @@ namespace System.Xml
 		public override int Depth
 		{
 			get {
+				if (NodeType == XmlNodeType.Attribute)
+					return elementDepth + 1;
+				else if (insideAttribute)
+					return elementDepth + 2; // inside attribute value.
 				return elementDepth;
 			}
 		}
@@ -403,6 +407,7 @@ namespace System.Xml
 				value, // value
 				false // clearAttributes
 				);
+			insideAttribute = true;
 			attributeValuePos = 0;
 		}
 
@@ -435,6 +440,7 @@ namespace System.Xml
 					value, // value
 					false // clearAttributes
 				);
+				insideAttribute = true;
 				attributeValuePos = 0;
 			}
 
@@ -461,6 +467,7 @@ namespace System.Xml
 				orderedAttributesEnumerator = null;
 				if (isPropertySaved)
 					RestoreProperties ();
+				insideAttribute = false;
 				return true;
 			}
 
@@ -493,6 +500,7 @@ namespace System.Xml
 					value, // value
 					false // clearAttributes
 				);
+				insideAttribute = true;
 				attributeValuePos = 0;
 				return true;
 			}
@@ -505,6 +513,7 @@ namespace System.Xml
 			bool more = false;
 			isPropertySaved = false;
 			readState = ReadState.Interactive;
+			insideAttribute = false;
 
 			// It was moved from end of ReadStartTag ().
 			if (depthUp)
@@ -519,7 +528,7 @@ namespace System.Xml
 				maybeTextDecl--;
 
 			if (!more && startNodeType == XmlNodeType.Document && currentState != XmlNodeType.EndElement)
-				throw new XmlException ("Document element was not appeared.");
+				throw new XmlException ("Document element did not appear.");
 
 			return more;
 		}
@@ -543,9 +552,20 @@ namespace System.Xml
 				return false;
 
 			// If not started, then initialize attributeString when parsing is at start.
-			if (attributeValuePos == 0)
+			if (attributeValuePos == 0) {
 				attributeString =
 					value.Substring (1, value.Length - 2);
+				// If it has an empty value, this method still returns true.
+				if (attributeString.Length == 0) {
+					attributeValuePos = -1;
+					SetProperties (XmlNodeType.Text,
+						"",
+						false,
+						"",
+						false);
+					return true;
+				}
+			}
 
 			// It occurs when attribute dully consists of entity reference.
 			if (attributeValuePos == attributeString.Length)
@@ -749,6 +769,8 @@ namespace System.Xml
 		private StringBuilder valueBuilder;
 		private bool valueBuilderAvailable = false;
 
+		private bool insideAttribute;
+
 		private bool isPropertySaved;
 		private XmlNodeType saveNodeType;
 		private string saveName;
@@ -780,6 +802,7 @@ namespace System.Xml
 
 		private string attributeString;
 		private int attributeValuePos;
+
 		// This should be only referenced(used) by ReadInnerXml(). Kind of flyweight pattern.
 		private StringBuilder innerXmlBuilder;
 
@@ -904,6 +927,7 @@ namespace System.Xml
 
 				if (indexOfColon == -1) {
 					prefix = String.Empty;
+//					prefix = nodeType == XmlNodeType.Attribute ? null : String.Empty;
 					localName = name;
 				} else {
 					prefix = name.Substring (0, indexOfColon);
@@ -917,6 +941,7 @@ namespace System.Xml
 			switch (nodeType) {
 			case XmlNodeType.Attribute:
 				if (prefix == string.Empty) namespaceURI = string.Empty;
+//				if (prefix == string.Empty || prefix == null) namespaceURI = string.Empty;
 				else namespaceURI = LookupNamespace (prefix);
 				if (localName == "xmlns" && prefix == "")
 					namespaceURI = "http://www.w3.org/2000/xmlns/";
