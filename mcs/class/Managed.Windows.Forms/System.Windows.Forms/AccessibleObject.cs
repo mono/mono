@@ -23,9 +23,10 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.1 $
-// $Modtime: $
 // $Log: AccessibleObject.cs,v $
+// Revision 1.2  2004/08/11 13:44:33  pbartok
+// - Fixed to match ControlCollection rewrite
+//
 // Revision 1.1  2004/07/09 05:21:25  pbartok
 // - Initial check-in
 //
@@ -163,8 +164,8 @@ namespace System.Windows.Forms {
 
 		public virtual AccessibleObject GetChild(int index) {
 			if (owner!=null) {
-				if (index<owner.num_of_children) {
-					return owner.children[index].AccessibilityObject;
+				if (index<owner.child_controls.Count) {
+					return owner.child_controls[index].AccessibilityObject;
 				}
 			}
 			return null;
@@ -172,7 +173,7 @@ namespace System.Windows.Forms {
 
 		public virtual int GetChildCount() {
 			if (owner!=null) {
-				return owner.num_of_children;
+				return owner.child_controls.Count;
 			}
 			return -1;
 		}
