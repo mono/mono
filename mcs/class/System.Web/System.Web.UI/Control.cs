@@ -436,11 +436,7 @@ namespace System.Web.UI
 
                 public virtual Control FindControl (string id)
                 {
-			Control x = FindControl (id, 0);
-			if (x == null) {
-				Console.WriteLine ("{0} NO encontrado", id);
-			}
-			return x;
+			return FindControl (id, 0);
                 }
 
 		Control LookForControlByName (string id)
@@ -459,7 +455,6 @@ namespace System.Web.UI
 				}
 			}
 
-			Console.WriteLine ("Devuelvo null para {0}", id);
 			return null;
 		}
 		
@@ -482,14 +477,11 @@ namespace System.Web.UI
 			if (colon == -1)
 				return LookForControlByName (id.Substring (pathOffset));
 			
-			Console.WriteLine ("Buscan: {0} {1} {2}", id, pathOffset, colon);
 			string idfound = id.Substring (pathOffset, colon - pathOffset);
 			namingContainer = LookForControlByName (idfound);
 			if (namingContainer == null || !namingContainer._isNamingContainer)
 				return null;
 
-			Console.WriteLine ("Encontrado {0}", idfound);
-			Console.WriteLine ("Ahora {0}", id.Substring (colon + 1));
 			return namingContainer.FindControl (id, colon + 1);
                 }
 
