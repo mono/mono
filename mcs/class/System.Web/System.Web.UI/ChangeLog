@@ -1,3 +1,9 @@
+2003-02-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: give different default names depending on the place where
+	it is assigned. Implemented ResolveURl (no more ~ rendered in
+	attributes!).
+
 2003-02-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs: when adding a control, assign default names to th

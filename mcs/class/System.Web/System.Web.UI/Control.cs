@@ -385,13 +385,12 @@ namespace System.Web.UI
 				control._parent.Controls.Remove (control);
 
 			control._parent = this;
-			control._page = Page;
+			control._page = _page;
 
 			if (_isNamingContainer) {
 				control._namingContainer = this;
-				if (control.AutoID == true && control._userId == null) {
-					control._userId =  GetDefaultName ();
-				}
+				if (control.AutoID == true && control._userId == null)
+					control._userId =  GetDefaultName () + "a";
 			}
 
 			if (inited)
@@ -692,10 +691,20 @@ namespace System.Web.UI
                         }
                 }
                 
-                [MonoTODO]
                 public string ResolveUrl(string relativeUrl)
                 {
-                	return relativeUrl;
+			if (relativeUrl == null)
+				throw new ArgumentNullException ("relativeUrl");
+
+			if (relativeUrl == "")
+				return "";
+
+			string ts = TemplateSourceDirectory;
+			if (UrlUtils.IsRelativeUrl (relativeUrl) == false || ts == "")
+				return relativeUrl;
+			
+			HttpResponse resp = Context.Response;
+			return resp.ApplyAppPathModifier (UrlUtils.Combine (ts, relativeUrl));
                 }
 
                 public void SetRenderMethodDelegate(RenderMethod renderMethod) //DIT
@@ -752,13 +761,13 @@ namespace System.Web.UI
 				if (namingContainer != null && 
 				    namingContainer._userId == null &&
 				    namingContainer.autoID)
-					namingContainer._userId = namingContainer.GetDefaultName ();
+					namingContainer._userId = namingContainer.GetDefaultName () + "b";
 
 				foreach (Control c in _controls) {
 					c._page = Page;
 					c._namingContainer = namingContainer;
 					if (namingContainer != null && c._userId == null && c.autoID)
-						c._userId = namingContainer.GetDefaultName ();
+						c._userId = namingContainer.GetDefaultName () + "c";
 
 					c.InitRecursive (namingContainer);
 				}
