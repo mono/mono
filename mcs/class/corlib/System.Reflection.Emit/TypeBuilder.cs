@@ -36,6 +36,7 @@ namespace System.Reflection.Emit {
 	private ModuleBuilder pmodule;
 	private int class_size;
 	private PackingSize packing_size;
+	private Type created;
 
 	public const int UnspecifiedTypeSize = -1;
 
@@ -125,7 +126,7 @@ namespace System.Reflection.Emit {
 		public PackingSize PackingSize {
 			get {return packing_size;}
 		}
-		public override Type ReflectedType {get {return parent;}}
+		public override Type ReflectedType {get {return nesting_type;}}
 		public override MemberTypes MemberType { 
 			get {return MemberTypes.TypeInfo;}
 		}
@@ -297,7 +298,13 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ();
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern Type create_runtime_class (TypeBuilder tb);
+		
 		public Type CreateType() {
+			/* handle nesting_type */
+			if (created != null)
+				throw new InvalidOperationException ("type already created");
 			if (methods != null) {
 				foreach (MethodBuilder method in methods) {
 					method.fixup ();
@@ -308,6 +315,7 @@ namespace System.Reflection.Emit {
 					ctor.fixup ();
 				}
 			}
+			created = create_runtime_class (this);
 
 			return this;
 		}

@@ -1,4 +1,8 @@
 
+Wed Aug 14 17:38:41 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* TypeBuilder.cs: ReflectedType and CreateType fixes.
+
 Thu Aug 8 10:25:51 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* AssemblyBuilder.cs: added API to embed managed resources.
