@@ -1,3 +1,8 @@
+//
+// Checks for an implicit void * conversion during an
+// explicit conversion
+//
+
 using System;
 
 namespace IntPtr_Conv
@@ -10,10 +15,10 @@ namespace IntPtr_Conv
 		
 		static int Main(string[] args)
 		{
-			IntPtr[] pArray = new IntPtr[1] {IntPtr.Zero};
+			IntPtr p = IntPtr.Zero;
 
 			unsafe {
-				FooStruct* s = (FooStruct*) (pArray[0]);
+				FooStruct* s = (FooStruct*) (p);
 			}
 
 			return 0;

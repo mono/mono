@@ -1,3 +1,8 @@
+2002-12-21  Ravi Pratap  <ravi@ximian.com>
+
+	* test-171.cs : Fix up since it wasn't working because of some
+	array code bug. That is a separate problem ;-)
+
 2002-12-21  Ravi Pratap  <ravi@ximain.com>
 
 	* test-171.cs : This was mysteriously absent. Add new test in its
