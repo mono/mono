@@ -112,7 +112,7 @@ namespace System.Windows.Forms {
 
 		#region ISerializable Members
 		[MonoTODO]
-		public void GetObjectData(SerializationInfo info, StreamingContext context) {
+		void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context) {
 			throw new NotImplementedException();
 		}
 		#endregion	// ISerializable Members
