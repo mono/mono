@@ -1,3 +1,9 @@
+2002-10-10  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* DSATest.cs: Added non-abstract DSA class to test To/FromXmlString()
+	* RSATest.cs: Added non-abstract RSA class to test To/FromXmlString()
+	* AllTests.cs: Added DSATest.cs and RSATest.cs in suite
+
 2002-10-09  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoConfigTest.cs: New tests

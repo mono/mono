@@ -55,6 +55,8 @@ namespace MonoTests.System.Security.Cryptography {
 				suite.AddTest (MD5Test.Suite);
 				suite.AddTest (RC2Test.Suite);
 				suite.AddTest (CryptoConfigTest.Suite);
+				suite.AddTest (DSATest.Suite);
+				suite.AddTest (RSATest.Suite);
                                 return suite;
                         }
                 }
