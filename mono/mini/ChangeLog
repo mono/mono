@@ -1,3 +1,8 @@
+2004-08-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c inssel-amd64.brg cpu-amd64.md: Merge changes from
+	x86 backend.
+
 2004-08-19 Bernie Solomon <bernard@ugsolutions.com>
 
 	* exceptions-sparc.c (throw_exception): fix typo
