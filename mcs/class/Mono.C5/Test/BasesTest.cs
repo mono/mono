@@ -81,7 +81,6 @@ namespace nunit.support
                 public bool Equals(dbl that) { return d == that.d; }
             }
 
-#if FIXME
 			[Test]
 			public void GenericC()
 			{
@@ -93,7 +92,6 @@ namespace nunit.support
 				Assert.AreEqual(0, h.Compare(s, t));
 				Assert.IsTrue(h.Compare(s, u) < 0);
 			}
-#endif
 
 
 			[Test]
@@ -109,7 +107,6 @@ namespace nunit.support
 			}
 
 
-#if FIXME
 			[Test]
 			public void GenericCViaBuilder()
 			{
@@ -145,7 +142,6 @@ namespace nunit.support
 				Assert.AreEqual(0, h.Compare(s, t));
 				Assert.IsTrue(h.Compare(s, u) < 0);
 			}
-#endif
 
 		}
 
