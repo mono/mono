@@ -1,3 +1,7 @@
+2003-10-09  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ObjRef.cs: Added new constructor to support CAD channel.
+
 2003-10-08  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* Identity.cs, RemotingServices.cs: Fixed memory leak. I Changed reference 

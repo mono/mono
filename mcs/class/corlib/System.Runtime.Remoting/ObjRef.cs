@@ -38,6 +38,13 @@ namespace System.Runtime.Remoting {
 			UpdateChannelInfo();
 		}
 
+		internal ObjRef (string typeName, string uri, IChannelInfo cinfo) 
+		{
+			this.uri = uri;
+			channel_info = cinfo;
+			typeInfo = new TypeInfo (Type.GetType (typeName));
+		}
+
 		internal ObjRef (ObjRef o, bool unmarshalAsProxy) {
 			channel_info = o.channel_info;
 			uri = o.uri;
