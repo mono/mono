@@ -1,6 +1,11 @@
+2002-08-26  Martin Baulig  <martin@gnome.org>
+
+	* debug.c (mono_debugger_internal_free_symbol_files): New function.
+	(mono_debugger_internal_symbol_files_changed): New global variable.
+
 2002-08-24  Martin Baulig  <martin@gnome.org>
 
-	* debug.c (mono_debugger_internal_symbol_files): New function.
+	* debug.c (mono_debugger_internal_get_symbol_files): New function.
 
 2002-08-24  Martin Baulig  <martin@gnome.org>
 
