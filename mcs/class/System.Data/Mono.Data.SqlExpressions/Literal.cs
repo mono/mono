@@ -11,7 +11,7 @@ using System;
 using System.Data;
 
 namespace Mono.Data.SqlExpressions {
-	public class Literal : IExpression {
+	internal class Literal : IExpression {
 		object val;
 	
 		public Literal (object val)
