@@ -1,3 +1,9 @@
+2003-05-30  Miguel de Icaza  <miguel@ximian.com>
+
+	* Methods.cs (MakeResponseSerializer): DUH.  Use the
+	ResponseName/ResponseNamespace for the member import, not the
+	RequestName and RequestNamespace.  The bugs of cut-and-paste.
+
 2003-05-29  Miguel de Icaza  <miguel@ximian.com>
 
 	* SoapHttpClientProtocol.cs (CreateMessage): Kill.  Move

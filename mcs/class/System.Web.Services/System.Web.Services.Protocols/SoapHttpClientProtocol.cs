@@ -19,7 +19,7 @@ using System.Web.Services;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Web.Services.Description;
-
+using System.Xml.Serialization;
 namespace System.Web.Services.Protocols {
 	public class SoapHttpClientProtocol : HttpWebClientProtocol {
 		TypeStubInfo type_info;
@@ -170,18 +170,11 @@ namespace System.Web.Services.Protocols {
 			xml_reader.MoveToContent ();
 			xml_reader.ReadStartElement ("Body", soap_envelope);
 
-			xml_reader.MoveToContent ();
-			xml_reader.ReadStartElement (msi.ResponseName, msi.ResponseNamespace);
-
 			object [] ret = (object []) msi.ResponseSerializer.Deserialize (xml_reader);
 
-			Console.WriteLine ("Returned array elements: " + ret.Length);
-			for (int i = 0; i < ret.Length; i++){
-				Console.WriteLine ("Value-{0}: {1}", i, ret [i]);
-			}
 			return (object []) ret;
 		}
-		
+
 		protected object[] Invoke (string method_name, object[] parameters)
 		{
 			MethodStubInfo msi = type_info.GetMethod (method_name);
