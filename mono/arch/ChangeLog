@@ -1,5 +1,10 @@
 2003-10-13  Bernie Solomon  <bernard@ugsolutions.com>
 
+	* hppa/tramp.c: add initial implementation - this is 64 bit only
+	hppa/Makefile.am hppa/.cvsignore: added
+
+2003-10-13  Bernie Solomon  <bernard@ugsolutions.com>
+
 	* sparc/sparc-codegen.h sparc/tramp.c: add initial implementation
 	for V9 (64 bit), cover more 32 bit cases as well.
 
