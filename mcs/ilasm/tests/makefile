@@ -10,7 +10,7 @@ test-compiler:
 	@rm -f *.exe; \
 	for i in $(TEST_SOURCES); do \
 		echo -n "Running $$i ... "; \
-		if $(ILASM) $$i.cs > /dev/null; then \
+		if $(ILASM) $$i.il > /dev/null; then \
 			if mono ./$$i.exe > /dev/null; then \
 				echo OK; \
 			else \
@@ -23,7 +23,7 @@ test-compiler:
 #	echo "Running NO_PASS tests ..."
 #	for i in $(TEST_NOPASS); do \
 #		echo -n "Running $$i ... "; \
-#		if $(ILASM) $$i.cs > /dev/null; then \
+#		if $(ILASM) $$i.il > /dev/null; then \
 #			echo OK; \
 #		else \
 #			echo FAILED TO COMPILE; exit 1; \
