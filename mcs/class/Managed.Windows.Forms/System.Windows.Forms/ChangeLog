@@ -13,6 +13,9 @@
 	  - Added handling of DestroyNotify message
 	  - Added handler for CreateNotify message (still disabled)
 	  - Improved (tried to at least) Where method to provide file and lineno
+	* X11Structs.cs:
+	  - Added XErrorHandler delegate
+	  - Added XRequest enumeration (to suppor translation of errors)
 
 2005-02-25  Jackson Harper  <jackson@ximian.com>
 
