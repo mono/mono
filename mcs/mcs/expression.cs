@@ -5058,10 +5058,8 @@ namespace Mono.CSharp {
 						
 						ig.Emit (OpCodes.Ldloc, temp);
 
-						for (int idx = dims; idx > 0; ) {
-							idx--;
+						for (int idx = 0; idx < dims; idx++) 
 							IntConstant.EmitInt (ig, current_pos [idx]);
-						}
 
 						//
 						// If we are dealing with a struct, get the
@@ -5096,7 +5094,7 @@ namespace Mono.CSharp {
 				//
 				// Advance counter
 				//
-				for (int j = 0; j < dims; j++){
+				for (int j = dims - 1; j >= 0; j--){
 					current_pos [j]++;
 					if (current_pos [j] < (int) bounds [j])
 						break;

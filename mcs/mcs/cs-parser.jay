@@ -2252,7 +2252,11 @@ unary_expression
 	  {
 		$$ = new Unary (Unary.Operator.OnesComplement, (Expression) $2, lexer.Location);
 	  }
-        | OPEN_PARENS expression CLOSE_PARENS unary_expression
+	| cast_expression
+	;
+
+cast_expression
+        : OPEN_PARENS expression CLOSE_PARENS unary_expression
 	  {
 		  $$ = new Cast ((Expression) $2, (Expression) $4, lexer.Location);
 	  }

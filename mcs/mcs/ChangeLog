@@ -1,3 +1,9 @@
+2002-09-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (EmitDynamicInitializers): Apply patch from
+	hwang_rob@yahoo.ca that fixes the order in which we emit our
+	initializers. 
+
 2002-09-21  Martin Baulig  <martin@gnome.org>
 
 	* delegate.cs (Delegate.VerifyApplicability): Make this work if the
