@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.4  2004/07/19 07:29:35  jordi
+// Call RefreshWindow only if the window has created
+//
 // Revision 1.3  2004/07/15 17:03:35  jordi
 // added basic mouse handeling events
 //
@@ -1043,8 +1046,9 @@ namespace System.Windows.Forms
 			OnCreateControl();
 		}
 
-		public virtual void Refresh() {
-			XplatUI.RefreshWindow(window.Handle);
+		public virtual void Refresh() {			
+			if (IsHandleCreated == true)
+				XplatUI.RefreshWindow(window.Handle);
 		}
 
 		public void SetBounds(int x, int y, int width, int height) {
