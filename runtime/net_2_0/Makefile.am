@@ -95,7 +95,7 @@ uninstall-local:
 	@if test -n '$(gac_assemblies_list)'; then \
 	  for i in ''$(gac_assemblies_list); do \
 		echo "$(top_builddir)/mono/mini/mono $(gacutil) /u $(srcdir)/$$i" ; \
-		$(top_builddir)/mono/mini/mono $(gacutil) /u $(srcdir)/$$i || exit 1 ; \
+		$(top_builddir)/mono/mini/mono $(gacutil) /u $(srcdir)/$(basename $$i dll) || exit 1 ; \
 	  done; fi
 	rm -f $(DESTDIR)/$(libdir)/$(corlibdir)/$(corlib)
 
