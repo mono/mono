@@ -1,3 +1,8 @@
+2003-11-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* aot.c: prevent divide by zero error when reporting (it happened with
+	Accessibility.dll).
+
 2003-11-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.h (inst_switch): Remove unused macro.
