@@ -393,6 +393,16 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if (source is New && target_type.IsValueType &&
+			    (target.eclass != ExprClass.IndexerAccess) && (target.eclass != ExprClass.PropertyAccess)){
+				New n = (New) source;
+
+				if (n.SetValueTypeVariable (target))
+					return n;
+				else
+					return null;
+			}
+
 			if ((source.eclass == ExprClass.Type) && (source is TypeExpr)) {
 				source.Error_UnexpectedKind ("variable or value", loc);
 				return null;
@@ -403,20 +413,9 @@ namespace Mono.CSharp {
 
 			}
 
-			if (target_type == source_type){
-				if (source is New && target_type.IsValueType &&
-				    (target.eclass != ExprClass.IndexerAccess) && (target.eclass != ExprClass.PropertyAccess)){
-					New n = (New) source;
-					
-					if (n.SetValueTypeVariable (target))
-						return n;
-					else
-						return null;
-				}
-				
+			if (target_type == source_type)
 				return this;
-			}
-
+			
 			//
 			// If this assignemnt/operator was part of a compound binary
 			// operator, then we allow an explicit conversion, as detailed
@@ -443,7 +442,7 @@ namespace Mono.CSharp {
 					// 2. and the original right side is implicitly convertible to
 					// the type of target
 					//
-					if (Convert.ImplicitStandardConversionExists (ec, a.original_source, target_type))
+					if (Convert.ImplicitStandardConversionExists (a.original_source, target_type))
 						return this;
 
 					//

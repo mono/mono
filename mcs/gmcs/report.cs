@@ -267,9 +267,9 @@ namespace Mono.CSharp {
 			Console.WriteLine (String.Format ("{0}({1}) (Location of symbol related to previous error)", loc.Name, loc.Row));
 		}    
         
-		static public void RuntimeMissingSupport (Location loc, string feature) 
+		static public void RuntimeMissingSupport (string feature) 
 		{
-			Report.Error (-88, loc, "Your .NET Runtime does not support '{0}'. Please use the latest Mono runtime instead.", feature);
+			Report.Error (-88, "Your .NET Runtime does not support '{0}'. Please use the latest Mono runtime instead.", feature);
 		}
 
 		/// <summary>

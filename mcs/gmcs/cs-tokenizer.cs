@@ -2195,9 +2195,9 @@ namespace Mono.CSharp
 			if (ifstack != null && ifstack.Count >= 1) {
 				int state = (int) ifstack.Pop ();
 				if ((state & REGION) != 0)
-					Report.Error (1038, Location, "#endregion directive expected");
+					Report.Error (1038, "#endregion directive expected");
 				else 
-					Report.Error (1027, Location, "#endif directive expected");
+					Report.Error (1027, "#endif directive expected");
 			}
 				
 		}

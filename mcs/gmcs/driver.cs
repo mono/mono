@@ -1675,7 +1675,7 @@ namespace Mono.CSharp
 							margs [1] = spec.Substring (0, cp);
 						} else {
 							margs [1] = spec;
-							margs [0] = Path.GetFileName (spec);
+							margs [0] = spec.Replace ('/','.').Replace ('\\', '.');
 						}
 
 						if (File.Exists ((string) margs [1]))

@@ -270,14 +270,14 @@ namespace Mono.CSharp {
 				// According to section 16.3.1, the namespace-or-type-name is resolved
 				// as if the immediately containing namespace body has no using-directives.
 				resolved = NamespaceEntry.Lookup (
-					null, alias, Alias.CountTypeArguments, true, Location);
+					null, alias, Alias.CountTypeArguments, true, false, Location);
 
 				NamespaceEntry curr_ns = NamespaceEntry.Parent;
 
 				while ((curr_ns != null) && (resolved == null)) {
 					resolved = curr_ns.Lookup (
 						null, alias, Alias.CountTypeArguments,
-						false, Location);
+						false, false, Location);
 
 					if (resolved == null)
 						curr_ns = curr_ns.Parent;
@@ -365,11 +365,12 @@ namespace Mono.CSharp {
 			if (using_clauses == null)
 				using_clauses = new ArrayList ();
 
-			foreach (UsingEntry old_entry in using_clauses) {
-				if (old_entry.Name == ns) {
-					if (RootContext.WarningLevel >= 3)
+			if (RootContext.WarningLevel >= 3) {
+				foreach (UsingEntry old_entry in using_clauses){
+					if (old_entry.Name == ns){
 						Report.Warning (105, loc, "The using directive for '{0}' appeared previously in this namespace", ns);
 						return;
+					}
 				}
 			}
 			
@@ -419,7 +420,7 @@ namespace Mono.CSharp {
 		}
 
 		public IAlias Lookup (DeclSpace ds, string name, int num_type_params,
-				      bool ignore_using, Location loc)
+				      bool ignore_using, bool silent, Location loc)
 		{
 			IAlias o;
 			Namespace ns;
@@ -432,7 +433,7 @@ namespace Mono.CSharp {
 				string first = name.Substring (0, pos);
 				string last = name.Substring (pos + 1);
 
-				o = Lookup (ds, first, 0, ignore_using, loc);
+				o = Lookup (ds, first, 0, ignore_using, silent, loc);
 				if (o == null)
 					return null;
 
@@ -480,7 +481,8 @@ namespace Mono.CSharp {
 				match = using_ns.Lookup (ds, name, loc);
 				if ((match != null) && match.IsType){
 					if (t != null) {
-						DeclSpace.Error_AmbiguousTypeReference (loc, name, t.Name, match.Name);
+						if (!silent)
+							DeclSpace.Error_AmbiguousTypeReference (loc, name, t.Name, match.Name);
 						return null;
 					} else {
 						t = match;
@@ -627,7 +629,7 @@ namespace Mono.CSharp {
 						continue;
 					}
 
-					error246 (entry.Location, entry.Alias.GetPartialName ());
+					error246 (entry.Location, entry.Alias.ToString ());
 				}
 			}
 		}

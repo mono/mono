@@ -379,15 +379,13 @@ namespace Mono.CSharp {
 				"System.ParamArrayAttribute",
 				"System.CLSCompliantAttribute",
 				"System.Security.UnverifiableCodeAttribute",
-				"System.Security.Permissions.SecurityAttribute",
 				"System.Runtime.CompilerServices.IndexerNameAttribute",
 				"System.Runtime.InteropServices.InAttribute",
 				"System.Runtime.InteropServices.StructLayoutAttribute",
 				"System.Runtime.InteropServices.FieldOffsetAttribute",
 				"System.InvalidOperationException",
 				"System.NotSupportedException",
-				"System.MarshalByRefObject",
-				"System.Security.CodeAccessPermission"
+				"System.MarshalByRefObject"
 			};
 
 			// We must store them here before calling BootstrapCorlib_ResolveDelegate.
@@ -489,13 +487,13 @@ namespace Mono.CSharp {
 		}
 
 		static TypeExpr NamespaceLookup (DeclSpace ds, string name,
-						 int num_type_args, Location loc)
+						 int num_type_args, bool silent, Location loc)
 		{
 			//
 			// Try in the current namespace and all its implicit parents
 			//
 			for (NamespaceEntry ns = ds.NamespaceEntry; ns != null; ns = ns.ImplicitParent) {
-				IAlias result = ns.Lookup (ds, name, num_type_args, false, loc);
+				IAlias result = ns.Lookup (ds, name, num_type_args, false, silent, loc);
 
 				if (result == null)
 					continue;
@@ -547,7 +545,6 @@ namespace Mono.CSharp {
 						//
 						Type type = TypeManager.LookupType (current_type.FullName + "." + name);
 						if (type != null){
-							type = ds.ResolveNestedType (type, loc);
 							t = new TypeExpression (type, loc);
 							ds.Cache [name] = t;
 							return t;
@@ -559,7 +556,7 @@ namespace Mono.CSharp {
 					containing_ds = containing_ds.Parent;
 				}
 				
-				t = NamespaceLookup (ds, name, num_type_params, loc);
+				t = NamespaceLookup (ds, name, num_type_params, silent, loc);
 				if (t != null){
 					ds.Cache [name] = t;
 					return t;

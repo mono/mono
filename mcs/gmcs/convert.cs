@@ -19,16 +19,6 @@ namespace Mono.CSharp {
 	// A container class for all the conversion operations
 	//
 	public class Convert {
-		//
-		// This is used to prettify the code: a null argument is allowed
-		// for ImplicitStandardConversion as long as it is known that
-		// no anonymous method will play a role.
-		//
-		// FIXME: renamed from `const' to `static' to allow bootstraping from older
-		// versions of the compiler that could not cope with this construct.
-		//
-		public static EmitContext ConstantEC = null;
-		
 		static void Error_CannotConvertType (Location loc, Type source, Type target)
 		{
 			Report.Error (30, loc, "Cannot convert type '" +
@@ -60,16 +50,16 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		static Type TypeParam_EffectiveBaseType (EmitContext ec, Type t)
+		static Type TypeParam_EffectiveBaseType (Type t)
 		{
 			GenericConstraints gc = TypeManager.GetTypeParameterConstraints (t);
 			if (gc == null)
 				return TypeManager.object_type;
 
-			return TypeParam_EffectiveBaseType (ec, gc);
+			return TypeParam_EffectiveBaseType (gc);
 		}
 
-		static Type TypeParam_EffectiveBaseType (EmitContext ec, GenericConstraints gc)
+		static Type TypeParam_EffectiveBaseType (GenericConstraints gc)
 		{
 			ArrayList list = new ArrayList ();
 			list.Add (gc.EffectiveBaseClass);
@@ -79,9 +69,9 @@ namespace Mono.CSharp {
 
 				GenericConstraints new_gc = TypeManager.GetTypeParameterConstraints (t);
 				if (new_gc != null)
-					list.Add (TypeParam_EffectiveBaseType (ec, new_gc));
+					list.Add (TypeParam_EffectiveBaseType (new_gc));
 			}
-			return FindMostEncompassedType (ec, list);
+			return FindMostEncompassedType (list);
 		}
 
 		static Expression TypeParameterConversion (Expression expr, bool is_reference, Type target_type)
@@ -92,8 +82,7 @@ namespace Mono.CSharp {
 				return new BoxedCast (expr, target_type);
 		}
 
-		static Expression ImplicitTypeParameterConversion (EmitContext ec, Expression expr,
-								   Type target_type)
+		static Expression ImplicitTypeParameterConversion (Expression expr, Type target_type)
 		{
 			Type expr_type = expr.Type;
 
@@ -108,7 +97,7 @@ namespace Mono.CSharp {
 
 			// We're converting from a type parameter which is known to be a reference type.
 			bool is_reference = gc.IsReferenceType;
-			Type base_type = TypeParam_EffectiveBaseType (ec, gc);
+			Type base_type = TypeParam_EffectiveBaseType (gc);
 
 			if (TypeManager.IsSubclassOf (base_type, target_type))
 				return TypeParameterConversion (expr, is_reference, target_type);
@@ -134,7 +123,7 @@ namespace Mono.CSharp {
 		}
 
 		static EmptyExpression MyEmptyExpr;
-		static public Expression ImplicitReferenceConversion (EmitContext ec, Expression expr, Type target_type)
+		static public Expression ImplicitReferenceConversion (Expression expr, Type target_type)
 		{
 			Type expr_type = expr.Type;
 
@@ -148,7 +137,7 @@ namespace Mono.CSharp {
 				return null;
 
 			if (expr_type.IsGenericParameter)
-				return ImplicitTypeParameterConversion (ec, expr, target_type);
+				return ImplicitTypeParameterConversion (expr, target_type);
 				
 			//
 			// notice that it is possible to write "ValueType v = 1", the ValueType here
@@ -163,11 +152,8 @@ namespace Mono.CSharp {
 
 				if (TypeManager.IsValueType (expr_type))
 					return new BoxedCast (expr);
-				if (expr_type.IsClass || expr_type.IsInterface || expr_type == TypeManager.enum_type){
-					if (target_type == TypeManager.anonymous_method_type)
-						return null;
+				if (expr_type.IsClass || expr_type.IsInterface || expr_type == TypeManager.enum_type)
 					return new EmptyCast (expr, target_type);
-				}
 
 				return null;
 			} else if (target_type == TypeManager.value_type) {
@@ -244,7 +230,7 @@ namespace Mono.CSharp {
 					Type target_element_type = TypeManager.GetElementType (target_type);
 
 					if (!expr_element_type.IsValueType && !target_element_type.IsValueType)
-						if (ImplicitStandardConversionExists (ConstantEC, MyEmptyExpr,
+						if (ImplicitStandardConversionExists (MyEmptyExpr,
 										      target_element_type))
 							return new EmptyCast (expr, target_type);
 				}
@@ -276,12 +262,12 @@ namespace Mono.CSharp {
 		// Tests whether an implicit reference conversion exists between expr_type
 		// and target_type
 		//
-		public static bool ImplicitReferenceConversionExists (EmitContext ec, Expression expr, Type target_type)
+		public static bool ImplicitReferenceConversionExists (Expression expr, Type target_type)
 		{
 			Type expr_type = expr.Type;
 
 			if (expr_type.IsGenericParameter)
-				return ImplicitTypeParameterConversion (ec, expr, target_type) != null;
+				return ImplicitTypeParameterConversion (expr, target_type) != null;
 
 			//
 			// This is the boxed case.
@@ -289,7 +275,6 @@ namespace Mono.CSharp {
 			if (target_type == TypeManager.object_type) {
 				if (expr_type.IsClass || TypeManager.IsValueType (expr_type) ||
 				    expr_type.IsInterface || expr_type == TypeManager.enum_type)
-					if (target_type != TypeManager.anonymous_method_type)
 					return true;
 
 				return false;
@@ -323,7 +308,7 @@ namespace Mono.CSharp {
 					Type target_element_type = TypeManager.GetElementType (target_type);
 						
 					if (!expr_element_type.IsValueType && !target_element_type.IsValueType)
-						if (ImplicitStandardConversionExists (ConstantEC, MyEmptyExpr,
+						if (ImplicitStandardConversionExists (MyEmptyExpr,
 										      target_element_type))
 							return true;
 				}
@@ -532,7 +517,7 @@ namespace Mono.CSharp {
 			if ((expr is NullLiteral) && target_type.IsGenericParameter)
 				return TypeParameter_to_Null (target_type);
 
-			if (ImplicitStandardConversionExists (ec, expr, target_type))
+			if (ImplicitStandardConversionExists (expr, target_type))
 				return true;
 
 			Expression dummy = ImplicitUserConversion (ec, expr, target_type, Location.Null);
@@ -553,10 +538,8 @@ namespace Mono.CSharp {
 		/// <summary>
 		///  Determines if a standard implicit conversion exists from
 		///  expr_type to target_type
-		///
-		///  ec should point to a real EmitContext if expr.Type is TypeManager.anonymous_method_type.
 		/// </summary>
-		public static bool ImplicitStandardConversionExists (EmitContext ec, Expression expr, Type target_type)
+		public static bool ImplicitStandardConversionExists (Expression expr, Type target_type)
 		{
 			Type expr_type = expr.Type;
 
@@ -674,7 +657,7 @@ namespace Mono.CSharp {
 					return true;
 			}	
 			
-			if (ImplicitReferenceConversionExists (ec, expr, target_type))
+			if (ImplicitReferenceConversionExists (expr, target_type))
 				return true;
 
 			//
@@ -735,18 +718,6 @@ namespace Mono.CSharp {
 			if (target_type == TypeManager.void_ptr_type && expr_type.IsPointer)
 				return true;
 
-			if (expr_type == TypeManager.anonymous_method_type){
-				if (!TypeManager.IsDelegateType (target_type))
-					return false;
-
-				AnonymousMethod am = (AnonymousMethod) expr;
-				int errors = Report.Errors;
-
-				Expression conv = am.Compatible (ec, target_type, true);
-				if (conv != null)
-					return true;
-			}
-			
 			return false;
 		}
 
@@ -761,7 +732,7 @@ namespace Mono.CSharp {
 		///  Finds "most encompassed type" according to the spec (13.4.2)
 		///  amongst the methods in the MethodGroupExpr
 		/// </summary>
-		static Type FindMostEncompassedType (EmitContext ec, ArrayList types)
+		static Type FindMostEncompassedType (ArrayList types)
 		{
 			Type best = null;
 
@@ -776,7 +747,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 				
-				if (ImplicitStandardConversionExists (ec, priv_fmet_param, best))
+				if (ImplicitStandardConversionExists (priv_fmet_param, best))
 					best = t;
 			}
 
@@ -794,7 +765,7 @@ namespace Mono.CSharp {
 		///  Finds "most encompassing type" according to the spec (13.4.2)
 		///  amongst the types in the given set
 		/// </summary>
-		static Type FindMostEncompassingType (EmitContext ec, ArrayList types)
+		static Type FindMostEncompassingType (ArrayList types)
 		{
 			Type best = null;
 
@@ -809,7 +780,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				if (ImplicitStandardConversionExists (ec, priv_fmee_ret, t))
+				if (ImplicitStandardConversionExists (priv_fmee_ret, t))
 					best = t;
 			}
 			
@@ -826,8 +797,8 @@ namespace Mono.CSharp {
 		///   by making use of FindMostEncomp* methods. Applies the correct rules separately
 		///   for explicit and implicit conversion operators.
 		/// </summary>
-		static public Type FindMostSpecificSource (EmitContext ec, MethodGroupExpr me,
-							   Expression source, bool apply_explicit_conv_rules,
+		static public Type FindMostSpecificSource (MethodGroupExpr me, Expression source,
+							   bool apply_explicit_conv_rules,
 							   Location loc)
 		{
 			ArrayList src_types_set = new ArrayList ();
@@ -856,17 +827,17 @@ namespace Mono.CSharp {
 					// or encompassed by S to a type encompassing or encompassed by T
 					//
 					priv_fms_expr.SetType (param_type);
-					if (ImplicitStandardConversionExists (ec, priv_fms_expr, source_type))
+					if (ImplicitStandardConversionExists (priv_fms_expr, source_type))
 						src_types_set.Add (param_type);
 					else {
-						if (ImplicitStandardConversionExists (ec, source, param_type))
+						if (ImplicitStandardConversionExists (source, param_type))
 							src_types_set.Add (param_type);
 					}
 				} else {
 					//
 					// Only if S is encompassed by param_type
 					//
-					if (ImplicitStandardConversionExists (ec, source, param_type))
+					if (ImplicitStandardConversionExists (source, param_type))
 						src_types_set.Add (param_type);
 				}
 			}
@@ -878,21 +849,21 @@ namespace Mono.CSharp {
 				ArrayList candidate_set = new ArrayList ();
 
 				foreach (Type param_type in src_types_set){
-					if (ImplicitStandardConversionExists (ec, source, param_type))
+					if (ImplicitStandardConversionExists (source, param_type))
 						candidate_set.Add (param_type);
 				}
 
 				if (candidate_set.Count != 0)
-					return FindMostEncompassedType (ec, candidate_set);
+					return FindMostEncompassedType (candidate_set);
 			}
 
 			//
 			// Final case
 			//
 			if (apply_explicit_conv_rules)
-				return FindMostEncompassingType (ec, src_types_set);
+				return FindMostEncompassingType (src_types_set);
 			else
-				return FindMostEncompassedType (ec, src_types_set);
+				return FindMostEncompassedType (src_types_set);
 		}
 
 		//
@@ -903,8 +874,8 @@ namespace Mono.CSharp {
 		/// <summary>
 		///  Finds the most specific target Tx according to section 13.4.4
 		/// </summary>
-		static public Type FindMostSpecificTarget (EmitContext ec, MethodGroupExpr me,
-							   Type target, bool apply_explicit_conv_rules,
+		static public Type FindMostSpecificTarget (MethodGroupExpr me, Type target,
+							   bool apply_explicit_conv_rules,
 							   Location loc)
 		{
 			ArrayList tgt_types_set = new ArrayList ();
@@ -932,11 +903,11 @@ namespace Mono.CSharp {
 					// or encompassed by S to a type encompassing or encompassed by T
 					//
 					priv_fms_expr.SetType (ret_type);
-					if (ImplicitStandardConversionExists (ec, priv_fms_expr, target))
+					if (ImplicitStandardConversionExists (priv_fms_expr, target))
 						tgt_types_set.Add (ret_type);
 					else {
 						priv_fms_expr.SetType (target);
-						if (ImplicitStandardConversionExists (ec, priv_fms_expr, ret_type))
+						if (ImplicitStandardConversionExists (priv_fms_expr, ret_type))
 							tgt_types_set.Add (ret_type);
 					}
 				} else {
@@ -944,7 +915,7 @@ namespace Mono.CSharp {
 					// Only if T is encompassed by param_type
 					//
 					priv_fms_expr.SetType (ret_type);
-					if (ImplicitStandardConversionExists (ec, priv_fms_expr, target))
+					if (ImplicitStandardConversionExists (priv_fms_expr, target))
 						tgt_types_set.Add (ret_type);
 				}
 			}
@@ -958,21 +929,21 @@ namespace Mono.CSharp {
 				foreach (Type ret_type in tgt_types_set){
 					priv_fmt_expr.SetType (ret_type);
 					
-					if (ImplicitStandardConversionExists (ec, priv_fmt_expr, target))
+					if (ImplicitStandardConversionExists (priv_fmt_expr, target))
 						candidate_set.Add (ret_type);
 				}
 
 				if (candidate_set.Count != 0)
-					return FindMostEncompassingType (ec, candidate_set);
+					return FindMostEncompassingType (candidate_set);
 			}
 			
 			//
 			// Okay, final case !
 			//
 			if (apply_explicit_conv_rules)
-				return FindMostEncompassedType (ec, tgt_types_set);
+				return FindMostEncompassedType (tgt_types_set);
 			else 
-				return FindMostEncompassingType (ec, tgt_types_set);
+				return FindMostEncompassingType (tgt_types_set);
 		}
 		
 		/// <summary>
@@ -1086,11 +1057,11 @@ namespace Mono.CSharp {
 			
 			Type most_specific_source, most_specific_target;
 
-			most_specific_source = FindMostSpecificSource (ec, union, source, look_for_explicit, loc);
+			most_specific_source = FindMostSpecificSource (union, source, look_for_explicit, loc);
 			if (most_specific_source == null)
 				return null;
 
-			most_specific_target = FindMostSpecificTarget (ec, union, target, look_for_explicit, loc);
+			most_specific_target = FindMostSpecificTarget (union, target, look_for_explicit, loc);
 			if (most_specific_target == null) 
 				return null;
 
@@ -1184,17 +1155,14 @@ namespace Mono.CSharp {
 
 			if (expr.eclass == ExprClass.MethodGroup){
 				if (!TypeManager.IsDelegateType (target_type)){
+					Report.Error (428, loc,
+						      String.Format (
+							   "Cannot convert method group to `{0}', since it is not a delegate",
+							   TypeManager.CSharpName (target_type)));
 					return null;
 				}
 
-				//
-				// Only allow anonymous method conversions on post ISO_1
-				//
-				if (RootContext.Version != LanguageVersion.ISO_1){
-					MethodGroupExpr mg = expr as MethodGroupExpr;
-					if (mg != null)
-						return ImplicitDelegateCreation.Create (ec, mg, target_type, loc);
-				}
+				return ImplicitDelegateCreation.Create (ec, (MethodGroupExpr) expr, target_type, loc);
 			}
 
 			if (expr_type.Equals (target_type) && !(expr is NullLiteral))
@@ -1204,7 +1172,7 @@ namespace Mono.CSharp {
 			if (e != null)
 				return e;
 
-			e = ImplicitReferenceConversion (ec, expr, target_type);
+			e = ImplicitReferenceConversion (expr, target_type);
 			if (e != null)
 				return e;
 			
@@ -1241,30 +1209,6 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (expr_type == TypeManager.anonymous_method_type){
-				if (!TypeManager.IsDelegateType (target_type)){
-					Report.Error (1660, loc,
-							      "Cannot convert anonymous method to `{0}', since it is not a delegate",
-							      TypeManager.CSharpName (target_type));
-					return null;
-				}
-
-				AnonymousMethod am = (AnonymousMethod) expr;
-				int errors = Report.Errors;
-
-				Expression conv = am.Compatible (ec, target_type, false);
-				if (conv != null)
-					return conv;
-				
-				//
-				// We return something instead of null, to avoid
-				// the duplicate error, since am.Compatible would have
-				// reported that already
-				//
-				if (errors != Report.Errors)
-					return new EmptyCast (expr, target_type);
-			}
-			
 			return null;
 		}
 
@@ -1325,10 +1269,11 @@ namespace Mono.CSharp {
 
 		static public void Error_CannotImplicitConversion (Location loc, Type source, Type target)
 		{
-			Report.Error (29, loc, "Cannot convert implicitly from {0} to `{1}'",
-				      source == TypeManager.anonymous_method_type ?
-				      "anonymous method" : "`" + TypeManager.CSharpName (source) + "'",
-				      TypeManager.CSharpName (target));
+			string msg = "Cannot convert implicitly from `"+
+				TypeManager.CSharpName (source) + "' to `" +
+				TypeManager.CSharpName (target) + "'";
+
+			Report.Error (29, loc, msg);
 		}
 
 		/// <summary>
@@ -1383,7 +1328,7 @@ namespace Mono.CSharp {
 			if (TypeManager.IsEnumType (real_target_type))
 				real_target_type = TypeManager.EnumToUnderlying (real_target_type);
 
-			if (ImplicitStandardConversionExists (ec, expr, real_target_type)){
+			if (ImplicitStandardConversionExists (expr, real_target_type)){
  				Expression ce = ImplicitConversionStandard (ec, expr, real_target_type, loc);
 
 				if (real_target_type != target_type)

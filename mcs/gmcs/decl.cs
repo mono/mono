@@ -90,16 +90,12 @@ namespace Mono.CSharp {
 		public string GetMethodName ()
 		{
 			if (Left != null)
-				return Left.GetPartialName () + "." + Name;
+				return Left.GetFullName () + "." + Name;
 			else
 				return Name;
 		}
 
-		///
-		/// This returns exclusively the name as seen on the source code
-		/// it is not the fully qualifed type after resolution
-		///
-		public string GetPartialName ()
+		public string GetFullName ()
 		{
 			string full_name;
 			if (TypeArguments != null)
@@ -107,7 +103,7 @@ namespace Mono.CSharp {
 			else
 				full_name = Name;
 			if (Left != null)
-				return Left.GetPartialName () + "." + full_name;
+				return Left.GetFullName () + "." + full_name;
 			else
 				return full_name;
 		}
@@ -198,9 +194,6 @@ namespace Mono.CSharp {
 
 		public override string ToString ()
 		{
-			throw new Exception ("This exception is thrown because someone is miss-using\n" +
-					     "MemberName.ToString in the compiler.  Please report this bug");
-
 			string full_name;
 			if (TypeArguments != null)
 				full_name = Name + "<" + TypeArguments + ">";
@@ -318,12 +311,6 @@ namespace Mono.CSharp {
 			VerifyClsCompliance (Parent);
 		}
 
-		public bool InUnsafe {
-			get {
-				return ((ModFlags & Modifiers.UNSAFE) != 0) || Parent.UnsafeContext;
-			}
-		}
-
 		// 
 		// Whehter is it ok to use an unsafe pointer in this type container
 		//
@@ -357,8 +344,11 @@ namespace Mono.CSharp {
 			if (OptAttributes == null)
 				return null;
 
-			Attribute obsolete_attr = OptAttributes.Search (
-				TypeManager.obsolete_attribute_type, ds.EmitContext);
+			// TODO: remove this allocation
+			EmitContext ec = new EmitContext (ds.Parent, ds, ds.Location,
+				null, null, ds.ModFlags, false);
+
+			Attribute obsolete_attr = OptAttributes.Search (TypeManager.obsolete_attribute_type, ec);
 			if (obsolete_attr == null)
 				return null;
 
@@ -411,7 +401,9 @@ namespace Mono.CSharp {
 		bool GetClsCompliantAttributeValue (DeclSpace ds)
 		{
 			if (OptAttributes != null) {
-				Attribute cls_attribute = OptAttributes.GetClsCompliantAttribute (ds.EmitContext);
+				EmitContext ec = new EmitContext (ds.Parent, ds, ds.Location,
+								  null, null, ds.ModFlags, false);
+				Attribute cls_attribute = OptAttributes.GetClsCompliantAttribute (ec);
 				if (cls_attribute != null) {
 					caching_flags |= Flags.HasClsCompliantAttribute;
 					return cls_attribute.GetClsCompliantAttributeValue (ds);
@@ -499,13 +491,6 @@ namespace Mono.CSharp {
 		readonly bool is_generic;
 		readonly int count_type_params;
 
-		// The emit context for toplevel objects.
-		protected EmitContext ec;
-		
-		public EmitContext EmitContext {
-			get { return ec; }
-		}
-
 		//
 		// Whether we are Generic
 		//
@@ -542,7 +527,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		protected bool AddToContainer (MemberCore symbol, bool is_method, string fullname, string basename)
 		{
-			if (basename == Basename && !(this is Interface)) {
+			if (basename == Basename) {
 				Report.SymbolRelatedToPreviousError (this);
 				Report.Error (542, "'{0}': member names cannot be the same as their enclosing type", symbol.Location, symbol.GetSignatureForError ());
 				return false;
@@ -686,17 +671,31 @@ namespace Mono.CSharp {
 		}
 
 		// <summary>
-		//    Looks up the type, as parsed into the expression `e'.
+		//    Looks up the type, as parsed into the expression `e' 
 		// </summary>
-		[Obsolete ("This method is going away soon")]
 		public Type ResolveType (Expression e, bool silent, Location loc)
 		{
 			TypeExpr d = ResolveTypeExpr (e, silent, loc);
-			return d == null ? null : d.Type;
+			if (d == null)
+				return null;
+
+			return ResolveType (d, loc);
 		}
 
-		public Type ResolveNestedType (Type t, Location loc)
+		public Type ResolveType (TypeExpr d, Location loc)
 		{
+			if (!d.CheckAccessLevel (this)) {
+				Report.Error (122, loc, "'{0}' is inaccessible due to its protection level", d.Name);
+				return null;
+			}
+
+			Type t = d.ResolveType (type_resolve_ec);
+			if (t == null)
+				return null;
+
+			if (d is UnboundTypeExpression)
+				return t;
+
 			TypeContainer tc = TypeManager.LookupTypeContainer (t);
 			if ((tc != null) && tc.IsGeneric) {
 				if (!IsGeneric) {
@@ -708,14 +707,10 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				TypeParameter[] args;
-				if (this is GenericMethod)
-					args = Parent.TypeParameters;
-				else
-					args = TypeParameters;
+				ConstructedType ctype = new ConstructedType (
+					t, TypeParameters, loc);
 
-				ConstructedType ctype = new ConstructedType (t, args, loc);
-				t = ctype.ResolveType (ec);
+				t = ctype.ResolveType (type_resolve_ec);
 			}
 
 			return t;
@@ -723,7 +718,7 @@ namespace Mono.CSharp {
 
 		// <summary>
 		//    Resolves the expression `e' for a type, and will recursively define
-		//    types.  This should only be used for resolving base types.
+		//    types. 
 		// </summary>
 		public TypeExpr ResolveTypeExpr (Expression e, bool silent, Location loc)
 		{
@@ -735,13 +730,50 @@ namespace Mono.CSharp {
 			else
 				type_resolve_ec.ContainerType = TypeBuilder;
 
-			return e.ResolveAsTypeTerminal (type_resolve_ec, silent);
+			int errors = Report.Errors;
+
+			TypeExpr d = e.ResolveAsTypeTerminal (type_resolve_ec);
+
+			if ((d != null) && (d.eclass == ExprClass.Type))
+				return d;
+
+			if (silent || (Report.Errors != errors))
+				return null;
+
+			if (e is SimpleName){
+				SimpleName s = new SimpleName (((SimpleName) e).Name, loc);
+				d = s.ResolveAsTypeTerminal (type_resolve_ec);
+
+				if ((d == null) || (d.Type == null)) {
+					Report.Error (246, loc, "Cannot find type `{0}'", e);
+					return null;
+				}
+
+				int num_args = TypeManager.GetNumberOfTypeArguments (d.Type);
+
+				if (num_args == 0) {
+					Report.Error (308, loc,
+						      "The non-generic type `{0}' cannot " +
+						      "be used with type arguments.",
+						      TypeManager.CSharpName (d.Type));
+					return null;
+				}
+
+				Report.Error (305, loc,
+					      "Using the generic type `{0}' " +
+					      "requires {1} type arguments",
+					      TypeManager.GetFullName (d.Type), num_args);
+				return null;
+			}
+
+			Report.Error (246, loc, "Cannot find type `{0}'", e);
+			return null;
 		}
 		
 		public bool CheckAccessLevel (Type check_type) 
 		{
 			TypeBuilder tb;
-			if ((this is GenericMethod) || (this is Iterator))
+			if (this is GenericMethod)
 				tb = Parent.TypeBuilder;
 			else
 				tb = TypeBuilder;
@@ -756,7 +788,7 @@ namespace Mono.CSharp {
 				return true; // FIXME
 			
 			TypeAttributes check_attr = check_type.Attributes & TypeAttributes.VisibilityMask;
-
+			
 			//
 			// Broken Microsoft runtime, return public for arrays, no matter what 
 			// the accessibility is for their underlying class, and they return 
@@ -771,21 +803,37 @@ namespace Mono.CSharp {
 
 			case TypeAttributes.NotPublic:
 
-				if (TypeBuilder == null)
-					// FIXME: TypeBuilder will be null when invoked by Class.GetNormalBases().
-					//        However, this is invoked again later -- so safe to return true.
-					//        May also be null when resolving top-level attributes.
-					return true;
-				//
-				// This test should probably use the declaringtype.
-				//
+ 				// In same cases is null.
+ 				if (TypeBuilder == null)
+ 					return true;
+
+  				//
+  				// This test should probably use the declaringtype.
+  				//
 				return check_type.Assembly == TypeBuilder.Assembly;
 
 			case TypeAttributes.NestedPublic:
 				return true;
 
 			case TypeAttributes.NestedPrivate:
-				return NestedAccessible (tb, check_type);
+				string check_type_name = check_type.FullName;
+				string type_name = tb.FullName;
+
+				int cio = check_type_name.LastIndexOf ('+');
+				string container = check_type_name.Substring (0, cio);
+
+				//
+				// Check if the check_type is a nested class of the current type
+				//
+				if (check_type_name.StartsWith (type_name + "+")){
+					return true;
+				}
+				
+				if (type_name.StartsWith (container)){
+					return true;
+				}
+
+				return false;
 
 			case TypeAttributes.NestedFamily:
 				//
@@ -810,31 +858,24 @@ namespace Mono.CSharp {
 
 		}
 
-		protected bool NestedAccessible (Type tb, Type check_type)
-		{
-			string check_type_name = check_type.FullName;
-			
-			// At this point, we already know check_type is a nested class.
-			int cio = check_type_name.LastIndexOf ('+');
-			
-			// Ensure that the string 'container' has a '+' in it to avoid false matches
-			string container = check_type_name.Substring (0, cio + 1);
-
-			// Ensure that type_name ends with a '+' so that it can match 'container', if necessary
-			string type_name = tb.FullName + "+";
-
-			// If the current class is nested inside the container of check_type,
-			// we can access check_type even if it is private or protected.
-			return type_name.StartsWith (container);
-		}
-
-		protected bool FamilyAccessible (Type tb, Type check_type)
+		protected bool FamilyAccessible (TypeBuilder tb, Type check_type)
 		{
 			Type declaring = check_type.DeclaringType;
-			if (tb == declaring || TypeManager.IsFamilyAccessible (tb, declaring))
+			if (tb.IsSubclassOf (declaring))
 				return true;
 
-			return NestedAccessible (tb, check_type);
+			string check_type_name = check_type.FullName;
+			
+			int cio = check_type_name.LastIndexOf ('+');
+			string container = check_type_name.Substring (0, cio);
+			
+			//
+			// Check if the check_type is a nested class of the current type
+			//
+			if (check_type_name.StartsWith (container + "+"))
+				return true;
+
+			return false;
 		}
 
 		// Access level of a type.
@@ -1072,7 +1113,7 @@ namespace Mono.CSharp {
 						return null;
 
 					if ((t != null) && containing_ds.CheckAccessLevel (t))
-						return ResolveNestedType (t, loc);
+						return t;
 
 					current_type = current_type.BaseType;
 				}
@@ -1200,6 +1241,8 @@ namespace Mono.CSharp {
 			caching_flags &= ~Flags.HasCompliantAttribute_Undetected;
 
 			if (OptAttributes != null) {
+				EmitContext ec = new EmitContext (Parent, this, Location,
+								  null, null, ModFlags, false);
 				Attribute cls_attribute = OptAttributes.GetClsCompliantAttribute (ec);
 				if (cls_attribute != null) {
 					caching_flags |= Flags.HasClsCompliantAttribute;
@@ -1640,7 +1683,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Create a new MemberCache for the given IMemberContainer `container'.
 		/// </summary>
-		public MemberCache (IMemberContainer container, bool setup_inherited_interfaces)
+		public MemberCache (IMemberContainer container)
 		{
 			this.Container = container;
 
@@ -1657,8 +1700,8 @@ namespace Mono.CSharp {
 				if (Container.ParentContainer != null)
 					parent = Container.ParentContainer.MemberCache;
 				else
-					parent = null;
-				member_hash = SetupCacheForInterface (parent, setup_inherited_interfaces);
+					parent = TypeHandle.ObjectType.MemberCache;
+				member_hash = SetupCacheForInterface (parent);
 			} else if (Container.ParentContainer != null)
 				member_hash = SetupCache (Container.ParentContainer.MemberCache);
 			else
@@ -1684,13 +1727,11 @@ namespace Mono.CSharp {
 		Hashtable SetupCache (MemberCache parent)
 		{
 			Hashtable hash = new Hashtable ();
-			if (parent == null)
-				return hash;
 
 			IDictionaryEnumerator it = parent.member_hash.GetEnumerator ();
 			while (it.MoveNext ()) {
 				hash [it.Key] = ((ArrayList) it.Value).Clone ();
-			}
+                        }
                                 
 			return hash;
 		}
@@ -1721,13 +1762,9 @@ namespace Mono.CSharp {
 		///   Type.GetMembers() won't return any inherited members for interface types,
 		///   so we need to do this manually.  Interfaces also inherit from System.Object.
 		/// </summary>
-		Hashtable SetupCacheForInterface (MemberCache parent, bool deep_setup)
+		Hashtable SetupCacheForInterface (MemberCache parent)
 		{
 			Hashtable hash = SetupCache (parent);
-
-			if (!deep_setup)
-				return hash;
-
 			Type [] ifaces = TypeManager.GetInterfaces (Container.Type);
 
 			foreach (Type itype in ifaces) {
@@ -1749,10 +1786,8 @@ namespace Mono.CSharp {
 		{
 			// We need to call AddMembers() with a single member type at a time
 			// to get the member type part of CacheEntry.EntryType right.
-			if (!container.IsInterface) {
-				AddMembers (MemberTypes.Constructor, container);
-				AddMembers (MemberTypes.Field, container);
-			}
+			AddMembers (MemberTypes.Constructor, container);
+			AddMembers (MemberTypes.Field, container);
 			AddMembers (MemberTypes.Method, container);
 			AddMembers (MemberTypes.Property, container);
 			AddMembers (MemberTypes.Event, container);
@@ -1904,7 +1939,7 @@ namespace Mono.CSharp {
 		///   number to speed up the searching process.
 		/// </summary>
 		[Flags]
-		protected internal enum EntryType {
+		protected enum EntryType {
 			None		= 0x000,
 
 			Instance	= 0x001,
@@ -1927,7 +1962,7 @@ namespace Mono.CSharp {
 			MaskType	= Constructor|Event|Field|Method|Property|NestedType
 		}
 
-		protected internal struct CacheEntry {
+		protected struct CacheEntry {
 			public readonly IMemberContainer Container;
 			public readonly EntryType EntryType;
 			public readonly MemberInfo Member;
@@ -2252,7 +2287,7 @@ namespace Mono.CSharp {
  							// Does exist easier way how to detect indexer ?
  							if ((entry.EntryType & EntryType.Property) != 0) {
  								Type[] arg_types = TypeManager.GetArgumentTypes ((PropertyInfo)entry.Member);
- 								if (arg_types.Length > 0)
+ 								if (arg_types.Length == 1)
  									continue;
  							}
  						}
