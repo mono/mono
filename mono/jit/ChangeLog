@@ -1,9 +1,13 @@
+2002-03-16  Martin Baulig  <martin@gnome.org>
+
+	* debug-dwarf2.c: Added support for enums.
+
 2002-03-15  Martin Baulig  <martin@gnome.org>
 
 	* debug.c (mono_debug_get_type): Recursively call this for all members
 	of a struct type.
 
-	* debug-dwarf.c: Added support for structs.
+	* debug-dwarf2.c: Added support for structs.
 
 2002-03-15  Dietmar Maurer  <dietmar@ximian.com>
 
