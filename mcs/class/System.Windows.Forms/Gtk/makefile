@@ -59,7 +59,7 @@ SOURCES = \
 	DockStyle.cs \
 	LayoutEventArgs.cs 
 
-all: demo.exe Demo2.exe Form1.exe
+all: demo.exe Demo2.exe Form1.exe StatusBarDemo.exe
 
 demo.exe: demo.cs System.Windows.Forms.dll
 	$(CSC) demo.cs -r System.Windows.Forms.dll -r System.Drawing 
@@ -72,6 +72,9 @@ singlewidget.exe : singlewidget.cs
 
 Form1.exe : Form1.cs
 	$(CSC) Form1.cs -r System.Windows.Forms.dll -r System.Drawing
+
+StatusBarDemo.exe : StatusBarDemo.cs
+	$(CSC) StatusBarDemo.cs -r System.Windows.Forms.dll -r System.Drawing -r System.Data
 
 System.Windows.Forms.dll: $(SOURCES)
 	$(CSC) $(SWFF) --target library -o System.Windows.Forms.dll $(SOURCES)

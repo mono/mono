@@ -62,6 +62,7 @@ namespace WindowsApplication7
 			this.statusBar1.Size = new System.Drawing.Size(292, 22);
 			this.statusBar1.TabIndex = 0;
 			this.statusBar1.Text = "statusBar1";
+			this.statusBar1.Text = "statusBar1xyz";
 			// 
 			// Form1
 			// 
@@ -70,7 +71,7 @@ namespace WindowsApplication7
 			this.Controls.Add(this.statusBar1);
 			this.Name = "Form1";
 			this.Text = "Form1";
-//			this.Load += new System.EventHandler(this.Form1_Load);
+			this.Load += new System.EventHandler(this.Form1_Load);
 //			this.ResumeLayout(false);
 
 		}
@@ -87,6 +88,8 @@ namespace WindowsApplication7
 
 		private void Form1_Load(object sender, System.EventArgs e)
 		{
+			this.statusBar1.Text = "test";
+			Console.WriteLine("Loaded");
 		
 		}
 	}

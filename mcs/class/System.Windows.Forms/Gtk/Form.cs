@@ -49,8 +49,13 @@ namespace System.Windows.Forms {
 			Widget contents = base.CreateWidget ();
 			win = new Window (WindowType.Toplevel);
 			win.DeleteEvent += new DeleteEventHandler (delete_cb);
+
 			win.Title = Text;
 			win.Add(contents);
+			// TODO: The Gtk.Windows does not have a on_show signal ? :(
+			if (Load != null)
+				Load (this, EventArgs.Empty);
+
 			return (Widget) win;
 		}
 
@@ -546,15 +551,8 @@ namespace System.Windows.Forms {
 		//	}
 		//}
 
-		// [MonoTODO]
-		// public event EventHandler  Load {
-		//	add {
-		//		throw new NotImplementedException ();
-		//	}
-		//	remove {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		public event EventHandler Load;
+
 		// [MonoTODO]
 		// public event EventHandler  MaximizedBoundsChanged {
 		//	add {

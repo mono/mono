@@ -186,8 +186,7 @@ namespace System.Windows.Forms {
 			}
 			set {
 				stext = value;
-				//if ( IsHandleCreated )
-				//	UpdateStatusText ( );
+				UpdateStatusText ( );
 			}
 		}
 
@@ -213,7 +212,7 @@ namespace System.Windows.Forms {
 			}
 			else {
 			//	Win32.SendMessage( Handle, (int)StatusbarMessages.SB_SIMPLE, 1, 0 );
-			//	UpdateStatusText ( );
+				UpdateStatusText ( );
 			}
 		}
 
@@ -252,7 +251,8 @@ namespace System.Windows.Forms {
 					TextToSet = panels[i].Text;
 				break;
 				}
-
+				//Console.WriteLine (TextToSet);
+				this.statusbar.Push (this.statusbar.GetContextId (i.ToString()), TextToSet);
 				//Win32.SendMessage( Handle, (int)StatusbarMessages.SB_SETTEXT, DrawStyle,
 				//			TextToSet );
 			}
@@ -270,15 +270,13 @@ namespace System.Windows.Forms {
 		}
 
 		internal  void UpdatePanels ( bool updateParts, bool updateText, StatusBarPanel p ) {
-			//if ( IsHandleCreated ) {
-			//	if ( updateParts )
-			//		UpdateParts ( );
+			if ( updateParts )
+				UpdateParts ( );
 
-			//	if ( updateText )
-			//		UpdateText( p );
+			if ( updateText )
+				UpdateText( p );
 
-			//	Invalidate( );
-			//}
+			// Invalidate( );
 		}
 
 		protected void CalculatePanelWidths ( int[] array ) {
@@ -317,7 +315,9 @@ namespace System.Windows.Forms {
 				array[i] = WidthArray[i] + (i == 0 ? 0 : array[i - 1]);
 		}
 
-		internal  void UpdateStatusText ( ){
+		internal  void UpdateStatusText ( )
+		{
+			this.statusbar.Push (0, Text);
 			//Win32.SendMessage( Handle, (int)StatusbarMessages.SB_SETTEXT,
 			//			255 | (int)StatusbarDrawType.SBT_NOBORDERS, Text );
 		}
