@@ -64,7 +64,9 @@ namespace System.Runtime.Remoting
 				object rval = InternalExecute (method, target, reqMsg.Args, out out_args);
 			
 				// Collect parameters with Out flag from the request message
-
+				// FIXME: This can be done in the unmanaged side and will be
+				// more efficient
+				
 				ParameterInfo[] parameters = method.GetParameters();
 				object[] returnArgs = new object [parameters.Length];
 				
@@ -76,6 +78,8 @@ namespace System.Runtime.Remoting
 						returnArgs [n++] = reqMsg.GetArg (par.Position);
 					else if (par.ParameterType.IsByRef)
 						returnArgs [n++] = out_args [noa++]; 
+					else
+						returnArgs [n++] = null; 
 				}
 				
 				result = new ReturnMessage (rval, returnArgs, n, CallContext.CreateLogicalCallContext(), reqMsg);

@@ -1,3 +1,8 @@
+2004-04-28  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* RemotingServices.cs: When create a ReturnMessage, provide an array with
+	  all parameters, including input parameters.
+
 2004-04-26  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ObjRef.cs: Little optimization.
