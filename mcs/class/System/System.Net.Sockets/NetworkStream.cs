@@ -279,13 +279,13 @@ namespace System.Net.Sockets
 		{
 			CheckDisposed ();
 			if (buffer == null)
-				throw new ArgumentNullException ("buffer is null");
-			if(offset<0 || offset>=buffer.Length) {
+				throw new ArgumentNullException ("buffer");
+
+			if (offset < 0 || offset > buffer.Length)
 				throw new ArgumentOutOfRangeException("offset exceeds the size of buffer");
-			}
-			if(offset+size<0 || offset+size>buffer.Length) {
+
+			if (size < 0 || size > buffer.Length - offset)
 				throw new ArgumentOutOfRangeException("offset+size exceeds the size of buffer");
-			}
 
 			try {
 				socket.Send (buffer, offset, size, 0);

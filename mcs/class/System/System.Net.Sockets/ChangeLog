@@ -1,3 +1,7 @@
+2003-02-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* NetworkStream.cs: allow 0 size array in Write.
+
 2003-02-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: make Worker.Connect and Receive work with non-blocking
