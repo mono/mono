@@ -1,3 +1,7 @@
+2003-07-27  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* XmlSignature.cs: Changed USE_VERSION_1_0 for NET_1_0.
+
 2003-07-24  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* XmlDsigC14NTransform.cs: Patch to use Mono.Xml.XmlCanonicalizer

@@ -26,7 +26,7 @@ namespace System.Security.Cryptography.Xml {
 			public const string KeyValue = "KeyValue";
 			public const string Object = "Object";
 			public const string Reference = "Reference";
-#if USE_VERSION_1_0
+#if NET_1_0
 			// RetrievalMethod vs RetrievalElement -> BUG in MS Framework 1.0
 			public const string RetrievalMethod = "RetrievalElement";
 #else
