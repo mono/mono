@@ -246,9 +246,17 @@ $(plattestlib): $(plattest_makefrag) $(plattest_response) $(plattest_stampfile)
 $(plattest_response): $(test_sourcefile) $(plattest_excludes)
 	@echo Creating $@ ...
 ifdef PLATFORM_CHANGE_SEPARATOR_CMD
+ifdef PLATFORM_MONO_NATIVE
 	@cat $(plattest_excludes) $(test_sourcefile) |sort |uniq -u |sed -e 's,^\(.\),Test/\1,' |$(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
 else
+	@cat $(test_sourcefile) |sort |uniq -u |sed -e 's,^\(.\),Test/\1,' |$(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
+endif
+else
+ifdef PLATFORM_MONO_NATIVE
 	@cat $(plattest_excludes) $(test_sourcefile) |sort |uniq -u |sed -e 's,^\(.\),Test/\1,' >$@
+else
+	@cat $(test_sourcefile) |sort |uniq -u |sed -e 's,^\(.\),Test/\1,' >$@
+endif
 endif
 
 $(plattest_makefrag): $(plattest_response)
