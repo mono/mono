@@ -1,5 +1,9 @@
 2005-01-30  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-amd64.c inssel-amd64.brg: Applied patch from  
+	Willibald Krenn <Willibald.Krenn@gmx.at>. Clean up usage of 
+	X86_COMPARE_MEMBASE opcodes.
+
 	* exceptions-amd64.c (mono_arch_find_jit_info): Fix AMD64 build.
 
 2005-01-29  Ben Maurer  <bmaurer@ximian.com>
