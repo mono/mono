@@ -27,13 +27,10 @@ To build the compiler and class libraries, run:
 The libraries will be placed in the directory class/lib/ and the mcs
 compiler executable in mcs/.
 
-To install them, run:
+To install them, run the following, where prefix identifies where you
+want the files installed:
 
-    make -f makefile.gnu install
-
-You can also specify a prefix into which the files will be installed:
-
-    make -f makefile.gnu install prefix=/opt
+    make -f makefile.gnu install prefix=/usr/local
 
 If you are tracking Mono's development, you may sometimes need to share
 the compiled libraries with others. If you want to produce an easily
@@ -50,7 +47,7 @@ mcs setup. To build the compiler and class libraries, run:
 
     make
 
-The libraries will be placed in the directory class/lib/ and the mcs compiler
-executable in mcs/. They can then be copied to /usr/lib and /usr/bin or
-wherever desired on the target system.
+The libraries will be placed in the directory class/lib/ and the mcs
+compiler executable in mcs/. They can then be copied to /usr/lib and
+/usr/bin or wherever desired on the target system.
 
