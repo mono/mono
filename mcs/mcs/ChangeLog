@@ -1,3 +1,42 @@
+2002-03-28  Martin Baulig  <martin@gnome.org>
+
+	* class.cs (Method.Emit): If we have a symbol writer, call its
+	OpenMethod(), CloseMethod() and SetMethodSourceRange() methods to
+	tell it about the current method.
+
+	* codegen.cs (EmitContext.Mark): New public method. Tell the symbol
+	writer that we're going to emit the first byte of IL code for a new
+	statement (a new source line).
+	(EmitContext.EmitTopBlock): If we have a symbol writer, call
+	EmitContext.Mark() before emitting any code.
+
+	* location.cs (SymbolDocument): Return null when we're Null.
+
+	* statement.cs (Statement): Moved the `Location loc' variable here.
+	(Statement.EmitBoolExpression): If we have a symbol writer, call
+	ec.Mark() before emitting any code to tell it that we're at the
+	beginning of a new statement.
+	(StatementExpression): Added `Location' argument to the constructor.
+	(Block): Added public readonly variable `StartLocation' and public
+	variable `EndLocation'.  The latter is to be set using SetEndLocation().
+	(Block): Added constructor which takes a start and end location.
+	(Block.SetEndLocation): New method. This sets the end location.
+	(Block.EmitMeta): If we have a symbol writer, tell it the names of the
+	local variables we create.
+	(Block.Emit): If we have a symbol writer, call ec.Mark() before emitting
+	each statement and do also mark the begin and end of the block.
+
+	* cs-parser.jay (block : OPEN_BRACE): Use the new `Block' constructor to
+	tell it the current lexer.Location, use Location.Null for the end of the
+	block.
+	(block : OPEN_BRACE opt_statement_list CLOSE_BRACE): When closing the
+	current block, set its end location using SetEndLocation().
+	(statement_expression): StatementExpression constructor now takes the
+	lexer.Location as additional argument.
+	(for_statement, declare_local_variables): Likewise.
+	(declare_local_variables): When creating a new implicit block, use the
+	new Block constructor and pass it the lexer.Location.
+
 2002-03-28  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (Expression.MemberLookup): On interfaces, lookup

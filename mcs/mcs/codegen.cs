@@ -300,11 +300,15 @@ namespace Mono.CSharp {
 			bool has_ret = false;
 
 //			Console.WriteLine ("Emitting: " + loc);
+
+			if (RootContext.CodeGen.SymbolWriter != null)
+				Mark (loc);
+
 			if (block != null){
 				int errors = Report.Errors;
-				
+
 				block.EmitMeta (this, block);
-				
+
 				if (Report.Errors == errors){
 					has_ret = block.Emit (this);
 
@@ -336,6 +340,20 @@ namespace Mono.CSharp {
 				}
 			}
 		}
+
+		/// <summary>
+		///   This is called immediately before emitting an IL opcode to tell the symbol
+		///   writer to which source line this opcode belongs.
+		/// </summary>
+		public void Mark (Location loc)
+		{
+			if (!Location.IsNull (loc)) {
+				ISymbolDocumentWriter doc = loc.SymbolDocument;
+
+				if (doc != null)
+					ig.MarkSequencePoint (doc, loc.Row, 0,  loc.Row, 0);
+			}		}
+
 
 		/// <summary>
 		///   Returns a temporary storage for a variable of type t as 

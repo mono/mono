@@ -2664,13 +2664,14 @@ class_base
 block
 	: OPEN_BRACE 
 	  {
-		current_block = new Block (current_block);
+		current_block = new Block (current_block, lexer.Location, Location.Null);
 	  } 
 	  opt_statement_list CLOSE_BRACE 
 	  { 
 		while (current_block.Implicit)
 			current_block = current_block.Parent;
 		$$ = current_block;
+		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 	  }
 	;
@@ -2856,13 +2857,13 @@ expression_statement
 	// because statement_expression is used for example in for_statement
 	//
 statement_expression
-	: invocation_expression		{ $$ = new StatementExpression ((ExpressionStatement) $1); }
-	| object_creation_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
-	| assignment_expression		{ $$ = new StatementExpression ((ExpressionStatement) $1); }
-	| post_increment_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
-	| post_decrement_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
-	| pre_increment_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
-	| pre_decrement_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
+	: invocation_expression		{ $$ = new StatementExpression ((ExpressionStatement) $1, lexer.Location); }
+	| object_creation_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1, lexer.Location); }
+	| assignment_expression		{ $$ = new StatementExpression ((ExpressionStatement) $1, lexer.Location); }
+	| post_increment_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1, lexer.Location); }
+	| post_decrement_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1, lexer.Location); }
+	| pre_increment_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1, lexer.Location); }
+	| pre_decrement_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1, lexer.Location); }
 	| error {
 		Report.Error (1002, lexer.Location, "Expecting `;'");
 	  }
@@ -3079,7 +3080,7 @@ for_statement
 					
 					Assign a = new Assign (var, expr, decl.Location);
 					
-					assign_block.AddStatement (new StatementExpression (a));
+					assign_block.AddStatement (new StatementExpression (a, lexer.Location));
 				}
 			}
 			
@@ -3528,7 +3529,7 @@ using_statement
 				vars.Add (new DictionaryEntry (var, expr));				
 
 				// Assign a = new Assign (var, expr, decl.Location);
-				// assign_block.AddStatement (new StatementExpression (a));
+				// assign_block.AddStatement (new StatementExpression (a, lexer.Location));
 			}
 			$3 = new DictionaryEntry (type, vars);
 		 }
@@ -3764,7 +3765,7 @@ Block declare_local_variables (string type, ArrayList variable_declarators, Loca
 	// int j = 1;  int k = j + 1;
 	//
 	if (current_block.Used)
-		implicit_block = new Block (current_block, true);
+		implicit_block = new Block (current_block, true, loc, Location.Null);
 	else
 		implicit_block = current_block;
 
@@ -3807,7 +3808,7 @@ Block declare_local_variables (string type, ArrayList variable_declarators, Loca
 
 		assign = new Assign (var, expr, decl.Location);
 
-		implicit_block.AddStatement (new StatementExpression (assign));
+		implicit_block.AddStatement (new StatementExpression (assign, lexer.Location));
 	}
 	
 	return implicit_block;

@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System;
 using System.Runtime.CompilerServices;
+using System.Diagnostics.SymbolStore;
 
 namespace Mono.CSharp {
 
@@ -2470,7 +2471,7 @@ namespace Mono.CSharp {
 				ig = MethodBuilder.GetILGenerator ();
 			else
 				ig = null;
-			
+
 			ec = new EmitContext (parent, Location, ig, GetReturnType (parent), ModFlags);
 
 			if (OptAttributes != null)
@@ -2492,8 +2493,23 @@ namespace Mono.CSharp {
 			//
 			if (Name == "Finalize" && type_return_type == TypeManager.void_type)
 				EmitDestructor (ec);
-			else
-				ec.EmitTopBlock (Block, Location);
+			else {
+				ISymbolWriter sw = RootContext.CodeGen.SymbolWriter;
+
+				if (sw != null) {
+					MethodToken token = MethodBuilder.GetToken ();
+					sw.OpenMethod (new SymbolToken (token.Token));
+					sw.SetMethodSourceRange (Location.SymbolDocument,
+								 Location.Row, 0,
+								 Block.EndLocation.SymbolDocument,
+								 Block.EndLocation.Row, 0);
+
+					ec.EmitTopBlock (Block, Location);
+
+					sw.CloseMethod ();
+				} else
+					ec.EmitTopBlock (Block, Location);
+			}
 		}
 
 		void EmitDestructor (EmitContext ec)

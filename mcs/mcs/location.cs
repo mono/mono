@@ -39,9 +39,8 @@ namespace Mono.CSharp {
 			sym_docs = new Hashtable ();
 			global_count = 0;
 			module_base = 0;
-
 		}
-	
+
 		static public void Push (string name)
 		{
 			map.Remove (global_count);
@@ -126,6 +125,9 @@ namespace Mono.CSharp {
 			get {
 				ISymbolWriter sw = RootContext.CodeGen.SymbolWriter;
 				ISymbolDocumentWriter doc;
+
+				if (token < 0)
+					return null;
 
 				// If we don't have a symbol writer, return null.
 				if (sw == null)

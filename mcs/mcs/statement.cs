@@ -17,6 +17,7 @@ namespace Mono.CSharp {
 	using System.Collections;
 	
 	public abstract class Statement {
+		public Location loc;
 
 		/// <summary>
 		///   Return value indicates whether all code paths emitted return.
@@ -44,6 +45,9 @@ namespace Mono.CSharp {
 					31, loc, "Can not convert the expression to a boolean");
 				return null;
 			}
+
+			if (RootContext.CodeGen.SymbolWriter != null)
+				ec.Mark (loc);
 
 			bool invert = false;
 			if (e is Unary){
@@ -73,7 +77,6 @@ namespace Mono.CSharp {
 			
 			return e;
 		}
-
 	}
 
 	public class EmptyStatement : Statement {
@@ -87,7 +90,6 @@ namespace Mono.CSharp {
 		public readonly Expression  Expr;
 		public readonly Statement   TrueStatement;
 		public readonly Statement   FalseStatement;
-		Location loc;
 		
 		public If (Expression expr, Statement trueStatement, Location l)
 		{
@@ -146,7 +148,6 @@ namespace Mono.CSharp {
 	public class Do : Statement {
 		public readonly Expression Expr;
 		public readonly Statement  EmbeddedStatement;
-		Location loc;
 		
 		public Do (Statement statement, Expression boolExpr, Location l)
 		{
@@ -195,7 +196,6 @@ namespace Mono.CSharp {
 	public class While : Statement {
 		public readonly Expression Expr;
 		public readonly Statement Statement;
-		Location loc;
 		
 		public While (Expression boolExpr, Statement statement, Location l)
 		{
@@ -244,7 +244,6 @@ namespace Mono.CSharp {
 		public readonly Expression Test;
 		public readonly Statement Increment;
 		public readonly Statement Statement;
-		Location loc;
 		
 		public For (Statement initStatement,
 			    Expression test,
@@ -315,9 +314,10 @@ namespace Mono.CSharp {
 	public class StatementExpression : Statement {
 		public readonly ExpressionStatement Expr;
 		
-		public StatementExpression (ExpressionStatement expr)
+		public StatementExpression (ExpressionStatement expr, Location l)
 		{
 			Expr = expr;
+			loc = l;
 		}
 
 		public override bool Emit (EmitContext ec)
@@ -349,7 +349,6 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class Return : Statement {
 		public Expression Expr;
-		public readonly Location loc;
 		
 		public Return (Expression expr, Location l)
 		{
@@ -405,7 +404,6 @@ namespace Mono.CSharp {
 
 	public class Goto : Statement {
 		string target;
-		Location loc;
 		Block block;
 		
 		public Goto (Block parent_block, string label, Location l)
@@ -475,7 +473,6 @@ namespace Mono.CSharp {
 	///   `goto default' statement
 	/// </summary>
 	public class GotoDefault : Statement {
-		Location loc;
 		
 		public GotoDefault (Location l)
 		{
@@ -502,7 +499,6 @@ namespace Mono.CSharp {
 	///   `goto case' statement
 	/// </summary>
 	public class GotoCase : Statement {
-		Location loc;
 		Expression expr;
 		
 		public GotoCase (Expression e, Location l)
@@ -548,7 +544,6 @@ namespace Mono.CSharp {
 	
 	public class Throw : Statement {
 		public readonly Expression Expr;
-		Location loc;
 		
 		public Throw (Expression expr, Location l)
 		{
@@ -584,7 +579,6 @@ namespace Mono.CSharp {
 	}
 
 	public class Break : Statement {
-		Location loc;
 		
 		public Break (Location l)
 		{
@@ -606,7 +600,6 @@ namespace Mono.CSharp {
 	}
 
 	public class Continue : Statement {
-		Location loc;
 		
 		public Continue (Location l)
 		{
@@ -673,8 +666,10 @@ namespace Mono.CSharp {
 	///   declarations.
 	/// </remarks>
 	public class Block : Statement {
-		public readonly Block  Parent;
-		public readonly bool   Implicit;
+		public readonly Block     Parent;
+		public readonly bool      Implicit;
+		public readonly Location  StartLocation;
+		public Location           EndLocation;
 
 		//
 		// The statements in this block
@@ -716,23 +711,27 @@ namespace Mono.CSharp {
 		int this_id;
 		
 		public Block (Block parent)
-		{
-			if (parent != null)
-				parent.AddChild (this);
-			
-			this.Parent = parent;
-			this.Implicit = false;
-
-			this_id = id++;
-		}
+			: this (parent, false, Location.Null, Location.Null)
+		{ }
 
 		public Block (Block parent, bool implicit_block)
+			: this (parent, implicit_block, Location.Null, Location.Null)
+		{ }
+
+		public Block (Block parent, Location start, Location end)
+			: this (parent, false, start, end)
+		{ }
+
+		public Block (Block parent, bool implicit_block, Location start, Location end)
 		{
 			if (parent != null)
 				parent.AddChild (this);
 			
 			this.Parent = parent;
-			this.Implicit = true;
+			this.Implicit = implicit_block;
+			this.StartLocation = start;
+			this.EndLocation = end;
+			this.loc = start;
 			this_id = id++;
 		}
 
@@ -748,6 +747,11 @@ namespace Mono.CSharp {
 				children = new ArrayList ();
 			
 			children.Add (b);
+		}
+
+		public void SetEndLocation (Location loc)
+		{
+			EndLocation = loc;
 		}
 
 		/// <summary>
@@ -976,6 +980,9 @@ namespace Mono.CSharp {
 					vi.VariableType = t;
 					vi.LocalBuilder = ig.DeclareLocal (t);
 
+					if (RootContext.CodeGen.SymbolWriter != null)
+						vi.LocalBuilder.SetLocalSymInfo (name);
+
 					if (constants == null)
 						continue;
 
@@ -1039,20 +1046,26 @@ namespace Mono.CSharp {
 					b.UsageWarning ();
 		}
 
-//		static int count;
-		
 		public override bool Emit (EmitContext ec)
 		{
 			bool is_ret = false;
 			Block prev_block = ec.CurrentBlock;
 
-//			count++;
 			ec.CurrentBlock = this;
-//			if (count == 40)
-//				throw new Exception ();
-			foreach (Statement s in Statements)
-				is_ret = s.Emit (ec);
-//			count--;
+
+			if (RootContext.CodeGen.SymbolWriter != null) {
+				ec.Mark (StartLocation);
+
+				foreach (Statement s in Statements) {
+					ec.Mark (s.loc);
+
+					is_ret = s.Emit (ec);
+				}
+
+				ec.Mark (EndLocation);
+			} else
+				foreach (Statement s in Statements)
+					is_ret = s.Emit (ec);
 			
 			ec.CurrentBlock = prev_block;
 			return is_ret;
@@ -1155,7 +1168,6 @@ namespace Mono.CSharp {
 		//
 		bool got_default;
 		Label default_target;
-		Location loc;
 		
 		//
 		// The types allowed to be implicitly cast from
@@ -1584,7 +1596,6 @@ namespace Mono.CSharp {
 	public class Lock : Statement {
 		public readonly Expression Expr;
 		public readonly Statement Statement;
-		Location loc;
 			
 		public Lock (Expression expr, Statement stmt, Location l)
 		{
@@ -1713,7 +1724,6 @@ namespace Mono.CSharp {
 		string    type;
 		ArrayList declarators;
 		Statement statement;
-		Location  loc;
 
 		public Fixed (string type, ArrayList decls, Statement stmt, Location l)
 		{
@@ -1980,7 +1990,6 @@ namespace Mono.CSharp {
 	public class Using : Statement {
 		object expression_or_block;
 		Statement Statement;
-		Location loc;
 		
 		public Using (object expression_or_block, Statement stmt, Location l)
 		{
@@ -2143,7 +2152,6 @@ namespace Mono.CSharp {
 		LocalVariableReference variable;
 		Expression expr;
 		Statement statement;
-		Location loc;
 		
 		public Foreach (string type, LocalVariableReference var, Expression expr,
 				Statement stmt, Location l)
