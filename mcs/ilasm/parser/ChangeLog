@@ -1,5 +1,9 @@
 2003-03-15 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Add external field references
+
+2003-03-15 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Add fields to the field table, add field references,
 	emit instructions that take a field param
 

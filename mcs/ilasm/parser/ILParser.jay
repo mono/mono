@@ -697,7 +697,13 @@ internal_field_ref	: type_ref internal_type_ref DOUBLE_COLON id
 			  }
 			;
 
-external_field_ref	:
+external_field_ref	: type_ref external_type_ref DOUBLE_COLON id
+			  {
+				ClassRef parent = ((TypeRef) $2).Type as ClassRef;
+				TypeRef type = (TypeRef) $1;
+					
+				$$ = parent.AddField ((string) $4, type.Type);
+			  }
 			;
 
 method_ref		: internal_method_ref
