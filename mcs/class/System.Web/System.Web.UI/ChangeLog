@@ -1,3 +1,7 @@
+2001-08-23  Bob Smith  <bob@thestuff.net>
+
+        * Control.cs: More implementation. Events reworked for performance.
+
 2001-08-22  Bob Smith  <bob@thestuff.net>
 
         * LiteralControl.cs: Implemented.

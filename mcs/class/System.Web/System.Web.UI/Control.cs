@@ -14,9 +14,14 @@
 
 //cycle:
 //init is called when control is first created.
+//load view state ic called right after init to populate the view state.
+//loadpostdata is called if ipostbackdatahandler is implemented.
 //load is called when control is loaded into a page
+//raisepostdatachangedevent if ipostbackdatahandler is implemented.
+//raisepostbackevent if ipostbackeventhandler is implemented.
 //prerender is called when the server is about to render its page object
-//disposed/unload not sure but is last.
+//SaveViewState is called.
+//Dispose disposed/unload not sure but is last.
 
 //read this later. http://gotdotnet.com/quickstart/aspplus/
 
@@ -28,18 +33,19 @@ namespace System.Web.UI
 {
         public class Control : IComponent, IDisposable, IParserAccessor, IDataBindingsAccessor
         {
-                public event EventHandler DataBinding;
-                public event EventHandler Disposed;
-                public event EventHandler Init;
-                public event EventHandler Load;
-                public event EventHandler PreRender;
-                public event EventHandler Unload;
+                private static readonly object DataBindingEvent = new object();
+                private static readonly object DisposedEvent = new object();
+                private static readonly object InitEvent = new object();
+                private static readonly object LoadEvent = new object();
+                private static readonly object PreRenderEvent = new object();
+                private static readonly object UnloadEvent = new object();
                 private string _clientId; //default to "ctrl#" where # is a static count of ctrls per page.
                 private string _userId = null;
-                private ControlCollection _controls;
+                private ControlCollection _controls = null;
                 private bool _enableViewState = true;
-                private Control _namingContainer;
-                private Page _page;
+                private bool _isNamingContainer = false;
+                private Control _namingContainer = null;
+                private Page _page = null;
                 private Control _parent; //TODO: set default.
                 private ISite _site; //TODO: what default?
                 private bool _visible; //TODO: what default?
@@ -47,17 +53,10 @@ namespace System.Web.UI
                 private bool _childControlsCreated = false;
                 private StateBag _viewState; //TODO: help me.
                 private bool _trackViewState = false; //TODO: I think this is right. Verify. Also modify other methods to use this.
-                private bool _viewStateIgnoreCase = true;
+                private EventHandlerList _events = new EventHandlerList();
                 public Control()
                 {
-                        _namingContainer = _parent;
-                        _viewState = new StateBag(_viewStateIgnoreCase);
-                        _events = new EventHandlerList();
-                        _controls = this.CreateControlCollection(); //FIXME: this goes here?
-                }
-                public ~Control()
-                {
-                        Dispose();
+                        _viewState = new StateBag(ViewStateIgnoreCase);
                 }
                 public virtual string ClientID
                 {
@@ -66,14 +65,15 @@ namespace System.Web.UI
                                 return _clientId;
                         }
                 }
-                public virtual ControlCollection Controls
+                public virtual ControlCollection Controls //DIT
                 {
                         get
                         {
+                                if (_controls == null) _controls = CreateControlCollection();
                                 return _controls;
                         }
                 }
-                public virtual bool EnableViewState
+                public virtual bool EnableViewState //DIT
                 {
                         get
                         {
@@ -98,17 +98,25 @@ namespace System.Web.UI
                                 _userId = value;
                         }
                 }
-                public virtual Control NamingContainer
+                public virtual Control NamingContainer //DIT
                 {
                         get
                         {
+                                if (_namingContainer == null && _parent != null)
+                                {
+                                        if (_parent._isNamingContainer == false)
+                                                _namingContainer = _parent.NamingContainer;
+                                        else
+                                                _namingContainer = _parent;
+                                }
                                 return _namingContainer;
                         }
                 }
-                public virtual Page Page
+                public virtual Page Page //DIT
                 {
                         get
                         {
+                                if (_page == null && _parent != null) _page = _parent.Page;
                                 return _page;
                         }
                         set
@@ -116,14 +124,14 @@ namespace System.Web.UI
                                 _page = value;
                         }
                 }
-                public virtual Control Parent
+                public virtual Control Parent //DIT
                 {
                         get
                         {
                                 return _parent;
                         }
                 }
-                public ISite Site
+                public ISite Site //DIT
                 {
                         get
                         {
@@ -180,7 +188,7 @@ namespace System.Web.UI
                 protected virtual HttpContext Context
                 {
                         get
-                        {
+                        {                              //TODO: Is this right?
                                 HttpContext context;
                                 if (_context != null)
                                         return _context;
@@ -192,18 +200,12 @@ namespace System.Web.UI
                                 return HttpContext.Current;
                         }
                 }
-                protected EventHandlerList Events
+                protected EventHandlerList Events //DIT
                 {
                         get
                         {
-                                EventHandlerList e = new EventHandlerList();
-                                e.AddHandler(this, DataBinding);
-                                e.AddHandler(this, Disposed);
-                                e.AddHandler(this, Init);
-                                e.AddHandler(this, Load);
-                                e.AddHandler(this, PreRender);
-                                e.AddHandler(this, Unload);
-                                return e;
+                                if (_events != null) return _events;
+                                _events = new EventHandlerList();
                         }
                 }
                 protected bool HasChildViewState
@@ -229,16 +231,17 @@ namespace System.Web.UI
                                 return _viewState;
                         }
                 }
-                protected virtual bool ViewStateIgnoresCase
+                protected virtual bool ViewStateIgnoresCase //DIT
                 {
                         get
                         {
-                                return _viewStateIgnoreCase;
+                                return true;
                         }
                 }
-                protected virtual void AddParsedSubObject(object obj)
+                protected virtual void AddParsedSubObject(object obj) //DIT
                 {
-                        _controls.Add(obj);
+                        Control c = (Control)obj;
+                        if (c != null) Controls.Add(c);
                 }
                 protected void BuildProfileTree(string parentId, bool calcViewState)
                 {
@@ -250,12 +253,19 @@ namespace System.Web.UI
                         //Not quite sure about this. an example clears children then calls this, so I think
                         //view state is local to the current object, not children.
                 }
-                protected virtual void CreateChildControls() {}
-                protected virtual ControlCollection CreateControlCollection()
+                protected virtual void CreateChildControls() {} //DIT
+                protected virtual ControlCollection CreateControlCollection() //DIT
                 {
-                        _controls = new ControlCollection(this);
+                        return new ControlCollection(this);
                 }
-                protected virtual void EnsureChildControls() {} //FIXME: I think this should be empty.
+                protected virtual void EnsureChildControls() //DIT
+                {
+                        if (_childControlsCreated == false)
+                        {
+                                CreateChildControls();
+                                ChildControlsCreated = true;
+                        }
+                }
                 public virtual Control FindControl(string id)
                 {
                         int i;
@@ -278,31 +288,50 @@ namespace System.Web.UI
                 {
                         //TODO: Need to read up on security+web.
                 }
-                protected virtual bool OnBubbleEvent(object source, EventArgs args)
+                protected virtual bool OnBubbleEvent(object source, EventArgs args) //DIT
                 {
-                        return false; //FIXME: It might throw "ItemCommand". not sure.
+                        return false;
                 }
-                protected virtual void OnDataBinding(EventArgs e)
+                protected virtual void OnDataBinding(EventArgs e) //DIT
                 {
-                        if (DataBinding != null) DataBinding(this, e);
+                        if (_events != null)
+                        {
+                                EventHandler eh = (EventHandler)(_events[DataBindingEvent]);
+                                if (eh != null) eh(this, e);
+                        }
                 }
-                protected virtual void OnInit(EventArgs e)
+                protected virtual void OnInit(EventArgs e) //DIT
                 {
-                        if (Init != null) Init(this, e);
+                        if (_events != null)
+                        {
+                                EventHandler eh = (EventHandler)(_events[InitEvent]);
+                                if (eh != null) eh(this, e);
+                        }
                 }
-                protected virtual void OnPreRender(EventArgs e)
+                protected virtual void OnPreRender(EventArgs e) //DIT
                 {
-                        if (PreRender != null) PreRender(this, e);
+                        if (_events != null)
+                        {
+                                EventHandler eh = (EventHandler)(_events[PreRenderEvent]);
+                                if (eh != null) eh(this, e);
+                        }
                 }
-                protected virtual void OnUnload(EventArgs e)
+                protected virtual void OnUnload(EventArgs e) //DIT
                 {
-                        if (Unload != null) Unload(this, e);
+                        if (_events != null)
+                        {
+                                EventHandler eh = (EventHandler)(_events[UnloadEvent]);
+                                if (eh != null) eh(this, e);
+                        }
                 }
                 protected void RaiseBubbleEvent(object source, EventArgs args)
                 {
-                        _parent.OnBubbleEvent(source, args); //FIXME: I think this is right. Check though.
+                        return false;
                 }
-                protected virtual void Render(HtmlTextWriter writer) {} //FIXME: Default?
+                protected virtual void Render(HtmlTextWriter writer) //DIT
+                {
+                        RenderChildren(writer);
+                }
                 protected virtual void RenderChildren(HtmlTextWriter writer)
                 {
                         //if render method delegate is set, call it here. otherwise,
@@ -323,11 +352,78 @@ namespace System.Web.UI
                 public virtual void Dispose()
                 {
                         //TODO: nuke stuff.
-                        if (Disposed != null) Disposed(this, e);
+                        if (_events != null)
+                        {
+                                EventHandler eh = (EventHandler)(_events[DisposedEvent]);
+                                if (eh != null) eh(this, e);
+                        }
                 }
-
-
-
+                public event EventHandler DataBinding //DIT
+                {
+                        add
+                        {
+                                Events.AddHandler(DataBindingEvent, value);
+                        }
+                        remove
+                        {
+                                Events.RemoveHandler(DataBindingEvent, value);
+                        }
+                }
+                public event EventHandler Disposed //DIT
+                {
+                        add
+                        {
+                                Events.AddHandler(DisposedEvent, value);
+                        }
+                        remove
+                        {
+                                Events.RemoveHandler(DisposedEvent, value);
+                        }
+                }
+                public event EventHandler Init //DIT
+                {
+                        add
+                        {
+                                Events.AddHandler(InitEvent, value);
+                        }
+                        remove
+                        {
+                                Events.RemoveHandler(InitEvent, value);
+                        }
+                }
+                public event EventHandler Load //DIT
+                {
+                        add
+                        {
+                                Events.AddHandler(LoadEvent, value);
+                        }
+                        remove
+                        {
+                                Events.RemoveHandler(LoadEvent, value);
+                        }
+                }
+                public event EventHandler PreRender //DIT
+                {
+                        add
+                        {
+                                Events.AddHandler(PreRenderEvent, value);
+                        }
+                        remove
+                        {
+                                Events.RemoveHandler(PreRenderEvent, value);
+                        }
+                }
+                public event EventHandler Unload //DIT
+                {
+                        add
+                        {
+                                Events.AddHandler(UnloadEvent, value);
+                        }
+                        remove
+                        {
+                                Events.RemoveHandler(UnloadEvent, value);
+                        }
+                }
 
         }
 }
