@@ -2,6 +2,7 @@
 // System.Runtime.Serialization.SurrogateSelector.cs
 //
 // Author: Duncan Mak (duncan@ximian.com)
+//         Lluis Sanchez (lsg@ctv.es)
 //
 // (C) Ximian, Inc.
 //
@@ -15,20 +16,8 @@ namespace System.Runtime.Serialization
 	{
 		// Fields
 		Hashtable Surrogates = new Hashtable ();
-		string currentKey = null; // current key of Surrogates
+		ISurrogateSelector nextSelector = null;
 
-		internal struct Bundle
-		{
-			public ISerializationSurrogate surrogate;
-			public ArrayList selectors;
-
-			public Bundle (ISerializationSurrogate surrogate)
-			{
-				this.surrogate = surrogate;
-				selectors = new ArrayList ();
-			}
-		}
-		
 		// Constructor
 		public SurrogateSelector()
 			: base ()
@@ -42,29 +31,32 @@ namespace System.Runtime.Serialization
 			if (type == null || surrogate == null)
 				throw new ArgumentNullException ("Null reference.");
 
-			currentKey = type.FullName + "#" + context.ToString ();
+			string currentKey = type.FullName + "#" + context.ToString ();
 
 			if (Surrogates.ContainsKey (currentKey))
 				throw new ArgumentException ("A surrogate for " + type.FullName + " already exists.");
 
-			Bundle values = new Bundle (surrogate);
-			
-			Surrogates.Add (currentKey, values);
+			Surrogates.Add (currentKey, surrogate);
 		}
 
 		public virtual void ChainSelector (ISurrogateSelector selector)
 		{
 			if (selector == null)
 				throw new ArgumentNullException ("Selector is null.");
-			
-			Bundle current = (Bundle) Surrogates [currentKey];
-			current.selectors.Add (selector);
+
+			// Chain the selector at the beggining of the chain
+			// since "The last selector added to the list will be the first one checked"
+			// (from MS docs)
+
+			if (nextSelector != null)
+				selector.ChainSelector (nextSelector);
+
+			nextSelector = selector;
 		}
 
 		public virtual ISurrogateSelector GetNextSelector ()
 		{
-			Bundle current = (Bundle) Surrogates [currentKey];
-			return (ISurrogateSelector) current.selectors [current.selectors.Count];
+			return nextSelector;
 		}
 
 		public virtual ISerializationSurrogate GetSurrogate (Type type,
@@ -72,12 +64,24 @@ namespace System.Runtime.Serialization
 		{
 			if (type == null)
 				throw new ArgumentNullException ("type is null.");
+
+			// Check this selector, and if the surrogate is not found,
+			// check the chained selectors
 			
 			string key = type.FullName + "#" + context.ToString ();			
-			Bundle current = (Bundle) Surrogates [key];
-			selector = (ISurrogateSelector) current.selectors [current.selectors.Count - 1];
+			ISerializationSurrogate surrogate = (ISerializationSurrogate) Surrogates [key];
+
+			if (surrogate != null) {
+				selector = this;
+				return surrogate;
+			}
 			
-			return (ISerializationSurrogate) current.surrogate;
+			if (nextSelector != null)
+				return nextSelector.GetSurrogate (type, context, out selector);
+			else {
+				selector = null;
+				return null;
+			}
 		}
 
 		public virtual void RemoveSurrogate (Type type, StreamingContext context)

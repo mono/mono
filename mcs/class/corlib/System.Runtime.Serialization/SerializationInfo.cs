@@ -103,10 +103,10 @@ namespace System.Runtime.Serialization
                         			
 			SerializationEntry values = (SerializationEntry) serialized [name];
 
-			if (values.Value != null && values.ObjectType != type)
-				throw new InvalidCastException ("Invalid Type casting.");
-			
-			return values.Value;
+			if (values.Value != null && values.Value.GetType() != type && !values.Value.GetType().IsSubclassOf (type))
+				return converter.Convert (values.Value, type);
+			else
+				return values.Value;
 		}
 
 		public void SetType (Type type)
@@ -275,6 +275,7 @@ namespace System.Runtime.Serialization
 		public string GetString (string name)
 		{
 			object value = GetValue (name, typeof (System.String));
+			if (value == null) return null;
 			return converter.ToString (value);
 		}
 
