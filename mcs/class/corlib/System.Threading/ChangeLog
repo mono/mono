@@ -1,3 +1,8 @@
+2001-10-03  Dick Porter  <dick@ximian.com>
+
+	* Monitor.cs: Implemented all methods except the two Wait()
+	methods that take boolean parameters
+
 2001-09-28  Dick Porter  <dick@ximian.com>
 
 	* Thread.cs: Implemented AllocateDataSlot(),
