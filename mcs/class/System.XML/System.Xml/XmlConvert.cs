@@ -421,7 +421,7 @@ namespace System.Xml {
 			if(ncname == null)
 				throw new ArgumentNullException("ncname");
 
-			if(XmlConstructs.IsValidName(ncname, out innerEx))
+			if(XmlConstructs.IsValidNCName(ncname, out innerEx))
 				return ncname;
 			
 			throw new XmlException("'"+ncname+"' is not a valid XML NCName",innerEx);

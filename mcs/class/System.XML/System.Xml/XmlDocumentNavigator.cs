@@ -223,10 +223,10 @@ namespace System.Xml
 						return false;
 					bool loop = true;
 					do {
-						switch (node.NodeType) {
+						switch (n.NodeType) {
 						case XmlNodeType.XmlDeclaration:
 						case XmlNodeType.DocumentType:
-							n = node.NextSibling;
+							n = n.NextSibling;
 							if (n == null)
 								return false;
 							break;
@@ -235,6 +235,7 @@ namespace System.Xml
 							break;
 						}
 					} while (loop);
+					node = n;
 				}
 				else
 					node = node.FirstChild;
