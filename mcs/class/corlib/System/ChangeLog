@@ -1,3 +1,7 @@
+2002-05-12  Daniel Morgan <danmorg@sc.rr.com>
+
+	* IServiceProvider.cs: added using System
+
 2002-05-09  Daniel Morgan <danmorg@sc.rr.com>
 
 	* Single.cs: copied ToString() and Parse() methods from 
