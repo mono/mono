@@ -532,7 +532,7 @@ namespace Mono.CSharp {
 				return null;
 			
 			Expression e = a.Expr;
-			
+
 			if (e is MethodGroupExpr) {
 				MethodGroupExpr mg = (MethodGroupExpr) e;
 

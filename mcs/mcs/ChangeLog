@@ -1,3 +1,45 @@
+2001-12-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (Foreach.GetEnumeratorFilter): Do not compare
+	against IEnumerator, test whether the return value is a descendant
+	of the IEnumerator interface.
+
+	* class.cs (Indexer.Define): Use an auxiliary method to implement
+	the other bits of the method definition.  Begin support for
+	explicit interface implementation.
+
+	(Property.DefineMethod): Use TypeManager.void_type instead of null
+	for an empty return value.
+
+2001-12-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (MemberAccess.ResolveMemberAccess): if we are
+	dealing with a FieldExpr which is composed of a FieldBuilder, in
+	the code path we did extract the constant, but we should have
+	obtained the underlying value to be able to cast it (otherwise we
+	end up in an infinite loop, this is what Ravi was running into).
+
+	(ArrayCreation.UpdateIndices): Arrays might be empty.
+
+	(MemberAccess.ResolveMemberAccess): Add support for section
+	14.5.4.1 that deals with the special case of E.I when E is a type
+	and something else, that I can be a reference to a static member.
+
+	(ArrayCreation.MakeByteBlob): It is not an error to not be able to
+	handle a particular array type to create byte blobs, it is just
+	something we dont generate byteblobs for.
+
+	* cs-tokenizer.cs (get_cmd_arg): Ignore \r in commands and
+	arguments. 
+
+	* location.cs (Push): remove the key from the hashtable that we
+	are about to add.   This happens for empty files.
+
+	* driver.cs: Dispose files after we have parsed them.
+
+	(tokenize): new function that only runs the tokenizer on its
+	input, for speed testing.
+
 2001-12-26  Ravi Pratap  <ravi@ximian.com>
 
 	* class.cs (Event.Define): Define the private field only if there

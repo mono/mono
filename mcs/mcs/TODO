@@ -262,6 +262,12 @@ OPTIMIZATIONS
 
 * Add a cache for the various GetArrayMethod operations.
 
+* Optimization:
+
+	Do not use StatementCollections, use ArrayLists of Statements,
+	and then "copy" it out to arrays.  Then reuse the existing
+	Statement structures.
+
 RECOMMENDATIONS
 ---------------
 
@@ -301,7 +307,6 @@ RECOMMENDATIONS
 	Only create one `This' instance per class, and reuse it.
 
 	Maybe keep a pool of constants/literals (zero, 1)?
-
 
 ************
 Potential bug:

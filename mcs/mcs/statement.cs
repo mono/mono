@@ -911,15 +911,21 @@ namespace Mono.CSharp {
 					b.UsageWarning ();
 		}
 
+//		static int count;
+		
 		public override bool Emit (EmitContext ec)
 		{
 			bool is_ret = false;
 			Block prev_block = ec.CurrentBlock;
 
+//			count++;
 			ec.CurrentBlock = this;
+//			if (count == 40)
+//				throw new Exception ();
 			foreach (Statement s in Statements)
 				is_ret = s.Emit (ec);
-
+//			count--;
+			
 			ec.CurrentBlock = prev_block;
 			return is_ret;
 		}
@@ -1831,9 +1837,11 @@ namespace Mono.CSharp {
 				return false;
 			
 			MethodInfo mi = (MethodInfo) m;
-			
-			if (mi.ReturnType != TypeManager.ienumerator_type)
-				return false;
+
+			if (mi.ReturnType != TypeManager.ienumerator_type){
+				if (!TypeManager.ienumerator_type.IsAssignableFrom (mi.ReturnType))
+					return false;
+			}
 			
 			Type [] args = TypeManager.GetArgumentTypes (mi);
 			if (args == null)

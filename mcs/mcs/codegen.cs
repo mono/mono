@@ -180,7 +180,8 @@ namespace Mono.CSharp {
 		public void EmitTopBlock (Block block, Location loc)
 		{
 			bool has_ret = false;
-			
+
+//			Console.WriteLine ("Emitting: " + loc);
 			if (block != null){
 				int errors = Report.Errors;
 				

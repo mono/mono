@@ -3345,6 +3345,7 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			MethodGroupExpr mg = (MethodGroupExpr) this.expr;
+
 			EmitCall (ec, method.IsStatic, mg.InstanceExpression, method, Arguments);
 		}
 		
@@ -3673,8 +3674,7 @@ namespace Mono.CSharp {
 		{
 			int i = 0;
 			for (ArrayList probe = Initializers; probe != null;) {
-				
-				if (probe [0] is ArrayList) {
+				if (probe.Count > 0 && probe [0] is ArrayList) {
 					Expression e = new IntConstant (probe.Count);
 					Arguments.Add (new Argument (e, Argument.AType.Expression));
 
@@ -3863,10 +3863,8 @@ namespace Mono.CSharp {
 				 underlying_type == TypeManager.char_type ||
 				 underlying_type == TypeManager.ushort_type)
 				factor = 2;
-			else {
-				Report.Error (-100, loc, "Unhandled type in MakeByteBlob!!");
+			else
 				return null;
-			}
 
 			data = new byte [count * factor];
 			int idx = 0;
@@ -4247,8 +4245,26 @@ namespace Mono.CSharp {
 		}
 
 #if USE_OLD
+		static bool IdenticalNameAndTypeName (EmitContext ec, Expression left_original, Location loc)
+		{
+			if (left_original == null)
+				return false;
+
+			if (!(left_original is SimpleName))
+				return false;
+
+			SimpleName sn = (SimpleName) left_original;
+
+			Type t = RootContext.LookupType (ec.TypeContainer, sn.Name, true, loc);
+			if (t != null)
+				return true;
+
+			return false;
+		}
+		
 		public static Expression ResolveMemberAccess (EmitContext ec, Expression member_lookup,
-							      Expression left, Location loc)
+							      Expression left, Location loc,
+							      Expression left_original)
 		{
 			//
 			// Method Groups
@@ -4272,6 +4288,14 @@ namespace Mono.CSharp {
 				// Instance.MethodGroup
 				//
 				if (!mg.RemoveStaticMethods ()){
+					if (IdenticalNameAndTypeName (ec, left_original, loc)){
+						if (!mg.RemoveInstanceMethods ()){
+							SimpleName.Error120 (loc, mg.Methods [0].Name);
+							return null;
+						}
+						return member_lookup;
+					}
+					
 					error176 (loc, mg.Methods [0].Name);
 					return null;
 				}
@@ -4290,7 +4314,8 @@ namespace Mono.CSharp {
 					
 					if (c != null) {
 						object o = c.LookupConstantValue (ec);
-						return Constantify (o, fi.FieldType);
+						object real_value = ((Constant) c.Expr).GetValue ();
+						return Constantify (real_value, fi.FieldType);
 					}
 				}
 
@@ -4305,8 +4330,8 @@ namespace Mono.CSharp {
 						o = fi.GetValue (fi);
 					
 					if (decl_type.IsSubclassOf (TypeManager.enum_type)) {
-						Expression enum_member = MemberLookup (ec, decl_type, "value__",
-										       false, loc); 
+						Expression enum_member = MemberLookup (
+							ec, decl_type, "value__", false, loc); 
 
 						Enum en = TypeManager.LookupEnum (decl_type);
 
@@ -4330,6 +4355,7 @@ namespace Mono.CSharp {
 				}
 				
 				if (left is TypeExpr){
+					// and refers to a type name or an 
 					if (!fe.FieldInfo.IsStatic){
 						error176 (loc, fe.FieldInfo.Name);
 						return null;
@@ -4337,6 +4363,9 @@ namespace Mono.CSharp {
 					return member_lookup;
 				} else {
 					if (fe.FieldInfo.IsStatic){
+						if (IdenticalNameAndTypeName (ec, left_original, loc))
+							return member_lookup;
+
 						error176 (loc, fe.FieldInfo.Name);
 						return null;
 					}
@@ -4357,6 +4386,8 @@ namespace Mono.CSharp {
 					return pe;
 				} else {
 					if (pe.IsStatic){
+						if (IdenticalNameAndTypeName (ec, left_original, loc))
+							return member_lookup;
 						error176 (loc, pe.PropertyInfo.Name);
 						return null;
 					}
@@ -4397,8 +4428,7 @@ namespace Mono.CSharp {
 						Report.Error (-200, loc, "Internal error!!");
 						return null;
 					}
-					
-					return ResolveMemberAccess (ec, ml, left, loc);
+					return ResolveMemberAccess (ec, ml, left, loc, left_original);
 				}
 
 				if (left is TypeExpr) {
@@ -4411,6 +4441,9 @@ namespace Mono.CSharp {
 
 				} else {
 					if (ee.IsStatic) {
+						if (IdenticalNameAndTypeName (ec, left_original, loc))
+							return ee;
+						    
 						error176 (loc, ee.EventInfo.Name);
 						return null;
 					}
@@ -4438,6 +4471,7 @@ namespace Mono.CSharp {
 			// We are the sole users of ResolveWithSimpleName (ie, the only
 			// ones that can cope with it
 			//
+			Expression original = expr;
 			expr = expr.ResolveWithSimpleName (ec);
 
 			if (expr == null)
@@ -4473,12 +4507,12 @@ namespace Mono.CSharp {
 				}
 			}
 
-			member_lookup = MemberLookup (ec, expr.Type, Identifier, false, loc);
+			member_lookup = MemberLookup (ec, expr_type, Identifier, false, loc);
 
 			if (member_lookup == null)
 				return null;
 
-			return ResolveMemberAccess (ec, member_lookup, expr, loc);
+			return ResolveMemberAccess (ec, member_lookup, expr, loc, original);
 		}
 
 #else
@@ -5264,7 +5298,7 @@ namespace Mono.CSharp {
 			else
 				left = new This (loc).Resolve (ec);
 			
-			return MemberAccess.ResolveMemberAccess (ec, member_lookup, left, loc);
+			return MemberAccess.ResolveMemberAccess (ec, member_lookup, left, loc, null);
 		}
 
 		public override void Emit (EmitContext ec)

@@ -40,6 +40,7 @@ namespace Mono.CSharp {
 	
 		static public void Push (string name)
 		{
+			map.Remove (global_count);
 			map.Add (global_count, name);
 			list.Add (global_count);
 			module_base = global_count;

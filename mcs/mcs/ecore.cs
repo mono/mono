@@ -2773,7 +2773,7 @@ namespace Mono.CSharp {
 					if (instance_expr != null)
 						instance_expr = instance_expr.Resolve (ec);
 					
-					return MemberAccess.ResolveMemberAccess (ec, ml, instance_expr, Location);
+					return MemberAccess.ResolveMemberAccess (ec, ml, instance_expr, Location, null);
 				}
 			}
 				

@@ -34,8 +34,12 @@ namespace Mono.CSharp
 		// Lookup paths
 		static ArrayList link_paths;
 
+		// Whether we want Yacc to output its progress
 		static bool yacc_verbose = false;
 
+		// Whether we want to only run the tokenizer
+		static bool tokenize = false;
+		
 		static int error_count = 0;
 
 		static string first_source;
@@ -46,6 +50,31 @@ namespace Mono.CSharp
 		static bool parse_only = false;
 
 		static ArrayList defines;
+
+		static int tokenize_file (string input_file)
+		{
+			Stream input;
+
+			try {
+				input = File.OpenRead (input_file);
+
+			} catch {
+				Report.Error (2001, "Source file '" + input_file + "' could not be opened");
+				return 1;
+			}
+
+			using (input){
+				Tokenizer lexer = new Tokenizer (input, input_file, defines);
+				int token, tokens = 0;
+
+				while ((token = lexer.token ()) != Token.EOF){
+					Location l = lexer.Location;
+					tokens++;
+				}
+			}
+			
+			return 0;
+		}
 		
 		static int parse (string input_file)
 		{
@@ -68,6 +97,8 @@ namespace Mono.CSharp
 				Console.WriteLine (ex);
 				Console.WriteLine ("Compilation aborted");
 				return 1;
+			} finally {
+				input.Close ();
 			}
 			
 			return errors;
@@ -312,6 +343,11 @@ namespace Mono.CSharp
 						continue;
 					}
 
+					case "--tokenize": {
+						tokenize = true;
+						continue;
+					}
+					
 					case "-o": case "--output":
 						if ((i + 1) >= argc){
 							Usage (true);
@@ -442,10 +478,16 @@ namespace Mono.CSharp
 						errors++;
 						continue;
 					}
-					errors += parse (f);
+					if (tokenize)
+						tokenize_file (f);
+					else 
+						errors += parse (f);
 				}
 			}
 
+			if (tokenize)
+				return;
+			
 			if (first_source == null){
 				Report.Error (2008, "No files to compile were specified");
 				return;

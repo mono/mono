@@ -1327,7 +1327,7 @@ namespace Mono.CSharp {
 		{
 			if (pending_implementations == null)
 				return null;
-			
+
 			foreach (TypeAndMethods tm in pending_implementations){
 				if (!(t == null || tm.type == t))
 					continue;
@@ -1338,7 +1338,7 @@ namespace Mono.CSharp {
 						i++;
 						continue;
 					}
-					
+
 					if (Name != m.Name){
 						i++;
 						continue;
@@ -1458,7 +1458,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void Emit ()
 		{
-			Console.WriteLine ("Emitting code for: " + TypeBuilder.FullName);
+//			Console.WriteLine ("Emitting code for: " + TypeBuilder.FullName);
 			if (constructors != null)
 				foreach (Constructor c in constructors)
 					c.Emit (this);
@@ -2562,7 +2562,7 @@ namespace Mono.CSharp {
 				name = "set_" + short_name;
 				parameters = new Type [1];
 				parameters [0] = PropertyType;
-				fn_type = null;
+				fn_type = TypeManager.void_type;
 			}
 
 			implementing = parent.IsInterfaceMethod (
@@ -3124,9 +3124,80 @@ namespace Mono.CSharp {
 			OptAttributes = attrs;
 		}
 
-		public override bool Define (TypeContainer parent)
+		void DefineMethod (TypeContainer parent, Type iface_type,
+				   Type ret_type, string name,
+				   Type [] parameters, bool is_get)
 		{
 			MethodAttributes attr = Modifiers.MethodAttr (ModFlags);
+			MethodInfo implementing;
+
+			implementing = parent.IsInterfaceMethod (
+				iface_type, name, ret_type, parameters, false);
+
+			//
+			// Setting null inside this block will trigger a more
+			// verbose error reporting for missing interface implementations
+			//
+			// The "candidate" function has been flagged already
+			// but it wont get cleared
+			//
+			if (implementing != null){
+				if (iface_type == null){
+					if ((ModFlags & Modifiers.PUBLIC) == 0)
+						implementing = null;
+					if ((ModFlags & Modifiers.STATIC) != 0)
+						implementing = null;
+				} else {
+					if((ModFlags&(Modifiers.PUBLIC | Modifiers.ABSTRACT)) != 0){
+						Report.Error (
+							106, Location,
+							"`public' or `abstract' modifiers are not "+
+							"allowed in explicit interface declarations"
+							);
+						implementing = null;
+					}
+				}
+			}
+			if (implementing != null){
+				attr |=
+					MethodAttributes.Virtual |
+					MethodAttributes.NewSlot |
+					MethodAttributes.HideBySig;
+				
+				// If not abstract, then we can set Final.
+				if ((attr & MethodAttributes.Abstract) == 0)
+					attr |= MethodAttributes.Final;
+				
+				//
+				// clear the pending flag
+				//
+				parent.IsInterfaceMethod (
+					iface_type, name, ret_type, parameters, true);
+			}
+
+			if (is_get){
+				GetBuilder = parent.TypeBuilder.DefineMethod (
+					"get_Item", attr, IndexerType, parameters);
+
+				if (implementing != null)
+					parent.TypeBuilder.DefineMethodOverride (
+						GetBuilder, implementing);
+
+				PropertyBuilder.SetGetMethod (GetBuilder);
+			} else {
+				SetBuilder = parent.TypeBuilder.DefineMethod (
+					"set_Item", attr, null, parameters);
+
+				if (implementing != null)
+					parent.TypeBuilder.DefineMethodOverride (
+						SetBuilder, implementing);
+					
+				PropertyBuilder.SetSetMethod (SetBuilder);
+			}
+		}
+			
+		public override bool Define (TypeContainer parent)
+		{
 			PropertyAttributes prop_attr =
 				PropertyAttributes.RTSpecialName |
 				PropertyAttributes.SpecialName;
@@ -3156,10 +3227,13 @@ namespace Mono.CSharp {
 				TypeManager.IndexerPropertyName (parent.TypeBuilder),
 				prop_attr, IndexerType, parameters);
 
+			//
+			// FIXME: Implement explicit implementation
+			//
+			Type iface_type = null;
+			
 			if (Get != null){
-				GetBuilder = parent.TypeBuilder.DefineMethod (
-					"get_Item", attr, IndexerType, parameters);
-
+				DefineMethod (parent, iface_type, IndexerType, "get_Item", parameters, true);
                                 InternalParameters pi = new InternalParameters (parent, FormalParameters);
 				if (!TypeManager.RegisterMethod (GetBuilder, pi, parameters)) {
 					Report.Error (111, Location,
@@ -3169,7 +3243,6 @@ namespace Mono.CSharp {
 						      "'get' indexer");
 					return false;
 				}
-				PropertyBuilder.SetGetMethod (GetBuilder);
 			}
 			
 			if (Set != null){
@@ -3183,26 +3256,32 @@ namespace Mono.CSharp {
 				Parameter [] tmp = new Parameter [fixed_parms.Length + 1];
 
 				fixed_parms.CopyTo (tmp, 0);
-				tmp [fixed_parms.Length] = new Parameter (Type, "value", Parameter.Modifier.NONE, null);
+				tmp [fixed_parms.Length] = new Parameter (
+					Type, "value", Parameter.Modifier.NONE, null);
 
 				Parameters set_formal_params = new Parameters (tmp, null, Location);
 				
-				SetBuilder = parent.TypeBuilder.DefineMethod (
-					"set_Item", attr, null, set_pars);
+				DefineMethod (
+					parent, iface_type, TypeManager.void_type,
+					"set_Item", set_pars, false);
+
 				InternalParameters ip = new InternalParameters (parent, set_formal_params);
 				
 				if (!TypeManager.RegisterMethod (SetBuilder, ip, set_pars)) {
-					Report.Error (111, Location,
-					       "Class `" + parent.Name + "' already contains a definition with the " +
-					       "same return value and parameter types for the " +
-					       "'set' indexer");
+					Report.Error (
+						111, Location,
+						"Class `" + parent.Name + "' already contains a " +
+						"definition with the " +
+						"same return value and parameter types for the " +
+						"'set' indexer");
 					return false;
 				}
-				PropertyBuilder.SetSetMethod (SetBuilder);
 			}
 
+			//
+			// Now name the parameters
+			//
 			Parameter [] p = FormalParameters.FixedParameters;
-
 			if (p != null) {
 				int i;
 				
@@ -3407,7 +3486,7 @@ namespace Mono.CSharp {
 						"object type");
 					return false;
 				}
-				
+
 				if (first_arg_type.IsInterface || return_type.IsInterface){
 					Report.Error (
 						552, Location,
