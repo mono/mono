@@ -1,3 +1,6 @@
+2004-09-19  Sureshkumar T <tsureshkumar@novell.com>
+	* DataSetTest.cs : Added a test for Deserialization of dataset : DeserializeModifiedDataSet
+
 2004-08-24  Nick Drochak <ndrochak@ieee.org>
 	* DataViewTest.cs : Fixed compile with csc
 
