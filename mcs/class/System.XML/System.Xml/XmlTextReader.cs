@@ -898,7 +898,7 @@ namespace System.Xml
 				LineNumber = LinePosition = 0;
 			}
 
-			internal virtual void FillNames ()
+			internal void FillNames ()
 			{
 				if (Reader.Namespaces) {
 					int indexOfColon = -1;
@@ -1014,11 +1014,37 @@ namespace System.Xml
 				ValueTokenStartIndex = ValueTokenEndIndex = 0;
 			}
 
-			internal override void FillNames ()
+			internal void FillPrefixAndXmlns ()
 			{
-				base.FillNames ();
-				if (Prefix == "xmlns" || Name == "xmlns")
+				if (!Reader.Namespaces) {
+					Prefix = String.Empty;
+					LocalName = Name;
+					return;
+				}
+				int indexOfColon = Name.IndexOf (':');
+
+				if (indexOfColon == -1) {
+					Prefix = String.Empty;
+					LocalName = Name;
+				} else {
+					Prefix = Reader.NameTable.Add (Name.Substring (0, indexOfColon));
+					LocalName = Reader.NameTable.Add (Name.Substring (indexOfColon + 1));
+				}
+				if (Object.ReferenceEquals (Prefix, XmlNamespaceManager.PrefixXmlns))
+					Reader.parserContext.NamespaceManager.AddNamespace (LocalName, Value);
+				else if (Object.ReferenceEquals (Name, XmlNamespaceManager.PrefixXmlns))
+					Reader.parserContext.NamespaceManager.AddNamespace (String.Empty, Value);
+			}
+
+			internal void FillNamespace ()
+			{
+				if (Object.ReferenceEquals (Prefix, XmlNamespaceManager.PrefixXmlns) ||
+					Object.ReferenceEquals (Name, XmlNamespaceManager.PrefixXmlns))
 					NamespaceURI = XmlNamespaceManager.XmlnsXmlns;
+				else if (Prefix.Length == 0)
+					NamespaceURI = string.Empty;
+				else
+					NamespaceURI = Reader.LookupNamespace (Prefix, true);
 			}
 
 			private void NormalizeSpaces ()
@@ -1478,7 +1504,9 @@ namespace System.Xml
 
 			// fill namespaces
 			for (int i = 0; i < attributeCount; i++)
-				attributeTokens [i].FillNames ();
+				attributeTokens [i].FillPrefixAndXmlns ();
+			for (int i = 0; i < attributeCount; i++)
+				attributeTokens [i].FillNamespace ();
 
 			// quick name check
 			for (int i = 0; i < attributeCount; i++) {
@@ -1853,13 +1881,6 @@ namespace System.Xml
 					dummyValue = currentAttributeToken.Value;
 
 				attributeCount++;
-
-				if (currentAttributeToken.Name == "xmlns")
-					parserContext.NamespaceManager.AddNamespace (String.Empty, GetAttribute (currentAttribute));
-				else if (currentAttributeToken.Name.StartsWith ("xmlns:")) {
-					string nsPrefix = currentAttributeToken.Name.Substring (6);
-					parserContext.NamespaceManager.AddNamespace (nsPrefix, GetAttribute (currentAttribute));
-				}
 
 				if (!SkipWhitespace ())
 					requireWhitespace = true;

@@ -1,6 +1,14 @@
 2004-11-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextReader.cs :
+	  With related to AddNamespace(), there was extra string.StartsWith()
+	  calls. Now AttributeTokenInfo.FillNames() is splitted into
+	  FillPrefixAndXmlns() and FillNamespace(), and AddNamespace() is done
+	  at FillPrefixAndXmlns().
+
+2004-11-03  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextReader.cs :
 	  Reduces LookupNamespace() call in FillNames(). This improves 6-7%
 	  speedup in some scenario.
 	  Code refactory; Removed unused code. AddAttribute() is used only for
