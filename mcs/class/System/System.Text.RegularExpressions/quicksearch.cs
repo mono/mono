@@ -7,6 +7,7 @@
 // 		(c) 2002
 
 using System;
+using System.Collections;
 
 namespace System.Text.RegularExpressions {
 
@@ -49,7 +50,7 @@ namespace System.Text.RegularExpressions {
 					}
 
 					if (ptr < end)
-						ptr += shift[text[ptr + len]];
+						ptr += GetShiftDistance (text[ptr + len]);
 					else
 						break;
 				}
@@ -66,7 +67,7 @@ namespace System.Text.RegularExpressions {
 					}
 
 					if (ptr < end)
-						ptr += shift[text[ptr + len]];
+						ptr += GetShiftDistance (text[ptr + len]);
 					else
 						break;
 				}
@@ -81,15 +82,7 @@ namespace System.Text.RegularExpressions {
 			if (ignore)
 				str = str.ToLower ();
 
-			// this is a 64k entry shift table. that's 128kb per pattern!
-			// is it worth compressing this by only storing shifts within
-			// a (lo, hi) character range? for most substrings this would
-			// be around 50 bytes...
-
-			shift = new int[0x1000];
-			for (int i = 0; i < 0x1000; ++ i)
-				shift[i] = len + 1;
-
+			shift = new Hashtable ();
 			for (int i = 0; i < len; ++ i) {
 				char c = str[i];
 
@@ -98,11 +91,17 @@ namespace System.Text.RegularExpressions {
 					shift[Char.ToUpper (c)] = len - i;
 			}
 		}
-
+	    
+		int GetShiftDistance (char c){
+			object s = shift[c];
+			return (s != null ? (int)s : len + 1);
+		}
+		
 		private string str;
 		private int len;
 		private bool ignore;
 
-		private int[] shift;
+		Hashtable shift;
 	}
+
 }
