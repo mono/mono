@@ -1,5 +1,7 @@
 2002-03-11  Miguel de Icaza  <miguel@ximian.com>
 
+	* ecore.cs: Only set the status used flag if we get back a Field.
+
 	* attribute.cs: Temporary hack, so Paolo can keep working.
 
 2002-03-08  Ravi Pratap  <ravi@ximian.com>

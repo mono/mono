@@ -3305,10 +3305,12 @@ namespace Mono.CSharp {
 				
 			if (FieldInfo is FieldBuilder){
 				Field f = TypeManager.GetField (FieldInfo);
-				if (f != null && (f.ModFlags & Modifiers.VOLATILE) != 0)
-					is_volatile = true;
+				if (f != null){
+					if ((f.ModFlags & Modifiers.VOLATILE) != 0)
+						is_volatile = true;
 				
-				f.status |= Field.Status.USED;
+					f.status |= Field.Status.USED;
+				}
 			}
 			
 			if (FieldInfo.IsStatic){

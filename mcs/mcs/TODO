@@ -165,6 +165,9 @@ PENDING TASKS
 
 * Make sure that we are pinning the right variable
 
+* Maybe track event usage?  Currently I am not tracking these, although they
+  are fields.
+
 OPTIMIZATIONS
 -------------
 
