@@ -1273,6 +1273,11 @@ namespace System.Reflection.Emit {
 				throw new ArgumentException (argName, "Illegal name.");
 		}
 
+		public override String ToString ()
+		{
+			return "TypeBuilder [" + FullName + "]";
+		}
+
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 		public override Type[] GetGenericArguments ()
 		{

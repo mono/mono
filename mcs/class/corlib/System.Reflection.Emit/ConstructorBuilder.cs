@@ -230,7 +230,7 @@ namespace System.Reflection.Emit {
 #endif
 
 		public override string ToString() {
-			return "constructor";
+			return "ConstructorBuilder ['" + type.Name + "']";
 		}
 
 		internal void fixup () {

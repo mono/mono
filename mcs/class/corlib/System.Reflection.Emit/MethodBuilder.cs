@@ -289,6 +289,10 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ();
 		}
 
+		public override string ToString() {
+			return "MethodBuilder [" + type.Name + "::" + name + "]";
+		}
+
 		internal override int get_next_table_index (object obj, int table, bool inc) {
 		    return type.get_next_table_index (obj, table, inc);
 		}
