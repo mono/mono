@@ -6983,7 +6983,8 @@ namespace Mono.CSharp {
 		public override string GetSignatureForError (TypeContainer tc)
 		{
 			StringBuilder sb = new StringBuilder ();
-			sb.AppendFormat ("{0}.operator {1} {2}({3}", tc.Name, GetName (OperatorType), Type.ToString (), Parameters.FixedParameters [0].GetSignatureForError ());
+			sb.AppendFormat ("{0}.operator {1} {2}({3}", tc.Name, GetName (OperatorType), Type.Type == null ? Type.ToString () : TypeManager.CSharpName (Type.Type),
+				Parameters.FixedParameters [0].GetSignatureForError ());
 			
 			if (Parameters.FixedParameters.Length > 1) {
 				sb.Append (",");

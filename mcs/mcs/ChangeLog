@@ -1,3 +1,10 @@
+2004-10-17  John Luke  <john.luke@gmail.com>
+
+	* class.cs (Operator.GetSignatureForError): use CSharpName
+
+	* parameter.cs (Parameter.GetSignatureForError): Returns
+	correct name even if was not defined.
+
 2004-10-13  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #65816.

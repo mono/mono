@@ -244,7 +244,14 @@ namespace Mono.CSharp {
 
 		public string GetSignatureForError ()
 		{
-			string typeName = TypeManager.CSharpName (parameter_type);
+			string typeName;
+			if (parameter_type != null)
+				typeName = TypeManager.CSharpName (parameter_type);
+			else if (TypeName.Type != null)
+				typeName = TypeManager.CSharpName (TypeName.Type);
+			else
+				typeName = TypeName.ToString ();
+
 			switch (ModFlags & ~Modifier.ISBYREF) {
 				case Modifier.OUT:
 					return "out " + typeName;
