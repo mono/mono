@@ -1,3 +1,9 @@
+2004-04-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: added GetSupportsAsync and Poll_internal internal calls.
+	Cleaned up Worker class: moved fields to SocketAsyncResult and use Poll
+	when the socket is non-blocking before getting EWOULDBLOCK error.
+
 2004-04-08  Dick Porter  <dick@ximian.com>
 
 	* Socket.cs: Rearrange the internal calls so that the exceptions

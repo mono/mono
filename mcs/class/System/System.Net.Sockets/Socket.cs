@@ -1,11 +1,13 @@
 // System.Net.Sockets.Socket.cs
 //
 // Authors:
-//    Phillip Pearson (pp@myelin.co.nz)
-//    Dick Porter <dick@ximian.com>
+//	Phillip Pearson (pp@myelin.co.nz)
+//	Dick Porter <dick@ximian.com>
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // Copyright (C) 2001, 2002 Phillip Pearson and Ximian, Inc.
 //    http://www.myelin.co.nz
+// (c) 2004 Novell, Inc. (http://www.novell.com)
 //
 
 using System;
@@ -22,29 +24,68 @@ namespace System.Net.Sockets
 	{
 		private sealed class SocketAsyncResult: IAsyncResult 
 		{
-			private object state;
-			private WaitHandle waithandle;
-			private bool completed_sync, completed;
-			private Worker worker;
-			private Exception delayedException = null;
+			/* Same structure in the runtime */
+			public Socket Sock;
+			object state;
+			AsyncCallback callback;
+			WaitHandle waithandle;
+			bool completed_sync;
+			bool completed;
+			Exception delayedException;
 
-			public SocketAsyncResult(object state) {
-				this.state=state;
-				completed_sync=completed=false;
+			public EndPoint EndPoint;	// Connect,ReceiveFrom,SendTo
+			public byte [] Buffer;		// Receive,ReceiveFrom,Send,SendTo
+			public int Offset;		// Receive,ReceiveFrom,Send,SendTo
+			public int Size;		// Receive,ReceiveFrom,Send,SendTo
+			public SocketFlags SockFlags;	// Receive,ReceiveFrom,Send,SendTo
+
+			// Return values
+			Socket acc_socket;
+			int total;
+			
+
+			public SocketAsyncResult (Socket sock, object state, AsyncCallback callback)
+			{
+				this.Sock = sock;
+				this.state = state;
+				this.callback = callback;
+				SockFlags = SocketFlags.None;
 			}
 
-			public void SetDelayedException (Exception e) {
-				delayedException = e;
-			}
-
-			public void CheckIfThrowDelayedException () {
+			public void CheckIfThrowDelayedException ()
+			{
 				if (delayedException != null)
 					throw delayedException;
 			}
 
+			public void Complete ()
+			{
+				IsCompleted = true;
+				if (callback != null)
+					callback (this);
+			}
+
+			public void Complete (int total)
+			{
+				this.total = total;
+				Complete ();
+			}
+			
+			public void Complete (Exception e)
+			{
+				delayedException = e;
+				Complete ();
+			}
+
+			public void Complete (Socket s)
+			{
+				acc_socket = s;
+				Complete ();
+			}
+
 			public object AsyncState {
 				get {
-					return(state);
+					return state;
 				}
 			}
 
@@ -82,314 +123,142 @@ namespace System.Net.Sockets
 				}
 			}
 			
-			public Worker Worker {
+			public Socket Socket {
 				get {
-					return(worker);
+					return acc_socket;
 				}
-				set {
-					worker=value;
+			}
+
+			public int Total {
+				get {
+					return total;
 				}
 			}
 		}
 
 		private sealed class Worker 
 		{
-			private AsyncCallback callback;
-			private SocketAsyncResult result;
-			private Socket socket;
+			SocketAsyncResult result;
 
-			// Parameters
-			private EndPoint endpoint;	// Connect,ReceiveFrom,SendTo
-			private byte[] buffer;		// Receive,ReceiveFrom,Send,SendTo
-			private int offset;		// Receive,ReceiveFrom,Send,SendTo
-			private int size;		// Receive,ReceiveFrom,Send,SendTo
-			private SocketFlags sockflags;	// Receive,ReceiveFrom,Send,SendTo
-
-			// Return values
-			private Socket acc_socket;
-			private int total;
-			
-
-			// For Accept
-			public Worker(Socket req_sock,
-				      AsyncCallback req_callback,
-				      SocketAsyncResult req_result)
-				: this(req_sock, null, 0, 0, SocketFlags.None,
-				       null, req_callback, req_result) {}
-
-			// For Connect
-			public Worker(Socket req_sock, EndPoint req_endpoint,
-				      AsyncCallback req_callback,
-				      SocketAsyncResult req_result)
-				: this(req_sock, null, 0, 0, SocketFlags.None,
-				       req_endpoint, req_callback,
-				       req_result) {}
-
-			// For Receive and Send
-			public Worker(Socket req_sock, byte[] req_buffer,
-				      int req_offset, int req_size,
-				      SocketFlags req_sockflags,
-				      AsyncCallback req_callback,
-				      SocketAsyncResult req_result)
-				: this(req_sock, req_buffer, req_offset,
-				       req_size, req_sockflags, null,
-				       req_callback, req_result) {}
-
-			// For ReceiveFrom and SendTo
-			public Worker(Socket req_sock, byte[] req_buffer,
-				      int req_offset, int req_size,
-				      SocketFlags req_sockflags,
-				      EndPoint req_endpoint,
-				      AsyncCallback req_callback,
-				      SocketAsyncResult req_result) {
-				socket=req_sock;
-				buffer=req_buffer;
-				offset=req_offset;
-				size=req_size;
-				sockflags=req_sockflags;
-				endpoint=req_endpoint;
-				callback=req_callback;
-				result=req_result;
+			public Worker (SocketAsyncResult ares)
+			{
+				this.result = ares;
 			}
 
-			private void End() {
-				result.IsCompleted=true;
-				if (callback != null)
-					callback(result);
-			}
-			
-			public void Accept() {
-				lock(result) {
+			public void Accept ()
+			{
+				lock (result) {
+					Socket acc_socket = null;
 					try {
-						acc_socket=socket.Accept();
+						acc_socket = result.Sock.Accept ();
 					} catch (Exception e) {
-						result.SetDelayedException(e);
-					}
-					End();
-				}
-			}
-
-			public void Connect() {
-				lock(result) {
-					if (socket.Blocking) {
-						try {
-							socket.Connect(endpoint);
-						} catch (Exception e) {
-							result.SetDelayedException(e);
-						}
-						End ();
+						result.Complete (e);
 						return;
 					}
 
-					Exception rethrow = null;
-					try {
-						socket.Connect (endpoint);
-					} catch (SocketException e) {
-						//WSAEINPROGRESS
-						if (e.NativeErrorCode != 10036) {
-							result.SetDelayedException(e);	
-							End ();
-							return;
-						}
-
-						socket.Poll (-1, SelectMode.SelectWrite);
-						try {
-							socket.Connect (endpoint);
-						} catch (SocketException e2) {
-							rethrow = e2;
-						}
-					} catch (Exception e3) {
-						rethrow = e3;
-					}
-					
-					if (rethrow != null)
-						result.SetDelayedException(rethrow);
-					End ();
+					result.Complete (acc_socket);
 				}
 			}
 
-			public void Receive() {
-				lock(result) {
-					if (socket.Blocking) {
-						try {
-							total=socket.Receive(buffer, offset,
-									     size, sockflags);
-						} catch (Exception e) {
-	                                                result.SetDelayedException(e);
-        	                                }
-						End();
+			public void Connect ()
+			{
+				lock (result) {
+					try {
+						if (!result.Sock.blocking)
+							result.Sock.Poll (-1, SelectMode.SelectWrite);
+
+						result.Sock.Connect (result.EndPoint);
+					} catch (Exception e) {
+						result.Complete (e);
 						return;
 					}
 
-					Exception rethrow = null;
-					try {
-						total = socket.Receive (buffer, offset, size, sockflags);
-					} catch (SocketException e) {
-						//WSAEWOULDBLOCK
-						if (e.NativeErrorCode != 10035) {
-							result.SetDelayedException(e);
-							End ();
-                                                        return;
-						}
-
-						socket.Poll (-1, SelectMode.SelectRead);
-						try {
-							total = socket.Receive (buffer, offset, size, sockflags);
-						} catch (SocketException e2) {
-							rethrow = e2;
-						}
-					} catch (Exception e3) {
-						rethrow = e3;
-					}
-
-					if (rethrow != null)
-						result.SetDelayedException(rethrow);
-					End ();
+					result.Complete ();
 				}
 			}
 
-			public void ReceiveFrom() {
-				lock(result) {
-					if (socket.Blocking) {
-						try {
-							total=socket.ReceiveFrom(buffer,
-										 offset, size,
-										 sockflags,
-										 ref endpoint);
-						} catch (Exception e) {
-							result.SetDelayedException(e);
-						}
-						End();
+			public void Receive ()
+			{
+				lock (result) {
+					int total = 0;
+					try {
+						if (!result.Sock.blocking)
+							result.Sock.Poll (-1, SelectMode.SelectRead);
+
+						total = result.Sock.Receive (result.Buffer,
+									     result.Offset,
+									     result.Size,
+									     result.SockFlags);
+					} catch (Exception e) {
+						result.Complete (e);
 						return;
 					}
 
-					Exception rethrow = null;
-					try {
-						total = socket.ReceiveFrom (buffer, offset, size,
-									sockflags, ref endpoint);
-					} catch (SocketException e) {
-						//WSAEWOULDBLOCK
-						if (e.NativeErrorCode != 10035) {
-							result.SetDelayedException(e);
-							End ();
-                                                        return;
-						}
-
-						socket.Poll (-1, SelectMode.SelectRead);
-						try {
-							total = socket.ReceiveFrom (buffer, offset, size,
-										sockflags, ref endpoint);
-						} catch (SocketException e2) {
-							rethrow = e2;
-						}
-					} catch (Exception e3) {
-						rethrow = e3;
-					}
-
-					if (rethrow != null)
-						result.SetDelayedException(rethrow);
-					End ();
+					result.Complete (total);
 				}
 			}
 
-			public void Send() {
-				lock(result) {
-					if (socket.Blocking) {
-						try {
-							total=socket.Send(buffer, offset, size,
-									  sockflags);
-						} catch (Exception e) {
-							result.SetDelayedException(e);
-						}
-						End();
+			public void ReceiveFrom ()
+			{
+				lock (result) {
+					int total = 0;
+					try {
+						if (!result.Sock.blocking)
+							result.Sock.Poll (-1, SelectMode.SelectRead);
+
+						total = result.Sock.ReceiveFrom (result.Buffer,
+										 result.Offset,
+										 result.Size,
+										 result.SockFlags,
+										 ref result.EndPoint);
+					} catch (Exception e) {
+						result.Complete (e);
 						return;
 					}
 
-					Exception rethrow = null;
-					try {
-						total = socket.Send (buffer, offset, size, sockflags);
-					} catch (SocketException e) {
-						//WSAEWOULDBLOCK
-						if (e.NativeErrorCode != 10035) {
-							result.SetDelayedException(e);
-							End ();
-                                                        return;
-						}
+					result.Complete (total);
+				}
+			}
 
-						socket.Poll (-1, SelectMode.SelectWrite);
-						try {
-							total = socket.Send (buffer, offset, size, sockflags);
-						} catch (SocketException e2) {
-							rethrow = e2;
-						}
-					} catch (Exception e3) {
-						rethrow = e3;
+			public void Send ()
+			{
+				lock (result) {
+					int total = 0;
+					try {
+						if (!result.Sock.blocking)
+							result.Sock.Poll (-1, SelectMode.SelectWrite);
+
+						total = result.Sock.Send (result.Buffer,
+									  result.Offset,
+									  result.Size,
+									  result.SockFlags);
+					} catch (Exception e) {
+						result.Complete (e);
+						return;
 					}
 
-					if (rethrow != null)
-						result.SetDelayedException(rethrow);
-					End ();
+					result.Complete (total);
 				}
 			}
 
 			public void SendTo() {
-				lock(result) {
-					if (socket.Blocking) {
-						try {
-							total=socket.SendTo(buffer, offset,
-									    size, sockflags,
-									    endpoint);
-						} catch (Exception e) {
-							result.SetDelayedException(e);
-						}
-						End();
+				lock (result) {
+					int total = 0;
+					try {
+						if (!result.Sock.blocking)
+							result.Sock.Poll (-1, SelectMode.SelectWrite);
+
+						total = result.Sock.SendTo (result.Buffer,
+									    result.Offset,
+									    result.Size,
+									    result.SockFlags,
+									    result.EndPoint);
+					} catch (Exception e) {
+						result.Complete (e);
 						return;
 					}
 
-					Exception rethrow = null;
-					try {
-						total = socket.SendTo (buffer, offset, size,
-									sockflags, endpoint);
-					} catch (SocketException e) {
-						//WSAEWOULDBLOCK
-						if (e.NativeErrorCode != 10035) {
-							result.SetDelayedException(e);
-							End ();
-                                                        return;
-						}
-
-						socket.Poll (-1, SelectMode.SelectWrite);
-						try {
-							total = socket.SendTo (buffer, offset, size,
-										sockflags, endpoint);
-						} catch (SocketException e2) {
-							rethrow = e2;
-						}
-					} catch (Exception e3) {
-						rethrow = e3;
-					}
-
-					if (rethrow != null)
-						result.SetDelayedException(rethrow);
-					End ();
-				}
-			}
-
-			public EndPoint EndPoint {
-				get {
-					return(endpoint);
-				}
-			}
-
-			public Socket Socket {
-				get {
-					return(acc_socket);
-				}
-			}
-
-			public int Total {
-				get {
-					return(total);
+					result.Complete (total);
 				}
 			}
 		}
@@ -399,9 +268,10 @@ namespace System.Net.Sockets
 		private AddressFamily address_family;
 		private SocketType socket_type;
 		private ProtocolType protocol_type;
-		private bool blocking=true;
+		internal bool blocking=true;
 		private int pendingEnds;
 		private int closeDelayed;
+		static readonly bool supportsAsync = GetSupportsAsync ();
 
 		delegate void SocketAsyncCall ();
 		/*
@@ -805,9 +675,8 @@ namespace System.Net.Sockets
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			Interlocked.Increment (ref pendingEnds);
-			SocketAsyncResult req=new SocketAsyncResult(state);
-			Worker worker=new Worker(this, callback, req);
-			req.Worker=worker;
+			SocketAsyncResult req = new SocketAsyncResult (this, state, callback);
+			Worker worker = new Worker (req);
 			SocketAsyncCall sac = new SocketAsyncCall (worker.Accept);
 			sac.BeginInvoke (null, null);
 			return(req);
@@ -824,10 +693,9 @@ namespace System.Net.Sockets
 				throw new ArgumentNullException ("end_point");
 
 			Interlocked.Increment (ref pendingEnds);
-			SocketAsyncResult req=new SocketAsyncResult(state);
-			Worker worker=new Worker(this, end_point, callback,
-						 req);
-			req.Worker=worker;
+			SocketAsyncResult req = new SocketAsyncResult (this, state, callback);
+			req.EndPoint = end_point;
+			Worker worker = new Worker (req);
 			SocketAsyncCall sac = new SocketAsyncCall (worker.Connect);
 			sac.BeginInvoke (null, null);
 			return(req);
@@ -855,13 +723,15 @@ namespace System.Net.Sockets
 				throw new ArgumentOutOfRangeException ("offset + size exceeds the buffer length");
 
 			Interlocked.Increment (ref pendingEnds);
-			SocketAsyncResult req=new SocketAsyncResult(state);
-			Worker worker=new Worker(this, buffer, offset, size,
-						 socket_flags, callback, req);
-			req.Worker=worker;
+			SocketAsyncResult req = new SocketAsyncResult (this, state, callback);
+			req.Buffer = buffer;
+			req.Offset = offset;
+			req.Size = size;
+			req.SockFlags = socket_flags;
+			Worker worker = new Worker (req);
 			SocketAsyncCall sac = new SocketAsyncCall (worker.Receive);
 			sac.BeginInvoke (null, null);
-			return(req);
+			return req;
 		}
 
 		public IAsyncResult BeginReceiveFrom(byte[] buffer, int offset,
@@ -886,14 +756,16 @@ namespace System.Net.Sockets
 				throw new ArgumentOutOfRangeException ("offset + size exceeds the buffer length");
 
 			Interlocked.Increment (ref pendingEnds);
-			SocketAsyncResult req=new SocketAsyncResult(state);
-			Worker worker=new Worker(this, buffer, offset, size,
-						 socket_flags, remote_end,
-						 callback, req);
-			req.Worker=worker;
+			SocketAsyncResult req = new SocketAsyncResult (this, state, callback);
+			req.Buffer = buffer;
+			req.Offset = offset;
+			req.Size = size;
+			req.SockFlags = socket_flags;
+			req.EndPoint = remote_end;
+			Worker worker = new Worker (req);
 			SocketAsyncCall sac = new SocketAsyncCall (worker.ReceiveFrom);
 			sac.BeginInvoke (null, null);
-			return(req);
+			return req;
 		}
 
 		public IAsyncResult BeginSend(byte[] buffer, int offset,
@@ -917,13 +789,15 @@ namespace System.Net.Sockets
 				throw new ArgumentOutOfRangeException ("offset + size exceeds the buffer length");
 
 			Interlocked.Increment (ref pendingEnds);
-			SocketAsyncResult req=new SocketAsyncResult(state);
-			Worker worker=new Worker(this, buffer, offset, size,
-						 socket_flags, callback, req);
-			req.Worker=worker;
+			SocketAsyncResult req = new SocketAsyncResult (this, state, callback);
+			req.Buffer = buffer;
+			req.Offset = offset;
+			req.Size = size;
+			req.SockFlags = socket_flags;
+			Worker worker = new Worker (req);
 			SocketAsyncCall sac = new SocketAsyncCall (worker.Send);
 			sac.BeginInvoke (null, null);
-			return(req);
+			return req;
 		}
 
 		public IAsyncResult BeginSendTo(byte[] buffer, int offset,
@@ -948,14 +822,16 @@ namespace System.Net.Sockets
 				throw new ArgumentOutOfRangeException ("offset + size exceeds the buffer length");
 
 			Interlocked.Increment (ref pendingEnds);
-			SocketAsyncResult req=new SocketAsyncResult(state);
-			Worker worker=new Worker(this, buffer, offset, size,
-						 socket_flags, remote_end,
-						 callback, req);
-			req.Worker=worker;
+			SocketAsyncResult req = new SocketAsyncResult (this, state, callback);
+			req.Buffer = buffer;
+			req.Offset = offset;
+			req.Size = size;
+			req.SockFlags = socket_flags;
+			req.EndPoint = remote_end;
+			Worker worker = new Worker(req);
 			SocketAsyncCall sac = new SocketAsyncCall (worker.SendTo);
 			sac.BeginInvoke (null, null);
-			return(req);
+			return req;
 		}
 
 		// Creates a new system socket, returning the handle
@@ -1007,8 +883,7 @@ namespace System.Net.Sockets
 
 			int error;
 			
-			Connect_internal(socket, remote_end.Serialize(),
-					 out error);
+			Connect_internal(socket, remote_end.Serialize(), out error);
 
 			if (error != 0) {
 				throw new SocketException (error);
@@ -1034,7 +909,7 @@ namespace System.Net.Sockets
 			Interlocked.Decrement (ref pendingEnds);
 			CheckIfClose ();
 			req.CheckIfThrowDelayedException();
-			return(req.Worker.Socket);
+			return req.Socket;
 		}
 
 		public void EndConnect(IAsyncResult result) {
@@ -1073,7 +948,7 @@ namespace System.Net.Sockets
 			Interlocked.Decrement (ref pendingEnds);
 			CheckIfClose ();
 			req.CheckIfThrowDelayedException();
-			return(req.Worker.Total);
+			return req.Total;
 		}
 
 		public int EndReceiveFrom(IAsyncResult result,
@@ -1094,8 +969,8 @@ namespace System.Net.Sockets
 			Interlocked.Decrement (ref pendingEnds);
 			CheckIfClose ();
  			req.CheckIfThrowDelayedException();
-			end_point=req.Worker.EndPoint;
-			return(req.Worker.Total);
+			end_point = req.EndPoint;
+			return req.Total;
 		}
 
 		public int EndSend(IAsyncResult result) {
@@ -1115,7 +990,7 @@ namespace System.Net.Sockets
 			Interlocked.Decrement (ref pendingEnds);
 			CheckIfClose ();
 			req.CheckIfThrowDelayedException();
-			return(req.Worker.Total);
+			return req.Total;
 		}
 
 		public int EndSendTo(IAsyncResult result) {
@@ -1135,7 +1010,7 @@ namespace System.Net.Sockets
 			Interlocked.Decrement (ref pendingEnds);
 			CheckIfClose ();
 			req.CheckIfThrowDelayedException();
-			return(req.Worker.Total);
+			return req.Total;
 		}
 
 		void CheckIfClose ()
@@ -1255,36 +1130,25 @@ namespace System.Net.Sockets
 			}
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static bool Poll_internal (IntPtr socket, SelectMode mode, int timeout, out int error);
+
 		/* The docs for Poll() are a bit lightweight too, but
 		 * it seems to be just a simple wrapper around Select.
 		 */
-		public bool Poll(int time_us, SelectMode mode) {
-			Socket [] socketlist = new Socket []{this};
-			Socket [] n = null;
+		public bool Poll (int time_us, SelectMode mode)
+		{
+			if (mode != SelectMode.SelectRead &&
+			    mode != SelectMode.SelectWrite &&
+			    mode != SelectMode.SelectError)
+				throw new NotSupportedException ("'mode' parameter is not valid.");
+
 			int error;
-			
-			switch(mode) {
-			case SelectMode.SelectError:
-				Select_internal (ref n, ref n, ref socketlist,
-						 time_us, out error);
-				break;
-			case SelectMode.SelectRead:
-				Select_internal (ref socketlist, ref n, ref n,
-						 time_us, out error);
-				break;
-			case SelectMode.SelectWrite:
-				Select_internal (ref n, ref socketlist, ref n,
-						 time_us, out error);
-				break;
-			default:
-				throw new NotSupportedException();
-			}
-
-			if (error != 0) {
+			bool result = Poll_internal (socket, mode, time_us, out error);
+			if (error != 0)
 				throw new SocketException (error);
-			}
 
-			return (socketlist.Length == 1);
+			return result;
 		}
 		
 		public int Receive(byte[] buf) {
@@ -1629,5 +1493,8 @@ namespace System.Net.Sockets
 		~Socket () {
 			Dispose(false);
 		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static bool GetSupportsAsync ();
 	}
 }
