@@ -4543,22 +4543,22 @@ namespace Mono.CSharp {
 
 		public override bool Define (TypeContainer container)
 		{
-			Type t = container.ResolveType (Type, false, Location);
+			MemberType = container.ResolveType (Type, false, Location);
 			
-			if (t == null)
+			if (MemberType == null)
 				return false;
 
 			CheckBase (container);
 			
-			if (!container.AsAccessible (t, ModFlags)) {
+			if (!container.AsAccessible (MemberType, ModFlags)) {
 				Report.Error (52, Location,
 					      "Inconsistent accessibility: field type `" +
-					      TypeManager.CSharpName (t) + "' is less " +
+					      TypeManager.CSharpName (MemberType) + "' is less " +
 					      "accessible than field `" + Name + "'");
 				return false;
 			}
 
-			if (t.IsPointer && !UnsafeOK (container))
+			if (MemberType.IsPointer && !UnsafeOK (container))
 				return false;
 			
 			if (RootContext.WarningLevel > 1){
@@ -4575,11 +4575,11 @@ namespace Mono.CSharp {
 			}
 
 			if ((ModFlags & Modifiers.VOLATILE) != 0){
-				if (!t.IsClass){
-					Type vt = t;
+				if (!MemberType.IsClass){
+					Type vt = MemberType;
 					
 					if (TypeManager.IsEnumType (vt))
-						vt = TypeManager.EnumToUnderlying (t);
+						vt = TypeManager.EnumToUnderlying (MemberType);
 
 					if (!((vt == TypeManager.bool_type) ||
 					      (vt == TypeManager.sbyte_type) ||
@@ -4611,8 +4611,8 @@ namespace Mono.CSharp {
 
 			if (container is Struct && 
 			    ((fa & FieldAttributes.Static) == 0) &&
-			    t == container.TypeBuilder &&
-			    !TypeManager.IsBuiltinType (t)){
+			    MemberType == container.TypeBuilder &&
+			    !TypeManager.IsBuiltinType (MemberType)){
 				Report.Error (523, Location, "Struct member `" + container.Name + "." + Name + 
 					      "' causes a cycle in the structure layout");
 				return false;
@@ -4620,7 +4620,7 @@ namespace Mono.CSharp {
 
 			try {
 				FieldBuilder = container.TypeBuilder.DefineField (
-					Name, t, Modifiers.FieldAttr (ModFlags));
+					Name, MemberType, Modifiers.FieldAttr (ModFlags));
 
 				TypeManager.RegisterFieldBase (FieldBuilder, this);
 			}

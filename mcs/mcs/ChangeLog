@@ -1,3 +1,8 @@
+2004-05-23  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (MemberBase.Define): Reuse MemberType member for 
+	resolved type. Other methods can use it too.
+
 2004-05-23  Martin Baulig  <martin@ximian.com>
 
 	* flowanalysis.cs (Reachability.Reachable): Compute this
@@ -7,7 +12,7 @@
 
 	* flowanalysis.cs (Reachability.And): Manually compute the
 	resulting `barrier' from the reachability.	
-
+       
 2004-05-23  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix bug #57835
