@@ -1,3 +1,8 @@
+
+2005-03-23 Ritvik Mayank <mritvik@novell.com>
+	* Removed executable attribute and eol control-char from all the files
+	* Removed some unwanted tests.
+
 2005-03-17 Manjula GHM <mmanjula@novell.com>
 	* LoopStatementB.vb 
 	* LoopStatementC.vb

@@ -19,6 +19,7 @@ Imports System
 	Class DerivedClass : Inherits BaseClass
 		Public Overrides Sub MyMethod(i)
 		i = 50
+				Throw New Exception ("Unexpected Behavior.MyMethod should always call member of BaseClass. It should never call the DerivedClass")
 		End Sub
 	End Class
 
