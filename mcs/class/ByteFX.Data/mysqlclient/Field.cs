@@ -20,10 +20,11 @@ using System.Data;
 using System.Data.SqlTypes;
 using System.Globalization;
 using System.Text;
+using ByteFX.Data.Common;
 
 namespace ByteFX.Data.MySqlClient
 {
-	internal enum ColFlags : int
+	internal enum ColumnFlags : int
 	{
 		NOT_NULL		= 1,
 		PRIMARY_KEY		= 2,
@@ -45,16 +46,19 @@ namespace ByteFX.Data.MySqlClient
 	/// </summary>
 	internal class MySqlField : Common.Field
 	{
-		  MySqlDbType			colType;
-		public	ColFlags		colFlags;
-		public	int				colDecimals;
-//		System.Text.Encoding	encoding;
+		protected	MySqlDbType	colType;
+		protected	ColumnFlags	colFlags;
+		protected	int			colDecimals;
+		protected	Encoding	encoding;
 		private static NumberFormatInfo		numberFormat = null;
 
+		protected	byte[]		buffer;
+		protected	long		bufIndex;
+		protected	long		bufLength;
 
-		public MySqlField()
+		public MySqlField(Encoding encoding)
 		{
-//			this.encoding = encoding;
+			this.encoding = encoding;
 			if (numberFormat == null)
 			{
 				numberFormat = (NumberFormatInfo)NumberFormatInfo.InvariantInfo.Clone();
@@ -62,99 +66,148 @@ namespace ByteFX.Data.MySqlClient
 			}
 		}
 
-		public void ReadSchemaInfo( Packet packet )
-		{	
-			tableName = packet.ReadLenString();
-			colName = packet.ReadLenString();
-			colLen = (int)packet.ReadNBytes();
-			colType = (MySqlDbType)packet.ReadNBytes();
-			packet.ReadByte();									// this is apparently 2 -- not sure what it is for
-			colFlags = (ColFlags)packet.ReadInteger(2);		//(short)(d.ReadByte() & 0xff);
-			colDecimals = packet.ReadByte();
+		public byte[] Buffer 
+		{
+			get { return buffer; }
 		}
 
+		public long	BufferIndex 
+		{
+			get { return bufIndex; }
+		}
+
+		public long BufferLength 
+		{
+			get { return bufLength; }
+		}
+
+		/// <summary>
+		/// CopyBuffer makes a copy of the byte buffer given to us while
+		/// the rowset was being read
+		/// </summary>
+		private void CopyBuffer()
+		{
+			byte[] newbuf = new byte[ bufLength ];
+			long oldIndex = bufIndex;
+			for (long i=0; i < bufLength; i++)
+				newbuf[i] = buffer[ oldIndex++ ];
+			bufIndex = 0;
+			buffer = newbuf;
+			value = newbuf;
+		}
+
+		/// <summary>
+		/// GetValue returns an object that represents the value of this field.
+		/// </summary>
+		/// <returns></returns>
 		public object GetValue() 
 		{
+			// if our value is a byte buffer and we are using only 
+			// a part of that buffer, then we need to make a copy
+			if (value is byte[] && (bufIndex > 0 || bufLength < buffer.Length))
+				CopyBuffer();
 			return value;
 		}
 
-		public int NumericPrecision()
+		public MySqlDbType	Type 
 		{
-			if (colType == MySqlDbType.Decimal)
-				return colLen;
-			return -1;
+			get { return colType; }
+			set { colType = value; }
 		}
 
-		public int NumericScale()
+		public int NumericPrecision
 		{
-			if (colType == MySqlDbType.Decimal)
-				return colDecimals;
-			return -1;
+			get 
+			{
+				if (colType == MySqlDbType.Decimal)
+					return colLen;
+				return -1;
+			}
+
+		}
+
+		public int NumericScale
+		{
+			get 
+			{
+				if (colType == MySqlDbType.Decimal)
+					return colDecimals;
+				return -1;
+			}
+			set 
+			{
+				colDecimals = value;
+			}
+		}
+
+		public ColumnFlags Flags 
+		{ 
+			get { return colFlags; }
+			set { colFlags = value; }
 		}
 
 		public bool IsAutoIncrement()
 		{
-			return (colFlags & ColFlags.AUTO_INCREMENT) > 0;
+			return (colFlags & ColumnFlags.AUTO_INCREMENT) > 0;
 		}
 
 		public bool IsNumeric()
 		{
-			return (colFlags & ColFlags.NUMBER) > 0;
+			return (colFlags & ColumnFlags.NUMBER) > 0;
 		}
 
 		public bool AllowsNull()
 		{
-			return (colFlags & ColFlags.NOT_NULL) == 0;
+			return (colFlags & ColumnFlags.NOT_NULL) == 0;
 		}
 
 		public bool IsUnique()
 		{
-			return (colFlags & ColFlags.UNIQUE_KEY) > 0;
+			return (colFlags & ColumnFlags.UNIQUE_KEY) > 0;
 		}
 
 		public bool IsPrimaryKey()
 		{
-			return (colFlags & ColFlags.PRIMARY_KEY) > 0;
+			return (colFlags & ColumnFlags.PRIMARY_KEY) > 0;
 		}
 
 		public bool IsBlob() 
 		{
-			return (colFlags & ColFlags.BLOB) > 0;
+			return (colFlags & ColumnFlags.BLOB) > 0;
 		}
 
 		public bool IsBinary()
 		{
-			return (colFlags & ColFlags.BINARY) > 0;
+			return (colFlags & ColumnFlags.BINARY) > 0;
 		}
 
 		public bool IsUnsigned()
 		{
-			return (colFlags & ColFlags.UNSIGNED) > 0;
+			return (colFlags & ColumnFlags.UNSIGNED) > 0;
 		}
 
-		public void SetValueData( Packet p, Encoding encoding )
+		public void SetValueData( byte[] buf, long index, long len, DBVersion version )
 		{
-			int len = p.ReadLenInteger();
 			if (len == -1)
 			{
 				value = DBNull.Value;
+				buffer = null;
 				return;
 			}
 
-			// read in the data
-			byte[] data = new byte[ len ];
-			p.Read( data, 0, len );
+			buffer = buf;
+			bufIndex = index;
+			bufLength = len;
 
 			// if it is a blob and binary, then GetBytes is the way to go
 			if ( IsBlob() && IsBinary() ) 
 			{
 				dbType = DbType.Binary;
-				value = data;
+				value = buffer;
 				return;
 			}
 
-			string sValue = encoding.GetString( data );//Chars(data, offset, count );
-			//string sValue = new string(_Chars);
+			string sValue = encoding.GetString( buf, (int)index, (int)len );
 
 			switch(colType)
 			{
@@ -199,6 +252,10 @@ namespace ByteFX.Data.MySqlClient
 					value = Convert.ToDouble( sValue, numberFormat );
 					break;
 
+				case MySqlDbType.Year:
+					value = Int32.Parse( sValue );
+					break;
+
 				case MySqlDbType.Date:
 					ParseDateValue( "0000-00-00", "yyyy-MM-dd", sValue );
 					break;
@@ -215,6 +272,13 @@ namespace ByteFX.Data.MySqlClient
 					break;
 
 				case MySqlDbType.Timestamp:
+					// MySql 4.1.0 and later use DateTime format for timestamp
+					if (version.isAtLeast(4,1,0))  
+					{
+						ParseDateValue( "0000-00-00 00:00:00", "yyyy-MM-dd HH:mm:ss", sValue );
+						return;
+					}
+
 					string pattern;
 					string null_value = "00000000000000";
 					switch (ColumnLength) 
@@ -319,16 +383,18 @@ namespace ByteFX.Data.MySqlClient
 				case MySqlDbType.TinyBlob:
 				case MySqlDbType.MediumBlob:
 				case MySqlDbType.LongBlob:
-				case MySqlDbType.Blob:		return typeof(System.Array);
+				case MySqlDbType.Blob:		
+					if ((colFlags & ColumnFlags.BINARY) != 0)
+						return typeof(System.Array);
+					else
+						return typeof(System.String);
+
+				case MySqlDbType.Year:
+					return typeof(System.Int32);
 
 				default:
 				case MySqlDbType.Null:		return typeof(System.DBNull);
 			}
-		}
-
-		public MySqlDbType GetMySqlDbType()
-		{
-			return colType;
 		}
 
 		public DbType GetDbType() 

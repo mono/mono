@@ -1,5 +1,6 @@
 // ByteFX.Data data access components for .Net
 // Copyright (C) 2002-2003  ByteFX, Inc.
+// Copyright (C) 2003  PT Cakram Datalingga Duaribu (http://www.cdl2000.com)
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -21,6 +22,9 @@ using System.Net;
 using System.Net.Sockets;
 using ByteFX.Data.Common;
 using System.Threading;
+#if __MonoCS__ 
+using Mono.Posix;
+#endif
 
 namespace ByteFX.Data.MySqlClient
 {
@@ -29,6 +33,8 @@ namespace ByteFX.Data.MySqlClient
 	/// </summary>
 	internal class MySqlStream : MultiHostStream
 	{
+		private Socket socket;
+
 		public MySqlStream( string hostList, int port, int readTimeOut, int connectTimeOut ) :
 			base( hostList, port, readTimeOut, connectTimeOut )
 
@@ -59,6 +65,11 @@ namespace ByteFX.Data.MySqlClient
 				return CreateSocketStream(ip, port);
 		}
 
+		protected override bool CreateStream (string filename)
+		{
+			return CreateUnixSocketStream (filename);
+		}
+
 		private bool CreatePipeStream( IPAddress ip, string hostname )
 		{
 			string pipeName;
@@ -82,7 +93,7 @@ namespace ByteFX.Data.MySqlClient
 
 		private bool CreateSocketStream( IPAddress ip, int port )
 		{
-			Socket socket = new Socket(AddressFamily.InterNetwork, 
+			socket = new Socket(AddressFamily.InterNetwork, 
 				SocketType.Stream, ProtocolType.Tcp);
 
 			try
@@ -93,6 +104,7 @@ namespace ByteFX.Data.MySqlClient
 				socket.Connect(endPoint);
 				socket.SetSocketOption( SocketOptionLevel.Tcp, SocketOptionName.NoDelay, 1 );
 				stream = new NetworkStream( socket, true );
+				socket.Blocking = false;
 				return true;
 			}
 			catch (Exception ex)
@@ -100,6 +112,29 @@ namespace ByteFX.Data.MySqlClient
 				baseException = ex;
 				return false;
 			}
+		}
+
+		private bool CreateUnixSocketStream(string socketName)
+		{
+#if __MonoCS__ && !WINDOWS
+			Socket socket = new Socket (AddressFamily.Unix, SocketType.Stream, ProtocolType.IP);
+
+			try
+			{
+				UnixEndPoint endPoint = new UnixEndPoint (socketName);
+				socket.Connect (endPoint);
+				stream = new NetworkStream (socket, true);
+				return true;
+			}
+			catch (Exception ex)
+			{
+				baseException = ex;
+				return false;
+			}
+#else
+			baseException = new PlatformNotSupportedException ("This is not a Unix");
+			return false;
+#endif
 		}
 
 		protected override bool DataAvailable

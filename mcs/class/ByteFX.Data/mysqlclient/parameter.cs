@@ -59,8 +59,10 @@ namespace ByteFX.Data.MySqlClient
 		{
 			ParameterName = parameterName;
 			paramValue = value;
-			dbType = GetMySqlType( paramValue.GetType() );
-			genericType = GetGenericType( paramValue.GetType() );
+			if (value is Byte[])
+				size = (value as Byte[]).Length;
+			dbType = GetMySqlType();
+			genericType = GetGenericType();
 		}
 
 		/// <summary>
@@ -332,8 +334,8 @@ namespace ByteFX.Data.MySqlClient
 				paramValue = value; 
 				if (dbType == MySqlDbType.Null) 
 				{
-					dbType = GetMySqlType( paramValue.GetType() );
-					genericType = GetGenericType( paramValue.GetType() );
+					dbType = GetMySqlType();
+					genericType = GetGenericType();
 				}
 			}
 		}
@@ -342,10 +344,11 @@ namespace ByteFX.Data.MySqlClient
 
 		private void EscapeByteArray( byte[] bytes, System.IO.MemoryStream s )
 		{
-			byte[] newbytes = new byte[ bytes.Length * 2 ];
+			int theSize = size == 0 ? bytes.Length : size;
+			byte[] newbytes = new byte[ theSize * 2 ];
 
 			int newx=0;
-			for (int x=0; x < bytes.Length; x++)
+			for (int x=0; x < theSize; x++)
 			{
 				byte b = bytes[x];
 				if (b == '\0') 
@@ -355,7 +358,7 @@ namespace ByteFX.Data.MySqlClient
 				}
 				else 
 				{
-					if (b == '\\' || b == '\'' || b == '"')
+					if (b == '\\' || b == '\'' || b == '"' || b == '`' || b == '´')
 						newbytes[newx++] = (byte)'\\';
 					newbytes[newx++] = b;
 				}
@@ -374,15 +377,9 @@ namespace ByteFX.Data.MySqlClient
 
 		private string EscapeString( string s )
 		{
-			StringBuilder sb = new StringBuilder();
-
-			foreach (char c in s) 
-			{
-				if (c == '\'')
-					sb.Append(c);
-				sb.Append(c);
-			}
-			return sb.ToString();
+			s = s.Replace("\'", "\\\'");
+			s = s.Replace("\"", "\\\"");
+			return s;
 		}
 
 		internal void SerializeToBytes( System.IO.MemoryStream s, MySqlConnection conn )
@@ -395,6 +392,8 @@ namespace ByteFX.Data.MySqlClient
 				parm_string = "Null";
 			else if (paramValue is bool)
 				parm_string = Convert.ToByte(paramValue).ToString();
+			else if (paramValue is Enum)
+				parm_string = ((int)paramValue).ToString();
 			else 
 			{
 				switch (dbType) 
@@ -462,6 +461,19 @@ namespace ByteFX.Data.MySqlClient
 						}
 						break;
 
+					case MySqlDbType.Int:
+					case MySqlDbType.Int24:
+						parm_string = Convert.ToInt32( Value.ToString() ).ToString();
+						break;
+				
+					case MySqlDbType.BigInt:
+						parm_string = Convert.ToInt64( Value.ToString() ).ToString();
+						break;
+
+					case MySqlDbType.Short:
+						parm_string = Convert.ToInt16( Value.ToString() ).ToString();
+						break;
+
 					default:
 						parm_string = Value.ToString();
 						break;
@@ -472,9 +484,16 @@ namespace ByteFX.Data.MySqlClient
 			s.Write(bytes, 0, bytes.Length);
 		}
 
-		private DbType GetGenericType( Type systemType )
+		private DbType GetGenericType()
 		{
-			switch ( Type.GetTypeCode(systemType) )
+			if (paramValue is TimeSpan)
+				return DbType.DateTime;
+			if (paramValue is Enum)
+				return DbType.Int32;
+			if (paramValue is Guid)
+				return DbType.String;
+
+			switch ( Type.GetTypeCode(paramValue.GetType()) )
 			{
 				case TypeCode.Boolean: return DbType.Boolean;
 				case TypeCode.Byte: return DbType.Byte;
@@ -496,9 +515,16 @@ namespace ByteFX.Data.MySqlClient
 			return DbType.Object;
 		}
 
-		private MySqlDbType GetMySqlType( Type systemType )
+		private MySqlDbType GetMySqlType()
 		{
-			switch (Type.GetTypeCode( systemType ))
+			if (paramValue is System.TimeSpan)
+				return MySqlDbType.Time;
+			if (paramValue is Enum)
+				return MySqlDbType.Int;
+			if (paramValue is Guid)
+				return MySqlDbType.String;
+
+			switch (Type.GetTypeCode( paramValue.GetType() ))
 			{
 				case TypeCode.Empty:
 					throw new SystemException("Invalid data type");
@@ -536,17 +562,8 @@ namespace ByteFX.Data.MySqlClient
 		}
 		#endregion
 
-		/* A TypeConverter for the Triangle object.  Note that you can make it internal,
-				private, or any scope you want and the designers will still be able to use
-				it through the TypeDescriptor object.  This type converter provides the
-				capability to convert to an InstanceDescriptor.  This object can be used by 
-		   the .NET Framework to generate source code that creates an instance of a 
-		   Triangle object. */
 		internal class MySqlParameterConverter : TypeConverter
 		{
-			/* This method overrides CanConvertTo from TypeConverter. This is called when someone
-					wants to convert an instance of Triangle to another type.  Here,
-					only conversion to an InstanceDescriptor is supported. */
 			public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
 			{
 				if (destinationType == typeof(InstanceDescriptor))
@@ -558,7 +575,6 @@ namespace ByteFX.Data.MySqlClient
 				return base.CanConvertTo(context, destinationType);
 			}
 
-			/* This code performs the actual conversion from a Triangle to an InstanceDescriptor. */
 			public override object ConvertTo(ITypeDescriptorContext context, 
 				System.Globalization.CultureInfo culture, object value, Type destinationType)
 			{

@@ -37,25 +37,13 @@ namespace ByteFX.Data.MySqlClient
 
 		public bool IsAlive() 
 		{
-			Packet packet;
 			try 
 			{
-				byte[] bytes = driver.Encoding.GetBytes("select connection_id();");
-				packet = driver.SendSql( bytes );
-				// we have to read for two last packets since MySql sends
-				// us a last packet after schema and again after rows
-				// I will likely change this later to have the driver just
-				// return schema in one very large packet.
-				while (! packet.IsLastPacket())
-					packet = driver.ReadPacket();
-
-				// now read off the resultset
-				packet = driver.ReadPacket();
-				while (! packet.IsLastPacket())
-					packet = driver.ReadPacket();
+				CommandResult result = driver.Send( DBCmd.PING, (byte[])null );
+				// we don't care about the result.  The fact that it responded is enough
 				return true;
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
 				return false;
 			}
@@ -87,14 +75,14 @@ namespace ByteFX.Data.MySqlClient
 				driver.MaxPacketSize = reader.GetInt64( 1 );
 				reader.Close();
 			}
-			catch 
+			catch (Exception)
 			{
 				driver.MaxPacketSize = 1047552;
 			}
 
 			cmd.CommandText = "show variables like 'character_set'";
 			driver.Encoding = System.Text.Encoding.Default;
-			
+		
 			try 
 			{
 				MySqlDataReader reader = cmd.ExecuteReader();

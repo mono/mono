@@ -29,7 +29,7 @@ namespace ByteFX.Data.MySqlClient
 			if (MySqlPoolManager.pools == null)
 				MySqlPoolManager.Initialize();
 
-			string text = settings.ConnectString;
+			string text = settings.GetConnectionString();
 
 			lock( pools.SyncRoot ) 
 			{
@@ -52,7 +52,7 @@ namespace ByteFX.Data.MySqlClient
 		{
 			lock (pools.SyncRoot) 
 			{
-				string key = connection.Settings.ConnectString;
+				string key = connection.Settings.GetConnectionString();
 				MySqlPool pool = (MySqlPool)pools[ key ];
 				if (pool == null)
 					throw new MySqlException("Pooling exception: Unable to find original pool for connection");

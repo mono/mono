@@ -35,9 +35,11 @@ namespace ByteFX.Data.Common
 			ProcessHosts( hostList, port, connectTimeOut );
 		}
 
+		// abstract members
 		protected abstract void TimeOut(MultiHostStreamErrorType error);
 		protected abstract void Error(string msg);
 		protected abstract bool CreateStream( IPAddress ip, string host, int port );
+		protected abstract bool CreateStream (string fileName);
 		protected abstract bool DataAvailable 
 		{
 			get;
@@ -48,6 +50,14 @@ namespace ByteFX.Data.Common
 			int startTime = Environment.TickCount;
 
 			int toTicks = connectTimeOut * 1000;
+
+			// support Unix sockets
+			if (hostList.StartsWith ("/")) 
+			{
+				CreateStream (hostList);
+				return;
+			} 
+
 			//
 			// Host name can contain multiple hosts, seperated by &.
 			string [] dnsHosts = hostList.Split('&');
@@ -113,7 +123,7 @@ namespace ByteFX.Data.Common
 					return b;
 				}
 				else
-					Thread.Sleep(1);
+					Thread.Sleep(0);
 			}
 
 			TimeOut(MultiHostStreamErrorType.Reading);
@@ -126,17 +136,25 @@ namespace ByteFX.Data.Common
 			int start = Environment.TickCount;
 			int ticks = readTimeOut * 1000;
 
-			while (numToRead > 0 && (Environment.TickCount - start) < ticks)
+			try 
 			{
-				if (DataAvailable) 
+				while (numToRead > 0 && (Environment.TickCount - start) < ticks)
 				{
-					int bytes_read = stream.Read( buffer, offset, numToRead);
-					if (bytes_read == 0)
-						return (count - numToRead);
-					offset += bytes_read;
-					numToRead -= bytes_read;
+					if (DataAvailable) 
+					{
+						int bytes_read = stream.Read( buffer, offset, numToRead);
+						if (bytes_read == 0)
+							return (count - numToRead);
+						offset += bytes_read;
+						numToRead -= bytes_read;
+					}
+					else
+						Thread.Sleep(0);
 				}
-				Thread.Sleep(1);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
 			}
 
 			if (numToRead > 0)

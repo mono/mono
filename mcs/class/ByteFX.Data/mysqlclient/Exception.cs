@@ -27,6 +27,8 @@ namespace ByteFX.Data.MySqlClient
 	[Serializable]
 	public sealed class MySqlException : SystemException
 	{
+		private int	errorCode;
+
 		internal MySqlException(string msg) : base(msg)
 		{
 		}
@@ -41,12 +43,20 @@ namespace ByteFX.Data.MySqlClient
 
 		internal MySqlException(string msg, int errno) : base(msg)
 		{
-			
+			errorCode = errno;	
 		}
 
 		internal MySqlException(SerializationInfo info,
 					StreamingContext context) : base(info, context)
 		{
+		}
+
+		/// <summary>
+		/// Gets a number that identifies the type of error.
+		/// </summary>
+		public int Number 
+		{
+			get { return errorCode; }
 		}
 
 	}

@@ -24,6 +24,7 @@ namespace ByteFX.Data.Common
 		protected	string		tableName;
 		protected	string		colName;
 		protected	int			colLen;
+		protected   string		catalogName;
 		protected	DbType		dbType;
 		protected	bool		hasValue;
 
@@ -35,16 +36,25 @@ namespace ByteFX.Data.Common
 		public string ColumnName 
 		{
 			get { return colName; }
+			set { colName = value; }
 		}
 
 		public int ColumnLength
 		{
 			get { return colLen; }
+			set { colLen = value; }
 		}
 
 		public string TableName 
 		{
 			get { return tableName; }
+			set { tableName = value; }
+		}
+
+		public string CatalogName 
+		{
+			get { return catalogName; }
+			set { catalogName = value; }
 		}
 
 	}

@@ -24,131 +24,61 @@ namespace ByteFX.Data.Common
 	/// <summary>
 	/// Summary description for Utility.
 	/// </summary>
-	internal class DBConnectionString
+	internal abstract class DBConnectionString
 	{
 		protected Hashtable	keyValues = new Hashtable();
+		protected string	connectionName = String.Empty;
 		protected string	connectString;
-		protected string	host;
-		protected string	username;
-		protected string	password;
-		protected string	database;
-		protected int		connectTimeout;
-		protected int		port;
-		protected int		maxPoolSize;
-		protected int		minPoolSize;
-		protected int		connectLifetime;
-		protected bool		pooling;
-		protected bool		persistSecurityInfo;
 
 		public DBConnectionString()
 		{	
-			persistSecurityInfo = false;
+			keyValues = GetDefaultValues();
 		}
 
-		public DBConnectionString(string connectString) : this()
+		public void SetConnectionString(string value)
 		{
-			this.connectString = connectString;
+			Hashtable ht = Parse( value );			
+			connectString = value;
+			keyValues = ht;
 		}
 
-		#region Properties
-		public string Host 
+		protected string GetString(string name) 
 		{
-			get { return host; }
+			if (! keyValues.ContainsKey(name)) return String.Empty;
+			return (keyValues[name] as string);
 		}
 
-		public string Username 
+		protected int GetInt( string name ) 
 		{
-			get { return username; }
+			return Convert.ToInt32(keyValues[name]);
 		}
 
-		public string Password 
+		protected bool GetBool( string name ) 
 		{
-			get { return password; }
+			return Convert.ToBoolean(keyValues[name]);
 		}
 
-		public int ConnectTimeout
-		{
-			get { return connectTimeout; }
-		}
-		
-		public string Database 
-		{
-			get { return database; }
-		}
-
-		public int Port 
-		{
-			get { return port; }
-		}
-
-		public int MaxPoolSize 
-		{
-			get { return maxPoolSize; }
-		}
-
-		public int MinPoolSize 
-		{
-			get { return minPoolSize; }
-		}
-
-		public bool Pooling 
-		{
-			get { return pooling; }
-		}
-
-		public int ConnectionLifetime 
-		{
-			get { return connectLifetime; }
-		}
-
-		public string ConnectString 
-		{
-			get { return GetConnectionString(); }
-			set { connectString = value; Parse(); }
-		}
-
-		#endregion
-
-		private string GetConnectionString()
-		{
-			StringBuilder str = new StringBuilder();
-
-			foreach ( string key in keyValues.Keys)
-			{
-				if ((key.ToLower() == "pwd" || key.ToLower() == "password") &&
-					!persistSecurityInfo) continue;
-				str.AppendFormat("{0}={1};", key, keyValues[key]);
-			}
-
-			if (str.Length > 0)
-				str.Remove( str.Length-1, 1 );
-
-			return str.ToString();
-		}
-
-		protected virtual void ConnectionParameterParsed(string key, string value)
+		protected virtual bool ConnectionParameterParsed(Hashtable hash, string key, string value)
 		{
 			switch (key.ToLower()) 
 			{
 				case "persist security info":
-					if (value.ToLower() == "no" || value.ToLower() == "false")
-						persistSecurityInfo = false;
-					else
-						persistSecurityInfo = true;
-					break;
+					hash["persist security info"] = 
+						value.ToLower() == "yes" || value.ToLower() == "true";
+					return true;
 
 				case "uid":
 				case "username":
 				case "user id":
 				case "user name": 
 				case "userid":
-					username = value;
-					break;
+					hash["user id"] = value;
+					return true;
 
 				case "password": 
 				case "pwd":
-					password = value;
-					break;
+					hash["password"] = value;
+					return true;
 
 				case "host":
 				case "server":
@@ -157,47 +87,51 @@ namespace ByteFX.Data.Common
 				case "address":
 				case "addr":
 				case "network address":
-					host = value;
-					break;
+					hash["host"] = value;
+					return true;
 				
 				case "initial catalog":
 				case "database":
-					database = value;
-					break;
+					hash["database"] = value;
+					return true;
 
 				case "connection timeout":
 				case "connect timeout":
-					connectTimeout = Int32.Parse( value );
-					break;
+					hash["connect timeout"] = Int32.Parse( value );
+					return true;
 
 				case "port":
-					port = Int32.Parse( value );
-					break;
+					hash["port"] = Int32.Parse( value );
+					return true;
 
 				case "pooling":
-					if (value.ToLower() == "no" || value.ToLower() == "false")
-						pooling = false;
-					else
-						pooling = true;
-					break;
+					hash["pooling"] = 
+						value.ToLower() == "yes" || value.ToLower() == "true";
+					return true;
 
 				case "min pool size":
-					minPoolSize = Int32.Parse(value);
-					break;
+					hash["min pool size"] = Int32.Parse(value);
+					return true;
 
 				case "max pool size":
-					maxPoolSize = Int32.Parse(value);
-					break;
+					hash["max pool size"] = Int32.Parse(value);
+					return true;
 
 				case "connection lifetime":
-					connectLifetime = Int32.Parse(value);
-					break;
+					hash["connect lifetime"] = Int32.Parse(value);
+					return true;
 			}
+			return false;
 		}
 
-		protected void Parse() 
+		protected virtual Hashtable GetDefaultValues()
 		{
-			String[] keyvalues = connectString.Split( ';' );
+			return null;
+		}
+
+		protected Hashtable ParseKeyValuePairs( string src )
+		{
+			String[] keyvalues = src.Split( ';' );
 			String[] newkeyvalues = new String[keyvalues.Length];
 			int		 x = 0;
 
@@ -220,7 +154,7 @@ namespace ByteFX.Data.Common
 				}
 			}
 
-			keyValues.Clear();
+			Hashtable hash = new Hashtable();
 
 			// now we run through our normalized key-values, splitting on equals
 			for (int y=0; y < x; y++) 
@@ -235,9 +169,19 @@ namespace ByteFX.Data.Common
 				parts[0] = parts[0].Trim('\'', '"');
 				parts[1] = parts[1].Trim('\'', '"');
 
-				ConnectionParameterParsed( parts[0], parts[1] );
-				keyValues.Add( parts[0], parts[1] );
+				hash.Add( parts[0], parts[1] );
 			}
+			return hash;
+		}
+
+		protected virtual Hashtable Parse(string newConnectString) 
+		{
+			Hashtable hash = ParseKeyValuePairs( newConnectString );
+			Hashtable newHash = GetDefaultValues();
+
+			foreach (object key in hash.Keys)
+				ConnectionParameterParsed( newHash, (string)key, (string)hash[key] );
+			return newHash;
 		}
 
 

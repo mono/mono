@@ -1,5 +1,7 @@
+using System;
+
 // ByteFX.Data data access components for .Net
-// Copyright (C) 2002-2003  ByteFX, Inc.
+// Copyright (C) 2002-2004  ByteFX, Inc.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -15,45 +17,25 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-using System;
-using System.ComponentModel.Design;
-using ByteFX.Data.MySqlClient;
-
 namespace ByteFX.Data.Common
 {
 	/// <summary>
-	/// Summary description for DBParametersEditor.
+	/// Summary description for Platform.
 	/// </summary>
-	internal class DBParametersEditor : CollectionEditor
+	internal class Platform
 	{
-		public DBParametersEditor(Type t) : base(t)
+		public static bool IsWindows() 
 		{
-		}
-
-		protected override object CreateInstance(Type itemType)
-		{
-			object[] items = base.GetItems(null);
-
-			int i = 1;
-			while (true) 
+			OperatingSystem os = Environment.OSVersion;
+			switch (os.Platform)
 			{
-				bool found = false;
-				foreach (object obj in items) 
-				{
-					MySqlParameter p = (MySqlParameter)obj;
-					if (p.ParameterName.Equals( "parameter" + i )) 
-					{
-						found = true;
-						break;
-					}
-				}
-				if (! found) break;
-				i ++;
+				case PlatformID.Win32NT:
+				case PlatformID.Win32S:
+				case PlatformID.Win32Windows:
+				case PlatformID.WinCE:
+					return true;
 			}
-
-			MySqlParameter parm = new MySqlParameter("parameter"+i, MySqlDbType.VarChar);
-			return parm;
+				return false;
 		}
-
 	}
 }

@@ -1,3 +1,101 @@
+3/11/2004
+MySql - Changed command editor to point to MySqlClient.Design
+
+3/4/2004
+Common - Fixed bug in Version.isAtLeast
+Common - Changed DBConnectionString to support changes done to MySqlConnectionString
+Common - Removed SqlCommandEditor and DataAdapterPreviewDialog
+
+3/3/2004
+MySql - Using new long return values in many places
+MySql - Integrated new CompressedStream class
+
+3/2/2004
+MySql - Changed ConnectionString and added attributes to allow it to be used in MySqlClient.Design
+MySql - Changed packet.cs to support newer lengths in ReadLenInteger
+MySql - changed other classes to use new properties and fields of MySqlConnectionString
+MySql - ConnectionInternal is now using PING to see if the server is alive
+
+3/1/2004
+MySql - Moved toolbox bitmaps into resource/
+MySql - Changed field.cs to allow values to come directly from row buffer
+
+2/25/2004
+MySql - Changed to use the new driver.Send syntax
+MySql - Using a new packet queueing system
+MySql - started work handling the "broken" compression packet handling
+
+2/20/2004
+Common - Fixed bug in StreamCreator where failure to connect to a host would continue
+to loop infinitly (thanks Kevin Casella)
+
+2/8/2004
+MySql - Improved connectstring handling
+MySql - Moved designers into Pro product
+
+2/4/2004
+MySql - Removed some old commented out code from command.cs
+MySql - Fixed a problem with compression
+
+2/2/2004
+MySql - Fixed connection object where an exception throw prior to the connection opening would not leave
+        the connection in the connecting state (thanks Chris Cline )
+
+1/31/2004
+MySql - Added GUID support
+MySql - Fixed sequence out of order bug (thanks Mark Reay)
+
+1/26/2004
+MySql - Enum values now supported as parameter values (thanks Philipp Sumi)
+1/22/2004
+MySql - Year datatype now supported
+
+1/21/2004
+MySql - fixed compression
+
+1/20/2004
+MySql - Fixed bug where a parameter with a TimeSpan as the value would not serialize properly
+MySql,Common - Fixed bug where default ctor would not set default connection string values
+MySql - Added some XML comments to some members
+MySql - Work to fix/improve compression handling
+
+1/13/2004
+MySql,Common - Improved ConnectionString handling so that it better matches the standard set by SqlClient.
+MySql - A MySqlException is now thrown if a username is not included in the connection string
+MySql- Localhost is now used as the default if not specified on the connection string
+MySql - An exception is now thrown if an attempt is made to set the connection string while the connection is open
+MySql - Small changes to ConnectionString docs
+MySql,common - Removed MultiHostStream and MySqlStream.  Replaced it with Common/StreamCreator
+MySql - Added support for Use Pipe connection string value
+MySql - Added Platform class for easier access to platform utility functions
+MySql - Fixed small pooling bug where new connection was not getting created after IsAlive fails
+Common - Added Platform.cs and StreamCreator.cs
+
+12/30/2003
+MySql - Fixed Field.cs to properly handle 4.1 style timestamps
+MySql - Changed Common.Version to Common.DBVersion to avoid name conflict
+
+
+12/29/2003
+MySql - Fixed field.cs so that text columns return the right field type (thanks beni27@gmx.net)
+
+12/22/2003
+MySql - Added MySqlError class to provide some reference for error codes (thanks Geert Veenstra)
+
+------------0.74 ------------------------
+
+12/6/2003
+MySql - Added Unix socket support (thanks Mohammad DAMT [md@mt.web.id])
+
+12/4/2003
+MySql - only calling Thread.Sleep when no data is available
+MySql - improved escaping of quote characters in parameter data
+MySql - removed misleading comments from parameter.cs
+
+12/1/2003
+Mysql -fixed pooling bug
+MySql - same pooling bug fixed again!!  ;-)
+
 11/30/2003
 MySql - Fixed ConnectionSTring editor dialog (thanks marco p (pomarc))
 Common - UserId now supported in connection strings (thanks Jeff Neeley)

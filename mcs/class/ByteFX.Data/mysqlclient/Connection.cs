@@ -29,7 +29,7 @@ namespace ByteFX.Data.MySqlClient
 	/// Represents an open connection to a MySQL Server database. This class cannot be inherited.
 	/// </summary>
 	/// <include file='docs/MySqlConnection.xml' path='MyDocs/MyMembers[@name="Class"]/*'/>
-	[System.Drawing.ToolboxBitmap( typeof(MySqlConnection), "Designers.connection.bmp")]
+	[System.Drawing.ToolboxBitmap( typeof(MySqlConnection), "MySqlClient.resources.connection.bmp")]
 	[System.ComponentModel.DesignerCategory("Code")]
 	[ToolboxItem(true)]
 	public sealed class MySqlConnection : Component, IDbConnection, ICloneable
@@ -51,7 +51,7 @@ namespace ByteFX.Data.MySqlClient
 		/// </summary>
 		public MySqlConnection()
 		{
-			settings = new MySqlConnectionString();
+			settings = new MySqlConnectionString("server=localhost");
 		}
 
 		/// <summary>
@@ -81,7 +81,7 @@ namespace ByteFX.Data.MySqlClient
 		[Browsable(true)]
 		public string DataSource
 		{
-			get { return settings.Host; }
+			get { return settings.Server; }
 		}
 
 		/// <summary>
@@ -91,7 +91,7 @@ namespace ByteFX.Data.MySqlClient
 		[Browsable(true)]
 		public int ConnectionTimeout
 		{
-			get { return settings.ConnectTimeout; }
+			get { return settings.ConnectionTimeout; }
 		}
 		
 		/// <summary>
@@ -152,7 +152,7 @@ namespace ByteFX.Data.MySqlClient
 		[Browsable(false)]
 		public string ServerVersion 
 		{
-			get { return  internalConnection.Driver.Version; }
+			get { return  internalConnection.Driver.VersionString; }
 		}
 
 		internal Encoding Encoding 
@@ -172,21 +172,25 @@ namespace ByteFX.Data.MySqlClient
 		/// </summary>
 		/// <include file='docs/MySqlConnection.xml' path='MyDocs/MyMembers[@name="ConnectionString"]/*'/>
 #if WINDOWS
-		[Editor(typeof(Designers.ConnectionStringEditor), typeof(System.Drawing.Design.UITypeEditor))]
+		[Editor("ByteFX.Data.MySqlClient.Design.ConnectionStringTypeEditor,MySqlClient.Design", typeof(System.Drawing.Design.UITypeEditor))]
 #endif
 		[Browsable(true)]
 		[Category("Data")]
+		[Description("Information used to connect to a DataSource, such as 'Server=xxx;UserId=yyy;Password=zzz;Database=dbdb'.")]
 		public string ConnectionString
 		{
 			get
 			{
 				// Always return exactly what the user set.
 				// Security-sensitive information may be removed.
-				return settings.ConnectString;
+				return settings.GetConnectionString();
 			}
 			set
 			{
-				settings.ConnectString = value;
+				if (this.State != ConnectionState.Closed)
+					throw new MySqlException("Not allowed to change the 'ConnectionString' property while the connection (state=" + State + ").");
+
+				settings.SetConnectionString(value);
 				if (internalConnection != null)
 					internalConnection.Settings = settings;
 			}
@@ -206,7 +210,7 @@ namespace ByteFX.Data.MySqlClient
 
 			MySqlTransaction t = new MySqlTransaction();
 			t.Connection = this;
-			InternalConnection.Driver.SendCommand( DBCmd.QUERY, "BEGIN");
+			InternalConnection.Driver.Send( DBCmd.QUERY, "BEGIN");
 			return t;
 		}
 
@@ -245,8 +249,8 @@ namespace ByteFX.Data.MySqlClient
 				case IsolationLevel.Chaos:
 					throw new NotSupportedException("Chaos isolation level is not supported");
 			}
-			InternalConnection.Driver.SendCommand( DBCmd.QUERY, cmd );
-			InternalConnection.Driver.SendCommand( DBCmd.QUERY, "BEGIN");
+			InternalConnection.Driver.Send( DBCmd.QUERY, cmd );
+			InternalConnection.Driver.Send( DBCmd.QUERY, "BEGIN");
 			return t;
 		}
 
@@ -271,7 +275,7 @@ namespace ByteFX.Data.MySqlClient
 				throw new MySqlException("Invalid operation: The connection is closed");
 
 			//TODOinternalConnection.ChangeDatabase( dbName );
-			InternalConnection.Driver.SendCommand( DBCmd.INIT_DB, dbName );
+			InternalConnection.Driver.Send( DBCmd.INIT_DB, dbName );
 		}
 
 		internal void SetState( ConnectionState newState ) 
@@ -292,19 +296,29 @@ namespace ByteFX.Data.MySqlClient
 
 			SetState( ConnectionState.Connecting );
 
-			if (settings.Pooling) 
+			try 
 			{
-				internalConnection = MySqlPoolManager.GetConnection( settings );
+				if (settings.Pooling) 
+				{
+					internalConnection = MySqlPoolManager.GetConnection( settings );
+				}
+				else
+				{
+					internalConnection = new MySqlInternalConnection( settings );
+					internalConnection.Open();
+				}
 			}
-			else
+			catch (Exception ex)
 			{
-				internalConnection = new MySqlInternalConnection( settings );
-				internalConnection.Open();
+				SetState( ConnectionState.Closed );
+				throw ex;
 			}
+
 
 			SetState( ConnectionState.Open );
 			internalConnection.SetServerVariables(this);
-			ChangeDatabase( settings.Database );
+			if (settings.Database != null && settings.Database != String.Empty)
+				ChangeDatabase( settings.Database );
 		}
 
 

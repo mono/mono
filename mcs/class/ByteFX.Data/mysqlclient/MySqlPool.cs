@@ -59,6 +59,7 @@ namespace ByteFX.Data.MySqlClient
 					{
 						conn.Close();
 						idlePool.RemoveAt(i);
+						conn = null;
 					}
 				}
 			}
@@ -114,7 +115,7 @@ namespace ByteFX.Data.MySqlClient
 			MySqlInternalConnection conn = null;
 
 			int start = Environment.TickCount;
-			int ticks = settings.ConnectTimeout * 1000;
+			int ticks = settings.ConnectionTimeout * 1000;
 
 			// wait timeOut seconds at most to get a connection
 			while (conn == null && (Environment.TickCount - start) < ticks)

@@ -37,6 +37,7 @@ namespace ByteFX.Data.MySqlClient
 		private MySqlCommand	command;
 		private bool			canRead;
 		private bool			hasRows;
+		private CommandResult	currentResult;
 
 		/* 
 		 * Keep track of the connection in order to implement the
@@ -104,10 +105,12 @@ namespace ByteFX.Data.MySqlClient
 		/// </summary>
 		public void Close()
 		{
+			if (! isOpen) return;
+
 			// finish any current command
-			ClearCurrentResult();
+			if (currentResult != null)
+				currentResult.Clear();
 			command.ExecuteBatch(false);
-			connection.InternalConnection.Driver.ClearPeekedPacket();
 
 			connection.Reader = null;
 			if (0 != (commandBehavior & CommandBehavior.CloseConnection))
@@ -199,20 +202,30 @@ namespace ByteFX.Data.MySqlClient
 			if (i >= _fields.Length) 
 				throw new IndexOutOfRangeException();
 
-			byte[] bytes = (byte[])GetValue(i);
+			long bufLen = _fields[i].BufferLength;
 
 			if (buffer == null) 
-				return bytes.Length;
+				return bufLen;
+
+			if (bufferIndex >= buffer.Length || bufferIndex < 0)
+				throw new IndexOutOfRangeException("Buffer index must be a valid index in buffer");
+			if (buffer.Length < (bufferIndex + length))
+				throw new ArgumentException( "Buffer is not large enough to hold the requested data" );
+			if (dataIndex < 0 || dataIndex >= bufLen )
+				throw new IndexOutOfRangeException( "Data index must be a valid index in the field" );
+
+			byte[] bytes = _fields[i].Buffer;
+			long fieldIndex = _fields[i].BufferIndex;
 
 			// adjust the length so we don't run off the end
-			if (bytes.Length < (dataIndex+length)) 
+			if ( bufLen < (dataIndex+length)) 
 			{
-				length = (int)(bytes.Length - dataIndex);
+				length = (int)((long)bytes.Length - dataIndex);
 			}
 
-			for (int x=0; x < length; x++)
+			for (long x=0; x < length; x++)
 			{
-				buffer[bufferIndex+x] = bytes[dataIndex+x];	
+				buffer[bufferIndex+x] = bytes[fieldIndex+dataIndex+x];	
 			}
 
 			return length;
@@ -341,12 +354,7 @@ namespace ByteFX.Data.MySqlClient
 		/// <returns></returns>
 		public Guid GetGuid(int i)
 		{
-			/*
-			* Force the cast to return the type. InvalidCastException
-			* should be thrown if the data is not already of the correct type.
-			*/
-			// The sample does not support this method.
-			throw new NotSupportedException("GetGUID not supported.");
+			return new Guid( GetString(i) );
 		}
 
 		/// <summary>
@@ -454,14 +462,14 @@ namespace ByteFX.Data.MySqlClient
 				r["ColumnName"] = f.ColumnName;
 				r["ColumnOrdinal"] = ord++;
 				r["ColumnSize"] = f.ColumnLength;
-				int prec = f.NumericPrecision();
-				int pscale = f.NumericScale();
+				int prec = f.NumericPrecision;
+				int pscale = f.NumericScale;
 				if (prec != -1)
 					r["NumericPrecision"] = (short)prec;
 				if (pscale != -1)
 					r["NumericScale"] = (short)pscale;
 				r["DataType"] = f.GetFieldType();
-				r["ProviderType"] = (int)f.GetMySqlDbType();
+				r["ProviderType"] = (int)f.Type;
 				r["IsLong"] = f.IsBlob() && f.ColumnLength > 255;
 				r["AllowDBNull"] = f.AllowsNull();
 				r["IsReadOnly"] = false;
@@ -576,17 +584,16 @@ namespace ByteFX.Data.MySqlClient
 			if (! isOpen)
 				throw new MySqlException("Invalid attempt to NextResult when reader is closed.");
 
-			Driver driver = connection.InternalConnection.Driver;
-
 			// clear any rows that have not been read from the last rowset
-			ClearCurrentResult();
+			if (currentResult != null)
+				currentResult.Clear();
 
 			// tell our command to continue execution of the SQL batch until it its
 			// another resultset
-			Packet packet = command.ExecuteBatch(true);
+			currentResult = command.ExecuteBatch(true);
 
 			// if there was no more resultsets, then signal done
-			if (packet == null) 
+			if (currentResult == null) 
 			{
 				canRead = false;
 				return false;
@@ -597,24 +604,12 @@ namespace ByteFX.Data.MySqlClient
 			// property here to dimension our field array
 			connection.SetState( ConnectionState.Fetching );
 			
-			_fields = new MySqlField[ packet.ReadLenInteger() ];
+			_fields = new MySqlField[ currentResult.ColumnCount ];
 			for (int x=0; x < _fields.Length; x++) 
-			{
-				packet = driver.ReadPacket();
-				_fields[x] = new MySqlField();
-				_fields[x].ReadSchemaInfo( packet );
-			}
+				_fields[x] = currentResult.GetField();
 
-			// read off the end of schema packet
-			packet = driver.ReadPacket();
-			if ( ! packet.IsLastPacket())
-				throw new MySqlException("Expected end of schema packet");
-
-			// now take a quick peek at the next packet to see if we have rows
-			// 
-			packet = driver.PeekPacket();
-			hasRows = ! packet.IsLastPacket();
-			canRead = hasRows;
+			hasRows = currentResult.CheckForRows();
+			canRead = hasRows;			
 
 			connection.SetState( ConnectionState.Open );
 			return true;
@@ -636,17 +631,19 @@ namespace ByteFX.Data.MySqlClient
 
 			try 
 			{
-				Packet rowPacket = driver.ReadPacket();
-				if (rowPacket.IsLastPacket())
+				if (! currentResult.ReadDataRow())
 				{
 					canRead = false;
 					return false;
 				}
-				rowPacket.Position = 0;
 
 				for (int col=0; col < _fields.Length; col++)
 				{
-					_fields[col].SetValueData( rowPacket, driver.Encoding );
+					byte[] buf = currentResult.GetFieldBuffer();
+					int index = currentResult.GetFieldIndex();
+					long len = currentResult.GetFieldLength();
+					_fields[col].SetValueData( buf, index, len, driver.Version );
+					currentResult.NextField();
 				}
 			}
 			catch (Exception ex)
@@ -671,21 +668,6 @@ namespace ByteFX.Data.MySqlClient
 			return 0;
 		}
 
-		#region Private Methods
-
-		private void ClearCurrentResult() 
-		{
-			if (! canRead) return;
-
-			Driver driver = connection.InternalConnection.Driver;
-
-			Packet packet = driver.ReadPacket();
-			// clean out any current resultset
-			while (! packet.IsLastPacket())
-				packet = driver.ReadPacket();
-		}
-
-		#endregion
 
 		#region IEnumerator
 		IEnumerator	IEnumerable.GetEnumerator()

@@ -25,8 +25,9 @@ namespace ByteFX.Data.MySqlClient
 	/// Represents a set of data commands and a database connection that are used to fill a dataset and update a MySQL database. This class cannot be inherited.
 	/// </summary>
 	/// <include file='docs/MySqlDataAdapter.xml' path='MyDocs/MyMembers[@name="Class"]/*'/>
-	[System.Drawing.ToolboxBitmap( typeof(MySqlDataAdapter), "Designers.dataadapter.bmp")]
+	[System.Drawing.ToolboxBitmap( typeof(MySqlDataAdapter), "MySqlClient.resources.dataadapter.bmp")]
 	[System.ComponentModel.DesignerCategory("Code")]
+	[Designer("ByteFX.Data.MySqlClient.Design.MySqlDataAdapterDesigner,MySqlClient.Design")]
 	public sealed class MySqlDataAdapter : DbDataAdapter, IDbDataAdapter
 	{
 		private MySqlCommand m_selectCommand;
@@ -85,7 +86,7 @@ namespace ByteFX.Data.MySqlClient
 		/// <summary>
 		/// Gets or sets a SQL statement to delete records from the data set.
 		/// </summary>
-		[DataSysDescription("Used during Update for deleted rows in Dataset.")]
+		[Description("Used during Update for deleted rows in Dataset.")]
 		public MySqlCommand DeleteCommand 
 		{
 			get { return m_deleteCommand; }
@@ -101,7 +102,7 @@ namespace ByteFX.Data.MySqlClient
 		/// <summary>
 		/// Gets or sets a SQL statement to insert new records into the data source.
 		/// </summary>
-		[DataSysDescription("Used during Update for new rows in Dataset.")]
+		[Description("Used during Update for new rows in Dataset.")]
 		public MySqlCommand InsertCommand 
 		{
 			get { return m_insertCommand; }
@@ -117,7 +118,7 @@ namespace ByteFX.Data.MySqlClient
 		/// <summary>
 		/// Gets or sets a SQL statement used to select records in the data source.
 		/// </summary>
-		[DataSysDescription("Used during Fill/FillSchema")]
+		[Description("Used during Fill/FillSchema")]
 		[Category("Fill")]
 		public MySqlCommand SelectCommand 
 		{
@@ -134,7 +135,7 @@ namespace ByteFX.Data.MySqlClient
 		/// <summary>
 		/// Gets or sets a SQL statement used to update records in the data source.
 		/// </summary>
-		[DataSysDescription("Used during Update for modified rows in Dataset.")]
+		[Description("Used during Update for modified rows in Dataset.")]
 		public MySqlCommand UpdateCommand 
 		{
 			get { return m_updateCommand; }

@@ -28,13 +28,31 @@ As the protocol to MySQL is very poorly documented, his driver proved to be inva
 Also, I have to give thanks for Jun Su for starting the SourceForge project and for his wonderful
 contribution of code and ideas.
 
-Thanks also go out to Peter Belbin, Timoth Parez, and Daniel Morgan for their input, testing, and all
-the other things that make open source projects successful!
+The following people have also contributed and their additions have been greatly appreciated.
+=================
+Timothy Parez
+Peter Belbin
+Daniel Guisinger
+Steve M. Brown
+Clint Kennedy
+Matthew J. Peddlesden
+Daniel Morgan
+Rory Plaire
+Marco Poponi
+Mark Reay
+
+....just to name a few.  Many people have contributed either through code, testing, or bug reports.  If I have left
+your name off, it is not intentional and I apologize.  Thank you to everyone who has contributed and continues
+to contribute to this project.
+
 
 I have started putting the names of people who post bugs, patches, suggestions, or anything else of value to the changelog.
 If you have posted and don't see your name, I apologize.  Please let me know who you are and I'll include you.
 The most important thing here is to understand that this is not a one man show.  So many people have provided input
 along the way.
+
+Reggie Burnett
+ByteFX, Inc.
 
 
 

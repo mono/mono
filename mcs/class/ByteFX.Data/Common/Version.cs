@@ -1,3 +1,20 @@
+// ByteFX.Data data access components for .Net
+// Copyright (C) 2002-2004  ByteFX, Inc.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+// 
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+// 
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 using System;
 
 namespace ByteFX.Data.Common
@@ -5,20 +22,20 @@ namespace ByteFX.Data.Common
 	/// <summary>
 	/// Summary description for Version.
 	/// </summary>
-	internal struct Version
+	internal struct DBVersion
 	{
 		private int	major;
 		private int minor;
 		private int build;
 
-		public Version( int major, int minor, int build)
+		public DBVersion( int major, int minor, int build)
 		{
 			this.major = major;
 			this.minor = minor;
 			this.build = build;
 		}
 
-		public static Version Parse( string versionString )
+		public static DBVersion Parse( string versionString )
 		{
 			int start = 0;
 			int index = versionString.IndexOf('.', start);
@@ -36,15 +53,15 @@ namespace ByteFX.Data.Common
 				i++;
 			int build = Convert.ToInt32( versionString.Substring(start, i-start).Trim());
 
-			return new Version( major, minor, build );
+			return new DBVersion( major, minor, build );
 		}
 
 		public bool isAtLeast(int major, int minor, int build)
 		{
-			if (major > this.major) return false;
-			if (minor > this.minor) return false;
-			if (build > this.build) return false;
-			return true;
+			if (this.major > major) return true;
+			if (this.major == major && this.minor > minor) return true;
+			if (this.major == major && this.minor == minor && this.build >= build) return true;
+			return false;
 		}
 
 	}

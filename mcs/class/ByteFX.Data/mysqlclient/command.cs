@@ -27,7 +27,7 @@ namespace ByteFX.Data.MySqlClient
 	/// </summary>
 	/// <include file='docs/MySqlCommand.xml' path='MyDocs/MyMembers[@name="Class"]/*'/>
 #if WINDOWS
-	[System.Drawing.ToolboxBitmap( typeof(MySqlCommand), "Designers.command.bmp")]
+	[System.Drawing.ToolboxBitmap( typeof(MySqlCommand), "MySqlClient.resources.command.bmp")]
 #endif
 	[System.ComponentModel.DesignerCategory("Code")]
 	public sealed class MySqlCommand : Component, IDbCommand, ICloneable
@@ -99,7 +99,7 @@ namespace ByteFX.Data.MySqlClient
 		[Category("Data")]
 		[Description("Command text to execute")]
 #if WINDOWS
-		[Editor(typeof(ByteFX.Data.Common.SqlCommandTextEditor), typeof(System.Drawing.Design.UITypeEditor))]
+		[Editor("ByteFX.Data.Common.Design.SqlCommandTextEditor,MySqlClient.Design", typeof(System.Drawing.Design.UITypeEditor))]
 #endif
 		public string CommandText
 		{
@@ -286,8 +286,7 @@ namespace ByteFX.Data.MySqlClient
 				{
 					string parm_name = sql.Substring(parm_start, x-parm_start); 
 
-					if (parameters.Contains( parm_name ))//p != null)
-					//if(parm_name.Length<2 || parm_name[1]!='@') // if doesn't begin with @@, do our processing.
+					if (parameters.Contains( parm_name ))
 					{
 						MySqlParameter p = (parameters[parm_name] as MySqlParameter);
 						p.SerializeToBytes(ms, connection );
@@ -343,7 +342,7 @@ namespace ByteFX.Data.MySqlClient
 		/// <summary>
 		/// Internal function to execute the next command in an array of commands
 		/// </summary>
-		internal Packet ExecuteBatch( bool stopAtResultSet )
+		internal CommandResult ExecuteBatch( bool stopAtResultSet )
 		{
 			Driver driver = connection.InternalConnection.Driver;
 
@@ -352,20 +351,18 @@ namespace ByteFX.Data.MySqlClient
 				byte[] sql = (byte[])arraySql[0];
 				arraySql.RemoveAt(0);
 
-				Packet packet =  driver.SendSql( sql );
-				byte b = (byte)packet.ReadByte();
-				if (b == 0) 
+				CommandResult result = driver.Send( DBCmd.QUERY, sql );
+				
+				if (result.IsResultSet)
 				{
-					if (updateCount == -1) updateCount = 0;
-					updateCount += (int)packet.ReadLenInteger();
+					if (stopAtResultSet) return result;
+					result.Clear();
+					continue;
 				}
-				else if (stopAtResultSet) 
-				{
-					packet.Position--;
-					return packet;
-				}
-				else
-					ReadOffResultSet();
+
+				// at this point, we know it is a zero field count
+				if (updateCount == -1) updateCount = 0;
+				updateCount += result.RowsAffected;
 			}
 			return null;
 		}

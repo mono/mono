@@ -4,38 +4,56 @@ using System.Text;
 
 namespace ByteFX.Data.MySqlClient
 {
-/*	internal enum PacketType 
-	{
-		None,
-		UpdateOrOk,
-		ResultSchema,
-		Last,
-		Auth,
-		Error,
-		LoadDataLocal,
-		Other
-	}*/
-
 	/// <summary>
 	/// Summary description for Packet.
 	/// </summary>
 	internal class Packet : MemoryStream
 	{
 		Encoding		encoding;
-		private static int	HEADER_LEN = 7;
+		byte			sequence;
+		int				completeLen;
+		public static int   NULL_LEN=-1;
+		private int		shortLen = 2;
+		private int		intLen = 3;
+		private int		longLen = 4;
+		private bool	longInts = false;
 
-		public Packet() : base(256+HEADER_LEN)
+		public Packet(bool longInts) : base()
 		{
-			Position = HEADER_LEN;
+			LongInts = longInts;
 		}
 
-		public Packet(int len) : base(len+HEADER_LEN)
+		public Packet(byte[] bytes, bool longInts) : base(bytes.Length)
 		{
-			Position = HEADER_LEN;
+			this.Write( bytes, 0, bytes.Length );
+			Position = 0;
+			LongInts = longInts;
 		}
 
-		public Packet(byte[] bytes) : base(bytes, 0, bytes.Length, true, true)
+		public bool LongInts 
 		{
+			get { return longInts; }
+			set 
+			{ 
+				longInts = value; 
+				if (longInts) 
+				{
+					intLen = 4;
+					longLen = 8;
+				}
+			}
+		}
+
+		public int CompleteLength 
+		{
+			get { return completeLen; }
+			set { completeLen = value; }
+		}
+
+		public byte Sequence 
+		{
+			get { return sequence; }
+			set { sequence = value; }
 		}
 
 		public Encoding Encoding 
@@ -44,9 +62,22 @@ namespace ByteFX.Data.MySqlClient
 			get { return encoding; }
 		}
 
+		public void Clear()
+		{
+			Position = 0;
+			this.SetLength(0);
+		}
+
 		public byte this[int index] 
 		{
-			get { return GetBuffer()[index]; }
+			get 
+			{ 
+				long pos = Position;
+				Position = index;
+				byte b = (byte)ReadByte();
+				Position = pos;
+				return b;
+			}
 		}
 
 		public new int Length 
@@ -56,18 +87,29 @@ namespace ByteFX.Data.MySqlClient
 
 		public bool IsLastPacket()
 		{
-			if (Length == 1 && this[0] == 0xfe) return true;
-			return false;
+			return (Length == 1 && this[0] == 0xfe);
 		}
 
-		public byte[] GetBytes( byte packetSeq ) 
+		public void Append( Packet p )
 		{
 			long oldPos = Position;
-			Position = 3;
-			WriteInteger( Length-HEADER_LEN, 3 );
-			WriteByte( packetSeq );
+			Position = Length;
+			this.Write( p.GetBuffer(), 0, p.Length );
 			Position = oldPos;
-			return GetBuffer();
+		}
+
+		public Packet ReadPacket()
+		{
+			if (! HasMoreData) return null;
+
+			int len = this.ReadInteger(3);
+			byte seq = (byte)this.ReadByte();
+			byte[] buf = new byte[ len ];
+			this.Read( buf, 0, len );
+			Packet p = new Packet( buf, LongInts );
+			p.Sequence = seq;
+			p.Encoding = this.Encoding;
+			return p;
 		}
 
 		public int ReadNBytes()
@@ -79,11 +121,11 @@ namespace ByteFX.Data.MySqlClient
 
 		public string ReadLenString()
 		{
-			int len = ReadLenInteger();
+			long len = ReadLenInteger();
 
 			byte[] buffer = new Byte[len];
-			Read(buffer, 0, len);
-			return encoding.GetString( buffer, 0, len);
+			Read(buffer, 0, (int)len);
+			return encoding.GetString( buffer, 0, (int)len);
 		}
 
 
@@ -128,16 +170,16 @@ namespace ByteFX.Data.MySqlClient
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public int ReadLenInteger()
+		public long ReadLenInteger()
 		{
 			byte c  = (byte)ReadByte();
 
 			switch(c) 
 			{
-				case 251 : return -1; 
-				case 252 : return ReadInteger(2);
-				case 253 : return ReadInteger(3);
-				case 254 : return ReadInteger(4);
+				case 251 : return NULL_LEN; 
+				case 252 : return ReadInteger(shortLen);
+				case 253 : return ReadInteger(intLen);
+				case 254 : return ReadInteger(longLen);
 				default  : return c;
 			}
 		}
