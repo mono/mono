@@ -1,3 +1,10 @@
+2004-11-01  Miguel de Icaza  <miguel@ximian.com>
+
+	* assign.cs (Assign.DoResolve): Only do the transform of
+	assignment into a New if the types are compatible, if not, fall
+	through and let the implicit code deal with the errors and with
+	the necessary conversions. 
+
 2004-10-04  Juraj Skripsky  <js@hotfeet.ch>
 
 	* namespace.cs (NamespaceEntry.Using): No matter which warning
