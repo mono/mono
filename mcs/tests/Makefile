@@ -1,11 +1,13 @@
 #
 # use `run-test-local'
 #
+# *** make sure you add multi-file tests to harness.mk
+
 thisdir = tests
 SUBDIRS = 
 include ../build/rules.make
 
-DISTFILES = README.tests $(wildcard *.cs)
+DISTFILES = README.tests harness.mk $(wildcard *.cs)
 
 ifeq (default, $(PROFILE))
 # force this, we don't case if CSC is broken. This also
@@ -18,9 +20,8 @@ endif
 
 USE_MCS_FLAGS :=
 
-#
 # All new tests for 'mcs' go in here
-# These tests are not run by GMCS since the corresponding code is not yet in there.
+# These tests are not run by GMCS since the corresponding code is not yet in there.-
 # Martin Baulig will manually move them into TEST_SOURCES_common after merging the code into GMCS.
 # He may also move some to TEST_EXCLUDE_net_2_0 if some of the merges are inappropriate for GMCS.
 #
@@ -137,7 +138,7 @@ test-casts: boot-casts.out mcs-casts.out
 
 test-local: 
 
-run-test-local: multi test-compiler-jit-real test-casts
+run-test-local: multi test-harness test-casts
 
 test-everything:
 	$(MAKE) PROFILE=default run-test
@@ -147,7 +148,7 @@ test-generics:
 	$(MAKE) PROFILE=net_2_0 run-test
 
 test-generics-2:
-	$(MAKE) PROFILE=net_2_0 TEST_SOURCES="$(TEST_SOURCES_net_2_0)" test-compiler-jit-real
+	$(MAKE) PROFILE=net_2_0 TEST_SOURCES="$(TEST_SOURCES_net_2_0)" test-harness
 
 clean-local:
 	rm -f *.exe *.netmodule *.out *.pdb casts.cs
@@ -155,44 +156,26 @@ clean-local:
 dist-local: dist-default
 	rm -f $(distdir)/casts.cs
 
-TEST_TAG = mcs
-
 ifeq (net_2_0, $(PROFILE))
 TEST_TAG = gmcs
+else
+TEST_TAG = mcs
 endif
 
-test-compiler-jit-real:
-	@rm -f *.exe *.dll *.netmodule $(TEST_TAG).log $(TEST_TAG)-*.log ; \
-	logfile="$(TEST_TAG).log" ; \
-	echo 'Running $(TEST_TAG) tests with flags "$(TEST_RUNTIME)" ... ' ; \
-	for i in $(TEST_SOURCES) ; do \
-	    options=`sed -n 's,^// Compiler options:,,p' $$i.cs`; \
-	    testlogfile="$(TEST_TAG)-$$i.log" ; \
-	    echo -n "$$i: "; \
-	    echo "*** $(CSCOMPILE) $$options $$i.cs" > $$testlogfile ; \
-	    if $(CSCOMPILE) $$options $$i.cs >> $$testlogfile 2>&1 ; then \
-	        if test -f $$i.exe; then \
-	            echo "*** $(TEST_RUNTIME) ./$$i.exe" >> $$testlogfile ; \
-	            if $(TEST_RUNTIME) ./$$i.exe >> $$testlogfile 2>&1 ; then \
-		        echo "PASS: $$i" >> $$logfile ; \
-	                echo OK ; rm -f $$testlogfile ; \
-	            else \
-		        echo "Exit code: $$?" >> $$testlogfile ; \
-		        failed="$$failed $$i" ; \
-		        echo "FAIL: $$i" >> $$logfile ; \
-	                echo FAILED ; cat $$testlogfile ; \
-		    fi ; \
-	        else \
-		    echo "PASS: $$i: compilation" >> $$logfile ; \
-		    echo OK ; rm -f $$testlogfile ; \
-	        fi ; \
-	    else \
-		echo "Exit code: $$?" >> $$testlogfile ; \
-		failed="$$failed $$i" ; \
-		echo "FAIL: $$i: compilation" >> $$logfile ; \
-	        echo FAILED COMPILATION ; cat $$testlogfile ; \
-	    fi ; \
-	done ; \
+.PHONY: test-harness test-harness-run
+test-harness:
+	@$(MAKE) -s test-harness-run
+
+test-harness-run:
+	@-rm -f $(TEST_TAG).log
+	@-rm -fr dir-$(TEST_TAG)
+	@mkdir dir-$(TEST_TAG)
+	@sed 's,@thisdir@,$(thisdir)/dir-$(TEST_TAG),' harness.mk > dir-$(TEST_TAG)/Makefile
+	@echo 'Running $(TEST_TAG) tests with flags "$(TEST_RUNTIME)" ... '
+	@cd dir-$(TEST_TAG) ; \
+	$(MAKE) -s $(TEST_SOURCES:=.res) || failed="make " ; \
+	cat $(TEST_SOURCES:=.res) > ../$(TEST_TAG).log ; \
+	failed=$$failed`sed -n 's,^FAIL: ,,p' ../$(TEST_TAG).log` ; \
 	if test -z "$$failed"; then :; else echo "Failing tests: $$failed"; exit 1; fi
 
 #

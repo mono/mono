@@ -1,3 +1,14 @@
+2004-10-21  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (test-harness, test-harness-run): Rename from
+	test-compiler-jit-real, and move body to harness.mk.
+	Update to use 'make' to loop over testcases, so that they can be
+	run in parallel.
+	(run-test-local): Update.
+	(test-generics-2): Likewise.
+	* harness.mk: New file.  Contains the actual harness, and also
+	lists dependencies in multi-file testcases.
+
 2004-10-13  Raja R Harinath  <rharinath@novell.com>
 
 	* test-309.cs: Testcase from #65816.
