@@ -1,3 +1,7 @@
+2003-10-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* get.c (get_ret_type): Remove needless warning message.
+
 2003-10-13 Jackson Harper <jackson@ximian.com>
 
 	* get.c: stringify nested types properly ie Outer/Inner.
