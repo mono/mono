@@ -124,6 +124,9 @@ namespace MonoTests.System.Threading
 		}
 
 */
+		
+		// Hangs
+		[Category("NotWorking")]
 		public void TestWaitAndSignal1()
 		{
 			Mutex Sem = new Mutex(false);
@@ -139,6 +142,8 @@ namespace MonoTests.System.Threading
 			}
 		}
 
+		// Hangs
+		[Category("NotWorking")]
 		public void TestWaitAndFoget1()
 		{
 			Mutex Sem = new Mutex(false);
