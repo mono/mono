@@ -1,6 +1,10 @@
+2004-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CookieContainerTest.cs: added tests for CookieContainer.
+
 2004-10-10 David Sheldon <dave-mono@earth.li>
 
-  * DnsTest.cs: Updated IP for www.go-mono.com. 
+	* DnsTest.cs: Updated IP for www.go-mono.com. 
 
 2004-09-10  Sebastien Pouliot  <sebastien@ximian.com>
 

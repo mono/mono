@@ -31,6 +31,7 @@ System.IO/FileSystemWatcherTest.cs
 System.IO.Compression/DeflateStreamTest.cs
 System.IO.Compression/GzipStreamTest.cs
 System.Net/CookieCollectionTest.cs
+System.Net/CookieContainerTest.cs
 System.Net/CookieTest.cs
 System.Net/CredentialCacheTest.cs
 System.Net/DnsPermissionAttributeTest.cs

@@ -1,8 +1,11 @@
 //
 // System.Net.Cookie.cs
 //
-// Author:
-//   Lawrence Pit (loz@cable.a2000.nl)
+// Authors:
+// 	Lawrence Pit (loz@cable.a2000.nl)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//
+// (c) Copyright 2004 Novell, Inc. (http://www.ximian.com)
 //
 
 //
@@ -38,25 +41,25 @@ namespace System.Net {
 	[Serializable]
 	public sealed class Cookie 
 	{
-		private string comment;
-		private Uri commentUri;
-		private bool discard;
-		private string domain;
-		private bool expired;
-		private DateTime expires;
-		private string name;
-		private string path;
-		private string port;
-		private int [] ports;
-		private bool secure;
-		private DateTime timestamp;
-		private string val;
-		private int version;
+		string comment;
+		Uri commentUri;
+		bool discard;
+		string domain;
+		bool expired;
+		DateTime expires;
+		string name;
+		string path;
+		string port;
+		int [] ports;
+		bool secure;
+		DateTime timestamp;
+		string val;
+		int version;
 		
-		private static char [] reservedCharsName = new char [] {' ', '=', ';', ',', '\n', '\r', '\t'};
-		private static char [] reservedCharsValue = new char [] {';', ','};
-		private static char [] portSeparators = new char [] {'"', ','};
-                private static string tspecials = "()<>@,;:\\\"/[]?={} \t";   // from RFC 2965, 2068
+		static char [] reservedCharsName = new char [] {' ', '=', ';', ',', '\n', '\r', '\t'};
+		static char [] reservedCharsValue = new char [] {';', ','};
+		static char [] portSeparators = new char [] {'"', ','};
+                static string tspecials = "()<>@,;:\\\"/[]?={} \t";   // from RFC 2965, 2068
 
 		public Cookie ()
 		{
@@ -65,6 +68,9 @@ namespace System.Net {
 			domain = "";
 			name = "";
 			val = "";
+			comment = "";
+			domain = "";
+			port = "";
 		}
 
 		public Cookie (string name, string value)
@@ -79,18 +85,18 @@ namespace System.Net {
 		{
 			Path = path;
 		}
-		
+
 		public Cookie (string name, string value, string path, string domain)
 			: this (name, value, path)
 		{
 			Domain = domain;
 		}
-		
+
 		public string Comment {
 			get { return comment; }
 			set { comment = value == null ? String.Empty : value; }
 		}
-		
+
 		public Uri CommentUri {
 			get { return commentUri; }
 			set { commentUri = value; }
@@ -100,7 +106,7 @@ namespace System.Net {
 			get { return discard; }
 			set { discard = value; }
 		}
-		
+
 		public string Domain {
 			get { return domain; }
 			set { domain = value == null ? String.Empty : value; }
@@ -143,7 +149,7 @@ namespace System.Net {
 		}
 
 		public string Path {
-			get { return (path == null) ? "/" : path; }
+			get { return (path == null || path == "") ? "/" : path; }
 			set { path = (value == null) ? String.Empty : value; }
 		}
 
@@ -172,8 +178,8 @@ namespace System.Net {
 				}
 			}
 		}
-		
-		int[] Ports {
+
+		internal int [] Ports {
 			get { return ports; }
 		}
 
@@ -215,7 +221,7 @@ namespace System.Net {
 					version = value; 
 			}
 		}
-		
+
 		public override bool Equals (Object obj) 
 		{
 			System.Net.Cookie c = obj as System.Net.Cookie;			
@@ -227,7 +233,7 @@ namespace System.Net {
 			       String.Compare (this.domain, c.domain, true) == 0 &&
 			       this.version == c.version;
 		}
-		
+
 		public override int GetHashCode ()
 		{
 			return hash(name.ToLower ().GetHashCode (),
@@ -236,12 +242,12 @@ namespace System.Net {
 			            domain.ToLower ().GetHashCode (),
 			            version);
 		}
-		
+
 		private static int hash (int i, int j, int k, int l, int m) 
 		{
 			return i ^ (j << 13 | j >> 19) ^ (k << 26 | k >> 6) ^ (l << 7 | l >> 25) ^ (m << 20 | m >> 12);
 		}
-		
+
 		// returns a string that can be used to send a cookie to an Origin Server
 		// i.e., only used for clients
 		// see also para 3.3.4 of RFC 1965
@@ -271,9 +277,9 @@ namespace System.Net {
 						
 			return result.ToString ();
 		}
-				
+
 		// See par 3.6 of RFC 2616
-  	    	private string QuotedString (string value)
+  	    	string QuotedString (string value)
 	    	{
 			if (version == 0 || IsToken (value))
 				return value;
@@ -281,7 +287,7 @@ namespace System.Net {
 				return "\"" + value.Replace("\"", "\\\"") + "\"";
 	    	}			    	    
 
-	    	private bool IsToken (string value) 
+	    	bool IsToken (string value) 
 	    	{
 			int len = value.Length;
 			for (int i = 0; i < len; i++) {
@@ -291,7 +297,6 @@ namespace System.Net {
 			}
 			return true;
 	    	}	    
-
 	}
 }
 

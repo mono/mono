@@ -1,5 +1,14 @@
 2004-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* CookieContainer.cs: style, fixed checks for properties, implemented
+	the MonoTODOs for the method that take an Uri. GetCookies and
+	GetCookieHeaders now really return only the cookies that are requested
+	filtering by the Uri parameter.
+
+	* Cookie.cs: style, added default values for Comment, Domain and Port.
+
+2004-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* CookieCollection.cs: reformatted, fixed Add by adding a new method to
 	search across the arraylist, as list.IndexOf is not what we want.
 
