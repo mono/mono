@@ -1,5 +1,14 @@
 2002-06-07  Martin Baulig  <martin@gnome.org>
 
+	* TypeBuilder.cs (TypeBuilder): Added `PackingSize packing_size' and
+	`int type_size' fields to the constructor.
+	(DefineNestedType): Pass packing_size and type_size to the constructor.
+
+	* ModuleBuilder.cs (DefineType): Pass the packing_size and type_size
+	fields to the TypeBuilder's constructor.
+
+2002-06-07  Martin Baulig  <martin@gnome.org>
+
 	* TypeBuilder.cs (DefineNestedType): There is no overload for this
 	method which takes 5 args in the specs, removed it.
 

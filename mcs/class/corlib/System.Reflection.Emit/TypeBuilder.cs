@@ -48,11 +48,12 @@ namespace System.Reflection.Emit {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void create_internal_class (TypeBuilder tb);
 		
-		internal TypeBuilder (ModuleBuilder mb, string name, TypeAttributes attr, Type parent, Type[] interfaces) {
+		internal TypeBuilder (ModuleBuilder mb, string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packing_size, int type_size) {
 			int sep_index;
 			this.parent = parent;
 			this.attrs = attr;
-			packing_size = PackingSize.Unspecified;
+			this.class_size = type_size;
+			this.packing_size = packing_size;
 			sep_index = name.LastIndexOf('.');
 			if (sep_index != -1) {
 				this.tname = name.Substring (sep_index + 1);
@@ -161,8 +162,8 @@ namespace System.Reflection.Emit {
 			return DefineNestedType (name, attr, parent, null);
 		}
 
-		public TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent, Type[] interfaces) {
-			TypeBuilder res = new TypeBuilder (pmodule, name, attr, parent, interfaces);
+		private TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packsize, int typesize) {
+			TypeBuilder res = new TypeBuilder (pmodule, name, attr, parent, interfaces, packsize, typesize);
 			if (subtypes != null) {
 				TypeBuilder[] new_types = new TypeBuilder [subtypes.Length + 1];
 				System.Array.Copy (subtypes, new_types, subtypes.Length);
@@ -175,12 +176,16 @@ namespace System.Reflection.Emit {
 			return res;
 		}
 
+		public TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent, Type[] interfaces) {
+			return DefineNestedType (name, attr, parent, interfaces, PackingSize.Unspecified, UnspecifiedTypeSize);
+		}
+
 		public TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent, int typesize) {
-			return DefineNestedType (name, attr, parent, null);
+			return DefineNestedType (name, attr, parent, null, PackingSize.Unspecified, typesize);
 		}
 
 		public TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent, PackingSize packsize) {
-			return DefineNestedType (name, attr, parent, null);
+			return DefineNestedType (name, attr, parent, null, packsize, UnspecifiedTypeSize);
 		}
 
 		public ConstructorBuilder DefineConstructor( MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes) {
@@ -288,6 +293,7 @@ namespace System.Reflection.Emit {
 					ctor.fixup ();
 				}
 			}
+
 			return this;
 		}
 

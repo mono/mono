@@ -132,8 +132,8 @@ namespace System.Reflection.Emit {
 			return DefineType (name, attr, parent, null);
 		}
 
-		public TypeBuilder DefineType (string name, TypeAttributes attr, Type parent, Type[] interfaces) {
-			TypeBuilder res = new TypeBuilder (this, name, attr, parent, interfaces);
+		private TypeBuilder DefineType (string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packsize, int typesize) {
+			TypeBuilder res = new TypeBuilder (this, name, attr, parent, interfaces, packsize, typesize);
 			if (types != null) {
 				TypeBuilder[] new_types = new TypeBuilder [types.Length + 1];
 				System.Array.Copy (types, new_types, types.Length);
@@ -147,16 +147,20 @@ namespace System.Reflection.Emit {
 			return res;
 		}
 
+		public TypeBuilder DefineType (string name, TypeAttributes attr, Type parent, Type[] interfaces) {
+			return DefineType (name, attr, parent, interfaces, PackingSize.Unspecified, TypeBuilder.UnspecifiedTypeSize);
+		}
+
 		public TypeBuilder DefineType (string name, TypeAttributes attr, Type parent, int typesize) {
-			return DefineType (name, attr, parent, null);
+			return DefineType (name, attr, parent, null, PackingSize.Unspecified, TypeBuilder.UnspecifiedTypeSize);
 		}
 
 		public TypeBuilder DefineType (string name, TypeAttributes attr, Type parent, PackingSize packsize) {
-			return DefineType (name, attr, parent, null);
+			return DefineType (name, attr, parent, null, packsize, TypeBuilder.UnspecifiedTypeSize);
 		}
 
 		public TypeBuilder DefineType (string name, TypeAttributes attr, Type parent, PackingSize packsize, int typesize) {
-			return DefineType (name, attr, parent, null);
+			return DefineType (name, attr, parent, null, packsize, typesize);
 		}
 
 		public MethodInfo GetArrayMethod( Type arrayClass, string methodName, CallingConventions callingConvention, Type returnType, Type[] parameterTypes) {
