@@ -1,0 +1,17 @@
+2001-08-01  Matthew S. Ford  <Matthew.S.Ford@Rose-Hulman.Edu>
+
+	* CipherMode.cs: Initial version.
+	* CryptoStreamMode.cs: Initial version.
+	* HashAlgorithm.cs: Initial version.
+	* ICryptoTransform.cs: Initial version.
+	* KeySizes.cs: Initial version.
+	* MD5.cs: Initial version.
+	* MD5CryptoServiceProvider.cs: Initial version.
+	* PaddingMode.cs: Initial version.
+	* SHA1.cs: Initial version.
+	* SHA1CryptoServiceProvider.cs: Initial version.
+	* SHA256.cs: Initial version.
+	* SHA256Managed.cs: Initial version.
+	* SHA384.cs: Initial version.
+	* SHA512.cs: Initial version.
+
