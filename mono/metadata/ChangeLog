@@ -1,3 +1,7 @@
+2004-10-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* threads.c (abort_appdomain_thread): Fix unref errors.
+
 2004-10-07  Jackson Harper  <jackson@ximian.com>
 
 	* culture-info-tables.h: regenerate file.
