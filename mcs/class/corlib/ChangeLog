@@ -1,3 +1,8 @@
+2005-01-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib.dll.sources: Added System.Security.AccessControl/
+	CryptoKeySecurity.cs (2.0) to the build.
+
 2005-01-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib_test.dll.sources : Added Test/System.Security/

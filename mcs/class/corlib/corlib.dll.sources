@@ -898,6 +898,7 @@ System.Security/UnverifiableCodeAttribute.cs
 System.Security/VerificationException.cs
 System.Security/XmlSyntaxException.cs
 System.Security.AccessControl/AccessControlActions.cs
+System.Security.AccessControl/CryptoKeySecurity.cs
 System.Security.Cryptography/AsymmetricAlgorithm.cs
 System.Security.Cryptography/AsymmetricKeyExchangeDeformatter.cs
 System.Security.Cryptography/AsymmetricKeyExchangeFormatter.cs
