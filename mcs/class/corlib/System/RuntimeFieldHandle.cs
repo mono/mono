@@ -12,7 +12,7 @@ using System.Globalization;
 
 namespace System {
 
-	// FIXME: Implement me!
+	[TODO]
 	public struct RuntimeFieldHandle : ISerializable {
 		IntPtr value;
 		

@@ -151,7 +151,7 @@ namespace System {
 				this.c_str[i] = (char) *(value + startIndex + i);
 		}
 
-		[CLSCompliant(false)]
+		[CLSCompliant(false)][TODO]
 		unsafe public String (sbyte *value, int startIndex, int length, Encoding enc)
 		{
 			// FIXME: implement me
@@ -187,6 +187,7 @@ namespace System {
 			return str.Length;
 		}
 
+		[TODO]
 		private static char tolowerordinal (char c)
 		{
 			// FIXME: implement me
@@ -256,6 +257,7 @@ namespace System {
 		}
 
 		// Methods
+		[TODO]
 		public object Clone ()
 		{
 			// FIXME: implement me
@@ -321,6 +323,7 @@ namespace System {
 			return ((int) (strA.c_str[i] - strB.c_str[i]));
 		}
 
+		[TODO]
 		public static int Compare (string strA, string strB, bool ignoreCase, CultureInfo culture)
 		{
 			// FIXME: implement me
@@ -385,6 +388,7 @@ namespace System {
 			return ((int) (strA[indexA + i] - strB[indexB + i]));
 		}
 
+		[TODO]
 		public static int Compare (string strA, int indexA, string strB, int indexB,
 					   int length, bool ignoreCase, CultureInfo culture)
 		{
@@ -713,30 +717,35 @@ namespace System {
 			return a == b;
 		}
 
+		[TODO]
 		public static string Format (string format, object arg0)
 		{
 			// FIXME: implement me
 			return null;
 		}
 
+		[TODO]
 		public static string Format (string format, params object[] args)
 		{
 			// FIXME: implement me
 			return null;
 		}
-
+		
+		[TODO]
 		public static string Format (IFormatProvider provider, string format, params object[] args)
 		{
 			// FIXME: implement me
 			return null;
 		}
-
+		
+		[TODO]
 		public static string Format (string format, object arg0, object arg1)
 		{
 			// FIXME: implement me
 			return null;
 		}
 
+		[TODO]
 		public static string Format (string format, object arg0, object arg1, object arg2)
 		{
 			// FIXME: implement me
@@ -744,7 +753,8 @@ namespace System {
 		}
 
 		//public CharEnumerator GetEnumerator ()
-		public IEnumerator GetEnumerator ()
+		[TODO]
+                public IEnumerator GetEnumerator ()
 		{
 			// FIXME: implement me
 			return null;
@@ -1362,18 +1372,21 @@ namespace System {
 			return res;
 		}
 
+		[TODO]
 		public bool ToBoolean (IFormatProvider provider)
 		{
 			// FIXME: implement me
 			throw new NotImplementedException ();
 		}
-
+		
+		[TODO]
 		public byte ToByte (IFormatProvider provider)
 		{
 			// FIXME: implement me
 			throw new NotImplementedException ();
 		}
-
+		
+		[TODO]
 		public char ToChar (IFormatProvider provider)
 		{
 			// FIXME: implement me
@@ -1400,6 +1413,7 @@ namespace System {
 			return chars;
 		}
 
+		[TODO]
 		public DateTime ToDateTime (IFormatProvider provider)
 		{
 			// FIXME: implement me
@@ -1407,30 +1421,35 @@ namespace System {
 			throw new NotImplementedException ();
 		}
 
+		[TODO]
 		public decimal ToDecimal (IFormatProvider provider)
 		{
 			// FIXME: implement me
 			throw new NotImplementedException ();
 		}
 
+		[TODO]
 		public double ToDouble (IFormatProvider provider)
 		{
 			// FIXME: implement me
 			throw new NotImplementedException ();
 		}
 
+		[TODO]
 		public short ToInt16 (IFormatProvider provider)
 		{
 			// FIXME: implement me
 			throw new NotImplementedException ();
 		}
 
+		[TODO]
 		public int ToInt32 (IFormatProvider provider)
 		{
 			// FIXME: implement me
 			throw new NotImplementedException ();
 		}
 
+		[TODO]
 		public long ToInt64 (IFormatProvider provider)
 		{
 			// FIXME: implement me
@@ -1450,6 +1469,7 @@ namespace System {
 			return res;
 		}
 
+		[TODO]
 		public string ToLower (CultureInfo culture)
 		{
 			// FIXME: implement me
@@ -1457,13 +1477,14 @@ namespace System {
 
 		}
 
-		[CLSCompliant(false)]
+		[CLSCompliant(false)][TODO]
 		public sbyte ToSByte (IFormatProvider provider)
 		{
 			// FIXME: implement me
 			throw new NotImplementedException ();
 		}
 
+		[TODO]
 		public float ToSingle (IFormatProvider provider)
 		{
 			// FIXME: implement me
@@ -1475,33 +1496,35 @@ namespace System {
 			return this;
 		}
 
+		[TODO]
 		public string ToString (IFormatProvider format)
 		{
 			// FIXME: implement me
 			throw new NotImplementedException ();
 		}
 
+		[TODO]
 		public object ToType (Type conversionType, IFormatProvider provider)
 		{
 			// FIXME: implement me
 			throw new NotImplementedException ();
 		}
 
-		[CLSCompliant(false)]
+		[CLSCompliant(false)][TODO]
 		public ushort ToUInt16 (IFormatProvider provider)
 		{
 			// FIXME: implement me
 			throw new NotImplementedException ();
 		}
 
-		[CLSCompliant(false)]
+		[CLSCompliant(false)][TODO]
 		public uint ToUInt32 (IFormatProvider provider)
 		{
 			// FIXME: implement me
 			throw new NotImplementedException ();
 		}
 
-		[CLSCompliant(false)]
+		[CLSCompliant(false)][TODO]
 		public ulong ToUInt64 (IFormatProvider provider)
 		{
 			// FIXME: implement me
@@ -1521,6 +1544,7 @@ namespace System {
 			return res;
 		}
 
+		[TODO]
 		public string ToUpper (CultureInfo culture)
 		{
 			// FIXME: implement me

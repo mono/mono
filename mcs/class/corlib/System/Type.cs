@@ -17,7 +17,8 @@ namespace System {
 	//
 	// FIXME: Implement the various IReflect dependencies
 	//
-	
+
+	[TODO]
 	public abstract class Type : MemberInfo /* IReflect */ {
 		
 		internal RuntimeTypeHandle _impl;
@@ -160,6 +161,7 @@ namespace System {
 			return type_is_subtype_of (this, c);
 		}
 
+		[TODO]
 		public virtual Type[] FindInterfaces (TypeFilter filter, object filterCriteria)
 		{
 			// FIXME
@@ -167,13 +169,15 @@ namespace System {
 		}
 
 		public abstract Type[] GetInterfaces ();
-		
+
+		[TODO]
 		public virtual bool IsAssignableFrom (Type c)
 		{
 			// FIXME
 			throw new NotImplementedException ();
 		}
 
+		[TODO]
 		public virtual int GetArrayRank ()
 		{
 			// FIXME
@@ -206,6 +210,7 @@ namespace System {
 			}
 		}
 
+		[TODO]
 		public bool IsPublic {
 			get {
 				// FIXME: handle nestedpublic, too?

@@ -1,4 +1,21 @@
+2002-01-04  Ravi Pratap  <ravi@ximian.com>
 
+	* TODOAttribute.cs : Add. We use this attribute to tag all bits
+	in our class libraries that are incomplete.
+
+	* Array.cs : Apply attribute wherever we find a FIXME which says we need
+	something to be implemented there.
+
+	* Int32.cs : Ditto.
+
+	* MulticastDelegate.cs : Ditto.
+
+	* RuntimeFieldHandler.cs, RuntimeMethodHandle.cs, RuntimeTypeHandle.cs : Ditto.
+
+	* String.cs : Ditto.
+
+	* Type.cs : Ditto.
+	
 Thu Jan 3 23:24:04 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* Delegate.cs: add Remove() stub.

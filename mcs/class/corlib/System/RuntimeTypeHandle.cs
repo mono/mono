@@ -11,8 +11,8 @@ using System.Runtime.Serialization;
 using System.Globalization;
 
 namespace System {
-
-	// FIXME: Implement me!
+	
+	[TODO]
 	public struct RuntimeTypeHandle : ISerializable {
 		IntPtr value;
 		
