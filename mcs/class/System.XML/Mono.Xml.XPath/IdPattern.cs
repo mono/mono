@@ -18,19 +18,21 @@ using System.Xml.Xsl;
 namespace Mono.Xml.XPath {
 	internal class IdPattern : LocationPathPattern {
 
-		string arg0;
+		string [] ids;
 		
 		public IdPattern (string arg0)
 			: base ((NodeTest) null)
 		{
-			this.arg0 = arg0;
+			ids = arg0.Split (XmlChar.WhitespaceChars);
 		}
 		
 		public override bool Matches (XPathNavigator node, XsltContext ctx)
 		{
 			XPathNavigator tmp = node.Clone ();
-			tmp.MoveToId (arg0);
-			return tmp.IsSamePosition (node);
+			for (int i = 0; i < ids.Length; i++)
+				if (tmp.MoveToId (ids [i]) && tmp.IsSamePosition (node))
+					return true;
+			return false;
 		}
 
 		public override double DefaultPriority { get { return 0.5; } }
