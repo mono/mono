@@ -138,6 +138,16 @@ namespace System.ServiceProcess
 		protected virtual void OnStart (string [] args) { }
 
 		protected virtual void OnStop () { }
+		
+		protected virtual void OnContinue () { }
+
+		protected virtual void OnCustomCommand () { }
+
+		protected virtual void OnPause () { }
+
+		protected virtual void OnPowerEvent () { }
+
+		protected virtual void OnShutdown () { }
 
                 public static void Run (ServiceBase service) { }
 

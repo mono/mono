@@ -1,3 +1,8 @@
+2005-01-23  Geoff Norton  <gnorton@customerdna.com>
+
+	* System.ServiceProcess.dll.sources: Add ServiceInstaller and 
+	ServiceProcessInstaller to the build.
+
 2004-09-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile: Updated to include unit tests.

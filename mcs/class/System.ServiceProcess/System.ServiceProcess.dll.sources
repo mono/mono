@@ -5,6 +5,8 @@ System.ServiceProcess/PowerBroadcastStatus.cs
 System.ServiceProcess/ServiceAccount.cs
 System.ServiceProcess/ServiceControllerPermissionAccess.cs
 System.ServiceProcess/ServiceControllerStatus.cs
+System.ServiceProcess/ServiceInstaller.cs
+System.ServiceProcess/ServiceProcessInstaller.cs
 System.ServiceProcess/ServiceStartMode.cs
 System.ServiceProcess/ServiceType.cs
 System.ServiceProcess/ServiceBase.cs

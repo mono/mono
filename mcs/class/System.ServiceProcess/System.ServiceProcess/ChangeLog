@@ -1,3 +1,9 @@
+2004-01-23  Geoff Norton  <gnorton@customerdna.com>
+
+	* ServiceBase.cs: Implement missing virtuals.
+	* ServiceInstaller.cs: Initial Implementation.
+	* ServiceProcessInstaller.cs: Initial Implementation.
+
 2004-09-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ChangeLog: New.
