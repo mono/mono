@@ -1,4 +1,8 @@
-2004-09-03  Tim Colmean <tim@timcoleman.com>
+2004-09-04  Tim Coleman <tim@timcoleman.com>
+	* XmlDecryptionTransform.cs:
+		Implement rudimentary xpointer support for Except URIs.
+
+2004-09-03  Tim Coleman <tim@timcoleman.com>
 	* EncryptedXml.cs: Add support for RSA for key formatting
 	* Reference.cs: Include XmlDecryptionTransform
 	* SignedXml.cs: 

@@ -118,10 +118,11 @@ namespace System.Security.Cryptography.Xml {
 				element.Attributes ["URI", NamespaceUri].Value = (string) o;
 				doc.DocumentElement.AppendChild (element);
 			}
+
 			return doc.GetElementsByTagName ("Except", NamespaceUri);
 		}
 
-		[MonoTODO ("Include processing of ExceptURIs")]
+		[MonoTODO ("Verify processing of ExceptURIs")]
 		public override object GetOutput ()
 		{
 			XmlDocument document;
@@ -141,6 +142,14 @@ namespace System.Security.Cryptography.Xml {
 
 			XmlNodeList nodes = document.GetElementsByTagName ("EncryptedData", EncryptedXml.XmlEncNamespaceUrl);
 			foreach (XmlNode node in nodes) {
+				if (node == document.DocumentElement && exceptUris.Contains ("#xpointer(/)"))
+					break;
+
+				// Need to exclude based on ExceptURI.  Only accept #id references.
+				foreach (string uri in exceptUris) 
+					if (IsTargetElement ((XmlElement) node, uri.Substring (1)))
+						break;
+
 				EncryptedData encryptedData = new EncryptedData ();
 				encryptedData.LoadXml ((XmlElement) node);
 				SymmetricAlgorithm symAlg = EncryptedXml.GetDecryptionKey (encryptedData, encryptedData.EncryptionMethod.KeyAlgorithm);
@@ -157,10 +166,10 @@ namespace System.Security.Cryptography.Xml {
 			throw new ArgumentException ("type");
 		}
 
-		[MonoTODO]
+		[MonoTODO ("verify")]
 		protected virtual bool IsTargetElement (XmlElement inputElement, string idValue)
 		{
-			throw new NotImplementedException ();
+			return (inputElement.Attributes ["id"].Value == idValue);
 		}
 
 		[MonoTODO ("This doesn't seem to work in .NET")]
@@ -172,8 +181,12 @@ namespace System.Security.Cryptography.Xml {
 			ClearExceptUris ();
 			foreach (XmlNode node in nodeList) {
 				XmlElement element = node as XmlElement;
-				if (element.NamespaceURI.Equals (NamespaceUri) && element.LocalName.Equals ("Except"))
-					AddExceptUri (element.Attributes ["URI", NamespaceUri].Value);
+				if (element.NamespaceURI.Equals (NamespaceUri) && element.LocalName.Equals ("Except")) {
+					string uri = element.Attributes ["URI", NamespaceUri].Value;
+					if (!uri.StartsWith ("#"))
+						throw new CryptographicException ("A Uri attribute is required for a CipherReference element.");
+					AddExceptUri (uri);
+				}
 			}
 		}
 
