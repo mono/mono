@@ -1,3 +1,11 @@
+2001-12-18	Gaurav Vaish <gvaish@iitk.ac.in>
+
+	TODO                        - Properly added
+	CheckBox.cs                 - Completed
+	BaseDataList.cs             - Completed
+	DayRenderEventArgs.cs       - Completed
+	RepeaterItem.cs             - Initial implementation
+
 2001-12-17	Gaurav Vaish <gvaish@iitk.ac.in>
 
 	BaseCompareValidator.cs     - Completed
