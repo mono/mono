@@ -1,3 +1,8 @@
+2003-03-16  Ville Palo <vi64pa@kolumbus.fi>
+
+	* DataColumn.cs: little fixes.
+	* DataColumnCollection.cs: Lots of little fixes and improvments.
+	
 2003-03-12  Alan Tam <Tam@SiuLung.com>
 
 	* DataSet.cs: Fixed a bug that the file written does not close correctly.

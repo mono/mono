@@ -56,7 +56,7 @@ namespace System.Data {
 		private string _columnName = null;
 		private Type _dataType = Type.GetType ("System.String");
 		private object _defaultValue = DBNull.Value;
-		private string expression = null;
+		private string expression = "";
 		private PropertyCollection _extendedProperties = new PropertyCollection ();
 		private int maxLength = -1; //-1 represents no length limit
 		private string nameSpace = "";
@@ -168,7 +168,7 @@ namespace System.Data {
 				if(value == true)
 				{
 					//Can't be true if this is a computed column
-					if (Expression != null)
+					if (Expression != string.Empty)
 					{
 						throw new ArgumentException("Can not Auto Increment a computed column."); 
 					}
@@ -357,6 +357,9 @@ namespace System.Data {
 			set {
 				//TODO: validation of the expression
 				expression = value;  //Check?
+				
+				if (expression != string.Empty)
+					ReadOnly = true;
 			}
 		}
 
@@ -532,8 +535,8 @@ namespace System.Data {
 		[MonoTODO]
 		public override string ToString()
 		{
-			if (expression != null)
-				return expression;
+			if (expression != string.Empty)
+				return ColumnName + " + " + expression;
 			
 			return ColumnName;
 		}

@@ -50,7 +50,7 @@ namespace System.Data {
 			{
 				foreach (DataColumn column in base.List)
 				{					
-					if (String.Compare (column.ColumnName, name, !column.Table.CaseSensitive) == 0)
+					if (String.Compare (column.ColumnName, name, true) == 0)
 					{
 						return column;
 					}
@@ -95,14 +95,16 @@ namespace System.Data {
 			
 			column.SetTable(parentTable);
 			base.List.Add(column);
+			
+			column.SetOrdinal(Count - 1);
 			OnCollectionChanged(e);
 			return column;
 		}
 
 		private string GetNextDefaultColumnName ()
 		{
-			string defColumnName = "Column";
-			for (int index = 1; Contains (defColumnName); ++index) {
+			string defColumnName = "Column1";
+			for (int index = 2; Contains (defColumnName); ++index) {
 				defColumnName = "Column" + index;
 			}
 			return defColumnName;
@@ -115,14 +117,25 @@ namespace System.Data {
 		[MonoTODO]
 		public void Add(DataColumn column)
 		{
+
+			if (column == null)
+				throw new ArgumentNullException ("column", "'column' argument cannot be null.");
+
 			if (column.ColumnName.Equals(String.Empty))
 			{
 				column.ColumnName = GetNextDefaultColumnName ();
 			}
 			else if (Contains(column.ColumnName))
 			{
-				throw new DuplicateNameException("A column named " + column.ColumnName + " already belongs to this DataTable.");
+				if (object.ReferenceEquals(this [column.ColumnName], column))
+					throw new ArgumentException ("Column '" + column.ColumnName + "' already belongs to this DataTable.");
+				else
+					throw new DuplicateNameException("A column named '" + column.ColumnName + "' already belongs to this DataTable.");
 			}
+
+			if (column.Table != null)
+				throw new ArgumentException ("Column '" + column.ColumnName + "' already belongs to another DataTable.");
+
 			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
 
 			column.SetTable (parentTable);
@@ -294,6 +307,48 @@ namespace System.Data {
 		public void Clear()
 		{
 			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Refresh, this);
+
+
+			// FIXME: Hmm... This loop could look little nicer :)
+			foreach (DataColumn Col in List) {
+
+				foreach (DataRelation Rel in Col.Table.ParentRelations) {
+
+					foreach (DataColumn Col2 in Rel.ParentColumns) {
+						if (Object.ReferenceEquals (Col, Col2))
+							throw new ArgumentException ("Cannot remove this column, because " + 
+										     "it is part of the parent key for relationship " + 
+										     Rel.RelationName + ".");
+					}
+
+					foreach (DataColumn Col2 in Rel.ChildColumns) {
+						if (Object.ReferenceEquals (Col, Col2))
+							throw new ArgumentException ("Cannot remove this column, because " + 
+										     "it is part of the parent key for relationship " + 
+										     Rel.RelationName + ".");
+
+					}
+				}
+
+				foreach (DataRelation Rel in Col.Table.ChildRelations) {
+
+					foreach (DataColumn Col2 in Rel.ParentColumns) {
+						if (Object.ReferenceEquals (Col, Col2))
+							throw new ArgumentException ("Cannot remove this column, because " + 
+										     "it is part of the parent key for relationship " + 
+										     Rel.RelationName + ".");
+					}
+
+					foreach (DataColumn Col2 in Rel.ChildColumns) {
+						if (Object.ReferenceEquals (Col, Col2))
+							throw new ArgumentException ("Cannot remove this column, because " + 
+										     "it is part of the parent key for relationship " + 
+										     Rel.RelationName + ".");
+					}
+				}
+
+			}
+					
 			base.List.Clear();
 			OnCollectionChanged(e);
 			return;
@@ -371,6 +426,18 @@ namespace System.Data {
 		/// <param name="column">The DataColumn to remove.</param>
 		public void Remove(DataColumn column)
 		{
+			
+			bool found = false;
+			foreach (DataColumn Col in List) {
+				if (Object.ReferenceEquals (Col, column)) {
+					found = true;
+					break;
+				}
+			}
+
+			if (!found)
+				throw new ArgumentException ("Cannot remove a column that doesn't belong to this table.");
+
 			//TODO: can remove first with exceptions
 			//and OnChanging Event
 			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Remove, this);
@@ -394,7 +461,11 @@ namespace System.Data {
 		/// <param name="name">The name of the column to remove.</param>
 		public void Remove(string name)
 		{
-			DataColumn column = this[name];			
+			DataColumn column = this[name];
+			
+			if (column == null)
+				throw new ArgumentException ("Column '" + name + "' does not belong to table test_table.");
+
 			Remove( column );
 		}
 
@@ -404,6 +475,9 @@ namespace System.Data {
 		/// <param name="index">The index of the column to remove.</param>
 		public void RemoveAt(int index)
 		{
+			if (Count <= index)
+				throw new IndexOutOfRangeException ("Cannot find column " + index + ".");
+
 			DataColumn column = this[index];
 			Remove( column );
 		}
