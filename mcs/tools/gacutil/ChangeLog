@@ -1,5 +1,12 @@
 2004-06-08  Jackson Harper  <jackson@ximian.com>
 
+	* driver.cs: When checking refs don't bother using an AppDomain
+	and load the assembly using the code base so we get the right
+	one. Print out the name of the non strong named assembly if one is
+	referenced.
+	
+2004-06-08  Jackson Harper  <jackson@ximian.com>
+
 	* driver.cs Add install from list and uninstall from list
 	commands. Allow options to come before commands. Add the /silent
 	option so we can shut the tool up. And use returns instead of

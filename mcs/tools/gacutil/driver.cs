@@ -449,15 +449,15 @@ namespace Mono.Tools {
 		{
 			AppDomain d = null;
 			try {
-				Assembly a;
+				Assembly a = Assembly.LoadFrom (an.CodeBase);
 				AssemblyName corlib = typeof (object).Assembly.GetName ();
-				d = AppDomain.CreateDomain (an.Name);
-				a = d.Load (an);
+
 				foreach (AssemblyName ref_an in a.GetReferencedAssemblies ()) {
 					if (ref_an.Name == corlib.Name) // Just do a string compare so we can install on diff versions
 						continue;
 					byte [] pt = ref_an.GetPublicKeyToken ();
 					if (pt == null || pt.Length == 0) {
+						WriteLine ("Assembly " + ref_an.Name + " is not strong named.");
 						return false;
 					}
 				}
