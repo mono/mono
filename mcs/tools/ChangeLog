@@ -1,3 +1,8 @@
+2002-03-01  Martin Baulig  <martin@gnome.org>
+
+	* scan-tests.pl: Catch exceptions when running the tests so that we
+	always run all the tests in a test suite even if some of them fail.
+
 2002-02-27  Martin Baulig  <martin@gnome.org>
 
 	* scan-tests.pl: Moved this script here from ../class/corlib/Test.

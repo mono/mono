@@ -116,7 +116,7 @@ foreach $alltest (@allfiles) {
 	foreach $badtest (@badtests) {
 	    next testloop if $fullname =~ /$badtest/;
 	}
-	print qq[\t\t\t$test ();\n];
+	print qq[\t\t\ttry \{ $test (); \} catch { }\n];
     }
     print qq[\t\t\}\n\t\}\n];
     print qq[\}\n\n];
