@@ -38,11 +38,9 @@ namespace MonoTests.System.Diagnostics {
 			// Trace.Listeners.Remove ("Default");
 
 			buffer = new StringWriter ();
-
 			listener = new TextWriterTraceListener (buffer, "TestOutput");
-
+			Trace.Listeners.Clear ();
 			Trace.Listeners.Add (listener);
-
 			Trace.AutoFlush = true;
 
 		}
@@ -53,7 +51,7 @@ namespace MonoTests.System.Diagnostics {
 			Trace.Listeners.Remove (listener);
 		}
 
-    public static ITest Suite {
+		public static ITest Suite {
  			get { 
 				return new TestSuite (typeof (TraceTest)); 
 			}
