@@ -66,11 +66,11 @@ namespace System.Web {
       }
 
       public void Write(string category, string msg) {
-	 Write(category, msg, null, true);
+	 Write(category, msg, null, false);
       }
 
       public void Write(string category, string msg, Exception error) {
-	 Write(category, msg, error, true);
+	 Write(category, msg, error, false);
       }
 
       [MonoTODO("Save the data into a web dataset directly...")]
