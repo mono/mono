@@ -20,13 +20,12 @@ namespace System.Net
 		private static readonly string asctime_date = "ddd MMM d HH:mm:ss yyyy";
 		private static readonly string [] formats = 
 			new string [] {rfc1123_date, rfc850_date, asctime_date};
-		private static readonly CultureInfo enUS = new CultureInfo("en-US", false);
 		
 		internal static DateTime Parse (string dateStr)
 		{			
 			 return DateTime.ParseExact (dateStr, 
 			                             formats, 
-			                             enUS, 
+			                             CultureInfo.InvariantCulture, 
 			                             DateTimeStyles.AllowWhiteSpaces);
 		}
 	}
