@@ -1,3 +1,22 @@
+2003-09-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_method_to_ir): Avoid inlining tail calls.
+
+	* mini.c (mono_method_to_ir): Fix tail recursion in the presence of 
+	inlining.
+
+	* mini.c (mono_method_check_inlining): Make the inlining limit 
+	configurable by an environment variable.
+	
+	* mini.c (mono_jit_runtime_invoke): Add Gonzalo's fix for #36545.
+
+	* mini.h: Bump AOT file version.
+
+	* mini.h mini.c aot.c mini-x86.c: For relocations which refer to a 
+	token, store the image along with the token, since the token might not 
+	refer to the same image as the method containing the relocation, 
+	because of inlining.
+
 2003-09-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_precompile_assemblies): New function to compile
