@@ -1,3 +1,8 @@
+2003-11-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* gc.c (ves_icall_System_GC_WaitForPendingFinalizers): Avoid deadlocks
+	if this method is called from a finalizer. Fixes #50913.
+
 2003-11-12  Miguel de Icaza  <miguel@ximian.com>
 
 	* threads.c: Implement VolatileRead/VolatileWrite
