@@ -564,8 +564,10 @@ public class TypeManager {
 
 		foreach (Assembly a in assemblies){
 			t = a.GetType (name);
-			if (t != null && (t.IsPublic || t.IsNestedPublic))
-				return t;
+			if (t == null)
+				continue;
+				
+			return t;
 		}
 
 		foreach (ModuleBuilder mb in modules) {

@@ -60,7 +60,8 @@ namespace Mono.CSharp
 		static bool parse_only = false;
 		static bool timestamps = false;
 		static bool pause = false;
-
+		static bool show_counters = false;
+		
 		//
 		// Whether to load the initial config file (what CSC.RSP has by default)
 		// 
@@ -255,8 +256,10 @@ namespace Mono.CSharp
 					Console.Write(" - {0} warning(s)", Report.Warnings);
 				}
 				Console.WriteLine();
-				//Console.WriteLine ("Counter1: " + counter1);
-				//Console.WriteLine ("Counter2: " + counter2);
+				if (show_counters){
+					Console.WriteLine ("Counter1: " + counter1);
+					Console.WriteLine ("Counter2: " + counter2);
+				}
 				return 0;
 			} else {
 				Console.WriteLine("Compilation failed: {0} error(s), {1} warnings",
@@ -610,6 +613,10 @@ namespace Mono.CSharp
 					Environment.Exit (1);
 				}
 				defines.Add (args [++i]);
+				return true;
+
+			case "--show-counters":
+				show_counters = true;
 				return true;
 				
 			case "--expect-error": {

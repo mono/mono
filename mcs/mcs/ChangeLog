@@ -1,3 +1,13 @@
+2003-07-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* typemanager.cs: Reverted patch from Gonzalo, my previous patch
+	already fixed it.  
+
+	I thought about the memory savings here, but LookupTypeReflection
+	is used under already very constrained scenarios.  Compiling
+	corlib or mcs only exposes one hit, so it would not really reduce
+	any memory consumption.
+
 2003-07-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* typemanager.cs: fixes bug #45889 by only adding public types from
