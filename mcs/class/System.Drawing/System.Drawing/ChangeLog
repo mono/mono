@@ -1,3 +1,7 @@
+2004-07-02 Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* gdipFunctions.cs: fixes bug 61050
+
 2004-06-24  Sanjay Gupta <gsanjay@novell.com>
 
 	* ImageAnimator.cs: Rewrote complete implementation.
