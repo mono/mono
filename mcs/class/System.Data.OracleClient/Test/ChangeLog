@@ -1,0 +1,13 @@
+2005-01-16  Daniel Morgan <danielmorgan@verizon.net>
+
+	* ChangeLog: added file for oracle tests
+	
+	* testblob.cs: test loading a binary file into
+	an Oracle BLOB column and then reading a BLOB column
+	to a new binary file
+	
+	* testclob.cs: test loading a text file into
+	an Oracle CLOB column and then reading a CLOB column
+	to a new text file
+	
+	
