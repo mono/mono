@@ -1,5 +1,7 @@
 2004-03-28  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-x86.c (mono_arch_patch_code): Fix warnings.
+	
 	* mini-x86.c (mono_arch_output_basic_block): Fix CEE_MUL_OVF_UN if 
 	dreg is not EAX. Thanks to Willibard Krenn for spotting this. Also
 	remove unused conv_u4 opcode.
