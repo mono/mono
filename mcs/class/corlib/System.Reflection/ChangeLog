@@ -1,3 +1,8 @@
+2004-06-10  Lluis Sanchez  <lluis@ximian.com>
+
+	* AssemblyName.cs: Added missing fields to serialization methods.
+	* StrongNameKeyPair.cs: Made it compatible with MS serialization.
+
 2004-06-08  Jacson Harper  <jackson@ximian.com>
 
 	* AssemblyName.cs (GetAssemblyName): Send a fullpath to the

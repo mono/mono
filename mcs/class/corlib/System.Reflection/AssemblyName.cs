@@ -50,6 +50,14 @@ namespace System.Reflection {
 			name = si.GetString ("_Name");
 			codebase = si.GetString ("_CodeBase");
 			version = (Version)si.GetValue ("_Version", typeof (Version));
+			publicKey = (byte[])si.GetValue ("_PublicKey", typeof (byte[]));
+			keyToken = (byte[])si.GetValue ("_PublicToken", typeof (byte[]));
+			hashalg = (AssemblyHashAlgorithm)si.GetValue ("_HashAlgorithm", typeof (AssemblyHashAlgorithm));
+			keypair = (StrongNameKeyPair)si.GetValue ("_StrongNameKeyPair", typeof (StrongNameKeyPair));
+			versioncompat = (AssemblyVersionCompatibility)si.GetValue ("_VersionCompatibility", typeof (AssemblyVersionCompatibility));
+			flags = (AssemblyNameFlags)si.GetValue ("_Flags", typeof (AssemblyNameFlags));
+			int lcid = si.GetInt32 ("_CultureInfo");
+			if (lcid != -1) cultureinfo = new CultureInfo (lcid);
 		}
 
 		public string Name {
@@ -208,8 +216,17 @@ namespace System.Reflection {
 		public void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			info.AddValue ("_Name", name);
+			info.AddValue ("_PublicKey", publicKey);
+			info.AddValue ("_PublicToken", keyToken);
+			info.AddValue ("_CultureInfo", cultureinfo != null ? cultureinfo.LCID : -1);
 			info.AddValue ("_CodeBase", codebase);
 			info.AddValue ("_Version", Version);
+			info.AddValue ("_HashAlgorithm", hashalg);
+			info.AddValue ("_HashAlgorithmForControl", AssemblyHashAlgorithm.None);
+			info.AddValue ("_StrongNameKeyPair", keypair);
+			info.AddValue ("_VersionCompatibility", versioncompat);
+			info.AddValue ("_Flags", flags);
+			info.AddValue ("_HashForControl", null);
 		}
 
 		public object Clone() 

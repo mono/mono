@@ -21,9 +21,13 @@ namespace System.Reflection {
 [Serializable]
 public class StrongNameKeyPair 
 {		
-	private byte[] publicKey;
-	private int bitLen;
-	private RSA rsa;
+	private byte[] _publicKey;
+	private string _keyPairContainer;
+	private bool _keyPairExported;
+	private byte[] _keyPairArray;
+	
+	[NonSerialized]
+	private RSA _rsa;
 
 	public StrongNameKeyPair (byte[] keyPairArray) 
 	{
@@ -49,9 +53,22 @@ public class StrongNameKeyPair
 		if (keyPairContainer == null)
 			throw new ArgumentNullException ("keyPairContainer");
 
-		CspParameters csp = new CspParameters ();
-		csp.KeyContainerName = keyPairContainer;
-		rsa = new RSACryptoServiceProvider (csp);
+		_keyPairContainer = keyPairContainer;
+	}
+	
+	private RSA GetRSA ()
+	{
+		if (_rsa != null) return _rsa;
+		
+		if (_keyPairArray != null) {
+			_rsa = CryptoConvert.FromCapiKeyBlob (_keyPairArray);
+		}
+		else if (_keyPairContainer != null) {
+			CspParameters csp = new CspParameters ();
+			csp.KeyContainerName = _keyPairContainer;
+			_rsa = new RSACryptoServiceProvider (csp);
+		}
+		return _rsa;
 	}
 
 	private void LoadKey (byte[] key) 
@@ -65,11 +82,11 @@ public class StrongNameKeyPair
 					sum += key [i++];
 				if (sum == 4) {
 					// it is the ECMA key
-					publicKey = (byte[]) key.Clone ();
+					_publicKey = (byte[]) key.Clone ();
 				}
 			}
 			else
-				rsa = CryptoConvert.FromCapiKeyBlob (key);
+				_keyPairArray = key;
 		}
 		catch
 		{
@@ -79,45 +96,47 @@ public class StrongNameKeyPair
 	}
 
 	public byte[] PublicKey {
-		get { 
-			if (publicKey == null) {
+		get {
+			if (_publicKey == null) {
+				RSA rsa = GetRSA ();
 				// ECMA "key" is valid but doesn't produce a RSA instance
 				if (rsa == null)
 					throw new ArgumentException ("invalid keypair");
 
 				byte[] blob = CryptoConvert.ToCapiKeyBlob (rsa, false);
-				publicKey = new byte [blob.Length + 12];
+				_publicKey = new byte [blob.Length + 12];
 				// The first 12 bytes are documented at:
 				// http://msdn.microsoft.com/library/en-us/cprefadd/html/grfungethashfromfile.asp
 				// ALG_ID - Signature
-				publicKey[0] = 0x00;
-				publicKey[1] = 0x24;	
-				publicKey[2] = 0x00;	
-				publicKey[3] = 0x00;	
+				_publicKey[0] = 0x00;
+				_publicKey[1] = 0x24;	
+				_publicKey[2] = 0x00;	
+				_publicKey[3] = 0x00;	
 				// ALG_ID - Hash
-				publicKey[4] = 0x04;
-				publicKey[5] = 0x80;
-				publicKey[6] = 0x00;
-				publicKey[7] = 0x00;
+				_publicKey[4] = 0x04;
+				_publicKey[5] = 0x80;
+				_publicKey[6] = 0x00;
+				_publicKey[7] = 0x00;
 				// Length of Public Key (in bytes)
 				int lastPart = blob.Length;
-				publicKey[8] = (byte)(lastPart % 256);
-				publicKey[9] = (byte)(lastPart / 256); // just in case
-				publicKey[10] = 0x00;
-				publicKey[11] = 0x00;
+				_publicKey[8] = (byte)(lastPart % 256);
+				_publicKey[9] = (byte)(lastPart / 256); // just in case
+				_publicKey[10] = 0x00;
+				_publicKey[11] = 0x00;
 
-				Buffer.BlockCopy (blob, 0, publicKey, 12, blob.Length);
+				Buffer.BlockCopy (blob, 0, _publicKey, 12, blob.Length);
 			}
-			return publicKey;
+			return _publicKey;
 		}
 	}
 
 	internal StrongName StrongName () 
 	{
+		RSA rsa = GetRSA ();
 		if (rsa != null)
 			return new StrongName (rsa);
-		if (publicKey != null)
-			return new StrongName (publicKey);
+		if (_publicKey != null)
+			return new StrongName (_publicKey);
 		return null;
 	}
 }
