@@ -1,5 +1,11 @@
 2004-04-11  Lluis Sanchez Gual <lluis@ximian.com>
 
+	* ReaderWriterLock.cs: More fixes: never wait where acquiring a reader lock
+	  if the thread already has the lock. Added readyWaitingReaders variable to
+	  keep track of threads ready to get the reader lock.
+
+2004-04-11  Lluis Sanchez Gual <lluis@ximian.com>
+
 	* LockQueue.cs: Moved lockCount change inside the rwlock lock. Removed
 	  lock(this) when entering the rwlock to avoid a deadlock.
 	* ReaderWriterLock.cs: In AcquireWriterLock, queue the thread if the queue

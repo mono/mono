@@ -22,6 +22,7 @@ namespace System.Threading
 		private LockQueue writer_queue;
 		private Hashtable reader_locks;
 		private int writer_lock_owner;
+		private int readyWaitingReaders = 0;
 
 		public ReaderWriterLock()
 		{
@@ -60,20 +61,23 @@ namespace System.Threading
 					return;
 				}
 				
-				// Wait if there is a write lock
-				readers++;
-				try {
-					if (state < 0 || !writer_queue.IsEmpty) {
-						if (!Monitor.Wait (this, millisecondsTimeout))
-							throw new ApplicationException ("Timeout expired");
-					}
-				}
-				finally {
-					readers--;
-				}
-				
 				object nlocks = reader_locks [Thread.CurrentThreadId];
-				if (nlocks == null) {
+				if (nlocks == null)
+				{
+					// Not currently holding a reader lock
+					// Wait if there is a write lock
+					readers++;
+					try {
+						if (state < 0 || !writer_queue.IsEmpty) {
+							if (!Monitor.Wait (this, millisecondsTimeout))
+								throw new ApplicationException ("Timeout expired");
+						}
+						readyWaitingReaders--;
+					}
+					finally {
+						readers--;
+					}
+					
 					reader_locks [Thread.CurrentThreadId] = initialLockCount;
 					state += initialLockCount;
 				}
@@ -105,7 +109,7 @@ namespace System.Threading
 				
 				// wait while there are reader locks or another writer lock, or
 				// other threads waiting for the writer lock
-				if (state != 0 || !writer_queue.IsEmpty) {
+				if (state != 0 || !writer_queue.IsEmpty || readers > 0) {
 					if (!writer_queue.Wait (millisecondsTimeout))
 						throw new ApplicationException ("Timeout expited");
 				}
@@ -135,7 +139,10 @@ namespace System.Threading
 				
 				state = lockCookie.ReaderLocks;
 				reader_locks [Thread.CurrentThreadId] = state;
-				Monitor.Pulse (this);
+				if (readers > 0) {
+					readyWaitingReaders = readers;
+					Monitor.PulseAll (this);
+				}
 				
 				// MSDN: A thread does not block when downgrading from the writer lock, 
 				// even if other threads are waiting for the writer lock
@@ -184,7 +191,7 @@ namespace System.Threading
 				reader_locks [Thread.CurrentThreadId] = new_count;
 				
 			state -= releaseCount;
-			if (state == 0 && !writer_queue.IsEmpty)
+			if (state == 0 && (readers == 0 || readyWaitingReaders <= 0) && !writer_queue.IsEmpty)
 				writer_queue.Pulse ();
 		}
 
@@ -202,8 +209,10 @@ namespace System.Threading
 		{
 			state += releaseCount;
 			if (state == 0) {
-				if (readers > 0)
-					Monitor.Pulse (this);
+				if (readers > 0) {
+					readyWaitingReaders = readers;
+					Monitor.PulseAll (this);
+				}
 				else if (!writer_queue.IsEmpty)
 					writer_queue.Pulse ();
 			}
@@ -224,7 +233,10 @@ namespace System.Threading
 			LockCookie cookie;
 			lock (this) {
 				cookie = GetLockCookie ();
-				if (cookie.WriterLocks != 0) return cookie;
+				if (cookie.WriterLocks != 0) {
+					state--;
+					return cookie;
+				}
 				
 				if (cookie.ReaderLocks != 0)
 					ReleaseReaderLock (cookie.ReaderLocks, cookie.ReaderLocks);
