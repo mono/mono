@@ -14,7 +14,7 @@ using System;
 
 namespace System.ComponentModel {
 
-	[AttributeUsage (AttributeTargets.Property)]
+	[AttributeUsage (AttributeTargets.All)]
 	public sealed class LocalizableAttribute : Attribute
 	{
 

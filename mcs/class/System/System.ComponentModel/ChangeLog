@@ -1,3 +1,9 @@
+
+Fri Jun 11 11:58:22 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* LocalizableAttribute.cs, DesignerSerializationVisibilityAttribute.cs,
+	DesignOnlyAttribute.cs: fix targets for attributes.
+
 2004-05-05  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* BooleanConverter.cs: Improved ConverFrom method.

@@ -11,7 +11,7 @@
 
 namespace System.ComponentModel {
 
-	[AttributeUsage (AttributeTargets.Property)]
+	[AttributeUsage (AttributeTargets.All)]
 	public sealed class DesignOnlyAttribute : Attribute
 	{
 

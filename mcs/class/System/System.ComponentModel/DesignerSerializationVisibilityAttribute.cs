@@ -12,7 +12,7 @@
 
 namespace System.ComponentModel {
 
-	[AttributeUsage (AttributeTargets.Property)]
+	[AttributeUsage (AttributeTargets.Method | AttributeTargets.Property)]
 	public sealed class DesignerSerializationVisibilityAttribute : Attribute
 	{
 
