@@ -1,3 +1,7 @@
+2003-07-17 Jackson Harper <jackson@latitudegeo.com>
+
+	* ilasm.exe.sources: Add corlib/GenericTypeRef.cs to build
+	
 2003-07-15 Jackson Harper <jackson@latitudegeo.com>
 
 	* Driver.cs: Use WriteLine for 'compilation succeeded' message.

@@ -48,6 +48,7 @@ codegen/HandlerBlock.cs
 codegen/FaultBlock.cs
 codegen/CatchBlock.cs
 codegen/CustomAttr.cs
+codegen/GenericTypeRef.cs
 parser/ScannerAdapter.cs
 scanner/ILReader.cs
 scanner/ILSyntaxError.cs
