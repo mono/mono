@@ -196,7 +196,7 @@ public class DateTimeTest : TestCase
 		AssertEquals ("D16", t2.Ticks, t1.Ticks);
 
 		// Custom patterns
-		t2 = new DateTime (2002, 1, 25);
+		t2 = new DateTime (2003, 1, 25);
 		t1 = DateTime.ParseExact ("25", "%d", null);
 		AssertEquals ("E01", t2.Ticks, t1.Ticks);
 		t1 = DateTime.ParseExact ("25", "dd", null);

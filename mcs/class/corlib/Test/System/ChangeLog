@@ -1,3 +1,8 @@
+2003-01-13  Nick Drochak  <ndrochak@gol.com>
+
+	* DateTimeTest.cs: Use 2003, since that' the year now.  Need to work
+	on this test so we don't have it fail each new year.
+
 2002-12-21  Nick Drochak <ndrochak@gol.com>
 
 	* all: make tests build and run under nunit2
