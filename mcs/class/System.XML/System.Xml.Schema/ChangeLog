@@ -1,3 +1,15 @@
+2005-01-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaValidator.cs : in case of open start tag,
+	  ValidateEndElement() calls ValidateEndOfAttributes().
+
+2005-01-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* xmlschemagen.config,
+	  XmlSchemaSerializer.cs : replacement of CustomSerializer.cs which was
+	  based on genxs but manually modified.
+	* CustomSerializer.cs : removed.
+
 2005-01-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchema.cs : Write() should handle carefully output

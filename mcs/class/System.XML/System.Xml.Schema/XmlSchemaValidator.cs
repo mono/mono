@@ -437,6 +437,11 @@ namespace System.Xml.Schema
 		public object ValidateEndElement (XmlSchemaInfo schemaInfo,
 			object var)
 		{
+			// If it is going to validate an empty element, then
+			// first validate end of attributes.
+			if (transition == Transition.StartTag)
+				ValidateEndOfAttributes ();
+
 			CheckState (Transition.Content);
 
 			elementQNameStack.RemoveAt (elementQNameStack.Count - 1);
