@@ -1,3 +1,10 @@
+2005-03-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MD2Managed.cs: Removed memory allocation from the transform method.
+	* MD4Managed.cs: Moved memoty allocation to constructor (from init).
+	* SHA224Managed.cs: Fixed bug #73404 which gaves bad results when the
+	digested data is longer than 2^32 bits.
+
 2005-01-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SymmetricTransform.cs: Added support for ANSI X9.23 padding and

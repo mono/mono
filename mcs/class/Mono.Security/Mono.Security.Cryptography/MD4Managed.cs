@@ -5,9 +5,7 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -61,13 +59,15 @@ namespace Mono.Security.Cryptography {
 
 		//--- constructor -----------------------------------------------------------
                 
-		public MD4Managed () : base ()
+		public MD4Managed ()
 		{
 			// we allocate the context memory
 			state = new uint [4];
 			count = new uint [2];
 			buffer = new byte [64];
 			digest = new byte [16];
+			// temporary buffer in MD4Transform that we don't want to keep allocate on each iteration
+			x = new uint [16];
 			// the initialize our context
 			Initialize ();
 		}
@@ -80,9 +80,9 @@ namespace Mono.Security.Cryptography {
 			state [1] = 0xefcdab89;
 			state [2] = 0x98badcfe;
 			state [3] = 0x10325476;
-			// temporary buffer in MD4Transform that we don't want to keep allocate on each iteration
-			x = new uint [16];
+			// Zeroize sensitive information
 			Array.Clear (buffer, 0, 64);
+			Array.Clear (x, 0, 16);
 		}
 
 		protected override void HashCore (byte[] array, int ibStart, int cbSize)
@@ -196,9 +196,9 @@ namespace Mono.Security.Cryptography {
 		private void Encode (byte[] output, uint[] input)
 		{
 			for (int i = 0, j = 0; j < output.Length; i++, j += 4) {
-				output [j]   = (byte)(input [i] & 0xff);
-				output [j+1] = (byte)((input [i] >> 8) & 0xff);
-				output [j+2] = (byte)((input [i] >> 16) & 0xff);
+				output [j]   = (byte)(input [i]);
+				output [j+1] = (byte)(input [i] >> 8);
+				output [j+2] = (byte)(input [i] >> 16);
 				output [j+3] = (byte)(input [i] >> 24);
 			}
 		}
@@ -276,9 +276,6 @@ namespace Mono.Security.Cryptography {
 			state [1] += b;
 			state [2] += c;
 			state [3] += d;
-
-			/* Zeroize sensitive information. */
-			Array.Clear (x, 0, 16);
 		}
 	}
 }

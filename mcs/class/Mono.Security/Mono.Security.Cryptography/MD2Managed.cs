@@ -5,9 +5,7 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2001-2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -43,6 +41,7 @@ namespace Mono.Security.Cryptography {
 		private byte[] checksum;
 		private byte[] buffer;
 		private int count;
+		private byte[] x;
 
 		/// <summary>
 		/// Permutation of 0..255 constructed from the digits of pi. It gives a
@@ -87,6 +86,7 @@ namespace Mono.Security.Cryptography {
 			state = new byte [16];
 			checksum = new byte [16];
 			buffer = new byte [16];
+			x = new byte [48];
 			// the initialize our context
 			Initialize ();
 		}
@@ -97,6 +97,8 @@ namespace Mono.Security.Cryptography {
 			Array.Clear (state, 0, 16);
 			Array.Clear (checksum, 0, 16);
 			Array.Clear (buffer, 0, 16);
+			// Zeroize sensitive information
+			Array.Clear (x, 0, 48);
 		}
 
 		protected override void HashCore (byte[] array, int ibStart, int cbSize)
@@ -161,8 +163,6 @@ namespace Mono.Security.Cryptography {
 		/// </summary>
 		private void MD2Transform (byte[] state, byte[] checksum, byte[] block, int index)
 		{
-			byte[] x = new byte [48];
-
 			/* Form encryption block from state, block, state ^ block. */
 			// MD2_memcpy ((POINTER)x, (POINTER)state, 16);
 			Buffer.BlockCopy (state, 0, x, 0, 16);
@@ -189,10 +189,6 @@ namespace Mono.Security.Cryptography {
 			t = checksum [15];
 			for (int i = 0; i < 16; i++)
 				t = checksum [i] ^= PI_SUBST [block [index + i] ^ t];
-
-			/* Zeroize sensitive information. */
-			// MD2_memset ((POINTER)x, 0, sizeof (x));
-			Array.Clear (x, 0, 48);
 		}
 	}
 }
