@@ -1,5 +1,24 @@
 2002-04-16  Daniel Morgan <danmorg@sc.rr.com>
 
+	* System.Data/SqlConnection.cs: modified - got to compile,
+	  run, and connect to PostgreSQL database
+	* System.Data/SqlCommand.cs: modified - got to compile,
+	  run, and execute a SQL INSERT command which successfully
+	  inserted a row into the PostgreSQL database
+
+	* System.Data/SqlTransaction.cs: modified
+	* System.Data/SqlParameter.cs: modified
+	* System.Data/SqlParameterCollection.cs: modified
+	* System.Data/SqlError.cs: modified
+	* System.Data/SqlErrorCollection.cs: modified
+	* System.Data/SqlException.cs: modified
+	* System.Data/PostgresLibrary.cs: modified - to compile
+
+	* System.Data/SqlAdapter: modified
+	* System.Data/SqlReader: modified - add more stubs
+	
+2002-04-16  Daniel Morgan <danmorg@sc.rr.com>
+
 	* Test/TestSqlInsert.cs: added 
 
 2002-04-15  Daniel Morgan <danmorg@sc.rr.com>
@@ -8,7 +27,6 @@
 	  SqlConnecition
 	* System.Data/SqlErrorCollection.cs: added
 	* System.Data/SqlErrors.cs: removed - no such class SqlErrors
-
 
 2002-04-15  Christopher Podurgiel <cpodurgiel@msn.com>
 	
