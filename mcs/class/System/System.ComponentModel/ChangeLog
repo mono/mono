@@ -1,3 +1,10 @@
+2002-07-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DerivedPropertyDescriptor.cs: New file. Internal class.
+
+	* PropertyDescriptorCollection.cs: almost fully implemented.
+
+	* TypeDescriptor.cs: implemented a couple of GetProperties ().
 
 Wed Jul 24 13:14:30 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

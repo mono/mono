@@ -227,10 +227,9 @@ public sealed class TypeDescriptor
 		throw new NotImplementedException ();
 	}
 
-	[MonoTODO]
 	public static PropertyDescriptorCollection GetProperties (object component)
 	{
-		throw new NotImplementedException ();
+		return GetProperties (component, false);
 	}
 
 	[MonoTODO]
@@ -245,10 +244,23 @@ public sealed class TypeDescriptor
 		throw new NotImplementedException ();
 	}
 
-	[MonoTODO]
+	[MonoTODO("noCustomTypeDesc")]
 	public static PropertyDescriptorCollection GetProperties (object component, bool noCustomTypeDesc)
 	{
-		throw new NotImplementedException ();
+		Type type = component.GetType ();
+		PropertyInfo [] props = type.GetProperties ();
+		DerivedPropertyDescriptor [] propsDescriptor = new DerivedPropertyDescriptor [props.Length];
+		int i = 0;
+		foreach (PropertyInfo prop in props) {
+			DerivedPropertyDescriptor propDescriptor = new DerivedPropertyDescriptor (prop.Name,
+												  null, 0);
+			propDescriptor.SetReadOnly (!prop.CanWrite);
+			propDescriptor.SetComponentType (type);
+			propDescriptor.SetPropertyType (prop.PropertyType);
+			propsDescriptor [i++] = propDescriptor;
+		}
+		
+		return new PropertyDescriptorCollection (propsDescriptor);
 	}
 
 	[MonoTODO]

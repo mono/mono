@@ -1,10 +1,12 @@
 //
 // System.ComponentModel.PropertyDescriptorCollection.cs
 //
-// Author:
-//   Rodrigo Moya (rodrigo@ximian.com)
+// Authors:
+// 	Rodrigo Moya (rodrigo@ximian.com)
+// 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) Rodrigo Moya, 2002
+// (c) 2002 Ximian, Inc. (http://www.ximian.com)
 //
 
 using System.Collections;
@@ -14,225 +16,268 @@ namespace System.ComponentModel
 	/// <summary>
 	/// Represents a collection of PropertyDescriptor objects.
 	/// </summary>
-	public class PropertyDescriptorCollection : IList, ICollection,
-		IEnumerable, IDictionary
+	public class PropertyDescriptorCollection : IList, ICollection, IEnumerable, IDictionary
 	{
-		[MonoTODO]
-		public PropertyDescriptorCollection (PropertyDescriptor[] properties) {
-			throw new NotImplementedException ();
+		public static readonly PropertyDescriptorCollection Empty =
+						new PropertyDescriptorCollection (null);
+
+		ArrayList properties;
+		bool readOnly;
+
+		public PropertyDescriptorCollection (PropertyDescriptor[] properties)
+		{
+			this.properties = new ArrayList ();
+			if (properties == null)
+				return;
+
+			foreach (PropertyDescriptor p in properties)
+				this.properties.Add (p);
 		}
 
-		[MonoTODO]
 		public int Add (PropertyDescriptor value)
 		{
-			throw new NotImplementedException ();
+			properties.Add (value);
+			return properties.Count - 1;
 		}
 
-		[MonoTODO]
 		int IList.Add (object value)
 		{
+			return Add ((PropertyDescriptor) value);
+		}
+
+		void IDictionary.Add (object key, object value)
+		{
+			Add ((PropertyDescriptor) value);
+		}
+		
+		public void Clear ()
+		{
+			properties.Clear ();
+		}
+
+		void IList.Clear ()
+		{
+			Clear ();
+		}
+
+		void IDictionary.Clear ()
+		{
+			Clear ();
+		}
+
+		public bool Contains (PropertyDescriptor value)
+		{
+			return properties.Contains (value);
+		}
+
+		bool IList.Contains (object value)
+		{
+			return Contains ((PropertyDescriptor) value);
+		}
+
+		bool IDictionary.Contains (object value)
+		{
+			return Contains ((PropertyDescriptor) value);
+		}
+
+		public void CopyTo (Array array, int index)
+		{
+			properties.CopyTo (array, index);
+		}
+
+		public virtual PropertyDescriptor Find (string name, bool ignoreCase)
+		{
+			foreach (PropertyDescriptor p in properties) {
+				if (0 == String.Compare (name, p.Name, ignoreCase))
+					return p;
+			}
+			return null;
+		}
+
+		public virtual IEnumerator GetEnumerator ()
+		{
+			return properties.GetEnumerator ();
+		}
+
+		[MonoTODO]
+		IDictionaryEnumerator IDictionary.GetEnumerator ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public int IndexOf (PropertyDescriptor value)
+		{
+			return properties.IndexOf (value);
+		}
+
+		int IList.IndexOf (object value)
+		{
+			return IndexOf ((PropertyDescriptor) value);
+		}
+
+		[MonoTODO]
+		public void Insert (int index, PropertyDescriptor value)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void IList.Insert (int index, object value)
+		{
+			Insert (index, (PropertyDescriptor) value);
+		}
+
+		public void Remove (PropertyDescriptor value)
+		{
+			properties.Remove (value);
+		}
+
+		void IDictionary.Remove (object value)
+		{
+			Remove ((PropertyDescriptor) value);
+		}
+
+		void IList.Remove (object value)
+		{
+			Remove ((PropertyDescriptor) value);
+		}
+
+		public void RemoveAt (int index)
+		{
+			properties.RemoveAt (index);
+		}
+
+		void IList.RemoveAt (int index)
+		{
+			RemoveAt (index);
+		}
+
+		[MonoTODO]
+		public virtual PropertyDescriptorCollection Sort ()
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		void IDictionary.Add (object key, object value)
+		public virtual PropertyDescriptorCollection Sort (IComparer ic)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected void InternalSort (IComparer ic)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected void InternalSort (string [] order)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
-		public void Clear () {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		void IList.Clear () {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		void IDictionary.Clear () {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public bool Contains (PropertyDescriptor value) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		bool IList.Contains (object value) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		bool IDictionary.Contains (object value) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void CopyTo (Array array, int index) {
-			throw new NotImplementedException ();
-		}
-
-		public virtual PropertyDescriptor Find (string name, bool ignoreCase) {
-			throw new NotImplementedException ();
-		}
-
-		public virtual IEnumerator GetEnumerator () {
-			throw new NotImplementedException ();
-		}
-
-		IDictionaryEnumerator IDictionary.GetEnumerator () {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public int IndexOf (PropertyDescriptor value) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		int IList.IndexOf (object value) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void Insert (int index, PropertyDescriptor value) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		void IList.Insert (int index, object value) {
-			throw new NotImplementedException ();
-		}
-
-		public void Remove (PropertyDescriptor value) {
-			throw new NotImplementedException ();
-		}
-
-		void IDictionary.Remove (object value) {
-			throw new NotImplementedException ();
-		}
-
-		void IList.Remove (object value) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void RemoveAt (int index) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		void IList.RemoveAt (int index) {
-			throw new NotImplementedException ();
-		}
-
-		public virtual PropertyDescriptorCollection Sort () {
-			throw new NotImplementedException ();
-		}
-
-		public virtual PropertyDescriptorCollection Sort (IComparer ic) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected void InternalSort (IComparer ic) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected void InternalSort (string[] order) {
-			throw new NotImplementedException ();
-		}
-		
-		public static readonly PropertyDescriptorCollection Empty;
-
-		public bool IsFixedSize {
-			[MonoTODO]
+		bool IDictionary.IsFixedSize
+		{
 			get {
-				throw new NotImplementedException ();	
+				return !readOnly;
 			}
 		}
 
-		public bool IsReadOnly {
-			[MonoTODO]
+		bool IList.IsFixedSize
+		{
 			get {
-				throw new NotImplementedException ();	
+				return !readOnly;
 			}
 		}
 
-		public bool IsSynchronized {
-			[MonoTODO]
+		public bool IsReadOnly
+		{
 			get {
-				throw new NotImplementedException ();	
+				return readOnly;
 			}
 		}
 
-		public ICollection Keys {
-			[MonoTODO]
+		public bool IsSynchronized
+		{
 			get {
-				throw new NotImplementedException ();
+				return false;
 			}
 		}
 
-		public ICollection Values {
-			[MonoTODO]
+		public int Count
+		{
 			get {
-				throw new NotImplementedException ();
+				return properties.Count;
+			}
+		}
+
+		object ICollection.SyncRoot
+		{
+			get {
+				return null;
 			}
 		}
 		
-		public int Count {
-			[MonoTODO]
+		ICollection IDictionary.Keys
+		{
 			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		object ICollection.SyncRoot {
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
+				string [] keys = new string [properties.Count];
+				int i = 0;
+				foreach (PropertyDescriptor p in properties)
+					keys [i++] = p.Name;
+				return keys;
 			}
 		}
 		
-		public object this[object key] {
-			[MonoTODO]
+		ICollection IDictionary.Values
+		{
 			get {
-				throw new NotImplementedException ();
+				return (ICollection) properties.Clone ();
 			}
-			[MonoTODO]
+		}
+		
+		object IDictionary.this [object key]
+		{
+			get {
+				if (!(key is string))
+					return null;
+				return this [(string) key];
+			}
 			set {
-				throw new NotImplementedException ();
+				if (!(key is string) || (value as PropertyDescriptor) == null)
+					throw new ArgumentException ();
+
+				int idx = properties.IndexOf (value);
+				if (idx == -1)
+					Add ((PropertyDescriptor) value);
+				else
+					properties [idx] = value;
+
 			}
 		}
-		
-		[MonoTODO]
-		public virtual PropertyDescriptor this[string s] {
+		public virtual PropertyDescriptor this [string s]
+		{
 			get {
-				throw new NotImplementedException ();
+				return Find (s, false);
 			}
 		}
 
-		object IList.this [int index] {
-			[MonoTODO]
+		object IList.this [int index]
+		{
 			get {
-				throw new NotImplementedException ();
+				return properties [index];
 			}
 
-			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				properties [index] = value;
 			}
 		}
 
-		[MonoTODO]
-		public virtual PropertyDescriptor this[int index] {
+		public virtual PropertyDescriptor this [int index]
+		{
 			get {
-				throw new NotImplementedException ();
+				return (PropertyDescriptor) properties [index];
 			}
 		}
 	}
 }
+
