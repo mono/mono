@@ -59,14 +59,24 @@ namespace Microsoft.JScript {
 		internal override bool Resolve (IdentificationTable context)
 		{
 			AST e;
+			bool no_effect;
 			bool r = true;
 			int i, n = elems.Count;
 
+			if (parent == null || parent is FunctionDeclaration)
+				no_effect = true;
+			else
+				no_effect = false;
+
 			for (i = 0; i < n; i++) {
 				e = (AST) elems [i];
-				r &= e.Resolve (context);
+				if (e is Exp) 
+					r &= ((Exp) e).Resolve (context, no_effect);
+				else
+					r &= e.Resolve (context);
 			}
 			return r;			
 		}
 	}
 }
+	
