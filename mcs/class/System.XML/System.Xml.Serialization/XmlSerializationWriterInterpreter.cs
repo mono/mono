@@ -40,6 +40,7 @@ namespace System.Xml.Serialization
 	{
 		XmlMapping _typeMap;
 		SerializationFormat _format;
+		const string xmlNamespace = "http://www.w3.org/2000/xmlns/";
 
 		public XmlSerializationWriterInterpreter (XmlMapping typeMap)
 		{
@@ -199,15 +200,6 @@ namespace System.Xml.Serialization
 		{
 			// Write attributes
 
-			ICollection attributes = map.AttributeMembers;
-			if (attributes != null)
-			{
-				foreach (XmlTypeMapMemberAttribute attr in attributes) {
-					if (MemberHasValue (attr, ob, isValueList))
-						WriteAttribute (attr.AttributeName, attr.Namespace, GetStringValue (attr.MappedType, attr.TypeData, GetMemberValue (attr, ob, isValueList)));
-				}
-			}
-
 			XmlTypeMapMember anyAttrMember = map.DefaultAnyAttributeMember;
 			if (anyAttrMember != null && MemberHasValue (anyAttrMember, ob, isValueList))
 			{
@@ -215,7 +207,17 @@ namespace System.Xml.Serialization
 				if (extraAtts != null) 
 				{
 					foreach (XmlAttribute attr in extraAtts)
-						WriteXmlAttribute (attr, ob);
+						if (attr.NamespaceURI != xmlNamespace)
+							WriteXmlAttribute (attr, ob);
+				}
+			}
+
+			ICollection attributes = map.AttributeMembers;
+			if (attributes != null)
+			{
+				foreach (XmlTypeMapMemberAttribute attr in attributes) {
+					if (MemberHasValue (attr, ob, isValueList))
+						WriteAttribute (attr.AttributeName, attr.Namespace, GetStringValue (attr.MappedType, attr.TypeData, GetMemberValue (attr, ob, isValueList)));
 				}
 			}
 		}

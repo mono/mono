@@ -1,3 +1,10 @@
+2005-01-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationCodeGenerator.cs,
+	  XmlSerializationWriterInterpreter.cs : exchanged attribute
+	  serialization orders (XmlAnyAttribute <-> XmlNamespaceDeclarations).
+	  xmlns attributes in XmlAnyAttribute are not written.
+
 2005-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SerializationCodeGeneratorConfiguration.cs,

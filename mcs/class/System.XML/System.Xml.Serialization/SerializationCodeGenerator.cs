@@ -418,6 +418,7 @@ namespace System.Xml.Serialization
 			else
 				WriteLine ("internal class " + writerClassName + " : XmlSerializationWriter");
 			WriteLineInd ("{");
+			WriteLine ("const string xmlNamespace = \"http://www.w3.org/2000/xmlns/\";");
 			
 			for (int n=0; n<maps.Count; n++)
 			{
@@ -670,6 +671,32 @@ namespace System.Xml.Serialization
 					WriteLine ("WriteNamespaceDeclarations ((XmlSerializerNamespaces) " + ob + ".@" + map.NamespaceDeclarations.Name + ");");
 					WriteLine ("");
 				}
+	
+				XmlTypeMapMember anyAttrMember = map.DefaultAnyAttributeMember;
+				if (anyAttrMember != null) 
+				{
+					if (!GenerateWriteMemberHook (xmlMapType, anyAttrMember))
+					{
+						string cond = GenerateMemberHasValueCondition (anyAttrMember, ob, isValueList);
+						if (cond != null) WriteLineInd ("if (" + cond + ") {");
+		
+						string tmpVar = GetObTempVar ();
+						WriteLine ("ICollection " + tmpVar + " = " + GenerateGetMemberValue (anyAttrMember, ob, isValueList) + ";");
+						WriteLineInd ("if (" + tmpVar + " != null) {");
+		
+						string tmpVar2 = GetObTempVar ();
+						WriteLineInd ("foreach (XmlAttribute " + tmpVar2 + " in " + tmpVar + ")");
+						WriteLineInd ("if (" + tmpVar2 + ".NamespaceURI != xmlNamespace)");
+						WriteLine ("WriteXmlAttribute (" + tmpVar2 + ", " + ob + ");");
+						Unindent ();
+						Unindent ();
+						WriteLineUni ("}");
+		
+						if (cond != null) WriteLineUni ("}");
+						WriteLine ("");
+						GenerateEndHook ();
+					}
+				}
 				
 				ICollection attributes = map.AttributeMembers;
 				if (attributes != null)
@@ -690,30 +717,6 @@ namespace System.Xml.Serialization
 						GenerateEndHook ();
 					}
 					WriteLine ("");
-				}
-	
-				XmlTypeMapMember anyAttrMember = map.DefaultAnyAttributeMember;
-				if (anyAttrMember != null) 
-				{
-					if (!GenerateWriteMemberHook (xmlMapType, anyAttrMember))
-					{
-						string cond = GenerateMemberHasValueCondition (anyAttrMember, ob, isValueList);
-						if (cond != null) WriteLineInd ("if (" + cond + ") {");
-		
-						string tmpVar = GetObTempVar ();
-						WriteLine ("ICollection " + tmpVar + " = " + GenerateGetMemberValue (anyAttrMember, ob, isValueList) + ";");
-						WriteLineInd ("if (" + tmpVar + " != null) {");
-		
-						string tmpVar2 = GetObTempVar ();
-						WriteLineInd ("foreach (XmlAttribute " + tmpVar2 + " in " + tmpVar + ")");
-						WriteLine ("WriteXmlAttribute (" + tmpVar2 + ", " + ob + ");");
-						Unindent ();
-						WriteLineUni ("}");
-		
-						if (cond != null) WriteLineUni ("}");
-						WriteLine ("");
-						GenerateEndHook ();
-					}
 				}
 				GenerateEndHook ();
 			}
