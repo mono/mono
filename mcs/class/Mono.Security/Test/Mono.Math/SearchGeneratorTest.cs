@@ -1,4 +1,4 @@
-﻿//
+//
 // MonoTests.Mono.Math.PrimeTestingTest.cs
 //
 // Authors:
@@ -44,9 +44,9 @@ namespace MonoTests.Mono.Math {
 			
 		}
 
-		public override Prime.PrimalityTest PrimalityTest {
+		public override PrimalityTest PrimalityTest {
 			get {
-				return new Prime.PrimalityTest (PrimalityTests.SmallPrimeSppTest);
+				return new PrimalityTest (PrimalityTests.SmallPrimeSppTest);
 			}
 		}
 
