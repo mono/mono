@@ -97,9 +97,22 @@ namespace Mono.Security {
 			if (data == null)
 				throw new ArgumentNullException ("data");
 
-			RSA = CryptoConvert.FromCapiKeyBlob (data);
-			if (rsa == null)
-				throw new ArgumentException ("data isn't a correctly encoded RSA public key");
+			// check for ECMA key
+			if (data.Length == 16) {
+				int i = 0;
+				int sum = 0;
+				while (i < data.Length)
+					sum += data [i++];
+				if (sum == 4) {
+					// it is the ECMA key
+					publicKey = (byte[]) data.Clone ();
+				}
+			}
+			else {
+				RSA = CryptoConvert.FromCapiKeyBlob (data);
+				if (rsa == null)
+					throw new ArgumentException ("data isn't a correctly encoded RSA public key");
+			}
 		}
 
 		public StrongName (RSA rsa) : base ()
