@@ -1,3 +1,6 @@
+2002-10-31  Dietmar Maurer  <dietmar@ximian.com>
+
+	* class.[ch]: added cast_class to fix bug 29517
 
 Wed Oct 30 19:37:32 CET 2002 Paolo Molaro <lupus@ximian.com>
 
