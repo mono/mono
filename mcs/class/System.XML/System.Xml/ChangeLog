@@ -1,3 +1,28 @@
+2003-07-27  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlLinkedNode.cs : added internal IsRooted.
+
+2003-07-26  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* DTDValidatingReader.cs :
+	  - Added ID support in ValidateAttributes().
+	  - More refined ReadAttributeValue() support for non-expanding entity
+	    situation
+	  - It should handle LocalName, Name, Prefix, NamespaceURI and Value
+	    correctly when the reader is on each of the value nodes of an
+	    attribute. Now XmlDocument.ReadNode() should work well.
+	* XmlDocument.cs :
+	  - added idTable, AddIdenticalAttribute(), GetIdenticalAttribute() and
+	    RemoveIdenticalAttribute()
+	  - Implemented GetAttributeById().
+	* XmlAttributeCollection.cs :
+	  - added private ownerDocument property and replaced
+	    ownerElement.OwnerDocument with it.
+	  - Added AdjustIdenticalAttribute() and it is used in SetNamedItem().
+	    It calls XmlDocument.{Add|Remove}IdenticalAttribute().
+	  - Added RemoveIdenticalAttribute() and it is used in Remove().
+	    (I also added AddIdenticalAttribute() but is not used.)
+
 2003-07-26  Duncan Mak  <duncan@ximian.com>
 
 	* XmlDocument.cs (GetIdenticalAttribute): Temporarily remove test

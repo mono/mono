@@ -27,6 +27,14 @@ namespace System.Xml
 		#endregion
 
 		#region Properties
+		internal bool IsRooted {
+			get {
+				for (XmlNode n = ParentNode; n != null; n = n.ParentNode)
+					if (n.NodeType == XmlNodeType.Document)
+						return true;
+				return false;
+			}
+		}
 
 		public override XmlNode NextSibling
 		{
