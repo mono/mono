@@ -17,7 +17,7 @@ namespace System.Web
 {
 	public sealed class HttpContext : IServiceProvider
 	{
-		private Exception []	_arrExceptions;
+		private ArrayList _arrExceptions;
 
 		private HttpResponse	_oResponse;
 		private HttpRequest _oRequest;
@@ -77,7 +77,10 @@ namespace System.Web
 		public Exception [] AllErrors
 		{
 			get {
-				return _arrExceptions;
+				if (_arrExceptions == null || _arrExceptions.Count == 0)
+					return null;
+
+				return (Exception []) _arrExceptions.ToArray (typeof (Exception));;
 			}
 		}
 
@@ -115,10 +118,10 @@ namespace System.Web
 		public Exception Error
 		{
 			get {
-				if (_arrExceptions == null || _arrExceptions.Length == 0)
+				if (_arrExceptions == null || _arrExceptions.Count == 0)
 					return null;
 
-				return _arrExceptions [0];
+				return (Exception) _arrExceptions [0];
 			}
 		}
 
@@ -239,19 +242,10 @@ namespace System.Web
 
 		public void AddError (Exception errorInfo)
 		{
-			int iSize = 1;
+			if (_arrExceptions == null)
+				_arrExceptions = new ArrayList ();
 
-			if (_arrExceptions != null)
-				iSize += _arrExceptions.Length;
-
-			Exception [] arrNew = new Exception [iSize];
-
-			if (null != _arrExceptions)
-				_arrExceptions.CopyTo (arrNew, 0);
-
-			_arrExceptions = arrNew;
-
-			_arrExceptions [iSize - 1] = errorInfo;
+			_arrExceptions.Add (errorInfo);
 		}
 
 		public void ClearError ()

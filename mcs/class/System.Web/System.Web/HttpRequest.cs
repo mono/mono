@@ -215,7 +215,8 @@ namespace System.Web {
 
 			string contentType = ContentType;
 			if (0 != String.Compare (contentType, "application/x-www-form-urlencoded", true)) {
-				Console.WriteLine ("Content-Type -> {0} not supported", contentType);
+				if (contentType.Length > 0)
+					Console.WriteLine ("Content-Type -> {0} not supported", contentType);
 				_oFormData = new HttpValueCollection ();
 				return;
 			}

@@ -123,8 +123,8 @@ namespace System.Web {
 		}
 
 		internal void FinishRequest(HttpContext context, Exception error) {
-			HttpWorkerRequest request = context.WorkerRequest;
-
+			if (context.Error != null)
+				Console.WriteLine ("context.Error: {0}", context.Error);
 			if (error == null) {
 				try {
 					context.Response.FlushAtEndOfRequest();
@@ -133,8 +133,10 @@ namespace System.Web {
 				}
 			}
 
+			HttpWorkerRequest request = context.WorkerRequest;
 			if (null != error) {
 				WebTrace.WriteLine (error.ToString ());
+
 				context.Response.Clear ();
 				if (!(error is HttpException)) {
 					error = new HttpException (String.Empty, error);
