@@ -1,3 +1,11 @@
+2003-07-05  Martin Baulig  <martin@ximian.com>
+
+	* pending.cs (PendingImplementation.ParentImplements): Don't
+	create the proxy if the parent is abstract.
+
+	* class.cs (TypeContainer.DefineIndexers): Process explicit
+	interface implementations first.  Fixes #37714.
+
 2003-07-04  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (MemberAccess.ResolveMemberAccess): Events are

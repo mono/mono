@@ -928,10 +928,25 @@ namespace Mono.CSharp {
 		void DefineIndexers ()
 		{
 			string class_indexer_name = null;
-			
+
+			//
+			// If there's both an explicit and an implicit interface implementation, the
+			// explicit one actually implements the interface while the other one is just
+			// a normal indexer.  See bug #37714.
+			//
+			ArrayList list = new ArrayList ();
 			foreach (Indexer i in Indexers){
+				if (i.ExplicitInterfaceName != null)
+					list.Add (i);
+			}
+			foreach (Indexer i in Indexers){
+				if (i.ExplicitInterfaceName == null)
+					list.Add (i);
+			}
+
+			foreach (Indexer i in list){
 				string name;
-				
+
 				i.Define (this);
 
 				name = i.IndexerName;
@@ -3145,7 +3160,7 @@ namespace Mono.CSharp {
 
 			if ((modifiers & Modifiers.UNSAFE) != 0)
 				builder.InitLocals = false;
-			
+
 			if (IsImplementing) {
 				//
 				// clear the pending implemntation flag

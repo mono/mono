@@ -488,7 +488,9 @@ namespace Mono.CSharp {
 			if (list.Count == 0)
 				return false;
 
-			DefineProxy (iface_type, (MethodInfo) list [0], mi, args);
+			MethodInfo parent = (MethodInfo) list [0];
+			if (!parent.IsAbstract)
+				DefineProxy (iface_type, parent, mi, args);
 			return true;
 		}
 
