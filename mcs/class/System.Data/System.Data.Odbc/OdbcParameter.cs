@@ -31,6 +31,7 @@ namespace System.Data.Odbc
 
 		// Buffers for parameter value based on type. Currently I've only optimized 
 		// for int parameters and everything else is just converted to a string.
+		private bool bufferIsSet;
 		int intbuf;
 		byte[] buffer;
 
@@ -148,22 +149,8 @@ namespace System.Data.Odbc
 				return ParamValue;
 			}
 			set { 
-				this.ParamValue = value; 
-				// Load buffer with new value
-				if (odbcType==OdbcType.Int)
-					intbuf=(int) value;
-				else
-				{
-					// Treat everything else as a string
-					// Init string buffer
-					if (buffer==null || buffer.Length< ((size>20)?size:20) )
-						buffer=new byte[(size>20)?size:20];
-					else
-						buffer.Initialize();
-					// Convert value into string and store into buffer
-					byte[] strValueBuffer=System.Text.Encoding.ASCII.GetBytes(ParamValue.ToString());
-					strValueBuffer.CopyTo(buffer,0);
-				}
+				this.ParamValue = value;
+				bufferIsSet = false;
 			}
 		}
 
@@ -174,6 +161,10 @@ namespace System.Data.Odbc
 		public void Bind(IntPtr hstmt,int ParamNum)
 		{
 			OdbcReturn ret;
+			// Set up the buffer if we haven't done so yet
+			if(!bufferIsSet)
+				setBuffer();
+				
 			// Convert System.Data.ParameterDirection into odbc enum
 			OdbcInputOutputDirection paramdir=libodbc.ConvertParameterDirection(this.direction);
 			// Bind parameter based on type
@@ -189,7 +180,26 @@ namespace System.Data.Odbc
 			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
 				throw new OdbcException(new OdbcError("SQLBindParam",OdbcHandleType.Stmt,hstmt));
 		}
-		
+
+		private void setBuffer() {
+			// Load buffer with new value
+			if (odbcType==OdbcType.Int)
+				intbuf=(int) ParamValue;
+			else
+			{
+				string paramValueString = ParamValue.ToString();
+				// Treat everything else as a string
+				// Init string buffer
+				if (buffer==null || buffer.Length< ((size>20)?size:20) )
+					buffer=new byte[(size>20)?size:20];
+				else
+					buffer.Initialize();
+				// Convert value into string and store into buffer
+				System.Text.Encoding.ASCII.GetBytes(paramValueString, 0, paramValueString.Length , buffer, 0);
+			}
+			bufferIsSet = true;
+		}
+
 		#endregion // public Properties
 
 		#region Methods
