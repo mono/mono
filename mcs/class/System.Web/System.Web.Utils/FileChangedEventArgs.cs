@@ -18,7 +18,7 @@ namespace System.Web.Utils
 		private string filename;
 		private FileAction action;
 
-		public FileChangedEvent(FileAction action, string file)
+		public void FileChangedEvent(FileAction action, string file)
 		{
 			this.action = action;
 			this.filename = file;

@@ -1,3 +1,14 @@
+2002-01-02  Nick Drochak  <ndrochak@gol.com>
+
+	* FileAction.cs: Use 0x7FFFFFFF as enum value for error.  0xFFFFFFFF
+	is too big for Int32.
+	* FileChangeEventHandler.cs: put missing 'void' return type on delegate
+	FileChangeEventHandler()
+	* FileChangedEventArgs.cs: ditto for FileChangedEvent()
+	* NativeFileChangeEventHandler.cs: ditto for NativeFileChangeEventHandler()
+	* FileChangesMonitor.cs: add needed namespaces and comment out imcomplete
+	code.
+
 2001-12-21      Gaurav Vaish <gvaish@iitk.ac.in>
 
 	* ApacheVersionInfo.cs     - Dummy class, for later use.

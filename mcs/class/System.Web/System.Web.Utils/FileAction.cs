@@ -21,6 +21,6 @@ namespace System.Web.Utils
 		Modifiled,
 		RenamedOldName,
 		RenamedNewName,
-		Error = 0xFFFFFFFF
+		Error = 0x7FFFFFFF
 	}
 }

@@ -13,5 +13,5 @@
 
 namespace System.Web.Utils
 {
-	public delegate FileChangeEventHandler(object sender, int method);
+	public delegate void FileChangeEventHandler(object sender, int method);
 }
