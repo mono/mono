@@ -1,4 +1,8 @@
 
+Fri Feb 15 18:15:04 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* ILGenerator.cs: finally block support and fixes.
+
 Thu Feb 14 18:55:52 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* FieldBuilder.cs: Add SetRVAData().

@@ -26,8 +26,11 @@ namespace System.Reflection.Emit {
 		internal int filter_offset;
 		
 		internal void Debug () {
-			System.Console.Write ("\ttype="+type.ToString()+" start="+start.ToString());
-			System.Console.WriteLine (" len="+len.ToString()+" extype="+extype.ToString());
+			System.Console.Write ("\ttype="+type.ToString()+" start="+start.ToString()+" len="+len.ToString());
+			if (extype != null)
+				System.Console.WriteLine (" extype="+extype.ToString());
+			else
+				System.Console.WriteLine ("");
 		}
 	}
 	internal struct ILExceptionInfo {
@@ -38,6 +41,7 @@ namespace System.Reflection.Emit {
 
 		internal void AddCatch (Type extype, int offset) {
 			int i;
+			End (offset);
 			add_block (offset);
 			i = handlers.Length - 1;
 			handlers [i].type = ILExceptionBlock.CATCH;
@@ -45,15 +49,37 @@ namespace System.Reflection.Emit {
 			handlers [i].extype = extype;
 		}
 
+		internal void AddFinally (int offset) {
+			int i;
+			End (offset);
+			add_block (offset);
+			i = handlers.Length - 1;
+			handlers [i].type = ILExceptionBlock.FINALLY;
+			handlers [i].start = offset;
+			handlers [i].extype = null;
+		}
+
 		internal void End (int offset) {
+			if (handlers == null)
+				return;
 			int i = handlers.Length - 1;
-			handlers [i].len = offset - handlers [i].start;
+			if (i >= 0)
+				handlers [i].len = offset - handlers [i].start;
+		}
+
+		internal int LastClauseType () {
+			if (handlers != null)
+				return handlers [handlers.Length-1].type;
+			else
+				return ILExceptionBlock.CATCH;
 		}
 
 		internal void Debug () {
+			if (false) {
 			System.Console.WriteLine ("Handler at "+start.ToString()+ " len: "+len.ToString());
 			for (int i = 0; i < handlers.Length; ++i)
 				handlers [i].Debug ();
+			}
 		}
 
 		void add_block (int offset) {
@@ -189,20 +215,35 @@ namespace System.Reflection.Emit {
 			return 1;
 		}
 
+		private void InternalEndClause () {
+			switch (ex_handlers [cur_block].LastClauseType ()) {
+			case ILExceptionBlock.CATCH:
+				// how could we optimize code size here?
+				Emit (OpCodes.Leave, ex_handlers [cur_block].end);
+				break;
+			case ILExceptionBlock.FAULT:
+			case ILExceptionBlock.FINALLY:
+				Emit (OpCodes.Endfinally);
+				break;
+			case ILExceptionBlock.FILTER:
+				Emit (OpCodes.Endfilter);
+				break;
+			}
+		}
+
 		public virtual void BeginCatchBlock (Type exceptionType) {
 			if (cur_block < 0)
 				throw new NotSupportedException ("Not in an exception block");
-			// how could we optimize code size here?
-			Emit (OpCodes.Leave, ex_handlers [cur_block].end);
+			InternalEndClause ();
 			ex_handlers [cur_block].AddCatch (exceptionType, code_len);
-			System.Console.WriteLine ("Begin catch Block: "+exceptionType.ToString());
+			//System.Console.WriteLine ("Begin catch Block: "+exceptionType.ToString());
 			//throw new NotImplementedException ();
 		}
 		public virtual void BeginExceptFilterBlock () {
 			throw new NotImplementedException ();
 		}
 		public virtual Label BeginExceptionBlock () {
-			System.Console.WriteLine ("Begin Block");
+			//System.Console.WriteLine ("Begin Block");
 			
 			++ cur_block;
 			if (ex_handlers != null) {
@@ -218,13 +259,15 @@ namespace System.Reflection.Emit {
 		public virtual void BeginFaultBlock() {
 			if (cur_block < 0)
 				throw new NotSupportedException ("Not in an exception block");
-			System.Console.WriteLine ("Begin fault Block");
+			//System.Console.WriteLine ("Begin fault Block");
 			//throw new NotImplementedException ();
 		}
 		public virtual void BeginFinallyBlock() {
 			if (cur_block < 0)
 				throw new NotSupportedException ("Not in an exception block");
-			System.Console.WriteLine ("Begin finally Block");
+			//System.Console.WriteLine ("Begin finally Block");
+			InternalEndClause ();
+			ex_handlers [cur_block].AddFinally (code_len);
 			//throw new NotImplementedException ();
 		}
 		public virtual void BeginScope () {
@@ -406,12 +449,11 @@ namespace System.Reflection.Emit {
 		public virtual void EndExceptionBlock () {
 			if (cur_block < 0)
 				throw new NotSupportedException ("Not in an exception block");
-			// how could we optimize code size here?
-			Emit (OpCodes.Leave, ex_handlers [cur_block].end);
+			InternalEndClause ();
 			MarkLabel (ex_handlers [cur_block].end);
 			ex_handlers [cur_block].End (code_len);
 			ex_handlers [cur_block].Debug ();
-			System.Console.WriteLine ("End Block");
+			//System.Console.WriteLine ("End Block");
 			//throw new NotImplementedException ();
 		}
 		public virtual void EndScope () {
