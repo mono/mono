@@ -426,7 +426,7 @@ namespace Mono.Xml.Xsl.Functions {
 				}
 			}
 			
-			return new EnumeratorIterator (list.GetEnumerator (), xsltContext);
+			return new ListIterator (list, xsltContext, false);
 		}
 	
 		XPathNodeIterator GetDocument (XsltCompiledContext xsltContext, string arg0, string baseUri)
@@ -681,7 +681,7 @@ namespace Mono.Xml.Xsl.Functions {
 				FindKeyMatch (ctx, XPathFunctions.ToString (o), result, iter.Current);
 			}
 			
-			return new EnumeratorIterator (result.GetEnumerator (), (iter.NamespaceManager as XsltCompiledContext));
+			return new ListIterator (result, (iter.NamespaceManager as XsltCompiledContext), true);
 		}
 		
 		void FindKeyMatch (XsltCompiledContext xsltContext, string value, ArrayList result, XPathNavigator context)
