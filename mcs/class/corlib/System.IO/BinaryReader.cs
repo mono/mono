@@ -148,13 +148,16 @@ namespace System.IO {
 				throw new ArgumentOutOfRangeException("count is less than 0");
 			}
 
+			int fromPeek = 0;
 			while (m_peekIndex < m_peekLimit) {
-				buffer[index++] = m_peekBuffer[m_peekIndex++]; count--; 
+				buffer[index++] = m_peekBuffer[m_peekIndex++];
+				count--; 
+				fromPeek++;
 			}
 
 			int bytes_read=m_stream.Read(buffer, index, count);
 
-			return(bytes_read);
+			return(bytes_read + fromPeek);
 		}
 
 		public virtual int Read(char[] buffer, int index, int count) {
