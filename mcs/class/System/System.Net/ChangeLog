@@ -1,5 +1,15 @@
 2004-02-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* AuthenticationManager.cs: implemented PreAuthenticate().
+
+	* HttpWebRequest.cs: once we know the version of the server, use it if
+	below the requested one. Remove 'Expect', 'Content-Length' and /or 
+	'Transfer-Encoding' if appropiate due to changes in version. Fixed 
+	'Host' header for non-standard ports. Support preauthentication. Closes
+	bug #50530.
+
+2004-02-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpWebRequest.cs: check for missing or wrong URI in Location header
 	when redirecting.
 

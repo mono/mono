@@ -80,7 +80,6 @@ namespace System.Net
 			return null;
 		}
 
-		[MonoTODO]
 		public static Authorization PreAuthenticate (WebRequest request, ICredentials credentials)
 		{
 			if (request == null)
@@ -88,6 +87,19 @@ namespace System.Net
 
 			if (credentials == null)
 				return null;
+
+			EnsureModules ();
+			lock (modules) {
+				foreach (IAuthenticationModule mod in modules) {
+					Authorization auth = mod.PreAuthenticate (request, credentials);
+					if (auth == null)
+						continue;
+
+					auth.Module = mod;
+					return auth;
+				}
+			}
+
 			return null;
 		}
 

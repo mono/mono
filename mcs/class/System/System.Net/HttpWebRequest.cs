@@ -46,7 +46,9 @@ namespace System.Net
 		string initialMethod = "GET";
 		bool pipelined = true;
 		bool preAuthenticate;
+		bool usedPreAuth;
 		Version version = HttpVersion.Version11;
+		Version actualVersion;
 		IWebProxy proxy;
 		bool sendChunked;
 		ServicePoint servicePoint;
@@ -307,7 +309,7 @@ namespace System.Net
 		}		
 		
 		public override bool PreAuthenticate { 
-			get { return preAuthenticate; } //TODO: support preauthentication
+			get { return preAuthenticate; }
 			set { preAuthenticate = value; }
 		}
 		
@@ -786,16 +788,19 @@ namespace System.Net
 			if (gotRequestStream && contentLength != -1) {
 				continue100 = true;
 				webHeaders.SetInternal ("Content-Length", contentLength.ToString ());
+				webHeaders.RemoveInternal ("Transfer-Encoding");
 			} else if (sendChunked) {
 				continue100 = true;
 				webHeaders.SetInternal ("Transfer-Encoding", "chunked");
+				webHeaders.RemoveInternal ("Content-Length");
 			}
 
-			if (version == HttpVersion.Version11 && continue100 &&
+			if (actualVersion == HttpVersion.Version11 && continue100 &&
 			    servicePoint.SendContinue) { // RFC2616 8.2.3
 				webHeaders.SetInternal ("Expect" , "100-continue");
 				expectContinue = true;
 			} else {
+				webHeaders.RemoveInternal ("Expect");
 				expectContinue = false;
 			}
 
@@ -810,14 +815,32 @@ namespace System.Net
 				webHeaders.SetInternal (connectionHeader, "close");
 			}
 
-			webHeaders.SetInternal ("Host", actualUri.Host);
+			webHeaders.SetInternal ("Host", actualUri.Authority);
 			if (cookieContainer != null) {
 				string cookieHeader = cookieContainer.GetCookieHeader (requestUri);
 				if (cookieHeader != "")
 					webHeaders.SetInternal ("Cookie", cookieHeader);
 			}
 
+			if (!usedPreAuth && preAuthenticate) {
+				DoPreAuthenticate ();
+			}
 			return webHeaders.ToString ();
+		}
+
+		void DoPreAuthenticate ()
+		{
+			webHeaders.RemoveInternal ("Proxy-Authenticate");
+			webHeaders.RemoveInternal ("WWW-Authenticate");
+			bool isProxy = (proxy != null && !proxy.IsBypassed (actualUri));
+			ICredentials creds = (!isProxy) ? credentials : proxy.Credentials;
+			Authorization auth = AuthenticationManager.PreAuthenticate (this, creds);
+			if (auth == null)
+				return;
+
+			string authHeader = (isProxy) ? "Proxy-Authenticate" : "WWW-Authenticate";
+			webHeaders [authHeader] = auth.Message;
+			usedPreAuth = true;
 		}
 		
 		internal void SetWriteStreamError (WebExceptionStatus status)
@@ -852,7 +875,14 @@ namespace System.Net
 									   actualUri.PathAndQuery);
 			}
 			
-			req.AppendFormat ("{0} {1} HTTP/{2}.{3}\r\n", method, query, version.Major, version.Minor);
+			if (servicePoint.ProtocolVersion != null && servicePoint.ProtocolVersion < version) {
+				actualVersion = servicePoint.ProtocolVersion;
+			} else {
+				actualVersion = version;
+			}
+
+			req.AppendFormat ("{0} {1} HTTP/{2}.{3}\r\n", method, query,
+								actualVersion.Major, actualVersion.Minor);
 			req.Append (GetHeaders ());
 			string reqstr = req.ToString ();
 			byte [] bytes = Encoding.UTF8.GetBytes (reqstr);
@@ -963,7 +993,7 @@ namespace System.Net
 				code  = webResponse.StatusCode;
 				if (!authCompleted && ((code == HttpStatusCode.Unauthorized && credentials != null) ||
 							code == HttpStatusCode.ProxyAuthenticationRequired)) {
-					if (CheckAuthorization (webResponse, code)) {
+					if (!usedPreAuth && CheckAuthorization (webResponse, code)) {
 						// Keep the written body, so it can be rewritten in the retry
 						if (allowBuffering) {
 							bodyBuffer = writeStream.WriteBuffer;
