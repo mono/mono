@@ -1,7 +1,18 @@
+John Sohn <jsohn@columbus.rr.com>
+Alexandre Pigolkine <pigolkin@transporeon.com>
+Amitabh Iyer <amitabh.iyer@infrasofttech.biz>
+Dennis Hayes <dennish@raytek.com>
+Frs-Denis Gonthier <fgonthier@hermes.usherb.ca>
+Jeff Bakst <jbakst@telocity.com>
+Javier Alvarez <jamaa@tid.es>
+Joshua Perry <jperry@1800contacts.com
+Dominik Pich <Dominik@implemented.org>
+
+
 
 AccessibleObject.cs
 AmbientProperties.cs
-Application.cs			Need CE
+Application.cs			
 ApplicationContext.cs
 AssemblyInfo.cs
 AxHost.cs
@@ -9,7 +20,7 @@ Binding.cs				Need CE
 BindingContext.cs			Need CE
 BindingManagerBase.cs		Need CE
 BindingMemberInfo.cs		Need CE - Needs constructor only.
-Button.cs				Need CE - 10-28-2002 John Sohn <jsohn@columbus.rr.com>
+Button.cs				Need CE 
 CheckBox.cs				Need CE
 CheckedListBox.cs
 Clipboard.cs
@@ -18,8 +29,8 @@ ColumnHeader.cs			Need CE
 ComboBox.cs				Need CE
 CommonDialog.cs			Need CE
 ContainerControl.cs		Need CE
-ContextMenu.cs			Need CE - 10-28-2002 - Alexandre Pigolkine <pigolkin@transporeon.com>
-Control.cs				Need CE - 11-4-2002 Amitabh Iyer <amitabh.iyer@infrasofttech.biz>
+ContextMenu.cs			Need CE  
+Control.cs				Need CE
 ControlBindingsCollection.cs Need CE
 ControlPaint.cs
 CreateParams.cs
@@ -44,7 +55,7 @@ FeatureSupport.cs
 FileDialog.cs			Need CE
 FolderBrowserDialog.cs
 FontDialog.cs
-Form.cs				Need CE	Amitabh Iyer <amitabh.iyer@infrasofttech.biz>
+Form.cs				Need CE	
 GridColumnStylesCollection.cs
 GridItem.cs
 GridItemCollection.cs
@@ -52,32 +63,32 @@ GridTableStylesCollection.cs
 GroupBox.cs
 Help.cs
 HelpProvider.cs
-HScrollBar.cs			Need CE - 10-28-2002- Dennis Hayes <dennish@raytek.com>
+HScrollBar.cs			Need CE 
 ImageIndexConverter.cs
-ImageList.cs			Need CE	- 10-28-2002 - Javier Alvarez <jamaa@tid.es>
+ImageList.cs			Need CE	
 ImageListStreamer.cs
 InputLanguage.cs
 InputLanguageCollection.cs
 KeysConverter.cs
-Label.cs				Need CE - 10-28-2002 John Sohn <jsohn@columbus.rr.com>
+Label.cs				Need CE 
 LinkArea.cs
 LinkLabel.cs
 LinkState.cs
 ListBindingConverter.cs
-ListBox.cs				Need CE  - 10-28-2002 - Joshua Perry <jperry@1800contacts.com
+ListBox.cs				Need CE  
 ListControl.cs			Need CE 
 ListView.cs				Need CE
 ListViewItem.cs			Need CE
 ListViewItemConverter.cs
-MainMenu.cs				Need CE - 10-28-2002 - Alexandre Pigolkine <pigolkin@transporeon.com>
-Menu.cs				Need CE - 10-28-2002 - Alexandre Pigolkine <pigolkin@transporeon.com>
-MenuItem.cs				Need CE - 10-28-2002 - Alexandre Pigolkine <pigolkin@transporeon.com>
+MainMenu.cs				Need CE 
+Menu.cs				Need CE 
+MenuItem.cs				Need CE 
 Message.cs
 MessageBox.cs			Need CE
 MethodInvoker.cs
 MonthCalendar.cs
-NativeWindow.cs					11-4-2002 Dominik Pich [Dominik@implemented.org]
-NotifyIcon.cs						Javier - 10-28-2002 - Alvarez <jamaa@tid.es>
+NativeWindow.cs					
+NotifyIcon.cs						
 NumericUpDown.cs			Need CE
 OpacityConverter.cs
 OpenFileDialog.cs			Need CE
@@ -97,9 +108,9 @@ RichTextBox.cs
 RichTextBoxSelectionAttribute.cs
 RichTextBoxWordPunctuations.cs
 SaveFileDialog.cs			Need CE
-Screen.cs				Need CE - 10-28-2002 - Frs-Denis Gonthier <fgonthier@hermes.usherb.ca>
-ScrollableControl.cs		Need CE - 10-28-2002 - Dennis Hayes <dennish@raytek.com>
-ScrollBar.cs			Need CE - 10-28-2002 - Dennis Hayes <dennish@raytek.com>
+Screen.cs				Need CE 
+ScrollableControl.cs		Need CE 
+ScrollBar.cs			Need CE 
 SecurityIDType.cs
 SelectionRange.cs
 SelectionRangeConverter.cs
@@ -112,22 +123,22 @@ StructFormat.cs
 SystemInformation.cs		Need CE (2 functions)
 TabControl.cs			Need CE
 TabPage.cs				Need CE
-TextBox.cs				Need CE	- 10-28-2002 - Joshua Perry <jperry@1800contacts.com
-TextBoxBase.cs			Need CE	- 10-28-2002 - Joshua Perry <jperry@1800contacts.com 
+TextBox.cs				Need CE	
+TextBoxBase.cs			Need CE	
 ThreadExceptionDialog.cs
-Timer.cs				Need CE - 10-28-2002 - Javier Alvarez <jamaa@tid.es>
+Timer.cs				Need CE 
 ToolBar.cs				Need CE
 ToolBarButton.cs			Need CE
 tooltip.cs
 TrackBar.cs				Need CE
-TreeNode.cs				Need CE	- 10-28-2002 - Jeff Bakst <jbakst@telocity.com>
-TreeNodeCollection.cs		Need CE	- 10-28-2002 - Jeff Bakst <jbakst@telocity.com>
-TreeNodeConverter.cs  				- 10-28-2002 - Jeff Bakst <jbakst@telocity.com>
-TreeView.cs				Need CE	- 10-28-2002 - Jeff Bakst <jbakst@telocity.com>
-TreeViewImageIndexConverter.cs		- 10-28-2002 - Jeff Bakst <jbakst@telocity.com>
+TreeNode.cs				Need CE	
+TreeNodeCollection.cs		Need CE	
+TreeNodeConverter.cs  				
+TreeView.cs				Need CE	
+TreeViewImageIndexConverter.cs		
 UpDownBase.cs			Need CE
-UserControl.cs					Amitabh Iyer <amitabh.iyer@infrasofttech.biz>
-VScrollBar.cs			Need CE  	- 10-28-2002 - Dennis Hayes <dennish@raytek.com>
+UserControl.cs					
+VScrollBar.cs			Need CE  	
 
 ===================================================
 
