@@ -1,3 +1,8 @@
+2004-11-25  Martin Baulig  <martin@ximian.com>
+
+	* object.c (mono_class_vtable): Don't create any JIT wrappers for
+	generic methods.
+
 2004-11-24  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c: Allow all kinds of whitespace, not just ' ' in type
