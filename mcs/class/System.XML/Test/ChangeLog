@@ -1,3 +1,7 @@
+2003-01-22  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	*  added recent tests below to System.XML_linux_test.args
+
 2003-01-21  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	*  added XmlNodeReaderTests.cs file and added it to AllTests.cs

@@ -21,11 +21,13 @@ XmlEntityReferenceTests.cs
 XmlNamespaceManagerTests.cs
 XmlNodeListTests.cs
 XmlNodeTests.cs
+XmlNodeReaderTests.cs
 XmlProcessingInstructionTests.cs
 XmlSignificantWhitespaceTests.cs
 XmlTextReaderTests.cs
 XmlTextTests.cs
 XmlTextWriterTests.cs
+XmlWriterTests.cs
 XmlWhiteSpaceTests.cs
 XPathNavigatorEvaluateTests.cs
 XPathNavigatorTests.cs
