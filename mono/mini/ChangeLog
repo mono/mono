@@ -1,4 +1,10 @@
 
+Tue Dec 9 17:27:14 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-x86.c, exceptions-ppc.c: allow the exception object
+	to be any type per the spec. Fix abnormal memory usage when
+	the same object is repeatedly thrown.
+
 Tue Dec 9 15:39:54 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: check for overruns in IL code.
