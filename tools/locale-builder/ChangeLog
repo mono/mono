@@ -1,3 +1,10 @@
+
+Mon Aug 9 13:24:09 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* Driver.cs, Entry.cs, CultureInfoEntry.cs, DateTimeFormatEntry.cs, 
+	NumberFormatEntry.cs: create a more compact representation of the
+	data.
+
 2004-06-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Driver.cs: handle single quotes in the pattern. We used to fail for,

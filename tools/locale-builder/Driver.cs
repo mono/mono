@@ -97,6 +97,7 @@ namespace Mono.Tools.LocaleBuilder {
                         using (StreamWriter writer = new StreamWriter (HeaderFileName, false, new UTF8Encoding (false, true))) {
 
                                 writer.WriteLine ();
+                                writer.WriteLine ("/* This is a generated file. Do not edit. See tools/locale-builder. */");
                                 writer.WriteLine ("#ifndef MONO_METADATA_CULTURE_INFO_TABLES");
                                 writer.WriteLine ("#define MONO_METADATA_CULTURE_INFO_TABLES 1");
                                 writer.WriteLine ("\n");
@@ -161,7 +162,7 @@ namespace Mono.Tools.LocaleBuilder {
                                 builder = new StringBuilder ();
                                 for (int i = 0; i < count; i++) {
                                         CultureInfoEntry ci = (CultureInfoEntry) cultures [i];
-                                        builder.Append ("\t{\"" + ci.Name.ToLower () + "\", ");
+                                        builder.Append ("\t{" + Entry.EncodeStringIdx (ci.Name.ToLower ()) + ", ");
                                         builder.Append (ci.Row + "}");
                                         if (i + 1 < count)
                                                 builder.Append (',');
@@ -170,6 +171,10 @@ namespace Mono.Tools.LocaleBuilder {
 
                                 writer.WriteLine ("static const CultureInfoNameEntry culture_name_entries [] = {");
                                 writer.Write (builder);
+                                writer.WriteLine ("};\n\n");
+
+                                writer.WriteLine ("static const char locale_strings [] = {");
+                                writer.Write (Entry.GetStrings ());
                                 writer.WriteLine ("};\n\n");
 
                                 writer.WriteLine ("#endif\n");

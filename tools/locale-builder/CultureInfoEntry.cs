@@ -61,15 +61,15 @@ namespace Mono.Tools.LocaleBuilder {
                 {
                         builder.Append ("\t{");
                         builder.AppendFormat ("{0}, {1}, {2}, " +
-                                        "\"{3}\", \"{4}\", \"{5}\", " +
-                                        "\"{6}\", \"{7}\", \"{8}\", " +
-                                        "\"{9}\", \"{10}\", " +
+                                        "{3}, {4}, {5}, " +
+                                        "{6}, {7}, {8}, " +
+                                        "{9}, {10}, " +
                                         "{11}, " +
                                         "{12}, {13}",
                                         Lcid, ParentLcid, SpecificLcid,
-                                        EncodeString (Name), EncodeString (IcuName), EncodeString (EnglishName),
-                                        EncodeString (DisplayName), EncodeString (NativeName), EncodeString (Win3Lang),
-                                        EncodeString (ISO3Lang), EncodeString (ISO2Lang),
+                                        EncodeStringIdx (Name), EncodeStringIdx (IcuName), EncodeStringIdx (EnglishName),
+                                        EncodeStringIdx (DisplayName), EncodeStringIdx (NativeName), EncodeStringIdx (Win3Lang),
+                                        EncodeStringIdx (ISO3Lang), EncodeStringIdx (ISO2Lang),
                                         ValuesString (CalendarData),
                                         DateTimeFormatEntry == null ? -1 : DateTimeFormatEntry.Row,
                                         NumberFormatEntry == null ? -1 : NumberFormatEntry.Row);

@@ -54,22 +54,22 @@ namespace Mono.Tools.LocaleBuilder {
                 {
                         builder.Append ("\t{");
 
-                        builder.Append ("\"" + EncodeString (CurrencyDecimalSeparator) + "\", ");
-                        builder.Append ("\"" + EncodeString (CurrencyGroupSeparator) + "\", ");
-                        builder.Append ("\"" + EncodeString (PercentDecimalSeparator) + "\", ");
-                        builder.Append ("\"" + EncodeString (PercentGroupSeparator) + "\", ");
-                        builder.Append ("\"" + EncodeString (NumberDecimalSeparator) + "\", ");
-                        builder.Append ("\"" + EncodeString (NumberGroupSeparator) + "\", ");
+                        builder.Append (EncodeStringIdx (CurrencyDecimalSeparator) + ", ");
+                        builder.Append (EncodeStringIdx (CurrencyGroupSeparator) + ", ");
+                        builder.Append (EncodeStringIdx (PercentDecimalSeparator) + ", ");
+                        builder.Append (EncodeStringIdx (PercentGroupSeparator) + ", ");
+                        builder.Append (EncodeStringIdx (NumberDecimalSeparator) + ", ");
+                        builder.Append (EncodeStringIdx (NumberGroupSeparator) + ", ");
 
-                        builder.Append ("\"" + EncodeString (CurrencySymbol) + "\", ");
-                        builder.Append ("\"" + EncodeString (PercentSymbol) + "\", ");
-                        builder.Append ("\"" + EncodeString (NaNSymbol) + "\", ");
-                        builder.Append ("\"" + EncodeString (PerMilleSymbol) + "\", ");
-                        builder.Append ("\"" + EncodeString (NegativeInfinitySymbol) + "\", ");
-                        builder.Append ("\"" + EncodeString (PositiveInfinitySymbol) + "\", ");
+                        builder.Append (EncodeStringIdx (CurrencySymbol) + ", ");
+                        builder.Append (EncodeStringIdx (PercentSymbol) + ", ");
+                        builder.Append (EncodeStringIdx (NaNSymbol) + ", ");
+                        builder.Append (EncodeStringIdx (PerMilleSymbol) + ", ");
+                        builder.Append (EncodeStringIdx (NegativeInfinitySymbol) + ", ");
+                        builder.Append (EncodeStringIdx (PositiveInfinitySymbol) + ", ");
 
-                        builder.Append ("\"" + EncodeString (NegativeSign) + "\", ");
-                        builder.Append ("\"" + EncodeString (PositiveSign) + "\", ");
+                        builder.Append (EncodeStringIdx (NegativeSign) + ", ");
+                        builder.Append (EncodeStringIdx (PositiveSign) + ", ");
 
                         builder.Append (CurrencyNegativePattern + ", ");
                         builder.Append (CurrencyPositivePattern + ", ");

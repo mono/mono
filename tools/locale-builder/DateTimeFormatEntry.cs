@@ -45,18 +45,18 @@ namespace Mono.Tools.LocaleBuilder {
                 public void AppendTableRow (StringBuilder builder)
                 {
                         builder.Append ("\t{");
-                        builder.Append ("\"" + EncodeString (FullDateTimePattern) + "\", ");
-                        builder.Append ("\"" + EncodeString (LongDatePattern) + "\", ");
-                        builder.Append ("\"" + EncodeString (ShortDatePattern) + "\", ");
+                        builder.Append (EncodeStringIdx (FullDateTimePattern) + ", ");
+                        builder.Append (EncodeStringIdx (LongDatePattern) + ", ");
+                        builder.Append (EncodeStringIdx (ShortDatePattern) + ", ");
 
-                        builder.Append ("\"" + EncodeString (LongTimePattern) + "\", ");
-                        builder.Append ("\"" + EncodeString (ShortTimePattern) + "\", ");
+                        builder.Append (EncodeStringIdx (LongTimePattern) + ", ");
+                        builder.Append (EncodeStringIdx (ShortTimePattern) + ", ");
 
-                        builder.Append ("\"" + EncodeString (YearMonthPattern) + "\", ");
-                        builder.Append ("\"" + EncodeString (MonthDayPattern) + "\", ");
+                        builder.Append (EncodeStringIdx (YearMonthPattern) + ", ");
+                        builder.Append (EncodeStringIdx (MonthDayPattern) + ", ");
 
-                        builder.Append ("\"" + EncodeString (AMDesignator) + "\", ");
-                        builder.Append ("\"" + EncodeString (PMDesignator) + "\", ");
+                        builder.Append (EncodeStringIdx (AMDesignator) + ", ");
+                        builder.Append (EncodeStringIdx (PMDesignator) + ", ");
 
                         AppendNames (builder, DayNames);
                         builder.Append (", ");
@@ -72,8 +72,8 @@ namespace Mono.Tools.LocaleBuilder {
                         builder.Append (CalendarWeekRule + ", ");
                         builder.Append (FirstDayOfWeek + ", ");
                         
-                        builder.Append ("\"" + EncodeString (DateSeparator) + "\", ");
-                        builder.Append ("\"" + EncodeString (TimeSeparator) + "\", ");
+                        builder.Append (EncodeStringIdx (DateSeparator) + ", ");
+                        builder.Append (EncodeStringIdx (TimeSeparator) + ", ");
 
                         AppendPatterns (builder, ShortDatePatterns);
                         builder.Append (',');
@@ -91,10 +91,8 @@ namespace Mono.Tools.LocaleBuilder {
                         string [] patterns = al.ToArray (typeof (string)) as string [];
                         builder.Append ('{');
                         for (int i = 0; i < patterns.Length; i++) {
-                                string s = EncodeString (patterns [i]);
-                                builder.Append ('\"');
+                                string s = EncodeStringIdx (patterns [i]);
                                 builder.Append (s);
-                                builder.Append ('\"');
                                 if (i + 1 < patterns.Length)
                                         builder.Append (',');
                         }
@@ -114,7 +112,7 @@ namespace Mono.Tools.LocaleBuilder {
                 {
                         builder.Append ('{');
                         for (int i=0; i<names.Count; i++) {
-                                builder.Append ("\"" + EncodeString (names [i].ToString ()) + "\"");
+                                builder.Append (EncodeStringIdx (names [i].ToString ()));
                                 if (i+1 < names.Count)
                                         builder.Append (", ");
                         }
