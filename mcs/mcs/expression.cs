@@ -3872,7 +3872,7 @@ namespace Mono.CSharp {
 
 				if (pd.ParameterModifier (j) == Parameter.Modifier.PARAMS &&
 				    chose_params_expanded)
-					parameter_type = parameter_type.GetElementType ();
+					parameter_type = TypeManager.TypeToCoreType (parameter_type.GetElementType ());
 
 				if (a.Type != parameter_type){
 					Expression conv;
