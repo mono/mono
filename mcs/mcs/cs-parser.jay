@@ -1457,7 +1457,8 @@ enum_declaration
 
 		foreach (VariableDeclaration ev in (ArrayList) $6){
 			CheckDef (e.AddEnumMember (ev.identifier, 
-						   (Expression) ev.expression_or_array_initializer),
+						   (Expression) ev.expression_or_array_initializer,
+						   (Location) ev.Location),
 				  ev.identifier);
 		}
 
@@ -1505,9 +1506,13 @@ enum_member_declaration
 	  {
 		$$ = new VariableDeclaration ((string) $2, null, lexer.Location);
 	  }
-	| opt_attributes IDENTIFIER ASSIGN expression
+	| opt_attributes IDENTIFIER
+	  {
+		  temporary_loc = lexer.Location;
+	  }
+          ASSIGN expression
 	  { 
-		$$ = new VariableDeclaration ((string) $2, $4, lexer.Location);
+		$$ = new VariableDeclaration ((string) $2, $5, temporary_loc);
 	  }
 	;
 

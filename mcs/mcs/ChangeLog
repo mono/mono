@@ -1,3 +1,26 @@
+2001-11-09  Ravi Pratap  <ravi@ximian.com>
+
+	* typemanager.cs (IsEnumType): Implement.
+
+	* enum.cs (Emit): Re-write parts to account for the underlying type
+	better and perform checking etc.
+
+	(GetNextDefaultValue): Helper to ensure we don't overshoot max value
+	of the underlying type.
+
+	* literal.cs (GetValue methods everywhere): Perform bounds checking and return
+	value
+
+	* enum.cs (error31): Helper to report error #31.
+
+	* cs-parser.jay (enum_declaration): Store location of each member too.
+
+	* enum.cs (member_to_location): New hashtable. 
+
+	(AddEnumMember): Update location hashtable.
+
+	(Emit): Use the location of each member while reporting errors.
+
 2001-11-09  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay: A for_initializer if is a

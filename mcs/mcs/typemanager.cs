@@ -406,6 +406,9 @@ public class TypeManager {
 		if (IsDelegateType (t))
 		        return null;
 
+		if (IsEnumType (t))
+		        return null;
+
 		Interface iface = (Interface) builder_to_interface [t];
 
 		if (iface != null) 
@@ -436,6 +439,16 @@ public class TypeManager {
 		Delegate del = (Delegate) delegate_types [t];
 
 		if (del != null)
+			return true;
+		else
+			return false;
+	}
+
+	public static bool IsEnumType (Type t)
+	{
+		Enum en = (Enum) enum_types [t];
+
+		if (en != null)
 			return true;
 		else
 			return false;
