@@ -1,3 +1,8 @@
+2003-04-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* loader.c (mono_lookup_internal_call): Report the corlib that is
+	out of sync.
+
 2003-03-05  Aleksey Demakov <avd@openlinksw.com>
 
 	* icall.c (ves_icall_type_GetTypeCode): fixed check for
