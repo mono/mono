@@ -480,7 +480,6 @@ namespace Mono.CSharp {
 
 			string signature; // "x:" are stripped
 			string name; // method invokation "(...)" are removed
-			string identifiers; // array indexer "[]" are removed
 			string parameters; // method parameter list
 
 			// strip 'T:' 'M:' 'F:' 'P:' 'E:' etc.
@@ -684,7 +683,6 @@ namespace Mono.CSharp {
 				paramTags [xname] = xname;
 			}
 			Parameter [] plist = mc.Parameters.FixedParameters;
-			Parameter parr = mc.Parameters.ArrayParameter;
 			if (plist != null) {
 				foreach (Parameter p in plist) {
 					if (paramTags.Count > 0 && paramTags [p.Name] == null)

@@ -1,3 +1,25 @@
+2004-12-09  Marek Safar  <marek.safar@seznam.cz>
+
+	* anonymous.cs, class.cs, convert.cs, doc.cs, support.cs: 
+	Reduced number of warnings.
+	
+	* class.cs (TypeContainer.VerifyClsCompliance): One if is enough.
+
+2004-12-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.cs: Removed message.
+
+	* delegate.cs: Fix bug introduced in 1.1.x: 70219.
+
+2004-12-08    <vargaz@freemail.hu>
+
+	* cs-tokenizer.cs: Add workaround for NET 2.0 beta 1 csc bug.
+
+2004-12-08  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (TypeContainer.VerifyClsCompliance): Report a CS3003
+	instead of a CS3002 for properties and indexer.
+
 2004-12-08  Martin Baulig  <martin@ximian.com>
 
 	* decl.cs (MemberName.ToString): Make this work again.

@@ -510,7 +510,6 @@ namespace Mono.CSharp {
 			if (ScopeTypeBuilder != null)
 				return;
 			
-			ILGenerator ig = ec.ig;
 			TypeBuilder container = ec.TypeContainer.TypeBuilder;
 
 			ScopeTypeBuilder = container.DefineNestedType (
@@ -692,9 +691,7 @@ namespace Mono.CSharp {
 		
 		public override string ToString ()
 		{
-			ToplevelBlock parent = ParentToplevel;
 			StringBuilder sb = new StringBuilder ();
-
 			sb.Append ("[");
 			DoPath (sb, this);
 			sb.Append ("]");
