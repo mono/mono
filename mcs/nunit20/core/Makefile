@@ -5,7 +5,7 @@ include ../../build/rules.make
 LIBRARY = nunit.core.dll
 LIBRARY_SNK = $(topdir)/nunit.key
 
-LOCAL_MCS_FLAGS= -r:nunit.framework.dll -r:System.dll /d:StronglyNamedAssembly
+LOCAL_MCS_FLAGS= -debug -r:nunit.framework.dll -r:System.dll /d:StronglyNamedAssembly
 NO_TEST = yo
 
 EXTRA_DISTFILES = nunit.core.dll.csproj
