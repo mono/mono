@@ -1,3 +1,10 @@
+2003-02-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AssemblyBuilder.cs: added GetToken (SignatureHelper).
+
+	* ILGenerator.cs: implemented EmitCalli() methods
+
+	* SignatureHelper.cs: implemented GetMethoSigHelper() methods.
 
 2003-01-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

@@ -11,6 +11,7 @@
 using System;
 using System.Collections;
 using System.Diagnostics.SymbolStore;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
 
@@ -503,6 +504,9 @@ namespace System.Reflection.Emit {
 			}
 		}
 		public virtual void Emit (OpCode opcode, MethodInfo method) {
+			if (method == null)
+				throw new ArgumentNullException ("method");
+
 			int token = abuilder.GetToken (method);
 			make_room (6);
 			ll_emit (opcode);
@@ -522,9 +526,8 @@ namespace System.Reflection.Emit {
 			code [code_len++] = (byte)val;
 		}
 
-		[MonoTODO]
 		public virtual void Emit (OpCode opcode, SignatureHelper shelper) {
-			int token = 0; // FIXME: request a token from the modulebuilder
+			int token = abuilder.GetToken (shelper);
 			make_room (6);
 			ll_emit (opcode);
 			emit_int (token);
@@ -560,10 +563,22 @@ namespace System.Reflection.Emit {
 		public void EmitCall (OpCode opcode, MethodInfo methodinfo, Type[] optionalParamTypes) {
 			throw new NotImplementedException ();
 		}
-		public void EmitCalli (OpCode opcode, CallingConventions call_conv, Type returnType, Type[] paramTypes, Type[] optionalParamTypes) {
-			throw new NotImplementedException ();
+
+		public void EmitCalli (OpCode opcode, CallingConvention unmanagedCallConv, Type returnType, Type[] paramTypes) {
+			SignatureHelper helper 
+				= SignatureHelper.GetMethodSigHelper (module, 0, unmanagedCallConv, returnType, paramTypes);
+			Emit (opcode, helper);
 		}
 
+		public void EmitCalli (OpCode opcode, CallingConventions callConv, Type returnType, Type[] paramTypes, Type[] optionalParamTypes) {
+			if (optionalParamTypes != null)
+				throw new NotImplementedException ();
+
+			SignatureHelper helper 
+				= SignatureHelper.GetMethodSigHelper (module, callConv, 0, returnType, paramTypes);
+			Emit (opcode, helper);
+		}
+		
 		public virtual void EmitWriteLine (FieldInfo field) {
 			throw new NotImplementedException ();
 		}

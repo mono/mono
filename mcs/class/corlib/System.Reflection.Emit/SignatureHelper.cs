@@ -28,6 +28,9 @@ namespace System.Reflection.Emit {
 		private ModuleBuilder module;
 		private Type[] arguments;
 		private SignatureHelperType type;
+		private Type returnType;
+		private CallingConventions callConv;
+		private CallingConvention unmanagedCallConv;
 
 		internal SignatureHelper (ModuleBuilder module, SignatureHelperType type)
 		{
@@ -42,6 +45,7 @@ namespace System.Reflection.Emit {
 
 			return new SignatureHelper ((ModuleBuilder) mod, SignatureHelperType.HELPER_FIELD);
 		}
+
 		public static SignatureHelper GetLocalVarSigHelper (Module mod)
 		{
 			if (!(mod is ModuleBuilder))
@@ -49,21 +53,29 @@ namespace System.Reflection.Emit {
 
 			return new SignatureHelper ((ModuleBuilder) mod, SignatureHelperType.HELPER_LOCAL);
 		}
-		[MonoTODO]
+
 		public static SignatureHelper GetMethodSigHelper( Module mod, CallingConventions callingConvention, Type returnType)
 		{
-			throw new NotImplementedException ();
+			return GetMethodSigHelper (mod, callingConvention, (CallingConvention)0, returnType, null);
 		}
-		[MonoTODO]
+
+		public static SignatureHelper GetMethodSigHelper( Module mod, CallingConvention unmanagedCallingConvention, Type returnType)
+		{
+			return GetMethodSigHelper (mod, CallingConventions.Standard, unmanagedCallingConvention, returnType, null);
+		}
+
 		public static SignatureHelper GetMethodSigHelper( Module mod, Type returnType, Type[] parameterTypes)
 		{
-			throw new NotImplementedException ();
+			return GetMethodSigHelper (mod, CallingConventions.Standard, 
+									   (CallingConvention)0, returnType, 
+									   parameterTypes);
 		}
 		[MonoTODO]
 		public static SignatureHelper GetPropertySigHelper( Module mod, Type returnType, Type[] parameterTypes)
 		{
 			throw new NotImplementedException ();
 		}
+
 		public void AddArgument (Type clsArgument)
 		{
 			if (arguments != null) {
@@ -114,6 +126,26 @@ namespace System.Reflection.Emit {
 			return "SignatureHelper";
 		}
 
+		internal static SignatureHelper GetMethodSigHelper( Module mod, CallingConventions callConv, CallingConvention unmanagedCallConv, Type returnType,
+														   Type [] parameters)
+		{
+			if (!(mod is ModuleBuilder))
+				throw new NotImplementedException ();
+
+			SignatureHelper helper = 
+				new SignatureHelper ((ModuleBuilder)mod, SignatureHelperType.HELPER_METHOD);
+			helper.returnType = returnType;
+			helper.callConv = callConv;
+			helper.unmanagedCallConv = unmanagedCallConv;
+
+			if (parameters != null) {
+				helper.arguments = new Type [parameters.Length];
+				for (int i = 0; i < parameters.Length; ++i)
+					helper.arguments [i] = parameters [i];
+			}
+
+			return helper;
+		}
 
 
 	}

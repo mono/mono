@@ -240,7 +240,7 @@ namespace System.Reflection.Emit {
 		private static extern int getUSIndex (AssemblyBuilder ab, string str);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern int getToken (AssemblyBuilder ab, MemberInfo member);
+		private static extern int getToken (AssemblyBuilder ab, object obj);
 
 		internal int GetToken (string str) {
 			if (us_string_cache.Contains (str))
@@ -253,7 +253,11 @@ namespace System.Reflection.Emit {
 		internal int GetToken (MemberInfo member) {
 			return getToken (this, member);
 		}
-		
+
+		internal int GetToken (SignatureHelper helper) {
+			return getToken (this, helper);
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern int getDataChunk (AssemblyBuilder ab, byte[] buf, int offset);
 
