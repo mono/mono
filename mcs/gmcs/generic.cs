@@ -736,6 +736,7 @@ namespace Mono.CSharp {
 
 			MethodGroupExpr new_mg = new MethodGroupExpr (methods, mg.Location);
 			new_mg.InstanceExpression = mg.InstanceExpression;
+			new_mg.HasTypeArguments = true;
 			return new_mg;
 		}
 

@@ -1,3 +1,16 @@
+2004-03-21  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs (TypeManager.IsGenericMethod): New public static
+	method; checks whether a method is a generic method.	
+
+	* expression.cs (Invocation.InferTypeArguments): New static method;
+	infer type arguments for generic method invocation.
+
+	* ecore.cs (MethodGroupExpr.HasTypeArguments): New public
+	property; we set this to true if we're resolving a generic method
+	invocation and the user specified type arguments, ie. we're not
+	doing type inference.
+
 2004-03-20  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (MethodData.DeclaringType): New public property.

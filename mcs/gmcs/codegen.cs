@@ -484,6 +484,7 @@ namespace Mono.CSharp {
 					    reachability.IsUnreachable)
 						unreachable = true;
 					}
+#if FIXME
 			    } catch (Exception e) {
 					Console.WriteLine ("Exception caught by the compiler while compiling:");
 					Console.WriteLine ("   Block that caused the problem begin at: " + loc);
@@ -496,6 +497,9 @@ namespace Mono.CSharp {
 					Console.WriteLine (Report.FriendlyStackTrace (e));
 					
 					Environment.Exit (1);
+#else
+			    } finally {
+#endif
 			    }
 			}
 

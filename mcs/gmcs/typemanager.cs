@@ -2459,6 +2459,19 @@ public class TypeManager {
 		IsObsoleteError = 1 << 1,
 		ShouldIgnore = 1 << 2
 	}
+
+	static public bool IsGenericMethod (MethodInfo mb)
+	{
+		if (mb.DeclaringType is TypeBuilder) {
+			MethodData method = (MethodData) builder_to_method [mb];
+			if (method == null)
+				return false;
+
+			return method.GenericMethod != null;
+		}
+
+		return mb.IsGenericMethodDefinition;
+	}
 	
 	//
 	// Returns the TypeManager.MethodFlags for this method.

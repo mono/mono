@@ -4581,7 +4581,14 @@ namespace Mono.CSharp {
 
                         bool found_applicable = false;
 
-			foreach (MethodBase candidate in me.Methods){
+			MethodBase[] methods = me.Methods;
+
+			for (int i = 0; i < methods.Length; i++) {
+				if (!me.HasTypeArguments &&
+				    !InferTypeArguments (ec, Arguments, ref methods [i]))
+					continue;
+
+				MethodBase candidate = methods [i];
                                 Type decl_type = candidate.DeclaringType;
 
                                 //
@@ -4613,6 +4620,11 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (Arguments == null)
+				argument_count = 0;
+			else
+				argument_count = Arguments.Count;
+
                         //
                         // Now we actually find the best method
                         //
@@ -4636,22 +4648,18 @@ namespace Mono.CSharp {
                                 method = candidate;
                         }
 
-			if (Arguments == null)
-				argument_count = 0;
-			else
-				argument_count = Arguments.Count;
-			
-
 			if (method == null) {
 				//
 				// Okay so we have failed to find anything so we
 				// return by providing info about the closest match
 				//
-				for (int i = 0; i < me.Methods.Length; ++i) {
+				for (int i = 0; i < methods.Length; ++i) {
 
-					MethodBase c = (MethodBase) me.Methods [i];
+					MethodBase c = methods [i];
+					if (c == null)
+						continue;
+
 					ParameterData pd = GetParameterData (c);
-
 					if (pd.Count != argument_count)
 						continue;
 
@@ -4836,6 +4844,86 @@ namespace Mono.CSharp {
 				}
 			}
 
+			return true;
+		}
+
+		static bool InferType (Type pt, Type at, ref Type[] infered)
+		{
+			if (!pt.ContainsGenericParameters)
+				return true;
+
+			if (pt.IsGenericParameter) {
+				int pos = pt.GenericParameterPosition;
+
+				if (infered [pos] == null) {
+					infered [pos] = at;
+					return true;
+				}
+
+				if (infered [pos] != at)
+					return false;
+
+				return true;
+			}
+
+			if (pt.IsArray) {
+				if (!at.IsArray ||
+				    (pt.GetArrayRank () != at.GetArrayRank ()))
+					return false;
+
+				return InferType (pt.GetElementType (), at.GetElementType (),
+						  ref infered);
+			}
+
+			if (!at.IsGenericInstance)
+				return false;
+
+			Type[] at_args = at.GetGenericArguments ();
+			Type[] pt_args = pt.GetGenericArguments ();
+
+			if (at_args.Length != pt_args.Length)
+				return false;
+
+			for (int i = 0; i < at_args.Length; i++)
+				if (!InferType (pt_args [i], at_args [i], ref infered))
+					return false;
+
+			return true;
+		}
+
+		static bool InferTypeArguments (EmitContext ec, ArrayList arguments,
+						ref MethodBase candidate)
+		{
+			MethodInfo method = candidate as MethodInfo;
+			if ((arguments == null) || (method == null) ||
+			    !TypeManager.IsGenericMethod (method))
+				return true;
+
+			ParameterData pd = GetParameterData (method);
+			if (arguments.Count != pd.Count)
+				return false;
+
+			Type[] method_args = method.GetGenericArguments ();
+			Type[] infered_types = new Type [method_args.Length];
+
+			for (int i = 0; i < arguments.Count; i++) {
+				Argument a = (Argument) arguments [i];
+
+				if ((a.Expr is NullLiteral) || (a.Expr is MethodGroupExpr))
+					continue;
+
+				Type pt = pd.ParameterType (i);
+				Type at = a.Type;
+
+				if (!InferType (pt, at, ref infered_types))
+					return false;
+			}
+
+			for (int i = 0; i < infered_types.Length; i++)
+				if (infered_types [i] == null)
+					return false;
+
+			candidate = method.BindGenericParameters (infered_types);
 			return true;
 		}
 

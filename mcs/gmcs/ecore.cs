@@ -2381,6 +2381,7 @@ namespace Mono.CSharp {
 		public MethodBase [] Methods;
 		Expression instance_expression = null;
 		bool is_explicit_impl = false;
+		bool has_type_arguments = false;
 		
 		public MethodGroupExpr (MemberInfo [] mi, Location l)
 		{
@@ -2442,6 +2443,16 @@ namespace Mono.CSharp {
 
 			set {
 				is_explicit_impl = value;
+			}
+		}
+
+		public bool HasTypeArguments {
+			get {
+				return has_type_arguments;
+			}
+
+			set {
+				has_type_arguments = value;
 			}
 		}
 
