@@ -30,6 +30,8 @@ namespace Mono.ILASM {
                 private PEAPI.Type resolved_type;
                 private ArrayList conversion_list;
                 private bool is_pinned;
+                private bool is_ref;
+                private bool is_array;
 
                 private bool is_resolved;
 
@@ -38,6 +40,8 @@ namespace Mono.ILASM {
                         this.full_name = full_name;
                         this.location = location;
                         is_pinned = false;
+                        is_ref = false;
+                        is_array = false;
                         conversion_list = new ArrayList ();
                         is_resolved = false;
                 }
@@ -48,6 +52,14 @@ namespace Mono.ILASM {
 
                 public bool IsPinned {
                         get { return is_pinned; }
+                }
+
+                public bool IsArray {
+                        get { return is_array; }
+                }
+
+                public bool IsRef {
+                        get { return is_ref; }
                 }
 
                 public PEAPI.Type PeapiType {
@@ -65,17 +77,20 @@ namespace Mono.ILASM {
                 public void MakeArray ()
                 {
                         conversion_list.Add (ConversionMethod.MakeArray);
+                        is_array = true;
                 }
 
                 public void MakeBoundArray (ArrayList bounds)
                 {
                         conversion_list.Add (ConversionMethod.MakeBoundArray);
                         conversion_list.Add (bounds);
+                        is_array = true;
                 }
 
                 public void MakeManagedPointer ()
                 {
                         conversion_list.Add (ConversionMethod.MakeManagedPointer);
+                        is_ref = true;
                 }
 
                 public void MakeUnmanagedPointer ()
@@ -95,7 +110,7 @@ namespace Mono.ILASM {
                 }
 
                 public  IMethodRef GetMethodRef (ITypeRef ret_type,
-                                string name, ITypeRef[] param)
+                        PEAPI.CallConv call_conv, string name, ITypeRef[] param)
                 {
                         return new MethodRef (this, ret_type, name, param);
                 }
@@ -147,6 +162,11 @@ namespace Mono.ILASM {
                         resolved_type = peapi_type.PeapiType;
 
                         is_resolved = true;
+                }
+
+                public IClassRef AsClassRef (CodeGen code_gen)
+                {
+                        return this;
                 }
 
                 public override string ToString ()

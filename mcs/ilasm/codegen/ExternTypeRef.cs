@@ -24,21 +24,31 @@ namespace Mono.ILASM {
                 }
 
                 public PEAPI.Class PeapiClass {
-                        get { return PeapiType as PEAPI.Class; }
+                        get {
+                                return PeapiType as PEAPI.Class;
+                        }
                 }
 
                 public PEAPI.ClassRef PeapiClassRef {
-                        get { return PeapiType as PEAPI.ClassRef; }
+                        get {
+                                return PeapiType as PEAPI.ClassRef;
+                        }
                 }
 
-                public IMethodRef GetMethodRef (ITypeRef ret_type, string name, ITypeRef[] param)
+                public IMethodRef GetMethodRef (ITypeRef ret_type, PEAPI.CallConv call_conv,
+                                string name, ITypeRef[] param)
                 {
-                        return new ExternMethodRef (this, ret_type, name, param);
+                        return new ExternMethodRef (this, ret_type, call_conv, name, param);
                 }
 
                 public IFieldRef GetFieldRef (ITypeRef ret_type, string name)
                 {
                         return new ExternFieldRef (this, ret_type, name);
+                }
+
+                public IClassRef AsClassRef (CodeGen code_gen)
+                {
+                        return this;
                 }
         }
 

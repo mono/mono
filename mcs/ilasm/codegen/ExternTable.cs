@@ -44,6 +44,21 @@ namespace Mono.ILASM {
 
                                 return klass;
                         }
+
+                        public PEAPI.ClassRef GetValueType (string name_space, string name)
+                        {
+                                string full_name = String.Format ("{0}.{1}",
+                                        name_space, name);
+                                PEAPI.ClassRef klass = type_table[full_name] as PEAPI.ClassRef;
+
+                                if (klass != null)
+                                        return klass;
+
+                                klass = (PEAPI.ClassRef) AssemblyRef.AddValueClass (name_space, name);
+                                type_table[full_name] = klass;
+
+                                return klass;
+                        }
                 }
 
                 PEAPI.PEFile pefile;
@@ -100,6 +115,21 @@ namespace Mono.ILASM {
                         GetNameAndNamespace (full_name, out name_space, out name);
 
                         return ext_asmb.GetType (name_space, name);
+                }
+
+                 public PEAPI.ClassRef GetValueClass (string asmb_name, string full_name)
+                {
+                        ExternAssembly ext_asmb;
+                        ext_asmb = assembly_table[asmb_name] as ExternAssembly;
+
+                        if (ext_asmb == null)
+                                throw new Exception (String.Format ("Assembly {0} not defined.", asmb_name));
+
+                        string name_space, name;
+
+                        GetNameAndNamespace (full_name, out name_space, out name);
+
+                        return ext_asmb.GetValueType (name_space, name);
                 }
 
                 public static void GetNameAndNamespace (string full_name,

@@ -1,3 +1,21 @@
+2003-05-18 Jackson Harper <jackson@latitudegeo.com>
+
+	* ExternMethodRef.cs: Accept and add calling conventions. Add
+	methods using array methods if owners are arrays, resolve methods
+	named <init> as .ctor.
+	* ExternTable.cs: Add method to get value classes.
+	* ExternTypeRef.cs: Add AsClassRef method, GetMethodRef now takes
+	calling conventions.
+	* IClassRef.cs: GetMethodRef now takes calling conventions
+	* ITypeRef.cs: Add IsArray IsRef and AsClassRef methods
+	* MethodRef.cs: Change <init> to .ctor
+	* PeapiTypeRef.cs: This class is no longer an ITypeRef because it
+	cannot be converted to a IClassRef. Add IsArray and IsRef, use new
+	Class::GetArray* methods to convert to arrays.
+	* PrimitiveTypeRef.cs: Add method to convert to an IClassRef
+	* TypeRef.cs: Add IsArray and IsRef, add method to convert to
+	IClassRef. GetMethodRef now takes calling conventions
+		
 2003-05-11 Jackson Harper <jackson@latitudegeo.com>
 
 	* MethodDef.cs: Add named param table and methods to get named param

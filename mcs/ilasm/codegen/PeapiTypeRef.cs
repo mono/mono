@@ -13,17 +13,21 @@ using System.Collections;
 
 namespace Mono.ILASM {
 
-        public class PeapiTypeRef : ITypeRef {
+        public class PeapiTypeRef  {
 
                 private PEAPI.Type peapi_type;
                 private string full_name;
                 private bool is_pinned;
+                private bool is_array;
+                private bool is_ref;
 
                 public PeapiTypeRef (PEAPI.Type peapi_type, string full_name)
                 {
                         this.peapi_type = peapi_type;
                         this.full_name = full_name;
                         is_pinned = false;
+                        is_array = false;
+                        is_ref = false;
                 }
 
                 public string FullName {
@@ -34,14 +38,28 @@ namespace Mono.ILASM {
                         get { return is_pinned; }
                 }
 
+                public bool IsArray {
+                        get { return is_array; }
+                }
+
+                public bool IsRef {
+                        get { return is_ref; }
+                }
+
                 public PEAPI.Type PeapiType {
                         get { return peapi_type; }
                 }
 
                 public void MakeArray ()
                 {
-                        peapi_type = new PEAPI.ZeroBasedArray (peapi_type);
+                        if (peapi_type is PEAPI.Class) {
+                                PEAPI.Class klass = (PEAPI.Class) peapi_type;
+                                peapi_type = klass.GetZeroBasedArray ();
+                        } else {
+                                peapi_type = new PEAPI.ZeroBasedArray (peapi_type);
+                        }
                         full_name += "[]";
+                        is_array = true;
                 }
 
                 public void MakeBoundArray (ArrayList bound_list)
@@ -83,12 +101,14 @@ namespace Mono.ILASM {
                         }
                         /// TODO: Proper full names
                         full_name += "[][]";
+                        is_array = true;
                 }
 
                 public void MakeManagedPointer ()
                 {
                         peapi_type = new PEAPI.ManagedPointer (peapi_type);
                         full_name += "&";
+                        is_ref = true;
                 }
 
                 public void MakeUnmanagedPointer ()
@@ -110,8 +130,9 @@ namespace Mono.ILASM {
 
                 public void Resolve (CodeGen code_gen)
                 {
-                        // Nothing needs to be done.
+
                 }
+
 
         }
 
