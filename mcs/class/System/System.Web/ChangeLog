@@ -1,3 +1,7 @@
+2003-11-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* AspNetHostingPermissionAttribute.cs: Added missing AttributeUsageAttribute
+
 2003-11-12  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* ChangeLog: Added
