@@ -5,7 +5,7 @@
 // 	Patrik Torstensson (ptorsten@hotmail.com)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (c) 2002 Ximian, Inc. (http://www.ximian.com)
+// (c) 2002,2003 Ximian, Inc. (http://www.ximian.com)
 //
 using System;
 using System.Collections;
@@ -16,10 +16,6 @@ using System.Web.Compilation;
 using System.Web.SessionState;
 
 namespace System.Web {
-	/// <summary>
-	/// TODO: We need to compile the global.asax into a type inherited from HttpApplication
-	/// </summary>
-	[MonoTODO]
 	class HttpApplicationFactory {
 		private string _appFilename;
 		private Type _appType;
@@ -65,8 +61,14 @@ namespace System.Web {
 			_appFreePublicInstances = 0;
 		}
 
-		static private string GetAppFilename(HttpContext context) {
-			return Path.Combine(context.Request.PhysicalApplicationPath, "global.asax");
+		static private string GetAppFilename (HttpContext context)
+		{
+			string physicalAppPath = context.Request.PhysicalApplicationPath;
+			string appFilePath = Path.Combine (physicalAppPath, "Global.asax");
+			if (File.Exists (appFilePath))
+				return appFilePath;
+
+			return Path.Combine (physicalAppPath, "global.asax");
 		}
 
 		private void CompileApp(HttpContext context) {
@@ -74,8 +76,10 @@ namespace System.Web {
 				// Setup filemonitor for all filedepend also. CacheDependency?
 
 				_appType = GlobalAsaxCompiler.CompileApplicationType (_appFilename, context);
-				if (_appType == null)
-					throw new ApplicationException ("Error compiling application file (global.asax).");
+				if (_appType == null) {
+					string msg = String.Format ("Error compiling application file ({0}).", _appFilename);
+					throw new ApplicationException (msg);
+				}
 			} else {
 				_appType = typeof (System.Web.HttpApplication);
 				_state = new HttpApplicationState ();

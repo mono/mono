@@ -1,5 +1,12 @@
 2003-02-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpApplicationFactory.cs: Global.asax takes precedence over
+	global.asax if it exists.
+
+	* HttpRequest.cs: use allowCrossAppMapping in MapPath.
+
+2003-02-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpApplication.cs: CreateHttpHandler is now internal.
 
 	* HttpRequest.cs: allow setting QueryStringRaw, which

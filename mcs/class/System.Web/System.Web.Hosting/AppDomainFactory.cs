@@ -107,7 +107,12 @@ namespace System.Web.Hosting
 			setup.ShadowCopyFiles = "true";
 			setup.ApplicationBase = new Uri (appPath, true).ToString ();
 			setup.ApplicationName = appName;
-			setup.ConfigurationFile = "web.config";
+			string webConfigName = Path.Combine (appPath, "Web.config");
+			if (File.Exists (webConfigName))
+				setup.ConfigurationFile = "Web.config";
+			else
+				setup.ConfigurationFile = "web.config";
+
 			if (dict != null) {
 				dict.Add (domainData [0], "*");
 				dict.Add (domainData [1], appId);

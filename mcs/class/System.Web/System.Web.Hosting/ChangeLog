@@ -1,3 +1,9 @@
+2003-02-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AppDomainFactory.cs: Web.config takes precedence over web.config.
+
+	* ApplicationHost.cs: removed hacks to work around an old bug.
+
 2003-02-04  Tim Haynes <thaynes@openlinksw.com>
 
 	* SimpleWorkerRequest.cs: changed the initialised values of

@@ -976,7 +976,6 @@ namespace System.Web {
 			return MapPath (VirtualPath, BaseVirtualDir, true);
 		}
 
-		[MonoTODO("allowCrossAppMapping?")]
 		public string MapPath (string virtualPath, string baseVirtualDir, bool allowCrossAppMapping)
 		{
 			if (_WorkerRequest == null)
@@ -986,6 +985,9 @@ namespace System.Web {
 				virtualPath = ".";
 			else
 				virtualPath = virtualPath.Trim ();
+
+			if (virtualPath.IndexOf (':') != -1)
+				throw new ArgumentException ("Invalid path -> " + virtualPath);
 
 			if (System.IO.Path.DirectorySeparatorChar != '/')
 				virtualPath = virtualPath.Replace (System.IO.Path.DirectorySeparatorChar, '/');
@@ -1000,6 +1002,14 @@ namespace System.Web {
 				}
 			}
 
+			if (!allowCrossAppMapping) {
+				if (!virtualPath.ToLower ().StartsWith (RootVirtualDir.ToLower ()))
+					throw new HttpException ("Mapping across applications not allowed.");
+
+				if (RootVirtualDir.Length > 1 && virtualPath.Length > 1 && virtualPath [0] != '/')
+					throw new HttpException ("Mapping across applications not allowed.");
+			}
+			
 			return _WorkerRequest.MapPath (virtualPath);
 		}
 
