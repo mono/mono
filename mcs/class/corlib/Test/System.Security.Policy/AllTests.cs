@@ -21,6 +21,8 @@ namespace MonoTests.System.Security.Policy {
                                 TestSuite suite = new TestSuite();
                                 suite.AddTest(CodeGroupTest.Suite);
 				suite.AddTest(EvidenceTest.Suite);
+                                suite.AddTest(PublisherTest.Suite);
+				suite.AddTest(PublisherMembershipConditionTest.Suite);
                                 return suite;
                         }
                 }
