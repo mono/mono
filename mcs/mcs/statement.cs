@@ -2062,7 +2062,11 @@ namespace Mono.CSharp {
 			if (index == 0)
 				return true;
 
-			int field_idx = struct_params [number] [field_name];
+			MyStructInfo info = (MyStructInfo) struct_params [number];
+			if (info == null)
+				return true;
+
+			int field_idx = info [field_name];
 
 			return CurrentUsageVector [index + field_idx];
 		}
@@ -2083,7 +2087,11 @@ namespace Mono.CSharp {
 			if (index == 0)
 				return;
 
-			int field_idx = struct_params [number] [field_name];
+			MyStructInfo info = (MyStructInfo) struct_params [number];
+			if (info == null)
+				return;
+
+			int field_idx = info [field_name];
 
 			if (!CurrentUsageVector.AlwaysBreaks)
 				CurrentUsageVector [index + field_idx] = true;

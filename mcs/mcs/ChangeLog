@@ -1,5 +1,10 @@
 2002-10-06  Martin Baulig  <martin@gnome.org>
 
+	* statemenc.cs (FlowBranching.SetParameterAssigned): Don't crash
+	if it's a class type and not a struct.  Fixes #31815.
+
+2002-10-06  Martin Baulig  <martin@gnome.org>
+
 	* statement.cs: Reworked the flow analysis code a bit to make it
 	usable for dead code elimination.
 
