@@ -95,6 +95,9 @@ namespace System.IO
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static bool SetFileAttributes (string path, FileAttributes attrs);
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static MonoFileType GetFileType (IntPtr handle);
+
 		public static bool Exists (string path)
 		{
 			FileAttributes attrs = GetFileAttributes (path);

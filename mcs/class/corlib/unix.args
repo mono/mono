@@ -239,6 +239,7 @@ System.IO/IOException.cs
 System.IO/MemoryStream.cs
 System.IO/MonoIO.cs
 System.IO/MonoIOError.cs
+System.IO/MonoFileType.cs
 System.IO/MonoIOStat.cs
 System.IO/Path.cs
 System.IO/PathTooLongException.cs

@@ -593,6 +593,7 @@ namespace System.Diagnostics {
 			if(startInfo.RedirectStandardInput==true) {
 				MonoIO.Close(stdin_rd);
 				process.input_stream=new StreamWriter(new FileStream(stdin_wr, FileAccess.Write, true));
+				process.input_stream.AutoFlush=true;
 			}
 
 			if(startInfo.RedirectStandardOutput==true) {
