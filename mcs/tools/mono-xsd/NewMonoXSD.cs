@@ -325,8 +325,9 @@ namespace Mono.Util {
 			{
 				foreach (XmlSchema schema in schemas) {
 					if (!schema.IsCompiled) schema.Compile (null);
-					foreach (XmlSchemaElement elem in schema.Elements.Values)
-						qnames.Add (elem.QualifiedName);
+					foreach (XmlSchemaObject ob in schema.Items)
+						if (ob is XmlSchemaElement)
+							qnames.Add (((XmlSchemaElement)ob).QualifiedName);
 				}
 			}
 
