@@ -556,7 +556,8 @@ namespace System.Xml {
 			for (int i = 0; i < row.Table.Columns.Count; i++) {
 
 				rowElement = CreateElement (row.Table.Columns [i].ColumnName);
-				rowElement.InnerText = (string)row [i];
+				object v = row [i];
+				rowElement.InnerText = v != null ? v.ToString () : String.Empty;
 				element.AppendChild (rowElement);
 			}
 			
