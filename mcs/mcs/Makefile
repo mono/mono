@@ -53,11 +53,11 @@ DISTFILES = \
 all-local: mcs.exe
 
 install-local: mcs.exe
-	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/bin
-	$(INSTALL_BIN) mcs.exe $(DESTDIR)$(prefix)/bin
+	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib/mono/1.1
+	$(INSTALL_BIN) mcs.exe $(DESTDIR)$(prefix)/lib/mono/1.1
 
 uninstall-local:
-	-rm -f $(DESTDIR)$(prefix)/bin/mcs.exe
+	-rm -f $(DESTDIR)$(prefix)/lib/mono/1.1/mcs.exe
 
 test-local run-test-local:
 
