@@ -554,20 +554,28 @@ namespace Mono.CSharp {
 			if (ImplicitStandardConversionExists (ec, expr, target_type))
 				return true;
 
-			Expression dummy = ImplicitUserConversion (ec, expr, target_type, Location.Null);
+			//
+			// VB.NET has no notion of User defined conversions
+			//
 
-			if (dummy != null)
-				return true;
+// 			Expression dummy = ImplicitUserConversion (ec, expr, target_type, Location.Null);
+
+// 			if (dummy != null)
+// 				return true;
 
 			return false;
 		}
 
-		public static bool ImplicitUserConversionExists (EmitContext ec, Type source, Type target)
-		{
-			Expression dummy = ImplicitUserConversion (
-				ec, new EmptyExpression (source), target, Location.Null);
-			return dummy != null;
-		}
+		//
+		// VB.NET has no notion of User defined conversions
+		//
+
+// 		public static bool ImplicitUserConversionExists (EmitContext ec, Type source, Type target)
+// 		{
+// 			Expression dummy = ImplicitUserConversion (
+// 				ec, new EmptyExpression (source), target, Location.Null);
+// 			return dummy != null;
+// 		}
 
 		/// <summary>
 		///  Determines if a standard implicit conversion exists from
@@ -1018,20 +1026,30 @@ namespace Mono.CSharp {
 		/// <summary>
 		///  User-defined Implicit conversions
 		/// </summary>
-		static public Expression ImplicitUserConversion (EmitContext ec, Expression source,
-								 Type target, Location loc)
-		{
-			return UserDefinedConversion (ec, source, target, loc, false);
-		}
+
+		//
+		// VB.NET has no notion of User defined conversions
+		//
+
+// 		static public Expression ImplicitUserConversion (EmitContext ec, Expression source,
+// 								 Type target, Location loc)
+// 		{
+// 			return UserDefinedConversion (ec, source, target, loc, false);
+// 		}
 
 		/// <summary>
 		///  User-defined Explicit conversions
 		/// </summary>
-		static public Expression ExplicitUserConversion (EmitContext ec, Expression source,
-								 Type target, Location loc)
-		{
-			return UserDefinedConversion (ec, source, target, loc, true);
-		}
+
+		//
+		// VB.NET has no notion of User defined conversions
+		//
+
+// 		static public Expression ExplicitUserConversion (EmitContext ec, Expression source,
+// 								 Type target, Location loc)
+// 		{
+// 			return UserDefinedConversion (ec, source, target, loc, true);
+// 		}
 
 		static DoubleHash explicit_conv = new DoubleHash (100);
 		static DoubleHash implicit_conv = new DoubleHash (100);
@@ -1112,6 +1130,10 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   User-defined conversions
 		/// </summary>
+
+		//
+		// VB.NET has no notion of User defined conversions. This method is not used.
+		//
 		static public Expression UserDefinedConversion (EmitContext ec, Expression source,
 								Type target, Location loc,
 								bool look_for_explicit)
@@ -1195,9 +1217,13 @@ namespace Mono.CSharp {
 			if (e != null)
 				return e;
 
-			e = ImplicitUserConversion (ec, expr, target_type, loc);
-			if (e != null)
-				return e;
+			//
+			// VB.NET has no notion of User defined conversions
+			//
+
+// 			e = ImplicitUserConversion (ec, expr, target_type, loc);
+// 			if (e != null)
+// 				return e;
 
 			return null;
 		}
@@ -1984,9 +2010,13 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			ne = ExplicitUserConversion (ec, expr, target_type, loc);
-			if (ne != null)
-				return ne;
+			//
+			// VB.NET has no notion of User defined conversions
+			//
+
+// 			ne = ExplicitUserConversion (ec, expr, target_type, loc);
+// 			if (ne != null)
+// 				return ne;
 
 			if (expr is NullLiteral){
 				Report.Error (37, loc, "Cannot convert null to value type `" +

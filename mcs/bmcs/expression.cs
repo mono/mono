@@ -1989,12 +1989,18 @@ namespace Mono.CSharp {
 			if (!check_user_conversions)
 				return false;
 
-			if (Convert.ImplicitUserConversionExists (ec, l, t))
-				return true;
-			else if (Convert.ImplicitUserConversionExists (ec, r, t))
-				return true;
-			else
-				return false;
+			//
+			// VB.NET has no notion of User defined conversions
+			//
+
+// 			if (Convert.ImplicitUserConversionExists (ec, l, t))
+// 				return true;
+// 			else if (Convert.ImplicitUserConversionExists (ec, r, t))
+// 				return true;
+// 			else
+// 				return false;
+
+			return false;
 		}
 
 		//

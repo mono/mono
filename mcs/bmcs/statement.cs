@@ -2390,34 +2390,39 @@ namespace Mono.CSharp {
 			// conversions, we have to report an error
 			//
 			Expression converted = null;
-			foreach (Type tt in allowed_types){
-				Expression e;
-				
-				e = Convert.ImplicitUserConversion (ec, Expr, tt, loc);
-				if (e == null)
-					continue;
 
-				//
-				// Ignore over-worked ImplicitUserConversions that do
-				// an implicit conversion in addition to the user conversion.
-				// 
-				if (e is UserCast){
-					UserCast ue = e as UserCast;
+			//
+			// VB.NET has no notion of User defined conversions
+			//
 
-					if (ue.Source != Expr)
-						e = null;
-				}
+// 			foreach (Type tt in allowed_types){
+// 				Expression e;
 				
-				if (converted != null){
-					Report.ExtraInformation (
-						loc,
-						String.Format ("reason: more than one conversion to an integral type exist for type {0}",
-							       TypeManager.CSharpName (Expr.Type)));
-					return null;
-				} else {
-					converted = e;
-				}
-			}
+// 				e = Convert.ImplicitUserConversion (ec, Expr, tt, loc);
+// 				if (e == null)
+// 					continue;
+
+// 				//
+// 				// Ignore over-worked ImplicitUserConversions that do
+// 				// an implicit conversion in addition to the user conversion.
+// 				// 
+// 				if (e is UserCast){
+// 					UserCast ue = e as UserCast;
+
+// 					if (ue.Source != Expr)
+// 						e = null;
+// 				}
+				
+// 				if (converted != null){
+// 					Report.ExtraInformation (
+// 						loc,
+// 						String.Format ("reason: more than one conversion to an integral type exist for type {0}",
+// 							       TypeManager.CSharpName (Expr.Type)));
+// 					return null;
+// 				} else {
+// 					converted = e;
+// 				}
+// 			}
 			return converted;
 		}
 

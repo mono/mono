@@ -1,3 +1,11 @@
+2005-02-28  Jambunathan K  <kjambunathan.devel@gmail.com>
+
+	* convert.cs :
+	* expression.cs :	
+	* statement.cs: VB.NET has no notion of User defined
+	conversions. Assuming that UserDefinedConversion() returns null,
+	propagated the resulting changes upstream. 
+
 2005-02-02  Martin Baulig  <martin@ximian.com>
 
 	* delegate.cs (Delegate.DefineType): Report an internal error if
