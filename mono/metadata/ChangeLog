@@ -1,3 +1,10 @@
+2003-02-05  Dietmar Maurer  <dietmar@ximian.com>
+
+	* object.c (mono_store_remote_field_new): used by the new jit
+	instead of mono_store_remote_field
+	(mono_load_remote_field_new): used by the new jit
+	instead of mono_load_remote_field
+
 2003-02-05  Patrik Torstensson
 
 	* appdomain.c: changed unload to take the domain id instead
