@@ -1,3 +1,7 @@
+2004-11-25  Ben Maurer  <bmaurer@ximian.com>
+
+	* Stack.cs: New, list based impl. Waiting for some gmcs fixes.
+
 2004-11-10  Martin Baulig  <martin@ximian.com>
 
 	* IDictionary.cs (IDictionary): `IsReadOnly' and `Clear' are

@@ -1,11 +1,11 @@
-// -*- Mode: csharp; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
 // System.Collections.Generic.Stack
 //
-// Author:
-//    Martin Baulig (martin@ximian.com)
+// Authors:
+//	Martin Baulig (martin@ximian.com)
+//	Ben Maurer (bmaurer@ximian.com)
 //
-// (C) 2003 Novell, Inc.
+// (C) 2003, 2004 Novell, Inc.
 //
 
 //
@@ -37,194 +37,232 @@ using System.Runtime.InteropServices;
 
 namespace System.Collections.Generic
 {
-	[CLSCompliant(false)]
-	[ComVisible(false)]
-	public class Stack<T> : ICollection<T>, IEnumerable<T>,
-		ICollection, IEnumerable
-	{
-		int count;
-		protected int modified;
-		protected Node head;
-
+	[CLSCompliant (false)]
+	[ComVisible (false)]
+	public class Stack <T> : ICollection <T>, IEnumerable <T>, ICollection, IEnumerable {
+		
+		T [] data;
+		int size;
+		int ver;
+		
 		public Stack ()
-		{ }
-
+		{
+		}
+		
+		public Stack (int count)
+		{
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count");
+			
+			data = new T [count];
+		}
+		
+		public Stack (IEnumerable <T> collection)
+		{
+			if (collection == null)
+				throw new ArgumentNullException ("collection");
+			
+			ICollection <T> col = collection as ICollection <T>;
+			
+			
+			if (col != null) {
+				size = col.Count;
+				data = new T [size];
+				col.CopyTo (data, 0);
+			} else {
+#if GMCS_FIXED
+				foreach (T t in collection)
+					Push (t);
+#endif
+			}
+		}
+		
 		public void Clear ()
 		{
-			head = null;
-			count = 0;
-			modified++;
+			if (data != null)
+				Array.Clear (data, 0, data.Length);
+			
+			size = 0;
+			ver ++;
 		}
-
-		public void Push (T item)
+		
+		public bool Contains (T t)
 		{
-			head = new Node (head, item);
-			count++;
-			modified++;
+			return data != null && Array.IndexOf (data, t, 0, size) != -1;
 		}
-
+		
+		public void CopyTo (T [] dest, int idx)
+		{
+			// this gets copied in the order that it is poped
+			if (data != null) {
+				data.CopyTo (dest, idx);
+				Array.Reverse (dest, idx, size);
+			}
+		}
+		
 		public T Peek ()
 		{
-			if (head == null)
-				throw new ArgumentException ();
-
-			return head.Item;
+			if (size == 0)
+				throw new InvalidOperationException ();
+			
+			ver ++;
+			
+			return data [size - 1];
 		}
-
+		
 		public T Pop ()
 		{
-			if (head == null)
-				throw new ArgumentException ();
-
-			T retval = head.Item;
-			head = head.Next;
-			count--;
-			modified++;
-			return retval;
+			if (size == 0)
+				throw new InvalidOperationException ();
+			
+			ver ++;
+			
+			return data [-- size];
 		}
 
-		public bool Contains (T item)
+		public void Push (T t)
 		{
-			for (Node node = head; node != null; node = node.Next)
-				if (node.Item == item)
-					return true;
-
-			return false;
+			if (size == 0 || size == data.Length)
+				Array.Resize <T> (ref data, size == 0 ? 10 : 2 * size);
+			
+			ver ++;
+			
+			data [++ size] = t;
 		}
-
-		public virtual void CopyTo (T[] array, int start)
+		
+		public T [] ToArray ()
 		{
-			// re-ordered to avoid possible integer overflow
-			if (start >= array.Length - count)
-				throw new ArgumentException ();
-
-			for (Node node = head; node != null; node = node.Next)
-				array [start++] = node.Item;
+			T [] copy = new T [size];
+			CopyTo (copy, 0);
+			return copy;
 		}
-
-		void ICollection.CopyTo (Array array, int start)
-		{
-			// re-ordered to avoid possible integer overflow
-			if (start >= array.Length - count)
-				throw new ArgumentException ();
-
-			for (Node node = head; node != null; node = node.Next)
-				array.SetValue (node.Item, start++);
-		}
-
-		public T[] ToArray ()
-		{
-			int pos = 0;
-			T[] retval = new T [count];
-			for (Node node = head; node != null; node = node.Next)
-				retval [pos++] = node.Item;
-
-			return retval;
-		}
-
+		
 		public void TrimToSize ()
-		{ }
-
-		public int Count {
-			get { return count; }
+		{
+			// for some broken reason, msft increments the version here
+			ver ++;
+			
+			if (size == 0)
+				data = null;
+			else
+				Array.Resize <T> (ref data, size);
 		}
-
-		public bool IsSynchronized {
+		
+		public int Count {
+			get { return size; }
+		}
+		
+		bool ICollection <T>.IsReadOnly {
 			get { return false; }
 		}
-
-		public object SyncRoot {
+		
+		bool ICollection.IsSynchronized {
+			get { return false; }
+		}
+		
+		object ICollection.SyncRoot {
 			get { return this; }
 		}
-
-		public bool IsReadOnly {
-			get { return false; }
-		}
-
-		public void Add (T item)
+		
+		void ICollection <T>.Add (T t)
 		{
-			Push (item);
+			Push (t);
 		}
-
-		public bool Remove (T item)
+		
+		bool ICollection <T>.Remove (T t)
 		{
-			throw new NotImplementedException ();
+			throw new InvalidOperationException ("");
 		}
-
-		public IEnumerator<T> GetEnumerator ()
+		
+		void ICollection.CopyTo (Array dest, int idx)
 		{
+			try {
+				if (data != null) {
+					data.CopyTo (dest, idx);
+					Array.Reverse (dest, idx, size);
+				}
+			} catch (ArrayTypeMismatchException) {
+				throw new ArgumentException ();
+			}
+		}
+		
+		public Enumerator <T> GetEnumerator ()
+		{
+#if GMCS_FIXED
 			return new Enumerator (this);
+#else
+			throw new Exception ("FIXME");
+#endif
+		}
+
+		IEnumerator <T> IEnumerable<T>.GetEnumerator ()
+		{
+			return GetEnumerator ();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			return new Enumerator (this);
+			return GetEnumerator ();
 		}
-
-		protected sealed class Node
-		{
-			public readonly T Item;
-			public readonly Node Next;
-
-			public Node (Node next, T item)
+		
+		public struct Enumerator <T> : IEnumerator <T>, IEnumerator, IDisposable {
+			const int NOT_STARTED = -2;
+			
+			// this MUST be -1, because we depend on it in move next.
+			// we just decr the size, so, 0 - 1 == FINISHED
+			const int FINISHED = -1;
+			
+			Stack <T> parent;
+			int idx;
+			int ver;
+			
+			internal Enumerator (Stack <T> t)
 			{
-				this.Next = next;
-				this.Item = item;
+				parent = t;
+				idx = NOT_STARTED;
+				ver = t.ver;
 			}
-		}
-
-		protected class Enumerator : IEnumerator<T>, IEnumerator
-		{
-			Stack<T> stack;
-			int modified;
-			Node current;
-
-			public Enumerator (Stack<T> stack)
-			{
-				this.stack = stack;
-				this.modified = stack.modified;
-				this.current = stack.head;
-			}
-
-			public T Current {
-				get {
-					if (stack.modified != modified)
-						throw new InvalidOperationException ();
-					if (current == null)
-						throw new ArgumentException ();
-					return current.Item;
-				}
-			}
-
-			object IEnumerator.Current {
-				get {
-					return Current;
-				}
-			}
-
-			public bool MoveNext ()
-			{
-				if (stack.modified != modified)
-					throw new InvalidOperationException ();
-				if (current == null)
-					throw new ArgumentException ();
-
-				current = current.Next;
-				return current != null;
-			}
-
-			public void Reset ()
-			{
-				if (stack.modified != modified)
-					throw new InvalidOperationException ();
-
-				current = stack.head;
-			}
-
+			
+			// for some fucked up reason, MSFT added a useless dispose to this class
+			// It means that in foreach, we must still do a try/finally. Broken, very
+			// broken.
 			public void Dispose ()
 			{
-				modified = -1;
+				idx = NOT_STARTED;
 			}
+			
+			public bool MoveNext ()
+			{
+				if (ver != parent.ver)
+					throw new InvalidOperationException ();
+				
+				if (idx == -2)
+					idx = parent.size;
+				
+				return idx != FINISHED && -- idx != FINISHED;
+			}
+			
+			public T Current {
+				get {
+					if (idx < 0)
+						throw new InvalidOperationException ();
+					
+					return parent.data [idx];
+				}
+			}
+			
+			void IEnumerator.Reset ()
+			{
+				if (ver != parent.ver)
+					throw new InvalidOperationException ();
+				
+				idx = NOT_STARTED;
+			}
+			
+			object IEnumerator.Current {
+				get { return Current; }
+			}
+			
 		}
 	}
 }
