@@ -3908,10 +3908,15 @@ namespace Mono.CSharp {
 			for (int j = 0; j < argument_count; j++) {
 				Argument a = (Argument) Arguments [j];
 				Expression a_expr = a.Expr;
-				Type parameter_type = pd.ParameterType (j);
-				
+				Type parameter_type = pd.ParameterType(j);
+					
+				if (parameter_type == null)
+				{
+					Error_WrongNumArguments(loc, (InvokingProperty == null)?((delegate_type == null)?FullMethodDesc (method):delegate_type.ToString ()):InvokingProperty, argument_count);
+					return false;	
+				}
 				if (pd.ParameterModifier (j) == Parameter.Modifier.PARAMS &&
-				    chose_params_expanded)
+			    	chose_params_expanded)
 					parameter_type = TypeManager.TypeToCoreType (parameter_type.GetElementType ());
 
 				if (a.Type != parameter_type){
@@ -4095,6 +4100,10 @@ namespace Mono.CSharp {
 					expr_to_return = pe.DoResolve (ec);
 					expr_to_return.eclass = ExprClass.PropertyAccess;
 				}
+				else
+				{
+					throw new Exception("Error resolving Property Access expression\n" + pe.ToString());
+				}
 			}
 
 			if (expr is FieldExpr || expr is LocalVariableReference || expr is ParameterReference) {
@@ -4145,6 +4154,12 @@ namespace Mono.CSharp {
 
 			return expr_to_return;
 		}
+
+        static void Error_WrongNumArguments (Location loc, String name, int arg_count)
+        {
+            Report.Error (1501, loc, "No overload for method `" + name + "' takes `" +
+                                      arg_count + "' arguments");
+        }
 
 		// <summary>
 		//   Emits the list of arguments as an array

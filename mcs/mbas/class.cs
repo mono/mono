@@ -3673,27 +3673,16 @@ namespace Mono.CSharp {
 			Modifiers.SEALED |
 			Modifiers.OVERRIDE |
 			Modifiers.ABSTRACT |
-		        Modifiers.UNSAFE |
+		    Modifiers.UNSAFE |
 			Modifiers.EXTERN |
-			Modifiers.VIRTUAL;
+			Modifiers.VIRTUAL |
+			Modifiers.DEFAULT |
+			Modifiers.READONLY |
+			Modifiers.WRITEONLY ;
 
 		string set_parameter_name;
 		Parameters get_params;
 		Parameters set_params;
-		
-		public Property (Expression type, string name, int mod_flags,
-				Accessor get_block, Accessor set_block,
-				Attributes attrs, Location loc, string set_name, 
-				Parameters p_get, Parameters p_set)
-			: base (type, name, mod_flags, AllowedModifiers,
-				p_set,
-				get_block, set_block, attrs, loc)
-		{
-			set_parameter_name = set_name;
-			get_params = p_get;
-			set_params = p_set;
-			Implements = null;
-		}
 		
 		public Property (Expression type, string name, int mod_flags,
 				Accessor get_block, Accessor set_block,
@@ -3708,17 +3697,13 @@ namespace Mono.CSharp {
 			set_params = p_set;
 			Implements = impl_what;
 		}		
-
+		
 		public Property (Expression type, string name, int mod_flags,
 				 Accessor get_block, Accessor set_block,
 				 Attributes attrs, Location loc)
-			: base (type, name, mod_flags, AllowedModifiers,
-				Parameters.EmptyReadOnlyParameters,
-				get_block, set_block, attrs, loc)
+			: this (type, name, mod_flags, get_block, set_block, attrs, loc, 
+					"Value", Parameters.EmptyReadOnlyParameters, Parameters.EmptyReadOnlyParameters, null)
 		{
-			set_parameter_name = "Value";
-			get_params = Parameters.EmptyReadOnlyParameters;
-			set_params = Parameters.EmptyReadOnlyParameters;
 		}
 
 		public override bool Define (TypeContainer parent)

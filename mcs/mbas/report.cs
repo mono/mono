@@ -58,6 +58,26 @@ namespace Mono.CSharp {
 		//
 		static Hashtable warning_ignore_table;
 		
+		static public int ProcessResults(bool quiet)
+		{
+			if (!quiet)
+			{
+				if (Report.ExpectedError != 0)
+					Console.WriteLine("Failed to report expected Error " + Report.ExpectedError);
+					
+				if (Errors == 0) 
+				{
+					if (Warnings == 0) 
+						Console.WriteLine("Compilation succeeded");
+					else
+						Console.WriteLine("Compilation succeeded: {0} warning(s)", Warnings);
+				}
+				else
+					Console.WriteLine("Compilation failed: {0} Error(s), {1} warnings",	Errors, Warnings);
+			}
+			return (Errors == 0)?0:1;
+		}
+		
 		static void Check (int code)
 		{
 			if (code == expected_error){

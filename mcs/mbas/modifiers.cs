@@ -11,21 +11,25 @@ namespace Mono.CSharp {
 		// The ordering of the following 4 constants
 		// has been carefully done.
 		//
-		public const int PROTECTED = 0x0001;
-		public const int PUBLIC    = 0x0002;
-		public const int PRIVATE   = 0x0004;
-		public const int INTERNAL  = 0x0008;
-		public const int NEW       = 0x0010;
-		public const int ABSTRACT  = 0x0020;
-		public const int SEALED    = 0x0040;
-		public const int STATIC    = 0x0080;
-		public const int READONLY  = 0x0100;
-		public const int VIRTUAL   = 0x0200;
-		public const int OVERRIDE  = 0x0400;
-		public const int EXTERN    = 0x0800;
-		public const int VOLATILE  = 0x1000;
-		public const int UNSAFE    = 0x2000;
-		public const int TOP       = 0x2000;
+		public const int PROTECTED = 0x00001;
+		public const int PUBLIC    = 0x00002;
+		public const int PRIVATE   = 0x00004;
+		public const int INTERNAL  = 0x00008;
+		public const int NEW       = 0x00010;
+		public const int ABSTRACT  = 0x00020;
+		public const int SEALED    = 0x00040;
+		public const int STATIC    = 0x00080;
+		public const int READONLY  = 0x00100;
+		public const int VIRTUAL   = 0x00200;
+		public const int OVERRIDE  = 0x00400;
+		public const int EXTERN    = 0x00800;
+		public const int VOLATILE  = 0x01000;
+		public const int UNSAFE    = 0x02000;
+		public const int WRITEONLY = 0x04000;
+		public const int OVERLOADS = 0x08000;
+		public const int DEFAULT   = 0x10000;
+		public const int NONVIRTUAL= 0x20000;
+		private const int TOP      = 0x20000;
 
 		public const int Accessibility =
 			PUBLIC | PROTECTED | INTERNAL | PRIVATE;

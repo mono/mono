@@ -54,8 +54,11 @@ namespace Mono.CSharp {
 		{
 			if (last_arg_is_params && pos >= pi.Length - 1)
 				return pi [pi.Length - 1].ParameterType;
-			else 
-				return pi [pos].ParameterType;
+			else
+				if (pos >= pi.Length)
+					return null;
+				else
+					return pi [pos].ParameterType;
 		}
 
 		public string ParameterName (int pos)

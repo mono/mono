@@ -66,7 +66,7 @@ namespace Mono.Languages
 		}
 
 		[Option("[Mono] Don\'t assume the standard library", "nostdlib")]
-		public bool nostdlib { set { RootContext.StdLib = !value; } }
+		public bool NoStandardLibraries { set { RootContext.StdLib = !value; } }
 
 		[Option("[Mono] Disables implicit references to assemblies", "noconfig")]
 		public bool NoConfig { set { load_default_config = !value; } }
@@ -77,7 +77,7 @@ namespace Mono.Languages
 		[Option("[Mono] Set default context to checked", "checked")]
 		public bool Checked { set { RootContext.Checked = value; } }
 
-		[Option("[Mono] Debugger arguments", "debug-args")]
+		[Option("[Mono] Debugger {arguments}", "debug-args")]
 		public WhatToDoNext SetDebugArgs(string args)
 		{
 			char[] sep = { ',' };
@@ -85,25 +85,25 @@ namespace Mono.Languages
 			return WhatToDoNext.GoAhead;
 		}
 
-		[Option("[Mono] Ignores warning number PARAM", "ignorewarn")]
+		[Option("[Mono] Ignores warning number {XXXX}", "ignorewarn")]
 		public WhatToDoNext SetIgnoreWarning(int warn)
 		{
 			Report.SetIgnoreWarning(warn);
 			return WhatToDoNext.GoAhead;
 		}	
 
-		[Option("[Mono] Sets warning level (the highest is 4, the default)", "wlevel")]
-		public int wlevel { set { RootContext.WarningLevel = value; } }
+		[Option("[Mono] Sets warning {level} (the highest is 4, the default)", "wlevel")]
+		public int WarningLevel { set { RootContext.WarningLevel = value; } }
 
 		[Option("[Mono] Makes errors fatal", "fatal")]
 		public bool Fatal { set { Report.Fatal = value; } }
 
 		// Output file options
 		//------------------------------------------------------------------
-		[Option("Specifies the output file name", 'o', "out")]
-		public string output_file = null;
+		[Option("Specifies the output {file} name", 'o', "out")]
+		public string OutputFileName = null;
 
-		[Option("Specifies the target type for the output file (exe [default], winexe, library, module)", "target")]
+		[Option("Specifies the target {type} for the output file (exe [default], winexe, library, module)", "target")]
 		public WhatToDoNext SetTarget(string type)
 		{
 			switch (type.ToLower())
@@ -131,48 +131,46 @@ namespace Mono.Languages
 
 		// input file options
 		//------------------------------------------------------------------
-		[Option("[NOT IMPLEMENTED YET]Reference metadata from specified module", "addmodule")]
-		public string[] addedModules = null;
+		public ArrayList AddedModules = new ArrayList();
 
-		[Option("[NOT IMPLEMENTED YET]Include all files in the current directory and subdirectories according to the wildcard", "recurse")]
-		public WhatToDoNext recurse(string wildcard)
+		[Option("[NOT IMPLEMENTED YET]References metadata from specified {module}", "addmodule")]
+		public string AddedModule { set { AddedModules.Add(value); } }
+
+		[Option("[NOT IMPLEMENTED YET]Include all files in the current directory and subdirectories according to the {wildcard}", "recurse")]
+		public WhatToDoNext Recurse(string wildcard)
 		{
 			//AddFiles (DirName, true); // TODO wrong semantics
 			return WhatToDoNext.GoAhead;
 		}
 
-		[Option(-1, "References metadata from the specified assembly", 'r', "reference")]
-		public string reference { set { references.Add(value); } }
+		[Option(-1, "References metadata from the specified {assembly}", 'r', "reference")]
+		public string AddedReference { set { references.Add(value); } }
 
 		// resource options
 		//------------------------------------------------------------------
 		public ArrayList EmbeddedResources = new ArrayList();
 		
-		// TODO : accept a multi-letter short form: 'res'
-		[Option(-1, "Adds the specified file as an embedded assembly resource", "resource")]
-		public string resource { set { EmbeddedResources.Add(value); } }
+		[Option(-1, "Adds the specified {file} as an embedded assembly resource", "resource", "res")]
+		public string AddedResource { set { EmbeddedResources.Add(value); } }
 
 		public ArrayList LinkedResources = new ArrayList();
 		
-		// TODO : accept a multi-letter short form: 'linkres'
-		[Option(-1, "[NOT IMPLEMENTED YET]Adds the specified file as an embedded assembly resource", "linkresource")]
-		public string linkresource { set { LinkedResources.Add(value); } }
+		[Option(-1, "[NOT IMPLEMENTED YET]Adds the specified {file} as a linked assembly resource", "linkresource", "linkres")]
+		public string AddedLinkresource { set { LinkedResources.Add(value); } }
 
 		public ArrayList Win32Resources = new ArrayList();
 		
-		[Option(-1, "[NOT IMPLEMENTED YET]Specifies a Win32 resource file (.res)", "win32resource")]
-		public string win32resource { set { Win32Resources.Add(value); } }
+		[Option(-1, "[NOT IMPLEMENTED YET]Specifies a Win32 resource {file} (.res)", "win32resource")]
+		public string AddedWin32resource { set { Win32Resources.Add(value); } }
 
 		public ArrayList Win32Icons = new ArrayList();
 		
-		// TODO : accept a multi-letter short form: 'res'
-		[Option(-1, "[NOT IMPLEMENTED YET]Specifies a Win32 icon file (.ico) for the default Win32 resources", "win32icon")]
-		public string win32icon { set { Win32Icons.Add(value); } }
-
+		[Option(-1, "[NOT IMPLEMENTED YET]Specifies a Win32 icon {file} (.ico) for the default Win32 resources", "win32icon")]
+		public string AddedWin32icon { set { Win32Icons.Add(value); } }
 
 		// code generation options
 		//------------------------------------------------------------------
-		[Option("[NOT IMPLEMENTED YET]Enable optimizations")]
+		[Option("[NOT IMPLEMENTED YET]Enable optimizations", "optimize")]
 		public bool optimize = false;
 
 		[Option("[NOT IMPLEMENTED YET]Remove integer checks. Default off.")]
@@ -193,34 +191,42 @@ namespace Mono.Languages
 		[Option("Treat warnings as errors", "warnaserror")]
 		public bool WarningsAreErrors { set { Report.WarningsAreErrors = value; } }
 
-		[Option("Disable warnings")]
-		public bool nowarn { set { if (value) RootContext.WarningLevel = 0; } }
+		[Option("Disable warnings", "nowarn")]
+		public bool NoWarnings { set { if (value) RootContext.WarningLevel = 0; } }
 
 
 		// language options
 		//------------------------------------------------------------------
 		public Hashtable Defines = new Hashtable();
 		
-		// TODO: Symbol-List parsing
-		[Option(-1, "[NOT IMPLEMENTED YET]Declares global conditional compilation symbol(s). symbol list:name=value,...", 'd', "define")]
+		[Option(-1, "Declares global conditional compilation symbol(s). {symbol-list}:name=value,...", 'd', "define")]
 		public string define { 
-			set {
-				foreach(string item in value.Split(',')) {	
+			set 
+			{
+				foreach(string item in value.Split(',')) 
+				{	
 					string[] dados = item.Split('=');
-					if (dados.Length > 1)
-						Defines.Add(dados[0], dados[1]); 
-					else
-						Defines.Add(dados[0], string.Empty);
+					try
+					{
+						if (dados.Length > 1)
+							Defines.Add(dados[0], dados[1]); 
+						else
+							Defines.Add(dados[0], string.Empty);
+					}
+					catch 
+					{
+						Error ("Could not define symbol" + dados[0]);
+					}
 				}
 			} 
 		}
 		
 		private string[] importsList = null;
 		
-		[Option("[NOT IMPLEMENTED YET]Declare global Imports for namespaces in referenced metadata files. import list:namespace,...", "imports")]
+		[Option("[NOT IMPLEMENTED YET]Declare global Imports for namespaces in referenced metadata files. {import-list}:namespace,...", "imports")]
 		public WhatToDoNext imports(string importslist)
 		{
-			importsList = importslist.Split(';');
+			importsList = importslist.Split(',');
 			return WhatToDoNext.GoAhead;
 		}
 
@@ -238,13 +244,13 @@ namespace Mono.Languages
 		[Option("[NOT IMPLEMENTED YET]Specifies text-style string comparisons.", "optioncompare:text")]
 		public bool optioncomparetext { set { Mono.MonoBASIC.Parser.InitialOptionCompareBinary = false; } }
 
-		[Option("Specifies de root namespace for all type declarations")]
+		[Option("Specifies de root {namespace} for all type declarations")]
 		public string rootnamespace { set { RootContext.RootNamespace = value; } }
 		
 		// Miscellaneous options	
 		//------------------------------------------------------------------
 		
-		[Option("[NOT IMPLEMENTED YET]Do not display compiler copyright banner")]
+		[Option("[IGNORED]Do not display compiler copyright banner")]
 		public bool nologo = false;
 		
 		[Option("[NOT IMPLEMENTED YET]Quiet output mode")]
@@ -257,25 +263,25 @@ namespace Mono.Languages
 		// Advanced options	
 		//------------------------------------------------------------------
 		// TODO: force option to accept number in hex format
-		[Option("[NOT IMPLEMENTED YET]The base address for a library or module (hex)")]
+		[Option("[NOT IMPLEMENTED YET]The base {address} for a library or module (hex)")]
 		public int baseaddress;
 		
-		[Option("[NOT IMPLEMENTED YET]Create bug report file")]
+		[Option("[NOT IMPLEMENTED YET]Create bug report {file}")]
 		public string bugreport;
 		
 		// TODO: handle VB.NET [+|-] boolean syntax
 		[Option("[NOT IMPLEMENTED YET]Delay-sign the assembly using only the public portion of the strong name key")]
 		public bool delaysign;
 		
-		[Option("[NOT IMPLEMENTED YET]Specifies a strong name key container")]
+		[Option("[NOT IMPLEMENTED YET]Specifies a strong name key {container}")]
 		public string keycontainer;
 		
-		[Option("[NOT IMPLEMENTED YET]Specifies a strong name key file")]
+		[Option("[NOT IMPLEMENTED YET]Specifies a strong name key {file}")]
 		public string keyfile;
 
 		public string[] libpath = null;
 		
-		[Option("List of directories to search for metadata references (semi-colon delimited)", "libpath")]
+		[Option("List of directories to search for metadata references {path-list}:path;...", "libpath")]
 		public WhatToDoNext setlibpath(string pathlist)
 		{
 			libpath = pathlist.Split(';');
@@ -283,12 +289,12 @@ namespace Mono.Languages
 		}
 
 		[Option(@"Specifies the Class or Module that contains Sub Main.
-			It can also be a Class that inherits from System.Windows.Forms.Form.",
+			It can also be a {class} that inherits from System.Windows.Forms.Form.",
 			'm', "main")]
 		public string main { set { RootContext.MainClass = value; } }
 
 		// TODO: handle VB.NET [+|-] boolean syntax
-		[Option("[NOT IMPLEMENTED YET]Emit compiler output in UTF8 character encoding")]
+		[Option("[IGNORED]Emit compiler output in UTF8 character encoding")]
 		public bool utf8output;
 
 		// TODO : response file support
@@ -319,13 +325,6 @@ namespace Mono.Languages
 				(int) span.TotalSeconds, span.Milliseconds, msg);
 		}
 	       		
-		public static int Main (string[] args)
-		{
-			Driver Exec = new Driver();
-
-			return Exec.MainDriver(args);
-		}
-
 		public int LoadAssembly (string assembly, bool soft)
 		{
 			Assembly a;
@@ -577,56 +576,22 @@ namespace Mono.Languages
 			{
 				if (outputFile_Name == null)
 				{
-					if (output_file == null)
+					if (OutputFileName == null)
 					{
 						int pos = first_source.LastIndexOf(".");
 
 						if (pos > 0)
-							output_file = first_source.Substring(0, pos);
+							OutputFileName = first_source.Substring(0, pos);
 						else
-							output_file = first_source;
+							OutputFileName = first_source;
 					}
-					string bname = CodeGen.Basename(output_file);
+					string bname = CodeGen.Basename(OutputFileName);
 					if (bname.IndexOf(".") == -1)
-						output_file +=  target_ext;
-					outputFile_Name = output_file;
+						OutputFileName +=  target_ext;
+					outputFile_Name = OutputFileName;
 				}
 				return outputFile_Name;
 			}
-		}
-
-		/// <summary>
-		///    Parses the arguments, and calls the compilation process.
-		/// </summary>
-		int MainDriver(string [] args)
-		{
-			ProcessArgs(args);
-			if (first_source == null)
-			{
-				DoHelp();
-				return 2;
-			}
-
-			CompileAll();
-
-			if (Report.Errors == 0) 
-			{
-				Console.Write("Compilation succeeded");
-				if (Report.Warnings > 0) 
-				{
-					Console.Write(" - {0} warning(s)", Report.Warnings);
-				} 
-				Console.WriteLine();
-				return 0;
-			} 
-			Console.WriteLine("Compilation failed: {0} Error(s), {1} warnings",
-				Report.Errors, Report.Warnings);
-			return 1;
-		}
-
-		public Driver()
-		{
-			SetupDefaultDefines();	
 		}
 
 		bool ParseAll() // Phase 1
@@ -883,11 +848,35 @@ namespace Mono.Languages
 			if (!ResolveAllTypes()) // Phase 2
 				return;
 
-			if (!GenerateAssembly()) // Phase 3 
-				return;
+			GenerateAssembly(); // Phase 3 
+		}
 
-			if (Report.ExpectedError != 0)
-				Error("Failed to report expected Error " + Report.ExpectedError);
+		/// <summary>
+		///    Parses the arguments, and calls the compilation process.
+		/// </summary>
+		int MainDriver(string [] args)
+		{
+			SetupDefaultDefines();	
+
+			ProcessArgs(args);
+			
+			if (first_source == null)
+			{
+				if (!quiet) 
+					DoHelp();
+				return 2;
+			}
+
+			CompileAll();
+
+			return Report.ProcessResults(quiet);
+		}
+
+		public static int Main (string[] args)
+		{
+			Driver Exec = new Driver();
+
+			return Exec.MainDriver(args);
 		}
 
 	}
