@@ -11,7 +11,7 @@
 //    Daniel Morgan <danielmorgan@verizon.net>
 //    Tim Coleman <tim@timcoleman.com>
 //
-// Copyright (C) Daniel Morgan, 2002, 2004
+// Copyright (C) Daniel Morgan, 2002, 2004-2005
 // Copyright (C) Tim Coleman , 2003
 //
 // Licensed under the MIT/X11 License.
@@ -22,6 +22,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.OracleClient.Oci;
 using System.Drawing.Design;
+using System.Text;
 
 namespace System.Data.OracleClient {
 	[Designer ("Microsoft.VSDesigner.Data.VS.OracleCommandDesigner, " + Consts.AssemblyMicrosoft_VSDesigner)]
@@ -39,7 +40,7 @@ namespace System.Data.OracleClient {
 		OracleTransaction transaction;
 		UpdateRowSource updatedRowSource;
 
-		OciStatementHandle preparedStatement;
+		private OciStatementHandle preparedStatement;
 		OciStatementType statementType;
 
 		#endregion // Fields
@@ -90,7 +91,11 @@ namespace System.Data.OracleClient {
 		[DefaultValue (CommandType.Text)]
 		public CommandType CommandType {
 			get { return commandType; }
-			set { commandType = value; }
+			set { 
+				if (value == CommandType.TableDirect)
+					throw new ArgumentException ("OracleClient provider does not support TableDirect CommandType.");
+				commandType = value; 
+			}
 		}
 
 		[DefaultValue (null)]
@@ -206,7 +211,44 @@ namespace System.Data.OracleClient {
 		[MonoTODO]
 		public object Clone ()
 		{
-			throw new NotImplementedException ();
+			// create a new OracleCommand object with the same properties
+			
+			OracleCommand cmd = new OracleCommand ();
+			
+			cmd.CommandText = this.CommandText;
+			cmd.CommandType = this.CommandType;
+
+			// FIXME: not sure if I should set the same object here
+			// or get a clone of these too
+			cmd.Connection = this.Connection;
+			cmd.Transaction = this.Transaction;
+			
+			foreach (OracleParameter parm in this.Parameters) {
+
+				OracleParameter newParm = cmd.CreateParameter ();
+
+				newParm.DbType = parm.DbType;
+				newParm.Direction = parm.Direction;
+				newParm.IsNullable = parm.IsNullable;
+				newParm.Offset = parm.Offset;
+				newParm.OracleType = parm.OracleType;
+				newParm.ParameterName = parm.ParameterName;
+				newParm.Precision = parm.Precision;
+				newParm.Scale = parm.Scale;
+				newParm.SourceColumn = parm.SourceColumn;
+				newParm.SourceVersion = parm.SourceVersion;
+				newParm.Value = parm.Value;
+
+				cmd.Parameters.Add (newParm);
+			}
+
+			//cmd.Container = this.Container;
+			cmd.DesignTimeVisible = this.DesignTimeVisible;
+			//cmd.DesignMode = this.DesignMode;
+			cmd.Site = this.Site;
+			//cmd.UpdateRowSource = this.UpdateRowSource;
+
+			return cmd;
 		}
 
 		internal void CloseDataReader ()
@@ -224,7 +266,7 @@ namespace System.Data.OracleClient {
 		private int ExecuteNonQueryInternal (OciStatementHandle statement, bool useAutoCommit)
 		{
 			if (preparedStatement == null)
-				statement.Prepare (CommandText);
+				PrepareStatement (statement);
 
 			BindParameters (statement);
 			statement.ExecuteNonQuery (useAutoCommit);
@@ -287,7 +329,40 @@ namespace System.Data.OracleClient {
 		[MonoTODO]
 		public object ExecuteOracleScalar ()
 		{
-			throw new NotImplementedException ();
+			object output = DBNull.Value;
+
+			AssertConnectionIsOpen ();
+			AssertTransactionMatch ();
+			AssertCommandTextIsSet ();
+
+			if (Transaction != null)
+				Transaction.AttachToServiceContext ();
+
+			OciStatementHandle statement = GetStatementHandle ();
+			try {
+				if (preparedStatement == null)
+					PrepareStatement (statement);
+				BindParameters (statement);
+
+				statement.ExecuteQuery ();
+
+				if (statement.Fetch ()) {
+					OciDefineHandle defineHandle = (OciDefineHandle) statement.Values [0];
+					if (!defineHandle.IsNull)
+						output = defineHandle.GetOracleValue ();
+						switch (defineHandle.DataType) {
+						case OciDataType.Blob:
+						case OciDataType.Clob:
+							((OracleLob) output).connection = Connection;
+							break;
+						}
+				}
+
+				return output;
+			}
+			finally {
+				SafeDisposeHandle (statement);
+			}
 		}
 
 		private bool IsNonQuery (OciStatementHandle statementHandle) 
@@ -322,7 +397,7 @@ namespace System.Data.OracleClient {
 
 			try	{
 				if (preparedStatement == null)
-					statement.Prepare (CommandText);
+					PrepareStatement (statement);
 				else
 					preparedStatement = null;	// OracleDataReader releases the statement handle
 
@@ -359,13 +434,30 @@ namespace System.Data.OracleClient {
 			OciStatementHandle statement = GetStatementHandle ();
 			try {
 				if (preparedStatement == null)
-					statement.Prepare (CommandText);
+					PrepareStatement (statement);
 				BindParameters (statement);
 
 				statement.ExecuteQuery ();
 
-				if (statement.Fetch ()) 
-					output = ((OciDefineHandle) statement.Values [0]).GetValue ();
+				if (statement.Fetch ()) {
+					OciDefineHandle defineHandle = (OciDefineHandle) statement.Values [0];
+					if (defineHandle.IsNull)
+						output = DBNull.Value;
+					else {
+						switch (defineHandle.DataType) {
+						case OciDataType.Blob:
+						case OciDataType.Clob:
+							OracleLob lob = (OracleLob) defineHandle.GetValue ();
+							lob.connection = Connection;
+							output = lob.Value;
+							lob.Close ();
+							break;
+						default:
+							output = defineHandle.GetValue ();
+							break;
+						}
+					}
+				}
 				else
 					output = DBNull.Value;
 			}
@@ -409,11 +501,29 @@ namespace System.Data.OracleClient {
 			return ExecuteReader (behavior);
 		}
 
+		void PrepareStatement (OciStatementHandle statement) 
+		{
+			if (commandType == CommandType.StoredProcedure) {
+				StringBuilder sb = new StringBuilder ();
+				if (Parameters.Count > 0)
+					foreach (OracleParameter parm in Parameters) {
+						if (sb.Length > 0)
+							sb.Append (",");
+						sb.Append (":" + parm.ParameterName);
+					}
+
+				string sql = "call " + commandText + "(" + sb.ToString() + ")";
+				statement.Prepare (sql);
+			}
+			else	// Text
+				statement.Prepare (commandText);
+		}
+
 		public void Prepare ()
 		{
 			AssertConnectionIsOpen ();
 			OciStatementHandle statement = GetStatementHandle ();
-			statement.Prepare (CommandText);
+			PrepareStatement (statement);
 			preparedStatement = statement;
 		}
 

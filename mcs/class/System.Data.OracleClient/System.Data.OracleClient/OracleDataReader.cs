@@ -23,6 +23,7 @@ using System.Data;
 using System.Data.Common;
 using System.Data.OracleClient.Oci;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace System.Data.OracleClient {
 	public sealed class OracleDataReader : MarshalByRefObject, IDataReader, IDisposable, IDataRecord, IEnumerable
@@ -54,14 +55,14 @@ namespace System.Data.OracleClient {
 			this.statementType = statement.GetStatementType ();
 		}
 
-	        internal OracleDataReader (OracleCommand command, OciStatementHandle statement, bool extHasRows )
-	        {
-        	    this.command = command;
-	            this.hasRows = extHasRows;
-	            this.isClosed = false;
-	            this.schemaTable = ConstructSchemaTable ();
-	            this.statement = statement;
-        	    this.statementType = statement.GetStatementType ();
+		internal OracleDataReader (OracleCommand command, OciStatementHandle statement, bool extHasRows ) 
+		{
+			this.command = command;
+			this.hasRows = extHasRows;
+			this.isClosed = false;
+			this.schemaTable = ConstructSchemaTable ();
+			this.statement = statement;
+			this.statementType = statement.GetStatementType ();
 	        }
 
 
@@ -206,7 +207,7 @@ namespace System.Data.OracleClient {
 
 		public string GetDataTypeName (int i)
 		{
-			return (string) dataTypeNames [i];
+			return dataTypeNames [i].ToString ().ToUpper ();
 		}
 
 		public DateTime GetDateTime (int i)
@@ -235,11 +236,8 @@ namespace System.Data.OracleClient {
 
 		public Type GetFieldType (int i)
 		{
-			// FIXME: "DataType" need to implement
-			//OciColumnInfo columnInfo = command.StatementHandle.DescribeColumn (i);
-			//Type fieldType = OciGlue.OciDataTypeToDbType (columnInfo.DataType);
-			//return fieldType;
-			return typeof(string);
+			OciDefineHandle defineHandle = (OciDefineHandle) statement.Values [i];
+			return defineHandle.FieldType;
 		}
 
 		public float GetFloat (int i)
@@ -290,25 +288,37 @@ namespace System.Data.OracleClient {
 		[MonoTODO]
 		public OracleBinary GetOracleBinary (int i)
 		{
-			throw new NotImplementedException ();
+			if (IsDBNull (i))
+				throw new InvalidOperationException("The value is null");
+
+			return new OracleBinary ((byte[]) GetValue (i));
 		}
 
 		public OracleLob GetOracleLob (int i)
 		{
-			OracleLob output = ((OciDefineHandle) statement.Values [i]).GetOracleLob ();
+			if (IsDBNull (i))
+				throw new InvalidOperationException("The value is null");
+
+			OracleLob output = (OracleLob) ((OciDefineHandle) statement.Values [i]).GetValue();
 			output.connection = command.Connection;
 			return output;
 		}
 
 		public OracleNumber GetOracleNumber (int i)
 		{
-			return new OracleNumber ((decimal) GetValue (i));
+			if (IsDBNull (i))
+				throw new InvalidOperationException("The value is null");
+
+			return new OracleNumber (GetDecimal (i));
 		}
 
 		[MonoTODO]
 		public OracleDateTime GetOracleDateTime (int i)
 		{
-			throw new NotImplementedException ();
+			if (IsDBNull (i))
+				throw new InvalidOperationException("The value is null");
+
+			return new OracleDateTime (GetDateTime (i));
 		}
 
 		[MonoTODO]
@@ -320,25 +330,65 @@ namespace System.Data.OracleClient {
 		[MonoTODO]
 		public OracleString GetOracleString (int i)
 		{
-			throw new NotImplementedException ();
+			if (IsDBNull (i))
+				throw new InvalidOperationException("The value is null");
+
+			return new OracleString (GetString (i));
 		}
 
 		[MonoTODO]
 		public object GetOracleValue (int i)
 		{
-			throw new NotImplementedException ();
+			OciDefineHandle defineHandle = (OciDefineHandle) statement.Values [i];
+
+			switch (defineHandle.DataType) {
+			case OciDataType.Raw:
+				return GetOracleBinary (i);
+			case OciDataType.Date:
+				return GetOracleDateTime (i);
+			case OciDataType.Clob:
+			case OciDataType.Blob:
+				return GetOracleLob (i);
+			case OciDataType.Integer:
+			case OciDataType.Number:
+			case OciDataType.Float:
+				return GetOracleNumber (i);
+			case OciDataType.VarChar2:
+			case OciDataType.String:
+			case OciDataType.VarChar:
+			case OciDataType.Char:
+			case OciDataType.CharZ:
+			case OciDataType.OciString:
+			case OciDataType.LongVarChar:
+			case OciDataType.RowIdDescriptor:
+				return GetOracleString (i);
+			default:
+				throw new NotImplementedException ();
+			}
 		}
 
 		[MonoTODO]
 		public int GetOracleValues (object[] values)
 		{
-			throw new NotImplementedException ();
+			int len = values.Length;
+			int count = statement.ColumnCount;
+			int retval = 0;
+
+			if (len > count)
+				retval = count;
+			else
+				retval = len;
+
+			for (int i = 0; i < retval; i += 1) 
+				values [i] = GetOracleValue (i);
+
+			return retval;
 		}
 
 		[MonoTODO]
 		public OracleTimeSpan GetOracleTimeSpan (int i)
 		{
-			throw new NotImplementedException ();
+			return new OracleTimeSpan (GetTimeSpan (i));
 		}
 
 		public int GetOrdinal (string name)
@@ -377,16 +427,15 @@ namespace System.Data.OracleClient {
 
 				OciParameterDescriptor parameter = statement.GetParameter (i);
 
-				dataTypeNames.Add(parameter.GetDataTypeName());
+				dataTypeNames.Add (parameter.GetDataTypeName ());
 
 				row ["ColumnName"]		= parameter.GetName ();
 				row ["ColumnOrdinal"]		= i + 1;
 				row ["ColumnSize"]		= parameter.GetDataSize ();
 				row ["NumericPrecision"]	= parameter.GetPrecision ();
 				row ["NumericScale"]		= parameter.GetScale ();
-				// FIXME: "DataType" need to implement
-				//row ["DataType"] = OciGlue.OciDataTypeToDbType (columnInfo.DataType);
-				row ["DataType"]		= typeof(string);
+				string sDataTypeName = parameter.GetDataTypeName ();
+				row ["DataType"]		= parameter.GetFieldType (sDataTypeName);
 				row ["AllowDBNull"]		= parameter.GetIsNull ();
 				row ["BaseColumnName"]		= parameter.GetName ();
 				row ["IsReadOnly"] 		= true;
@@ -417,10 +466,19 @@ namespace System.Data.OracleClient {
 		{
 			OciDefineHandle defineHandle = (OciDefineHandle) statement.Values [i];
 
-			if (IsDBNull (i))
+			if (defineHandle.IsNull)
 				return DBNull.Value;
 
-			return defineHandle.GetValue ();
+			switch (defineHandle.DataType) {
+			case OciDataType.Blob:
+			case OciDataType.Clob:
+				OracleLob lob = GetOracleLob (i);
+				object value = lob.Value;
+				lob.Close ();
+				return value;
+			default:
+				return defineHandle.GetValue ();
+			}
 		}
 
 		public int GetValues (object[] values)
@@ -447,14 +505,14 @@ namespace System.Data.OracleClient {
 
 		public bool IsDBNull (int i)
 		{
-			return ((OciDefineHandle) statement.Values [i]).IsNull;
+			OciDefineHandle defineHandle = (OciDefineHandle) statement.Values [i];
+			return defineHandle.IsNull;
 		}
 
 		[MonoTODO]
 		public bool NextResult ()
 		{
 			// FIXME: get next result
-			//throw new NotImplementedException ();
 			return false; 
 		}
 
@@ -463,7 +521,6 @@ namespace System.Data.OracleClient {
 			bool retval = statement.Fetch ();
 			hasRows = retval;
 			return retval;
-			//return command.StatementHandle.Fetch ();
 		}
 
 		#endregion // Methods

@@ -156,7 +156,7 @@ namespace System.Data.OracleClient.Oci {
 				IntPtr.Zero,
 				IntPtr.Zero,
 				(OciExecuteMode)executeMode);
-		
+
 			switch (status) {
 			case OciGlue.OCI_DEFAULT:
 				if (!nonQuery) {

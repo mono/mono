@@ -302,8 +302,7 @@ namespace System.Data.OracleClient
 
 				switch (name) {
 				case "DATA SOURCE" :
-				case "DATABASE" :
-					// set Database property
+				case "SERVER" :
 					conInfo.Database = value;
 					break;
 				case "PASSWORD" :
@@ -315,7 +314,7 @@ namespace System.Data.OracleClient
 					conInfo.Username = value;
 					break;
 				default:
-					throw new Exception("Connection parameter not supported." + name);
+					throw new ArgumentException("Connection parameter not supported: '" + name + "'");
 				}
 			}
 		}

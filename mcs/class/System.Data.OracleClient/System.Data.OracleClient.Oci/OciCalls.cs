@@ -93,9 +93,9 @@ namespace System.Data.OracleClient.Oci
 				[MarshalAs (UnmanagedType.U4)] int position,
 				IntPtr valuep,
 				int value_sz,
-				[MarshalAs (UnmanagedType.U2)] OciDataType dty,
+				[MarshalAs (UnmanagedType.U4)] OciDataType dty,
 				ref short indp,
-				ref int rlenp,
+				ref short rlenp,
 				IntPtr rcodep,
 				uint mode);
 
@@ -106,9 +106,9 @@ namespace System.Data.OracleClient.Oci
 				[MarshalAs (UnmanagedType.U4)] int position,
 				ref IntPtr valuep,
 				int value_sz,
-				[MarshalAs (UnmanagedType.U2)] OciDataType dty,
+				[MarshalAs (UnmanagedType.U4)] OciDataType dty,
 				ref short indp,
-				ref int rlenp,
+				ref short rlenp,
 				IntPtr rcodep,
 				uint mode);
 
@@ -300,7 +300,7 @@ namespace System.Data.OracleClient.Oci
 			internal static extern int OCIStmtExecute (IntPtr svchp,
 				IntPtr stmthp,
 				IntPtr errhp,
-				[MarshalAs (UnmanagedType.U4)] bool iters,
+				[MarshalAs (UnmanagedType.U4)] uint iters,
 				uint rowoff,
 				IntPtr snap_in,
 				IntPtr snap_out,
@@ -423,7 +423,7 @@ namespace System.Data.OracleClient.Oci
 			int value_sz,
 			OciDataType dty,
 			ref short indp,
-			ref int rlenp,
+			ref short rlenp,
 			IntPtr rcodep,
 			uint mode)
 		{
@@ -440,7 +440,7 @@ namespace System.Data.OracleClient.Oci
 			int value_sz,
 			OciDataType dty,
 			ref short indp,
-			ref int rlenp,
+			ref short rlenp,
 			IntPtr rcodep,
 			uint mode)
 		{
@@ -721,7 +721,12 @@ namespace System.Data.OracleClient.Oci
 			OciExecuteMode mode)
 		{
 			Trace.WriteLineIf(traceOci, "OCIStmtExecute", "OCI");
-			return OciNativeCalls.OCIStmtExecute (svchp, stmthp, errhp, iters, rowoff,
+			
+			uint it = 0;
+			if (iters == true)
+				it = 1;
+			
+			return OciNativeCalls.OCIStmtExecute (svchp, stmthp, errhp, it, rowoff,
 				snap_in, snap_out, mode);
 		}
 

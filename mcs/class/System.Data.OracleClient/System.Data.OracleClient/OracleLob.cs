@@ -142,12 +142,29 @@ namespace System.Data.OracleClient {
 				if (IsNull)
 					return DBNull.Value;
 				
-				byte[] buffer = new byte [Length];
-				Read (buffer, 1, (int) Length);
+				byte[] buffer = null;
 
-				if (LobType == OracleType.Clob)
-					return (new UnicodeEncoding ()).GetString (buffer);
-				return buffer;
+				int len = (int) Length;
+				if (len == 0) {
+					// LOB is not Null, but it is Empty
+					if (LobType == OracleType.Clob)
+						return "";
+					else // OracleType.Blob
+						return new byte[0];
+				}
+
+				if (LobType == OracleType.Clob) {
+					buffer = new byte [len];
+					Read (buffer, 0, len);
+					UnicodeEncoding encoding = new UnicodeEncoding ();
+					return encoding.GetString (buffer);
+				}
+				else {
+					// OracleType.Blob
+					buffer = new byte [len];
+					Read (buffer, 0, len);
+					return buffer;
+				}
 			}
 		}
 

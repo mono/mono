@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration ("Development version")]
 [assembly: AssemblyCompany ("MONO development team")]
 [assembly: AssemblyProduct ("MONO CLI")]
-[assembly: AssemblyCopyright ("(c) 2003 Various Authors")]
+[assembly: AssemblyCopyright ("(c) 2002-2005 Novell, Inc and Various Authors")]
 [assembly: AssemblyTrademark ("")]
 
 [assembly: CLSCompliant (true)]

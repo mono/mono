@@ -65,6 +65,67 @@ namespace System.Data.OracleClient.Oci {
 			return (OciDataType) GetAttributeInt32 (OciAttributeType.DataType, ErrorHandle);
 		}
 
+		public Type GetFieldType (string sDataTypeName) 
+		{
+			switch (sDataTypeName) {
+			case "VarChar2":
+				return typeof (System.String);
+			case "Number":
+				return typeof (System.Decimal);
+			case "Integer":
+				return typeof (System.Int32);
+			case "Float":
+				return typeof (System.Decimal);
+			case "String":
+				return typeof (System.String);
+			case "VarNum":
+				return typeof (System.Decimal);
+			case "Long":
+				return typeof (System.String);
+			case "VarChar":
+				return typeof (System.String);
+			case "RowId":
+				return typeof (System.String);
+			case "Date":
+				return typeof (System.DateTime);
+			case "VarRaw":
+				return Type.GetType ("System.Byte[]");
+			case "Raw":
+				return Type.GetType ("System.Byte[]");
+			case "LongRaw":
+				return Type.GetType ("System.Byte[]");
+			case "UnsignedInt":
+				return typeof (System.UInt32);
+			case "LongVarChar":
+				return typeof (System.String);
+			case "LongVarRaw":
+				return Type.GetType ("System.Byte[]");
+			case "Char":
+				return typeof (System.String);
+			case "CharZ":
+				return typeof (System.String);
+			case "RowIdDescriptor":
+				return typeof (System.String);
+			case "NamedDataType":
+				return typeof (System.String);
+			case "Ref":
+				return Type.GetType ("System.Data.OracleClient.OracleDataReader");
+			case "Clob":
+				return typeof (System.String);
+			case "Blob":
+				return Type.GetType ("System.Byte[]");
+			case "BFile":
+				return Type.GetType ("System.Byte[]");
+			case "OciString":
+				return typeof (System.String);
+			case "OciDate":
+				return typeof (System.DateTime);
+			default:
+				// FIXME: are these types correct?
+				return typeof(System.String);
+			}
+		}
+
 		public string GetDataTypeName ()
 		{
 			switch(GetDataType())

@@ -39,15 +39,15 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Methods
 
-		/*
-		FIXME: This method only exists in Oracle 9i
-
+		
+		//FIXME: This method only exists in Oracle 9i
+/*
 		[DllImport ("oci")] 
 		static extern int OCIRowidToChar (IntPtr rowidDesc,
 						IntPtr outbfp,
 						ref int outbflp,
 						IntPtr errhp);
-		*/
+*/		
 
 		protected override void Dispose (bool disposing)
 		{
@@ -61,8 +61,8 @@ namespace System.Data.OracleClient.Oci {
 		public string GetRowId (OciErrorHandle errorHandle)
 		{
 			string output = String.Empty;
-			/*
-			int len = 64;
+/*			
+			int len = 10;
 			IntPtr outputPtr = Marshal.AllocHGlobal (len); // FIXME: how big should this be?
 
 			int status = 0;
@@ -82,8 +82,7 @@ namespace System.Data.OracleClient.Oci {
 				if (str != null)
 					output = String.Copy ((string) str);
 			}
-
-			*/
+*/			
 			output = "NOT YET SUPPORTED.";
 
 			return output;

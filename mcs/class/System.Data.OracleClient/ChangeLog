@@ -1,3 +1,49 @@
+2005-01-06  Daniel Morgan <danielmorgan@verizon.net>
+
+	* Assembly/AssemblyInfo.cs: updated copyright
+	
+	* System.Data.OracleClient/OracleCommand.cs: add 
+	connection string parameter "Server" and 
+	removed "Database" to match .NET
+	
+	* System.Data.OracleClient/OracleLob.cs: handle 
+		BLOBs and CLOBs that are not null, but are empty
+	
+	* System.Data.OracleClient/OracleCommand.cs: started 
+		implementing Clone and ExecuteOracleScalar
+	
+	* System.Data.OracleClient/OracleDataReader.cs: modified
+	- ms.net has GetDataTypeName return data types upper case
+	- implement	GetFieldType
+	- implement GetOracleValues, GetOracleValue, 
+	  GetOracleDateTime, GetOracleNumber, GetOracleString
+	- modified GetOracleLob based on internal change
+	- fix GetSchemaTable to return the correct "DataType" 
+		instead of always being System.String
+	- GetValue should return Blobs as a byte array and Clobs 
+		as a string
+	- Test/TestOracleClient.cs: updated Mono Oracle Tests
+	- System.Data.OracleClient.Oci/OciCalls.cs: update 
+		DllImports for data type, actual data size, and iters
+
+	* System.Data.OracleClient.Oci/OciDefineHandle.cs: modified
+	- added properties for precision and field type
+	- if ROWID is specified in a SELECT statement, handle 
+		the data type of OciDataType.RowIdDescriptor by just 
+		treating it as 10 byte string
+	- do not free a HGlobal handle for a LOB since they do
+		not get a HGlobal created for them
+	- GetValue should return an OracleLob for BLOBs and CLOBs
+	
+	* System.Data.OracleClient.Oci/OciDataType.cs: make enum
+	OciDataType to be uint
+	
+	* System.Data.OracleClient.Oci/OciParameterDescriptor.cs:
+	- add function to convert Oracle's data type name 
+		to .net data type name
+		
+	* System.Data.OracleClient.Oci/OciRowIdDescriptor.cs: flush	
+
 2004-09-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile: Activate unit tests.

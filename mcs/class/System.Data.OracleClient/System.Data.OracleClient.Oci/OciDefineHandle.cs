@@ -9,10 +9,12 @@
 // Assembly: System.Data.OracleClient.dll
 // Namespace: System.Data.OracleClient.Oci
 // 
-// Author: 
+// Authors: 
 //     Tim Coleman <tim@timcoleman.com>
+//     Daniel Morgan <danielmorgan@verizon.net>
 //         
 // Copyright (C) Tim Coleman, 2003
+// Copyright (C) Daniel Morgan, 2004
 // 
 
 using System;
@@ -20,7 +22,8 @@ using System.Data.OracleClient;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace System.Data.OracleClient.Oci {
+namespace System.Data.OracleClient.Oci 
+{
 	internal sealed class OciDefineHandle : OciHandle, IDisposable
 	{
 		#region Fields
@@ -34,8 +37,11 @@ namespace System.Data.OracleClient.Oci {
 		OciDataType ociType;
 		OciDataType definedType;
 		int definedSize;
-		int rlenp;
+		short rlenp = 0;
+		short precision;
 		short scale;
+		Type fieldType;
+		string name;
 
 		OciErrorHandle errorHandle;
 
@@ -54,10 +60,15 @@ namespace System.Data.OracleClient.Oci {
 		public void DefineByPosition (int position)
 		{
 			OciParameterDescriptor parameter = ((OciStatementHandle) Parent).GetParameter (position);
-			definedSize = parameter.GetDataSize ();
-			scale = parameter.GetScale ();
+			
+			name = parameter.GetName ();
 			definedType = parameter.GetDataType ();
+			definedSize = parameter.GetDataSize ();
+			precision = parameter.GetPrecision ();
+			scale = parameter.GetScale ();
+
 			Define (position);
+
 			parameter.Dispose ();
 		}
 
@@ -67,6 +78,10 @@ namespace System.Data.OracleClient.Oci {
 
 		public OciDataType DataType {
 			get { return definedType; }
+		}
+
+		public Type FieldType {
+			get { return fieldType; }
 		}
 
 		public int DefinedSize {
@@ -86,7 +101,7 @@ namespace System.Data.OracleClient.Oci {
 			get { return scale; }
 		}
 
-		public int Size {
+		public short Size {
 			get { return rlenp; }
 		}
 
@@ -102,16 +117,23 @@ namespace System.Data.OracleClient.Oci {
 		{
 			switch (definedType) {
 			case OciDataType.Date:
-				definedSize = 7;
 				DefineDate (position); 
 				return;
 			case OciDataType.Clob:
 			case OciDataType.Blob:
-				definedSize = -1;
 				DefineLob (position, definedType);
 				return;
 			case OciDataType.Raw:
 				DefineRaw( position);
+				return;
+			case OciDataType.RowIdDescriptor:
+				definedSize = 10;
+				DefineChar (position);
+				return;
+			case OciDataType.Integer:
+			case OciDataType.Number:
+			case OciDataType.Float:
+				DefineNumber (position);
 				return;
 			default:
 				DefineChar (position); // HANDLE ALL OTHERS AS CHAR FOR NOW
@@ -121,7 +143,10 @@ namespace System.Data.OracleClient.Oci {
 
 		void DefineDate (int position)
 		{
+			definedSize = 7;
 			ociType = OciDataType.Date;
+			fieldType = typeof(System.DateTime);
+
 			value = Marshal.AllocHGlobal (definedSize);
 
 			int status = 0;
@@ -146,14 +171,16 @@ namespace System.Data.OracleClient.Oci {
 
 		void DefineChar (int position)
 		{
-			ociType = OciDataType.Char;
-			
+			fieldType = typeof (System.String);
+
 			// The buffer is able to contain twice the defined size
 			// to allow usage of multibyte characters
 			value = Marshal.AllocHGlobal (definedSize * 2);
 
-			int status = 0;
+			ociType = OciDataType.Char;
 
+			int status = 0;
+			
 			status = OciCalls.OCIDefineByPos (Parent,
 						out handle,
 						ErrorHandle,
@@ -172,9 +199,42 @@ namespace System.Data.OracleClient.Oci {
 			}
 		}
 
+		void DefineNumber (int position) 
+		{
+			fieldType = typeof (System.Decimal);
+			value = Marshal.AllocHGlobal (definedSize);
+
+			ociType = OciDataType.Char;
+
+			int status = 0;
+			
+			status = OciCalls.OCIDefineByPos (Parent,
+				out handle,
+				ErrorHandle,
+				position + 1,
+				value,
+				definedSize * 2,
+				ociType,
+				ref indicator,
+				ref rlenp,
+				IntPtr.Zero,
+				0);
+
+			if (status != 0) {
+				OciErrorInfo info = ErrorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
+		}
+
 		void DefineLob (int position, OciDataType type)
 		{
 			ociType = type;
+
+			if (ociType == OciDataType.Clob)
+				fieldType = typeof(System.String);
+			else if (ociType == OciDataType.Blob)
+				fieldType = Type.GetType("System.Byte[]");
+
 			int status = 0;
 
 			definedSize = -1;
@@ -202,6 +262,8 @@ namespace System.Data.OracleClient.Oci {
 							IntPtr.Zero,
 							0);
 
+			definedSize = Int32.MaxValue;
+
 			if (status != 0) {
 				OciErrorInfo info = ErrorHandle.HandleError ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
@@ -211,6 +273,7 @@ namespace System.Data.OracleClient.Oci {
 		void DefineRaw (int position)
 		{
 			ociType = OciDataType.Raw;
+			fieldType = Type.GetType("System.Byte[]");
 
 			value = Marshal.AllocHGlobal (definedSize);
 
@@ -237,10 +300,18 @@ namespace System.Data.OracleClient.Oci {
 		{
 			if (!disposed) {
 				try {
-					Marshal.FreeHGlobal (value);
+					switch (definedType) {
+					case OciDataType.Clob:
+					case OciDataType.Blob:
+						break;
+					default:
+						Marshal.FreeHGlobal (value);
+						break;
+					}
 					disposed = true;
 				} finally {
 					base.Dispose (disposing);
+					value = IntPtr.Zero;
 				}
 			}
 		}
@@ -261,6 +332,8 @@ namespace System.Data.OracleClient.Oci {
 			case OciDataType.Char:
 			case OciDataType.CharZ:
 			case OciDataType.OciString:
+			case OciDataType.RowIdDescriptor:
+			case OciDataType.LongVarChar:
 				byte [] buffer = new byte [Size];
 				Marshal.Copy (Value, buffer, 0, Size);
 				
@@ -276,33 +349,11 @@ namespace System.Data.OracleClient.Oci {
 				return ret.ToString ();
 
 			case OciDataType.Integer:
-				tmp = Marshal.PtrToStringAnsi (Value, Size);
-				if (tmp != null)
-					return Int32.Parse (String.Copy ((string) tmp));
-				break;
 			case OciDataType.Number:
-				tmp = Marshal.PtrToStringAnsi (Value, Size);
-				if (tmp != null) {
-					if (Scale == 0) {
-						try {
-							if (Size < 10)
-								return Int32.Parse (String.Copy ((string) tmp));
-							else
-								return Int64.Parse (String.Copy ((string) tmp));
-						} catch {
-							// Fallback: Scale is reported as 0 when column
-							// was created as NUMBER without parameters.
-							return Decimal.Parse (String.Copy ((string) tmp));
-						}
-					}
-					else
-						return Decimal.Parse (String.Copy ((string) tmp));
-				}
-				break;
 			case OciDataType.Float:
 				tmp = Marshal.PtrToStringAnsi (Value, Size);
 				if (tmp != null)
-					return Double.Parse (String.Copy ((string) tmp));
+					return Decimal.Parse (String.Copy ((string) tmp));
 				break;
 			case OciDataType.Date:
 				return UnpackDate ();
@@ -310,9 +361,44 @@ namespace System.Data.OracleClient.Oci {
 				byte [] raw_buffer = new byte [Size];
 				Marshal.Copy (Value, raw_buffer, 0, Size);
 				return raw_buffer;
+			case OciDataType.Blob:
+			case OciDataType.Clob:
+				return GetOracleLob ();
 			}
 
 			return DBNull.Value;
+		}
+
+		internal object GetOracleValue () 
+		{
+			object ovalue = GetValue ();
+
+			switch (DataType) {
+			case OciDataType.Raw:
+				return new OracleBinary ((byte[]) ovalue);
+			case OciDataType.Date:
+				return new OracleDateTime ((DateTime) ovalue);
+			case OciDataType.Blob:
+			case OciDataType.Clob:
+				OracleLob lob = (OracleLob) ovalue;
+				return lob;
+			case OciDataType.Integer:
+			case OciDataType.Number:
+			case OciDataType.Float:
+				return new OracleNumber ((decimal) ovalue);
+			case OciDataType.VarChar2:
+			case OciDataType.String:
+			case OciDataType.VarChar:
+			case OciDataType.Char:
+			case OciDataType.CharZ:
+			case OciDataType.OciString:
+			case OciDataType.LongVarChar:
+			case OciDataType.RowIdDescriptor:
+				return new OracleString ((string) ovalue);
+			default:
+				// TODO: do other types
+				throw new NotImplementedException ();
+			}
 		}
 
 		[MonoTODO ("Be able to handle negative dates... i.e. BCE.")]
