@@ -1,5 +1,7 @@
 2003-04-07  Dietmar Maurer  <dietmar@ximian.com>
 
+	* Makefile.am: added hack for automake
+
 	* mono/mini/mini.c (mono_save_args): always copy arguments to keep
 	correct sematics.
 
