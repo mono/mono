@@ -1,3 +1,13 @@
+2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DSA.cs: Moved XML comments to monodoc. Added globalization to 
+	exceptions. Already had 100% coverage.
+	* DSAParameters.cs: Moved XML comments to monodoc.
+	* DSASignatureDeformetter.cs: Added globalization to exceptions. 
+	Limited catch to expected exception. Already had 100% coverage.
+	* DSASignatureFormatter.cs: Added globalization to exceptions. Limited
+	catch to expected exception. Already had 100% coverage.
+
 2004-04-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AsymmetricAlgorithm.cs: Moved XML comments to monodoc. Added 

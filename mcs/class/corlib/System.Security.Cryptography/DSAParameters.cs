@@ -4,18 +4,16 @@
 // Author:
 //   Thomas Neidhart (tome@sbox.tugraz.at)
 //
+// (C) 2004 Novell (http://www.novell.com)
+//
 
 using System;
 
-namespace System.Security.Cryptography
-{
+namespace System.Security.Cryptography {
 
-	/// <summary>
-	/// DSA Parameters
-	/// </summary>
 	[Serializable]
-	public struct DSAParameters
-	{
+	public struct DSAParameters {
+
 		public int Counter;
 		
 		public byte[] G;
@@ -32,7 +30,5 @@ namespace System.Security.Cryptography
 		public byte[] X;
 		
 		public byte[] Y;
-		
-	} // DSAParameters
-	
-} // System.Security.Cryptography
+	}
+}

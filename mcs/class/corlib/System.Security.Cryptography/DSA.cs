@@ -2,13 +2,15 @@
 // System.Security.Cryptography.DSA.cs class implementation
 //
 // Authors:
-//   Thomas Neidhart (tome@sbox.tugraz.at)
-//   Sebastien Pouliot (spouliot@motus.com)
+//	Thomas Neidhart (tome@sbox.tugraz.at)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
+using System.Globalization;
 using System.Text;
 
 using Mono.Xml;
@@ -20,15 +22,14 @@ using Mono.Security;
 
 namespace System.Security.Cryptography {
 
-	/// <summary>
-	/// Abstract base class for all implementations of the DSA algorithm
-	/// </summary>
 	public abstract class DSA : AsymmetricAlgorithm	{
 
 		// LAMESPEC: It says to derive new DSA implemenation from DSA class.
 		// Well it's aint gonna be easy this way.
 		// RSA constructor is public
-		internal DSA () {}
+		internal DSA ()
+		{
+		}
 	
 		public static new DSA Create ()
 		{
@@ -135,7 +136,7 @@ namespace System.Security.Cryptography {
 					int l = inArr.Length;
 					while (inArr[l-1] == 0x00)
 						l--;
-					byte[] c = new byte[l];
+					byte[] c = new byte [l];
 					Array.Copy (inArr, 0, c, 0, l);
 					sb.Append (Convert.ToBase64String (c));
 					sb.Append ("</PgenCounter>");
@@ -146,8 +147,10 @@ namespace System.Security.Cryptography {
 					sb.Append (Convert.ToBase64String (dsaParams.X));
 					sb.Append ("</X>");
 				}
-				else if (includePrivateParameters)
-					throw new CryptographicException();
+				else if (includePrivateParameters) {
+					throw new CryptographicException (
+						Locale.GetText ("Missing private key informations"));
+				}
 
 				sb.Append ("</DSAKeyValue>");
 			}
@@ -160,7 +163,5 @@ namespace System.Security.Cryptography {
 		}
 		
 		public abstract bool VerifySignature (byte[] rgbHash, byte[] rgbSignature);
-		
-	} // DSA
-	
-} // System.Security.Cryptography
+	}
+}
