@@ -1,8 +1,8 @@
 <VisualStudioProject>
     <CSHARP
         ProjectType = "Local"
-        ProductVersion = "7.0.9466"
-        SchemaVersion = "1.0"
+        ProductVersion = "7.10.3077"
+        SchemaVersion = "2.0"
         ProjectGuid = "{F7734143-3845-4288-B1CA-FE614FFA70F0}"
     >
         <Build>
@@ -16,6 +16,8 @@
                 DefaultTargetSchema = "IE50"
                 DelaySign = "false"
                 OutputType = "Library"
+                PreBuildEvent = ""
+                PostBuildEvent = ""
                 RootNamespace = "MonoMicro.Test"
                 StartupObject = ""
             >
@@ -30,6 +32,8 @@
                     DebugSymbols = "true"
                     FileAlignment = "4096"
                     IncrementalBuild = "true"
+                    NoStdLib = "false"
+                    NoWarn = ""
                     Optimize = "false"
                     OutputPath = "bin\Debug\"
                     RegisterForComInterop = "false"
@@ -48,6 +52,8 @@
                     DebugSymbols = "false"
                     FileAlignment = "4096"
                     IncrementalBuild = "false"
+                    NoStdLib = "false"
+                    NoWarn = ""
                     Optimize = "true"
                     OutputPath = "bin\Release\"
                     RegisterForComInterop = "false"
@@ -63,19 +69,14 @@
                     HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.dll"
                 />
                 <Reference
-                    Name = "System.Data"
-                    AssemblyName = "System.Data"
-                    HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.Data.dll"
-                />
-                <Reference
-                    Name = "System.XML"
-                    AssemblyName = "System.XML"
-                    HintPath = "..\obj\Debug\System.XML.dll"
-                />
-                <Reference
                     Name = "nunit.framework"
                     AssemblyName = "nunit.framework"
-                    HintPath = "..\..\..\nunit20\NUnit.Framework.dll"
+                    HintPath = "..\..\..\..\..\Program Files\NUnit V2.0\bin\nunit.framework.dll"
+                />
+                <Reference
+                    Name = "Mono.System.XML"
+                    Project = "{0CB7FB41-3C0F-40E8-ACD3-8C5B8BC35B2C}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
         </Build>
@@ -111,7 +112,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml\XmlCharTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml\XmlCommentTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\XmlConvertTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -171,6 +182,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml\XmlReaderCommonTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml\XmlSignificantWhitespaceTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -191,6 +207,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml\XmlUrlResolverTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\XmlValidatingReaderTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml\XmlWhiteSpaceTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -201,7 +227,57 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml\XsdParticleValidationTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\XsdValidatingReaderTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Schema\XmlSchemaBuiltInDatatypeTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Schema\XmlSchemaCollectionTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Schema\XmlSchemaDatatypeTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Schema\XmlSchemaLengthFacetTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml.Schema\XmlSchemaTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Serialization\DeserializeTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Serialization\XmlAttributesTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Serialization\XmlReflectionImporterTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Serialization\XmlSerializationWriterTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -217,6 +293,11 @@
                 />
                 <File
                     RelPath = "System.Xml.XPath\SelectNodesTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.XPath\XPathNavigatorCommonTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
