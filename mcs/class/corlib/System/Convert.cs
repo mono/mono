@@ -2327,6 +2327,8 @@ namespace System {
 
 		public static object ChangeType (object value, Type conversionType)
 		{
+			if ((value != null) && (conversionType == null))
+				throw new ArgumentNullException ("conversionType");
 			CultureInfo ci = CultureInfo.CurrentCulture;
 			NumberFormatInfo number = ci.NumberFormat;
 			return ToType (value, conversionType, number);
@@ -2342,6 +2344,8 @@ namespace System {
 
 		public static object ChangeType (object value, Type conversionType, IFormatProvider provider)
 		{
+			if ((value != null) && (conversionType == null))
+				throw new ArgumentNullException ("conversionType");
 			return ToType (value, conversionType, provider);
 		}
 		
@@ -2560,7 +2564,7 @@ namespace System {
 				return null;
 
 			if (conversionType == null)
-				throw new ArgumentNullException ("convertionType");
+				throw new InvalidCastException ("Cannot cast to destination type.");
 
 			if (value.GetType () == conversionType)
 				return value;

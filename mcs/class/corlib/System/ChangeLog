@@ -2,7 +2,8 @@
 
 	* Convert.cs: Fixed ToSByte(string,IFormatProvider) to throw 
 	ArgumentNullException (only case, all other returns 0). Fixed exception
-	reporting for hex prefix only strings.
+	reporting for hex prefix only strings. Fixed ChangeTo where null could
+	be misinterpreted between null and Empty.
 
 2004-05-28  Sebastien Pouliot  <sebastien@ximian.com>
 
