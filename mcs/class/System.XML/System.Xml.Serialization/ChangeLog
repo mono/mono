@@ -1,3 +1,7 @@
+2003-06-11  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlSerializationReader.cs, XmlSerializationReaderInterpreter.cs: Minor fixes.
+
 2003-06-10  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SoapReflectionImporter.cs: Added check: some overrides cannot be applied to primitive types.

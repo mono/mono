@@ -116,8 +116,10 @@ namespace System.Xml.Serialization {
 			collFixups = EnsureHashtable (collFixups);
 			collFixups [fixup.Id] = fixup;
 
-			if (delayedListFixups != null && delayedListFixups.ContainsKey (fixup.Id))
+			if (delayedListFixups != null && delayedListFixups.ContainsKey (fixup.Id)) {
 				fixup.CollectionItems = delayedListFixups [fixup.Id];
+				delayedListFixups.Remove (fixup.Id);
+			}
 		}
 
 		protected void AddFixup (Fixup fixup)
@@ -498,6 +500,11 @@ namespace System.Xml.Serialization {
 				nt = reader.NodeType;
 			}
 
+			// Registers delayed list
+			
+			foreach (DictionaryEntry entry in delayedListFixups)
+				AddTarget ((string)entry.Key, entry.Value);
+			
 			// Fix arrays
 
 			if (collItemFixups != null)
