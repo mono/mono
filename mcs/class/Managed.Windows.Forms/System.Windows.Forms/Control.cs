@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.4 $
+// $Revision: 1.5 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.5  2004/07/19 16:49:23  jordi
+// fixes SetBounds logic
+//
 // Revision 1.4  2004/07/19 07:29:35  jordi
 // Call RefreshWindow only if the window has created
 //
@@ -1056,19 +1059,19 @@ namespace System.Windows.Forms
 		}
 
 		public void SetBounds(int x, int y, int width, int height, BoundsSpecified bounds_specified) {
-			if ((bounds_specified & BoundsSpecified.X)==0) {
+			if ((bounds_specified & BoundsSpecified.X)!=0) {
 				x = Left;
 			}
 
-			if ((bounds_specified & BoundsSpecified.Y)==0) {
+			if ((bounds_specified & BoundsSpecified.Y)!=0) {
 				y = Top;
 			}
 
-			if ((bounds_specified & BoundsSpecified.Width)==0) {
+			if ((bounds_specified & BoundsSpecified.Width)!=0) {
 				width = Width;
 			}
 
-			if ((bounds_specified & BoundsSpecified.Height)==0) {
+			if ((bounds_specified & BoundsSpecified.Height)!=0) {
 				height = Height;
 			}
 
