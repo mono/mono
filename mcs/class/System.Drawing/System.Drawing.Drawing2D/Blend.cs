@@ -1,10 +1,12 @@
 //
 // System.Drawing.Drawing2D.Blend.cs
 //
-// Author:
+// Authors:
 //   Dennis Hayes (dennish@Raytek.com)
+//   Ravindra (rkumar@novell.com)
 //
-// (C) 2002/3 Ximian, Inc
+// (C) 2002/3 Ximian, Inc. http://www.ximian.com
+// (C) 2004 Novell, Inc. http://www.novell.com
 //
 using System;
 
@@ -15,60 +17,38 @@ namespace System.Drawing.Drawing2D
 	/// </summary>
 	public sealed class Blend
 	{
-		private int count;
 		private float [] positions;
 		private float [] factors;
-		public Blend(int count) {
-			this.count = count;
-			if(count < 2){
-				throw new ArgumentOutOfRangeException("Count", count, "Must be at least 2");
-			}
+
+		public Blend ()
+		{
+			positions = new float [1];
+			factors = new float [1];
+		}
+
+		public Blend (int count)
+		{
 			positions = new float [count];
 			factors = new float [count];
-				//FIXME: call Blend! 
-			for (int i = 0; i < count; i++){
-				positions[i] = (1.0F/count) * i;
-				factors[i] = (1.0F/count) * i;
-			}
-			//fix any rounding errors that would generate an invald list.
-			positions[0] = 0.0F;
-			positions[1] = 1.0F;
-			factors[0] = 0.0F;
-			factors[1] = 1.0F;
+		}
 
-		}
-		public Blend() {
-			count = 2;
-			positions = new float [2];
-			factors = new float [2];
-			positions[0] = 0.0F;
-			positions[1] = 1.0F;
-			factors[0] = 0.0F;
-			factors[1] = 1.0F;
-		}
-		public float [] Factors{
+		public float [] Factors {
 			get {
 				return factors;
 			}
-			set{
-				count = value.GetUpperBound(0) + 1;
-				if((value[0] !=0) | (value[count-1] != 1.0F)){
-					throw new ArgumentException(" First value must be 0.0, last value must be 1.0","Factors");
-				}
+
+			set {
 				factors = value;
 			}
 		}
-		public float [] Positions{
+
+		public float [] Positions {
 			get {
 				return positions;
 			}
-			set{
-				count = value.GetUpperBound(0) + 1;
-				if((value[0] !=0) | (value[count-1] != 1.0F)){
-					throw new ArgumentException(" First value must be 0.0, last value must be 1.0","Positon");
-				}
+
+			set {
 				positions = value;
-				
 			}
 		}
 	}
