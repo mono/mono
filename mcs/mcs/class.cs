@@ -6,7 +6,7 @@
 //
 // Licensed under the terms of the GNU GPL
 //
-// (C) 2001, 2002 Ximian, Inc (http://www.ximian.com)
+// (C) 2001, 2002, 2003 Ximian, Inc (http://www.ximian.com)
 //
 //
 //  2002-10-11  Miguel de Icaza  <miguel@ximian.com>

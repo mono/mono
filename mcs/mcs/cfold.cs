@@ -4,7 +4,7 @@
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
 //
-// (C) 2002 Ximian, Inc.
+// (C) 2002, 2003 Ximian, Inc.
 //
 
 using System;

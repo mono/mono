@@ -5,7 +5,7 @@
 //
 // Licensed under the terms of the GNU GPL
 //
-// (C) 2001 Ximian, Inc (http://www.ximian.com)
+// (C) 2001, 2002, 2003 Ximian, Inc (http://www.ximian.com)
 //
 
 namespace Mono.CSharp
@@ -233,7 +233,7 @@ namespace Mono.CSharp
 		static void About ()
 		{
 			Console.WriteLine (
-				"The Mono C# compiler is (C) 2001 - 2003 Ximian, Inc.\n\n" +
+				"The Mono C# compiler is (C) 2001, 2002, 2003 Ximian, Inc.\n\n" +
 				"The compiler source code is released under the terms of the GNU GPL\n\n" +
 
 				"For more information on Mono, visit the project Web site\n" +
