@@ -25,5 +25,4 @@ endif
 
 profile-check:
 
-# Causes some build errors
-PROFILE_MCS_FLAGS = -d:GENERICS -d:NET_1_1
+PROFILE_MCS_FLAGS = -d:GENERICS -d:NET_1_1 -d:NET_1_2
