@@ -107,6 +107,7 @@ System.Web.UI/PersistenceMode.cs
 System.Web.UI/PropertyConverter.cs
 System.Web.UI/StateBag.cs
 System.Web.UI/StateItem.cs
+System.Web.UI/SimpleWebHandlerParser.cs
 System.Web.UI/ToolboxDataAttribute.cs
 System.Web.UI/Utils.cs
 System.Web.UI/ConstructorNeedsTagAttribute.cs
@@ -139,6 +140,7 @@ System.Web.UI/TemplateParser.cs
 System.Web.UI/Triplet.cs
 System.Web.UI/UserControl.cs
 System.Web.UI/CompiledTemplateBuilder.cs
+System.Web.UI/WebServiceParser.cs
 System.Web.UI.HtmlControls/HtmlAnchor.cs
 System.Web.UI.HtmlControls/HtmlButton.cs
 System.Web.UI.HtmlControls/HtmlContainerControl.cs
@@ -338,4 +340,6 @@ System.Web.Compilation/AspGenerator.cs
 System.Web.Compilation/AspParser.cs
 System.Web.Compilation/AspTokenizer.cs
 System.Web.Compilation/PageCompiler.cs
+System.Web.Compilation/ProcessRunner.cs
 System.Web.Compilation/TemplateFactory.cs
+System.Web.Compilation/WebServiceCompiler.cs

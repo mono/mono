@@ -346,6 +346,8 @@ namespace System.Web.Compilation
 							      "VaryByCustom", "VaryByHeader", "VaryByParam" };
 		private static string [] reference_atts = { "page", "control" };
 
+		private static string [] webservice_atts = { "class", "codebehind", "debug", "language" };
+
 		static Directive ()
 		{
 			InitHash ();
@@ -390,6 +392,10 @@ namespace System.Web.Compilation
 			valid_attributes = new Hashtable (provider, comparer);
 			foreach (string att in reference_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("REFERENCE", valid_attributes);
+
+			valid_attributes = new Hashtable (provider, comparer);
+			foreach (string att in webservice_atts) valid_attributes.Add (att, null);
+			directivesHash.Add ("WEBSERVICE", valid_attributes);
 		}
 		
 		public Directive (string tag, TagAttributes attributes) :
