@@ -1,5 +1,10 @@
 2005-02-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XslNumber.cs : For group size, use decimal instead of integer to allow
+	  such number that is larger than int.MaxValue. patch by Andrew Skiba.
+
+2005-02-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XslForEach.cs : Don't bork at <xsl:for-each/>. Patch by Andrew Skiba.
 
 2005-02-08  Atsushi Enomoto  <atsushi@ximian.com>
