@@ -4,7 +4,7 @@ CSCFLAGS=/nologo /debug+ /debug:full
 
 windows: linux
 
-linux: monostyle.exe verifier.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./type-reflector/type-reflector.exe ./corcompare/CorCompare.exe ./SqlSharp/sqlsharp.exe
+linux: monostyle.exe verifier.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./type-reflector/type-reflector.exe ./corcompare/CorCompare.exe ./SqlSharp/sqlsharp.exe secutil.exe
 #linux: verifier.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./corcompare/CorCompare.exe update
 
 monostyle.exe: monostyle.cs
@@ -42,6 +42,8 @@ EnumCheck.exe: EnumCheck.cs EnumCheckAssemblyCollection.cs
 IFaceDisco.exe: IFaceDisco.cs XMLUtil.cs
 	$(CSC) $(CSCFLAGS) /out:IFaceDisco.exe IFaceDisco.cs XMLUtil.cs
 
+secutil.exe: secutil.cs
+	$(CSC) $(CSCFLAGS) secutil.cs
 
 clean:
 	(cd corcompare; make clean)

@@ -1,3 +1,10 @@
+2002-12-22  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* secutils.cs: New tool to extract strongname and X509 certificate
+	from assembly (or other signed files).
+	* makefile: Added secutil.exe to Windows build.
+	* makefile.gnu: Added secutil.exe to Linux build.
+
 2002-12-06  Duncan Mak  <duncan@ximian.com>
 
 	* makefile.gnu (clean): Remove *.dbg files.

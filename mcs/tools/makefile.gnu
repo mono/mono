@@ -3,7 +3,7 @@ CSCRIPT=$(WINDIR)/system32/cscript.exe
 CSCFLAGS=/nologo /debug+ /debug:full 
 INSTALL = /usr/bin/install
 
-MONO_TOOLS = monostyle.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./SqlSharp/sqlsharp.exe
+MONO_TOOLS = monostyle.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./SqlSharp/sqlsharp.exe secutil.exe
 
 # tools commented here because they were unable to build under linux
 #MONO_TOOLS = monostyle.exe verifier.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./type-reflector/type-reflector.exe ./corcompare/CorCompare.exe ./SqlSharp/SqlSharpCli.exe
@@ -59,6 +59,8 @@ EnumCheck.exe: EnumCheck.cs EnumCheckAssemblyCollection.cs
 IFaceDisco.exe: IFaceDisco.cs XMLUtil.cs
 	$(CSC) $(CSCFLAGS) /out:IFaceDisco.exe IFaceDisco.cs XMLUtil.cs
 
+secutil.exe: secutil.cs
+	$(CSC) $(CSCFLAGS) secutil.cs
 
 clean:
 	(cd corcompare; make clean)
