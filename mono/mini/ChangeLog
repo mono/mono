@@ -1,5 +1,9 @@
 2005-01-30  Zoltan Varga  <vargaz@freemail.hu>
 
+	* abcremoval.h ssapre.h abcremoval.c ssapre.c mini.c tramp-amd64.c 
+	trace.c mini-exceptions.c linear-scan.c inssel-amd64.brg inssel.brg:
+	Fix 64 bit warnings.
+
 	* mini-amd64.c (mono_arch_output_basic_block): Fix uninitialized
 	variable not spotted by gcc.
 	
