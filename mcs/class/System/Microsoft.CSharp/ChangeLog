@@ -1,3 +1,7 @@
+2002-10-30 Jackson Harper <jackson@latitudegeo.com>
+
+	* CompilerError: Added class
+	
 2002-10-19  Rachel Hestilow <hestilow@ximian.com>
 
 	* CSharpCodeProvider.cs
