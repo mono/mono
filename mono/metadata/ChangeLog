@@ -1,3 +1,11 @@
+2003-04-24  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.c: Moved all code which interacts with the
+	Mono Debugger here.
+
+	* debug-mono-symfile.c: This code now just deals with the symbol
+	file itself, the debugger code is now in mono-debug-debugger.c.
+
 2003-04-23  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.c (mono_debug_source_location_from_il_offset):
