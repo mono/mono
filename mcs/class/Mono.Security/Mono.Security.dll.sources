@@ -46,7 +46,6 @@
 ./Mono.Security.Protocol.Tls/TlsSessionState.cs
 ./Mono.Security.Protocol.Tls/TlsSocket.cs
 ./Mono.Security.Protocol.Tls/TlsStream.cs
-./Mono.Security.Protocol.Tls/TlsCompressionMethod.cs
 ./Mono.Security.Protocol.Tls/TlsSslCipherSuite.cs
 ./Mono.Security.Protocol.Tls.Alerts/TlsAlert.cs
 ./Mono.Security.Protocol.Tls.Alerts/TlsCloseNotifyAlert.cs
