@@ -1,6 +1,6 @@
 2004-07-30  Duncan Mak  <duncan@ximian.com>
 
-	* cil-opcodes.xml: Added OperandType information to each of the
+	* cil-opcodes.xml: Added OpCodeType information to each of the
 	public opcodes with the new "type" attribute. Removed mono_func_*
 	from the opcodes and updated the "o2" attribute for the mono_*
 	opcodes to match the values in the existing opcode.def. Added
