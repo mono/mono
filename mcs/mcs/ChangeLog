@@ -1,10 +1,5 @@
 2003-02-09  Martin Baulig  <martin@ximian.com>
 
-	* driver.cs (Driver.SetupDefaultDefines): Define `__MonoRuntime__'
-	if we're using mono's corlib.
-
-2003-02-09  Martin Baulig  <martin@ximian.com>
-
 	* cs-tokenizer.cs (Tokenizer.PreProcessLine): Also reset the
 	filename on `#line default'.
 
