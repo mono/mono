@@ -1,3 +1,7 @@
+2004-07-28  Dick Porter  <dick@ximian.com>
+
+	* locales.c (string_invariant_compare_char): Fix invariant char
+	compares between upper and lower cases.  Fixes bug 61458.
 
 Tue Jul 27 15:58:19 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
