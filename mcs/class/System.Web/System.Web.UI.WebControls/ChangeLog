@@ -1,5 +1,11 @@
 2003-11-07 Jackson Harper <jackson@ximian.com>
 
+	* ImageButton.cs: This is a workaround for bug #49819. It appears
+	that the .x and .y values are not being posted, and only the x
+	value is being posted with the ctrl's id as the key.
+	
+2003-11-07 Jackson Harper <jackson@ximian.com>
+
 	* DataGrid.cs (CreateControlHierarchy): Current page index is
 	alolowed to equal page count. This prevents an exception being
 	thrown when both are zero.

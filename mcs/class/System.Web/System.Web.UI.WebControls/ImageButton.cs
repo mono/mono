@@ -165,11 +165,21 @@ namespace System.Web.UI.WebControls
 		{
 			string xCoord = postCollection[UniqueID + ".x"];
 			string yCoord = postCollection[UniqueID + ".y"];
+			string id = postCollection[UniqueID];
 			if(xCoord != null && yCoord != null && xCoord.Length > 0 && yCoord.Length > 0)
 			{
 				x = Int32.Parse(xCoord);
 				y = Int32.Parse(yCoord);
 				Page.RegisterRequiresRaiseEvent(this);
+			} else if (id != null)
+			{
+                                //
+                                // This is a workaround for bug #49819. It appears that the .x and .y
+                                // values are not being posted, and only the x value is being posted
+                                // with the ctrl's id as the key.
+                                //
+				x = Int32.Parse (id);
+				Page.RegisterRequiresRaiseEvent (this);
 			}
 			return false;
 		}
