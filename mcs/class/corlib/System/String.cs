@@ -779,8 +779,7 @@ namespace System
 
 		public String ToLower ()
 		{
-			// CurrentCulture can never be invariant or null
-			return InternalToLower (CultureInfo.CurrentCulture);
+			return ToLower (CultureInfo.CurrentCulture);
 		}
 
 		public String ToLower (CultureInfo culture)
@@ -791,7 +790,7 @@ namespace System
 			if (culture.LCID == 0x007F) { // Invariant
 				return ToLowerInvariant ();
 			}
-			return InternalToLower (culture);
+			return culture.TextInfo.ToLower (this);
 		}
 
 		internal unsafe String ToLowerInvariant ()
@@ -813,8 +812,7 @@ namespace System
 
 		public String ToUpper ()
 		{
-			// CurrentCulture can never be invariant or null
-			return InternalToUpper (CultureInfo.CurrentCulture);
+			return ToUpper (CultureInfo.CurrentCulture);
 		}
 
 		public String ToUpper (CultureInfo culture)
@@ -825,7 +823,7 @@ namespace System
 			if (culture.LCID == 0x007F) { // Invariant
 				return ToUpperInvariant ();
 			}
-			return InternalToUpper (culture);
+			return culture.TextInfo.ToUpper (this);
 		}
 
 		internal unsafe String ToUpperInvariant ()
@@ -1721,12 +1719,6 @@ namespace System
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern String InternalPad (int width, char chr, bool right);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern String InternalToLower (CultureInfo culture);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern String InternalToUpper (CultureInfo culture);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static String InternalAllocateStr (int length);

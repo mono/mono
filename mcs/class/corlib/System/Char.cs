@@ -490,7 +490,7 @@ namespace System
 
 		public static char ToLower (char c)
 		{
-			return InternalToLower (c, CultureInfo.CurrentCulture);
+			return ToLower (c, CultureInfo.CurrentCulture);
 		}
 
 		internal static char ToLowerInvariant (char c)
@@ -511,15 +511,12 @@ namespace System
 			if (culture.LCID == 0x007F) // Invariant
 				return ToLowerInvariant (c);
 
-			return InternalToLower (c, culture);
+			return culture.TextInfo.ToLower (c);
 		}
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private static extern char InternalToLower (char c, CultureInfo culture);
 
 		public static char ToUpper (char c)
 		{
-			return InternalToUpper (c, CultureInfo.CurrentCulture);
+			return ToUpper (c, CultureInfo.CurrentCulture);
 		}
 
 		internal static char ToUpperInvariant (char c)
@@ -540,11 +537,8 @@ namespace System
 			if (culture.LCID == 0x007F) // Invariant
 				return ToUpperInvariant (c);
 
-			return InternalToUpper (c, culture);
+			return culture.TextInfo.ToUpper (c);
 		}
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private static extern char InternalToUpper (char c, CultureInfo culture);
 		
 		public override string ToString ()
 		{

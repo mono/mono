@@ -36,12 +36,14 @@ using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace System.Globalization {
 
 	[Serializable]
 	public class TextInfo: IDeserializationCallback
 	{
+		private delegate char CharConverter (char c);
 		
 		[StructLayout (LayoutKind.Sequential)]
 		struct Data {
@@ -51,7 +53,10 @@ namespace System.Globalization {
 			public int oem;
 			public byte list_sep;
 		}
-		
+
+		CharConverter toLower;
+		CharConverter toUpper;
+
 		int m_win32LangID;
 		int m_nDataItem;
 		bool m_useUserOverride;
@@ -72,6 +77,8 @@ namespace System.Globalization {
 				this.data = new Data ();
 				this.data.list_sep = (byte) '.';
 			}
+			toLower = new CharConverter (ToLower);
+			toUpper = new CharConverter (ToUpper);
 		}
 
 		public virtual int ANSICodePage
@@ -128,19 +135,6 @@ namespace System.Globalization {
 		{
 			return (m_win32LangID);
 		}
-
-		public virtual char ToLower(char c)
-		{
-			return Char.ToLower (c);
-		}
-		
-		public virtual string ToLower(string str)
-		{
-			if(str==null) 
-				throw new ArgumentNullException("string is null");
-
-			return str.ToLower (ci);
-		}
 		
 		public override string ToString()
 		{
@@ -173,17 +167,140 @@ namespace System.Globalization {
 			return s.ToString ();
 		}
 
-		public virtual char ToUpper (char c)
+		// Only Azeri and Turkish have their own special cases.
+		// Other than them, all languages have common special case
+		// (enumerable enough).
+		public virtual char ToLower (char c)
 		{
-			return Char.ToUpper (c, ci);
+			if (ci == CultureInfo.InvariantCulture)
+				return Char.ToLowerInvariant (c);
+
+			switch ((int) c) {
+			case '\u0049': // Latin uppercase I
+				CultureInfo tmp = ci;
+				while (tmp.Parent != tmp && tmp.Parent != CultureInfo.InvariantCulture)
+					tmp = tmp.Parent;
+				switch (tmp.LCID) {
+				case 44: // Azeri (az)
+				case 31: // Turkish (tr)
+					return '\u0131'; // I becomes dotless i
+				}
+				break;
+			case '\u0130': // I-dotted
+				return '\u0069'; // i
+
+			case '\u01c5': // LATIN CAPITAL LETTER D WITH SMALL LETTER Z WITH CARON
+				return '\u01c6';
+			// \u01c7 -> \u01c9 (LJ) : invariant
+			case '\u01c8': // LATIN CAPITAL LETTER L WITH SMALL LETTER J
+				return '\u01c9';
+			// \u01ca -> \u01cc (NJ) : invariant
+			case '\u01cb': // LATIN CAPITAL LETTER N WITH SMALL LETTER J
+				return '\u01cc';
+			// WITH CARON : invariant
+			// WITH DIAERESIS AND * : invariant
+
+			case '\u01f2': // LATIN CAPITAL LETTER D WITH SMALL LETTER Z
+				return '\u01f3';
+			case '\u03d2':  // ? it is not in ICU
+				return '\u03c5';
+			case '\u03d3':  // ? it is not in ICU
+				return '\u03cd';
+			case '\u03d4':  // ? it is not in ICU
+				return '\u03cb';
+			}
+			return Char.ToLowerInvariant (c);
 		}
 
-		public virtual string ToUpper (string str)
+		public virtual char ToUpper (char c)
 		{
-			if(str==null)
+			if (ci == CultureInfo.InvariantCulture)
+				return Char.ToUpperInvariant (c);
+
+			switch (c) {
+			case '\u0069': // Latin lowercase i
+				CultureInfo tmp = ci;
+				while (tmp.Parent != tmp && tmp.Parent != CultureInfo.InvariantCulture)
+					tmp = tmp.Parent;
+				switch (tmp.LCID) {
+				case 44: // Azeri (az)
+				case 31: // Turkish (tr)
+					return '\u0130'; // dotted capital I
+				}
+				break;
+			case '\u0131': // dotless i
+				return '\u0049'; // I
+
+			case '\u01c5': // see ToLower()
+				return '\u01c4';
+			case '\u01c8': // see ToLower()
+				return '\u01c7';
+			case '\u01cb': // see ToLower()
+				return '\u01ca';
+			case '\u01f2': // see ToLower()
+				return '\u01f1';
+			case '\u0390': // GREEK SMALL LETTER IOTA WITH DIALYTIKA AND TONOS
+				return '\u03aa'; // it is not in ICU
+			case '\u03b0': // GREEK SMALL LETTER UPSILON WITH DIALYTIKA AND TONOS
+				return '\u03ab'; // it is not in ICU
+			case '\u03d0': // GREEK BETA
+				return '\u0392';
+			case '\u03d1': // GREEK THETA
+				return '\u0398';
+			case '\u03d5': // GREEK PHI
+				return '\u03a6';
+			case '\u03d6': // GREEK PI
+				return '\u03a0';
+			case '\u03f0': // GREEK KAPPA
+				return '\u039a';
+			case '\u03f1': // GREEK RHO
+				return '\u03a1';
+			// am not sure why miscellaneous GREEK symbols are 
+			// not handled here.
+			}
+
+			return Char.ToUpperInvariant (c);
+		}
+
+		public virtual string ToLower (string s)
+		{
+			// In ICU (3.2) there are a few cases that one single
+			// character results in multiple characters in e.g.
+			// tr-TR culture. So I tried brute force conversion
+			// test with single character as a string input, but 
+			// there was no such conversion. So I think it just
+			// invokes ToLower(char).
+			return Transliterate (s, toLower);
+		}
+
+		public virtual string ToUpper (string s)
+		{
+			// In ICU (3.2) there is a case that string
+			// is handled beyond per-character conversion, but
+			// it is only lt-LT culture where MS.NET does not
+			// handle any special transliteration. So I keep
+			// ToUpper() just as character conversion.
+			return Transliterate (s, toUpper);
+		}
+
+		private string Transliterate (string s, CharConverter convert)
+		{
+			if (s == null)
 				throw new ArgumentNullException("string is null");
-			
-			return str.ToUpper (ci);
+			StringBuilder sb = null;
+			int start = 0;
+			for (int i = 0; i < s.Length; i++) {
+				if (s [i] != convert (s [i])) {
+					if (sb == null)
+						sb = new StringBuilder (s.Length);
+					sb.Append (s.Substring (start, i - start));
+					sb.Append (convert (s [i]));
+					start = i + 1;
+				}
+			}
+			if (sb != null && start < s.Length)
+				sb.Append (s.Substring (start));
+			return sb == null ? s : sb.ToString ();
 		}
 
 		/* IDeserialization interface */

@@ -1,3 +1,8 @@
+2005-04-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* String.cs,
+	  Char.cs : use TextInfo for ToLower() and ToUpper().
+
 2005-03-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Exception.cs: Added Assert for TypeInformation to GetObjectData and

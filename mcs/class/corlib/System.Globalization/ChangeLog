@@ -1,3 +1,8 @@
+2005-04-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TextInfo.cs : implemented culture sensitive ToLower() and ToUpper()
+	  which behaves exactly the same as MS.NET does.
+
 2005-02-09  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* CultureInfo.cs: Added field needed for serialization
