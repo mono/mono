@@ -109,51 +109,52 @@ namespace System.Web.UI.WebControls
 
 		internal Unit(string value, CultureInfo culture, UnitType defType)
 		{
-			this.val = 0;
-			this.type = UnitType.Pixel;
-			if(value == null || value.Length == 0)
-			{
-				this.val = 0;
-				this.type = UnitType.Pixel;
+			string valueTrim;
+			if (value == null || (valueTrim = value.Trim ()).Length == 0) {
+				val = 0;
+				type = UnitType.Pixel;
+				return;
 			}
-			if(culture == null)
+
+			if (culture == null)
 				culture = CultureInfo.CurrentCulture;
-			string strVal = value.Trim().ToLower();
+
+			string strVal = valueTrim.ToLower ();
+			int length = strVal.Length;
 			char c;
 			int start = -1;
-			//int current = 0;
-			for(int i = 0; i < strVal.Length; i++)
-			{
-				c = strVal[i];
+			for (int i = 0; i < length; i++) {
+				c = strVal [i];
 				if( (c >= '0' && c <= '9') || (c == '-' || c == '.' || c == ',') )
 					start = i;
 			}
-			if(start == -1)
-				throw new ArgumentException();
-			if( (start + 1) < strVal.Length)
-			{
-				this.type = (UnitType)GetTypeFromString(strVal.Substring(start + 1).Trim());
-				this.val  = 0;
-			} else
-			{
-				this.type = defType;
-				this.val  = 0;
+			
+			if (start == -1)
+				throw new ArgumentException("No digits in 'value'");
+			
+			start++;
+			if (start < length) {
+				type = GetTypeFromString (strVal.Substring (start).Trim ());
+				val  = 0;
+			} else {
+				type = defType;
 			}
-			try
-			{
-				if(type == UnitType.Pixel)
-					val = (double) Int32.Parse (strVal.Substring (0, start + 1), culture);
+
+			try {
+				string numbers = strVal.Substring (0, start);
+				if (type == UnitType.Pixel)
+					val = (double) Int32.Parse (numbers, culture);
 				else
-					val = (double) Single.Parse (strVal.Substring (0, start + 1), culture);
-			} catch(Exception)
-			{
-				throw new ArgumentOutOfRangeException();
+					val = (double) Single.Parse (numbers, culture);
+			} catch (Exception) {
+				throw new FormatException ("Error parsing " + value);
 			}
-			if(val < Min || val > Max)
-				throw new ArgumentOutOfRangeException();
+
+			if (val < Min || val > Max)
+				throw new ArgumentOutOfRangeException ();
 		}
 
-		private UnitType GetTypeFromString(string s)
+		private static UnitType GetTypeFromString(string s)
 		{
 			if(s == null || s.Length == 0)
 				return UnitType.Pixel;

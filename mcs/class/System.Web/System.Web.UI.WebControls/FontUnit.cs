@@ -12,6 +12,7 @@
  */
 
 using System;
+using System.Collections;
 using System.Globalization;
 using System.Web;
 using System.Web.UI;
@@ -33,6 +34,27 @@ namespace System.Web.UI.WebControls
 
 		private FontSize type;
 		private Unit     val;
+
+		private static Hashtable sizeTable;
+
+		static FontUnit ()
+		{
+			sizeTable = new Hashtable (CaseInsensitiveHashCodeProvider.Default,
+						   CaseInsensitiveComparer.Default);
+			sizeTable.Add ("smaller", 2);
+			sizeTable.Add ("larger", 3);
+			sizeTable.Add ("xx-small", 4);
+			sizeTable.Add ("xxsmall", 4);
+			sizeTable.Add ("x-small", 5);
+			sizeTable.Add ("xsmall", 5);
+			sizeTable.Add ("small", 6);
+			sizeTable.Add ("medium", 7);
+			sizeTable.Add ("large", 8);
+			sizeTable.Add ("xlarge", 9);
+			sizeTable.Add ("x-large", 9);
+			sizeTable.Add ("xxlarge", 10);
+			sizeTable.Add ("xx-large", 10);
+		}
 
 		public FontUnit(FontSize type)
 		{
@@ -78,42 +100,22 @@ namespace System.Web.UI.WebControls
 			if(value != null && value != String.Empty)
 			{
 				string low = value.ToLower(culture);
-				int index = GetTypeFromString(low);
-				if( index != -1)
+				int size = GetTypeFromString(low);
+				if (size != -1)
 				{
-					type = (FontSize)index;
-					return;
-				} else
-				{
+					type = (FontSize)size;
+				} else {
 					val = new Unit(value, culture, UnitType.Point);
 					type = FontSize.AsUnit;
 				}
 			}
 		}
 
-		private int GetTypeFromString(string strVal)
+		private static int GetTypeFromString(string strVal)
 		{
-			string[] values = {
-				"smaller",
-				"larger",
-				"xx-small",
-				"x-small",
-				"small",
-				"medium",
-				"large",
-				"xlarge",
-				"xxlarge"
-			};
-			int i = 0;
-			foreach(string valType in values)
-			{
-				if(strVal == valType)
-				{
-					return (i + 2);
-				}
-				i++;
-			}
-			return -1;
+			if (!(sizeTable.ContainsKey (strVal)))
+					return -1;
+			return (int) sizeTable [strVal];
 		}
 
 		public static FontUnit Parse(string s)

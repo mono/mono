@@ -1,5 +1,11 @@
 2002-07-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* FontUnit.cs: use a hashtable for mapping size name to value.
+	* HyperLink.cs: fixed a bug and a typo.
+	* Unit.cs: some fixes to internal constructor.
+
+2002-07-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ListControl.cs: fixed a couple of range checks.
 	* WebControl.cs: MS lies! Not all WebControls must be rendered inside
 	an HtmlForm (p.e., Label).

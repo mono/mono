@@ -117,7 +117,7 @@ namespace System.Web.UI.WebControls
 			}
 			if(Text.Length > 0)
 			{
-				base.AddParsedSubObject(Text);
+				base.AddParsedSubObject(new LiteralControl (Text));
 				Text = String.Empty;
 			}
 			base.AddParsedSubObject (obj);
@@ -149,7 +149,7 @@ namespace System.Web.UI.WebControls
 			}
 			if(HasControls())
 			{
-				base.RenderControl(writer);
+				base.RenderContents(writer);
 				return;
 			}
 			writer.Write(Text);
