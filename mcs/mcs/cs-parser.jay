@@ -1538,7 +1538,7 @@ indexer_declarator
 	  {
 		$$ = new IndexerDeclaration ((string) $1, null, (Parameters) $4);
 	  }
-	| type interface_type DOT THIS OPEN_BRACKET formal_parameter_list CLOSE_BRACKET
+	| type qualified_identifier DOT THIS OPEN_BRACKET formal_parameter_list CLOSE_BRACKET
 	  {
 		$$ = new IndexerDeclaration ((string) $1, (string) $2, (Parameters) $6);
 	  }
@@ -1941,7 +1941,7 @@ base_access
 	  }
 	| BASE OPEN_BRACKET expression_list CLOSE_BRACKET
 	  {
-		$$ = new BaseIndexerAccess ((ArrayList) $3);
+		$$ = new BaseIndexerAccess ((ArrayList) $3, lexer.Location);
 	  }
 	;
 
@@ -2481,7 +2481,7 @@ modifiers
 
 		if ((m1 & m2) != 0) {
 			Location l = lexer.Location;
-			Report.Error (1002, l, "Duplicate modifier: `" + Modifiers.Name (m2) + "'");
+			Report.Error (1004, l, "Duplicate modifier: `" + Modifiers.Name (m2) + "'");
 		}
 		$$ = (int) (m1 | m2);
 	  }

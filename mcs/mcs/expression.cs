@@ -1345,10 +1345,33 @@ namespace Mono.CSharp {
 				//
 				Type other = null;
 				
-				if (l == TypeManager.uint32_type)
+				if (l == TypeManager.uint32_type){
+					if (right is IntConstant){
+						IntConstant ic = (IntConstant) right;
+						int val = ic.Value;
+						
+						if (val >= 0)
+							right = new UIntConstant ((uint) val);
+
+						type = l;
+						return true;
+					}
 					other = r;
-				else if (r == TypeManager.uint32_type)
+				} 
+				else if (r == TypeManager.uint32_type){
+					if (left is IntConstant){
+						IntConstant ic = (IntConstant) left;
+						int val = ic.Value;
+						
+						if (val >= 0)
+							left = new UIntConstant ((uint) val);
+
+						type = r;
+						return true;
+					}
+					
 					other = l;
+				}
 
 				if ((other == TypeManager.sbyte_type) ||
 				    (other == TypeManager.short_type) ||
@@ -5473,22 +5496,30 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class BaseIndexerAccess : Expression {
 		ArrayList Arguments;
-
-		public BaseIndexerAccess (ArrayList args)
+		Location loc;
+		
+		public BaseIndexerAccess (ArrayList args, Location l)
 		{
 			Arguments = args;
+			loc = l;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			// FIXME: Implement;
-			throw new Exception ("Unimplemented");
-			// return this;
+			Type current_type = ec.TypeContainer.TypeBuilder;
+			Type base_type = current_type.BaseType;
+			Expression member_lookup;
+
+			member_lookup = MemberLookup (ec, base_type, "get_Item", false, loc);
+			if (member_lookup == null)
+				return null;
+
+			return MemberAccess.ResolveMemberAccess (ec, member_lookup, ec.This, loc, null);
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			throw new Exception ("Unimplemented");
+			throw new Exception ("Should never be called");
 		}
 	}
 	

@@ -36,7 +36,7 @@ TEST_TOKENIZER_SOURCES = test-token.cs $(COMMON_SOURCES)
 
 all: mcs.exe
 
-mcs.exe: cs-parser.cs
+mcs.exe: cs-parser.cs $(COMPILER_SOURCES)
 	$(CSC) $(CSCFLAGS) /target:exe /r:System.dll /out:mcs.exe $(COMPILER_SOURCES)
 
 res:
@@ -78,11 +78,11 @@ cs-parser.cs: cs-parser.jay
 pn:
 	../jay/jay -ctv < ../jay/skeleton.cs cs-parser.jay | grep -v '#line' > cs-parser.cs
 
-statementCollection.cs: X-Collection.cs
-	sed -e "s/@CONTAINEE@/Statement/g" -e "s/@arrayname@/statements/g" < X-Collection.cs > statementCollection.cs
+#statementCollection.cs: X-Collection.cs
+#	sed -e "s/@CONTAINEE@/Statement/g" -e "s/@arrayname@/statements/g" < X-Collection.cs > statementCollection.cs
 
-parameterCollection.cs: X-Collection.cs
-	sed -e "s/@CONTAINEE@/Parameter/g" -e "s/@arrayname@/parameters/g" < X-Collection.cs > parameterCollection.cs
+#parameterCollection.cs: X-Collection.cs
+#	sed -e "s/@CONTAINEE@/Parameter/g" -e "s/@arrayname@/parameters/g" < X-Collection.cs > parameterCollection.cs
 
 clean:
 	rm -f mcs.exe cs-parser.cs y.output mcs.pdb *~ .*~ mb-parser.cs mcs.log

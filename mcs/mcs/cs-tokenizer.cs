@@ -457,6 +457,7 @@ namespace Mono.CSharp
 				} else
 					break;
 			}
+			
 			return seen_digits;
 		}
 
@@ -494,7 +495,6 @@ namespace Mono.CSharp
 			default:
 				return Token.NONE;
 			}
-			getChar ();
 			return t;
 		}
 
@@ -652,7 +652,7 @@ namespace Mono.CSharp
 			if (c == '.'){
 				if (decimal_digits ('.')){
 					is_real = true;
-					c = peekChar ();
+					c = getChar ();
 				} else {
 					putback ('.');
 					number.Length -= 1;
@@ -663,29 +663,30 @@ namespace Mono.CSharp
 			if (c == 'e' || c == 'E'){
 				is_real = true;
 				number.Append ("e");
-				getChar ();
+				c = getChar ();
 				
-				c = peekChar ();
 				if (c == '+'){
 					number.Append ((char) c);
-					getChar ();
-					c = peekChar ();
+					c = getChar ();
 				} else if (c == '-'){
 					number.Append ((char) c);
-					getChar ();
-					c = peekChar ();
+					c = getChar ();
 				}
 				decimal_digits (-1);
-				c = peekChar ();
+				c = getChar ();
 			}
 
 			type = real_type_suffix (c);
 			if (type == Token.NONE && !is_real){
 				putback (c);
 				return adjust_int (c);
-			} else
+			} else 
 				is_real = true;
 
+			if (type == Token.NONE){
+				putback (c);
+			}
+			
 			if (is_real)
 				return adjust_real (type);
 

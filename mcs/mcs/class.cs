@@ -1369,7 +1369,7 @@ namespace Mono.CSharp {
 						i++;
 						continue;
 					}
-					
+
 					if (args == null){
 						if (tm.args [i] == null || tm.args [i].Length == 0){
 							if (clear)
@@ -1399,13 +1399,18 @@ namespace Mono.CSharp {
 						continue;
 					}
 					
-					int j;
-						
-					for (j = 0; j < args.Length; j++){
+					int j, top = args.Length;
+					bool fail = false;
+					
+					for (j = 0; j < top; j++){
 						if (tm.args [i][j] != args[j]){
-							i++;
-							continue;
+							fail = true;
+							break;
 						}
+					}
+					if (fail){
+						i++;
+						continue;
 					}
 
 					if (clear)
@@ -3279,6 +3284,10 @@ namespace Mono.CSharp {
 			if (IndexerType == null || parameters == null)
 				return false;
 
+			if (!parent.MethodModifiersValid (ModFlags, InterfaceType == null ?
+							  "this" : InterfaceType, Location))
+				return false;
+
 			//
 			// verify accessibility
 			//
@@ -3292,15 +3301,19 @@ namespace Mono.CSharp {
 			if (error)
 				return false;
 			
+			Type iface_type = null;
+
+			if (InterfaceType != null){
+				iface_type = RootContext.LookupType (parent, InterfaceType, false, Location);
+				if (iface_type == null)
+					return false;
+			} 
+				
+			
 			PropertyBuilder = parent.TypeBuilder.DefineProperty (
 				TypeManager.IndexerPropertyName (parent.TypeBuilder),
 				prop_attr, IndexerType, parameters);
 
-			//
-			// FIXME: Implement explicit implementation
-			//
-			Type iface_type = null;
-			
 			if (Get != null){
 				DefineMethod (parent, iface_type, IndexerType, "get_Item", parameters, true);
                                 InternalParameters pi = new InternalParameters (parent, FormalParameters);

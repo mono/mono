@@ -1,4 +1,23 @@
+2002-01-07  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (BaseIndexer): Begin implementation.
+
+	* class.cs (TypeContainer.IsInterfaceMethod): Bug fix.
+
+	* cs-parser.jay (indexer_declarator): Use qualified_identifier
+	production directly to remove a shift/reduce, and implement
+	explicit interface implementation.
+
+	* cs-tokenizer.cs: Fix tokenizer, it was consuming one extra char
+	after a floating point suffix.
+
+	* expression.cs (DoNumericPromotions): Improved the conversion for
+	uint/uint.  If we have a constant, we avoid doing a typecast to a
+	larger type.
+
+	* class.cs (Indexer): Implement explicit interface implementation
+	for indexers.
+	
 Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.cs: make the default instance constructor public and hidebysig.

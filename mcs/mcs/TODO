@@ -9,10 +9,11 @@ Major tasks:
 
 	Implement base indexer access.
 
-	base property access on a virtual method.
-
 BUGS
 ----
+
+* Do not declare a .property on things that are just implementations, that
+  comes from the parent, just do the method.
 
 * Currently the code path for 108/109 reporting is not being ran for methods
   as we need to compare method signatures.  But since we retrieve the expensive
