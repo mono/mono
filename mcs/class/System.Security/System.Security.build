@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- NAnt build file for System.Security.dll -->
+
+<project name="System.Data" default="build">
+	<property name="debug" value="false"/>
+
+	<target name="build">
+		<csc target="library" output="../lib/System.Security.dll" debug="${debug}">
+			<arg value="/nowarn:1595"/>
+			<arg value="/nowarn:0067"/>
+			<arg value="/nowarn:0109"/>
+			<arg value="/nowarn:0169"/>
+			<arg value="/nowarn:0679"/>
+			<arg value="/nowarn:0649"/>
+			<arg value="/unsafe"/>
+			<arg value="/noconfig"/>
+			<arg value="/r:System.Xml.dll"/>
+			<sources basedir=".">
+				<includes name="System.Security.Cryptography.Xml/*.cs"/>
+			</sources>
+			<references>
+				<includes name="../lib/corlib.dll"/>
+				<includes name="../lib/System.Xml.dll"/>
+			</references>
+		</csc>
+		<copy file="../lib/System.Security.dll" tofile="Test/System.Security.dll"/>
+	</target>
+	<target name="test" depends="build">
+		<nant basedir="Test" target="test"/>
+	</target>
+	<target name="clean">
+		<delete file="../lib/System.Security.dll" failonerror="false"/>
+		<delete file="Test/System.Security.dll" failonerror="false"/>
+
+	</target>
+</project>

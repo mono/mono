@@ -1,0 +1,3 @@
+2002-11-28  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* System.Security.build: New. Nant build file for Windows.
