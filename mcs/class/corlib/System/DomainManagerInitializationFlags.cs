@@ -34,8 +34,8 @@ namespace System {
 	[Serializable]
 	public enum DomainManagerInitializationFlags {
 		None = 0,
-		Activate = 1,
-		RegisterWithHost = 2
+		RegisterWithHost = 1,
+		Activate = 2
 	}
 }
 

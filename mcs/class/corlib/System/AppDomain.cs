@@ -10,10 +10,6 @@
 //   Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2001, 2002 Ximian, Inc.  http://www.ximian.com
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -71,6 +67,7 @@ namespace System
 		// CAS
 		private Evidence _evidence;
 		private PermissionSet _granted;
+		internal PermissionSet _refused;
 
 		// non-CAS
 		private PrincipalPolicy _principalPolicy;
@@ -87,7 +84,10 @@ namespace System
 
 		public AppDomainSetup SetupInformation {
 			get {
-				return getSetup ();
+				AppDomainSetup setup = getSetup ();
+				if (setup == null)
+					return null;
+				return new AppDomainSetup (setup);
 			}
 		}
 
@@ -127,7 +127,20 @@ namespace System
 
 		public Evidence Evidence {
 			get {
-				return _evidence;
+				// if the host (runtime) hasn't provided it's own evidence...
+				if (_evidence == null) {
+					// ... we will provide our own
+					lock (this) {
+						// the executed assembly from the "default" appdomain
+						// or null if we're not in the default appdomain
+						Assembly a = Assembly.GetEntryAssembly ();
+						if (a == null)
+							_evidence = AppDomain.DefaultDomain.Evidence;
+						else
+							_evidence = Evidence.GetDefaultHostEvidence (a);
+					}
+				}
+				return new Evidence (_evidence);	// return a copy
 			}
 		}
 
@@ -167,6 +180,9 @@ namespace System
 			}
 		}
 
+#if NET_2_0
+		[Obsolete ("")]
+#endif
 		public void AppendPrivatePath (string path)
 		{
 			if (path == null || path.Length == 0)
@@ -187,6 +203,9 @@ namespace System
 			setup.PrivateBinPath = pp + path;
 		}
 
+#if NET_2_0
+		[Obsolete ("")]
+#endif
 		public void ClearPrivatePath ()
 		{
 			SetupInformation.PrivateBinPath = String.Empty;
@@ -387,12 +406,12 @@ namespace System
 
 		public int ExecuteAssembly (string assemblyFile)
 		{
-			return ExecuteAssembly (assemblyFile, new Evidence (), null);
+			return ExecuteAssembly (assemblyFile, null, null);
 		}
 
 		public int ExecuteAssembly (string assemblyFile, Evidence assemblySecurity)
 		{
-			return ExecuteAssembly (assemblyFile, new Evidence (), null);
+			return ExecuteAssembly (assemblyFile, assemblySecurity, null);
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -425,7 +444,7 @@ namespace System
 
 		public Assembly Load (AssemblyName assemblyRef)
 		{
-			return Load (assemblyRef, new Evidence ());
+			return Load (assemblyRef, null);
 		}
 
 		public Assembly Load (AssemblyName assemblyRef, Evidence assemblySecurity)
@@ -448,7 +467,7 @@ namespace System
 			if (assemblyString == null)
 				throw new ArgumentNullException ("assemblyString");
 
-			return LoadAssembly (assemblyString, new Evidence ());
+			return LoadAssembly (assemblyString, null);
 		}
 
 		public Assembly Load (string assemblyString, Evidence assemblySecurity)
@@ -461,12 +480,12 @@ namespace System
 
 		public Assembly Load (byte[] rawAssembly)
 		{
-			return Load (rawAssembly, null, new Evidence ());
+			return Load (rawAssembly, null, null);
 		}
 
 		public Assembly Load (byte[] rawAssembly, byte[] rawSymbolStore)
 		{
-			return Load (rawAssembly, rawSymbolStore, new Evidence ());
+			return Load (rawAssembly, rawSymbolStore, null);
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -615,29 +634,49 @@ namespace System
 
 		public static AppDomain CreateDomain (string friendlyName)
 		{
-			return CreateDomain (friendlyName, new Evidence (), new AppDomainSetup ());
+			return CreateDomain (friendlyName, null, null);
 		}
 		
 		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo)
 		{
-			return CreateDomain (friendlyName, securityInfo, new AppDomainSetup ());
+			return CreateDomain (friendlyName, securityInfo, null);
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern AppDomain createDomain (string friendlyName, AppDomainSetup info);
 
-		[MonoTODO]
+		[MonoTODO ("allow setup in the other domain")]
 		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo, AppDomainSetup info)
 		{
-			//TODO: treat securityInfo (can be null)
 			if (friendlyName == null)
 				throw new System.ArgumentNullException ("friendlyName");
 
-			if (info == null)
-				throw new System.ArgumentNullException ("info");
+			if (info == null) {
+				// if null, get default domain's SetupInformation
+				AppDomain def = AppDomain.DefaultDomain;
+				if (def == null)
+					info = new AppDomainSetup ();	// we're default!
+				else
+					info = def.SetupInformation;
+			}
+			else
+				info = new AppDomainSetup (info);	// copy
 
 			// todo: allow setup in the other domain
-			return (AppDomain) RemotingServices.GetDomainProxy (createDomain (friendlyName, info));
+
+			AppDomain ad = (AppDomain) RemotingServices.GetDomainProxy (createDomain (friendlyName, info));
+			if (securityInfo == null) {
+				// get default domain's Evidence (unless we're are the default!)
+				AppDomain def = AppDomain.DefaultDomain; 
+				if (def == null)
+					ad._evidence = null;		// we'll get them later (GetEntryAssembly)
+				else
+					ad._evidence = def.Evidence;	// new (shallow) copy
+			}
+			else
+				ad._evidence = new Evidence (securityInfo);	// copy
+
+			return ad;
 		}
 
 		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo,string appBasePath,
@@ -690,6 +729,9 @@ namespace System
 			SetupInformation.DynamicBase = path;
 		}
 
+#if NET_2_0
+		[Obsolete ("")]
+#endif
 		public static int GetCurrentThreadId ()
 		{
 			return Thread.CurrentThreadId;
@@ -825,5 +867,107 @@ namespace System
 		public event ResolveEventHandler TypeResolve;
 
 		public event UnhandledExceptionEventHandler UnhandledException;
+
+#if NET_2_0
+		private ActivationContext _activation;
+		private AppDomainManager _domain_manager;
+
+		// properties
+
+		public ActivationContext ActivationContext {
+			get { return _activation; }
+		}
+
+		// default is null
+		public AppDomainManager DomainManager {
+			get { return _domain_manager; }
+		}
+
+		public int Id {
+			get { return getDomainID (); }
+		}
+
+		// methods
+
+		[MonoTODO ("what's the policy affecting names ?")]
+		[ComVisible (false)]
+		public string ApplyPolicy (string assemblyName)
+		{
+			if (assemblyName == null)
+				throw new ArgumentNullException ("assemblyName");
+			if (assemblyName.Length == 0) // String.Empty
+				throw new ArgumentException ("assemblyName");
+			return assemblyName;
+		}
+
+		// static methods
+
+		[MonoTODO]
+		// LAMESPEC: Only the fist argument (full path to application) is documented
+		public static bool Activate (string[] args)
+		{
+			if (args == null)
+				throw new ArgumentNullException ("args");
+			// TODO - what class implements IApplicationDescription ?
+			return ActivateNewProcess (null);
+		}
+
+		[MonoTODO]
+		public static bool ActivateNewProcess (IApplicationDescription appDescription)
+		{
+			if (appDescription == null)
+				throw new ArgumentNullException ("appDescription");
+			return false;
+		}
+
+		[MonoTODO ("add support for new delegate")]
+		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo, string appBasePath,
+			string appRelativeSearchPath, bool shadowCopy, AppDomainInitializer adInit, string[] adInitArgs)
+		{
+			return CreateDomain (friendlyName, securityInfo, appBasePath, appRelativeSearchPath, shadowCopy);
+		}
+
+		[MonoTODO ("resolve assemblyName to location")]
+		public int ExecuteAssemblyByName (string assemblyName)
+		{
+			return ExecuteAssemblyByName (assemblyName, null, null);
+		}
+
+		[MonoTODO ("resolve assemblyName to location")]
+		public int ExecuteAssemblyByName (string assemblyName, Evidence assemblySecurity)
+		{
+			return ExecuteAssemblyByName (assemblyName, assemblySecurity, null);
+		}
+
+		[MonoTODO ("resolve assemblyName to location")]
+		public int ExecuteAssemblyByName (string assemblyName, Evidence assemblySecurity, string[] args)
+		{
+			if (assemblyName == null)
+				throw new ArgumentNullException ("assemblyName");
+
+			AssemblyName an = new AssemblyName (assemblyName);
+			return ExecuteAssemblyByName (an, assemblySecurity, args);
+		}
+
+		[MonoTODO ("assemblyName may not have a codebase")]
+		public int ExecuteAssemblyByName (AssemblyName assemblyName, Evidence assemblySecurity, string[] args)
+		{
+			if (assemblyName == null)
+				throw new ArgumentNullException ("assemblyName");
+
+			return ExecuteAssembly (assemblyName.CodeBase, assemblySecurity, args);
+		}
+
+		public bool IsDefaultAppDomain ()
+		{
+			return (Id == 0);
+		}
+
+		[MonoTODO ("see Assembly.ReflectionOnlyLoad")]
+		public Assembly[] ReflectionOnlyGetAssemblies ()
+		{
+			return new Assembly [0];
+		}
+#endif
 	}
 }

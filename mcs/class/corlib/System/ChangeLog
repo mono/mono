@@ -1,6 +1,10 @@
 2004-08-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ApplicationId.cs: Fixed typo to fix NET_2_0 compilation.
+	* AppDomain.cs: Fixed use of Evidence and AppDomainSetup (copies, not
+	references). Added (non-obsolete) Fx 2.0 properties and methods.
+	* AppDomainSetup.cs: Added internal copy constructor.
+	* DomainManagerInitializationFlags.cs: Fixed values.
 
 2004-08-08  Sebastien Pouliot  <sebastien@ximian.com>
 
