@@ -2314,10 +2314,13 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected class Unwrap : Expression
+		protected class Unwrap : Expression, IMemoryLocation
 		{
 			Expression expr;
 			NullableInfo info;
+
+			LocalTemporary temp;
+			bool has_temp;
 
 			public Unwrap (Expression expr, Location loc)
 			{
@@ -2331,6 +2334,9 @@ namespace Mono.CSharp {
 				if (expr == null)
 					return null;
 
+				if (!(expr is IMemoryLocation))
+					temp = new LocalTemporary (ec, expr.Type);
+
 				info = new NullableInfo (expr.Type);
 				type = info.UnderlyingType;
 				eclass = expr.eclass;
@@ -2339,14 +2345,27 @@ namespace Mono.CSharp {
 
 			public override void Emit (EmitContext ec)
 			{
-				((IMemoryLocation) expr).AddressOf (ec, AddressOp.LoadStore);
+				AddressOf (ec, AddressOp.LoadStore);
 				ec.ig.EmitCall (OpCodes.Call, info.Value, null);
 			}
 
-			public void EmitCheck (EmitContext ec)
+			public void EmitCheck (EmitContext ec, Label label)
 			{
-				((IMemoryLocation) expr).AddressOf (ec, AddressOp.LoadStore);
+				AddressOf (ec, AddressOp.LoadStore);
 				ec.ig.EmitCall (OpCodes.Call, info.HasValue, null);
+				ec.ig.Emit (OpCodes.Brfalse, label);
+			}
+
+			public void AddressOf (EmitContext ec, AddressOp mode)
+			{
+				if (temp != null) {
+					if (!has_temp) {
+						temp.Store (ec);
+						has_temp = true;
+					}
+					temp.AddressOf (ec, AddressOp.LoadStore);
+				} else
+					((IMemoryLocation) expr).AddressOf (ec, AddressOp.LoadStore);
 			}
 		}
 
@@ -2418,7 +2437,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public abstract class Lifted : Expression
+		public abstract class Lifted : Expression, IMemoryLocation
 		{
 			Expression expr, underlying, wrap, null_value;
 			Unwrap unwrap;
@@ -2464,8 +2483,7 @@ namespace Mono.CSharp {
 				Label is_null_label = ig.DefineLabel ();
 				Label end_label = ig.DefineLabel ();
 
-				unwrap.EmitCheck (ec);
-				ig.Emit (OpCodes.Brfalse, is_null_label);
+				unwrap.EmitCheck (ec, is_null_label);
 
 				wrap.Emit (ec);
 				ig.Emit (OpCodes.Br, end_label);
@@ -2474,6 +2492,11 @@ namespace Mono.CSharp {
 				null_value.Emit (ec);
 
 				ig.MarkLabel (end_label);
+			}
+
+			public void AddressOf (EmitContext ec, AddressOp mode)
+			{
+				unwrap.AddressOf (ec, mode);
 			}
 		}
 
@@ -2494,14 +2517,15 @@ namespace Mono.CSharp {
 
 			protected override Expression ResolveUnderlying (Expression unwrap, EmitContext ec)
 			{
+				Type type = TypeManager.GetTypeArguments (TargetType) [0];
+
 				if (IsUser) {
-					return Convert.UserDefinedConversion (
-						ec, unwrap, TargetType, loc, IsExplicit);
+					return Convert.UserDefinedConversion (ec, unwrap, type, loc, IsExplicit);
 				} else {
 					if (IsExplicit)
-						return Convert.ExplicitConversion (ec, unwrap, TargetType, loc);
+						return Convert.ExplicitConversion (ec, unwrap, type, loc);
 					else
-						return Convert.ImplicitConversion (ec, unwrap, TargetType, loc);
+						return Convert.ImplicitConversion (ec, unwrap, type, loc);
 				}
 			}
 		}
@@ -2602,15 +2626,11 @@ namespace Mono.CSharp {
 				Label is_null_label = ig.DefineLabel ();
 				Label end_label = ig.DefineLabel ();
 
-				if (left_unwrap != null) {
-					left_unwrap.EmitCheck (ec);
-					ig.Emit (OpCodes.Brfalse, is_null_label);
-				}
+				if (left_unwrap != null)
+					left_unwrap.EmitCheck (ec, is_null_label);
 
-				if (right_unwrap != null) {
-					right_unwrap.EmitCheck (ec);
-					ig.Emit (OpCodes.Brfalse, is_null_label);
-				}
+				if (right_unwrap != null)
+					right_unwrap.EmitCheck (ec, is_null_label);
 
 				underlying.Emit (ec);
 				ig.Emit (OpCodes.Br, end_label);

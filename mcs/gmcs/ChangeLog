@@ -1,3 +1,11 @@
+2005-03-07  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (Nullable.Unwrap): Implement IMemoryLocation and make
+	it work if `expr' is not an IMemoryLocation.
+	(Nullable.Lifted): Implement IMemoryLocation.
+	(Nullable.LiftedConversion.ResolveUnderlying): Use the correct
+	target type.
+
 2005-03-05  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (Nullable.Unwrap, Wrap): New protected classes.
