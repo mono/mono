@@ -233,15 +233,27 @@ namespace Mono.Xml.XPath
 					valueBuilder = new StringBuilder ();
 				else
 					valueBuilder.Length = 0;
-				
+
+				int end = nodes [currentNode].NextSibling;
+				if (end == 0) {
+					int tmp = currentNode;
+					do {
+						tmp = nodes [tmp].Parent;
+						end = nodes [tmp].NextSibling;
+					} while (end == 0 && tmp != 0);
+					if (end == 0)
+						end = nodes.Length;
+				}
+
 				int iter = nodes [currentNode].FirstChild;
-				int depth = nodes [currentNode].Depth;
-				while (iter < nodes.Length && nodes [iter].Depth > depth) {
+				if (iter == 0)
+					iter = end;
+
+				while (iter < end) {
 					switch (nodes [iter].NodeType) {
-					case XPathNodeType.Comment:
-					case XPathNodeType.ProcessingInstruction:
-						break;
-					default:
+					case XPathNodeType.Text:
+					case XPathNodeType.SignificantWhitespace:
+					case XPathNodeType.Whitespace:
 						valueBuilder.Append (nonAtomicStringPool [nodes [iter].Value]);
 						break;
 					}
