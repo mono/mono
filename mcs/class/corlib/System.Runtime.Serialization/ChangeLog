@@ -1,0 +1,9 @@
+2001-07-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* SerializationInfo.cs: New file.
+
+	* IFormatterConverter.cs: New file.
+
+	* ISerializable.cs: New file.
+	
+

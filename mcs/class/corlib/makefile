@@ -8,6 +8,7 @@ DIRS=	\
 	System.Reflection 				\
 	System.Runtime.CompilerServices			\
 	System.Runtime.InteropServices			\
+	System.Runtime.Serialization			\
 	System.Security.Permissions			\
 	System.Text					\
 	System.Threading
@@ -18,7 +19,9 @@ all:
 
 windows: make-list
 	$(CSC) /unsafe /target:library /out:corlibx.dll /nowarn:1595 @list
-#	$(CSC) /unsafe /nostdlib /target:library /out:corlib.dll /nowarn:1595 System\\Object.cs System\\ValueType.cs @list
+
+monolib: make-list-mono
+	$(CSC) /unsafe /nostdlib /target:library /out:corlib.dll /nowarn:1595 System\\Object.cs System\\ValueType.cs @listmono
 
 unix:
 	@echo "'make unix' is broken for now."
@@ -27,3 +30,8 @@ make-list:
 	for i in $(DIRS); do						\
 		cat $$i/common.src $$i/windows.src | sed "s/^/$$i\\\\/";	\
 	done > list
+
+make-list-mono:
+	for i in $(DIRS); do						\
+		cat $$i/common.src $$i/mono.src $$i/windows.src | sed "s/^/$$i\\\\/";	\
+	done > listmono

@@ -1409,7 +1409,8 @@ namespace System {
 		public DateTime ToDateTime (IFormatProvider provider)
 		{
 			// FIXME: implement me
-			return 0;
+
+			return new DateTime (0);
 		}
 
 		public decimal ToDecimal (IFormatProvider provider)

@@ -1,3 +1,7 @@
+2001-07-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* OutAttribute.cs: New file.
+
 2001-07-18  Michael Lambert <michaellambert@email.com>
 
 	* CallingConvention.cs.cs, CharSet.cs, GCHandleType.cs, LayoutKind.cs: Add.
