@@ -1,3 +1,14 @@
+2003-08-25  Lluis Sanchez <lluis@ximian.com>
+
+	* object.h: Added call_type field to MonoMethodMessage and the corresponding
+	enumeration of values. Removed fields to store remote call output values in
+	MonoAsyncResult. Not needed any more.
+	* object.c: Initialize call_type and async_result fields in mono_message_init.
+	* marshal.c: mono_delegate_begin_invoke(): for proxies, set call_type before
+	dispatching the message.
+	mono_delegate_end_invoke (): delegate to the proxy the work of waiting for the
+	async call to finish. To do it use a message with EndInvoke call type.
+
 2003-08-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* loader.h loader.c (mono_method_hash_marhal_info): New function which
