@@ -1,3 +1,9 @@
+2003-05-05  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlConvert.cs : IsInvalid() Now uses XmlConstructs.IsName(Start).
+	  EncodeName() now correctly encodes invalid names.
+	  Result string of ToString(DateTime) contains "fffffff".
+
 2003-04-29  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlElement.cs : fixed IsEmpty (removed private field isEmpty).

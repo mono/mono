@@ -5,6 +5,7 @@
 //      Dwivedi, Ajay kumar (Adwiv@Yahoo.com)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //      Alan Tam Siu Lung (Tam@SiuLung.com)
+//	Atsushi Enomoto (ginga@kit.h-ho.ne.jp)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
 //
@@ -67,10 +68,10 @@ namespace System.Xml {
 			if (c == ':') // Special case. allowed in EncodeName, but encoded in EncodeLocalName
 				return false;
 			
-			if (firstOnlyLetter && !Char.IsLetter (c) && c != '_')
-				return false;
-			
-			return !Char.IsLetterOrDigit (c);
+			if (firstOnlyLetter)
+				return !XmlConstructs.IsNameStart (c);
+			else
+				return !XmlConstructs.IsName (c);
 		}
 
 		private static string EncodeName (string name, bool nmtoken)
@@ -79,22 +80,12 @@ namespace System.Xml {
 			int length = name.Length;
 			for (int i = 0; i < length; i++) {
 				char c = name [i];
-				if (c != '_' || i + 6 >= length) {
-					bool firstOnlyLetter = (i == 0 && !nmtoken);
-					if (IsInvalid (c, firstOnlyLetter)) {
-						sb.AppendFormat ("_x{0:X4}_", (int) c);
-						continue;
-					}
-				} else { 
-					if (Char.ToUpper (name [i + 1]) == 'X' && name [i + 6] == '_') {
-						string decoded = TryDecoding (name.Substring (i + 1, 6));
-						if (decoded.Length == 1) {
-							sb.AppendFormat ("_x{0:X4}_", (int) c);
-							continue;
-						}
-					}
-				}
-				sb.Append (c);
+				if (IsInvalid (c, i == 0 && !nmtoken))
+					sb.AppendFormat ("_x{0:X4}_", (int) c);
+				else if (c == '_' && i + 6 < length && name [i+1] == 'x' && name [i + 6] == '_')
+					sb.Append ("_x005F_");
+				else
+					sb.Append (c);
 			}
 			return sb.ToString ();
 		}
@@ -380,7 +371,7 @@ namespace System.Xml {
 
 		public static string ToString(DateTime value)
 		{
-			return value.ToString("yyyy-MM-ddTHH:mm:sszzz", CultureInfo.InvariantCulture);
+			return value.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz", CultureInfo.InvariantCulture);
 		}
 
 		public static string ToString(DateTime value, string format)
