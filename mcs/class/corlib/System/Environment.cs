@@ -377,7 +377,7 @@ namespace System {
 		/// <summary>
 		/// Return a set of all environment variables and their values
 		/// </summary>
-	   
+#if NET_2_0
 		public static IDictionary GetEnvironmentVariables ()
 		{
 			StringBuilder sb = null;
@@ -402,7 +402,17 @@ namespace System {
 			}
 			return vars;
 		}
-
+#else
+		[EnvironmentPermission (SecurityAction.Demand, Unrestricted=true)]
+		public static IDictionary GetEnvironmentVariables ()
+		{
+			Hashtable vars = new Hashtable ();
+			foreach (string name in GetEnvironmentVariableNames ()) {
+				vars [name] = internalGetEnvironmentVariable (name);
+			}
+			return vars;
+		}
+#endif
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static string GetWindowsFolderPath (int folder);

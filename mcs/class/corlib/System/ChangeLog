@@ -1,3 +1,8 @@
+2005-03-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Environment.cs: Fix CAS unit tests for NET_1_1.
+	* Exception.cs: Fix CAS unit tests for NET_1_1.
+
 2005-03-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Version.cs: don't ignore the last number. Fixes bug #73539.

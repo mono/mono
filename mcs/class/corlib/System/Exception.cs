@@ -35,6 +35,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace System
 {
@@ -121,6 +122,9 @@ namespace System
 		}
 
 		public virtual string Source {
+#if ONLY_1_1
+			[ReflectionPermission (SecurityAction.Assert, TypeInformation = true)]
+#endif
 			get {
 				if (source == null) {
 					StackTrace st = new StackTrace (this, true);
@@ -191,6 +195,9 @@ namespace System
 		}
 
 		public MethodBase TargetSite {
+#if ONLY_1_1
+			[ReflectionPermission (SecurityAction.Demand, TypeInformation = true)]
+#endif
 			get {
 				StackTrace st = new StackTrace (this, true);
 				if (st.FrameCount > 0)
