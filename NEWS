@@ -1,5 +1,151 @@
 Hello!
 
+	Version 0.17 of Mon ohas been released.
+
+	There are plenty of new features, bug fixes, new classes, 
+	performance improvements, optimizations and much more
+	available on this release.
+
+* Stats
+
+	2605 cvs commits to the Mono repository since October 1st, an
+	average of 37 commits per day including weekends.  
+
+	212 commits to the Mono module.
+	1438 commits to the MCS module.
+
+* Mono Improvements:
+
+	Work has begun to make the runtime run a finalizer thread and
+	invoke all the finalizers from this thread.  This is the same
+	behavior as Java and the Microsoft runtime, but it is disabled
+	on this build.
+
+	Integrated the s390 work from Neale Ferguson.
+
+	Beginning of the work for pre-compiling code (Ahead of time
+	compilation) for Mono (based on the early work of Zoltan).
+
+	New option `--noboundscheck' for benchmark purposes, it
+	disables array bound checks.
+	
+	Uses mmap instead of SysV shared memory for the Windows API
+	emulation layer.
+
+	Plenty of bug fixes, improvements and integration with the
+	upper layer class libraries.
+
+	New exception handling code uses the GCC native support for
+	stack-walking if available and gives big performance boost
+	(15% on mcs bootstrap).
+
+	A lot of the work in the new release of Mono is required for
+	the Mono Debugger (which will be released separatedly).  The
+	Mono debugger is interesting, because it can debug both
+	managed and unmanaged applications, but it only supports the
+	JITer for debugging.
+
+	Dick, Dietmar, Gonzalo, Martin and Paolo were in charge of
+	most of these changes.
+
+* Compiler improvements:
+
+	Many bug fixes as usual, better C# compliancy.
+
+	Performance improvements.  The new release of the Mono C#
+	compiler is 37% faster than the previous version (self-compile
+	is down to 8 seconds).  On my P4 1.8Ghz machine, the Mono C#
+	compiler compiles (342,000 lines per minute).
+
+	Thanks to go Ravi and Martin for helping out with the bug
+	fixing hunt.
+
+* Cryptography and Security classes
+
+	Sebastien Pouliot and Andrew Birkett were extremely busy
+	during the past two months working on the cryptography
+	classes, many of the crypto providers are now working
+
+	Jackson on the other hand helped us with the security
+	classes, he said about those:
+
+	`Writing security classes is the most exciting thing I have
+	ever done, I can not wait to write more of them'.
+
+* ASP.NET:
+
+	We have now moved the code from the XSP server (which was our
+	test bed for ASP.NET) into the right classes inside
+	System.Web, and now any web server that was built by using the
+	System.Web hosting interfaces can be used with Mono.
+
+	The sample XSP server still exists, but it is now just a
+	simple implementation of the WorkerRequest and ApplicationHost
+	classes and can be used to test drive ASP.NET.  A big thanks
+	goes to Gonzalo who worked on this night and day (mostly
+	night).
+
+	Gaurav keeps helping us with the Web.Design classes, and
+	improving the existing web controls. 
+
+* ADO.NET:
+
+	New providers are available in this release.  The relentless
+	System.Data team (Brian, Dan, Rodrigo, Tim and Ville) are hacking
+	non-stop on the databse code.  Improving existing providers,
+	and also providing new ones: Oracle, and TDS are the big names
+	on this release.  Many regression tests have been added as
+	well.
+
+* System.XML:
+
+	Atsushi has taken the lead in fixing and plugging the missing
+	parts of the System.XML namespace, many fixes, many
+	improvements.
+
+* CodeDom and the C# provider.
+
+	Jackson Harper has been helping us with the various interface
+	classes from the CodeDOM to the C# compiler, in this release
+	a new assembly joins us: Cscompmgd.  It is a simple assembly,
+	and hence Microsoft decided not to waste an entire "System"
+	"dot" on it.  
+
+* Testing
+
+	Nick Drochak has integrated the new NUnit 2.0 system.
+
+* Monograph:
+
+	Monograph now has a --stats option to get statistics on
+	assembly code.
+	
+
+CVS Contributors to this release:
+
+	Alejandro Sanchez, Alp Toker, Andrew Birkett, Atsushi Enomoto,
+	Brian Ritchie, Cesar Octavio Lopez Nataren, Chris Toshok,
+	Daniel Morgan, Daniel Stodden, Dennis Hayes, Dick Porter,
+	Diego Sevilla, Dietmar Maurer, Duncan Mak, Eduardo Garcia,
+	Ettore Perazzoli, Gaurav Vaish, Gonzalo Paniagua, Jackson
+	Harper, Jaime Anguiano, Johannes Roith, John Sohn, Jonathan
+	Pryor, Kristian Rietveld, Mads Pultz, Mail Delivery Subsystem,
+	mailman-owner@ximian.com, Mark Crichton, Martin Baulig, Martin
+	Willemoes Hansen, Miguel de Icaza, Mike Kestner, Nick Drochak,
+	Nick Zigarovich, Paolo Molaro, Patrik Torstensson, Phillip
+	Pearson, Piers Haken, Rachel Hestilow, Radek Doulik, Rafael
+	Teixeira, Ravi Pratap, Rodrigo Moya, Sebastien Pouliot, Tim
+	Coleman, Tim Haynes, Ville Palo, Vladimir Vukicevic, and
+	Zoltan Varga.
+
+	(Am sorry, I could not track everyone from the ChangeLog
+	messages, I apologize in advance for the missing
+	contributors).
+
+------------------------------------------------------------------------
+
+Hello!
+
 	Version 0.16 of Mono has been released!  This is mostly a bug
 	fix release, a lot of work has been going on to make existing
 	features more robust and less buggy.   Also, contributions are
