@@ -1,5 +1,7 @@
 2005-03-13  Zoltan Varga  <vargaz@freemail.hu>
 
+	* tramp-amd64.c (create_specific_trampoline): Optimize trampoline size.
+
 	* exceptions-amd64.c (mono_amd64_exceptions_init): Remove this.
 
 	* mini.h mini.c tramp-*.c: Move common trampoline code to mini.c.
