@@ -1,3 +1,11 @@
+2003-10-13  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* Makefile.am: fix so it works if builddir != srcdir
+
+	* libtest.c: (mono_test_empty_struct) make it exist for 
+	non-GCC	builds (and possibly pass depending on trampolines).
+	(mono_test_marshal_bool_byref) bools marshal as ints by default
+	
 2003-10-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* bug-46781.cs: New regression test.
