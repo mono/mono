@@ -1,7 +1,17 @@
+2004-10-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: correctly process script tags that self-closing.
+	Fixes bug #69657.
+
 2004-10-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CachingCompiler.cs: when compiling a single .cs file, add the file
 	itself to dependencies. Fixes bug #68788.
+
+2004-09-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ControlBuilder.cs: don't close server tags when we get to a closing
+	tag that is not applied to a server control. Fixes bug #60323.
 
 2004-09-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
