@@ -2991,5 +2991,12 @@ namespace MonoTests.System {
 		{
 			Convert.ToByte ("-1");
 		}
+
+		[Test]
+		public void ToByte_NegativeZeroString () 
+		{
+			// legal
+			Convert.ToByte ("-0");
+		}
 	}
 }
