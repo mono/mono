@@ -1,3 +1,15 @@
+2004-05-14 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* image.c: image->runtime_invoke_cache is keyed on signatures now.
+	* marshal.c (mono_mb_emit_calli): new helper to emit a CEE_CALLI with
+	a signature.
+	(mono_mb_emit_managed_call, mono_mb_emit_native_call): use the above.
+	(mono_marshal_get_runtime_invoke): The runtime invoke method now takes
+	an extra param that is the pointer of the method to invoke. The IL for
+	the invoke method is no longer specific to the method, but to the
+	signature of the method. Thus, we can share the same code for multiple
+	methods. This reduces the number of methods that have to be compiled.
+
 2004-05-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_System_Reflection_Assembly_load_with_partial_name): Fix warning.

@@ -1,3 +1,8 @@
+2004-05-14 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* mini.c (mono_jit_runtime_invoke): Follow new convention
+	of calling the invoke method with an function pointer.
+
 2004-05-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ChangeLog: Fix author of memory leak patch.
