@@ -23,9 +23,19 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.10 $
+// $Revision: 1.11 $
 // $Modtime: $
 // $Log: Form.cs,v $
+// Revision 1.11  2004/09/22 20:09:44  pbartok
+// - Added Form.ControllCollection class
+// - Added handling for Form owners: Owner, OwnedForms, AddOwnedForm,
+//   RemoveOwnedForm (still incomplete, missing on-top and common
+//   minimize/maximize behaviour)
+// - Added StartPosition property (still incomplete, does not use when
+//   creating the form)
+// - Added ShowDialog() methods (still incomplete, missing forcing the dialog
+//   modal)
+//
 // Revision 1.10  2004/09/13 16:56:04  pbartok
 // - Fixed #region names
 // - Moved properties and methods into their proper #regions
@@ -76,20 +86,81 @@ using System.Threading;
 namespace System.Windows.Forms {
 	public class Form : ContainerControl {
 		#region Local Variables
-		internal bool		closing;
+		internal bool			closing;
 
-		private static bool	autoscale;
-		private static Size	autoscale_base_size;
-		private IButtonControl	accept_button;
-		private IButtonControl	cancel_button;
-		private DialogResult	dialog_result;
+		private static bool		autoscale;
+		private static Size		autoscale_base_size;
+		private bool			is_modal;
+		internal bool			end_modal;			// This var is being monitored by the application modal loop
+		private IButtonControl		accept_button;
+		private IButtonControl		cancel_button;
+		private DialogResult		dialog_result;
+		private FormStartPosition	start_position;
+		private Form			owner;
+		private Form.ControlCollection	owned_forms;
 		#endregion	// Local Variables
 
+		#region Public Classes
+		public class ControlCollection : Control.ControlCollection {
+			Form	form_owner;
+
+			public ControlCollection(Form owner) : base(owner) {
+				this.form_owner = owner;
+			}
+
+			public override void Add(Control value) {
+				base.Add(value);
+				((Form)value).owner = form_owner;
+			}
+
+			public override void Remove(Control value) {
+				((Form)value).owner = null;
+				base.Remove (value);
+			}
+		}
+		#endregion	// Public Classes
+			
 		#region Public Constructor & Destructor
 		public Form() {
 			closing = false;
+			is_modal = false;
+			end_modal = false;
+			dialog_result = DialogResult.None;
+			start_position = FormStartPosition.WindowsDefaultLocation;
 		}
 		#endregion	// Public Constructor & Destructor
+
+		#region Private and Internal Methods
+		public DialogResult ShowDialog(Control owner) {
+			if (is_modal) {
+				return DialogResult.None;
+			}
+
+			if (owner != null) {
+				//this.Parent = owner;
+			} else {
+				;; // get an owner
+			}
+
+			if (IsHandleCreated) {
+//				if (owner != this.owner) {
+//					this.RecreateHandle();
+//				}
+			} else {
+				CreateControl();
+			}
+
+			Show();
+
+			is_modal = true;
+			Application.ModalRun(this);
+			is_modal = false;
+
+			Hide();
+
+			return DialogResult;
+		}
+		#endregion	// Private and Internal Methods
 
 		#region Public Static Properties
 		#endregion	// Public Static Properties
@@ -135,7 +206,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO("Add code to terminate modal application loop")]
 		public DialogResult DialogResult {
 			get {
 				return dialog_result;
@@ -144,7 +214,53 @@ namespace System.Windows.Forms {
 			set {
 				dialog_result = value;
 
-				// Add termination code here
+				if (is_modal && (dialog_result != DialogResult.None)) {
+					end_modal = true;
+				}
+			}
+		}
+
+		public bool Modal  {
+			get {
+				return is_modal;
+			}
+		}
+
+		public Form[] OwnedForms {
+			get {
+				Form[] form_list;
+
+				form_list = new Form[owned_forms.Count];
+
+				for (int i=0; i<owned_forms.Count; i++) {
+					form_list[i] = (Form)owned_forms[i];
+				}
+
+				return form_list;
+			}
+		}
+
+		public Form Owner {
+			get {
+				return owner;
+			}
+
+			set {
+				if (owner != value) {
+					owner.RemoveOwnedForm(this);
+					owner = value;
+					owner.AddOwnedForm(this);
+				}
+			}
+		}
+
+		public FormStartPosition StartPosition {
+			get {
+				return start_position;
+			}
+
+			set {
+				start_position = value;
 			}
 		}
 		#endregion	// Public Instance Properties
@@ -170,6 +286,50 @@ namespace System.Windows.Forms {
 				create_params.Style = (int)WindowStyles.WS_OVERLAPPEDWINDOW;
 				create_params.Style |= (int)WindowStyles.WS_VISIBLE;
 
+				switch(start_position) {
+					case FormStartPosition.CenterParent: {
+						if (Parent!=null && Width>0 && Height>0) {
+							Size	ParentSize;
+
+							ParentSize = Parent.Size;
+
+							create_params.X = Parent.Size.Width/2-Width/2;
+							create_params.Y = Parent.Size.Height/2-Height/2;
+						}
+						break;
+					}
+
+					case FormStartPosition.CenterScreen: {
+						if (Width>0 && Height>0) {
+							Size	DisplaySize;
+
+							XplatUI.GetDisplaySize(out DisplaySize);
+
+							create_params.X = DisplaySize.Width/2-Width/2;
+							create_params.Y = DisplaySize.Height/2-Height/2;
+						}
+						break;
+					}
+
+					case FormStartPosition.Manual: {
+						break;
+					}
+
+					case FormStartPosition.WindowsDefaultBounds: {
+						create_params.X = -1;
+						create_params.Y = -1;
+						create_params.Width = -1;
+						create_params.Height = -1;
+						break;
+					}
+
+					case FormStartPosition.WindowsDefaultLocation: {
+						create_params.X = -1;
+						create_params.Y = -1;
+						break;
+					}
+				}
+
 				return create_params;
 			}
 		}
@@ -186,6 +346,22 @@ namespace System.Windows.Forms {
 		#endregion	// Public Static Methods
 
 		#region Public Instance Methods
+		public void AddOwnedForm(Form ownedForm) {
+			owned_forms.Add(ownedForm);
+		}
+
+		public void RemoveOwnedForm(Form ownedForm) {
+			owned_forms.Remove(ownedForm);
+		}
+
+		public DialogResult ShowDialog() {
+			return ShowDialog(null);
+		}
+
+		public DialogResult ShowDialog(IWin32Window owner) {
+			return ShowDialog(Control.ControlNativeWindow.ControlFromHandle(owner.Handle));
+		}
+
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
