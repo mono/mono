@@ -1,3 +1,12 @@
+2003-09-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* aot.c: Moved the check for MONO_LASTAOT into the initialization
+	function of the module.
+
+	* mini.h mini.c aot.c: Added a new optimization flag OPT_AOT for
+	turning on/off the usage of AOT code. Got rid of mono_no_aot and the
+	--no-aot command line option.
+
 2003-09-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* helpers.c (mono_disassemble_code): Make this work under cygwin. Patch
