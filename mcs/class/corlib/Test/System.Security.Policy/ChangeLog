@@ -1,4 +1,9 @@
 2004-01-25  David Sheldon <dave-mono@earth.li>
+
+       * UrlTest.cs:  Changed "\r\n" in strings to use
+       Environment.NewLine.
+
+2004-01-25  David Sheldon <dave-mono@earth.li>
         
 	* PublisherTest.cs, SiteTest.cs: Changed "\r\n" in strings to use
 	Environment.NewLine. 

@@ -74,7 +74,7 @@ namespace MonoTests.System.Security.Policy {
 		{
 			Url u = new Url ("http://www.go-mono.com");
 			AssertEquals ("Value", "http://www.go-mono.com/", u.Value);
-			AssertEquals ("ToString", "<System.Security.Policy.Url version=\"1\">\r\n   <Url>http://www.go-mono.com/</Url>\r\n</System.Security.Policy.Url>\r\n", u.ToString ());
+			AssertEquals ("ToString", "<System.Security.Policy.Url version=\"1\">" + Environment.NewLine + "   <Url>http://www.go-mono.com/</Url>" + Environment.NewLine + "</System.Security.Policy.Url>" + Environment.NewLine, u.ToString ());
 
 			Url u2 = (Url) u.Copy ();
 			AssertEquals ("Copy.Value", u.Value, u2.Value);
@@ -124,7 +124,7 @@ namespace MonoTests.System.Security.Policy {
 		{
 			Url u = new Url ("*");
 			AssertEquals ("Value", "file://*", u.Value);
-			AssertEquals ("ToString", "<System.Security.Policy.Url version=\"1\">\r\n   <Url>file://*</Url>\r\n</System.Security.Policy.Url>\r\n", u.ToString ());
+			AssertEquals ("ToString", "<System.Security.Policy.Url version=\"1\">" + Environment.NewLine + "   <Url>file://*</Url>" + Environment.NewLine + "</System.Security.Policy.Url>" + Environment.NewLine, u.ToString ());
 
 			Url u2 = (Url) u.Copy ();
 			AssertEquals ("Copy.Value", u.Value, u2.Value);
