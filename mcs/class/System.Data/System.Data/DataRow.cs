@@ -1283,26 +1283,27 @@ namespace System.Data {
 			for(int i = 0; i < columns.Count; i++){
 
 				string columnName = columns[i].ColumnName;
-				int index = row.Table.Columns.IndexOf(columnName);
+				DataColumn column = row.Table.Columns[columnName];
 				//if a column with the same name exists in both rows copy the values
-				if(index != -1) {
+				if(column != null) {
+					int index = column.Ordinal;
 					if (HasVersion(DataRowVersion.Original))
 					{
 						if (row.original == null)
 							row.original = new object[row.Table.Columns.Count];
-						row.original[index] = row.SetColumnValue(original[i], Table.Columns[index], index);
+						row.original[index] = row.SetColumnValue(original[i], column, index);
 					}
 					if (HasVersion(DataRowVersion.Current))
 					{
 						if (row.current == null)
 							row.current = new object[row.Table.Columns.Count];
-						row.current[index] = row.SetColumnValue(current[i], Table.Columns[index], index);
+						row.current[index] = row.SetColumnValue(current[i], column, index);
 					}
 					if (HasVersion(DataRowVersion.Proposed))
 					{
 						if (row.proposed == null)
 							row.proposed = new object[row.Table.Columns.Count];
-						row.proposed[index] = row.SetColumnValue(proposed[i], Table.Columns[index], index);
+						row.proposed[index] = row.SetColumnValue(proposed[i], column, index);
 					}
 					
 					//Saving the current value as the column value
