@@ -1,3 +1,10 @@
+2003-08-28  Martin Baulig  <martin@ximian.com>
+
+	* mini-x86.c (mono_arch_call_opcode): Added support for
+	MONO_TYPE_GENERICINST.
+
+	* mini.c (check_call_signature): Added support for MONO_TYPE_GENERICINST.	
+
 2003-08-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Makefile.am (BUILT_SOURCES): Fix compilation on platforms without
