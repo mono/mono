@@ -1,3 +1,33 @@
+2003-10-20  Carlos Guzmán Álvarez  <carlosga@telefonica.net>
+
+	TlsCupherSuite.cs: Fixed padding length calculation on record encryption.
+	
+	TlsSessionContext.cs: Added new CompressionMethod property.
+	
+	TlsSessionSettings.cs: Added new CompressionMethod property.
+
+	* Abstracted CipherSuite classes for allow work with other protocol versions.
+
+	* Added new files :
+
+		TlsAbstractCipherSuite.cs 
+			
+		TlsSslCipherSuite.cs
+
+		TlsCipherSuiteFactory.cs
+
+		TlsCompressionMethod.cs
+
+	* Added new cipher suites definitions based on RFC3268 - (http://www.ietf.org/rfc/rfc3268.txt)
+
+	* Added two new supported ciphersuites for TLS protocol:
+
+		TLS_RSA_WITH_AES_256_CBC_SHA
+
+		TLS_RSA_WITH_AES_128_CBC_SHA
+
+	* Moved key generation stuff to specific cipher suite classes.
+
 2003-10-20  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* AssemblyInfo.cs: commented out KeyFile reference.
