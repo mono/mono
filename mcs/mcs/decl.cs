@@ -260,6 +260,9 @@ namespace Mono.CSharp {
 			return AdditionResult.Success;
 		}
 
+		public static int length;
+		public static int small;
+		
 		/// <summary>
 		///   Introduce @name into this declaration space and
 		///   associates it with the object @o.  Note that for
@@ -268,6 +271,13 @@ namespace Mono.CSharp {
 		protected void DefineName (string name, object o)
 		{
 			defined_names.Add (name, o);
+
+#if DEBUGME
+			int p = name.LastIndexOf (".");
+			int l = name.Length;
+			length += l;
+			small += l -p;
+#endif
 		}
 
 		/// <summary>
@@ -399,6 +409,7 @@ namespace Mono.CSharp {
 
 			int errors = Report.Errors;
 			Expression d = e.Resolve (type_resolve_ec, ResolveFlags.Type);
+			
 			if (d == null || d.eclass != ExprClass.Type){
 				if (!silent && errors == Report.Errors){
 					Report.Error (246, loc, "Cannot find type `"+ e.ToString () +"'");
@@ -419,6 +430,7 @@ namespace Mono.CSharp {
 				type_resolve_ec = GetTypeResolveEmitContext (parent, loc);
 
 			Expression d = e.Resolve (type_resolve_ec, ResolveFlags.Type);
+			 
 			if (d == null || d.eclass != ExprClass.Type){
 				if (!silent){
 					Report.Error (246, loc, "Cannot find type `"+ e +"'");
@@ -489,7 +501,7 @@ namespace Mono.CSharp {
 
 				while (current_type != null) {
 					string pre = current_type.FullName;
-					
+
 					t = LookupInterfaceOrClass (pre, name, out error);
 					if (error)
 						return null;

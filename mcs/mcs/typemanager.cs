@@ -9,6 +9,14 @@
 // (C) 2001 Ximian, Inc (http://www.ximian.com)
 //
 //
+
+//
+// We will eventually remove the SIMPLE_SPEEDUP, and should never change 
+// the behavior of the compilation.  This can be removed if we rework
+// the code to get a list of namespaces available.
+//
+#define SIMPLE_SPEEDUP
+
 using System;
 using System.Globalization;
 using System.Collections;
@@ -478,6 +486,8 @@ public class TypeManager {
 		return null;
 	}
 
+	static Hashtable negative_hits = new Hashtable ();
+	
 	//
 	// This function is used when you want to avoid the lookups, and want to go
 	// directly to the source.  This will use the cache.
@@ -517,6 +527,11 @@ public class TypeManager {
 		if (t != null)
 			return t;
 
+#if SIMPLE_SPEEDUP
+		if (negative_hits.Contains (name))
+			return null;
+#endif
+		
 		//
 		// Optimization: ComposedCast will work with an existing type, and might already have the
 		// full name of the type, so the full system lookup can probably be avoided.
@@ -539,6 +554,13 @@ public class TypeManager {
 				types [name] = t;
 				return t;
 			} 
+
+			//
+			// We know that System.Object does not have children, and since its the parent of 
+			// all the objects, it always gets probbed for inner classes. 
+			//
+			if (top_level_type == "System.Object")
+				return null;
 			
 			string newt = top_level_type + "+" + String.Join ("+", elements, n, count - n);
 			t = LookupTypeDirect (newt);
@@ -546,6 +568,10 @@ public class TypeManager {
 				types [newt] = t;
 			return t;
 		}
+
+#if SIMPLE_SPEEDUP
+		negative_hits [name] = true;
+#endif
 		return null;
 	}
 
@@ -575,7 +601,23 @@ public class TypeManager {
 				namespaces [ns] = ns;
 			}
 		}
+		Console.WriteLine ("Namespaces: " + namespaces.Count);
 		return namespaces;
+	}
+
+	public static void GetAllTypes ()
+	{
+		Hashtable namespaces = new Hashtable ();
+
+		foreach (Assembly a in assemblies){
+			foreach (Type t in a.GetTypes ()){
+			}
+		}
+
+		foreach (ModuleBuilder mb in modules){
+			foreach (Type t in mb.GetTypes ()){
+			}
+		}
 	}
 	
 	/// <summary>

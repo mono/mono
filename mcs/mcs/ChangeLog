@@ -1,5 +1,17 @@
 2002-11-08  Miguel de Icaza  <miguel@ximian.com>
 
+	* typemanager.cs (LookupType): Added a negative-hit hashtable for
+	the Type lookups, as we perform quite a number of lookups on
+	non-Types.  This can be removed once we can deterministically tell
+	whether we have a type or a namespace in advance.
+
+	But this might require special hacks from our corlib.
+
+	* TODO: updated.
+
+	* ecore.cs (TryImplicitIntConversion): Handle conversions to float
+	and double which avoids a conversion from an integer to a double.
+
 	* expression.cs: tiny optimization, avoid calling IsConstant,
 	because it effectively performs the lookup twice.
 

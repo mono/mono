@@ -1201,6 +1201,17 @@ namespace Mono.CSharp
 
 			TypeManager.AddModule (CodeGen.ModuleBuilder);
 
+#if DEBUGME
+			DateTime start = DateTime.Now;
+			TypeManager.GetNamespaces ();
+			DateTime end = DateTime.Now;
+			Console.WriteLine ("Loading namespaces: " + (end - start));
+			start = DateTime.Now;
+			TypeManager.GetAllTypes ();
+			end = DateTime.Now;
+			Console.WriteLine ("Getting Types: " + (end - start));
+#endif
+			
 			//
 			// Before emitting, we need to get the core
 			// types emitted from the user defined types
@@ -1355,6 +1366,10 @@ namespace Mono.CSharp
 				return false;
 			}
 
+#if DEBUGME
+			Console.WriteLine ("Size of strings held: " + DeclSpace.length);
+			Console.WriteLine ("Size of strings short: " + DeclSpace.small);
+#endif
 			return (Report.Errors == 0);
 		}
 

@@ -1717,7 +1717,10 @@ namespace Mono.CSharp {
 				//
 				if (value >= 0)
 					return new ULongConstant ((ulong) value);
-			}
+			} else if (target_type == TypeManager.double_type)
+				return new DoubleConstant ((double) value);
+			else if (target_type == TypeManager.float_type)
+				return new FloatConstant ((float) value);
 			
 			if (value == 0 && ic is IntLiteral && TypeManager.IsEnumType (target_type)){
 				Type underlying = TypeManager.EnumToUnderlying (target_type);
