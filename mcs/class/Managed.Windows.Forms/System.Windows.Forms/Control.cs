@@ -29,9 +29,13 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.68 $
+// $Revision: 1.69 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.69  2004/10/13 02:57:36  pbartok
+// - Fix from John BouAntoun: Raise ForeColorChanged event when text color is
+//   changed
+//
 // Revision 1.68  2004/10/06 09:59:05  jordi
 // removes warnings from compilation
 //
@@ -1354,8 +1358,11 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				foreground_color=value;
-				Refresh();
+				if (foreground_color != value) {
+					foreground_color=value;
+					Refresh();
+					OnForeColorChanged(EventArgs.Empty);
+				}
 			}
 		}
 
