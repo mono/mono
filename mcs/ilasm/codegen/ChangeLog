@@ -1,5 +1,10 @@
 2003-10-08 Jackson Harper <jackson@ximian.com>
 
+	* PeapiTypeRef.cs: Remove old hackery for adding methods to
+	arrays, use typespecs now.
+	
+2003-10-08 Jackson Harper <jackson@ximian.com>
+
 	* InstrTable.cs: Add unbox.any instruction.
 	* MethodDef.cs: Allow generic parameters to be added to methods.
 	

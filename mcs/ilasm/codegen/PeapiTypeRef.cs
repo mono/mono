@@ -53,13 +53,7 @@ namespace Mono.ILASM {
                 public void MakeArray ()
                 {
                         use_type_spec = true;
-
-                        if (peapi_type is PEAPI.Class) {
-                                PEAPI.Class klass = (PEAPI.Class) peapi_type;
-                                peapi_type = klass.GetZeroBasedArray ();
-                        } else {
-                                peapi_type = new PEAPI.ZeroBasedArray (peapi_type);
-                        }
+                        peapi_type = new PEAPI.ZeroBasedArray (peapi_type);
                         is_array = true;
                 }
 
