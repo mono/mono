@@ -1,4 +1,9 @@
 
+Mon Jun 3 13:13:32 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: changed default precision of Double.ToString() to 15.
+	Fixed memory leak. Unified with Single.ToString.
+
 Sat Jun 1 14:26:45 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* sysmath.c: workaround systems missing NAN and/or HUGE_VAL.
