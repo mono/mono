@@ -1,3 +1,11 @@
+2003-08-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: bug fix, parameter was 4, not 3.
+
+	* expression.cs: Just use the property;
+
+	* statement.cs: No need for GetVariableInfo method.
+
 2003-08-08  Martin Baulig  <martin@ximian.com>
 
 	* flowanalysis.cs (FlowReturns): This is now nested in the

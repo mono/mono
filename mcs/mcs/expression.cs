@@ -3543,8 +3543,12 @@ namespace Mono.CSharp {
 				is_readonly = local_info.ReadOnly;
 			}
 
-			variable_info = Block.GetVariableInfo (local_info);
+			variable_info = local_info.VariableInfo; 
 			type = local_info.VariableType;
+#if false
+			if (ec.InAnonymousMethod)
+				Block.LiftVariable (local_info);
+#endif
 		}
 		
 		public override Expression DoResolve (EmitContext ec)
@@ -6296,7 +6300,7 @@ namespace Mono.CSharp {
 			}
 
 			if ((block != null) && (block.ThisVariable != null))
-				variable_info = block.GetVariableInfo (block.ThisVariable);
+				variable_info = block.ThisVariable.VariableInfo;
 
 			return true;
 		}

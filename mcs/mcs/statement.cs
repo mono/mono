@@ -1047,14 +1047,13 @@ namespace Mono.CSharp {
 
 		public bool IsThisAssigned (EmitContext ec, Location loc)
 		{
-			VariableInfo vi = Block.GetVariableInfo (this);
-			if (vi == null)
+			if (VariableInfo == null)
 				throw new Exception ();
 
-			if (!ec.DoFlowAnalysis || ec.CurrentBranching.IsAssigned (vi))
+			if (!ec.DoFlowAnalysis || ec.CurrentBranching.IsAssigned (VariableInfo))
 				return true;
 
-			return vi.TypeInfo.IsFullyInitialized (ec.CurrentBranching, vi, loc);
+			return VariableInfo.TypeInfo.IsFullyInitialized (ec.CurrentBranching, VariableInfo, loc);
 		}
 
 		public bool Resolve (DeclSpace decl)
@@ -1448,11 +1447,6 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public VariableInfo GetVariableInfo (LocalInfo li)
-		{
-			return li.VariableInfo;
-		}
-
 		public Expression GetVariableType (string name)
 		{
 			LocalInfo vi = GetLocalInfo (name);
@@ -1556,6 +1550,11 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool LiftVariable (LocalInfo local_info)
+		{
+			return false;
+		}
+		
 		/// <summary>
 		///   Emits the variable declarations and labels.
 		/// </summary>
