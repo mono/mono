@@ -69,7 +69,7 @@ namespace System.Xml.XPath
 			get { return false; }
 		}
 
-		public virtual int ComparablePosition {
+		public int ComparablePosition {
 			get {
 				if (ReverseAxis) {
 					int diff = Count - CurrentPosition + 1;
@@ -247,8 +247,6 @@ namespace System.Xml.XPath
 			canMove = false;
 			return true;
 		}
-
-		public override bool ReverseAxis { get { return true; } }
 	}
 
 	internal class ChildIterator : SimpleIterator
@@ -714,8 +712,6 @@ namespace System.Xml.XPath
 			}
 			return false;
 		}
-
-		public override bool ReverseAxis { get { return true; } }
 	}
 
 	internal class AttributeIterator : SimpleIterator

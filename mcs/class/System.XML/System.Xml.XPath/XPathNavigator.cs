@@ -70,11 +70,21 @@ namespace System.Xml.XPath
 		}
 
 		public virtual bool HasAttributes {
-			get { return Clone ().MoveToFirstAttribute (); }
+			get {
+				if (!MoveToFirstAttribute ())
+					return false;
+				MoveToParent ();
+				return true;
+			}
 		}
 
 		public virtual bool HasChildren {
-			get { return Clone ().MoveToFirstChild (); }
+			get {
+				if (!MoveToFirstChild ())
+					return false;
+				MoveToParent ();
+				return true;
+			}
 		}
 #else
 		public abstract bool HasAttributes { get; }
@@ -119,18 +129,6 @@ namespace System.Xml.XPath
 		public abstract string XmlLang { get; }
 #endif
 
-		int Depth
-		{
-			get
-			{
-				int cLevels = 0;
-				XPathNavigator nav = Clone ();
-				while (nav.MoveToParent ())
-					cLevels ++;
-				return cLevels;
-			}
-		}
-
 		#endregion
 
 		#region Methods
@@ -142,86 +140,80 @@ namespace System.Xml.XPath
 			if (IsSamePosition (nav))
 				return XmlNodeOrder.Same;
 
+			// quick check for direct descendant
 			if (IsDescendant (nav))
 				return XmlNodeOrder.Before;
+
+			// quick check for direct ancestor
+			if (nav.IsDescendant (this))
+				return XmlNodeOrder.After;
 
 			XPathNavigator nav1 = Clone ();
 			XPathNavigator nav2 = nav.Clone ();
 
-			int nDepth1 = nav1.Depth;
-			int nDepth2 = nav2.Depth;
+			// check if document instance is the same.
+			nav1.MoveToRoot ();
+			nav2.MoveToRoot ();
+			if (!nav1.IsSamePosition (nav2))
+				return XmlNodeOrder.Unknown;
+			nav1.MoveTo (this);
+			nav2.MoveTo (nav);
 
-			if (nDepth1 > nDepth2)
-			{
-				while (nDepth1 > nDepth2)
-				{
-					if (!nav1.MoveToParent ())
-						break;
-					nDepth1 --;
-				}
-				if (nav1.IsSamePosition (nav2))
-					return XmlNodeOrder.After;
-			}
-			else if (nDepth1 < nDepth2)
-			{
-				while (nDepth1 < nDepth2)
-				{
-					if (!nav2.MoveToParent ())
-						break;
-					nDepth2 --;
-				}
-				if (nav1.IsSamePosition (nav2))
-					return XmlNodeOrder.Before;
-			}
+			int depth1 = 0;
+			while (nav1.MoveToParent ())
+				depth1++;
+			nav1.MoveTo (this);
+			int depth2 = 0;
+			while (nav2.MoveToParent ())
+				depth2++;
+			nav2.MoveTo (nav);
 
-			XPathNavigator parent1 = nav1.Clone ();
-			XPathNavigator parent2 = nav2.Clone ();
-			while (parent1.MoveToParent () && parent2.MoveToParent ())
-			{
-				if (parent1.IsSamePosition (parent2))
-				{
-					// the ordering is namespace, attribute, children
-					// assume that nav1 is before nav2, find counter-example
-					if (nav1.NodeType == XPathNodeType.Namespace)
-					{
-						if (nav2.NodeType == XPathNodeType.Namespace)
-						{
-							// match namespaces
-							while (nav2.MoveToNextNamespace ())
-								if (nav2.IsSamePosition (nav1))
-									return XmlNodeOrder.After;
-						}
-					}
-					else if (nav1.NodeType == XPathNodeType.Attribute)
-					{
-						if (nav2.NodeType == XPathNodeType.Namespace)
-							return XmlNodeOrder.After;
-						else if (nav2.NodeType == XPathNodeType.Attribute)
-						{
-							// match attributes
-							while (nav2.MoveToNextAttribute ())
-								if (nav2.IsSamePosition (nav1))
-									return XmlNodeOrder.After;
-						}
-					}
-					else
-					{
-						switch (nav2.NodeType) {
-						case XPathNodeType.Namespace:
-						case XPathNodeType.Attribute:
-							return XmlNodeOrder.After;
-						}
-						// match children
-						while (nav2.MoveToNext ())
-							if (nav2.IsSamePosition (nav1))
-								return XmlNodeOrder.After;
-					}
-					return XmlNodeOrder.Before;
-				}
+			// find common parent depth
+			int common = depth1;
+			for (;common > depth2; common--)
+				nav1.MoveToParent ();
+			for (int i = depth2; i > common; i--)
+				nav2.MoveToParent ();
+			while (!nav1.IsSamePosition (nav2)) {
 				nav1.MoveToParent ();
 				nav2.MoveToParent ();
+				common--;
 			}
-			return XmlNodeOrder.Unknown;
+
+			// For each this and target, move to the node that is 
+			// ancestor of the node and child of the common parent.
+			nav1.MoveTo (this);
+			for (int i = depth1; i > common + 1; i--)
+				nav1.MoveToParent ();
+			nav2.MoveTo (nav);
+			for (int i = depth2; i > common + 1; i--)
+				nav2.MoveToParent ();
+
+			// Those children of common parent are comparable.
+			// namespace nodes precede to attributes, and they
+			// precede to other nodes.
+			if (nav1.NodeType == XPathNodeType.Namespace) {
+				if (nav2.NodeType != XPathNodeType.Namespace)
+					return XmlNodeOrder.Before;
+				while (nav1.MoveToNextNamespace ())
+					if (nav1.IsSamePosition (nav2))
+						return XmlNodeOrder.Before;
+				return XmlNodeOrder.After;
+			}
+			if (nav2.NodeType == XPathNodeType.Namespace)
+				return XmlNodeOrder.After;
+			if (nav1.NodeType == XPathNodeType.Attribute) {
+				if (nav2.NodeType != XPathNodeType.Attribute)
+					return XmlNodeOrder.Before;
+				while (nav1.MoveToNextAttribute ())
+					if (nav1.IsSamePosition (nav2))
+						return XmlNodeOrder.Before;
+				return XmlNodeOrder.After;
+			}
+			while (nav1.MoveToNext ())
+				if (nav1.IsSamePosition (nav2))
+					return XmlNodeOrder.Before;
+			return XmlNodeOrder.After;
 		}
 
 		public virtual XPathExpression Compile (string xpath)
@@ -319,20 +311,20 @@ namespace System.Xml.XPath
 #if NET_2_0
 		public virtual string GetAttribute (string localName, string namespaceURI)
 		{
-			XPathNavigator nav = Clone ();
-			if (nav.MoveToAttribute (localName, namespaceURI))
-				return nav.Value;
-			else
+			if (!MoveToAttribute (localName, namespaceURI))
 				return String.Empty;
+			string value = nav.Value;
+			MoveToParent ();
+			return value;
 		}
 
 		public virtual string GetNamespace (string name)
 		{
-			XPathNavigator nav = Clone ();
-			if (nav.MoveToNamespace (name))
-				return nav.Value;
-			else
+			if (!MoveToNamespace (name))
 				return String.Empty;
+			string value = nav.Value;
+			MoveToParent ();
+			return value;
 		}
 
 #else

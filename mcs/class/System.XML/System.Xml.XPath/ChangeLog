@@ -1,3 +1,9 @@
+2004-03-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XPathNavigator.cs : reduced some Clone().
+	  Simplified ComparePosition().
+	* Iterator.cs : some iterators are not actually reverse axis.
+
 2004-03-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Expression.cs : EvaluateBoolean() for RTF should check return true
