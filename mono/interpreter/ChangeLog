@@ -1,3 +1,9 @@
+
+Mon Apr 22 16:52:03 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: handle muslticast delegates. Implement a couple more
+	convert opcodes. Pretend we spend some time jitting...
+
 2002-04-20  Dietmar Maurer  <dietmar@ximian.com>
 
 	* interp.c (ves_exec_method): support internalcall String constructors
