@@ -2,11 +2,13 @@
 
 	* Makefile (test-local): Depend on TestRunner-$(PROFILE).cs.
 	(run-mcs-tests): Clean up.  Use profile specific test runner.
+	Disable TestRunner on net_2_0 profile.
 	* TestRunner.cs (ProcessTester): Redirect stdout too.
 	(Tester.Log, Tester.LogLine): New.  Replacements for Console.Write
 	and Console.WriteLine that also log to files.
 	(Tester.Main): Add new command line argument for log file name.
 	Use the name of the compiler to select tests rather than "1".
+	Exit with non-zero on regressions.
 
 2005-03-16 Marek Safar <marek.safar@seznam.cz>
 

@@ -230,7 +230,7 @@ namespace TestRunner {
 
 			log_file.Close ();
 
-			return 0;
+			return regression.Count == 0 ? 0 : 1;
 		}
 
 		static void ReadWrongErrors (string file)
