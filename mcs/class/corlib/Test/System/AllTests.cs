@@ -33,6 +33,7 @@ namespace MonoTests.System {
                                 suite.AddTest(UInt64Test.Suite);
                                 suite.AddTest(RandomTest.Suite);
                                 suite.AddTest(ResolveEventArgsTest.Suite);
+				suite.AddTest(StringTest.Suite);
 				return suite;
                         }
                 }

@@ -72,6 +72,21 @@ public class StringTest : TestCase
 		Assert (String.Concat (string1, string2) == concat);
 	}
 
+	public void TestFormat ()
+	{
+		Assert ("Empty format string.", String.Format ("", 0) == "");
+		Assert ("Single argument.", String.Format ("{0}", 100) == "100");
+		Assert ("Single argument, right justified.", String.Format ("X{0,5}X", 37) == "X   37X");
+		Assert ("Single argument, left justified.", String.Format ("X{0,-5}X", 37) == "X37   X");
+		Assert ("Two arguments.", String.Format ("The {0} wise {1}.", 3, "men") == "The 3 wise men.");
+		Assert ("Three arguments.", String.Format ("{0} re {1} fa {2}.", "do", "me", "so") == "do re me fa so.");
+		Assert ("Formatted argument.", String.Format ("###{0:x8}#", 0xc0ffee) == "###00c0ffee#");
+		Assert ("Formatted argument, right justified.", String.Format ("#{0,5:x3}#", 0x33) == "#  033#");
+		Assert ("Formatted argument, left justified.", String.Format ("#{0,-5:x3}#", 0x33) == "#033  #");
+
+		// TODO test failure modes
+	}
+
 }
 
 }
