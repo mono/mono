@@ -124,11 +124,49 @@ namespace MonoTests.System
 			AssertEquals ("#n15", "file", uri.Scheme);
 			AssertEquals ("#n16", false, uri.UserEscaped);
 			AssertEquals ("#n17", "", uri.UserInfo);
+			
+			uri = new Uri (new Uri("http://www.contoso.com"), "Hello World.htm", true);
+			AssertEquals ("#rel1a", "http://www.contoso.com/Hello World.htm", uri.AbsoluteUri);
+			AssertEquals ("#rel1b", true, uri.UserEscaped);
+			uri = new Uri (new Uri("http://www.contoso.com"), "Hello World.htm", false);
+			AssertEquals ("#rel2a", "http://www.contoso.com/Hello%20World.htm", uri.AbsoluteUri);
+			AssertEquals ("#rel2b", false, uri.UserEscaped);
+			uri = new Uri (new Uri("http://www.contoso.com"), "http://www.xxx.com/Hello World.htm", false);
+			AssertEquals ("#rel3", "http://www.xxx.com/Hello%20World.htm", uri.AbsoluteUri);
+			//uri = new Uri (new Uri("http://www.contoso.com"), "foo:8080/bar/Hello World.htm", false);
+			//AssertEquals ("#rel4", "foo:8080/bar/Hello%20World.htm", uri.AbsoluteUri);
+			uri = new Uri (new Uri("http://www.contoso.com"), "foo/bar/Hello World.htm?x=0:8", false);
+			AssertEquals ("#rel5", "http://www.contoso.com/foo/bar/Hello%20World.htm?x=0:8", uri.AbsoluteUri);
+			uri = new Uri (new Uri("http://www.contoso.com/xxx/yyy/index.htm"), "foo/bar/Hello World.htm?x=0:8", false);
+			AssertEquals ("#rel6", "http://www.contoso.com/xxx/yyy/foo/bar/Hello%20World.htm?x=0:8", uri.AbsoluteUri);
+			uri = new Uri (new Uri("http://www.contoso.com/xxx/yyy/index.htm"), "/foo/bar/Hello World.htm?x=0:8", false);
+			AssertEquals ("#rel7", "http://www.contoso.com/foo/bar/Hello%20World.htm?x=0:8", uri.AbsoluteUri);
+			uri = new Uri (new Uri("http://www.contoso.com/xxx/yyy/index.htm"), "../foo/bar/Hello World.htm?x=0:8", false);
+			AssertEquals ("#rel8", "http://www.contoso.com/xxx/foo/bar/Hello%20World.htm?x=0:8", uri.AbsoluteUri);
+			uri = new Uri (new Uri("http://www.contoso.com/xxx/yyy/index.htm"), "../../../foo/bar/Hello World.htm?x=0:8", false);
+			AssertEquals ("#rel9", "http://www.contoso.com/../foo/bar/Hello%20World.htm?x=0:8", uri.AbsoluteUri);
+			uri = new Uri (new Uri("http://www.contoso.com/xxx/yyy/index.htm"), "./foo/bar/Hello World.htm?x=0:8", false);
+			AssertEquals ("#rel10", "http://www.contoso.com/xxx/yyy/foo/bar/Hello%20World.htm?x=0:8", uri.AbsoluteUri);
 
 			try {
+				uri = new Uri (null, "http://www.contoso.com/index.htm", false);
+				Fail ("#rel20");
+			} catch (NullReferenceException) {
+			}
+			try {
+				uri = new Uri (new Uri("http://www.contoso.com"), null, false);
+				Fail ("#rel21");
+			} catch (NullReferenceException) {
+			}
+			try {
+				uri = new Uri (new Uri("http://www.contoso.com/foo/bar/index.html?x=0"), String.Empty, false);
+				AssertEquals("#22", "http://www.contoso.com/foo/bar/index.html?x=0", uri.ToString ());
+			} catch (NullReferenceException) {
+			}			
+			try {
 				uri = new Uri ("http://www.contoso.com:12345678/foo/bar/");
-				Fail ("#o1 should have failed because of invalid port");
-			} catch (UriFormatException) { }			
+				Fail ("#30: known to fail with ms.net, should have failed because of invalid port");
+			} catch (UriFormatException) { }
 		}
 		
 		public void TestLocalPath ()
@@ -454,6 +492,12 @@ namespace MonoTests.System
 			AssertEquals ("#13", "/foo/bar", uri10.MakeRelative (uri13));
 			
 			AssertEquals ("#14", "http://www.xxx.com/bar/foo/foobar.htm?z=0&y=5" + (char) 0xa9, uri1.MakeRelative (uri8));
+		}
+		
+		public void TestToString ()
+		{			
+			Uri uri = new Uri ("dummy://xxx");
+			AssertEquals ("#1", "dummy://xxx/", uri.ToString ());
 		}
 
 		public static void Print (Uri uri)

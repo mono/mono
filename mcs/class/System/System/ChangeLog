@@ -1,3 +1,8 @@
+2002-05-28  Lawrence Pit <loz@cable.a2000.nl>
+
+	* Uri.cs: Implemented ctor UriTest (baseUri, relativeUri)
+	* Uri.cs: Fixed bug in internal method GetSchemeDelimiter
+
 2002-05-22  Lawrence Pit <loz@cable.a2000.nl>
 
 	* Uri.cs: implemented MakeRelative, improved GetLeftPart

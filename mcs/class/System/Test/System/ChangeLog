@@ -1,3 +1,7 @@
+2002-05-28  Lawrence Pit <loz@cable.a2000.nl>
+
+	* UriTest.cs: added tests ctor UriTest (baseUri, relativeUri)
+
 2002-05-22  Lawrence Pit <loz@cable.a2000.nl>
 
 	* Added UriTest.MakeRelative

@@ -65,6 +65,7 @@ namespace System
 		{
 		}
 
+		[MonoTODO]
 		protected Uri (SerializationInfo serializationInfo, 
 			       StreamingContext streamingContext) :
 			this (serializationInfo.GetString ("Uri"), true)
@@ -91,12 +92,131 @@ namespace System
 		{			
 		}
 
-		[MonoTODO]
 		public Uri (Uri baseUri, string relativeUri, bool dontEscape) 
 		{
-			userEscaped = dontEscape;
 			// See RFC 2396 Par 5.2 and Appendix C
-			throw new NotImplementedException ();
+
+			userEscaped = dontEscape;
+
+			this.scheme = baseUri.scheme;
+			this.host = baseUri.host;
+			this.port = baseUri.port;
+			this.userinfo = baseUri.userinfo;
+			
+			if (relativeUri == null)
+				throw new NullReferenceException ("relativeUri");
+
+			if (relativeUri == String.Empty) {
+				this.path = baseUri.path;
+				this.query = baseUri.query;
+				this.fragment = baseUri.fragment;
+				return;
+			}
+			
+			int pos = relativeUri.IndexOf (':');
+			if (pos != -1) {
+				int pos2 = relativeUri.IndexOfAny (new char [] {'/', '\\'});
+				if (pos2 > pos) {
+					// equivalent to new Uri (relativeUri, dontEscape)
+					Parse (relativeUri);
+
+					if (userEscaped) 
+						return;
+
+					host = EscapeString (host, false, true, false);
+					path = EscapeString (path);
+					query = EscapeString (query);
+					fragment = EscapeString (fragment, false, false, true);
+					return;
+				}
+			}
+						
+			// 8 fragment
+			pos = relativeUri.IndexOf ('#');
+			if (pos != -1) {
+				fragment = relativeUri.Substring (pos);
+				if (!userEscaped)
+					fragment = EscapeString (fragment, false, false, true);
+				relativeUri = relativeUri.Substring (0, pos);
+			}
+
+			// 6 query
+			pos = relativeUri.IndexOf ('?');
+			if (pos != -1) {
+				query = relativeUri.Substring (pos);
+				if (!userEscaped)
+					query = EscapeString (query);
+				relativeUri = relativeUri.Substring (0, pos);
+			}
+
+			if (relativeUri[0] == '/') {
+				path = relativeUri;
+				if (!userEscaped)
+					path = EscapeString (path);
+				return;
+			}
+			
+			// par 5.2 step 6 a)
+			path = baseUri.path;
+			pos = path.LastIndexOf ('/');
+			if (pos > 0) 
+				path = path.Substring (0, pos + 1);
+				
+			// 6 b)
+			path += relativeUri;
+			
+			// 6 c)
+			int startIndex = 0;
+			while (true) {
+				pos = path.IndexOf ("./", startIndex);
+				if (pos == -1)
+					break;
+				if (pos == 0)
+					path = path.Remove (0, 2);
+				else if (path [pos - 1] != '.')
+					path = path.Remove (pos, 2);
+				else
+					startIndex = pos + 1;
+			}
+			
+			// 6 d)
+			if (path.Length > 1 && 
+			    path [path.Length - 1] == '.' &&
+			    path [path.Length - 2] == '/')
+				path = path.Remove (path.Length - 1, 1);
+			
+			// 6 e)
+			startIndex = 0;
+			while (true) {
+				pos = path.IndexOf ("/../", startIndex);
+				if (pos == -1)
+					break;
+				if (pos == 0) {
+					startIndex = 3;
+					continue;
+				}
+				int pos2 = path.LastIndexOf ('/', pos - 1);
+				if (pos2 == -1) {
+					startIndex = pos + 1;
+				} else {
+					if (path.Substring (pos2 + 1, pos - pos2 - 1) != "..")
+						path = path.Remove (pos2 + 1, pos - pos2 + 3);
+					else
+						startIndex = pos + 1;
+				}
+			}
+			
+			// 6 f)
+			if (path.Length > 3 && path.EndsWith ("/..")) {
+				pos = path.LastIndexOf ('/', path.Length - 4);
+				Console.WriteLine ("6f " + pos);
+				if (pos != -1)
+					if (path.Substring (pos + 1, path.Length - pos - 4) != "..")
+						path = path.Remove (pos + 1, path.Length - pos - 1);
+			}
+			
+			if (!userEscaped)
+				path = EscapeString (path);
 		}		
 		
 		// Properties
@@ -107,25 +227,8 @@ namespace System
 
 		public string AbsoluteUri { 
 			get { 
-				if (cachedAbsoluteUri == null) {			
-					StringBuilder s = new StringBuilder ();
-					s.Append (scheme);
-					s.Append (GetSchemeDelimiter (scheme));
-					if (path.Length > 1 && path [1] == ':' && "file".Equals (scheme)) 
-						s.Append ('/');  // win32 file
-					if (userinfo.Length > 0) 
-						s.Append (userinfo).Append ('@');
-					s.Append (host);
-					int defaultPort = GetDefaultPort (scheme);
-					if ((port != -1) && (port != defaultPort))
-						s.Append (':').Append (port);			 
-					s.Append (path);
-					s.Append (query);
-					s.Append (fragment);
-
-					cachedAbsoluteUri = s.ToString ();
-				}
-				
+				if (cachedAbsoluteUri == null)
+					cachedAbsoluteUri = GetLeftPart (UriPartial.Path) + query + fragment;
 				return cachedAbsoluteUri;
 			} 
 		}
@@ -705,7 +808,7 @@ namespace System
 			for (int i = 0; i < schemes.Length; i++) 
 				if (schemes [i].scheme == scheme)
 					return schemes [i].delimiter;
-			return String.Empty;
+			return Uri.SchemeDelimiter;
 		}
 		
 		internal static int GetDefaultPort (string scheme)
