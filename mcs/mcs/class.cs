@@ -2473,12 +2473,13 @@ namespace Mono.CSharp {
 		// <summary>
 		//   Modifiers allowed for a constructor.
 		// </summary>
-		const int AllowedModifiers =
+		public const int AllowedModifiers =
 			Modifiers.PUBLIC |
 			Modifiers.PROTECTED |
 			Modifiers.INTERNAL |
 			Modifiers.STATIC |
 			Modifiers.UNSAFE |
+			Modifiers.EXTERN |		
 			Modifiers.PRIVATE;
 
 		//

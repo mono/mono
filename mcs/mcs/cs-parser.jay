@@ -1378,10 +1378,11 @@ constructor_declaration
 	  { 
 		Constructor c = (Constructor) $3;
 		c.Block = (Block) $4;
-		c.ModFlags = (int) $2;
 		c.OptAttributes = (Attributes) $1;
-
+	
 		if ((c.ModFlags & Modifiers.STATIC) != 0){
+			c.ModFlags = Modifiers.Check (Constructor.AllowedModifiers, (int) $2, 0, c.Location);	
+
 			if ((c.ModFlags & Modifiers.Accessibility) != 0) {
 				Report.Error (
 					515, c.Location, 
@@ -1399,7 +1400,9 @@ constructor_declaration
 				Report.Error (
 					132, c.Location, "Static constructors should not have parameters");
 			}
-		} 
+		} else {
+			c.ModFlags = Modifiers.Check (Constructor.AllowedModifiers, (int) $2, Modifiers.PRIVATE, c.Location);
+		}
 		
 		CheckDef (current_container.AddConstructor (c), c.Name, c.Location);
 

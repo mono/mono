@@ -1,5 +1,13 @@
 2002-10-04  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs (Constructor): Make AllowedModifiers public, add
+	EXTERN.
+
+	* cs-parser.jay: Perform the modifiers test here, as the
+	constructor for the Constructor class usually receives a zero
+	because of the way we create it (first we create, later we
+	customize, and we were never checking the modifiers).
+
 	* typemanager.cs (Typemanager.LookupTypeDirect): This new function
 	is a version of LookupTypeReflection that includes the type-name
 	cache.  This can be used as a fast path for functions that know
