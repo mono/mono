@@ -9,6 +9,7 @@
 
 using System.Collections;
 using System.Data;
+using System.Data.Common;
 
 namespace Mono.Data.TdsClient.Internal {
 	internal class TdsPacketColumnInfoResult : TdsPacketResult, IEnumerable
@@ -16,6 +17,7 @@ namespace Mono.Data.TdsClient.Internal {
 		#region Fields
 
 		ArrayList list;
+		ArrayList columnTypes;
 		
 		#endregion // Fields
 
@@ -25,22 +27,31 @@ namespace Mono.Data.TdsClient.Internal {
 			: base (TdsPacketSubType.ColumnNameToken)
 		{
 			list = new ArrayList ();
+			columnTypes = new ArrayList ();
 		}
 
 		#endregion // Constructors
 
 		#region Properties
 
-		public TdsColumnSchema this [int index] {
-			get { return (TdsColumnSchema) list[index]; }
+		public SchemaInfo[] Schema {
+			get { return (SchemaInfo[]) list.ToArray (typeof (SchemaInfo)); }
+		}
+
+		public SchemaInfo this [int index] {
+			get { return (SchemaInfo) list[index]; }
 			set { list[index] = value; }
+		}
+
+		public ArrayList ColumnTypes {
+			get { return columnTypes; }
 		}
 
 		#endregion // Properties
 
 		#region Methods
 
-		public int Add (TdsColumnSchema schema)
+		public int Add (SchemaInfo schema)
 		{
 			int index;
 			index = list.Add (schema);
@@ -51,6 +62,11 @@ namespace Mono.Data.TdsClient.Internal {
 		public IEnumerator GetEnumerator ()
 		{
 			return list.GetEnumerator ();
+		}
+
+		public int Add (TdsColumnType columnType)
+		{
+			return columnTypes.Add (columnType);
 		}
 
 		#endregion // Methods

@@ -9,7 +9,10 @@
 	* Tds42.cs:
 	* Tds50.cs:
 	* Tds70.cs:
+	* TdsPacketColumnInfoResult.cs:
+	* TdsPacketRowResult.cs:
 		Uses new SchemaInfo object
+	
 
 2002-10-29  Tim Coleman (tim@timcoleman.com)
 	* ITds.cs:

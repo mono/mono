@@ -11,7 +11,7 @@ using System;
 using System.Collections;
 
 namespace Mono.Data.TdsClient.Internal {
-	internal class TdsPacketRowResult : TdsPacketResult
+	internal class TdsPacketRowResult : TdsPacketResult, IEnumerable
 	{
 		#region Fields
 
@@ -58,6 +58,11 @@ namespace Mono.Data.TdsClient.Internal {
 		public void CopyTo (int index, Array array, int arrayIndex, int count)
 		{
 			list.CopyTo (index, array, arrayIndex, count);
+		}
+
+		public IEnumerator GetEnumerator ()
+		{
+			return list.GetEnumerator ();
 		}
 
 		#endregion // Methods
