@@ -1,3 +1,7 @@
+2004-05-11  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* OpCodes.cs: Refactored to avoid the static constructor
+
 2004-05-10  Gert Driesen (drieseng@users.sourceforge.net)
 	* AssemblyBuilder.cs: fixed warning
 	* MethodRental.cs: added private default ctror to match MS.NET
