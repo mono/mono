@@ -1,3 +1,7 @@
+2004-12-08  Peter Bartok  <pbartok@novell.com>
+
+	* SWF.csproj: Added XplatUIOSX.cs to build list
+
 2004-12-07  Geoff Norton  <gnorton@customerdna.com>
 
 	* System.Windows.Forms.dll.sources:  Add the XplatUIOSX.cs driver.
