@@ -228,7 +228,7 @@ namespace System.Windows.Forms {
 		//protected virtual IntPtr Instance{}
 		//protected virtual int Options{}
 
-		internal protected virtual void initOpenFileName ( ref OPENFILENAME opf ) 
+		internal virtual void initOpenFileName ( ref OPENFILENAME opf ) 
 		{
 			opf.lStructSize  = (uint)Marshal.SizeOf( opf );
 			char[] FileNameBuffer = new char[MAX_PATH];

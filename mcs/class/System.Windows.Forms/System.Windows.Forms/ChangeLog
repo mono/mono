@@ -1,3 +1,10 @@
+2004-04-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* win32structs: made members internal
+	* FileDialog.cs
+	* OpenFileDialog.cs
+	* SaveFileDialog.cs: made methods pure internal
+
 2004-04-14  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* win32enum: made Msg internal

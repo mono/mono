@@ -326,7 +326,7 @@ namespace System.Windows.Forms
 	}
 	#endregion
 
-    #region RGBQUAD
+	#region RGBQUAD
 	internal struct RGBQUAD 
 	{
 		internal byte		rgbBlue;
@@ -338,7 +338,7 @@ namespace System.Windows.Forms
 	
 	#region BITMAPFILEHEADER
 	[StructLayout(LayoutKind.Sequential)]
-	struct BITMAPFILEHEADER {        // File info header
+	internal struct BITMAPFILEHEADER {        // File info header
 		public ushort bfType;      // Specifies the type of file. This member must be BM.
 		public uint   bfSize;      // Specifies the size of the file, in bytes.
 		public ushort bfReserved1; // Reserved; must be set to zero.
@@ -616,7 +616,7 @@ namespace System.Windows.Forms
 			// "000214E6-0000-0000-c000-000000000046"
 			string[] data = guid.Split('-');
 			Debug.Assert(data.Length == 5);
-            x = Convert.ToInt32(data[0], 16);
+			x = Convert.ToInt32(data[0], 16);
 			s1 = Convert.ToInt16(data[1], 16);
 			s2 = Convert.ToInt16(data[2], 16);
 			string bytesData = data[3] + data[4];
@@ -655,7 +655,7 @@ namespace System.Windows.Forms
 		internal IntPtr hParent;
 		internal IntPtr hInsertAfter;
 		internal TVITEM item;
-    }
+	}
 	#endregion
 
 	#region NM_TREEVIEW
@@ -832,7 +832,7 @@ namespace System.Windows.Forms
 	}
 
 	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
-	public struct CHOOSECOLOR { 
+	internal struct CHOOSECOLOR { 
 		internal uint          lStructSize; 
 		internal IntPtr        hwndOwner; 
 		internal IntPtr        hInstance; 
@@ -845,7 +845,7 @@ namespace System.Windows.Forms
 	}
 
 	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
-	public  struct OPENFILENAME_PREWIN50 {
+	internal  struct OPENFILENAME_PREWIN50 {
 		internal uint          lStructSize; 
 		internal IntPtr        hwndOwner; 
 		internal IntPtr        hInstance; 
@@ -874,55 +874,56 @@ namespace System.Windows.Forms
 	// recent Plataforms SDK.  
 	//
 	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
-		public  struct OPENFILENAME {
-			internal uint          lStructSize; 
-			internal IntPtr        hwndOwner; 
-			internal IntPtr        hInstance; 
-			internal string        lpstrFilter; 
-			internal string	       lpstrCustomFilter; 
-			internal uint          nMaxCustFilter; 
-			internal uint          nFilterIndex; 
-			internal string	       lpstrFile; 
-			internal uint          nMaxFile; 
-			internal string	       lpstrFileTitle; 
-			internal uint          nMaxFileTitle; 
-			internal string        lpstrInitialDir; 
-			internal string        lpstrTitle; 
-			internal uint          Flags; 
-			internal short         nFileOffset; 
-			internal short         nFileExtension; 
-			internal string        lpstrDefExt; 
-			internal int           lCustData; 
-			internal Win32.FnHookProc lpfnHook; 
-			internal string        lpTemplateName; 			
-			internal IntPtr		   pvReserved;	//#if (_WIN32_WINNT >= 0x0500)			
-			internal uint 	       dwReserved;
-			internal uint 		   FlagsEx;			
+	internal struct OPENFILENAME {
+		internal uint          lStructSize; 
+		internal IntPtr        hwndOwner; 
+		internal IntPtr        hInstance; 
+		internal string        lpstrFilter; 
+		internal string	       lpstrCustomFilter; 
+		internal uint          nMaxCustFilter; 
+		internal uint          nFilterIndex; 
+		internal string	       lpstrFile; 
+		internal uint          nMaxFile; 
+		internal string	       lpstrFileTitle; 
+		internal uint          nMaxFileTitle; 
+		internal string        lpstrInitialDir; 
+		internal string        lpstrTitle; 
+		internal uint          Flags; 
+		internal short         nFileOffset; 
+		internal short         nFileExtension; 
+		internal string        lpstrDefExt; 
+		internal int           lCustData; 
+		internal Win32.FnHookProc lpfnHook; 
+		internal string        lpTemplateName; 
+		internal IntPtr		   pvReserved;	//#if (_WIN32_WINNT >= 0x0500)
+		internal uint 	       dwReserved;
+		internal uint 		   FlagsEx;
 	}
 	
 	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
-	public  struct LOGFONT 	
+	internal struct LOGFONT 
 	{
-	    internal uint	lfHeight;
-	    internal uint	lfWidth;
-	    internal uint	lfEscapement;
-	    internal uint	lfOrientation;
-	    internal uint	lfWeight;
-	    internal byte	lfItalic;
-	    internal byte	lfUnderline;
-	    internal byte	lfStrikeOut;
-	    internal byte	lfCharSet;
-	    internal byte	lfOutPrecision;
-	    internal byte	lfClipPrecision;
-	    internal byte   lfQuality;
-	    internal byte	lfPitchAndFamily;
-	    [MarshalAs(UnmanagedType.ByValTStr, SizeConst=32)]
+		internal uint	lfHeight;
+		internal uint	lfWidth;
+		internal uint	lfEscapement;
+		internal uint	lfOrientation;
+		internal uint	lfWeight;
+		internal byte	lfItalic;
+		internal byte	lfUnderline;
+		internal byte	lfStrikeOut;
+		internal byte	lfCharSet;
+		internal byte	lfOutPrecision;
+		internal byte	lfClipPrecision;
+		internal byte   lfQuality;
+		internal byte	lfPitchAndFamily;
+
+		[MarshalAs(UnmanagedType.ByValTStr, SizeConst=32)]
 		internal string lfFaceName;
 		
 	} 
 	
 	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
-	public  struct CHOOSEFONT {
+	internal struct CHOOSEFONT {
 	
 		internal uint				lStructSize;
 		internal IntPtr 			hwndOwner; 
@@ -934,8 +935,8 @@ namespace System.Windows.Forms
 		internal uint   			lCustData;
 		internal Win32.FnHookProc 	lpfnHook; 		
 		internal uint   			lpTemplateName; 
-		internal IntPtr				hInstance;   		                      
-		internal uint				lpszStyle;    		                      
+		internal IntPtr				hInstance;
+		internal uint				lpszStyle;
 		internal short				nFontType;    
 		internal short				___MISSING_ALIGNMENT__;          
 		internal int 				nSizeMin;          
@@ -944,7 +945,7 @@ namespace System.Windows.Forms
 		} 
 		
 	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
-	public struct LVCOLUMN {
+	internal struct LVCOLUMN {
 		
 		internal	int mask;
 		internal	int fmt; 
@@ -953,12 +954,11 @@ namespace System.Windows.Forms
 		internal	int cchTextMax; 
 		internal	int iSubItem;
 		internal	int iImage;
-    	internal	int iOrder;
-		
+		internal	int iOrder;
 	}
 	
 	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
-	public struct NMLISTVIEW {
+	internal struct NMLISTVIEW {
 		
 		internal	NMHDR hdr;
 		internal	int iItem; 
@@ -967,33 +967,33 @@ namespace System.Windows.Forms
 		internal 	uint uOldState;
 		internal 	uint uChanged;
 		internal	POINT ptAction;
-	    internal 	IntPtr lItemlParam;	
+		internal 	IntPtr lItemlParam;	
 	}	
 	
 	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
-	public struct NMITEMACTIVATE {	
+	internal struct NMITEMACTIVATE {
 	
-    	internal	NMHDR   hdr;
-    	internal	int     iItem;
-    	internal	int     iSubItem;
-    	internal	uint    uNewState;
-    	internal 	uint    uOldState;
-    	internal	uint    uChanged;
-    	internal	POINT   ptAction;
-    	internal	IntPtr  lParam;
-    	internal	uint    uKeyFlags;
+		internal	NMHDR   hdr;
+		internal	int     iItem;
+		internal	int     iSubItem;
+		internal	uint    uNewState;
+		internal 	uint    uOldState;
+		internal	uint    uChanged;
+		internal	POINT   ptAction;
+		internal	IntPtr  lParam;
+		internal	uint    uKeyFlags;
 	} 
 	
 	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
-	public struct LVDISPINFO {	
-    	internal	NMHDR hdr;
-    	internal	LVITEM item;
+	internal struct LVDISPINFO {
+		internal	NMHDR hdr;
+		internal	LVITEM item;
 	} 
 
 	
 
 	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
-	struct OFNOTIFY { 
+	internal struct OFNOTIFY { 
 		//internal NMHDR         hdr; 	// FIXME: cannot be marshaled
 		internal IntPtr hwndFrom;
 		internal int idFrom;
@@ -1043,13 +1043,12 @@ namespace System.Windows.Forms
 	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi,  Pack=1)]		
 	internal struct BROWSEINFO {
 		internal IntPtr				hwndOwner;
-    	internal IntPtr				pidlRoot;
-    	internal IntPtr				pszDisplayName;
-    	internal string				lpszTitle;     
-    	internal uint				ulFlags; 
-    	internal IntPtr		  		lpfn;
-    	internal IntPtr      		lParam;    
-    	internal int				iImage;    
+		internal IntPtr				pidlRoot;
+		internal IntPtr				pszDisplayName;
+		internal string				lpszTitle;     
+		internal uint				ulFlags; 
+		internal IntPtr		  		lpfn;
+		internal IntPtr      		lParam;    
+		internal int				iImage;    
 	} 
 }
-
