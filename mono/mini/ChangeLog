@@ -1,5 +1,12 @@
 2003-04-23  Martin Baulig  <martin@ximian.com>
 
+	* tramp-x86.c, tramp-ppc.c: Reenable the debugger breakpoint interface.
+
+	* driver.c: Added `--debug' command line argument to enable
+	debugging support.
+
+2003-04-23  Martin Baulig  <martin@ximian.com>
+
 	* debug.[ch]: Removed.  The code is now in
 	../metadata/mono-debug.[ch] and mono-debug-debugger.[ch].
 
