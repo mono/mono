@@ -1,3 +1,19 @@
+2004-03-13  Martin Baulig  <martin@ximian.com>
+
+	* class.h (MonoGenericInst): Added `int count_ifaces'.
+
+	* iclass.c (ves_icall_MonoGenericInst_GetInterfaces): Use
+	`ginst->count_ifaces' instead `klass->interface_count' since we
+	may get called before the vtable is created.
+
+	* loader.c (mono_method_get_param_names): If we're a generic
+	instance, return and don't initialize the class.
+
+	* reflection.c (mono_reflection_setup_generic_class): Don't call
+	ensure_runtime_vtable().
+	(mono_reflection_bind_generic_parameters): Set
+	`ginst->count_ifaces'.
+
 2004-03-11  Jackson Harper <jackson@ximian.com>
 
 	* icall.c:
