@@ -1,5 +1,8 @@
 2004-05-13  Zoltan Varga  <vargaz@freemail.hu>
 
+	* AssemblyBuilder.cs: Make extra methods internal. mcs was changed
+	to handle this a long time ago.
+
 	* TypeBuilder.cs: Add IsAssignableFrom and IsInstanceOfType.
 	
 	* TypeBuilder.cs MethodBuilder.cs ConstructorBuilder.cs: Implement

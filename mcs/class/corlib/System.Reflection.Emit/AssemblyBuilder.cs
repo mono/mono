@@ -173,12 +173,12 @@ namespace System.Reflection.Emit {
 			resources [p].attrs = attribute;
 		}
 
-		public void EmbedResourceFile (string name, string fileName)
+		internal void EmbedResourceFile (string name, string fileName)
 		{
 			EmbedResourceFile (name, fileName, ResourceAttributes.Public);
 		}
 
-		public void EmbedResourceFile (string name, string fileName, ResourceAttributes attribute)
+		internal void EmbedResourceFile (string name, string fileName, ResourceAttributes attribute)
 		{
 			if (resources != null) {
 				MonoResource[] new_r = new MonoResource [resources.Length + 1];
@@ -658,13 +658,13 @@ namespace System.Reflection.Emit {
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
 
-		public void SetCorlibTypeBuilders (Type corlib_object_type, Type corlib_value_type, Type corlib_enum_type) {
+		internal void SetCorlibTypeBuilders (Type corlib_object_type, Type corlib_value_type, Type corlib_enum_type) {
 			this.corlib_object_type = corlib_object_type;
 			this.corlib_value_type = corlib_value_type;
 			this.corlib_enum_type = corlib_enum_type;
 		}
 
-		public void SetCorlibTypeBuilders (Type corlib_object_type, Type corlib_value_type, Type corlib_enum_type, Type corlib_void_type)
+		internal void SetCorlibTypeBuilders (Type corlib_object_type, Type corlib_value_type, Type corlib_enum_type, Type corlib_void_type)
 		{
 			SetCorlibTypeBuilders (corlib_object_type, corlib_value_type, corlib_enum_type);
 			this.corlib_void_type = corlib_void_type;
