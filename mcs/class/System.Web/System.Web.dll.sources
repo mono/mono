@@ -270,6 +270,8 @@ System.Web.UI.WebControls/CreateUserErrorEventHandler.cs
 System.Web.UI.WebControls/CustomValidator.cs
 System.Web.UI.WebControls/DataBoundControl.cs
 System.Web.UI.WebControls/DataControlCellType.cs
+System.Web.UI.WebControls/DataControlField.cs
+System.Web.UI.WebControls/DataControlFieldCell.cs
 System.Web.UI.WebControls/DataControlRowState.cs
 System.Web.UI.WebControls/DataControlRowType.cs
 System.Web.UI.WebControls/DataGrid.cs

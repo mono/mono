@@ -1,3 +1,8 @@
+2004-11-29 Sanjay Gupta <gsanjay@novell.com>
+
+	* System.Web.dll.sources: Added DataControlField.cs and 
+	DataControlFieldCell.cs.
+
 2004-11-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Web.dll.sources: added ReusableMemoryStream.
