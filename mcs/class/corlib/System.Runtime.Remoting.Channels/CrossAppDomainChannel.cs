@@ -174,6 +174,10 @@ namespace System.Runtime.Remoting.Channels
 				}
 			}
 		}
+		
+		internal int TargetDomainId {
+			get { return _domainID; }
+		}
 
 		private struct ProcessMessageRes {
 			public byte[] arrResponse;

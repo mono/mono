@@ -1,3 +1,7 @@
+2004-10-26  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* CrossAppDomainChannel.cs: Added getter for the target domain Id.
+
 2004-09-28  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* CrossAppDomainChannel.cs: In CreateMessageSink, ignore the url
