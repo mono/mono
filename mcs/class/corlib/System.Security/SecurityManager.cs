@@ -198,7 +198,7 @@ namespace System.Security {
 		public static PermissionSet ResolvePolicy (Evidence[] evidences)
 		{
 			if (evidences == null)
-				throw new PermissionSet (PermissionState.None);
+				return new PermissionSet (PermissionState.None);
 
 			// probably not optimal
 			PermissionSet ps = null;
