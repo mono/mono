@@ -1,4 +1,8 @@
 
+Mon Jun 14 18:36:08 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c: remove NPTL reference in --version output.
+
 Sun Jun 13 17:25:28 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* aot.c: patch from Patrick Beard (pcbeard@mac.com) to
