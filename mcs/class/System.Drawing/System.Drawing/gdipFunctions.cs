@@ -46,7 +46,10 @@ namespace System.Drawing
 	{
 		public const int FACESIZE = 32;
 		public const int LANG_NEUTRAL = 0;
-		
+		public static IntPtr Display = IntPtr.Zero;
+		public static bool UseX11Drawable = (Environment.OSVersion.Platform == (PlatformID) 128);
+		public static bool UseQuartzDrawable = (Environment.GetEnvironmentVariable ("MONO_MWF_USE_QUARTZ_BACKEND") != null);
+
 		#region gdiplus.dll functions
 
 		// startup / shutdown
@@ -60,6 +63,11 @@ namespace System.Drawing
 		static void ProcessExit (object sender, EventArgs e)
 		{			
 			GdiplusShutdown (ref GdiPlusToken);
+
+			if (UseX11Drawable && Display != IntPtr.Zero) {
+				XCloseDisplay (Display);
+			}
+
 		}
 
 		static GDIPlus ()
@@ -1358,6 +1366,9 @@ namespace System.Drawing
 		// Some special X11 stuff
 		[DllImport("libX11", EntryPoint="XOpenDisplay")]
 		internal extern static IntPtr XOpenDisplay(IntPtr display);	
+
+		[DllImport("libX11", EntryPoint="XCloseDisplay")]
+		internal extern static int XCloseDisplay(IntPtr display);	
 
 		// FontCollection
 		[DllImport ("gdiplus.dll")]

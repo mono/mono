@@ -1,3 +1,8 @@
+2004-01-17 Jordi Mas i Hernandez <jordi@ximian.com>
+
+        * Graphics.cs: calls XCloseDisplay on X11 when need it
+        * gdipFunctions.cs: calls XCloseDisplay on X11 when need it
+
 2004-12-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* gdipFunctions.cs Image.cs: Fix marshalling of arrays on amd64.

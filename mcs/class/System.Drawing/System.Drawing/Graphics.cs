@@ -46,11 +46,6 @@ namespace System.Drawing
 		private bool disposed = false;
 		private static float defDpiX = 0;
 		private static float defDpiY = 0;
-		private static IntPtr display = IntPtr.Zero;
-
-		// We use X Drawable on Linux.
-		private static bool use_x_drawable = (Environment.OSVersion.Platform == (PlatformID) 128);
-		private static bool use_quartz_drawable = (Environment.GetEnvironmentVariable ("MONO_MWF_USE_QUARTZ_BACKEND") != null);
 
 		[ComVisible(false)]
 		public delegate bool EnumerateMetafileProc (EmfPlusRecordType recordType,
@@ -1229,8 +1224,8 @@ namespace System.Drawing
 		{
 			Status status = GDIPlus.GdipFlush (nativeObject, intention);
                         GDIPlus.CheckStatus (status);                    
-			if (use_quartz_drawable)
-				Carbon.CGContextFlush (display);
+			if (GDIPlus.UseQuartzDrawable)
+				Carbon.CGContextFlush (GDIPlus.Display);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]		
@@ -1252,7 +1247,7 @@ namespace System.Drawing
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static Graphics FromHdcInternal (IntPtr hdc)
 		{
-			display = hdc;
+			GDIPlus.Display = hdc;
 			return null;
 		}
 
@@ -1261,19 +1256,19 @@ namespace System.Drawing
 		{
 			IntPtr graphics;
 
-			if (use_quartz_drawable) {
+			if (GDIPlus.UseQuartzDrawable) {
 				CarbonContext cgContext = Carbon.GetCGContextForView (hwnd);
 				GDIPlus.GdipCreateFromQuartz_macosx (cgContext.ctx, cgContext.width, cgContext.height, out graphics);
 				
-				display = cgContext.ctx;
+				GDIPlus.Display = cgContext.ctx;
 				return new Graphics (graphics);
 			}
-			if (use_x_drawable) {
-				if (display == IntPtr.Zero) {
-					display = GDIPlus.XOpenDisplay (IntPtr.Zero);
+			if (GDIPlus.UseX11Drawable) {
+				if (GDIPlus.Display == IntPtr.Zero) {
+					GDIPlus.Display = GDIPlus.XOpenDisplay (IntPtr.Zero);
 				}
 
-				return FromXDrawable (hwnd, display);
+				return FromXDrawable (hwnd, GDIPlus.Display);
 
 			}
 
