@@ -1,3 +1,7 @@
+2004-01-21  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Added TypedDataSetGeneratorTest.cs.
+
 2003-12-18  Jackson Harper <jackson@ximian.com>
 
 	* DataViewTest.cs: Add some tests for new methods.
