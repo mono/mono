@@ -1,3 +1,8 @@
+2005-03-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (mono_reflection_create_runtime_class): Remove the
+	AssemblyBuilder.Save optimization since it causes too many problems.
+
 2005-03-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* exception.c|h: Added mono_get_exception_reflection_type_load to
