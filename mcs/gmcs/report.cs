@@ -60,24 +60,139 @@ namespace Mono.CSharp {
 		//
 		static Hashtable warning_ignore_table;
 
+		static Hashtable warning_regions_table;
+
 		/// <summary>
 		/// List of symbols related to reported error/warning. You have to fill it before error/warning is reported.
 		/// </summary>
 		static StringCollection related_symbols = new StringCollection ();
-		
-		static void Check (int code)
-		{
-			if (code == expected_error){
+
+		abstract class AbstractMessage {
+
+			static void Check (int code)
+			{
+				if (code == expected_error) {
+					Environment.Exit (0);
+				}
+			}
+
+			public abstract string MessageType { get; }
+
+			public virtual void Print (int code, string location, string text)
+			{
+				if (code < 0)
+					code = 8000-code;
+
+				StringBuilder msg = new StringBuilder ();
+				if (location.Length != 0) {
+					msg.Append (location);
+					msg.Append (' ');
+				}
+				msg.AppendFormat ("{0} CS{1:0000}: {2}", MessageType, code, text);
+				Console.WriteLine (msg.ToString ());
+
+				foreach (string s in related_symbols) {
+					Console.WriteLine (String.Concat (s, MessageType, ')'));
+				}
+				related_symbols.Clear ();
+
+				if (Stacktrace)
+					Console.WriteLine (FriendlyStackTrace (new StackTrace (true)));
+
 				if (Fatal)
-					throw new Exception ();
-				
-				Environment.Exit (0);
+					throw new Exception (text);
+
+				Check (code);
+			}
+
+			public virtual void Print (int code, Location location, string text)
+			{
+				if (location.Equals (Location.Null)) {
+					Print (code, "", text);
+					return;
+				}
+				Print (code, String.Format ("{0}({1})", location.Name, location.Row), text);
 			}
 		}
-		
-		public static void FeatureIsNotStandardized (string feature)
+
+		sealed class WarningMessage: AbstractMessage {
+			Location loc = Location.Null;
+			readonly int Level;
+
+			public WarningMessage ():
+				this (-1) {}
+
+			public WarningMessage (int level)
+			{
+				Level = level;
+			}
+
+			bool IsEnabled (int code)
+			{
+				if (RootContext.WarningLevel < Level)
+					return false;
+
+				if (warning_ignore_table != null) {
+					if (warning_ignore_table.Contains (code)) {
+						return false;
+					}
+				}
+
+				if (warning_regions_table == null || loc.Equals (Location.Null))
+					return true;
+
+				WarningRegions regions = (WarningRegions)warning_regions_table [loc.Name];
+				return regions.IsWarningEnabled (code, loc.Row);
+			}
+
+			public override void Print(int code, string location, string text)
+			{
+				if (!IsEnabled (code)) {
+					related_symbols.Clear ();
+					return;
+				}
+
+				if (WarningsAreErrors) {
+					new ErrorMessage ().Print (code, location, text);
+					return;
+				}
+
+				Warnings++;
+				base.Print (code, location, text);
+			}
+
+			public override void Print(int code, Location location, string text)
+			{
+				loc = location;
+				base.Print (code, location, text);
+			}
+
+			public override string MessageType {
+				get {
+					return "warning";
+				}
+			}
+		}
+
+		sealed class ErrorMessage: AbstractMessage {
+
+			public override void Print(int code, string location, string text)
+			{
+				Errors++;
+				base.Print (code, location, text);
+			}
+
+			public override string MessageType {
+				get {
+					return "error";
+				}
+			}
+
+		}
+
+		public static void FeatureIsNotStandardized (Location loc, string feature)
 		{
-			Report.Error (1644, "Feature '{0}' cannot be used because it is not part of the standardized ISO C# language specification", feature);
+			Report.Error (1644, loc, "Feature '{0}' cannot be used because it is not part of the standardized ISO C# language specification", feature);
 		}
 		
 		public static string FriendlyStackTrace (Exception e)
@@ -120,20 +235,34 @@ namespace Mono.CSharp {
 	
 			return sb.ToString ();
 		}
+
+		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		// IF YOU ADD A NEW WARNING YOU HAVE TO DUPLICATE ITS ID HERE
+		public static bool IsValidWarning (int code)
+		{
+			int[] all_warnings = new int[] { 28, 67, 78, 105, 108, 109, 114, 192, 168, 169, 183, 184, 219, 251, 612, 618, 626, 628, 642, 649,
+											 659, 660, 661, 672, 1030, 1522, 1616, 1691, 1692, 1901, 2002, 2023, 3012, 3019, 8024, 8028
+										   };
+			foreach (int i in all_warnings) {
+				if (i == code)
+					return true;
+			}
+			return false;
+		}
 		
 		static public void LocationOfPreviousError (Location loc)
 		{
 			Console.WriteLine (String.Format ("{0}({1}) (Location of symbol related to previous error)", loc.Name, loc.Row));
-		}                
-
+		}    
+        
 		static public void RuntimeMissingSupport (string feature) 
 		{
 			Report.Error (-88, "Your .NET Runtime does not support '{0}'. Please use the latest Mono runtime instead.");
 		}
 
 		/// <summary>
-                /// In most error cases is very useful to have information about symbol that caused the error.
-                /// Call this method before you call Report.Error when it makes sense.
+		/// In most error cases is very useful to have information about symbol that caused the error.
+		/// Call this method before you call Report.Error when it makes sense.
 		/// </summary>
 		static public void SymbolRelatedToPreviousError (Location loc, string symbol)
 		{
@@ -142,27 +271,19 @@ namespace Mono.CSharp {
 
 		static public void SymbolRelatedToPreviousError (MemberInfo mi)
 		{
-			Type decl = mi.DeclaringType;
-			if (decl.IsGenericInstance)
-				decl = decl.GetGenericTypeDefinition ();
-
-			TypeContainer temp_ds = TypeManager.LookupTypeContainer (decl);
+			TypeContainer temp_ds = TypeManager.LookupTypeContainer (mi.DeclaringType);
 			if (temp_ds == null) {
-				SymbolRelatedToPreviousError (decl.Assembly.Location, TypeManager.GetFullNameSignature (mi));
+				SymbolRelatedToPreviousError (mi.DeclaringType.Assembly.Location, TypeManager.GetFullNameSignature (mi));
 			} else {
 				if (mi is MethodBase) {
-					MethodBase mb = (MethodBase) mi;
-					if (mb.Mono_IsInflatedMethod)
-						mb = mb.GetGenericMethodDefinition ();
-
-					IMethodData md = TypeManager.GetMethod (mb);
+					IMethodData md = TypeManager.GetMethod ((MethodBase)mi);
 					SymbolRelatedToPreviousError (md.Location, md.GetSignatureForError (temp_ds));
 					return;
 				}
 
 				string name = String.Concat (temp_ds.Name, ".", mi.Name);
-				MemberCore mc = temp_ds.GetDefinition (name) as MemberCore;
-				SymbolRelatedToPreviousError (mc.Location, mc.GetSignatureForError ());
+				MemberCore mc = temp_ds.GetDefinition (name);
+				SymbolRelatedToPreviousError (mc);
 			}
 		}
 
@@ -175,7 +296,7 @@ namespace Mono.CSharp {
 		{
 			DeclSpace temp_ds = TypeManager.LookupDeclSpace (type);
 			if (temp_ds == null)
-			SymbolRelatedToPreviousError (type.Assembly.Location, TypeManager.CSharpName (type));
+				SymbolRelatedToPreviousError (type.Assembly.Location, TypeManager.CSharpName (type));
 			else 
 				SymbolRelatedToPreviousError (temp_ds.Location, TypeManager.CSharpName (type));
 		}
@@ -185,89 +306,42 @@ namespace Mono.CSharp {
 			related_symbols.Add (String.Format ("{0}: '{1}' (name of symbol related to previous ", loc, symbol));
 		}
 
-		static public void RealError (string msg)
+		public static WarningRegions RegisterWarningRegion (Location location)
 		{
-			Errors++;
-			Console.WriteLine (msg);
+			if (warning_regions_table == null)
+				warning_regions_table = new Hashtable ();
 
-			foreach (string s in related_symbols)
-				Console.WriteLine (s + "error)");
-			related_symbols.Clear ();
-
-			if (Stacktrace)
-				Console.WriteLine (FriendlyStackTrace (new StackTrace (true)));
-			
-			if (Fatal)
-				throw new Exception (msg);
-		}
-
-
-		static public void Error (int code, Location l, string text)
-		{
-			if (code < 0)
-				code = 8000-code;
-			
-			string msg = String.Format (
-				"{0}({1}) error CS{2:0000}: {3}", l.Name, l.Row, code, text);
-//				"{0}({1}) error CS{2}: {3}", l.Name, l.Row, code, text);
-			
-			RealError (msg);
-			Check (code);
-		}
-
-		static public void Warning (int code, Location l, string text)
-		{
-			if (code < 0)
-				code = 8000-code;
-			
-			if (warning_ignore_table != null){
-				if (warning_ignore_table.Contains (code)) {
-					related_symbols.Clear ();
-					return;
-				}
+			WarningRegions regions = (WarningRegions)warning_regions_table [location.Name];
+			if (regions == null) {
+				regions = new WarningRegions ();
+				warning_regions_table.Add (location.Name, regions);
 			}
-			
-			if (WarningsAreErrors)
-				Error (code, l, text);
-			else {
-				string row;
-				
-				if (Location.IsNull (l))
-					row = "";
-				else
-					row = l.Row.ToString ();
-				
-				Console.WriteLine (String.Format (
-					"{0}({1}) warning CS{2:0000}: {3}",
-//					"{0}({1}) warning CS{2}: {3}",
-					l.Name,  row, code, text));
-				Warnings++;
-
-				foreach (string s in related_symbols)
-					Console.WriteLine (s + "warning)");
-				related_symbols.Clear ();
-
-				Check (code);
-
-				if (Stacktrace)
-					Console.WriteLine (new StackTrace ().ToString ());
-			}
+			return regions;
 		}
-		
+
+		static public void Warning (int code, int level, Location loc, string format, params object[] args)
+		{
+			WarningMessage w = new WarningMessage (level);
+			w.Print (code, loc, String.Format (format, args));
+		}
+
+		static public void Warning (int code, Location loc, string format, params object[] args)
+		{
+			WarningMessage w = new WarningMessage ();
+			w.Print (code, loc, String.Format (format, args));
+		}
+
+		static public void Warning (int code, string format, params object[] args)
+		{
+			Warning (code, Location.Null, String.Format (format, args));
+		}
+
+		/// <summary>
+		/// Did you test your WarningLevel, that you use this method
+		/// </summary>
 		static public void Warning (int code, string text)
 		{
 			Warning (code, Location.Null, text);
-		}
-
-		static public void Error (int code, string text)
-		{
-			if (code < 0)
-				code = 8000-code;
-			
-			string msg = String.Format ("error CS{0:0000}: {1}", code, text);
-			
-			RealError (msg);
-			Check (code);
 		}
 
 		static public void Error (int code, string format, params object[] args)
@@ -277,17 +351,8 @@ namespace Mono.CSharp {
 
 		static public void Error (int code, Location loc, string format, params object[] args)
 		{
-			Error (code, loc, String.Format (format, args));
-		}
-
-		static public void Warning (int code, string format, params object[] args)
-		{
-			Warning (code, Location.Null, String.Format (format, args));
-		}
-
-		static public void Warning (int code, Location loc, string format, params object[] args)
-		{
-			Warning (code, loc, String.Format (format, args));
+			ErrorMessage e = new ErrorMessage ();
+			e.Print (code, loc, String.Format (format, args));
 		}
 
 		static public void SetIgnoreWarning (int code)
@@ -298,14 +363,14 @@ namespace Mono.CSharp {
 			warning_ignore_table [code] = true;
 		}
 		
-                static public int ExpectedError {
-                        set {
-                                expected_error = value;
-                        }
-                        get {
-                                return expected_error;
-                        }
-                }
+		static public int ExpectedError {
+			set {
+				expected_error = value;
+			}
+			get {
+				return expected_error;
+			}
+		}
 
 		public static int DebugFlags = 0;
 
@@ -336,8 +401,6 @@ namespace Mono.CSharp {
 						sb.Append ("null");
 					else if (arg is ICollection)
 						sb.Append (PrintCollection ((ICollection) arg));
-					else if (arg is IntPtr)
-						sb.Append (String.Format ("IntPtr(0x{0:x})", ((IntPtr) arg).ToInt32 ()));
 					else
 						sb.Append (arg);
 				}
@@ -463,9 +526,121 @@ namespace Mono.CSharp {
 			: base (message)
 		{
 		}
+	}
 
-		public InternalErrorException (string format, params object[] args)
-			: this (String.Format (format, args))
-		{ }
+	/// <summary>
+	/// Handles #pragma warning
+	/// </summary>
+	public class WarningRegions {
+
+		abstract class PragmaCmd
+		{
+			public int Line;
+
+			protected PragmaCmd (int line)
+			{
+				Line = line;
+			}
+
+			public abstract bool IsEnabled (int code, bool previous);
+		}
+		
+		class Disable: PragmaCmd
+		{
+			int code;
+			public Disable (int line, int code)
+				: base (line)
+			{
+				this.code = code;
+			}
+
+			public override bool IsEnabled (int code, bool previous)
+			{
+				return this.code == code ? false : previous;
+			}
+		}
+
+		class DisableAll: PragmaCmd
+		{
+			public DisableAll (int line)
+				: base (line) {}
+
+			public override bool IsEnabled(int code, bool previous)
+			{
+				return false;
+			}
+		}
+
+		class Enable: PragmaCmd
+		{
+			int code;
+			public Enable (int line, int code)
+				: base (line)
+			{
+				this.code = code;
+			}
+
+			public override bool IsEnabled(int code, bool previous)
+			{
+				return this.code == code ? true : previous;
+			}
+		}
+
+		class EnableAll: PragmaCmd
+		{
+			public EnableAll (int line)
+				: base (line) {}
+
+			public override bool IsEnabled(int code, bool previous)
+			{
+				return true;
+			}
+		}
+
+
+		ArrayList regions = new ArrayList ();
+
+		public void WarningDisable (int line)
+		{
+			regions.Add (new DisableAll (line));
+		}
+
+		public void WarningDisable (Location location, int code)
+		{
+			if (CheckWarningCode (code, location))
+				regions.Add (new Disable (location.Row, code));
+		}
+
+		public void WarningEnable (int line)
+		{
+			regions.Add (new EnableAll (line));
+		}
+
+		public void WarningEnable (Location location, int code)
+		{
+			if (CheckWarningCode (code, location))
+				regions.Add (new Enable (location.Row, code));
+		}
+
+		public bool IsWarningEnabled (int code, int src_line)
+		{
+			bool result = true;
+			foreach (PragmaCmd pragma in regions) {
+				if (src_line < pragma.Line)
+					break;
+
+				result = pragma.IsEnabled (code, result);
+			}
+			return result;
+		}
+
+		bool CheckWarningCode (int code, Location loc)
+		{
+			if (Report.IsValidWarning (code))
+				return true;
+
+			Report.Warning (1691, 1, loc, "'{0}' is not a valid warning number", code);
+			return false;
+		}
 	}
 }

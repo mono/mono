@@ -397,29 +397,19 @@ namespace Mono.CSharp {
 	//
 	// This type represents a generic type parameter
 	//
-	public class TypeParameter : IMemberContainer {
+	public class TypeParameter : MemberCore, IMemberContainer {
 		string name;
 		Constraints constraints;
 		Location loc;
 		GenericTypeParameterBuilder type;
 
-		public TypeParameter (string name, Constraints constraints, Location loc)
+		public TypeParameter (TypeContainer parent, string name,
+				      Constraints constraints, Location loc)
+			: base (parent, new MemberName (name), null, loc)
 		{
 			this.name = name;
 			this.constraints = constraints;
 			this.loc = loc;
-		}
-
-		public string Name {
-			get {
-				return name;
-			}
-		}
-
-		public Location Location {
-			get {
-				return loc;
-			}
 		}
 
 		public Constraints Constraints {
@@ -543,8 +533,40 @@ namespace Mono.CSharp {
 		}
 
 		//
+		// MemberContainer
+		//
+
+		public override bool Define ()
+		{
+			return true;
+		}
+
+		protected override void VerifyObsoleteAttribute ()
+		{ }
+
+		public override void ApplyAttributeBuilder (Attribute a,
+							    CustomAttributeBuilder cb)
+		{ }
+
+		public override AttributeTargets AttributeTargets {
+			get {
+				return (AttributeTargets) 0;
+			}
+		}
+
+		public override string[] ValidAttributeTargets {
+			get {
+				return new string [0];
+			}
+		}
+
+		//
 		// IMemberContainer
 		//
+
+		string IMemberContainer.Name {
+			get { return Name; }
+		}
 
 		IMemberContainer IMemberContainer.ParentContainer {
 			get { return null; }

@@ -848,7 +848,7 @@ public class TypeManager {
 			@"^System\." +
 			@"(Int32|UInt32|Int16|UInt16|Int64|UInt64|" +
 			@"Single|Double|Char|Decimal|Byte|SByte|Object|" +
-			@"Boolean|String|Void)" +
+			@"Boolean|String|Void|Null)" +
 			@"(\W+|\b)", 
 			new MatchEvaluator (CSharpNameMatch));
 	}	
@@ -963,7 +963,7 @@ public class TypeManager {
 			iparams = new ReflectionParameters (mb);
 		
 		// Is property
-		if (mb.IsSpecialName && iparams.Count == 0)
+		if (mb.IsSpecialName && iparams.Count == 0 && !mb.IsConstructor)
 			return GetFullNameSignature (mb);
 		
                 for (int i = 0; i < iparams.Count; i++) {
@@ -2014,15 +2014,13 @@ public class TypeManager {
 	///   for anything which is dynamic, and we need this in a number of places,
 	///   we register this information here, and use it afterwards.
 	/// </remarks>
-	static public bool RegisterMethod (MethodBase mb, InternalParameters ip, Type [] args)
+	static public void RegisterMethod (MethodBase mb, InternalParameters ip, Type [] args)
 	{
 		if (args == null)
 			args = NoTypes;
 				
 		method_arguments.Add (mb, args);
 		method_internal_params.Add (mb, ip);
-		
-		return true;
 	}
 	
 	static public InternalParameters LookupParametersByBuilder (MethodBase mb)
@@ -2138,17 +2136,14 @@ public class TypeManager {
 	
 	static Hashtable events;
 
-	static public bool RegisterEvent (MyEventBuilder eb, MethodBase add, MethodBase remove)
+	static public void RegisterEvent (MyEventBuilder eb, MethodBase add, MethodBase remove)
 	{
 		if (events == null)
 			events = new Hashtable ();
 
-		if (events.Contains (eb))
-			return false;
-
+		if (!events.Contains (eb)) {
 		events.Add (eb, new Pair (add, remove));
-
-		return true;
+		}
 	}
 
 	static public MethodInfo GetAddMethod (EventInfo ei)

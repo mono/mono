@@ -1042,6 +1042,10 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return null;
 			
+			if (expr.Type.IsPointer) {
+				Report.Error (244, loc, "\"is\" or \"as\" are not valid on pointer types");
+				return null;
+			}
 			return this;
 		}
 	}
@@ -3414,8 +3418,11 @@ namespace Mono.CSharp {
 					else if (rtype == TypeManager.uint64_type)
 						ig.Emit (OpCodes.Conv_U8);
 					ig.Emit (OpCodes.Mul);
-					ig.Emit (OpCodes.Conv_I);
 				}
+				
+				if (rtype == TypeManager.int64_type || rtype == TypeManager.uint64_type)
+					ig.Emit (OpCodes.Conv_I);
+				
 				if (is_add)
 					ig.Emit (OpCodes.Add);
 				else
@@ -3485,14 +3492,6 @@ namespace Mono.CSharp {
 				Type true_type = trueExpr.Type;
 				Type false_type = falseExpr.Type;
 
-				if (trueExpr is NullLiteral){
-					type = false_type;
-					return this;
-				} else if (falseExpr is NullLiteral){
-					type = true_type;
-					return this;
-				}
-				
 				//
 				// First, if an implicit conversion exists from trueExpr
 				// to falseExpr, then the result type is of type falseExpr.Type
@@ -4020,6 +4019,16 @@ namespace Mono.CSharp {
 				if (Expr == null)
 					return false;
 
+				if (!ec.IsConstructor) {
+					FieldExpr fe = Expr as FieldExpr;
+					if (fe != null && fe.FieldInfo.IsInitOnly) {
+						if (fe.FieldInfo.IsStatic)
+							Report.Error (199, loc, "A static readonly field cannot be passed ref or out (except in a static constructor)");
+						else
+							Report.Error (192, loc, "A readonly field cannot be passed ref or out (except in a constructor)");
+						return false;
+					}
+				}
 				Expr = Expr.ResolveLValue (ec, Expr);
 			} else if (ArgType == AType.Out)
 				Expr = Expr.ResolveLValue (ec, new EmptyExpression ());
@@ -5291,6 +5300,14 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if (method.Name == "Finalize" && Arguments == null) {
+				if (is_base)
+					Report.Error (250, loc, "Do not directly call your base class Finalize method. It is called automatically from your destructor");
+				else
+					Report.Error (245, loc, "Destructors and object.Finalize cannot be called directly. Consider calling IDisposable.Dispose if available");
+				return null;
+			}
+
 			if ((method.Attributes & MethodAttributes.SpecialName) != 0){
 				if (TypeManager.IsSpecialMethod (method))
 					Report.Error (571, loc, method.Name + ": can not call operator or accessor");
@@ -6219,7 +6236,7 @@ namespace Mono.CSharp {
 					Expression tmp = (Expression) o;
 					tmp = tmp.Resolve (ec);
 					if (tmp == null)
-						continue;
+						return false;
 
 					// Console.WriteLine ("I got: " + tmp);
 					// Handle initialization from vars, fields etc.
@@ -6314,11 +6331,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		void Error_NegativeArrayIndex ()
-		{
-			Error (284, "Can not create array with a negative size");
-		}
-		
 		//
 		// Converts `source' to an int, uint, long or ulong.
 		//
@@ -6349,14 +6361,14 @@ namespace Mono.CSharp {
 			if (target is Constant){
 				if (target is IntConstant){
 					if (((IntConstant) target).Value < 0){
-						Error_NegativeArrayIndex ();
+						Expression.Error_NegativeArrayIndex (loc);
 						return null;
 					}
 				}
 
 				if (target is LongConstant){
 					if (((LongConstant) target).Value < 0){
-						Error_NegativeArrayIndex ();
+						Expression.Error_NegativeArrayIndex (loc);
 						return null;
 					}
 				}
@@ -6854,16 +6866,6 @@ namespace Mono.CSharp {
 			}
 			return ret;
 		}
-
-		public Expression TurnIntoConstant ()
-		{
-			//
-			// Should use something like the above attribute thing.
-			// It should return a subclass of Constant that just returns
-			// the computed value of the array
-			//
-			throw new Exception ("Does not support yet Turning array into a Constant");
-		}
 	}
 	
 	/// <summary>
@@ -7128,6 +7130,10 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if (typearg.IsPointer && !ec.InUnsafe){
+				UnsafeError (loc);
+				return null;
+			}
 			CheckObsoleteAttribute (typearg);
 
 			type = TypeManager.type_type;
@@ -7508,7 +7514,12 @@ namespace Mono.CSharp {
 						object value = en.LookupEnumValue (ec, Identifier, loc);
 						
 						if (value != null){
-							ObsoleteAttribute oa = en.GetObsoleteAttribute (ec, Identifier);
+							MemberCore mc = en.GetDefinition (Identifier);
+							ObsoleteAttribute oa = mc.GetObsoleteAttribute (en);
+							if (oa != null) {
+								AttributeTester.Report_ObsoleteMessage (oa, mc.GetSignatureForError (), Location);
+							}
+							oa = en.GetObsoleteAttribute (en);
 							if (oa != null) {
 								AttributeTester.Report_ObsoleteMessage (oa, en.GetSignatureForError (), Location);
 							}

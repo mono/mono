@@ -1,3 +1,184 @@
+2004-09-13  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (MethodCore.CheckBase): Fix bug #65757.
+
+2004-09-12  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (Attribute.Resolve): Add error 653 report.
+
+	* class.cs (Class.ApplyAttributeBuilder): Add error 641
+	report.
+	(Method.ApplyAttributeBuilder): Add error 685 report.
+	(Operator.Define): Add error 564 report.
+
+	* cs-tokenizer.cs (handle_hex): Add error 1013 report.
+
+	* expression.cs (Invocation.DoResolve): Add error
+	245 and 250 report.
+
+	* parameter.cs (Parameter.ApplyAttributeBuilder): Add
+	error 674 report.
+
+2004-09-11  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (ConstructorInitializer.Resolve):
+	Wrong error number (515->516).
+
+2004-09-11  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (Indexer.Define): Add error 631 report.
+
+2004-09-11  Marek Safar  <marek.safar@seznam.cz>
+
+	* ecore.cs (Error_NegativeArrayIndex): Fix 248 error.
+
+2004-09-11  Marek Safar  <marek.safar@seznam.cz>
+
+	* expression.cs (Probe.DoResolve): Add error CS0241 report.
+
+2004-09-10  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay: Added error CS0241 report.
+
+2004-09-10  Raja R Harinath  <rharinath@novell.com>
+
+	* cs-parser.jay (fixed_statement): Introduce a scope for the
+	declaration in the 'fixed' statement.
+
+2004-09-09  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay: Added CS0230 error report.
+
+2004-09-09  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay: Added errors CS0231 and CS0257 report.
+
+2004-09-09  Marek Safar  <marek.safar@seznam.cz>
+
+	* expression.cs (Argument.Resolve): Added error CS0192 and
+	CS0199 report.
+
+2004-09-09  Marek Safar  <marek.safar@seznam.cz>
+
+	C# 2.0 #pragma warning feature
+
+	* cs-tokenizer.cs (PreProcessPragma): New method; 
+	Handles #pragma directive.
+
+	* report.cs (WarningRegions): New class; Support
+	class for #pragma warning directive. It tests whether
+	warning is enabled for a given line.
+
+2004-09-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* const.cs: Add more descriptive error report, tahnks to
+	Sebastien. 
+
+2004-09-08  Marek Safar  <marek.safar@seznam.cz>
+
+	* ecore.cs (FieldExpr.DoResolveLValue): Fixed CS0198 report.
+
+2004-09-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs: Apply patch from Ben: Remove dead code from
+	ArrayCreation, and remove the TurnintoConstant call in const.cs,
+	as that code just threw an exception anwyays.
+
+	* const.cs: Remove the call to the turnintoconstant, for details
+	see bug: #63144
+	
+	* literal.cs: The type of the null-literal is the null type;  So
+	we use a placeholder type (literal.cs:System.Null, defined here)
+	for it.
+
+	* expression.cs (Conditional.DoResolve): Remove some old code that
+	is no longer needed, conversions have been fixed.
+
+	(ArrayCreationExpression.DoResolve): Return false if we fail to
+	resolve the inner expression.
+
+2004-09-07  Raja R Harinath  <rharinath@novell.com>
+
+	Fix test-290.cs.
+	* cs-parser.jay (delegate_declaration): Record a delegate
+	declaration as a type declaration.
+	Reported by Jo Vermeulen <jo@lumumba.luc.ac.be>.
+
+2004-09-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* parameter.cs: Do not crash if the type can not be resolved. 
+
+	* expression.cs: Report errors with unsafe pointers, fixes #64896
+
+2004-09-06 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* expression.cs: Pointer arith always needs to do a conv.i
+	if the operand is a long. fix 65320
+
+2004-09-04  Marek Safar  <marek.safar@seznam.cz>
+
+	Fixed cs0619-37.cs, cs0619-38.cs
+
+	* enum.cs (GetObsoleteAttribute): Removed.
+
+	* expression.cs (MemberAccess.DoResolve): Test for [Obsolete]
+	on Enum member is double staged. The first is tested member
+	and then enum.
+
+2004-09-04  Marek Safar  <marek.safar@seznam.cz>
+
+	Fixed #56986, #63631, #65231
+
+	* class.cs: (TypeContainer.AddToMemberContainer): New method,
+	adds member to name container.
+	(TypeContainer.AddToTypeContainer): New method, adds type to
+	name container.
+	(AddConstant, AddEnum, AddClassOrStruct, AddDelegate, AddMethod,
+	AddConstructor, AddInterface, AddField, AddProperty, AddEvent,
+	AddOperator): Simplified by reusing AddToMemberContainer.
+	(TypeContainer.UserDefinedStaticConstructor): Changed to property
+	instead of field.
+	(Method.CheckForDuplications): Fixed implementation to test all
+	possibilities.
+	(MemberBase): Detection whether member is explicit interface
+	implementation is now in constructor.
+	(MemberBase.UpdateMemberName): Handles IndexerName.
+	(Accessor): Changed to keep also location information.
+	(AbstractPropertyEventMethod): Is derived from MemberCore.
+	(AbstractPropertyEventMethod.IsDummy): Says whether accessor
+	will be emited or not.
+	(PropertyBase.AreAccessorsDuplicateImplementation):
+	Tests whether accessors are not in collision with some method.
+	(Operator): Is derived from MethodCore to simplify common
+	operations.
+
+	* decl.cs (Flags.TestMethodDuplication): Test for duplication
+	must be performed.
+	(DeclSpace.AddToContainer): Adds the member to defined_names
+	table. It tests for duplications and enclosing name conflicts.
+
+	* enum.cs (EnumMember): Clean up to reuse the base structures
+
+2004-09-03  Martin Baulig  <martin@ximian.com>
+
+	Merged latest changes into gmcs.  Please keep this comment in
+	here, it makes it easier for me to see what changed in MCS since
+	the last time I merged.
+
+2004-09-03  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (TypeContainer.DefineDefaultConstructor): Put this back
+	into TypeContainer, to make partial classes work again.
+
+2004-09-03  Martin Baulig  <martin@ximian.com>
+
+	* rootcontext.cs (RootContext.V2): Removed.
+
+2004-03-23  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (Invocation.OverloadResolve): Added `bool
+	may_fail' argument and use it instead of the Location.IsNull() hack.
+
 2004-09-09  Martin Baulig  <martin@ximian.com>
 
 	* cs-parser.jay (namespace_declaration): Fixed CS0134 reporting.

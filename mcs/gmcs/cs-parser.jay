@@ -770,8 +770,7 @@ struct_declaration
 		if ($7 != null)
 			current_class.Bases = (ArrayList) $7;
 
-		CheckDef (current_class.SetParameterInfo ((ArrayList) $8), current_class.Name,
-			  current_class.Location);
+		current_class.SetParameterInfo ((ArrayList) $8);
 
 		current_class.Register ();
 	  }
@@ -836,7 +835,7 @@ constant_declaration
 				(Expression) constant.expression_or_array_initializer, (int) $2, 
 				(Attributes) $1, l);
 
-			CheckDef (current_container.AddConstant (c), c.Name, l);
+			current_container.AddConstant (c);
 		}
 	  }
 	;
@@ -888,7 +887,7 @@ field_declaration
 						 var.expression_or_array_initializer, 
 						 (Attributes) $1, l);
 
-			CheckDef (current_container.AddField (field), field.Name, l);
+			current_container.AddField (field);
 		}
 	  }
 	| opt_attributes
@@ -966,7 +965,7 @@ method_declaration
 		}
 
 		method.Block = (Block) $3;
-		CheckDef (current_container.AddMethod (method), method.Name, method.Location);
+		current_container.AddMethod (method);
 
 		current_local_parameters = null;
 		iterator_container = null;
@@ -1017,7 +1016,7 @@ method_header
 			generic = new GenericMethod (current_namespace, current_class,
 						     name, lexer.Location);
 
-			CheckDef (generic.SetParameterInfo ((ArrayList) $9), name.Name, lexer.Location);
+			generic.SetParameterInfo ((ArrayList) $9);
 		}
 
 		method = new Method (current_class, generic, (Expression) $3, (int) $2, false,
@@ -1050,8 +1049,7 @@ method_header
 			generic = new GenericMethod (current_namespace, current_class,
 						     name, lexer.Location);
 
-
-			CheckDef (generic.SetParameterInfo ((ArrayList) $9), name.Name, lexer.Location);
+			generic.SetParameterInfo ((ArrayList) $9);
 		}
 
 		method = new Method (current_class, generic, TypeManager.system_void_expr,
@@ -1220,7 +1218,7 @@ property_declaration
 		if (SimpleIteratorContainer.Simple.Yields)
 			prop.SetYields ();
 		
-		CheckDef (current_container.AddProperty (prop), prop.Name, loc);
+		current_container.AddProperty (prop);
 		implicit_value_parameter_type = null;
 		iterator_container = null;
 	  }
@@ -1260,7 +1258,7 @@ get_accessor_declaration
 	  }
           accessor_body
 	  {
-		$$ = new Accessor ((Block) $4, (Attributes) $1);
+		$$ = new Accessor ((Block) $4, (Attributes) $1, lexer.Location);
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
 	  }
@@ -1297,7 +1295,7 @@ set_accessor_declaration
 	  }
 	  accessor_body
 	  {
-		$$ = new Accessor ((Block) $4, (Attributes) $1);
+		$$ = new Accessor ((Block) $4, (Attributes) $1, lexer.Location);
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
 	  }
@@ -1343,8 +1341,7 @@ interface_declaration
 		if ($7 != null)
 			current_class.Bases = (ArrayList) $7;
 
-		CheckDef (current_class.SetParameterInfo ((ArrayList) $8),
-			  current_class.Name, current_class.Location);
+		current_class.SetParameterInfo ((ArrayList) $8);
 
 		current_class.Register ();
 	  }
@@ -1381,19 +1378,19 @@ interface_member_declaration
 	  { 
 		Method m = (Method) $1;
 
-		CheckDef (current_container.AddMethod (m), m.Name, m.Location);
+		current_container.AddMethod (m);
 	  }
 	| interface_property_declaration	
 	  { 
 		Property p = (Property) $1;
 
-		CheckDef (current_container.AddProperty (p), p.Name, p.Location);
+		current_container.AddProperty (p);
           }
 	| interface_event_declaration 
           { 
 		if ($1 != null){
 			Event e = (Event) $1;
-			CheckDef (current_container.AddEvent (e), e.Name, lexer.Location);
+			current_container.AddEvent (e);
 		}
 	  }
 	| interface_indexer_declaration
@@ -1435,7 +1432,7 @@ interface_method_declaration
 			generic = new GenericMethod (current_namespace, current_class,
 						     name, lexer.Location);
 
-			CheckDef (generic.SetParameterInfo ((ArrayList) $9), name.Name, lexer.Location);
+			generic.SetParameterInfo ((ArrayList) $9);
 		}
 
 		$$ = new Method (current_class, generic, (Expression) $3, (int) $2, true, name,
@@ -1462,7 +1459,7 @@ interface_method_declaration
 			generic = new GenericMethod (current_namespace, current_class,
 						     name, lexer.Location);
 
-			CheckDef (generic.SetParameterInfo ((ArrayList) $9), name.Name, lexer.Location);
+			generic.SetParameterInfo ((ArrayList) $9);
 		}
 
 		$$ = new Method (current_class, generic, TypeManager.system_void_expr, (int) $2,
@@ -1495,12 +1492,12 @@ interface_property_declaration
 	;
 
 interface_accessors
-	: opt_attributes GET SEMICOLON		{ $$ = new InterfaceAccessorInfo (true, false, (Attributes) $1, null); }
-	| opt_attributes SET SEMICOLON		{ $$ = new InterfaceAccessorInfo (false, true, null, (Attributes) $1); }
+	: opt_attributes GET SEMICOLON		{ $$ = new InterfaceAccessorInfo (true, false, (Attributes) $1, null, lexer.Location, lexer.Location); }
+	| opt_attributes SET SEMICOLON		{ $$ = new InterfaceAccessorInfo (false, true, null, (Attributes) $1, lexer.Location, lexer.Location); }
 	| opt_attributes GET SEMICOLON opt_attributes SET SEMICOLON 
-	  { $$ = new InterfaceAccessorInfo (true, true, (Attributes) $1, (Attributes) $3); }
+	  { $$ = new InterfaceAccessorInfo (true, true, (Attributes) $1, (Attributes) $3, lexer.Location, lexer.Location); }
 	| opt_attributes SET SEMICOLON opt_attributes GET SEMICOLON
-	  { $$ = new InterfaceAccessorInfo (true, true, (Attributes) $3, (Attributes) $1); }
+	  { $$ = new InterfaceAccessorInfo (true, true, (Attributes) $3, (Attributes) $1, lexer.Location, lexer.Location); }
 	;
 
 interface_event_declaration
@@ -1535,8 +1532,9 @@ interface_indexer_declaration
 	  {
 		InterfaceAccessorInfo info = (InterfaceAccessorInfo) $10;
 
-		$$ = new Indexer (current_class, (Expression) $3, (int) $2, true,
-				  MemberName.Null, (Parameters) $6, (Attributes) $1,
+		$$ = new Indexer (current_class, (Expression) $3,
+				  new MemberName (TypeContainer.DefaultIndexerName),
+				  (int) $2, true, (Parameters) $6, (Attributes) $1,
 				  info.Get, info.Set, lexer.Location);
 	  }
 	;
@@ -1550,10 +1548,16 @@ operator_declaration
 	  {
 		OperatorDeclaration decl = (OperatorDeclaration) $3;
 		
+		Parameter [] param_list = new Parameter [decl.arg2type != null ? 2 : 1];
+
+		param_list[0] = new Parameter (decl.arg1type, decl.arg1name, Parameter.Modifier.NONE, null);
+		if (decl.arg2type != null)
+			param_list[1] = new Parameter (decl.arg2type, decl.arg2name, Parameter.Modifier.NONE, null);
+
 		Operator op = new Operator (
-			current_class, decl.optype, decl.ret_type, (int) $2, decl.arg1type,
-			decl.arg1name, decl.arg2type, decl.arg2name, (Block) $5,
-			(Attributes) $1, decl.location);
+			current_class, decl.optype, decl.ret_type, (int) $2,
+			new Parameters (param_list, null, decl.location),
+			(Block) $5, (Attributes) $1, decl.location);
 
 		if (SimpleIteratorContainer.Simple.Yields)
 			op.SetYields ();
@@ -1716,7 +1720,7 @@ constructor_declaration
 			Console.WriteLine ("{0} and {1}", c.Name, current_container.Basename);
 		}
 
-		CheckDef (current_container.AddConstructor (c), c.Name, c.Location);
+		current_container.AddConstructor (c);
 
 		current_local_parameters = null;
 	  }
@@ -1798,7 +1802,7 @@ destructor_declaration
 				new Parameters (null, null, l), (Attributes) $1, l);
 		  
 			d.Block = (Block) $7;
-			CheckDef (current_container.AddMethod (d), d.Name, d.Location);
+			current_container.AddMethod (d);
 		}
 	  }
 	| opt_attributes opt_modifiers EVENT type member_name OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS block {
@@ -1825,7 +1829,7 @@ event_declaration
 						  var.expression_or_array_initializer,
 						  (Attributes) $1, lexer.Location);
 
-			CheckDef (current_container.AddEvent (e), e.Name, e.Location);
+			current_container.AddEvent (e);
 				       
 		}
 	  }
@@ -1861,7 +1865,7 @@ event_declaration
 					     (Accessor) pair.First, (Accessor) pair.Second,
 					     loc);
 		
-		CheckDef (current_container.AddEvent (e), e.Name, loc);
+		current_container.AddEvent (e);
 		implicit_value_parameter_type = null;
 	  }
 	  }
@@ -1895,7 +1899,7 @@ add_accessor_declaration
 	  }
           block
 	  {
-		$$ = new Accessor ((Block) $4, (Attributes) $1);
+		$$ = new Accessor ((Block) $4, (Attributes) $1, lexer.Location);
 		lexer.EventParsing = true;
 	  }
 	| opt_attributes ADD error {
@@ -1919,7 +1923,7 @@ remove_accessor_declaration
 	  }
           block
 	  {
-		$$ = new Accessor ((Block) $4, (Attributes) $1);
+		$$ = new Accessor ((Block) $4, (Attributes) $1, lexer.Location);
 		lexer.EventParsing = true;
 	  }
 	| opt_attributes REMOVE error {
@@ -1962,15 +1966,12 @@ indexer_declaration
 		if (decl.interface_type != null)
 			name = new MemberName (decl.interface_type, "", null);
 		else
-			name = MemberName.Null;
+			name = new MemberName (TypeContainer.DefaultIndexerName);
 
-		indexer = new Indexer (current_class, decl.type, (int) $2, false,
-				       name, decl.param_list, (Attributes) $1,
+		indexer = new Indexer (current_class, decl.type, name,
+				       (int) $2, false, decl.param_list, (Attributes) $1,
 				       get_block, set_block, loc);
 
-		// Note that there is no equivalent of CheckDef for this case
-		// We shall handle this in semantic analysis
-		
 		current_container.AddIndexer (indexer);
 		
 		current_local_parameters = null;
@@ -2027,14 +2028,13 @@ enum_declaration
 		foreach (VariableDeclaration ev in (ArrayList) $6) {
 			Location loc = (Location) ev.Location;
 
-			CheckDef (e.AddEnumMember (ev.identifier, 
-						   (Expression) ev.expression_or_array_initializer,
-						   loc, ev.OptAttributes),
-				  ev.identifier, loc);
+			e.AddEnumMember (ev.identifier, 
+					 (Expression) ev.expression_or_array_initializer,
+					 loc, ev.OptAttributes);
 		}
 
 		string name = full_name.GetName (false);
-		CheckDef (current_container.AddEnum (e), name, enum_location);
+		current_container.AddEnum (e);
 		RootContext.Tree.RecordDecl (name, e);
 
 	  }
@@ -2101,7 +2101,7 @@ delegate_declaration
 			current_namespace, current_container, (Expression) $4, (int) $2,
 			MakeName ((MemberName) $5), (Parameters) $7, (Attributes) $1, l);
 		  
-		CheckDef (current_container.AddDelegate (del), del.Name, l);
+		current_container.AddDelegate (del);
 
 		current_delegate = del;
 
@@ -2113,7 +2113,7 @@ delegate_declaration
 	  }
 	  SEMICOLON
 	  {
-		CheckDef (current_delegate.SetParameterInfo ((ArrayList) $9), current_delegate.Name, current_delegate.Location);
+		current_delegate.SetParameterInfo ((ArrayList) $9);
 
 		current_delegate = null;
 	  }
@@ -2128,7 +2128,7 @@ delegate_declaration
 			TypeManager.system_void_expr, (int) $2, MakeName ((MemberName) $5), 
 			(Parameters) $7, (Attributes) $1, l);
 
-		CheckDef (current_container.AddDelegate (del), del.Name, l);
+		current_container.AddDelegate (del);
 
 		current_delegate = del;
 
@@ -2140,7 +2140,7 @@ delegate_declaration
 	  }
 	  SEMICOLON
 	  {
-		CheckDef (current_delegate.SetParameterInfo ((ArrayList) $9), current_delegate.Name, current_delegate.Location);
+		current_delegate.SetParameterInfo ((ArrayList) $9);
 
 		current_delegate = null;
 	  }
@@ -2742,7 +2742,7 @@ anonymous_method_expression
 		} else {
 			create_toplevel_block = false;
 			if (RootContext.Version == LanguageVersion.ISO_1){
-				Report.FeatureIsNotStandardized ("anonymous methods");
+				Report.FeatureIsNotStandardized (lexer.Location, "anonymous methods");
 				$$ = null;
 			} else 
 				$$ = new AnonymousMethod ((Parameters) $2, (Block) $4, lexer.Location);
@@ -3172,8 +3172,7 @@ class_declaration
 			current_class.Bases = (ArrayList) $7;
 		}
 
-		CheckDef (current_class.SetParameterInfo ((ArrayList) $8),
-			  current_class.Name, current_class.Location);
+		current_class.SetParameterInfo ((ArrayList) $8);
 
 		current_class.Register ();
 	  }
@@ -3943,7 +3942,7 @@ yield_statement
 			$$ = null;
 		}
 		if (RootContext.Version == LanguageVersion.ISO_1){
-			Report.FeatureIsNotStandardized ("yield statement");
+			Report.FeatureIsNotStandardized (lexer.Location, "yield statement");
 			$$ = null;
 		}
 		if (iterator_container == null){
@@ -3962,7 +3961,7 @@ yield_statement
 			$$ = null;
 		}
 		if (RootContext.Version == LanguageVersion.ISO_1){
-			Report.FeatureIsNotStandardized ("yield statement");
+			Report.FeatureIsNotStandardized (lexer.Location, "yield statement");
 			$$ = null;
 		}
 		if (iterator_container == null){
@@ -4311,12 +4310,12 @@ public class InterfaceAccessorInfo {
         public readonly Accessor Get, Set;
 
         public InterfaceAccessorInfo (bool has_get, bool has_set,
-                                      Attributes get_attrs, Attributes set_attrs)
+                                      Attributes get_attrs, Attributes set_attrs, Location get_loc, Location set_loc)
         {
 		if (has_get)
-			Get = new Accessor (null, get_attrs);
+			Get = new Accessor (null, get_attrs, get_loc);
 		if (has_set)
-			Set = new Accessor (null, set_attrs);
+			Set = new Accessor (null, set_attrs, set_loc);
         }
 }
 
@@ -4407,24 +4406,6 @@ MakeName (MemberName class_name)
 	} else {
 		return new MemberName (current_container.MemberName, class_name);
 	}
-}
-
-// <summary>
-//   Used to report back to the user the result of a declaration
-//   in the current declaration space
-// </summary>
-void 
-CheckDef (DeclSpace.AdditionResult result, string name, Location l)
-{
-	current_container.CheckDef (result, name, l);
-}
-
-void 
-CheckDef (bool result, string name, Location l)
-{
-	if (result)
-		return;
-	CheckDef (DeclSpace.AdditionResult.NameExists, name, l);
 }
 
 Block declare_local_variables (Expression type, ArrayList variable_declarators, Location loc)

@@ -79,7 +79,7 @@ namespace Mono.CSharp {
 				return false;
 
 			const_ec = new EmitContext (Parent, Location, null, type, ModFlags);
-			
+
 			Type ttype = type;
 			while (ttype.IsArray)
 			    ttype = TypeManager.GetElementType (ttype);
@@ -196,7 +196,7 @@ namespace Mono.CSharp {
 				value = null;
 				return false;
 			}
-			
+
 			Expr = Expr.Resolve (const_ec);
 
 			in_transit = false;
@@ -222,15 +222,8 @@ namespace Mono.CSharp {
 					Expr = ch_expr.Expr;
 				else if ((ec_expr != null) && (ec_expr.Child is Constant))
 					Expr = ec_expr.Child;
-				else if (Expr is ArrayCreation) {
-					ArrayCreation ac = (ArrayCreation) Expr;
-
-					Expr = ac.TurnIntoConstant ();
-					if (Expr == null){
-						Report.Error (150, Location, "A constant value is expected");
-						value = null;
-						return false;
-					}
+				else if (Expr is ArrayCreation){
+					Report.Error (133, Location, "Arrays can not be constant");
 				} else {
 					if (errors == Report.Errors)
 						Report.Error (150, Location, "A constant value is expected");

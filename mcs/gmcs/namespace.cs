@@ -260,18 +260,24 @@ namespace Mono.CSharp {
 				if (resolved != null)
 					return resolved;
 
-				NamespaceEntry curr_ns = NamespaceEntry;
-
 				//
 				// GENERICS: Cope with the expression and not with the string
 				// this will fail with `using A = Stack<int>'
 				//
 				
 				string alias = Alias.GetTypeName ();
+
+				// According to section 16.3.1, the namespace-or-type-name is resolved
+				// as if the immediately containing namespace body has no using-directives.
+				resolved = NamespaceEntry.Lookup (
+					null, alias, Alias.CountTypeArguments, true, false, Location);
+
+				NamespaceEntry curr_ns = NamespaceEntry.Parent;
+
 				while ((curr_ns != null) && (resolved == null)) {
 					resolved = curr_ns.Lookup (
 						null, alias, Alias.CountTypeArguments,
-						false, Location);
+						false, false, Location);
 
 					if (resolved == null)
 						curr_ns = curr_ns.Parent;
@@ -414,7 +420,7 @@ namespace Mono.CSharp {
 		}
 
 		public IAlias Lookup (DeclSpace ds, string name, int num_type_params,
-				      bool silent, Location loc)
+				      bool ignore_using, bool silent, Location loc)
 		{
 			IAlias o;
 			Namespace ns;
@@ -427,7 +433,7 @@ namespace Mono.CSharp {
 				string first = name.Substring (0, pos);
 				string last = name.Substring (pos + 1);
 
-				o = Lookup (ds, first, 0, silent, loc);
+				o = Lookup (ds, first, 0, ignore_using, silent, loc);
 				if (o == null)
 					return null;
 
@@ -450,6 +456,9 @@ namespace Mono.CSharp {
 			o = NS.Lookup (ds, name, loc);
 			if (o != null)
 				return o;
+
+			if (ignore_using)
+				return null;
 
 			//
 			// Check aliases.

@@ -1267,9 +1267,9 @@ namespace Mono.CSharp {
 				return 0;
 		}
 
-		static void Error_NegativeArrayIndex (Location loc)
+		public static void Error_NegativeArrayIndex (Location loc)
 		{
-			Report.Error (284, loc, "Can not create array with a negative size");
+			Report.Error (248, loc, "Cannot create an array with a negative size");
 		}
 		
 		//
@@ -2985,7 +2985,7 @@ namespace Mono.CSharp {
 					return this;
 			}
 
-			Report_AssignToReadonly (true);
+			Report_AssignToReadonly (!IsStatic);
 			
 			return null;
 		}

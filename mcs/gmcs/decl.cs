@@ -21,7 +21,7 @@ using System.Reflection;
 namespace Mono.CSharp {
 
 	public class MemberName {
-		public readonly string Name;
+		public string Name;
 		public readonly TypeArguments TypeArguments;
 
 		public readonly MemberName Left;
@@ -175,6 +175,14 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public MemberName Clone ()
+		{
+			if (Left != null)
+				return new MemberName (Left.Clone (), Name, TypeArguments);
+			else
+				return new MemberName (Name, TypeArguments);
+		}
+
 		public string Basename {
 			get {
 				if (TypeArguments != null)
@@ -207,7 +215,11 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Public name
 		/// </summary>
-		public string Name;
+		public string Name {
+			get {
+				return MemberName.GetName (!(this is GenericMethod) && !(this is Method));
+			}
+		}
 
 		public readonly MemberName MemberName;
 
@@ -234,21 +246,20 @@ namespace Mono.CSharp {
 			HasClsCompliantAttribute = 1 << 6,			// Type has CLSCompliantAttribute
 			ClsCompliantAttributeTrue = 1 << 7,			// Type has CLSCompliant (true)
 			Excluded_Undetected = 1 << 8,		// Conditional attribute has not been detected yet
-			Excluded = 1 << 9					// Method is conditional
-
+			Excluded = 1 << 9,					// Method is conditional
+			TestMethodDuplication = 1 << 10		// Test for duplication must be performed
 		}
   
 		/// <summary>
 		///   MemberCore flags at first detected then cached
  		/// </summary>
-		protected Flags caching_flags;
+		internal Flags caching_flags;
 
 		public MemberCore (TypeContainer parent, MemberName name, Attributes attrs,
 				   Location loc)
 			: base (attrs)
 		{
 			Parent = parent;
-			Name = name.GetName (!(this is GenericMethod) && !(this is Method));
 			MemberName = name;
 			Location = loc;
 			caching_flags = Flags.Obsolete_Undetected | Flags.ClsCompliance_Undetected | Flags.HasCompliantAttribute_Undetected | Flags.Excluded_Undetected;
@@ -475,9 +486,6 @@ namespace Mono.CSharp {
 		
 		public string Basename;
 		
-		/// <summary>
-		///   defined_names is used for toplevel objects
-		/// </summary>
 		protected Hashtable defined_names;
 
 		readonly bool is_generic;
@@ -514,6 +522,35 @@ namespace Mono.CSharp {
 				count_type_params += parent.count_type_params;
 		}
 
+		/// <summary>
+		/// Adds the member to defined_names table. It tests for duplications and enclosing name conflicts
+		/// </summary>
+		protected bool AddToContainer (MemberCore symbol, bool is_method, string fullname, string basename)
+		{
+			if (basename == Basename) {
+				Report.SymbolRelatedToPreviousError (this);
+				Report.Error (542, "'{0}': member names cannot be the same as their enclosing type", symbol.Location, symbol.GetSignatureForError ());
+				return false;
+			}
+
+			MemberCore mc = (MemberCore)defined_names [fullname];
+
+			if (is_method && (mc is MethodCore || mc is IMethodData)) {
+				symbol.caching_flags |= Flags.TestMethodDuplication;
+				mc.caching_flags |= Flags.TestMethodDuplication;
+				return true;
+			}
+
+			if (mc != null) {
+				Report.SymbolRelatedToPreviousError (mc);
+				Report.Error (102, symbol.Location, "The type '{0}' already contains a definition for '{1}'", GetSignatureForError (), basename);
+				return false;
+			}
+
+			defined_names.Add (fullname, symbol);
+			return true;
+		}
+
 		public void RecordDecl ()
 		{
 			if ((NamespaceEntry != null) && (Parent == RootContext.Tree.Types))
@@ -521,94 +558,15 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   The result value from adding an declaration into
-		///   a struct or a class
+		///   Returns the MemberCore associated with a given name in the declaration
+		///   space. It doesn't return method based symbols !!
 		/// </summary>
-		public enum AdditionResult {
-			/// <summary>
-			/// The declaration has been successfully
-			/// added to the declation space.
-			/// </summary>
-			Success,
-
-			/// <summary>
-			///   The symbol has already been defined.
-			/// </summary>
-			NameExists,
-
-			/// <summary>
-			///   Returned if the declation being added to the
-			///   name space clashes with its container name.
-			///
-			///   The only exceptions for this are constructors
-			///   and static constructors
-			/// </summary>
-			EnclosingClash,
-
-			/// <summary>
-			///   Returned if a constructor was created (because syntactically
-			///   it looked like a constructor) but was not (because the name
-			///   of the method is not the same as the container class
-			/// </summary>
-			NotAConstructor,
-
-			/// <summary>
-			///   This is only used by static constructors to emit the
-			///   error 111, but this error for other things really
-			///   happens at another level for other functions.
-			/// </summary>
-			MethodExists,
-
-			/// <summary>
-			///   Some other error.
-			/// </summary>
-			Error
-		}
-
-		/// <summary>
-		///   Returns a status code based purely on the name
-		///   of the member being added
-		/// </summary>
-		protected AdditionResult IsValid (string basename, string name)
+		/// 
+		public MemberCore GetDefinition (string name)
 		{
-			if (basename == Basename)
-				return AdditionResult.EnclosingClash;
-
-			if (defined_names.Contains (name))
-				return AdditionResult.NameExists;
-
-			return AdditionResult.Success;
+			return (MemberCore)defined_names [name];
 		}
 
-		public static int length;
-		public static int small;
-		
-		/// <summary>
-		///   Introduce @name into this declaration space and
-		///   associates it with the object @o.  Note that for
-		///   methods this will just point to the first method. o
-		/// </summary>
-		public void DefineName (string name, object o)
-		{
-			defined_names.Add (name, o);
-
-#if DEBUGME
-			int p = name.LastIndexOf ('.');
-			int l = name.Length;
-			length += l;
-			small += l -p;
-#endif
-		}
-
-		/// <summary>
-		///   Returns the object associated with a given name in the declaration
-		///   space.  This is the inverse operation of `DefineName'
-		/// </summary>
-		public object GetDefinition (string name)
-		{
-			return defined_names [name];
-		}
-		
 		bool in_transit = false;
 		
 		/// <summary>
@@ -1383,17 +1341,16 @@ namespace Mono.CSharp {
 			return type_param_list;
 		}
 
-		public AdditionResult SetParameterInfo (ArrayList constraints_list)
+		public void SetParameterInfo (ArrayList constraints_list)
 		{
 			if (!is_generic) {
 				if (constraints_list != null) {
 					Report.Error (
 						80, Location, "Contraints are not allowed " +
 						"on non-generic declarations");
-					return AdditionResult.Error;
 				}
 
-				return AdditionResult.Success;
+				return;
 			}
 
 			string[] names = MemberName.TypeArguments.GetDeclarations ();
@@ -1405,11 +1362,6 @@ namespace Mono.CSharp {
 			for (int i = 0; i < type_params.Length; i++) {
 				string name = names [i];
 
-				AdditionResult res = IsValid (name, name);
-
-				if (res != AdditionResult.Success)
-					return res;
-
 				Constraints constraints = null;
 				if (constraints_list != null) {
 					foreach (Constraints constraint in constraints_list) {
@@ -1420,12 +1372,11 @@ namespace Mono.CSharp {
 					}
 				}
 
-				type_params [i] = new TypeParameter (name, constraints, Location);
+				type_params [i] = new TypeParameter (Parent, name, constraints, Location);
 
-				DefineName (name, type_params [i]);
+				string full_name = Name + "." + name;
+				AddToContainer (type_params [i], false, full_name, name);
 			}
-
-			return AdditionResult.Success;
 		}
 
 		public TypeParameter[] TypeParameters {

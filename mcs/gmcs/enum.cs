@@ -22,12 +22,15 @@ namespace Mono.CSharp {
 
 		Enum parent_enum;
 		public FieldBuilder builder;
+		internal readonly Expression Type;
 
-		public EnumMember (Enum parent_enum, string name, Location loc, Attributes attrs):
+		public EnumMember (Enum parent_enum, Expression expr, string name,
+				   Location loc, Attributes attrs):
 			base (null, new MemberName (name), attrs, loc)
 		{
 			this.parent_enum = parent_enum;
 			this.ModFlags = parent_enum.ModFlags;
+			this.Type = expr;
 		}
 
 		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
@@ -66,27 +69,12 @@ namespace Mono.CSharp {
 
 		public void Emit (EmitContext ec)
 		{
+			base.Emit ();
+
 			if (OptAttributes != null)
 				OptAttributes.Emit (ec, this); 
 
 			Emit ();
-		}
-
-		// TODO: caching would be usefull
-		public ObsoleteAttribute GetObsoleteAttribute (EmitContext ec)
-		{
-			if (OptAttributes == null)
-				return null;
-
-			Attribute obsolete_attr = OptAttributes.Search (TypeManager.obsolete_attribute_type, ec);
-			if (obsolete_attr == null)
-				return null;
-
-			ObsoleteAttribute obsolete = obsolete_attr.GetObsoleteAttribute (ec.DeclSpace);
-			if (obsolete == null)
-				return null;
-
-			return obsolete;
 		}
 
 		public override string GetSignatureForError()
@@ -124,7 +112,6 @@ namespace Mono.CSharp {
 		public Type UnderlyingType;
 
 		Hashtable member_to_location;
-		Hashtable member_to_attributes;
 
 		//
 		// This is for members that have been defined
@@ -137,9 +124,6 @@ namespace Mono.CSharp {
 		Hashtable in_transit;
 		
 		ArrayList field_builders;
-		
-
-		Hashtable name_to_member;
 		
 		public const int AllowedModifiers =
 			Modifiers.NEW |
@@ -161,38 +145,27 @@ namespace Mono.CSharp {
 			member_to_value = new Hashtable ();
 			in_transit = new Hashtable ();
 			field_builders = new ArrayList ();
-
-			name_to_member = new Hashtable ();
 		}
 
 		/// <summary>
 		///   Adds @name to the enumeration space, with @expr
 		///   being its definition.  
 		/// </summary>
-		public AdditionResult AddEnumMember (string name, Expression expr, Location loc,
-						     Attributes opt_attrs)
+		public void AddEnumMember (string name, Expression expr, Location loc, Attributes opt_attrs)
 		{
-			if (defined_names.Contains (name))
-				return AdditionResult.NameExists;
-
 			if (name == "value__") {
 				Report.Error (76, loc, "An item in an enumeration can't have an identifier `value__'");
-				return AdditionResult.Error;
+				return;
 			}
 
-			DefineName (name, expr);
+			EnumMember em = new EnumMember (this, expr, name, loc, opt_attrs);
+			if (!AddToContainer (em, false, name, ""))
+				return;
 
+
+			// TODO: can be almost deleted
 			ordered_enums.Add (name);
 			member_to_location.Add (name, loc);
-
-			if (member_to_attributes == null)
-				member_to_attributes = new Hashtable ();
-
-			member_to_attributes.Add (name, opt_attrs);
-			
-			name_to_member.Add (name, new EnumMember (this, name, loc, opt_attrs));
-
-			return AdditionResult.Success;
 		}
 
 		//
@@ -611,7 +584,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			EnumMember em = name_to_member [name] as EnumMember;
+			EnumMember em = (EnumMember) defined_names [name];
 			em.DefineMember (TypeBuilder);
 
 			bool fail;
@@ -643,14 +616,14 @@ namespace Mono.CSharp {
 			//
 			if (TypeBuilder == null)
 				return false;
-			
+
 			EmitContext ec = new EmitContext (this, this, Location, null,
 							  UnderlyingType, ModFlags, false);
 
 			
 			object default_value = 0;
 			
-			
+		
 			foreach (string name in ordered_enums) {
 				//
 				// Have we already been defined, thanks to some cross-referencing ?
@@ -671,7 +644,7 @@ namespace Mono.CSharp {
 						return false;
 					}
 
-					EnumMember em = name_to_member [name] as EnumMember;
+					EnumMember em = (EnumMember) defined_names [name];
 
 					em.DefineMember (TypeBuilder);
 					FieldBuilder fb = em.builder;
@@ -702,7 +675,7 @@ namespace Mono.CSharp {
 
 			return true;
 		}
-			
+
 		public override void Emit ()
 		{
 			EmitContext ec = new EmitContext (
@@ -712,7 +685,7 @@ namespace Mono.CSharp {
 				OptAttributes.Emit (ec, this);
 			}
 
-			foreach (EnumMember em in name_to_member.Values) {
+			foreach (EnumMember em in defined_names.Values) {
 				em.Emit (ec);
 			}
 
@@ -720,21 +693,21 @@ namespace Mono.CSharp {
 		}
 		
  		void VerifyClsName ()
-		{
+  		{
  			Hashtable ht = new Hashtable ();
  			foreach (string name in ordered_enums) {
  				string locase = name.ToLower (System.Globalization.CultureInfo.InvariantCulture);
  				if (!ht.Contains (locase)) {
- 					ht.Add (locase, name_to_member [name]);
-						continue;
-				}
+ 					ht.Add (locase, defined_names [name]);
+ 					continue;
+ 				}
  
- 				EnumMember conflict = (EnumMember)ht [locase];
+ 				MemberCore conflict = (MemberCore)ht [locase];
  				Report.SymbolRelatedToPreviousError (conflict);
- 				conflict = (EnumMember)name_to_member [name];
+ 				conflict = GetDefinition (name);
  				Report.Error (3005, conflict.Location, "Identifier '{0}' differing only in case is not CLS-compliant", conflict.GetSignatureForError ());
-			}
-		}
+  			}
+  		}
 
 		protected override bool VerifyClsCompliance (DeclSpace ds)
 		{
@@ -796,7 +769,7 @@ namespace Mono.CSharp {
 		// indexer
 		public Expression this [string name] {
 			get {
-				return (Expression) defined_names [name];
+				return ((EnumMember) defined_names [name]).Type;
 			}
 		}
 
@@ -809,29 +782,6 @@ namespace Mono.CSharp {
 		protected override void VerifyObsoleteAttribute()
 		{
 			// UnderlyingType is never obsolete
-		}
-
-		/// <summary>
-		/// Returns ObsoleteAttribute for both enum type and enum member
-		/// </summary>
-		public ObsoleteAttribute GetObsoleteAttribute (EmitContext ec, string identifier)
-		{
-			if ((caching_flags & Flags.Obsolete_Undetected) == 0 && (caching_flags & Flags.Obsolete) == 0) {
-				return null;
-			}
-
-			ObsoleteAttribute oa = GetObsoleteAttribute (ec.DeclSpace);
-			if (oa != null)
-				return oa;
-
-			EnumMember em = (EnumMember)name_to_member [identifier];
-			oa = em.GetObsoleteAttribute (ec);
-
-			if (oa == null)
-				return null;
-
-			caching_flags |= Flags.Obsolete;
-			return oa;
 		}
 	}
 }
