@@ -1,3 +1,7 @@
+2002-04-07  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* AllTests.cs: Added System.Diagnostics tests, as they work now.
+
 2002/03/08  Nick Drochak <ndrochak@gol.com>
 
 	* System.XML_test.build: Don't build test dll by default.  Only build
