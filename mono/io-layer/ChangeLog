@@ -1,3 +1,8 @@
+2002-05-14  Dick Porter  <dick@ximian.com>
+
+	* io.c: Fix a cut&paste error, found by
+	Jaroslaw Kowalski <jarek@atm.com.pl>
+
 2002-05-10  Dan Lewis  <dihlewis@yahoo.co.uk>
 
 	* io.c:	Nasty typo.
