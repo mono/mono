@@ -363,14 +363,35 @@ namespace System.Data
 				n   = x.Parent;
 			}
 		}
+
+		internal Node[] FindAllSimple(DataColumn[] relatedColumns, int index)
+		{
+			if (_columns.Length == 0) {
+				return new Node[0];
+			}
+
+			int tmpRecord = _columns[0].Table.RecordCache.NewRecord();
+
+			try {
+				for (int i = 0; i < relatedColumns.Length && i < _columns.Length; i++) {
+					// according to MSDN: the DataType value for both columns must be identical.
+					_columns[i].DataContainer.CopyValue(relatedColumns[i].DataContainer, index, tmpRecord);
+				}
+
+				return FindAllSimple(tmpRecord, relatedColumns.Length);
+			}
+			finally {
+				_columns[0].Table.RecordCache.DisposeRecord(tmpRecord);
+			}
+		}
 		
-		internal Node[] FindAllSimple(Object[] indexcoldata)
+		internal Node[] FindAllSimple(int index, int length)
 		{
 			ArrayList nodes = new ArrayList();
-			Node n = FindSimple (indexcoldata, true);
+			Node n = FindSimple (index, length, true);
 			if (n == null)
 				return new Node[0];
-			while (n != null && ComparePartialRowNonUnique(indexcoldata, n.Row) == 0) {
+			while (n != null && ComparePartialRowNonUnique(index, n.Row.IndexFromVersion(DataRowVersion.Current), length) == 0) {
 				nodes.Add (n);
 				n = Next (n);
 			}
@@ -378,18 +399,18 @@ namespace System.Data
 			return (Node[])nodes.ToArray (typeof (Node));
 		}
 
-		internal Node FindSimple(Object[] indexcoldata, bool first)
+		internal Node FindSimple(int index, int length, bool first)
 		{
 			Node x      = _root, n;
 			Node result = null;
 
-			if (indexcoldata[0] == null) {
+			if (_columns.Length > 0 && _columns[0].DataContainer.IsNull(index)) {
 				return null;
 			}
 
 			while (x != null) {
            
-				int i = this.ComparePartialRowNonUnique(indexcoldata, x.Row);
+				int i = this.ComparePartialRowNonUnique(index, x.Row.IndexFromVersion(DataRowVersion.Current), length);
 
 				if (i == 0) {
 					if (first == false) {
@@ -595,9 +616,9 @@ namespace System.Data
 			return null;
 		}
 
-		internal int ComparePartialRowNonUnique(object[] a, DataRow b)
+		internal int ComparePartialRowNonUnique(int index1, int index2, int length)
 		{
-			int i = DataColumn.CompareValues(a[0], b[_columns[0].Ordinal, DataRowVersion.Current], _columns[0].DataType, !_columns[0].Table.CaseSensitive);
+			int i = _columns[0].CompareValues(index1, index2);
 
 			if (i != 0) {
 				return i;
@@ -605,14 +626,14 @@ namespace System.Data
 
 			int fieldcount = _columns.Length;
 
-			for (int j = 1; j < a.Length && j < fieldcount; j++) {
-				Object o = a[j];
+			for (int j = 1; j < length && j < fieldcount; j++) {
+				DataColumn column = _columns[j];
 
-				if (o == null) {
+				if (column.DataContainer.IsNull(index1)) {
 					continue;
 				}
 
-				i = DataColumn.CompareValues(o, b[_columns[j].Ordinal, DataRowVersion.Current], _columns[j].DataType, !_columns[j].Table.CaseSensitive);
+				i = column.CompareValues(index1, index2);
 
 				if (i != 0) {
 					return i;
@@ -651,9 +672,10 @@ namespace System.Data
 			//			if (a == b)
 			//				return 0;
 
-			int i = 0;
+			int index1 = a.IndexFromVersion(version);
+			int index2 = b.IndexFromVersion(DataRowVersion.Current);
 			for (int j = 0; j < _columns.Length; j++) {
-				i = DataColumn.CompareValues(a[_columns[j].Ordinal, version], b[_columns[j].Ordinal, DataRowVersion.Current], _columns[j].DataType, !_columns[j].Table.CaseSensitive);
+				int i = _columns[j].DataContainer.CompareValues(index1, index2);
 
 				if (i != 0) {
 					return i;

@@ -163,10 +163,13 @@ namespace System.Data {
 			return defColumnName;
 		}
 
+		static readonly string[] TenColumns = { "Column0", "Column1", "Column2", "Column3", "Column4", "Column5", "Column6", "Column7", "Column8", "Column9" };
+
 		private string MakeName(int index)
 		{
-			// FIXME: This is problem if the user wants to add a column later on with
-			// Name as say "Column1" after we have added a default name of Column1 to th			    // to the first column that got added (without a name)
+			if (index < 10)
+				return TenColumns[index];
+
 			return String.Concat("Column", index.ToString());
 		}
 
@@ -197,6 +200,12 @@ namespace System.Data {
 			RegisterName(column.ColumnName, column);
 			int ordinal = base.List.Add(column);
 			column.SetOrdinal (ordinal);
+
+			// if table already has rows we need to allocate space 
+			// in the column data container 
+			if ( parentTable.Rows.Count > 0 ) {
+				column.DataContainer.Capacity = parentTable.RecordCache.CurrentCapacity;
+			}
 
 			if (column.AutoIncrement) {
 				DataRowCollection rows = column.Table.Rows;
@@ -440,6 +449,11 @@ namespace System.Data {
 		/// <returns>The zero-based index of the column with the specified name, or -1 if the column doesn't exist in the collection.</returns>
 		public int IndexOf(string columnName)
 		{
+			DataColumn dc = columnFromName[columnName] as DataColumn;
+				
+			if (dc != null)
+				return IndexOf(dc);
+
 			return IndexOf(columnName, false);
 		}
 
@@ -511,11 +525,9 @@ namespace System.Data {
 		public void Remove(string name)
 		{
 			DataColumn column = this[name];
-			String parentTableString;
+			
 			if (column == null)
-			{
-				parentTableString = parentTable == null ? "" : parentTable.TableName;				    throw new ArgumentException ("Column '"+ name +"' does not belong to table "+ parentTableString + ".");
-			}
+				throw new ArgumentException ("Column '" + name + "' does not belong to table " + parentTable == null ? "" : parentTable.TableName + ".");
 			Remove(column);
 		}
 

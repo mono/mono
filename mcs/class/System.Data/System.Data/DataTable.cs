@@ -16,6 +16,7 @@
 //
 
 using System;
+using System.Data.Common;
 using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
@@ -35,6 +36,8 @@ namespace System.Data {
 	[Serializable]
 	public class DataTable : MarshalByValueComponent, IListSource, ISupportInitialize, ISerializable 
 	{
+		#region Fields
+
 		internal DataSet dataSet;   
 		
 		private bool _caseSensitive;
@@ -64,6 +67,7 @@ namespace System.Data {
 		private bool enforceConstraints = true;
 		private DataRowBuilder _rowBuilder;
 		private ArrayList _indexes;
+		private RecordCache _recordCache;
 
 		
 		// If CaseSensitive property is changed once it does not anymore follow owner DataSet's 
@@ -75,12 +79,13 @@ namespace System.Data {
                 /// Delegate to call a function which performs cleanup after EndInit() is called
                 /// </summary>
                 internal enum initStatus { NotInitialized, BeginInit, EndInit };
-        
 	        private initStatus _initStatus;
         
+		#endregion //Fields
+		
 		private delegate void PostEndInit();
                 
-		internal initStatus InitStatus{
+		internal initStatus InitStatus {
                         get{ return( _initStatus ); }
                 }
 	
@@ -88,7 +93,6 @@ namespace System.Data {
 		/// <summary>
 		/// Initializes a new instance of the DataTable class with no arguments.
 		/// </summary>
-		
 		public DataTable () 
 		{
 			dataSet = null;
@@ -103,6 +107,7 @@ namespace System.Data {
 			_site = null;
 			_rows = new DataRowCollection (this);
 			_indexes = new ArrayList();
+			_recordCache = new RecordCache(this);
 			
 			//LAMESPEC: spec says 25 impl does 50
 			_minimumCapacity = 50;
@@ -110,7 +115,6 @@ namespace System.Data {
 			_childRelations = new DataRelationCollection.DataTableRelationCollection (this);
 			_parentRelations = new DataRelationCollection.DataTableRelationCollection (this);
 
-		
 			_defaultView = new DataView(this);
 		}
 
@@ -131,7 +135,7 @@ namespace System.Data {
 		{
 			string schema = info.GetString ("XmlSchema");
 			string data = info.GetString ("XmlDiffGram");
-
+			
 			DataSet ds = new DataSet ();
 			ds.ReadXmlSchema (new StringReader (schema));
 			ds.Tables [0].CopyProperties (this);
@@ -513,6 +517,12 @@ namespace System.Data {
 			}
 		}
 		
+		internal RecordCache RecordCache {
+			get {
+				return _recordCache;
+			}
+		}
+		
 		private bool EnforceConstraints {
 			get { return enforceConstraints; }
 			set {
@@ -530,22 +540,31 @@ namespace System.Data {
 			}
 		}
 
-		internal bool RowsExist(Object[] columns, Object[] relatedColumns,DataRow row)
+		internal bool RowsExist(DataColumn[] columns, DataColumn[] relatedColumns,DataRow row)
 		{
-			object[] vals = new object[relatedColumns.Length];
-			for (int i = 0; i < vals.Length; i++)
-				vals[i] = row[(DataColumn)relatedColumns[i]];
+			int curIndex = row.IndexFromVersion(DataRowVersion.Current);
+			int tmpRecord = RecordCache.NewRecord();
 
-			return RowsExist(columns,vals);
+			try {
+				for (int i = 0; i < relatedColumns.Length; i++) {
+					// according to MSDN: the DataType value for both columns must be identical.
+					columns[i].DataContainer.CopyValue(relatedColumns[i].DataContainer, curIndex, tmpRecord);
+				}
+
+				return RowsExist(columns, tmpRecord, relatedColumns.Length);
+			}
+			finally {
+				RecordCache.DisposeRecord(tmpRecord);
+			}
 		}
 
-		internal bool RowsExist(Object[] columns,Object[] values)
+		bool RowsExist(DataColumn[] columns, int index, int length)
 		{
 			bool rowsExist = false;
-			Index indx = this.GetIndexByColumns ((DataColumn[])columns);
+			Index indx = this.GetIndexByColumns (columns);
 
 			if (indx != null) { // lookup for a row in index			
-				rowsExist = (indx.FindSimple (values, false) != null);
+				rowsExist = (indx.FindSimple (index, length, false) != null);
 			} 
 			
 			if(indx == null || rowsExist == false) { 
@@ -555,8 +574,9 @@ namespace System.Data {
 					if (thisRow.RowState != DataRowState.Deleted) {
 						bool match = true;
 						// check if the values in the columns are equal
-						for (int i = 0; i < columns.Length; i++) {
-							if (!thisRow[(DataColumn)columns[i]].Equals(values[i])) {
+						int thisIndex = thisRow.IndexFromVersion(DataRowVersion.Current);
+						foreach (DataColumn column in columns) {
+							if (column.DataContainer.CompareValues(thisIndex, index) != 0) {
 								match = false;
 								break;
 							}	
@@ -1022,6 +1042,58 @@ namespace System.Data {
 			return row;
 		}
 
+		internal DataRow LoadDataRow(IDataRecord record, int[] mapping, bool fAcceptChanges)
+		{
+			DataRow row = null;
+			if (PrimaryKey.Length == 0) {
+				row = NewRow();
+				row.SetValuesFromDataRecord(record, mapping);
+				Rows.Add (row);
+
+				if (fAcceptChanges) {
+					row.AcceptChanges();
+				}
+			}
+			else {
+				bool hasPrimaryValues = true;
+				int tmpRecord = this.RecordCache.NewRecord();
+				try {
+					for (int i = 0; i < PrimaryKey.Length && hasPrimaryValues; i++) {
+						DataColumn primaryKeyColumn = PrimaryKey[i];
+						int ordinal = primaryKeyColumn.Ordinal;
+						if(ordinal < mapping.Length) {
+							primaryKeyColumn.DataContainer.SetItemFromDataRecord(tmpRecord,record,mapping[ordinal]);
+						}
+						else {
+							hasPrimaryValues = false;
+						}
+					}
+					
+					if (hasPrimaryValues) {
+						// find the row in the table.
+						row = Rows.Find(tmpRecord,PrimaryKey.Length);
+					}
+				}
+				finally {
+					this.RecordCache.DisposeRecord(tmpRecord);
+				}
+
+				if (row == null) {
+					row = NewRow();
+					row.SetValuesFromDataRecord(record, mapping);
+					Rows.Add (row);
+				}
+				else {
+					row.SetValuesFromDataRecord(record, mapping);
+				}
+				
+				if (fAcceptChanges) {
+					row.AcceptChanges();
+				}
+			}				
+			return row;
+		}
+
 #if NET_2_0
 		[MonoTODO]
 		public DataRow LoadDataRow (object[] values, LoadOption loadOption)
@@ -1409,7 +1481,7 @@ namespace System.Data {
 		}
 #endif
 		
-		#region Events /////////////////
+		#region Events 
 		
 		/// <summary>
 		/// Raises the ColumnChanged event.
@@ -1418,6 +1490,10 @@ namespace System.Data {
 			if (null != ColumnChanged) {
 				ColumnChanged (this, e);
 			}
+		}
+
+		internal void RaiseOnColumnChanged (DataColumnChangeEventArgs e) {
+			OnColumnChanged(e);
 		}
 
 		/// <summary>
@@ -1700,10 +1776,10 @@ namespace System.Data {
 					SortableColumn sortColumn = sortColumns[i];
 					DataColumn dc = sortColumn.Column;
 
-					IComparable objx = (IComparable) rowx[dc];
-					object objy = rowy[dc];
+					int result = dc.CompareValues(
+						rowx.IndexFromVersion(DataRowVersion.Default),
+						rowy.IndexFromVersion(DataRowVersion.Default));
 
-					int result = CompareObjects (objx, objy);
 					if (result != 0) {
 						if (sortColumn.SortDirection == ListSortDirection.Ascending) {
 							return result;
@@ -1714,32 +1790,6 @@ namespace System.Data {
 					}
 				}
 				return 0;
-			}
-
-			private int CompareObjects (object a, object b) 
-			{
-				if (a == b)
-					return 0;
-				else if (a == null)
-					return -1;
-				else if (a == DBNull.Value)
-					return -1;
-				else if (b == null)
-					return 1;
-				else if (b == DBNull.Value)
-					return 1;
-
-				if((a is string) && (b is string)) {
-					a = ((string) a).ToUpper (table.Locale);
-					b = ((string) b).ToUpper (table.Locale);			
-				}
-
-				if (a is IComparable)
-					return ((a as IComparable).CompareTo (b));
-				else if (b is IComparable)
-					return -((b as IComparable).CompareTo (a));
-
-				throw new ArgumentException ("Neither a nor b IComparable");
 			}
 		}
 

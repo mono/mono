@@ -16,10 +16,15 @@ namespace System.Data
 	/// </summary>
 	public class DataColumnChangeEventArgs : EventArgs
 	{
-		
+		#region Fields
+
 		private DataColumn _column = null;
 		private DataRow _row = null;
 		private object _proposedValue = null;
+
+		#endregion // Fields
+
+		#region Constructors
 
 		/// <summary>
 		/// Initializes a new instance of the DataColumnChangeEventArgs class.
@@ -29,10 +34,16 @@ namespace System.Data
 		/// <param name="value"></param>
 		public DataColumnChangeEventArgs(DataRow row, DataColumn column, object value)
 		{
-			_column = column;
-			_row = row;
-			_proposedValue = value;
+			Initialize(row, column, value);
 		}
+
+		internal DataColumnChangeEventArgs()
+		{
+		}
+
+		#endregion // Constructors
+
+		#region Properties
 
 		/// <summary>
 		/// Gets the DataColumn with a changing value.
@@ -73,8 +84,17 @@ namespace System.Data
 			}
 		}
 
+		#endregion // Properties
 
+		#region Methods
 
-
+		internal void Initialize(DataRow row, DataColumn column, object value)
+		{
+			_column = column;
+			_row = row;
+			_proposedValue = value;
+		}
+	
+		#endregion // Methods
 	}
 }

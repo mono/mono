@@ -1,5 +1,17 @@
 2004-05-19  Boris Kirzner  <borisk@mainsoft.com>
 
+	* DataColumn.cs,
+	  DataColumnChangeEventArgs.cs,
+	  DataColumnCollection.cs,
+	  DataRow.cs,
+	  DataRowCollection.cs,
+	  DataTable.cs,
+	  Index.cs : Data storage in the row is redesigned. Now data is stored in 
+	  typed containers inside DataColumn. Row holds its versions as indexes inside
+	  each of data container, accessed through the row that holds it.
+
+2004-05-19  Boris Kirzner  <borisk@mainsoft.com>
+
 	* UniqueConstraint.cs - added comment.
 	
 2004-05-19  Atsushi Enomoto  <atsushi@ximian.com>

@@ -153,27 +153,38 @@ namespace System.Data
 			if (table.PrimaryKey.Length > 1)
 				throw new ArgumentException ("Expecting " + table.PrimaryKey.Length +" value(s) for the key being indexed, but received 1 value(s).");
 
-			if( key==null)
-                                throw new ArgumentException("Expecting 1 value(s) for the key being indexed, but received 0 value(s).");
+			if (key == null)
+				throw new ArgumentException("Expecting 1 value(s) for the key being indexed, but received 0 value(s).");
 
-			string primColumnName = table.PrimaryKey [0].ColumnName;
-			Type coltype = null;
-			object newKey = null;
-			
-			foreach (DataRow row in this) {
-				
-				if (row.RowState != DataRowState.Deleted)
-				{
-					object primValue = row [primColumnName];
-									       
-					newKey = Convert.ChangeType (key, Type.GetTypeCode(primValue.GetType ()));
+			DataColumn primaryKey = table.PrimaryKey[0];
+			Index primaryKeyIndex = table.GetIndexByColumns(table.PrimaryKey);
+			int tmpRecord = table.RecordCache.NewRecord();
+			try {
+				primaryKey.DataContainer[tmpRecord] = key;
 
-					if (primValue.Equals (newKey))
-						return row;
+				// if we can search through index
+				if (primaryKeyIndex != null) {
+					// get the child rows from the index
+					Node node = primaryKeyIndex.FindSimple(tmpRecord,1,true);
+					if (node != null) {
+						return node.Row;
+					}
 				}
+			
+				//loop through all collection rows			
+				foreach (DataRow row in this) {
+					if (row.RowState != DataRowState.Deleted) {
+						int index = row.IndexFromVersion(DataRowVersion.Default); 
+						if (primaryKey.DataContainer.CompareValues(index, tmpRecord) == 0) {
+							return row;
+						}
+					}
+				}
+				return null;
 			}
-						
-			return null;
+			finally {
+				table.RecordCache.DisposeRecord(tmpRecord);
+			}
 		}
 
 		/// <summary>
@@ -184,49 +195,50 @@ namespace System.Data
 			if (table.PrimaryKey.Length == 0)
 				throw new MissingPrimaryKeyException ("Table doesn't have a primary key.");
 
-			 if (keys == null)
-                                throw new ArgumentException ("Expecting " + table.PrimaryKey.Length +" value(s) for the key being indexed, but received 0 value(s).");
-                                                                                                                             if (table.PrimaryKey.Length != keys.Length)
-                                throw new ArgumentException ("Expecting " + table.PrimaryKey.Length +" value(s) for the key being indexed, but received " + keys.Length +  " value(s).");
+			if (keys == null)
+				throw new ArgumentException ("Expecting " + table.PrimaryKey.Length +" value(s) for the key being indexed, but received 0 value(s).");
+			if (table.PrimaryKey.Length != keys.Length)
+				throw new ArgumentException ("Expecting " + table.PrimaryKey.Length +" value(s) for the key being indexed, but received " + keys.Length +  " value(s).");
                                                                                                     
-                        foreach (object key in keys)
-                                if (key == null)
-                                        return null;
+			DataColumn[] primaryKey = table.PrimaryKey;
+			int tmpRecord = table.RecordCache.NewRecord();
+			try {
+				int numColumn = keys.Length;
+				for (int i = 0; i < numColumn; i++) {
+					// according to MSDN: the DataType value for both columns must be identical.
+					primaryKey[i].DataContainer[tmpRecord] = keys[i];
+				}
+				return Find(tmpRecord,numColumn);
+			}
+			finally {
+				table.RecordCache.DisposeRecord(tmpRecord);
+			}
+		}
 
-			
-			string  [] primColumnNames = new string [table.PrimaryKey.Length];
-			
-			for (int i = 0; i < primColumnNames.Length; i++)
-				primColumnNames [i] = table.PrimaryKey [i].ColumnName;
-
-			Type coltype = null;
-			object newKey = null;
-			
-			foreach (DataRow row in this) {
-				
-				if (row.RowState != DataRowState.Deleted)
-				{
-					bool eq = true;
-					for (int i = 0; i < keys.Length; i++) 
-					{
-					
-						object primValue = row [primColumnNames [i]];
-						object keyValue = keys [i];
-								       
-						newKey = Convert.ChangeType (keyValue, Type.GetTypeCode(primValue.GetType ()));
-
-						if (!primValue.Equals (newKey)) 
-						{
-							eq = false;
-							break;
-						}						
-					}
-
-					if (eq)
-						return row;
+		internal DataRow Find(int index, int length)
+		{
+			DataColumn[] primaryKey = table.PrimaryKey;
+			Index primaryKeyIndex = table.GetIndexByColumns(primaryKey);
+			// if we can search through index
+			if (primaryKeyIndex != null) {
+				// get the child rows from the index
+				Node node = primaryKeyIndex.FindSimple(index,length,true);
+				if ( node != null ) {
+					return node.Row;
 				}
 			}
-						
+		
+			//loop through all collection rows			
+			foreach (DataRow row in this) {
+				if (row.RowState != DataRowState.Deleted) {
+					int rowIndex = row.IndexFromVersion(DataRowVersion.Default);
+					for (int columnCnt = 0; columnCnt < length; ++columnCnt) { 
+						if (primaryKey[columnCnt].DataContainer.CompareValues(rowIndex, index) == 0) {
+							return row;
+						}
+					}
+				}
+			}
 			return null;
 		}
 

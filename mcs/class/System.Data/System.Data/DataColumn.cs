@@ -53,37 +53,36 @@ namespace System.Data {
 		private long _autoIncrementSeed;
 		private long _autoIncrementStep = 1;
 		private long _nextAutoIncrementValue;
-		private bool dataHasBeenSet;
 		private string _caption;
 		private MappingType _columnMapping;
 		private string _columnName;
-		private Type _dataType;
 		private object _defaultValue = DBNull.Value;
 		private string expression;
 		private IExpression compiledExpression;
 		private PropertyCollection _extendedProperties = new PropertyCollection ();
 		private int maxLength = -1; //-1 represents no length limit
-		private string nameSpace = "";
+		private string nameSpace = String.Empty;
 		private int _ordinal = -1; //-1 represents not part of a collection
-		private string prefix = "";
+		private string prefix = String.Empty;
 		private bool readOnly;
 		private DataTable _table;
 		private bool unique;
+		private AbstractDataContainer _dataContainer;
 
 		#endregion // Fields
 
 		#region Constructors
 
-		public DataColumn() : this("", typeof (string), "", MappingType.Element)
+		public DataColumn() : this(String.Empty, typeof (string), String.Empty, MappingType.Element)
 		{
 		}
 
 		//TODO: Ctor init vars directly
-		public DataColumn(string columnName): this(columnName, typeof (string), "", MappingType.Element)
+		public DataColumn(string columnName): this(columnName, typeof (string), String.Empty, MappingType.Element)
 		{
 		}
 
-		public DataColumn(string columnName, Type dataType): this(columnName, dataType, "", MappingType.Element)
+		public DataColumn(string columnName, Type dataType): this(columnName, dataType, String.Empty, MappingType.Element)
 		{
 		}
 
@@ -95,19 +94,36 @@ namespace System.Data {
 		public DataColumn(string columnName, Type dataType, 
 			string expr, MappingType type)
 		{
-			ColumnName = (columnName == null ? "" : columnName);
+			ColumnName = (columnName == null ? String.Empty : columnName);
 			
 			if(dataType == null) {
 				throw new ArgumentNullException("dataType can't be null.");
 			}
 			
 			DataType = dataType;
-			Expression = expr == null ? "" : expr;
+			Expression = expr == null ? String.Empty : expr;
 			ColumnMapping = type;
 		}
 		#endregion
 
 		#region Properties
+
+		internal object this[int index] {
+			get {
+				return DataContainer[index];
+			}
+			set {
+				DataContainer[index] = value;
+
+				if ( AutoIncrement && DataContainer.IsNull(index) ) {
+					long value64 = Convert.ToInt64(value);
+					if(value64 > _nextAutoIncrementValue) {
+						_nextAutoIncrementValue = value64;
+						AutoIncrementValue ();
+					}
+				}
+			}
+		}
 
 		[DataCategory ("Data")]
 		[DataSysDescription ("Indicates whether null values are allowed in this column.")]
@@ -181,12 +197,12 @@ namespace System.Data {
 
 					//If the DataType of this Column isn't an Int
 					//Make it an int
-					TypeCode typeCode = Type.GetTypeCode(_dataType);
+					TypeCode typeCode = Type.GetTypeCode(DataType);
 					if(typeCode != TypeCode.Int16 && 
 						typeCode != TypeCode.Int32 && 
 						typeCode != TypeCode.Int64)
 					{
-						_dataType = typeof(Int32); 
+						DataType = typeof(Int32); 
 					}
 
 					if (_table != null)
@@ -228,14 +244,6 @@ namespace System.Data {
 			}
 		}
 
-		internal void UpdateAutoIncrementValue (long value) 
-		{
-			if(value > _nextAutoIncrementValue) {
-				_nextAutoIncrementValue = value;
-				AutoIncrementValue ();
-			}
-		}
-
 		internal long AutoIncrementValue () 
 		{
 			long currentValue = _nextAutoIncrementValue;
@@ -246,15 +254,6 @@ namespace System.Data {
 		internal long GetAutoIncrementValue ()
 		{
 			return _nextAutoIncrementValue;
-		}
-
-		internal bool DataHasBeenSet {
-			get {
-				return dataHasBeenSet;
-			}
-			set {
-				dataHasBeenSet = value;
-			}
 		}
 
 		[DataCategory ("Data")]
@@ -293,7 +292,7 @@ namespace System.Data {
 		public string ColumnName
 		{
 			get {
-				return (_columnName == null ? "" : _columnName);
+				return (_columnName == null ? String.Empty : _columnName);
 			}
 			set {
 				//Both are checked after the column is part of the collection
@@ -311,24 +310,32 @@ namespace System.Data {
 		public Type DataType
 		{
 			get {
-				return _dataType;
+				return DataContainer.Type;
 			}
 			set {
-				// check if data already exists can we change the datatype
-				if(DataHasBeenSet == true)
-					throw new ArgumentException("The column already has data stored.");
+				if ( _dataContainer != null ) {
+					if ( value == _dataContainer.Type ) {
+						return;
+					}
 
-				// we want to check that the datatype is supported?
-				TypeCode typeCode = Type.GetTypeCode(value);
+					// check if data already exists can we change the datatype
+					if ( _dataContainer.Capacity > 0 )
+						throw new ArgumentException("The column already has data stored.");
+				}
 				
+				_dataContainer = AbstractDataContainer.CreateInstance(value, this);
+
 				//Check AutoIncrement status, make compatible datatype
 				if(AutoIncrement == true) {
+					// we want to check that the datatype is supported?
+					TypeCode typeCode = Type.GetTypeCode(value);
+					
 					if(typeCode != TypeCode.Int16 &&
 					   typeCode != TypeCode.Int32 &&
-					   typeCode != TypeCode.Int64)
+					   typeCode != TypeCode.Int64) {
 						AutoIncrement = false;
+					}
 				}
-				_dataType = value;
 			}
 		}
 
@@ -524,7 +531,7 @@ namespace System.Data {
 
 					if( value )
 					{
-						if (Expression != null && Expression != "")
+						if (Expression != null && Expression != String.Empty)
 							throw new ArgumentException("Cannot change Unique property for the expression column.");
 						if( _table != null )
 						{
@@ -559,6 +566,12 @@ namespace System.Data {
 					}
 
 				}
+			}
+		}
+
+		internal AbstractDataContainer DataContainer {
+			get {
+				return _dataContainer;
 			}
 		}
 
@@ -654,10 +667,9 @@ namespace System.Data {
 			return true;
 		}
 		
-		static internal int CompareValues (object val1, object val2, Type t, bool ignoreCase)
+		internal int CompareValues (int index1, int index2)
 		{
-			IComparer comparer = DBComparerFactory.GetComparer (t, ignoreCase);
-			return comparer.Compare (val1, val2);
+			return DataContainer.CompareValues(index1, index2);
 		}
 
 		#endregion // Methods
