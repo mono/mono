@@ -1,3 +1,12 @@
+2003-10-23  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XsdParticleValidationState.cs : Default content processing shoule be
+	  lax.
+	* XsdValidatingReader.cs : If there is no trial to get schemas for
+	  namespaces, then validation against such namespace should be failed.
+	  It now uses XmlSchemaAttribute.ValidatedUse instead of .Use.
+	* XsdWildcard.cs : Fixed incorrect intersection computing.
+
 2003-10-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XsdKeyTable.cs : Reduced compilation warning.

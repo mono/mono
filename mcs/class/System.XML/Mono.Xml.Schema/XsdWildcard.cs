@@ -88,7 +88,7 @@ namespace Mono.Xml.Schema
 
 		// 3.8.6. Attribute Wildcard Intersection
 		// Only try to examine if their intersection is expressible, and
-		// returns if the result is empty.
+		// returns true if the result is empty.
 		public bool ExamineAttributeWildcardIntersection (XmlSchemaAny other,
 			ValidationEventHandler h, XmlSchema schema)
 		{
@@ -120,21 +120,25 @@ namespace Mono.Xml.Schema
 					!this.HasValueTargetNamespace &&
 					this.ResolvedNamespaces.Count == 0;
 			// 5.
-			if (this.HasValueOther && other.HasValueOther) {
-				xsobj.error (h, "The Wildcard intersection is not expressible.");
+			if (this.HasValueOther && other.HasValueOther && this.TargetNamespace != other.TargetNamespace) {
+//				xsobj.error (h, "The Wildcard intersection is not expressible.");
 				return false;
 			}
 			// 3.
-			if (this.HasValueOther && !other.HasValueOther)
-				return !other.HasValueLocal &&
-					(other.ResolvedNamespaces.Count == 0 ||
-					other.ResolvedNamespaces.Count == 1 && other.ResolvedNamespaces.Contains (other.TargetNamespace)) &&
-					!other.ValidateWildcardAllowsNamespaceName (this.TargetNamespace, h, schema, false);
-			if (!this.HasValueOther && other.HasValueOther)
-				return !this.HasValueLocal &&
-					(this.ResolvedNamespaces.Count == 0 ||
-					this.ResolvedNamespaces.Count == 1 && this.ResolvedNamespaces.Contains (other.TargetNamespace)) &&
-					!this.ValidateWildcardAllowsNamespaceName (other.TargetNamespace, h, schema, false);
+			if (this.HasValueOther) {
+				if (other.HasValueLocal && this.TargetNamespace != String.Empty)
+					return false;
+				if (other.HasValueTargetNamespace && this.TargetNamespace != other.TargetNamespace)
+					return false;
+				return other.ValidateWildcardAllowsNamespaceName (this.TargetNamespace, h, schema, false);
+			}
+			if (other.HasValueOther) {
+				if (this.HasValueLocal && other.TargetNamespace != String.Empty)
+					return false;
+				if (this.HasValueTargetNamespace && other.TargetNamespace != this.TargetNamespace)
+					return false;
+				return this.ValidateWildcardAllowsNamespaceName (other.TargetNamespace, h, schema, false);
+			}
 			// 4.
 			if (this.ResolvedNamespaces.Count > 0) {
 				foreach (string ns in this.ResolvedNamespaces)
@@ -165,44 +169,49 @@ namespace Mono.Xml.Schema
 		}
 
 		// 3.10.6 Wildcard Subset
-		internal void ValidateWildcardSubset (XmlSchemaAnyAttribute other,
+		// Other = wider. this = restricted subset
+		internal void ValidateWildcardSubset (XsdWildcard other,
 			ValidationEventHandler h, XmlSchema schema)
 		{
 			// 1.
-			if (HasValueAny)
+			if (other.HasValueAny)
 				return;
-			if (HasValueOther) {
-				if (other.HasValueOther) {
+			if (HasValueOther && other.HasValueOther) {
 					// 2.1 and 2.2
 					if (TargetNamespace == other.TargetNamespace ||
 						other.TargetNamespace == null || other.TargetNamespace == "")
 						return;
-				}
+			}
+			// 3.1.
+			if (this.HasValueAny)
+				xsobj.error (h, "Invalid wildcard subset was found.");
+			// 3.2
+			if (other.HasValueOther) {
 				// 3.2.2
-				else if (TargetNamespace == null || TargetNamespace == String.Empty)
+				if (other.TargetNamespace == null || other.TargetNamespace == String.Empty)
 					return;
 				else {
-					foreach (string ns in other.ResolvedNamespaces)
-						if (ns == this.TargetNamespace) {
+					foreach (string ns in ResolvedNamespaces)
+						if (ns == other.TargetNamespace) {
 							xsobj.error (h, "Invalid wildcard subset was found.");
 							return;
 						}
 				}
 			} else {
-				// 3.1
-				if (!HasValueLocal && other.HasValueLocal) {
+				// 3.2.1
+				if (!other.HasValueLocal && HasValueLocal) {
 					xsobj.error (h, "Invalid wildcard subset was found.");
-				} else if (other.ResolvedNamespaces.Count == 0)
 					return;
-				else {
-					foreach (string ns in other.ResolvedNamespaces)
-						if (!this.ResolvedNamespaces.Contains (ns)) {
+				} else if (ResolvedNamespaces.Count == 0) {
+					return;
+				} else {
+					foreach (string ns in ResolvedNamespaces)
+						if (!other.ResolvedNamespaces.Contains (ns)) {
 							xsobj.error (h, "Invalid wildcard subset was found.");
 							return;
 						}
 				}
 			}
 		}
-
 	}
 }

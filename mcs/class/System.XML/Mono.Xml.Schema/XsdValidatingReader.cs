@@ -782,7 +782,7 @@ string each = normalized;
 					break;
 				default:
 					XmlSchema schema = schemas [reader.NamespaceURI];
-					if (xsiTypeName == null && (schema != null && !schema.missedSubComponents)) {
+					if (xsiTypeName == null && (schema == null || !schema.missedSubComponents)) {
 						HandleError ("Element declaration for " + reader.LocalName + " is missing.");
 					}
 					break;
@@ -924,7 +924,7 @@ string each = normalized;
 			// FIXME: FixedValue check maybe extraneous.
 			foreach (XmlSchemaAttribute attr in cType.AttributeUses) {
 				if (reader [attr.QualifiedName.Name, attr.QualifiedName.Namespace] == null) {
-					if (attr.Use == XmlSchemaUse.Required && 
+					if (attr.ValidatedUse == XmlSchemaUse.Required && 
 						attr.ValidatedFixedValue == null)
 						HandleError ("Required attribute " + attr.QualifiedName + " was not found.");
 					else if (attr.ValidatedDefaultValue != null)
@@ -1063,7 +1063,7 @@ string each = normalized;
 		{
 			// TODO: value constraint check
 			// This is extra check than spec 3.5.4
-			if (attr.Use == XmlSchemaUse.Prohibited)
+			if (attr.ValidatedUse == XmlSchemaUse.Prohibited)
 				HandleError ("Attribute " + attr.QualifiedName + " is prohibited in this context.");
 		}
 
