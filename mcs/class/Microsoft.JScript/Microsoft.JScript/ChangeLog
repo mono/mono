@@ -1,3 +1,7 @@
+2004-10-25  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* Convert.cs: implement CheckIfDoubleIsInteger and CheckIfSingleIsInteger
+
 2004-10-20  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* ast.cs (Function): added method emit_return_local_field, if

@@ -43,12 +43,16 @@ namespace Microsoft.JScript {
 
 		public static double CheckIfDoubleIsInteger (double d)
 		{
+			if (d == Math.Round (d))
+				return d;
 			throw new NotImplementedException ();
 		}
 
 
 		public static Single CheckIfSingleIsInteger (Single s)
 		{
+			if (s == Math.Round (s))
+				return s;
 			throw new NotImplementedException ();
 		}
 
@@ -141,8 +145,9 @@ namespace Microsoft.JScript {
 		{
 			if (value is String)
 				return (string) value;
-			else
-				throw new NotImplementedException ();
+			else if (value is StringObject)
+				return ((StringObject) value).value;
+			throw new NotImplementedException ();
 		}
 
 
