@@ -1,5 +1,10 @@
 2003-09-29    <cesar@ciencias.unam.mx>
+	
+	* Makefile: Set TEST_MCS_FLAGS.
 
+	* Microsoft.JScript_test.dll.sources: deleted the building of my
+	local test  BaseVsaEngineTest.
+	
 	* Added Microsoft.JScript_test.dll.sources
 
 	* Makefile: allow test build.
