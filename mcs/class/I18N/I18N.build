@@ -1,0 +1,169 @@
+<?xml version="1.0"?>
+<project name="pnetlib I18N" default="all">
+	<target name="all">
+
+		<!-- Build the primary I18N.dll library -->
+		<compile output="I18N.dll"
+				 target="library"
+				 unsafe="true"
+				 nostdlib="true"
+				 optimize="true">
+
+			<define name="__PNET__" value="true"/>
+
+			<sources>
+				<includes name="Common/*.cs"/>
+			</sources>
+
+			<resources>
+				<file name="../resources/en_US/I18N/I18N.resources"/>
+			</resources>
+
+			<references>
+				<file name="../runtime/mscorlib.dll"/>
+			</references>
+
+			<arg compiler="cscc" value="-Wno-empty-input"/>
+			<arg compiler="csc" value="/nowarn:626"/>
+			<arg compiler="csc" value="/nowarn:649"/>
+			<arg compiler="csc" value="/nowarn:168"/>
+			<arg compiler="csc" value="/nowarn:67"/>
+			<arg compiler="csc" value="/nowarn:169"/>
+		</compile>
+
+		<!-- Build the I18N.CJK.dll library -->
+		<compile output="I18N.CJK.dll"
+				 target="library"
+				 unsafe="true"
+				 nostdlib="true"
+				 optimize="true">
+
+			<define name="__PNET__" value="true"/>
+
+			<sources>
+				<includes name="CJK/*.cs"/>
+			</sources>
+
+			<resources>
+				<file name="CJK/jis.table"/>
+			</resources>
+
+			<references>
+				<file name="I18N.dll"/>
+				<file name="../runtime/mscorlib.dll"/>
+			</references>
+
+			<arg compiler="cscc" value="-Wno-empty-input"/>
+			<arg compiler="csc" value="/nowarn:626"/>
+			<arg compiler="csc" value="/nowarn:649"/>
+			<arg compiler="csc" value="/nowarn:168"/>
+			<arg compiler="csc" value="/nowarn:67"/>
+			<arg compiler="csc" value="/nowarn:169"/>
+		</compile>
+
+		<!-- Build the I18N.MidEast.dll library -->
+		<compile output="I18N.MidEast.dll"
+				 target="library"
+				 unsafe="true"
+				 nostdlib="true"
+				 optimize="true">
+
+			<define name="__PNET__" value="true"/>
+
+			<sources>
+				<includes name="MidEast/*.cs"/>
+			</sources>
+
+			<references>
+				<file name="I18N.dll"/>
+				<file name="../runtime/mscorlib.dll"/>
+			</references>
+
+			<arg compiler="cscc" value="-Wno-empty-input"/>
+			<arg compiler="csc" value="/nowarn:626"/>
+			<arg compiler="csc" value="/nowarn:649"/>
+			<arg compiler="csc" value="/nowarn:168"/>
+			<arg compiler="csc" value="/nowarn:67"/>
+			<arg compiler="csc" value="/nowarn:169"/>
+		</compile>
+
+		<!-- Build the I18N.Other.dll library -->
+		<compile output="I18N.Other.dll"
+				 target="library"
+				 unsafe="true"
+				 nostdlib="true"
+				 optimize="true">
+
+			<define name="__PNET__" value="true"/>
+
+			<sources>
+				<includes name="Other/*.cs"/>
+			</sources>
+
+			<references>
+				<file name="I18N.dll"/>
+				<file name="../runtime/mscorlib.dll"/>
+			</references>
+
+			<arg compiler="cscc" value="-Wno-empty-input"/>
+			<arg compiler="csc" value="/nowarn:626"/>
+			<arg compiler="csc" value="/nowarn:649"/>
+			<arg compiler="csc" value="/nowarn:168"/>
+			<arg compiler="csc" value="/nowarn:67"/>
+			<arg compiler="csc" value="/nowarn:169"/>
+		</compile>
+
+		<!-- Build the I18N.Rare.dll library -->
+		<compile output="I18N.Rare.dll"
+				 target="library"
+				 unsafe="true"
+				 nostdlib="true"
+				 optimize="true">
+
+			<define name="__PNET__" value="true"/>
+
+			<sources>
+				<includes name="Rare/*.cs"/>
+			</sources>
+
+			<references>
+				<file name="I18N.dll"/>
+				<file name="../runtime/mscorlib.dll"/>
+			</references>
+
+			<arg compiler="cscc" value="-Wno-empty-input"/>
+			<arg compiler="csc" value="/nowarn:626"/>
+			<arg compiler="csc" value="/nowarn:649"/>
+			<arg compiler="csc" value="/nowarn:168"/>
+			<arg compiler="csc" value="/nowarn:67"/>
+			<arg compiler="csc" value="/nowarn:169"/>
+		</compile>
+
+		<!-- Build the I18N.West.dll library -->
+		<compile output="I18N.West.dll"
+				 target="library"
+				 unsafe="true"
+				 nostdlib="true"
+				 optimize="true">
+
+			<define name="__PNET__" value="true"/>
+
+			<sources>
+				<includes name="West/*.cs"/>
+			</sources>
+
+			<references>
+				<file name="I18N.dll"/>
+				<file name="../runtime/mscorlib.dll"/>
+			</references>
+
+			<arg compiler="cscc" value="-Wno-empty-input"/>
+			<arg compiler="csc" value="/nowarn:626"/>
+			<arg compiler="csc" value="/nowarn:649"/>
+			<arg compiler="csc" value="/nowarn:168"/>
+			<arg compiler="csc" value="/nowarn:67"/>
+			<arg compiler="csc" value="/nowarn:169"/>
+		</compile>
+
+	</target>
+</project>
