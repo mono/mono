@@ -1,3 +1,7 @@
+2004-08-14  Martin Baulig  <martin@ximian.com>
+
+	* class.c (dup_type): Also copy the `byref' field.
+
 2004-08-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (create_dynamic_mono_image): Revert the last change 
