@@ -97,7 +97,7 @@ namespace System.Web.Mail {
 	    
 	    case MailFormat.Text: 
 		header.ContentType = 
-		    String.Format( "text/html; charset=\"{0}\"" , message.BodyEncoding.BodyName );
+		    String.Format( "text/plain; charset=\"{0}\"" , message.BodyEncoding.BodyName );
 		break;
 	    
 	    default: 

@@ -1,3 +1,9 @@
+2003-11-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MailMessageWrapper.cs: fixed typo that made all messages be sent as
+	html, even when the body is marked as text. Path by Mohammad DAMT.
+	Closes bug #51177.
+
 2003-07-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MailAddress.cs: return null instead of exception when the address is
