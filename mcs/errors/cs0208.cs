@@ -16,7 +16,7 @@ namespace cs208
 		unsafe static void Main ()
 		{			
 			Foo f = new Foo ();
-			Foo *s = &f;
+			void *s = &f;
 		}
 	}
 }
