@@ -63,6 +63,16 @@ namespace System.Web.UI.WebControls {
 				throw new ArgumentException ("viewName");
 		}
 		
+		protected virtual SqlDataSourceView CreateDataSourceView (string viewName)
+		{
+			SqlDataSourceView view = new SqlDataSourceView (this, viewName, this.Context);
+			view.DataSourceViewChanged += new EventHandler (ViewChanged);
+			if (IsTrackingViewState)
+				((IStateManager) view).TrackViewState ();			
+			return view;
+		}
+
+		
 		protected override ICollection GetViewNames ()
 		{
 			return new string [] { "DefaultView" };

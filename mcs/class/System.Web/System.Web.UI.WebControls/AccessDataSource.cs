@@ -55,13 +55,21 @@ namespace System.Web.UI.WebControls {
 			this.ProviderName = "System.Data.OleDb";							
 		}
 
-		/*[MonoTODO]
-		protected override SqlDataSourceView CreateDataSourceView (string view)
+		protected override SqlDataSourceView CreateDataSourceView (string viewName)
 		{
-			throw new NotImplementedException ();
+			AccessDataSourceView view = new AccessDataSourceView (this, viewName, this.Context);
+			view.DataSourceViewChanged += new EventHandler (ViewChanged);
+			if (IsTrackingViewState)
+				((IStateManager) view).TrackViewState ();				
+			return view;
 		}
 
-		[MonoTODO]
+		void ViewChanged (object source, EventArgs e)
+		{
+			OnDataSourceChanged (e);
+		}
+
+		/*[MonoTODO]
 		protected internal override void SaveDataToCache (int startingRowIndex,
 							int maxRows, object data)
 		{
