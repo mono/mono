@@ -1,3 +1,16 @@
+2005-03-30  Joshua Tauberer  <tauberer@for.net>
+
+	* class.c: Changed mono_class_name_from_token so that types
+	outside of a namespace don't have an initial period.  Improved
+	the g_warning message used in _mono_class_get when loading
+	fails.
+	* assembly.c: In mono_assembly_load_reference, when an assembly
+	can't be found, "No such file or directory" is misleading and
+	unhelpful because a few paths were checked for the presence of
+	the assembly.  When that happens (ENOENT), display a nicer
+	message indicating the directories that were searched.  In all
+	cases, the warning is made easier to read for non-hackers.
+
 2005-03-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* assembly.c: Set MONO_ASSEMBLIES to NULL when compiling from a VS.NET
