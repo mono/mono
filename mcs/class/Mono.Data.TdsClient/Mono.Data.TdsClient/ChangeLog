@@ -1,3 +1,7 @@
+2002-10-20  Tim Coleman (tim@timcoleman.com)
+	* TdsConnection.cs:
+		Lots of stuff to get this working somewhat.
+
 2002-10-19  Tim Coleman (tim@timcoleman.com)
 	* TdsDataReader.cs:
 	* TdsError.cs:
