@@ -1,3 +1,10 @@
+2002-06-12   Nick Drochak  <ndrochak@gol.com>
+
+	* ConvertTest.cs: Punt bug in DateTime.Parse() over to that test.
+	* DateTimeTest.cs: Add test for date format of yyyy-mm-dd which mono
+	doesn't handle automagically like ms.net does.  This smells like a 
+	LAMESPEC, however.
+
 2002/06/12  Nick Drochak <ndrochak@gol.com>
 
 	* RandomTest.cs: Exercise Next(min,max) a little more, especially

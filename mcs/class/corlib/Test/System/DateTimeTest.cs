@@ -299,6 +299,8 @@ public class DateTimeTest : TestCase
 	{
 		// Standard patterns
 		DateTime t1 = DateTime.Parse ("02/25/2002");
+		AssertEquals ("H00", myTicks[0], t1.Ticks);
+		t1 = DateTime.Parse ("2002-02-25");
 		AssertEquals ("H01", myTicks[0], t1.Ticks);
 		t1 = DateTime.Parse ("Monday, 25 February 2002");
 		AssertEquals ("H02", myTicks[0], t1.Ticks);

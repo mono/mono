@@ -603,7 +603,7 @@ namespace MonoTests.System
 		}
 
 		public void TestToDateTime() {
-			string dateString = "2002-01-01";
+			string dateString = "01/01/2002";
 			
 			int iTest = 1;
 			try {
