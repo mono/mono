@@ -1,3 +1,6 @@
+//
+// Tests the syntax for delegates and events
+//
 using System;
 
 delegate void ClickEvent ();

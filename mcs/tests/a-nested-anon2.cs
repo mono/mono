@@ -1,3 +1,6 @@
+//
+// Nested anonymous methods and capturing of variables test
+//
 using System;
 
 delegate void D ();

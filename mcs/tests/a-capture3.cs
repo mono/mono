@@ -1,3 +1,6 @@
+//
+// Simple variable capturing
+//
 delegate void S ();
 using System;
 

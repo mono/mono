@@ -1,3 +1,6 @@
+//
+// Capturing test.
+//
 delegate void S ();
 using System;
 

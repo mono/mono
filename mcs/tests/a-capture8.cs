@@ -1,3 +1,7 @@
+//
+// Tests assignment of a captured variable to another
+// Do not add anything else to this test.
+//
 delegate void S ();
 
 class X {

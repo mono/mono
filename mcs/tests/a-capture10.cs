@@ -1,5 +1,7 @@
-// cs1673.cs: Not possible to use `this' in anonymous methods inside structs
-// Line: 
+//
+// This test exercises the access to a field instance from an instance
+// method that has an anonymous method.
+// 
 using System;
 
 class S {

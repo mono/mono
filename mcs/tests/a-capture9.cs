@@ -1,3 +1,6 @@
+//
+// Tests unary mutator operators on captured variables
+//
 using System;
 
 class X {

@@ -1,3 +1,6 @@
+//
+// Instance access.
+//
 using System;
 
 delegate void D ();

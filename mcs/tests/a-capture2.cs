@@ -1,3 +1,6 @@
+//
+// This test checks various uses of captured local variables
+//
 delegate void S ();
 using System;
 
