@@ -17,6 +17,7 @@ public class ConstFields
 	static readonly Decimal MaxValueDiv10 = MaxValue / 10;
             
         static decimal DecimalValue = -90;
+        const decimal SmallConstValue = .02M;
             
         static int Main ()
         {
@@ -31,6 +32,9 @@ public class ConstFields
             
             if (ConstDecimal1 != (-1) * ConstDecimal2)
                 return 3;
+            
+            if (!(SmallConstValue < 1 && SmallConstValue > 0))
+                return 4;
 
             // THIS IS TEST TOO
             Console.WriteLine (C.D);
