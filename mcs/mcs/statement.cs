@@ -1862,8 +1862,10 @@ namespace Mono.CSharp {
 				//ig.Emit (OpCodes.Br, lblEnd);
 			}
 			
-			if (!fFoundDefault)
+			if (!fFoundDefault) {
 				ig.MarkLabel (lblDefault);
+				fAllReturn = false;
+			}
 			ig.MarkLabel (lblEnd);
 
 			return fAllReturn;
