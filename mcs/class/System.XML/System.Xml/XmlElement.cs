@@ -115,13 +115,11 @@ namespace System.Xml
 			}
 			set {
 				// Why its behavior (of MS FCL) is different from InnerXml...?
-				if (FirstChild != null && FirstChild.NodeType == XmlNodeType.Text)
+				if (ChildNodes != null && ChildNodes.Count == 1 && FirstChild.NodeType == XmlNodeType.Text)
 					FirstChild.Value = value;
 				else {
-					if (FirstChild != null) {
-						for (int i = 0; i < ChildNodes.Count; i++)
-							this.RemoveChild (ChildNodes [i]);
-					}
+					while (FirstChild != null)
+						this.RemoveChild (FirstChild);
 					// creates new Text node
 					AppendChild (OwnerDocument.CreateTextNode (value));
 				}

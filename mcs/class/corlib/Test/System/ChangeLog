@@ -1,3 +1,13 @@
+2004-09-23  Martin Garton  <martin@wrasse.demon.co.uk>
+
+	* ConvertTest.cs: Ensure ToType() fails with an ArgumentException in
+	a case where is cannot convert.
+
+2004-08-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* VersionTest.cs: Added tests when cloning a version with no build and
+	no revision numbers (-1).
+
 2004-06-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DoubleFormatterTest.cs: Added a new test for a negative roundtrip

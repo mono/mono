@@ -227,6 +227,19 @@ namespace System.Web.Mail {
 	public string UrlContentLocation {
 	    get { return message.UrlContentLocation; } 
 	}
+
+#if NET_1_1
+	public MailHeader Fields {
+		get {
+			MailHeader bodyHeaders = new MailHeader();
+			// Add Fields to MailHeader Object
+			foreach( string key in message.Fields.Keys )
+				bodyHeaders.Data[ key ] = (string)this.message.Fields[ key ];
+			return bodyHeaders;
+		}
+	}
+#endif
+
     }
 
 }

@@ -46,6 +46,7 @@ namespace System.Data.Odbc
 		int connectionTimeout;
 		internal OdbcTransaction transaction;
 		IntPtr henv=IntPtr.Zero, hdbc=IntPtr.Zero;
+		bool disposed = false;
 		
 		#endregion
 
@@ -197,27 +198,25 @@ namespace System.Data.Odbc
 				// disconnect
 				ret = libodbc.SQLDisconnect (hdbc);
 				if ( (ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-					throw new OdbcException (new OdbcError ("SQLConnect", OdbcHandleType.Dbc,hdbc));
+					throw new OdbcException (new OdbcError ("SQLDisconnect", OdbcHandleType.Dbc,hdbc));
 
 				// free handles
 				if (hdbc != IntPtr.Zero) {
 					ret = libodbc.SQLFreeHandle ( (ushort) OdbcHandleType.Dbc, hdbc);	
 					if ( (ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-						throw new OdbcException (new OdbcError ("SQLConnect", OdbcHandleType.Dbc,hdbc));
+						throw new OdbcException (new OdbcError ("SQLFreeHandle", OdbcHandleType.Dbc,hdbc));
 				}
 				hdbc = IntPtr.Zero;
 
 				if (henv != IntPtr.Zero) {
 					ret = libodbc.SQLFreeHandle ( (ushort) OdbcHandleType.Env, henv);	
 					if ( (ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-						throw new OdbcException (new OdbcError ("SQLConnect", OdbcHandleType.Dbc,hdbc));
+						throw new OdbcException (new OdbcError ("SQLFreeHandle", OdbcHandleType.Env,henv));
 				}
 				henv = IntPtr.Zero;
 
 				transaction = null;
 			}
-			else
-				throw new InvalidOperationException ();
 		}
 
 		public OdbcCommand CreateCommand ()
@@ -231,10 +230,23 @@ namespace System.Data.Odbc
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		protected override void Dispose (bool disposing)
-		{
-		}
+                {
+                        if (!this.disposed) {
+                                try
+                                {
+                                        // release the native unmananged resources
+                                        this.Close();
+                                        this.disposed = true;
+                                }
+                                finally
+                                {
+                                        // call Dispose on the base class
+                                        base.Dispose(disposing);
+                                }
+                        }
+                }
+
 
 		[MonoTODO]
 		object ICloneable.Clone ()

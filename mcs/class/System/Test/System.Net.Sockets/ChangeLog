@@ -1,3 +1,7 @@
+2004-10-14  Dick Porter  <dick@ximian.com>
+
+	* SocketTest.cs: Test the blocking status of accepted sockets
+
 2004-06-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SocketTest.cs: added test for Select with empty lists. Changed the

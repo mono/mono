@@ -82,7 +82,12 @@ namespace System.Web.Security
 				return;
 
 			FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt (cookie.Value);
-			ticket = FormsAuthentication.RenewTicketIfOld (ticket);
+			if (ticket == null || ticket.Expired)
+				return;
+
+			if (config.SlidingExpiration)
+				ticket = FormsAuthentication.RenewTicketIfOld (ticket);
+
 			context.User = new GenericPrincipal (new FormsIdentity (ticket), new string [0]);
 
 			cookie.Value = FormsAuthentication.Encrypt (ticket);

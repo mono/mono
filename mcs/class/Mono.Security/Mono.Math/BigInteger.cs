@@ -12,7 +12,8 @@
 //
 // Copyright (c) 2002 Chew Keong TAN
 // All rights reserved.
-
+//
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -169,6 +170,7 @@ namespace Mono.Math {
 		public BigInteger ()
 		{
 			data = new uint [DEFAULT_LEN];
+			this.length = DEFAULT_LEN;
 		}
 
 		[CLSCompliant (false)]
@@ -539,6 +541,9 @@ namespace Mono.Math {
 		/// <param name="rng">A RNG.</param>
 		public void Randomize (RandomNumberGenerator rng)
 		{
+			if (this == 0)
+				return;
+
 			int bits = this.BitCount ();
 			int dwords = bits >> 5;
 			int remBits = bits & 0x1F;

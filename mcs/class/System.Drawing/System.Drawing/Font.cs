@@ -395,12 +395,10 @@ namespace System.Drawing
 			}
 		}
 
-		private int _height;
-
 		[Browsable (false)]
 		public int Height {
 			get {
-				return _height;
+				return (int) Math.Ceiling (GetHeight ());
 			}
 		}
 
@@ -511,7 +509,7 @@ namespace System.Drawing
 
 		public float GetHeight ()
 		{
-			return (float) _height;
+			return GetHeight (Graphics.systemDpiY);
 		}
 
 		[MonoTODO]
@@ -532,19 +530,68 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public float GetHeight (Graphics graphics)
 		{
-			if (Unit == GraphicsUnit.Pixel || Unit == GraphicsUnit.World)
-				return GetHeight ();
+			float height = GetHeight (graphics.DpiY);
 
-			throw new NotImplementedException ();
+			switch (graphics.PageUnit) {
+				case GraphicsUnit.Document:
+					height *= (300f / graphics.DpiY);
+					break;
+				case GraphicsUnit.Display:
+					height *= (75f / graphics.DpiY);
+					break;
+				case GraphicsUnit.Inch:
+					height /=  graphics.DpiY;
+					break;
+				case GraphicsUnit.Millimeter:
+					height *= (25.4f / graphics.DpiY);
+					break;
+				case GraphicsUnit.Point:
+					height *= (72f / graphics.DpiY);
+					break;
+
+				case GraphicsUnit.Pixel:
+				case GraphicsUnit.World:
+				default:
+					break;
+			}
+
+			return height;
 		}
 
-		[MonoTODO]
 		public float GetHeight (float dpi)
 		{
-			return GetHeight ();
+			float height;
+			int emHeight = _fontFamily.GetEmHeight (_style);
+			int lineSpacing = _fontFamily.GetLineSpacing (_style);
+
+			height = lineSpacing * (_size / emHeight);
+
+			switch (_unit) {
+				case GraphicsUnit.Document:
+					height *= (dpi / 300f);
+					break;
+				case GraphicsUnit.Display:
+					height *= (dpi / 75f);
+					break;
+				case GraphicsUnit.Inch:
+					height *= dpi;
+					break;
+				case GraphicsUnit.Millimeter:
+					height *= (dpi / 25.4f);
+					break;
+				case GraphicsUnit.Point:
+					height *= (dpi / 72f);
+					break;
+
+				case GraphicsUnit.Pixel:
+				case GraphicsUnit.World:
+				default:
+					break;
+			}
+
+			return height;
 		}
 
 		public override String ToString ()

@@ -1,3 +1,47 @@
+2004-08-31 Umadevi S (sumadevi@novell.com)
+        * OdbcDataReader.cs - Fixed Decimal parsing
+                                                                                                    
+
+2004-08-30 Umadevi S (sumadevi@novell.com)
+        * OdbcType.cs - removed inheritance from short.
+
+2004-08-27 Sureshkumar T (tsureshkumar@novell.com)
+	* OdbcDataReader.cs - fixed bug #63539 - TINYINT ODBC datatype is converted into System.Byte
+
+2004-08-26 Sureshkumar T (tsureshkumar@novell.com)
+	* OdbcDataReader.cs - Date & DateTime GetValue fixed. 
+			      GetBytes ordinal parameter passing fixed for BINARY in GetValue.
+
+2004-08-20 Sureshkumar T (tsureshkumar@novell.com)
+	* OdbcConnection.cs - correct handles are passed to OdbcError exception to trap the correct error
+
+2004-08-04 Umadevi S (sumadevi@novell.com)
+	* OdbcDataReader.cs - Fixed bug 61832 - Column names were not filled, due to which name based lookup of columns failed.
+
+2004-08-04 Umadevi S (sumadevi@novell.com)
+	* OdbcDataReader.cs - Fixed bug 61405 - Handling smallint column type.
+
+2004-07-30  Sureshkumar T (tsureshkumar@novell.com)
+        * OdbcCommand.cs: ExecuteNonQuery Closed statement handle to fix memory leak
+        * OdbcDataReader.cs: Closed statement handle to fix memory leak
+			     Removed SQLState login in GetBytes coz OdbcError provides the same.
+
+2004-07-29 Umadevi S (sumadevi@novell.com)
+	* OdbcCommand.cs - Fixed bug 62046. ExecuteNonQuery implemented correctly
+
+2004-07-28 Umadevi S (sumadevi@novell.com)
+	* OdbcParameter.cs - fixed bug 61968. String values passed with quotes
+
+2004-07-07 Umadevi S (sumadevi@novell.com)
+        * OdbcConnection.cs - Allowed Close to be called multiple times
+                            - Implementation of Dispose method
+
+2004-07-07 Umadevi S (sumadevi@novell.com)
+	* OdbcCommand.cs : fixed set method for Transaction
+
+2004-07-01  Sureshkumar T (tsureshkumar@novell.com)
+	* OdbcCommand.cs   : fixed reader problem with ExecuteScalar
+
 2004-06-23  Sureshkumar T (tsureshkumar@novell.com)
         * OdbcConnection.cs: Fix: Moved env allocation to Open method. 
 			     Disconnection & freeing handles are done in Close 

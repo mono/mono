@@ -1,3 +1,33 @@
+2004-10-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ModuleBuilder.cs (GetTypes): Fix length of returned array. Fixes
+	#65931.	
+
+2004-10-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ModuleBuilder.cs (DefineType): Check for duplicate type names. Fixes
+	#65988.	
+
+2004-09-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* CustomAttributeBuilder.cs: Applied patch from Marcus Urban (mathpup@mylinuxisp.com). Add support for defining custom marshallers by calling SetCustomAttribute.
+
+2004-09-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeBuilder.cs: Set the table_idx of the global type to 1.
+
+	* ModuleBuilder.cs: Save the main module of the assembly even if it is 
+	transient.
+
+2004-08-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyBuilder.cs: (Partly) Fix delay-signing issue (#56621) when 
+	MCS is used on the MS runtime (other part of the fix is for MCS).
+
+2004-07-24  Martin Baulig  <martin@ximian.com>
+
+	* TypeBuilder.cs (TypeBuilder.UnspecifiedTypeSize): Set this to 0
+	and initialize it to 0 everywhere.
 
 Thu Jun 24 15:33:04 CEST 2004 Paolo Molaro <lupus@ximian.com>
 

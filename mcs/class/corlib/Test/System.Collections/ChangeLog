@@ -1,3 +1,7 @@
+2004-07-28  Dick Porter  <dick@ximian.com>
+
+	* ComparerTest.cs: Test for invariant compares (bug 61458.)
+
 2004-06-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HashtableTest.cs: Added new case to CopyTo(Array,int) an empty 

@@ -526,7 +526,12 @@ public class Page : TemplateControl, IHttpHandler
 		writer.WriteLine ("<script language=\"javascript\">");
 		writer.WriteLine ("<!--");
 		writer.WriteLine ("\tfunction __doPostBack(eventTarget, eventArgument) {");
-		writer.WriteLine ("\t\tvar theform = document.getElementById ('{0}');", formUniqueID);
+
+		if (Request.Browser.Browser == ("Netscape") && Request.Browser.MajorVersion == 4)
+			writer.WriteLine ("\t\tvar theform = document.{0};", formUniqueID);
+		else
+			writer.WriteLine ("\t\tvar theform = document.getElementById ('{0}');", formUniqueID);
+
 		writer.WriteLine ("\t\ttheform.{0}.value = eventTarget;", postEventSourceID);
 		writer.WriteLine ("\t\ttheform.{0}.value = eventArgument;", postEventArgumentID);
 		writer.WriteLine ("\t\ttheform.submit();");
@@ -769,11 +774,18 @@ public class Page : TemplateControl, IHttpHandler
 
 	private void RenderTrace (HtmlTextWriter output)
 	{
-		if (!Trace.IsEnabled)
+		TraceManager traceManager = HttpRuntime.TraceManager;
+
+		if (Trace.HaveTrace && !Trace.IsEnabled || !Trace.HaveTrace && !traceManager.Enabled)
 			return;
 		
 		Trace.SaveData ();
-		Trace.Render (output);
+
+		if (!Trace.HaveTrace && traceManager.Enabled && !traceManager.PageOutput) 
+			return;
+
+		if (!traceManager.LocalOnly || Context.Request.IsLocal)
+			Trace.Render (output);
 	}
 	
 	internal void RaisePostBackEvents ()

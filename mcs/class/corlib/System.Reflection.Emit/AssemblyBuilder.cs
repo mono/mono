@@ -131,7 +131,15 @@ namespace System.Reflection.Emit {
 			}
 
 			if (n.KeyPair != null) {
+				// full keypair is available (for signing)
 				sn = n.KeyPair.StrongName ();
+			}
+			else {
+				// public key is available (for delay-signing)
+				byte[] pk = n.GetPublicKey ();
+				if ((pk != null) && (pk.Length > 0)) {
+					sn = new Mono.Security.StrongName (pk);
+				}
 			}
 
 			basic_init (this);

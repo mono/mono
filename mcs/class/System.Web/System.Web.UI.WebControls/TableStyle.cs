@@ -171,7 +171,7 @@ namespace System.Web.UI.WebControls
 			{
 				writer.AddAttribute(HtmlTextWriterAttribute.Align, Enum.Format(typeof(HorizontalAlign), HorizontalAlign, "G"));
 			}
-			string gd = String.Empty;
+			string gd = null;
 			switch(GridLines)
 			{
 				case GridLines.None:	   break;
@@ -182,6 +182,8 @@ namespace System.Web.UI.WebControls
 				case GridLines.Both:       gd = "all";
 				                           break;
 			}
+
+			if (gd != null)
 				writer.AddAttribute(HtmlTextWriterAttribute.Rules, gd);
 		}
 

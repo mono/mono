@@ -46,6 +46,8 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Text;
 using System.Web.Hosting;
+using System.Web.UI;
+using System.Web.Util;
 
 namespace System.Web
 {
@@ -190,19 +192,26 @@ namespace System.Web
 			} else {
 				query = "";
 			}
-			
-			string filePath = _Context.Request.MapPath (path);
+
+			HttpRequest request = _Context.Request;
 			HttpResponse response = _Context.Response;
+
+			string oldQuery = request.QueryStringRaw;
+			request.QueryStringRaw = query;
+
+			HttpValueCollection oldForm = null;
+			if (!preserveQuery) {
+				oldForm = _Context.Request.Form as HttpValueCollection;
+				_Context.Request.SetForm (new HttpValueCollection ());
+			}
+
+			string filePath = _Context.Request.MapPath (path);
 			TextWriter output = writer;
 			if (output == null)
 			 	output = response.Output;
 
-			HttpRequest request = _Context.Request;
 			string oldFilePath = request.FilePath;
-			request.SetFilePath (path);
-			string oldQuery = request.QueryStringRaw;
-			
-			if (!preserveQuery)	request.QueryStringRaw = query;
+			request.SetCurrentExePath (UrlUtils.Combine (_Context.Request.BaseVirtualDir, path));
 			IHttpHandler handler = _Context.ApplicationInstance.CreateHttpHandler (_Context,
 											       request.RequestType,
 											       path,
@@ -219,9 +228,11 @@ namespace System.Web
 					asyncHandler.EndProcessRequest (ar);
 				}
 			} finally {
-				request.SetFilePath (oldFilePath);
+				request.SetCurrentExePath (oldFilePath);
 				request.QueryStringRaw = oldQuery;
 				response.SetTextWriter (previous);
+				if (!preserveQuery)
+					_Context.Request.SetForm (oldForm);
 			}
 
 		}
@@ -302,7 +313,15 @@ namespace System.Web
 		/// <param name="path">The URL path of the new page on the server to execute. </param>
 		public void Transfer (string path)
 		{
-			Transfer (path, true);
+			// If it's a page and a postback, don't pass form data
+			// See bug #65613.
+			bool preserveForm = true;
+			if (_Context.Handler is Page) {
+				Page page = (Page) _Context.Handler;
+				preserveForm = !page.IsPostBack;
+			}
+
+			Transfer (path, preserveForm);
 		}
 
 		/// <summary>
@@ -314,16 +333,7 @@ namespace System.Web
 		/// they are cleared. The default is false. </param>
 		public void Transfer (string path, bool preserveForm)
 		{
-			HttpValueCollection oldForm = null;
-			if (!preserveForm) {
-				oldForm = _Context.Request.Form as HttpValueCollection;
-				_Context.Request.SetForm (new HttpValueCollection ());
-			}
-
 			Execute (path, null, preserveForm);
-			if (!preserveForm)
-				_Context.Request.SetForm (oldForm);
-
 			_Context.Response.End ();
 		}
 

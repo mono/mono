@@ -1,3 +1,6 @@
+2004-07-12 Umadevi S   <sumadevi@novell.com>
+	* Tokenizer.cs - read an Int64 from the text instead of Int32. Resolves bug 61203
+
 2004-06-17  Boris Kirzner <borisk@mainsoft.com>
         *  Comparison.cs - use 'as' to avoid NullReferenceExeption in casting.
 

@@ -401,7 +401,21 @@ namespace Microsoft.VisualBasic
 							}
 							break;
 						default:
-							returnstr=Convert.ToDouble(expression).ToString (style);
+							if (style.IndexOf("X") != -1 
+								|| style.IndexOf("x") != -1 ) {
+								returnstr = Microsoft.VisualBasic.Conversion.Hex(Convert.ToInt64(expression));
+							}
+							else
+								try 
+								{
+									returnstr=Convert.ToDouble(expression).ToString (style);
+								}
+								catch (Exception ex){
+									style = "0" + style;
+									returnstr=Convert.ToDouble(expression).ToString (style);
+								}
+
+
 							break;
 					}
 					break;
@@ -694,6 +708,7 @@ namespace Microsoft.VisualBasic
 			return InStr(1, String1, String2, Compare);
 		}
 		
+
 		/// <summary>
 		/// Returns an integer specifying the start position of the first occurrence of one string within another.
 		/// </summary>
@@ -826,17 +841,22 @@ namespace Microsoft.VisualBasic
 			[DefaultValue(" ")] 
 			string Delimiter)
 		{
+			try 
+			{
+				if (SourceArray == null)
+					throw new ArgumentException("Argument 'SourceArray' can not be null.", "SourceArray");
+				if (SourceArray.Rank > 1)
+					throw new ArgumentException("Argument 'SourceArray' can have only one dimension.", "SourceArray");
 
-			if (SourceArray == null)
-				throw new ArgumentException("Argument 'SourceArray' can not be null.", "SourceArray");
-			if (SourceArray.Rank > 1)
-				throw new ArgumentException("Argument 'SourceArray' can have only one dimension.", "SourceArray");
+				string[] dest;
+				dest = new string[SourceArray.Length];
 
-			string[] dest;
-			dest = new string[SourceArray.Length];
-
-			SourceArray.CopyTo(dest, 0);
-			return string.Join(Delimiter, dest);
+				SourceArray.CopyTo(dest, 0);
+				return string.Join(Delimiter, dest);
+			}
+			catch (System.InvalidCastException ie){
+				throw new System.ArgumentException("Invalid argument");
+			}
 		}
 
 		/// <summary>
@@ -854,8 +874,8 @@ namespace Microsoft.VisualBasic
 		/// <param name="Value">Required. Any valid String or Char expression.</param>
 		public static string LCase(string Value) 
 		{
-			if ((Value == null) || (Value.Length == 0))
-				return String.Empty; // VB.net does this.
+			if ((Value == null) || (Value.Length == 0)) 
+				return Value; // comparing nunit test results say this is an exception to the return String.Empty rule
 
 			return Value.ToLower();
 		}
@@ -865,16 +885,18 @@ namespace Microsoft.VisualBasic
 		/// Returns a string containing a specified number of characters from the left side of a string.
 		/// </summary>
 		/// <param name="Str">Required. String expression from which the leftmost characters are returned.</param>
-		/// <param name="Length">Required. Integer expression. Numeric expression indicating how many characters to return. If 0, a zero-length string ("") is returned. If greater than or equal to the number of characters in Str, the entire string is returned.</param>
-		public static string Left(string Str, 
-			int Length) 
+		/// <param name="Length">Required. Integer expression. Numeric expression indicating how many characters to return. 
+		///	If 0, a zero-length string ("") is returned. If greater than or equal to the number of characters in Str, 
+		///	the entire string is returned.</param>
+		public static string Left(string Str, int Length) 
 		{
 			if (Length < 0)
 				throw new ArgumentException("Argument 'Length' must be non-negative.", "Length");
-			if ((Str == null) || (Str.Length == 0))
+			if ((Str == null) || (Str.Length == 0) || Length == 0)
 				return String.Empty; // VB.net does this.
-
-			return Str.Substring(0, Length);
+			if (Length < Str.Length)
+				return Str.Substring(0, Length);
+			return Str;
 		}
 
 		/// <summary>
@@ -1202,16 +1224,16 @@ namespace Microsoft.VisualBasic
 		/// </summary>
 		/// <param name="Source">Required. String expression. Name of string variable.</param>
 		/// <param name="Length">Required. Integer expression. Length of returned string.</param>
-		public static string RSet(string Source, 
-			int Length) 
+		public static string RSet(string Source, int Length) 
 		{
 		
 			if (Source == null)
 				Source = String.Empty;
 			if (Length < 0)
 				throw new ArgumentOutOfRangeException("Length", "Length must be non-negative.");
-
-			return Source.PadLeft(Length);
+			if (Length > Source.Length)
+				return Source.PadLeft(Length);
+			return Source.Substring(0, Length);
 		}
 
 		/// <summary>
@@ -1235,7 +1257,7 @@ namespace Microsoft.VisualBasic
 		/// <param name="Compare">Optional. Numeric value indicating the comparison to use when evaluating substrings. See Settings for values.</param>
 		public static string[] Split(string Expression, 
 			[Optional]
-			[DefaultValue(" ")] 
+			[DefaultValue("")] 
 			string Delimiter,
 			[Optional]
 			[DefaultValue(-1)] 
@@ -1245,30 +1267,37 @@ namespace Microsoft.VisualBasic
 			[DefaultValue(CompareMethod.Binary)] 
 			CompareMethod Compare)
 		{
-
-			
 			if (Expression == null)
 				return new string[1];
 
-			if ((Delimiter == null) || (Delimiter.Length == 0))
-			{
+			if ((Delimiter == null) || (Delimiter.Length == 0))	{
 				string [] ret = new string[1];
 				ret[0] = Expression;
 				return ret;
 			}
 			if (Limit == 0)
 				Limit = 1; 
-
-			if (Limit < -1)
+			else if (Limit < -1)
 				throw new OverflowException("Arithmetic operation resulted in an overflow.");
-			switch (Compare)
-			{
-				case CompareMethod.Binary:
-					return Expression.Split(Delimiter.ToCharArray(0, 1), Limit);
-				case CompareMethod.Text:
-					return Expression.Split(Delimiter.ToCharArray(0, 1), Limit);
-				default:
-					throw new System.ArgumentException("Argument 'Compare' must be CompareMethod.Binary or CompareMethod.Text.", "Compare");
+
+			if (Limit != -1) {
+				switch (Compare){
+					case CompareMethod.Binary:
+						return Expression.Split(Delimiter.ToCharArray(0, 1), Limit);
+					case CompareMethod.Text:
+						return Expression.Split(Delimiter.ToCharArray(0, 1), Limit);
+                    default:
+						throw new System.ArgumentException("Argument 'Compare' must be CompareMethod.Binary or CompareMethod.Text.", "Compare");
+                }
+			} else {
+				switch (Compare) {
+					case CompareMethod.Binary:
+						return Expression.Split(Delimiter.ToCharArray(0, 1));
+					case CompareMethod.Text:
+						return Expression.Split(Delimiter.ToCharArray(0, 1));
+					default:
+						throw new System.ArgumentException("Argument 'Compare' must be CompareMethod.Binary or CompareMethod.Text.", "Compare");
+				}
 			}
 		}
 

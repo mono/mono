@@ -31,6 +31,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Net.Sockets;
 using System.Runtime.Serialization;
@@ -315,88 +316,89 @@ namespace System.Net
 			if (webHeaders == null)
 				return;
 
-			string val = webHeaders ["Set-Cookie"];
-			if (val != null && val.Trim () != "")
-				SetCookie (val);
-
-			val = webHeaders ["Set-Cookie2"];
-			if (val != null && val.Trim () != "")
-				SetCookie2 (val);
-		}
-		
-		static string [] SplitValue (string input)
-		{
-			string [] result = new string [2];
-			int eq = input.IndexOf ('=');
-			if (eq == -1) {
-				result [0] = "invalid";
-			} else {
-				result [0] = input.Substring (0, eq).Trim ().ToUpper ();
-				result [1] = input.Substring (eq + 1);
+			string [] values = webHeaders.GetValues ("Set-Cookie");
+			if (values != null) {
+				foreach (string va in values)
+					SetCookie (va);
 			}
-			
-			return result;
+
+			values = webHeaders.GetValues ("Set-Cookie2");
+			if (values != null) {
+				foreach (string va in values)
+					SetCookie2 (va);
+			}
 		}
 		
-		[MonoTODO ("Parse dates")]
-		void SetCookie (string cookie_str)
+		void SetCookie (string header)
 		{
-			string[] parts = null;
-			Collections.Queue options = null;
+			string [] name_values = header.Trim ().Split (';');
+			int length = name_values.Length;
 			Cookie cookie = null;
+			int pos;
+			for (int i = 0; i < length; i++) {
+				pos = 0;
+				string name_value = name_values [i].Trim ();
+				string name = GetCookieName (name_value, name_value.Length, ref pos);
+				string value = GetCookieValue (name_value, name_value.Length, ref pos);
+				if (cookie == null) {
+					cookie = new Cookie (name, value);
+					continue;
+				}
 
-			options = new Collections.Queue (cookie_str.Split (';'));
-			parts = SplitValue ((string) options.Dequeue()); // NAME=VALUE must be first
-
-			cookie = new Cookie (parts[0], parts[1]);
-
-			while (options.Count > 0) {
-				parts = SplitValue ((string) options.Dequeue());
-				switch (parts [0]) {
-					case "COMMENT":
-						if (cookie.Comment == null)
-							cookie.Comment = parts[1];
+				name = name.ToUpper ();
+				switch (name) {
+				case "COMMENT":
+					if (cookie.Comment == null)
+						cookie.Comment = value;
 					break;
-					case "COMMENTURL":
-						if (cookie.CommentUri == null)
-							cookie.CommentUri = new Uri(parts[1]);
+				case "COMMENTURL":
+					if (cookie.CommentUri == null)
+						cookie.CommentUri = new Uri (value);
 					break;
-					case "DISCARD":
-						cookie.Discard = true;
+				case "DISCARD":
+					cookie.Discard = true;
 					break;
-					case "DOMAIN":
-						if (cookie.Domain == "")
-							cookie.Domain = parts[1];
+				case "DOMAIN":
+					if (cookie.Domain == "")
+						cookie.Domain = value;
 					break;
-					case "MAX-AGE": // RFC Style Set-Cookie2
-						if (cookie.Expires == DateTime.MinValue)
-							cookie.Expires = cookie.TimeStamp.AddSeconds (Int32.Parse (parts[1]));
+				case "MAX-AGE": // RFC Style Set-Cookie2
+					if (cookie.Expires == DateTime.MinValue)
+						cookie.Expires = cookie.TimeStamp.AddSeconds (Int32.Parse (value));
 					break;
-					case "EXPIRES": // Netscape Style Set-Cookie
-						if (cookie.Expires == DateTime.MinValue) {
-							//FIXME: Does DateTime parse something like: "Sun, 17-Jan-2038 19:14:07 GMT"?
-							//cookie.Expires = DateTime.ParseExact (parts[1]);
+				case "EXPIRES": // Netscape Style Set-Cookie
+					if (cookie.Expires != DateTime.MinValue)
+						break;
+					try {
+						cookie.Expires = DateTime.ParseExact (value, "r", CultureInfo.InvariantCulture);
+					} catch {
+						try { 
+						cookie.Expires = DateTime.ParseExact (value,
+								"ddd, dd'-'MMM'-'yyyy HH':'mm':'ss 'GMT'",
+								CultureInfo.InvariantCulture);
+						} catch {
 							cookie.Expires = DateTime.Now.AddDays (1);
 						}
+					}
 					break;
-					case "PATH":
-							cookie.Path = parts[1];
+				case "PATH":
+					cookie.Path = value;
 					break;
-					case "PORT":
-						if (cookie.Port == null)
-							cookie.Port = parts[1];
+				case "PORT":
+					if (cookie.Port == null)
+						cookie.Port = value;
 					break;
-					case "SECURE":
-						cookie.Secure = true;
+				case "SECURE":
+					cookie.Secure = true;
 					break;
-					case "VERSION":
-						cookie.Version = Int32.Parse (parts[1]);
+				case "VERSION":
+					cookie.Version = Int32.Parse (value);
 					break;
-				} // switch
-			} // while
+				}
+			}
 
 			if (cookieCollection == null)
-				cookieCollection = new CookieCollection();
+				cookieCollection = new CookieCollection ();
 
 			if (cookie.Domain == "")
 				cookie.Domain = uri.Host;
@@ -410,6 +412,40 @@ namespace System.Net
 	
 			foreach (string cookie_str in cookies)
 				SetCookie (cookie_str);
+		}
+
+		static string GetCookieValue (string str, int length, ref int i)
+		{
+			if (i >= length)
+				return null;
+
+			int k = i;
+			while (k < length && Char.IsWhiteSpace (str [k]))
+				k++;
+
+			int begin = k;
+			while (k < length && str [k] != ';')
+				k++;
+
+			i = k;
+			return str.Substring (begin, i - begin).Trim ();
+		}
+
+		static string GetCookieName (string str, int length, ref int i)
+		{
+			if (i >= length)
+				return null;
+
+			int k = i;
+			while (k < length && Char.IsWhiteSpace (str [k]))
+				k++;
+
+			int begin = k;
+			while (k < length && str [k] != ';' &&  str [k] != '=')
+				k++;
+
+			i = k + 1;
+			return str.Substring (begin, k - begin).Trim ();
 		}
 	}	
 }

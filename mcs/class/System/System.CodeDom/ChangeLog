@@ -1,3 +1,8 @@
+2004-08-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CodeEntryPointMethod.cs: patch by Fawad Halim that makes the entry
+	point method public.
+
 2004-02-04  Jackson Harper <jackson@ximian.com>
 
 	* CodeTypeMember.cs: Name is String.Empty if not set.

@@ -147,7 +147,7 @@ namespace System.Web.Services.Discovery {
 				{
 					string contentType = null;
 					Stream stream = prot.Download (ref url, ref contentType);
-					XmlTextReader reader = new XmlTextReader (stream);
+					XmlTextReader reader = new XmlTextReader (url, stream);
 					reader.MoveToContent ();
 					
 					DiscoveryReference refe;

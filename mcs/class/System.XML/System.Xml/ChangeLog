@@ -1,3 +1,74 @@
+2004-10-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextReader.cs :
+	  Normalization check is also required for ReadText(). This fixes
+	  bug #68449.
+
+2004-10-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextReader.cs : Inside DTD, '<' character inside XML comment 
+	  is regatded as invalid. This fixes bug #68410. (Error message was
+	  also not correct.)
+
+2004-09-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlNode.cs : GetEnumerator() does not have to create ChildNodes
+	  every time. Removed unused StringBuilder field.
+
+2004-09-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlWriter.cs : on reader.NodeType is None, WriteNode() still tries
+	  to read more (and might result in an error).
+
+2004-09-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextReader.cs : When Normalization is true, CRLF and CR should
+	  be converted to single LF. This should fix part of bug #62076.
+
+2004-08-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlAttribute.cs : some property getters threw NullReferenceException
+	  when the attribute is not added to an element.
+	* XmlNode.cs : When a node is not appended to another node, BaseURI
+	  is empty. Bug #64120 is fixed.
+
+2004-08-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextWriter.cs : In CheckState(), don't create indentation string
+	  at every time. WriteIndent() now handles the indentation without
+	  recomputation.
+
+2004-08-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlElement.cs : set_InnerText was removing children incompletely.
+	  This fixes bug #63574.
+
+2004-08-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	  ResetState() now throws InvalidOperationException() as MS.NET does.
+
+2004-08-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextReader.cs : Fixed EOF not to return true when it is just
+	  closed. Element and EndElement location is now adjusted to be the
+	  same as MS.NET does. This fixes bug #63505 and #63507.
+
+2004-07-28  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlTextReader.cs: Stop parsing when a null character is found.
+
+2004-07-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlNode.cs : When the argument node being inserted is the existing
+	  document element, it should not result in an error (since it should
+	  be first removed from document, thus no error should happen).
+
+2004-07-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextReader.cs : Fixed several problems on ReadBase64();
+	  Whitespaces should be ignored, and '=' was not skipped correctly.
+	  It caused "unexpected end of document" error at immediate close tag.
+
 2004-06-18  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDObjectModel.cs, DTDReader.cs, XmlConvert.cs, XmlDocument.cs,

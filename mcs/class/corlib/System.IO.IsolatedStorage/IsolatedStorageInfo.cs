@@ -37,7 +37,7 @@ namespace System.IO.IsolatedStorage {
 		[MonoTODO("Unix Specific; generalize for Win32")]
 		internal static string GetIsolatedStorageDirectory ()
 		{
-			string home = Environment.GetEnvironmentVariable ("HOME");
+			string home = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
 
 			if (home == null)
 				home = "~";

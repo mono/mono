@@ -1,3 +1,21 @@
+2004-07-22  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* ObjRef.cs: Fixed type check in in ObjRef constructor. The requested class
+	  must be the object class or a base class. This fixes bug #61249.
+
+2004-07-22  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* RemotingServices.cs: Changed GetMethodBaseFromMethodMessage so its code
+	  can be reused internally. Also fixed bug when gettting a method from an
+	  interface.
+
+2004-07-02  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* RemotingConfiguration.cs: Avoid adding "id" and "type" as custom 
+	  properties of providers. This fixes bug #60934.
+	* ServerIdentity.cs, RemotingServices.cs: When disposing an identity, detach
+	  the identity from the object, so it can be safely marshalled again.
+
 2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* RemotingTimeoutException.cs: added missing serialization ctor

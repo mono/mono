@@ -1,3 +1,25 @@
+2004-10-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializationWriter.cs : When namespace is an empty string,
+	  XmlTextWriter.LookupPrefix() will raise an error. Just skip it in
+	  such case.
+
+2004-09-28  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* CodeIdentifier.cs: MakeValid now returns "Item" for an empty string.
+	  This fixes bug #66877.
+
+2004-09-03  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlSerializer.cs: When the XmlReader is created by XmlSerializer, use
+	  Normalization==true by default.
+
+2004-07-15  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* TypeTranslator.cs, XmlCustomFormatter.cs: Added support for base64. This
+	  xsd type is not part of the last schema specification, but the google api
+	  uses it and ms.net accepts it.
+
 2004-06-22  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ReflectionHelper.cs: Correctly detect private types.

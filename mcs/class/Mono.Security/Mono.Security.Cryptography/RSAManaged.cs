@@ -14,6 +14,8 @@
 //
 
 //
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -147,8 +149,12 @@ namespace Mono.Security.Cryptography {
 		public override int KeySize {
 			get { 
 				// in case keypair hasn't been (yet) generated
-				if (keypairGenerated)
-					return n.BitCount (); 
+				if (keypairGenerated) {
+					int ks = n.BitCount ();
+					if ((ks & 7) != 0)
+						ks = ks + (8 - (ks & 7));
+					return ks;
+				}
 				else
 					return base.KeySize;
 			}

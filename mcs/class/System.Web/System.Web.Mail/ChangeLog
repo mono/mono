@@ -1,3 +1,20 @@
+2004-10-28 Sanjay Gupta <gsanjay@novell.com>
+
+	* SmtpClient.cs: Backported fix for bug 68829.
+	
+2004-08-30 Sanjay Gupta <gsanjay@novell.com>
+
+	* MailMessage.cs:
+	* MailMessageWrapper.cs:
+	* SmtpClient.cs: Fields property of MailMessage from .Net 1.1 was not
+	handled completely.
+	
+2004-08-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SmtpClient.cs: multipart mails default body format is now the same as
+	the one used for single part mails instead of being forced to
+	"text/plain".
+
 2004-02-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MailMessage.cs: patch by John Luke that initialized the fields in

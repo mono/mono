@@ -148,7 +148,7 @@ namespace System.Web.Configuration
 			if (context == null)
 				return null;
 
-			ConfigurationData config = GetConfigFromFileName (context.Request.FilePath, context);
+			ConfigurationData config = GetConfigFromFileName (context.Request.CurrentExecutionFilePath, context);
 			if (config == null)
 				return null;
 
@@ -213,6 +213,9 @@ namespace System.Web.Configuration
 
 		public void Init (HttpContext context)
 		{
+			if (initCalled)
+				return;
+
 			lock (this) {
 				if (initCalled)
 					return;
@@ -251,7 +254,7 @@ namespace System.Web.Configuration
                 public FileWatcherCache (ConfigurationData data)
                 {
 			this.data = data;
-                        cacheTable = Hashtable.Synchronized (new Hashtable ());
+			cacheTable = new Hashtable ();
 			this.path = Path.GetDirectoryName (data.FileName);
 			this.filename = Path.GetFileName (data.FileName);
 			if (!Directory.Exists (path))
@@ -539,7 +542,7 @@ namespace System.Web.Configuration
 		public object GetConfig (string sectionName, HttpContext context)
 		{
 			if (locations != null && dirname != null) {
-				string reduced = UrlUtils.MakeRelative (context.Request.FilePath, dirname);
+				string reduced = UrlUtils.MakeRelative (context.Request.CurrentExecutionFilePath, dirname);
 				string [] parts = reduced.Split ('/');
 				Location location = null;
 				int length = parts.Length;
@@ -791,16 +794,13 @@ namespace System.Web.Configuration
 
 		void StoreLocation (string name, XmlTextReader reader)
 		{
-			if (locations == null) {
-				locations = new Hashtable ();
-			}
-
 			string path = null;
 			bool haveAllow = false;
 			bool allowOverride = true;
+			string att = null;
 
 			while (reader.MoveToNextAttribute ()) {
-				string att = reader.Name;
+				att = reader.Name;
 
 				if (att == "path") {
 					if (path != null)
@@ -830,8 +830,13 @@ namespace System.Web.Configuration
 				ThrowException ("Unrecognized attribute.", reader);
 			}
 
+			if (att == null)
+				return; // empty location tag
+
 			Location loc = new Location (this, path, allowOverride);
-			if (locations.ContainsKey (loc.Path))
+			if (locations == null)
+				locations = new Hashtable ();
+			else if (locations.ContainsKey (loc.Path))
 				ThrowException ("Duplicated location path: " + loc.Path, reader);
 
 			reader.MoveToElement ();

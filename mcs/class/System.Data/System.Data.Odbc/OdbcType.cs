@@ -51,7 +51,7 @@ namespace System.Data.Odbc
 	//#define SQL_INTERVAL							10
 	//	could map to SmallDateTime?
 
-	public enum OdbcType : short
+	public enum OdbcType
 	{
 		BigInt=-5,		// SQL_BIGINT
 		Binary=-2,		// SQL_BINARY

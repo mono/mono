@@ -9,10 +9,6 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -136,7 +132,7 @@ namespace Mono.Security.X509 {
 					tmp = FindCertificateParent (x);
 					if (x != null) {
 						_chain.Add (x);
-						tmp = x;	// last valid
+						x = tmp;	// last valid
 					}
 				}
 				// find a trusted root
@@ -193,7 +189,8 @@ namespace Mono.Security.X509 {
 			_status = X509ChainStatusFlags.NoError;
 			roots = null; // this force a reload
 			certs.Clear ();
-			_chain.Clear ();
+			if (_chain != null)
+				_chain.Clear ();
 		}
 
 		// private stuff

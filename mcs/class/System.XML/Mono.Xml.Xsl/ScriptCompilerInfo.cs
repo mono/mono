@@ -216,12 +216,6 @@ end namespace
 	{
 		static Type providerType;
 
-		static JScriptCompilerInfo ()
-		{
-			Assembly jsasm = Assembly.LoadWithPartialName ("Microsoft.JScript", null);
-			providerType = jsasm.GetType ("Microsoft.JScript.JScriptCodeProvider");
-		}
-
 		public JScriptCompilerInfo ()
 		{
 			this.CompilerCommand = "mjs";
@@ -232,7 +226,15 @@ end namespace
 		}
 
 		public override CodeDomProvider CodeDomProvider {
-			get { return (CodeDomProvider) Activator.CreateInstance (providerType); }
+			get {
+				// no need for locking
+				if (providerType == null) {
+					Assembly jsasm = Assembly.LoadWithPartialName ("Microsoft.JScript", null);
+					if (jsasm != null)
+						providerType = jsasm.GetType ("Microsoft.JScript.JScriptCodeProvider");
+				}
+				return (CodeDomProvider) Activator.CreateInstance (providerType); 
+			}
 		}
 
 		public override string Extension {

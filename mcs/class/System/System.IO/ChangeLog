@@ -1,3 +1,24 @@
+2004-10-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DefaultWatcher.cs: if the file is removed between reading the
+	directory and filling the file info, catch the exception and ignore the
+	file. Fixes bug #59482.
+
+2004-10-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DefaultWatcher.cs: don't use Directory.GetFileSystemEntries when the
+	pattern has no wildcards. Fixes bug #67447.
+
+2004-09-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FAMWatcher.cs: s/fam/libfam.so.0/ so that g_module finds it even
+	when the development package is not installed.
+
+2004-08-06  Geoff Norton <gnorton@customerdna.com>
+
+	* FileSystemWatcher.cs: Use the new KeventWatcher if its supported
+	* KeventWatcher.cs: Added to cvs
+
 2004-06-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DefaultWatcher.cs: fixed subdirectories notifications and don't

@@ -45,7 +45,6 @@ namespace System.Xml
 
 		XmlDocument ownerDocument;
 		XmlNode parentNode;
-		StringBuilder tmpBuilder;
 		XmlLinkedNode lastLinkedChild;
 		XmlNodeListChildren childNodes;
 		bool isReadOnly;
@@ -71,7 +70,7 @@ namespace System.Xml
 			get {
 				// Isn't it conformant to W3C XML Base Recommendation?
 				// As far as I tested, there are not...
-				return (ParentNode != null) ? ParentNode.BaseURI : OwnerDocument.BaseURI;
+				return (ParentNode != null) ? ParentNode.BaseURI : String.Empty;
 			}
 		}
 
@@ -295,7 +294,7 @@ namespace System.Xml
 
 		public IEnumerator GetEnumerator ()
 		{
-			return new XmlNodeListChildren (this).GetEnumerator ();
+			return ChildNodes.GetEnumerator ();
 		}
 
 		public virtual string GetNamespaceOfPrefix (string prefix)
@@ -524,7 +523,7 @@ namespace System.Xml
 					throw new ArgumentException ("The reference node is not a child of this node.");
 			}
 
-			if(this == ownerDoc && ownerDoc.DocumentElement != null && (newChild is XmlElement))
+			if(this == ownerDoc && ownerDoc.DocumentElement != null && (newChild is XmlElement) && newChild != ownerDoc.DocumentElement)
 				throw new XmlException ("multiple document element not allowed.");
 
 			// checking validity finished. then appending...

@@ -1,3 +1,34 @@
+2004-10-14  Dick Porter  <dick@ximian.com>
+
+	* Socket.cs (Sockets ): Set Accept()ed socket blocking status to
+	be the same as the listening socket.  This follows MS behaviour.
+
+2004-08-04  Dick Porter  <dick@ximian.com>
+
+	* Socket.cs: Update Connected state in Select and Poll; this is
+	when we find out that non-blocking Connects succeed.  Fixes bug
+	62398.
+
+2004-07-28  Dick Porter  <dick@ximian.com>
+
+	* Socket.cs: ReceiveFrom might not return a valid EndPoint.  Patch
+	by Nick Vaughan (dev@6wardlaw.freeserve.co.uk), fixes bug 61608.
+
+2004-07-15  Dick Porter  <dick@ximian.com>
+
+	* Socket.cs: Don't try and dereference a null array in Select()
+	(possible if a descriptor list of length 0 was passed.)  Patch by
+	Nick Vaughan (dev@6wardlaw.freeserve.co.uk), fixes bug 61595.
+
+2004-07-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+        * Socket.cs: if'ed RemoveReferences calls.
+
+2004-07-09  Dick Porter  <dick@ximian.com>
+
+	* Socket.cs: Slight tweak to allow unknown objects to be returned
+	by GetSocketOption().
+
 2004-06-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: connect on non-blocking sockets returns EINPROGRESS. Fixes

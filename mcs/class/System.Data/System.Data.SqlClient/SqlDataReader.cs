@@ -131,6 +131,9 @@ namespace System.Data.SqlClient {
 
 		public void Close ()
 		{
+			// skip to end & read output parameters
+			while (NextResult ())
+				;
 			isClosed = true;
 			command.Connection.DataReader = null;
 			command.CloseDataReader (moreResults);

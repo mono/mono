@@ -217,7 +217,7 @@ namespace System.Web.UI.WebControls
 		[Bindable(true)]
 		[DefaultValue("")]
 		[Editor ("System.Web.UI.Design.XmlUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
-		[WebCategory("Behaviour")]
+		[WebCategory("Behavior")]
 		[WebSysDescription("AdRotator_AdvertisementFile")]
 		public string AdvertisementFile {
 			get { return ((advertisementFile != null) ? advertisementFile : ""); }
@@ -232,7 +232,7 @@ namespace System.Web.UI.WebControls
 
 		[Bindable(true)]
 		[DefaultValue("")]
-		[WebCategory("Behaviour")]
+		[WebCategory("Behavior")]
 		[WebSysDescription("AdRotator_KeywordFilter")]
 		public string KeywordFilter {
 			get {
@@ -251,7 +251,7 @@ namespace System.Web.UI.WebControls
 		[Bindable(true)]
 		[DefaultValue("")]
 		[TypeConverter(typeof(TargetConverter))]
-		[WebCategory("Behaviour")]
+		[WebCategory("Behavior")]
 		[WebSysDescription("AdRotator_Target")]
 		public string Target {
 			get {

@@ -211,6 +211,15 @@ namespace MonoTests.System.Text.RegularExpressions
 			text = re.Replace(text, " ");
 			AssertEquals("#01", "Go, \bNo Go", text);
 		}
+
+		[Test]
+		public void ReplaceNegOneAndStartat ()
+		{
+			string text = "abcdeeee";
+			Regex re = new Regex("e+");
+			text = re.Replace(text, "e", -1, 4);
+			AssertEquals("#01", "abcde", text);
+		}
 	}
 }
 

@@ -479,7 +479,7 @@ namespace System.Xml.Serialization {
 
 			ICollection namespaces = ns.Namespaces.Values;
 			foreach (XmlQualifiedName qn in namespaces) {
-				if (Writer.LookupPrefix (qn.Namespace) == null)
+				if (qn.Namespace != String.Empty && Writer.LookupPrefix (qn.Namespace) == null)
 					WriteAttribute ("xmlns", qn.Name, xmlNamespace, qn.Namespace);
 			}
 		}

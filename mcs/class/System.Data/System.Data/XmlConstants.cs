@@ -83,6 +83,8 @@ internal class XmlConstants
 	//ms schema objects	
 	public const string MsdataPrefix = "msdata";	
 	public const string MsdataNamespace = "urn:schemas-microsoft-com:xml-msdata";
+	public const string MspropPrefix = "msprop";	
+	public const string MspropNamespace = "urn:schemas-microsoft-com:xml-msprop";
 	public const string DiffgrPrefix = "diffgr";
 	public const string DiffgrNamespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
 	public const string TnsPrefix = "mstns";
@@ -94,6 +96,7 @@ internal class XmlConstants
 	public const string ConstraintName = "ConstraintName";
 	public const string PrimaryKey = "PrimaryKey";
 	public const string ColumnName = "ColumnName";
+	public const string ReadOnly = "ReadOnly";
 
 	public static XmlQualifiedName QnString = new XmlQualifiedName ("string", XmlSchema.Namespace);
 	public static XmlQualifiedName QnShort = new XmlQualifiedName ("short", XmlSchema.Namespace);

@@ -190,7 +190,7 @@ namespace System.Web
 			CultureInfo oSavedInfo = Thread.CurrentThread.CurrentCulture;
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-			string date = DateTime.Now.ToUniversalTime ().ToString ("ddd, d MMM yyyy HH:mm:ss ");
+			string date = DateTime.UtcNow.ToString ("ddd, d MMM yyyy HH:mm:ss ");
 			HttpResponseHeader date_header = new HttpResponseHeader ("Date", date + "GMT");
 			oHeaders.Add (date_header);
 			
@@ -618,9 +618,6 @@ namespace System.Web
 			}
 			
 			set {
-				if (_bHeadersSent)
-					throw new HttpException ("Headers has been sent to the client");
-
 				_bSuppressContent = true;
 			}
 		}
@@ -845,6 +842,9 @@ namespace System.Web
 
 				if (!_bSuppressContent && Request.HttpMethod == "HEAD")
 					_bSuppressContent = true;
+
+				if (_bSuppressContent)
+					_Writer.Clear ();
 
 				if (!_bSuppressContent) {
 					_bClientDisconnected = false;

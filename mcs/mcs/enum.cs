@@ -685,6 +685,7 @@ namespace Mono.CSharp {
 
 				default_value = GetNextDefaultValue (default_value);
 			}
+
 			return true;
 		}
 

@@ -168,9 +168,10 @@ namespace System
 				length = args.Length;
 
 			Type [] atypes = new Type [length];
-			for (int i = 0; i < length; ++i) {
-				atypes [i] = args [i].GetType ();
-			}
+			for (int i = 0; i < length; ++i)
+				if (args [i] != null)
+					atypes [i] = args [i].GetType ();
+			
 			ConstructorInfo ctor = type.GetConstructor (atypes);
 			if (ctor == null) {
 				if (type.IsValueType && atypes.Length == 0)
@@ -213,9 +214,10 @@ namespace System
 				length = args.Length;
 
 			Type[] atypes = new Type [length];
-			for (int i = 0; i < length; ++i) {
-				atypes [i] = args [i].GetType ();
-			}
+			for (int i = 0; i < length; ++i)
+				if (args [i] != null)
+					atypes [i] = args [i].GetType ();
+				
 			ConstructorInfo ctor = type.GetConstructor (bindingAttr, binder, atypes, null);
 			if (ctor == null) {
 				// Not sure about this

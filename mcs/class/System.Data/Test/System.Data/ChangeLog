@@ -1,3 +1,19 @@
+2004-10-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSetTest.cs : now xs:schema contains xmlns="".
+
+2004-09-24 Umadevi S <sumadevi@novell.com>
+        * DataRowTest.cs : Added a test for EnforceConstraints with relations defined.
+
+2004-09-24  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataSetTest.cs (DataSetClearTest): Added a test for DataSet.Clear. This should not
+	throw any exception and should override constraints.
+
+2004-09-21  Sureshkumar T <tsureshkumar@novell.com>
+	
+	* DataSetTest.cs : Added a test for Deserialization of dataset : DeserializeModifiedDataSet
+	
 2004-06-23 Umadevi S <sumadevi@novell.com>
 	* DataTableTest.cs :Corrected Testcases to .net 1.1 specifications
 

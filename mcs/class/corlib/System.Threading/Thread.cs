@@ -157,9 +157,10 @@ namespace System.Threading
 
 		// Stores a hash keyed by strings of LocalDataStoreSlot objects
 		static Hashtable datastorehash;
-
+		private static object datastore_lock = new object ();
+		
 		private static void InitDataStoreHash () {
-			lock (typeof (Thread)) {
+			lock (datastore_lock) {
 				if (datastorehash == null) {
 					datastorehash = Hashtable.Synchronized(new Hashtable());
 				}
@@ -167,7 +168,7 @@ namespace System.Threading
 		}
 		
 		public static LocalDataStoreSlot AllocateNamedDataSlot(string name) {
-			lock (typeof (Thread)) {
+			lock (datastore_lock) {
 				if (datastorehash == null)
 					InitDataStoreHash ();
 				LocalDataStoreSlot slot = (LocalDataStoreSlot)datastorehash[name];
@@ -186,7 +187,7 @@ namespace System.Threading
 		}
 
 		public static void FreeNamedDataSlot(string name) {
-			lock (typeof (Thread)) {
+			lock (datastore_lock) {
 				if (datastorehash == null)
 					InitDataStoreHash ();
 				LocalDataStoreSlot slot=(LocalDataStoreSlot)datastorehash[name];
@@ -210,15 +211,17 @@ namespace System.Threading
 		public extern static int GetDomainID();
 
 		public static LocalDataStoreSlot GetNamedDataSlot(string name) {
-			if (datastorehash == null)
-				InitDataStoreHash ();
-			LocalDataStoreSlot slot=(LocalDataStoreSlot)datastorehash[name];
+			lock (datastore_lock) {
+				if (datastorehash == null)
+					InitDataStoreHash ();
+				LocalDataStoreSlot slot=(LocalDataStoreSlot)datastorehash[name];
 
-			if(slot==null) {
-				slot=AllocateNamedDataSlot(name);
-			}
+				if(slot==null) {
+					slot=AllocateNamedDataSlot(name);
+				}
 			
-			return(slot);
+				return(slot);
+			}
 		}
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

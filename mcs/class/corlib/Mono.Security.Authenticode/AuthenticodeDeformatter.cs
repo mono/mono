@@ -2,12 +2,9 @@
 // AuthenticodeDeformatter.cs: Authenticode signature validator
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -57,6 +54,9 @@ namespace Mono.Security.Authenticode {
 		private DateTime timestamp;
 		private X509Certificate signingCertificate;
 		private int reason;
+		private bool trustedRoot;
+		private bool trustedTimestampRoot;
+		private byte[] entry;
 
 		private X509Chain signerChain;
 		private X509Chain timestampChain;
@@ -70,17 +70,20 @@ namespace Mono.Security.Authenticode {
 
 		public AuthenticodeDeformatter (string fileName) : this () 
 		{
-			if (!CheckSignature (fileName)) {
-				// invalid or no signature
-				if (signedHash != null)
-					throw new COMException ("Invalid signature");
-				// no exception is thrown when there's no signature in the PE file
-			}
+			FileName = fileName;
 		}
 
 		public string FileName {
 			get { return filename; }
-			set { CheckSignature (value); }
+			set { 
+				Reset ();
+				try {
+					CheckSignature (value); 
+				}
+				catch {
+					reason = 1;
+				}
+			}
 		}
 
 		public byte[] Hash {
@@ -101,7 +104,7 @@ namespace Mono.Security.Authenticode {
 
 		public bool IsTrusted ()
 		{
-			if (rawData == null) {
+			if (entry == null) {
 				reason = 1;
 				return false;
 			}
@@ -111,13 +114,13 @@ namespace Mono.Security.Authenticode {
 				return false;
 			}
 
-			if (signerChain.Root == null) {
+			if ((signerChain.Root == null) || !trustedRoot) {
 				reason = 6;
 				return false;
 			}
 
 			if (timestamp != DateTime.MinValue) {
-				if (timestampChain.Root == null) {
+				if ((timestampChain.Root == null) || !trustedTimestampRoot) {
 					reason = 6;
 					return false;
 				}
@@ -139,7 +142,11 @@ namespace Mono.Security.Authenticode {
 		}
 
 		public byte[] Signature {
-			get { return (byte[]) rawData.Clone (); }
+			get {
+				if (entry == null)
+					return null;
+				return (byte[]) entry.Clone (); 
+			}
 		}
 
 		public DateTime Timestamp {
@@ -157,43 +164,58 @@ namespace Mono.Security.Authenticode {
 		private bool CheckSignature (string fileName) 
 		{
 			filename = fileName;
-
-			// by default we try with MD5
-			string hashName = "MD5";
-			// compare the signature's hash with the hash of the file
-			hash = HashFile (filename, hashName);
-
-			// is a signature present ?
-			if (rawData == null)
+			base.Open (filename);
+			entry = base.GetSecurityEntry ();
+			if (entry == null) {
+				// no signature is present
+				reason = 1;
+				base.Close ();
 				return false;
+			}
 
-			PKCS7.ContentInfo ci = new PKCS7.ContentInfo (rawData);
-			if (ci.ContentType != PKCS7.Oid.signedData)
+			PKCS7.ContentInfo ci = new PKCS7.ContentInfo (entry);
+			if (ci.ContentType != PKCS7.Oid.signedData) {
+				base.Close ();
 				return false;
+			}
 
 			PKCS7.SignedData sd = new PKCS7.SignedData (ci.Content);
-			if (sd.ContentInfo.ContentType != spcIndirectDataContext)
+			if (sd.ContentInfo.ContentType != spcIndirectDataContext) {
+				base.Close ();
 				return false;
+			}
 
 			coll = sd.Certificates;
 
 			ASN1 spc = sd.ContentInfo.Content;
 			signedHash = spc [0][1][1];
-			if (signedHash.Length == 20) {
-				// seems to be SHA-1, restart hashing
-				hashName = "SHA1";
-				hash = HashFile (filename, hashName);
+
+			HashAlgorithm ha = null; 
+			switch (signedHash.Length) {
+				case 16:
+					ha = HashAlgorithm.Create ("MD5"); 
+					hash = GetHash (ha);
+					break;
+				case 20:
+					ha = HashAlgorithm.Create ("SHA1");
+					hash = GetHash (ha);
+					break;
+				default:
+					reason = 5;
+					base.Close ();
+					return false;
 			}
+			base.Close ();
 
 			if (!signedHash.CompareValue (hash))
 				return false;
 
 			// messageDigest is a hash of spcIndirectDataContext (which includes the file hash)
 			byte[] spcIDC = spc [0].Value;
-			HashAlgorithm ha = HashAlgorithm.Create (hashName);
+			ha.Initialize (); // re-using hash instance
 			byte[] messageDigest = ha.ComputeHash (spcIDC);
 
-			return VerifySignature (sd, messageDigest, hashName);
+			return VerifySignature (sd, messageDigest, ha);
 		}
 
 		private bool CompareIssuerSerial (string issuer, byte[] serial, X509Certificate x509) 
@@ -213,7 +235,7 @@ namespace Mono.Security.Authenticode {
 		}
 
 		//private bool VerifySignature (ASN1 cs, byte[] calculatedMessageDigest, string hashName) 
-		private bool VerifySignature (PKCS7.SignedData sd, byte[] calculatedMessageDigest, string hashName) 
+		private bool VerifySignature (PKCS7.SignedData sd, byte[] calculatedMessageDigest, HashAlgorithm ha) 
 		{
 			string contentType = null;
 			ASN1 messageDigest = null;
@@ -242,7 +264,7 @@ namespace Mono.Security.Authenticode {
 					case "1.3.6.1.4.1.311.2.1.12":
 						// spcSpOpusInfo (Microsoft code signing)
 						try {
-							spcSpOpusInfo = System.Text.Encoding.UTF8.GetString (attr[1][0][1][0].Value);
+							spcSpOpusInfo = System.Text.Encoding.UTF8.GetString (attr[1][0][0][0].Value);
 						}
 						catch (NullReferenceException) {
 							spcSpOpusInfo = null;
@@ -262,13 +284,13 @@ namespace Mono.Security.Authenticode {
 				return false;
 
 			// verify signature
-			string hashOID = CryptoConfig.MapNameToOID (hashName);
+			string hashOID = CryptoConfig.MapNameToOID (ha.ToString ());
 			
 			// change to SET OF (not [0]) as per PKCS #7 1.5
 			ASN1 aa = new ASN1 (0x31);
 			foreach (ASN1 a in sd.SignerInfo.AuthenticatedAttributes)
 				aa.Add (a);
-			HashAlgorithm ha = HashAlgorithm.Create (hashName);
+			ha.Initialize ();
 			byte[] p7hash = ha.ComputeHash (aa.GetBytes ());
 
 			byte[] signature = sd.SignerInfo.Signature;
@@ -282,10 +304,9 @@ namespace Mono.Security.Authenticode {
 						RSACryptoServiceProvider rsa = (RSACryptoServiceProvider) x509.RSA;
 						if (rsa.VerifyHash (p7hash, hashOID, signature)) {
 							signerChain.LoadCertificates (coll);
-							if (signerChain.Build (x509))
-								signingCertificate = x509;
-							else
-								return false;
+							trustedRoot = signerChain.Build (x509);
+							signingCertificate = x509;
+							break; 
 						}
 					}
 				}
@@ -301,17 +322,18 @@ namespace Mono.Security.Authenticode {
 						//     countersignature (1 2 840 113549 1 9 6)
 						//   SET {
 						PKCS7.SignerInfo cs = new PKCS7.SignerInfo (attr [1]);
-						return VerifyCounterSignature (cs, signature, hashName);
+						trustedTimestampRoot = VerifyCounterSignature (cs, signature);
+						break;
 					default:
 						// we don't support other unauthenticated attributes
 						break;
 				}
 			}
 
-			return true;
+			return (trustedRoot && trustedTimestampRoot);
 		}
 
-		private bool VerifyCounterSignature (PKCS7.SignerInfo cs, byte[] signature, string hashName) 
+		private bool VerifyCounterSignature (PKCS7.SignerInfo cs, byte[] signature) 
 		{
 			// SEQUENCE {
 			//   INTEGER 1
@@ -358,6 +380,7 @@ namespace Mono.Security.Authenticode {
 			if (messageDigest == null)
 				return false;
 			// TODO: must be read from the ASN.1 structure
+			string hashName = null;
 			switch (messageDigest.Length) {
 				case 16:
 					hashName = "MD5";
@@ -397,6 +420,21 @@ namespace Mono.Security.Authenticode {
 			}
 			// no certificate can verify this signature!
 			return false;
+		}
+
+		private void Reset ()
+		{
+			filename = null;
+			entry = null;
+			hash = null;
+			signedHash = null;
+			signingCertificate = null;
+			reason = -1;
+			trustedRoot = false;
+			trustedTimestampRoot = false;
+			signerChain.Reset ();
+			timestampChain.Reset ();
+			timestamp = DateTime.MinValue;
 		}
 	}
 }

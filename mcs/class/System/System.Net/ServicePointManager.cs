@@ -186,11 +186,16 @@ namespace System.Net
 			RecycleServicePoints ();
 			
 			bool usesProxy = false;
+			bool useConnect = false;
 			if (proxy != null && !proxy.IsBypassed(address)) {
 				usesProxy = true;
+				bool isSecure = address.Scheme == "https";
 				address = proxy.GetProxy (address);
-				if (address.Scheme != "http" && address.Scheme != "https")
+				if (address.Scheme != "http" && !isSecure)
 					throw new NotSupportedException ("Proxy scheme not supported.");
+
+				if (isSecure && address.Scheme == "http")
+					useConnect = true;
 			} 
 
 			address = new Uri (address.Scheme + "://" + address.Authority);
@@ -212,6 +217,7 @@ namespace System.Net
 				sp.UseNagleAlgorithm = useNagle;
 #endif
 				sp.UsesProxy = usesProxy;
+				sp.UseConnect = useConnect;
 				servicePoints.Add (address, sp);
 			}
 			

@@ -74,7 +74,7 @@ namespace System
 				}
 			}
 			inext = 0;
-			inextp = 21;
+			inextp = 31;
 		}
 
 		protected virtual double Sample ()

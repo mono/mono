@@ -1,3 +1,23 @@
+2004-09-15  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Methods.cs: Use the service namespace as the base for the soap action.
+	  This fixes bug #60379.
+
+2004-09-28  Lluis Sanchez Gual <lluis@novell.com>
+
+	* WebServiceHelper.cs: Write the encodingStyle attribute when using the
+	  encoded format. This fixes bug #66908.
+
+2004-08-25  Lluis Sanchez Gual <lluis@novell.com>
+
+	* HttpSoapWebServiceHandler.cs, WebServiceHandler.cs: Do not assign the
+	  context to the service. It already gets it from HttpContext.Current.
+
+2004-07-20  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* HttpWebClientProtocol.cs: Add received cookies to cookieContainer when
+	  getting the response, do not wait for the next request to do it.
+
 2004-06-22  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* XmlReturnReader.cs, XmlReturnWriter.cs: Generate the serializer with

@@ -167,25 +167,8 @@ namespace System.Data.Odbc
 			return cols[ordinal];
 		}
 
-                private string GetSQLState (IntPtr hstmt, ushort recNo) 
-                {
-                        OdbcReturn ret = OdbcReturn.Error;
-                        short bufLength=256, txtLength=0;
-                        int nativeError = 1;
-                        string sqlState = "", sqlMsg = "";
-                        byte [] msgtxtBuffer = new byte [bufLength];
-                        byte [] sqlStateBuffer = new byte [bufLength];
-                        ret = libodbc.SQLGetDiagRec (OdbcHandleType.Stmt, hstmt, recNo,
-                                            sqlStateBuffer, ref nativeError, msgtxtBuffer, 
-                                            bufLength, ref txtLength);
-                        sqlState = Encoding.Default.GetString (sqlStateBuffer).Replace (
-                                                        (char) 0, ' ').Trim ();
-                        return sqlState;
-                }
-	
 		public void Close ()
 		{
-			// libodbc.SQLFreeHandle((ushort) OdbcHandleType.Stmt, hstmt);
 		
 			OdbcReturn ret=libodbc.SQLCloseCursor(hstmt);
 			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
@@ -196,6 +179,9 @@ namespace System.Data.Odbc
 
 			if ((behavior & CommandBehavior.CloseConnection)==CommandBehavior.CloseConnection)
 				this.command.Connection.Close();
+			ret = libodbc.SQLFreeHandle( (ushort) OdbcHandleType.Stmt, hstmt);
+			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+				throw new OdbcException(new OdbcError("SQLFreeHandle",OdbcHandleType.Stmt,hstmt));
 		}
 
 		~OdbcDataReader ()
@@ -231,6 +217,10 @@ namespace System.Data.Odbc
                         if ( (ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo)) 
                                 throw new OdbcException (new OdbcError ("SQLGetData", OdbcHandleType.Stmt, hstmt));
 
+			OdbcError odbcErr = null;
+			if ( (ret == OdbcReturn.SuccessWithInfo))
+				odbcErr = new OdbcError ("SQLGetData", OdbcHandleType.Stmt, hstmt);
+
                         if (buffer == null)
                                 return outsize; //if buffer is null,return length of the field
                         
@@ -241,11 +231,10 @@ namespace System.Data.Odbc
                                         copyBuffer = false;
                                         returnVal = -1;
                                 } else {
-                                        string sqlstate = GetSQLState (hstmt, 1);
+                                        string sqlstate = odbcErr.SQLState;
                                         //SQLState: String Data, Right truncated
                                         if (sqlstate != libodbc.SQLSTATE_RIGHT_TRUNC) 
-                                                throw new OdbcException (new OdbcError ("SQLGetData",
-                                                                OdbcHandleType.Stmt, hstmt));
+                                                throw new OdbcException ( odbcErr);
                                         copyBuffer = true;
                                 }
                         } else {
@@ -400,7 +389,6 @@ namespace System.Data.Odbc
 				for (int i = 0; i < cols.Length; i += 1 ) 
 				{
 					OdbcColumn col=GetColumn(i);
-					//Console.WriteLine("{0}:{1}:{2}",col.ColumnName,col.DataType,col.OdbcType);
 
 					schemaRow = dataTableSchema.NewRow ();
 					dataTableSchema.Rows.Add (schemaRow);
@@ -485,14 +473,23 @@ namespace System.Data.Odbc
 						bufsize=50;
 						buffer=new byte[bufsize];  // According to sqlext.h, use SQL_CHAR for decimal
 						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.Char, buffer, bufsize, ref outsize);
+						byte[] temp = new byte[outsize];
+                                                for (int i=0;i<outsize;i++)
+                                                        temp[i]=buffer[i];
+                                                                                                    
 						if (outsize!=-1)
-							DataValue=Decimal.Parse(System.Text.Encoding.Default.GetString(buffer));
+							DataValue=Decimal.Parse(System.Text.Encoding.Default.GetString(temp));
 						break;
 					case OdbcType.TinyInt:
 						short short_data=0;
 						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.TinyInt, ref short_data, 0, ref outsize);
-						DataValue=short_data;
+						DataValue = System.Convert.ToByte (short_data);
 						break;
+					 case OdbcType.SmallInt:
+                                                short sint_data=0;
+                                                ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.SmallInt, ref sint_data, 0, ref outsize);
+                                                DataValue=sint_data;
+                                                break;
 					case OdbcType.Int:
 						int int_data=0;
 						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.Int, ref int_data, 0, ref outsize);
@@ -524,8 +521,17 @@ namespace System.Data.Odbc
 						break;
 					case OdbcType.Timestamp:
 					case OdbcType.DateTime:
+					case OdbcType.Date:
+					case OdbcType.Time:
 						OdbcTimestamp ts_data=new OdbcTimestamp();
-						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.DateTime, ref ts_data, 0, ref outsize);
+						if (col.OdbcType == OdbcType.Timestamp) 
+							ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.Timestamp, ref ts_data, 0, ref outsize);
+						else if (col.OdbcType == OdbcType.DateTime)
+							ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.DateTime, ref ts_data, 0, ref outsize);
+						else if (col.OdbcType == OdbcType.Date)
+							ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.Date, ref ts_data, 0, ref outsize);
+						else  // FIXME: how to get TIME datatype ??
+							ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.DateTime, ref ts_data, 0, ref outsize);
 						if (outsize!=-1) // This means SQL_NULL_DATA 
 							DataValue=new DateTime(ts_data.year,ts_data.month,ts_data.day,ts_data.hour,
 								ts_data.minute,ts_data.second,Convert.ToInt32(ts_data.fraction));
@@ -534,12 +540,11 @@ namespace System.Data.Odbc
                                         case OdbcType.Image :
                                                 bufsize = col.MaxLength + 1;
                                                 buffer = new byte [bufsize];
-                                                long read = GetBytes (ColIndex, 0, buffer, 0, bufsize);
+                                                long read = GetBytes (ordinal, 0, buffer, 0, bufsize);
                                                 ret = OdbcReturn.Success;
                                                 DataValue = buffer;
                                                 break;
 					default:
-						//Console.WriteLine("Fetching unsupported data type as string: "+col.OdbcType.ToString());
 						bufsize=255;
 						buffer=new byte[bufsize];
 						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.Char, buffer, bufsize, ref outsize);
@@ -612,6 +617,8 @@ namespace System.Data.Odbc
 				currentRow=-1;
 			else
 				currentRow++;
+			GetSchemaTable();
+			
 			// Clear cached values from last record
 			foreach (OdbcColumn col in cols)
 			{

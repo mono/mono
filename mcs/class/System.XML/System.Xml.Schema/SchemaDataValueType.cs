@@ -19,6 +19,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using Mono.Xml.Schema;
+
 namespace System.Xml.Schema
 {
 	internal struct QNameValueType
@@ -97,14 +99,14 @@ namespace System.Xml.Schema
 
 	internal struct UriValueType
 	{
-		string value;
+		XmlSchemaUri value;
 
-		public UriValueType (string value)
+		public UriValueType (XmlSchemaUri value)
 		{
 			this.value = value;
 		}
 
-		public string Value {
+		public XmlSchemaUri Value {
 			get { return value; }
 		}
 
@@ -133,7 +135,7 @@ namespace System.Xml.Schema
 
 		public override string ToString ()
 		{
-			return value;
+			return value.ToString ();
 		}
 	}
 

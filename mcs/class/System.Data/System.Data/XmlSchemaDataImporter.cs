@@ -654,6 +654,9 @@ el.ElementType != schemaAnyType)
 					case XmlConstants.AutoIncrementSeed:
 						col.AutoIncrementSeed = int.Parse (attr.Value);
 						break;
+					case XmlConstants.ReadOnly:
+						col.ReadOnly = XmlConvert.ToBoolean (attr.Value);
+						break;
 					case XmlConstants.Ordinal:
 						ordinal = int.Parse (attr.Value);
 						break;

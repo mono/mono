@@ -39,17 +39,37 @@ using System.Web.UI.WebControls;
 
 namespace System.Web.Handlers
 {
+#if NET_2_0
+	[Serializable]
+#endif
+	class TraceNotAvailableException : HttpException
+	{
+		bool notLocal;
+
+		public TraceNotAvailableException (bool notLocal) :
+			base (notLocal ? 403 : 500, "Trace Error")
+		{
+			this.notLocal = notLocal;
+		}
+
+		internal override string Description {
+			get {
+				if (notLocal)
+					return "Trace is not enabled for remote clients.";
+
+				return "Trace.axd is not enabled in the configuration file for this application.";
+			}
+		}
+	}
+
 	public class TraceHandler : IHttpHandler
 	{
 		void IHttpHandler.ProcessRequest (HttpContext context)
 		{
 			TraceManager manager = HttpRuntime.TraceManager;
 
-			if (manager.LocalOnly && !context.Request.IsLocal) {
-				// Need to figure out the error message that goes here
-				// but I only have cassini for testing
-				return;
-			}
+			if (!manager.Enabled || manager.LocalOnly && !context.Request.IsLocal)
+				throw new TraceNotAvailableException (manager.Enabled);
 				
 			HtmlTextWriter output = new HtmlTextWriter (context.Response.Output);
 

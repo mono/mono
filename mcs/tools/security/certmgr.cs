@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// (C) 2004 Novell (http://www.novell.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
 using System;
@@ -51,6 +51,7 @@ namespace Mono.Tools {
 			Console.WriteLine ("\t-crl\tadd/del/put certificate revocation lists");
 			Console.WriteLine ("\t-ctl\tadd/del/put certificate trust lists [unsupported]");
 			Console.WriteLine ("other options");
+			Console.WriteLine ("\t-m\tuse the machine certificate store (default to user)");
 			Console.WriteLine ("\t-v\tverbose mode (display status for every steps)");
 			Console.WriteLine ("\t-?\th[elp]\tDisplay this help message");
 		}
@@ -246,7 +247,8 @@ namespace Mono.Tools {
 
 		static void Delete (ObjectType type, X509Store store, string file, bool verbose) 
 		{
-			switch (type) {
+			throw new NotImplementedException ("Delete not yet supported");
+/*			switch (type) {
 				case ObjectType.Certificate:
 					break;
 				case ObjectType.CRL:
@@ -254,12 +256,13 @@ namespace Mono.Tools {
 					break;
 				default:
 					throw new NotSupportedException (type.ToString ());
-			}
+			}*/
 		}
 
 		static void Put (ObjectType type, X509Store store, string file, bool verbose) 
 		{
-			switch (type) {
+			throw new NotImplementedException ("Put not yet supported");
+/*			switch (type) {
 				case ObjectType.Certificate:
 					break;
 				case ObjectType.CRL:
@@ -267,7 +270,7 @@ namespace Mono.Tools {
 					break;
 				default:
 					throw new NotSupportedException (type.ToString ());
-			}
+			}*/
 		}
 
 		[STAThread]
@@ -295,9 +298,12 @@ namespace Mono.Tools {
 			bool verbose = (GetCommand (args [n]) == "V");
 			if (verbose)
 				n++;
+			bool machine = (GetCommand (args [n]) == "M");
+			if (machine)
+				n++;
 
 			string storeName = args [n++];
-			X509Store store = GetStoreFromName (storeName, false);
+			X509Store store = GetStoreFromName (storeName, machine);
 			if (store == null) {
 				Console.WriteLine ("Invalid Store: {0}", storeName);
 				Console.WriteLine ("Valid stores are: {0}, {1}, {2}, {3} and {4}",
@@ -312,18 +318,24 @@ namespace Mono.Tools {
 			string file = args [n];
 
 			// now action!
-			switch (action) {
+			try {
+				switch (action) {
 				case Action.Add:
 					Add (type, store, file, verbose);
 					break;
 				case Action.Delete:
-					throw new NotImplementedException ("Delete not yet supported");
-					//Delete (type, store, file, verbose);
+					Delete (type, store, file, verbose);
 					break;
 				case Action.Put:
-					throw new NotImplementedException ("Put not yet supported");
-					//Put (type, store, file, verbose);
+					Put (type, store, file, verbose);
 					break;
+				default:
+					throw new NotSupportedException (action.ToString ());
+				}
+			}
+			catch (UnauthorizedAccessException) {
+				Console.WriteLine ("Access to the {0} '{1}' certificate store has been denied.", 
+					(machine ? "machine" : "user"), storeName);
 			}
 		}
 	}

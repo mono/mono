@@ -86,6 +86,11 @@ namespace Mono.Security.X509.Extensions {
 
 		public KeyUsageExtension (X509Extension extension) : base (extension) {}
 
+		public KeyUsageExtension () : base ()
+		{
+			extnOid = "2.5.29.15";
+		}
+
 		protected override void Decode () 
 		{
 			ASN1 bitString = new ASN1 (extnValue.Value);
@@ -94,6 +99,18 @@ namespace Mono.Security.X509.Extensions {
 			int i = 1; // byte zero has the number of unused bits (ASN1's BITSTRING)
 			while (i < bitString.Value.Length)
 				kubits = (kubits << 8) + bitString.Value [i++];
+		}
+
+		protected override void Encode ()
+		{
+			if (extnValue == null) {
+				extnValue = new ASN1 (0x03, new byte[] { 0x00, (byte)kubits });
+			}
+		}
+
+		public KeyUsages KeyUsage {
+			get { return (KeyUsages) kubits; }
+			set { kubits = Convert.ToInt32 (value, CultureInfo.InvariantCulture); }
 		}
 
 		public override string Name {

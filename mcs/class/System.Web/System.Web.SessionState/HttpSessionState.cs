@@ -59,7 +59,7 @@ public sealed class HttpSessionState : ICollection, IEnumerable
 	{
 		_id = id;
 		_dict = dict;
-		_staticObjects = staticObjects;
+		_staticObjects = staticObjects.Clone ();
 		_timeout = timeout;
 		_newSession = newSession;
 		_isCookieless = isCookieless;

@@ -42,15 +42,18 @@ namespace Mono.CSharp {
 		public static bool CheckContext (EmitContext ec, Location loc)
 		{
 			if (ec.CurrentBranching.InFinally (true)){
-				Report.Error (-208, loc, "yield statement can not appear in finally clause");
+				Report.Error (1625, loc, "Cannot yield in the body of a " +
+					      "finally clause");
 				return false;
 			}
 			if (ec.CurrentBranching.InCatch ()){
-				Report.Error (-209, loc, "yield statement can not appear in the catch clause");
+				Report.Error (1631, loc, "Cannot yield in the body of a " +
+					      "catch clause");
 				return false;
 			}
 			if (ec.InAnonymousMethod){
-				Report.Error (-209, loc, "yield statement can not appear inside an anonymoud method");
+				Report.Error (1621, loc, "yield statement can not appear " +
+					      "inside an anonymoud method");
 				return false;
 			}
 
@@ -651,12 +654,12 @@ namespace Mono.CSharp {
 
 		static bool IsIEnumerable (Type t)
 		{
-			return t == TypeManager.ienumerable_type || TypeManager.ImplementsInterface (t, TypeManager.ienumerable_type);
+			return t == TypeManager.ienumerable_type;
 		}
 
 		static bool IsIEnumerator (Type t)
 		{
-			return t == TypeManager.ienumerator_type || TypeManager.ImplementsInterface (t, TypeManager.ienumerator_type);
+			return t == TypeManager.ienumerator_type;
 		}
 		
 		//
@@ -666,18 +669,17 @@ namespace Mono.CSharp {
 		{
 			if (!(IsIEnumerator (return_type) || IsIEnumerable (return_type))){
 				Report.Error (
-					-205, loc, String.Format (
-						"The method `{0}' contains a yield statement, but has an invalid return type for an iterator `{1}'",
-						name, TypeManager.CSharpName (return_type)));
+					1624, loc, "The body of `{0}' cannot be an iterator " +
+					"block because '{1}' is not an iterator interface type",
+					name, TypeManager.CSharpName (return_type));
 				return null;
 			}
 
 			for (int i = 0; i < parameters.Count; i++){
 				Parameter.Modifier mod = parameters.ParameterModifier (i);
 				if ((mod & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0){
-					Report.Error (-207, loc, String.Format (
-							      "Parameter {0} of `{1}' is {2} and not allowed for an iterator method",
-							      i+1, name, parameters.ParameterDesc (i)));
+					Report.Error (1623, loc, "Iterators cannot have ref " +
+						      "or out parameters");
 					return null;
 				}
 			}

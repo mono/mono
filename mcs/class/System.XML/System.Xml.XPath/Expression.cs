@@ -1443,7 +1443,7 @@ namespace System.Xml.XPath
 			object objResult = var.Evaluate (context);
 			XPathNodeIterator iterResult = objResult as XPathNodeIterator;
 			if (iterResult != null)
-				return iterResult.Clone ();
+				return new WrapperIterator (iterResult.Clone (), iter.NamespaceManager);
 			return objResult;
 		}
 	}

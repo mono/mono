@@ -65,22 +65,27 @@ namespace System.Web.Compilation
 
 		public int BeginLine {
 			get { return beginLine; }
+			set { beginLine = value; }
 		}
 
 		public int EndLine {
 			get { return endLine; }
+			set { endLine = value; }
 		}
 
 		public int BeginColumn {
 			get { return beginColumn; }
+			set { beginColumn = value; }
 		}
 
 		public int EndColumn {
 			get { return endColumn; }
+			set { endColumn = value; }
 		}
 
 		public string PlainText {
 			get { return plainText; }
+			set { plainText = value; }
 		}
 	}
 }

@@ -147,7 +147,7 @@ namespace System.Net
 			get { return webHeaders ["Accept"]; }
 			set {
 				CheckRequestStarted ();
-				webHeaders.SetInternal ("Accept", value);
+				webHeaders.RemoveAndAdd ("Accept", value);
 			}
 		}
 		
@@ -199,7 +199,7 @@ namespace System.Net
 				if (keepAlive && val.IndexOf ("keep-alive") == -1)
 					value = value + ", Keep-Alive";
 				
-				webHeaders.SetInternal ("Connection", value);
+				webHeaders.RemoveAndAdd ("Connection", value);
 			}
 		}		
 		
@@ -226,12 +226,11 @@ namespace System.Net
 		public override string ContentType { 
 			get { return webHeaders ["Content-Type"]; }
 			set {
-				CheckRequestStarted ();
 				if (value == null || value.Trim().Length == 0) {
 					webHeaders.RemoveInternal ("Content-Type");
 					return;
 				}
-				webHeaders.SetInternal ("Content-Type", value);
+				webHeaders.RemoveAndAdd ("Content-Type", value);
 			}
 		}
 		
@@ -266,7 +265,7 @@ namespace System.Net
 				if (val == "100-continue")
 					throw new ArgumentException ("100-Continue cannot be set with this property.",
 								     "value");
-				webHeaders.SetInternal ("Expect", value);
+				webHeaders.RemoveAndAdd ("Expect", value);
 			}
 		}
 		
@@ -452,7 +451,7 @@ namespace System.Net
 				if (!sendChunked)
 					throw new ArgumentException ("SendChunked must be True", "value");
 
-				webHeaders.SetInternal ("Transfer-Encoding", value);
+				webHeaders.RemoveAndAdd ("Transfer-Encoding", value);
 			}
 		}
 		
@@ -484,7 +483,7 @@ namespace System.Net
 		}
 		
 		internal bool ProxyQuery {
-			get { return servicePoint.UsesProxy; }
+			get { return servicePoint.UsesProxy && !servicePoint.UseConnect; }
 		}
 		
 		// Methods
@@ -525,7 +524,7 @@ namespace System.Net
 				value += ",";
 			else
 				throw new InvalidOperationException ("rangeSpecifier");
-			webHeaders.SetInternal ("Range", value + range + "-");	
+			webHeaders.RemoveAndAdd ("Range", value + range + "-");	
 		}
 		
 		public void AddRange (string rangeSpecifier, int from, int to)
@@ -541,7 +540,7 @@ namespace System.Net
 				value += ",";
 			else
 				throw new InvalidOperationException ("rangeSpecifier");
-			webHeaders.SetInternal ("Range", value + from + "-" + to);	
+			webHeaders.RemoveAndAdd ("Range", value + from + "-" + to);	
 		}
 		
 		public override int GetHashCode ()
@@ -584,7 +583,6 @@ namespace System.Net
 				initialMethod = method;
 				if (haveRequest) {
 					if (writeStream != null) {
-						Monitor.Exit (this);
 						asyncWrite.SetCompleted (true, writeStream);
 						asyncWrite.DoCallback ();
 						return asyncWrite;
@@ -830,7 +828,7 @@ namespace System.Net
 				throw new WebException ("No Location header found for " + (int) code,
 							WebExceptionStatus.ProtocolError);
 
-			string host = actualUri.Host;
+			Uri prev = actualUri;
 			try {
 				actualUri = new Uri (actualUri, uriString);
 			} catch (Exception) {
@@ -839,7 +837,8 @@ namespace System.Net
 									WebExceptionStatus.ProtocolError);
 			}
 
-			hostChanged = (actualUri.Host != host);
+			hostChanged = (actualUri.Scheme != prev.Scheme || actualUri.Host != prev.Host ||
+					actualUri.Port != prev.Port);
 			return true;
 		}
 
@@ -852,13 +851,13 @@ namespace System.Net
 				webHeaders.RemoveInternal ("Transfer-Encoding");
 			} else if (sendChunked) {
 				continue100 = true;
-				webHeaders.SetInternal ("Transfer-Encoding", "chunked");
+				webHeaders.RemoveAndAdd ("Transfer-Encoding", "chunked");
 				webHeaders.RemoveInternal ("Content-Length");
 			}
 
 			if (actualVersion == HttpVersion.Version11 && continue100 &&
 			    servicePoint.SendContinue) { // RFC2616 8.2.3
-				webHeaders.SetInternal ("Expect" , "100-continue");
+				webHeaders.RemoveAndAdd ("Expect" , "100-continue");
 				expectContinue = true;
 			} else {
 				webHeaders.RemoveInternal ("Expect");
@@ -871,9 +870,9 @@ namespace System.Net
 					 servicePoint.ProtocolVersion == HttpVersion.Version10);
 
 			if (keepAlive && (version == HttpVersion.Version10 || spoint10)) {
-				webHeaders.SetInternal (connectionHeader, "keep-alive");
+				webHeaders.RemoveAndAdd (connectionHeader, "keep-alive");
 			} else if (!keepAlive && version == HttpVersion.Version11) {
-				webHeaders.SetInternal (connectionHeader, "close");
+				webHeaders.RemoveAndAdd (connectionHeader, "close");
 			}
 
 			webHeaders.SetInternal ("Host", actualUri.Authority);
@@ -883,9 +882,9 @@ namespace System.Net
 					webHeaders.SetInternal ("Cookie", cookieHeader);
 			}
 
-			if (!usedPreAuth && preAuthenticate) {
+			if (!usedPreAuth && preAuthenticate)
 				DoPreAuthenticate ();
-			}
+
 			return webHeaders.ToString ();
 		}
 
@@ -981,14 +980,15 @@ namespace System.Net
 			}
 		}
 
-		internal void SetResponseError (WebExceptionStatus status, Exception e)
+		internal void SetResponseError (WebExceptionStatus status, Exception e, string where)
 		{
 			WebAsyncResult r = asyncRead;
 			if (r == null)
 				r = asyncWrite;
 
 			if (r != null) {
-				WebException wexc = new WebException ("Error getting response stream: " + status, e, status, null); 
+				string msg = String.Format ("Error getting response stream ({0}): {1}", where, status);
+				WebException wexc = new WebException (msg, e, status, null); 
 				r.SetCompleted (false, wexc);
 				r.DoCallback ();
 				asyncRead = null;

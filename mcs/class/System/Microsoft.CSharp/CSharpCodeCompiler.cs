@@ -97,7 +97,7 @@ namespace Mono.CSharp
 			StringCollection assemblies = options.ReferencedAssemblies;
 
 			foreach (CodeCompileUnit e in ea) {
-				fileNames [i] = GetTempFileNameWithExtension (options.TempFiles, "cs");
+				fileNames [i] = GetTempFileNameWithExtension (options.TempFiles, i.ToString () + ".cs");
 				FileStream f=new FileStream(fileNames[i],FileMode.OpenOrCreate);
 				StreamWriter s=new StreamWriter(f, Encoding.UTF8);
 				if (e.ReferencedAssemblies != null) {
@@ -183,7 +183,7 @@ namespace Mono.CSharp
 			string[] fileNames=new string[sources.Length];
 			int i=0;
 			foreach (string source in sources) {
-				fileNames [i] = GetTempFileNameWithExtension (options.TempFiles, "cs");
+				fileNames [i] = GetTempFileNameWithExtension (options.TempFiles, i.ToString () + ".cs");
 				FileStream f=new FileStream(fileNames[i],FileMode.OpenOrCreate);
 				StreamWriter s=new StreamWriter(f);
 				s.Write(source);

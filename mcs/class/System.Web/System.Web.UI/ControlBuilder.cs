@@ -66,6 +66,7 @@ namespace System.Web.UI {
 		internal int renderIndex;
 		internal bool isProperty;
 		internal ILocation location;
+		ArrayList otherTags;
 
 		public ControlBuilder ()
 		{
@@ -89,6 +90,16 @@ namespace System.Web.UI {
 			this.attribs = attribs;
 			this.line = line;
 			this.fileName = sourceFileName;
+		}
+
+		internal void EnsureOtherTags ()
+		{
+			if (otherTags == null)
+				otherTags = new ArrayList ();
+		}
+		
+		internal ArrayList OtherTags {
+			get { return otherTags; }
 		}
 
 		public Type ControlType {

@@ -29,12 +29,17 @@ class FindProvides {
         }
 
         static void PrintProvides (string s)
-        { 
+        {
                 try {
                         Assembly a = Assembly.LoadFrom (s);
                         AssemblyName an = a.GetName ();
 
-                        Console.WriteLine ("mono({0}) = {1}", an.Name, an.Version);
+                        // hack to work around the issue with a 2.0 corlib
+			if (s.Trim ().EndsWith ("2.0/mscorlib.dll"))
+                                Console.WriteLine  ("mono({0}) = {1}", "mscorlib", "2.0.3600.0");
+                        else
+                                Console.WriteLine ("mono({0}) = {1}", an.Name, an.Version);
+
                 } catch {}
         }
 }

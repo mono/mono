@@ -43,6 +43,45 @@ namespace MonoTests.System.Net.Sockets
 			Socket.Select (list, list, list, 1000);
 		}
 		
+		private bool BlockingConnect (bool block)
+		{
+			IPEndPoint ep = new IPEndPoint(IPAddress.Any, 1234);
+			Socket server = new Socket(AddressFamily.InterNetwork,
+						   SocketType.Stream,
+						   ProtocolType.Tcp);
+			server.Bind(ep);
+			server.Blocking=block;
+
+			server.Listen(0);
+
+			Socket conn = new Socket (AddressFamily.InterNetwork,
+						  SocketType.Stream,
+						  ProtocolType.Tcp);
+			conn.Connect (ep);
+
+			Socket client = server.Accept();
+			bool client_block = client.Blocking;
+
+			client.Close();
+			conn.Close();
+			server.Close();
+			
+			return(client_block);
+		}
+
+		[Test]
+		public void AcceptBlockingStatus()
+		{
+			bool block;
+
+			block = BlockingConnect(true);
+			Assertion.AssertEquals ("BlockingStatus01",
+						block, true);
+
+			block = BlockingConnect(false);
+			Assertion.AssertEquals ("BlockingStatus02",
+						block, false);
+		}
 	}
 
 }

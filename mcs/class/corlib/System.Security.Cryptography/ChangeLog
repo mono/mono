@@ -1,3 +1,9 @@
+2004-07-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DES.cs: Fixed FeedbackSizeValue to 8.
+	* RC2.cs: Fixed FeedbackSizeValue to 8.
+	* TripleDES.cs: Fixed FeedbackSizeValue to 8.
+
 2004-06-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoStream.cs: Removed the block reduction. This seems to be done

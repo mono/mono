@@ -639,6 +639,7 @@ namespace System.Web
 			{
 				bool ready_sync = false;
 				IStateHandler handler;
+				bool timeoutPossible = false;
 
 				lock (_app) {
 					_app.OnStateExecuteEnter ();
@@ -662,14 +663,25 @@ namespace System.Web
 
 							handler = _handlers [_currentStateIdx];
 							_countSteps++;
-							lasterror = ExecuteState (handler, ref ready_sync);
-							if (ready_sync) 
-								_countSyncSteps++;
+							timeoutPossible = handler.PossibleToTimeout;
+							try {
+								if (timeoutPossible)
+									HttpRuntime.TimeoutManager.Add (_app.Context);
+	
+								lasterror = ExecuteState (handler, ref ready_sync);
+								if (ready_sync) 
+									_countSyncSteps++;
+							} finally {
+								if (timeoutPossible)
+									HttpRuntime.TimeoutManager.Remove (_app.Context);
+							}
 						} while (ready_sync && _currentStateIdx < _endStateIdx);
 
 						if (null != lasterror)
 							_app.HandleError (lasterror);
 					} finally {
+
+
 						_app.OnStateExecuteLeave ();
 					}
 				}
@@ -805,7 +817,12 @@ namespace System.Web
 					return ret;
 				} catch (DirectoryNotFoundException) {
 					throw new HttpException (404, "Cannot find '" + file + "'.");
-				} catch (FileNotFoundException) {
+				} catch (FileNotFoundException fnf) {
+					string fname = fnf.FileName;
+					if (fname != null && fname != "") {
+						file = Path.GetFileName (fname);
+					}
+
 					throw new HttpException (404, "Cannot find '" + file + "'.");
 				}
 			}
@@ -888,14 +905,12 @@ namespace System.Web
 			SaveThreadCulture ();
 			_savedContext = HttpContext.Context;
 			HttpContext.Context = _Context;
-			HttpRuntime.TimeoutManager.Add (_Context);
 			SetPrincipal (Context.User);
 		}
 
 		internal void OnStateExecuteLeave ()
 		{
 			RestoreThreadCulture ();
-			HttpRuntime.TimeoutManager.Remove (_Context);
 			HttpContext.Context = _savedContext;
 			RestorePrincipal ();
 		}
@@ -1145,10 +1160,8 @@ namespace System.Web
 				if (null != _Session)
 					return _Session;
 
-				if (null != _Context && null != _Context.Session) {
-					_Session = _Context.Session;
-					return _Session;
-				}
+				if (null != _Context && null != _Context.Session)
+					return _Context.Session;
 
 				throw new HttpException ("Failed to get session object");
 			}

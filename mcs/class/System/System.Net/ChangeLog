@@ -1,3 +1,105 @@
+2004-10-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: don't fail if the request has already been sent
+	when accessing ContentType setter. Fixes bug #68848.
+
+2004-10-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ChunkStream.cs:
+	(WantMore): we're not done until we get a 0 chunk size and the trailer.
+	The 0 can be expressed as more than one character too (ie, 000000).
+
+	* HttpWebRequest.cs: new argument in SetResponseError.
+	* WebConnection.cs: added argument to HandleError as a hint for
+	debugging.
+	(Connect): make the chunked stream be in the expected state when
+	reusing.
+
+	* WebConnectionStream.cs: removed unused method (ResetWriteBuffer).
+
+2004-10-11 David Sheldon <dave-mono@earth.li>
+
+	* HttpWebRequest.cs: Use RemoveAndAdd for AddRange. Fixes unittest. 
+
+2004-10-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: ProxyQuery returns true when we use a proxy without
+	tunneling a secure connection.
+
+	* ServicePoint.cs: added UseConnect property.
+
+	* ServicePointManager.cs: set the UseConnect property when we use a http
+	proxy for a https connection.
+
+	* WebConnection.cs: setup the tunnled connection when using a proxy and
+	https.
+
+2004-10-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: ProxyQuery returns true when we use a proxy without
+	tunneling a secure connection.
+
+	* ServicePoint.cs: added UseConnect property.
+
+	* ServicePointManager.cs: set the UseConnect property when we use a http
+	proxy for a https connection.
+
+	* WebConnection.cs: setup the tunnled connection when using a proxy and
+	https.
+
+2004-09-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebResponse.cs: remove unused SplitValue method.
+
+2004-08-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Cookie.cs: don't fail when using default constructor. Fixes bug
+	#62890.
+
+2004-08-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebResponse.cs: set-cookie and set-cookie2 can be present more
+	than once and have multiple values. Don't rely on string.split when
+	parsing cookie values.
+
+	* WebHeaderCollection.cs: same thing for set-cookie and set-cookie2.
+	Fixed GetValues (it was splitting values that contained a comma) and
+	changed SetInternal to handle multi-value headers.
+
+	Fixes bug #62744.
+
+2004-07-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebProxy.cs: fix scheme detection. Patch by Konstantin Triger
+	(kostat@mainsoft.com).
+
+2004-07-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: detect changes in scheme or port when redirecting.
+	Fixes las take on bug 61218.
+
+2004-07-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs: moved loading of the ssl stream Type to its own
+	method. Don't create a new ssl stream if we're reusing the connection.
+
+	* WebConnectionStream.cs: ensure the number of bytes copied in ReadAll
+	is the expected even if the dta from the server has extra bytes.
+
+2004-07-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs:
+	* WebConnectionStream.cs: when the status code is 1xx, 204 or 304,
+	"responses MUST NOT include a message-body". We tried to read the
+	stream even when getting those codes and considered the 0 length
+	read as a failure.
+
+2004-07-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: removed bogus Monitor.Exit.
+	* WebConnection.cs: use Address instead of RequestUri when checking for
+	the scheme in order to select the stream type. Fixes bug #61218.
+
 2004-06-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ChunkStream.cs: added ChunkLeft property.

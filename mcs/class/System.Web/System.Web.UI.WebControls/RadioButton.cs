@@ -103,10 +103,14 @@ namespace System.Web.UI.WebControls
 		private string UniqueGroupNamePrivate
 		{
 			get {
-				string retVal = GroupName;
-				int unique = UniqueID.LastIndexOf (':');
-				if (unique >= 0)
-					retVal += UniqueID.Substring (unique + 1);
+				string retVal;
+				string uid = UniqueID;
+				int unique = uid.LastIndexOf (':');
+				if (unique == -1) {
+					retVal = GroupName;
+				} else {
+					retVal = uid.Substring (0, unique + 1) + GroupName;
+				}
 
 				return retVal;
 			}

@@ -140,6 +140,7 @@ namespace System.Web.Mail {
 	    string boundary = MailUtil.GenerateBoundary();
 		
 	    // set the Content-Type header to multipart/mixed
+	    string bodyContentType = msg.Header.ContentType;
 	    msg.Header.ContentType = 
 		String.Format( "multipart/mixed;\r\n   boundary={0}" , boundary );
 		
@@ -151,7 +152,23 @@ namespace System.Web.Mail {
 	    smtp.WriteBoundary( boundary );
 		
 	    MailHeader partHeader = new MailHeader();
-	    partHeader.ContentType = "text/plain";
+	    partHeader.ContentType = bodyContentType;
+
+#if NET_1_1
+		// Add all the custom headers to body part as specified in 
+ 		//Fields property of MailMessageWrapper
+		
+		//Remove fields specific for authenticating to SMTP server.
+                                                                                
+        	if (msg.Fields.Data ["http://schemas.microsoft.com/cdo/configuration/smtpauthenticate"] != null)
+            		msg.Fields.Data.Remove ("http://schemas.microsoft.com/cdo/configuration/smtpauthenticate");
+        	if (msg.Fields.Data ["http://schemas.microsoft.com/cdo/configuration/sendusername"] != null)
+            		msg.Fields.Data.Remove ("http://schemas.microsoft.com/cdo/configuration/sendusername");
+	        if (msg.Fields.Data ["http://schemas.microsoft.com/cdo/configuration/sendpassword"] != null)
+        	    	msg.Fields.Data.Remove ("http://schemas.microsoft.com/cdo/configuration/sendpassword");
+
+ 		partHeader.Data.Add(msg.Fields.Data);
+#endif
 		
 	    smtp.WriteHeader( partHeader );
 	    	

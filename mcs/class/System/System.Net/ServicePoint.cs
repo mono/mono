@@ -52,6 +52,7 @@ namespace System.Net
 		bool usesProxy;
 		Hashtable groups;
 		bool sendContinue = true;
+		bool useConnect;
 #if NET_1_1
 		bool useNagle;
 #endif
@@ -158,6 +159,11 @@ namespace System.Net
 		internal bool UsesProxy {
 			get { return usesProxy; }
 			set { usesProxy = value; }
+		}
+
+		internal bool UseConnect {
+			get { return useConnect; }
+			set { useConnect = value; }
 		}
 
 		internal bool AvailableForRecycling {

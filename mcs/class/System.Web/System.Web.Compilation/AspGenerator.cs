@@ -34,6 +34,7 @@ using System.IO;
 using System.Text;
 using System.Web.Caching;
 using System.Web.UI;
+using System.Web.UI.HtmlControls;
 using System.Web.Util;
 
 namespace System.Web.Compilation
@@ -49,7 +50,7 @@ namespace System.Web.Compilation
 			this.Location = location;
 		}
 	}
-	
+
 	class BuilderLocationStack : Stack
 	{
 		public override void Push (object o)
@@ -127,7 +128,46 @@ namespace System.Web.Compilation
 			get { return current.Filename; }
 		}
 	}
-	
+
+	class TagStack
+	{
+		Stack tags;
+
+		public TagStack ()
+		{
+			tags = new Stack ();
+		}
+		
+		public void Push (string tagid)
+		{
+			tags.Push (tagid);
+		}
+
+		public string Pop ()
+		{
+			if (tags.Count == 0)
+				return null;
+
+			return (string) tags.Pop ();
+		}
+
+		public bool CompareTo (string tagid)
+		{
+			if (tags.Count == 0)
+				return false;
+
+			return 0 == String.Compare (tagid, (string) tags.Peek (), true);
+		}
+		
+		public int Count {
+			get { return tags.Count; }
+		}
+
+		public string Current {
+			get { return (string) tags.Peek (); }
+		}
+	}
+
 	class AspGenerator
 	{
 		ParserStack pstack;
@@ -138,7 +178,10 @@ namespace System.Web.Compilation
 		bool inScript, javascript;
 		ILocation location;
 		bool isApplication;
+		StringBuilder tagInnerText = new StringBuilder ();
 		static Hashtable emptyHash = new Hashtable ();
+		bool inForm;
+		TagStack formTags;
 
 		public AspGenerator (TemplateParser tparser)
 		{
@@ -283,12 +326,22 @@ namespace System.Web.Compilation
 				tparser.AddDirective (tagid, attributes.GetDictionary (null));
 				break;
 			case TagType.Tag:
-				if (!ProcessTag (tagid, attributes, tagtype))
-					TextParsed (location, location.PlainText);
+				if (ProcessTag (tagid, attributes, tagtype))
+					break;
+
+				if (inForm) {
+					stack.Builder.EnsureOtherTags ();
+					stack.Builder.OtherTags.Add (tagid);
+				}
+
+				TextParsed (location, location.PlainText);
 				break;
 			case TagType.Close:
-				if (!CloseControl (tagid))
-					TextParsed (location, location.PlainText);
+				bool notServer = (inForm && TryRemoveTag (tagid, stack.Builder.OtherTags));
+				if (!notServer && CloseControl (tagid))
+					break;
+				
+				TextParsed (location, location.PlainText);
 				break;
 			case TagType.SelfClosing:
 				int count = stack.Count;
@@ -319,8 +372,8 @@ namespace System.Web.Compilation
 
 				if (isvirtual) {
 					file = tparser.MapPath (file);
-				} else if (!Path.IsPathRooted (file)) {
-					file = UrlUtils.Combine (tparser.BaseVirtualDir, file);
+				} else {
+					file = GetIncludeFilePath (tparser.BaseDir, file);
 				}
 
 				InitParser (file);
@@ -332,6 +385,28 @@ namespace System.Web.Compilation
 			//PrintLocation (location);
 		}
 
+		static bool TryRemoveTag (string tagid, ArrayList otags)
+		{
+			if (otags == null || otags.Count == 0)
+				return false;
+
+			int idx = otags.Count - 1;
+			string otagid = (string) otags [idx];
+			if (0 != String.Compare (tagid, otagid, true))
+				return false;
+
+			otags.RemoveAt (idx);
+			return true;
+		}
+
+		static string GetIncludeFilePath (string basedir, string filename)
+		{
+			if (Path.DirectorySeparatorChar == '/')
+				filename = filename.Replace ("\\", "/");
+
+			return Path.GetFullPath (Path.Combine (basedir, filename));
+		}
+		
 		void TextParsed (ILocation location, string text)
 		{
 			if (text.IndexOf ("<%") != -1 && !inScript) {
@@ -359,7 +434,11 @@ namespace System.Web.Compilation
 			if (tparser.DefaultDirectiveName == "application" && t.Trim () != "")
 				throw new ParseException (location, "Content not valid for application file.");
 
-			stack.Builder.AppendLiteralString (t);
+			ControlBuilder current = stack.Builder;
+			current.AppendLiteralString (t);
+			if (current.NeedsTagInnerText ()) {
+				tagInnerText.Append (t);
+			}
 		}
 
 		bool ProcessTag (string tagid, TagAttributes atts, TagType tagtype)
@@ -409,6 +488,14 @@ namespace System.Web.Compilation
 
 			builder.location = location;
 			builder.ID = htable ["id"] as string;
+			if (typeof (HtmlForm).IsAssignableFrom (builder.ControlType)) {
+				if (inForm)
+					throw new ParseException (location, "Only one <form> allowed.");
+
+				inForm = true;
+				formTags = new TagStack ();
+			}
+
 			if (builder.HasBody () && !(builder is ObjectTagBuilder)) {
 				if (builder is TemplateBuilder) {
 				//	push the id list
@@ -446,8 +533,10 @@ namespace System.Web.Compilation
 
 					return true;
 				} else {
-					Parser.VerbatimID = "script";
-					javascript = true;
+					if (tagtype != TagType.SelfClosing) {
+						Parser.VerbatimID = "script";
+						javascript = true;
+					}
 					TextParsed (location, location.PlainText);
 					return true;
 				}
@@ -485,6 +574,20 @@ namespace System.Web.Compilation
 
 			// if (current is TemplateBuilder)
 			//	pop from the id list
+			if (current.NeedsTagInnerText ()) {
+				try { 
+					current.SetTagInnerText (tagInnerText.ToString ());
+				} catch (Exception e) {
+					throw new ParseException (current.location, e.Message, e);
+				}
+
+				tagInnerText.Length = 0;
+			}
+
+			if (typeof (HtmlForm).IsAssignableFrom (current.ControlType)) {
+				inForm = false;
+			}
+
 			current.CloseControl ();
 			stack.Pop ();
 			stack.Builder.AppendSubBuilder (current);

@@ -136,7 +136,13 @@ namespace System.Runtime.Remoting
 
 		protected void DisposeServerObject()
 		{
-			_serverObject = null;
+			// Detach identity from server object to avoid problems if the
+			// object is marshalled again.
+			
+			if (_serverObject != null) {
+				_serverObject.ObjectIdentity = null;
+				_serverObject = null;
+			}
 		}
 	}
 

@@ -184,12 +184,15 @@ namespace System.Web.Compilation
 			str = str.Substring (2).Trim ();
 			int len = str.Length;
 			int lastQuote = str.LastIndexOf ('"');
-			if (len < 10 || lastQuote != len - 1 || !str.StartsWith ("#include "))
+			if (len < 10 || lastQuote != len - 1)
+				return false;
+
+			if (!str.ToLower ().StartsWith ("#include "))
 				return false;
 
 			str = str.Substring (9).Trim ();
-			bool isfile = (str.StartsWith ("file"));
-			if (!isfile && !str.StartsWith ("virtual"))
+			bool isfile = (str.ToLower ().StartsWith ("file"));
+			if (!isfile && !str.ToLower ().StartsWith ("virtual"))
 				return false;
 
 			pathType = (isfile) ? "file" : "virtual";
@@ -379,8 +382,11 @@ namespace System.Web.Compilation
 		void GetServerTag (out TagType tagtype, out string id, out TagAttributes attributes)
 		{
 			string inside_tags;
+			bool old = tokenizer.ExpectAttrValue;
 
+			tokenizer.ExpectAttrValue = false;
 			if (Eat ('@')){
+				tokenizer.ExpectAttrValue = old;
 				tagtype = TagType.Directive;
 				id = "";
 				if (Eat (Token.DIRECTIVE))
@@ -394,6 +400,7 @@ namespace System.Web.Compilation
 			}
 			
 			if (Eat (Token.DOUBLEDASH)) {
+				tokenizer.ExpectAttrValue = old;
 				tokenizer.Verbatim = true;
 				inside_tags = GetVerbatim (tokenizer.get_token (), "--%>");
 				tokenizer.Verbatim = false;
@@ -403,6 +410,7 @@ namespace System.Web.Compilation
 				return;
 			}
 
+			tokenizer.ExpectAttrValue = old;
 			bool varname;
 			bool databinding;
 			varname = Eat ('=');

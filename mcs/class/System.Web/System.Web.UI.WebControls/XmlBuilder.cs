@@ -2,8 +2,10 @@
 // System.Web.UI.WebControls.XmlBuilder.cs
 //
 // Author:
-//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+// 	Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//	Gonzalo Paniagua Javier (gonzalo@novell.com)
 //
+// Copyright (c) 2004 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -29,14 +31,16 @@
 
 using System;
 using System.Collections;
+using System.Web.Compilation;
 using System.Web.UI;
+using System.Xml;
 
 namespace System.Web.UI.WebControls
 {
-	internal class XmlBuilder : ControlBuilder
+	class XmlBuilder : ControlBuilder
 	{
 		public override void AppendLiteralString (string s)
-		{	
+		{
 		}
 
 		public override Type GetChildControlType (string tagName, IDictionary attribs)
@@ -49,10 +53,26 @@ namespace System.Web.UI.WebControls
 			return true;
 		}
 
-		[MonoTODO ("find out what this does and implement")]
 		public override void SetTagInnerText (string text)
 		{
-			throw new NotImplementedException ();
+			string trimmed = text.Trim ();
+			if (trimmed == "")
+				return;
+
+			XmlDocument doc = new XmlDocument ();
+			try {
+				doc.LoadXml (text);
+			} catch (XmlException xmle) {
+				Location newloc = new Location (location);
+				if (xmle.LineNumber >= 0)
+					newloc.BeginLine += xmle.LineNumber - 1;
+
+				location = newloc;
+				throw;
+			}
+
+			base.AppendLiteralString (trimmed);
 		}
 	}
 }
+

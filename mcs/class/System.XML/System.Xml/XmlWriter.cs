@@ -273,7 +273,7 @@ namespace System.Xml
 			case XmlNodeType.EndEntity:
 				break;
 			case XmlNodeType.None:
-				return;	// Do nothing, nor reporting errors.
+				break;	// Do nothing, nor reporting errors.
 			default:
 				throw new XmlException ("Unexpected node " + reader.Name + " of type " + reader.NodeType);
 			}

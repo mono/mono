@@ -45,7 +45,6 @@ namespace System.Web.Services.Protocols {
 		CookieContainer cookieContainer;
 		IWebProxy proxy;
 		string userAgent;
-		CookieCollection prevCookies;
 		
 #if NET_1_1
 		bool _unsafeAuthenticated;
@@ -117,40 +116,24 @@ namespace System.Web.Services.Protocols {
 
 		#region Methods
 
-		internal virtual void AddCookies (Uri uri)
-		{
-			if (cookieContainer == null)
-				cookieContainer = new CookieContainer ();
-
-			if (prevCookies == null || prevCookies.Count == 0)
-				return;
-
-			CookieCollection coll = cookieContainer.GetCookies (uri);
-			foreach (Cookie prev in prevCookies) {
-				bool dont = false;
-				foreach (Cookie c in coll) {
-					if (c.Equals (prev)) {
-						dont = true;
-						break;
-					}
-				}
-
-				if (dont == false)
-					cookieContainer.Add (prev);
-			}
-		}
-
 		internal virtual void CheckForCookies (HttpWebResponse response)
 		{
 			CookieCollection cookies = response.Cookies;
-			if (cookies.Count == 0)
+			if (cookieContainer == null || cookies.Count == 0)
 				return;
 
-			if (prevCookies == null)
-				prevCookies = new CookieCollection ();
-
-			foreach (Cookie c in cookies)
-				prevCookies.Add (c);
+			CookieCollection coll = cookieContainer.GetCookies (uri);
+			foreach (Cookie c in cookies) {
+				bool add = true;
+				foreach (Cookie prev in coll) {
+					if (c.Equals (prev)) {
+						add = false;
+						break;
+					}
+				}
+				if (add)
+					cookieContainer.Add (c);
+			}
 		}
 		
 		protected override WebRequest GetWebRequest (Uri uri)
@@ -164,7 +147,6 @@ namespace System.Web.Services.Protocols {
 			if (clientCertificates != null)
 				request.ClientCertificates.AddRange (clientCertificates);
 
-			AddCookies (uri);
 			request.CookieContainer = cookieContainer;
 			if (proxy != null)
 				request.Proxy = proxy;

@@ -1,3 +1,51 @@
+2004-09-19  Dick Porter  <dick@ximian.com>
+
+	* UnexceptionalStreamWriter.cs: 
+	* UnexceptionalStreamReader.cs: Wrappers around StreamWriter and
+	StreamReader that catch IOException.  Used by System.Console so
+	that graphical applications dont get IO errors when their
+	stdin/out/err vanishes (ie when they spew debug output.)
+
+2004-09-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Stream.cs: Close() does not call Flush(). Fixes bug #65340.
+
+2004-08-26 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* StreamWriter.cs: avoid String.ToCharArray for perf.
+
+2004-08-18  Dick Porter  <dick@ximian.com>
+
+	* StreamWriter.cs: Flush the buffer if AutoFlush is set to true.
+	Fixes bug 63063, patch by Laurent Debacker (debackerl@yahoo.com).
+
+2004-08-13  Dick Porter  <dick@ximian.com>
+
+	* StreamWriter.cs: Allow FileShare.Read access to the underlying
+	FileStream, to be compatible with MS.  Fixes bug 62152.
+
+2004-07-06  Dick Porter  <dick@ximian.com>
+
+	* MonoIO.cs: Add ERROR_INVALID_PARAMETER to the exception list.
+	Don't blow away the SetFileTime() error before the caller gets to
+	see it.  Part of the bug fix to 60970.
+
+2004-07-05  Dick Porter  <dick@ximian.com>
+
+	* CheckPermission.cs:
+	* File.cs:
+	* FileInfo.cs:
+	* MonoIO.cs:
+	* FileStream.cs: Give the filename when throwing
+	FileNotFoundException.  Fixes bug 61120, based on patch from
+	Carlos Alberto Cesario <carloscesario@gmail.com>.
+
+2004-07-05  Dick Porter  <dick@ximian.com>
+
+	* File.cs: File.Move() should check that the destination doesn't
+	already exist.  Fixes bug 60915, patch based on one from Carlos
+	Alberto Cesario <carloscesario@gmail.com>.
+
 2004-06-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Directory.cs: implemented GetLogicalDrives.

@@ -1461,7 +1461,7 @@ namespace Mono.CSharp
 			switch (cmd){
 			case "pragma":
 				if (RootContext.V2)
-					return true;
+					return caller_is_taking;
 				break;
 				
 			case "line":
@@ -1469,7 +1469,7 @@ namespace Mono.CSharp
 					Report.Error (
 						1576, Location,
 						"Argument to #line directive is missing or invalid");
-				return true;
+				return caller_is_taking;
 
 			case "region":
 				region_directive = true;

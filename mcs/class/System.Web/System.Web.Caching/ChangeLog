@@ -1,3 +1,8 @@
+2004-10-03 Ben Maurer  <bmaurer@ximian.com>
+
+	* Cache.cs, CacheEntry.cs, CacheExpires.cs, ExpiresBuckets.cs:
+	use UtcNow rather than Now.
+
 2004-05-27	Patrik Torstensson <totte@hiddenpeaks.com>
 
 	* ExpiresBucket.cs (FlushExpiredItems): fix csc and a typo bug

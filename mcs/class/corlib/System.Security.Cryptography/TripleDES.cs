@@ -5,10 +5,6 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -51,7 +47,7 @@ public abstract class TripleDES : SymmetricAlgorithm {
 		// from SymmetricAlgorithm
 		KeySizeValue = 192;
 		BlockSizeValue = 64;
-		FeedbackSizeValue = 64;
+		FeedbackSizeValue = 8;
 
 		LegalKeySizesValue = new KeySizes [1];
 		LegalKeySizesValue [0] = new KeySizes (128, 192, 64);

@@ -55,30 +55,46 @@ namespace Mono.CSharp {
 	///   The local temporary is used to alter the normal flow of code generation
 	///   basically it creates a local variable, and its emit instruction generates
 	///   code to access this value, return its address or save its value.
+	///
+	///   If `is_address' is true, then the value that we store is the address to the
+	///   real value, and not the value itself. 
+	///
+	///   This is needed for a value type, because otherwise you just end up making a
+	///   copy of the value on the stack and modifying it. You really need a pointer
+	///   to the origional value so that you can modify it in that location. This
+	///   Does not happen with a class because a class is a pointer -- so you always
+	///   get the indirection.
+	///
+	///   The `is_address' stuff is really just a hack. We need to come up with a better
+	///   way to handle it.
 	/// </remarks>
 	public class LocalTemporary : Expression, IMemoryLocation {
 		LocalBuilder builder;
+		bool is_address;
 		
-		public LocalTemporary (EmitContext ec, Type t)
+		public LocalTemporary (EmitContext ec, Type t) : this (ec, t, false) {}
+			
+		public LocalTemporary (EmitContext ec, Type t, bool is_address) 
 		{
 			type = t;
 			eclass = ExprClass.Value;
 			loc = Location.Null;
-			builder = ec.GetTemporaryLocal (t);
+			builder = ec.GetTemporaryLocal (is_address ? TypeManager.GetReferenceType (t): t);
+			this.is_address = is_address;
 		}
 
-		public void Release (EmitContext ec)
-		{
-			ec.FreeTemporaryLocal (builder, type);
-			builder = null;
-		}
-		
 		public LocalTemporary (LocalBuilder b, Type t)
 		{
 			type = t;
 			eclass = ExprClass.Value;
 			loc = Location.Null;
 			builder = b;
+		}
+
+		public void Release (EmitContext ec)
+		{
+			ec.FreeTemporaryLocal (builder, type);
+			builder = null;
 		}
 		
 		public override Expression DoResolve (EmitContext ec)
@@ -88,17 +104,39 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			ec.ig.Emit (OpCodes.Ldloc, builder); 
+			ILGenerator ig = ec.ig;
+			
+			ig.Emit (OpCodes.Ldloc, builder);
+			// we need to copy from the pointer
+			if (is_address)
+				LoadFromPtr (ig, type);
 		}
 
+		// NB: if you have `is_address' on the stack there must
+		// be a managed pointer. Otherwise, it is the type from
+		// the ctor.
 		public void Store (EmitContext ec)
 		{
-			ec.ig.Emit (OpCodes.Stloc, builder);
+			ILGenerator ig = ec.ig;
+			ig.Emit (OpCodes.Stloc, builder);
 		}
 
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
-			ec.ig.Emit (OpCodes.Ldloca, builder);
+			// if is_address, than this is just the address anyways,
+			// so we just return this.
+			ILGenerator ig = ec.ig;
+				
+			if (is_address)
+				ig.Emit (OpCodes.Ldloc, builder);
+			else
+				ig.Emit (OpCodes.Ldloca, builder);
+		}
+
+		public bool PointsToAddress {
+			get {
+				return is_address;
+			}
 		}
 	}
 
@@ -386,7 +424,7 @@ namespace Mono.CSharp {
 			// just use `dup' to propagate the result
 			// 
 			IAssignMethod am = (IAssignMethod) target;
-			
+
 			if (this is CompoundAssign)
 				am.CacheTemporaries (ec);
 

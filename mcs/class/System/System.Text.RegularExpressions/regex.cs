@@ -354,9 +354,15 @@ namespace System.Text.RegularExpressions {
 		{
 			StringBuilder result = new StringBuilder ();
 			int ptr = startat;
+			int counter = count;
+
+			result.Append (input.Substring (0, ptr));
 
 			Match m = Match (input, startat);
-			while (m.Success && count -- > 0) {
+			while (m.Success) {
+				if (count != -1)
+					if(counter -- <= 0)
+						break;
 				result.Append (input.Substring (ptr, m.Index - ptr));
 				result.Append (evaluator (m));
 

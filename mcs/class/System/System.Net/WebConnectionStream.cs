@@ -57,6 +57,7 @@ namespace System.Net
 		byte [] headers;
 		bool disposed;
 		bool headersSent;
+		bool forceCompletion;
 
 		public WebConnectionStream (WebConnection cnc)
 		{
@@ -113,9 +114,15 @@ namespace System.Net
 			get { return (int) writeBuffer.Length; }
 		}
 
+		internal void ForceCompletion ()
+		{
+			forceCompletion = true;
+		}
+		
 		internal void CheckComplete ()
 		{
-			if (!nextReadCalled && readBufferSize - readBufferOffset == contentLength) {
+			bool nrc = nextReadCalled;
+			if (forceCompletion || (!nrc && readBufferSize - readBufferOffset == contentLength)) {
 				nextReadCalled = true;
 				cnc.NextRead ();
 			}
@@ -151,8 +158,12 @@ namespace System.Net
 				} else {
 					new_size = contentLength - totalRead;
 					b = new byte [new_size];
-					if (readBuffer != null && diff > 0)
+					if (readBuffer != null && diff > 0) {
+						if (diff > new_size)
+							diff = new_size;
+
 						Buffer.BlockCopy (readBuffer, readBufferOffset, b, 0, diff);
+					}
 					
 					int remaining = new_size - diff;
 					int r = -1;
@@ -460,16 +471,6 @@ namespace System.Net
 			WriteRequest ();
 		}
 
-		internal void ResetWriteBuffer ()
-		{
-			if (!allowBuffering)
-				return;
-
-			writeBuffer = new MemoryStream ();
-			requestWritten = false;
-			headersSent = false;
-		}
-		
 		public override long Seek (long a, SeekOrigin b)
 		{
 			throw new NotSupportedException ();

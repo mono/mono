@@ -721,9 +721,9 @@ namespace System.Runtime.Remoting
 				
 				if (at == "id" && isTemplate)
 					prov.Id = val;
-				if (at == "type")
+				else if (at == "type")
 					prov.Type = val;
-				if (at == "ref" && !isTemplate)
+				else if (at == "ref" && !isTemplate)
 					prov.Ref = val;
 				else
 					prov.CustomProperties.Add (at, val);

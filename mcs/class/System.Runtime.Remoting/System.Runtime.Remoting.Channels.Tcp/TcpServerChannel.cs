@@ -106,6 +106,9 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			{
 				switch((string)property.Key)
 				{
+					case "name":
+						name = property.Value.ToString();
+						break;
 					case "port":
 						port = Convert.ToInt32(property.Value);
 						break;

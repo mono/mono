@@ -1,3 +1,9 @@
+
+Wed Oct 13 15:12:17 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* System.Resources/ResXResourceReader.cs: patch by
+	 joel.reed@ddiworld.com (joel) to handle CDATA sections.
+
 2004-05-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Resources/ResXResourceWriter.cs: implemented.

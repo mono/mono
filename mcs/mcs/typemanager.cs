@@ -1495,7 +1495,7 @@ public class TypeManager {
 	
 	public static bool IsEnumType (Type t)
 	{
-		if (t == TypeManager.enum_type || t.IsSubclassOf (TypeManager.enum_type))
+		if (t.IsSubclassOf (TypeManager.enum_type))
 			return true;
 		else
 			return false;
