@@ -306,11 +306,15 @@ static void convertSJISLine(char *buf)
 	{
 		/* Greek subset */
 		greekToJis[code - 0x0391] = (unsigned short)(offset + 0x0100);
+		/* This is required to decode Extra subset to Unicode!! */
+		jisx0208ToUnicode[offset] = (unsigned short)code;
 	}
 	else if(code >= 0xFF01 && code <= 0xFFEF)
 	{
 		/* Extra subset */
 		extraToJis[code - 0xFF01] = (unsigned short)(offset + 0x0100);
+		/* This is required to decode Extra subset to Unicode!! */
+		jisx0208ToUnicode[offset] = (unsigned short)code;
 	}
 	else if(code >= 0x0100 && code < 0x4E00)
 	{
