@@ -1,3 +1,7 @@
+2004-08-31  Nick Drochak <ndrochak@gol.com>
+
+	* StringWriterTest.cs: Eliminate ambiguity so csc can compile.
+
 2004-06-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* FileStreamTest.cs : Added some tests on .ctor() without FileShare.

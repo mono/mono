@@ -166,7 +166,7 @@ public class StringWriterTest : Assertion {
 	public void WriteString_Null ()
 	{
         	StringWriter writer = new StringWriter ();
-		writer.Write (null);
+		writer.Write (null as String);
 	}
 
 	[Test]
