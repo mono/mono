@@ -1,3 +1,7 @@
+2003-10-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AppDomain.cs: Fix prototype of InternalIsFinalizingForUnload.
+
 2003-10-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AppDomain.cs (IsFinalizingForUnload): Implement.

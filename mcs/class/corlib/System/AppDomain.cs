@@ -603,7 +603,7 @@ namespace System {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]		
-		private extern bool InternalIsFinalizingForUnload (int domain_id);
+		private static extern bool InternalIsFinalizingForUnload (int domain_id);
 
 		public bool IsFinalizingForUnload()
 		{
