@@ -1,3 +1,10 @@
+2004-07-02  Raja R Harinath  <rharinath@novell.com>
+
+	* ecore.cs (DoSimpleNameResolve): Expand CS0038 check to all names
+	visible from inside a nested class, not just the names of the
+	immediately enclosing class.
+	Fix for bug #60730.
+
 2004-06-24  Raja R Harinath  <rharinath@novell.com>
 
 	* expression.cs (BetterConversion): Remove buggy special-case
