@@ -261,6 +261,10 @@ System.Web.UI.WebControls/CalendarDay.cs
 System.Web.UI.WebControls/CalendarSelectionMode.cs
 System.Web.UI.WebControls/CheckBox.cs
 System.Web.UI.WebControls/CheckBoxList.cs
+System.Web.UI.WebControls/Content.cs
+System.Web.UI.WebControls/ContentControlBuilder.cs
+System.Web.UI.WebControls/ContentPlaceHolder.cs
+System.Web.UI.WebControls/ContentPlaceHolderBuilder.cs
 System.Web.UI.WebControls/ControlIDConverter.cs
 System.Web.UI.WebControls/CommandEventArgs.cs
 System.Web.UI.WebControls/CommandEventHandler.cs
@@ -671,6 +675,8 @@ System.Web.UI/KeyedListEnumerator.cs
 System.Web.UI/ListSourceHelper.cs
 System.Web.UI/LiteralControl.cs
 System.Web.UI/LosFormatter.cs
+System.Web.UI/MasterPage.cs
+System.Web.UI/MasterPageParser.cs
 System.Web.UI/ObjectConverter.cs
 System.Web.UI/ObjectStateFormatter.cs
 System.Web.UI/ObjectTag.cs

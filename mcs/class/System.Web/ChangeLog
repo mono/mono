@@ -1,3 +1,13 @@
+2005-01-21  Lluis Sanchez Gual <lluis@novell.com>
+
+	* System.Web.dll.sources: Added new files:
+		System.Web.UI.WebControls/Content.cs
+		System.Web.UI.WebControls/ContentControlBuilder.cs
+		System.Web.UI.WebControls/ContentPlaceHolder.cs
+		System.Web.UI.WebControls/ContentPlaceHolderBuilder.cs
+		System.Web.UI/MasterPage.cs
+		System.Web.UI/MasterPageParser.cs
+
 2005-01-10  Lluis Sanchez Gual <lluis@novell.com>
 
 	* System.Web.dll.sources: Added new files:
