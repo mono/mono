@@ -1,5 +1,10 @@
 2005-02-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* class.c: Add missing setup_... calls.
+
+	* class.c (mono_class_get_method_from_name_flags): Avoid calling
+	mono_class_setup_methods () if possible.
+
 	* class-internals.h (MonoClass): Add 'has_cctor' flag.
 
 	* class-internals.h (MonoCachedClassInfo): New structure.
