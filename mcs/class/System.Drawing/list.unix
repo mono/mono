@@ -1,4 +1,5 @@
 -o System.Drawing.dll --target library
+Assembly/AssemblyInfo.cs
 System.Drawing/Bitmap.cs
 System.Drawing/Brush.cs
 System.Drawing/Brushes.cs

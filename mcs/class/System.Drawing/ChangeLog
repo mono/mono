@@ -1,3 +1,8 @@
+2003-07-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* System.Drawing.dll.sources:
+	* list.unix: AssemblyInfo.cs added
+
 2003-06-27 Alexandre Pigolkine <pigolkine@gmx.de>
 	* list.unix		
 		new file added
