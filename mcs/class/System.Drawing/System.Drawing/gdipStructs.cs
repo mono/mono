@@ -65,7 +65,7 @@ namespace System.Drawing {
 	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
 	internal  struct LOGFONTA  
 	{
-		internal uint   lfHeight;
+		internal int    lfHeight;
 		internal uint   lfWidth;
 		internal uint   lfEscapement;
 		internal uint   lfOrientation;

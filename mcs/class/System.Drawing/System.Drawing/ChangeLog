@@ -1,3 +1,9 @@
+2004-04-41 Peter Bartok <pbartok@novell.com>
+   * Font.cs: Implemented Font.FromHfont method
+   * gdipStructs.cs: fixed sign for LOGFONTA lfHeight member
+   * gdipFunctions.cs: Added imports for functions required to support
+   Font.FromHfont method
+
 2004-04-21 Jordi Mas i Hernandez <jordi@ximian.com>
 	* RectangleConverter.cs: stubbed out
 	* Font.cs : added missing members

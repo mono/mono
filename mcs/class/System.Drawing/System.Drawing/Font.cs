@@ -95,7 +95,7 @@ namespace System.Drawing {
 			}				
 		}
 		
-		internal void setProperties(FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)			 
+		internal void setProperties(FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
 		{			
 			_name=family.Name;
 			_fontFamily = family;
@@ -122,11 +122,64 @@ namespace System.Drawing {
                                 _underline = true;                  
 		}
 
-		public static Font FromHfont(IntPtr font)
+		public static Font FromHfont(IntPtr Hfont)
 		{
-			// FIXME: 
-			Font result = new Font("Arial", (float)12.0, FontStyle.Regular);
-			return result;
+			System.OperatingSystem	osInfo = System.Environment.OSVersion;
+			IntPtr			newObject;
+			IntPtr			hdc;
+			IntPtr			oldFont;
+			FontStyle		newStyle=FontStyle.Regular;
+			float			newSize;
+			LOGFONTA		lf = new LOGFONTA();
+
+			// Sanity. Should we throw an exception?
+			if (Hfont==IntPtr.Zero) {
+				Font result = new Font("Arial", (float)10.0, FontStyle.Regular);
+				return(result);
+			}
+
+			if ((int)osInfo.Platform==128) {
+				// If we're on Unix we use our private gdiplus API to avoid Wine 
+				// dependencies in S.D
+
+				GDIPlus.GdipCreateFontFromHfont(Hfont, out newObject, ref lf);
+			} else {
+
+				// This needs testing, but I don't have a working win32 mono
+				// environment. 
+
+				// GetDC, SelectObject, ReleaseDC GetTextMetric and GetFontFace are not 
+				// really GDIPlus, see gdipFunctions.cs
+
+				newStyle=FontStyle.Regular;
+
+				hdc=GDIPlus.GetDC(IntPtr.Zero);
+				oldFont=GDIPlus.SelectObject(hdc, Hfont);
+				GDIPlus.GdipCreateFontFromDC(hdc, out newObject);
+				GDIPlus.GdipGetLogFontA(newObject, IntPtr.Zero, ref lf);
+				GDIPlus.SelectObject(hdc, oldFont);
+				GDIPlus.ReleaseDC(hdc);
+			}
+
+			if (lf.lfItalic!=0) {
+				newStyle |= FontStyle.Italic;
+			}
+			if (lf.lfUnderline!=0) {
+				newStyle |= FontStyle.Underline;
+			}
+			if (lf.lfStrikeOut!=0) {
+				newStyle |= FontStyle.Strikeout;
+			}
+			if (lf.lfWeight>400) {
+				newStyle |= FontStyle.Bold;
+			}
+			if (lf.lfHeight<0) {
+				newSize=lf.lfHeight*-1;
+			} else {
+				newSize=lf.lfHeight;
+			}
+
+			return (new Font(newObject, lf.lfFaceName, newStyle, newSize));
 		}
 
 		public IntPtr ToHfont ()
@@ -153,12 +206,20 @@ namespace System.Drawing {
 			return(Hfont);
 		}
 
+		internal Font(IntPtr newFontObject, string familyName, FontStyle style, float size)
+		{
+			FontFamily	fontFamily = new FontFamily(familyName);
+
+			setProperties(fontFamily, size, style, GraphicsUnit.Pixel, 0, false);
+			fontObject=newFontObject;
+		}
+
 		public Font(Font original, FontStyle style)
 		{
 			setProperties(original.FontFamily, original.Size, style, original.Unit, 
 				original.GdiCharSet, original.GdiVerticalFont);
 			
-			GDIPlus.GdipCreateFont(_fontFamily.NativeObject,	Size,  Style,   Unit,  out fontObject);					
+			GDIPlus.GdipCreateFont(_fontFamily.NativeObject,	Size,  Style,   Unit,  out fontObject);
 		}
 		
 		public Font(FontFamily family, float emSize,  GraphicsUnit unit)
@@ -219,7 +280,7 @@ namespace System.Drawing {
 		{
 		}
 		
-		public Font(string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)			 
+		public Font(string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
 		{
 			FontFamily family = new FontFamily(familyName);			
 			setProperties(family, emSize, style, unit, charSet, isVertical);

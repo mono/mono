@@ -1151,14 +1151,25 @@ namespace System.Drawing {
 		internal static extern Status GdipDeleteFont (IntPtr font);		
 		[DllImport("gdiplus.dll")]                   
 		internal static extern Status GdipGetLogFontA(IntPtr font, IntPtr graphics, ref LOGFONTA logfontA);
+		[DllImport("gdiplus.dll")]                   
+		internal static extern Status GdipCreateFontFromDC(IntPtr hdc, out IntPtr font);
 
-		// GdfipGetHfont is our private function, it only exists in our own libgdiplus library
+		// These are our private functions, they exists in our own libgdiplus library, this way we
+		// avoid relying on wine in System.Drawing
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipGetHfont (IntPtr font, out IntPtr Hfont);	
+		[DllImport("gdiplus.dll")]                   
+		internal static extern Status GdipCreateFontFromHfont(IntPtr hdc, out IntPtr font, ref LOGFONTA lf);
 
-		// This is win32/gdi, not gdiplus, but it's easier to keep in here
+		// This is win32/gdi, not gdiplus, but it's easier to keep in here, also see above comment
 		[DllImport("gdi32.dll", EntryPoint="CreateFontIndirectA", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
 		internal static extern IntPtr CreateFontIndirectA (ref LOGFONTA logfontA);	
+		[DllImport("gdi32.dll", EntryPoint="GetDC", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
+		internal static extern IntPtr GetDC(IntPtr hwnd);	
+		[DllImport("gdi32.dll", EntryPoint="ReleaseDC", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
+		internal static extern int ReleaseDC(IntPtr hdc);
+		[DllImport("gdi32.dll", EntryPoint="SelectObject", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
+		internal static extern IntPtr SelectObject(IntPtr hdc, IntPtr obj);	
 
 		// FontCollection
 		[DllImport ("gdiplus.dll")]
