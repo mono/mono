@@ -89,7 +89,7 @@ namespace Mono.CSharp.Debugger
 
 		public void WriteSLeb128 (int value)
 		{
-			writer.WriteLine ("\t.uleb128\t" + value);
+			writer.WriteLine ("\t.sleb128\t" + value);
 		}
 
 		public void WriteULeb128 (int value)
@@ -119,7 +119,7 @@ namespace Mono.CSharp.Debugger
 
 		public void WriteRelativeOffset (string start_label, string end_label)
 		{
-			writer.WriteLine ("\t.long\t\t._L_" + end_label + " - .L_" + start_label);
+			writer.WriteLine ("\t.long\t\t.L_" + end_label + " - .L_" + start_label);
 		}
 
 		public void WriteShortRelativeOffset (string start_label, string end_label)
@@ -148,7 +148,7 @@ namespace Mono.CSharp.Debugger
 			int start_index = GetNextLabelIndex ();
 			int end_index = GetNextLabelIndex ();
 
-			WriteRelativeOffset (GetLabelName (start_index), GetLabelName (end_index));
+			WriteShortRelativeOffset (GetLabelName (start_index), GetLabelName (end_index));
 			WriteLabel (start_index);
 
 			return end_index;
@@ -160,3 +160,4 @@ namespace Mono.CSharp.Debugger
 		}
 	}
 }
+
