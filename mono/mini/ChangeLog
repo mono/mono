@@ -1,3 +1,9 @@
+
+Wed Sep 22 19:03:20 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, exceptions-ppc.c, exceptions-s390.c, exceptions-s390x.c,
+	mini-exceptions.c: updates for changed stack walk interface.
+
 2004-09-21  Neale Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
 
 	* mini-s390.c, cpu-s390.md: Minor changes to OP_ARGLIST handling
