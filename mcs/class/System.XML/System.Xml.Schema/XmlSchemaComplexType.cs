@@ -340,26 +340,8 @@ namespace System.Xml.Schema
 			}
 			else
 			{
-				if(Particle is XmlSchemaGroupRef)
-				{
-					XmlSchemaGroupRef xsgr = (XmlSchemaGroupRef)Particle;
-					errorCount += xsgr.Compile(h,schema);
-				}
-				else if(Particle is XmlSchemaAll)
-				{
-					XmlSchemaAll xsa = (XmlSchemaAll)Particle;
-					errorCount += xsa.Compile(h,schema);
-				}
-				else if(Particle is XmlSchemaChoice)
-				{
-					XmlSchemaChoice xsc = (XmlSchemaChoice)Particle;
-					errorCount += xsc.Compile(h,schema);
-				}
-				else if(Particle is XmlSchemaSequence)
-				{
-					XmlSchemaSequence xss = (XmlSchemaSequence)Particle;
-					errorCount += xss.Compile(h,schema);
-				}
+				if (Particle != null)
+					errorCount += Particle.Compile (h, schema);
 
 				if(this.anyAttribute != null)
 				{
