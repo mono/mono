@@ -1,3 +1,7 @@
+2003-02-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* socket-io.c: fixed bug #36322.
+
 2003-02-06  Piers Haken	<piersh@friskit.com>
 
 	* appdomain.[ch]:
