@@ -1,3 +1,7 @@
+2004-05-24  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlNodeTests.cs : added Normalize2().
+
 2004-05-13  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdValidatingReaderTests.cs : Ignore TestNamespaceFalse(). It is not

@@ -229,6 +229,58 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void Normalize2 ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.PreserveWhitespace = true;
+			doc.LoadXml ("<root>  </root>");
+			XmlElement root = doc.DocumentElement;
+			root.AppendChild (doc.CreateTextNode ("foo"));
+			root.AppendChild (doc.CreateTextNode ("bar"));
+			root.AppendChild (doc.CreateWhitespace ("   "));
+			root.AppendChild (doc.CreateTextNode ("baz"));
+			doc.NodeInserted += new XmlNodeChangedEventHandler (OnChange);
+			doc.NodeChanged += new XmlNodeChangedEventHandler (OnChange);
+			doc.NodeRemoved += new XmlNodeChangedEventHandler (OnChange);
+			AssertEquals ("Before Normalize()", 5, root.ChildNodes.Count);
+			root.Normalize ();
+			AssertEquals ("<root>  foobar   baz</root>", root.OuterXml);
+			AssertEquals ("After Normalize()", 1, root.ChildNodes.Count);
+		}
+
+		int normalize2Count;
+
+		private void OnChange (object o, XmlNodeChangedEventArgs e)
+		{
+			switch (normalize2Count) {
+			case 0:
+				AssertEquals ("Action0", XmlNodeChangedAction.Remove, e.Action);
+				AssertEquals ("Value0", "  ", e.Node.Value);
+				break;
+			case 1:
+				AssertEquals ("Action1", XmlNodeChangedAction.Remove, e.Action);
+				AssertEquals ("Value1", "bar", e.Node.Value);
+				break;
+			case 2:
+				AssertEquals ("Action2", XmlNodeChangedAction.Remove, e.Action);
+				AssertEquals ("Value2", "   ", e.Node.Value);
+				break;
+			case 3:
+				AssertEquals ("Action3", XmlNodeChangedAction.Remove, e.Action);
+				AssertEquals ("Value3", "baz", e.Node.Value);
+				break;
+			case 4:
+				AssertEquals ("Action4", XmlNodeChangedAction.Change, e.Action);
+				AssertEquals ("Value4", "  foobar   baz", e.Node.Value);
+				break;
+			default:
+				Fail (String.Format ("Unexpected event. Action = {0}, node type = {1}, node name = {2}, node value = {3}", e.Action, e.Node.NodeType, e.Node.Name, e.Node.Value));
+				break;
+			}
+			normalize2Count++;
+		}
+
+		[Test]
 		public void PrependChild()
 		{
 			document = new XmlDocument();
