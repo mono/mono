@@ -1784,9 +1784,7 @@ constructor_declaration
 		c.ModFlags = (int) current_modifiers;
 		c.OptAttributes = current_attributes;
 		
-		// FIXME: This should happen at grammar level, but doing it
-		// triggers a lot of conflicts/problems.
-		c.Initializer = FixConstructorInitializer (ref c.Block.statements);
+		c.Initializer = CheckConstructorInitializer (ref c.Block.statements);
 
 		CheckDef (current_container.AddConstructor(c), c.Name, c.Location);
 		current_local_parameters = null;
@@ -4195,7 +4193,7 @@ private void RemoveHandler (Expression evt_definition, string handler_name)
 	RemoveHandler (current_block, evt_definition, handler_name);
 }
 
-private ConstructorInitializer FixConstructorInitializer (ref ArrayList s)
+private ConstructorInitializer CheckConstructorInitializer (ref ArrayList s)
 {
 	ConstructorInitializer ci = null;
 	
