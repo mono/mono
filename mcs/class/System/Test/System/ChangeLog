@@ -1,3 +1,7 @@
+2005-03-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UriTest2.cs: added test from bug #73316.
+
 2005-02-02  Ben Maurer  <bmaurer@ximian.com>
 
 	* UriTest2.cs: Make this file use resources, not files. Helps with

@@ -131,5 +131,14 @@ TextWriter sw = Console.Out;
 			}
 		}
 
+		[Test]
+		public void MoreUnescape () // bug 733316
+		{
+			int index = 0;
+			char unesc = Uri.HexUnescape ("%F6", ref index);
+			AssertEquals ("#01", 3, index);
+			AssertEquals ("#02", 0xf6, unesc);
+		}
+
 	}
 }
