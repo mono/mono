@@ -2,7 +2,8 @@
 // System.Drawing.Imaging.BitmapData.cs
 //
 // Author:
-//   Miguel de Icaza (miguel@ximian.com
+//   Miguel de Icaza (miguel@ximian.com)
+//   Vladimir Vukicevic (vladimir@pobox.com)
 //
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
@@ -16,19 +17,12 @@ namespace System.Drawing.Imaging
 	// MUST BE KEPT IN SYNC WITH gdip.h in libgdiplus!
 	[StructLayout(LayoutKind.Sequential)]
 	public sealed class BitmapData {
-		internal int width, height, stride;
-		internal PixelFormat pixel_format;		
+		internal int width;
+		internal int height;
+		internal int stride;
+		internal PixelFormat pixel_format; // int
 		internal IntPtr address;
 		internal int reserved;
-		internal bool own_scan0;
-		
-		~BitmapData()
-		{
-			if (address != IntPtr.Zero && own_scan0) {
-				GDIPlus.GdipFree (address);
-				address = IntPtr.Zero;
-			}
-		}
 		
 		public int Height {
 			get {
@@ -77,17 +71,6 @@ namespace System.Drawing.Imaging
 			}
 
 			set {
-				if (address == value)
-					return;
-
-				// FIXME -- do we really want to prevent the
-				// user from shooting themselves in the foot,
-				// if they want to?
-				if (address != IntPtr.Zero && own_scan0) {
-					GDIPlus.GdipFree (address);
-					address = IntPtr.Zero;
-				}
-
 				address = value;
 			}
 		}
