@@ -1,5 +1,12 @@
 2004-07-25  Martin Baulig  <martin@ximian.com>
 
+	* Makefile (test-generic): Correctly set the MONO_PATH to run
+	things in the v2.0 environment.
+	(test-generic-2): New target.
+	(test-everything): New target to run everything.
+
+2004-07-25  Martin Baulig  <martin@ximian.com>
+
 	* 2test-12.cs, 2test-13.cs: New tests for partial classes.
 
 2004-07-23  Martin Baulig  <martin@ximian.com>

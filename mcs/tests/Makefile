@@ -99,6 +99,8 @@ test-local:
 
 run-test-local: test-compiler-jit test-unsafe-compiler-jit test-casts test-2
 
+test-everything: run-test-local test-generic test-generic-2
+
 clean-local:
 	rm -f *.exe *.netmodule *.out *.pdb casts.cs
 
@@ -117,7 +119,7 @@ test-compiler-jit-real:
 	    options=`sed -n 's,^// Compiler options:,,p' $$i.cs`; \
 	    testlogfile="$(TEST_TAG)-$$i.log" ; \
 	    echo -n "$$i: "; \
-	    echo "*** $(INTERNAL_MCS) $$options $$i.cs" > $$testlogfile ; \
+	    echo "*** $(MONO_PATH) $(INTERNAL_MCS) $$options $$i.cs" > $$testlogfile ; \
 	    if $(INTERNAL_MCS) $$options $$i.cs >> $$testlogfile 2>&1 ; then \
 		: ; \
 	    else \
@@ -146,7 +148,12 @@ GENERIC_KNOWN_FAILURES = test-55
 #
 test-generic:
 	sources=`echo $(TEST_SOURCES) | tr ' ' '\n' | grep -v $(GENERIC_KNOWN_FAILURES)| tr '\n' ' ' `;  \
-	make INTERNAL_MCS="mono ../gmcs/gmcs.exe" test-compiler-jit-real TEST_SOURCES="$$sources" TEST_TAG=gmcs
+	make MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" TEST_RUNTIME="MONO_PATH=$$MONO_PATH $(RUNTIME) --debug" INTERNAL_MCS="mono ../gmcs/gmcs.exe" test-compiler-jit-real TEST_SOURCES="$$sources" TEST_TAG=gmcs
+
+test-generic-2:
+	make MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" TEST_RUNTIME="MONO_PATH=$$MONO_PATH $(RUNTIME) --debug" INTERNAL_MCS="mono ../gmcs/gmcs.exe" test-compiler-jit-real TEST_SOURCES="$(TEST2_SOURCES)" TEST_TAG=gmcs-v2
+
+
 
 #
 # Tests the 2.0 features
