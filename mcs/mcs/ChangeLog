@@ -1,3 +1,7 @@
+
+Tue Jan 28 17:30:57 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* statement.cs: small memory and time optimization in FlowBranching.
 	
 2003-01-28  Pedro Mart  <yoros@wanadoo.es>
 
