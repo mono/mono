@@ -1,5 +1,32 @@
 2003-09-15  Zoltan Varga  <vargaz@freemail.hu>
 
+	* tramp-x86.c (x86_class_init_trampoline): New trampoline function
+	which calls mono_runtime_class_init and patches the call site to
+	avoid further calls.
+	(mono_arch_create_class_init_trampoline): New arch specific function 
+	to create a class init trampoline.
+	(create_trampoline_code): Generalized so it can create
+	class init trampolines as well.
+
+	* mini.c (helper_sig_class_init_trampoline): New helper variable.
+	(mono_create_class_init_trampoline): New function to create and cache
+	class init trampolines.
+	(mono_find_class_init_trampoline_by_addr): New function to lookup the
+	vtable given the address of a class init trampoline. Used by the
+	patching process.
+	(mono_codegen): Generate a call to a trampoline instead of
+	mono_runtime_class_init in LDSFLD[A].
+	(mono_codegen): Add relocations for the new trampoline.
+	
+	* mini.h mini-x86.c aot.c: Added a new relocation type: 
+	MONO_PATCH_INFO_CLASS_INIT.
+
+	* mini.h: Bump AOT version number.
+
+	* aot.c: Create a copy of the loaded code instead of using the original
+	so methods which call each other will be close in memory, improving
+	cache behaviour.
+	
 	* exceptions-x86.c (mono_arch_has_unwind_info): Back out the previous
 	patch since it breaks the regression tests.
 	
