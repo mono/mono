@@ -10,8 +10,8 @@ verifier.exe: verifier.cs
 	$(CSC) $(CSCFLAGS) verifier.cs
 
 corcompare.exe: CorCompare.cs
-	$(CSC) $(CSCFLAGS) corcompare.cs
-	corcompare.exe ../class/lib/corlib_cmp.dll > ../../mono/status/cormissing.xml
+	$(CSC) $(CSCFLAGS) CorCompare.cs
+	./CorCompare.exe ../class/lib/corlib_cmp.dll > ../../mono/status/cormissing.xml
 
 clean:
 	if test -e verifier.exe; then \
