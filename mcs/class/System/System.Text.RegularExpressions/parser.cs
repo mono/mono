@@ -874,6 +874,11 @@ namespace System.Text.RegularExpressions.Syntax {
 			int p = ptr;
 			int c;
 
+			if (p >= pattern.Length)
+				throw new ArgumentException (
+						String.Format ("Parsing \"{0}\" - Illegal \\ at end of " + 
+								"pattern.", pattern), pattern);
+			
 			switch (pattern[ptr ++]) {
 	
 			// standard escapes (except \b)

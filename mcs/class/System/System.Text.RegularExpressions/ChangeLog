@@ -1,3 +1,7 @@
+2002-11-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* parser.cs: detect illegal \ at end of pattern. Fixes 31334.
+
 2002-10-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* parser.cs: applied fix from Tim Haynes (thaynes@openlinksw.com) to
