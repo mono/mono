@@ -1,3 +1,15 @@
+2003-05-15  Jean-Marc Andre <jean-marc.andre@polymtl.ca>
+	* SoapFormatter:
+		New version of the SoapFormatter installed
+	* list.unix:
+		added to build the new formatter
+	* makefile.gnu:
+		changed to build the new formatter
+	* System.Runtime.Serialization.Formatters.Soap:
+		many files added or change to build the new formatter
+	* Test:
+		nunit-2 test added
+
 2002-08-15  Tim Coleman <tim@timcoleman.com>
 	* ChangeLog:
 		New changelog added
