@@ -1,4 +1,4 @@
-Option Explicit
+﻿Option Explicit
 Option Strict Off
 Option Compare Text
 
@@ -25,8 +25,7 @@ Public Class WriteOK2
 
     Friend Shared Sub [Sub]() ' Escaped identifier
 		Dim Text as string ' here 'Text' isn't a keyword
-'		Dim sometext = "Yeah! Some Text" 'TODO: still case sensitive on identifiers
-		Dim someText = "Yeah! Some Text"
+		Dim sometext = "Yeah! Some Text" 'TODO: still case sensitive on identifiers
 		Dim someOtherText as string = "Blah! Some Other Text"
 '		Const sometext = "Yeah! Some Text" ' FIXME: raises InvalidCastException in yyParse
 '		Const someOtherText as string = "Blah! Some Other Text" ' FIXME: raises InvalidCastException in yyParse
