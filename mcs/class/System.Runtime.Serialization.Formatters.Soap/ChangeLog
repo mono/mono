@@ -1,6 +1,0 @@
-2002-08-15  Tim Coleman <tim@timcoleman.com>
-	* ChangeLog:
-		New changelog added
-	* list:
-	* makefile.gnu:
-		Added so we can build this assembly on linux now.

@@ -1,9 +1,0 @@
-
-2002-10-07       Gaurav Vaish <gvaish_mono@lycos.com>
-
-	* System.Design.build              : Bug fix. Attribute is "basedir"
-	                                     and not "bardir".
-
-2002-09-16       Gaurav Vaish <gvaish_mono@lycos.com>
-
-	* System.Web.UI.Design.WebControls : Added directory.

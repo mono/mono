@@ -1,5 +1,0 @@
-linux:
-
-window:
-
-clean:

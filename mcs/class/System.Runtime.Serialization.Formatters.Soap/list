@@ -1,6 +1,0 @@
-System.Runtime.Serialization.Formatters.Soap/ObjectDeserializer.cs
-System.Runtime.Serialization.Formatters.Soap/ObjectSerializer.cs
-System.Runtime.Serialization.Formatters.Soap/SoapFormatter.cs
-System.Runtime.Serialization.Formatters.Soap/SoapReader.cs
-System.Runtime.Serialization.Formatters.Soap/SoapWriter.cs
-System.Runtime.Serialization.Formatters.Soap/TODOAttribute.cs
