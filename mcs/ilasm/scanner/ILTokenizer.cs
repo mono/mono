@@ -76,18 +76,41 @@ namespace Mono.ILASM {
                         int next;
                         ILToken res = ILToken.EOF.Clone () as ILToken;
 
+                        
                         while ((ch = reader.Read ()) != -1) {
+
+                                // Comments
+                                if (ch == '/') {
+                                        next = reader.Peek ();
+                                        if (next == '/') {
+                                                // double-slash comment, skip to the end of the line.
+                                                for (reader.Read ();
+                                                        next != -1 && next != '\n';
+                                                        next = reader.Read ());
+                                                continue;
+                                        } else if (next == '*') {
+                                                reader.Read ();
+                                                for (next = reader.Read ();
+                                                     next != -1 && next != '*' && reader.Peek () != '/';
+                                                     next = reader.Read ());
+                                                reader.Read ();
+                                                continue;
+                                        }
+                                }
 
                                 // HEXBYTES are flagged by the parser otherwise it is
                                 // impossible to figure them out
                                 if (in_byte_array) {
                                         string hx = String.Empty;
 
+                                        if (Char.IsWhiteSpace ((char) ch))
+                                                continue;
+
                                         if (ch == ')') {
                                                 res = ILToken.CloseParens;
                                                 break;
                                         }
-                                                
+
                                         if (!is_hex (ch))
                                                 throw new Exception ("Invalid hex value. '" + (char) ch + "'."); // yeah proper error reporting would be great
                                         hx += (char) ch;
@@ -142,26 +165,6 @@ namespace Mono.ILASM {
                                                         res = ILToken.Dot;
                                                 }
                                                 break;
-                                        }
-                                }
-
-
-                                // Comments
-                                if (ch == '/') {
-                                        next = reader.Peek ();
-                                        if (next == '/') {
-                                                // double-slash comment, skip to the end of the line.
-                                                for (reader.Read ();
-                                                        next != -1 && next != '\n';
-                                                        next = reader.Read ());
-                                                continue;
-                                        } else if (next == '*') {
-                                                reader.Read ();
-                                                for (next = reader.Read ();
-                                                     next != -1 && next != '*' && reader.Peek () != '/';
-                                                     next = reader.Read ());
-                                                reader.Read ();
-                                                continue;
                                         }
                                 }
 
