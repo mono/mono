@@ -191,10 +191,10 @@ namespace System.Data.ProviderBase {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected void OnStateChange (ConnectionState originalState, ConnectionState currentState)
 		{
-			throw new NotImplementedException ();
+                        if (StateChange != null)
+                                StateChange (this, new StateChangeEventArgs (originalState, currentState));
 		}
 
 		[MonoTODO]

@@ -1,7 +1,8 @@
 2005-03-11  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* OdbcConnection.cs : notify state change through event. clean up
-	handles in case any exception while opening a connection.
+	handles in case any exception while opening a connection. NET_2_0
+	uses base class's OnStateChange handler.
 
 2005-03-10  Sureshkumar T  <tsureshkumar@novell.com>
 

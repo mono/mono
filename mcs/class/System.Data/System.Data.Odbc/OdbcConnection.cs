@@ -257,7 +257,7 @@ namespace System.Data.Odbc
 
 				transaction = null;
 
-                                RaiseEventStateChange (ConnectionState.Open, ConnectionState.Closed);
+                                OnStateChange (ConnectionState.Open, ConnectionState.Closed);
 			}
 		}
 
@@ -372,7 +372,7 @@ namespace System.Data.Odbc
                                                 throw new OdbcException(new OdbcError("SQLDriverConnect",OdbcHandleType.Dbc,hdbc));
                                 }
 
-                                RaiseEventStateChange (ConnectionState.Closed, ConnectionState.Open);
+                                OnStateChange (ConnectionState.Closed, ConnectionState.Open);
                         } catch (Exception) {
                                 // free handles if any.
                                 FreeHandles ();
@@ -433,12 +433,13 @@ namespace System.Data.Odbc
                         return System.Text.Encoding.Default.GetString (buffer);
                 }
 
-
-                private void RaiseEventStateChange (ConnectionState from, ConnectionState to)
+#if ONLY_1_1
+                private void OnStateChange (ConnectionState from, ConnectionState to)
                 {
                         if (StateChange != null)
                                 StateChange (this, new StateChangeEventArgs (from, to));
                 }
+#endif // ONLY_1_1
                 
 
 		#endregion
