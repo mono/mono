@@ -1,5 +1,6 @@
 2004-03-31  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* expression.cs: Added shift operators IL emit.
 	* BitwiseBinary.cs: added constructor for building it according to
 	JSToken enum. return a new object on EvaluateBitwiseBinary (this
 	needs a real implementation).

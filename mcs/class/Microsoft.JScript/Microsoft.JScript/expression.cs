@@ -137,6 +137,9 @@ namespace Microsoft.JScript {
 			case JSToken.BitwiseAnd:
 			case JSToken.BitwiseXor:
 			case JSToken.BitwiseOr:
+			case JSToken.LeftShift:
+			case JSToken.RightShift:
+			case JSToken.UnsignedRightShift:
 				ig.Emit (OpCodes.Call, typeof (BitwiseBinary).GetMethod ("EvaluateBitwiseBinary"));
 					 break;
 			case JSToken.Equal:
@@ -170,6 +173,18 @@ namespace Microsoft.JScript {
 				t = typeof (NumericBinary);
 				local_builder = ig.DeclareLocal (t);
 				ig.Emit (OpCodes.Ldc_I4_S, (byte) 47);
+			} else if (current_op == JSToken.LeftShift) {
+				t = typeof (BitwiseBinary);
+				local_builder = ig.DeclareLocal (t);
+				ig.Emit (OpCodes.Ldc_I4_S, (byte) 61);
+			} else if (current_op == JSToken.RightShift) {
+				t = typeof (BitwiseBinary);
+				local_builder = ig.DeclareLocal (t);
+				ig.Emit (OpCodes.Ldc_I4_S, (byte) 62);
+			} else if (current_op == JSToken.UnsignedRightShift) {
+				t = typeof (BitwiseBinary);
+				local_builder = ig.DeclareLocal (t);
+				ig.Emit (OpCodes.Ldc_I4_S, (byte) 63);
 			} else if (current_op == JSToken.Multiply) {
 				t = typeof (NumericBinary);
 				local_builder = ig.DeclareLocal (t);
@@ -203,6 +218,7 @@ namespace Microsoft.JScript {
 				local_builder = ig.DeclareLocal (t);
 				ig.Emit (OpCodes.Ldc_I4_S, (byte) 54);
 			}
+
 			ig.Emit (OpCodes.Newobj, t.GetConstructor (new Type [] {typeof (int)}));
 			ig.Emit (OpCodes.Stloc, local_builder);
 			ig.Emit (OpCodes.Ldloc, local_builder);
