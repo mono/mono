@@ -200,6 +200,14 @@ namespace System.Web.Compilation
 					initAsControl.Parameters.Add (new CodePropertyReferenceExpression (thisRef, "Page"));
 					method.Statements.Add (initAsControl);
 				}
+#if NET_2_0
+				if (typeof (System.Web.UI.WebControls.ContentPlaceHolder).IsAssignableFrom (type)) {
+					CodePropertyReferenceExpression prop = new CodePropertyReferenceExpression (thisRef, "ContentPlaceHolders");
+					CodeMethodInvokeExpression addPlaceholder = new CodeMethodInvokeExpression (prop, "Add");
+					addPlaceholder.Parameters.Add (ctrlVar);
+					method.Statements.Add (addPlaceholder);
+				}
+#endif
 			}
 
 			mainClass.Members.Add (method);
@@ -287,7 +295,6 @@ namespace System.Web.Compilation
 		
 		bool ProcessPropertiesAndFields (ControlBuilder builder, MemberInfo member, string id, string attValue)
 		{
-			CodeMemberMethod method = builder.method;
 			int hyphen = id.IndexOf ('-');
 
 			bool isPropertyInfo = (member is PropertyInfo);
@@ -515,6 +522,26 @@ namespace System.Web.Compilation
 			method.Statements.Add (assign);
 		}
 
+#if NET_2_0
+		void AddContentTemplateInvocation (ContentControlBuilder cbuilder, CodeMemberMethod method, string methodName)
+		{
+			CodePropertyReferenceExpression pag = new CodePropertyReferenceExpression (ctrlVar, "Page");
+			CodePropertyReferenceExpression prop = new CodePropertyReferenceExpression (pag, "Master");
+
+			CodeObjectCreateExpression newBuild = new CodeObjectCreateExpression (typeof (BuildTemplateMethod));
+			newBuild.Parameters.Add (new CodeMethodReferenceExpression (thisRef, methodName));
+
+			CodeObjectCreateExpression newCompiled = new CodeObjectCreateExpression (typeof (CompiledTemplateBuilder));
+			newCompiled.Parameters.Add (newBuild);
+			
+			CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression (prop, "AddContentTemplate");
+			invoke.Parameters.Add (new CodePrimitiveExpression (cbuilder.ContentPlaceHolderID));
+			invoke.Parameters.Add (newCompiled);
+
+			method.Statements.Add (invoke);
+		}
+#endif
+
 		void AddCodeRender (ControlBuilder parent, CodeRenderBuilder cr)
 		{
 			if (cr.Code == null || cr.Code.Trim () == "")
@@ -650,7 +677,7 @@ namespace System.Web.Compilation
 			}
 
 			InitMethod (builder, isTemplate, childrenAsProperties);
-			if (builder.GetType () != typeof (TemplateBuilder))
+			if (!isTemplate || builder.GetType () == typeof (RootBuilder))
 				CreateAssignStatementsFromAttributes (builder);
 
 			if (builder.Children != null && builder.Children.Count > 0) {
@@ -670,6 +697,15 @@ namespace System.Web.Compilation
 						continue;
 					}
 
+#if NET_2_0
+					if (b is ContentControlBuilder) {
+						ContentControlBuilder cb = (ContentControlBuilder) b;
+						CreateControlTree (cb, true, true);
+						AddContentTemplateInvocation (cb, builder.method, cb.method.Name);
+						continue;
+					}
+#endif
+
 					if (b is TemplateBuilder) {
 						if (templates == null)
 							templates = new ArrayList ();
@@ -687,7 +723,7 @@ namespace System.Web.Compilation
 						AddDataBindingLiteral (builder, (DataBindingBuilder) b);
 						continue;
 					}
-
+					
 					if (b is ControlBuilder) {
 						ControlBuilder child = (ControlBuilder) b;
 						CreateControlTree (child, inTemplate, builder.ChildrenAsProperties);

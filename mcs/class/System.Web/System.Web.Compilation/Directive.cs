@@ -122,6 +122,12 @@ namespace System.Web.Compilation
 			valid_attributes = new Hashtable (provider, comparer);
 			foreach (string att in application_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("APPLICATION", valid_attributes);
+
+#if NET_2_0
+			valid_attributes = new Hashtable (provider, comparer);
+			foreach (string att in control_atts) valid_attributes.Add (att, null);
+			directivesHash.Add ("MASTER", valid_attributes);
+#endif
 		}
 		
 		private Directive () { }

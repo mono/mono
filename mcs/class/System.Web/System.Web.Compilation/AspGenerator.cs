@@ -214,6 +214,10 @@ namespace System.Web.Compilation
 
 			if (type == typeof (UserControlParser))
 				return new UserControlCompiler ((UserControlParser) tparser);
+#if NET_2_0
+			if (type == typeof(MasterPageParser))
+				return new UserControlCompiler ((UserControlParser) tparser);
+#endif
 
 			throw new Exception ("Got type: " + type);
 		}

@@ -1,3 +1,13 @@
+2005-01-21  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Directive.cs: Added MASTER directive.
+	* AspGenerator.cs: Use UserControlCompiler for compiling master pages.
+	* PageCompiler.cs: Set the master file name when generating the page.
+	* TemplateControlCompiler.cs: When generating the method for a
+	content holder, register the content holder in the base MasterPage.
+	Added method for registering a Content control for a MasterPage.
+	Generate code for Content controls.
+
 2005-01-10  Lluis Sanchez Gual <lluis@novell.com>
 
 	* TemplateControlCompiler.cs: Get the container type from the

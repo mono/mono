@@ -61,6 +61,17 @@ namespace System.Web.Compilation
 				localVars.Add (new CodeAssignStatement (prop, ct));
 			}
 
+#if NET_2_0
+			if (pageParser.MasterPageFile != null) {
+				CodeExpression prop;
+				prop = new CodePropertyReferenceExpression (thisRef, "MasterPageFile");
+				CodeExpression ct = new CodePrimitiveExpression (pageParser.MasterPageFile);
+				if (localVars == null)
+					localVars = new CodeStatementCollection ();
+				localVars.Add (new CodeAssignStatement (prop, ct));
+			}
+#endif
+
 			base.CreateConstructor (localVars, trueStmt);
 		}
 		
