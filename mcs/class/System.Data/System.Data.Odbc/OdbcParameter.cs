@@ -261,7 +261,10 @@ namespace System.Data.Odbc
 				string paramValueString = ParamValue.ToString();
 				// Treat everything else as a string
 				// Init string buffer
-				if (buffer == null || buffer.Length < ((size > 20) ? size : 20))
+				 if (ParamValue is String)
+                                        paramValueString = "\'"+paramValueString+"\'";
+                                 
+				 if (buffer == null || buffer.Length < ((size > 20) ? size : 20))
 					buffer = new byte[(size > 20) ? size : 20];
 				else
 					buffer.Initialize();
