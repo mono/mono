@@ -1,3 +1,9 @@
+2004-07-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : added call to jay for creating XQueryParser.cs.
+	* System.Xml.dll.sources : added XQueryParser.cs, XQueryTokenizer.cs,
+	  XQueryModuleProlog.cs, XPath2Expression.cs and XQueryExpression.cs.
+
 2004-07-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml.dll.sources: Added XQueryConvert.cs. Removed 
