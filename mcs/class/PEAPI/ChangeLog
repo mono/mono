@@ -1,5 +1,10 @@
 2004-05-25  Jackson Harper  <jackson@ximian.com>
 
+	* PEAPI.cs: Set the has default flag on fields when a default data
+	constant is assigned to them.
+	
+2004-05-25  Jackson Harper  <jackson@ximian.com>
+
 	* PEAPI.cs: Encode string constants as unicode before putting them
 	in the blob.
 	

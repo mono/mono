@@ -2913,6 +2913,7 @@ namespace PEAPI
     //private static readonly uint PInvokeImpl = 0x2000;
     private static readonly ushort HasFieldMarshal = 0x1000;
     private static readonly ushort HasFieldRVA = 0x100;
+    private static readonly ushort HasDefault = 0x8000;
 
     FieldRVA rva;
     ConstantElem constVal;
@@ -2943,6 +2944,7 @@ namespace PEAPI
     /// <param name="val">the value for the field</param>
     public void AddValue(Constant val) {
       constVal = new ConstantElem(this,val);
+      flags |= HasDefault;
     }
 
     /// <summary>
