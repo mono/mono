@@ -2,6 +2,9 @@
 
 	* corlib.dll.sources: Added KeyPairPersistance class, in Mono.
 	Security.Cryptography namespace, to the build.
+	* corlib_test.dll.sources: Added AppDomain unit tests in System.
+	Some tests are currently ignored because they produce lots of GC
+	Warning failures but they seems to work (nunit finishes).
 
 2004-01-14  Sebastien Pouliot  <spouliot@videotron.ca>
 
