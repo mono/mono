@@ -1,3 +1,9 @@
+2003-06-26  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* Object.cs: Object must have the Serializable attribute.
+	* DateTime.cs: Fixed _DoParse() so it correctly applies the utc offset
+	  to the resulting date. Also fixed _ToString so now correctly formates the
+	  UTC offset.
 
 Wed Jun 18 19:22:22 CEST 2003 Paolo Molaro <lupus@ximian.com>
 

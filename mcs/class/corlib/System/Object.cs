@@ -12,6 +12,7 @@ using System.Runtime.CompilerServices;
 
 namespace System {
 
+	[Serializable]
 	public class Object {
 
 		// <summary>

@@ -76,6 +76,8 @@ namespace System
 		{
 			int[] days;
 			int temp = 0, m=1 ;
+
+
 		
 			days = (IsLeapYear(year) ? daysmonthleap  : daysmonth);
 			
@@ -601,7 +603,7 @@ namespace System
 					       DateTimeFormatInfo dfi,
 					       DateTimeStyles style)
 		{
-			bool useutc = true, use_localtime = true;
+			bool useutc = false, use_localtime = true;
 			bool sloppy_parsing = false;
 
 			if (format.Length == 1)
@@ -609,6 +611,7 @@ namespace System
 
 			if ((style & DateTimeStyles.AllowLeadingWhite) != 0) {
 				format = format.TrimStart (null);
+
 				s = s.TrimStart (null);
 			}
 
@@ -890,6 +893,7 @@ namespace System
 				hour = 0;
 			if (minute == -1)
 				minute = 0;
+
 			if (second == -1)
 				second = 0;
 			if (millisecond == -1)
@@ -929,6 +933,7 @@ namespace System
 
 			// If no timezone was specified, default to the local timezone.
 			TimeSpan utcoffset;
+
 			if (useutc)
 				utcoffset = new TimeSpan (0, 0, 0);
 			else if (tzsign == -1) {
@@ -1198,7 +1203,7 @@ namespace System
 						int shortyear = Year % 100;
 						str = shortyear.ToString ("d02");
 					} else {
-						str = Year.ToString ("d");
+						str = Year.ToString ("d04");
 						num = 3;
 					}
 					break;
@@ -1222,6 +1227,7 @@ namespace System
 
 					break;
 				case 'h':
+
 					if (num == 0) {
 						int shorthour = Hour % 12;
 						str = shorthour.ToString ("d");
@@ -1270,21 +1276,22 @@ namespace System
 					if (num == 0) {
 						int offset = utcoffset.Hours;
 						str = offset.ToString ("d");
-						if (offset > 0)
-							str = String.Concat ("+", str);
-					} else if (num == 1) {
+						str = String.Concat ((offset >= 0) ? "+" : "-", str);
+					} 
+					else if (num == 1) 
+					{
 						int offset = utcoffset.Hours;
 						str = offset.ToString ("d02");
-						if (offset > 0)
-							str = String.Concat ("+", str);
-					} else if (num == 2) {
+						str = String.Concat ((offset >= 0) ? "+" : "-", str);
+					} 
+					else if (num == 2) 
+					{
 						int offhour = utcoffset.Hours;
 						int offminute = utcoffset.Minutes;
 						str = offhour.ToString ("d02");
 						str = String.Concat (str, dfi.TimeSeparator);
 						str = String.Concat (str, offminute.ToString ("d02"));
-						if (offhour > 0)
-							str = String.Concat ("+", str);
+						str = String.Concat ((offhour >= 0) ? "+" : "-", str);
 						num = 2;
 					}
 					break;
@@ -1312,6 +1319,7 @@ namespace System
 		}
 
 		public string ToString (string format, IFormatProvider fp)
+
 		{
 			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance(fp);
 
@@ -1404,6 +1412,7 @@ namespace System
 		byte IConvertible.ToByte(IFormatProvider provider)
 		{
 			throw new InvalidCastException();
+
 		}
 
 		char IConvertible.ToChar(IFormatProvider provider)
