@@ -86,7 +86,7 @@ namespace Mono.CSharp {
 				UsageAttr = true;
 			if (Type == TypeManager.methodimpl_attr_type)
 				MethodImplAttr = true;
-			
+
 			// Now we extract the positional and named arguments
 			
 			ArrayList pos_args = new ArrayList ();
@@ -453,6 +453,14 @@ namespace Mono.CSharp {
 							
 							RootContext.TypeManager.RegisterAttrType (
 										 (TypeBuilder) builder, tc);
+
+						} else if (a.Type == TypeManager.default_member_attr_type) {
+							if (tc.Indexers != null) {
+								Report.Error (646, loc,
+								      "Cannot specify the DefaultMember attribute on " +
+								      " a type containing an indexer");
+								return;
+							}
 
 						} else {
 							if (!CheckAttribute (a, kind)) {

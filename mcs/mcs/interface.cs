@@ -680,25 +680,28 @@ namespace Mono.CSharp {
 				foreach (InterfaceIndexer ii in defined_indexer)
 					PopulateIndexer (ii);
 
-				CustomAttributeBuilder cb = EmitDefaultMemberAttr (parent);
+				CustomAttributeBuilder cb = EmitDefaultMemberAttr (parent, ModFlags, Location);
 				TypeBuilder.SetCustomAttribute (cb);
 			}
 			
 			return true;
 		}
 
-		CustomAttributeBuilder EmitDefaultMemberAttr (TypeContainer parent)
+		public static CustomAttributeBuilder EmitDefaultMemberAttr (TypeContainer parent, int flags,
+									    Location loc)
 		{
-			EmitContext ec = new EmitContext (parent, Location, null, null, ModFlags);
+			EmitContext ec = new EmitContext (parent, loc, null, null, flags);
 
 			Expression ml = Expression.MemberLookup (ec, TypeManager.default_member_attr_type,
-								    ".ctor", false, MemberTypes.Constructor,
-								    BindingFlags.Public | BindingFlags.Instance,
-								    Location.Null);
-
-			if (!(ml is MethodGroupExpr))
+								 ".ctor", false, MemberTypes.Constructor,
+								 BindingFlags.Public | BindingFlags.Instance,
+								 Location.Null);
+			
+			if (!(ml is MethodGroupExpr)) {
 				Console.WriteLine ("Internal error !!!!");
-
+				return null;
+			}
+			
 			MethodGroupExpr mg = (MethodGroupExpr) ml;
 
 			MethodBase constructor = mg.Methods [0];

@@ -1314,6 +1314,7 @@ namespace Mono.CSharp {
 				if (Type.FilterName (e.FieldBuilder, ei.Name))
 					return e.FieldBuilder;
 			}
+
 			return null;
 		}
 
@@ -1498,10 +1499,15 @@ namespace Mono.CSharp {
 				foreach (Property p in properties)
 					p.Emit (this);
 
-			if (indexers != null)
+			if (indexers != null) {
 				foreach (Indexer ix in indexers)
 					ix.Emit (this);
 
+				CustomAttributeBuilder cb = Interface.EmitDefaultMemberAttr (this, ModFlags, Location);
+
+				TypeBuilder.SetCustomAttribute (cb);
+			}
+			
 			if (fields != null)
 				foreach (Field f in fields)
 					f.Emit (this);

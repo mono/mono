@@ -1,3 +1,20 @@
+2001-01-03  Ravi Pratap  <ravi@ximian.com>
+
+	* interface.cs (EmitDefaultMemberAttr): Make this helper method static
+	so we can call it from elsewhere.
+
+	* class.cs (TypeContainer.Emit): Emit the attribute here too. The rule is that
+	we emit it internally if the class has a defined indexer; otherwise the user
+	emits it by decorating the class definition with the DefaultMemberAttribute.
+
+	* attribute.cs (ApplyAttributes): Perform checks to see that the DefaultMember
+	attribute is not used on a type which defines an indexer.
+
+	* cs-tokenizer.cs (get_cmd_arg): Ensure we trim whitespace and also include the tab
+	character when we skip whitespace.
+
+	* ../errors/cs0646.cs : Add.
+
 2002-01-03  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (SimpleName.ResolveSimpleName): Report error 120

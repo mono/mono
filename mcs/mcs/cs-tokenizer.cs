@@ -789,13 +789,13 @@ namespace Mono.CSharp
 			arg = "";
 			static_cmd_arg.Length = 0;
 				
-			while ((c = getChar ()) != -1 && (c != '\n') && (c != ' ')){
+			while ((c = getChar ()) != -1 && (c != '\n') && ((c != ' ') || c == '\t')){
 				if (c == '\r')
 					continue;
 				static_cmd_arg.Append ((char) c);
 			}
 
-			cmd = static_cmd_arg.ToString ();
+			cmd = static_cmd_arg.ToString ().Trim ();
 
 			if (c == '\n'){
 				line++;
@@ -804,7 +804,7 @@ namespace Mono.CSharp
 			}
 
 			// skip over white space
-			while ((c = getChar ()) != -1 && (c != '\n') && (c == ' '))
+			while ((c = getChar ()) != -1 && (c != '\n') && ((c == ' ') || (c == '\t')))
 				;
 
 			if (c == '\n'){
