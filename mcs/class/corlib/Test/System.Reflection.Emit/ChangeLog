@@ -1,3 +1,8 @@
+2004-06-09  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* MethodRentalTest.cs: Added check for invalid method size,
+	fixed tests on MS.NET, Mono-stylized
+
 2004-04-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MethodRentalTest.cs: New file.
