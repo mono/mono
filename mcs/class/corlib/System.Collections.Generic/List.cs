@@ -25,13 +25,34 @@ namespace System.Collections.Generic
 		protected T[] contents;
 		protected int modified;
 
+		public List ()
+		{
+		}
+
+		public List (int capacity)
+		{
+			this.capacity = capacity;
+			contents = new T [capacity];
+		}
+
+		public List (ICollection collection)
+			: this (collection.Count)
+		{
+			collection.CopyTo (contents, 0);
+			count = collection.Count;
+		}
+
 		protected void Resize (int size)
 		{
-			if (size <= capacity)
+			if (size < capacity)
 				return;
 
+			if (size < 10)
+				size = 10;
+
 			T[] ncontents = new T [size];
-			Array.Copy (contents, 0, ncontents, 0, count);
+			if (count > 0)
+				Array.Copy (contents, 0, ncontents, 0, count);
 
 			modified++;
 			contents = ncontents;
@@ -164,12 +185,14 @@ namespace System.Collections.Generic
 
 		public void CopyTo (T[] array, int arrayIndex)
 		{
-			Array.Copy (contents, 0, array, arrayIndex, count);
+			if (count > 0)
+				Array.Copy (contents, 0, array, arrayIndex, count);
 		}
 
 		void ICollection.CopyTo (Array array, int arrayIndex)
 		{
-			Array.Copy (contents, 0, array, arrayIndex, count);
+			if (count > 0)
+				Array.Copy (contents, 0, array, arrayIndex, count);
 		}
 
 		public int Count {
@@ -206,13 +229,15 @@ namespace System.Collections.Generic
 			{
 				this.list = list;
 				this.modified = list.modified;
-				this.current = 0;
+				this.current = -1;
 			}
 
 			public T Current {
 				get {
 					if (list.modified != modified)
 						throw new InvalidOperationException ();
+					if (current < 0)
+						current = 0;
 					if (current > list.count)
 						throw new ArgumentException ();
 					return list.contents [current];
@@ -239,7 +264,7 @@ namespace System.Collections.Generic
 				if (list.modified != modified)
 					throw new InvalidOperationException ();
 
-				current = 0;
+				current = -1;
 			}
 
 			public void Dispose ()
