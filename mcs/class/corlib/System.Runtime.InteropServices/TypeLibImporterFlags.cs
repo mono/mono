@@ -38,6 +38,14 @@ namespace System.Runtime.InteropServices
 		PrimaryInteropAssembly = 1,
 		UnsafeInterfaces = 2,
 		SafeArrayAsSystemArray = 4,
-		TransformDispRetVals = 8
+		TransformDispRetVals = 8,
+#if NET_2_0
+		None = 0,
+		PreventClassMembers = 16,
+		PlatformLegacy = 4096,
+		PlatformLibrary = 8192,
+		PlatformAppDomain = 16384,
+		PlatformProcess = 32768
+#endif
 	}
 }

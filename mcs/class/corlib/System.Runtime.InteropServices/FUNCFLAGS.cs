@@ -32,6 +32,9 @@ using System;
 
 namespace System.Runtime.InteropServices
 {
+#if NET_2_0
+	[Obsolete]
+#endif
 	[Flags, Serializable, ComVisible (false)]
 	public enum FUNCFLAGS
 	{

@@ -30,6 +30,9 @@
 
 namespace System.Runtime.InteropServices
 {
+#if NET_2_0
+	[Obsolete]
+#endif
 	[ComVisible (false)]
 	[StructLayout (LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 	public struct PARAMDESC

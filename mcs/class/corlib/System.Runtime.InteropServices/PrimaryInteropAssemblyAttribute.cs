@@ -33,7 +33,11 @@ using System;
 
 namespace System.Runtime.InteropServices {
 
-	[AttributeUsage (AttributeTargets.Assembly, Inherited=false)]
+	[AttributeUsage (AttributeTargets.Assembly, Inherited=false
+#if NET_2_0
+		, AllowMultiple = true
+#endif
+	)]
 	public sealed class PrimaryInteropAssemblyAttribute : Attribute
 	{
 		int major, minor;

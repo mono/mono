@@ -32,15 +32,25 @@ using System;
 
 namespace System.Runtime.InteropServices
 {
+#if NET_2_0
+	[Obsolete]
+#endif
+	[ComImport]
 	[Guid ("00000101-0000-0000-c000-000000000046")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMIEnumString
 	{
-		[PreserveSigAttribute]
+#if NET_2_0
+		[PreserveSig]
+#endif
 		int Next (int celt, [Out, MarshalAs (UnmanagedType.LPArray, ArraySubType = Consts.UnmanagedType_80, SizeParamIndex = 0)] string[] rgelt, out int pceltFetched);
-		[PreserveSigAttribute]
+#if NET_2_0
+		[PreserveSig]
+#endif
 		int Skip (int celt);
-		[PreserveSigAttribute]
+#if NET_2_0
+		[PreserveSig]
+#endif
 		int Reset ();
 		void Clone (out UCOMIEnumString ppenum);
 	}

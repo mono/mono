@@ -34,6 +34,7 @@
 
 namespace System.Runtime.InteropServices
 {
+	[ComVisible (false)]
 	public sealed class VariantWrapper
 	{
 		private object _wrappedObject;

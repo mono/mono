@@ -133,6 +133,21 @@ namespace System.Runtime.InteropServices
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static IntPtr GetAddrOfPinnedObject(int handle);
+
+#if NET_2_0
+		public override bool Equals(object o)
+		{
+			if (o == null || !(o is GCHandle))
+				return false;
+
+			return (handle == ((GCHandle)o).handle);
+		}
+
+		public override int GetHashCode()
+		{
+			return handle.GetHashCode ();
+		}
+#endif
 	} 
 }
 

@@ -32,12 +32,18 @@ using System;
 
 namespace System.Runtime.InteropServices
 {
+#if NET_2_0
+	[Obsolete]
+#endif
+	[ComImport]
 	[Guid ("0000010b-0000-0000-c000-000000000046")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMIPersistFile
 	{
 		void GetClassID (out Guid pClassID);
+#if NET_2_0
 		[PreserveSig]
+#endif
 		int IsDirty ();
 		void Load ([MarshalAs(UnmanagedType.LPWStr)] string pszFileName, int dwMode);
 		void Save ([MarshalAs (UnmanagedType.LPWStr)] string pszFileName, [MarshalAs (UnmanagedType.Bool)] bool fRemember);

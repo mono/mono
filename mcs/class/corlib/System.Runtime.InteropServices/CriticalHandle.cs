@@ -28,11 +28,13 @@ namespace System.Runtime.InteropServices
 			Dispose ();
 		}
 
+		[ReliabilityContract (Consistency.WillNotCorruptState, CER.Success)]
 		public void Close ()
 		{
 			Dispose ();
 		}
 
+		[ReliabilityContract (Consistency.WillNotCorruptState, CER.Success)]
 		public void Dispose ()
 		{
 			if (_disposed)
@@ -49,23 +51,30 @@ namespace System.Runtime.InteropServices
 			}
 		}
 
+		[ReliabilityContract (Consistency.WillNotCorruptState, CER.Success)]
 		protected abstract bool ReleaseHandle ();
 
+		[ReliabilityContract (Consistency.WillNotCorruptState, CER.Success)]
 		protected void SetHandle (IntPtr handle)
 		{
 			this.handle = handle;
 		}
 
+		[ReliabilityContract (Consistency.WillNotCorruptState, CER.Success)]
 		public void SetHandleAsInvalid()
 		{
 			_disposed = true;
 		}
 
 		public bool IsClosed {
+			[ReliabilityContract (Consistency.WillNotCorruptState, CER.Success)]
 			get { return _disposed; }
 		}
 
-		public abstract bool IsInvalid {get;}
+		public abstract bool IsInvalid {
+			[ReliabilityContract (Consistency.WillNotCorruptState, CER.Success)]
+			get;
+		}
 	}
 }
 #endif

@@ -30,6 +30,9 @@
 
 namespace System.Runtime.InteropServices
 {
+#if NET_2_0
+	[Obsolete]
+#endif
 	[Serializable]
 	[ComVisible (false)]
 	public enum CALLCONV

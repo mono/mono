@@ -12,6 +12,7 @@ using System.Runtime.Serialization;
 
 namespace System.Runtime.InteropServices
 {
+	[Serializable]
 	public class ComObjectInUseException : SystemException
 	{
 		private const int ErrorCode = -2146233046;

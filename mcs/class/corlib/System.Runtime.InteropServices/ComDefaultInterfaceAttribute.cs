@@ -11,6 +11,7 @@ using System;
 
 namespace System.Runtime.InteropServices
 {
+	[AttributeUsage (AttributeTargets.Class)]
 	public sealed class ComDefaultInterfaceAttribute : Attribute
 	{
 		Type _type;

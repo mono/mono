@@ -38,6 +38,7 @@ namespace System.Runtime.InteropServices {
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	public interface ITypeLibExporterNotifySink {
 		void ReportEvent (ExporterEventKind eventKind, int eventCode, string eventMsg);
+		[return: MarshalAs(UnmanagedType.Interface)]
 		object ResolveRef (Assembly assembly);
 	}
 }

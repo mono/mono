@@ -1,3 +1,66 @@
+2005-03-04  Kazuki Oikawa  <kazuki@panicode.com>
+
+	* _Exception.cs
+	* BIND_OPTS.cs
+	* BINDPTR.cs
+	* CALLCONV.cs
+	* ComDefaultInterfaceAttribute.cs
+	* ComObjectInUseException.cs
+	* ComSourceInterfacesAttribute.cs
+	* CONNECTDATA.cs
+	* CriticalHandle.cs
+	* DefaultCharSetAttribute.cs
+	* DESCKIND.cs
+	* DISPPARAMS.cs
+	* ELEMDESC.cs
+	* EXCEPINFO.cs
+	* ExposeAsClassToComAttribute.cs
+	* FILETIME.cs
+	* FUNCDESC.cs
+	* FUNCFLAGS.cs
+	* FUNCKIND.cs
+	* GCHandle.cs
+	* ICustomAdapter.cs
+	* IDLDESC.cs
+	* IDLFLAG.cs
+	* IMPLTYPEFLAGS.cs
+	* INVOKEKIND.cs
+	* ITypeLibConverter.cs
+	* ITypeLibExporterNameProvider.cs
+	* ITypeLibExporterNotifySink.cs
+	* LIBFLAGS.cs
+	* PARAMDESC.cs
+	* PARAMFLAG.cs
+	* PrimaryInteropAssemblyAttribute.cs
+	* STATSTG.cs
+	* SYSKIND.cs
+	* TYPEATTR.cs
+	* TYPEDESC.cs
+	* TYPEFLAGS.cs
+	* TYPEKIND.cs
+	* TYPELIBATTR.cs
+	* TypeLibExporterFlags.cs
+	* TypeLibImporterFlags.cs
+	* UCOMIBindCtx.cs
+	* UCOMIConnectionPoint.cs
+	* UCOMIConnectionPointContainer.cs
+	* UCOMIEnumConnectionPoints.cs
+	* UCOMIEnumConnections.cs
+	* UCOMIEnumMoniker.cs
+	* UCOMIEnumString.cs
+	* UCOMIEnumVARIANT.cs
+	* UCOMIMoniker.cs
+	* UCOMIPersistFile.cs
+	* UCOMIRunningObjectTable.cs
+	* UCOMIStream.cs
+	* UCOMITypeComp.cs
+	* UCOMITypeInfo.cs
+	* UCOMITypeLib.cs
+	* UnmanagedFunctionPointerAttribute.cs
+	* VARDESC.cs
+	* VARFLAGS.cs
+	* VariantWrapper.cs: Added missing attributes.
+
 2005-03-03  Kazuki Oikawa  <kazuki@panicode.com>
 
 	* _ConstructorInfo.cs
