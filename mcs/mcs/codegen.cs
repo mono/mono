@@ -64,16 +64,7 @@ namespace CIR {
 		// tracks the state of checked/unchecked arithmetic
 		// generation.
 		//
-		bool check_state;
-		public bool CheckState {
-			get {
-				return check_state;
-			}
-
-			set {
-				check_state = value;
-			}
-		}
+		public bool CheckState;
 		
 		public EmitContext (TypeContainer parent, ILGenerator ig)
 		{

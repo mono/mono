@@ -83,7 +83,6 @@ namespace CIR {
 	}
 
 	public class BoolLiteral : Literal {
-		static Type bool_type = Type.GetType ("System.Bool");
 		bool val;
 		
 		public BoolLiteral (bool val)
@@ -99,7 +98,7 @@ namespace CIR {
 		public override Expression Resolve (TypeContainer tc)
 		{
 			eclass = ExprClass.Value;
-			type = bool_type;
+			type = TypeManager.bool_type;
 
 			return this;
 		}

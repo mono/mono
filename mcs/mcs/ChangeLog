@@ -1,5 +1,12 @@
 2001-09-09  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (Binary::Resolve): Beginning of it.  I scratched
+	my previous implementation, did not work.
+
+	* typemanager.cs: Add a couple of missing types (the longs).
+
+	* literal.cs: Use TypeManager.bool_type instead of getting it.
+
 	* expression.cs (EventExpr): New kind of expressions.
 	(Expressio::ExprClassFromMemberInfo): finish
 

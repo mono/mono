@@ -348,6 +348,8 @@ namespace CIR {
 
 		Operator oper;
 		Expression left, right;
+
+		OpCode opcode, opcode_check;
 		
 		public Binary (Operator oper, Expression left, Expression right)
 		{
@@ -383,14 +385,56 @@ namespace CIR {
 			}
 		}
 
+		Expression ResolveOperator (Operator oper, Type l, Type r)
+		{
+			//
+			// Step 1: Perform Operator Overload location
+			//
+
+			//
+			// Step 2: Default operations
+			//
+			switch (oper){
+			case Operator.Multiply:
+				opcode = OpCodes.Mul;
+				if (l == TypeManager.int32_type)
+					opcode_check = OpCodes.Mul_Ovf;
+				else if (l == TypeManager.uint32_type)
+					opcode_check = OpCodes.Mul_Ovf_Un;
+				else if (l == TypeManager.uint64_type) 
+					opcode_check = OpCodes.Mul_Ovf_Un;
+				else if (l == TypeManager.int64_type) 
+					opcode_check = OpCodes.Mul_Ovf;
+				else
+					opcode_check = OpCodes.Mul;
+				break;
+			}
+
+			return this;
+		}
+		
 		public override Expression Resolve (TypeContainer tc)
 		{
-			// FIXME: implement me
-			return this;
+			left = left.Resolve (tc);
+			right = right.Resolve (tc);
+
+			if (left == null || right == null)
+				return null;
+					
+			return ResolveOperator (oper, left.Type, right.Type);
 		}
 
 		public override void Emit (EmitContext ec)
 		{
+			ILGenerator ig = ec.ig;
+
+			left.Emit (ec);
+			right.Emit (ec);
+
+			if (ec.CheckState)
+				ec.ig.Emit (opcode_check);
+			else
+				ec.ig.Emit (opcode);
 		}
 	}
 
@@ -664,43 +708,16 @@ namespace CIR {
 			
 			return -1;
 		}
-		
-		public override Expression Resolve (TypeContainer tc)
+
+		// <summary>
+		//   Find the Applicable Function Members (7.4.2.1)
+		// </summary>
+		static MethodInfo OverloadResolve (MethodGroupExpr me, ArrayList Arguments)
 		{
-			//
-			// First, resolve the expression that is used to
-			// trigger the invocation
-			//
-			this.expr = expr.Resolve (tc);
-			if (this.expr == null)
-				return null;
-
-			if (!(this.expr is MethodGroupExpr)){
-				tc.RootContext.Report.Error (118,
-				       "Denotes an " + this.expr.ExprClass + " while a method was expected");
-				return null;
-			}
-
-			//
-			// Next, evaluate all the expressions in the argument list
-			//
-			if (Arguments != null){
-				for (int i = Arguments.Count; i > 0;){
-					--i;
-					Argument a = (Argument) Arguments [i];
-
-					if (!a.Resolve (tc))
-						return null;
-				}
-			}
-
-			//
-			// Find the Applicable Function Members (7.4.2.1)
-			//
-			MethodGroupExpr me = (MethodGroupExpr) this.expr;
 			ArrayList afm = new ArrayList ();
 			int best_match = 10000;
 			int best_match_idx = -1;
+			MethodInfo method = null;
 			
 			for (int i = me.Methods.Length; i > 0; ){
 				i--;
@@ -733,6 +750,44 @@ namespace CIR {
 					}
 				}
 			}
+
+			if (best_match_idx == -1)
+				return null;
+			
+			return method;
+		}
+
+			
+		public override Expression Resolve (TypeContainer tc)
+		{
+			//
+			// First, resolve the expression that is used to
+			// trigger the invocation
+			//
+			this.expr = expr.Resolve (tc);
+			if (this.expr == null)
+				return null;
+
+			if (!(this.expr is MethodGroupExpr)){
+				tc.RootContext.Report.Error (118,
+				       "Denotes an " + this.expr.ExprClass + " while a method was expected");
+				return null;
+			}
+
+			//
+			// Next, evaluate all the expressions in the argument list
+			//
+			if (Arguments != null){
+				for (int i = Arguments.Count; i > 0;){
+					--i;
+					Argument a = (Argument) Arguments [i];
+
+					if (!a.Resolve (tc))
+						return null;
+				}
+			}
+
+			method = OverloadResolve ((MethodGroupExpr) this.expr, Arguments);
 
 			if (method == null){
 				tc.RootContext.Report.Error (-6,

@@ -19,6 +19,8 @@ public class TypeManager {
 	static public Type string_type;
 	static public Type int32_type;
 	static public Type uint32_type;
+	static public Type int64_type;
+	static public Type uint64_type;
 	static public Type float_type;
 	static public Type double_type;
 	static public Type char_type;
@@ -102,7 +104,9 @@ public class TypeManager {
 		object_type  = LookupType ("System.Object");
 		string_type  = LookupType ("System.String");
 		int32_type   = LookupType ("System.Int32");
+		int64_type   = LookupType ("System.Int64");
 		uint32_type  = LookupType ("System.UInt32"); 
+		uint64_type  = LookupType ("System.UInt64"); 
 		float_type   = LookupType ("System.Single");
 		double_type  = LookupType ("System.Double");
 		char_type    = LookupType ("System.Char");
