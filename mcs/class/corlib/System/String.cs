@@ -821,6 +821,9 @@ namespace System {
 		}
 	
 		public static string Join (string separator, string [] value) {
+			if (value == null)
+				throw new ArgumentNullException ();
+
 			return Join(separator, value, 0, value.Length);
 		}
 
