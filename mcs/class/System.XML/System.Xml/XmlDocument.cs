@@ -875,9 +875,8 @@ namespace System.Xml
 				{
 					reader.ResolveEntity ();
 					reader.Read ();
-					for (XmlNode child; reader.NodeType != XmlNodeType.EndEntity && ((child = ReadNode (reader)) != null);)
+					for (XmlNode child; reader.NodeType != XmlNodeType.EndEntity && (child = ReadNode (reader)) != null;)
 						n.InsertBefore (child, null, false, false);
-					reader.Read (); // skip EndEntity
 				}
 				break;
 

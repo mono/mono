@@ -59,7 +59,6 @@ namespace Mono.Xml
 			XmlValidatingReader validatingReader)
 		{
 			entityReaderStack = new Stack ();
-			entityReaderNameStack = new Stack ();
 			entityReaderDepthStack = new Stack ();
 			this.reader = reader;
 			this.sourceTextReader = reader as XmlTextReader;
@@ -83,7 +82,6 @@ namespace Mono.Xml
 		}
 
 		Stack entityReaderStack;
-		Stack entityReaderNameStack;
 		Stack entityReaderDepthStack;
 		XmlReader reader;
 		XmlTextReader sourceTextReader;
@@ -393,14 +391,12 @@ namespace Mono.Xml
 				if (DTD == null || DTD.EntityDecls [reader.Name] == null)
 					throw NotWFError (String.Format ("Entity '{0}' was not declared.", reader.Name));
 				entityReaderStack.Push (reader);
-				entityReaderNameStack.Push (reader.Name);
 				entityReaderDepthStack.Push (Depth);
 				reader = sourceTextReader = nextEntityReader;
 				nextEntityReader = null;
 				return ReadContent ();
 			} else if (reader.EOF && entityReaderStack.Count > 0) {
 				reader = entityReaderStack.Pop () as XmlReader;
-				entityReaderNameStack.Pop ();
 				entityReaderDepthStack.Pop ();
 				sourceTextReader = reader as XmlTextReader;
 				return ReadContent ();
@@ -1062,6 +1058,8 @@ namespace Mono.Xml
 			get {
 				if (currentTextValue != null || consumedAttribute)
 					return String.Empty;
+				if (entityReaderStack.Count > 0 && reader.EOF)
+					return ((XmlReader) entityReaderStack.Peek ()).LocalName; // name of EndEntity
 				else if (NodeType == XmlNodeType.Attribute)
 					return (string) attributeLocalNames [currentAttribute];
 				else if (IsDefault)
@@ -1075,6 +1073,8 @@ namespace Mono.Xml
 			get {
 				if (currentTextValue != null || consumedAttribute)
 					return String.Empty;
+				if (entityReaderStack.Count > 0 && reader.EOF)
+					return ((XmlReader) entityReaderStack.Peek ()).Name; // name of EndEntity
 				else if (NodeType == XmlNodeType.Attribute)
 					return currentAttribute;
 				else if (IsDefault)

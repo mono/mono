@@ -1,5 +1,12 @@
 2005-03-07  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlDocument.cs : ugh, so I introduced extraneous reader.Read() in
+	  ReadNode() for EntityReference and it resulted in unexpected skip.
+	* DTDValidatingReader.cs : On EndEntity, LocalName and Name should
+	  return the name of entity. Removed unused entityReaderNameStack.
+
+2005-03-07  Atsushi Enomoto <atsushi@ximian.com>
+
 	* DTDValidatingReader.cs : reverted one change in r40985. Entity stack
 	  is nothing to do with ReadAttributeValue().
 
