@@ -30,6 +30,7 @@ System.Windows.Forms/ButtonBase.cs
 System.Windows.Forms/ButtonBorderStyle.cs
 System.Windows.Forms/ButtonState.cs
 System.Windows.Forms/CaptionButton.cs
+System.Windows.Forms/CharacterCasing.cs
 System.Windows.Forms/CheckBox.cs
 System.Windows.Forms/CheckState.cs
 System.Windows.Forms/ColorDepth.cs
@@ -189,6 +190,9 @@ System.Windows.Forms/TabControl.cs
 System.Windows.Forms/TabDrawMode.cs
 System.Windows.Forms/TabPage.cs
 System.Windows.Forms/TabSizeMode.cs
+System.Windows.Forms/TextBox.cs
+System.Windows.Forms/TextBoxBase.cs
+System.Windows.Forms/TextControl.cs
 System.Windows.Forms/Theme.cs
 System.Windows.Forms/ThemeEngine.cs
 System.Windows.Forms/ThemeGtk.cs
@@ -205,11 +209,6 @@ System.Windows.Forms/ToolBar.cs
 System.Windows.Forms/ToolBarTextAlign.cs
 System.Windows.Forms/ToolTip.cs
 System.Windows.Forms/TrackBar.cs
-System.Windows.Forms/TreeNode.cs
-System.Windows.Forms/TreeNodeCollection.cs
-System.Windows.Forms/TreeView.cs
-System.Windows.Forms/TreeViewAction.cs
-System.Windows.Forms/TreeViewEventArgs.cs
 System.Windows.Forms/TreeViewImageIndexConverter.cs
 System.Windows.Forms/UICues.cs
 System.Windows.Forms/UICuesEventArgs.cs
