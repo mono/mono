@@ -14,14 +14,7 @@
 // (c) 2003 Gilles Freart
 //
 
-#define NUNIT // Comment out this one if you wanna play with the test without using NUnit
-
-#if NUNIT
 using NUnit.Framework;
-#else
-using System.Reflection;
-#endif
-
 using System.IO;
 using System;
 using System.Text;
@@ -35,28 +28,18 @@ namespace MonoTests.System.IO
 		Mac
 	}
 
-#if NUNIT
 	[TestFixture]
 	public class PathTest : Assertion
 	{
-#else
-	public class PathTest
-	{
-#endif
 		static string path1;
 		static string path2;
 		static string path3;
 		static OsType OS;
 		static char DSC = Path.DirectorySeparatorChar;
 	     
-#if NUNIT
 		[SetUp]
 		public void SetUp ()
 		{
-#else
-		static PathTest ()
-		{
-#endif
 			if ('/' == DSC) {
 				OS = OsType.Unix;
 				path1 = "/foo/test.txt";
@@ -571,41 +554,18 @@ namespace MonoTests.System.IO
 				AssertEquals ("No win #01", "/etc", Path.GetDirectoryName ("/etc/hostname"));
 			}
 		}
-#if !NUNIT
-		void Assert (string msg, bool result)
-		{
-			if (!result)
-				Console.WriteLine (msg);
-		}
 
-		void AssertEquals (string msg, object expected, object real)
+		public void TestGetFullPathUnix ()
 		{
-			if (expected == null && real == null)
+			if (Windows)
 				return;
 
-			if (expected != null && expected.Equals (real))
-				return;
-
-			Console.WriteLine ("{0}: expected: '{1}', got: '{2}'", msg, expected, real);
+			AssertEquals ("#01", "/", Path.GetFullPath ("/"));
+			AssertEquals ("#02", "/hey", Path.GetFullPath ("/hey"));
+			AssertEquals ("#03", Environment.CurrentDirectory, Path.GetFullPath ("."));
+			AssertEquals ("#04", Path.Combine (Environment.CurrentDirectory, "hey"),
+					     Path.GetFullPath ("hey"));
 		}
-
-		void Fail (string msg)
-		{
-			Console.WriteLine ("Failed: {0}", msg);
-		}
-
-		static void Main ()
-		{
-			PathTest p = new PathTest ();
-			Type t = p.GetType ();
-			MethodInfo [] methods = t.GetMethods ();
-			foreach (MethodInfo m in methods) {
-				if (m.Name.Substring (0, 4) == "Test") {
-					m.Invoke (p, null);
-				}
-			}
-		}
-#endif
 	}
 }
 

@@ -1,5 +1,9 @@
 2004-01-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* PathTest.cs: added some unix-only tests for GetFullPath.
+
+2004-01-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* PathTest.cs: a couple of tests for bugs.
 
 2003-01-06  Atsushi Enomoto <atsushi@ximian.com>
