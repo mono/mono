@@ -1,3 +1,8 @@
+2004-09-12  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* System.dll.sources: removed duplicate entry for System.Net.
+	Configuration.WebRequestModuleHandler
+
 2004-09-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System_test.dll.sources: Added unit tests for System.Diagnostics.

@@ -454,7 +454,6 @@ System.Net.Cache/HttpRequestCacheLevel.cs
 System.Net.Cache/HttpRequestCachePolicy.cs
 System.Net.Cache/RequestCacheLevel.cs
 System.Net.Cache/RequestCachePolicy.cs
-System.Net.Configuration/WebRequestModuleHandler.cs
 System.Net.Configuration/AuthenticationModuleElementCollection.cs
 System.Net.Configuration/AuthenticationModuleElement.cs
 System.Net.Configuration/AuthenticationModulesSection.cs
