@@ -1,4 +1,9 @@
 
+Mon May 3 22:58:51 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* inssel-ppc.brg: another small pre-release workaround:
+	we don't do overflow detection for long_sub_un.
+
 Sun May 2 20:12:22 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c, mini-ops, inssel-long32.brg: speedup ulong >> 32
