@@ -163,14 +163,13 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				object o = ViewState["BackImageUrl"];
-				if(o != null)
-					return (string)o;
-				return String.Empty;
+				 if (!ControlStyleCreated)
+					return string.Empty; 
+				return ((TableStyle) base.ControlStyle).BackImageUrl; 
 			}
 			set
 			{
-				ViewState["BackImageUrl"] = value;
+				 ((TableStyle) base.ControlStyle).BackImageUrl = value;
 			}
 		}
 

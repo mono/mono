@@ -1,4 +1,9 @@
-2003-12-10  Alon Gazit <along@mainsoft.com>
+2003-12-15  Alon Gazit <along@mainsoft.com>
+	* DataGrid.cs: Change the implementation of the property 
+	BackImageUrl. The current implementation has no influence 
+	on the rendered Html.
+
+2003-12-15  Alon Gazit <along@mainsoft.com>
 	* WebControl.cs: Change the implementation of the property 
 	Enabled. Before the change the WebControl also looked at 
 	parent.Enabled . fixed bug #52171.
