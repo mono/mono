@@ -1,3 +1,9 @@
+
+Fri Jun 25 17:36:28 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c: remove loop from the default optimizations: it seems to
+	interact badly with some of the other options (see bug #60613).
+
 2004-06-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c mini-x86.h mini-x86.c: Applied patch from Guenter Feldmann 
