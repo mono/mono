@@ -1,3 +1,7 @@
+2004-04-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* mini-arch.h: fix the build on windows.
+
 2004-04-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Makefile.am mini.h mini-exceptions.c mini-x86.h mini-sparc.h exceptions-sparc.c: Move parts of the sparc exception handling code to XP code.
