@@ -1,3 +1,9 @@
+2004-05-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ManagedXslTransform.cs : For Stream input, use StreamWriter for 
+	  input to GenericOutputter. Passing XmlWriter causes unexpected
+	  xml declaration output.
+
 2004-03-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsltContext.cs : Supply NameTable to base ctor().
