@@ -1,3 +1,7 @@
+2003-11-21  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* Context.cs: Added internal static_data field.
+	
 2003-11-19  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* Context.cs: Implemented several missing methods and properties:
