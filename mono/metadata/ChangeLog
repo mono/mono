@@ -1,3 +1,11 @@
+2004-01-30  Duncan Mak  <duncan@ximian.com>
+
+	* marshal.h: Add prototype for
+	"ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMem"
+	and
+	"ves_icall_System_Runtime_InteropServices_Marshal_FreeCoTaskMem" to
+	fix the build.
+
 2004-01-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMem): New icall.
