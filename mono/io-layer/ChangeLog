@@ -1,3 +1,9 @@
+2004-05-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* io.c: translate from GFileError to errno codes and don't free
+	variables right after calling mono_io_scandir, as we may overwrite
+	errno value.
+
 2004-05-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* io.c: g_dir_open return ENOENT for directories on which we don't have
