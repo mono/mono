@@ -1,5 +1,9 @@
 2003-01-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HyperLink.cs: fixes bug #36336.
+
+2003-01-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* DataList.cs: fixed IRepeatInfoUser.GetItemStyle.
 
 2002-12-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>

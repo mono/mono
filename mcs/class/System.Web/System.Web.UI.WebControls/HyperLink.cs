@@ -26,6 +26,8 @@ namespace System.Web.UI.WebControls
 	[ToolboxData("<{0}:HyperLink runat=\"server\">HyperLink</{0}:HyperLink>")]
 	public class HyperLink: WebControl
 	{
+		bool textSet;
+
 		public HyperLink(): base(HtmlTextWriterTag.A)
 		{
 		}
@@ -77,17 +79,23 @@ namespace System.Web.UI.WebControls
 
 		public virtual string Text
 		{
-			get
-			{
-				object o = ViewState["Text"];
-				if(o!=null)
-					return (string)o;
+			get {
+				object o = ViewState ["Text"];
+				if (o != null)
+					return (string) o;
+
 				return String.Empty;
 			}
-			set
-			{
+			set {
 				ViewState["Text"] = value;
+				textSet = true;
 			}
+		}
+
+		string InternalText
+		{
+			get { return Text; }
+			set { ViewState["Text"] = value; }
 		}
 
 		protected override void AddAttributesToRender(HtmlTextWriter writer)
@@ -112,7 +120,17 @@ namespace System.Web.UI.WebControls
 			}
 			if(obj is LiteralControl)
 			{
-				Text = ((LiteralControl)obj).Text;
+				// This is a hack to workaround the behaviour of the code generator, which
+				// may split a text in several LiteralControls if there's a special character
+				// such as '<' in it.
+				if (textSet) {
+					Text = ((LiteralControl)obj).Text;
+					textSet = false;
+				} else {
+					InternalText += ((LiteralControl)obj).Text;
+				}
+				//
+
 				return;
 			}
 			if(Text.Length > 0)
