@@ -226,11 +226,28 @@ namespace System.IO
 
 		public override void Close ()
 		{
-			if (owner)
+			Dispose (true);
+			GC.SuppressFinalize (this);	// remove from finalize queue
+		}
+
+		public void Dispose (bool disposing) {
+			if (handle != IntPtr.Zero) {
+				Flush ();
 				FileClose (handle);
+
+				handle = IntPtr.Zero;
+			}
+
+			if (disposing)
+				buf = null;
 		}
 
 		// private
+
+		~FileStream ()
+		{
+			Dispose (false);
+		}
 
 		private int ReadSegment (byte [] dest, int dest_offset, int count)
 		{
