@@ -660,14 +660,14 @@ namespace System.Drawing
 		
 		public void DrawImageUnscaled (Image image, int x, int y)
 		{
-			DrawImage (image, x, y);
+			DrawImage (image, x, y, image.Width, image.Height);
 		}
 
 		public void DrawImageUnscaled (Image image, int x, int y, int width, int height)
 		{
 			Image tmpImg = new Bitmap (width, height);
 			Graphics g = FromImage (tmpImg);
-			g.DrawImage (image, 0, 0);
+			g.DrawImage (image, 0, 0, image.Width, image.Height);
 			this.DrawImage (tmpImg, x, y, width, height);
 			tmpImg.Dispose ();
 			g.Dispose ();

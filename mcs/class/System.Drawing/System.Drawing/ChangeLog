@@ -1,3 +1,9 @@
+2004-09-13  Ravindra <rkumar@novell.com>
+
+	* Graphics.cs: MSDN says that using image width and height gives
+	better performance, hence we are using image width and height to
+	avoid autoscaling in DrawImageUnscaled.
+
 2004-09-10  Ravindra <rkumar@novell.com>
 
 	* Graphics.cs: Implemented DrawIcon methods and fixed
