@@ -1,3 +1,8 @@
+2004-01-27  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* shared.c (_wapi_shm_file): add hostname
+	to shared data file names to handle NFS mounted
+	.wapi directories.
 
 Mon Jan 26 16:15:03 CET 2004 Paolo Molaro <lupus@ximian.com>
 
