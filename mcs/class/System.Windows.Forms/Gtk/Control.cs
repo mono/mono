@@ -19,10 +19,11 @@ namespace System.Windows.Forms {
 	public class Control : Component {
 		internal Widget widget;
 		Control parent;
-		string text;
-		int left, top, width, height;
+		string text, name;
+		Size size;
+		int left, top, width, height, tabindex, index;
 		ControlCollection controls;
-		Point location = new Point (0, 0);
+		Point location = new System.Drawing.Point (0, 0);
 		Gtk.Layout layout = null;
 		AnchorStyles anchor = AnchorStyles.Top|AnchorStyles.Left;
 		
@@ -113,7 +114,7 @@ namespace System.Windows.Forms {
 			}
 	
 		}
-		
+
 		static Control ()
 		{
 			init_me = 1;
@@ -135,11 +136,12 @@ namespace System.Windows.Forms {
 		}
 
 		public Control (string text, int left, int top, int width, int height)
-		{
+		{			
 		}
 
 		public Control (Control parent, string text, int left, int top, int width, int height)
 		{
+			
 		}
 
 		internal Widget Widget {
@@ -174,7 +176,47 @@ namespace System.Windows.Forms {
 			if (TextChanged != null)
 			 TextChanged (this, e);
 		}
+
+
+		public virtual string Name {
+     	get {
+           		return name;	
+       }
+         
+       set { 
+						name = value;
+			 			Widget.Name = value;
+			}
+     }
 		
+		public Size Size {
+			get { 
+				return size;
+			}
+			set {
+				size = value;
+				Widget.SetSizeRequest (value.Width,value.Height);
+			}
+		}
+
+		public int TabIndex {
+			get { 
+				return tabindex;
+			}
+			set {
+				tabindex = value;
+			}			
+		}	
+				
+		public int Index {
+			get { 
+				return index;
+			}
+			set {
+				index = value;
+			}			
+		}	
+
 		public void Show ()
 		{
 			Widget.Show ();
@@ -194,6 +236,7 @@ namespace System.Windows.Forms {
 				Widget.Visible = value;
 			}
 		}
+		
 		
 		public ControlCollection Controls {
 			get { if (controls == null) controls = new ControlCollection (this); return controls;}
@@ -232,6 +275,7 @@ namespace System.Windows.Forms {
 				ControlRemoved (this, e);
 		}
 
+
 		public Point Location {
 			get { return location; }
 			set {
@@ -259,5 +303,6 @@ namespace System.Windows.Forms {
 			get { return anchor; }
 			set { anchor=value; }
     }
+
 	}
 }

@@ -1,5 +1,5 @@
 CSC=mcs
-SWFF=-r gtk-sharp -r glib-sharp -r System.Drawing 
+SWFF=-r gdk-sharp -r gtk-sharp -r glib-sharp -r System.Drawing 
 
 SOURCES = \
 	AnchorStyles.cs		\
@@ -15,6 +15,14 @@ SOURCES = \
 	IButtonControl.cs	\
 	IContainerControl.cs	\
 	Label.cs		\
+	ScrollBars.cs	\
+	HorizontalAlignment.cs	\
+	TextBoxBase.cs	\
+	TextBox.cs	\
+	CheckBox.cs	\
+	RadioButton.cs	\
+	Frame.cs	\
+	ProgressBar.cs	\
 	ScrollableControl.cs
 
 all: demo.exe

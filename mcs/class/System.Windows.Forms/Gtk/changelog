@@ -1,3 +1,11 @@
+2003-03-07  Joel Basson  <jstrike@mweb.co.za>
+
+*	CheckBox.cs
+*	RadioButton.cs
+*	Frame.cs
+*	Added properties: Size and Name
+*	Touchups here and there
+
 2002-8-7  DennisHayes <dennish@raytek.com>
 
 *  Started changelog
