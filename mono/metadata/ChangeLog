@@ -1,3 +1,11 @@
+2005-01-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* file-io.c (ves_icall_System_IO_MonoIO_get_InvalidPathChars):
+	Make the size of the array fit only the number of invalid path
+	chars that we have.
+
+	* class.c (_mono_class_get): Improve the error reporting when a
+	class referenced is not found, to assist debugging. 
 
 Wed Jan 19 19:57:43 CET 2005 Paolo Molaro <lupus@ximian.com>
 
