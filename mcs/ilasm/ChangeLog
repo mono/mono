@@ -1,3 +1,8 @@
+2003-002-08 Jackson Harper <jackson@latitudegeo.com>
+
+	* makefile: Add TypeManager.cs to build
+	* makefile.gnu: Add TypeManager.cs to build
+
 2003-02-03 Jackson Harper <jackson@latitudegeo.com>
 
 	* Driver.cs: Remove some debugging info.
