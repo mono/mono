@@ -1,3 +1,10 @@
+2002-07-23  Duncan Mak  <duncan@ximian.com>
+
+	* list: 
+	* unix.args: Added new Attributes in System.Runtim.CompilerServices.
+
+	* System.Runtime.Remoting.Proxies/ProxyAttribute.cs: Added.
+
 2002-07-22  Tim Coleman <tim@timcoleman.com>
 	* list:
 	* unix.args:

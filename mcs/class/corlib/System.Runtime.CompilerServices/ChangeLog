@@ -1,3 +1,20 @@
+2002-07-23  Duncan Mak  <duncan@ximian.com>
+
+	* AccessedThroughPropertyAttribute.cs: 
+	* CompilationRelaxationsAttribute.cs: 
+	* CompilerGlobalScopeAttribute.cs: 
+	* CustomConstantAttribute.cs: 
+	* DateTimeConstantAttribute.cs: 
+	* DecimalConstantAttribute.cs: 
+	* DiscardableAttribute.cs: 
+	* IDispatchConstantAttribute.cs: 
+	* IUnknownConstantAttribute.cs: 
+	* RequiredAttributeAttribute.cs: Added all the missing Attributes
+
+	* IsVolatile.cs: Added to CVS.
+
+	* MethodImplOptions.cs: Added the PreserveSig flag.
+
 2002-04-15  Dan Lewis <dihlewis@yahoo.co.uk>
 
 	* MethodImplAttribute.cs: added constructor usage.

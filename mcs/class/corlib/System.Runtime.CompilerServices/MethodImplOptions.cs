@@ -36,6 +36,11 @@ namespace System.Runtime.CompilerServices {
 		/// <summary>
 		/// </summary>
 		NoInlining = 8,
+
+		/// <summary>
+		/// </summary>
+		PreserveSig = 128,
+
 	} // MethodImplOptions
 
 } // System.Runtime.CompilerServices

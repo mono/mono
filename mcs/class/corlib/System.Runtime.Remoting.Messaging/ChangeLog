@@ -1,3 +1,8 @@
+2002-07-23  Duncan Mak  <duncan@ximian.com>
+
+	* IRemotingFormatter.cs: Added to CVS.
+
+	* IMethodMessage.cs: IMethodMessage inherits from IMessage.
 
 Thu Apr 4 13:13:20 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
