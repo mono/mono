@@ -250,6 +250,24 @@ namespace MonoTests.System.Text.RegularExpressions
 			AssertEquals ("#10", "", words [10]);
 
 		}
+
+		[Test]
+		public void CaseAndSearch () // bug 69065
+		{
+			string test1 =  @"!E   ZWEITBAD :REGLER-PARAMETER 20.10.2004  SEITE   1";
+			string test2 =  @" REGLER-PARAMETER ";
+			string test3 =  @"REGLER-PARAMETER ";
+			Regex x = new Regex ("REGLER-PARAMETER",RegexOptions.IgnoreCase|RegexOptions.Compiled);
+
+			Match m = x.Match (test1);
+			AssertEquals ("#01", true, m.Success);
+
+			m = x.Match (test2);
+			AssertEquals ("#02", true, m.Success);
+
+			m = x.Match (test3);
+			AssertEquals ("#03", true, m.Success);
+		}
 	}
 }
 
