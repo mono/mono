@@ -1,3 +1,15 @@
+2002-03-01  Ravi Pratap  <ravi@ximian.com>
+
+	* cs-parser.jay (member_access): Change the case for pre-defined types
+	to use a MemberAccess instead of a SimpleName. Thanks to Felix again for 
+	this suggestion.
+
+	* class.cs (Operator::Emit): If we are abstract or extern, we don't have
+	a method body.
+
+	* attribute.cs (CheckAttribute, ApplyAttribute): Ensure that treat operators
+	essentially like methods and apply attributes like MethodImplOptions.
+
 2002-02-28  Ravi Pratap  <ravi@ximian.com>
 
 	* rootcontext.cs (LookupType): As we cycle through the chain of namespaces

@@ -1910,7 +1910,7 @@ member_access
 	  }
 	| predefined_type DOT IDENTIFIER
 	  {
-		$$ = new SimpleName ((string) $1 + "." + (string) $3, lexer.Location);
+		$$ = new MemberAccess (new SimpleName ((string) $1, lexer.Location), (string) $3, lexer.Location);
 	  }
 	;
 

@@ -3903,6 +3903,12 @@ namespace Mono.CSharp {
 		{
 			EmitContext ec = new EmitContext (parent, Location, null, null, ModFlags);
 			Attribute.ApplyAttributes (ec, OperatorMethodBuilder, this, OptAttributes, Location);
+
+			//
+			// abstract or extern methods have no bodies
+			//
+			if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
+				return;
 			
 			OperatorMethod.Block = Block;
 			OperatorMethod.Emit (parent);

@@ -371,7 +371,7 @@ namespace Mono.CSharp {
 					return true;
 				else
 					return false;
-			} else if (element is Method) {
+			} else if (element is Method || element is Operator) {
 				if ((targets & AttributeTargets.Method) != 0)
 					return true;
 				else
@@ -422,7 +422,7 @@ namespace Mono.CSharp {
 						}
 
 					
-					if (kind is Method) {
+					if (kind is Method || kind is Operator) {
 						if (a.Type == TypeManager.methodimpl_attr_type) {
 							if (a.ImplOptions == MethodImplOptions.InternalCall)
 								((MethodBuilder) builder).SetImplementationFlags (
@@ -440,8 +440,8 @@ namespace Mono.CSharp {
 						((EventBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is ParameterBuilder){
 						((ParameterBuilder) builder).SetCustomAttribute (cb);
-					} else if (kind is Operator) {
-						((MethodBuilder) builder).SetCustomAttribute (cb);
+						//} else if (kind is Operator) {
+						//((MethodBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is Enum) {
 						((TypeBuilder) builder).SetCustomAttribute (cb); 
 
