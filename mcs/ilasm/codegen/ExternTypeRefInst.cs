@@ -59,6 +59,11 @@ namespace Mono.ILASM {
 			get { return type_ref.UseTypeSpec; }
 		}
 
+                public ExternTypeRefInst Clone ()
+		{
+                        return new ExternTypeRefInst (type_ref.Clone (), is_valuetypeinst);
+		}
+
 		public void MakeArray ()
 		{
 			type_ref.MakeArray ();
@@ -101,7 +106,7 @@ namespace Mono.ILASM {
 				return;
 
 			type_ref.Resolve (code_gen);
-			type = new PEAPI.ClassRefInst (type_ref.PeapiClass, is_valuetypeinst);
+			type = new PEAPI.ClassRefInst (type_ref.PeapiType, is_valuetypeinst);
 
 			is_resolved = true;
 		}

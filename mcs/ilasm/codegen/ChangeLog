@@ -1,3 +1,9 @@
+2004-07-21  Jackson Harper  <jackson@ximian.com>
+
+	* ExternTypeRefInst.cs: Use the PeapiType so that modified types
+	will actually work. Add a Clone method so that type ref insts
+	aren't duplicated making them modified multiple times.
+	
 2004-07-12  Jackson Harper  <jackson@ximian.com>
 
 	* MethodDef.cs: Local lists are not lazyily allocated so they were
