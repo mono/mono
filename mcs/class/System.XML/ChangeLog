@@ -1,3 +1,7 @@
+2003-12-14  Tim Coleman <tim@timcoleman.com>
+	* System.Xml.dll.sources :
+		Add files from new System.Xml.Query namespace.
+
 2003-12-11  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* System.Xml.dll.sources : Added ScriptCompilerInfo.cs.

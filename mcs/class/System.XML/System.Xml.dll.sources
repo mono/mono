@@ -187,6 +187,7 @@ System.Xml.Schema/XmlSchemaAppInfo.cs
 System.Xml.Schema/XmlSchemaAttribute.cs
 System.Xml.Schema/XmlSchemaAttributeGroup.cs
 System.Xml.Schema/XmlSchemaAttributeGroupRef.cs
+System.Xml.Schema/XmlSchemaBuiltInType.cs
 System.Xml.Schema/XmlSchemaChoice.cs
 System.Xml.Schema/XmlSchemaCollection.cs
 System.Xml.Schema/XmlSchemaCollectionEnumerator.cs
@@ -331,3 +332,8 @@ System.Xml.Serialization/XmlTypeMapMemberNamespaces.cs
 System.Xml.Serialization/XmlTypeMapping.cs
 System.Xml.Serialization/XmlElementEventHandler.cs
 System.Xml.Serialization/XmlNodeEventHandler.cs
+System.Xml.Query/XmlCommand.cs
+System.Xml.Query/XmlQueryArgumentList.cs
+System.Xml.Query/XmlQueryCompileException.cs
+System.Xml.Query/XmlQueryException.cs
+System.Xml.Query/XsltProcessor.cs
