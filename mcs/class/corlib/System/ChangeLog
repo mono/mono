@@ -1,3 +1,7 @@
+2002-05-16  Piers Haken <piersh@friksit.com
+
+	* UInt64.cs: fix declaration of IConvertible.To* overrides.
+
 2002-05-16  Nick Drochak  <ndrochak@gol.com>
 
 	* BitConverter.cs (ToString): Add parameter check for invalid start 
