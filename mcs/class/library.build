@@ -20,6 +20,7 @@
 		<nant basedir="corlib" target="test"/>
 		<nant basedir="System" target="test"/>
 		<nant basedir="System.XML" target="test"/>
+		<nant basedir="System.Data" target="test"/>
 	</target>
 
 	<target name="clean">
