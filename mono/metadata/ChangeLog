@@ -1,3 +1,17 @@
+2003-03-31  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* loader.h: added marshalbyrefobject_class to mono_defaults
+	* domain.c: added initialization of mono_defaults.marshalbyrefobject_class 
+	* icall.c: ves_icall_InternalExecute: fixed bug in field setter and in the
+	  generation of output parameters.
+	  ves_icall_Remoting_RealProxy_GetTransparentProxy: added support for interfaces.
+	* marshal.c: mono_remoting_wrapper(): avoided call through proxy when the type is
+	  contextbound and the target object belongs to the context of the caller.
+	* object.h: added context and unwrapped_server variables in MonoRealProxy.
+	* object.c: Implemented support for interfaces and abstract classes
+	  in mono_class_proxy_vtable. Fixed several methods to avoid unneeded calls through
+	  proxy. Fixed problem when dealing with output parameters in mono_runtime_invoke_array.
+
 2003-03-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* class.h class.c (mono_class_is_subclass_of): New function.
