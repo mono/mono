@@ -2786,6 +2786,11 @@ namespace Mono.CSharp {
 				accmods = Modifiers.PRIVATE;
 
 			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, l);
+			if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.SEALED)) == (Modifiers.ABSTRACT | Modifiers.SEALED)) {
+				// "'{0}' cannot be both abstract and sealed"
+				Report.Error_T (502, Location, GetSignatureForError ());
+			}
+
 			attribute_usage = new AttributeUsageAttribute (AttributeTargets.All);
 		}
 

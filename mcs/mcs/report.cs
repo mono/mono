@@ -96,6 +96,7 @@ namespace Mono.CSharp {
  				case 0243: return "Conditional not valid on '{0}' because it is an override method";
 				case 0247: return "Cannot use a negative size with stackalloc";
 				case 0415: return "The 'IndexerName' attribute is valid only on an indexer that is not an explicit interface member declaration";
+				case 0502: return "'{0}' cannot be both abstract and sealed";
  				case 0553: return "'{0}' : user defined conversion to/from base class";
  				case 0554: return "'{0}' : user defined conversion to/from derived class";
  				case 0577: return "Conditional not valid on '{0}' because it is a destructor, operator, or explicit interface implementation";
