@@ -1,3 +1,7 @@
+2003-12-01  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* Added dirs mcs/jtest and mcs/jerrors.
+
 2003-10-28 Jackson Harper <jackson@ximian.com>
 
 	* INSTALL.txt: Tell users where to find monocharges, do not
