@@ -31,9 +31,9 @@ namespace SourceForge.NAnt {
         string _doc = null;
 
         protected override void WriteOptions(TextWriter writer) {
-            writer.WriteLine("/fullpaths");
+            WriteOption(writer, "fullpaths");
             if (_doc != null) {
-                writer.WriteLine("/doc:{0}", _doc);
+                WriteOption(writer, "doc", _doc);
             }
         }
 

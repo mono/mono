@@ -74,6 +74,14 @@ namespace SourceForge.NAnt {
         protected virtual void WriteOptions(TextWriter writer) {
         }
 
+	protected virtual void WriteOption(TextWriter writer, string name) {
+	    writer.WriteLine("/{0}", name);
+	}
+
+	protected virtual void WriteOption(TextWriter writer, string name, string arg) {
+	    writer.WriteLine("/{0}:{1}", name, arg);
+	}
+
         protected string GetOutputPath() {
             return Path.GetFullPath(Path.Combine(BaseDirectory, Project.ExpandText(Output)));
         }
@@ -123,27 +131,28 @@ namespace SourceForge.NAnt {
                     WriteOptions(writer);
 
                     // Microsoft common compiler options
-                    writer.WriteLine("/nologo");
-                    writer.WriteLine("/target:{0}", OutputTarget);
-                    writer.WriteLine("/out:{0}", GetOutputPath());
+		    WriteOption(writer, "nologo");
+		    WriteOption(writer, "target", OutputTarget);
+		    WriteOption(writer, "out", GetOutputPath());
                     if (Debug) {
-                        writer.WriteLine("/debug");
-                        writer.WriteLine("/define:DEBUG;TRACE");
+			WriteOption(writer, "debug");
+			WriteOption(writer, "define", "DEBUG");
+			WriteOption(writer, "define", "TRACE");
                     }
                     if (Define != null) {
-                        writer.WriteLine("/define:{0}", Define);
+			WriteOption(writer, "define", Define);
                     }
                     if (Win32Icon != null) {
-                        writer.WriteLine("/win32icon:{0}", Win32Icon);
+			WriteOption(writer, "win32icon", Win32Icon);
                     }
                     foreach (string fileName in References.FileNames) {
-                        writer.WriteLine("/reference:{0}", fileName);
+                        WriteOption(writer, "reference", fileName);
                     }
                     foreach (string fileName in Modules.FileNames) {
-                        writer.WriteLine("/addmodule:{0}", fileName);
+                        WriteOption(writer, "addmodule", fileName);
                     }
                     foreach (string fileName in Resources.FileNames) {
-                        writer.WriteLine("/resource:{0}", fileName);
+                        WriteOption(writer, "resource", fileName);
                     }
                     foreach (string fileName in Sources.FileNames) {
                         writer.WriteLine(fileName);
