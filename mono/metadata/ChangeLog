@@ -1,3 +1,9 @@
+2004-09-03  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* object.c: In mono_message_invoke, fill the output parameter array after
+	  calling the managed method (it was done before the call). This fixes
+	  bug #59299.
+
 2004-09-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_marshal_alloc): Return a valid pointer on size 0
