@@ -4800,20 +4800,24 @@ namespace Mono.MonoBASIC {
 					return null;
 			}
 
-			MemberInfo mi = GetFieldFromEvent (this);
-			if (mi == null)
+			if (this.DeclaringType == ec.ContainerType)	{
+				MemberInfo mi = GetFieldFromEvent (this);
+				if (mi == null)
 					return null;
-			field_expr = ExprClassFromMemberInfo (ec, mi, loc);
-			((FieldExpr) field_expr).InstanceExpression = instance_expr;
-			field_expr = field_expr.DoResolve (ec);
-			if (field_expr == null)
+				field_expr = ExprClassFromMemberInfo (ec, mi, loc);
+				((FieldExpr) field_expr).InstanceExpression = instance_expr;
+				field_expr = field_expr.DoResolve (ec);
+				if (field_expr == null)
 					return null;
+			}
+
 			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			field_expr.Emit (ec);
+			if (field_expr != null)
+				field_expr.Emit (ec);
 		}
 
 		public void EmitAddOrRemove (EmitContext ec, Expression source)
