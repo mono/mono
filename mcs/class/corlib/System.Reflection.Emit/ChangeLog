@@ -1,3 +1,8 @@
+2004-01-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeBuilder.cs (IsDefined): Implement this, since some corlib classes
+	make calls to IsDefined.
+
 2004-01-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyBuilder.cs: Fix warning.
