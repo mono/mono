@@ -1,3 +1,9 @@
+2005-01-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IPAddressTest.cs: Some tests may not work if support for IPv6 is
+	disabled in machine.config. Tests haven't re-worked to check for
+	Socket.SupportsIPv6 to ignore them in this case.
+
 2005-01-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* IPAddressTest.cs: this test fails with a FormatException.

@@ -7,11 +7,13 @@
 //
 // (C) Ximian, Inc. http://www.ximian.com
 // (C) 2003 Martin Willemoes Hansen
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 using NUnit.Framework;
 using System;
 using System.Net;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
 
 namespace MonoTests.System.Net
@@ -106,7 +108,7 @@ public class IPAddressTest
 	}
 
 	[Test]
-	public void ToStringTest ()
+	public void ToStringV4 ()
 	{
 		IPAddress ip = IPAddress.Parse ("192.168.1.1");
 		Assertion.AssertEquals ("ToString #1", "192.168.1.1", ip.ToString ());
@@ -114,17 +116,24 @@ public class IPAddressTest
 		Assertion.AssertEquals ("ToString #3", "255.255.255.255", IPAddress.Broadcast.ToString ());
 		Assertion.AssertEquals ("ToString #4", "127.0.0.1", IPAddress.Loopback.ToString ());
 		Assertion.AssertEquals ("ToString #5", "255.255.255.255", IPAddress.None.ToString ());
+	}
 
 #if NET_1_1
-		for(int i=0; i<ipv6AddressList.Length/2; i++) {
-			string addr = IPAddress.Parse (ipv6AddressList[i*2+1]).ToString().ToLower();
-			Assertion.AssertEquals ("ToStringIPv6 #" + i, ipv6AddressList[i*2].ToLower(), addr);
-		}
-#endif
-	}
-	
 	[Test]
-	public void IsLoopback ()
+	public void ToStringV6 ()
+	{
+		if (Socket.SupportsIPv6) {
+			for(int i=0; i<ipv6AddressList.Length/2; i++) {
+				string addr = IPAddress.Parse (ipv6AddressList[i*2+1]).ToString().ToLower();
+				Assertion.AssertEquals ("ToStringIPv6 #" + i, ipv6AddressList[i*2].ToLower(), addr);
+			}
+		} else
+			Assert.Ignore ("IPv6 must be enabled in machine.config");
+	}
+#endif
+
+	[Test]
+	public void IsLoopbackV4 ()
 	{
 		IPAddress ip = IPAddress.Parse ("127.0.0.1");
 		Assertion.AssertEquals ("IsLoopback #1", true, IPAddress.IsLoopback (ip));
@@ -135,14 +144,6 @@ public class IPAddressTest
 		} catch {
 		}
 
-#if NET_1_1
-		ip = IPAddress.IPv6Loopback;
-		Assertion.AssertEquals ("IsLoopback #3", true, IPAddress.IsLoopback (ip));
-
-		ip = IPAddress.IPv6None;
-		Assertion.AssertEquals ("IsLoopback #7", false, IPAddress.IsLoopback (ip));
-#endif
-
 		ip = IPAddress.Any;
 		Assertion.AssertEquals ("IsLoopback #5", false, IPAddress.IsLoopback (ip));
 
@@ -152,15 +153,37 @@ public class IPAddressTest
 
 #if NET_1_1
 	[Test]
-	public void GetAddressBytes()
+	public void IsLoopbackV6 ()
+	{
+		if (Socket.SupportsIPv6) {
+			IPAddress ip = IPAddress.IPv6Loopback;
+			Assertion.AssertEquals ("IsLoopback #3", true, IPAddress.IsLoopback (ip));
+
+			ip = IPAddress.IPv6None;
+			Assertion.AssertEquals ("IsLoopback #7", false, IPAddress.IsLoopback (ip));
+		} else
+			Assert.Ignore ("IPv6 must be enabled in machine.config");
+	}
+
+	[Test]
+	public void GetAddressBytesV4 ()
 	{
 		byte[] dataIn	= { 10, 11, 12, 13 };
 		byte[] dataOut	= IPAddress.Parse ("10.11.12.13").GetAddressBytes ();
 		for(int i=0; i<dataIn.Length; i++)
 			Assertion.AssertEquals ("GetAddressBytes #1", dataIn[i], dataOut[i]);	
-	
-		dataIn	= new byte[]{ 0x01, 0x23, 0x45, 0x67, 0x89, 0x98, 0x76, 0x54, 0x32, 0x10, 0x01, 0x23, 0x45, 0x67, 0x89, 0x98 };
-		dataOut	= IPAddress.Parse ("123:4567:8998:7654:3210:0123:4567:8998").GetAddressBytes ();
+	}
+
+	[Test]
+	public void GetAddressBytesV6 ()
+	{
+		if (!Socket.SupportsIPv6) {
+			Assert.Ignore ("IPv6 must be enabled in machine.config");
+			return;
+		}
+
+		byte[] dataIn	= new byte[]{ 0x01, 0x23, 0x45, 0x67, 0x89, 0x98, 0x76, 0x54, 0x32, 0x10, 0x01, 0x23, 0x45, 0x67, 0x89, 0x98 };
+		byte[] dataOut	= IPAddress.Parse ("123:4567:8998:7654:3210:0123:4567:8998").GetAddressBytes ();
 		for(int i=0; i<dataIn.Length; i++)
 			Assertion.AssertEquals ("GetAddressBytes #2", dataIn[i], dataOut[i]);
 
@@ -170,7 +193,7 @@ public class IPAddressTest
 			Assertion.AssertEquals ("GetAddressBytes #3", dataIn[i], dataOut[i]);
 	}
 #endif
-	
+
 	[Test]
 	public void Address ()
 	{
@@ -195,7 +218,7 @@ public class IPAddressTest
 	}
 
 	[Test]
-	public void ParseOk ()
+	public void ParseOkV4 ()
 	{
 		for(int i=0; i<ipv4ParseOk.Length / 2; i++) {
 			IPAddress ip;
@@ -209,10 +232,18 @@ public class IPAddressTest
 				Assertion.Fail ("Cannot parse test i=" + i + ": '" + ipv4ParseOk [i*2] + "'");
 			}
 		}
+	}
 
 #if NET_1_1
-		for(int i=0; i<ipv6AddressList.Length / 2; i++) 
-		{
+	[Test]
+	public void ParseOkV6 ()
+	{
+		if (!Socket.SupportsIPv6) {
+			Assert.Ignore ("IPv6 must be enabled in machine.config");
+			return;
+		}
+
+		for(int i=0; i<ipv6AddressList.Length / 2; i++) {
 			string source = ipv6AddressList [i*2].ToLower();
 
 			IPAddress ip = IPAddress.Parse (source);
@@ -223,8 +254,8 @@ public class IPAddressTest
 			Assertion.Assert (string.Format("ParseIPv6 #{0}-2: {1} != {2}", i,
 				ip.ToString ().ToLower (), source), ip.ToString ().ToLower () == source);
 		}
-#endif
 	}
+#endif
 
 	[Test]
 	public void ParseWrong ()
