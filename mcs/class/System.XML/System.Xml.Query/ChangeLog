@@ -1,3 +1,10 @@
+2004-08-31  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XQueryArithmeticOperator.cs : added.
+	* XPath2Expression.cs, XQueryParser.jay :
+	  renamed some ArithmeticOperator enumeration members.
+	  Implemented ArithmeticOperationExpr.Evaluate().
+
 2004-08-30  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathSequence.cs : fixed NodeIterator to get correct current node

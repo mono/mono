@@ -1493,13 +1493,13 @@ AdditiveExpr
 		tokenizer.State = ParseState.Default;
 	  } AdditiveExpr
 	{
-		$$ = new ArithmeticOperationExpr ((ExprSingle) $1, (ExprSingle) $4, ArithmeticOperator.Plus);
+		$$ = new ArithmeticOperationExpr ((ExprSingle) $1, (ExprSingle) $4, ArithmeticOperator.Add);
 	}
 	| MultiplicativeExpr MINUS {
 		tokenizer.State = ParseState.Default;
 	  } AdditiveExpr
 	{
-		$$ = new ArithmeticOperationExpr ((ExprSingle) $1, (ExprSingle) $4, ArithmeticOperator.Minus);
+		$$ = new ArithmeticOperationExpr ((ExprSingle) $1, (ExprSingle) $4, ArithmeticOperator.Sub);
 	}
 	;
 

@@ -1268,8 +1268,8 @@ namespace Mono.Xml.XPath2
 	// arithmetic operation expr
 
 	public enum ArithmeticOperator {
-		Plus,
-		Minus,
+		Add,
+		Sub,
 		Mul,
 		Div,
 		IDiv,
@@ -1281,6 +1281,13 @@ namespace Mono.Xml.XPath2
 		public ArithmeticOperationExpr (ExprSingle left, ExprSingle right, ArithmeticOperator oper)
 			: base (left, right)
 		{
+			this.oper = oper;
+		}
+
+		ArithmeticOperator oper;
+
+		public ArithmeticOperator Operation {
+			get { return oper; }
 		}
 
 #region CompileAndEvaluate
@@ -1298,10 +1305,42 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			XPathAtomicValue lvalue = Left.EvaluateAsAtomic (iter);
-			XPathAtomicValue rvalue = Right.EvaluateAsAtomic (iter);
+			XPathSequence lseq = Left.Evaluate (iter);
+			if (!lseq.MoveNext ())
+				return new XPathEmptySequence (iter.Context);
+			XPathSequence rseq = Right.Evaluate (iter);
+			if (!rseq.MoveNext ())
+				return new XPathEmptySequence (iter.Context);
+			XPathAtomicValue lvalue = Atomize (lseq.Current);
+			XPathAtomicValue rvalue = Atomize (rseq.Current);
+			if (lseq.MoveNext ())
+				throw new XmlQueryException ("XP0006: Left operand resulted in an sequence that contains more than one item.");
+			if (rseq.MoveNext ())
+				throw new XmlQueryException ("XP0006: Left operand resulted in an sequence that contains more than one item.");
 
-			throw new NotImplementedException ();
+			// FIXME: handle "untypedAtomic to xs:double" casting
+
+			return new SingleItemIterator (Compute (lvalue, rvalue), iter.Context);
+		}
+
+		private XPathAtomicValue Compute (XPathAtomicValue lvalue, XPathAtomicValue rvalue)
+		{
+			switch (Operation) {
+			case ArithmeticOperator.Add:
+				return XQueryArithmeticOperator.Add (lvalue, rvalue);
+			case ArithmeticOperator.Sub:
+				return XQueryArithmeticOperator.Subtract (lvalue, rvalue);
+			case ArithmeticOperator.Mul:
+				return XQueryArithmeticOperator.Multiply (lvalue, rvalue);
+			case ArithmeticOperator.Div:
+				return XQueryArithmeticOperator.Divide (lvalue, rvalue);
+			case ArithmeticOperator.IDiv:
+				return XQueryArithmeticOperator.IntDivide (lvalue, rvalue);
+			case ArithmeticOperator.IMod:
+				return XQueryArithmeticOperator.Remainder (lvalue, rvalue);
+			default:
+				throw new SystemException ("XQuery internal error: should not happen.");
+			}
 		}
 #endregion
 	}
