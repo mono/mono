@@ -290,7 +290,7 @@ namespace System.IO
 
 		public override int ReadByte ()
 		{
-			return 0;
+			return -1;
 		}
 
 		public override long Seek (long offset,
