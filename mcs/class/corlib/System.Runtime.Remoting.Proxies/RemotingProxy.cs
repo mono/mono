@@ -29,11 +29,13 @@ namespace System.Runtime.Remoting.Proxies
 		IMessageSink _sink;
 		bool _hasEnvoySink;
 		ConstructionCall _ctorCall;
+		string _targetUri;
 
 		internal RemotingProxy (Type type, ClientIdentity identity) : base (type, identity)
 		{
 			_sink = identity.ChannelSink;
 			_hasEnvoySink = false;
+			_targetUri = identity.TargetUri;
 		}
 
 		internal RemotingProxy (Type type, string activationUrl, object[] activationAttributes) : base (type)
@@ -55,7 +57,7 @@ namespace System.Runtime.Remoting.Proxies
 			if (mMsg.MethodBase == _cache_GetTypeMethod)
 				return new MethodResponse(GetProxiedType(), null, null, request as IMethodCallMessage);
 
-			mMsg.Uri = _objectIdentity.ObjectUri;
+			mMsg.Uri = _targetUri;
 			((IInternalMessage)mMsg).TargetIdentity = _objectIdentity;
 
 			_objectIdentity.NotifyClientDynamicSinks (true, request, true, false);
@@ -96,7 +98,12 @@ namespace System.Runtime.Remoting.Proxies
 			}
 
 			if (identity is ClientIdentity)
+			{
 				((ClientIdentity)identity).ClientProxy = (MarshalByRefObject) GetTransparentProxy();
+				_targetUri = ((ClientIdentity)identity).TargetUri;
+			}
+			else
+				_targetUri = identity.ObjectUri;
 
 			if (_objectIdentity.EnvoySink != null) 
 			{
