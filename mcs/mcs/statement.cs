@@ -2250,6 +2250,15 @@ namespace Mono.CSharp {
 		Expression type;
 		ArrayList declarators;
 		Statement statement;
+		Type expr_type;
+		FixedData[] data;
+
+		struct FixedData {
+			public bool is_object;
+			public VariableInfo vi;
+			public Expression expr;
+			public Expression converted;
+		}			
 
 		public Fixed (Expression type, ArrayList decls, Statement stmt, Location l)
 		{
@@ -2261,20 +2270,13 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			return statement.Resolve (ec);
-		}
-		
-		public override bool Emit (EmitContext ec)
-		{
-			ILGenerator ig = ec.ig;
-			Type t;
-			
-			t = ec.DeclSpace.ResolveType (type, false, loc);
-			if (t == null)
+			expr_type = ec.DeclSpace.ResolveType (type, false, loc);
+			if (expr_type == null)
 				return false;
 
-			bool is_ret = false;
+			data = new FixedData [declarators.Count];
 
+			int i = 0;
 			foreach (Pair p in declarators){
 				VariableInfo vi = (VariableInfo) p.First;
 				Expression e = (Expression) p.Second;
@@ -2303,37 +2305,30 @@ namespace Mono.CSharp {
 							"No need to use fixed statement for parameters or " +
 							"local variable declarations (address is already " +
 							"fixed)");
-						continue;
+						return false;
 					}
 					
 					e = e.Resolve (ec);
 					if (e == null)
-						continue;
+						return false;
 
 					child = ((Unary) e).Expr;
 					
 					if (!TypeManager.VerifyUnManaged (child.Type, loc))
-						continue;
+						return false;
 
-					//
-					// Store pointer in pinned location
-					//
-					e.Emit (ec);
-					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
-
-					is_ret = statement.Emit (ec);
-
-					// Clear the pinned variable.
-					ig.Emit (OpCodes.Ldc_I4_0);
-					ig.Emit (OpCodes.Conv_U);
-					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+					data [i].is_object = true;
+					data [i].expr = e;
+					data [i].converted = null;
+					data [i].vi = vi;
+					i++;
 
 					continue;
 				}
 
 				e = e.Resolve (ec);
 				if (e == null)
-					continue;
+					return false;
 
 				//
 				// Case 2: Array
@@ -2346,7 +2341,7 @@ namespace Mono.CSharp {
 					// Provided that array_type is unmanaged,
 					//
 					if (!TypeManager.VerifyUnManaged (array_type, loc))
-						continue;
+						return false;
 
 					//
 					// and T* is implicitly convertible to the
@@ -2357,12 +2352,69 @@ namespace Mono.CSharp {
 					Expression converted = Expression.ConvertImplicitRequired (
 						ec, array_ptr, vi.VariableType, loc);
 					if (converted == null)
-						continue;
+						return false;
 
+					data [i].is_object = false;
+					data [i].expr = e;
+					data [i].converted = converted;
+					data [i].vi = vi;
+					i++;
+
+					continue;
+				}
+
+				//
+				// Case 3: string
+				//
+				if (e.Type == TypeManager.string_type){
+					data [i].is_object = false;
+					data [i].expr = e;
+					data [i].converted = null;
+					data [i].vi = vi;
+					i++;
+				}
+			}
+
+			return statement.Resolve (ec);
+		}
+		
+		public override bool Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+
+			bool is_ret = false;
+
+			for (int i = 0; i < data.Length; i++) {
+				VariableInfo vi = data [i].vi;
+
+				//
+				// Case 1: & object.
+				//
+				if (data [i].is_object) {
 					//
 					// Store pointer in pinned location
 					//
-					converted.Emit (ec);
+					data [i].expr.Emit (ec);
+					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+
+					is_ret = statement.Emit (ec);
+
+					// Clear the pinned variable.
+					ig.Emit (OpCodes.Ldc_I4_0);
+					ig.Emit (OpCodes.Conv_U);
+					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+
+					continue;
+				}
+
+				//
+				// Case 2: Array
+				//
+				if (data [i].expr.Type.IsArray){
+					//
+					// Store pointer in pinned location
+					//
+					data [i].converted.Emit (ec);
 					
 					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
 
@@ -2379,11 +2431,11 @@ namespace Mono.CSharp {
 				//
 				// Case 3: string
 				//
-				if (e.Type == TypeManager.string_type){
+				if (data [i].expr.Type == TypeManager.string_type){
 					LocalBuilder pinned_string = ig.DeclareLocal (TypeManager.string_type);
 					TypeManager.MakePinned (pinned_string);
 					
-					e.Emit (ec);
+					data [i].expr.Emit (ec);
 					ig.Emit (OpCodes.Stloc, pinned_string);
 
 					Expression sptr = new StringPtr (pinned_string);

@@ -1,5 +1,8 @@
 2002-07-29  Martin Baulig  <martin@gnome.org>
 
+	* statement.cs (Fixed): Moved all code that does variable lookups
+	and resolvings from Emit to Resolve.
+
 	* statement.cs (For): Moved all code that does variable lookups
 	and resolvings from Emit to Resolve.
 
