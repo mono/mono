@@ -28,7 +28,12 @@ namespace System.Drawing.Imaging
 			flags = 0;
 			entries = new Color [0];
 		}
-		
+
+		internal ColorPalette (int flags, Color[] colors) {
+			this.flags = flags;
+			entries = colors;
+		}
+
 		public Color [] Entries {
 			get {
 				return entries;

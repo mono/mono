@@ -12,21 +12,23 @@ namespace System.Drawing.Imaging {
 
 	public sealed class ImageFormat {
 
+		Guid	guid_;
+
 		// constructors
 		[MonoTODO]
 		public ImageFormat(Guid guid) {
-			throw new NotImplementedException ();
+			guid_ = guid;
 		}
 		
 		// methods
 		[MonoTODO]
 		public override bool Equals(object o) {
-			throw new NotImplementedException ();
+			return base.Equals(o);
 		}
 
 		[MonoTODO]
 		public override int GetHashCode() {
-			throw new NotImplementedException ();
+			return base.GetHashCode();
 		}
 		
 		[MonoTODO]
@@ -35,9 +37,11 @@ namespace System.Drawing.Imaging {
 		}
 
 		// properties
+		static ImageFormat BmpImageFormat_ = new ImageFormat(new Guid("DFB9AC7D-498D-4bd8-9D42-E23E541964B1"));
+
 		[MonoTODO]
 		public static ImageFormat Bmp {
-			get { throw new NotImplementedException (); }
+			get { return BmpImageFormat_; }
 		}
 		
 		[MonoTODO]
@@ -57,7 +61,7 @@ namespace System.Drawing.Imaging {
 		
 		[MonoTODO]
 		public Guid Guid {
-			get { throw new NotImplementedException (); }
+			get { return guid_; }
 		}
 		
 		[MonoTODO]
@@ -65,9 +69,10 @@ namespace System.Drawing.Imaging {
 			get { throw new NotImplementedException (); }
 		}
 		
-		[MonoTODO]
+		[MonoTODO] 
+		static ImageFormat JpegImageFormat_ = new ImageFormat(new Guid("83BFFDF8-398F-407f-BA33-A7993D11B2DA"));
 		public static ImageFormat Jpeg {
-			get { throw new NotImplementedException (); }
+			get { return JpegImageFormat_; }
 		}
 		
 		[MonoTODO]
