@@ -131,6 +131,8 @@ namespace Mono.CSharp {
 		//
 		public string IndexerName;
 
+		Type GenericType;
+
 		public TypeContainer ():
 			this (null, null, "", null, new Location (-1)) {
 		}
@@ -824,6 +826,9 @@ namespace Mono.CSharp {
 			}
 
 			if (IsGeneric) {
+				CurrentType = new ConstructedType (
+					Name, TypeParameters, Location);
+
 				foreach (TypeParameter type_param in TypeParameters)
 					type_param.Define (TypeBuilder);
 			}
@@ -1161,6 +1166,13 @@ namespace Mono.CSharp {
 			
 			if (delegates != null)
 				DefineMembers (delegates, defined_names);
+
+			if (CurrentType != null) {
+				GenericType = CurrentType.ResolveType (ec);
+
+				ec.ContainerType = GenericType;
+			}
+
 
 #if CACHE
 			if (TypeBuilder.BaseType != null)
@@ -1980,7 +1992,13 @@ namespace Mono.CSharp {
 
 		MemberList IMemberContainer.GetMembers (MemberTypes mt, BindingFlags bf)
 		{
-			return FindMembers (mt, bf | BindingFlags.DeclaredOnly, null, null);
+			BindingFlags new_bf = bf | BindingFlags.DeclaredOnly;
+
+			if (GenericType != null)
+				return TypeManager.FindMembers (GenericType, mt, new_bf,
+								null, null);
+			else
+				return FindMembers (mt, new_bf, null, null);
 		}
 
 		//

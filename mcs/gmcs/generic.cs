@@ -309,8 +309,21 @@ namespace Mono.CSharp {
 			loc = l;
 			this.name = name;
 			this.args = args;
-			eclass = ExprClass.Type;
 
+			eclass = ExprClass.Type;
+			full_name = name + "<" + args.ToString () + ">";
+		}
+
+		public ConstructedType (string name, TypeParameter[] type_params, Location l)
+		{
+			loc = l;
+			this.name = name;
+
+			args = new TypeArguments ();
+			foreach (TypeParameter type_param in type_params)
+				args.Add (new TypeParameterExpr (type_param, l));
+
+			eclass = ExprClass.Type;
 			full_name = name + "<" + args.ToString () + ">";
 		}
 
@@ -351,6 +364,9 @@ namespace Mono.CSharp {
 
 		public override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
+			if (gt != null)
+				return this;
+
 			//
 			// First, resolve the generic type.
 			//
@@ -371,6 +387,11 @@ namespace Mono.CSharp {
 
 		public override Type ResolveType (EmitContext ec)
 		{
+			if (type != null)
+				return type;
+			if (DoResolveAsTypeStep (ec) == null)
+				return null;
+
 			//
 			// Resolve the arguments.
 			//

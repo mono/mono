@@ -1,3 +1,27 @@
+2004-01-26  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (DeclSpace.CurrentType): New public field.
+
+	* expression.cs (This.ResolveBase): If we have an
+	`ec.TypeContainer.CurrentType', use it instead of
+	`ec.ContainerType'.
+
+	* class.cs (TypeContainer.DefineType): If we're a generic type,
+	create the `CurrentType' (unresolved).
+	(TypeContainer.GenericType): New private field.
+	(TypeContainer.DefineMembers): If we have a `CurrentType', resolve
+	it and store it in `GenericType' before creating the MemberCache.
+	(TypeContainer.GetMembers): If we have a `GenericType', call
+	TypeManager.FindMembers() on it.
+
+	* interface.cs (Interface.GenericType): New private field.
+	(Interface.DefineType): If we're a generic type, create the
+	`CurrentType' (unresolved).
+	(Interface.DefineMembers): If we have a `CurrentType', resolve it
+	and store it in `GenericType' before creating the MemberCache.
+	(Interface.GetMembers): If we have a `GenericType', call
+	TypeManager.FindMembers() on it.
+
 2004-01-22  Martin Baulig  <martin@ximian.com>
 
 	* cs-parser.jay (namespace_or_type_name): Return an Expression,

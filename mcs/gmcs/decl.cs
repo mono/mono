@@ -90,10 +90,17 @@ namespace Mono.CSharp {
 	/// </remarks>
 	public abstract class DeclSpace : MemberCore {
 		/// <summary>
-		///   this points to the actual definition that is being
+		///   This points to the actual definition that is being
 		///   created with System.Reflection.Emit
 		/// </summary>
 		public TypeBuilder TypeBuilder;
+
+		/// <summary>
+		///   If we are a generic type, this is the type we are
+		///   currently defining.  We need to lookup members on this
+		///   instead of the TypeBuilder.
+		/// </summary>
+		public TypeExpr CurrentType;
 
 		/// <summary>
 		///   This variable tracks whether we have Closed the type

@@ -54,6 +54,9 @@ namespace Mono.CSharp {
 
 		bool members_defined;
 
+		EmitContext ec;
+		Type GenericType;
+
 		// These will happen after the semantic analysis
 		
 		// Hashtable defined_indexers;
@@ -730,8 +733,8 @@ namespace Mono.CSharp {
 			
 			InTransit = true;
 			
-			EmitContext ec = new EmitContext (this, this, Location, null, null,
-							  ModFlags, false);
+			ec = new EmitContext (this, this, Location, null, null,
+					      ModFlags, false);
 
 			ifaces = GetInterfaceBases (out error);
 
@@ -772,6 +775,9 @@ namespace Mono.CSharp {
 			}
 
 			if (IsGeneric) {
+				CurrentType = new ConstructedType (
+					Name, TypeParameters, Location);
+
 				foreach (TypeParameter type_param in TypeParameters)
 					type_param.Define (TypeBuilder);
 
@@ -860,6 +866,12 @@ namespace Mono.CSharp {
 				if (cb != null)
 					TypeBuilder.SetCustomAttribute (cb);
  			}
+
+			if (CurrentType != null) {
+				GenericType = CurrentType.ResolveType (ec);
+
+				ec.ContainerType = GenericType;
+			}
 
 #if CACHE
 			if (TypeBuilder.BaseType != null)
@@ -1004,6 +1016,12 @@ namespace Mono.CSharp {
 				return MemberList.Empty;
 			if ((bf & BindingFlags.Public) == 0)
 				return MemberList.Empty;
+
+			BindingFlags new_bf = bf | BindingFlags.DeclaredOnly;
+
+			if (GenericType != null)
+				return TypeManager.FindMembers (GenericType, mt, new_bf,
+								null, null);
 
 			ArrayList members = new ArrayList ();
 

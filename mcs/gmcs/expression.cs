@@ -6325,7 +6325,11 @@ namespace Mono.CSharp {
 		public bool ResolveBase (EmitContext ec)
 		{
 			eclass = ExprClass.Variable;
-			type = ec.ContainerType;
+
+			if (ec.TypeContainer.CurrentType != null)
+				type = ec.TypeContainer.CurrentType.ResolveType (ec);
+			else
+				type = ec.ContainerType;
 
 			if (ec.IsStatic) {
 				Error (26, "Keyword this not valid in static code");
