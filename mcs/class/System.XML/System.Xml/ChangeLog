@@ -1,3 +1,18 @@
+2002-03-02  Jason Diamond <jason@injektilo.org>
+
+	* XmlTextReader.cs: Implemented MoveToNextAttribute().
+
+	* XmlDocument.cs: Reformatted. Adding missing methods and MonoTODO
+	attributes. Create attribute nodes while loading. Implemented
+	Load(string) and CreateTextNode().
+
+	* XmlCharacterData.cs, XmlText.cs: Re-implemented.
+
+	* XmlCDataSection.cs, XmlComment.cs: Call correct constructor in 
+	XmlCharacterData.
+
+	* XmlNamedNodeMap.cs, XmlAttributeCollection.cs: Stubbed out.
+
 2002-03-02  Mike Kestner <mkestner@speakeasy.net>
 
 	* XmlAttribute.cs : Using fix.

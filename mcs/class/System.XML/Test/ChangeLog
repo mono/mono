@@ -1,3 +1,10 @@
+2002-03-02  Jason Diamond <jason@injektilo.org>
+
+	* XmlTextReaderTests.cs: Test MoveToNextAttribute().
+
+	* XmlDocumentTests.cs: Test loading document containing attributes
+	and text nodes.
+
 2002-03-02  Mike Kestner <mkestner@speakeasy.net>
 
 	* XmlAttributeTests.cs : New test suite for attrs.

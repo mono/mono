@@ -31,7 +31,7 @@ namespace System.Xml
 		{
 			get
 			{
-				return Name;
+				return FattrName;
 			}
 		}
 
@@ -42,7 +42,7 @@ namespace System.Xml
 		{ 
 			get
 			{
-				return Name;
+				return FattrName;
 			}
 		}
 

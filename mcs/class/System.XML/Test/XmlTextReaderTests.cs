@@ -1632,5 +1632,57 @@ namespace Ximian.Mono.Tests
 			Assert (XmlReader.IsNameToken ("1foo"));
 			Assert (!XmlReader.IsNameToken (" foo"));
 		}
+
+		public void TestMoveToNextAttribute()
+		{
+			string xml = @"<foo bar=""baz"" quux='quuux'/>";
+			XmlReader xmlReader =
+				new XmlTextReader (new StringReader (xml));
+
+			AssertStartDocument (xmlReader);
+
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.Element, // nodeType
+				0, //depth
+				true, // isEmptyElement
+				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
+				String.Empty, // namespaceURI
+				String.Empty, // value
+				2 // attributeCount
+			);
+
+			AssertAttribute (
+				xmlReader, // xmlReader
+				"bar", // name
+				String.Empty, // prefix
+				"bar", // localName
+				String.Empty, // namespaceURI
+				"baz" // value
+			);
+
+			AssertAttribute (
+				xmlReader, // xmlReader
+				"quux", // name
+				String.Empty, // prefix
+				"quux", // localName
+				String.Empty, // namespaceURI
+				"quuux" // value
+			);
+
+			Assert (xmlReader.MoveToNextAttribute ());
+			Assert ("bar" == xmlReader.Name || "quux" == xmlReader.Name);
+			Assert ("baz" == xmlReader.Value || "quuux" == xmlReader.Value);
+
+			Assert (xmlReader.MoveToNextAttribute ());
+			Assert ("bar" == xmlReader.Name || "quux" == xmlReader.Name);
+			Assert ("baz" == xmlReader.Value || "quuux" == xmlReader.Value);
+
+			Assert (!xmlReader.MoveToNextAttribute ());
+
+			AssertEndDocument (xmlReader);
+		}
 	}
 }

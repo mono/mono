@@ -105,7 +105,7 @@ namespace System.Xml
 
 		}
 		// Constructors
-		internal XmlComment(XmlDocument aOwner, string txt, XmlInputSource src) : base(aOwner)
+		internal XmlComment(XmlDocument aOwner, string txt, XmlInputSource src) : base(txt, aOwner)
 		{
 			XmlException e = wellFormed(txt, src);
 

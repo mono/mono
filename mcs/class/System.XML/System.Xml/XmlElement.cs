@@ -29,7 +29,7 @@ namespace System.Xml
 			this.localName = localName;
 			this.namespaceURI = namespaceURI;
 
-			attributes = new XmlAttributeCollection(doc, this, null);
+			attributes = new XmlAttributeCollection(this);
 		}
 
 		#endregion
@@ -125,9 +125,10 @@ namespace System.Xml
 		}
 
 		[MonoTODO]
-		public virtual string GetAttribute(string name)
+		public virtual string GetAttribute (string name)
 		{
-			throw new NotImplementedException();
+			XmlNode attributeNode = Attributes.GetNamedItem (name);
+			return attributeNode != null ? attributeNode.Value : String.Empty;
 		}
 
 		[MonoTODO]
@@ -221,7 +222,9 @@ namespace System.Xml
 		[MonoTODO]
 		public virtual void SetAttribute(string name, string value)
 		{
-			throw new NotImplementedException();
+			XmlAttribute attribute = OwnerDocument.CreateAttribute (name);
+			attribute.Value = value;
+			Attributes.SetNamedItem (attribute);
 		}
 
 		[MonoTODO]

@@ -1,88 +1,69 @@
-// -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
 // System.Xml.XmlText
 //
 // Author:
-//   Daniel Weber (daniel-weber@austin.rr.com)
+//   Jason Diamond <jason@injektilo.org>
 //
-// (C) 2001 Daniel Weber
-
+// (C) 2002 Jason Diamond  http://injektilo.org/
+//
 
 using System;
 
 namespace System.Xml
 {
-	/// <summary>
-	/// Represents the text content of an element or attribute
-	/// </summary>
-	public class XmlText : XmlNode
+	public class XmlText : XmlCharacterData
 	{
-		// Private data members
+		#region Constructor
 
-		// public properties
+		protected internal XmlText (string strData, XmlDocument doc) : base(strData, doc)
+		{
+		}
+
+		#endregion
+
+		#region Properties
+
 		public override string LocalName 
 		{
-			get
-			{
-				return "#text";
-			}
+			get { return "#text"; }
 		}
-		/// <summary>
-		/// Get the name of the node.
-		/// </summary>
-		public override string Name 
+
+		public override string Name {
+			get { return "#text"; }
+		}
+
+		public override XmlNodeType NodeType {
+			get { return XmlNodeType.Text; }
+		}
+
+		#endregion
+
+		#region Methods
+
+		[MonoTODO]
+		public override XmlNode CloneNode (bool deep)
 		{
-			get
-			{
-				return "#text";
-			}
+			throw new NotImplementedException ();
 		}
 
-		public override XmlNodeType NodeType
+		[MonoTODO]
+		public virtual XmlText SplitText (int offset)
 		{
-			get
-			{
-				return XmlNodeType.Text;
-			}
+			throw new NotImplementedException ();
 		}
-		
 
-		// Public Methods
-		//===========================================================================
-		/// <summary>
-		/// Override.  Throw InvalidOperationException - text nodes do not have child nodes
-		/// </summary>
-		/// <param name="newChild">N/A</param>
-		/// <param name="refChild">N/A</param>
-		/// <returns>N/A</returns>
-		public override XmlNode InsertAfter(XmlNode newChild, XmlNode refChild)
+		[MonoTODO]
+		public override void WriteContentTo (XmlWriter w)
 		{
-			throw new InvalidOperationException("#text nodes do not have child nodes");
+			throw new NotImplementedException ();
 		}
 
-		public override XmlNode CloneNode( bool deep)
+		[MonoTODO]
+		public override void WriteTo (XmlWriter w)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
-		public override void WriteContentTo(XmlWriter w)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override void WriteTo(XmlWriter w)
-		{
-			throw new NotImplementedException();
-		}
-
-		// Internal method calls
-		//===========================================================================
-
-		// Constructors
-		//===========================================================================
-		internal XmlText (XmlDocument aOwnerDoc ) : base(aOwnerDoc)
-		{
-		}
-
+		#endregion
 	}
 }

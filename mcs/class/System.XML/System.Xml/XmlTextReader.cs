@@ -384,10 +384,28 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override bool MoveToNextAttribute ()
 		{
-			throw new NotImplementedException ();
+			if (attributes == null)
+				return false;
+
+			if (attributeEnumerator == null)
+				attributeEnumerator = attributes.GetEnumerator();
+
+			if (attributeEnumerator.MoveNext ()) {
+				string name = attributeEnumerator.Key as string;
+				string value = attributeEnumerator.Value as string;
+				SetProperties (
+					XmlNodeType.Attribute, // nodeType
+					name, // name
+					false, // isEmptyElement
+					value, // value
+					false // clearAttributes
+				);
+				return true;
+			}
+
+			return false;
 		}
 
 		public override bool Read ()
@@ -477,6 +495,7 @@ namespace System.Xml
 		private bool isEmptyElement;
 		private string value;
 		private Hashtable attributes;
+		private IDictionaryEnumerator attributeEnumerator;
 
 		private bool returnEntityReference;
 		private string entityReferenceName;
@@ -511,6 +530,7 @@ namespace System.Xml
 			isEmptyElement = false;
 			value = String.Empty;
 			attributes = new Hashtable ();
+			attributeEnumerator = null;
 			
 			returnEntityReference = false;
 			entityReferenceName = String.Empty;
@@ -566,6 +586,8 @@ namespace System.Xml
 		{
 			if (attributes.Count > 0)
 				attributes.Clear ();
+
+			attributeEnumerator = null;
 		}
 
 		private int PeekChar ()

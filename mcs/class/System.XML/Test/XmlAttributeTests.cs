@@ -28,7 +28,7 @@ namespace Ximian.Mono.Tests
 
 		public void TestAttributes()
 		{
-			AssertNotNull(attr.Attributes);
+			AssertNull(attr.Attributes);
 		}
 
 		public void TestHasChildNodes()

@@ -12,11 +12,11 @@ namespace System.Xml
 	{
 		// Constructor
 		protected internal XmlCDataSection (string data, XmlDocument doc)
-			: base (doc)
+			: base (data, doc)
 		{
 		}
 
-	        // Properties
+        // Properties
 		public override string LocalName
 		{
 			get { return "#cdata-section"; }
