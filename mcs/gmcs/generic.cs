@@ -312,6 +312,9 @@ namespace Mono.CSharp {
 			Type atype = args.Arguments [index];
 			Type ptype = gen_params [index];
 
+			//// FIXME
+			return true;
+
 			//
 			// First, check parent class.
 			//
