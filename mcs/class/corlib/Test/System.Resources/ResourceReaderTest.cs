@@ -11,6 +11,7 @@
 using System;
 using System.Resources;
 using System.IO;
+
 using System.Collections;
 using MonoTests.System.Resources;
 using NUnit.Framework;
@@ -56,12 +57,15 @@ namespace MonoTests.System.Resources {
 		}
 
 		public void TestConstructorString() {
+			if (!File.Exists(m_ResourceFile)) {
+				Fail("Resource file is not where it should be:" + Directory.GetCurrentDirectory()+ "\\" + m_ResourceFile);
+			}
 			ResourceReader r = null;
 			try {
 				r = new ResourceReader(m_ResourceFile);
 			}
 			catch {
-				Fail("Should have been able to open resource file: ");
+				Fail("Should have been able to open resource file.");
 			}
 			finally {
 				if (null != r)
@@ -127,11 +131,11 @@ namespace MonoTests.System.Resources {
 			// Goes through the enumerator, printing out the key and value pairs.
 			while (en.MoveNext()) {
 				DictionaryEntry de = (DictionaryEntry)en.Current;
-				Assert("Current.Key should not be empty",String.Empty != de.Key);
-				Assert("Current.Value should not be empty",String.Empty != de.Value);
-				Assert("Current.Value should not be empty",String.Empty != de.Value);
-				Assert("Entry.Key should not be empty",String.Empty != en.Key);
-				Assert("Entry.Value should not be empty",String.Empty != en.Value);
+				Assert("Current.Key should not be empty",String.Empty != (string)de.Key);
+				Assert("Current.Value should not be empty",String.Empty != (string)de.Value);
+				Assert("Current.Value should not be empty",String.Empty != (string)de.Value);
+				Assert("Entry.Key should not be empty",String.Empty != (string)en.Key);
+				Assert("Entry.Value should not be empty",String.Empty != (string)en.Value);
 			}
 			reader.Close();
 		}
