@@ -1,3 +1,7 @@
+2001-07-16  Miguel de Icaza  <miguel@ximian.com>
+
+	* Version.cs: Remove my buggy comment.
+
 2001-07-15  Sean MacIsaac  <macisaac@ximian.com>
 
 	* String.cs: Spelling error of IComparable, object's

@@ -137,11 +137,6 @@ namespace System {
 			return false;
 		}
 
-		// <summary>
-		//   This is sort of lame: the documentation claims that the
-		//   return value is a 32-bit integer, but "int" can be 64
-		//   on Alphas for example. 
-		// </summary>
 		public override int GetHashCode ()
 		{
 			return (revision << 24) | (build << 16) | (minor << 8) | major;
