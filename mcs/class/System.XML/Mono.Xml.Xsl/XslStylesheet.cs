@@ -236,7 +236,7 @@ namespace Mono.Xml.Xsl {
 				switch (n.LocalName)
 				{
 				case "script":
-					c.ScriptManager.AddScript (n);
+					c.ScriptManager.AddScript (c);
 					break;
 				}
 				break;
