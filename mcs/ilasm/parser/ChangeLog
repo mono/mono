@@ -1,5 +1,9 @@
 2003-05-04 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Use new MiscInstr.ldstr for ldstr, add INSTR_Rs
+		
+2003-05-04 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Set int64's masquerading as int32 to upper and
 	lower bounds if neccasary. NEED TO TEST this behavoir on windows.
 		
