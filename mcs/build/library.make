@@ -116,8 +116,21 @@ uninstall-local:
 
 else
 
+# If RUNTIME_HAS_CONSISTENT_GACDIR is set, it implies that the internal GACDIR
+# of the runtime is the same as the GACDIR we want.  So, we don't need to pass it
+# to gacutil.  Note that the GACDIR we want may not be the same as the value of 
+# GACDIR set above, since the user could have overridden the value of $(prefix).
+#
+# This makes a difference only when we're building from the mono/ tree, since we
+# have to ensure that the internal GACDIR of the in-tree runtime matches where we 
+# install the DLLs.
+
+ifndef RUNTIME_HAS_CONSISTENT_GACDIR
+gacdir_flag = /gacdir $(GACDIR)
+endif
+
 install-local: $(gacutil)
-	$(GACUTIL) /i $(the_lib) /f /gacdir $(GACDIR) /root $(GACROOT) /package $(FRAMEWORK_VERSION)
+	$(GACUTIL) /i $(the_lib) /f $(gacdir_flag) /root $(GACROOT) /package $(FRAMEWORK_VERSION)
 
 uninstall-local: $(gacutil)
 	$(GACUTIL) /u $(LIBRARY_NAME:.dll=)
