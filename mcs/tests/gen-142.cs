@@ -109,6 +109,22 @@ class X
 		Assert.IsTrue ("f || b", f || b);
 		Assert.IsTrue ("f || c", f || c);
 
+		int? g = 3, h = null, i = 3, j = null;
+
+		Assert.IsFalse ("g == null", g == null);
+		Assert.IsTrue ("g != null", g != null);
+		Assert.IsTrue ("h == null", h == null);
+		Assert.IsFalse ("h != null", h != null);
+
+		Assert.IsTrue ("g == i", g == i);
+		Assert.IsFalse ("g != i", g != i);
+		Assert.IsFalse ("g == j", g == j);
+		Assert.IsTrue ("g != j", g != j);
+		Assert.IsFalse ("h == i", h == i);
+		Assert.IsTrue ("h != i", h != i);
+		Assert.IsTrue ("h == j", h == j);
+		Assert.IsFalse ("h != j", h != j);
+
 		Console.WriteLine ("{0} errors.", Assert.Errors);
 		return Assert.Errors;
 	}
