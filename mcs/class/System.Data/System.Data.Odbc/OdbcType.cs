@@ -119,7 +119,7 @@ namespace System.Data.Odbc
                 UNASSIGNED                      = Int16.MaxValue
         }
 
-        public enum SQL_C_TYPE : short
+        internal enum SQL_C_TYPE : short
         {
                 BINARY				= (-2),
                 BIT				= (-7),
