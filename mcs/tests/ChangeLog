@@ -1,3 +1,8 @@
+2002-07-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* test-151.cs: New test. See bug #22119.
+	* makefile: added new test.
+
 2002-07-24  Martin Baulig  <martin@gnome.org>
 
 	* test-150.cs: New test.
