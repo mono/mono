@@ -1,3 +1,11 @@
+2005-02-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebResponse.cs:
+	* WebConnection.cs:
+	* HttpWebRequest.cs:
+	* WebConnectionStream.cs: don't read the entire response unless the
+	user requests it. Fixes bug #72443.
+
 2005-02-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs: send the headers when we're supposed to write

@@ -455,7 +455,17 @@ namespace System.Net
 				return;
 			}
 
-			if (isRead || !allowBuffering || disposed)
+			if (isRead) {
+				if (!nextReadCalled) {
+					CheckComplete ();
+					// If we have not read all the contents
+					if (!nextReadCalled)
+						cnc.Close (true);
+				}
+				return;
+			}
+
+			if (!allowBuffering || disposed)
 				return;
 
 			disposed = true;
