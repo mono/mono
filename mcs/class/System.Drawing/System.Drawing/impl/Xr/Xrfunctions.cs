@@ -220,7 +220,7 @@ namespace System.Drawing.XrImpl {
 		internal static extern void XrClosePath (IntPtr xr_state);
 
 		//
-		// Paiting functions
+		// Painting functions
 		//
 
 		[DllImport (Xrimp)]

@@ -57,6 +57,8 @@ namespace System.Drawing
 			internal IntPtr initial_hwnd = IntPtr.Zero;
 			internal System.Drawing.XrImpl.Image initialized_from_image = null;
 
+			internal const double C1 = 0.552; // this is some *magic* number
+
 			internal Graphics (IntPtr nativeGraphics)
 			{
 				native_object = nativeGraphics;
@@ -128,58 +130,81 @@ namespace System.Drawing
 				}
 			}
 
-			[MonoTODO]
 			void IGraphics.DrawArc (System.Drawing.Pen pen, Rectangle rect, float startAngle, float sweepAngle)
 			{
-				throw new NotImplementedException ();
+				((IGraphics) this).DrawArc (pen, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
 			}
 
-			[MonoTODO]
 			void IGraphics.DrawArc (System.Drawing.Pen pen, RectangleF rect, float startAngle, float sweepAngle)
 			{
-				throw new NotImplementedException ();
+				((IGraphics) this).DrawArc (pen, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
 			}
 
 			[MonoTODO]
-			void IGraphics.DrawArc (System.Drawing.Pen pen, float x, float y, float width, float height, float startAngle, float sweepAngle)
+			void IGraphics.DrawArc (System.Drawing.Pen pen,
+					float x, float y, float width, float height, float startAngle, float sweepAngle)
 			{
 				throw new NotImplementedException ();
 			}
 
 			[MonoTODO]
-			void IGraphics.DrawArc (System.Drawing.Pen pen, int x, int y, int width, int height, int startAngle, int sweepAngle)
+			void IGraphics.DrawArc (System.Drawing.Pen pen,
+					int x, int y, int width, int height, int startAngle, int sweepAngle)
 			{
 				throw new NotImplementedException ();
 			}
 
-			[MonoTODO]
 			void IGraphics.DrawBezier (System.Drawing.Pen pen, PointF pt1, PointF pt2, PointF pt3, PointF pt4)
 			{
-				throw new NotImplementedException ();
+				((IGraphics) this).DrawBezier (pen, pt1.X, pt1.Y, pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
 			}
 
-			[MonoTODO]
 			void IGraphics.DrawBezier (System.Drawing.Pen pen, Point pt1, Point pt2, Point pt3, Point pt4)
 			{
-				throw new NotImplementedException ();
+				((IGraphics) this).DrawBezier (pen, pt1.X, pt1.Y, pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
 			}
 
-			[MonoTODO]
 			void IGraphics.DrawBezier (System.Drawing.Pen pen, float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
 			{
-				throw new NotImplementedException ();
+				Pen xrPen = ConvertPen (pen);
+				xrPen.SetXrValues (native_object);
+
+				Xr.XrMoveTo (native_object, x1, y1);
+				Xr.XrCurveTo (native_object, x2, y2, x3, y3, x4, y4);
+
+				Xr.XrStroke (native_object);
 			}
 
-			[MonoTODO]
 			void IGraphics.DrawBeziers (System.Drawing.Pen pen, Point [] points)
 			{
-				throw new NotImplementedException ();
+				Pen xrPen = ConvertPen (pen);
+				xrPen.SetXrValues (native_object);
+
+				Xr.XrMoveTo (native_object, points [0].X, points [0].Y);
+
+				for (int i = 1; i < points.Length; i += 3)
+					Xr.XrCurveTo (native_object,
+							points [i].X, points [i].Y,
+							points [i + 1].X, points [i + 1].Y,
+							points [i + 2].X, points [i + 2].Y);
+
+				Xr.XrStroke (native_object);
 			}
 
-			[MonoTODO]
 			void IGraphics.DrawBeziers (System.Drawing.Pen pen, PointF [] points)
 			{
-				throw new NotImplementedException ();
+				Pen xrPen = ConvertPen (pen);
+				xrPen.SetXrValues (native_object);
+
+				Xr.XrMoveTo (native_object, points [0].X, points [0].Y);
+
+				for (int i = 1; i < points.Length; i += 3)
+					Xr.XrCurveTo (native_object,
+							points [i].X, points [i].Y,
+							points [i + 1].X, points [i + 1].Y,
+							points [i + 2].X, points [i + 2].Y);
+
+				Xr.XrStroke (native_object);
 			}
 
 			[MonoTODO]
@@ -248,28 +273,53 @@ namespace System.Drawing
 				throw new NotImplementedException ();
 			}
 
-			[MonoTODO]
 			void IGraphics.DrawEllipse (System.Drawing.Pen pen, Rectangle rect)
 			{
-				throw new NotImplementedException ();
+				((IGraphics) this).DrawEllipse (pen, rect.X, rect.Y, rect.Width, rect.Height);
 			}
 
-			[MonoTODO]
 			void IGraphics.DrawEllipse (System.Drawing.Pen pen, RectangleF rect)
 			{
-				throw new NotImplementedException ();
+				((IGraphics) this).DrawEllipse (pen, rect.X, rect.Y, rect.Width, rect.Height);
 			}
 
-			[MonoTODO]
 			void IGraphics.DrawEllipse (System.Drawing.Pen pen, int x, int y, int width, int height)
 			{
-				throw new NotImplementedException ();
+				((IGraphics) this).DrawEllipse (pen, (float) x, (float) y, (float) width, (float) height);
 			}
 
-			[MonoTODO]
 			void IGraphics.DrawEllipse (System.Drawing.Pen pen, float x, float y, float width, float height)
 			{
-				throw new NotImplementedException ();
+				double rx = width / 2;
+				double ry = height / 2;
+				double cx = x + rx;
+				double cy = y + ry;
+
+				Pen xrPen = ConvertPen (pen);
+
+				xrPen.SetXrValues (native_object);
+				Xr.XrMoveTo (native_object, cx + rx, cy);
+
+				// Do an approprimation of the ellipse by drawing a curve in each quatrant
+				Xr.XrCurveTo (native_object,
+						cx + rx, cy - C1 * ry,
+						cx + C1 * rx, cy - ry,
+						cx, cy - ry);
+				Xr.XrCurveTo (native_object,
+						cx - C1 * rx, cy - ry,
+						cx - rx, cy - C1 * ry,
+						cx - rx, cy);
+				Xr.XrCurveTo (native_object,
+						cx - rx, cy + C1 * ry,
+						cx - C1 * rx, cy + ry,
+						cx, cy + ry);
+				Xr.XrCurveTo (native_object,
+						cx + C1 * rx, cy + ry,
+						cx + rx, cy + C1 * ry,
+						cx + rx, cy);
+
+				Xr.XrClosePath (native_object);
+				Xr.XrStroke (native_object);
 			}
 
 			[MonoTODO]
@@ -563,16 +613,14 @@ namespace System.Drawing
 				throw new NotImplementedException ();
 			}
 
-			[MonoTODO]
 			void IGraphics.DrawPie (System.Drawing.Pen pen, Rectangle rect, float startAngle, float sweepAngle)
 			{
-				throw new NotImplementedException ();
+				((IGraphics) this).DrawPie (pen, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
 			}
 
-			[MonoTODO]
 			void IGraphics.DrawPie (System.Drawing.Pen pen, RectangleF rect, float startAngle, float sweepAngle)
 			{
-				throw new NotImplementedException ();
+				((IGraphics) this).DrawPie (pen, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
 			}
 
 			[MonoTODO]
@@ -587,16 +635,31 @@ namespace System.Drawing
 				throw new NotImplementedException ();
 			}
 
-			[MonoTODO]
 			void IGraphics.DrawPolygon (System.Drawing.Pen pen, Point [] points)
 			{
-				throw new NotImplementedException ();
+				Pen xrPen = ConvertPen (pen);
+
+				xrPen.SetXrValues (native_object);
+				Xr.XrMoveTo (native_object, (double) points [0].X, (double) points [0].Y);
+
+				for (int i = 1; i < points.Length; i ++)
+					Xr.XrLineTo (native_object, (double) points [i].X, (double) points [i].Y);
+				
+				Xr.XrClosePath (native_object);
+				Xr.XrStroke (native_object);
 			}
 
-			[MonoTODO]
 			void IGraphics.DrawPolygon (System.Drawing.Pen pen, PointF [] points)
 			{
-				throw new NotImplementedException ();
+				Pen xrPen = ConvertPen (pen);
+
+				xrPen.SetXrValues (native_object);
+
+				for (int i = 0; i < points.Length; i += 2)
+					((IGraphics) this).DrawLine (pen, points [i], points [i + 1]);
+				
+				Xr.XrClosePath (native_object);
+				Xr.XrStroke (native_object);
 			}
 
 			[MonoTODO]

@@ -1,3 +1,9 @@
+2003-08-08  Duncan Mak  <duncan@ximian.com>
+
+	* Graphics.cs (DrawArc):
+	(DrawBezier):
+	(DrawEllipse): Implemented!
+
 2003-08-06  Duncan Mak  <duncan@ximian.com>
 
 	* Bitmap.cs: Reformatted. All public methods turn into

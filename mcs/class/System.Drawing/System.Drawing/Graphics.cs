@@ -4,7 +4,7 @@
 // (C) 2003 Ximian, Inc.  http://www.ximian.com
 //
 // Authors:
-// 	Gonzalo Paniagua Javier (gonzalo@ximian.com) (stubbed out)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com) (stubbed out)
 //   Alexandre Pigolkine(pigolkine@gmx.de)
 //
 using System;
@@ -89,28 +89,24 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void DrawArc (Pen pen, int x, int y, int width, int height, int startAngle, int sweepAngle)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void DrawBezier (Pen pen, PointF pt1, PointF pt2, PointF pt3, PointF pt4)
 		{
-			throw new NotImplementedException ();
+			((IGraphics) this).DrawBezier (pen, pt1.X, pt1.Y, pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
 		}
 
-		[MonoTODO]
 		public void DrawBezier (Pen pen, Point pt1, Point pt2, Point pt3, Point pt4)
 		{
-			throw new NotImplementedException ();
+			((IGraphics) this).DrawBezier (pen, pt1.X, pt1.Y, pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
 		}
 
-		[MonoTODO]
 		public void DrawBezier (Pen pen, float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
 		{
-			throw new NotImplementedException ();
+			((IGraphics) this).DrawBezier (pen, pt1.X, pt1.Y, pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
 		}
 
 		[MonoTODO]
@@ -194,25 +190,23 @@ namespace System.Drawing
 		[MonoTODO]
 		public void DrawEllipse (Pen pen, Rectangle rect)
 		{
-			throw new NotImplementedException ();
+			DrawEllipse (pen, rect.X, rect.Y, rect.Height, rect.Width);
 		}
 
 		[MonoTODO]
 		public void DrawEllipse (Pen pen, RectangleF rect)
 		{
-			throw new NotImplementedException ();
+			DrawEllipse (pen, rect.X, rect.Y, rect.Height, rect.Width);
 		}
 
-		[MonoTODO]
 		public void DrawEllipse (Pen pen, int x, int y, int width, int height)
 		{
-			throw new NotImplementedException ();
+			implementation.DrawEllipse (pen, x, y, width, height);
 		}
 
-		[MonoTODO]
 		public void DrawEllipse (Pen pen, float x, float y, float width, float height)
 		{
-			throw new NotImplementedException ();
+			implementation.DrawEllipse (pen, x, y, width, height);
 		}
 
 		[MonoTODO]
@@ -517,16 +511,15 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void DrawPolygon (Pen pen, Point [] points)
 		{
-			throw new NotImplementedException ();
+			implementation.DrawPolygon (pen, points);
 		}
 
 		[MonoTODO]
 		public void DrawPolygon (Pen pen, PointF [] points)
 		{
-			throw new NotImplementedException ();
+			implementation.DrawPolygon (pen, points);
 		}
 
 		[MonoTODO]
@@ -969,9 +962,9 @@ namespace System.Drawing
 		public void FillRectangles (Brush brush, Rectangle [] rects)
 		{
 		    if(rects != null) {
-		        foreach( Rectangle rc in rects) {
-		            FillRectangle(brush, rc);
-		        }
+			foreach( Rectangle rc in rects) {
+			    FillRectangle(brush, rc);
+			}
 		    }
 		}
 
@@ -979,9 +972,9 @@ namespace System.Drawing
 		public void FillRectangles (Brush brush, RectangleF [] rects)
 		{
 		    if(rects != null) {
-		        foreach( RectangleF rc in rects) {
-		            FillRectangle(brush, rc);
-		        }
+			foreach( RectangleF rc in rects) {
+			    FillRectangle(brush, rc);
+			}
 		    }
 		}
 
