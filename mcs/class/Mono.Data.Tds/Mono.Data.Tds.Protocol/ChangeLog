@@ -1,3 +1,8 @@
+2005-03-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Tds.cs: set the charset for MS SQL 2000. Patch from Aleksandar
+	Dezelin. Closes bug #73591.
+
 2005-02-04  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* Tds.cs (ProcessEndToken): Added a bool validRowCount and add to
