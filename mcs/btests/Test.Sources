@@ -187,6 +187,7 @@ OverloadingC3 \
 InheritanceC1 \
 InheritanceC2 \
 InheritanceC3 \
+InheritanceC4 \
 MustInheritC1 \
 MustInheritC2 \
 MustInheritC3 \
@@ -219,6 +220,9 @@ OverrideC8 \
 OverrideC9 \
 AccessibilityC1 \
 AccessibilityC2 \
+AccessibilityC3 \
+AccessibilityC4 \
+AccessibilityC5 \
 AttributesC1 \
 AttributesC2 \
 AttributesC3 \
