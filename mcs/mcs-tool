@@ -1,11 +1,6 @@
 #!/bin/sh
 
-mono=${MCSTOOL_MONO:-mono}
-compiler=${MCSTOOL_MCSEXE:-/usr/bin/mcs.exe}
-
-test $mono != mono && echo "$0: using special interpreter $mono"
-
-command="$mono $compiler"
+command=${MCSTOOL_MCSEXE:-/usr/bin/mcs}
 
 while test $# -gt 0 ; do
     case $1 in
