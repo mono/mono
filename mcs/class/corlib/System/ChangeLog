@@ -4,6 +4,7 @@
 	* Int64.cs:
 	* UInt32.cs:
 	* UInt64.cs (Parse): don't use Char.IsNumber to test for hex digits.
+	Don't use a delegate to test for valid digits.
 
 2002-05-01  Duncan Mak  <duncan@ximian.com>
 

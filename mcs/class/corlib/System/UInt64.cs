@@ -68,8 +68,6 @@ namespace System {
 			return Parse (s, style, null);
 		}
 
-		private delegate bool IsAnything (Char c);
-
 		private static void CheckStyle (NumberStyles style)
 		{
 			if ((style & NumberStyles.AllowHexSpecifier) != 0) {
@@ -139,11 +137,14 @@ namespace System {
 			return false;
 		}
 
-		private static bool is_hex (char e)
+		private static bool ValidDigit (char e, bool allowHex)
 		{
-			return Char.IsDigit (e) || (e >= 'A' && e <= 'F') || (e >= 'a' && e <= 'f');
-		}
+			if (allowHex)
+				return Char.IsDigit (e) || (e >= 'A' && e <= 'F') || (e >= 'a' && e <= 'f');
 
+			return Char.IsDigit (e);
+		}
+		
 		[CLSCompliant(false)]
 		public static ulong Parse (string s, NumberStyles style, IFormatProvider fp)
 		{
@@ -232,12 +233,6 @@ namespace System {
 				}
 			}
 			
-			IsAnything validDigit;
-			if (AllowHexSpecifier)
-				validDigit = new IsAnything (is_hex);
-			else
-				validDigit = new IsAnything (Char.IsDigit);
-			
 			ulong number = 0;
 			int nDigits = 0;
 			bool decimalPointFound = false;
@@ -248,7 +243,7 @@ namespace System {
 			// Just the same as Int32, but this one adds instead of substract
 			do {
 
-				if (!validDigit (s [pos])) {
+				if (!ValidDigit (s [pos], AllowHexSpecifier)) {
 					if (AllowThousands &&
 					    FindOther (ref pos, s, nfi.NumberGroupSeparator))
 					    continue;
