@@ -28,10 +28,10 @@ namespace Mono.Xml.Xsl
 		private Emitter _emitter;
 		//Outputting state
 		private WriteState _state;
-		//Collection of pending attributes. Key is attribute's QName, 
-		//value is Attribute object, which encapsulates prefix, QName and string
-		//value of the attribute. Subject to optimization.
-		private Hashtable _pendingAttrs;
+		// Collection of pending attributes. TODO: Can we make adding an attribute
+		// O(1)? I'm not sure it is that important (this would only really make a difference
+		// if elements had like 10 attributes, which is very rare).
+		ArrayList pendingAttributes = new ArrayList ();
 		//Namespace manager. Subject to optimization.
 		private XmlNamespaceManager _nsManager;
 		//Name table
@@ -42,7 +42,6 @@ namespace Mono.Xml.Xsl
 			_outputs = outputs;
 			_currentOutput = (XslOutput)outputs [String.Empty];
 			_state = WriteState.Start;
-			_pendingAttrs = new Hashtable ();
 			//TODO: Optimize using nametable
 			_nt = new NameTable ();
 			_nsManager = new XmlNamespaceManager (_nt);
@@ -87,9 +86,8 @@ namespace Mono.Xml.Xsl
 				//namespaces to WriteStartElement
 				_nsManager.PushScope ();
 				//Emit pending attributes
-				foreach (XmlQualifiedName qName in _pendingAttrs.Keys) {
-					Attribute attr = (Attribute)_pendingAttrs [qName];
-					_emitter.WriteAttributeString (attr.Prefix, qName.Name, qName.Namespace, attr.Value);
+				foreach (Attribute attr in pendingAttributes) {
+					_emitter.WriteAttributeString (attr.Prefix, attr.QName.Name, attr.QName.Namespace, attr.Value);
 				}	
 				//Attributes flushed, state is Content now				
 				_state = WriteState.Content;
@@ -122,7 +120,7 @@ namespace Mono.Xml.Xsl
 			CheckState ();
 			_emitter.WriteStartElement (prefix, localName, nsURI);
 			_state = WriteState.Element;						
-			_pendingAttrs.Clear ();
+			pendingAttributes.Clear ();
 		}
 
 		public override void WriteEndElement ()
@@ -138,16 +136,19 @@ namespace Mono.Xml.Xsl
 		{										
 			//Put attribute to pending attributes collection, replacing namesake one
 		 	XmlQualifiedName qName = new XmlQualifiedName (localName, nsURI);
-		 	Attribute attr = (Attribute)_pendingAttrs [qName];
-		 	if (attr == null) {
-		 		attr = new Attribute (prefix, qName, value);
-		 		_pendingAttrs.Add (qName, attr);
-		 	} else {
-		 		attr.Value = value;
-		 		//Keep prefix (e.g. when literal attribute is overriden by xsl:attribute)
-		 		if (attr.Prefix == String.Empty && prefix != String.Empty)
-		 			attr.Prefix = prefix;
-		 	}		
+			
+			foreach (Attribute attr in pendingAttributes) {
+				if (attr.QName == qName) {
+					attr.Value = value;
+					//Keep prefix (e.g. when literal attribute is overriden by xsl:attribute)
+					if (attr.Prefix == String.Empty && prefix != String.Empty)
+						attr.Prefix = prefix;
+					
+					return;
+				}
+			}
+			
+			pendingAttributes.Add (new Attribute (prefix, qName, value));	
 		}
 
 		public override void WriteNamespaceDecl (string prefix, string nsUri)

@@ -1,3 +1,8 @@
+2003-09-15 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* GenericOutputter.cs: Output attributes in order recieved; not
+	required by spec, but useful for running test cases.
+
 2003-09-14 Oleg Tkachenko <oleg@tkachenko.com>
 
 	* GenericOutputter.cs - fix bug with outputting state.
