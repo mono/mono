@@ -132,10 +132,11 @@ namespace System.Web.UI.WebControls
 		{
 			if(Events != null)
 			{
-				EventHandler eh = (EventHandler)(Events[CommandEvent]);
+				CommandEventHandler eh = (CommandEventHandler)(Events[CommandEvent]);
 				if(eh!= null)
 					eh(this,e);
 			}
+			RaiseBubbleEvent(this, e);
 		}
 
 		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
