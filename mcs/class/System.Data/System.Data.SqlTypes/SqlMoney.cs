@@ -20,7 +20,7 @@ namespace System.Data.SqlTypes
 		decimal value;
 		
 		private bool notNull;
-
+		
 		public static readonly SqlMoney MaxValue = new SqlMoney (922337203685477.5807m);
 		public static readonly SqlMoney MinValue = new SqlMoney (-922337203685477.5808m);
 		public static readonly SqlMoney Null;
@@ -32,26 +32,23 @@ namespace System.Data.SqlTypes
 
 		public SqlMoney (decimal value) 
 		{
+			if (value > 922337203685477.5807m || value < -922337203685477.5808m)
+				throw new OverflowException ();
+
 			this.value = value;
 			notNull = true;
 		}
 
-		public SqlMoney (double value) 
-		{
-			this.value = (decimal)value;
-			notNull = true;
+		public SqlMoney (double value) : this ((decimal)value)
+		{			
 		}
 
-		public SqlMoney (int value) 
+		public SqlMoney (int value) : this ((decimal)value)
 		{
-			this.value = (decimal)value;
-			notNull = true;
 		}
 
-		public SqlMoney (long value) 
+		public SqlMoney (long value) : this ((decimal)value)
 		{
-			this.value = (decimal)value;
-			notNull = true;
 		}
 
 		#endregion
@@ -403,7 +400,7 @@ namespace System.Data.SqlTypes
 			if (x.IsNull) 
 				return Null;
 			else
-				return new SqlMoney ((decimal)x.Value);
+				return new SqlMoney (x.Value);
 		}
 
 		#endregion

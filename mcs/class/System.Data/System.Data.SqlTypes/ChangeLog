@@ -1,5 +1,9 @@
 2003-05-28  Ville Palo <vi64pa@kolumbus.fi>
 
+	* SqlMoney.cs: little fixes and clean ups
+	
+2003-05-28  Ville Palo <vi64pa@kolumbus.fi>
+
 	* SqlInt16.cs: more checked fixes.
 	* SqlInt64.cs: checked fixes.
 	* SqlSingle.cs: checked fixes.
