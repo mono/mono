@@ -235,6 +235,8 @@ namespace System.Windows.Forms {
 				wm_delete_window=XInternAtom(display_handle, "WM_DELETE_WINDOW", false);
 
 				handle_data = new Hashtable ();
+			} else {
+				throw new ArgumentNullException("Display", "Could not open display (X-Server required. Check you DISPLAY environment variable)");
 			}
 		}
 
