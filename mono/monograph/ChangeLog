@@ -1,4 +1,9 @@
 
+Wed Feb 20 17:53:59 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* monograph.c: added -i option to create a graph of the types
+	implementing an interface.
+
 Tue Feb 19 12:24:15 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* monograph.c: fix typo. Update for changes in mono_init ().
