@@ -1060,7 +1060,7 @@ namespace System.Text.RegularExpressions.Syntax {
 							c = '\b';
 					}
 				}
-				result.Append (c);
+				result.Append ((char) c);
 			}
 
 			return result.ToString ();
