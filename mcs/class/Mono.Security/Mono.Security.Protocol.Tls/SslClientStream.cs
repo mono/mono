@@ -236,6 +236,11 @@ namespace Mono.Security.Protocol.Tls
 			}
 		} 
 
+		// this is used by Mono's certmgr tool to download certificates
+		internal Mono.Security.X509.X509CertificateCollection ServerCertificates {
+			get { return context.ServerSettings.Certificates; }
+		}
+
 		#endregion
 
 		#region Callback Properties
