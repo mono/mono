@@ -1,3 +1,8 @@
+2005-01-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SiteIdentityPermission.cs: Fix case were the wildcard '*' is present
+	but not the first character of the site.
+
 2005-01-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PermissionSetAttribute.cs: Throw proper exception if XML cannot be
