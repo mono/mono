@@ -184,12 +184,15 @@ namespace System.Web.Compilation
 			str = str.Substring (2).Trim ();
 			int len = str.Length;
 			int lastQuote = str.LastIndexOf ('"');
-			if (len < 10 || lastQuote != len - 1 || !str.StartsWith ("#include "))
+			if (len < 10 || lastQuote != len - 1)
+				return false;
+
+			if (!str.ToLower ().StartsWith ("#include "))
 				return false;
 
 			str = str.Substring (9).Trim ();
-			bool isfile = (str.StartsWith ("file"));
-			if (!isfile && !str.StartsWith ("virtual"))
+			bool isfile = (str.ToLower ().StartsWith ("file"));
+			if (!isfile && !str.ToLower ().StartsWith ("virtual"))
 				return false;
 
 			pathType = (isfile) ? "file" : "virtual";
