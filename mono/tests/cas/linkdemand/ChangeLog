@@ -1,3 +1,12 @@
+2005-02-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* cas6-9.cs: New. CAS tests cases for NEWOBK (constructor), LDFTN
+	(delegate) and LDVIRTFNT (delegate using a virtual method).
+	* cas10.cs|.il: New. CAS test case for JMP. Not part of "make test"
+	until #66033 is fixed (ILASM doesn't support decl security attrs).
+	* Makefile: Updated makefile for new test cases.
+	* README: Updated informations of new CAS tests.
+
 2005-02-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* noncas1-4.cs: New. Non-CAS permission tests (derived from test cases
