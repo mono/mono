@@ -1,7 +1,7 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyVersion("0.22")]
+[assembly: AssemblyVersion("0.23")]
 [assembly: AssemblyTitle ("Mono C# Compiler")]
 [assembly: AssemblyDescription ("Mono C# Compiler")]
 [assembly: AssemblyCopyright ("2001, 2002 Ximian, Inc.")]
