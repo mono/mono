@@ -1,5 +1,11 @@
 2004-12-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* object-internals.h: Add new fields to MonoThread.
+
+	* appdomain.c (MONO_CORLIB_VERSION): Bump corlib version.
+
+	* icall.c threads-types.h threads.c: Add new icalls.
+
 	* object-internals.h (MonoThread): Remove unused 'unmanaged' field.
 
 	* object-internals.h (MonoReflectionAssembly): Sync object layout with
