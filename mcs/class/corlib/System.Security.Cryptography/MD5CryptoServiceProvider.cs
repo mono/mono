@@ -13,7 +13,7 @@ namespace System.Security.Cryptography {
 	/// <summary>
 	/// C# implementation of the MD5 cryptographic hash function.
 	/// </summary>
-#if USE_VERSION_1_0
+#if NET_1_0
 	public class MD5CryptoServiceProvider : MD5 {
 #else
 	public sealed class MD5CryptoServiceProvider : MD5 {

@@ -50,6 +50,7 @@ internal class CorlibHandler : MiniParser.IHandler {
 	private bool cryptographySettings;
 	private bool cryptoNameMapping;
 	private bool cryptoClasses;
+	private bool oidMap;
 
 	private Hashtable algo;
 	private Hashtable cryptoClass;
@@ -95,6 +96,14 @@ internal class CorlibHandler : MiniParser.IHandler {
 				if (cryptoClasses)
 					cryptoClass.Add (attrs.Names [0], attrs.Values [0]);
 				break;
+			case "oidMap":
+				if (cryptographySettings)
+					oidMap = true;
+				break;
+			case "oidEntry":
+				if (oidMap)
+					oid.Add (attrs.Values [0], attrs.Values [1]);
+				break;
 			default:
 				// unknown tag in parameters
 				break;
@@ -115,6 +124,9 @@ internal class CorlibHandler : MiniParser.IHandler {
 				break;
 			case "cryptoClasses":
 				cryptoClasses = false;
+				break;
+			case "oidMap":
+				oidMap = false;
 				break;
 			default:
 				// unknown tag in parameters
@@ -372,7 +384,7 @@ public class CryptoConfig {
 	}
 
 	// managed version of "get_machine_config_path"
-	private static string GetMachineConfigPath () 
+	internal static string GetMachineConfigPath () 
 	{
 		string env = Environment.GetEnvironmentVariable ("MONO_CONFIG");
 		if (env != null)
@@ -424,7 +436,7 @@ public class CryptoConfig {
 		// for MS BCL compatibility
 		// comment next two lines to remove restriction
 		if ((x > Int32.MaxValue) || (x < Int32.MinValue))
-			throw new OverflowException("part of OID doesn't fit in Int32");
+			throw new OverflowException ("part of OID doesn't fit in Int32");
 
 		long y = x;
 		// number of bytes required to encode this number
@@ -499,7 +511,7 @@ public class CryptoConfig {
 		else
 			oid2 [1] = Convert.ToByte (j - 2); 
 
-		System.Array.Copy (oid, k, oid2, k, j - k);
+		Array.Copy (oid, k, oid2, k, j - k);
 		return oid2;
 	}
 

@@ -18,7 +18,7 @@ using System.Runtime.CompilerServices;
 
 namespace System.Security.Cryptography {
 	
-#if USE_VERSION_1_0
+#if NET_1_0
 	public class RNGCryptoServiceProvider : RandomNumberGenerator {
 #else
 	public sealed class RNGCryptoServiceProvider : RandomNumberGenerator {
@@ -67,7 +67,7 @@ namespace System.Security.Cryptography {
 		
 		~RNGCryptoServiceProvider () 
 		{
-			// in our case we have nothing unmamanged to dispose
+			// in our case we have nothing unmanaged to dispose
 		}
 	}
 }

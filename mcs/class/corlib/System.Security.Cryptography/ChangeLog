@@ -1,3 +1,11 @@
+2003-06-09  Sebastien Pouliot <spouliot@motus.com>
+
+	* CryptoConfig.cs: Now support OID in machine.config.
+	* DSACryptoServiceProvider.cs: Changed USE_VERSION_1_0 for NET_1_0.
+	* KeySizes.cs: Changed USE_VERSION_1_0 for NET_1_0.
+	* MD5CryptoServiceProvider.cs: Changed USE_VERSION_1_0 for NET_1_0.
+	* RNGCryptoServiceProvider.cs: Changed USE_VERSION_
+
 2003-05-12  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* PKCS1MaskGenerationMethod.cs: Added comment to justify why
