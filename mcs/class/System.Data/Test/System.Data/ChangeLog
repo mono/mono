@@ -1,5 +1,9 @@
 2003-27-01  Ville Palo <vi64pa@koti.soon.fi>
 
+	* DataRelationTest.cs: Added more tests
+	
+2003-27-01  Ville Palo <vi64pa@koti.soon.fi>
+
 	* DataTableTest.cs: Added test for DataTable.Select ()
 	
 2003-24-01  Ville Palo <vi64pa@koti.soon.fi>

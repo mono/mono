@@ -97,6 +97,25 @@ namespace MonoTests.System.Data
                 		AssertEquals ("test#04", typeof (ConstraintException), e.GetType ());
                 		AssertEquals ("test#05", "Column 'ChildName' is constrained to be unique.  Value 'Dick' is already present.", e.Message);
                 	}                	
+
+			Row = Mom.NewRow ();                                 
+                        Row [0] = "Teresa";                                  
+                        Row [1] = "Mich";                                    
+                        Mom.Rows.Add (Row);                                  
+                        AssertEquals ("test#06", 1, Child.Rows.Count);       
+			
+                        Row = Child.NewRow ();                               
+                        Row [0] = "Jack";                                    
+                        Row [1] = 16;                                        
+			
+                        try {                                                
+                                Child.Rows.Add (Row);                               
+                                Fail ("test#07");                                   
+                        } catch (Exception e) {                              
+                                AssertEquals ("test#08", typeof (InvalidConstraintException), e.GetType ());
+                                AssertEquals ("test#09", "ForeignKeyConstraint Rel requires the child key values (Jack) to exist in the parent table.", e.Message);                                                                      
+                        }                                                    
+
                 }
 
 		public void TestInvalidConstraintException ()
@@ -125,7 +144,7 @@ namespace MonoTests.System.Data
 			}									
 		}
 		
-		public void TestDataSetRealtions ()
+		public void TestDataSetRelations ()
 		{
 			DataRelation Relation;
 			AssertEquals ("test#01", 0, Set.Relations.Count);
