@@ -1,3 +1,6 @@
+2002-07-19  Dietmar Maurer  <dietmar@ximian.com>
+
+	* metadata.c (mono_get_param_info): set alignment for value types
 
 Fri Jul 19 18:58:27 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
