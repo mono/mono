@@ -174,7 +174,6 @@ namespace System.DirectoryServices
 				string eFdn=nextEntry.DN;
 				LdapUrl curl=new LdapUrl(host,port,eFdn);
 				dEntry.Path=curl.ToString();
-				Console.WriteLine("Path:" + eFdn);
 				m_oValues.Add((DirectoryEntry) dEntry);
 			}
 			return m_oValues.GetEnumerator();
@@ -236,7 +235,7 @@ namespace System.DirectoryServices
 			DirectoryEntry child=CheckEntry(filter);
 
 			if( child != null)			{
-				if(child.Properties["objectClass"].ContainsCaselessStringValue(otype))
+				if(child.Properties["objectclass"].ContainsCaselessStringValue(otype))
 					return child;
 				else
 					throw new Exception("An unknown directory object was requested");

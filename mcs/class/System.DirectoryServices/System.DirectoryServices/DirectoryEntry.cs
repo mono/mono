@@ -33,6 +33,7 @@
 using System.ComponentModel;
 using Novell.Directory.Ldap;
 using Novell.Directory.Ldap.Utilclass;
+using System.Globalization;
 
 namespace System.DirectoryServices
 {
@@ -433,7 +434,6 @@ namespace System.DirectoryServices
 			}
 
 		}
-
 
 		/// <summary>
 		/// Gets a PropertyCollection of properties set on this object.

@@ -58,7 +58,35 @@ namespace System.DirectoryServices
 		private TimeSpan _ServerPageTimeLimit=new TimeSpan(-1);
 		private int _SizeLimit=1000;
 		private LdapConnection _conn = null;
+		private string _Host=null;
+		private int _Port=389;
+		private SearchResultCollection _SrchColl=null;
+		private bool emptycoll=true;
 
+		internal SearchResultCollection SrchColl 
+		{
+			get
+			{
+				if (emptycoll)
+				{
+					_SrchColl =  new SearchResultCollection();
+					DoSearch();
+					emptycoll=false;
+				}
+				return _SrchColl;
+			}
+		}
+
+		private void InitBlock()
+		{
+			_conn = new LdapConnection();
+			LdapUrl lUrl=new LdapUrl(SearchRoot.Path);
+			_Host=lUrl.Host;
+			_Port=lUrl.Port;
+			_conn.Connect(_Host,_Port);
+			_conn.Bind(SearchRoot.Username,SearchRoot.Password);
+
+		}
 		/// <summary>
 		/// Gets or sets the node in the Ldap Directory hierarchy where the 
 		/// search starts.
@@ -493,6 +521,80 @@ namespace System.DirectoryServices
 
 		}
 
+		/// <summary>
+		/// Executes the Search and returns only the first entry found
+		/// </summary>
+		/// <returns> 
+		/// A SearchResult that is the first entry found during the Search
+		/// </returns>
+		public SearchResult FindOne()
+		{
+			return SrchColl[0];
+		}
+
+		/// <summary>
+		/// Executes the Search and returns a collection of the entries that are found
+		/// </summary>
+		/// <returns> 
+		/// A SearchResultCollection collection of entries from the director
+		/// </returns>
+		public SearchResultCollection FindAll()
+		{
+			return SrchColl;
+		}
+
+		private void DoSearch()
+		{
+			InitBlock();
+			String[] attrs= new String[PropertiesToLoad.Count];
+			PropertiesToLoad.CopyTo(attrs,0);
+			LdapSearchResults lsc=_conn.Search(	SearchRoot.Fdn,
+												LdapConnection.SCOPE_SUB,
+												Filter,
+												attrs,
+												false);
+
+			while(lsc.hasMore())						
+			{
+
+				LdapEntry nextEntry = null;
+				try 							
+				{
+					nextEntry = lsc.next();
+				}
+				catch(LdapException e) 							
+				{
+					Console.WriteLine("Error: " + e.LdapErrorMessage);
+					// Exception is thrown, go for next entry
+					throw e;
+				}
+				DirectoryEntry de = new DirectoryEntry(_conn);
+				PropertyCollection pcoll = new PropertyCollection();
+//				de.SetProperties();
+				de.Path="LDAP://" + _Host+ ":" + _Port + "/" + nextEntry.DN;
+				LdapAttributeSet attributeSet = nextEntry.getAttributeSet();
+				System.Collections.IEnumerator ienum=attributeSet.GetEnumerator();
+				if(ienum!=null)							
+				{
+					while(ienum.MoveNext())				
+					{
+						LdapAttribute attribute=(LdapAttribute)ienum.Current;
+						string attributeName = attribute.Name;
+						pcoll[attributeName].AddRange(attribute.StringValueArray);
+//						de.Properties[attributeName].AddRange(attribute.StringValueArray);
+//						de.Properties[attributeName].Mbit=false;
+					}
+				}
+//				_SrchColl.Add(new SearchResult(de,PropertiesToLoad));
+				_SrchColl.Add(new SearchResult(de,pcoll));
+			}
+		return;
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			throw new NotImplementedException();
+		}
 
 	}
 }

@@ -11,3 +11,5 @@ System.DirectoryServices/SearchScope.cs
 System.DirectoryServices/SortDirection.cs
 System.DirectoryServices/ResultPropertyValueCollection.cs
 System.DirectoryServices/ResultPropertyCollection.cs
+System.DirectoryServices/SearchResultCollection.cs
+System.DirectoryServices/SearchResult.cs
