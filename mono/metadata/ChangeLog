@@ -1,3 +1,7 @@
+2003-11-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (fixup_method): Add support for MonoCMethod.
+
 2003-11-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* gc.c: Fix hangs and error messages when GC_DONT_GC is set.
