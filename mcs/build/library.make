@@ -183,15 +183,17 @@ run-test-ondotnet-lib: test-local
 	$$ok
 endif
 
-DISTFILES = $(sourcefile) $(test_sourcefile) $(btest_sourcefile) $(EXTRA_DISTFILES)
+DISTFILES = $(sourcefile) $(EXTRA_DISTFILES)
 
 TEST_FILES =
 
 ifdef HAVE_CS_TESTS
 TEST_FILES += `sed 's,^,Test/,' $(test_sourcefile)`
+DISTFILES += $(test_sourcefile)
 endif
 ifdef HAVE_VB_TESTS
 TEST_FILES += `sed 's,^,Test/,' $(btest_sourcefile)`
+DISTFILES += $(btest_sourcefile)
 endif
 
 dist-local: dist-default
