@@ -1,3 +1,8 @@
+2003-12-19  Martin Baulig  <martin@ximian.com>
+
+	* pending.cs (Pending.InterfaceMethod): Use
+	`Type.IsAssignableFrom()' instead of `=='.
+
 2003-12-18  Martin Baulig  <martin@ximian.com>
 
 	* decl.cs (DeclSpace.AsAccessible): Check for array, pointer and
