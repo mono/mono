@@ -40,6 +40,8 @@ namespace System {
 
 		internal String (int storage)
 		{
+			if (storage < 0)
+				throw new ArgumentOutOfRangeException ();
 			length = storage;
 			c_str = new char [storage];
 		}
@@ -1361,7 +1363,7 @@ namespace System {
 			}
 
 			/* fit the remaining chunk of the @this into it's own element */
-			if (index != this.length) {
+			if (index < this.length - 1) {
 				char[] str;
 				int i;
 
@@ -1667,7 +1669,7 @@ namespace System {
 			bool matches = true;
 			int end;
 
-			for (end = this.length; end > 0; end--) {
+			for (end = this.length - 1; end > 0; end--) {
 				if (trimChars != null) {
 					matches = false;
 					foreach (char c in trimChars) {

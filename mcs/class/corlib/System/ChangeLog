@@ -1,4 +1,8 @@
 
+Fri Feb 15 21:02:46 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* String.cs: fix more off by one errors.
+
 Thu Feb 14 18:54:09 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* MonoType.cs: fix IsValueTypeImpl.
