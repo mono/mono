@@ -1,3 +1,7 @@
+2003-07-14  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* list.unix: Added Assembly/AssemblyInfo.cs, Removed System.Xml.Serialization/AssemblyInfo.cs
+
 2003-07-06  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* list.unix : added System.Xml.Schema/BuiltInDatatype.cs,

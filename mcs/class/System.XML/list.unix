@@ -1,3 +1,4 @@
+Assembly/AssemblyInfo.cs
 Mono.Xml.XPath/DTMXPathDocument.cs
 Mono.Xml.XPath/DTMXPathDocumentBuilder.cs
 Mono.Xml.XPath/DTMXPathNavigator.cs
@@ -167,7 +168,6 @@ System.Xml.Schema/ValidationHandler.cs
 System.Xml.Schema/XmlSchemaInfo.cs
 System.Xml.Schema/XmlSchemaUtil.cs
 System.Xml.Schema/XmlSchemaReader.cs
-System.Xml.Serialization/AssemblyInfo.cs
 System.Xml.Serialization/CodeIdentifier.cs
 System.Xml.Serialization/CodeIdentifiers.cs
 System.Xml.Serialization/IXmlSerializable.cs
