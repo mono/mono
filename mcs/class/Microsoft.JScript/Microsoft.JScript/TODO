@@ -18,6 +18,11 @@ a list of things where you can start helping with:
 
 2) Runtime support.
 
+- URGENT: Implement the classes: Plus (focus on EvaluatePlus method),
+  Equality (focus on EvaluateEquality method), Relational (focus on
+  EvaluateRelational method), NumericBinary (focus on
+  EvaluateNumericBinary), NumericUnary (focus on EvaluateUnary).
+
 - The building block for this is the VsaEngine, and of particular
 interest are the classes:
 
