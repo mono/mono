@@ -136,6 +136,7 @@ namespace Mono.Xml.Xsl
 		{
 			XslOutput xslOutput = (XslOutput)_outputs [String.Empty];
 			switch (xslOutput.Method) {
+				default: // .Custom format is not supported, only handled as unknown
 				case OutputMethod.Unknown:
 					if (localName != null && String.Compare (localName, "html", true, CultureInfo.InvariantCulture) == 0 && ns == String.Empty)
 						goto case OutputMethod.HTML;
@@ -158,8 +159,6 @@ namespace Mono.Xml.Xsl
 				case OutputMethod.Text:
 					_emitter = new TextEmitter (pendingTextWriter);
 					break;
-				case OutputMethod.Custom:
-					throw new NotSupportedException ("Custom output method is not supported in this version.");
 			}
 			pendingTextWriter = null;
 		}

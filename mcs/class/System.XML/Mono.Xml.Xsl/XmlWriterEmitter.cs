@@ -127,6 +127,8 @@ namespace Mono.Xml.Xsl
 
 		public override void WriteProcessingInstruction (string name, string text)
 		{
+			while (text.IndexOf ("?>") >= 0)
+				text = text.Replace ("?>", "? >");
 			writer.WriteProcessingInstruction (name, text);
 		}
 

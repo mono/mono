@@ -1,3 +1,9 @@
+2005-02-21  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlWriterEmitter.cs : PI nodes are normalized as to not contain "?>".
+	* HtmlEmitter.cs : CDATA nodes are written just as text.
+	* GenericOutputter.cs : custom format are treated just as XML output.
+
 2005-02-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Outputter.cs,

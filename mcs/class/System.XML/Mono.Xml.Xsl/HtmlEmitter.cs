@@ -499,9 +499,9 @@ namespace Mono.Xml.Xsl
 		public override void WriteCDataSection (string text) {
 			if (openElement)
 				CloseStartElement ();
-			writer.Write ("<![CDATA[");
+//			writer.Write ("<![CDATA[");
 			writer.Write (text);
-			writer.Write ("]]>");
+//			writer.Write ("]]>");
 		}
 
 		public override void WriteWhitespace (string value)
