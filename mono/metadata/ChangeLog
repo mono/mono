@@ -1,3 +1,10 @@
+2005-01-31  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_FieldInfo_SetValueInternal): Handle setting of
+	valuetype fields to null.
+
+	* object.c (set_value): Ditto. Fixes #71669.	
+
 2005-01-31  Martin Baulig  <martin@ximian.com>
 
 	* metadata.c (mono_metadata_has_generic_params): New public
