@@ -757,7 +757,10 @@ namespace Mono.CSharp {
 			}
 
 			ec.Breaks = true;
-			ig.Emit (OpCodes.Br, ec.LoopEnd);
+			if (ec.InTry || ec.InCatch)
+				ig.Emit (OpCodes.Leave, ec.LoopEnd);
+			else
+				ig.Emit (OpCodes.Br, ec.LoopEnd);
 
 			return false;
 		}

@@ -73,6 +73,25 @@ class X {
 		if (total2 != "AB")
 			return 3;
 
+		ArrayList list = new ArrayList ();
+		list.Add ("one");
+		list.Add ("two");
+		list.Add ("three");
+		int count = 0;
+
+		//
+		// This test will make sure that `break' inside foreach will
+		// actually use a `leave' opcode instead of a `br' opcode
+		//
+		foreach (string s in list){
+			if (s == "two"){
+				break;
+			}
+			count++;
+		}
+		if (count != 1)
+			return 4;
+		
 		Console.WriteLine ("test passes");
 		return 0;
 	}
