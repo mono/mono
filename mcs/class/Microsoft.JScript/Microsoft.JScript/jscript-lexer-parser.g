@@ -27,12 +27,12 @@ program returns [ScriptBlock prog]
 	;
 
 source_elements [Block elems]
-	: (source_element [elems])*
+	: (source_element [elems, elems.parent])*
 	;
 
-source_element [Block elems]
+source_element [Block elems, AST parent]
 { AST stm = null; }
-	: stm = statement 
+	: stm = statement [parent]
 	  { 
 		  if (stm != null) {
 		  	  elems.Add (stm); 
@@ -40,7 +40,7 @@ source_element [Block elems]
 					     stm.ToString ());
 		  }
 	  }
-	| stm = function_decl_or_expr
+	| stm = function_decl_or_expr [parent]
           {
 		  if (stm != null)
 			  elems.Add (stm);
@@ -48,7 +48,7 @@ source_element [Block elems]
 	  }
 	;
 
-function_decl_or_expr returns [AST func]
+function_decl_or_expr [AST parent] returns [AST func]
 {
 	func = null;
 	bool is_func_exp = false;
@@ -58,27 +58,29 @@ function_decl_or_expr returns [AST func]
 	: "function" (id:IDENTIFIER | { is_func_exp = true; } ) 
 	  OPEN_PARENS (p = formal_param_list | ) CLOSE_PARENS 
 	  (COLON type_annot:IDENTIFIER | )
-	  OPEN_BRACE body = function_body CLOSE_BRACE
 	  {
 		if (is_func_exp)
 			if (type_annot == null)
-				func = new FunctionExpression (String.Empty, p, null, body);
+				func = new FunctionExpression (parent, String.Empty, p,
+							       null, null);
 			else 
-				func = new FunctionExpression (String.Empty, p,
-							       type_annot.getText (), body);
+				func = new FunctionExpression (parent, String.Empty, p,
+							       type_annot.getText (), null);
 		else if (type_annot == null)
-			func = new FunctionDeclaration (id.getText (), p, null,
-							body);
+			func = new FunctionDeclaration (parent, id.getText (), p, null, null);
 		     else 
-			func = new FunctionDeclaration (id.getText (), p, 
-							type_annot.getText (),
-						        body);
+			func = new FunctionDeclaration (parent, id.getText (), p, 
+							type_annot.getText (), null);
 	  }
+	  OPEN_BRACE 
+		  body = function_body [func] 
+		  { ((FunctionDeclaration) func).Function.body = body; } 
+	  CLOSE_BRACE
 	;
 
-function_body returns [Block elems]
+function_body [AST parent] returns [Block elems]
 {
-	elems = new Block ();
+	elems = new Block (parent);
 }
 	: source_elements [elems]
 	;
@@ -100,10 +102,10 @@ formal_param_list returns [FormalParameterList p]
 // Statements
 //
 
-statement returns [AST stm]
+statement [AST parent] returns [AST stm]
 { stm = null; }
 	: stm = expr_stm SEMI_COLON
-	| stm = var_stm
+	| stm = var_stm [parent]
 	| empty_stm
 	| stm = if_stm
 	| iteration_stm
@@ -117,7 +119,7 @@ statement returns [AST stm]
 	;
 
 block
-	: OPEN_BRACE (statement)* CLOSE_BRACE
+	: OPEN_BRACE (statement [null])* CLOSE_BRACE
 	;
 
 try_stm
@@ -170,7 +172,7 @@ with_stm returns [AST with]
 	AST exp, stm;
 	exp = stm = null;
 }
-	: "with" OPEN_PARENS exp = expr CLOSE_PARENS stm = statement
+	: "with" OPEN_PARENS exp = expr CLOSE_PARENS stm = statement [null]
 	  {
 		  with = new With (exp, stm);  
 	  }	
@@ -201,9 +203,9 @@ continue_stm returns [AST cont]
 	;
 
 iteration_stm
-	: "do" statement "while" OPEN_PARENS expr CLOSE_PARENS SEMI_COLON
-	| "while" OPEN_PARENS expr CLOSE_PARENS statement
-	| "for" OPEN_PARENS inside_for CLOSE_PARENS statement
+	: "do" statement [null] "while" OPEN_PARENS expr CLOSE_PARENS SEMI_COLON
+	| "while" OPEN_PARENS expr CLOSE_PARENS statement [null]
+	| "for" OPEN_PARENS inside_for CLOSE_PARENS statement [null]
 	;
 
 inside_for
@@ -211,7 +213,7 @@ inside_for
 	: (expr | ) SEMI_COLON (expr | ) SEMI_COLON (expr | )
 	// We must keep a counter c, c tells us how many decls are
 	// done, in order to interrupt if c > 1 and we are inside a "in"
-	| "var" (var_decl_list [null] 
+	| "var" (var_decl_list [null, null] 
 		  ( SEMI_COLON (expr | ) SEMI_COLON (expr | )
 		  | "in" expr))
 	// FIXME: left_hand_side_expr in exp rule, missing
@@ -223,8 +225,8 @@ if_stm returns [AST ifStm]
 	AST cond, true_stm, false_stm;
 	cond = true_stm = false_stm = null;
 }
-	: "if" OPEN_PARENS cond = expr CLOSE_PARENS true_stm = statement 
-	  (("else")=> "else" false_stm = statement | )
+	: "if" OPEN_PARENS cond = expr CLOSE_PARENS true_stm = statement [null]
+	  (("else")=> "else" false_stm = statement [null] | )
 	  {
 		  ifStm = new If (cond, true_stm, false_stm);
 	  }
@@ -234,19 +236,19 @@ empty_stm
 	: SEMI_COLON
 	;
 
-var_stm returns [VariableStatement var_stm]
+var_stm [AST parent] returns [VariableStatement var_stm]
 { var_stm = new VariableStatement (); }
-	: "var" var_decl_list [var_stm] SEMI_COLON
+	: "var" var_decl_list [var_stm, parent] SEMI_COLON
 	;
 
-var_decl_list [VariableStatement var_stm]
+var_decl_list [VariableStatement var_stm, AST parent]
 { VariableDeclaration var_decln = null; }
-	: var_decln = var_decl 
+	: var_decln = var_decl [parent]
 	  { 
 		if (var_decln != null)
 			var_stm.Add (var_decln);
 	  }
-	  (COMMA var_decln = var_decl 
+	  (COMMA var_decln = var_decl [parent]
 	  { 
 		  if (var_decln != null) 
 		  	  var_stm.Add (var_decln);
@@ -255,7 +257,7 @@ var_decl_list [VariableStatement var_stm]
 	;
 	
 
-var_decl returns [VariableDeclaration var_decl]
+var_decl [AST parent] returns [VariableDeclaration var_decl]
 { 
 	var_decl = null;
 	AST init = null;
@@ -264,16 +266,16 @@ var_decl returns [VariableDeclaration var_decl]
 	  (init = initializer
 	   { 
 		  if (type_annot == null)
-		  var_decl = new VariableDeclaration (id.getText (), null , init);
+		  	  var_decl = new VariableDeclaration (parent, id.getText (), null , init);
 		  else 
-			  var_decl = new VariableDeclaration (id.getText (), type_annot.getText () , init); 
+			  var_decl = new VariableDeclaration (parent, id.getText (), type_annot.getText () , init); 
 	   }
 	  | 
 	   {
 		  if (type_annot == null)
-			  var_decl = new VariableDeclaration (id.getText (), null, null);
+			  var_decl = new VariableDeclaration (parent, id.getText (), null, null);
 		  else
-			  var_decl = new VariableDeclaration (id.getText (), type_annot.getText (), null);
+			  var_decl = new VariableDeclaration (parent, id.getText (), type_annot.getText (), null);
 	   })
 	;
 
@@ -289,7 +291,7 @@ expr_stm returns [AST e]
 
 
 statement_list
-	: (statement)*
+	: (statement [null])*
 	;
 
 expr returns [Expression e]
@@ -834,7 +836,7 @@ primary_expr returns [AST prim_exp]
 object_literal
 	: OPEN_BRACE 
 	   ((property_name COLON)=> OPEN_BRACE (property_name COLON assignment_expr)+
-	   | (statement)*  // block_stm case
+	   | (statement [null])*  // block_stm case
 	   ) CLOSE_BRACE
 
 	;
