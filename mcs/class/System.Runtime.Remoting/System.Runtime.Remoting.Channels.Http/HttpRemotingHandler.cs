@@ -22,6 +22,12 @@ namespace System.Runtime.Remoting.Channels.Http
 		{
 		}
 
+		[MonoTODO]
+		public HttpRemotingHandler (Type type, object srvID)
+		{
+			throw new NotImplementedException ();
+		}
+
 		internal HttpRemotingHandler (HttpServerTransportSink sink)
 		{
 			transportSink = sink;

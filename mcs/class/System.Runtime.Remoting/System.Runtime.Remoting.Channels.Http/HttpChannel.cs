@@ -18,16 +18,16 @@ using System;
 using System.Collections;
 using System.Runtime.Remoting.Messaging;
 
-
 namespace System.Runtime.Remoting.Channels.Http  
 {
-
-	public class HttpChannel: IChannelReceiver, IChannelSender, IChannel, IChannelReceiverHook
+	public class HttpChannel: BaseChannelWithProperties, IChannelReceiver, 
+		IChannelSender, IChannel, IChannelReceiverHook
 	{
 		private HttpServerChannel serverChannel;
 		private HttpClientChannel clientChannel;
 		private string channelName = "http";
 		private int channelPriority = 1;
+		private AggregateDictionary properties;
 
 		public HttpChannel()
 		{
@@ -41,9 +41,9 @@ namespace System.Runtime.Remoting.Channels.Http
 			SetupChannel(prop,null,null);
 		}
 
-		public HttpChannel (IDictionary Properties,IClientChannelSinkProvider clientSinkProvider,IServerChannelSinkProvider serverSinkProvider)
+		public HttpChannel (IDictionary properties,IClientChannelSinkProvider clientSinkProvider,IServerChannelSinkProvider serverSinkProvider)
 		{
-			SetupChannel (Properties,clientSinkProvider,serverSinkProvider);
+			SetupChannel (properties,clientSinkProvider,serverSinkProvider);
 		}
 
 		private void SetupChannel (IDictionary properties, IClientChannelSinkProvider clientSinkProvider, IServerChannelSinkProvider serverSinkProvider)
@@ -56,6 +56,8 @@ namespace System.Runtime.Remoting.Channels.Http
 			
 			val = properties ["priority"];
 			if (val != null) channelPriority = Convert.ToInt32 (val);
+			
+			this.properties = new AggregateDictionary (new IDictionary[] {clientChannel, serverChannel});
 		}
 
 
@@ -122,5 +124,21 @@ namespace System.Runtime.Remoting.Channels.Http
 		{
 			serverChannel.AddHookChannelUri (channelUri);
 		} 
+		
+		public override object this [object key]
+		{
+			get { return properties[key]; }
+			set { properties[key] = value; }
+		}
+		
+		public override ICollection Keys 
+		{
+			get { return properties.Keys; }
+		}
+		
+		public override IDictionary Properties 
+		{
+			get { return properties; }
+		}
 	}
 }

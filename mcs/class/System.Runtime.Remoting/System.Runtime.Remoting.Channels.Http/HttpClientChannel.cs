@@ -28,7 +28,7 @@ using System.Text;
 
 namespace System.Runtime.Remoting.Channels.Http
 {
-	public class HttpClientChannel : IChannelSender,IChannel
+	public class HttpClientChannel : BaseChannelWithProperties, IChannelSender,IChannel
 	{
 		// Property Keys (purposely all lower-case)
 		private const String ProxyNameKey = "proxyname";
@@ -47,28 +47,20 @@ namespace System.Runtime.Remoting.Channels.Http
 		private int _clientConnectionLimit = 0; // bump connection limit to at least this number (only meaningful if > 0)
 		private bool _bUseDefaultCredentials = false; // should default credentials be used?
         
-		private IClientChannelSinkProvider _sinkProvider = null; // sink chain provider         
-        
-		private IMessageSink _msgSink;
-
-
+		private IClientChannelSinkProvider _sinkProvider = null; // sink chain provider
 
 		public HttpClientChannel()
 		{
-			
-			SetupProvider(_sinkProvider);
+			SetupProvider (null,null);
 		} 
-
-
 		
 		public HttpClientChannel(String name, IClientChannelSinkProvider sinkProvider)
 		{
 			if(name != null)
 				_channelName = name;
 			
-			SetupProvider(sinkProvider);
+			SetupProvider (sinkProvider, null);
 		}
-       
 
 		// constructor used by config file
 		public HttpClientChannel(IDictionary properties, IClientChannelSinkProvider sinkProvider)
@@ -101,11 +93,9 @@ namespace System.Runtime.Remoting.Channels.Http
 				}
 			}
 			
-			SetupProvider (sinkProvider);
-
+			SetupProvider (sinkProvider, properties);
 		} 
         
-		
 		public int ChannelPriority
 		{
 			get { return _channelPriority; }    
@@ -143,19 +133,18 @@ namespace System.Runtime.Remoting.Channels.Http
 			if(url != null && HttpHelper.StartsWithHttp(url))
 			{
 				HttpHelper.Parse(url, out objectURI);
-				_msgSink = (IMessageSink) _sinkProvider.CreateSink(this,url,remoteChannelData); 
+				IMessageSink msgSink = (IMessageSink) _sinkProvider.CreateSink(this,url,remoteChannelData); 
 				
-				if(_msgSink !=null )
+				if(msgSink !=null )
 					SetServicePoint(url);
 
-				return _msgSink;
+				return msgSink;
 			}
 			else
 			{
 				objectURI = null;
 				return null;
 			}
-
 		}
 
 		private void UpdateProxy()
@@ -182,12 +171,16 @@ namespace System.Runtime.Remoting.Channels.Http
 		internal IWebProxy ProxyObject { get { return _proxyObject; } }
 		internal bool UseDefaultCredentials { get { return _bUseDefaultCredentials; } }
 
-		private void SetupProvider(IClientChannelSinkProvider sinkProvider)
+		private void SetupProvider (IClientChannelSinkProvider sinkProvider, IDictionary properties)
 		{
+			if (properties == null) properties = new Hashtable ();
+			HttpClientTransportSinkProvider httpSink = new HttpClientTransportSinkProvider (properties);
+			SinksWithProperties = httpSink;
+			
 			if(sinkProvider == null)
 			{
 				_sinkProvider = new SoapClientFormatterSinkProvider();
-				_sinkProvider.Next = new HttpClientTransportSinkProvider();
+				_sinkProvider.Next = httpSink;
 			}
 			else
 			{
@@ -199,17 +192,30 @@ namespace System.Runtime.Remoting.Channels.Http
 					dummySinkProvider = dummySinkProvider.Next;
 				}
 
-				dummySinkProvider.Next = new HttpClientTransportSinkProvider();
+				dummySinkProvider.Next = httpSink;
 			} 
-			
+		}
+		
+		public override object this [object key]
+		{
+			get { return Properties[key]; }
+			set { Properties[key] = value; }
+		}
+		
+		public override ICollection Keys 
+		{
+			get { return Properties.Keys; }
 		}
 	} 
 
 
-	internal class HttpClientTransportSinkProvider : IClientChannelSinkProvider
+	internal class HttpClientTransportSinkProvider : IClientChannelSinkProvider, IChannelSinkBase
 	{
-		internal HttpClientTransportSinkProvider()
+		IDictionary _properties;
+		
+		internal HttpClientTransportSinkProvider (IDictionary properties)
 		{
+			_properties = properties;
 		}    
    
 		public IClientChannelSink CreateSink(IChannelSender channel, String url, 
@@ -224,6 +230,12 @@ namespace System.Runtime.Remoting.Channels.Http
 			get { return null; }
 			set { throw new NotSupportedException(); }
 		}
+		
+		public IDictionary Properties
+		{
+			get { return _properties; }
+		}
+		
 	} // class HttpClientTransportSinkProvider
 
 

@@ -1,3 +1,11 @@
+2004-05-13  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HttpChannel.cs, HttpClientChannel.cs: Added missing IDictionary 
+	properties.
+	* HttpRemotingHandler.cs: Added missing constructor.
+	* HttpRemotingHandlerFactory.cs: Made ConfigureHttpChannel private.
+	* HttpServerChannel.cs: Fixed IDictionary properties.
+
 2004-04-30  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* HttpServer.cs: Removed dead code.

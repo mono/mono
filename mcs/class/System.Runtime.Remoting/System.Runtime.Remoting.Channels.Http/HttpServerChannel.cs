@@ -31,8 +31,7 @@ using System.Runtime.InteropServices;
 namespace System.Runtime.Remoting.Channels.Http
 {
 
-
-	public class HttpServerChannel : IChannel,
+	public class HttpServerChannel : BaseChannelWithProperties, IChannel,
 		IChannelReceiver, IChannelReceiverHook
 	{
 		private int               _channelPriority = 1;  // priority of channel (default=1)
@@ -59,13 +58,13 @@ namespace System.Runtime.Remoting.Channels.Http
 
 		public HttpServerChannel() : base()
 		{
-			SetupChannel(null);
+			SetupChannel(null,null);
 		}
 
 		public HttpServerChannel(int port) : base()
 		{
 			_port = port;
-			SetupChannel(null);
+			SetupChannel(null,null);
 		} 
 		
 		public HttpServerChannel(String name, int port) : base()
@@ -73,7 +72,7 @@ namespace System.Runtime.Remoting.Channels.Http
             _channelName = name;
 			_port = port;
 			_wantsToListen = false;
-			SetupChannel(null);
+			SetupChannel(null,null);
 		} 
 
 		public HttpServerChannel(String name, int port, IServerChannelSinkProvider sinkProvider) : base()
@@ -82,7 +81,7 @@ namespace System.Runtime.Remoting.Channels.Http
 			
 			_port = port;
 			_wantsToListen = false;
-			SetupChannel(sinkProvider);
+			SetupChannel(sinkProvider,null);
 		} 
 
 		public HttpServerChannel (IDictionary properties, IServerChannelSinkProvider sinkProvider) : base()
@@ -120,12 +119,14 @@ namespace System.Runtime.Remoting.Channels.Http
 				}
 			}
 
-			SetupChannel (sinkProvider);
+			SetupChannel (sinkProvider, properties);
 		} 
 
 
-		void SetupChannel (IServerChannelSinkProvider sinkProvider)
+		void SetupChannel (IServerChannelSinkProvider sinkProvider, IDictionary properties)
 		{
+			if (properties == null) properties = new Hashtable ();
+			
 			SetupMachineName();
 			
 			_sinkProvider = sinkProvider;
@@ -153,10 +154,11 @@ namespace System.Runtime.Remoting.Channels.Http
 			IServerChannelSink snk = 
 				ChannelServices.CreateServerChannelSinkChain(_sinkProvider,this);
 
-			_transportSink = new HttpServerTransportSink (snk);
+			_transportSink = new HttpServerTransportSink (snk, properties);
+			SinksWithProperties = _transportSink;
 		}
 
-		public void Listen()
+		internal void Listen()
 		{
 			while(true)
 			{
@@ -288,44 +290,35 @@ namespace System.Runtime.Remoting.Channels.Http
 			_channelData.ChannelUris = newUris;
 			_wantsToListen = false;
 		}
-        
-		public Object this[Object key]
+		
+		public override object this [object key]
 		{
-			get { return null; }
-        
-			set
-			{
-				switch((string)key)
-				{
-					case "":
-						break;
-				}
-			}
+			get { return Properties[key]; }
+			set { Properties[key] = value; }
 		}
 		
-		public ICollection Keys
+		public override ICollection Keys 
 		{
-			get
-			{
-				return new ArrayList(); 
-			}
+			get { return Properties.Keys; }
 		}
 
 	} // HttpServerChannel
 
 
-	internal class HttpServerTransportSink : IServerChannelSink
+	internal class HttpServerTransportSink : IServerChannelSink, IChannelSinkBase
 	{
 		private static String s_serverHeader =
 			"mono .NET Remoting, mono .NET CLR " + System.Environment.Version.ToString();
     
 		// sink state
 		private IServerChannelSink _nextSink;
+		private IDictionary _properties;
         
 
-		public HttpServerTransportSink (IServerChannelSink nextSink)
+		public HttpServerTransportSink (IServerChannelSink nextSink, IDictionary properties)
 		{
 			_nextSink = nextSink;
+			_properties = properties;
 
 		} // IServerChannelSink
 
@@ -415,7 +408,7 @@ namespace System.Runtime.Remoting.Channels.Http
 
 		public IDictionary Properties
 		{
-			get { return null; }
+			get { return _properties; }
 		} // Properties
         
 

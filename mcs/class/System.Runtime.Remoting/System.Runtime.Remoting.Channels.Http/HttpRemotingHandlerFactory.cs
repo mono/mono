@@ -35,7 +35,7 @@ namespace System.Runtime.Remoting.Channels.Http
 			return new HttpRemotingHandler (transportSink);
 		}
 		
-		public void ConfigureHttpChannel (HttpContext context)
+		void ConfigureHttpChannel (HttpContext context)
 		{
 			lock (GetType())
 			{
@@ -60,7 +60,7 @@ namespace System.Runtime.Remoting.Channels.Http
 					channelUrl += context.Request.ApplicationPath;
 					chook.AddHookChannelUri (channelUrl);
 					
-					transportSink = new HttpServerTransportSink (chook.ChannelSinkChain);
+					transportSink = new HttpServerTransportSink (chook.ChannelSinkChain, null);
 				}
 				webConfigLoaded = true;
 			}
