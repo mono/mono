@@ -1,3 +1,9 @@
+2004-10-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* aot.c (mono_aot_load_method): Align PATCH_INFO_R8 on an 8 byte 
+	boundary. Fixes reading of PATCH_INFO_R4 and R8.
+	(mono_aot_load_method): Do not allocate MonoAotMethod in the GC heap.
+
 2004-10-24  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (mono_arch_patch_code): Fix patching of class init
