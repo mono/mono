@@ -860,35 +860,41 @@ namespace System.Xml.Schema
                         xwriter.Formatting = Formatting.Indented;
                         Write(xwriter,namespaceManager);
                 }
-                public void Write(System.Xml.XmlWriter writer, System.Xml.XmlNamespaceManager namespaceManager)
-                {
-                        if(Namespaces == null)
-                        {
-                                Namespaces = new XmlSerializerNamespaces();
-                        }
-                        //Add the xml schema namespace.
-                        if(Namespaces.Count == 0)
-                        {
-								if (writer.LookupPrefix (XmlSchema.Namespace) == null)
-	                                Namespaces.Add("xs", XmlSchema.Namespace);
-                                if (TargetNamespace != null && TargetNamespace != String.Empty)
-                                        Namespaces.Add("tns", TargetNamespace);
-                        }
-                        if(namespaceManager != null)
-                        {
-                                foreach(string name in namespaceManager)
-                                {
-                                        //xml and xmlns namespaced are added by default in namespaceManager.
-                                        //So we should ignore them
-                                        if(name!="xml" && name != "xmlns")
-                                                Namespaces.Add(name,namespaceManager.LookupNamespace(name));
-                                }
-                        }
 
-                        XmlSerializer xser = new XmlSerializer(typeof(XmlSchema));
-                        xser.Serialize(writer,this,Namespaces);
-                        writer.Flush();
-                }
+		public void Write (System.Xml.XmlWriter writer, System.Xml.XmlNamespaceManager namespaceManager)
+		{
+			XmlSerializerNamespaces nss = new XmlSerializerNamespaces ();
+
+			if (namespaceManager != null) {
+				if (nss == null)
+					nss = new XmlSerializerNamespaces ();
+				foreach (string name in namespaceManager) {
+					//xml and xmlns namespaces are added by default in namespaceManager.
+					//So we should ignore them
+					if (name !="xml" && name != "xmlns")
+					        nss.Add (name, namespaceManager.LookupNamespace (name));
+				}
+			}
+
+			if (Namespaces != null && Namespaces.Count > 0) {
+				nss.Add (String.Empty, XmlSchema.Namespace);
+				foreach (XmlQualifiedName qn in Namespaces.ToArray ()) {
+					nss.Add (qn.Name, qn.Namespace);
+				}
+			}
+
+			if (nss.Count == 0) {
+				// Add the xml schema namespace. (It is done 
+				// only when no entry exists in Namespaces).
+			        nss.Add ("xs", XmlSchema.Namespace);
+				if (TargetNamespace != null)
+				        nss.Add ("tns", TargetNamespace);
+			}
+
+			XmlSerializer xser = new XmlSerializer (typeof (XmlSchema));
+			xser.Serialize (writer, this, nss);
+			writer.Flush();
+		}
                 #endregion
         }
 }
