@@ -23,10 +23,14 @@ namespace Mono.CSharp {
 		CS_28_The_Microsoft_NET_Runtime_does_not_permit_setting_custom_attributes_on_the_return_type = -28,
 		CS0028_The_wrong_signature_to_be_an_entry_point = 28,
 		CS0067_The_event_is_never_used = 67,
+		CS0072_Event_can_override_only_event = 72,
 		CS0078_The_l_suffix_is_easily_confused_with_the_digit_1 = 78,
 		CS0105_The_using_directive_for_appeared_previously_in_this_namespace = 105,
 		CS0108_The_keyword_new_is_required = 108,
+		CS0109_The_member_does_not_hide_an_inherited_member_new_keyword_is_not_required = 109,
+		CS0111_Type_already_defines_member_with_the_same_parameter_types = 111,
 		CS0114_Hides_inherited_member = 114,
+		CS0115_No_suitable_methods_found_to_override = 115,
 		CS0122_is_inaccessible_due_to_its_protection_level = 122,
 		CS0134_Cannot_use_qualified_namespace_names_in_nested_namespace_declarations = 134,
 		CS0145_A_const_field_requires_a_value_to_be_provided = 145,
@@ -255,10 +259,14 @@ namespace Mono.CSharp {
 				case -28: return new WarningData (1, "The Microsoft .NET Runtime 1.x does not permit setting custom attributes on the return type");
 				case 0028: return new WarningData (4, "'{0}' has the wrong signature to be an entry point");
 				case 0067: return new WarningData (3, "The event '{0}' is never used");
+				case 0072: return new ErrorData ("Event '{0}' can override only event");
 				case 0078: return new WarningData (4, "The 'l' suffix is easily confused with the digit '1' (use 'L' for clarity)");
 				case 0105: return new WarningData (3, "The using directive for '{0}' appeared previously in this namespace");
-				case 0108: return new WarningData (1, "The keyword new is required on '{0}' because it hides inherited member '{1}'");
+				case 0108: return new WarningData (1, "The keyword new is required on '{0}' because it hides inherited member");
+				case 0109: return new WarningData (4, "The member '{0}' does not hide an inherited member. The new keyword is not required");
+				case 0111: return new ErrorData ("Type '{0}' already defines a member called '{1}' with the same parameter types");
 				case 0114: return new WarningData (2, "'{0}' hides inherited member '{1}'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword");
+				case 0115: return new ErrorData ("'{0}': no suitable methods found to override");
  				case 0122: return new ErrorData ("'{0}' is inaccessible due to its protection level");
  				case 0134: return new ErrorData ("Cannot use qualified namespace names in nested namespace declarations");
 				case 0145: return new ErrorData ("A const field requires a value to be provided");
@@ -397,6 +405,11 @@ namespace Mono.CSharp {
 				MemberCore mc = temp_ds.GetDefinition (name) as MemberCore;
 				SymbolRelatedToPreviousError (mc.Location, mc.GetSignatureForError ());
 			}
+		}
+
+		static public void SymbolRelatedToPreviousError (MemberCore mc)
+		{
+			Report.SymbolRelatedToPreviousError (mc.Location, mc.GetSignatureForError ());
 		}
 
 		static public void SymbolRelatedToPreviousError (Type type)

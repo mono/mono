@@ -1941,5 +1941,52 @@ namespace Mono.CSharp {
 			
 			return null;
 		}
+
+ 		/// <summary>
+ 		/// The method is looking for conflict with inherited symbols (errors CS0108, CS0109).
+ 		/// We handle two cases. The first is for types without parameters (events, field, properties).
+ 		/// The second are methods, indexers and this is why ignore_complex_types is here.
+ 		/// The latest param is temporary hack. See DoDefineMembers method for more info.
+ 		/// </summary>
+ 		public MemberInfo FindMemberWithSameName (string name, bool ignore_complex_types, MemberInfo ignore_member)
+ 		{
+ 			ArrayList applicable = null;
+ 
+ 			if (method_hash != null)
+ 				applicable = (ArrayList) method_hash [name];
+ 
+ 			if (applicable != null) {
+ 				for (int i = applicable.Count - 1; i >= 0; i--) {
+ 					CacheEntry entry = (CacheEntry) applicable [i];
+ 					if ((entry.EntryType & EntryType.Public) != 0)
+ 						return entry.Member;
+ 				}
+ 			}
+ 
+ 			if (member_hash == null)
+ 				return null;
+ 			applicable = (ArrayList) member_hash [name];
+ 			
+ 			if (applicable != null) {
+ 				for (int i = applicable.Count - 1; i >= 0; i--) {
+ 					CacheEntry entry = (CacheEntry) applicable [i];
+ 					if ((entry.EntryType & EntryType.Public) != 0 & entry.Member != ignore_member) {
+ 						if (ignore_complex_types) {
+ 							if ((entry.EntryType & EntryType.Method) != 0)
+ 								continue;
+ 
+ 							// Does exist easier way how to detect indexer ?
+ 							if ((entry.EntryType & EntryType.Property) != 0) {
+ 								Type[] arg_types = TypeManager.GetArgumentTypes ((PropertyInfo)entry.Member);
+ 								if (arg_types.Length == 1)
+ 									continue;
+ 							}
+ 						}
+ 						return entry.Member;
+ 					}
+ 				}
+ 			}
+  			return null;
+  		}
 	}
 }

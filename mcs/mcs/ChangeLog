@@ -1,3 +1,25 @@
+2004-08-04  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix for #55382
+	* class.cs:
+	(TypeContainer.Define): Renamed to DefineContainerMembers because of
+	name collision.
+	(MethodCore.parent_method): New member. The method we're overriding
+	if this is an override method.
+	(MethodCore.CheckBase): Moved from Method class and made common.
+	(MethodCore.CheckMethodAgainstBase): Moved from MemberBase and made
+	private.
+	(MethodCore.CheckForDuplications): New abstract method. For custom
+	member duplication search in a container
+	(MethodCore.FindOutParentMethod): New abstract method. Gets parent
+	method and its return type.
+	(Event.conflict_symbol): New member. Symbol with same name in the
+	parent class.
+
+	* decl.cs:
+	(MemberCache.FindMemberWithSameName): New method. The method
+	is looking for conflict with inherited symbols.
+
 2004-08-04  Martin Baulig  <martin@ximian.com>
 
 	* codegen.cs (VariableStorage.EmitLoadAddress): New public method.
