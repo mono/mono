@@ -50,6 +50,7 @@ namespace System.Windows.Forms
 			SearchSaveLabelText = "Search in:";
 			
 			FileDialogShowReadOnly = showReadOnly;
+			FileDialogReadOnlyChecked = readOnlyChecked;
 			
 			fileDialogType = FileDialogType.OpenFileDialog;
 			
@@ -82,6 +83,7 @@ namespace System.Windows.Forms
 			set
 			{
 				readOnlyChecked = value;
+				FileDialogReadOnlyChecked = readOnlyChecked;
 			}
 		}
 		
@@ -116,7 +118,9 @@ namespace System.Windows.Forms
 			base.Reset( );
 			multiSelect = false;
 			readOnlyChecked = false;
+			FileDialogReadOnlyChecked = readOnlyChecked;
 			showReadOnly = false;
+			FileDialogShowReadOnly = showReadOnly;
 		}
 		
 		[MonoTODO]

@@ -67,6 +67,7 @@ namespace System.Windows.Forms
 		internal string openSaveButtonText;
 		internal string searchSaveLabelText;
 		internal bool fileDialogShowReadOnly;
+		internal bool fileDialogReadOnlyChecked;
 		internal bool fileDialogMultiSelect;
 		internal bool saveDialogCreatePrompt = false;
 		internal bool saveDialogOverwritePrompt = true;
@@ -326,6 +327,19 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		internal bool FileDialogReadOnlyChecked
+		{
+			set
+			{
+				fileDialogReadOnlyChecked = value;
+			}
+			
+			get
+			{
+				return fileDialogReadOnlyChecked;
+			}
+		}
+		
 		internal bool FileDialogMultiSelect
 		{
 			set
@@ -459,6 +473,11 @@ namespace System.Windows.Forms
 			OnHelpRequest( e );
 		}
 		
+		internal void SetFilenames( string[] filenames )
+		{
+			fileNames = filenames;
+		}
+		
 		internal struct FilterStruct
 		{
 			public string filterName;
@@ -479,11 +498,6 @@ namespace System.Windows.Forms
 				
 				filters.AddRange( split );
 			}
-		}
-		
-		internal void SetFilenames( string[] filenames )
-		{
-			fileNames = filenames;
 		}
 		
 		internal ArrayList filterArrayList = new ArrayList();
@@ -525,6 +539,7 @@ namespace System.Windows.Forms
 			private ToolBarButton workplaceToolBarButton;
 			private ComboBox fileTypeComboBox;
 			private ImageList imageListTopToolbar;
+			private ContextMenu contextMenu;
 			
 			internal FileDialog fileDialog;
 			
@@ -576,6 +591,7 @@ namespace System.Windows.Forms
 				fileDialog.form.CancelButton = cancelButton;
 				imageListTopToolbar = new ImageList( );
 				menueToolBarButtonContextMenu = new ContextMenu( );
+				contextMenu = new ContextMenu( );
 				
 				SuspendLayout( );
 				
@@ -701,6 +717,11 @@ namespace System.Windows.Forms
 				mi = new MenuItem( "Details", new EventHandler( OnClickMenuToolBarContextMenu ) );
 				menueToolBarButtonContextMenu.MenuItems.Add( mi );
 				
+				// contextMenu
+				mi = new MenuItem( "Show hidden files", new EventHandler( OnClickContextMenu ) );
+				mi.Checked = fileDialog.ShowHiddenFiles;
+				contextMenu.MenuItems.Add( mi );
+				
 				// openButton
 				openSaveButton.Anchor = ( (AnchorStyles)( ( AnchorStyles.Bottom | AnchorStyles.Right ) ) );
 				openSaveButton.FlatStyle = FlatStyle.System;
@@ -727,6 +748,8 @@ namespace System.Windows.Forms
 				helpButton.Hide( );
 				
 				ClientSize = new Size( 554, 405 ); // 384
+				
+				ContextMenu = contextMenu;
 				
 				Controls.Add( smallButtonToolBar );
 				Controls.Add( cancelButton );
@@ -819,6 +842,18 @@ namespace System.Windows.Forms
 				get
 				{
 					return multiSelect;
+				}
+			}
+			
+			void OnClickContextMenu( object sender, EventArgs e )
+			{
+				MenuItem senderMenuItem = sender as MenuItem;
+				
+				if ( senderMenuItem.Index == 0 )
+				{
+					senderMenuItem.Checked = !senderMenuItem.Checked;
+					fileDialog.ShowHiddenFiles = senderMenuItem.Checked;
+					fileListView.UpdateFileListView( );
 				}
 			}
 			

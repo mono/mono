@@ -1,5 +1,10 @@
 2005-03-27  Alexander Olk  <xenomorph2@onlinehome.de>
 
+	* FileDialog.cs: Added a contextmenu to change ShowHiddenFiles
+	* SaveDialog.cs, OpenFileDialog.cs: Fixes for Reset() method
+
+2005-03-27  Alexander Olk  <xenomorph2@onlinehome.de>
+
 	* FileDialog.cs, OpenFileDialog.cs, SaveFileDialog.cs:
 	  - Added missing CreatePrompt property in SaveDialog
 	  - Overall SaveDialog handling should be better now

@@ -55,20 +55,6 @@ namespace System.Windows.Forms
 		#endregion	// Public Constructors
 		
 		#region Public Instance Properties
-		public bool OverwritePrompt
-		{
-			set
-			{
-				overwritePrompt = value;
-				SaveDialogOverwritePrompt = overwritePrompt;
-			}
-			
-			get
-			{
-				return overwritePrompt;
-			}
-		}
-		
 		public bool CreatePrompt
 		{
 			set
@@ -80,6 +66,20 @@ namespace System.Windows.Forms
 			get
 			{
 				return createPrompt;
+			}
+		}
+		
+		public bool OverwritePrompt
+		{
+			set
+			{
+				overwritePrompt = value;
+				SaveDialogOverwritePrompt = overwritePrompt;
+			}
+			
+			get
+			{
+				return overwritePrompt;
 			}
 		}
 		#endregion	// Public Instance Properties
@@ -98,6 +98,9 @@ namespace System.Windows.Forms
 		{
 			base.Reset( );
 			overwritePrompt = true;
+			createPrompt = false;
+			SaveDialogOverwritePrompt = overwritePrompt;
+			SaveDialogCreatePrompt = createPrompt;
 		}
 		
 		[MonoTODO]
