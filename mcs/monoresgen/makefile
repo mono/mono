@@ -12,7 +12,7 @@ linux: monoresgen.exe
 windows: monoresgen.exe
 
 monoresgen.exe: $(SOURCES)
-	$(MCS) $(MCS_FLAGS) -o $@ $(SOURCES)
+	$(RUNTIME) $(MCS) $(MCS_FLAGS) -o $@ $(SOURCES)
 
 install: all
 	mkdir -p $(prefix)/bin/
