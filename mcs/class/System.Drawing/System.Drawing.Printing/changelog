@@ -1,3 +1,7 @@
+2003-07-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* PrinterResolution.cs: Fixed signature, implemented, restyled, removed non-CLS compliant members
+
 2002-10-13  DennisHayes <dennish@raytek.com>
 	* PrintDocument
 	* Added OriginAtMargin for .NET V 1.1 compatablity.
