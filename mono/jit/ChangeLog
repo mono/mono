@@ -1,3 +1,8 @@
+
+Fri May 10 15:43:53 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* x86.brg, emit-x86.c: patch the branch targets with x86_patch().
+
 2002-05-10  Dietmar Maurer  <dietmar@ximian.com>
 
 	* linear-scan.c (mono_update_gen_set): improvement/bug fix
