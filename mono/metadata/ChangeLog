@@ -1,3 +1,9 @@
+2003-12-10  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* process.c:  (ves_icall_System_Diagnostics_Process_GetWorkingSet_internal
+	ves_icall_System_Diagnostics_Process_SetWorkingSet_internal):
+	cope with sizeof(size_t) != sizeof(guint32).
+
 2003-12-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* process.[ch]: the 'pid' field in MonoProcInfo stores GetLastError
