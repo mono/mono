@@ -1,4 +1,8 @@
 
+Fri May 31 15:36:53 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.h, metadata.c: fixed warnings/compilation errors.
+
 Fri May 31 13:08:25 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* Makefile.am, mono-config.c, mono-config.h: configuration file
