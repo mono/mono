@@ -40,7 +40,6 @@
 ./System.Management.Instrumentation/DefaultManagementProjectInstaller.cs
 ./System.Management.Instrumentation/Instance.cs
 ./System.Management.Instrumentation/InstrumentedAttribute.cs
-./System.Management.Instrumentation/TODOAttribute.cs
 ./System.Management.Instrumentation/IEvent.cs
 ./System.Management.Instrumentation/InstrumentationClassAttribute.cs
 ./System.Management.Instrumentation/IgnoreMemberAttribute.cs
