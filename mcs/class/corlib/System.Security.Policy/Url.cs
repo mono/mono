@@ -93,10 +93,10 @@ namespace System.Security.Policy {
 			// is a protocol specified
 			int protocolPos = url.IndexOf ("://");
 			if (protocolPos == -1)
-				return "file://" + url.ToUpper ();
+				return "file://" + url.ToUpperInvariant ();
 			
 			if (url.StartsWith ("file://"))
-				return "file://" + url.Substring (7).ToUpper ();
+				return "file://" + url.Substring (7).ToUpperInvariant ();
 
 			// add a trailing slash if none (lonely one) is present
 			if (url.LastIndexOf ("/") == protocolPos + 2)
