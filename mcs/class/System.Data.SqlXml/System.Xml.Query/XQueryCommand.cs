@@ -51,7 +51,7 @@ namespace System.Xml.Query
 
 		static XQueryCommand ()
 		{
-			implType = typeof (XPathNavigator).Assembly.GetType ("Mono.Xml.XQuery.XQueryCommandImpl");
+			implType = typeof (XPathNavigator).Assembly.GetType ("Mono.Xml.XPath2.XQueryCommandImpl");
 			compileMethod = implType.GetMethod ("Compile");
 			executeMethod = implType.GetMethod ("Execute");
 			if (compileMethod == null)
@@ -71,6 +71,12 @@ namespace System.Xml.Query
 		#endregion // Constructor
 
 		object impl;
+
+		#region Event
+
+		public event QueryEventHandler OnMessageEvent;
+
+		#endregion
 
 		#region Methods
 
@@ -96,7 +102,7 @@ namespace System.Xml.Query
 		[MonoTODO]
 		public void Compile (TextReader query, Evidence evidence)
 		{
-			compileMethod.Invoke (impl, new object [] {query, evidence});
+			compileMethod.Invoke (impl, new object [] {query, evidence, this});
 		}
 
 		// Execute

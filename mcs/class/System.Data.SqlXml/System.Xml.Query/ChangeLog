@@ -1,3 +1,8 @@
+2004-09-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XQueryCommand.cs : Forgot to commit. sys.xml internal class now
+	  requires this instance for message delegating (not complete though).
+
 2004-08-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XQueryCommand.cs : Reverted. "context item is nothing" should be
