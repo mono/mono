@@ -1,5 +1,11 @@
 2003-03-29  Martin Willemoes Hansen <mwh@sysrq.dk>
 
+	* Stubed System.ComponentModel/LicenseContext.cs
+	* Stubed System.ComponentModel/LicenseUsageMode.cs
+	* Stubed rest of System.ComponentModel.Design
+
+2003-03-29  Martin Willemoes Hansen <mwh@sysrq.dk>
+
 	* Stubed System.ComponentModel/InheritanceAttribute.cs
 	* Stubed System.ComponentModel/InheritanceLevel.cs
 	* Stubed System.ComponentModel.Design/IDesignerFilter.cs

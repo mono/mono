@@ -168,6 +168,8 @@ System.ComponentModel/ISupportInitialize.cs
 System.ComponentModel/ISynchronizeInvoke.cs
 System.ComponentModel/ITypeDescriptorContext.cs
 System.ComponentModel/ITypedList.cs
+System.ComponentModel/LicenseContext.cs
+System.ComponentModel/LicenseUsageMode.cs
 System.ComponentModel/ListBindableAttribute.cs
 System.ComponentModel/ListChangedEventArgs.cs
 System.ComponentModel/ListChangedEventHandler.cs
