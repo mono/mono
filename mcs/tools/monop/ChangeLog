@@ -1,3 +1,7 @@
+2004-12-25  Ben Maurer  <bmaurer@ximian.com>
+
+	* monop.cs, outline.cs, monop-completion.sh: Add MIT/X11 License.
+
 2004-12-09  Dan Winship  <danw@novell.com>
 
 	* outline.cs (OutlineType, OutlineOperator, OperatorFromName):
