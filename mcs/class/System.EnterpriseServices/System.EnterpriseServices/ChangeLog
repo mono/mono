@@ -1,3 +1,8 @@
+2004-05-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* RegistrationHelper.cs: fixed the build on windows. I will file a bug
+	report on mcs for this.
+
 2004-05-12  Mike Kestner <mkestner@ximian.com>
 
 	* ApplicationAccessControlAttribute.cs : Add ComVisible and

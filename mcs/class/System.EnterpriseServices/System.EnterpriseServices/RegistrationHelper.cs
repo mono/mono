@@ -24,7 +24,7 @@ namespace System.EnterpriseServices {
 
 		#region Methods
 
-		public void InstallAssembly (string assembly, out string application, out string tlb, InstallationFlags installFlags)
+		public void InstallAssembly (string assembly, ref string application, ref string tlb, InstallationFlags installFlags)
 		{
 			application = String.Empty;
 			tlb = String.Empty;
