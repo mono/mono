@@ -70,22 +70,16 @@ namespace System.Web.UI.WebControls
 			switch (idx) {
 			case 0:
 				return new ControlParameter ();
-				break;
 			case 1:
-				return new CookieParameter ();
-				break;
+				return new CookieParameter ();			
 			case 2:
-				return new FormParameter ();
-				break;
+				return new FormParameter ();			
 			case 3:
-				return new Parameter ();
-				break;
+				return new Parameter ();		
 			case 4:
-				return new QueryStringParameter ();
-				break;
+				return new QueryStringParameter ();		
 			case 5:
-				return new SessionParameter ();
-				break;
+				return new SessionParameter ();			
 			}
 
 			throw new ArgumentOutOfRangeException ("index");
