@@ -282,7 +282,7 @@ public class ArrayListTest : TestCase {
 			String[] s1 = {"This", "is", "a", "test"};
 			al1.AddRange(s1);
 			al1.BinarySearch(42);
-		} catch (ArgumentException) {
+		} catch (InvalidOperationException) {
 			errorThrown = true;
 		}
 		Assert("search-for-wrong-type error not thrown", 
