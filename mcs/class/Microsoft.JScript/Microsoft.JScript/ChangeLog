@@ -1,5 +1,7 @@
 2004-05-24  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* StrictEquality.cs: got it back to Microsoft.JScript namespace.
+
 	* Statement.cs: Added code generation support for 'switch' statement.
 
 	* jscript-lexer-parser.g: added 'using' for
