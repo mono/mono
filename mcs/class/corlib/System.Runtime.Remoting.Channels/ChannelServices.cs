@@ -44,7 +44,6 @@ namespace System.Runtime.Remoting
 	}
 }
 
-	
 namespace System.Runtime.Remoting.Channels
 {
 	public sealed class ChannelServices
@@ -136,10 +135,12 @@ namespace System.Runtime.Remoting.Channels
 				return ServerProcessing.Complete;
 		}
 
-		[MonoTODO]
 		public static IChannel GetChannel (string name)
-	        {
-			throw new NotImplementedException ();
+		{
+			foreach (IChannel chnl in registeredChannels) {
+				if (chnl.ChannelName == name && !(chnl is CrossAppDomainChannel)) return chnl;
+			}
+			return null;
 		}
 
 		[MonoTODO]
@@ -148,10 +149,23 @@ namespace System.Runtime.Remoting.Channels
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static string[] GetUrlsForObject (MarshalByRefObject obj)
 		{
-			throw new NotImplementedException ();
+			string uri = RemotingServices.GetObjectUri (obj);
+			if (uri == null) return new string [0];
+
+			ArrayList list = new ArrayList ();
+
+			foreach (object chnl_obj in registeredChannels) {
+				if (chnl_obj is CrossAppDomainChannel) continue;
+				
+				IChannelReceiver chnl = chnl_obj as IChannelReceiver;
+
+				if (chnl != null)
+					list.AddRange (chnl.GetUrlsForUri (uri));
+			}
+
+			return  (string[]) list.ToArray (typeof(string));
 		}
 
 		public static void RegisterChannel (IChannel chnl)
