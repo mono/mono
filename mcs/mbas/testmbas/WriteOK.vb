@@ -15,7 +15,7 @@ Module WriteOK
 		IO.WriteLine("OK! via aliased name") ' from alias
 		nodim = 1 ' test for explicit
         Console.WriteLine(nodim)
-		WriteOK5.ModuleSub()
+		'WriteOK5.ModuleSub()
     End Sub
 
 End Module
@@ -25,7 +25,7 @@ Public Class WriteOK2
     Friend Shared Sub [Sub]() ' Escaped identifier
 		Dim Text as string ' here 'Text' isn't a keyword
 		Text = "This is a test!"
-        Console.WriteLine("Sub:OK! - " & Text)
+        Console.WriteLine("Sub:OK! - """ & Text & """")
     End Sub
 
 End Class

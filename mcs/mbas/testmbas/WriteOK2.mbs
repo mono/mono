@@ -1,3 +1,5 @@
+'Option Explicit
+'Option Strict Off
 Option Compare Text
 
 Imports System

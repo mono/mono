@@ -1,3 +1,9 @@
+2003/03/11  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* makefile.gnu : use $RUNTIME for all targets
+					 actually run the compiled program on 'test-gtk' target 
+	* mb-tokenizer.cs : no escaping of chars allowed in VB.NET (old mcs code removed)
+						handle doubled-doublequotes (VB idiom to escape a doublequote) 
+	
 2003/03/04  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* mb-parser.jay: added rule for Imports with alias
 	* mb-parser.jay: Friend (internal) modifier was missing,

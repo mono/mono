@@ -127,7 +127,7 @@ namespace Mono.MonoBASIC
 		bool OptionStrict;
 		bool OptionCompareBinary;
 
-		bool UseExtendedSyntax; // for ".mbs" files
+		static public bool UseExtendedSyntax; // for ".mbs" files
 
 		public override string[] extensions()
 		{
@@ -377,7 +377,7 @@ compilation_unit
 		$$ = $4;
 	  }
 	;
-	
+	  
 opt_option_directives
 	: /* empty */
 	| option_directives
@@ -540,7 +540,7 @@ imports_term
 	;
 
 opt_attributes
-	: /* empty */		
+	: /* empty */
 	| attribute_sections 	{ $$ = $1; }
 	;
 

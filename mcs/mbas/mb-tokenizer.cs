@@ -31,7 +31,7 @@ namespace Mono.MonoBASIC
 		public int ref_line = 1;
 		public int line = 1;
 		public int col = 1;
-		public int current_token;
+		public int current_token = Token.EOL;
 		bool handle_get_set = false;
 
 		public int ExpandedTabsSize = 4; 
@@ -600,42 +600,7 @@ namespace Mono.MonoBASIC
 			
 		int escape (int c)
 		{
-			int d;
-			int v;
-
-			d = peekChar ();
-			if (c != '\\')
-				return c;
-			
-			switch (d){
-			case 'a':
-				v = '\a'; break;
-			case 'b':
-				v = '\b'; break;
-			case 'n':
-				v = '\n'; break;
-			case 't':
-				v = '\t'; break;
-			case 'v':
-				v = '\v'; break;
-			case 'r':
-				v = 'c'; break;
-			case '\\':
-				v = '\\'; break;
-			case 'f':
-				v = '\f'; break;
-			case '0':
-				v = 0; break;
-			case '"':
-				v = '"'; break;
-			case '\'':
-				v = '\''; break;
-			default:
-				error_details = "cs1009: Unrecognized escape sequence " + (char)d;
-				return -1;
-			}
-			getChar ();
-			return v;
+			return peekChar ();
 		}
 
 		int getChar ()
@@ -762,7 +727,7 @@ namespace Mono.MonoBASIC
 					
 				// Handle line continuation character
 				if (c == '_') {
-					while ((c = getChar ()) != -1 && (c != '\n')){}
+					while ((c = getChar ()) != -1 && !IsEOL(c)) {}
 					c = getChar ();					
 				}
 				// Handle EOL.
@@ -849,14 +814,18 @@ namespace Mono.MonoBASIC
 					System.Text.StringBuilder s = new System.Text.StringBuilder ();
 
 					while ((c = getChar ()) != -1){
-						if (c == '"'){ // TODO: treat double-doublequotes
-							val = s.ToString ();
-							return Token.LITERAL_STRING;
+						if (c == '"'){
+							if (peekChar() == '"')
+								getChar();
+							else {
+								val = s.ToString ();
+								return Token.LITERAL_STRING;
+							}
 						}
 
-						c = escape (c);
-						if (c == -1)
+						if (IsEOL(c))
 							return Token.ERROR;
+							
 						s.Append ((char) c);
 					}
 				}
@@ -877,7 +846,7 @@ namespace Mono.MonoBASIC
 				return Token.ERROR;
 			}
 
-			if (current_token != Token.EOL) // if last token wasn´t EOL send it before EOF
+			if (current_token != Token.EOL) // if last token wasn't EOL send it before EOF
 				return Token.EOL;
 			
 			return Token.EOF;
