@@ -1,3 +1,8 @@
+2003-12-08  Martin Baulig  <martin@ximian.com>
+
+	* TypeBuilder.cs (TypeBuilder.MonoGenericParam): Removed; use the
+	new `MonoGenericParam' class instead (in S.R/MonoGenericInst.cs).
+
 2003-12-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ModuleBuilder.cs: Double the size of the types array during insertion

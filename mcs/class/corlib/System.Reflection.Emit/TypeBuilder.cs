@@ -1145,23 +1145,28 @@ namespace System.Reflection.Emit {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern Type define_generic_parameter (MonoGenericParam param);
+		private extern MonoGenericParam define_generic_parameter (string name, int index);
 		
-		public Type DefineGenericParameter (string name, Type[] constraints)
+		public Type DefineGenericParameter (string name)
 		{
-			MonoGenericParam gparam = new MonoGenericParam (name, constraints);
-
+			int index;
 			if (generic_params != null) {
 				MonoGenericParam[] new_generic_params = new MonoGenericParam [generic_params.Length+1];
 				System.Array.Copy (generic_params, new_generic_params, generic_params.Length);
-				new_generic_params [generic_params.Length] = gparam;
+				index = generic_params.Length;
 				generic_params = new_generic_params;
 			} else {
 				generic_params = new MonoGenericParam [1];
-				generic_params [0] = gparam;
+				index = 0;
 			}
 
-			return define_generic_parameter (gparam);
+			generic_params [index] = define_generic_parameter (name, index);
+			return generic_params [index];
+		}
+
+		public void SetGenericParameterConstraints (int index, Type[] constraints)
+		{
+			generic_params [index].SetConstraints (constraints);
 		}
 
 		public MethodBuilder DefineGenericMethod (string name, MethodAttributes attributes)
@@ -1169,20 +1174,5 @@ namespace System.Reflection.Emit {
 			return DefineMethod (name, attributes, CallingConventions.Standard, null, null);
 		}
 #endif
-
-		internal sealed class MonoGenericParam {
-			private readonly uint Handle;
-
-			public readonly Type Type;
-			public readonly string Name;
-			public readonly int Flags;
-			public readonly Type[] Constraints;
-
-			public MonoGenericParam (string name, Type[] constraints)
-			{
-				this.Name = name;
-				this.Constraints = constraints;
-			}
-		}
 	}
 }

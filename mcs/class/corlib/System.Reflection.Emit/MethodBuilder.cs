@@ -37,7 +37,7 @@ namespace System.Reflection.Emit {
 		private CallingConvention native_cc;
 		private CallingConventions call_conv;
 		private bool init_locals = true;
-		private	TypeBuilder.MonoGenericParam[] generic_params;
+		private	MonoGenericParam[] generic_params;
 		private Type[] returnModReq;
 		private Type[] returnModOpt;
 		private Type[][] paramModReq;
@@ -245,23 +245,28 @@ namespace System.Reflection.Emit {
 
 #if NET_1_2
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern Type define_generic_parameter (TypeBuilder.MonoGenericParam param);
+		private extern MonoGenericParam define_generic_parameter (string name, int index);
 		
-		public Type DefineGenericParameter (string name, Type[] constraints)
+		public Type DefineGenericParameter (string name)
 		{
-			TypeBuilder.MonoGenericParam gparam = new TypeBuilder.MonoGenericParam (name, constraints);
-
+			int index;
 			if (generic_params != null) {
-				TypeBuilder.MonoGenericParam[] new_generic_params = new TypeBuilder.MonoGenericParam [generic_params.Length+1];
+				MonoGenericParam[] new_generic_params = new MonoGenericParam [generic_params.Length+1];
 				System.Array.Copy (generic_params, new_generic_params, generic_params.Length);
-				new_generic_params [generic_params.Length] = gparam;
+				index = generic_params.Length;
 				generic_params = new_generic_params;
 			} else {
-				generic_params = new TypeBuilder.MonoGenericParam [1];
-				generic_params [0] = gparam;
+				generic_params = new MonoGenericParam [1];
+				index = 0;
 			}
 
-			return define_generic_parameter (gparam);
+			generic_params [index] = define_generic_parameter (name, index);
+			return generic_params [index];
+		}
+
+		public void SetGenericParameterConstraints (int index, Type[] constraints)
+		{
+			generic_params [index].SetConstraints (constraints);
 		}
 
 		public override Type[] GetGenericArguments ()
@@ -271,7 +276,7 @@ namespace System.Reflection.Emit {
 
 			Type[] result = new Type [generic_params.Length];
 			for (int i = 0; i < generic_params.Length; i++)
-				result [i] = generic_params [i].Type;
+				result [i] = generic_params [i];
 
 			return result;
 		}
