@@ -2,7 +2,8 @@ DIRS =	corlib				\
 	System				\
 	System.XML			\
 	System.Drawing			\
-	System.Data
+	System.Data			\
+	System.EnterpriseServices
 
 #	System.Web			\
 #	Microsoft.VisualBasic		\
