@@ -131,7 +131,6 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		//TODO: How do I check if the value is negative. FontUnit is struct not enum
 		[DefaultValue (null), Bindable (true), WebCategory ("Font")]
 		[NotifyParentProperty (true)]
 		[WebSysDescription ("The size of the font.")]

@@ -411,7 +411,6 @@ public class Page : TemplateControl, IHttpHandler
 		return 0;
 	}
 
-	[MonoTODO]
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected virtual void InitOutputCache (int duration,
 						string varyByHeader,
@@ -822,6 +821,7 @@ public class Page : TemplateControl, IHttpHandler
 		if (!hiddenFields.ContainsKey (hiddenFieldName))
 			hiddenFields.Add (hiddenFieldName, hiddenFieldInitialValue);
 	}
+
 	[MonoTODO("Used in HtmlForm")]
 	internal void RegisterClientScriptFile (string a, string b, string c)
 	{

@@ -63,7 +63,6 @@ namespace System.Web.UI.WebControls
 
 		public Calendar(): base()
 		{
-			//TODO: Initialization
 		}
 
 
@@ -661,7 +660,6 @@ namespace System.Web.UI.WebControls
 
 		protected override void Render(HtmlTextWriter writer)
 		{
-			//TODO: Implement me
 			globCal = DateTimeFormatInfo.CurrentInfo.Calendar;
 			DateTime visDate   = GetEffectiveVisibleDate();
 			DateTime firstDate = GetFirstCalendarDay(visDate);

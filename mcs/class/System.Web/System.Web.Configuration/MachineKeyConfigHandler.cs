@@ -69,7 +69,6 @@ namespace System.Web.Configuration
 			if (section.HasChildNodes)
 				ThrowException ("Child nodes not allowed here", section.FirstChild);
 
-			//TODO: context?
 			MachineKeyConfig config = new MachineKeyConfig (parent);
 
 			string validationKey = AttValue ("validationKey", section);

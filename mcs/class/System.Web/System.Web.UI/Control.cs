@@ -37,7 +37,7 @@ namespace System.Web.UI
 		private bool id_set;
                 private ControlCollection _controls;
                 private bool _enableViewState = true;
-                private IDictionary _childViewStates; //TODO: Not sure datatype. Placeholder guess.
+                private IDictionary _childViewStates;
                 private bool _isNamingContainer;
                 private Control _namingContainer;
                 private Page _page;
@@ -732,12 +732,11 @@ namespace System.Web.UI
 			foreach (Control c in _controls)
 				c.DataBind();
 		}
-		
 
-                public virtual bool HasControls() //DIT
+
+                public virtual bool HasControls ()
                 {
-                        if (_controls != null && _controls.Count >0) return true;
-                        return false;
+                        return (_controls != null && _controls.Count > 0);
                 }
 
                 public void RenderControl(HtmlTextWriter writer)
@@ -758,9 +757,9 @@ namespace System.Web.UI
 				return relativeUrl;
 			
 			string ts = TemplateSourceDirectory;
-			if (UrlUtils.IsRelativeUrl (relativeUrl) == false || ts == "")
+			if (ts == "" || UrlUtils.IsRelativeUrl (relativeUrl) == false)
 				return relativeUrl;
-			
+
 			HttpResponse resp = Context.Response;
 			return resp.ApplyAppPathModifier (UrlUtils.Combine (ts, relativeUrl));
 		}
@@ -942,8 +941,6 @@ namespace System.Web.UI
 			control._namingContainer = null;
 		}
 
-                //TODO: I think there are some needed Interface implementations to do here.
-		
 		#if NET_2_0
 		protected string GetWebResourceUrl (string resourceName)
 		{

@@ -176,7 +176,6 @@ namespace System.Web.Compilation
 					return item.Result;
 
 				CompilerParameters options = GetOptions (assemblies);
-				//TODO: support for other languages
 				results = CSCompiler.Compiler.CompileAssemblyFromFile (options, file);
 				cache [key] = new CompilationCacheItem (results, file);
 			}

@@ -106,15 +106,9 @@ namespace System.Web
 		/// </summary>
 		/// <param name="type">A Type representing the object to create. </param>
 		/// <returns>The new object.</returns>
-		[MonoTODO()]
 		public object CreateObject (Type type)
 		{
-			Object o;
-			o = Activator.CreateInstance (type);
-
-			// TODO: Call OnStartPage()
-
-			return o;
+			return Activator.CreateInstance (type);
 		}
 
 

@@ -18,7 +18,6 @@ namespace System.Web.Configuration
 	{
 		public object Create (object parent, object context, XmlNode section)
 		{
-			//TODO: context?
 			AuthConfig config = new AuthConfig (parent);
 
 			string mode = AttValue ("mode", section);

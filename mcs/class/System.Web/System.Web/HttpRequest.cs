@@ -99,7 +99,6 @@ namespace System.Web {
 			return "HTTP_" + header.ToUpper().Replace("-", "_");
 		}
 
-		[MonoTODO("Need to support non-raw mode also..")]
 		private string GetAllHeaders(bool Raw) {
 			StringBuilder oData;
 

@@ -30,7 +30,6 @@ namespace System.Web.UI.WebControls
 		bool enabled = true;
 		string tagName;
 
-		// TODO: The constructors definitions
 		protected WebControl () : this (HtmlTextWriterTag.Span)
 		{
 		}

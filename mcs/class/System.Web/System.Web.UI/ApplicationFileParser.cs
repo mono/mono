@@ -16,6 +16,8 @@ namespace System.Web.UI
 {
 	sealed class ApplicationFileParser : TemplateParser
 	{
+		static ArrayList dependencies;
+
 		public ApplicationFileParser (string fname, HttpContext context)
 		{
 			InputFile = fname;
@@ -30,7 +32,10 @@ namespace System.Web.UI
 		internal static Type GetCompiledApplicationType (string inputFile, HttpContext context)
 		{
 			ApplicationFileParser parser = new ApplicationFileParser (inputFile, context);
-			return GlobalAsaxCompiler.CompileApplicationType (parser);
+			AspGenerator generator = new AspGenerator (parser);
+			Type type = generator.GetCompiledType ();
+			dependencies = parser.Dependencies;
+			return type;
 		}
 
 		internal override void AddDirective (string directive, Hashtable atts)
@@ -43,6 +48,10 @@ namespace System.Web.UI
 			base.AddDirective (directive, atts);
 		}
 
+		internal static ArrayList FileDependencies {
+			get { return dependencies; }
+		}
+		
 		internal override Type DefaultBaseType {
 			get { return typeof (HttpApplication); }
 		}

@@ -17,7 +17,6 @@ namespace System.Web {
 		{
 		}
 
-		[MonoTODO ("What does this do?")]
 		internal HttpUnhandledException (string message, string x, Exception innerException)
 			: base (message, innerException)
 		{

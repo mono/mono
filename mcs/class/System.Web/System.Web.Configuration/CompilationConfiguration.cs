@@ -36,7 +36,6 @@ namespace System.Web.Configuration
 		/* Only the config. handler should create instances of this. Use GetInstance (context) */
 		public CompilationConfiguration (object p)
 		{
-			//TODO: reload config when file changes.
 			CompilationConfiguration parent = p as CompilationConfiguration;
 			if (parent != null)
 				Init (parent);
