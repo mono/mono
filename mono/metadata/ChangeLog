@@ -1,3 +1,8 @@
+2005-01-25  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_is_assignable_from): Make this work for
+	generic instances.
+
 2005-01-24  Ben Maurer  <bmaurer@ximian.com>
 
 	* marshal.c (mono_string_utf8_to_builder)
