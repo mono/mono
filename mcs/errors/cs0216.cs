@@ -5,5 +5,8 @@ class X {
 	{
 		return null;
 	}
+
+	static void Main () {
+	}
 }
 	

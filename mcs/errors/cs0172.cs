@@ -12,7 +12,7 @@ class Y {
 	}
 }
 
-class Main 
+class Z
 {
 	static void Main ()
 	{

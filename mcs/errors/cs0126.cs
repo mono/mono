@@ -2,7 +2,7 @@
 // Line: 7
 
 class X {
-	int X ()
+	int Y ()
 	{
 		return;
 	}

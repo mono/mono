@@ -5,7 +5,7 @@ class X {
 
 	static void Main ()
 	{
-		int i;
+		int i = 5;
 
 		if (i is int){
 		}

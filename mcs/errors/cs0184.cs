@@ -5,7 +5,7 @@ class X {
 
 	static void Main ()
 	{
-		int a;
+		int a = 1;
 		
 		if (a is byte){
 		}

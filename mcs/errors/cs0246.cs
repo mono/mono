@@ -2,3 +2,8 @@
 // Line: 4
 interface A : B {
 }
+
+class X {
+	static void Main () {
+	}
+}

@@ -2,7 +2,7 @@
 // Line: 9
 
 class T {
-	public T ()
+	static void Main ()
 	{
 		int errors;
 

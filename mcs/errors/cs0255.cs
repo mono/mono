@@ -6,8 +6,7 @@ unsafe class X {
 	{
 		try {
 		} catch {
-		char *ptr = stackalloc char [10];
-		ptr = ptr;
+			char *ptr = stackalloc char [10];
 		}
 	}
 }	
