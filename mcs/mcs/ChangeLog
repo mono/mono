@@ -1,5 +1,10 @@
 2004-03-28 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* expression.cs: cs0213, cant fix a fixed expression.
+	fixes 50231.
+
+2004-03-28 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* cs-parser.jay: detect invalid embeded statements gracefully.
 	bug #51113.
 

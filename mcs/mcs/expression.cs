@@ -428,6 +428,11 @@ namespace Mono.CSharp {
 					       "of a fixed statement initializer");
 					return null;
 				}
+				
+				if (ec.InFixedInitializer && ((variable != null) && variable.VerifyFixed (false))) {
+					Error (213, "You can not fix an already fixed expression");
+					return null;
+				}
 
 				// According to the specs, a variable is considered definitely assigned if you take
 				// its address.
