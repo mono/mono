@@ -76,15 +76,7 @@ namespace System.Windows.Forms {
 				invalid = new Rectangle (x, y, width, height);
 				return;
 			}
-
-			if (x < invalid.X)
-				invalid.X = x;
-			if (y < invalid.Y)
-				invalid.Y = y;
-			if (height > invalid.Height)
-				invalid.Height = height;
-			if (width > invalid.Width)
-				invalid.Width = width;
+			invalid = Rectangle.Union (invalid, new Rectangle (x, y, width, height));
 		}
 
 		public void AddToInvalidArea (Rectangle r)
