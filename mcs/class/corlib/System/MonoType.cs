@@ -131,23 +131,26 @@ namespace System
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern override MethodInfo[] GetMethods (BindingFlags bindingAttr);
+		internal extern MethodInfo [] GetMethodsByName (string name, BindingFlags bindingAttr, bool ignoreCase);
+
+		public override MethodInfo [] GetMethods (BindingFlags bindingAttr)
+		{
+			return GetMethodsByName (null, bindingAttr, false);
+		}
 
 		protected override MethodInfo GetMethodImpl (string name, BindingFlags bindingAttr,
 							     Binder binder,
 							     CallingConventions callConvention,
 							     Type[] types, ParameterModifier[] modifiers)
 		{
-			MethodInfo[] methods = GetMethods (bindingAttr);
 			bool ignoreCase = ((bindingAttr & BindingFlags.IgnoreCase) != 0);
+			MethodInfo[] methods = GetMethodsByName (name, bindingAttr, ignoreCase);
 			MethodInfo found = null;
 			MethodBase[] match;
 			int typesLen = (types != null) ? types.Length : 0;
 			int count = 0;
 			
 			foreach (MethodInfo m in methods) {
-				if (String.Compare (m.Name, name, ignoreCase, CultureInfo.InvariantCulture) != 0)
-					continue;
 				// Under MS.NET, Standard|HasThis matches Standard...
 				if (callConvention != CallingConventions.Any && ((m.CallingConvention & callConvention) != callConvention))
 					continue;
@@ -167,8 +170,6 @@ namespace System
 			else {
 				count = 0;
 				foreach (MethodInfo m in methods) {
-					if (String.Compare (m.Name, name, ignoreCase, CultureInfo.InvariantCulture) != 0)
-						continue;
 					if (callConvention != CallingConventions.Any && ((m.CallingConvention & callConvention) != callConvention))
 						continue;
 					match [count++] = m;
@@ -213,35 +214,32 @@ namespace System
 			PropertyInfo [] props = GetPropertiesByName (name, bindingAttr, ignoreCase);
 
 			foreach (PropertyInfo info in props) {
-					if (String.Compare (info.Name, name, ignoreCase, CultureInfo.InvariantCulture) != 0) 
+				if (returnType != null && info.PropertyType != returnType)
 						continue;
 
-					if (returnType != null && info.PropertyType != returnType)
-							continue;
+				if (types.Length > 0) {
+					ParameterInfo[] parameterInfo = info.GetIndexParameters ();
 
-					if (types.Length > 0) {
-						ParameterInfo[] parameterInfo = info.GetIndexParameters ();
+					if (parameterInfo.Length != types.Length)
+						continue;
 
-						if (parameterInfo.Length != types.Length)
-							continue;
+					int i;
+					bool match = true;
 
-						int i;
-						bool match = true;
+					for (i = 0; i < types.Length; i ++)
+						if (parameterInfo [i].ParameterType != types [i]) {
+							match = false;
+							break;
+						}
 
-						for (i = 0; i < types.Length; i ++)
-							if (parameterInfo [i].ParameterType != types [i]) {
-								match = false;
-								break;
-							}
+					if (!match)
+						continue;
+				}
 
-						if (!match)
-							continue;
-					}
+				if (null != ret)
+					throw new AmbiguousMatchException();
 
-					if (null != ret)
-						throw new AmbiguousMatchException();
-
-					ret = info;
+				ret = info;
 			}
 
 			return ret;
@@ -328,20 +326,9 @@ namespace System
 			}
 			bool ignoreCase = (invokeAttr & BindingFlags.IgnoreCase) != 0;
 			if ((invokeAttr & BindingFlags.InvokeMethod) != 0) {
-				MethodInfo[] methods = GetMethods (invokeAttr);
+				MethodInfo[] methods = GetMethodsByName (name, invokeAttr, ignoreCase);
 				object state = null;
-				int i, count = 0;
-				for (i = 0; i < methods.Length; ++i) {
-					if (String.Compare (methods [i].Name, name, ignoreCase, CultureInfo.InvariantCulture) == 0)
-						count++;
-				}
-				MethodBase[] smethods = new MethodBase [count];
-				count = 0;
-				for (i = 0; i < methods.Length; ++i) {
-					if (String.Compare (methods [i].Name, name, ignoreCase, CultureInfo.InvariantCulture) == 0)
-						smethods [count++] = methods [i];
-				}
-				MethodBase m = binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, out state);
+				MethodBase m = binder.BindToMethod (invokeAttr, methods, ref args, modifiers, culture, namedParameters, out state);
 				if (m == null)
 					throw new MissingMethodException ();
 				object result = m.Invoke (target, invokeAttr, binder, args, culture);
@@ -371,14 +358,14 @@ namespace System
 				object state = null;
 				int i, count = 0;
 				for (i = 0; i < properties.Length; ++i) {
-					if (String.Compare (properties [i].Name, name, ignoreCase, CultureInfo.InvariantCulture) == 0 && (properties [i].GetGetMethod () != null))
+					if ((properties [i].GetGetMethod () != null))
 						count++;
 				}
 				MethodBase[] smethods = new MethodBase [count];
 				count = 0;
 				for (i = 0; i < properties.Length; ++i) {
 					MethodBase mb = properties [i].GetGetMethod ();
-					if (String.Compare (properties [i].Name, name, ignoreCase, CultureInfo.InvariantCulture) == 0 && (mb != null))
+					if (mb != null)
 						smethods [count++] = mb;
 				}
 				MethodBase m = binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, out state);
@@ -388,18 +375,18 @@ namespace System
 				binder.ReorderArgumentArray (ref args, state);
 				return result;
 			} else if ((invokeAttr & BindingFlags.SetProperty) != 0) {
-				PropertyInfo[] properties = GetProperties (invokeAttr);
+				PropertyInfo[] properties = GetPropertiesByName (name, invokeAttr, ignoreCase);
 				object state = null;
 				int i, count = 0;
 				for (i = 0; i < properties.Length; ++i) {
-					if (String.Compare (properties [i].Name, name, ignoreCase, CultureInfo.InvariantCulture) == 0 && (properties [i].GetSetMethod () != null))
+					if (properties [i].GetSetMethod () != null)
 						count++;
 				}
 				MethodBase[] smethods = new MethodBase [count];
 				count = 0;
 				for (i = 0; i < properties.Length; ++i) {
 					MethodBase mb = properties [i].GetSetMethod ();
-					if (String.Compare (properties [i].Name, name, ignoreCase, CultureInfo.InvariantCulture) == 0 && (mb != null))
+					if (mb != null)
 						smethods [count++] = mb;
 				}
 				MethodBase m = binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, out state);
