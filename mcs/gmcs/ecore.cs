@@ -2629,7 +2629,13 @@ namespace Mono.CSharp {
 				if (IsStatic && !ec.IsStatic)
 					Report_AssignToReadonly (false);
 
-				if (ec.ContainerType == FieldInfo.DeclaringType)
+				Type ctype;
+				if (ec.TypeContainer.CurrentType != null)
+					ctype = ec.TypeContainer.CurrentType.ResolveType (ec);
+				else
+					ctype = ec.ContainerType;
+
+				if (ctype == FieldInfo.DeclaringType)
 					return this;
 			}
 

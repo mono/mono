@@ -1,3 +1,9 @@
+2004-02-05  Martin Baulig  <martin@ximian.com>
+
+	* ecore.cs (FieldExpr.DoResolveLValue): If we have an
+	`ec.TypeContainer.CurrentType', use it instead of
+	`ec.ContainerType' to check whether we're in the type's ctor.
+
 2004-01-29  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (Invocation.DoResolve): If we're a
