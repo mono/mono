@@ -1,3 +1,8 @@
+
+Tue Aug 31 17:55:15 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mono-debug.c, debug-mono-symfile.c: add some locking love.
+
 2004-08-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* domain-internals.h domain.c: Add a per-domain jump trampoline hash.
