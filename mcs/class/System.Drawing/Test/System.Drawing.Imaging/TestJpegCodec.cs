@@ -17,7 +17,7 @@ namespace MonoTests.System.Drawing
 {
 
 	[TestFixture]	
-	public class TestJpegCodec : Assertion 
+	public class TestJpegCodec 
 	{
 		
 		[TearDown]
@@ -76,17 +76,17 @@ namespace MonoTests.System.Drawing
 			
 			rect = bmp.GetBounds(ref unit);
 
-			AssertEquals (PixelFormat.Format24bppRgb, bmp.PixelFormat);
-			AssertEquals (110, bmp.Width);
-			AssertEquals (100, bmp.Height);		
+			Assert.AreEqual (PixelFormat.Format24bppRgb, bmp.PixelFormat);
+			Assert.AreEqual (110, bmp.Width);
+			Assert.AreEqual (100, bmp.Height);		
 			
-			AssertEquals (0, rect.X);
-			AssertEquals (0, rect.Y);		
-			AssertEquals (110, rect.Width);
-			AssertEquals (100, rect.Height);					
+			Assert.AreEqual (0, rect.X);
+			Assert.AreEqual (0, rect.Y);		
+			Assert.AreEqual (110, rect.Width);
+			Assert.AreEqual (100, rect.Height);					
 			
-			AssertEquals (110, bmp.Size.Width);
-			AssertEquals (100, bmp.Size.Height);
+			Assert.AreEqual (110, bmp.Size.Width);
+			Assert.AreEqual (100, bmp.Size.Height);
 			
 		}
 
@@ -112,7 +112,7 @@ namespace MonoTests.System.Drawing
 			
 			Color color = bmpLoad.GetPixel(10,10);					
 			
-			AssertEquals (Color.FromArgb(255,255,0,0), color);											
+			Assert.AreEqual (Color.FromArgb(255,255,0,0), color);											
 		}
 
 		

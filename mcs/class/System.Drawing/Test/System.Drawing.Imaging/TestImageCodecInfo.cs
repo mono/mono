@@ -17,7 +17,7 @@ namespace MonoTests.System.Drawing
 {
 
 	[TestFixture]	
-	public class TestImageCodecInfo : Assertion 
+	public class TestImageCodecInfo 
 	{
 		
 		[TearDown]
@@ -33,12 +33,12 @@ namespace MonoTests.System.Drawing
 		{			
 			for (int i = 0; i < codecs.Length; i++) {
 				if (codecs[i].FormatID.ToString() == formatID) {
-					AssertEquals (codecs[i].Clsid.ToString(), clsid);
+					Assert.AreEqual (codecs[i].Clsid.ToString(), clsid);
 					return;
 				}
 			}
 
-			Assert (false);
+			Assert.IsTrue (false);
 		}
 		
 		/*

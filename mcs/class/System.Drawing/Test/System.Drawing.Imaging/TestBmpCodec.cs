@@ -19,7 +19,7 @@ namespace MonoTests.System.Drawing
 {
 
 	[TestFixture]	
-	public class TestBmpCodec : Assertion 
+	public class TestBmpCodec
 	{
 		
 		[TearDown]
@@ -78,17 +78,17 @@ namespace MonoTests.System.Drawing
 			
 			rect = bmp.GetBounds(ref unit);
 			
-			AssertEquals (PixelFormat.Format24bppRgb, bmp.PixelFormat);
-			AssertEquals (173, bmp.Width);
-			AssertEquals (183, bmp.Height);		
+			Assert.AreEqual (PixelFormat.Format24bppRgb, bmp.PixelFormat);
+			Assert.AreEqual (173, bmp.Width);
+			Assert.AreEqual (183, bmp.Height);		
 			
-			AssertEquals (0, rect.X);
-			AssertEquals (0, rect.Y);		
-			AssertEquals (173, rect.Width);
-			AssertEquals (183, rect.Height);					
+			Assert.AreEqual (0, rect.X);
+			Assert.AreEqual (0, rect.Y);		
+			Assert.AreEqual (173, rect.Width);
+			Assert.AreEqual (183, rect.Height);					
 			
-			AssertEquals (173, bmp.Size.Width);
-			AssertEquals (183, bmp.Size.Height);					
+			Assert.AreEqual (173, bmp.Size.Width);
+			Assert.AreEqual (183, bmp.Size.Height);					
 		}
 
 		
@@ -104,17 +104,17 @@ namespace MonoTests.System.Drawing
 			
 			rect = bmp.GetBounds(ref unit);
 			
-			//AssertEquals (PixelFormat.Format32bppArgb, bmp.PixelFormat);
-			AssertEquals (173, bmp.Width);
-			AssertEquals (183, bmp.Height);		
+			//Assert.AreEqual (PixelFormat.Format32bppArgb, bmp.PixelFormat);
+			Assert.AreEqual (173, bmp.Width);
+			Assert.AreEqual (183, bmp.Height);		
 			
-			AssertEquals (0, rect.X);
-			AssertEquals (0, rect.Y);		
-			AssertEquals (173, rect.Width);
-			AssertEquals (183, rect.Height);					
+			Assert.AreEqual (0, rect.X);
+			Assert.AreEqual (0, rect.Y);		
+			Assert.AreEqual (173, rect.Width);
+			Assert.AreEqual (183, rect.Height);					
 			
-			AssertEquals (173, bmp.Size.Width);
-			AssertEquals (183, bmp.Size.Height);					
+			Assert.AreEqual (173, bmp.Size.Width);
+			Assert.AreEqual (183, bmp.Size.Height);					
 		}
 
 		[Test]
@@ -139,7 +139,7 @@ namespace MonoTests.System.Drawing
 			
 			Color color = bmpLoad.GetPixel(10,10);					
 			
-			AssertEquals (Color.FromArgb(255,255,0,0), color);											
+			Assert.AreEqual (Color.FromArgb(255,255,0,0), color);											
 		}
 
 		
