@@ -1,5 +1,7 @@
 2004-04-28  Zoltan Varga  <vargaz@freemail.hu>
 
+	* exceptions-sparc.c exceptions-ppc.c exceptions-s390.c mini-ppc.h mini-s390.h mini-sparc.h: Fix up ports after changes.
+
 	* mini-exceptions.c: New file.
 	
 	* mini.c mini-exceptions.c mini-x86.h exceptions-x86.c Makefile.am:
