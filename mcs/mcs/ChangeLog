@@ -1,5 +1,9 @@
 2005-02-18  Raja R Harinath  <rharinath@novell.com>
 
+	Fix crasher in re-opened #72347.
+	* namespace.cs (Namespace.Lookup): Return null if
+	DeclSpace.DefineType returns null.
+
 	Fix #72678.
 	* expression.cs (Argument.Resolve): Handle a case of CS0120 here.
 
