@@ -151,4 +151,98 @@
 
 ** Statements
 
-* Code Generation
+* Output Generation
+
+** Code Generation
+
+	The EmitContext class is created any time that IL code is to
+	be generated (methods, properties, indexers and attributes all
+	create EmitContexts).
+
+	An EmitContext is used by the underlying code generation
+	facilities to track the state of code generation:
+
+		* The ILGenerator used to generate code for this
+		  method.
+
+		* The TypeContainer where the code lives, this is used
+		  to access the TypeBuilder.
+
+		* The DeclSpace, this is used to resolve names through
+	 	  RootContext.LookupType in the various statements and
+	 	  expressions. 
+	
+	Code generation state is also tracked here:
+
+		* CheckState:
+
+		  This variable tracks the `checked' state of the
+		  compilation, it controls whether we should generate
+		  code that does overflow checking, or if we generate
+		  code that ignores overflows.
+		  
+		  The default setting comes from the command line
+		  option to generate checked or unchecked code plus
+		  any source code changes using the checked/unchecked
+		  statements or expressions.  Contrast this with the
+		  ConstantCheckState flag.
+
+		* ConstantCheckState
+		  
+		  The constant check state is always set to `true' and
+		  cant be changed from the command line.  The source
+		  code can change this setting with the `checked' and
+		  `unchecked' statements and expressions.
+		  
+		* IsStatic
+		  
+		  Whether we are emitting code inside a static or
+		  instance method
+		  
+		* ReturnType
+		  
+		  The value that is allowed to be returned or NULL if
+		  there is no return type.
+		  
+		  
+		* ContainerType
+		  
+		  Points to the Type (extracted from the
+		  TypeContainer) that declares this body of code
+		  summary>
+		  
+		  
+		* IsConstructor
+		  
+		  Whether this is generating code for a constructor
+
+		* CurrentBlock
+
+		  Tracks the current block being generated.
+
+		* ReturnLabel;
+		
+		  The location where return has to jump to return the
+		  value
+
+	A few variables are used to track the state for checking in
+	for loops, or in try/catch statements:
+
+		* InFinally
+		
+		  Whether we are in a Finally block
+
+		* InTry
+
+		  Whether we are in a Try block
+
+		* InCatch
+		  
+		  Whether we are in a Catch block
+
+		* InUnsafe
+		  Whether we are inside an unsafe block
+		
+
+
+
