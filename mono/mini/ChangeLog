@@ -1,3 +1,9 @@
+
+Sun Jan 23 16:16:48 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* inssel.brg: optimize casts of sealed types (more
+	optimizations waiting for fixes in remoting).
+
 2005-01-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* inssel.brg (stmt): Add another dummy rule.
