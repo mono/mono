@@ -64,6 +64,8 @@ namespace MonoTests.System.Collections {
 		[ExpectedException (typeof (ArgumentException))]
 		public void TestObject()
 		{
+		    object a = new object();
+		    object b = new object();
 		    CaseInsensitiveComparer.Default.Compare(a,b);
 		}
 
@@ -71,6 +73,8 @@ namespace MonoTests.System.Collections {
 		[ExpectedException (typeof (ArgumentException))]
 		public void TestDiffArgs()
 		{
+		    int a = 5;
+		    string b = "hola";
 		    CaseInsensitiveComparer.Default.Compare(a,b);
 		}
 
@@ -98,7 +102,7 @@ namespace MonoTests.System.Collections {
 			string a = "AA";
 			string b = "aa";
 
-			Assert("#06 Failed",CaseInsensitiveComparer.Default.Compare(a,b),0);
+			AssertEquals("#06 Failed",CaseInsensitiveComparer.Default.Compare(a,b),0);
 		}
       
 	}
