@@ -24,12 +24,8 @@ namespace System.Web.Services.Protocols {
 	// This class represents all the information we extract from a MethodInfo
 	// in the SoapHttpClientProtocol derivative stub class
 	//
-	internal class MethodStubInfo {
-		internal LogicalMethodInfo MethodInfo;
-
-		// The name used bythe stub class to reference this method.
-		internal string Name;
-		
+	internal class SoapMethodStubInfo : MethodStubInfo
+	{
 		internal string Action;
 		internal string Binding;
 
@@ -41,16 +37,10 @@ namespace System.Web.Services.Protocols {
 		internal string ResponseName;
 		internal string ResponseNamespace;
 		
-		internal WebMethodAttribute MethodAttribute;
 		internal bool OneWay;
 		internal SoapParameterStyle ParameterStyle;
 		internal SoapBindingStyle SoapBindingStyle;
 		internal SoapBindingUse Use;
-
-		internal bool BufferResponse;
-		internal int CacheDuration;
-		internal string Description;
-		internal bool EnableSession;
 
 		internal XmlSerializer RequestSerializer;
 		internal XmlSerializer ResponseSerializer;
@@ -74,10 +64,10 @@ namespace System.Web.Services.Protocols {
 		//
 		// Constructor
 		//
-		MethodStubInfo (TypeStubInfo parent, LogicalMethodInfo source, object kind, XmlReflectionImporter xmlImporter, SoapReflectionImporter soapImporter)
+		public SoapMethodStubInfo (TypeStubInfo typeStub, LogicalMethodInfo source, object kind, XmlReflectionImporter xmlImporter, SoapReflectionImporter soapImporter)
+		: base (typeStub, source)
 		{
-			MethodInfo = source;
-
+			SoapTypeStubInfo parent = (SoapTypeStubInfo) typeStub;
 			XmlElementAttribute optional_ns = null;
 
 			if (kind == null) {
@@ -134,20 +124,6 @@ namespace System.Web.Services.Protocols {
 					throw new Exception ("OneWay methods should not have out/ref parameters");
 			}
 			
-			object [] o = source.GetCustomAttributes (typeof (WebMethodAttribute));
-			if (o.Length == 1){
-				MethodAttribute = (WebMethodAttribute) o [0];
-				BufferResponse = MethodAttribute.BufferResponse;
-				CacheDuration = MethodAttribute.CacheDuration;
-				Description = MethodAttribute.Description;
-				EnableSession = MethodAttribute.EnableSession;
-				Name = MethodAttribute.MessageName;
-
-				if (Name == "")
-					Name = source.Name;
-			} else
-				Name = source.Name;
-
 			if (RequestNamespace == "") RequestNamespace = parent.WebServiceNamespace;
 			if (ResponseNamespace == "") ResponseNamespace = parent.WebServiceNamespace;
 			if (RequestName == "") RequestName = Name;
@@ -179,7 +155,7 @@ namespace System.Web.Services.Protocols {
 			RequestSerializer = s [0];
 			ResponseSerializer = s [1];
 
-			o = source.GetCustomAttributes (typeof (SoapHeaderAttribute));
+			object[] o = source.GetCustomAttributes (typeof (SoapHeaderAttribute));
 			Headers = new HeaderInfo[o.Length];
 			for (int i = 0; i < o.Length; i++) {
 				SoapHeaderAttribute att = (SoapHeaderAttribute) o[i];
@@ -192,20 +168,6 @@ namespace System.Web.Services.Protocols {
 			}
 
 			SoapExtensions = SoapExtension.GetMethodExtensions (source);
-		}
-
-		static internal MethodStubInfo Create (TypeStubInfo parent, LogicalMethodInfo lmi, XmlReflectionImporter xmlImporter, SoapReflectionImporter soapImporter)
-		{
-			object [] o = lmi.GetCustomAttributes (typeof (SoapDocumentMethodAttribute));
-			if (o.Length == 0) o = lmi.GetCustomAttributes (typeof (SoapRpcMethodAttribute));
-
-			if (o.Length == 0)
-			{
-				if (lmi.GetCustomAttributes (typeof (WebMethodAttribute)).Length == 0) return null;
-				return new MethodStubInfo (parent, lmi, null, xmlImporter, soapImporter);
-			}
-			else
-				return new MethodStubInfo (parent, lmi, o [0], xmlImporter, soapImporter);
 		}
 
 		XmlReflectionMember [] BuildRequestReflectionMembers (XmlElementAttribute optional_ns)
@@ -357,43 +319,31 @@ namespace System.Web.Services.Protocols {
 	// Holds the metadata loaded from the type stub, as well as
 	// the metadata for all the methods in the type
 	//
-	internal class TypeStubInfo {
-		Hashtable name_to_method = new Hashtable ();
+	internal class SoapTypeStubInfo : TypeStubInfo
+	{
 		Hashtable header_serializers = new Hashtable ();
 		Hashtable header_serializers_byname = new Hashtable ();
 		ArrayList bindings = new ArrayList ();
-		ArrayList methods = new ArrayList ();
 
 		// Precomputed
 		internal SoapParameterStyle      ParameterStyle;
 		internal SoapServiceRoutingStyle RoutingStyle;
 		internal SoapBindingUse          Use;
-		internal string                  WebServiceName;
-		internal string                  WebServiceNamespace;
 		internal string                  DefaultBinding;
-		internal string                  Description;
 		internal XmlSerializer           FaultSerializer;
 		internal SoapExtensionRuntimeConfig[][] SoapExtensions;
 		internal SoapBindingStyle SoapBindingStyle;
 		internal XmlReflectionImporter 	XmlImporter;
 		internal SoapReflectionImporter SoapImporter;
-		internal Type                   Type;
 
-		void GetTypeAttributes (Type t)
+		public SoapTypeStubInfo (Type t)
+		: base (t)
 		{
+			XmlImporter = new XmlReflectionImporter ();
+			SoapImporter = new SoapReflectionImporter ();
+			
 			object [] o;
 
-			o = t.GetCustomAttributes (typeof (WebServiceAttribute), false);
-			if (o.Length == 1){
-				WebServiceAttribute a = (WebServiceAttribute) o [0];
-				WebServiceName = (a.Name != string.Empty) ? a.Name : t.Name;
-				WebServiceNamespace = (a.Namespace != string.Empty) ? a.Namespace : WebServiceAttribute.DefaultNamespace;
-				Description = a.Description;
-			} else {
-				WebServiceName = t.Name;
-				WebServiceNamespace = WebServiceAttribute.DefaultNamespace;
-			}
-			
 			DefaultBinding = WebServiceName + "Soap";
 			BindingInfo binfo = new BindingInfo (DefaultBinding, WebServiceNamespace);
 			bindings.Add (binfo);
@@ -434,40 +384,19 @@ namespace System.Web.Services.Protocols {
 			SoapExtensions = SoapExtension.GetTypeExtensions (t);
 		}
 
-		//
-		// Extract all method information
-		//
-		void GetTypeMethods (Type t, XmlReflectionImporter xmlImporter, SoapReflectionImporter soapImporter)
+		protected override MethodStubInfo CreateMethodStubInfo (TypeStubInfo parent, LogicalMethodInfo lmi, bool isClientProxy)
 		{
-			MethodInfo [] type_methods = t.GetMethods (BindingFlags.Instance | BindingFlags.Public);
-			LogicalMethodInfo [] methods = LogicalMethodInfo.Create (type_methods, LogicalMethodTypes.Sync);
+			object [] ats = lmi.GetCustomAttributes (typeof (SoapDocumentMethodAttribute));
+			if (ats.Length == 0) ats = lmi.GetCustomAttributes (typeof (SoapRpcMethodAttribute));
 
-			foreach (LogicalMethodInfo mi in methods){
-				MethodStubInfo msi = MethodStubInfo.Create (this, mi, xmlImporter, soapImporter);
-
-				if (msi == null)
-					continue;
-
-				name_to_method [msi.Name] = msi;
-				this.methods.Add (msi);
-			}
+			if (ats.Length == 0 && isClientProxy)
+				return null;
+			else if (ats.Length == 0)
+				return new SoapMethodStubInfo (parent, lmi, null, XmlImporter, SoapImporter);
+			else
+				return new SoapMethodStubInfo (parent, lmi, ats[0], XmlImporter, SoapImporter);
 		}
 		
-		internal TypeStubInfo (Type t)
-		{
-			this.Type = t;
-			GetTypeAttributes (t);
-
-			XmlImporter = new XmlReflectionImporter ();
-			SoapImporter = new SoapReflectionImporter ();
-			GetTypeMethods (t, XmlImporter, SoapImporter);
-		}
-
-		internal MethodStubInfo GetMethod (string name)
-		{
-			return (MethodStubInfo) name_to_method [name];
-		}
-
 		internal void RegisterHeaderType (Type type)
 		{
 			XmlSerializer s = (XmlSerializer) header_serializers [type];
@@ -491,11 +420,6 @@ namespace System.Web.Services.Protocols {
 			return (XmlSerializer) header_serializers_byname [qname];
 		}
 		
-		internal ArrayList Methods
-		{
-			get { return methods; }
-		}
-
 		internal ArrayList Bindings
 		{
 			get { return bindings; }
@@ -506,41 +430,6 @@ namespace System.Web.Services.Protocols {
 			for (int n=0; n<bindings.Count; n++)
 				if (((BindingInfo)bindings[n]).Name == name) return (BindingInfo)bindings[n];
 			return null;
-		}
-	}
-	
-	//
-	// Manages 
-	//
-	internal class TypeStubManager {
-		static Hashtable type_to_manager;
-		
-		static TypeStubManager ()
-		{
-			type_to_manager = new Hashtable ();
-		}
-
-		//
-		// This needs to be thread safe
-		//
-		static internal TypeStubInfo GetTypeStub (Type t)
-		{
-			TypeStubInfo tm = (TypeStubInfo) type_to_manager [t];
-
-			if (tm != null)
-				return tm;
-
-			lock (typeof (TypeStubInfo)){
-				tm = (TypeStubInfo) type_to_manager [t];
-
-				if (tm != null)
-					return tm;
-				
-				tm = new TypeStubInfo (t);
-				type_to_manager [t] = tm;
-
-				return tm;
-			}
 		}
 	}
 }

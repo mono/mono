@@ -56,10 +56,10 @@ namespace System.Web.Services.Protocols
 					handler = new HttpSoapWebServiceHandler (type);
 					break;
 				case WSProtocol.HttpPost:
-					//handler = new ();
+					handler = new HttpPostWebServiceHandler (type);
 					break;
 				case WSProtocol.HttpGet:
-					//handler = new ();
+					handler = new HttpGetWebServiceHandler (type);
 					break;
 				case WSProtocol.Documentation:
 					handler = new SoapDocumentationHandler (type, context);
@@ -75,10 +75,20 @@ namespace System.Web.Services.Protocols
 
 		static WSProtocol GuessProtocol (HttpContext context, string verb)
 		{
-			if (context.Request.RequestType == "GET")
-				return WSProtocol.Documentation;
+			if (context.Request.PathInfo == null || context.Request.PathInfo == "")
+			{
+				if (context.Request.RequestType == "GET")
+					return WSProtocol.Documentation;
+				else
+					return WSProtocol.HttpSoap;
+			}
 			else
-				return WSProtocol.HttpSoap;
+			{
+				if (context.Request.RequestType == "GET")
+					return WSProtocol.HttpGet;
+				else
+					return WSProtocol.HttpPost;
+			}
 		}
 
 		public void ReleaseHandler (IHttpHandler handler)

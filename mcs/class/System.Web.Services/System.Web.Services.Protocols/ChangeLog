@@ -1,3 +1,22 @@
+2003-10-01  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HtmlFormParameterReader.cs, HtmlFormParameterWriter.cs, 
+	  HttpGetClientProtocol.cs, HttpPostClientProtocol.cs, 
+	  HttpSimpleClientProtocol.cs, MimeFormatter.cs, MimeParameterWriter.cs,
+	  NopReturnReader.cs, UrlEncodedParameterWriter.cs, UrlParameterReader.cs,
+	  UrlParameterWriter.cs, ValueCollectionParameterReader.cs, 
+	  WebClientAsyncResult.cs, XmlReturnReader.cs, XmlReturnWriter.cs
+	  : Implemented.
+	
+	* HttpSoapWebServiceHandler.cs, SoapClientMessage.cs, SoapServerMessage.cs,
+	  SoapDocumentationHandler.cs, SoapHttpClientProtocol.cs, 
+	  WebServiceHelper.cs: Changed due to modifications in  TypeStubInfo.
+	  
+	* Methods.cs: Moved common code to TypeStubInfo.cs.
+	* WebServiceHandler.cs: Moved invoke code to HttpSoapWebServiceHandler.cs
+	* ServerProtocol.cs, SoapServerProtocol.cs: Fixed formatting.
+	* WebServiceHandlerFactory.cs: Added support for HttpGet and HttpPost.
+
 2003-09-29  Lluis Sanchez Gual  <lluis@ximian.com>
 	
 	* Methods.cs: Little fix in binding check.

@@ -12,22 +12,21 @@ using System.Web;
 using System.Xml;
 using System.Text;
 using System.IO;
+using System.Reflection;
 using System.Xml.Serialization;
 
 namespace System.Web.Services.Protocols
 {
 	internal class HttpSoapWebServiceHandler: WebServiceHandler
 	{
-		Type _type;
-		TypeStubInfo _typeStubInfo;
+		SoapTypeStubInfo _typeStubInfo;
 		SoapExtension[] _extensionChainHighPrio;
 		SoapExtension[] _extensionChainMedPrio;
 		SoapExtension[] _extensionChainLowPrio;
 
-		public HttpSoapWebServiceHandler (Type type)
+		public HttpSoapWebServiceHandler (Type type): base (type)
 		{
-			_type = type;
-			_typeStubInfo = TypeStubManager.GetTypeStub (_type);
+			_typeStubInfo = (SoapTypeStubInfo) TypeStubManager.GetTypeStub (ServiceType, typeof(SoapTypeStubInfo));
 		}
 
 		public override bool IsReusable 
@@ -60,9 +59,9 @@ namespace System.Web.Services.Protocols
 			using (stream)
 			{
 				string soapAction = null;
-				MethodStubInfo methodInfo = null;
+				SoapMethodStubInfo methodInfo = null;
 				Encoding encoding = WebServiceHelper.GetContentEncoding (request.ContentType);
-				object server = Activator.CreateInstance (_type);
+				object server = CreateServerInstance ();
 
 				SoapServerMessage message = new SoapServerMessage (request, server, stream);
 				message.SetStage (SoapMessageStage.BeforeDeserialize);
@@ -163,12 +162,12 @@ namespace System.Web.Services.Protocols
 			}
 		}
 
-		MethodStubInfo GetMethodFromAction (string soapAction)
+		SoapMethodStubInfo GetMethodFromAction (string soapAction)
 		{
 			soapAction = soapAction.Trim ('"',' ');
 			int i = soapAction.LastIndexOf ('/');
 			string methodName = soapAction.Substring (i + 1);
-			return _typeStubInfo.GetMethod (methodName);
+			return (SoapMethodStubInfo) _typeStubInfo.GetMethod (methodName);
 		}
 
 		string ReadActionFromRequestElement (Stream stream, Encoding encoding)
@@ -203,7 +202,7 @@ namespace System.Web.Services.Protocols
 
 		void SerializeResponse (HttpResponse response, SoapServerMessage message)
 		{
-			MethodStubInfo methodInfo = message.MethodStubInfo;
+			SoapMethodStubInfo methodInfo = message.MethodStubInfo;
 			
 			response.ContentType = "text/xml; charset=utf-8";
 			if (message.Exception != null) response.StatusCode = 500;
@@ -213,7 +212,7 @@ namespace System.Web.Services.Protocols
 			MemoryStream bufferStream = null;
 			Stream responseStream = response.OutputStream;
 			
-			if (methodInfo.BufferResponse)
+			if (methodInfo.MethodAttribute.BufferResponse)
 			{
 				bufferStream = new MemoryStream ();
 				outStream = bufferStream;
@@ -225,7 +224,7 @@ namespace System.Web.Services.Protocols
 			{
 				// While serializing, process extensions in reverse order
 
-				if (methodInfo.BufferResponse)
+				if (methodInfo.MethodAttribute.BufferResponse)
 				{
 					outStream = SoapExtension.ExecuteChainStream (_extensionChainHighPrio, outStream);
 					outStream = SoapExtension.ExecuteChainStream (_extensionChainMedPrio, outStream);
@@ -246,7 +245,7 @@ namespace System.Web.Services.Protocols
 				else
 					WebServiceHelper.WriteSoapMessage (xtw, _typeStubInfo, _typeStubInfo.FaultSerializer, new Fault (message.Exception), null);
 
-				if (methodInfo.BufferResponse)
+				if (methodInfo.MethodAttribute.BufferResponse)
 				{
 					message.SetStage (SoapMessageStage.AfterSerialize);
 					SoapExtension.ExecuteProcessMessage (_extensionChainLowPrio, message, true);
@@ -261,7 +260,7 @@ namespace System.Web.Services.Protocols
 			{
 				// If the response is buffered, we can discard the response and
 				// serialize a new Fault message as response.
-				if (methodInfo.BufferResponse) throw ex;
+				if (methodInfo.MethodAttribute.BufferResponse) throw ex;
 				
 				// If it is not buffered, we can't rollback what has been sent,
 				// so we can only close the connection and return.
@@ -271,7 +270,7 @@ namespace System.Web.Services.Protocols
 			
 			try
 			{
-				if (methodInfo.BufferResponse)
+				if (methodInfo.MethodAttribute.BufferResponse)
 					responseStream.Write (bufferStream.GetBuffer(), 0, (int) contentLength);
 			}
 			catch {}
@@ -296,6 +295,47 @@ namespace System.Web.Services.Protocols
 
 			SerializeResponse (context.Response, faultMessage);
 			return;
+		}
+		
+		private SoapServerMessage Invoke (SoapServerMessage requestMessage)
+		{
+			SoapMethodStubInfo methodInfo = requestMessage.MethodStubInfo;
+
+			// Assign header values to web service members
+
+			requestMessage.UpdateHeaderValues (requestMessage.Server, methodInfo.Headers);
+
+			// Fill an array with the input parameters at the right position
+
+			object[] parameters = new object[methodInfo.MethodInfo.Parameters.Length];
+			ParameterInfo[] inParams = methodInfo.MethodInfo.InParameters;
+			for (int n=0; n<inParams.Length; n++)
+				parameters [inParams[n].Position] = requestMessage.InParameters [n];
+
+			// Invoke the method
+
+			try
+			{
+				object[] results = methodInfo.MethodInfo.Invoke (requestMessage.Server, parameters);
+				requestMessage.OutParameters = results;
+			}
+			catch (TargetInvocationException ex)
+			{
+				throw ex.InnerException;
+			}
+
+			// Check that headers with MustUnderstand flag have been understood
+			
+			foreach (SoapHeader header in requestMessage.Headers)
+			{
+				if (header.MustUnderstand && !header.DidUnderstand)
+					throw new SoapHeaderException ("Header not understood: " + header.GetType(), SoapException.MustUnderstandFaultCode);
+			}
+
+			// Collect headers that must be sent to the client
+			requestMessage.CollectHeaders (requestMessage.Server, methodInfo.Headers, SoapHeaderDirection.Out);
+
+			return requestMessage;
 		}
 	}
 }

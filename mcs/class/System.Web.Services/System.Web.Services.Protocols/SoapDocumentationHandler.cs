@@ -22,19 +22,17 @@ namespace System.Web.Services.Protocols
 {
 	internal class SoapDocumentationHandler: WebServiceHandler
 	{
-		Type _type;
-		TypeStubInfo _typeStubInfo;
+		SoapTypeStubInfo _typeStubInfo;
 		ServiceDescriptionCollection _descriptions;
 		XmlSchemas _schemas;
 		string _url;
 
-		public SoapDocumentationHandler (Type type, HttpContext context)
+		public SoapDocumentationHandler (Type type, HttpContext context): base (type)
 		{
-			_type = type;
 			_url = context.Request.Url.ToString();
 			int i = _url.LastIndexOf ('?');
 			if (i != -1) _url = _url.Substring (0,i);
-			_typeStubInfo = TypeStubManager.GetTypeStub (_type);
+			_typeStubInfo = (SoapTypeStubInfo) TypeStubManager.GetTypeStub (ServiceType, typeof(SoapTypeStubInfo));
 		}
 
 		public override bool IsReusable 
@@ -137,7 +135,7 @@ namespace System.Web.Services.Protocols
 			if (_descriptions == null)
 			{
 				ServiceDescriptionReflector reflector = new ServiceDescriptionReflector ();
-				reflector.Reflect (_type,_url);
+				reflector.Reflect (ServiceType,_url);
 				_schemas = reflector.Schemas;
 				_descriptions = reflector.ServiceDescriptions;
 			}

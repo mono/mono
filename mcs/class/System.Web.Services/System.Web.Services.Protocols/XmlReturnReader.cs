@@ -9,11 +9,14 @@
 
 using System.IO;
 using System.Net;
+using System.Xml.Serialization;
 using System.Web.Services;
 
 namespace System.Web.Services.Protocols {
 	public class XmlReturnReader : MimeReturnReader {
 
+		XmlSerializer serializer;
+		
 		#region Constructors
 
 		public XmlReturnReader () 
@@ -24,28 +27,47 @@ namespace System.Web.Services.Protocols {
 
 		#region Methods
 
-		[MonoTODO]
 		public override object GetInitializer (LogicalMethodInfo methodInfo)
 		{
-			throw new NotImplementedException ();
+			string namesp = WebServiceHelper.GetServiceNamespace (methodInfo.DeclaringType);
+			return new XmlSerializer (methodInfo.ReturnType, namesp);
 		}
 
-		[MonoTODO]
 		public override object[] GetInitializers (LogicalMethodInfo[] methodInfos)
 		{
-			throw new NotImplementedException ();
+			XmlReflectionImporter importer = new XmlReflectionImporter ();
+			XmlMapping[] sers = new XmlMapping [methodInfos.Length];
+			for (int n=0; n<sers.Length; n++)
+			{
+				LogicalMethodInfo metinfo = methodInfos[n];
+				if (metinfo.IsVoid) 
+					sers[n] = null;
+				else
+				{
+					string namesp = WebServiceHelper.GetServiceNamespace (metinfo.DeclaringType);
+					sers[n] = importer.ImportTypeMapping (methodInfos[n].ReturnType, namesp);
+				}
+			}
+			return XmlSerializer.FromMappings (sers);
 		}
-
-		[MonoTODO]
+		
 		public override void Initialize (object o)
 		{
-			throw new NotImplementedException ();
+			serializer = (XmlSerializer)o;
 		}
 
-		[MonoTODO]
 		public override object Read (WebResponse response, Stream responseStream)
 		{
-			throw new NotImplementedException ();
+			object result = null;
+			if (serializer != null)
+			{
+				if (response.ContentType.IndexOf ("text/xml") == -1)
+					throw new InvalidOperationException ("Result was not XML");
+				
+				result = serializer.Deserialize (responseStream);
+			}
+			responseStream.Close ();
+			return result;
 		}
 
 		#endregion // Methods

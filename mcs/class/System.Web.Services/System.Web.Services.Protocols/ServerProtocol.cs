@@ -93,7 +93,8 @@ namespace System.Web.Services.Protocols {
 		}
 
 		public abstract bool Initialize ();
-                public abstract object[] ReadParameters ();
+
+		public abstract object[] ReadParameters ();
 
 		[MonoTODO]
 		public virtual bool WriteException (Exception e, Stream outputStream)

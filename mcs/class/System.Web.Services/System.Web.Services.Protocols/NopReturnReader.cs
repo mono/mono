@@ -16,32 +16,27 @@ namespace System.Web.Services.Protocols {
 
 		#region Constructors
 
-		[MonoTODO]
 		public NopReturnReader () 
 		{
-			throw new NotImplementedException ();
 		}
 		
 		#endregion // Constructors
 
 		#region Methods
 
-		[MonoTODO]
 		public override object GetInitializer (LogicalMethodInfo methodInfo)
 		{
-			throw new NotImplementedException ();
+			return this;
 		}
 
-		[MonoTODO]
 		public override void Initialize (object initializer)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override object Read (WebResponse response, Stream responseStream)
 		{
-			throw new NotImplementedException ();
+			responseStream.Close ();
+			return null;
 		}
 
 		#endregion // Methods

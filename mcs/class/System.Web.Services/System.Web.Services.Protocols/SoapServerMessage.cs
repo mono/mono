@@ -17,7 +17,7 @@ namespace System.Web.Services.Protocols {
 		#region Fields
 
 		string action;
-		MethodStubInfo stubInfo;
+		SoapMethodStubInfo stubInfo;
 		object server;
 		string url;
 		object[] parameters;
@@ -34,7 +34,7 @@ namespace System.Web.Services.Protocols {
 			this.url = request.Url.ToString();
 		}
 
-		internal SoapServerMessage (HttpRequest request, SoapException exception, MethodStubInfo stubInfo, object server, Stream stream)
+		internal SoapServerMessage (HttpRequest request, SoapException exception, SoapMethodStubInfo stubInfo, object server, Stream stream)
 			: base (stream, exception)
 		{
 			this.action = request.Headers ["SOAPAction"];
@@ -55,7 +55,7 @@ namespace System.Web.Services.Protocols {
 			get { return action; }
 		}
 
-		internal MethodStubInfo MethodStubInfo {
+		internal SoapMethodStubInfo MethodStubInfo {
 			get { return stubInfo; }
 			set { stubInfo = value; }
 		}

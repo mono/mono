@@ -3,6 +3,7 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2002
 //
@@ -14,46 +15,60 @@ using System.Web;
 namespace System.Web.Services.Protocols {
 	public abstract class ValueCollectionParameterReader : MimeParameterReader {
 
+		ParameterInfo[] parameters;
+
 		#region Constructors
 
-		[MonoTODO]
 		protected ValueCollectionParameterReader () 
 		{
-			throw new NotImplementedException ();
 		}
 		
 		#endregion // Constructors
 
 		#region Methods
 
-		[MonoTODO]
 		public override object GetInitializer (LogicalMethodInfo methodInfo)
 		{
-			throw new NotImplementedException ();
+			if (IsSupported (methodInfo)) return methodInfo.Parameters;
+			else return null;
 		}
 
-		[MonoTODO]
 		public override void Initialize (object o)
 		{
-			throw new NotImplementedException ();
+			parameters = (ParameterInfo[]) o;
 		}
 
-		[MonoTODO]
 		public static bool IsSupported (LogicalMethodInfo methodInfo)
 		{
-			throw new NotImplementedException ();
+			foreach (ParameterInfo param in methodInfo.Parameters)
+				if (!IsSupported (param)) return false;
+			return true;
 		}
 
-		[MonoTODO]
 		public static bool IsSupported (ParameterInfo paramInfo)
 		{
-			throw new NotImplementedException ();
+			return !paramInfo.ParameterType.IsByRef && !paramInfo.IsOut;
 		}
 
-		[MonoTODO]
 		protected object[] Read (NameValueCollection collection)
 		{
-			throw new NotImplementedException ();
+			object[] res = new object [parameters.Length];
+			for (int n=0; n<res.Length; n++)
+			{
+				string val = collection [parameters[n].Name];
+				if (val == null) throw new InvalidOperationException ("Missing parameter: " + parameters[n].Name);
+				try
+				{
+					res [n] = Convert.ChangeType (val, parameters[n].ParameterType);
+				}
+				catch (Exception ex)
+				{
+					string error = "Cannot convert " + val + " to " + parameters[n].ParameterType.FullName + "\n";
+					error += "Parameter name: " + parameters[n].Name + " --> " + ex.Message;
+					throw new InvalidOperationException (error);
+				}
+			}
+			return res;
 		}
 
 		#endregion // Methods

@@ -17,6 +17,7 @@ namespace System.Web.Services.Protocols {
 
 		public HttpPostClientProtocol () 
 		{
+			TypeStub = (HttpSimpleTypeStubInfo) TypeStubManager.GetTypeStub (GetType(), typeof (HttpPostMethodStubInfo));
 		}
 		
 		#endregion // Constructors
@@ -29,7 +30,10 @@ namespace System.Web.Services.Protocols {
 				throw new InvalidOperationException ("The uri parameter is a null reference.");
 			if (String.Empty == uri.ToString ())
 				throw new InvalidOperationException ("The uri parameter has a length of zero.");
-			return WebRequest.Create (uri);
+
+			WebRequest request = WebRequest.Create (uri);
+			request.Method = "POST";
+			return request;
 		}
 
 		#endregion // Methods

@@ -3,6 +3,7 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2002
 //
@@ -17,10 +18,8 @@ namespace System.Web.Services.Protocols {
 
 		#region Constructors
 
-		[MonoTODO]
 		protected MimeParameterWriter () 
 		{
-			throw new NotImplementedException ();
 		}
 		
 		#endregion // Constructors
@@ -28,37 +27,29 @@ namespace System.Web.Services.Protocols {
 		#region Properties 
 
 		public virtual Encoding RequestEncoding {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			get { return null; }
+			set { ; }
 		}
 
 		public virtual bool UsesWriteRequest {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return false; }
 		}
 
 		#endregion // Properties
 
 		#region Methods
 
-		[MonoTODO]
 		public virtual string GetRequestUrl (string url, object[] parameters)
 		{
-			throw new NotImplementedException ();
+			return url;
 		}
 
-		[MonoTODO]
 		public virtual void InitializeRequest (WebRequest request, object[] values)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual void WriteRequest (Stream requestStream, object[] values)
 		{
-			throw new NotImplementedException ();
 		}
 
 		#endregion // Methods

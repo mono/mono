@@ -3,6 +3,7 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2002
 //
@@ -15,24 +16,29 @@ namespace System.Web.Services.Protocols {
 
 		#region Fields
 
-		WaitHandle waitHandle;
+		AsyncCallback _callback;
+		object _asyncState;
 
-		WebClientProtocol protocol;
-		WebRequest request;
-		AsyncCallback callback;
-		object asyncState;
+		bool _completedSynchronously;
+		bool _done;
+		ManualResetEvent _waitHandle;
+		
+		internal SoapClientMessage Message;
+		internal SoapExtension[] Extensions;
 
+		internal object Result;
+		internal Exception Exception;
+		internal WebRequest Request;
+			
 		#endregion // Fields
 
 		#region Constructors 
 
-		[MonoTODO ("Figure out what this does.")]
-		internal WebClientAsyncResult (WebClientProtocol protocol, object x, WebRequest request, AsyncCallback callback, object asyncState, int y)
+		internal WebClientAsyncResult (WebRequest request, AsyncCallback callback, object asyncState)
 		{
-			this.protocol = protocol;
-			this.request = request;
-			this.callback = callback; 
-			this.asyncState = asyncState;
+			_callback = callback; 
+			Request = request;
+			_asyncState = asyncState;
 		}
 
 		#endregion // Constructors
@@ -40,21 +46,29 @@ namespace System.Web.Services.Protocols {
 		#region Properties
 
 		public object AsyncState {
-			get { return asyncState; }
+			get { return _asyncState; }
 		}
 
-		public WaitHandle AsyncWaitHandle {
-			get { return waitHandle; }
+		public WaitHandle AsyncWaitHandle 
+		{
+			get
+			{
+				lock (this) {
+					if (_waitHandle != null) return _waitHandle;
+					_waitHandle = new ManualResetEvent (_done);
+					return _waitHandle;
+				}
+			}
 		}
 
-		public bool CompletedSynchronously {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+		public bool CompletedSynchronously 
+		{
+			get { return _completedSynchronously; }
 		}
 
-		public bool IsCompleted {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+		public bool IsCompleted 
+		{
+			get { lock (this) { return _done; } }
 		}
 
 		#endregion // Properties
@@ -63,7 +77,29 @@ namespace System.Web.Services.Protocols {
 
 		public void Abort ()
 		{
-			request.Abort ();
+			Request.Abort ();
+		}
+
+		internal void SetCompleted (object result, Exception exception, bool async)
+		{
+			lock (this)
+			{
+				Exception = exception;
+				Result = result;
+				_done = true;
+				_completedSynchronously = async;
+				if (_waitHandle != null) _waitHandle.Set ();
+				Monitor.PulseAll (this);
+			}
+			if (_callback != null) _callback (this);
+		}
+
+		internal void WaitForComplete ()
+		{
+			lock (this)
+			{
+				Monitor.Wait (this);
+			}
 		}
 
 		#endregion // Methods

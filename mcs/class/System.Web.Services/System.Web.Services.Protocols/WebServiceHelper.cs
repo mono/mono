@@ -19,6 +19,14 @@ namespace System.Web.Services.Protocols
 	{
 		public const string SoapEnvelopeNamespace = "http://schemas.xmlsoap.org/soap/envelope/";
 
+		public static string GetServiceNamespace (Type t)
+		{
+			object[] ats = t.GetCustomAttributes (typeof(WebServiceAttribute), true);
+			if (ats.Length == 0) return WebServiceAttribute.DefaultNamespace;
+			else return ((WebServiceAttribute)ats[0]).Namespace;
+		}
+
+
 		public static Encoding GetContentEncoding (string cts)
 		{
 			string encoding;
@@ -53,7 +61,7 @@ namespace System.Web.Services.Protocols
 			return Encoding.GetEncoding (encoding);
 		}
 
-		public static void WriteSoapMessage (XmlTextWriter xtw, TypeStubInfo info, XmlSerializer bodySerializer, object bodyContent, SoapHeaderCollection headers)
+		public static void WriteSoapMessage (XmlTextWriter xtw, SoapTypeStubInfo info, XmlSerializer bodySerializer, object bodyContent, SoapHeaderCollection headers)
 		{
 			xtw.WriteStartDocument ();
 			xtw.WriteStartElement ("soap", "Envelope", WebServiceHelper.SoapEnvelopeNamespace);
@@ -81,7 +89,7 @@ namespace System.Web.Services.Protocols
 			xtw.Flush ();
 		}
 
-		public static void ReadSoapMessage (XmlTextReader xmlReader, TypeStubInfo typeStubInfo, XmlSerializer bodySerializer, out object body, out SoapHeaderCollection headers)
+		public static void ReadSoapMessage (XmlTextReader xmlReader, SoapTypeStubInfo typeStubInfo, XmlSerializer bodySerializer, out object body, out SoapHeaderCollection headers)
 		{
 			xmlReader.MoveToContent ();
 			xmlReader.ReadStartElement ("Envelope", WebServiceHelper.SoapEnvelopeNamespace);
@@ -95,7 +103,7 @@ namespace System.Web.Services.Protocols
 			body = bodySerializer.Deserialize (xmlReader);
 		}
 
-		static SoapHeaderCollection ReadHeaders (TypeStubInfo typeStubInfo, XmlTextReader xmlReader)
+		static SoapHeaderCollection ReadHeaders (SoapTypeStubInfo typeStubInfo, XmlTextReader xmlReader)
 		{
 			SoapHeaderCollection headers = new SoapHeaderCollection ();
 			while (! (xmlReader.NodeType == XmlNodeType.Element && xmlReader.LocalName == "Body" && xmlReader.NamespaceURI == WebServiceHelper.SoapEnvelopeNamespace))

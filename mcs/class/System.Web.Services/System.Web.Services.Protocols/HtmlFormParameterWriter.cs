@@ -16,10 +16,8 @@ namespace System.Web.Services.Protocols {
 
 		#region Constructors
 
-		[MonoTODO]
 		public HtmlFormParameterWriter () 
 		{
-			throw new NotImplementedException ();
 		}
 		
 		#endregion // Constructors
@@ -27,24 +25,26 @@ namespace System.Web.Services.Protocols {
 		#region Properties
 
 		public override bool UsesWriteRequest {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return true; }
 		}
 
 		#endregion // Properties
 
 		#region Methods
 
-		[MonoTODO]
 		public override void InitializeRequest (WebRequest request, object[] values)
 		{
-			throw new NotImplementedException ();
+			if (RequestEncoding == null) request.ContentType = "application/x-www-form-urlencoded";
+			else request.ContentType = "application/x-www-form-urlencoded; charset=" + RequestEncoding.BodyName;
 		}
 
-		[MonoTODO]
 		public override void WriteRequest (Stream requestStream, object[] values)
 		{
-			throw new NotImplementedException ();
+			MemoryStream ms = new MemoryStream ();
+			StreamWriter sw = new StreamWriter (ms);
+			Encode (sw, values);
+			sw.Flush ();
+			requestStream.Write (ms.GetBuffer(), 0, (int) ms.Length);
 		}
 
 		#endregion // Methods

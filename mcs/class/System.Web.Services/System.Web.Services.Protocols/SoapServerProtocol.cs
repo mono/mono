@@ -46,23 +46,23 @@ namespace System.Web.Services.Protocols {
 			throw new NotImplementedException ();
 		}
 
-                [MonoTODO]
-                public override object[] ReadParameters ()
-                {
-                        throw new NotImplementedException ();
-                }
-
-                [MonoTODO]
-                public override bool WriteException (Exception e, Stream outputStream)
-                {
-                        throw new NotImplementedException ();
-                }
-                
 		[MonoTODO]
-                public override void WriteReturns (object[] returnValues, Stream outputStream)
-                {
-                        throw new NotImplementedException ();
-                }
+		public override object[] ReadParameters ()
+		{
+				throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public override bool WriteException (Exception e, Stream outputStream)
+		{
+				throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public override void WriteReturns (object[] returnValues, Stream outputStream)
+		{
+				throw new NotImplementedException ();
+		}
 
 		#endregion
 	}

@@ -9,35 +9,52 @@
 
 using System.IO;
 using System.Web;
+using System.Xml.Serialization;
 
 namespace System.Web.Services.Protocols {
 	internal class XmlReturnWriter : MimeReturnWriter {
 
+		XmlSerializer serializer;
+		
 		#region Methods
 
-		[MonoTODO]
-                public override object GetInitializer (LogicalMethodInfo methodInfo)
+		public override object GetInitializer (LogicalMethodInfo methodInfo)
 		{
-			throw new NotImplementedException ();
+			string namesp = WebServiceHelper.GetServiceNamespace (methodInfo.DeclaringType);
+			return new XmlSerializer (methodInfo.ReturnType, namesp);
+		}
+		
+		public override object[] GetInitializers (LogicalMethodInfo[] methodInfos)
+		{
+			XmlReflectionImporter importer = new XmlReflectionImporter ();
+			XmlMapping[] sers = new XmlMapping [methodInfos.Length];
+			for (int n=0; n<sers.Length; n++)
+			{
+				LogicalMethodInfo metinfo = methodInfos[n];
+				if (metinfo.IsVoid) 
+					sers[n] = null;
+				else
+				{
+					string namesp = WebServiceHelper.GetServiceNamespace (metinfo.DeclaringType);
+					sers[n] = importer.ImportTypeMapping (methodInfos[n].ReturnType, namesp);
+				}
+			}
+			return XmlSerializer.FromMappings (sers);
 		}
 
-                [MonoTODO]
-                public override object[] GetInitializers (LogicalMethodInfo[] methodInfos)
-                {
-                        throw new NotImplementedException ();
-                }
-
-		[MonoTODO]
-                public override void Initialize (object initializer) 
+		public override void Initialize (object initializer) 
 		{
-			throw new NotImplementedException ();
+			serializer = (XmlSerializer) initializer;
 		}
 
-		[MonoTODO]
 		public override void Write (HttpResponse response, Stream outputStream, object returnValue)
 		{
-			//serializer.Serialize (textWriter, o)
-			throw new NotImplementedException ();
+			if (serializer != null)
+			{
+				response.ContentType = "text/xml; charset=utf-8";
+				serializer.Serialize (outputStream, returnValue);
+			}
+			outputStream.Close ();
 		}
 
 		#endregion // Methods

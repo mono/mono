@@ -17,6 +17,7 @@ namespace System.Web.Services.Protocols {
 
 		public HttpGetClientProtocol () 
 		{
+			TypeStub = (HttpSimpleTypeStubInfo) TypeStubManager.GetTypeStub (GetType(), typeof (HttpGetMethodStubInfo));
 		}
 		
 		#endregion // Constructors
@@ -29,7 +30,10 @@ namespace System.Web.Services.Protocols {
 				throw new InvalidOperationException ("The uri parameter is null.");
 			if (uri.ToString () == String.Empty)
 				throw new InvalidOperationException ("The uri parameter has a length of zero.");
-			return WebRequest.Create (uri);
+				
+			WebRequest request = WebRequest.Create (uri);
+			request.Method = "GET";
+			return request;
 		}
 
 		#endregion // Methods

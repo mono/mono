@@ -20,7 +20,7 @@ namespace System.Web.Services.Protocols {
 		SoapHttpClientProtocol client;
 		string url;
 		LogicalMethodInfo client_method;
-		internal MethodStubInfo MethodStubInfo;
+		internal SoapMethodStubInfo MethodStubInfo;
 
 		//
 		// Expose this one internally
@@ -33,7 +33,7 @@ namespace System.Web.Services.Protocols {
 		//
 		// Constructs the SoapClientMessage
 		//
-		internal SoapClientMessage (SoapHttpClientProtocol client, MethodStubInfo msi, string url, object [] parameters)
+		internal SoapClientMessage (SoapHttpClientProtocol client, SoapMethodStubInfo msi, string url, object [] parameters)
 		{
 			this.MethodStubInfo = msi;
 			this.client = client;

@@ -3,6 +3,7 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2002
 //
@@ -15,20 +16,17 @@ namespace System.Web.Services.Protocols {
 
 		#region Constructors
 
-		[MonoTODO]
 		public HtmlFormParameterReader () 
 		{
-			throw new NotImplementedException ();
 		}
 		
 		#endregion // Constructors
 
 		#region Methods
 
-		[MonoTODO]
 		public override object[] Read (HttpRequest request)
 		{
-			throw new NotImplementedException ();
+			return Read (request.Form);
 		}
 
 		#endregion // Methods

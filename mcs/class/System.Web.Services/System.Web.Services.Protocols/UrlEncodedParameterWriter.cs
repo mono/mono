@@ -3,6 +3,7 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2002
 //
@@ -10,16 +11,19 @@
 using System.IO;
 using System.Text;
 using System.Web.Services;
+using System.Web;
+using System.Reflection;
 
 namespace System.Web.Services.Protocols {
 	public abstract class UrlEncodedParameterWriter : MimeParameterWriter {
 
+		Encoding requestEncoding;
+		ParameterInfo[] parameters;
+		
 		#region Constructors
 
-		[MonoTODO]
 		protected UrlEncodedParameterWriter () 
 		{
-			throw new NotImplementedException ();
 		}
 		
 		#endregion // Constructors
@@ -27,38 +31,39 @@ namespace System.Web.Services.Protocols {
 		#region Properties 
 
 		public override Encoding RequestEncoding {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			get { return requestEncoding; }
+			set { requestEncoding = value; }
 		}
 
 		#endregion // Properties
 
 		#region Methods
 
-		[MonoTODO]
 		protected void Encode (TextWriter writer, object[] values)
 		{
-			throw new NotImplementedException ();
+			for (int n=0; n<values.Length; n++)
+			{
+				if (n>0) writer.Write ("&");
+				Encode (writer, parameters[n].Name, values[n]);
+			}
 		}
 
-		[MonoTODO]
 		protected void Encode (TextWriter writer, string name, object value)
 		{
-			throw new NotImplementedException ();
+			writer.Write (HttpUtility.UrlEncode (name, requestEncoding));
+			writer.Write ("=");
+			writer.Write (HttpUtility.UrlEncode (value.ToString(), requestEncoding));
 		}
 
-		[MonoTODO]
 		public override object GetInitializer (LogicalMethodInfo methodInfo)
 		{
-			throw new NotImplementedException ();
+			if (methodInfo.OutParameters.Length > 0) return null;
+			else return methodInfo.Parameters;
 		}
 
-		[MonoTODO]
 		public override void Initialize (object initializer)
 		{
-			throw new NotImplementedException ();
+			parameters = (ParameterInfo[]) initializer;
 		}
 
 		#endregion // Methods

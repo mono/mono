@@ -3,6 +3,7 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2002
 //
@@ -14,40 +15,42 @@ namespace System.Web.Services.Protocols {
 
 		#region Constructors
 
-		[MonoTODO]
 		protected MimeFormatter () 
 		{
-			throw new NotImplementedException ();
 		}
 		
 		#endregion // Constructors
 
 		#region Methods
 
-		[MonoTODO]
 		public static MimeFormatter CreateInstance (Type type, object initializer)
 		{
-			throw new NotImplementedException ();
+			MimeFormatter ob = (MimeFormatter) Activator.CreateInstance (type);
+			ob.Initialize (initializer);
+			return ob;
 		}
 
 		public abstract object GetInitializer (LogicalMethodInfo methodInfo);
 
-		[MonoTODO]
 		public static object GetInitializer (Type type, LogicalMethodInfo methodInfo)
 		{
-			throw new NotImplementedException ();
+			MimeFormatter ob = (MimeFormatter) Activator.CreateInstance (type);
+			return ob.GetInitializer (methodInfo);
 		}
 
-		[MonoTODO]
 		public virtual object[] GetInitializers (LogicalMethodInfo[] methodInfos)
 		{
-			throw new NotImplementedException ();
+			object[] initializers = new object [methodInfos.Length];
+			for (int n=0; n<methodInfos.Length; n++)
+				initializers [n] = GetInitializer (methodInfos[n]);
+				
+			return initializers;
 		}
 
-		[MonoTODO]
 		public static object[] GetInitializers (Type type, LogicalMethodInfo[] methodInfos)
 		{
-			throw new NotImplementedException ();
+			MimeFormatter ob = (MimeFormatter) Activator.CreateInstance (type);
+			return ob.GetInitializers (methodInfos);
 		}
 
 		public abstract void Initialize (object initializer);	

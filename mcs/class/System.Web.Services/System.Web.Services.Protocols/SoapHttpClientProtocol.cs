@@ -27,7 +27,7 @@ using System.Threading;
 
 namespace System.Web.Services.Protocols {
 	public class SoapHttpClientProtocol : HttpWebClientProtocol {
-		TypeStubInfo type_info;
+		SoapTypeStubInfo type_info;
 
 		#region AsyncInfo class
 
@@ -100,7 +100,7 @@ namespace System.Web.Services.Protocols {
 
 		public SoapHttpClientProtocol () 
 		{
-			type_info = TypeStubManager.GetTypeStub (this.GetType ());
+			type_info = (SoapTypeStubInfo) TypeStubManager.GetTypeStub (this.GetType (), typeof(SoapTypeStubInfo));
 		}
 
 		#endregion // Constructors
@@ -111,7 +111,7 @@ namespace System.Web.Services.Protocols {
 		{
 			AsyncInfo ainfo = new AsyncInfo ();
 
-			MethodStubInfo msi = type_info.GetMethod (methodName);
+			SoapMethodStubInfo msi = (SoapMethodStubInfo) type_info.GetMethod (methodName);
 			ainfo.Message = new SoapClientMessage (this, msi, Url, parameters);
 			ainfo.Message.CollectHeaders (this, ainfo.Message.MethodStubInfo.Headers, SoapHeaderDirection.In);
 			ainfo.Extensions = SoapExtension.CreateExtensionChain (type_info.SoapExtensions[0], msi.SoapExtensions, type_info.SoapExtensions[1]);
@@ -258,7 +258,7 @@ namespace System.Web.Services.Protocols {
 		{
 			HttpWebResponse http_response = (HttpWebResponse) response;
 			HttpStatusCode code = http_response.StatusCode;
-			MethodStubInfo msi = message.MethodStubInfo;
+			SoapMethodStubInfo msi = message.MethodStubInfo;
 
 			if (!(code == HttpStatusCode.Accepted || code == HttpStatusCode.OK || code == HttpStatusCode.InternalServerError))
 				throw new Exception ("Return code was: " + http_response.StatusCode);
@@ -312,7 +312,7 @@ namespace System.Web.Services.Protocols {
 
 		protected object[] Invoke (string method_name, object[] parameters)
 		{
-			MethodStubInfo msi = type_info.GetMethod (method_name);
+			SoapMethodStubInfo msi = (SoapMethodStubInfo) type_info.GetMethod (method_name);
 			
 			SoapClientMessage message = new SoapClientMessage (this, msi, Url, parameters);
 			message.CollectHeaders (this, message.MethodStubInfo.Headers, SoapHeaderDirection.In);
