@@ -25,7 +25,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public TrackBar()
 		{
-			throw new NotImplementedException ();
+			
 		}
 		//
 		// --- Public Properties
@@ -115,10 +115,10 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override string Text {
 			get {
-				throw new NotImplementedException ();
+				return base.Text;
 			}
 			set {
-				throw new NotImplementedException ();
+				base.Text = value;
 			}
 		}
 		[MonoTODO]
@@ -174,8 +174,25 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
-				throw new NotImplementedException ();
-			}
+				CreateParams createParams = new CreateParams ();
+				window = new ControlNativeWindow (this);
+
+				createParams.Caption = Text;
+				createParams.ClassName = "TRACKBAR";
+				createParams.X = Left;
+				createParams.Y = Top;
+				createParams.Width = Width;
+				createParams.Height = Height;
+				createParams.ClassStyle = 0;
+				createParams.ExStyle = 0;
+				createParams.Param = 0;
+				//			createParams.Parent = Parent.Handle;
+				createParams.Style = (int) (
+					WindowStyles.WS_CHILD | 
+					WindowStyles.WS_VISIBLE);
+				window.CreateHandle (createParams);
+				return createParams;
+			}		
 		}
 		[MonoTODO]
 		protected override ImeMode DefaultImeMode {
@@ -186,7 +203,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override Size DefaultSize {
 			get {
-				throw new NotImplementedException ();
+				//FIXME: replace with correct values
+				return new System.Drawing.Size(300,20);
 			}
 		}
 		//
@@ -195,7 +213,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void CreateHandle() 
 		{
-			throw new NotImplementedException ();
+			//FIXME: just to get it to run
+			base.CreateHandle();
 		}
 		[MonoTODO]
 		protected override bool IsInputKey(Keys keyData) 
@@ -229,16 +248,19 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected override void WndProc(ref Message m)
 		{
 			throw new NotImplementedException ();
 		}
+
 		void ISupportInitialize.BeginInit(){
-			throw new NotImplementedException ();
+			//FIXME:
 		}
+
 		void ISupportInitialize.EndInit(){
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 	}
 }

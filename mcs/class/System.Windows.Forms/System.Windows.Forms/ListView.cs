@@ -12,7 +12,6 @@ using System.Drawing;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
 	//
 	// </summary>
 	public class ListView : Control {
@@ -22,7 +21,7 @@ namespace System.Windows.Forms {
 		//
 		[MonoTODO]
 		public ListView() {
-			throw new NotImplementedException ();
+			
 		}
 
 		//
@@ -266,10 +265,10 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override string Text {
 			get {
-				throw new NotImplementedException ();
+				return base.Text;
 			}
 			set {
-				throw new NotImplementedException ();
+				base.Text = value;
 			}
 		}
 		[MonoTODO]
@@ -327,54 +326,6 @@ namespace System.Windows.Forms {
 		public Rectangle RetItemRect(int val, ItemBoundsPortion portion) {
 			throw new NotImplementedException ();
 		}
-		//public void Invalidate() {
-		//	throw new NotImplementedException ();
-		//}
-		//public void Invalidate(bool b) {
-		//	throw new NotImplementedException ();
-		//}
-		//public void Invalidate(Rectangle rect) {
-		//	throw new NotImplementedException ();
-		//}
-		//public void Invalidate(Region reg) {
-		//	throw new NotImplementedException ();
-		//}
-		//public void Invalidate(Rectangle rect, bool b) {
-		//	throw new NotImplementedException ();
-		//}
-		//public object Invoke(Delegate del) {
-		//	throw new NotImplementedException ();
-		//}
-		//public object Invoke(Delegate del, object[] objs) {
-		//	throw new NotImplementedException ();
-		//}
-		//public void PerformLayout() {
-		//	throw new NotImplementedException ();
-		//}
-		//public void PerformLayout(Control ctl, string str) {
-		//	throw new NotImplementedException ();
-		//}
-		//public void ResumeLayout() {
-		//	throw new NotImplementedException ();
-		//}
-		//public void ResumeLayout(bool b) {
-		//	throw new NotImplementedException ();
-		//}
-		//public void Scale(float val1) {
-		//	throw new NotImplementedException ();
-		//}
-		//public void Scale(float val1, float val2) {
-		//	throw new NotImplementedException ();
-		//}
-		//public void Select() {
-		//	throw new NotImplementedException ();
-		//}
-		//public void SetBounds(int val1, int val2, int val3, int val4) {
-		//	throw new NotImplementedException ();
-		//}
-		//public void SetBounds(int val1, int val2, int val3, int val4, BoundsSpecified bounds) {
-		//	throw new NotImplementedException ();
-		//}
 		[MonoTODO]
 		public override string ToString() {
 			throw new NotImplementedException ();
@@ -398,8 +349,25 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
-				throw new NotImplementedException ();
-			}
+				CreateParams createParams = new CreateParams ();
+				window = new ControlNativeWindow (this);
+
+				createParams.Caption = Text;
+				createParams.ClassName = "LISTVIEW";
+				createParams.X = Left;
+				createParams.Y = Top;
+				createParams.Width = Width;
+				createParams.Height = Height;
+				createParams.ClassStyle = 0;
+				createParams.ExStyle = 0;
+				createParams.Param = 0;
+				//			createParams.Parent = Parent.Handle;
+				createParams.Style = (int) (
+					WindowStyles.WS_CHILD | 
+					WindowStyles.WS_VISIBLE);
+				window.CreateHandle (createParams);
+				return createParams;
+			}		
 		}
 		[MonoTODO]
 		protected override Size DefaultSize {
@@ -413,11 +381,9 @@ namespace System.Windows.Forms {
 		//
 		[MonoTODO]
 		protected override void CreateHandle() {
-			throw new NotImplementedException ();
+			base.CreateHandle();
 		}
-		//protected override void Dispose(bool disposing) {
-		//	throw new NotImplementedException ();
-		//}
+
 		[MonoTODO]
 		protected override bool IsInputKey(Keys keyData) {
 			throw new NotImplementedException ();
@@ -507,7 +473,7 @@ namespace System.Windows.Forms {
 			//
 			[MonoTODO]
 			public SelectedListViewItemCollection(ListView owner) {
-				throw new NotImplementedException ();
+				
 			}
 
 			//
@@ -552,9 +518,6 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 
-			//public static bool Equals(object o1, object o2) {
-			//	throw new NotImplementedException ();
-			//}
 			[MonoTODO]
 			public override int GetHashCode() {
 				//FIXME add our proprities
@@ -672,7 +635,7 @@ namespace System.Windows.Forms {
 			//
 			[MonoTODO]
 			public CheckedListViewItemCollection(ListView owner) {
-				throw new NotImplementedException ();
+				
 			}
 
 			//
@@ -833,7 +796,7 @@ namespace System.Windows.Forms {
 			//
 			[MonoTODO]
 			public ColumnHeaderCollection(ListView owner) {
-				throw new NotImplementedException ();
+				
 			}
 
 			//
@@ -934,7 +897,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			//[MonoTODO]
+			[MonoTODO]
 			object IList.this[int index]{
 				get{
 					throw new NotImplementedException ();
@@ -1022,7 +985,7 @@ namespace System.Windows.Forms {
 			//
 			[MonoTODO]
 			public ListViewItemCollection (ListView owner) {
-				throw new NotImplementedException ();
+				
 			}
 
 			//
@@ -1215,7 +1178,7 @@ namespace System.Windows.Forms {
 			//
 			[MonoTODO]
 			public SelectedIndexCollection(ListView owner) {
-				throw new NotImplementedException ();
+				
 			}
 
 			//
@@ -1377,7 +1340,7 @@ namespace System.Windows.Forms {
 			//
 			[MonoTODO]
 			public CheckedIndexCollection(ListView owner) {
-				throw new NotImplementedException ();
+				
 			}
 
 			//

@@ -24,7 +24,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public Splitter()
 		{
-			throw new NotImplementedException ();
+			
 		}
 
 		//
@@ -132,107 +132,16 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override string Text {
 			get {
-				throw new NotImplementedException ();
+				return base.Text;
 			}
 			set {
-				throw new NotImplementedException ();
+				base.Text = value;
 			}
 		}
 
 		
 		//  --- Public Methods
-		
-		//public IAsyncResult BeginInvoke(Delegate del)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public IAsyncResult BeginInvoke(Delegate del, object[] obj)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public override void Dispose()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		[MonoTODO]
-		public override bool Equals(object o)
-		{
-			throw new NotImplementedException ();
-		}
 
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
-			return base.GetHashCode();
-		}		
-		//public void Invalidate()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Invalidate(bool b)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Invalidate(Rectangle rect)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Invalidate(Region reg)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Invalidate(Rectangle rect, bool b)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public object Invoke(Delegate del)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public object Invoke(Delegate del, object[] objs)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void PerformLayout()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void PerformLayout(Control ctl, string str)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void ResumeLayout()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void ResumeLayout(bool b)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Scale(float val1)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Scale(float val1, float val2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Select()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void SetBounds(int val1, int val2, int val3, int val4)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void SetBounds(int val1, int val2, int val3, int val4, BoundsSpecified bounds)
-		//{
-		//	throw new NotImplementedException ();
-		//}
 		[MonoTODO]
 		public override string ToString()
 		{
@@ -245,8 +154,25 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
-				throw new NotImplementedException ();
-			}
+				CreateParams createParams = new CreateParams ();
+				window = new ControlNativeWindow (this);
+
+				createParams.Caption = Text;
+				createParams.ClassName = "SPLITTER";
+				createParams.X = Left;
+				createParams.Y = Top;
+				createParams.Width = Width;
+				createParams.Height = Height;
+				createParams.ClassStyle = 0;
+				createParams.ExStyle = 0;
+				createParams.Param = 0;
+				//			createParams.Parent = Parent.Handle;
+				createParams.Style = (int) (
+					WindowStyles.WS_CHILD | 
+					WindowStyles.WS_VISIBLE);
+				window.CreateHandle (createParams);
+				return createParams;
+			}		
 		}
 		[MonoTODO]
 		protected override ImeMode DefaultImeMode {
@@ -257,18 +183,14 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override Size DefaultSize {
 			get {
-				throw new NotImplementedException ();
+				return new System.Drawing.Size(10,500);
 			}
 		}
 
 		//
 		//  --- Protected Methods
 		//
-		//inherited
-		//protected override void Dispose(bool val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+
 		[MonoTODO]
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
@@ -289,39 +211,11 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
-		//ContentAlignment RtlTranslateAlignment(ContentAlignment calign)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//HorizontalAlignment RtlTranslateAlignment(HorizontalAlignment halign)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//LeftRightAlignment RtlTranslateAlignment(LeftRightAlignment lralign)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected virtual void Select(bool val1, bool val2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
 		[MonoTODO]
 		protected override void SetBoundsCore( int x, int y, int width, int height, BoundsSpecified specified)
 		{
 			throw new NotImplementedException ();
 		}
-		//protected void UpdateBounds()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected void UpdateBounds(int val1, int val2, int val3, int val4)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected void UpdateBounds(int val1, int val2, int val3, int val4, int val5, int val6)
-		//{
-		//	throw new NotImplementedException ();
-		//}
 		bool IMessageFilter.PreFilterMessage(ref Message m){
 			throw new NotImplementedException ();
 		}

@@ -13,7 +13,6 @@ using System.IO;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
 	//
 	// </summary>
 
@@ -25,7 +24,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public RichTextBox()
 		{
-			throw new NotImplementedException ();
+			
 		}
 
 		//
@@ -295,10 +294,10 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override string Text {
 			get {
-				throw new NotImplementedException ();
+				return base.Text;
 			}
 			set {
-				throw new NotImplementedException ();
+				base.Text = value;
 			}
 		}
 		[MonoTODO]
@@ -326,14 +325,7 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		//public IAsyncResult BeginInvoke(Delegate del)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public IAsyncResult BeginInvoke(Delegate del, object[] objs)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+
 		[MonoTODO]
 		public bool CanPaste(DataFormats.Format clipFormat)
 		{
@@ -345,10 +337,6 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
 		[MonoTODO]
 		public override int GetHashCode() {
 			//FIXME add our proprities
@@ -403,38 +391,7 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
-		//public void Invalidate()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Invalidate(bool val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Invalidate(Rectangle rect)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Invalidate(Region reg)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Invalidate(Rectangle rect, bool val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Invalidate(Region reg, bool val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public object Invoke(Delegate del)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public object Invoke(Delegate del, object[] objs)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+
 		[MonoTODO]
 		public void LoadFile(string str)
 		{
@@ -446,36 +403,19 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		
-		//public void Paste()
-		//{
-		//	throw new NotImplementedException ();
-		//}
+
 		[MonoTODO]
 		public void Paste(DataFormats.Format format)
 		{
 			throw new NotImplementedException ();
 		}
-		//public void PerformLayout()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void PerformLayout(Control ctl, string str)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+
 		[MonoTODO]
 		public void Redo()
 		{
 			throw new NotImplementedException ();
 		}
-		//public void ResumeLayout()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void ResumeLayout(bool val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+
 		[MonoTODO]
 		public void SaveFile(string str)
 		{
@@ -491,34 +431,6 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
-		//public void Scale(float val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Scale(float val1, float val2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Select()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Select(int val1, int val2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public virtual void Select(bool val1, bool val2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void SetBounds(int val1, int val2, int val3, int val4)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void SetBounds(int val1, int val2, int val3, int val4, BoundsSpecified bounds)
-		//{
-		//	throw new NotImplementedException ();
-		//}
 
 		//
 		//  --- Public Events
@@ -537,13 +449,31 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
-				throw new NotImplementedException ();
-			}
+				CreateParams createParams = new CreateParams ();
+				window = new ControlNativeWindow (this);
+
+				createParams.Caption = Text;
+				createParams.ClassName = "RICHTEXTBOX";
+				createParams.X = Left;
+				createParams.Y = Top;
+				createParams.Width = Width;
+				createParams.Height = Height;
+				createParams.ClassStyle = 0;
+				createParams.ExStyle = 0;
+				createParams.Param = 0;
+				//			createParams.Parent = Parent.Handle;
+				createParams.Style = (int) (
+					WindowStyles.WS_CHILD | 
+					WindowStyles.WS_VISIBLE);
+				window.CreateHandle (createParams);
+				return createParams;
+			}		
 		}
+
 		[MonoTODO]
 		protected override Size DefaultSize {
 			get {
-				throw new NotImplementedException ();
+				return new System.Drawing.Size(300,300);
 			}
 		}
 
@@ -555,46 +485,55 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected override void OnBackColorChanged(EventArgs e)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected virtual void OnContentsResized(ContentsResizedEventArgs e)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected override void  OnContextMenuChanged(EventArgs e)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected override void  OnHandleCreated(EventArgs e)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected override void  OnHandleDestroyed(EventArgs e)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected virtual void OnHScroll(EventArgs e)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected virtual void OnImeChanged(EventArgs e)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected virtual void OnClicked(LinkClickedEventArgs e)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected virtual void OnProtected(EventArgs e)
 		{
@@ -606,58 +545,31 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected virtual void OnSelectionChanged(EventArgs e)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected override void OnSystemColorsChanged(EventArgs e)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected override void OnTextChanged(EventArgs e)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected virtual void OnVScroll(EventArgs e)
 		{
 			throw new NotImplementedException ();
 		}
-		//protected ContentAlignment RtlTranslateAlignment(ContentAlignment calign)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected HorizontalAlignment RtlTranslateAlignment(HorizontalAlignment halign)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected LeftRightAlignment RtlTranslateAlignment(LeftRightAlignment lralign)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected void Select()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected virtual void Select(bool val1, bool val2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected void UpdateBounds()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected void UpdateBounds(int val1, int val2, int val3, int val4)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected void UpdateBounds(int val1, int val2, int val3, int val4, int val5, int val6)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+
 		[MonoTODO]
 		protected override void WndProc(ref Message m)
 		{

@@ -11,7 +11,6 @@ using System.ComponentModel;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
 	//
 	// </summary>
 
@@ -22,11 +21,12 @@ namespace System.Windows.Forms {
 		//
 		[MonoTODO]
 		public ToolTip() {
-			throw new NotImplementedException ();
+			
 		}
+
 		[MonoTODO]
 		public ToolTip(IContainer cont) {
-			throw new NotImplementedException ();
+			
 		}
 		//
 		// --- Public Properties
@@ -40,6 +40,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}	
 		}
+
 		[MonoTODO]
 		public int AutomaticDelay {
 			get {
@@ -49,6 +50,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}	
 		}
+
 		[MonoTODO]
 		public int AutoPopDelay{
 			get {
@@ -58,6 +60,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public int InitialDelay {
 			get {
@@ -67,6 +70,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public int ReshowDelay {
 			get {
@@ -76,6 +80,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public bool ShowAlways {
 			get {
@@ -90,11 +95,11 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		public void RemoveAll() {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public void SetToolTip(Control control, string caption) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		public override string ToString() {
@@ -104,13 +109,9 @@ namespace System.Windows.Forms {
 		// --- Protected Methods
 		//
 
-		//inherited
-		//protected override void Dispose(bool disposing) {
-		//	throw new NotImplementedException ();
-		//}
 		[MonoTODO]
 		~ToolTip() {
-			throw new NotImplementedException ();
+			
 		}
 		bool IExtenderProvider.CanExtend(object extendee){
 			throw new NotImplementedException ();

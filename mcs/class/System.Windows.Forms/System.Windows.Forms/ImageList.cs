@@ -13,11 +13,10 @@ using System.Collections;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
 	//
 	// </summary>
     public sealed class ImageList : Component {
-
+		internal ColorDepth colorDepth;
 		//
 		//  --- Constructor
 		//
@@ -25,13 +24,13 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public ImageList()
 		{
-			throw new NotImplementedException ();
+			colorDepth = ColorDepth.Depth8Bit;
 		}
 
 		[MonoTODO]
-		public ImageList(IContainer cont)
+		public ImageList(IContainer cont) : this()
 		{
-			throw new NotImplementedException ();
+			
 		}
 
 		//
@@ -41,7 +40,10 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public ColorDepth ColorDepth {
 			get {
-				throw new NotImplementedException ();
+				return colorDepth;
+			}
+			set {
+				colorDepth = value;
 			}
 		}
 
@@ -66,13 +68,14 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal Size imageSize; //FIXME: just to get it to run
 		[MonoTODO]
 		public Size ImageSize {
 			get {
-				throw new NotImplementedException ();
+				return imageSize;
 			}
 			set {
-				throw new NotImplementedException ();
+				imageSize = value;
 			}
 		}
 
@@ -86,24 +89,20 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal Color transparentColor; //FIXME: just to get it to run
 		[MonoTODO]
 		public Color TransparentColor {
 			get {
-				throw new NotImplementedException ();
+				return transparentColor;
 			}
 			set {
-				throw new NotImplementedException ();
+				transparentColor = value;
 			}
 		}
 
 		//
 		//  --- Public Methods
 		//
-
-		//public void Dispose()
-		//{
-		//	throw new NotImplementedException ();
-		//}
 
 		[MonoTODO]
 		public void Draw(Graphics g, Point pt, int n)
@@ -115,23 +114,6 @@ namespace System.Windows.Forms {
 		public void Draw(Graphics g, int n1, int n2, int n3)
 		{
 			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override bool Equals(object o)
-		{
-			throw new NotImplementedException ();
-		}
-
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
-			return base.GetHashCode();
 		}
 
 		[MonoTODO]
@@ -148,11 +130,6 @@ namespace System.Windows.Forms {
 		//
 		//  --- Protected Methods
 		//
-		//[MonoTODO]
-		//protected virtual void Dispose(bool disposing)
-		//{
-		//	throw new NotImplementedException ();
-		//}
 
 
 		//
@@ -164,7 +141,6 @@ namespace System.Windows.Forms {
 		//// (C) 2002 Ximian, Inc
 		////
 		// <summary>
-		//	This is only a template.  Nothing is implemented yet.
 		//
 		// </summary>
 
@@ -244,22 +220,6 @@ namespace System.Windows.Forms {
 		public bool Contains(Image image)
 		{
 			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override bool Equals(object o)
-		{
-			throw new NotImplementedException ();
-		}
-
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
-			return base.GetHashCode();
 		}
 
 		[MonoTODO]

@@ -14,19 +14,19 @@ using System.Drawing;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
 	//
 	// </summary>
 
 	public class TabControl : Control  {
 
+		private int selectedIndex;
 
 		//
 		//  --- Public Properties
 		//
 		[MonoTODO]
 		public TabControl() {
-			throw new NotImplementedException ();
+			selectedIndex = 0;
 		}
 
 		[MonoTODO]
@@ -156,10 +156,10 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public int SelectedIndex {
 			get {
-				throw new NotImplementedException ();
+				return selectedIndex;
 			}
 			set {
-				throw new NotImplementedException ();
+				selectedIndex = value;
 			}
 		}
 
@@ -209,11 +209,12 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		public override string Text  {
+			//FIXME: just to get it to run
 			get {
-				throw new NotImplementedException ();
+				return base.Text;
 			}
 			set {
-				throw new NotImplementedException ();
+				base.Text = value;
 			}
 		}
 		 
@@ -239,14 +240,31 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override CreateParams CreateParams  {
 			get {
-				throw new NotImplementedException ();
-			}
+				CreateParams createParams = new CreateParams ();
+				window = new ControlNativeWindow (this);
+
+				createParams.Caption = Text;
+				createParams.ClassName = "TABCONTROL";
+				createParams.X = Left;
+				createParams.Y = Top;
+				createParams.Width = Width;
+				createParams.Height = Height;
+				createParams.ClassStyle = 0;
+				createParams.ExStyle = 0;
+				createParams.Param = 0;
+				//			createParams.Parent = Parent.Handle;
+				createParams.Style = (int) (
+					WindowStyles.WS_CHILD | 
+					WindowStyles.WS_VISIBLE);
+				window.CreateHandle (createParams);
+				return createParams;
+			}		
 		}
 
 		[MonoTODO]
 		protected override Size DefaultSize {
 			get {
-				throw new NotImplementedException ();
+				return new System.Drawing.Size(200,100);
 			}
 		}
 		
@@ -254,12 +272,13 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		protected override Control.ControlCollection CreateControlsInstance() {
-			throw new NotImplementedException ();
+			//just to get i tto run, wrong, very wrong
+			return new Control.ControlCollection(this);
 		}
 
 		[MonoTODO]
 		protected override void CreateHandle() {
-			throw new NotImplementedException ();
+			base.CreateHandle();
 		}
 
 		[MonoTODO]

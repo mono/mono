@@ -27,13 +27,14 @@ namespace System.Windows.Forms {
 		private IntPtr windowHandle;
 		static private Hashtable windowCollection = new Hashtable ();
 		static bool registeredClass = false;
-
+		static Win32.WndProc wp;
 		//
 		//  --- Constructor
 		//
 		public NativeWindow () 
 		{
 			windowHandle = (IntPtr) 0;
+			wp = null;
 		}
 
 		//
@@ -65,13 +66,12 @@ namespace System.Windows.Forms {
 			Object lpParam = new Object();
 
 			if (!registeredClass) {
-				Win32.WndProc wp = new Win32.WndProc (WndProc);
 				WNDCLASS wndClass = new WNDCLASS();
 
 				wndClass.style = (int) (CS_.CS_OWNDC |
 							CS_.CS_VREDRAW |
 							CS_.CS_HREDRAW);
-				wndClass.lpfnWndProc = wp;
+				wndClass.lpfnWndProc = GetWindowProc();
 				wndClass.cbClsExtra = 0;
 				wndClass.cbWndExtra = 0;
 				wndClass.hInstance = (IntPtr)0;
@@ -104,12 +104,6 @@ namespace System.Windows.Forms {
 			//}
 		}
 
-		[MonoTODO]
-		public override ObjRef CreateObjRef (Type requestedType) 
-		{
-			throw new NotImplementedException ();
-		}
-
 		public void DefWndProc (ref Message m) 
 		{
 			m.Result = Win32.DefWindowProcA (m.HWnd, m.Msg, 
@@ -122,24 +116,6 @@ namespace System.Windows.Forms {
 			Win32.DestroyWindow (windowHandle);
 		}
 
-		[MonoTODO]
-		public override bool Equals (object o) 
-		{
-			throw new NotImplementedException ();
-		}
-
-		//inherited
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		[MonoTODO]
-		public override int GetHashCode () 
-		{
-			//FIXME add our proprities
-			return base.GetHashCode ();
-		}
-
 		public static NativeWindow FromHandle (IntPtr handle) 
 		{
 			NativeWindow window = new NativeWindow ();
@@ -147,38 +123,16 @@ namespace System.Windows.Forms {
 			return window;
 		}
 
-		//inherited
-		//public object GetLifetimeService() {
-		//	throw new NotImplementedException ();
-		//}
-
-		//public Type GetType() {
-		//	throw new NotImplementedException ();
-		//}
-
-		//public virtual object InitializeLifetimeService(){
-		//	throw new NotImplementedException ();
-		//}
-
 		public virtual void ReleaseHandle () 
 		{
 			windowHandle = (IntPtr) 0;
 			OnHandleChange ();
 		}
 
-		[MonoTODO]
-		public override string ToString () 
-		{
-			throw new NotImplementedException ();
-		}
-
 		//
 		//  --- Protected Methods
 		//
-		//inherited
-		//protected object MemberwiseClone() {
-		//	throw new NotImplementedException ();
-		//}
+
 
 		[MonoTODO]
 		protected virtual void OnHandleChange () 
@@ -240,5 +194,11 @@ namespace System.Windows.Forms {
 
  			return message.Result;
  		}
+		internal static Win32.WndProc GetWindowProc() {
+			if( wp == null){
+				wp = new Win32.WndProc (WndProc);
+			}
+			return wp;
+		}
 	}
 }

@@ -24,15 +24,19 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override string Text {
 
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get {
+				throw new NotImplementedException();
+			}
+			set {
+				throw new NotImplementedException();
+			}
 		}
 
 		// --- Constructor ---
 		[MonoTODO]
 		public UserControl()
 		{
-			throw new NotImplementedException();
+			
 		}
 
 		// --- Methods ---

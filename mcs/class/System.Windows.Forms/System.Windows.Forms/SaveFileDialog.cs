@@ -24,7 +24,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public SaveFileDialog()
 		{
-			throw new NotImplementedException ();
+			
 		}
 
 		//
@@ -52,10 +52,7 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		//public void Dispose()
-		//{
-		//	throw new NotImplementedException ();
-		//}
+
 		[MonoTODO]
 		public Stream OpenFile()
 		{
@@ -66,19 +63,5 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
-		
-		//public DialogResult ShowDialog()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-		//
-		//  --- Protected Methods
-		//
-		//[MonoTODO]
-		//protected virtual void Dispose(bool val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
 	 }
 }

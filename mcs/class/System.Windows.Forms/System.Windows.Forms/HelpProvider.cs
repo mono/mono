@@ -22,7 +22,7 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		public HelpProvider() {
-			throw new NotImplementedException ();
+			
 		}
 
 		//
@@ -110,23 +110,10 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Events
 		
-		//public event EventHandler Disposed {
-		//	add {
-		//		throw new NotImplementedException ();
-		//	}
-		//	remove {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-
 		//
 		//  --- Protected Methods
 		//
 
-		
-		//protected override void Dispose(bool disposing) {
-		//	throw new NotImplementedException ();
-		//}
 		bool IExtenderProvider.CanExtend(object extendee){
 			throw new NotImplementedException ();
 		}	

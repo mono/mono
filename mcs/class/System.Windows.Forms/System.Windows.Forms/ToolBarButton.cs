@@ -12,7 +12,6 @@ using System.Drawing;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
 	//
 	// </summary>
 using System.ComponentModel;
@@ -24,12 +23,13 @@ using System.ComponentModel;
 		[MonoTODO]
 		public ToolBarButton()
 		{
-			throw new NotImplementedException ();
+			
 		}
+
 		[MonoTODO]
 		public ToolBarButton(string text)
 		{
-			throw new NotImplementedException ();
+			
 		}
 		//
 		// --- Public Properties
@@ -43,6 +43,7 @@ using System.ComponentModel;
 				throw new NotImplementedException ();
 			}	
 		}
+
 		[MonoTODO]
 		public bool Enabled {
 			get {
@@ -52,6 +53,7 @@ using System.ComponentModel;
 				throw new NotImplementedException ();
 			}	
 		}
+
 		[MonoTODO]
 		public int ImageIndex {
 			get {
@@ -61,12 +63,14 @@ using System.ComponentModel;
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public ToolBar Parent {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public bool PartialPush {
 			get {
@@ -76,6 +80,7 @@ using System.ComponentModel;
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public bool Pushed {
 			get {
@@ -85,12 +90,14 @@ using System.ComponentModel;
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public Rectangle Rectangle {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public ToolBarButtonStyle Style {
 			get {
@@ -100,6 +107,7 @@ using System.ComponentModel;
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public object Tag {
 			get {
@@ -109,6 +117,7 @@ using System.ComponentModel;
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public string Text {
 			get {
@@ -118,6 +127,7 @@ using System.ComponentModel;
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public string ToolTipText {
 			get {
@@ -127,6 +137,7 @@ using System.ComponentModel;
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public bool Visible {
 			get {
@@ -148,10 +159,5 @@ using System.ComponentModel;
 		// --- Protected Methods
 		//
 
-		//inherited
-		//protected override void Dispose(bool disposing) 
-		//{
-		//	throw new NotImplementedException ();
-		//}
 	}
 }

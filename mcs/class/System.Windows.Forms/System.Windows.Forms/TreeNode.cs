@@ -11,7 +11,6 @@ using System.Drawing;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
 	//
 	// </summary>
 
@@ -23,17 +22,17 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public TreeNode()
 		{
-			throw new NotImplementedException ();
+			
 		}
 		[MonoTODO]
 		public TreeNode(string text)
 		{
-			throw new NotImplementedException ();
+			
 		}
 		[MonoTODO]
 		public TreeNode(string text, TreeNode[] children)
 		{
-			throw new NotImplementedException ();
+			
 		}
 		
 		// --- Public Properties

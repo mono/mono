@@ -206,7 +206,7 @@
  				createParams.ClassStyle = 0;
  				createParams.ExStyle = 0;
  				createParams.Param = 0;
- 				createParams.Parent = Parent.Handle;
+ 		//		createParams.Parent = Parent.Handle;
  				createParams.Style = (int) (
  					(int)WindowStyles.WS_CHILD | 
  					(int)WindowStyles.WS_VISIBLE | (int)SS_Static_Control_Types.SS_LEFT );

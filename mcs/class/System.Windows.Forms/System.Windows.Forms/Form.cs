@@ -21,7 +21,7 @@
 			DialogResult dialogResult;
 			Size maximumSize;
 			Size minimizeSize;
-
+			double opacity;
 			// Temperary varibles that may be replaced
 			// with win32 functions
 
@@ -38,6 +38,8 @@
 
 			public Form () : base ()
     		{
+				opacity = 0;
+
     		}
     		
     		static Form ()
@@ -80,14 +82,15 @@
     				throw new NotImplementedException ();
     			}
     		}
-    
+			internal Size autoscalebasesize; //debug/test only
+
     		[MonoTODO]
     		public virtual Size AutoScaleBaseSize {
     			get {
-    				throw new NotImplementedException ();
+    				return autoscalebasesize;
     			}
     			set {
-    				throw new NotImplementedException ();
+    				autoscalebasesize = value;
     			}
     		}
     
@@ -125,6 +128,8 @@
     				throw new NotImplementedException ();
     			}
     			set {
+					//bool MenuReady;
+					//if(mainMenu_
 					SetClientSize( value, (int)WindowStyles.WS_OVERLAPPEDWINDOW, mainMenu_ != null);
 				}
     		}
@@ -352,10 +357,10 @@
     		[MonoTODO]
     		public double Opacity {
     			get {
-    				throw new NotImplementedException ();
+    				return opacity;
     			}
     			set {
-    				throw new NotImplementedException ();
+    				opacity = value;
     			}
     		}
     
@@ -489,49 +494,6 @@
     			Win32.CloseWindow (Handle);
     		}
     
-    		//inherited
-    		//public void Dispose ()
-    		//{
-    		//		throw new NotImplementedException ();
-    		//}
-    		//public static bool Equals (object o1, object o2)
-    		//{
-    		//		throw new NotImplementedException ();
-    		//}		 [MonoTODO]
-    
-    		//public override bool Equals (object o)
-    		//{
-    		//	throw new NotImplementedException ();
-    		//}
-    
-    
-    		//[MonoTODO]
-    		//public override int GetHashCode () {
-    		//	return base.GetHashCode ();
-    		//}
-    
-    		//[MonoTODO]
-    		// Font class not implemented or stubbed
-     		//public static SizeF GetAutoScaleSize(Font font)
-     		//{
-     		//	throw new NotImplementedException ();
-     		//}
-    
-    		//public void Invalidate()
-    		//{
-    		//		throw new NotImplementedException ();
-    		//}
-    
-    		//public object Invoke()
-    		//{
-    		//		throw new NotImplementedException ();
-    		//}
-    
-     		//public void PerformLayout()
-    		//{
-    		//		throw new NotImplementedException ();
-    		//}
-    
    			[MonoTODO]
     		public void LayoutMdi (MdiLayout value)
     		{
@@ -544,26 +506,7 @@
     			throw new NotImplementedException ();
     		}
     
-    		//	public void ResumeLayout()
-    		//	{
-    		//		throw new NotImplementedException ();
-    		//	}
-    		//
-    		//	public void Scale(float f)
-    		//	{
-    		//		throw new NotImplementedException ();
-    		//	}
-    		//
-    		//	public void Select()
-    		//	{
-    		//		throw new NotImplementedException ();
-    		//	}
-    		//
-    		//	public void SetBounds(int x, int y, int width, int height)
-    		//	{
-    		//		throw new NotImplementedException ();
-    		//	}
-    
+     
     		public void SetDesktopLocation (int x, int y)
     		{
     			Win32.SetWindowPos ((IntPtr) Handle, SetWindowPosZOrder.HWND_TOPMOST, 
@@ -572,11 +515,6 @@
     					    SetWindowPosFlags.SWP_NOZORDER);
     		}
     
-    		//inherited from control
-			//public new void Show ()
-    		//{
-    		//	Win32.ShowWindow (Handle, (int) Win32.SW_SHOW);
-    		//}
     
     		[MonoTODO]
     		public DialogResult ShowDialog ()
@@ -683,12 +621,7 @@
     		{
     			window.DefWndProc (ref m);
     		}
-    
-    		//protected override void Dispose(bool disposing)
-    		//{
-    		//		throw new NotImplementedException ();
-    		//}
-    
+
   			//Compact Framework
     		protected virtual void OnClosed (EventArgs e)
     		{
@@ -884,16 +817,6 @@
     			base.SetVisibleCore (value);
     		}
 
-     		//public void Select(bool b1, bool b2)
-    		//{
-    		//		throw new NotImplementedException ();
-    		//}
-
-   			//protected void UpdateBounds()
-    		//{
-    		//		throw new NotImplementedException ();
-    		//}
-    
     		protected override void WndProc (ref Message m)
     		{
     			base.WndProc (ref m);
@@ -1037,19 +960,11 @@
     			public override bool Equals (object o) {
     				throw new NotImplementedException ();
     			}
-    
-    			//public static bool Equals(object o1, object o2) {
-    			//	throw new NotImplementedException ();
-    			//}
 
     			public override int GetHashCode () {
     				//FIXME add our proprities
     				return base.GetHashCode ();
     			}
-    
-    			//public override int GetChildIndex(Control c) {
-    				//return base.GetChildIndex (c);
-    			//}
     
     			public override void Remove(Control value) {
     				base.Remove (value);

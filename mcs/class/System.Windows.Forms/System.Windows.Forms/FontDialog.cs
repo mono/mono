@@ -10,7 +10,6 @@ using System.Drawing;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
 	//
 	// </summary>
 
@@ -22,7 +21,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public FontDialog()
 		{
-			throw new NotImplementedException ();
+			
 		}
 
 		//
@@ -166,33 +165,9 @@ namespace System.Windows.Forms {
 
 		
 		//  --- Public Methods
-		//inherited
-		//public void Dispose()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		[MonoTODO]
-		public override bool Equals(object o)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public override int GetHashCode()
-		{
-			//FIXME add our proprities
-			return base.GetHashCode();
-		}
+
 		[MonoTODO]
 		public override void Reset()
-		{
-			throw new NotImplementedException ();
-		}
-		//public DialogResult ShowDialog()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		[MonoTODO]
-		public override string ToString()
 		{
 			throw new NotImplementedException ();
 		}
@@ -206,12 +181,7 @@ namespace System.Windows.Forms {
 		//
 		//  --- Protected Properties
 		//
-		//inherited
-		//[MonoTODO]
-		//protected void Dispose()
-		//{
-		//	throw new NotImplementedException ();
-		//}
+
 		[MonoTODO]
 		protected override IntPtr HookProc( IntPtr hWnd,  int msg,  IntPtr wparam,  IntPtr lparam )
 		{

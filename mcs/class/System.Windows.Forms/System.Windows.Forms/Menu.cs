@@ -45,11 +45,6 @@ namespace System.Windows.Forms  {
 		public virtual void MergeMenu(Menu menuSrc) {
 			throw new NotImplementedException();
 		}
-
-		[MonoTODO]
-		protected override void Dispose(bool disposing) {
-			throw new NotImplementedException ();
-		}
 		
 		[MonoTODO]
 		public override string ToString() {

@@ -12,7 +12,6 @@ using System.Collections;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
 	//
 	// </summary>
 
@@ -24,7 +23,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public ToolBar() 
 		{
-			throw new NotImplementedException ();
+			
 		}
 		//
 		// --- Public Properties
@@ -107,13 +106,15 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
+		internal bool dropDownArrows; //FIXME: Just to get it to run
 		[MonoTODO]
 		public bool DropDownArrows {
 			get {
-				throw new NotImplementedException ();
+				return dropDownArrows;
 			}
 			set {
-				throw new NotImplementedException ();
+				dropDownArrows = value;
 			}
 		}
 		[MonoTODO]
@@ -158,22 +159,24 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+		
+		internal bool showToolTips;//FIXME: just to get it to run
 		[MonoTODO]
 		public bool ShowToolTips {
 			get {
-				throw new NotImplementedException ();
+				return showToolTips;
 			}
 			set {
-				throw new NotImplementedException ();
+				showToolTips = value;
 			}
 		}
 		[MonoTODO]
 		public override string Text {
 			get {
-				throw new NotImplementedException ();
+				return base.Text;
 			}
 			set {
-				throw new NotImplementedException ();
+				base.Text = value;
 			}
 		}
 		[MonoTODO]
@@ -215,8 +218,25 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
-				throw new NotImplementedException ();
-			}
+				CreateParams createParams = new CreateParams ();
+				window = new ControlNativeWindow (this);
+
+				createParams.Caption = Text;
+				createParams.ClassName = "TOOLBAR";
+				createParams.X = Left;
+				createParams.Y = Top;
+				createParams.Width = Width;
+				createParams.Height = Height;
+				createParams.ClassStyle = 0;
+				createParams.ExStyle = 0;
+				createParams.Param = 0;
+				//			createParams.Parent = Parent.Handle;
+				createParams.Style = (int) (
+					WindowStyles.WS_CHILD | 
+					WindowStyles.WS_VISIBLE);
+				window.CreateHandle (createParams);
+				return createParams;
+			}		
 		}
 		[MonoTODO]
 		protected override ImeMode DefaultImeMode {
@@ -236,48 +256,43 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void CreateHandle() 
 		{
-			throw new NotImplementedException ();
+			base.CreateHandle();
 		}
 
-		//inherited
-		//protected override void Dispose(bool disposing) 
-		//{
-		//	throw new NotImplementedException ();
-		//}
 		[MonoTODO]
 		protected virtual void OnButtonClick(ToolBarButtonClickEventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected virtual void OnButtonDropDown(ToolBarButtonClickEventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected override void OnFontChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected override void OnHandleCreated(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected override void OnResize(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected override void WndProc(ref Message m) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		public class ToolBarButtonCollection : IList, ICollection, IEnumerable {
 			//
@@ -286,7 +301,7 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			public ToolBarButtonCollection(ToolBar owner)
 			{
-				throw new NotImplementedException ();
+				
 			}
 			//
 			// --- Public Properties
@@ -328,12 +343,12 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			public void AddRange(ToolBarButton[] buttons) 
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 			[MonoTODO]
 			public void Clear() 
 			{
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 			[MonoTODO]
 			public bool Contains(ToolBarButton button) 

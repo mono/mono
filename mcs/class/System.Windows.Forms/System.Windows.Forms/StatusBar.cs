@@ -37,7 +37,6 @@ namespace System.Windows.Forms {
 			Dock = DockStyle.Bottom;
 			showPanels = false;
 			sizingGrip = true;
-			throw new NotImplementedException ();
 		}
 
 		//
@@ -55,49 +54,51 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void CreateHandle()
 		{
-			throw new NotImplementedException ();
+			base.CreateHandle();
 		}
 
-		//inherited
-		//protected override void Dispose(bool disposing)
-		//{
-		//	throw new NotImplementedException ();
-		//}
 		[MonoTODO]
 		protected virtual void OnDrawItem(StatusBarDrawItemEventArgs e)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected override void OnHandleDestroyed(EventArgs e)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected override void OnLayout(LayoutEventArgs e)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected virtual void OnPanelClick(StatusBarPanelClickEventArgs e)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected override void OnResize(EventArgs e)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected override void WndProc(ref Message m)
 		{
@@ -119,64 +120,84 @@ namespace System.Windows.Forms {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
+
 		[MonoTODO]
 		public override Image BackgroundImage {
 
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
+
+		//just to get it to run
+		//FIXME:
+		internal DockStyle dockstyle;
 		[MonoTODO]
 		public override DockStyle Dock {
-
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				return dockstyle;
+			}
+			set {
+				dockstyle =  value;
+			}
 		}
+
 		[MonoTODO]
 		public override Font Font {
 
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
+
 		[MonoTODO]
 		public override Color ForeColor {
 
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
+
 		[MonoTODO]
 		public new ImeMode ImeMode {
 
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
+
 		[MonoTODO]
 		public StatusBar.StatusBarPanelCollection Panels {
 
 			get { throw new NotImplementedException (); }
 		}
+
 		[MonoTODO]
 		public bool ShowPanels {// default false {
 
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
+
 		[MonoTODO]
 		public bool SizingGrip // default true {
 		{
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
+
 		[MonoTODO]
 		public new bool TabStop {
 
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
+
 		[MonoTODO]
 		public override string Text {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { 
+				return base.Text;
+			}
+			set {
+				base.Text = value;
+			}
 		}
 
 		//
@@ -185,13 +206,34 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 
-			get { throw new NotImplementedException (); }
+			get {
+				CreateParams createParams = new CreateParams ();
+				window = new ControlNativeWindow (this);
+
+				createParams.Caption = Text;
+				createParams.ClassName = "STATUSBAR";
+				createParams.X = Left;
+				createParams.Y = Top;
+				createParams.Width = Width;
+				createParams.Height = Height;
+				createParams.ClassStyle = 0;
+				createParams.ExStyle = 0;
+				createParams.Param = 0;
+				//			createParams.Parent = Parent.Handle;
+				createParams.Style = (int) (
+					WindowStyles.WS_CHILD | 
+					WindowStyles.WS_VISIBLE);
+				window.CreateHandle (createParams);
+				return createParams;
+			}		
 		}
+
 		[MonoTODO]
 		protected override ImeMode DefaultImeMode {
 
 			get { throw new NotImplementedException (); }
 		}
+
 		[MonoTODO]
 		protected override Size DefaultSize {
 
@@ -247,6 +289,7 @@ namespace System.Windows.Forms {
 				//panel.Parent = owner;
 				return list.Add(panel);
 			}
+
 			[MonoTODO]
 			public virtual StatusBarPanel Add(string s)
 			{
@@ -258,6 +301,7 @@ namespace System.Windows.Forms {
 			//	list.Add(tmp);
 			//	return tmp;
 			}
+
 			[MonoTODO]
 			public virtual void AddRange(StatusBarPanel[] panels)
 			{
@@ -272,22 +316,27 @@ namespace System.Windows.Forms {
 				}
 				list.AddRange(panels);
 			}
+
 			public virtual void Clear()
 			{
 				list.Clear();
 			}
+
 			public bool Contains(StatusBarPanel panel)
 			{
 				return list.Contains(panel);
 			}
+
 			public IEnumerator GetEnumerator()
 			{
 				return list.GetEnumerator();
 			}
+
 			public int IndexOf(StatusBarPanel panel)
 			{
 				return list.IndexOf(panel);
 			}
+
 			[MonoTODO]
 			public virtual void Insert(int index, StatusBarPanel panel)
 			{
@@ -312,6 +361,7 @@ namespace System.Windows.Forms {
 				// FIXME: StatusBarPanel.Parent is readonly!
 				// panel.Parent = owner; // a rethrow for a better exception message, or an extra range check, would incur an unnecessary performance cost
 			}
+
 			public virtual void Remove(StatusBarPanel panel)
 			{
 				string method_string = "Remove(StatusBarPanel) ";
@@ -321,10 +371,12 @@ namespace System.Windows.Forms {
 				}
 				list.Remove(panel);
 			}
+
 			public virtual void RemoveAt(int index)
 			{
 				list.RemoveAt(index);
 			}
+
 			void ICollection.CopyTo(Array dest, int index)
 			{
 				string method_string = "ICollection.CopyTo(Array,int) ";
@@ -354,6 +406,7 @@ namespace System.Windows.Forms {
 					dest.SetValue(list[i], index);
 				}
 			}
+
 			int IList.Add(object panel)
 			{
 				string method_string = "IList.Add(object) ";
@@ -363,6 +416,7 @@ namespace System.Windows.Forms {
 				}
 				return Add((StatusBarPanel) panel);
 			}
+
 			bool IList.Contains(object panel)
 			{
 				if (!(panel is StatusBarPanel)) {
@@ -371,6 +425,7 @@ namespace System.Windows.Forms {
 				}
 				return Contains((StatusBarPanel) panel);
 			}
+
 			int IList.IndexOf(object panel)
 			{
 				if (!(panel is StatusBarPanel)) {
@@ -379,6 +434,7 @@ namespace System.Windows.Forms {
 				}
 				return IndexOf((StatusBarPanel) panel);
 			}
+
 			void IList.Insert(int index, object panel)
 			{
 				string method_string = "IList.Insert(int,object) ";
@@ -388,6 +444,7 @@ namespace System.Windows.Forms {
 				}
 				Insert(index, (StatusBarPanel) panel);
 			}
+
 			void IList.Remove(object panel)
 			{
 				string method_string = "IList.Remove(object) ";
@@ -405,15 +462,18 @@ namespace System.Windows.Forms {
 				get { throw new NotImplementedException (); }
 				//get { return list.Count; }
 			}
+
 			public bool IsReadOnly {
 
 				get { return false; }
 			}
+
 			object IList.this[int index] {
 
 				get { return this[index]; }
 				set { this[index]=(StatusBarPanel)value; }
 			}
+
 			public virtual StatusBarPanel this[int index] {
 
 				get
@@ -451,13 +511,16 @@ namespace System.Windows.Forms {
 					list[index] = value;
 				}
 			}
+
 			bool IList.IsFixedSize {
 				[MonoTODO] get { throw new NotImplementedException (); }
 			}
+
 			object ICollection.SyncRoot {
 
 				[MonoTODO] get { throw new NotImplementedException (); }
 			}
+
 			bool ICollection.IsSynchronized {
 
 				[MonoTODO] get { throw new NotImplementedException (); }

@@ -13,7 +13,6 @@ using System.ComponentModel;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
 	//
 	// </summary>
 
@@ -25,7 +24,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public PageSetupDialog()
 		{
-			throw new NotImplementedException ();
+			
 		}
 
 		//
@@ -86,11 +85,6 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		//public IContainer Container {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
 		[MonoTODO]
 		public PrintDocument Document {
 			get {
@@ -127,131 +121,23 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-		//public virtual ISite Site {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
 
 		//
 		//  --- Public Methods
 		//
-		//public virtual ObjRef CreateObjRef(Type requestedType)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public override void Dispose()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		[MonoTODO]
-		public override bool Equals(object o)
-		{
-			throw new NotImplementedException ();
-		}
 
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
-			return base.GetHashCode();
-		}
-	
-		//public object GetLifetimeService()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public Type GetType()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public virtual object InitializeLifetimeService()
-		//{
-		//	throw new NotImplementedException ();
-		//}
 		[MonoTODO]
 		public override void Reset()
 		{
 			throw new NotImplementedException ();
 		}
-		//public DialogResult ShowDialog()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public DialogResult ShowDialog(IWin32Window owner)
-		//{
-		//	throw new NotImplementedException ();
-		//}
 
-		//
-		//  --- Public Events
-		//
-		//public event EventHandler Disposed;
-		//public event EventHandler HelpRequest;
-
-		//
-		//  --- Protected Properties
-		//
-		//protected bool DesignMode {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//protected EventHandlerList Events {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
 		//
 		//  --- Protected Methods
 		//
-		//[MonoTODO]
-		//protected virtual void Dispose(bool disposing)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected virtual void OnHelpRequest(EventArgs e)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected virtual object GetService(Type service)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected virtual IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected virtual IntPtr OwnerWndProc(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected object MemberwiseClone()
-		//{
-		//	throw new NotImplementedException ();
-		//}
+
 		[MonoTODO]
 		protected override bool RunDialog(IntPtr hwndOwner)
-		{
-			throw new NotImplementedException ();
-		}
-
-		//
-		//  --- Destructor
-		//
-		[MonoTODO]
-		~PageSetupDialog()
 		{
 			throw new NotImplementedException ();
 		}

@@ -12,7 +12,6 @@ using System.Drawing;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
 	//
 	// </summary>
 
@@ -71,28 +70,13 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		//inherited
-		//public IAsyncResult BeginInvoke(Delegate del)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public IAsyncResult BeginInvoke(Delegate del, object[] objs)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Dispose()
-		//{
-		//	throw new NotImplementedException ();
-		//}
+
 		[MonoTODO]
 		public override bool Equals(object o)
 		{
 			throw new NotImplementedException ();
 		}
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+
 		[MonoTODO]
 		public override int GetHashCode() {
 			//FIXME add our proprities
@@ -103,71 +87,6 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
-		//inherited
-		//public void Invalidate()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Invalidate(bool val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Invalidate(Rectangle rect)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Invalidate(Region reg)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public object Invoke(Delegate del)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public object Invoke(Delegate del, object[] objs)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void PerformLayout()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void PerformLayout(Control ctl, string str)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void ResumeLayout()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void ResumeLayout(bool val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Scale(float val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Scale(float val1, float val2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Select()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected override void Select(bool val1, bool val2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void SetBounds(int val1, int val2, int val3, int val4)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void SetBounds(int val1, int val2, int val3, int val4, BoundsSpecified bounds)
-		//{
-		//	throw new NotImplementedException ();
-		//}
 
 		//
 		//  --- Public Events
@@ -197,7 +116,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected ListControl()
 		{
-			throw new NotImplementedException ();
+			
 		}
 
 		//
@@ -214,11 +133,6 @@ namespace System.Windows.Forms {
 		//
 		//  --- Protected Methods
 		//
-		//inherited
-		//protected override void Dispose(bool val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
 		[MonoTODO]
 		protected override bool IsInputKey(Keys keyData)
 		{
@@ -252,34 +166,6 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		protected abstract void RefreshItem(int index);
-		//inherited
-		//protected ContentAlignment RtlTranslateAlignment(ContentAlignment align)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected HorizontalAlignment RtlTranslateAlignment(HorizontalAlignment align)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected LeftRightAlignment RtlTranslateAlignment(LeftRightAlignment align)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected void Select()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected void UpdateBounds()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected void UpdateBounds(int val1, int val2, int val3, int val4)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected void UpdateBounds(int val1, int val2, int val3, int val4, int val5, int val6)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+
 	 }
 }

@@ -20,8 +20,6 @@ using System.ComponentModel;
 namespace System.Windows.Forms {
 
 	/// <summary>
-	/// ToDo note:
-	///  - Nothing is implemented
 	/// </summary>
 
 	public class MainMenu : Menu  {
@@ -63,14 +61,6 @@ namespace System.Windows.Forms {
 		}
 
 		//
-		// -- Protected Methods
-		//
-
-		//
-		// -- Public Events
-		//
-
-		//
 		// -- Public Properties
 		//
 
@@ -89,9 +79,6 @@ namespace System.Windows.Forms {
 		//
 		// -- protected Properties
 		//
-		[MonoTODO]
-		protected override void Dispose(bool disposing){
-			throw new NotImplementedException();
-		}
+
 	}
 }

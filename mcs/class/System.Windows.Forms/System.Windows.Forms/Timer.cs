@@ -23,12 +23,12 @@ using System.ComponentModel;
 		[MonoTODO]
 		public Timer()
 		{
-			throw new NotImplementedException ();
+			
 		}
 		[MonoTODO]
 		public Timer(IContainer container)
 		{
-			throw new NotImplementedException ();
+			
 		}
 		//
 		// --- Public Properties
@@ -78,11 +78,6 @@ using System.ComponentModel;
 		// --- Protected Methods
 		//
 
-		//inherited
-		//protected override void Dispose(bool disposing) 
-		//{
-		//	throw new NotImplementedException ();
-		//}
 		[MonoTODO]
 		protected virtual void OnTick(EventArgs e) 
 		{

@@ -20,7 +20,7 @@ namespace System.Windows.Forms {
 			get {
 				CreateParams createParams = new CreateParams ();
 				createParams.Caption = "";
-				createParams.ClassName = "mono_scrollable_control";
+				createParams.ClassName = "VSCROLL";
 				createParams.X = Left;
 				createParams.Y = Top;
 				createParams.Width = Width;

@@ -17,7 +17,7 @@ namespace System.Windows.Forms {
 	// </summary>
 
         public class TextBoxBase : Control {
-
+			private string text;
 		//
 		//  --- Public Properties
 		//
@@ -204,11 +204,11 @@ namespace System.Windows.Forms {
 		public override string Text {
 			get
 			{
-				throw new NotImplementedException ();
+				return base.Text;
 			}
 			set
 			{
-				throw new NotImplementedException ();
+				base.Text = value;
 			}
 		}
 		[MonoTODO]
@@ -312,9 +312,25 @@ namespace System.Windows.Forms {
         
 		[MonoTODO]
 		protected override CreateParams CreateParams {
-			get
-			{
-				throw new NotImplementedException ();
+			get {
+				CreateParams createParams = new CreateParams ();
+				window = new ControlNativeWindow (this);
+
+				createParams.Caption = Text;
+				createParams.ClassName = "BUTTONBASE";
+				createParams.X = Left;
+				createParams.Y = Top;
+				createParams.Width = Width;
+				createParams.Height = Height;
+				createParams.ClassStyle = 0;
+				createParams.ExStyle = 0;
+				createParams.Param = 0;
+				//			createParams.Parent = Parent.Handle;
+				createParams.Style = (int) (
+					WindowStyles.WS_CHILD | 
+					WindowStyles.WS_VISIBLE);
+				window.CreateHandle (createParams);
+				return createParams;
 			}
 		}
 		[MonoTODO]
@@ -330,7 +346,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void CreateHandle()
 		{
-			throw new NotImplementedException ();
+			base.CreateHandle();
 		}
 		[MonoTODO]
 		protected override bool IsInputKey(Keys keyData)

@@ -17,8 +17,6 @@ namespace System.Windows.Forms {
 	/// <summary>
 	/// Represents a dialog box form that contains a PrintPreviewControl.
 	///
-	/// ToDo note:
-	///  - nothing is implemented
 	/// </summary>
 
 	[MonoTODO]
@@ -62,9 +60,6 @@ namespace System.Windows.Forms {
 		FormWindowState windowState;
 		#endregion
 
-
-
-
 		#region Constructor
 		[MonoTODO]
 		public PrintPreviewDialog() 
@@ -89,13 +84,9 @@ namespace System.Windows.Forms {
 			topMost=false;
 			visible=true;
 			windowState=FormWindowState.Normal;
-			
-			throw new NotImplementedException ();
+
 		}
 		#endregion
-
-
-
 
 		#region Properties
 		public new IButtonControl AcceptButton {
@@ -364,14 +355,11 @@ namespace System.Windows.Forms {
 		}
 		#endregion
 
-
-
-
 		#region Methods
 		[MonoTODO]
 		protected override void CreateHandle() 
 		{
-			throw new NotImplementedException ();
+			base.CreateHandle();
 		}
 		
 		[MonoTODO]

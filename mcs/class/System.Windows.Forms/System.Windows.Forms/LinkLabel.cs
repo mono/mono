@@ -26,7 +26,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public LinkLabel()
 		{
-			throw new NotImplementedException ();
+			
 		}
 
 		//
@@ -103,11 +103,12 @@ namespace System.Windows.Forms {
 		}
 		[MonoTODO]
 		public override string Text {
+			//FIXME: This is to get it to run
 			get {
-				throw new NotImplementedException ();
+				return	base.Text;
 			}
 			set {
-				throw new NotImplementedException ();
+				base.Text = value;
 			}
 		}
 		[MonoTODO]
@@ -261,7 +262,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void CreateHandle()
 		{
-			throw new NotImplementedException ();
+			//FIXME: this is just to get it running
+			base.CreateHandle();
 		}
 
 		//inherited

@@ -11,7 +11,6 @@
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
 	//
 	// </summary>
 
@@ -23,7 +22,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public TextBox()
 		{
-			throw new NotImplementedException ();
+			
 		}
 		
 		//  --- Public Properties
@@ -94,9 +93,25 @@ namespace System.Windows.Forms {
         
 		[MonoTODO]
 		protected override CreateParams CreateParams {
-			get
-			{
-				throw new NotImplementedException ();
+			get {
+				CreateParams createParams = new CreateParams ();
+				window = new ControlNativeWindow (this);
+
+				createParams.Caption = Text;
+				createParams.ClassName = "TEXTBOX";
+				createParams.X = Left;
+				createParams.Y = Top;
+				createParams.Width = Width;
+				createParams.Height = Height;
+				createParams.ClassStyle = 0;
+				createParams.ExStyle = 0;
+				createParams.Param = 0;
+				//			createParams.Parent = Parent.Handle;
+				createParams.Style = (int) (
+					WindowStyles.WS_CHILD | 
+					WindowStyles.WS_VISIBLE);
+				window.CreateHandle (createParams);
+				return createParams;
 			}
 		}
 		 [MonoTODO]
@@ -125,24 +140,24 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void OnHandleCreated(EventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected override void OnMouseUp(MouseEventArgs mevent)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		//[Lame Spec] spec says this should be virtural
 		//Spec was right!
 		protected virtual void OnTextAlignChanged(EventArgs e)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected override void WndProc(ref Message m)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 	}
 }

@@ -17,8 +17,6 @@ namespace System.Windows.Forms {
 	/// <summary>
 	/// The raw "preview" part of print previewing, without any dialogs or buttons. Most PrintPreviewControl objects are found on PrintPreviewDialog objects, but they do not have to be.
 	///
-	/// ToDo note:
-	///  - nothing is implemented
 	/// </summary>
 
 	[MonoTODO]
@@ -34,9 +32,6 @@ namespace System.Windows.Forms {
 		double zoom;
 		#endregion
 		
-		
-		
-		
 		#region Constructors
 		[MonoTODO]
 		public PrintPreviewControl() 
@@ -47,12 +42,8 @@ namespace System.Windows.Forms {
 			rows=0;
 			startPage=0;
 			zoom=1.0;
-			throw new NotImplementedException ();
 		}
 		#endregion
-		
-		
-		
 		
 		#region Properties
 		public bool AutoZoom {
@@ -67,7 +58,26 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		protected override CreateParams CreateParams {
-			get { throw new NotImplementedException (); }
+			get {
+				CreateParams createParams = new CreateParams ();
+				window = new ControlNativeWindow (this);
+
+				createParams.Caption = Text;
+				createParams.ClassName = "PRINTPREVIEWCONTROL";
+				createParams.X = Left;
+				createParams.Y = Top;
+				createParams.Width = Width;
+				createParams.Height = Height;
+				createParams.ClassStyle = 0;
+				createParams.ExStyle = 0;
+				createParams.Param = 0;
+				//			createParams.Parent = Parent.Handle;
+				createParams.Style = (int) (
+					WindowStyles.WS_CHILD | 
+					WindowStyles.WS_VISIBLE);
+				window.CreateHandle (createParams);
+				return createParams;
+			}		
 		}
 
 		public PrintDocument Document {
@@ -87,8 +97,12 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		public override string Text {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { 
+				return base.Text;
+			}
+			set {
+				base.Text = value;
+			}
 		}
 		
 		public bool UseAntiAlias {
@@ -101,9 +115,6 @@ namespace System.Windows.Forms {
 			set { zoom=value; }
 		}
 		#endregion
-		
-		
-		
 		
 		#region Methods
 		[MonoTODO]
@@ -148,9 +159,6 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		#endregion
-		
-		
-		
 		
 		#region Events
 		[MonoTODO]

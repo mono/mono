@@ -92,11 +92,10 @@ namespace System.Windows.Forms {
 		protected override CreateParams CreateParams {
 			get {
 				if (!classRegistered) {
-	                                Win32.WndProc wp = new Win32.WndProc (WndProc);
         	                        WNDCLASS wndClass = new WNDCLASS();
  
 					wndClass.style = (int) (CS_.CS_OWNDC | CS_.CS_VREDRAW | CS_.CS_HREDRAW);
-					wndClass.lpfnWndProc = wp;
+					wndClass.lpfnWndProc = NativeWindow.GetWindowProc();
 					wndClass.cbClsExtra = 0;
 					wndClass.cbWndExtra = 0;
 					wndClass.hInstance = (IntPtr)0;

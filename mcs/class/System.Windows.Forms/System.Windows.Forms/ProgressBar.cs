@@ -17,8 +17,6 @@ namespace System.Windows.Forms {
 	/// <summary>
 	/// Represents a Windows progress bar control.
 	///
-	/// ToDo note:
-	///  - nothing is implemented
 	/// </summary>
 
 	[MonoTODO]
@@ -31,9 +29,6 @@ namespace System.Windows.Forms {
 		int value;
 		#endregion
 		
-		
-		
-		
 		#region Constructor
 		[MonoTODO]
 		public ProgressBar() 
@@ -42,30 +37,38 @@ namespace System.Windows.Forms {
 			minimum=0;
 			step=10;
 			value=0;
-			throw new NotImplementedException ();
 		}
 		#endregion
-		
-		
-		
 		
 		#region Properties
 		[MonoTODO]
 		public override bool AllowDrop {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
 		
 		[MonoTODO]
 		public override Color BackColor {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
 		
 		[MonoTODO]
 		public override Image BackgroundImage {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException (); 
+			}
 		}
 
 		/// This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
@@ -73,82 +76,132 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		protected override CreateParams CreateParams {
-			get { throw new NotImplementedException (); }
+			get {
+				CreateParams createParams = new CreateParams ();
+				window = new ControlNativeWindow (this);
+
+				createParams.Caption = Text;
+				createParams.ClassName = "PROGRESSBAR";
+				createParams.X = Left;
+				createParams.Y = Top;
+				createParams.Width = Width;
+				createParams.Height = Height;
+				createParams.ClassStyle = 0;
+				createParams.ExStyle = 0;
+				createParams.Param = 0;
+				//			createParams.Parent = Parent.Handle;
+				createParams.Style = (int) (
+					WindowStyles.WS_CHILD | 
+					WindowStyles.WS_VISIBLE);
+				window.CreateHandle (createParams);
+				return createParams;
+			}		
 		}
 
 		[MonoTODO]
 		protected override ImeMode DefaultImeMode {
-			get { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 
 		[MonoTODO]
 		protected override Size DefaultSize {
-			get { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException (); 
+			}
 		}
 		
 		[MonoTODO]
 		public override Font Font {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
 		
 		[MonoTODO]
 		public override Color ForeColor  {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException (); 
+			}
 		}
 		
 		/// This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
 		/// public new ImeMode ImeMode {get; set;}
 		
 		public int Maximum {
-			get { return maximum; }
-			set { maximum=value; }
+			get {
+				return maximum;
+			}
+			set {
+				maximum=value;
+			}
 		}
 		
 		public int Minimum {
-			get { return minimum; }
-			set { minimum=value; }
+			get {
+				return minimum;
+			}
+			set {
+				minimum=value;
+			}
 		}
 		
 		/// This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
 		/// public new bool TabStop {get; set;}
 		[MonoTODO]
 		public override RightToLeft RightToLeft {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { 
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
 		
 		public int Step {
-			get { return step; }
-			set { step=value; }
+			get { 
+				return step;
+			}
+			set {
+				step=value;
+			}
 		}
 		
 		[MonoTODO]
 		public override string Text {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { 
+				return base.Text; 
+			}
+			set {
+				base.Text = value; 
+			}
 		}
 		
 		public int Value {
-			get { return value; }
-			set { value=value; }
+			get {
+				return value;
+			}
+			set {
+				value=value; 
+			}
 		}
 		#endregion
 		
-		
-		
-		
 		#region Methods
 		[MonoTODO]
-		protected override void CreateHandle() 
-		{
-			throw new NotImplementedException ();
+		protected override void CreateHandle() 	{
+			base.CreateHandle();
 		}
 		
 		[MonoTODO]
-		public void Increment(int value) 
-		{
+		public void Increment(int value) 	{
 			throw new NotImplementedException ();
 		}
 		
@@ -170,9 +223,6 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		#endregion
-		
-		
-		
 		
 		#region Events
 		/*

@@ -25,21 +25,17 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public NotifyIcon()
 		{
-			throw new NotImplementedException ();
+			
 		}
 
+		[MonoTODO]
+		public NotifyIcon(IContainer container) {
+			
+		}
 		//
 		//  --- Public Properties
 		//
-		//inherited
-		//public IContainer Container {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+
 		[MonoTODO]
 		public ContextMenu ContextMenu {
 			get {
@@ -49,6 +45,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
 		[MonoTODO]
 		public Icon Icon {
 			get {
@@ -58,89 +55,39 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-		//[MonoTODO]
-		//public override ISite Site {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+
+		internal string text; //FIXME: just to get it to run
 		[MonoTODO]
 		public string Text {
 			get {
-				throw new NotImplementedException ();
+				return text;
 			}
 			set {
-				throw new NotImplementedException ();
+				text = value;
 			}
 		}
+
+		internal bool visible;//FIXME: just to get it to run
 		[MonoTODO]
 		public bool Visible {
 			get {
-				throw new NotImplementedException ();
+				return visible;
 			}
 			set {
-				throw new NotImplementedException ();
+				visible = value;
 			}
 		}
 
 		//
 		//  --- Public Methods
 		//
-		[MonoTODO]
-		public override ObjRef CreateObjRef(Type requestedType)
-		{
-			throw new NotImplementedException ();
-		}
-		//inherited
-		//public void Dispose()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public object GetLifetimeService()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//inherited
-		//public virtual object InitializeLifetimeService()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		[MonoTODO]
-		public override bool Equals(object o)
-		{
-			throw new NotImplementedException ();
-		}
-		//inherited
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
-			return base.GetHashCode();
-		}
 
-		//inherited
-		//public Type GetType()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		[MonoTODO]
-		public override string ToString()
-		{
-			throw new NotImplementedException ();
-		}
 
 		//
 		//  --- Public Events
 		//
 		[MonoTODO]
 		public event EventHandler Click;
-		//public event EventHandler Disposed;
 		public event EventHandler DoubleClick;
 		public event MouseEventHandler MouseDown;
 		public event MouseEventHandler MouseMove;
@@ -149,44 +96,14 @@ namespace System.Windows.Forms {
 		//
 		//  --- Protected Properties
 		//
-		//[MonoTODO]
-		//protected bool DesignMode {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//protected EventHandlerList Events {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
 
 		//
 		//  --- Protected Methods
 		//
-		//[MonoTODO]
-		//protected virtual void Dispose(bool disposing)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected virtual object GetService(Type service)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected object MemberwiseClone()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-		//
-		//  --- DeConstructor
-		//
-		[MonoTODO]
-		~NotifyIcon()
-		{
-			throw new NotImplementedException ();
+		protected override void Dispose(bool disposing) {
+			base.Dispose (disposing);
 		}
+
+
 	 }
 }

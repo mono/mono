@@ -15,7 +15,6 @@ using System.ComponentModel;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
 	// </summary>
 
 
@@ -36,13 +35,10 @@ namespace System.Windows.Forms {
 		/// --- Constructor ---
 		public UpDownBase()	
 		{
-			throw new NotImplementedException ();
+			
 		}
 
 		/// --- Destructor ---
-		~UpDownBase() {
-			throw new NotImplementedException ();
-		}
 
 		/// --- Public Properties ---
 		#region Public Properties
@@ -145,10 +141,10 @@ namespace System.Windows.Forms {
 		// Gets or sets the text displayed in the up-down control
 		public override string Text {
 			get {
-				throw new NotImplementedException ();
+				return base.Text;
 			}
 			set {
-				throw new NotImplementedException ();
+				base.Text = value;
 			}
 		}
 
@@ -213,14 +209,31 @@ namespace System.Windows.Forms {
 		// Gets the required creation parameters when the control handle is created
 		protected override CreateParams CreateParams {
 			get {
-				throw new NotImplementedException ();
+				CreateParams createParams = new CreateParams ();
+				window = new ControlNativeWindow (this);
+
+				createParams.Caption = Text;
+				createParams.ClassName = "UPDOWNBASE";
+				createParams.X = Left;
+				createParams.Y = Top;
+				createParams.Width = Width;
+				createParams.Height = Height;
+				createParams.ClassStyle = 0;
+				createParams.ExStyle = 0;
+				createParams.Param = 0;
+				//			createParams.Parent = Parent.Handle;
+				createParams.Style = (int) (
+					WindowStyles.WS_CHILD | 
+					WindowStyles.WS_VISIBLE);
+				window.CreateHandle (createParams);
+				return createParams;
 			}
 		}
 
 		// Gets the default size of the control.
 		protected override Size DefaultSize {
 			get {
-				throw new NotImplementedException ();
+				return new System.Drawing.Size(100,20);
 			}
 		}
 
@@ -242,55 +255,58 @@ namespace System.Windows.Forms {
 		// Raises the FontChanged event
 		protected override void OnFontChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnFontChanged(e);
 		}
 
 		// Raises the HandleCreated event
 		protected override void OnHandleCreated(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnHandleCreated(e);
 		}
 
 		// Raises the Layout event
 		protected override void OnLayout(LayoutEventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnLayout(e);
 		}
 	
 		// Raises the MouseWheel event
 		protected override void OnMouseWheel(MouseEventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		// Raises the KeyDown event
 		protected virtual void OnTextBoxKeyDown(object source, KeyEventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		// Raises the KeyPress event
 		protected virtual void OnTextBoxKeyPress(object source, KeyPressEventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		// Raises the LostFocus event
 		protected virtual void OnTextBoxLostFocus(object source, EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		// Raises the Resize event
 		protected virtual void OnTextBoxResize(object source, EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		// Raises the TextChanged event.
 		protected virtual void OnTextBoxTextChanged(object source, EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		// This member overrides Control.SetBoundsCore.
@@ -307,19 +323,19 @@ namespace System.Windows.Forms {
 		// up-down control
 		protected virtual void ValidateEditText() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 
 			//FIXME shoould this be (ref message m)??
 		protected virtual void WndProc(Message m) { // .NET V1.1 Beta
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected override void Dispose(bool Disposing) { // .NET V1.1 Beta
-			throw new NotImplementedException ();
+			base.Dispose(Disposing);
 		}
 		
 		#endregion // Protected Methods
