@@ -23,18 +23,38 @@
  */
 
 using System;
+using System.Collections;
 using System.IO;
+using System.Net;
+using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+
+using Mono.Security.Protocol.Tls.Alerts;
 
 namespace Mono.Security.Protocol.Tls
 {
 	public class SslServerStream : Stream, IDisposable
 	{
+		#region Internal Events
+		
+		internal event CertificateValidationCallback ClientCertValidation;
+		
+		#endregion
+
 		#region Fields
 
-		private Stream	innerStream;
-		private bool	disposed;
-		private bool	ownsStream;
+		private CertificateValidationCallback	clientCertValidationDelegate;
+
+		private ServerRecordProtocol	protocol;
+		private BufferedStream			inputBuffer;
+		private ServerContext			context;
+		private Stream					innerStream;
+		private bool					disposed;
+		private bool					ownsStream;
+		private bool					checkCertRevocationStatus;
+		private object					read;
+		private object					write;		
 
 		#endregion
 
@@ -72,87 +92,205 @@ namespace Mono.Security.Protocol.Tls
 
 		public bool CheckCertRevocationStatus 
 		{
-			get { throw new NotSupportedException(); }
-			set { throw new NotSupportedException(); }
+			get { return this.checkCertRevocationStatus ; }
+			set { this.checkCertRevocationStatus = value; }
 		}
 
 		public CipherAlgorithmType CipherAlgorithm 
 		{
-			get { throw new NotSupportedException(); }
+			get 
+			{ 
+				if (this.context.HandshakeFinished)
+				{
+					return this.context.Cipher.CipherAlgorithmType;
+				}
+
+				return CipherAlgorithmType.None;
+			}
 		}
-		
+
 		public int CipherStrength 
 		{
-			get { throw new NotSupportedException(); }
+			get 
+			{ 
+				if (this.context.HandshakeFinished)
+				{
+					return this.context.Cipher.EffectiveKeyBits;
+				}
+
+				return 0;
+			}
 		}
 		
 		public X509Certificate ClientCertificate
 		{
-			get { throw new NotSupportedException(); }
-		}
+			get 
+			{ 
+				if (this.context.HandshakeFinished)
+				{
+					return this.context.ClientSettings.ClientCertificate;
+				}
 
-		public CertificateValidationCallback ClientCertValidationDelegate 
-		{
-			get { throw new NotSupportedException(); }
-			set { throw new NotSupportedException(); }
-		}
-
+				return null;
+			}
+		}		
+		
 		public HashAlgorithmType HashAlgorithm 
 		{
-			get { throw new NotSupportedException(); }
+			get 
+			{ 
+				if (this.context.HandshakeFinished)
+				{
+					return this.context.Cipher.HashAlgorithmType; 
+				}
+
+				return HashAlgorithmType.None;
+			}
 		}
 		
 		public int HashStrength
 		{
-			get { throw new NotSupportedException(); }
+			get 
+			{ 
+				if (this.context.HandshakeFinished)
+				{
+					return this.context.Cipher.HashSize * 8; 
+				}
+
+				return 0;
+			}
 		}
 		
 		public int KeyExchangeStrength 
 		{
-			get { throw new NotSupportedException(); }
+			get 
+			{ 
+				if (this.context.HandshakeFinished)
+				{
+					return this.context.ServerSettings.Certificates[0].RSA.KeySize;
+				}
+
+				return 0;
+			}
 		}
 		
 		public ExchangeAlgorithmType KeyExchangeAlgorithm 
 		{
-			get { throw new NotSupportedException(); }
+			get 
+			{ 
+				if (this.context.HandshakeFinished)
+				{
+					return this.context.Cipher.ExchangeAlgorithmType; 
+				}
+
+				return ExchangeAlgorithmType.None;
+			}
 		}
 		
 		public SecurityProtocolType SecurityProtocol 
 		{
-			get { throw new NotSupportedException(); }
+			get 
+			{ 
+				if (this.context.HandshakeFinished)
+				{
+					return this.context.SecurityProtocol; 
+				}
+
+				return 0;
+			}
 		}
 
 		public X509Certificate ServerCertificate 
 		{
-			get { throw new NotSupportedException(); }
+			get 
+			{ 
+				if (this.context.HandshakeFinished)
+				{
+					if (this.context.ServerSettings.Certificates != null &&
+						this.context.ServerSettings.Certificates.Count > 0)
+					{
+						return new X509Certificate(this.context.ServerSettings.Certificates[0].RawData);
+					}
+				}
+
+				return null;
+			}
+		} 
+
+		#endregion
+
+		#region Callback Properties
+
+		public CertificateValidationCallback ClientCertValidationDelegate 
+		{
+			get { return this.clientCertValidationDelegate; }
+			set 
+			{ 
+				if (this.ClientCertValidation != null)
+				{
+					this.ClientCertValidation -= this.clientCertValidationDelegate;
+				}
+				this.clientCertValidationDelegate	= value;
+				this.ClientCertValidation			+= this.clientCertValidationDelegate;
+			}
 		}
 
 		#endregion
 
 		#region Constructors
 
-		public SslServerStream(Stream stream, X509Certificate serverCertificate)
+		public SslServerStream(
+			Stream			stream, 
+			X509Certificate serverCertificate) : this(
+			stream, 
+			serverCertificate, 
+			false, 
+			false, 
+			SecurityProtocolType.Default)
 		{
-			throw new NotSupportedException();
 		}
 
 		public SslServerStream(
-			Stream stream,
+			Stream			stream,
 			X509Certificate serverCertificate,
-			bool clientCertificateRequired,
-			bool ownsStream)
+			bool			clientCertificateRequired,
+			bool			ownsStream): this(
+			stream, 
+			serverCertificate, 
+			clientCertificateRequired, 
+			ownsStream, 
+			SecurityProtocolType.Default)
 		{
-			throw new NotSupportedException();
 		}
 
 		public SslServerStream(
-			Stream stream,
-			X509Certificate serverCertificate,
-			bool clientCertificateRequired,
-			bool ownsStream,
-			SecurityProtocolType securityProtocolType)
+			Stream					stream,
+			X509Certificate			serverCertificate,
+			bool					clientCertificateRequired,
+			bool					ownsStream,
+			SecurityProtocolType	securityProtocolType)
 		{
-			throw new NotSupportedException();
+			if (stream == null)
+			{
+				throw new ArgumentNullException("stream is null.");
+			}
+			if (!stream.CanRead || !stream.CanWrite)
+			{
+				throw new ArgumentNullException("stream is not both readable and writable.");
+			}
+
+			this.context = new ServerContext(
+				this,
+				securityProtocolType,
+				serverCertificate,
+				clientCertificateRequired);
+
+			this.inputBuffer	= new BufferedStream(new MemoryStream());
+			this.innerStream	= stream;
+			this.ownsStream		= ownsStream;
+			this.read			= String.Empty;
+			this.write			= String.Empty;
+			this.protocol		= new ServerRecordProtocol(innerStream, context);
 		}
 
 		#endregion
@@ -182,6 +320,13 @@ namespace Mono.Security.Protocol.Tls
 				{
 					if (this.innerStream != null)
 					{
+						if (this.context.HandshakeFinished)
+						{
+							// Write close notify
+							TlsCloseNotifyAlert alert = new TlsCloseNotifyAlert(this.context);
+							this.protocol.SendAlert(alert);
+						}
+
 						if (this.ownsStream)
 						{
 							// Close inner stream
@@ -190,6 +335,11 @@ namespace Mono.Security.Protocol.Tls
 					}
 					this.ownsStream		= false;
 					this.innerStream	= null;
+					if (this.ClientCertValidation != null)
+					{
+						this.ClientCertValidation -= this.clientCertValidationDelegate;
+					}
+					this.clientCertValidationDelegate	= null;
 				}
 
 				this.disposed = true;
@@ -201,66 +351,230 @@ namespace Mono.Security.Protocol.Tls
 		#region Methods
 
 		public override IAsyncResult BeginRead(
-			byte[] buffer, 
-			int offset, 
-			int count, 
-			AsyncCallback asyncCallback, 
-			object asyncState)
+			byte[]			buffer,
+			int				offset,
+			int				count,
+			AsyncCallback	callback,
+			object			state)
 		{
-			throw new NotSupportedException();
+			this.checkDisposed();
+			
+			if (buffer == null)
+			{
+				throw new ArgumentNullException("buffer is a null reference.");
+			}
+			if (offset < 0)
+			{
+				throw new ArgumentOutOfRangeException("offset is less than 0.");
+			}
+			if (offset > buffer.Length)
+			{
+				throw new ArgumentOutOfRangeException("offset is greater than the length of buffer.");
+			}
+			if (count < 0)
+			{
+				throw new ArgumentOutOfRangeException("count is less than 0.");
+			}
+			if (count > (buffer.Length - offset))
+			{
+				throw new ArgumentOutOfRangeException("count is less than the length of buffer minus the value of the offset parameter.");
+			}
+
+			lock (this)
+			{
+				if (!this.context.HandshakeFinished)
+				{
+					this.doHandshake();	// Handshake negotiation
+				}
+			}
+
+			IAsyncResult asyncResult;
+
+			lock (this.read)
+			{
+				try
+				{
+					// If actual buffer is full readed reset it
+					if (this.inputBuffer.Position == this.inputBuffer.Length &&
+						this.inputBuffer.Length > 0)
+					{
+						this.resetBuffer();
+					}
+
+					if (!this.context.ConnectionEnd)
+					{
+						// Check if we have space in the middle buffer
+						// if not Read next TLS record and update the inputBuffer
+						while ((this.inputBuffer.Length - this.inputBuffer.Position) < count)
+						{
+							// Read next record and write it into the inputBuffer
+							long	position	= this.inputBuffer.Position;					
+							byte[]	record		= this.protocol.ReceiveRecord();
+					
+							if (record != null && record.Length > 0)
+							{
+								// Write new data to the inputBuffer
+								this.inputBuffer.Seek(0, SeekOrigin.End);
+								this.inputBuffer.Write(record, 0, record.Length);
+
+								// Restore buffer position
+								this.inputBuffer.Seek(position, SeekOrigin.Begin);
+							}
+							else
+							{
+								if (record == null)
+								{
+									break;
+								}
+							}
+
+							// TODO: Review if we need to check the Length
+							// property of the innerStream for other types
+							// of streams, to check that there are data available
+							// for read
+							if (this.innerStream is NetworkStream &&
+								!((NetworkStream)this.innerStream).DataAvailable)
+							{
+								break;
+							}
+						}
+					}
+
+					asyncResult = this.inputBuffer.BeginRead(
+						buffer, offset, count, callback, state);
+				}
+				catch (TlsException)
+				{
+					throw new IOException("The authentication or decryption has failed.");
+				}
+				catch (Exception)
+				{
+					throw new IOException("IO exception during read.");
+				}
+			}
+
+			return asyncResult;
 		}
 
 		public override IAsyncResult BeginWrite(
-			byte[] buffer, 
-			int offset, 
-			int count, 
-			AsyncCallback asyncCallback, 
-			object asyncState)
+			byte[]			buffer,
+			int				offset,
+			int				count,
+			AsyncCallback	callback,
+			object			state)
 		{
-			throw new NotSupportedException();
-		}
+			this.checkDisposed();
 
-		public override void Close()
-		{
-			throw new NotSupportedException();
+			if (buffer == null)
+			{
+				throw new ArgumentNullException("buffer is a null reference.");
+			}
+			if (offset < 0)
+			{
+				throw new ArgumentOutOfRangeException("offset is less than 0.");
+			}
+			if (offset > buffer.Length)
+			{
+				throw new ArgumentOutOfRangeException("offset is greater than the length of buffer.");
+			}
+			if (count < 0)
+			{
+				throw new ArgumentOutOfRangeException("count is less than 0.");
+			}
+			if (count > (buffer.Length - offset))
+			{
+				throw new ArgumentOutOfRangeException("count is less than the length of buffer minus the value of the offset parameter.");
+			}
+
+			lock (this)
+			{
+				if (!this.context.HandshakeFinished)
+				{
+					// Start handshake negotiation
+					this.doHandshake();
+				}
+			}
+
+			IAsyncResult asyncResult;
+
+			lock (this.write)
+			{
+				try
+				{
+					// Send the buffer as a TLS record
+					
+					byte[] record = this.protocol.EncodeRecord(
+						TlsContentType.ApplicationData, buffer, offset, count);
+				
+					asyncResult = this.innerStream.BeginWrite(
+						record, 0, record.Length, callback, state);
+				}
+				catch (TlsException)
+				{
+					throw new IOException("The authentication or decryption has failed.");
+				}
+				catch (Exception)
+				{
+					throw new IOException("IO exception during Write.");
+				}
+			}
+
+			return asyncResult;
 		}
 
 		public override int EndRead(IAsyncResult asyncResult)
 		{
-			throw new NotSupportedException();
+			this.checkDisposed();
+
+			if (asyncResult == null)
+			{
+				throw new ArgumentNullException("asyncResult is null or was not obtained by calling BeginRead.");
+			}
+
+			return this.inputBuffer.EndRead(asyncResult);
 		}
 
 		public override void EndWrite(IAsyncResult asyncResult)
 		{
-			throw new NotSupportedException();
+			this.checkDisposed();
+
+			if (asyncResult == null)
+			{
+				throw new ArgumentNullException("asyncResult is null or was not obtained by calling BeginRead.");
+			}
+
+			this.innerStream.EndWrite (asyncResult);
+		}
+
+		public override void Close()
+		{
+			((IDisposable)this).Dispose();
 		}
 
 		public override void Flush()
 		{
-			if (this.disposed)
-			{
-				throw new ObjectDisposedException("The NetworkStream is closed.");
-			}
+			this.checkDisposed();
+
+			this.innerStream.Flush();
 		}
 
 		public int Read(byte[] buffer)
 		{
-			throw new NotSupportedException();
+			return this.Read(buffer, 0, buffer.Length);
 		}
 
-		public override int Read(
-			byte[] buffer, 
-			int offset, 
-			int count)
+		public override int Read(byte[] buffer, int offset, int count)
 		{
-			throw new NotSupportedException();
+			IAsyncResult res = this.BeginRead(buffer, offset, count, null, null);
+
+			return this.EndRead(res);
 		}
 
 		public override long Seek(long offset, SeekOrigin origin)
 		{
 			throw new NotSupportedException();
 		}
-
+		
 		public override void SetLength(long value)
 		{
 			throw new NotSupportedException();
@@ -268,15 +582,77 @@ namespace Mono.Security.Protocol.Tls
 
 		public void Write(byte[] buffer)
 		{
-			throw new NotSupportedException();
+			this.Write(buffer, 0, buffer.Length);
 		}
 
-		public override void Write(
-			byte[] buffer, 
-			int offset, 
-			int count)
+		public override void Write(byte[] buffer, int offset, int count)
 		{
-			throw new NotSupportedException();
+			IAsyncResult res = this.BeginWrite (buffer, offset, count, null, null);
+
+			this.EndWrite(res);
+		}
+
+		#endregion
+
+		#region Misc Methods
+
+		private void resetBuffer()
+		{
+			this.inputBuffer.SetLength(0);
+			this.inputBuffer.Position = 0;
+		}
+
+		private void checkDisposed()
+		{
+			if (this.disposed)
+			{
+				throw new ObjectDisposedException("The SslClientStream is closed.");
+			}
+		}
+
+		#endregion
+
+		#region Handsake Methods
+
+		/*
+			Client											Server
+
+			ClientHello                 -------->
+															ServerHello
+															Certificate*
+															ServerKeyExchange*
+															CertificateRequest*
+										<--------			ServerHelloDone
+			Certificate*
+			ClientKeyExchange
+			CertificateVerify*
+			[ChangeCipherSpec]
+			Finished                    -------->
+															[ChangeCipherSpec]
+										<--------           Finished
+			Application Data            <------->			Application Data
+
+					Fig. 1 - Message flow for a full handshake		
+		*/
+
+		private void doHandshake()
+		{
+			try
+			{
+#warning "Implement server handshake logic"
+
+				// Obtain supported cipher suites
+				this.context.SupportedCiphers = TlsCipherSuiteFactory.GetSupportedCiphers(this.context.SecurityProtocol);
+
+				// Clear Key Info
+				this.context.ClearKeyInfo();
+
+				throw new NotSupportedException();
+			}
+			catch
+			{
+				throw new IOException("The authentication or decryption has failed.");
+			}
 		}
 
 		#endregion

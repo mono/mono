@@ -30,7 +30,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 	{
 		#region Constructors
 
-		public TlsServerHelloDone(TlsContext context, byte[] buffer) 
+		public TlsServerHelloDone(Context context, byte[] buffer) 
 			: base(context, TlsHandshakeType.ServerHello, buffer)
 		{
 		}
@@ -41,9 +41,11 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		public override void Update()
 		{
+			ClientContext context = (ClientContext)this.Context;
+
 			base.Update();
 
-			this.Context.HelloDone = true;
+			context.HelloDone = true;
 		}
 
 		#endregion

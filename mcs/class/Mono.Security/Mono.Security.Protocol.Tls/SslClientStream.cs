@@ -29,7 +29,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading;
 
 using Mono.Security.Protocol.Tls.Alerts;
 using Mono.Security.Protocol.Tls.Handshake;
@@ -71,7 +70,7 @@ namespace Mono.Security.Protocol.Tls
 		private PrivateKeySelectionCallback		privateKeySelectionDelegate;
 		private Stream							innerStream;
 		private BufferedStream					inputBuffer;
-		private TlsContext						context;
+		private ClientContext					context;
 		private ClientRecordProtocol			protocol;
 		private bool							ownsStream;
 		private bool							disposed;
@@ -348,11 +347,12 @@ namespace Mono.Security.Protocol.Tls
 				throw new ArgumentNullException("targetHost is null or an empty string.");
 			}
 
-			this.context = new TlsContext(
+			this.context = new ClientContext(
 				this,
 				securityProtocolType, 
 				targetHost, 
 				clientCertificates);
+
 			this.inputBuffer	= new BufferedStream(new MemoryStream());
 			this.innerStream	= stream;
 			this.ownsStream		= ownsStream;
@@ -524,13 +524,13 @@ namespace Mono.Security.Protocol.Tls
 					asyncResult = this.inputBuffer.BeginRead(
 						buffer, offset, count, callback, state);
 				}
-				catch (TlsException ex)
+				catch (TlsException)
 				{
-					throw new IOException("The authentication or decryption has failed.", ex);
+					throw new IOException("The authentication or decryption has failed.");
 				}
-				catch (Exception ex)
+				catch (Exception)
 				{
-					throw new IOException("IO exception during read.", ex);
+					throw new IOException("IO exception during read.");
 				}
 			}
 			/*
@@ -597,19 +597,20 @@ namespace Mono.Security.Protocol.Tls
 				try
 				{
 					// Send the buffer as a TLS record
+					
 					byte[] record = this.protocol.EncodeRecord(
 						TlsContentType.ApplicationData, buffer, offset, count);
 				
 					asyncResult = this.innerStream.BeginWrite(
 						record, 0, record.Length, callback, state);
 				}
-				catch (TlsException ex)
+				catch (TlsException)
 				{
 					throw new IOException("The authentication or decryption has failed.");
 				}
-				catch (Exception ex)
+				catch (Exception)
 				{
-					throw new IOException("IO exception during Write.", ex);
+					throw new IOException("IO exception during Write.");
 				}
 			}
 

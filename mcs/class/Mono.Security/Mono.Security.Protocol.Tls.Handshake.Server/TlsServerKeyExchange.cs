@@ -28,23 +28,15 @@ using System.Security.Cryptography;
 using Mono.Security.Cryptography;
 using Mono.Security.X509;
 
-namespace Mono.Security.Protocol.Tls.Handshake.Client
+namespace Mono.Security.Protocol.Tls.Handshake.Server
 {
 	internal class TlsServerKeyExchange : TlsHandshakeMessage
 	{
-		#region Fields
-
-		private RSAParameters	rsaParams;
-		private byte[]			signedParams;
-
-		#endregion
-
 		#region Constructors
 
-		public TlsServerKeyExchange(Context context, byte[] buffer)
-			: base(context, TlsHandshakeType.ServerKeyExchange, buffer)
+		public TlsServerKeyExchange(Context context)
+			: base(context, TlsHandshakeType.ServerKeyExchange)
 		{
-			this.verifySignature();
 		}
 
 		#endregion
@@ -53,11 +45,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		public override void Update()
 		{
-			base.Update();
-
-			this.Context.ServerSettings.ServerKeyExchange	= true;
-			this.Context.ServerSettings.RsaParameters		= this.rsaParams;
-			this.Context.ServerSettings.SignedParams		= this.signedParams;
+			throw new NotSupportedException();
 		}
 
 		#endregion
@@ -71,47 +59,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		protected override void ProcessAsTls1()
 		{
-			this.rsaParams = new RSAParameters();
-			
-			// Read modulus
-			this.rsaParams.Modulus	= this.ReadBytes(this.ReadInt16());
-
-			// Read exponent
-			this.rsaParams.Exponent	= this.ReadBytes(this.ReadInt16());
-
-			// Read signed params
-			this.signedParams		= this.ReadBytes(this.ReadInt16());
-		}
-
-		#endregion
-
-		#region Private Methods
-
-		private void verifySignature()
-		{
-			MD5SHA1 hash = new MD5SHA1();
-
-			// Calculate size of server params
-			int size = rsaParams.Modulus.Length + rsaParams.Exponent.Length + 4;
-
-			// Create server params array
-			TlsStream stream = new TlsStream();
-
-			stream.Write(this.Context.RandomCS);
-			stream.Write(this.ToArray(), 0, size);
-
-			hash.ComputeHash(stream.ToArray());
-
-			stream.Reset();
-			
-			bool isValidSignature = hash.VerifySignature(
-				this.Context.Cipher.CertificateRSA(),
-				this.signedParams);
-
-			if (!isValidSignature)
-			{
-				throw this.Context.CreateException("Data was not signed with the server certificate.");
-			}
+			throw new NotSupportedException();
 		}
 
 		#endregion

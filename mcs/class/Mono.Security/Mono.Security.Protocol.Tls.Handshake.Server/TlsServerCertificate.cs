@@ -23,22 +23,48 @@
  */
 
 using System;
-using Mono.Security.Protocol.Tls;
+using System.Collections;
+using System.Text.RegularExpressions;
+using System.Security.Cryptography;
+using X509Cert = System.Security.Cryptography.X509Certificates;
 
-namespace Mono.Security.Protocol.Tls.Alerts
+using Mono.Security.Protocol.Tls.Alerts;
+using Mono.Security.X509;
+
+namespace Mono.Security.Protocol.Tls.Handshake.Server
 {
-	internal class TlsCloseNotifyAlert : TlsAlert
+	internal class TlsServerCertificate : TlsHandshakeMessage
 	{
-		public TlsCloseNotifyAlert(Context context) 
-			: base(context,  
-					TlsAlertLevel.Warning, 
-					TlsAlertDescription.CloseNotify)
+		#region Constructors
+
+		public TlsServerCertificate(Context context) 
+			: base(context, TlsHandshakeType.Certificate)
 		{
 		}
 
+		#endregion
+
+		#region Methods
+
 		public override void Update()
 		{
-			this.Context.ConnectionEnd = true;
-		}	
+			throw new NotSupportedException();
+		}
+
+		#endregion
+
+		#region Protected Methods
+
+		protected override void ProcessAsSsl3()
+		{
+			throw new NotSupportedException();
+		}
+
+		protected override void ProcessAsTls1()
+		{
+			throw new NotSupportedException();
+		}
+
+		#endregion
 	}
 }

@@ -23,22 +23,57 @@
  */
 
 using System;
-using Mono.Security.Protocol.Tls;
 
-namespace Mono.Security.Protocol.Tls.Alerts
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+
+namespace Mono.Security.Protocol.Tls
 {
-	internal class TlsCloseNotifyAlert : TlsAlert
+	internal class ClientContext : Context
 	{
-		public TlsCloseNotifyAlert(Context context) 
-			: base(context,  
-					TlsAlertLevel.Warning, 
-					TlsAlertDescription.CloseNotify)
+		#region Fields
+
+		private SslClientStream	sslStream;
+		private short			clientHelloProtocol;
+		private bool			helloDone;
+
+		#endregion
+
+		#region Properties
+
+		public SslClientStream SslStream
 		{
+			get { return this.sslStream; }
 		}
 
-		public override void Update()
+		public bool HelloDone
 		{
-			this.Context.ConnectionEnd = true;
-		}	
+			get { return helloDone; }
+			set { helloDone = value; }
+		}
+
+		public short ClientHelloProtocol
+		{
+			get { return this.clientHelloProtocol; }
+			set { this.clientHelloProtocol = value; }
+		}
+
+		#endregion
+
+		#region Constructors
+
+		public ClientContext(
+			SslClientStream				stream,
+			SecurityProtocolType		securityProtocolType,
+			string						targetHost,
+			X509CertificateCollection	clientCertificates) 
+			: base(securityProtocolType)
+		{
+			this.sslStream						= stream;
+			this.ClientSettings.Certificates	= clientCertificates;
+			this.ClientSettings.TargetHost		= targetHost;
+		}
+
+		#endregion
 	}
 }

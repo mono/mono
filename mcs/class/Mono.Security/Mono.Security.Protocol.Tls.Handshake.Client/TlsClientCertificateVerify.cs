@@ -34,7 +34,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 	{
 		#region Constructors
 
-		public TlsClientCertificateVerify(TlsContext context) 
+		public TlsClientCertificateVerify(Context context) 
 			: base(context, TlsHandshakeType.Finished)
 		{
 		}
@@ -61,8 +61,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		protected override void ProcessAsTls1()
 		{
 			AsymmetricAlgorithm privKey = null;
+			ClientContext		context = (ClientContext)this.Context;
 			
-			privKey = this.Context.SslStream.RaisePrivateKeySelection(
+			privKey = context.SslStream.RaisePrivateKeySelection(
 				this.Context.ClientSettings.ClientCertificate,
 				this.Context.ClientSettings.TargetHost);
 
@@ -75,9 +76,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 				// Compute handshake messages hash
 				MD5SHA1 hash = new MD5SHA1();
 				hash.ComputeHash(
-					this.Context.HandshakeMessages.ToArray(),
+					context.HandshakeMessages.ToArray(),
 					0,
-					(int)this.Context.HandshakeMessages.Length);
+					(int)context.HandshakeMessages.Length);
 
 				// RSAManaged of the selected ClientCertificate 
 				// (at this moment the first one)

@@ -36,8 +36,8 @@ namespace Mono.Security.Protocol.Tls
 	{
 		#region Fields
 
-		protected Stream		innerStream;
-		protected TlsContext	context;
+		protected Stream	innerStream;
+		protected Context	context;
 
 		#endregion
 
@@ -49,7 +49,7 @@ namespace Mono.Security.Protocol.Tls
 			set { this.innerStream = value; }
 		}
 
-		public TlsContext Context
+		public Context Context
 		{
 			get { return this.context; }
 			set { this.context = value; }
@@ -59,7 +59,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Constructors
 
-		public RecordProtocol(Stream innerStream, TlsContext context)
+		public RecordProtocol(Stream innerStream, Context context)
 		{
 			this.innerStream	= innerStream;
 			this.context		= context;
@@ -108,8 +108,7 @@ namespace Mono.Security.Protocol.Tls
 			TlsStream message = new TlsStream(buffer);
 		
 			// Check that the message has a valid protocol version
-			if (protocol != this.context.Protocol &&
-				this.context.HelloDone)
+			if (protocol != this.context.Protocol && this.context.ProtocolNegotiated)
 			{
 				throw this.context.CreateException("Invalid protocol version on message received from server");
 			}
@@ -268,9 +267,9 @@ namespace Mono.Security.Protocol.Tls
 				short	fragmentLength = 0;
 				byte[]	fragment;
 
-				if ((count - position) > TlsContext.MAX_FRAGMENT_SIZE)
+				if ((count - position) > Context.MAX_FRAGMENT_SIZE)
 				{
-					fragmentLength = TlsContext.MAX_FRAGMENT_SIZE;
+					fragmentLength = Context.MAX_FRAGMENT_SIZE;
 				}
 				else
 				{

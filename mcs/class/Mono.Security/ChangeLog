@@ -1,3 +1,42 @@
+2004-02-23 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* Mono.Security.Protocol.Tls/TlsContext.cs:
+
+		- Removed file, implementation is now present in:
+
+			Context.cs
+			ClientContext.cs
+			ServerContext.cs
+
+	* Mono.Security.Protocol.Tls/Context.cs:
+	* Mono.Security.Protocol.Tls/ClientContext.cs:
+	* Mono.Security.Protocol.Tls/ServerContext.cs:
+	* Mono.Security.Protocol.Tls/ServerRecordProtocol.cs:
+
+		 - New classes.
+
+	* Mono.Security.Protocol.Tls/SslServerStream.cs:
+
+		- Added implementation for properties, and read/write methods
+		as in SslClientStream.
+
+		- doHandshake method is not implemented yet.
+
+	* Mono.Security.Protocol.Tls/SslClientStream.cs:
+	* Mono.Security.Protocol.Tls/RecordProtocol.cs:
+	* Mono.Security.Protocol.Tls/Ciphersuite.cs:
+	* Mono.Security.Protocol.Tls.Alerts/TlsAlert.cs:
+	* Mono.Security.Protocol.Tls.Alerts/TlsCloseNotifyAlert.cs:
+	* Mono.Security.Protocol.Tls.Handshake/TlsHandshakeMessage.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Client/*.cs:
+
+		- Added changes for make use of the new Context implementation.
+
+	* Mono.Security.Protocol.Tls.Handshake.Server/*.cs:
+
+        - New classes with method signatures only for the server handshake
+        implementation.
+
 2004-02-21  Carlos Guzman Alvarez  <carlosga@telefonica.net>
 
     * TlsServerHello: Fix for handle SecurityProtocolType.Default.

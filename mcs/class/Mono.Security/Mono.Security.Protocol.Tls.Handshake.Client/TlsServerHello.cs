@@ -39,7 +39,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		#region Constructors
 
-		public TlsServerHello(TlsContext context, byte[] buffer) 
+		public TlsServerHello(Context context, byte[] buffer) 
 			: base(context, TlsHandshakeType.ServerHello, buffer)
 		{
 		}
@@ -57,6 +57,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			this.Context.Cipher				= this.cipherSuite;
 			this.Context.CompressionMethod	= this.compressionMethod;
 			this.Context.Cipher.Context		= this.Context;
+			this.Context.ProtocolNegotiated	= true;
 
 			// Compute ClientRandom + ServerRandom
 			TlsStream random = new TlsStream();
@@ -119,7 +120,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			SecurityProtocolType serverProtocol = this.Context.DecodeProtocolCode(protocol);
 
 			if ((serverProtocol & this.Context.SecurityProtocolFlags) == serverProtocol ||
-                (this.Context.SecurityProtocolFlags & SecurityProtocolType.Default) == SecurityProtocolType.Default)
+				(this.Context.SecurityProtocolFlags & SecurityProtocolType.Default) == SecurityProtocolType.Default)
 			{
 				this.Context.SecurityProtocol = serverProtocol;
 				this.Context.SupportedCiphers.Clear();

@@ -39,7 +39,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		#region Constructors
 
-		public TlsServerCertificateRequest(TlsContext context, byte[] buffer) 
+		public TlsServerCertificateRequest(Context context, byte[] buffer) 
 			: base(context, TlsHandshakeType.ServerHello, buffer)
 		{
 		}

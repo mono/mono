@@ -37,7 +37,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		#region Constructors
 
-		public TlsClientHello(TlsContext context) 
+		public TlsClientHello(Context context) 
 			: base(context, TlsHandshakeType.ClientHello)
 		{
 		}
@@ -48,10 +48,12 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		public override void Update()
 		{
+			ClientContext context = (ClientContext)this.Context;
+
 			base.Update();
 
-			this.Context.ClientRandom			= random;
-			this.Context.ClientHelloProtocol	= this.Context.Protocol;
+			context.ClientRandom		= random;
+			context.ClientHelloProtocol	= this.Context.Protocol;
 
 			random = null;
 		}

@@ -33,7 +33,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 	{
 		#region Constructors
 
-		public TlsClientCertificate(TlsContext context) 
+		public TlsClientCertificate(Context context) 
 			: base(context, TlsHandshakeType.Certificate)
 		{
 		}
@@ -60,9 +60,10 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		protected override void ProcessAsTls1()
 		{
 #warning "Client certificate selection is unfinished"
+			ClientContext context = (ClientContext)this.Context;
 
-			if (this.Context.ClientSettings.Certificates == null ||
-				this.Context.ClientSettings.Certificates.Count == 0)
+			if (context.ClientSettings.Certificates == null ||
+				context.ClientSettings.Certificates.Count == 0)
 			{
 				throw this.Context.CreateException("Client certificate requested by the server and no client certificate specified.");
 			}
@@ -70,7 +71,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			// Select a valid certificate
 			X509Certificate clientCert = this.Context.ClientSettings.Certificates[0];
 
-			clientCert = this.Context.SslStream.RaiseClientCertificateSelection(
+			clientCert = context.SslStream.RaiseClientCertificateSelection(
 				this.Context.ClientSettings.Certificates,
 				new X509Certificate(this.Context.ServerSettings.Certificates[0].RawData),
 				this.Context.ClientSettings.TargetHost,
@@ -82,7 +83,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			}
 
 			// Update the selected client certificate
-			this.Context.ClientSettings.ClientCertificate = clientCert;
+			context.ClientSettings.ClientCertificate = clientCert;
 
 			// Write client certificates information to a stream
 			TlsStream stream = new TlsStream();

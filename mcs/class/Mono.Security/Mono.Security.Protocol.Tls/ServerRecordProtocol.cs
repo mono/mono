@@ -27,17 +27,17 @@ using System.IO;
 
 using Mono.Security.Protocol.Tls.Alerts;
 using Mono.Security.Protocol.Tls.Handshake;
-using Mono.Security.Protocol.Tls.Handshake.Client;
+using Mono.Security.Protocol.Tls.Handshake.Server;
 
 namespace Mono.Security.Protocol.Tls
 {
-	internal class ClientRecordProtocol : RecordProtocol
+	internal class ServerRecordProtocol : RecordProtocol
 	{
 		#region Constructors
 
-		public ClientRecordProtocol(
+		public ServerRecordProtocol(
 			Stream			innerStream, 
-			ClientContext	context) : base(innerStream, context)
+			ServerContext	context) : base(innerStream, context)
 		{
 		}
 
@@ -48,7 +48,7 @@ namespace Mono.Security.Protocol.Tls
 		public override void SendRecord(TlsHandshakeType type)
 		{
 			// Create the record message
-			TlsHandshakeMessage msg = this.createClientHandshakeMessage(type);
+			TlsHandshakeMessage msg = this.createServerHandshakeMessage(type);
 			
 			// Write record
 			this.SendRecord(msg.ContentType, msg.EncodeMessage());
@@ -77,7 +77,7 @@ namespace Mono.Security.Protocol.Tls
 			handMsg.Read(data, 0, length);
 
 			// Create and process the server message
-			message = this.createServerHandshakeMessage(handshakeType, data);
+			message = this.createClientHandshakeMessage(handshakeType, data);
 
 			// Update session
 			if (message != null)
@@ -88,35 +88,35 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region Client Handshake Message Factories
+		#region Server Handshake Message Factories
 
 		private TlsHandshakeMessage createClientHandshakeMessage(
-			TlsHandshakeType type)
+			TlsHandshakeType type, byte[] buffer)
 		{
 			switch (type)
 			{
 				case TlsHandshakeType.ClientHello:
-					return new TlsClientHello(this.context);
+					return new TlsClientHello(this.context, buffer);
 
 				case TlsHandshakeType.Certificate:
-					return new TlsClientCertificate(this.context);
+					return new TlsClientCertificate(this.context, buffer);
 
 				case TlsHandshakeType.ClientKeyExchange:
-					return new TlsClientKeyExchange(this.context);
+					return new TlsClientKeyExchange(this.context, buffer);
 
 				case TlsHandshakeType.CertificateVerify:
-					return new TlsClientCertificateVerify(this.context);
+					return new TlsClientCertificateVerify(this.context, buffer);
 
 				case TlsHandshakeType.Finished:
-					return new TlsClientFinished(this.context);
+					return new TlsClientFinished(this.context, buffer);
 
 				default:
-					throw new InvalidOperationException("Unknown client handshake message type: " + type.ToString() );
+					throw this.context.CreateException("Unknown server handshake message received ({0})", type.ToString());
 			}
 		}
 
 		private TlsHandshakeMessage createServerHandshakeMessage(
-			TlsHandshakeType type, byte[] buffer)
+			TlsHandshakeType type)
 		{
 			switch (type)
 			{
@@ -125,25 +125,25 @@ namespace Mono.Security.Protocol.Tls
 					return null;
 
 				case TlsHandshakeType.ServerHello:
-					return new TlsServerHello(this.context, buffer);
+					return new TlsServerHello(this.context);
 
 				case TlsHandshakeType.Certificate:
-					return new TlsServerCertificate(this.context, buffer);
+					return new TlsServerCertificate(this.context);
 
 				case TlsHandshakeType.ServerKeyExchange:
-					return new TlsServerKeyExchange(this.context, buffer);
+					return new TlsServerKeyExchange(this.context);
 
 				case TlsHandshakeType.CertificateRequest:
-					return new TlsServerCertificateRequest(this.context, buffer);
+					return new TlsServerCertificateRequest(this.context);
 
 				case TlsHandshakeType.ServerHelloDone:
-					return new TlsServerHelloDone(this.context, buffer);
+					return new TlsServerHelloDone(this.context);
 
 				case TlsHandshakeType.Finished:
-					return new TlsServerFinished(this.context, buffer);
+					return new TlsServerFinished(this.context);
 
 				default:
-					throw this.context.CreateException("Unknown server handshake message received ({0})", type.ToString());
+					throw new InvalidOperationException("Unknown server handshake message type: " + type.ToString() );					
 			}
 		}
 

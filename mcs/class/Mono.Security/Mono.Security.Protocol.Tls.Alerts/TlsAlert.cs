@@ -70,7 +70,7 @@ namespace Mono.Security.Protocol.Tls.Alerts
 	{
 		#region Fields
 
-		private TlsContext				context;
+		private Context				context;
 		private TlsAlertLevel			level;
 		private TlsAlertDescription		description;
 
@@ -78,7 +78,7 @@ namespace Mono.Security.Protocol.Tls.Alerts
 
 		#region Properties
 
-		public TlsContext Context
+		public Context Context
 		{
 			get { return this.context; }
 		}
@@ -88,7 +88,7 @@ namespace Mono.Security.Protocol.Tls.Alerts
 		#region Constructors
 
 		public TlsAlert(
-			TlsContext				context,
+			Context				context,
 			TlsAlertLevel			level,
 			TlsAlertDescription		description) : base()
 		{

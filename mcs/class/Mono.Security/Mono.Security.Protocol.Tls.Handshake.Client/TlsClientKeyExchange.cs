@@ -32,7 +32,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 	{
 		#region Constructors
 
-		public TlsClientKeyExchange (TlsContext context) : 
+		public TlsClientKeyExchange (Context context) : 
 			base(context,
 				TlsHandshakeType.ClientKeyExchange)
 		{

@@ -23,22 +23,36 @@
  */
 
 using System;
-using Mono.Security.Protocol.Tls;
+using System.IO;
+using System.Security.Cryptography;
 
-namespace Mono.Security.Protocol.Tls.Alerts
+namespace Mono.Security.Protocol.Tls.Handshake.Server
 {
-	internal class TlsCloseNotifyAlert : TlsAlert
+	internal class TlsClientKeyExchange : TlsHandshakeMessage
 	{
-		public TlsCloseNotifyAlert(Context context) 
-			: base(context,  
-					TlsAlertLevel.Warning, 
-					TlsAlertDescription.CloseNotify)
+		#region Constructors
+
+		public TlsClientKeyExchange (Context context, byte[] buffer) : 
+			base(context,
+				TlsHandshakeType.ClientKeyExchange, 
+				buffer)
 		{
 		}
 
-		public override void Update()
+		#endregion
+
+		#region Protected Methods
+
+		protected override void ProcessAsSsl3()
 		{
-			this.Context.ConnectionEnd = true;
-		}	
+			throw new NotSupportedException();
+		}
+
+		protected override void ProcessAsTls1()
+		{
+			throw new NotSupportedException();
+		}
+
+		#endregion
 	}
 }

@@ -41,13 +41,13 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 	{
 		#region Fields
 
-		private X509CertificateCollection	certificates;
+		private X509CertificateCollection certificates;
 		
 		#endregion
 
 		#region Constructors
 
-		public TlsServerCertificate(TlsContext context, byte[] buffer) 
+		public TlsServerCertificate(Context context, byte[] buffer) 
 			: base(context, TlsHandshakeType.Certificate, buffer)
 		{
 		}
@@ -110,13 +110,15 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		// DH certificates requires some changes - does anyone use one ?
 		private bool checkCertificateUsage (X509Certificate cert) 
 		{
+            ClientContext context = (ClientContext)this.Context;
+
 			// certificate extensions are required for this
 			// we "must" accept older certificates without proofs
 			if (cert.Version < 3)
 				return true;
 
 			KeyUsage ku = KeyUsage.none;
-			switch (this.Context.Cipher.ExchangeAlgorithmType) {
+			switch (context.Cipher.ExchangeAlgorithmType) {
 				case ExchangeAlgorithmType.RsaSign:
 					ku = KeyUsage.digitalSignature;
 					break;
@@ -169,6 +171,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		private void validateCertificates(X509CertificateCollection certificates)
 		{
+            ClientContext context = (ClientContext)this.Context;
+
 			// the leaf is the web server certificate
 			X509Certificate leaf = certificates [0];
 			X509Cert.X509Certificate cert = new X509Cert.X509Certificate (leaf.RawData);
@@ -179,7 +183,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			//   connections to a server).
 			// - this won't work when used directly from assembly 
 			//   Mono.Security.dll but will when called from System.dll
-			Uri target = new Uri ("https://" + this.Context.ClientSettings.TargetHost);
+			Uri target = new Uri ("https://" + context.ClientSettings.TargetHost);
 			ServicePoint sp = ServicePointManager.FindServicePoint (target);
 			if ((sp != null) && (sp.Certificate != null)) {
 				// is the service point still valid ?
@@ -262,11 +266,11 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 			int[] certificateErrors = (int[])errors.ToArray(typeof(int));
 
-			if (!this.Context.SslStream.RaiseServerCertificateValidation(
+			if (!context.SslStream.RaiseServerCertificateValidation(
 				cert, 
 				certificateErrors))
 			{
-				throw this.Context.CreateException("Invalid certificate received form server.");
+				throw context.CreateException("Invalid certificate received form server.");
 			}
 		}
 
@@ -282,7 +286,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		// 3.1		Existing practice but DEPRECATED
 		private bool checkServerIdentity (X509Certificate cert) 
 		{
-			string targetHost = this.Context.ClientSettings.TargetHost;
+            ClientContext context = (ClientContext)this.Context;
+
+			string targetHost = context.ClientSettings.TargetHost;
 
 			X509Extension ext = cert.Extensions ["2.5.29.17"];
 			// 1. subjectAltName
@@ -307,6 +313,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		private bool checkDomainName(string subjectName)
 		{
+            ClientContext context = (ClientContext)this.Context;
+
 			string	domainName = String.Empty;
 			Regex search = new Regex(@"([\w\s\d]*)\s*=\s*([^,]*)");
 
@@ -323,7 +331,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			}
 
 			// TODO: add wildcard * support
-			return (String.Compare (this.Context.ClientSettings.TargetHost, domainName, true, CultureInfo.InvariantCulture) == 0);
+			return (String.Compare (context.ClientSettings.TargetHost, domainName, true, CultureInfo.InvariantCulture) == 0);
 
 /*
  * the only document found describing this is:
@@ -339,7 +347,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			}
 			else
 			{
-				string targetHost = this.Context.ClientSettings.TargetHost;
+				string targetHost = context.ClientSettings.TargetHost;
 
 				// Check that the IP is correct
 				try

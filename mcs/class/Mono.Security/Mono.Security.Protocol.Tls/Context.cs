@@ -34,7 +34,7 @@ using Mono.Security.Protocol.Tls.Handshake;
 
 namespace Mono.Security.Protocol.Tls
 {
-	internal class TlsContext
+	internal abstract class Context
 	{
 		#region Internal Constants
 
@@ -47,15 +47,9 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Fields
 		
-		// SslClientStream that owns the context
-		private SslClientStream	sslStream;
-
 		// Protocol version
 		private SecurityProtocolType securityProtocol;
 		
-		// Client hello protocol code
-		private short clientHelloProtocol;
-
 		// Sesison ID
 		private byte[] sessionId;
 
@@ -73,32 +67,32 @@ namespace Mono.Security.Protocol.Tls
 		private TlsCipherSuiteCollection	supportedCiphers;
 
 		// Misc
-		private bool				isActual;
-		private bool				helloDone;
-		private	bool				handshakeFinished;
-		private bool				connectionEnd;
+		private bool	isActual;
+		private	bool	handshakeFinished;
+		private bool	connectionEnd;
+		private bool	protocolNegotiated;
 		
 		// Sequence numbers
-		private long				writeSequenceNumber;
-		private long				readSequenceNumber;
+		private long	writeSequenceNumber;
+		private long	readSequenceNumber;
 
 		// Random data
-		private byte[]				clientRandom;
-		private byte[]				serverRandom;
-		private byte[]				randomCS;
-		private byte[]				randomSC;
+		private byte[]	clientRandom;
+		private byte[]	serverRandom;
+		private byte[]	randomCS;
+		private byte[]	randomSC;
 
 		// Key information
-		private byte[]				masterSecret;
-		private byte[]				clientWriteMAC;
-		private byte[]				serverWriteMAC;
-		private byte[]				clientWriteKey;
-		private byte[]				serverWriteKey;
-		private byte[]				clientWriteIV;
-		private byte[]				serverWriteIV;
+		private byte[]	masterSecret;
+		private byte[]	clientWriteMAC;
+		private byte[]	serverWriteMAC;
+		private byte[]	clientWriteKey;
+		private byte[]	serverWriteKey;
+		private byte[]	clientWriteIV;
+		private byte[]	serverWriteIV;
 		
 		// Handshake hashes
-		private TlsStream			handshakeMessages;
+		private TlsStream handshakeMessages;
 		
 		// Secure Random generator		
 		private RandomNumberGenerator random;
@@ -107,36 +101,30 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Properties
 
-		public SslClientStream SslStream
+		public bool	ProtocolNegotiated
 		{
-			get { return sslStream; }
+			get { return this.protocolNegotiated; }
+			set { this.protocolNegotiated = value; }
 		}
 
 		public SecurityProtocolType SecurityProtocol
 		{
 			get 
 			{
-				if (this.handshakeFinished)
+				if ((this.securityProtocol & SecurityProtocolType.Tls) == SecurityProtocolType.Tls ||	
+					(this.securityProtocol & SecurityProtocolType.Default) == SecurityProtocolType.Default)
 				{
-					return this.securityProtocol;
+					return SecurityProtocolType.Tls;
 				}
 				else
 				{
-					if ((this.securityProtocol & SecurityProtocolType.Tls) == SecurityProtocolType.Tls ||	
-						(this.securityProtocol & SecurityProtocolType.Default) == SecurityProtocolType.Default)
+					if ((this.securityProtocol & SecurityProtocolType.Ssl3) == SecurityProtocolType.Ssl3)
 					{
-						return SecurityProtocolType.Tls;
+						return SecurityProtocolType.Ssl3;
 					}
-					else
-					{
-						if ((this.securityProtocol & SecurityProtocolType.Ssl3) == SecurityProtocolType.Ssl3)
-						{
-							return SecurityProtocolType.Ssl3;
-						}
-					}
-
-					throw new NotSupportedException("Unsupported security protocol type");
 				}
+
+				throw new NotSupportedException("Unsupported security protocol type");
 			}
 
 			set { this.securityProtocol = value; }
@@ -155,22 +143,16 @@ namespace Mono.Security.Protocol.Tls
 				{
 					case SecurityProtocolType.Tls:
 					case SecurityProtocolType.Default:
-						return TlsContext.TLS1_PROTOCOL_CODE;
+						return Context.TLS1_PROTOCOL_CODE;
 
 					case SecurityProtocolType.Ssl3:
-						return TlsContext.SSL3_PROTOCOL_CODE;
+						return Context.SSL3_PROTOCOL_CODE;
 
 					case SecurityProtocolType.Ssl2:
 					default:
 						throw new NotSupportedException("Unsupported security protocol type");
 				}
 			}
-		}
-
-		public short ClientHelloProtocol
-		{
-			get { return this.clientHelloProtocol; }
-			set { this.clientHelloProtocol = value; }
 		}
 
 		public byte[] SessionId
@@ -201,12 +183,6 @@ namespace Mono.Security.Protocol.Tls
 		{
 			get { return this.isActual; }
 			set { this.isActual = value; }
-		}
-
-		public bool HelloDone
-		{
-			get { return helloDone; }
-			set { helloDone = value; }
 		}
 
 		public bool HandshakeFinished
@@ -320,13 +296,8 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Constructors
 
-		public TlsContext(
-			SslClientStream				sslStream,
-			SecurityProtocolType		securityProtocolType,
-			string						targetHost,
-			X509CertificateCollection	clientCertificates)
+		public Context(SecurityProtocolType securityProtocolType)
 		{
-			this.sslStream			= sslStream;
 			this.SecurityProtocol	= securityProtocolType;
 			this.compressionMethod	= SecurityCompressionType.None;
 			this.serverSettings		= new TlsServerSettings();
@@ -334,10 +305,6 @@ namespace Mono.Security.Protocol.Tls
 			this.handshakeMessages	= new TlsStream();
 			this.sessionId			= null;
 			this.random				= RandomNumberGenerator.Create();
-
-			// Set client settings
-			this.ClientSettings.TargetHost		= targetHost;
-			this.ClientSettings.Certificates	= clientCertificates;
 		}
 
 		#endregion
@@ -391,10 +358,10 @@ namespace Mono.Security.Protocol.Tls
 		{
 			switch (code)
 			{
-				case TlsContext.TLS1_PROTOCOL_CODE:
+				case Context.TLS1_PROTOCOL_CODE:
 					return SecurityProtocolType.Tls;
 
-				case TlsContext.SSL3_PROTOCOL_CODE:
+				case Context.SSL3_PROTOCOL_CODE:
 					return SecurityProtocolType.Ssl3;
 
 				default:
@@ -406,12 +373,12 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Exception Methods
 
-		internal TlsException CreateException(TlsAlertLevel alertLevel, TlsAlertDescription alertDesc)
+		public TlsException CreateException(TlsAlertLevel alertLevel, TlsAlertDescription alertDesc)
 		{
 			return CreateException(TlsAlert.GetAlertMessage(alertDesc));
 		}
 
-		internal TlsException CreateException(string format, params object[] args)
+		public TlsException CreateException(string format, params object[] args)
 		{
 			StringBuilder message = new StringBuilder();
 			message.AppendFormat(format, args);
@@ -419,7 +386,7 @@ namespace Mono.Security.Protocol.Tls
 			return CreateException(message.ToString());
 		}
 
-		internal TlsException CreateException(string message)
+		public TlsException CreateException(string message)
 		{
 			return new TlsException(message);
 		}

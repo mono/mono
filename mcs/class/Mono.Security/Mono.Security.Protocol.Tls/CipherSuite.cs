@@ -57,7 +57,7 @@ namespace Mono.Security.Protocol.Tls
 		private short					effectiveKeyBits;
 		private byte					ivSize;
 		private byte					blockSize;
-		private TlsContext		context;
+		private Context		context;
 		private SymmetricAlgorithm		encryptionAlgorithm;
 		private ICryptoTransform		encryptionCipher;
 		private SymmetricAlgorithm		decryptionAlgorithm;
@@ -194,7 +194,7 @@ namespace Mono.Security.Protocol.Tls
 			get { return this.blockSize; }
 		}
 
-		public TlsContext Context
+		public Context Context
 		{
 			get { return this.context; }
 			set { this.context = value; }
@@ -352,13 +352,14 @@ namespace Mono.Security.Protocol.Tls
 
 		public byte[] CreatePremasterSecret()
 		{
-			TlsStream stream = new TlsStream();
+			TlsStream		stream	= new TlsStream();
+			ClientContext	context	= (ClientContext)this.Context;
 
 			// Write protocol version
 			// We need to send here the protocol version used in 
 			// the ClientHello message, that can be different than the actual
 			// protocol version
-			stream.Write(this.Context.ClientHelloProtocol);
+			stream.Write(context.ClientHelloProtocol);
 
 			// Generate random bytes
 			stream.Write(this.context.GetSecureRandomBytes(46));

@@ -23,7 +23,6 @@
  */
 
 using System;
-// using Mono.Security.Protocol.Tls;
 
 namespace Mono.Security.Protocol.Tls.Handshake
 {
@@ -31,7 +30,7 @@ namespace Mono.Security.Protocol.Tls.Handshake
 	{
 		#region Fields
 
-		private TlsContext			context;
+		private Context				context;
 		private TlsHandshakeType	handshakeType;
 		private TlsContentType		contentType;
 
@@ -39,7 +38,7 @@ namespace Mono.Security.Protocol.Tls.Handshake
 
 		#region Properties
 
-		public TlsContext Context
+		public Context Context
 		{
 			get { return this.context; }
 		}
@@ -59,14 +58,14 @@ namespace Mono.Security.Protocol.Tls.Handshake
 		#region Constructors
 
 		public TlsHandshakeMessage(
-			TlsContext			context,
+			Context			context,
 			TlsHandshakeType	handshakeType) 
 			: this(context, handshakeType, TlsContentType.Handshake)
 		{
 		}
 
 		public TlsHandshakeMessage(
-			TlsContext			context,
+			Context			context,
 			TlsHandshakeType	handshakeType,
 			TlsContentType		contentType) : base()
 		{
@@ -79,7 +78,7 @@ namespace Mono.Security.Protocol.Tls.Handshake
 		}
 
 		public TlsHandshakeMessage(
-			TlsContext			context, 
+			Context			context, 
 			TlsHandshakeType	handshakeType, 
 			byte[]				data) : base(data)
 		{
