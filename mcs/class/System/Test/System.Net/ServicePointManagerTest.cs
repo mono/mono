@@ -83,6 +83,7 @@ public class ServicePointManagerTest : Assertion
         [Test]
 	public void FindServicePoint ()
 	{
+		ServicePointManager.MaxServicePoints = 0;
 		ServicePoint sp = ServicePointManager.FindServicePoint (googleUri, new WebProxy (apacheUri));
 		AssertEquals ("#1", apacheUri, sp.Address);
 		AssertEquals ("#2", 2, sp.ConnectionLimit);

@@ -1,3 +1,8 @@
+2005-01-24  Nick Drochak  <ndrochak@ieee.org>
+
+	* ServicePointManagerTest.cs: Make sure we have some Service Points
+	when we try to get one.
+
 2005-01-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ServicePointManagerTest.cs: Add a TearDown method; add setup/teardown
