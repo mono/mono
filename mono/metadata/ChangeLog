@@ -1,5 +1,8 @@
 2004-10-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* class-internals.h class.c (mono_class_get_implemented_interfaces): 
+	New helper function.
+
 	* icall.c (ves_icall_System_Reflection_Assembly_GetTypes): Return the
 	created MonoType for dynamic types. Fixes #66180.
 
