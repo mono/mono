@@ -128,7 +128,8 @@ namespace System.Security
 					throw new ArgumentNullException ();
 				if (!IsValidTag (value))
 					throw new ArgumentException (Locale.GetText ("Invalid XML string") + ": " + value);
-				tag = value;
+				int colon = value.IndexOf (':');
+				tag = colon < 0 ? value : value.Substring (colon + 1);
 			}
 		}
 
