@@ -507,9 +507,6 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern bool type_is_assignable_from (Type a, Type b);
 		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern bool type_is_instance (Type a, object b);
-		
 		public virtual bool IsSubclassOf (Type c)
 		{
 			if (c == null)

@@ -1,3 +1,8 @@
+
+Tue Jun 15 15:15:44 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* Type.cs: removed unused (and non-existing) icall type_is_instance.
+
 2004-06-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Environment.cs: use internalGetHome instead of getting "HOME" as
