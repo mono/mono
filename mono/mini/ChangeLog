@@ -1,3 +1,7 @@
+2004-12-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (NEW_AOTCONST): Share some code between the different NEW_AOTCONST macros.
+
 2004-12-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c jit-icalls.c: Pass generic_context to mono_ldtoken_wrapper.
