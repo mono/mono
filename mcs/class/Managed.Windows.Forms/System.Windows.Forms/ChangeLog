@@ -1,3 +1,10 @@
+2004-12-09  John BouAntoun <jba-mono@optusnet.com.au>
+
+	* MonthCalendar.cs: 
+	  - optimisationL only invalidate areas that have changed 
+	* ThemeWin32Classic.cs:
+	  - only paint parts that intersect with clip_area
+
 2004-12-09  Peter Bartok  <pbartok@novell.com>
 
 	* Application.cs: Undid changes from r37004 which cause problems 

@@ -1360,9 +1360,7 @@ namespace System.Windows.Forms
 			// cache local copies of Marshal-by-ref internal members (gets around error CS0197)
 			Size calendar_spacing = (Size)((object)mc.calendar_spacing);
 			Size date_cell_size = (Size)((object)mc.date_cell_size);
-			// fill the background of the calendar
-			dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), client_rectangle);
-		
+
 			// draw the singlecalendars
 			int x_offset = 1;
 			int y_offset = 1;
@@ -1385,46 +1383,91 @@ namespace System.Windows.Forms
 						x_offset = 1;
 					}
 
-					DrawSingleMonth (
-						dc,
-						new Rectangle (x_offset, y_offset, month_size.Width, month_size.Height),
-						mc,
-						i,
-						j);
-
-					// draw the today date if it's set
-					if (mc.ShowToday &&
-						(i == mc.CalendarDimensions.Height-1 && j == 0)) 
+					Rectangle month_rect = new Rectangle (x_offset, y_offset, month_size.Width, month_size.Height);
+					if (month_rect.IntersectsWith (clip_rectangle)) {
+						DrawSingleMonth (
+							dc,
+							clip_rectangle,
+							month_rect,
+							mc,
+							i,
+							j);
+					}
+				}
+			}
+			
+			Rectangle bottom_rect = new Rectangle (
+						client_rectangle.X,
+						Math.Max(client_rectangle.Bottom - date_cell_size.Height - 3, 0),
+						client_rectangle.Width,
+						date_cell_size.Height + 2);
+			// draw the today date if it's set
+			if (mc.ShowToday && bottom_rect.IntersectsWith (clip_rectangle)) 
+			{
+				dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), bottom_rect);
+				if (mc.ShowToday) {
+					int today_offset = 5;
+					if (mc.ShowTodayCircle) 
 					{
-						int today_offset = 0;
-						if (mc.ShowTodayCircle) 
-						{
-							Rectangle today_circle_rect = new Rectangle (
-								client_rectangle.X + 5,
-								Math.Max(client_rectangle.Bottom - date_cell_size.Height - 2, 0),
-								date_cell_size.Width,
-								date_cell_size.Height);
+						Rectangle today_circle_rect = new Rectangle (
+							client_rectangle.X + 5,
+							Math.Max(client_rectangle.Bottom - date_cell_size.Height - 2, 0),
+							date_cell_size.Width,
+							date_cell_size.Height);
 							DrawTodayCircle (dc, today_circle_rect);
-							today_offset = date_cell_size.Width + 5;
-						}
-						// draw today's date
-						StringFormat text_format = new StringFormat();
-						text_format.LineAlignment = StringAlignment.Center;
-						text_format.Alignment = StringAlignment.Near;
-						Font bold_font = new Font (mc.Font.FontFamily, mc.Font.Size, mc.Font.Style | FontStyle.Bold);
-						Rectangle today_rect = new Rectangle (
-								today_offset + client_rectangle.X,
-								Math.Max(client_rectangle.Bottom - date_cell_size.Height, 0),
-								Math.Max(client_rectangle.Width - today_offset, 0),
-								date_cell_size.Height);						
-						dc.DrawString ("Today: " + DateTime.Now.ToShortDateString(), bold_font, ResPool.GetSolidBrush (mc.ForeColor), today_rect, text_format);
+						today_offset += date_cell_size.Width + 5;
+					}
+					// draw today's date
+					StringFormat text_format = new StringFormat();
+					text_format.LineAlignment = StringAlignment.Center;
+					text_format.Alignment = StringAlignment.Near;
+					Font bold_font = new Font (mc.Font.FontFamily, mc.Font.Size, mc.Font.Style | FontStyle.Bold);
+					Rectangle today_rect = new Rectangle (
+							today_offset + client_rectangle.X,
+							Math.Max(client_rectangle.Bottom - date_cell_size.Height, 0),
+							Math.Max(client_rectangle.Width - today_offset, 0),
+							date_cell_size.Height);
+					dc.DrawString ("Today: " + DateTime.Now.ToShortDateString(), bold_font, ResPool.GetSolidBrush (mc.ForeColor), today_rect, text_format);
+				}				
+			}
+			
+			// finally paint the borders of the calendars as required
+			for (int i = 0; i <= mc.CalendarDimensions.Width; i++) {
+				if (i == 0 && clip_rectangle.X == client_rectangle.X) {
+					dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), new Rectangle (client_rectangle.X, client_rectangle.Y, 1, client_rectangle.Height));
+				} else if (i == mc.CalendarDimensions.Width && clip_rectangle.Right == client_rectangle.Right) {
+					dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), new Rectangle (client_rectangle.Right-1, client_rectangle.Y, 1, client_rectangle.Height));
+				} else { 
+					Rectangle rect = new Rectangle (
+						client_rectangle.X + (month_size.Width*i) + (calendar_spacing.Width * (i-1)) + 1,
+						client_rectangle.Y,
+						calendar_spacing.Width,
+						client_rectangle.Height);
+					if (i < mc.CalendarDimensions.Width && i > 0 && clip_rectangle.IntersectsWith (rect)) {
+						dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), rect);
+					}
+				}
+			}
+			for (int i = 0; i <= mc.CalendarDimensions.Height; i++) {
+				if (i == 0 && clip_rectangle.Y == client_rectangle.Y) {
+					dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), new Rectangle (client_rectangle.X, client_rectangle.Y, client_rectangle.Width, 1));
+				} else if (i == mc.CalendarDimensions.Height && clip_rectangle.Bottom == client_rectangle.Bottom) {
+					dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), new Rectangle (client_rectangle.X, client_rectangle.Bottom-1, client_rectangle.Width, 1));
+				} else { 
+					Rectangle rect = new Rectangle (
+						client_rectangle.X,
+						client_rectangle.Y + (month_size.Height*i) + (calendar_spacing.Height*(i-1)) + 1,
+						client_rectangle.Width,
+						calendar_spacing.Height);
+					if (i < mc.CalendarDimensions.Height && i > 0 && clip_rectangle.IntersectsWith (rect)) {
+						dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), rect);
 					}
 				}
 			}
 		}
 
 		// darws a single part of the month calendar (with one month)
-		private void DrawSingleMonth(Graphics dc, Rectangle rectangle, MonthCalendar mc, int row, int col) 
+		private void DrawSingleMonth(Graphics dc, Rectangle clip_rectangle, Rectangle rectangle, MonthCalendar mc, int row, int col) 
 		{
 			// cache local copies of Marshal-by-ref internal members (gets around error CS0197)
 			Size title_size = (Size)((object)mc.title_size);
@@ -1438,118 +1481,141 @@ namespace System.Windows.Forms
 			
 
 			// draw the title back ground
-			Rectangle title_rect = new Rectangle(rectangle.X, rectangle.Y, title_size.Width, title_size.Height);
-			dc.FillRectangle (ResPool.GetSolidBrush (mc.TitleBackColor), title_rect);
-			// draw the title
 			DateTime this_month = current_month.AddMonths (row*mc.CalendarDimensions.Width+col);
-			string title_text = this_month.ToString ("MMMM yyyy");
-			dc.DrawString (title_text, mc.Font, ResPool.GetSolidBrush (mc.TitleForeColor), title_rect, text_format);
+			Rectangle title_rect = new Rectangle(rectangle.X, rectangle.Y, title_size.Width, title_size.Height);
+			if (title_rect.IntersectsWith (clip_rectangle)) {
+				dc.FillRectangle (ResPool.GetSolidBrush (mc.TitleBackColor), title_rect);
+				// draw the title				
+				string title_text = this_month.ToString ("MMMM yyyy");
+				dc.DrawString (title_text, mc.Font, ResPool.GetSolidBrush (mc.TitleForeColor), title_rect, text_format);
 
-			// draw previous and next buttons if it's time
-			if (row == 0 && col == 0) 
-			{
-				// draw previous button
-				DrawMonthCalendarButton (
-					dc,
-					rectangle,
-					mc,
-					title_size,
-					mc.button_x_offset,
-					(System.Drawing.Size)((object)mc.button_size),
-					true);
-			}
-			if (row == 0 && col == mc.CalendarDimensions.Width-1) 
-			{
-				// draw next button
-				DrawMonthCalendarButton (
-					dc,
-					rectangle,
-					mc,
-					title_size,
-					mc.button_x_offset,
-					(System.Drawing.Size)((object)mc.button_size),
-					false);
+				// draw previous and next buttons if it's time
+				if (row == 0 && col == 0) 
+				{
+					// draw previous button
+					DrawMonthCalendarButton (
+						dc,
+						rectangle,
+						mc,
+						title_size,
+						mc.button_x_offset,
+						(System.Drawing.Size)((object)mc.button_size),
+						true);
+				}
+				if (row == 0 && col == mc.CalendarDimensions.Width-1) 
+				{
+					// draw next button
+					DrawMonthCalendarButton (
+						dc,
+						rectangle,
+						mc,
+						title_size,
+						mc.button_x_offset,
+						(System.Drawing.Size)((object)mc.button_size),
+						false);
+				}
 			}
 			
 			// set the week offset and draw week nums if needed
 			int col_offset = (mc.ShowWeekNumbers) ? 1 : 0;
-			// draw the day names 
-			DayOfWeek first_day_of_week = mc.GetDayOfWeek(mc.FirstDayOfWeek);
-			for (int i=0; i < 7; i++) 
-			{
-				int position = i - (int) first_day_of_week;
-				if (position < 0) 
+			Rectangle day_name_rect = new Rectangle(
+				rectangle.X,
+				rectangle.Y + title_size.Height,
+				(7 + col_offset) * date_cell_size.Width,
+				date_cell_size.Height);
+			if (day_name_rect.IntersectsWith (clip_rectangle)) {
+				dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), day_name_rect);
+				// draw the day names 
+				DayOfWeek first_day_of_week = mc.GetDayOfWeek(mc.FirstDayOfWeek);
+				for (int i=0; i < 7; i++) 
 				{
-					position = 7 + position;
+					int position = i - (int) first_day_of_week;
+					if (position < 0) 
+					{
+						position = 7 + position;
+					}
+					// draw it
+					Rectangle day_rect = new Rectangle(
+						day_name_rect.X + ((i + col_offset)* date_cell_size.Width),
+						day_name_rect.Y,
+						date_cell_size.Width,
+						date_cell_size.Height);
+					dc.DrawString (((DayOfWeek)i).ToString().Substring(0, 3), mc.Font, ResPool.GetSolidBrush (mc.TitleBackColor), day_rect, text_format);
 				}
-				// draw it
-				Rectangle day_rect = new Rectangle(
-					rectangle.X + ((position + col_offset) * date_cell_size.Width),
-					rectangle.Y + title_size.Height,
-					date_cell_size.Width,
-					date_cell_size.Height);
-				dc.DrawString (((DayOfWeek)i).ToString().Substring(0, 3), mc.Font, ResPool.GetSolidBrush (mc.TitleBackColor), day_rect, text_format);
+				
+				// draw the vertical divider
+				int vert_divider_y = Math.Max(title_size.Height+ date_cell_size.Height-1, 0);
+				dc.DrawLine (
+					ResPool.GetPen (mc.ForeColor),
+					rectangle.X + (col_offset * date_cell_size.Width) + mc.divider_line_offset,
+					rectangle.Y + vert_divider_y,
+					rectangle.Right - mc.divider_line_offset,
+					rectangle.Y + vert_divider_y);
 			}
 
-			// draw the vertical divider
-			int vert_divider_y = Math.Max(title_size.Height+ date_cell_size.Height-1, 0);
-			dc.DrawLine (
-				ResPool.GetPen (mc.ForeColor),
-				rectangle.X + (col_offset * date_cell_size.Width) + mc.divider_line_offset,
-				rectangle.Y + vert_divider_y,
-				rectangle.Right - mc.divider_line_offset,
-				rectangle.Y + vert_divider_y);
 
-			// draw the actual date items in the grid (including the week
+			// draw the actual date items in the grid (including the week numbers)
 			Rectangle date_rect = new Rectangle(
 				rectangle.X,
 				rectangle.Y + title_size.Height + date_cell_size.Height,
 				date_cell_size.Width,
 				date_cell_size.Height);
 			int month_row_count = 0;
+			bool draw_week_num_divider = false;
+			bool no_more_content = false;	// required to enable us to fill the background rect and not draw any dates on it (if none are required)
 			DateTime current_date = mc.GetFirstDateInMonthGrid ( new DateTime (this_month.Year, this_month.Month, 1));
 			for (int i=0; i < 6; i++) 
 			{
+				// establish if this row is in our clip_area
+				Rectangle row_rect = new Rectangle (
+					rectangle.X,
+					rectangle.Y + title_size.Height + (date_cell_size.Height * (i+1)),
+					date_cell_size.Width * 7,
+					date_cell_size.Height);
+				if (mc.ShowWeekNumbers) {
+					row_rect.Width += date_cell_size.Width;
+				}
+		
+				bool draw_row = row_rect.IntersectsWith (clip_rectangle);
+				if (draw_row) {
+					dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), row_rect);
+				}
+				// establish if this is a valid week to draw
+				if (mc.IsValidWeekToDraw (this_month, current_date, row, col)) {
+					month_row_count = i;
+				}
+				
 				// draw the week number if required
-				if (mc.ShowWeekNumbers) 
-				{
+				if (mc.ShowWeekNumbers && month_row_count == i) {
+					draw_week_num_divider = draw_row;
 					// get the week for this row
 					int week = mc.GetWeekOfYear (current_date);	
-					// determine if we are drawing this week number
-					bool draw_week_num = mc.IsValidWeekToDraw (this_month, current_date, row, col);
 
-					if (draw_week_num) {
+					if (draw_row) {
 						dc.DrawString (
 							week.ToString(),
 							mc.Font,
 							ResPool.GetSolidBrush (mc.TitleBackColor),
 							date_rect,
 							text_format);
-						date_rect.Offset(date_cell_size.Width, 0);
-						month_row_count = i;
-						
-					} else {
-						// leave the loop
-						break;
 					}
-				} else {
-					if (mc.IsValidWeekToDraw (this_month, current_date, row, col)) {
-						month_row_count = i;
-					}
+					date_rect.Offset(date_cell_size.Width, 0);
 				}
-				
+								
 				// only draw the days if we have to
 				if(month_row_count == i) {
 					for (int j=0; j < 7; j++) 
 					{
-						DrawMonthCalendarDate (
-							dc,
-							date_rect,
-							mc,
-							current_date,
-							this_month,
-							row,
-							col);
+						if (draw_row) {
+							DrawMonthCalendarDate (
+								dc,
+								date_rect,
+								mc,
+								current_date,
+								this_month,
+								row,
+								col);
+						}
 
 						// move the day on
 						current_date = current_date.AddDays(1);
@@ -1566,14 +1632,14 @@ namespace System.Windows.Forms
 			month_row_count++;
 
 			// draw week numbers if required
-			if (mc.ShowWeekNumbers) {
+			if (draw_week_num_divider) {
 				col_offset = 1;
 				dc.DrawLine (
 					ResPool.GetPen (mc.ForeColor),
 					rectangle.X + date_cell_size.Width - 1,
 					rectangle.Y + title_size.Height + date_cell_size.Height + mc.divider_line_offset,
 					rectangle.X + date_cell_size.Width - 1,
-					rectangle.Y + title_size.Height + date_cell_size.Height + (month_row_count * date_cell_size.Height) - mc.divider_line_offset);			
+					rectangle.Y + title_size.Height + date_cell_size.Height + (month_row_count * date_cell_size.Height) - mc.divider_line_offset);
 			}
 		}
 

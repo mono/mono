@@ -73,7 +73,7 @@ namespace System.Windows.Forms {
 		internal bool			is_previous_clicked;
 		internal bool			is_next_clicked;
 		internal bool 			is_shift_pressed;
-		internal DateTime		shift_select_start_date;
+		internal DateTime		first_select_start_date;
 		private Point			month_title_click_location;
 		
 		// arraylists used to store new dates
@@ -147,7 +147,7 @@ namespace System.Windows.Forms {
 			is_previous_clicked = false;
 			is_next_clicked = false;
 			is_shift_pressed = false;
-			shift_select_start_date = now;
+			first_select_start_date = now;
 			month_title_click_location = Point.Empty;
 
 			SetUpContextMenu ();
@@ -305,7 +305,6 @@ namespace System.Windows.Forms {
 			
 				if (max_selection_count != value) {
 					max_selection_count = value;
-					this.Invalidate ();
 				}
 			}
 			get {
@@ -376,6 +375,7 @@ namespace System.Windows.Forms {
 				}
 
 				if (SelectionRange.End != value) {
+					DateTime old_end = SelectionRange.End; 
 					// make sure the end obeys the max selection range count
 					if (value < SelectionRange.Start) {
 						SelectionRange.Start = value;
@@ -384,8 +384,8 @@ namespace System.Windows.Forms {
 						SelectionRange.Start = value.AddDays((MaxSelectionCount-1)*-1);
 					}
 					SelectionRange.End = value;
+					this.InvalidateDateRange (new SelectionRange (old_end, SelectionRange.End));
 					this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
-					this.Invalidate ();
 				}
 			}
 			get {
@@ -397,6 +397,8 @@ namespace System.Windows.Forms {
 		public SelectionRange SelectionRange {
 			set {
 				if (selection_range != value) {
+					SelectionRange old_range = selection_range;
+
 					// make sure the end obeys the max selection range count
 					if (value.End.AddDays((MaxSelectionCount-1)*-1) > value.Start) {
 						selection_range = new SelectionRange (value.End.AddDays((MaxSelectionCount-1)*-1), value.End);
@@ -412,8 +414,34 @@ namespace System.Windows.Forms {
 						int month_diff = selection_range.End.Month - visible_range.End.Month;
 						current_month = current_month.AddMonths(year_diff * 12 + month_diff);
 					}
+					
+					// invalidate the selected range changes
+					DateTime diff_start = old_range.Start;
+					DateTime diff_end = old_range.End;
+					// now decide which region is greated
+					if (old_range.Start > SelectionRange.Start) {
+						diff_start = SelectionRange.Start;
+					} else if (old_range.Start == SelectionRange.Start) {
+						if (old_range.End < SelectionRange.End) {
+							diff_start = old_range.End;
+						} else {
+							diff_start = SelectionRange.End;
+						}
+					}
+					if (old_range.End < SelectionRange.End) {
+						diff_end = SelectionRange.End;
+					} else if (old_range.End == SelectionRange.End) {
+						if (old_range.Start < SelectionRange.Start) {
+							diff_end = SelectionRange.Start;
+						} else {
+							diff_end = old_range.Start;
+						}
+					}
+				
+					// invalidate the region required
+					this.InvalidateDateRange (new SelectionRange (diff_start, diff_end));
+					// raise date changed event
 					this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
-					this.Invalidate ();
 				}
 			}
 			get {
@@ -429,6 +457,7 @@ namespace System.Windows.Forms {
 				}
 
 				if (SelectionRange.Start != value) {
+					DateTime old_start = SelectionRange.Start; 
 					// make sure the end obeys the max selection range count
 					if (value > SelectionRange.End) {
 						SelectionRange.End = value;
@@ -437,8 +466,8 @@ namespace System.Windows.Forms {
 					}
 					SelectionRange.Start = value;
 					current_month = value;
+					this.InvalidateDateRange (new SelectionRange (old_start, SelectionRange.Start));
 					this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
-					this.Invalidate ();
 				}
 			}
 			get {
@@ -560,7 +589,10 @@ namespace System.Windows.Forms {
 			set {
 				if (trailing_fore_color != value) {
 					trailing_fore_color = value;
-					this.Invalidate ();
+					SelectionRange bounds = this.GetDisplayRange (false);
+					SelectionRange visible_bounds = this.GetDisplayRange (true);
+					this.InvalidateDateRange (new SelectionRange (bounds.Start, visible_bounds.Start));
+					this.InvalidateDateRange (new SelectionRange (bounds.End, visible_bounds.End));
 				}
 			}
 			get {
@@ -916,7 +948,23 @@ namespace System.Windows.Forms {
 				(specified & BoundsSpecified.Width) == BoundsSpecified.Width ||
 				(specified & BoundsSpecified.Size) == BoundsSpecified.Size) {
 				// only allow sizes = default size to be set
-				base.SetBoundsCore (x, y, DefaultSize.Width, DefaultSize.Height, specified);
+				Size min_size = DefaultSize;
+				Size max_size = new Size (
+					DefaultSize.Width + SingleMonthSize.Width + calendar_spacing.Width,
+					DefaultSize.Height + SingleMonthSize.Height + calendar_spacing.Height);
+				int x_mid_point = (max_size.Width + min_size.Width)/2;
+				int y_mid_point = (max_size.Height + min_size.Height)/2;
+				if (width < x_mid_point) {
+					width = min_size.Width;
+				} else {
+					width = max_size.Width;
+				}
+				if (height < y_mid_point) {
+					height = min_size.Height;
+				} else {
+					height = max_size.Height;
+				}
+				base.SetBoundsCore (x, y, width, height, specified);
 			} else {
 				base.SetBoundsCore (x, y, width, height, specified);
 			}
@@ -1077,7 +1125,7 @@ namespace System.Windows.Forms {
 			DateTime end_point;
 			// okay we add the period to the date that is not the same as the 
 			// start date when shift was first clicked.
-			if (SelectionStart != shift_select_start_date) {
+			if (SelectionStart != first_select_start_date) {
 				cursor_point = SelectionStart;
 			} else {
 				cursor_point = SelectionEnd;
@@ -1090,10 +1138,10 @@ namespace System.Windows.Forms {
 				end_point = cursor_point.AddMonths (delta);
 			}
 			// set the new selection range
-			SelectionRange range = new SelectionRange (shift_select_start_date, end_point);
+			SelectionRange range = new SelectionRange (first_select_start_date, end_point);
 			if (range.Start.AddDays (MaxSelectionCount-1) < range.End) {
 				// okay the date is beyond what is allowed, lets set the maximum we can
-				if (range.Start != shift_select_start_date) {
+				if (range.Start != first_select_start_date) {
 					range.Start = range.End.AddDays ((MaxSelectionCount-1)*-1);
 				} else {
 					range.End = range.Start.AddDays (MaxSelectionCount-1);
@@ -1105,11 +1153,11 @@ namespace System.Windows.Forms {
 		// attempts to add the date to the selection without throwing exception
 		private void SelectDate (DateTime date) {
 			// try and add the new date to the selction range
-			if (is_shift_pressed) {
-				SelectionRange range = new SelectionRange (shift_select_start_date, date);
+			if (is_shift_pressed || this.Capture) {
+				SelectionRange range = new SelectionRange (first_select_start_date, date);
 				if (range.Start.AddDays (MaxSelectionCount-1) < range.End) {
 					// okay the date is beyond what is allowed, lets set the maximum we can
-					if (range.Start != shift_select_start_date) {
+					if (range.Start != first_select_start_date) {
 						range.Start = range.End.AddDays ((MaxSelectionCount-1)*-1);
 					} else {
 						range.End = range.Start.AddDays (MaxSelectionCount-1);
@@ -1118,6 +1166,7 @@ namespace System.Windows.Forms {
 				SelectionRange = range;
 			} else {
 				SelectionRange = new SelectionRange (date, date);
+				first_select_start_date = date;
 			}
 		}
 
@@ -1340,19 +1389,19 @@ namespace System.Windows.Forms {
 		// raised by any key down events
 		private void KeyDownHandler (object sender, KeyEventArgs e) {
 			if (!is_shift_pressed && e.Shift) {
-				shift_select_start_date = SelectionStart;
+				first_select_start_date = SelectionStart;
 				is_shift_pressed = e.Shift;
 			}
-			bool changed = false;		
+			bool changed = true;		
 			switch (e.KeyCode) {
 				case Keys.Home:
 					// set the date to the start of the month
 					if (is_shift_pressed) {
-						DateTime date = GetFirstDateInMonth (shift_select_start_date);
-						if (date < shift_select_start_date.AddDays ((MaxSelectionCount-1)*-1)) {
-							date = shift_select_start_date.AddDays ((MaxSelectionCount-1)*-1);
+						DateTime date = GetFirstDateInMonth (first_select_start_date);
+						if (date < first_select_start_date.AddDays ((MaxSelectionCount-1)*-1)) {
+							date = first_select_start_date.AddDays ((MaxSelectionCount-1)*-1);
 						}
-						this.SetSelectionRange (date, shift_select_start_date);
+						this.SetSelectionRange (date, first_select_start_date);
 					} else {
 						DateTime date = GetFirstDateInMonth (this.SelectionStart);
 						this.SetSelectionRange (date, date);
@@ -1362,11 +1411,11 @@ namespace System.Windows.Forms {
 				case Keys.End:
 					// set the date to the last of the month
 					if (is_shift_pressed) {
-						DateTime date = GetLastDateInMonth (shift_select_start_date);
-						if (date > shift_select_start_date.AddDays (MaxSelectionCount-1)) {
-							date = shift_select_start_date.AddDays (MaxSelectionCount-1);
+						DateTime date = GetLastDateInMonth (first_select_start_date);
+						if (date > first_select_start_date.AddDays (MaxSelectionCount-1)) {
+							date = first_select_start_date.AddDays (MaxSelectionCount-1);
 						}
-						this.SetSelectionRange (date, shift_select_start_date);
+						this.SetSelectionRange (date, first_select_start_date);
 					} else {
 						DateTime date = GetLastDateInMonth (this.SelectionStart);
 						this.SetSelectionRange (date, date);
@@ -1396,61 +1445,45 @@ namespace System.Windows.Forms {
 				case Keys.Up:
 					// set the back 1 week
 					if (is_shift_pressed) {
-						this.AddTimeToSelection (-7, true);
-						changed = true;
+						this.AddTimeToSelection (-7, true);						
 					} else {
 						DateTime date = this.SelectionStart.AddDays (-7);
 						this.SetSelectionRange (date, date);
-						changed = true;
 					}
-					if (changed) {
-						this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
-					}
+					this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 					break;
 				case Keys.Down:
 					// set the date forward 1 week
 					if (is_shift_pressed) {
 						this.AddTimeToSelection (7, true);
-						changed = true;
 					} else {
 						DateTime date = this.SelectionStart.AddDays (7);
 						this.SetSelectionRange (date, date);
-						changed = true;
 					}
-					if (changed) {
-						this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
-					}
+					this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 					break;
 				case Keys.Left:
 					// move one left
 					if (is_shift_pressed) {
 						this.AddTimeToSelection (-1, true);
-						changed = true;
 					} else {
 						DateTime date = this.SelectionStart.AddDays (-1);
 						this.SetSelectionRange (date, date);
-						changed = true;
 					}
-					if (changed) {
-						this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
-					}
+					this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 					break;
 				case Keys.Right:
 					// move one left
 					if (is_shift_pressed) {
 						this.AddTimeToSelection (1, true);
-						changed = true;
 					} else {
 						DateTime date = this.SelectionStart.AddDays (1);
 						this.SetSelectionRange (date, date);
-						changed = true;
 					}
-					if (changed) {
-						this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
-					}
+					this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 					break;
 				default:
-					// do nothing
+					changed = false;
 					break;
 			}
 			e.Handled = true;
@@ -1459,10 +1492,31 @@ namespace System.Windows.Forms {
 		// to check if the mouse has come up on this control
 		private void MouseUpHandler (object sender, MouseEventArgs e)
 		{
+			// invalidate the next monthbutton
+			if (this.is_next_clicked) {
+				this.Invalidate(
+					new Rectangle (
+						this.ClientRectangle.Right - 1 - button_x_offset - button_size.Width,
+						this.ClientRectangle.Y + 1 + (title_size.Height - button_size.Height)/2,
+						button_size.Width,
+						button_size.Height));
+			}					
+			// invalidate the prev monthbutton
+			if (this.is_previous_clicked) {
+				this.Invalidate(
+					new Rectangle (
+						this.ClientRectangle.X + 1 + button_x_offset,
+						this.ClientRectangle.Y + 1 + (title_size.Height - button_size.Height)/2,
+						button_size.Width,
+						button_size.Height));
+			}
+			if (this.is_date_clicked) {
+				// invalidate the area under the cursor, to remove focus rect
+				this.InvalidateDateRange (new SelectionRange (clicked_date, clicked_date));				
+			}
 			this.is_previous_clicked = false;
 			this.is_next_clicked = false;
 			this.is_date_clicked = false;
-			this.Invalidate();
 		}
 
 		// raised by any key up events
@@ -1476,13 +1530,106 @@ namespace System.Windows.Forms {
 			if (Width <= 0 || Height <=  0 || Visible == false)
     				return;
 
-			Draw ();
+			Draw (pe.ClipRectangle);
 			pe.Graphics.DrawImage (ImageBuffer, 0, 0);
 		}
+		
+		// returns the region of the control that needs to be redrawn 
+		private void InvalidateDateRange (SelectionRange range) {
+			SelectionRange bounds = this.GetDisplayRange (false);
+			if (range.End < bounds.Start || range.Start > bounds.End) {
+				// don't invalidate anything, as the modified date range
+				// is outside the visible bounds of this control
+				return;
+			}
+			// adjust the start and end to be inside the visible range
+			if (range.Start < bounds.Start) {
+				range = new SelectionRange (bounds.Start, range.End);
+			}
+			if (range.End > bounds.End) {
+				range = new SelectionRange (range.Start, bounds.End);
+			}
+			// now invalidate the date rectangles as series of rows
+			DateTime last_month = this.current_month.AddMonths ((CalendarDimensions.Width * CalendarDimensions.Height) - 1);
+			DateTime current = range.Start;
+			while (current <= range.End) {
+				DateTime month_end = new DateTime (current.Year, current.Month, 1).AddMonths (1).AddDays (-1);
+				month_end.AddMonths (1).AddDays (-1);
+				Rectangle start_rect;
+				Rectangle end_rect;
+				start_rect = GetDateRowRect (current, current);
+				if (range.End < month_end)	{
+					// the end is the last date
+					end_rect = GetDateRowRect (current, range.End);
+				} else {
+					// the end needs to be the last row of this month
+					if (last_month.Year == month_end.Year && last_month.Month == month_end.Month) {
+						// which may be the trailing months
+						end_rect = GetDateRowRect (current, bounds.End);
+					} else {
+						end_rect = GetDateRowRect (current, month_end);
+					}
+				}
+				// push to the next month
+				current = month_end.AddDays (1);
+				// invalidate from the start row to the end row for this month				
+				this.Invalidate (
+					new Rectangle (
+						start_rect.X,
+						start_rect.Y,
+						start_rect.Width,
+						Math.Max (end_rect.Bottom - start_rect.Y, 0)));
+				}
+		} 
+		
+		// gets the rect of the row where the specified date appears on the specified month
+		private Rectangle GetDateRowRect (DateTime month, DateTime date) {
+			// first get the general rect of the supplied month
+			Size month_size = SingleMonthSize;
+			Rectangle month_rect = Rectangle.Empty;
+			for (int i=0; i < CalendarDimensions.Width*CalendarDimensions.Height; i++) {
+				DateTime this_month = this.current_month.AddMonths (i);
+				if (month.Year == this_month.Year && month.Month == this_month.Month) {
+					month_rect = new Rectangle (
+						this.ClientRectangle.X + 1 + (month_size.Width * (i%CalendarDimensions.Width)) + (this.calendar_spacing.Width * (i%CalendarDimensions.Width)),
+						this.ClientRectangle.Y + 1 + (month_size.Height * (i/CalendarDimensions.Width)) + (this.calendar_spacing.Height * (i/CalendarDimensions.Width)),
+						month_size.Width,
+						month_size.Height);
+						break;		
+				}
+			}
+			// now find out where in the month the supplied date is
+			if (month_rect == Rectangle.Empty) {
+				return Rectangle.Empty;
+			}
+			// find out which row this date is in
+			int row = -1;
+			DateTime first_date = GetFirstDateInMonthGrid (month);
+			DateTime end_date = first_date.AddDays (7); 
+			for (int i=0; i < 6; i++) {
+				if (date >= first_date && date < end_date) {
+					row = i;
+					break;
+				}
+				first_date = end_date;
+				end_date = end_date.AddDays (7);
+			}
+			// ensure it's a valid row
+			if (row < 0) {
+				return Rectangle.Empty;
+			}
+			int x_offset = (this.ShowWeekNumbers) ? date_cell_size.Width : 0;
+			int y_offset = title_size.Height + (date_cell_size.Height * (row + 1));
+			return new Rectangle (
+				month_rect.X + x_offset,
+				month_rect.Y + y_offset,
+				date_cell_size.Width * 7,
+				date_cell_size.Height);
+		}
 
-		internal void Draw ()
+		internal void Draw (Rectangle clip_rect)
 		{			
-			ThemeEngine.Current.DrawMonthCalendar(DeviceContext, ClientRectangle, this);
+			ThemeEngine.Current.DrawMonthCalendar(DeviceContext, clip_rect, this);
 		}
 
 		#endregion 	//internal methods
