@@ -1,3 +1,11 @@
+2004-08-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ApplicationIdTest.cs: New. Unit tests for ApplicationId (NET_2_0).
+	* ApplicationIdentityTest.cs: New. Unit tests for ApplicationIdentity
+	(NET_2_0).
+	* AppDomainTest.cs: Added new unit tests for AppDomain (both fx 1.1 
+	and 2.0).
+
 2004-06-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DoubleFormatterTest.cs: Added a new test for a negative roundtrip
