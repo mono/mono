@@ -10,6 +10,7 @@
 
 using System;
 using System.IO;
+using System.Reflection;
 using System.Collections;
 
 namespace Mono.ILASM {
@@ -97,7 +98,14 @@ namespace Mono.ILASM {
 							scan_only = true;
 							break;
 						case "-about":
+							if (str[0] != '-')
+								break;
 							About ();
+							break;
+						case "-version":
+							if (str[0] != '-')
+								break;
+							Version ();
 							break;
 					}
 				}
@@ -119,7 +127,7 @@ namespace Mono.ILASM {
 			}
 			
 			/// <summary>
-			///   Get the first file name and make it into an output file name
+			///   Get the first file name and makes it into an output file name
 			/// </summary>
 			private string CreateOutputFile () 
 			{
@@ -138,6 +146,7 @@ namespace Mono.ILASM {
 				Console.WriteLine ("Mono ILasm compiler\n" +
 					"ilasm [options] source-files\n" +
 					"   --about            About the Mono ILasm compiler\n" +
+					"   --version          Print the version number of the Mono ILasm compiler\n" +
 					"   /out:file_name     Specifies output file.\n" +
 					"   /exe               Compile to executable.\n" +
 					"   /dll               Compile to library.\n" +
@@ -149,6 +158,13 @@ namespace Mono.ILASM {
 				Console.WriteLine (
 					"For more information on Mono, visit the project Web site\n" +
 					"   http://www.go-mono.com\n\n");
+				Environment.Exit (0);
+			}
+			
+			private void Version ()
+			{
+				string version = Assembly.GetExecutingAssembly ().GetName ().Version.ToString ();
+				Console.WriteLine ("Mono ILasm compiler version {0}", version);
 				Environment.Exit (0);
 			}
 

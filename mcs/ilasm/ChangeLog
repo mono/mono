@@ -1,4 +1,8 @@
-2003-02-27 Jackson Harper <jackson@latitudegeo.com>
+2003-02-22 Jackson Harper <jackson@latitudegeo.com>
+
+	* Driver.cs: Add version option, fix bug that allowed -- switches to be invoked with /-
+
+2003-02-21 Jackson Harper <jackson@latitudegeo.com>
 
 	* AssemblyInfo.cs: Add file
 	* makefile: Add AssemblyInfo to build
