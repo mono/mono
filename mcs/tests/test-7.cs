@@ -8,6 +8,18 @@ namespace Mine {
 			return true;
 		}
 	}
+
+	public class MyTrueFalse {
+		public static bool operator true (MyTrueFalse i)
+		{
+			return true;
+		}
+		
+		public static bool operator false (MyTrueFalse i)
+		{
+			return false;
+		}
+	}
 	
 	public class Blah {
 
@@ -81,6 +93,13 @@ namespace Mine {
 			if (!myb)
 				return 10;
 
+			//
+			// Tests the conditional operator invoking operator true
+			MyTrueFalse mf = new MyTrueFalse ();
+			int x = mf ? 1 : 2;
+			if (x != 1)
+				return 11;
+			
 			Console.WriteLine ("Test passed");
 			return 0;
 		}
