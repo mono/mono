@@ -46,6 +46,20 @@ namespace Mono.ILASM {
 				}
 			}
 
+			public bool CheckDefined ()
+			{
+				if (!Defined)
+					return false;
+				
+				if (!FieldTable.CheckDefined ())
+					return false;
+				
+				if (!MethodTable.CheckDefined ())
+					return false;
+				
+				return true;
+			}
+
 			public MethodTable MethodTable {
 				get { return method_table; }
 			}
@@ -152,7 +166,7 @@ namespace Mono.ILASM {
 		{
 			foreach (DictionaryEntry dic_entry in table) {
 				ClassTableItem table_item = (ClassTableItem) dic_entry.Value;
-				if (table_item.Defined)
+				if (table_item.CheckDefined ())
 					continue;
 				throw new Exception (String.Format ("Type: {0} is not defined.", dic_entry.Key));
 			}

@@ -74,9 +74,9 @@ namespace Mono.ILASM {
 			private int flags;
 
 			public ArrayList LocationList;
-			public Method Method;
+			public MethodDef Method;
 
-			public MethodTableItem (Method method, Location location)
+			public MethodTableItem (MethodDef method, Location location)
 			{
 				flags = 0;
 				Method = method;
@@ -142,16 +142,35 @@ namespace Mono.ILASM {
 					return_type, param_list, table.Contains (signature), method_attr, 
 					impl_attr, call_conv));
 
-			CheckExists (signature);
-
-			MethodDef method = parent_class.AddMethod (method_attr, impl_attr, name, 
-				return_type.Type, param_list);
-			method.AddCallConv (call_conv);
-			AddDefined (signature, method, location);
+			MethodTableItem item = (MethodTableItem) table[signature];
 			
-			return method;
+			if (item == null) {
+				MethodDef method = parent_class.AddMethod (method_attr, impl_attr, name, 
+					return_type.Type, param_list);
+				method.AddCallConv (call_conv);
+				AddDefined (signature, method, location);
+				return method;
+			}
+			
+			item.Method.AddMethAttribute (method_attr);
+			item.Method.AddImplAttribute (impl_attr);
+			item.Method.AddCallConv (call_conv);
+			item.Defined = true;
+		
+			return item.Method;
 		}
-			
+
+		public bool CheckDefined ()
+		{
+			foreach (DictionaryEntry dic_entry in table) {
+				MethodTableItem table_item = (MethodTableItem) dic_entry.Value;
+				if (table_item.Defined)
+					continue;
+				throw new Exception (String.Format ("Method: {0} is not defined.", dic_entry.Key));
+			}
+			return true;
+		}
+					
 		protected string GetSignature (string name, TypeRef return_type, 
 			TypeRef[] param_list)
 		{
@@ -184,7 +203,7 @@ namespace Mono.ILASM {
 			table[signature] = item;
 		}
 
-		protected void AddReferenced (string signature, Method method, Location location)
+		protected void AddReferenced (string signature, MethodDef method, Location location)
 		{
 			MethodTableItem item = new MethodTableItem (method, location);
 			

@@ -23,9 +23,9 @@ namespace Mono.ILASM {
 			private int flags;
 
 			public ArrayList LocationList;
-			public Field Field;
+			public FieldDef Field;
 
-			public FieldTableItem (Field field, Location location)
+			public FieldTableItem (FieldDef field, Location location)
 			{
 				flags = 0;
 				Field = field;
@@ -71,12 +71,29 @@ namespace Mono.ILASM {
 		public FieldDef AddDefinition (FieldAttr field_attr, string name, 
 			TypeRef type, Location location) 
 		{
-			CheckExists (name);
-
-			FieldDef field = parent_class.AddField (field_attr, name, type.Type);
-			AddDefined (name, field, location);
+			FieldTableItem item = (FieldTableItem) table[name];
 			
-			return field;
+			if (item == null) {
+				FieldDef field = parent_class.AddField (field_attr, name, type.Type);
+				AddDefined (name, field, location);
+				return field;
+			}
+			
+			item.Field.AddFieldAttr (field_attr);
+			item.Defined = true;
+			
+			return item.Field;
+		}
+
+		public bool CheckDefined ()
+		{
+			foreach (DictionaryEntry dic_entry in table) {
+				FieldTableItem table_item = (FieldTableItem) dic_entry.Value;
+				if (table_item.Defined)
+					continue;
+				throw new Exception (String.Format ("Field: {0} is not defined.", dic_entry.Key));
+			}
+			return true;
 		}
 			
 		protected void AddDefined (string signature, FieldDef field, Location location)
@@ -90,7 +107,7 @@ namespace Mono.ILASM {
 			table[signature] = item;
 		}
 
-		protected void AddReferenced (string signature, Field field, Location location)
+		protected void AddReferenced (string signature, FieldDef field, Location location)
 		{
 			FieldTableItem item = new FieldTableItem (field, location);
 			
