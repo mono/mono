@@ -1,3 +1,7 @@
+2004-04-25  Vladimir Vukicevic  <vladimir@pobox.com>
+
+	* Graphics.cs, gdipFunctions.cs: Added CreateFromXDrawable_linux.
+
 2004-04-23  Vladimir Vukicevic  <vladimir@pobox.com>
 
 	* Commited patch from pcgod@gmx.net (Bnehamin Jemlich) for

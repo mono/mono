@@ -1140,6 +1140,14 @@ namespace System.Drawing
 			return result;
 		}
 
+		public static Graphics FromXDrawable (IntPtr drawable, IntPtr display)
+		{
+		  IntPtr graphics;
+		  Status s = GDIPlus.GdipCreateFromXDrawable_linux (drawable, display, out graphics);
+		  GDIPlus.CheckStatus (s);
+		  return new Graphics (graphics);
+		}
+
 		[MonoTODO]
 		public static IntPtr GetHalftonePalette ()
 		{

@@ -719,6 +719,9 @@ namespace System.Drawing {
 
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipCreateFromHWND (IntPtr hwnd, out IntPtr graphics);
+
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipCreateFromXDrawable_linux (IntPtr drawable, IntPtr display, out IntPtr graphics);
 		
 		[DllImport("gdiplus.dll", CharSet=CharSet.Unicode)]
 		internal static extern Status GdipMeasureString(IntPtr graphics, string str, int length, IntPtr font,
