@@ -1,3 +1,9 @@
+Wed Jul 30 20:44:07 EDT 2003 Mark Crichton <crichton@gimp.org>
+
+	* mini-sparc.c: Fixed compile errors.
+	* exceptions-sparc.c: Same.  We now produce a mono binary 
+	on sparc-linux.  Yea.
+
 Wed Jul 30 14:10:12 EDT 2003 Mark Crichton <crichton@gimp.org>
 
 	* mini-sparc.c: Renamed registers.  Also some macro cleanups.
