@@ -1,5 +1,7 @@
 2005-02-04  Zoltan Varga  <vargaz@freemail.hu>
 
+	* console-io.c: Include sys/filio.h under solaris.
+	
 	* console-io.c: Include curses.h if needed correctly.
 
 2005-02-03  Zoltan Varga  <vargaz@freemail.hu>
