@@ -2717,11 +2717,9 @@ namespace Mono.CSharp {
 					AddChildVariableName (name);
 			}
 
-			foreach (Block child in block.children) {
-				if (child.Variables != null) {
-					foreach (string name in child.Variables.Keys)
-						AddChildVariableName (name);
-				}
+			if (block.children != null) {
+				foreach (Block child in block.children)
+					AddChildVariableNames (child);
 			}
 		}
 
