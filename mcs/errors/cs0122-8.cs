@@ -1,4 +1,4 @@
-// error CS0122: 'A.AnEvent' is inaccessible due to its protection level
+// error CS0122: 'A.member' is inaccessible due to its protection level
 //
 // NOTE: if `member' were a field or a property, this'd be CS1540
 
