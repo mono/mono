@@ -82,7 +82,7 @@ namespace Mono.Xml.XPath
 				return new KeyPattern ((XsltKey) e);
 			}
 
-			throw new Exception ("Invalid Pattern");
+			return null; // throw Exception outer this method.
 		}
 		
 		public virtual double DefaultPriority { get { return 0.5; }}
