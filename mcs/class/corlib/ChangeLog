@@ -1,3 +1,10 @@
+2002-01-03  Nick Drochak  <ndrochak@gol.com>
+
+	* corlib.build: Put the linux target at the top.  I keep changing the 
+	build for windows 'cause it's at the top.  Then when I do make, nothing
+	changes.  It seems like it always takes me half a day to remember
+	that the linux target comes second.  Old age I guess.
+
 2002-01-02  Nick Drochak  <ndrochak@gol.com>
 
 	* corlib.build: Removed "exclude CodeAccessPermission.cs"

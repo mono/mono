@@ -5,49 +5,7 @@
 <!-- Target linux builds libraries _for_ linux -->
 
 <project name="corlib" default="linux">
-	<property name="debug" value="false"/>
-
-	<target name="windows">
-		<mkdir dir="../lib"/>
-		<csc target="library" output="../lib/corlib.dll" debug="${debug}">
-			<arg value="/nowarn:1595"/>
-			<arg value="/nowarn:0649"/> <!-- field never assigned to -->
-			<arg value="/nowarn:0169"/> <!-- field never used -->
-			<arg value="/unsafe"/>
-			<sources>
-				<includes name="**/*.cs"/> 
-				<excludes name="Test/**"/>
-				<excludes name="Linux/**"/>
-				<excludes name="System.PAL/IOperatingSystem.cs"/>
-				<excludes name="System.Resources/*"/>
-			</sources>
-		</csc>
-		<csc target="library" output="Test/corlib_res.dll" debug="${debug}">
-			<arg value="/nowarn:1595"/>
-			<arg value="/nowarn:0649"/> <!-- field never assigned to -->
-			<arg value="/nowarn:0169"/> <!-- field never used -->
-			<arg value="/unsafe"/>
-			<sources>
-				<includes name="**/*.cs"/>
-				<excludes name="Test/**"/>
-				<excludes name="Linux/**"/>
-				<excludes name="System/Object.cs"/>
-				<excludes name="System/ValueType.cs"/>
-				<excludes name="System/Type.cs"/>
-				<excludes name="System/Array.cs"/>
-				<excludes name="System/String.cs"/>
-				<excludes name="System/Console.cs"/>
-				<excludes name="System/AppDomain.cs"/>
-				<excludes name="System.Reflection.Emit/**"/>
-				<excludes name="System/RuntimeTypeHandle.cs"/>
-				<excludes name="System.PAL/IOperatingSystem.cs"/>
-				<excludes name="System.Collections/Queue.cs"/>
-				<excludes name="System.Resources/*"/>
-				<excludes name="System.Security/CodeAccessPermission.cs"/>
-			</sources>
-		</csc>
-		<nant basedir="Test" target="build"/>
-	</target>
+	<property name="debug" value="true"/>
 
 	<target name="linux">
 		<mkdir dir="../lib"/>
@@ -96,6 +54,48 @@
 
 	<target name="test" depends="linux">
 		<nant basedir="Test" target="test"/>
+	</target>
+
+	<target name="windows">
+		<mkdir dir="../lib"/>
+		<csc target="library" output="../lib/corlib.dll" debug="${debug}">
+			<arg value="/nowarn:1595"/>
+			<arg value="/nowarn:0649"/> <!-- field never assigned to -->
+			<arg value="/nowarn:0169"/> <!-- field never used -->
+			<arg value="/unsafe"/>
+			<sources>
+				<includes name="**/*.cs"/> 
+				<excludes name="Test/**"/>
+				<excludes name="Linux/**"/>
+				<excludes name="System.PAL/IOperatingSystem.cs"/>
+				<excludes name="System.Resources/*"/>
+			</sources>
+		</csc>
+		<csc target="library" output="Test/corlib_res.dll" debug="${debug}">
+			<arg value="/nowarn:1595"/>
+			<arg value="/nowarn:0649"/> <!-- field never assigned to -->
+			<arg value="/nowarn:0169"/> <!-- field never used -->
+			<arg value="/unsafe"/>
+			<sources>
+				<includes name="**/*.cs"/>
+				<excludes name="Test/**"/>
+				<excludes name="Linux/**"/>
+				<excludes name="System/Object.cs"/>
+				<excludes name="System/ValueType.cs"/>
+				<excludes name="System/Type.cs"/>
+				<excludes name="System/Array.cs"/>
+				<excludes name="System/String.cs"/>
+				<excludes name="System/Console.cs"/>
+				<excludes name="System/AppDomain.cs"/>
+				<excludes name="System.Reflection.Emit/**"/>
+				<excludes name="System/RuntimeTypeHandle.cs"/>
+				<excludes name="System.PAL/IOperatingSystem.cs"/>
+				<excludes name="System.Collections/Queue.cs"/>
+				<excludes name="System.Resources/*"/>
+				<excludes name="System.Security/CodeAccessPermission.cs"/>
+			</sources>
+		</csc>
+		<nant basedir="Test" target="build"/>
 	</target>
 
 	<target name="clean">
