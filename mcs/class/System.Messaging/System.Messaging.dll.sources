@@ -1,4 +1,5 @@
 Assembly/AssemblyInfo.cs
+Assembly/Consts.cs
 Assembly/Locale.cs
 System.Messaging/AccessControlEntry.cs
 System.Messaging/AccessControlEntryType.cs
@@ -45,3 +46,8 @@ System.Messaging/StandardAccessRights.cs
 System.Messaging/Trustee.cs
 System.Messaging/TrusteeType.cs
 System.Messaging/XmlMessageFormatter.cs
+System.Messaging.Design/MessageFormatterConverter.cs
+System.Messaging.Design/MessageQueueConverter.cs
+System.Messaging.Design/TimeoutConverter.cs
+System.Messaging.Design/QueuePathDialog.cs
+System.Messaging.Design/QueuePathEditor.cs
