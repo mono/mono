@@ -1,5 +1,6 @@
 2005-02-11  Nick Drochak  <ndrochak@ieee.org>
 
+	* NumberFormatterTest.cs:
 	* DecimalTest.cs: 
 	* DecimalTest2.cs: Put NotWorking on some tests.
 

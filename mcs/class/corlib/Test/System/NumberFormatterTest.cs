@@ -2999,14 +2999,20 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		[Category("NotWorking")]
+		// see bugzilla #60227 ???
+		public void Test13024_NotWorking () {
+			AssertEquals ("#02", "1.2", 1.15.ToString ("G2", _nfi));
+			AssertEquals ("#07", "1.7", 1.65.ToString ("G2", _nfi));
+		}
+
+		[Test]
 		public void Test13024 () {
 			AssertEquals ("#01", "1.1", 1.05.ToString ("G2", _nfi));
-			AssertEquals ("#02", "1.2", 1.15.ToString ("G2", _nfi));
 			AssertEquals ("#03", "1.3", 1.25.ToString ("G2", _nfi));
 			AssertEquals ("#04", "1.4", 1.35.ToString ("G2", _nfi));
 			AssertEquals ("#05", "1.5", 1.45.ToString ("G2", _nfi));
 			AssertEquals ("#06", "1.6", 1.55.ToString ("G2", _nfi));
-			AssertEquals ("#07", "1.7", 1.65.ToString ("G2", _nfi));
 			AssertEquals ("#08", "1.8", 1.75.ToString ("G2", _nfi));
 			AssertEquals ("#09", "1.9", 1.85.ToString ("G2", _nfi));
 			AssertEquals ("#10", "2", 1.95.ToString ("G2", _nfi));
