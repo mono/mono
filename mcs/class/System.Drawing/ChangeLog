@@ -1,3 +1,7 @@
+2004-06-10  Ravindra <rkumar@novell.com>
+
+	* Makefile: Suppress compiler warning cs:618 for test dll.
+
 2004-06-03  Ravindra <rkumar@novell.com>
 
 	* Makefile: Updated. We don't need to define the flag
