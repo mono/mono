@@ -19,7 +19,7 @@ namespace Microsoft.Web.Services.Messaging {
 
 		int IdleTimeout { get; set; }
 		
-		string Scheme { get; }
+		//string Scheme { get; }
 		
 		IAsyncResult BeginSend ( 
 			SoapEnvelope envelope,
