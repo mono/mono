@@ -1,3 +1,8 @@
+
+Tue Jul 22 15:48:50 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: add IsArrayImpl icall.
+
 2003-07-22  Zoltan Varga  <vargaz@freemail.hu>
 
 	* class.c (mono_class_layout_fields): Fix gc aware auto layout by
