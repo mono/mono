@@ -51,8 +51,11 @@ namespace System.Web
 		{
 			int iBytes = length;
 
-			if (_iPos + length > _arrData.Length) {
-				iBytes = (int) _arrData.Length - _iPos;
+			if (_iPos < _iOffset)
+				_iPos = _iOffset;
+
+			if (_iPos + length > _iOffset + _iLength) {
+				iBytes = (int) _iOffset + _iLength - _iPos;
 			}
 
 			if (iBytes <= 0) {
