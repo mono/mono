@@ -1,3 +1,9 @@
+2004-10-21 Joerg Rosenkranz <joergr@voelcker.com>
+
+    * regex.cs: Fixed a bug introduced with the last patch which
+      prevented any replacements when a postive count is given.
+      This also happens in all overloads without count parameter.
+
 2004-10-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* regex.cs: in Replace, when count is negative, replacement continues

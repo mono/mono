@@ -361,7 +361,7 @@ namespace System.Text.RegularExpressions {
 			Match m = Match (input, startat);
 			while (m.Success) {
 				if (count != -1)
-					if(counter -- > 0)
+					if(counter -- <= 0)
 						break;
 				result.Append (input.Substring (ptr, m.Index - ptr));
 				result.Append (evaluator (m));
