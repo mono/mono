@@ -216,8 +216,10 @@ Status GdipCreateBitmapFromGraphics (int width, int height, gdip_graphics_ptr gr
 
 Status GdipBitmapLockBits (gdip_bitmap_ptr bitmap, Rect *rc, int flags, int format, GdipBitmapData *result)
 {
-	if (bitmap == 0)
+	if (bitmap == 0){
+		printf ("Bitmap is null\n");
 		return InvalidParameter;
+	}
 
 	/* Special case: the entire image is requested */
 	if (rc->left == 0 && rc->right == bitmap->data.Width &&
@@ -228,8 +230,10 @@ Status GdipBitmapLockBits (gdip_bitmap_ptr bitmap, Rect *rc, int flags, int form
 		return Ok;
 	}
 	
-	if (bitmap->data.PixelFormat != format)
+	if (bitmap->data.PixelFormat != format){
+		printf ("Requesting format change, not supported yet %d %d\n", bitmap->data.PixelFormat, format);
 		return InvalidParameter;
+	}
 	
 	result->Width = bitmap->data.Width; 
 	result->Height = bitmap->data.Height; 
@@ -253,7 +257,7 @@ Status ____BitmapLockBits (gdip_bitmap_ptr bitmap, Rect *rc, int flags, int form
 	*fptr = d.PixelFormat;
 	*res = d.Reserved;
 	*scan0 = d.Scan0;
-	
+
 	return s;
 }
 

@@ -90,5 +90,10 @@ namespace System.Drawing
 				return new SolidBrush(SystemColors.Window);
 			}
 		}
+		public static Brush WindowText {
+			get {
+				return new SolidBrush(SystemColors.WindowText);
+			}
+		}
 	}
 }

@@ -87,6 +87,7 @@ namespace System.Drawing {
 			Status s = GDIPlus.GdipCreateBitmapFromScan0 (bd.Width, bd.Height, bd.Stride, bd.PixelFormat, bd.Scan0, out bmp);
 			if (s != Status.Ok)
 				throw new ArgumentException ("Could not allocate the GdiPlus image: " + s);
+			Console.WriteLine ("Image is {0}", bmp);
 			nativeObject = (IntPtr)bmp;
 		}
 		
@@ -182,6 +183,9 @@ namespace System.Drawing {
 			//
 			int w = 0, h = 0, s = 0, f = 0, res = 0;
 			IntPtr sc = (IntPtr) 0xdeadcafe;
+
+			if (nativeObject == (IntPtr) 0)
+				throw new Exception ("nativeObject is null");
 			
 			Status status = GDIPlus.____BitmapLockBits (nativeObject, ref rc, flags, format, ref w, ref h, ref s, ref f, ref res, ref sc);
 			result.Width = w;
@@ -192,7 +196,7 @@ namespace System.Drawing {
 			result.Scan0 = sc;
 			
 			if (status != Status.Ok)
-				throw new Exception ("Could not lock bits: " + s);
+				throw new Exception ("Could not lock bits: " + status);
 			return result;
 		}
 
