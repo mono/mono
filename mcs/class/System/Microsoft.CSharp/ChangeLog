@@ -1,3 +1,9 @@
+2005-01-12  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* CSharpCodeGenerator.cs: Avoid keywords when writing enum members.
+	Removed the GetSafeTypeName method. It was a wrong bug fix. Type names
+	are expected to always use the full name form, never the alias.
+
 2004-12-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CSharpCodeCompiler.cs: ignore the 'BETA SOFTWARE blah' from gmcs.

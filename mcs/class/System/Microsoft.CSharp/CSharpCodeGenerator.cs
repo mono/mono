@@ -529,7 +529,7 @@ namespace Mono.CSharp
 				OutputAttributeDeclarations( field.CustomAttributes );
 
 			if (IsCurrentEnum)
-				Output.Write(field.Name);
+				Output.Write(GetSafeName (field.Name));
 			else {
 				MemberAttributes attributes = field.Attributes;
 				OutputMemberAccessModifier( attributes );
@@ -915,7 +915,7 @@ namespace Mono.CSharp
 			if (keywordsTable == null)
 				FillKeywordTable ();
 
-			if (keywordsTable.Contains (value) || typesTable.Contains (value))
+			if (keywordsTable.Contains (value))
 				return "_" + value;
 			else
 				return value;
@@ -988,13 +988,11 @@ namespace Mono.CSharp
 					break;
 
 				default:
-					output = type.BaseType;
+					output = GetSafeName (type.BaseType);
 					break;
 				}
 			}
 			
-			output = GetSafeTypeName (output);
-
 #if NET_2_0
 			if (type.Options == CodeTypeReferenceOptions.GlobalReference)
 				output = String.Concat ("global::", output);
@@ -1018,7 +1016,7 @@ namespace Mono.CSharp
 			if (keywordsTable == null)
 				FillKeywordTable ();
 
-			return !keywordsTable.Contains (identifier) && !typesTable.Contains (identifier);
+			return !keywordsTable.Contains (identifier);
 		}
 
 		protected override bool Supports( GeneratorSupport supports )
@@ -1150,15 +1148,6 @@ namespace Mono.CSharp
 			if (keywordsTable == null) {
 				FillKeywordTable ();
 			}
-			if (keywordsTable.Contains (id) || typesTable.Contains (id)) return "@" + id;
-			else return id;
-		}
-
-		string GetSafeTypeName (string id)
-		{
-			if (keywordsTable == null) {
-				FillKeywordTable ();
-			}
 			if (keywordsTable.Contains (id)) return "@" + id;
 			else return id;
 		}
@@ -1166,16 +1155,8 @@ namespace Mono.CSharp
 		static void FillKeywordTable ()
 		{
 			keywordsTable = new Hashtable ();
-				foreach (string keyword in keywords) keywordsTable.Add (keyword,keyword);
-			typesTable = new Hashtable ();
-				foreach (string type in types) typesTable.Add (type,type);
+			foreach (string keyword in keywords) keywordsTable.Add (keyword,keyword);
 		}
-
-		static Hashtable typesTable;
-		static string[] types = new string[] {
-			"object","bool","byte","float","uint","char","ulong","ushort",
-			"decimal","int","sbyte","short","double","long","string","void"
-		};
 
 		static Hashtable keywordsTable;
 		static string[] keywords = new string[] {
@@ -1188,6 +1169,8 @@ namespace Mono.CSharp
 			"interface","sealed","volatile","delegate","internal","do","is",
 			"sizeof","while","lock","stackalloc","else","static","enum",
 			"namespace",
+			"object","bool","byte","float","uint","char","ulong","ushort",
+			"decimal","int","sbyte","short","double","long","string","void",
 #if NET_2_0
 			"partial", "yield", "where"
 #endif
