@@ -202,7 +202,7 @@ namespace Npgsql
                         if (freeConnector2 != null)
                             return freeConnector2;
                         else
-                            Thread.Sleep(timeoutMilliseconds % 900);
+                            Thread.Sleep((timeoutMilliseconds > 900) ? 900 : timeoutMilliseconds);
                         timeoutMilliseconds -= 900;
                     }
                     
