@@ -1,3 +1,7 @@
+2004-12-14  Patrik Torstensson  <patrik.torstensson@gmail.com>
+
+	* mini-x86.c: disabling the Interlocked optimizing code. 
+
 2004-12-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* aot.c (load_aot_module): Move reading of got_addr after the AOT
