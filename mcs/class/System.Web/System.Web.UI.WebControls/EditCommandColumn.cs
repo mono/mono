@@ -108,7 +108,7 @@ namespace System.Web.UI.WebControls
 			
 			if (itemType == ListItemType.EditItem) {
 				cell.Controls.Add (MakeButton ("Update", UpdateText));
-				cell.Controls.Add (new LiteralControl (" "));
+				cell.Controls.Add (new LiteralControl ("&nbsp;"));
 				cell.Controls.Add (MakeButton ("Cancel", CancelText));
 			} else {
 				cell.Controls.Add (MakeButton ("Edit", EditText));

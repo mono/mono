@@ -1,3 +1,7 @@
+2004-02-04 Alon Gazit <along@mainsoft.com>
+	* EditCommandColumn.cs: fixed InitializeCell().
+	The rendered LiteralControl should contain "&nbsp;" and not " ".
+
 2004-02-01 Alon Gazit <along@mainsoft.com>
 
 	* DataGrid.cs: fixed a problem in the paging mechanism in the method
