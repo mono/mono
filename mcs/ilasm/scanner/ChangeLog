@@ -1,3 +1,7 @@
+2003-04-03 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILToken.cs: Add open angle bracket, and close angle bracket tokens.
+		
 2003-03-31 Jackson Harper <jackson@latitudegeo.com>
 
 	* NumberHelper.cs: handle situations like this 21452. properly
