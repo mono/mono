@@ -287,13 +287,21 @@ public sealed class TypeDescriptor
 	[MonoTODO]
 	public static PropertyDescriptorCollection GetProperties (object component, Attribute [] attributes)
 	{
+		Type type = component.GetType ();
+		if (typeof (ICustomTypeDescriptor).IsAssignableFrom (type))
+			return ((ICustomTypeDescriptor) component).GetProperties (attributes);
+
 		throw new NotImplementedException ();
 	}
 
 	[MonoTODO("noCustomTypeDesc")]
 	public static PropertyDescriptorCollection GetProperties (object component, bool noCustomTypeDesc)
 	{
-		return GetProperties (component.GetType ());
+		Type type = component.GetType ();
+		if (typeof (ICustomTypeDescriptor).IsAssignableFrom (type))
+			return ((ICustomTypeDescriptor) component).GetProperties ();
+
+		return GetProperties (type);
 	}
 
 	[MonoTODO]

@@ -1,3 +1,9 @@
+2003-01-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TypeDescriptor.cs: use ICustomTypeDescriptor if the component
+	implements it. It's done for GetProperties and should be done for the
+	rest of methods present in ICustomTypeDescriptor.
+
 2003-01-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TypeDescriptor.cs: moved code from GetProperties (object) to (Type).
