@@ -2,20 +2,20 @@
 // System.Windows.Forms.DateTimePickerFormat.cs
 //
 // Author:
-//	Dennis Hayes (dennish@raytek.com)
-//
-// (C) Ximian, Inc., 2002
+//   Dennis Hayes (dennish@raytek.com)
+// (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
 
 using System;
 
-namespace System.Windows.Forms {
-
+namespace System.Windows.Forms
+{
 	/// <summary>
 	/// </summary>
-	[MonoTODO]
-	public class DateTimePickerFormat {
-
-		/// --- Constructor ---
+	public enum DateTimePickerFormat {
+		Custom = 8,
+		Long = 1,
+		Short = 2,
+		Time = 4
 	}
 }

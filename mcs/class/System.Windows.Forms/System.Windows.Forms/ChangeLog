@@ -1,3 +1,10 @@
+2002-7-22  DennisHayes <dennish@raytek.com>
+
+* DateTimePickerFormat.cs
+* Added values.
+* The NAMESPACE NOW COMPILES under windows in Visual Studio using the Microsoft version of the classes.
+* Verify.exe reports 600 errors.
+
 2002-7-21  DennisHayes <dennish@raytek.com>
 
 * AccessibleObject.cs
