@@ -1,3 +1,15 @@
+2004-11-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* class-internals.h: Added a flag field to MonoClass to cache the
+	declarative security attributes actions associated with the class.
+	* domain-internals.h: Added booleans to MonoJitInfo to cache the
+	(class or method level) stack modifiers (Assert, Deny and PermitOnly)
+	applicable to the JITted method.
+	* reflection.c|h: Added functions to extract (as flags) which security
+	actions are available (declaratively) for a method, class or assembly.
+	* metadata.c|h: Added functions to search the declarative security
+	table in the metadata.
+	
 2004-11-29  Ben Maurer  <bmaurer@ximian.com>
 
 	* icall.c (ves_icall_System_Reflection_Assembly_GetNamespaces):
