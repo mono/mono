@@ -855,7 +855,11 @@ namespace MonoTests.System {
 			AssertEquals("#H09", (decimal)trySByte, Convert.ToDecimal(trySByte));
 			AssertEquals("#H10", (decimal)tryFloat, Convert.ToDecimal(tryFloat));
 			string sep = NumberFormatInfo.CurrentInfo.NumberDecimalSeparator;
-			AssertEquals("#H11", (decimal)23456.432, Convert.ToDecimal("23456" + sep + "432"));
+//			AssertEquals("#H11", (decimal)23456.432, Convert.ToDecimal("23456" + sep + "432"));
+//			Note: changed because the number were the same but with a different base
+//			and this isn't a Convert bug (but a Decimal bug). See #60227 for more details.
+//			http://bugzilla.ximian.com/show_bug.cgi?id=60227
+			Assert ("#H11", Decimal.Equals (23456.432m, Convert.ToDecimal ("23456" + sep + "432")));
 			AssertEquals("#H12", (decimal)tryUI16, Convert.ToDecimal(tryUI16));
 			AssertEquals("#H13", (decimal)tryUI32, Convert.ToDecimal(tryUI32));
 			AssertEquals("#H14", (decimal)tryUI64, Convert.ToDecimal(tryUI64));

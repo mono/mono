@@ -1,5 +1,8 @@
 2004-06-15  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* ConvertTest.cs: Changed compare between Decimals (from a string 
+	compare to Decimal.Equals) because the issue wasn't related to the
+	Convert class. See #60227 for more details.
 	* DecimalTest.cs: Added test to ensure we keep/output the decimals
 	precision (#59425). Added tests to see how many decimals are supported
 	in "G" before switching to "E".
