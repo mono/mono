@@ -1,5 +1,9 @@
 2003-03-31 Jackson Harper <jackson@latitudegeo.com>
 
+	* NumberHelper.cs: handle situations like this 21452. properly
+		
+2003-03-31 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILTokenizer.cs: Handle Ellipsis
 	* NUmberHelper.cs: Handle situations like this 0... properly
 		
