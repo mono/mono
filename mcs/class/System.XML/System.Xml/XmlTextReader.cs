@@ -624,7 +624,8 @@ namespace System.Xml
 			return ReadCharsInternal (buffer, offset, length);
 		}
 
-#if NET_1_0
+#if NET_1_1
+#else
 		public override string ReadInnerXml ()
 		{
 			return ReadInnerXmlInternal ();

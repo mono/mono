@@ -1,3 +1,7 @@
+2004-04-27  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextReader.cs : don't use NET_1_0.
+
 2004-04-24  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlComment.cs. XmlProcessingInstruction.cs : missing commits.
