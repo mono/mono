@@ -1,3 +1,8 @@
+2004-01-02  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* corlib.dll.sources: Added many (long time) missing classes in the
+	System.Security.Policy namespace.
+
 2004-01-01  Nick Drochak  <ndrochak@gol.com>
 
 	* corlib_test.dll.sources: Add PermissionRequestEvidenceTest.cs
