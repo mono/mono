@@ -9,6 +9,8 @@ Mono.Math/BigInteger.cs
 Mono.Security/ASN1.cs
 Mono.Security.Cryptography/CryptoTools.cs
 Mono.Security.Cryptography/PKCS1.cs
+Mono.Security.Cryptography/HMACAlgorithm.cs
+Mono.Security.Cryptography/MACAlgorithm.cs
 Mono.Xml/MiniParser.cs
 System/Activator.cs
 System/AppDomain.cs
