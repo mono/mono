@@ -1,3 +1,10 @@
+2005-03-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ResourceReaderCas.cs: New. CAS unit tests for ResourceReader.
+	* ResourceReaderTest.cs: Changed filename to internal so the "normal" 
+	tests case can be reused, with partial trust, by the CAS tests. 
+	* ResourceSetCas.cs: : New. CAS unit tests for ResourceSet.
+
 2005-01-28  Nick Drochak <ndrochak@ieee.org>
 
 	* ResourceReaderTest.cs: Not sure about a zero-byte length file.

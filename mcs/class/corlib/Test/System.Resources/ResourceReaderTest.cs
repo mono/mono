@@ -19,7 +19,7 @@ namespace MonoTests.System.Resources {
 
 	[TestFixture]
 	public class ResourceReaderTest : Assertion {
-		private static string m_ResourceFile;
+		internal static string m_ResourceFile;
 		private static string m_BadResourceFile;
 
 		[TestFixtureSetUp]
@@ -131,7 +131,6 @@ namespace MonoTests.System.Resources {
 			while (en.MoveNext()) {
 				DictionaryEntry de = (DictionaryEntry)en.Current;
 				Assert("Current.Key should not be empty",String.Empty != (string)de.Key);
-				Assert("Current.Value should not be empty",String.Empty != (string)de.Value);
 				Assert("Current.Value should not be empty",String.Empty != (string)de.Value);
 				Assert("Entry.Key should not be empty",String.Empty != (string)en.Key);
 				Assert("Entry.Value should not be empty",String.Empty != (string)en.Value);
