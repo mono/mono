@@ -1,3 +1,8 @@
+2004-06-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CSharpCodeGenerator.cs : Fix for tests. Check type names in
+	  CreateValidIdentifier. Implemented IsValidIdentifier.
+
 2004-06-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CSharpCodeCompiler.cs: let the TempFileCollection handle the removal

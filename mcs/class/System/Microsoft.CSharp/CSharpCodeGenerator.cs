@@ -836,6 +836,13 @@ namespace Mono.CSharp
 			Output.Write (GetSafeName (e.Name));
 		}
 
+		protected override void GenerateTypeOfExpression (CodeTypeOfExpression e)
+		{
+			Output.Write ("typeof(");
+			OutputType (e.Type);
+			Output.Write (")");
+		}
+
 		/* 
 		 * ICodeGenerator
 		 */
@@ -850,11 +857,10 @@ namespace Mono.CSharp
 			if (value == null)
 				throw new NullReferenceException ();
 
-			if (keywordsTable == null) {
+			if (keywordsTable == null)
 				FillKeywordTable ();
-			}
 
-			if (keywordsTable.Contains (value))
+			if (keywordsTable.Contains (value) || typesTable.Contains (value))
 				return "_" + value;
 			else
 				return value;
@@ -944,9 +950,12 @@ namespace Mono.CSharp
 			return output;
 		}
 
-		protected override bool IsValidIdentifier( string identifier )
+		protected override bool IsValidIdentifier ( string identifier )
 		{
-			return true;
+			if (keywordsTable == null)
+				FillKeywordTable ();
+
+			return !keywordsTable.Contains (identifier) && !typesTable.Contains (identifier);
 		}
 
 		protected override bool Supports( GeneratorSupport supports )
