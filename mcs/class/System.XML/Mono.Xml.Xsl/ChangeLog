@@ -1,5 +1,14 @@
 2003-12-12 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* ScriptCompilerInfo.cs : SecurityManager.ResolvePolicy() was not 
+	  implemented yet.
+	* MSMslScriptManager.cs : modified generated assembly class to be unique
+	  through running AppDomain.
+	* XsltCompiledContext.cs : XsltExtensionFunction.Invoke() has to cast
+	  arguments to actual argument types. Bugzilla #51450 should be fixed.
+
+2003-12-12 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* HtmlEmitter.cs : Fixed incorrect character entity output.
 
 2003-12-11 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>

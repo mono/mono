@@ -62,7 +62,9 @@ namespace Mono.Xml.Xsl
 			proc.StartInfo = psi;
 			StreamWriter sw = null;
 			try {
-				SecurityManager.ResolvePolicy (evidence).Demand ();
+				PermissionSet ps = SecurityManager.ResolvePolicy (evidence);
+				if (ps != null)
+					ps.Demand ();
 				sw = File.CreateText (tmpbase + Extension);
 				sw.WriteLine (SourceTemplate.Replace ("{0}", DateTime.Now.ToString ()).Replace ("{1}", classSuffix).Replace ("{2}", code));
 
@@ -211,7 +213,9 @@ class Script{1} {
 #if !MS_NET
 		public override Type GetScriptClass (string code, string classSuffix, XPathNavigator scriptNode, Evidence evidence)
 		{
-			SecurityManager.ResolvePolicy (evidence).Demand ();
+			PermissionSet ps = SecurityManager.ResolvePolicy (evidence);
+			if (ps != null)
+				ps.Demand ();
 			Assembly jsasm = Assembly.LoadWithPartialName ("Microsoft.JScript.dll", evidence);
 			Type providerType = jsasm.GetType ("Microsoft.JScript.JScriptCodeProvider");
 			CodeDomProvider provider = (CodeDomProvider) Activator.CreateInstance (providerType);

@@ -109,6 +109,7 @@ namespace Mono.Xml.Xsl {
 			
 			public object Compile ()
 			{
+				string suffix = Guid.NewGuid ().ToString ().Replace ("-", String.Empty);
 				switch (this.language) {
 				case ScriptingLanguage.CSharp:
 					return new CSharpCompilerInfo ().GetScriptClass (Code, suffix, node, evidence);

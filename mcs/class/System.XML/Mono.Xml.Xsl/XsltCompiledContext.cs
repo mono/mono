@@ -63,7 +63,7 @@ namespace Mono.Xml.Xsl {
 				extension = p.ScriptManager.GetExtensionObject (ns);
 				if (extension == null)
 					return null;
-				
+
 				isScript = true;
 			}
 			
@@ -328,15 +328,52 @@ namespace Mono.Xml.Xsl.Functions {
 		public override object Invoke (XsltCompiledContext xsltContext, object [] args, XPathNavigator docContext)
 		{
 			try {
-				object result = method.Invoke(extension, args);
+				ParameterInfo [] pis = method.GetParameters ();
+				object [] castedArgs = new object [pis.Length];
+				for (int i = 0; i < args.Length; i++) {
+					Type t = pis [i].ParameterType;
+					switch (t.FullName) {
+					case "System.Int16":
+					case "System.UInt16":
+					case "System.Int32":
+					case "System.UInt32":
+					case "System.Int64":
+					case "System.UInt64":
+					case "System.Single":
+					case "System.Decimal":
+						castedArgs [i] = Convert.ChangeType (args [i], t);
+						break;
+					default:
+						castedArgs [i] = args [i];
+						break;
+					}
+				}
+
+				object result = null;
+				switch (method.ReturnType.FullName) {
+				case "System.Int16":
+				case "System.UInt16":
+				case "System.Int32":
+				case "System.UInt32":
+				case "System.Int64":
+				case "System.UInt64":
+				case "System.Single":
+				case "System.Decimal":
+					result = (double) method.Invoke (extension, castedArgs);
+					break;
+				default:
+					result = method.Invoke(extension, castedArgs);
+					break;
+				}
 				IXPathNavigable navigable = result as IXPathNavigable;
 				if (navigable != null)
 					return navigable.CreateNavigator ();
 
 				return result;
-			} catch {
-				Debug.WriteLine ("****** INCORRECT RESOLUTION **********");
-				return "";
+			} catch (Exception ex) {
+				throw new XsltException ("Custom function reported an error.", ex);
+//				Debug.WriteLine ("****** INCORRECT RESOLUTION **********");
+//				return "";
 			}
 		}
 	}
