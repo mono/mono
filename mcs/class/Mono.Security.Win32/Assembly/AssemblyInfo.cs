@@ -43,5 +43,5 @@ using System.Runtime.InteropServices;
 [assembly:SecurityPermission(SecurityAction.RequestMinimum, UnmanagedCode=true)]
 
 
-//[assembly: AssemblyDelaySign (true)]
-//[assembly: AssemblyKeyFile ("")]
+[assembly: AssemblyDelaySign (true)]
+[assembly: AssemblyKeyFile ("../ecma.pub")]

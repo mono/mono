@@ -18,3 +18,5 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyProduct("MONO CLI")]
 [assembly: AssemblyCopyright("(c) 2003 Various Authors")]
 
+[assembly: AssemblyDelaySign(true)]
+[assembly: AssemblyKeyFile("../ecma.pub")]

@@ -36,4 +36,4 @@ using System.Runtime.InteropServices;
 [assembly: AllowPartiallyTrustedCallers()]
 
 [assembly: AssemblyDelaySign(true)]
-//[assembly: AssemblyKeyFile("")]
+[assembly: AssemblyKeyFile("../ecma.pub")]

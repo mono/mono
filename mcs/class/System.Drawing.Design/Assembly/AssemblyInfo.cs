@@ -40,4 +40,4 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 [assembly: AssemblyDelaySign(true)]
-//[assembly: AssemblyKeyFile("..\\..\\MonoKey.snk")]
+[assembly: AssemblyKeyFile("../ecma.pub")]

@@ -39,5 +39,5 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyInformationalVersion("0.0.0.1")]
 [assembly: NeutralResourcesLanguage("en-US")]
 
-//[assembly: AssemblyDelaySign(false)]
-//[assembly: AssemblyKeyFile("")]
+[assembly: AssemblyDelaySign(true)]
+[assembly: AssemblyKeyFile("../ecma.pub")]

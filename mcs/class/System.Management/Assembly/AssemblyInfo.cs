@@ -35,6 +35,5 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisible (false)]
 
-//[assembly: AssemblyDelaySign (true)]
-//[assembly: AssemblyKeyName ("")]
-//[assembly: AssemblyKeyFile ("")]
+[assembly: AssemblyDelaySign (true)]
+[assembly: AssemblyKeyFile ("../ecma.pub")]

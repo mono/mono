@@ -44,5 +44,5 @@ using System.Runtime.InteropServices;
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: Guid("1ea4dbf0-3c3b-11cf-810c-00aa00389b71")]
 
-//[assembly: AssemblyDelaySign(false)]
-//[assembly: AssemblyKeyFile("")]
+[assembly: AssemblyDelaySign(true)]
+[assembly: AssemblyKeyFile("../ecma.pub")]

@@ -43,5 +43,5 @@ using System.Web.UI;
 [assembly: AllowPartiallyTrustedCallers()]
 [assembly: TagPrefix("System.Web.UI.WebControls", "asp")]
 
-//[assembly: AssemblyDelaySign(false)]
-//[assembly: AssemblyKeyFile("")]
+[assembly: AssemblyDelaySign(true)]
+[assembly: AssemblyKeyFile("../ecma.pub")]

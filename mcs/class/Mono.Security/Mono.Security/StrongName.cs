@@ -408,17 +408,22 @@ namespace Mono.Security {
 				sn = StrongHash (fs, StrongNameOptions.Signature);
 				fs.Close ();
 			}
-			if (sn.Hash == null)
+			if (sn.Hash == null) {
+                                Console.WriteLine ("hash is null");
 				return false;
+                        }
 
 			try {
 				AssemblyHashAlgorithm algorithm = AssemblyHashAlgorithm.SHA1;
 				if (tokenAlgorithm == "MD5")
 					algorithm = AssemblyHashAlgorithm.MD5;
-				return Verify (rsa, algorithm, sn.Hash, sn.Signature);
+				bool v = Verify (rsa, algorithm, sn.Hash, sn.Signature);
+                                Console.WriteLine ("returning v:   " + v);
+                                return v;
 			}
-			catch (CryptographicException) {
+			catch (CryptographicException e) {
 				// no exception allowed
+                                Console.WriteLine ("exception:  " + e);
 				return false;
 			}
 		}
