@@ -1,3 +1,8 @@
+2003-01-11 David Sheldon <dave-mono@earth.li>
+
+  * DateTimeTest.cs: Tests for bug 52274 fix, formats such as 
+   '--MM--'
+
 2003-12-27  Nick Drochak <ndrochak@gol.com>
 
 	* AppDomainSetupTest.cs: Seems that AppDomainSetup's use the temp

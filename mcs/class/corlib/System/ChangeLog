@@ -1,3 +1,8 @@
+2004-01-11  David Sheldon <dave-mono@earth.li>
+
+ * DateTime.cs: Correct processing of formats with multiple '-'s, fixing bug
+  52274
+
 2004-01-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AppDomain.cs: Keep track of type resolve and assembly resolve 

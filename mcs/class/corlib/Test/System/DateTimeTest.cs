@@ -529,6 +529,16 @@ public class DateTimeTest : Assertion
 		t1 = DateTime.ParseExact ("Sun Nov  6 08:49:37 1994", formats, enUS, 
 					DateTimeStyles.AllowWhiteSpaces);
 		AssertEquals ("M06", myTicks[6], t1.Ticks);
+	
+	        // Bug 52274
+		t1 = DateTime.ParseExact ("--12--", "--MM--" , null);
+		AssertEquals("Dash01", 12, t1.Month);
+		t1=DateTime.ParseExact ("--12-24", "--MM-dd" , null);
+		AssertEquals("Dash02", 24, t1.Day);
+		AssertEquals("Dash03", 12, t1.Month);
+		t1=DateTime.ParseExact ("---24", "---dd" , null);
+		AssertEquals("Dash04", 24, t1.Day);
+	
 	}
 
 	[Ignore ("need to fix tests that run on different timezones")]

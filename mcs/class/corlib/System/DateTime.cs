@@ -888,7 +888,7 @@ namespace System
 						return false;
 					break;
 				case '-':
-					if (!_ParseString (s, 0, "-", out num_parsed)) {
+					if (!_ParseString (s, 0, new String('-', num + 1), out num_parsed)) {
 						return false;
 					}
 					break;
