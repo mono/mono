@@ -258,105 +258,126 @@ namespace Microsoft.JScript {
 			CodeGenerator.Save (trim_extension (file_name) + ".exe");
 		}
 
+		static void emit_default_case (EmitContext ec, AST ast, OpCode op, Label lbl)
+		{
+			ast.Emit (ec);
+			if (need_convert_to_boolean (ast))
+				emit_to_boolean (ast, ec.ig, 0);
+			ec.ig.Emit (op, lbl);
+		}
+
+		static void ft_binary_recursion (EmitContext ec, AST ast, Label lbl)
+		{
+			ILGenerator ig = ec.ig;
+			if (ast is Binary) {
+				Binary b = ast as Binary;
+				switch (b.op) {
+				case JSToken.LogicalOr:
+					Label ftLb = ig.DefineLabel ();
+					fall_false (ec, b.left, ftLb);
+					fall_true (ec, b.right, lbl);
+					ig.MarkLabel (ftLb);
+					break;
+				case JSToken.LogicalAnd:
+					fall_true (ec, b.left, lbl);
+					fall_true (ec, b.right, lbl);
+					break;
+
+				case JSToken.LessThan:
+					ig.Emit (OpCodes.Ldc_I4_0);
+					ig.Emit (OpCodes.Conv_R8);
+					ig.Emit (OpCodes.Blt, lbl);
+					break;
+				}
+			}
+		}
+
+		static void ft_emit_equality (EmitContext ec, AST ast, Label lbl)
+		{
+			ILGenerator ig = ec.ig;
+			Equality eq = ast as Equality;
+
+			switch (eq.op) {
+			case JSToken.NotEqual:
+				ig.Emit (OpCodes.Brtrue, lbl);
+				break;
+			case JSToken.Equal:
+				ig.Emit (OpCodes.Brfalse, lbl);
+				break;
+			}
+		}
+
 		internal static void fall_true (EmitContext ec, AST ast, Label lbl)
 		{
 			ILGenerator ig = ec.ig;
+			Type type = ast.GetType ();
 
-			if (ast.GetType () == typeof (Expression)) {  
+			if (type == typeof (Expression)) {  
 				Expression exp = ast as Expression;
 				exp.Emit (ec);
 				AST last_exp = (AST) exp.exprs [exp.exprs.Count - 1];
 
-				if (last_exp is Binary) {
-					Binary b = last_exp as Binary;
-					switch (b.op) {
-					case JSToken.LogicalOr:
-						Label ftLb = ig.DefineLabel ();
-						fall_false (ec, b.left, ftLb);
-						fall_true (ec, b.right, lbl);
-						ig.MarkLabel (ftLb);
-						break;
-					case JSToken.LogicalAnd:
-						fall_true (ec, b.left, lbl);
-						fall_true (ec, b.right, lbl);
-						break;
+				if (last_exp is Binary)
+					ft_binary_recursion (ec, last_exp, lbl);
+				else if (last_exp is Equality)
+					ft_emit_equality (ec, last_exp, lbl);
+			} else if (type == typeof (Binary))
+				ft_binary_recursion (ec, ast, lbl);
+			else
+				emit_default_case (ec, ast, OpCodes.Brfalse, lbl);
+		}
 
-					case JSToken.LessThan:
-						ig.Emit (OpCodes.Ldc_I4_0);
-						ig.Emit (OpCodes.Conv_R8);
-						ig.Emit (OpCodes.Blt, lbl);
-						break;
-					}
-				} else if (last_exp is Equality) {
-					Equality eq = last_exp as Equality;
-					switch (eq.op) {
-					case JSToken.NotEqual:
-						ig.Emit (OpCodes.Brtrue, lbl);
-						break;
-					case JSToken.Equal:
-						ig.Emit (OpCodes.Brfalse, lbl);
-						break;
-					default:
-						if (need_convert_to_boolean (ast))
-							emit_to_boolean (ast, ig, 0);
-						ig.Emit (OpCodes.Brtrue, lbl);
-						break;
-					}
-				}
-			} else {
-				ast.Emit (ec);
-				if (need_convert_to_boolean (ast))
-					emit_to_boolean (ast, ig, 0);
-				ig.Emit (OpCodes.Brfalse, lbl);
+		static void ff_emit_relational (ILGenerator ig, AST ast, Label lbl)
+		{
+			Relational r = ast as Relational;
+
+			switch (r.op) {
+			case JSToken.LessThan:
+				ig.Emit (OpCodes.Ldc_I4_0);
+				ig.Emit (OpCodes.Conv_R8);
+				ig.Emit (OpCodes.Blt, lbl);
+				break;
+			}
+		}
+
+		static void ff_binary_recursion (EmitContext ec, AST ast, Label lbl)
+		{
+			ILGenerator ig = ec.ig;
+			Binary b = ast as Binary;
+
+			switch (b.op) {
+			case JSToken.LogicalOr:
+				fall_false (ec, b.left, lbl);
+				fall_false (ec, b.right, lbl);
+				break;
+
+			case JSToken.LogicalAnd:
+				Label ftLb = ig.DefineLabel ();
+				fall_true (ec, b.left, ftLb);
+				fall_false (ec, b.right, lbl);
+				ig.MarkLabel (ftLb);
+				break;
 			}
 		}
 
 		internal static void fall_false (EmitContext ec, AST ast, Label lbl)
 		{
 			ILGenerator ig = ec.ig;
-			
-			if (ast.GetType () == typeof (Expression)) {  
+			Type type = ast.GetType ();
+
+			if (type == typeof (Expression)) {  
 				Expression exp = ast as Expression;
 				exp.Emit (ec);
 				AST last_exp = (AST) exp.exprs [exp.exprs.Count - 1];
 
-				if (last_exp is Relational) {
-					Relational r = last_exp as Relational;
-					switch (r.op) {
-					case JSToken.LessThan:
-						ig.Emit (OpCodes.Ldc_I4_0);
-						ig.Emit (OpCodes.Conv_R8);
-						ig.Emit (OpCodes.Blt, lbl);
-						break;
-					}
-				} else if (last_exp is Binary) {
-					Binary b = last_exp as Binary;
-					switch (b.op) {
-					case JSToken.LogicalOr:
-						fall_false (ec, b.left, lbl);
-						fall_false (ec, b.right, lbl);
-						break;
-
-					case JSToken.LogicalAnd:
-						Label ftLb = ig.DefineLabel ();
-						fall_true (ec, b.left, ftLb);
-						fall_false (ec, b.right, lbl);
-						ig.MarkLabel (ftLb);
-						break;
-
-					default:
-						if (need_convert_to_boolean (ast))
-							emit_to_boolean (ast, ig, 0);
-						ig.Emit (OpCodes.Brtrue, lbl);
-						break;
-					}
-				} else {
-					ast.Emit (ec);
-					if (need_convert_to_boolean (ast))
-						emit_to_boolean (ast, ig, 0);
-					ig.Emit (OpCodes.Brtrue, lbl);
-				}
-			}
+				if (last_exp is Relational)
+					ff_emit_relational (ec.ig, last_exp, lbl);
+				else if (last_exp is Binary)
+					ff_binary_recursion (ec, last_exp, lbl);
+			} else if (type == typeof (Binary))
+				ff_binary_recursion (ec, ast, lbl);
+			else 
+				emit_default_case (ec, ast, OpCodes.Brtrue, lbl);
 		}
 
 		internal static void emit_to_boolean (AST ast, ILGenerator ig, int i)

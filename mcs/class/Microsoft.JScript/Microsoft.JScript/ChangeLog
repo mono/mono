@@ -1,3 +1,10 @@
+2004-11-15  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* CodeGenerator.cs: factor code for fall_true/fall_false (add
+	emit_default_case, ft_binary_recursion, ft_emit_equality,
+	ff_emit_relational, ff_binary_recursion). Fix
+	trouble with logical ops code generation.	
+
 2004-11-12  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* TypeOf.cs, Plus.cs, Equality.cs:  implementation of
