@@ -8,18 +8,20 @@
 //
 
 using System;
+using System.Diagnostics;
 using System.Runtime.Remoting.Metadata;
 using System.Runtime.Remoting.Messaging;
 
 namespace System.Runtime.Remoting
 {
-	public sealed class InternalRemotingServices 
+	public class InternalRemotingServices 
 	{
 		public InternalRemotingServices ()
 		{
 		}
 		
 		[MonoTODO]
+		[Conditional("_LOGGING")]
 		public static void DebugOutChnl (string s)
 		{
 			throw new NotImplementedException ();
@@ -32,12 +34,14 @@ namespace System.Runtime.Remoting
 		}
 		
 		[MonoTODO]
+		[Conditional("_DEBUG")]
 		public static void RemotingAssert (bool condition, string message)
 		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
+		[Conditional("_LOGGING")]
 		public static void RemotingTrace (params object[] messages)
 		{
 			throw new NotImplementedException ();
