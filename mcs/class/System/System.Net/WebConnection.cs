@@ -88,7 +88,7 @@ namespace System.Net
 							status = WebExceptionStatus.Success;
 							break;
 						} 
-						catch (SocketException e2) {
+						catch (SocketException) {
 							socket.Close();
 							status = WebExceptionStatus.ConnectFailure;
 						}
@@ -104,7 +104,7 @@ namespace System.Net
 			//TODO: create stream for https
 			try {
 				nstream = new NetworkStream (socket, false);
-			} catch (Exception e) {
+			} catch (Exception) {
 				status = WebExceptionStatus.ConnectFailure;
 				return false;
 			}
@@ -461,7 +461,7 @@ namespace System.Net
 			if (!chunkedRead || chunkStream.WantMore) {
 				try {
 					result = nstream.BeginRead (buffer, offset, size, cb, state);
-				} catch (Exception e) {
+				} catch (Exception) {
 					status = WebExceptionStatus.ReceiveFailure;
 					throw;
 				}
@@ -502,7 +502,7 @@ namespace System.Net
 
 			try {
 				result = nstream.BeginWrite (buffer, offset, size, cb, state);
-			} catch (Exception e) {
+			} catch (Exception) {
 				status = WebExceptionStatus.SendFailure;
 				throw;
 			}

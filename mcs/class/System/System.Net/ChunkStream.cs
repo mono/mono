@@ -27,7 +27,7 @@ namespace System.Net
 		int chunkSize;
 		int chunkRead;
 		State state;
-		byte [] waitBuffer;
+		//byte [] waitBuffer;
 		StringBuilder saved;
 		bool sawCR;
 		bool gotit;
@@ -193,7 +193,6 @@ namespace System.Net
 		State ReadTrailer (byte [] buffer, ref int offset, int size)
 		{
 			char c = '\0';
-			bool empty = false;
 
 			// short path
 			if ((char) buffer [offset] == '\r') {

@@ -217,7 +217,7 @@ namespace System.Net {
 				IPv6Address newIPv6Address = IPv6Address.Parse(ip);
 				return new IPAddress(newIPv6Address.Address, newIPv6Address.ScopeId);
 			}
-			catch(Exception e) {
+			catch (Exception) {
 				return null;
 			}
 		}
