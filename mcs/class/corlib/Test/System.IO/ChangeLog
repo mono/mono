@@ -1,3 +1,7 @@
+2003-05-05  Ville Palo <vi64pa@kolumbus.fi>
+
+	* DirectoryInfoTest.cs: new file.
+	
 2003-05-04  Ville Palo <vi64pa@kolumbus.fi>
 
 	* FileInfoTest.cs: new file.
