@@ -1,3 +1,9 @@
+2004-06-18  Jackson Harper  <jackson@ximian.com>
+
+	* mono-logger.c: Change default logging level to ERROR. Make sure
+	that mono_trace_init is called if mono_tracev is our first trace
+	statement is mono_tracev. Little indentation fix.
+	
 2004-05-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mono-codeman.c (mono_code_manager_invalidate): On x86, fill the
