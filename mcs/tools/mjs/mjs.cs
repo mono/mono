@@ -39,7 +39,7 @@ class Driver {
 	public static void Main (string [] args) {
 	
 		if (args.Length < 1) {
-			Console.WriteLine ("Usage: [mono] mjs.exe filename.js");
+			Console.WriteLine ("Usage: mjs filename.js");
 			Environment.Exit (0);
 		}
 
