@@ -20,6 +20,9 @@ namespace Microsoft.Web.Services.Configuration {
 		bool diagnosticsTraceEnabled;
 		string diagnosticsTraceInputFilename;
 		string diagnosticsTraceOutputFilename;
+#if WSE2
+		private MessagingConfiguration _messagingConfiguration = new MessagingConfiguration ();
+#endif
 
 		public WSEConfig (XmlNode section) 
 		{
@@ -30,6 +33,13 @@ namespace Microsoft.Web.Services.Configuration {
 				diagnosticsTraceOutputFilename = trace.Attributes ["output"].InnerText;
 			}
 		}
+
+#if WSE2 //Not sure why this keeps happenning, this code will workaround it though
+		public WSEConfig ()
+		{
+
+		}
+#endif
 
 		public bool Trace {
 			get { return diagnosticsTraceEnabled; }
@@ -42,17 +52,17 @@ namespace Microsoft.Web.Services.Configuration {
 		public string TraceOutput {
 			get { return diagnosticsTraceOutputFilename; }
 		}
+#if WSE2
+		public MessagingConfiguration MessagingConfiguration {
+			get { return _messagingConfiguration; }
+		}
+#endif
 	}
 
 	[MonoTODO("This whole class requires some serious attention")]
 	public sealed class WebServicesConfiguration : ConfigurationBase, IConfigurationSectionHandler {
 
-		static WSEConfig config;
-
-		static WebServicesConfiguration () 
-		{
-			config = (WSEConfig) ConfigurationSettings.GetConfig ("microsoft.web.services");
-		}
+		static WSEConfig config = (WSEConfig) ConfigurationSettings.GetConfig ("microsoft.web.services");
 
 		internal WebServicesConfiguration () {}
 
@@ -64,8 +74,18 @@ namespace Microsoft.Web.Services.Configuration {
 			get { return new FilterConfiguration (); }
 		}
 #if WSE2
+
+		static WebServicesConfiguration ()
+		{
+			if(config == null) {
+				config = new WSEConfig ();
+			}
+		}
+
 		public static MessagingConfiguration MessagingConfiguration {
-			get { return new MessagingConfiguration (); }
+			get { 
+				return config.MessagingConfiguration;
+			}
 		}
 		
 /* Class not stubbed

@@ -1,6 +1,11 @@
+2003-10-26  Todd Berman <tberman@gentoo.org>
+
+	* WebServicesConfiguration.cs: Allowing the MessagingConfiguration to 
+	stay the same one (prevents double socket binding attempts)
+
 2003-10-22  Todd Berman <tberman@gentoo.org>
 
-	* WebServicesConfiguartion.cs: Added MessagingConfiguration
+	* WebServicesConfiguration.cs: Added MessagingConfiguration
 	* FilterConfiguration.cs: #if'd out some stuff breaking wse2
 
 2003-10-05  Sebastien Pouliot  <spouliot@videotron.ca>
