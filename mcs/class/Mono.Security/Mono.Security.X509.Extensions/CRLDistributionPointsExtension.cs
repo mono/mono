@@ -102,17 +102,18 @@ namespace Mono.Security.X509.Extensions {
 		public override string ToString () 
 		{
 			StringBuilder sb = new StringBuilder ();
-			int n = 1;
-			foreach (object dp in dps) {
+			foreach (DP dp in dps) {
 				sb.Append ("[");
-				sb.Append (n);
+				sb.Append (dp.Reasons);
 				sb.Append ("]CRL Distribution Point");
 				sb.Append (Environment.NewLine);
 				sb.Append ("\tDistribution Point Name:");
+				sb.Append (dp.DistributionPoint);
 				sb.Append (Environment.NewLine);
 				sb.Append ("\t\tFull Name:");
 				sb.Append (Environment.NewLine);
 				sb.Append ("\t\t\tDirectory Address:");
+				sb.Append (dp.CRLIssuer);
 				sb.Append (Environment.NewLine);
 			}
 			return sb.ToString ();

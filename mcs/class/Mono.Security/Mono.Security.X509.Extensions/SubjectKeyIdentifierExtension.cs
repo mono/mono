@@ -48,6 +48,10 @@ namespace Mono.Security.X509.Extensions {
 			get { return "Subject Key Identifier"; }
 		}
 
+		public byte[] Identifier {
+			get { return (byte[]) ski.Clone (); }
+		}
+
 		public override string ToString () 
 		{
 			if (ski == null)
