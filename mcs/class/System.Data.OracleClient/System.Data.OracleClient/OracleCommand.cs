@@ -477,6 +477,7 @@ namespace System.Data.OracleClient {
 			OciStatementHandle h = (OciStatementHandle) Connection.Environment.Allocate (OciHandleType.Statement);
 			h.ErrorHandle = Connection.ErrorHandle;
 			h.Service = Connection.ServiceContext;
+			h.Command = this;
 			return h;
 		}
 

@@ -104,7 +104,7 @@ namespace System.Data.OracleClient
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string DataSource {
 			get {
-				throw new NotImplementedException ();
+				return conInfo.Database;
 			}
 		}
 
@@ -128,8 +128,35 @@ namespace System.Data.OracleClient
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string ServerVersion {
 			get {
-				throw new NotImplementedException ();
+				if (this.State != ConnectionState.Open)
+					throw new System.InvalidOperationException ("Invalid operation. The connection is closed.");
+				return GetOracleVersion ();
 			}
+		}
+
+		internal string GetOracleVersion () 
+		{
+			byte[] buffer = new Byte[256];
+			uint bufflen = (uint) buffer.Length;
+
+			IntPtr sh = oci.ServiceContext;
+			IntPtr eh = oci.ErrorHandle;
+
+			OciCalls.OCIServerVersion (sh, 
+				eh, 
+				ref buffer,  bufflen,
+				OciHandleType.Service);
+			
+			// Get length of returned string
+			int 	rsize = 0;
+			IntPtr	env = oci.Environment;
+			OciCalls.OCICharSetToUnicode (env, null, buffer, out rsize);
+			
+			// Get string
+			StringBuilder ret = new StringBuilder(rsize);
+			OciCalls.OCICharSetToUnicode (env, ret, buffer, out rsize);
+
+			return ret.ToString ();
 		}
 
 		internal OciGlue Oci {
@@ -184,7 +211,12 @@ namespace System.Data.OracleClient
 		[MonoTODO]
 		object ICloneable.Clone ()
 		{
-			throw new NotImplementedException ();
+			OracleConnection con = new OracleConnection ();
+			con.ConnectionString = this.ConnectionString;
+			if (this.State == ConnectionState.Open)
+				con.Open ();
+			// TODO: what other properties need to be cloned?
+			return con;
 		}
 
 		IDbTransaction IDbConnection.BeginTransaction ()
@@ -224,6 +256,31 @@ namespace System.Data.OracleClient
 		{
 			oci.CreateConnection (conInfo);
 			state = ConnectionState.Open;
+			CreateStateChange (ConnectionState.Closed, ConnectionState.Open);
+		}
+
+		internal void CreateInfoMessage (OciErrorInfo info) 
+		{
+			OracleInfoMessageEventArgs a = new OracleInfoMessageEventArgs (info);
+			OnInfoMessage (a);
+		}
+
+		private void OnInfoMessage (OracleInfoMessageEventArgs e) 
+		{
+			if (InfoMessage != null)
+				InfoMessage (this, e);
+		}
+
+		internal void CreateStateChange (ConnectionState original, ConnectionState current) 
+		{
+			StateChangeEventArgs a = new StateChangeEventArgs (original, current);
+			OnStateChange (a);
+		}
+
+		private void OnStateChange (StateChangeEventArgs e) 
+		{
+			if (StateChange != null)
+				StateChange (this, e);
 		}
 
 		public void Close () 
@@ -233,8 +290,8 @@ namespace System.Data.OracleClient
 
 			oci.Disconnect ();
 			state = ConnectionState.Closed;
+			CreateStateChange (ConnectionState.Open, ConnectionState.Closed);
 		}
-
 
 		void SetConnectionString (string connectionString) 
 		{

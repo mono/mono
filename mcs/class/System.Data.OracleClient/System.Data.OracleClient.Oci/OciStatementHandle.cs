@@ -30,6 +30,7 @@ namespace System.Data.OracleClient.Oci {
 		bool moreResults;
 		OciServiceHandle serviceHandle;
 		ArrayList values;
+		OracleCommand command;
 	
 		#endregion // Fields
 
@@ -61,6 +62,11 @@ namespace System.Data.OracleClient.Oci {
 		
 		public ArrayList Values {
 			get { return values; }
+		}
+
+		public OracleCommand Command {
+			get { return command; }
+			set { command = value; }
 		}
 
 		#endregion // Properties
@@ -206,6 +212,11 @@ namespace System.Data.OracleClient.Oci {
 				moreResults = false;
 				break;
 			case OciGlue.OCI_DEFAULT:
+				moreResults = true;
+				break;
+			case OciGlue.OCI_SUCCESS_WITH_INFO:
+				//OciErrorInfo ei = ErrorHandle.HandleError ();
+				//command.Connection.CreateInfoMessage (ei);
 				moreResults = true;
 				break;
 			default:

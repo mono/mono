@@ -347,7 +347,6 @@ namespace System.Data.OracleClient.Oci
 				OciCalls.OCICharSetToUnicode (env, ret, buffer, out rsize);
 	
 				return ret.ToString ();
-
 			case OciDataType.Integer:
 			case OciDataType.Number:
 			case OciDataType.Float:

@@ -277,6 +277,13 @@ namespace System.Data.OracleClient.Oci
 				uint mode);
 
 			[DllImport ("oci")]
+			internal static extern int OCIServerVersion (IntPtr hndlp,
+				IntPtr errhp,
+				[In][Out] byte[] bufp,
+				uint bufsz,
+				[MarshalAs (UnmanagedType.U4)] OciHandleType type);
+
+			[DllImport ("oci")]
 			internal static extern int OCISessionBegin (IntPtr svchp,
 				IntPtr errhp,
 				IntPtr usrhp,
@@ -680,6 +687,20 @@ namespace System.Data.OracleClient.Oci
 		{
 			Trace.WriteLineIf(traceOci, "OCIServerDetach", "OCI");
 			return OciNativeCalls.OCIServerDetach (srvhp, errhp, mode);
+		}
+
+		internal static int OCIServerVersion (IntPtr hndlp,
+			IntPtr errhp,
+			ref byte[] bufp,
+			uint bufsz,
+			OciHandleType hndltype) 
+		{
+			Trace.WriteLineIf(traceOci, "OCIServerVersion", "OCI");
+			return OciNativeCalls.OCIServerVersion (hndlp,
+				errhp,
+				bufp,
+				bufsz,
+				hndltype);
 		}
 
 		internal static int OCISessionBegin (IntPtr svchp,

@@ -11,6 +11,9 @@
 //     Assembly: System.Data.OracleClient.dll
 //     Namespace: System.Data.OracleClient
 // 
+// To Compile:
+// mcs TestOracleClient.cs /r:System.Data.dll /r:System.Data.OracleClient.dll /nowarn:0168
+//
 // Author: 
 //     Daniel Morgan <danielmorgan@verizon.net>
 //         
@@ -760,6 +763,87 @@ namespace Test.OracleClient
 			cmd3.ExecuteNonQuery ();
 		}
 
+		static void ShowConnectionProperties (OracleConnection con) 
+		{
+			IDbConnection dbcon = (IDbConnection) con;
+
+			try {
+				Console.WriteLine ("ServerVersion: " + con.ServerVersion);
+			} catch (System.InvalidOperationException ioe) {
+				Console.WriteLine ("InvalidOperationException caught.");
+				Console.WriteLine ("Message: " + ioe.Message);
+			}
+
+			Console.WriteLine ("DataSource: " + con.DataSource);
+		}
+
+		static void NullAggregateTest (OracleConnection con)
+		{
+			Console.WriteLine("  Drop table MONO_TEST_TABLE3...");
+			OracleCommand cmd2 = con.CreateCommand ();
+
+			try {
+				cmd2.CommandText = "DROP TABLE MONO_TEST_TABLE3";
+				cmd2.ExecuteNonQuery ();
+			}
+			catch(OracleException oe1) {
+				// ignore if table already exists
+			}
+
+			Console.WriteLine("  Create table MONO_TEST_TABLE3...");
+						
+			cmd2.CommandText = "CREATE TABLE MONO_TEST_TABLE3 (" +
+				" COL1 VARCHAR2(8), "+
+				" COL2 VARCHAR2(32))";
+
+			cmd2.ExecuteNonQuery ();
+
+			Console.WriteLine("  Insert some rows into table MONO_TEST_TABLE3...");
+			cmd2.CommandText = "INSERT INTO MONO_TEST_TABLE3 (COL1, COL2) VALUES ('1','one')";
+			cmd2.ExecuteNonQuery ();
+
+			cmd2.CommandText = "INSERT INTO MONO_TEST_TABLE3 (COL1, COL2) VALUES ('1','uno')";
+			cmd2.ExecuteNonQuery ();
+			
+			cmd2.CommandText = "INSERT INTO MONO_TEST_TABLE3 (COL1, COL2) VALUES ('3','three')";
+			cmd2.ExecuteNonQuery ();
+			
+			cmd2.CommandText = "INSERT INTO MONO_TEST_TABLE3 (COL1, COL2) VALUES ('3', null)";
+			cmd2.ExecuteNonQuery ();
+
+			cmd2.CommandText = "INSERT INTO MONO_TEST_TABLE3 (COL1, COL2) VALUES ('3','few')";
+			cmd2.ExecuteNonQuery ();
+
+			Console.WriteLine("  ExecuteScalar...");
+			cmd2.CommandText = "SELECT COL1, COUNT(COL2) AS MAX_COL1 FROM MONO_TEST_TABLE3 GROUP BY COL1";
+			OracleDataReader reader = cmd2.ExecuteReader ();
+			Console.WriteLine (" Read...");
+			while (reader.Read ()) {
+
+				object obj0 = reader.GetValue (0);
+				Console.WriteLine("Value 0: " + obj0.ToString ());
+				object obj1 = reader.GetValue (1);
+				Console.WriteLine("Value 1: " + obj1.ToString ());
+			
+				Console.WriteLine (" Read...");
+			}
+
+			Console.WriteLine (" No more records.");
+		}
+
+		static void OnInfoMessage (object sender, OracleInfoMessageEventArgs e) 
+		{
+			Console.WriteLine("InfoMessage Message: " + e.Message.ToString());
+			Console.WriteLine("InfoMessage Code: " + e.Code.ToString());
+			Console.WriteLine("InfoMessage Source: " + e.Source.ToString());
+		}
+
+		static void OnStateChange (object sender, StateChangeEventArgs e) 
+		{
+			Console.WriteLine("StateChange CurrentSate:" + e.CurrentState.ToString ());
+			Console.WriteLine("StateChange OriginalState:" + e.OriginalState.ToString ());
+		}
+
 		[STAThread]
 		static void Main(string[] args) 
 		{ 	
@@ -777,13 +861,22 @@ namespace Test.OracleClient
 				args[0], args[1], args[2]);
 
 			OracleConnection con1 = new OracleConnection();
+
+			ShowConnectionProperties (con1);
+
 			con1.ConnectionString = connectionString;
-			con1.Open();
+
+			con1.InfoMessage += new OracleInfoMessageEventHandler (OnInfoMessage);
+			con1.StateChange += new StateChangeEventHandler (OnStateChange);
+			Console.WriteLine("Opening...");
+			con1.Open ();
+			Console.WriteLine("Opened.");
+
+			ShowConnectionProperties (con1);
 
 			Console.WriteLine ("Mono Oracle Test BEGIN ...");
 			MonoTest (con1);
 			Console.WriteLine ("Mono Oracle Test END ...");
-
 
 			Wait ("");
 			
@@ -836,8 +929,14 @@ namespace Test.OracleClient
 			Console.WriteLine ("Stored Proc Test 2 END...");
 
 			Wait ("");
-			
-			con1.Close();		
+
+			Console.WriteLine ("Null Aggregate Warning BEGIN test...");
+			NullAggregateTest (con1);
+			Console.WriteLine ("Null Aggregate Warning END test...");
+
+			Console.WriteLine("Closing...");
+			con1.Close ();
+			Console.WriteLine("Closed.");
 			
 			Console.WriteLine("Done.");
 		}

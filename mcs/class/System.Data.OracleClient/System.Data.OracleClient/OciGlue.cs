@@ -69,6 +69,14 @@ namespace System.Data.OracleClient.Oci {
 			get { return service; }
 		}
 
+		public OciServerHandle ServerHandle {
+			get { return server; }
+		}
+
+		public OciSessionHandle SessionHandle {
+			get { return session; }
+		}
+
 		#endregion // Properties
 
 		#region Methods
@@ -129,7 +137,6 @@ namespace System.Data.OracleClient.Oci {
 				Disconnect ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
 			}
-
 
 			if (!service.SetSession (session)) {
 				OciErrorInfo info = error.HandleError ();
