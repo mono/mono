@@ -19,6 +19,7 @@
 
 namespace Mono.MonoBASIC {
 
+
 	using System;
 	using System.Reflection;
 	using System.Reflection.Emit;
@@ -36,11 +37,11 @@ namespace Mono.MonoBASIC {
 		bool in_transit = false;
 
 		public const int AllowedModifiers =
-			Modifiers.NEW |
 			Modifiers.PUBLIC |
 			Modifiers.PROTECTED |
 			Modifiers.INTERNAL |
-			Modifiers.PRIVATE;
+			Modifiers.PRIVATE |
+			Modifiers.SHADOWS;
 
 		public Const (Expression constant_type, string name, Expression expr, int mod_flags,
 			      Attributes attrs, Location loc)
@@ -244,7 +245,7 @@ namespace Mono.MonoBASIC {
 
 			if (!TypeManager.RegisterFieldValue (FieldBuilder, ConstantValue))
 				return null;
-
+			
 			return ConstantValue;
 		}
 		

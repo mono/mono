@@ -927,7 +927,7 @@ module_member_declaration
 	   	current_attributes = (Attributes) $1;
 	   	current_modifiers = ((int)$2) | Modifiers.STATIC; 
 		bool explicit_static = (((int) $2 & Modifiers.STATIC) > 0);
-		implicit_modifiers = (!explicit_static);	  	
+		implicit_modifiers = (!explicit_static);
 	   }
 	   module_member_declarator
 	   {
@@ -954,9 +954,13 @@ module_member_declarator
 constant_declaration
 	: CONST constant_declarators EOL
 	{
+		// Module members are static by default, but constants *can't* be declared static
+		// so we must fix it, if mbas was the one actually responsible for this
+		// instead of triggering an error.
+		if (implicit_modifiers && ((current_modifiers & Modifiers.STATIC) != 0))
+			current_modifiers = (current_modifiers & ~Modifiers.STATIC);
+		
 		int mod = (int) current_modifiers;
-
-		mod = mod ^ Modifiers.STATIC;
 		
 		// Structure members are Public by default			
 		if ((current_container is Struct) && (mod == 0))
