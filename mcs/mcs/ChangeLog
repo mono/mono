@@ -1,3 +1,8 @@
+2003-01-13  Duncan Mak  <duncan@ximian.com>
+
+	* cs-tokenizer.cs (Cleanup): Rename to 'cleanup' to make it more
+	consistent with other methods.
+
 2003-01-13 Jackson Harper <jackson@latitudegeo.com>
 
 	* cs-tokenizer.cs: Add Cleanup method, also fix #region error messages.
