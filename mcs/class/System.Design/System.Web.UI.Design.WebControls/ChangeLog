@@ -1,4 +1,9 @@
 
+2002-12-06     Gaurav Vaish <gvaish_mono@lycos.com>
+
+	* ListControlDataBindingHandler.cs
+	                          : Initial implementation.
+
 2002-10-29     Gaurav Vaish <gvaish_mono@lycos.com>
 
 	* RepeaterDesigner.CS     : Initial implementation.
