@@ -2,9 +2,10 @@
 // SecUtil.cs: secutil clone tool
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -67,17 +68,7 @@ class SecUtil {
 
 	static private void Header () 
 	{
-		Assembly a = Assembly.GetExecutingAssembly ();
-		AssemblyName an = a.GetName ();
-		
-		object [] att = a.GetCustomAttributes (typeof (AssemblyTitleAttribute), false);
-		string title = ((att.Length > 0) ? ((AssemblyTitleAttribute) att [0]).Title : "Mono SecUtil");
-
-		att = a.GetCustomAttributes (typeof (AssemblyCopyrightAttribute), false);
-		string copyright = ((att.Length > 0) ? ((AssemblyCopyrightAttribute) att [0]).Copyright : "");
-
-		Console.WriteLine ("{0} {1}", title, an.Version.ToString ());
-		Console.WriteLine ("{0}{1}", copyright, Environment.NewLine);
+		Console.WriteLine (new AssemblyInfo ().ToString ());
 	}
 
 	static private void Help () 

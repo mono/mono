@@ -1,3 +1,18 @@
+2004-12-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Added a class to get informations from assembly
+	attributes (and remove common code from all security tools).
+	* caspol.cs: New. CAS policy management tool.
+	* cert2spc.cs: Updated to use new AssemblyInfo class.
+	* certmgr.cs: Updated to use new AssemblyInfo class.
+	* chktrust.cs: Updated to use new AssemblyInfo class.
+	* Makefile: Added caspol to the build.
+	* MakeCert.cs: Updated to use new AssemblyInfo class.
+	* secutil.cs: Updated to use new AssemblyInfo class.
+	* setreg.cs: Updated to use new AssemblyInfo class.
+	* signcode.cs: Updated to use new AssemblyInfo class.
+	* sn.cs: Updated to use new AssemblyInfo class.
+
 2004-12-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : test .mdb existence (for csc build).
