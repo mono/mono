@@ -57,9 +57,8 @@ namespace TestSystemDataSqlClient
 			
 			System.Console.WriteLine ("get row...");
 			if (null != dataSet) {
-				row = dataSet.Tables["Table"].Rows[0];
-
-				Console.WriteLine("tablename: " + row["tablename"]);
+				foreach (DataRow row in dataSet.Tables["Table"].Rows)
+					Console.WriteLine("tablename: " + row["tablename"]);
 				System.Console.WriteLine("Done.");
 			}
 

@@ -1,3 +1,10 @@
+2002-05-16  Tim Coleman  <tim@timcoleman.com>
+        * TestSqlDataAdapter.cs: Added the foreach loop to iterate through
+        all of the DataRows in the DataSet table "Table", as the
+        GetEnumerator method of InternalDataCollectionBase has now been
+        implemented.
+
+
 2002/05/17  Nick Drochak <ndrochak@gol.com>
 
 	* System.Data_test.build: Remove RunTests from the default build. We
