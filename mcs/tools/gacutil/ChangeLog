@@ -1,3 +1,7 @@
+2004-04-29  Todd Berman  <tberman@sevenl.net>
+
+	* gacutil.cs: Add assembly name to installation message.
+
 2004-04-27  Jackson Harper  <jackson@ximian.com>
 
 	* gacutil.cs: Temporarily disable strong name verification when installing.

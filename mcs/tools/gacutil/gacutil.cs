@@ -286,7 +286,7 @@ namespace Mono.Tools
 
 			WriteAssemblyInfo (fullPath + "__AssemblyInfo__", info);
 
-			Console.WriteLine ("Assembly installed into the gac");
+			Console.WriteLine ("{0} installed into the gac", an.Name);
 		}
 
 		private bool EnsureDirectories (string name, string tok)
