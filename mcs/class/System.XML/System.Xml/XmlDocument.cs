@@ -597,7 +597,8 @@ namespace System.Xml
 				xr.XmlResolver = resolver;
 				Load (xr);
 			} finally {
-				xr.Close ();
+				if (xr != null)
+					xr.Close ();
 			}
 		}
 
