@@ -1,3 +1,8 @@
+2002-03-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* LocalBuilder.cs: Drop the symbol_writer as LocalBuilder fields.
+	Do this lazily in SetLocalSymInfo.
+	
 2002-03-24  Martin Baulig  <martin@gnome.org>
 
 	* ModuleBuilder.cs (GetSymbolWriter): The MonoSymbolWriter's constructor
