@@ -1,3 +1,8 @@
+2005-02-07  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* grp.c, pwd.c: Clear errno before calling the actual calls, as errno may
+	  have a stale value, leading to spurious errors later.  Fixes #72292.
+
 2005-02-03  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Makefile.am (MPH_C_SOURCE): Move errno.c into MPH_C_SOURCE, so it's built

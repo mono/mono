@@ -114,6 +114,7 @@ Mono_Posix_Syscall_getgrnam (const char *name, struct Mono_Posix_Syscall__Group 
 		return -1;
 	}
 
+	errno = 0;
 	_gbuf = getgrnam (name);
 	if (_gbuf == NULL)
 		return -1;
@@ -135,6 +136,7 @@ Mono_Posix_Syscall_getgrgid (mph_gid_t gid, struct Mono_Posix_Syscall__Group *gb
 		return -1;
 	}
 
+	errno = 0;
 	_gbuf = getgrgid (gid);
 	if (_gbuf == NULL)
 		return -1;
@@ -173,6 +175,7 @@ Mono_Posix_Syscall_getgrnam_r (const char *name,
 			return -1;
 		}
 		buf = buf2;
+		errno = 0;
 	} while ((r = getgrnam_r (name, &_grbuf, buf, buflen, gbufp)) && 
 			recheck_range (r));
 
@@ -211,6 +214,7 @@ Mono_Posix_Syscall_getgrgid_r (mph_gid_t gid,
 			return -1;
 		}
 		buf = buf2;
+		errno = 0;
 	} while ((r = getgrgid_r (gid, &_grbuf, buf, buflen, gbufp)) && 
 			recheck_range (r));
 
@@ -232,6 +236,7 @@ Mono_Posix_Syscall_getgrent (struct Mono_Posix_Syscall__Group *grbuf)
 		return -1;
 	}
 
+	errno = 0;
 	gr = getgrent ();
 	if (gr == NULL)
 		return -1;
@@ -254,6 +259,7 @@ Mono_Posix_Syscall_fgetgrent (FILE *stream, struct Mono_Posix_Syscall__Group *gr
 		return -1;
 	}
 
+	errno = 0;
 	gr = fgetgrent (stream);
 	if (gr == NULL)
 		return -1;
