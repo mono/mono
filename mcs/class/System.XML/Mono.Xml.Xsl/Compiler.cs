@@ -148,7 +148,13 @@ namespace Mono.Xml.Xsl
 				} while (nav.MoveToNextNamespace (XPathNamespaceScope.ExcludeXml));
 				nav.MoveToParent ();
 			}
-			this.rootStyle = new XslStylesheet (this);
+			try {
+				this.rootStyle = new XslStylesheet (this);
+			} catch (XsltCompileException) {
+				throw;
+			} catch (Exception x) {
+				throw new XsltCompileException ("XSLT compile error. " + x.Message, x,  Input);
+			}
 			
 			return new CompiledStylesheet (rootStyle, globalVariables, attrSets, exprStore, nsMgr, rootStyle.Keys, outputs, decimalFormats, msScripts);
 		}
@@ -198,7 +204,8 @@ namespace Mono.Xml.Xsl
 			string absUriString = absUri != null ? absUri.ToString () : String.Empty;
 			using (Stream s = (Stream)res.GetEntity (absUri, null, typeof(Stream)))
 			{
-
+				if (s == null)
+					throw new XsltCompileException ("Can not access URI "+absUri.ToString (), null, Input);
 				XmlValidatingReader vr = new XmlValidatingReader (new XmlTextReader (absUriString, s, nsMgr.NameTable));
 				vr.ValidationType = ValidationType.None;
 				XPathNavigator n = new XPathDocument (vr, XmlSpace.Preserve).CreateNavigator ();
@@ -259,10 +266,16 @@ namespace Mono.Xml.Xsl
 			if (s == null) return null;
 				
 			string [] names = s.Split (new char [] {' ', '\r', '\n', '\t'});
-			QName [] ret = new QName [names.Length];
+			int count=0;
+			for (int i=0; i<names.Length; i++)
+				if (names[i].Length != 0)
+					count ++;
+
+			QName [] ret = new QName [count];
 			
-			for (int i = 0; i < names.Length; i++)
-				ret [i] = XslNameUtil.FromString (names [i], Input);
+			for (int i = 0, j=0; i < names.Length; i++)
+				if (names[i].Length != 0)
+					ret [j++] = XslNameUtil.FromString (names [i], Input);
 			
 			return ret;
 		}

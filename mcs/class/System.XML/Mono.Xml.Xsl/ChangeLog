@@ -1,5 +1,12 @@
 2005-02-08  Atsushi Enomoto <atsushi@ximian.com>
 
+	* Compiler.cs : Patch by Andew Skiba.
+	  wrap internal exception with XsltCompileException.
+	  Raise an error for not-found document URI.
+	  QName might contain sequential whitespaces and thus could be empty.
+
+2005-02-08  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XslAttributeSet.cs : just ignore other kind of nodes than element
 	  in its content. Fix by Andrew Skiba.
 
