@@ -1,4 +1,7 @@
 2004-06-23 Anirban Bhattacharjee <banirban@novell.com>
+	* DateTime.cs: More date formats supported by DateValue function now
+
+2004-06-23 Anirban Bhattacharjee <banirban@novell.com>
 	* Strings.cs: Trivial changes
 
 2004-06-23 Anirban Bhattacharjee <banirban@novell.com>

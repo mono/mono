@@ -471,7 +471,8 @@ namespace Microsoft.VisualBasic
 		public static System.DateTime DateValue (string StringDate) 
 		{ 
 			string[] expectedFormats = {"D", "d", "G", "g", "f" ,"F", "m", "M", "r", "R",
-							"s", "T", "t", "U", "u", "Y", "y"};
+							"s", "T", "t", "U", "u", "Y", "y",
+							"MMM dd, yy", "MMMM dd, yy", "MMM dd, yyyy", "MMMM dd, yyyy"};
 			
 			try {
 				return DateTime.ParseExact(StringDate, expectedFormats,
