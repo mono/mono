@@ -1,3 +1,8 @@
+2004-03-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_jit_compile_method_with_out): Move the calling of
+	static constructors outside the domain lock. Fixes #55720.
+
 2004-03-17  Martin Baulig  <martin@ximian.com>
 
 	* mini.c (get_generic_field_inst): Removed, this'll never happen.
