@@ -1433,6 +1433,11 @@ public class TypeManager {
 			return false;
 	}
 
+	public static bool IsBuiltinType (TypeContainer tc)
+	{
+		return IsBuiltinType (tc.TypeBuilder);
+	}
+
 	//
 	// This is like IsBuiltinType, but lacks decimal_type, we should also clean up
 	// the pieces in the code where we use IsBuiltinType and special case decimal_type.
@@ -1871,7 +1876,7 @@ public class TypeManager {
 	public static bool CheckStructCycles (TypeContainer tc, Hashtable seen,
 					      Hashtable hash)
 	{
-		if (!(tc is Struct))
+		if (!(tc is Struct) || IsBuiltinType (tc))
 			return true;
 
 		//
