@@ -1,3 +1,7 @@
+2003-12-18  Jackson Harper <jackson@ximian.com>
+
+	* DataView.cs: Implement AddNew, Delete, and OnListChanged.
+	
 2003-12-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DataSet.cs, XmlDataLoader.cs : Table name should be encoded before

@@ -265,7 +265,19 @@ namespace System.Data
 		[MonoTODO]
 		public virtual DataRowView AddNew() 
 		{
-			throw new NotImplementedException ();
+			if (!IsOpen)
+				throw new DataException ("DataView is not open.");
+			if (!AllowNew)
+				throw new DataException ("Cannot call AddNew on a DataView where AllowNew is false.");
+			
+			DataRow row = dataTable.NewRow ();
+			DataRowView view = new DataRowView (this, row);
+			
+			dataTable.Rows.Add (row);
+
+			UpdateIndex ();
+			OnListChanged (new ListChangedEventArgs (ListChangedType.ItemAdded, rowCache.Length));
+			return view;
 		}
 
 		[MonoTODO]
@@ -295,10 +307,23 @@ namespace System.Data
 			}
 		}
 
-		[MonoTODO]
 		public void Delete(int index) 
 		{
-			throw new NotImplementedException ();
+			if (!IsOpen)
+				throw new DataException ("DataView is not open.");
+			if (!AllowDelete)
+				throw new DataException ("Cannot delete on a DataSource where AllowDelete is false.");
+			
+			UpdateIndex ();
+
+			if (index > rowCache.Length)
+				throw new IndexOutOfRangeException ("There is no row at " +
+						"position: " + index + ".");
+			
+			DataRowView row = rowCache [index];
+			row.Row.Delete ();
+
+			OnListChanged (new ListChangedEventArgs (ListChangedType.ItemDeleted, index));
 		}
 
 #if NET_1_2
@@ -415,7 +440,11 @@ namespace System.Data
 		[MonoTODO]
 		protected virtual void OnListChanged(ListChangedEventArgs e) 
 		{
-			throw new NotImplementedException ();
+			try {
+				if (ListChanged != null)
+					ListChanged (this, e);
+			} catch {
+			}
 		}
 
 		[MonoTODO]
@@ -450,6 +479,7 @@ namespace System.Data
 			Close ();
 			rowCache = null;
 			Open ();
+			OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1));
 		}
 
 #if NET_1_2
