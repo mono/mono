@@ -70,6 +70,7 @@ namespace Mono.ILASM {
                 private ArrayList customattr_list;
                 private Hashtable label_table;
 		private ArrayList label_list;
+		private ArrayList offset_list;
                 private PEAPI.MethodDef methoddef;
                 private bool entry_point;
                 private bool is_resolved;
@@ -95,6 +96,7 @@ namespace Mono.ILASM {
                         customattr_list = new ArrayList ();
                         label_table = new Hashtable ();
 			label_list = new ArrayList ();
+			offset_list = new ArrayList ();
                         local_list = new ArrayList ();
                         named_local_table = new Hashtable ();
                         named_param_table = new Hashtable ();
@@ -285,7 +287,6 @@ namespace Mono.ILASM {
                                 return;
 
                         Resolve (code_gen, classdef);
-
                         WriteCode (code_gen, methoddef);
 
                         is_defined = true;
@@ -337,10 +338,6 @@ namespace Mono.ILASM {
                         Array.Sort (label_info);
 
                         foreach (LabelInfo label in label_info) {
-				if (label.UseOffset) {
-					label.Define (new PEAPI.CILLabel (label.Offset));
-					continue;
-				}
                                 if (label.Pos == previous_pos)
                                         label.Label = previous_label.Label;
                                 else
@@ -349,6 +346,10 @@ namespace Mono.ILASM {
                                 previous_label = label;
                                 previous_pos = label.Pos;
                         }
+
+			foreach (LabelInfo label in offset_list) {
+				label.Define (new PEAPI.CILLabel (label.Offset));
+			}
 
                         int label_pos = 0;
                         int next_label_pos = (label_info.Length > 0 ? label_info[0].Pos : -1);
@@ -359,7 +360,7 @@ namespace Mono.ILASM {
                                         cil.CodeLabel (label_info[label_pos].Label);
                                         if (label_pos < label_info.Length) {
                                                 while (next_label_pos == i && ++label_pos < label_info.Length)
-                                                        next_label_pos = label_info[label_pos].Pos;
+                                                       next_label_pos = label_info[label_pos].Pos;
                                         }
                                         if (label_pos >= label_info.Length)
                                                 next_label_pos = -1;
@@ -377,8 +378,8 @@ namespace Mono.ILASM {
 
 		public void AddLabel (uint offset)
 		{
-			LabelInfo label_info = new LabelInfo (name, -1, offset);
-			label_list.Add (label_info);
+			LabelInfo label_info = new LabelInfo (null, -1, offset);
+			offset_list.Add (label_info);
 		}
 
 		public int AddLabel ()
@@ -421,7 +422,7 @@ namespace Mono.ILASM {
 
 		public PEAPI.CILLabel GetLabelDef (uint offset)
 		{
-			foreach (LabelInfo li in label_list) {
+			foreach (LabelInfo li in offset_list) {
 				if (li.Offset == offset)
 					return li.Label;
 			}

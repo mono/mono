@@ -84,7 +84,6 @@ namespace Mono.ILASM {
                                                 ret_type.PeapiType, param_list);
                         }
 
-			Console.WriteLine ("Adding call conv:   " + call_conv);
                         peapi_method.AddCallConv (call_conv);
 
 			is_resolved = true;

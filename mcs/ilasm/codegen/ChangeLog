@@ -1,5 +1,12 @@
 2003-08-02 Jackson Harper <jackson@latitudegeo.com>
 
+	* ExternMethodRef.cs: Remove top secret debugging code.
+	* MethodDef.cs: Less elegant but more bugfree method of doing explicit
+	offsets for labels. Just put the offset labels in another list and 
+	define them in another loop.
+	
+2003-08-02 Jackson Harper <jackson@latitudegeo.com>
+
 	* IMethodRef.cs: Method refs should expose their call conv. This is
 	needed so the call conv can be modified for the newobj operation which
 	is implicitly instance.
