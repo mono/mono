@@ -87,8 +87,10 @@ namespace System.Security.Policy {
 				if (uri.IsFile) {
 					if (File.Exists (uri.LocalPath))
 						z = SecurityZone.MyComputer;
-					else
+					else if (String.Compare ("FILE://", 0, url, 0, 7, true, CultureInfo.InvariantCulture) == 0)
 						z = SecurityZone.Intranet;	// non accessible file:// 
+					else
+						z = SecurityZone.Internet;
 				}
 				else if (uri.IsLoopback) {			// e.g. http://localhost/x
 					z = SecurityZone.Intranet;

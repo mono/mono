@@ -1,3 +1,9 @@
+2005-01-19  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* PolicyLevel.cs: Fixed RemoveNamedPermissionSet when used with a
+	permission instance.
+	* Zone.cs: Fixed zone for URIs without a scheme.
+
 2005-01-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ApplicationTrustCollection.cs: Updated for Dec CTP.

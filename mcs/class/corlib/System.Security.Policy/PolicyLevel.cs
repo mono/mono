@@ -329,13 +329,7 @@ namespace System.Security.Policy {
                         if (permSet == null)
                                 throw new ArgumentNullException ("permSet");
 
-                        if (! ((IList )named_permission_sets).Contains (permSet))
-                                throw new ArgumentException (
-                                        Locale.GetText ("permSet cannot be found."));
-
-                        ((IList) named_permission_sets).Remove (permSet);
-
-                        return permSet;
+			return RemoveNamedPermissionSet (permSet.Name);
                 }
 
 		[MonoTODO ("Check for reserved names")]
