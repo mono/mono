@@ -1,3 +1,7 @@
+2005-03-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (mono_reflection_create_runtime_class): Fix 2.0 build.
+
 2005-03-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* filewatcher.c: commented out the code for windows watcher, as we don't
