@@ -27,6 +27,7 @@ namespace Mono.CSharp {
 			base (null, name, attrs, loc)
 		{
 			this.parent_enum = parent_enum;
+			this.ModFlags = parent_enum.ModFlags;
 		}
 
 		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
@@ -50,11 +51,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override bool IsClsCompliaceRequired (DeclSpace ds)
-		{
-			return parent_enum.IsClsCompliaceRequired (ds);
-		}
-
 		public void DefineMember (TypeBuilder tb)
 		{
 			FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static
@@ -72,6 +68,8 @@ namespace Mono.CSharp {
 		{
 			if (OptAttributes != null)
 				OptAttributes.Emit (ec, this); 
+
+			Emit ();
 		}
 
 		// TODO: caching would be usefull
@@ -91,17 +89,28 @@ namespace Mono.CSharp {
 			return obsolete;
 		}
 
+		public override string GetSignatureForError()
+		{
+			return String.Concat (parent_enum.GetSignatureForError (), '.', base.GetSignatureForError ());
+		}
+
 		public override string[] ValidAttributeTargets {
 			get {
 				return attribute_targets;
 			}
 		}
 
-		protected override void VerifyObsoleteAttribute()
+		protected override bool VerifyClsCompliance(DeclSpace ds)
 		{
-			throw new NotImplementedException ();
+			// Because parent is TypeContainer and we have only DeclSpace parent.
+			// Parameter replacing is required
+			return base.VerifyClsCompliance (parent_enum);
 		}
 
+		// There is no base type
+		protected override void VerifyObsoleteAttribute()
+		{
+		}
 	}
 
 	/// <summary>

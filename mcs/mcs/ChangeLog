@@ -1,3 +1,8 @@
+2004-09-03  Marek Safar  <marek.safar@seznam.cz>
+
+	* enum.cs: Fixed CLS-Compliance checks for enum members.
+	Error tests cs3008-8.cs, cs3014-8.cs
+
 2004-09-02  Marek Safar  <marek.safar@seznam.cz>
 
 	Fixed bug #62342, #63102

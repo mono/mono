@@ -246,6 +246,7 @@ namespace Mono.CSharp {
 				if (HasClsCompliantAttribute) {
 					Report.Error (3014, Location, "'{0}' cannot be marked as CLS-compliant because the assembly does not have a CLSCompliant attribute", GetSignatureForError ());
 				}
+				return false;
 			}
 
 			int index = Name.LastIndexOf ('.');
