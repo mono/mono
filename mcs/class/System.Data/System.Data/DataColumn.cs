@@ -493,7 +493,6 @@ namespace System.Data {
 			}
 		}
 
-		[MonoTODO]
 		[DataCategory ("Data")]
 		[DataSysDescription ("Indicates whether this column should restrict its values in the rows of the table to be unique.")]
 		[DefaultValue (false)]
@@ -504,13 +503,10 @@ namespace System.Data {
 				return unique;
 			}
 			set {
-				//if Table == null then the UniqueConstraint is
-				//created on addition to the collection
-				
-				//FIXME?: need to check if value is the same
-				//because when calling "new UniqueConstraint"
-				//the new object tries to set "column.Unique = True"
-				//which creates an infinite loop.
+				//NOTE: In .NET 1.1 the Unique property
+                                //is left unchanged when it is added
+                                //to a UniqueConstraint
+
 				if(unique != value)
 				{
 				unique = value;
@@ -606,11 +602,20 @@ namespace System.Data {
 			return ColumnName;
 		}
 
-		[MonoTODO]
 		internal void SetTable(DataTable table) {
-			_table = table; 
-			// this will get called by DataTable 
-			// and DataColumnCollection
+			if(_table!=null) { // serves as double check while adding to a table
+                        	throw new ArgumentException("The column already belongs to a different table");
+                        }
+                        _table = table;
+                        // this will get called by DataTable
+                        // and DataColumnCollection
+                        if(unique) {
+                        	// if the DataColumn is marked as Unique and then
+	                        // added to a DataTable , then a UniqueConstraint
+        	                // should be created
+                	        UniqueConstraint uc = new UniqueConstraint(this);
+                        	_table.Constraints.Add(uc);
+                        }
 		}
 
 		
