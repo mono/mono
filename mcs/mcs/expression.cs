@@ -3396,7 +3396,7 @@ namespace Mono.CSharp {
 				if (a.Type != parameter_type){
 					Expression conv;
 					
-					conv = ConvertImplicitStandard (ec, a_expr, parameter_type, Location.Null);
+					conv = ConvertImplicitStandard (ec, a_expr, parameter_type, loc);
 
 					if (conv == null) {
 						if (!Location.IsNull (loc)) {

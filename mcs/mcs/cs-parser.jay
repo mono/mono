@@ -1069,7 +1069,7 @@ interface_declaration
 		RootContext.Tree.RecordInterface (full_interface_name, new_interface);
 	  }
 	  opt_interface_base
-	  interface_body
+	  interface_body opt_semicolon
 	  { 
 		Interface new_interface = (Interface) current_interface;
 

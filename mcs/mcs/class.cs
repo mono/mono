@@ -635,6 +635,21 @@ namespace Mono.CSharp {
 			Type b = TypeBuilder.BaseType;
 			int icount = 0;
 
+			if (false)
+			{
+				Type x = TypeBuilder;
+
+				while (x != null){
+					Type [] iff = x.GetInterfaces ();
+					Console.WriteLine ("Type: " + x.Name);
+					
+					foreach (Type tt in iff){
+						Console.WriteLine ("  Iface: " + tt.Name);
+					}
+					x = x.BaseType;
+				}
+			}
+					
 			icount = ifaces.Length;
 
 			//
@@ -1581,7 +1596,7 @@ namespace Mono.CSharp {
 				BindingFlags.Public | BindingFlags.Instance,
 				Method.method_signature_filter, ms);
 
-			if (list == null)
+			if (list == null || list.Length == 0)
 				return false;
 			
 			DefineProxy (iface_type, (MethodInfo) list [0], mi, args);

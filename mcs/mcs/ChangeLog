@@ -1,3 +1,13 @@
+2002-03-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Add opt_semicolon to the interface declaration.
+
+	* expression.cs: Pass location information to
+	ConvertImplicitStandard. 
+
+	* class.cs: Added debugging code to track return values from
+	interfaces. 
+
 2002-03-05  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Is.DoResolve): If either side of the `is' is an
