@@ -50,6 +50,7 @@ namespace Mono.Xml.Xsl
 		int nonHtmlDepth;
 		bool indent;
 		Encoding outputEncoding;
+		string mediaType;
 
 		public HtmlEmitter (TextWriter writer, XslOutput output)
 		{
@@ -58,6 +59,9 @@ namespace Mono.Xml.Xsl
 			elementNameStack = new Stack ();
 			nonHtmlDepth = -1;
 			outputEncoding = writer.Encoding == null ? output.Encoding : writer.Encoding;
+			mediaType = output.MediaType;
+			if (mediaType == null || mediaType.Length == 0)
+				mediaType = "text/html";
 		}
 
 		public override void WriteStartDocument (Encoding encoding, StandaloneType standalone)
@@ -100,6 +104,7 @@ namespace Mono.Xml.Xsl
 
 		private void CloseStartElement ()
 		{
+			//FIXME: consider sanity check if (openElement) return;
 			if (openAttribute)
 				CloseAttribute ();
 			writer.Write ('>');
@@ -111,7 +116,7 @@ namespace Mono.Xml.Xsl
 				case "HEAD":
 					WriteStartElement (String.Empty, "META", String.Empty);
 					WriteAttributeString (String.Empty, "http-equiv", String.Empty, "Content-Type");
-					WriteAttributeString (String.Empty, "content", String.Empty, "text/html; charset=" + outputEncoding.WebName);
+					WriteAttributeString (String.Empty, "content", String.Empty, String.Concat (mediaType, "; charset=", outputEncoding.WebName));
 					WriteEndElement ();
 					break;
 				case "STYLE":
@@ -184,8 +189,6 @@ namespace Mono.Xml.Xsl
 			if (nsURI != String.Empty || !IsHtmlElement (localName)) {
 				// XML output
 				if (prefix != String.Empty) {
-					writer.Write (prefix);
-					writer.Write (':');
 					formatName = String.Concat (prefix, ":", localName);
 				}
 				
@@ -257,7 +260,8 @@ namespace Mono.Xml.Xsl
 			case "PARAM":
 				if (openAttribute)
 					CloseAttribute ();
-				writer.Write ('>');
+				if (openElement)
+					writer.Write ('>'); //FIXME: consider using CloseStartElement() to write '>'
 				elementNameStack.Pop ();
 				break;
 			default:
@@ -278,9 +282,16 @@ namespace Mono.Xml.Xsl
 
 		public override void WriteAttributeString (string prefix, string localName, string nsURI, string value)
 		{
-			if (nonHtmlDepth >= 0) {
-				writer.Write (' ');
-				writer.Write (localName);
+			writer.Write (' ');
+			if (prefix != null && prefix.Length!=0)
+			{
+				writer.Write (prefix);
+				writer.Write (":");
+			}
+			writer.Write (localName);
+
+			if (nonHtmlDepth >= 0) 
+			{
 				writer.Write ("=\"");
 				openAttribute = true;
 				WriteFormattedString (value);
@@ -291,16 +302,12 @@ namespace Mono.Xml.Xsl
 			}
 
 			string attribute = localName.ToUpper (CultureInfo.InvariantCulture);
-			writer.Write (' ');
-			writer.Write (localName);
-
 			switch (attribute) {
 			case "OPTION":
 			case "CHECKED":
 			case "SELECTED":
 				return;
 			}
-
 			writer.Write ("=\"");
 			openAttribute = true;
 
@@ -434,7 +441,7 @@ namespace Mono.Xml.Xsl
 		private void WriteFormattedString (string text)
 		{
 			// style and script should not be escaped.
-			if (!openAttribute) {
+			if (!openAttribute && elementNameStack.Count > 0) {
 				string element = ((string) elementNameStack.Peek ()).ToUpper (CultureInfo.InvariantCulture);
 				switch (element) {
 				case "SCRIPT":

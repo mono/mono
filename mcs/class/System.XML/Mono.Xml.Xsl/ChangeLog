@@ -1,6 +1,13 @@
 2005-02-08  Atsushi Enomoto <atsushi@ximian.com>
 
-	* Compiler.cs : Patch by Andew Skiba.
+	* HtmlEmitter.cs : patch by Andrew Skiba.
+	  Remove extra element prefix output. simplify attribute prefix output.
+	  Attribute output might have resulted in invalid element stack peek.
+	  Output specified media type if any.
+
+2005-02-08  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Compiler.cs : Patch by Andrew Skiba.
 	  wrap internal exception with XsltCompileException.
 	  Raise an error for not-found document URI.
 	  QName might contain sequential whitespaces and thus could be empty.
