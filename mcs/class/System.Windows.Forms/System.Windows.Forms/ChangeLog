@@ -1,3 +1,7 @@
+2003-03-15 Alexandre Pigolkine <pigolkine@gmx.de>
+	* monogc.c					dynamic loader for gc-wine.dll by John Sohn <jsohn@columbus.rr.com>
+	* makefile					changed to build monogc
+
 2003-03-10 Alexandre Pigolkine <pigolkine@gmx.de>
 	* Button.cs
 		check in for Steven Stewart <stevenstewart@mindspring.com>

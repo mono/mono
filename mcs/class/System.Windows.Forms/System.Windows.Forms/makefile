@@ -15,9 +15,9 @@ all:	monostub.exe.so
 
 ##########################################################################
 # build the mono stub application
-monostub.exe.so: monostub.o monosem.o monostub.exe.spec.o monostub.exe.dbg.o
+monostub.exe.so: monostub.o monosem.o monogc.o monostub.exe.spec.o monostub.exe.dbg.o
 	gcc -shared -Wl,-Bsymbolic -D_REENTRANT -DWINELIB -o monostub.exe.so \
-	monostub.exe.spec.o monostub.o  monosem.o monostub.exe.dbg.o \
+	monostub.exe.spec.o monostub.o monosem.o monogc.o monostub.exe.dbg.o \
 	$(GLIB20_LIBS) $(MONO_LIBS) \
 	-lgc -lwine -lntdll.dll -lm -lpthread
 
@@ -34,8 +34,13 @@ monosem.o: monosem.c
 	$(GLIB20_CFLAGS) $(MONO_CFLAGS) -D_REENTRANT -DWINELIB \
 	-g -O2 -Wall -o monosem.o monosem.c
 
-monostub.exe.tmp.o: monostub.o monosem.o
-	ld -r  monostub.o monosem.o -o monostub.exe.tmp.o
+monogc.o: monogc.c
+	gcc -c -I. -I$(WINE_INCLUDE) -I$(WINDOWS_INCLUDE) -I$(X11R6_INCLUDE) \
+	$(GLIB20_CFLAGS) $(MONO_CFLAGS) -D_REENTRANT -DWINELIB \
+	-g -O2 -Wall -o monogc.o monogc.c
+
+monostub.exe.tmp.o: monostub.o monosem.o monogc.o
+	ld -r  monostub.o monosem.o monogc.o -o monostub.exe.tmp.o
 	strip --strip-unneeded monostub.exe.tmp.o
 
 monostub.exe.spec.c: monostub.exe.tmp.o
