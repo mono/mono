@@ -1,3 +1,13 @@
+2004-01-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* io.c:
+	(FindFirstFile): unlock the handle if FindNextFile fails.
+	(FindNextFile): g_free a couple of pointers before retrying.
+
+	* wait.c:
+	(WaitForMultipleObjects): if only one handle provided, use
+	WaitForSingleObject.
+
 2003-12-22  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* handles-private.h: (_wapi_handle_type) check

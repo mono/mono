@@ -1,4 +1,16 @@
 
+2004-01-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* strenc.c:
+	(mono_unicode_from_external): UTF8 is the default, not the preferred
+	encoding, ie, try MONO_EXTERNAL_ENCODINGS first. When "default_locale"
+	was passed in the env. var., it always failed because we were passing
+	"default_locale" to g_convert. Also fixed the byte count for non-UTF8
+	conversions.
+	(mono_utf8_from_external): UTF8 is the default, not the preferred one.
+
+	Fixes bug #53166.
+
 Thu Jan 8 19:56:08 CET 2004 Paolo Molaro <lupus@ximian.com>
 
 	* mono-uri.c: fixed compile problem.
