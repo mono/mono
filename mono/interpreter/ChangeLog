@@ -1,3 +1,7 @@
+2004-01-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* interp.c (ves_array_set): Check for ArrayTypeMismatchException.
+
 2004-01-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* interp.c: call setlocale (). Fixes bug #52100.
