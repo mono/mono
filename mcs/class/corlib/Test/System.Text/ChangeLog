@@ -1,3 +1,8 @@
+2004-03-19  Dick Porter  <dick@ximian.com>
+
+	* UnicodeEncodingTest.cs: Test for character counts on subranges
+	of arrays with a BOM at the start of the array.
+
 2004-03-10  Juraj Skripsky <juraj@hotfeet.ch>
 
 	* StringBuilderTest.cs: added new test for bug in Insert.

@@ -1,3 +1,9 @@
+2004-03-19  Dick Porter  <dick@ximian.com>
+
+	* UnicodeEncoding.cs: GetCharCount(), GetChars(): Check for the
+	BOM at the beginning of the range of characters we're interested
+	in, not at the beginning of the array.  Fixes bug 51531.
+
 2004-03-10  Juraj Skripsky <juraj@hotfeet.ch>
 
 	* StringBuilder.cs

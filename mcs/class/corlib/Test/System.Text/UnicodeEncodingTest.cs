@@ -97,6 +97,18 @@ namespace MonoTests.System.Text
                         
                         Assertion.AssertEquals ("Uni #1", Unicode, Result);
                 }
+
+		[Test]
+		public void TestEncodingGetCharCount ()
+		{
+			byte[] b = new byte[] {255, 254, 115, 0, 104, 0, 105, 0};
+			UnicodeEncoding encoding = new UnicodeEncoding ();
+
+			Assertion.AssertEquals ("GetCharCount #1", 3,
+				encoding.GetCharCount (b, 2, b.Length - 2));
+		}
+
+	
                 
                 [Test]
                 public void TestPreamble1()
