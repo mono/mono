@@ -1,7 +1,9 @@
 2004-03-25  Martin Baulig  <martin@ximian.com>
 
-	* mini.c (mini_get_method): Take a `MonoGenericContext *' instead
-	of a `MonoGenericMethod *'.
+	* mini.c (mini_get_class): Take a `MonoGenericContext *' instead
+	of a `MonoMethod *'.
+	(mini_get_method): Take a `MonoGenericContext *' instead
+	of a `MonoMethod *'.
 	(TYPE_PARAM_TO_TYPE, MTYPE_PARAM_TO_TYPE): mono_method_to_ir() has
 	a new local variable called `generic_context' which holds the
 	current `MonoGenericContext *'; use it to lookup things.
