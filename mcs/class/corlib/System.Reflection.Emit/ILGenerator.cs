@@ -12,6 +12,64 @@ using System;
 using System.Diagnostics.SymbolStore;
 
 namespace System.Reflection.Emit {
+
+	internal struct ILExceptionBlock {
+		public const int CATCH = 0;
+		public const int FILTER = 1;
+		public const int FINALLY = 2;
+		public const int FAULT = 4;
+
+		internal Type extype;
+		internal int type;
+		internal int start;
+		internal int len;
+		internal int filter_offset;
+		
+		internal void Debug () {
+			System.Console.Write ("\ttype="+type.ToString()+" start="+start.ToString());
+			System.Console.WriteLine (" len="+len.ToString()+" extype="+extype.ToString());
+		}
+	}
+	internal struct ILExceptionInfo {
+		ILExceptionBlock[] handlers;
+		internal int start;
+		int len;
+		internal Label end;
+
+		internal void AddCatch (Type extype, int offset) {
+			int i;
+			add_block (offset);
+			i = handlers.Length - 1;
+			handlers [i].type = ILExceptionBlock.CATCH;
+			handlers [i].start = offset;
+			handlers [i].extype = extype;
+		}
+
+		internal void End (int offset) {
+			int i = handlers.Length - 1;
+			handlers [i].len = offset - handlers [i].start;
+		}
+
+		internal void Debug () {
+			System.Console.WriteLine ("Handler at "+start.ToString()+ " len: "+len.ToString());
+			for (int i = 0; i < handlers.Length; ++i)
+				handlers [i].Debug ();
+		}
+
+		void add_block (int offset) {
+			if (handlers != null) {
+				int i = handlers.Length;
+				ILExceptionBlock[] new_b = new ILExceptionBlock [i + 1];
+				System.Array.Copy (handlers, new_b, i);
+				handlers = new_b;
+				handlers [i].len = offset - handlers [i].start;
+			} else {
+				handlers = new ILExceptionBlock [1];
+				len = offset - start;
+			}
+		}
+	}
+	
 	public class ILGenerator: Object {
 		private struct LabelFixup {
 			public int size;
@@ -24,11 +82,13 @@ namespace System.Reflection.Emit {
 		private int max_stack;
 		private int cur_stack;
 		private LocalBuilder[] locals;
+		private ILExceptionInfo[] ex_handlers;
 		private int[] label_to_addr;
 		private int num_labels;
 		private LabelFixup[] fixups;
 		private int num_fixups;
 		private AssemblyBuilder abuilder;
+		private int cur_block;
 
 		internal ILGenerator (MethodBase mb, int size) {
 			if (size < 0)
@@ -38,6 +98,7 @@ namespace System.Reflection.Emit {
 			mbuilder = mb;
 			cur_stack = max_stack = 0;
 			num_fixups = num_labels = 0;
+			cur_block = -1;
 			label_to_addr = new int [16];
 			fixups = new LabelFixup [16];
 			if (mb is MethodBuilder) {
@@ -129,19 +190,42 @@ namespace System.Reflection.Emit {
 		}
 
 		public virtual void BeginCatchBlock (Type exceptionType) {
-			throw new NotImplementedException ();
+			if (cur_block < 0)
+				throw new NotSupportedException ("Not in an exception block");
+			// how could we optimize code size here?
+			Emit (OpCodes.Leave, ex_handlers [cur_block].end);
+			ex_handlers [cur_block].AddCatch (exceptionType, code_len);
+			System.Console.WriteLine ("Begin catch Block: "+exceptionType.ToString());
+			//throw new NotImplementedException ();
 		}
 		public virtual void BeginExceptFilterBlock () {
 			throw new NotImplementedException ();
 		}
-		public virtual void BeginExceptionBlock () {
-			throw new NotImplementedException ();
+		public virtual Label BeginExceptionBlock () {
+			System.Console.WriteLine ("Begin Block");
+			
+			++ cur_block;
+			if (ex_handlers != null) {
+				ILExceptionInfo[] new_ex = new ILExceptionInfo [cur_block + 1];
+				System.Array.Copy (ex_handlers, new_ex, cur_block);
+				ex_handlers = new_ex;
+			} else {
+				ex_handlers = new ILExceptionInfo [1];
+			}
+			ex_handlers [cur_block].start = code_len;
+			return ex_handlers [cur_block].end = DefineLabel ();
 		}
 		public virtual void BeginFaultBlock() {
-			throw new NotImplementedException ();
+			if (cur_block < 0)
+				throw new NotSupportedException ("Not in an exception block");
+			System.Console.WriteLine ("Begin fault Block");
+			//throw new NotImplementedException ();
 		}
 		public virtual void BeginFinallyBlock() {
-			throw new NotImplementedException ();
+			if (cur_block < 0)
+				throw new NotSupportedException ("Not in an exception block");
+			System.Console.WriteLine ("Begin finally Block");
+			//throw new NotImplementedException ();
 		}
 		public virtual void BeginScope () {
 			throw new NotImplementedException ();
@@ -320,7 +404,15 @@ namespace System.Reflection.Emit {
 		}
 
 		public virtual void EndExceptionBlock () {
-			throw new NotImplementedException ();
+			if (cur_block < 0)
+				throw new NotSupportedException ("Not in an exception block");
+			// how could we optimize code size here?
+			Emit (OpCodes.Leave, ex_handlers [cur_block].end);
+			MarkLabel (ex_handlers [cur_block].end);
+			ex_handlers [cur_block].End (code_len);
+			ex_handlers [cur_block].Debug ();
+			System.Console.WriteLine ("End Block");
+			//throw new NotImplementedException ();
 		}
 		public virtual void EndScope () {
 			throw new NotImplementedException ();

@@ -1,4 +1,8 @@
 
+Tue Jan 15 22:46:21 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* ILGenerator.cs: implement some of the exception support methods.
+
 Mon Jan 14 17:07:32 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* ModulerBuilder.cs: search also for subtypes in GetTypes().
