@@ -1,3 +1,7 @@
+2003-02-14  Patrik Torstensson
+
+	* Exception.cs: Fixed message output formating
+
 2003-02-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Int32.cs:
