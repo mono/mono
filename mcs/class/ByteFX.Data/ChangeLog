@@ -1,0 +1,11 @@
+2003-03-15  Daniel Morgan <danmorg@sc.rr.com>
+
+	* mysqlclient/datareader.cs: in GetSchemaTable(),
+	"BaseColumnName" should be set to the ColumnName,
+	not null
+
+2003-03-14  Daniel Morgan <danmorg@sc.rr.com>
+
+	Imported the ByteFX.Data MySQL 0.6.5 data provider.  See
+	ChangeLog at the root of mcs for this date.
+

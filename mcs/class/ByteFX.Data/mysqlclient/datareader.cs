@@ -220,7 +220,7 @@ namespace ByteFX.Data.MySQLClient
 				r["BaseSchemaName"] = null;
 				r["BaseCatalogName"] = null;
 				r["BaseTableName"] = f.TableName;
-				r["BaseColumnName"] = null;
+				r["BaseColumnName"] = f.ColumnName;
 
 				dataTableSchema.Rows.Add( r );
 			}
