@@ -1,3 +1,7 @@
+2003-08-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ICalls.cs: holds a couple of icalls.
+
 2003-08-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UrlUtils.cs: made Reduce work when a "/" is passed.
