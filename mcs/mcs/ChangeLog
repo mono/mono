@@ -1,3 +1,20 @@
+2001-12-03  Ravi Pratap  <ravi@ximian.com>
+
+	* attribute.cs (CheckAttribute): Handle system attributes by using
+	Attribute.GetAttributes to examine information we need.
+
+	(GetValidPlaces): Same here.
+
+	* class.cs (Method::Define): Catch invalid use of extern and abstract together.
+
+	* typemanager.cs (dllimport_type): Core type for System.DllImportAttribute.
+
+	* class.cs (Method.IsPinvoke): Used to determine if we are a PInvoke method.
+
+	(Method::Define): Set appropriate flags if we have a DllImport attribute.
+
+	(Method::Emit): Handle the case when we are a PInvoke method.
+
 2001-12-03  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs: Use ResolveWithSimpleName on compound names.

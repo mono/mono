@@ -236,52 +236,60 @@ namespace Mono.CSharp {
 		static string GetValidPlaces (Attribute attr)
 		{
 			StringBuilder sb = new StringBuilder ();
-
+			AttributeTargets targets = 0;
+			
 			TypeContainer a = TypeManager.LookupAttr (attr.Type);
 
-			if (a == null)
-				return "(none) ";
+			if (a == null) {
+				System.Attribute [] attrs = System.Attribute.GetCustomAttributes (attr.Type);
+				
+				foreach (System.Attribute tmp in attrs)
+					if (tmp is AttributeUsageAttribute) 
+						targets = ((AttributeUsageAttribute) tmp).ValidOn;
+			} else
+				targets = a.Targets;
 
-			if ((a.Targets & AttributeTargets.Assembly) != 0)
+			
+			if ((targets & AttributeTargets.Assembly) != 0)
 				sb.Append ("'assembly' ");
 
-			if ((a.Targets & AttributeTargets.Class) != 0)
+			if ((targets & AttributeTargets.Class) != 0)
 				sb.Append ("'class' ");
 
-			if ((a.Targets & AttributeTargets.Constructor) != 0)
+			if ((targets & AttributeTargets.Constructor) != 0)
 				sb.Append ("'constructor' ");
 
-			if ((a.Targets & AttributeTargets.Delegate) != 0)
+			if ((targets & AttributeTargets.Delegate) != 0)
 				sb.Append ("'delegate' ");
 
-			if ((a.Targets & AttributeTargets.Enum) != 0)
+			if ((targets & AttributeTargets.Enum) != 0)
 				sb.Append ("'enum' ");
 
-			if ((a.Targets & AttributeTargets.Event) != 0)
+			if ((targets & AttributeTargets.Event) != 0)
 				sb.Append ("'event' ");
 
-			if ((a.Targets & AttributeTargets.Field) != 0)
+			if ((targets & AttributeTargets.Field) != 0)
 				sb.Append ("'field' ");
 
-			if ((a.Targets & AttributeTargets.Interface) != 0)
+			if ((targets & AttributeTargets.Interface) != 0)
 				sb.Append ("'interface' ");
 
-			if ((a.Targets & AttributeTargets.Method) != 0)
+			if ((targets & AttributeTargets.Method) != 0)
 				sb.Append ("'method' ");
 
-			if ((a.Targets & AttributeTargets.Module) != 0)
+			if ((targets & AttributeTargets.Module) != 0)
 				sb.Append ("'module' ");
 
-			if ((a.Targets & AttributeTargets.Parameter) != 0)
+			if ((targets & AttributeTargets.Parameter) != 0)
 				sb.Append ("'parameter' ");
 
-			if ((a.Targets & AttributeTargets.Property) != 0)
+			if ((targets & AttributeTargets.Property) != 0)
 				sb.Append ("'property' ");
 
-			if ((a.Targets & AttributeTargets.ReturnValue) != 0)
+			if ((targets & AttributeTargets.ReturnValue) != 0)
 				sb.Append ("'return value' ");
 
-			if ((a.Targets & AttributeTargets.Struct) != 0)
+			if ((targets & AttributeTargets.Struct) != 0)
 				sb.Append ("'struct' ");
 
 			return sb.ToString ();
@@ -297,68 +305,75 @@ namespace Mono.CSharp {
 		public static bool CheckAttribute (Attribute a, object element)
 		{
 			TypeContainer attr = TypeManager.LookupAttr (a.Type);
+			AttributeTargets targets = 0;
+			
+			if (attr == null) {
+				System.Attribute [] attrs = System.Attribute.GetCustomAttributes (a.Type);
 
-			if (attr == null)
-				return false;
+				foreach (System.Attribute tmp in attrs)
+					if (tmp is AttributeUsageAttribute) 
+						targets = ((AttributeUsageAttribute) tmp).ValidOn;
+			} else
+				targets = attr.Targets;
 
 			if (element is Class) {
-				if ((attr.Targets & AttributeTargets.Class) != 0)
+				if ((targets & AttributeTargets.Class) != 0)
 					return true;
 				else
 					return false;
 				
 			} else if (element is Struct) {
-				if ((attr.Targets & AttributeTargets.Struct) != 0)
+				if ((targets & AttributeTargets.Struct) != 0)
 					return true;
 				else
 					return false;
 			} else if (element is Constructor) {
-				if ((attr.Targets & AttributeTargets.Constructor) != 0)
+				if ((targets & AttributeTargets.Constructor) != 0)
 					return true;
 				else
 					return false;
 			} else if (element is Delegate) {
-				if ((attr.Targets & AttributeTargets.Delegate) != 0)
+				if ((targets & AttributeTargets.Delegate) != 0)
 					return true;
 				else
 					return false;
 			} else if (element is Enum) {
-				if ((attr.Targets & AttributeTargets.Enum) != 0)
+				if ((targets & AttributeTargets.Enum) != 0)
 					return true;
 				else
 					return false;
 			} else if (element is Event) {
-				if ((attr.Targets & AttributeTargets.Event) != 0)
+				if ((targets & AttributeTargets.Event) != 0)
 					return true;
 				else
 					return false;
 			} else if (element is Field) {
-				if ((attr.Targets & AttributeTargets.Field) != 0)
+				if ((targets & AttributeTargets.Field) != 0)
 					return true;
 				else
 					return false;
 			} else if (element is Interface) {
-				if ((attr.Targets & AttributeTargets.Interface) != 0)
+				if ((targets & AttributeTargets.Interface) != 0)
 					return true;
 				else
 					return false;
 			} else if (element is Method) {
-				if ((attr.Targets & AttributeTargets.Method) != 0)
+				if ((targets & AttributeTargets.Method) != 0)
 					return true;
 				else
 					return false;
 			} else if (element is Parameter) {
-				if ((attr.Targets & AttributeTargets.Parameter) != 0)
+				if ((targets & AttributeTargets.Parameter) != 0)
 					return true;
 				else
 					return false;
 			} else if (element is Property) {
-				if ((attr.Targets & AttributeTargets.Property) != 0)
+				if ((targets & AttributeTargets.Property) != 0)
 					return true;
 				else
 					return false;
 			}
-			
+
 			return false;
 		}
 	}

@@ -1623,6 +1623,8 @@ namespace Mono.CSharp {
 		public MethodBuilder MethodBuilder;
 		public readonly Attributes OptAttributes;
 
+		public bool IsPinvoke = false;
+
 		/// <summary>
 		///   Modifiers allowed in a class declaration
 		/// </summary>
@@ -1865,8 +1867,28 @@ namespace Mono.CSharp {
 				error = true;
 			}
 
+			if ((ModFlags & Modifiers.EXTERN) != 0 && (ModFlags & Modifiers.ABSTRACT) != 0) {
+				Report.Error (180, Location, MakeName (parent) + " cannot be both extern and abstract");
+				error = true;
+			}
+
 			if (error)
 				return null;
+
+			
+			if (OptAttributes != null && OptAttributes.AttributeSections != null) {
+				foreach (AttributeSection asec in OptAttributes.AttributeSections) {
+				 	if (asec.Attributes == null)
+						continue;
+					
+					foreach (Attribute a in asec.Attributes)
+						if (a.Name.IndexOf ("DllImport") != -1) {
+							flags |= MethodAttributes.PinvokeImpl;
+							IsPinvoke = true;
+						}
+				
+				}
+			}
 
 			//
 			// Finally, define the method
@@ -1941,13 +1963,16 @@ namespace Mono.CSharp {
 		// 
 		public void Emit (TypeContainer parent)
 		{
+			if (IsPinvoke)
+				return;
+			
 			ILGenerator ig = MethodBuilder.GetILGenerator ();
 			EmitContext ec = new EmitContext (parent, Location, ig,
 							  GetReturnType (parent), ModFlags);
 
 			if (OptAttributes != null && OptAttributes.AttributeSections != null) {
 				foreach (AttributeSection asec in OptAttributes.AttributeSections) {
-					if (asec.Attributes == null)
+				 	if (asec.Attributes == null)
 						continue;
 					
 					foreach (Attribute a in asec.Attributes) {
@@ -1959,8 +1984,9 @@ namespace Mono.CSharp {
 							Attribute.Error592 (a, Location);
 							return;
 						}
-						
-						MethodBuilder.SetCustomAttribute (cb);
+
+						if (a.Type != TypeManager.dllimport_type)
+							MethodBuilder.SetCustomAttribute (cb);
 					}
 				}
 			}

@@ -24,6 +24,9 @@ BUGS
 	Move our utility FindMembers from TypeContainer to Decl, because interfaces
 	are also scanned with it.
 
+	>> DONE - we have separate FindMembers methods for interfaces,
+        >> enums,  delegates etc.
+
 * Visibility
 
 	I am not reporting errors on visibility yet.
@@ -32,6 +35,8 @@ BUGS
 
 	They currently can not be defined in terms of other enumerations
 	or constants.
+	
+	>> DONE 
 
 * Interfaces
 
@@ -59,6 +64,8 @@ BUGS
 	Need to use FindMembers to lookup the member for reporting
 	whether a new is needed or not.  
 
+	>> DONE
+
 * Handle destructors specially
 
 	Turn ~X () { a () } into:
@@ -82,6 +89,8 @@ BUGS
 		}
 
 	Is failing to create a single namespace
+
+	>> This has been fixed. Test #33 tests this functionality
 
 * Arrays
 

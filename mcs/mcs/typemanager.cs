@@ -53,6 +53,7 @@ public class TypeManager {
 	static public Type monitor_type;
 	static public Type runtime_field_handle_type;
 	static public Type attribute_usage_type;
+	static public Type dllimport_type;
 	static public Type param_array_type;
 	
 	//
@@ -404,6 +405,7 @@ public class TypeManager {
 		intptr_type          = CoreLookupType ("System.IntPtr");
 
 		attribute_usage_type = CoreLookupType ("System.AttributeUsageAttribute");
+		dllimport_type       = CoreLookupType ("System.Runtime.InteropServices.DllImportAttribute");
 		param_array_type     = CoreLookupType ("System.ParamArrayAttribute");
 		
 		//
