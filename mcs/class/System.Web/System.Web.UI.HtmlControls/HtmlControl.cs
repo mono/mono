@@ -19,7 +19,7 @@ namespace System.Web.UI.HtmlControls{
 	[ToolboxItem(false)]
 	public abstract class HtmlControl : Control, IAttributeAccessor
 	{
-		private string _tagName = "span";
+		internal string _tagName;
 		private AttributeCollection _attributes;
 		private bool _disabled = false;
 		

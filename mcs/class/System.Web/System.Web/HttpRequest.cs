@@ -34,6 +34,7 @@ namespace System.Web {
 		private string	_sPath;
 		private string	_sPathInfo;
 		private string _sFilePath;
+		private string baseVirtualDir;
 		private string _sPathTranslated;
 		private string _sQueryStringRaw;
 		private string _sRequestType;
@@ -892,6 +893,15 @@ namespace System.Web {
 			}
 		}
 		
+		internal string BaseVirtualDir {
+			get {
+				if (baseVirtualDir == null)
+					baseVirtualDir = UrlUtils.GetDirectory (FilePath);
+
+				return baseVirtualDir;
+			}
+		}
+		
 		public byte [] BinaryRead(int count) {
 			int iSize = TotalBytes;
 			if (iSize == 0) {
@@ -945,7 +955,7 @@ namespace System.Web {
 
 		public string MapPath (string VirtualPath)
 		{
-			return MapPath (VirtualPath, RootVirtualDir, true);
+			return MapPath (VirtualPath, BaseVirtualDir, true);
 		}
 
 		[MonoTODO("allowCrossAppMapping?")]
@@ -965,10 +975,11 @@ namespace System.Web {
 			if (UrlUtils.IsRooted (virtualPath)) {
 				virtualPath = UrlUtils.Reduce (virtualPath);
 			} else {
-				if (baseVirtualDir == null)
+				if (baseVirtualDir == null) {
 					virtualPath = UrlUtils.Combine (RootVirtualDir, virtualPath);
-				else
+				} else {
 					virtualPath = UrlUtils.Combine (baseVirtualDir, virtualPath);
+				}
 			}
 
 			return _WorkerRequest.MapPath (virtualPath);

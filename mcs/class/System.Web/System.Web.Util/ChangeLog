@@ -1,3 +1,7 @@
+2003-01-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UrlUtils.cs: fixed Combine ().
+
 2002-12-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UrlUtils.cs: fixed IsRelativeUrl and IsRootUrl.

@@ -18,8 +18,6 @@ namespace System.Web.UI.HtmlControls{
 	
 	[ConstructorNeedsTag]
 	public class HtmlGenericControl : HtmlContainerControl {
-		private string tagName;
-
 		public HtmlGenericControl() :
 			this ("span")
 		{
@@ -30,7 +28,7 @@ namespace System.Web.UI.HtmlControls{
 		{
 			if (tag == null)
 				tag = "";
-			tagName = tag;
+			_tagName = tag;
 		}
 		
 		[DefaultValue("")]
@@ -38,8 +36,8 @@ namespace System.Web.UI.HtmlControls{
 		[WebCategory("Appearance")]
 		public new string TagName
 		{
-			get { return tagName; }
-			set { tagName = value; }
+			get { return _tagName; }
+			set { _tagName = value; }
 		}
 	}
 }

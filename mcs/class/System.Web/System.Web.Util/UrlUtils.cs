@@ -115,7 +115,7 @@ namespace System.Web.Util
 			}
 
 			if (relPath.Length < 3 || relPath [0] != '~' || relPath [0] == '/' || relPath [0] == '\\') {
-				if (basePath == null || basePath.Length == 1 || basePath [0] == '/')
+				if (basePath == null || (basePath.Length == 1 && basePath [0] == '/'))
 					basePath = String.Empty;
 
 				return Reduce (basePath + "/" + relPath);
