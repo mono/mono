@@ -1,3 +1,8 @@
+
+Fri May 21 07:35:30 EDT 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: cleanups, off-by-one fixes, avoid recursive thunks.
+
 2004-05-20  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* mini.c: Delegate most of the abort signal work to 
