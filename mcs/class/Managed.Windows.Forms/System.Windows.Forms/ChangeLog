@@ -1,3 +1,7 @@
+2004-12-08  Peter Bartok  <pbartok@novell.com>
+
+	* XplatUIOSX.cs: Added Idle event, now compiles on VS.Net
+
 2004-12-07  Geoff Norton  <gnorton@customerdna.com>
 
         * XplatUIOSX.cs: Initial checkin
