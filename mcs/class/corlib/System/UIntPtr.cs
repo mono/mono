@@ -18,9 +18,6 @@
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 
-[
-    assembly: System.CLSCompliant(true)
-] 
 
 namespace System
 {

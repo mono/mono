@@ -1,3 +1,10 @@
+2001-08-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* (common.src): Removed IAsyncResult as it is not on CVS yet.
+
+	* UIntPtr.cs: Removed CLSCompliant attribute before the namespace,
+	as it breaks the build.
+
 2001-08-23  Michael Lambert <michaellambert@email.com>
 
 	* IntPtr.cs: Optimized unsafe declaration, implemented GetObjectData, 
