@@ -1,3 +1,8 @@
+2004-09-21  Geoff Norton <gnorton@customerdna.com>
+
+	* Type.cs: BindingFlags.IgnoreCase was being ignored, this reimplements
+	this filter. Fixes bug #65778.
+
 2004-09-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Environment.cs: Bump corlib version.

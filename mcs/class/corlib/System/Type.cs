@@ -621,7 +621,10 @@ namespace System {
 
 		public virtual MemberInfo[] GetMember (string name, MemberTypes type, BindingFlags bindingAttr)
 		{
-			return FindMembers (type, bindingAttr, FilterName, name);
+			if ((bindingAttr & BindingFlags.IgnoreCase) != 0)
+				return FindMembers (type, bindingAttr, FilterNameIgnoreCase, name);
+			else
+				return FindMembers (type, bindingAttr, FilterName, name);
 		}
 
 		public MemberInfo[] GetMembers ()
