@@ -64,12 +64,12 @@ namespace Mono.CSharp {
 			type = t;
 			eclass = ExprClass.Value;
 			loc = Location.Null;
-			builder = ec.GetTemporaryStorage (t);
+			builder = ec.GetTemporaryLocal (t);
 		}
 
 		public void Release (EmitContext ec)
 		{
-			ec.FreeTemporaryStorage (builder);
+			ec.FreeTemporaryLocal (builder, type);
 			builder = null;
 		}
 		

@@ -497,24 +497,60 @@ namespace Mono.CSharp {
 		///   Returns a temporary storage for a variable of type t as 
 		///   a local variable in the current body.
 		/// </summary>
-		public LocalBuilder GetTemporaryStorage (Type t)
+		public LocalBuilder GetTemporaryLocal (Type t)
 		{
-			LocalBuilder location;
+			LocalBuilder location = null;
 			
 			if (temporary_storage != null){
-				location = (LocalBuilder) temporary_storage [t];
-				if (location != null)
-					return location;
+				object o = temporary_storage [t];
+				if (o != null){
+					if (o is ArrayList){
+						ArrayList al = (ArrayList) o;
+						
+						for (int i = 0; i < al.Count; i++){
+							if (al [i] != null){
+								location = (LocalBuilder) al [i];
+								al [i] = null;
+								break;
+							}
+						}
+					} else
+						location = (LocalBuilder) o;
+					if (location != null)
+						return location;
+				}
 			}
 			
-			location = ig.DeclareLocal (t);
-			
-			return location;
+			return ig.DeclareLocal (t);
 		}
 
-		public void FreeTemporaryStorage (LocalBuilder b)
+		public void FreeTemporaryLocal (LocalBuilder b, Type t)
 		{
-			// Empty for now.
+			if (temporary_storage == null){
+				temporary_storage = new Hashtable ();
+				temporary_storage [t] = b;
+				return;
+			}
+			object o = temporary_storage [t];
+			if (o == null){
+				temporary_storage [t] = b;
+				return;
+			}
+			if (o is ArrayList){
+				ArrayList al = (ArrayList) o;
+				for (int i = 0; i < al.Count; i++){
+					if (al [i] == null){
+						al [i] = b;
+						return;
+					}
+				}
+				al.Add (b);
+				return;
+			}
+			ArrayList replacement = new ArrayList ();
+			replacement.Add (o);
+			temporary_storage.Remove (t);
+			temporary_storage [t] = replacement;
 		}
 
 		/// <summary>

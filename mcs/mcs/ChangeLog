@@ -1,3 +1,8 @@
+2003-08-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* codegen.cs (GetTemporaryLocal, FreeTemporaryLocal): Recycle
+	these bad boys.
+
 2003-08-05  Miguel de Icaza  <miguel@ximian.com>
 
 	* codegen.cs (RemapLocal, RemapLocalLValue, RemapParameter,
