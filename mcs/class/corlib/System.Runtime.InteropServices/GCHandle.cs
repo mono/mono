@@ -114,6 +114,8 @@ namespace System.Runtime.InteropServices
 		
 		public static explicit operator GCHandle(IntPtr value)
 		{
+			if (value == IntPtr.Zero)
+				throw new ArgumentException ("GCHandle value cannot be zero");
 			if (!CheckCurrentDomain ((int)value))
 				throw new ArgumentException ("GCHandle value belongs to a different domain");
 			return new GCHandle (value);

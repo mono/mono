@@ -1,3 +1,8 @@
+2005-03-31  Alp Toker  <alp@atoker.com>
+
+	* GCHandle.cs: Clearer ArgumentException text in the case of a
+	null-valued IntPtr argument.
+
 2005-03-04  Kazuki Oikawa  <kazuki@panicode.com>
 
 	* _Exception.cs
