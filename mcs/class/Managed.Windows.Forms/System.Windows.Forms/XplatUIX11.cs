@@ -343,6 +343,7 @@ namespace System.Windows.Forms {
 					data.Dispose ();
 					handle_data [handle] = null;
 				}
+				XDestroyWindow(DisplayHandle, handle);
 			}
 		}
 
