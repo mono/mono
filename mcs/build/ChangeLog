@@ -1,3 +1,7 @@
+2005-02-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* library.make (run-test-lib): Exclude InetAccess tests.
+
 2005-02-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* library.make: Exclude CAS category from run-test-ondotnet.
