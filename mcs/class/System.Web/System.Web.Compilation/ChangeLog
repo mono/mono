@@ -1,3 +1,7 @@
+2003-01-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: fixed EnableSesssionState handling.
+
 2003-01-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: don't generate instance fields for pages/controls

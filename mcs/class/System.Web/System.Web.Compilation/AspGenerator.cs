@@ -315,7 +315,6 @@ class AspGenerator
 	private string parent;
 	private Type parentType;
 	private string fullPath;
-	private static string enableSessionStateLiteral =  ", System.Web.SessionState.IRequiresSessionState";
 
 	Hashtable options;
 	string privateBinPath;
@@ -328,6 +327,8 @@ class AspGenerator
 
 	HttpContext context;
 
+	SessionState sessionState = SessionState.Enabled;
+
 	static Type styleType = typeof (System.Web.UI.WebControls.Style);
 	static Type fontinfoType = typeof (System.Web.UI.WebControls.FontInfo);
 
@@ -338,6 +339,13 @@ class AspGenerator
 		CompilationFailed = 2
 	}
 
+	enum SessionState
+	{
+		Enabled,
+		ReadOnly,
+		Disabled
+	}
+	
 	public AspGenerator (string pathToFile, ArrayList elements)
 	{
 		if (elements == null)
@@ -408,10 +416,15 @@ class AspGenerator
 		set { context = value; }
 	}
 	
+	void AddInterface (Type type)
+	{
+		AddInterface (type.ToString ());
+	}
+	
 	public void AddInterface (string iface)
 	{
-		if (interfaces == "") {
-			interfaces = iface;
+		if (interfaces == null) {
+			interfaces = ", " + iface;
 		} else {
 			string s = ", " + iface;
 			if (interfaces.IndexOf (s) == -1)
@@ -584,10 +597,17 @@ class AspGenerator
 		}
 
 		if (att ["EnableSessionState"] != null){
+			if (!IsPage)
+				throw new ApplicationException ("EnableSessionState not allowed here.");
+			
 			string est = (string) att ["EnableSessionState"];
 			if (0 == String.Compare (est, "false", true))
-				interfaces = interfaces.Replace (enableSessionStateLiteral, "");
-			else if (0 != String.Compare (est, "true", true))
+				sessionState = SessionState.Disabled;
+			else if (0 == String.Compare (est, "true", true))
+				sessionState = SessionState.Enabled;
+			else if (0 == String.Compare (est, "readonly", true))
+				sessionState = SessionState.ReadOnly;
+			else
 				throw new ApplicationException ("EnableSessionState in Page directive not set to " +
 								"a correct value: " + est);
 		}
@@ -739,7 +759,7 @@ class AspGenerator
 				throw new ApplicationException ("@ Implements not allowed in an application file.");
 
 			string iface = (string) att ["interface"];
-			interfaces += ", " + iface;
+			AddInterface (iface);
 			break;
 		case "REGISTER":
 			if (IsApplication)
@@ -1830,6 +1850,14 @@ class AspGenerator
 
 	private void End ()
 	{
+		if (isPage) {
+			if (sessionState == SessionState.Enabled || sessionState == SessionState.ReadOnly)
+				AddInterface (typeof (System.Web.SessionState.IRequiresSessionState));
+
+			if (sessionState == SessionState.ReadOnly)
+				AddInterface (typeof (System.Web.SessionState.IReadOnlySessionState));
+		}
+		
 		classDecl = "\tpublic class " + className + " : " + parent + interfaces + " {\n"; 
 		prolog.Append ("\n" + classDecl);
 		declarations.Append ("\t\tprivate static bool __intialized = false;\n\n");
