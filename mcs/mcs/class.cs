@@ -2686,7 +2686,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool Resolve (EmitContext ec)
+		public bool Resolve (ConstructorBuilder caller_builder, EmitContext ec)
 		{
 			Expression parent_constructor_group;
 			Type t;
@@ -2732,6 +2732,11 @@ namespace Mono.CSharp {
 			if (parent_constructor == null){
 				Report.Error (1501, loc,
 				       "Can not find a constructor for this argument list");
+				return false;
+			}
+
+			if (parent_constructor == caller_builder){
+				Report.Error (515, String.Format ("Constructor `{0}' can not call itself", TypeManager.CSharpSignature (caller_builder)));
 				return false;
 			}
 			
@@ -2905,7 +2910,7 @@ namespace Mono.CSharp {
 				// `this' access
 				//
 				ec.IsStatic = true;
-				if (Initializer != null && !Initializer.Resolve (ec))
+				if (Initializer != null && !Initializer.Resolve (ConstructorBuilder, ec))
 					return;
 				ec.IsStatic = false;
 			}

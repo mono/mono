@@ -806,7 +806,11 @@ public class TypeManager {
 	/// </summary>
 	static public string GetFullNameSignature (MemberInfo mi)
 	{
-		return mi.DeclaringType.FullName.Replace ('+', '.') + '.' + mi.Name;
+		string n = mi.Name;
+		if (n == ".ctor")
+			n = mi.DeclaringType.Name;
+		
+		return mi.DeclaringType.FullName.Replace ('+', '.') + '.' + n;
 	}
 
 	/// <summary>
