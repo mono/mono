@@ -904,6 +904,17 @@ namespace MonoTests.System.Xml
 			AssertEquals (XmlNodeType.Element, dom.FirstChild.NextSibling.NextSibling.NodeType);
 		}
 
+		[Test]
+		public void CreateAttribute () {
+			XmlDocument dom = new XmlDocument ();
+
+			// Check that null prefix and namespace are allowed and
+			// equivalent to ""
+			XmlAttribute attr = dom.CreateAttribute (null, "FOO", null);
+			AssertEquals (attr.Prefix, "");
+			AssertEquals (attr.NamespaceURI, "");
+		}
+
 //		[Test]  Comment out in the meantime.
 //		public void LoadExternalUri ()
 //		{
