@@ -1,3 +1,7 @@
+2003-07-14  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlSchemaDatatype.cs: Fixed compiler warning.
+
 2003-07-12  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* BuiltInDatatype.cs,

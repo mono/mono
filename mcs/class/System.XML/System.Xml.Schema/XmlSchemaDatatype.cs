@@ -98,7 +98,6 @@ namespace System.Xml.Schema
 			default:
 				throw new NotImplementedException ();
 			}
-			throw new NotImplementedException ();
 		}
 
 		private static XsdString datatypeString = new XsdString ();
