@@ -44,7 +44,7 @@ run-test-local:
 		fi; \
 	done; \
 	if $$failed; then \
-		echo "The following tests failed: $$flist"; \
+		echo "The compiler failed to flag the following errors: $$flist"; \
 	else \
 		echo All tests passed; \
 	fi
