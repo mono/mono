@@ -1,3 +1,10 @@
+2002-9-2  DennisHayes <dennish@raytek.com>
+
+	* Brushes.cs : stubbed, added colors. Not sure how to implement,
+				 but this should at least save someone some typing.
+	* CharacterRange.cs :Implmented
+	* Region.cs : stub needed for system.windows.forms
+
 2002-07-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ColorTranslator.cs: use Color.Name.
