@@ -787,9 +787,8 @@ namespace System.Drawing {
 		internal static extern Status GdipCreateFontFamilyFromName (
                         [MarshalAs(UnmanagedType.LPWStr)] string fName, IntPtr collection, out IntPtr fontFamily);
 
-		// We should be using StringBuilder. See bug http://bugzilla.ximian.com/show_bug.cgi?id=53700
 		[DllImport ("gdiplus.dll", CharSet=CharSet.Unicode)]
-		internal static extern Status GdipGetFamilyName(IntPtr family, IntPtr fName, int language);
+		internal static extern Status GdipGetFamilyName(IntPtr family, StringBuilder fName, int language);
 
 		[DllImport ("gdiplus.dll")]
 		internal static extern Status GdipGetGenericFontFamilySansSerif (out IntPtr fontFamily);

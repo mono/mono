@@ -29,14 +29,10 @@ namespace System.Drawing {
 		{
 			nativeFontFamily = fntfamily;		
 			int language = 0;
-			
-    		// Temporal until we fix bug 53700
-			IntPtr dest = Marshal.AllocHGlobal (GDIPlus.FACESIZE * UnicodeEncoding.CharSize);            
-			Status status = GDIPlus.GdipGetFamilyName (fntfamily, dest, language);
-			byte[] marshalled = new byte[GDIPlus.FACESIZE* UnicodeEncoding.CharSize];    		
-			Marshal.Copy (dest, marshalled, 0, GDIPlus.FACESIZE* UnicodeEncoding.CharSize);     		
-			UnicodeEncoding enc = new UnicodeEncoding (false, true);           
-			name = enc.GetString (marshalled);    		
+						
+			StringBuilder sBuilder = new StringBuilder(GDIPlus.FACESIZE * UnicodeEncoding.CharSize);	
+    		Status status = GDIPlus.GdipGetFamilyName (fntfamily, sBuilder, language);
+    		name = sBuilder.ToString();    		    		
 		}
 		
 		//Need to come back here, is Arial the right thing to do

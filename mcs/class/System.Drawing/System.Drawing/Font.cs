@@ -59,7 +59,6 @@ namespace System.Drawing {
 				_italic = true;
 				break;
 			case FontStyle.Regular:
-				_bold = true;
 				break;
 			case FontStyle.Strikeout:
 				_strikeout = true;
