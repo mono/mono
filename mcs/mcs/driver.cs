@@ -85,13 +85,15 @@ namespace Mono.CSharp
 
 			using (input){
 				Tokenizer lexer = new Tokenizer (input, input_file, defines);
-				int token, tokens = 0;
+				int token, tokens = 0, errors = 0;
 
 				while ((token = lexer.token ()) != Token.EOF){
 					Location l = lexer.Location;
 					tokens++;
+					if (token == Token.ERROR)
+						errors++;
 				}
-				Console.WriteLine ("Tokenized: " + tokens);
+				Console.WriteLine ("Tokenized: " + tokens + " found " + errors + " errors");
 			}
 			
 			return 0;

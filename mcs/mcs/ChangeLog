@@ -1,3 +1,8 @@
+2002-01-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-tokenizer.cs: (Tokenizer.escape): Escape '\r' as '\r' not as
+	'r'.  Allows mcs to parse itself fully.
+
 2002-01-02  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (ArrayCreation.num_automatic_initializers): Keep track

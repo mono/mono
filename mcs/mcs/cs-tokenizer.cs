@@ -714,7 +714,7 @@ namespace Mono.CSharp
 			case 'v':
 				v = '\v'; break;
 			case 'r':
-				v = 'c'; break;
+				v = '\r'; break;
 			case '\\':
 				v = '\\'; break;
 			case 'f':
@@ -1216,10 +1216,11 @@ namespace Mono.CSharp
 					col = 0;
 					continue;
 				}
+
 				if (c == ' ' || c == '\t' || c == '\f' || c == '\v' || c == '\r'){
 					if (c == '\t')
 						col = (((col + 8) / 8) * 8) - 1;
-					
+
 					continue;
 				}
 
