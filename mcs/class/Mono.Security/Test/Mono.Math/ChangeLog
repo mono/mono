@@ -1,3 +1,7 @@
+2005-01-03  Nick Drochak  <ndrochak@gol.com>
+
+	* BigIntegerTest.cs: Make tests pass on MS DotNet
+
 2004-12-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BigIntegerTest.cs: Added tests for ModPow when power is 0, for a 

@@ -27,7 +27,7 @@
 //
 
 using NUnit.Framework;
-using System;
+using myalias = System;
 using Mono.Math;
 
 namespace MonoTests.Mono.Math {
@@ -86,7 +86,7 @@ namespace MonoTests.Mono.Math {
 			for (int i=1; i < 40; i++) {
 				BigInteger e = new BigInteger (i);
 				BigInteger r = e.ModPow (b, m);
-				long expected = (long) System.Math.Pow (i, 10) % 32;
+				long expected = (long) myalias.Math.Pow (i, 10) % 32;
 				Assert.AreEqual (expected.ToString (), r.ToString (), i.ToString ());
 			}
 		}
