@@ -82,6 +82,21 @@ namespace System {
 			if (info == null)
 				throw new ArgumentNullException (Locale.GetText ("MethodInfo is null"));
 
+			if (!type.IsSubclassOf (typeof (MulticastDelegate)))
+				throw new ArgumentException ("type");
+
+			ParameterInfo[] delargs = type.GetMethod ("Invoke").GetParameters ();
+			Type[] delargtypes = new Type [delargs.Length];
+			ParameterInfo[] args = info.GetParameters ();
+
+			for (int i=0; i<delargs.Length; i++)
+				delargtypes [i] = delargs [i].ParameterType;
+			if (args.Length != delargtypes.Length)
+				throw new ArgumentException ("info");
+			for (int i=0; i<delargs.Length; i++) {
+				if (delargtypes [i] != args [i].ParameterType)
+					throw new ArgumentException ("info");
+			}
 			return CreateDelegate_internal (type, null, info);
 		}
 
@@ -101,6 +116,9 @@ namespace System {
 			if (method == null)
 				throw new ArgumentNullException (Locale.GetText ("method string is null"));
 
+			if (!type.IsSubclassOf (typeof (MulticastDelegate)))
+				throw new ArgumentException ("type");
+
 			ParameterInfo[] delargs = type.GetMethod ("Invoke").GetParameters ();
 			Type[] delargtypes = new Type [delargs.Length];
 
@@ -111,7 +129,7 @@ namespace System {
 			 * FIXME: we should check the caller has reflection permission
 			 * or if it lives in the same assembly...
 			 */
-			BindingFlags flags = BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic;
+			BindingFlags flags = BindingFlags.ExactBinding | BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic;
 			MethodInfo info = target.GetMethod (method, flags, null, delargtypes, new ParameterModifier [0]);
 
 			if (info == null)
@@ -131,6 +149,9 @@ namespace System {
 			if (method == null)
 				throw new ArgumentNullException (Locale.GetText ("method string is null"));
 
+			if (!type.IsSubclassOf (typeof (MulticastDelegate)))
+				throw new ArgumentException ("type");
+
 			ParameterInfo[] delargs = type.GetMethod ("Invoke").GetParameters ();
 			Type[] delargtypes = new Type [delargs.Length];
 
@@ -141,7 +162,7 @@ namespace System {
 			 * FIXME: we should check the caller has reflection permission
 			 * or if it lives in the same assembly...
 			 */
-			BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
+			BindingFlags flags = BindingFlags.ExactBinding | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
 
 			if (ignorecase)
 				flags |= BindingFlags.IgnoreCase;

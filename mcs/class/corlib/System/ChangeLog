@@ -1,4 +1,9 @@
 
+Wed Sep 11 11:06:43 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Delegate.cs: check the type passed to CreateDelegate is a Delegate
+	type. Check the method signature matches.
+
 Sat Sep 7 10:16:52 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* RuntimeMethodHandle.cs: implemented GetFunctionPointer().
