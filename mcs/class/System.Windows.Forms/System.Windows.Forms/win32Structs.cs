@@ -785,7 +785,7 @@ namespace System.Windows.Forms
 	}
 
 	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
-	internal struct OPENFILENAME {
+	public  struct OPENFILENAME {
 		internal uint          lStructSize; 
 		internal IntPtr        hwndOwner; 
 		internal IntPtr        hInstance; 

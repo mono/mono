@@ -17,7 +17,8 @@ namespace System.Windows.Forms {
 
     public abstract class FileDialog : CommonDialog {
 		internal string fileName = "";
-		internal const  int MAX_PATH = 512;
+		internal const  int MAX_PATH = 1024*8;
+		bool checkFileExists = false;
 		//
 		//  --- Public Properties
 		//
@@ -32,12 +33,8 @@ namespace System.Windows.Forms {
 		}
 		[MonoTODO]
 		public virtual bool CheckFileExists {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+			get { return checkFileExists;  }
+			set { checkFileExists = value; }
 		}
 		[MonoTODO]
 		public bool CheckPathExists {
@@ -153,8 +150,9 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override void Reset()
 		{
-			throw new NotImplementedException ();
+			CheckFileExists = false;
 		}
+
 		[MonoTODO]
 		public override string ToString()
 		{
@@ -186,19 +184,25 @@ namespace System.Windows.Forms {
 		protected  override bool RunDialog( IntPtr hWndOwner )
 		{
 			OPENFILENAME opf = new OPENFILENAME (  );
-			char[] FileNameBuffer = new char[MAX_PATH];
-
-			opf.lStructSize  = (uint)Marshal.SizeOf( opf );
-			opf.lpstrFile = new string( FileNameBuffer );
-			opf.nMaxFile = (uint) opf.lpstrFile.Length;
 			opf.hwndOwner = hWndOwner;
-			opf.lpfnHook  = new Win32.FnHookProc ( base.HookProc );
+
+			initOpenFileName ( ref opf );
 
 			bool res = Win32.GetOpenFileName ( ref opf );
 			if ( res ) {
 				FileName = opf.lpstrFile;
 			}
 			return res;
+		}
+
+		protected virtual void initOpenFileName ( ref OPENFILENAME opf ) 
+		{
+			opf.lStructSize  = (uint)Marshal.SizeOf( opf );
+			char[] FileNameBuffer = new char[MAX_PATH];
+			opf.lpstrFile = new string( FileNameBuffer );
+			opf.nMaxFile = (uint) opf.lpstrFile.Length;
+			opf.lpfnHook = new Win32.FnHookProc ( base.HookProc );
+			opf.Flags = (int) ( OpenFileDlgFlags.OFN_ENABLEHOOK | OpenFileDlgFlags.OFN_EXPLORER );
 		}
 	 }
 }

@@ -31,7 +31,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual IntPtr HookProc(IntPtr hWnd,int msg,IntPtr wparam,IntPtr lparam) 
 		{
-			throw new NotImplementedException ();
+			// FIXME: center window in response to WM_INITDIALOG message
+			return IntPtr.Zero;
 		}
 		
 		// event methods
