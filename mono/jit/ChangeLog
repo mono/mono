@@ -1,3 +1,7 @@
+2003-01-31  Zoltan Varga  <vargaz@freemail.hu>
+
+	* debug.c (mono_debug_open_image): dynamic assemblies have no debug
+	info.
 
 Thu Jan 30 11:07:06 CET 2003 Paolo Molaro <lupus@ximian.com>
 
