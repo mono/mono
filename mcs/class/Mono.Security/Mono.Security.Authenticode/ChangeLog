@@ -1,3 +1,9 @@
+2003-12-15  Sebastien Pouliot  <spouliot@videotron.ca>	
+
+	* AuthenticodeDeformatter.cs: Now throw a COMException for invalid 
+	signature. Added a SigningCertificate property (to be independant of
+	the certificate collection ordering).
+
 2003-09-01  Sebastien Pouliot  <spouliot@videotron.ca>	
 
 	* AuthenticodeBase.cs: New. Base class including how to hash a

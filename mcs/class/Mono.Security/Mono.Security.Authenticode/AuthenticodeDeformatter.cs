@@ -1,5 +1,5 @@
 //
-// AuthenticodeSignature.cs: Authenticode signature validator and generator
+// AuthenticodeDeformatter.cs: Authenticode signature validator
 //
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
@@ -9,6 +9,7 @@
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 
 using Mono.Security;
@@ -19,7 +20,12 @@ namespace Mono.Security.Authenticode {
 	// References:
 	// a.	http://www.cs.auckland.ac.nz/~pgut001/pubs/authenticode.txt
 
-	public class AuthenticodeDeformatter : AuthenticodeBase {
+#if INSIDE_CORLIB
+	internal
+#else
+	public 
+#endif
+	class AuthenticodeDeformatter : AuthenticodeBase {
 
 		private string filename;
 		private byte[] hash;
@@ -41,7 +47,12 @@ namespace Mono.Security.Authenticode {
 
 		public AuthenticodeDeformatter (string fileName) : this () 
 		{
-			CheckSignature (fileName);
+			if (!CheckSignature (fileName)) {
+				// invalid or no signature
+				if (signedHash != null)
+					throw new COMException ("Invalid signature");
+				// no exception is thrown when there's no signature in the PE file
+			}
 		}
 
 		public string FileName {
@@ -114,6 +125,10 @@ namespace Mono.Security.Authenticode {
 
 		public X509CertificateCollection Certificates {
 			get { return coll; }
+		}
+
+		public X509Certificate SigningCertificate {
+			get { return signingCertificate; }
 		}
 
 		private bool CheckSignature (string fileName) 
@@ -273,7 +288,6 @@ namespace Mono.Security.Authenticode {
 			return true;
 		}
 
-		//private bool VerifyCounterSignature (ASN1 cs, byte[] signature, string hashName) 
 		private bool VerifyCounterSignature (PKCS7.SignerInfo cs, byte[] signature, string hashName) 
 		{
 			// SEQUENCE {
@@ -348,7 +362,7 @@ namespace Mono.Security.Authenticode {
 			byte[] serial = cs.SerialNumber;
 			foreach (X509Certificate x509 in coll) {
 				if (CompareIssuerSerial (issuer, serial, x509)) {
-					// don't verify is key size don't match
+					// don't verify if key size don't match
 					if (x509.PublicKey.Length > (counterSignature.Length >> 3)) {
 						RSACryptoServiceProvider rsa = (RSACryptoServiceProvider) x509.RSA;
 						if (rsa.VerifyHash (p7hash, hashOID, counterSignature)) {
