@@ -1,3 +1,11 @@
+2004-12-30  Duncan Mak  <duncan@ximian.com>
+
+	* convert.cs: Fixed some typos and update some of the names.
+	(ImplicitStandardConversionExists):
+	(TryImplicitIntConversion): if target_type is IConvertible,
+	IComparable or IFormattable, return true / a BoxedCast instead of
+	failing. This fixes #70468.
+
 2004-12-29  Duncan Mak  <duncan@ximian.com>
 
 	* expression.cs (Argument.Emit): Check that Expr is

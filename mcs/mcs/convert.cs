@@ -636,6 +636,13 @@ namespace Mono.CSharp {
 					return true;
 			}
 
+			//
+			// If `expr_type' implements `target_type' (which is an iface)
+			// see TryImplicitIntConversion
+			// 
+			if (target_type.IsInterface && target_type.IsAssignableFrom (expr_type))
+				return true;
+
 			if (target_type == TypeManager.void_ptr_type && expr_type.IsPointer)
 				return true;
 
@@ -1169,7 +1176,7 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   Attemps to perform an implict constant conversion of the IntConstant
+		///   Attempts to perform an implicit constant conversion of the IntConstant
 		///   into a different data type using casts (See Implicit Constant
 		///   Expression Conversions)
 		/// </summary>
@@ -1220,6 +1227,14 @@ namespace Mono.CSharp {
 
 				return new EnumConstant (e, target_type);
 			}
+
+			//
+			// If `target_type' is an interface and the type of `ic' implements the interface
+			// e.g. target_type is IComparable, IConvertible, IFormattable
+			//
+			if (target_type.IsInterface && target_type.IsAssignableFrom (ic.Type))
+				return new BoxedCast (ic);
+
 			return null;
 		}
 
@@ -1239,7 +1254,7 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   Attemptes to implicityly convert `target' into `type', using
+		///   Attempts to implicitly convert `source' into `target_type', using
 		///   ImplicitConversion.  If there is no implicit conversion, then
 		///   an error is signaled
 		/// </summary>
