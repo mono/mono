@@ -5131,6 +5131,9 @@ namespace Mono.CSharp {
 		public static bool InferTypeArguments (Type[] param_types, Type[] arg_types,
 						       ref Type[] infered_types)
 		{
+			if (infered_types == null)
+				return false;
+
 			for (int i = 0; i < arg_types.Length; i++) {
 				if (arg_types [i] == null)
 					continue;

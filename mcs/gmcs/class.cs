@@ -3257,13 +3257,21 @@ namespace Mono.CSharp {
 			bool equal = true;
 			bool may_unify;
 
-			Type[] infered_types = new Type [type_params];
+			Type[] infered_types;
+			if (type_params > 0)
+				infered_types = new Type [type_params];
+			else
+				infered_types = null;
 
 			may_unify = Invocation.InferTypeArguments (
 				param_types, ParameterTypes, ref infered_types);
 
 			if (!may_unify) {
-				infered_types = new Type [type_params];
+				if (type_params > 0)
+					infered_types = new Type [type_params];
+				else
+					infered_types = null;
+
 				may_unify = Invocation.InferTypeArguments (
 					ParameterTypes, param_types, ref infered_types);
 			}
