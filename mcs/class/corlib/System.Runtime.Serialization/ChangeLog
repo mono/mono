@@ -1,5 +1,11 @@
 2002-08-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* FormatterServices.cs: implemented GetUninitializedObject.
+	PopulateObjectMembers needs a working FieldInfo.SetValue (it's
+	not implemented right now).
+
+2002-08-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* FormatterServices.cs:a implemented GetSerializableMembers ().
 
 2002-08-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>

@@ -9,6 +9,7 @@
 using System;
 using System.Collections;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace System.Runtime.Serialization
 {
@@ -92,10 +93,18 @@ namespace System.Runtime.Serialization
 			return assem.GetType (name);
 		}
 
-		[MonoTODO]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern object GetUninitializedObjectInternal (Type type);
+
 		public static object GetUninitializedObject (Type type)
 		{
-			throw new NotImplementedException ();
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
+			if (type == typeof (string))
+				throw new ArgumentException ("Uninitialized Strings cannot be created.");
+
+			return GetUninitializedObjectInternal (type);
 		}
 
 		public static object PopulateObjectMembers (object obj, MemberInfo [] members, object [] data)
