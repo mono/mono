@@ -1640,15 +1640,27 @@ namespace Mono.CSharp {
 						return new OpcodeCast (expr, target_type, OpCodes.Conv_U);
 				}
 				if (expr_type.IsPointer){
-					if (target_type == TypeManager.sbyte_type ||
-					    target_type == TypeManager.byte_type ||
-					    target_type == TypeManager.short_type ||
-					    target_type == TypeManager.ushort_type ||
-					    target_type == TypeManager.int32_type ||
-					    target_type == TypeManager.uint32_type ||
-					    target_type == TypeManager.uint64_type ||
-					    target_type == TypeManager.int64_type){
-						Expression e = new EmptyCast (expr, TypeManager.uint32_type);
+					Expression e = null;
+					
+					if (target_type == TypeManager.sbyte_type)
+						e = new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
+					else if (target_type == TypeManager.byte_type)
+						e = new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
+					else if (target_type == TypeManager.short_type)
+						e = new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
+					else if (target_type == TypeManager.ushort_type)
+						e = new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+					else if (target_type == TypeManager.int32_type)
+						e = new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
+					else if (target_type == TypeManager.uint32_type)
+						e = new OpcodeCast (expr, target_type, OpCodes.Conv_U4);
+					else if (target_type == TypeManager.uint64_type)
+						e = new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+					else if (target_type == TypeManager.int64_type){
+						e = new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+					}
+
+					if (e != null){
 						Expression ci, ce;
 
 						ci = ImplicitConversionStandard (ec, e, target_type, loc);

@@ -2071,24 +2071,24 @@ namespace Mono.CSharp {
 						IntConstant ic = (IntConstant) right;
 						int val = ic.Value;
 						
-						if (val >= 0)
+						if (val >= 0){
 							right = new UIntConstant ((uint) val);
-
-						type = l;
-						return true;
+							type = l;
+							
+							return true;
+						}
 					}
 					other = r;
-				} 
-				else if (r == TypeManager.uint32_type){
+				} else if (r == TypeManager.uint32_type){
 					if (left is IntConstant){
 						IntConstant ic = (IntConstant) left;
 						int val = ic.Value;
 						
-						if (val >= 0)
+						if (val >= 0){
 							left = new UIntConstant ((uint) val);
-
-						type = r;
-						return true;
+							type = r;
+							return true;
+						}
 					}
 					
 					other = l;
@@ -4906,15 +4906,15 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public Expression ValueTypeVariable {
-			get {
-				return value_target;
+		public bool SetValueTypeVariable (Expression value)
+		{
+			value_target = value;
+			value_target_set = true;
+			if (!(value_target is IMemoryLocation)){
+				Error_UnexpectedKind ("variable");
+				return false;
 			}
-
-			set {
-				value_target = value;
-				value_target_set = true;
-			}
+			return true;
 		}
 
 		//
@@ -4972,8 +4972,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			bool is_struct = false;
-			is_struct = type.IsValueType;
+			bool is_struct = type.IsValueType;
 			eclass = ExprClass.Value;
 
 			//
@@ -5006,8 +5005,7 @@ namespace Mono.CSharp {
 					}
 				}
 
-				method = Invocation.OverloadResolve (ec, (MethodGroupExpr) ml,
-								     Arguments, loc);
+				method = Invocation.OverloadResolve (ec, (MethodGroupExpr) ml, Arguments, loc);
 				
 			}
 
@@ -5019,6 +5017,7 @@ namespace Mono.CSharp {
 					return null;
                                 }
 			}
+
 			return this;
 		}
 
@@ -5059,7 +5058,7 @@ namespace Mono.CSharp {
 				// you can't share LocalBuilders among ILGeneators.
 				if (!value_target_set)
 					value_target = new LocalTemporary (ec, type);
-					
+
 				ml = (IMemoryLocation) value_target;
 				ml.AddressOf (ec, AddressOp.Store);
 			}

@@ -1,3 +1,20 @@
+2003-07-04  Miguel de Icaza  <miguel@ximian.com>
+
+	* convert.cs (ExplicitConversion): Convert pointer values using
+	the conv opcode to the proper type.
+
+	* ecore.cs (New): change ValueTypeVariable property into a method,
+	that returns whether the valuetype is suitable for being used.
+
+	* expression.cs (Binary.DoNumericPromotions): Only return if we
+	the int constant was a valid uint, and we can return both left and
+	right as uints.  If not, we continue processing, to trigger the
+	type conversion.  This fixes 39018.
+
+	* statement.cs (Block.EmitMeta): During constant resolution, set
+	the CurrentBlock property on the emitcontext, so that we resolve
+	constants propertly.
+
 2003-07-02  Martin Baulig  <martin@ximian.com>
 
 	* codegen.cs (EmitContext.NeedExplicitReturn): New public variable.

@@ -270,8 +270,10 @@ namespace Mono.CSharp {
 			if (source is New && target_type.IsValueType){
 				New n = (New) source;
 
-				n.ValueTypeVariable = target;
-				return n;
+				if (n.SetValueTypeVariable (target))
+					return n;
+				else
+					return null;
 			}
 
 			if (target.eclass != ExprClass.Variable && target.eclass != ExprClass.EventAccess){
