@@ -481,7 +481,10 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
-			return XmlConvert.ToDecimal (Normalize (s));
+			decimal d = XmlConvert.ToDecimal (Normalize (s));
+			if (Decimal.Floor (d) != d)
+				throw new FormatException ("Integer contains point number.");
+			return d;
 		}
 	}
 

@@ -351,7 +351,7 @@ namespace System.Xml.Schema
 						if (resolver == null)
 							resolver = new XmlUrlResolver ();
 						stream = resolver.GetEntity (new Uri (url), null, typeof (Stream)) as Stream;
-					} catch (Exception ex) {
+					} catch (Exception) {
 						// FIXME: This is not good way to handle errors.
 						stream = null;
 					}

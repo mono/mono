@@ -29,7 +29,8 @@ namespace System.Xml.Schema
 				errorCount += type.Validate (h, schema);
 				actualBaseSchemaType = type;
 			} else if (baseTypeName == XmlSchemaComplexType.AnyTypeName) {
-				actualBaseSchemaType = XmlSchemaComplexType.AnyType;
+//				actualBaseSchemaType = XmlSchemaComplexType.AnyType;
+				actualBaseSchemaType = XmlSchemaSimpleType.AnySimpleType;
 			} else if (baseTypeName.Namespace == XmlSchema.Namespace) {
 				actualBaseSchemaType = XmlSchemaDatatype.FromName (baseTypeName);
 				if (actualBaseSchemaType == null)
@@ -39,5 +40,11 @@ namespace System.Xml.Schema
 			else if (!schema.IsNamespaceAbsent (baseTypeName.Namespace))
 				error (h, "Referenced base schema type " + baseTypeName + " was not found in the corresponding schema.");
 		}
+
+		internal virtual string Normalize (string s, XmlNameTable nt, XmlNamespaceManager nsmgr)
+		{
+			return s;
+		}
+
 	}
 }

@@ -70,7 +70,7 @@ namespace System.Xml.Schema
 				idCollection.Add(id,xso);
 		}
 
-		[MonoTODO]
+//		[MonoTODO]
 		public static bool CheckAnyUri(string uri)
 		{
 			if (uri.StartsWith ("##"))
@@ -102,7 +102,7 @@ namespace System.Xml.Schema
 				XmlConvert.VerifyNCName(name);
 				return true;
 			}
-			catch(Exception ex)
+			catch(Exception)
 			{
 				return false;
 			}

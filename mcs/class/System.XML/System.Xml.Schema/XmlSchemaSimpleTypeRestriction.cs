@@ -1,9 +1,11 @@
 // Author: Dwivedi, Ajay kumar
 //            Adwiv@Yahoo.com
 using System;
+using System.Collections;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Serialization;
-
+using Mono.Xml.Schema;
 
 namespace System.Xml.Schema
 {
@@ -16,6 +18,14 @@ namespace System.Xml.Schema
 		private XmlQualifiedName baseTypeName;
 		private XmlSchemaObjectCollection facets;
 		private static string xmlname = "restriction";
+		private string [] enumarationFacetValues;
+		private string [] patternFacetValues;
+		private Regex [] rexPatterns;
+		private decimal lengthFacet;
+		private decimal maxLengthFacet;
+		private decimal minLengthFacet;
+		private decimal fractionDigitsFacet;
+		private decimal totalDigitsFacet;
 
 		public XmlSchemaSimpleTypeRestriction()
 		{
@@ -93,9 +103,173 @@ namespace System.Xml.Schema
 
 			this.ValidateActualType (baseType, baseTypeName, h, schema);
 
+			enumarationFacetValues = patternFacetValues = null;
+			rexPatterns = null;
+			lengthFacet = maxLengthFacet = minLengthFacet = fractionDigitsFacet = totalDigitsFacet = -1;
+
+			ArrayList enums = null;
+			ArrayList patterns = null;
+			for (int i = 0; i < facets.Count; i++) {
+				XmlSchemaEnumerationFacet ef = facets [i] as XmlSchemaEnumerationFacet;
+				if (ef != null) {
+					if (enums == null)
+						enums = new ArrayList ();
+					enums.Add (ef.Value);
+					continue;
+				}
+				XmlSchemaPatternFacet pf = facets [i] as XmlSchemaPatternFacet;
+				if (pf != null) {
+					if (patterns == null)
+						patterns = new ArrayList ();
+					patterns.Add (pf.Value);
+					continue;
+				}
+				XmlSchemaLengthFacet lf = facets [i] as XmlSchemaLengthFacet;
+				if (lf != null) {
+					try {
+						if (lengthFacet >= 0)
+							lf.error (h, "There already length facet exists.");
+						else
+							lengthFacet = decimal.Parse (lf.Value.Trim ());
+					} catch (Exception) { // FIXME: better catch ;-(
+						lf.error (h, "Invalid length facet specifidation");
+					}
+					continue;
+				}
+				XmlSchemaMaxLengthFacet maxlf = facets [i] as XmlSchemaMaxLengthFacet;
+				if (maxlf != null) {
+					try {
+						if (maxLengthFacet >= 0)
+							maxlf.error (h, "There already maxLength facet exists.");
+						else
+							maxLengthFacet = decimal.Parse (maxlf.Value.Trim ());
+					} catch (Exception) { // FIXME: better catch ;-(
+						maxlf.error (h, "Invalid maxLength facet specifidation");
+					}
+					continue;
+				}
+				XmlSchemaMinLengthFacet minlf = facets [i] as XmlSchemaMinLengthFacet;
+				if (minlf != null) {
+					try {
+						if (minLengthFacet >= 0)
+							minlf.error (h, "There already minLength facet exists.");
+						else
+							minLengthFacet = decimal.Parse (minlf.Value.Trim ());
+					} catch (Exception) { // FIXME: better catch ;-(
+						minlf.error (h, "Invalid minLength facet specifidation");
+					}
+					continue;
+				}
+			}
+			if (enums != null)
+				this.enumarationFacetValues = enums.ToArray (typeof (string)) as string [];
+			if (patterns != null) {
+				this.patternFacetValues = patterns.ToArray (typeof (string)) as string [];
+				this.rexPatterns = new Regex [patterns.Count];
+				for (int i = 0; i < patternFacetValues.Length; i++) {
+					Regex rex = new Regex (patternFacetValues [i]);
+					rexPatterns [i] = rex;
+				}
+			}
+
 			ValidationId = schema.ValidationId;
 			return errorCount;
 		}
+
+		internal bool ValidateValueWithFacets (string value, XmlNameTable nt)
+		{
+			XmlSchemaSimpleType baseST = this.ActualBaseSchemaType as XmlSchemaSimpleType;
+			XmlSchemaSimpleTypeList listType = baseST != null ? baseST.Content as XmlSchemaSimpleTypeList : null;
+			// numeric
+			if (listType != null)
+				return ValidateNonListValueWithFacets (value, nt);
+			else
+				return ValidateListValueWithFacets (value, nt);
+		}
+
+		private bool ValidateNonListValueWithFacets (string value, XmlNameTable nt)
+		{
+			string [] list = ((XsdAnySimpleType) XmlSchemaDatatype.FromName ("anySimpleType")).ParseListValue (value, nt);
+
+			// pattern
+			if (this.patternFacetValues != null) {
+				for (int l = 0; l < list.Length; l++) {
+					for (int i = 0; i < this.patternFacetValues.Length; i++)
+						if (rexPatterns [i] != null && !rexPatterns [i].IsMatch (list [l]))
+							return false;
+				}
+			}
+			// enumeration
+			if (this.enumarationFacetValues != null) {
+				for (int l = 0; l < list.Length; l++) {
+					bool matched = false;
+					for (int i = 0; i < this.enumarationFacetValues.Length; i++) {
+						if (list [l] == this.enumarationFacetValues [i]) {
+							matched = true;
+							break;
+						}
+					}
+					if (!matched)
+						return false;
+				}
+			}
+
+			// numeric
+			// : length
+			if (lengthFacet >= 0 && list.Length != lengthFacet)
+					return false;
+			// : maxLength
+			if (maxLengthFacet >= 0 && list.Length > maxLengthFacet)
+					return false;
+			// : minLength
+			if (minLengthFacet >= 0 && list.Length < minLengthFacet)
+					return false;
+			return true;
+		}
+
+		private bool ValidateListValueWithFacets (string value, XmlNameTable nt)
+		{
+			// pattern
+			if (this.patternFacetValues != null) {
+				for (int i = 0; i < this.patternFacetValues.Length; i++)
+					if (rexPatterns [i] != null && !rexPatterns [i].IsMatch (value))
+						return false;
+			}
+			// enumeration
+			if (this.enumarationFacetValues != null) {
+				bool matched = false;
+				for (int i = 0; i < this.enumarationFacetValues.Length; i++) {
+					if (value == this.enumarationFacetValues [i]) {
+						matched = true;
+						break;
+					}
+				}
+				if (!matched)
+					return false;
+			}
+			// numeric
+			// : length
+			if (lengthFacet >= 0 && value.Length != lengthFacet)
+					return false;
+			// : maxLength
+			if (maxLengthFacet >= 0 && value.Length > maxLengthFacet)
+					return false;
+			// : minLength
+			if (minLengthFacet >= 0 && value.Length < minLengthFacet)
+					return false;
+
+			// TODO: fractionDigits and totalDigits
+
+			// all passed
+			return true;
+		}
+
+		internal override string Normalize (string s, XmlNameTable nt, XmlNamespaceManager nsmgr)
+		{
+			return base.Normalize (s, nt, nsmgr);
+		}
+
+
 		//<restriction 
 		//  base = QName 
 		//  id = ID 

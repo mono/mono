@@ -1,3 +1,17 @@
+2003-10-21  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* XmlSchema.cs,
+	  XmlSchemaUtil.cs : Reduced warning message.
+	* XmlSchemaAttribute.cs : NotImplementedException should no more exist.
+	  (All things are going to be implemented.)
+	* BuiltInDatatype.cs : XsdInteger should not allow non-integer decimal.
+	* XmlSchemaSimpleType.cs : Added internal Datatype property. Implemented
+	  list type derivation validation. Added Normalize().
+	* XmlSchemaSimpleTypeContent.cs : Added Normalize(). Replaced anyType
+	  with anySimpleType.
+	* XmlSchemaSimpleTypeRestriction.cs : Implemented some facet validation,
+	  such as pattern, enumeration, and length etc.
+
 2003-10-19  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* BuiltInDatatype.cs : Implemented XsdHexBinary.Parse().

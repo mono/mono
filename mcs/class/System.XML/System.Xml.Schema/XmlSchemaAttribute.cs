@@ -195,7 +195,6 @@ namespace System.Xml.Schema
 		///		3. default and fixed must not both be present. 
 		///     4. If default and use are both present, use must have the ·actual value· optional.
 		/// </remarks>
-		[MonoTODO]
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
@@ -279,7 +278,7 @@ namespace System.Xml.Schema
 			else
 			{
 				if(RefName == null || RefName.IsEmpty) 
-					throw new NotImplementedException ("Error: Should Never Happen. refname must be present");
+					throw new InvalidOperationException ("Error: Should Never Happen. refname must be present");
 				else
 					qualifiedName = RefName;
 			}
@@ -301,7 +300,6 @@ namespace System.Xml.Schema
 		/// Schema Component: 
 		///			QName, SimpleType, Scope, Default|Fixed, annotation
 		/// </summary>
-		[MonoTODO]
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			if(IsValidated (schema.ValidationId))

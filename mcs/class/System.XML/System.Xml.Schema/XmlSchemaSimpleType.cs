@@ -46,6 +46,19 @@ namespace System.Xml.Schema
 			get{ return variety; }
 		}
 
+		internal XmlSchemaDatatype Datatype
+		{
+			get {
+				XmlSchemaDatatype dt = BaseSchemaType as XmlSchemaDatatype;
+				if (dt == null) {
+					XmlSchemaSimpleType baseSimple = BaseSchemaType as XmlSchemaSimpleType;
+					if (baseSimple != null)
+						dt = baseSimple.Datatype;
+				}
+				return dt;
+			}
+		}
+
 		/// <remarks>
 		/// For a simple Type:
 		///		1. Content must be present
@@ -204,6 +217,14 @@ namespace System.Xml.Schema
 			if (r != null)
 				ValidateDerivationValid (BaseSchemaType, r.Facets, h, schema);
 
+			// TODO: describe which validation term this belongs to.
+			XmlSchemaSimpleTypeList l = Content as XmlSchemaSimpleTypeList;
+			if (l != null) {
+				XmlSchemaSimpleType itemSimpleType = l.ValidatedListItemType as XmlSchemaSimpleType;
+				if (itemSimpleType != null && itemSimpleType.Content is XmlSchemaSimpleTypeList)
+					error (h, "List type must not be derived from another list type.");
+			}
+
 			recursed = false;
 			ValidationId = schema.ValidationId;
 			return errorCount;
@@ -323,6 +344,11 @@ namespace System.Xml.Schema
 			if (raiseError)
 				error(h, "Invalid simple type derivation was found.");
 			return false;
+		}
+
+		internal string Normalize (string s, XmlNameTable nt, XmlNamespaceManager nsmgr)
+		{
+			return Content.Normalize (s, nt, nsmgr);
 		}
 
 		//<simpleType 
