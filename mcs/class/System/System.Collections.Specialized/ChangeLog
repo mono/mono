@@ -1,3 +1,8 @@
+2004-05-24  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* StringCollection.cs: Renamed internal variable to make serialization
+	  compatible with MS.NET.
+
 2004-03-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ListDictionary.cs: mark ListEntry as serializable. Thanks to Jan

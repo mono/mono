@@ -15,15 +15,15 @@ namespace System.Collections.Specialized {
 	
 	[Serializable]
 	public class StringCollection : IList {
-		ArrayList strings = new ArrayList ();
+		ArrayList data = new ArrayList ();
 	
 		public string this [int index] {
-			get { return (string)strings [index]; }
-			set { strings [index] = value;	}
+			get { return (string)data [index]; }
+			set { data [index] = value;	}
 		}
 		
 		public int Count {
-			get { return strings.Count; }
+			get { return data.Count; }
 		}
 
 		bool IList.IsReadOnly {
@@ -36,26 +36,26 @@ namespace System.Collections.Specialized {
 		
 		
 		public int Add (string value) {
-			return strings.Add (value);
+			return data.Add (value);
 		}
 		
 		public void AddRange (string [] value) {
 			if (value == null)
 				throw new ArgumentNullException ("value");
 
-			strings.AddRange (value);
+			data.AddRange (value);
 		}
 		
 		public void Clear () {
-			strings.Clear ();
+			data.Clear ();
 		}
 		
 		public bool Contains (string value) {
-			return strings.Contains (value);
+			return data.Contains (value);
 		}
 		
 		public void CopyTo (string [] array, int index) {
-			strings.CopyTo (array, index);
+			data.CopyTo (array, index);
 		}
 		
 		public StringEnumerator GetEnumerator () {
@@ -63,11 +63,11 @@ namespace System.Collections.Specialized {
 		}
 		
 		public int IndexOf (string value) {
-			return strings.IndexOf (value);
+			return data.IndexOf (value);
 		}
 		
 		public void Insert(int index, string value) {
-			strings.Insert (index, value);
+			data.Insert (index, value);
 		}
 		
 		public bool IsReadOnly {
@@ -79,11 +79,11 @@ namespace System.Collections.Specialized {
 		}
 		
 		public void Remove (string value) {
-			strings.Remove (value);
+			data.Remove (value);
 		}
 		
 		public void RemoveAt (int index) {
-			strings.RemoveAt (index);
+			data.RemoveAt (index);
 		}
 		
 		public object SyncRoot {
@@ -116,11 +116,11 @@ namespace System.Collections.Specialized {
 		}
 		
 		void ICollection.CopyTo (Array array, int index) {
-			strings.CopyTo (array, index);
+			data.CopyTo (array, index);
 		}
 		
 		IEnumerator IEnumerable.GetEnumerator () {
-			return strings.GetEnumerator ();
+			return data.GetEnumerator ();
 		}
 	}
 }
