@@ -30,6 +30,7 @@
 
 
 using System;
+using System.Text;
 using System.Data;
 using System.Data.Odbc;
 
@@ -109,9 +110,9 @@ namespace MonoTests.System.Data.Odbc
                         reader = dbcmd.ExecuteReader ();
                         DataTable schemaTable = reader.GetSchemaTable ();
                         Assertion.AssertEquals ("GetSchemaTable.ColumnDataType failes for column #1", 
-                                        typeof (System.Byte), schemaTable.Rows [0]["DataType"]);
+                                        typeof (Byte), schemaTable.Rows [0]["DataType"]);
                         Assertion.AssertEquals ("GetSchemaTable.ColumnDataType failes for column #1", 
-                                        typeof (System.String), schemaTable.Rows [1]["DataType"]);
+                                        typeof (String), schemaTable.Rows [1]["DataType"]);
               } finally {
                         // clean up
                         if (reader != null && !reader.IsClosed)
@@ -166,7 +167,7 @@ namespace MonoTests.System.Data.Odbc
                                 buffstart += (int) retval;
 
                                 // assemble here.
-                                string col = System.Text.Encoding.Default.GetString (val, 0, buffstart);
+                                string col = Encoding.Default.GetString (val, 0, buffstart);
                                 
                                 Assertion.AssertEquals ("The assembled value length does not match", 
                                               39, col.Length);
@@ -322,7 +323,7 @@ namespace MonoTests.System.Data.Odbc
                                 Assertion.AssertEquals ("Type of tinyInt column is wrong!", 
                                                 "System.Byte", ob.GetType ().ToString () );
                                 Assertion.AssertEquals ("Value of tinyInt column is wrong!", 
-                                                1, System.Convert.ToInt16(ob) );
+                                                1, Convert.ToInt16(ob) );
                         }
                 } finally {
                         // clean up

@@ -43,6 +43,7 @@
 
 using System;
 using System.Data;
+using System.Configuration;
 using System.Data.Odbc;
 using System.Collections.Specialized;
 
@@ -59,7 +60,7 @@ namespace MonoTests.System.Data
                 public MySqlOdbcBaseClient ()
                 {
                         //Connection String with DSN.
-                        NameValueCollection appSettings = System.Configuration.ConfigurationSettings.AppSettings ;
+                        NameValueCollection appSettings = ConfigurationSettings.AppSettings ;
                         connectionString = appSettings ["MySql-DSN"];
                         conn = new OdbcConnection (connectionString);
                 }

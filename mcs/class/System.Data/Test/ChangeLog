@@ -1,3 +1,8 @@
+2005-02-15  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* MySqlTestBed.cs: fix for namespace collision MonoTests.System &
+	corlib System.
+
 2004-08-26  Sureshkumar T <TSureshkumar@novell.com>
 	* MySqlTestBed.cs - Added few more fields for DateTime testing
 

@@ -1,3 +1,9 @@
+2005-02-15  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* OdbcParameterCollectionTest.cs: fix for namespace collision
+	MonoTests.System & corlib System.
+	* OdbcDataReaderTest.cs: --do--
+
 2005-01-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* OdbcPermissionTest.cs, OdbcPermissionAttributeTest.cs:
