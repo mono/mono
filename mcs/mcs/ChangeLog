@@ -1,3 +1,11 @@
+2005-02-14  Raja R Harinath  <rharinath@novell.com>
+
+	* decl.cs (EntryType.EntryType): New constructor to create an
+	updated copy of a cache entry.
+	(MemberCache.AddMethods): Use it.
+	(MemberCache.ClearDeclaredOnly): Remove.
+	(MemberCache.MemberCache): Update.
+
 2005-02-11  Miguel de Icaza  <miguel@novell.com>
 
 	* codegen.cs (EmitContext): Introduce the `MethodIsStatic'
