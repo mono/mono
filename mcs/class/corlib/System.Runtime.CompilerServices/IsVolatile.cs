@@ -1,10 +1,7 @@
 //
-// System.Runtime.CompilerServices.IsVolatile.cs
+// System.Runtime.CompilerServices.IsVolatile
 //
-// Author: Duncan Mak  (duncan@ximian.com)
-//
-// (C) Copyright, Ximian Inc.
-
+// Author: Zoltan Varga (vargaz@gmail.com)
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -28,13 +25,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+
 using System;
 
 namespace System.Runtime.CompilerServices {
-	public sealed class IsVolatile
+
+	public static class IsVolatile
 	{
-		private IsVolatile() 
-		{
-		}
 	}
 }
+
+#endif

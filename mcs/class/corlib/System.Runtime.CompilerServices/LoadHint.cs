@@ -28,9 +28,11 @@
 #if NET_2_0
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.Runtime.CompilerServices {
 
+	[ComVisible (false)]
 	public enum LoadHint {
 		Default = 0,
 

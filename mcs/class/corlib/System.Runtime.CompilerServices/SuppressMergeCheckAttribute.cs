@@ -28,11 +28,12 @@
 #if NET_2_0
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.Runtime.CompilerServices {
 
 	[AttributeUsage (AttributeTargets.Class|AttributeTargets.Constructor|AttributeTargets.Method|AttributeTargets.Property|AttributeTargets.Field|AttributeTargets.Event)] 
-	[Serializable]
+	[ComVisible (false)]
 	public sealed class SuppressMergeCheckAttribute : Attribute
 	{
 		public SuppressMergeCheckAttribute ()

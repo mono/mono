@@ -28,6 +28,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+using System.Runtime.ConstrainedExecution;
+#endif
+
 namespace System.Runtime.CompilerServices
 {
 	[Serializable]
@@ -82,6 +86,7 @@ namespace System.Runtime.CompilerServices
 
 #if NET_2_0
 		[MonoTODO]
+		[ReliabilityContract (Consistency.WillNotCorruptState, CER.MayFail)]
 		public static void PrepareConstrainedRegions () {
 			throw new NotImplementedException ();
 		}

@@ -28,11 +28,13 @@
 #if NET_2_0
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.Runtime.CompilerServices {
 
 	[AttributeUsage (AttributeTargets.Assembly)] 
 	[Serializable]
+	[ComVisible (false)]
 	public sealed class DependencyAttribute : Attribute
 	{
 		string dependentAssembly;

@@ -31,8 +31,7 @@ using System;
 
 namespace System.Runtime.CompilerServices {
 
-	// This should be abstract as well but C# doesn't allow it
-	public sealed class IsSignUnspecifiedByte
+	public static class IsSignUnspecifiedByte
 	{
 	}
 }
