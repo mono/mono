@@ -102,5 +102,14 @@ namespace Microsoft.JScript {
 		{
 			throw new NotImplementedException ();
 		}
+
+		internal string ClassName {
+			get { 
+				if (this is ObjectPrototype)
+					return "Object";
+				else
+					throw new NotImplementedException ();
+			}
+		}
 	}
 }
