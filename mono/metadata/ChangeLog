@@ -1,3 +1,15 @@
+
+Thu Mar 28 15:58:43 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.c, debug-helpers.c, image.c, image.h, metadata.c, pedump.c,
+	rawbuffer.c, reflection.c, verify.c: mare warning cleanups.
+
+Thu Mar 28 15:20:39 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.h: fix function prototype.
+	* metadata.h, metadata.c, object.h, private.h: get rid of warnings.
+	* mono-endian.h: use const cast.
+
 2002-03-28  Dietmar Maurer  <dietmar@ximian.com>
 
 	* icall.c (ves_icall_MonoMethodMessage_InitMessage): moved from message.c
