@@ -1,4 +1,8 @@
 
+Sat Feb 16 12:00:24 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: fixed cut&paste error for ldind.r4 and ldind.r8.
+
 Fri Feb 15 15:07:27 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: use strrchr instead of rindex. use _isnan and _finite on
