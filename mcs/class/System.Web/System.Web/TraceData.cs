@@ -128,7 +128,7 @@ namespace System.Web {
 				return s;
 
 			string res = HttpUtility.HtmlEncode (s);
-			res = res.Replace ("\r\n", "<br />");
+			res = res.Replace ("\n", "<br />");
 			return res.Replace (" ", "&nbsp;");
 		}
 		
