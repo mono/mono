@@ -30,11 +30,11 @@
  file. Please follow the alphabetical order while adding the name of your test
  class.
 
- Samples are independent C# programs with a Main method. Sample are supposed
+ Samples are independent C# programs with a Main method. Samples are supposed
  to solve two purposes. First, samples expose the bugs that are not captured
- by Nunit tests. To achieve this, it is advisable that we don't repeat the
- code in a test and sample for any class until unless required. Second, samples
- help System.Drawing users in understanding System.Drawing components as well
- as in writing System.Drawing applications. Writing too trivial samples for
- well known classes might not be really helpful for the users. It is better
- to write a sample to solve a particular problem.
+ by Nunit tests. To achieve this, it is advisable not to repeat the code in a
+ test and a sample for any class until unless required. Second, samples help
+ System.Drawing users in understanding System.Drawing components as well as in
+ writing System.Drawing applications. Writing too trivial samples for well known
+ classes might not be really helpful for the users. It is better to write a sample
+ to solve a particular problem.
