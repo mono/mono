@@ -32,6 +32,7 @@ using System;
 using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace System.Web.Configuration
 {
@@ -44,6 +45,8 @@ namespace System.Web.Configuration
 		private Regex requestRegex;
 		private Regex pathRegex;
 		static Hashtable regexCache;
+		object instance;
+		bool validated;
 
 		public HandlerItem (string requestType, string path, string type, bool validate)
 		{
@@ -56,19 +59,25 @@ namespace System.Web.Configuration
 				DoValidation ();
 		}
 
-		public object Create ()
+		public object GetInstance ()
 		{
-			if (_type == null)
-				DoValidation ();
+			object obj = Interlocked.CompareExchange (ref instance, null, null);
+			if (obj != null)
+				return obj;
 
-			return HttpRuntime.CreateInternalObject (_type);
+			DoValidation ();
+			obj = HttpRuntime.CreateInternalObject (_type);
+			IHttpHandler hnd = obj as IHttpHandler;
+			if (hnd != null && hnd.IsReusable)
+				Interlocked.CompareExchange (ref instance, hnd, null);
+
+			return obj;
 		}
 
 		public Type Type
 		{
 			get {
-				if (_type == null)
-					DoValidation ();
+				DoValidation ();
 				return _type;
 			}
 		}
@@ -97,7 +106,15 @@ namespace System.Web.Configuration
 
 		void DoValidation ()
 		{
-			_type = Type.GetType (_typeName, true);
+			if (validated)
+				return;
+
+			lock (this) {
+				Type t = Type.GetType (_typeName, true);
+				_type = t;
+				validated = true;
+			}
+
 			if (typeof (IHttpHandler).IsAssignableFrom (_type))
 				return;
 			

@@ -1,3 +1,9 @@
+2004-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HandlerItem.cs: for reusable items, return the same instance always.
+	Fixes bug #69959.
+
+
 2004-11-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* GlobalizationConfigurationHandler.cs: fixed stupid typo (uiculture ->

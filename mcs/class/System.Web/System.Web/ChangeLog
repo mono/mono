@@ -1,3 +1,7 @@
+2004-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: Create() is not GetInstance().
+
 2004-11-18 Lluis Sanchez Gual <lluis@novell.com>
 
 	* SiteMapNodeCollection.cs: Added missing properties.
