@@ -1,5 +1,10 @@
 2002-04-10  Patrik Torstensson <patrik.torstensson@labs2.com>
 
+    * HttpWorkerRequest.EndOfSendNotification.cs Removed (included in WorkerRequest)
+    * Checkin of all new files (noted in last changenote)
+
+2002-04-10  Patrik Torstensson <patrik.torstensson@labs2.com>
+
     * HttpContext.cs: First implementation (basic support, few methods left to impl)
     * HttpException.cs: Partial implementation (basic support)
     * HttpHelper.cs: Header parse helper, used by runtime (non public)
