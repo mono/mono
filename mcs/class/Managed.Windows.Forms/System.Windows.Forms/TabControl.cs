@@ -38,7 +38,7 @@ namespace System.Windows.Forms {
 		private TabDrawMode draw_mode;
 		private bool multiline;
 		private ImageList image_list;
-		private Size item_size;
+		private Size item_size = Size.Empty;
 		private Point padding;
 		private int row_count = 1;
 		private bool hottrack;
@@ -46,10 +46,16 @@ namespace System.Windows.Forms {
 		private bool show_tool_tips;
 		private TabSizeMode size_mode;
 		private bool redraw;
+		private Rectangle display_rect;
 
 		public TabControl ()
 		{
 			tab_pages = new TabPageCollection (this);
+			SetStyle (ControlStyles.UserPaint, true);
+			padding = ThemeEngine.Current.TabControlDefaultPadding;
+			item_size = ThemeEngine.Current.TabControlDefaultItemSize;
+
+			MouseDown += new MouseEventHandler (MouseDownHandler);
 		}
 
 		public TabAlignment Alignment {
@@ -85,7 +91,9 @@ namespace System.Windows.Forms {
 		}
 
 		public override Rectangle DisplayRectangle {
-			get { return base.DisplayRectangle; }
+			get {
+				return ThemeEngine.Current.GetTabControlDisplayRectangle (this);
+			}
 		}
 
 		public TabDrawMode DrawMode {
@@ -120,11 +128,7 @@ namespace System.Windows.Forms {
 
 		public Size ItemSize {
 			get {
-				if (item_size != Size.Empty)
-					return item_size;
-				if (!IsHandleCreated)
-					return DefaultItemSize;
-				return TabSize;
+				return item_size;
 			}
 			set {
 				if (value.Height < 0 || value.Width < 0)
@@ -172,7 +176,17 @@ namespace System.Windows.Forms {
 					throw new ArgumentException ("'" + value + "' is not a valid value for 'value'. " +
 							"'value' must be greater than or equal to -1.");
 				}
-				// OnSelectedIndexChanged (EventArgs.Empty);
+
+				SuspendLayout ();
+				if (selected_index != -1)
+					Controls [selected_index].Visible = false;
+				selected_index = value;
+				Console.WriteLine ("selected index:  " + selected_index);
+				if (selected_index != -1) 
+					Controls [selected_index].Visible = true;
+				ResumeLayout ();
+				
+				SizeTabs (Width);
 				Refresh ();
 			}
 		}
@@ -227,7 +241,6 @@ namespace System.Windows.Forms {
 			set { base.Text = value; }
 		}
 
-		
 		[MonoTODO ("Anything special need to be done?")]
 		protected override CreateParams CreateParams {
 			get {
@@ -241,17 +254,9 @@ namespace System.Windows.Forms {
 			get { return new Size (200, 100); }  
 		}
 
-		[MonoTODO]
-		private Size TabSize {
-			get {
-				return new Size ();
-			}
-		}
-
-		[MonoTODO]
 		private Size DefaultItemSize {
 			get {
-				return new Size ();
+				return ThemeEngine.Current.TabControlDefaultItemSize;
 			}
 		}
 
@@ -283,6 +288,12 @@ namespace System.Windows.Forms {
 		public event EventHandler DrawItem;
 		public event EventHandler SelectedIndexChanged;
 
+		public Rectangle GetTabRect (int index)
+		{
+			TabPage page = GetTab (index);
+			return page.TabBounds;
+		}
+
 		public Control GetControl (int index)
 		{
 			return GetTab (index);
@@ -295,6 +306,7 @@ namespace System.Windows.Forms {
 
 		protected override void CreateHandle ()
 		{
+			ResizeTabPages ();
 			base.CreateHandle ();
 		}
 
@@ -338,6 +350,17 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		private void MouseDownHandler (object sender, MouseEventArgs e)
+		{
+			int count = Controls.Count;
+			for (int i = 0; i<count; i++) {
+				if (!GetTabRect (i).Contains (e.X, e.Y))
+					continue;
+				SelectedIndex = i;
+				break;
+			}
+		}
+
 		internal void UpdateTabpage (TabPage page)
 		{
 
@@ -352,14 +375,99 @@ namespace System.Windows.Forms {
 			return -1;
 		}
 
+		private void ResizeTabPages ()
+		{
+			SizeTabs (Width);
+			Rectangle r = DisplayRectangle;
+			foreach (TabPage page in Controls) {
+				page.Bounds = r;
+			}
+		}
+
+		private int MinimumTabWidth {
+			get {
+				return ThemeEngine.Current.TabControlMinimumTabWidth;
+			}
+		}
+
+		private Size TabSpacing {
+			get {
+				return ThemeEngine.Current.TabControlGetSpacing (this);
+			}
+		}
+
+		private void SizeTabs (int row_width)
+		{
+			int xpos = 4;
+			int ypos = 1;
+			row_count = 1;
+			Size spacing = TabSpacing;
+			
+			for (int i = 0; i < TabPages.Count; i++) {
+				TabPage page = TabPages [i];
+				int width;
+				if (SizeMode == TabSizeMode.Fixed) {
+					width = item_size.Width;
+				} else {
+					width = (int) DeviceContext.MeasureString (page.Text, Font).Width + (Padding.X * 2);
+				}
+
+				if (width < MinimumTabWidth)
+					width = MinimumTabWidth;
+
+				if (xpos + width > row_width && multiline) {
+					xpos = 4;
+					// Move everything
+					for (int j = 0; j < i; j++) {
+						TabPages [j].TabBounds = new Rectangle (
+							TabPages [j].TabBounds.X,
+							TabPages [j].TabBounds.Y + item_size.Height + spacing.Height,
+							TabPages [j].TabBounds.Width,
+							TabPages [j].TabBounds.Height);
+					}
+					row_count++;
+				}
+
+				page.TabBounds = new Rectangle (xpos, ypos, width, item_size.Height);
+				xpos += width + 1 + spacing.Width;
+				
+				if (i == SelectedIndex) {
+					 ExpandSelected (page, xpos == 4, row_width);
+				}
+			}
+		}
+
+		private void ExpandSelected (TabPage page, bool edge, int row_width)
+		{
+			int wexpand = (edge ? 2 : 4);
+
+			if (Appearance != TabAppearance.Normal)
+				return;
+
+			if (Alignment == TabAlignment.Top || Alignment == TabAlignment.Bottom) {
+				int x, y, w, h;
+				x = page.TabBounds.X - wexpand;
+				y = page.TabBounds.Y;
+				w = page.TabBounds.Width + (wexpand * 2);
+				h = page.TabBounds.Height + 2;
+
+				if (Alignment == TabAlignment.Top)
+					y -= 1;
+
+				page.TabBounds = new Rectangle (x, y, w, h);
+			} else {
+				// TODO: left and right
+			}
+		}
+
 		private void PaintInternal (PaintEventArgs pe)
 		{
 			if (this.Width <= 0 || this.Height <=  0 || this.Visible == false)
 				return;
 
 			Draw ();
-			pe.Graphics.DrawImage (this.ImageBuffer, pe.ClipRectangle, pe.ClipRectangle, GraphicsUnit.Pixel);
-
+			pe.Graphics.DrawImageUnscaled (ImageBuffer, 0, 0);
+			ImageBuffer.Save ("ImageBuffer.bmp");
 			// On MS the Paint event never seems to be raised
 		}
 
@@ -374,9 +482,7 @@ namespace System.Windows.Forms {
 
 		private void Draw ()
 		{
-			if (redraw) {
-
-			}
+			ThemeEngine.Current.DrawTabControl (DeviceContext, ClientRectangle, this);
 			redraw = false;
 		}
 
@@ -393,8 +499,12 @@ namespace System.Windows.Forms {
 
 		public class ControlCollection : System.Windows.Forms.Control.ControlCollection {
 
+			private TabControl owner;
+			private ArrayList list = new ArrayList ();
+
 			public ControlCollection (TabControl owner) : base (owner)
 			{
+				this.owner = owner;
 			}
 
 			public override void Add (Control value)
@@ -404,6 +514,9 @@ namespace System.Windows.Forms {
 						value.GetType ().Name + " to TabControl. " +
 						"Only TabPages can be directly added to TabControls.");
 				base.Add (value);
+
+				if (Count == 0)
+					owner.SelectedIndex = 0;
 			}
 		}
 
