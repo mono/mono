@@ -1,3 +1,8 @@
+2005-02-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* X509CertificateCollectionTest.cs: Disable some tests which fail
+	on 2.0.
+
 2004-06-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509CertificateCollectionTest.cs: New. Unit tests for 

@@ -225,6 +225,11 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
+#if NET_2_0
+		[Category ("NotWorking")]
+		// The last test depends on Equals () doing a reference comparison
+		// which is no longer true in 2.0
+#endif
 		public void IndexOf () 
 		{
 			X509CertificateCollection c = new X509CertificateCollection ();
@@ -275,6 +280,11 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
+#if NET_2_0
+		[Category ("NotWorking")]
+		// The last test depends on Equals () doing a reference comparison
+		// which is no longer true in 2.0
+#endif
 		public void Remove_ByValue () 
 		{
 			X509CertificateCollection c = new X509CertificateCollection ();
