@@ -1,3 +1,8 @@
+2004-02-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c: Revert the klass->refclass changes since they introduce
+	regressions (bug #54518).
+
 2004-02-18  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_class_init): If we're a generic instance and don't
