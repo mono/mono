@@ -1,3 +1,7 @@
+2002-11-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplicationFactory.cs: compile global.asax file if it exists.
+
 2002-11-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequest.cs: provide a default Browser until we detect it.

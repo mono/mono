@@ -9,6 +9,7 @@ using System.Collections;
 using System.IO;
 using System.Reflection;
 using System.Web;
+using System.Web.Compilation;
 using System.Web.SessionState;
 
 namespace System.Web {
@@ -48,12 +49,11 @@ namespace System.Web {
 		[MonoTODO("CompileApp(HttpContext context)")]
 		private void CompileApp(HttpContext context) {
 			if (File.Exists(_appFilename)) {
-				// Compile the global application file here
 				// Setup filemonitor for all filedepend also.
 
-				// tmp
-				_state = new HttpApplicationState (); // FIXME: should get it from compiled app file.
-				_appType = Type.GetType("System.Web.HttpApplication");
+				_appType = GlobalAsaxCompiler.CompileApplicationType (_appFilename);
+				if (_appType == null)
+					throw new ApplicationException ("Error compiling application file (global.asax).");
 			} else {
 				_appType = typeof (System.Web.HttpApplication);
 				_state = new HttpApplicationState ();

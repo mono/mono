@@ -293,6 +293,9 @@ class AspGenerator
 
 	Hashtable options;
 	string privateBinPath;
+	string main_directive;
+	static string app_file_wrong = "The content in the application file is not valid.";
+
 
 	enum UserControlResult
 	{
@@ -313,19 +316,11 @@ class AspGenerator
 		this.className = className.Replace (' ', '_');
 		Options ["ClassName"] = this.className;
 		this.fullPath = Path.GetFullPath (pathToFile);
-		/*
-		if (IsUserControl) {
-			this.parent = "System.Web.UI.UserControl"; // Overriden by @ Control Inherits
-			this.interfaces = "";
-		} else {
-			this.parent = "System.Web.UI.Page"; // Overriden by @ Page Inherits
-			this.interfaces = enableSessionStateLiteral;
-		}
-		//
-		//*/
+
 		this.has_form_tag = false;
 		AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
 		privateBinPath = setup.PrivateBinPath;
+		// This is a hack until we can run stuff in different domains
 		if (privateBinPath == null || privateBinPath.Length == 0)
 			privateBinPath = "bin";
 			
@@ -353,6 +348,20 @@ class AspGenerator
 		}
 	}
 	
+	public bool IsPage
+	{
+		get {
+			return (BaseType == typeof (Page).ToString ());
+		}
+	}
+	
+	public bool IsApplication
+	{
+		get {
+			return (BaseType == typeof (HttpApplication).ToString ());
+		}
+	}
+
 	public string Interfaces 
 	{
 		get {
@@ -582,32 +591,88 @@ class AspGenerator
 		if (att == null)
 			return;
 
+		string value;
 		string id = directive.TagID.ToUpper ();
 		switch (id){
+		case "APPLICATION":
+			if (main_directive != null)
+				throw new ApplicationException (id + " not allowed after " + main_directive);
+
+			if (!IsApplication)
+				throw new ApplicationException ("@Application not allowed.");
+
+			string inherits = att ["inherits"] as string;
+			if (inherits != null)
+				Options ["Inherits"] = inherits;
+
+			main_directive = directive.TagID;
+			break;
 		case "PAGE":
 		case "CONTROL":
+			if (main_directive != null)
+				throw new ApplicationException (id + " not allowed after " + main_directive);
+
 			if (IsUserControl && id != "CONTROL")
-				throw new ApplicationException ("@Page not allowed if --control specified.");
-			else if (!IsUserControl && id != "PAGE")
-				throw new ApplicationException ("@Control not allowed here.");
+				throw new ApplicationException ("@Page not allowed for user controls.");
+			else if (IsPage && id != "PAGE")
+				throw new ApplicationException ("@Control not allowed here. This is a page!");
+
 			PageDirective (att);
+			main_directive = directive.TagID;
 			break;
 		case "IMPORT":
-			foreach (string key in att.Keys){
-				if (0 == String.Compare (key, "NAMESPACE", true)){
-					string _using = "using " + (string) att [key] + ";";
-					if (prolog.ToString ().IndexOf (_using) == -1)
-						prolog.AppendFormat ("\tusing {0};\n", (string) att [key]);
-					break;
+			value = att ["namespace"] as string;
+			if (value == null || att.Count > 1)
+				throw new ApplicationException ("Wrong syntax in Import directive.");
+
+			string _using = "using " + value + ";";
+			if (prolog.ToString ().IndexOf (_using) == -1) {
+				prolog.AppendFormat ("\t{0}\n", _using);
+				string imports = Options ["Import"] as string;
+				if (imports == null) {
+					imports = value;
+				} else {
+					imports += "," + value;
 				}
+
+				Options ["Import"] = imports;
 			}
 			break;
 		case "IMPLEMENTS":
+			if (IsApplication)
+				throw new ApplicationException ("@ Implements not allowed in an application file.");
+
 			string iface = (string) att ["interface"];
 			interfaces += ", " + iface;
 			break;
 		case "REGISTER":
+			if (IsApplication)
+				throw new ApplicationException ("@ Register not allowed in an application file.");
+
 			RegisterDirective (att);
+			break;
+		case "ASSEMBLY":
+			if (att.Count > 1)
+				throw new ApplicationException ("Wrong syntax in Assembly directive.");
+
+			string name = att ["name"] as string;
+			string src = att ["src"] as string;
+
+			if (name == null && src == null)
+				throw new ApplicationException ("Wrong syntax in Assembly directive.");
+
+			if (IsApplication && src != null)
+				throw new ApplicationException ("'name' attribute expected.");
+
+			value = (name == null) ? src : name;
+			string assemblies = Options ["Assembly"] as string;
+			if (assemblies == null) {
+				assemblies = value;
+			} else {
+				assemblies += "," + value;
+			}
+
+			Options ["Assembly"] = assemblies;
 			break;
 		}
 	}
@@ -616,10 +681,16 @@ class AspGenerator
 	{
 		PlainText asis = (PlainText) elements.Current;
 		string trimmed = asis.Text.Trim ();
-		if (trimmed == "" && controls.SpaceBetweenTags == true)
+		if (trimmed == String.Empty && controls.SpaceBetweenTags == true)
 			return;
 
-		if (trimmed != "" && controls.PeekChildKind () != ChildrenKind.CONTROLS){
+		if (IsApplication) {
+			if (trimmed != String.Empty)
+				throw new ApplicationException (app_file_wrong);
+			return;
+		}
+
+		if (trimmed != String.Empty && controls.PeekChildKind () != ChildrenKind.CONTROLS){
 			string tag_id = controls.PeekTagID ();
 			throw new ApplicationException ("Literal content not allowed for " + tag_id);
 		}
@@ -1122,6 +1193,8 @@ class AspGenerator
 			if (elements.Current is CloseTag)
 				elements.MoveNext ();
 			return;
+		} else if (IsApplication) {
+			throw new ApplicationException (app_file_wrong);
 		}
 		
 		Type controlType = html_ctrl.ControlType;
@@ -1475,19 +1548,32 @@ class AspGenerator
 			} else if (element is PlainText){
 				ProcessPlainText ();
 			} else if (element is DataBindingTag){
+				if (IsApplication)
+					throw new ApplicationException (app_file_wrong);
 				ProcessDataBindingLiteral ();
 			} else if (element is CodeRenderTag){
+				if (IsApplication)
+					throw new ApplicationException (app_file_wrong);
 				ProcessCodeRenderTag ();
 			} else {
 				elements.Current = Map ((Tag) element);
-				if (elements.Current is HtmlControlTag)
+				if (elements.Current is ServerObjectTag) {
+					ProcessServerObjectTag ();
+					continue;
+				}
+
+				if (elements.Current is HtmlControlTag) {
 					ProcessHtmlControlTag ();
+					continue;
+				}
+
+				if (IsApplication)
+					throw new ApplicationException (app_file_wrong);
+
 				else if (elements.Current is AspComponent)
 					ProcessComponent ();
 				else if (elements.Current is CloseTag)
 					ProcessCloseTag ();
-				else if (elements.Current is ServerObjectTag)
-					ProcessServerObjectTag ();
 				else if (elements.Current is Tag)
 					ProcessHtmlTag ();
 				else
@@ -1501,14 +1587,17 @@ class AspGenerator
 		classDecl = "\tpublic class " + className + " : " + parent + interfaces + " {\n"; 
 		prolog.Append ("\n" + classDecl);
 		declarations.Append ("\t\tprivate static bool __intialized = false;\n\n");
-		if (!IsUserControl)
+		if (IsPage)
 			declarations.Append ("\t\tprivate static ArrayList __fileDependencies;\n\n");
 
 		// adds the constructor
-		constructor.AppendFormat ("\t\tpublic {0} ()\n\t\t{{\n" + 
-					"\t\t\tSystem.Collections.ArrayList dependencies;\n\n" +
-					"\t\t\tif (ASP.{0}.__intialized == false){{\n", className); 
-		if (!IsUserControl) {
+		constructor.AppendFormat ("\t\tpublic {0} ()\n\t\t{{\n", className);
+		if (!IsApplication)
+			constructor.Append ("\t\t\tSystem.Collections.ArrayList dependencies;\n\n");
+			
+		constructor.AppendFormat ("\t\t\tif (ASP.{0}.__intialized == false){{\n", className); 
+
+		if (IsPage) {
 			constructor.AppendFormat ("\t\t\t\tdependencies = new System.Collections.ArrayList ();\n" +
 						"\t\t\t\tdependencies.Add (@\"{1}\");\n" +
 						"\t\t\t\tASP.{0}.__fileDependencies = dependencies;\n",
@@ -1518,35 +1607,37 @@ class AspGenerator
 		constructor.AppendFormat ("\t\t\t\tASP.{0}.__intialized = true;\n\t\t\t}}\n\t\t}}\n\n",
 					  className);
          
-		//FIXME: add AutoHandlers: don't know what for...yet!
-		constructor.AppendFormat (
-			"\t\tprotected override int AutoHandlers\n\t\t{{\n" +
-			"\t\t\tget {{ return ASP.{0}.__autoHandlers; }}\n" +
-			"\t\t\tset {{ ASP.{0}.__autoHandlers = value; }}\n" +
-			"\t\t}}\n\n", className);
+		if (!IsApplication) {
+			//FIXME: add AutoHandlers: don't know what for...yet!
+			constructor.AppendFormat (
+				"\t\tprotected override int AutoHandlers\n\t\t{{\n" +
+				"\t\t\tget {{ return ASP.{0}.__autoHandlers; }}\n" +
+				"\t\t\tset {{ ASP.{0}.__autoHandlers = value; }}\n" +
+				"\t\t}}\n\n", className);
 
-		//FIXME: add ApplicationInstance: don't know what for...yet!
-		constructor.Append (
-			"\t\tprotected System.Web.HttpApplication ApplicationInstance\n\t\t{\n" +
-			"\t\t\tget { return (System.Web.HttpApplication) this.Context.ApplicationInstance; }\n" +
-			"\t\t}\n\n");
-		//FIXME: add TemplateSourceDirectory: don't know what for...yet!
-		//FIXME: it should be the path from the root where the file resides
-		constructor.Append (
-			"\t\tpublic override string TemplateSourceDirectory\n\t\t{\n" +
-			"\t\t\tget { return \"/dummypath\"; }\n" +
-			"\t\t}\n\n");
+			constructor.Append (
+				"\t\tprotected System.Web.HttpApplication ApplicationInstance\n\t\t{\n" +
+				"\t\t\tget { return (System.Web.HttpApplication) this.Context.ApplicationInstance; }\n" +
+				"\t\t}\n\n");
+			//FIXME: add TemplateSourceDirectory: don't know what for...yet!
+			//FIXME: it should be the path from the root where the file resides
+			constructor.Append (
+				"\t\tpublic override string TemplateSourceDirectory\n\t\t{\n" +
+				"\t\t\tget { return \"/dummypath\"; }\n" +
+				"\t\t}\n\n");
 
-		epilog.Append ("\n\t\tprotected override void FrameworkInitialize ()\n\t\t{\n" +
-				"\t\t\tthis.__BuildControlTree (this);\n");
+			epilog.Append ("\n\t\tprotected override void FrameworkInitialize ()\n\t\t{\n" +
+					"\t\t\tthis.__BuildControlTree (this);\n");
 
-		if (!IsUserControl) {
-			epilog.AppendFormat ("\t\t\tthis.FileDependencies = ASP.{0}.__fileDependencies;\n" +
-						"\t\t\tthis.EnableViewStateMac = true;\n", className);
+			if (IsPage) {
+				epilog.AppendFormat ("\t\t\tthis.FileDependencies = ASP.{0}.__fileDependencies;\n" +
+							"\t\t\tthis.EnableViewStateMac = true;\n", className);
+			}
+
+			epilog.Append ("\t\t}\n\n");
 		}
-		epilog.Append ("\t\t}\n\n");
 
-		if (!IsUserControl) {
+		if (IsPage) {
 			Random rnd = new Random ();
 			epilog.AppendFormat ("\t\tpublic override int GetTypeHashCode ()\n\t\t{{\n" +
 					     "\t\t\treturn {0};\n" +

@@ -1,3 +1,10 @@
+2002-11-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspElements.cs: added @Application directive.
+
+	* AspGenerator.cs: make it work also with application files. We
+	currently generate an extra private function.
+
 2002-11-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* GlobalAsaxCompiler.cs: compiler for global.asax file. If the file

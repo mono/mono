@@ -351,6 +351,8 @@ namespace System.Web.Compilation
 
 		private static string [] webservice_atts = { "class", "codebehind", "debug", "language" };
 
+		private static string [] application_atts = { "description", "inherits" };
+
 		static Directive ()
 		{
 			InitHash ();
@@ -399,6 +401,10 @@ namespace System.Web.Compilation
 			valid_attributes = new Hashtable (provider, comparer);
 			foreach (string att in webservice_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("WEBSERVICE", valid_attributes);
+
+			valid_attributes = new Hashtable (provider, comparer);
+			foreach (string att in application_atts) valid_attributes.Add (att, null);
+			directivesHash.Add ("APPLICATION", valid_attributes);
 		}
 		
 		public Directive (string tag, TagAttributes attributes) :
