@@ -352,6 +352,11 @@ namespace Mono.CSharp.Debugger
 
 		public SourceLine Start {
 			get {
+				if (_implicit_block.Start == null)
+					return null;
+				else if (_implicit_block.Start.Row == 0)
+					return null;
+
 				return _implicit_block.Start;
 			}
 		}
@@ -635,8 +640,8 @@ namespace Mono.CSharp.Debugger
 
 		protected void CreateOutput (Assembly assembly)
 		{
-			using (MonoSymbolTableWriter writer = new MonoSymbolTableWriter (output_filename))
-				writer.WriteSymbolTable (this);
+			MonoSymbolTableWriter writer = new MonoSymbolTableWriter (output_filename);
+			writer.WriteSymbolTable (this);
 		}
 	}
 }

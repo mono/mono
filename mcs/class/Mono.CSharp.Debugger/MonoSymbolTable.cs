@@ -18,64 +18,46 @@ namespace Mono.CSharp.Debugger
 {
 	public struct OffsetTable
 	{
-		public const int  Version = 28;
+		public const int  Version = 29;
 		public const long Magic   = 0x45e82623fd7fa614;
 
-		public int total_file_size;
-		public int source_table_offset;
-		public int source_table_size;
-		public int method_count;
-		public int method_table_offset;
-		public int method_table_size;
-		public int line_number_table_offset;
-		public int line_number_table_size;
-		public int local_variable_table_offset;
-		public int local_variable_table_size;
-		public int source_file_table_offset;
-		public int source_file_table_size;
-		public int source_file_count;
-		public int type_count;
-		public int type_index_table_offset;
-		public int type_index_table_size;
+		public int TotalFileSize;
+		public int DataSectionOffset;
+		public int DataSectionSize;
+		public int SourceCount;
+		public int SourceTableOffset;
+		public int SourceTableSize;
+		public int MethodCount;
+		public int MethodTableOffset;
+		public int MethodTableSize;
+		public int TypeCount;
 
-		public OffsetTable (IMonoBinaryReader reader)
+		internal OffsetTable (BinaryReader reader)
 		{
-			total_file_size = reader.ReadInt32 ();
-			source_table_offset = reader.ReadInt32 ();
-			source_table_size = reader.ReadInt32 ();
-			method_count = reader.ReadInt32 ();
-			method_table_offset = reader.ReadInt32 ();
-			method_table_size = reader.ReadInt32 ();
-			line_number_table_offset = reader.ReadInt32 ();
-			line_number_table_size = reader.ReadInt32 ();
-			local_variable_table_offset = reader.ReadInt32 ();
-			local_variable_table_size = reader.ReadInt32 ();
-			source_file_table_offset = reader.ReadInt32 ();
-			source_file_table_size = reader.ReadInt32 ();
-			source_file_count = reader.ReadInt32 ();
-			type_count = reader.ReadInt32 ();
-			type_index_table_offset = reader.ReadInt32 ();
-			type_index_table_size = reader.ReadInt32 ();
+			TotalFileSize = reader.ReadInt32 ();
+			DataSectionOffset = reader.ReadInt32 ();
+			DataSectionSize = reader.ReadInt32 ();
+			SourceCount = reader.ReadInt32 ();
+			SourceTableOffset = reader.ReadInt32 ();
+			SourceTableSize = reader.ReadInt32 ();
+			MethodCount = reader.ReadInt32 ();
+			MethodTableOffset = reader.ReadInt32 ();
+			MethodTableSize = reader.ReadInt32 ();
+			TypeCount = reader.ReadInt32 ();
 		}
 
-		public void Write (BinaryWriter bw)
+		internal void Write (BinaryWriter bw)
 		{
-			bw.Write (total_file_size);
-			bw.Write (source_table_offset);
-			bw.Write (source_table_size);
-			bw.Write (method_count);
-			bw.Write (method_table_offset);
-			bw.Write (method_table_size);
-			bw.Write (line_number_table_offset);
-			bw.Write (line_number_table_size);
-			bw.Write (local_variable_table_offset);
-			bw.Write (local_variable_table_size);
-			bw.Write (source_file_table_offset);
-			bw.Write (source_file_table_size);
-			bw.Write (source_file_count);
-			bw.Write (type_count);
-			bw.Write (type_index_table_offset);
-			bw.Write (type_index_table_size);
+			bw.Write (TotalFileSize);
+			bw.Write (DataSectionOffset);
+			bw.Write (DataSectionSize);
+			bw.Write (SourceCount);
+			bw.Write (SourceTableOffset);
+			bw.Write (SourceTableSize);
+			bw.Write (MethodCount);
+			bw.Write (MethodTableOffset);
+			bw.Write (MethodTableSize);
+			bw.Write (TypeCount);
 		}
 	}
 
@@ -94,7 +76,7 @@ namespace Mono.CSharp.Debugger
 			: this (line.Row, line.Offset)
 		{ }
 
-		public LineNumberEntry (IMonoBinaryReader reader)
+		internal LineNumberEntry (BinaryReader reader)
 		{
 			Row = reader.ReadInt32 ();
 			Offset = reader.ReadInt32 ();
@@ -125,21 +107,19 @@ namespace Mono.CSharp.Debugger
 			this.Signature = Signature;
 		}
 
-		public LocalVariableEntry (IMonoBinaryReader reader)
+		internal LocalVariableEntry (BinaryReader reader)
 		{
 			int name_length = reader.ReadInt32 ();
-			byte[] name = reader.ReadBuffer (name_length);
+			byte[] name = reader.ReadBytes (name_length);
 			Name = Encoding.UTF8.GetString (name);
 			Attributes = (FieldAttributes) reader.ReadInt32 ();
 			int sig_length = reader.ReadInt32 ();
-			Signature = reader.ReadBuffer (sig_length);
+			Signature = reader.ReadBytes (sig_length);
 		}
 
-		internal void Write (BinaryWriter bw)
+		internal void Write (MonoSymbolFile file, BinaryWriter bw)
 		{
-			byte[] name = Encoding.UTF8.GetBytes (Name);
-			bw.Write ((int) name.Length);
-			bw.Write (name);
+			file.WriteString (bw, Name);
 			bw.Write ((int) Attributes);
 			bw.Write ((int) Signature.Length);
 			bw.Write (Signature);
@@ -153,74 +133,106 @@ namespace Mono.CSharp.Debugger
 
 	public class SourceFileEntry
 	{
-		public readonly string SourceFile;
-
-		IMonoBinaryReader reader;
-		long method_position;
+		MonoSymbolFile file;
+		string file_name;
 		ArrayList methods;
-		int count;
+		int index, count, name_offset, method_offset;
+		bool creating;
 
-		internal SourceFileEntry (string source_file)
-		{
-			this.SourceFile = source_file;
-			this.methods = new ArrayList ();
-			this.count = 0;
+		internal static int Size {
+			get { return 16; }
 		}
 
-		internal void AddMethod (MethodSourceEntry method)
+		internal SourceFileEntry (MonoSymbolFile file, string file_name, int index)
 		{
-			methods.Add (method);
-			count++;
+			this.file = file;
+			this.file_name = file_name;
+			this.index = index;
+
+			creating = true;
+			methods = new ArrayList ();
+		}
+
+		public void DefineMethod (MethodBase method, int token, LocalVariableEntry[] locals,
+					  LineNumberEntry[] lines, int start, int end)
+		{
+			if (!creating)
+				throw new InvalidOperationException ();
+
+			MethodEntry entry = new MethodEntry (
+				file, this, method, token, locals, lines, start, end);
+
+			methods.Add (entry);
+			file.AddMethod (entry);
+		}
+
+		internal void WriteData (BinaryWriter bw)
+		{
+			name_offset = (int) bw.BaseStream.Position;
+			file.WriteString (bw, file_name);
+
+			ArrayList list = new ArrayList ();
+			foreach (MethodEntry entry in methods)
+				list.Add (entry.Write (file, bw));
+			list.Sort ();
+			count = list.Count;
+
+			method_offset = (int) bw.BaseStream.Position;
+			foreach (MethodSourceEntry method in list)
+				method.Write (bw);
 		}
 
 		internal void Write (BinaryWriter bw)
 		{
-			byte[] name = Encoding.UTF8.GetBytes (SourceFile);
-			bw.Write ((int) name.Length);
-			bw.Write (name);
-
-			methods.Sort ();
-			bw.Write (methods.Count);
-			foreach (MethodSourceEntry method in methods)
-				method.Write (bw);
+			bw.Write (index);
+			bw.Write (count);
+			bw.Write (name_offset);
+			bw.Write (method_offset);
 		}
 
-		public SourceFileEntry (IMonoBinaryReader reader)
+		internal SourceFileEntry (MonoSymbolFile file, BinaryReader reader)
 		{
-			int name_length = reader.ReadInt32 ();
-			byte[] name = reader.ReadBuffer (name_length);
-			SourceFile = Encoding.UTF8.GetString (name);
+			this.file = file;
 
+			index = reader.ReadInt32 ();
 			count = reader.ReadInt32 ();
-			this.reader = reader;
-			this.method_position = reader.Position;
+			name_offset = reader.ReadInt32 ();
+			method_offset = reader.ReadInt32 ();
 
-			reader.Position += count * MethodSourceEntry.Size;
+			file_name = file.ReadString (name_offset);
+		}
+
+		public int Index {
+			get { return index; }
+		}
+
+		public string FileName {
+			get { return file_name; }
 		}
 
 		public MethodSourceEntry[] Methods {
 			get {
-				read_methods ();
-				MethodSourceEntry[] retval = new MethodSourceEntry [methods.Count];
-				methods.CopyTo (retval, 0);
+				if (creating)
+					throw new InvalidOperationException ();
+
+				BinaryReader reader = file.BinaryReader;
+				int old_pos = (int) reader.BaseStream.Position;
+
+				reader.BaseStream.Position = method_offset;
+				ArrayList list = new ArrayList ();
+				for (int i = 0; i < count; i ++)
+					list.Add (new MethodSourceEntry (reader));
+				reader.BaseStream.Position = old_pos;
+
+				MethodSourceEntry[] retval = new MethodSourceEntry [count];
+				list.CopyTo (retval, 0);
 				return retval;
 			}
 		}
 
-		void read_methods ()
-		{
-			if (methods != null)
-				return;
-
-			reader.Position = method_position;
-			methods = new ArrayList ();
-			for (int i = 0; i < count; i++)
-				methods.Add (new MethodSourceEntry (reader));
-		}
-
 		public override string ToString ()
 		{
-			return String.Format ("SourceFileEntry ({0}:{1})", SourceFile, count);
+			return String.Format ("SourceFileEntry ({0}:{1}:{2})", index, file_name, count);
 		}
 	}
 
@@ -239,7 +251,7 @@ namespace Mono.CSharp.Debugger
 			this.EndRow = end;
 		}
 
-		public MethodSourceEntry (IMonoBinaryReader reader)
+		internal MethodSourceEntry (BinaryReader reader)
 		{
 			Index = reader.ReadInt32 ();
 			FileOffset = reader.ReadInt32 ();
@@ -283,34 +295,52 @@ namespace Mono.CSharp.Debugger
 
 	public class MethodEntry
 	{
+		#region This is actually written to the symbol file
+		public readonly int SourceFileIndex;
 		public readonly int Token;
 		public readonly int StartRow;
 		public readonly int EndRow;
-		public readonly int NumLineNumbers;
 		public readonly int ThisTypeIndex;
 		public readonly int NumParameters;
 		public readonly int NumLocals;
+		public readonly int NumLineNumbers;
 
-		public int TypeIndexTableOffset;
-		public int LocalVariableTableOffset;
-		public readonly int SourceFileOffset;
-		public readonly int LineNumberTableOffset;
+		int NameOffset;
+		int FullNameOffset;
+		int TypeIndexTableOffset;
+		int LocalVariableTableOffset;
+		int LineNumberTableOffset;
+		#endregion
 
-		public readonly string SourceFile = null;
-		public readonly LineNumberEntry[] LineNumbers = null;
-		public readonly int[] ParamTypeIndices = null;
-		public readonly int[] LocalTypeIndices = null;
-		public readonly LocalVariableEntry[] Locals = null;
+		int index;
+		int file_offset;
+		string name;
+		string full_name;
+
+		public readonly SourceFileEntry SourceFile;
+		public readonly LineNumberEntry[] LineNumbers;
+		public readonly int[] ParamTypeIndices;
+		public readonly int[] LocalTypeIndices;
+		public readonly LocalVariableEntry[] Locals;
 
 		public static int Size
 		{
 			get {
-				return 44;
+				return 48;
 			}
 		}
 
-		public MethodEntry (IMonoBinaryReader reader)
+		public string Name {
+			get { return name; }
+		}
+
+		public string FullName {
+			get { return full_name; }
+		}
+
+		internal MethodEntry (MonoSymbolFile file, BinaryReader reader)
 		{
+			SourceFileIndex = reader.ReadInt32 ();
 			Token = reader.ReadInt32 ();
 			StartRow = reader.ReadInt32 ();
 			EndRow = reader.ReadInt32 ();
@@ -318,47 +348,44 @@ namespace Mono.CSharp.Debugger
 			NumParameters = reader.ReadInt32 ();
 			NumLocals = reader.ReadInt32 ();
 			NumLineNumbers = reader.ReadInt32 ();
+			NameOffset = reader.ReadInt32 ();
+			FullNameOffset = reader.ReadInt32 ();
 			TypeIndexTableOffset = reader.ReadInt32 ();
 			LocalVariableTableOffset = reader.ReadInt32 ();
-			SourceFileOffset = reader.ReadInt32 ();
 			LineNumberTableOffset = reader.ReadInt32 ();
 
-			if (SourceFileOffset != 0) {
-				long old_pos = reader.Position;
-				reader.Position = SourceFileOffset;
-				int source_file_length = reader.ReadInt32 ();
-				byte[] source_file = reader.ReadBuffer (source_file_length);
-				SourceFile = Encoding.UTF8.GetString (source_file);
-				reader.Position = old_pos;
-			}
+			name = file.ReadString (NameOffset);
+			full_name = file.ReadString (FullNameOffset);
+
+			SourceFile = file.GetSourceFile (SourceFileIndex);
 
 			if (LineNumberTableOffset != 0) {
-				long old_pos = reader.Position;
-				reader.Position = LineNumberTableOffset;
+				long old_pos = reader.BaseStream.Position;
+				reader.BaseStream.Position = LineNumberTableOffset;
 
 				LineNumbers = new LineNumberEntry [NumLineNumbers];
 
 				for (int i = 0; i < NumLineNumbers; i++)
 					LineNumbers [i] = new LineNumberEntry (reader);
 
-				reader.Position = old_pos;
+				reader.BaseStream.Position = old_pos;
 			}
 
 			if (LocalVariableTableOffset != 0) {
-				long old_pos = reader.Position;
-				reader.Position = LocalVariableTableOffset;
+				long old_pos = reader.BaseStream.Position;
+				reader.BaseStream.Position = LocalVariableTableOffset;
 
 				Locals = new LocalVariableEntry [NumLocals];
 
 				for (int i = 0; i < NumLocals; i++)
 					Locals [i] = new LocalVariableEntry (reader);
 
-				reader.Position = old_pos;
+				reader.BaseStream.Position = old_pos;
 			}
 
 			if (TypeIndexTableOffset != 0) {
-				long old_pos = reader.Position;
-				reader.Position = TypeIndexTableOffset;
+				long old_pos = reader.BaseStream.Position;
+				reader.BaseStream.Position = TypeIndexTableOffset;
 
 				ParamTypeIndices = new int [NumParameters];
 				LocalTypeIndices = new int [NumLocals];
@@ -368,34 +395,90 @@ namespace Mono.CSharp.Debugger
 				for (int i = 0; i < NumLocals; i++)
 					LocalTypeIndices [i] = reader.ReadInt32 ();
 
-				reader.Position = old_pos;
+				reader.BaseStream.Position = old_pos;
 			}
 		}
 
-		internal MethodEntry (int token, int sf_offset, string source_file,
-				      int this_type_index, int[] param_type_indices,
-				      int[] local_type_indices, LocalVariableEntry[] locals,
-				      LineNumberEntry[] lines, int lnt_offset,
+		internal MethodEntry (MonoSymbolFile file, SourceFileEntry source, MethodBase method,
+				      int token, LocalVariableEntry[] locals, LineNumberEntry[] lines,
 				      int start_row, int end_row)
 		{
-			this.Token = token;
-			this.StartRow = start_row;
-			this.EndRow = end_row;
-			this.NumLineNumbers = lines.Length;
-			this.ThisTypeIndex = this_type_index;
-			this.NumParameters = param_type_indices.Length;
-			this.NumLocals = local_type_indices.Length;
-			this.ParamTypeIndices = param_type_indices;
-			this.LocalTypeIndices = local_type_indices;
-			this.Locals = locals;
-			this.SourceFileOffset = sf_offset;
-			this.LineNumberTableOffset = lnt_offset;
-			this.SourceFile = source_file;
-			this.LineNumbers = lines;
+			index = file.GetNextMethodIndex ();
+
+			Token = token;
+			SourceFileIndex = source.Index;
+			SourceFile = source;
+			StartRow = start_row;
+			EndRow = end_row;
+
+			NumLineNumbers = lines.Length;
+			LineNumbers = lines;
+
+			ParameterInfo[] parameters = method.GetParameters ();
+			if (parameters == null)
+				parameters = new ParameterInfo [0];
+
+			StringBuilder sb = new StringBuilder ();
+			sb.Append (method.DeclaringType.FullName);
+			sb.Append (".");
+			sb.Append (method.Name);
+			sb.Append ("(");
+			for (int i = 0; i < parameters.Length; i++) {
+				if (i > 0)
+					sb.Append (",");
+				sb.Append (parameters [i].ParameterType.FullName);
+			}
+			sb.Append (")");
+
+			name = method.Name;
+			full_name = sb.ToString ();
+
+			NumParameters = parameters.Length;
+			ParamTypeIndices = new int [NumParameters];
+			for (int i = 0; i < NumParameters; i++)
+				ParamTypeIndices [i] = file.DefineType (parameters [i].ParameterType);
+
+			NumLocals = locals.Length;
+			Locals = locals;
+
+			LocalTypeIndices = new int [NumLocals];
+			for (int i = 0; i < NumLocals; i++)
+				LocalTypeIndices [i] = file.GetNextTypeIndex ();
+
+			if (method.IsStatic)
+				ThisTypeIndex = 0;
+			else
+				ThisTypeIndex = file.DefineType (method.ReflectedType);
 		}
 
-		internal void Write (BinaryWriter bw)
+		internal MethodSourceEntry Write (MonoSymbolFile file, BinaryWriter bw)
 		{
+			NameOffset = (int) bw.BaseStream.Position;
+			file.WriteString (bw, name);
+
+			FullNameOffset = (int) bw.BaseStream.Position;
+			file.WriteString (bw, full_name);
+
+			TypeIndexTableOffset = (int) bw.BaseStream.Position;
+
+			for (int i = 0; i < NumParameters; i++)
+				bw.Write (ParamTypeIndices [i]);
+			for (int i = 0; i < NumLocals; i++)
+				bw.Write (LocalTypeIndices [i]);
+
+			LocalVariableTableOffset = (int) bw.BaseStream.Position;
+
+			for (int i = 0; i < NumLocals; i++)
+				Locals [i].Write (file, bw);
+
+			LineNumberTableOffset = (int) bw.BaseStream.Position;
+
+			for (int i = 0; i < NumLineNumbers; i++)
+				LineNumbers [i].Write (bw);
+
+			file_offset = (int) bw.BaseStream.Position;
+
+			bw.Write (SourceFileIndex);
 			bw.Write (Token);
 			bw.Write (StartRow);
 			bw.Write (EndRow);
@@ -403,17 +486,26 @@ namespace Mono.CSharp.Debugger
 			bw.Write (NumParameters);
 			bw.Write (NumLocals);
 			bw.Write (NumLineNumbers);
+			bw.Write (NameOffset);
+			bw.Write (FullNameOffset);
 			bw.Write (TypeIndexTableOffset);
 			bw.Write (LocalVariableTableOffset);
-			bw.Write (SourceFileOffset);
 			bw.Write (LineNumberTableOffset);
+
+			return new MethodSourceEntry (index, file_offset, StartRow, EndRow);
+		}
+
+		internal void WriteIndex (BinaryWriter bw)
+		{
+			bw.Write (file_offset);
+			bw.Write (FullNameOffset);
 		}
 
 		public override string ToString ()
 		{
-			return String.Format ("[Method {0}:{1}:{2}:{3}:{4} - {5}:{6}]",
-					      Token, SourceFile, StartRow, EndRow,
-					      NumLineNumbers, SourceFileOffset, LineNumberTableOffset);
+			return String.Format ("[Method {0}:{1}:{2}:{3}:{4} - {5} - {6}]",
+					      SourceFileIndex, index, Token, StartRow, EndRow,
+					      SourceFile, FullName);
 		}
 	}
 }

@@ -3,4 +3,4 @@ MonoSymbolDocumentWriter.cs
 MonoSymbolWriter.cs
 MonoSymbolTable.cs
 MonoSymbolTableWriter.cs
-IMonoBinaryReader.cs
+MonoSymbolFile.cs
