@@ -1,3 +1,7 @@
+2004-06-23  Jackson Harper  <jackson@ximian.com>
+
+	* Driver.cs: Use the same success message as MS.
+	
 2004-06-19  Jackson Harper  <jackson@ximian.com>
 
 	* ilasm.exe.sources: Add MethodPointerTypeRef.cs to the build.
