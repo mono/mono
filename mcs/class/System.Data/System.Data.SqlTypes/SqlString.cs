@@ -286,11 +286,20 @@ namespace System.Data.SqlTypes
 				return 1;
 			else if (!(value is SqlString))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Data.SqlTypes.SqlString"));
-			else if (((SqlString)value).IsNull)
+			
+			return CompareSqlString ((SqlString)value);
+		}
+
+		
+		private int CompareSqlString (SqlString value)
+		{
+			if (value.IsNull)
 				return 1;
+			else if (value.CompareOptions != this.CompareOptions)
+				throw new SqlTypeException (Locale.GetText ("Two strings to be compared have different collation"));
 //			else
 //				return String.Compare (this.value, ((SqlString)value).Value, (this.SqlCompareOptions & SqlCompareOptions.IgnoreCase) != 0, this.CultureInfo);
-			return CultureInfo.CompareInfo.Compare (this.value, ((SqlString)value).Value, this.CompareOptions);
+			return CultureInfo.CompareInfo.Compare (this.value, value.Value, this.CompareOptions);
 		}
 
 		public static SqlString Concat(SqlString x, SqlString y) 
@@ -449,9 +458,12 @@ namespace System.Data.SqlTypes
 		// Concatenates
 		public static SqlString operator + (SqlString x, SqlString y) 
 		{
-			if (x.IsNull || y.IsNull)
-				return SqlString.Null;
+			 if (x.IsNull || y.IsNull)
+                                return SqlString.Null;
 
+			if (( x == null) || (y == null))
+                                return SqlString.Null;
+			
 			return new SqlString (x.Value + y.Value);
 		}
 
@@ -611,6 +623,21 @@ namespace System.Data.SqlTypes
 		{
 			return new SqlString (x);
 		}
+
+		#if NET_2_0
+                public static SqlString Add (SqlString x, SqlString y)
+                {
+                  	return ( x + y);
+                                                                                                    
+                }
+
+		public int CompareTo (SqlString value)
+                {
+                	return CompareSqlString (value);
+                }
+                #endif
+
+
 
 		#endregion // Public Methods
 	}

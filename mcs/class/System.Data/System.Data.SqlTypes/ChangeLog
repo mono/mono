@@ -1,3 +1,7 @@
+2004-07-14 Umadevi S <sumadevi@novell.com>
+	* SqlString.cs :Fixed + operator for null, CompareTo to throw SqlTypeException
+			Implemented Add and CompareTo methods from .NET2.0
+
 2004-06-18  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* SqlNullValueException.cs: fixed serialization
