@@ -16,41 +16,15 @@ namespace Commons.Xml.Relaxng
 {
 	internal class Util
 	{
-		public static string ResolveUri (string baseUri, string href)
+		public static string ResolveUri (string baseUri, string href, XmlResolver resolver)
 		{
-#if true
 			Uri uri = null;
 			if (baseUri != null && baseUri.Length > 0)
 				uri = new Uri (baseUri);
-			Uri result = new XmlUrlResolver ().ResolveUri (uri, href);
+			Uri result = resolver.ResolveUri (uri, href);
 			if (result.Query.Length > 0 || result.Fragment.Length > 0)
 				throw new RelaxngException ("Invalid URI format: " + href);
 			return result.ToString ();
-#else
-			// If baseUri does not exist, then it is only the way.
-			if (baseUri == String.Empty)
-				return href;
-
-			// If href itself is a uri, then return it directly.
-			try {
-				return new Uri (href).ToString ();
-			} catch (UriFormatException) {
-			}
-
-			// If baseUri is a valid uri, then make relative uri.
-			try {
-				return new Uri (
-					new Uri (baseUri), href).ToString ();
-			} catch (UriFormatException) {
-			}
-
-			// Otherwise, they might be filesystem path.
-			if (Path.IsPathRooted (href))
-				return href;
-
-			return Path.Combine (
-				Path.GetDirectoryName (baseUri), href);
-#endif
 		}
 
 		public static string NormalizeWhitespace (string s)

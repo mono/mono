@@ -1,3 +1,9 @@
+2004-06-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Misc.cs, RelaxngGrammar.cs, RelaxngPattern.cs, RelaxngReader.cs :
+	  Added XmlResolver property to fix bug #60334.
+	  Check incrrect recursion check that caused possible infinite loop.
+
 2004-05-31  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Misc.cs : made Util class internal.

@@ -33,6 +33,7 @@ namespace Commons.Xml.Relaxng
 		// fields
 		Stack nsStack = new Stack ();
 		Stack datatypeLibraryStack = new Stack ();
+		XmlResolver resolver = new XmlUrlResolver ();
 
 		// ctor
 		public RelaxngReader (XmlReader reader)
@@ -50,6 +51,14 @@ namespace Commons.Xml.Relaxng
 			if (Reader.ReadState == ReadState.Initial)
 				Read ();
 			MoveToContent ();
+		}
+
+		public XmlResolver XmlResolver {
+			set { resolver = value; }
+		}
+
+		internal XmlResolver Resolver {
+			get { return resolver; }
 		}
 
 		private void FillLocation (RelaxngElementBase el)
@@ -432,7 +441,7 @@ namespace Commons.Xml.Relaxng
 			string href = GetSpaceStrippedAttribute ("href");
 			if (href == null)
 				throw new RelaxngException ("Required attribute href was not found.");
-			i.Href = Util.ResolveUri (BaseURI, href);
+			i.Href = Util.ResolveUri (BaseURI, href, resolver);
 			if (!IsEmptyElement) {
 				Read ();
 				this.readGrammarIncludeContent (i.Starts, i.Defines, i.Divs, null);
@@ -631,7 +640,7 @@ namespace Commons.Xml.Relaxng
 			string href = GetSpaceStrippedAttribute ("href");
 			if (href == null)
 				throw new RelaxngException ("Required attribute href was not found.");
-			r.Href = Util.ResolveUri (BaseURI, href);
+			r.Href = Util.ResolveUri (BaseURI, href, resolver);
 			r.NSContext = ContextNamespace;
 			if (!IsEmptyElement) {
 				Read ();

@@ -267,10 +267,13 @@ namespace Commons.Xml.Relaxng
 		{
 			grammar.CheckIncludeRecursion (Href);
 			grammar.IncludedUris.Add (Href, Href);
-			string url = Util.ResolveUri (BaseUri, href);
-			XmlTextReader xtr = new XmlTextReader (url);
+			string url = Util.ResolveUri (BaseUri, href, grammar.Resolver);
+			if (grammar.Resolver == null)
+				throw new RelaxngException ("To compile 'include' element, XmlResolver is required.");
+			XmlTextReader xtr = null;
 			RelaxngGrammar g = null;
 			try {
+				xtr = new XmlTextReader (url, (Stream) grammar.Resolver.GetEntity (grammar.Resolver.ResolveUri (null, url), null, typeof (Stream)));
 				RelaxngReader r = new RelaxngReader (xtr, ns);
 				r.MoveToContent ();
 				g = r.ReadPattern () as RelaxngGrammar;
@@ -408,8 +411,13 @@ namespace Commons.Xml.Relaxng
 		// Private Fields
 		RdpPattern startRelaxngPattern;
 		RelaxngDatatypeProvider provider;
+		XmlResolver resolver = new XmlUrlResolver ();
 
 		// Public
+		public XmlResolver XmlResolver {
+			set { resolver = value; }
+		}
+
 		public abstract RelaxngPatternType PatternType { get; }
 		public RelaxngDatatypeProvider DataProvider {
 			get {
@@ -427,6 +435,7 @@ namespace Commons.Xml.Relaxng
 				g = (RelaxngGrammar) this;
 			else {
 				g = new RelaxngGrammar ();
+				g.XmlResolver = this.Resolver;
 				g.BaseUri = this.BaseUri;
 				g.LineNumber = this.LineNumber;
 				g.LinePosition = this.LinePosition;
@@ -444,6 +453,10 @@ namespace Commons.Xml.Relaxng
 
 
 		// Internal
+		internal XmlResolver Resolver {
+			get { return resolver; }
+		}
+
 		internal abstract void CheckConstraints ();
 
 		protected RelaxngPattern () 
@@ -936,6 +949,8 @@ namespace Commons.Xml.Relaxng
 			RdpPattern target = (RdpPattern) defs [this.name];
 			if (target == null)
 				throw new RelaxngException ("Target definition " + name + " not found.");
+			if (target == this)
+				throw new RelaxngException (String.Format ("Illegal recursion was found. Definition is '{0}'.", name));
 			return target.ExpandRef (defs);
 		}
 
@@ -1063,17 +1078,27 @@ namespace Commons.Xml.Relaxng
 		{
 			grammar.CheckIncludeRecursion (Href);
 			grammar.IncludedUris.Add (Href, Href);
-			string uri = Util.ResolveUri (this.BaseUri, href);
-			RelaxngReader r = new RelaxngReader (new XmlTextReader (uri), ns);
-			r.MoveToContent ();
-			RelaxngPattern p = r.ReadPattern ();
-			p.DataProvider = grammar.Provider;
+			string uri = Util.ResolveUri (this.BaseUri, href, grammar.Resolver);
+			if (grammar.Resolver == null)
+				throw new RelaxngException ("To compile 'include' element, XmlResolver is required.");
+			XmlTextReader xtr = null;
+			try {
+				xtr = new XmlTextReader (uri, (Stream) grammar.Resolver.GetEntity (grammar.Resolver.ResolveUri (null, uri), null, typeof (Stream)));
+				RelaxngReader r = new RelaxngReader (xtr, ns);
+				r.MoveToContent ();
+				RelaxngPattern p = r.ReadPattern ();
+				p.DataProvider = grammar.Provider;
 
-			RdpPattern ret = p.Compile (grammar);
+				RdpPattern ret = p.Compile (grammar);
 
-			grammar.IncludedUris.Remove (Href);
+				grammar.IncludedUris.Remove (Href);
 
-			return ret;
+				return ret;
+			} finally {
+				if (xtr != null)
+					xtr.Close ();
+			}
+
 		}
 
 		internal override void CheckConstraints () 
