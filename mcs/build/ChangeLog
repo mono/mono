@@ -1,5 +1,20 @@
 2003-07-20  Peter Williams  <peter@newton.cx>
 
+	* config-default.make (TEST_RUNTIME): Use the platform runtime
+	to run tests, by default.
+
+	* profiles/default.make (TEST_RUNTIME): If our test runtime is
+	mono, use the --debug flag.
+
+	* executable.make (sourcefile): Add a basename so that we can
+	find the nunit sources and so we behave a bit more like
+	library.make
+
+	* config-default.make (TEST_HARNESS): Find nunit-console in its
+	new home.
+
+2003-07-20  Peter Williams  <peter@newton.cx>
+
 	* library.make ($(response)): Do a "Creating ..." line here.
 
 	* executable.make ($(response)): Same.

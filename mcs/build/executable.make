@@ -6,14 +6,15 @@
 # but since on Win32 we need to munge the paths
 # anyway, we might as well.
 
-sourcefile = $(PROGRAM).sources
+base_prog = $(shell basename $(PROGRAM))
+sourcefile = $(base_prog).sources
 ifdef PLATFORM_CHANGE_SEPARATOR_CMD
-response = $(depsdir)/$(PROGRAM).response
+response = $(depsdir)/$(base_prog).response
 else
 response = $(sourcefile)
 endif
-stampfile = $(depsdir)/$(PROGRAM).stamp
-makefrag = $(depsdir)/$(PROGRAM).makefrag
+stampfile = $(depsdir)/$(base_prog).stamp
+makefrag = $(depsdir)/$(base_prog).makefrag
 pdb = $(patsubst %.exe,%.pdb,$(PROGRAM))
 
 all-local: $(PROGRAM)
