@@ -1,3 +1,10 @@
+2002-12-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c: fix buglet when building exe file name.  Handle full
+	assembly name (needed after latest changes to AssemblyName).
+	* image.c:
+	(mono_image_close): free some hashtables.
+
 2002-12-05  Dietmar Maurer  <dietmar@ximian.com>
 
 	* threads.c (ves_icall_System_Threading_Thread_Abort): we use SIGRTMIN 
