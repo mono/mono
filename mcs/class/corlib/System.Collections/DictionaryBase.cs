@@ -104,7 +104,7 @@ namespace System.Collections {
 		///   Internal routine called by CopyTo to perform the actual
 		///   copying of the data
 		/// </summary>
-		virtual protected void DoCopy (Array array, int index)
+		private void DoCopy (Array array, int index)
 		{
 			foreach (DictionaryEntry de in dictionary)
 				array.SetValue (de, index++);
@@ -205,7 +205,7 @@ namespace System.Collections {
 		/// <param name="key">Key of the object to change</param>
 		/// <param name="current_value">Current value of the object associated with
 		/// <paramref name="key"/></param>
-		protected virtual void OnSet (object key, object current_value)
+		protected virtual void OnSet (object key, object current_value, object new_value)
 		{
 		}
 		
@@ -221,7 +221,7 @@ namespace System.Collections {
 		/// <param name="key">Key of the object to change</param>
 		/// <param name="current_value">Current value of the object associated with
 		/// <paramref name="key"/></param>
-		protected virtual void OnSetComplete (object key, object current_value)
+		protected virtual void OnSetComplete (object key, object current_value, object new_value)
 		{
 		}
 
@@ -296,9 +296,10 @@ namespace System.Collections {
 
 			set {
 				if (dictionary.ContainsKey (key)){
-					OnSet (key, value);
+					object current_value = dictionary [key];
+					OnSet (key, current_value, value);
 					dictionary [key] = value;
-					OnSetComplete (key, value);
+					OnSetComplete (key, current_value, value);
 				} else {
 					OnInsert (key, value);
 					dictionary [key] = value;
