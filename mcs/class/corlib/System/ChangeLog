@@ -1,3 +1,9 @@
+2002-11-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MarshalByRefObject.cs: undo latest changes. It breaks the build by
+	some obscure reasons (try make -f makefile.gnu using a corlib which has
+	the modified version).
+
 2002-11-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* String.cs (Concat): Reduce the number of compares required. 
