@@ -1,3 +1,8 @@
+2005-04-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConfig.cs: Added Assert for FileIOPermission to LoadConfig so 
+	the configuration can be read under partial trust.
+
 2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConfig.cs: Added LinkDemand for unrestricted to CreateFromName

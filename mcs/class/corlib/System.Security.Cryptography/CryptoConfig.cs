@@ -357,6 +357,7 @@ public class CryptoConfig {
 		LoadConfig (config);
 	}
 
+	[FileIOPermission (SecurityAction.Assert, Unrestricted = true)]
 	private static void LoadConfig (string filename) 
 	{
 		if (!File.Exists (filename))
