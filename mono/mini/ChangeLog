@@ -1,3 +1,9 @@
+2004-09-02  Martin Baulig  <martin@ximian.com>
+
+	* mini.c (mono_method_to_ir): When initializing the locals, call
+	handle_initobj() on the generic instance itself, not its
+	underlying type.
+
 2004-09-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.h (MonoJitDynamicMethodInfo): New structure, extension of 
