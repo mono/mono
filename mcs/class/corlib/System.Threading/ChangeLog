@@ -1,3 +1,10 @@
+2004-04-11  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* LockQueue.cs: Moved lockCount change inside the rwlock lock. Removed
+	  lock(this) when entering the rwlock to avoid a deadlock.
+	* ReaderWriterLock.cs: In AcquireWriterLock, queue the thread if the queue
+	  is not empty (even if state==0).
+
 2004-04-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Timer.cs: Call the callback immediately if dueTime is 0. Fixes
@@ -188,7 +195,7 @@ Tue May 13 15:34:29 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	* Thread.cs: added missing field used by the runtime and
 	a new field to support thread-static data.
 
-2003-04-17  Pedro Martínez Juliá  <yoros@wanadoo.es>
+2003-04-17  Pedro Martï¿½ez Juliï¿½ <yoros@wanadoo.es>
 
 	* Timer.cs: Change the position of two lines because they were
 	before the "if" that ensures the integrity. After this, the first of

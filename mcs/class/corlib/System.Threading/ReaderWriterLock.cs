@@ -102,7 +102,10 @@ namespace System.Threading
 					state--;
 					return;
 				}
-				if (state != 0) { // wait while there are reader locks or another writer lock
+				
+				// wait while there are reader locks or another writer lock, or
+				// other threads waiting for the writer lock
+				if (state != 0 || !writer_queue.IsEmpty) {
 					if (!writer_queue.Wait (millisecondsTimeout))
 						throw new ApplicationException ("Timeout expited");
 				}

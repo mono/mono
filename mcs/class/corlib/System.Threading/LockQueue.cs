@@ -29,15 +29,15 @@ namespace System.Threading {
 
 			try {
 				lock (this) {
+					lockCount++;
 					Monitor.Exit (rwlock);
 					_lock = true;
-					lockCount++;
 					return Monitor.Wait (this, timeout);
 				}
 			} finally {
 				if (_lock) {
+					Monitor.Enter (rwlock);
 					lockCount--;
-					lock (this) Monitor.Enter (rwlock);
 				}
 			}
 		}
