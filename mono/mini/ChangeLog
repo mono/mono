@@ -1,4 +1,9 @@
 
+Thu Mar 18 19:57:56 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, exceptions-ppc.c: basic exceptions support 
+	for Linux/ppc.
+
 Thu Mar 18 19:56:19 CET 2004 Paolo Molaro <lupus@ximian.com>
 
 	* inssel-ppc.brg: fixed register assignments for some rules.
