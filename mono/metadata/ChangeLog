@@ -1,3 +1,10 @@
+2003-02-07  Martin Baulig  <martin@ximian.com>
+
+	* debug-mono-symfile.c: Reflected latest symwriter changes.
+	(mono_debug_create_mono_symbol_file): Removed.
+	(mono_debug_open_mono_symbol_file): Take an argument which
+	specifies whether to create a dynamic symbol file.
+
 2003-02-07  Dietmar Maurer  <dietmar@ximian.com>
 
 	* class.c (mono_class_from_mono_type): added MONO_TYPE_TYPEDBYREF
