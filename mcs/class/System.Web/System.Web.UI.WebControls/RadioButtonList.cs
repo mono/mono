@@ -206,6 +206,7 @@ namespace System.Web.UI.WebControls
 		{
 			/* Create a new RadioButton as if it was defined in the page and render it */
 			RadioButton button = new RadioButton ();
+			button.Page = Page;
 			button.GroupName = UniqueID;
 			button.TextAlign = TextAlign;
 			button.AutoPostBack = AutoPostBack;

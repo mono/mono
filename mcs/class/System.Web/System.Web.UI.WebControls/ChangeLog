@@ -1,3 +1,7 @@
+2003-09-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* RadioButtonList.cs: fix for bug #48870 by Yaron Shkop.
+
 2003-09-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataList.cs: fixed bug #48217. Patch by yaronsh@mainsoft.com (Yaron
