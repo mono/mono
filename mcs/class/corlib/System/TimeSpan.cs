@@ -54,7 +54,7 @@ namespace System
 						TicksPerMillisecond * milliseconds;
 				}
 			}
-			catch {
+			catch (OverflowException) {
 				throw new ArgumentOutOfRangeException (Locale.GetText ("The timespan is too big or too small."));
 			}
 		}
@@ -73,7 +73,7 @@ namespace System
 					}
 				}
 			}
-			catch {
+			catch (OverflowException) {
 				throw new ArgumentOutOfRangeException (Locale.GetText ("The timespan is too big or too small."));
 			}
 		}
@@ -151,7 +151,7 @@ namespace System
 					return new TimeSpan (_ticks + ts.Ticks);
 				}
 			}
-			catch {
+			catch (OverflowException) {
 				throw new OverflowException (Locale.GetText ("Resulting timespan is too big."));
 			}
 		}
@@ -184,7 +184,7 @@ namespace System
 					return new TimeSpan (Math.Abs (_ticks));
 				}
 			}
-			catch {
+			catch (OverflowException) {
 				throw new OverflowException (Locale.GetText (
 					"This TimeSpan value is MinValue so you cannot get the duration."));
 			}
@@ -238,7 +238,7 @@ namespace System
 					return new TimeSpan (val * TicksPerMillisecond);
 				}
 			}
-			catch {
+			catch (OverflowException) {
 				throw new OverflowException (Locale.GetText ("Resulting timespan is too big."));
 			}
 		}
@@ -278,7 +278,7 @@ namespace System
 					return new TimeSpan (_ticks - ts.Ticks);
 				}
 			}
-			catch {
+			catch (OverflowException) {
 				throw new OverflowException (Locale.GetText ("Resulting timespan is too big."));
 			}
 		}
