@@ -1,3 +1,10 @@
+2004-02-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* error.c: fixed mapping for EPROTONOSUPPORT and ESOCKTNOSUPPORT.
+
+	* sockets.[ch]: retry creating the socket for AF_INET, SOCK_RAW
+	using IP protocol with IP over IP. Implemented WSAIoctl UNIX-style.
+
 2004-01-27  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* shared.c (_wapi_shm_file): add hostname

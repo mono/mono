@@ -1,3 +1,10 @@
+2004-02-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: added Socket.WSAIoctl icall.
+
+	* socket-io.[ch]: implemented
+	ves_icall_System_Net_Sockets_Socket_WSAIoctl.
+
 2004-02-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* icall.c: removed IsDigit, IsSeparator, IsWhiteSpace from char_icalls.
