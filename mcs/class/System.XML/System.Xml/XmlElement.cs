@@ -241,7 +241,7 @@ namespace System.Xml
 		public virtual void SetAttribute (string name, string value)
 		{
 			XmlAttribute attribute = OwnerDocument.CreateAttribute (name);
-			attribute.SetOwnerElement (this);
+			attribute.SetParentNode (this);
 			attribute.Value = value;
 			Attributes.SetNamedItem (attribute);
 		}
@@ -255,6 +255,7 @@ namespace System.Xml
 		[MonoTODO]
 		public virtual XmlAttribute SetAttributeNode (XmlAttribute newAttr)
 		{
+			newAttr.SetParentNode(this);
 			XmlNode oldAttr = Attributes.SetNamedItem(newAttr);
 			return oldAttr != null ? oldAttr as XmlAttribute : null;
 		}

@@ -282,7 +282,13 @@ namespace System.Xml
 
 		public override bool MoveToParent ()
 		{
-			if (node.ParentNode != null) {
+			if (node.NodeType == XmlNodeType.Attribute) {
+				XmlElement ownerElement = ((XmlAttribute)node).OwnerElement;
+				if (ownerElement != null) {
+					node = ownerElement;
+					return true;
+				}
+			} else if (node.ParentNode != null) {
 				node = node.ParentNode;
 				return true;
 			}

@@ -1,3 +1,14 @@
+2002-07-14  Jason Diamond  <jason@injektilo.org>
+
+	* XmlAttribute.cs: Removed ownerElement field since we can reuse 
+	parentNode field.
+
+	* XmlDocumentNavigator.cs: MoveToParent now moves to the OwnerElement
+	if the current node is an attribute.
+
+	* XmlElement.cs: SetAttributeNode now sets the new attribute's
+	owner element.
+
 2002-07-12  Jason Diamond  <jason@injektilo.org>
 
 	* XmlDocument.cs: If null was passed in for prefix or namespaceURI when

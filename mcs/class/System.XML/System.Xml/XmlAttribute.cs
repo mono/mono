@@ -15,7 +15,6 @@ namespace System.Xml
 	{
 		#region Fields
 
-		private XmlElement ownerElement;
 		private XmlLinkedNode lastChild;
 		private string localName;
 		private string namespaceURI;
@@ -43,7 +42,7 @@ namespace System.Xml
 
 		public override string BaseURI {
 			get {
-				return ownerElement.BaseURI;
+				return OwnerElement.BaseURI;
 			}
 		}
 
@@ -102,7 +101,7 @@ namespace System.Xml
 
 		public virtual XmlElement OwnerElement {
 			get {
-				return ownerElement;
+				return base.ParentNode as XmlElement;
 			}
 		}
 
@@ -167,11 +166,6 @@ namespace System.Xml
 			}
 
 			return node;
-		}
-
-		internal void SetOwnerElement (XmlElement ownerElement)
-		{
-			this.ownerElement = ownerElement;
 		}
 
 		public override void WriteContentTo (XmlWriter w)
