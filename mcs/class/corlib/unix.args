@@ -464,6 +464,9 @@ System.Runtime.Remoting.Channels/BinaryClientFormatterSink.cs
 System.Runtime.Remoting.Channels/BinaryClientFormatterSinkProvider.cs
 System.Runtime.Remoting.Channels/BinaryServerFormatterSink.cs
 System.Runtime.Remoting.Channels/BinaryServerFormatterSinkProvider.cs
+System.Runtime.Remoting.Channels/ChannelDataStore.cs
+System.Runtime.Remoting.Channels/ChannelServices.cs
+System.Runtime.Remoting.Channels/ClientChannelSinkStack.cs
 System.Runtime.Remoting.Channels/IChannel.cs
 System.Runtime.Remoting.Channels/IChannelDataStore.cs
 System.Runtime.Remoting.Channels/IChannelReceiver.cs
