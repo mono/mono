@@ -21,8 +21,8 @@ namespace System.Collections.Generic
 	{
 		int count;
 		protected int modified;
-		protected Node<T> head;
-		Node<T> tail;
+		protected Node head;
+		Node tail;
 
 		public void Clear ()
 		{
@@ -33,7 +33,7 @@ namespace System.Collections.Generic
 
 		public void Enqueue (T item)
 		{
-			tail = new Node<T> (tail, item);
+			tail = new Node (tail, item);
 			if (head == null)
 				head = tail;
 			count++;
@@ -64,7 +64,7 @@ namespace System.Collections.Generic
 
 		public bool Contains (T item)
 		{
-			for (Node<T> node = head; node != null; node = node.Next)
+			for (Node node = head; node != null; node = node.Next)
 				if (node.Item == item)
 					return true;
 
@@ -76,7 +76,7 @@ namespace System.Collections.Generic
 			if (start + count >= array.Length)
 				throw new ArgumentException ();
 
-			for (Node<T> node = head; node != null; node = node.Next)
+			for (Node node = head; node != null; node = node.Next)
 				array [start++] = node.Item;
 		}
 
@@ -84,7 +84,7 @@ namespace System.Collections.Generic
 		{
 			int pos = 0;
 			T[] retval = new T [count];
-			for (Node<T> node = head; node != null; node = node.Next)
+			for (Node node = head; node != null; node = node.Next)
 				retval [pos++] = node.Item;
 
 			return retval;
@@ -102,12 +102,12 @@ namespace System.Collections.Generic
 			return new Enumerator (this);
 		}
 
-		protected sealed class Node<T>
+		protected sealed class Node
 		{
 			public readonly T Item;
-			public readonly Node<T> Next;
+			public readonly Node Next;
 
-			public Node (Node<T> next, T item)
+			public Node (Node next, T item)
 			{
 				this.Next = next;
 				this.Item = item;
@@ -118,7 +118,7 @@ namespace System.Collections.Generic
 		{
 			Queue<T> queue;
 			int modified;
-			Node<T> current;
+			Node current;
 
 			public Enumerator (Queue<T> queue)
 			{

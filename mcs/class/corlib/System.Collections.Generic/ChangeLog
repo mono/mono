@@ -1,3 +1,9 @@
+2004-03-11  Martin Baulig  <martin@ximian.com>
+
+	* Stack.cs, Queue.cs: Just use `Node' for the nested class, not
+	`Node<T>' (which would create another type parameter `T'
+	overriding `T' from the outer class).	
+
 2004-02-23  Martin Baulig  <martin@ximian.com>
 
 	* Stack.cs, Queue.cs: New files.  Hmm, looks like I forgot to add

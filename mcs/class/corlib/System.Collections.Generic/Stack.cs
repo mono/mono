@@ -21,7 +21,7 @@ namespace System.Collections.Generic
 	{
 		int count;
 		protected int modified;
-		protected Node<T> head;
+		protected Node head;
 
 		public Stack ()
 		{ }
@@ -35,7 +35,7 @@ namespace System.Collections.Generic
 
 		public void Push (T item)
 		{
-			head = new Node<T> (head, item);
+			head = new Node (head, item);
 			count++;
 			modified++;
 		}
@@ -62,7 +62,7 @@ namespace System.Collections.Generic
 
 		public bool Contains (T item)
 		{
-			for (Node<T> node = head; node != null; node = node.Next)
+			for (Node node = head; node != null; node = node.Next)
 				if (node.Item == item)
 					return true;
 
@@ -74,7 +74,7 @@ namespace System.Collections.Generic
 			if (start + count >= array.Length)
 				throw new ArgumentException ();
 
-			for (Node<T> node = head; node != null; node = node.Next)
+			for (Node node = head; node != null; node = node.Next)
 				array [start++] = node.Item;
 		}
 
@@ -82,7 +82,7 @@ namespace System.Collections.Generic
 		{
 			int pos = 0;
 			T[] retval = new T [count];
-			for (Node<T> node = head; node != null; node = node.Next)
+			for (Node node = head; node != null; node = node.Next)
 				retval [pos++] = node.Item;
 
 			return retval;
@@ -100,12 +100,12 @@ namespace System.Collections.Generic
 			return new Enumerator (this);
 		}
 
-		protected sealed class Node<T>
+		protected sealed class Node
 		{
 			public readonly T Item;
-			public readonly Node<T> Next;
+			public readonly Node Next;
 
-			public Node (Node<T> next, T item)
+			public Node (Node next, T item)
 			{
 				this.Next = next;
 				this.Item = item;
@@ -116,7 +116,7 @@ namespace System.Collections.Generic
 		{
 			Stack<T> stack;
 			int modified;
-			Node<T> current;
+			Node current;
 
 			public Enumerator (Stack<T> stack)
 			{
