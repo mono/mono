@@ -1,3 +1,8 @@
+2003-02-23  Peter Williams  <peterw@ximian.com>
+
+	* makefile.gnu (all): Give this dependencies
+	so that we don't rebuild every time.
+
 2003-02-22 Jackson Harper <jackson@latitudegeo.com>
 
 	* Image.cs: Write CorHeader
