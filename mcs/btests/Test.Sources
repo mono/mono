@@ -67,6 +67,7 @@ NSA \
 NSB \
 ModuleTest \
 ModuleA \
+ModuleB \
 ClassTest \
 Scope \
 ScopeA \
@@ -119,7 +120,13 @@ VariablesC \
 VariablesD \
 VariablesE \
 ConstantA \
-ConstantB
+ConstantB \
+StructureA \
+StructureB \
+ArrayA \
+ArrayB \
+ArrayC \
+ArrayD
 
 
 # All negetive test cases which should
@@ -185,6 +192,10 @@ NameSpaceC2 \
 NameSpaceC3 \
 ModuleTestC1 \
 ModuleTestC2 \
+ModuleTestC3 \
+ModuleTestC4 \
+ModuleTestC5 \
+ModuleTestC6 \
 ClassTestC1 \
 ScopeC1 \
 OverloadingC1 \
@@ -249,7 +260,12 @@ ConstantC4 \
 ConstantC5 \
 VariablesC1 \
 VariablesC2 \
-VariablesC3 
+VariablesC3 \
+StructureC1 \
+StructureC2 \
+StructureC3 \
+ArrayC1 \
+ArrayC2 
 
 
 # All negetive test cases which should fail at
