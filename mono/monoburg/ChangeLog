@@ -1,3 +1,8 @@
+2002-09-26  Dietmar Maurer  <dietmar@ximian.com>
+
+	* monoburg.c (emit_state): include additional fields to handle
+	register allocation in dag_mode
+
 2002-09-25  Dietmar Maurer  <dietmar@ximian.com>
 
 	* added -p and -e options. monoburg is now able to work with DAGs.
