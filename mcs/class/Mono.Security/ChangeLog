@@ -1,3 +1,22 @@
+2004-02-18 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
+
+	* Mono.Security.Protocol.Tls/CipherAlgorithmType.cs:
+	* Mono.Security.Protocol.Tls/HashAlgorithmType.cs:
+	* Mono.Security.Protocol.Tls/ExchangeAlgorithmType.cs:
+
+		- Added Serializable attribute.
+
+	* Mono.Security.Protocol.Tls/CipherSuite.cs:
+	* Mono.Security.Protocol.Tls/TlsCipherSuite.cs:
+	* Mono.Security.Protocol.Tls/TlsSslCipherSuite.cs:
+	* Mono.Security.Protocol.Tls/TlsContext.cs:
+
+		- Added some optimizations proposed by Sebastien Pouliot.
+
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsServerCertificate.cs:
+
+		- Changes on Common Name detection and certificate error handling ( Thanks to Sebastien Pouliot for his feedback ).
+
 2004-02-17 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls/SslClientStream.cs:

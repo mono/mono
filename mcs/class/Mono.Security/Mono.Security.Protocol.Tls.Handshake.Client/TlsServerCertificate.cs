@@ -141,7 +141,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 				if (!this.Context.SslStream.RaiseServerCertificateValidation(
 					new X509Cert.X509Certificate(certificate.RawData), 
-					new int[]{}))
+					certificateErrors))
 				{
 					throw this.Context.CreateException("Invalid certificate received form server.");
 				}
@@ -151,18 +151,14 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		private bool checkDomainName(string subjectName)
 		{
 			string	domainName = String.Empty;
-			Regex search = new Regex(@"([\w\s\d]*)\s*=\s*([^,]*)");
+			// Regex search = new Regex(@"([\w\s\d]*)\s*=\s*([^,]*)");
+			Regex search = new Regex(@"CN=\s*([^,]*)");
 
 			MatchCollection	elements = search.Matches(subjectName);
 
-			foreach (Match element in elements)
+			if (elements[0].Value.StartsWith("CN="))
 			{
-				switch (element.Groups[1].Value.Trim().ToUpper())
-				{
-					case "CN":
-						domainName = element.Groups[2].Value;
-						break;
-				}
+				domainName = elements[0].Value.Remove(0, 3);
 			}
 
 			if (domainName == String.Empty)
