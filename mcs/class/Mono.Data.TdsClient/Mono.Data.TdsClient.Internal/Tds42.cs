@@ -211,22 +211,22 @@ namespace Mono.Data.TdsClient.Internal {
 
 		protected override TdsPacketColumnInfoResult ProcessColumnInfo ()
 		{
-			int precision;
-			int scale;
-			int totalLength = comm.GetTdsShort ();
+			byte precision;
+			byte scale;
+			int totalLength = Comm.GetTdsShort ();
 			int bytesRead = 0;
 
 			TdsPacketColumnInfoResult result = new TdsPacketColumnInfoResult ();
 
 			while (bytesRead < totalLength) {
-				scale = -1;
-				precision = -1;
+				scale = 0;
+				precision = 0;
 
 				int bufLength = -1;
 				//int dispSize = -1;
 				byte[] flagData = new byte[4];
 				for (int i = 0; i < 4; i += 1) {
-					flagData[i] = comm.GetByte ();
+					flagData[i] = Comm.GetByte ();
 					bytesRead += 1;
 				}
 				bool nullable = (flagData[2] & 0x01) > 0;
@@ -235,32 +235,32 @@ namespace Mono.Data.TdsClient.Internal {
 				bool autoIncrement = (flagData[2] & 0x10) > 0;
 
 				string tableName = String.Empty;
-				TdsColumnType columnType = (TdsColumnType) comm.GetByte ();
+				TdsColumnType columnType = (TdsColumnType) Comm.GetByte ();
 
 				bytesRead += 1;
 
 				if (columnType == TdsColumnType.Text || columnType == TdsColumnType.Image) {
-					comm.Skip (4);
+					Comm.Skip (4);
 					bytesRead += 4;
 
-					int tableNameLength = comm.GetTdsShort ();
+					int tableNameLength = Comm.GetTdsShort ();
 					bytesRead += 2;
-					tableName = comm.GetString (tableNameLength);
+					tableName = Comm.GetString (tableNameLength);
 					bytesRead += tableNameLength;
 					bufLength = 2 << 31 - 1;
 				}
 				else if (columnType == TdsColumnType.Decimal || columnType == TdsColumnType.Numeric) {
-					bufLength = comm.GetByte ();
+					bufLength = Comm.GetByte ();
 					bytesRead += 1;
-					precision = comm.GetByte ();
+					precision = Comm.GetByte ();
 					bytesRead += 1;
-					scale = comm.GetByte ();
+					scale = Comm.GetByte ();
 					bytesRead += 1;
 				}
 				else if (IsFixedSizeColumn (columnType))
 					bufLength = LookupBufferSize (columnType);
 				else {
-					bufLength = (int) comm.GetByte () & 0xff;
+					bufLength = (int) Comm.GetByte () & 0xff;
 					bytesRead += 1;
 				}
 
@@ -268,7 +268,7 @@ namespace Mono.Data.TdsClient.Internal {
 				result[index].NumericPrecision = precision;
 				result[index].NumericScale = scale;
 				result[index].ColumnSize = bufLength;
-				result[index].ColumnName = columnNames[index];
+				result[index].ColumnName = ColumnNames[index];
 				result[index].ColumnType = columnType;
 				result[index].TableName = tableName;
 				result[index].Nullable = nullable;

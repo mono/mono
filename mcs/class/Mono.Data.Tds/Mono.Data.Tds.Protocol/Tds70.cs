@@ -187,19 +187,19 @@ namespace Mono.Data.TdsClient.Internal {
 		protected override TdsPacketColumnInfoResult ProcessColumnInfo ()
 		{
 			TdsPacketColumnInfoResult result = new TdsPacketColumnInfoResult ();
-			int numColumns = comm.GetTdsShort ();
+			int numColumns = Comm.GetTdsShort ();
 
 			for (int i = 0; i < numColumns; i += 1) {
 				byte[] flagData = new byte[4];
 				for (int j = 0; j < 4; j += 1) 
-					flagData[j] = comm.GetByte ();
+					flagData[j] = Comm.GetByte ();
 
 				bool nullable = (flagData[2] & 0x01) > 0;
 				bool caseSensitive = (flagData[2] & 0x02) > 0;
 				bool writable = (flagData[2] & 0x0c) > 0;
 				bool autoIncrement = (flagData[2] & 0x10) > 0;
 
-				TdsColumnType columnType = (TdsColumnType) (comm.GetByte () & 0xff);
+				TdsColumnType columnType = (TdsColumnType) (Comm.GetByte () & 0xff);
 				if ((byte) columnType == 0xef)
 					columnType = TdsColumnType.NChar;
 			
@@ -210,31 +210,31 @@ namespace Mono.Data.TdsClient.Internal {
 						columnType -= 128;
 				}
 
-				int dispSize = -1;
+				//int dispSize = -1;
 				int bufLength;
 				string tableName = "";
 
 				if (IsBlobType (columnType)) {
-					bufLength = comm.GetTdsInt ();
-					tableName = comm.GetString (comm.GetTdsShort ());
+					bufLength = Comm.GetTdsInt ();
+					tableName = Comm.GetString (Comm.GetTdsShort ());
 				}
 				else if (IsFixedSizeColumn (columnType))
 					bufLength = LookupBufferSize (columnType);
 				else if (IsLargeType ((TdsColumnType) xColumnType))
-					bufLength = comm.GetTdsShort ();
+					bufLength = Comm.GetTdsShort ();
 				else
-					bufLength = comm.GetByte () & 0xff;
+					bufLength = Comm.GetByte () & 0xff;
 
 				byte precision = 0;
 				byte scale = 0;
 
 				if (columnType == TdsColumnType.Decimal || columnType == TdsColumnType.Numeric) {
-					precision = comm.GetByte ();
-					scale = comm.GetByte ();
+					precision = Comm.GetByte ();
+					scale = Comm.GetByte ();
 				}
 
-				int colNameLength = comm.GetByte ();
-				string columnName = comm.GetString (colNameLength);
+				int colNameLength = Comm.GetByte ();
+				string columnName = Comm.GetString (colNameLength);
 
 				int index = result.Add (new TdsColumnSchema ());
 				result[index].NumericPrecision = precision;

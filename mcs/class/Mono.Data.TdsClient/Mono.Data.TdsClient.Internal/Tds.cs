@@ -64,6 +64,10 @@ namespace Mono.Data.TdsClient.Internal {
 			get { return language; }
 		}
 
+		protected TdsPacketColumnNamesResult ColumnNames {
+			get { return columnNames; }
+		}
+
 		protected TdsComm Comm {
 			get { return comm; }
 		}
@@ -440,7 +444,7 @@ namespace Mono.Data.TdsClient.Internal {
 			}
 		}
 
-		private int LookupBufferSize (TdsColumnType columnType)
+		protected int LookupBufferSize (TdsColumnType columnType)
 		{
 			switch (columnType) {
 				case TdsColumnType.Int1 :
