@@ -1,3 +1,9 @@
+2002-08-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c:
+	(ves_icall_MonoField_GetValue): changed to use mono_field_get_value.
+	(ves_icall_System_Environment_get_MachineName): removed warning when
+	compiling under cygwin.
 
 Thu Aug 22 18:49:11 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
