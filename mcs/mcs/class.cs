@@ -430,6 +430,12 @@ namespace CIR {
 			}
 		}
 
+		public ArrayList Operators {
+			get {
+				return operators;
+			}
+		}
+		
 		public Attributes OptAttributes {
 			get {
 				return attributes;
@@ -622,6 +628,11 @@ namespace CIR {
 			if (Indexers != null) {
 				foreach (Indexer i in Indexers)
 					i.Define (this);
+			}
+
+			if (Operators != null) {
+				foreach (Operator o in Operators)
+					o.Define (this);
 			}
 			
 		}
@@ -1320,6 +1331,7 @@ namespace CIR {
 		public readonly int    ModFlags;
 		public readonly Block  Block;
 		public Attributes      OptAttributes;
+		public MethodBuilder   OperatorMethodBuilder;
 
 		public Operator (OpType type, string ret_type, int flags, string arg1type, string arg1name,
 				 string arg2type, string arg2name, Block block, Attributes attrs)
@@ -1334,6 +1346,30 @@ namespace CIR {
 			Block = block;
 			OptAttributes = attrs;
 		}
+
+		public void Define (TypeContainer parent)
+		{
+			MethodAttributes attr = Modifiers.MethodAttr (ModFlags);
+
+			string name = "Operator" + OperatorType;
+
+			Type ret_type = System.Type.GetType (ReturnType);
+
+			Type [] param_types = new Type [2];
+
+			param_types [0] = System.Type.GetType (FirstArgType);
+			if (SecondArgType != null)
+				param_types [1] = System.Type.GetType (SecondArgType);
+			
+			OperatorMethodBuilder = parent.TypeBuilder.DefineMethod (name, attr, ret_type, param_types);
+
+			OperatorMethodBuilder.DefineParameter (1, ParameterAttributes.None, FirstArgName);
+
+			if (SecondArgType != null)
+				OperatorMethodBuilder.DefineParameter (2, ParameterAttributes.None, SecondArgName);
+
+		}
+		
 
 	}
 

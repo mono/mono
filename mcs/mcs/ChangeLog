@@ -1,5 +1,14 @@
 2001-09-10  Ravi Pratap  <ravi@ximian.com>
 
+	* class.cs (TypeContainer::Populate): Now define operators too. 
+	(TypeContainer.Operators): New property to access the list of operators
+	in a type.
+	(Operator.OperatorMethodBuilder): New member to hold the method builder
+	for the operator we are defining.
+	(Operator::Define): Implement.
+
+2001-09-10  Ravi Pratap  <ravi@ximian.com>
+
 	* class.cs (Event::Define): Make the prefixes of the accessor methods
 	addOn_ and removeOn_ 
 
