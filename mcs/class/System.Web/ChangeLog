@@ -1,3 +1,7 @@
+2005-02-04  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Makefile: Added resource file.
+
 2005-02-02  Lluis Sanchez Gual <lluis@novell.com>
 
 	* System.Web.dll.sources: Added some files to the build:

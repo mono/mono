@@ -38,6 +38,7 @@ RESOURCE_FILES = \
 	resources/TreeView_tminus.gif \
 	resources/TreeView_tplus.gif \
 	resources/callback.js \
+	resources/webform.js \
 	System.Web.UI.WebControls/TreeView.js \
 	System.Web.UI.WebControls/Menu.js
 
