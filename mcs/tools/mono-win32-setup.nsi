@@ -25,7 +25,7 @@
 ;
 ;
   !define MILESTONE "0.24" ;
-  !define SOURCE_INSTALL_DIR "c:\cygwin\home\Administrator\install\\*" ;
+  !define SOURCE_INSTALL_DIR "c:\mono-0.23-setup\install\\*" ;
 
 ; =====================================================
 ; SET LOGO
