@@ -1,6 +1,11 @@
 2003-02-26  Dietmar Maurer  <dietmar@ximian.com>
 
+	* metadata.h: reverted the filter_len change, it breaks reflection
+	
+2003-02-26  Dietmar Maurer  <dietmar@ximian.com>
+
 	* metadata.h: added a new field to store the filter_len
+	
 
 Tue Feb 25 10:56:16 CET 2003 Paolo Molaro <lupus@ximian.com>
 
