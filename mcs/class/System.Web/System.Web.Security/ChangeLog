@@ -1,0 +1,10 @@
+2002-03-05	Gaurav Vaish <gvaish@iitk.ac.in>
+
+	* DefaultAuthenticationEventHandler.cs,
+	* FormsAuthenticationEventHandler.cs,
+	* PassportAuthenticationEventHandler.cs, 
+	* WindowsAuthenticationEventHandler.cs
+	                                  - Completed.
+
+
+// File Created 2002-03-05
