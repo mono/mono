@@ -45,6 +45,8 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 		// these will be moved once a SqlSharpWindow has been created
 		private IDbConnection conn = null;
 		public DbProvider dbProvider = null;
+		private Type connectionType = null;
+		private Type adapterType = null;
 		public Assembly providerAssembly = null;
 		public string connectionString = "";
 		
@@ -164,12 +166,12 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			toolbar.AppendItem ("Execute", 
 				"Execute SQL Commands.", String.Empty,
 				new Gtk.Image (Stock.Execute, IconSize.SmallToolbar),
-				new SignalFunc (execute_func));	
+				new Gtk.SignalFunc (execute_func));	
 
 			toolbar.AppendItem ("Output", 
 				"Toggle Results to DataGrid or TextView", String.Empty,
 				new Gtk.Image (Stock.GoDown, IconSize.SmallToolbar),
-				new SignalFunc (toggle_results_output_func));	
+				new Gtk.SignalFunc (toggle_results_output_func));	
 
 			toolbar.AppendSpace ();		
 
@@ -186,14 +188,14 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 				"MySQL",
 				"Mono.Data.MySql",
 				"Mono.Data.MySql.MySqlConnection",
-				"Mono.Data.MySql.MySqlAdapter",
+				"Mono.Data.MySql.MySqlDataAdapter",
 				false ));
 			providerList.Add (new DbProvider (
 				"POSTGRESQL",
 				"PostgreSQL",
 				"Mono.Data.PostgreSqlClient",
 				"Mono.Data.PostgreSqlClient.PgSqlConnection",
-				"Mono.Data.PostgreSqlClient.PgSqlAdapter",
+				"Mono.Data.PostgreSqlClient.PgSqlDataAdapter",
 				false ));
 			providerList.Add (new DbProvider (
 				"SQLCLIENT",
@@ -207,7 +209,7 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 				"TDS Generic",
 				"Mono.Data.TdsClient",
 				"Mono.Data.TdsClient.TdsConnection",
-				"Mono.Data.TdsClient.TdsAdapter",
+				"Mono.Data.TdsClient.TdsDataAdapter",
 				false ));
 			providerList.Add (new DbProvider (
 				"ODBC",
@@ -228,14 +230,14 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 				"SQL Lite",
 				"Mono.Data.SqliteClient",
 				"Mono.Data.SqliteClient.SqliteConnection",
-				"Mono.Data.SqliteClient.SqliteAdapter",
+				"Mono.Data.SqliteClient.SqliteDataAdapter",
 				false ));
 			providerList.Add (new DbProvider (
 				"SYBASE",
 				"Sybase",
 				"Mono.Data.SybaseClient",
 				"Mono.Data.SybaseClient.SybaseConnection",
-				"Mono.Data.SybaseClient.SybaseAdapter",
+				"Mono.Data.SybaseClient.SybaseDataAdapter",
 				false ));
 		}
 
@@ -265,6 +267,12 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			mb.Append (file_item);
 
 			return mb;
+		}
+
+		void AppendText (string text) {
+			Console.WriteLine (text);
+			Console.Out.Flush ();
+			AppendText (buf, text);
 		}
 
 		// WriteLine() to output text to bottom TextView
@@ -357,7 +365,7 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			AppendText (buf, "Disconnected.");
 		}
 
-		void toggle_results_output_func (Gtk.Object o) {
+		void toggle_results_output_func () {
 			ToggleResultsOutput ();
 		}
 
@@ -376,7 +384,7 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			outbox.ResizeChildren ();
 		}
 
-		void execute_func (Gtk.Object o) {
+		public void execute_func () {
 			ExecuteSQL ();
 		}
 
@@ -456,8 +464,11 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 				}
 				else if(outputResults == OutputResults.DataGrid) {
 					DataTable dataTable = LoadDataTable (cmd);
+					AppendText("set DataGrid.DataSource to DataTable...");
 					grid.DataSource = dataTable;
+					AppendText("DataBind...");
 					grid.DataBind ();
+					AppendText("Done.");
 				}
 				cmd = null;
 			} 
@@ -892,68 +903,90 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			return success;
 		}
 
-		public DbDataAdapter CreateDbDataAdapter () {
-
+		public System.Object CreateDbDataAdapter (IDbCommand cmd) {
 			string msg = "";
-			DbDataAdapter adapter = null;
+			System.Object dbAdapter = null;
 			if (dbProvider.InternalProvider == true) {
-				string providerKey = dbProvider.Key;
-				switch (providerKey.ToUpper ()) {
-				case "SQLCLIENT":
-					try {
-						adapter = new SqlDataAdapter ();
-					}
-					catch (Exception e) {
-						msg = "Error: unable to create adapter: " +
-							e.Message;
-						Error (msg);
-						return null;
-					}
-					break;
-				
-				case "OLEDB":
-					try {
-						adapter = new OleDbDataAdapter ();
-					}
-					catch (Exception e) {
-						msg = "Error: unable to create adapter: " +
-							e.Message;
-						Error (msg);
-						return null;
-					}
-					break;
-				// FIXME: need a OdbcDataAdapter
-				case "ODBC":
-					/*
-					try {
-						adapter = new OdbcDataAdapter ();
-					}
-					catch (Exception e) {
-						msg = "Error: unable to create adapter: " +
-							e.Message;
-						Error (msg);
-						return null;
-					}
-					*/
-					break;
-				}
+				dbAdapter = CreateInternalDataAdapter (cmd);
 			}
 			else {
-				CreateExternalDataAdapter (dbProvider.AdapterClass);
+				dbAdapter = CreateExternalDataAdapter (dbProvider.AdapterClass, cmd);
 			}
-			return adapter;
+			return dbAdapter;
 		}
 
-		public DbDataAdapter CreateExternalDataAdapter (string adapterClass) {
-			Type adapterType = providerAssembly.GetType (adapterClass);
-			return (DbDataAdapter) Activator.CreateInstance (adapterType);
+		public System.Object CreateInternalDataAdapter (IDbCommand cmd) {
+			AppendText("DEBUG: create internal DbDataAdapter...");
+			string msg = "";
+			System.Object dbAdapter = null;
+			string providerKey = dbProvider.Key;
+			switch (providerKey.ToUpper ()) {
+			case "SQLCLIENT":
+				try {
+					dbAdapter = new SqlDataAdapter (cmd as SqlCommand);
+				}
+				catch (Exception e) {
+					msg = "Error: unable to create adapter: " +
+						e.Message;
+					Error (msg);
+					return null;
+				}
+				break;
+				
+			case "OLEDB":
+				try {
+					dbAdapter = new OleDbDataAdapter (cmd as OleDbCommand);
+				}
+				catch (Exception e) {
+					msg = "Error: unable to create adapter: " +
+						e.Message;
+					Error (msg);
+					return null;
+				}
+				break;
+			case "ODBC":
+					try {
+						dbAdapter = new OdbcDataAdapter (cmd as OdbcCommand);
+					}
+					catch (Exception e) {
+						msg = "Error: unable to create adapter: " +
+							e.Message;
+						Error (msg);
+						return null;
+					}
+				break;
+			}
+			return dbAdapter;
 		}
 
-		public DataTable LoadDataTable (IDbCommand cmd) {
-			DbDataAdapter adapter = CreateDbDataAdapter ();
-			((IDbDataAdapter) adapter).SelectCommand = cmd;
+		public System.Object CreateExternalDataAdapter (string adapterClass, IDbCommand cmd) {
+			adapterType = providerAssembly.GetType (adapterClass);
+			System.Object ad = Activator.CreateInstance (adapterType);
+
+			// set property SelectCommand on DbDataAdapter
+			PropertyInfo prop = adapterType.GetProperty("SelectCommand");
+			prop.SetValue (ad, cmd, null);
+
+			return ad;
+		}
+
+		public DataTable LoadDataTable (IDbCommand dbcmd) {
+			AppendText("Create DbDataAdapter...");
+			System.Object ack = CreateDbDataAdapter (dbcmd);
+			
+			DbDataAdapter adapter;
+			adapter = (DbDataAdapter) ack;
+			
+			IDbDataAdapter a;
+			a = (IDbDataAdapter) ack;		
+
+			AppendText("Create DataTable...");
 			DataTable dataTable = new DataTable ();
+
+			AppendText("Fill data into DataTable via DbDataAdapter...");
 			adapter.Fill (dataTable);
+
+			AppendText("Return DataTable...");
 			return dataTable;
 		}
 

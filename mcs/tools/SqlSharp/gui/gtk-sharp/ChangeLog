@@ -1,3 +1,10 @@
+2002-11-30  Daniel Morgan <danmorg@sc.rr.com>
+
+	* sqlsharpgtk.cs: fix dynamically creating DbDataAdapter
+	so external providers can display data in the DataGrid too, 
+	included the use of OdbcDataAdapter for ODBC to use
+	a DataGrid,	fix compile errors for a newer Gtk# in cvs
+
 2002-11-17  Daniel Morgan <danmorg@sc.rr.com>
 
 	* DataGrid.cs: Redid Clear(). Made GetResolvedDataSource() protected.  
@@ -6,7 +13,6 @@
 	
 	* sqlsharpgtk.cs: for bottom panel (Output Results) add tool bar button
 	to toggle between DataGrid and TextView
-	
 
 2002-11-16  Daniel Morgan <danmorg@sc.rr.com>
 
