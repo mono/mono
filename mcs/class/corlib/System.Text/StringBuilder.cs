@@ -240,7 +240,7 @@ namespace System.Text {
 										// boundary, so we'll make sure the behaviour 
 										// here is the same.
 
-					if( nextIndex + oldValue.Length < startIndex + count ) {
+					if( nextIndex + oldValue.Length <= startIndex + count ) {
 
 						// Add everything to the left of the old 
 												// string
