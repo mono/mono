@@ -723,7 +723,18 @@ namespace System.Web.UI
 			
 			HttpResponse resp = Context.Response;
 			return resp.ApplyAppPathModifier (UrlUtils.Combine (ts, relativeUrl));
-                }
+		}
+
+		internal string ResolveBaseUrl (string url)
+		{
+			if (url [0] != '~')
+				return url;
+			if (url.Length < 2 || (url.Length == 2 && url [1] == '/'))
+				return Context.Request.BaseVirtualDir;
+			if (url [1] == '/')
+				return UrlUtils.Combine (Context.Request.BaseVirtualDir, url.Substring (2));
+			return url;
+		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
                 public void SetRenderMethodDelegate(RenderMethod renderMethod) //DIT

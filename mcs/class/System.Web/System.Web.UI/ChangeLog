@@ -1,5 +1,10 @@
 2003-11-19  Jackson Harper <jackson@ximian.com>
 
+	* Control.cs: New method for resolving urls that use ~/ to denote
+	the applications base directory.
+	
+2003-11-19  Jackson Harper <jackson@ximian.com>
+
 	* TemplateParser.cs: Fix typo in error message.
 		
 2003-11-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
