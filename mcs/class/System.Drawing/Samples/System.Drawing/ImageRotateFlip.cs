@@ -14,13 +14,14 @@ using System.Drawing.Imaging;
 public class ImageRotateSample
 {
 	static Pen p = new Pen(Color.Red, 2);	
-	static SolidBrush br = new SolidBrush(Color.White);
+	static SolidBrush br = new SolidBrush(Color.Black);
 	
 	public static void CreateImage (RotateFlipType rotate, int movex, int movey, string text, Bitmap dest, Graphics grdest)
 	{
-		Bitmap	bmp = new Bitmap (80, 80, PixelFormat.Format32bppArgb);			
-		Graphics gr = Graphics.FromImage (bmp);
 		Color clr;
+		Bitmap	bmp = new Bitmap (80, 80, PixelFormat.Format32bppArgb);	
+		Graphics gr = Graphics.FromImage (bmp);
+		gr.Clear (Color.White);
 		
 		gr.DrawLine (p, 10.0F, 10.0F, 70.0F, 70.0F);
 		gr.DrawLine (p, 10.0F, 15.0F, 70.0F, 15.0F);
@@ -44,7 +45,8 @@ public class ImageRotateSample
 		Bitmap	bmp = new Bitmap(800,800, PixelFormat.Format32bppArgb);
 		Console.WriteLine("Bitmap created OK {0}", bmp != null);
 	
-		Graphics gr = Graphics.FromImage(bmp);		
+		Graphics gr = Graphics.FromImage(bmp);
+		gr.Clear (Color.White);
 		
 		CreateImage (RotateFlipType.RotateNoneFlipNone, 0, 0, "RotateNoneFlipNone", bmp, gr);
 		CreateImage (RotateFlipType.Rotate90FlipNone, 150, 0, "Rotate90FlipNone", bmp, gr);
