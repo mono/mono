@@ -366,13 +366,13 @@ namespace System.Web.Services.Protocols {
 		//
 		static internal LogicalTypeInfo GetLogicalTypeInfo (Type t)
 		{
-			LogicalTypeInfo tm = (LogicalTypeInfo) type_to_manager [t];
-
-			if (tm != null)
-				return tm;
-
-			lock (typeof (LogicalTypeInfo))
+			lock (type_to_manager)
 			{
+				LogicalTypeInfo tm = (LogicalTypeInfo) type_to_manager [t];
+	
+				if (tm != null)
+					return tm;
+
 				tm = (LogicalTypeInfo) type_to_manager [t];
 
 				if (tm != null)

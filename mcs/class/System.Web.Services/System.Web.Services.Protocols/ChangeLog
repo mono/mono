@@ -1,3 +1,8 @@
+2004-06-10  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* TypeStubManager.cs: Improved locking in GetLogicalTypeInfo().
+	* WebServiceHandler.cs: Removed unneded methods.
+
 2004-06-02  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* LogicalMethodInfo.cs: Don't crash in GetCustomAttribute if the requested

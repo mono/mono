@@ -65,31 +65,6 @@ namespace System.Web.Services.Protocols
 
 			return ws;
 		}
-		
-		[MonoTODO]
-		protected IAsyncResult BeginCoreProcessRequest (AsyncCallback callback, object o)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected void CoreProcessRequest ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected void EndCoreProcessRequest (IAsyncResult result)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		private void WriteReturns (object[] returnValues)
-		{
-			//protocol.WriteReturns (returnValues, outputStream);
-			throw new NotImplementedException ();
-		}
 	}
 }
 
