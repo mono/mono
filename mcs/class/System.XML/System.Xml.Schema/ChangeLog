@@ -1,5 +1,16 @@
 2004-01-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* BUGS-MS.txt : added list derivation and facet case.
+	* XmlSchemaComplexType.cs :
+	  Added some description.  Avoided null reference exception in 
+	  some places.  
+	  Fixed incorrect 3.4.6 Derivation Valid (Extension) 1.4.1.2.2 and
+	  3.9.6 Particle Valid (Extension) 2.
+	* XmlSchemaGroupBase.cs : Fixed ParticleEquals() which didn't work
+	  properly against sequence and all.
+
+2004-01-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlSchemaObjectTable.cs : Modified enumerator's Current to return
 	  DictionaryEntry.
 	* XmlSchemaComplexType.cs, XmlSchemaUtil.cs :

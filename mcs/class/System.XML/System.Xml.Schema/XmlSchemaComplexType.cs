@@ -355,6 +355,26 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 
+		//
+		// We have to validate:
+		//
+		//	- Type Definition Properties Correct
+		//
+		// and it subsequently delegates:
+		//
+		//	- Derivation Valid (Extension)
+		//	- Derivation Valid (Restriction, Complex)
+		//	- Type Derivation OK (Complex)
+		//
+		// There are many schema errata:
+		// http://www.w3.org/2001/05/xmlschema-errata#Errata1
+		//
+		// E1-43 Derivation Valid (Restriction, Complex) 5.
+		// E1-21 Derivation Valid (Restriction, Complex) 4.3.
+		// E1-17 Type Derivation OK (Complex) 2.1.
+		//
+		// And E1-38, E1-37, E1-30 and E1-27
+		//
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			if (IsValidated (schema.ValidationId))
@@ -364,10 +384,12 @@ namespace System.Xml.Schema
 			// it may result in insufficient results.
 			ValidationId = schema.ValidationId;
 
-			// Term. 1 of 3.4.6 = 3.4.1 : Complex Type Definitions Properties Correct
-			// Term. 2 and 3 goes ValidateContentModel().
-			// Term. 4 and 5 follows in this method.
+			// 3.4.6: Properties Correct
+			// Term. 1 => 3.4.1
+			// Term. 2, 3 and 4 goes ValidateContentModel().
+			// Term. 5 follows in this method.
 			//
+			// 3.4.1:  Complex Type Definitions Properties Correct
 			// Schema component to CLR type property mapping:
 			// {derivation method} => resolvedDerivedBy
 			// {annotations} are as is.
@@ -379,8 +401,6 @@ namespace System.Xml.Schema
 			// {base type definition} => BaseSchemaType (later)
 			// {attribute uses} => AttributeUses (later)
 			// {content type} => ContentType and ContentTypeParticle (later)
-
-			// TODO: Beware of E1-27 of http://www.w3.org/2001/05/xmlschema-errata#Errata1
 			if (contentModel != null)
 				ValidateContentModel (h, schema);
 			else {
@@ -478,7 +498,8 @@ namespace System.Xml.Schema
 				baseType = (XmlSchemaType) redefinedObject;
 				if (baseType == null)
 					error (h, "Redefinition base type was not found.");
-				baseType.Validate (h, schema);
+				else
+					baseType.Validate (h, schema);
 			}
 			// 3.4.6 Properties Correct :: 3. Circular definition prohibited.
 			if (ValidateRecursionCheck ())
@@ -562,6 +583,8 @@ namespace System.Xml.Schema
 					seq.Validate (h, schema);
 					contentTypeParticle = seq;
 				}
+				if (contentTypeParticle == null)
+					contentTypeParticle = XmlSchemaParticle.Empty;
 
 				// I don't think 3.4.6 Derivation Valid (Extension) :: 1.2
 				// is constraining anything here, since 3.4.2 {attribute uses}
@@ -738,7 +761,7 @@ namespace System.Xml.Schema
 			}
 		}
 
-		// Term. 1 of 3.4.6 Derivation Valid (Extension)
+		// 3.4.6 Derivation Valid (Extension) - Term. 1 (Complex Type)
 		internal void ValidateComplexBaseDerivationValidExtension (XmlSchemaComplexType baseComplexType,
 			ValidationEventHandler h, XmlSchema schema)
 		{
@@ -768,29 +791,23 @@ namespace System.Xml.Schema
 			// 1.4.2.2.1
 			if (baseComplexType.ContentType != XmlSchemaContentType.Empty) {
 				// 1.4.2.2.2.1
-				if (this.GetContentType () == baseComplexType.ContentType) {
-					// nothing to do
-				}
-				// 1.4.2.2.2.2
-				// 3.9.6 Particle Valid (Extension)
-				else if (this.contentTypeParticle != baseComplexType.ContentTypeParticle) {
+				if (this.GetContentType () != baseComplexType.ContentType)
+					error (h, "Base complex type has different content type " + baseComplexType.ContentType + ".");
+				// 1.4.2.2.2.2 => 3.9.6 Particle Valid (Extension)
+				else if (this.contentTypeParticle == null ||
+					!this.contentTypeParticle.ParticleEquals (baseComplexType.ContentTypeParticle)) {
 					XmlSchemaSequence seq = contentTypeParticle as XmlSchemaSequence;
-					if (contentTypeParticle.ValidatedMinOccurs != 1 ||
-						contentTypeParticle.ValidatedMaxOccurs != 1 ||
-						seq == null)
+					if (contentTypeParticle != XmlSchemaParticle.Empty && (seq == null || contentTypeParticle.ValidatedMinOccurs != 1 || contentTypeParticle.ValidatedMaxOccurs != 1))
 						error (h, "Invalid complex content extension was found.");
 					else {
 						// Identical sequence item should be checked, but
 						// I think it is naturally achieved as coded above.
 					}
-
 				}
-				else
-					error (h, "Invalid complex content extension was found. Extended complex type has different content type from base type.");
 			}
 		}
 
-		// Term. 2 of 3.4.6 Derivation Valid (Extension)
+		// 3.4.6 Derivation Valid (Extension) - Term. 2 (Simple Type)
 		internal void ValidateSimpleBaseDerivationValidExtension (object baseType,
 			ValidationEventHandler h, XmlSchema schema)
 		{

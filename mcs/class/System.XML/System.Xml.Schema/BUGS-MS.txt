@@ -141,3 +141,10 @@ BUGS in MS Implementation of XmlSchema:
 
   Which implies that you can specify a value for minLength that is the same as
   {value}.
+
+013. Some facets are incorrectly allowed for list simple type.
+
+	As to structures spec 3.14.6 Derivation Valid (Simple) 2.2, only length,
+	minLength, maxLength, pattern and enumeration are allowed. However, MS
+	implementation allows whitespace (and possibly and so on).
+
