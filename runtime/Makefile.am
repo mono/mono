@@ -71,7 +71,7 @@ monobinsdir = $(bindir)
 endif
 
 $(assemblies_DATA):
-	@f=$(mcs_topdir)/class/lib/$@; \
+	@f=$(mcs_topdir)/class/lib/default/$@; \
 	if test -f $$f; then :; else f=$(assembliesdir)/$@; fi ; \
 	echo "cp -f $$f $(srcdir)"; \
 	cp -f $$f $(srcdir)
