@@ -1,5 +1,7 @@
 2005-02-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* class.c: Back out garbage in previous patch.
+	
 	* class.c: Add missing setup_... calls.
 
 	* class.c (mono_class_get_method_from_name_flags): Avoid calling
