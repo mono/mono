@@ -38,6 +38,7 @@ namespace System.Windows.Forms {
 
 		public Timer ()
 		{
+			enabled = false;
 		}
 
 		public Timer (IContainer container) : this ()
@@ -50,11 +51,13 @@ namespace System.Windows.Forms {
 				return enabled;
 			}
 			set {
-				enabled = value;
-				if (value) {
-					XplatUI.SetTimer (this);
-				} else {
-					XplatUI.KillTimer (this);
+				if (value != enabled) {
+					enabled = value;
+					if (value) {
+						XplatUI.SetTimer (this);
+					} else {
+						XplatUI.KillTimer (this);
+					}
 				}
 			}
 		}
