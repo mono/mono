@@ -1,5 +1,22 @@
 2004-02-08  Martin Baulig  <martin@ximian.com>
 
+	* image.h (MonoImage): Removed `generics_cache'.
+
+	* class.c (mono_class_from_generic): Take a `MonoGenericInst *'
+	instead of a `MonoType *' argument; removed the `inflate_methods'
+	argument.  Don't inflate methods here.
+
+	* loader.c (find_method): If it's a generic instance, call
+	mono_class_init() on the `sclass->generic_inst->generic_type'.
+
+	* metadata.c (mono_type_size): Make this work on uninitialized
+	generic instances; call it on the `ginst->generic_type's class.
+
+	* reflection.c (mono_reflection_bind_generic_parameters): Call
+	mono_class_from_generic() to create the `ginst->klass'.
+
+2004-02-08  Martin Baulig  <martin@ximian.com>
+
 	* class.h (MonoClass): Changed type of `generic_inst' from
 	`MonoType *' to `MonoGenericInst *'.
 
