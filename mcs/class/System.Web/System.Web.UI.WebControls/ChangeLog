@@ -1,3 +1,7 @@
+2002-12-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataList.cs: fixed header & footer.
+
 2002-12-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataList.cs: for header and footer don't use data source.

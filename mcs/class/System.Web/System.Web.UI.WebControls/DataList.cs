@@ -642,9 +642,8 @@ namespace System.Web.UI.WebControls
 				int selIndex = SelectedIndex;
 				string dataKey = DataKeyField;
 				
-				if (headerTemplate != null) {
-					CreateItem (-1, ListItemType.Header, false, null);
-				}
+				if (headerTemplate != null)
+					CreateItem (-1, ListItemType.Header, useDataSource, null);
 
 				foreach (object current in source) {
 					if (!useDataSource) {
@@ -668,7 +667,7 @@ namespace System.Web.UI.WebControls
 				}
 
 				if (footerTemplate != null)
-					CreateItem (-1, ListItemType.Footer, false, null);
+					CreateItem (-1, ListItemType.Footer, useDataSource, null);
 			}
 
 			if (useDataSource) {
@@ -830,16 +829,16 @@ namespace System.Web.UI.WebControls
 				break;
 			}
 
-			if (itemTemplate != null)
-				itemTemplate.InstantiateIn (item);
+			if (template != null)
+				template.InstantiateIn (item);
 		}
 
 		bool IRepeatInfoUser.HasFooter {
-			get { return !(ShowFooter && footerTemplate != null); }
+			get { return (ShowFooter && footerTemplate != null); }
 		}
 
 		bool IRepeatInfoUser.HasHeader {
-			get { return !(ShowHeader && headerTemplate != null); }
+			get { return (ShowHeader && headerTemplate != null); }
 		}
 
 		bool IRepeatInfoUser.HasSeparators {
