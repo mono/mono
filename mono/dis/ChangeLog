@@ -1,5 +1,9 @@
 2004-12-11  Martin Baulig  <martin@ximian.com>
 
+	* get.c (get_token): Escape typedefs, typerefs and typespecs.
+
+2004-12-11  Martin Baulig  <martin@ximian.com>
+
 	* get.c (get_escaped_name): Correctly escape nested classes.
 
 2004-12-11  Martin Baulig  <martin@ximian.com>
