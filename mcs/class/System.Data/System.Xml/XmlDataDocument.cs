@@ -218,7 +218,7 @@ namespace System.Xml {
 
 					if (reader.Name == DataSet.Tables [i].TableName) {
 
-						dt = DataSet.Tables [i];
+ 						dt = DataSet.Tables [i];
 						dt.ColumnChanged += new DataColumnChangeEventHandler (OnDataTableColumnChanged);
 						dt.RowDeleted += new DataRowChangeEventHandler (OnDataTableRowDeleted);
 						dt.RowChanged += new DataRowChangeEventHandler (OnDataTableRowChanged);
@@ -228,20 +228,30 @@ namespace System.Xml {
 				// TODO: Findout what kind of exception 
 				if (dt == null) 
 					throw new Exception (); // there were no correct table
-				
+
+				// Read rows to table
+				DataRow tempRow = dt.NewRow ();
 				while ((reader.NodeType != XmlNodeType.EndElement ||
 					reader.Name != dt.TableName) && reader.Read()) {
 					
 					switch (reader.NodeType) {
 						
 				        case XmlNodeType.Element:
-						dt.Rows.Add (LoadRow (reader, dt.NewRow ()));
-						
+						// Add column to DataRow
+						LoadRow (reader, ref tempRow);
 						break;
 				        default:
 						break;
 					}			
-				}		
+				}
+
+				// Every row must have unique id.
+				tempRow.XmlRowID = dataRowID;
+				dataRowIDList.Add (dataRowID);
+				dt.Rows.Add (tempRow);
+				dataRowID++;					
+				
+				
 			} while (reader.Read ());
 
 			base.Load (textReader);
@@ -323,11 +333,16 @@ namespace System.Xml {
 					OnDataTableRowAdded (eventArgs);
 					break;
 
+			        case DataRowAction.Rollback:
+					OnDataTableRowRollback (eventArgs);
+					break;
 			        default:
 					break;
 			} 
 		}
 
+		// Added
+		[MonoTODO]
 		private void OnDataTableRowAdded (DataRowChangeEventArgs args)
 		{
 			// If XmlRowID is != 0 then it is already added
@@ -339,18 +354,37 @@ namespace System.Xml {
 			row.XmlRowID = dataRowID;
 			dataRowID++;
 			XmlElement element = CreateElement (args.Row.Table.TableName);
-			Console.WriteLine ("-" + args.Row.Table.TableName);
-			
 			DocumentElement.AppendChild (element);
 			
 			XmlElement rowElement = null;
 			for (int i = 0; i < row.Table.Columns.Count; i++) {
-								
-				Console.WriteLine (row.Table.Columns [i].ToString () + " " + row[i]);
+
 				rowElement = CreateElement (row.Table.Columns [i].ToString ());
 				rowElement.InnerText = (string)row [i];
 				element.AppendChild (rowElement);
 			}
+		}
+
+		// Rollback
+		[MonoTODO]
+		private void OnDataTableRowRollback (DataRowChangeEventArgs args)
+		{
+			DataRow row = args.Row;
+			
+			int rowid = dataRowIDList.IndexOf (row.XmlRowID);
+			
+			// find right element in xmldocument
+			XmlNode node = GetElementsByTagName (row.Table.TableName) [rowid];
+
+			int rowValue = 0;
+			for (int i = 0; i < node.ChildNodes.Count; i++) {
+
+				XmlNode child = node.ChildNodes [i];
+				if (child.NodeType != XmlNodeType.Whitespace)				
+					child.InnerText = (string)row [rowValue++];
+				
+			}
+			
 		}
 
 		#endregion // DataSet event handlers
@@ -358,33 +392,28 @@ namespace System.Xml {
 		#region Private methods
 
 		[MonoTODO]
-		private DataRow LoadRow (XmlReader reader, DataRow row)
-		{
+		private void LoadRow (XmlReader reader, ref DataRow row)
+		{			
+			// dt.Rows.Add (LoadRow (reader, dt.NewRow ()));
 			// This method returns DataRow filled by values
 			// from xmldocument
 			string rowname = reader.Name;
 			string column = "";
-			     		
+			
 			if (reader.NodeType == XmlNodeType.Element)
 				column = reader.Name;
-
+			
 			reader.Read ();
-
+			
 			if (reader.NodeType == XmlNodeType.Text) {
-
-					string val = reader.Value;
-					if (row.Table.Columns.Contains (column))
-						row [column] = val;
+				
+				string val = reader.Value;
+				if (row.Table.Columns.Contains (column))
+					row [column] = val;
 			}
-
-			// Every row must have unique id.
-			row.XmlRowID = dataRowID;
-			dataRowIDList.Add (dataRowID);
-			dataRowID++;					
-
-			return row;
 		}
-
+		
 		#endregion // Private methods
 	}
 }
+
