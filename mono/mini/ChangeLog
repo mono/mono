@@ -1,3 +1,10 @@
+
+Sun Jan 16 12:19:35 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, mini.c, cfold.c: optimize access to enum
+	readonly fields, too. Eval conditional branches if possible
+	to perform unreachable code removal in more cases.
+
 2005-01-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* tramp-amd64.c exceptions-amd64.c: Use the new global code manager.
