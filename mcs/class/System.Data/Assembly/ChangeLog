@@ -1,6 +1,10 @@
+2004-04-06  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* AssemblyInfo.cs: also remove the fixme
+
 2004-04-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* Assembly/AssemblyInfo.cs: missing bits from Gert's patch for CLS
+	* AssemblyInfo.cs: missing bits from Gert's patch for CLS
 	compliance.
 
 2003-07-18  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
