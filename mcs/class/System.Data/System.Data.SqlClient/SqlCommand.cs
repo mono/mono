@@ -84,7 +84,7 @@ namespace System.Data.SqlClient {
 
 		[DataSysDescription ("Command text to execute.")]
 		[DefaultValue ("")]
-		[RefreshProperties (RefreshProperties.All)]
+		//[RefreshProperties (RefreshProperties.All)]
 		public string CommandText {
 			get { return CommandText; }
 			set { commandText = value; }
@@ -103,7 +103,7 @@ namespace System.Data.SqlClient {
 
 		[DataSysDescription ("How to interpret the CommandText.")]
 		[DefaultValue (CommandType.Text)]
-		[RefreshProperties (RefreshProperties.All)]
+		//[RefreshProperties (RefreshProperties.All)]
 		public CommandType CommandType	{
 			get { return commandType; }
 			set { commandType = value; }

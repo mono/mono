@@ -84,7 +84,7 @@ namespace System.Data.SqlClient {
 		[DataSysDescription ("Information used to connect to a DataSource, such as 'Data Source=x;Initial Catalog=x;Integrated Security=SSPI'.")]
 		[DefaultValue ("")]
 		[RecommendedAsConfigurable (true)]	
-		[RefreshProperties (RefreshProperties.All)]
+		//[RefreshProperties (RefreshProperties.All)]
 		public string ConnectionString	{
 			get { return connectionString; }
 			set { SetConnectionString (value); }

@@ -92,7 +92,7 @@ namespace System.Data.SqlClient {
 		[Browsable (false)]
 		[DataSysDescription ("The parameter generic type.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[RefreshProperties (RefreshProperties.All)]
+		//[RefreshProperties (RefreshProperties.All)]
 		public DbType DbType {
 			get { return theDbType; }
 			set { theDbType = value; }
@@ -157,7 +157,7 @@ namespace System.Data.SqlClient {
 		
 		[DataSysDescription ("The parameter native type.")]
 		[DefaultValue (SqlDbType.NVarChar)]
-		[RefreshProperties (RefreshProperties.All)]
+		//[RefreshProperties (RefreshProperties.All)]
 		public SqlDbType SqlDbType {
 			get { return dbtype; }
 			set { dbtype = value; }
