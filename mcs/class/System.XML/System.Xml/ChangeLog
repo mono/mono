@@ -1,3 +1,27 @@
+2002-10-29  Atsushi Enomoto <gigna@kit.hi-ho.ne.jp>
+
+	* XmlAttribute.cs : add internal 'IsDefault' property
+			    (equals to !Specified)
+	* XmlImplementation.cs : added 'internalNameTable' property.
+	* XmlDocument.cs :
+	    + now allows "" for 'standalone' in CreateXmlDeclaration.
+	    + implemented 'Implementation' property and constructor with it.
+	    + added logic for appending name table (but still no use)
+	    + implemented property 'DocumentType'
+	      (but without internalSubset parsing. wait for next update.)
+	* XmlNode.cs :
+	    + modified AppendChild() and RemoveChild() to support fragment.
+	    + modified AppendChild() to remove newChild from its parent
+	      when newChild is already in the other place.
+	    + modified RemoveChild() to set parentNode null.
+	    + modified ConstructDOM() to create DocumentType,
+	      and fixed access modifier ('internal protected' to 'internal')
+	* XmlLinkedNode.cs : fixed 'NextSibling' to return null
+		when its parent is null.
+	* XmlDocumentFragment.cs : added internal override 'LastLinkedChild'
+		property to enable AppendChild() for this class.
+	* XmlTextReader.cs : appended private publicId and systemId fields.
+
 2002-10-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XmlTextReader.cs: make it work when the underlying Stream is not
