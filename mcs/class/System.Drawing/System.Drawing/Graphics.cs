@@ -1365,7 +1365,6 @@ namespace System.Drawing
 			Region []	result=new Region[stringFormat.GetCharRanges.Length];
 			string 		textFragment;
 			SizeF		fragmentSize;
-			int		counter;
 			
 			for (int i=0; i<stringFormat.GetCharRanges.Length; i++) { 
 				textFragment=text.Substring(stringFormat.GetCharRanges[i].First, stringFormat.GetCharRanges[i].Length);

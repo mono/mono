@@ -160,7 +160,7 @@ namespace System.Drawing
 				//Console.WriteLine ("Exiting loop handler");
 				//MessageBox.Show ("Exiting loop handler");
 			}
-			catch(ThreadAbortException tae)
+			catch(ThreadAbortException)
 			{ 
 				//lets not bother ourselves with tae
 				//it will be thrown anyway
