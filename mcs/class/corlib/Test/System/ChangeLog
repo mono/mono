@@ -1,3 +1,7 @@
+2005-04-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AppDomainCas.cs: New. Permission (CAS) unit tests for AppDomain.
+
 2005-03-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ExceptionTest.cs: Added check for ArgumentNullException on 
