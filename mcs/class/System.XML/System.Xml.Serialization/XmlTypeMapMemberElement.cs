@@ -132,7 +132,7 @@ namespace System.Xml.Serialization
 			{
 				foreach (XmlTypeMapElementInfo elem in ElementInfo)
 				{
-					if (elem.ElementName == "") 
+					if (elem.IsUnnamedAnyElement) 
 						return true;
 				}
 				return false;

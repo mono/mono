@@ -105,7 +105,7 @@ namespace System.Xml.Serialization
 				else if(obj is XmlChoiceIdentifierAttribute)
 					xmlChoiceIdentifier = (XmlChoiceIdentifierAttribute) obj;
 				else if(obj is DefaultValueAttribute)
-					xmlDefaultValue = obj;
+					xmlDefaultValue = ((DefaultValueAttribute)obj).Value;
 				else if(obj is XmlElementAttribute )
 					xmlElements.Add((XmlElementAttribute ) obj);
 				else if(obj is XmlEnumAttribute)

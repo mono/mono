@@ -20,6 +20,7 @@ namespace System.Xml.Serialization
 		private string ns;
 		private string xmlType;
 		TypeData type;
+		XmlTypeMapping baseMap;
 		bool multiReferenceType = false;
 
 		ArrayList _derivedTypes = new ArrayList();
@@ -74,6 +75,12 @@ namespace System.Xml.Serialization
 			set { multiReferenceType = value; }
 		}
 
+		internal XmlTypeMapping BaseMap
+		{
+			get { return baseMap; }
+			set { baseMap = value; }
+		}
+
 		internal XmlTypeMapping GetRealTypeMap (string objectFullTypeName)
 		{
 			// Returns the map for a subtype of this map's type
@@ -102,6 +109,7 @@ namespace System.Xml.Serialization
 		ArrayList _elementMembers;
 		Hashtable _attributeMembers;
 		ArrayList _flatLists;
+		ArrayList _allMembers = new ArrayList ();
 		XmlTypeMapMemberAnyElement _defaultAnyElement;
 		XmlTypeMapMemberAnyAttribute _defaultAnyAttribute;
 		XmlTypeMapMemberNamespaces _namespaceDeclarations;
@@ -109,6 +117,7 @@ namespace System.Xml.Serialization
 
 		public void AddMember (XmlTypeMapMember member)
 		{
+			_allMembers.Add (member);
 			if (member is XmlTypeMapMemberAttribute)
 			{
 				XmlTypeMapMemberAttribute atm = (XmlTypeMapMemberAttribute)member;
@@ -178,6 +187,13 @@ namespace System.Xml.Serialization
 		{
 			if (_elements == null) return null;
 			return (XmlTypeMapElementInfo)_elements[name + "/" + ns];
+		}
+
+		public XmlTypeMapMember FindMember (string name)
+		{
+			for (int n=0; n<_allMembers.Count; n++)
+				if (((XmlTypeMapMember)_allMembers[n]).Name == name) return (XmlTypeMapMember)_allMembers[n];
+			return null;
 		}
 
 		public XmlTypeMapMemberAnyElement DefaultAnyElementMember

@@ -207,6 +207,7 @@ namespace System.Xml.Serialization {
 
 				XmlTypeMapping derived = ImportTypeMapping (includedType, root, defaultNamespace);
 				map.DerivedTypes.Add (derived);
+				if (type != typeof (object)) derived.BaseMap = map;
 				map.DerivedTypes.AddRange (derived.DerivedTypes);
 			}
 
@@ -464,12 +465,12 @@ namespace System.Xml.Serialization {
 				else 
 					mapAttribute.AttributeName = atts.XmlAttribute.AttributeName;
 
-				mapAttribute.DataType = atts.XmlAttribute.DataType;
 				mapAttribute.Form = atts.XmlAttribute.Form;
 				mapAttribute.Namespace = (atts.XmlAttribute.Namespace != null) ? atts.XmlAttribute.Namespace : "";
 				if (typeData.IsComplexType)
 					mapAttribute.MappedType = ImportTypeMapping (typeData.Type, null, mapAttribute.Namespace);
 
+				typeData = TypeTranslator.GetTypeData(rmember.MemberType, atts.XmlAttribute.DataType);
 				mapMember = mapAttribute;
 			}
 			else if (typeData.SchemaType == SchemaTypes.Array)
@@ -530,20 +531,19 @@ namespace System.Xml.Serialization {
 				member.IsXmlTextCollector = true;
 				if (atts.XmlText.Type != null) defaultType = atts.XmlText.Type;
 				if (defaultType == typeof(XmlNode)) defaultType = typeof(XmlText);	// Nodes must be text nodes
-				
+
 				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (member, TypeTranslator.GetTypeData(defaultType, atts.XmlText.DataType));
 
 				if (elem.TypeData.SchemaType != SchemaTypes.Primitive && elem.TypeData.SchemaType != SchemaTypes.Enum &&
 				    elem.TypeData.SchemaType != SchemaTypes.XmlNode)
 					throw new InvalidOperationException ("XmlText cannot be used to encode complex types");
 
-				elem.ElementName = "<text>";
-				elem.Namespace = string.Empty;
+				elem.IsTextElement = true;
 				elem.WrappedElement = false;
 				list.Add (elem);
 			}
 
-			if (atts.XmlElements.Count == 0)
+			if (atts.XmlElements.Count == 0 && list.Count == 0)
 			{
 				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (member, TypeTranslator.GetTypeData(defaultType));
 				elem.ElementName = defaultName;
@@ -589,7 +589,8 @@ namespace System.Xml.Serialization {
 			foreach (XmlAnyElementAttribute att in atts.XmlAnyElements)
 			{
 				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (member, TypeTranslator.GetTypeData(typeof(XmlElement)));
-				elem.ElementName = (att.Name != null) ? att.Name : "";
+				if (att.Name != null && att.Name != string.Empty) elem.ElementName = att.Name;
+				else elem.IsUnnamedAnyElement = true;
 				elem.Namespace = (att.Namespace != null) ? att.Namespace : "";
 				list.Add (elem);
 			}

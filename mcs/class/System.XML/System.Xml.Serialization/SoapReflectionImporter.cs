@@ -184,6 +184,7 @@ namespace System.Xml.Serialization {
 
 				XmlTypeMapping derived = ImportTypeMapping (includedType, defaultNamespace);
 				map.DerivedTypes.Add (derived);
+				if (type != typeof (object)) derived.BaseMap = map;
 				map.DerivedTypes.AddRange (derived.DerivedTypes);
 			}
 
@@ -315,11 +316,11 @@ namespace System.Xml.Serialization {
 				else 
 					mapAttribute.AttributeName = atts.SoapAttribute.AttributeName;
 
-				mapAttribute.DataType = atts.SoapAttribute.DataType;
 				mapAttribute.Namespace = (atts.SoapAttribute.Namespace != null) ? atts.SoapAttribute.Namespace : "";
 				if (typeData.IsComplexType)
 					mapAttribute.MappedType = ImportTypeMapping (typeData.Type);
 
+				typeData = TypeTranslator.GetTypeData (rmember.MemberType, atts.SoapAttribute.DataType);
 				mapMember = mapAttribute;
 			}
 			else

@@ -39,10 +39,13 @@ namespace System.Xml.Serialization
 			set { _namespace = value; }
 		}
 
-		public string DataType
+		public string DataTypeNamespace
 		{
-			get { return _dataType; }
-			set { _dataType = value; }
+			get 
+			{ 
+				if (_mappedType == null) return XmlSchema.Namespace;
+				else return _mappedType.Namespace;
+			}
 		}
 
 		public XmlSchemaForm Form 

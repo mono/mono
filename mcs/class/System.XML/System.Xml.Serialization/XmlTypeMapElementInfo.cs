@@ -118,6 +118,18 @@ namespace System.Xml.Serialization
 			set { _wrappedElement = value; }
 		}
 
+		public bool IsTextElement
+		{
+			get { return ElementName == "<text>"; }
+			set { ElementName = "<text>"; Namespace = string.Empty; }
+		}
+
+		public bool IsUnnamedAnyElement
+		{
+			get { return ElementName == string.Empty; }
+			set { ElementName = string.Empty; Namespace = string.Empty; }
+		}
+
 		public override bool Equals (object other)
 		{
 			XmlTypeMapElementInfo oinfo = (XmlTypeMapElementInfo)other;
@@ -126,7 +138,7 @@ namespace System.Xml.Serialization
 			if (_namespace != oinfo._namespace) return false;
 			if (_form != oinfo._form) return false;
 			if (_choiceValue != oinfo._choiceValue) return false;
-			if (_type.Type != oinfo._type.Type) return false;
+			if (_type != oinfo._type) return false;
 			if (_isNullable != oinfo._isNullable) return false;
 			return true;
 		}

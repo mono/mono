@@ -90,7 +90,8 @@ namespace System.Xml.Serialization
 			{ 
 				return (SchemaType == SchemaTypes.Class || 
 					      SchemaType == SchemaTypes.Array ||
-					      SchemaType == SchemaTypes.Enum ); 
+					      SchemaType == SchemaTypes.Enum ||
+						  SchemaType == SchemaTypes.XmlSerializable ); 
 			}
 		}
 

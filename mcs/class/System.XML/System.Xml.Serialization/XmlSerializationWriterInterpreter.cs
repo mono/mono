@@ -224,9 +224,15 @@ namespace System.Xml.Serialization
 			if (isValueList) {
 				return member.Index < ((object[])ob).Length;
 			}
-			else if (member.DefaultValue != null) {
+			else if (member.DefaultValue != System.DBNull.Value) {
 				object val = GetMemberValue (member, ob, isValueList);
-				if (val != null && member.DefaultValue != null && val.Equals (member.DefaultValue)) return false;
+				if (val == null && member.DefaultValue == null) return false;
+				if (val != null && val.GetType().IsEnum)
+				{
+					if (val.Equals (member.DefaultValue)) return false;
+					val = Convert.ChangeType (val, val.GetType().GetElementType ());
+				}
+				if (val != null && val.Equals (member.DefaultValue)) return false;
 			}
 			return true;
 		}
@@ -422,6 +428,8 @@ namespace System.Xml.Serialization
 				return GetEnumXmlValue (typeMap, value);
 			else if (type.Type == typeof (XmlQualifiedName))
 				return FromXmlQualifiedName ((XmlQualifiedName)value);
+			else if (value == null)
+				return null;
 			else
 				return XmlCustomFormatter.ToXmlString (type, value);
 		}

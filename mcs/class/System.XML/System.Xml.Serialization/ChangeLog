@@ -1,3 +1,22 @@
+2003-07-14  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SoapReflectionImporter.cs: Set the BaseMap property of map. Small fix.
+	* TypeData.cs: IsComplexType now returns true for IXmlSerializable types.
+	* XmlAttributes.cs: Fixed bug when reading the value of DefaultValueAttribute.
+	* XmlReflectionImporter.cs: Set the BaseMap property of map. Several small fixes.
+	* XmlSchemaExporter.cs: Implemented.
+	* XmlSchemas.cs: Support schemas with TargetNamespace set to null.
+	* XmlSerializationWriter.cs: FromXmlQualifiedName (): return null if the qname is null.
+	  GetNamespacePrefix (): no need to add xmlns attribute if namespace is null.
+	* XmlSerializationWriterInterpreter.cs: Fixed management of default values.
+	  GetStringValue() returns null if the value is null, instead of empty string.
+	  (attributes with null values are not written).
+	* XmlTypeMapElementInfo.cs: added IsTextElement and IsUnnamedAnyElement properties.
+	* XmlTypeMapMemberAttribute.cs: added DataTypeNamespace and removed DataType.
+	  DataType value can is now in TypeData.
+	* XmlTypeMapMemberElement.cs: Small fix.
+	* XmlTypeMapping.cs: Added FindMember method and BaseMap property.
+
 2003-07-14  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* AssemblyInfo.cs: Removed

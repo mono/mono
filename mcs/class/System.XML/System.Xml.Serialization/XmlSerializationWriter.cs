@@ -161,7 +161,8 @@ namespace System.Xml.Serialization {
 		protected string FromXmlQualifiedName (XmlQualifiedName xmlQualifiedName)
 		{
 			if (xmlQualifiedName == null || xmlQualifiedName == XmlQualifiedName.Empty)
-				return string.Empty;
+				return null;
+				
 			return GetQualifiedName (xmlQualifiedName.Name, xmlQualifiedName.Namespace);
 		}
 
@@ -191,7 +192,6 @@ namespace System.Xml.Serialization {
 			{
 				if (ns == String.Empty) {
 					prefix = String.Empty;
-					WriteAttribute ("xmlns", String.Empty);
 				} else {
 					prefix = String.Format ("q{0}", ++qnameCount);
 					WriteAttribute ("xmlns", prefix, null, ns);

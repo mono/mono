@@ -40,7 +40,7 @@ namespace System.Xml.Serialization {
 		}
 
 		public XmlSchema this [string ns] {
-			get { return (XmlSchema) table[ns]; }
+			get { return (XmlSchema) table[ns!=null?ns:""]; }
 		}
 
 		#endregion // Properties
@@ -124,8 +124,10 @@ namespace System.Xml.Serialization {
 		}
 
 		protected override void OnInsert (int index, object value)
-		{	
-			table [((XmlSchema) value).TargetNamespace] = value;
+		{
+			string ns = ((XmlSchema) value).TargetNamespace;
+			if (ns == null) ns = "";
+			table [ns] = value;
 		}
 
 		protected override void OnRemove (int index, object value)
@@ -135,7 +137,9 @@ namespace System.Xml.Serialization {
 
 		protected override void OnSet (int index, object oldValue, object newValue)
 		{
-			table [((XmlSchema) oldValue).TargetNamespace] = newValue;
+			string ns = ((XmlSchema) oldValue).TargetNamespace;
+			if (ns == null) ns = "";
+			table [ns] = newValue;
 		}
 	
 		public void Remove (XmlSchema schema)
