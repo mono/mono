@@ -1,3 +1,11 @@
+2003-11-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.h (MonoReflectionAssemblyBuilder): Track changes to the
+	object layout.
+
+	* reflection.c (mono_image_build_metadata): Avoid creation of a default
+	main module, since it is now done by the managed code.
+
 2003-11-03  Martin Baulig  <martin@ximian.com>
 
 	* reflection.c (mono_image_get_generic_method_param_info):
