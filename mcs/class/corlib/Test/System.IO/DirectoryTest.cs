@@ -1121,6 +1121,15 @@ public class DirectoryTest : Assertion {
 			DeleteDirectory (DirPath);
 		}
 	}
+
+	[Test]
+	public void GetParentOfRootDirectory ()
+	{
+		DirectoryInfo info;
+
+                info = Directory.GetParent ("/");
+		AssertEquals (null, info);
+	}
 	
 	[Test]
 	public void GetFiles ()
