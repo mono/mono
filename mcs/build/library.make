@@ -35,7 +35,7 @@ all-local: $(the_lib)
 
 install-local: $(the_lib) gacutil
 	@if test -f Assembly/AssemblyInfo.cs ; then \
-		$(PLATFORM_RUNTIME)  $(gacutil) /i $(the_lib) /f || exit 1 ; \
+		$(RUNTIME)  $(gacutil) /i $(the_lib) /f || exit 1 ; \
 	else \
 		$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib ; \
 		$(INSTALL_LIB) $(the_lib) $(DESTDIR)$(prefix)/lib ; \
@@ -43,7 +43,7 @@ install-local: $(the_lib) gacutil
 
 uninstall-local: gacutil
 	@if test -f Assembly/AssemblyInfo.cs ; then \
-		$(PLATFORM_RUNTIME)  $(gacutil) /u $(the_lib) /f ; \
+		$(RUNTIME)  $(gacutil) /u $(the_lib) /f ; \
 	else \
 		-rm -f $(DESTDIR)$(prefix)/lib/$(LIBRARY)
 	fi

@@ -1,3 +1,8 @@
+2004-04-29  Jackson Harper  <jackson@ximian.com>
+
+	* library.make: Use RUNTIME instead of PLATFORM_RUNTIME for the
+	gacutil. gacutil needs to be run on our runtime.
+	
 2004-04-28  Jackson Harper  <jackson@ximian.com>
 
 	* library.make: Use the proper runtime, make sure gacutil is
