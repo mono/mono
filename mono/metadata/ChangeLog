@@ -1,5 +1,8 @@
 2005-02-02  Zoltan Varga  <vargaz@freemail.hu>
 
+	* appdomain.c (set_domain_search_path): Allow this to be called if
+	domain->setup is not yet set.
+
 	* loader.c (mono_method_get_index): New helper function.
 
 	* loader.c reflection.c: Use mono_method_get_index ().
