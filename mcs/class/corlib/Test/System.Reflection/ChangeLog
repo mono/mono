@@ -1,3 +1,7 @@
+2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ModuleCas.cs: New. CAS unit tests for Module.
+
 2005-03-01  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MethodInfoTest.cs: Disable code causing mcs to fail.
