@@ -318,7 +318,13 @@ namespace Mono.Xml.Xsl {
 
 			if (c.Input.MoveToFirstChild ()) {
 				bool alldone = true;
+				XPathNavigator contentStart = c.Input.Clone ();
+				bool shouldMove = false;
 				do {
+					if (shouldMove) {
+						shouldMove = false;
+						contentStart.MoveTo (c.Input);
+					}
 					if (c.Input.NodeType == XPathNodeType.Text)
 						{ alldone = false; break; }
 					
@@ -333,10 +339,12 @@ namespace Mono.Xml.Xsl {
 						this.parameters = new ArrayList ();
 					
 					parameters.Add (new XslLocalParam (c));
-					
+					shouldMove = true;
 				} while (c.Input.MoveToNext ());
-				if (!alldone)
+				if (!alldone) {
+					c.Input.MoveTo (contentStart);
 					content = c.CompileTemplateContent ();
+				}
 				c.Input.MoveToParent ();
 			}
 		}

@@ -1,5 +1,9 @@
 2005-03-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XslTemplate.cs : First non-element content were incorrectly ignored.
+
+2005-03-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XslFunctions.cs, Compiler.cs : Eliminated XPathNavigatorNsm class
 	  to reduce references to stylesheet XPathNavigator. To accomplish it,
 	  IStaticXsltContext does not declare GetNsm() anymore. All xslt
