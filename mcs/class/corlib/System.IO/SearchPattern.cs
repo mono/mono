@@ -142,8 +142,8 @@ namespace System.IO {
 
 		// private static
 
-		private static readonly char [] WildcardChars = { '*', '?' };
-		private static readonly char [] InvalidChars = { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar };
+		internal static readonly char [] WildcardChars = { '*', '?' };
+		internal static readonly char [] InvalidChars = { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar };
 
 		private class Op {
 			public Op (OpCode code)

@@ -327,30 +327,45 @@ namespace System.IO
 			if (path == "")
 				throw new ArgumentException ("The Path do not have a valid format");
 
-			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
+			string wild = Path.Combine (path, pattern);
+			string wildpath = Path.GetDirectoryName (wild);
+			if (wildpath.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ("Path contains invalid characters");
 
-			if (!Directory.Exists (path)) {
-				throw new DirectoryNotFoundException ("Directory '" + path + "' not found.");
+			if (wildpath.IndexOfAny (Path.InvalidPathChars) != -1) {
+				if (path.IndexOfAny (SearchPattern.InvalidChars) == -1)
+					throw new ArgumentException ("Path contains invalid characters", "path");
+
+				throw new ArgumentException ("Pattern contains invalid characters", "pattern");
 			}
 
-			search = new SearchPattern (pattern);
+			if (!Directory.Exists (wildpath)) {
+				if (wildpath.IndexOfAny (SearchPattern.WildcardChars) == -1)
+					throw new DirectoryNotFoundException ("Directory '" + wildpath + "' not found.");
+
+				if (path.IndexOfAny (SearchPattern.WildcardChars) == -1)
+					throw new ArgumentException ("Pattern is invalid", "pattern");
+
+				throw new ArgumentException ("Path is invalid", "path");
+			}
+
+			search = new SearchPattern (Path.GetFileName (wild));
 
 			MonoIOError error;
 			
-			find = MonoIO.FindFirstFile (Path.Combine (path , "*"), out stat, out error);
+			find = MonoIO.FindFirstFile (Path.Combine (wildpath , "*"), out stat, out error);
 			if (find == MonoIO.InvalidHandle) {
 				switch (error) {
 				case MonoIOError.ERROR_FILE_NOT_FOUND:
 				case MonoIOError.ERROR_PATH_NOT_FOUND:
-					string message = String.Format ("Could not find a part of the path \"{0}\"", path);
+					string message = String.Format ("Could not find a part of the path \"{0}\"",
+									wildpath);
 					throw new DirectoryNotFoundException (message);
 				case MonoIOError.ERROR_NO_MORE_FILES:
 					return new string [0];
 
 				default:
-					throw MonoIO.GetException (path,
-								   error);
+					throw MonoIO.GetException (wildpath, error);
 				}
 			}
 			
@@ -367,10 +382,9 @@ namespace System.IO
 				    search.IsMatch (stat.Name) &&
 				    stat.Name != "." &&
 				    stat.Name != "..")
-					entries.Add (Path.Combine (path, stat.Name));
+					entries.Add (Path.Combine (wildpath, stat.Name));
 
-				if (!MonoIO.FindNextFile (find, out stat,
-							  out error))
+				if (!MonoIO.FindNextFile (find, out stat, out error))
 					break;
 			}
 			MonoIO.FindClose (find, out error);

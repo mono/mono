@@ -1,5 +1,12 @@
 2003-11-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Directory.cs: allow directory names without wildcards in the pattern.
+	Fixes bug #3 50969.
+
+	* SearchPattern.cs: made InvalidChars and WildcardChars internal.
+
+2003-11-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* FileStream.cs: use the argument name when throwing exception.
 
 	* StreamReader.cs:
