@@ -196,7 +196,16 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (true), Bindable (true), WebCategory ("Behavior")]
 		[WebSysDescription ("The activation state of this WebControl.")]
 		public virtual bool Enabled {
-			get { return enabled; }
+			get {
+				if (!enabled)
+					return false;
+
+				WebControl parent = Parent as WebControl;
+				if (parent != null)
+					return ((WebControl) parent).Enabled;
+					
+				return true;
+			}
 			set {
 				if (enabled != value)
 					ViewState ["Enabled"] = value;
@@ -444,6 +453,7 @@ namespace System.Web.UI.WebControls
 			if (ControlStyleCreated)
 				controlView = ControlStyle.SaveViewState ();
 
+			ViewState ["Enabled"] = enabled;
 			object baseView = base.SaveViewState ();
 			object attrView = null;
 			if (attributeState != null)

@@ -133,11 +133,6 @@ namespace System.Web.UI.WebControls
 				ControlStyle.AddAttributesToRender (writer, this);
 			}
 
-			if (!Enabled){
-				hasBeginRendering = true;
-				writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
-			}
-
 			if (ToolTip.Length > 0){
 				hasBeginRendering = true;
 				writer.AddAttribute (HtmlTextWriterAttribute.Title, ToolTip);
@@ -178,6 +173,9 @@ namespace System.Web.UI.WebControls
 		
 		internal virtual void RenderInputTag (HtmlTextWriter writer, string clientId)
 		{
+			if (!Enabled)
+				writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
+
 			writer.AddAttribute (HtmlTextWriterAttribute.Id, clientId);
 			writer.AddAttribute( HtmlTextWriterAttribute.Type, "checkbox");
 			writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
