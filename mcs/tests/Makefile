@@ -7,7 +7,7 @@ thisdir = tests
 SUBDIRS = 
 include ../build/rules.make
 
-DISTFILES = README.tests harness.mk $(wildcard *.cs) $(wildcard *.il)
+DISTFILES = README.tests harness.mk $(wildcard *.cs) $(wildcard *.il) $(wildcard *.xml)
 
 ifeq (default, $(PROFILE))
 # force this, we don't case if CSC is broken. This also
