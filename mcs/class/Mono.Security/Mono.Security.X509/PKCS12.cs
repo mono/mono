@@ -974,7 +974,7 @@ namespace Mono.Security.X509 {
 			ArrayList addcerts = new ArrayList ();
 			ArrayList removecerts = new ArrayList ();
 
-			foreach (X509Certificate c in _certs) {
+			foreach (X509Certificate c in Certificates) {
 				bool found = false;
 
 				foreach (X509Certificate lc in scs) {
@@ -990,7 +990,7 @@ namespace Mono.Security.X509 {
 			foreach (X509Certificate c in scs) {
 				bool found = false;
 
-				foreach (X509Certificate lc in _certs) {
+				foreach (X509Certificate lc in Certificates) {
 					if (Compare (c.RawData, lc.RawData)) {
 						found = true;
 					}

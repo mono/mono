@@ -1,3 +1,8 @@
+2004-05-06  Jesper Pedersen  <jep@itplus.dk>
+
+	* PKCS12.cs: Fixed synchronization with X509CertificateCollection in 
+	GetBytes ().
+
 2004-05-05  Jesper Pedersen  <jep@itplus.dk>
 
 	* PKCS12.cs: Added support for SafeBag attributes. Added support for 
