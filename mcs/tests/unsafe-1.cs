@@ -50,6 +50,55 @@ unsafe class X {
 		}
 		return 0;
 	}
+
+	static int i = 1;
+	static char c = 'a';
+	static long l = 123;
+	static double d = 1.2;
+	static float f = 1.3F;
+	static short s = 4;
+	
+	static int TestPtrAssign ()
+	{
+
+		fixed (int *ii = &i){
+			*ii = 10;
+		}
+
+		fixed (char *cc = &c){
+			*cc = 'b';
+		}
+
+		fixed (long *ll = &l){
+			*ll = 100;
+		}
+
+		fixed (double *dd = &d){
+			*dd = 3.0;
+		}
+
+		fixed (float *ff = &f){
+			*ff = 1.2F;
+		}
+
+		fixed (short *ss = &s){
+			*ss = 102;
+		}
+
+		if (i != 10)
+			return 100;
+		if (c != 'b')
+			return 101;
+		if (l != 100)
+			return 102;
+		if (d != 3.0)
+			return 103;
+		if (f != 1.2F)
+			return 104;
+		if (s != 102)
+			return 105;
+		return 0;
+	}
 	
 	static int Main ()
 	{
@@ -61,6 +110,9 @@ unsafe class X {
 		if ((v = TestPtrAdd ()) != 0)
 			return v;
 
+		if ((v = TestPtrAssign ()) != 0)
+			return v;
+		
 		Console.WriteLine ("Ok");
 		return 0;
 	}

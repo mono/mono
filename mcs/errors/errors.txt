@@ -41,4 +41,4 @@ numbers to match the Microsoft numbers:
 
 -14     Invalid number passed to probe
 
--15	Does not implement the IMemoryLocation interface
+-15	Can not locate default assembly path

@@ -518,14 +518,14 @@ namespace Mono.CSharp {
 	// after semantic analysis (this is so we can take the address
 	// of an indirection).
 	//
-	public class Indirection : Expression, IMemoryLocation {
+	public class Indirection : Expression, IMemoryLocation, IAssignMethod {
 		Expression expr;
 		
 		public Indirection (Expression expr)
 		{
 			this.expr = expr;
 			this.type = expr.Type.GetElementType ();
-			eclass = ExprClass.Value;
+			eclass = ExprClass.Variable;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -534,6 +534,13 @@ namespace Mono.CSharp {
 			LoadFromPtr (ec.ig, Type, false);
 		}
 
+		public void EmitAssign (EmitContext ec, Expression source)
+		{
+			expr.Emit (ec);
+			source.Emit (ec);
+			StoreFromPtr (ec.ig, type);
+		}
+		
 		public void AddressOf (EmitContext ec)
 		{
 			expr.Emit (ec);
@@ -2535,26 +2542,9 @@ namespace Mono.CSharp {
 			
 			source.Emit (ec);
 
-			if (is_ref){
-				if (type == TypeManager.int32_type || type == TypeManager.uint32_type)
-					ig.Emit (OpCodes.Stind_I4);
-				else if (type == TypeManager.int64_type || type == TypeManager.uint64_type)
-					ig.Emit (OpCodes.Stind_I8);
-				else if (type == TypeManager.char_type || type == TypeManager.short_type ||
-					type == TypeManager.ushort_type)
-					ig.Emit (OpCodes.Stind_I2);
-				else if (type == TypeManager.float_type)
-					ig.Emit (OpCodes.Stind_R4);
-				else if (type == TypeManager.double_type)
-					ig.Emit (OpCodes.Stind_R8);
-				else if (type == TypeManager.byte_type || type == TypeManager.sbyte_type ||
-					type == TypeManager.bool_type)
-					ig.Emit (OpCodes.Stind_I1);
-				else if (type == TypeManager.intptr_type)
-					ig.Emit (OpCodes.Stind_I);
-				else
-					ig.Emit (OpCodes.Stind_Ref);
-			} else {
+			if (is_ref)
+				StoreFromPtr (ig, type);
+			else {
 				if (arg_idx <= 255)
 					ig.Emit (OpCodes.Starg_S, (byte) arg_idx);
 				else

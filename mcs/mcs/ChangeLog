@@ -1,3 +1,12 @@
+2002-02-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Indirection): Implement EmitAssign and set the
+	ExprClass to Variable.  This allows pointer dereferences to be
+	treated as variables, and to have values assigned to them.
+
+	* ecore.cs (Expression.StoreFromPtr): New utility function to
+	store values dereferencing.
+
 2002-02-20  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (Binary.ResolveOperator): Ensure that we are

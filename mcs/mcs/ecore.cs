@@ -2251,6 +2251,31 @@ namespace Mono.CSharp {
 		}
 
 		//
+		// The stack contains the pointer and the value of type `type'
+		//
+		public static void StoreFromPtr (ILGenerator ig, Type type)
+		{
+			if (type == TypeManager.int32_type || type == TypeManager.uint32_type)
+				ig.Emit (OpCodes.Stind_I4);
+			else if (type == TypeManager.int64_type || type == TypeManager.uint64_type)
+				ig.Emit (OpCodes.Stind_I8);
+			else if (type == TypeManager.char_type || type == TypeManager.short_type ||
+				 type == TypeManager.ushort_type)
+				ig.Emit (OpCodes.Stind_I2);
+			else if (type == TypeManager.float_type)
+				ig.Emit (OpCodes.Stind_R4);
+			else if (type == TypeManager.double_type)
+				ig.Emit (OpCodes.Stind_R8);
+			else if (type == TypeManager.byte_type || type == TypeManager.sbyte_type ||
+				 type == TypeManager.bool_type)
+				ig.Emit (OpCodes.Stind_I1);
+			else if (type == TypeManager.intptr_type)
+				ig.Emit (OpCodes.Stind_I);
+			else
+				ig.Emit (OpCodes.Stind_Ref);
+		}
+		
+		//
 		// Returns the size of type `t' if known, otherwise, 0
 		//
 		public static int GetTypeSize (Type t)
