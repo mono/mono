@@ -20,22 +20,24 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Authors:
+// Author:
 //	Ravindra (rkumar@novell.com)
 //
 // TODO:
-//   - Drawing dotted text when text is too big to draw on a button
-//   - Hilighting a button in flat appearance, when mouse moves over
+//   - Drawing ellipsis when text is too big to draw on a button
 //   - RightToLeft
 //   - DropDown ContextMenu
 //   - Tooltip
 //
-// Copyright (C) Novell Inc., 2004
+// Copyright (C) Novell Inc., 2004 (http://www.novell.com)
 //
 //
-// $Revision: 1.10 $
+// $Revision: 1.11 $
 // $Modtime: $
 // $Log: ToolBar.cs,v $
+// Revision 1.11  2004/09/16 13:00:19  ravindra
+// Invalidate should be done before redrawing.
+//
 // Revision 1.10  2004/09/09 11:25:03  ravindra
 // Make redraw accessible from ToolBarButton.
 //
@@ -279,7 +281,13 @@ namespace System.Windows.Forms
 		[DefaultValue (true)]
 		public bool Divider {
 			get { return divider; }
-			set { divider = value; }
+			set {
+				if (value == divider)
+					return;
+
+				divider = value;
+				Redraw (false);
+			}
 		}
 
 		[DefaultValue (DockStyle.Top)]
@@ -490,8 +498,8 @@ namespace System.Windows.Forms
 			}
 			e.Button.Pressed = false;
 
-			Redraw (false);
 			Invalidate (e.Button.Rectangle);
+			Redraw (false);
 
 			if (e.Button.Style == ToolBarButtonStyle.DropDownButton)
 				this.OnButtonDropDown (e);
@@ -558,8 +566,8 @@ namespace System.Windows.Forms
 				if (button.Rectangle.Contains (hit) && button.Enabled) {
 					button.Pressed = true;
 					this.Capture = true;
-					Redraw (false);
 					Invalidate (button.Rectangle);
+					Redraw (false);
 					break;
 				}
 			}
@@ -579,14 +587,14 @@ namespace System.Windows.Forms
 						this.OnButtonClick (new ToolBarButtonClickEventArgs (button));
 					else {
 						button.Pressed = false;
-						Redraw (false);
 						Invalidate (button.Rectangle);
+						Redraw (false);
 					}
 				}
 				else if (button.Pressed) {
 						button.Pressed = false;
-						Redraw (false);
 						Invalidate (button.Rectangle);
+						Redraw (false);
 				}
 			}
 		}
@@ -597,8 +605,8 @@ namespace System.Windows.Forms
 
 			if (currentButton != null && currentButton.Hilight) {
 				currentButton.Hilight = false;
-				Redraw (false);
 				Invalidate (currentButton.Rectangle);
+				Redraw (false);
 			}
 			currentButton = null;
 		}
@@ -613,8 +621,8 @@ namespace System.Windows.Forms
 				if (currentButton.Hilight)
 					return;
 				currentButton.Hilight = true;
-				Redraw (false);
 				Invalidate (currentButton.Rectangle);
+				Redraw (false);
 			}
 			else {
 				foreach (ToolBarButton button in buttons) {
@@ -623,13 +631,13 @@ namespace System.Windows.Forms
 						if (currentButton.Hilight)
 							break;
 						currentButton.Hilight = true;
-						Redraw (false);
 						Invalidate (currentButton.Rectangle);
+						Redraw (false);
 					}
 					else if (button.Hilight) {
 						button.Hilight = false;
-						Redraw (false);
 						Invalidate (button.Rectangle);
+						Redraw (false);
 					}
 				}
 			}
