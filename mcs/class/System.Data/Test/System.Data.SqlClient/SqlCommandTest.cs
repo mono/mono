@@ -92,8 +92,34 @@ namespace MonoTests.System.Data.SqlClient
           }
 
 
-
+	 [Test]
+	 /**
+	 The below test does not need a connection but since the setup opens the connection
+	 i will need to close it
+	 **/
+	 public void CloneTest() {
 	
+			SqlCommand cmd = new SqlCommand();
+			cmd.Connection = null;
+			cmd.CommandText = "sp_insert";
+			cmd.CommandType = CommandType.StoredProcedure;
+			Object TestPar = System.DBNull.Value;
+			cmd.Parameters.Add("@TestPar1",SqlDbType.Int);
+			cmd.Parameters["@TestPar1"].Value = TestPar;
+			cmd.Parameters.Add("@BirthDate",DateTime.Now);
+			cmd.DesignTimeVisible = true;
+			cmd.CommandTimeout = 100;
+			Object clone1 = ((ICloneable)(cmd)).Clone();
+			SqlCommand cmd1 = (SqlCommand)clone1;
+			Assert.AreEqual(2,cmd1.Parameters.Count);
+			Assert.AreEqual(100,cmd1.CommandTimeout);
+			cmd1.Parameters.Add("@test",DateTime.Now);
+			// to check that it is deep copy and not a shallow copy of the
+			// parameter collection
+			Assert.AreEqual(3,cmd1.Parameters.Count);
+			Assert.AreEqual(2,cmd.Parameters.Count);
+	 }
+		
 	
     }
 }

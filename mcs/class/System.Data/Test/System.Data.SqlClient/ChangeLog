@@ -1,3 +1,6 @@
+2004-10-14 Umadevi S <sumadevi@novell.com>
+	* SqlCommandTest.cs - added Test for clone method
+
 2004-09-24 Umadevi S <sumadevi@novell.com>
 	* SqlTransactionTest.cs -new file .unit testing for SqlTransaction
 
