@@ -12,6 +12,11 @@
 
 	This fixes bugs #43367 and #46199.
 
+	* attribute.cs: Documentation updates.
+
+	(CheckAttribute): Rename to CheckAttributeTarget.
+	(GetValidPlaces): Rename to GetValidTargets.
+
 2003-07-28  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (TypeContainer.DefineMembers): Use the base type's full
