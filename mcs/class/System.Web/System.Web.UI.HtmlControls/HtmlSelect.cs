@@ -46,6 +46,20 @@ namespace System.Web.UI.HtmlControls{
 			return new EmptyControlCollection(this);
 		}
 		
+		/*
+		 * Helper method for LoadViewState. Any change to Select (int [])
+		 * should be done here too.
+		 */
+		void Select (object [] selectedIndices)
+		{
+			ClearSelection();
+			int count = Items.Count;
+			foreach (int current in selectedIndices) {
+				if (current >= 0 && current < count)
+					Items [current].Selected = true;
+			}
+		}
+
 		protected override void LoadViewState(object savedState)
 		{
 			if (savedState != null) {
@@ -54,7 +68,7 @@ namespace System.Web.UI.HtmlControls{
 				Items.LoadViewState (state.Second);
 				object indices = state.Third;
 				if (indices != null)
-					Select ((int[]) indices);
+					Select ((object []) indices);
 			}
 		}
 		
@@ -167,6 +181,7 @@ namespace System.Web.UI.HtmlControls{
 			return null;
 		}
 		
+		/* Any change here should also be done to Select (object []) */
 		protected virtual void Select(int[] selectedIndices){
 			// unselect all options
 			ClearSelection();

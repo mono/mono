@@ -1,3 +1,7 @@
+2002-11-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlSelect.cs: fixed LoadViewstate.
+
 2002-11-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlButton.cs: make it do a POST if the button has any ServerClick
