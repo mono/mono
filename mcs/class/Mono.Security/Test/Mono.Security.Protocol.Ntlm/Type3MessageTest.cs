@@ -21,6 +21,20 @@ namespace MonoTests.Mono.Security.Protocol.Ntlm {
 		static byte[] nonce = { 0x53, 0x72, 0x76, 0x4e, 0x6f, 0x6e, 0x63, 0x65 };
 
 		[Test]
+		// Example for a password smaller than 8 characters - which implies a weak DES key
+		public void SmallPassword () 
+		{
+			Type3Message msg = new Type3Message ();
+			msg.Challenge = new byte [8] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 };
+			msg.Domain = "DOMAIN";
+			msg.Host = "HOST";
+			msg.Password = "WELCOME";
+			msg.Username = "username";
+			AssertEquals ("Type", 3, msg.Type);
+			AssertEquals ("GetBytes", "4E-54-4C-4D-53-53-50-00-03-00-00-00-18-00-18-00-64-00-00-00-18-00-18-00-7C-00-00-00-0C-00-0C-00-40-00-00-00-10-00-10-00-4C-00-00-00-08-00-08-00-5C-00-00-00-00-00-00-00-94-00-00-00-01-82-00-00-44-00-4F-00-4D-00-41-00-49-00-4E-00-75-00-73-00-65-00-72-00-6E-00-61-00-6D-00-65-00-48-00-4F-00-53-00-54-00-CA-12-00-72-3C-41-D5-77-AB-18-C7-64-C6-DE-F3-4F-A6-1B-FA-06-71-EA-5F-C8-7A-CE-90-85-AB-CC-37-59-38-0B-1C-68-62-E3-98-C3-C0-EF-9C-FC-22-E8-A2-C2", BitConverter.ToString (msg.GetBytes ()));
+		}
+
+		[Test]
 		// Example from http://www.innovation.ch/java/ntlm.html
 		public void Encode1 () 
 		{
