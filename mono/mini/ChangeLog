@@ -1,6 +1,8 @@
 2004-09-09  Martin Baulig  <martin@ximian.com>
 
 	* mini-amd64.c (get_call_info): Fix support for generic instances.
+	(add_valuetype): Use mono_class_from_mono_type() to get the class
+	since we can be a generic instance.
 
 Thu Sep 9 01:43:53 PDT 2004 Paolo Molaro <lupus@ximian.com>
 
