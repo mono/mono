@@ -1,3 +1,7 @@
+2004-12-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* ILTable.cs: Add new .stackreserve token.
+
 2004-07-27  Martin Baulig  <martin@ximian.com>
 
 	* ILTokenizer.cs (ILTokenizer.Location): New public property.

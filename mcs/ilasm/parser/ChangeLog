@@ -1,3 +1,10 @@
+2004-12-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* ILParser.jay: Added D_STACKRESERVE token.
+
+	(prop_head, event_head): Allow it to take a compound name (for explicit
+	interface implementations of properties).
+
 2004-07-21  Jackson Harper  <jackson@ximian.com>
 
 	* ILParser.jay: Clones ExternTypeRefInsts as well as

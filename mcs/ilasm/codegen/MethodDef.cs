@@ -321,7 +321,7 @@ namespace Mono.ILASM {
 
                         WriteCode (code_gen, methoddef);
 
-                        code_gen.Report.Message (String.Format ("Assembled method '<Module>'::{0}", name));
+                        //code_gen.Report.Message (String.Format ("Assembled method '<Module>'::{0}", name));
                         is_defined = true;
                 }
 
@@ -336,7 +336,7 @@ namespace Mono.ILASM {
                         Resolve (code_gen, (PEAPI.ClassDef) typedef.ClassDef);
                         WriteCode (code_gen, methoddef);
 
-                        code_gen.Report.Message (String.Format ("Assembled method {0}::{1}", typedef.FullName, name));                        is_defined = true;
+                        //code_gen.Report.Message (String.Format ("Assembled method {0}::{1}", typedef.FullName, name));                        is_defined = true;
                 }
 
                 public void AddInstr (IInstr instr)

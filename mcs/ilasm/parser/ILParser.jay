@@ -190,6 +190,7 @@ namespace Mono.ILASM {
 %token D_REMOVEON
 %token D_SET
 %token D_SIZE
+%token D_STACKRESERVE
 %token D_SUBSYSTEM
 %token D_TITLE
 %token D_TRY
@@ -2184,7 +2185,7 @@ event_all		: event_head OPEN_BRACE event_decls CLOSE_BRACE
                           }
 			;
 
-event_head		: D_EVENT event_attr type_spec id
+event_head		: D_EVENT event_attr type_spec comp_name
                           {
                                 EventDef event_def = new EventDef ((FeatureAttr) $2,
                                         (ITypeRef) $3, (string) $4);
@@ -2242,7 +2243,7 @@ prop_all		: prop_head OPEN_BRACE prop_decls CLOSE_BRACE
                           }
 			;
 
-prop_head		: D_PROPERTY prop_attr type id OPEN_PARENS type_list CLOSE_PARENS init_opt
+prop_head		: D_PROPERTY prop_attr type comp_name OPEN_PARENS type_list CLOSE_PARENS init_opt
                           {
                                 PropertyDef prop_def = new PropertyDef ((FeatureAttr) $2, (ITypeRef) $3,
                                         (string) $4, (ArrayList) $6);

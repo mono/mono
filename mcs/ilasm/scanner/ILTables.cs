@@ -98,6 +98,7 @@ namespace Mono.ILASM {
                                 directives [".removeon"] = new ILToken (Token.D_REMOVEON, ".removeon");
                                 directives [".set"] = new ILToken (Token.D_SET, ".set");
                                 directives [".size"] = new ILToken (Token.D_SIZE, ".size");
+				directives [".stackreserve"] = new ILToken (Token.D_STACKRESERVE, ".stackreserve");
                                 directives [".subsystem"] = new ILToken (Token.D_SUBSYSTEM, ".subsystem");
                                 directives [".title"] = new ILToken (Token.D_TITLE, ".title");
                                 directives [".try"] = new ILToken (Token.D_TRY, ".try");
