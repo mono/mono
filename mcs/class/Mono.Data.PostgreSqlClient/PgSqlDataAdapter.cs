@@ -65,24 +65,40 @@ namespace System.Data.SqlClient
 
 		#region Properties
 
-		public new SqlCommand DeleteCommand {
-			get { return deleteCommand; }
-			set { deleteCommand = value; }
+		public SqlCommand DeleteCommand {
+			get {
+				return deleteCommand;
+			}
+			set {
+				deleteCommand = value;
+			}
 		}
 
-		public new SqlCommand InsertCommand {
-			get { return insertCommand; }
-			set { insertCommand = value; }
+		public SqlCommand InsertCommand {
+			get {
+				return insertCommand;
+			}
+			set {
+				insertCommand = value;
+			}
 		}
 
-		public new SqlCommand SelectCommand {
-			get { return selectCommand; }
-			set { selectCommand = value; }
+		public SqlCommand SelectCommand {
+			get {
+				return selectCommand;
+			}
+			set {
+				selectCommand = value;
+			}
 		}
 
-		public new SqlCommand UpdateCommand {
-			get { return updateCommand; }
-			set { updateCommand = value; }
+		public SqlCommand UpdateCommand {
+			get {
+				return updateCommand;
+			}
+			set {
+				updateCommand = value;
+			}
 		}
 
 		IDbCommand IDbDataAdapter.DeleteCommand {
