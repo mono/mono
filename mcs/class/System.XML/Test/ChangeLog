@@ -1,3 +1,8 @@
+2002-12-24  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlDocumentTests.cs, XmlWhitespaceTests.cs:
+		fixed whitespace handling (in relation to Ville's patch).
+
 2002-12-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlTextWriterTests.cs (TestAttributeNamespacesXmlnsXmlns):

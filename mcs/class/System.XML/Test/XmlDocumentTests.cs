@@ -84,6 +84,7 @@ namespace MonoTests.System.Xml
 		protected override void SetUp ()
 		{
 			document = new XmlDocument ();
+			document.PreserveWhitespace = true;
 		}
 
 		public void TestCreateNodeNodeTypeNameEmptyParams ()

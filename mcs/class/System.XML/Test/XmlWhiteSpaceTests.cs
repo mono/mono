@@ -36,6 +36,7 @@ namespace MonoTests.System.Xml
 			element.AppendChild (whitespace);
 
 			doc2 = new XmlDocument ();
+			doc2.PreserveWhitespace = true;
 		}
 
 		public void TestInnerAndOuterXml ()
