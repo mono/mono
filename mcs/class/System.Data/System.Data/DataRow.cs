@@ -1,8 +1,9 @@
 //
-// System.Data.DataRowAction.cs
+// System.Data.DataRow.cs
 //
 // Author:
 //   Rodrigo Moya <rodrigo@ximian.com>
+//   Daniel Morgan <danmorg@sc.rr.com>
 //
 // (C) Ximian, Inc
 //
@@ -14,6 +15,15 @@ namespace System.Data
 	/// </summary>
 	public class DataRow
 	{
+		#region Fields
+
+		private ArrayList columns = new ArrayList();
+		private ArrayList columnNames = new ArrayList();
+
+		#endregion
+
+		#region Methods
+
 		[MonoTODO]
 		public void AcceptChanges() {
 			throw new NotImplementedException ();
@@ -184,6 +194,10 @@ namespace System.Data
 			throw new NotImplementedException ();
 		}
 		
+		#endregion // Methods
+
+		#region Properties
+
 		[MonoTODO]
 		public bool HasErrors {
 			get { throw new NotImplementedException (); }
@@ -242,6 +256,13 @@ namespace System.Data
 		[MonoTODO]
 		public DataTable Table {
 			get { throw new NotImplementedException (); }
+		}
+
+		#endregion // Public Properties
+
+		internal void SetTable(DataTable table) {
+			this.table = table; 
+			// FIXME: called by DataTable
 		}
 	}
 }

@@ -14,12 +14,6 @@ In order to do this, we need to compile
 	DataTable
 	and dependencies...
 
-Other classes missing:
-	* InternalDataCollectionBase - this is a public class despite its name
-	* DataRowBuilder
-	* Constraint
-	* ConstraintCollection
-
 System.Data.Common classes that need to be implemented:
  - implement DataAdapter.cs
  - implement DataColumnMapping.cs
@@ -40,17 +34,14 @@ The following classes implement InternalDataCollectionBase:
 	* ConstraintCollection
 
 Other classes, structs, etc. that are missing:
-	Constraint
-	DataRowChangeEventArgs
+	DataRowView
 	DataSysDescriptionAttribute
-	DataView
 	DataViewManager
 	DataViewSetting
 	DataViewSettingCollection
 	FillErrorEventArgs
 	ForeignKeyConstraint
 	MergeFailedEventArgs
-	PropertyCollection
 	UniqueConstraint
 	TypedDataSetGenerator
 

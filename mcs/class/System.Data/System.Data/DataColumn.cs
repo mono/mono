@@ -21,6 +21,8 @@ namespace System.Data
 	/// </summary>
 	public class DataColumn
 	{		
+		#region Fields
+
 		private bool allowDBNull = true;
 		private bool autoIncrement = false;
 		private long autoIncrementSeed = 0;
@@ -42,7 +44,10 @@ namespace System.Data
 		private DataTable table = null;
 		private bool unique = false;
 
+		#endregion // Fields
+
 		#region Constructors
+
 		public DataColumn()
 		{
 		}
@@ -64,18 +69,21 @@ namespace System.Data
 
 		}
 
-		public DataColumn( string columnName, Type dataType, string expr): this(columnName, dataType)
+		public DataColumn( string columnName, Type dataType, 
+			string expr): this(columnName, dataType)
 		{
 			Expression = expr;
 		}
 
-		public DataColumn(string columnName, Type dataType, string expr, MappingType type): this(columnName, dataType, expr)
+		public DataColumn(string columnName, Type dataType, 
+			string expr, MappingType type): this(columnName, dataType, expr)
 		{
 			ColumnMapping = type;
 		}
 		#endregion
 
-		#region Properties		
+		#region Properties
+		
 		public bool AllowDBNull
 		{
 			get
@@ -151,7 +159,10 @@ namespace System.Data
 		{
 			get
 			{
-				return caption;
+				if(caption == null)
+					return columnName;
+				else
+					return caption;
 			}
 			set
 			{
@@ -313,7 +324,7 @@ namespace System.Data
 			}
 		}
 
-		#endregion
+		#endregion // Properties
 
 		#region Methods
 
@@ -352,7 +363,13 @@ namespace System.Data
 			}
 		}
 
-		#endregion
+		[MonoTODO]
+		internal void SetTable(DataTable table) {
+			this.table = table; 
+			// FIXME: this will get called by DataTable
+		}
+
+		#endregion // Methods
 
 	}
 }

@@ -3,8 +3,10 @@
 //
 // Author:
 //   Christopher Podurgiel (cpodurgiel@msn.com)
+//   Daniel Morgan <danmorg@sc.rr.com>
 //
 // (C) Chris Podurgiel
+// (C) Ximian, Inc 2002
 //
 
 using System;
@@ -26,8 +28,8 @@ namespace System.Data
 		private bool _caseSensitive;
 		private DataColumnCollection _columnCollection;
 		private ConstraintCollection _constraintCollection;
-		private DataSet _dataSet;
-		private DataView _defaultView;
+		// private DataSet _dataSet;      // FIXME: temporarily commented
+		// private DataView _defaultView; // FIXME: temporarily commented
 		private string _displayExpression;
 		private PropertyCollection _extendedProperties;
 		private bool _hasErrors;
@@ -52,8 +54,8 @@ namespace System.Data
 		
 		public DataTable()
 		{
-			_dataSet = null;
-			_defaultView = null;
+			// _dataSet = null;     // FIXME: temporarily commented
+			// _defaultView = null; // FIXME: temporarily commented
 			_columnCollection = new DataColumnCollection(this);
 			//_constraintCollection = new ConstraintCollection(); TODO: uncomment after ConstraintCollection is built.
 			_extendedProperties = null;
@@ -88,8 +90,8 @@ namespace System.Data
 		
 		public DataTable(string tableName)
 		{
-			_dataSet = null;
-			_defaultView = null;
+			// _dataSet = null; // FIXME: temporarily commented
+			// _defaultView = null; // FIXME: temporarily commented
 			_columnCollection = new DataColumnCollection(this);
 			//_constraintCollection = new ConstraintCollection(); TODO: uncomment after ConstraintCollection is built.
 			_extendedProperties = null;
@@ -185,6 +187,9 @@ namespace System.Data
 		/// Gets the DataSet that this table belongs to.
 		/// </summary>
 		
+		/*
+		 * FIXME: temporarily commented, so we could get a
+		 *        simple forward read only result set to read
 		public DataSet DataSet
 		{
 			get
@@ -204,6 +209,7 @@ namespace System.Data
 				return _defaultView;
 			}
 		}
+		*/
 
 		/// <summary>
 		/// Gets or sets the expression that will return a value used to represent this table in the user interface.
@@ -549,11 +555,13 @@ namespace System.Data
 		/// <summary>
 		/// Creates a new row from an existing row.
 		/// </summary>
+		/* DataRowBuilder is internal
 		protected virtual DataRow NewRowFromBuilder(DataRowBuilder builder)
 		{
 			DataRow dataRow = null;
 			return dataRow;
 		}
+		*/
 
 		/// <summary>
 		/// Raises the ColumnChanged event.
@@ -683,6 +691,8 @@ namespace System.Data
 			return "";
 		}
 
+		/* FIXME: temporarily commented - so we can get a
+		 *        a simple forward read only result set
 		/// <summary>
 		/// Occurs when after a value has been changed for the specified DataColumn in a DataRow.
 		/// </summary>
@@ -718,12 +728,6 @@ namespace System.Data
 		/// </summary>
 		
 		public event DataRowChangeEventHandler RowDeleting;
-
-
-
-
-
-
-
+		*/
 	}
 }

@@ -26,8 +26,7 @@ namespace System.Data.SqlClient
 	{
 		#region Fields
 
-		DataTable tableSchema;
-		DataTable tableRow;
+		private DataTable table = null;
 
 		#endregion // Fields
 
@@ -200,7 +199,7 @@ namespace System.Data.SqlClient
 
 		#endregion // Public Methods
 
-		#region // Destructors
+		#region Destructors
 
 		[MonoTODO]
 		public void Dispose () {

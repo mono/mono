@@ -10,7 +10,9 @@
 namespace System.Data
 {
 	/// <summary>
-	/// Provides access to the column values within each row for a DataReader, and is implemented by .NET data providers that access relational databases.
+	/// Provides access to the column values within 
+	/// each row for a DataReader, and is implemented by .NET data 
+	/// providers that access relational databases.
 	/// </summary>
 	public interface IDataRecord
 	{
@@ -18,11 +20,13 @@ namespace System.Data
 
 		byte GetByte(int i);
 
-		long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferOffset, int length);
+		long GetBytes(int i, long fieldOffset, byte[] buffer, 
+			int bufferOffset, int length);
 
 		char GetChar(int i);
 
-		long GetChars(int i, long fieldOffset, char[] buffer, int bufferOffset, int length);
+		long GetChars(int i, long fieldOffset, char[] buffer, 
+			int bufferOffset, int length);
 
 		IDataReader GetData(int i);
 

@@ -20,14 +20,16 @@ namespace System.Data.SqlClient
 	{
 		private SqlErrorCollection errors; 
 
-		internal SqlException() {
+		internal SqlException() 
+			: base("a SQL Exception has occurred") {
 			errors = new SqlErrorCollection();
 		}
 
 		internal SqlException(byte theClass, int lineNumber,
 			string message,	int number, string procedure,
-			string server, string source, byte state) {
-						
+			string server, string source, byte state) 
+				: base(message) {	
+			
 			errors = new SqlErrorCollection (theClass, 
 				lineNumber, message,
 				number, procedure,

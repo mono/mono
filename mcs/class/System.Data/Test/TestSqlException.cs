@@ -104,12 +104,15 @@ namespace TestSystemDataSqlClient
 				// Display the SQL Errors and Rollback the database
 				Console.WriteLine("SqlException caught: " +
 					e.ToString());
-				trans.Rollback();
-				Console.WriteLine("Database has been Rolled back!");
+				if(trans != null) {
+					trans.Rollback();
+					Console.WriteLine("Database has been Rolled back!");
+				}
 			}
 			finally {
-				if(conn.State == ConnectionState.Open)
-					conn.Close();
+				if(conn != null)
+					if(conn.State == ConnectionState.Open)
+						conn.Close();
 			}
 		}
 	}

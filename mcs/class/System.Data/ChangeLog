@@ -1,3 +1,46 @@
+2002-04-27  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.Data/DataRowChangeEventArgs.cs
+	* System.Data/DataRowCollection.cs
+	* System.Data/DataView.cs
+	* System.Data/PropertyCollection.cs: added new stubs
+
+	* System.Data.build: modified - added new files to exclude
+	from build
+	
+	* TODO: modified - removed files from TODO list 
+	that were stubbed above
+	
+	* System.Data/DataColumn.cs
+	* System.Data/DataRow.cs: modified - various tweaks
+	and added internal method SetTable to set the reference
+	to a DataTable
+	
+	* System.Data/DataSet.cs: modified - class was not
+	completely stubbed.
+	
+	* System.Data/DataTable.cs: modified - temporarily commented
+	DataSet and DataView references - trying to compile a SqlDataReader,
+	DataTable, and dependencies for a forward read-only result set.
+	SqlDataAdapter, DataSet, and DataView will come later once we can get
+	a forward read only result set working.
+	
+	* System.Data/IDataRecord.cs: modified - source code lines should
+	not be > 80
+	
+	* System.Data/InternalDataCollectionBase.cs: modified - started 
+	implementing this base class for collection of data rows,
+	columns, tables, relations, and constraints
+	
+	* System.Data.SqlClient/SqlException.cs: modified -
+	call base(message) so a unhandled exception displays
+	the message of a SQL error instead of the 
+	default SystemException message
+	
+	* Test/TestSqlException.cs: modified - 
+	handle the rollback properly for a SqlException on a
+	failure to connect
+
 2002-04-23  Daniel Morgan <danmorg@sc.rr.com>
 
 	* System.Data.build: modified - added new

@@ -15,11 +15,16 @@
 				<excludes name="System.Data/ConstraintCollection.cs"/>
 				<excludes name="System.Data/InternalDataCollectionBase.cs"/>
 				<excludes name="System.Data/DataColumn.cs"/>
+				<excludes name="System.Data/DataColumnCollection.cs"/>
 				<excludes name="System.Data/DataRow.cs"/>
+				<excludes name="System.Data/DataRowCollection.cs"/>
+				<excludes name="System.Data/DataRowChangeEventArgs.cs"/>
 				<excludes name="System.Data/DataTableRelationCollection.cs"/>
 				<excludes name="System.Data/DataRelationCollection.cs"/>
 				<excludes name="System.Data/DataTable.cs"/>
+				<excludes name="System.Data/DataView.cs"/>
 				<excludes name="System.Data/DataSet.cs"/>
+				<excludes name="System.Data/PropertyCollection.cs"/>
 				<excludes name="Test/**"/>
 				<excludes name="System.Data.Common/*"/>
 				<excludes name="System.Data.SqlClient/SqlDataAdapter.cs"/>
