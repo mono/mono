@@ -13,7 +13,7 @@ namespace System.Windows.Forms {
 	[Serializable]
 	public struct Message { 
 
-		private int msg;
+		private Msg msg;
 		private IntPtr hwnd;
 		private IntPtr lparam;
 		private IntPtr wparam;
@@ -67,7 +67,7 @@ namespace System.Windows.Forms {
 		// Public Instance Members
 		// -----------------------
 
-		public int Msg {
+		public Msg Msg {
 			get{
 				return msg;
 			}
@@ -112,7 +112,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public static Message create(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam)
+		public static Message create(IntPtr hWnd, Msg msg, IntPtr wparam, IntPtr lparam)
 		{
 			Message NewMessage =  new Message();
 			NewMessage.msg = msg;

@@ -190,7 +190,7 @@ namespace System.Windows.Forms {
 
 		protected virtual void WndProc (ref Message m) 
 		{
-			if (m.Msg == (int) Msg.WM_CREATE)
+			if (m.Msg == Msg.WM_CREATE)
 				Console.WriteLine ("NW WndProc WM_CREATE");
 			DefWndProc (ref m);
 		}
@@ -204,7 +204,7 @@ namespace System.Windows.Forms {
 		}
 
  		static private IntPtr WndProc (
-			IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam) 
+			IntPtr hWnd, Msg msg, IntPtr wParam, IntPtr lParam) 
 		{
 			// windowCollection is a collection of all the 
 			// NativeWindow(s) that have been created.
@@ -219,11 +219,11 @@ namespace System.Windows.Forms {
 			message.LParam = lParam;
  			message.Result = (IntPtr) 0;
 
-			if (msg == (int) Msg.WM_CREATE)
+			if (msg == Msg.WM_CREATE)
 				Console.WriteLine ("WM_CREATE (static)");
 
  			if (window != null) {
-			if (msg == (int) Msg.WM_CREATE)
+			if (msg == Msg.WM_CREATE)
 				Console.WriteLine ("WM_CREATE (static != null)");
  				window.WndProc(ref message);
  			} else {

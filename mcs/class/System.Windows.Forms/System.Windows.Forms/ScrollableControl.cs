@@ -155,7 +155,7 @@ namespace System.Windows.Forms {
 		//
 		//  --- Protected Methods
 		//
-		static private IntPtr WndProc (IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam) {
+		static private IntPtr WndProc (IntPtr hWnd, Msg msg, IntPtr wParam, IntPtr lParam) {
 			Message message = new Message();
 
 			message.HWnd = hWnd;

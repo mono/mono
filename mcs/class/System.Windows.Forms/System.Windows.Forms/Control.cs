@@ -22,6 +22,7 @@
     	
     	public class Control : Component , ISynchronizeInvoke, IWin32Window {
     
+
     		// Helper NativeWindow class to dispatch messages back
     		// to the Control class
     		protected class ControlNativeWindow : NativeWindow {
@@ -107,7 +108,7 @@
     			text = "";
     			visible = true;
     			parent = null;
-    			window = null;
+    			CreateHandle();//sets window handle. FIXME: No it does not
     		}
     		
     		// according to docs, the constructors do not create 
@@ -286,8 +287,9 @@
     			set {
     				if (IsHandleCreated)
     					Win32.SetWindowPos (
-    						Handle, (IntPtr) 0, value.X, value.Y,
-    						value.Width, value.Height, 0);
+    						//Handle, (IntPtr) 0, value.X, value.Y,
+							Handle, SetWindowPosZOrder.HWND_TOPMOST, value.X, value.Y,
+							value.Width, value.Height, 0);
     				else bounds = value;
     			}
     		}
@@ -713,7 +715,7 @@
     				return name;
     			}
     			set {
-    				name=value;
+    				name = value;
     			}
     		}
     		
@@ -824,13 +826,21 @@
     		}
     		
   			//Compact Framework
-    		[MonoTODO]
     		public Size Size {
+				//FIXME: should we return client size or someother size???
     			get {
-    				throw new NotImplementedException ();
+					RECT WindowRectangle;
+					WindowRectangle = new RECT();
+					if(!Win32.GetWindowRect(Handle,ref WindowRectangle)){
+						//throw new Exception("couild not retreve Control Size");
+					}
+					return new Size(WindowRectangle.right - WindowRectangle.left,
+						WindowRectangle.bottom - WindowRectangle.top);
     			}
     			set {
-    				throw new NotImplementedException ();
+    				Win32.SetWindowPos(Handle, 0, 0, 0, this.Size.Width, this.Size.Height,
+						SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOMOVE | 
+						SetWindowPosFlags.SWP_NOZORDER | SetWindowPosFlags.SWP_NOACTIVATE);
     			}
     		}
     		
@@ -1925,8 +1935,8 @@
     				// FIXME: verify on whether this is supposed
     				// to activate/deactive the window
     				Win32.SetWindowPos (Handle, 
-    						    (IntPtr) SetWindowPosZOrder.HWND_NOTOPMOST,
-    						    0, 0, 0, 0, 0);
+						SetWindowPosZOrder.HWND_NOTOPMOST,
+						0, 0, 0, 0, 0);
     			else
     				// FIXME: this does not make sense but
     				// the docs say the window is hidden
@@ -2049,11 +2059,11 @@
     
     			switch (m.Msg) {
     
-    			case (int)Msg.WM_CREATE:
+    			case Msg.WM_CREATE:
     				Console.WriteLine ("WM_CREATE");
     				OnHandleCreated (eventArgs);
     				break;
-    			case (int)Msg.WM_LBUTTONDBLCLK:
+    			case Msg.WM_LBUTTONDBLCLK:
     				OnDoubleClick (eventArgs);
     				break;
     				// OnDragDrop
@@ -2061,88 +2071,88 @@
     				// OnDragLeave
     				// OnDragOver
     				// OnQueryContinueDrag
-    			case (int)Msg.WM_ENABLE:
+    			case Msg.WM_ENABLE:
     				OnEnabledChanged (eventArgs);
     				break;
-    			case (int)Msg.WM_SETFOCUS:
+    			case Msg.WM_SETFOCUS:
     				OnEnter (eventArgs);
     				OnGotFocus (eventArgs);
     				break;
-    			case (int)Msg.WM_FONTCHANGE:
+    			case Msg.WM_FONTCHANGE:
     				OnFontChanged (eventArgs);
     				break;
-    			case (int)Msg.WM_DESTROY:
+    			case Msg.WM_DESTROY:
     				OnHandleDestroyed (eventArgs);
     				break;
-    			case (int)Msg.WM_HELP:
+    			case Msg.WM_HELP:
     				// FIXME:
     				//OnHelpRequested (eventArgs);
     				break;
-    			case (int)Msg.WM_KEYDOWN:
+    			case Msg.WM_KEYDOWN:
     				// FIXME:
     				// OnKeyDown (eventArgs);
     				break;
-    			case (int)Msg.WM_CHAR:
+    			case Msg.WM_CHAR:
     				// FIXME:
     				// OnKeyPress (eventArgs);
     				break;
-    			case (int)Msg.WM_KEYUP:
+    			case Msg.WM_KEYUP:
     				// FIXME:
     				// OnKeyUp (eventArgs);
     				break;
-    			case (int)Msg.WM_KILLFOCUS:
+    			case Msg.WM_KILLFOCUS:
     				OnLeave (eventArgs);
     				OnLostFocus (eventArgs);
     				break;
-    			case (int)Msg.WM_LBUTTONDOWN:
+    			case Msg.WM_LBUTTONDOWN:
     				// FIXME:
     				// OnMouseDown (eventArgs);
     				break;
-    			case (int)Msg.WM_MOUSEACTIVATE:
+    			case Msg.WM_MOUSEACTIVATE:
     				OnMouseEnter (eventArgs);
     				break;
-    			case (int)Msg.WM_MOUSEHOVER: // called by TrackMouseEvent
+    			case Msg.WM_MOUSEHOVER: // called by TrackMouseEvent
     				OnMouseHover (eventArgs);
     				break;
-    			case (int)Msg.WM_MOUSELEAVE: // called by TrackMouseEvent
+    			case Msg.WM_MOUSELEAVE: // called by TrackMouseEvent
     				OnMouseLeave (eventArgs);
     				break;
-    			case (int)Msg.WM_MOUSEMOVE:
+    			case Msg.WM_MOUSEMOVE:
     				// FIXME:
     				// OnMouseMove (eventArgs);
     				break;
-    			case (int)Msg.WM_LBUTTONUP:
+    			case Msg.WM_LBUTTONUP:
     				// FIXME:
     				// OnMouseUp (eventArgs);
     				break;
-    			case (int)Msg.WM_MOUSEWHEEL:
+    			case Msg.WM_MOUSEWHEEL:
     				// FIXME:
     				// OnMouseWheel (eventArgs);
     				break;
-    			case (int)Msg.WM_MOVE:
+    			case Msg.WM_MOVE:
     				OnMove (eventArgs);
     				break;
-    			case (int)Msg.WM_NOTIFY:
+    			case Msg.WM_NOTIFY:
     				// FIXME: get NM_CLICKED msg from pnmh
     				// OnClick (eventArgs);
     				// OnNotifyMessage (eventArgs);
-    			case (int)Msg.WM_PAINT:
+    			case Msg.WM_PAINT:
     				//OnPaint (paintEventArgs);
     				break;
-    			case (int)Msg.WM_SIZE:
+    			case Msg.WM_SIZE:
     				OnResize (eventArgs);
     				OnSizeChanged (eventArgs);
     				break;
-    			case (int)Msg.WM_STYLECHANGED:
+    			case Msg.WM_STYLECHANGED:
     				OnStyleChanged (eventArgs);
     				break;
-    			case (int)Msg.WM_SYSCOLORCHANGE:
+    			case Msg.WM_SYSCOLORCHANGE:
     				OnSystemColorsChanged (eventArgs);
     				break;
-    			case (int)Msg.WM_SETTEXT:
+    			case Msg.WM_SETTEXT:
     				OnTextChanged (eventArgs);
     				break;
-    			case (int)Msg.WM_SHOWWINDOW:
+    			case Msg.WM_SHOWWINDOW:
     				OnVisibleChanged (eventArgs);
     				break;
     // 			default:

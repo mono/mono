@@ -178,7 +178,7 @@ namespace System.Windows.Forms {
 
 				Message message = new Message ();
 				message.HWnd = msg.hwnd;
-				message.Msg = (int) msg.message;
+				message.Msg = msg.message;//
 				message.WParam = msg.wParam;
 				message.LParam = msg.lParam;
 

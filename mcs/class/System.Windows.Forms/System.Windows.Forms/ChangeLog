@@ -1,3 +1,19 @@
+    2002-11-24  DennisHayes <dennish@raytek.com>	
+
+	* Application.cs
+	* Control.cs
+	* Form.cs
+	* Message.cs
+	* NativeWindow.cs
+	* ScrollableControl.cs
+	* win32functions.cs
+	* win32Structs.cs
+	
+	* Fixed added more win32 stuff
+	* On windows in Visual studio and runs my test program, but does 
+	* not display a window. the window Handle is null, so the size gets set to 0,0.
+	
+
   2002-11-23  DennisHayes <dennish@raytek.com>	
 	 checked in for 	Francois-Denis Gonthier
 

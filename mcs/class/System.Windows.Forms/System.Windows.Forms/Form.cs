@@ -566,10 +566,10 @@
     
     		public void SetDesktopLocation (int x, int y)
     		{
-    			Win32.SetWindowPos ((IntPtr) Handle, (IntPtr) 0, 
+    			Win32.SetWindowPos ((IntPtr) Handle, SetWindowPosZOrder.HWND_TOPMOST, 
     					    x, y, 0, 0, 
-    					    (int) (SetWindowPosFlags.SWP_NOSIZE | 
-    					    SetWindowPosFlags.SWP_NOZORDER));
+    					    SetWindowPosFlags.SWP_NOSIZE | 
+    					    SetWindowPosFlags.SWP_NOZORDER);
     		}
     
     		//inherited from control
@@ -899,31 +899,31 @@
     			base.WndProc (ref m);
     
     			switch (m.Msg) {
-    			case (int)Msg.WM_CLOSE:
+    			case Msg.WM_CLOSE:
     				EventArgs closeArgs = new EventArgs();
     				OnClosed (closeArgs);
     				break;
     				//case ?:
     				//OnCreateControl()
     				//break;
-    			case (int)Msg.WM_FONTCHANGE:
+    			case Msg.WM_FONTCHANGE:
     				EventArgs fontChangedArgs = new EventArgs();
     				OnFontChanged (fontChangedArgs);
     				break;
-    			case (int)Msg.WM_CREATE:
+    			case Msg.WM_CREATE:
     				EventArgs handleCreatedArgs = new EventArgs(); 
     				OnHandleCreated (handleCreatedArgs);
     				break;
-    			case (int)Msg.WM_DESTROY:
+    			case Msg.WM_DESTROY:
     				EventArgs destroyArgs = new EventArgs();
     				OnHandleDestroyed (destroyArgs);
     				break;
-    			case (int)Msg.WM_INPUTLANGCHANGE:
+    			case Msg.WM_INPUTLANGCHANGE:
     				//InputLanguageChangedEventArgs ilChangedArgs =
     				//	new InputLanguageChangedEventArgs();
     				//OnInputLanguageChanged (ilChangedArgs);
     				break;
-    			case (int)Msg.WM_INPUTLANGCHANGEREQUEST:
+    			case Msg.WM_INPUTLANGCHANGEREQUEST:
     				//InputLanguageChangingEventArgs ilChangingArgs =
     				//	new InputLanguageChangingEventArgs();
     				//OnInputLanguagedChanging (ilChangingArgs);
@@ -940,41 +940,41 @@
     				// case ?:
     				// OnMaximumSizedChanged(EventArgs e)
     				//break;
-    			case (int)Msg.WM_MDIACTIVATE:
+    			case Msg.WM_MDIACTIVATE:
     				EventArgs mdiActivateArgs = new EventArgs();
     				OnMdiChildActivate (mdiActivateArgs);
     				break;
-    			case (int)Msg.WM_EXITMENULOOP:
+    			case Msg.WM_EXITMENULOOP:
     				EventArgs menuCompleteArgs = new EventArgs();
     				OnMenuComplete (menuCompleteArgs);
     				break;
-    			case (int)Msg.WM_ENTERMENULOOP:
+    			case Msg.WM_ENTERMENULOOP:
     				EventArgs enterMenuLoopArgs = new EventArgs();
     				OnMenuStart (enterMenuLoopArgs);
     				break;
     				// case ?:
     				// OnMinimumSizeChanged(EventArgs e)
     				// break;
-    			case (int)Msg.WM_PAINT:
+    			case Msg.WM_PAINT:
     				//PaintEventArgs paintArgs = new PaintEventArgs();
     				//OnPaint (paintArgs);
     				break;
-    			case (int)Msg.WM_SIZE:
+    			case Msg.WM_SIZE:
     				EventArgs resizeArgs = new EventArgs();
     				OnResize (resizeArgs);
     				break;
     				//case ?:
     				//OnStyleChanged(EventArgs e)
     				//break;
-    			case (int)Msg.WM_SETTEXT:
+    			case Msg.WM_SETTEXT:
     				EventArgs textChangedArgs = new EventArgs();
     				OnTextChanged (textChangedArgs);
     				break;
-    			case (int)Msg.WM_SHOWWINDOW:
+    			case Msg.WM_SHOWWINDOW:
     				EventArgs visibleChangedArgs = new EventArgs();
     				OnVisibleChanged (visibleChangedArgs);
     				break;
-    			case (int)Msg.WM_COMMAND:
+    			case Msg.WM_COMMAND:
     				OnWmCommand (ref m);
     				break;
     			}

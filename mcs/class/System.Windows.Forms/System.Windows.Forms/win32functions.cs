@@ -548,7 +548,7 @@ namespace System.Windows.Forms{
 
 		#region Mono win32 Fuinctions
 
-		internal delegate IntPtr WndProc (IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam);
+		internal delegate IntPtr WndProc (IntPtr hwnd, Msg msg, IntPtr wParam, IntPtr lParam);
 		
 		[DllImport ("user32.dll", 
 			 CallingConvention = CallingConvention.StdCall,
@@ -600,7 +600,7 @@ namespace System.Windows.Forms{
 		[DllImport ("user32.dll", CallingConvention = 
 			 CallingConvention.StdCall, CharSet = CharSet.Auto)]
 		internal extern static IntPtr DefWindowProcA (
-			IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
+			IntPtr hWnd, Msg Msg, IntPtr wParam, IntPtr lParam);
 
 		[DllImport ("user32.dll", CallingConvention = 
 			 CallingConvention.StdCall, CharSet = CharSet.Auto)]
@@ -649,8 +649,8 @@ namespace System.Windows.Forms{
 			 CallingConvention.StdCall,
 			 CharSet = CharSet.Auto)]
 		internal extern static int SetWindowPos (
-			IntPtr hWnd, IntPtr hWndInsertAfter, 
-			int X, int Y, int cx, int cy, int uFlags);
+			IntPtr hWnd, SetWindowPosZOrder pos,
+			int X, int Y, int cx, int cy, SetWindowPosFlags uFlags);
 
 		[DllImport ("user32.dll", 
 			 CallingConvention = CallingConvention.StdCall, 

@@ -688,7 +688,7 @@ namespace System.Windows.Forms
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct MSG {
 		internal IntPtr   hwnd;
-		internal uint  message; 
+		internal Msg  message; 
 		internal IntPtr wParam; 
 		internal IntPtr lParam; 
 		internal uint  time; 
