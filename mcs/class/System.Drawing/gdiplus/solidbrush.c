@@ -25,17 +25,36 @@
 #include "gdip.h"
 
 void 
-gdip_brush_init (GpBrush *brush)
+gdip_solidfill_init (GpSolidFill *brush)
 {
 	brush->color = 0;
+        brush->type = BrushTypeSolidColor;
 }
 
-GpBrush *
-gdip_brush_new (void)
+GpSolidFill *
+gdip_solidfill_new (void)
 {
-	GpBrush *result = (GpBrush *) GdipAlloc (sizeof (GpBrush));
-	gdip_brush_init (result);
+	GpSolidFill *result = (GpSolidFill *) gdip_brush_new ();
+	gdip_solidfill_init (result);
 	return result;
+}
+
+void
+gdip_solidfill_setup (GpGraphics *graphics, GpBrush *brush)
+{
+        int R = (brush->color & 0x00FF0000 ) >> 16;
+        int G = (brush->color & 0x0000FF00 ) >> 8;
+        int B = (brush->color & 0x000000FF );
+        cairo_set_rgb_color (graphics->ct, (double) R, (double) G, (double) B);
+}
+
+GpStatus
+gdip_solidfill_clone (GpBrush *brush, GpBrush **clonedBrush)
+{
+        *clonedBrush = gdip_brush_new ();
+        (*clonedBrush)->color = brush->color;
+
+        return Ok;
 }
 
 GpStatus 
@@ -44,4 +63,20 @@ GdipCreateSolidFill (int color, GpBrush **brush)
 	*brush = gdip_brush_new ();
 	(*brush)->color = color;
 	return NotImplemented;
+}
+
+GpStatus
+GdipSetSolidFillColor (GpSolidFill *brush, int color)
+{
+        brush->color = color;
+
+        return Ok;
+}
+
+GpStatus
+GdipGetSolidFillColor (GpSolidFill *brush, int *color)
+{
+        *color = brush->color;
+
+        return Ok;
 }

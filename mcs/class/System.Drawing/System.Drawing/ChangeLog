@@ -1,3 +1,29 @@
+2003-11-28  Duncan Mak  <duncan@ximian.com>
+
+	* Brush.cs (CreateBrush): new internal factory method for creating
+	specific brushes based on the internal (GDI+ C API) BrushType
+	enum.
+	(Brush (IntPtr)): new internal constructor.
+
+	* Pen.cs: Removed all the C# fields. We are using GDI+ completely
+	now.
+	(Pen (IntPtr)): new internal constructor.
+	(Pen (Brush, float)): Use GdipCreateBrush2.
+	(Clone): Implemented using GdipClonePen.
+	(Alignment, Brush, Color, Width): Use GDI+ implementations
+	instead.
+	(CompoundArray, DashCap, DashOffset, DashPattern, DashStyle):
+	Implemented these properties.
+	(CustomStartCap, CustomEndCap, StartCap, EndCap, SetLineCap): Stubbed.
+	(MultiplyTransform, ResetTransform, RotateTransform):
+	(ScaleTransform, TranslateTransform): Implemented these methods.
+
+	* SolidBrush.cs (SolidBrush (IntPtr)): new internal constructor.
+
+	* gdipEnums.cs (BrushType): Added new GDI+ enum.
+
+	* gdipFunctions.cs: Imported new Brush and Pen functions.
+
 2003-11-22  Duncan Mak  <duncan@ximian.com>
 
 	* gdipFunctions.cs

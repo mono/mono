@@ -1,3 +1,31 @@
+2003-11-28  Duncan Mak  <duncan@ximian.com>
+
+	* brush.c (gdip_brush_setup): Check on the type of the brush and
+	delegate the implementation to the concrete Brushes, 
+	(GdipCloneBrush, GdipDeleteBrush, GdipGetBrushType): Implemented.
+
+	* gdip.h (DashStyle): Fixed typo.
+	(PenAlignment, BrushType): Added new enumerations.
+	(GpBrush): Added new type field.
+	(GpPen): Added new fields: color, brush, mode, dash_array and
+	unit. Updated the header file to include new Pen functions.
+
+	* pen.c (convert_dash_array): Utitlity function for converting
+	from a float* from GDI+ to a double* for Cairo.
+	(GdipCreatePen2, GdipClonePen): Implemented.
+	(PenWidth, BrushFill, Color, PenMode, PenUnit, DashStyle):
+	(DashOffset, DashCount, DashArray): Implemented the Get/Set
+	function pairs for these properties.
+	(GdipGetPenCompoundArray, GdipSetPenCompoundArray):
+	(GdipGetPenCompoundArrayCount): Stubbed.
+
+	* solidbrush.c (gdip_solidfill_init): Utility for initializing a
+	SolidBrush. Sets type as BrushTypeSolidColor.
+	(gdip_solidfill_setup): Moved from gdip_brush_setup.
+	(gdip_solidfill_clone): Implementation for GdipCloneBrush for a
+	GpSolidFill.
+	(GdipSetSolidFillColor, GdipGetSolidFillColor): Implemented.
+
 2003-11-22  Duncan Mak  <duncan@ximian.com>
 
 	* matrix.c (GdipCreateMatrix3, GdipCreateMatrix3I): Implemented.

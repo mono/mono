@@ -11,15 +11,21 @@ using System;
 
 namespace System.Drawing
 {
-	public sealed class SolidBrush	: Brush {
+	public sealed class SolidBrush : Brush {
 		
 		Color color;
 
-		public SolidBrush( Color color ) {
+                internal SolidBrush (IntPtr ptr)
+                        : base (ptr)
+                {
+                }
+
+		public SolidBrush (Color color)
+                {
 			this.Color = color;
 			int brush;
 			GDIPlus.GdipCreateSolidFill (color.ToArgb (), out brush);
-			nativeObject = (IntPtr)brush;
+			nativeObject = (IntPtr) brush;
 		}
 
 		public Color Color {

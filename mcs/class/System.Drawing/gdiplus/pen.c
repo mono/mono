@@ -30,10 +30,13 @@ void
 gdip_pen_init (GpPen *pen)
 {
         pen->color = 0;
-        pen->width = 1.0F;
-        pen->miter_limit = 0;
+        pen->width = 1;
+        pen->miter_limit = 10;
         pen->line_join = LineJoinMiter;
         pen->matrix = NULL;
+        pen->dash_offset = 0;
+        pen->line_cap = LineCapFlat;
+        pen->line_join = LineJoinMiter;
 }
 
 GpPen*
@@ -88,6 +91,17 @@ convert_line_cap (GpLineCap cap)
         }
 }
 
+static double *
+convert_dash_array (float *f, int count)
+{
+        double *retval = malloc (sizeof (double) * count);
+        int i;
+        for (i = 0; i < count; i++, f++, retval++)
+                *retval = (double) *f;
+
+        return retval;
+}
+
 void 
 gdip_pen_setup (GpGraphics *graphics, GpPen *pen)
 {
@@ -103,6 +117,11 @@ gdip_pen_setup (GpGraphics *graphics, GpPen *pen)
 
         if (pen->matrix != NULL)
                 cairo_set_matrix (graphics->ct, pen->matrix);
+
+        if (pen->dash_array != NULL && pen->dash_count != 0)
+                cairo_set_dash (graphics->ct,
+                                convert_dash_array (pen->dash_array, pen->dash_count),
+                                pen->dash_count, pen->dash_offset);
 }
 
 GpStatus 
@@ -114,13 +133,113 @@ GdipCreatePen1(int argb, float width, GpUnit unit, GpPen **pen)
         return Ok; 
 }
 
+GpStatus
+GdipCreatePen2 (GpBrush *brush, float width, GpUnit unit, GpPen **pen)
+{
+        int color;
+        GpBrushType type;        
+        *pen = gdip_pen_new ();
+        (*pen)->width = width;
+
+        GdipGetBrushType (brush, &type);
+
+        switch (type) {
+
+        case BrushTypeSolidColor:
+
+                GdipGetSolidFillColor (brush, &color);                
+                (*pen)->color = color;
+                return Ok;
+
+        case BrushTypeHatchFill:
+        case BrushTypeTextureFill:
+        case BrushTypePathGradient:
+        case BrushTypeLinearGradient:
+        default:
+                return GenericError;
+        }
+}
+
+GpStatus 
+GdipClonePen (GpPen *pen, GpPen **clonepen)
+{
+        GpPen *result = gdip_pen_new ();
+        result->color = pen->color;
+        result->width = pen->width;
+        result->miter_limit = pen->miter_limit;
+        result->line_join = pen->line_join;
+        result->matrix = pen->matrix;
+        result->dash_offset = pen->dash_offset;
+        result->line_cap = pen->line_cap;
+        result->line_join = pen->line_join;
+
+        *clonepen = result;
+
+        return Ok;
+}       
+
+
 GpStatus 
 GdipDeletePen (GpPen *pen)
 {
         if (pen->matrix != NULL)
                 cairo_matrix_destroy (pen->matrix);
+
+        if (pen->dash_array != NULL)
+                free (pen->dash_array);
         
         GdipFree (pen);
+}
+
+GpStatus
+GdipSetPenWidth (GpPen *pen, float width)
+{
+        pen->width = width;
+        return Ok;
+}
+
+GpStatus
+GdipGetPenWidth (GpPen *pen, float *width)
+{
+        *width = pen->width;
+        return Ok;
+}
+
+GpStatus
+GdipSetPenBrushFill (GpPen *pen, GpBrush *brush)
+{
+        GpStatus s;
+        pen->brush = brush;
+        int color;
+        s = GdipGetSolidFillColor (brush, &color);
+
+        if (s != Ok)
+                return s;
+        
+        pen->color = color;
+        return Ok;
+}
+
+GpStatus
+GdipGetPenBrushFill (GpPen *pen, GpBrush **brush)
+{
+        *brush = pen->brush;
+        return Ok;
+}
+
+GpStatus
+GdipSetPenColor (GpPen *pen, int argb)
+{
+        pen->color = argb;
+
+        return Ok;
+}
+
+GpStatus
+GdipGetPenColor (GpPen *pen, int *argb)
+{
+        *argb = pen->color;
+        return Ok;
 }
 
 GpStatus
@@ -163,6 +282,34 @@ GpStatus
 GdipGetPenLineCap (GpPen *pen, GpLineJoin *lineCap)
 {
         *lineCap = pen->line_cap;
+        return Ok;
+}
+
+GpStatus
+GdipSetPenMode (GpPen *pen, GpPenAlignment penMode)
+{
+        pen->mode = penMode;
+        return Ok;
+}
+
+GpStatus
+GdipGetPenMode (GpPen *pen, GpPenAlignment *penMode)
+{
+        *penMode = pen->mode;
+        return Ok;
+}
+
+GpStatus
+GdipGetPenUnit (GpPen *pen, GpUnit *unit)
+{
+        *unit = pen->unit;
+        return Ok;
+}
+
+GpStatus
+GdipSetPenUnit (GpPen *pen, GpUnit unit)
+{
+        pen->unit = unit;
         return Ok;
 }
 
@@ -211,3 +358,131 @@ GdipRotatePenTransform (GpPen *pen, float angle, GpMatrixOrder order)
         return GdipRotateMatrix (pen->matrix, angle, order);
 }
 
+GpStatus
+GdipGetPenDashStyle (GpPen *pen, GpDashStyle *dashStyle)
+{
+        *dashStyle = pen->dash_style;
+        return Ok;
+}
+
+static float Custom [] = { 1.0 };
+static float Dot []  = { 1.0, 1.0 };
+static float Dash []  = { 3.0, 1.0 };
+static float DashDot [] = { 3.0, 1.0, 1.0, 1.0 };
+static float DashDotDot [] = { 3.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
+
+GpStatus
+GdipSetPenDashStyle (GpPen *pen, GpDashStyle dashStyle)
+{
+        pen->dash_style = dashStyle;
+
+        switch (dashStyle) {
+        case DashStyleSolid:
+                pen->dash_array = NULL;
+                return Ok;
+
+        case DashStyleDashDot:
+                pen->dash_array = DashDot;
+                pen->dash_count = 4;
+                return Ok;
+                
+        case DashStyleDashDotDot:
+                pen->dash_array = DashDotDot;
+                pen->dash_count = 6;
+                return Ok;
+
+        case DashStyleDot:
+                pen->dash_array = Dot;
+                pen->dash_count = 2;
+                return Ok;
+
+        case DashStyleDash:
+                pen->dash_array = Dash;
+                pen->dash_count = 2;
+                return Ok;
+
+        case DashStyleCustom:
+                pen->dash_array = Custom;
+                pen->dash_count = 1;
+                return Ok;
+
+        default:
+                return GenericError;
+        }
+}
+
+GpStatus
+GdipGetPenDashOffset (GpPen *pen, float *offset)
+{
+        *offset = pen->dash_offset;
+        return Ok;
+}
+
+GpStatus
+GdipSetPenDashOffset (GpPen *pen, float offset)
+{
+        pen->dash_offset = offset;
+        return Ok;
+}
+
+GpStatus
+GdipGetPenDashCount (GpPen *pen, int *count)
+{
+        *count = pen->dash_count;
+
+        return Ok;
+}
+
+GpStatus
+GdipSetPenDashCount (GpPen *pen, int count)
+{
+        pen->dash_count = count;
+
+        return Ok;
+}
+
+/*
+ * This is the DashPattern property in Pen
+ */
+GpStatus
+GdipGetPenDashArray (GpPen *pen, float **dash, int *count)
+{
+        *dash = pen->dash_array;
+        *count = pen->dash_count;
+
+        return Ok;
+}
+
+GpStatus
+GdipSetPenDashArray (GpPen *pen, float *dash, int count)
+{
+        if (count == 0 || dash == NULL)
+                return Ok;
+
+        GdipSetPenDashStyle (pen, DashStyleCustom);
+        pen->dash_array = dash;
+        pen->dash_count = count;
+
+        return Ok;
+}
+
+/*
+ * MonoTODO: Find out what the difference is between CompoundArray and DashArray
+ */
+GpStatus
+GdipGetPenCompoundCount (GpPen *pen, int *count)
+{
+        return NotImplemented;
+}
+
+GpStatus
+GdipSetPenCompoundArray (GpPen *pen, const float *dash, int count)
+{
+        return NotImplemented;
+}
+
+GpStatus
+GdipGetPenCompoundArray (GpPen *pen, float **dash, int count)
+{
+        return NotImplemented;
+}

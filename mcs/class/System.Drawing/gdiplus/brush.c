@@ -24,21 +24,47 @@
 
 #include "gdip.h"
 
-void gdip_brush_setup (GpGraphics *graphics, GpBrush *brush)
+void 
+gdip_brush_setup (GpGraphics *graphics, GpBrush *brush)
 {
-	int R = (brush->color & 0x00FF0000 ) >> 16;
-	int G = (brush->color & 0x0000FF00 ) >> 8;
-	int B = (brush->color & 0x000000FF );
-	cairo_set_rgb_color (graphics->ct, (double) R, (double) G, (double) B);
+        GpBrushType type;
+        GdipGetBrushType (brush, &type);
+
+        if (type == BrushTypeSolidColor) {
+                GpSolidFill *solid = brush;
+                gdip_solidfill_setup (graphics, solid);
+        }
 }
 
-GpStatus GdipCloneBrush (GpBrush *brush, GpBrush **clonedBrush)
+GpBrush *
+gdip_brush_new (void)
 {
-	return NotImplemented;
+        GpBrush *result = (GpBrush *) GdipAlloc (sizeof (GpBrush));
+
+        return result;
 }
 
-GpStatus GdipDeleteBrush (GpBrush *brush)
+GpStatus 
+GdipCloneBrush (GpBrush *brush, GpBrush **clonedBrush)
 {
-	return NotImplemented;
+	GpBrushType type;
+        GdipGetBrushType (brush, &type);
+
+        if (type == BrushTypeSolidColor)
+                return gdip_solidfill_clone (brush, clonedBrush);
+        else
+                return NotImplemented;
 }
 
+GpStatus 
+GdipDeleteBrush (GpBrush *brush)
+{
+        GdipFree (brush);
+}
+
+GpStatus
+GdipGetBrushType (GpBrush *brush, GpBrushType *type)
+{
+        *type = brush->type;
+        return Ok;
+}

@@ -4,23 +4,25 @@
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
 //   Alexandre Pigolkine (pigolkine@gmx.de)
+//   Duncan Mak (duncan@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
 using System;
 using System.Drawing.Drawing2D;
+using System.Runtime.InteropServices;
 
 namespace System.Drawing {
 
 	public sealed class Pen : MarshalByRefObject, ICloneable, IDisposable {
-		Brush brush;
-		Color color;
-		float width;
 		internal IntPtr nativeObject;
 
-		PenAlignment alignment;
-		
+                internal Pen (IntPtr p)
+                {
+                        nativeObject = p;
+                }
+
 		public Pen (Brush brush) : this (brush, 1.0F)
 		{
 		}
@@ -31,14 +33,13 @@ namespace System.Drawing {
 
 		public Pen (Brush brush, float width)
 		{
-			this.width = width;
-			this.brush = brush;
+			int pen;
+			GDIPlus.GdipCreatePen2 (brush.nativeObject, width, Unit.UnitWorld, out pen);
+			nativeObject = (IntPtr) pen;
 		}
 
 		public Pen (Color color, float width)
 		{
-			this.width = width;
-			this.color = color;
 			int pen;
 			GDIPlus.GdipCreatePen1 (color.ToArgb (), width, Unit.UnitWorld, out pen);
 			nativeObject = (IntPtr)pen;
@@ -49,65 +50,188 @@ namespace System.Drawing {
 		//
 		public PenAlignment Alignment {
 			get {
-				return alignment;
-			}
+				PenAlignment retval;
+                                GDIPlus.GdipGetPenMode (nativeObject, out retval);
+
+                                return retval;
+                        }
 
 			set {
-				alignment = value;
+				GDIPlus.GdipSetPenMode (nativeObject, value);
 			}
 		}
 
 		public Brush Brush {
 			get {
-				return brush;
-			}
+                                IntPtr retval;
+                                GDIPlus.GdipGetPenBrushFill (nativeObject, out retval);
+                                BrushType type;
+                                GDIPlus.GdipGetBrushType (retval, out type);
+                                
+                                return Brush.CreateBrush (retval, type);
+                        }
 
 			set {
-				brush = value;
+                                GDIPlus.GdipSetPenBrushFill (nativeObject, value.nativeObject);
 			}
 		}
 
 		public Color Color {
 			get {
-				return color;
+				int argb;
+                                GDIPlus.GdipGetPenColor (nativeObject, out argb);
+
+                                return Color.FromArgb (argb);
 			}
 
 			set {
-				color = value;
+				GDIPlus.GdipSetPenColor (nativeObject, value.ToArgb ());
 			}
 		}
 
+                public float [] CompoundArray {
+                        get {
+                                int count;
+                                GDIPlus.GdipGetPenCompoundArrayCount (nativeObject, out count);
 
-		[MonoTODO]
+                                IntPtr tmp = Marshal.AllocHGlobal (8 * count);
+                                GDIPlus.GdipGetPenCompoundArray (nativeObject, out tmp, out count);
+
+                                float [] retval = new float [count];
+                                Marshal.Copy (tmp, retval, 0, count);
+
+                                Marshal.FreeHGlobal (tmp);
+
+                                return retval;
+                        }
+
+                        set {
+                                int length = value.Length;
+                                IntPtr tmp = Marshal.AllocHGlobal (8 * length);
+                                Marshal.Copy (value, 0, tmp, length);
+                                GDIPlus.GdipSetPenCompoundArray (nativeObject, tmp, length);
+
+                                Marshal.FreeHGlobal (tmp);
+                        }
+                }
+
+                [MonoTODO]
+                public CustomLineCap CustomEndCap {
+                        get {
+                                throw new NotImplementedException ();
+                        }
+
+                        set {
+                                throw new NotImplementedException ();                                
+                        }
+                }
+
+                [MonoTODO]
+                public CustomLineCap CustomStartCap {
+
+                        get {
+                                throw new NotImplementedException ();                                
+                        }
+
+                        set {
+                                throw new NotImplementedException ();                                
+                        }
+                }
+
+                public DashCap DashCap {
+
+                        get {
+                                DashCap retval;
+                                GDIPlus.GdipGetPenDashCap (nativeObject, out retval);
+
+                                return retval;
+                        }
+
+                        set {
+                                GDIPlus.GdipSetPenDashCap (nativeObject, value);
+                        }
+                }
+
+                public float DashOffset {
+
+                        get {
+                                float retval;
+                                GDIPlus.GdipGetPenDashOffset (nativeObject, out retval);
+
+                                return retval;
+                        }
+
+                        set {
+                                GDIPlus.GdipSetPenDashOffset (nativeObject, value);
+                        }
+                }
+
+                public float [] DashPattern {
+                        get {
+                                int count;
+                                GDIPlus.GdipGetPenDashCount (nativeObject, out count);
+
+                                IntPtr tmp = Marshal.AllocHGlobal (8 * count);
+                                GDIPlus.GdipGetPenDashArray (nativeObject, out tmp, out count);
+
+                                float [] retval = new float [count];
+                                Marshal.Copy (tmp, retval, 0, count);
+
+                                Marshal.FreeHGlobal (tmp);
+
+                                return retval;
+                        }
+
+                        set {
+                                int length = value.Length;
+                                IntPtr tmp = Marshal.AllocHGlobal (8 * length);
+                                Marshal.Copy (value, 0, tmp, length);
+                                GDIPlus.GdipSetPenDashArray (nativeObject, tmp, length);
+
+                                Marshal.FreeHGlobal (tmp);
+                        }
+                }
+
 		public DashStyle DashStyle {
 			get {
-				throw new NotImplementedException ();
+				DashStyle retval;
+                                GDIPlus.GdipGetPenDashStyle (nativeObject, out retval);
+
+                                return retval;
 			}
 
 			set {
-				throw new NotImplementedException ();
+				GDIPlus.GdipSetPenDashStyle (nativeObject, value);
 			}
 		}
 
-		[MonoTODO]
 		public LineCap StartCap {
 			get {
-				throw new NotImplementedException ();
+                                throw new NotImplementedException ();
+// 				LineCap retval;
+//                                 GDIPlus.GdipGetPenStartCap (nativeObject, out retval);
+
+//                                 return retval;
 			}
 
 			set {
-				throw new NotImplementedException ();
+                                throw new NotImplementedException ();                                
+// 				GDIPlus.GdipSetPenStartCap (nativeObject, value);
 			}
 		}
  
-		[MonoTODO]
 		public LineCap EndCap {
 			get {
-				throw new NotImplementedException ();
+                                throw new NotImplementedException ();                                
+// 				LineCap retval;
+//                                 GDIPlus.GdipGetPenEndCap (nativeObject, out retval);
+
+//                                 return retval;
 			}
 
 			set {
-				throw new NotImplementedException ();
+                                throw new NotImplementedException ();                                
+// 				GDIPlus.GdipSetPenEndCap (nativeObject, value);
 			}
 		}
  
@@ -154,21 +278,21 @@ namespace System.Drawing {
 
 		public float Width {
 			get {
-				return width;
+				float f;
+                                GDIPlus.GdipGetPenWidth (nativeObject, out f);
+                                return f;
 			}
 			set {
-				width = value;
+				GDIPlus.GdipSetPenWidth (nativeObject, value);
 			}
 		}
 
 		public object Clone ()
 		{
-			Pen p = new Pen (brush, width);
-			
-			p.color = color;
-			p.alignment = alignment;
+                        IntPtr ptr;
+                        GDIPlus.GdipClonePen (nativeObject, out ptr);
 
-			return p;
+                        return new Pen (ptr);
 		}
 
 		public void Dispose ()
@@ -179,11 +303,62 @@ namespace System.Drawing {
 
 		void Dispose (bool disposing)
 		{
+                        GDIPlus.GdipDeletePen (nativeObject);
 		}
 
 		~Pen ()
 		{
 			Dispose (false);
 		}
+
+                public void MultiplyTransform (Matrix matrix)
+                {
+                        MultiplyTransform (matrix, MatrixOrder.Prepend);
+                }
+
+                public void MultiplyTransform (Matrix matrix, MatrixOrder order)
+                {
+                        GDIPlus.GdipMultiplyPenTransform (nativeObject, matrix.nativeMatrix, order);
+                }
+
+                public void ResetTransform ()
+                {
+                        GDIPlus.GdipResetPenTransform (nativeObject);
+                }
+
+                public void RotateTransform (float angle)
+                {
+                        RotateTransform (angle, MatrixOrder.Prepend);
+                }
+
+                public void RotateTransform (float angle, MatrixOrder order)
+                {
+                        GDIPlus.GdipRotatePenTransform (nativeObject, angle, order);
+                }
+
+                public void ScaleTransform (float sx, float sy)
+                {
+                        ScaleTransform (sx, sy, MatrixOrder.Prepend);
+                }
+
+                public void ScaleTransform (float sx, float sy, MatrixOrder order)
+                {
+                        GDIPlus.GdipScalePenTransform (nativeObject, sx, sy, order);
+                }
+
+                public void SetLineCap (LineCap startCap, LineCap endCap, DashCap dashCap)
+                {
+                        // GDIPlus.GdipSetLineCap197819 (nativeObject, startCap, endCap, dashCap);
+                }
+
+                public void TranslateTransform (float dx, float dy)
+                {
+                        TranslateTransform (dx, dy, MatrixOrder.Prepend);
+                }
+
+                public void TranslateTransform (float dx, float dy, MatrixOrder order)
+                {
+                        GDIPlus.GdipTranslatePenTransform (nativeObject, dx, dy, order);
+                }
 	}
 }

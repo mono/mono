@@ -310,10 +310,9 @@ GdipGetWorldTransform (GpGraphics *graphics, GpMatrix *matrix)
 }
 
 GpStatus
-GdipMultiplyWorldTransform (GpGraphics *graphics, const GpMatrix *matrix, GpMatrixOrder order)
+GdipMultiplyWorldTransform (GpGraphics *graphics, GpMatrix *matrix, GpMatrixOrder order)
 {
-        GpMatrix *tmp = matrix;
-        Status s = GdipMultiplyMatrix (graphics->copy_of_ctm, tmp, order);
+        Status s = GdipMultiplyMatrix (graphics->copy_of_ctm, matrix, order);
         
         if (s != Ok)
                 return s;

@@ -114,7 +114,7 @@ typedef enum {
         DashStyleDot = 2,        /* dotted line */
         DashStyleDashDot = 3,    /* alt. dash-dot */
         DashStyleDashDotDot = 4, /* alt. dash-dot-dot */
-        dashStyleCustom = 5      /* user-defined */
+        DashStyleCustom = 5      /* user-defined */
 } GpDashStyle;
 
 typedef enum {
@@ -148,6 +148,19 @@ typedef enum {
     LineCapArrowAnchor = 0x14,
     LineCapCustom = 0xff
 } GpLineCap;
+
+typedef enum {
+        PenAlignmentCenter = 0,
+        PenAlignmentInset = 1
+} GpPenAlignment, PenAlignment;
+
+typedef enum {
+        BrushTypeSolidColor = 0,
+        BrushTypeHatchFill = 1,
+        BrushTypeTextureFill = 2,
+        BrushTypePathGradient = 3,
+        BrushTypeLinearGradient = 4
+} GpBrushType, BrushType;
 
 /*
  * Structures
@@ -191,13 +204,22 @@ typedef cairo_matrix_t GpMatrix;
 
 typedef struct {
 	int color;
+        GpBrushType type;
+} GpBrush, GpSolidFill;
+
+typedef struct {
+	int color;
+        GpBrush *brush; 
 	float width;
         float miter_limit;
         GpLineJoin line_join;
         GpDashStyle dash_style;
         GpLineCap line_cap;
+        GpPenAlignment mode;
         float dash_offset;
         int dash_count;
+        float *dash_array;
+        GpUnit unit;
         GpMatrix *matrix;
 } GpPen;
 
@@ -219,10 +241,6 @@ typedef struct {
 	void *hInitialBitmap;
 	void *hBitmap;
 } GpBitmap;
-
-typedef struct {
-	int color;
-} GpBrush;
 
 typedef struct {
         GpFillMode fillMode;
@@ -254,10 +272,17 @@ GpGraphics *gdip_graphics_new (void);
 void gdip_graphics_attach_bitmap (GpGraphics *graphics, GpBitmap *image);
 void gdip_graphics_detach_bitmap (GpGraphics *graphics, GpBitmap *image);
 
-void gdip_brush_init (GpBrush *brush);
-GpBrush *gdip_brush_new (void);
+/* Brush */
 void gdip_brush_setup (GpGraphics *graphics, GpBrush *brush);
+GpBrush *gdip_brush_new (void);
 
+/* Solid fill */
+void gdip_solidfill_init (GpSolidFill *brush);
+void gdip_solidfill_setup (GpGraphics *graphics, GpBrush *brush);
+GpStatus gdip_solidfill_clone (GpBrush *brush, GpBrush **clonedBrush);
+GpSolidFill *gdip_solidfill_new (void);
+
+/* Pen */
 void gdip_pen_init (GpPen *pen);
 GpPen *gdip_pen_new (void);
 void gdip_pen_setup (GpGraphics *graphics, GpPen *pen);
@@ -312,9 +337,36 @@ GpStatus gdip_get_status (cairo_status_t status);
 /* Brush */
 GpStatus GdipCloneBrush (GpBrush *brush, GpBrush **clonedBrush);
 GpStatus GdipDeleteBrush (GpBrush *brush);
+GpStatus GdipGetBrushType (GpBrush *brush, GpBrushType *brushType);
+
+/* Solidfill Brush */
+GpStatus GdipGetSolidFillColor (GpSolidFill *brush, int *color);
 
 /* Pen */
 GpStatus GdipCreatePen1 (int argb, float width, GpUnit unit, GpPen **pen);
+GpStatus GdipCreatePen2 (GpBrush *brush, float width, GpUnit unit, GpPen **pen);
+GpStatus GdipClonePen (GpPen *pen, GpPen **clonedpen);
+GpStatus GdipSetPenWidth (GpPen *pen, float width);
+GpStatus GdipGetPenWidth (GpPen *pen, float *width);
+GpStatus GdipSetPenBrushFill (GpPen *pen, GpBrush *brush);
+GpStatus GdipGetPenBrushFill (GpPen *pen, GpBrush **brush);
+GpStatus GdipSetPenColor (GpPen *pen, int color);
+GpStatus GdipGetPenColor (GpPen *pen, int *color);;
+GpStatus GdipSetPenDashStyle (GpPen *pen, GpDashStyle dashStyle);
+GpStatus GdipGetPenDashStyle (GpPen *pen, GpDashStyle *dashStyle);
+GpStatus GdipSetPenDashOffset (GpPen *pen, float offset);
+GpStatus GdipGetPenDashOffset (GpPen *pen, float *offset);
+GpStatus GdipSetPenDashCount (GpPen *pen, int count);
+GpStatus GdipGetPenDashCount (GpPen *pen, int *count);
+GpStatus GdipSetPenDashArray (GpPen *pen, float *dash, int count);
+GpStatus GdipGetPenDashArray (GpPen *pen, float **dash, int *count);
+GpStatus GdipSetPenDashCompoundArray (GpPen *pen, float *dash, int count);
+GpStatus GdipGetPenDashCompoundArray (GpPen *pen, float **dash, int *count);
+GpStatus GdipGetPenDashCompoundCount (GpPen *pen, int *count);
+GpStatus GdipSetPenMode (GpPen *pen, GpPenAlignment penMode);
+GpStatus GdipGetPenMode (GpPen *pen, GpPenAlignment *penMode);
+GpStatus GdipSetPenUnit (GpPen *pen, GpUnit unit);
+GpStatus GdipGetPenUnit (GpPen *pen, GpUnit *unit);
 GpStatus GdipDeletePen (GpPen *pen);
 GpStatus GdipSetPenMiterLimit (GpPen *pen, float miterLimit);
 GpStatus GdipGetPenMiterLimit (GpPen *pen, float *miterLimit);
