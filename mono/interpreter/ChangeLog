@@ -1,3 +1,8 @@
+2004-07-27  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* transform.c (mono_interp_transform_method):
+	quick fix to cope with the fake ptr classes
+
 2004-07-26  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* mintops.def: more options on ICALL op code
