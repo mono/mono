@@ -1,3 +1,8 @@
+2002-07-09  Dick Porter  <dick@ximian.com>
+
+	* threads.c: Make the thread cleaning up cope with threads that
+	call ExitThread()
+
 2002-07-08  Radek Doulik  <rodo@ximian.com>
 
 	* reflection.c (method_encode_code): use non-translated values to
