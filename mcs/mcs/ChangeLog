@@ -1,3 +1,8 @@
+2004-12-10  Marek Safar  <marek.safar@seznam.cz>
+
+	* attributes.cs (Attribute.Resolve): Avoid multiple error report
+	and report exception as error 182.
+
 2004-12-10  Raja R Harinath  <rharinath@novell.com>
 
 	* driver.cs (Main): Fix message when there are warnings.

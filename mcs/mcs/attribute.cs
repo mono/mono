@@ -78,6 +78,8 @@ namespace Mono.CSharp {
 
 		public Type Type;
 
+		bool resolve_error;
+
 		// Is non-null if type is AttributeUsageAttribute
 		AttributeUsageAttribute usage_attribute;
 
@@ -265,6 +267,11 @@ namespace Mono.CSharp {
 		
 		public CustomAttributeBuilder Resolve (EmitContext ec)
 		{
+			if (resolve_error)
+				return null;
+
+			resolve_error = true;
+
 			Type oldType = Type;
 			
 			// Sanity check.
@@ -558,13 +565,6 @@ namespace Mono.CSharp {
 				else
 					cb = new CustomAttributeBuilder (
 						(ConstructorInfo) constructor, pos_values);
-			} catch (NullReferenceException) {
-				// 
-				// Don't know what to do here
-				//
-				Report.Warning (
-				        -101, Location, "NullReferenceException while trying to create attribute." +
-                                        "Something's wrong!");
 			} catch (Exception e) {
 				//
 				// Sample:
@@ -572,10 +572,11 @@ namespace Mono.CSharp {
 				// [DefaultValue (CollectionChangeAction.Add)]
 				// class X { static void Main () {} }
 				//
-				Report.Warning (
-					-23, Location, "The compiler can not encode this attribute in .NET due to a bug in the .NET runtime. Try the Mono runtime. The exception was: " + e.Message);
+				Error_AttributeArgumentNotValid (Location);
+				return null;
 			}
 			
+			resolve_error = false;
 			return cb;
 		}
 
