@@ -498,7 +498,7 @@ namespace Mono.CSharp {
 			return d;
 		}
 		
-		bool CheckAccessLevel (Type check_type) 
+		public bool CheckAccessLevel (Type check_type) 
 		{
 			if (check_type == TypeBuilder)
 				return true;
