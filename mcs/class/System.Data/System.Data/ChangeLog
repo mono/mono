@@ -1,5 +1,9 @@
 2004-04-29  Boris Kirzner <borisk@mainsoft.com>
 
+	* MergeManager.cs : added ( incomplete yet ) support for merging DataSet schema.
+
+2004-04-29  Boris Kirzner <borisk@mainsoft.com>
+
 	* DataRow.cs : Bug fix in CopyValuesToRow().
 	
 2004-04-29  Boris Kirzner <borisk@mainsoft.com>

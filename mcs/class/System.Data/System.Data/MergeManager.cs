@@ -17,6 +17,8 @@ namespace System.Data
 			foreach (DataTable t in sourceSet.Tables)
 				MergeManager.Merge(targetSet, t, preserveChanges, missingSchemaAction);
 
+			AdjustSchema(targetSet,sourceSet,missingSchemaAction);
+
 		}
 
 		internal static void Merge(DataSet targetSet, DataTable sourceTable, bool preserveChanges, MissingSchemaAction missingSchemaAction)
@@ -100,7 +102,86 @@ namespace System.Data
 
 		}
 			
-		
+
+		// adjust the dataset schema according to the missingschemaaction param
+		// (relations).
+		// return false if adjusting fails.
+		private static bool AdjustSchema(DataSet targetSet, DataSet sourceSet, MissingSchemaAction missingSchemaAction)
+		{
+			if (missingSchemaAction == MissingSchemaAction.Add || missingSchemaAction == MissingSchemaAction.AddWithKey) {
+				foreach (DataRelation relation in sourceSet.Relations) {
+					// TODO : add more precise condition (columns)
+					if (!targetSet.Relations.Contains(relation.RelationName)) {
+						DataTable targetTable = targetSet.Tables[relation.ParentColumns[0].Table.TableName];
+						DataColumn[] parentColumns = ResolveColumns(sourceSet,targetTable,relation.ParentColumns);
+						targetTable = targetSet.Tables[relation.ChildColumns[0].Table.TableName];
+						DataColumn[] childColumns = ResolveColumns(sourceSet,targetTable,relation.ChildColumns);
+						if (parentColumns != null && childColumns != null) {
+							DataRelation newRelation = new DataRelation(relation.RelationName,parentColumns,childColumns);
+							targetSet.Relations.Add(newRelation);
+						}
+					}
+					else {
+						// TODO : should we throw an exeption ?
+					}
+				}			
+
+				foreach(DataTable sourceTable in sourceSet.Tables) {				
+					DataTable targetTable = targetSet.Tables[sourceTable.TableName];
+
+					if (targetTable != null) {
+						foreach(UniqueConstraint uc in sourceTable.Constraints.UniqueConstraints) {
+							// TODO : add more precise condition (columns)
+							if ( !targetTable.Constraints.Contains(uc.ConstraintName) ) {		
+								DataColumn[] columns = ResolveColumns(sourceSet,targetTable,uc.Columns);
+								if (columns != null) {
+									UniqueConstraint newConstraint = new UniqueConstraint(uc.ConstraintName,columns,uc.IsPrimaryKey);
+									targetTable.Constraints.Add(newConstraint);
+								}
+							}
+							else {
+								// TODO : should we throw an exeption ?
+							}
+						}
+
+						foreach(ForeignKeyConstraint fc in sourceTable.Constraints.ForeignKeyConstraints) {
+							// TODO : add more precise condition (columns)
+							if (!targetTable.Constraints.Contains(fc.ConstraintName)) {
+								DataColumn[] columns = ResolveColumns(sourceSet,targetTable,fc.Columns);
+								DataTable relatedTable = targetSet.Tables[fc.RelatedTable.TableName];
+								DataColumn[] relatedColumns = ResolveColumns(sourceSet,relatedTable,fc.RelatedColumns);
+								if (columns != null && relatedColumns != null) {
+									ForeignKeyConstraint newConstraint = new ForeignKeyConstraint(fc.ConstraintName,relatedColumns,columns);
+									targetTable.Constraints.Add(newConstraint);
+								}
+							}
+							else {
+								// TODO : should we throw an exeption ?
+							}
+						}
+					}
+				}
+			}
+
+			return true;
+		}
+
+		private static DataColumn[] ResolveColumns(DataSet targetSet,DataTable targetTable,DataColumn[] sourceColumns)
+		{
+			if (sourceColumns != null && sourceColumns.Length > 0) {
+				// TODO : worth to check that all source colums come from the same table
+				if (targetTable != null) {
+					int i=0;
+					DataColumn[] targetColumns = new DataColumn[sourceColumns.Length];
+					foreach(DataColumn sourceColumn in sourceColumns) {
+						targetColumns[i++] = targetTable.Columns[sourceColumn.ColumnName];
+					}
+					return targetColumns;
+				}
+			}
+			return null;
+		}
+
 		
 		// adjust the table schema according to the missingschemaaction param.
 		// return false if adjusting fails.
@@ -120,32 +201,51 @@ namespace System.Data
 					return true;
 				if (missingSchemaAction == MissingSchemaAction.Error)
 					throw new ArgumentException("Target DataSet missing definition for "+ tableName + ".");
-				
 				DataTable cloneTable = (DataTable)sourceTable.Clone();
 				targetSet.Tables.Add(cloneTable);
 				tableName = cloneTable.TableName;
-			}
+			}								
 			
 			DataTable table = targetSet.Tables[tableName];
 			
-			if (!CheckPrimaryKeys(table, sourceTable))
-				return false;
-			
 			for (int i = 0; i < sourceTable.Columns.Count; i++)
 			{
-				DataColumn col = sourceTable.Columns[i];
+				DataColumn sourceColumn = sourceTable.Columns[i];
 				// if a column from the source table doesn't exists in the target table
 				// we act according to the missingschemaaction param.
-				if(!table.Columns.Contains(col.ColumnName))
-				{
+				DataColumn targetColumn = table.Columns[sourceColumn.ColumnName];
+				if(targetColumn == null) {
 					if (missingSchemaAction == MissingSchemaAction.Ignore)
 						continue;
 					if (missingSchemaAction == MissingSchemaAction.Error)
-						throw new ArgumentException(("Column '" + col.ColumnName + "' does not belong to table Items."));
+						throw new ArgumentException(("Column '" + sourceColumn.ColumnName + "' does not belong to table Items."));
 					
-					table.Columns.Add(new DataColumn(col.ColumnName, col.DataType, col.Expression, col.ColumnMapping));
+					targetColumn = new DataColumn(sourceColumn.ColumnName, sourceColumn.DataType, sourceColumn.Expression, sourceColumn.ColumnMapping);
+					table.Columns.Add(targetColumn);
+				}
+
+				if (sourceColumn.Unique) {
+					try{
+						targetColumn.Unique = sourceColumn.Unique;
+					}
+					catch(Exception e){
+						Console.WriteLine("targetColumn : {0}   targetTable : {1} ",targetColumn.ColumnName,table.TableName);
+						foreach(DataRow row in table.Rows) {
+							Console.WriteLine(row[targetColumn]);
+						}
+						throw e;
+					}
+				}
+
+				if(sourceColumn.AutoIncrement) {
+					targetColumn.AutoIncrement = sourceColumn.AutoIncrement;
+					targetColumn.AutoIncrementSeed = sourceColumn.AutoIncrementSeed;
+					targetColumn.AutoIncrementStep = sourceColumn.AutoIncrementStep;
 				}
 			}
+
+			if (!AdjustPrimaryKeys(table, sourceTable))
+				return false;
 
 			return true;
 		}
@@ -153,51 +253,70 @@ namespace System.Data
 		// find if there is a valid matching between the targetTable PrimaryKey and the
 		// sourceTable primatyKey.
 		// return true if there is a match, else return false and raise a MergeFailedEvent.
-		private static bool CheckPrimaryKeys(DataTable targetTable, DataTable sourceTable)
+		private static bool AdjustPrimaryKeys(DataTable targetTable, DataTable sourceTable)
 		{
 			// if the length of one of the tables primarykey if 0 - there is nothing to check.
-			if (targetTable.PrimaryKey.Length != 0 && sourceTable.PrimaryKey.Length != 0)
-			{
-				// if the length of primarykey is not equal - merge fails
-				if (targetTable.PrimaryKey.Length != sourceTable.PrimaryKey.Length)
-				{
-					string message = "<target>.PrimaryKey and <source>.PrimaryKey have different Length.";
-					MergeFailedEventArgs e = new MergeFailedEventArgs(sourceTable, message);
-					targetTable.DataSet.OnMergeFailed(e);
-					return false;
-				}
-				else
-				{
-					// we have to see that each primary column in the target table
-					// has a column with the same name in the sourcetable primarykey columns. 
-					bool foundMatch;
-					DataColumn[] targetDataColumns = targetTable.PrimaryKey;
-					DataColumn[] srcDataColumns = sourceTable.PrimaryKey;
+			if (sourceTable.PrimaryKey.Length != 0) {
+				if (targetTable.PrimaryKey.Length == 0) {
+					// if target table has no primary key at all - 
+					// import primary key from source table
+					DataColumn[] targetColumns = new DataColumn[sourceTable.PrimaryKey.Length];
+					
+					for(int i=0; i < sourceTable.PrimaryKey.Length; i++){
+					    DataColumn sourceColumn = sourceTable.PrimaryKey[i];
+						DataColumn targetColumn = targetTable.Columns[sourceColumn.ColumnName];
 
-					// loop on all primary key columns in the targetTable.
-					for (int i = 0; i < targetDataColumns.Length; i++)
-					{
-						foundMatch = false;
-						DataColumn col = targetDataColumns[i];
-
-						// find if there is a column with the same name in the 
-						// sourceTable primary key columns.
-						for (int j = 0; j < srcDataColumns.Length; j++)
-						{
-							if (srcDataColumns[j].ColumnName == col.ColumnName)
-							{
-								foundMatch = true;
-								break;
-							}
-						}
-						if (!foundMatch)
-						{
-							string message = "Mismatch columns in the PrimaryKey : <target>." + col.ColumnName + " versus <source>." + srcDataColumns[i].ColumnName + ".";
+						if (targetColumn == null) {
+							// is target table has no column corresponding
+							// to source table PK column - merge fails
+							string message = "Column " + sourceColumn.ColumnName + " does not belongs to table " + targetTable.TableName;
 							MergeFailedEventArgs e = new MergeFailedEventArgs(sourceTable, message);
 							targetTable.DataSet.OnMergeFailed(e);
 							return false;
 						}
-						
+						else {
+							targetColumns[i] = targetColumn;
+						}
+					}
+					targetTable.PrimaryKey = targetColumns;
+				}
+				else {
+					// if target table already has primary key and
+					// if the length of primarykey is not equal - merge fails
+					if (targetTable.PrimaryKey.Length != sourceTable.PrimaryKey.Length) {
+						string message = "<target>.PrimaryKey and <source>.PrimaryKey have different Length.";
+						MergeFailedEventArgs e = new MergeFailedEventArgs(sourceTable, message);
+						targetTable.DataSet.OnMergeFailed(e);
+						return false;
+					}
+					else {
+						// we have to see that each primary column in the target table
+						// has a column with the same name in the sourcetable primarykey columns. 
+						bool foundMatch;
+						DataColumn[] targetDataColumns = targetTable.PrimaryKey;
+						DataColumn[] srcDataColumns = sourceTable.PrimaryKey;
+
+						// loop on all primary key columns in the targetTable.
+						for (int i = 0; i < targetDataColumns.Length; i++) {
+							foundMatch = false;
+							DataColumn col = targetDataColumns[i];
+
+							// find if there is a column with the same name in the 
+							// sourceTable primary key columns.
+							for (int j = 0; j < srcDataColumns.Length; j++) {
+								if (srcDataColumns[j].ColumnName == col.ColumnName) {
+									foundMatch = true;
+									break;
+								}
+							}
+							if (!foundMatch) {
+								string message = "Mismatch columns in the PrimaryKey : <target>." + col.ColumnName + " versus <source>." + srcDataColumns[i].ColumnName + ".";
+								MergeFailedEventArgs e = new MergeFailedEventArgs(sourceTable, message);
+								targetTable.DataSet.OnMergeFailed(e);
+								return false;
+							}
+							
+						}
 					}
 				}
 			}
