@@ -43,6 +43,22 @@ public class Class1 {
 	public int i;
 }
 
+[StructLayout(LayoutKind.Sequential)]
+public class Class2 {
+	[MarshalAsAttribute(UnmanagedType.Bool)]
+	public int f0;
+
+	[MarshalAs(UnmanagedType.LPArray, ArraySubType=UnmanagedType.LPStr)]
+	public string[] f1;
+
+	[MarshalAs(UnmanagedType.ByValTStr, SizeConst=100)]
+	public string f2;
+
+	// This doesn't work under mono
+	//[MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Marshal1), MarshalCookie = "5")]
+	//public object f3;
+}
+
 [TestFixture]
 public class FieldInfoTest : Assertion
 {
@@ -56,8 +72,28 @@ public class FieldInfoTest : Assertion
 
 		AssertEquals (1, t.GetField ("i").GetCustomAttributes (typeof (NonSerializedAttribute), true).Length);
 
-		FieldOffsetAttribute attr = (FieldOffsetAttribute)(typeof (Class1).GetField ("i").GetCustomAttributes (true) [0]);
-		AssertEquals (32, attr.Value);
+		FieldOffsetAttribute field_attr = (FieldOffsetAttribute)(typeof (Class1).GetField ("i").GetCustomAttributes (true) [0]);
+		AssertEquals (32, field_attr.Value);
+
+		MarshalAsAttribute attr;
+
+		attr = (MarshalAsAttribute)typeof (Class2).GetField ("f0").GetCustomAttributes (true) [0];
+		AssertEquals (UnmanagedType.Bool, attr.Value);
+
+		attr = (MarshalAsAttribute)typeof (Class2).GetField ("f1").GetCustomAttributes (true) [0];
+		AssertEquals (UnmanagedType.LPArray, attr.Value);
+		AssertEquals (UnmanagedType.LPStr, attr.ArraySubType);
+
+		attr = (MarshalAsAttribute)typeof (Class2).GetField ("f2").GetCustomAttributes (true) [0];
+		AssertEquals (UnmanagedType.ByValTStr, attr.Value);
+		AssertEquals (100, attr.SizeConst);
+
+		/*
+		attr = (MarshalAsAttribute)typeof (Class2).GetField ("f3").GetCustomAttributes (true) [0];
+		AssertEquals (UnmanagedType.CustomMarshaler, attr.Value);
+		AssertEquals ("5", attr.MarshalCookie);
+		AssertEquals (typeof (Marshal1), Type.GetType (attr.MarshalType));
+		*/
 	}
 #endif
 }		

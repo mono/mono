@@ -1,5 +1,7 @@
 2004-09-26  Zoltan Varga  <vargaz@freemail.hu>
 
+	* FieldInfoTest.cs: Add tests for MarshalAsAttribute.
+
 	* ParameterInfoTest.cs: Add tests for MarshalAsAttribute.
 
 	* FieldInfoTest.cs: Add tests for FieldOffsetAttribute.
