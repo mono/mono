@@ -403,34 +403,10 @@ namespace System.Data {
 			return ReadXml (new XmlTextReader (reader));
 		}
 
-		[MonoTODO]
 		public XmlReadMode ReadXml (XmlReader r)
 		{
-			// FIXME: somekinda exception?
-			if (!r.Read ())
-				return XmlReadMode.Auto; // FIXME
-
-			/*\
-			 *  If document is diffgram we will use diffgram
-			\*/
-			if (r.LocalName == "diffgram")
-				return ReadXml (r, XmlReadMode.DiffGram);
-
-			/*\
-			 *  If we already have a schema, or the document 
-			 *  contains an in-line schema, sets XmlReadMode to ReadSchema.
-		        \*/
-
-			// FIXME: is this always true: "if we have tables we have to have schema also"
-			if (Tables.Count > 0)				
-				return ReadXml (r, XmlReadMode.ReadSchema);
-
-			/*\
-			 *  If we dont have a schema yet and document 
-			 *  contains no inline-schema  mode is XmlReadMode.InferSchema
-			\*/
-
-			return ReadXml (r, XmlReadMode.InferSchema);
+			XmlDataLoader Loader = new XmlDataLoader (this);
+			return Loader.LoadData (r);
 		}
 
 		public XmlReadMode ReadXml (Stream stream, XmlReadMode mode)
@@ -451,25 +427,8 @@ namespace System.Data {
 		[MonoTODO]
 		public XmlReadMode ReadXml (XmlReader reader, XmlReadMode mode)
 		{
-			XmlReadMode readMode = XmlReadMode.Auto;
-
-			switch (mode) {
-
-			        case XmlReadMode.DiffGram:
-					break;
-				case XmlReadMode.ReadSchema:
-					readMode = XmlReadMode.ReadSchema;
-					ReadXmlReadSchema (reader);					
-					break;
-			        case XmlReadMode.InferSchema:
-					readMode = XmlReadMode.InferSchema;
-					ReadXmlInferSchemaMode (reader);
-					break;
-			        default:
-					break;
-			}
-
-			return readMode;
+			XmlDataLoader Loader = new XmlDataLoader (this);
+			return Loader.LoadData (reader, mode);
 		}
 
 		#endregion // Public Methods
@@ -522,114 +481,6 @@ namespace System.Data {
 		}
 		#endregion
 		
-		#region Private ReadXml-methods
-
-		[MonoTODO]
-		private void ReadXmlInferSchemaMode (XmlReader reader)
-		{
-			// root element is DataSets name
-			reader.MoveToContent ();
-
-			dataSetName = reader.LocalName;
-
-			// And now comes tables
-			while (reader.Read ()) {
-
-				// skip possible inline-schema
-				if (String.Compare (reader.LocalName, "schema", true) == 0 && reader.NodeType == XmlNodeType.Element) {
-					while (reader.Read () && (reader.NodeType != XmlNodeType.EndElement 
-								  || String.Compare (reader.LocalName, "schema", true) != 0));
-				}
-
-
-				if (reader.NodeType == XmlNodeType.Element) {
-					
-					string datatablename = reader.LocalName;
-					bool addTable = true;
-					DataTable table;
-
-					if (!Tables.Contains (datatablename)) {
-						table = new DataTable (reader.LocalName);
-					}
-					else {
-						table = Tables [datatablename];
-						addTable = false;
-					}
-
-					Hashtable rowValue = new Hashtable ();
-
-					while (reader.Read () && (reader.NodeType != XmlNodeType.EndElement 
-								  || reader.LocalName != datatablename))
-					{
-						if (reader.NodeType == XmlNodeType.Element) {
-
-							string dataColumnName = reader.LocalName;
-							if (addTable)
-								table.Columns.Add (dataColumnName);
-
-							// FIXME: exception?
-							if (!reader.Read ())
-								return;
-
-							rowValue.Add (dataColumnName, reader.Value);
-						}
-					}
-					
-					DataRow row = table.NewRow ();
-					
-					IDictionaryEnumerator enumerator = rowValue.GetEnumerator ();
-					while (enumerator.MoveNext ()) {
-						row [enumerator.Key.ToString ()] = enumerator.Value.ToString ();
-					}
-
-					table.Rows.Add (row);
-					
-					if (addTable)
-						Tables.Add (table);
-				}
-			}			
-		}
-
-		[MonoTODO]
-		private void ReadXmlReadSchema (XmlReader reader)
-		{
-			/*\
-			 *  Reads any inline schema, but an exception is thrown 
-			 *  if any tables in the inline schema already exist in the DataSet.
-			\*/
-
-			reader.MoveToContent ();
-
-			while (reader.Read ()) {
-
-				// FIXME: possible inline-schema should be readed here
-				if (String.Compare (reader.LocalName, "schema", true) == 0 && reader.NodeType == XmlNodeType.Element) {
-					ReadXmlSchema (reader);
-				}
-
-				// find table
-				if (reader.NodeType == XmlNodeType.Element && Tables.Contains (reader.LocalName)) {
-					
-					DataTable table = Tables [reader.LocalName];
-					DataRow row = table.NewRow ();
-					do {
-						if (reader.NodeType == XmlNodeType.Element && 
-						    table.Columns.Contains (reader.LocalName)) {
-							string columName = reader.LocalName;
-							reader.Read ();
-							row [columName] = reader.Value;
-						}
-
-					} while (table.TableName != reader.LocalName 
-								    || reader.NodeType != XmlNodeType.EndElement);
-					
-					table.Rows.Add (row);
-				}
-			}
-		}
-
-		#endregion // Private ReadXml-methods
-
 		#region Private Xml Serialisation
 	
 		private void WriteTable( XmlWriter writer, DataTable table, XmlWriteMode mode )
