@@ -42,7 +42,6 @@ namespace System.Xml
 		private bool checkCharacters;
 		private bool closeOutput;
 		private ConformanceLevel conformance;
-		private bool encodeXmlBinary;
 		private Encoding encoding;
 		private bool indent;
 		private string indentChars;
@@ -61,7 +60,6 @@ namespace System.Xml
 			checkCharacters = org.checkCharacters;
 			closeOutput = org.closeOutput;
 			conformance = org.conformance;
-			encodeXmlBinary = org.encodeXmlBinary;
 			encoding = org.encoding;
 			indent = org.indent;
 			indentChars = org.indentChars;
@@ -86,7 +84,6 @@ namespace System.Xml
 			checkCharacters = true;
 			closeOutput = false; // ? not documented
 			conformance = ConformanceLevel.Document;
-			encodeXmlBinary = false;
 			encoding = Encoding.UTF8;
 			indent = false;
 			indentChars = "  ";
@@ -115,14 +112,6 @@ namespace System.Xml
 			set { conformance = value; }
 		}
 
-		[MonoTODO]
-		[Obsolete]
-		public bool EncodeXmlBinary {
-			get { return encodeXmlBinary; }
-			set { encodeXmlBinary = value; }
-		}
-
-		[MonoTODO]
 		public Encoding Encoding {
 			get { return encoding; }
 			set { encoding = value; }

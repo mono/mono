@@ -37,6 +37,7 @@ using System.Text;
 
 namespace System.Xml
 {
+	[MonoTODO ("CheckCharacters; Conformance; NormalizeNewLines; OmitXmlDeclaration")]
 	public class XmlTextWriter : XmlWriter
 	{
 		#region Fields
@@ -59,7 +60,7 @@ namespace System.Xml
 		string indentChars = "  ";
 		char quoteChar = '\"';
 		int indentLevel = 0;
-		string indentFormatting;
+		bool indentLocal;
 		Stream baseStream = null;
 		string xmlLang = null;
 		XmlSpace xmlSpace = XmlSpace.None;
@@ -79,6 +80,11 @@ namespace System.Xml
 		bool shouldAddSavedNsToManager;
 		bool shouldCheckElementXmlns;
 
+		// XmlWriterSettings support
+		bool closeOutput;
+		bool newLineOnAttributes;
+		string newLineChars;
+
 		#endregion
 
 		#region Constructors
@@ -90,6 +96,7 @@ namespace System.Xml
 			StreamWriter sw = w as StreamWriter;
 			if (sw != null)
 				baseStream = sw.BaseStream;
+			newLineChars = w.NewLine;
 		}
 
 		public XmlTextWriter (Stream w,	Encoding encoding) : base ()
@@ -100,6 +107,7 @@ namespace System.Xml
 			} else 
 				this.w = new StreamWriter (w, encoding);
 			baseStream = w;
+			newLineChars = this.w.NewLine;
 		}
 
 		public XmlTextWriter (string filename, Encoding encoding) :
@@ -159,6 +167,29 @@ openElements [openElementCount - 1]).IndentingOverriden;
 				UpdateIndentChars ();
 			}
 		}
+
+#if NET_2_0
+		internal bool CloseOutput {
+//			get { return closeOutput; }
+			set { closeOutput = value; }
+		}
+
+		internal string IndentChars {
+//			get { return indentChars; }
+			set { indentChars = value == null ? String.Empty : value; }
+		}
+
+		internal string NewLineChars {
+//			get { return newLineChars; }
+			set { newLineChars = value == null ? String.Empty : value; }
+		}
+
+		internal bool NewLineOnAttributes {
+//			get { return newLineOnAttributes; }
+			set { newLineOnAttributes = value; }
+		}
+
+#endif
 
 		public bool Namespaces {
 			get { return namespaces; }
@@ -276,10 +307,10 @@ openElements [openElementCount - 1]).IndentingOverriden;
 				throw new InvalidOperationException ("The Writer is closed.");
 			}
 			if ((documentStarted == true) && (formatting == Formatting.Indented) && (!IndentingOverriden)) {
-				indentFormatting = w.NewLine;
+				indentLocal = true;
 			}
 			else
-				indentFormatting = null;
+				indentLocal = false;
 
 			documentStarted = true;
 		}
@@ -288,7 +319,8 @@ openElements [openElementCount - 1]).IndentingOverriden;
 		{
 			CloseOpenAttributeAndElements ();
 
-			w.Close();
+			if (closeOutput)
+				w.Close();
 			ws = WriteState.Closed;
 			openWriter = false;
 		}
@@ -512,9 +544,9 @@ openElements [openElementCount - 1]).IndentingOverriden;
 
 		private void WriteIndent ()
 		{
-			if (indentFormatting == null)
+			if (!indentLocal)
 				return;
-			w.Write (w.NewLine);
+			w.Write (newLineChars);
 			for (int i = 0; i < indentLevel; i++)
 				w.Write (indentChars);
 		}
@@ -680,7 +712,6 @@ openElements [openElementCount - 1]).IndentingOverriden;
 				ns = String.Empty;
 
 			string formatPrefix = "";
-			string formatSpace = "";
 
 			if (ns != String.Empty && prefix != "xmlns") {
 				string existingPrefix = namespaceManager.LookupPrefix (ns, false);
@@ -719,10 +750,13 @@ openElements [openElementCount - 1]).IndentingOverriden;
 				formatPrefix = prefix + ":";
 			}
 
-			if (openStartElement || attributeWrittenForElement)
-				formatSpace = " ";
+			if (openStartElement || attributeWrittenForElement) {
+				if (newLineOnAttributes)
+					WriteIndent ();
+				else
+					w.Write (" ");
+			}
 
-			w.Write (formatSpace);
 			w.Write (formatPrefix);
 			w.Write (localName);
 			w.Write ('=');

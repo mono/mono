@@ -91,58 +91,79 @@ namespace System.Xml
 		public abstract void Close ();
 
 #if NET_2_0
-		[MonoTODO]
 		public static XmlWriter Create (Stream stream)
 		{
-			throw new NotImplementedException ();
+			return Create (stream, null);
 		}
 
-		[MonoTODO]
 		public static XmlWriter Create (string file)
 		{
-			return new XmlTextWriter (file, null);
+			return Create (file, null);
 		}
 
-		[MonoTODO]
 		public static XmlWriter Create (TextWriter writer)
 		{
-			return new XmlTextWriter (writer);
+			return Create (writer, null);
 		}
 
-		[MonoTODO]
 		public static XmlWriter Create (StringBuilder builder)
 		{
-			throw new NotImplementedException ();
+			return Create (builder, null);
 		}
 
-		[MonoTODO]
 		public static XmlWriter Create (Stream stream, XmlWriterSettings settings)
 		{
-			throw new NotImplementedException ();
+			// FIXME: this might result in encoding null reference
+			Encoding enc = settings != null ? settings.Encoding : Encoding.UTF8;
+			return Create (new StreamWriter (stream, enc), settings);
 		}
 
-		[MonoTODO]
 		public static XmlWriter Create (string file, XmlWriterSettings settings)
 		{
-			throw new NotImplementedException ();
+			// FIXME: this might result in encoding null reference
+			Encoding enc = settings != null ? settings.Encoding : Encoding.UTF8;
+			return Create (new StreamWriter (file, false, enc), settings);
 		}
 
 		[MonoTODO]
 		public static XmlWriter Create (StringBuilder builder, XmlWriterSettings settings)
 		{
-			throw new NotImplementedException ();
+			return Create (new StringWriter (builder), null);
 		}
 
 		[MonoTODO]
 		public static XmlWriter Create (TextWriter writer, XmlWriterSettings settings)
 		{
-			throw new NotImplementedException ();
+			return CreateTextWriter (writer, settings);
 		}
 
 		[MonoTODO]
 		public static XmlWriter Create (XmlWriter writer, XmlWriterSettings settings)
 		{
-			throw new NotImplementedException ();
+			if (settings == null)
+				settings = new XmlWriterSettings ();
+//			throw new NotImplementedException ();
+			writer.settings = settings;
+			return writer;
+		}
+
+		public static XmlWriter CreateTextWriter (TextWriter writer, XmlWriterSettings settings)
+		{
+			if (settings == null)
+				settings = new XmlWriterSettings ();
+			XmlTextWriter xtw = new XmlTextWriter (writer);
+			// Indent, IndentChars
+			if (settings.Indent) {
+				xtw.Formatting = Formatting.Indented;
+				xtw.IndentChars = settings.IndentChars;
+			}
+			// NewLineChars
+			xtw.NewLineChars = settings.NewLineChars;
+			// CloseOutput
+			xtw.CloseOutput = settings.CloseOutput;
+			// NewLineOnAttributes
+			xtw.NewLineOnAttributes = settings.NewLineOnAttributes;
+			return Create (xtw, settings);
 		}
 
 		[MonoTODO]

@@ -1177,8 +1177,6 @@ namespace System.Xml
 
 			checkCharacters = true;
 #if NET_2_0
-if (Settings != null)
-Console.WriteLine ("Settings.CheckCharacters = " + Settings.CheckCharacters);
 			if (Settings != null)
 				checkCharacters = Settings.CheckCharacters;
 #endif
@@ -1230,6 +1228,7 @@ Console.WriteLine ("Settings.CheckCharacters = " + Settings.CheckCharacters);
 		}
 
 #if NET_2_0
+		[MonoTODO ("Test")]
 		internal ConformanceLevel Conformance {
 			set {
 				if (value == ConformanceLevel.Fragment) {
