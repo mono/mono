@@ -59,12 +59,6 @@ namespace System.Runtime.Remoting.Channels.Http
 			Sink = sink;
 		}
 		
-		public RequestArguments (Stream inputStream, Stream outputStream, HttpServerTransportSink sink)
-		{
-			InputStream = inputStream;
-			OutputStream = outputStream;
-			Sink = sink;
-		}
 		public Stream InputStream;
 		public Stream OutputStream;
 		public HttpServerTransportSink Sink;
@@ -105,9 +99,8 @@ namespace System.Runtime.Remoting.Channels.Http
 			else
 				buffer = new byte [0];
 				
-			
 			//Step (5)
-		    SendRequestForChannel (reqArg, HeaderFields, CustomHeaders, buffer);
+			SendRequestForChannel (reqArg, HeaderFields, CustomHeaders, buffer);
 		}
 
 		private static ArrayList RecieveHeader (RequestArguments reqArg)
@@ -215,8 +208,7 @@ namespace System.Runtime.Remoting.Channels.Http
 						SendResponse (reqArg, 408, null, null);
 						break;
 					default :
-						//<Exception>					
-						break;
+						throw e;
 				}
 				
 				return false;
@@ -261,7 +253,7 @@ namespace System.Runtime.Remoting.Channels.Http
 			
 		}
 		
-		public static bool SendResponse (RequestArguments reqArg, int httpStatusCode, ITransportHeaders headers, Stream responseStream)
+		public static void SendResponse (RequestArguments reqArg, int httpStatusCode, ITransportHeaders headers, Stream responseStream)
 		{
 			byte [] headersBuffer = null;
 			byte [] entityBuffer = null;
@@ -309,22 +301,11 @@ namespace System.Runtime.Remoting.Channels.Http
 		
 		   	headersBuffer = Encoding.ASCII.GetBytes (responseStr.ToString());
 
-			try
-			{
-				//send headersBuffer
-				reqArg.OutputStream.Write (headersBuffer, 0, headersBuffer.Length);
+			//send headersBuffer
+			reqArg.OutputStream.Write (headersBuffer, 0, headersBuffer.Length);
 
-				if (entityBuffer != null)
-					reqArg.OutputStream.Write (entityBuffer, 0, entityBuffer.Length);
-			}
-			catch
-			{
-				//<EXCEPTION>
-				//may be its the client's fault so just return with false
-				return false;
-			}
-
-			return true;
+			if (entityBuffer != null)
+				reqArg.OutputStream.Write (entityBuffer, 0, entityBuffer.Length);
 		}
 
 		internal static string GetReasonPhrase (int HttpStatusCode)
