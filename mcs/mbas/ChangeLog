@@ -1,3 +1,6 @@
+2005/01/28 Satya Sudha K <ksathyasudha@novell.com>
+	* ecore.cs : Added a few fixes for Boolean to Numeric Conversions
+
 2005/01/25 Satya Sudha K <ksathyasudha@novell.com>
 	* ecore.cs : Added support for Implicit numeric conversions.
 		Most of the work on this patch done by Jambunathan K
