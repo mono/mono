@@ -7258,7 +7258,7 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			Invocation.EmitCall (ec, false, false, instance_expr, get, arguments, loc);
+			Invocation.EmitCall (ec, is_base_indexer, false, instance_expr, get, arguments, loc);
 		}
 
 		//
@@ -7268,7 +7268,7 @@ namespace Mono.CSharp {
 		//
 		public void EmitAssign (EmitContext ec, Expression source)
 		{
-			Invocation.EmitCall (ec, false, false, instance_expr, set, set_arguments, loc);
+			Invocation.EmitCall (ec, is_base_indexer, false, instance_expr, set, set_arguments, loc);
 		}
 	}
 

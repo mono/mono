@@ -1,5 +1,10 @@
 2003-05-26  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (IndexerAccess.Emit, IndexerAccess.EmitAssign):
+	Pass `is_base_indexer' to Invocation.EmitCall instead of false.
+	Because if we are a BaseIndexerAccess that value will be true.
+	Fixes 43643.
+
 	* statement.cs (GotoCase.Resolve): Return after reporting an
 	error, do not attempt to continue. 
 
