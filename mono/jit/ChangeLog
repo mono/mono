@@ -1,3 +1,7 @@
+2002-12-02  root  <dietmar@ximian.com>
+
+	* x86.brg (stmt): POP floating point stack correctly
+
 2002-11-28  Dietmar Maurer  <dietmar@ximian.com>
 
 	* emit-x86.c (arch_emit_prologue): don't save caller saved
