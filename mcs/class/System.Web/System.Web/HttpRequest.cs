@@ -390,7 +390,7 @@ namespace System.Web {
 			}
 		}
 
-		static private string GetCookieValue (string str, int length, bool allowComma, ref int i)
+		static private string GetCookieValue (string str, int length, ref int i)
 		{
 			if (i >= length)
 				return null;
@@ -400,7 +400,7 @@ namespace System.Web {
 				k++;
 
 			int begin = k;
-			while (k < length && (str [k] != ';' || (allowComma && str [k] == ',')))
+			while (k < length && str [k] != ';')
 				k++;
 
 			i = k;
@@ -453,7 +453,7 @@ namespace System.Web {
 				pos = 0;
 				string name_value = name_values [i].Trim ();
 				string name = GetCookieName (name_value, name_value.Length, ref pos);
-				string value = GetCookieName (name_value, name_value.Length, ref pos);
+				string value = GetCookieValue (name_value, name_value.Length, ref pos);
 				if (cookie != null) {
 					if (name == "$Path") {
 						cookie.Path = value;
