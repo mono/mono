@@ -1,3 +1,9 @@
+2004-01-28  Sanjay Gupta <gsanjay@novell.com>
+
+	* FontCollection.cs: Implemented missing functionalities.
+	* InstalledFontCollection.css: Implemented missing functionalities.
+	* PrivateFontCollection.cs: Implemented few methods.
+
 2004-01-10 Ravindra <rkumar@novell.com>
 
 	* All Enums: Made serializable.
