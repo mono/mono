@@ -129,7 +129,7 @@ namespace CIR {
 			
 			if (same_type)
 				bf |= BindingFlags.NonPublic;
-
+			
 			MemberInfo [] mi = rc.TypeManager.FindMembers (t, mt, bf, Type.FilterName, name);
 
 			if (mi == null)
