@@ -14,7 +14,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 
-namespace System.Web.UI.Utils
+namespace System.Web.Utils
 {
 	internal class DataSourceHelper
 	{

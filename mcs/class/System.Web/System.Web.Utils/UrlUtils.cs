@@ -11,7 +11,7 @@
 
 using System;
 
-namespace System.Web.UI.Utils
+namespace System.Web.Utils
 {
 	internal class UrlUtils
 	{

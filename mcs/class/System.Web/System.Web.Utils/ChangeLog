@@ -1,3 +1,8 @@
+2001-12-16  Miguel de Icaza  <miguel@ximian.com>
+
+	* DataSourceHelper.cs, UrlUtils.cs: Set the correct namespace. 
+	
+
 2001-11-30
 		Gaurav Vaish <gvaish@iitk.ac.in>
 	DataSourceHelper.cs      - Resolving DataSource objects
