@@ -1,3 +1,7 @@
+2004-11-18 Marek Safar <marek.safar@seznam.cz>
+
+	* cs0657-19.cs: Bug#69462
+
 2004-11-03  Carlos Alberto Cortez <carlos@unixmexico.org>
 	* cs0273.cs: New
 	* cs0274.cs: New
