@@ -268,9 +268,11 @@ namespace System.Security.Cryptography {
 
 			int total = inputCount;
 			byte[] res = new byte [total];
-			while (inputCount > 0) {
-				TransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, inputOffset);
-				inputOffset += BlockSizeByte;
+			int nres = 0;
+ 			while (inputCount > 0) {
+				TransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, nres);
+ 				inputOffset += BlockSizeByte;
+				nres += BlockSizeByte;
 				inputCount -= BlockSizeByte;
 			}
 

@@ -1,3 +1,8 @@
+2003-11-11  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* SymmetricAlgorithm.cs: Fixed decryption when inputOffset > 0.
+	[#50826].
+
 2003-11-10  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Rfc2898DeriveBytes.cs: Implementation for PKCS5 PBKDF2. It works
