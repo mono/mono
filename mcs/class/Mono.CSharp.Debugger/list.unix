@@ -2,5 +2,4 @@ IMonoSymbolWriter.cs
 MonoSymbolDocumentWriter.cs
 MonoSymbolWriter.cs
 MonoSymbolTable.cs
-MonoSymbolTableReader.cs
 MonoSymbolTableWriter.cs
