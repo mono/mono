@@ -212,6 +212,7 @@ namespace Mono.CSharp
 			keywords.Add ("set", Token.SET);
 			keywords.Add ("short", Token.SHORT);
 			keywords.Add ("sizeof", Token.SIZEOF);
+			keywords.Add ("stackalloc", Token.STACKALLOC);
 			keywords.Add ("static", Token.STATIC);
 			keywords.Add ("string", Token.STRING);
 			keywords.Add ("struct", Token.STRUCT);

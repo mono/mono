@@ -305,7 +305,8 @@ namespace Mono.CSharp
 		{
 			int errors = 0, i;
 			string output_file = null;
-
+			bool parsing_options = true;
+			
 			references = new ArrayList ();
 			link_paths = new ArrayList ();
 
@@ -354,10 +355,14 @@ namespace Mono.CSharp
 					continue;
 				}
 				
-				if (arg.StartsWith ("-")){
+				if (parsing_options && (arg.StartsWith ("-") || arg.StartsWith ("/"))){
 					switch (arg){
 					case "-v":
 						yacc_verbose = true;
+						continue;
+
+					case "--":
+						parsing_options = false;
 						continue;
 
 					case "--parse":
@@ -380,6 +385,7 @@ namespace Mono.CSharp
 						RootContext.Optimize = true;
 						continue;
 
+					case "/?": case "/h": case "/help":
 					case "--help":
 						Usage (false);
 						return;
@@ -410,14 +416,15 @@ namespace Mono.CSharp
 						continue;
 					}
 					
-					case "-o": case "--output":
+					case "-o": 
+					case "--output":
 						if ((i + 1) >= argc){
 							Usage (true);
 							return;
 						}
 						output_file = args [++i];
 						continue;
-						
+
 					case "--checked":
 						RootContext.Checked = true;
 						continue;

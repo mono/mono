@@ -1,5 +1,20 @@
 2002-02-21  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (Binary.ResolveOperator): Remove redundant
+	MemberLookup pn parent type.
+	Optimize union call, we do not need a union if the types are the same.
+	(Unary.ResolveOperator): REmove redundant MemberLookup on parent
+	type.
+
+	Specialize the use of MemberLookup everywhere, instead of using
+	the default settings. 
+
+	(StackAlloc): Implement stackalloc keyword.
+
+	* cs-parser.jay: Add rule to parse stackalloc.
+	
+	* driver.cs: Handle /h, /help, /?
+
 	* expression.cs (MakeByteBlob): Removed the hacks we had in place
 	before we supported unsafe code.
 	

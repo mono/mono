@@ -146,6 +146,7 @@ namespace Mono.CSharp
 %token SEALED	
 %token SHORT	
 %token SIZEOF	
+%token STACKALLOC
 %token STATIC	
 %token STRING	
 %token STRUCT	
@@ -758,9 +759,13 @@ variable_initializer
 		$$ = $1;
 	  }
 	| array_initializer
-	{
+	  {
 		$$ = $1;
-	}
+	  }
+	| STACKALLOC type OPEN_BRACKET expression CLOSE_BRACKET
+	  {
+		$$ = new StackAlloc ((string) $2, (Expression) $4, lexer.Location);
+	  }
 	;
 
 method_declaration

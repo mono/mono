@@ -263,10 +263,7 @@ namespace Mono.CSharp {
 			
 			op_name = oper_names [(int) oper];
 
-			mg = MemberLookup (ec, expr_type, op_name, loc);
-			
-			if (mg == null && expr_type.BaseType != null)
-				mg = MemberLookup (ec, expr_type.BaseType, op_name, loc);
+			mg = MemberLookup (ec, expr_type, op_name, MemberTypes.Method, AllBindingFlags, loc);
 			
 			if (mg != null) {
 				Expression e = StaticCallExpr.MakeSimpleCall (
@@ -645,10 +642,11 @@ namespace Mono.CSharp {
 			else 
 				op_name = "op_Decrement";
 
-			mg = MemberLookup (ec, expr_type, op_name, loc);
+			mg = MemberLookup (ec, expr_type, op_name, MemberTypes.Method, AllBindingFlags, loc);
 
 			if (mg == null && expr_type.BaseType != null)
-				mg = MemberLookup (ec, expr_type.BaseType, op_name, loc);
+				mg = MemberLookup (ec, expr_type.BaseType, op_name,
+						   MemberTypes.Method, AllBindingFlags, loc);
 			
 			if (mg != null) {
 				method = StaticCallExpr.MakeSimpleCall (
@@ -1587,15 +1585,14 @@ namespace Mono.CSharp {
 			
 			string op = "op_" + oper;
 
-			left_expr = MemberLookup (ec, l, op, loc);
-			if (left_expr == null && l.BaseType != null)
-				left_expr = MemberLookup (ec, l.BaseType, op, loc);
-			
-			right_expr = MemberLookup (ec, r, op, loc);
-			if (right_expr == null && r.BaseType != null)
-				right_expr = MemberLookup (ec, r.BaseType, op, loc);
-			
-			MethodGroupExpr union = Invocation.MakeUnionSet (left_expr, right_expr);
+			MethodGroupExpr union;
+			left_expr = MemberLookup (ec, l, op, MemberTypes.Method, AllBindingFlags, loc);
+			if (r != l){
+				right_expr = MemberLookup (
+					ec, r, op, MemberTypes.Method, AllBindingFlags, loc);
+				union = Invocation.MakeUnionSet (left_expr, right_expr);
+			} else
+				union = (MethodGroupExpr) left_expr;
 			
 			if (union != null) {
 				Arguments = new ArrayList ();
@@ -4737,7 +4734,8 @@ namespace Mono.CSharp {
 					
 					if (decl_type.IsSubclassOf (TypeManager.enum_type)) {
 						Expression enum_member = MemberLookup (
-							ec, decl_type, "value__", loc); 
+							ec, decl_type, "value__", MemberTypes.Field,
+							AllBindingFlags, loc); 
 
 						Enum en = TypeManager.LookupEnum (decl_type);
 
@@ -5604,7 +5602,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			member_lookup = MemberLookup (ec, base_type, "get_Item", loc);
+			member_lookup = MemberLookup (ec, base_type, "get_Item", MemberTypes.Method, AllBindingFlags, loc);
 			if (member_lookup == null)
 				return null;
 
@@ -5783,5 +5781,73 @@ namespace Mono.CSharp {
 			return this;
 		}
 	}
-	
+
+	//
+	// Implements the `stackalloc' keyword
+	//
+	public class StackAlloc : Expression {
+		Type otype;
+		string t;
+		Expression count;
+		Location loc;
+		
+		public StackAlloc (string type, Expression count, Location l)
+		{
+			t = type;
+			this.count = count;
+			loc = l;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			count = count.Resolve (ec);
+			if (count == null)
+				return null;
+			
+			if (count.Type != TypeManager.int32_type){
+				count = ConvertImplicitRequired (ec, count, TypeManager.int32_type, loc);
+				if (count == null)
+					return null;
+			}
+
+			if (ec.InCatch || ec.InFinally){
+				Report.Error (255, loc,
+					      "stackalloc can not be used in a catch or finally block");
+				return null;
+			}
+			
+			otype = RootContext.LookupType (ec.TypeContainer, t, false, loc);
+
+			if (otype == null)
+				return null;
+
+			if (!TypeManager.VerifyUnManaged (otype, loc))
+				return null;
+
+			string ptr_name = otype.FullName + "*";
+			type = Type.GetType (ptr_name);
+			if (type == null){
+				ModuleBuilder mb = RootContext.ModuleBuilder;
+				
+				type = mb.GetType (ptr_name);
+			}
+			eclass = ExprClass.Value;
+
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			int size = GetTypeSize (otype);
+			ILGenerator ig = ec.ig;
+				
+			if (size == 0)
+				ig.Emit (OpCodes.Sizeof, otype);
+			else
+				IntConstant.EmitInt (ig, size);
+			count.Emit (ec);
+			ig.Emit (OpCodes.Mul);
+			ig.Emit (OpCodes.Localloc);
+		}
+	}
 }

@@ -248,6 +248,11 @@ OPTIMIZATIONS
 	a single one that maps a TypeBuilder `t' to a set of classes
 	that implement an interface that supports FindMembers.
 
+* MakeUnionSet Callers
+
+	If the types are the same, there is no need to compute the unionset,
+ 	we can just use the list from one of the types.
+
 RECOMMENDATIONS
 ---------------
 
