@@ -7,7 +7,7 @@ RESOURCE_FILES = \
 include ../../build/rules.make
 
 LOCAL_MCS_FLAGS = \
-	-r:Mono.GetOptions \
+	/r:Mono.GetOptions.dll \
 	$(RESOURCE_FILES:%=/resource:%)
 
 PROGRAM = macpack.exe
