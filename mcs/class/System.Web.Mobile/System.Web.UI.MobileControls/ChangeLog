@@ -1,4 +1,9 @@
 
+2003-01-30	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* ListDataHelperInternal.cs
+	                         : Added class.
+
 2003-01-27	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* IListControl.cs        : A private class hacked.
