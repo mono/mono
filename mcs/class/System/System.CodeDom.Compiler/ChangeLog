@@ -1,3 +1,11 @@
+2003-04-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CodeGenerator.cs:
+	(GenerateCompileUnitStart):
+	(GenerateCompileUnitEnd): removed debug output.
+	(GeneratePrimitiveExpression): handle null and bool as special cases.
+	(GenerateType): added type constructor and constructor calls.
+
 2003-02-20  Alfonso Ali <isa@infomed.sld.cu>
 
 	* CodeGenerator.cs: Generates the entry point method.

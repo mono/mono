@@ -233,12 +233,10 @@ namespace System.CodeDom.Compiler {
 
 		protected virtual void GenerateCompileUnitEnd( CodeCompileUnit compileUnit )
 		{
-			output.WriteLine( "<compileUnitEnd>" );
 		}
 
 		protected virtual void GenerateCompileUnitStart( CodeCompileUnit compileUnit )
 		{
-			output.WriteLine( "<compileUnitStart>" );
 		}
 
 		protected abstract void GenerateConditionStatement( CodeConditionStatement s );
@@ -429,7 +427,17 @@ namespace System.CodeDom.Compiler {
 
 		protected virtual void GeneratePrimitiveExpression (CodePrimitiveExpression e)
 		{
-			output.Write( e.Value );
+			if (e.Value == null) {
+				output.Write ("null");
+				return;
+			}
+
+			if (e.Value is bool) {
+				output.Write (e.Value.ToString ().ToLower ());
+				return;
+			}
+
+			output.Write (e.Value);
 		}
 
 		protected abstract void GenerateProperty (CodeMemberProperty p, CodeTypeDeclaration d);
@@ -876,6 +884,16 @@ namespace System.CodeDom.Compiler {
 				CodeEntryPointMethod epmethod = member as CodeEntryPointMethod;
 				if ( epmethod != null ) {
 					GenerateEntryPointMethod( epmethod, type );
+					continue;
+				}
+				CodeTypeConstructor typeCtor = member as CodeTypeConstructor;
+				if (typeCtor != null) {
+					GenerateTypeConstructor (typeCtor);
+					continue;
+				}
+				CodeConstructor ctor = member as CodeConstructor;
+				if (ctor != null) {
+					GenerateConstructor (ctor, type);
 					continue;
 				}
 				CodeMemberMethod method = member as CodeMemberMethod;

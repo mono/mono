@@ -307,10 +307,10 @@ namespace Mono.CSharp
 			++Indent;
 			GenerateStatements( statement.TrueStatements );
 			--Indent;
-			output.Write( '}' );
 
 			CodeStatementCollection falses = statement.FalseStatements;
 			if ( falses.Count > 0 ) {
+				output.Write( '}' );
 				if ( Options.ElseOnClosing )
 					output.Write( ' ' );
 				else
@@ -319,8 +319,8 @@ namespace Mono.CSharp
 				++Indent;
 				GenerateStatements( falses );
 				--Indent;
-				output.WriteLine( '}' );
 			}
+			output.WriteLine( '}' );
 		}
 
 		protected override void GenerateTryCatchFinallyStatement( CodeTryCatchFinallyStatement statement )
@@ -559,12 +559,23 @@ namespace Mono.CSharp
 		protected override void GenerateConstructor( CodeConstructor constructor,
 							     CodeTypeDeclaration declaration )
 		{
-			Output.Write( "<GenerateConstructor>" );
+			OutputMemberAccessModifier (constructor.Attributes);
+			Output.Write (CurrentTypeName + " (");
+			OutputParameters (constructor.Parameters);
+			Output.WriteLine (") {");
+			Indent++;
+			GenerateStatements (constructor.Statements);
+			Indent--;
+			Output.WriteLine ('}');
 		}
 		
 		protected override void GenerateTypeConstructor( CodeTypeConstructor constructor )
 		{
-			Output.Write( "<GenerateTypeConstructor>" );
+			Output.WriteLine ("static " + CurrentTypeName + "() {");
+			Indent++;
+			GenerateStatements (constructor.Statements);
+			Indent--;
+			Output.WriteLine ('}');
 		}
 
 		protected override void GenerateTypeStart( CodeTypeDeclaration declaration )

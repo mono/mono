@@ -1,3 +1,8 @@
+2003-04-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CSharpCodeGenerator.cs: beautified conditional statements. Implemented
+	GenerateConstructor and GenerateTypeConstructor.
+
 2003-01-10  Duncan Mak  <duncan@ximian.com>
 
 	* CSharpCodeCompiler.cs: 
