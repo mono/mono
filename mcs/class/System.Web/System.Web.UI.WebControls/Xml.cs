@@ -177,7 +177,7 @@ namespace System.Web.UI.WebControls
 			}
 
 			if (documentSource != null && documentSource.Length != 0) {
-				xpathDoc = new XPathDocument (MapPathSecure (documentSource));
+				xpathDoc = new XPathDocument (documentSource);
 				return;
 			}
 		}

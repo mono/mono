@@ -1,3 +1,8 @@
+2004-03-30  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* Xml.cs: In LoadXpathDoc(), don't use MapPathSecure with documentSource,
+	  since it is already a physical path. Fixes bug #55334.
+
 2004-02-13  Jackson Harper  <jackson@ximian.com>
 
 	* Calendar.cs: Match MS postback data. This allows sites that
