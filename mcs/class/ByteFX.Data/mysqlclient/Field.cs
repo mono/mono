@@ -18,39 +18,11 @@
 using System;
 using System.Data;
 using System.Data.SqlTypes;
+using System.Globalization;
+using System.Text;
 
-namespace ByteFX.Data.MySQLClient
+namespace ByteFX.Data.MySqlClient
 {
-	
-
-	internal enum MySQLFieldType : byte
-	{
-		DECIMAL		=   0,
-		TINY        =   1,
-		BYTE		=   1,
-		SHORT       =   2,
-		LONG        =   3,
-		FLOAT       =   4,
-		DOUBLE      =   5,
-		NULL        =   6,
-		TIMESTAMP   =   7,
-		LONGLONG    =   8,
-		INT24       =   9,
-		DATE        =  10,
-		TIME        =  11,
-		DATETIME    =  12,
-		YEAR        =  13,
-		NEWDATE     =  14,
-		ENUM        = 247,
-		SET         = 248,
-		TINY_BLOB   = 249,
-		MEDIUM_BLOB = 250,
-		LONG_BLOB   = 251,
-		BLOB        = 252,
-		VAR_STRING  = 253,
-		STRING      = 254
-	};
-
 	internal enum ColFlags : int
 	{
 		NOT_NULL		= 1,
@@ -71,193 +43,200 @@ namespace ByteFX.Data.MySQLClient
 	/// <summary>
 	/// Summary description for Field.
 	/// </summary>
-	internal class MySQLField : Common.Field
+	internal class MySqlField : Common.Field
 	{
-		  MySQLFieldType	m_FieldType;
-		public	ColFlags		ColumnFlags;
-		public	int				ColumnDecimals;
-		object					m_Value;
+		  MySqlDbType			colType;
+		public	ColFlags		colFlags;
+		public	int				colDecimals;
+//		System.Text.Encoding	encoding;
+		private static NumberFormatInfo		numberFormat = null;
 
-		public MySQLField()
+
+		public MySqlField()
 		{
+//			this.encoding = encoding;
+			if (numberFormat == null)
+			{
+				numberFormat = (NumberFormatInfo)NumberFormatInfo.InvariantInfo.Clone();
+				numberFormat.NumberDecimalSeparator = ".";
+			}
 		}
 
-		public void ReadSchemaInfo( Driver d )
+		public void ReadSchemaInfo( Packet packet )
 		{	
-			d.ReadPacket();
-
-			m_TableName = d.ReadLenString();
-			m_ColName = d.ReadLenString();
-			m_ColLen = d.ReadNBytes();
-			m_FieldType = (MySQLFieldType)d.ReadNBytes();
-			d.ReadByte();									// this is apparently 2 -- not sure what it is for
-			ColumnFlags = (ColFlags)d.ReadInteger(2);		//(short)(d.ReadByte() & 0xff);
-			ColumnDecimals = d.ReadByte();
+			tableName = packet.ReadLenString();
+			colName = packet.ReadLenString();
+			colLen = (int)packet.ReadNBytes();
+			colType = (MySqlDbType)packet.ReadNBytes();
+			packet.ReadByte();									// this is apparently 2 -- not sure what it is for
+			colFlags = (ColFlags)packet.ReadInteger(2);		//(short)(d.ReadByte() & 0xff);
+			colDecimals = packet.ReadByte();
 		}
 
 		public object GetValue() 
 		{
-			return m_Value;
+			return value;
 		}
 
 		public int NumericPrecision()
 		{
-			if (m_FieldType == MySQLFieldType.DECIMAL)
-				return ColumnLength;
+			if (colType == MySqlDbType.Decimal)
+				return ((SqlDecimal)value).Precision;
 			return -1;
 		}
 
 		public int NumericScale()
 		{
-			if (m_FieldType == MySQLFieldType.DECIMAL)
-				return ColumnDecimals;
+			if (colType == MySqlDbType.Decimal)
+				return ((SqlDecimal)value).Scale; 
 			return -1;
 		}
 
 		public bool IsAutoIncrement()
 		{
-			return (ColumnFlags & ColFlags.AUTO_INCREMENT) > 0;
+			return (colFlags & ColFlags.AUTO_INCREMENT) > 0;
 		}
 
 		public bool IsNumeric()
 		{
-			return (ColumnFlags & ColFlags.NUMBER) > 0;
+			return (colFlags & ColFlags.NUMBER) > 0;
 		}
 
 		public bool AllowsNull()
 		{
-			return (ColumnFlags & ColFlags.NOT_NULL) == 0;
+			return (colFlags & ColFlags.NOT_NULL) == 0;
 		}
 
 		public bool IsUnique()
 		{
-			return (ColumnFlags & ColFlags.UNIQUE_KEY) > 0;
+			return (colFlags & ColFlags.UNIQUE_KEY) > 0;
 		}
 
 		public bool IsPrimaryKey()
 		{
-			return (ColumnFlags & ColFlags.PRIMARY_KEY) > 0;
+			return (colFlags & ColFlags.PRIMARY_KEY) > 0;
 		}
 
 		public bool IsBlob() 
 		{
-			return (ColumnFlags & ColFlags.BLOB) > 0;
+			return (colFlags & ColFlags.BLOB) > 0;
 		}
 
 		public bool IsBinary()
 		{
-			return (ColumnFlags & ColFlags.BINARY) > 0;
+			return (colFlags & ColFlags.BINARY) > 0;
 		}
 
 		public bool IsUnsigned()
 		{
-			return (ColumnFlags & ColFlags.UNSIGNED) > 0;
+			return (colFlags & ColFlags.UNSIGNED) > 0;
 		}
 
-		public void SetValueData( byte[] data )
+		public void SetValueData( byte[] data, int offset, int count, Encoding encoding )
 		{
-			if (data == null) 
+			if (data == null || count == 0) 
 			{
-				m_Value = null;
+				value = DBNull.Value;
 				return;
 			}
 
 			// if it is a blob and binary, then GetBytes is the way to go
 			if ( IsBlob() && IsBinary() ) 
 			{
-				m_DbType = DbType.Binary;
+				dbType = DbType.Binary;
+				value = data;
 				return;
 			}
 
-			char[] _Chars = System.Text.Encoding.ASCII.GetChars( data );
+			char[] _Chars = encoding.GetChars(data, offset, count );
 			string sValue = new string(_Chars);
 
-			switch(m_FieldType)
+			switch(colType)
 			{
-				case MySQLFieldType.BYTE:
-					if (IsUnsigned()) 
-						m_Value = Byte.Parse( sValue );
-					else 
-						m_Value = SByte.Parse( sValue );
-					break;
-
-				case MySQLFieldType.SHORT:
-					if (IsUnsigned()) 
-						m_Value = UInt16.Parse( sValue );
-					else 
-						m_Value = Int16.Parse( sValue );
-					break;
-
-				case MySQLFieldType.INT24:
-				case MySQLFieldType.LONG : 
-					if (IsUnsigned()) 
-						m_Value = UInt32.Parse( sValue );
-					else 
-						m_Value = Int32.Parse( sValue );
-					break;
-
-				case MySQLFieldType.LONGLONG:
-					if (IsUnsigned()) 
-						m_Value = UInt64.Parse( sValue );
-					else 
-						m_Value = Int64.Parse( sValue );
-					break;
-
-				case MySQLFieldType.FLOAT:
-					m_Value = Single.Parse( sValue );
-					break;
-
-				case MySQLFieldType.DOUBLE:
-					m_Value = Double.Parse( sValue );
-					break;
-
-				case MySQLFieldType.DECIMAL:
-					m_Value = Decimal.Parse( sValue );
-					break;
-			
-				case MySQLFieldType.DATE:
-					if (sValue == "0000-00-00")
-						m_Value = null;
+				case MySqlDbType.Byte:
+					if (IsUnsigned())
+						value = Byte.Parse( sValue );
 					else
-						m_Value = DateTime.ParseExact( sValue, "yyyy-MM-dd", new System.Globalization.DateTimeFormatInfo());
-						
+						value = SByte.Parse( sValue );
 					break;
 
-				case MySQLFieldType.DATETIME:
-					if (sValue == "0000-00-00 00:00:00")
-						m_Value = null;
+				case MySqlDbType.Short:
+					if (IsUnsigned())
+						value = UInt16.Parse( sValue );
 					else
-						m_Value = DateTime.ParseExact( sValue, "yyyy-MM-dd HH:mm:ss", new System.Globalization.DateTimeFormatInfo());
-
+						value = Int16.Parse( sValue );
+					break;
+					
+				case MySqlDbType.Long : 
+				case MySqlDbType.Int24:
+					if (IsUnsigned())
+						value = UInt32.Parse( sValue );
+					else
+						value = Int32.Parse( sValue );
 					break;
 
-				case MySQLFieldType.TIME:
-					m_Value = TimeSpan.Parse(sValue);
+				case MySqlDbType.LongLong:
+					if (IsUnsigned())
+						value = UInt64.Parse( sValue );
+					else
+						value = Int64.Parse( sValue );
 					break;
 
-				case MySQLFieldType.TIMESTAMP:
+				case MySqlDbType.Decimal:
+					value = Decimal.Parse( sValue , numberFormat );
+					break;
+
+				case MySqlDbType.Float:
+					value = Convert.ToSingle( sValue, numberFormat );
+					break;
+
+				case MySqlDbType.Double:
+					value = Convert.ToDouble( sValue, numberFormat );
+					break;
+
+				case MySqlDbType.Date:
+					ParseDateValue( "0000-00-00", "yyyy-MM-dd", sValue );
+					break;
+
+				case MySqlDbType.Datetime:
+					ParseDateValue( "0000-00-00 00:00:00", "yyyy-MM-dd HH:mm:ss", sValue );
+					break;
+
+				case MySqlDbType.Time:
+					if (sValue.Equals("00:00:00"))
+						value = DBNull.Value;
+					else
+						value = TimeSpan.Parse(sValue);
+					break;
+
+				case MySqlDbType.Timestamp:
 					string pattern;
-				switch (ColumnLength) 
-				{
-					case 2:  pattern = "yy"; break;
-					case 4:  pattern = "yyMM"; break;
-					case 6:  pattern = "yyMMdd"; break;
-					case 8:  pattern = "yyyyMMdd"; break;
-					case 10: pattern = "yyMMddHHmm"; break;
-					case 12: pattern = "yyMMddHHmmss"; break;
-					case 14: 
-					default: pattern = "yyyyMMddHHmmss"; break;
-				}
-					m_Value = DateTime.ParseExact( sValue, pattern, new System.Globalization.DateTimeFormatInfo());
+					string null_value = "00000000000000";
+					switch (ColumnLength) 
+					{
+						case 2:  pattern = "yy"; break;
+						case 4:  pattern = "yyMM"; break;
+						case 6:  pattern = "yyMMdd"; break;
+						case 8:  pattern = "yyyyMMdd"; break;
+						case 10: pattern = "yyMMddHHmm"; break;
+						case 12: pattern = "yyMMddHHmmss"; break;
+						case 14: 
+						default: pattern = "yyyyMMddHHmmss"; break;
+					}
+
+					if (ColumnLength > 2 && sValue.Equals( null_value.Substring(0, ColumnLength)))
+						value = DBNull.Value;
+					else
+						value = DateTime.ParseExact( sValue, pattern, new System.Globalization.DateTimeFormatInfo());
 					break;
 
-				case MySQLFieldType.STRING:
-				case MySQLFieldType.VAR_STRING:
-				case MySQLFieldType.BLOB:
-				case MySQLFieldType.TINY_BLOB:
-				case MySQLFieldType.LONG_BLOB:
-				case MySQLFieldType.MEDIUM_BLOB:
-					m_Value = sValue;
+				case MySqlDbType.String:
+				case MySqlDbType.VarChar:
+				case MySqlDbType.Blob:
+				case MySqlDbType.TinyBlob:
+				case MySqlDbType.LongBlob:
+				case MySqlDbType.MediumBlob: 
+					value = sValue;
 					break;
 
 				default:
@@ -265,33 +244,41 @@ namespace ByteFX.Data.MySQLClient
 			}
 		}
 
+		protected void ParseDateValue( string nullpattern, string pattern, string data )
+		{
+			if ( data.Equals (nullpattern) )
+				value = DBNull.Value;
+			else
+				value = DateTime.ParseExact( data, pattern, new System.Globalization.DateTimeFormatInfo());
+		}
+
 		public string GetFieldTypeName() 
 		{
-			switch (m_FieldType) 
+			switch (colType) 
 			{
-				case MySQLFieldType.DECIMAL:		return "DECIMAL";
-				case MySQLFieldType.TINY:			return "TINY";
-				case MySQLFieldType.SHORT:			return "SHORT";
-				case MySQLFieldType.LONG:			return "LONG";
-				case MySQLFieldType.FLOAT:			return "FLOAT";
-				case MySQLFieldType.DOUBLE:			return "DOUBLE";
-				case MySQLFieldType.NULL:			return "NULL";
-				case MySQLFieldType.TIMESTAMP:		return "TIMESTAMP";
-				case MySQLFieldType.LONGLONG:		return "LONGLONG";
-				case MySQLFieldType.INT24:			return "INT24";
-				case MySQLFieldType.DATE:			return "DATE";
-				case MySQLFieldType.TIME:			return "TIME";
-				case MySQLFieldType.DATETIME:		return "DATETIME";
-				case MySQLFieldType.YEAR:			return "YEAR";
-				case MySQLFieldType.NEWDATE:		return "NEWDATE";
-				case MySQLFieldType.ENUM:			return "ENUM";
-				case MySQLFieldType.SET:			return "SET";
-				case MySQLFieldType.TINY_BLOB:		return "TINY_BLOB";
-				case MySQLFieldType.MEDIUM_BLOB:	return "MEDIUM_BLOB";
-				case MySQLFieldType.LONG_BLOB:		return "LONG_BLOB";
-				case MySQLFieldType.BLOB:			return "BLOB";
-				case MySQLFieldType.VAR_STRING:	return "VAR_STRING";
-				case MySQLFieldType.STRING:		return "STRING";
+				case MySqlDbType.Decimal:		return "DECIMAL";
+				case MySqlDbType.Byte:			return "TINY";
+				case MySqlDbType.Short:			return "SHORT";
+				case MySqlDbType.Long:			return "LONG";
+				case MySqlDbType.Float:			return "FLOAT";
+				case MySqlDbType.Double:		return "DOUBLE";
+				case MySqlDbType.Null:			return "NULL";
+				case MySqlDbType.Timestamp:		return "TIMESTAMP";
+				case MySqlDbType.LongLong:		return "LONGLONG";
+				case MySqlDbType.Int24:			return "INT24";
+				case MySqlDbType.Date:			return "DATE";
+				case MySqlDbType.Time:			return "TIME";
+				case MySqlDbType.Datetime:		return "DATETIME";
+				case MySqlDbType.Year:			return "YEAR";
+				case MySqlDbType.Newdate:		return "NEWDATE";
+				case MySqlDbType.Enum:			return "ENUM";
+				case MySqlDbType.Set:			return "SET";
+				case MySqlDbType.TinyBlob:		return "TINY_BLOB";
+				case MySqlDbType.MediumBlob:	return "MEDIUM_BLOB";
+				case MySqlDbType.LongBlob:		return "LONG_BLOB";
+				case MySqlDbType.Blob:			return "BLOB";
+				case MySqlDbType.VarChar:	return "VAR_STRING";
+				case MySqlDbType.String:		return "STRING";
 			}
 			return "Unknown typeid";
 		}
@@ -299,100 +286,105 @@ namespace ByteFX.Data.MySQLClient
 
 		public Type GetFieldType() 
 		{
-			switch (m_FieldType) 
+			switch (colType) 
 			{
-				case MySQLFieldType.BYTE:		return Type.GetType("System.Byte");
+				case MySqlDbType.Byte:		return IsUnsigned() ? typeof(System.Byte) : typeof(System.SByte);
 
-				case MySQLFieldType.SHORT:		return Type.GetType("System.Int16");
+				case MySqlDbType.Short:		return IsUnsigned() ? typeof(System.UInt16) : typeof(System.Int16);
 
-				case MySQLFieldType.LONG:
-				case MySQLFieldType.INT24:		return Type.GetType("System.Int32", false, true);
+				case MySqlDbType.Long:
+				case MySqlDbType.Int24:		return IsUnsigned() ? typeof(System.UInt32) : typeof(System.Int32);
 
-				case MySQLFieldType.FLOAT:		return Type.GetType("System.Single");
-				case MySQLFieldType.DOUBLE:		return Type.GetType("System.Double");
+				case MySqlDbType.LongLong:	return IsUnsigned() ? typeof(System.UInt64) : typeof(System.Int64);
 
-				case MySQLFieldType.TIME:		return Type.GetType("System.TimeSpan");
+				case MySqlDbType.Float:		return typeof(System.Single);
+				case MySqlDbType.Double:		return typeof(System.Double);
 
-				case MySQLFieldType.DATE:
-				case MySQLFieldType.DATETIME:
-				case MySQLFieldType.TIMESTAMP:	return Type.GetType("System.DateTime");
+				case MySqlDbType.Time:		return typeof(System.TimeSpan);
 
-				case MySQLFieldType.LONGLONG:	return Type.GetType("System.Int64");
+				case MySqlDbType.Date:
+				case MySqlDbType.Datetime:
+				case MySqlDbType.Timestamp:	return typeof(System.DateTime);
 
-				case MySQLFieldType.DECIMAL:	return Type.GetType("System.Decimal");
+				case MySqlDbType.Decimal:	return typeof(System.Decimal);
 
-				case MySQLFieldType.VAR_STRING:	
-				case MySQLFieldType.STRING:		return Type.GetType("System.String");
+				case MySqlDbType.VarChar:	
+				case MySqlDbType.String:		return typeof(System.String);
 
-				case MySQLFieldType.TINY_BLOB:
-				case MySQLFieldType.MEDIUM_BLOB:
-				case MySQLFieldType.LONG_BLOB:
-				case MySQLFieldType.BLOB:		return Type.GetType("System.Array");
+				case MySqlDbType.TinyBlob:
+				case MySqlDbType.MediumBlob:
+				case MySqlDbType.LongBlob:
+				case MySqlDbType.Blob:		return typeof(System.Array);
 
 				default:
-				case MySQLFieldType.NULL:		return Type.GetType("System.null", false, true);
+				case MySqlDbType.Null:		return typeof(System.DBNull);
 			}
+		}
+
+		public MySqlDbType GetMySqlDbType()
+		{
+			return colType;
 		}
 
 		public DbType GetDbType() 
 		{
-			switch (m_FieldType) 
+			switch (colType) 
 			{
-				case MySQLFieldType.DECIMAL:		return DbType.Decimal;
-				case MySQLFieldType.TINY:			return DbType.Byte;
-				case MySQLFieldType.SHORT:			
+				case MySqlDbType.Decimal:		return DbType.Decimal;
+				case MySqlDbType.Byte:			return DbType.Byte;
+				case MySqlDbType.Short:			
 					if (IsUnsigned())
 						return DbType.UInt16;
 					else
 						return DbType.Int16;
 
-				case MySQLFieldType.LONG:			
+				case MySqlDbType.Long:			
 					if (IsUnsigned())
 						return DbType.UInt32;
 					else
 						return DbType.Int32;
 
-				case MySQLFieldType.FLOAT:			return DbType.Double;
-				case MySQLFieldType.DOUBLE:			return DbType.Double;
-				case MySQLFieldType.NULL:			return DbType.Object;
+				case MySqlDbType.Float:			return DbType.Single;
+				case MySqlDbType.Double:		return DbType.Double;
+				case MySqlDbType.Null:			return DbType.Object;
 
-				case MySQLFieldType.LONGLONG:		
+				case MySqlDbType.LongLong:		
 					if (IsUnsigned())
 						return DbType.UInt64;
 					else
 						return DbType.Int64;
 
-				case MySQLFieldType.INT24:			
+				case MySqlDbType.Int24:			
 					if (IsUnsigned())
 						return DbType.UInt32;
 					else
 						return DbType.Int32;
-				case MySQLFieldType.DATE:			
-				case MySQLFieldType.YEAR:
-				case MySQLFieldType.NEWDATE:
+				case MySqlDbType.Date:			
+				case MySqlDbType.Year:
+				case MySqlDbType.Newdate:
 					return DbType.Date;
 
-				case MySQLFieldType.TIME:			
+				case MySqlDbType.Time:			
 					return DbType.Time;
-				case MySQLFieldType.DATETIME:		
-				case MySQLFieldType.TIMESTAMP:
+				case MySqlDbType.Datetime:		
+				case MySqlDbType.Timestamp:
 					return DbType.DateTime;
 
-				case MySQLFieldType.ENUM:			return DbType.UInt32;
-				case MySQLFieldType.SET:			return DbType.Object;
+				case MySqlDbType.Enum:			return DbType.UInt32;
+				case MySqlDbType.Set:			return DbType.Object;
 
-				case MySQLFieldType.TINY_BLOB:		
-				case MySQLFieldType.MEDIUM_BLOB:
-				case MySQLFieldType.LONG_BLOB:
-				case MySQLFieldType.BLOB:
+				case MySqlDbType.TinyBlob:		
+				case MySqlDbType.MediumBlob:
+				case MySqlDbType.LongBlob:
+				case MySqlDbType.Blob:
 					if (IsBinary()) return DbType.Binary;
 					return DbType.String;
-				case MySQLFieldType.VAR_STRING:
+				case MySqlDbType.VarChar:
 					return DbType.String;
-				case MySQLFieldType.STRING:
+				case MySqlDbType.String:
 					return DbType.StringFixedLength;
 			}
-			throw new Exception("unknown MySQLFieldType");
+			throw new Exception("unknown MySqlDbType");
 		}
 
 	}

@@ -16,33 +16,40 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using System;
-using System.Runtime.Serialization;
+#if WINDOWS
+using System.Windows.Forms;
+using System.Drawing.Design;
+#endif
 
-namespace ByteFX.Data.MySqlClient
+namespace ByteFX.Data.MySqlClient.Designers
 {
+#if WINDOWS
 	/// <summary>
-	/// Summary description for MySqlException.
+	/// Summary description for MySqlConnectionDesign.
 	/// </summary>
-	[Serializable]
-	public sealed class MySqlException : Exception
+	public class ConnectionStringEditor : UITypeEditor
 	{
-		public MySqlException(string msg) : base(msg)
+		public override System.Drawing.Design.UITypeEditorEditStyle GetEditStyle(System.ComponentModel.ITypeDescriptorContext context)
 		{
+			return System.Drawing.Design.UITypeEditorEditStyle.Modal;
 		}
 
-		public MySqlException() 
+		public override bool GetPaintValueSupported(System.ComponentModel.ITypeDescriptorContext context)
 		{
+			return false;
 		}
 
-		public MySqlException(string msg, int errno) : base(msg)
+		public override object EditValue(System.ComponentModel.ITypeDescriptorContext context, System.IServiceProvider provider, object value)
 		{
-			
+			EditConnectionString dlg = new EditConnectionString();
+			dlg.ConnectionString = (string)value;
+			if(dlg.ShowDialog() == DialogResult.OK)
+			{
+				return dlg.ConnectionString;
+			}
+			else
+				return value;
 		}
-
-		public MySqlException(SerializationInfo info,
-					StreamingContext context) : base(info, context)
-		{
-		}
-
 	}
+#endif
 }

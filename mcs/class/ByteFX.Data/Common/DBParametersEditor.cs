@@ -16,32 +16,43 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using System;
-using System.Runtime.Serialization;
+using System.ComponentModel.Design;
+using ByteFX.Data.MySqlClient;
 
-namespace ByteFX.Data.MySqlClient
+namespace ByteFX.Data.Common
 {
 	/// <summary>
-	/// Summary description for MySqlException.
+	/// Summary description for DBParametersEditor.
 	/// </summary>
-	[Serializable]
-	public sealed class MySqlException : Exception
+	public class DBParametersEditor : CollectionEditor
 	{
-		public MySqlException(string msg) : base(msg)
+		public DBParametersEditor(Type t) : base(t)
 		{
 		}
 
-		public MySqlException() 
+		protected override object CreateInstance(Type itemType)
 		{
-		}
+			object[] items = base.GetItems(null);
 
-		public MySqlException(string msg, int errno) : base(msg)
-		{
-			
-		}
+			int i = 1;
+			while (true) 
+			{
+				bool found = false;
+				foreach (object obj in items) 
+				{
+					MySqlParameter p = (MySqlParameter)obj;
+					if (p.ParameterName.Equals( "parameter" + i )) 
+					{
+						found = true;
+						break;
+					}
+				}
+				if (! found) break;
+				i ++;
+			}
 
-		public MySqlException(SerializationInfo info,
-					StreamingContext context) : base(info, context)
-		{
+			MySqlParameter parm = new MySqlParameter("parameter"+i, MySqlDbType.VarChar);
+			return parm;
 		}
 
 	}

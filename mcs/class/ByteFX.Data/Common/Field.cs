@@ -9,39 +9,43 @@ namespace ByteFX.Data.Common
 	/// </summary>
 	internal class Field
 	{
-		protected	SqlDateTime	m_DateTime;
-		protected	SqlString	m_StringValue;
-		protected	SqlInt64	m_IntValue;
-		protected	SqlDouble	m_DoubleValue;
-		protected	SqlSingle	m_SingleValue;
-		protected	SqlMoney	m_MoneyValue;
-		protected	SqlDecimal	m_DecimalValue;
-		protected	SqlBinary	m_BinaryValue;
+/*		protected	SqlByte		byteValue;
+		protected	SqlDateTime	dateValue;
+		protected	SqlString	stringValue;
+		protected	SqlInt32	int32Value;
+		protected	SqlInt64	int64Value;
+		protected	SqlDouble	doubleValue;
+		protected	SqlSingle	singleValue;
+		protected	SqlMoney	moneyValue;
+		protected	SqlDecimal	decimalValue;
+		protected	SqlBinary	binaryValue;*/
+		protected	object		value;
 
-		protected	string		m_TableName;
-		protected	string		m_ColName;
-		protected	int			m_ColLen;
-		protected	DbType		m_DbType;
-		protected	bool		m_HasValue;
+		protected	string		tableName;
+		protected	string		colName;
+		protected	int			colLen;
+		protected	DbType		dbType;
+		protected	bool		hasValue;
 
 		public Field()
 		{
-			m_HasValue = false;
+			hasValue = false;
 		}
 
 		public string ColumnName 
 		{
-			get { return m_ColName; }
+			get { return colName; }
 		}
 
 		public int ColumnLength
 		{
-			get { return m_ColLen; }
+			get { return colLen; }
 		}
 
 		public string TableName 
 		{
-			get { return m_TableName; }
+			get { return tableName; }
 		}
+
 	}
 }

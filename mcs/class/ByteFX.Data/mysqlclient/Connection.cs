@@ -18,87 +18,142 @@
 using System;
 using System.Data;
 using System.Collections.Specialized;
+using System.Text;
 using System.ComponentModel;
+using System.Globalization;
+using ByteFX.Data.Common;
 
-namespace ByteFX.Data.MySQLClient
+namespace ByteFX.Data.MySqlClient
 {
 	/// <summary>
-	/// Summary description for MySQLConnection.
+	/// Summary description for MySqlConnection.
 	/// </summary>
-#if WINDOWS
-	[System.Drawing.ToolboxBitmap( typeof(MySQLConnection), "Designers.connection.bmp")]
-#endif
+	[System.Drawing.ToolboxBitmap( typeof(MySqlConnection), "Designers.connection.bmp")]
+	[System.ComponentModel.DesignerCategory("Code")]
 	[ToolboxItem(true)]
-	public sealed class MySQLConnection : Common.Connection, IDbConnection, ICloneable
+	public sealed class MySqlConnection : IDbConnection, ICloneable
 	{
-		Driver				m_Driver;
+		public ConnectionState			state;
+		private MySqlInternalConnection	internalConnection;
+		private MySqlDataReader			dataReader;
+		private NumberFormatInfo		numberFormat;
+		private MySqlConnectionString	settings;
+
+		public event StateChangeEventHandler	StateChange;
+
 
 		// Always have a default constructor.
-		public MySQLConnection()
+		public MySqlConnection()
 		{
-			ConnectionString = "data source=localhost;user id=root;pwd=;database=mysql";
+			settings = new MySqlConnectionString();
 		}
 
-		public MySQLConnection(System.ComponentModel.IContainer container)
+		public MySqlConnection(System.ComponentModel.IContainer container)
 		{
-			ConnectionString = "data source=localhost;user id=root;pwd=;database=mysql";
+			settings = new MySqlConnectionString();
 		}
     
 
 		// Have a constructor that takes a connection string.
-		public MySQLConnection(string sConnString)
+		public MySqlConnection(string connectString)
 		{
-			ConnectionString = sConnString;
-			Init();
-		}
-
-		public new void Dispose()
-		{
-			base.Dispose();
-			if (m_State == ConnectionState.Open)
-				Close();
-		}
-
-		internal Driver Driver
-		{
-			get { return m_Driver; }
+			settings = new MySqlConnectionString(connectString);
 		}
 
 		#region Properties
+		[Browsable(true)]
+		public string DataSource
+		{
+			get { return settings.Host; }
+		}
+
+		[Browsable(false)]
+		public string User
+		{
+			get { return settings.Username; }
+		}
+
+		[Browsable(false)]
+		public string Password
+		{
+			get { return settings.Password; }
+		}
+
+		[Browsable(true)]
+		public int ConnectionTimeout
+		{
+			get { return settings.ConnectTimeout; }
+		}
+		
+		[Browsable(true)]
+		public string Database
+		{
+			get	{ return settings.Database; }
+		}
+
+		[Browsable(false)]
+		public bool UseCompression
+		{
+			get { return settings.UseCompression; }
+		}
+		
+		[Browsable(false)]
+		public int Port
+		{
+			get	{ return settings.Port; }
+		}
+
+		[Browsable(false)]
+		public ConnectionState State
+		{
+			get { return state; }
+		}
+
+		internal MySqlDataReader Reader
+		{
+			get { return dataReader; }
+			set { dataReader = value; }
+		}
+
+		internal MySqlInternalConnection InternalConnection
+		{
+			get { return internalConnection; }
+		}
+
+		internal NumberFormatInfo NumberFormat
+		{
+			get 
+			{
+				if (numberFormat == null)
+				{
+					numberFormat = new NumberFormatInfo();
+					numberFormat = (NumberFormatInfo)NumberFormatInfo.InvariantInfo.Clone();
+					numberFormat.NumberDecimalSeparator = ".";
+				}
+				return numberFormat;
+			}
+		}
+
 		/// <summary>
 		/// Gets a string containing the version of the of the server to which the client is connected.
 		/// </summary>
 		[Browsable(false)]
 		public string ServerVersion 
 		{
-			get
-			{
-				return m_Driver.ServerVersion;
-			}
+			get { return ""; } //internalConnection.GetServerVersion(); }
 		}
 
-		[Browsable(false)]
-		public bool UseCompression
+		internal Encoding Encoding 
 		{
 			get 
 			{
-				String s = m_ConnSettings["use compression"];
-				if (s == null) return false;
-				return s.ToLower() == "true" || s.ToLower() == "yes";
+//TODO				if (encoding == null)
+					return System.Text.Encoding.Default;
+//				else 
+//					return encoding;
 			}
 		}
-		
-		[Browsable(false)]
-		public int Port
-		{
-			get
-			{
-				if (m_ConnSettings["port"] == null)
-					return 3306;
-				else
-					return Convert.ToInt32(m_ConnSettings["port"]);
-			}
-		}
+
 
 #if WINDOWS
 		[Editor(typeof(Designers.ConnectionStringEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -111,12 +166,13 @@ namespace ByteFX.Data.MySQLClient
 			{
 				// Always return exactly what the user set.
 				// Security-sensitive information may be removed.
-				return m_ConnString;
+				return settings.ConnectString;
 			}
 			set
 			{
-				m_ConnString = value;
-				m_ConnSettings = Common.ConnectionString.ParseConnectString( m_ConnString );
+				settings.ConnectString = value;
+				if (internalConnection != null)
+					internalConnection.Settings = settings;
 			}
 		}
 
@@ -127,11 +183,14 @@ namespace ByteFX.Data.MySQLClient
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public MySQLTransaction BeginTransaction()
+		public MySqlTransaction BeginTransaction()
 		{
-			MySQLTransaction t = new MySQLTransaction();
+			if (state != ConnectionState.Open)
+				throw new MySqlException("Invalid operation: The connection is closed");
+
+			MySqlTransaction t = new MySqlTransaction();
 			t.Connection = this;
-			m_Driver.SendCommand( DBCmd.QUERY, "BEGIN");
+			InternalConnection.Driver.SendCommand( DBCmd.QUERY, "BEGIN");
 			return t;
 		}
 
@@ -148,9 +207,12 @@ namespace ByteFX.Data.MySQLClient
 		/// </summary>
 		/// <param name="level"></param>
 		/// <returns></returns>
-		public MySQLTransaction BeginTransaction(IsolationLevel level)
+		public MySqlTransaction BeginTransaction(IsolationLevel level)
 		{
-			MySQLTransaction t = new MySQLTransaction();
+			if (state != ConnectionState.Open)
+				throw new MySqlException("Invalid operation: The connection is closed");
+
+			MySqlTransaction t = new MySqlTransaction();
 			t.Connection = this;
 			t.IsolationLevel = level;
 			string cmd = "SET SESSION TRANSACTION ISOLATION LEVEL ";
@@ -167,8 +229,8 @@ namespace ByteFX.Data.MySQLClient
 				case IsolationLevel.Chaos:
 					throw new NotSupportedException("Chaos isolation level is not supported");
 			}
-			m_Driver.SendCommand( DBCmd.QUERY, cmd );
-			m_Driver.SendCommand( DBCmd.QUERY, "BEGIN");
+			InternalConnection.Driver.SendCommand( DBCmd.QUERY, cmd );
+			InternalConnection.Driver.SendCommand( DBCmd.QUERY, "BEGIN");
 			return t;
 		}
 
@@ -189,57 +251,68 @@ namespace ByteFX.Data.MySQLClient
 		/// <param name="dbName"></param>
 		public void ChangeDatabase(string dbName)
 		{
-			/*
-			* Change the database setting on the back-end. Note that it is a method
-			* and not a property because the operation requires an expensive
-			* round trip.
-			*/
-			m_ConnSettings["database"] = dbName;
+			if (state != ConnectionState.Open)
+				throw new MySqlException("Invalid operation: The connection is closed");
 
-			m_Driver.SendCommand( DBCmd.INIT_DB, m_ConnSettings["database"] );
+			//TODOinternalConnection.ChangeDatabase( dbName );
+			InternalConnection.Driver.SendCommand( DBCmd.INIT_DB, dbName );
+		}
+
+		internal void SetState( ConnectionState newState ) 
+		{
+			ConnectionState oldState = state;
+			state = newState;
+			if (this.StateChange != null)
+				StateChange(this, new StateChangeEventArgs( oldState, newState ));
 		}
 
 		public void Open()
 		{
-			/*
-			* Open the database connection and set the ConnectionState
-			* property. If the underlying connection to the server is 
-			* expensive to obtain, the implementation should provide
-			* implicit pooling of that connection.
-			* 
-			* If the provider also supports automatic enlistment in 
-			* distributed transactions, it should enlist during Open().
-			*/
-			m_State = ConnectionState.Connecting;
-			if (m_Driver == null)
-				m_Driver = new Driver(ConnectionTimeout);
-			m_Driver.Open( DataSource, Port, User, Password, UseCompression );
+			if (state == ConnectionState.Open)
+				throw new MySqlException("error connecting: The connection is already Open (state=Open).");
 
-			//m_Driver.SendCommand( DBCmd.QUERY, "use " + m_Settings["database"] );
-			m_Driver.SendCommand( DBCmd.INIT_DB, m_ConnSettings["database"] );
-			m_State = ConnectionState.Open;
+			SetState( ConnectionState.Connecting );
+
+			if (settings.Pooling) 
+			{
+				internalConnection = MySqlPoolManager.GetConnection( settings );
+			}
+			else
+			{
+				internalConnection = new MySqlInternalConnection( settings );
+				internalConnection.Open();
+			}
+
+			SetState( ConnectionState.Open );
+			internalConnection.SetServerVariables(this);
+			ChangeDatabase( settings.Database );
 		}
 
 
 		public void Close()
 		{
-			// this shouldn't happen, but it is!
-			if (m_State == ConnectionState.Closed) return;
+			if (state == ConnectionState.Closed) return;
 
-			m_Driver.SendCommand( DBCmd.QUIT, null );
-			m_Driver.Close();
-			/*
-			* Close the database connection and set the ConnectionState
-			* property. If the underlying connection to the server is
-			* being pooled, Close() will release it back to the pool.
-			*/
-			m_State = ConnectionState.Closed;
+			if (dataReader != null)
+				dataReader.Close();
+
+			if (settings.Pooling)
+				MySqlPoolManager.ReleaseConnection( internalConnection );
+			else
+				internalConnection.Close();
+
+			SetState( ConnectionState.Closed );
 		}
 
-		public IDbCommand CreateCommand()
+		IDbCommand IDbConnection.CreateCommand()
+		{
+			return CreateCommand();
+		}
+
+		public MySqlCommand CreateCommand()
 		{
 			// Return a new instance of a command object.
-			MySQLCommand c = new MySQLCommand();
+			MySqlCommand c = new MySqlCommand();
 			c.Connection = this;
 			return c;
 		}
@@ -247,10 +320,18 @@ namespace ByteFX.Data.MySQLClient
 		#region ICloneable
 		public object Clone()
 		{
-			MySQLConnection clone = new MySQLConnection();
+			MySqlConnection clone = new MySqlConnection();
 			clone.ConnectionString = this.ConnectionString;
 			//TODO:  how deep should this go?
 			return clone;
+		}
+		#endregion
+
+		#region IDisposeable
+		public void Dispose() 
+		{
+			if (State == ConnectionState.Open)
+				Close();
 		}
 		#endregion
   }

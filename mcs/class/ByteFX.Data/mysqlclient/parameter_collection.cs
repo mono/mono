@@ -18,10 +18,13 @@
 using System;
 using System.Data;
 using System.Collections;
+using System.ComponentModel;
 
-namespace ByteFX.Data.MySQLClient
+namespace ByteFX.Data.MySqlClient
 {
-	public sealed class MySQLParameterCollection : MarshalByRefObject, IDataParameterCollection, 
+	[Editor(typeof(ByteFX.Data.Common.DBParametersEditor), typeof(System.Drawing.Design.UITypeEditor))]
+	[ListBindable(true)]
+	public sealed class MySqlParameterCollection : MarshalByRefObject, IDataParameterCollection, 
 		IList, ICollection, IEnumerable
 	{
 		private ArrayList	_parms = new ArrayList();
@@ -100,18 +103,19 @@ namespace ByteFX.Data.MySQLClient
 			get { return this[index]; }
 			set 
 			{ 
-				if (! (value is MySQLParameter)) throw new MySQLException("Only MySQLParameter objects may be stored");
-				this[index] = (MySQLParameter)value; 
+				if (! (value is MySqlParameter)) throw new MySqlException("Only MySqlParameter objects may be stored");
+				this[index] = (MySqlParameter)value; 
 			}
 		}
 
 		public int Add( object value )
 		{
-			if (! (value is MySQLParameter)) throw new MySQLException("Only MySQLParameter objects may be stored");
+			if (! (value is MySqlParameter)) throw new MySqlException("Only MySqlParameter objects may be stored");
 
+			MySqlParameter p = (MySqlParameter)value;
 
-			if ( ((MySQLParameter)value).ParameterName == null ) 
-				throw new ArgumentException("parameter must be named");
+			if (p.ParameterName == null || p.ParameterName == String.Empty)
+				throw new MySqlException("Parameters must be named");
 
 			return _parms.Add(value);
 		}
@@ -121,7 +125,9 @@ namespace ByteFX.Data.MySQLClient
 		#region IDataParameterCollection
 		public bool Contains(string name)
 		{
-			foreach (MySQLParameter p in _parms)
+			if (name[0] == '@')
+				name = name.Substring(1, name.Length-1);
+			foreach (MySqlParameter p in _parms)
 			{
 				if (p.ParameterName.ToLower().Equals( name.ToLower() )) return true;
 			}
@@ -130,12 +136,14 @@ namespace ByteFX.Data.MySQLClient
 
 		public int IndexOf( string name )
 		{
+			if (name[0] == '@')
+				name = name.Substring(1, name.Length-1);
 			for (int x=0; x < _parms.Count; x++) 
 			{
-				MySQLParameter p = (MySQLParameter)_parms[x];
+				MySqlParameter p = (MySqlParameter)_parms[x];
 				if (p.ParameterName.ToLower().Equals( name.ToLower() )) return x;
 			}
-			throw new MySQLException("Parameter '" + name + "' not found in collection");
+			throw new MySqlException("Parameter '" + name + "' not found in collection");
 		}
 
 		public void RemoveAt( string name )
@@ -149,8 +157,8 @@ namespace ByteFX.Data.MySQLClient
 			get { return this[name]; }
 			set 
 			{ 
-				if (! (value is MySQLParameter)) throw new MySQLException("Only MySQLParameter objects may be stored");
-				this[name] = (MySQLParameter)value;
+				if (! (value is MySqlParameter)) throw new MySqlException("Only MySqlParameter objects may be stored");
+				this[name] = (MySqlParameter)value;
 			}
 		}
 		#endregion
@@ -163,25 +171,19 @@ namespace ByteFX.Data.MySQLClient
 		#endregion
 
 		#region Public Methods
-		public MySQLParameter this[int index]
+		public MySqlParameter this[int index]
 		{
-			get { return (MySQLParameter)_parms[index]; }
-			set 
-			{ 
-				_parms[index] = value;
-			}
+			get { return (MySqlParameter)_parms[index]; }
+			set { _parms[index] = value; }
 		}
 
-		public MySQLParameter this[string name]
+		public MySqlParameter this[string name]
 		{
-			get { return (MySQLParameter)_parms[ IndexOf( name ) ]; }
-			set 
-			{ 
-				_parms[ IndexOf( name ) ] = value;
-			}
+			get { return (MySqlParameter)_parms[ IndexOf( name ) ]; }
+			set { _parms[ IndexOf( name ) ] = value; }
 		}
 
-		public MySQLParameter Add(MySQLParameter value)
+		public MySqlParameter Add(MySqlParameter value)
 		{
 			if ( value.ParameterName == null ) throw new ArgumentException("parameter must be named");
 
@@ -189,19 +191,19 @@ namespace ByteFX.Data.MySQLClient
 			return value;
 		}
 
-		public MySQLParameter Add(string parameterName, DbType type)
+		public MySqlParameter Add(string parameterName, MySqlDbType type)
 		{
-			return Add(new MySQLParameter(parameterName, type));
+			return Add(new MySqlParameter(parameterName, type));
 		}
 
-		public MySQLParameter Add(string parameterName, object value)
+		public MySqlParameter Add(string parameterName, MySqlDbType dbType, int size)
 		{
-			return Add(new MySQLParameter(parameterName, value));
+			return Add(new MySqlParameter(parameterName, dbType, size ));
 		}
 
-		public MySQLParameter Add(string parameterName, MySQLDbType dbType, string sourceColumn)
+		public MySqlParameter Add(string parameterName, MySqlDbType dbType, int size, string sourceColumn)
 		{
-			return Add(new MySQLParameter(parameterName, dbType, sourceColumn));
+			return Add(new MySqlParameter(parameterName, dbType, size, sourceColumn));
 		}
 
 		#endregion

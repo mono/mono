@@ -18,15 +18,15 @@
 using System;
 using System.Data;
 
-namespace ByteFX.Data.MySQLClient
+namespace ByteFX.Data.MySqlClient
 {
-	public class MySQLTransaction : IDbTransaction
+	public class MySqlTransaction : IDbTransaction
 	{
 		private IsolationLevel	_level;
-		private MySQLConnection	_conn;
+		private MySqlConnection	_conn;
 		private bool			_open;
 
-		internal MySQLTransaction() 
+		internal MySqlTransaction() 
 		{
 			_open = true;
 		}
@@ -40,7 +40,7 @@ namespace ByteFX.Data.MySQLClient
 		public IDbConnection Connection
 		{
 			get { return _conn;	} 
-			set { _conn = (MySQLConnection)value; }
+			set { _conn = (MySqlConnection)value; }
 		}
 
 		public void Dispose() 
@@ -53,13 +53,13 @@ namespace ByteFX.Data.MySQLClient
 				throw new InvalidOperationException("Connection must be valid and open to commit transaction");
 			if (!_open)
 				throw new InvalidOperationException("Transaction has already been committed or is not pending");
-			Driver d = _conn.Driver;
+			Driver d = _conn.InternalConnection.Driver;
 			try 
 			{
 				d.SendCommand(DBCmd.QUERY, "COMMIT");
 				_open = false;
 			}
-			catch (MySQLException ex) 
+			catch (MySqlException ex) 
 			{
 				throw ex;
 			}
@@ -71,13 +71,13 @@ namespace ByteFX.Data.MySQLClient
 				throw new InvalidOperationException("Connection must be valid and open to commit transaction");
 			if (!_open)
 				throw new InvalidOperationException("Transaction has already been rolled back or is not pending");
-			Driver d = _conn.Driver;
+			Driver d = _conn.InternalConnection.Driver;
 			try 
 			{
 				d.SendCommand(DBCmd.QUERY, "ROLLBACK");
 				_open = false;
 			}
-			catch (MySQLException ex) 
+			catch (MySqlException ex) 
 			{
 				throw ex;
 			}

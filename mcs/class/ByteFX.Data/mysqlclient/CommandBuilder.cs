@@ -20,45 +20,46 @@ using System.ComponentModel;
 using System.Data;
 using System.Text;
 
-namespace ByteFX.Data.MySQLClient
+namespace ByteFX.Data.MySqlClient
 {
 	/// <summary>
 	/// Summary description for CommandBuilder.
 	/// </summary>
 	[ToolboxItem(false)]
-	public sealed class MySQLCommandBuilder : Component
+	[System.ComponentModel.DesignerCategory("Code")]
+	public sealed class MySqlCommandBuilder : Component
 	{
-		private MySQLDataAdapter	_adapter;
+		private MySqlDataAdapter	_adapter;
 		private string				_QuotePrefix;
 		private string				_QuoteSuffix;
 		private DataTable			_schema;
 		private string				_tableName;
 
-		private	MySQLCommand		_updateCmd;
-		private MySQLCommand		_insertCmd;
-		private MySQLCommand		_deleteCmd;
+		private	MySqlCommand		_updateCmd;
+		private MySqlCommand		_insertCmd;
+		private MySqlCommand		_deleteCmd;
 
 		#region Constructors
-		public MySQLCommandBuilder()
+		public MySqlCommandBuilder()
 		{
 		}
 
-		public MySQLCommandBuilder( MySQLDataAdapter adapter )
+		public MySqlCommandBuilder( MySqlDataAdapter adapter )
 		{
 			_adapter = adapter;
-			_adapter.RowUpdating += new MySQLRowUpdatingEventHandler( OnRowUpdating );
+			_adapter.RowUpdating += new MySqlRowUpdatingEventHandler( OnRowUpdating );
 		}
 		#endregion
 
 		#region Properties
-		public MySQLDataAdapter DataAdapter 
+		public MySqlDataAdapter DataAdapter 
 		{
 			get { return _adapter; }
 			set 
 			{ 
 				if (_adapter != null) 
 				{
-					_adapter.RowUpdating -= new MySQLRowUpdatingEventHandler( OnRowUpdating );
+					_adapter.RowUpdating -= new MySqlRowUpdatingEventHandler( OnRowUpdating );
 				}
 				_adapter = value; 
 			}
@@ -79,26 +80,26 @@ namespace ByteFX.Data.MySQLClient
 		#endregion
 
 		#region Public Methods
-		public static void DeriveParameters(MySQLCommand command)
+		public static void DeriveParameters(MySqlCommand command)
 		{
-			throw new MySQLException("DeriveParameters is not supported (due to MySQL not supporting SP)");
+			throw new MySqlException("DeriveParameters is not supported (due to MySql not supporting SP)");
 		}
 
-		public MySQLCommand GetDeleteCommand()
+		public MySqlCommand GetDeleteCommand()
 		{
 			if (_schema == null)
 				GenerateSchema();
 			return CreateDeleteCommand();
 		}
 
-		public MySQLCommand GetInsertCommand()
+		public MySqlCommand GetInsertCommand()
 		{
 			if (_schema == null)
 				GenerateSchema();
 			return CreateInsertCommand();
 		}
 
-		public MySQLCommand GetUpdateCommand() 
+		public MySqlCommand GetUpdateCommand() 
 		{
 			if (_schema == null)
 				GenerateSchema();
@@ -119,11 +120,11 @@ namespace ByteFX.Data.MySQLClient
 		private void GenerateSchema()
 		{
 			if (_adapter == null)
-				throw new MySQLException("Improper MySQLCommandBuilder state: adapter is null");
+				throw new MySqlException("Improper MySqlCommandBuilder state: adapter is null");
 			if (_adapter.SelectCommand == null)
-				throw new MySQLException("Improper MySQLCommandBuilder state: adapter's SelectCommand is null");
+				throw new MySqlException("Improper MySqlCommandBuilder state: adapter's SelectCommand is null");
 
-			MySQLDataReader dr = _adapter.SelectCommand.ExecuteReader(CommandBehavior.SchemaOnly | CommandBehavior.KeyInfo);
+			MySqlDataReader dr = _adapter.SelectCommand.ExecuteReader(CommandBehavior.SchemaOnly | CommandBehavior.KeyInfo);
 			_schema = dr.GetSchemaTable();
 			dr.Close();
 
@@ -137,10 +138,10 @@ namespace ByteFX.Data.MySQLClient
 				if (_tableName == null)
 					_tableName = (string)row["BaseTableName"];
 				else if (_tableName != (string)row["BaseTableName"])
-					throw new InvalidOperationException("MySQLCommandBuilder does not support multi-table statements");
+					throw new InvalidOperationException("MySqlCommandBuilder does not support multi-table statements");
 			}
 			if (! hasKeyOrUnique)
-				throw new InvalidOperationException("MySQLCommandBuilder cannot operate on tables with no unique or key columns");
+				throw new InvalidOperationException("MySqlCommandBuilder cannot operate on tables with no unique or key columns");
 		}
 
 		private string Quote(string table_or_column)
@@ -150,32 +151,32 @@ namespace ByteFX.Data.MySQLClient
 			return _QuotePrefix + table_or_column + _QuoteSuffix;
 		}
 
-		private MySQLParameter CreateParameter(DataRow row, bool Original)
+		private MySqlParameter CreateParameter(DataRow row, bool Original)
 		{
-			MySQLParameter p;
+			MySqlParameter p;
 			if (Original)
-				p = new MySQLParameter( "@Original_" + (string)row["ColumnName"], (MySQLDbType)row["ProviderType"],
-					ParameterDirection.Input, (string)row["ColumnName"], DataRowVersion.Original, null );
+				p = new MySqlParameter( "@Original_" + (string)row["ColumnName"], (MySqlDbType)row["ProviderType"],
+					ParameterDirection.Input, (string)row["ColumnName"], DataRowVersion.Original, DBNull.Value );
 			else
-				p = new MySQLParameter( "@" + (string)row["ColumnName"], (MySQLDbType)row["ProviderType"],
-					(string)row["ColumnName"]);
+				p = new MySqlParameter( "@" + (string)row["ColumnName"], (MySqlDbType)row["ProviderType"],
+					ParameterDirection.Input, (string)row["ColumnName"], DataRowVersion.Current, DBNull.Value );
 			return p;
 		}
 
-		private MySQLCommand CreateBaseCommand()
+		private MySqlCommand CreateBaseCommand()
 		{
-			MySQLCommand cmd = new MySQLCommand();
+			MySqlCommand cmd = new MySqlCommand();
 			cmd.Connection = _adapter.SelectCommand.Connection;
 			cmd.CommandTimeout = _adapter.SelectCommand.CommandTimeout;
 			cmd.Transaction = _adapter.SelectCommand.Transaction;
 			return cmd;
 		}
 
-		private MySQLCommand CreateDeleteCommand()
+		private MySqlCommand CreateDeleteCommand()
 		{
 			if (_deleteCmd != null) return _deleteCmd;
 
-			MySQLCommand cmd = CreateBaseCommand();
+			MySqlCommand cmd = CreateBaseCommand();
 
 			cmd.CommandText = "DELETE FROM " + Quote(_tableName) + 
 				" WHERE " + CreateOriginalWhere(cmd);
@@ -199,17 +200,24 @@ namespace ByteFX.Data.MySQLClient
 				if (where.Length > 0)
 					where.Append(" AND ");
 				where.Append( "(" + colname + "=" );
-				if ((bool)row["IsAutoIncrement"] && forinsert)
-					where.Append("last_insert_id()");
-				else
+				if (forinsert) 
+				{
+					if ((bool)row["IsAutoIncrement"])
+						where.Append("last_insert_id()");
+					else if ((bool)row["IsKey"])
+						where.Append("@" + colname);
+				}
+				else 
+				{
 					where.Append("@Original_" + colname);
+				}
 				where.Append(")");
 			}
 			return "SELECT " + sel.ToString() + " FROM " + Quote(_tableName) +
 				   " WHERE " + where.ToString();
 		}
 
-		private string CreateOriginalWhere(MySQLCommand cmd)
+		private string CreateOriginalWhere(MySqlCommand cmd)
 		{
 			StringBuilder wherestr = new StringBuilder();
 
@@ -222,22 +230,22 @@ namespace ByteFX.Data.MySQLClient
 					wherestr.Append(" AND ");
 				string colname = Quote((string)row["ColumnName"]);
 
-				MySQLParameter op = CreateParameter(row, true);
+				MySqlParameter op = CreateParameter(row, true);
 				cmd.Parameters.Add(op);
 
-				wherestr.Append( "(" + colname + "=" + op.ParameterName);
+				wherestr.Append( "(" + colname + "=@" + op.ParameterName);
 				if ((bool)row["AllowDBNull"] == true) 
-					wherestr.Append( " or " + colname + " is null and " + op.ParameterName + " is null");
+					wherestr.Append( " or (" + colname + " IS NULL and @" + op.ParameterName + " IS NULL)");
 				wherestr.Append(")");
 			}
 			return wherestr.ToString();
 		}
 
-		private MySQLCommand CreateUpdateCommand()
+		private MySqlCommand CreateUpdateCommand()
 		{
 			if (_updateCmd != null) return _updateCmd; 
 
-			MySQLCommand cmd = CreateBaseCommand();
+			MySqlCommand cmd = CreateBaseCommand();
 
 			StringBuilder setstr = new StringBuilder();
 		
@@ -250,10 +258,10 @@ namespace ByteFX.Data.MySQLClient
 				if (setstr.Length > 0) 
 					setstr.Append(", ");
 
-				MySQLParameter p = CreateParameter(schemaRow, false);
+				MySqlParameter p = CreateParameter(schemaRow, false);
 				cmd.Parameters.Add(p);
 
-				setstr.Append( colname + "=" + p.ParameterName );
+				setstr.Append( colname + "=@" + p.ParameterName );
 			}
 
 			cmd.CommandText = "UPDATE " + Quote(_tableName) + " SET " + setstr.ToString() + 
@@ -264,11 +272,11 @@ namespace ByteFX.Data.MySQLClient
 			return cmd;
 		}
 
-		private MySQLCommand CreateInsertCommand()
+		private MySqlCommand CreateInsertCommand()
 		{
 			if (_insertCmd != null) return _insertCmd;
 
-			MySQLCommand cmd = CreateBaseCommand();
+			MySqlCommand cmd = CreateBaseCommand();
 
 			StringBuilder setstr = new StringBuilder();
 			StringBuilder valstr = new StringBuilder();
@@ -284,11 +292,11 @@ namespace ByteFX.Data.MySQLClient
 					valstr.Append(", ");
 				}
 
-				MySQLParameter p = CreateParameter(schemaRow, false);
+				MySqlParameter p = CreateParameter(schemaRow, false);
 				cmd.Parameters.Add(p);
 
 				setstr.Append( colname );
-				valstr.Append( p.ParameterName );
+				valstr.Append( "@" + p.ParameterName );
 			}
 
 			cmd.CommandText = "INSERT INTO " + Quote(_tableName) + " (" + setstr.ToString() + ") " +
@@ -333,23 +341,23 @@ namespace ByteFX.Data.MySQLClient
 
 		private bool IncludedInWhereClause (DataRow schemaRow)
 		{
-			if ((bool) schemaRow ["IsLong"])
-				return false;
+//			if ((bool) schemaRow ["IsLong"])
+//				return false;
 			return true;
 		}
 
-		private void SetParameterValues(MySQLCommand cmd, DataRow dataRow)
+		private void SetParameterValues(MySqlCommand cmd, DataRow dataRow)
 		{
-			foreach (MySQLParameter p in cmd.Parameters)
+			foreach (MySqlParameter p in cmd.Parameters)
 			{
-				if (p.ParameterName.Length >= 9 && p.ParameterName.Substring(0, 9).Equals("@Original"))
+				if (p.ParameterName.Length >= 8 && p.ParameterName.Substring(0, 8).Equals("Original"))
 					p.Value = dataRow[ p.SourceColumn, DataRowVersion.Original ];
 				else
 					p.Value = dataRow[ p.SourceColumn, DataRowVersion.Current ];
 			}
 		}
 
-		private void OnRowUpdating(object sender, MySQLRowUpdatingEventArgs args)
+		private void OnRowUpdating(object sender, MySqlRowUpdatingEventArgs args)
 		{
 			// make sure we are still to proceed
 			if (args.Status != UpdateStatus.Continue) return;

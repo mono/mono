@@ -4,13 +4,10 @@ Managed Drivers for MySQL and PostgreSQL
 Current Status of MySQL driver
 ----------------------------------
 The driver is currently under heavy development.
-The driver is in beta form with most features working reasonably well, but
-is not very well tested.  Use at your own risk!
+The driver is in beta form with most features working reasonably well.
 
-
-
-The goal for version 0.7 is to use many more test cases and improve the stability
-of the driver greatly.
+** Please note that the binaries distributed in the package are either
+compiled with Mono or .NET 1.1. **
 
 
 Current status of the PostgreSQL driver
@@ -33,5 +30,12 @@ contribution of code and ideas.
 
 Thanks also go out to Peter Belbin, Timoth Parez, and Daniel Morgan for their input, testing, and all
 the other things that make open source projects successful!
+
+I have started putting the names of people who post bugs, patches, suggestions, or anything else of value to the changelog.
+If you have posted and don't see your name, I apologize.  Please let me know who you are and I'll include you.
+The most important thing here is to understand that this is not a one man show.  So many people have provided input
+along the way.
+
+
 
 

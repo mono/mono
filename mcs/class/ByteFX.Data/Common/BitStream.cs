@@ -33,7 +33,6 @@ namespace ByteFX.Data.Common
 		public int PeekBits(int numbits)
 		{
 			int val=0;
-			int numbytes=0;
 
 			int index=_start;
 			while (numbits > 0)

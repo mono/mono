@@ -19,38 +19,39 @@ using System;
 using System.Data;
 using System.Collections;
 
-namespace ByteFX.Data.MySQLClient
+namespace ByteFX.Data.MySqlClient
 {
-	public sealed class MySQLDataReader : MarshalByRefObject, IEnumerable, IDataReader, IDisposable, IDataRecord
+	public sealed class MySqlDataReader : MarshalByRefObject, IEnumerable, IDataReader, IDisposable, IDataRecord
 	{
 		// The DataReader should always be open when returned to the user.
-		private bool m_fOpen = true;
+		private bool			isOpen = true;
 
 		// Keep track of the results and position
 		// within the resultset (starts prior to first record).
-		private MySQLField[]	_fields;
-		private ArrayList		m_Rows;
-		private	bool			m_IsSequential;
+		private MySqlField[]	_fields;
+		private CommandBehavior	commandBehavior;
+		private MySqlCommand	command;
+		private bool			canRead;
+		private bool			hasRows;
+//		private Packet			rowPacket = null;
 
 		/* 
 		 * Keep track of the connection in order to implement the
 		 * CommandBehavior.CloseConnection flag. A null reference means
 		 * normal behavior (do not automatically close).
 		 */
-		private MySQLConnection _connection = null;
+		private MySqlConnection connection = null;
 
 		/*
 		 * Because the user should not be able to directly create a 
 		 * DataReader object, the constructors are
 		 * marked as internal.
 		 */
-		internal MySQLDataReader( MySQLConnection conn, bool Sequential)
+		internal MySqlDataReader( MySqlCommand cmd, CommandBehavior behavior)
 		{
-			_connection = conn;
-			m_IsSequential = Sequential;
-
-			m_Rows = new ArrayList();
-
+			this.command = cmd;
+			connection = (MySqlConnection)command.Connection;
+			commandBehavior = behavior;
 		}
 
 		/****
@@ -70,95 +71,126 @@ namespace ByteFX.Data.MySQLClient
 			 * Keep track of the reader state - some methods should be
 			 * disallowed if the reader is closed.
 			 */
-			get  { return !m_fOpen; }
+			get  { return ! isOpen; }
 		}
 
 		public void Dispose() 
 		{
+			if (isOpen)
+				Close();
 		}
 
 		public int RecordsAffected 
 		{
-			/*
-			 * RecordsAffected is only applicable to batch statements
-			 * that include inserts/updates/deletes. The sample always
-			 * returns -1.
-			 */
-			get { return -1; }
+			// RecordsAffected returns the number of rows affected in batch
+			// statments from insert/delete/update statments.  This property
+			// is not completely accurate until .Close() has been called.
+			get { return command.UpdateCount; }
 		}
 
-		internal void LoadResults() 
+		public bool HasRows
 		{
-			Driver d = _connection.Driver;
-
-			// When executing query statements, the result byte that is returned
-			// from MySQL is the column count.  That is why we reference the LastResult
-			// property here to dimension our field array
-			_fields = new MySQLField[d.LastResult];
-			for (int x=0; x < _fields.Length; x++) 
-			{
-				_fields[x] = new MySQLField();
-			}
-
-			_connection.m_State = ConnectionState.Fetching;
-
-			// Load in the column defs
-			for (int i=0; i < _fields.Length; i++) 
-			{
-				_fields[i].ReadSchemaInfo( d );
-			}
-
-			// read the end of schema packet
-			d.ReadPacket();
-			if (! d.IsLastPacketSignal())
-				throw new MySQLException("Expected end of column data.  Unknown transmission status");
-
-			_connection.m_State = ConnectionState.Open;
+			get { return hasRows; }
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public void Close()
 		{
-			m_fOpen = false;
-			m_Rows.Clear();
+			// finish any current command
+			ClearCurrentResult();
+			command.ExecuteBatch(false);
+
+			connection.Reader = null;
+			if (0 != (commandBehavior & CommandBehavior.CloseConnection))
+				connection.Close();
+
+			isOpen = false;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
 		public bool NextResult()
 		{
-			// The sample only returns a single resultset. However,
-			// DbDataAdapter expects NextResult to return a value.
-			return false;
+			if (! isOpen)
+				throw new MySqlException("Invalid attempt to NextResult when reader is closed.");
+
+			Driver driver = connection.InternalConnection.Driver;
+
+			ClearCurrentResult();
+
+			// tell our command to execute the next sql batch
+			Packet packet = command.ExecuteBatch(true);
+
+			// if there was no more batches, then signal done
+			if (packet == null) return false;
+
+			// When executing query statements, the result byte that is returned
+			// from MySql is the column count.  That is why we reference the LastResult
+			// property here to dimension our field array
+			connection.SetState( ConnectionState.Fetching );
+			
+			_fields = new MySqlField[ packet.ReadLenInteger() ];
+			for (int x=0; x < _fields.Length; x++) 
+			{
+				_fields[x] = new MySqlField();
+				_fields[x].ReadSchemaInfo( packet );
+			}
+
+			// now take a quick peek at the next packet to see if we have rows
+			// 
+			packet = driver.PeekPacket();
+			hasRows = packet.Type != PacketType.Last;
+			canRead = hasRows;
+
+			connection.SetState( ConnectionState.Open );
+			return true;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
 		public bool Read()
 		{
-			_connection.m_State = ConnectionState.Fetching;
-			Driver d = _connection.Driver;
+			if (! isOpen)
+				throw new MySqlException("Invalid attempt to Read when reader is closed.");
+
+			if (! canRead) return false;
+
+			Driver driver = connection.InternalConnection.Driver;
+			connection.SetState( ConnectionState.Fetching );
 
 			try 
 			{
-				d.ReadPacket();
-			}
-			catch (Exception e)
-			{
-				Console.Error.WriteLine("MySQL.Net error: " + e.Message);
-				_connection.m_State = ConnectionState.Open;
-				return false;
-			}
+				Packet rowPacket = driver.ReadPacket();
+				if (rowPacket.Type == PacketType.Last) 
+				{
+					canRead = false;
+					return false;
+				}
+				rowPacket.Position = 0;
 
-			if (d.IsLastPacketSignal()) 
-			{
-				_connection.m_State = ConnectionState.Open;
-				return false;
+				for (int col=0; col < _fields.Length; col++)
+				{
+					int len = (int)rowPacket.ReadLenInteger();
+					_fields[col].SetValueData( rowPacket.GetBytes(), (int)rowPacket.Position, len, driver.Encoding );
+					rowPacket.Position += len;
+				}
 			}
-
-			for (int col=0; col < _fields.Length; col++)
+			catch (Exception ex)
 			{
-				byte [] data = d.ReadColumnData();
-				_fields[col].SetValueData( data );
+				System.Diagnostics.Trace.WriteLine("MySql error: " + ex.Message);
+				throw ex;
 			}
-
-			_connection.m_State = ConnectionState.Open;
-			return true;			
+			finally 
+			{
+				connection.SetState( ConnectionState.Open );
+			}
+			return true;
 		}
 
 		public DataTable GetSchemaTable()
@@ -196,7 +228,7 @@ namespace ByteFX.Data.MySQLClient
 			dataTableSchema.Columns.Add ("IsReadOnly", typeof (bool));
 
 			int ord = 1;
-			foreach (MySQLField f in _fields)
+			foreach (MySqlField f in _fields)
 			{
 				DataRow r = dataTableSchema.NewRow();
 				r["ColumnName"] = f.ColumnName;
@@ -209,7 +241,7 @@ namespace ByteFX.Data.MySQLClient
 				if (pscale != -1)
 					r["NumericScale"] = (short)pscale;
 				r["DataType"] = f.GetFieldType();
-				r["ProviderType"] = (int)f.GetDbType();
+				r["ProviderType"] = (int)f.GetMySqlDbType();
 				r["IsLong"] = f.IsBlob() && f.ColumnLength > 255;
 				r["AllowDBNull"] = f.AllowsNull();
 				r["IsReadOnly"] = false;
@@ -238,7 +270,9 @@ namespace ByteFX.Data.MySQLClient
 			// array.
 			get 
 			{ 
-				return _fields.Length;
+				if (_fields != null)
+					return _fields.Length;
+				return 0;
 			}
 		}
 
@@ -249,7 +283,7 @@ namespace ByteFX.Data.MySQLClient
 
 		public String GetDataTypeName(int i)
 		{
-			if (!m_fOpen) throw new Exception("No current query in data reader");
+			if (! isOpen) throw new Exception("No current query in data reader");
 			if (i >= _fields.Length) throw new IndexOutOfRangeException();
 
 			// return the name of the type used on the backend
@@ -258,15 +292,15 @@ namespace ByteFX.Data.MySQLClient
 
 		public Type GetFieldType(int i)
 		{
-			if (!m_fOpen) throw new Exception("No current query in data reader");
+			if (! isOpen) throw new Exception("No current query in data reader");
 			if (i >= _fields.Length) throw new IndexOutOfRangeException();
 
 			return _fields[i].GetFieldType();
 		}
 
-		public Object GetValue(int i)
+		public object GetValue(int i)
 		{
-			if (!m_fOpen) throw new Exception("No current query in data reader");
+			if (! isOpen) throw new Exception("No current query in data reader");
 			if (i >= _fields.Length) throw new IndexOutOfRangeException();
 
 			return _fields[i].GetValue();
@@ -284,7 +318,7 @@ namespace ByteFX.Data.MySQLClient
 
 		public int GetOrdinal(string name)
 		{
-			if (! m_fOpen)
+			if (! isOpen)
 				throw new Exception("No current query in data reader");
 
 			for (int i=0; i < _fields.Length; i ++) 
@@ -312,14 +346,21 @@ namespace ByteFX.Data.MySQLClient
 			get { return this[GetOrdinal(name)]; }
 		}
 
+		private MySqlField GetField(int i)
+		{
+			if (i >= _fields.Length) throw new IndexOutOfRangeException();
+			return _fields[i];
+		}
+
+		#region TypeSafe Accessors
 		public bool GetBoolean(int i)
 		{
-			return (bool)GetValue(i);
+			return Convert.ToBoolean(GetValue(i));
 		}
 
 		public byte GetByte(int i)
 		{
-			return (byte)GetValue(i);
+			return Convert.ToByte(GetValue(i));
 		}
 
 		public long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length)
@@ -327,7 +368,7 @@ namespace ByteFX.Data.MySQLClient
 			if (i >= _fields.Length) 
 				throw new IndexOutOfRangeException();
 
-			byte[] bytes = (m_Rows[0] as ArrayList)[i] as byte[];
+			byte[] bytes = (byte[])GetValue(i);
 
 			if (buffer == null) 
 				return bytes.Length;
@@ -348,7 +389,7 @@ namespace ByteFX.Data.MySQLClient
 
 		public char GetChar(int i)
 		{
-			return (char)GetValue(i);
+			return Convert.ToChar(GetValue(i));
 		}
 
 		public long GetChars(int i, long fieldOffset, char[] buffer, int bufferoffset, int length)
@@ -392,43 +433,59 @@ namespace ByteFX.Data.MySQLClient
 
 		public Int16 GetInt16(int i)
 		{
-			return (Int16)GetValue(i);
+			return Convert.ToInt16(GetValue(i));
+		}
+
+		public UInt16 GetUInt16( int i )
+		{
+			return Convert.ToUInt16(GetValue(i));
 		}
 
 		public Int32 GetInt32(int i)
 		{
-			return (Int32)GetValue(i);
+			return Convert.ToInt32(GetValue(i));
+		}
+
+		public UInt32 GetUInt32( int i )
+		{
+			return Convert.ToUInt32(GetValue(i));
 		}
 
 		public Int64 GetInt64(int i)
 		{
-			return (Int64)GetValue(i);
+			return Convert.ToInt64(GetValue(i));
+		}
+
+		public UInt64 GetUInt64( int i )
+		{
+			return Convert.ToUInt64(GetValue(i));
 		}
 
 		public float GetFloat(int i)
 		{
-			return (float)GetValue(i);
+			return Convert.ToSingle(GetValue(i));
 		}
 
 		public double GetDouble(int i)
 		{
-			return (double)GetValue(i);
+			return Convert.ToDouble(GetValue(i));
 		}
 
 		public String GetString(int i)
 		{
-			return (string)GetValue(i);
+			return GetValue(i).ToString();
 		}
 
 		public Decimal GetDecimal(int i)
 		{
-			return (Decimal)GetValue(i);
+			return Convert.ToDecimal(GetValue(i));
 		}
 
 		public DateTime GetDateTime(int i)
 		{
-			return (DateTime)GetValue(i);
+			return Convert.ToDateTime(GetValue(i));
 		}
+		#endregion
 
 		public IDataReader GetData(int i)
 		{
@@ -453,6 +510,20 @@ namespace ByteFX.Data.MySQLClient
 	//      return CultureInfo.CurrentCulture.CompareInfo.Compare(strA, strB, CompareOptions.IgnoreKanaType | CompareOptions.IgnoreWidth | CompareOptions.IgnoreCase);
 			return 0;
 		}
+
+		#region Private Methods
+
+		private void ClearCurrentResult() 
+		{
+			if (! canRead) return;
+
+			Packet packet = connection.InternalConnection.Driver.ReadPacket();
+			// clean out any current resultset
+			while (packet.Type != PacketType.Last)
+				packet = connection.InternalConnection.Driver.ReadPacket();
+		}
+
+		#endregion
 
 		#region IEnumerator
 		public IEnumerator	GetEnumerator()

@@ -20,94 +20,63 @@ using System.Net;
 using System.Net.Sockets;
 using System.IO;
 using ICSharpCode.SharpZipLib.Zip.Compression;
+using System.Security.Cryptography;
+using ByteFX.Data.Common;
+using System.Text;
 
-namespace ByteFX.Data.MySQLClient
+namespace ByteFX.Data.MySqlClient
 {
 	/// <summary>
 	/// Summary description for Driver.
 	/// </summary>
-	internal class Driver : IDisposable
+	internal class Driver
 	{
-		protected const	int COMPRESS_HEADER_LEN = 3;
 		protected const int HEADER_LEN = 4;
-		protected const int MIN_COMPRESS_LEN = 50;
+		protected const int MIN_COMPRESS_LENGTH = 50;
 
-		public MemoryStream		_packet;
-		protected Stream		_stream;
-		protected Socket		_socket;
-		protected int			m_Seq;
-		protected int			m_BufIndex;
-		protected byte			m_LastResult;
-		protected byte[]		m_Buffer;
-		protected int			m_Timeout;
-		protected int			_port;
+		protected MySqlStream		stream;
+		protected Encoding			encoding;
+		protected byte				packetSeq;
+		protected int				timeOut;
+		protected long				maxPacketSize;
+		protected Packet			peekedPacket = null;
+		protected ByteFX.Data.Common.Version	serverVersion;
+		protected bool				isOpen;
 
-		int		m_Protocol;
-		String	m_ServerVersion;
-		int		m_ThreadID;
-		String	m_EncryptionSeed;
-		int		m_ServerCaps;
-		bool	m_UseCompression = false;
+		int		protocol;
+		uint	threadID;
+		String	encryptionSeed;
+		int		serverCaps;
+		bool	useCompression = false;
 
 
-		public Driver(int ConnectionTimeout)
+		public Driver()
 		{
-			m_Seq = -1;
-			m_LastResult = 0xff;
-			m_Timeout = ConnectionTimeout;
-			m_BufIndex = 0;
-
-			ResetPacket();
+			packetSeq = 0;
+			encoding = System.Text.Encoding.Default;
+			isOpen = false;
 		}
 
-		~Driver() 
+		#region Properties
+		public bool IsDead
 		{
+			get 
+			{ 
+				return stream.IsClosed;
+			}
+		}
+		#endregion
+
+		public Encoding Encoding 
+		{
+			get { return encoding; }
+			set { encoding = value; }
 		}
 
-		public byte LastResult 
+		public long MaxPacketSize 
 		{
-			get { return m_LastResult; }
-		}
-
-		public string ServerVersion 
-		{
-			get { return m_ServerVersion; }
-		}
-
-		public void Dispose() 
-		{
-		}
-
-#if WINDOWS
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="host"></param>
-		void CreatePipeStream( string host ) 
-		{
-			string _pipename;
-			if (host.ToLower().Equals("localhost"))
-				_pipename = @"\\.\pipe\MySQL";
-			else
-				_pipename = String.Format(@"\\{0}\pipe\MySQL", host);
-
-			_stream = new ByteFX.Data.Common.NamedPipeStream(_pipename, FileAccess.ReadWrite);
-		}
-#endif
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="host"></param>
-		/// <param name="port"></param>
-		void CreateSocketStream( string host, int port ) 
-		{
-			_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-			IPHostEntry he = Dns.GetHostByName(host);
-			IPEndPoint _serverAddr = new IPEndPoint(he.AddressList[0], port);
-
-			_socket.Connect(_serverAddr);
-			_stream = new NetworkStream(_socket);
+			get { return maxPacketSize; }
+			set { maxPacketSize = value; }
 		}
 
 		/// <summary>
@@ -117,35 +86,27 @@ namespace ByteFX.Data.MySQLClient
 		/// <param name="port"></param>
 		/// <param name="userid"></param>
 		/// <param name="password"></param>
-		public void Open( String host, int port, String userid, String password, bool UseCompression ) 
+		public void Open( String host, int port, String userid, String password, 
+			bool UseCompression, int connectTimeout ) 
 		{
-			_port = port;
-#if WINDOWS
-			if (-1 == port) 
-			{
-				CreatePipeStream(host);
-			}
-#endif
-			
-			if (-1 != port)
-			{
-				CreateSocketStream(host, port);
-			}
+			timeOut = connectTimeout;
+			stream = new MySqlStream( host, port, timeOut );
 
-			ReadPacket();
+			Packet packet = ReadPacket();
 
 			// read off the protocol version
-			m_Protocol = _packet.ReadByte();
-			m_ServerVersion = ReadString();
-			m_ThreadID = ReadInteger(4);
-			m_EncryptionSeed = ReadString();
+			protocol = packet.ReadByte();
+			serverVersion = ByteFX.Data.Common.Version.Parse( packet.ReadString() );
+			threadID = packet.ReadInteger(4);
+			encryptionSeed = packet.ReadString();
 
 			// read in Server capabilities if they are provided
-			m_ServerCaps = 0;
-			if (_packet.CanRead)
-				m_ServerCaps = ReadInteger(2);
+			serverCaps = 0;
+			if (packet.CanRead)
+				serverCaps = (int)packet.ReadInteger(2);
 
 			Authenticate( userid, password, UseCompression );
+			isOpen = true;
 		}
 
 		/// <summary>
@@ -157,192 +118,203 @@ namespace ByteFX.Data.MySQLClient
 		{
 			ClientParam clientParam = ClientParam.CLIENT_FOUND_ROWS | ClientParam.CLIENT_LONG_FLAG;
 
-			if ((m_ServerCaps & (int)ClientParam.CLIENT_COMPRESS) != 0 && UseCompression)
+			if ((serverCaps & (int)ClientParam.CLIENT_COMPRESS) != 0 && UseCompression)
 			{
 				clientParam |= ClientParam.CLIENT_COMPRESS;
 			}
 
 			clientParam |= ClientParam.CLIENT_LONG_PASSWORD;
+			clientParam |= ClientParam.CLIENT_LOCAL_FILES;
+//			if (serverVersion.isAtLeast(4,1,0))
+//				clientParam |= ClientParam.CLIENT_PROTOCOL_41;
+			if ( (serverCaps & (int)ClientParam.CLIENT_SECURE_CONNECTION ) != 0 && password.Length > 0 )
+				clientParam |= ClientParam.CLIENT_SECURE_CONNECTION;
 
-			password = EncryptPassword(password, m_EncryptionSeed, m_Protocol > 9);
-			// header_length = 4
-			//int headerLength = (userid.Length + 16) + 6 + 4; // Passwords can be 16 chars long
+			int packetLength = userid.Length + 16 + 6 + 4;  // Passwords can be 16 chars long
 
-			ResetPacket();
-			WriteInteger( (int)clientParam, 2 );
-			WriteInteger( 0, 3 ); 
-			WriteString( userid );
-			WriteString( password );
-			WritePacket();
+			Packet packet = new Packet();// packetLength );
 
-			CheckResult();
+			if ((clientParam & ClientParam.CLIENT_PROTOCOL_41) != 0)
+			{
+				packet.WriteInteger( (int)clientParam, 4 );
+				packet.WriteInteger( (256*256*256)-1, 4 );
+			}
+			else
+			{
+				packet.WriteInteger( (int)clientParam, 2 );
+				packet.WriteInteger( 255*255*255, 3 );
+			}
 
+			packet.WriteString( userid, encoding  );
+			if ( (clientParam & ClientParam.CLIENT_SECURE_CONNECTION ) != 0 )
+			{
+				// use the new authentication system
+				AuthenticateSecurely( packet, password );
+			}
+			else
+			{
+				// use old authentication system
+				packet.WriteString( EncryptPassword(password, encryptionSeed, protocol > 9), encoding );
+				SendPacket(packet);
+			}
+
+			packet = ReadPacket();
 			if ((clientParam & ClientParam.CLIENT_COMPRESS) != 0)
-				m_UseCompression = true;
+				useCompression = true;
 		}
 
-		public void ResetPacket()
+		/// <summary>
+		/// AuthenticateSecurity implements the new 4.1 authentication scheme
+		/// </summary>
+		/// <param name="password"></param>
+		private void AuthenticateSecurely( Packet packet, string password )
 		{
-			_packet = new MemoryStream();
-			_packet.SetLength(0);
+			packet.WriteString("xxxxxxxx", encoding );
+			SendPacket(packet);
 
-			// hack for Mono 0.17 not handling length < position on MemoryStream
-			_packet.Position = 0;
-			WriteInteger(0, HEADER_LEN);
+			packet = ReadPacket();
 
-			if (m_UseCompression)
-				_packet.Position += (COMPRESS_HEADER_LEN+HEADER_LEN);
+			// compute pass1 hash
+			string newPass = password.Replace(" ","").Replace("\t","");
+			SHA1 sha = new SHA1CryptoServiceProvider(); 
+			byte[] firstPassBytes = sha.ComputeHash( System.Text.Encoding.Default.GetBytes(newPass));
+
+			byte[] salt = packet.GetBytes();
+			byte[] input = new byte[ firstPassBytes.Length + 4 ];
+			salt.CopyTo( input, 0 );
+			firstPassBytes.CopyTo( input, 4 );
+			byte[] outPass = new byte[100];
+			byte[] secondPassBytes = sha.ComputeHash( input );
+
+			byte[] cryptSalt = new byte[20];
+			Security.ArrayCrypt( salt, 4, cryptSalt, 0, secondPassBytes, 20 );
+
+			Security.ArrayCrypt( cryptSalt, 0, firstPassBytes, 0, firstPassBytes, 20 );
+
+			// send the packet
+			packet = new Packet();
+			packet.WriteBytes( firstPassBytes, 0, 20 );
+			SendPacket(packet);
 		}
 
-		protected bool CanReadStream()
-		{
-#if WINDOWS
-			if (_port == -1)
-			{
-				return (_stream as ByteFX.Data.Common.NamedPipeStream).DataAvailable;
-			}
-#endif
-			return (_stream as NetworkStream).DataAvailable;
-		}
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
-		public byte ReadStreamByte()
+		private Packet ReadRawPacket()
 		{
-			long start = DateTime.Now.Ticks;
-			long timeout = m_Timeout * TimeSpan.TicksPerSecond;
+			int packetLength = stream.ReadInt24();
+			int unCompressedLen = 0;
 
-			while ((DateTime.Now.Ticks - start) < timeout)
-			{
-				if (CanReadStream()) return (byte)_stream.ReadByte();
-			}
-			throw new MySQLException("Timeout waiting for response from server");
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="buf"></param>
-		/// <param name="offset"></param>
-		/// <param name="count"></param>
-		protected void ReadStreamBytes(byte[] buf, int offset, int count)
-		{
-			long start = DateTime.Now.Ticks;
-			long timeout = m_Timeout * TimeSpan.TicksPerSecond;
-			long curoffset = offset;
-
-			while (count > 0 && ((DateTime.Now.Ticks - start) < timeout))
-			{
-				if (CanReadStream()) 
-				{
-					int cnt = _stream.Read(buf, (int)curoffset, count);
-					count -= cnt;
-					curoffset += cnt;
-				}
-			}
-			if (count > 0)
-				throw new MySQLException("Timeout waiting for response from server");
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		private void ReadServerDataBlock()
-		{
-			int b0 = (int)ReadStreamByte();
-			int b1 = (int)ReadStreamByte();
-			int b2 = (int)ReadStreamByte();
-
-			if (b0 == -1 && b1 == -1 && b2 == -1) 
-			{
-				//TODO: close?
-				throw new IOException("Unexpected end of input stream");
-			}
-
-			int packetLength = (int)(b0+ (256*b1) + (256*256*b2));
-			int comp_len = 0;
-			byte Seq = (byte)ReadStreamByte();
+			// read the packet sequence and make sure it makes sense
+			byte seq = (byte)stream.ReadByte();
+			if (seq != packetSeq) 
+				throw new MySqlException("Unknown transmission status: sequence out of order");
 	
-			// handle the stupid field swapping does if compression is used
-			// If the block is compressed, then the first length field is the compressed
-			// length and the second is the uncompressed.
-			// If the block is uncompressed, even if compression is selected, the first
-			// length field is the uncompressed size and the second field is zero
-			if (m_UseCompression) 
-			{
-				int c0 = (int)ReadStreamByte();
-				int c1 = (int)ReadStreamByte();
-				int c2 = (int)ReadStreamByte();
-				comp_len = (int)(c0 + (256*c1) + (256*256*c2));
-				if (comp_len > 0) 
-				{
-					int temp = packetLength;
-					packetLength = comp_len;
-					comp_len = temp;
-				}
-			}
+			if (useCompression) 
+				unCompressedLen = stream.ReadInt24();
 
-			if (m_UseCompression && comp_len > 0) 
+			byte[] buffer;
+			if (useCompression && unCompressedLen > 0)
 			{
-				m_Buffer = new Byte[packetLength];
-				byte[] comp = new Byte[comp_len];
+				byte[] compressed_buffer = new Byte[packetLength];
+				buffer = new Byte[unCompressedLen];
+
 				// read in the compressed data
-				ReadStreamBytes(comp, 0, comp_len);
+				stream.Read( compressed_buffer, 0, packetLength );
 
+				// inflate it
 				Inflater i = new Inflater();
-				i.SetInput( comp );
-
-				i.Inflate(m_Buffer);
-				return;
-			}
-
-			if (!m_UseCompression) 
-			{
-				m_Buffer = new Byte[packetLength+4];
-				ReadStreamBytes(m_Buffer, 4, packetLength);
-				m_Buffer[0] = (byte)b0; m_Buffer[1] = (byte)b1; m_Buffer[2] = (byte)b2;
-				m_Buffer[3] = (byte)Seq;
+				i.SetInput( compressed_buffer );
+				i.Inflate( buffer );
 			}
 			else 
 			{
-				m_Buffer = new Byte[packetLength];
-				ReadStreamBytes(m_Buffer, 0, packetLength);
+				buffer = new Byte[packetLength];
+				stream.Read( buffer, 0, packetLength);
 			}
+
+			packetSeq++;
+			Packet packet = new Packet( buffer );
+			packet.Encoding = encoding;
+			return packet;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public void SendFileToServer()
+		{
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public Packet PeekPacket()
+		{
+			// we can peek the same packet more than once
+			if (peekedPacket != null)
+				return peekedPacket;
+
+			peekedPacket = ReadPacket();
+			return peekedPacket;
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public int ReadPacket()
+		public Packet ReadPacket()
 		{
-			if (_packet == null || m_Buffer == null || m_BufIndex == m_Buffer.Length)
+			// if we have a peeked packet, return it now
+			if (peekedPacket != null) 
 			{
-				ReadServerDataBlock();
-				m_BufIndex = 0;
+				Packet p = peekedPacket;
+				peekedPacket = null;
+				return p;
 			}
 
-			_packet = new MemoryStream(m_Buffer, m_BufIndex, m_Buffer.Length - m_BufIndex);
-			int len = ReadInteger(3);
-			int seq = (int)ReadByte();
-			_packet.SetLength(len+HEADER_LEN);
-			m_BufIndex += (int)_packet.Length;
+			Packet packet = ReadRawPacket();
 
-			// if the sequence doesn't match up, then there must be some orphaned
-			// packets so we just read them off
-			if (seq != (m_Seq+1)) return ReadPacket();
-			
-			m_Seq = seq;
-			return len;
-}
+			if (packet.Type == PacketType.Error)
+			{
+				int errorCode = (int)packet.ReadInteger(2);
+				string msg = packet.ReadString();
+				throw new MySqlException( msg, errorCode );
+			}
+			else 
+				packet.Position = 0;
+
+			return packet;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="packet"></param>
+		private Packet LoadSchemaIntoPacket( Packet packet, int count )
+		{
+			for (int i=0; i < count; i++) 
+			{
+				Packet colPacket = ReadRawPacket();
+				packet.AppendPacket( colPacket );
+			}
+			Packet lastPacket = ReadRawPacket();
+			if (lastPacket.Type != PacketType.Last)
+				throw new MySqlException("Last packet not received when expected");
+
+			packet.Type = PacketType.ResultSchema;
+			packet.Position = 0;
+			return packet;
+		}
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		protected int CompressPacket()
+/*		protected byte[] CompressPacket(Packet packet)
 		{
 			// compress the entire packet except the length
 
@@ -365,214 +337,68 @@ namespace ByteFX.Data.MySQLClient
 			_packet = new MemoryStream( output, 0, comp_len + offset );
 			return (int)comp_len;
 		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="useCompressionIfAvail"></param>
-		protected void WritePacket()
+*/
+		protected byte[] CompressPacket(Packet packet)
 		{
-			if (m_UseCompression)
+			if (packet.Length < MIN_COMPRESS_LENGTH) return null;
+
+			byte[] compressed_buffer = new byte[packet.Length * 2];
+			Deflater deflater = new Deflater();
+			deflater.SetInput( packet.GetBytes(), 0, packet.Length );
+			deflater.Finish();
+			int comp_len = deflater.Deflate( compressed_buffer, 0, compressed_buffer.Length );
+			if (comp_len > packet.Length) return null;
+			return compressed_buffer;
+		}
+
+		protected void SendPacket(Packet packet)
+		{
+			Packet header = null;
+			byte[] buffer = null;
+
+			if (useCompression)
 			{
-				// store the length of the buffer we are going to compress
-				long num_bytes = _packet.Length - (HEADER_LEN*2) - COMPRESS_HEADER_LEN;
-				_packet.Position = HEADER_LEN + COMPRESS_HEADER_LEN;
-				WriteInteger( (int) num_bytes, 3 );
-				_packet.WriteByte(0);				// internal packet has 0 as seq if compressing
-
-				// now compress it
-				int compressed_size = CompressPacket();
-
-				_packet.Position = 0;
-				if (compressed_size == 0) 
+				byte[] compressed_bytes = CompressPacket(packet);
+				header = new Packet();
+				
+				// if we succeeded in compressing
+				if (compressed_bytes != null) 
 				{
-					WriteInteger( (int)num_bytes + HEADER_LEN, 3);
-					_packet.WriteByte((byte)++m_Seq);
-					WriteInteger( compressed_size, 3 );
+					header.WriteInteger( compressed_bytes.Length, 3 );
+					header.WriteByte( packetSeq );
+					header.WriteInteger( packet.Length + HEADER_LEN, 3 );
+					buffer = compressed_bytes;
 				}
-				else 
+				else
 				{
-					WriteInteger( compressed_size, 3 );
-					_packet.WriteByte((byte)++m_Seq);
-					WriteInteger( (int)num_bytes + HEADER_LEN, 3);
+					header.WriteInteger( packet.Length + HEADER_LEN, 3 );
+					header.WriteByte( packetSeq );
+					header.WriteInteger( 0, 3 );
+					buffer = packet.GetBytes();
 				}
+				// now write the internal header
+				header.WriteInteger( packet.Length, 3 );
+				header.WriteByte( 0 );
 			}
 			else 
 			{
-				_packet.Position = 0;
-				WriteInteger( (int)(_packet.Length - HEADER_LEN), 3 );
-				_packet.WriteByte((byte)++m_Seq);
+				header = new Packet();
+				header.WriteInteger( packet.Length, 3 );
+				header.WriteByte( packetSeq );
+				buffer = packet.GetBytes();
 			}
+			packetSeq++;
 
-			_stream.Write( _packet.ToArray(), 0, (int)_packet.Length );
-			_stream.Flush();
-
-			// reset the writeStream to empty
-			ResetPacket();
+			// send the data to eth server
+			stream.Write( header.GetBytes(), 0, header.Length );
+			stream.Write( buffer, 0, buffer.Length );
+			stream.Flush();
 		}
 
-
-		protected void WriteString(string v)
-		{
-			WriteStringNoNull(v);
-			_packet.WriteByte(0);
-		}
-
-		protected void WriteStringNoNull(string v)
-		{
-			byte[] bytes = System.Text.Encoding.ASCII.GetBytes(v);
-			_packet.Write(bytes, 0, bytes.Length);
-		}
 
 		public void Close() 
 		{
-			m_Seq = -1;
-			_stream.Close();
-			if (_socket != null)
-				_socket.Close();
-		}
-
-		public string ReadString()
-		{
-			String str = new String('c',0);
-
-			while (_packet.Position < _packet.Length) 
-			{
-				byte b = (byte)_packet.ReadByte();
-				if (b == 0) break;
-				str += Convert.ToChar(b);
-			}
-			return str;
-		}
-
-		protected void WriteInteger( int v, int numbytes )
-		{
-			int val = v;
-
-			if (numbytes < 1 || numbytes > 4) 
-				throw new Exception("Wrong byte count for WriteInteger");
-
-			for (int x=0; x < numbytes; x++)
-			{
-				_packet.WriteByte( (byte)(val&0xff) );
-				val >>= 8;
-			}
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="numbytes"></param>
-		/// <returns></returns>
-		public int ReadInteger(int numbytes)
-		{
-			int val = 0;
-			int raise = 1;
-			for (int x=0; x < numbytes; x++)
-			{
-				int b = (int)_packet.ReadByte();
-				val += (b*raise);
-				raise *= 256;
-			}
-			return val;
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		public int ReadLength()
-		{
-			byte c  = (byte)_packet.ReadByte();
-			switch(c) 
-			{
-				case 251 : return (int) 0; 
-				case 252 : return ReadInteger(2);
-				case 253 : return ReadInteger(3);
-				case 254 : return ReadInteger(4);
-				default  : return (int) c;
-			}
-		}
-
-		public byte ReadByte()
-		{
-			return (byte)_packet.ReadByte();
-		}
-
-		public int ReadNBytes()
-		{
-			byte c = (byte)_packet.ReadByte();
-			if (c < 1 || c > 4) throw new MySQLException("Unexpected byte count received");
-			return ReadInteger((int)c);
-		}
-
-		public string ReadLenString()
-		{
-			int len = ReadLength();
-
-			byte[] buf = new Byte[len];
-			_packet.Read(buf, 0, len);
-
-			String s = new String('c', 0);
-			for (int x=0; x < buf.Length; x++)
-				s += Convert.ToChar(buf[x]);
-			return s;
-		}
-
-
-		void CheckResult()
-		{
-			ReadPacket();
-
-			m_LastResult = (byte)_packet.ReadByte();
-
-			if (0xff == m_LastResult) 
-			{
-				int errno = ReadInteger(2);
-				string msg = ReadString();
-				throw new MySQLException(msg, errno);
-			}
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		public bool IsLastPacketSignal() 
-		{
-			byte b = (byte)_packet.ReadByte();
-			_packet.Position--;
-
-			if ((_packet.Length - HEADER_LEN) == 1 && b == 0xfe)
-			{
-				return true;
-			}
-
-			return false;
-		}
-
-		/// <summary>
-		/// Read the byte data from the server for the next column
-		/// </summary>
-		/// <returns></returns>
-		public byte[] ReadColumnData()
-		{
-			int		len;
-
-			byte c = (byte)_packet.ReadByte(); 
-
-			switch (c)
-			{
-				case 251:  return null; //new byte[1] { c }; 
-				case 252:  len = ReadInteger(2); break;
-				case 253:  len = ReadInteger(3); break;
-				case 254:  len = ReadInteger(4); break;
-				default:   len = c; break;
-			}
-
-			byte[] buf = new Byte[len];
-			_packet.Read(buf, 0, len);
-			return buf;
+			stream.Close();
 		}
 
 
@@ -584,44 +410,61 @@ namespace ByteFX.Data.MySQLClient
 		/// <returns>Result packet returned from database server</returns>
 		public void SendCommand( DBCmd command, String text ) 
 		{
-			m_Seq = -1;
-			ResetPacket();
-
-			_packet.WriteByte( (byte)command );
-
-			if (text != null && text.Length > 0)
-				WriteStringNoNull(text);
-
-			try 
-			{
-				WritePacket();
-
-				if (command != DBCmd.QUIT)
-					CheckResult();
-			}
-			catch (Exception e) 
-			{
-				throw e;
-			}
+			Packet packet = new Packet();
+			packetSeq = 0;
+			packet.WriteByte( (byte)command );
+			packet.WriteStringNoNull( text, encoding );
+			SendPacket(packet);
+			
+			packet = ReadPacket();
+			if (packet.Type != PacketType.UpdateOrOk)
+				throw new MySqlException("SendCommand failed for command " + text );
 		}
 
-		public void SendQuery( byte[] sql )
+		/// <summary>
+		/// SendQuery sends a byte array of SQL to the server
+		/// </summary>
+		/// <param name="sql"></param>
+		/// <returns>A packet containing the bytes returned by the server</returns>
+		public Packet SendQuery( byte[] sql )
 		{
-			try 
-			{
-				m_Seq = -1;
-				ResetPacket();
+			Packet packet = new Packet();
+			packetSeq = 0;
+			packet.WriteByte( (byte)DBCmd.QUERY );
+			packet.WriteBytes( sql, 0, sql.Length );
 
-				_packet.WriteByte( (byte)DBCmd.QUERY );
-				_packet.Write( sql, 0, sql.Length );
+			SendPacket( packet );
+			return ReadPacket();
+		}
 
-				WritePacket();
-				CheckResult();
-			}
-			catch (Exception e) 
+		public Packet SendSql( string sql )
+		{
+			byte[] bytes = encoding.GetBytes(sql);
+
+			Packet packet = new Packet();
+			packetSeq = 0;
+			packet.WriteByte( (byte)DBCmd.QUERY );
+			packet.WriteBytes( bytes, 0, bytes.Length );
+
+			SendPacket( packet );
+			packet = ReadPacket();
+
+			switch (packet.Type)
 			{
-				throw e;
+				case PacketType.LoadDataLocal:
+					SendFileToServer();
+					return null;
+
+				case PacketType.Other:
+					packet.Position = 0;
+					int count = (int)packet.ReadLenInteger();
+					if (count > 0) 
+						return LoadSchemaIntoPacket( packet, count );
+					else
+						return packet;
 			}
+
+			return packet;
 		}
 
 		#region PasswordStuff

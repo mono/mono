@@ -17,170 +17,177 @@
 
 using System.Data;
 using System.Data.Common;
+using System.ComponentModel;
 
-namespace ByteFX.Data.MySQLClient
+namespace ByteFX.Data.MySqlClient
 {
-#if WINDOWS
-	[System.Drawing.ToolboxBitmap( typeof(MySQLDataAdapter), "Designers.dataadapter.bmp")]
-#endif
-	public sealed class MySQLDataAdapter : DbDataAdapter, IDbDataAdapter
-  {
-    private MySQLCommand m_selectCommand;
-    private MySQLCommand m_insertCommand;
-    private MySQLCommand m_updateCommand;
-    private MySQLCommand m_deleteCommand;
-
-    /*
-     * Inherit from Component through DbDataAdapter. The event
-     * mechanism is designed to work with the Component.Events
-     * property. These variables are the keys used to find the
-     * events in the components list of events.
-     */
-    static private readonly object EventRowUpdated = new object(); 
-    static private readonly object EventRowUpdating = new object(); 
-
-
-    public MySQLDataAdapter()
-    {
-    }
-
-	public MySQLDataAdapter( MySQLCommand selectCommand ) 
+	[System.Drawing.ToolboxBitmap( typeof(MySqlDataAdapter), "Designers.dataadapter.bmp")]
+	[System.ComponentModel.DesignerCategory("Code")]
+	public sealed class MySqlDataAdapter : DbDataAdapter, IDbDataAdapter
 	{
-		SelectCommand = selectCommand;
+		private MySqlCommand m_selectCommand;
+		private MySqlCommand m_insertCommand;
+		private MySqlCommand m_updateCommand;
+		private MySqlCommand m_deleteCommand;
+
+		/*
+			* Inherit from Component through DbDataAdapter. The event
+			* mechanism is designed to work with the Component.Events
+			* property. These variables are the keys used to find the
+			* events in the components list of events.
+			*/
+		static private readonly object EventRowUpdated = new object(); 
+		static private readonly object EventRowUpdating = new object(); 
+
+
+		public MySqlDataAdapter()
+		{
+		}
+
+		public MySqlDataAdapter( MySqlCommand selectCommand ) 
+		{
+			SelectCommand = selectCommand;
+		}
+
+		public MySqlDataAdapter( string selectCommandText, string selectConnString) 
+		{
+			SelectCommand = new MySqlCommand( selectCommandText, 
+				new MySqlConnection(selectConnString) );
+		}
+
+		public MySqlDataAdapter( string selectCommandText, MySqlConnection conn) 
+		{
+			SelectCommand = new MySqlCommand( selectCommandText, conn );
+		}
+
+		#region Properties
+		[DataSysDescription("Used during Fill/FillSchema")]
+		[Category("Fill")]
+		public MySqlCommand SelectCommand 
+		{
+			get { return m_selectCommand; }
+			set { m_selectCommand = value; }
+		}
+
+		IDbCommand IDbDataAdapter.SelectCommand 
+		{
+			get { return m_selectCommand; }
+			set { m_selectCommand = (MySqlCommand)value; }
+		}
+
+		[DataSysDescription("Used during Update for new rows in Dataset.")]
+		public MySqlCommand InsertCommand 
+		{
+			get { return m_insertCommand; }
+			set { m_insertCommand = value; }
+		}
+
+		IDbCommand IDbDataAdapter.InsertCommand 
+		{
+			get { return m_insertCommand; }
+			set { m_insertCommand = (MySqlCommand)value; }
+		}
+
+		[DataSysDescription("Used during Update for modified rows in Dataset.")]
+		public MySqlCommand UpdateCommand 
+		{
+			get { return m_updateCommand; }
+			set { m_updateCommand = value; }
+		}
+
+		IDbCommand IDbDataAdapter.UpdateCommand 
+		{
+			get { return m_updateCommand; }
+			set { m_updateCommand = (MySqlCommand)value; }
+		}
+
+		[DataSysDescription("Used during Update for deleted rows in Dataset.")]
+		public MySqlCommand DeleteCommand 
+		{
+			get { return m_deleteCommand; }
+			set { m_deleteCommand = value; }
+		}
+
+		IDbCommand IDbDataAdapter.DeleteCommand 
+		{
+			get { return m_deleteCommand; }
+			set { m_deleteCommand = (MySqlCommand)value; }
+		}
+		#endregion
+
+		/*
+			* Implement abstract methods inherited from DbDataAdapter.
+			*/
+		override protected RowUpdatedEventArgs CreateRowUpdatedEvent(DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping)
+		{
+			return new MySqlRowUpdatedEventArgs(dataRow, command, statementType, tableMapping);
+		}
+
+		override protected RowUpdatingEventArgs CreateRowUpdatingEvent(DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping)
+		{
+			return new MySqlRowUpdatingEventArgs(dataRow, command, statementType, tableMapping);
+		}
+
+		override protected void OnRowUpdating(RowUpdatingEventArgs value)
+		{
+			MySqlRowUpdatingEventHandler handler = (MySqlRowUpdatingEventHandler) Events[EventRowUpdating];
+			if ((null != handler) && (value is MySqlRowUpdatingEventArgs)) 
+			{
+				handler(this, (MySqlRowUpdatingEventArgs) value);
+			}
+		}
+
+		override protected void OnRowUpdated(RowUpdatedEventArgs value)
+		{
+			MySqlRowUpdatedEventHandler handler = (MySqlRowUpdatedEventHandler) Events[EventRowUpdated];
+			if ((null != handler) && (value is MySqlRowUpdatedEventArgs)) 
+			{
+				handler(this, (MySqlRowUpdatedEventArgs) value);
+			}
+		}
+
+		public event MySqlRowUpdatingEventHandler RowUpdating
+		{
+			add { Events.AddHandler(EventRowUpdating, value); }
+			remove { Events.RemoveHandler(EventRowUpdating, value); }
+		}
+
+		public event MySqlRowUpdatedEventHandler RowUpdated
+		{
+			add { Events.AddHandler(EventRowUpdated, value); }
+			remove { Events.RemoveHandler(EventRowUpdated, value); }
+		}
 	}
 
-	public MySQLDataAdapter( string selectCommandText, string selectConnString) 
+	public delegate void MySqlRowUpdatingEventHandler(object sender, MySqlRowUpdatingEventArgs e);
+	public delegate void MySqlRowUpdatedEventHandler(object sender, MySqlRowUpdatedEventArgs e);
+
+	public class MySqlRowUpdatingEventArgs : RowUpdatingEventArgs
 	{
-		SelectCommand = new MySQLCommand( selectCommandText, 
-			new MySQLConnection(selectConnString) );
+		public MySqlRowUpdatingEventArgs(DataRow row, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
+			: base(row, command, statementType, tableMapping) 
+		{
+		}
+
+		// Hide the inherited implementation of the command property.
+		new public MySqlCommand Command
+		{
+			get  { return (MySqlCommand)base.Command; }
+			set  { base.Command = value; }
+		}
 	}
 
-	public MySQLDataAdapter( string selectCommandText, MySQLConnection conn) 
+	public class MySqlRowUpdatedEventArgs : RowUpdatedEventArgs
 	{
-		SelectCommand = new MySQLCommand( selectCommandText, conn );
+		public MySqlRowUpdatedEventArgs(DataRow row, IDbCommand command, StatementType statementType, DataTableMapping tableMapping)
+			: base(row, command, statementType, tableMapping) 
+		{
+		}
+
+		// Hide the inherited implementation of the command property.
+		new public MySqlCommand Command
+		{
+			get  { return (MySqlCommand)base.Command; }
+		}
 	}
-
-    public MySQLCommand SelectCommand 
-    {
-      get { return m_selectCommand; }
-      set { m_selectCommand = value; }
-    }
-
-    IDbCommand IDbDataAdapter.SelectCommand 
-    {
-      get { return m_selectCommand; }
-      set { m_selectCommand = (MySQLCommand)value; }
-    }
-
-    public MySQLCommand InsertCommand 
-    {
-      get { return m_insertCommand; }
-      set { m_insertCommand = value; }
-    }
-
-    IDbCommand IDbDataAdapter.InsertCommand 
-    {
-      get { return m_insertCommand; }
-      set { m_insertCommand = (MySQLCommand)value; }
-    }
-
-    public MySQLCommand UpdateCommand 
-    {
-      get { return m_updateCommand; }
-      set { m_updateCommand = value; }
-    }
-
-    IDbCommand IDbDataAdapter.UpdateCommand 
-    {
-      get { return m_updateCommand; }
-      set { m_updateCommand = (MySQLCommand)value; }
-    }
-
-    public MySQLCommand DeleteCommand 
-    {
-      get { return m_deleteCommand; }
-      set { m_deleteCommand = value; }
-    }
-
-    IDbCommand IDbDataAdapter.DeleteCommand 
-    {
-      get { return m_deleteCommand; }
-      set { m_deleteCommand = (MySQLCommand)value; }
-    }
-
-    /*
-     * Implement abstract methods inherited from DbDataAdapter.
-     */
-    override protected RowUpdatedEventArgs CreateRowUpdatedEvent(DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping)
-    {
-      return new MySQLRowUpdatedEventArgs(dataRow, command, statementType, tableMapping);
-    }
-
-    override protected RowUpdatingEventArgs CreateRowUpdatingEvent(DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping)
-    {
-      return new MySQLRowUpdatingEventArgs(dataRow, command, statementType, tableMapping);
-    }
-
-    override protected void OnRowUpdating(RowUpdatingEventArgs value)
-    {
-      MySQLRowUpdatingEventHandler handler = (MySQLRowUpdatingEventHandler) Events[EventRowUpdating];
-      if ((null != handler) && (value is MySQLRowUpdatingEventArgs)) 
-      {
-        handler(this, (MySQLRowUpdatingEventArgs) value);
-      }
-    }
-
-    override protected void OnRowUpdated(RowUpdatedEventArgs value)
-    {
-      MySQLRowUpdatedEventHandler handler = (MySQLRowUpdatedEventHandler) Events[EventRowUpdated];
-      if ((null != handler) && (value is MySQLRowUpdatedEventArgs)) 
-      {
-        handler(this, (MySQLRowUpdatedEventArgs) value);
-      }
-    }
-
-    public event MySQLRowUpdatingEventHandler RowUpdating
-    {
-      add { Events.AddHandler(EventRowUpdating, value); }
-      remove { Events.RemoveHandler(EventRowUpdating, value); }
-    }
-
-    public event MySQLRowUpdatedEventHandler RowUpdated
-    {
-      add { Events.AddHandler(EventRowUpdated, value); }
-      remove { Events.RemoveHandler(EventRowUpdated, value); }
-    }
-  }
-
-  public delegate void MySQLRowUpdatingEventHandler(object sender, MySQLRowUpdatingEventArgs e);
-  public delegate void MySQLRowUpdatedEventHandler(object sender, MySQLRowUpdatedEventArgs e);
-
-  public class MySQLRowUpdatingEventArgs : RowUpdatingEventArgs
-  {
-    public MySQLRowUpdatingEventArgs(DataRow row, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
-      : base(row, command, statementType, tableMapping) 
-    {
-    }
-
-    // Hide the inherited implementation of the command property.
-    new public MySQLCommand Command
-    {
-      get  { return (MySQLCommand)base.Command; }
-      set  { base.Command = value; }
-    }
-  }
-
-  public class MySQLRowUpdatedEventArgs : RowUpdatedEventArgs
-  {
-    public MySQLRowUpdatedEventArgs(DataRow row, IDbCommand command, StatementType statementType, DataTableMapping tableMapping)
-      : base(row, command, statementType, tableMapping) 
-    {
-    }
-
-    // Hide the inherited implementation of the command property.
-    new public MySQLCommand Command
-    {
-      get  { return (MySQLCommand)base.Command; }
-    }
-  }
 }

@@ -14,13 +14,15 @@
 // You should have received a copy of the GNU Lesser General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+using System;
 
-namespace ByteFX.Data.MySQLClient
+namespace ByteFX.Data.MySqlClient
 {
 	/// <summary>
 	/// Summary description for ClientParam.
 	/// </summary>
-	internal enum ClientParam : short
+	[Flags()]
+	internal enum ClientParam
 	{
 		CLIENT_LONG_PASSWORD	= 1,			// new more secure passwords
 		CLIENT_FOUND_ROWS		= 2,			// found instead of affected rows
@@ -36,8 +38,12 @@ namespace ByteFX.Data.MySQLClient
 		CLIENT_SSL				= 2048,			// Switch to SSL after handshake
 		CLIENT_IGNORE_SIGPIPE	= 4096,			// IGNORE sigpipes
 		CLIENT_TRANSACTIONS		= 8192,			// Client knows about transactions
+		CLIENT_PROTOCOL_41		= 16384,
+		CLIENT_SECURE_CONNECTION = 32768
+
 	}
 	
+
 	/// <summary>
 	/// DB Operations Code
 	/// </summary>
@@ -63,10 +69,9 @@ namespace ByteFX.Data.MySQLClient
 		CHANGE_USER    = 17,
 	}
 
-	public enum MySQLDbType
+	public enum MySqlDbType
 	{
 		Decimal		=   0,
-		Tiny        =   1,
 		Byte		=   1,
 		Short       =   2,
 		Long        =   3,
@@ -95,27 +100,27 @@ namespace ByteFX.Data.MySQLClient
 	enum Field_Type : byte
 	{
 		DECIMAL					=0,
-		BYTE						=1,
+		BYTE					=1,
 		SHORT					=2,
-		LONG						=3,
+		LONG					=3,
 		FLOAT					=4,
 		DOUBLE					=5,
-		NULL						=6,
+		NULL					=6,
 		TIMESTAMP				=7,
 		LONGLONG				=8,
-		INT24						=9,
-		DATE						=10,
-		TIME						=11,
+		INT24					=9,
+		DATE					=10,
+		TIME					=11,
 		DATETIME				=12,
-		YEAR						=13,
-		NEWDATE				=14,
-		ENUM						=247,
+		YEAR					=13,
+		NEWDATE					=14,
+		ENUM					=247,
 		SET						=248,
 		TINY_BLOB				=249,
-		MEDIUM_BLOB			=250,
+		MEDIUM_BLOB				=250,
 		LONG_BLOB				=251,
-		BLOB						=252,
-		VAR_STRING			=253,
+		BLOB					=252,
+		VAR_STRING				=253,
 		STRING					=254,
 	}
 }

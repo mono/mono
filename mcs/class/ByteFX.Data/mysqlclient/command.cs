@@ -20,32 +20,35 @@ using System.Data;
 using System.ComponentModel;
 using System.Collections;
 
-namespace ByteFX.Data.MySQLClient
+namespace ByteFX.Data.MySqlClient
 {
 #if WINDOWS
-	[System.Drawing.ToolboxBitmap( typeof(MySQLCommand), "Designers.command.bmp")]
+	[System.Drawing.ToolboxBitmap( typeof(MySqlCommand), "Designers.command.bmp")]
 #endif
-	public sealed class MySQLCommand : Component, IDbCommand, ICloneable
+
+	[System.ComponentModel.DesignerCategory("Code")]
+	public sealed class MySqlCommand : Component, IDbCommand, ICloneable
 	{
-		MySQLConnection				m_connection;
-		MySQLTransaction			m_txn;
-		string						m_sCmdText;
-		int							m_UpdateCount;
-		UpdateRowSource				m_updatedRowSource = UpdateRowSource.Both;
-		MySQLParameterCollection	m_parameters = new MySQLParameterCollection();
+		MySqlConnection				connection;
+		MySqlTransaction			curTransaction;
+		string						cmdText;
+		int							updateCount;
+		UpdateRowSource				updatedRowSource = UpdateRowSource.Both;
+		MySqlParameterCollection	parameters = new MySqlParameterCollection();
+		private ArrayList			arraySql = new ArrayList();
 
 		// Implement the default constructor here.
-		public MySQLCommand()
+		public MySqlCommand()
 		{
 		}
 
 		// Implement other constructors here.
-		public MySQLCommand(string cmdText)
+		public MySqlCommand(string cmdText)
 		{
-			m_sCmdText = cmdText;
+			this.cmdText = cmdText;
 		}
 
-		public MySQLCommand(System.ComponentModel.IContainer container)
+		public MySqlCommand(System.ComponentModel.IContainer container)
 		{
 			/// <summary>
 			/// Required for Windows.Forms Class Composition Designer support
@@ -53,10 +56,10 @@ namespace ByteFX.Data.MySQLClient
 			container.Add(this);
 		}
 
-		public MySQLCommand(string cmdText, MySQLConnection connection)
+		public MySqlCommand(string cmdText, MySqlConnection connection)
 		{
-			m_sCmdText    = cmdText;
-			m_connection  = connection;
+			this.cmdText    = cmdText;
+			this.connection  = connection;
 		}
 
 		public new void Dispose() 
@@ -64,22 +67,32 @@ namespace ByteFX.Data.MySQLClient
 			base.Dispose();
 		}
 
-		public MySQLCommand(string cmdText, MySQLConnection connection, MySQLTransaction txn)
+		public MySqlCommand(string cmdText, MySqlConnection connection, MySqlTransaction txn)
 		{
-			m_sCmdText		= cmdText;
-			m_connection	= connection;
-			m_txn			= txn;
+			this.cmdText	= cmdText;
+			this.connection	= connection;
+			curTransaction	= txn;
 		} 
 
-		/****
-		* IMPLEMENT THE REQUIRED PROPERTIES.
-		****/
+		#region Properties
+		[Category("Data")]
+		[Description("Command text to execute")]
+#if WINDOWS
+		[Editor(typeof(ByteFX.Data.Common.SqlCommandTextEditor), typeof(System.Drawing.Design.UITypeEditor))]
+#endif
 		public string CommandText
 		{
-			get { return m_sCmdText;  }
-			set  { m_sCmdText = value;  }
+			get { return cmdText;  }
+			set  { cmdText = value;  }
 		}
 
+		public int UpdateCount 
+		{
+			get { return updateCount; }
+		}
+
+		[Category("Misc")]
+		[Description("Time to wait for command to execute")]
 		public int CommandTimeout
 		{
 			/*
@@ -91,15 +104,22 @@ namespace ByteFX.Data.MySQLClient
 			set  { if (value != 0) throw new NotSupportedException(); }
 		}
 
+		[Category("Data")]
 		public CommandType CommandType
 		{
 			/*
 			* The sample only supports CommandType.Text.
 			*/
 			get { return CommandType.Text; }
-			set { if (value != CommandType.Text) throw new NotSupportedException(); }
+			set 
+			{ 
+				if (value != CommandType.Text) 
+					throw new NotSupportedException("This version of the MySql provider only supports Text command types"); 
+			}
 		}
 
+		[Category("Behavior")]
+		[Description("Connection used by the command")]
 		public IDbConnection Connection
 		{
 			/*
@@ -108,7 +128,7 @@ namespace ByteFX.Data.MySQLClient
 			*/
 			get 
 			{ 
-				return m_connection;  
+				return connection;  
 			}
 			set
 			{
@@ -117,23 +137,27 @@ namespace ByteFX.Data.MySQLClient
 				* so set the transaction object to return a null reference if the connection 
 				* is reset.
 				*/
-				if (m_connection != value)
+				if (connection != value)
 				this.Transaction = null;
 
-				m_connection = (MySQLConnection)value;
+				connection = (MySqlConnection)value;
 			}
 		}
 
-		public MySQLParameterCollection Parameters
+		[Category("Data")]
+		[Description("The parameters collection")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+		public MySqlParameterCollection Parameters
 		{
-			get  { return m_parameters; }
+			get  { return parameters; }
 		}
 
 		IDataParameterCollection IDbCommand.Parameters
 		{
-			get  { return m_parameters; }
+			get  { return parameters; }
 		}
 
+		[Browsable(false)]
 		public IDbTransaction Transaction
 		{
 			/*
@@ -142,133 +166,153 @@ namespace ByteFX.Data.MySQLClient
 			*/
 			get 
 			{ 
-				return m_txn; 
+				return curTransaction; 
 			}
 			set 
 			{ 
-				m_txn = (MySQLTransaction)value; 
+				curTransaction = (MySqlTransaction)value; 
 			}
 		}
 
+		[Category("Behavior")]
 		public UpdateRowSource UpdatedRowSource
 		{
 			get 
 			{ 
-				return m_updatedRowSource;  
+				return updatedRowSource;  
 			}
 			set 
 			{ 
-				m_updatedRowSource = value; 
+				updatedRowSource = value; 
 			}
 		}
+		#endregion
 
-		/****
-			* IMPLEMENT THE REQUIRED METHODS.
-			****/
+		#region Methods
 		public void Cancel()
 		{
-			// The sample does not support canceling a command
-			// once it has been initiated.
 			throw new NotSupportedException();
 		}
 
-		public IDbDataParameter CreateParameter()
+		public MySqlParameter CreateParameter()
 		{
-			return new MySQLParameter();
+			return new MySqlParameter();
 		}
 
-		/// <summary>
-		/// Convert the SQL command into a series of ASCII bytes streaming
-		/// each of the parameters into the proper place
-		/// </summary>
-		/// <param name="sql">Source SQL command with parameter markers</param>
-		/// <returns>Byte array with all parameters included</returns>
-		private ArrayList ConvertSQLToBytes(string sql)
+		IDbDataParameter IDbCommand.CreateParameter()
 		{
-			ArrayList	byteArrays = new ArrayList();
+			return CreateParameter();
+		}
+
+		private ArrayList SplitSql(string sql)
+		{
+			ArrayList commands = new ArrayList();
 			System.IO.MemoryStream ms = new System.IO.MemoryStream();
-			
-			if (sql[ sql.Length-1 ] != ';')
-				sql += ';';
-			byte[] bytes = System.Text.Encoding.ASCII.GetBytes(sql);
+
+			// first we tack on a semi-colon, if not already there, to make our
+			// sql processing code easier.  Then we ask our encoder to give us
+			// the bytes for this sql string
+			byte[] bytes = connection.Encoding.GetBytes(sql + ";");
 
 			byte left_byte = 0;
-			int  parm_start=-1, parm_end = -1;
+			bool escaped = false;
+			int  parm_start=-1;
 			for (int x=0; x < bytes.Length; x++)
 			{
 				byte b = bytes[x];
+
 				// if we see a quote marker, then check to see if we are opening
 				// or closing a quote
-				if (b == '\'' || b == '\"')
+				if ((b == '\'' || b == '\"') && ! escaped )
 				{
-					if (b == left_byte)
-					{
-						left_byte = 0;
-					}
-					else
-					{
-						if (left_byte == 0)
-							left_byte = b;
-					}
-					ms.WriteByte(b);
+					if (b == left_byte) left_byte = 0;
+					else if (left_byte == 0) left_byte = b;
 				}
 
-					// if we find a ; not part of a quoted string, then take the parsed portion
-					// as a sql command and add it to the array
-				else if (b == ';' && left_byte == 0)
+				else if (b == '\\') 
 				{
-					byte[] sqlBytes = ms.ToArray();
-					byteArrays.Add( sqlBytes );
-					ms = new System.IO.MemoryStream();
+					escaped = !escaped;
 				}
 
 					// if we see the marker for a parameter, then save its position and
 					// look for the end
-				else if (b == '@' && left_byte == 0) 
-				{
+				else if (b == '@' && left_byte == 0 && ! escaped && parm_start==-1) 
 					parm_start = x;
-					left_byte = b;
-				}
 
 					// if we see a space and we are tracking a parameter, then end the parameter and have
-					// that parameter serialize itself to the memory streams
-				else if ((b == ' ' || b == ',' || b == ';' || b == ')') && left_byte == '@')
+					// that parameter serialize itself to the memory stream
+				else if (parm_start > -1 && (b != '@') && (b != '$') && (b != '_') && (b != '.') && ! Char.IsLetterOrDigit((char)b))
 				{
-					parm_end = x-1;
-					string parm_name = sql.Substring(parm_start, parm_end-parm_start+1);
-					MySQLParameter p = (m_parameters[parm_name] as MySQLParameter);
-					p.SerializeToBytes(ms);
-					ms.WriteByte(b);
+					string parm_name = sql.Substring(parm_start, x-parm_start); 
 
-					if (b == ';') 
+					if(parm_name.Length<2 || parm_name[1]!='@') // if doesn't begin with @@, do our processing.
 					{
-						byte[] sqlBytes = ms.ToArray();
-						byteArrays.Add( sqlBytes );
-						ms = new System.IO.MemoryStream();
+						MySqlParameter p = (parameters[parm_name] as MySqlParameter);
+						p.SerializeToBytes(ms, connection );
 					}
-
-					left_byte = 0;
+					else
+					{
+						// otherwise assume system param. just write it out
+						byte[] buf = connection.Encoding.GetBytes(parm_name);
+						ms.Write(buf, 0, buf.Length); 
+					}
+					parm_start=-1;
 				}
 
-					// we want to write out the bytes in all cases except when we are parsing out a parameter
-				else if (left_byte != '@')
-					ms.WriteByte( b );
+				// if we are not in a string and we are not escaped and we are on a semi-colon,
+				// then write out what we have as a command
+				if (left_byte == 0 && ! escaped && b == ';' && ms.Length > 0)
+				{
+					commands.Add( ms.ToArray() );
+					ms.SetLength(0);
+				}
+				else if (parm_start == -1)
+					ms.WriteByte(b);
+
+
+				// we want to write out the bytes in all cases except when we are parsing out a parameter
+				if (escaped && b != '\\') escaped = false;
 			}
 
-			// if we have any left, then add it at the end
-			if (ms.Length > 0) 
+			return commands;
+		}
+
+/*		internal void ExecuteRemainingCommands()
+		{
+			// let's execute any remaining commands
+			Packet packet = ExecuteNextSql();
+			while (packet != null)
 			{
-				byte[] newbytes = ms.ToArray();
-				byteArrays.Add( newbytes );
+				while (packet.Type != PacketType.Last)
+					packet = connection.InternalConnection.Driver.ReadPacket();
+				packet = ExecuteNextSql();
 			}
-
-/*			string s = new string('c', 0);
-			byte[] bites = (byte[])byteArrays[0];
-			for (int zt=0; zt < bites.Length; zt++)
-				s += Convert.ToChar(bites[zt]);
-			System.Windows.Forms.MessageBox.Show(s);
+		}
 */
-			return byteArrays;
+		/// <summary>
+		/// Internal function to execute the next command in an array of commands
+		/// </summary>
+		internal Packet ExecuteBatch( bool stopAtResultSet )
+		{
+			Driver driver = connection.InternalConnection.Driver;
+
+			while (arraySql.Count > 0)
+			{
+				byte[] sql = (byte[])arraySql[0];
+				arraySql.RemoveAt(0);
+
+				string s = connection.Encoding.GetString(sql);
+				Packet packet =  driver.SendSql( s );
+				if (packet.Type == PacketType.UpdateOrOk)
+					updateCount += (int)packet.ReadLenInteger();
+				else if (packet.Type == PacketType.ResultSchema && stopAtResultSet)
+					return packet;
+				else do 
+					 {
+						packet = driver.ReadPacket();
+					 } while (packet.Type != PacketType.Last);
+			}
+			return null;
 		}
 
 		/// <summary>
@@ -278,36 +322,23 @@ namespace ByteFX.Data.MySQLClient
 		/// <returns>Number of rows affected</returns>
 		public int ExecuteNonQuery()
 		{
-			/*
-			* ExecuteNonQuery is intended for commands that do
-			* not return results, instead returning only the number
-			* of records affected.
-			*/
-
 			// There must be a valid and open connection.
-			if (m_connection == null || m_connection.State != ConnectionState.Open)
-			throw new InvalidOperationException("Connection must valid and open");
+			if (connection == null || connection.State != ConnectionState.Open)
+				throw new InvalidOperationException("Connection must valid and open");
 
-			ArrayList list = ConvertSQLToBytes( m_sCmdText );
-			m_UpdateCount = 0;
+			// Data readers have to be closed first
+			if (connection.Reader != null)
+				throw new MySqlException("There is already an open DataReader associated with this Connection which must be closed first.");
 
-			// Execute the command.
-			Driver d = m_connection.Driver;
-			try 
-			{
-				for (int x=0; x < list.Count; x++)
-				{
-					d.SendQuery( (byte[])list[x] );	
-					if (d.LastResult == 0)
-						m_UpdateCount += d.ReadLength();
-				}
-			}
-			catch (Exception ex)
-			{
-				throw ex;
-			}
+			// execute any commands left in the queue from before.
+			ExecuteBatch(false);
+			
+			arraySql = SplitSql( cmdText );
+			updateCount = 0;
 
-			return m_UpdateCount;
+			ExecuteBatch(false);
+
+			return (int)updateCount;
 		}
 
 		IDataReader IDbCommand.ExecuteReader ()
@@ -320,12 +351,12 @@ namespace ByteFX.Data.MySQLClient
 			return ExecuteReader (behavior);
 		}
 
-		public MySQLDataReader ExecuteReader()
+		public MySqlDataReader ExecuteReader()
 		{
 			return ExecuteReader(CommandBehavior.Default);
 		}
 
-		public MySQLDataReader ExecuteReader(CommandBehavior behavior)
+		public MySqlDataReader ExecuteReader(CommandBehavior behavior)
 		{
 			/*
 			* ExecuteReader should retrieve results from the data source
@@ -334,16 +365,14 @@ namespace ByteFX.Data.MySQLClient
 			*/
 
 			// There must be a valid and open connection.
-			if (m_connection == null || m_connection.State != ConnectionState.Open)
+			if (connection == null || connection.State != ConnectionState.Open)
 				throw new InvalidOperationException("Connection must valid and open");
 
-			if (0 != (behavior & CommandBehavior.CloseConnection))
-			{
-			}
+			// make sure all readers on this connection are closed
+			if (connection.Reader != null)
+				throw new InvalidOperationException("There is already an open DataReader associated with this Connection which must be closed first.");
 
-			if (0 != (behavior & CommandBehavior.Default))
-			{
-			}
+			string sql = cmdText;
 
 			if (0 != (behavior & CommandBehavior.KeyInfo))
 			{
@@ -363,61 +392,30 @@ namespace ByteFX.Data.MySQLClient
 
 			if (0 != (behavior & CommandBehavior.SingleRow))
 			{
+				sql = String.Format("SET SQL_SELECT_LIMIT=1;{0};SET sql_select_limit=-1;", cmdText);
 			}
 
+			// execute any commands left in the queue from before.
+			ExecuteBatch(false);
 
-			/*
-			* ExecuteReader should retrieve results from the data source
-			* and return a DataReader that allows the user to process 
-			* the results.
-			*/
-			ArrayList cmds = ConvertSQLToBytes( m_sCmdText );
-			m_UpdateCount = 0;
+			arraySql = SplitSql( sql );
 
-			MySQLDataReader reader = new MySQLDataReader(m_connection, behavior == CommandBehavior.SequentialAccess);
+			MySqlDataReader reader = new MySqlDataReader(this, behavior);
 
-			// Execute the command.
-			Driver d = m_connection.Driver;
 			try 
 			{
-				for (int x=0; x < cmds.Count; x++)
+				if (reader.NextResult()) 
 				{
-/*					string st = new string('c',0);
-					for (int z=0; z < ((byte[])cmds[x]).Length; z++)
-					{
-						st += Convert.ToChar( ((byte[])cmds[x])[z] );
-					}
-					System.Windows.Forms.MessageBox.Show(st); */
-
-/*					System.IO.FileStream fs = new System.IO.FileStream("c:\\cmd.sql",  System.IO.FileMode.OpenOrCreate);
-					byte[] bites = (byte[])(cmds[0]);
-					fs.Write(bites, 0, bites.Length);
-					fs.Close();
-*/
-					d.SendQuery( (byte[])cmds[x] );
-					if (d.LastResult == 0)
-						m_UpdateCount += d.ReadLength();
-					else
-						reader.LoadResults();
+					connection.Reader = reader;
+					return reader;
 				}
+				return null;
 			}
-			catch (Exception ex) 
+			catch (Exception e) 
 			{
-				throw ex;
+				System.Diagnostics.Trace.WriteLine("Exception in ExecuteReader: " + e.Message);
+				throw e;
 			}
-
-			return reader;
-
-			//TODO implement rest of command behaviors on ExecuteReader
-			/*
-			* The only CommandBehavior option supported by this
-			* sample is the automatic closing of the connection
-			* when the user is done with the reader.
-			*/
-		//      if (behavior == CommandBehavior.CloseConnection)
-		//        return new TemplateDataReader(resultset, m_connection);
-		//      else
-		//        return new TemplateDataReader(resultset);
 		}
 
 		/// <summary>
@@ -429,45 +427,37 @@ namespace ByteFX.Data.MySQLClient
 		public object ExecuteScalar()
 		{
 			// There must be a valid and open connection.
-			if (m_connection == null || m_connection.State != ConnectionState.Open)
+			if (connection == null || connection.State != ConnectionState.Open)
 				throw new InvalidOperationException("Connection must valid and open");
 
-			MySQLDataReader reader = new MySQLDataReader(m_connection, false);
-			ArrayList cmds = ConvertSQLToBytes( m_sCmdText );
-			m_UpdateCount = 0;
+			// Data readers have to be closed first
+			if (connection.Reader != null)
+				throw new MySqlException("There is already an open DataReader associated with this Connection which must be closed first.");
 
-			// Execute the command.
-			Driver d = m_connection.Driver;
+			// execute any commands left in the queue from before.
+			ExecuteBatch(false);
 
-			try 
-			{
-				for (int x=0; x < cmds.Count; x++)
-				{
-					d.SendQuery( (byte[])cmds[x] );
-					if (d.LastResult == 0)
-						m_UpdateCount += d.ReadLength();
-					else
-						reader.LoadResults();
-				}
-			}
-			catch (Exception ex)
-			{
-				throw ex;
-			}
+			arraySql = SplitSql( cmdText );
 
-			if (! reader.Read()) return null;
-			return reader.GetValue(0);
+			MySqlDataReader reader = new MySqlDataReader(this, 0);
+			reader.NextResult();
+			object val = null;
+			if (reader.Read())
+				val = reader.GetValue(0);
+			reader.Close();
+			return val;
 		}
 
 		public void Prepare()
 		{
 		}
+		#endregion
 
 		#region ICloneable
 		public object Clone() 
 		{
-			MySQLCommand clone = new MySQLCommand(m_sCmdText, m_connection, m_txn);
-			foreach (MySQLParameter p in m_parameters) 
+			MySqlCommand clone = new MySqlCommand(cmdText, connection, curTransaction);
+			foreach (MySqlParameter p in parameters) 
 			{
 				clone.Parameters.Add(p.Clone());
 			}
