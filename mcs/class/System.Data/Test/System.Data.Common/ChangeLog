@@ -1,3 +1,7 @@
+2004-09-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DBDataPermissionTest.cs: New. Unit tests for DBDataPermission.
+
 2004-09-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DBDataPermissionAttributeTest.cs: New. Unit tests for DBData
