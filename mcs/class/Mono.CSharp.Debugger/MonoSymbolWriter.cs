@@ -461,21 +461,19 @@ namespace Mono.CSharp.Debugger
 						  int[] endLines,
 						  int[] endColumns)
 		{
-			if (current_method == null)
-				return;
-
-			LineNumberEntry source_line = new LineNumberEntry (lines [0], offsets [0]);
-
-			if (current_method != null)
-				current_method.AddLine (source_line);
-		}
-
-		public void Initialize (IntPtr emitter, string filename, bool fFullBuild)
-		{
 			throw new NotSupportedException ();
 		}
 
-		public void Initialize (string blah, string filename, string[] blah2)
+		public void MarkSequencePoint (int offset, int line, int column)
+		{
+			if (current_method == null)
+				return;
+
+			LineNumberEntry source_line = new LineNumberEntry (line, offset);
+			current_method.AddLine (source_line);
+		}
+
+		public void Initialize (IntPtr emitter, string filename, bool fFullBuild)
 		{
 			throw new NotSupportedException ();
 		}
