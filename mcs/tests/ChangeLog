@@ -1,3 +1,7 @@
+2004-06-01  Marek Safar <marek.safar@seznam.cz>
+
+	* test-267.cs: New test.
+
 2004-05-30  Marek Safar <marek.safar@seznam.cz>
 
 	* test-240.cs: Enable test.
