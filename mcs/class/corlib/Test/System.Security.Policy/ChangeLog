@@ -1,3 +1,9 @@
+2004-01-14  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* UrlTest.cs: New. Unit tests for Url. Site test still fails.
+	* UrlMembershipConditionTest.cs: New. Unit tests for 
+	UrlMembershipCondition. Site test still fails.
+
 2004-01-05  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CodeGroupTest.cs: Updated to NUnit2. Added new tests for exceptions 
