@@ -288,7 +288,16 @@ namespace Mono.CSharp {
 					prop_info_arr, prop_values_arr,
 					field_info_arr, field_values_arr); 
 			} catch {
-				Console.WriteLine ("FIXME: We have chosen the wrong constructor!");
+				//
+				// Sample:
+				// using System.ComponentModel;
+				// [DefaultValue (CollectionChangeAction.Add)]
+				// class X { static void Main () {} }
+				//
+				Report.Warning (
+					-23, Location,
+					"The compiler can not encode this attribute in .NET due to\n" +
+					"\ta bug in the .NET runtime.  Try the Mono runtime");
 			}
 			
 			return cb;

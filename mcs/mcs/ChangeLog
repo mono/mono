@@ -1,5 +1,9 @@
 2002-05-26  Miguel de Icaza  <miguel@ximian.com>
 
+	* attribute.cs (Attribute.Resolve): Catch the error, and emit a
+	warning, I have verified that this is a bug in the .NET runtime
+	(JavaScript suffers of the same problem).
+
 	* typemanager.cs (MemberLookup): When looking up members for
 	interfaces, the parent of an interface is the implicit
 	System.Object (so we succeed in searches of Object methods in an
