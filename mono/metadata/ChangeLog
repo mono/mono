@@ -1,3 +1,12 @@
+2003-03-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c: moved Uri handling to assembly.c
+	* assembly.c: use g_filename_from_uri (). This makes assembly.LoadFrom
+	work when using a file Uri in *nix and windows.
+
+	* icall.c: fixed Assembly.CodeBase to return a valid Uri. The same for
+	GetReferencedAssemblies.
+
 2003-03-18  Dick Porter  <dick@ximian.com>
 
 	* icall.c: Rename a couple of internal calls
