@@ -111,7 +111,7 @@ namespace System.Web.UI.MobileControls.Adapters
 			Control.CreateDefaultTemplatedUI(doDataBind);
 		}
 
-		public bool HandlePostBackEvent(string eventArguments)
+		public virtual bool HandlePostBackEvent(string eventArguments)
 		{
 			return false;
 		}
@@ -128,22 +128,22 @@ namespace System.Web.UI.MobileControls.Adapters
 			return false;
 		}
 
-		public void OnInit(EventArgs e)
+		public virtual void OnInit(EventArgs e)
 		{
 			return;
 		}
 
-		public void OnLoad(EventArgs e)
+		public virtual void OnLoad(EventArgs e)
 		{
 			return;
 		}
 
-		public void OnPreRender(EventArgs e)
+		public virtual void OnPreRender(EventArgs e)
 		{
 			return;
 		}
 
-		public void OnUnload(EventArgs e)
+		public virtual void OnUnload(EventArgs e)
 		{
 			return;
 		}

@@ -1,6 +1,15 @@
 
 2003-10-08	Gaurav Vaish <gvaish_mono AT lycos.com>
 
+	* CHtmlCalendarAdapter.cs: Initial implmentation.
+	* ControlAdapter.cs      : HandlePostBackEvent(string),
+	                         : OnLoad(EventArgs),
+	                         : OnPreRender(EventArgs),
+	                         : OnUnload(EventArgs),
+	                         : OnRender(EventArgs)     - Marked virtual
+
+2003-10-08	Gaurav Vaish <gvaish_mono AT lycos.com>
+
 	* HtmlCalendarAdapter.cs: Initial implmentation.
 
 2003-09-29	Gaurav Vaish <gvaish_mono AT lycos.com>
