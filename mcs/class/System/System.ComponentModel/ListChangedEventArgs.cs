@@ -15,6 +15,7 @@ namespace System.ComponentModel {
 		ListChangedType changedType;
 		int oldIndex;
 		int newIndex;
+		PropertyDescriptor propDesc;	// What to do with this?
 	
 		public ListChangedEventArgs (ListChangedType listChangedType,
 					     int newIndex)
@@ -23,11 +24,11 @@ namespace System.ComponentModel {
 			this.newIndex = newIndex;
 		}
 	
-		[MonoTODO]
 		public ListChangedEventArgs (ListChangedType listChangedType,
 					     PropertyDescriptor propDesc)
 		{
 			this.changedType = listChangedType;
+			this.propDesc = propDesc;
 		}
 	
 		public ListChangedEventArgs (ListChangedType listChangedType,

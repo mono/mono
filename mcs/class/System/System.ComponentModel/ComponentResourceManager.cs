@@ -10,8 +10,11 @@
 
 #if NET_1_1
 
+using System;
 using System.Resources;
 using System.Globalization;
+using System.Collections;
+using System.Reflection;
 
 namespace System.ComponentModel {
 
@@ -28,13 +31,26 @@ namespace System.ComponentModel {
 
 		public void ApplyResources (object value, string objectName)
 		{
-			ApplyResources (value, objectName, null);
+			ApplyResources (value, objectName, System.Threading.Thread.CurrentThread.CurrentCulture);
 		}
 
-		[MonoTODO("Implement")]
 		public virtual void ApplyResources (object value, string objectName, CultureInfo culture)
 		{
-			throw new NotImplementedException ();
+			string objKey = objectName + ".";
+			Type type = value.GetType ();
+			
+			ResourceSet rset = GetResourceSet (culture, true, true);
+			foreach (DictionaryEntry di in rset)
+			{
+				string key = di.Key as string;
+				if (key.StartsWith (objKey)) {
+					key = key.Substring (objKey.Length);
+					PropertyInfo pi = type.GetProperty (key);
+					if (pi != null && pi.CanWrite)
+						pi.SetValue (value, Convert.ChangeType (di.Value, pi.PropertyType), null);
+				}
+			}
+			rset.Close ();
 		}
 	}
 }

@@ -1,3 +1,14 @@
+2004-04-08  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* AmbientValueAttribute.cs, EnumConverter.cs, ListChangedEventArgs.cs: 
+	  Removed unneded TODOs.
+	* ComponentResourceManager.cs: Implemented ApplyResources.
+	* EventDescriptorCollection.cs: Implemented several missing methods.
+	* LicFileLicenseProvider.cs: Implemented.
+	* MemberDescriptor.cs: Implemented some missing methods. Handle correctly
+	  the creation of the Attribute list.
+	* TypeConverter.cs: Use null as default value for attribute array parameter.
+
 2004-04-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Win32Exception.cs: added 10024 (WSAEMFILE).

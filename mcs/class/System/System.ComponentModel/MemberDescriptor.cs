@@ -21,41 +21,52 @@ namespace System.ComponentModel
     {
 
         private string name;
-        private string displayName;
         private Attribute [] attrs;
         private AttributeCollection attrCollection;
 		
         protected MemberDescriptor (string name, Attribute [] attrs)
         {
             this.name = name;
-            this.displayName = name;
             this.attrs = attrs;
         }
 
         protected MemberDescriptor (MemberDescriptor reference, Attribute [] attrs)
         {
             name = reference.name;
-            this.displayName = name;
             this.attrs = attrs;
         }
 
         protected MemberDescriptor (string name)
         {
             this.name = name;
-            this.displayName = name;
         }
 
         protected MemberDescriptor (MemberDescriptor reference)
         {
             name = reference.name;
-            this.displayName = name;
-            attrs = reference.attrs;
+            attrs = reference.AttributeArray;
         }
 
         protected virtual Attribute [] AttributeArray 
         {
             get 
             {
+				if (attrs == null) 
+				{
+					ArrayList list = new ArrayList ();
+					FillAttributes (list);
+					
+					ArrayList filtered = new ArrayList ();
+					foreach (Attribute at in list) {
+						bool found = false;
+						for (int n=0; n<filtered.Count && !found; n++)
+							found = (filtered[n].GetType() == at.GetType ());
+						if (!found)
+							filtered.Add (at);
+					}
+					attrs = (Attribute[]) filtered.ToArray (typeof(Attribute));
+				}
+				
                 return attrs;
             }
 
@@ -65,13 +76,9 @@ namespace System.ComponentModel
             }
         }
 
-        [MonoTODO]
         protected virtual void FillAttributes(System.Collections.IList attributeList)
         {
-            // LAMESPEC/FIXME - I don't think this is correct, but didn't really understand
-            // what this sub is good for
-            attributeList = this.attrs;
-            return;
+			// to be overriden
         }
 
         public virtual AttributeCollection Attributes
@@ -86,7 +93,7 @@ namespace System.ComponentModel
 
         protected virtual AttributeCollection CreateAttributeCollection()
         {
-            return new AttributeCollection (attrs);
+            return new AttributeCollection (AttributeArray);
         }
 			
         public virtual string Category 
@@ -101,7 +108,7 @@ namespace System.ComponentModel
         {
             get 
             {
-                foreach (Attribute attr in attrs)
+                foreach (Attribute attr in AttributeArray)
                 {
                     if (attr is DescriptionAttribute)
                         return ((DescriptionAttribute) attr).Description;
@@ -114,7 +121,7 @@ namespace System.ComponentModel
         {
             get 
             {
-                foreach (Attribute attr in attrs)
+                foreach (Attribute attr in AttributeArray)
                 {
                     if (attr is DesignOnlyAttribute)
                         return ((DesignOnlyAttribute) attr).IsDesignOnly;
@@ -128,7 +135,7 @@ namespace System.ComponentModel
         {
             get 
             {
-                return displayName;
+                return name;
             }
         }
 
@@ -144,7 +151,7 @@ namespace System.ComponentModel
         {
             get 
             {
-                foreach (Attribute attr in attrs)
+                foreach (Attribute attr in AttributeArray)
                 {
                     if (attr is BrowsableAttribute)
                         return ((BrowsableAttribute) attr).Browsable;
@@ -167,17 +174,12 @@ namespace System.ComponentModel
             return name.GetHashCode ();
         }
 
-        [MonoTODO ("Probably not correctly implemented (too harsh?)")]
         public override bool Equals(object obj)
         {
-            if (!(obj is MemberDescriptor))
-                return false;
-            if (obj == this)
-                return true;
-            return (((MemberDescriptor) obj).AttributeArray == attrs) &&
-                (((MemberDescriptor) obj).Attributes == attrCollection) &&
-                (((MemberDescriptor) obj).DisplayName == displayName) &&
-                (((MemberDescriptor) obj).Name == name);
+			MemberDescriptor other = obj as MemberDescriptor;
+            if (obj == null) return false;
+			
+            return other.name == name;
         }
 
         protected static ISite GetSite(object component)
@@ -192,7 +194,11 @@ namespace System.ComponentModel
         protected static object GetInvokee(Type componentClass, object component)
         {
             // FIXME WHAT should that do???
-            throw new NotImplementedException ();
+			
+			// Lluis: Checked with VS.NET and it always return the component, even if
+			// it has its own designer set with DesignerAttribute. So, no idea
+			// what this should do.
+            return component;
         }
 
         protected static MethodInfo FindMethod(Type componentClass, string name, 

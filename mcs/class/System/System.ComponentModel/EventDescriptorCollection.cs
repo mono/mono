@@ -21,6 +21,10 @@ namespace System.ComponentModel
 		
 		public static readonly EventDescriptorCollection Empty;
 		
+		private EventDescriptorCollection ()
+		{
+		}
+		
 		public EventDescriptorCollection (EventDescriptor[] events) 
 		{
 			for (int i = 0; i < events.Length; i++)
@@ -69,32 +73,70 @@ namespace System.ComponentModel
 		}
 
 		public virtual EventDescriptorCollection Sort () {
-			eventList.Sort ();
-			return this;
+			EventDescriptorCollection col = CloneCollection ();
+			col.InternalSort ((IComparer) null);
+			return col;
 		}
 
 		public virtual EventDescriptorCollection Sort (IComparer comparer) {
-			eventList.Sort (comparer);
-			return this;
+			EventDescriptorCollection col = CloneCollection ();
+			col.InternalSort (comparer);
+			return col;
 		}
 
-		[MonoTODO]
 		public virtual EventDescriptorCollection Sort (string[] order) {
-			throw new NotImplementedException ();
+			EventDescriptorCollection col = CloneCollection ();
+			col.InternalSort (order);
+			return col;
 		}
 
-		[MonoTODO]
 		public virtual EventDescriptorCollection Sort (string[] order, IComparer comparer) {
-			throw new NotImplementedException ();
+			EventDescriptorCollection col = CloneCollection ();
+			ArrayList sorted = col.ExtractItems (order);
+			col.InternalSort (comparer);
+			sorted.AddRange (col.eventList);
+			col.eventList = sorted;
+			return col;
 		}
 
 		protected void InternalSort (IComparer comparer) {
 			eventList.Sort (comparer);
 		}
 
-		[MonoTODO]
 		protected void InternalSort (string[] order) {
-			throw new NotImplementedException ();
+			ArrayList sorted = ExtractItems (order);
+			InternalSort ((IComparer) null);
+			sorted.AddRange (eventList);
+			eventList = sorted;
+		}
+		
+		ArrayList ExtractItems (string[] names)
+		{
+			ArrayList sorted = new ArrayList (eventList.Count);
+			object[] ext = new object [names.Length];
+			
+			for (int n=0; n<eventList.Count; n++)
+			{
+				EventDescriptor ed = (EventDescriptor) eventList[n];
+				int i = Array.IndexOf (names, ed.Name);
+				if (i != -1) {
+					ext[i] = ed;
+					eventList.RemoveAt (n);
+					n--;
+				}
+			}
+			foreach (object ob in ext)
+				if (ob != null) sorted.Add (ob);
+				
+			sorted.AddRange (eventList);
+			return sorted;
+		}
+		
+		private EventDescriptorCollection CloneCollection ()
+		{
+			EventDescriptorCollection col = new EventDescriptorCollection ();
+			col.eventList = (ArrayList) eventList.Clone ();
+			return col;
 		}
 		
 		public int Count {

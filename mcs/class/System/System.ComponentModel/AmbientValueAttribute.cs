@@ -67,7 +67,6 @@ namespace System.ComponentModel
 			AmbientValue = value;
 		}
 
-		[MonoTODO]
 		public AmbientValueAttribute (Type type, string value)
 		{
 			try {

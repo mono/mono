@@ -273,7 +273,7 @@ namespace System.ComponentModel
 			public SimplePropertyDescriptor (Type componentType,
 							 string name,
 							 Type propertyType) :
-				this (componentType, name, propertyType, new Attribute [0])
+				this (componentType, name, propertyType, null)
 			{
 			}
 

@@ -4,10 +4,13 @@
 // Authors:
 //   Martin Willemoes Hansen (mwh@sysrq.dk)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // (C) 2003 Martin Willemoes Hansen
 // (C) 2003 Andreas Nahr
 //
+
+using System.IO;
 
 namespace System.ComponentModel
 {
@@ -18,13 +21,33 @@ namespace System.ComponentModel
 		{
 		}
 
-		[MonoTODO]
 		public override License GetLicense (LicenseContext context,
 						    Type type,
 						    object instance,
 						    bool allowExceptions)
 		{
-			throw new NotImplementedException();
+			try
+			{
+				if (context == null || context.UsageMode != LicenseUsageMode.Designtime)
+					return null;
+			
+				string path = Path.GetDirectoryName (type.Assembly.Location);
+				path = Path.Combine (path, type.FullName + ".LIC");
+			
+				if (!File.Exists (path)) return null;
+			
+				StreamReader sr = new StreamReader (path);
+				string key = sr.ReadLine ();
+				sr.Close ();
+				
+				if (IsKeyValid (key, type))
+					return new LicFileLicense (key);
+			}
+			catch
+			{
+				if (allowExceptions) throw;
+			}
+			return null;
 		}
 
 		protected virtual string GetKey (Type type)
@@ -37,6 +60,25 @@ namespace System.ComponentModel
 			if (key == null)
 				return false;
 			return key.Equals (GetKey (type));
+		}
+	}
+	
+	internal class LicFileLicense: License
+	{
+		string _key;
+		
+		public LicFileLicense (string key)
+		{
+			_key = key;
+		}
+		
+		public override string LicenseKey
+		{
+			get { return _key; }
+		}
+		
+		public override void Dispose ()
+		{
 		}
 	}
 }

@@ -24,13 +24,11 @@ namespace System.ComponentModel
 			this.type = type;
 		}
 
-		[MonoTODO]
 		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
 		{
 			return base.CanConvertTo (context, destinationType);
 		}
 
-		[MonoTODO]
 		public override object ConvertTo (ITypeDescriptorContext context,
 						  CultureInfo culture,
 						  object value,
