@@ -39,7 +39,6 @@ namespace System.Xml
 		}
 		
 		// Methods
-		[MonoTODO("Uri must be absolute.")]
 		public override object GetEntity (Uri absoluteUri, string role, Type ofObjectToReturn)
 		{
 			if (ofObjectToReturn == null)
@@ -47,8 +46,11 @@ namespace System.Xml
 			if (ofObjectToReturn != typeof (Stream))
 				throw new XmlException ("This object type is not supported.");
 
-			if (absoluteUri.Scheme == "file")
+			if (absoluteUri.Scheme == "file") {
+				if (absoluteUri.AbsolutePath == String.Empty)
+					throw new ArgumentException ("uri must be absolute.", "absoluteUri");
 				return new FileStream (UnescapeRelativeUriBody (absoluteUri.LocalPath), FileMode.Open, FileAccess.Read, FileShare.Read);
+			}
 
 			// (MS documentation says) parameter role isn't used yet.
 			Stream s = null;

@@ -493,6 +493,8 @@ namespace System.Xml
 				return ReadUntilEndTag ();
 			}
 
+			base64CacheStartsAt = -1;
+
 			more = ReadContent ();
 
 			if (depth == 0 && !allowMultipleRoot && (IsEmptyElement || NodeType == XmlNodeType.EndElement))
@@ -526,7 +528,6 @@ namespace System.Xml
 				return false;
 		}
 
-		[MonoTODO ("It looks to keep incomplete byte block.")]
 		public int ReadBase64 (byte [] buffer, int offset, int length)
 		{
 			if (offset < 0)
@@ -536,31 +537,94 @@ namespace System.Xml
 			else if (buffer.Length < offset + length)
 				throw new ArgumentOutOfRangeException ("buffer length is smaller than the sum of offset and length.");
 
+			if (length == 0)	// It does not raise an error.
+				return 0;
+
+			int bufIndex = offset;
+			int bufLast = offset + length;
+
+			if (base64CacheStartsAt >= 0) {
+				for (int i = base64CacheStartsAt; i < 3; i++) {
+					buffer [bufIndex++] = base64Cache [base64CacheStartsAt++];
+					if (bufIndex == bufLast)
+						return bufLast - offset;
+				}
+			}
+
+			for (int i = 0; i < 3; i++)
+				base64Cache [i] = 0;
+			base64CacheStartsAt = -1;
+
 			int max = (int) System.Math.Ceiling (4.0 / 3 * length);
+			int additional = max % 4;
+			if (additional > 0)
+				max += 4 - additional;
 			char [] chars = new char [max];
 			int charsLength = ReadChars (chars, 0, max);
 
-			int bufIndex = offset;
+			byte b = 0;
+			byte work = 0;
 			for (int i = 0; i < charsLength - 3; i += 4) {
-				buffer [bufIndex] = (byte) (GetBase64Byte (chars [i]) << 2);
+				b = (byte) (GetBase64Byte (chars [i]) << 2);
+				if (bufIndex < bufLast)
+					buffer [bufIndex] = b;
+				else {
+					if (base64CacheStartsAt < 0)
+						base64CacheStartsAt = 0;
+					base64Cache [0] = b;
+				}
+				// charsLength mod 4 might not equals to 0.
 				if (i + 1 == charsLength)
 					break;
-				byte b = GetBase64Byte (chars [i + 1]);
-				buffer [bufIndex] += (byte) (b >> 4);
-				bufIndex++;
-				buffer [bufIndex] = (byte) ((b & 0xf) << 4);
+				b = GetBase64Byte (chars [i + 1]);
+				work = (byte) (b >> 4);
+				if (bufIndex < bufLast) {
+					buffer [bufIndex] += work;
+					bufIndex++;
+				}
+				else
+					base64Cache [0] += work;
+
+				work = (byte) ((b & 0xf) << 4);
+				if (bufIndex < bufLast) {
+					buffer [bufIndex] = work;
+				}
+				else {
+					if (base64CacheStartsAt < 0)
+						base64CacheStartsAt = 1;
+					base64Cache [1] = work;
+				}
+
 				if (i + 2 == charsLength)
 					break;
 				b = GetBase64Byte (chars [i + 2]);
-				buffer [bufIndex] += (byte) (b >> 2);
-				bufIndex++;
-				buffer [bufIndex] = (byte) ((b & 3) << 6);
+				work = (byte) (b >> 2);
+				if (bufIndex < bufLast) {
+					buffer [bufIndex] += work;
+					bufIndex++;
+				}
+				else
+					base64Cache [1] += work;
+
+				work = (byte) ((b & 3) << 6);
+				if (bufIndex < bufLast)
+					buffer [bufIndex] = work;
+				else {
+					if (base64CacheStartsAt < 0)
+						base64CacheStartsAt = 2;
+					base64Cache [2] = work;
+				}
 				if (i + 3 == charsLength)
 					break;
-				buffer [bufIndex] += GetBase64Byte (chars [i + 3]);
-				bufIndex++;
+				work = GetBase64Byte (chars [i + 3]);
+				if (bufIndex < bufLast) {
+					buffer [bufIndex] += work;
+					bufIndex++;
+				}
+				else
+					base64Cache [2] += work;
 			}
-			return (int) System.Math.Ceiling (4.0 / 3 * max);
+			return System.Math.Min (bufLast - offset, bufIndex - offset);
 		}
 
 		public int ReadBinHex (byte [] buffer, int offset, int length)
@@ -909,6 +973,8 @@ namespace System.Xml
 
 		// For ReadChars()/ReadBase64()/ReadBinHex()
 		private bool shouldSkipUntilEndTag;
+		private byte [] base64Cache = new byte [3];
+		private int base64CacheStartsAt;
 
 		// These values are never re-initialized.
 		private bool namespaces = true;
@@ -959,6 +1025,7 @@ namespace System.Xml
 			currentState = XmlNodeType.None;
 
 			shouldSkipUntilEndTag = false;
+			base64CacheStartsAt = -1;
 		}
 
 		private void InitializeContext (string url, XmlParserContext context, TextReader fragment, XmlNodeType fragType)

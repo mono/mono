@@ -217,7 +217,7 @@ namespace System.Xml {
 			get { return schemaInfo.SchemaType; }
 		}
 
-		[MonoTODO]
+//		[MonoTODO] We decided not to support XDR schema. It is obsolete.
 		public ValidationType ValidationType {
 			get { return validationType; }
 			set {
@@ -351,17 +351,14 @@ namespace System.Xml {
 			return validatingReader.MoveToNextAttribute ();
 		}
 
-		[MonoTODO]
+//		[MonoTODO] We decided not to support XDR schema. It is obsolete.
 		public override bool Read ()
 		{
 			if (ReadState == ReadState.Initial) {
 				switch (ValidationType) {
 				case ValidationType.Auto:
 				case ValidationType.None:
-//					if (schemas.Count > 0)
-						goto case ValidationType.Schema; // might be specified by xsi:schemaLocation.
-//					else
-//						goto case ValidationType.DTD;
+					goto case ValidationType.Schema; // might be specified by xsi:schemaLocation.
 				case ValidationType.DTD:
 					validatingReader = dtdReader = new DTDValidatingReader (sourceReader, this);
 					if (specifiedResolver)

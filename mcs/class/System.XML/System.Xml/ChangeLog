@@ -1,3 +1,13 @@
+2003-10-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlNode.cs : GetPrefixOfNamespace() also contained a bug similar to
+	  GetNamespaceOfPrefix() fixed at 2003-10-13.
+	* XmlTextReader.cs : ReadBase64() should keep incomplete base64 block
+	  which remained by previous call of this method.
+	* XmlUrlResolver.cs : Added assertion for file Uri path's absoluteness.
+	* XmlValidatingReader.cs : Notice about intention of XDR won't be
+	  supported (at least in Mono 1.0).
+
 2003-10-18  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlDocument.cs : CloneNode() does not copy PreserveWhitespace.

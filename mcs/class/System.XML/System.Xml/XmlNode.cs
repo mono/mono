@@ -318,7 +318,7 @@ namespace System.Xml
 				break;
 			}
 
-			while (node.NodeType != XmlNodeType.Document) {
+			while (node != null && node.Attributes != null) {
 				foreach (XmlAttribute attr in node.Attributes) {
 					if (attr.Prefix == "xmlns" && attr.Value == namespaceURI)
 						return attr.LocalName;
