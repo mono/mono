@@ -67,22 +67,22 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
-		protected Exception CreateInvalidCastException (string name, object value)
+		protected Exception CreateInvalidCastException (Type type, object value)
 		{
-			throw new NotImplementedException ();
+			string message = String.Format ("Cannot assign object of type {0} to an object of type {1}.", value.GetType (), type);
+			return new InvalidCastException (message);
 		}
 
-		[MonoTODO ("Implement")]
 		protected Exception CreateReadOnlyCollectionException (string name)
 		{
-			throw new NotImplementedException ();
+			string message = String.Format ("Could not serialize {0}. Default constructors are required for collections and enumerators.", name);
+			return new InvalidOperationException (message);
 		}
 
-		[MonoTODO ("Implement")]
 		protected Exception CreateUnknownConstantException (string value, Type enumType)
 		{
-			throw new NotImplementedException ();
+			string message = String.Format ("'{0}' is not a valid value for {1}.", value, enumType);
+			return new InvalidOperationException (message);
 		}
 
 		[MonoTODO ("Implement")]
@@ -132,7 +132,6 @@ namespace System.Xml.Serialization {
 		{
 			throw new NotImplementedException ();
 		}
-
 
 		protected abstract void InitCallbacks ();
 		protected abstract void InitIDs ();
@@ -281,22 +280,19 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected static char ToChar (string value)
 		{
-			throw new NotImplementedException ();
+			return XmlCustomFormatter.ToChar (value);
 		}
 
-		[MonoTODO ("Implement")]
 		protected static DateTime ToDate (string value)
 		{
-			throw new NotImplementedException ();
+			return XmlCustomFormatter.ToDate (value);
 		}
 
-		[MonoTODO ("Implement")]
 		protected static DateTime ToDateTime (string value)
 		{
-			throw new NotImplementedException ();
+			return XmlCustomFormatter.ToDateTime (value);
 		}
 
 		[MonoTODO ("Implement")]
@@ -305,34 +301,29 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected static DateTime ToTime (string value)
 		{
-			throw new NotImplementedException ();
+			return XmlCustomFormatter.ToTime (value);
 		}
 
-		[MonoTODO ("Implement")]
 		protected static string ToXmlName (string value)
 		{
-			throw new NotImplementedException ();
+			return XmlCustomFormatter.ToXmlName (value);
 		}
 
-		[MonoTODO ("Implement")]
 		protected static string ToXmlNCName (string value)
 		{
-			throw new NotImplementedException ();
+			return XmlCustomFormatter.ToXmlNCName (value);
 		}
 
-		[MonoTODO ("Implement")]
 		protected static string ToXmlNmToken (string value)
 		{
-			throw new NotImplementedException ();
+			return XmlCustomFormatter.ToXmlNmToken (value);
 		}
 
-		[MonoTODO ("Implement")]
 		protected static string ToXmlNmTokens (string value)
 		{
-			throw new NotImplementedException ();
+			return XmlCustomFormatter.ToXmlNmTokens (value);
 		}
 
 		[MonoTODO ("Implement")]

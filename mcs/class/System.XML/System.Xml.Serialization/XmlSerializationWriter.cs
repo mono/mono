@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections;
+using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 
@@ -16,6 +17,9 @@ namespace System.Xml.Serialization {
 	public abstract class XmlSerializationWriter {
 
 		#region Fields
+
+		Hashtable references;
+		int referenceCount;
 
 		ArrayList namespaces;
 		XmlWriter writer;
@@ -27,6 +31,8 @@ namespace System.Xml.Serialization {
 		[MonoTODO]
 		protected XmlSerializationWriter ()
 		{
+			references = new Hashtable ();
+			referenceCount = 0;
 		}
 
 		#endregion // Constructors
@@ -76,66 +82,56 @@ namespace System.Xml.Serialization {
 			return new InvalidOperationException (message);
 		}
 
-		[MonoTODO ("Implement")]
 		protected static byte[] FromByteArrayBase64 (byte[] value)
 		{
-			throw new NotImplementedException ();
+			return XmlCustomFormatter.FromByteArrayBase64 (value);
 		}
 
-		[MonoTODO ("Implement")]
 		protected static string FromByteArrayHex (byte[] value)
 		{
-			throw new NotImplementedException ();
+			return XmlCustomFormatter.FromByteArrayHex (value);
 		}
 
 		protected static string FromChar (char value)
 		{
-			return ((int) value).ToString ();
+			return XmlCustomFormatter.FromChar (value);
 		}
 
-		[MonoTODO ("Implement")]
 		protected static string FromDate (DateTime value)
 		{
-			throw new NotImplementedException ();
+			return XmlCustomFormatter.FromDate (value);
 		}
 
-		[MonoTODO ("Implement")]
 		protected static string FromDateTime (DateTime value)
 		{
-			throw new NotImplementedException ();
+			return XmlCustomFormatter.FromDateTime (value);
 		}
 
-		[MonoTODO ("Implement")]
 		protected static string FromEnum (long value, string[] values, long[] ids)
 		{
-			throw new NotImplementedException ();
+			return XmlCustomFormatter.FromEnum (value, values, ids);
 		}
 
-		[MonoTODO ("Implement")]
 		protected static string FromTime (DateTime value)
 		{
-			throw new NotImplementedException ();
+			return XmlCustomFormatter.FromTime (value);
 		}
 
-		[MonoTODO ("Implement")]
 		protected static string FromXmlName (string name)
 		{
 			return XmlCustomFormatter.FromXmlName (name);
 		}
 
-		[MonoTODO ("Implement")]
 		protected static string FromXmlNCName (string ncName)
 		{
 			return XmlCustomFormatter.FromXmlNCName (ncName);
 		}
 
-		[MonoTODO ("Implement")]
 		protected static string FromXmlNmToken (string nmToken)
 		{
 			return XmlCustomFormatter.FromXmlNmToken (nmToken);
 		}
 
-		[MonoTODO ("Implement")]
 		protected static string FromXmlNmTokens (string nmTokens)
 		{
 			return XmlCustomFormatter.FromXmlNmTokens (nmTokens);
@@ -144,13 +140,22 @@ namespace System.Xml.Serialization {
 		[MonoTODO ("Implement")]
 		protected string FromXmlQualifiedName (XmlQualifiedName xmlQualifiedName)
 		{
-			return GetQualifiedName (xmlQualifiedName.Name, xmlQualifiedName.Namespace).ToString ();
+			return GetQualifiedName (xmlQualifiedName.Name, xmlQualifiedName.Namespace);
 		}
 
-		private XmlQualifiedName GetQualifiedName (string name, string ns)
+		private string GetId (object o, bool addToReferencesList)
+		{
+			referenceCount += 1;
+			string id = String.Format ("id{0}", referenceCount);
+			if (addToReferencesList)
+				references[o] = id;
+			return id;
+		}
+
+		private string GetQualifiedName (string name, string ns)
 		{
 			WriteAttribute ("xmlns", "q1", null, ns);
-			return new XmlQualifiedName (name, "q1");
+			return String.Format ("{0}:{1}", "q1", name);
 		}
 
 		protected abstract void InitCallbacks ();
@@ -171,10 +176,11 @@ namespace System.Xml.Serialization {
 			WriteAttribute (String.Empty, localName, String.Empty, value);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteAttribute (string localName, string ns, byte[] value)
 		{
-			throw new NotImplementedException ();
+			Writer.WriteStartAttribute (localName, ns);
+			WriteValue (value);
+			Writer.WriteEndAttribute ();
 		}
 
 		protected void WriteAttribute (string localName, string ns, string value)
@@ -184,7 +190,9 @@ namespace System.Xml.Serialization {
 
 		protected void WriteAttribute (string prefix, string localName, string ns, string value)
 		{
-			Writer.WriteAttributeString (prefix, localName, ns, value);
+			Writer.WriteStartAttribute (prefix, localName, ns);
+			WriteValue (value);
+			Writer.WriteEndAttribute ();
 		}
 
 		[MonoTODO ("Implement")]
@@ -321,10 +329,9 @@ namespace System.Xml.Serialization {
 			Writer.WriteEndElement ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteId (object o)
 		{
-			throw new NotImplementedException ();
+			WriteAttribute ("id", GetId (o, true));
 		}
 
 		[MonoTODO ("Implement")]
@@ -475,16 +482,16 @@ namespace System.Xml.Serialization {
 				Writer.WriteStartElement (name, ns);
 		}
 
-		[MonoTODO ("Include XMLSchema-Instance namespace")]
+		[MonoTODO ("get primitive type name")]
 		protected void WriteTypedPrimitive (string name, string ns, object o, bool xsiType)
 		{
-			if (!xsiType) {
-				WriteElementString (name, ns, o.ToString ());
-				return;
-			}
+			WriteStartElement (name, ns);
 
-			XmlQualifiedName xsiTypeQName = new XmlQualifiedName (o.GetType ().Name, XmlSchema.Namespace);
-			WriteElementString (name, ns, o.ToString (), xsiTypeQName);
+			if (xsiType)
+				WriteXsiType (o.GetType ().Name, XmlSchema.Namespace);
+
+			WriteValue (o.ToString ());
+			WriteEndElement ();
 		}
 
 		protected void WriteValue (byte[] value)
@@ -497,26 +504,24 @@ namespace System.Xml.Serialization {
 			Writer.WriteString (value);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteXmlAttribute (XmlNode node)
 		{
-			throw new NotImplementedException ();
+			WriteXmlAttribute (node, null);
 		}
 
 		[MonoTODO ("Implement")]
 		protected void WriteXmlAttribute (XmlNode node, object container)
 		{
+			if (!(node is XmlAttribute))
+				throw new InvalidOperationException ("The node must be either type XmlAttribute or a derived type.");
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Change prefix")]
 		protected void WriteXsiType (string name, string ns)
 		{
-			WriteAttribute ("d0p1", "type", null, GetQualifiedName (name, ns).ToString ());
+			WriteAttribute ("type", XmlSchema.InstanceNamespace, GetQualifiedName (name, ns));
 		}
 		
-
-
 		#endregion
 	}
 }

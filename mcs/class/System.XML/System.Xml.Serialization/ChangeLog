@@ -1,7 +1,9 @@
 2002-08-22  Tim Coleman <tim@timcoleman.com>
+	* XmlSerializationReader.cs:
+		Some implementation
 	* XmlSerializationWriter.cs:
 		More implementation
-	* XmlCustomFormatter.sc:
+	* XmlCustomFormatter.cs:
 		Implemented this class.
 
 2002-08-20  Tim Coleman <tim@timcoleman.com>
