@@ -1,3 +1,7 @@
+2002-12-14  Ville Palo vi64pa@koti.soon.fi>
+
+	* System.Xml/XmlDataDocumentTest.cs: Added three new tests
+	
 2002-12-10  Ville Palo <vi64pa@koti.soon.fi>
 
 	* System.Xml/XmlDataDocumentTest.cs: Added new tests 
