@@ -6,9 +6,8 @@
 //    Ricardo Fernández Pascual
 //
 // (C) 2001 Ricardo Fernández Pascual
+// Copyright (C) 2004 Novell (http://www.novell.com)
 //
-
-
 
 using System;
 using System.Collections;
@@ -23,7 +22,9 @@ namespace MonoTests.System.Collections {
 		protected Queue q2;
 		protected Queue emptyQueue;
 
-		protected void SetUp () {
+		[SetUp]
+		protected void SetUp () 
+		{
 			q1 = new Queue (10);
 			for (int i = 0; i < 100; i++)
 				q1.Enqueue (i);
@@ -196,8 +197,7 @@ namespace MonoTests.System.Collections {
 
 
 		public void TestCopyTo () 
-{
-
+		{
 			SetUp();
 
 			int[] a1 = new int[100];
@@ -295,6 +295,16 @@ namespace MonoTests.System.Collections {
 			} 
 			catch (InvalidOperationException) {}
 
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void EnumeratorCurrentAfterMoveNextAll () 
+		{
+			IEnumerator e = q1.GetEnumerator();
+			while (e.MoveNext ()) {
+			}
+			AssertNotNull (e.Current);
 		}
 
 		public void TestClone () {
@@ -433,7 +443,6 @@ namespace MonoTests.System.Collections {
 			Queue q1syncclone = (Queue) q1sync.Clone();
 			AssertEquals("clone must be synchronized too", true, q1syncclone.IsSynchronized);
 		}
-
 	}
 }
 
