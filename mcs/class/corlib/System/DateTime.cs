@@ -1,6 +1,7 @@
 //
 // System.DateTime.cs
 //
+
 // author:
 //   Marcel Narings (marcel@narings.nl)
 //   Martin Baulig (martin@gnome.org)
@@ -10,7 +11,6 @@
 using System;
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 
 namespace System
@@ -33,18 +33,14 @@ namespace System
 		// which is the constant ticks from the .NET epoch
 		private const long w32file_epoch = 504911232000000000L;
 
-		//private const long MAX_VALUE_TICKS = 3155378975400000000L;
-		// -- Microsoft .NET has this value.
-		private const long MAX_VALUE_TICKS = 3155378975999999999L;
-
 		//
 		// The UnixEpoch, it begins on Jan 1, 1970 at 0:0:0, expressed
 		// in Ticks
 		//
 		internal const long UnixEpoch = 621355968000000000L;
 		
-		public static readonly DateTime MaxValue = new DateTime (false, MAX_VALUE_TICKS);
-		public static readonly DateTime MinValue = new DateTime (false, 0);
+		public static readonly DateTime MaxValue = new DateTime (false,TimeSpan.MaxValue);
+		public static readonly DateTime MinValue = new DateTime (false,0);
 
 		private static string[] formats = {
 			// For compatibility with MS's CLR, this format (which
@@ -334,7 +330,7 @@ namespace System
 
 		public DateTime Add (TimeSpan ts)
 		{
-			return AddTicks (ts.Ticks);
+			return new DateTime (true, ticks) + ts;
 		}
 
 		public DateTime AddDays (double days)
@@ -344,10 +340,7 @@ namespace System
 		
 		public DateTime AddTicks (long t)
 		{
-			if ((t + ticks.Ticks) > MAX_VALUE_TICKS || (t + ticks.Ticks) < 0) {
-				throw new ArgumentOutOfRangeException();
-			}
-			return new DateTime (t + ticks.Ticks);
+			return Add (new TimeSpan (t));
 		}
 
 		public DateTime AddHours (double hours)
@@ -357,11 +350,9 @@ namespace System
 
 		public DateTime AddMilliseconds (double ms)
 		{
-			if (((ms + (ms > 0 ? 0.5 : -0.5)) * TimeSpan.TicksPerMillisecond) > long.MaxValue ||
-					((ms + (ms > 0 ? 0.5 : -0.5)) * TimeSpan.TicksPerMillisecond) < long.MinValue) {
-				throw new ArgumentOutOfRangeException();
-			}
-			long msticks = (long) (ms += ms > 0 ? 0.5 : -0.5) * TimeSpan.TicksPerMillisecond;
+			long msticks;
+			
+			msticks = (long) (ms += ms > 0 ? 0.5 : -0.5) * TimeSpan.TicksPerMillisecond ; 
 
 			return AddTicks (msticks);
 		}
@@ -745,23 +736,23 @@ namespace System
 
 					if (num == 0) {
 						year = _ParseNumber (s, 2, false, sloppy_parsing, out num_parsed);
+						year += (year < 30) ? 2000 : 1900;
 					} else if (num < 3) {
 						year = _ParseNumber (s, 2, true, sloppy_parsing, out num_parsed);
+						year += (year < 30) ? 2000 : 1900;
 					} else {
+						if(Char.IsDigit(s[4]))
+							throw new ArgumentOutOfRangeException ("year", "Valid " + 
+								"values are between 1 and 9999 inclusive");
 						year = _ParseNumber (s, 4, false, sloppy_parsing, out num_parsed);
 						num = 3;
 					}
 
-					//FIXME: We should do use dfi.Calendat.TwoDigitYearMax
-					if (num_parsed <= 2)
-						year += (year < 30) ? 2000 : 1900;
-					
 					// if there is another digit next to the ones we just parsed, then the year value
 					// is too big for sure.
 					//if (num_parsed < s.Length && Char.IsDigit(s[num_parsed]) || (year != 0 && (year < 1 || year > 9999)))
 					if (year != 0 && (year < 1 || year > 9999))
-						throw new ArgumentOutOfRangeException ("year", "Valid " + 
-								"values are between 1 and 9999 inclusive");
+						throw new ArgumentOutOfRangeException ("year", "Valid " + "values are between 1 and 9999 inclusive");
 					break;
 				case 'h':
 					if (hour != -1)
@@ -885,11 +876,6 @@ namespace System
 					if (!_ParseString (s, 0, dfi.TimeSeparator, out num_parsed))
 						return false;
 					break;
-				case '-':
-					if (!_ParseString (s, 0, "-", out num_parsed)) {
-						return false;
-					}
-					break;
 				case '/':
 					if (!_ParseString (s, 0, dfi.DateSeparator, out num_parsed))
 						return false;
@@ -948,6 +934,16 @@ namespace System
 
 			if (ampm == 1)
 				hour = hour + 12;
+
+			// this is added to make the 
+			// code compatible to .Net 1.1
+			if ( year < 1 || year > 9999 || 
+			month < 1 || month >12  ||
+			day < 1 || day > DaysInMonth(year, month) ||
+			hour < 0 || hour > 23 ||
+			minute < 0 || minute > 59 ||
+			second < 0 || second > 59 )
+				return false;
 
 			result = new DateTime (year, month, day, hour, minute, second, millisecond);
 
@@ -1015,7 +1011,7 @@ namespace System
 					return result;
 			}
 
-			throw new FormatException ();
+			throw new FormatException("String was not recognized as valid DateTime");
 		}
 		
 		public TimeSpan Subtract(DateTime dt)
@@ -1151,228 +1147,193 @@ namespace System
 
 		internal string _ToString (string format, DateTimeFormatInfo dfi)
 		{
-			// the length of the format is usually a good guess of the number
-			// of chars in the result. Might save us a few bytes sometimes
-			// Add + 10 for cases like mmmm dddd
-			StringBuilder result = new StringBuilder (format.Length + 10);
+			String str = null, result = null;
+			char[] chars = format.ToCharArray ();
+			int len = format.Length, pos = 0, num = 0;
 
-			int i = 0;
+			TimeZone tz = TimeZone.CurrentTimeZone;
+			TimeSpan utcoffset = tz.GetUtcOffset (this);
 
-			while (i < format.Length) {
-				int tokLen;
-				char ch = format [i];
+			while (pos < len)
+			{
+				if (chars[pos] == '\'') {
+					num = 1;
+					while (pos+num <= len) {
+						if (chars[pos+num] == '\'')
+							break;
 
-				switch (ch) {
-
-				//
-				// Time Formats
-				//
-				case 'h':
-					// hour, [1, 12]
-					tokLen = CountRepeat (format, i, ch);
-
-					int hr = this.Hour % 12;
-					if (hr == 0)
-						hr = 12;
-
-					ZeroPad (result, hr, tokLen == 1 ? 1 : 2);
-					break;
-				case 'H':
-					// hour, [0, 23]
-					tokLen = CountRepeat (format, i, ch);
-					ZeroPad (result, this.Hour, tokLen == 1 ? 1 : 2);
-					break;
-				case 'm':
-					// minute, [0, 59]
-					tokLen = CountRepeat (format, i, ch);
-					ZeroPad (result, this.Minute, tokLen == 1 ? 1 : 2);
-					break;
-				case 's':
-					// second [0, 29]
-					tokLen = CountRepeat (format, i, ch);
-					ZeroPad (result, this.Second, tokLen == 1 ? 1 : 2);
-					break;
-				case 'f':
-					// fraction of second, to same number of
-					// digits as there are f's
-
-					tokLen = CountRepeat (format, i, ch);
-					if (tokLen > 7)
-						throw new FormatException ("Invalid Format String");
-
-					int dec = (int)((long)(this.Ticks % TimeSpan.TicksPerSecond) / (long) Math.Pow (10, 7 - tokLen));
-					ZeroPad (result, dec, tokLen);
-
-					break;
-				case 't':
-					// AM/PM. t == first char, tt+ == full
-					tokLen = CountRepeat (format, i, ch);
-					string desig = this.Hour < 12 ? dfi.AMDesignator : dfi.PMDesignator;
-
-					if (tokLen == 1) {
-						if (desig.Length >= 1)
-							result.Append (desig [0]);
+						result += chars[pos+num];
+						num++;
 					}
-					else
-						result.Append (desig);
+					if (pos+num > len)
+						throw new FormatException (Locale.GetText ("The specified format is invalid"));
 
-					break;
-				case 'z':
-					// timezone. t = +/-h; tt = +/-hh; ttt+=+/-hh:mm
-					tokLen = CountRepeat (format, i, ch);
-					TimeSpan offset = TimeZone.CurrentTimeZone.GetUtcOffset (this);
+					pos += num+1;
+					num = 0;
+					continue;
+				} else if (chars[pos] == '\\') {
+					if (pos+1 >= len)
+						throw new FormatException (Locale.GetText ("The specified format is invalid"));
 
-					if (offset.Ticks >= 0)
-						result.Append ('+');
-					else
-						result.Append ('-');
+					result += chars[pos+1];
+					pos += 2;
+					continue;
+				} else if (chars[pos] == '%') {
+					pos++;
+					continue;
+				}
 
-					switch (tokLen) {
-					case 1:
-						result.Append (Math.Abs (offset.Hours));
-						break;
-					case 2:
-						result.Append (Math.Abs (offset.Hours).ToString ("00"));
-						break;
-					default:
-						result.Append (Math.Abs (offset.Hours).ToString ("00"));
-						result.Append (':');
-						result.Append (Math.Abs (offset.Minutes).ToString ("00"));
-						break;
-					}
-					break;
-				//
-				// Date tokens
-				//
+				if ((pos+num+1 < len) && (chars[pos+num+1] == chars[pos+num])) {
+					num++;
+					continue;
+				}
+
+				switch (chars[pos])
+				{
 				case 'd':
-					// day. d(d?) = day of month (leading 0 if two d's)
-					// ddd = three leter day of week
-					// dddd+ full day-of-week
-					tokLen = CountRepeat (format, i, ch);
-
-					if (tokLen <= 2)
-						ZeroPad (result, dfi.Calendar.GetDayOfMonth (this), tokLen == 1 ? 1 : 2);
-					else if (tokLen == 3)
-						result.Append (dfi.GetAbbreviatedDayName (dfi.Calendar.GetDayOfWeek (this)));
-					else
-						result.Append (dfi.GetDayName (dfi.Calendar.GetDayOfWeek (this)));
-
+					if (num == 0)
+						str = Day.ToString ("d");
+					else if (num == 1)
+						str = Day.ToString ("d02");
+					else if (num == 2)
+						str = dfi.GetAbbreviatedDayName (DayOfWeek);
+					else {
+						str = dfi.GetDayName (DayOfWeek);
+						num = 3;
+					}
 					break;
 				case 'M':
-					// Month.m(m?) = month # (with leading 0 if two mm)
-					// mmm = 3 letter name
-					// mmmm+ = full name
-					tokLen = CountRepeat (format, i, ch);
-					int month = dfi.Calendar.GetMonth(this);
-					if (tokLen <= 2)
-						ZeroPad (result, month, tokLen);
-					else if (tokLen == 3)
-						result.Append (dfi.GetAbbreviatedMonthName (month));
-					else
-						result.Append (dfi.GetMonthName (month));
-
+					if (num == 0)
+						str = Month.ToString ("d");
+					else if (num == 1)
+						str = Month.ToString ("d02");
+					else if (num == 2)
+						str = dfi.GetAbbreviatedMonthName (Month);
+					else {
+						str = dfi.GetMonthName (Month);
+						num = 3;
+					}
 					break;
 				case 'y':
-					// Year. y(y?) = two digit year, with leading 0 if yy
-					// yyy+ full year, if yyy and yr < 1000, displayed as three digits
-					tokLen = CountRepeat (format, i, ch);
-
-					if (tokLen <= 2)
-						ZeroPad (result, dfi.Calendar.GetYear (this) % 100, tokLen);
-					else
-						result.Append (dfi.Calendar.GetYear (this).ToString ("D" + (tokLen == 3 ? 3 : 4)));
-
+					if (num == 0) {
+						int shortyear = Year % 100;
+						str = shortyear.ToString ("d");
+					} else if (num == 1) {
+						int shortyear = Year % 100;
+						str = shortyear.ToString ("d02");
+					} else {
+						str = Year.ToString ("d04");
+						num = 3;
+					}
 					break;
 				case 'g':
-					// Era name
-					tokLen = CountRepeat (format, i, ch);
-					result.Append (dfi.GetEraName (dfi.Calendar.GetEra (this)));
+					// FIXME
 					break;
+				case 'f':
+					num = Math.Min (num, 6);
 
-				//
-				// Other
-				//
+					long relativeTicks = ticks.Ticks % TimeSpan.TicksPerSecond;
+
+					long exp = 10;
+					for (int i = 0; i < num; i++)
+						exp = exp * 10;
+
+					long frac = relativeTicks * exp / TimeSpan.TicksPerSecond;
+
+					String prec = (num+1).ToString ("d02");
+					str = frac.ToString (String.Concat ("d", prec));
+
+					break;
+				case 'h':
+
+					if (num == 0) {
+						int shorthour = Hour % 12;
+						str = shorthour.ToString ("d");
+					} else {
+						int shorthour = Hour % 12;
+						str = shorthour.ToString ("d02");
+						num = 1;
+					}
+					break;
+				case 'H':
+					if (num == 0)
+						str = Hour.ToString ("d");
+					else {
+						str = Hour.ToString ("d02");
+						num = 1;
+					}
+					break;
+				case 'm':
+					if (num == 0)
+						str = Minute.ToString ("d");
+					else {
+						str = Minute.ToString ("d02");
+						num = 1;
+					}
+					break;
+				case 's':
+					if (num == 0)
+						str = Second.ToString ("d");
+					else {
+						str = Second.ToString ("d02");
+						num = 1;
+					}
+					break;
+				case 't':
+					if (Hour < 12)
+						str = dfi.AMDesignator;
+					else
+						str = dfi.PMDesignator;
+
+					if (num == 0)
+						str = str.Substring (0,1);
+					else
+						num = 1;
+					break;
+				case 'z':
+					if (num == 0) {
+						int offset = utcoffset.Hours;
+						str = offset.ToString ("d");
+						str = String.Concat ((offset >= 0) ? "+" : "", str);
+					} 
+					else if (num == 1) 
+					{
+						int offset = utcoffset.Hours;
+						str = offset.ToString ("d02");
+						str = String.Concat ((offset >= 0) ? "+" : "", str);
+					} 
+					else if (num == 2) 
+					{
+						int offhour = utcoffset.Hours;
+						int offminute = utcoffset.Minutes;
+						str = offhour.ToString ("d02");
+						str = String.Concat (str, dfi.TimeSeparator);
+						str = String.Concat (str, offminute.ToString ("d02"));
+						str = String.Concat ((offhour >= 0) ? "+" : "", str);
+						num = 2;
+					}
+					break;
 				case ':':
-					result.Append (dfi.TimeSeparator);
-					tokLen = 1;
+					str = dfi.TimeSeparator;
+					num = 0;
 					break;
 				case '/':
-					result.Append (dfi.DateSeparator);
-					tokLen = 1;
-					break;
-				case '\'': case '"':
-					tokLen = ParseQuotedString (format, i, result);
-					break;
-				case '%':
-					if (i >= format.Length - 1)
-						throw new FormatException ("% at end of date time string");
-					if (format [i + 1] == '%')
-						throw new FormatException ("%% in date string");
-
-					// Look for the next char
-					tokLen = 1;
-					break;
-				case '\\':
-					// C-Style escape
-					if (i >= format.Length - 1)
-						throw new FormatException ("\\ at end of date time string");
-
-					result.Append (format [i + 1]);
-					tokLen = 2;
-
+					str = dfi.DateSeparator;
+					num = 0;
 					break;
 				default:
-					// catch all
-					result.Append (ch);
-					tokLen = 1;
+					str = String.Concat (chars [pos]);
+					num = 0;
 					break;
 				}
-				i += tokLen;
-			}
-			return result.ToString ();
-		}
-		
-		static int CountRepeat (string fmt, int p, char c)
-		{
-			int l = fmt.Length;
-			int i = p + 1;
-			while ((i < l) && (fmt [i] == c)) 
-				i++;
-			
-			return i - p;
-		}
-		
-		static int ParseQuotedString (string fmt, int pos, StringBuilder output)
-		{
-			// pos == position of " or '
-			
-			int len = fmt.Length;
-			int start = pos;
-			char quoteChar = fmt [pos++];
-			
-			while (pos < len) {
-				char ch = fmt [pos++];
-				
-				if (ch == quoteChar)
-					return pos - start;
-				
-				if (ch == '\\') {
-					// C-Style escape
-					if (pos >= len)
-						throw new FormatException("Un-ended quote");
-	
-					output.Append (fmt [pos++]);
-				} else {
-					output.Append (ch);
-				}
+
+				result = String.Concat (result, str);
+						
+				pos += num + 1;
+				num = 0;
 			}
 
-			throw new FormatException("Un-ended quote");
-		}
-		
-		static void ZeroPad (StringBuilder output, int digits, int padding)
-		{
-			output.Append (digits.ToString (new string ('0', padding)));
+			return result;
 		}
 
 		public string ToString (string format, IFormatProvider fp)
@@ -1479,9 +1440,9 @@ namespace System
 
 		// TODO Implement me
 		[MonoTODO]
-		System.DateTime IConvertible.ToDateTime(IFormatProvider provider)
+		public System.DateTime ToDateTime(IFormatProvider provider)
 		{
-			return new System.DateTime (true,this.ticks);
+			return new System.DateTime(true,this.ticks);
 		} 
 		
 		decimal IConvertible.ToDecimal(IFormatProvider provider)

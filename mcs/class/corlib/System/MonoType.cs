@@ -15,13 +15,26 @@ using System.Runtime.Serialization;
 
 namespace System
 {
+	internal struct MonoTypeInfo {
+		public string name;
+		public string name_space;
+		public Type etype;
+		public Type nested_in;
+		public Assembly assembly;
+		public int rank;
+		public bool isprimitive;
+	}
+
 	[Serializable]
-	internal class MonoType : Type, ISerializable
+	internal sealed class MonoType : Type, ISerializable
 	{
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void type_from_obj (MonoType type, Object obj);
 		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern void get_type_info (IntPtr type, out MonoTypeInfo info);
+
 		[MonoTODO]
 		internal MonoType (Object obj)
 		{
@@ -53,8 +66,7 @@ namespace System
 			MethodBase[] match;
 			int count = 0;
 			foreach (ConstructorInfo m in methods) {
-				// Under MS.NET, Standard|HasThis matches Standard...
-				if (callConvention != CallingConventions.Any && ((m.CallingConvention & callConvention) != callConvention))
+				if (callConvention != CallingConventions.Any && m.CallingConvention != callConvention)
 					continue;
 				found = m;
 				count++;
@@ -72,7 +84,7 @@ namespace System
 			else {
 				count = 0;
 				foreach (ConstructorInfo m in methods) {
-					if (callConvention != CallingConventions.Any && ((m.CallingConvention & callConvention) != callConvention))
+					if (callConvention != CallingConventions.Any && m.CallingConvention != callConvention)
 						continue;
 					match [count++] = m;
 				}
@@ -113,9 +125,9 @@ namespace System
 			Type[] interfaces = GetInterfaces();
 
 			foreach (Type type in interfaces) {
-				if (String.Compare (type.Name, name, ignoreCase, CultureInfo.InvariantCulture) == 0)
+				if (String.Compare (type.Name, name, ignoreCase) == 0)
 					return type;
-				if (String.Compare (type.FullName, name, ignoreCase, CultureInfo.InvariantCulture) == 0)
+				if (String.Compare (type.FullName, name, ignoreCase) == 0)
 					return type;
 			}
 
@@ -144,10 +156,9 @@ namespace System
 			MethodBase[] match;
 			int count = 0;
 			foreach (MethodInfo m in methods) {
-				if (String.Compare (m.Name, name, ignoreCase, CultureInfo.InvariantCulture) != 0)
+				if (String.Compare (m.Name, name, ignoreCase) != 0)
 					continue;
-				// Under MS.NET, Standard|HasThis matches Standard...
-				if (callConvention != CallingConventions.Any && ((m.CallingConvention & callConvention) != callConvention))
+				if (callConvention != CallingConventions.Any && m.CallingConvention != callConvention)
 					continue;
 				found = m;
 				count++;
@@ -165,9 +176,9 @@ namespace System
 			else {
 				count = 0;
 				foreach (MethodInfo m in methods) {
-					if (String.Compare (m.Name, name, ignoreCase, CultureInfo.InvariantCulture) != 0)
+					if (String.Compare (m.Name, name, ignoreCase) != 0)
 						continue;
-					if (callConvention != CallingConventions.Any && ((m.CallingConvention & callConvention) != callConvention))
+					if (callConvention != CallingConventions.Any && m.CallingConvention != callConvention)
 						continue;
 					match [count++] = m;
 				}
@@ -201,7 +212,7 @@ namespace System
 			bool ignoreCase = ((bindingAttr & BindingFlags.IgnoreCase) != 0);
 
 			foreach (PropertyInfo info in props) {
-					if (String.Compare (info.Name, name, ignoreCase, CultureInfo.InvariantCulture) != 0) 
+					if (String.Compare (info.Name, name, ignoreCase) != 0) 
 						continue;
 
 					if (returnType != null && info.PropertyType != returnType)
@@ -288,7 +299,7 @@ namespace System
 			if ((invokeAttr & BindingFlags.SetField) != 0 && ((args == null) || args.Length != 1))
 				throw new ArgumentException ("invokeAttr");
 			if ((namedParameters != null) && ((args == null) || args.Length < namedParameters.Length))
-				throw new ArgumentException ("namedParameters");
+				throw new ArgumentException ("namedParameters cannot be more than named arguments in number");
 
 			/* set some defaults if none are provided :-( */
 			if ((invokeAttr & (BindingFlags.Public|BindingFlags.NonPublic)) == 0)
@@ -320,13 +331,13 @@ namespace System
 				object state = null;
 				int i, count = 0;
 				for (i = 0; i < methods.Length; ++i) {
-					if (String.Compare (methods [i].Name, name, ignoreCase, CultureInfo.InvariantCulture) == 0)
+					if (String.Compare (methods [i].Name, name, ignoreCase) == 0)
 						count++;
 				}
 				MethodBase[] smethods = new MethodBase [count];
 				count = 0;
 				for (i = 0; i < methods.Length; ++i) {
-					if (String.Compare (methods [i].Name, name, ignoreCase, CultureInfo.InvariantCulture) == 0)
+					if (String.Compare (methods [i].Name, name, ignoreCase) == 0)
 						smethods [count++] = methods [i];
 				}
 				MethodBase m = binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, out state);
@@ -359,14 +370,14 @@ namespace System
 				object state = null;
 				int i, count = 0;
 				for (i = 0; i < properties.Length; ++i) {
-					if (String.Compare (properties [i].Name, name, ignoreCase, CultureInfo.InvariantCulture) == 0 && (properties [i].GetGetMethod () != null))
+					if (String.Compare (properties [i].Name, name, ignoreCase) == 0 && (properties [i].GetGetMethod () != null))
 						count++;
 				}
 				MethodBase[] smethods = new MethodBase [count];
 				count = 0;
 				for (i = 0; i < properties.Length; ++i) {
 					MethodBase mb = properties [i].GetGetMethod ();
-					if (String.Compare (properties [i].Name, name, ignoreCase, CultureInfo.InvariantCulture) == 0 && (mb != null))
+					if (String.Compare (properties [i].Name, name, ignoreCase) == 0 && (mb != null))
 						smethods [count++] = mb;
 				}
 				MethodBase m = binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, out state);
@@ -380,14 +391,14 @@ namespace System
 				object state = null;
 				int i, count = 0;
 				for (i = 0; i < properties.Length; ++i) {
-					if (String.Compare (properties [i].Name, name, ignoreCase, CultureInfo.InvariantCulture) == 0 && (properties [i].GetSetMethod () != null))
+					if (String.Compare (properties [i].Name, name, ignoreCase) == 0 && (properties [i].GetSetMethod () != null))
 						count++;
 				}
 				MethodBase[] smethods = new MethodBase [count];
 				count = 0;
 				for (i = 0; i < properties.Length; ++i) {
 					MethodBase mb = properties [i].GetSetMethod ();
-					if (String.Compare (properties [i].Name, name, ignoreCase, CultureInfo.InvariantCulture) == 0 && (mb != null))
+					if (String.Compare (properties [i].Name, name, ignoreCase) == 0 && (mb != null))
 						smethods [count++] = mb;
 				}
 				MethodBase m = binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, out state);
@@ -403,14 +414,20 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern override Type GetElementType ();
 
-		public extern override Type UnderlyingSystemType {
-			[MethodImplAttribute(MethodImplOptions.InternalCall)]
-			get;
+		public override Type UnderlyingSystemType {
+			get {
+				MonoTypeInfo info;
+				get_type_info (_impl.Value, out info);
+				return info.etype;
+			}
 		}
 
-		public extern override Assembly Assembly {
-			[MethodImplAttribute(MethodImplOptions.InternalCall)]
-			get;
+		public override Assembly Assembly {
+			get {
+				MonoTypeInfo info;
+				get_type_info (_impl.Value, out info);
+				return info.assembly;
+			}
 		}
 
 		public override string AssemblyQualifiedName {
@@ -456,21 +473,29 @@ namespace System
 
 		public override MemberTypes MemberType {
 			get {
-				if (DeclaringType != null)
-					return MemberTypes.NestedType;
-				else
-					return MemberTypes.TypeInfo;
+				MonoTypeInfo info;
+				get_type_info (_impl.Value, out info);
+				return info.nested_in == null? MemberTypes.TypeInfo: MemberTypes.NestedType;
 			}
 		}
 
-		public extern override string Name {
-			[MethodImplAttribute(MethodImplOptions.InternalCall)]
-			get;
+		public override string Name {
+			get {
+				MonoTypeInfo info;
+				get_type_info (_impl.Value, out info);
+				return info.name;
+			}
 		}
 
-		public extern override string Namespace {
-			[MethodImplAttribute(MethodImplOptions.InternalCall)]
-			get;
+		public override string Namespace {
+			get {
+				MonoTypeInfo info;
+				get_type_info (_impl.Value, out info);
+				if (info.nested_in == null)
+					return info.name_space;
+				else
+					return info.nested_in.Namespace;
+			}
 		}
 
 		public extern override Module Module {
@@ -478,14 +503,19 @@ namespace System
 			get;
 		}
 
-		public extern override Type DeclaringType {
-			[MethodImplAttribute(MethodImplOptions.InternalCall)]
-			get;
+		public override Type DeclaringType {
+			get {
+				MonoTypeInfo info;
+				get_type_info (_impl.Value, out info);
+				return info.nested_in;
+			}
 		}
 
 		public override Type ReflectedType {
 			get {
-				return DeclaringType;
+				MonoTypeInfo info;
+				get_type_info (_impl.Value, out info);
+				return info.nested_in;
 			}
 		}
 
@@ -495,47 +525,35 @@ namespace System
 			}
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern override int GetArrayRank ();
+		public override int GetArrayRank ()
+		{
+			MonoTypeInfo info;
+			
+			get_type_info (_impl.Value, out info);
+			return info.rank;
+		}
 
 		public void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			UnitySerializationHolder.GetTypeData (this, info, context);
 		}
 
-#if NET_1_2
-		public extern override bool HasGenericArguments {
+#if GENERICS
+		public extern override bool HasGenericParameters {
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
 			get;
 		}
 
-		public override bool ContainsGenericParameters {
-			get {
-				if (IsGenericParameter)
-					return true;
-
-				if (HasGenericArguments) {
-					foreach (Type arg in GetGenericArguments ())
-						if (arg.ContainsGenericParameters)
-							return true;
-				}
-
-				if (HasElementType)
-					return GetElementType ().ContainsGenericParameters;
-
-				return false;
-			}
-		}
-
-		public extern override bool IsGenericParameter {
+		public extern override bool HasUnboundGenericParameters {
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
 			get;
 		}
 
-		public extern override MethodInfo DeclaringMethod {
+		public extern override bool IsUnboundGenericParameter {
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
 			get;
 		}
+
 #endif
 	}
 }
