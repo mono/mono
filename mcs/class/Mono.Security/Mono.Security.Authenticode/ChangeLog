@@ -1,3 +1,14 @@
+2003-09-01  Sebastien Pouliot  <spouliot@videotron.ca>	
+
+	* AuthenticodeBase.cs: New. Base class including how to hash a
+	PE file.
+	* AuthenticodeDeformatter.cs: New. Class to decode Authenticode(tm)
+	signatures.
+	* AuthenticodeFormatter.cs: New. Class to encode a Authenticode(tm)
+	signature, and optionally a timestamp, into a PE file.
+	* SoftwarePublisherCertificate.cs: Now use Mono.Security.X509.
+	X509Certificate class.
+
 2003-06-19  Nick Drochak <ndrochak@gol.com>
 
 	* PrivateKey.cs: Work around for mcs? bug 45127.

@@ -11,9 +11,9 @@
 using System;
 using System.Collections;
 using System.IO;
-using System.Security.Cryptography.X509Certificates;
 
 using Mono.Security;
+using Mono.Security.X509;
 
 namespace Mono.Security.Authenticode {
 
