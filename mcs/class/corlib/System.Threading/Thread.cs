@@ -157,7 +157,7 @@ namespace System.Threading
 		}
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static void ResetAbort_internal();
+		private extern static void ResetAbort_internal();
 
 		static void ResetAbort()
 		{
@@ -341,7 +341,7 @@ namespace System.Threading
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern void Abort_internal (object stateInfo);
+		private extern void Abort_internal (object stateInfo);
 
 		public void Abort() {
 			set_state(ThreadState.AbortRequested);
