@@ -34,6 +34,10 @@ namespace Mono.ILASM {
 
                 private ArrayList defcont_list;
 
+                private int sub_system;
+                private int cor_flags;
+                private long image_base;
+
                 public CodeGen (string output_file, bool is_dll, bool is_assembly)
                 {
                         pefile = new PEFile (output_file, is_dll, is_assembly);
@@ -45,6 +49,10 @@ namespace Mono.ILASM {
                         global_data_list = new ArrayList ();
 
                         defcont_list = new ArrayList ();
+
+                        sub_system = -1;
+                        cor_flags = -1;
+                        image_base = -1;
                 }
 
                 public PEFile PEFile {
@@ -70,6 +78,21 @@ namespace Mono.ILASM {
 
                 public TypeManager TypeManager {
                         get { return type_manager; }
+                }
+
+                public void SetSubSystem (int sub_system)
+                {
+                        this.sub_system = sub_system;
+                }
+
+                public void SetCorFlags (int cor_flags)
+                {
+                        this.cor_flags = cor_flags;
+                }
+
+                public void SetImageBase (long image_base)
+                {
+                        this.image_base = image_base;
                 }
 
                 public void SetAssemblyName (string name)
@@ -174,6 +197,11 @@ namespace Mono.ILASM {
                         foreach (TypeDef typedef in defcont_list) {
                                 typedef.DefineContents (this);
                         }
+
+                        if (sub_system != -1)
+                                pefile.SetSubSystem ((PEAPI.SubSystem) sub_system);
+                        if (cor_flags != -1)
+                                pefile.SetCorFlags (cor_flags);
 
                         pefile.WritePEFile ();
                 }

@@ -1,5 +1,9 @@
 2003-06-14 Jackson Harper <jackson@latitudegeo.com>
 
+	* CodeGen.cs: Add methods for setting corflags, subsystem, and corflags.
+	
+2003-06-14 Jackson Harper <jackson@latitudegeo.com>
+
 	* ITypeRef.cs, PeapiTypeRef.cs, TypeRef.cs: Quick hack for custom
 	modified types.
 		
