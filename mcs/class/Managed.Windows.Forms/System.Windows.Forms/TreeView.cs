@@ -767,6 +767,7 @@ namespace System.Windows.Forms {
 				edit_text_box = new TextBox ();
 				edit_text_box.BorderStyle = BorderStyle.FixedSingle;
 				edit_text_box.KeyUp += new KeyEventHandler (EditTextBoxKeyDown);
+				edit_text_box.Leave += new EventHandler (EditTextBoxLeave);
 				Controls.Add (edit_text_box);
 			}
 
@@ -783,11 +784,20 @@ namespace System.Windows.Forms {
 
 		private void EditTextBoxKeyDown (object sender, KeyEventArgs e)
 		{
-			if (e.KeyCode == Keys.Return) {
-				edit_text_box.Visible = false;
-				edit_node.EndEdit (false);
-				Invalidate (edit_node.Bounds);
-			}
+			if (e.KeyCode == Keys.Return)
+				EndEdit ();
+		}
+
+		private void EditTextBoxLeave (object sender, EventArgs e)
+		{
+			EndEdit ();
+		}
+
+		private void EndEdit ()
+		{
+			edit_text_box.Visible = false;
+			edit_node.EndEdit (false);
+			Invalidate (edit_node.Bounds);
 		}
 
 		private void UpdateNodeBounds (TreeNode node, int x, int y, int item_height)

@@ -1,5 +1,10 @@
 2005-01-19  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: Hook up to the text controls leave event so we can
+	end editing when the users clicks outside the text box.
+	
+2005-01-19  Jackson Harper  <jackson@ximian.com>
+
 	* X11Keyboard.cs: Fix typo that was causing the wrong keycodes to
 	get set in the conversion array.
 
