@@ -25,6 +25,10 @@
 //
 //
 // $Log: CheckBox.cs,v $
+// Revision 1.6  2004/09/01 20:01:24  pbartok
+// - Added missing default
+// - Added missing region mark
+//
 // Revision 1.5  2004/09/01 01:55:58  pbartok
 // - Fixed to match the removal of the needs_redraw concept
 //
@@ -49,6 +53,7 @@ using System.Drawing;
 
 namespace System.Windows.Forms {
 	public class CheckBox : ButtonBase {
+		#region Local Variables
 		private Appearance		appearance;
 		private bool			auto_check;
 		private ContentAlignment	check_alignment;
@@ -56,6 +61,7 @@ namespace System.Windows.Forms {
 		private CheckState		check_state;
 		private bool			three_state;
 		private int			checkmark_size=13;		// Keep it configurable for accessability
+		#endregion	// Local Variables
 
 
 		#region Public Constructors
@@ -63,6 +69,7 @@ namespace System.Windows.Forms {
 			appearance = Appearance.Normal;
 			auto_check = true;
 			check_alignment = ContentAlignment.MiddleLeft;
+			text_alignment = ContentAlignment.MiddleLeft;
 		}
 		#endregion	// Public Constructors
 
