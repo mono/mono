@@ -1,7 +1,20 @@
+2004-12-29  Duncan Mak  <duncan@ximian.com>
+
+	* monop.cs (SearchType): New method, returns a list of type names
+	that matches the method argument, either completely or partially.
+	(GetKnownAssemblyNames): Renamed from GetAssemblyNamesFromGAC, as
+	it now includes mscorlib in the return value.
+	(Main): Added new flags: "--search", "-s", "-k". These flags will
+	invoke SearchType. Prints out a list of Types and the location of
+	the Assembly containing the Type.
+
+	This fixes bug #70068.
+	
 2004-12-24  John Luke  <john.luke@gmail.com>
 
 	* monop.cs: sort the types when printing an assembly
 	handle -r:~/foo.dll by substituting for $HOME
+
 	* TypeSorter.cs: IComparer to sort types by name
 
 2004-12-25  Ben Maurer  <bmaurer@ximian.com>

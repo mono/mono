@@ -37,6 +37,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Text;
 
 class MonoP {
 	static string assembly;
@@ -74,14 +75,38 @@ class MonoP {
 		if (assembly != null) {
 			Assembly a = GetAssembly (assembly, true);
 			t = a.GetType (tname, false, ignoreCase);
-		} else {
+		} else 
 			t = Type.GetType (tname, false, ignoreCase);
-		}
 
 		return t;
-	}	
+	}
+	
+	static string SearchTypes (string name)
+	{
+		StringBuilder sb = new StringBuilder ();
 
-	static string [] GetAssemblyNamesFromGAC ()
+		foreach (string asm in GetKnownAssemblyNames ()) {
+			Assembly a = GetAssembly (asm, false);
+
+			if (a == null)
+				continue;
+
+			foreach (Type t in a.GetTypes ()) {
+				if (t.Name == name)
+					sb.Append (t.FullName + " from " + a.Location + "\n");
+
+				if (t.Name.ToLower ().IndexOf (name.ToLower ()) > 0)
+					sb.Append (t.FullName + " from " + a.Location + "\n");
+			}
+		}
+
+		if (sb.Length == 0) 
+			return null;
+		
+		return sb.ToString ();
+	}
+
+	static string [] GetKnownAssemblyNames ()
 	{
 		Process p = new Process ();
 		p.StartInfo.UseShellExecute = false;
@@ -98,9 +123,11 @@ class MonoP {
 			names.Add (s);
 
 		p.WaitForExit ();
-
-		string [] retval = new string [names.Count - 2];
-		names.CopyTo (1, retval, 0, retval.Length); // skip the first and last line
+		
+		int length = names.Count - 1;
+		string [] retval = new string [length];
+		retval [0] = typeof (Object).Assembly.FullName;		
+		names.CopyTo (1, retval, 1, length - 1); // skip the first and last line
 		return retval;
 	}
 
@@ -144,8 +171,7 @@ class MonoP {
 		// ; on win32, : everywhere else
 		char sep = (Path.DirectorySeparatorChar == '/' ? ':' : ';');
 		string[] paths = Environment.GetEnvironmentVariable ("MONO_PATH").Split (sep);
-		foreach (string path in paths)
-		{	
+		foreach (string path in paths) {	
 			string apath = Path.Combine (path, assembly);
 			if (File.Exists (apath))
 				return Assembly.LoadFrom (apath);	
@@ -166,8 +192,7 @@ class MonoP {
 		Console.WriteLine ("Assembly Information:");
 
 		object[] cls = a.GetCustomAttributes (typeof (CLSCompliantAttribute), false);
-		if (cls.Length > 0)
-		{
+		if (cls.Length > 0) {
 			CLSCompliantAttribute cca = cls[0] as CLSCompliantAttribute;
 			if (cca.IsCompliant)
 				Console.WriteLine ("[CLSCompliant]");
@@ -238,6 +263,7 @@ class MonoP {
 		Console.WriteLine ("\t--declared-only,-d\tOnly show members declared in the Type");
 		Console.WriteLine ("\t--help,-h\t\tShow this information");
 		Console.WriteLine ("\t--private,-p\t\tShow private members");
+		Console.WriteLine ("\t--search,-s,-k\t\tSearch through all known namespaces");
 	}
 	
 	static void Main (string [] args)
@@ -271,13 +297,19 @@ class MonoP {
 		}
 
 		if (args [i] == "--private" || args [i] == "-p") {
-				default_flags |= BindingFlags.NonPublic;
-				i++;
+			default_flags |= BindingFlags.NonPublic;
+			i++;
 		}
 
 		if (args [i] == "--declared-only" || args [i] == "-d") {
-				default_flags |= BindingFlags.DeclaredOnly;
-				i++;
+			default_flags |= BindingFlags.DeclaredOnly;
+			i++;
+		}
+
+		bool search = false;
+		if (args [i] == "--search" || args [i] == "-s" || args [i] == "-k") {
+			search = true;
+			i++;
 		}
 
 		if (args.Length < i + 1) {
@@ -287,6 +319,18 @@ class MonoP {
 
 		string message = null;
 		string tname = args [i];
+
+		if (search){
+			string matches = SearchTypes (tname);
+
+			if (matches != null) {
+				Console.WriteLine ("The follow types match:");
+				Console.WriteLine (matches);
+				return;
+			} else
+				goto notfound;
+		}
+			
 		Type t = GetType (tname);
 
 		if (t == null) {
@@ -299,7 +343,7 @@ class MonoP {
 		}
 
 		if (t == null) {
-			foreach (string assm in GetAssemblyNamesFromGAC ()) {
+			foreach (string assm in GetKnownAssemblyNames ()) {
 				try {
 					Assembly a = GetAssembly (assm, false);
 					t = a.GetType (tname, false, true);
@@ -313,8 +357,8 @@ class MonoP {
 						t = a.GetType (ns + "." + tname, false, true);
 						if (t != null) {
 							message = String.Format ("{0} is included in the {1} assembly.",
-								t.FullName, 
-								t.Assembly.GetName ().Name);
+									t.FullName, 
+									t.Assembly.GetName ().Name);
 							goto found;
 						}
 					}
@@ -322,7 +366,8 @@ class MonoP {
 				}
 			}
 		}
-		
+
+	notfound:
 		if (t == null) {
 			Console.WriteLine ("Could not find {0}", tname);
 			return;
