@@ -3112,7 +3112,7 @@ namespace MonoTests.System {
 			AssertEquals ("8000,16", Int16.MinValue, Convert.ToInt16 ("8000", 16));
 			AssertEquals ("-32768,10", Int16.MinValue, Convert.ToInt16 ("-32768", 10));
 			AssertEquals ("100000,8", Int16.MinValue, Convert.ToInt16 ("100000", 8));
-			AssertEquals ("10000000000000000,2", Int16.MinValue, Convert.ToInt16 ("10000000000000000", 2));
+			AssertEquals ("1000000000000000,2", Int16.MinValue, Convert.ToInt16 ("1000000000000000", 2));
 		}
 	}
 }
