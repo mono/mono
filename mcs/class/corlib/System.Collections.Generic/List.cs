@@ -1,8 +1,8 @@
-// -*- Mode: csharp; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
 // System.Collections.Generic.List
 //
-// Author:
+// Authors:
+//    Ben Maurer (bmaurer@ximian.com)
 //    Martin Baulig (martin@ximian.com)
 //
 // (C) 2004 Novell, Inc.
