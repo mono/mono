@@ -2,6 +2,7 @@
 //            Adwiv@Yahoo.com
 using System;
 using System.Xml.Serialization;
+using System.Xml;
 
 namespace System.Xml.Schema
 {
@@ -12,6 +13,7 @@ namespace System.Xml.Schema
 	{
 		private string name;
 		private XmlSchemaGroupBase particle;
+		private XmlQualifiedName qualifiedName;
 
 		public XmlSchemaGroup()
 		{
@@ -31,6 +33,12 @@ namespace System.Xml.Schema
 		{
 			get{ return  particle; }
 			set{ particle = value; }
+		}
+
+		[XmlIgnore]
+		internal XmlQualifiedName QualifiedName 
+		{
+			get{ return qualifiedName;}
 		}
 
 		[MonoTODO]

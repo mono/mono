@@ -11,7 +11,7 @@ namespace System.Xml.Schema
 	[Flags]
 	public enum XmlSchemaDerivationMethod
 	{
-		[XmlEnum("empty")]
+		[XmlEnum("")]
 		Empty		= 0x00000000, 
 		[XmlEnum("substitution")]
 		Substitution= 0x00000001, 

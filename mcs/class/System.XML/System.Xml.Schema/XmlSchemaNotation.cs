@@ -2,6 +2,7 @@
 //            Adwiv@Yahoo.com
 using System;
 using System.Xml.Serialization;
+using System.Xml;
 
 namespace System.Xml.Schema
 {
@@ -13,6 +14,7 @@ namespace System.Xml.Schema
 		private string name;
 		private string pub;
 		private string system;
+		private XmlQualifiedName qualifiedName;
 
 		public XmlSchemaNotation()
 		{
@@ -34,6 +36,12 @@ namespace System.Xml.Schema
 		{
 			get{ return  system; } 
 			set{ system = value; }
+		}
+
+		[XmlIgnore]
+		internal XmlQualifiedName QualifiedName 
+		{
+			get{ return qualifiedName;}
 		}
 
 		[MonoTODO]

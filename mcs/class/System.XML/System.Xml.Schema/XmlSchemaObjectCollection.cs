@@ -52,7 +52,7 @@ namespace System.Xml.Schema
 		[MonoTODO]
 		public new XmlSchemaObjectEnumerator GetEnumerator()
 		{
-			return (XmlSchemaObjectEnumerator) new object();
+			return new XmlSchemaObjectEnumerator(this.List);
 		}
 		
 		public int IndexOf(XmlSchemaObject item)

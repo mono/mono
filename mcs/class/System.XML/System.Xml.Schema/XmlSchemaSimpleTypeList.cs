@@ -14,6 +14,7 @@ namespace System.Xml.Schema
 	{
 		private XmlSchemaSimpleType itemType;
 		private XmlQualifiedName itemTypeName;
+		private bool errorOccured;
 
 		public XmlSchemaSimpleTypeList()
 		{}
@@ -39,16 +40,39 @@ namespace System.Xml.Schema
 				itemType = null;
 			}
 		}
+		/// <remarks>
+		/// 1. One of itemType or a <simpleType> must be present, but not both.
+		/// 2. id must be of type ID
+		/// </remarks>
 		[MonoTODO]
 		internal bool Compile(ValidationEventHandler h, XmlSchemaInfo info)
 		{
-			return false;
+			if(this.itemType != null && !this.ItemTypeName.IsEmpty)
+				error(h, "both itemType and simpletype can't be present");
+			if(this.itemType == null && this.ItemTypeName.IsEmpty)
+				error(h, "one of itemType or simpletype must be present");
+			if(this.itemType != null)
+			{
+				this.itemType.islocal = true;
+				this.itemType.Compile(h,info);
+			}
+
+			if(!XmlSchemaUtil.CheckID(this.Id))
+				error(h,"id must be a valid ID");
+
+			return !errorOccured;
 		}
 		
 		[MonoTODO]
 		internal bool Validate(ValidationEventHandler h)
 		{
 			return false;
+		}
+		
+		internal void error(ValidationEventHandler handle,string message)
+		{
+			this.errorOccured = true;
+			ValidationHandler.RaiseValidationError(handle,this,message);
 		}
 	}
 }

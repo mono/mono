@@ -10,40 +10,40 @@ namespace System.Xml.Schema
 	/// </summary>
 	public sealed class XmlSchemaObjectEnumerator : IEnumerator
 	{
-		private IDictionaryEnumerator xenum;
-		internal XmlSchemaObjectEnumerator(Hashtable htable)
+		private IEnumerator ienum;
+		internal XmlSchemaObjectEnumerator(IList list)
 		{
-			this.xenum = htable.GetEnumerator();
+			this.ienum = list.GetEnumerator();
 		}
 		// Properties
 		public XmlSchemaObject Current
 		{ 
 			get
 			{
-				return (XmlSchema) xenum.Current; 
+				return (XmlSchemaObject) ienum.Current; 
 			}
 		}
 		// Methods
 		public bool MoveNext()
 		{
-			return xenum.MoveNext();
+			return ienum.MoveNext();
 		}
 		public void Reset()
 		{
-			xenum.Reset();
+			ienum.Reset();
 		}
 		//Explicit Interface implementation
 		bool IEnumerator.MoveNext()
 		{
-			return xenum.MoveNext();
+			return ienum.MoveNext();
 		}
 		void IEnumerator.Reset()
 		{
-			xenum.Reset();
+			ienum.Reset();
 		}
 		object IEnumerator.Current
 		{
-			get{return (XmlSchema) xenum.Current;}
+			get{return (XmlSchema) ienum.Current;}
 		}
 	}
 }

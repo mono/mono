@@ -2,6 +2,7 @@
 //            Adwiv@Yahoo.com
 using System;
 using System.Xml.Serialization;
+using System.Xml;
 
 namespace System.Xml.Schema
 {
@@ -14,6 +15,7 @@ namespace System.Xml.Schema
 		private XmlSchemaObjectCollection attributes;
 		private string name;
 		private XmlSchemaAttributeGroup redefined;
+		private XmlQualifiedName qualifiedName;
 
 		public XmlSchemaAttributeGroup()
 		{
@@ -49,6 +51,13 @@ namespace System.Xml.Schema
 		{
 			get{ return redefined;}
 		}
+
+		[XmlIgnore]
+		internal XmlQualifiedName QualifiedName 
+		{
+			get{ return qualifiedName;}
+		}
+
 		[MonoTODO]
 		internal bool Compile(ValidationEventHandler h, XmlSchemaInfo info)
 		{

@@ -56,11 +56,13 @@ namespace System.Xml.Schema
 
 		/// <remarks>
 		/// 1. One of base or simpletype must be present but not both
+		/// 2. id must be a valid ID
+		/// 3. base must be a valid QName *NO CHECK REQUIRED*
 		/// </remarks>
 		[MonoTODO]
 		internal bool Compile(ValidationEventHandler h, XmlSchemaInfo info)
 		{
-			if(this.baseType != null && !this.BaseTypeName.IsEmpty) // 1
+			if(this.baseType != null && !this.BaseTypeName.IsEmpty)
 				error(h, "both base and simpletype can't be set");
 			if(this.baseType == null && this.BaseTypeName.IsEmpty)
 				error(h, "one of basetype or simpletype must be present");
@@ -69,12 +71,11 @@ namespace System.Xml.Schema
 				this.baseType.islocal = true;
 				this.baseType.Compile(h,info);
 			}
-			if(!this.baseTypeName.IsEmpty)
-			{
-				// Do nothing.
-			}
-			
-			return this.errorOccured;
+
+			if(!XmlSchemaUtil.CheckID(this.Id))
+				error(h,"id must be a valid ID");
+
+			return !errorOccured;
 		}
 		
 		[MonoTODO]

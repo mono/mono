@@ -140,8 +140,8 @@ namespace System.Xml.Schema
 		[XmlElement("simpleType",typeof(XmlSchemaSimpleType),Namespace="http://www.w3.org/2001/XMLSchema")]
 		[XmlElement("complexType",typeof(XmlSchemaComplexType),Namespace="http://www.w3.org/2001/XMLSchema")]
 		[XmlElement("group",typeof(XmlSchemaGroup),Namespace="http://www.w3.org/2001/XMLSchema")]
-		//Only Schema's attributeGroup has type XmlSchemaAttributeGroup.
-		//Others (complextype, restrictions etc) must have XmlSchemaAttributeGroupRef
+			//Only Schema's attributeGroup has type XmlSchemaAttributeGroup.
+			//Others (complextype, restrictions etc) must have XmlSchemaAttributeGroupRef
 		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroup),Namespace="http://www.w3.org/2001/XMLSchema")]
 		[XmlElement("element",typeof(XmlSchemaElement),Namespace="http://www.w3.org/2001/XMLSchema")]
 		[XmlElement("attribute",typeof(XmlSchemaAttribute),Namespace="http://www.w3.org/2001/XMLSchema")]
@@ -161,7 +161,7 @@ namespace System.Xml.Schema
 		[XmlIgnore]
 		public XmlSchemaObjectTable SchemaTypes 
 		{
-			get{ return schemaTypes;}
+			get{ return schemaTypes; }
 		}
 		
 		[System.Xml.Serialization.XmlAttribute("targetNamespace")]
@@ -202,24 +202,71 @@ namespace System.Xml.Schema
 		/// 2. Validates the schema by calling Validate method.
 		/// Every XmlSchemaObject has a Compile Method which gets called.
 		/// </summary>
+		/// <remarks>
+		///		1. blockDefault must be one of #all | List of (extension | restriction | substitution)
+		///		2. finalDefault must be one of (#all | List of (extension | restriction))
+		///			BUGS: MS Implementation allows union and list on finaldefault. Why?
+		///		3. id must be of type ID
+		///		4. targetNamespace should be any uri
+		///		5. version should be a token
+		///		6. xml:lang should be a language
+		///		
+		/// </remarks>
 		[MonoTODO]
 		public void Compile(ValidationEventHandler handler)
 		{
+			//1. Union and List are not allowed in block default
+			if(this.blockDefault != XmlSchemaDerivationMethod.All)
+			{
+				if((this.blockDefault & XmlSchemaDerivationMethod.List)!=0 )
+					error(handler, "list is not allowed in blockDefault attribute");
+				if((this.blockDefault & XmlSchemaDerivationMethod.Union)!=0 )
+					error(handler, "union is not allowed in blockDefault attribute");
+			}
+			//2. List, Union and Substitution are not allowed in finaldefault.
+			if(this.finalDefault != XmlSchemaDerivationMethod.All)
+			{
+				if((this.finalDefault & XmlSchemaDerivationMethod.List)!=0 )
+					error(handler, "list is not allowed in finalDefault attribute");
+				if((this.finalDefault & XmlSchemaDerivationMethod.Union)!=0 )
+					error(handler, "union is not allowed in finalDefault attribute");
+				if((this.finalDefault & XmlSchemaDerivationMethod.Substitution)!=0 )
+					error(handler, "substitution is not allowed in finalDefault attribute");
+			}
+			//3. id must be of type ID
+			if(!XmlSchemaUtil.CheckID(this.id))
+				error(handler, "id attribute is not a valid ID");
+
+			//4. targetNamespace should be of type anyURI
+			if(!XmlSchemaUtil.CheckAnyUri(this.targetNamespace))
+				error(handler, "targetNamespace is not a valid URI");
+
+			//5. version should be of type TOKEN
+			if(!XmlSchemaUtil.CheckToken(this.version))
+				error(handler, "version is not a valid token");
+
+			//6. xml:lang must be a language
+			if(!XmlSchemaUtil.CheckLanguage(this.language))
+				error(handler, "xml:lang is not a valid language");
+
 			// Create the xmlschemainfo object which we use to pass variables like targetnamespace;
 			info = new XmlSchemaInfo();
-			info.targetNS = this.TargetNamespace;
-			info.finalDefault = this.FinalDefault;
+			if(this.targetNamespace != null && XmlSchemaUtil.CheckAnyUri(this.targetNamespace))
+				info.targetNS = this.TargetNamespace;
+			info.finalDefault = (FinalDefault & XmlSchemaDerivationMethod.Extension & XmlSchemaDerivationMethod.Restriction);
+			info.blockDefault = (blockDefault & XmlSchemaDerivationMethod.Extension & 
+									XmlSchemaDerivationMethod.Restriction & XmlSchemaDerivationMethod.Substitution);
 
+			// Compile the content of this schema
 			foreach(XmlSchemaObject obj in Includes)
 			{
 				if(obj is XmlSchemaExternal)
 				{
-					//FIXME: Kuch to karo (Do Something ;)
+					//FIXME: Kuch to karo! (Do Something ;)
 				}
 				else
 				{
-					ValidationHandler.RaiseValidationError(handler,this,
-						"Object of Type "+obj.GetType().Name+" is not valid in Includes Property of Schema");
+					error(handler,"Object of Type "+obj.GetType().Name+" is not valid in Includes Property of Schema");
 				}
 			}
 			foreach(XmlSchemaObject obj in Items)
@@ -236,6 +283,7 @@ namespace System.Xml.Schema
 					XmlSchemaAttribute attr = (XmlSchemaAttribute) obj;
 					if(attr.Compile(handler,info))
 					{
+						attr.parentIsSchema = true;
 						Attributes.Add(attr.QualifiedName, attr);
 					}
 				}
@@ -244,7 +292,7 @@ namespace System.Xml.Schema
 					XmlSchemaAttributeGroup attrgrp = (XmlSchemaAttributeGroup) obj;
 					if(attrgrp.Compile(handler,info))
 					{
-						AttributeGroups.Add(XmlQualifiedName.Empty, attrgrp);
+						AttributeGroups.Add(attrgrp.QualifiedName, attrgrp);
 					}
 				}
 				else if(obj is XmlSchemaComplexType)
@@ -276,7 +324,7 @@ namespace System.Xml.Schema
 					XmlSchemaGroup grp = (XmlSchemaGroup) obj;
 					if(grp.Compile(handler,info))
 					{
-						Groups.Add(XmlQualifiedName.Empty,grp);
+						Groups.Add(grp.QualifiedName,grp);
 					}
 				}
 				else if(obj is XmlSchemaNotation)
@@ -284,7 +332,7 @@ namespace System.Xml.Schema
 					XmlSchemaNotation ntn = (XmlSchemaNotation) obj;
 					if(ntn.Compile(handler,info))
 					{
-						Notations.Add(XmlQualifiedName.Empty, ntn);
+						Notations.Add(ntn.QualifiedName, ntn);
 					}
 				}
 				else
@@ -303,42 +351,39 @@ namespace System.Xml.Schema
 			foreach(XmlSchemaObject obj in Includes)
 			{
 			}
-			foreach(XmlSchemaObject obj in Items)
+
+			//				foreach(XmlSchemaAnnotation ann in ??????)
+			//				{
+			//					ann.Validate(handler);
+			//				}
+			foreach(XmlSchemaAttribute attr in Attributes.Values)
 			{
-//				foreach(XmlSchemaAnnotation ann in ??????)
-//				{
-//					ann.Validate(handler);
-//				}
-				foreach(XmlSchemaAttribute attr in Attributes)
+				attr.Validate(handler);
+			}
+			foreach(XmlSchemaAttributeGroup attrgrp in AttributeGroups.Values)
+			{
+				attrgrp.Validate(handler);
+			}
+			foreach(XmlSchemaType type in SchemaTypes.Values)
+			{
+				if(type is XmlSchemaComplexType)
 				{
-					attr.parentIsSchema = true;
-					attr.Validate(handler);
+					((XmlSchemaComplexType)type).Validate(handler);
 				}
-				foreach(XmlSchemaAttributeGroup attrgrp in AttributeGroups)
-				{
-					attrgrp.Validate(handler);
-				}
-				foreach(XmlSchemaType type in SchemaTypes)
-				{
-					if(type is XmlSchemaComplexType)
-					{
-						((XmlSchemaComplexType)type).Validate(handler);
-					}
-					else
-						((XmlSchemaSimpleType)type).Validate(handler);
-				}
-				foreach(XmlSchemaElement elem in Elements)
-				{
-					elem.Validate(handler);
-				}
-				foreach(XmlSchemaGroup grp in Groups)
-				{
-					grp.Validate(handler);
-				}
-				foreach(XmlSchemaNotation ntn in Notations)
-				{
-					ntn.Validate(handler);
-				}
+				else
+					((XmlSchemaSimpleType)type).Validate(handler);
+			}
+			foreach(XmlSchemaElement elem in Elements.Values)
+			{
+				elem.Validate(handler);
+			}
+			foreach(XmlSchemaGroup grp in Groups.Values)
+			{
+				grp.Validate(handler);
+			}
+			foreach(XmlSchemaNotation ntn in Notations.Values)
+			{
+				ntn.Validate(handler);
 			}
 		}
 
@@ -410,6 +455,11 @@ namespace System.Xml.Schema
 			XmlSerializer xser = new XmlSerializer(typeof(XmlSchema));
 			xser.Serialize(writer,this,xns);
 			writer.Flush();
+		}
+		
+		internal void error(ValidationEventHandler handle,string message)
+		{
+			ValidationHandler.RaiseValidationError(handle,this,message);
 		}
 	}
 }

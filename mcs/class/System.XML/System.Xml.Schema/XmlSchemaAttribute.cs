@@ -23,7 +23,6 @@ namespace System.Xml.Schema
 		private XmlQualifiedName schemaTypeName;
 		private XmlSchemaUse use;
 		//Compilation fields
-		private string targetNamespace;
 		internal bool parentIsSchema = false;
 		internal XmlSchema schema = null;
 		internal bool errorOccured = false;
@@ -158,14 +157,16 @@ namespace System.Xml.Schema
 			{
 				if(this.refName!= null && !this.refName.IsEmpty) // a.1
 					error(h,"ref must be absent in the top level <attribute>");
-				if(this.form!= XmlSchemaForm.None)	// a.2
+				
+				if(this.form != XmlSchemaForm.None)	// a.2
 					error(h,"form must be absent in the top level <attribute>");
-				if(this.use!= XmlSchemaUse.None)		// a.3
+				
+				if(this.use != XmlSchemaUse.None)		// a.3
 					error(h,"use must be absent in the top level <attribute>");
+
 				if(this.name == null)	//a.4
 					error(h,"name must be present if attribute has schema as its parent");
-				// FIXME: A better way to check NCName? Something like IsNCName()?
-				else if(this.name.IndexOf(":") != -1) // a.4.2
+				else if(!XmlSchemaUtil.CheckNCName(this.name)) // a.4.2
 					error(h,"attribute name must be NCName");
 				else if(this.name == "xmlns") // a.14 
 					error(h,"attribute name can't be xmlns");
@@ -175,7 +176,7 @@ namespace System.Xml.Schema
 				// TODO: a.10, a.11, a.12, a.13
 				if(this.defaultValue != null && this.fixedValue != null) // a.6
 					error(h,"default and fixed must not both be present in an Attribute");
-				this.targetNamespace = this.schema.TargetNamespace; // a.9
+
 				if(this.schemaType != null)
 				{
 					if(this.schemaTypeName != null && !this.SchemaTypeName.IsEmpty) // a.8
@@ -186,13 +187,20 @@ namespace System.Xml.Schema
 						this.schemaType.Compile(h,info); 
 					}
 				}
-				if(this.targetNamespace == XmlSchema.InstanceNamespace && this.name != "nil" && this.name != "type" 
-						&& this.name != "schemaLocation" && this.name != "noNamespaceSchemaLocation") // a.15, a.16
+
+				if(info.targetNS == XmlSchema.InstanceNamespace && this.name != "nil" && this.name != "type" 
+					&& this.name != "schemaLocation" && this.name != "noNamespaceSchemaLocation") // a.15, a.16
 					error(h,"targetNamespace can't be " + XmlSchema.InstanceNamespace);
 
 			}
-			// TODO: else
-			return errorOccured;
+//			TODO: 
+//			else
+//			{
+//			}
+			if(!XmlSchemaUtil.CheckID(this.Id))
+				error(h,"id must be a valid ID");
+
+			return !errorOccured;
 		}
 		
 		[MonoTODO]

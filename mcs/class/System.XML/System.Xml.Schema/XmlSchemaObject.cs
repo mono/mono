@@ -2,25 +2,20 @@
 //            Adwiv@Yahoo.com
 using System;
 using System.Xml.Serialization;
+using System.Xml;
 
 namespace System.Xml.Schema
 {
 	/// <summary>
 	/// Summary description for XmlSchemaObject.
 	/// </summary>
-//	[XmlInclude(typeof(XmlSchema)),
-//	XmlInclude(typeof(XmlSchemaAnnotated)),
-//	XmlInclude(typeof(XmlSchemaAnnotation)),
-//	XmlInclude(typeof(XmlSchemaAppInfo)),
-//	XmlInclude(typeof(XmlSchemaDocumentation)),
-//	XmlInclude(typeof(XmlSchemaExternal))]
 	public abstract class XmlSchemaObject
 	{
 		private int lineNumber;
 		private int linePosition;
 		private string sourceUri;
 		private XmlSerializerNamespaces namespaces;
-
+		
 		protected XmlSchemaObject()
 		{
 			namespaces = new XmlSerializerNamespaces();

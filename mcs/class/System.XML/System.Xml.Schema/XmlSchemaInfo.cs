@@ -14,5 +14,6 @@ namespace System.Xml.Schema
 
 		internal string targetNS;
 		internal XmlSchemaDerivationMethod finalDefault;
+		internal XmlSchemaDerivationMethod blockDefault;
 	}
 }

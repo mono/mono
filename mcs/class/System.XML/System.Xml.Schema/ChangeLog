@@ -1,3 +1,12 @@
+2002-05-04  Dwivedi, Ajay kumar <adwiv@yahoo.com>
+	* XmlSchemaUtil.cs: New file added. 
+	
+	* Parser.cs: New file Added. Unused at the moment.
+
+	* XmlSchemaObjectCollection: Fixed GetEnumerator
+	
+	* General: Preprocessing for Attributes and SimpleTypes completed.
+
 2002-04-26  Duncan Mak  <duncan@ximian.com>
 
 	* ValidationHandler.cs: New file.
