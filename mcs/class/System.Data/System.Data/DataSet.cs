@@ -1777,17 +1777,10 @@ namespace System.Data {
 				// FIXME: what happens if extended properties are set on attribute columns??
 				if (!col.AllowDBNull)
 					att.Use = XmlSchemaUse.Required;
-				if (col.MaxLength != 0) {
-					XmlSchemaSimpleType st = new XmlSchemaSimpleType ();
-					XmlSchemaSimpleContentRestriction r = new XmlSchemaSimpleContentRestriction ();
-					r.BaseTypeName = typeName;
-					XmlSchemaMaxLengthFacet f = new XmlSchemaMaxLengthFacet ();
-					f.Value = col.MaxLength.ToString (table.Locale);
-					r.Facets.Add (f);
-					att.SchemaType = st;
-				}
+				if (col.MaxLength > -1)
+					att.SchemaType = GetTableSimpleType (doc, col);
 				else
-					att.SchemaTypeName = typeName;
+					att.SchemaTypeName = MapType (col.DataType);
 				schemaAttributes.Add (att);
 			}
 
