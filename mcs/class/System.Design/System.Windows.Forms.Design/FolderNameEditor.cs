@@ -9,14 +9,14 @@ using System;
 using System.ComponentModel;
 using System.Drawing.Design;
 
-namespace System.Windows.Forms.Design 
+namespace System.Windows.Forms.Design
 {
-	[MonoTODO()]
+	[MonoTODO]
 	public class FolderNameEditor : UITypeEditor
 	{
 		#region Public Instance Constructors
 
-		public FolderNameEditor() 
+		public FolderNameEditor ()
 		{
 		}
 
@@ -26,12 +26,12 @@ namespace System.Windows.Forms.Design
 
 		public override object EditValue (ITypeDescriptorContext context, IServiceProvider provider, object value)
 		{
-			if (folderBrowser == null) 
+			if (folderBrowser == null)
 			{
-				folderBrowser = new FolderBrowser();
+				folderBrowser = new FolderBrowser ();
 				InitializeDialog (folderBrowser);
 			}
-			if (this.folderBrowser.ShowDialog() != DialogResult.OK) 
+			if (this.folderBrowser.ShowDialog () != DialogResult.OK)
 			{
 				return value;
 			}
@@ -59,7 +59,8 @@ namespace System.Windows.Forms.Design
 
 		#endregion Private Instance Fields
 
-		protected enum FolderBrowserFolder {
+		protected enum FolderBrowserFolder
+		{
 			Desktop = 0,
 			Favorites = 6,
 			MyComputer = 17,
@@ -74,8 +75,9 @@ namespace System.Windows.Forms.Design
 			Templates = 21
 		}
 
-		[Flags()]
-		protected enum FolderBrowserStyles {
+		[Flags]
+		protected enum FolderBrowserStyles
+		{
 			BrowseForComputer = 4096,
 			BrowseForEverything = 16384,
 			BrowseForPrinter = 8192,
@@ -85,8 +87,9 @@ namespace System.Windows.Forms.Design
 			ShowTextBox = 16
 		}
 
-		protected sealed class FolderBrowser: Component {
-			[MonoTODO()]
+		protected sealed class FolderBrowser : Component
+		{
+			[MonoTODO]
 			public FolderBrowser ()
 			{
 				startLocation = FolderBrowserFolder.Desktop;
@@ -99,30 +102,30 @@ namespace System.Windows.Forms.Design
 
 			public string Description
 			{
-				get 
+				get
 				{
 					return descriptionText;
 				}
-				set 
+				set
 				{
 					descriptionText = (value == null) ? string.Empty : value;
- 				}
+				}
 			}
 			public string DirectoryPath
 			{
-				get 
+				get
 				{
 					return directoryPath;
 				}
 			}
 
-			public FolderBrowserFolder StartLocation 
+			public FolderBrowserFolder StartLocation
 			{
-				get 
+				get
 				{
 					return startLocation;
 				}
-				set 
+				set
 				{
 					startLocation = value;
 				}
@@ -135,7 +138,7 @@ namespace System.Windows.Forms.Design
 					return publicOptions;
 				}
 
-				set 
+				set
 				{
 					publicOptions = value;
 				}
@@ -145,16 +148,16 @@ namespace System.Windows.Forms.Design
 
 			#region Public Instance Methods
 
-			[MonoTODO()]
+			[MonoTODO]
 			public DialogResult ShowDialog ()
 			{
-				return ShowDialog(null);
+				return ShowDialog (null);
 			}
 
-			[MonoTODO()]
+			[MonoTODO]
 			public DialogResult ShowDialog (IWin32Window owner)
 			{
-				throw new NotImplementedException();
+				throw new NotImplementedException ();
 			}
 
 			#endregion Public Instance Methods

@@ -11,11 +11,11 @@ using System.Drawing.Design;
 
 namespace System.Windows.Forms.Design
 {
-	public class FileNameEditor: UITypeEditor
+	public class FileNameEditor : UITypeEditor
 	{
 		#region Public Instance Constructors
 
-		public FileNameEditor()
+		public FileNameEditor ()
 		{
 		}
 
@@ -23,13 +23,13 @@ namespace System.Windows.Forms.Design
 
 		#region Override implementation of UITypeEditor
 
-		[MonoTODO()]
-		public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
+		[MonoTODO]
+		public override object EditValue (ITypeDescriptorContext context, IServiceProvider provider, object value)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
-		public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context) 
+		public override UITypeEditorEditStyle GetEditStyle (ITypeDescriptorContext context)
 		{
 			return UITypeEditorEditStyle.Modal;
 		}
@@ -38,10 +38,10 @@ namespace System.Windows.Forms.Design
 
 		#region Protected Instance Methods
 
-		[MonoTODO()]
-		protected virtual void InitializeDialog (OpenFileDialog openFileDialog) 
+		[MonoTODO]
+		protected virtual void InitializeDialog (OpenFileDialog openFileDialog)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		#endregion Protected Instance Methods

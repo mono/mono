@@ -1,4 +1,10 @@
 2004-05-15  Gert Driesen (drieseng@users.sourceforge.net)
+	
+	* System.Windows.Forms.Design/FileNameEditor.cs: code formatting
+	* System.Windows.Forms.Design/FolderNameEditor.cs: code formatting
+	* System.Windows.Forms.Design/MenuCommands.cs: code formatting
+
+2004-05-15  Gert Driesen (drieseng@users.sourceforge.net)
 
 	* System.Design.dll.sources: remove MenusCommands, added
 	MenuCommands
