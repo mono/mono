@@ -699,16 +699,6 @@ namespace System {
 			return Concat(obj1.ToString(), obj2.ToString(), obj3.ToString());
 		}
 
-		//
-		// I can not find the "__arglist" argument on the spec
-		//
-#if !__MonoCS__
-		[CLSCompliant(false)]
-		public static String Concat (Object arg0, Object arg1, Object arg2, Object arg3, __arglist) {
-			throw new NotImplementedException();
-		}
-#endif
-
 		public static String Concat(String s1, String s2) {
 			if (null == s1) {
 				if (null == s2) { return String.Empty; }

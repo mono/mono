@@ -12,7 +12,7 @@
 
 using System.Globalization;
 using System.Text;
-using S = System;  // only used for switching test implementation
+using System;
 
 namespace System 
 {
@@ -53,7 +53,7 @@ namespace System
             return true;
         }	 
 
-        public static string NumberToString(string format, NumberFormatInfo nfi, S.Decimal value)
+        public static string NumberToString(string format, NumberFormatInfo nfi, Decimal value)
         {
             char specifier;
             int precision;
@@ -91,9 +91,8 @@ namespace System
             // get digit string
             const int bufSize = 40;
             int decPos = 0, sign = 0;
-#if !MSTEST
             char[] buf = new char[bufSize];
-            if (S.Decimal.decimal2string(ref value, digits, decimals, buf, bufSize, out decPos, out sign) != 0) 
+            if (Decimal.decimal2string(ref value, digits, decimals, buf, bufSize, out decPos, out sign) != 0) 
             {
                 throw new FormatException(); // should never happen 
             }
@@ -101,13 +100,6 @@ namespace System
 		string TempString = new String(buf);
 		TempString = TempString.Trim(new char[] {(char)0x0});
 		StringBuilder sb = new StringBuilder(TempString, TempString.Length);
-#else
-            StringBuilder sb = new StringBuilder(bufSize);
-            if (S.Decimal.decimal2string(ref value, digits, decimals, sb, bufSize, out decPos, out sign) != 0) 
-            {
-                throw new FormatException(); // should never happen 
-            }
-#endif
 
 	    if (sb.ToString () == String.Empty && decPos > 0 && sign == 0)
 		    sb.Append ('0');
