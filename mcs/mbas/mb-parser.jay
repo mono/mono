@@ -1692,7 +1692,7 @@ interface_method_declaration
 	;
 
 interface_property_declaration
-	: PROPERTY identifier opt_type_character opt_property_parameters opt_type_spec logical_end_of_line
+	: PROPERTY identifier opt_type_character opt_property_parameters opt_type_with_ranks logical_end_of_line
 	  {
 		Expression ftype = ($5 == null) ? (($3 == null) ? 
 				TypeManager.system_object_expr : (Expression) $3 ) : (Expression) $5;
@@ -1776,7 +1776,7 @@ property_declaration
 	;
 	
 abstract_propery_declaration
-	: MUSTOVERRIDE PROPERTY identifier opt_type_character opt_property_parameters opt_type_spec logical_end_of_line
+	: MUSTOVERRIDE PROPERTY identifier opt_type_character opt_property_parameters opt_type_with_ranks logical_end_of_line
 	  {	
 		Expression ftype = ($6 == null) ? (($4 == null) ? 
 				TypeManager.system_object_expr : (Expression) $4 ) : (Expression) $6;
@@ -1833,7 +1833,7 @@ abstract_propery_declaration
 	
 	
  non_abstract_propery_declaration
-	  : PROPERTY identifier opt_type_character opt_property_parameters opt_type_spec opt_implement_clause logical_end_of_line
+	  : PROPERTY identifier opt_type_character opt_property_parameters opt_type_with_ranks opt_implement_clause logical_end_of_line
 	  {
 		get_implicit_value_parameter_type  = 
 			($5 == null) ? (($3 == null) ? 
@@ -2015,7 +2015,7 @@ opt_set_parameter
 		set_implicit_value_parameter_type = (Expression) get_implicit_value_parameter_type;
 		set_implicit_value_parameter_name = "Value";
 	}	
-	| OPEN_PARENS opt_parameter_modifier opt_identifier opt_type_spec CLOSE_PARENS
+	| OPEN_PARENS opt_parameter_modifier opt_identifier opt_type_with_ranks CLOSE_PARENS
 	{
 		Parameter.Modifier pm = (Parameter.Modifier)$2;
 		if ((pm | Parameter.Modifier.VAL) != 0)
@@ -2136,7 +2136,7 @@ delegate_declaration
 	| DELEGATE FUNCTION	  
 	  identifier OPEN_PARENS 
 	  opt_formal_parameter_list
-	  CLOSE_PARENS opt_type_spec logical_end_of_line
+	  CLOSE_PARENS opt_type_with_ranks logical_end_of_line
 	  {
 		Location l = lexer.Location;
 		
@@ -2159,7 +2159,8 @@ delegate_declaration
 	;
 	
 opt_evt_handler
-	: /* empty */	  {	$$ = null; }
+	: /* empty */
+	  { 	$$ = null; }
 	| HANDLES qualified_identifier
 	  {
 		$$ = (Expression) DecomposeQI ((string)$2, lexer.Location);	
@@ -2258,7 +2259,7 @@ fixed_parameters
 fixed_parameter
 	: opt_attributes
 	  opt_parameter_modifier
-	  identifier opt_type_character opt_rank_specifiers opt_type_spec opt_variable_initializer
+	  identifier opt_type_character opt_rank_specifiers opt_type_with_ranks opt_variable_initializer
 	  {
 	  	Parameter.Modifier pm = (Parameter.Modifier)$2;
 	  	bool opt_parm = ((pm & Parameter.Modifier.OPTIONAL) != 0);
@@ -2279,8 +2280,11 @@ fixed_parameter
 
 		ptype = (Expression)(($6 == null) ? (($4 == null) ? TypeManager.system_object_expr : $4) : $6);
 		if ($5 != null)	{
-	  		string t = ptype.ToString() + VariableDeclaration.BuildRank ((ArrayList) $5);
-	  		ptype = DecomposeQI (t, lexer.Location);
+	  		string t = ptype.ToString();
+	  		if (t.IndexOf('[') >= 0)
+				Report.Error (31087, lexer.Location, "Array types specified in too many places");
+			else	
+	  			ptype = DecomposeQI (t + VariableDeclaration.BuildRanks ((ArrayList) $5, true, lexer.Location), lexer.Location);
 	  	}			
 		$$ = new Parameter (ptype, (string) $3, pm,
 					(Attributes) $1, (Expression) $7, opt_parm);
@@ -3209,7 +3213,7 @@ object_creation_expression
 	;
 	
 array_creation_expression
-	: object_creation_expression array_initializer
+	: object_creation_expression opt_rank_specifiers array_initializer
 	  {
 	  	New n = (New) $1;
 	  	ArrayList dims = new ArrayList();
@@ -3222,7 +3226,10 @@ array_creation_expression
 			
 	  	Expression atype = n.RequestedType;
 
-		ArrayList init = (ArrayList) $2;
+		if ($2 != null)
+			atype = DecomposeQI (atype.ToString () + VariableDeclaration.BuildRanks ((ArrayList)$2, true, lexer.Location), lexer.Location);
+
+		ArrayList init = (ArrayList) $3;
 		if (init.Count == 0)
 			init = null;
   	
@@ -3233,7 +3240,7 @@ array_creation_expression
 	  	else
 	  	{
 	  		string rank = VariableDeclaration.BuildRank (dims);
-	  		$$ = new ArrayCreation (atype, rank, (ArrayList) $2, lexer.Location); 
+	  		$$ = new ArrayCreation (atype, rank, (ArrayList) $3, lexer.Location); 
 	  	}
 	  	//Console.WriteLine ("Creating a new array of type " + (atype.ToString()) + " with rank '" + dims + "'");
 	  }
@@ -3391,16 +3398,7 @@ variable_declarator
 					Report.Error (30638, "Array bounds cannot appear in type specifiers.");	
 				
 				current_rank_specifiers = new ArrayList ();
-				current_rank_specifiers.Add (args);
-				
-				/*string s_vartype = vartype.ToString();				
-				s_vartype += "[";
-				if (args != null)
-					for (int x = 0; x < args.Count; x++)
-						s_vartype += ",";
-					
-				s_vartype += "]";	
-				vartype = DecomposeQI(s_vartype, Location.Null);	*/
+				current_rank_specifiers.Add (args);				
 	  		}
 	  		else
 				vartype = ($2 == null) ? ((vname.Type == null) ? TypeManager.system_object_expr : (Expression) vname.Type ) : (Expression) $2;
@@ -3440,7 +3438,7 @@ variable_declarator
 					VariableDeclaration.VBFixIndexLists (ref a_dims);
 					varinit = VariableDeclaration.BuildArrayCreator(vartype, a_dims, (ArrayList) varinit, lexer.Location);
 				}
-				vartype = DecomposeQI (vartype.ToString() + VariableDeclaration.BuildRanks (this), lexer.Location);
+				vartype = DecomposeQI (vartype.ToString() + VariableDeclaration.BuildRanks (current_rank_specifiers, false, lexer.Location), lexer.Location);
 			}
 
 			if (vartype is New) {
@@ -3497,18 +3495,14 @@ opt_type_with_ranks
 	: opt_type_spec	
 	| AS type rank_specifiers
 	  {
-	  	$$ = TypeManager.system_object_expr; 
+		$$ = DecomposeQI ($2.ToString() + VariableDeclaration.BuildRanks ((ArrayList)$3, true, lexer.Location), lexer.Location);
 	  }
 	;
 	
 opt_type_decl
-	: opt_type_spec
+	: opt_type_with_ranks
 	  {
 	  	$$ = $1;
-	  }
-	| AS type OPEN_PARENS /*opt_argument_list*/ opt_dim_separators CLOSE_PARENS
-	  {
-	  	$$ = new Pair ($2, $4);
 	  }
 	| AS NEW type
 	  {
@@ -3612,57 +3606,35 @@ rank_specifiers
         ;	  	
 	
 rank_specifier
-	: OPEN_PARENS opt_dim_separators CLOSE_PARENS
+	: OPEN_PARENS opt_dim_specifiers CLOSE_PARENS
 	  {
 		$$ = $2;
 	  }
 	;
 		
-opt_dim_separators
+opt_dim_specifiers
 	: /* empty */
-	  {
-		ArrayList ds = new ArrayList();
-	  	ds.Add (new EmptyExpression());
-	  	$$ = ds;		
-	  }
-	| dim_separators
-	  {
-		ArrayList ds = (ArrayList) $1;
-	  	ds.Add (new EmptyExpression());
-	  	$$ = ds;	
-	  }	
-	| dim_specifiers
-	  {
-	  	$$ = $1;
-	  }	  
-	;
-
-dim_separators
-	: COMMA
 	  {
 	  	ArrayList ds = new ArrayList();
 	  	ds.Add (new EmptyExpression());
 	  	$$ = ds;
-	  }
-	| dim_separators COMMA
-	  {
-		ArrayList ds = (ArrayList) $1;
-	  	ds.Add (new EmptyExpression());
-	  	$$ = ds;		
-	  }
-	;
-
-dim_specifiers
-	: expression
+	  }	
+	| expression
 	  {
 	  	ArrayList ds = new ArrayList();
 	  	ds.Add ((Expression) $1);
 	  	$$ = ds;
 	  }	
-	| dim_specifiers COMMA expression
+	| opt_dim_specifiers COMMA expression
 	  {
 		ArrayList ds = (ArrayList) $1;
 	  	ds.Add ((Expression) $3);
+	  	$$ = ds;		
+	  }	
+	| opt_dim_specifiers COMMA 
+	  {
+		ArrayList ds = (ArrayList) $1;
+	  	ds.Add (new EmptyExpression());
 	  	$$ = ds;		
 	  }	
 	;
@@ -4573,22 +4545,42 @@ public class VariableDeclaration {
 	
 	public static string BuildRank (ArrayList rank)
 	{
+		bool allEmpty;
+		return BuildRank(rank, out allEmpty);
+	}
+            
+	public static string BuildRank (ArrayList rank, out bool allEmpty)
+	{
 		string res = "";
 
 		res += "[";
-		for (int x = 0; x < (rank.Count -1 ); x++)
-			res += ",";
+		allEmpty = true;
+		bool first = true;
+		foreach (object e in rank) {
+			if (!(e is EmptyExpression))
+				allEmpty = false;
+			if (!first)
+				res += ",";
+			first = false;
+		}
 			
 		res += "]";
 		return res;
 	}
 		
-	public static string BuildRanks (Parser t)
+	public static string BuildRanks (ArrayList rank_specifiers, bool mustBeEmpty, Location loc)
 	{
 		string res = "";
 
-		foreach (ArrayList rank in t.current_rank_specifiers)
-			res += BuildRank (rank);
+		bool allEmpty = true;
+		foreach (ArrayList rank in rank_specifiers) {
+			bool tmp;
+			res = BuildRank (rank, out tmp) + res;
+			if (!tmp)
+				allEmpty = false;
+		}
+		if (!allEmpty && mustBeEmpty)
+			Report.Error (30638, loc, "Array bounds cannot appear in type specifiers.");	
 
 		return res;
 	}	
