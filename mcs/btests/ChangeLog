@@ -1,4 +1,11 @@
 2004-08-12 Sachin Kumar <skumar1@novell.com>
+	* WithStatementA.vb:
+	* WithStatementB.vb:
+	* WithStatementC1.vb:
+	* WithStatementC2.vb:
+	* Test.Sources: included new tests
+
+2004-08-12 Sachin Kumar <skumar1@novell.com>
 	* LocalDeclarationA.vb:
 	* LocalDeclarationC1.vb:
 	* LocalDeclarationC2.vb:

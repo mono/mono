@@ -172,7 +172,9 @@ TypeOf \
 BlockStatementsA \
 LocalVariablesA \
 LocalVariablesB \
-LocalDeclarationA
+LocalDeclarationA \
+WithStatementA \
+WithStatementB
 
 # All negetive test cases which should
 # fail during compilation goes here
@@ -363,7 +365,9 @@ LocalVariablesC1 \
 LocalVariablesC2 \
 LocalVariablesC3 \
 LocalDeclarationC1 \
-LocalDeclarationC2
+LocalDeclarationC2 \
+WithStatementC1 \
+WithStatementC2
 
 # All negetive test cases which should fail at
 # runtime goes here
