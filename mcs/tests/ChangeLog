@@ -1,3 +1,10 @@
+2001-10-21  Ravi Pratap  <ravi@ximian.com>
+
+	* test-27.cs : Add to do various implicit and explicit
+	reference conversions.
+
+	* makefile : Update accordingly.
+
 2001-10-18  Ravi Pratap  <ravi@ximian.com>
 
 	* test-26.cs : Update to test delegate creation from another 
