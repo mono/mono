@@ -1,3 +1,12 @@
+2004-12-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTMXPathDocument2.cs,
+	  DTMXPathNavigator2.cs,
+	  DTMXPathDocumentBuilder2.cs,
+	  DTMXPathDocumentWriter2.cs,
+	  DTMXPathNode2.cs : added new implementation that uses string pool
+	  and eliminates string field inside struct (IF we use struct).
+
 2004-12-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTMXPathDocumentWriter.cs : Fix for DTM_CLASS switch that does not
