@@ -31,9 +31,10 @@ namespace Microsoft.Web.Services.Xml
 			if(value.IndexOf(':') > 0) {
 				string[] strings = value.Split(':');
 
-				if(strings.Length != 2 || strings[0].Length == 0 || strings[1].Length == 1) {
+				if(strings.Length != 2 || strings[0].Length == 0 || strings[1].Length == 0) {
 					throw new FormatException ("xml_ImproperQName");
 				}
+
 				string nspace = node.GetNamespaceOfPrefix (strings[0]);
 				if(nspace.Length == 0) {
 					throw new FormatException ("xml_CouldNotResolveNSPrefix");
