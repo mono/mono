@@ -1,3 +1,10 @@
+2005-03-07  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-tokenizer.cs (xtoken): Add CS1035.
+	
+	* class.cs (MethodData.Define): Add CS0683.
+	(FieldMember.ctor): Add CS0681.
+
 2005-03-07  Raja R Harinath  <rharinath@novell.com>
 
 	* ecore.cs (SimpleName.DoResolve): Rename from
