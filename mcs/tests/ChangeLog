@@ -1,3 +1,7 @@
+2004-09-14  Marek Safar <marek.safar@seznam.cz>
+
+	* test-294.cs: New test for bug #61902.
+
 2004-09-14  Martin Baulig  <martin@ximian.com>
 
 	* Makefile: Put the old Makefile back.  There was a reason why we
