@@ -1,3 +1,11 @@
+2002-05-23  Martin Baulig  <martin@gnome.org>
+
+	* exception.c (arch_handle_exception): Don't G_BREAKPOINT() if we get
+	an unhandled exception.
+
+	* jit.c (mono_thread_abort): G_BREAKPOINT() immediately before the
+	ExitThread().
+
 2002-05-23  Dietmar Maurer  <dietmar@ximian.com>
 
 	* delegate.c: move the thread pool to metadata/threadpool.c, code
