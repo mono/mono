@@ -1,3 +1,8 @@
+
+Wed Apr 21 16:20:32 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, mini-ppc.c, cpu-g4.md: support for implicit exceptions.
+
 2004-04-19 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* iltests.il: more tests.
