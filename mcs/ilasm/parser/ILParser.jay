@@ -1,7 +1,10 @@
 %{
-// Mono::ILASM::ILParser
 //
+// Mono::ILASM::ILParser
+// 
 // (C) Sergey Chaban (serge@wildwestsoftware.com)
+// (C) 2003 Jackson Harper, All rights reserved
+//
 
 using PEAPI;
 using System;
@@ -433,16 +436,16 @@ class_head 		: D_CLASS class_attr id typars_clause extends_clause
                                 codegen.BeginTypeDef ((TypeAttr) $2, (string) $3, 
 						$5 as IClassRef, $6 as ArrayList, null);
 
-                                // Lets not worry about generics for now :p
+                                                /*
                                 if ($4 != null) {
                                         ArrayList typars_list = (ArrayList) $4;
                                         foreach (DictionaryEntry entry in typars_list) {
-                                                string name = (string) entry.Key;
+                                                ITypeRef constraint = (ITypeRef) entry.Key;
                                                 string id = (string) entry.Value;
-                                                codegen.CurrentTypeDef.AddGenericParam (name, id);
+                                                codegen.CurrentTypeDef.AddGenericParam (constraint, id);
                                         }
                                 }
-                                
+                                */
                           }
 			;
 
@@ -526,11 +529,11 @@ formal_typars           : formal_typar
                         ;
 
 
-formal_typar            : id
+formal_typar            : type
                           {
                                 $$ = new DictionaryEntry ($1, null);
                           }
-                        | id id
+                        | type id
                           {
                                 $$ = new DictionaryEntry ($1, $2);
                           }
@@ -661,23 +664,17 @@ type			: K_CLASS class_ref
                           }
 			| type K_MODREQ OPEN_PARENS class_ref CLOSE_PARENS
                           {
-                                /*
                                 ITypeRef base_type = (ITypeRef) $1;
-                                ITypeRef class_ref = (ITypeRef) $4;
-
-                                $$ = new CustomModifiedType (base_type.Type,
-                                        CustomModifier.modreq, (Class) class_ref.Type);
-                                */
+                                IClassRef class_ref = (IClassRef) $4;
+                                base_type.MakeCustomModified (codegen,
+                                        CustomModifier.modopt, class_ref);    
                           }
 			| type K_MODOPT OPEN_PARENS class_ref CLOSE_PARENS
                           {
-                                /*
-                                TypeRef base_type = (TypeRef) $1;
-                                TypeRef class_ref = (TypeRef) $4;
-
-                                $$ = new CustomModifiedType (base_type.Type,
-                                        CustomModifier.modopt, (Class) class_ref.Type);
-                                */
+                                ITypeRef base_type = (ITypeRef) $1;
+                                IClassRef class_ref = (IClassRef) $4;
+                                base_type.MakeCustomModified (codegen,
+                                        CustomModifier.modopt, class_ref);    
                           }
 			| K_METHOD call_conv type STAR OPEN_PARENS sig_args CLOSE_PARENS
 			| K_TYPEDREF
