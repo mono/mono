@@ -3,6 +3,8 @@
 	* ConvertTest.cs: New tests for prefixed hexadecimal strings and
 	negative byte convertion.
 	* StringTest.cs: Added new tests for integer overflow and negatives.
+	Added tests for special cases like s.LastIndexOf ('o', s.Length, 1)
+	fail but s.LastIndexOf ("o", s.Length, 1) works.
 
 2004-05-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

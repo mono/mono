@@ -835,6 +835,15 @@ public class StringTest : Assertion
 
 	[Test]
 	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void LastIndexOf_Char_StartIndexStringLength () 
+	{
+		string s = "Mono";
+		s.LastIndexOf ('n', s.Length, 1);
+		// this works for string but not for a char
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
 	public void LastIndexOf_Char_StartIndexOverflow () 
 	{
 		"Mono".LastIndexOf ('o', Int32.MaxValue, 1);
@@ -845,6 +854,22 @@ public class StringTest : Assertion
 	public void LastIndexOf_Char_LengthOverflow () 
 	{
 		"Mono".LastIndexOf ('o', 1, Int32.MaxValue);
+	}
+
+	[Test]
+	public void LastIndexOf_String_StartIndexStringLength () 
+	{
+		string s = "Mono";
+		s.LastIndexOf ("n", s.Length, 1);
+		// this works for string but not for a char
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void LastIndexOf_String_StartIndexStringLength_Plus1 () 
+	{
+		string s = "Mono";
+		s.LastIndexOf ("n", s.Length + 1, 1);
 	}
 
 	[Test]
