@@ -1,3 +1,7 @@
+2003-07-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* rules.make: set corlib to PLATFORM_CORLIB if this is defined.
+
 2003-07-22  Peter Williams  <peter@newton.cx>
 
 	* rules.make (withmcs): Add this developer utility target.

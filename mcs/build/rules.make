@@ -69,6 +69,9 @@ endif
 
 include $(topdir)/build/platforms/$(PLATFORM).make
 
+ifdef PLATFORM_CORLIB
+corlib = $(PLATFORM_CORLIB)
+endif
 # Useful
 
 ifeq ($(PLATFORM_RUNTIME),$(RUNTIME))
