@@ -1146,6 +1146,28 @@ public class DirectoryTest : Assertion {
 		}								
 	}
 
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void SetCurrentDirectoryNull (string path)
+	{
+		Directory.SetCurrentDirectory (null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void SetCurrentDirectoryEmpty (string path)
+	{
+		Directory.SetCurrentDirectory (String.Empty);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void SetCurrentDirectoryWhitespace (string path)
+	{
+		Directory.SetCurrentDirectory (" ");
+	}
+
+
 	private void DeleteDirectory (string path)
 	{
 		if (Directory.Exists (path))
