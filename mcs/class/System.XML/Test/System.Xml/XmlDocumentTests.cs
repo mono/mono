@@ -1111,5 +1111,26 @@ namespace MonoTests.System.Xml
 			AssertNotNull (n);
 			AssertEquals (XmlNodeType.Whitespace, n.NodeType);
 		}
+
+		[Test]
+		public void SavePreserveWhitespace ()
+		{
+			string xml = "<root>  <element>text\n</element></root>";
+			XmlDocument doc = new XmlDocument ();
+			doc.PreserveWhitespace = true;
+			doc.LoadXml (xml);
+			StringWriter sw = new StringWriter ();
+			doc.Save (sw);
+			AssertEquals ("<?xml version=\"1.0\" encoding=\"utf-16\"?>" + xml, sw.ToString ());
+
+			doc.PreserveWhitespace = false;
+			sw = new StringWriter ();
+			doc.Save (sw);
+			string NEL = Environment.NewLine;
+			AssertEquals ("<?xml version=\"1.0\" encoding=\"utf-16\"?>"
+				+ NEL + "<root>  <element>text" 
+				+ "\n</element></root>",
+				sw.ToString ());
+		}
 	}
 }

@@ -1243,5 +1243,13 @@ namespace MonoTests.System.Xml
 		{
 			xtw.WriteStartAttribute ("", "xmlns", "urn:foo");
 		}
+
+		[Test]
+		public void WriteRawProceedToProlog ()
+		{
+			XmlTextWriter xtw = new XmlTextWriter (new StringWriter ());
+			xtw.WriteRaw ("");
+			AssertEquals (WriteState.Prolog, xtw.WriteState);
+		}
 	}
 }

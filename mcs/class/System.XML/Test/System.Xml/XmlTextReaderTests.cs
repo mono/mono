@@ -776,7 +776,28 @@ namespace MonoTests.System.Xml
 			AssertEquals (134, bytes2 [3]);
 			AssertEquals (184, bytes2 [4]);
 			AssertEquals (0, bytes2 [5]);
+			while (!xtr.EOF)
+				xtr.Read ();
 			xtr.Close ();
+		}
+
+		[Test]
+		public void ReadBase64Test2 ()
+		{
+			string xml = "<root/>";
+			XmlTextReader xtr = new XmlTextReader (new StringReader (xml));
+			xtr.Read ();
+			byte [] data = new byte [1];
+			xtr.ReadBase64 (data, 0, 1);
+			while (!xtr.EOF)
+				xtr.Read ();
+
+			xml = "<root></root>";
+			xtr = new XmlTextReader (new StringReader (xml));
+			xtr.Read ();
+			xtr.ReadBase64 (data, 0, 1);
+			while (!xtr.EOF)
+				xtr.Read ();
 		}
 	}
 }

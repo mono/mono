@@ -1,3 +1,9 @@
+2004-05-27  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextReaderTests.cs : added test for bug #59142.
+	* XmlTextWriterTests.cs : added test for bug #59154.
+	* XmlDocumentTests.cs : added test for bug #59155.
+
 2004-05-24  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlNodeTests.cs : added Normalize2().
