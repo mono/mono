@@ -1,5 +1,7 @@
 2003-08-26  Zoltan Varga  <vargaz@freemail.hu>
 
+	* loader.h: Add missing include to fix build.
+
 	* image.h: mono_image_load_references is no more.
 
 	* assembly.c: Reworked assembly loading to make it really thread safe.
