@@ -28,8 +28,10 @@ namespace N1
 		}
 	}
 
-	static int Main  ()
-	{
-		return 0;
+	public class Blah {
+		static int Main  ()
+		{
+			return 0;
+		}
 	}
 }

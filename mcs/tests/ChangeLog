@@ -1,3 +1,7 @@
+2002-04-05  Ravi Pratap  <ravi@ximian.com>
+
+	* test-90.cs : Fix bug where we had no class !
+
 2002-03-27  Miguel de Icaza  <miguel@ximian.com>
 
 	* test-18.cs: Augment test with the multi-flow try/catch.

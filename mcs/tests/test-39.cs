@@ -25,7 +25,7 @@ using System;
 	}
 
 [Simple ("Dummy", MyNamedArg = "Dude!")]
-[Simple ("Daya", MyNamedArg = "Raj", AnotherArg = "Foo")]	
+[Simple ("Vids", MyNamedArg = "Raj", AnotherArg = "Foo")]	
 	public class Blah {
 
 		public static int Main ()
