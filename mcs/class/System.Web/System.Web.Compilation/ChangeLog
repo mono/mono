@@ -1,5 +1,9 @@
 2003-04-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* TemplateControlCompiler.cs: added support for data bound properties.
+
+2003-04-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* AspComponentFoundry.cs: simplified it a lot by using Type and Assembly
 	instead of their names.
 

@@ -27,6 +27,7 @@ namespace System.Web.Compilation
 		static Type fontinfoType = typeof (System.Web.UI.WebControls.FontInfo);
 
 		TemplateControlParser parser;
+		int dataBoundAtts;
 		static TypeConverter colorConverter;
 
 		static CodeVariableReferenceExpression ctrlVar = new CodeVariableReferenceExpression ("__ctrl");
@@ -195,10 +196,49 @@ namespace System.Web.Compilation
 			}
 		}
 
-		void AddCodeForPropertyOrField (CodeMemberMethod method, Type type, string var_name, string att, bool isDataBound)
+		string TrimDB (string value)
 		{
+			string str = value.Trim ();
+			str = str.Substring (3);
+			return str.Substring (0, str.Length - 2);
+		}
+
+		string DataBoundProperty (ControlBuilder builder, Type type, string varName, string value)
+		{
+			value = TrimDB (value);
+			CodeMemberMethod method;
+			string dbMethodName = builder.method.Name + "_DB_" + dataBoundAtts++;
+
+			method = CreateDBMethod (dbMethodName, GetContainerType (builder), builder.ControlType);
+
+			CodeVariableReferenceExpression targetExpr = new CodeVariableReferenceExpression ("target");
+
+			// This should be a CodePropertyReferenceExpression for properties... but it works anyway
+			CodeFieldReferenceExpression field = new CodeFieldReferenceExpression (targetExpr, varName);
+
+			CodeExpression expr;
+			if (type == typeof (string)) {
+				CodeMethodInvokeExpression tostring = new CodeMethodInvokeExpression ();
+				CodeTypeReferenceExpression conv = new CodeTypeReferenceExpression (typeof (Convert));
+				tostring.Method = new CodeMethodReferenceExpression (conv, "ToString");
+				tostring.Parameters.Add (new CodeSnippetExpression (value));
+				expr = tostring;
+			} else {
+				CodeSnippetExpression snippet = new CodeSnippetExpression (value);
+				expr = new CodeCastExpression (type, snippet);
+			}
+			
+			method.Statements.Add (new CodeAssignStatement (field, expr));
+			mainClass.Members.Add (method);
+			return method.Name;
+		}
+
+		void AddCodeForPropertyOrField (ControlBuilder builder, Type type, string var_name, string att, bool isDataBound)
+		{
+			CodeMemberMethod method = builder.method;
 			if (isDataBound) {
-				//DataBoundProperty (type, var_name, att);
+				string dbMethodName = DataBoundProperty (builder, type, var_name, att);
+				AddEventAssign (method, "DataBinding", typeof (EventHandler), dbMethodName);
 				return;
 			}
 
@@ -209,15 +249,25 @@ namespace System.Web.Compilation
 			method.Statements.Add (assign);
 		}
 
-		bool ProcessPropertiesAndFields (CodeMemberMethod method, MemberInfo member, string id, string attValue)
+		bool IsDataBound (string value)
 		{
+			if (value == null || value == "")
+				return false;
+
+			string str = value.Trim ();
+			return (str.StartsWith ("<%#") && str.EndsWith ("%>"));
+		}
+		
+		bool ProcessPropertiesAndFields (ControlBuilder builder, MemberInfo member, string id, string attValue)
+		{
+			CodeMemberMethod method = builder.method;
+			this.dataBoundAtts = 0;
 			int hyphen = id.IndexOf ('-');
 
 			bool isPropertyInfo = (member is PropertyInfo);
-
 			bool is_processed = false;
-			//FIXME: bool isDataBound = att.IsDataBound ((string) att [id]);
-			bool isDataBound = false;
+			bool isDataBound = IsDataBound (attValue);
+
 			Type type;
 			if (isPropertyInfo) {
 				type = ((PropertyInfo) member).PropertyType;
@@ -228,7 +278,7 @@ namespace System.Web.Compilation
 			}
 
 			if (0 == String.Compare (member.Name, id, true)){
-				AddCodeForPropertyOrField (method, type, member.Name, attValue, isDataBound);
+				AddCodeForPropertyOrField (builder, type, member.Name, attValue, isDataBound);
 				is_processed = true;
 			} else if (hyphen != -1 && (type == fontinfoType || type == styleType || type.IsSubclassOf (styleType))){
 				//FIXME: x-y should not be limited to style and font
@@ -255,7 +305,7 @@ namespace System.Web.Compilation
 					else
 						value = attValue;
 
-					AddCodeForPropertyOrField (method, subprop.PropertyType,
+					AddCodeForPropertyOrField (builder, subprop.PropertyType,
 							 member.Name + "." + subprop.Name,
 							 value, isDataBound);
 					is_processed = true;
@@ -294,6 +344,7 @@ namespace System.Web.Compilation
 					continue;
 
 				is_processed = false;
+				string attvalue = atts [id] as string;
 				if (id.Length > 2 && id.Substring (0, 2).ToUpper () == "ON"){
 					if (ev_info == null)
 						ev_info = type.GetEvents ();
@@ -304,7 +355,7 @@ namespace System.Web.Compilation
 							AddEventAssign (builder.method,
 									ev.Name,
 									ev.EventHandlerType,
-									(string) atts [id]);
+									attvalue);
 
 							is_processed = true;
 							break;
@@ -319,7 +370,7 @@ namespace System.Web.Compilation
 					prop_info = type.GetProperties ();
 
 				foreach (PropertyInfo prop in prop_info) {
-					is_processed = ProcessPropertiesAndFields (builder.method, prop, id, atts [id] as string);
+					is_processed = ProcessPropertiesAndFields (builder, prop, id, attvalue);
 					if (is_processed)
 						break;
 				}
@@ -331,7 +382,7 @@ namespace System.Web.Compilation
 					field_info = type.GetFields ();
 
 				foreach (FieldInfo field in field_info){
-					is_processed = ProcessPropertiesAndFields (builder.method, field, id, atts [id] as string);
+					is_processed = ProcessPropertiesAndFields (builder, field, id, attvalue);
 					if (is_processed)
 						break;
 				}
@@ -447,6 +498,42 @@ namespace System.Web.Compilation
 			return prop.PropertyType;
 		}
 		
+		CodeMemberMethod CreateDBMethod (string name, Type container, Type target)
+		{
+			CodeMemberMethod method = new CodeMemberMethod ();
+			method.Attributes = MemberAttributes.Public | MemberAttributes.Final;
+			method.Name = name;
+			method.Parameters.Add (new CodeParameterDeclarationExpression (typeof (object), "sender"));
+			method.Parameters.Add (new CodeParameterDeclarationExpression (typeof (EventArgs), "e"));
+
+			CodeTypeReference containerRef = new CodeTypeReference (container);
+			CodeTypeReference targetRef = new CodeTypeReference (target);
+
+			CodeVariableDeclarationStatement decl = new CodeVariableDeclarationStatement();
+			decl.Name = "Container";
+			decl.Type = containerRef;
+			method.Statements.Add (decl);
+
+			decl = new CodeVariableDeclarationStatement();
+			decl.Name = "target";
+			decl.Type = targetRef;
+			method.Statements.Add (decl);
+
+			CodeVariableReferenceExpression targetExpr = new CodeVariableReferenceExpression ("target");
+			CodeAssignStatement assign = new CodeAssignStatement ();
+			assign.Left = targetExpr;
+			assign.Right = new CodeCastExpression (targetRef, new CodeArgumentReferenceExpression ("sender"));
+			method.Statements.Add (assign);
+
+			assign = new CodeAssignStatement ();
+			assign.Left = new CodeVariableReferenceExpression ("Container");
+			assign.Right = new CodeCastExpression (containerRef,
+						new CodePropertyReferenceExpression (targetExpr, "BindingContainer"));
+			method.Statements.Add (assign);
+
+			return method;
+		}
+
 		void AddDataBindingLiteral (ControlBuilder builder, DataBindingBuilder db)
 		{
 			if (db.Code == null || db.Code.Trim () == "")
@@ -463,40 +550,13 @@ namespace System.Web.Compilation
 			method.Statements.Add (new CodeMethodReturnStatement (ctrlVar));
 
 			// Add the DataBind handler
-			CodeTypeReference dbTypeRef = new CodeTypeReference (typeof (DataBoundLiteralControl));
-			CodeTypeReference containerType = new CodeTypeReference (GetContainerType (builder));
+			method = CreateDBMethod (dbMethodName, GetContainerType (builder), typeof (DataBoundLiteralControl));
 
-			method = new CodeMemberMethod ();
-			method.Attributes = MemberAttributes.Public | MemberAttributes.Final;
-			method.Name = dbMethodName;
-			method.Parameters.Add (new CodeParameterDeclarationExpression (typeof (object), "sender"));
-			method.Parameters.Add (new CodeParameterDeclarationExpression (typeof (EventArgs), "e"));
-
-			CodeVariableDeclarationStatement decl = new CodeVariableDeclarationStatement();
-			decl.Name = "Container";
-			decl.Type = containerType;
-			method.Statements.Add (decl);
-
-			decl = new CodeVariableDeclarationStatement();
-			decl.Name = "target";
-			decl.Type = dbTypeRef;
-			method.Statements.Add (decl);
-
-			CodeVariableReferenceExpression target = new CodeVariableReferenceExpression ("target");
-			CodeAssignStatement assign = new CodeAssignStatement ();
-			assign.Left = target;
-			assign.Right = new CodeCastExpression (dbTypeRef, new CodeArgumentReferenceExpression ("sender"));
-			method.Statements.Add (assign);
-
-			assign = new CodeAssignStatement ();
-			assign.Left = new CodeVariableReferenceExpression ("Container");
-			assign.Right = new CodeCastExpression (containerType,
-						new CodePropertyReferenceExpression (target, "BindingContainer"));
-			method.Statements.Add (assign);
-
+			CodeVariableReferenceExpression targetExpr = new CodeVariableReferenceExpression ("target");
 			CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression ();
-			invoke.Method = new CodeMethodReferenceExpression (target, "SetDataBoundString");
+			invoke.Method = new CodeMethodReferenceExpression (targetExpr, "SetDataBoundString");
 			invoke.Parameters.Add (new CodePrimitiveExpression (0));
+
 			CodeMethodInvokeExpression tostring = new CodeMethodInvokeExpression ();
 			tostring.Method = new CodeMethodReferenceExpression (
 							new CodeTypeReferenceExpression (typeof (Convert)),
