@@ -1,3 +1,7 @@
+2003-12-12  Lluis Sanchez Gual <lluis@ximian.com>
+	
+	* WebServicesConfigurationSectionHandler.cs: Removed TODO.
+
 2003-10-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebServicesConfigurationSectionHandler.cs: keep the file name of the

@@ -223,7 +223,6 @@ namespace System.Web.Services.Configuration
 	
 	class WebServicesConfigurationSectionHandler : IConfigurationSectionHandler
 	{
-		[MonoTODO("Some nodes not supported, see below")]
 		public object Create (object parent, object context, XmlNode section)
 		{
 			WSConfig config = new WSConfig (parent as WSConfig, context);
