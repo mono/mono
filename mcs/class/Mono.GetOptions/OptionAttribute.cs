@@ -25,22 +25,22 @@ namespace Mono.GetOptions
 
 		public OptionAttribute(string shortDescription)
 		{
-			SetValues(shortDescription, ' ', string.Empty, 0); 
+			SetValues(shortDescription, ' ', string.Empty, 1);
 		}
 
 		public OptionAttribute(string shortDescription, char shortForm)
 		{
-			SetValues(shortDescription, shortForm, string.Empty, 0);
+			SetValues(shortDescription, shortForm, string.Empty, 1);
 		}
 
 		public OptionAttribute(string shortDescription, char shortForm, string longForm)
 		{
-			SetValues(shortDescription, shortForm, longForm, 0); 
+			SetValues(shortDescription, shortForm, longForm, 1);
 		}
 
 		public OptionAttribute(string shortDescription, string longForm)
 		{
-			SetValues(shortDescription, ' ', longForm, 0); 
+			SetValues(shortDescription, ' ', longForm, 1); 
 		}
 
 		public OptionAttribute(int maxOccurs, string shortDescription)

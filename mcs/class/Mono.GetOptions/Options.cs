@@ -5,6 +5,7 @@ namespace Mono.GetOptions
 	public class Options
 	{
 		public OptionsParsingMode ParsingMode;
+		public bool BreakSingleDashManyLettersIntoManyOptions;
 		public bool EndOptionProcessingWithDoubleDash;
 
 		private OptionList optionParser;
@@ -14,6 +15,7 @@ namespace Mono.GetOptions
 		public Options()
 		{
 			ParsingMode = OptionsParsingMode.Both;
+			BreakSingleDashManyLettersIntoManyOptions = false;
 			EndOptionProcessingWithDoubleDash = true;
 		}
 
@@ -40,6 +42,13 @@ namespace Mono.GetOptions
 		{
 			return optionParser.DoUsage();
 		}
+
+		[Option("Show verbose parsing of options", ' ',"verbosegetoptions")]
+		public bool VerboseParsingOfOptions
+		{
+			set { OptionDetails.Verbose = value;}
+		}
+
 
 	}
 	

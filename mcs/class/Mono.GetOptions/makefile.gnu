@@ -3,7 +3,7 @@ topdir = ../..
 LIBRARY = $(topdir)/class/lib/Mono.GetOptions.dll
 
 LIB_LIST = list.unix
-LIB_FLAGS = -r System.Data -r System.Xml
+LIB_FLAGS = 
 
 SOURCES_INCLUDE=*.cs
 

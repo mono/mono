@@ -18,8 +18,15 @@ namespace Mono.GetOptions
 		AbandonProgram,
 		GoAhead
 	}
+	
+	internal enum OptionProcessingResult
+	{
+		NotThisOption,
+		OptionAlone,
+		OptionConsumedParameter
+	}
 
-	internal class OptionDetails : IComparable 
+	internal class OptionDetails : IComparable
 	{
 		public char ShortForm;
 		public string LongForm;
@@ -32,6 +39,8 @@ namespace Mono.GetOptions
 		public ArrayList Values;
 		public System.Type ParameterType;
 		public string ParamName = "PARAM"; // TODO: another element to get from OptionAttribute
+		
+		public static bool Verbose = false;
 		
 		public override string ToString()
 		{
@@ -71,7 +80,7 @@ namespace Mono.GetOptions
 					return parameters[0].ParameterType;
 			}
 
-			throw new NotSupportedException("'" + memberInfo.MemberType + "' memberType is not supportted");
+			throw new NotSupportedException("'" + memberInfo.MemberType + "' memberType is not supported");
 		}
 
 		public OptionDetails(MemberInfo memberInfo, OptionAttribute option, Options optionBundle)
@@ -89,16 +98,25 @@ namespace Mono.GetOptions
 
 			if (this.ParameterType != null && this.ParameterType.FullName != "System.Boolean")
 			{
+				if (this.LongForm.IndexOf(':') >= 0)
+					throw new InvalidOperationException("Options with an embedded colon (':') in their visible name must be boolean!!! [" + this.MemberInfo.ToString() + " isn't]");
+				
 				this.NeedsParameter = true;
-				if (this.ParameterType.IsArray)
+
+				if (option.MaxOccurs != 1)
 				{
-					this.Values = new ArrayList();
-					this.MaxOccurs = option.MaxOccurs;
-				}
-				else
-				{
-					if (this.MemberInfo is MethodInfo)
+					if (this.ParameterType.IsArray)
+					{
+						this.Values = new ArrayList();
 						this.MaxOccurs = option.MaxOccurs;
+					}
+					else
+					{
+						if (this.MemberInfo is MethodInfo || this.MemberInfo is PropertyInfo)
+							this.MaxOccurs = option.MaxOccurs;
+						else
+							throw new InvalidOperationException("MaxOccurs set to non default value (" + option.MaxOccurs + ") for a [" + this.MemberInfo.ToString() + "] option");
+					}
 				}
 			}
 		}
@@ -134,21 +152,29 @@ namespace Mono.GetOptions
 			}
 		}
 
-		private void DoIt(string parameter)
+		private void Occurred(int howMany)
 		{
-			Occurs++;
+			Occurs += howMany;
 
 			if (MaxOccurs > 0 && Occurs > MaxOccurs)
 				throw new IndexOutOfRangeException("Option " + ShortForm + " can be used at most " + MaxOccurs + " times");
-			
+		}
+
+		private void DoIt()
+		{
 			if (!NeedsParameter)
 			{
+				Occurred(1);
+
+				if (Verbose)
+					Console.WriteLine("<" + this.LongForm + "> set to [true]");
+
 				if (MemberInfo is FieldInfo)
 				{
 					((FieldInfo)MemberInfo).SetValue(OptionBundle, true);
 					return;
 				}
-				if (MemberInfo is PropertyInfo) 
+				if (MemberInfo is PropertyInfo)
 				{
 					((PropertyInfo)MemberInfo).SetValue(OptionBundle, true, null);
 					return;
@@ -158,50 +184,98 @@ namespace Mono.GetOptions
 
 				return;
 			}
+		}
+		
+		private void DoIt(string parameterValue)
+		{
+			if (parameterValue == null)
+				parameterValue = "";
 
-			object convertedParameter = null;
+			string[] parameterValues = parameterValue.Split(',');
 
-			if (Values != null && parameter != null)
+			Occurred(parameterValues.Length);
+
+			foreach (string parameter in parameterValues)
 			{
-				convertedParameter = Convert.ChangeType(parameter, ParameterType.GetElementType());
-				Values.Add(convertedParameter);
-				return;
+
+				object convertedParameter = null;
+
+				if (Verbose)
+					Console.WriteLine("<" + this.LongForm + "> set to [" + parameter + "]");
+
+				if (Values != null && parameter != null)
+				{
+					convertedParameter = Convert.ChangeType(parameter, ParameterType.GetElementType());
+					Values.Add(convertedParameter);
+					continue;
+				}
+
+				if (parameter != null)
+					convertedParameter = Convert.ChangeType(parameter, ParameterType);
+
+				if (MemberInfo is FieldInfo)
+				{
+					((FieldInfo)MemberInfo).SetValue(OptionBundle, convertedParameter);
+					continue;
+				}
+
+				if (MemberInfo is PropertyInfo)
+				{
+					((PropertyInfo)MemberInfo).SetValue(OptionBundle, convertedParameter, null);
+					continue;
+				}
+
+				if ((WhatToDoNext)((MethodInfo)MemberInfo).Invoke(OptionBundle, new object[] { convertedParameter }) == WhatToDoNext.AbandonProgram)
+					System.Environment.Exit(1);
 			}
-
-			if (parameter != null)
-				convertedParameter = Convert.ChangeType(parameter, ParameterType);
-
-			if (MemberInfo is FieldInfo)
-			{
-				((FieldInfo)MemberInfo).SetValue(OptionBundle, convertedParameter);
-				return;
-			}
-
-			if (MemberInfo is PropertyInfo) 
-			{
-				((PropertyInfo)MemberInfo).SetValue(OptionBundle, convertedParameter, null);
-				return;
-			}
-
-			if ((WhatToDoNext)((MethodInfo)MemberInfo).Invoke(OptionBundle, new object[] { convertedParameter }) == WhatToDoNext.AbandonProgram)
-				System.Environment.Exit(1);
 		}
 
-		public bool ProcessArgument(string arg, string nextArg)
+		private bool StartsLikeAnOption(string arg)
 		{
-			if (arg == ("-" + ShortForm) || arg == ("--" + LongForm) ||
-				arg == ("/" + ShortForm) || arg == ("/" + LongForm)) 
+			return (arg != null && arg[0] == '-');
+		}
+
+		private bool IsThisOption(string arg)
+		{
+			if (StartsLikeAnOption(arg))
 			{
-				DoIt(nextArg);
-				return true;
-			}
-			string temp = (arg + ":" + nextArg).TrimStart('-','/');
-			if (temp == LongForm)
-			{
-				DoIt(null);
-				return true;
+				arg = arg.TrimStart('-');
+				return (arg == "" + ShortForm || arg == LongForm);
 			}
 			return false;
+		}
+
+		public OptionProcessingResult ProcessArgument(string arg, string nextArg)
+		{
+			if (IsThisOption(arg))
+			{
+				if (!NeedsParameter)
+				{
+					DoIt();
+					return OptionProcessingResult.OptionAlone;
+				}
+				else
+				{
+					if (StartsLikeAnOption(nextArg))
+					{
+						DoIt(null);
+						return OptionProcessingResult.OptionAlone;
+					}
+					else
+					{
+						DoIt(nextArg);
+						return OptionProcessingResult.OptionConsumedParameter;
+					}
+				}
+			}
+
+			if (IsThisOption(arg + ":" + nextArg))
+			{
+				DoIt();
+				return OptionProcessingResult.OptionConsumedParameter;
+			}
+
+			return OptionProcessingResult.NotThisOption;
 		}
 	}
 }

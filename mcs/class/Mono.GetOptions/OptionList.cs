@@ -30,6 +30,7 @@ namespace Mono.GetOptions
 	
 		private Options optionBundle = null;
 		private OptionsParsingMode parsingMode;
+		private bool breakSingleDashManyLettersIntoManyOptions;
 		private bool endOptionProcessingWithDoubleDash;
 		
 		private string appExeName;
@@ -139,6 +140,7 @@ namespace Mono.GetOptions
 
 			this.optionBundle = optionBundle; 
 			this.parsingMode = optionBundle.ParsingMode ;
+			this.breakSingleDashManyLettersIntoManyOptions = optionBundle.BreakSingleDashManyLettersIntoManyOptions;
 			this.endOptionProcessingWithDoubleDash = optionBundle.EndOptionProcessingWithDoubleDash;
 
 			GetAssemblyAttributeValue(typeof(AssemblyTitleAttribute), "Title", ref appTitle);
@@ -294,18 +296,27 @@ namespace Mono.GetOptions
 							continue;
 						}
 
-						if ((parsingMode & OptionsParsingMode.Windows) > 0)
+						if (arg[0] == '/')
 						{
-						 	if (arg[0] == '/')
-								result.AddRange(arg.Split(':')); 
+							if ((parsingMode & OptionsParsingMode.Windows) > 0)
+							{
+								string newArg = '-' + arg.TrimStart('/');
+								result.AddRange(newArg.Split(':'));
+								continue;
+							}
 						}
 
 						if ((parsingMode & OptionsParsingMode.Linux) > 0)
 						{
 							if ((arg[0] == '-') && (arg[1] != '-'))
 							{
-								foreach(char c in arg.Substring(1)) // many single-letter options
-									result.Add("-" + c); // expand into individualized options
+								if (breakSingleDashManyLettersIntoManyOptions)
+								{
+									foreach(char c in arg.Substring(1)) // many single-letter options
+										result.Add("-" + c); // expand into individualized options
+								}
+								else
+									result.Add(arg);
 								continue;
 							}
 
@@ -343,28 +354,25 @@ namespace Mono.GetOptions
 			try
 			{
 				int argc = args.Length;
-				for(int i = 0; i < argc; i++)
+				for (int i = 0; i < argc; i++)
 				{
 					arg =  args[i];
 					if (i+1 < argc)
-					{
 						nextArg = args[i+1];
-						if (nextArg.StartsWith("-"))
-							nextArg = null;
-					}
 					else
 						nextArg = null;
 
 					OptionWasProcessed = false;
 
-					if (arg.StartsWith("-") || arg.StartsWith("/"))
+					if (arg.StartsWith("-"))
 					{
 						foreach(OptionDetails option in list)
 						{
-							if (option.ProcessArgument(arg, nextArg))
+							OptionProcessingResult result = option.ProcessArgument(arg, nextArg);
+							if (result != OptionProcessingResult.NotThisOption)
 							{
 								OptionWasProcessed = true;
-								if (nextArg != null)
+								if (result == OptionProcessingResult.OptionConsumedParameter)
 									i++;
 								break;
 							}
@@ -372,7 +380,12 @@ namespace Mono.GetOptions
 					}
 
 					if (!OptionWasProcessed)
-						arguments.Add(arg); 
+					{
+						if (OptionDetails.Verbose)
+							Console.WriteLine("Could not find what to do with [" + arg + "] followed by [" + nextArg + "]");
+
+						arguments.Add(arg);
+					}
 				}
 
 				foreach(OptionDetails option in list)

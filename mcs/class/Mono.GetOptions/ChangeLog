@@ -1,3 +1,13 @@
+2003-06-16  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
+    * OptionDetails.cs :
+		- Now handles correctly options specifiying maxOccurs != 1 (that was preventing mbas from being useable)
+		- Now indicates if option parsing consumed a parameter or not (also checks if it is available first)
+		- Now multivalued options can either be given as many pairs option/parameter and also as a pair option/comma-separated-list, and both
+			Example: -r System.Data -r System.Xml  or /r System.Data,System.Xml
+		- Now it is more lax in the form matching: -r /r -reference --reference /reference are valid for a ('r',"reference") option
+	* Options.cs : new BreakSingleDashManyLettersIntoManyOptions field to make more GNUish parsing of single letter options.
+			Makes -zxf become -z -x -f if set to true
+
 2003-01-30  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
 
     * OptionDetails.cs : now handle composite arguments '/option:suboption'
