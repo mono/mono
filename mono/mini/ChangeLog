@@ -1,3 +1,7 @@
+2004-04-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-*.c (mono_arch_get_allocatable_int_vars): Skip written-only
+	vars as well.
 
 Mon Apr 19 19:39:47 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
