@@ -272,7 +272,7 @@ namespace System.Web.UI.WebControls
 				end = indices.Count;
 				for (i = 0; i < end; i++) {
 					if ((int) indices [i] < Count ) {
-						this [i].LoadViewState (states [i]);
+						this [(int) indices [i]].LoadViewState (states [i]);
 					} else {
 						ListItem temp = new ListItem ();
 						temp.LoadViewState (states [i]);

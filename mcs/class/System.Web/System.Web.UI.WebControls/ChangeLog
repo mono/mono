@@ -1,3 +1,8 @@
+2004-10-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ListItemCollection.cs: fixed bug when indexing changed elements in
+	LoadViewState. Patch from Alois Bělaška.
+
 2004-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TableStyle.cs: don't render empty 'rules' attribute (again).
