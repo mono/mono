@@ -1,5 +1,17 @@
 2003-05-18  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (This.ResolveBase): New public function.
+	(This.DoResolve): Check for CS0188.
+
+	* codegen.cs (EmitContext.This): Just call This.ResolveBase(), not
+	This.Resolve().
+
+	* ecore.cs (MethodGroupExpr.DoResolve): Set the
+	`instance_expression' to null if we don't have any non-static
+	methods.
+
+2003-05-18  Martin Baulig  <martin@ximian.com>
+
 	Reworked the way how local variables and parameters are handled by
 	the flow analysis code.
 

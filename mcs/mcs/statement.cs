@@ -2165,12 +2165,6 @@ namespace Mono.CSharp {
 		// </summary>
 		public readonly int Offset;
 
-		// <summary>
-		//   If true, this is a struct which only has public fields.
-		//   If false, it's either not a struct or it has non-public fields.
-		// </summary>
-		public readonly bool IsPublicStruct;
-
 		protected readonly StructInfo struct_info;
 
 		private static Hashtable type_hash = new Hashtable ();
@@ -2202,10 +2196,8 @@ namespace Mono.CSharp {
 			this.Type = type;
 
 			struct_info = StructInfo.GetStructInfo (type);
-			if (struct_info != null) {
+			if (struct_info != null)
 				Length = struct_info.CountTotal;
-				IsPublicStruct = !struct_info.HasNonPublicFields;
-			}
 		}
 
 		private TypeInfo (TypeContainer tc)
@@ -2213,10 +2205,8 @@ namespace Mono.CSharp {
 			this.Type = tc.TypeBuilder;
 
 			struct_info = StructInfo.GetStructInfo (tc);
-			if (struct_info != null) {
+			if (struct_info != null)
 				Length = struct_info.CountTotal;
-				IsPublicStruct = !struct_info.HasNonPublicFields;
-			}
 		}
 
 		protected TypeInfo (StructInfo struct_info, int offset)
@@ -2470,9 +2460,14 @@ namespace Mono.CSharp {
 			this.IsParameter = true;
 		}
 
+		public bool IsAssigned (EmitContext ec)
+		{
+			return !ec.DoFlowAnalysis || ec.CurrentBranching.IsAssigned (this);
+		}
+
 		public bool IsAssigned (EmitContext ec, Location loc)
 		{
-			if (!ec.DoFlowAnalysis || ec.CurrentBranching.IsAssigned (this))
+			if (IsAssigned (ec))
 				return true;
 
 			Report.Error (165, loc,
@@ -2485,10 +2480,6 @@ namespace Mono.CSharp {
 		{
 			if (vector [Offset])
 				return true;
-
-			// Check whether it's a struct with only public fields.
-			if (!TypeInfo.IsPublicStruct)
-				return false;
 
 			// Ok, so each field must be assigned.
 			for (int i = 0; i < TypeInfo.Length; i++)

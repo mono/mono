@@ -3913,6 +3913,9 @@ namespace Mono.CSharp {
 		
 		override public Expression DoResolve (EmitContext ec)
 		{
+			if (!IsInstance)
+				instance_expression = null;
+
 			if (instance_expression != null) {
 				instance_expression = instance_expression.DoResolve (ec);
 				if (instance_expression == null)

@@ -591,7 +591,7 @@ namespace Mono.CSharp {
 	        ///   A dynamic This that is shared by all variables in a emitcontext.
 		///   Created on demand.
 		/// </summary>
-		public Expression my_this;
+		public This my_this;
 		public Expression This {
 			get {
 				if (my_this == null) {
@@ -600,7 +600,8 @@ namespace Mono.CSharp {
 					else
 						my_this = new This (loc);
 
-					my_this = my_this.Resolve (this);
+					if (!my_this.ResolveBase (this))
+						my_this = null;
 				}
 
 				return my_this;

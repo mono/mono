@@ -3351,48 +3351,6 @@ namespace Mono.CSharp {
 			get { return variable_info; }
 		}
 
-		public bool IsAssigned (EmitContext ec, Location loc)
-		{
-			if (variable_info == null)
-				return true;
-
-			if (!ec.DoFlowAnalysis || ec.CurrentBranching.IsAssigned (variable_info))
-				return true;
-
-			Report.Error (165, loc,
-				      "Use of unassigned local variable `" +
-				      Name + "'");
-			ec.CurrentBranching.SetAssigned (variable_info);
-			return false;
-		}
-
-		public bool IsFieldAssigned (EmitContext ec, string name, Location loc)
-		{
-			if (variable_info == null)
-				return true;
-
-			if (!ec.DoFlowAnalysis ||
-			    ec.CurrentBranching.IsFieldAssigned (variable_info, name))
-				return true;
-
-			Report.Error (170, loc,
-				      "Use of possibly unassigned field `" + name + "'");
-			ec.CurrentBranching.SetFieldAssigned (variable_info, name);
-			return false;
-		}
-
-		public void SetAssigned (EmitContext ec)
-		{
-			if (ec.DoFlowAnalysis && (variable_info != null))
-				ec.CurrentBranching.SetAssigned (variable_info);
-		}
-
-		public void SetFieldAssigned (EmitContext ec, string name)
-		{
-			if (ec.DoFlowAnalysis && (variable_info != null))
-				ec.CurrentBranching.SetFieldAssigned (variable_info, name);
-		}
-
 		public bool IsReadOnly {
 			get {
 				return is_readonly;
@@ -3421,7 +3379,7 @@ namespace Mono.CSharp {
 				return e;
 			}
 
-			if (ec.DoFlowAnalysis && !IsAssigned (ec, loc))
+			if ((variable_info != null) && !variable_info.IsAssigned (ec, loc))
 				return null;
 
 			return this;
@@ -3430,7 +3388,9 @@ namespace Mono.CSharp {
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
 			DoResolveBase (ec);
-			SetAssigned (ec);
+
+			if (variable_info != null)
+				variable_info.SetAssigned (ec);
 
 			Expression e = DoResolve (ec);
 
@@ -5943,67 +5903,44 @@ namespace Mono.CSharp {
 			get { return variable_info; }
 		}
 
-		public bool IsAssigned (EmitContext ec, Location loc)
-		{
-			if (variable_info == null)
-				return true;
-
-			if (!ec.DoFlowAnalysis || ec.CurrentBranching.IsAssigned (variable_info))
-				return true;
-
-			Report.Error (165, loc, "Use of unassigned local variable `this'");
-			ec.CurrentBranching.SetAssigned (variable_info);
-			return false;
-		}
-
-		public bool IsFieldAssigned (EmitContext ec, string name, Location loc)
-		{
-			if (variable_info == null)
-				return true;
-
-			if (!ec.DoFlowAnalysis ||
-			    ec.CurrentBranching.IsFieldAssigned (variable_info, name))
-				return true;
-
-			Report.Error (170, loc,
-				      "Use of possibly unassigned field `" + name + "'");
-			ec.CurrentBranching.SetFieldAssigned (variable_info, name);
-			return false;
-		}
-
-		public void SetAssigned (EmitContext ec)
-		{
-			if (ec.DoFlowAnalysis && (variable_info != null))
-				ec.CurrentBranching.SetAssigned (variable_info);
-		}
-
-		public void SetFieldAssigned (EmitContext ec, string name)
-		{
-			if (ec.DoFlowAnalysis && (variable_info != null))
-				ec.CurrentBranching.SetFieldAssigned (variable_info, name);
-		}
-
-
-		public override Expression DoResolve (EmitContext ec)
+		public bool ResolveBase (EmitContext ec)
 		{
 			eclass = ExprClass.Variable;
 			type = ec.ContainerType;
 
-			if (ec.IsStatic){
+			if (ec.IsStatic) {
 				Error (26, "Keyword this not valid in static code");
-				return null;
+				return false;
 			}
 
 			if ((block != null) && (block.ThisVariable != null))
 				variable_info = block.GetVariableInfo (block.ThisVariable);
+
+			return true;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			if (!ResolveBase (ec))
+				return null;
+
+			if ((variable_info != null) && !variable_info.IsAssigned (ec)) {
+				Error (188, "The this object cannot be used before all " +
+				       "of its fields are assigned to");
+				variable_info.SetAssigned (ec);
+				return this;
+			}
 
 			return this;
 		}
 
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
-			DoResolve (ec);
-			SetAssigned (ec);
+			if (!ResolveBase (ec))
+				return null;
+
+			if (variable_info != null)
+				variable_info.SetAssigned (ec);
 			
 			if (ec.TypeContainer is Class){
 				Error (1604, "Cannot assign to `this'");
