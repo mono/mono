@@ -1,3 +1,12 @@
+2003-02-04 Lluis Sanchez Gual <lluis@ideary.com>
+
+	* Identity.cs: created and identity class for each identity type. It is a more clear design.
+	* ServerIdentity.cs: added. Implements identity funtionality specific to server objects
+	* RemotingServices.cs: Modified to work with new types of identities.
+	* RemotingConfiguration.cs: Modified to work with new types of identities.
+	* ObjRef.cs: Added initialization of channel info in default constructor.
+	* Identity.cs: Added support for WellKnownService objects.
+
 2003-02-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* RemotingServices.cs:

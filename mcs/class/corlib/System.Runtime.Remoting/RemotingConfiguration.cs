@@ -173,8 +173,7 @@ namespace System.Runtime.Remoting
 		public static void RegisterWellKnownServiceType (WellKnownServiceTypeEntry entry) 
 		{
 			wellKnownServiceEntries [entry.ObjectUri] = entry;
-			ServiceType st = (entry.Mode == WellKnownObjectMode.SingleCall) ? ServiceType.SingleCall : ServiceType.Singleton;
-			RemotingServices.CreateServerIdentity (null, entry.ObjectType, entry.ObjectUri, st);
+			RemotingServices.CreateWellKnownServerIdentity (entry.ObjectType, entry.ObjectUri, entry.Mode);
 		}
 	}	
 }

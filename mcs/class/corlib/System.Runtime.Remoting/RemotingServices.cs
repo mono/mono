@@ -36,7 +36,7 @@ namespace System.Runtime.Remoting
 		{
 			app_id = "/" + Guid.NewGuid().ToString().Replace('-', '_') + "/";
 
-			CreateServerIdentity (null, typeof(RemoteActivator), "RemoteActivationService.rem", ServiceType.Singleton);
+			CreateWellKnownServerIdentity (typeof(RemoteActivator), "RemoteActivationService.rem", WellKnownObjectMode.Singleton);
 		}
 	
 		private RemotingServices () {}
@@ -142,9 +142,19 @@ namespace System.Runtime.Remoting
 			}
 
 			if (requested_type == null) requested_type = obj.GetType();
-			if (uri == null) uri = app_id + Environment.TickCount + "_" + next_id++;
 
-			CreateServerIdentity (obj, requested_type, uri, ServiceType.ClientActivated);
+			if (uri == null) 
+			{
+				uri = app_id + Environment.TickCount + "_" + next_id++;
+				CreateClientActivatedServerIdentity (obj, requested_type, uri);
+			}
+			else
+			{
+				ClientActivatedIdentity identity = uri_hash [uri] as ClientActivatedIdentity;
+				if (identity == null || obj != identity.GetServerObject()) 
+					CreateClientActivatedServerIdentity (obj, requested_type, uri);
+			}
+
 			return obj.CreateObjRef(requested_type);
 		}
 
@@ -213,7 +223,7 @@ namespace System.Runtime.Remoting
 
 		public static bool IsObjectOutOfContext(object tp)
 		{
-			Identity ident = GetObjectIdentity((MarshalByRefObject)tp);
+			ServerIdentity ident = GetObjectIdentity((MarshalByRefObject)tp) as ServerIdentity;
 			if (ident != null) return ident.Context != System.Threading.Thread.CurrentContext;
 			else return false;
 		}
@@ -248,7 +258,7 @@ namespace System.Runtime.Remoting
 				return obj.ObjectIdentity;
 		}
 
-		private static Identity GetClientIdentity(Type requiredType, string url, object channelData, string remotedObjectUri)
+		private static ClientIdentity GetClientIdentity(Type requiredType, string url, object channelData, string remotedObjectUri)
 		{
 			// This method looks for an identity for the given url. 
 			// If an identity is not found, it creates the identity and 
@@ -275,18 +285,18 @@ namespace System.Runtime.Remoting
 
 			lock (uri_hash)
 			{
-				Identity identity = (Identity)uri_hash [objectUri];
+				ClientIdentity identity = uri_hash [objectUri] as ClientIdentity;
 				if (identity != null) 
 					return identity;	// Object already registered
 
 				// Creates an identity and a proxy for the remote object
 
-				identity = new Identity (objectUri, null, requiredType, ServiceType.ClientProxy);
+				identity = new ClientIdentity (objectUri, requiredType);
 				identity.ClientSink = sink;
 
 				RemotingProxy proxy = new RemotingProxy (requiredType, identity);
 
-				identity.RealObject = (MarshalByRefObject) proxy.GetTransparentProxy();
+				identity.ClientProxy = (MarshalByRefObject) proxy.GetTransparentProxy();
 
 				// Registers the identity
 				uri_hash [objectUri] = identity;
@@ -294,42 +304,42 @@ namespace System.Runtime.Remoting
 			}
 		}
 
-		internal static Identity CreateServerIdentity(MarshalByRefObject realObject, Type objectType, string objectUri, ServiceType serviceType)
+		internal static ClientActivatedIdentity CreateClientActivatedServerIdentity(MarshalByRefObject realObject, Type objectType, string objectUri)
 		{
-			// This method looks for an identity for the given object. 
-			// If an identity is not found, it creates the identity and 
-			// assigns it to the given object
+			ClientActivatedIdentity identity = new ClientActivatedIdentity (objectUri, Context.DefaultContext, objectType);
+			identity.AttachServerObject (realObject);
+			RegisterServerIdentity (identity);
+			return identity;
+		}
 
+		internal static ServerIdentity CreateWellKnownServerIdentity(Type objectType, string objectUri, WellKnownObjectMode mode)
+		{
+			ServerIdentity identity;
+
+			if (mode == WellKnownObjectMode.SingleCall)
+				identity = new  SingleCallIdentity(objectUri, Context.DefaultContext, objectType);
+			else
+				identity = new  SingletonIdentity(objectUri, Context.DefaultContext, objectType);
+
+			RegisterServerIdentity (identity);
+			return identity;
+		}
+
+		private static void RegisterServerIdentity(Identity identity)
+		{
 			lock (uri_hash)
 			{
-		                Identity identity = (Identity)uri_hash [objectUri];
-				if (identity != null) 
-				{
-					if (realObject != identity.RealObject)
-						throw new RemotingException ("Uri already in use: " + objectUri);
+				if (uri_hash.ContainsKey (identity.ObjectUri)) 
+					throw new RemotingException ("Uri already in use: " + identity.ObjectUri);
 
-					return identity;	// Object already registered
-				}
-
-				identity = new Identity (objectUri, Context.DefaultContext, objectType, serviceType);
-				identity.RealObject = realObject;
-
-				// Registers the identity
-				uri_hash[objectUri] = identity;
-
-				if (realObject != null)
-					realObject.ObjectIdentity = identity;
-
-				LifetimeServices.TrackLifetime (identity);
-
-				return identity;
+				uri_hash[identity.ObjectUri] = identity;
 			}
 		}
 
 		internal static object GetRemoteObject(Type requiredType, string url, object channelData, string remotedObjectUri)
 		{
-			Identity id = GetClientIdentity(requiredType, url, channelData, remotedObjectUri);
-			return id.RealObject;
+			ClientIdentity id = GetClientIdentity(requiredType, url, channelData, remotedObjectUri);
+			return id.ClientProxy;
 		}
 
 		internal static object GetDomainProxy(AppDomain domain) 
@@ -356,23 +366,27 @@ namespace System.Runtime.Remoting
 			return (AppDomain) RemotingServices.Unmarshal(appRef);
 		}
 
-
 		private static void RegisterInternalChannels() 
 		{
 			CrossAppDomainChannel.RegisterCrossAppDomainChannel();
 		}
-
 	        
-		internal static void DisposeObject (MarshalByRefObject obj)
+		internal static void DisposeIdentity (Identity ident)
 		{
-			IDisposable disp = obj as IDisposable;
-			if (disp != null) disp.Dispose ();
-
-			Identity ident = GetObjectIdentity (obj);
-			if (ident == null) return;
-			else uri_hash.Remove (ident.ObjectUri);
+			uri_hash.Remove (ident.ObjectUri);
 		}
 
-		#endregion	
+		internal static ServerIdentity GetMessageTargetIdentity (IMessage msg)
+		{
+			// Returns the identity where the message is sent
+			// TODO: check for identity embedded in MethodCall
+
+			lock (uri_hash)
+			{
+				return uri_hash [((IMethodMessage)msg).Uri] as ServerIdentity;
+			}
+		}
+
+		#endregion
 	}
 }
