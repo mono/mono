@@ -1,3 +1,8 @@
+2005-01-25  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlSchemaImporter.cs: When importing a default value of type enum,
+	translate it from the schema value to the clr value.
+
 2005-01-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XmlSerializer.cs: only print the results if there's an error
