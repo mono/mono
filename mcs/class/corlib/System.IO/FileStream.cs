@@ -343,25 +343,26 @@ namespace System.IO
 			if (!CanWrite)
 				throw new NotSupportedException ("Stream does not support writing");
 
-			int copied = 0;
-			while (count > 0) {
-				int n = WriteSegment (src, src_offset + copied, count);
-				copied += n;
-				count -= n;
+
 				
-				FlushBuffer ();
+			if (count > buf_size) {
+				// shortcut for long writes
+				MonoIOError error;
 				
-				if (count == 0) {
-					break;
-				}
-				
-				if (count > buf_size) {
-					// shortcut for long writes
-					MonoIOError error;
+				MonoIO.Write (handle, src, src_offset, count, out error);
+				buf_start += count;
+			} else {
+
+				int copied = 0;
+				while (count > 0) {
 					
-					MonoIO.Write (handle, src, src_offset + copied, count, out error);
-					buf_start += count;
-					break;
+					int n = WriteSegment (src, src_offset + copied, count);
+					copied += n;
+					count -= n;
+					
+					if (count == 0) {
+						break;
+					}
 				}
 			}
 		}

@@ -1,3 +1,7 @@
+2003-06-09  Ville Palo <vi64pa@kolumbus.fi>
+
+	* FileStream.cs: Does not anymore flush while writing
+	
 2003-06-02  Nick Drochak <ndrochak@gol.com>
 
 	* FileInfo.cs (MoveTo): Throw exceptions when dest exists, and check
