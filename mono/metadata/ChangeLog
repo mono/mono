@@ -1,4 +1,8 @@
 
+Sun Jun 13 18:22:40 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* threadpool.c, threadpool.h: use the correct return type in SetMinThreads ().
+
 Sun Jun 13 16:44:39 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* marshal.c: keep track of struct size with explicit layout
