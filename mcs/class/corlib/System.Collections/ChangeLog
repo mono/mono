@@ -1,3 +1,8 @@
+2002-03-14  Nick Drochak  <ndrochak@gol.com>
+
+	* ArrayList.cs (FixedSize(ArrayList)): should return an ArrayList. The
+	other FixedSize() methods returns an IList.
+
 2002-03-13  Duncan Mak  <duncan@ximian.com>
 
 	* ArrayList.cs (FixedSize): Changed the return type to IList if

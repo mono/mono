@@ -69,7 +69,7 @@ namespace System.Collections {
 		}
 
 		[MonoTODO]
-		public static IList FixedSize (ArrayList list) {
+		public static ArrayList FixedSize (ArrayList list) {
 			throw new NotImplementedException ("System.Collections.ArrayList.FixedSize");
 		}
 
