@@ -262,9 +262,7 @@ namespace System.Security {
 		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
 		public static void SavePolicyLevel (PolicyLevel level) 
 		{
-			// throw a SecurityException if we don't have ControlPolicy permission
-// MS BUG		if (level == null)
-//				throw new ArgumentNullException ("level");
+			// Yes this will throw a NullReferenceException, just like MS (see FDBK13121)
 			level.Save ();
 		}
 

@@ -1,3 +1,10 @@
+2004-08-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityElement.cs: Fixed the new Copy() in Fx 2.0 as it isn't a 
+	deep copy. Throw proper exceptions in FromString (Fx 2.0).
+	* SecurityManager.cs: Throw a NullReference exception in 
+	SavePolicyLevel as MS won't fix it (FDBK13121).
+
 2004-08-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CodeAccessPermission.cs : csc build fix. Currently mcs has bugs on

@@ -95,7 +95,7 @@ namespace System.Security
 			this.Text = text;
 		}
 
-		// deep copy
+		// not a deep copy (childs are references)
 		internal SecurityElement (SecurityElement se)
 		{
 			this.Tag = se.Tag;
@@ -108,7 +108,7 @@ namespace System.Security
 			}
 			if (se.children != null) {
 				foreach (SecurityElement child in se.children) {
-					this.AddChild (new SecurityElement (child));
+					this.AddChild (child);
 				}
 			}
 		}
@@ -301,11 +301,20 @@ namespace System.Security
 		}
 
 #if NET_2_0
-		static public SecurityElement FromString (string xml)
+		public static SecurityElement FromString (string xml)
 		{
-			SecurityParser sp = new SecurityParser ();
-			sp.LoadXml (xml);
-			return sp.ToXml ();
+			if (xml == null)
+				throw new ArgumentNullException ("xml");
+
+			try {
+				SecurityParser sp = new SecurityParser ();
+				sp.LoadXml (xml);
+				return sp.ToXml ();
+			}
+			catch (Exception e) {
+				string msg = Locale.GetText ("Invalid XML.");
+				throw new XmlSyntaxException (msg, e);
+			}
 		}
 #endif
 
