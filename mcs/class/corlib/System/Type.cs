@@ -32,6 +32,7 @@
 
 using System.Diagnostics;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
@@ -574,6 +575,9 @@ namespace System {
 
 			if (Equals (c))
 				return true;
+
+			if (c is TypeBuilder)
+				return ((TypeBuilder)c).IsAssignableTo (this);
 
 			return type_is_assignable_from (this, c);
 		}
