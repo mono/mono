@@ -50,44 +50,41 @@ namespace System.Web.UI.WebControls
 
 		private FontInfo font;
 
-		public Style()
+		public Style ()
 		{
 			Initialize(null);
 			selfStateBag = true;
 		}
 
-		public Style(StateBag bag): base()
+		public Style (StateBag bag)
 		{
-			Initialize(bag);
+			Initialize (bag);
 			selfStateBag = false;
 		}
 
-		private void Initialize(StateBag bag)
+		private void Initialize (StateBag bag)
 		{
 			viewState     = bag;
 			selectionBits = 0x00;
 		}
 
-		protected internal StateBag ViewState
-		{
-			get
-			{
-				if(viewState == null)
-				{
-					viewState = new StateBag(false);
-					if(IsTrackingViewState)
-						viewState.TrackViewState();
+		protected internal StateBag ViewState {
+			get {
+				if (viewState == null) {
+					viewState = new StateBag (false);
+					if (IsTrackingViewState)
+						viewState.TrackViewState ();
 				}
 				return viewState;
 			}
 		}
 
-		internal bool IsSet(int bit)
+		internal bool IsSet (int bit)
 		{
-			return ( (selectionBits & bit) != 0x00);
+			return ((selectionBits & bit) != 0x00);
 		}
 
-		internal virtual void Set(int bit)
+		internal virtual void Set (int bit)
 		{
 			selectionBits |= bit;
 			if (IsTrackingViewState)
@@ -98,16 +95,13 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (null), Bindable (true), WebCategory ("Appearance")]
 		[TypeConverter (typeof (WebColorConverter))]
 		[WebSysDescription ("The background color for the WebControl.")]
-		public Color BackColor
-		{
-			get
-			{
+		public Color BackColor {
+			get {
 				if(IsSet(BACKCOLOR))
 					return (Color)ViewState["BackColor"];
 				return Color.Empty;
 			}
-			set
-			{
+			set {
 				ViewState["BackColor"] = value;
 				Set(BACKCOLOR);
 			}
@@ -117,72 +111,60 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (null), Bindable (true), WebCategory ("Appearance")]
 		[TypeConverter (typeof (WebColorConverter))]
 		[WebSysDescription ("The border color for the WebControl.")]
-		public Color BorderColor
-		{
-			get
-			{
-				if(IsSet(BORDERCOLOR))
-					return (Color)ViewState["BorderColor"];
+		public Color BorderColor {
+			get {
+				if (IsSet (BORDERCOLOR))
+					return (Color) ViewState ["BorderColor"];
 				return Color.Empty;
 			}
-			set
-			{
-				ViewState["BorderColor"] = value;
-				Set(BORDERCOLOR);
+			set {
+				ViewState ["BorderColor"] = value;
+				Set (BORDERCOLOR);
 			}
 		}
 
 		[NotifyParentProperty (true)]
 		[DefaultValue (typeof(BorderStyle), "NotSet"), Bindable (true), WebCategory ("Appearance")]
 		[WebSysDescription ("The style/type of the border used for the WebControl.")]
-		public BorderStyle BorderStyle
-		{
-			get
-			{
-				if(IsSet(BORDERSTYLE))
-					return (BorderStyle)ViewState["BorderStyle"];
+		public BorderStyle BorderStyle {
+			get {
+				if (IsSet (BORDERSTYLE))
+					return (BorderStyle) ViewState ["BorderStyle"];
 				return BorderStyle.NotSet;
 			}
-			set
-			{
-				ViewState["BorderStyle"] = value;
-				Set(BORDERSTYLE);
+			set {
+				ViewState ["BorderStyle"] = value;
+				Set (BORDERSTYLE);
 			}
 		}
 
 		[NotifyParentProperty (true)]
 		[DefaultValue (null), Bindable (true), WebCategory ("Appearance")]
 		[WebSysDescription ("The width of the border used for the WebControl.")]
-		public Unit BorderWidth
-		{
-			get
-			{
-				if(IsSet(BORDERWIDTH))
-					return (Unit)ViewState["BorderWidth"];
+		public Unit BorderWidth {
+			get {
+				if (IsSet (BORDERWIDTH))
+					return (Unit) ViewState ["BorderWidth"];
 				return Unit.Empty;
 			}
-			set
-			{
-				ViewState["BorderWidth"] = value;
-				Set(BORDERWIDTH);
+			set {
+				ViewState ["BorderWidth"] = value;
+				Set (BORDERWIDTH);
 			}
 		}
 
 		[NotifyParentProperty (true)]
 		[DefaultValue (""), WebCategory ("Appearance")]
 		[WebSysDescription ("The cascading stylesheet class that is associated with this WebControl.")]
-		public string CssClass
-		{
-			get
-			{
-				if(IsSet(CSSCLASS))
-					return (string)ViewState["CssClass"];
+		public string CssClass {
+			get {
+				if (IsSet (CSSCLASS))
+					return (string) ViewState["CssClass"];
 				return string.Empty;
 			}
-			set
-			{
-				ViewState["CssClass"] = value;
-				Set(CSSCLASS);
+			set {
+				ViewState ["CssClass"] = value;
+				Set (CSSCLASS);
 			}
 		}
 
@@ -190,54 +172,45 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (null), Bindable (true), WebCategory ("Appearance")]
 		[TypeConverter (typeof (WebColorConverter))]
 		[WebSysDescription ("The color that is used to paint the primary display of the WebControl.")]
-		public Color ForeColor
-		{
-			get
-			{
-				if(IsSet(FORECOLOR))
-					return (Color)ViewState["ForeColor"];
+		public Color ForeColor {
+			get {
+				if (IsSet (FORECOLOR))
+					return (Color) ViewState ["ForeColor"];
 				return Color.Empty;
 			}
-			set
-			{
-				ViewState["ForeColor"] = value;
-				Set(FORECOLOR);
+			set {
+				ViewState ["ForeColor"] = value;
+				Set (FORECOLOR);
 			}
 		}
 
 		[NotifyParentProperty (true)]
 		[DefaultValue (null), Bindable (true), WebCategory ("Layout")]
 		[WebSysDescription ("The height of this WebControl.")]
-		public Unit Height
-		{
-			get
-			{
-				if(IsSet(HEIGHT))
-					return (Unit)ViewState["Height"];
+		public Unit Height {
+			get {
+				if (IsSet (HEIGHT))
+					return (Unit) ViewState ["Height"];
 				return Unit.Empty;
 			}
-			set
-			{
-				ViewState["Height"] = value;
-				Set(HEIGHT);
+			set {
+				ViewState ["Height"] = value;
+				Set (HEIGHT);
 			}
 		}
 
 		[NotifyParentProperty (true)]
 		[DefaultValue (null), Bindable (true), WebCategory ("Layout")]
 		[WebSysDescription ("The width of this WebControl.")]
-		public Unit Width
-		{
-			get
-			{
-				if(IsSet(WIDTH))
-					return (Unit)ViewState["Width"];
+		public Unit Width {
+			get {
+				if (IsSet(WIDTH))
+					return (Unit) ViewState ["Width"];
 				return Unit.Empty;
 			}
-			set
-			{
-				ViewState["Width"] = value;
-				Set(WIDTH);
+			set {
+				ViewState ["Width"] = value;
+				Set (WIDTH);
 			}
 		}
 
@@ -245,12 +218,10 @@ namespace System.Web.UI.WebControls
 		[WebCategory ("Appearance")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[WebSysDescription ("The font of this WebControl.")]
-		public FontInfo Font
-		{
-			get
-			{
-				if(font==null)
-					font = new FontInfo(this);
+		public FontInfo Font {
+			get {
+				if (font==null)
+					font = new FontInfo (this);
 				return font;
 			}
 		}
@@ -260,238 +231,206 @@ namespace System.Web.UI.WebControls
 			get { return (selectionBits == 0); }
 		}
 
-		private void AddColor(HtmlTextWriter writer, HtmlTextWriterStyle style, Color color)
+		private void AddColor (HtmlTextWriter writer, HtmlTextWriterStyle style, Color color)
 		{
-			if(!color.IsEmpty)
-				writer.AddStyleAttribute(style, ColorTranslator.ToHtml(color));
+			if (!color.IsEmpty)
+				writer.AddStyleAttribute (style, ColorTranslator.ToHtml (color));
 		}
 
-		private static string StringArrayToString(string[] array, char separator)
+		private static string StringArrayToString (string [] array, char separator)
 		{
-			if(array.Length == 0)
+			if (array.Length == 0)
 				return String.Empty;
-			StringBuilder sb = new StringBuilder();
-			for(int i=0; i < array.Length; i++)
-			{
-				if(i==0)
-				{
-					sb.Append(array[0]);
-				} else
-				{
-					sb.Append(separator);
-					sb.Append(array[i]);
+			StringBuilder sb = new StringBuilder ();
+			for (int i = 0; i < array.Length; i++) {
+				if (i == 0) {
+					sb.Append (array [0]);
+				} else {
+					sb.Append (separator);
+					sb.Append (array [i]);
 				}
 			}
-			return sb.ToString();
+			return sb.ToString ();
 		}
 
-		public void AddAttributesToRender(HtmlTextWriter writer)
+		public void AddAttributesToRender (HtmlTextWriter writer)
 		{
-			AddAttributesToRender(writer, null);
+			AddAttributesToRender (writer, null);
 		}
 
-		public virtual void AddAttributesToRender(HtmlTextWriter writer, WebControl owner)
+		public virtual void AddAttributesToRender (HtmlTextWriter writer, WebControl owner)
 		{
-			if(IsSet(BACKCOLOR))
-			{
-				AddColor(writer, HtmlTextWriterStyle.BackgroundColor, (Color)ViewState["BackColor"]);
+			if (IsSet (BACKCOLOR))
+				AddColor (writer, HtmlTextWriterStyle.BackgroundColor, BackColor);
+
+			if (IsSet(BORDERCOLOR))
+				AddColor (writer, HtmlTextWriterStyle.BorderColor, BorderColor);
+
+			if (IsSet (FORECOLOR))
+				AddColor (writer, HtmlTextWriterStyle.Color, ForeColor);
+
+			if (IsSet (CSSCLASS)) {
+				string cssClass = (string) ViewState ["CssClass"];
+				if (cssClass.Length > 0)
+					writer.AddAttribute (HtmlTextWriterAttribute.Class, cssClass);
 			}
 
-			if(IsSet(BORDERCOLOR))
-			{
-				AddColor(writer, HtmlTextWriterStyle.BorderColor, (Color)ViewState["BorderColor"]);
-			}
+			if (!BorderWidth.IsEmpty) {
+				writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth,
+						BorderWidth.ToString (CultureInfo.InvariantCulture));
 
-			if(IsSet(FORECOLOR))
-			{
-				AddColor(writer, HtmlTextWriterStyle.Color, (Color)ViewState["ForeColor"]);
-			}
-
-			if(IsSet(CSSCLASS))
-			{
-				string cssClass = (string)ViewState["CssClass"];
-				if(cssClass.Length > 0)
-					writer.AddAttribute(HtmlTextWriterAttribute.Class, cssClass);
-			}
-
-			if(!BorderWidth.IsEmpty)
-			{
-				writer.AddStyleAttribute(HtmlTextWriterStyle.BorderWidth, BorderWidth.ToString(CultureInfo.InvariantCulture));
-				if(BorderStyle!=BorderStyle.NotSet)
-				{
-					writer.AddStyleAttribute(HtmlTextWriterStyle.BorderStyle, Enum.Format(typeof(BorderStyle), BorderStyle, "G"));
-				} else
-				{
-					if(BorderWidth.Value != 0.0)
-					{
-						writer.AddStyleAttribute(HtmlTextWriterStyle.BorderStyle, "solid");
-					}
+				if (BorderStyle != BorderStyle.NotSet) {
+					writer.AddStyleAttribute (HtmlTextWriterStyle.BorderStyle,
+							Enum.Format (typeof (BorderStyle), BorderStyle, "G"));
+				} else {
+					if (BorderWidth.Value != 0.0)
+						writer.AddStyleAttribute (HtmlTextWriterStyle.BorderStyle,
+									  "solid");
 				}
-			} else
-			{
-				if(BorderStyle!=BorderStyle.NotSet)
-				{
-					writer.AddStyleAttribute(HtmlTextWriterStyle.BorderStyle, Enum.Format(typeof(BorderStyle), BorderStyle, "G"));
-				}
+			} else {
+				if (BorderStyle != BorderStyle.NotSet)
+					writer.AddStyleAttribute (HtmlTextWriterStyle.BorderStyle,
+							Enum.Format (typeof (BorderStyle), BorderStyle, "G"));
 			}
 
-			if(Font.Names.Length > 0)
-			{
-				writer.AddStyleAttribute(HtmlTextWriterStyle.FontFamily, StringArrayToString(Font.Names,','));
-			}
+			if (Font.Names.Length > 0)
+				writer.AddStyleAttribute (HtmlTextWriterStyle.FontFamily,
+							StringArrayToString (Font.Names, ','));
 
-			if(!Font.Size.IsEmpty)
-			{
-				writer.AddStyleAttribute(HtmlTextWriterStyle.FontSize, Font.Size.ToString(CultureInfo.InvariantCulture));
-			}
+			if (!Font.Size.IsEmpty)
+				writer.AddStyleAttribute (HtmlTextWriterStyle.FontSize,
+							Font.Size.ToString (CultureInfo.InvariantCulture));
 
 			if(Font.Bold)
-			{
-				writer.AddStyleAttribute(HtmlTextWriterStyle.FontWeight, "bold");
-			}
+				writer.AddStyleAttribute (HtmlTextWriterStyle.FontWeight, "bold");
 
 			if(Font.Italic)
-			{
-				writer.AddStyleAttribute(HtmlTextWriterStyle.FontStyle, "italic");
-			}
+				writer.AddStyleAttribute (HtmlTextWriterStyle.FontStyle, "italic");
 
 			string textDecoration = String.Empty;
-			if(Font.Strikeout)
-			{
+			if (Font.Strikeout)
 				textDecoration += " line-through";
-			}
-			if(Font.Underline)
-			{
+
+			if (Font.Underline)
 				textDecoration += " underline";
-			}
-			if(Font.Overline)
-			{
+
+			if (Font.Overline)
 				textDecoration += " overline";
-			}
-			if(textDecoration.Length > 0)
-			{
-				writer.AddStyleAttribute(HtmlTextWriterStyle.TextDecoration, textDecoration);
-			}
+
+			if (textDecoration.Length > 0)
+				writer.AddStyleAttribute( HtmlTextWriterStyle.TextDecoration, textDecoration);
 
 			Unit u = Unit.Empty;
-			if(IsSet(HEIGHT))
-			{
-				u = (Unit)ViewState["Height"];
-				writer.AddStyleAttribute(HtmlTextWriterStyle.Height, u.ToString(CultureInfo.InvariantCulture));
+			if (IsSet (HEIGHT)) {
+				u = (Unit) ViewState ["Height"];
+				writer.AddStyleAttribute (HtmlTextWriterStyle.Height,
+							u.ToString (CultureInfo.InvariantCulture));
 			}
-			if(IsSet(WIDTH))
-			{
-				u = (Unit)ViewState["Width"];
-				writer.AddStyleAttribute(HtmlTextWriterStyle.Width, u.ToString(CultureInfo.InvariantCulture));
-			}
-		}
 
-		public virtual void CopyFrom(Style source)
-		{
-			if(source!=null && !source.IsEmpty)
-			{
-				Font.CopyFrom(source.Font);
-				if(source.Height!=Unit.Empty)
-				{
-					Height = source.Height;
-				}
-				if(source.Width!=Unit.Empty)
-				{
-					Width = source.Width;
-				}
-				if(source.BorderColor!=Color.Empty)
-				{
-					BorderColor = source.BorderColor;
-				}
-				if(source.BorderWidth!=Unit.Empty)
-				{
-					BorderWidth = source.BorderWidth;
-				}
-				if(source.BorderStyle!=BorderStyle.NotSet)
-				{
-					BorderStyle = source.BorderStyle;
-				}
-				if(source.BackColor!=Color.Empty)
-				{
-					BackColor = source.BackColor;
-				}
-				if(source.CssClass!=String.Empty)
-				{
-					CssClass = source.CssClass;
-				}
-				if(source.ForeColor!=Color.Empty)
-				{
-					ForeColor = source.ForeColor;
-				}
+			if (IsSet (WIDTH)) {
+				u = (Unit) ViewState ["Width"];
+				writer.AddStyleAttribute (HtmlTextWriterStyle.Width,
+							u.ToString (CultureInfo.InvariantCulture));
 			}
 		}
 
-		public virtual void MergeWith(Style with)
+		public virtual void CopyFrom (Style source)
 		{
-			if(with!=null && !with.IsEmpty)
-			{
-				if(IsEmpty)
-				{
-					CopyFrom(with);
-					return;
-				}
+			if (source == null || source.IsEmpty)
+				return;
 
-				Font.MergeWith(with.Font);
-				if(!IsSet(HEIGHT) && with.Height!=Unit.Empty)
-				{
-					Height = with.Height;
-				}
-				if(!IsSet(WIDTH) && with.Width!=Unit.Empty)
-				{
-					Width = with.Width;
-				}
-				if(!IsSet(BORDERCOLOR) && with.BorderColor!=Color.Empty)
-				{
-					BorderColor = with.BorderColor;
-				}
-				if(!IsSet(BORDERWIDTH) && with.BorderWidth!=Unit.Empty)
-				{
-					BorderWidth = with.BorderWidth;
-				}
-				if(!IsSet(BORDERSTYLE) && with.BorderStyle!=BorderStyle.NotSet)
-				{
-					BorderStyle = with.BorderStyle;
-				}
-				if(!IsSet(BACKCOLOR) && with.BackColor!=Color.Empty)
-				{
-					BackColor = with.BackColor;
-				}
-				if(!IsSet(CSSCLASS) && with.CssClass!=String.Empty)
-				{
-					CssClass = with.CssClass;
-				}
-				if(!IsSet(FORECOLOR) && with.ForeColor!=Color.Empty)
-				{
-					ForeColor = with.ForeColor;
-				}
-			}
+			Font.CopyFrom (source.Font);
+			if (source.Height != Unit.Empty)
+				Height = source.Height;
+
+			if (source.Width != Unit.Empty)
+				Width = source.Width;
+
+			if (source.BorderColor != Color.Empty)
+				BorderColor = source.BorderColor;
+
+			if (source.BorderWidth != Unit.Empty)
+				BorderWidth = source.BorderWidth;
+
+			if (source.BorderStyle != BorderStyle.NotSet)
+				BorderStyle = source.BorderStyle;
+
+			if (source.BackColor != Color.Empty)
+				BackColor = source.BackColor;
+
+			if (source.CssClass != String.Empty)
+				CssClass = source.CssClass;
+
+			if (source.ForeColor != Color.Empty)
+				ForeColor = source.ForeColor;
+
 		}
 
-		public virtual void Reset()
+		public virtual void MergeWith (Style with)
 		{
-			if(IsSet(BACKCOLOR))
-				ViewState.Remove("BackColor");
-			if(IsSet(BORDERCOLOR))
-				ViewState.Remove("BorderColor");
-			if(IsSet(BORDERSTYLE))
-				ViewState.Remove("BorderStyle");
-			if(IsSet(BORDERWIDTH))
-				ViewState.Remove("BorderWidth");
-			if(IsSet(CSSCLASS))
-				ViewState.Remove("CssClass");
-			if(IsSet(FORECOLOR))
-				ViewState.Remove("ForeColor");
-			if(IsSet(HEIGHT))
-				ViewState.Remove("Height");
-			if(IsSet(WIDTH))
-				ViewState.Remove("Width");
-			if(font!=null)
-				font.Reset();
+			if (with == null || with.IsEmpty)
+				return;
+
+			if (IsEmpty) {
+				CopyFrom (with);
+				return;
+			}
+
+			Font.MergeWith (with.Font);
+			if (!IsSet (HEIGHT) && with.Height != Unit.Empty)
+				Height = with.Height;
+
+			if (!IsSet(WIDTH) && with.Width != Unit.Empty)
+				Width = with.Width;
+
+			if (!IsSet (BORDERCOLOR) && with.BorderColor != Color.Empty)
+				BorderColor = with.BorderColor;
+
+			if (!IsSet (BORDERWIDTH) && with.BorderWidth != Unit.Empty)
+				BorderWidth = with.BorderWidth;
+
+			if (!IsSet (BORDERSTYLE) && with.BorderStyle != BorderStyle.NotSet)
+				BorderStyle = with.BorderStyle;
+
+			if (!IsSet (BACKCOLOR) && with.BackColor != Color.Empty)
+				BackColor = with.BackColor;
+
+			if (!IsSet (CSSCLASS) && with.CssClass != String.Empty)
+				CssClass = with.CssClass;
+
+			if (!IsSet (FORECOLOR) && with.ForeColor != Color.Empty)
+				ForeColor = with.ForeColor;
+		}
+
+		public virtual void Reset ()
+		{
+			if (IsSet (BACKCOLOR))
+				ViewState.Remove ("BackColor");
+
+			if (IsSet (BORDERCOLOR))
+				ViewState.Remove ("BorderColor");
+
+			if (IsSet (BORDERSTYLE))
+				ViewState.Remove ("BorderStyle");
+
+			if (IsSet (BORDERWIDTH))
+				ViewState.Remove ("BorderWidth");
+
+			if (IsSet (CSSCLASS))
+				ViewState.Remove ("CssClass");
+
+			if (IsSet (FORECOLOR))
+				ViewState.Remove ("ForeColor");
+
+			if (IsSet (HEIGHT))
+				ViewState.Remove ("Height");
+
+			if (IsSet (WIDTH))
+				ViewState.Remove( "Width");
+
+			if (font != null)
+				font.Reset ();
+
 			selectionBits = 0x00;
 		}
 
@@ -520,7 +459,7 @@ namespace System.Web.UI.WebControls
 			return null;
 		}
 
-		protected internal void LoadViewState(object state)
+		protected internal void LoadViewState (object state)
 		{
 			if (state != null && selfStateBag)
 				ViewState.LoadViewState (state);
@@ -537,27 +476,24 @@ namespace System.Web.UI.WebControls
 			LoadViewState(state);
 		}
 
-		object IStateManager.SaveViewState()
+		object IStateManager.SaveViewState ()
 		{
-			return SaveViewState();
+			return SaveViewState ();
 		}
 
-		void IStateManager.TrackViewState()
+		void IStateManager.TrackViewState ()
 		{
-			TrackViewState();
+			TrackViewState ();
 		}
 
-		bool IStateManager.IsTrackingViewState
-		{
-			get
-			{
-				return IsTrackingViewState;
-			}
+		bool IStateManager.IsTrackingViewState {
+			get { return IsTrackingViewState; }
 		}
 
-		public override string ToString()
+		public override string ToString ()
 		{
 			return String.Empty;
 		}
 	}
 }
+
