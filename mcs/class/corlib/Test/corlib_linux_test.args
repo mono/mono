@@ -54,6 +54,7 @@ System.Collections/CaseInsensitiveComparerTest.cs
 System.Collections/CaseInsensitiveHashCodeProviderTest.cs
 System.Collections/CollectionBaseTest.cs
 System.Collections/ComparerTest.cs
+System.Collections/DictionaryBaseTest.cs
 System.Collections/DictionaryEntryTest.cs
 System.Collections/HashtableTest.cs
 System.Collections/QueueTest.cs
