@@ -7,9 +7,11 @@ using System.IO;
 using System.Reflection;
 using System.Collections;
 
-class cilc
+public class cilc
 {
-	public static CodeWriter C, H, Cindex, Hindex, Hdecls;
+	private cilc () {}
+
+	static CodeWriter C, H, Cindex, Hindex, Hdecls;
 	static string ns, dllname;
 	static string cur_type, CurType;
 	static string target_dir;
@@ -33,7 +35,15 @@ class cilc
 	public static void Generate (string assembly, string target)
 	{
 		target_dir = target + Path.DirectorySeparatorChar;
-		if (!Directory.Exists (target_dir)) Directory.CreateDirectory (target_dir);
+
+		if (Directory.Exists (target_dir)) {
+			Console.WriteLine ("Error: Target directory " + target_dir + " already exists.");
+			return;
+		}
+
+		Directory.CreateDirectory (target_dir);
+
+		//TODO: parse given .h files here and register the type names
 
 		Assembly a = Assembly.LoadFrom (assembly);
 		dllname = Path.GetFileName (assembly);
@@ -63,8 +73,6 @@ class cilc
 
 	static void AssemblyGen (Assembly a)
 	{
-		//TODO: parse given .h files here and register the type names
-		
 		Type[] types = a.GetTypes ();
 		Hashtable ns_types = new Hashtable ();
 

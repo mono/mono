@@ -7,23 +7,22 @@ PROGRAM = cilc.exe
 # fixme: make clean doesn't know to rm -rf generated.
 # and we can't extend the make clean target.
 
-CLEAN_FILES = generated Test.dll Test.pdb
+CLEAN_FILES = generated Demo.dll Demo.pdb
 
 EXTRA_DISTFILES = demo.c README TODO Test.cs
 
 include ../../build/executable.make
 
-test-local: Test.dll
+test-local: Demo.dll
 
 run-test-local: run-cilc-test
 
-run-cilc-test: cilc.exe Test.dll
+run-cilc-test: cilc.exe Demo.dll
 	rm -rf generated
-	mkdir generated
-	$(RUNTIME) cilc.exe Test.dll generated
+	$(RUNTIME) cilc.exe Demo.dll generated
 	$(MAKE) -C generated
 	$(CCOMPILE) -Wall `pkg-config --cflags --libs glib-2.0 mono` -Igenerated -Lgenerated -ldemo demo.c -o generated/demo
-	cp Test.dll generated
+	cp Demo.dll generated
 
-Test.dll: Test.cs
+Demo.dll: Test.cs
 	$(CSCOMPILE) /target:library /out:$@ $^

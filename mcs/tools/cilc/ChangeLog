@@ -9,6 +9,9 @@
 	Ignore non-public types for now.
 	Handle multiple namespaces in a single assembly.
 	Name the generated .so according to the input assembly name.
+	Code generator access modifier cleanups.
+	* Makefile:
+	Build Demo.dll, not Test.dll.
 
 2004-12-08  Alp Toker  <alp@atoker.com>
 
