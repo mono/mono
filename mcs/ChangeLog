@@ -1,3 +1,8 @@
+2004-05-10  Raja R Harinath  <rharinath@novell.com>
+
+	* INSTALL.txt: Don't mention 'fullbuild'.  Mention 'bootstrap'
+	instead.  Update instructions for 'monocharge'.
+
 2004-04-30  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (SUBDIRS): Remove 'gmcs' for now.

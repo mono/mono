@@ -7,13 +7,10 @@ include build/rules.make
 
 #all: platform-check profile-check all-recursive #all-local
 
-all:
-	$(MAKE) PROFILE=default all-profile
-	$(MAKE) PROFILE=net_2_0 all-profile
-
-clean:
-	$(MAKE) PROFILE=default clean-profile
-	$(MAKE) PROFILE=net_2_0 clean-profile
+.PHONY: all clean all-profile clean-profile install uninstall test run-test testcorlib
+all clean:
+	$(MAKE) PROFILE=default $@-profile
+	$(MAKE) PROFILE=net_2_0 $@-profile
 
 all-profile: platform-check profile-check all-recursive
 
