@@ -1,4 +1,9 @@
 
+Tue Sep 11 13:46:35 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: get it to work on platforms that insist on having
+	a weird extension at the end of an executable name.
+
 Mon Sep 10 17:24:45 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* Makefile.am: make it work for make distcheck.
