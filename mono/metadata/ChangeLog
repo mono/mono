@@ -1,3 +1,7 @@
+2002-04-03  Dietmar Maurer  <dietmar@ximian.com>
+
+	* icall.c (ves_icall_InternalExecute): impl. FielSetter
+
 2002-03-30  Dietmar Maurer  <dietmar@ximian.com>
 
 	* icall.c (mono_message_init): impl. (code cleanup)

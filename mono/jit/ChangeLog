@@ -1,3 +1,11 @@
+2002-04-03  Dietmar Maurer  <dietmar@ximian.com>
+
+	* mono.c (main): use --trace instead of --trace-calls
+
+	* x86.brg: impl. REMOTE_STIND_XX
+
+	* message.c (mono_store_remote_field): impl.
+
 2002-03-30  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg: impl. REMOTE_FIELD (load fields of remote objects)
