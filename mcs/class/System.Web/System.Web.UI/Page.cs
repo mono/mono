@@ -7,6 +7,7 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002,2003 Ximian, Inc. (http://www.ximian.com)
+// (c) 2003 Novell, Inc. (http://www.novell.com)
 //
 
 using System;
@@ -15,9 +16,11 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.ComponentModel.Design.Serialization;
+using System.Globalization;
 using System.IO;
 using System.Security.Principal;
 using System.Text;
+using System.Threading;
 using System.Web;
 using System.Web.Caching;
 using System.Web.SessionState;
@@ -33,7 +36,6 @@ namespace System.Web.UI
 [RootDesignerSerializer ("Microsoft.VSDesigner.WebForms.RootCodeDomSerializer, " + Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design, true)]
 public class Page : TemplateControl, IHttpHandler
 {
-	private string _culture;
 	private bool _viewState = true;
 	private bool _viewStateMac = false;
 	private string _errorPage;
@@ -44,7 +46,6 @@ public class Page : TemplateControl, IHttpHandler
 	private bool _traceEnabled;
 	private TraceMode _traceModeValue;
 	private int _transactionMode;
-	private string _UICulture;
 	private HttpContext _context;
 	private ValidatorCollection _validators;
 	private bool renderingForm;
@@ -133,7 +134,7 @@ public class Page : TemplateControl, IHttpHandler
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected string Culture
 	{
-		set { _culture = value; }
+		set { Thread.CurrentThread.CurrentCulture = new CultureInfo (value); }
 	}
 
 	[Browsable (false)]
@@ -196,10 +197,9 @@ public class Page : TemplateControl, IHttpHandler
 		get { return _isValid; }
 	}
 
-	[MonoTODO]
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected int LCID {
-		set { throw new NotImplementedException (); }
+		set { Thread.CurrentThread.CurrentCulture = new CultureInfo (value); }
 	}
 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -273,7 +273,7 @@ public class Page : TemplateControl, IHttpHandler
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected string UICulture
 	{
-		set { _UICulture = value; }
+		set { Thread.CurrentThread.CurrentUICulture = new CultureInfo (value); }
 	}
 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -617,14 +617,24 @@ public class Page : TemplateControl, IHttpHandler
 	public void ProcessRequest (HttpContext context)
 	{
 		_context = context;
-		WebTrace.PushContext ("Page.ProcessRequest ()");
-		WebTrace.WriteLine ("Entering");
 		WireupAutomaticEvents ();
-		WebTrace.WriteLine ("Finished hookup");
 		//-- Control execution lifecycle in the docs
-		WebTrace.WriteLine ("FrameworkInitialize");
+
+		// Save culture information because it can be modified in FrameworkInitialize()
+		CultureInfo culture = Thread.CurrentThread.CurrentCulture;
+		CultureInfo uiculture = Thread.CurrentThread.CurrentUICulture;
 		FrameworkInitialize ();
-		WebTrace.WriteLine ("InitRecursive");
+
+		try {
+			InternalProcessRequest ();
+		} finally {
+			Thread.CurrentThread.CurrentCulture = culture;
+			Thread.CurrentThread.CurrentUICulture = uiculture;
+		}
+	}
+
+	void InternalProcessRequest ()
+	{
 		InitRecursive (null);
 		renderingForm = false;	
 		if (IsPostBack) {
@@ -632,27 +642,20 @@ public class Page : TemplateControl, IHttpHandler
 			ProcessPostData (DeterminePostBackMode (), false);
 		}
 
-		WebTrace.WriteLine ("LoadRecursive");
 		LoadRecursive ();
 		if (IsPostBack) {
 			ProcessPostData (secondPostData, true);
 			RaiseChangedEvents ();
 			RaisePostBackEvents ();
 		}
-		WebTrace.WriteLine ("PreRenderRecursiveInternal");
 		PreRenderRecursiveInternal ();
 
-		WebTrace.WriteLine ("SavePageViewState");
 		SavePageViewState ();
 		//--
-		HtmlTextWriter output = new HtmlTextWriter (context.Response.Output);
-		WebTrace.WriteLine ("RenderControl");
+		HtmlTextWriter output = new HtmlTextWriter (_context.Response.Output);
 		RenderControl (output);
 		_context = null;
-		WebTrace.WriteLine ("UnloadRecursive");
 		UnloadRecursive (true);
-		WebTrace.WriteLine ("End");
-		WebTrace.PopContext ();
 	}
 	
 	internal void RaisePostBackEvents ()
@@ -804,15 +807,12 @@ public class Page : TemplateControl, IHttpHandler
 
 	internal void LoadPageViewState()
 	{
-		WebTrace.PushContext ("LoadPageViewState");
 		object sState = LoadPageStateFromPersistenceMedium ();
-		WebTrace.WriteLine ("sState = '{0}'", sState);
 		if (sState != null) {
 			Pair pair = (Pair) sState;
 			LoadViewStateRecursive (pair.First);
 			_requiresPostBack = pair.Second as ArrayList;
 		}
-		WebTrace.PopContext ();
 	}
 
 	internal void SavePageViewState ()
