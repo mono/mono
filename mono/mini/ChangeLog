@@ -1,5 +1,9 @@
 2005-02-27  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-amd64.h mini.h mini-amd64.c tramp-amd64.c (mono_amd64_get_vcall_slot_addr):
+	Rename this to mono_arch....
+	(mono_amd64_get_delegate_method_ptr_addr): Ditto.
+
 	* mini-amd64.c (mono_amd64_get_delegate_method_ptr_addr): New helper function.
 
 	* mini-amd64.c (emit_call): If both the caller and the callee is
