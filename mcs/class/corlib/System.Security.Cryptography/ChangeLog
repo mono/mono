@@ -4,6 +4,10 @@
 	performance.
 	* FromBase64Transform.cs: Updated to use the new tables. Source code
 	cleanup.
+	* SHA256Managed.cs: Updated to use shared constants.
+	* SHA384Managed.cs: Updated to use shared constants.
+	* SHA512Managed.cs: Updated to use shared constants.
+	* SHAConstants.cs: New. Shared constants for SHA implementations.
 	* ToBase64Transform.cs: Updated to use the new tables. Added 
 	globalization. Commented finalizer as it isn't required in this case.
 

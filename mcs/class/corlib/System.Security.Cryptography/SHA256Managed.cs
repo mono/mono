@@ -5,6 +5,7 @@
 //   Matthew S. Ford (Matthew.S.Ford@Rose-Hulman.Edu)
 //
 // (C) 2001 
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 
@@ -34,25 +35,6 @@ namespace System.Security.Cryptography {
 			_H = new uint[8];
 			HashSizeValue = HASH_SIZE_BITS;
 			_ProcessingBuffer = new byte[BLOCK_SIZE_BYTES];
-
-			K = new uint[64];
-			K[0]  = 0x428A2F98;  K[1]  = 0x71374491;  K[2]  = 0xB5C0FBCF;  K[3]  = 0xE9B5DBA5;
-			K[4]  = 0x3956C25B;  K[5]  = 0x59F111F1;  K[6]  = 0x923F82A4;  K[7]  = 0xAB1C5ED5;
-			K[8]  = 0xD807AA98;  K[9]  = 0x12835B01;  K[10] = 0x243185BE;  K[11] = 0x550C7DC3;
-			K[12] = 0x72BE5D74;  K[13] = 0x80DEB1FE;  K[14] = 0x9BDC06A7;  K[15] = 0xC19BF174;
-			K[16] = 0xE49B69C1;  K[17] = 0xEFBE4786;  K[18] = 0x0FC19DC6;  K[19] = 0x240CA1CC;
-			K[20] = 0x2DE92C6F;  K[21] = 0x4A7484AA;  K[22] = 0x5CB0A9DC;  K[23] = 0x76F988DA;
-			K[24] = 0x983E5152;  K[25] = 0xA831C66D;  K[26] = 0xB00327C8;  K[27] = 0xBF597FC7;
-			K[28] = 0xC6E00BF3;  K[29] = 0xD5A79147;  K[30] = 0x06CA6351;  K[31] = 0x14292967;
-			K[32] = 0x27B70A85;  K[33] = 0x2E1B2138;  K[34] = 0x4D2C6DFC;  K[35] = 0x53380D13;
-			K[36] = 0x650A7354;  K[37] = 0x766A0ABB;  K[38] = 0x81C2C92E;  K[39] = 0x92722C85;
-			K[40] = 0xA2BFE8A1;  K[41] = 0xA81A664B;  K[42] = 0xC24B8B70;  K[43] = 0xC76C51A3;
-			K[44] = 0xD192E819;  K[45] = 0xD6990624;  K[46] = 0xF40E3585;  K[47] = 0x106AA070;
-			K[48] = 0x19A4C116;  K[49] = 0x1E376C08;  K[50] = 0x2748774C;  K[51] = 0x34B0BCB5;
-			K[52] = 0x391C0CB3;  K[53] = 0x4ED8AA4A;  K[54] = 0x5B9CCA4F;  K[55] = 0x682E6FF3;
-			K[56] = 0x748F82EE;  K[57] = 0x78A5636F;  K[58] = 0x84C87814;  K[59] = 0x8CC70208;
-			K[60] = 0x90BEFFFA;  K[61] = 0xA4506CEB;  K[62] = 0xBEF9A3F7;  K[63] = 0xC67178F2;
-	
 			Initialize();
 		}
 
@@ -226,7 +208,7 @@ namespace System.Security.Cryptography {
 			h = _H[7];
 
 			for (i=0; i<64; i++) {
-				t1 = h + Sig1(e) + Ch(e,f,g) + K[i] + buff[i];
+				t1 = h + Sig1(e) + Ch(e,f,g) + SHAConstants.K1 [i] + buff[i];
 				t2 = Sig0(a) + Maj(a,b,c);
 				h = g;
 				g = f;
