@@ -1,3 +1,12 @@
+2004-05-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaDataImporter.cs : 
+	  Design change to add indirect table and relation structures.
+	  Support for "relation" annotation for local element.
+	  Support for repeatable simple element column (maxOccurs > 1).
+	  Fixed handling of Nested property on DataRelation (for globally
+	  annotated relation, Nested is false).
+
 2004-05-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataRow.cs : Added DataElement property to avoid storing every row-
