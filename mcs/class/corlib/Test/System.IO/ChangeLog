@@ -1,3 +1,13 @@
+2002-05-05  Nick Drochak  <ndrochak@gol.com>
+
+	* StreamReaderTest.cs: Change location of sample file. In some places,
+	use memory stream instead of file stream to eliminate reliance on file 
+	io for now.  That area is still a bit immature. Added a bunch of 
+	markers to tell where errors were occuring.
+
+	* resources: New directory to hold files open/read, etc. by unit
+	tests.
+
 2002-05-01  Nick Drochak  <ndrochak@gol.com>
 
 	* StreamReaderTest.cs:

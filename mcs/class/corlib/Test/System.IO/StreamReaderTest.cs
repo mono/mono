@@ -33,8 +33,7 @@ public class StreamReaderTest : TestCase
 		}
 	}
 
-	// assume testing pwd is corlib/Test
-	private string _codeFileName = "System.IO/StreamReaderTest.cs";
+	private string _codeFileName = "resources" + Path.DirectorySeparatorChar + "AFile.txt";
 
 	public void TestCtor1() {
 		{
@@ -88,7 +87,7 @@ public class StreamReaderTest : TestCase
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 1: " + e.ToString());
+				Fail ("Incorrect exception thrown at 2: " + e.ToString());
 			}
 			Assert("null string error not thrown", errorThrown);
 		}
@@ -99,7 +98,7 @@ public class StreamReaderTest : TestCase
 			} catch (FileNotFoundException) {
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 1: " + e.ToString());
+				Fail ("Incorrect exception thrown at 3: " + e.ToString());
 			}
 			Assert("fileNotFound error not thrown", errorThrown);
 		}
@@ -110,7 +109,7 @@ public class StreamReaderTest : TestCase
 			} catch (DirectoryNotFoundException) {
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 1: " + e.ToString());
+				Fail ("Incorrect exception thrown at 4: " + e.ToString());
 			}
 			Assert("dirNotFound error not thrown", errorThrown);
 		}
@@ -125,7 +124,7 @@ public class StreamReaderTest : TestCase
 				//   compiler says 'ArgExc'...
 				errorThrown = true;
 			} catch (Exception e) {
-				Fail ("Incorrect exception thrown at 1: " + e.ToString());
+				Fail ("Incorrect exception thrown at 5: " + e.ToString());
 			}
 			Assert("invalid filename error not thrown", errorThrown);
 		}
@@ -146,7 +145,7 @@ public class StreamReaderTest : TestCase
 			} catch (Exception e) {
 				Fail ("Incorrect exception thrown at 1: " + e.ToString());
 			}
-			Assert("null string error not thrown", errorThrown);
+			Assert("null stream error not thrown", errorThrown);
 		}
 		{
 			bool errorThrown = false;
@@ -345,14 +344,12 @@ public class StreamReaderTest : TestCase
 	
 	public void TestBaseStream() {
 		try {
-			FileStream f = new FileStream(_codeFileName, 
-						      FileMode.Open, 
-						      FileAccess.Read);
-			StreamReader r = new StreamReader(f);
-			//AssertEquals("wrong base stream ", f.Name, ((FileStream)r.BaseStream).Name);
-			AssertEquals("wrong base stream ", f, r.BaseStream);
+			Byte[] b = {};
+			MemoryStream m = new MemoryStream(b);
+			StreamReader r = new StreamReader(m);
+			AssertEquals("wrong base stream ", m, r.BaseStream);
 			r.Close();
-			f.Close();
+			m.Close();
 		} catch (Exception e) {
 			Fail ("Unexpected exception thrown: " + e.ToString());
 		}
@@ -360,7 +357,9 @@ public class StreamReaderTest : TestCase
 
 	public void TestCurrentEncoding() {
 		try {
-			StreamReader r = new StreamReader(_codeFileName);
+			Byte[] b = {};
+			MemoryStream m = new MemoryStream(b);
+			StreamReader r = new StreamReader(m);
 			AssertEquals("wrong encoding", 
 				     Encoding.UTF8, r.CurrentEncoding);
 		} catch (Exception e) {
@@ -485,21 +484,36 @@ public class StreamReaderTest : TestCase
 			Assert("out of range error not thrown", errorThrown);
 		}
 		{
-			Byte[] b = {(byte)'a', (byte)'b', (byte)'c', 
-				    (byte)'d', (byte)'e', (byte)'f', 
-				    (byte)'g'};
-			MemoryStream m = new MemoryStream(b);
-			StreamReader r = new StreamReader(m);
+			int ii = 1;
+			try {
+				Byte[] b = {(byte)'a', (byte)'b', (byte)'c', 
+					    (byte)'d', (byte)'e', (byte)'f', 
+					    (byte)'g'};
+				MemoryStream m = new MemoryStream(b);
+				ii++;
+				StreamReader r = new StreamReader(m);
+				ii++;
 
-			char[] buffer = new Char[7];
-			char[] target = {'g','d','e','f','b','c','a'};
-			r.Read(buffer, 6, 1);
-			r.Read(buffer, 4, 2);
-			r.Read(buffer, 1, 3);
-			r.Read(buffer, 0, 1);
-			for (int i = 0; i < target.Length; i++) {
-				AssertEquals("read no work", 
-					     target[i], buffer[i]);
+				char[] buffer = new Char[7];
+				ii++;
+				char[] target = {'g','d','e','f','b','c','a'};
+				ii++;
+				r.Read(buffer, 6, 1);
+				ii++;
+				r.Read(buffer, 4, 2);
+				ii++;
+				r.Read(buffer, 1, 3);
+				ii++;
+				r.Read(buffer, 0, 1);
+				ii++;
+				for (int i = 0; i < target.Length; i++) {
+					AssertEquals("read no work", 
+						     target[i], buffer[i]);
+				i++;
+				}
+						    
+			} catch (Exception e) {
+				Fail ("Caught when ii=" + ii + ". e:" + e.ToString());
 			}
 		}
 	}
