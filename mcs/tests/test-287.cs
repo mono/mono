@@ -1,5 +1,3 @@
-// TODO: add test of no constructor presence in the class when mono will support it
-
 using System;
 using System.Reflection;
 
@@ -19,6 +17,11 @@ public class MainClass
         if (!type.IsAbstract || !type.IsSealed) {
             Console.WriteLine ("Is not abstract sealed");
             return 1;
+        }
+        
+        if (type.GetConstructors ().Length > 0) {
+            Console.WriteLine ("Has constructor");
+            return 2;
         }
         
         Console.WriteLine (StaticClass.Name ());
