@@ -1,3 +1,8 @@
+2003-07-14  Ravi Pratap M  <ravi@ximian.com>
+
+	* cs1501-4.cs: Another test case for this error. This time it is on
+	constructors for attributes. We now report the error correctly.
+
 2003-05-18  Martin Baulig  <martin@ximian.com>
 
 	* error-3.cs: Added testcase for CS0188.
