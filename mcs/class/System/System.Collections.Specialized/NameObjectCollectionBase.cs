@@ -27,6 +27,7 @@ namespace System.Collections.Specialized
 		private IComparer m_comparer;
 		private int m_defCapacity;
 		private bool m_readonly;
+		SerializationInfo infoCopy;
 
 		internal IComparer Comparer {
 			get {return m_comparer;}
@@ -199,10 +200,12 @@ namespace System.Collections.Specialized
 			m_NullKeyItem = null;			*/
 			//throw new Exception("Not implemented yet");
 		}
-		protected NameObjectCollectionBase( SerializationInfo info, StreamingContext context )
+
+		protected NameObjectCollectionBase (SerializationInfo info, StreamingContext context)
 		{
-			throw new Exception("Not implemented yet");
+			infoCopy = info;
 		}
+
 		protected NameObjectCollectionBase( int capacity, IHashCodeProvider hashProvider, IComparer comparer )
 		{
 			m_readonly = false;
@@ -296,13 +299,11 @@ namespace System.Collections.Specialized
 		// IDeserializationCallback
 		public virtual void OnDeserialization (object sender)
 		{
-			if (sender == null)
-				throw new ArgumentNullException ("sender");
-
-			SerializationInfo info = sender as SerializationInfo;
+			SerializationInfo info = infoCopy;
 			if (info == null)
 				throw new SerializationException ("The object is not a SerializationInfo");
 
+			infoCopy = null;
 			m_hashprovider = (IHashCodeProvider) info.GetValue ("m_hashprovider",
 									    typeof (IHashCodeProvider));
 
