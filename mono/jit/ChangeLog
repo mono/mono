@@ -1,3 +1,8 @@
+2002-05-23  Dietmar Maurer  <dietmar@ximian.com>
+
+	* delegate.c: move the thread pool to metadata/threadpool.c, code
+	cleanup.
+
 2002-05-22  Dietmar Maurer  <dietmar@ximian.com>
 
 	* exception.c (arch_exc_is_catched): impl. MS like exception

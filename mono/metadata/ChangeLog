@@ -1,3 +1,8 @@
+2002-05-23  Dietmar Maurer  <dietmar@ximian.com>
+
+	* threadpool.[ch]: impl. a threadpool that can
+	be used by mint and mono.
+
 2002-05-22  Martin Baulig  <martin@gnome.org>
 
 	* reflection.h (MonoArrayList): New typedef.

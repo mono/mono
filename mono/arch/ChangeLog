@@ -1,3 +1,9 @@
+2002-05-23  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86/tramp.c (mono_create_method_pointer): removed the magic
+	trick to store the function pointer in the prolog and use the same
+	mechanism as in the jit.
+
 2002-05-13  Radek Doulik  <rodo@ximian.com>
 
 	* ppc/tramp.c (emit_save_parameters): fix I8 parameters
