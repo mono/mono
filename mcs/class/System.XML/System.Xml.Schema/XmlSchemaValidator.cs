@@ -400,10 +400,7 @@ namespace System.Xml.Schema
 			// If there is no schema information, then no validation is performed.
 			if (skipValidationDepth < 0 || depth <= skipValidationDepth) {
 				if (shouldValidateCharacters)
-					// LAMESPEC: even if we get simple type
-					// information here, it will be
-					// overwritten with element information.
-					ValidateEndSimpleContent (info);
+					ValidateEndSimpleContent (null);
 
 				AssessOpenStartElementSchemaValidity (localName, ns);
 			}
@@ -432,8 +429,11 @@ namespace System.Xml.Schema
 		}
 
 		// The return value is typed primitive, if supplied.
+		// Parameter 'var' seems to be converted into the type
+		// represented by current simple content type. (try passing
+		// some kind of object to this method to check the behavior.)
 		// EndTagDeriv
-		[MonoTODO ("Find out what 'var' parameter means.")]
+		[MonoTODO ("Handle 'var' parameter.")]
 		public object ValidateEndElement (XmlSchemaInfo schemaInfo,
 			object var)
 		{

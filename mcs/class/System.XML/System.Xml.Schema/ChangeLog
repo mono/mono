@@ -1,5 +1,10 @@
 2004-12-16  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaValidator.cs : ValidateElement() was not LAMESPEC. Added
+	  some comments on ValidateEndElement().
+
+2004-12-16  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaValidator.cs : fill schemaInfo as long as possible right now.
 
 2004-12-16  Atsushi Enomoto <atsushi@ximian.com>
