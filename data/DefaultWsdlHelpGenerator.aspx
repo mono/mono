@@ -61,6 +61,9 @@ void Page_Load(object sender, EventArgs e)
 	
 	Service service = desc.Services[0];
 	WebServiceName = service.Name;
+	if (desc.Bindings.Count == 0)
+		return;
+	
 	DefaultBinding = desc.Bindings[0].Name;
 	WebServiceDescription = service.Documentation;
 	ServiceProtocols = FindServiceProtocols (null);
@@ -1582,7 +1585,9 @@ function clearForm ()
 	<p class="label">Web Service Overview</p>
 	<%#WebServiceDescription%>
 	
-<%} if (CurrentPage == "op") {%>
+<%} if (DefaultBinding == null) {%>
+This service does not contain any public web method.
+<%} else if (CurrentPage == "op") {%>
 
 <!--
 	**********************************************************
@@ -1710,9 +1715,7 @@ function clearForm ()
 		<% } %>
 		
 	<% } %>
-<%}%>
-
-<% if (CurrentPage == "proxy") {%>
+<%} else if (CurrentPage == "proxy") {%>
 <!--
 	**********************************************************
 	Client Proxy
@@ -1733,9 +1736,7 @@ function clearForm ()
 	<div class="codePanel">
 	<div class="code-<%#CurrentLanguage%>"><%#GetProxyCode ()%></div>
 	</div>
-<%}%>
-
-<% if (CurrentPage == "wsdl") {%>
+<%} else if (CurrentPage == "wsdl") {%>
 <!--
 	**********************************************************
 	Service description
