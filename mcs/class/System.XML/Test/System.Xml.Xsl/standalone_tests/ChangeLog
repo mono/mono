@@ -1,3 +1,7 @@
+2004-01-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* xslttest.cs : Now it tests against XPathDocument. Reduced error msgs.
+
 2003-12-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Added testresults.tar.gz and README.
