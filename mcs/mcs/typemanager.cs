@@ -1812,9 +1812,6 @@ public class TypeManager {
 				if (!IsSubclassOrNestedChildOf (closure_invocation_type, mb.DeclaringType))
 					return false;
 
-				Report.Debug ("CHECK", closure_start_type, closure_invocation_type,
-					      closure_invocation_type.IsSubclassOf (closure_start_type));
-
 				// Although a derived class can access protected members of its base class
 				// it cannot do so through an instance of the base class (CS1540).
 				if ((closure_invocation_type != closure_start_type) &&
