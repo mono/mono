@@ -1,3 +1,13 @@
+2003-04-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* HttpWebRequest.cs: .NET Allows the HttpWebRequest to not have
+	the ContentLength specified on the request.  If that happens, we
+	have to accumulate all the data written, and once we accumulate
+	the data, we send it off.  
+
+	Notice that the documentation in .NET is actually incorrect, they
+	state that setting ContentLength is mandatory.  It is not.
+
 2003-04-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebResponse.cs: fixes bug #41180.

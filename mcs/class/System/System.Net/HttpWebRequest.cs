@@ -467,9 +467,8 @@ namespace System.Net
 		internal Stream GetRequestStreamInternal ()
 		{
 		        if (this.requestStream == null) {
-				this.requestStream = new HttpWebRequestStream (this,
-										GetSocket (),
-										new EventHandler (OnClose));
+				this.requestStream = new HttpWebRequestStream (
+					this, GetSocket (), new EventHandler (OnClose));
 			}
 
 			return this.requestStream;
@@ -643,36 +642,105 @@ namespace System.Net
 		{
 			bool disposed;
 			EventHandler onClose;
+			ArrayList AccumulateOutput;
+			HttpWebRequest webRequest;
 			
 			internal HttpWebRequestStream (HttpWebRequest webRequest,
-							Socket socket,
-							EventHandler onClose)
+						       Socket socket,
+						       EventHandler onClose)
 				: base (socket, FileAccess.Write, false)
 			{
 				this.onClose = onClose;
+				this.webRequest = webRequest;
+				
+				long content_length = webRequest.ContentLength;
+				if (content_length != -1)
+					WriteHeaders (content_length, false);
+				else
+					AccumulateOutput = new ArrayList ();
+
+				if (!socket.Poll (webRequest.Timeout, SelectMode.SelectWrite))
+					throw new WebException("The request timed out", WebExceptionStatus.Timeout);
+
+				// FIXME: write cookie headers (CookieContainer not yet implemented)
+			}
+
+			//
+			// This can be invoked at two points: at the startup of the stream,
+			// or after we accumulated data.
+			//
+			// At startup we are complete (ContentLength specified), so we use
+			// the information from the headers.
+			void WriteHeaders (long content_length, bool add_manually_cl)
+			{
 				StringBuilder sb = new StringBuilder ();
 				sb.Append (webRequest.Method + " " + 
 					   webRequest.actualUri.PathAndQuery +
 					   " HTTP/" +
 					   webRequest.version.ToString (2) +
 					   "\r\n");
-
-				foreach (string header in webRequest.webHeaders) {
+				
+				foreach (string header in webRequest.webHeaders) 
 					sb.Append (header + ": " + webRequest.webHeaders[header] + "\r\n");
-				}
 
-				// FIXME: write cookie headers (CookieContainer not yet implemented)
-
+				//
+				// we do not use the parent property, because that property tracks
+				// the state, and disallows changes after creation
+				//
+				if (add_manually_cl)
+					sb.Append ("Content-Length: " + content_length + "\r\n");
+				
 				sb.Append ("\r\n");
 				byte [] bytes = Encoding.ASCII.GetBytes (sb.ToString ());
-				if (!socket.Poll (webRequest.Timeout, SelectMode.SelectWrite))
-					throw new WebException("The request timed out", WebExceptionStatus.Timeout);
-				
 				this.Write (bytes, 0, bytes.Length);
+			}
+
+			public override void Write (byte [] buffer, int offset, int count)
+			{
+				if (AccumulateOutput == null){
+					base.Write (buffer, offset, count);
+				} else {
+					if (buffer == null)
+						throw new ArgumentNullException ();
+					if (offset < 0)
+						throw new ArgumentOutOfRangeException ("offset into buffer is negative");
+					if (count < 0)
+						throw new ArgumentOutOfRangeException ("count is negative");
+				        if (disposed)
+						throw new ObjectDisposedException ("stream has been disposed");
+					if (offset + count > buffer.Length)
+						throw new ArgumentException ("Write beyond end of buffer requested");
+
+					byte [] copy = new byte [count];
+					Array.Copy (buffer, offset, copy, 0, count);
+					AccumulateOutput.Add (copy);
+				}
+			}
+
+			public override void Flush ()
+			{
+				if (AccumulateOutput == null){
+					base.Flush ();
+					return;
+				}
+				ArrayList output = AccumulateOutput;
+				AccumulateOutput = null;
+				long size = 0;
+				foreach (byte [] b in output)
+					size += b.Length;
+				WriteHeaders (size, true);
+				foreach (byte [] b in output)
+					base.Write (b, 0, b.Length);
+
+				AccumulateOutput = null;
+				base.Flush ();
 			}
 
 			protected override void Dispose (bool disposing)
 			{
+				if (AccumulateOutput != null)
+					Flush ();
+				
 				if (disposed)
 					return;
 
@@ -692,6 +760,10 @@ namespace System.Net
 			
 			public override void Close() 
 			{
+
+				if (AccumulateOutput != null)
+					Flush ();
+					       
 				GC.SuppressFinalize (this);
 				Dispose (true);
 			}
