@@ -13,6 +13,8 @@ using System.Net;
 using System.Collections;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Reflection;
+using System.IO;
 
 namespace System.Net.Sockets 
 {
@@ -261,6 +263,12 @@ namespace System.Net.Sockets
 		 * the last IO operation
 		 */
 		private bool connected=false;
+
+		/* Used in LocalEndPoint and RemoteEndPoint if the
+		 * Mono.Posix assembly is available
+		 */
+		private static object unixendpoint=null;
+		private static Type unixendpointtype=null;
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Select_internal(ref Socket[] read,
@@ -351,6 +359,30 @@ namespace System.Net.Sockets
 			}
 		}
 
+		static Socket() {
+			Assembly ass;
+			
+			try {
+				ass=Assembly.Load("Mono.Posix");
+			} catch (FileNotFoundException) {
+				return;
+			}
+				
+			unixendpointtype=ass.GetType("Mono.Posix.UnixEndPoint");
+
+			/* The endpoint Create() method is an instance
+			 * method :-(
+			 */
+			Type[] arg_types=new Type[1];
+			arg_types[0]=typeof(string);
+			ConstructorInfo cons=unixendpointtype.GetConstructor(arg_types);
+
+			object[] args=new object[1];
+			args[0]="";
+
+			unixendpoint=cons.Invoke(args);
+		}
+
 		// private constructor used by Accept, which already
 		// has a socket handle to use
 		private Socket(AddressFamily family, SocketType type,
@@ -435,6 +467,9 @@ namespace System.Net.Sockets
 					// Stupidly, EndPoint.Create() is an
 					// instance method
 					return new IPEndPoint(0, 0).Create(sa);
+				} else if (sa.Family==AddressFamily.Unix &&
+					   unixendpoint!=null) {
+					return((EndPoint)unixendpointtype.InvokeMember("Create", BindingFlags.InvokeMethod|BindingFlags.Instance|BindingFlags.Public, null, unixendpoint, new object[] {sa}));
 				} else {
 					throw new NotImplementedException();
 				}
@@ -462,6 +497,9 @@ namespace System.Net.Sockets
 					// Stupidly, EndPoint.Create() is an
 					// instance method
 					return new IPEndPoint(0, 0).Create(sa);
+				} else if (sa.Family==AddressFamily.Unix &&
+					   unixendpoint!=null) {
+					return((EndPoint)unixendpointtype.InvokeMember("Create", BindingFlags.InvokeMethod|BindingFlags.Instance|BindingFlags.Public, null, unixendpoint, new object[] {sa}));
 				} else {
 					throw new NotImplementedException();
 				}
