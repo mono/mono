@@ -603,12 +603,17 @@ namespace System.Xml
 				if (innerXmlBuilder == null)
 					innerXmlBuilder = new StringBuilder ();
 				innerXmlBuilder.Length = 0;
+				bool loop = true;
 				do {
 					Read ();
-					if (NodeType != XmlNodeType.EndElement || depth + 1 > startDepth)
+					if (NodeType ==XmlNodeType.None)
+						throw new XmlException ("unexpected end of xml.");
+					else if (NodeType == XmlNodeType.EndElement) {
+						if (depth == startDepth)
+							loop = false;
+					} else
 						innerXmlBuilder.Append (currentTag);
-				} while (depth >= startDepth);
-
+				} while (loop);
 				string xml = innerXmlBuilder.ToString ();
 				innerXmlBuilder.Length = 0;
 				return xml;

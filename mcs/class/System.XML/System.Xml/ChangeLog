@@ -1,3 +1,8 @@
+2003-04-26  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlTextReader.cs : fixed ReadInnerXml(). it was inconsistent with
+	  Depth property fix.
+
 2003-04-25  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlDocument.cs : fixed Load() to set baseURI correctly.
