@@ -1,6 +1,6 @@
-//
-// Requires -unsafe to build
-//
+// cs0019.cs: Can not apply operator + between string and float *
+// Line: 12
+// Compiler options: -unsafe
 using System;
 
 public class Driver {
