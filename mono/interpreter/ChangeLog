@@ -1,3 +1,8 @@
+2004-07-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* interp.c mintops.def transform.c: Replace CEE_MONO_PROC<x> with
+	CEE_MONO_ICALL.
+
 2004-07-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mintops.h: Applied patch from Marcin Krzyzanowski (krzak@pld-linux.org). Add support for unaligned access on little endian machines.
