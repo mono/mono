@@ -1,3 +1,21 @@
+2003-05-23 Jackson Harper <jackson@latitudegeo.com>
+
+	* CatchBlock.cs: New file - Initial implementation of a catch
+	block
+	* FaultBlock.cs: New file - Initial implementation of a fault
+	block
+	* FilterBlock.cs: New file - Initial implementation of a filter
+	block
+	* FinallyBlock.cs: New file - Initial implementation of a finally
+	block
+	* HandlerBlock.cs: New file - A handler block is the block
+	assosciated with a SEH clause
+	* ISehClause: New file - Interface that structured exception
+	handling clauses must implement.
+	* TryBlock.cs: New file - Initial implementation only supports
+	label form SEH. This TryBlock is added to a method as an
+	instruction out of convenience, tryblock is not an instruction.
+		
 2003-05-22 Jackson Harper <jackson@latitudegeo.com>
 
 	* InstrTable.cs: Add unsigned conversion instructions.
