@@ -1,3 +1,7 @@
+2003-07-10  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* SystemEvents.cs: Implemented preliminary timer support, added private constructor, fixed events
+
 2003-06-12  Duncan Mak  <duncan@ximian.com>
 
 	* UserPreferenceChangedEventArgs.cs 
