@@ -3114,5 +3114,137 @@ namespace MonoTests.System {
 			AssertEquals ("100000,8", Int16.MinValue, Convert.ToInt16 ("100000", 8));
 			AssertEquals ("1000000000000000,2", Int16.MinValue, Convert.ToInt16 ("1000000000000000", 2));
 		}
+
+		// signed types
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToSByte_OverMaxValue ()
+		{
+			string max_plus1 = "128";
+			Convert.ToSByte (max_plus1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToSByte_OverMinValue ()
+		{
+			string min_minus1 = "-129";
+			Convert.ToSByte (min_minus1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToInt16_OverMaxValue ()
+		{
+			string max_plus1 = "32768";
+			Convert.ToInt16 (max_plus1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToInt16_OverMinValue ()
+		{
+			string min_minus1 = "-32769";
+			Convert.ToInt16 (min_minus1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToInt32_OverMaxValue ()
+		{
+			string max_plus1 = "2147483648";
+			Convert.ToInt32 (max_plus1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToInt32_OverMinValue ()
+		{
+			string min_minus1 = "-2147483649";
+			Convert.ToInt32 (min_minus1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToInt64_OverMaxValue ()
+		{
+			string max_plus1 = "9223372036854775808";
+			Convert.ToInt64 (max_plus1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToInt64_OverMinValue ()
+		{
+			string min_minus1 = "-9223372036854775809";
+			Convert.ToInt64 (min_minus1);
+		}
+
+		// unsigned types
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToByte_OverMaxValue ()
+		{
+			string max_plus1 = "257";
+			Convert.ToByte (max_plus1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToByte_OverMinValue ()
+		{
+			string min_minus1 = "-1";
+			Convert.ToByte (min_minus1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToUInt16_OverMaxValue ()
+		{
+			string max_plus1 = "65536";
+			Convert.ToUInt16 (max_plus1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToUInt16_OverMinValue ()
+		{
+			string min_minus1 = "-1";
+			Convert.ToUInt16 (min_minus1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToUInt32_OverMaxValue ()
+		{
+			string max_plus1 = "4294967296";
+			Convert.ToUInt32 (max_plus1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToUInt32_OverMinValue ()
+		{
+			string min_minus1 = "-1";
+			Convert.ToUInt32 (min_minus1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToUInt64_OverMaxValue ()
+		{
+			string max_plus1 = "18446744073709551616";
+			Convert.ToUInt64 (max_plus1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToUInt64_OverMinValue ()
+		{
+			string min_minus1 = "-1";
+			Convert.ToUInt64 (min_minus1);
+		}
 	}
 }

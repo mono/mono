@@ -1,6 +1,7 @@
 2004-05-28  Sebastien Pouliot  <sebastien@ximian.com>
 
-	* ConvertTest.cs: Removed extra 0 from ToInt16_MinValue.
+	* ConvertTest.cs: Removed extra 0 from ToInt16_MinValue. Added overflow
+	testing for integer types convertion.
 
 2004-05-27  Sebastien Pouliot  <sebastien@ximian.com>
 
