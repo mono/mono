@@ -170,16 +170,18 @@ namespace System.Windows.Forms {
 			}
 
 			caret.on = !caret.on;
+			Graphics g = Graphics.FromHwnd (caret.hwnd);
 
 			if (caret.on) {
-				caret.graphics.FillRectangle (caretOnBrush, caret.rect);
-				caret.graphics.DrawRectangle (caretOnPen, caret.rect);
+				g.FillRectangle (caretOnBrush, caret.rect);
+				g.DrawRectangle (caretOnPen, caret.rect);
 			} else {
 				// Fixme; this will kill what was underneath it before
-				caret.graphics.FillRectangle (caretOffBrush, caret.rect);
-				caret.graphics.DrawRectangle (caretOffPen, caret.rect);
+				g.FillRectangle (caretOffBrush, caret.rect);
+				g.DrawRectangle (caretOffPen, caret.rect);
 			}
-			caret.graphics.Flush ();
+			g.Flush ();
+			g.Dispose ();
 		}
 
 		[MonoTODO]
@@ -931,9 +933,11 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 			if (caret.on)
 				return;
 			caret.on = true;
-			caret.graphics.FillRectangle (caretOnBrush, caret.rect);
-			caret.graphics.DrawRectangle (caretOnPen, caret.rect);
-			caret.graphics.Flush ();
+			Graphics g = Graphics.FromHwnd (caret.hwnd);
+			g.FillRectangle (caretOnBrush, caret.rect);
+			g.DrawRectangle (caretOnPen, caret.rect);
+			g.Flush ();
+			g.Dispose ();
 		}
 
 		internal static void HideCaret () {
@@ -941,9 +945,11 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 				return;
 			caret.on = false;
 			// Fixme; this will kill what was underneath it before
-			caret.graphics.FillRectangle (caretOffBrush, caret.rect);
-			caret.graphics.DrawRectangle (caretOffPen, caret.rect);
-			caret.graphics.Flush ();
+			Graphics g = Graphics.FromHwnd (caret.hwnd);
+			g.FillRectangle (caretOffBrush, caret.rect);
+			g.DrawRectangle (caretOffPen, caret.rect);
+			g.Flush ();
+			g.Dispose ();
 		}
 
 		internal override void CreateCaret (IntPtr hwnd, int width, int height) {
@@ -955,7 +961,6 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 			caret.height = height;
 			caret.visible = 0;
 			caret.on = false;
-			caret.graphics = Graphics.FromHwnd (hwnd);
 		}
 
 		internal override void DestroyCaret (IntPtr hwnd) {
@@ -1242,7 +1247,6 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 	{
 		internal Timer timer;
 		internal IntPtr hwnd;
-		internal Graphics graphics;
 		internal Rectangle rect;
 		internal int x;
 		internal int y;
