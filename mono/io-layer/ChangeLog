@@ -2,6 +2,8 @@
 
 	* unicode.c (_wapi_unicode_to_utf8): byteswap UTF16 strings before
 	passing them to iconv
+	(_wapi_unicode_to_utf8): only swap bytes on LE systems, remove bug
+	from previous commit.
 
 2001-12-11  Dick Porter  <dick@ximian.com>
 
