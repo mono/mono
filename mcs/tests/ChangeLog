@@ -1,3 +1,8 @@
+2003-02-25  Miguel de Icaza  <miguel@ximian.com>
+
+	* makefile (all): Make it so that doing `make' will run the
+	default tests depending on Windows/Linux.
+
 2003-02-23  Martin Baulig  <martin@ximian.com>
 
 	When adding any tests here, please do also add them to the

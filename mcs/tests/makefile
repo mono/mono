@@ -48,8 +48,12 @@ WINDOWS_SOURCES = \
 TEST_NOPASS = \
 	test-45  test-53  test-91  test-106 test-107 test-120 test-122 test-132 test-133 test-66 test-177
 
-all: test-compiler test-unsafe test-windows
+all: 
+	if test x$(OS) = xWindows_NT; then make all-windows; else make all-linux; fi
 
+all-windows: test-compiler test-unsafe test-windows
+
+all-linux: test-compiler-mono test-unsafe-mono
 
 # Compile with mono, run with MS jit
 test-compiler:
