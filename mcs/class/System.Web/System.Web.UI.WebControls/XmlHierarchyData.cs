@@ -13,7 +13,7 @@ using System.Collections.Specialized;
 using System.Text;
 using System.Xml;
 using System.ComponentModel;
-using AttributeCollection = System.ComponentModel.AttributeCollection;
+using AC = System.ComponentModel.AttributeCollection;
 
 namespace System.Web.UI.WebControls {
 	public class XmlHierarchyData : IHierarchyData, ICustomTypeDescriptor {
@@ -28,9 +28,9 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		#region ICustomTypeDescriptor
-		AttributeCollection ICustomTypeDescriptor.GetAttributes ()
+		AC ICustomTypeDescriptor.GetAttributes ()
 		{
-			return AttributeCollection.Empty;
+			return AC.Empty;
 		}
 		
 		string ICustomTypeDescriptor.GetClassName ()

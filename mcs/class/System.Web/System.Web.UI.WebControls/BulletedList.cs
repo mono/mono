@@ -152,7 +152,6 @@ namespace System.Web.UI.WebControls {
 		
 		public override ListItem SelectedItem {
 			get { return base.SelectedItem; }
-			set { throw new NotSupportedException (String.Format ("This property is not supported in {0}", GetType ())); }
 		}
 		
 		public virtual string BulletImageUrl {
