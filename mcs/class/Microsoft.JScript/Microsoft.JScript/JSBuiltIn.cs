@@ -106,6 +106,7 @@ namespace Microsoft.JScript {
 		Global_encodeURIComponent,
 		Global_escape,
 		Global_eval,
+		Global_GetObject,
 		Global_isNaN,
 		Global_isFinite,
 		Global_parseFloat,

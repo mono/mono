@@ -61,7 +61,7 @@ namespace Microsoft.JScript {
 			get { throw new NotImplementedException (); }
 		}
 
-		[JSFunctionAttribute(0, JSBuiltin.Global_CollectGarbage)]
+		[JSFunctionAttribute (0, JSBuiltin.Global_CollectGarbage)]
 		public static void CollectGarbage ()
 		{
 			throw new NotImplementedException ();
@@ -134,6 +134,12 @@ namespace Microsoft.JScript {
 		public static FunctionConstructor Function {
 			get { throw new NotImplementedException (); }
 		}
+
+		[JSFunctionAttribute (0, JSBuiltin.Global_GetObject)]
+		public static Object GetObject (Object moniker, Object progId)
+		{
+			throw new NotImplementedException ();
+		}		
 
 		public static Type @int {
 			get { throw new NotImplementedException (); }
