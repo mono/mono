@@ -5,6 +5,9 @@
 	need to add extra code here to look at them. Just removes a bit of
 	cruft.
 
+	(ves_icall_System_Environment_get_TickCount): No need for #if
+	WINDOWS. We already have the code in io-layer.
+
 2004-11-28  Martin Baulig  <martin@ximian.com>
 
 	* loader.c
