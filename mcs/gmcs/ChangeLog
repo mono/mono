@@ -1,5 +1,9 @@
 2003-11-08  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (ConstructedType): Override `IsClass' etc.
+
+2003-11-08  Martin Baulig  <martin@ximian.com>
+
 	* class.cs (TypeContainer.GetClassBases): Use TypeExpr's for the
 	return value and the `out parent' parameter.
 	(TypeContainer.DefineType): Moved the CS0644 check into

@@ -391,6 +391,32 @@ namespace Mono.CSharp {
 			return type;
 		}
 
+		public override bool CheckAccessLevel (DeclSpace ds)
+		{
+			return ds.CheckAccessLevel (gt);
+		}
+
+		public override bool AsAccessible (DeclSpace ds, int flags)
+		{
+			return ds.AsAccessible (gt, flags);
+		}
+
+		public override bool IsClass {
+			get { return gt.IsClass; }
+		}
+
+		public override bool IsValueType {
+			get { return gt.IsValueType; }
+		}
+
+		public override bool IsInterface {
+			get { return gt.IsInterface; }
+		}
+
+		public override bool IsSealed {
+			get { return gt.IsSealed; }
+		}
+
 		public override string Name {
 			get {
 				return full_name;
