@@ -1,3 +1,9 @@
+2002-05-05  Lawrence Pit <loz@cable.a2000.nl>
+
+	* UriBuilder.cs: Implemented.
+	
+	* Uri.cs: Complete new reimplementation. 
+
 2002-02-08  Duncan Mak  <duncan@ximian.com>
 
 	* UriFormatException.cs: Removed TODO attribute, the docs are
