@@ -1,3 +1,9 @@
+2004-09-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate.cs: CreateFromSignedFile now throw the COMException
+	if the specified file isn't signed (before this was done by 
+	AuthenticodeDeformatter). More details are available on failure.
+
 2004-07-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate.cs: Added new Equals(Object). Moved [Serializable]
