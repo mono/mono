@@ -1,5 +1,11 @@
 2002-09-03  Martin Baulig  <martin@gnome.org>
 
+	* AssemblerWriterI386.cs, IAssemblerWriter.cs, MonoDwarfFileWriter.cs,
+	README, README.relocation-table, csharp-lang.[ch], gdb-csharp-support.patch,
+	gdb-variable-scopes.patch: Removed.
+
+2002-09-03  Martin Baulig  <martin@gnome.org>
+
 	* MonoSymbolTableReader.cs (MonoSymbolTableReader.ImageFile): New
 	public property.
 
