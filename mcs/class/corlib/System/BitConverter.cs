@@ -271,9 +271,11 @@ namespace System
 			// It makes a small difference when start_index is
 			// outside the range and length==0. 
 			if (startIndex < 0 || length < 0 || startIndex >= value.Length) {
+#if NET_2_0
 				// special (but valid) case (e.g. new byte [0])
 				if ((startIndex == 0) && (value.Length == 0))
 					return String.Empty;
+#endif
 				throw new ArgumentOutOfRangeException ("startIndex");
 			}
 			// note: re-ordered to avoid possible integer overflow

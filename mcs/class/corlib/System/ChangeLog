@@ -2,6 +2,8 @@
 
 	* AppDomain.cs: Fix the DefaultDomain property to return the root 
 	domain (as it seems that the root's Id isn't always 0).
+	* BitConverter.cs: The "special support" for ToString(new byte[0]) is
+	only for NET_2_0 - previously this was an ArgumentOutOfRangeException.
 
 2005-01-08  Miguel de Icaza  <miguel@ximian.com>
 
