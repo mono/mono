@@ -1,4 +1,9 @@
 2002-05-18  Tim Coleman <tim@timcoleman.com>
+	* System.Data/DataRow.cs: More implementation,
+	as well as boundary checks and small semantic
+	repairs
+
+2002-05-18  Tim Coleman <tim@timcoleman.com>
 	* System.Data/DataRow.cs: Try to reduce memory
 	usage by only creating the original and proposed
 	arrays as required in BeginEdit, and then destroying

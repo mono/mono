@@ -23,16 +23,15 @@ namespace System.Data
 	{
 		#region Fields
 
-		private DataTable table;
+		DataTable table;
 
-		private object[] original;
-		private object[] proposed;
-		private object[] current;
+		object[] original;
+		object[] proposed;
+		object[] current;
 
-		private Hashtable versions;
-		private string[] columnErrors;
-		private string rowError;
-		private DataRowState rowState;
+		string[] columnErrors;
+		string rowError;
+		DataRowState rowState;
 
 		#endregion
 
@@ -49,12 +48,6 @@ namespace System.Data
 			original = null; 
 			proposed = null;
 			current = new object[table.Columns.Count];
-
-			versions = new Hashtable ();
-
-			versions[DataRowVersion.Original] = original;
-			versions[DataRowVersion.Proposed] = proposed;
-			versions[DataRowVersion.Current] = current;
 
 			columnErrors = new string[table.Columns.Count];
 			rowError = String.Empty;
@@ -104,9 +97,9 @@ namespace System.Data
 					throw new InvalidCastException ();
 				if (rowState == DataRowState.Deleted)
 					throw new DeletedRowInaccessibleException ();
-				BeginEdit ();
+
+				BeginEdit ();  // implicitly called
 				proposed[columnIndex] = value;
-				EndEdit ();
 			}
 		}
 
@@ -142,14 +135,29 @@ namespace System.Data
 			get {
 				if (column == null)
 					throw new ArgumentNullException ();	
+
 				int columnIndex = table.Columns.IndexOf (column);
+
 				if (columnIndex == -1)
 					throw new ArgumentException ();
+
 				if (version == DataRowVersion.Default)
 					return column.DefaultValue;
+
 				if (!HasVersion (version))
 					throw new VersionNotFoundException ();
-				return ((object[])(versions[version]))[columnIndex];
+
+				switch (version)
+				{
+					case DataRowVersion.Proposed:
+						return proposed[columnIndex];
+					case DataRowVersion.Current:
+						return current[columnIndex];
+					case DataRowVersion.Original:
+						return original[columnIndex];
+					default:
+						throw new ArgumentException ();
+				}
 			}
 		}
 
@@ -193,9 +201,8 @@ namespace System.Data
 						throw new InvalidCastException ();
 				}
 
-				BeginEdit ();
+				BeginEdit ();  // implicitly called
 				proposed = value;
-				EndEdit ();
 			}
 		}
 
@@ -234,8 +241,6 @@ namespace System.Data
 		{
 			this.EndEdit ();
 
-			original = null;
-
 			switch (rowState)
 			{
 				case DataRowState.Added:
@@ -248,6 +253,8 @@ namespace System.Data
 					table.Rows.Remove (this);
 					break;
 			}
+
+			original = null;
 		}
 
 		/// <summary>
@@ -255,27 +262,40 @@ namespace System.Data
 		/// </summary>
 		public void BeginEdit() 
 		{
-			proposed = new object[table.Columns.Count];
-			original = new object[table.Columns.Count];
-			Array.Copy (current, proposed, table.Columns.Count);
-			Array.Copy (current, original, table.Columns.Count);
+			if (rowState == DataRowState.Deleted)
+				throw new DeletedRowInaccessibleException ();
+
+			if (!HasVersion (DataRowVersion.Proposed))
+			{
+				proposed = new object[table.Columns.Count];
+				Array.Copy (current, proposed, table.Columns.Count);
+			}
+
+			if (!HasVersion (DataRowVersion.Original))
+			{
+				original = new object[table.Columns.Count];
+				Array.Copy (current, original, table.Columns.Count);
+			}
 		}
 
 		/// <summary>
 		/// Cancels the current edit on the row.
 		/// </summary>
-		public void CancelEdit() 
+		public void CancelEdit () 
 		{
-			original = null;
-			proposed = null;
-			rowState = DataRowState.Unchanged;
+			if (HasVersion (DataRowVersion.Proposed))
+			{
+				original = null;
+				proposed = null;
+				rowState = DataRowState.Unchanged;
+			}
 		}
 
 		/// <summary>
 		/// Clears the errors for the row, including the RowError and errors set with
 		/// SetColumnError.
 		/// </summary>
-		public void ClearErrors() 
+		public void ClearErrors () 
 		{
 			rowError = String.Empty;
 			columnErrors = new String[table.Columns.Count];
@@ -284,19 +304,22 @@ namespace System.Data
 		/// <summary>
 		/// Deletes the DataRow.
 		/// </summary>
-		public void Delete() 
+		public void Delete () 
 		{
+			if (rowState == DataRowState.Deleted)
+				throw new DeletedRowInaccessibleException ();
+
 			rowState = DataRowState.Deleted;
 		}
 
 		/// <summary>
 		/// Ends the edit occurring on the row.
 		/// </summary>
-		public void EndEdit() 
+		public void EndEdit () 
 		{
-			rowState = DataRowState.Modified;
-			if (proposed != null)
+			if (HasVersion (DataRowVersion.Proposed))
 			{
+				rowState = DataRowState.Modified;
 				Array.Copy (proposed, current, table.Columns.Count);
 				proposed = null;
 			}
@@ -467,7 +490,18 @@ namespace System.Data
 		/// </summary>
 		public bool HasVersion (DataRowVersion version) 
 		{
-			return (versions[version] != null);
+			switch (version)
+			{
+				case DataRowVersion.Default:
+					return true;
+				case DataRowVersion.Proposed:
+					return (proposed != null);
+				case DataRowVersion.Current:
+					return (current != null);
+				case DataRowVersion.Original:
+					return (original != null);
+			}
+			return false;
 		}
 
 		/// <summary>
@@ -507,22 +541,26 @@ namespace System.Data
 		/// <summary>
 		/// Rejects all changes made to the row since AcceptChanges was last called.
 		/// </summary>
-		[MonoTODO]
 		public void RejectChanges () 
 		{
-			Array.Copy (original, current, table.Columns.Count);
-			CancelEdit ();
-			switch (rowState)
+			// If original is null, then nothing has happened since AcceptChanges
+			// was last called.  We have no "original" to go back to.
+			if (original != null)
 			{
-				case DataRowState.Added:
-					table.Rows.Remove (this);
-					break;
-				case DataRowState.Modified:
-					rowState = DataRowState.Unchanged;
-					break;
-				case DataRowState.Deleted:
-					rowState = DataRowState.Unchanged;
-					break;
+				Array.Copy (original, current, table.Columns.Count);
+				CancelEdit ();
+				switch (rowState)
+				{
+					case DataRowState.Added:
+						table.Rows.Remove (this);
+						break;
+					case DataRowState.Modified:
+						rowState = DataRowState.Unchanged;
+						break;
+					case DataRowState.Deleted:
+						rowState = DataRowState.Unchanged;
+						break;
+				}
 			}
 		}
 
