@@ -1,3 +1,8 @@
+2002-03-08  Nick Drochak  <ndrochak@gol.com>
+
+	* nunit.build: exclude all the obsolete stuff, and prevent csc from
+	linking any ms stuff to the dll and exe we are testing on Linux.
+
 2002-03-07  Nick Drochak  <ndrochak@gol.com>
 
 	* .cvsignore: ignore *.pdb files

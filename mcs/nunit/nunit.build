@@ -10,6 +10,13 @@
 			<sources basedir="src/NUnitCore">
 				<includes name="*.cs"/>
 				<excludes name="SimpleTestCollector.cs"/>
+				<excludes name="ClassPathTestCollector.cs"/>
+				<excludes name="ReflectionUtils.cs"/>
+				<excludes name="ITestSuiteLoader.cs"/>
+				<excludes name="LoadingTestCollector.cs"/>
+				<excludes name="ReloadingTestSuiteLoader.cs"/>
+				<excludes name="StandardTestSuiteLoader.cs"/>
+				<excludes name="TestCaseClassLoader.cs"/>
 			</sources>
 		</csc>
 
@@ -17,9 +24,18 @@
 			<sources basedir="src/NUnitCore">
 				<includes name="*.cs"/>
 				<excludes name="SimpleTestCollector.cs"/>
+				<excludes name="ClassPathTestCollector.cs"/>
+				<excludes name="ReflectionUtils.cs"/>
+				<excludes name="ITestSuiteLoader.cs"/>
+				<excludes name="LoadingTestCollector.cs"/>
+				<excludes name="ReloadingTestSuiteLoader.cs"/>
+				<excludes name="StandardTestSuiteLoader.cs"/>
+				<excludes name="TestCaseClassLoader.cs"/>
 			</sources>
 			<arg value="/r:..\class\lib\corlib.dll"/>
-			<arg value="/nowarn:1595"/>
+			<arg value="/r:..\class\lib\System.dll"/>
+			<arg value="/nostdlib"/> 	<!-- don't reference mscorlib -->
+			<arg value="/noconfig"/>	<!-- don't reference ms assemblies -->
 		</csc>
 
 		<csc target="library" output="NUnitBase.dll" debug="${debug}">
@@ -47,6 +63,9 @@
 			<references>
 				<includes name="NUnitCore_mono.dll"/>
 			</references>
+			<arg value="/nostdlib"/> 	<!-- don't reference mscorlib -->
+			<arg value="/noconfig"/>	<!-- don't reference ms assemblies -->
+			<arg value="/r:..\class\lib\corlib.dll"/>
 		</csc>
 	</target>
 
