@@ -19,6 +19,7 @@
 			<arg value="/noconfig"/>
 			<arg value="/debug"/>
 			<arg value="/r:System.dll"/>
+			<arg value="/r:System.EnterpriseServices.dll"/>
 			<arg value="/r:System.Xml.dll"/>
 			<arg value="/r:System.Web.dll"/>
 			<sources>
