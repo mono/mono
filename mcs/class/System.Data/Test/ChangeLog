@@ -1,3 +1,13 @@
+2002-05-06  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.Data.SqlTypes.SqlInt32Test.cs: missing
+	declaration for SqlInt32 z which was a test build blocker
+	
+	* PostgresTest.cs: got rid of warning about missing e
+	
+	* Test/PostgresTest.cs: exclude PostgresTest.cs 
+	from test build
+
 2002-05-05  Tim Coleman <tim@timcoleman.com>
 	* TheTests.cs:
 	* System.Data.SqlTypes/SqlInt32Test.cs:

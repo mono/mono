@@ -40,7 +40,8 @@ namespace MonoTests.System.Data.SqlTypes
 			int b = 7;
 			
 			SqlInt32 x;
-			SqlInt32 y ;
+			SqlInt32 y;
+			SqlInt32 z;
 
 			x = new SqlInt32 (a);
 			y = new SqlInt32 (b);
@@ -54,7 +55,7 @@ namespace MonoTests.System.Data.SqlTypes
 		{
 			int a = 5;
 			int b = 7;
-			
+						
 			SqlInt32 x = new SqlInt32 (a);
 			SqlInt32 y = new SqlInt32 (b);
 			SqlInt32 z = x & y;

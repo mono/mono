@@ -23,6 +23,8 @@
 				<excludes name="TestSqlException.cs"/>
 				<excludes name="TestSqlInsert.cs"/>
 				<excludes name="TestSqlIsolationLevel.cs"/>
+				<excludes name="PostgresTest.cs"/>
+
 			</sources>
 			<references basedir="..\..\..\nunit">
 				<includes name="NUnitCore.dll"/>
@@ -41,6 +43,8 @@
 				<excludes name="TestSqlException.cs"/>
 				<excludes name="TestSqlInsert.cs"/>
 				<excludes name="TestSqlIsolationLevel.cs"/>
+				<excludes name="PostgresTest.cs"/>
+
 			</sources>
 			<references basedir="..\..\..\nunit">
 				<includes name="NUnitBase.dll"/>

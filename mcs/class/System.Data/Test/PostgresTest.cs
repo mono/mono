@@ -156,7 +156,7 @@ namespace TestSystemDataSqlClient {
 				Console.WriteLine ("OK");
 			}
 			catch (SqlException e) {
-				Console.WriteLine("Error (don't worry about this one)");
+				Console.WriteLine("Error (don't worry about this one): + e");
 			}
 			
 			try {
