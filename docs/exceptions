@@ -16,7 +16,7 @@ unmanaged code. That way we can recover from exceptions inside unmanaged code.
 
 void handle_exception ((struct sigcontext *ctx, gpointer obj)
 {
-        if (ctx->ip < mono_end_of_stack) {
+        if (ctx->bp < mono_end_of_stack) {
 	        /* unhandled exception */
 	        abort ();
 	}
