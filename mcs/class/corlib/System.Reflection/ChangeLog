@@ -1,3 +1,8 @@
+2003-10-17  Martin Baulig  <martin@ximian.com>
+
+	* MethodInfo.cs (MethodInfo.GetGenericArguments): New method.
+	(MethodInfo.BindGenericParameters): New method.
+
 2003-10-16  Martin Baulig  <martin@ximian.com>
 
 	* MethodInfo.cs (MethodInfo.IsGenericMethodDefinition): New

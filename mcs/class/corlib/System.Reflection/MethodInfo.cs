@@ -28,6 +28,12 @@ namespace System.Reflection {
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
 			get;
 		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern Type [] GetGenericArguments ();
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern MethodInfo BindGenericParameters (Type [] types);
 #endif
 	}
 
