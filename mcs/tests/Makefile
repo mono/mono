@@ -46,8 +46,8 @@ TEST_SOURCES = \
 	test-271 test-272 test-273 test-274 test-275 test-276 test-277 test-278 test-279 test-280 \
 	test-281 test-282 test-283 test-284 test-285 test-286 test-287 test-288 \
 	cls-test-0 cls-test-1 cls-test-2 cls-test-3 cls-test-5 cls-test-6 cls-test-7 cls-test-10  \
-	cls-test-11 cls-test-14 cls-test-15 cls-test-16
-#	mtest-1-dll mtest-1-exe
+	cls-test-11 cls-test-14 cls-test-15 cls-test-16 \
+	mtest-1-dll mtest-1-exe
 
 GENERIC_SOURCES = \
 	gen-1   gen-2   gen-3   gen-4   gen-5   gen-6   gen-7   gen-8   gen-9   gen-10 \
@@ -153,6 +153,9 @@ test-compiler-jit-real:
 		    echo "FAIL: $$i" >> $$logfile ; \
 	            echo FAILED ; cat $$testlogfile ; \
 		fi ; \
+	    else \
+		echo "PASS: $$i: compilation" >> $$logfile ; \
+		echo OK ; rm -f $$testlogfile ; \
 	    fi ; \
 	done ; \
 	if test -z "$$failed"; then :; else echo "Failing tests: $$failed"; exit 1; fi

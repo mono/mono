@@ -1,3 +1,9 @@
+2004-09-03  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (TEST_SOURCES): Add 'mtest-1-dll' and 'mtest-1-exe'.
+	Testcases from #61128.
+	(test-compiler-jit-real): Minor cleanups.
+
 2004-09-02  Duncan Mak  <duncan@ximian.com>
 
 	* Makefile (test-2): Use /langversion instead of -v2. This fixes

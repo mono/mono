@@ -1,10 +1,10 @@
-// Compiler options: -r:mtest-1-dll
+// Compiler options: -r:mtest-1-dll.dll
 
 using System;
 using Q;
 
 public class B {
- public static void Main( string[] args ) {
-  Console.WriteLine( A.ToString() );
- }
+	public static int Main() {
+		return (A.ToString() == "Hello world!") ? 0 : 1;
+	}
 }
