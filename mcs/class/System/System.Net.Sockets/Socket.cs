@@ -152,7 +152,11 @@ namespace System.Net.Sockets
 			
 			public void Accept() {
 				lock(result) {
-					acc_socket=socket.Accept();
+					try {
+						acc_socket=socket.Accept();
+					} catch (Exception e) {
+						result.SetDelayedException(e);
+					}
 					End();
 				}
 			}
@@ -174,8 +178,11 @@ namespace System.Net.Sockets
 						socket.Connect (endpoint);
 					} catch (SocketException e) {
 						//WSAEINPROGRESS
-						if (e.NativeErrorCode != 10036)
-							throw;
+						if (e.NativeErrorCode != 10036) {
+							result.SetDelayedException(e);	
+							End ();
+							return;
+						}
 
 						socket.Poll (-1, SelectMode.SelectWrite);
 						try {
@@ -184,17 +191,21 @@ namespace System.Net.Sockets
 							rethrow = e2;
 						}
 					}
-					End ();
 					if (rethrow != null)
-						throw rethrow;
+						result.SetDelayedException(rethrow);
+					End ();
 				}
 			}
 
 			public void Receive() {
 				lock(result) {
 					if (socket.Blocking) {
-						total=socket.Receive(buffer, offset,
-								     size, sockflags);
+						try {
+							total=socket.Receive(buffer, offset,
+									     size, sockflags);
+						} catch (Exception e) {
+	                                                result.SetDelayedException(e);
+        	                                }
 						End();
 						return;
 					}
@@ -204,8 +215,11 @@ namespace System.Net.Sockets
 						total = socket.Receive (buffer, offset, size, sockflags);
 					} catch (SocketException e) {
 						//WSAEWOULDBLOCK
-						if (e.NativeErrorCode != 10035)
-							throw;
+						if (e.NativeErrorCode != 10035) {
+							result.SetDelayedException(e);
+							End ();
+                                                        return;
+						}
 
 						socket.Poll (-1, SelectMode.SelectRead);
 						try {
@@ -214,18 +228,22 @@ namespace System.Net.Sockets
 							rethrow = e2;
 						}
 					}
-					End ();
 					if (rethrow != null)
-						throw rethrow;
+						result.SetDelayedException(rethrow);
+					End ();
 				}
 			}
 
 			public void ReceiveFrom() {
 				lock(result) {
-					total=socket.ReceiveFrom(buffer,
-								 offset, size,
-								 sockflags,
-								 ref endpoint);
+					try {
+						total=socket.ReceiveFrom(buffer,
+									 offset, size,
+									 sockflags,
+									 ref endpoint);
+					} catch (Exception e) {
+                                                result.SetDelayedException(e);
+					}
 					End();
 				}
 			}
@@ -736,6 +754,7 @@ namespace System.Net.Sockets
 			SocketAsyncResult req=(SocketAsyncResult)result;
 
 			result.AsyncWaitHandle.WaitOne();
+			req.CheckIfThrowDelayedException();
 			return(req.Worker.Socket);
 		}
 
@@ -750,6 +769,7 @@ namespace System.Net.Sockets
 			SocketAsyncResult req=(SocketAsyncResult)result;
 
 			result.AsyncWaitHandle.WaitOne();
+			req.CheckIfThrowDelayedException();
 			return(req.Worker.Total);
 		}
 
@@ -758,6 +778,7 @@ namespace System.Net.Sockets
 			SocketAsyncResult req=(SocketAsyncResult)result;
 
 			result.AsyncWaitHandle.WaitOne();
+ 			req.CheckIfThrowDelayedException();
 			end_point=req.Worker.EndPoint;
 			return(req.Worker.Total);
 		}
