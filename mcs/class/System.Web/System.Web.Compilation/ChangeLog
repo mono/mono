@@ -1,3 +1,8 @@
+2003-02-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: fixed code generation for Table/TableRow/TableCell
+	when used explicitly.
+
 2003-02-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspElements.cs: get the property Type for controls that use

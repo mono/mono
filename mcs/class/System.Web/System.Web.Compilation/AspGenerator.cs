@@ -848,29 +848,31 @@ class AspGenerator
 			throw new ApplicationException ("Child controls not allowed for " + prev_tag_id);
 		}
 
+		Type allowed = null;
 		if (prev_children_kind == ChildrenKind.DBCOLUMNS &&
-		    control_type != typeof (System.Web.UI.WebControls.DataGridColumn) &&
-		    !control_type.IsSubclassOf (typeof (System.Web.UI.WebControls.DataGridColumn)))
-			throw new ApplicationException ("Inside " + controls.PeekTagID () + " only " + 
-							"System.Web.UI.WebControls.DataGridColum " + 
-							"objects are allowed");
-		else if (prev_children_kind == ChildrenKind.LISTITEM &&
-			 control_type != typeof (System.Web.UI.WebControls.ListItem))
-			throw new ApplicationException ("Inside " + controls.PeekTagID () + " only " + 
-							"System.Web.UI.WebControls.ListItem " + 
-							"objects are allowed");
-		else if (prev_children_kind == ChildrenKind.HTMLROW &&
-			 control_type != typeof (System.Web.UI.HtmlControls.HtmlTableRow))
-			throw new ApplicationException ("Inside " + controls.PeekTagID () + " only " + 
-							"System.Web.UI.HtmlControls.HtmlTableRow " + 
-							"objects are allowed");
-		else if (prev_children_kind == ChildrenKind.HTMLCELL &&
-			 control_type != typeof (System.Web.UI.HtmlControls.HtmlTableCell))
-			throw new ApplicationException ("Inside " + controls.PeekTagID () + " only " + 
-							"System.Web.UI.HtmlControls.HtmlTableCell " + 
-							"objects are allowed");
+		    typeof (DataGridColumn).IsAssignableFrom (control_type)) {
+			allowed = typeof (DataGridColumn);
+		} else if (prev_children_kind == ChildrenKind.LISTITEM &&
+			 control_type != typeof (System.Web.UI.WebControls.ListItem)) {
+			allowed = typeof (DataGridColumn);
+		} else if (prev_children_kind == ChildrenKind.HTMLROW) {
+			Type prevType = controls.PeekType ();
+			if (prevType == typeof (HtmlTable) && control_type != typeof (HtmlTableRow))
+				allowed = typeof (HtmlTableRow);
+			else if (prevType == typeof (Table) && control_type != typeof (TableRow))
+				allowed = typeof (TableRow);
+		} else if (prev_children_kind == ChildrenKind.HTMLCELL) {
+			Type prevType = controls.PeekType ();
+			if (prevType == typeof (HtmlTableRow) && control_type != typeof (HtmlTableCell))
+				allowed = typeof (HtmlTableCell);
+			else if (prevType == typeof (TableRow) && control_type != typeof (TableCell))
+				allowed = typeof (TableCell);
+		}
 	
-					
+		if (allowed != null)
+			throw new ApplicationException ("Inside " + controls.PeekTagID () + " only " + 
+							allowed + " objects are allowed");
+
 		StringBuilder func_code = new StringBuilder ();
 		current_function = func_code;
 		if (0 == String.Compare (tag_id, "form", true)){
@@ -1303,14 +1305,14 @@ class AspGenerator
 			control_id = controls.PeekControlID ();
 			current_function.AppendFormat ("\t\t\tthis.__BuildControl_{0} ();\n\t\t\t__parser." +
 						       "AddParsedSubObject (this.{0});\n\n", control_id);
-		} else if (control_type == typeof (HtmlTableCell)) {
+		} else if (control_type == typeof (HtmlTableCell) || control_type == typeof (TableCell)) {
 			old_function.Append ("\n\t\t\treturn __ctrl;\n\t\t}\n\n");
 			object top = controls.Pop ();
 			Type t = controls.PeekType ();
 			controls.Push (top);
 			string parsed = "";
 			string ctrl_name = "ctrl";
-			if (t != typeof (HtmlTableRow)) {
+			if (!t.IsSubclassOf (typeof (WebControl)) && t != typeof (HtmlTableRow)) {
 				parsed = "ParsedSubObject";
 				ctrl_name = "parser";
 			}
@@ -1330,7 +1332,7 @@ class AspGenerator
 			controls.Pop ();
 			control_id = controls.PeekControlID ();
 			current_function.AppendFormat ("\t\t\tthis.__BuildControl_{0} ();\n", control_id);
-			if (child_kind == ChildrenKind.HTMLROW) {
+			if (child_kind == ChildrenKind.HTMLROW || !control_type.IsSubclassOf (typeof (WebControl))) {
 				current_function.AppendFormat ("\t\t\t__parser.AddParsedSubObject ({0});\n",
 								control_id);
 			} else {
