@@ -1,3 +1,7 @@
+2003-11-25  Jackson Harper <jackson@ximian.com>
+
+	* System.web.dll.sources: Add AltSerialization.cs to the build
+
 2003-11-24  Jackson Harper <jackson@ximian.com>
 
 	* System.web.dll.sources: Add State server classes to build.
