@@ -49,7 +49,12 @@ namespace System
     /// digits, suitable for financial and commercial calculations
     /// </summary>
 	[Serializable]
-    public struct Decimal: IComparable, IFormattable, IConvertible
+    public struct Decimal: IFormattable, IConvertible,
+#if NET_2_0
+	IComparable, IComparable<Decimal>
+#else
+	IComparable
+#endif
     {
 	// LAMESPEC: the attributes aren't mentioned, but show up in CorCompare
 	// Unfortunately, corcompare starts throwing security exceptions when
@@ -652,6 +657,18 @@ namespace System
             Decimal d2 = (Decimal)val;
             return decimalCompare(ref this, ref d2);
         }
+
+#if NET_2_0
+	public int CompareTo(Decimal value)
+	{
+	    return decimalCompare(ref this, ref value);
+	}
+
+        public bool Equals(Decimal value) 
+        {
+            return Equals(value, this);
+        }
+#endif
 
         public static Decimal Parse(string s) 
         {

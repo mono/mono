@@ -1,5 +1,9 @@
 2004-07-17  Martin Baulig  <martin@ximian.com>
 
+	* Decimal.cs: Implement IComparable<Decimal>.
+
+2004-07-17  Martin Baulig  <martin@ximian.com>
+
 	* Byte.cs, Int16.cs, Int32.cs, Int64.cs, SByte.cs, String.cs,
 	UInt16.cs, UInt32.cs, UInt64.cs: Implement IComparable<T>.	
 
