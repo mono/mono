@@ -28,14 +28,14 @@ monobins_DATA = \
 	gacutil.exe				\
 	sn.exe
 
-fx11_DATA = \
+monoone_DATA = \
 	mcs.exe					\
 	mbas.exe
 
-fx20_DATA = \
+monotwo_DATA = \
 	gmcs.exe
 
-EXTRA_DIST= $(monobins_DATA) $(fx11_DATA) $(fx20_DATA)
+EXTRA_DIST= $(monobins_DATA) $(monoone_DATA) $(monotwo_DATA)
 
 MAINTAINERCLEANFILES = $(EXTRA_DIST)
 
@@ -44,15 +44,15 @@ MAINTAINERCLEANFILES = $(EXTRA_DIST)
 #
 if PLATFORM_WIN32
 monobinsdir = $(libdir)
-fx11dir = $(libdir)
-fx20dir = $(libdir)
+monoonedir = $(libdir)
+monotwodir = $(libdir)
 else
 monobinsdir = $(bindir)
-fx11dir = $(libdir)/mono/1.1/
-fx20dir = $(libdir)/mono/2.0/
+monoonedir = $(libdir)/mono/1.0/
+monotwodir = $(libdir)/mono/2.0/
 endif
 
-$(fx11_DATA):
+$(monoone_DATA):
 	if test -f $(mcs_topdir)/mcs/mcs.exe; then f=$(mcs_topdir)/mcs/mcs.exe; else f=$(fx11dir)/mcs.exe; fi; \
 	echo "cp -f $$f $(srcdir)"; \
 	cp -f $$f $(srcdir)
@@ -60,7 +60,7 @@ $(fx11_DATA):
 	echo "cp -f $$f $(srcdir)"; \
 	cp -f $$f $(srcdir)
 
-$(fx20_DATA):
+$(monotwo_DATA):
 	if test -f $(mcs_topdir)/gmcs/gmcs.exe; then f=$(mcs_topdir)/gmcs/gmcs.exe; else f=$(fx20dir)/gmcs.exe; fi; \
 	echo "cp -f $$f $(srcdir)"; \
 	cp -f $$f $(srcdir)
