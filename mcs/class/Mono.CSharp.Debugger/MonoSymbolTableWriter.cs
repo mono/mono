@@ -19,11 +19,24 @@ namespace Mono.CSharp.Debugger
 	internal class MonoSymbolTableWriter : IDisposable
 	{
 		BinaryWriter bw;
+		Hashtable type_hash;
+		int last_type_index;
 
 		public MonoSymbolTableWriter (string output_filename)
 		{
 			FileStream stream = new FileStream (output_filename, FileMode.Create);
 			bw = new BinaryWriter (stream);
+			type_hash = new Hashtable ();
+		}
+
+		int GetTypeIndex (Type type)
+		{
+			if (type_hash.Contains (type))
+				return (int) type_hash [type];
+
+			int index = ++last_type_index;
+			type_hash.Add (type, index);
+			return index;
 		}
 
 		public void WriteSymbolTable (MonoSymbolWriter symwriter)
@@ -80,7 +93,21 @@ namespace Mono.CSharp.Debugger
 				address_table_size += my_size;
 
 				int num_params = method.Parameters.Length;
-				int num_locals = method.Locals.Length;
+				int[] param_type_indices = new int [num_params];
+				for (int i = 0; i < num_params; i++) {
+					Type type = method.Parameters [i].ParameterType;
+					param_type_indices [i] = GetTypeIndex (type);
+				}
+
+				int num_locals = 0;				
+				int[] local_type_indices = new int [0];
+
+				int type_index_table_offset = ot.type_index_table_size;
+				ot.type_index_table_size += 4 * (num_params + num_locals);
+
+				int this_type_index = 0;
+				if (!method.MethodBase.IsStatic)
+					this_type_index = GetTypeIndex (method.MethodBase.ReflectedType);
 
 				int variable_table_offset = address_table_size;
 				int my_size2 = VariableInfo.StructSize * (num_params + num_locals);
@@ -95,9 +122,9 @@ namespace Mono.CSharp.Debugger
 
 				MethodEntry entry = new MethodEntry (
 					(int) method.Token, (int) sources [method.SourceFile],
-					method.SourceFile.FileName, !method.MethodBase.IsStatic,
-					num_params, num_locals, lines, pos, address_table_offset,
-					variable_table_offset, my_size + my_size2,
+					method.SourceFile.FileName, this_type_index,
+					param_type_indices, local_type_indices, lines, pos,
+					address_table_offset, variable_table_offset, my_size + my_size2,
 					(int) method.Start.Row, (int) method.End.Row);
 
 				methods.Add (method, entry);
@@ -107,6 +134,22 @@ namespace Mono.CSharp.Debugger
 				ot.line_number_table_offset;
 
 			//
+			// Write type index table.
+			//
+
+			ot.type_index_table_offset = (int) bw.BaseStream.Position;
+			foreach (MethodEntry entry in methods.Values) {
+				entry.TypeIndexTableOffset = (int) bw.BaseStream.Position;
+
+				for (int i = 0; i < entry.NumParameters; i++)
+					bw.Write (entry.ParamTypeIndices [i]);
+				for (int i = 0; i < entry.NumLocals; i++)
+					bw.Write (entry.LocalTypeIndices [i]);
+			}
+			ot.type_index_table_size = (int) bw.BaseStream.Position -
+				ot.type_index_table_offset;
+
+			//
 			// Write method table
 			//
 			ot.method_count = methods.Count;
@@ -114,6 +157,8 @@ namespace Mono.CSharp.Debugger
 			foreach (MethodEntry entry in methods.Values)
 				entry.Write (bw);
 			ot.method_table_size = (int) bw.BaseStream.Position -  ot.method_table_offset;
+
+			ot.type_count = last_type_index;
 
 			//
 			// Write offset table

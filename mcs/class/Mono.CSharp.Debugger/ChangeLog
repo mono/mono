@@ -1,5 +1,11 @@
 2002-09-20  Martin Baulig  <martin@gnome.org>
 
+	* MonoSymbolTable.cs: Set version number to 24.  Added a type index
+	table.  Write the type of a local variable or a parameter as an index
+	into this table.
+
+2002-09-20  Martin Baulig  <martin@gnome.org>
+
 	* IMonoSymbolWriter.cs: Remove all the unused interfaces.
 
 2002-09-20  Martin Baulig  <martin@gnome.org>
