@@ -122,9 +122,10 @@ namespace System.Xml.Serialization
 
 		internal XmlTypeMapping GetRealElementMap (string name, string ens)
 		{
-			if (xmlType == name && ns == ens) return this;
+			if (xmlType == name && xmlTypeNamespace == ens) return this;
 			foreach (XmlTypeMapping map in _derivedTypes)
-				if (map.xmlType == name && map.ns == ens) return map;
+				if (map.xmlType == name && map.xmlTypeNamespace == ens) return map;
+			
 			return null;
 		}
 	}

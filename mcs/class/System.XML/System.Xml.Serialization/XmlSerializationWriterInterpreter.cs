@@ -113,7 +113,7 @@ namespace System.Xml.Serialization
 			}
 
 			if (needType) 
-				WriteXsiType(map.XmlType, map.Namespace);
+				WriteXsiType(map.XmlType, map.XmlTypeNamespace);
 
 			switch (map.TypeData.SchemaType)
 			{

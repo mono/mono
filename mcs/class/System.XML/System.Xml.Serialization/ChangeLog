@@ -1,5 +1,10 @@
 2004-01-13  Lluis Sanchez Gual  <lluis@ximian.com>
 
+	* XmlReflectionImporter.cs, XmlSerializationWriterInterpreter.cs
+	XmlTypeMapping.cs: more namespace fixes.
+
+2004-01-13  Lluis Sanchez Gual  <lluis@ximian.com>
+
 	* XmlReflectionImporter.cs: type namespace must never be used as root
 	  namespace. This fixes bug #52772.
 

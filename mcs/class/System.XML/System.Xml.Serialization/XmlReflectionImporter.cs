@@ -180,7 +180,6 @@ namespace System.Xml.Serialization {
 					rootNamespace = root.Namespace;
 			}
 
-			if (rootNamespace == null) rootNamespace = "";
 			if (defaultNamespace == null || defaultNamespace.Length == 0) defaultNamespace = rootNamespace;
 			
 			XmlTypeMapping map = new XmlTypeMapping (elementName, rootNamespace, typeData, defaultXmlType, defaultNamespace);
@@ -200,8 +199,8 @@ namespace System.Xml.Serialization {
 				ReflectionHelper.CheckSerializableType (type);
 			
 			map = CreateTypeMapping (typeData, root, null, defaultNamespace);
-			helper.RegisterClrType (map, type, map.Namespace);
-			helper.RegisterSchemaType (map, map.XmlType, map.Namespace);
+			helper.RegisterClrType (map, type, map.XmlTypeNamespace);
+			helper.RegisterSchemaType (map, map.XmlType, map.XmlTypeNamespace);
 
 			// Import members
 
@@ -254,8 +253,6 @@ namespace System.Xml.Serialization {
 
 		string GetTypeNamespace (TypeData typeData, XmlRootAttribute root, string defaultNamespace)
 		{
-			string mapNamespace = defaultNamespace;
-
 			XmlAttributes atts = null;
 			if (!typeData.IsListType)
 			{
@@ -271,18 +268,19 @@ namespace System.Xml.Serialization {
 
    			if (atts.XmlType != null)
    			{
-   				if (atts.XmlType.Namespace != null && atts.XmlType.Namespace != string.Empty)
-   					mapNamespace = atts.XmlType.Namespace;
-			}
-			
-			if (root != null)
-			{
-				if (root.Namespace != null && root.Namespace != String.Empty)
-					mapNamespace = root.Namespace;
+   				if (atts.XmlType.Namespace != null && atts.XmlType.Namespace.Length != 0 && typeData.SchemaType != SchemaTypes.Enum)
+   					defaultNamespace = atts.XmlType.Namespace;
 			}
 
-			if (mapNamespace == null) return "";
-			else return mapNamespace;
+			string rootNamespace = "";
+			if (root != null)
+			{
+				if (root.Namespace != null && root.Namespace.Length != 0)
+					rootNamespace = root.Namespace;
+			}
+
+			if (defaultNamespace == null || defaultNamespace.Length == 0) return rootNamespace;
+			else return defaultNamespace;
 		}
 
 		XmlTypeMapping ImportListMapping (Type type, XmlRootAttribute root, string defaultNamespace, XmlAttributes atts, int nestingLevel)
@@ -397,13 +395,13 @@ namespace System.Xml.Serialization {
 			// Registers the maps for XmlNode and XmlElement
 
 			XmlTypeMapping nodeMap = CreateTypeMapping (TypeTranslator.GetTypeData (typeof(XmlNode)), root, null, defaultNamespace);
-			helper.RegisterClrType (nodeMap, typeof(XmlNode), nodeMap.Namespace);
+			helper.RegisterClrType (nodeMap, typeof(XmlNode), nodeMap.XmlTypeNamespace);
 
 			XmlTypeMapping elemMap = CreateTypeMapping (TypeTranslator.GetTypeData (typeof(XmlElement)), root, null, defaultNamespace);
-			helper.RegisterClrType (elemMap, typeof(XmlElement), elemMap.Namespace);
+			helper.RegisterClrType (elemMap, typeof(XmlElement), elemMap.XmlTypeNamespace);
 
 			XmlTypeMapping textMap = CreateTypeMapping (TypeTranslator.GetTypeData (typeof(XmlText)), root, null, defaultNamespace);
-			helper.RegisterClrType (elemMap, typeof(XmlText), textMap.Namespace);
+			helper.RegisterClrType (elemMap, typeof(XmlText), textMap.XmlTypeNamespace);
 
 			XmlTypeMapping obmap = ImportTypeMapping (typeof(object));
 			obmap.DerivedTypes.Add (nodeMap);
@@ -421,7 +419,7 @@ namespace System.Xml.Serialization {
 			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, root, defaultNamespace));
 			if (map != null) return map;
 			map = CreateTypeMapping (typeData, root, null, defaultNamespace);
-			helper.RegisterClrType (map, type, map.Namespace);
+			helper.RegisterClrType (map, type, map.XmlTypeNamespace);
 			return map;
 		}
 
@@ -431,7 +429,7 @@ namespace System.Xml.Serialization {
 			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, root, defaultNamespace));
 			if (map != null) return map;
 			map = CreateTypeMapping (typeData, root, null, defaultNamespace);
-			helper.RegisterClrType (map, type, map.Namespace);
+			helper.RegisterClrType (map, type, map.XmlTypeNamespace);
 
 			string [] names = Enum.GetNames (type);
 			ArrayList members = new ArrayList();
@@ -459,7 +457,7 @@ namespace System.Xml.Serialization {
 			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, root, defaultNamespace));
 			if (map != null) return map;
 			map = CreateTypeMapping (typeData, root, null, defaultNamespace);
-			helper.RegisterClrType (map, type, map.Namespace);
+			helper.RegisterClrType (map, type, map.XmlTypeNamespace);
 			return map;
 		}
 
