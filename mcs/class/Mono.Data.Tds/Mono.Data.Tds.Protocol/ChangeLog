@@ -1,3 +1,7 @@
+2004-11-06 Gert Driesen <drieseng@users.sourceforge.net>
+	* Tds70.cs: For numeric parameters, convert enum to numeric value.
+	Fixes bug #66630.
+
 2004-08-09 Sureshkumar T <tsureshkumar@novell.com>
 	* Tds70.cs - Prepare Method stored procedure handle read problem fixed.
 

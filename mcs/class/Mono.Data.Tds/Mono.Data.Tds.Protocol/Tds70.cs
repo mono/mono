@@ -415,7 +415,12 @@ namespace Mono.Data.Tds.Protocol {
 			case "smallint":
 			case "smallmoney":
 			case "tinyint":
-				value = parameter.Value.ToString ();
+				object paramValue = parameter.Value;
+				Type paramType = paramValue.GetType ();
+				if (paramType.IsEnum)
+					paramValue = Convert.ChangeType (paramValue,
+						Type.GetTypeCode (paramType));
+				value = paramValue.ToString ();
 				break;
 			case "nvarchar":
 			case "nchar":
