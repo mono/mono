@@ -4,10 +4,12 @@
 //
 // Copyright (C) 2001 Moonlight Enterprises, All Rights Reserved
 // Copyright (C) 2002 Ximian, Inc. (http://www.ximian.com)
+// Copyright (C) 2003 Ben Maurer
 // 
 // Author:         Jim Richardson, develop@wtfo-guru.com
 //                 Dan Lewis (dihlewis@yahoo.co.uk)
 //                 Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//                 Ben Maurer (bmaurer@users.sourceforge.net)
 // Created:        Saturday, August 11, 2001 
 //
 //------------------------------------------------------------------------------
@@ -162,10 +164,10 @@ namespace System.IO
 			if (path == String.Empty)
 				throw new ArgumentException ("The path is not of a legal form", "path");
 
-			if (IsPathRooted (path))
-				return path;
-
-			return Directory.GetCurrentDirectory () + DirectorySeparatorStr + path;
+			if (!IsPathRooted (path))
+				path = Directory.GetCurrentDirectory () + DirectorySeparatorStr + path;
+			
+			return CanonicalizePath (path);
 		}
 
 		public static string GetPathRoot (string path)
@@ -274,6 +276,52 @@ namespace System.IO
 			};
 
 			dirEqualsVolume = (DirectorySeparatorChar == VolumeSeparatorChar);
+		}
+		
+		
+		static string CanonicalizePath (string path) {
+			
+			// STEP 1: Check for empty string
+			if (path == null || path == String.Empty) return path;
+			path.Trim ();
+			if (path == String.Empty) return path;
+			
+			// STEP 2: Check to see if this is only a root
+			string root = GetPathRoot (path);
+			if (root == path) return path;
+				
+			string dir = GetDirectoryName (path);
+			if (dir == String.Empty) return path;
+			
+			string file = GetFileName (path);
+			string result = root;
+			// STEP 3: split the directories, this gets rid of consecutative "/"'s
+			string [] dirs = dir.Split (DirectorySeparatorChar, AltDirectorySeparatorChar);
+			
+			// STEP 4: Get rid of directories containing . and ..
+			for (int i = 0; i < dirs.Length; i++) {
+				if (dirs [i] == ".")
+					dirs [i] = String.Empty;
+				else if (dirs [i] == "..") {
+					dirs [i] = String.Empty;
+					int j = i;
+					while (i-- > 0) {
+						if (dirs [i] != String.Empty) {
+							dirs [i] = String.Empty;
+							break;
+						}
+					}
+				}
+			}
+			
+			// STEP 5: Combine everything.
+			for (int i = 0; i < dirs.Length; i++) {
+				if (dirs [i] != String.Empty)
+					result += dirs [i] + DirectorySeparatorChar;
+			}
+			
+			result += file;
+			return result;
 		}
 	}
 }
