@@ -1,3 +1,7 @@
+2004-09-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal9.cs libtest.c: Fix memory leaks in test.
+
 2004-08-31  Zoltan Varga  <vargaz@freemail.hu>
 
 	* pinvoke16.cs: Merge this into pinvoke2.cs, and fix it.
