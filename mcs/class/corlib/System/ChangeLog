@@ -1,3 +1,9 @@
+2004-05-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Convert.cs: Added checks for integer overflow for From|ToBase64Char.
+	Also fixed the case where wide (16 bits) characters were converted to 
+	bytes.
+
 2004-05-19  Gert Driesen (drieseng@users.sourceforge.net)
 
         * ThreadStaticAttribute.cs

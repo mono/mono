@@ -80,7 +80,9 @@ namespace System {
 		public static readonly object DBNull = System.DBNull.Value;
 		static ToBase64Transform toBase64Transform = new ToBase64Transform();
 	
-		private Convert () {}
+		private Convert ()
+		{
+		}
 
 		// ========== BASE 64 Conversions ========== //
 		// the BASE64 convert methods are using the Base64 converting methods
@@ -97,7 +99,8 @@ namespace System {
 				throw new ArgumentOutOfRangeException ("offset < 0");
 			if (length < 0)
 				throw new ArgumentOutOfRangeException ("length < 0");
-			if (offset + length > inArray.Length)
+			// avoid integer overflow
+			if (offset > inArray.Length - length)
 				throw new ArgumentOutOfRangeException ("offset + length > array.Length");
 			// do not check length here (multiple of 4) because the
 			// string can contain ignored characters
@@ -125,6 +128,9 @@ namespace System {
 				// drop ignored characters
 				if (c == '\t' || c == '\r' || c == '\n' || c == ' ')
 					continue;
+				// wide chars (16 bits)
+				if ((int)c > Byte.MaxValue)
+					continue;
 				data [n++] = (byte) c;
 			}
 			// now the length must be a multiple of 4 bytes (same as % 4)
@@ -151,48 +157,55 @@ namespace System {
 				return false;
 		}
 		
-		public static int ToBase64CharArray(byte[] inArray, int offsetIn, int length, 
+		public static int ToBase64CharArray (byte[] inArray, int offsetIn, int length, 
 		                                    char[] outArray, int offsetOut)
 		{
-			if (inArray == null || outArray == null)
-				throw new ArgumentNullException();
-			
-			if (offsetIn < 0 || length < 0 || offsetOut < 0 || (offsetIn + length) > inArray.Length)
-				throw new ArgumentOutOfRangeException();
-			
+			if (inArray == null)
+				throw new ArgumentNullException ("inArray");
+			if (outArray == null)
+				throw new ArgumentNullException ("outArray");
+			if (offsetIn < 0 || length < 0 || offsetOut < 0)
+				throw new ArgumentOutOfRangeException ("offsetIn, length, offsetOut < 0");
+			// avoid integer overflow
+			if (offsetIn > inArray.Length - length)
+				throw new ArgumentOutOfRangeException ("offsetIn + length > array.Length");
+
 			// note: normally ToBase64Transform doesn't support multiple block processing
-			byte[] outArr = toBase64Transform.InternalTransformFinalBlock(inArray, offsetIn, length);
+			byte[] outArr = toBase64Transform.InternalTransformFinalBlock (inArray, offsetIn, length);
 			
-			char[] cOutArr = new System.Text.ASCIIEncoding().GetChars(outArr);
+			char[] cOutArr = new ASCIIEncoding ().GetChars (outArr);
 			
-			if ((offsetOut + cOutArr.Length) > outArray.Length)
-				throw new ArgumentOutOfRangeException();
+			// avoid integer overflow
+			if (offsetOut > outArray.Length - cOutArr.Length)
+				throw new ArgumentOutOfRangeException ("offsetOut + cOutArr.Length > outArray.Length");
 			
-			Array.Copy(cOutArr, 0, outArray, offsetOut, cOutArr.Length);
+			Array.Copy (cOutArr, 0, outArray, offsetOut, cOutArr.Length);
 			
 			return cOutArr.Length;
 		}
 		
-		public static string ToBase64String(byte[] inArray)
+		public static string ToBase64String (byte[] inArray)
 		{
 			if (inArray == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException ("inArray");
 
-			return ToBase64String(inArray, 0, inArray.Length);
+			return ToBase64String (inArray, 0, inArray.Length);
 		}
 		
-		public static string ToBase64String(byte[] inArray, int offset, int length)
+		public static string ToBase64String (byte[] inArray, int offset, int length)
 		{
 			if (inArray == null)
-				throw new ArgumentNullException();
-			
-			if (offset < 0 || length < 0 || (offset + length) > inArray.Length)
-				throw new ArgumentOutOfRangeException();
+				throw new ArgumentNullException ("inArray");
+			if (offset < 0 || length < 0)
+				throw new ArgumentOutOfRangeException ("offset < 0 || length < 0");
+			// avoid integer overflow
+			if (offset > inArray.Length - length)
+				throw new ArgumentOutOfRangeException ("offset + length > array.Length");
 			
 			// note: normally ToBase64Transform doesn't support multiple block processing
 			byte[] outArr = toBase64Transform.InternalTransformFinalBlock (inArray, offset, length);
 			
-			return (new System.Text.ASCIIEncoding().GetString(outArr));
+			return (new ASCIIEncoding ().GetString (outArr));
 		}
 		
 		// ========== Boolean Conversions ========== //
