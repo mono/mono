@@ -1,3 +1,8 @@
+
+Thu Sep 13 18:04:23 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* FileLoadException.cs, FileNotFoundException.cs: added.
+
 2001-08-28  Dietmar Maurer  <dietmar@ximian.com>
 
 	* TextReader.cs: implemented the Read method

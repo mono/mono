@@ -6,7 +6,9 @@ File.cs
 FileAccess.cs
 FileAttributes.cs
 FileInfo.cs
+FileLoadException.cs
 FileMode.cs
+FileNotFoundException.cs
 FileShare.cs
 FileStream.cs
 FileSystemInfo.cs
