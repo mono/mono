@@ -1,5 +1,10 @@
 2002-11-30  Daniel Morgan <danmorg@sc.rr.com>
 
+	* README: updated by including help for all the
+	SQL# commands with examples
+
+2002-11-30  Daniel Morgan <danmorg@sc.rr.com>
+
 	* SqlSharpCli.cs: allow the ODBC provider
 	to execute a query and save results an XML file
 	via the \exexml command
