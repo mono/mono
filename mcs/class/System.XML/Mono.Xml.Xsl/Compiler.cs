@@ -824,9 +824,7 @@ namespace Mono.Xml.Xsl
 		XPathNavigator nsScope;
 		
 		public XPathNavigatorNsm (XPathNavigator n) : base (n.NameTable) {
-			nsScope = n.Clone ();
-			if (nsScope.NodeType == XPathNodeType.Attribute)
-				nsScope.MoveToParent ();
+			nsScope = n;
 		}
 
 		public XPathNavigator Navigator {
@@ -844,7 +842,13 @@ namespace Mono.Xml.Xsl
 			if (prefix == "" || prefix == null)
 				return "";
 			
-			return nsScope.GetNamespace (prefix);
+			XPathNavigator n = nsScope;
+			if (nsScope.NodeType == XPathNodeType.Attribute) {
+				n = nsScope.Clone ();
+				n.MoveToParent ();
+			}
+
+			return n.GetNamespace (prefix);
 		}
 	}
 }
