@@ -1,3 +1,8 @@
+2003-04-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: A namespace also introduces a DeclarationFound.
+	Fixes #41591
+
 2003-04-18  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs (GetReferenceType, GetPointerType): In .NET each

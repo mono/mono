@@ -404,7 +404,9 @@ namespace_member_declaration
 		}
 		current_namespace.DeclarationFound = true;
 	  }
-	| namespace_declaration
+	| namespace_declaration {
+		current_namespace.DeclarationFound = true;
+	  }
 	;
 
 type_declaration
