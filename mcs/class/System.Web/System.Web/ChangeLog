@@ -1,3 +1,15 @@
+
+2004-08-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRuntime.cs: initialize the response writer when finishing a
+	request because it cannot be queued. Under heavy load we made new
+	requests be processed before the ones that might be queued. This is
+	no longer the case.
+
+	* QueueManager.cs: instead of queueing/dequeuing separately, we now
+	have a single method that does everything needed to decide which one
+	will be the next request processed.
+
 2004-08-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRuntime.cs: removed initializations to null in .cctor. Prevent
