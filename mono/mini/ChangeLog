@@ -1,5 +1,10 @@
 2004-03-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* mini.c: reverted changed to sigsegv_signal_handler commited
+	accidentally in the previous patch.
+
+2004-03-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* mini.c:
 	(mono_method_to_ir): CEE_CALLVIRT, abort if no method. It hanged when
 	running --aot with an old assembly.
