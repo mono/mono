@@ -372,56 +372,6 @@ namespace Mono.CSharp {
 			FlowBranching cfb = (FlowBranching) FlowStack.Pop ();
 		}
 
-		// <summary>
-		//   Checks whether the local variable `vi' is already initialized
-		//   at the current point of the method's control flow.
-		//   If this method returns false, the caller must report an
-		//   error 165.
-		// </summary>
-		public bool IsVariableAssigned (LocalInfo vi)
-		{
-			if (DoFlowAnalysis)
-				return CurrentBranching.IsVariableAssigned (vi);
-			else
-				return true;
-		}
-
-		// <summary>
-		//   Marks the local variable `vi' as being initialized at the current
-		//   current point of the method's control flow.
-		// </summary>
-		public void SetVariableAssigned (LocalInfo vi)
-		{
-			if (DoFlowAnalysis)
-				CurrentBranching.SetVariableAssigned (vi);
-		}
-
-		// <summary>
-		//   Checks whether the parameter `number' is already initialized
-		//   at the current point of the method's control flow.
-		//   If this method returns false, the caller must report an
-		//   error 165.  This is only necessary for `out' parameters and the
-		//   call will always succeed for non-`out' parameters.
-		// </summary>
-		public bool IsParameterAssigned (int number)
-		{
-			if (DoFlowAnalysis)
-				return CurrentBranching.IsParameterAssigned (number);
-			else
-				return true;
-		}
-
-		// <summary>
-		//   Marks the parameter `number' as being initialized at the current
-		//   current point of the method's control flow.  This is only necessary
-		//   for `out' parameters.
-		// </summary>
-		public void SetParameterAssigned (int number)
-		{
-			if (DoFlowAnalysis)
-				CurrentBranching.SetParameterAssigned (number);
-		}
-
 		public void EmitTopBlock (Block block, InternalParameters ip, Location loc)
 		{
 			bool has_ret = false;
@@ -433,13 +383,13 @@ namespace Mono.CSharp {
 			    try {
 				int errors = Report.Errors;
 
-				block.EmitMeta (this, block);
+				block.EmitMeta (this, ip, block);
 
 				if (Report.Errors == errors){
 					bool old_do_flow_analysis = DoFlowAnalysis;
 					DoFlowAnalysis = true;
 
-					FlowBranching cfb = new FlowBranching (block, ip, loc);
+					FlowBranching cfb = new FlowBranching (block, loc);
 					FlowStack.Push (cfb);
 
 					if (!block.Resolve (this)) {

@@ -96,36 +96,9 @@ namespace Mono.CSharp {
 	///   This interface is implemented by variables
 	/// </summary>
 	public interface IVariable {
-		/// <summary>
-		///   Checks whether the variable has already been assigned at
-		///   the current position of the method's control flow and
-		///   reports an appropriate error message if not.
-		///
-		///   If the variable is a struct, then this call checks whether
-		///   all of its fields (including all private ones) have been
-		///   assigned.
-		/// </summary>
-		bool IsAssigned (EmitContext ec, Location loc);
-
-		/// <summary>
-		///   Checks whether field `name' in this struct has been assigned.
-		/// </summary>
-		bool IsFieldAssigned (EmitContext ec, string name, Location loc);
-
-		/// <summary>
-		///   Tells the flow analysis code that the variable has already
-		///   been assigned at the current code position.
-		///
-		///   If the variable is a struct, this call marks all its fields
-		///   (including private fields) as being assigned.
-		/// </summary>
-		void SetAssigned (EmitContext ec);
-
-		/// <summary>
-		///   Tells the flow analysis code that field `name' in this struct
-		///   has already been assigned atthe current code position.
-		/// </summary>
-		void SetFieldAssigned (EmitContext ec, string name);
+		VariableInfo VariableInfo {
+			get;
+		}
 	}
 
 	/// <summary>
@@ -3684,7 +3657,7 @@ namespace Mono.CSharp {
 				if (par != null) {
 					ParameterReference param;
 					
-					param = new ParameterReference (pars, idx, Name, loc);
+					param = new ParameterReference (pars, current_block, idx, Name, loc);
 
 					if (right_side != null)
 						return param.ResolveLValue (ec, right_side);
@@ -4069,7 +4042,11 @@ namespace Mono.CSharp {
 
 			// If the instance expression is a local variable or parameter.
 			IVariable var = instance_expr as IVariable;
-			if ((var != null) && !var.IsFieldAssigned (ec, FieldInfo.Name, loc))
+			if (var == null)
+				return this;
+
+			VariableInfo vi = var.VariableInfo;
+			if ((vi != null) && !vi.IsFieldAssigned (ec, FieldInfo.Name, loc))
 				return null;
 
 			return this;
@@ -4092,8 +4069,8 @@ namespace Mono.CSharp {
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
 			IVariable var = instance_expr as IVariable;
-			if (var != null)
-				var.SetFieldAssigned (ec, FieldInfo.Name);
+			if ((var != null) && (var.VariableInfo != null))
+				var.VariableInfo.SetFieldAssigned (ec, FieldInfo.Name);
 
 			Expression e = DoResolve (ec);
 

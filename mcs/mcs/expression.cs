@@ -3325,7 +3325,8 @@ namespace Mono.CSharp {
 	public class LocalVariableReference : Expression, IAssignMethod, IMemoryLocation, IVariable {
 		public readonly string Name;
 		public readonly Block Block;
-		LocalInfo variable_info;
+		LocalInfo local_info;
+		VariableInfo variable_info;
 		bool is_readonly;
 		
 		public LocalVariableReference (Block block, string name, Location l)
@@ -3339,62 +3340,83 @@ namespace Mono.CSharp {
 		// Setting `is_readonly' to false will allow you to create a writable
 		// reference to a read-only variable.  This is used by foreach and using.
 		public LocalVariableReference (Block block, string name, Location l,
-					       LocalInfo variable_info, bool is_readonly)
+					       LocalInfo local_info, bool is_readonly)
 			: this (block, name, l)
 		{
-			this.variable_info = variable_info;
+			this.local_info = local_info;
 			this.is_readonly = is_readonly;
 		}
 
-		public LocalInfo LocalInfo {
-			get {
-				if (variable_info == null) {
-					variable_info = Block.GetLocalInfo (Name);
-					is_readonly = variable_info.ReadOnly;
-				}
-				return variable_info;
-			}
+		public VariableInfo VariableInfo {
+			get { return variable_info; }
 		}
 
 		public bool IsAssigned (EmitContext ec, Location loc)
 		{
-			return LocalInfo.IsAssigned (ec, loc);
+			if (variable_info == null)
+				return true;
+
+			if (!ec.DoFlowAnalysis || ec.CurrentBranching.IsAssigned (variable_info))
+				return true;
+
+			Report.Error (165, loc,
+				      "Use of unassigned local variable `" +
+				      Name + "'");
+			ec.CurrentBranching.SetAssigned (variable_info);
+			return false;
 		}
 
 		public bool IsFieldAssigned (EmitContext ec, string name, Location loc)
 		{
-			return LocalInfo.IsFieldAssigned (ec, name, loc);
+			if (variable_info == null)
+				return true;
+
+			if (!ec.DoFlowAnalysis ||
+			    ec.CurrentBranching.IsFieldAssigned (variable_info, name))
+				return true;
+
+			Report.Error (170, loc,
+				      "Use of possibly unassigned field `" + name + "'");
+			ec.CurrentBranching.SetFieldAssigned (variable_info, name);
+			return false;
 		}
 
 		public void SetAssigned (EmitContext ec)
 		{
-			LocalInfo.SetAssigned (ec);
+			if (ec.DoFlowAnalysis && (variable_info != null))
+				ec.CurrentBranching.SetAssigned (variable_info);
 		}
 
 		public void SetFieldAssigned (EmitContext ec, string name)
 		{
-			LocalInfo.SetFieldAssigned (ec, name);
+			if (ec.DoFlowAnalysis && (variable_info != null))
+				ec.CurrentBranching.SetFieldAssigned (variable_info, name);
 		}
 
 		public bool IsReadOnly {
 			get {
-				if (variable_info == null) {
-					variable_info = Block.GetLocalInfo (Name);
-					is_readonly = variable_info.ReadOnly;
-				}
 				return is_readonly;
 			}
+		}
+
+		protected void DoResolveBase (EmitContext ec)
+		{
+			if (local_info == null) {
+				local_info = Block.GetLocalInfo (Name);
+				is_readonly = local_info.ReadOnly;
+			}
+
+			variable_info = Block.GetVariableInfo (local_info);
+			type = local_info.VariableType;
 		}
 		
 		public override Expression DoResolve (EmitContext ec)
 		{
-			LocalInfo vi = LocalInfo;
-			Expression e;
-			
-			e = Block.GetConstantExpression (Name);
+			DoResolveBase (ec);
+
+			Expression e = Block.GetConstantExpression (Name);
 			if (e != null) {
-				vi.Used = true;
-				type = vi.VariableType;
+				local_info.Used = true;
 				eclass = ExprClass.Value;
 				return e;
 			}
@@ -3402,16 +3424,13 @@ namespace Mono.CSharp {
 			if (ec.DoFlowAnalysis && !IsAssigned (ec, loc))
 				return null;
 
-			type = vi.VariableType;
 			return this;
 		}
 
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
-			LocalInfo vi = LocalInfo;
-
-			if (ec.DoFlowAnalysis)
-				ec.SetVariableAssigned (vi);
+			DoResolveBase (ec);
+			SetAssigned (ec);
 
 			Expression e = DoResolve (ec);
 
@@ -3428,44 +3447,40 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			LocalInfo vi = LocalInfo;
 			ILGenerator ig = ec.ig;
 
-			if (vi.LocalBuilder == null){
+			if (local_info.LocalBuilder == null){
 				ec.EmitThis ();
-				ig.Emit (OpCodes.Ldfld, vi.FieldBuilder);
+				ig.Emit (OpCodes.Ldfld, local_info.FieldBuilder);
 			} else 
-				ig.Emit (OpCodes.Ldloc, vi.LocalBuilder);
+				ig.Emit (OpCodes.Ldloc, local_info.LocalBuilder);
 			
-			vi.Used = true;
+			local_info.Used = true;
 		}
 		
 		public void EmitAssign (EmitContext ec, Expression source)
 		{
 			ILGenerator ig = ec.ig;
-			LocalInfo vi = LocalInfo;
 
-			vi.Assigned = true;
+			local_info.Assigned = true;
 
-			if (vi.LocalBuilder == null){
+			if (local_info.LocalBuilder == null){
 				ec.EmitThis ();
 				source.Emit (ec);
-				ig.Emit (OpCodes.Stfld, vi.FieldBuilder);
+				ig.Emit (OpCodes.Stfld, local_info.FieldBuilder);
 			} else {
 				source.Emit (ec);
-				ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+				ig.Emit (OpCodes.Stloc, local_info.LocalBuilder);
 			}
 		}
 		
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
-			LocalInfo vi = LocalInfo;
-
-			if (vi.LocalBuilder == null){
+			if (local_info.LocalBuilder == null){
 				ec.EmitThis ();
-				ec.ig.Emit (OpCodes.Ldflda, vi.FieldBuilder);
+				ec.ig.Emit (OpCodes.Ldflda, local_info.FieldBuilder);
 			} else
-				ec.ig.Emit (OpCodes.Ldloca, vi.LocalBuilder);
+				ec.ig.Emit (OpCodes.Ldloca, local_info.LocalBuilder);
 		}
 	}
 
@@ -3477,59 +3492,68 @@ namespace Mono.CSharp {
 		Parameters pars;
 		String name;
 		int idx;
+		Block block;
+		VariableInfo vi;
 		public Parameter.Modifier mod;
 		public bool is_ref, is_out;
 		
-		public ParameterReference (Parameters pars, int idx, string name, Location loc)
+		public ParameterReference (Parameters pars, Block block, int idx, string name, Location loc)
 		{
 			this.pars = pars;
+			this.block = block;
 			this.idx  = idx;
 			this.name = name;
 			this.loc = loc;
 			eclass = ExprClass.Variable;
 		}
 
+		public VariableInfo VariableInfo {
+			get { return vi; }
+		}
+
 		public bool IsAssigned (EmitContext ec, Location loc)
 		{
-			if (!is_out || !ec.DoFlowAnalysis)
+			if (!ec.DoFlowAnalysis || !is_out ||
+			    ec.CurrentBranching.IsAssigned (vi))
 				return true;
 
-			if (!ec.CurrentBranching.IsParameterAssigned (idx)) {
-				Report.Error (165, loc,
-					      "Use of unassigned local variable `" + name + "'");
-				return false;
-			}
-
-			return true;
+			Report.Error (165, loc,
+				      "Use of unassigned parameter `" + name + "'");
+			return false;
 		}
 
 		public bool IsFieldAssigned (EmitContext ec, string field_name, Location loc)
 		{
-			if (!is_out || !ec.DoFlowAnalysis)
+			if (!ec.DoFlowAnalysis || !is_out ||
+			    ec.CurrentBranching.IsFieldAssigned (vi, field_name))
 				return true;
 
-			if (ec.CurrentBranching.IsParameterAssigned (idx))
-				return true;
-
-			if (!ec.CurrentBranching.IsParameterAssigned (idx, field_name)) {
-				Report.Error (170, loc,
-					      "Use of possibly unassigned field `" + field_name + "'");
-				return false;
-			}
-
-			return true;
+			Report.Error (170, loc,
+				      "Use of possibly unassigned field `" + field_name + "'");
+			return false;
 		}
 
 		public void SetAssigned (EmitContext ec)
 		{
 			if (is_out && ec.DoFlowAnalysis)
-				ec.CurrentBranching.SetParameterAssigned (idx);
+				ec.CurrentBranching.SetAssigned (vi);
 		}
 
 		public void SetFieldAssigned (EmitContext ec, string field_name)
 		{
 			if (is_out && ec.DoFlowAnalysis)
-				ec.CurrentBranching.SetParameterAssigned (idx, field_name);
+				ec.CurrentBranching.SetFieldAssigned (vi, field_name);
+		}
+
+		protected void DoResolveBase (EmitContext ec)
+		{
+			type = pars.GetParameterInfo (ec.DeclSpace, idx, out mod);
+			is_ref = (mod & Parameter.Modifier.ISBYREF) != 0;
+			is_out = (mod & Parameter.Modifier.OUT) != 0;
+			eclass = ExprClass.Variable;
+
+			if (is_out)
+				vi = block.ParameterMap [idx];
 		}
 
 		//
@@ -3546,10 +3570,7 @@ namespace Mono.CSharp {
 		//
 		public override Expression DoResolve (EmitContext ec)
 		{
-			type = pars.GetParameterInfo (ec.DeclSpace, idx, out mod);
-			is_ref = (mod & Parameter.Modifier.ISBYREF) != 0;
-			is_out = (mod & Parameter.Modifier.OUT) != 0;
-			eclass = ExprClass.Variable;
+			DoResolveBase (ec);
 
 			if (is_out && ec.DoFlowAnalysis && !IsAssigned (ec, loc))
 				return null;
@@ -3559,13 +3580,9 @@ namespace Mono.CSharp {
 
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
-			type = pars.GetParameterInfo (ec.DeclSpace, idx, out mod);
-			is_ref = (mod & Parameter.Modifier.ISBYREF) != 0;
-			is_out = (mod & Parameter.Modifier.OUT) != 0;
-			eclass = ExprClass.Variable;
+			DoResolveBase (ec);
 
-			if (is_out && ec.DoFlowAnalysis)
-				ec.SetParameterAssigned (idx);
+			SetAssigned (ec);
 
 			return this;
 		}
@@ -5909,7 +5926,7 @@ namespace Mono.CSharp {
 	public class This : Expression, IAssignMethod, IMemoryLocation, IVariable {
 
 		Block block;
-		LocalInfo vi;
+		VariableInfo variable_info;
 		
 		public This (Block block, Location loc)
 		{
@@ -5922,33 +5939,50 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 
-		public bool IsAssigned (EmitContext ec, Location loc)
-		{
-			if (vi == null)
-				return true;
-
-			return vi.IsAssigned (ec, loc);
+		public VariableInfo VariableInfo {
+			get { return variable_info; }
 		}
 
-		public bool IsFieldAssigned (EmitContext ec, string field_name, Location loc)
+		public bool IsAssigned (EmitContext ec, Location loc)
 		{
-			if (vi == null)
+			if (variable_info == null)
 				return true;
 
-			return vi.IsFieldAssigned (ec, field_name, loc);
+			if (!ec.DoFlowAnalysis || ec.CurrentBranching.IsAssigned (variable_info))
+				return true;
+
+			Report.Error (165, loc, "Use of unassigned local variable `this'");
+			ec.CurrentBranching.SetAssigned (variable_info);
+			return false;
+		}
+
+		public bool IsFieldAssigned (EmitContext ec, string name, Location loc)
+		{
+			if (variable_info == null)
+				return true;
+
+			if (!ec.DoFlowAnalysis ||
+			    ec.CurrentBranching.IsFieldAssigned (variable_info, name))
+				return true;
+
+			Report.Error (170, loc,
+				      "Use of possibly unassigned field `" + name + "'");
+			ec.CurrentBranching.SetFieldAssigned (variable_info, name);
+			return false;
 		}
 
 		public void SetAssigned (EmitContext ec)
 		{
-			if (vi != null)
-				vi.SetAssigned (ec);
+			if (ec.DoFlowAnalysis && (variable_info != null))
+				ec.CurrentBranching.SetAssigned (variable_info);
 		}
 
-		public void SetFieldAssigned (EmitContext ec, string field_name)
-		{	
-			if (vi != null)
-				vi.SetFieldAssigned (ec, field_name);
+		public void SetFieldAssigned (EmitContext ec, string name)
+		{
+			if (ec.DoFlowAnalysis && (variable_info != null))
+				ec.CurrentBranching.SetFieldAssigned (variable_info, name);
 		}
+
 
 		public override Expression DoResolve (EmitContext ec)
 		{
@@ -5960,8 +5994,8 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (block != null)
-				vi = block.ThisVariable;
+			if ((block != null) && (block.ThisVariable != null))
+				variable_info = block.GetVariableInfo (block.ThisVariable);
 
 			return this;
 		}
@@ -5969,10 +6003,7 @@ namespace Mono.CSharp {
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
 			DoResolve (ec);
-
-			LocalInfo vi = ec.CurrentBlock.ThisVariable;
-			if (vi != null)
-				vi.SetAssigned (ec);
+			SetAssigned (ec);
 			
 			if (ec.TypeContainer is Class){
 				Error (1604, "Cannot assign to `this'");

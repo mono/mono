@@ -1,5 +1,37 @@
 2003-05-18  Martin Baulig  <martin@ximian.com>
 
+	Reworked the way how local variables and parameters are handled by
+	the flow analysis code.
+
+	* statement.cs (TypeInfo, VariableMap): New public classes.
+	(VariableInfo): New public class.  This is now responsible for
+	checking whether a variable has been assigned.  It is used for
+	parameters and local variables.
+	(Block.EmitMeta): Take the InternalParameters as argument; compute
+	the layout of the flow vectors here.
+	(Block.LocalMap, Block.ParameterMap): New public properties.
+	(FlowBranching): The .ctor doesn't get the InternalParameters
+	anymore since Block.EmitMeta() now computes the layout of the flow
+	vector.
+	(MyStructInfo): This class is now known as `StructInfo' and nested
+	in `TypeInfo'; we don't access this directly anymore.
+
+	* ecore.cs (IVariable): Added `VariableInfo VariableInfo'
+	property and removed IsAssigned(), IsFieldAssigned(),
+	SetAssigned() and SetFieldAssigned(); we now call them on the
+	VariableInfo so we don't need to duplicate this code everywhere.
+
+	* expression.cs (ParameterReference): Added `Block block' argument
+	to the .ctor.
+	(LocalVariableReference, ParameterReference, This): The new
+	VariableInfo class is now responsible for all the definite
+	assignment stuff.
+
+	* codegen.cs (EmitContext.IsVariableAssigned, SetVariableAssigned,
+	IsParameterAssigned, SetParameterAssigned): Removed.
+
+2003-05-18  Martin Baulig  <martin@ximian.com>
+
 	* typemanager.cs (InitCoreTypes): Try calling
 	SetCorlibTypeBuilders() with 4 args; if that fails, fall back to
 	the 3-args-version.  Corlib now also needs our `void_type'.
