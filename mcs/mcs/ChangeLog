@@ -1,3 +1,8 @@
+2004-03-30  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs: Do not override operand before we know if it is
+	non-null.  Fix 56207
+
 2004-03-29 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* typemanager.cs: support for pinned variables.

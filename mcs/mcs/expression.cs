@@ -3147,12 +3147,13 @@ namespace Mono.CSharp {
 			// Conversion to object
 			//
 			if (operand.Type != TypeManager.string_type) {
-				operand = Convert.ImplicitConversion (ec, operand, TypeManager.object_type, loc);
+				Expression no = Convert.ImplicitConversion (ec, operand, TypeManager.object_type, loc);
 				
-				if (operand == null) {
+				if (no == null) {
 					Binary.Error_OperatorCannotBeApplied (loc, "+", TypeManager.string_type, operand.Type);
 					invalid = true;
 				}
+				operand = no;
 			}
 			
 			operands.Add (operand);
