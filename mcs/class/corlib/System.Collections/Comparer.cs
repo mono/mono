@@ -5,43 +5,41 @@
 //   Sergey Chaban (serge@wildwestsoftware.com)
 //
 
-using System;
-using System.Collections;
 using System.Globalization;
-using System.Threading;
 
 namespace System.Collections
 {
 	[Serializable]
 	public sealed class Comparer : IComparer
 	{
-		public static readonly Comparer Default;
+		public static readonly Comparer Default = new Comparer ();
 #if NET_1_1
-		public static readonly Comparer DefaultInvariant;
+		public
+#else
+		internal
 #endif
+		static readonly Comparer DefaultInvariant = new Comparer (CultureInfo.InvariantCulture);
+
 		CultureInfo _culture;
 
-		// Class constructor
-		static Comparer ()
-		{
-			Default = new Comparer ();
-#if NET_1_1
-			DefaultInvariant = new Comparer (CultureInfo.InvariantCulture);
-#endif
-		}
-		
-
-		// Public instance constructor
 		private Comparer ()
 		{
-			LAMESPEC: This seems to be encoded at runtime while CaseInsensitiveComparer does at creation.
+			//LAMESPEC: This seems to be encoded at runtime while CaseInsensitiveComparer does at creation
 		}
+
 #if NET_1_1
-		public Comparer (CultureInfo culture)
+		public
+#else
+		internal
+#endif
+		Comparer (CultureInfo culture)
 		{
+			if (culture == null)
+				throw new ArgumentNullException ("culture");
+
 			_culture = culture;
 		}
-#endif
+
 
 		// IComparer
 		public int Compare (object a, object b)
@@ -52,18 +50,20 @@ namespace System.Collections
 				return -1;
 			else if (b == null)
 				return 1;
-			else if (a is string && b is string) {
-				if (_culture != null)
-					return _culture.CompareInfo.Compare ((string)a, (string)b);
-				else
-					return Thread.CurrentThread.CurrentCulture.CompareInfo.Compare ((string)a, (string)b);
+
+			if (_culture != null) {
+				string sa = a as string;
+				string sb = b as string;
+				if (sa != null && sb != null)
+					return _culture.CompareInfo.Compare (sa, sb);
 			}
-			else if (a is IComparable)
+
+			if (a is IComparable)
 				return (a as IComparable).CompareTo (b);
 			else if (b is IComparable)
 				return -(b as IComparable).CompareTo (a);
 
-			throw new ArgumentException ("Neither a nor b IComparable");
+			throw new ArgumentException (Locale.GetText ("Neither a nor b Comparable."));
 		}
 	}
 }
