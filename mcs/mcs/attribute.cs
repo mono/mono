@@ -62,6 +62,35 @@ namespace Mono.CSharp {
 				      "expression or array creation expression");
 		}
 
+		private Type CheckAttributeType (EmitContext ec) {
+			Type t;
+			bool isattributeclass = true;
+			
+			t = RootContext.LookupType (ec.DeclSpace, Name, true, Location);
+			if (t != null) {
+				isattributeclass = t.IsSubclassOf (TypeManager.attribute_type);
+				if (isattributeclass)
+					return t;
+			}
+			t = RootContext.LookupType (ec.DeclSpace, Name + "Attribute", true, Location);
+			if (t != null) {
+				if (t.IsSubclassOf (TypeManager.attribute_type))
+					return t;
+			}
+			if (!isattributeclass) {
+				Report.Error (616, Location, "'" + Name + "': is not an attribute class");
+				return null;
+			}
+			if (t != null) {
+				Report.Error (616, Location, "'" + Name + "Attribute': is not an attribute class");
+				return null;
+			}
+			Report.Error (
+				246, Location, "Could not find attribute '" + Name + "' (are you" +
+				" missing a using directive or an assembly reference ?)");
+			return null;
+		}
+
 		public CustomAttributeBuilder Resolve (EmitContext ec)
 		{
 			bool MethodImplAttr = false;
@@ -69,16 +98,9 @@ namespace Mono.CSharp {
 
 			UsageAttr = false;
 
-			Type = RootContext.LookupType (ec.DeclSpace, Name, true, Location);
+			Type = CheckAttributeType (ec);
 			if (Type == null)
-				Type = RootContext.LookupType (ec.DeclSpace, Name + "Attribute", false, Location);
-
-			if (Type == null) {
-				Report.Error (
-					246, Location, "Could not find attribute '" + Name + "' (are you" +
-					" missing a using directive or an assembly reference ?)");
 				return null;
-			}
 
 			if (Type == TypeManager.attribute_usage_type)
 				UsageAttr = true;
@@ -533,15 +555,9 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			Type = RootContext.LookupType (ec.DeclSpace, Name, true, Location);
+			Type = CheckAttributeType (ec);
 			if (Type == null)
-				Type = RootContext.LookupType (ec.DeclSpace, Name + "Attribute", false, Location);
-
-			if (Type == null) {
-				Report.Error (246, Location, "Could not find attribute '" + Name + "' (are you" +
-					      " missing a using directive or an assembly reference ?)");
 				return null;
-			}
 			
 			ArrayList named_args = new ArrayList ();
 			

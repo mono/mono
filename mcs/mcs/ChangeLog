@@ -1,4 +1,10 @@
 
+Wed May 8 16:40:50 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* attribute.cs: check that the type derives from System.Attribute
+	and report the correct error in that case (moved the duplicate code to
+	its own method, too).
+
 Wed May 8 11:50:31 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* attribute.cs: lookup attribute type name as the spec says: first the
