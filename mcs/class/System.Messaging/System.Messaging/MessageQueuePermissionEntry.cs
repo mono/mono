@@ -1,12 +1,12 @@
 //
-// System.Messaging
+// System.Messaging.MessageQueuePermissionEntry.cs
 //
 // Authors:
 //      Peter Van Isacker (sclytrack@planetinternet.be)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Peter Van Isacker
-//
-
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,52 +27,58 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
 
-namespace System.Messaging 
-{
+namespace System.Messaging {
+
 	[Serializable]
-	public class MessageQueuePermissionEntry 
-	{		
-		[MonoTODO]
-		public MessageQueuePermissionEntry(MessageQueuePermissionAccess permissionAccess, string path)
+	public class MessageQueuePermissionEntry {
+
+		private MessageQueuePermissionAccess _permissionAccess;
+		private string _machineName;
+		private string _label;
+		private string _category;
+		private string _path;
+
+		public MessageQueuePermissionEntry (MessageQueuePermissionAccess permissionAccess, string path)
 		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
+			MessageQueuePermission.ValidatePath (path);
+
+			_permissionAccess = permissionAccess;
+			_path = path;
 		}
 		
-		[MonoTODO]
-		public MessageQueuePermissionEntry(MessageQueuePermissionAccess permissionAccess, string machineName, string label, string category)
+		public MessageQueuePermissionEntry (MessageQueuePermissionAccess permissionAccess, string machineName, string label, string category)
 		{
+			if (machineName == null)
+				throw new ArgumentNullException ("machineName");
+			MessageQueuePermission.ValidateMachineName (machineName);
+
+			_permissionAccess = permissionAccess;
+			_machineName = machineName;
+			_label = label;
+			_category = category;
 		}
 		
-		public string Category 
-		{
-			[MonoTODO]
-			get {throw new NotImplementedException();}
+		public string Category {
+			get { return _category; }
 		}
 		
-		public string Label 
-		{
-			[MonoTODO]
-			get {throw new NotImplementedException();}
+		public string Label {
+			get { return _label; }
 		}
 
-		public string MachineName 
-		{
-			[MonoTODO]
-			get {throw new NotImplementedException();}
+		public string MachineName {
+			get { return _machineName; }
 		}
 		
-		public string Path 
-		{
-			[MonoTODO]
-			get {throw new NotImplementedException();}
+		public string Path {
+			get { return _path; }
 		}
 		
-		
-		public MessageQueuePermissionAccess PermissionAccess 
-		{
-			[MonoTODO]
-			get {throw new NotImplementedException();}
+		public MessageQueuePermissionAccess PermissionAccess {
+			get { return _permissionAccess; }
 		}
 	}
 }

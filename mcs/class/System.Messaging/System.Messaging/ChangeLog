@@ -1,3 +1,12 @@
+2004-09-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MessageQueuePermission.cs: Implemented enough TODO so compilers can
+	call ToXml (and the runtime can call FromXml) without exceptions.
+	* MessageQueuePermissionAttribute.cs: Implemented all TODO.
+	* MessageQueuePermissionEntry.cs: Implemented all TODO.
+	* MessageQueuePermissionEntryCollection.cs: Removed Clear on On* 
+	methods and added TODO.
+
 2004-06-16  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* AccessControlEntryType.cs: fixed enum field values to correspond
