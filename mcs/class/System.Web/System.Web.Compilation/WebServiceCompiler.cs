@@ -5,26 +5,29 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
+// Copyright (c) 2040 Novell, Inc. (http://www.novell.com)
 //
 using System;
 using System.CodeDom.Compiler;
 using System.IO;
+using System.Web.Configuration;
 using System.Web.UI;
 using System.Reflection;
-//temp:
-using Microsoft.CSharp;
 
 namespace System.Web.Compilation
 {
 	class WebServiceCompiler : BaseCompiler
 	{
-		SimpleWebHandlerParser wService;
+		SimpleWebHandlerParser parser;
 		ICodeCompiler compiler;
+		CodeDomProvider provider;
+		CompilerParameters compilerParameters;
+		string inputFile;
 
 		public WebServiceCompiler (SimpleWebHandlerParser wService)
 			: base (null)
 		{
-			this.wService = wService;
+			this.parser = wService;
 		}
 
 		public static Type CompileIntoType (SimpleWebHandlerParser wService)
@@ -35,72 +38,80 @@ namespace System.Web.Compilation
 
 		public override Type GetCompiledType ()
 		{
-			if (wService.Program.Trim () == "")
-				return wService.GetTypeFromBin (wService.ClassName);
+			if (parser.Program.Trim () == "")
+				return parser.GetTypeFromBin (parser.ClassName);
 
-			CompilerResults results = (CompilerResults) HttpRuntime.Cache [wService.PhysicalPath];
+			CompilerResults results = (CompilerResults) HttpRuntime.Cache [parser.PhysicalPath];
 			if (results != null) {
 				Assembly a = results.CompiledAssembly;
 				if (a != null)
-					return a.GetType (wService.ClassName, true);
+					return a.GetType (parser.ClassName, true);
 			}
 
-			//FIXME: update when we support other languages
-			string fname = GetTempFileNameWithExtension ("cs");
-			StreamWriter sw = new StreamWriter (File.OpenWrite (fname));
-			sw.WriteLine (wService.Program);
+			string lang = parser.Language;
+			CompilationConfiguration config;
+			config = CompilationConfiguration.GetInstance (parser.Context);
+			provider = config.GetProvider (lang);
+			if (provider == null)
+				throw new HttpException ("Configuration error. Language not supported: " +
+							  lang, 500);
+
+			compiler = provider.CreateCompiler ();
+
+			compilerParameters = CachingCompiler.GetOptions (parser.Assemblies);
+			compilerParameters.IncludeDebugInformation = parser.Debug;
+			compilerParameters.CompilerOptions = config.GetCompilerOptions (lang);
+			compilerParameters.WarningLevel = config.GetWarningLevel (lang);
+
+			bool keepFiles = (Environment.GetEnvironmentVariable ("MONO_ASPNET_NODELETE") != null);
+
+			TempFileCollection tempcoll;
+			tempcoll = new TempFileCollection (config.TempDirectory, keepFiles);
+			compilerParameters.TempFiles = tempcoll;
+
+			inputFile = tempcoll.AddExtension (provider.FileExtension);
+			Stream st = File.OpenWrite (inputFile);
+			StreamWriter sw = new StreamWriter (st);
+			sw.WriteLine (parser.Program);
 			sw.Close ();
 
-			//TODO: get the compiler and default options from system.web/compileroptions
-			results = CachingCompiler.Compile (wService.PhysicalPath, fname, this);
-			FileInfo finfo = new FileInfo (fname);
-			finfo.Delete ();
+			string dllfilename = tempcoll.AddExtension ("dll", true);
+			if (!Directory.Exists (dynamicBase))
+				Directory.CreateDirectory (dynamicBase);
+
+			compilerParameters.OutputAssembly = Path.Combine (dynamicBase, dllfilename);
+
+			results = CachingCompiler.Compile (this);
 			CheckCompilerErrors (results);
+			if (results.CompiledAssembly == null)
+				throw new CompilationException (inputFile, results.Errors,
+					"No assembly returned after compilation!?");
 
-			return results.CompiledAssembly.GetType (wService.ClassName, true);
-		}
-
-		static string GetTempFileNameWithExtension (string extension)
-		{
-			Exception exc;
-			string extFile;
-
-			do {
-				string tmpFile = Path.GetTempFileName ();
-				FileInfo fileInfo = new FileInfo (tmpFile);
-				extFile = Path.ChangeExtension (tmpFile, extension);
-				try {
-					fileInfo.MoveTo (extFile);
-					exc = null;
-				} catch (Exception e) {
-					exc = e;
-				}
-			} while (exc != null);
-
-			return extFile;
+			return results.CompiledAssembly.GetType (parser.ClassName, true);
 		}
 
 		void CheckCompilerErrors (CompilerResults results)
 		{
 			if (results.NativeCompilerReturnValue == 0)
 				return;
-
-			throw new CompilationException (wService.PhysicalPath, results.Errors, wService.Program);
+ 
+			throw new CompilationException (parser.PhysicalPath, results.Errors, parser.Program);
 		}
 
 		internal new SimpleWebHandlerParser Parser {
-			get { return wService; }
+			get { return parser; }
 		}
 
 		internal override ICodeCompiler Compiler {
-			get {
-				if (compiler == null) {
-					//TODO: get the compiler and default options from system.web/compileroptions
-					compiler = new CSharpCodeProvider ().CreateCompiler ();
-				}
+			get { return compiler; }
+		}
 
-				return compiler;
-			}
+		internal CompilerParameters CompilerOptions {
+			get { return compilerParameters; }
+		}
+
+		internal string InputFile {
+			get { return inputFile; }
 		}
 	}
 }

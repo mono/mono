@@ -43,8 +43,9 @@ namespace System.Web.Compilation
 			return results;
 		}
 
-		public static CompilerResults Compile (string key, string file, WebServiceCompiler compiler)
+		public static CompilerResults Compile (WebServiceCompiler compiler)
 		{
+			string key = compiler.Parser.PhysicalPath;
 			Cache cache = HttpRuntime.Cache;
 			CompilerResults results = (CompilerResults) cache [key];
 			if (results != null)
@@ -56,9 +57,9 @@ namespace System.Web.Compilation
 					return results;
 
 				SimpleWebHandlerParser parser = compiler.Parser;
-				CompilerParameters options = GetOptions (parser.Assemblies);
+				CompilerParameters options = compiler.CompilerOptions;
 				options.IncludeDebugInformation = parser.Debug;
-				results = compiler.Compiler.CompileAssemblyFromFile (options, file);
+				results = compiler.Compiler.CompileAssemblyFromFile (options, compiler.InputFile);
 				string [] deps = (string []) parser.Dependencies.ToArray (typeof (string));
 				cache.Insert (key, results, new CacheDependency (deps));
 			}
@@ -66,7 +67,7 @@ namespace System.Web.Compilation
 			return results;
 		}
 
-		static CompilerParameters GetOptions (ICollection assemblies)
+		internal static CompilerParameters GetOptions (ICollection assemblies)
 		{
 			CompilerParameters options = new CompilerParameters ();
 			if (assemblies != null) {

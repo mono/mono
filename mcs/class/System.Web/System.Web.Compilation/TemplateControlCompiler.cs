@@ -954,6 +954,21 @@ namespace System.Web.Compilation
 				}
 			}
 
+			TypeConverter converter = TypeDescriptor.GetConverter (type);
+			if (converter != null && converter.CanConvertFrom (typeof (string))) {
+				CodeMethodReferenceExpression m = new CodeMethodReferenceExpression ();
+				m.TargetObject = new CodeTypeReferenceExpression (typeof (TypeDescriptor));
+				m.MethodName = "GetConverter";
+				CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression (m);
+				CodeTypeReference tref = new CodeTypeReference (type);
+				invoke.Parameters.Add (new CodeTypeOfExpression (tref));
+				
+				invoke = new CodeMethodInvokeExpression (invoke, "ConvertFrom");
+				invoke.Parameters.Add (new CodePrimitiveExpression (str));
+
+				return new CodeCastExpression (tref, invoke);
+			}
+
 			bool parms = false;
 			BindingFlags flags = BindingFlags.Public | BindingFlags.Static;
 			MethodInfo parse = type.GetMethod ("Parse", flags, null, arrayStringCultureInfo, null);

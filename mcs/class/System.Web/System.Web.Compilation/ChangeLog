@@ -1,3 +1,17 @@
+2004-06-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BaseCompiler.cs: dynamicBase is now protected. Check
+	MONO_ASPNET_NODELETE here.
+
+	* TemplateControlCompiler.cs: if the type is not known but has a 
+	TypeConverter, invoke ConvertFromString in the generated code.
+
+	* WebServiceCompiler.cs: it used a hardcoded C# compiler, now it gets
+	the compiler from the configuration. Also handle MONO_ASPNET_NODELETE.
+
+	* CachingCompiler.cs: updated compilation of web services and simple
+	web handlers.
+
 2004-06-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CSCompiler.cs: removed.

@@ -21,7 +21,7 @@ namespace System.Web.Compilation
 {
 	abstract class BaseCompiler
 	{
-		static string dynamicBase = AppDomain.CurrentDomain.SetupInformation.DynamicBase;
+		protected static string dynamicBase = AppDomain.CurrentDomain.SetupInformation.DynamicBase;
 		TemplateParser parser;
 		CodeDomProvider provider;
 		ICodeCompiler compiler;
@@ -288,9 +288,10 @@ namespace System.Web.Compilation
 							     parser.CompilerOptions;
 
 			compilerParameters.WarningLevel = config.GetWarningLevel (lang);
-			TempFileCollection tempcoll = new TempFileCollection (config.TempDirectory);
+			bool keepFiles = (Environment.GetEnvironmentVariable ("MONO_ASPNET_NODELETE") != null);
+			TempFileCollection tempcoll = new TempFileCollection (config.TempDirectory, keepFiles);
 			compilerParameters.TempFiles = tempcoll;
-			string dllfilename = Path.GetFileName (tempcoll.BasePath) + ".dll";
+			string dllfilename = tempcoll.AddExtension ("dll", true);
 			if (!Directory.Exists (dynamicBase))
 				Directory.CreateDirectory (dynamicBase);
 
