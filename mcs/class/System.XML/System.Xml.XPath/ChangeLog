@@ -1,3 +1,11 @@
+2004-11-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Iterator.cs :
+	  - Made copy constructor certainly different from other constructors.
+	  - Position is never computed in each derived type. All MoveNext() are
+	    now MoveNextCore().
+	  - Most of the protected members could just be private.
+
 2004-11-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Expression.cs, XPathNavigator.cs : hold raw expression field for
