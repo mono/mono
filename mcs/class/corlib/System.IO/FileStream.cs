@@ -160,13 +160,6 @@ namespace System.IO
 			}
 
 
-			if (mode==FileMode.Append) {
-				this.Seek (0, SeekOrigin.End);
-				this.append_startpos=this.Position;
-			} else {
-				this.append_startpos=0;
-			}
-
 			if (access == FileAccess.Read && canseek && (bufferSize == DefaultBufferSize)) {
 				/* Avoid allocating a large buffer for small files */
 				long len = Length;
@@ -176,6 +169,13 @@ namespace System.IO
 			}
 
 			InitBuffer (bufferSize, false);
+
+			if (mode==FileMode.Append) {
+				this.Seek (0, SeekOrigin.End);
+				this.append_startpos=this.Position;
+			} else {
+				this.append_startpos=0;
+			}
 		}
 
 		// properties

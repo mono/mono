@@ -1,3 +1,8 @@
+2004-05-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FileStream.cs: delay seeking to the end when FileMode.Append is
+	specified until after buffer initialization. Fixes bug #59151.
+
 2004-05-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BufferedStream.cs: Added globalization and fixed exceptions and 
