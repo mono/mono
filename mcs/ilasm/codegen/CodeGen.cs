@@ -294,7 +294,7 @@ namespace Mono.ILASM {
                                 asmb.AddAssemblyInfo(assembly_major_version,
                                                 assembly_minor_version, assembly_build_version,
                                                 assembly_revision_version, assembly_public_key,
-                                                assembly_hash_algorithm, assembly_locale);
+                                                (uint) assembly_hash_algorithm, assembly_locale);
 
                                 pefile.WritePEFile ();
                         } catch {

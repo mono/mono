@@ -1,3 +1,7 @@
+2004-04-03  Jackson Harper  <jackson@ximian.com>
+
+	* CodeGen.cs: cast
+	
 2004-04-02  Jackson Harper  <jackson@ximian.com>
 
 	* CodeGen.cs: Allow setting assembly info.
