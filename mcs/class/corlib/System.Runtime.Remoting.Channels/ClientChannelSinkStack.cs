@@ -44,10 +44,9 @@ namespace System.Runtime.Remoting.Channels
 			// after its own processing
 		}
 
-		[MonoTODO]
 		public void DispatchException (Exception e)
 		{
-			throw new NotImplementedException ();
+			DispatchReplyMessage (new ReturnMessage (e, null));
 		}
 
 		public void DispatchReplyMessage (IMessage msg)

@@ -1,3 +1,7 @@
+2003-08-25  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ClientChannelSinkStack.cs: Implemented DispatchException.
+
 2003-08-14  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ChannelServices.cs: Set call context info for the incoming
