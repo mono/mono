@@ -4,6 +4,7 @@
 // Author:
 //   stubbed out by Jackson Harper (jackson@latitudegeo.com)
 //   Dennis Hayes (dennish@Raytek.com)
+//   Aleksey Ryabchuk (ryabchuk@yahoo.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -13,7 +14,7 @@ using System.ComponentModel;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//
+	// Represents a Windows text box control.
 	// </summary>
 
      public class TextBox : TextBoxBase {
@@ -22,9 +23,8 @@ namespace System.Windows.Forms {
 		bool acceptsReturn;
 		CharacterCasing characterCasing;
 		char passwordChar;
-		//
-		//  --- Public Constructor
-		//
+		ScrollBars scrollbars;
+
 		[MonoTODO]
 		public TextBox()
 		{
@@ -32,53 +32,62 @@ namespace System.Windows.Forms {
 			acceptsReturn = true;
 			characterCasing = CharacterCasing.Normal;
 			passwordChar = (char)0;
+			scrollbars = ScrollBars.None;
 		}
 		
-		//  --- Public Properties
-		
-		[MonoTODO]
 		public bool AcceptsReturn  {
-			get {
-				return acceptsReturn;
-			}
+			get { return acceptsReturn; }
 			set {
-				acceptsReturn = value;
+				if ( acceptsReturn != value ) {
+					int oldStyle = acceptsReturn ? (int)EditControlStyles.ES_WANTRETURN : 0;
+					acceptsReturn = value;
+					int newStyle = acceptsReturn ? (int)EditControlStyles.ES_WANTRETURN : 0;
+					if ( IsHandleCreated )
+						Win32.UpdateWindowStyle ( Handle, oldStyle, newStyle );
+				}
 			}
 		}
-		[MonoTODO]
+
 		public CharacterCasing CharacterCasing {
-			get {
-				return characterCasing;
-			}
+			get { return characterCasing; }
 			set {
 				if ( !Enum.IsDefined ( typeof(CharacterCasing), value ) )
 					throw new InvalidEnumArgumentException( "CharacterCasing",
 						(int)value,
 						typeof(CharacterCasing));
 
-				characterCasing = value;
+				if ( characterCasing != value ) {
+					int oldStyle = CaseStyle; 
+					characterCasing = value;
+					if ( IsHandleCreated )
+						Win32.UpdateWindowStyle ( Handle, oldStyle, CaseStyle );
+				    }
 			}
 		}
-		[MonoTODO]
+
 		public char PasswordChar {
-			get {
-				return passwordChar;
-			}
+			get { return passwordChar; }
 			set {
 				passwordChar = value;
 				if ( IsHandleCreated )
 					Win32.SendMessage ( Handle, (int) EditControlMessages.EM_SETPASSWORDCHAR, passwordChar, 0 );
 			}
 		}
-		[MonoTODO]
+
 		public ScrollBars ScrollBars {
-			get
-			{
-				throw new NotImplementedException ();
-			}
-			set
-			{
-				//FIXME:
+			get { return scrollbars; }
+			set {
+				if ( !Enum.IsDefined ( typeof(ScrollBars), value ) )
+					throw new InvalidEnumArgumentException( "ScrollBars",
+						(int)value,
+						typeof(ScrollBars));
+
+				if ( scrollbars != value ) {
+					int oldStyle = ScrollBarStyle; 
+					scrollbars = value;
+					if ( IsHandleCreated )
+						Win32.UpdateWindowStyle ( Handle, oldStyle, ScrollBarStyle );
+				    }
 			}
 		}
 
@@ -98,12 +107,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		// --- Public Events
-		
-		[MonoTODO]
 		public event EventHandler TextAlignChanged;
-        
-       //  --- Protected Properties
         
 		[MonoTODO]
 		protected override CreateParams CreateParams {
@@ -111,34 +115,20 @@ namespace System.Windows.Forms {
 				CreateParams createParams = base.CreateParams;
 
 				createParams.ClassName = "EDIT";
-				createParams.Style |= (int) (
-					WindowStyles.WS_CHILD | 
-					WindowStyles.WS_VISIBLE) | TextAlignStyle;
+				createParams.Style |= (int) ( WindowStyles.WS_CHILD ) | TextAlignStyle | ScrollBarStyle | CaseStyle;
+				if ( AcceptsReturn )
+					createParams.Style |= (int)EditControlStyles.ES_WANTRETURN;
+
 				return createParams;
 			}
 		}
 
 		 [MonoTODO]
 		 protected override ImeMode DefaultImeMode {
-			 get {
-				 //FIXME:
-				 return base.ImeMode;
-			 }
-		 }
-		 [MonoTODO]
-		 public override int SelectionLength {
-			 get {
-				 //FIXME:
-				 return base.SelectionLength;
-			 }
-			 set {
-				 //FIXME:
-				 base.SelectionLength = value;
-			 }
+			 get { return ImeMode.Inherit; }
 		 }
 		
 		// --- Protected Members
-
 		
 		protected override bool IsInputKey(Keys keyData)
 		{
@@ -159,12 +149,11 @@ namespace System.Windows.Forms {
 			//FIXME:
 			base.OnMouseUp(e);
 		}
-		[MonoTODO]
-		//[Lame Spec] spec says this should be virtural
-		//Spec was right!
+
 		protected virtual void OnTextAlignChanged(EventArgs e)
 		{
-			//FIXME:
+			if ( TextAlignChanged != null )
+				TextAlignChanged ( this, EventArgs.Empty );
 		}
 		[MonoTODO]
 		protected override void WndProc(ref Message m)
@@ -191,5 +180,44 @@ namespace System.Windows.Forms {
 				return style;
 			}
 		}
+
+		private int ScrollBarStyle
+		{
+			get {
+				int style = 0;
+				switch ( this.ScrollBars ) {
+				case ScrollBars.Vertical:
+					style = (int) WindowStyles.WS_VSCROLL;
+				break;
+				case ScrollBars.Horizontal:
+					if ( !WordWrap )
+						style = (int) WindowStyles.WS_HSCROLL;
+				break;
+				case ScrollBars.Both:
+					style = (int) WindowStyles.WS_VSCROLL;
+					if ( !WordWrap )
+						style = (int) WindowStyles.WS_HSCROLL;
+
+				break;
+				}
+				return style;
+			}
+		}
+
+	     private int CaseStyle
+	     {
+		     get {
+				int style = 0;
+				switch ( this.CharacterCasing ) {
+				case CharacterCasing.Lower:
+					style = (int) EditControlStyles.ES_LOWERCASE;
+				break;
+				case CharacterCasing.Upper:
+					style = (int) EditControlStyles.ES_UPPERCASE;
+				break;
+				}
+				return style;
+		     }
+	     }
 	}
 }

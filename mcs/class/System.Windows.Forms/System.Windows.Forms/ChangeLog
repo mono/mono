@@ -1,3 +1,6 @@
+2003-07-30 Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* TextBox.cs : ScrollBars, AcceptsReturn, CharacterCasing properties were implemented
+
 2003-07-29 Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* TextBoxBase.cs
 	* TextBox.cs
