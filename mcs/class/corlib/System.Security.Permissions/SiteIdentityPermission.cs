@@ -220,7 +220,6 @@ namespace System.Security.Permissions {
 
 			int wcs = _site.IndexOf ('*');
 			int wct = target.IndexOf ('*');
-			int pos = Int32.MaxValue;
 
 			if ((wcs == -1) && (wct == -1)) {
 				// no wildcard, this is an exact match

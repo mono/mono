@@ -71,7 +71,6 @@ namespace System.Security.Permissions {
 			if (this.Unrestricted)
 				return new StrongNameIdentityPermission (PermissionState.Unrestricted);
 
-			StrongNameIdentityPermission perm = null;
 			if ((name == null) && (key == null) && (version == null))
 				return new StrongNameIdentityPermission (PermissionState.None);
 

@@ -1,3 +1,8 @@
+2004-09-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SiteIdentityPermission.cs: Fixed warning (l4) for unused variable.
+	* StrongNameIdentityPermissionAttribute.cs: Fixed warning (l4)...
+
 2004-09-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FileIOPermission.cs: Reworked to support partial paths, non-c14n
