@@ -1,3 +1,12 @@
+
+Fri Jul 12 11:35:48 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: fixup typebuilder tokens.
+	* image.c: fix buglet.
+	* marshal.h: remove whitespace.
+	* metadata.h, metadata.c: reinstate code that was removed.
+	* verify.c: handle catch directives and fix another couple of bugs.
+
 2002-07-11  Dietmar Maurer  <dietmar@ximian.com>
 
 	* marshal.c (mono_marshal_get_native_wrapper): support BOOLEAN
