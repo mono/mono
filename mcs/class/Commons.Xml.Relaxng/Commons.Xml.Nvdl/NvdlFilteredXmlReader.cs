@@ -5,6 +5,29 @@ using System.Xml;
 
 namespace Commons.Xml.Nvdl
 {
+#if false
+	internal class NvdlFilteredXmlReader : XmlDefaultReader
+	{
+		public NvdlFilteredXmlReader (XmlReader reader,
+			NvdlValidateInterp validate)
+			: base (reader)
+		{
+		}
+
+		public bool Read ()
+		{
+			return !Reader.EOF;
+		}
+
+		public void AttachPlaceHolder ()
+		{
+		}
+
+		public void DetachPlaceHolder ()
+		{
+		}
+	}
+#else
 	internal class NvdlFilteredXmlReader : XmlReader
 	{
 		int placeHolderDepth = -1;
@@ -17,6 +40,9 @@ namespace Commons.Xml.Nvdl
 
 		AttributeInfo [] attributes = new AttributeInfo [10];
 		int attributeCount;
+
+		// PlanAtt validation cache.
+		Hashtable attributeValidators = new Hashtable ();
 
 		class AttributeInfo
 		{
@@ -91,22 +117,22 @@ namespace Commons.Xml.Nvdl
 			if (reader.EOF)
 				return false;
 
+			MoveToElement ();
+			attributeCount = 0;
+
 			if (nextPlaceHolder != XmlNodeType.None) {
 				placeHolder = nextPlaceHolder;
 				nextPlaceHolder = XmlNodeType.None;
 				return true;
 			}
 
-			MoveToElement ();
-			attributeCount = 0;
-
 			if (!reader.MoveToFirstAttribute ())
 				return true;
+
+			// Attribute rule application
+			attributeValidators.Clear ();
 			do {
-				if (reader.NamespaceURI == String.Empty) {
-					AddAttribute ();
-					continue;
-				}
+				// FIXME: could be more efficient
 				SimpleRule rule = FindAttributeRule (
 					reader.NamespaceURI,
 					validate.CreatedMode);
@@ -118,11 +144,18 @@ namespace Commons.Xml.Nvdl
 						AddAttribute ();
 					if (ra != null)
 						continue;
-					// FIXME: validate global attribute (PlanAtt).
-					SimpleValidate v = a as SimpleValidate;
+					attributeValidators [reader.NamespaceURI] = a;
 				}
 			} while (reader.MoveToNextAttribute ());
 			reader.MoveToElement ();
+
+			if (attributeValidators.Count > 0) {
+				foreach (string ns in attributeValidators.Keys) {
+					((SimpleValidate) attributeValidators [
+						ns]).ValidateAttributes (reader, ns);
+				}
+			}
+
 			return true;
 		}
 
@@ -523,5 +556,6 @@ namespace Commons.Xml.Nvdl
 			}
 		}
 	}
+#endif
 }
 

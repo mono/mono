@@ -256,12 +256,12 @@ namespace Commons.Xml.Nvdl
 				ann.LineNumber = this.LineNumber;
 				ann.LinePosition = this.LinePosition;
 
-				NvdlAllow allow = new NvdlAllow ();
-				allow.SourceUri = this.SourceUri;
-				allow.LineNumber = this.LineNumber;
-				allow.LinePosition = this.LinePosition;
+				NvdlAttach attach = new NvdlAttach ();
+				attach.SourceUri = this.SourceUri;
+				attach.LineNumber = this.LineNumber;
+				attach.LinePosition = this.LinePosition;
 				ann.Match = NvdlRuleTarget.Attributes;
-				ann.Actions.Add (allow);
+				ann.Actions.Add (attach);
 
 				al.Add (new SimpleRule (ann, true, ctx));
 			}
@@ -542,59 +542,6 @@ namespace Commons.Xml.Nvdl
 			// 6.4.7
 			generator = ctx.Config.GetGenerator (validate,
 				ctx.Rules.SchemaType);
-/*
-			this.resolver = ctx.Config.XmlResolverInternal;
-
-			// 6.4.7
-			string schemaType = validate.SchemaType;
-			if (schemaType == null)
-				schemaType = ctx.Rules.SchemaType;
-			if (schemaType == null && validate.SchemaBody != null && !ElementHasElementChild (validate.SchemaBody))
-				schemaType = validate.SchemaBody.InnerText;
-			if (schemaType == null)
-				schemaType = "text/xml";
-
-			// FIXME: this part must be totally rewritten.
-
-			XmlReader schemaReader = null;
-			if (schemaType == "text/xml") {
-				if (validate.SchemaUri != null) {
-					if (validate.SchemaBody != null)
-						throw new NvdlCompileException ("Both 'schema' attribute and 'schema' element are specified in a 'validate' element.", validate);
-					// FIXME: use NvdlConfig
-					schemaReader = new XmlTextReader (validate.SchemaUri);
-				}
-				else if (validate.SchemaBody != null) {
-					schemaReader = new XmlNodeReader (validate.SchemaBody);
-					schemaReader.MoveToContent ();
-					schemaReader.Read (); // Skip "schema" element
-				}
-				else
-					throw new NvdlCompileException ("Neither 'schema' attribute nor 'schema' element is specified in a 'validate' element.", validate);
-			}
-			else
-				throw new NvdlCompileException (String.Format ("MIME type '{0}' is not supported at this moment.", schemaType), validate);
-
-			schemaReader.MoveToContent ();
-
-			NvdlValidationProvider provider =
-				ctx.Config.GetProvider (schemaReader.NamespaceURI);
-
-			if (provider == null)
-				throw new NvdlCompileException (String.Format ("Schema type '{0}' is not supported in this configuration. Use custom provider that supports this schema type.", schemaType), validate);
-
-			generator = provider.CreateGenerator (schemaReader, ctx.Config.XmlResolverInternal);
-
-			foreach (NvdlOption option in validate.Options) {
-				bool mustSupport = option.MustSupport != null ?
-					XmlConvert.ToBoolean (option.MustSupport) : false;
-				if (!generator.AddOption (option.Name,
-					option.Arg) && mustSupport)
-					throw new NvdlCompileException (String.Format ("Option '{0}' with argument '{1}' is not supported for schema type '{2}'.",
-						option.Name, option.Arg,
-						schemaType), validate);
-			}
-*/
 		}
 
 		internal NvdlValidatorGenerator Generator {
@@ -608,6 +555,25 @@ namespace Commons.Xml.Nvdl
 		public XmlReader CreateValidator (XmlReader reader)
 		{
 			return generator.CreateValidator (reader, resolver);
+		}
+
+		public void ValidateAttributes (XmlReader reader, string ns)
+		{
+			XmlDocument doc = new XmlDocument ();
+			XmlElement el = doc.CreateElement ("virtualElement",
+				Nvdl.PlaceHolderNamespace);
+			for (int i = 0; i < reader.AttributeCount; i++) {
+				reader.MoveToAttribute (i);
+				if (reader.NamespaceURI != ns)
+					continue;
+				el.SetAttribute (reader.LocalName,
+					reader.NamespaceURI, reader.Value);
+			}
+			reader.MoveToElement ();
+			XmlReader r = generator.CreateAttributeValidator (
+				new XmlNodeReader (el), resolver);
+			while (!r.EOF)
+				r.Read ();
 		}
 	}
 

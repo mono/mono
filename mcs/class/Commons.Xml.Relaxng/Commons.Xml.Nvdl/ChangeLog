@@ -1,3 +1,21 @@
+2005-03-07  Atsushi Enomoto <atsushi@ximian.com>
+
+	* README :
+	  more description.
+	* NvdlBuiltInValidationProvider.cs :
+	  When it is "allow", it should not always return false.
+	* NvdlFilteredXmlReader.cs :
+	  Added support for PlanAtt validation.
+	* NvdlConfig.cs :
+	  Removed unused code.
+	* NvdlSimplified.cs :
+	  Attribute default rule is "attach", not "allow". Removed unused
+	  code. Added attribute validation support.
+	* NvdlValidationProvider.cs :
+	  Extended MIME type check to "*/*-xml" (not only text/xml).
+	  Added CreateAttributeValidator() method for "schema rewriting for
+	  attribute sections" support (FCD spec 8.7.3).
+
 2005-03-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* NvdlFilteredXmlReader.cs : code refactory.

@@ -11,7 +11,10 @@ namespace Commons.Xml.Nvdl
 		public virtual NvdlValidatorGenerator CreateGenerator (NvdlValidate validate, string schemaType, NvdlConfig config)
 		{
 			XmlReader schema = null;
-			if (schemaType != "text/xml")
+			// FIXME: we need a bit more strict check.
+			if (schemaType.Length < 5 ||
+				!schemaType.EndsWith ("xml") ||
+				Char.IsLetter (schemaType, schemaType.Length - 4))
 				return null;
 
 			string schemaUri = validate.SchemaUri;
@@ -77,7 +80,15 @@ namespace Commons.Xml.Nvdl
 	{
 		// creates individual validator with schema
 		// (which should be provided in derived constructor).
-		public abstract XmlReader CreateValidator (XmlReader reader, XmlResolver resolver);
+		public abstract XmlReader CreateValidator (XmlReader reader, 
+			XmlResolver resolver);
+
+		public virtual XmlReader CreateAttributeValidator (
+			XmlReader reader,
+			XmlResolver resolver)
+		{
+			throw new NotSupportedException ();
+		}
 
 		public abstract bool AddOption (string name, string arg);
 	}

@@ -55,9 +55,11 @@ namespace Commons.Xml.Nvdl
 
 		public override bool Read ()
 		{
-			if (Reader.Read () && !allow)
+			if (!Reader.Read ())
+				return false;
+			if (!allow)
 				throw new NvdlValidationException (String.Format ("The NVDL script does not allow an element whose namespace is '{0}'", Reader.NamespaceURI), Reader as IXmlLineInfo);
-			return false;
+			return true;
 		}
 	}
 }
