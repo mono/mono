@@ -297,7 +297,8 @@ namespace System.Reflection {
 		[MonoTODO]
 		public static Assembly LoadFrom (String assemblyFile, Evidence securityEvidence)
 		{
-			throw new NotImplementedException ();
+			// Evidence is ignored
+			return LoadFrom (assemblyFile);
 		}
 
 #if NET_1_1
