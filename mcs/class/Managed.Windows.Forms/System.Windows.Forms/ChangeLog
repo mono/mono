@@ -1,5 +1,11 @@
 2005-03-23  Jackson Harper  <jackson@ximian.com>
 
+	* TabControl.cs: Account for the drawing of tabs borders when
+	invalidating. If the slider was clicked dont do click detection on
+	the tabs.
+
+2005-03-23  Jackson Harper  <jackson@ximian.com>
+
 	* TabControl.cs: Fix typo, emilinates an unneeded expose event.
 
 2005-03-22  Jonathan Chambers  <jonathan.chambers@ansys.com>

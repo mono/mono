@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Jackson Harper (jackson@ximian.com)
@@ -240,8 +240,12 @@ namespace System.Windows.Forms {
 					Refresh ();
 				} else {
 					SizeTabs ();
+					// The lines are drawn on the edges of the tabs so the invalid area should
+					// needs to include the extra pixels of line width.
+					if (appearance == TabAppearance.Normal)
+						invalid.Inflate (4, 4);
 					Invalidate (invalid);
-                                }
+				}
 			}
 		}
 
@@ -453,6 +457,7 @@ namespace System.Windows.Forms {
 					} else {
 						Invalidate (right);
 					}
+					return;
 				} else if (left.Contains (e.X, e.Y)) {
 					left_slider_state = ButtonState.Pushed;
 					if (CanScrollLeft) {
@@ -462,6 +467,7 @@ namespace System.Windows.Forms {
 					} else {
 						Invalidate (left);
 					}
+					return;
 				}
 			}
 
