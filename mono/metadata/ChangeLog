@@ -1,3 +1,11 @@
+2003-10-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: added an argument to async_invoke_thread that is the
+	item to process, pass the MonoAsyncResult to the thread start function
+	when creating a new thread. This way we don't need to acquire any lock
+	when we're creating a new thread. Readded a semaphore for faster
+	response times (instead of that Sleep i added).
+
 2003-10-08  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* icall.c (ves_icall_System_CurrentTimeZone_GetTimeZoneData):
