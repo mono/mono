@@ -1,7 +1,11 @@
+2004-04-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Cache.cs: fix from Jan Jaros for NullRef (bug #56996).
+
 2004-04-07  Lluis Sanchez Gual <lluis@ximian.com>
 
-	* Cache.cs, CacheEntry.cs, ExpiresBuckets.cs: The value to use to specify
-	infinite timeout in ReaderWriterLock is -1, not 0.
+	* Cache.cs, CacheEntry.cs, ExpiresBuckets.cs: The value to use to
+	specify infinite timeout in ReaderWriterLock is -1, not 0.
 
 2004-03-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

@@ -530,8 +530,8 @@ namespace System.Web.Caching
 				if (objEntry != null) {
 					if (objEntry.HasAbsoluteExpiration || objEntry.HasSlidingExpiration)
 						_objExpires.Remove (objEntry);
+					objEntry.Close (enumReason);
 				}
-				objEntry.Close (enumReason);
 				return null;
 			}
 
