@@ -1,3 +1,7 @@
+2003-12-03  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* MonoWSDL.cs: Added support for VB.
+
 2003-09-04  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* MonoWSDL.cs: Implemented support for WSDL documents that import other

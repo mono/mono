@@ -323,6 +323,10 @@ namespace Mono.WebServices
 				    provider = new CSharpCodeProvider();
 				    break;
 			    
+				case "VB":
+					provider = new Microsoft.VisualBasic.VBCodeProvider();
+					break;
+					
 			    default:
 				    throw new Exception("Unknow language");
 			}
@@ -558,7 +562,7 @@ namespace Mono.WebServices
 			{
 				Console.WriteLine("Error: {0}", exception.Message);
 				// FIXME: surpress this except for when debug is enabled
-				Console.WriteLine("Stack:\n {0}", exception.StackTrace);
+				//Console.WriteLine("Stack:\n {0}", exception.StackTrace);
 			}
 		}
 		
