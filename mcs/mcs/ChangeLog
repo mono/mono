@@ -1,3 +1,8 @@
+2003-10-13 Jackson Harper <jackson@ximian.com>
+
+	* typemanager.cs (TypeToCoreType): Add float and double this fixes
+	bug #49611
+	
 2003-10-09  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (MethodCore): Added additional `DeclSpace ds' argument

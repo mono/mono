@@ -1966,6 +1966,10 @@ public class TypeManager {
 			return TypeManager.int64_type;
 		case TypeCode.UInt64:
 			return TypeManager.uint64_type;
+                case TypeCode.Single:
+                        return TypeManager.float_type;
+                case TypeCode.Double:
+                        return TypeManager.double_type;
 		case TypeCode.String:
 			return TypeManager.string_type;
 		default:
