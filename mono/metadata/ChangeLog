@@ -1,3 +1,6 @@
+Thu May 9 18:50:00 EDT 2002 Daniel Morgan <danmorg@sc.rr.com>
+
+	* icall.c: copied Double ToStringImpl for Single ToStringImpl
 
 Wed May 8 12:28:28 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
