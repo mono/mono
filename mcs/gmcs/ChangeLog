@@ -1,3 +1,8 @@
+2003-10-16  Martin Baulig  <martin@ximian.com>
+
+	* cs-parser.jay (namespace_or_type_name): Only create a
+	GenericMemberAccess if we actually have type arguments.
+
 2003-10-13  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (Method.Define): If we're a generic method, call

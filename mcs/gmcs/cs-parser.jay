@@ -1916,8 +1916,12 @@ namespace_or_type_name
 		// Third argument will become an Expression, when we have sorted out
 		// the issues with SimpleName first
 		//
-		$$ = new GenericMemberAccess ((Expression) $1, (string) $3,
-					      (TypeArguments) $4, lexer.Location);
+
+		if ($4 == null)
+			$$ = new MemberAccess ((Expression) $1, (string) $3, lexer.Location);
+		else
+			$$ = new GenericMemberAccess ((Expression) $1, (string) $3,
+						      (TypeArguments) $4, lexer.Location);
 	  }
 	;
 
