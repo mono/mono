@@ -1,14 +1,15 @@
-2004-01-23  Ravindra <rkumar.novell.com>
+2004-01-26  Ravindra <rkumar@novell.com>
+	* System.Drawing_test.dll.sources: Added to create 
+	System.Drawing_test.dll.
 
+2004-01-23  Ravindra <rkumar@novell.com>
 	* System.Drawing.dll.sources: Removed TextureBrush.cs. 
 	Was added by mistake during last check-in.
 
 2004-01-19  Ravindra <rkumar@novell.com>
-
 	* System.Drawing.dll.sources: Added Encoder.cs.
 
 2003-11-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
-
 	* System.Drawing.dll.sources: MetafileHeader added (was missing), Consts.cs added
 
 2003-10-14  Bernie Solomon  <bernard@ugsolutions.com>
@@ -22,7 +23,6 @@
 									Add gdi+ implementation
 
 2003-09-21  Miguel de Icaza  <miguel@ximian.com>
-
 	* System.Drawing.dll.sources: Remove xr implementation. 
 
 2003-09-21  Alexandre Pigolkine <pigolkine@gmx.de>
