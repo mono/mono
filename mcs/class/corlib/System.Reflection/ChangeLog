@@ -1,3 +1,7 @@
+2003-07-21  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* ParameterInfo.cs: Position is zero-based in ParameterInfo.
+	  Set the right position value when getting from ParameterBuilder.
 
 Thu Jul 17 17:26:59 CEST 2003 Paolo Molaro <lupus@ximian.com>
 

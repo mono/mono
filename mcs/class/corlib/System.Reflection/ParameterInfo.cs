@@ -26,11 +26,11 @@ namespace System.Reflection
 			this.MemberImpl = member;
 			if (pb != null) {
 				this.NameImpl = pb.Name;
-				this.PositionImpl = pb.Position;
+				this.PositionImpl = pb.Position - 1;	// ParameterInfo.Position is zero-based
 				this.AttrsImpl = (ParameterAttributes) pb.Attributes;
 			} else {
 				this.NameImpl = "";
-				this.PositionImpl = position;
+				this.PositionImpl = position - 1;
 				this.AttrsImpl = ParameterAttributes.None;
 			}
 		}
