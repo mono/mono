@@ -67,7 +67,7 @@ clean-local:
 dist-local: dist-default
 
 gmcs.exe: $(all_sources)
-	MONO_PATH="../class/lib/net_2_0_bootstrap:$(MONO_PATH)" $(BOOT_COMPILE) /target:exe /out:$@ $^
+	MONO_PATH="../class/lib/net_2_0_bootstrap" mono ../mcs/mcs.exe -2 /target:exe /out:$@ $^
 
 cs-parser.cs: cs-parser.jay $(topdir)/jay/skeleton.cs
 	$(topdir)/jay/jay -ctv < $(topdir)/jay/skeleton.cs $< >$@
