@@ -1,5 +1,10 @@
 2004-04-01  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (Invocation.EmitCall): If we're invoking a method
+	on a type parameter, use the new `Constrained' prefix opcode.
+
+2004-04-01  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs (ConstructedType.CheckConstraints): Use
 	Convert.ImplicitStandardConversionExists(); user-defined implicit
 	conversions are not allowed according to the spec.

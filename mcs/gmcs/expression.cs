@@ -5380,9 +5380,7 @@ namespace Mono.CSharp {
 						// reference-type with a value-type argument need
 						// to have their value boxed.  
 
-						if (!instance_expr.Type.IsGenericParameter)
-							struct_call = true;
-						if (TypeManager.IsValueType (decl_type)){
+						if (TypeManager.IsValueType (instance_expr.Type)){
 							//
 							// If the expression implements IMemoryLocation, then
 							// we can optimize and use AddressOf on the
@@ -5402,6 +5400,8 @@ namespace Mono.CSharp {
 								ig.Emit (OpCodes.Stloc, temp);
 								ig.Emit (OpCodes.Ldloca, temp);
 							}
+							if (instance_expr.Type.IsGenericParameter)
+								ig.Emit (OpCodes.Constrained, instance_expr.Type);
 						} else {
 							instance_expr.Emit (ec);
 							ig.Emit (OpCodes.Box, instance_expr.Type);
