@@ -1,3 +1,21 @@
+2005-01-06  Peter Bartok <pbartok@novell.com>
+
+	* Form.cs:
+	  - Implemented OnActivated and OnDeactivate event trigger
+	  - Implemented Activate() method
+	  - Fixed ShowDialog() to activate the form that was active before
+	    the dialog was shown
+	* XplatUIX11.cs:
+	  - Added global active_window var that tracks the currently active
+	    X11 window
+	  - Now always grabs Property changes from the root window to always
+	    catch changes on the active window property
+	  - Added code to PropertyNotify handler to send Active/Inactive
+	    messages when state changes. This puts X11 and Win32 en par on
+	    WM_ACTIVATE notifications (except for double notifications when
+	    the user clicks away from our modal window to another one of our
+	    windows)
+
 2005-01-05  Jackson Harper  <jackson@ximian.com>
 
 	* ImageList.cs: Implment ctor
