@@ -1,5 +1,10 @@
 2004-06-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* FileStream.cs :
+	  .ctor() should block write access when created with FileAccess.Write.
+
+2004-06-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* FileStream.cs : Check buffer size before creating file.
 	* StreamReader.cs : Check encoding!=null before creating file.
 	* File.cs,

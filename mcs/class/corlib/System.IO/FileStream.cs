@@ -103,7 +103,7 @@ namespace System.IO
 			: this (name, mode, (mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite), FileShare.Read, DefaultBufferSize, false) { }
 
 		public FileStream (string name, FileMode mode, FileAccess access)
-			: this (name, mode, access, FileShare.ReadWrite, DefaultBufferSize, false) { }
+			: this (name, mode, access, access == FileAccess.Write ? FileShare.None : FileShare.Read, DefaultBufferSize, false) { }
 
 		public FileStream (string name, FileMode mode, FileAccess access, FileShare share)
 			: this (name, mode, access, share, DefaultBufferSize, false) { }
