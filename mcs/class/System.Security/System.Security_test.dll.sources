@@ -15,4 +15,5 @@ System.Security.Cryptography.Xml/TransformChainTest.cs
 System.Security.Cryptography.Xml/XmlDsigBase64TransformTest.cs
 System.Security.Cryptography.Xml/XmlDsigC14NTransformTest.cs
 System.Security.Cryptography.Xml/XmlDsigC14NWithCommentsTransformTest.cs
+System.Security.Cryptography.Xml/XmlDsigXPathTransformTest.cs
 System.Security.Cryptography.Xml/XmlDsigXsltTransformTest.cs
