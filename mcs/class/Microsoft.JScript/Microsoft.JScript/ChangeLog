@@ -1,3 +1,7 @@
+2005-02-28  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* ForIn.cs: Initial implementation of ForIn stm.
+
 2005-02-27  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* VariableStatement.cs (PopulateContext): Do not add the symbol to
