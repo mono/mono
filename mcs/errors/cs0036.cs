@@ -1,5 +1,5 @@
 // cs0036.cs: Attibute [In] cannot be accompaning the an 'out' parameter.
-// Line:
+// Line: 10
 
 using System;
 using System.Runtime.InteropServices;
