@@ -230,7 +230,19 @@ namespace System.IO
 			GC.SuppressFinalize (this);	// remove from finalize queue
 		}
 
-		public void Dispose (bool disposing) {
+		public override void Dispose ()
+		{
+			Close ();
+		}
+
+		// protected
+
+		~FileStream ()
+		{
+			Dispose (false);
+		}
+
+		protected override void Dispose (bool disposing) {
 			if (handle != IntPtr.Zero) {
 				Flush ();
 				FileClose (handle);
@@ -243,11 +255,6 @@ namespace System.IO
 		}
 
 		// private
-
-		~FileStream ()
-		{
-			Dispose (false);
-		}
 
 		private int ReadSegment (byte [] dest, int dest_offset, int count)
 		{
