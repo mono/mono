@@ -409,7 +409,7 @@ namespace System.Data {
 				// get the unique constraint for the releation
 				UniqueConstraint constraint = GetDSConstraint(name, collection);
 				// generate the FK.
-				ForeignKeyConstraint fkConstraint = new ForeignKeyConstraint(constraint.Columns, Columns);
+				ForeignKeyConstraint fkConstraint = new ForeignKeyConstraint(KeyRef.Name, constraint.Columns, Columns);
 				Table.Constraints.Add (fkConstraint);
 				// generate the relation.
 				DataRelation relation = new DataRelation(KeyRef.Name, constraint.Columns, Columns, false);
@@ -421,6 +421,8 @@ namespace System.Data {
 						}
 					}
 				}
+				relation.SetParentKeyConstraint (constraint);
+				relation.SetChildKeyConstraint (fkConstraint);
 
 				DSet.Relations.Add(relation);
 			}

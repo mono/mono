@@ -1,5 +1,11 @@
 2004-04-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlSchemaMapper.cs : set parent key and foreign key info to 
+	  DataRelation when reading refkey constraints.
+	  Supply constraint name for fkey.
+
+2004-04-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlDataLoader.cs : Don't overwrite existing DataSetName. When read
 	  mode is Auto, just ignore the schema if there is already schema info.
 	* DataSet.cs : Similarly ignore schema info for XmlReadMode = Auto.
