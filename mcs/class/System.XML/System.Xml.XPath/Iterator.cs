@@ -52,8 +52,8 @@ namespace System.Xml.XPath
 		public MergedIterator (BaseIterator iter ) : base (iter) {}
 		protected MergedIterator (MergedIterator other) : base (other)
 		{
-			foreach (object obj in other._iters)
-				_iters.Add (obj);
+			foreach (XPathNodeIterator iter in other._iters)
+				_iters.Add (iter.Clone ());
 			_pos = other._pos;
 			_index = other._index;
 		}
@@ -118,7 +118,7 @@ namespace System.Xml.XPath
 	{
 		public SelfIterator (BaseIterator iter) : base (iter) {}
 		public SelfIterator (XPathNavigator nav, XmlNamespaceManager nsm) : base (nav, nsm) {}
-		protected SelfIterator (SimpleIterator other) : base (other) {}
+		protected SelfIterator (SelfIterator other) : base (other) {}
 		public override XPathNodeIterator Clone () { return new SelfIterator (this); }
 		public override bool MoveNext ()
 		{
@@ -136,7 +136,7 @@ namespace System.Xml.XPath
 		public NullIterator (BaseIterator iter) : base (iter) {}
 		public NullIterator (XPathNavigator nav) : this (nav, null) {}
 		public NullIterator (XPathNavigator nav, XmlNamespaceManager nsm) : base (nav, nsm) {}
-		protected NullIterator (SimpleIterator other) : base (other) {}
+		protected NullIterator (NullIterator other) : base (other) {}
 		public override XPathNodeIterator Clone () { return new NullIterator (this); }
 		public override bool MoveNext ()
 		{
@@ -147,7 +147,7 @@ namespace System.Xml.XPath
 	internal class ParentIterator : SimpleIterator
 	{
 		public ParentIterator (BaseIterator iter) : base (iter) {}
-		protected ParentIterator (SimpleIterator other) : base (other) {}
+		protected ParentIterator (ParentIterator other) : base (other) {}
 		public override XPathNodeIterator Clone () { return new ParentIterator (this); }
 		public override bool MoveNext ()
 		{
@@ -163,7 +163,7 @@ namespace System.Xml.XPath
 	internal class ChildIterator : SimpleIterator
 	{
 		public ChildIterator (BaseIterator iter) : base (iter) {}
-		protected ChildIterator (SimpleIterator other) : base (other) {}
+		protected ChildIterator (ChildIterator other) : base (other) {}
 		public override XPathNodeIterator Clone () { return new ChildIterator (this); }
 		public override bool MoveNext ()
 		{
@@ -177,7 +177,7 @@ namespace System.Xml.XPath
 	internal class FollowingSiblingIterator : SimpleIterator
 	{
 		public FollowingSiblingIterator (BaseIterator iter) : base (iter) {}
-		protected FollowingSiblingIterator (SimpleIterator other) : base (other) {}
+		protected FollowingSiblingIterator (FollowingSiblingIterator other) : base (other) {}
 		public override XPathNodeIterator Clone () { return new FollowingSiblingIterator (this); }
 		public override bool MoveNext ()
 		{
@@ -193,7 +193,7 @@ namespace System.Xml.XPath
 	internal class PrecedingSiblingIterator : SimpleIterator
 	{
 		public PrecedingSiblingIterator (BaseIterator iter) : base (iter) {}
-		protected PrecedingSiblingIterator (SimpleIterator other) : base (other) {}
+		protected PrecedingSiblingIterator (PrecedingIterator other) : base (other) {}
 		public override XPathNodeIterator Clone () { return new PrecedingSiblingIterator (this); }
 		public override bool MoveNext ()
 		{
@@ -209,7 +209,7 @@ namespace System.Xml.XPath
 	internal class AncestorIterator : SimpleIterator
 	{
 		public AncestorIterator (BaseIterator iter) : base (iter) {}
-		protected AncestorIterator (SimpleIterator other) : base (other) {}
+		protected AncestorIterator (AncestorIterator other) : base (other) {}
 		public override XPathNodeIterator Clone () { return new AncestorIterator (this); }
 		public override bool MoveNext ()
 		{
@@ -229,7 +229,7 @@ namespace System.Xml.XPath
 			Add (new SelfIterator (iter));
 			Add (new AncestorIterator (iter));
 		}
-		protected AncestorOrSelfIterator (MergedIterator other) : base (other) {}
+		protected AncestorOrSelfIterator (AncestorOrSelfIterator other) : base (other) {}
 		public override XPathNodeIterator Clone () { return new AncestorOrSelfIterator (this); }
 	}
 
@@ -237,7 +237,10 @@ namespace System.Xml.XPath
 	{
 		protected int _depth;
 		public DescendantIterator (BaseIterator iter) : base (iter) {}
-		protected DescendantIterator (SimpleIterator other) : base (other) {}
+		protected DescendantIterator (DescendantIterator other) : base (other)
+		{
+			_depth = other._depth;
+		}
 		public override XPathNodeIterator Clone () { return new DescendantIterator (this); }
 		[MonoTODO]
 		public override bool MoveNext ()
@@ -270,14 +273,14 @@ namespace System.Xml.XPath
 			Add (new SelfIterator (iter));
 			Add (new DescendantIterator (iter));
 		}
-		protected DescendantOrSelfIterator (MergedIterator other) : base (other) {}
+		protected DescendantOrSelfIterator (DescendantOrSelfIterator other) : base (other) {}
 		public override XPathNodeIterator Clone () { return new DescendantOrSelfIterator (this); }
 	}
 
 	internal class FollowingIterator : SimpleIterator
 	{
 		public FollowingIterator (BaseIterator iter) : base (iter) {}
-		protected FollowingIterator (SimpleIterator other) : base (other) {}
+		protected FollowingIterator (FollowingIterator other) : base (other) {}
 		public override XPathNodeIterator Clone () { return new FollowingIterator (this); }
 		public override bool MoveNext ()
 		{
@@ -313,7 +316,7 @@ namespace System.Xml.XPath
 	internal class PrecedingIterator : SimpleIterator
 	{
 		public PrecedingIterator (BaseIterator iter) : base (iter) {}
-		protected PrecedingIterator (SimpleIterator other) : base (other) {}
+		protected PrecedingIterator (PrecedingIterator other) : base (other) {}
 		public override XPathNodeIterator Clone () { return new PrecedingIterator (this); }
 		public override bool MoveNext ()
 		{
@@ -351,7 +354,7 @@ namespace System.Xml.XPath
 	internal class NamespaceIterator : SimpleIterator
 	{
 		public NamespaceIterator (BaseIterator iter) : base (iter) {}
-		protected NamespaceIterator (SimpleIterator other) : base (other) {}
+		protected NamespaceIterator (NamespaceIterator other) : base (other) {}
 		public override XPathNodeIterator Clone () { return new NamespaceIterator (this); }
 		public override bool MoveNext ()
 		{
@@ -375,7 +378,7 @@ namespace System.Xml.XPath
 	internal class AttributeIterator : SimpleIterator
 	{
 		public AttributeIterator (BaseIterator iter) : base (iter) {}
-		protected AttributeIterator (SimpleIterator other) : base (other) {}
+		protected AttributeIterator (AttributeIterator other) : base (other) {}
 		public override XPathNodeIterator Clone () { return new AttributeIterator (this); }
 		public override bool MoveNext ()
 		{

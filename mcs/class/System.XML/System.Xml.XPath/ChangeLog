@@ -1,3 +1,10 @@
+2003-08-13 Piers Haken	<piersh@friskit.com>
+	
+	* Iterator.cs:
+		fix MergedIterator.Clone(), now clones other's iterators
+		fix DescendantIterator.Clone(), now copies depth
+		make iterator cloning constructors more type-specific
+
 2003-08-01 Piers Haken	<piersh@friskit.com>
 
 	* Expression.cs: added NodeNamespaceTest
