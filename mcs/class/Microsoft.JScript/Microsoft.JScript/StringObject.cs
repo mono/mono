@@ -35,6 +35,15 @@ namespace Microsoft.JScript {
 
 		internal string value;
 
+		internal StringObject ()
+		{
+		}
+
+		internal StringObject (string value)
+		{
+			this.value = value;
+		}
+
 		public int length {
 			get { throw new NotImplementedException (); }
 		}
