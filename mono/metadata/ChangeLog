@@ -1,3 +1,6 @@
+2002-10-01  Martin Baulig  <martin@gnome.org>
+
+	* debug-mono-symfile.c: Added support for properties.
 
 Fri Sep 27 18:55:01 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
