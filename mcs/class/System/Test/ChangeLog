@@ -1,3 +1,9 @@
+2004-10-04  Raja R Harinath  <rharinath@novell.com>
+
+	* System.IO.Compression/DeflateStreamTest.cs: NET_2_0 only.
+	* System.IO.Compression/GzipStreamTest.cs: Likewise.
+	Report from Mayank Ritvik <mritvik@novell.com>.
+	
 2003-05-29  Nick Drochak  <ndrochak@gol.com>
 
 	* makefile.gnu: turn on debug since it works now
