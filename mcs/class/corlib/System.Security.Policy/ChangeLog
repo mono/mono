@@ -1,3 +1,8 @@
+2004-08-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ZoneMembershipCondition.cs: Added missing tag name validation in
+	FromXml.
+
 2004-08-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ApplicationSecurityInfo.cs: Added missing interfaces.

@@ -104,7 +104,11 @@ namespace System.Security.Policy {
                 public void FromXml (SecurityElement element, PolicyLevel level)
                 {
 			if (element == null)
-				throw new ArgumentException ("element");
+				throw new ArgumentNullException ("element");
+
+			if (element.Tag != "IMembershipCondition")
+				throw new ArgumentException (
+					Locale.GetText ("Invalid tag - expected IMembershipCondition"));
 
                         if (element.Attribute ("version") != "1")
                                 throw new ArgumentException (
