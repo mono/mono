@@ -36,7 +36,11 @@ namespace System.Web.UI
 		bool debug;
 		string compilerOptions;
 		string language;
-
+		bool output_cache;
+		int oc_duration;
+		string oc_header, oc_custom, oc_param;
+		OutputCacheLocation oc_location;
+                
 		internal TemplateParser ()
 		{
 			imports = new ArrayList ();
@@ -146,9 +150,53 @@ namespace System.Web.UI
 				return;
 			}
 
+			cmp = String.Compare ("OutputCache", directive, true);
+			if (cmp == 0) {
+				output_cache = true;
+				
+				if (atts ["Duration"] == null)
+					ThrowParseException ("The directive is missing a 'duration' attribute.");
+				if (atts ["VaryByParam"] == null)
+					ThrowParseException ("This directive is missing a 'VaryByParam' " +
+							"attribute, which should bne set to \"none\", \"*\", " +
+							"or a list of name/value pairs.");
+
+				foreach (DictionaryEntry entry in atts) {
+					string key = (string) entry.Key;
+					switch (key.ToLower ()) {
+					case "duration":
+						oc_duration = Int32.Parse ((string) entry.Value);
+						if (oc_duration < 1)
+							ThrowParseException ("The 'd	uration' attribute must be set " +
+									"to a positive integer value");
+						break;
+					case "varybyparam":
+						oc_param = (string) entry.Value;
+						break;
+					case "varybyheader":
+						oc_header = (string) entry.Value;
+						break;
+					case "varybycustom":
+						oc_custom = (string) entry.Value;
+						break;
+					case "location":
+						oc_location = (OutputCacheLocation) Enum.Parse (typeof (OutputCacheLocation),
+								(string) entry.Value);
+						break;
+					default:
+						ThrowParseException ("The '" + key + "' attribute is not " +
+								"supported by the 'Outputcache' directive.");
+						break;
+					}
+					
+				}
+				
+				return;
+			}
+
 			ThrowParseException ("Unknown directive: " + directive);
 		}
-		
+
 		internal Type LoadType (string typeName)
 		{
 			// First try loaded assemblies, then try assemblies in Bin directory.
@@ -427,6 +475,31 @@ namespace System.Web.UI
 		internal bool Debug {
 			get { return debug; }
 		}
+
+		internal bool OutputCache {
+			get { return output_cache; }
+		}
+
+		internal int OutputCacheDuration {
+			get { return oc_duration; }
+		}
+
+		internal string OutputCacheVaryByHeader {
+			get { return oc_header; }
+		}
+
+		internal string OutputCacheVaryByCustom {
+			get { return oc_custom; }
+		}
+
+		internal OutputCacheLocation OutputCacheLocation {
+			get { return oc_location; }
+		}
+
+		internal string OutputCacheVaryByParam {
+			get { return oc_param; }
+		}
+			
 	}
 }
 

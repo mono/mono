@@ -346,7 +346,7 @@ public class Page : TemplateControl, IHttpHandler
 
 		NameValueCollection coll = null;
 		if (IsPostBack)
-			coll =  req.Form;
+			coll =	req.Form;
 		else 
 			coll = req.QueryString;
 
@@ -401,7 +401,46 @@ public class Page : TemplateControl, IHttpHandler
 						OutputCacheLocation location,
 						string varyByParam)
 	{
-		throw new NotImplementedException ();
+		HttpCachePolicy cache = _context.Response.Cache;
+
+		switch (location) {
+		case OutputCacheLocation.Any:
+			if (varyByCustom != null)
+				cache.SetVaryByCustom (varyByCustom);
+			
+			if (varyByParam.Length > 0) {
+				string[] prms = varyByParam.Split (';');
+				foreach (string p in prms)
+					cache.VaryByParams [p.Trim ()] = true;
+				cache.VaryByParams.IgnoreParams = false;
+			} else {
+				cache.VaryByParams.IgnoreParams = true;
+			}
+			
+			if (varyByHeader != null) {
+				string[] hdrs = varyByHeader.Split (';');
+				foreach (string h in hdrs)
+					cache.VaryByHeaders [h.Trim ()] = true;
+			}
+			
+			goto case OutputCacheLocation.Downstream;
+		case OutputCacheLocation.Client:
+			cache.SetCacheability (HttpCacheability.Private);
+			cache.SetExpires (DateTime.Now.AddSeconds (duration));
+			cache.SetMaxAge (new TimeSpan (0, 0, duration));		
+			cache.SetLastModified (_context.Timestamp);
+			break;
+		case OutputCacheLocation.Downstream:
+			cache.SetCacheability (HttpCacheability.Public);
+			cache.SetExpires (DateTime.Now.AddSeconds (duration));
+			cache.SetMaxAge (new TimeSpan (0, 0, duration));		
+			cache.SetLastModified (_context.Timestamp);
+			break;
+		case OutputCacheLocation.Server:
+			goto case OutputCacheLocation.None;
+		case OutputCacheLocation.None:
+			break;
+		}
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
