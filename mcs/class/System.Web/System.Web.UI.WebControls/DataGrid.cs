@@ -21,7 +21,7 @@ namespace System.Web.UI.WebControls
 {
 	//TODO: [Designer("??")]
 	//TODO: [Editor("??")]
-	[DefaultEvent("SelectedIndexChanged"]
+	[DefaultEvent("SelectedIndexChanged")]
 	[DefaultProperty("DataSource")]
 	[ParseChildren(true)]
 	[PersistChildren(false)]

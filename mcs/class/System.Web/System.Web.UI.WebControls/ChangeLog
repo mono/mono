@@ -1,5 +1,23 @@
 2002-07-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* CheckBoxList.cs:
+	* DataGrid.cs:
+	* DataList.cs:
+	* DropDownList.cs:
+	* ListBox.cs:
+	* PlaceHolder.cs:
+	* RadioButton.cs:
+	* RadioButtonList.cs:
+	* TableRow.cs:
+	* WebControl.cs:
+	* Xml.cs: forgot to add using System.ComponentModel.
+
+	* BaseValidator.cs: use explicitly 
+	System.ComponentModel.AttributeCollection as there is another class
+	with the same name under System.Web.UI.
+
+2002-07-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* AdRotator.cs:
 	* Button.cs:
 	* Calendar.cs:

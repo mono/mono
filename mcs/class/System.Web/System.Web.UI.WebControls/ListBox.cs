@@ -15,13 +15,14 @@ using System;
 using System.Drawing;
 using System.Collections;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Globalization;
 using System.Web;
 using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
-	[DefaultEvent("SelectedIndexChanged"]
+	[DefaultEvent("SelectedIndexChanged")]
 	[DefaultProperty("DataSource")]
 	[ParseChildren(true)]
 	[PersistChildren(false)]

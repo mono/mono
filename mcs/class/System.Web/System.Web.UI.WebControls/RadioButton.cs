@@ -22,7 +22,7 @@ using System.ComponentModel;
 namespace System.Web.UI.WebControls
 {
 	//[Designer("??")]
-	[DefaultEvent("CheckedChanged"]
+	[DefaultEvent("CheckedChanged")]
 	[DefaultProperty("Text")]
 	[ParseChildren(true)]
 	[PersistChildren(false)]

@@ -153,7 +153,7 @@ namespace System.Web.UI.WebControls
 
 		public static PropertyDescriptor GetValidationProperty(object component)
 		{
-			AttributeCollection coll = TypeDescriptor.GetAttributes (component);
+			System.ComponentModel.AttributeCollection coll = TypeDescriptor.GetAttributes (component);
 			Type type = typeof (ValidationPropertyAttribute);
 			ValidationPropertyAttribute attrib = (ValidationPropertyAttribute) coll [type];
 			if (attrib != null && attrib.Name != null)
