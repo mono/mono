@@ -55,11 +55,15 @@ namespace Mono.CSharp {
 					return new BoxedCast (expr);
 				if (expr_type.IsClass || expr_type.IsInterface || expr_type == TypeManager.enum_type)
 					return new EmptyCast (expr, target_type);
+
+				return null;
 			} else if (target_type == TypeManager.value_type) {
 				if (expr_type.IsValueType)
 					return new BoxedCast (expr);
 				if (expr is NullLiteral)
 					return new NullCast (expr, target_type);
+
+				return null;
 			} else if (expr_type.IsSubclassOf (target_type)) {
 				//
 				// Special case: enumeration to System.Enum.
@@ -70,93 +74,88 @@ namespace Mono.CSharp {
 					return new BoxedCast (expr);
 
 				return new EmptyCast (expr, target_type);
-			} else {
-
-				// This code is kind of mirrored inside ImplicitStandardConversionExists
-				// with the small distinction that we only probe there
-				//
-				// Always ensure that the code here and there is in sync
-
-				// from the null type to any reference-type.
-				if (expr is NullLiteral){
-					if (target_type.IsPointer)
-						return NullPointer.Null;
-					
-					if (!target_type.IsValueType)
-						return new NullCast (expr, target_type);
-				}
-
-				// from any class-type S to any interface-type T.
-				if (target_type.IsInterface) {
-					if (target_type != TypeManager.iconvertible_type &&
-						expr_type.IsValueType && (expr is Constant) &&
-						!(expr is IntLiteral || expr is BoolLiteral ||
-						expr is FloatLiteral || expr is DoubleLiteral ||
-						expr is LongLiteral || expr is CharLiteral ||
-						expr is StringLiteral || expr is DecimalLiteral ||
-						expr is UIntLiteral || expr is ULongLiteral)) {
-						return null;
-					}
-
-					if (TypeManager.ImplementsInterface (expr_type, target_type)){
-						if (expr_type.IsClass)
-							return new EmptyCast (expr, target_type);
-						else if (expr_type.IsValueType)
-							return new BoxedCast (expr, target_type);
-						else
-							return new EmptyCast (expr, target_type);
-					}
-				}
-
-				// from any interface type S to interface-type T.
-				if (expr_type.IsInterface && target_type.IsInterface) {
-					if (TypeManager.ImplementsInterface (expr_type, target_type))
-						return new EmptyCast (expr, target_type);
-					else
-						return null;
-				}
-				
-				// from an array-type S to an array-type of type T
-				if (expr_type.IsArray && target_type.IsArray) {
-					if (expr_type.GetArrayRank () == target_type.GetArrayRank ()) {
-
-						Type expr_element_type = TypeManager.GetElementType (expr_type);
-
-						if (MyEmptyExpr == null)
-							MyEmptyExpr = new EmptyExpression ();
-						
-						MyEmptyExpr.SetType (expr_element_type);
-						Type target_element_type = TypeManager.GetElementType (target_type);
-
-						if (!expr_element_type.IsValueType && !target_element_type.IsValueType)
-							if (ImplicitStandardConversionExists (MyEmptyExpr,
-										      target_element_type))
-								return new EmptyCast (expr, target_type);
-					}
-				}
-				
-				
-				// from an array-type to System.Array
-				if (expr_type.IsArray && target_type == TypeManager.array_type)
-					return new EmptyCast (expr, target_type);
-				
-				// from any delegate type to System.Delegate
-				if ((expr_type == TypeManager.delegate_type || 
-				     expr_type.IsSubclassOf (TypeManager.delegate_type)) &&
-				    target_type == TypeManager.delegate_type)
-					return new EmptyCast (expr, target_type);
-					
-				// from any array-type or delegate type into System.ICloneable.
-				if (expr_type.IsArray ||
-				    expr_type == TypeManager.delegate_type ||
-				    expr_type.IsSubclassOf (TypeManager.delegate_type))
-					if (target_type == TypeManager.icloneable_type)
-						return new EmptyCast (expr, target_type);
-				
-				return null;
-
 			}
-			
+
+			// This code is kind of mirrored inside ImplicitStandardConversionExists
+			// with the small distinction that we only probe there
+			//
+			// Always ensure that the code here and there is in sync
+
+			// from the null type to any reference-type.
+			if (expr is NullLiteral){
+				if (target_type.IsPointer)
+					return NullPointer.Null;
+					
+				if (!target_type.IsValueType)
+					return new NullCast (expr, target_type);
+			}
+
+			// from any class-type S to any interface-type T.
+			if (target_type.IsInterface) {
+				if (target_type != TypeManager.iconvertible_type &&
+				    expr_type.IsValueType && (expr is Constant) &&
+				    !(expr is IntLiteral || expr is BoolLiteral ||
+				      expr is FloatLiteral || expr is DoubleLiteral ||
+				      expr is LongLiteral || expr is CharLiteral ||
+				      expr is StringLiteral || expr is DecimalLiteral ||
+				      expr is UIntLiteral || expr is ULongLiteral)) {
+					return null;
+				}
+
+				if (TypeManager.ImplementsInterface (expr_type, target_type)){
+					if (expr_type.IsClass)
+						return new EmptyCast (expr, target_type);
+					else if (expr_type.IsValueType)
+						return new BoxedCast (expr, target_type);
+					else
+						return new EmptyCast (expr, target_type);
+				}
+			}
+
+			// from any interface type S to interface-type T.
+			if (expr_type.IsInterface && target_type.IsInterface) {
+				if (TypeManager.ImplementsInterface (expr_type, target_type))
+					return new EmptyCast (expr, target_type);
+				else
+					return null;
+			}
+				
+			// from an array-type S to an array-type of type T
+			if (expr_type.IsArray && target_type.IsArray) {
+				if (expr_type.GetArrayRank () == target_type.GetArrayRank ()) {
+
+					Type expr_element_type = TypeManager.GetElementType (expr_type);
+
+					if (MyEmptyExpr == null)
+						MyEmptyExpr = new EmptyExpression ();
+						
+					MyEmptyExpr.SetType (expr_element_type);
+					Type target_element_type = TypeManager.GetElementType (target_type);
+
+					if (!expr_element_type.IsValueType && !target_element_type.IsValueType)
+						if (ImplicitStandardConversionExists (MyEmptyExpr,
+										      target_element_type))
+							return new EmptyCast (expr, target_type);
+				}
+			}
+				
+			// from an array-type to System.Array
+			if (expr_type.IsArray && target_type == TypeManager.array_type)
+				return new EmptyCast (expr, target_type);
+				
+			// from any delegate type to System.Delegate
+			if ((expr_type == TypeManager.delegate_type ||
+			     expr_type.IsSubclassOf (TypeManager.delegate_type)) &&
+			    target_type == TypeManager.delegate_type)
+				return new EmptyCast (expr, target_type);
+					
+			// from any array-type or delegate type into System.ICloneable.
+			if (expr_type.IsArray ||
+			    expr_type == TypeManager.delegate_type ||
+			    expr_type.IsSubclassOf (TypeManager.delegate_type))
+				if (target_type == TypeManager.icloneable_type)
+					return new EmptyCast (expr, target_type);
+				
 			return null;
 		}
 
@@ -175,66 +174,66 @@ namespace Mono.CSharp {
 				if (expr_type.IsClass || expr_type.IsValueType ||
 				    expr_type.IsInterface || expr_type == TypeManager.enum_type)
 					return true;
+
+				return false;
 			} else if (expr_type.IsSubclassOf (target_type)) 
 				return true;
-			else {
-				// Please remember that all code below actually comes
-				// from ImplicitReferenceConversion so make sure code remains in sync
-				
-				// from any class-type S to any interface-type T.
-				if (target_type.IsInterface) {
-					if (TypeManager.ImplementsInterface (expr_type, target_type))
-						return true;
-				}
-				
-				// from any interface type S to interface-type T.
-				if (expr_type.IsInterface && target_type.IsInterface)
-					if (TypeManager.ImplementsInterface (expr_type, target_type))
-						return true;
-				
-				// from an array-type S to an array-type of type T
-				if (expr_type.IsArray && target_type.IsArray) {
-					if (expr_type.GetArrayRank () == target_type.GetArrayRank ()) {
-						
-						Type expr_element_type = expr_type.GetElementType ();
 
-						if (MyEmptyExpr == null)
-							MyEmptyExpr = new EmptyExpression ();
-						
-						MyEmptyExpr.SetType (expr_element_type);
-						Type target_element_type = TypeManager.GetElementType (target_type);
-						
-						if (!expr_element_type.IsValueType && !target_element_type.IsValueType)
-							if (ImplicitStandardConversionExists (MyEmptyExpr,
-										      target_element_type))
-								return true;
-					}
-				}
+			// Please remember that all code below actually comes
+			// from ImplicitReferenceConversion so make sure code remains in sync
 				
-				// from an array-type to System.Array
-				if (expr_type.IsArray && (target_type == TypeManager.array_type))
+			// from any class-type S to any interface-type T.
+			if (target_type.IsInterface) {
+				if (TypeManager.ImplementsInterface (expr_type, target_type))
 					return true;
-				
-				// from any delegate type to System.Delegate
-				if ((expr_type == TypeManager.delegate_type ||
-				     expr_type.IsSubclassOf (TypeManager.delegate_type)) &&
-				    target_type == TypeManager.delegate_type)
-					if (target_type.IsAssignableFrom (expr_type))
-						return true;
-					
-				// from any array-type or delegate type into System.ICloneable.
-				if (expr_type.IsArray ||
-				    expr_type == TypeManager.delegate_type ||
-				    expr_type.IsSubclassOf (TypeManager.delegate_type))
-					if (target_type == TypeManager.icloneable_type)
-						return true;
-				
-				// from the null type to any reference-type.
-				if (expr is NullLiteral && !target_type.IsValueType &&
-				    !TypeManager.IsEnumType (target_type))
-					return true;
-				
 			}
+				
+			// from any interface type S to interface-type T.
+			if (expr_type.IsInterface && target_type.IsInterface)
+				if (TypeManager.ImplementsInterface (expr_type, target_type))
+					return true;
+				
+			// from an array-type S to an array-type of type T
+			if (expr_type.IsArray && target_type.IsArray) {
+				if (expr_type.GetArrayRank () == target_type.GetArrayRank ()) {
+						
+					Type expr_element_type = expr_type.GetElementType ();
+
+					if (MyEmptyExpr == null)
+						MyEmptyExpr = new EmptyExpression ();
+						
+					MyEmptyExpr.SetType (expr_element_type);
+					Type target_element_type = TypeManager.GetElementType (target_type);
+						
+					if (!expr_element_type.IsValueType && !target_element_type.IsValueType)
+						if (ImplicitStandardConversionExists (MyEmptyExpr,
+										      target_element_type))
+							return true;
+				}
+			}
+				
+			// from an array-type to System.Array
+			if (expr_type.IsArray && (target_type == TypeManager.array_type))
+				return true;
+				
+			// from any delegate type to System.Delegate
+			if ((expr_type == TypeManager.delegate_type ||
+			     expr_type.IsSubclassOf (TypeManager.delegate_type)) &&
+			    target_type == TypeManager.delegate_type)
+				if (target_type.IsAssignableFrom (expr_type))
+					return true;
+					
+			// from any array-type or delegate type into System.ICloneable.
+			if (expr_type.IsArray ||
+			    expr_type == TypeManager.delegate_type ||
+			    expr_type.IsSubclassOf (TypeManager.delegate_type))
+				if (target_type == TypeManager.icloneable_type)
+					return true;
+				
+			// from the null type to any reference-type.
+			if (expr is NullLiteral && !target_type.IsValueType && !TypeManager.IsEnumType (target_type))
+				return true;
+				
 			return false;
 		}
 
