@@ -942,18 +942,15 @@ namespace System.IO
 			/* when async == true, if we get here we don't suport AIO or it's disabled
 			 * and we're using the threadpool */
 			amount = MonoIO.Read (handle, buf, offset, count, out error);
-			if (error != MonoIOError.ERROR_SUCCESS) {
+			if (error == MonoIOError.ERROR_BROKEN_PIPE) {
+				amount = 0; // might not be needed, but well...
+			} else if (error != MonoIOError.ERROR_SUCCESS) {
 				throw MonoIO.GetException (name, error);
 			}
 			
 			/* Check for read error */
 			if(amount == -1) {
-				/* Kludge around broken pipes */
-				if(error == MonoIOError.ERROR_BROKEN_PIPE) {
-					amount = 0;
-				} else {
-					throw new IOException ();
-				}
+				throw new IOException ();
 			}
 			
 			return(amount);

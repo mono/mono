@@ -1,3 +1,8 @@
+2004-06-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FileStream.cs: re-enabled ignoring broken pipe errors when reading.
+	Fixes bug #59639.
+
 2004-06-08  Duncan Mak  <duncan@ximian.com>
 
 	* Directory.cs (IsRootDirectory): New helper method for
