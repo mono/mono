@@ -557,7 +557,26 @@ namespace System.Xml
 		[MonoTODO]
 		public virtual void WriteValue (object value)
 		{
-			throw new NotImplementedException ();
+			if (value is string)
+				WriteString ((string) value);
+			else if (value is bool)
+				WriteValue ((bool) value);
+			else if (value is DateTime)
+				WriteValue ((DateTime) value);
+			else if (value is decimal)
+				WriteValue ((decimal) value);
+			else if (value is double)
+				WriteValue ((double) value);
+			else if (value is int)
+				WriteValue ((int) value);
+			else if (value is long)
+				WriteValue ((long) value);
+			else if (value is XmlQualifiedName) {
+				XmlQualifiedName qname = (XmlQualifiedName) value;
+				WriteQualifiedName (qname.Name, qname.Namespace);
+			}
+			else
+				throw new NotImplementedException ("Argument value is " + value);
 		}
 
 		[MonoTODO]
