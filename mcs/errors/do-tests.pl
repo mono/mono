@@ -73,7 +73,8 @@ foreach (glob ($files)) {
 	chomp $options;
 	print "...";
 
-	system "$compile $options $_ --expect-error $error_number > /dev/null";
+	my $testlogfile="$_.log";
+	system "$compile $options $_ --expect-error $error_number > $testlogfile 2>&1";
 	
 	exit 1 if $? & 127;
 	
@@ -84,6 +85,7 @@ foreach (glob ($files)) {
 	my $status;
 	
 	if ($exit_value == 0) {
+                system "rm -f $testlogfile";
 		$status = $RESULT_UNEXPECTED_CORRECT_ERROR     if     exists $expecting_map {$_};
 		$status = $RESULT_CORRECT_ERROR                unless exists $expecting_map {$_};
 	}

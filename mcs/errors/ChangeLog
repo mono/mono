@@ -1,3 +1,8 @@
+2004-06-10 Marek Safar <marek.safar@seznam.cz>
+
+	* do-test.pl: Added simple error logging.
+	* Makefile (clean): Remove .dll & .log files
+
 2004-06-07  Raja R Harinath  <rharinath@novell.com>
 
 	* cs0038-2.cs: New test, from bug #59477.

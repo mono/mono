@@ -64,6 +64,7 @@ test-multi-local:
 clean-local:
 	rm -f *.exe
 	rm -f *.dll
+	rm -f *.log
 
 dist-local: dist-default
 
