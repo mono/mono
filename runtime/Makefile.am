@@ -26,7 +26,7 @@ assemblies_DATA =	\
 	Mono.Data.Tds.dll					\
 	Mono.GetOptions.dll					\
 	Mono.PEToolkit.dll					\
-	Npqsql.dll						\
+	Npgsql.dll						\
 	NUnitCore_mono.dll					\
 	PEAPI.dll						\
 	System.Configuration.Install.dll			\
