@@ -1,3 +1,8 @@
+2002-06-18  Ajay kumar Dwivedi <adwiv@yahoo.com>
+	
+	* XmlTextReader.cs: HasLineInfo returns false instead of throwing an
+	Exception.
+
 2002-06-14  Duncan Mak  <duncan@ximian.com>
 
 	* XmlConvert.cs: Added CLSCompliant attributes to methods.

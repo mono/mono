@@ -357,7 +357,7 @@ namespace System.Xml
 		[MonoTODO]
 		bool IXmlLineInfo.HasLineInfo ()
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
 
 		public override string LookupNamespace (string prefix)
