@@ -61,7 +61,6 @@ namespace System.Xml.Schema
 			else
 				this.qName = new XmlQualifiedName(Name,info.TargetNamespace);
 
-			//TODO: Compile Xpath. 
 			if(Selector == null)
 				error(h,"selector must be present");
 			else

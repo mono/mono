@@ -1,4 +1,8 @@
 2002-06-18  Dwivedi, Ajay kumar <adwiv@yahoo.com>
+	
+	* XmlSchema: Started work on Validate methods
+
+2002-06-18  Dwivedi, Ajay kumar <adwiv@yahoo.com>
 	* XmlSchema: The Read and Write methods are no more [MonoTODO] :)
 	
 	* XmlSchemaAppInfo: Xml Markup is now being read.

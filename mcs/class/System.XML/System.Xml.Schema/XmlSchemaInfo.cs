@@ -20,5 +20,6 @@ namespace System.Xml.Schema
 		internal XmlSchemaForm ElementFormDefault = XmlSchemaForm.None;
 		internal XmlSchemaForm AttributeFormDefault = XmlSchemaForm.None;
 		internal Hashtable IDCollection;
+		internal XmlSchemaObjectTable SchemaTypes ;
 	}
 }

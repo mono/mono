@@ -289,7 +289,7 @@ namespace System.Xml.Schema
 				info.BlockDefault = XmlSchemaDerivationMethod.All;
 			else // If finalDefault is None, info's blockDefault is set to empty
 				info.BlockDefault = (blockDefault & (XmlSchemaDerivationMethod.Extension |
-									XmlSchemaDerivationMethod.Restriction | XmlSchemaDerivationMethod.Substitution));
+					XmlSchemaDerivationMethod.Restriction | XmlSchemaDerivationMethod.Substitution));
 
 			// Compile the content of this schema
 			foreach(XmlSchemaObject obj in Includes)
@@ -402,9 +402,11 @@ namespace System.Xml.Schema
 		[MonoTODO]
 		private void Validate(ValidationEventHandler handler)
 		{
+			info.SchemaTypes = SchemaTypes;
+
 			foreach(XmlSchemaAttribute attr in Attributes.Values)
 			{
-				attr.Validate(handler);
+				attr.Validate(handler, info);
 			}
 			foreach(XmlSchemaAttributeGroup attrgrp in AttributeGroups.Values)
 			{
@@ -417,7 +419,7 @@ namespace System.Xml.Schema
 					((XmlSchemaComplexType)type).Validate(handler);
 				}
 				else
-					((XmlSchemaSimpleType)type).Validate(handler);
+					((XmlSchemaSimpleType)type).Validate(handler, info);
 			}
 			foreach(XmlSchemaElement elem in Elements.Values)
 			{
@@ -512,7 +514,7 @@ namespace System.Xml.Schema
 							error(h, reader.Value + " is not a valid value for elementFormDefault.", ex);
 						break;
 					case "finalDefault":
-						 schema.finalDefault = XmlSchemaUtil.ReadDerivationAttribute(reader, out ex, "finalDefault");
+						schema.finalDefault = XmlSchemaUtil.ReadDerivationAttribute(reader, out ex, "finalDefault");
 						if(ex != null)
 							warn(h, ex.Message , ex);
 						break;
@@ -681,9 +683,15 @@ namespace System.Xml.Schema
 		{
 			if(Namespaces == null)
 			{
-				 Namespaces = new XmlSerializerNamespaces();
+				Namespaces = new XmlSerializerNamespaces();
 			}
-
+			//Add the xml schema namespace.
+			if(Namespaces.Count == 0)
+			{
+				Namespaces.Add("xs", XmlSchema.Namespace);
+				if (TargetNamespace != null && TargetNamespace != String.Empty)
+					Namespaces.Add("tns", TargetNamespace);
+			}
 			if(namespaceManager != null)
 			{
 				foreach(string name in namespaceManager)
@@ -694,7 +702,7 @@ namespace System.Xml.Schema
 						Namespaces.Add(name,namespaceManager.LookupNamespace(name));
 				}
 			}
-			
+
 			XmlSerializer xser = new XmlSerializer(typeof(XmlSchema));
 			xser.Serialize(writer,this,Namespaces);
 			writer.Flush();

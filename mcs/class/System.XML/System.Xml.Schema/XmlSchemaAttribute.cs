@@ -256,9 +256,60 @@ namespace System.Xml.Schema
 			XmlSchemaUtil.CompileID(Id, this, info.IDCollection, h);
 		}
 
+		/// <summary>
+		/// Schema Component: 
+		///			QName, SimpleType, Scope, Default|Fixed, annotation
+		/// </summary>
 		[MonoTODO]
-		internal int Validate(ValidationEventHandler h)
+		internal int Validate(ValidationEventHandler h, XmlSchemaInfo info)
 		{
+			if(isCompiled)
+				return errorCount;
+
+			//If Parent is schema:
+			if(parentIsSchema)
+			{
+				if(SchemaType != null)
+				{
+					errorCount += SchemaType.Validate(h, info);
+					attributeType = SchemaType;
+				}
+				else if(SchemaTypeName != null && !SchemaTypeName.IsEmpty)
+				{
+					//First Try to get a Inbuilt DataType
+					XmlSchemaDatatype dtype = XmlSchemaDatatype.GetType(SchemaTypeName);
+					if(dtype != null)
+					{
+						attributeType = dtype;
+					}
+					else
+					{
+						XmlSchemaObject obj = info.SchemaTypes[SchemaTypeName];
+
+						if(obj is XmlSchemaSimpleType)
+						{
+							XmlSchemaSimpleType stype = (XmlSchemaSimpleType) obj;
+							errorCount += stype.Validate(h, info);
+							attributeType = stype;
+						}
+						else if(attributeType == null)
+							error(h,"The type '"+ SchemaTypeName +"' is not defined in the schema");
+						else if(attributeType is XmlSchemaComplexType)
+							error(h,"An attribute can't have complexType Content");
+						else
+							error(h, "Should Never Happen. Illegal content in SchemaTypes");
+					}
+				}
+				else
+				{
+					error(h,"Should Never Happen. Attribute SimpleType Not set. Should have been caught in the Compile() phase");
+				}
+			}
+			else
+			{
+				//TODO: Local Attribute Validation
+			}
+			isCompiled = true;
 			return errorCount;
 		}
 		//<attribute

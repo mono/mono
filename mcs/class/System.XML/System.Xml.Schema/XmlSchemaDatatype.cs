@@ -20,5 +20,11 @@ namespace System.Xml.Schema
 		// Methods
 		public abstract object ParseValue(string s, 
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr);
+
+		//TODO: This should return appropriate inbuilt type
+		internal static XmlSchemaDatatype GetType(XmlQualifiedName qname)
+		{
+			return null;
+		}
 	}
 }

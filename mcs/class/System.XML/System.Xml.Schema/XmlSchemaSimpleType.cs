@@ -120,8 +120,11 @@ namespace System.Xml.Schema
 		}
 		
 		[MonoTODO]
-		internal int Validate(ValidationEventHandler h)
+		internal int Validate(ValidationEventHandler h, XmlSchemaInfo info)
 		{
+			if(isCompiled)
+				return errorCount;
+
 			return errorCount;
 		}
 

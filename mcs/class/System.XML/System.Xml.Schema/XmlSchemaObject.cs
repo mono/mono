@@ -17,13 +17,15 @@ namespace System.Xml.Schema
 		private string sourceUri;
 		private XmlSerializerNamespaces namespaces;
 		internal ArrayList unhandledAttributeList ;
-
+		internal bool isCompiled = false;
 		internal int errorCount = 0;
 
 		protected XmlSchemaObject()
 		{
 			namespaces = new XmlSerializerNamespaces();
+			unhandledAttributeList = null;
 		}
+
 		[XmlIgnore]
 		public int LineNumber 
 		{ 
