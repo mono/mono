@@ -1,4 +1,12 @@
+2002-06-19  Dietmar Maurer  <dietmar@ximian.com>
+
+	* exception.c (ves_icall_get_trace): new method to get the stack
+	trace from a Exception.
+
 2002-06-18  Dietmar Maurer  <dietmar@ximian.com>
+
+	* jit.c (check_inlining): do not inline functions containing 
+	calls to stack query functions
 
 	* exception.c (ves_icall_get_frame_info): impl.
 
