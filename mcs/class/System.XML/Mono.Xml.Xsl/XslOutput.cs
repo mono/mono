@@ -144,9 +144,11 @@ namespace Mono.Xml.Xsl
 					method = OutputMethod.XML;
 					break;
 				case "html":
+					omitXmlDeclaration = true;
 					method = OutputMethod.HTML;
 					break;
 				case "text":
+					omitXmlDeclaration = true;
 					method = OutputMethod.Text;
 					break;
 				default:

@@ -1,5 +1,10 @@
 2005-02-08  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XslOutput.cs : for html and text output mode, just set internal
+	  omitXmlDeclaration status true. Patch by Andrew Skiba.
+
+2005-02-08  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XslFunctions.cs : fixed line ending mixture.
 
 2005-02-03  Atsushi Enomoto <atsushi@ximian.com>
