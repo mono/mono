@@ -1,3 +1,8 @@
+2003-03-08  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* sn.cs: New. (Incomplete) SN (StrongName) tool.
+	* sectools.build: Updated build for SN.
+
 2003-03-06  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AssemblyInfo.cs: New. Global assembly attributes (version and 

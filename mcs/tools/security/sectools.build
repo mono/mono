@@ -42,14 +42,14 @@
 				<includes name="AssemblyInfo.cs"/>
 				<includes name="signcode.cs"/>
 			</sources>
-		</csc>
+		</csc -->
 		<csc target="exe" output="sn.exe" debug="${debug}">
 			<arg value="/r:..\..\class\lib\Mono.Security.dll"/>
 			<sources basedir=".">
 				<includes name="AssemblyInfo.cs"/>
 				<includes name="sn.cs"/>
 			</sources>
-		</csc -->
+		</csc>
 	</target>
 
 	<target name="sign">
