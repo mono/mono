@@ -1,3 +1,8 @@
+2003-05-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* object.c (mono_string_new_wrapper): Compatibility fix for MS
+	compilers.
+
 2003-05-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* class.c (mono_class_layout_fields): Add experimental GC aware
