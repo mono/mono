@@ -1,3 +1,9 @@
+2004-04-13 Marek Safar <marek.safar@seznam.cz>
+
+	* cs1618-2.cs,
+	* cs1619-{27-36}.cs,
+	* cs1667.cs, cs1667-2.cs: 13 new error tests.
+
 2004-04-08 Marek Safar <marek.safar@seznam.cz>
 
 	* cs1677.cs: Changed name from cs1667.cs

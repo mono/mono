@@ -10,6 +10,4 @@ class AA
                         System.Console.WriteLine (aa);
                 }
         }
-        
-//        public static void Main () {}
 }
