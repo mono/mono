@@ -1,3 +1,23 @@
+2002-11-30  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.Data.Odbc/OdbcDataReader.cs: implemented GetValues() method
+	needed by OdbcDataAdapter
+	
+	* System.Data.Odbc/OdbcDataAdapter.cs
+	* System.Data.Odbc/OdbcRowUpdatedEventArgs.cs
+	* System.Data.Odbc/OdbcRowUpdatedEventHandler.cs
+	* System.Data.Odbc/OdbcRowUpdatingEventArgs.cs
+	* System.Data.Odbc/OdbcRowUpdatingEventHandler.cs: added files for an
+	ODBC Data Adapter
+
+	* list: added new files to linux build 
+	in namespace System.Data.Odbc for the ODBC Data Adapter
+	
+	* System.Xml/XmlDataDocument.cs: commented method
+	protected internal override XPathNavigator CreateNavigator(XmlNode node)
+	because it would not compile on .NET Framework.  Added 
+	a FIXME comment there
+
 2002-11-29  Ville Palo <vi64pa@koti.soon.fi>
 
 	* System.Xml/XmlDataDocument.cs: Started to implement.

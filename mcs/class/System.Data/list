@@ -157,6 +157,11 @@ System.Data.Odbc/OdbcParameterCollection.cs
 System.Data.Odbc/OdbcTransaction.cs
 System.Data.Odbc/OdbcType.cs
 System.Data.Odbc/libodbc.cs
+System.Data.Odbc/OdbcDataAdapter.cs
+System.Data.Odbc/OdbcRowUpdatedEventArgs.cs
+System.Data.Odbc/OdbcRowUpdatedEventHandler.cs
+System.Data.Odbc/OdbcRowUpdatingEventArgs.cs
+System.Data.Odbc/OdbcRowUpdatingEventHandler.cs
 System.Data.SqlClient/SqlClientPermission.cs
 System.Data.SqlClient/SqlClientPermissionAttribute.cs
 System.Data.SqlClient/SqlCommand.cs

@@ -3,8 +3,10 @@
 //
 // Author:
 //   Brian Ritchie (brianlritchie@hotmail.com) 
+//   Daniel Morgan <danmorg@sc.rr.com>
 //
 // Copyright (C) Brian Ritchie, 2002
+// Copyright (C) Daniel Morgan, 2002
 //
 
 using System.Collections;
@@ -55,8 +57,7 @@ namespace System.Data.Odbc
 
 		public int FieldCount {
 			get {
-
-			return cols.Length;
+				return cols.Length;
 			}
 		}
 
@@ -459,11 +460,30 @@ namespace System.Data.Odbc
 			}
 			return col.Value;
 		}
-
-		[MonoTODO]
+		
 		public int GetValues (object[] values)
 		{
-			throw new NotImplementedException ();
+			int numValues = 0;
+
+			// copy values
+			for (int i = 0; i < values.Length; i++) {
+				if (i < FieldCount) {
+					values[i] = GetValue(i);
+				}
+				else {
+					values[i] = null;
+				}
+			}
+
+			// get number of object instances in array
+			if (values.Length < FieldCount)
+				numValues = values.Length;
+			else if (values.Length == FieldCount)
+				numValues = FieldCount;
+			else
+				numValues = FieldCount;
+
+			return numValues;
 		}
 
 		[MonoTODO]

@@ -272,10 +272,11 @@ namespace System.Xml {
 
 		#region Protected Methods
 
-		[MonoTODO]
-		protected internal override XPathNavigator CreateNavigator(XmlNode node) {
-			throw new NotImplementedException();
-		}
+		//FIXME: how do you handle this?
+		//[MonoTODO]
+		//protected internal override XPathNavigator CreateNavigator(XmlNode node) {
+		//	throw new NotImplementedException();
+		//}
 
 		[MonoTODO]
 		public new XPathNavigator CreateNavigator() {
