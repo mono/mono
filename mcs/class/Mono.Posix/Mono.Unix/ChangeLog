@@ -1,5 +1,10 @@
 2004-12-30  Jonathan Pryor <jonpryor@vt.edu>
 
+	* Stdlib.cs: Implement all C89 <stdio.h> functions except for the scanf(3)
+	  family.  These are too dangerous to expose.
+
+2004-12-30  Jonathan Pryor <jonpryor@vt.edu>
+
 	* CdeclFunctions.cs: Remove warning about unused variable.
 	* Stdlib.cs: Make signal(2) sane and (hopefully) complete.
 	* Syscall.cs: Fix cuserid Obsolete message to reference correct class name.
