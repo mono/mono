@@ -1,5 +1,9 @@
 2004-09-02  Marek Safar <marek.safar@seznam.cz>
 
+	* test-288.cs: New test for #62342.
+
+2004-09-02  Marek Safar <marek.safar@seznam.cz>
+
 	* test-205.cs: New test for #65170.
 
 2004-09-02  Martin Baulig  <martin@ximian.com>
