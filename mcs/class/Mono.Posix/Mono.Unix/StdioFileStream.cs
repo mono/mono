@@ -104,7 +104,7 @@ namespace Mono.Unix {
 				r = Stdlib.fseek (file, curPos, SeekFlags.SEEK_SET);
 				UnixMarshal.ThrowExceptionForLastErrorIf (r);
 
-				return endPos - curPos;
+				return endPos;
 			}
 		}
 

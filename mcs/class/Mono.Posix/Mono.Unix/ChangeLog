@@ -1,3 +1,8 @@
+2005-02-02  Jonathan Pryor <jonpryor@vt.edu>
+
+	* StdioFileStream.cs: Fix Length property to actually return the size of the
+	  file, not the # of bytes from the current position to EOF.  Oops.
+
 2005-01-31  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Stdlib.cs: Import "msvcrt", not "libc".  These members are part of the
