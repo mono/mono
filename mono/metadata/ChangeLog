@@ -1,5 +1,9 @@
 2002-04-23	Patrik Torstensson <patrik.torstensson@labs2.com>
 
+	* string-icalls.c: fixed bug in split (one off bug)
+
+2002-04-23	Patrik Torstensson <patrik.torstensson@labs2.com>
+
 	* string-icalls.c: fixed bug in remove and lastindexofany, add equals icall.
 	* icalls.c: added String::Equals as internal method
 
