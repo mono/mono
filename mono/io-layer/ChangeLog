@@ -1,3 +1,8 @@
+2003-12-19  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* handles.c: remove my bad use of MONO_ZERO_ARRAY_LENGTH
+	in HDRSIZE 
+
 2003-12-15  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* shared.c: (_wapi_shm_open) make scratch file
