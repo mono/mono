@@ -409,7 +409,7 @@ namespace System.Data
 			return Find(keys);
 		}
 		
-		public int Find(object[] key) 
+		public int Find (object[] key) 
 		{
 			int index; 
 			if (sort == null || sort == string.Empty)
@@ -432,30 +432,56 @@ namespace System.Data
 					return searchResult;
 			}
 		}
-		
-		[MonoTODO]
-		public DataRowView[] FindRows(object key) 
-		{
-			// FIXME: use an index cache to the DataTable, and 
-			//        only refresh the index when the DataTable
-			//        has changes via column, row, or constraint
-			//        changed events
 
-			throw new NotImplementedException ();
+		public DataRowView[] FindRows (object key) 
+		{
+			return FindRows (new object [] {key});
 		}
 
-		[MonoTODO]
-		public DataRowView[] FindRows(object[] key) 
+		public DataRowView[] FindRows (object[] key) 
 		{
-			// FIXME: use an index cache to the DataTable, and 
-			//        only refresh the index when the DataTable
-			//        has changes via column, row, or constraint
-			//        changed events
-			
-			throw new NotImplementedException ();
+			if (Sort == String.Empty)
+				throw new ArgumentException ("Find method depends on an explicit Sort property value.");
+			if (sortedColumns.Length != key.Length)
+				throw new ArgumentException (String.Format ("Expecting {0} keys being indexed based on Sort property, but got {1} keys.", sortedColumns.Length, key.Length));
+
+			IExpression [] compExpr = new IExpression [sortedColumns.Length];
+			for (int i = 0; i < sortedColumns.Length; i++)
+				compExpr [i] = new Comparison (Operation.EQ,
+					new ColumnReference (sortedColumns [i].Column.ColumnName),
+					new Literal (key [i]));
+
+			// Find first match.
+			int r = 0;
+			for (; r < rowCache.Length; r++) {
+				if (!compExpr [0].EvalBoolean (rowCache [r].Row))
+					continue;
+				break;
+			}
+			if (r == rowCache.Length) // no match
+				return new DataRowView [0];
+
+			bool finish = false;
+			int start = r;
+			// Find first no-match from here.
+			for (; r < rowCache.Length; r++) {
+				for (int c = 0; c < key.Length; c++) {
+					if (!compExpr [c].EvalBoolean (rowCache [r].Row)) {
+						finish = true;
+						break;
+					}
+				}
+				if (finish)
+					break;
+			}
+
+			DataRowView [] ret = new DataRowView [r - start];
+			for (int i = 0; i < ret.Length; i++)
+			ret [i] = rowCache [start + i];
+
+			return ret;
 		}
 
-		[MonoTODO]
 		public IEnumerator GetEnumerator() 
 		{
 			return new DataViewEnumerator (rowCache);

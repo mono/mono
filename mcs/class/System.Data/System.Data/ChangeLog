@@ -1,5 +1,10 @@
 2005-01-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataView.cs : implemented FindRows() (btw we should not use
+	  DataTable since there are detached rows by AddNew().)
+
+2005-01-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataView.cs :
 	  Code cleanup: privatify some members, remove unused methods.
 	  Some event-based invocation methods should not raise NotImplemented.
