@@ -1,3 +1,9 @@
+2004-05-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Convert.cs: Fixed ToSByte(string,IFormatProvider) to throw 
+	ArgumentNullException (only case, all other returns 0). Fixed exception
+	reporting for hex prefix only strings.
+
 2004-05-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Convert.cs: Fixed integer parsing for special cases (0x, 0X for base

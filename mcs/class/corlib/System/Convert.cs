@@ -1469,7 +1469,7 @@ namespace System {
 		public static sbyte ToSByte (string value, IFormatProvider provider) 
 		{
 			if (value == null)
-				return 0; // LAMESPEC: Spec says throw ArgumentNullException
+				throw new ArgumentNullException ("value");
 			return SByte.Parse (value, provider);
 		}
 
@@ -2394,7 +2394,7 @@ namespace System {
 						i+=2;
 					}
 					if (len == i) {
-						throw new OverflowException (
+						throw new FormatException (
 							Locale.GetText ("Missing number after prefix"));
 					}
 				}
