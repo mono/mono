@@ -854,8 +854,8 @@ namespace Microsoft.VisualBasic
 		/// <param name="Value">Required. Any valid String or Char expression.</param>
 		public static string LCase(string Value) 
 		{
-			if ((Value == null) || (Value.Length == 0))
-				return String.Empty; // VB.net does this.
+			if ((Value == null) || (Value.Length == 0)) 
+				return Value; // comparing nunit test results say this is an exception to the return String.Empty rule
 
 			return Value.ToLower();
 		}
@@ -865,16 +865,18 @@ namespace Microsoft.VisualBasic
 		/// Returns a string containing a specified number of characters from the left side of a string.
 		/// </summary>
 		/// <param name="Str">Required. String expression from which the leftmost characters are returned.</param>
-		/// <param name="Length">Required. Integer expression. Numeric expression indicating how many characters to return. If 0, a zero-length string ("") is returned. If greater than or equal to the number of characters in Str, the entire string is returned.</param>
-		public static string Left(string Str, 
-			int Length) 
+		/// <param name="Length">Required. Integer expression. Numeric expression indicating how many characters to return. 
+		///	If 0, a zero-length string ("") is returned. If greater than or equal to the number of characters in Str, 
+		///	the entire string is returned.</param>
+		public static string Left(string Str, int Length) 
 		{
 			if (Length < 0)
 				throw new ArgumentException("Argument 'Length' must be non-negative.", "Length");
-			if ((Str == null) || (Str.Length == 0))
+			if ((Str == null) || (Str.Length == 0) || Length == 0)
 				return String.Empty; // VB.net does this.
-
-			return Str.Substring(0, Length);
+			if (Length < Str.Length)
+				return Str.Substring(0, Length);
+			return Str;
 		}
 
 		/// <summary>
@@ -1202,16 +1204,16 @@ namespace Microsoft.VisualBasic
 		/// </summary>
 		/// <param name="Source">Required. String expression. Name of string variable.</param>
 		/// <param name="Length">Required. Integer expression. Length of returned string.</param>
-		public static string RSet(string Source, 
-			int Length) 
+		public static string RSet(string Source, int Length) 
 		{
 		
 			if (Source == null)
 				Source = String.Empty;
 			if (Length < 0)
 				throw new ArgumentOutOfRangeException("Length", "Length must be non-negative.");
-
-			return Source.PadLeft(Length);
+			if (Length > Source.Length)
+				return Source.PadLeft(Length);
+			return Source.Substring(0, Length);
 		}
 
 		/// <summary>
