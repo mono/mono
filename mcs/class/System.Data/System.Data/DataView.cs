@@ -356,19 +356,25 @@ namespace System.Data
 
 		internal void CancelEditRowView (DataRowView rowView)
 		{
-			if (addNewCache.Contains (rowView))
+			int index = IndexOfRowView (rowView);
+			if (addNewCache.Contains (rowView.Row))
 				addNewCache.Remove (rowView.Row);
 			else
 				rowViewPool.Remove (rowView.Row);
+			if (index >= 0)
+				OnListChanged (new ListChangedEventArgs (ListChangedType.ItemDeleted, index, -1));
 			rowView.Row.CancelEdit ();
 		}
 
 		internal void DeleteRowView (DataRowView rowView)
 		{
-			if (addNewCache.Contains (rowView))
+			int index = IndexOfRowView (rowView);
+			if (addNewCache.Contains (rowView.Row))
 				addNewCache.Remove (rowView.Row);
 			else
 				rowViewPool.Remove (rowView.Row);
+			if (index >= 0)
+				OnListChanged (new ListChangedEventArgs (ListChangedType.ItemDeleted, index, -1));
 			rowView.Row.Delete ();
 		}
 
