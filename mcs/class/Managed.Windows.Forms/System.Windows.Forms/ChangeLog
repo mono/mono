@@ -1,3 +1,12 @@
+2005-03-07  Jackson Harper  <jackson@ximian.com>
+
+	* Binding.cs: Format and parse data correctly. Use ASsignableFrom
+	instead of IsSubclassOf. Pulling data now sets the value on the
+	control.
+	* PropertyManager.cs:
+	* CurrencyManager.cs: Just need to pull data when updating now,
+	because PullData will set the value on the control.
+
 2005-03-04  Jackson Harper  <jackson@ximian.com>
 
 	* Binding.cs: Implement data type parsing and converting on pulled

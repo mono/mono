@@ -117,7 +117,7 @@ namespace System.Windows.Forms {
 
 		protected internal override void OnCurrentChanged (EventArgs e)
 		{
-			UpdateBindings ();
+			PullData ();
 
 			if (onCurrentChangedHandler != null) {
 				onCurrentChangedHandler (this, e);

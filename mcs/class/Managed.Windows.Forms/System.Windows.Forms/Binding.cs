@@ -146,12 +146,11 @@ namespace System.Windows.Forms {
 			is_null_desc = TypeDescriptor.GetProperties (manager.Current).Find (property_name + "IsNull", false);
 
 			PullData ();
-			PushData ();
 		}
 
 		internal void PushData ()
 		{
-			prop_desc.SetValue (control, data);
+			SetControlValue (data);
 		}
 
 		internal void PullData ()
@@ -166,12 +165,20 @@ namespace System.Windows.Forms {
 
 			PropertyDescriptor pd = TypeDescriptor.GetProperties (manager.Current).Find (data_member, true);
 			object pulled = pd.GetValue (manager.Current);
-			data = ParseData (pulled);
+			data = ParseData (pulled, pd.PropertyType);
+
+			data = FormatData (data);
+			SetControlValue (data);
 		}
 
 		internal void UpdateIsBinding ()
 		{
 			PushData ();
+		}
+
+		private void SetControlValue (object data)
+		{
+			prop_desc.SetValue (control, data);
 		}
 
 		private void CurrentChangedHandler ()
@@ -196,7 +203,6 @@ namespace System.Windows.Forms {
 		private void PropertyValueChanged (object sender, EventArgs e)
 		{
 			PullData ();
-			PushData ();
 		}
 
 		private void ControlValidatingHandler (object sender, CancelEventArgs e)
@@ -204,24 +210,42 @@ namespace System.Windows.Forms {
 			PullData ();
 		}
 
-                // TODO: Are there more ways the data can be converted?
-		private object ParseData (object data)
+		private object ParseData (object data, Type data_type)
 		{
 			ConvertEventArgs e = new ConvertEventArgs (data, data_type);
 
 			OnParse (e);
-			if (e.Value.GetType ().IsSubclassOf (data_type))
+			if (e.Value.GetType ().IsAssignableFrom (data_type))
 				return e.Value;
 			if (e.Value == Convert.DBNull)
 				return e.Value;
 
+			return ConvertData (e.Value, data_type);
+		}
+
+		private object FormatData (object data)
+		{
+			if (data_type == typeof (object)) 
+				return data;
+
+			ConvertEventArgs e = new ConvertEventArgs (data, data_type);
+
+			OnFormat (e);
+			if (e.Value.GetType ().IsAssignableFrom (data_type))
+				return e.Value;
+
+			return ConvertData (data, data_type);
+		}
+
+		private object ConvertData (object data, Type data_type)
+		{
 			TypeConverter converter = TypeDescriptor.GetConverter (data.GetType ());
 			if (converter != null && converter.CanConvertTo (data_type))
 				return converter.ConvertTo (data, data_type);
 
 			if (data is IConvertible) {
 				object res = Convert.ChangeType (data, data_type);
-				if (res.GetType ().IsSubclassOf (data_type))
+				if (res.GetType ().IsAssignableFrom (data_type))
 					return res;
 			}
 
