@@ -34,6 +34,7 @@ using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace Mono.CSharp {
 
@@ -1861,6 +1862,49 @@ namespace Mono.CSharp {
 			return;
 		}
 
+		protected virtual void VerifyMembers ()
+		{
+			//
+			// Check for internal or private fields that were never assigned
+			//
+			if (RootContext.WarningLevel >= 3) {
+				if (fields != null){
+					foreach (Field f in fields) {
+						if ((f.ModFlags & Modifiers.Accessibility) != Modifiers.PRIVATE)
+							continue;
+						
+						if ((f.status & Field.Status.USED) == 0){
+							Report.Warning (
+								169, f.Location, "Private field " +
+								MakeName (f.Name) + " is never used");
+							continue;
+						}
+						
+						//
+						// Only report 649 on level 4
+						//
+						if (RootContext.WarningLevel < 4)
+							continue;
+						
+						if ((f.status & Field.Status.ASSIGNED) != 0)
+							continue;
+						
+						Report.Warning (
+							649, f.Location,
+							"Field " + MakeName (f.Name) + " is never assigned " +
+							" to and will always have its default value");
+					}
+				}
+
+				if (events != null){
+					foreach (Event e in events){
+						if (e.status == 0)
+							Report.Warning (67, "The event " + MakeName (e.Name) + " is never used");
+					}
+				}
+			}
+		}
+
 		/// <summary>
 		///   Emits the code, this step is performed after all
 		///   the types, enumerations, constructors
@@ -1933,46 +1977,8 @@ namespace Mono.CSharp {
 			if (Pending != null)
 				if (Pending.VerifyPendingMethods ())
 					return;
-			
-			//
-			// Check for internal or private fields that were never assigned
-			//
-			if (RootContext.WarningLevel >= 3) {
-				if (fields != null){
-					foreach (Field f in fields) {
-						if ((f.ModFlags & Modifiers.Accessibility) != Modifiers.PRIVATE)
-							continue;
-						
-						if ((f.status & Field.Status.USED) == 0){
-							Report.Warning (
-								169, f.Location, "Private field " +
-								MakeName (f.Name) + " is never used");
-							continue;
-						}
-						
-						//
-						// Only report 649 on level 4
-						//
-						if (RootContext.WarningLevel < 4)
-							continue;
-						
-						if ((f.status & Field.Status.ASSIGNED) != 0)
-							continue;
-						
-						Report.Warning (
-							649, f.Location,
-							"Field " + MakeName (f.Name) + " is never assigned " +
-							" to and will always have its default value");
-					}
-				}
 
-				if (events != null){
-					foreach (Event e in events){
-						if (e.status == 0)
-							Report.Warning (67, "The event " + MakeName (e.Name) + " is never used");
-					}
-				}
-			}
+			VerifyMembers ();
 			
 //			if (types != null)
 //				foreach (TypeContainer tc in types)
@@ -2453,7 +2459,52 @@ namespace Mono.CSharp {
 		
 	}
 
-	public class Class : TypeContainer {
+	public class ClassOrStruct : TypeContainer {
+		bool hasExplicitLayout = false;
+		public ClassOrStruct (NamespaceEntry ns, TypeContainer parent, string name, Attributes attrs, Location l)
+			: base (ns, parent, name, attrs, l)
+		{
+		}
+
+		protected override void VerifyMembers () 
+		{
+			if (Fields != null) {
+				foreach (Field f in Fields) {
+					if ((f.ModFlags & Modifiers.STATIC) != 0)
+						continue;
+					if (hasExplicitLayout) {
+						if (f.OptAttributes == null 
+						    || !f.OptAttributes.Contains (TypeManager.field_offset_attribute_type, this)) {
+							Report.Error (625, f.Location,
+								      "Instance field of type marked with" 
+								      + " StructLayout(LayoutKind.Explicit) must have a"
+								      + " FieldOffset attribute.");
+						}
+					}
+					else {
+						if (f.OptAttributes != null 
+						    && f.OptAttributes.Contains (TypeManager.field_offset_attribute_type, this)) {
+							Report.Error (636, f.Location,
+								      "The FieldOffset attribute can only be placed on members of "
+								      + "types marked with the StructLayout(LayoutKind.Explicit)");
+						}
+					}
+				}
+			}
+			base.VerifyMembers ();
+		}
+
+		public override void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb)
+		{
+			if (a.Type == TypeManager.struct_layout_attribute_type
+			    && (LayoutKind) a.GetPositionalValue (0) == LayoutKind.Explicit)
+				hasExplicitLayout = true;
+
+			base.ApplyAttributeBuilder (builder, a, cb);
+		}
+	}
+
+	public class Class : ClassOrStruct {
 		// <summary>
 		//   Modifiers allowed in a class declaration
 		// </summary>
@@ -2492,7 +2543,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class Struct : TypeContainer {
+	public class Struct : ClassOrStruct {
 		// <summary>
 		//   Modifiers allowed in a struct declaration
 		// </summary>
@@ -5555,7 +5606,7 @@ namespace Mono.CSharp {
 
 			protected override MethodInfo DelegateMethodInfo {
 				get {
-					return TypeManager.delegate_combine_delegate_delegate;
+					return TypeManager.delegate_remove_delegate_delegate;
 				}
 			}
 

@@ -812,6 +812,11 @@ namespace Mono.CSharp {
 
 				// TODO: It is not neccessary to call whole Resolve (ApplyAttribute does it now) we need only ctor args.
  				// But because a lot of attribute class code must be rewritten will be better to wait...
+		public object GetPositionalValue (int i)
+		{
+			return (pos_values == null) ? null : pos_values[i];
+		}
+
  				Resolve (ec);
  			}
 
