@@ -56,10 +56,7 @@ namespace Mono.CSharp {
 			else {
 				Type t = pi [pos].ParameterType;
 
-				if (t.IsByRef)
-					return t.GetElementType ();
-				else
-					return t;
+				return t;
 			}
 		}
 
@@ -75,16 +72,22 @@ namespace Mono.CSharp {
 		{
 			StringBuilder sb = new StringBuilder ();
 
-			if (pi [pos].IsOut)
-				sb.Append ("out ");
-
 			if (pi [pos].IsIn)
 				sb.Append ("in ");
+
+			Type partype = ParameterType (pos);
+			if (partype.IsByRef){
+				partype = partype.GetElementType ();
+				if (pi [pos].IsOut)
+					sb.Append ("out ");
+				else
+					sb.Append ("ref ");
+			} 
 
 			if (pos >= pi.Length - 1 && last_arg_is_params)
 				sb.Append ("params ");
 			
-			sb.Append (TypeManager.CSharpName (ParameterType (pos)));
+			sb.Append (TypeManager.CSharpName (partype));
 
 			return sb.ToString ();
 			
