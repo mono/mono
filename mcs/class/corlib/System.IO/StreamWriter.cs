@@ -115,6 +115,8 @@ namespace System.IO {
 				return iflush;
 			}
 			set {
+				if (DisposedAlready)
+					throw new ObjectDisposedException("StreamWriter");
 				iflush = value;
 			}
 		}
@@ -131,7 +133,8 @@ namespace System.IO {
 			}
 		}
 
-		protected override void Dispose (bool disposing) {
+		protected override void Dispose (bool disposing) 
+		{
 			if (!DisposedAlready && disposing && internalStream != null) {
 				Flush();
 				DisposedAlready = true;
@@ -144,7 +147,8 @@ namespace System.IO {
 			decode_buf = null;
 		}
 
-		public override void Flush () {
+		public override void Flush ()
+		{
 			if (DisposedAlready)
 				throw new ObjectDisposedException("StreamWriter");
 
@@ -160,7 +164,8 @@ namespace System.IO {
 		// Decode () is called when the buffer is full or we need to flash.
 		// Decode () will use the encoding to get the bytes and but them inside
 		// byte_buf. From byte_buf the data is finally outputted to the stream.
-		void FlushBytes () {
+		void FlushBytes () 
+		{
 			// write the encoding preamble only at the start of the stream
 			if (!preamble_done && byte_pos > 0) {
 				byte[] preamble = internalEncoding.GetPreamble ();
@@ -172,7 +177,8 @@ namespace System.IO {
 			byte_pos = 0;
 		}
 		
-		void Decode () {
+		void Decode () 
+		{
 			if (byte_pos > 0)
 				FlushBytes ();
 			if (decode_pos > 0) {
@@ -182,23 +188,27 @@ namespace System.IO {
 			}
 		}
 		
-		public override void Write (char[] buffer, int index, int count) {
+		public override void Write (char[] buffer, int index, int count) 
+		{
 			if (DisposedAlready)
 				throw new ObjectDisposedException("StreamWriter");
-
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
-			if (index < 0 || index > buffer.Length)
-				throw new ArgumentOutOfRangeException ("index");
-			if (count < 0 || (index + count) > buffer.Length)
-				throw new ArgumentOutOfRangeException ("count");
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ("index", "< 0");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count", "< 0");
+			// re-ordered to avoid possible integer overflow
+			if (index > buffer.Length - count)
+				throw new ArgumentException ("index + count > buffer.Length");
 
 			LowLevelWrite (buffer, index, count);
 			if (iflush)
 				Flush();
 		}
 		
-		void LowLevelWrite (char[] buffer, int index, int count) {
+		void LowLevelWrite (char[] buffer, int index, int count)
+		{
 			while (count > 0) {
 				int todo = decode_buf.Length - decode_pos;
 				if (todo == 0) {
@@ -216,6 +226,9 @@ namespace System.IO {
 
 		public override void Write (char value)
 		{
+			if (DisposedAlready)
+				throw new ObjectDisposedException("StreamWriter");
+
 			// the size of decode_buf is always > 0 and
 			// we check for overflow right away
 			if (decode_pos >= decode_buf.Length)
@@ -225,14 +238,19 @@ namespace System.IO {
 				Flush ();
 		}
 
-		public override void Write (char [] value)
+		public override void Write (char[] value)
 		{
-			LowLevelWrite (value, 0, value.Length);
+			if (DisposedAlready)
+				throw new ObjectDisposedException("StreamWriter");
+
+			if (value != null)
+				LowLevelWrite (value, 0, value.Length);
 			if (iflush)
 				Flush ();
 		}
 
-		public override void Write (string value) {
+		public override void Write (string value) 
+		{
 			if (DisposedAlready)
 				throw new ObjectDisposedException("StreamWriter");
 
@@ -242,13 +260,13 @@ namespace System.IO {
 				Flush ();
 		}
 
-
 		public override void Close()
 		{
 			Dispose (true);
 		}
 
-		~StreamWriter() {
+		~StreamWriter ()
+		{
 			Dispose(false);
 		}
 	}

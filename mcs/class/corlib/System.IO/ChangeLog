@@ -3,6 +3,8 @@
 	* MemoryStream.cs: Fixed exception reporting to match MS Fx. Fixed the
 	condition to allow zeroization of existing data when we shrink the 
 	stream.
+	* StreamWriter.cs: Add dispose check to Write(char) and Write(char[]),
+	AutoFlush. Fixed possible integer overflow in Write(char[],int,int).
 	* StringWriter.cs: Fixed possible integer overflow in Write. Changed
 	spaces for tabs.
 
