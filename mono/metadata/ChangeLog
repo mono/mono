@@ -1,3 +1,8 @@
+2003-10-18  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* icall.c: Removed GetUninitializedObject method because
+	  AllocateUninitializedClassInstance does the same.
+
 2003-10-18  Martin Baulig  <martin@ximian.com>
 
 	* class.c (inflate_generic_signature): Renamed to
