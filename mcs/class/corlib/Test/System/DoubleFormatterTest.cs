@@ -916,9 +916,30 @@ namespace MonoTests.System {
 
 		// see bug #60110 for more details
 		[Test]
+		public void Roundtrip_ExactStringFormat () 
+		{
+			// here we check that the "R" output is "extactly" the same as MS implementation
+			AssertEquals ("R-E", "2.7182818284590451", Math.E.ToString ("R", CultureInfo.InvariantCulture));
+		}
+
+		// see bug #60110 for more details
+		[Test]
 		public void Roundtrip () 
 		{
-			AssertEquals ("R-E", "2.7182818284590451", Math.E.ToString ("R", CultureInfo.InvariantCulture));
+			// here we check that we can recreate the "extact" same double from the "R" format
+			string se = Math.E.ToString ("R", CultureInfo.InvariantCulture);
+			Double de = Double.Parse (se);
+			AssertEquals ("E==E", Math.E, de);
+
+			// we try Mono "long" R format
+			se = "2.718281828459045090795598298427648842334747314453125";
+			de = Double.Parse (se);
+			AssertEquals ("Mono==E", Math.E, de);
+
+			// we try MS "short" R format
+			se = "2.7182818284590451";
+			de = Double.Parse (se);
+			AssertEquals ("Mono==E", Math.E, de);
 		}
 	}
 }
