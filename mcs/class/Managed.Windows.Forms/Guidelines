@@ -68,7 +68,8 @@ guidelines are for the sake of consistency.
 9. Define regions in your code, as it makes it easy to browse the code
    in the editors which can collapse/expand regions.
 
-10. To be added.
+10. Last but not the least, please let others on the mono-winforms-list
+    know about your work, so that duplication can be avoided.
 
 Happy hacking!
 
