@@ -5,14 +5,16 @@ DIST=monocharge-`date -u +%Y%m%d`
 
 default: all
 
-all install:
+all:
+	for i in $(DIRS) ; do \
+		(cd $$i; $(MAKE) -f makefile.gnu $@) || exit 1; \
+	done
+
+install: all
 	if test x$$prefix = x; then \
 		echo Usage is: make -f makefile.gnu install prefix=YOURPREFIX; \
 		exit 1; \
 	fi;
-	for i in $(DIRS) ; do \
-		(cd $$i; $(MAKE) -f makefile.gnu $@) || exit 1; \
-	done
 
 clean:
 	-rm monocharge-*.tar.gz

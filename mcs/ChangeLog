@@ -1,3 +1,8 @@
+2002-07-29  Martin Baulig  <martin@gnome.org>
+
+	* makefile.gnu: Don't force people to install.  The default must also
+	be `all' and not `install'.
+
 2002-07-26  Alp Toker  <alp@atoker.com>
 
 	* INSTALL: Wrote a guide to mcs installation.
