@@ -383,22 +383,18 @@ namespace System.Windows.Forms
 		public int SelectionStart {
 			get { 
 				if (dropdown_style == ComboBoxStyle.DropDownList) 
-					return 0; 
-					
-				// Not implemented in TextBox yet
-				//return textbox_ctrl.SelectionStart;
-				return 0;
+					return 0; 					
+				
+				return textbox_ctrl.SelectionStart;				
 			}
 			set {
 				if (dropdown_style == ComboBoxStyle.DropDownList) 
 					return;
 				
-				// Not implemented in TextBox yet
-					
-				//if (textbox_ctrl.SelectionStart == value)
-				//	return;					
+				if (textbox_ctrl.SelectionStart == value)
+					return;					
 				
-				//textbox_ctrl.SelectionStart = value;
+				textbox_ctrl.SelectionStart = value;
 			}
 		}
 
@@ -734,8 +730,7 @@ namespace System.Windows.Forms
 		}
 
 		private void CreateComboListBox ()
-		{
-			Console.WriteLine ("CreateComboListBox called");
+		{			
 			listbox_ctrl = new ComboListBox (this);
 			//listbox_ctrl.Size = combobox_info.listbox_size;
 			listbox_ctrl.Size = new Size (100, 100);			
@@ -824,15 +819,7 @@ namespace System.Windows.Forms
     				
     			Rectangle rect = ClientRectangle;
 
-			/* Copies memory drawing buffer to screen*/			
-			//if (rect.Height > Height)
-			//	rect.Height = Height;
-			
-			//if (rect.Height > 20)
-			//	rect.Height = 20;
-				
-			Console.WriteLine ("ComboBox.OnPaint {0}", rect);
-				
+			/* Copies memory drawing buffer to screen*/
 			Draw (rect);			
 			pevent.Graphics.DrawImage (ImageBuffer, rect, rect, GraphicsUnit.Pixel);
 
@@ -1010,7 +997,18 @@ namespace System.Windows.Forms
 			private int top_item;			/* First item that we show the in the current page */
 			private int last_item;			/* Last visible item */
 			private int highlighted_item;		/* Item that is currently selected */
-			private Rectangle textarea_drawable;	/* Rectangle of the drawable text area */			
+			internal int page_size;			/* Number of listbox items per page */
+			private Rectangle textarea_drawable;	/* Rectangle of the drawable text area */
+			
+			internal enum ItemNavigation
+			{
+				First,
+				Last,
+				Next,
+				Previous,
+				NextPage,
+				PreviousPage,
+			}
 
 			public ComboListBox (ComboBox owner) : base ()
 			{	
@@ -1018,11 +1016,13 @@ namespace System.Windows.Forms
 				need_vscrollbar = false;
 				top_item = 0;
 				last_item = 0;
+				page_size = 0;
 				highlighted_item = -1;
 
 				MouseDown += new MouseEventHandler (OnMouseDownPUW);
 				MouseMove += new MouseEventHandler (OnMouseMovePUW);
 				MouseUp += new MouseEventHandler (OnMouseUpPUW);
+				KeyDown += new KeyEventHandler (OnKeyDownPUW);
 				Paint += new PaintEventHandler (OnPaintPUW);
 				SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 				SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
@@ -1064,7 +1064,7 @@ namespace System.Windows.Forms
 				
 				if (owner.DropDownStyle == ComboBoxStyle.Simple) {
 					width = owner.CBoxInfo.listbox_area.Width;
-					height = owner.CBoxInfo.listbox_area.Height;					
+					height = owner.CBoxInfo.listbox_area.Height;
 
 					if (owner.IntegralHeight == true) {
 						int remaining = (height - 2 -
@@ -1088,11 +1088,15 @@ namespace System.Windows.Forms
 					width = owner.ClientRectangle.Width;
 	
 					if (owner.Items.Count <= owner.MaxDropDownItems) {
-						height = owner.ItemHeight * owner.Items.Count;						
+						height = (owner.ItemHeight - 2) * owner.Items.Count;						
 					}
 					else {
-						height = owner.ItemHeight * owner.MaxDropDownItems;						
+						height = (owner.ItemHeight - 2) * owner.MaxDropDownItems;						
 					}
+					
+					height += ThemeEngine.Current.DrawComboListBoxDecorationBottom (owner.DropDownStyle);				
+					height += ThemeEngine.Current.DrawComboListBoxDecorationTop (owner.DropDownStyle);
+
 				}
 				
 				if (owner.Items.Count <= owner.MaxDropDownItems) {
@@ -1104,8 +1108,7 @@ namespace System.Windows.Forms
 						ThemeEngine.Current.DrawComboListBoxDecorationTop (owner.DropDownStyle);
 						
 					vscrollbar_ctrl.Location = new Point (width - vscrollbar_ctrl.Width - ThemeEngine.Current.DrawComboListBoxDecorationRight (owner.DropDownStyle), 
-						ThemeEngine.Current.DrawComboListBoxDecorationTop (owner.DropDownStyle));
-					
+						ThemeEngine.Current.DrawComboListBoxDecorationTop (owner.DropDownStyle));					
 	
 					vscrollbar_ctrl.Maximum = owner.Items.Count - owner.MaxDropDownItems;
 				}
@@ -1116,8 +1119,7 @@ namespace System.Windows.Forms
 				Size = new Size (width, height);
 				textarea_drawable = ClientRectangle;
 				textarea_drawable.Width = width;
-				textarea_drawable.Height = height;
-				
+				textarea_drawable.Height = height;				
 
 				// Exclude decorations
 				textarea_drawable.X += ThemeEngine.Current.DrawComboListBoxDecorationLeft (owner.DropDownStyle);
@@ -1126,17 +1128,20 @@ namespace System.Windows.Forms
 				textarea_drawable.Width -= ThemeEngine.Current.DrawComboListBoxDecorationLeft (owner.DropDownStyle);
 				textarea_drawable.Height -= ThemeEngine.Current.DrawComboListBoxDecorationBottom (owner.DropDownStyle);				
 				textarea_drawable.Height -= ThemeEngine.Current.DrawComboListBoxDecorationTop (owner.DropDownStyle);
+				
 				if (need_vscrollbar)
 					textarea_drawable.Width -= vscrollbar_ctrl.Width;
 
-				last_item = LastVisibleItem ();
+				last_item = LastVisibleItem ();				
+				page_size = textarea_drawable.Height / (owner.ItemHeight - 2);
 				
-				Console.WriteLine ("ComboListBox.CalcListBoxArea {0} ", textarea_drawable);
+				Console.WriteLine ("ComboListBox.CalcListBoxArea {0} page_size {1}, dh: {2}, itemh {3}", textarea_drawable,
+					page_size, textarea_drawable.Height, (owner.ItemHeight - 2));
 			}			
 
 			private void Draw (Rectangle clip)
 			{	
-				Rectangle cl = ClientRectangle;
+				Rectangle cl = ClientRectangle;				
 				
 				DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
 					(owner.BackColor), ClientRectangle);
@@ -1145,7 +1150,7 @@ namespace System.Windows.Forms
 					Rectangle item_rect;
 					DrawItemState state = DrawItemState.None;
 
-					for (int i = top_item; i < last_item; i++) {
+					for (int i = top_item; i <= last_item; i++) {
 						item_rect = GetItemDisplayRectangle (i, top_item);
 
 						if (clip.IntersectsWith (item_rect) == false)
@@ -1156,8 +1161,6 @@ namespace System.Windows.Forms
 
 						if (i == highlighted_item)
 							state |= DrawItemState.Selected;
-							
-						Console.WriteLine ("Item {0} {1}", i, item_rect);
 
 						owner.OnDrawItem (new DrawItemEventArgs (DeviceContext, owner.Font, item_rect,
 							i, state, owner.ForeColor, owner.BackColor));
@@ -1184,13 +1187,16 @@ namespace System.Windows.Forms
 
 			public void HideWindow ()
 			{
+				if (owner.DropDownStyle == ComboBoxStyle.Simple)
+					return;
+					
 				owner.ButtonReleased ();
 				Hide ();
 			}
 
 			private int IndexFromPointDisplayRectangle (int x, int y)
 			{
-	    			for (int i = top_item; i < last_item; i++) {
+	    			for (int i = top_item; i <= last_item; i++) {
 					if (GetItemDisplayRectangle (i, top_item).Contains (x, y) == true)
 						return i;
 				}
@@ -1205,13 +1211,132 @@ namespace System.Windows.Forms
 				int i = 0;
 
 				for (i = top_item; i < owner.Items.Count; i++) {
-					item_rect = GetItemDisplayRectangle (i, top_item);
-					if (item_rect.Y > top_y)
+					item_rect = GetItemDisplayRectangle (i, top_item);				
+					if (item_rect.Y + item_rect.Height > top_y) {
 						return i;
+					}
 				}
 				return i;
 			}
+			
+			private void NavigateItem (ItemNavigation navigation)
+			{
+				switch (navigation) {
+				case ItemNavigation.Next: {
+					if (highlighted_item + 1 < owner.Items.Count) {
+						
+						if (highlighted_item + 1 > last_item) {
+							top_item++;
+							vscrollbar_ctrl.Value = top_item;
+						}
+						SetHighLightedItem (highlighted_item + 1);
+					}
+					break;
+				}
+				
+				case ItemNavigation.Previous: {
+					if (highlighted_item > 0) {						
+						
+						if (highlighted_item - 1 < top_item) {							
+							top_item--;
+							vscrollbar_ctrl.Value = top_item;							
+						}
+						SetHighLightedItem (highlighted_item - 1);
+					}					
+					break;
+				}
+				
+				case ItemNavigation.NextPage: {
+					if (highlighted_item + page_size - 1 > owner.Items.Count) {
+						top_item = owner.Items.Count - page_size;
+						vscrollbar_ctrl.Value = top_item; 						
+						SetHighLightedItem (owner.Items.Count - 1);						
+					}
+					else {
+						if (highlighted_item + page_size - 1  > last_item) {
+							top_item = highlighted_item;
+							vscrollbar_ctrl.Value = highlighted_item;
+						}
+					
+						SetHighLightedItem (highlighted_item + page_size - 1);
+					}
+					
+					break;
+				}
+				
+				case ItemNavigation.PreviousPage: {					
+					
+					/* Go to the first item*/
+					if (highlighted_item - (page_size - 1) <= 0) {
+																		
+						top_item = 0;
+						vscrollbar_ctrl.Value = top_item;
+						SetHighLightedItem (0);
+						
+					
+					}
+					else { /* One page back */
+						if (highlighted_item - (page_size - 1)  < top_item) {
+							top_item = highlighted_item - (page_size - 1);
+							vscrollbar_ctrl.Value = top_item;
+						}
+					
+						SetHighLightedItem (highlighted_item - (page_size - 1));
+					}
+					
+					break;
+				}				
+					
+				default:
+					break;
+				}		
+				
+			}
+			
+			private void OnKeyDownPUW (object sender, KeyEventArgs e) 			
+			{				
+				switch (e.KeyCode) {			
+				case Keys.Up:
+					NavigateItem (ItemNavigation.Previous);
+					break;				
+	
+				case Keys.Down:				
+					NavigateItem (ItemNavigation.Next);
+					break;
+				
+				case Keys.PageUp:
+					NavigateItem (ItemNavigation.PreviousPage);
+					break;				
+	
+				case Keys.PageDown:				
+					NavigateItem (ItemNavigation.NextPage);
+					break;
+				
+				default:
+					break;
+				}
+			}
+			
+			private void SetHighLightedItem (int index)
+			{
+				Rectangle invalidate;
+				
+				/* Previous item */
+    				if (highlighted_item != -1) {
+					invalidate = GetItemDisplayRectangle (highlighted_item, top_item);
+	    				if (ClientRectangle.Contains (invalidate))
+	    					Invalidate (invalidate);
+	    			}
+				
+    				highlighted_item = index;
 
+    				 /* Current item */
+    				invalidate = GetItemDisplayRectangle (highlighted_item, top_item);
+    				if (ClientRectangle.Contains (invalidate))
+    					Invalidate (invalidate);
+				
+			}			
+			
 			private void OnMouseDownPUW (object sender, MouseEventArgs e)
 	    		{
 	    			/* Click outside the client area destroys the popup */
@@ -1226,7 +1351,7 @@ namespace System.Windows.Forms
 
 				owner.SelectedIndex = index;
 				HideWindow ();
-			}
+			}			
 
 			private void OnMouseUpPUW (object sender, MouseEventArgs e)
 	    		{
@@ -1234,25 +1359,11 @@ namespace System.Windows.Forms
 			}
 
 			private void OnMouseMovePUW (object sender, MouseEventArgs e)
-			{
-				Rectangle invalidate;
+			{				
 				int index = IndexFromPointDisplayRectangle (e.X, e.Y);
 
-    				if (index == -1) return;
-
-    				/* Previous item */
-    				if (highlighted_item != -1) {
-					invalidate = GetItemDisplayRectangle (highlighted_item, top_item);
-	    				if (ClientRectangle.Contains (invalidate))
-	    					Invalidate (invalidate);
-	    			}
-
-    				highlighted_item = index;
-
-    				 /* Current item */
-    				invalidate = GetItemDisplayRectangle (highlighted_item, top_item);
-    				if (ClientRectangle.Contains (invalidate))
-    					Invalidate (invalidate);
+    				if (index != -1)
+					SetHighLightedItem (index);
 			}
 
 			private void OnPaintPUW (Object o, PaintEventArgs pevent)
@@ -1276,7 +1387,7 @@ namespace System.Windows.Forms
 
 			// Value Changed
 			private void VerticalScrollEvent (object sender, EventArgs e)
-			{
+			{				
 				top_item =  vscrollbar_ctrl.Value;
 				last_item = LastVisibleItem ();
 				Refresh ();

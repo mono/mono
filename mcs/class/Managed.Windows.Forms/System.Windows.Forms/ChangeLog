@@ -1,3 +1,7 @@
+2005-01-10  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ComboBox.cs: keyboard navigation, item navigation, bug fixes
+
 2005-01-10  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs:
