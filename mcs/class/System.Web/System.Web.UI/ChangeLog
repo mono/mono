@@ -1,3 +1,8 @@
+2004-06-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlTextWriter.cs: only create a closing tag for unknown tags. Fixes
+	bug #60681.
+
 2004-06-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* PageParser.cs:
