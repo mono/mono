@@ -1,3 +1,10 @@
+2003-12-03  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* System.Runtime.Remoting.dll.sources: Added:
+		System.Runtime.Remoting.MetadataServices/MetaDataExporter.cs
+		System.Runtime.Remoting.MetadataServices/MetaDataCodeGenerator.cs
+	* Makefile: Added new assembly references.
+
 2003-11-16  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* System.Runtime.Remoting.dll.sources: Added:

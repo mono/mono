@@ -28,6 +28,8 @@
 ./System.Runtime.Remoting.Channels.Http/HttpServer.cs
 ./System.Runtime.Remoting.Channels.Http/HttpServerChannel.cs
 ./System.Runtime.Remoting.MetadataServices/MetaData.cs
+./System.Runtime.Remoting.MetadataServices/MetaDataExporter.cs
+./System.Runtime.Remoting.MetadataServices/MetaDataCodeGenerator.cs
 ./System.Runtime.Remoting.MetadataServices/SdlChannelSinkProvider.cs
 ./System.Runtime.Remoting.MetadataServices/ServiceType.cs
 ./System.Runtime.Remoting.MetadataServices/SUDSParserException.cs
