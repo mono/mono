@@ -30,13 +30,7 @@ namespace System.Globalization
 		
 		// Public Static (Shared) Fields
 		// DONE!
-		public static int JulianEra
-		{
-			get 
-			{
-				return 1;
-			}
-		}
+		public static readonly int JulianEra = 1;
 
 		// Public Instance Constructors
 		// DONE!

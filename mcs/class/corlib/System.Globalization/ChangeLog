@@ -1,3 +1,8 @@
+2002-03-04  Nick Drochak  <ndrochak@gol.com>
+
+	* JulianCalendar.cs: JulianEra should be field, not a property.
+	Thanks CorCompare (and Piers).
+
 2002-02-12  Duncan Mak  <duncan@ximian.com>
 
 	* CultureInfo.cs: Added the Calendar property to make the TimeZone
