@@ -1,3 +1,7 @@
+2004-09-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: reuse allocated slots in the queue.
+
 2004-09-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* appdomain.c:
