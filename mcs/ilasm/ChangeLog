@@ -1,4 +1,7 @@
+2003-03-15 Jackson Harper <jackson@latitudegeo.com>
 
+	* makefile, makefile.gnu: Add FieldTable to build
+	
 Fri Mar 14 10:06:49 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* codegen/InstrTable.cs: fix break instruction name.
