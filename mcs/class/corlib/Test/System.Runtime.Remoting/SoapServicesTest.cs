@@ -200,8 +200,11 @@ namespace MonoTests.System.Runtime.Remoting
 			act = SoapServices.GetSoapActionFromMethodBase (mb);
 
 			mb = typeof(SoapTest).GetMethod ("FesAlgoMes");
-			SoapServices.RegisterSoapActionForMethodBase (mb, "anotheraction");
 			act = SoapServices.GetSoapActionFromMethodBase (mb);
+			if (act != "anotheraction")
+			{
+				SoapServices.RegisterSoapActionForMethodBase (mb, "anotheraction");
+			}
 
 			mb = typeof(SoapTest).GetMethod ("FesAlgoMesEspecial");
 			act = SoapServices.GetSoapActionFromMethodBase (mb);
@@ -258,6 +261,7 @@ namespace MonoTests.System.Runtime.Remoting
 			Assert ("M7", res);
 //			AssertEquals ("M8", GetSimpleTypeName (typeof(SoapTest)), typeName);
 			AssertEquals ("M9", "FesAlgoMesEspecial", methodName);
+
 		}
 	}
 }
