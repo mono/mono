@@ -273,6 +273,7 @@ System/UInt64Test.cs
 System/UIntPtrTest.cs
 System/VersionTest.cs
 System/ValueTypeTest.cs
+System/BadImageFormatExceptionCas.cs
 System/EnvironmentCas.cs
 System/ExceptionCas.cs
 System.Diagnostics/StackFrameCas.cs
@@ -280,4 +281,6 @@ System.Diagnostics/StackTraceCas.cs
 System.IO/DirectoryCas.cs
 System.IO/FileLoadExceptionCas.cs
 System.IO/FileNotFoundExceptionCas.cs
+System.IO.IsolatedStorage/IsolatedStorageFileCas.cs
+System.IO.IsolatedStorage/IsolatedStorageFileStreamCas.cs
 System.Security/SecurityExceptionCas.cs
