@@ -1,5 +1,10 @@
 2005-03-31  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MSXslScriptManager.cs : added TARGET_JVM switch (that does not
+	  support CodeDom). Use Guid.ToString("N").
+
+2005-03-31  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Compiler.cs : removed extraneous using_directive.
 
 2005-03-25  Atsushi Enomoto  <atsushi@ximian.com>

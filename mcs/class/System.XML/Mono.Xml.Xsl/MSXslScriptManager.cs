@@ -127,7 +127,10 @@ namespace Mono.Xml.Xsl {
 			
 			public object Compile (XPathNavigator node)
 			{
-				string suffix = Guid.NewGuid ().ToString ().Replace ("-", String.Empty);
+#if TARGET_JVM
+				throw new NotImplementedException ();
+#else
+				string suffix = Guid.NewGuid ().ToString ("N");
 				switch (this.language) {
 				case ScriptingLanguage.CSharp:
 					return new CSharpCompilerInfo ().GetScriptClass (Code, suffix, node, evidence);
@@ -138,6 +141,7 @@ namespace Mono.Xml.Xsl {
 				default:
 					return null;
 				}
+#endif
 			}
 		}
 	}
