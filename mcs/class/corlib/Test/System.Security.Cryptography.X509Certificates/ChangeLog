@@ -1,3 +1,9 @@
+2003-12-17  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* X509SpcTest.cs: Now use Path.GetFullPath for all filenames as 
+	X509Certificate.CreateFromSignedFile sometimes (like on Nick's
+	computer) didn't "see" the file and returned an empty certificate.
+
 2003-12-15  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* X509CapiTest.cs: New. Unit test for loading a certificate using a

@@ -1,5 +1,5 @@
 //
-// X509SPCTest.cs - NUnit Test Cases for X509 Software Publisher Certificate
+// X509SpcTest.cs - NUnit Test Cases for X509 Software Publisher Certificate
 //
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
@@ -17,18 +17,17 @@ using System.Text;
 namespace MonoTests.System.Security.Cryptography.X509Certificates {
 
 	[TestFixture]
-	public class X509SPCTest : Assertion {
+	public class SoftwarePublisherCertificateTest : Assertion {
 
 		[TearDown]
 		void TearDown () 
 		{
 			try {
-				File.Delete ("smallspc.exe");
-				File.Delete ("smallspc-invalid.exe");
-				File.Delete ("small.exe");
+				File.Delete (Path.GetFullPath ("smallspc.exe"));
+				File.Delete (Path.GetFullPath ("smallspc-invalid.exe"));
+				File.Delete (Path.GetFullPath ("small.exe"));
 			}
-			catch {
-			}
+			catch {}
 		}
 
 		static private byte[] smallexe = { 
@@ -1003,35 +1002,35 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		[Test]
 		public void ValidSignature () 
 		{
-			string filename = "smallspc.exe";
+			string filename = Path.GetFullPath ("smallspc.exe");
 			WriteFile (filename, smallspcexe);
 
 			X509Certificate spc = X509Certificate.CreateFromSignedFile (filename);
 			X509Certificate cert = new X509Certificate (motus);
-			AssertEquals ("CreateFromSignedFile", spc.GetRawCertDataString(), cert.GetRawCertDataString());
+			AssertEquals ("CreateFromSignedFile", cert.GetRawCertDataString (), spc.GetRawCertDataString ());
 		}
 
 		[Test]
 		[ExpectedException (typeof (COMException))]
 		public void InvalidSignature () 
 		{
-			string filename = "smallspc-invalid.exe";
+			string filename = Path.GetFullPath ("smallspc-invalid.exe");
 			byte[] content = (byte[]) smallspcexe.Clone ();
 			// make sure it's invalid
 			byte[] mark = Encoding.ASCII.GetBytes ("bad signature");
 			Buffer.BlockCopy (mark, 0, content, 1024, mark.Length);
 			WriteFile (filename, content);
 
-			X509Certificate spc = X509Certificate.CreateFromSignedFile ("smallspc-invalid.exe");
+			X509Certificate spc = X509Certificate.CreateFromSignedFile (filename);
 		}
 
 		[Test]
 		public void NonSignedAssembly () 
 		{
-			string filename = "small.exe";
+			string filename = Path.GetFullPath ("small.exe");
 			WriteFile (filename, smallexe);
 
-			X509Certificate spc = X509Certificate.CreateFromSignedFile ("small.exe");
+			X509Certificate spc = X509Certificate.CreateFromSignedFile (filename);
 			AssertEquals ("NonSignedAssembly", 0, spc.GetHashCode ());
 		}
 	}
