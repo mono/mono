@@ -8,8 +8,11 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices {
+
+	[ComVisible(false)]
 	public struct XACTTRANSINFO {
 
 		#region Fields

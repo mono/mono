@@ -60,6 +60,7 @@ System.EnterpriseServices/SecurityRoleAttribute.cs
 System.EnterpriseServices/ServicedComponent.cs
 System.EnterpriseServices/ServicedComponentException.cs
 System.EnterpriseServices/ServiceConfig.cs
+System.EnterpriseServices/ServiceDomain.cs
 System.EnterpriseServices/SharedProperty.cs
 System.EnterpriseServices/SharedPropertyGroup.cs
 System.EnterpriseServices/SharedPropertyGroupManager.cs
