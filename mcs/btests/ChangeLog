@@ -1,3 +1,15 @@
+2004-08-17 Sachin Kumar <skumar1@novell.com>
+	* AssignmentStatements1.vb:
+	* AssignmentStatements2.vb:
+	* AssignmentStatements3.vb:
+	* AssignmentStatements4.vb:
+	* AssignmentStatementsA.vb:
+	* AssignmentStatementsB.vb:
+	* AssignmentStatementsC1.vb:
+	* AssignmentStatementsC2.vb:
+	* AssignmentStatementsC3.vb:
+	* Test.Sources: included new tests
+
 2004-08-16 Sachin Kumar <skumar1@novell.com>
 	* WithStatementC.vb:
 	* WithStatementC3.vb:

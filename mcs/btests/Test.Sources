@@ -175,7 +175,9 @@ LocalDeclarationA \
 WithStatementA \
 WithStatementB \
 WithStatementC \
-ForEachA
+ForEachA \
+AssignmentStatementsA \
+AssignmentStatementsB
 
 # All negetive test cases which should
 # fail during compilation goes here
@@ -370,7 +372,10 @@ LocalDeclarationC2 \
 WithStatementC1 \
 WithStatementC2 \
 WithStatementC3 \
-WithStatementC4
+WithStatementC4 \
+AssignmentStatementsC1 \
+AssignmentStatementsC2 \
+AssignmentStatementsC3 
 
 # All negetive test cases which should fail at
 # runtime goes here
@@ -397,6 +402,10 @@ ArithmeticOperators2 \
 ArithmeticOperators3 \
 LikeOperator1 \
 RelationalOperators1 \
-LocalVariables1
+LocalVariables1 \
+AssignmentStatements1 \
+AssignmentStatements2 \
+AssignmentStatements3 \
+AssignmentStatements4
 
 
