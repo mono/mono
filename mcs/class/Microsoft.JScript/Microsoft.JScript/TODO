@@ -3,13 +3,6 @@ a list of things where you can start helping with:
 
 1) Grammar.
 
-- Most of the syntatic grammar described at EcmaScript 262 (3rd Edition)
-  is on cvs, but we need to test it a lot to make sure we are not
-  accepting more that needed. Here is where some help on "howto" set
-  up a test suite for our parser would help me a lot.
-
-- Add upport for URI's (Section 15.1.3 from Ecma262).
-- Add support for regular expressions. (Section 15.10.1 from Ecma262).
 - Add support for the extensions from MS for JScript .Net (classes,
   packages, interfaces, etc. This is included at the MS SDK docs - mostly).
 
@@ -30,9 +23,6 @@ interest are the classes:
 	   'Global Object' at the spec.
 	 - ScriptObject
 	 - ScriptFunction
-
-4) Design ideas about the object system (class and prototype based).
-
 
 Thanks!
 
