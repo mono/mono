@@ -1430,6 +1430,11 @@ namespace Mono.CSharp {
 			return Child.GetValue ();
 		}
 
+		public object GetValueAsEnumType ()
+		{
+			return System.Enum.ToObject (type, Child.GetValue ());
+		}
+
 		//
 		// Converts from one of the valid underlying types for an enumeration
 		// (int32, uint32, int64, uint64, short, ushort, byte, sbyte) to

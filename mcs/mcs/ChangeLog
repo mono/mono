@@ -1,3 +1,17 @@
+2004-09-22  Martin Baulig  <martin@ximian.com>
+
+	Marek and me just fixed one of our oldest bugs: #28562 :-)
+
+	* ecore.cs (EnumConstant.GetValueAsEnumType): New public method.
+
+	* attribute.cs (Attribute.GetAttributeArgumentExpression): If
+	we're an EnumConstant, just return that.
+	(Attribute.Resolve): GetAttributeArgumentExpression() may give us
+	an EnumConstant.  In this case, we need to use GetValueAsEnumType()
+	to get the value which'll actually be written into the attribute.
+	However, we have to use GetValue() to access the attribute's value
+	in the compiler.	
+
 2004-09-22  Marek Safar  <marek.safar@seznam.cz>
 
 	* constant.cs (Constant.IsNegative): New abstract property
