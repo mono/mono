@@ -1,2 +1,10 @@
+2004-05-29  Gert Driesen (drieseng@users.sourceforge.net)
+
+	* System.Messaging/Acknowledgment.cs: added/corrected values,
+	removed TODO
+	* System.Messaging/MessageQueueErrorCode.cs: fixed typo
+	* System.Messaging/MessageQueueAccessRights.cs: removed extra
+	enum field
+
 2003-02-23  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* added just files enough to compile a dummy DLL for now

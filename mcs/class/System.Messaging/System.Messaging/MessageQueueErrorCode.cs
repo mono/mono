@@ -28,7 +28,7 @@ namespace System.Messaging
 		CannotJoinDomain,
 		CannotLoadMsmqOcm, 
 		CannotOpenCertificateStore,
-		CannotSetCryptographicSecurityDescription, 
+		CannotSetCryptographicSecurityDescriptor, 
 		CannotSignDataEx,
 		CertificateNotProvided, 
 		ComputerDoesNotSupportEncryption,

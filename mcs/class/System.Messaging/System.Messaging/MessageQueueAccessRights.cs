@@ -10,26 +10,24 @@ using System;
 
 namespace System.Messaging 
 {
-	[MonoTODO("Have to force the right specific values for each element")]
 	[Flags]
 	[Serializable]
-	public enum MessageQueueAccessRights 
+	public enum MessageQueueAccessRights
 	{
-		ChangeQueuePermissions,
-		DeleteJournalMessage, 
-		DeleteMessage,
-		DeleteQueue, 
-		FullControl, 
-		GenericRead,
-		GenericWrite, 
-		GetQueuePermissions, 
-		GetQueueProperties,
-		PeekMessage, 
-		ReceiveJournalMessage, 
-		ReceiveMessage,
-		SetQueueProperties, 
-		TakeQueueProperties, 
-		TakeQueueOwnership,
-		WriteMessage
+		ChangeQueuePermissions = 262144,
+		DeleteJournalMessage = 8, 
+		DeleteMessage = 1,
+		DeleteQueue = 65536,
+		FullControl = 983103,
+		GenericRead = 131115,
+		GenericWrite = 131108, 
+		GetQueuePermissions = 131072, 
+		GetQueueProperties = 32,
+		PeekMessage = 2, 
+		ReceiveJournalMessage = 10, 
+		ReceiveMessage = 3,
+		SetQueueProperties = 16, 
+		TakeQueueOwnership = 524288,
+		WriteMessage = 4
 	}
 }

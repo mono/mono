@@ -9,24 +9,26 @@
 using System;
 
 namespace System.Messaging 
-{	
-	[MonoTODO("Have to force the right specific values for each element")]
+{
 	[Serializable]
 	public enum Acknowledgment 
 	{
-		AccessDenied, 
-		BadDestinationQueue, 
-		BadEncryption,
-		BadSignature, 
-		CouldNotEncrypt, 
-		HopCountExceeded,
-		None, 
-		NotTransactionalMessage, 
-		NotTransactionQueue,
-		Purged, 
-		ReachQueue, 
-		ReachQueueTimeout,
-		Receive, 
-		ReceiveTimeout
+		AccessDenied = 32772,
+		BadDestinationQueue = 32768,
+		BadEncryption = 32775,
+		BadSignature = 32774,
+		CouldNotEncrypt = 32776,
+		HopCountExceeded = 32773,
+		None = 0,
+		NotTransactionalMessage = 32778,
+		NotTransactionalQueue = 32777,
+		Purged = 32769,
+		QueueDeleted = 49152,
+		QueueExceedMaximumSize = 32771,
+		QueuePurged = 49153,
+		ReachQueue = 2,
+		ReachQueueTimeout = 32770,
+		Receive = 16384,
+		ReceiveTimeout = 49154
 	}
 }
