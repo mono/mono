@@ -24,6 +24,9 @@
 //
 //
 // $Log: Cursor.cs,v $
+// Revision 1.2  2004/08/23 19:39:59  pbartok
+// - Implemented Position property
+//
 // Revision 1.1  2004/08/22 18:03:57  pbartok
 // - Started implementation, not usable yet
 //
@@ -77,15 +80,21 @@ namespace System.Windows.Forms {
 
 			[MonoTODO("First need to add ability to set cursor clip rectangle to XplatUI drivers to implement this property")]
 			set {
-				IntPtr		handle;
-				bool		confined;
-				Rectangle	rect;
+				;
+			}
+		}
 
-				XplatUI.GrabInfo(out handle, out confined, out rect);
-				if (handle == IntPtr.Zero) {
-					// cannot set the clip rectangle, no Grab going on
-				}
-				//
+		public static Point Position {
+			get {
+				int x;
+				int y;
+
+				XplatUI.GetCursorPos (IntPtr.Zero, out x, out y);
+				return new Point (x, y);
+			}
+
+			set {
+				XplatUI.SetCursorPos(IntPtr.Zero, value.X, value.Y);
 			}
 		}
 		#endregion	// Public Static Properties
