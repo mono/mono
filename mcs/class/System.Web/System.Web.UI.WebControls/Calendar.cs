@@ -658,9 +658,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[MonoTODO]
 		protected override void OnPreRender (EventArgs e)
 		{
+			base.OnPreRender (e);
 		}
 
 		protected override void Render(HtmlTextWriter writer)
@@ -1244,10 +1244,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[MonoTODO]
 		protected bool HasWeekSelectors (CalendarSelectionMode selectionMode)
 		{
-			return true;
+			return selectionMode == CalendarSelectionMode.DayWeek ||
+				selectionMode == CalendarSelectionMode.DayWeekMonth;
 		}
 	}
 }
