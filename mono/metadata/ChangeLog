@@ -1,3 +1,8 @@
+2004-09-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (mono_marshal_alloc): Return a valid pointer on size 0
+	as well.
+
 2004-08-28 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* gc.c: actually enable paolo's patch to make GC warnings
