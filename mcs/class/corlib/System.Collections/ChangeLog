@@ -3,6 +3,11 @@
 	* Hashtable.cs: made SynchedHashtable serializable. Fixes bug #45918.
 	Thanks to JoergR@voelcker.com (Joerg Rosenkranz).
 
+2003-06-27  Duncan Mak  <duncan@ximian.com>
+
+	* Hashtable.cs: Patch from PAF@design.ru, GetEnumerator should be
+	returning DictionaryEntrys, instead of just the Key of the table.
+
 2003-06-26  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Hashtable.cs: Fixed bug when serializing and deserializing

@@ -294,7 +294,7 @@ namespace System.Collections {
 
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			return new Enumerator (this, EnumeratorMode.KEY_MODE);
+			return new Enumerator (this, EnumeratorMode.ENTRY_MODE);
 		}
 
 
