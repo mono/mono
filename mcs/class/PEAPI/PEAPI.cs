@@ -147,6 +147,31 @@ namespace PEAPI
             }
   }
 
+  public class GenericMethodSig {
+
+          private Type[] gen_param;
+
+          public GenericMethodSig (Type[] gen_param)
+          {
+                  this.gen_param = gen_param;
+          }
+
+          internal void TypeSig (MemoryStream str)
+          {
+                  MetaData.CompressNum ((uint) gen_param.Length, str); // THIS IS NOT RIGHT, but works
+                  MetaData.CompressNum ((uint) gen_param.Length, str);
+                  foreach (Type param in gen_param)
+                          param.TypeSig (str);
+          }
+
+          internal uint GetSigIx (MetaData md)
+          {
+                  MemoryStream sig = new MemoryStream();
+                  TypeSig (sig);
+                  return md.AddToBlobHeap (sig.ToArray());
+          }
+  }
+
         public class Sentinel : Type {
 
             public Sentinel () : base (0x41) { }
@@ -505,7 +530,7 @@ namespace PEAPI
   /// Method call conventions
   /// </summary>
   public enum CallConv { Default, Cdecl, Stdcall, Thiscall, 
-    Fastcall, Vararg, Instance = 0x20, Generic = 0x50, InstanceExplicit = 0x60 }
+    Fastcall, Vararg, Instance = 0x20, Generic = 0x10, InstanceExplicit = 0x60 }
 
   /// <summary>
   /// Type custom modifier
@@ -4048,18 +4073,18 @@ if (rsrc != null)
         internal class MethodSpec : MetaDataElement
         {
                 Method meth;
-                GenericTypeInst type_inst;
-                uint meth_idx;
+                GenericMethodSig g_sig;
+                uint sidx;
 
-                internal MethodSpec (Method meth, GenericTypeInst type_inst) {
+                internal MethodSpec (Method meth, GenericMethodSig g_sig) {
                         this.meth = meth;
-                        this.type_inst = type_inst;
+                        this.g_sig = g_sig;
                         tabIx = MDTable.MethodSpec;
                 }
 
                 internal sealed override void BuildTables (MetaData md) {
                         if (done) return;
-                        meth_idx = meth.GetSigIx (md);
+                        sidx = g_sig.GetSigIx (md);
                         done = true;
                 }
 
@@ -4069,8 +4094,8 @@ if (rsrc != null)
                 }
 
                 internal sealed override void Write (FileImage output) {
-                    output.WriteCodedIndex(CIx.MethodDefOrRef, meth);
-                    output.BlobIndex (meth_idx);
+                    output.WriteCodedIndex (CIx.MethodDefOrRef, meth);
+                    output.BlobIndex (sidx);
                 }
         }
 
@@ -6033,9 +6058,9 @@ if (rsrc != null)
             return field;
     }
 
-    public void AddMethodSpec (Method m, GenericTypeInst type_inst)
+    public void AddMethodSpec (Method m, GenericMethodSig g_sig)
     {
-            MethodSpec ms = new MethodSpec (m, type_inst);
+            MethodSpec ms = new MethodSpec (m, g_sig);
             metaData.AddToTable (MDTable.MethodSpec, ms);
     }
 
