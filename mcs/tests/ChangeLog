@@ -1,3 +1,7 @@
+2004-04-21  Raja R Harinath  <rharinath@novell.com>
+
+	* test-237.cs: Test for #56442.
+
 2004-04-16  Raja R Harinath  <rharinath@novell.com>
 
 	* test-236.cs: Test for #56300.

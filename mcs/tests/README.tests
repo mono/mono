@@ -20,7 +20,7 @@ Test cases listed by Category:
 
 * Events and Delegates
 
-  test-149.cs test-164.cs verify-3.cs
+  test-149.cs test-164.cs test-237.cs verify-3.cs
 
 * Constant Folding
 
@@ -466,6 +466,11 @@ test-236.cs:
 -----------
 Test for bug #56300.  DefaultMemberAttribute should not be created if a
 class has only private interface indexers.
+
+test-237.cs:
+-----------
+Test for bug #56442.  Verify that delegate invocation and normal method
+invocation act the same when the 'params' keyword is used.
 
 verify-1.cs
 -----------
