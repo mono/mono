@@ -51,9 +51,11 @@ namespace DB2ClientCS
 			unsafe public static extern short SQLDriverConnect(IntPtr hdbc, int centered, [In] string inConnectStr, [In] int inStrLength, [Out] StringBuilder outConnectStr, [Out] int outStrCapacity, [Out] IntPtr outStrLengthReturned, [In] int completion);
 		[DllImport("db2cli.dll", EntryPoint = "SQLPrepare")]
 			unsafe public static extern short SQLPrepare(IntPtr stmtHandle, string stmt, int length);
-		[DllImport("SQLDescribeParam", EntryPoint = "SQLDescribeParam")]
-			unsafe public static extern short SQLDescribeParam(IntPtr stmtHandle, [In] IntPtr paramNumber, [Out] IntPtr paramSize, [Out] IntPtr decimalDigits, [Out] IntPtr nullable);
+		[DllImport("db2cli.dll", EntryPoint = "SQLDescribeParam")]
+			unsafe public static extern short SQLDescribeParam(IntPtr stmtHandle, short paramNumber,ref IntPtr dataType, ref IntPtr paramSize, ref IntPtr decimalDigits, ref IntPtr nullable);
 		[DllImport("db2cli.dll", EntryPoint = "SQLNumParams")]
 			unsafe public static extern short SQLNumParams(IntPtr stmtHandle, ref IntPtr numParams);
+		[DllImport("db2cli.dll", EntryPoint = "SQLBindParameter")]
+			unsafe public static extern short SQLBindParameter(IntPtr stmtHandle, short paramNumber, IntPtr dataType, IntPtr valueType, IntPtr paramType, IntPtr colSize, IntPtr decDigits, [In][Out] IntPtr dataBufferPtr, int dataBufferLength, ref IntPtr StrLen_or_IndPtr);
 	}
 }
