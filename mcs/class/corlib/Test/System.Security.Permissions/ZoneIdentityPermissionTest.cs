@@ -127,6 +127,19 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.IsTrue (zip.IsSubsetOf (null), "IsSubset-Null");
 			IPermission intersect = zip.Intersect (zip);
 			Assert.IsNull (intersect, "Intersect with No Zone");
+			// NoZone is special as it is a subset of all zones
+			ZoneIdentityPermission ss = new ZoneIdentityPermission (SecurityZone.Internet);
+			Assert.IsTrue (zip.IsSubsetOf (ss), "IsSubset-Internet");
+			ss.SecurityZone = SecurityZone.Intranet;
+			Assert.IsTrue (zip.IsSubsetOf (ss), "IsSubset-Intranet");
+			ss.SecurityZone = SecurityZone.MyComputer;
+			Assert.IsTrue (zip.IsSubsetOf (ss), "IsSubset-MyComputer");
+			ss.SecurityZone = SecurityZone.NoZone;
+			Assert.IsTrue (zip.IsSubsetOf (ss), "IsSubset-NoZone");
+			ss.SecurityZone = SecurityZone.Trusted;
+			Assert.IsTrue (zip.IsSubsetOf (ss), "IsSubset-Trusted");
+			ss.SecurityZone = SecurityZone.Untrusted;
+			Assert.IsTrue (zip.IsSubsetOf (ss), "IsSubset-Untrusted");
 		}
 
 		[Test]
