@@ -1,5 +1,8 @@
 2002-08-24  Miguel de Icaza  <miguel@ximian.com>
 
+	* StreamReader.cs: Removed TODOs, as the code seems to be
+	complete. 
+
 	* Path.cs (GetTempFileName): Make this routine atomic by not
 	testing and then creating, but using the create call to ensure
 	that we own the filename.

@@ -102,7 +102,6 @@ namespace System.IO {
 		public StreamReader(string path, Encoding encoding, bool detectEncodingFromByteOrderMarks)
 			: this (path, encoding, detectEncodingFromByteOrderMarks, DefaultFileBufferSize) { }
 		
-		[MonoTODO]
 		public StreamReader(string path, Encoding encoding, bool detectEncodingFromByteOrderMarks, int bufferSize)
 		{
 			if (null == path)
@@ -122,7 +121,6 @@ namespace System.IO {
 			Initialize (stream, encoding, detectEncodingFromByteOrderMarks, bufferSize);
 		}
 
-		[MonoTODO]
 		protected void Initialize (Stream stream, Encoding encoding, bool detectEncodingFromByteOrderMarks, int bufferSize)
 		{
 			if (null == stream)
