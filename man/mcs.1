@@ -94,6 +94,10 @@ assembly in your program.
 .I \-v 
 Debugging. Turns on verbose yacc parsing.
 .PP
+.SH NOTES
+During compilation the MCS compiler defines the __MonoCS__ symbol,
+this can be used by pre-processor instructions to compile Mono C#
+compiler specific code.
 .SH AUTHORS
 The Mono C# Compiler was written by Miguel de Icaza and Ravi Pratap at
 Ximian. 
