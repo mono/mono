@@ -72,6 +72,7 @@ namespace Mono.ILASM {
                         inst_table["ldind.i4"] = new ILToken (Token.INSTR_NONE, Op.ldind_i4);
                         inst_table["ldind.u4"] = new ILToken (Token.INSTR_NONE, Op.ldind_u4);
                         inst_table["ldind.i8"] = new ILToken (Token.INSTR_NONE, Op.ldind_i8);
+                        inst_table["ldind.u8"] = new ILToken (Token.INSTR_NONE, Op.ldind_i8);
                         inst_table["ldind.i"] = new ILToken (Token.INSTR_NONE, Op.ldind_i);
                         inst_table["ldind.r4"] = new ILToken (Token.INSTR_NONE, Op.ldind_r4);
                         inst_table["ldind.r8"] = new ILToken (Token.INSTR_NONE, Op.ldind_r8);
@@ -126,6 +127,7 @@ namespace Mono.ILASM {
                         inst_table["ldelem.i4"] = new ILToken (Token.INSTR_NONE, Op.ldelem_i4);
                         inst_table["ldelem.u4"] = new ILToken (Token.INSTR_NONE, Op.ldelem_u4);
                         inst_table["ldelem.i8"] = new ILToken (Token.INSTR_NONE, Op.ldelem_i8);
+                        inst_table["ldelem.u8"] = new ILToken (Token.INSTR_NONE, Op.ldelem_i8);
                         inst_table["ldelem.i"] = new ILToken (Token.INSTR_NONE, Op.ldelem_i);
                         inst_table["ldelem.r4"] = new ILToken (Token.INSTR_NONE, Op.ldelem_r4);
                         inst_table["ldelem.r8"] = new ILToken (Token.INSTR_NONE, Op.ldelem_r8);

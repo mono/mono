@@ -1,3 +1,8 @@
+2004-06-20  Jackson Harper  <jackson@ximian.com>
+
+	* InstrTable.cs: Add .u8 opcodes for ldind and ldelem these are
+	just aliases to their .i8 equivelents.
+	
 2004-06-19  Jackson Harper  <jackson@ximian.com>
 
 	* MethodPointerTypeRef.cs: New File - represents a method pointer
