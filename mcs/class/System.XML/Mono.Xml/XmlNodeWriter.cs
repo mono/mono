@@ -9,9 +9,9 @@
 using System;
 using System.Xml;
 
-namespace Mono.Xml
+namespace System.Xml
 {
-	public class XmlNodeWriter : XmlWriter
+	internal class XmlNodeWriter : XmlWriter
 	{
 		public XmlNodeWriter () : this (true)
 		{
