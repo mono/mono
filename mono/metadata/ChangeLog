@@ -1,3 +1,16 @@
+2004-09-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* object-internals.h (MonoReflectionModule): Add 'token' field.
+	
+	* reflection.c (mono_reflection_get_token): Add support for Module
+	and Assembly.
+	(mono_module_get_object): Set 'token' field.
+	(mono_module_file_get_object): Set 'token' field.
+
+	* icall.c: Add new Assembly and Module icalls.
+
+	* appdomain.c: Bump corlib version.
+
 2004-09-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* loader.h loader.c class.h class.c: Add helper functions for obtaining
