@@ -58,6 +58,17 @@ namespace Mono.CSharp {
 				return Name;
 		}
 
+		public bool IsGeneric {
+			get {
+				if (TypeArguments != null)
+					return true;
+				else if (Left != null)
+					return Left.IsGeneric;
+				else
+					return false;
+			}
+		}
+
 		public string GetName (bool is_generic)
 		{
 			string name = is_generic ? Basename : Name;

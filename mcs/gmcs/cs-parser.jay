@@ -591,8 +591,13 @@ attribute
 	  }
 	  opt_attribute_arguments
 	  {
-		string name = ((MemberName) $1).GetName ();
+		MemberName mname = (MemberName) $1;
+		if (mname.IsGeneric) {
+			Report.Error (404, lexer.Location,
+				      "'<' unexpected: attributes cannot be generic");
+		}
 
+		string name = mname.GetName ();
 		if (current_attr_target == "assembly" || current_attr_target == "module")
 			$$ = new GlobalAttribute (current_container, current_attr_target,
 						  name, (ArrayList) $3, (Location) $2);

@@ -1,5 +1,9 @@
 2004-06-13  Martin Baulig  <martin@ximian.com>
 
+	* cs-parser.jay: Don't allow generic attributes.
+
+2004-06-13  Martin Baulig  <martin@ximian.com>
+
 	* class.cs (MemberBase.DoDefineBase): New protected method.
 	(MemberBase.DoDefine): Compute the `flags' in the new
 	DoDefineBase() which must be called first.
