@@ -1,3 +1,6 @@
+Request notes:
+It apears each http request has its own thread. Need to figure out how to deal with this with apache.
+
 Session notes:
 When a request is finished, the contents of Request.Session are serialized and dumped to the State Server.
 When a request is started, a new Request.Session is created, data is deserialized from the State Server, and the objects are placed back into Request.Session.

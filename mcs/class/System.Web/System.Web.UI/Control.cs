@@ -12,6 +12,14 @@
 //even more notes: view state info in trackviewstate method description. read later.
 //Ok, enough notes: what the heck is different between enable view state, and track view state.
 
+//cycle:
+//init is called when control is first created.
+//load is called when control is loaded into a page
+//prerender is called when the server is about to render its page object
+//disposed/unload not sure but is last.
+
+//read this later. http://gotdotnet.com/quickstart/aspplus/
+
 using System;
 using System.Web;
 using System.ComponentModel;
