@@ -25,6 +25,7 @@ namespace Ximian.Mono.Tests
 				suite.AddTest (new TestSuite (typeof (XmlDocumentTests)));
 				suite.AddTest (new TestSuite (typeof (NameTableTests)));
 				suite.AddTest (new TestSuite (typeof (XmlElementTests)));
+				suite.AddTest (new TestSuite (typeof (XmlNodeListTests)));
 				return suite;
 			}
 		}

@@ -1,5 +1,5 @@
 //
-// System.Xml.XmlProcessingInstruction
+// System.Xml.XmlNode
 //
 // Author:
 //   Kral Ferch <kral_ferch@hotmail.com>
@@ -15,10 +15,24 @@ namespace System.Xml
 {
 	public abstract class XmlNode : ICloneable, IEnumerable, IXPathNavigable
 	{
+		#region Fields
+		///////////////////////////////////////////////////////////////////////
+		//
+		//	Fields
+		//
+		///////////////////////////////////////////////////////////////////////
+
 		XmlDocument ownerDocument;
 		XmlNode parentNode;
 
+		#endregion
+
 		#region Constructors
+		///////////////////////////////////////////////////////////////////////
+		//
+		//	Constructors
+		//
+		///////////////////////////////////////////////////////////////////////
 
 		protected internal XmlNode(XmlDocument ownerDocument)
 		{
@@ -28,6 +42,11 @@ namespace System.Xml
 		#endregion
 
 		#region Properties
+		///////////////////////////////////////////////////////////////////////
+		//
+		//	Properties
+		//
+		///////////////////////////////////////////////////////////////////////
 
 		public virtual XmlAttributeCollection Attributes
 		{
@@ -40,14 +59,13 @@ namespace System.Xml
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
-		public virtual XmlNodeList ChildNodes
-		{
-			get { throw new NotImplementedException (); }
+		public virtual XmlNodeList ChildNodes {
+			get {
+				return new XmlNodeListChildren(LastLinkedChild);
+			}
 		}
 
-		public virtual XmlNode FirstChild
-		{
+		public virtual XmlNode FirstChild {
 			get {
 				if (LastChild != null) {
 					return LastLinkedChild.NextLinkedSibling;
@@ -58,114 +76,91 @@ namespace System.Xml
 			}
 		}
 
-		public virtual bool HasChildNodes
-		{
+		public virtual bool HasChildNodes {
 			get { return LastChild != null; }
 		}
 
 		[MonoTODO]
-		public virtual string InnerText
-		{
+		public virtual string InnerText {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public virtual string InnerXml
-		{
+		public virtual string InnerXml {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public virtual bool IsReadOnly
-		{
+		public virtual bool IsReadOnly {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public virtual XmlElement this[string name]
-		{
+		[System.Runtime.CompilerServices.IndexerName("Item")]
+		public virtual XmlElement this [string name] {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public virtual XmlElement this[string localname, string ns]
-		{
+		[System.Runtime.CompilerServices.IndexerName("Item")]
+		public virtual XmlElement this [string localname, string ns] {
 			get { throw new NotImplementedException (); }
 		}
 
-		public virtual XmlNode LastChild
-		{
+		public virtual XmlNode LastChild {
 			get { return LastLinkedChild; }
 		}
 
-		internal virtual XmlLinkedNode LastLinkedChild
-		{
+		internal virtual XmlLinkedNode LastLinkedChild {
 			get { return null; }
 			set { }
 		}
 
 		[MonoTODO]
-		public abstract string LocalName
-		{
-			get;
-		}
+		public abstract string LocalName { get;	}
 
 		[MonoTODO]
-		public abstract string Name
-		{
-			get;
-		}
+		public abstract string Name	{ get; }
 
 		[MonoTODO]
-		public virtual string NamespaceURI
-		{
+		public virtual string NamespaceURI {
 			get { throw new NotImplementedException (); }
 		}
 
-		public virtual XmlNode NextSibling
-		{
+		public virtual XmlNode NextSibling {
 			get { return null; }
 		}
 
 		[MonoTODO]
-		public abstract XmlNodeType NodeType
-		{
-			get;
-		}
+		public abstract XmlNodeType NodeType { get;	}
 
 		[MonoTODO]
-		public virtual string OuterXml
-		{
+		public virtual string OuterXml {
 			get { throw new NotImplementedException (); }
 		}
 
-		public virtual XmlDocument OwnerDocument
-		{
+		public virtual XmlDocument OwnerDocument {
 			get { return ownerDocument; }
 		}
 
-		public virtual XmlNode ParentNode
-		{
+		public virtual XmlNode ParentNode {
 			get { return parentNode; }
 		}
 
 		[MonoTODO]
-		public virtual string Prefix
-		{
+		public virtual string Prefix {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
-		public virtual XmlNode PreviousSibling
-		{
+		public virtual XmlNode PreviousSibling {
 			get { return null; }
 		}
 
 		[MonoTODO]
-		public virtual string Value
-		{
+		public virtual string Value {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
@@ -173,6 +168,11 @@ namespace System.Xml
 		#endregion
 
 		#region Methods
+		///////////////////////////////////////////////////////////////////////
+		//
+		//	Methods
+		//
+		///////////////////////////////////////////////////////////////////////
 
 		public virtual XmlNode AppendChild (XmlNode newChild)
 		{

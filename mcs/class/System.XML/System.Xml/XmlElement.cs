@@ -115,6 +115,7 @@ namespace System.Xml
 				
 				value.NextLinkedSibling = LastLinkedChild.NextLinkedSibling;
 				LastLinkedChild.NextLinkedSibling = value;
+				lastChild = value;
 
 				SetParentNode(this);
 			}

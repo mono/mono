@@ -1,42 +1,57 @@
+//
+// System.Xml.XmlNodeList
+//
+// Author:
+//   Kral Ferch <kral_ferch@hotmail.com>
+//
+// (C) 2002 Kral Ferch
+//
+
 using System;
 using System.Collections;
 
 namespace System.Xml
 {
-	/// <summary>
-	/// Abstract class XmlNodeList.
-	/// </summary>
 	public abstract class XmlNodeList : IEnumerable
 	{
-		// public properties
-		public abstract int Count { get; }
+		#region Constructors
+		///////////////////////////////////////////////////////////////////////
+		//
+		//	Constructors
+		//
+		///////////////////////////////////////////////////////////////////////
+
+		protected internal XmlNodeList() { }
+
+		#endregion
+
+		#region Properties
+		///////////////////////////////////////////////////////////////////////
+		//
+		//	Properties
+		//
+		///////////////////////////////////////////////////////////////////////
+
+		public abstract int Count {	get; }
 
 		[System.Runtime.CompilerServices.IndexerName("ItemOf")]
-		public virtual XmlNode this[int i] 
-		{
-			get
-			{
-				return Item(i);
-			}
+		public virtual XmlNode this [int i]	{
+			get { return Item(i); }
 		}
 
-		// Public Methods
-		/// <summary>
-		/// Abstract.  Return the enumerator for the class.
-		/// </summary>
-		/// <returns>Enumerator</returns>
-		public abstract IEnumerator GetEnumerator();
+		#endregion
 
-		/// <summary>
-		/// Abstract.  Returns the item at index.  Index is 0-based.
-		/// </summary>
-		/// <param name="index"></param>
-		/// <returns></returns>
-		public abstract XmlNode Item(int index);
-		
-		public XmlNodeList()
-		{
-			// TODO: What should be done in constructor for XmlNodeList.XmlNodeList()? (nothing)
-		}
+		#region Methods
+		///////////////////////////////////////////////////////////////////////
+		//
+		//	Methods
+		//
+		///////////////////////////////////////////////////////////////////////
+
+		public abstract IEnumerator GetEnumerator ();
+
+		public abstract XmlNode Item (int index);
+
+		#endregion
 	}
 }

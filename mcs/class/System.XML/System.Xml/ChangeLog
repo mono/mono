@@ -1,3 +1,18 @@
+2002-03-08  Kral Ferch <kral_ferch@hotmail.com>
+
+	* XmlNodeList.cs, XmlDocument.cs, XmlLinkedNode.cs,
+	XmlNode.cs: Formatting.
+	
+	* XmlNodeListChildren.cs: Implementation of XmlNodeList
+	for XmlNode.ChildNodes property.
+	
+	* XmlNodeListAsArrayList.cs: Removed file.  Using different
+	data structure (circular list) in XmlNode so this file
+	is no longer valid.
+	
+	* XmlDocument.cs, XmlElement.cs: New ChildNodes tests found
+	bug in setter property of LastLinkedChild so fixed it.
+	
 2002-03-06  Jason Diamond  <jason@injektilo.org>
 
 	* XmlInputSource.cs, XmlNames_1_0.cs, XmlParse.cs: Removed files.

@@ -266,7 +266,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml\XmlNodeListAsArrayList.cs"
+                    RelPath = "System.Xml\XmlNodeListChildren.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -1,3 +1,9 @@
+2002-03-08  Kral Ferch <kral_ferch@hotmail.com>
+
+	* XmlNodeListTests.cs: New file.
+
+	* AllTests.cs: Added XmlNodeListTests.
+
 2002/03/08  Nick Drochak <ndrochak@gol.com>
 
 	* System_test.build: Don't build test dll by default.  Only build
