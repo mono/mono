@@ -473,8 +473,12 @@ namespace System.Data.Odbc
 						bufsize=50;
 						buffer=new byte[bufsize];  // According to sqlext.h, use SQL_CHAR for decimal
 						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.Char, buffer, bufsize, ref outsize);
+						byte[] temp = new byte[outsize];
+                                                for (int i=0;i<outsize;i++)
+                                                        temp[i]=buffer[i];
+
 						if (outsize!=-1)
-							DataValue=Decimal.Parse(System.Text.Encoding.Default.GetString(buffer));
+							DataValue=Decimal.Parse(System.Text.Encoding.Default.GetString(temp));
 						break;
 					case OdbcType.TinyInt:
 						short short_data=0;

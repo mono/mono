@@ -1,3 +1,6 @@
+2004-08-31 Umadevi S (sumadevi@novell.com)
+	* OdbcDataReader.cs - Fixed Decimal parsing
+
 2004-08-30 Umadevi S (sumadevi@novell.com)
 	* OdbcType.cs - removed inheritance from short.
 
