@@ -1,4 +1,7 @@
+2003-06-16 Jackson Harper <jackson@latitudegeo.com>
 
+	* get.c: Fix modopt and modreq
+		
 Thu May 29 12:21:47 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* dump.c, get.c: misc fixes.
