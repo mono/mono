@@ -1739,6 +1739,12 @@ namespace Mono.CSharp {
 					}
 				}
 
+				if ((branching.Type == FlowBranchingType.LOOP_BLOCK) &&
+				    branching.MayLeaveLoop && (new_returns == FlowReturns.ALWAYS)) {
+					Returns = FlowReturns.SOMETIMES;
+					return FlowReturns.SOMETIMES;
+				}
+
 				return new_returns;
 			}
 
@@ -2240,13 +2246,17 @@ namespace Mono.CSharp {
 			default:
 				// The code following a block or exception is reachable unless the
 				// block either always returns or always breaks.
-				reachable = !CurrentUsageVector.AlwaysBreaks &&
-					!CurrentUsageVector.AlwaysReturns;
+				if (MayLeaveLoop)
+					reachable = true;
+				else
+					reachable = !CurrentUsageVector.AlwaysBreaks &&
+						!CurrentUsageVector.AlwaysReturns;
 				break;
 			}
 
-			Report.Debug (1, "REACHABLE", Type, CurrentUsageVector.Returns,
-				      CurrentUsageVector.Breaks, CurrentUsageVector, reachable);
+			Report.Debug (1, "REACHABLE", this, Type, CurrentUsageVector.Returns,
+				      CurrentUsageVector.Breaks, CurrentUsageVector, MayLeaveLoop,
+				      reachable);
 
 			return reachable;
 		}
