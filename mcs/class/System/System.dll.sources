@@ -413,6 +413,7 @@ System.Net/CookieContainer.cs
 System.Net/Cookie.cs
 System.Net/CookieException.cs
 System.Net/CredentialCache.cs
+System.Net/DigestClient.cs
 System.Net/Dns.cs
 System.Net/DnsPermissionAttribute.cs
 System.Net/DnsPermission.cs
