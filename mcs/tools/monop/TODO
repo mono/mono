@@ -2,8 +2,6 @@ TODO
 ----
 
 	* Support for params (show the params keyword)
-	* Handle interfaces:
-		* handle explicit vs. implicit impl
-	* attributes (Serializable, etc)
-	* add declared only / inherited option
+	* handle explicit vs. implicit interfaces
 	* handle ~ based paths (ex -r:~/foo.dll)
+	* improve commandline handling

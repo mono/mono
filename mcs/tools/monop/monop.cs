@@ -177,6 +177,7 @@ class MonoP {
 		PrintUsage ();
 		Console.WriteLine ("");
 		Console.WriteLine ("options:");
+		Console.WriteLine ("\t--declared-only,-d\tOnly show members declared in the Type");
 		Console.WriteLine ("\t--help,-h\t\tShow this information");
 		Console.WriteLine ("\t--private,-p\t\tShow private members");
 	}
@@ -213,6 +214,11 @@ class MonoP {
 
 		if (args [i] == "--private" || args [i] == "-p") {
 				default_flags |= BindingFlags.NonPublic;
+				i++;
+		}
+
+		if (args [i] == "--declared-only" || args [i] == "-d") {
+				default_flags |= BindingFlags.DeclaredOnly;
 				i++;
 		}
 

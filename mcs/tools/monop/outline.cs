@@ -27,6 +27,7 @@ public class Outline {
 
 	public void OutlineType (BindingFlags flags)
         {
+		OutlineAttributes ();
 		o.Write (GetTypeVisibility (t));
 		o.Write (" ");
 		o.Write (GetTypeKind (t));
@@ -131,6 +132,16 @@ public class Outline {
 			new Outline (ntype, o).OutlineType (flags);
 		
 		o.Indent--; o.WriteLine ("}");
+	}
+
+	// FIXME: add other interesting attributes?
+	void OutlineAttributes ()
+	{
+		if (t.IsSerializable)
+			o.WriteLine ("[Serializable]");
+
+		if (t.GetCustomAttributes (typeof (System.FlagsAttribute), true).Length > 0)
+			o.WriteLine ("[Flags]");
 	}
 
 	void OutlineEvent (EventInfo ei)

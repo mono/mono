@@ -1,3 +1,9 @@
+2004-08-15  John Luke  <john.luke@gmail.com>
+
+	* monop.cs: add declared-only option
+	* outline.cs: add limited attribute support (only for
+	[Serializable] and [Flags])
+
 2004-08-13  John Luke  <john.luke@gmail.com>
 
 	* monop.cs: add MONO_PATH support
