@@ -1,3 +1,9 @@
+2002-07-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Int32.cs:
+	* Int64.cs:
+	* UInt32.cs:
+	* UInt64.cs: fixed bug #28050. May be a MS bug?
 
 Thu Jul 18 14:47:03 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

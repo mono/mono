@@ -378,7 +378,7 @@ namespace System {
 					pos = JumpOverWhite (pos, s, false);
 			}
 
-			if (pos < s.Length)
+			if (pos < s.Length && s [pos] != '\u0000')
 				throw new FormatException ("Input string was not in the correct format.");
 
 			
