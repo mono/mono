@@ -150,23 +150,29 @@ namespace System.Web.UI.WebControls
 
 		object IStateManager.SaveViewState()
 		{
-			ArrayList retVal = new ArrayList(columns.Count);
-			foreach(DataGridColumn current in this)
-			{
-				retVal.Add(((IStateManager)current).SaveViewState());
-			}
+			if (columns.Count == 0)
+				return null;
+
+			ArrayList retVal = new ArrayList (columns.Count);
+			foreach (IStateManager current in columns)
+				retVal.Add (current.SaveViewState ());
+
 			return retVal;
 		}
 
 		void IStateManager.LoadViewState(object savedState)
 		{
-			if(savedState != null && savedState is ArrayList)
-			{
-				int currentIndex = 0;
-				foreach(DataGridColumn current in (ArrayList)savedState)
-				{
-					((IStateManager)columns[currentIndex ++]).LoadViewState(current);
-				}
+			if (savedState == null || !(savedState is ArrayList))
+				return;
+
+			ArrayList list = (ArrayList) savedState;
+			int end = list.Count;
+			if (end != columns.Count)
+				return;
+
+			for (int i = 0; i < end; i++) {
+				IStateManager col = (IStateManager) columns [i];
+				col.LoadViewState (list [i]);
 			}
 		}
 

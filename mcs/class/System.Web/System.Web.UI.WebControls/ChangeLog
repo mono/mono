@@ -1,3 +1,8 @@
+2003-05-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataGridColumnCollection.cs: fixed LoadViewState for the columns.
+	Don't save ViewState is the number of columns is 0.
+
 2003-05-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataGrid.cs: get the right item Type for the property we're reading
