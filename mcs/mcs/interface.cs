@@ -674,11 +674,15 @@ namespace Mono.CSharp {
 				foreach (InterfaceEvent ie in defined_events)
 					PopulateEvent (ie);
 
+			//
+			// FIXME: Pull the right indexer name out of the `IndexerName' attribute
+			//
 			if (defined_indexer != null) {
 				foreach (InterfaceIndexer ii in defined_indexer)
 					PopulateIndexer (ii);
 
-				CustomAttributeBuilder cb = EmitDefaultMemberAttr (parent, ModFlags, Location);
+				CustomAttributeBuilder cb = EmitDefaultMemberAttr (
+					parent, "Item", ModFlags, Location);
 				if (cb != null)
 					TypeBuilder.SetCustomAttribute (cb);
  			}
@@ -686,7 +690,9 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public static CustomAttributeBuilder EmitDefaultMemberAttr (TypeContainer parent, int flags,
+		public static CustomAttributeBuilder EmitDefaultMemberAttr (TypeContainer parent,
+									    string name,
+									    int flags,
 									    Location loc)
 		{
 			EmitContext ec = new EmitContext (parent, loc, null, null, flags);
@@ -705,7 +711,7 @@ namespace Mono.CSharp {
 
 			MethodBase constructor = mg.Methods [0];
 
-			string [] vals = { "Item" };
+			string [] vals = { name };
 
 			CustomAttributeBuilder cb = null;
 			try {

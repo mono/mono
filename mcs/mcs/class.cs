@@ -97,7 +97,11 @@ namespace Mono.CSharp {
 		public AttributeTargets Targets = AttributeTargets.All;
 		public bool AllowMultiple = false;
 		public bool Inherited;
-		
+
+		//
+		// The indexer name for this class
+		//
+		public string IndexerName;
 
 		public TypeContainer (TypeContainer parent, string name, Location l)
 			: base (parent, name, l)
@@ -1029,6 +1033,42 @@ namespace Mono.CSharp {
 			
 			remove_list.Clear ();
 		}
+
+		//
+		// Defines the indexers, and also verifies that the IndexerNameAttribute in the
+		// class is consisten.  Either it is `Item' or it is the name defined by all the
+		// indexers with the `IndexerName' attribute.
+		//
+		// Turns out that the IndexerNameAttribute is applied to each indexer,
+		// but it is never emitted, instead a DefaultName attribute is attached
+		// to the class.
+		//
+		void DefineIndexers ()
+		{
+			string class_indexer_name = null;
+			
+			foreach (Indexer i in Indexers){
+				string name;
+				
+				i.Define (this);
+
+				name = i.IndexerName;
+				if (class_indexer_name == null){
+					class_indexer_name = name;
+					continue;
+				}
+				
+				if (name == class_indexer_name)
+					continue;
+				
+				Report.Error (
+					668, "Two indexers have different names, " +
+					" you should use the same name for all your indexers");
+			}
+			if (class_indexer_name == null)
+				class_indexer_name = "Item";
+			IndexerName = class_indexer_name;
+		}
 		
 		/// <summary>
 		///   Populates our TypeBuilder with fields and methods
@@ -1106,9 +1146,9 @@ namespace Mono.CSharp {
 				DefineMembers (events, defined_names);
 
 			if (indexers != null) {
-				foreach (Indexer i in Indexers)
-					i.Define (this);
-			}
+				DefineIndexers ();
+			} else
+				IndexerName = "Item";
 
 			if (operators != null)
 				DefineMembers (operators, null);
@@ -1609,7 +1649,7 @@ namespace Mono.CSharp {
 					con.EmitConstant (this);
 			return;
 		}
-		
+
 		/// <summary>
 		///   Emits the code, this step is performed after all
 		///   the types, enumerations, constructors
@@ -1635,12 +1675,12 @@ namespace Mono.CSharp {
 				foreach (Property p in properties)
 					p.Emit (this);
 
-			if (indexers != null) {
+			if (indexers != null){
 				foreach (Indexer ix in indexers)
 					ix.Emit (this);
-
-				CustomAttributeBuilder cb = Interface.EmitDefaultMemberAttr (this, ModFlags, Location);
-
+				
+				CustomAttributeBuilder cb = Interface.EmitDefaultMemberAttr (
+					this, IndexerName, ModFlags, Location);
 				TypeBuilder.SetCustomAttribute (cb);
 			}
 			
@@ -2638,6 +2678,9 @@ namespace Mono.CSharp {
 
 			Type [] parameters = ParameterTypes (parent);
 
+			if (parameters == null)
+				return false;
+			
 			if ((ModFlags & Modifiers.STATIC) != 0)
 				ca |= MethodAttributes.Static;
 			else {
@@ -3540,6 +3583,8 @@ namespace Mono.CSharp {
 		public MethodBuilder       SetBuilder;
 		public PropertyBuilder PropertyBuilder;
 	        public Type IndexerType;
+		public string IndexerName;
+		EmitContext ec;
 
 		public Indexer (string type, string int_type, int flags, Parameters parms,
 				Accessor get_block, Accessor set_block, Attributes attrs, Location loc)
@@ -3623,10 +3668,9 @@ namespace Mono.CSharp {
 				implementing = null;
 
 			if (is_get){
-
-				string meth_name = "get_Item";
+				string meth_name = "get_" + IndexerName;
 				if (iface_type != null)
- 					meth_name = iface_type + ".get_Item";
+ 					meth_name = iface_type + ".get_" + IndexerName;
 				
 				GetBuilder = parent.TypeBuilder.DefineMethod (
 					meth_name, attr, IndexerType, parameters);
@@ -3638,11 +3682,10 @@ namespace Mono.CSharp {
 				
 				PropertyBuilder.SetGetMethod (GetBuilder);
 			} else {
-
-				string meth_name = "set_Item";
+				string meth_name = "set_" + IndexerName;
 
 				if (iface_type != null)
-					meth_name = iface_type + ".set_Item";
+					meth_name = iface_type + ".set_" + IndexerName;
 				
 				SetBuilder = parent.TypeBuilder.DefineMethod (
 				        meth_name, attr, null, parameters);
@@ -3698,16 +3741,20 @@ namespace Mono.CSharp {
 				if (iface_type == null)
 					return false;
 			} 
-				
+
+			ec = new EmitContext (parent, Location, null, IndexerType, ModFlags);
+
+			IndexerName = Attribute.ScanForIndexerName (ec, OptAttributes);
+			if (IndexerName == null)
+				IndexerName = "Item";
 			
 			PropertyBuilder = parent.TypeBuilder.DefineProperty (
-				TypeManager.IndexerPropertyName (parent.TypeBuilder),
-				prop_attr, IndexerType, parameters);
+				IndexerName, prop_attr, IndexerType, parameters);
 
 			MethodAttributes attr = Modifiers.MethodAttr (ModFlags);
 			
 			if (Get != null){
-				DefineMethod (parent, iface_type, IndexerType, "get_Item",
+				DefineMethod (parent, iface_type, IndexerType, "get_" + IndexerName,
 					      parameters, attr, true);
                                 InternalParameters pi = new InternalParameters (parent, FormalParameters);
 				if (!TypeManager.RegisterMethod (GetBuilder, pi, parameters)) {
@@ -3755,7 +3802,7 @@ namespace Mono.CSharp {
 				
 				DefineMethod (
 					parent, iface_type, TypeManager.void_type,
-					"set_Item", set_pars, attr, false);
+					"set_" + IndexerName, set_pars, attr, false);
 
 				InternalParameters ip = new InternalParameters (parent, set_formal_params);
 				
@@ -3806,10 +3853,9 @@ namespace Mono.CSharp {
 		public void Emit (TypeContainer tc)
 		{
 			ILGenerator ig;
-			EmitContext ec;
 
-			ec = new EmitContext (tc, Location, null, IndexerType, ModFlags);
-			Attribute.ApplyAttributes (ec, PropertyBuilder, this, OptAttributes, Location);
+			Attribute.ApplyAttributes (
+				ec, PropertyBuilder, this, OptAttributes, Location);
 
 			if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
 				return;

@@ -5778,10 +5778,11 @@ namespace Mono.CSharp {
 		static public Indexers GetIndexersForType (Type caller_type, Type lookup_type, Location loc) 
 		{
 			Indexers ix = (Indexers) map [lookup_type];
-			string p_name = TypeManager.IndexerPropertyName (lookup_type);
 			
 			if (ix != null)
 				return ix;
+
+			string p_name = TypeManager.IndexerPropertyName (lookup_type);
 
 			MemberInfo [] mi = TypeManager.MemberLookup (
 				caller_type, lookup_type, MemberTypes.Property,

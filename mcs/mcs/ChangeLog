@@ -1,3 +1,21 @@
+2002-05-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* attribute.cs (ApplyAttributes): Make this function filter out
+	the IndexerName attribute (as that attribute in reality is never
+	applied) and return the string constant for the IndexerName
+	attribute. 
+
+	* class.cs (TypeContainer.Emit): Validate that all the indexers
+	have the same IndexerName attribute, and if so, set the
+	DefaultName attribute on the class. 
+
+	* typemanager.cs: The return value might contain other stuff (not
+	only methods).  For instance, consider a method with an "Item"
+	property and an Item method.
+
+	* class.cs: If there is a problem with the parameter types,
+	return. 
+
 2002-05-24  Ravi Pratap  <ravi@ximian.com>
 
 	* ecore.cs (ImplicitConversionExists): Wrapper function which also

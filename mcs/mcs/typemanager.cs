@@ -16,6 +16,7 @@ using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text.RegularExpressions;
+using System.Runtime.CompilerServices;
 
 namespace Mono.CSharp {
 
@@ -65,6 +66,7 @@ public class TypeManager {
 	static public Type marshal_as_attr_type;
 	static public Type param_array_type;
 	static public Type void_ptr_type;
+	static public Type indexer_name_type;
 
 	static public Type [] NoTypes;
 	
@@ -247,20 +249,32 @@ public class TypeManager {
 	{
 		try {
 			types.Add (name, t);
-			user_types.Add (t);
-			
-			if (ifaces != null)
-				builder_to_ifaces [t] = ifaces;
 		} catch {
 			Type prev = (Type) types [name];
 			TypeContainer tc = (TypeContainer) builder_to_container [prev];
 
-			Report.Error (-17, "The type `" + name + "' has already been defined");
-			if (tc == null){
-				Report.Error (-17, " it was defined in: (" + prev.Assembly.FullName);
+			if (tc != null){
+				//
+				// This probably never happens, as we catch this before
+				//
+				Report.Error (-17, "The type `" + name + "' has already been defined.");
 				return;
 			}
+
+			tc = (TypeContainer) builder_to_container [t];
+			
+			Report.Warning (
+				1595, "The type `" + name + "' is defined in an existing assembly;"+
+				" Using the new definition from: " + tc.Location);
+			Report.Warning (1595, "Previously defined in: " + prev.Assembly.FullName);
+			
+			types.Remove (name);
+			types.Add (name, t);
 		}
+		user_types.Add (t);
+			
+		if (ifaces != null)
+			builder_to_ifaces [t] = ifaces;
 	}
 
 	//
@@ -274,9 +288,9 @@ public class TypeManager {
 	
 	public static void AddUserType (string name, TypeBuilder t, TypeContainer tc, Type [] ifaces)
 	{
-		AddUserType (name, t, ifaces);
 		builder_to_container.Add (t, tc);
 		typecontainers.Add (name, tc);
+		AddUserType (name, t, ifaces);
 	}
 
 	public static void AddDelegateType (string name, TypeBuilder t, Delegate del)
@@ -287,9 +301,6 @@ public class TypeManager {
 	
 	public static void AddEnumType (string name, TypeBuilder t, Enum en)
 	{
-			if (name == "System.Diagnostics.Switch"){
-				Console.WriteLine ("Fuck4");
-			}
 		types.Add (name, t);
 		builder_to_enum.Add (t, en);
 	}
@@ -568,6 +579,8 @@ public class TypeManager {
 		unverifiable_code_type= CoreLookupType ("System.Security.UnverifiableCodeAttribute");
 
 		void_ptr_type         = CoreLookupType ("System.Void*");
+
+		indexer_name_type     = CoreLookupType ("System.Runtime.CompilerServices.IndexerNameAttribute");
 
 	}
 
@@ -1115,36 +1128,13 @@ public class TypeManager {
 		if (t is TypeBuilder) {
 			TypeContainer tc = (TypeContainer) builder_to_container [t];
 
-			Attributes attrs = tc.OptAttributes;
-			
-			if (attrs == null || attrs.AttributeSections == null)
-				return "Item";
-
-			foreach (AttributeSection asec in attrs.AttributeSections) {
-
-				if (asec.Attributes == null)
-					continue;
-
-				foreach (Attribute a in asec.Attributes) {
-					if (a.Name.IndexOf ("DefaultMember") != -1) {
-						ArrayList pos_args = (ArrayList) a.Arguments [0];
-						Expression e = ((Argument) pos_args [0]).expr;
-
-						if (e is StringConstant)
-							return ((StringConstant) e).Value;
-					}
-				}
-			}
-
-			return "Item";
+			return tc.IndexerName;
 		}
 		
-		System.Attribute attr = System.Attribute.GetCustomAttribute (t, TypeManager.default_member_type);
-		
-		if (attr != null)
-		{
+		System.Attribute attr = System.Attribute.GetCustomAttribute (
+			t, TypeManager.default_member_type);
+		if (attr != null){
 			DefaultMemberAttribute dma = (DefaultMemberAttribute) attr;
-			
 			return dma.MemberName;
 		}
 
@@ -1204,8 +1194,11 @@ public class TypeManager {
 	{
 		if (target_list == null){
 			target_list = new ArrayList ();
-			
-			target_list.AddRange (new_members);
+
+			foreach (MemberInfo mi in new_members){
+				if (mi is MethodBase)
+					target_list.Add (mi);
+			}
 			return target_list;
 		}
 		
@@ -1329,7 +1322,7 @@ public class TypeManager {
 		bool searching = (original_bf & BindingFlags.DeclaredOnly) == 0;
 		bool private_ok;
 		bool always_ok_flag = false;
-		
+
 		closure_name = name;
 		closure_invocation_type = invocation_type;
 		closure_invocation_assembly = invocation_type != null ? invocation_type.Assembly : null;
@@ -1414,6 +1407,13 @@ public class TypeManager {
 			if (count == 1 && !(mi [0] is MethodBase)){
 				return mi;
 			}
+
+			//
+			// Multiple properties: we query those just to find out the indexer
+			// name
+			//
+			if (mi [0] is PropertyInfo)
+				return mi;
 			
 			//
 			// We found methods, turn the search into "method scan"

@@ -48,7 +48,7 @@ namespace Mono.CSharp {
 			Location = loc;
 		}
 
-		void error617 (string name)
+		void Error_InvalidNamedArgument (string name)
 		{
 			Report.Error (617, Location, "'" + name + "' is not a valid named attribute " +
 				      "argument. Named attribute arguments must be fields which are not " +
@@ -56,13 +56,20 @@ namespace Mono.CSharp {
 				      "are not static.");
 		}
 
-		void error182 ()
+		void Error_AttributeArgumentNotValid ()
 		{
 			Report.Error (182, Location,
 				      "An attribute argument must be a constant expression, typeof " +
 				      "expression or array creation expression");
 		}
 
+		static void Error_AttributeConstructorMismatch (Location loc)
+		{
+			Report.Error (
+					-6, loc,
+					"Could not find a constructor for this argument list.");
+		}
+		
 		private Type CheckAttributeType (EmitContext ec) {
 			Type t;
 			bool isattributeclass = true;
@@ -92,12 +99,17 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public CustomAttributeBuilder Resolve (EmitContext ec)
+		public Type ResolveType (EmitContext ec)
 		{
 			Type = CheckAttributeType (ec);
-			
+			return Type;
+		}
+
+		
+		public CustomAttributeBuilder Resolve (EmitContext ec)
+		{
 			if (Type == null)
-				return null;
+				Type = CheckAttributeType (ec);
 
 			bool MethodImplAttr = false;
 			bool MarshalAsAttr = false;
@@ -145,7 +157,7 @@ namespace Mono.CSharp {
 				} else if (e is TypeOf) {
 					pos_values [i] = ((TypeOf) e).TypeArg;
 				} else {
-					error182 ();
+					Error_AttributeArgumentNotValid ();
 					return null;
 				}
 				
@@ -185,7 +197,7 @@ namespace Mono.CSharp {
 					Location);
 
 				if (member == null || !(member is PropertyExpr || member is FieldExpr)) {
-					error617 (member_name);
+					Error_InvalidNamedArgument (member_name);
 					return null;
 				}
 
@@ -195,7 +207,7 @@ namespace Mono.CSharp {
 					PropertyInfo pi = pe.PropertyInfo;
 
 					if (!pi.CanWrite) {
-						error617 (member_name);
+						Error_InvalidNamedArgument (member_name);
 						return null;
 					}
 
@@ -211,7 +223,7 @@ namespace Mono.CSharp {
 						}
 						
 					} else { 
-						error182 ();
+						Error_AttributeArgumentNotValid ();
 						return null;
 					}
 					
@@ -222,7 +234,7 @@ namespace Mono.CSharp {
 					FieldInfo fi = fe.FieldInfo;
 
 					if (fi.IsInitOnly) {
-						error617 (member_name);
+						Error_InvalidNamedArgument (member_name);
 						return null;
 					}
 
@@ -234,7 +246,7 @@ namespace Mono.CSharp {
 						
 						field_values.Add (value);
 					} else { 
-						error182 ();
+						Error_AttributeArgumentNotValid ();
 						return null;
 					}
 					
@@ -247,9 +259,7 @@ namespace Mono.CSharp {
 				BindingFlags.Public | BindingFlags.Instance, Location);
 
 			if (mg == null) {
-				Report.Error (
-					-6, Location,
-					"Could not find a constructor for this argument list.");
+				Error_AttributeConstructorMismatch (Location);
 				return null;
 			}
 
@@ -257,9 +267,7 @@ namespace Mono.CSharp {
 				ec, (MethodGroupExpr) mg, pos_args, Location);
 
 			if (constructor == null) {
-				Report.Error (
-					-6, Location,
-					"Could not find a constructor for this argument list.");
+				Error_AttributeConstructorMismatch (Location);
 				return null;
 			}
 			
@@ -273,11 +281,15 @@ namespace Mono.CSharp {
 
 			prop_values.CopyTo  (prop_values_arr, 0);
 			prop_infos.CopyTo   (prop_info_arr, 0);
-			
-			cb = new CustomAttributeBuilder (
-				(ConstructorInfo) constructor, pos_values,
-				prop_info_arr, prop_values_arr,
-				field_info_arr, field_values_arr); 
+
+			try {
+				cb = new CustomAttributeBuilder (
+					(ConstructorInfo) constructor, pos_values,
+					prop_info_arr, prop_values_arr,
+					field_info_arr, field_values_arr); 
+			} catch {
+				Console.WriteLine ("HELLO!");
+			}
 			
 			return cb;
 		}
@@ -456,17 +468,74 @@ namespace Mono.CSharp {
 			return false;
 		}
 
+		//
+		// This method should be invoked to pull the IndexerName attribute from an
+		// Indexer if it exists.
+		//
+		public static string ScanForIndexerName (EmitContext ec, Attributes opt_attrs)
+		{
+			if (opt_attrs == null)
+				return null;
+			if (opt_attrs.AttributeSections == null)
+				return null;
+
+			foreach (AttributeSection asec in opt_attrs.AttributeSections) {
+				if (asec.Attributes == null)
+					continue;
+
+				foreach (Attribute a in asec.Attributes){
+					if (a.ResolveType (ec) == null)
+						return null;
+					
+					if (a.Type != TypeManager.indexer_name_type)
+						continue;
+
+					//
+					// So we have found an IndexerName, pull the data out.
+					//
+					if (a.Arguments == null || a.Arguments [0] == null){
+						Error_AttributeConstructorMismatch (a.Location);
+						return null;
+					}
+					ArrayList pos_args = (ArrayList) a.Arguments [0];
+					if (pos_args.Count == 0){
+						Error_AttributeConstructorMismatch (a.Location);
+						return null;
+					}
+					
+					Argument arg = (Argument) pos_args [0];
+					if (!arg.Resolve (ec, a.Location))
+						return null;
+					
+					Expression e = arg.Expr;
+					if (!(e is StringConstant)){
+						Error_AttributeConstructorMismatch (a.Location);
+						return null;
+					}
+
+					//
+					// Remove the attribute from the list
+					//
+					asec.Attributes.Remove (a);
+
+					return (((StringConstant) e).Value);
+				}
+			}
+			return null;
+		}
+		
+		//
+		// Applies the attributes to the `builder'.
+		//
 		public static void ApplyAttributes (EmitContext ec, object builder, object kind,
 						    Attributes opt_attrs, Location loc)
 		{
 			if (opt_attrs == null)
 				return;
-
 			if (opt_attrs.AttributeSections == null)
 				return;
 
 			foreach (AttributeSection asec in opt_attrs.AttributeSections) {
-
 				if (asec.Attributes == null)
 					continue;
 
@@ -595,7 +664,7 @@ namespace Mono.CSharp {
 			if (tmp.Expr is Constant)
 				dll_name = (string) ((Constant) tmp.Expr).GetValue ();
 			else { 
-				error182 ();
+				Error_AttributeArgumentNotValid ();
 				return null;
 			}
 
@@ -624,7 +693,7 @@ namespace Mono.CSharp {
 					Location);
 
 				if (member == null || !(member is FieldExpr)) {
-					error617 (member_name);
+					Error_InvalidNamedArgument (member_name);
 					return null;
 				}
 
@@ -633,7 +702,7 @@ namespace Mono.CSharp {
 					FieldInfo fi = fe.FieldInfo;
 
 					if (fi.IsInitOnly) {
-						error617 (member_name);
+						Error_InvalidNamedArgument (member_name);
 						return null;
 					}
 
@@ -653,7 +722,7 @@ namespace Mono.CSharp {
 						else if (member_name == "PreserveSig")
 							preserve_sig = (bool) c.GetValue ();
 					} else { 
-						error182 ();
+						Error_AttributeArgumentNotValid ();
 						return null;
 					}
 					
