@@ -1,3 +1,19 @@
+2001-07-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.c (mono_class_create_from_typedef): Take into account
+	parent classes for the size of a structure. 
+
+	Still not ideal, but better than before.
+
+	For the case of the interpreter, Paolo is right, there is not much
+	use for a Field Map, as the way the Fields are located is through
+	a token.
+
+	(mono_class_init): Remove, initialize automatically.
+
+	(mono_class_get_field): new function, returns the information
+	about a field given a class and its token.
+	
 2001-07-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* object.h, object.c, class.h, class.c: Implemented the beginning
