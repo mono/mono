@@ -1,5 +1,10 @@
 2004-02-23  Zoltan Varga  <vargaz@freemail.hu>
 
+	* appdomain.h (MonoDomain): Add preallocated null_reference_ex and 
+	stack_overflow_ex members which are used by exception handling.
+
+	* appdomain.c (mono_runtime_init): Initialize the new members.
+
 	* gc.c (mono_gc_enable): New helper function.
 	* gc.c (mono_gc_disable): New helper function.
 
