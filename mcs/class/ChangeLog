@@ -1,3 +1,7 @@
+2003-01-08  Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* System.Web.Mobile  : Added new directory
+
 2002-12-11  Jeroen Janssen <japj@darius.demon.nl>
 	
 	* enabled building Mono.Directory.LDAP and
