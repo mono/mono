@@ -1,3 +1,7 @@
+2003-04-20  Ville Palo <vi64pa@kolumbus.fi>
+
+	* DirectoryTest.cs: new file
+	
 2003-04-16  Ville Palo <vi64pa@kolumbus.fi>
 
 	* BufferedStreamTest.cs: new file
