@@ -45,6 +45,9 @@ namespace MonoTests.System
 		public new int this [int i] { get { return 2; } }
 		public new void TestVoid() { level = 2; }
 		public new void TestInt(int i) { level = 2; }
+
+		public void Overload () { }
+		public void Overload (int i) { }
 	}
 
 	[TestFixture]
@@ -112,6 +115,9 @@ namespace MonoTests.System
 			// Test binding of new slot methods (using types)
 			AssertEquals(typeof (Base), typeof (Base).GetMethod("TestInt", new Type [] { typeof(int) }).DeclaringType);
 			AssertEquals(typeof (NewVTable), typeof (NewVTable).GetMethod("TestInt", new Type [] { typeof(int) }).DeclaringType);
+
+			// Test overload resolution
+			AssertEquals (0, typeof (NewVTable).GetMethod ("Overload", new Type [0]).GetParameters ().Length);
 		}
 
 		[Test]

@@ -1,3 +1,7 @@
+2003-12-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeTest.cs (GetMethodImpl): New test for overload resolution.
+
 2003-12-19  Dick Porter  <dick@ximian.com>
 
 	* StringTest.cs: Added Compare test for length==0.
