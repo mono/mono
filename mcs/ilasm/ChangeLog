@@ -1,3 +1,7 @@
+2003-03-29 Jackson Harper <jackson@latitudegeo.com>
+
+	* Driver.cs: Add switch to display parser debugging information.
+		
 2003-03-16 Jackson Harper <jackson@latitudegeo.com>
 
 	* Driver.cs: Add switch to display method definitions and references.

@@ -37,6 +37,7 @@ namespace Mono.ILASM {
 			private bool show_tokens = false;
 			private bool show_method_def = false;
 			private bool show_method_ref = false;
+			private bool show_parser = false;
 			private bool scan_only = false;
 			private CodeGen codegen;
 
@@ -89,7 +90,10 @@ namespace Mono.ILASM {
 				}
 
 				ILParser parser = new ILParser (codegen);
-				parser.yyparse (new ScannerAdapter (scanner), null);
+				if (show_parser)
+					parser.yyparse (new ScannerAdapter (scanner),  new yydebug.yyDebugSimple ());
+				else
+					parser.yyparse (new ScannerAdapter (scanner),  null);
 			}
 
 			public void ShowToken (object sender, NewTokenEventArgs args)
@@ -147,6 +151,9 @@ namespace Mono.ILASM {
 							break;
 						case "show_method_ref":
 							show_method_ref = true;
+							break;
+						case "show_parser":
+							show_parser = true;
 							break;
 						case "-about":
 							if (str[0] != '-')
