@@ -4,6 +4,7 @@
 	* Mono.Data.Tds.Protocol/TdsPacketEndTokenResult.cs:
 	* Mono.Data.Tds.Protocol/TdsMessage.cs:
 	* Mono.Data.Tds.Protocol/TdsPacketUnknown.cs:
+	* Mono.Data.Tds.Protocol/TdsPacketRetStatResult.cs:
 		Remove these classes as they are unused.
 	* Mono.Data.Tds.Protocol/TdsPacketColumnNamesResult.cs:
 	* Mono.Data.Tds.Protocol/TdsPacketTableNameResult.cs:

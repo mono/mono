@@ -25,7 +25,6 @@ Mono.Data.Tds.Protocol/TdsPacketColumnOrderResult.cs
 Mono.Data.Tds.Protocol/TdsPacketControlResult.cs
 Mono.Data.Tds.Protocol/TdsPacketOutputParam.cs
 Mono.Data.Tds.Protocol/TdsPacketResult.cs
-Mono.Data.Tds.Protocol/TdsPacketRetStatResult.cs
 Mono.Data.Tds.Protocol/TdsPacketRowResult.cs
 Mono.Data.Tds.Protocol/TdsPacketSubType.cs
 Mono.Data.Tds.Protocol/TdsPacketType.cs
