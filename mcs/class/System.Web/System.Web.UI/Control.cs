@@ -386,15 +386,16 @@ namespace System.Web.UI
 
 			control._parent = this;
 			control._page = _page;
+			Control nc = _isNamingContainer ? this : NamingContainer;
 
-			if (NamingContainer != null) {
-				control._namingContainer = _namingContainer;
+			if (nc != null) {
+				control._namingContainer = nc;
 				if (control.AutoID == true && control._userId == null)
-					control._userId =  _namingContainer.GetDefaultName () + "a";
+					control._userId =  nc.GetDefaultName () + "a";
 			}
 
 			if (inited)
-				control.InitRecursive (_namingContainer);
+				control.InitRecursive (nc);
 
 			if (loaded)
 				control.LoadRecursive ();
@@ -854,7 +855,7 @@ namespace System.Web.UI
 		{
 			get { return autoID; }
 			set { 
-				if (value == false && !_isNamingContainer)
+				if (value == false && _isNamingContainer)
 					return;
 
 				autoID = value;

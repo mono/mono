@@ -1,3 +1,16 @@
+2003-02-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ButtonColumn.cs: fixed a couple of infinite loop problems and render
+	correctly the header of the column.
+
+	* DataGridTableInternal.cs: don't assign a default ID to this control.
+
+	* LinkButton.cs: raise bubble event in OnCommand.
+
+	* TableCellCollection.cs: fixed the index returned by Add.
+
+	* TableRowCollection.cs: ditto.
+
 2003-02-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Xml.cs: don't call MapPathSecure when setting DocumentSource.

@@ -1,3 +1,7 @@
+2003-02-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: corrected typo and wrong fix.
+
 2003-02-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: fixed code generation for Table/TableRow/TableCell

@@ -70,6 +70,7 @@ System.Web.Configuration/ClientTargetSectionHandler.cs
 System.Web.Configuration/FormsAuthPasswordFormat.cs
 System.Web.Configuration/FormsProtectionEnum.cs
 System.Web.Configuration/GlobalizationConfiguration.cs
+System.Web.Configuration/GlobalizationConfigurationHandler.cs
 System.Web.Configuration/HttpCapabilitiesBase.cs
 System.Web.Configuration/HandlerFactoryConfiguration.cs
 System.Web.Configuration/HandlerFactoryProxy.cs

@@ -1,3 +1,9 @@
+2003-02-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: have i definitely fixed naming container stuff this time?
+
+	* LosFormatter.cs: activated binary serialization code.
+
 2003-02-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs:

@@ -74,7 +74,7 @@ namespace System.Web.UI.WebControls
 		public int Add(TableRow row)
 		{
 			AddAt(-1, row);
-			return owner.Controls.Count;
+			return owner.Controls.Count - 1;
 		}
 
 		public void AddAt(int index, TableRow row)

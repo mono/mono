@@ -251,7 +251,7 @@ namespace System.Web.UI
 				}
 				break;
 			case binaryID:
-				byte [] buffer = WebEncoding.Encoding.GetBytes (enclosed);
+				byte [] buffer = Convert.FromBase64String (enclosed);
 				MemoryStream ms = new MemoryStream (buffer);
 				BinaryFormatter fmt = new BinaryFormatter ();
 				obj = fmt.Deserialize (ms);
@@ -421,8 +421,6 @@ namespace System.Web.UI
 		private void SerializeBinary (TextWriter output, object value)
 		{
 			WebTrace.PushContext ("LosFormatter.SerializeBinary");
-			Console.WriteLine ("not serializing value type: " + value.GetType ());
-			output.Write ("<>");
 			/* This is just for debugging purposes */
 			/*if (value is Array) {
 				Array array = (Array) value;
@@ -435,7 +433,7 @@ namespace System.Web.UI
 				}
 			}
 			*/
-			/*
+			
 			BinaryFormatter fmt = new BinaryFormatter ();
 			MemoryStream stream = new MemoryStream ();
 
@@ -443,9 +441,9 @@ namespace System.Web.UI
 			output.Write (binaryID);
 			output.Write ('<');
 			byte [] buffer = stream.GetBuffer ();
-			output.Write (Convert.ToBase64String (stream.GetBuffer ()));
+			output.Write (Convert.ToBase64String (buffer));
 			output.Write ('>');
-			*/
+			
 			WebTrace.PopContext ();
 		}
 

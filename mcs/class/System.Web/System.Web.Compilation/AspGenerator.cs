@@ -850,7 +850,7 @@ class AspGenerator
 
 		Type allowed = null;
 		if (prev_children_kind == ChildrenKind.DBCOLUMNS &&
-		    typeof (DataGridColumn).IsAssignableFrom (control_type)) {
+		    !typeof (DataGridColumn).IsAssignableFrom (control_type)) {
 			allowed = typeof (DataGridColumn);
 		} else if (prev_children_kind == ChildrenKind.LISTITEM &&
 			 control_type != typeof (System.Web.UI.WebControls.ListItem)) {
@@ -1332,7 +1332,7 @@ class AspGenerator
 			controls.Pop ();
 			control_id = controls.PeekControlID ();
 			current_function.AppendFormat ("\t\t\tthis.__BuildControl_{0} ();\n", control_id);
-			if (child_kind == ChildrenKind.HTMLROW || !control_type.IsSubclassOf (typeof (WebControl))) {
+			if (child_kind == ChildrenKind.HTMLROW) {
 				current_function.AppendFormat ("\t\t\t__parser.AddParsedSubObject ({0});\n",
 								control_id);
 			} else {

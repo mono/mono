@@ -17,6 +17,7 @@ namespace System.Web.UI.WebControls
 	{
 		public DataGridTableInternal() : base()
 		{
+			PreventAutoID ();
 		}
 
 		protected override void AddAttributesToRender(HtmlTextWriter writer)

@@ -102,6 +102,7 @@ namespace System.Web.UI.WebControls
 				if (ceh != null)
 					ceh (this, e);
 			}
+			RaiseBubbleEvent (this, e);
 		}
 
 		protected override void OnPreRender (EventArgs e)

@@ -28,14 +28,16 @@ namespace System.Web.UI.WebControls
 
 		public override void Initialize()
 		{
-			Initialize();
+			base.Initialize();
 			textFieldDescriptor = null;
 		}
 		
 		public override void InitializeCell(TableCell cell, int columnIndex, ListItemType itemType)
 		{
-			InitializeCell(cell, columnIndex, itemType);
-			if(Enum.IsDefined(typeof(ListItemType), itemType) && itemType != ListItemType.Footer)
+			base.InitializeCell(cell, columnIndex, itemType);
+			if (Enum.IsDefined(typeof(ListItemType), itemType) &&
+			    itemType != ListItemType.Footer &&
+			    itemType != ListItemType.Header)
 			{
 				WebControl toDisplay = null;
 				if(ButtonType == ButtonColumnType.PushButton)
