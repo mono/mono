@@ -5,11 +5,11 @@ mcs \- Mono Compiler Suite.
 .B mcs 
 [option] [source-files]
 .SH DESCRIPTION
-mcs implements the Mono C# compiler, an implementation of the ECMA-334
+mcs is the Mono C# compiler, an implementation of the ECMA-334
 specification.  You can pass one or more options to drive the
 compiler, and a set of source files.  Extra options or arguments can
-be provided in a respose file.  Response files are referenced by
-prepending the @ symbol in front of the response file name.
+be provided in a response file.  Response files are referenced by
+prepending the @ symbol to the response file name.
 .PP
 C# source files must end with a ".cs" extension.  Compilation of C#
 source code requires all the files that make up a library, module or
@@ -20,9 +20,9 @@ and later reference them with the "-r" flag.
 .PP
 The Mono C# compiler generates images (.exe files) that contain CIL
 byte code that can be executed by any system that implements a Common
-Language Infrastructure virtual machine.  Both the Microsoft .NET
+Language Infrastructure virtual machine such as the Microsoft .NET
 runtime engine on Windows or the Mono runtime engine on Unix systems.
-Executables are not bound to a specific CPU or an operating system.
+Executables are not bound to a specific CPU or operating system.
 .PP
 .SH OPTIONS
 .TP
@@ -38,12 +38,12 @@ Defines a symbol named SYMBOL.  This can be tested in the source code
 by the pre-processor.
 .TP
 .I \-\-fatal 
-This is used for debugging the compiler.  This makes the error emision
-generate an exception that can be caught by a debugger
+This is used for debugging the compiler.  This makes the error emission
+generate an exception that can be caught by a debugger.
 .TP
 .I \-\-stacktrace
-Generates a strack trace at the time the error is reported, useful for
-debugging the compiler
+Generates a stack trace at the time the error is reported, useful for
+debugging the compiler.
 .TP
 .I \-L PATH
 Directs the compiler to look for libraries in the specified path.
@@ -57,7 +57,7 @@ compiler load its internal types from the assembly being compiled.
 Makes the compiler ignore warning XXX.
 .TP
 .I \-o FNAME
-Names the output file to be generated
+Names the output file to be generated.
 .TP
 .I \-\-optimize
 Turns on optimizations in the compiler.  
@@ -78,18 +78,18 @@ Another debugging flag.  Used to display the times at various points
 in the compilation process.
 .TP
 .I \-\-unsafe
-Enables compilation of unsafe code
+Enables compilation of unsafe code.
 .TP
 .I \-\-werror
-Treat warnings as errors
+Treat warnings as errors.
 .TP
 .I \-\-wlevel LEVEL
-Sets the warning level.  zero is the lowest warning level, and four is the
-highest.  The default is two.
+Sets the warning level.  0 is the lowest warning level, and 4 is the
+highest.  The default is 2.
 .TP
 .I \-r ASSEMBLY
 Reference the named assembly.  Use this to use classes from the named
-assembly in your program
+assembly in your program.
 .TP
 .I \-v 
 Debugging. Turns on verbose yacc parsing.
