@@ -1,3 +1,7 @@
+2004-07-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* basic.cs: Add a test for add.ovf.un.
+
 2004-07-30  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* mini-sparc.c: add case for OP_IDIV_UN
