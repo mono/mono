@@ -284,13 +284,37 @@ namespace System.Collections {
 
 		public virtual Object this [Object key] {
 			get {
-				int i = Find (key);
+				if (key == null)
+					throw new ArgumentNullException ("key", "null key");
 	
-				if (i >= 0)
-					return table [i].value;
+				Slot [] table = this.table;
+				uint size = (uint) table.Length;
+				int h = this.GetHash (key) & Int32.MaxValue;
+				uint indx = (uint)h;
+				uint step = (uint) ((h >> 5)+1) % (size-1)+1;
+				
+	
+				for (uint i = size; i > 0; i--) {
+					indx %= size;
+					Slot entry = table [indx];
+					Object k = entry.key;
+					if (k == null)
+						break;
+					
+					if (k == key || ((entry.hashMix & Int32.MaxValue) == h
+					    && this.KeyEquals (key, k))) {
+						return entry.value;
+					}
+	
+					if ((entry.hashMix & CHAIN_MARKER) == 0)
+						break;
+	
+					indx += step;
+				}
 				
 				return null;
 			}
+			
 			set {
 				PutImpl (key, value, true);
 			}
@@ -563,14 +587,15 @@ namespace System.Collections {
 				Slot entry = table [indx];
 				Object k = entry.key;
 				if (k == null)
-					return -1;
+					break;
+				
 				if (k == key || ((entry.hashMix & Int32.MaxValue) == h
 				    && this.KeyEquals (key, k))) {
 					return (int) indx;
 				}
 
 				if ((entry.hashMix & CHAIN_MARKER) == 0)
-					return -1;
+					break;
 
 				indx += step;
 			}

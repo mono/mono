@@ -1,5 +1,9 @@
 2004-12-21  Ben Maurer  <bmaurer@ximian.com>
 
+	* Hashtable.cs (get_Item): duplicate Find here, as we can
+	specialize a few things. This gives me 7% back.
+	(Find) Use break rather than return -1. Saves a bit of code.
+	
 	* Hashtable.cs (GetHash): Avoid a method call. Also, don't store
 	the this.hcpRef in a variable. This will create another register
 	which must be pushed on the stack. It is better to just reference
