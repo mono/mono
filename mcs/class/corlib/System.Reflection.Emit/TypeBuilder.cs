@@ -1048,12 +1048,25 @@ namespace System.Reflection.Emit {
 
 			return define_generic_parameter (this, gparam);
 		}
+
+		/*
+		 * This is used for generic methods; since TypeBuilder.DefineMethod() takes the parameter
+		 * types as arguments, we need to create the type parameters before getting the
+		 * MehtodBuilder.
+		 */
+		public Type DefineGenericParameter (string name, int index, Type[] constraints)
+		{
+			MonoGenericParam gparam = new MonoGenericParam (name, index, constraints);
+
+			return define_generic_parameter (this, gparam);
+		}
 #endif
 
 		internal sealed class MonoGenericParam {
 			private readonly uint Handle;
 
 			public readonly Type Type;
+			public readonly int Index;
 			public readonly string Name;
 			public readonly int Flags;
 			public readonly Type[] Constraints;
@@ -1062,6 +1075,14 @@ namespace System.Reflection.Emit {
 			{
 				this.Name = name;
 				this.Constraints = constraints;
+				this.Index = 0;
+			}
+
+			public MonoGenericParam (string name, int index, Type[] constraints)
+			{
+				this.Name = name;
+				this.Constraints = constraints;
+				this.Index = index + 1;
 			}
 		}
 	}

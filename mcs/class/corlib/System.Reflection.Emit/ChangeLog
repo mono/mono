@@ -1,3 +1,9 @@
+2003-10-10  Martin Baulig  <martin@ximian.com>
+
+	* TypeBuilder.cs (TypeBuilder.MonoGenericParam): Added `index' field.
+	(TypeBuilder.DefineGenericParameter): Added overloaded version
+	taking an `int index' argument for generic methods.
+
 2003-10-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeBuilder.cs (CreateType): Fire TypeResolve events for unfinished 
