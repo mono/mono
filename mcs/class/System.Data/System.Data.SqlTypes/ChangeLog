@@ -1,5 +1,18 @@
 2004-05-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SqlDecimal.cs :
+	  - .ctor() should check the valid scale range and throw 
+	    SqlTypeException.
+	  - Value should copy the last int32 value fragment.
+	  - Fixed Abs() and Ceiling() to return Null when the input is Null.
+	  - Now AdjustScale() should not depend on Truncate() that keeps zero
+	    digits correctly. So Round() before returning the final result.
+	  - ToString() should insert '-' for minus values.
+	  - operator+ should use larger scale of operands rather than smaller
+	    scale.
+
+2004-05-18  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SqlDecimal.cs : Fixed Truncate() to work fine.
 	* SqlMoney.cs : Added one hack line in operator/ to work fine.
 

@@ -120,9 +120,12 @@ namespace System.Data.SqlTypes
 			this.value[2] = data3;
 			this.value[3] = data4;
 			notNull = true;
-			
+
 			if (precision < scale)
-				throw new ArgumentException(Locale.GetText ("Invalid scale"));
+				throw new SqlTypeException (Locale.GetText ("Invalid presicion/scale combination."));
+
+			if (precision > 38)
+				throw new SqlTypeException (Locale.GetText ("Invalid precision/scale combination."));
 
 			if (this.ToDouble () > (Math.Pow (10, 38) - 1)  || 
 			    this.ToDouble () < -(Math.Pow (10, 38)))
@@ -160,6 +163,7 @@ namespace System.Data.SqlTypes
 				ret [0] = value [0];
 				ret [1] = value [1];
 				ret [2] = value [2];
+				ret [3] = value [3];
 				return ret;
 			}
 		}
@@ -198,9 +202,9 @@ namespace System.Data.SqlTypes
 
 		public static SqlDecimal Abs (SqlDecimal n)
 		{
-				return new SqlDecimal (n.Precision, n.Scale, true, 
-						       n.BinData [0], n.BinData [1], 
-						       n.BinData [2], n.BinData [3]);
+			if (!n.notNull)
+				return n;
+			return new SqlDecimal (n.Precision, n.Scale, true, n.Data);
 		}
 
 		public static SqlDecimal Add (SqlDecimal x, SqlDecimal y)
@@ -216,7 +220,9 @@ namespace System.Data.SqlTypes
 
 			int [] data;
 			byte newScale;
-			if (digits > 0) {
+			if (digits == 0)
+				return n;
+			else if (digits > 0) {
 			        prec = (byte)(prec + digits);
 				decimal d = n.Value;
 				if (digits > 0)
@@ -229,7 +235,7 @@ namespace System.Data.SqlTypes
 				if (fRound)
 					n = Round (n, digits + n.scale);
 				else
-					n = Truncate (n, digits + n.scale);
+					n = Round (Truncate (n, digits + n.scale), digits + n.scale);
 				data = n.Data;
 				newScale = n.scale;
 			}
@@ -239,6 +245,8 @@ namespace System.Data.SqlTypes
 
 		public static SqlDecimal Ceiling (SqlDecimal n)
 		{
+			if (!n.notNull)
+				return n;
 			return AdjustScale (n, -(n.Scale), true);
 		}
 
@@ -479,6 +487,9 @@ namespace System.Data.SqlTypes
  
 			if (this.Scale > 0)
 			        Result.Insert (Result.Length - this.Scale, ".");
+
+			if (!positive)
+				Result.Insert (0, '-');
 
 			return Result.ToString ();
 		}
@@ -1030,12 +1041,12 @@ namespace System.Data.SqlTypes
 			// if one of them is negative, perform subtraction
 			if (x.IsPositive && !y.IsPositive) return x - y;
 			if (y.IsPositive && !x.IsPositive) return y - x;
-		
-			// adjust the scale to the smaller of the two beforehand
-			if (x.Scale > y.Scale)
-				x = SqlDecimal.AdjustScale(x, y.Scale - x.Scale, true);
-			else if (y.Scale > x.Scale)
-				y = SqlDecimal.AdjustScale(y, x.Scale - y.Scale, true);
+
+			// adjust the scale to the larger of the two beforehand
+			if (x.scale > y.scale)
+				y = SqlDecimal.AdjustScale (y, x.scale - y.scale, true); // FIXME: should be false (fix it after AdjustScale(,,false) is fixed)
+			else if (y.scale > x.scale)
+				x = SqlDecimal.AdjustScale (x, y.scale - x.scale, true); // FIXME: should be false (fix it after AdjustScale(,,false) is fixed)
 
 			// set the precision to the greater of the two
 			byte resultPrecision;
