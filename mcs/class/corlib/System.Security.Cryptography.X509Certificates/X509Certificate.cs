@@ -4,21 +4,23 @@
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
 //
-// (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 
 using Mono.Security;
+using Mono.Security.X509;
 
 namespace System.Security.Cryptography.X509Certificates {
 
 	// References:
 	// a.	Internet X.509 Public Key Infrastructure Certificate and CRL Profile
-	//	http://www.ietf.org/rfc/rfc2459.txt
+	//	http://www.ietf.org/rfc/rfc3280.txt
 	
 	// LAMESPEC: the MSDN docs always talks about X509v3 certificates
 	// and/or Authenticode certs. However this class works with older
@@ -26,29 +28,9 @@ namespace System.Security.Cryptography.X509Certificates {
 	[Serializable]
 	public class X509Certificate {
 	
-		static private byte[] countryName = { 0x55, 0x04, 0x06 };
-		static private byte[] organizationName = { 0x55, 0x04, 0x0A };
-		static private byte[] organizationalUnitName = { 0x55, 0x04, 0x0B };
-		static private byte[] commonName = { 0x55, 0x04, 0x03 };
-		static private byte[] localityName = { 0x55, 0x04, 0x07 };
-		static private byte[] stateOrProvinceName = { 0x55, 0x04, 0x08 };
-		static private byte[] streetAddress = { 0x55, 0x04, 0x09 };
-		static private byte[] serialNumber = { 0x55, 0x04, 0x05 };
-		static private byte[] domainComponent = { 0x09, 0x92, 0x26, 0x89, 0x93, 0xF2, 0x2C, 0x64, 0x01, 0x19 };
-		static private byte[] userid = { 0x09, 0x92, 0x26, 0x89, 0x93, 0xF2, 0x2C, 0x64, 0x01, 0x01 };
-		static private byte[] email = { 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x09, 0x01 };
-	
-		private byte[] m_encodedcert;
-		private byte[] m_certhash;
-		private DateTime m_from;
-		private DateTime m_until;
-		private string m_issuername;
-		private string m_keyalgo;
-		private byte[] m_keyalgoparams;
-		private string m_subject;
-		private byte[] m_publickey;
-		private byte[] m_serialnumber;
+		private Mono.Security.X509.X509Certificate x509;
 		private bool hideDates;
+		private byte[] cachedCertificateHash;
 	
 		// almost every byte[] returning function has a string equivalent
 		// sadly the BitConverter insert dash between bytes :-(
@@ -62,219 +44,6 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 			else
 				return null;
-		}
-	
-		/// <summary>
-		/// Tranform an RDN to a UTF-8 string representation
-		/// The string is reserved from what is defined in RFC2253.
-		/// </summary>
-		/// <returns>The relative distingued name (RDN) as a string</returns>
-		private string RDNToString (ASN1 seq)
-		{
-			StringBuilder sb = new StringBuilder ();
-			for (int i = 0; i < seq.Count; i++) {
-				ASN1 entry = seq.Element (i);
-				ASN1 pair = entry.Element (0);
-	
-				ASN1 s = pair.Element (1);
-				if (s == null)
-					continue;
-	
-				ASN1 poid = pair.Element (0);
-				if (poid == null)
-					continue;
-	
-				if (poid.CompareValue (countryName))
-					sb.Append ("C=");
-				else if (poid.CompareValue (organizationName))
-					sb.Append ("O=");
-				else if (poid.CompareValue (organizationalUnitName))
-					sb.Append ("OU=");
-				else if (poid.CompareValue (commonName))
-					sb.Append ("CN=");
-				else if (poid.CompareValue (localityName))
-					sb.Append ("L=");
-				else if (poid.CompareValue (stateOrProvinceName))
-					sb.Append ("S=");	// NOTE: RFC2253 uses ST=
-				else if (poid.CompareValue (streetAddress))
-					sb.Append ("STREET=");
-				else if (poid.CompareValue (domainComponent))
-					sb.Append ("DC=");
-				else if (poid.CompareValue (userid))
-					sb.Append ("UID=");
-				else if (poid.CompareValue (email))
-					sb.Append ("E=");	// NOTE: Not part of RFC2253
-				else {
-					// unknown OID
-					sb.Append ("OID.");	// NOTE: Not present as RFC2253
-					sb.Append (OIDToString (poid.Value));
-					sb.Append ("=");
-				}
-	
-				string sValue = null;
-				// 16bits or 8bits string ? TODO not complete (+special chars!)
-				if (s.Tag == 0x1E) {
-					// BMPSTRING
-					StringBuilder sb2 = new StringBuilder ();
-					for (int j = 1; j < s.Value.Length; j+=2)
-						sb2.Append ((char) s.Value[j]);
-					sValue = sb2.ToString ();
-				}
-				else {
-					sValue = System.Text.Encoding.UTF8.GetString (s.Value);
-					// in some cases we must quote (") the value
-					// Note: this doesn't seems to conform to RFC2253
-					char[] specials = { ',', '+', '"', '\\', '<', '>', ';' };
-					if (sValue.IndexOfAny(specials, 0, sValue.Length) > 0)
-						sValue = "\"" + sValue + "\"";
-					else if (sValue.StartsWith (" "))
-						sValue = "\"" + sValue + "\"";
-					else if (sValue.EndsWith (" "))
-						sValue = "\"" + sValue + "\"";
-				}
-	
-				sb.Append (sValue);
-	
-				// separator (not on last iteration)
-				if (i < seq.Count - 1)
-					sb.Append (", ");
-			}
-			return sb.ToString ();
-		}
-	
-		/// <summary>
-		/// Convert a binary encoded OID to human readable string representation of 
-		/// an OID (IETF style). Based on DUMPASN1.C from Peter Gutmann.
-		/// </summary>
-		/// <param name="aOID">a byte array containing the value of the OID
-		/// (no tag, no length)</param>
-		/// <returns></returns>
-		private string OIDToString (byte[] aOID)
-		{
-			StringBuilder sb = new StringBuilder ();
-			// Pick apart the OID
-			byte x = (byte) (aOID[0] / 40);
-			byte y = (byte) (aOID[0] % 40);
-			if (x > 2) {
-				// Handle special case for large y if x = 2
-				y += (byte) ((x - 2) * 40);
-				x = 2;
-			}
-			sb.Append (x.ToString ());
-			sb.Append (".");
-			sb.Append (y.ToString ());
-			ulong val = 0;
-			for (x = 1; x < aOID.Length; x++) {
-				val = ((val << 7) | ((byte) (aOID [x] & 0x7F)));
-				if ( !((aOID [x] & 0x80) == 0x80)) {
-					sb.Append (".");
-					sb.Append (val.ToString ());
-					val = 0;
-				}
-			}
-			return sb.ToString ();
-		}
-	
-		private DateTime UTCToDateTime (ASN1 time)
-		{
-			string t = System.Text.Encoding.ASCII.GetString (time.Value);
-			// to support both UTCTime and GeneralizedTime (and not so common format)
-			string mask = null;
-			switch (t.Length) {
-			case 11: mask = "yyMMddHHmmZ"; // illegal I think ... must check
-				break;
-			case 13: mask = "yyMMddHHmmssZ"; // UTCTime
-				break;
-			case 15: mask = "yyyyMMddHHmmssZ"; // GeneralizedTime
-				break;
-			}
-			return DateTime.ParseExact (t, mask, null).ToUniversalTime ();
-		}
-	
-		// that's were the real job is!
-		// from http://www.ietf.org/rfc/rfc2459.txt
-		//
-		//Certificate  ::=  SEQUENCE  {
-		//     tbsCertificate       TBSCertificate,
-		//     signatureAlgorithm   AlgorithmIdentifier,
-		//     signature            BIT STRING  }
-		//
-		//TBSCertificate  ::=  SEQUENCE  {
-		//     version         [0]  Version DEFAULT v1,
-		//     serialNumber         CertificateSerialNumber,
-		//     signature            AlgorithmIdentifier,
-		//     issuer               Name,
-		//     validity             Validity,
-		//     subject              Name,
-		//     subjectPublicKeyInfo SubjectPublicKeyInfo,
-		//     issuerUniqueID  [1]  IMPLICIT UniqueIdentifier OPTIONAL,
-		//                          -- If present, version shall be v2 or v3
-		//     subjectUniqueID [2]  IMPLICIT UniqueIdentifier OPTIONAL,
-		//                          -- If present, version shall be v2 or v3
-		//     extensions      [3]  Extensions OPTIONAL
-		//                          -- If present, version shall be v3 --  }
-		private void Parse(byte[] data) 
-		{
-			string e = "Input data cannot be coded as a valid certificate.";
-			try {
-				ASN1 certdecoder = new ASN1 (data);
-				// select root element
-				ASN1 Certificate = certdecoder.Element (0, 0x30);
-				if (Certificate == null)
-					throw new CryptographicException (e);
-				ASN1 tbsCertificate = Certificate.Element (0, 0x30);
-				if (tbsCertificate == null)
-					throw new CryptographicException (e);
-		
-				int tbs = 0;
-				// version (optional) is present only in v2+ certs
-				ASN1 version = tbsCertificate.Element (tbs, 0xA0);
-				if (version != null)
-					tbs++;
-		
-				ASN1 serialnumber = tbsCertificate.Element (tbs++, 0x02);
-				if (serialnumber == null)
-					throw new CryptographicException (e);
-				m_serialnumber = serialnumber.Value;
-				Array.Reverse(m_serialnumber, 0, m_serialnumber.Length);
-		
-				ASN1 signature = tbsCertificate.Element (tbs++, 0x30); 
-		
-				ASN1 issuer = tbsCertificate.Element (tbs++, 0x30); 
-				m_issuername = RDNToString (issuer);
-		
-				ASN1 validity = tbsCertificate.Element (tbs++, 0x30);
-				ASN1 notBefore = validity.Element (0);
-				m_from = UTCToDateTime (notBefore);
-				ASN1 notAfter = validity.Element (1);
-				m_until = UTCToDateTime (notAfter);
-		
-				ASN1 subject = tbsCertificate.Element (tbs++, 0x30);
-				m_subject = RDNToString (subject);
-		
-				ASN1 subjectPublicKeyInfo = tbsCertificate.Element (tbs++, 0x30);
-		
-				ASN1 algorithm = subjectPublicKeyInfo.Element (0, 0x30);
-				ASN1 algo = algorithm.Element (0, 0x06);
-				m_keyalgo = OIDToString (algo.Value);
-				// parameters ANY DEFINED BY algorithm OPTIONAL
-				// so we dont ask for a specific (Element) type and return DER
-				ASN1 parameters = algorithm.Element (1);
-				m_keyalgoparams = parameters.GetBytes ();
-		
-				ASN1 subjectPublicKey = subjectPublicKeyInfo.Element (1, 0x03); 
-				// we must drop th first byte (which is the number of unused bits
-				// in the BITSTRING)
-				int n = subjectPublicKey.Length - 1;
-				m_publickey = new byte [n];
-				Array.Copy (subjectPublicKey.Value, 1, m_publickey, 0, n);
-	
-				// keep original copy
-				m_encodedcert = data;
-			}
-			catch {
-				throw new CryptographicException (e);
-			}
 		}
 	
 		// static methods
@@ -361,13 +130,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 			byte[] signature = GetAuthenticodeSignature (filename);
 			if (signature == null)
-				return null;	// file isn't signed
-	
-			// \/ for debugging only \/
-	//		FileStream debug = new FileStream (@"d:\debug.sig", FileMode.Create);
-	//		debug.Write (signature, 0, signature.Length);
-	//		debug.Close ();
-			// /\ for debugging only /\
+				throw new COMException ("File doesn't have a signature", -2146762496);
 	
 			// this is a big bad ASN.1 structure
 			// Reference: http://www.cs.auckland.ac.nz/~pgut001/pubs/authenticode.txt
@@ -375,8 +138,8 @@ namespace System.Security.Cryptography.X509Certificates {
 			try {
 				ASN1 sign = new ASN1 (signature);
 				// we don't have to understand much of it to get the certificate
-				ASN1 certs = sign.Element(0).Element(1).Element(0).Element(3);
-				byte[] lastCert = certs.Element(certs.Count - 1).GetBytes();
+				ASN1 certs = sign [1][0][3];
+				byte[] lastCert = certs [certs.Count - 1].GetBytes();
 				return new X509Certificate (lastCert);
 			}
 			catch {
@@ -391,13 +154,14 @@ namespace System.Security.Cryptography.X509Certificates {
 		internal X509Certificate (byte[] data, bool dates) 
 		{
 			if (data != null) {
-				Parse (data);
+				x509 = new Mono.Security.X509.X509Certificate (data);
 				hideDates = !dates;
 			}
 		}
 	
 		public X509Certificate (byte[] data) : this (data, true) {}
 	
+		[MonoTODO("Handle on CryptoAPI certificate")]
 		public X509Certificate (IntPtr handle) 
 		{
 			// normally a handle to CryptoAPI
@@ -405,26 +169,26 @@ namespace System.Security.Cryptography.X509Certificates {
 			throw new NotSupportedException ();
 		}
 	
-		public X509Certificate (X509Certificate cert) 
+		public X509Certificate (System.Security.Cryptography.X509Certificates.X509Certificate cert) 
 		{
 			if (cert != null) {
 				byte[] data = cert.GetRawCertData ();
 				if (data != null)
-					Parse(data);
+					x509 = new Mono.Security.X509.X509Certificate (data);
 				hideDates = false;
 			}
 		}
 	
 		// public methods
 	
-		public virtual bool Equals(X509Certificate cert)
+		public virtual bool Equals (System.Security.Cryptography.X509Certificates.X509Certificate cert)
 		{
 			if (cert != null) {
 				byte[] raw = cert.GetRawCertData ();
 				if (raw != null) {
-					if (raw.Length == m_encodedcert.Length) {
+					if (raw.Length == x509.RawData.Length) {
 						for (int i = 0; i < raw.Length; i++) {
-							if (raw[i] != m_encodedcert[i])
+							if (raw[i] != x509.RawData [i])
 								return false;
 						}
 						// well no choice must be equals!
@@ -434,7 +198,7 @@ namespace System.Security.Cryptography.X509Certificates {
 						return false;
 				}
 			}
-			return (m_encodedcert == null);
+			return (x509.RawData == null);
 		}
 	
 		// LAMESPEC: This is the equivalent of the "thumbprint" that can be seen
@@ -444,11 +208,11 @@ namespace System.Security.Cryptography.X509Certificates {
 		public virtual byte[] GetCertHash () 
 		{
 			// we'll hash the cert only once and only if required
-			if ((m_certhash == null) && (m_encodedcert != null)) {
+			if ((cachedCertificateHash == null) && (x509.RawData != null)) {
 				SHA1 sha = SHA1.Create ();
-				m_certhash = sha.ComputeHash (m_encodedcert);
+				cachedCertificateHash = sha.ComputeHash (x509.RawData);
 			}
-			return m_certhash;
+			return cachedCertificateHash;
 		}
 	
 		public virtual string GetCertHashString () 
@@ -464,7 +228,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 			if (hideDates)
 				return null;
-			DateTime dt = m_from.AddHours (-8);
+			DateTime dt = x509.ValidFrom.ToUniversalTime().AddHours (-8);
 			return dt.ToString (); //"yyyy-MM-dd HH:mm:ss");
 		}
 	
@@ -475,7 +239,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 			if (hideDates)
 				return null;
-			DateTime dt = m_until.AddHours (-8);
+			DateTime dt = x509.ValidUntil.ToUniversalTime().AddHours (-8);
 			return dt.ToString (); //"yyyy-MM-dd HH:mm:ss");
 		}
 	
@@ -488,70 +252,70 @@ namespace System.Security.Cryptography.X509Certificates {
 		public override int GetHashCode ()
 		{
 			// the cert hash may not be (yet) calculated
-			if (m_certhash == null)
+			if (cachedCertificateHash == null)
 				GetCertHash();
 		
 			// return the integer of the first 4 bytes of the cert hash
-			if ((m_certhash != null) && (m_certhash.Length >= 4))
-				return ((m_certhash[0] << 24) |(m_certhash[1] << 16) |
-					(m_certhash[2] << 8) | m_certhash[3]);
+			if ((cachedCertificateHash != null) && (cachedCertificateHash.Length >= 4))
+				return ((cachedCertificateHash[0] << 24) |(cachedCertificateHash[1] << 16) |
+					(cachedCertificateHash[2] << 8) | cachedCertificateHash[3]);
 			else
 				return 0;
 		}
 	
 		public virtual string GetIssuerName () 
 		{
-			return m_issuername;
+			return x509.IssuerName;
 		}
 	
 		public virtual string GetKeyAlgorithm () 
 		{
-			return m_keyalgo;
+			return x509.KeyAlgorithm;
 		}
 	
 		public virtual byte[] GetKeyAlgorithmParameters () 
 		{
-			return m_keyalgoparams;
+			return x509.KeyAlgorithmParameters;
 		}
 	
 		public virtual string GetKeyAlgorithmParametersString () 
 		{
-			return tostr (m_keyalgoparams);
+			return tostr (x509.KeyAlgorithmParameters);
 		}
 	
 		public virtual string GetName ()
 		{
-			return m_subject;
+			return x509.SubjectName;
 		}
 	
 		public virtual byte[] GetPublicKey () 
 		{
-			return m_publickey;
+			return x509.PublicKey;
 		}
 	
 		public virtual string GetPublicKeyString () 
 		{
-			return tostr (m_publickey);
+			return tostr (x509.PublicKey);
 		}
 	
 		public virtual byte[] GetRawCertData () 
 		{
-			return m_encodedcert;
+			return x509.RawData;
 		}
 	
 		public virtual string GetRawCertDataString () 
 		{
-			return tostr (m_encodedcert);
+			return tostr (x509.RawData);
 		}
 	
 		public virtual byte[] GetSerialNumber () 
 		{
-			return m_serialnumber;
+			return x509.SerialNumber;
 		}
 	
 		public virtual string GetSerialNumberString () 
 		{
-			return tostr (m_serialnumber);
+			return tostr (x509.SerialNumber);
 		}
 	
 		// to please corcompare ;-)
@@ -569,22 +333,22 @@ namespace System.Security.Cryptography.X509Certificates {
 				sb.Append (nl);
 				sb.Append ("\tFormat:  ");
 				sb.Append (GetFormat ());
-				if (m_subject != null) {
+				if (x509.SubjectName != null) {
 					sb.Append (nl);
 					sb.Append ("\tName:  ");
 					sb.Append (GetName ());
 				}
-				if (m_issuername != null) {
+				if (x509.IssuerName != null) {
 					sb.Append (nl);
 					sb.Append ("\tIssuing CA:  ");
 					sb.Append (GetIssuerName ());
 				}
-				if (m_keyalgo != null) {
+				if (x509.SignatureAlgorithm != null) {
 					sb.Append (nl);
 					sb.Append ("\tKey Algorithm:  ");
 					sb.Append (GetKeyAlgorithm ());
 				}
-				if (m_serialnumber != null) {
+				if (x509.SerialNumber != null) {
 					sb.Append (nl);
 					sb.Append ("\tSerial Number:  ");
 					sb.Append (GetSerialNumberString ());
@@ -592,12 +356,12 @@ namespace System.Security.Cryptography.X509Certificates {
 				// Note: Algorithm is not spelled right as the actual 
 				// MS implementation (we do exactly the same for the
 				// comparison in the unit tests)
-				if (m_keyalgoparams != null) {
+				if (x509.KeyAlgorithmParameters != null) {
 					sb.Append (nl);
 					sb.Append ("\tKey Alogrithm Parameters:  ");
 					sb.Append (GetKeyAlgorithmParametersString ());
 				}
-				if (m_publickey != null) {
+				if (x509.PublicKey != null) {
 					sb.Append (nl);
 					sb.Append ("\tPublic Key:  ");
 					sb.Append (GetPublicKeyString ());
@@ -607,7 +371,7 @@ namespace System.Security.Cryptography.X509Certificates {
 				return sb.ToString ();
 			}
 			else
-				return ToString ();
+				return base.ToString ();
 		}
 	}
 }
