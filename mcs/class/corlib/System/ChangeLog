@@ -1,3 +1,7 @@
+2003-12-03  Dick Porter  <dick@ximian.com>
+
+	* String.cs: Calling Replace on an empty string returns itself.
+
 2003-12-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MonoType.cs: Get rid of get_type_info, use a separate icall for

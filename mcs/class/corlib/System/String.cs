@@ -621,6 +621,10 @@ namespace System {
 				throw new ArgumentException ("oldValue is the empty string.");
 			}
 
+			if(this==String.Empty) {
+				return(this);
+			}
+
 			if(newValue==null) {
 				newValue=String.Empty;
 			}
