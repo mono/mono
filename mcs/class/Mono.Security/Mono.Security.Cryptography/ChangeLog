@@ -1,7 +1,11 @@
-2004-02-07  Sebastien Pouliot  <sebastien@ximian.com>
+2004-02-06  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* CryptoTools.cs: New. Copied from corlib to offer the sames services
+	to symmetric algorithms in Mono.Security assembly.
 	* KeyPairPersistance.cs: Provides a similar to CryptoAPI persistence 
 	mechanism for keypairs (based on CspParameters).
+	* SymmetricTransform.cs: New. Copied from corlib to offer the sames 
+	services to symmetric algorithms in Mono.Security assembly.
 
 2004-01-12  Sebastien Pouliot  <spouliot@videotron.ca>
 
