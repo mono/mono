@@ -8,14 +8,15 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace System {
     
 	[Serializable]
-	//	[ClassInterface (ClassInterfaceType.AutoDual)] (no implementation yet)
-	[MonoTODO]
+	[ClassInterface (ClassInterfaceType.AutoDual)]
 	public class Exception : ISerializable 
 	{
 		IntPtr [] trace_ips;
@@ -108,14 +109,16 @@ namespace System {
 			}
 		}
 
-		[MonoTODO]
 		public virtual string Source 
 		{
 			get 
 			{
-				// TODO: if source is null, we must return
-				// the name of the assembly where the error
-				// originated.
+				if (source == null) {
+					StackTrace st = new StackTrace (this, true);
+					if (st.FrameCount > 0)
+						source = st.GetFrame (0).GetMethod ().DeclaringType.Assembly.GetName ().Name;
+				}
+				
 				return source;
 			}
 
@@ -133,12 +136,14 @@ namespace System {
 			}
 		}
 
-		[MonoTODO]
 		public MethodBase TargetSite 
 		{
 			get 
 			{
-				// TODO: Implement this.
+				StackTrace st = new StackTrace (this, true);
+				if (st.FrameCount > 0)
+					return st.GetFrame (0).GetMethod ();
+				
 				return null;
 			}
 		}

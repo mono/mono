@@ -1,5 +1,11 @@
 2003-08-26 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* Exception.cs: Add ClassInterface attr. Implement TargetSite and
+	Source. Remove MonoTODO attributes (class is 100% done). Also
+	passes all Rotor tests for Exception!
+
+2003-08-26 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* Enum.cs: Remove [MonoTODO]'s that had been completed.
 
 2003-08-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
