@@ -52,6 +52,7 @@ namespace System.Drawing
 			if (s == null)
 				return base.ConvertFrom (context, culture, value);
 
+			// FIXME: use culture
 			string [] subs = s.Split (',');
 			if (subs.Length != 2)
 				throw new ArgumentException ("Failed to parse Text(" + s + ") expected text in the format \"Width,Height.\"");
@@ -67,6 +68,11 @@ namespace System.Drawing
 						  object value,
 						  Type destinationType)
 		{
+			// LAMESPEC: "The default implementation calls the ToString method
+			// of the object if the object is valid and if the destination
+			// type is string." MS does not behave as per the specs.
+			// Oh well, it is just a string and there is no harm in behaving
+			// like MS.
 			if ((destinationType == typeof (string)) && (value is Size))
 				return ((Size) value).Width + ", " + ((Size) value).Height;
 			
@@ -87,12 +93,14 @@ namespace System.Drawing
 			return true;
 		}
 
-		[MonoTODO]
 		public override PropertyDescriptorCollection GetProperties (
 							ITypeDescriptorContext context,
 							object value, Attribute[] attributes)
 		{
-			throw new NotImplementedException ();
+			if (value is Size)
+				return TypeDescriptor.GetProperties (value, attributes);
+
+			return base.GetProperties (context, value, attributes);
 		}
 		
 		public override bool GetPropertiesSupported (ITypeDescriptorContext context)

@@ -2,11 +2,14 @@
 // System.Drawing.FontConverter.cs
 //
 // Authors:
-// 	Dennis Hayes (dennish@Raytek.com)
+//	Dennis Hayes (dennish@Raytek.com)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Ravindra (rkumar@novell.com)
 //
-// (C) 2002,2003 Ximian, Inc
+// Copyright (C) 2002,2003 Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2004 Novell, Inc.  http://www.novell.com
 //
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -16,29 +19,35 @@ namespace System.Drawing
 {
 	public class FontConverter : TypeConverter
 	{
-		public FontConverter()
+		public FontConverter ()
 		{
 		}
 
-		[MonoTODO]
 		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 		{
-			throw new NotImplementedException ();
+			if (sourceType == typeof (string))
+				return true;
+
+			return base.CanConvertFrom (context, sourceType);
 		}
 
-		[MonoTODO]
 		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
 		{
-			throw new NotImplementedException ();
+			if (destinationType == typeof (String))
+				return true;
+
+			return base.CanConvertTo (context, destinationType);
 		}
 
-		[MonoTODO]
 		public override object ConvertTo (ITypeDescriptorContext context,
 						  CultureInfo culture,
 						  object value,
 						  Type destinationType)
 		{
-			throw new NotImplementedException ();
+			if ((destinationType == typeof (string)) && (value is Font))
+				return value.ToString ();
+
+			return base.ConvertTo (context, culture, value, destinationType);
 		}
 
 		[MonoTODO]
@@ -61,12 +70,14 @@ namespace System.Drawing
 			return true;
 		}
 
-		[MonoTODO]
 		public override PropertyDescriptorCollection GetProperties (ITypeDescriptorContext context,
 									    object value,
 									    Attribute [] attributes)
 		{
-			throw new NotImplementedException ();
+			if (value is Font)
+				return TypeDescriptor.GetProperties (value, attributes);
+
+			return base.GetProperties (context, value, attributes);
 		}
 
 		public override bool GetPropertiesSupported (ITypeDescriptorContext context)
@@ -80,10 +91,12 @@ namespace System.Drawing
 			{
 			}
 
-			[MonoTODO]
 			public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 			{
-				throw new NotImplementedException ();
+				if (sourceType == typeof (string))
+					return true;
+
+				return base.CanConvertFrom (context, sourceType);
 			}
 
 			[MonoTODO]
@@ -110,7 +123,25 @@ namespace System.Drawing
 			{
 				return true;
 			}
+
+			[MonoTODO]
+			~FontNameConverter ()
+			{
+				throw new NotImplementedException ();
+			}
+		}
+
+		public sealed class FontUnitConverter : TypeConverter
+		{
+			public FontUnitConverter () 
+			{
+			}
+
+			[MonoTODO]
+			public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
+			{
+				throw new NotImplementedException ();
+			}
 		}
 	}
 }
-

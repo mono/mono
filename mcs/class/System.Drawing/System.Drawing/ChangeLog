@@ -1,5 +1,12 @@
 2004-05-06  Ravindra <rkumar@novell.com>
 
+	* RectangleConverter.cs: Implemented GetProperties () method.
+	* SizeConverter.cs: Implemented GetProperties () method.
+	* PointConverter.cs: Implemented GetProperties () method.
+	* FontConverter.cs: Implemented some of the methods.
+
+2004-05-06  Ravindra <rkumar@novell.com>
+
 	* Color.cs: Fixed Name property.
 	* ColorTranslator.cs: Fixed the existing methods and implemented
 	the missing methods.
