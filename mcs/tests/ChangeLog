@@ -1,3 +1,10 @@
+2001-12-26  Ravi Pratap  <ravi@ximian.com>
+
+	* test-67.cs : Add. These are tests for explicit layout
+	of structs and classes.
+
+	* makefile : Update accordingly.
+	
 2001-12-25  Ravi Pratap  <ravi@ximian.com>
 
 	* test-57.cs : Update to exercise more of the code base for
