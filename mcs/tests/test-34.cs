@@ -30,6 +30,16 @@ public class Blah {
 		got = 3;
 	}
 
+	static void In (ref int a)
+	{
+		a++;
+	}
+
+	static void Out (ref int a)
+	{
+		In (ref a);
+	}
+	
 	public static int Main ()
 	{
 		int i = 1;
@@ -54,6 +64,12 @@ public class Blah {
 		if (got != 2)
 			return 3;
 
+		int k = 10;
+
+		Out (ref k);
+		if (k != 11)
+			return 10;
+		
 		return  0;
 	}
 }

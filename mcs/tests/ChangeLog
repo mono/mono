@@ -1,3 +1,7 @@
+2002-01-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* test-34.cs: Improve this test to check ref/ref cases.
+
 2002-01-02  Ravi Pratap  <ravi@ximian.com>
 
 	* test-45.cs : Augment to exercise support for array initialization

@@ -2320,7 +2320,7 @@ namespace Mono.CSharp {
 		Parameters pars;
 		String name;
 		int idx;
-		bool is_ref;
+		public bool is_ref;
 		
 		public ParameterReference (Parameters pars, int idx, string name)
 		{
@@ -2350,6 +2350,26 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		//
+		// This method is used by parameters that are references, that are
+		// being passed as references:  we only want to pass the pointer (that
+		// is already stored in the parameter, not the address of the pointer,
+		// and not the value of the variable).
+		//
+		public void EmitLoad (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			int arg_idx = idx;
+
+			if (!ec.IsStatic)
+				arg_idx++;
+			
+			if (arg_idx <= 255)
+				ig.Emit (OpCodes.Ldarg_S, (byte) arg_idx);
+			else
+				ig.Emit (OpCodes.Ldarg, arg_idx);
+		}
+		
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
@@ -2529,9 +2549,23 @@ namespace Mono.CSharp {
 
 		public void Emit (EmitContext ec)
 		{
-			if (ArgType == AType.Ref || ArgType == AType.Out)
-				((IMemoryLocation)expr).AddressOf (ec);
-			else
+			//
+			// Ref and Out parameters need to have their addresses taken.
+			//
+			// ParameterReferences might already be references, so we want
+			// to pass just the value
+			//
+			if (ArgType == AType.Ref || ArgType == AType.Out){
+				if (expr is ParameterReference){
+					ParameterReference pr = (ParameterReference) expr;
+
+					if (pr.is_ref)
+						pr.EmitLoad (ec);
+					else
+						pr.AddressOf (ec);
+				} else
+					((IMemoryLocation)expr).AddressOf (ec);
+			} else
 				expr.Emit (ec);
 		}
 	}

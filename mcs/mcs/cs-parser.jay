@@ -1553,7 +1553,7 @@ enum_declaration
 	  opt_semicolon
 	  { 
 		string full_name = MakeName ((string) $4);
-		Enum e = new Enum ((string) $5, (int) $2, full_name, (Attributes) $1, lexer.Location);
+		Enum e = new Enum (current_container, (string) $5, (int) $2, full_name, (Attributes) $1, lexer.Location);
 
 		foreach (VariableDeclaration ev in (ArrayList) $6){
 			CheckDef (e.AddEnumMember (ev.identifier, 

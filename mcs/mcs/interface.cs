@@ -45,8 +45,6 @@ namespace Mono.CSharp {
 		ArrayList method_builders;
 		ArrayList property_builders;
 		
-		TypeContainer parent;
-
 		Attributes OptAttributes;
 
 		// These will happen after the semantic analysis
@@ -65,10 +63,9 @@ namespace Mono.CSharp {
 			Modifiers.PRIVATE;
 
 		public Interface (TypeContainer parent, string name, int mod, Attributes attrs, Location l)
-			: base (name, l)
+			: base (parent, name, l)
 		{
 			ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE);
-			this.parent = parent;
 			OptAttributes = attrs;
 			
 			method_builders = new ArrayList ();
@@ -174,8 +171,8 @@ namespace Mono.CSharp {
 
 		public bool IsTopLevel {
 			get {
-				if (parent != null){
-					if (parent.Parent == null)
+				if (Parent != null){
+					if (Parent.Parent == null)
 						return true;
 				}
 				return false;
@@ -373,7 +370,7 @@ namespace Mono.CSharp {
 				Parameter [] parms = new Parameter [1];
 				parms [0] = new Parameter (ip.Type, "value", Parameter.Modifier.NONE, null);
 				InternalParameters ipp = new InternalParameters (
-					parent, new Parameters (parms, null, Location.Null));
+					Parent, new Parameters (parms, null, Location.Null));
 					
 				if (!RegisterMethod (set, ipp, setter_args)) {
 					Error111 (ip);

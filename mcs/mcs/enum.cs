@@ -43,8 +43,8 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Enum (string type, int mod_flags, string name, Attributes attrs, Location l)
-			: base (name, l)
+		public Enum (TypeContainer parent, string type, int mod_flags, string name, Attributes attrs, Location l)
+			: base (parent, name, l)
 		{
 			this.BaseType = type;
 			ModFlags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PUBLIC);

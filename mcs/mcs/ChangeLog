@@ -1,3 +1,15 @@
+2002-01-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Argument.Emit): Handle the case of ref objects
+	being passed to ref functions;  
+
+	(ParameterReference.EmitLoad): Loads the content of the pointer
+	without dereferencing.
+
+2002-01-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-tokenizer.cs: Implemented the pre-processing expressions.
+
 2002-01-08  Ravi Pratap  <ravi@ximian.com>
 
 	* class.cs (Indexer.DefineMethod): Incorporate the interface

@@ -79,7 +79,6 @@ namespace Mono.CSharp {
 		//
 		string     base_class_name;
 
-		TypeContainer parent;
 		ArrayList type_bases;
 
 		// Attributes for this type
@@ -93,11 +92,10 @@ namespace Mono.CSharp {
 		
 
 		public TypeContainer (TypeContainer parent, string name, Location l)
-			: base (name, l)
+			: base (parent, name, l)
 		{
 			string n;
 			types = new ArrayList ();
-			this.parent = parent;
 
 			if (parent == null)
 				n = "";
@@ -345,12 +343,6 @@ namespace Mono.CSharp {
 			return AdditionResult.Success;
 		}
 		
-		public TypeContainer Parent {
-			get {
-				return parent;
-			}
-		}
-
 		public ArrayList Types {
 			get {
 				return types;
@@ -452,8 +444,8 @@ namespace Mono.CSharp {
 		//
 		public bool IsTopLevel {
 			get {
-				if (parent != null){
-					if (parent.Parent == null)
+				if (Parent != null){
+					if (Parent.Parent == null)
 						return true;
 				}
 				return false;

@@ -889,6 +889,7 @@ namespace Mono.CSharp
 
 		bool eval_val (string s)
 		{
+			Console.WriteLine ("Evaluating " + s);
 			if (s == "true")
 				return true;
 			if (s == "false")
@@ -901,18 +902,155 @@ namespace Mono.CSharp
 
 			return false;
 		}
+
+		bool pp_primary (ref string s)
+		{
+			Console.WriteLine ("pp_primary: [" + s + "]");
+			s.Trim ();
+			int len = s.Length;
+			
+			if (len > 0){
+				if (s [0] == '('){
+					s = s.Substring (1);
+					bool val = pp_expr (ref s);
+					if (s.Length > 0 && s [0] == ')')
+						return val;
+					report1517 ();
+					return false;
+				}
+				if (Char.IsLetter (s [0])){
+					int j = 1;
+
+					while (j < len){
+						char c = s [j];
+						
+						if (Char.IsLetter (c) || Char.IsDigit (c)){
+							j++;
+							continue;
+						}
+						bool v = eval_val (s.Substring (0, j));
+						s = s.Substring (j);
+						return v;
+					}
+					bool vv = eval_val (s);
+					s = "";
+					return vv;
+				}
+			}
+			report1517 ();
+			return false;
+		}
+		
+		bool pp_unary (ref string s)
+		{
+			Console.WriteLine ("pp_unary: [" + s + "]");
+			s = s.Trim ();
+			int len = s.Length;
+
+			if (len > 0){
+				if (s [0] == '!'){
+					if (len > 1 && s [1] == '='){
+						report1517 ();
+						return false;
+					}
+					s = s.Substring (1);
+					return ! pp_primary (ref s);
+				} else
+					return pp_primary (ref s);
+			} else {
+				report1517 ();
+				return false;
+			}
+		}
+		
+		bool pp_eq (ref string s)
+		{
+			Console.WriteLine ("pp_eq: [" + s + "]");
+			bool va = pp_unary (ref s);
+
+			s = s.Trim ();
+			int len = s.Length;
+			if (len > 0){
+				if (s [0] == '='){
+					if (len > 2 && s [1] == '='){
+						s = s.Substring (2);
+						return va == pp_unary (ref s);
+					} else {
+						report1517 ();
+						return false;
+					}
+				} else if (s [0] == '!' && len > 1 && s [1] == '='){
+					s = s.Substring (2);
+
+					return va != pp_unary (ref s);
+
+				}
+			}
+
+			return va;
+				
+		}
+		
+		bool pp_and (ref string s)
+		{
+			Console.WriteLine ("pp_and: [" + s + "]");
+			bool va = pp_eq (ref s);
+
+			s = s.Trim ();
+			int len = s.Length;
+			if (len > 0){
+				if (s [0] == '&'){
+					if (len > 2 && s [1] == '&'){
+						s = s.Substring (2);
+						return va && pp_eq (ref s);
+					} else {
+						report1517 ();
+						return false;
+					}
+				} 
+			}
+			return va;
+		}
 		
 		//
 		// Evaluates an expression for `#if' or `#elif'
 		//
+		bool pp_expr (ref string s)
+		{
+			Console.WriteLine ("eval: [" + s + "]");
+			bool va = pp_and (ref s);
+
+			s = s.Trim ();
+			int len = s.Length;
+			if (len > 0){
+				if (s [0] == '|'){
+					if (len > 2 && s [1] == '|'){
+						s = s.Substring (2);
+						return va || pp_and (ref s);
+					} else {
+						report1517 ();
+						return false;
+					}
+				} else {
+					report1517 ();
+					return false;
+				}
+			}
+
+			return va;
+		}
+
 		bool eval (string s)
 		{
-			Console.WriteLine ("Evaluating  : " + s);
+			bool v = pp_expr (ref s);
 
-// 			String [] a = s.Split (' ');
-// 			foreach (string t in a)
-// 				Console.WriteLine (t);
-			return eval_val (s);
+			Console.WriteLine ("Returning: " + v);
+			return v;
+		}
+		
+		void report1517 ()
+		{
+			Report.Error (1517, Location, "Invalid pre-processor directive");
 		}
 
 		void report1028 (string extra)
@@ -967,7 +1105,7 @@ namespace Mono.CSharp
 				
 			case "if":
 				if (arg == ""){
-					Report.Error (1517, Location, "Invalid pre-processor directive");
+					report1517 ();
 					return true;
 				}
 				bool taking = false;

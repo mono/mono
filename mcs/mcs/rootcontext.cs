@@ -238,14 +238,19 @@ namespace Mono.CSharp {
 			// For the case the type we are looking for is nested within this one
 			// or any base class
 			//
-			Type current_type = ds.TypeBuilder;
+			DeclSpace containing_ds = ds;
+			while (containing_ds != null){
+				Type current_type = containing_ds.TypeBuilder;
 
-			while (current_type != null) {
-				t = TypeManager.LookupType (current_type.FullName + "+" + name);
-				if (t != null)
-					return t;
-				current_type = current_type.BaseType;
-			} 
+				while (current_type != null) {
+					t = TypeManager.LookupType (current_type.FullName + "+" + name);
+					if (t != null)
+						return t;
+					current_type = current_type.BaseType;
+				}
+
+				containing_ds = containing_ds.Parent;
+			}
 
 			t = TypeManager.LookupType (MakeFQN (ds.Namespace.Name, name));
 			if (t != null)

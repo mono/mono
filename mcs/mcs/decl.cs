@@ -170,11 +170,14 @@ namespace Mono.CSharp {
 		/// </summary>
 		protected Hashtable defined_names;
 
-		public DeclSpace (string name, Location l)
+		TypeContainer parent;		
+
+		public DeclSpace (TypeContainer parent, string name, Location l)
 			: base (name, l)
 		{
 			Basename = name.Substring (1 + name.LastIndexOf ('.'));
 			defined_names = new Hashtable ();
+			this.parent = parent;
 		}
 
 		/// <summary>
@@ -225,6 +228,12 @@ namespace Mono.CSharp {
 
 			set {
 				definition = value;
+			}
+		}
+
+		public TypeContainer Parent {
+			get {
+				return parent;
 			}
 		}
 
