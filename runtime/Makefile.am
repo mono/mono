@@ -90,6 +90,7 @@ $(monobins_DATA):
 	-cp $(top_srcdir)/../mcs/tools/security/MakeCert.exe . || cp $(monobinsdir)/MakeCert.exe .
 	-cp $(top_srcdir)/../mcs/tools/security/cert2spc.exe . || cp $(monobinsdir)/cert2spc.exe .
 	-cp $(top_srcdir)/../mcs/tools/security/certmgr.exe . || cp $(monobinsdir)/certmgr.exe .
+	-cp $(top_srcdir)/../mcs/tools/security/setreg.exe . || cp $(monobinsdir)/setreg.exe .
 	-cp $(top_srcdir)/../mcs/tools/monop/monop.exe . || cp $(monobinsdir)/monop.exe .
 	-cp $(top_srcdir)/../mcs/tools/browsercaps-updater/browsercaps-updater.exe . || cp $(monobinsdir)/browsercaps-updater.exe .
 
