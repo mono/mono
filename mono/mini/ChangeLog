@@ -1,3 +1,8 @@
+2005-03-09  Ben Maurer  <bmaurer@ximian.com>
+
+	* mini.c (mono_codegen): Don't leak here, to help people running
+	monogrind.
+
 2005-03-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (mono_arch_output_basic_block): Fix int->float 
