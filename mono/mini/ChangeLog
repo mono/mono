@@ -1,5 +1,7 @@
 2003-09-30  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mono_jit_compile_method): Fix reading of freed memory.
+
 	* inssel.brg (OP_UNBOXCAST): Fix #46027.
 
 	* inssel.brg (OP_UNBOX): Remove unused rule.
