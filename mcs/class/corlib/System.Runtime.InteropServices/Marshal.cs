@@ -727,12 +727,14 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public static extern IntPtr GetFunctionPointerForDelegateInternal (Delegate d);
+		
 		public static IntPtr GetFunctionPointerForDelegate (Delegate d) {
 			if (d == null)
 				throw new ArgumentNullException ("d");
 			
-			throw new NotImplementedException ();
+			return GetFunctionPointerForDelegateInternal (d);
 		}
 #endif
 	}
