@@ -1,3 +1,12 @@
+2004-11-19  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ThemeWin32Classic.cs: initial listbox drawing code
+	* DrawMode.cs: new enumerator
+	* ListControl.cs: stubbed class
+	* ListBox.cs: initial implementation
+	* Theme.cs: new methods definitions
+	* SelectionMode.cs: new enumerator
+
 2004-11-17  Peter Bartok  <pbartok@novell.com>
 
 	* XplatUIWin32.cs: Added double-click events to the class style

@@ -337,7 +337,20 @@ namespace System.Windows.Forms
 
 		#region LinkLabel
 		#endregion	// LinkLabel
+		
+		#region ListBox
+		// Drawing
+		public abstract void DrawListBox (Graphics dc, Rectangle clip_rectangle, ListBox control);
+		public abstract void DrawListBoxItem (Graphics dc, int elem, Rectangle rect, ListBox ctrl);		
+		
 
+		// Sizing
+		public abstract int DrawListBoxDecorationTop (BorderStyle border_style);
+		public abstract int DrawListBoxDecorationBottom (BorderStyle border_style);
+		public abstract int DrawListBoxDecorationRight (BorderStyle border_style);
+		public abstract int DrawListBoxDecorationLeft (BorderStyle border_style);
+		#endregion	// ListBox
+		
 		#region ListView
 		// Drawing
 		public abstract void DrawListView (Graphics dc, Rectangle clip_rectangle, ListView control);

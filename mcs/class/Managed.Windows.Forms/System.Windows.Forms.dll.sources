@@ -57,6 +57,7 @@ System.Windows.Forms/DragEventHandler.cs
 System.Windows.Forms/DrawItemEventArgs.cs
 System.Windows.Forms/DrawItemEventHandler.cs
 System.Windows.Forms/DrawItemState.cs
+System.Windows.Forms/DrawMode.cs
 System.Windows.Forms/FlatStyle.cs
 System.Windows.Forms/Form.cs
 System.Windows.Forms/FormBorderStyle.cs
@@ -115,6 +116,8 @@ System.Windows.Forms/LinkLabel.cs
 System.Windows.Forms/LinkLabelLinkClickedEventArgs.cs
 System.Windows.Forms/LinkLabelLinkClickedEventHandler.cs
 System.Windows.Forms/LinkState.cs
+System.Windows.Forms/ListBox.cs
+System.Windows.Forms/ListControl.cs
 System.Windows.Forms/ListView.cs
 System.Windows.Forms/ListViewAlignment.cs
 System.Windows.Forms/ListViewItem.cs
@@ -152,6 +155,7 @@ System.Windows.Forms/QueryContinueDragEventArgs.cs
 System.Windows.Forms/QueryContinueDragEventHandler.cs
 System.Windows.Forms/RadioButton.cs
 System.Windows.Forms/RightToLeft.cs
+System.Windows.Forms/SelectionMode.cs
 System.Windows.Forms/ScrollableControl.cs
 System.Windows.Forms/ScrollBar.cs
 System.Windows.Forms/ScrollBars.cs

@@ -1031,6 +1031,89 @@ namespace System.Windows.Forms
 			}
 		}
 		#endregion	// Label
+		
+		#region ListBox
+		
+		// Drawing
+		
+		public override void DrawListBox (Graphics dc, Rectangle clip_rectangle, ListBox ctrl)
+		{			
+			
+			clip_rectangle = ctrl.LBoxInfo.textdrawing_rect;
+			dc.FillRectangle (ResPool.GetSolidBrush (ctrl.BackColor), ctrl.LBoxInfo.textdrawing_rect);			
+			
+			clip_rectangle.Height -= (ThemeEngine.Current.DrawListBoxDecorationTop (ctrl.BorderStyle) + ThemeEngine.Current.DrawListBoxDecorationBottom (ctrl.BorderStyle));
+			clip_rectangle.Width -= (ThemeEngine.Current.DrawListBoxDecorationLeft (ctrl.BorderStyle) + ThemeEngine.Current.DrawListBoxDecorationRight (ctrl.BorderStyle));
+									
+			// Draw items
+			int y = ThemeEngine.Current.DrawListBoxDecorationTop (ctrl.BorderStyle);
+			Rectangle rect = new Rectangle ();
+			rect.X = ThemeEngine.Current.DrawListBoxDecorationLeft (ctrl.BorderStyle);
+			rect.Width = clip_rectangle.Width;
+			rect.Height = ctrl.LBoxInfo.item_height;			
+			
+			for (int i = ctrl.LBoxInfo.top_item; i < ctrl.Items.Count; i++) {				
+				rect.Y = y;				
+				DrawListBoxItem (dc, i, rect, ctrl);
+				y += ctrl.LBoxInfo.item_height;
+			}	
+			
+			Rectangle cl = ctrl.ClientRectangle;
+			
+			// Draw decorations
+			switch (ctrl.BorderStyle) {
+			case BorderStyle.Fixed3D: {				
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), cl.X, cl.Y, cl.X + cl.Width, cl.Y); //top 
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), cl.X + 1, cl.Y + 1, cl.X + cl.Width - 2, cl.Y + 1);
+				dc.DrawLine (ResPool.GetPen (ColorButtonFace), cl.X, cl.Y + cl.Height - 2, cl.X + cl.Width, cl.Y + cl.Height - 2); //down
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), cl.X, cl.Y + cl.Height - 1, cl.X + cl.Width, cl.Y + cl.Height - 1);
+				dc.DrawLine (ResPool.GetPen (ColorButtonShadow), cl.X, cl.Y, cl.X, cl.Y + cl.Height); //left
+				dc.DrawLine (ResPool.GetPen (ColorButtonDkShadow), cl.X + 1, cl.Y + 1, cl.X + 1, cl.Y + cl.Height - 2); 
+				dc.DrawLine (ResPool.GetPen (ColorButtonFace), cl.X + cl.Width - 2, cl.Y, cl.X + cl.Width - 2, cl.Y + cl.Height); //right
+				dc.DrawLine (ResPool.GetPen (ColorButtonHilight), cl.X + cl.Width - 1, cl.Y + 1 , cl.X + cl.Width - 1, cl.Y + cl.Height - 1);		
+				break;
+			}
+			case BorderStyle.FixedSingle:
+				dc.DrawRectangle (ResPool.GetPen (ColorWindowFrame), cl.X, cl.Y, cl.Width - 1, cl.Height - 1);
+				break;
+			case BorderStyle.None:
+			default:
+				break;
+			}		
+		
+		}
+		
+		public override void DrawListBoxItem (Graphics dc, int elem, Rectangle rect, ListBox ctrl)
+		{
+			StringFormat string_format = new StringFormat ();
+
+			dc.DrawString (ctrl.Items[elem].ToString (), ctrl.Font,
+					ThemeEngine.Current.ResPool.GetSolidBrush (ctrl.ForeColor),
+					rect, string_format);
+		}
+		
+		private int DrawListBoxDecorationSize (BorderStyle border_style)
+		{
+			switch (border_style) {
+				case BorderStyle.Fixed3D:
+					return 2;
+				case BorderStyle.FixedSingle:					
+					return 1;
+				case BorderStyle.None:
+				default:
+					break;
+				}
+				
+			return 0;
+		}			
+		
+		// Sizing				
+		public override int DrawListBoxDecorationTop  (BorderStyle border_style) { return DrawListBoxDecorationSize (border_style);}
+		public override int DrawListBoxDecorationBottom  (BorderStyle border_style) { return DrawListBoxDecorationSize (border_style);}
+		public override int DrawListBoxDecorationRight (BorderStyle border_style) { return DrawListBoxDecorationSize (border_style);}
+		public override int DrawListBoxDecorationLeft (BorderStyle border_style) { return DrawListBoxDecorationSize (border_style);}
+		
+		#endregion ListBox
 
 		#region ListView
 		// Drawing
