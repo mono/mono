@@ -1,5 +1,8 @@
 2002-03-19  Martin Baulig  <martin@gnome.org>
 
+	* IMonoSymbolWriter.cs (ISourceFile, ISourceMethod, ISourceLine, ILocalVariable):
+	New interfaces.
+
 	* IMonoSymbolWriter.cs (OpenMethod): Take a System.Reflection.MethodInfo, not
 	a string.
 

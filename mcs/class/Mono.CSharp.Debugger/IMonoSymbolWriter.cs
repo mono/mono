@@ -35,4 +35,62 @@ namespace Mono.CSharp.Debugger
 		// method name and source file back from a token.
 		void OpenMethod (SymbolToken token, MethodInfo method_info, string source_file);
 	}
+
+	public interface ISourceFile
+	{
+		string FileName {
+			get;
+		}
+
+		ISourceMethod[] Methods {
+			get;
+		}
+
+		void AddMethod (ISourceMethod method);
+	}
+
+	public interface ISourceMethod
+	{
+		ISourceLine[] Lines {
+			get;
+		}
+
+		void AddLine (ISourceLine line);
+
+		ILocalVariable[] Locals {
+			get;
+		}
+
+		void AddLocal (ILocalVariable local);
+
+		MethodInfo MethodInfo {
+			get;
+		}
+
+		ISourceFile SourceFile {
+			get;
+		}
+	}
+
+	public interface ISourceLine
+	{
+		int Offset {
+			get;
+		}
+
+		int Line {
+			get;
+		}
+	}
+
+	public interface ILocalVariable
+	{
+		string Name {
+			get;
+		}
+
+		int Index {
+			get;
+		}
+	}
 }
