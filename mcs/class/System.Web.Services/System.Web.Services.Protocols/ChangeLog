@@ -1,3 +1,9 @@
+2005-02-07  Lluis Sanchez Gual <lluis@novell.com>
+
+	* XmlReturnWriter.cs, SoapDocumentationHandler.cs: Use utf-8 encoding
+	when generating xml responses, wsdl documents and schemas. This fixes
+	bug #72202.
+
 2004-12-09  Lluis Sanchez Gual <lluis@novell.com>
 
 	* ValueCollectionParameterReader.cs: Parse parameters in the correct

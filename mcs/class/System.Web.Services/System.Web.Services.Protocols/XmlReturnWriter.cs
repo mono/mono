@@ -31,6 +31,8 @@
 using System.IO;
 using System.Web;
 using System.Xml.Serialization;
+using System.Xml;
+using System.Text;
 
 namespace System.Web.Services.Protocols {
 	internal class XmlReturnWriter : MimeReturnWriter {
@@ -77,7 +79,9 @@ namespace System.Web.Services.Protocols {
 			if (serializer != null)
 			{
 				response.ContentType = "text/xml; charset=utf-8";
-				serializer.Serialize (outputStream, returnValue);
+				XmlTextWriter xtw = new XmlTextWriter (outputStream, new UTF8Encoding (false));
+				xtw.Formatting = Formatting.Indented;
+				serializer.Serialize (xtw, returnValue);
 			}
 			outputStream.Close ();
 		}

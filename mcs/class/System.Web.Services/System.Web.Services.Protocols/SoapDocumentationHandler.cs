@@ -31,6 +31,8 @@
 using System;
 using System.Web;
 using System.IO;
+using System.Xml;
+using System.Text;
 using System.Xml.Serialization;
 using System.Xml.Schema;
 using System.Web.Services.Description;
@@ -68,7 +70,6 @@ namespace System.Web.Services.Protocols
 				
 			string help = WSConfig.Instance.WsdlHelpPage;
 			string path = Path.GetDirectoryName (WSConfig.Instance.ConfigFilePath);
-			string file = Path.GetFileName (WSConfig.Instance.ConfigFilePath);
 			string appPath = AppDomain.CurrentDomain.GetData (".appPath").ToString ();
 			string vpath;
 			if (path.StartsWith (appPath)) {
@@ -127,7 +128,9 @@ namespace System.Web.Services.Protocols
 			if (wsdlId != null && wsdlId != "") di = int.Parse (wsdlId);
 			
 			context.Response.ContentType = "text/xml; charset=utf-8";
-			GetDescriptions() [di].Write (context.Response.OutputStream);
+			XmlTextWriter xtw = new XmlTextWriter (context.Response.OutputStream, new UTF8Encoding (false));
+			xtw.Formatting = Formatting.Indented;
+			GetDescriptions() [di].Write (xtw);
 		}
 		
 		void GenerateDiscoDocument (HttpContext context)
@@ -155,7 +158,9 @@ namespace System.Web.Services.Protocols
 					}
 
 			context.Response.ContentType = "text/xml; charset=utf-8";
-			doc.Write (context.Response.OutputStream);
+			XmlTextWriter xtw = new XmlTextWriter (context.Response.OutputStream, new UTF8Encoding (false));
+			xtw.Formatting = Formatting.Indented;
+			doc.Write (xtw);
 		}
 		
 		void GenerateSchema (HttpContext context, string schemaId)
@@ -164,7 +169,9 @@ namespace System.Web.Services.Protocols
 			if (schemaId != null && schemaId != "") di = int.Parse (schemaId);
 			
 			context.Response.ContentType = "text/xml; charset=utf-8";
-			GetSchemas() [di].Write (context.Response.OutputStream);
+			XmlTextWriter xtw = new XmlTextWriter (context.Response.OutputStream, new UTF8Encoding (false));
+			xtw.Formatting = Formatting.Indented;
+			GetSchemas() [di].Write (xtw);
 		}
 		
 		void GenerateCode (HttpContext context, string langId)
