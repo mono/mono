@@ -97,39 +97,13 @@ namespace System {
 		private const int maxIntLength = 12;
 		private const int maxLongLength = 22;
 
-		private static char[] digitLowerTable;
-/**
- * This makes a TypeNotInitialized exception be thrown.
- *		{ '0', '1', '2', '3', '4', '5', '6', '7', 
- *		  '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
- */
+		private static char[] digitLowerTable =
+		{ '0', '1', '2', '3', '4', '5', '6', '7', 
+		  '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 
-		private static char[] digitUpperTable;
-/*
- *		{ '0', '1', '2', '3', '4', '5', '6', '7', 
- *		  '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
- */
-
-		static IntegerFormatter ()
-		{
-			int i;
-
-			digitLowerTable = new char[16];
-			digitUpperTable = new char[16];
-
-			for (i = 0; i < 10; i++){
-				digitLowerTable[i] = (char) ('0' + i);
-				digitUpperTable[i] = (char) ('0' + i);
-			}
-
-			char lc = (char ) ('a' - i);
-			char uc = (char ) ('A' - i);
-			while (i < 16){
-				digitLowerTable[i] = (char) (lc + i);
-				digitUpperTable[i] = (char) (uc + i);
-				i++;
-			}
-		}
+		private static char[] digitUpperTable =
+		{ '0', '1', '2', '3', '4', '5', '6', '7', 
+		  '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
 		private static bool ParseFormat (string format, out char specifier,  out int precision, out bool custom)
 		{		 		 
