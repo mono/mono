@@ -29,6 +29,7 @@ System.Data/DataTable.cs
 System.Data/DataTableCollection.cs
 System.Data/DataView.cs
 System.Data/DataViewManager.cs
+System.Data/DataViewManagerListItemTypeDescriptor.cs
 System.Data/DataViewRowState.cs
 System.Data/DataViewSetting.cs
 System.Data/DataViewSettingCollection.cs
