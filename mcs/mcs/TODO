@@ -1,3 +1,12 @@
+New
+---
+
+	When invoked by `Assign' on a value type, it knows the address where
+	it will be stored.
+
+	In any other place value types do not need a local variable, so
+	we could probably just do an `initobj' and leave the result *on the stack*
+	as an argument.
 
 NEW NOTES:
 ----------
