@@ -200,6 +200,8 @@ MustInheritC7 \
 NotInheritableC1 \
 NotInheritableC2 \
 NotInheritableC3 \
+ConstructorC1 \
+ConstructorC2 \
 InterfaceC1 \
 InterfaceC2 \
 InterfaceC3 \
