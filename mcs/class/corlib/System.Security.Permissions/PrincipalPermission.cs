@@ -124,14 +124,14 @@ namespace System.Security.Permissions {
 				}
 
 				if (!demand)
-					throw new SecurityException ("invalid Principal");
+					throw new SecurityException ("Demand for principal refused.");
 			}
 		}
 
 		public void FromXml (SecurityElement esd) 
 		{
 			// General validation in CodeAccessPermission
-			CodeAccessPermission.CheckSecurityElement (esd, "esd", version, version);
+			CheckSecurityElement (esd, "esd", version, version);
 			// Note: we do not (yet) care about the return value 
 			// as we only accept version 1 (min/max values)
 
@@ -141,7 +141,7 @@ namespace System.Security.Permissions {
 				foreach (SecurityElement se in esd.Children) {
 					if (se.Tag != "Identity")
 						throw new ArgumentException ("not IPermission/Identity");
-					string name = se.Attribute ("Name");
+					string name = se.Attribute ("ID");
 					string role = se.Attribute ("Role");
 					string auth = se.Attribute ("Authenticated");
 					bool isAuthenticated = false;
@@ -175,9 +175,13 @@ namespace System.Security.Permissions {
 						string name = null;
 						if ((pi.Name == opi.Name) || (opi.Name == null))
 							name = pi.Name;
+						else if (pi.Name == null)
+							name = opi.Name;
 						string role = null;
 						if ((pi.Role == opi.Role) || (opi.Role == null))
 							role = pi.Role;
+						else if (pi.Role == null)
+							role = opi.Role;
 						if ((name != null) || (role != null)) {
 							PrincipalInfo ipi = new PrincipalInfo (name, role, pi.IsAuthenticated);
 							intersect.principals.Add (ipi);
@@ -232,7 +236,7 @@ namespace System.Security.Permissions {
 
 		public SecurityElement ToXml () 
 		{
-			SecurityElement se = new SecurityElement ("IPermission");
+			SecurityElement se = new SecurityElement ("Permission");
 			Type type = this.GetType ();
 			se.AddAttribute ("class", type.FullName + ", " + type.Assembly.ToString ().Replace ('\"', '\''));
 			se.AddAttribute ("version", version.ToString ());
@@ -240,7 +244,7 @@ namespace System.Security.Permissions {
 			foreach (PrincipalInfo pi in principals) {
 				SecurityElement sec = new SecurityElement ("Identity");
 				if (pi.Name != null)
-					sec.AddAttribute ("Name", pi.Name);
+					sec.AddAttribute ("ID", pi.Name);
 				if (pi.Role != null)
 					sec.AddAttribute ("Role", pi.Role);
 				if (pi.IsAuthenticated)
@@ -324,6 +328,45 @@ namespace System.Security.Permissions {
 			}
 
 			return pp;
+		}
+
+		// Normally permissions tags are "IPermission" but this (non-CAS) permission use "Permission"
+		internal int CheckSecurityElement (SecurityElement se, string parameterName, int minimumVersion, int maximumVersion) 
+		{
+			if (se == null)
+				throw new ArgumentNullException (parameterName);
+
+			// Tag is case-sensitive
+			if (se.Tag != "Permission") {
+				string msg = String.Format (Locale.GetText ("Invalid tag {0}"), se.Tag);
+				throw new ArgumentException (msg, parameterName);
+			}
+
+			// Note: we do not care about the class attribute at 
+			// this stage (in fact we don't even if the class 
+			// attribute is present or not). Anyway the object has
+			// already be created, with success, if we're loading it
+
+			// we assume minimum version if no version number is supplied
+			int version = minimumVersion;
+			string v = se.Attribute ("version");
+			if (v != null) {
+				try {
+					version = Int32.Parse (v);
+				}
+				catch (Exception e) {
+					string msg = Locale.GetText ("Couldn't parse version from '{0}'.");
+					msg = String.Format (msg, v);
+					throw new ArgumentException (msg, parameterName, e);
+				}
+			}
+
+			if ((version < minimumVersion) || (version > maximumVersion)) {
+				string msg = Locale.GetText ("Unknown version '{0}', expected versions between ['{1}','{2}'].");
+				msg = String.Format (msg, version, minimumVersion, maximumVersion);
+				throw new ArgumentException (msg, parameterName);
+			}
+			return version;
 		}
 	}
 }

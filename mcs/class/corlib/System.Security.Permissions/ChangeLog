@@ -1,3 +1,8 @@
+2004-10-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PrincipalPermission.cs: Fixed bug in Intersect (thanks to Alain
+	Normandin). Changed XML tag to "Permission" (not "IPermission").
+
 2004-10-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PrincipalPermission.cs: Fixed bug where a change to a permission
