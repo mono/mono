@@ -2259,8 +2259,6 @@ indexer_declarator
 		}
 
 		MemberName name = (MemberName) $2;
-		if (name.TypeArguments != null)
-			syntax_error (lexer.Location, "an indexer can't have type arguments");
 
 		$$ = new IndexerDeclaration ((Expression) $1, name, pars);
 

@@ -1,5 +1,11 @@
 2005-01-26  Martin Baulig  <martin@ximian.com>
 
+	* cs-parser.jay (indexer_declarator): Don't report an error if we
+	have type parameters since we can be an explicit interface
+	implementation; fixes #71449.
+
+2005-01-26  Martin Baulig  <martin@ximian.com>
+
 	* class.cs (TypeContainer.AttributeTargets): Return the correct
 	AttributeTargets depending on our `Kind' instead of throwing an
 	exception; fixes #71632.
