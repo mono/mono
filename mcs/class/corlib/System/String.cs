@@ -1576,7 +1576,7 @@ namespace System {
 			}
 
 			matches = true;
-			for (end = this.length-1; end > begin; end--) {
+			for (end = this.length - 1; matches && end > begin; end--) {
 				if (trimChars != null) {
 					matches = false;
 					foreach (char c in trimChars) {
@@ -1589,7 +1589,7 @@ namespace System {
 				}
 			}
 
-			if (begin == end)
+			if (begin >= end)
 				return String.Empty;
 
 			return Substring (begin, end - begin);

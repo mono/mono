@@ -1,3 +1,8 @@
+2002-01-04  Jeffrey Stedfast  <fejj@ximian.com>
+
+	* String.cs (Trim): Fixed a few logic bugs in the code that
+	calculated how much to trim off the end of the string.
+
 2001-01-04  Nick Drochak  <ndrochak@gol.com>
 	
 	* Commented out the [TODO] attributes for now.  We don't have the
@@ -5,26 +10,28 @@
 
 2002-01-04  Ravi Pratap  <ravi@ximian.com>
 
-	* TODOAttribute.cs : Add. We use this attribute to tag all bits
-	in our class libraries that are incomplete.
+	* TODOAttribute.cs : Add. We use this attribute to tag all bits in
+	our class libraries that are incomplete.
 
-	* Array.cs : Apply attribute wherever we find a FIXME which says we need
-	something to be implemented there.
+	* Array.cs : Apply attribute wherever we find a FIXME which says
+	we need something to be implemented there.
 
 	* Int32.cs : Ditto.
 
 	* MulticastDelegate.cs : Ditto.
 
-	* RuntimeFieldHandler.cs, RuntimeMethodHandle.cs, RuntimeTypeHandle.cs : Ditto.
+	* RuntimeFieldHandler.cs, RuntimeMethodHandle.cs,
+	RuntimeTypeHandle.cs : Ditto.
 
 	* String.cs : Ditto.
 
 	* Type.cs : Ditto.
 
-	* Byte.cs, Char.cs, ContextBoundObject.cs, DateTime.cs, Delegate.cs : Ditto.
+	* Byte.cs, Char.cs, ContextBoundObject.cs, DateTime.cs,
+	Delegate.cs : Ditto.
 
-	* Enum.cs, Environment.cs, Exception.cs, Int64.cs, SByte.cs, Single.cs, 
-	UInt16.cs, UInt32.cs, ValueType.cs: Ditto.
+	* Enum.cs, Environment.cs, Exception.cs, Int64.cs, SByte.cs,
+	Single.cs, UInt16.cs, UInt32.cs, ValueType.cs: Ditto.
 	
 Thu Jan 3 23:24:04 CET 2002 Paolo Molaro <lupus@ximian.com>
 
