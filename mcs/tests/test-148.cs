@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Runtime.CompilerServices;
 
 public interface X
@@ -105,6 +106,19 @@ public class Z : Y
 		if (d [3,5] != 15)
 			return 11;
 
+		//
+		// Now test for bug 35492
+		//
+		ChildList xd = new ChildList ();
+
+		xd.Add (0);
+		if (0 != (int)xd [0])
+			return 12;
+		
+		xd.Test ();
+		if (1 != (int) xd [0])
+			return 13;
+		
 		return 0;
 	}
 
@@ -119,6 +133,7 @@ public class Z : Y
 
 		return result;
 	}
+
 }
 
 public class A
@@ -170,3 +185,16 @@ public class F : E {
 		get { return "h"; }
 	}
 }
+
+public class DisposableNotifyList : ArrayList
+	{
+	}
+	
+public class ChildList : DisposableNotifyList
+    {
+		public void Test()
+		{
+			base[0] = 1;
+
+		}
+    }	
