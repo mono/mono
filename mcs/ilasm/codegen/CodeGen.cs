@@ -57,15 +57,15 @@ namespace Mono.ILASM {
 			set { class_table = value; }
 		}
 
-		public void AddClass (TypeAttr at, string name)
+		public void AddClass (TypeAttr at, string name, Location location)
 		{
-			current_class = pefile.AddClass (at, current_namespace, name);
+			current_class = class_table.AddDefinition (current_namespace, name, at, location);
 		}
-
-		public void AddClass (TypeAttr at, string name, Class parent)
-		{
-			current_class = pefile.AddClass (at, current_namespace, name, parent);
-		}
+		
+		/// public void AddClass (TypeAttr at, string name, Class parent)
+		/// {
+		/// 	current_class = pefile.AddClass (at, current_namespace, name, parent);
+		/// }
 	}
 
 }
