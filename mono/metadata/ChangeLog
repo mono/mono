@@ -1,4 +1,12 @@
 
+Fri Apr 19 18:04:34 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c: compare also the retuns type when comparing signatures:
+	we didn't do this as an optimization since really overloaded methods
+	must differ also in the arguments, but this doesn't work with
+	low-level IL code (or when using explicit conversion operators: see
+	bug#23498 for an example).
+
 Fri Apr 19 16:14:52 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* loader.c: SZARRAY types can be saved as TYPESPEC, too.
