@@ -350,10 +350,15 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		}
 	}
 	
-	[MonoTODO]	
 	public Guid[] FrameDimensionsList {
 		get {
-			throw new NotImplementedException ();
+			uint found;
+			Status status = GDIPlus.GdipImageGetFrameDimensionsCount (nativeObject, out found);
+			GDIPlus.CheckStatus (status);
+			Guid [] guid = new Guid [found ];
+			status = GDIPlus.GdipImageGetFrameDimensionsList (nativeObject, guid, found);
+			GDIPlus.CheckStatus (status);  
+			return guid;
 		}
 	}
 	
