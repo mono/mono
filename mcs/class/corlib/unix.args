@@ -577,6 +577,7 @@ System.Runtime.Serialization.Formatters/ServerFault.cs
 System.Runtime.Serialization.Formatters/SoapFault.cs
 System.Runtime.Serialization.Formatters/SoapMessage.cs
 System.Runtime.Serialization.Formatters.Binary/BinaryArrayTypeEnum.cs
+System.Runtime.Serialization.Formatters.Binary/BinaryFormatter.cs
 System.Security/CodeAccessPermission.cs
 System.Security/IEvidenceFactory.cs
 System.Security/IPermission.cs
