@@ -5,7 +5,11 @@ System.DirectoryServices/AuthenticationTypes.cs
 System.DirectoryServices/DirectoryEntries.cs
 System.DirectoryServices/DirectoryEntry.cs
 System.DirectoryServices/DirectorySearcher.cs
+System.DirectoryServices/DirectoryServicesPermission.cs
 System.DirectoryServices/DirectoryServicesPermissionAccess.cs
+System.DirectoryServices/DirectoryServicesPermissionAttribute.cs
+System.DirectoryServices/DirectoryServicesPermissionEntry.cs
+System.DirectoryServices/DirectoryServicesPermissionEntryCollection.cs
 System.DirectoryServices/DSDescriptionAttribute.cs
 System.DirectoryServices/PropertyCollection.cs
 System.DirectoryServices/PropertyValueCollection.cs
@@ -18,4 +22,5 @@ System.DirectoryServices/SearchResultCollection.cs
 System.DirectoryServices/SearchScope.cs
 System.DirectoryServices/SortDirection.cs
 System.DirectoryServices/SortOption.cs
+System.DirectoryServices/TODOAttribute.cs
 System.DirectoryServices.Design/DirectoryEntryConverter.cs
