@@ -21,7 +21,7 @@ namespace System.Threading
 		private IntPtr system_thread_handle;
 		
 		private CultureInfo current_culture;
-		private bool threadpool_thread = false;
+		private bool threadpool_thread;
 		private ThreadState state = ThreadState.Unstarted;
 		private object abort_exc;
 		internal object abort_state;

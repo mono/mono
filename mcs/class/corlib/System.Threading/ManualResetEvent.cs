@@ -26,11 +26,13 @@ namespace System.Threading
 
 		public bool Set()
 		{
+			CheckDisposed ();
 			return (NativeEventCalls.SetEvent_internal (Handle));
 		}
 
 		public bool Reset()
 		{
+			CheckDisposed ();
 			return(NativeEventCalls.ResetEvent_internal (Handle));
 		}
 

@@ -1,3 +1,8 @@
+2003-10-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ManualResetEvent.cs: added check for disposed.
+	* Thread.cs: no need to init this field.
+
 2003-10-01  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Thread.cs: Add locking to AllocateNamedDataSlot and 
