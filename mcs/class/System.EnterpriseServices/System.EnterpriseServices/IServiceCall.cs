@@ -14,7 +14,7 @@ namespace System.EnterpriseServices {
 #if NET_1_1
 	[Guid("BD3E2E12-42DD-40f4-A09A-95A50C58304B")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	interface IServiceCall {
+	public interface IServiceCall {
 
 		#region Methods
 

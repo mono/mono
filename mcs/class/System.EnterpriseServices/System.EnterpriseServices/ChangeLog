@@ -1,5 +1,12 @@
 2004-05-12  Mike Kestner <mkestner@ximian.com>
 
+	* IAsyncErrorNotify.cs : oops, should be public
+	* IProcessInitComponent.cs : ditto
+	* IProcessInitializer.cs : ditto
+	* IServiceCall.cs : ditto
+
+2004-05-12  Mike Kestner <mkestner@ximian.com>
+
 	* IAsyncErrorNotify.cs : implement new 1.1 iface.
 	* IPlaybackControl.cs : implement new 1.1 iface.
 	* IProcessInitComponent.cs : implement new 1.1 iface.
