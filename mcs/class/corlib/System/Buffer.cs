@@ -31,14 +31,14 @@ namespace System {
 
 		public static byte GetByte (Array array, int index) {
 			if (index < 0 || index >= ByteLength (array))
-				throw new ArgumentException ("Index was out of range. Must be non-negative and less than the size of the collection.");
+				throw new ArgumentOutOfRangeException ("Index was out of range. Must be non-negative and less than the size of the collection.");
 
 			return GetByteInternal (array, index);
 		}
 
 		public static void SetByte (Array array, int index, byte value) {
 			if (index < 0 || index >= ByteLength (array))
-				throw new ArgumentException ("Index was out of range. Must be non-negative and less than the size of the collection.");
+				throw new ArgumentOutOfRangeException ("Index was out of range. Must be non-negative and less than the size of the collection.");
 
 			SetByteInternal (array, index, value);
 		}
