@@ -1512,10 +1512,14 @@ namespace Mono.CSharp {
 			// sealed, or provided T implements S.
 			//
 			if (source_type.IsInterface) {
-				if (!target_type.IsSealed || TypeManager.ImplementsInterface (target_type, source_type))
-					return new ClassCast (source, target_type);
-				else
-					return null;
+				if (!target_type.IsSealed || TypeManager.ImplementsInterface (target_type, source_type)) {
+					if (target_type.IsClass)
+						return new ClassCast (source, target_type);
+					else
+						return new UnboxCast (source, target_type);
+				}
+
+				return null;
 			}
 			
 			// From an array type S with an element type Se to an array type T with an 
