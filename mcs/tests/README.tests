@@ -383,10 +383,16 @@ test-216.cs:
 ------------
 Accessability bug fix #48710 on events
 
-test-216.cs
+test-217.cs
 -----------
 
 >= and <= operators; bug #48679
+
+test-218.cs
+-----------
+Tests delegate creation inside an array;  This exposed a bug in the
+fact that New is called for DoResolve twice from array initialization.
+Bug #48800
 
 verify-1.cs
 -----------
