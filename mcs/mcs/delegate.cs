@@ -321,7 +321,7 @@ namespace Mono.CSharp {
 				ec, delegate_type, "Invoke", loc);
 
 			if (!(ml is MethodGroupExpr)) {
-				Report.Error (-100, loc, "Internal error : could not find Invoke method!");
+				Report.Error (-100, loc, "Internal error: could not find Invoke method!");
 				return null;
 			}
 
@@ -365,9 +365,9 @@ namespace Mono.CSharp {
 
 			Expression ml = Expression.MemberLookup (
 				ec, delegate_type, "Invoke", loc);
-			
+
 			if (!(ml is MethodGroupExpr)) {
-				Report.Error (-100, loc, "Internal error : could not find Invoke method!");
+				Report.Error (-100, loc, "Internal error: could not find Invoke method!" + delegate_type);
 				return false;
 			}
 			
@@ -400,7 +400,7 @@ namespace Mono.CSharp {
 				ec, delegate_type, "Invoke", loc);
 			
 			if (!(ml is MethodGroupExpr)) {
-				Report.Error (-100, loc, "Internal error : could not find Invoke method!");
+				Report.Error (-100, loc, "Internal error: could not find Invoke method!");
 				return false;
 			}
 			
@@ -411,7 +411,7 @@ namespace Mono.CSharp {
 				ec, delegate_type, "Invoke", loc);
 			
 			if (!(probe_ml is MethodGroupExpr)) {
-				Report.Error (-100, loc, "Internal error : could not find Invoke method!");
+				Report.Error (-100, loc, "Internal error: could not find Invoke method!");
 				return false;
 			}
 			
@@ -555,7 +555,7 @@ namespace Mono.CSharp {
 				ec, type, ".ctor", loc);
 
 			if (!(ml is MethodGroupExpr)) {
-				Report.Error (-100, loc, "Internal error : Could not find delegate constructor!");
+				Report.Error (-100, loc, "Internal error: Could not find delegate constructor!");
 				return null;
 			}
 
@@ -718,7 +718,7 @@ namespace Mono.CSharp {
 
 			Expression lookup = Expression.MemberLookup (ec, del_type, "Invoke", loc);
 			if (!(lookup is MethodGroupExpr)) {
-				Report.Error (-100, loc, "Internal error : could not find Invoke method!");
+				Report.Error (-100, loc, "Internal error: could not find Invoke method!");
 				return null;
 			}
 			
