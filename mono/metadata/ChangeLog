@@ -1,4 +1,9 @@
 
+Wed Apr 17 14:14:36 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* profiler.c: TSC-based timer code (faster and more accurate).
+	Not hooked up in configure, yet (set USE_X86TSC to 1).
+
 Wed Apr 17 12:33:10 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* profiler.c, profiler.h: track time spent compiling methods.
