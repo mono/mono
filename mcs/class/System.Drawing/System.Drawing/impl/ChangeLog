@@ -1,3 +1,6 @@
+2003-06-22  Alexandre Pigolkine <pigolkine@gmx.de>
+	* ItfFontFamily.cs		file added
+
 2003-06-15  Alexandre Pigolkine <pigolkine@gmx.de>
 	* ItfImage.cs		properties uncommented
 
