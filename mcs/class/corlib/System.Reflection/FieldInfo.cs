@@ -114,5 +114,13 @@ namespace System.Reflection {
 		{
 			SetValue (obj, value, 0, null, null);
 		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern FieldInfo internal_from_handle (RuntimeFieldHandle handle);
+
+		public static FieldInfo GetFieldFromHandle (RuntimeFieldHandle handle)
+		{
+			return internal_from_handle (handle);
+		}
 	}
 }

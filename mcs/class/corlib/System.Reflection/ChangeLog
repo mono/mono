@@ -1,3 +1,7 @@
+2003-03-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* FieldInfo.cs (GetFieldFromHandle): Implemented.
+
 2003-03-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Assembly.cs: added missing stuff. Only ModuleResolve event is left
