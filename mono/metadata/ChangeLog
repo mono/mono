@@ -1,3 +1,9 @@
+
+Tue Apr 15 11:03:25 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: ensure the element class of arrays is initialized.
+	Setup the supertype info for array classes, too.
+
 2003-04-14  Miguel de Icaza  <miguel@ximian.com>
 
 	* icall.c (ves_icall_Type_GetNestedType): Add new internal call.
