@@ -65,6 +65,8 @@ namespace Mono.CSharp
 				return;
 			}
 
+			ds.RecordDecl ();
+
 			int p = name.LastIndexOf ('.');
 			if (p == -1)
 				decl_ns_name.Insert ("", name, ds);

@@ -1,3 +1,12 @@
+2003-09-07  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (DeclSpace..ctor): Don't call
+	NamespaceEntry.DefineName() here; do it in RecordDecl() which is
+	called from Tree.RecordDecl().  Fixes the CS0101 reporting.
+	(DeclSpace.RecordDecl): New method.
+
+	* tree.cs (Tree.RecordDecl): Call ds.RecordDecl().
+
 2003-09-02  Ravi Pratap  <ravi@ximian.com>
 
 	* attribute.cs (CheckAttributeTarget): Ensure that we allow return

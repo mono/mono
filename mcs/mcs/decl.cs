@@ -108,7 +108,10 @@ namespace Mono.CSharp {
 			Basename = name.Substring (1 + name.LastIndexOf ('.'));
 			defined_names = new Hashtable ();
 			this.parent = parent;
+		}
 
+		public void RecordDecl ()
+		{
 			if ((NamespaceEntry != null) && (parent == RootContext.Tree.Types))
 				NamespaceEntry.DefineName (Basename, this);
 		}
