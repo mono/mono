@@ -1,3 +1,6 @@
+2004-01-23  Marek Safar <marek.safar@seznam.cz>
+	* System.EnterpriseServices.dll.sources: Added AssemblyInfo.cs
+
 2002-11-20  Alejandro Sánchez Acosta <raciel@es.gnu.org>
 	* list: new files added to build
 

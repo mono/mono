@@ -1,3 +1,4 @@
+Assembly/AssemblyInfo.cs
 System.EnterpriseServices/AccessChecksLevelOption.cs
 System.EnterpriseServices/ActivationOption.cs
 System.EnterpriseServices/ApplicationAccessControlAttribute.cs
