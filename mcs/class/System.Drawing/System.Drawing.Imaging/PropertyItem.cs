@@ -16,10 +16,10 @@ namespace System.Drawing.Imaging {
 	public sealed class PropertyItem 
 	{
 
-		int id;
-		int len;
-		short type;
-		byte[] value;
+		private int id;
+		private int len;
+		private short type;
+		private byte[] value;
 
 		//constructor
 		internal PropertyItem()

@@ -11,7 +11,7 @@ namespace System.Drawing.Imaging
 {
 	public sealed class Encoder
 	{
-		Guid guid;
+		private Guid guid;
 
 		public static readonly Encoder ChrominanceTable;
 		public static readonly Encoder ColorDepth;

@@ -18,8 +18,8 @@ namespace System.Drawing.Imaging
 		// 0x2: the color values are grayscale values.
 		// 0x4: the colors in the array are halftone values.
 
-		int flags;
-		Color [] entries;
+		private int flags;
+		private Color [] entries;
 
 		//
 		// There is no public constructor, this will be used somewhere in the

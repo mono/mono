@@ -1,15 +1,12 @@
-2004-05-13  Sanjay Gupta <gsanjay@novell.com>
-	
-	* MetaFileHeader.cs: Implemented internal constructor.
-	* PropertyItem.cs: Implemented internal constructor.
+2004-05-13 Jordi Mas i Hernadez <jordi@ximian.com>
 
-2004-05-13  Sanjay Gupta <gsanjay@novell.com>
-	
-	* MetaFile.cs: Added Editor attribute to class Metafile.
-
-2004-05-13  Sanjay Gupta <gsanjay@novell.com>
-	
-	* WmfPlaceableFileHeader.cs: Removed extra property Id.
+	* ColorMatrix.cs:Make private data private 
+	* ColorPalette.cs: Make private data private
+	* Encoder.cs: Make private data private
+	* EncoderParameter.cs: Make private data private
+	* EncoderParameters.cs: Make private data private
+	* MetaHeader.cs: Make private data private
+	* PropertyItem.cs: Make private data private
 
 2004-05-04  Vladimir Vukicevic  <vladimir@pobox.com>
 

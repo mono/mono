@@ -13,7 +13,7 @@ namespace System.Drawing.Imaging
 {
 	public sealed class EncoderParameters : IDisposable
 	{
-		EncoderParameter[] parameters;
+		private EncoderParameter[] parameters;
 
 		public EncoderParameters () {
 			parameters = new EncoderParameter[1];

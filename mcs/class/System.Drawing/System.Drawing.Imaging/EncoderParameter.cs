@@ -14,10 +14,10 @@ namespace System.Drawing.Imaging {
 
 	public sealed class EncoderParameter : IDisposable {
 
-		Encoder encoder;
-		Object value;
-		int valuesCount;
-		EncoderParameterValueType type;
+		private Encoder encoder;
+		private Object value;
+		private int valuesCount;
+		private EncoderParameterValueType type;
 		
 		public EncoderParameter (Encoder encoder, byte value)
 		{

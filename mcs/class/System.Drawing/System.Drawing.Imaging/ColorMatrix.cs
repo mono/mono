@@ -15,7 +15,7 @@ namespace System.Drawing.Imaging {
 
 	public sealed class ColorMatrix {
 
-		float[] colors;
+		private float[] colors;
 
 		// constructors
 		public ColorMatrix() 

@@ -15,13 +15,13 @@ namespace System.Drawing.Imaging {
 
 	public sealed class MetaHeader {
 
-		short headerSize;
-		int maxRecord;
-		short noObjects;
-		short noParameters;
-		int size;
-		short type;
-		short version;
+		private short headerSize;
+		private int maxRecord;
+		private short noObjects;
+		private short noParameters;
+		private int size;
+		private short type;
+		private short version;
 
 		// constructors
 		public MetaHeader()
