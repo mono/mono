@@ -108,6 +108,7 @@ namespace System {
 			return Parse (s, style, null);
 		}
 
+		[MonoTODO]
 		public static double Parse (string s, NumberStyles style, IFormatProvider provider)
 		{
 			if (s == null) throw new ArgumentNullException();
@@ -156,8 +157,16 @@ namespace System {
 			if ((style & NumberStyles.AllowLeadingSign) != 0){
 				tempstyle = NumberStyles.AllowLeadingSign;
 			}
-			integral = long.Parse(sl[0], tempstyle, format);
+
+			if (sl[0].Length > 0)
+				integral = long.Parse(sl[0], tempstyle, format);
+			else
+				integral = 0;
+
 			retval = fraction;
+
+			// FIXME: what about the zeros between the decimal point 
+			// and the first non-zero digit?
 			while (retval >1) retval /= 10;
 			if (integral < 0){
 				retval -= integral;
