@@ -137,6 +137,17 @@ namespace Mono.CSharp {
 			if (rt == lt && left is EnumConstant)
 				result_type = lt;
 
+			//
+			// During an enum evaluation, we need to unwrap enumerations
+			//
+			if (ec.InEnumContext){
+				if (left is EnumConstant)
+					left = ((EnumConstant) left).Child;
+				
+				if (right is EnumConstant)
+					right = ((EnumConstant) right).Child;
+			}
+			
 			switch (oper){
 			case Binary.Operator.BitwiseOr:
 				DoConstantNumericPromotions (oper, ref left, ref right, loc);

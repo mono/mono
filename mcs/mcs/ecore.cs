@@ -314,9 +314,9 @@ namespace Mono.CSharp {
 			else if (t == TypeManager.char_type)
 				return new CharConstant ((char)v);
 			else if (TypeManager.IsEnumType (t)){
-				Expression e = Constantify (v, v.GetType ());
+				Constant e = Constantify (v, v.GetType ());
 
-				return new EnumConstant ((Constant) e, t);
+				return new EnumConstant (e, t);
 			} else
 				throw new Exception ("Unknown type for constant (" + t +
 						     "), details: " + v);

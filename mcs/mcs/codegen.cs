@@ -279,6 +279,16 @@ namespace Mono.CSharp {
 		///   path to SimpleName from the cast operation.
 		/// </summary>
 		public bool OnlyLookupTypes;
+
+		/// <summary>
+		///   Inside an enum definition, we do not resolve enumeration values
+		///   to their enumerations, but rather to the underlying type/value
+		///   This is so EnumVal + EnumValB can be evaluated.
+		///
+		///   There is no "E operator + (E x, E y)", so during an enum evaluation
+		///   we relax the rules
+		/// </summary>
+		public bool InEnumContext;
 		
 		public EmitContext (TypeContainer parent, DeclSpace ds, Location l, ILGenerator ig,
 				    Type return_type, int code_flags, bool is_constructor)

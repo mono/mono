@@ -296,7 +296,10 @@ namespace Mono.CSharp {
 				}
 				
 			} else {
+				bool old = ec.InEnumContext;
+				ec.InEnumContext = true;
 				val = val.Resolve (ec);
+				ec.InEnumContext = old;
 				
 				if (val == null) {
 					Report.Error (-12, loc, "Definition is circular.");

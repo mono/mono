@@ -1697,14 +1697,15 @@ namespace Mono.CSharp {
 			Type l = left.Type;
 			Type r = right.Type;
 
+			bool overload_failed = false;
+
 			//
 			// Step 1: Perform Operator Overload location
 			//
 			Expression left_expr, right_expr;
-			
+				
 			string op = oper_names [(int) oper];
-
-			bool overload_failed = false;
+				
 			MethodGroupExpr union;
 			left_expr = MemberLookup (ec, l, op, MemberTypes.Method, AllBindingFlags, loc);
 			if (r != l){
@@ -1713,23 +1714,23 @@ namespace Mono.CSharp {
 				union = Invocation.MakeUnionSet (left_expr, right_expr, loc);
 			} else
 				union = (MethodGroupExpr) left_expr;
-			
+				
 			if (union != null) {
 				Arguments = new ArrayList ();
 				Arguments.Add (new Argument (left, Argument.AType.Expression));
 				Arguments.Add (new Argument (right, Argument.AType.Expression));
-
+				
 				method = Invocation.OverloadResolve (ec, union, Arguments, Location.Null);
 				if (method != null) {
 					MethodInfo mi = (MethodInfo) method;
-
+					
 					type = mi.ReturnType;
 					return this;
 				} else {
 					overload_failed = true;
 				}
 			}	
-
+			
 			//
 			// Step 2: Default operations on CLI native types.
 			//
