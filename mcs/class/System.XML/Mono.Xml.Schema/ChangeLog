@@ -1,3 +1,8 @@
+2004-02-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdValidatingReader.cs : When the reader points at XmlDeclaration,
+	  AttributeCount counts its values (version, encoding, standalone).
+
 2004-02-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdValidatingReader.cs : schemaLocation is not NMTOKENS. It is list

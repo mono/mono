@@ -1635,6 +1635,9 @@ namespace Mono.Xml.Schema
 					this.missingIDReferences.ToArray (typeof (string)) as string []));
 
 			switch (reader.NodeType) {
+			case XmlNodeType.XmlDeclaration:
+				this.nonDefaultAttributeCount = reader.AttributeCount;
+				break;
 			case XmlNodeType.Element:
 				nonDefaultAttributeCount = reader.AttributeCount;
 
