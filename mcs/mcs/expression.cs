@@ -3748,7 +3748,7 @@ namespace Mono.CSharp {
 
 		protected void DoResolveBase (EmitContext ec)
 		{
-			type = pars.GetParameterInfo (ec.DeclSpace, idx, out mod);
+			type = pars.GetParameterInfo (ec, idx, out mod);
 			is_ref = (mod & Parameter.Modifier.ISBYREF) != 0;
 			is_out = (mod & Parameter.Modifier.OUT) != 0;
 			eclass = ExprClass.Variable;
@@ -8424,15 +8424,9 @@ namespace Mono.CSharp {
 					return null;
 			}
 
-			if (!ec.ResolvingTypeTree){
-				//
-				// If the above flag is set, this is being invoked from the ResolveType function.
-				// Upper layers take care of the type validity in this context.
-				//
 			if (!ec.InUnsafe && type.IsPointer){
 				UnsafeError (loc);
 				return null;
-			}
 			}
 			
 			eclass = ExprClass.Type;

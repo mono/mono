@@ -144,11 +144,7 @@ namespace Mono.CSharp {
 		{
 			this.param_types = param_types;
 			this.Parameters = parameters;
-		}
 
-		public InternalParameters (DeclSpace ds, Parameters parameters)
-			: this (parameters.GetParameterInfo (ds), parameters)
-		{
 			has_varargs = parameters.HasArglist;
 
 			if (param_types == null)
