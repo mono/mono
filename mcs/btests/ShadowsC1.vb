@@ -1,8 +1,4 @@
-REM LineNo: 31
-REM ExpectedError: BC30057
-REM ErrorMessage: Too many arguments to 'Public Shadows Function F() As Object'.
-
-REM LineNo: 32
+REM LineNo: 27
 REM ExpectedError: BC30057
 REM ErrorMessage: Too many arguments to 'Public Shadows Function F() As Object'.
 
@@ -28,7 +24,6 @@ End Class
 Module ShadowA_C1
     Sub Main()
         Dim x As D = New D()
-        x.F(10)
         x.F("abc")
     End Sub
 

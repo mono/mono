@@ -1,8 +1,4 @@
-REM LineNo: 8
-REM ExpectedError: BC30420
-REM ErrorMessage: 'Sub Main' was not found in 'NameSpaceC3'.
-
-REM LineNo: 14
+REM LineNo: 10
 REM ExpectedError: BC30179
 REM ErrorMessage: module 'NameSpaceTest' and module 'NameSpaceTest' conflict in namespace 'NS1'.
 

@@ -1,12 +1,4 @@
-REM LineNo: 26
-REM ExpectedError: BC30455
-REM ErrorMessage: Argument not specified for parameter 'i1' of 'Public Shared Function F(i1 As Integer, i2 As Integer) As Object'.
-
-REM LineNo: 26
-REM ExpectedError: BC30455
-REM ErrorMessage: Argument not specified for parameter 'i2' of 'Public Shared Function F(i1 As Integer, i2 As Integer) As Object'.
-
-REM LineNo: 27
+REM LineNo: 18
 REM ExpectedError: BC30455
 REM ErrorMessage: Argument not specified for parameter 'i2' of 'Public Shared Function F(i1 As Integer, i2 As Integer) As Object'.
 
@@ -23,7 +15,6 @@ Class C1
 
         Function fnc()
             F(10, 20)
-            F()
             F(10)
         End Function
 

@@ -1,3 +1,9 @@
+2004-10-15  Jambunathan K  <kjambunathan@novell.com>
+	* Audited existing negative test cases that emit multiple,
+	mutually independent error messages and splitted them in to
+	multiple files where possible so that atmost one error is tested
+	for in any given file.
+
 2004-10-14  Jambunathan K  <kjambunathan@novell.com>
 	* Added LineNo, ExpectedError and ErrorMessage to all negative
 	test case files that emit just a single compile time error. All

@@ -1,20 +1,13 @@
-REM LineNo: 15
-REM ExpectedError: BC30205
-REM ErrorMessage: End of statement expected.
-
-REM LineNo: 16
-REM ExpectedError: BC30001
-REM ErrorMessage: Statement is not valid in a namespace.
-
-REM LineNo: 17
+REM LineNo: 9
 REM ExpectedError: BC30678
 REM ErrorMessage: 'End' statement not valid.
 
 Imports system
 
-Public Struct s
+Public Structure s
+		Dim a As Integer
 		public MustOverride Property p() as Integer
-End Struct
+End Structure
 
 
 Module M
