@@ -1,3 +1,7 @@
+2005-02-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* assembly.c (mono_assembly_remap_version): Fix binary search.
+	
 2005-02-17  Sebastien Pouliot  <sebastien@ximian.com>
  
 	* class.c: Added inheritance check when a method is overloaded (from a
