@@ -1601,6 +1601,10 @@ namespace System.Drawing
 
 		}
 		
+		/* Mac only function calls */
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipCreateFromQuartz_macosx (IntPtr cgref, int width, int height, out IntPtr graphics);
+
 		/* Linux only function calls*/
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipSetVisibleClip_linux (IntPtr graphics, ref Rectangle rect);

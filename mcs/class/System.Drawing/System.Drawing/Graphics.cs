@@ -1253,6 +1253,13 @@ namespace System.Drawing
 			return null;
 		}
 
+		public static Graphics FromHwndWithSize (IntPtr hwnd, int width, int height) {
+			IntPtr graphics;
+			Status s = GDIPlus.GdipCreateFromQuartz_macosx (hwnd, width, height, out graphics);
+			GDIPlus.CheckStatus (s);
+			return new Graphics (graphics);
+		}
+
 		[EditorBrowsable (EditorBrowsableState.Advanced)]		
 		public static Graphics FromHwnd (IntPtr hwnd)
 		{
@@ -1264,6 +1271,7 @@ namespace System.Drawing
 				}
 
 				return FromXDrawable (hwnd, display);
+
 			}
 
 			Status status = GDIPlus.GdipCreateFromHWND (hwnd, out graphics);
