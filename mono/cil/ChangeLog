@@ -1,3 +1,8 @@
+2004-07-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* opcode.def: Remove CEE_MONO_FUNC and related opcodes, replace them
+	with CEE_MONO_ICALL.
+
 2004-05-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* opcode.def: Add mono_save_lmf and mono_restore_lmf.
