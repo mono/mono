@@ -1569,7 +1569,6 @@ namespace nunit.arrays.list
 			[Test]
 			public void MapEtc()
 			{
-#if FIXME
 				ArrayList<double> dbl = (ArrayList<double>)view.Map(new Mapper<int,double>(delegate(int i){return i/10.0;}));
 
 				Assert.IsTrue(dbl.Check());
@@ -1580,7 +1579,6 @@ namespace nunit.arrays.list
 				list = (ArrayList<int>)view.FindAll(new Filter<int>(delegate(int i){return i%4==1;}));
 				Assert.IsTrue(list.Check());
 				Assert.IsTrue(IC.eq(list, 1, 1, 5, 9));
-#endif
 			}
 
 

@@ -1344,7 +1344,6 @@ namespace nunit.arrays.hashed
 			[Test]
 			public void MapEtc()
 			{
-#if FIXME
 				ArrayList<double> dbl = (ArrayList<double>)view.Map(new Mapper<int,double>(delegate(int i){return i/10.0;}));
 
 				Assert.IsTrue(dbl.Check());
@@ -1356,7 +1355,6 @@ namespace nunit.arrays.hashed
 
 				Assert.IsTrue(list2.Check());
 				Assert.IsTrue(IC.eq(list2, 1, 5, 9));
-#endif
 			}
 
 
