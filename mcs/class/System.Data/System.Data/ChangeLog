@@ -1,3 +1,8 @@
+2004-10-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSet.cs : Also clear UnhandledAttributes ArrayList before 
+	  generating next attribute column schema. This fixes bug #68432.
+
 2004-10-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSet.cs : clear UnhandledAttributes ArrayList before generating

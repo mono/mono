@@ -1799,6 +1799,7 @@ namespace System.Data {
 				}
 
 				att.UnhandledAttributes = xattrs.ToArray (typeof (XmlAttribute)) as XmlAttribute [];
+				xattrs.Clear ();
 
 				if (col.MaxLength > -1)
 					att.SchemaType = GetTableSimpleType (doc, col);
