@@ -161,32 +161,77 @@ public class MemberList : IList {
 	}
 }
 
+/// <summary>
+///   This interface provides a cache-based member lookup.	
+/// </summary>	
 public interface IMemberFinder {
-	MemberList FindMembers (MemberTypes mt, BindingFlags bf,
+	/// <summary>
+	///   Looks up members with name `name'.  If you provide an optional
+	///   filter function, it'll only be called with members matching the
+	///   requested member name.
+	///
+	///   This method will try to use the cache to do the lookup if possible.
+	/// </summary>
+	/// <remarks>
+	///   When implementing this function, you must manually check for the
+	///   member name and only call the filter function on members with the
+	///   requested name.
+	/// </remarks>
+	MemberList FindMembers (MemberTypes mt, BindingFlags bf, string name,
 				MemberFilter filter, object criteria);
 
+	/// <summary>
+	///   If we have a MemberCache, return it.
+	/// </summary>
 	MemberCache MemberCache {
 		get;
 	}
 }
 
+/// <summary>
+///   This interface is used to get all members of a class when creating the
+///   member cache.  It must be implemented by all DeclSpace derivatives which
+///   want to support the member cache and by TypeHandle to get caching of
+///   non-dynamic types.
+/// </summary>
 public interface IMemberContainer : IMemberFinder {
+	/// <summary>
+	///   The name of the IMemberContainer.  This is only used for
+	///   debugging purposes.
+	/// </summary>
 	string Name {
 		get;
 	}
 
-	Type Type {
-		get;
-	}
-
+	/// <summary>
+	///   Returns the IMemberContainer of the parent class or null if this
+	///   is an interface or TypeManger.object_type.
+	///   This is used when creating the member cache for a class to get all
+	///   members from the parent class.
+	/// </summary>
 	IMemberContainer Parent {
 		get;
 	}
 
+	/// <summary>
+	///   Whether this is an interface.
+	/// </summary>
 	bool IsInterface {
 		get;
 	}
 
+	/// <summary>
+	///   Returns all members of this class with the corresponding MemberTypes
+	///   and BindingFlags.
+	/// </summary>
+	/// <remarks>
+	///   When implementing this method, make sure not to return any inherited
+	///   members and check the MemberTypes and BindingFlags properly.
+	///   Unfortunately, System.Reflection is lame and doesn't provide a way to
+	///   get the BindingFlags (static/non-static,public/non-public) in the
+	///   MemberInfo class, but the cache needs this information.  That's why
+	///   this method is called multiple times with different BindingFlags.
+	/// </remarks>
 	MemberList GetMembers (MemberTypes mt, BindingFlags bf);
 }
 
@@ -347,7 +392,7 @@ public class TypeManager {
 	// </remarks>
 	static ArrayList user_types;
 
-	static PtrHashtable builder_to_member_finder;
+	static PtrHashtable builder_to_declspace;
 
 	// <remarks>
 	//   Tracks the interfaces implemented by typebuilders.  We only
@@ -468,7 +513,7 @@ public class TypeManager {
 		types = new Hashtable ();
 		typecontainers = new Hashtable ();
 		
-		builder_to_member_finder = new PtrHashtable ();
+		builder_to_declspace = new PtrHashtable ();
 		builder_to_attr = new PtrHashtable ();
 		builder_to_method = new PtrHashtable ();
 		method_arguments = new PtrHashtable ();
@@ -488,7 +533,7 @@ public class TypeManager {
 			types.Add (name, t);
 		} catch {
 			Type prev = (Type) types [name];
-			TypeContainer tc = builder_to_member_finder [prev] as TypeContainer;
+			TypeContainer tc = builder_to_declspace [prev] as TypeContainer;
 
 			if (tc != null){
 				//
@@ -498,7 +543,7 @@ public class TypeManager {
 				return;
 			}
 
-			tc = builder_to_member_finder [t] as TypeContainer;
+			tc = builder_to_declspace [t] as TypeContainer;
 			
 			Report.Warning (
 				1595, "The type `" + name + "' is defined in an existing assembly;"+
@@ -525,7 +570,7 @@ public class TypeManager {
 	
 	public static void AddUserType (string name, TypeBuilder t, TypeContainer tc, Type [] ifaces)
 	{
-		builder_to_member_finder.Add (t, tc);
+		builder_to_declspace.Add (t, tc);
 		typecontainers.Add (name, tc);
 		AddUserType (name, t, ifaces);
 	}
@@ -533,19 +578,19 @@ public class TypeManager {
 	public static void AddDelegateType (string name, TypeBuilder t, Delegate del)
 	{
 		types.Add (name, t);
-		builder_to_member_finder.Add (t, del);
+		builder_to_declspace.Add (t, del);
 	}
 	
 	public static void AddEnumType (string name, TypeBuilder t, Enum en)
 	{
 		types.Add (name, t);
-		builder_to_member_finder.Add (t, en);
+		builder_to_declspace.Add (t, en);
 	}
 
 	public static void AddUserInterface (string name, TypeBuilder t, Interface i, Type [] ifaces)
 	{
 		AddUserType (name, t, ifaces);
-		builder_to_member_finder.Add (t, i);
+		builder_to_declspace.Add (t, i);
 	}
 
 	public static void AddMethod (MethodBuilder builder, MethodData method)
@@ -564,31 +609,33 @@ public class TypeManager {
 	/// </summary>
 	public static TypeContainer LookupTypeContainer (Type t)
 	{
-		return builder_to_member_finder [t] as TypeContainer;
+		return builder_to_declspace [t] as TypeContainer;
 	}
 
 	public static IMemberContainer LookupMemberContainer (Type t)
 	{
-		IMemberContainer container = builder_to_member_finder [t] as IMemberContainer;
-		if (container != null)
-			return container;
+		if (t is TypeBuilder) {
+			IMemberContainer container = builder_to_declspace [t] as IMemberContainer;
+			if (container != null)
+				return container;
+		}
 
 		return TypeHandle.GetTypeHandle (t);
 	}
 
 	public static Interface LookupInterface (Type t)
 	{
-		return builder_to_member_finder [t] as Interface;
+		return builder_to_declspace [t] as Interface;
 	}
 
 	public static Delegate LookupDelegate (Type t)
 	{
-		return builder_to_member_finder [t] as Delegate;
+		return builder_to_declspace [t] as Delegate;
 	}
 
 	public static Enum LookupEnum (Type t)
 	{
-		return builder_to_member_finder [t] as Enum;
+		return builder_to_declspace [t] as Enum;
 	}
 	
 	public static TypeContainer LookupAttr (Type t)
@@ -1024,12 +1071,12 @@ public class TypeManager {
 	public static MemberList FindMembers (Type t, MemberTypes mt, BindingFlags bf,
 					      MemberFilter filter, object criteria)
 	{
-		IMemberFinder finder = (IMemberFinder) builder_to_member_finder [t];
+		DeclSpace decl = (DeclSpace) builder_to_declspace [t];
 
-		if (finder != null) {
+		if (decl != null) {
 			MemberList list;
 			Timer.StartTimer (TimerType.FindMembers);
-			list = finder.FindMembers (mt, bf, filter, criteria);
+			list = decl.FindMembers (mt, bf, filter, criteria);
 			Timer.StopTimer (TimerType.FindMembers);
 			return list;
 		}
@@ -1100,10 +1147,9 @@ public class TypeManager {
 				mt, bf, name, FilterWithClosure_delegate, null);
 		}
 
-		IMemberFinder finder = (IMemberFinder) builder_to_member_finder [t];
-
-		if (finder != null) {
-			MemberCache cache = finder.MemberCache;
+		if (t is TypeBuilder) {
+			DeclSpace decl = (DeclSpace) builder_to_declspace [t];
+			MemberCache cache = decl.MemberCache;
 
 			if (cache != null) {
 				searching = false;
@@ -1113,17 +1159,16 @@ public class TypeManager {
 
 			MemberList list;
 			Timer.StartTimer (TimerType.FindMembers);
-			list = finder.FindMembers (mt, bf | BindingFlags.DeclaredOnly,
-						   FilterWithClosure_delegate, name);
+			list = decl.FindMembers (mt, bf | BindingFlags.DeclaredOnly,
+						 FilterWithClosure_delegate, name);
 			Timer.StopTimer (TimerType.FindMembers);
 			return list;
 		}
 
-		finder = TypeHandle.GetTypeHandle (t);
-		builder_to_member_finder.Add (t, finder);
+		IMemberFinder finder = TypeHandle.GetTypeHandle (t);
 
 		searching = false;
-		return finder.MemberCache.FindMembers (mt, bf, name, FilterWithClosure_delegate, null);
+		return finder.FindMembers (mt, bf, name, FilterWithClosure_delegate, null);
 	}
 
 	public static bool IsBuiltinType (Type t)
@@ -1163,7 +1208,7 @@ public class TypeManager {
 	
 	public static bool IsInterfaceType (Type t)
 	{
-		Interface iface = builder_to_member_finder [t] as Interface;
+		Interface iface = builder_to_declspace [t] as Interface;
 
 		if (iface != null)
 			return true;
@@ -2583,10 +2628,10 @@ public sealed class TypeHandle : IMemberContainer {
 
 	// IMemberFinder methods
 
-	public MemberList FindMembers (MemberTypes mt, BindingFlags bf,
+	public MemberList FindMembers (MemberTypes mt, BindingFlags bf, string name,
 				       MemberFilter filter, object criteria)
 	{
-		throw new NotSupportedException ();
+		return member_cache.FindMembers (mt, bf, name, filter, criteria);
 	}
 
 	public MemberCache MemberCache {

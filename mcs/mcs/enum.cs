@@ -19,7 +19,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Enumeration container
 	/// </summary>
-	public class Enum : DeclSpace, IMemberFinder {
+	public class Enum : DeclSpace {
 		ArrayList ordered_enums;
 		
 		public Expression BaseType;
@@ -440,8 +440,8 @@ namespace Mono.CSharp {
 		//
 		// IMemberFinder
 		//
-		MemberList IMemberFinder.FindMembers (MemberTypes mt, BindingFlags bf,
-						      MemberFilter filter, object criteria)
+		internal override MemberList FindMembers (MemberTypes mt, BindingFlags bf,
+							  MemberFilter filter, object criteria)
 		{
 			ArrayList members = new ArrayList ();
 
@@ -454,7 +454,7 @@ namespace Mono.CSharp {
 			return new MemberList (members);
 		}
 
-		MemberCache IMemberFinder.MemberCache {
+		public override MemberCache MemberCache {
 			get {
 				return null;
 			}

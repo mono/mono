@@ -20,7 +20,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Holds Delegates
 	/// </summary>
-	public class Delegate : DeclSpace, IMemberFinder {
+	public class Delegate : DeclSpace {
  		public Expression ReturnType;
 		public Parameters      Parameters;
 		public Attributes      OptAttributes;
@@ -452,7 +452,8 @@ namespace Mono.CSharp {
 		}
 		
 		// Hack around System.Reflection as found everywhere else
-		public MemberList FindMembers (MemberTypes mt, BindingFlags bf, MemberFilter filter, object criteria)
+		internal override MemberList FindMembers (MemberTypes mt, BindingFlags bf,
+							  MemberFilter filter, object criteria)
 		{
 			ArrayList members = new ArrayList ();
 
@@ -477,7 +478,7 @@ namespace Mono.CSharp {
 			return new MemberList (members);
 		}
 
-		public MemberCache MemberCache {
+		public override MemberCache MemberCache {
 			get {
 				return null;
 			}

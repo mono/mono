@@ -23,7 +23,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   This is the base class for structs and classes.  
 	/// </summary>
-	public class TypeContainer : DeclSpace, IMemberFinder {
+	public class TypeContainer : DeclSpace {
 		// Holds a list of classes and structures
 		ArrayList types;
 
@@ -1098,8 +1098,8 @@ namespace Mono.CSharp {
 		//
 		// Since the whole process is a no-op, it is fine to check for null here.
 		//
-		public MemberList FindMembers (MemberTypes mt, BindingFlags bf,
-					       MemberFilter filter, object criteria)
+		internal override MemberList FindMembers (MemberTypes mt, BindingFlags bf,
+							  MemberFilter filter, object criteria)
 		{
 			ArrayList members = new ArrayList ();
 			bool priv = (bf & BindingFlags.NonPublic) != 0;
@@ -1688,10 +1688,7 @@ namespace Mono.CSharp {
 			Report.Error (539, loc, "Explicit implementation: `" + name + "' is not a member of the interface");
 		}
 
-		//
-		// IMemberContainer
-		//
-		public MemberCache MemberCache {
+		public override MemberCache MemberCache {
 			get {
 				return null;
 			}

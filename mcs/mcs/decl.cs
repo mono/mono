@@ -544,5 +544,21 @@ namespace Mono.CSharp {
 			//Report.Error (246, Location, "Can not find type `"+name+"'");
 			return null;
 		}
+
+		/// <remarks>
+		///   This function is broken and not what you're looking for.  It should only
+		///   be used while the type is still being created since it doesn't use the cache
+		///   and relies on the filter doing the member name check.
+		/// </remarks>
+		internal abstract MemberList FindMembers (MemberTypes mt, BindingFlags bf,
+							  MemberFilter filter, object criteria);
+
+		/// <remarks>
+		///   If we have a MemberCache, return it.  This property may return null if the
+		///   class doesn't have a member cache or while it's still being created.
+		/// </remarks>
+		public abstract MemberCache MemberCache {
+			get;
+		}
 	}
 }
