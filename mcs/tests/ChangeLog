@@ -1,3 +1,7 @@
+2004-01-21  Martin Baulig  <martin@ximian.com>
+
+	* test-227.cs: New test for #52517.
+
 2004-01-20  Martin Baulig  <martin@ximian.com>
 
 	* test-154.cs: Added testcase for bug #46640.
