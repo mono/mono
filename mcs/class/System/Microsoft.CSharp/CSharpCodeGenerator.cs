@@ -445,8 +445,10 @@ namespace Mono.CSharp
 		{
 			TextWriter output = Output;
 
-			output.Write( GetSafeName (statement.Label) );
-			GenerateStatement( statement.Statement );
+			output.Write( String.Concat (GetSafeName (statement.Label), ": "));
+
+			if (statement.Statement != null)
+				GenerateStatement( statement.Statement );
 		}
 
 		protected override void GenerateVariableDeclarationStatement( CodeVariableDeclarationStatement statement )

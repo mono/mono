@@ -1,3 +1,9 @@
+2004-06-23  Jackson Harper  <jackson@ximian.com>
+
+	* CSharpCodeGenerator.cs (GenerateLabeledStatement): Append a ": "
+	to the statement name. Make sure the statement isn't null before
+	writing. Patch by Alex Yakunin.
+	
 2004-06-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CSharpCodeGenerator.cs :
