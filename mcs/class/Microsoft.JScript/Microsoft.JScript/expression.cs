@@ -534,7 +534,7 @@ namespace Microsoft.JScript {
 					string msg = "class Call, Method Emit, binding was not found.";
 					throw new Exception (msg + " This should not be reached");
 				}
-				
+
 				if (IsGlobalObjectMethod (binding)) {
 					args.Emit (ec);
 					member_exp.Emit (ec);
@@ -642,7 +642,12 @@ namespace Microsoft.JScript {
 
 		bool IsConstructorProperty (object binding)
 		{
-			return false;
+			if (!(binding is BuiltIn))
+				return false;
+
+			string name = (binding as BuiltIn).Name;
+			
+			return (name == "Object" || name == "Function" || name == "Array" || name == "String" || name == "Boolean" || name == "Number" || name == "Date" || name == "RegExp" || name == "Error" || name == "EvalError" || name == "RangeError" || name == "ReferenceError" || name == "SyntaxError" || name == "TypeError" || name == "URIError");
 		}
 
 		bool IsGlobalObjectMethod (object binding)

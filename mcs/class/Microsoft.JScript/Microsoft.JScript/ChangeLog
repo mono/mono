@@ -1,3 +1,7 @@
+2004-10-11  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* expression.cs (Call.Emit): implement IsConstructorProperty.
+
 2004-10-06  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* expression.cs: added support for function calls. Handle case of
