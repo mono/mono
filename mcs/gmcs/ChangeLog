@@ -1,3 +1,8 @@
+2004-12-07  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (DeclSpace.AddToContainer): Report correct errors CS0694
+	and CS0692 where appropriate.
+
 2004-12-06  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (MethodCore.MayUnify): Moved the CS0408 check here from

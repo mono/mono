@@ -566,8 +566,14 @@ namespace Mono.CSharp {
 		protected bool AddToContainer (MemberCore symbol, bool is_method, string fullname, string basename)
 		{
 			if (basename == Basename && !(this is Interface)) {
-				Report.SymbolRelatedToPreviousError (this);
-				Report.Error (542, "'{0}': member names cannot be the same as their enclosing type", symbol.Location, symbol.GetSignatureForError ());
+				if (symbol is TypeParameter)
+					Report.Error (694, "Type parameter `{0}' has same name as " +
+						      "containing type or method", basename);
+				else {
+					Report.SymbolRelatedToPreviousError (this);
+					Report.Error (542, "'{0}': member names cannot be the same as their " +
+						      "enclosing type", symbol.Location, symbol.GetSignatureForError ());
+				}
 				return false;
 			}
 
@@ -580,8 +586,14 @@ namespace Mono.CSharp {
 			}
 
 			if (mc != null) {
-				Report.SymbolRelatedToPreviousError (mc);
-				Report.Error (102, symbol.Location, "The type '{0}' already contains a definition for '{1}'", GetSignatureForError (), basename);
+				if (symbol is TypeParameter)
+					Report.Error (692, symbol.Location, "Duplicate type parameter `{0}'", basename);
+				else {
+					Report.SymbolRelatedToPreviousError (mc);
+					Report.Error (102, symbol.Location,
+						      "The type '{0}' already contains a definition for '{1}'",
+						      GetSignatureForError (), basename);
+				}
 				return false;
 			}
 
