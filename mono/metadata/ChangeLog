@@ -1,3 +1,34 @@
+2003-12-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* image.h (MonoImage): Add a new 'dynamic' field to denote that the image 
+	is dynamic. This is needed since an assembly can contain both dynamic and
+	non-dynamic images.
+
+	* class.c loader.c metadata.c object.c: Use image->dynamic instead of 
+	assembly->dynamic.
+
+	* icall.c reflection.c: Add new AssemblyBuilder:AddModule icall.
+
+	* reflection.h (MonoReflectionAssemblyBuilder): Add 'loaded_modules' field
+	to store modules loaded using AddModule.
+
+	* reflection.c (mono_image_fill_file_table): Generalize this so it works
+	on Modules.
+
+	* reflection.c (mono_image_fill_export_table_from_class): New helper function.
+
+	* reflection.c (mono_image_fill_export_table_from_module): New function to
+	fill out the EXPORTEDTYPES table from a module.
+
+	* reflection.c (mono_image_emit_manifest): Refactor manifest creation code
+	into a separate function. Also handle loaded non-dynamic modules.
+
+	* reflection.c (mono_image_basic_init): Fix memory allocation.
+
+	* appdomain.c (MONO_CORLIB_VERSION): Bump corlib version.
+
+	* assembly.c (mono_assembly_load_references): Make this public.
+
 2003-12-19  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_class_initialize_generic): Made this static, take
