@@ -187,6 +187,9 @@ namespace System.IO
 				if (!canseek)
 					throw new NotSupportedException ("The stream does not support seeking");
 
+				// Buffered data might change the length of the stream
+				FlushBufferIfDirty ();
+
 				MonoIOError error;
 				
 				return MonoIO.GetLength (handle, out error);
@@ -344,12 +347,12 @@ namespace System.IO
 			if (!CanWrite)
 				throw new NotSupportedException ("Stream does not support writing");
 
-
-				
 			if (count > buf_size) {
 				// shortcut for long writes
 				MonoIOError error;
-				
+
+				FlushBuffer ();
+
 				MonoIO.Write (handle, src, src_offset, count, out error);
 				buf_start += count;
 			} else {
@@ -360,10 +363,12 @@ namespace System.IO
 					int n = WriteSegment (src, src_offset + copied, count);
 					copied += n;
 					count -= n;
-					
+
 					if (count == 0) {
 						break;
 					}
+
+					FlushBuffer ();
 				}
 			}
 		}
@@ -382,8 +387,6 @@ namespace System.IO
 			}
 
 			lock(this) {
-
-				FlushBuffer ();
 
 				switch (origin) {
 				case SeekOrigin.End:
@@ -410,12 +413,16 @@ namespace System.IO
 					/* More undocumented crap */
 					throw new IOException("Can't seek back over pre-existing data in append mode");
 				}
-				
-				if (pos >= buf_start &&
-				    pos <= buf_start + buf_length) {
-					buf_offset = (int) (pos - buf_start);
-					return pos;
+
+				if (buf_length > 0) {
+					if (pos >= buf_start &&
+						pos <= buf_start + buf_length) {
+						buf_offset = (int) (pos - buf_start);
+						return pos;
+					}
 				}
+
+				FlushBuffer ();
 
 				MonoIOError error;
 			
@@ -568,10 +575,16 @@ namespace System.IO
 				MonoIO.Write (handle, buf, 0,
 					      buf_length, out error);
 			}
-			
+
 			buf_start += buf_offset;
 			buf_offset = buf_length = 0;
 			buf_dirty = false;
+		}
+
+		private void FlushBufferIfDirty ()
+		{
+			if (buf_dirty)
+				FlushBuffer ();
 		}
 
 		private void RefillBuffer ()

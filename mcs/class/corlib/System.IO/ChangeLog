@@ -1,3 +1,18 @@
+2003-06-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* FileStream.cs: Fix errors in previous checkins:
+	(Write): Only take the shortcut route if the data is longer than the
+	buffer length.
+	(Write): Flush the buffer before writing out the new data
+	(Write): Flush the buffer after writing out a segment since otherwise
+	we will go into an infinite loop.
+	(FlushBuffer): Remove my last change since it was clearly wrong.
+	(Seek): Run FlushBuffer () after the in-buffer seek optimization.
+	(Seek): Only use the in-buffer optimization if the buffer is not
+	empty.
+	(Length): Call FlushBuffer () since buffer data might change the size
+	of the stream.
+
 2003-06-09  Ville Palo <vi64pa@kolumbus.fi>
 
 	* FileStream.cs:
