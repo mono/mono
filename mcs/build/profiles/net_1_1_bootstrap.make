@@ -1,6 +1,6 @@
 # -*- makefile -*-
 
-#BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/basic:$$MONO_PATH" $(INTERNAL_MCS)
+BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/basic:$$MONO_PATH" $(RUNTIME) $(topdir)/class/lib/basic/mcs.exe
 MCS = MONO_PATH="$(topdir)/class/lib/$(PROFILE):$$MONO_PATH" $(INTERNAL_MCS)
 MBAS = MONO_PATH="$(topdir)/class/lib/$(PROFILE):$$MONO_PATH" $(INTERNAL_MBAS)
 

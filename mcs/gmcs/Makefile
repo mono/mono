@@ -87,7 +87,7 @@ bootstrap-libs:
 	cd .. && $(MAKE) PROFILE=net_2_0_bootstrap all
 
 gmcs.exe: $(all_sources) $(bootstrap_libfiles)
-	MONO_PATH="../class/lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" mono ../mcs/mcs.exe $(DEBUG_FLAGS) -2 /target:exe /debug /out:$@ $(all_sources)
+	MONO_PATH="../class/lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(topdir)/class/lib/net_2_0_bootstrap/mcs.exe $(DEBUG_FLAGS) -2 /target:exe /debug /out:$@ $(all_sources)
 
 gmcs2.exe: $(all_sources)
 	MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" time mcs -2 /target:exe /debug /out:$@ $^ $(DEBUG_FLAGS) 

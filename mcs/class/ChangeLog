@@ -1,3 +1,8 @@
+2004-11-19  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (DIST_PROFILES): New.
+	(dist-local): Create profile-specific directories in the tarball.
+
 2004-11-12  Martin Baulig  <martin@ximian.com>
 
 	* Makefile (SUBDIRS): Added Mono.C5.

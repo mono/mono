@@ -9,11 +9,10 @@ EXTRA_DISTFILES = \
 	compiler.doc		\
 	compiler.sln		\
 	cs-parser.jay		\
-	mcs.exe.config		\
 	NOTES			\
 	TODO
 
-PROGRAM = mcs.exe
+PROGRAM = $(topdir)/class/lib/$(PROFILE)/mcs.exe
 PROGRAM_COMPILE = $(BOOT_COMPILE)
 PROGRAM_INSTALL_DIR = $(prefix)/lib/mono/1.0
 
@@ -34,8 +33,8 @@ TIME = time
 btest: mcs2.exe mcs3.exe
 	ls -l mcs2.exe mcs3.exe
 
-mcs2.exe: mcs.exe
-	$(TIME) $(RUNTIME) ./mcs.exe $(USE_MCS_FLAGS) /target:exe /out:$@ $(BUILT_SOURCES) @$(response)
+mcs2.exe: $(PROGRAM)
+	$(TIME) $(RUNTIME) $(PROGRAM) $(USE_MCS_FLAGS) /target:exe /out:$@ $(BUILT_SOURCES) @$(response)
 
 mcs3.exe: mcs2.exe
 	$(TIME) $(RUNTIME) ./mcs2.exe $(USE_MCS_FLAGS) /target:exe /out:$@ $(BUILT_SOURCES) @$(response)
@@ -50,7 +49,7 @@ ctest:
 # we need this because bash tries to use its own crappy timer
 FRIENDLY_TIME = $(shell which time) -f'%U seconds'
 
-do-time : mcs.exe
+do-time : $(PROGRAM)
 	@ echo -n "Run 1:   "
 	@ rm -f mcs2.exe
 	@ $(MAKE) TIME="$(FRIENDLY_TIME)" mcs2.exe > /dev/null || (echo FAILED; exit 1)
@@ -62,10 +61,10 @@ do-time : mcs.exe
 do-corlib:
 	@ echo -n "corlib:  "
 	@ rm -f ../class/lib/mscorlib.dll
-	@ cd ../class/corlib ; $(MAKE) BOOTSTRAP_MCS="$(FRIENDLY_TIME) mono ../../mcs/mcs.exe" > /dev/null || (echo FAILED; exit 1)
+	@ cd ../class/corlib ; $(MAKE) BOOTSTRAP_MCS='$(FRIENDLY_TIME) mono $$(topdir)/class/lib/$(PROFILE)/mcs.exe' > /dev/null || (echo FAILED; exit 1)
 
 PROFILER=default
 
-profile : mcs.exe
-	$(RUNTIME) --profile=$(PROFILER) ./mcs.exe $(USE_MCS_FLAGS) /target:exe /out:mcs2.exe $(BUILT_SOURCES) @$(response)
+profile : $(PROGRAM)
+	$(RUNTIME) --profile=$(PROFILER) $(PROGRAM) $(USE_MCS_FLAGS) /target:exe /out:mcs2.exe $(BUILT_SOURCES) @$(response)
 

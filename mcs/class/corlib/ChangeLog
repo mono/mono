@@ -1,3 +1,7 @@
+2004-11-19  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (LIBRARY_COMPILE): Simplify.
+
 2004-10-29  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile: Move support for building net_2_0_bootstrap libraries

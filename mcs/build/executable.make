@@ -9,6 +9,8 @@ ifdef base_prog_config
 PROGRAM_config := $(PROGRAM).config
 endif
 
+executable_CLEAN_FILES = *.exe $(PROGRAM) $(PROGRAM).mdb $(BUILT_SOURCES)
+
 ifeq (cat,$(PLATFORM_CHANGE_SEPARATOR_CMD))
 response = $(sourcefile)
 else
@@ -39,7 +41,7 @@ uninstall-local:
 	-rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$(base_prog) $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$(base_prog).mdb
 
 clean-local:
-	-rm -f *.exe $(BUILT_SOURCES) $(executable_CLEAN_FILES) $(CLEAN_FILES)
+	-rm -f $(executable_CLEAN_FILES) $(CLEAN_FILES)
 
 test-local: $(PROGRAM)
 	@:
@@ -64,10 +66,12 @@ $(PROGRAM): $(BUILT_SOURCES) $(EXTRA_SOURCES) $(response)
 	$(PROGRAM_COMPILE) /target:exe /out:$(base_prog) $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response)
 ifneq ($(base_prog),$(PROGRAM))
 	mv $(base_prog) $(PROGRAM)
+	-mv $(base_prog).mdb $(PROGRAM).mdb
 endif
 
 ifdef PROGRAM_config
 ifneq ($(base_prog_config),$(PROGRAM_config))
+executable_CLEAN_FILES += $(PROGRAM_config)
 $(PROGRAM_config): $(base_prog_config)
 	cp $(base_prog_config) $(PROGRAM_config)
 endif

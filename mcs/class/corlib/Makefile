@@ -75,14 +75,7 @@ EXTRA_DISTFILES = \
 	$(plattestlib).excludes \
 	Test/ms_run_test.sh
 
-ifeq (net_2_0, $(PROFILE))
-# Net 2.0 corlib is built with in-tree 'gmcs'
-gmcs = $(topdir)/gmcs/gmcs.exe
-
-LIBRARY_COMPILE = MONO_PATH="../lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(gmcs) $(USE_MCS_FLAGS) /define:NET_1_1 /define:NET_2_0
-else
 LIBRARY_COMPILE = $(BOOT_COMPILE)
-endif
 
 include ../../build/library.make
 

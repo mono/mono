@@ -1,3 +1,13 @@
+2004-11-19  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (%-profiles): Go through an intermediate set of rules.
+	Move body to ...
+	(profiles-do--%): ... this.
+	(profiles-do--run-test): Customized rule that usefully runs with
+	'make -j' and 'make -k'.
+	(profiles-do--all, profile-do--%--all): Orchestrate the bootstrap
+	process.
+
 2004-11-09  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (basic_SUBDIRS): New.

@@ -34,18 +34,31 @@ all-local $(STD_TARGETS:=-local):
 PROFILES = default net_2_0
 
 .PHONY: all-profiles $(STD_TARGETS:=-profiles)
-all-profiles $(STD_TARGETS:=-profiles):
-	$(MAKE) $(PROFILES:%=profile-do--%--$(@:-profiles=))
+all-profiles $(STD_TARGETS:=-profiles): %-profiles: profiles-do--%
+	@:
+
+profiles-do--%:
+	$(MAKE) $(PROFILES:%=profile-do--%--$*)
 
 # The % below looks like profile-name--target-name
 profile-do--%:
 	$(MAKE) PROFILE=$(subst --, ,$*)
 
-# Ensure these don't run in parallel, for now.
-profile-do--net_2_0--run-test: profile-do--default--run-test
+profiles-do--run-test:
+	ret=:; \
+	$(MAKE) PROFILE=default run-test || ret=false; \
+	$(MAKE) PROFILE=net_2_0 run-test && $$ret
+
+# Orchestrate the bootstrap here.
+profiles-do--all: profile-do--net_2_0--all
 
 profile-do--net_2_0--all: profile-do--net_2_0_bootstrap--all
 profile-do--net_2_0_bootstrap--all: profile-do--default--all
+
+ifeq (linux, $(PLATFORM))
+profile-do--default--all: profile-do--net_1_1_bootstrap--all
+profile-do--net_1_1_bootstrap--all: profile-do--basic--all
+endif
 
 testcorlib:
 	@cd class/corlib && $(MAKE) test run-test

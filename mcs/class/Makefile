@@ -96,5 +96,7 @@ DISTFILES = \
 all-local $(STD_TARGETS:=-local):
 	@:
 
+DIST_PROFILES = basic net_1_1_bootstrap default net_2_0_bootstrap net_2_0
+
 dist-local: dist-default
-	-$(MKINSTALLDIRS) $(distdir)/lib
+	-$(MKINSTALLDIRS) $(distdir)/lib $(DIST_PROFILES:%=$(distdir)/lib/%)

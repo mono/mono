@@ -1,3 +1,7 @@
+2004-11-19  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (gmcs.exe): Update to new location of bootstrap mcs.exe.
+
 2004-11-17  Raja R Harinath  <rharinath@novell.com>
 
 	* typemanager.cs (TypeHandle.GetTypeHandle): Make private.

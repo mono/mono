@@ -20,17 +20,17 @@ EXTRA_DISTFILES = \
 	System.ComponentModel.Design/Changelog		\
 	Test/test-config-file
 
+lib_file := $(wildcard ../lib/$(PROFILE)/System.dll)
+ifndef lib_file
+USE_BOOT_COMPILE = yes
+endif
+
+ifeq (net_2_0, $(PROFILE))
+BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$(topdir)/class/lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_GMCS)
+endif
+
 ifdef USE_BOOT_COMPILE
 LIBRARY_COMPILE = $(BOOT_COMPILE)
-endif
-
-ifeq (net_2_0,$(PROFILE))
-
-lib_file := $(wildcard ../lib/net_2_0/System.dll)
-ifndef lib_file
-MCS = MONO_PATH="$(topdir)/class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$(topdir)/class/lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_GMCS)
-endif
-
 endif
 
 ifndef CYCLIC_DEP_FILE

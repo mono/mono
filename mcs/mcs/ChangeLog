@@ -1,3 +1,9 @@
+2004-11-19  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (EXTRA_DISTFILES): Remove mcs.exe.config.  It's
+	automatically handled by executable.make.
+	(PROGRAM): Make profile-specific.
+
 2004-11-18  Marek Safar  <marek.safar@seznam.cz>
 
 	* expression.cs (DoResolveBase): Fixed wrong warning for out

@@ -1,3 +1,21 @@
+2004-11-19  Raja R Harinath  <rharinath@novell.com>
+
+	Orchestrate the bootstrap.
+	* rules.make (INTERNAL_MCS): Look for mcs.exe in profile-specific directory.
+	* profiles/net_1_1_bootstrap.make (BOOTSTRAP_MCS): Use mcs.exe from
+	basic profile.	
+	* profiles/default.make (BOOTSTRAP_MCS): Use mcs.exe from the
+	net_1_1_bootstrap profile.
+	* profiles/net_2_0_bootstrap.make (BOOTSTRAP_MCS): Use mcs.exe
+	from default profile.
+	(all-local, clean-local): New.  Copy mcs.exe from default profile,
+	but customize it to work with 2.0.x libraries.
+	* profiles/net_2_0.make (BOOTSTRAP_MCS): Define approprately for
+	building corlib.
+
+	* executable.make (executable_CLEAN_FILES): Clean up more files.
+	($(PROGRAM)): Move .mdb files too.
+
 2004-11-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* library.make: Reverted the last fix. It broke windows build (that

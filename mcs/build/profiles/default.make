@@ -15,6 +15,7 @@
 # in the MONO_PATH too).
 
 ifdef PLATFORM_MONO_NATIVE
+BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap:$$MONO_PATH" $(RUNTIME) $(topdir)/class/lib/net_1_1_bootstrap/mcs.exe
 MCS = MONO_PATH="$(topdir)/class/lib/$(PROFILE):$$MONO_PATH" $(INTERNAL_MCS)
 MBAS = MONO_PATH="$(topdir)/class/lib/$(PROFILE):$$MONO_PATH" $(INTERNAL_MBAS)
 else

@@ -1,3 +1,9 @@
+2004-11-19  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (USE_BOOT_COMPILE): Re-organize to use BOOT_COMPILE
+	during the first pass.
+	(BOOTSTRAP_MCS): Use mscorlib.dll from the net_2_0 profile.
+
 2004-11-18  Lluis Sanchez Gual <lluis@novell.com>
 
 	* System.dll.sources: Added new files:
