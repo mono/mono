@@ -1,3 +1,20 @@
+2005-03-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* assembly.c: Set MONO_ASSEMBLIES to NULL when compiling from a VS.NET
+	project/solution.
+	* appdomain.h|domain.c: Removed inline from functions.
+	* appdomain.c: Reduced warnings when compiling on windows.
+	* icall.c: Fixed output_debug declaration to gunichar2*.
+	* mono-config.c: Reduced warnings when compiling on windows.
+	* rand.c: Added missing "windows.h". Added missing return value.
+	* rawbuffer.c: Added missing winsock2.h for windows.
+	* sysmath.h: Added mono-compiler.h header to allow/ease 
+	compilation with non-GCC compilers.
+	* threads.c: Fixed declarations to compile with VS.NET C compiler.
+	Removed cast warnings.
+
+	Adapted from the work of J Lothian (for VC6).
+
 2005-03-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* assembly.c (mono_assembly_load_corlib): Do not try loading corlib
