@@ -190,7 +190,7 @@
 
 
 
-	<!-- interface -->
+	<!-- interface types -->
 	<xsl:template match="class[@type='interface']">
 		<xsl:apply-templates select="class[@type='interface']">
 			<xsl:sort select="@name"/>
@@ -207,6 +207,25 @@
 			</xsl:if>
 		</DIV>
 	</xsl:template>
+
+	<!-- interfaces implemented by Types -->
+	<xsl:template match="interface">
+		<xsl:apply-templates select="interface">
+			<xsl:sort select="@name"/>
+		</xsl:apply-templates>
+	</xsl:template>
+
+	<xsl:template match="interface[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
+		<DIV>
+			<xsl:call-template name="ELEMENT">
+				<xsl:with-param name="class">i</xsl:with-param>
+			</xsl:call-template>
+			<xsl:if test="not(@presence)">
+				<xsl:apply-templates/>
+			</xsl:if>
+		</DIV>
+	</xsl:template>
+
 
 
 	<!-- delegate -->

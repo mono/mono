@@ -1,5 +1,10 @@
 2003-11-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* mono-api.xsl: handle <interface>, which is different from
+	<class name="x" type="interface"...>.
+
+2003-11-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* mono-api-diff.cs: added a couple of missing attributes for extra
 	classes.
 
