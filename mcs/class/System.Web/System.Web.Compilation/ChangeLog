@@ -1,3 +1,10 @@
+2004-08-02  Duncan Mak  <duncan@ximian.com>
+
+	* BuildProviderResultFlags.cs: 	
+	* IImplicitResourceProvider.cs: 
+	* ImplicitResourceKey.cs:
+	* IResourceReader.cs: Added.
+
 2004-07-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: the path for file was treated as virtual, but it's
