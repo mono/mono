@@ -1,0 +1,7 @@
+2003-04-22  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ConfidenceFactor.cs: New. Enum for prime quality.
+	Support for BigInteger (commited for Ben Maurer).
+	* PrimalityTests.cs: New. Tests for primality.
+	Support for BigInteger (commited for Ben Maurer).
+
