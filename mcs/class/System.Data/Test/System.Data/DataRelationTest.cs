@@ -18,21 +18,15 @@ namespace MonoTests.System.Data
                 public DataRelationTest() : base ("MonoTests.System.Data.DataRelation") {}
                 public DataRelationTest(string name) : base(name) {}
 
-                protected override void SetUp() {}  
-                
-                protected override void TearDown() {}
+		private DataSet Set = null;
+        	private DataTable Mom = null;
+        	private DataTable Child = null;        	
 
-                public static ITest Suite {
-                        get { 
-                                return new TestSuite(typeof(DataRelationTest)); 
-                        }
-                }
-
-		public void TestCreation ()
+                protected override void SetUp() 
 		{
-			DataSet Set = new DataSet ();
-			DataTable Mom = new DataTable ("Mom");
-			DataTable Child = new DataTable ("Child");
+			Set = new DataSet ();
+			Mom = new DataTable ("Mom");
+			Child = new DataTable ("Child");
 			Set.Tables.Add (Mom);
 			Set.Tables.Add (Child);
 			
@@ -43,10 +37,139 @@ namespace MonoTests.System.Data
 			
 			DataColumn Col3 = new DataColumn ("Name");
 			DataColumn Col4 = new DataColumn ("Age");
+			Col4.DataType = Type.GetType ("System.Int16");
 			Child.Columns.Add (Col3);
 			Child.Columns.Add (Col4);
+		}  
+                
+                protected override void TearDown() {}
+
+                public static ITest Suite {
+                        get { 
+                                return new TestSuite(typeof(DataRelationTest)); 
+                        }
+                }
+
+                public void TestForeign ()
+                {
+			DataRelation Relation = new DataRelation ("Rel", Mom.Columns [1], Child.Columns [0]);
+			Set.Relations.Add (Relation);
+
+                	DataRow Row = Mom.NewRow ();
+                	Row [0] = "Teresa";
+                	Row [1] = "Jack";
+                	Mom.Rows.Add (Row);
+                	
+                	Row = Mom.NewRow ();
+                	Row [0] = "Teresa";
+                	Row [1] = "Dick";
+                	Mom.Rows.Add (Row);
+                	
+                	Row = Mom.NewRow ();
+                	Row [0] = "Mary";
+                	Row [1] = "Harry";
+                	
+                	Row = Child.NewRow ();
+                	Row [0] = "Jack";
+                	Row [1] = 16;
+                	Child.Rows.Add (Row);
+                	
+                	Row = Child.NewRow ();
+                	Row [0] = "Dick";
+                	Row [1] = 56;
+                	Child.Rows.Add (Row);
+                	
+                	AssertEquals ("test#01", 2, Child.Rows.Count);
+                	
+                	Row = Mom.Rows [0];
+                	Row.Delete ();
+                	
+                	AssertEquals ("test#02", 1, Child.Rows.Count);
+                	
+                	Row = Mom.NewRow ();
+                	Row [0] = "Teresa";
+                	Row [1] = "Dick";
+                	
+                	try {
+                		Mom.Rows.Add (Row);
+                		Fail ("test#03");
+                	} catch (Exception e) {
+                		AssertEquals ("test#04", typeof (ConstraintException), e.GetType ());
+                		AssertEquals ("test#05", "Column 'ChildName' is constrained to be unique.  Value 'Dick' is already present.", e.Message);
+                	}                	
+                }
+
+		public void TestInvalidConstraintException ()
+		{
 			
-			DataRelation Relation = new DataRelation ("Rel", Col2, Col3);
+			DataRelation Relation = null;
+			try {
+				Relation = new DataRelation ("Rel", Mom.Columns [1], Child.Columns [1], true);
+				Fail ("test#01");
+			} catch (Exception e) {
+				AssertEquals ("test#02", typeof (InvalidConstraintException), e.GetType ());
+				AssertEquals ("test#03", "Parent Columns and Child Columns don't have type-matching columns.", e.Message);
+			}
+			
+			Child.Columns [1].DataType = Mom.Columns [1].DataType;
+			
+			Relation = new DataRelation ("Rel", Mom.Columns [1], Child.Columns [1], true);
+			Set.Relations.Add (Relation);
+			
+			try {
+				Child.Columns [1].DataType = Type.GetType ("System.Double");
+				Fail ("test#04");
+			} catch (Exception e) {
+				AssertEquals ("test#05", typeof (InvalidConstraintException), e.GetType ());
+				AssertEquals ("test#06", "Parent Columns and Child Columns don't have type-matching columns.", e.Message);
+			}									
+		}
+		
+		public void TestDataSetRealtions ()
+		{
+			DataRelation Relation;
+			AssertEquals ("test#01", 0, Set.Relations.Count);
+			AssertEquals ("test#02", 0, Mom.ParentRelations.Count);
+			AssertEquals ("test#03", 0, Mom.ChildRelations.Count);
+			AssertEquals ("test#04", 0, Child.ParentRelations.Count);
+			AssertEquals ("test#05", 0, Child.ChildRelations.Count);
+			
+			Relation = new DataRelation ("Rel", Mom.Columns [1], Child.Columns [0]);
+			Set.Relations.Add (Relation);
+			
+			AssertEquals ("test#06", 1, Set.Relations.Count);
+			AssertEquals ("test#07", 0, Mom.ParentRelations.Count);
+			AssertEquals ("test#08", 1, Mom.ChildRelations.Count);
+			AssertEquals ("test#09", 1, Child.ParentRelations.Count);
+			AssertEquals ("test#10", 0, Child.ChildRelations.Count);
+						
+			Relation = Set.Relations [0];
+			AssertEquals ("test#11", 1, Relation.ParentColumns.Length);
+			AssertEquals ("test#12", 1, Relation.ChildColumns.Length);
+			AssertEquals ("test#13", "Rel", Relation.ChildKeyConstraint.ConstraintName);
+			AssertEquals ("test#14", "Constraint1", Relation.ParentKeyConstraint.ConstraintName);
+		}
+		
+		public void TestConstraints ()
+		{
+				
+			AssertEquals ("test#01", 0, Mom.Constraints.Count);
+			AssertEquals ("test#02", 0, Child.Constraints.Count);
+
+			DataRelation Relation = new DataRelation ("Rel", Mom.Columns [1], Child.Columns [0]);
+			Set.Relations.Add (Relation);
+			
+			AssertEquals ("test#03", 1, Mom.Constraints.Count);
+			AssertEquals ("test#04", 1, Child.Constraints.Count);
+			AssertEquals ("test#05", typeof (ForeignKeyConstraint), Child.Constraints [0].GetType ());
+			AssertEquals ("test#05", typeof (UniqueConstraint), Mom.Constraints [0].GetType ());
+			
+		}
+
+		public void TestCreation ()
+		{
+			
+			DataRelation Relation = new DataRelation ("Rel", Mom.Columns [1], Child.Columns [0]);
 			Set.Relations.Add (Relation);
 			DataRelation Test = null;
 			AssertEquals ("test#01", 1, Mom.ChildRelations.Count);
@@ -71,30 +194,30 @@ namespace MonoTests.System.Data
 		public void TestCreation2 ()
 		{
 			DataSet Set = new DataSet ();
-			DataTable Mom = new DataTable ("Mom");
-			DataTable Child = new DataTable ("Child");
+			DataTable Mom2 = new DataTable ("Mom");
+			DataTable Child2 = new DataTable ("Child");
 			DataTable Hubby = new DataTable ("Hubby");
-			Set.Tables.Add (Mom);
-			Set.Tables.Add (Child);
+			Set.Tables.Add (Mom2);
+			Set.Tables.Add (Child2);
 			Set.Tables.Add (Hubby);
 						
 			DataColumn Col = new DataColumn ("Name");
 			DataColumn Col2 = new DataColumn ("ChildName");
 			DataColumn Col3 = new DataColumn ("hubby");
-			Mom.Columns.Add (Col);
-			Mom.Columns.Add (Col2);
-			Mom.Columns.Add (Col3);
+			Mom2.Columns.Add (Col);
+			Mom2.Columns.Add (Col2);
+			Mom2.Columns.Add (Col3);
 			
 			DataColumn Col4 = new DataColumn ("Name");
 			DataColumn Col5 = new DataColumn ("Age");
 			DataColumn Col6 = new DataColumn ("father");
-			Child.Columns.Add (Col4);
-			Child.Columns.Add (Col5);
-			Child.Columns.Add (Col6);
+			Child2.Columns.Add (Col4);
+			Child2.Columns.Add (Col5);
+			Child2.Columns.Add (Col6);
 			
 			
 			DataColumn Col7 = new DataColumn ("Name");
-			DataColumn Col8 = new DataColumn ("Age");			
+			DataColumn Col8 = new DataColumn ("Age");
 			Hubby.Columns.Add (Col7);
 			Hubby.Columns.Add (Col8);
 			
@@ -121,12 +244,12 @@ namespace MonoTests.System.Data
 			Set.Relations.Add (Relation);
 			
 			DataRelation Test = null;
-			AssertEquals ("test#01", 1, Mom.ChildRelations.Count);
-			AssertEquals ("test#02", 0, Child.ChildRelations.Count);
-			AssertEquals ("test#03", 0, Mom.ParentRelations.Count);
-			AssertEquals ("test#04", 1, Child.ParentRelations.Count);
+			AssertEquals ("test#01", 1, Mom2.ChildRelations.Count);
+			AssertEquals ("test#02", 0, Child2.ChildRelations.Count);
+			AssertEquals ("test#03", 0, Mom2.ParentRelations.Count);
+			AssertEquals ("test#04", 1, Child2.ParentRelations.Count);
 				
-			Test = Child.ParentRelations [0];
+			Test = Child2.ParentRelations [0];
 			AssertEquals ("test#05", "Rel", Test.ToString ());
 			AssertEquals ("test#06", "Rel", Test.RelationName);
 			AssertEquals ("test#07", "Mom", Test.ParentTable.TableName);
@@ -138,31 +261,16 @@ namespace MonoTests.System.Data
 			AssertEquals ("test#13", "Child", Test.ChildTable.TableName);
 			AssertEquals ("test#14", "Rel", Test.ChildKeyConstraint.ConstraintName);
 			AssertEquals ("test#15", 2, Test.ChildColumns.Length);
-			AssertEquals ("test#16", 1, Mom.Constraints.Count);
-			AssertEquals ("test#17", "Constraint1", Mom.Constraints [0].ToString ());
-			AssertEquals ("test#18", 1, Child.Constraints.Count);			
+			AssertEquals ("test#16", 1, Mom2.Constraints.Count);
+			AssertEquals ("test#17", "Constraint1", Mom2.Constraints [0].ToString ());
+			AssertEquals ("test#18", 1, Child2.Constraints.Count);			
 			AssertEquals ("test#19", 0, Hubby.Constraints.Count);
 		}
 		
 		public void TestCreation3 ()
 		{
-			DataSet Set = new DataSet ();
-			DataTable Mom = new DataTable ("Mom");
-			DataTable Child = new DataTable ("Child");
-			Set.Tables.Add (Mom);
-			Set.Tables.Add (Child);
-			
-			DataColumn Col = new DataColumn ("Name");
-			DataColumn Col2 = new DataColumn ("ChildName");
-			Mom.Columns.Add (Col);
-			Mom.Columns.Add (Col2);
-			
-			DataColumn Col3 = new DataColumn ("Name");
-			DataColumn Col4 = new DataColumn ("Age");
-			Child.Columns.Add (Col3);
-			Child.Columns.Add (Col4);
 
-			DataRelation Relation = new DataRelation ("Rel", Col2, Col3, false);
+			DataRelation Relation = new DataRelation ("Rel", Mom.Columns [1], Child.Columns [0], false);
 			Set.Relations.Add (Relation);
 			DataRelation Test = null;
 	
@@ -196,21 +304,6 @@ namespace MonoTests.System.Data
 
 		public void TestCreation4 ()
 		{
-			DataSet Set = new DataSet ();
-			DataTable Mom = new DataTable ("Mom");
-			DataTable Child = new DataTable ("Child");
-			Set.Tables.Add (Mom);
-			Set.Tables.Add (Child);
-			
-			DataColumn Col = new DataColumn ("Name");
-			DataColumn Col2 = new DataColumn ("ChildName");
-			Mom.Columns.Add (Col);
-			Mom.Columns.Add (Col2);
-			
-			DataColumn Col3 = new DataColumn ("Name");
-			DataColumn Col4 = new DataColumn ("Age");
-			Child.Columns.Add (Col3);
-			Child.Columns.Add (Col4);
 			
 			DataRelation Relation = new DataRelation ("Rel", "Mom", "Child", 
 			                                          new string [] {"ChildName"},
@@ -321,23 +414,8 @@ namespace MonoTests.System.Data
 		
 		public void TestChildRows ()
 		{
-			DataSet Set = new DataSet ();
-			DataTable Mom = new DataTable ("Mom");
-			DataTable Child = new DataTable ("Child");
-			Set.Tables.Add (Mom);
-			Set.Tables.Add (Child);
 			
-			DataColumn Col = new DataColumn ("Name");
-			DataColumn Col2 = new DataColumn ("ChildName");
-			Mom.Columns.Add (Col);
-			Mom.Columns.Add (Col2);
-			
-			DataColumn Col3 = new DataColumn ("Name");
-			DataColumn Col4 = new DataColumn ("Age");
-			Child.Columns.Add (Col3);
-			Child.Columns.Add (Col4);
-			
-			DataRelation Relation = new DataRelation ("Rel", Col2, Col3);
+			DataRelation Relation = new DataRelation ("Rel", Mom.Columns [1], Child.Columns [0]);
 			Set.Relations.Add (Relation);
 			
 			DataRow TempRow = Mom.NewRow ();
@@ -363,7 +441,7 @@ namespace MonoTests.System.Data
 			DataRow Row = Mom.Rows [1];			
 			TempRow = Row.GetChildRows ("Rel") [0];
 			AssertEquals ("test#01", "Dick", TempRow [0]);
-			AssertEquals ("test#02", "10", TempRow [1]);
+			AssertEquals ("test#02", "10", TempRow [1].ToString ());
 			TempRow = TempRow.GetParentRow ("Rel");
 			AssertEquals ("test#03", "teresa", TempRow [0]);
 			AssertEquals ("test#04", "Dick", TempRow [1]);
