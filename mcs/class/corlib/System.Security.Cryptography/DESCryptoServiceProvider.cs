@@ -6,7 +6,7 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -233,7 +233,7 @@ namespace System.Security.Cryptography {
 			33-1,  1-1, 41-1,  9-1, 49-1, 17-1, 57-1, 25-1
 		};
 */	
-		private static readonly uint[] ipTab = {
+		internal static readonly uint[] ipTab = {
 			0x00000000, 0x00000000, 0x00000100, 0x00000000, 0x00000000, 0x00000100, 0x00000100, 0x00000100, 
 			0x00000001, 0x00000000, 0x00000101, 0x00000000, 0x00000001, 0x00000100, 0x00000101, 0x00000100, 
 			0x00000000, 0x00000001, 0x00000100, 0x00000001, 0x00000000, 0x00000101, 0x00000100, 0x00000101, 
@@ -300,7 +300,7 @@ namespace System.Security.Cryptography {
 			0x00800000, 0x00800000, 0x80800000, 0x00800000, 0x00800000, 0x80800000, 0x80800000, 0x80800000 
 		};
 
-		private static readonly uint[] fpTab = { 
+		internal static readonly uint[] fpTab = { 
 			0x00000000, 0x00000000, 0x00000000, 0x00000040, 0x00000000, 0x00004000, 0x00000000, 0x00004040, 
 			0x00000000, 0x00400000, 0x00000000, 0x00400040, 0x00000000, 0x00404000, 0x00000000, 0x00404040, 
 			0x00000000, 0x40000000, 0x00000000, 0x40000040, 0x00000000, 0x40004000, 0x00000000, 0x40004040, 
@@ -463,12 +463,10 @@ namespace System.Security.Cryptography {
 			return res;
 		}
 	
-		private static void Permutation (byte[] input, byte[] _output, uint[] permTab, bool preSwap)
+		internal static void Permutation (byte[] input, byte[] output, uint[] permTab, bool preSwap)
 		{
 			if (preSwap && BitConverter.IsLittleEndian)
 				BSwap (input);
-	
-			byte[] output = _output;
 	
 			int offs1 = (((int)(input [0]) >> 4)) << 1;
 			int offs2 = (1 << 5) + ((((int)input [0]) & 0xF) << 1);
@@ -572,16 +570,7 @@ namespace System.Security.Cryptography {
 		// public helper for TripleDES
 		public void ProcessBlock (byte[] input, byte[] output) 
 		{
-			ECB (input, output);
-		}
-	
-		protected override void ECB (byte[] input, byte[] output) 
-		{
-			byte[] byteBuff = this.byteBuff;
-			uint[] dwordBuff = this.dwordBuff;
-	
-			Permutation (input, byteBuff, ipTab, false);
-			Buffer.BlockCopy (byteBuff, 0, dwordBuff, 0, BLOCK_BYTE_SIZE);
+			Buffer.BlockCopy (input, 0, dwordBuff, 0, BLOCK_BYTE_SIZE);
 	
 			if (encrypt) {
 				uint d0 = dwordBuff [0];
@@ -634,7 +623,13 @@ namespace System.Security.Cryptography {
 				dwordBuff [1] = d1;
 			}
 	
-			Buffer.BlockCopy (dwordBuff, 0, byteBuff, 0, BLOCK_BYTE_SIZE);
+			Buffer.BlockCopy (dwordBuff, 0, output, 0, BLOCK_BYTE_SIZE);
+		}
+	
+		protected override void ECB (byte[] input, byte[] output) 
+		{
+			Permutation (input, output, ipTab, false);
+			ProcessBlock (output, byteBuff);
 			Permutation (byteBuff, output, fpTab, true);
 		}
 	} 

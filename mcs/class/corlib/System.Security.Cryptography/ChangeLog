@@ -1,3 +1,12 @@
+2005-01-03  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* DESCryptoServiceProvider.cs: Refactored ECB/ProcessBlock to allow
+	TripleDES to be more efficient by using the permutations itself. 
+	* TripleDESCryptoServiceProvider.cs: Removed memory allocation in 
+	Transform's ECB method. Changed code to directly call DES's 
+	permutations. MACTripleDES is now 20% faster (didn't have any other
+	3DES benchmark on hand) and requires much less memory.
+
 2005-01-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DESCryptoServiceProvider.cs: Now using pre-computed tables (instead
