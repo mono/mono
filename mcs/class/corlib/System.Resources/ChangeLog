@@ -1,3 +1,7 @@
+2003-11-18  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* ResourceSet.cs: Implemented v1.1 updates
+
 2003-09-07  Dick Porter  <dick@ximian.com>
 
 	* Temporary workaround for bug 43567, so that Npgsql at least

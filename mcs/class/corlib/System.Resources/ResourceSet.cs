@@ -4,17 +4,24 @@
 // Authors:
 //	Duncan Mak (duncan@ximian.com)
 //	Dick Porter (dick@ximian.com)
+//	Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2001, 2002 Ximian, Inc.		http://www.ximian.com
 //
 
 using System.Collections;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace System.Resources
 {
 	[Serializable]
 	public class ResourceSet : IDisposable
+
+#if (NET_1_1)
+						, IEnumerable
+#endif
+
 	{
 
 		protected IResourceReader Reader;
@@ -82,6 +89,23 @@ namespace System.Resources
 		{
 			return (typeof (ResourceWriter));
 		}
+
+#if (NET_1_1)
+
+		[ComVisible (false)]
+		public virtual IDictionaryEnumerator GetEnumerator ()
+		{
+			if (Table == null)
+				ReadResources ();
+			return Table.GetEnumerator(); 
+		}
+
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return this.GetEnumerator (); 
+		}
+
+#endif
 
 		public virtual object GetObject (string name)
 		{
