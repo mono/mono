@@ -153,47 +153,64 @@ namespace System.Runtime.Remoting.Channels
 
 			try 
 			{
-				// Serialize the request message
-				MemoryStream reqMsgStream = CADSerializer.SerializeMessage(msgRequest);
-
 				// Time to transit into the "our" domain
 				byte [] arrResponse = null;
-				byte [] arrRequest = reqMsgStream.GetBuffer();
+				byte [] arrRequest = null; 
 				
-				// TODO: Enable again when we have support in the runtime
-				//AppDomain currentDomain = AppDomain.EnterDomain ( _domainID );
+				CADMethodReturnMessage cadMrm = null;
+				CADMethodCallMessage cadMsg;
+				
+				cadMsg = CADMethodCallMessage.Create (msgRequest);
+				if (null == cadMsg) {
+					// Serialize the request message
+					MemoryStream reqMsgStream = CADSerializer.SerializeMessage(msgRequest);
+					arrRequest = reqMsgStream.GetBuffer();
+				}
+
+				// TODO: Use Contexts instead of domain id only
+				AppDomain currentDomain = AppDomain.InternalSetDomainByID ( _domainID );
 				try 
 				{
-					IMessage reqDomMsg = CADSerializer.DeserializeMessage (new MemoryStream(arrRequest), null);
+					IMessage reqDomMsg;
+
+					if (null != arrRequest)
+						reqDomMsg = CADSerializer.DeserializeMessage (new MemoryStream(arrRequest), null);
+					else
+						reqDomMsg = new MethodCall (cadMsg);
 
 					IMessage retDomMsg = ChannelServices.SyncDispatchMessage (reqDomMsg);
 
-					arrResponse = CADSerializer.SerializeMessage (retDomMsg).GetBuffer();
+					cadMrm = CADMethodReturnMessage.Create (retDomMsg);
+					if (null == cadMrm) {
+						arrResponse = CADSerializer.SerializeMessage (retDomMsg).GetBuffer();
+					} else
+						arrResponse = null;
+
 				}
 				catch (Exception e) 
 				{
-					IMessage errorMsg = new ReturnMessage (e, new ErrorMessage());
+					IMessage errorMsg = new MethodResponse (e, new ErrorMessage());
 					arrResponse = CADSerializer.SerializeMessage (errorMsg).GetBuffer(); 
 				}   
 				finally 
 				{
-					// TODO: Enable again when we have support in the runtime
-					// AppDomain.EnterDomain (AppDomain.getIDFromDomain (currentDomain));
+					AppDomain.InternalSetDomain (currentDomain);
 				}
-
-				if (null != arrResponse) 
-				{
+				
+				if (null != arrResponse) {
 					// Time to deserialize the message
 					MemoryStream respMsgStream = new MemoryStream(arrResponse);
 
 					// Deserialize the response message
 					retMessage = CADSerializer.DeserializeMessage(respMsgStream, msgRequest as IMethodCallMessage);
-				}
+				} else
+					retMessage = new MethodResponse (msgRequest as IMethodCallMessage, cadMrm);
 			}
 			catch (Exception e) 
 			{
 				try
 				{
+					Console.WriteLine("Exception in base domain");
 					retMessage = new ReturnMessage (e, msgRequest as IMethodCallMessage);
 				}
 				catch (Exception)
@@ -202,7 +219,7 @@ namespace System.Runtime.Remoting.Channels
 				}
 			}
 
-	    		return retMessage;
+		    	return retMessage;
 		}
 
 		public virtual IMessageCtrl AsyncProcessMessage(IMessage reqMsg, IMessageSink replySink) 
@@ -222,20 +239,43 @@ namespace System.Runtime.Remoting.Channels
 			serializer.SurrogateSelector = null;
 			mem.Position = 0;
 
-			return (IMessage) serializer.Deserialize(mem);
+			return (IMessage) serializer.Deserialize(mem, null);
 		}
 		
 		internal static MemoryStream SerializeMessage(IMessage msg)
 		{
-			MemoryStream mem = new MemoryStream();
-			BinaryFormatter serializer = new BinaryFormatter();                
+			MemoryStream mem = new MemoryStream ();
+			BinaryFormatter serializer = new BinaryFormatter ();                
 
-			serializer.SurrogateSelector = new RemotingSurrogateSelector();
-			serializer.Serialize(mem, msg);
+			serializer.SurrogateSelector = new RemotingSurrogateSelector ();
+			serializer.Serialize (mem, msg);
 
 			mem.Position = 0;
 
 			return mem;
+		}
+
+		internal static MemoryStream SerializeObject(object obj)
+		{
+			MemoryStream mem = new MemoryStream ();
+			BinaryFormatter serializer = new BinaryFormatter ();                
+
+			serializer.SurrogateSelector = new RemotingSurrogateSelector ();
+			serializer.Serialize (mem, obj);
+
+			mem.Position = 0;
+
+			return mem;
+		}
+
+		internal static object DeserializeObject(MemoryStream mem)
+		{
+			BinaryFormatter serializer = new BinaryFormatter();                
+
+			serializer.SurrogateSelector = null;
+			mem.Position = 0;
+
+			return serializer.Deserialize (mem);
 		}
 	}
 }
