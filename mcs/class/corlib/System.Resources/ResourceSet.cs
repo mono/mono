@@ -12,7 +12,6 @@ using System.IO;
 
 namespace System.Resources
 {
-	   
 	   [Serializable]
 	   public class ResourceSet : IDisposable
 	   {
