@@ -1,3 +1,7 @@
+2005-03-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Binder.cs (check_type): Fix byref support. Fixes #73972.
+
 2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MemberInfo.cs: Add an InheritanceDemand for Unrestricted on class.

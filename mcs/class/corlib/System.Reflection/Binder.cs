@@ -199,8 +199,8 @@ namespace System.Reflection
 				TypeCode fromt = Type.GetTypeCode (from);
 				TypeCode tot = Type.GetTypeCode (to);
 
-				if (to.IsByRef && !from.IsByRef)
-					return check_type (from, to.GetElementType ());
+				if (to.IsByRef != from.IsByRef)
+					return false;
 
 				switch (fromt) {
 				case TypeCode.Char:
