@@ -130,12 +130,22 @@ public class SecurityElementTest : TestCase
 	
 	public void TestEqual ()
 	{
-		SecurityElement elem2 = CreateElement ();
-		Assert ("#1", elem.Equal (elem2));
-		SecurityElement child = (SecurityElement) elem2.Children [0];
-		child = (SecurityElement) child.Children [1];
-		child.Text = "some text";
-		Assert ("#1", !elem.Equal (elem2));
+		int iTest = 0;
+		try {
+			SecurityElement elem2 = CreateElement ();
+			iTest++;
+			Assert ("#1", elem.Equal (elem2));
+			iTest++;
+			SecurityElement child = (SecurityElement) elem2.Children [0];
+			iTest++;
+			child = (SecurityElement) child.Children [1];
+			iTest++;
+			child.Text = "some text";
+			iTest++;
+			Assert ("#2", !elem.Equal (elem2));
+		} catch (Exception e) {
+			Fail ("Unexpected Exception at iTest = " + iTest + ". e = " + e);
+		}
 	}
 	
 	public void TestEscape ()
