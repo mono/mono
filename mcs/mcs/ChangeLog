@@ -1,3 +1,8 @@
+2003-01-31 Jackson Harper <jackson@latitudegeo.com>
+
+	* statement.cs: Add parameters and locals set in catch blocks that might 
+	return to set vector
+
 2003-01-29  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (Operator): Set the SpecialName flags for operators.
