@@ -1,3 +1,8 @@
+
+Mon May 24 11:13:46 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c: fix calc of max loop size when aligning loops start.
+
 2004-05-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ssa.c (mono_ssa_cprop): Allocate carray dynamically instead of on
