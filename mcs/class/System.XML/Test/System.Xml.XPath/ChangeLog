@@ -1,3 +1,9 @@
+2004-03-24  Atsushi Enomoto <atsushi@ximian.com>
+
+	* SelectNodesTests.cs : Added test for 1) not selecting previously-
+	  selected prefixes, and that 2) default namespace erasure (i.e. 
+	  xmlns="") should not be selected.
+
 2004-03-16  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigatorCommonTests.cs : Added test for splitted text.

@@ -247,7 +247,7 @@ namespace MonoTests.System.Xml.XPath
 		}
 
 		[Test]
-		public void NamespaceSelect()
+		public void NamespaceSelect ()
 		{
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<root xmlns=\"urn:foo1:foo2\"/>");
@@ -255,6 +255,27 @@ namespace MonoTests.System.Xml.XPath
 			nsmgr.AddNamespace("foons", "urn:foo1:foo2");
 			XmlNodeList nodes = document.SelectNodes ("/foons:root", nsmgr);
 			AssertEquals (1, nodes.Count);
+		}
+
+		[Test]
+		public void NamespaceSelectWithNsElasure ()
+		{
+			XmlDocument doc = new XmlDocument ();
+
+			doc.LoadXml ("<root xmlns='urn:root' xmlns:hoge='urn:hoge'><foo xmlns='urn:foo'><bar xmlns=''><baz/></bar></foo></root>");
+			XmlNode n = doc.FirstChild.FirstChild.FirstChild.FirstChild; //baz
+			XmlNodeList nl = n.SelectNodes ("namespace::*");
+			AssertEquals ("hoge", nl [0].LocalName);
+			AssertEquals ("xml", nl [1].LocalName);
+			AssertEquals (2, nl.Count);
+
+			n = doc.FirstChild.FirstChild; // foo
+			nl = n.SelectNodes ("namespace::*");
+			Console.WriteLine ("at foo::");
+			AssertEquals ("xmlns", nl [0].LocalName);
+			AssertEquals ("hoge", nl [1].LocalName);
+			AssertEquals ("xml", nl [2].LocalName);
+			AssertEquals (3, nl.Count);
 		}
 	}
 }
