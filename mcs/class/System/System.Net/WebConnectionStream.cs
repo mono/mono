@@ -158,8 +158,12 @@ namespace System.Net
 				} else {
 					new_size = contentLength - totalRead;
 					b = new byte [new_size];
-					if (readBuffer != null && diff > 0)
+					if (readBuffer != null && diff > 0) {
+						if (diff > new_size)
+							diff = new_size;
+
 						Buffer.BlockCopy (readBuffer, readBufferOffset, b, 0, diff);
+					}
 					
 					int remaining = new_size - diff;
 					int r = -1;
