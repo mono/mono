@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-// gmcs can't compile the ExceptionHandlingClauses property
-#if FIXME
 #if NET_2_0
 
 using System;
@@ -50,11 +48,20 @@ namespace System.Reflection {
 		internal MethodBody () {
 		}
 
+#if FIXME
+// gmcs can't compile this
 		public IList<ExceptionHandlingClause> ExceptionHandlingClauses {
 			get {
 				return Array.AsReadOnly<ExceptionHandlingClause> (clauses);
 			}
 		}
+
+		public IList<LocalVariableInfo> LocalVariables {
+			get {
+				return Array.AsReadOnly<LocalVariableInfo> (locals);
+			}
+		}
+#endif
 
 		public bool InitLocals {
 			get {
@@ -65,12 +72,6 @@ namespace System.Reflection {
 		public int LocalSignatureMetadataToken {
 			get {
 				return sig_token;
-			}
-		}
-
-		public IList<LocalVariableInfo> LocalVariables {
-			get {
-				return Array.AsReadOnly<LocalVariableInfo> (locals);
 			}
 		}
 
@@ -88,4 +89,4 @@ namespace System.Reflection {
 }
 
 #endif
-#endif
+
