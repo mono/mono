@@ -2755,15 +2755,21 @@ namespace Mono.CSharp {
 
 			if (e is FieldExpr){
 				FieldExpr fe = (FieldExpr) e;
-
-				//
-				// If we are not in static code (ec.IsStatic) and this
-				// field is not static, set the instance to `this'.
-				//
-				if (!fe.FieldInfo.IsStatic && !ec.IsStatic)
-					fe.InstanceExpression = ec.This;
-
 				FieldInfo fi = fe.FieldInfo;
+
+				if (ec.IsStatic){
+					if (!allow_static && !fi.IsStatic){
+						Error120 (Location, Name);
+						return null;
+					}
+				} else {
+					// If we are not in static code and this
+					// field is not static, set the instance to `this'.
+
+					if (!fi.IsStatic)
+						fe.InstanceExpression = ec.This;
+				}
+
 				
 				if (fi is FieldBuilder) {
 					Const c = TypeManager.LookupConstant ((FieldBuilder) fi);
@@ -2831,7 +2837,7 @@ namespace Mono.CSharp {
 			if (ec.IsStatic){
 				if (allow_static)
 					return e;
-				
+
 				return MemberStaticCheck (e);
 			} else
 				return e;

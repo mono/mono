@@ -11,18 +11,8 @@ Major tasks:
 
 	base property access on a virtual method.
 
-	Final should not be set for abstract method implementations.
-	final should be set for implementations of interface methods.
-
 BUGS
 ----
-
-* Major bug:
-
-	Since I added the support for the dual interpreatation of names, I dont
-	catch this error:
-
-	class X { int i;  static void a () { i = 1; } }
 
 * Currently the code path for 108/109 reporting is not being ran for methods
   as we need to compare method signatures.  But since we retrieve the expensive
@@ -52,19 +42,6 @@ BUGS
 * Visibility
 
 	I am not reporting errors on visibility yet.
-
-* Interfaces
-
-	For indexers, the output of ix2.cs is different from our
-	compiler and theirs.  They use a DefaultMemberAttribute, which
-	I have yet to figure out:
-
-	.class interface private abstract auto ansi INTERFACE
-	{
-		.custom instance void [mscorlib]System.Reflection.DefaultMemberAttribute::.ctor(string) 
-		= ( 01 00 04 49 74 65 6D 00 00 )                      // ...Item..
-		...
-	}
 
 * Interface indexers
 
@@ -115,11 +92,6 @@ BUGS
 	They should transfer control to the finally block if inside a try/catch
 	block.
 
-* Conversions and overflow
-
-	I am not using the checked state while doing type casts,
-	they should result in conv.ovf.XXX
-
 * Method Registration and error CS111
 
 	The way we use the method registration to signal 111 is wrong.
@@ -147,23 +119,15 @@ BUGS
 PENDING TASKS
 -------------
 
-	* Implement Goto.
-
 	* Unsafe code.
 		Making the parser accept unsafe code.
 		
-	* Implement `base' (BaseAccess class)
-
-	* Implement constant folding.  We might need to implement
-	  a new `Constant' class and derive Literal from it.
-
 * OUT Variables passed as OUT variables.
 
 	Currently we pass the pointer to the pointer (see expression.cs:Argument.Emit)
 
 * Make the rules for inheritance/overriding apply to 
-  properties, operators and indexers (currently we only do this
-  on methods).
+  indexers
 
 * Handle volatile
 
@@ -307,3 +271,6 @@ class X : I {
 class Y : X, I {
 	void I.A () {}
 }
+
+
+
