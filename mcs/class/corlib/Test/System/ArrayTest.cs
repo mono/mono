@@ -617,16 +617,54 @@ public class ArrayTest : TestCase
 	}
 
 	public void TestGetEnumerator() {
-		// FIXME: Not yet implemented
-		return;
 		String[] s1 = {"this", "is", "a", "test"};
-		IEnumerator en = s1.GetEnumerator();
-		AssertNotNull("#G01", en);
+		IEnumerator en = s1.GetEnumerator ();
+		AssertNotNull ("#G01", en);
 
-		for (int i = 0; i < s1.Length; i++) {
-			en.MoveNext();
-			AssertEquals("#G02", s1[i], en.Current);
-		}
+		Assert ("#G02", en.MoveNext ());
+		AssertEquals ("#G03", "this", en.Current);
+		Assert ("#G04", en.MoveNext ());
+		AssertEquals ("#G05", "is", en.Current);
+		Assert ("#G06", en.MoveNext ());
+		AssertEquals ("#G07", "a", en.Current);
+		Assert ("#G08", en.MoveNext ());
+		AssertEquals ("#G09", "test", en.Current);
+		Assert ("#G10", !en.MoveNext ());
+
+		en.Reset ();
+		Assert("#G11", en.MoveNext ());
+		AssertEquals ("#G12", "this", en.Current);
+
+		// mutation does not invalidate array enumerator!
+		s1.SetValue ("change", 1);
+		Assert ("#G13", en.MoveNext ());
+		AssertEquals ("#G14", "change", en.Current);
+	}
+
+	public void TestGetEnumeratorMultipleDimension() {
+		String[,] s1 = {{"this", "is"}, {"a", "test"}};
+		IEnumerator en = s1.GetEnumerator ();
+		AssertNotNull ("#AA01", en);
+
+		Assert ("#AA02", en.MoveNext ());
+		AssertEquals ("#AA03", "this", en.Current);
+		Assert ("#AA04", en.MoveNext ());
+		AssertEquals ("#AA05", "is", en.Current);
+		Assert ("#AA06", en.MoveNext ());
+		AssertEquals ("#AA07", "a", en.Current);
+		Assert ("#AA08", en.MoveNext ());
+		AssertEquals ("#AA09", "test", en.Current);
+		Assert ("#AA10", !en.MoveNext ());
+
+		en.Reset ();
+		Assert("#AA11", en.MoveNext ());
+		AssertEquals ("#AA12", "this", en.Current);
+
+		int[] idxs = {0,1};
+		// mutation does not invalidate array enumerator!
+		s1.SetValue ("change", idxs);
+		Assert ("#AA13", en.MoveNext ());
+		AssertEquals ("#AA14", "change", en.Current);
 	}
 
 	public void TestGetLength() {

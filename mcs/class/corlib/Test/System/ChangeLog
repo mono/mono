@@ -1,3 +1,9 @@
+2002-03-09  Nick Drochak  <ndrochak@gol.com>
+
+	* ArrayTest.cs: Enable the enumerator test and include test for
+	Multi-dimensional array enumerator.  Also include test for
+	mutation _not_ invalidating the enumerator.
+
 2002-03-09  Martin Baulig  <martin@gnome.org>
 
 	* Int16Test.cs, Int32Tests.cs, UInt16Tests.cs: Use "en-US" culture and
