@@ -1,3 +1,7 @@
+2003-06-10  Dick Porter  <dick@ximian.com>
+
+	* atomic.c: Delete the useless compile warning
+
 2003-06-09  Dick Porter  <dick@ximian.com>
 
 	* daemon.c: Lookup env as a string array.  Fixes bug 44289.  Also
