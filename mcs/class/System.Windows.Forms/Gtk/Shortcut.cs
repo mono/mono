@@ -15,6 +15,7 @@ using Gnome;
 
 namespace System.Windows.Forms
 {
+	[MonoTODO]
 	internal class ShortcutHelper {
 		public static void AddShortcutToWidget (Gtk.Widget widget, Gtk.AccelGroup group, Shortcut shortcut, string signal) {
 			switch (shortcut) {
@@ -45,7 +46,6 @@ namespace System.Windows.Forms
 			case Shortcut.CtrlY : widget.AddAccelerator(signal, group, (uint)Gdk.Key.Y, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
 			case Shortcut.CtrlZ : widget.AddAccelerator(signal, group, (uint)Gdk.Key.Z, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
 
-			case Shortcut.CtrlDel : widget.AddAccelerator(signal, group, (uint)Gdk.Key.Delete, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
 			case Shortcut.Ctrl0 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.KP_0, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
 			case Shortcut.Ctrl1 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.KP_1, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
 			case Shortcut.Ctrl2 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.KP_2, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
@@ -56,6 +56,10 @@ namespace System.Windows.Forms
 			case Shortcut.Ctrl7 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.KP_7, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
 			case Shortcut.Ctrl8 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.KP_8, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
 			case Shortcut.Ctrl9 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.KP_9, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+
+			case Shortcut.CtrlDel : widget.AddAccelerator(signal, group, (uint)Gdk.Key.Delete, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlIns : widget.AddAccelerator(signal, group, (uint)Gdk.Key.Insert, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+
 			case Shortcut.CtrlF1 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.F1, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break; 
 			case Shortcut.CtrlF2 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.F2, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
 			case Shortcut.CtrlF3 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.F3, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
@@ -68,9 +72,10 @@ namespace System.Windows.Forms
 			case Shortcut.CtrlF10 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.F10, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break; 
 			case Shortcut.CtrlF11 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.F11, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
 			case Shortcut.CtrlF12 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.F12, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
-			case Shortcut.CtrlIns : widget.AddAccelerator(signal, group, (uint)Gdk.Key.Insert, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
 
 			case Shortcut.ShiftDel : widget.AddAccelerator(signal, group, (uint)Gdk.Key.Delete, Gdk.ModifierType.ShiftMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.ShiftIns : widget.AddAccelerator(signal, group, (uint)Gdk.Key.Insert, Gdk.ModifierType.ShiftMask, Gtk.AccelFlags.Visible); break;
+
 			case Shortcut.ShiftF1 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.F1, Gdk.ModifierType.ShiftMask, Gtk.AccelFlags.Visible); break;
 			case Shortcut.ShiftF2 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.F2, Gdk.ModifierType.ShiftMask, Gtk.AccelFlags.Visible); break;
 			case Shortcut.ShiftF3 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.F4, Gdk.ModifierType.ShiftMask, Gtk.AccelFlags.Visible); break;
@@ -83,7 +88,98 @@ namespace System.Windows.Forms
 			case Shortcut.ShiftF10 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.F10, Gdk.ModifierType.ShiftMask, Gtk.AccelFlags.Visible); break;
 			case Shortcut.ShiftF11 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.F11, Gdk.ModifierType.ShiftMask, Gtk.AccelFlags.Visible); break;
 			case Shortcut.ShiftF12 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.F12, Gdk.ModifierType.ShiftMask, Gtk.AccelFlags.Visible); break;
-			case Shortcut.ShiftIns : widget.AddAccelerator(signal, group, (uint)Gdk.Key.Insert, Gdk.ModifierType.ShiftMask, Gtk.AccelFlags.Visible); break;
+
+			case Shortcut.CtrlShift0 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.KP_0, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShift1 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.KP_1, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShift2 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.KP_2, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShift3 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.KP_3, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShift4 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.KP_4, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShift5 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.KP_5, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShift6 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.KP_6, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShift7 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.KP_7, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShift8 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.KP_8, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShift9 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.KP_9, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			
+			case Shortcut.CtrlShiftA : widget.AddAccelerator(signal, group, (uint)Gdk.Key.N, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftB : widget.AddAccelerator(signal, group, (uint)Gdk.Key.B, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftC : widget.AddAccelerator(signal, group, (uint)Gdk.Key.C, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftD : widget.AddAccelerator(signal, group, (uint)Gdk.Key.D, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftE : widget.AddAccelerator(signal, group, (uint)Gdk.Key.E, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftF : widget.AddAccelerator(signal, group, (uint)Gdk.Key.F, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftG : widget.AddAccelerator(signal, group, (uint)Gdk.Key.G, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftH : widget.AddAccelerator(signal, group, (uint)Gdk.Key.H, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftI : widget.AddAccelerator(signal, group, (uint)Gdk.Key.I, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftJ : widget.AddAccelerator(signal, group, (uint)Gdk.Key.J, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftK : widget.AddAccelerator(signal, group, (uint)Gdk.Key.K, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftL : widget.AddAccelerator(signal, group, (uint)Gdk.Key.L, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftM : widget.AddAccelerator(signal, group, (uint)Gdk.Key.M, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftN : widget.AddAccelerator(signal, group, (uint)Gdk.Key.N, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftO : widget.AddAccelerator(signal, group, (uint)Gdk.Key.O, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftP : widget.AddAccelerator(signal, group, (uint)Gdk.Key.P, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftQ : widget.AddAccelerator(signal, group, (uint)Gdk.Key.Q, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftR : widget.AddAccelerator(signal, group, (uint)Gdk.Key.R, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftS : widget.AddAccelerator(signal, group, (uint)Gdk.Key.S, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftT : widget.AddAccelerator(signal, group, (uint)Gdk.Key.T, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftU : widget.AddAccelerator(signal, group, (uint)Gdk.Key.U, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftV : widget.AddAccelerator(signal, group, (uint)Gdk.Key.V, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftW : widget.AddAccelerator(signal, group, (uint)Gdk.Key.W, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftX : widget.AddAccelerator(signal, group, (uint)Gdk.Key.X, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftY : widget.AddAccelerator(signal, group, (uint)Gdk.Key.Y, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftZ : widget.AddAccelerator(signal, group, (uint)Gdk.Key.Z, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+
+			case Shortcut.CtrlShiftF1 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.F1, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break; 
+			case Shortcut.CtrlShiftF2 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.F2, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftF3 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.F3, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftF4 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.F4, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftF5 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.F5, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftF6 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.F6, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftF7 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.F7, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftF8 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.F8, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftF9 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.F9, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftF10 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.F10, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break; 
+			case Shortcut.CtrlShiftF11 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.F11, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlShiftF12 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.F12, Gdk.ModifierType.ShiftMask|Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+
+// TODO: 
+//		Del = 46,
+//		F1 = 112,
+//		F2 = 113,
+//		F3 = 114,
+//		F4 = 115,
+//		F5 = 116,
+//		F6 = 117,
+//		F7 = 118,
+//		F8 = 119,
+//		F9 = 120,
+//		F10 = 121,
+//		F11 = 122,
+//		F12 = 123,
+//		Ins = 45,
+//		None = 0,
+
+//		Alt0 = 262192,
+//		Alt1 = 262193,
+//		Alt2 = 262194,
+//		Alt3 = 262195,
+//		Alt4 = 262196,
+//		Alt5 = 262197,
+//		Alt6 = 262198,
+//		Alt7 = 262199,
+//		Alt8 = 262200,
+//		Alt9 = 262201,
+//		AltBksp = 262152,
+//		AltF1 = 262256,
+//		AltF2 = 262257,
+//		AltF3 = 262258,
+//		AltF4 = 262259,
+//		AltF5 = 262260,
+//		AltF6 = 262261,
+//		AltF7 = 262262,
+//		AltF8 = 262263,
+//		AltF9 = 262264,
+//		AltF10 = 262265,
+//		AltF11 = 262266,
+//		AltF12 = 262267,
 			}
 		}
 	}
