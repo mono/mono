@@ -1,5 +1,10 @@
 2002-07-19  Dietmar Maurer  <dietmar@ximian.com>
 
+	* marshal.c (emit_ptr_to_str_conv): marshal object as structs
+	(emit_str_to_ptr_conv): marshal object as structs
+
+	* metadata.c (mono_type_to_unmanaged): marshal object as structs
+
 	* marshal.c (mono_marshal_get_runtime_invoke): support value types
 
 2002-07-18  Dietmar Maurer  <dietmar@ximian.com>
