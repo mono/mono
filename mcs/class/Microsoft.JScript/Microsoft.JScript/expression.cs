@@ -215,6 +215,10 @@ namespace Microsoft.JScript {
 						ig.Emit (OpCodes.Ldc_R8, v);
 						ig.Emit (OpCodes.Box, typeof (Double));
 						break;
+					default:
+						if (right is Identifier)
+							emit_late_binding (ec);
+						break;
 					}
 				}
 			} else {
@@ -229,14 +233,59 @@ namespace Microsoft.JScript {
 				ig.Emit (OpCodes.Pop);
 		}
 
+		void emit_late_binding (EmitContext ec)			
+		{
+			LocalBuilder local_lb = init_late_binding (ec);
+			emit_late_get_or_set (ec, local_lb);
+		}
+
+		LocalBuilder init_late_binding (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			Type lb_type = typeof (LateBinding);
+
+			LocalBuilder local = ig.DeclareLocal (lb_type);
+			
+			string prop_name = (right as Identifier).name;
+			ig.Emit (OpCodes.Ldstr, prop_name);
+			ig.Emit (OpCodes.Newobj, lb_type.GetConstructor (new Type [] {typeof (string)}));
+			ig.Emit (OpCodes.Stloc, local);			
+
+			return local;
+		}
+		
+		void emit_late_get_or_set (EmitContext ec, LocalBuilder local)
+		{
+			ILGenerator ig = ec.ig;
+
+			ig.Emit (OpCodes.Ldloc, local);
+			ig.Emit (OpCodes.Dup);
+			
+			left.Emit (ec);
+
+			ig.Emit (OpCodes.Ldarg_0);
+			ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
+			ig.Emit (OpCodes.Call , typeof (Convert).GetMethod ("ToObject"));
+
+			Type lb_type = typeof (LateBinding);
+
+			ig.Emit (OpCodes.Stfld, lb_type.GetField ("obj"));
+
+			if (assign) {
+				right_side.Emit (ec);
+				ig.Emit (OpCodes.Call, lb_type.GetMethod ("SetValue"));
+			} else
+				ig.Emit (OpCodes.Call, lb_type.GetMethod ("GetNonMissingValue"));
+		}
+		
 		internal void get_default_this (ILGenerator ig)
 		{
-			if (parent == null || parent.GetType () == typeof (ScriptBlock))
+			if (parent == null || parent.GetType () == typeof (ScriptBlock)) {
 				ig.Emit (OpCodes.Ldarg_0);
-			else
+				ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
+			} else
 				ig.Emit (OpCodes.Ldarg_1);
-			
-			ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
+		       
 			ig.Emit (OpCodes.Call, typeof (Microsoft.JScript.Vsa.VsaEngine).GetMethod ("ScriptObjectStackTop"));
 			Type iact_obj = typeof (IActivationObject);
 			ig.Emit (OpCodes.Castclass, iact_obj);
@@ -531,9 +580,9 @@ namespace Microsoft.JScript {
 					binding = TypeManager.GetMethod (member_exp.ToString ());
 
 				if (binding == null) {
-					string msg = "class Call, Method Emit, binding was not found.";
-					throw new Exception (msg + " This should not be reached");
-				}
+					emit_late_call (ec);
+					return;
+				} 
 
 				if (IsGlobalObjectMethod (binding)) {
 					args.Emit (ec);
@@ -547,6 +596,104 @@ namespace Microsoft.JScript {
 
 				if (no_effect)
 					ec.ig.Emit (OpCodes.Pop);
+			}
+		}
+
+		void emit_late_call (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+
+			if (member_exp is Binary) {
+				Binary bin = member_exp as Binary;
+				if (bin.right is Identifier) {
+					Identifier rside = bin.right as Identifier;
+					Type lb_type = typeof (LateBinding);
+				
+					LocalBuilder lb = ig.DeclareLocal (lb_type);
+
+					ig.Emit (OpCodes.Ldstr, rside.name);
+					ig.Emit (OpCodes.Newobj , lb_type.GetConstructor (new Type [] {typeof (string)}));
+					ig.Emit (OpCodes.Stloc, lb);
+					init_late_binding (ec, lb);
+					setup_late_call_args (ec);
+					ig.Emit (OpCodes.Call, typeof (LateBinding).GetMethod ("Call"));
+				} else {
+					bin.left.Emit (ec);
+					member_exp.Emit (ec);
+					setup_late_call_args (ec);
+					ig.Emit (OpCodes.Call, typeof (LateBinding).GetMethod ("CallValue"));
+				}
+			} else {				
+				get_global_scope_or_this (ec.ig);
+				member_exp.Emit (ec);
+				setup_late_call_args (ec);
+				ig.Emit (OpCodes.Call, typeof (LateBinding).GetMethod ("CallValue"));
+				if (no_effect)
+					ec.ig.Emit (OpCodes.Pop);
+			}
+		}
+
+		internal void get_global_scope_or_this (ILGenerator ig)
+		{
+			if (parent == null || parent.GetType () == typeof (ScriptBlock)) {
+				ig.Emit (OpCodes.Ldarg_0);
+				ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
+			} else
+				ig.Emit (OpCodes.Ldarg_1);
+
+			ig.Emit (OpCodes.Call, typeof (Microsoft.JScript.Vsa.VsaEngine).GetMethod ("ScriptObjectStackTop"));
+			Type iact_obj = typeof (IActivationObject);
+			ig.Emit (OpCodes.Castclass, iact_obj);
+
+			//
+			//FIXME: when is each of them (GetGlobalScope | GetDefaultThisObject?
+			//
+			// ig.Emit (OpCodes.Callvirt, iact_obj.GetMethod ("GetGlobalScope"));
+			ig.Emit (OpCodes.Callvirt, iact_obj.GetMethod ("GetDefaultThisObject"));
+		}
+
+		void init_late_binding (EmitContext ec, LocalBuilder local)
+		{
+			ILGenerator ig = ec.ig;
+
+			ig.Emit (OpCodes.Ldloc, local);
+			ig.Emit (OpCodes.Dup);
+			
+			AST left = (member_exp as Binary).left;
+			left.Emit (ec);
+			
+			ig.Emit (OpCodes.Ldarg_0);
+			ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
+			ig.Emit (OpCodes.Call , typeof (Convert).GetMethod ("ToObject"));
+
+			Type lb_type = typeof (LateBinding);
+
+			ig.Emit (OpCodes.Stfld, lb_type.GetField ("obj"));
+		}
+
+		void setup_late_call_args (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			int n = args.Size;
+
+			ig.Emit (OpCodes.Ldc_I4, n);
+			ig.Emit (OpCodes.Newarr, typeof (object));
+			
+			for (int i = 0; i < n; i++) {
+				ig.Emit (OpCodes.Dup);
+				ig.Emit (OpCodes.Ldc_I4, i);
+				args.get_element (i).Emit (ec);
+				ig.Emit (OpCodes.Stelem_Ref);
+			}
+
+			ig.Emit (OpCodes.Ldc_I4_0);
+			ig.Emit (OpCodes.Ldc_I4_0);
+
+			if (InFunction)
+				ig.Emit (OpCodes.Ldarg_1);
+			else {
+				ig.Emit (OpCodes.Ldarg_0);
+				ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
 			}
 		}
 
@@ -729,15 +876,12 @@ namespace Microsoft.JScript {
 		{
 			if (parent is Identifier) {
 				Identifier p = parent as Identifier;
-
-				Console.WriteLine ("ResolveFieldAccess: p.name = {0}", p.name);
-				Console.WriteLine ("ResolveFieldAccess: name = {0}", name);
-
+				
 				AST binding = (AST) SemanticAnalyser.ObjectSystemContains (p.name);
 				if (binding != null && binding is BuiltIn)
 					return IsBuiltInObjectProperty (p.name, name);
 			}
-			return false;
+			return true;
 		}
 
 		bool IsBuiltInObjectProperty (string obj_name, string prop_name)
@@ -745,14 +889,12 @@ namespace Microsoft.JScript {
 			Type type;
 			if (obj_name == "Math") {
 				type = typeof (MathObject);
-				//FieldInfo prop = type.GetField (prop_name);
 				members = type.FindMembers (MemberTypes.Field | MemberTypes.Method,
-									  BindingFlags.Public | BindingFlags.Static,
-									  Type.FilterName, prop_name);
-				if (members != null && members.Length > 0) {
-					Console.WriteLine ("found property {0}", prop_name);
+							    BindingFlags.Public | BindingFlags.Static,
+							    Type.FilterName, prop_name);
+				if (members != null && members.Length > 0)
 					return true;
-				} else
+				else
 					throw new Exception ("error: JS0438: Object doesn't support this property or method");
 			}
 			return false;
@@ -769,7 +911,7 @@ namespace Microsoft.JScript {
 			} else if (binding is VariableDeclaration || binding is Try) {
 				FieldInfo field_info = extract_field_info (binding);
 				LocalBuilder local_builder = extract_local_builder (binding);
-				
+
 				if (field_info != null) {
 					if (assign)
 						ig.Emit (OpCodes.Stsfld, field_info);
@@ -783,17 +925,30 @@ namespace Microsoft.JScript {
 				}
 			} else if (binding is BuiltIn)
 				binding.Emit (ec);
+			else if (binding is FunctionDeclaration)
+				load_script_func (ec, (FunctionDeclaration) binding);
 			else
-				//Console.WriteLine ("class Identifier, method Emit, DID NOT EMIT ANYTHING, binding is {0}", binding.GetType ());
+				//Console.WriteLine ("class Identifier, binding = {0}, method Emit, DID NOT EMIT ANYTHING, binding.GetType = {1}", binding, binding.GetType ());
 
 			if (!assign && no_effect)
 				ig.Emit (OpCodes.Pop);				
 		}
 
+		void load_script_func (EmitContext ec, FunctionDeclaration binding)
+		{
+			ILGenerator ig = ec.ig;
+			TypeBuilder type = ec.type_builder;
+			FieldInfo method = type.GetField (binding.func_obj.name);
+			if (method != null)
+				ig.Emit (OpCodes.Ldsfld, method);
+			else
+				throw new Exception ("method " + binding.func_obj.name + " not found");
+		}
 
 		internal FieldInfo extract_field_info (AST a)
 		{
 			FieldInfo r = null;
+
 			if (a is VariableDeclaration)
 				r = ((VariableDeclaration) a).field_info;
 			else if (a is Try)
@@ -869,11 +1024,9 @@ namespace Microsoft.JScript {
 		internal override void Emit (EmitContext ec)
 		{
 			int i = 0, n = elems.Count;
-			//Console.WriteLine ("n = {0}", n);
-			//Console.WriteLine ("num_of_args = {0}", num_of_args);
 			AST ast;
+
 			do {
-				//Console.WriteLine ("Args.Emit, i = {0}", i);
 				ast = get_element (i);
 				if (ast != null)
 					ast.Emit (ec);
@@ -985,12 +1138,15 @@ namespace Microsoft.JScript {
 		internal override bool Resolve (IdentificationTable context)
 		{						
 			bool r;
+
 			if (left is IAssignable)
 				r = ((IAssignable) left).ResolveAssign (context, right);
 			else
 				throw new Exception ("(" + line_number + ",0): error JS5008: Illegal assignment");
 			if (right is Exp)
 				r &=((Exp) right).Resolve (context, false);
+			else
+				r &= right.Resolve (context);
 			return r;
 		}
 
@@ -1194,7 +1350,6 @@ namespace Microsoft.JScript {
 			case "URIError":
 				ig.Emit (OpCodes.Call, go.GetProperty ("URIError").GetGetMethod ());
 				break;
-
 			/* other properties of the Global object */
 			case "Math":
 				ig.Emit (OpCodes.Call, go.GetProperty ("Math").GetGetMethod ());
