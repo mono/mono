@@ -1,3 +1,7 @@
+2003-11-15  Duncan Mak  <duncan@ximian.com>
+
+	* gdipFunctions.cs: Imported matrix functions.
+
 2003-11-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* Bitmap.cs: Added Attributes
@@ -27,7 +31,7 @@
 
 2003-11-13  Duncan Mak  <duncan@ximian.com>
 
-	* Pen.cs (LineCape, LineJoin, MiterLimit, Transform): implemented.
+	* Pen.cs (LineCap, LineJoin, MiterLimit, Transform): implemented.
 
 	* gdipFunctions.cs
 	(GdipSetPenMiterLimit, GdipGetPenMiterLimit):

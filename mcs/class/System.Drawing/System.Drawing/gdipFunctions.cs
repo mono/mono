@@ -18,7 +18,7 @@ namespace System.Drawing {
 	public class GDIPlus {
 		
 		#region gdiplus.dll functions
-		
+
 		// startup / shutdown
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdiplusStartup(ref ulong token, ref GdiplusStartupInput input, ref GdiplusStartupOutput output);
@@ -194,6 +194,52 @@ namespace System.Drawing {
 		internal static extern Status GdipDrawImageI( IntPtr graphics, IntPtr image, int x, int y);
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipGetImageGraphicsContext( IntPtr image, out int graphics);
+
+                // Matrix functions
+                [DllImport ("gdiplus.dll")]
+                internal static extern Status GdipCreateMatrix (out IntPtr matrix);
+                [DllImport ("gdiplus.dll")]
+                internal static extern Status GdipCreateMatrix2 (float m11, float m12, float m21, float m22, float dx, float dy, out IntPtr matrix);
+//              [DllImport ("gdiplus.dll")]
+//              internal static extern Status GdipCreateMatrix3 (RectangleF rect, PointF dstplg, out IntPtr matrix);
+//              [DllImport ("gdiplus.dll")]                
+//              internal static extern Status GdipCreateMatrix3I (Rectangle rect, Point dstplg, out IntPtr matrix);                
+
+                [DllImport ("gdiplus.dll")]
+                internal static extern Status GdipCloneMatrix (IntPtr matrix, out IntPtr cloneMatrix);
+                [DllImport ("gdiplus.dll")]
+                internal static extern Status GdipSetMatrixElements (IntPtr matrix, float m11, float m12, float m21, float m22, float dx, float dy);
+                [DllImport ("gdiplus.dll")]
+                internal static extern Status GdipGetMatrixElements (IntPtr matrix, out float[] matrixOut);
+                [DllImport ("gdiplus.dll")]
+                internal static extern Status GdipMultiplyMatrix (IntPtr matrix, IntPtr matrix2, MatrixOrder order);
+                [DllImport ("gdiplus.dll")]
+                internal static extern Status GdipTranslateMatrix (IntPtr matrix, float offsetX, float offsetY, MatrixOrder order);
+                [DllImport ("gdiplus.dll")]
+                internal static extern Status GdipScaleMatrix (IntPtr matrix, float scaleX, float scaleY, MatrixOrder order);
+                [DllImport ("gdiplus.dll")]
+                internal static extern Status GdipRotateMatrix (IntPtr matrix, float angle, MatrixOrder order);
+
+//              [DllImport ("gdiplus.dll")]
+//              internal static extern Status GdipShearMatrix (IntPtr matrix, float shearX, float shearY, MatrixOrder order);
+
+                [DllImport ("gdiplus.dll")]
+                internal static extern Status GdipInvertMatrix (IntPtr matrix);
+                [DllImport ("gdiplus.dll")]
+                internal static extern Status GdipTransformMatrixPoints (IntPtr matrix, PointF[] pts, int count);
+                [DllImport ("gdiplus.dll")]
+                internal static extern Status GdipTransformMatrixPointsI (IntPtr matrix, Point[] pts, int count);                
+                [DllImport ("gdiplus.dll")]
+                internal static extern Status GdipVectorTransformMatrixPoints (IntPtr matrix, PointF[] pts, int count);
+                [DllImport ("gdiplus.dll")]
+                internal static extern Status GdipVectorTransformMatrixPointsI (IntPtr matrix, Point[] pts, int count);
+                [DllImport ("gdiplus.dll")]
+                internal static extern Status GdipIsMatrixInvertible (IntPtr matrix, out bool result);
+
+//              [DllImport ("gdiplus.dll")]
+//              internal static extern Status GdipIsMatrixIdentity (IntPtr matrix, out bool result);
+//              [DllImport ("gdiplus.dll")]                
+//              internal static extern Status GdipIsMatrixEqual (IntPtr matrix, IntPtr matrix2, out bool result); 
 		
 		#endregion
 	}

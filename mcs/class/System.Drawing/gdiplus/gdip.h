@@ -20,6 +20,13 @@
 #include <mono/io-layer/uglify.h>
 
 /*
+ * Constants
+ *
+ */
+#define PI 3.14159265358979323846
+#define DEGTORAD PI / 180.0
+
+/*
  * Enums
  *
  */
@@ -165,11 +172,11 @@ typedef struct tagRectF{
 
 typedef struct {
         int X, Y;
-} GpPoint;
+} GpPoint, Point;
 
 typedef struct {
         float X, Y;
-} GpPointF;
+} GpPointF, PointF;
 
 typedef struct {
 	cairo_t         *ct;
@@ -216,6 +223,13 @@ typedef struct {
 typedef struct {
 	int color;
 } GpBrush;
+
+typedef struct {
+        GpFillMode fillMode;
+        int count;
+        GpPointF *float_points;
+        GpPoint *int_points;
+} GpPath;
 
 /*
  * Functions

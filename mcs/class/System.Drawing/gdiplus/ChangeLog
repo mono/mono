@@ -1,9 +1,34 @@
-2003-11-14  Duncan Mak  <duncan@ximian.com>
+2003-11-16  Duncan Mak  <duncan@ximian.com>
+
+	* pen.c (GdipResetPenTransform):
+	(GdipMultiplyPenTransform, GdipTranslatePenTransform):
+	(GdipScalePenTransform, GdipRotatePenTransform): Implemented..
+
+	* matrix.c (set_translate, set_scale, set_rotate): Helper
+	functions copied from Cairo. We are doing this because you can
+	specify the order of multiplcation in GDI+, but not in Cairo.
+
+2003-11-15  Duncan Mak  <duncan@ximian.com>
+
+	* graphics.c: Moved PI and GRADTORAD to gdip.h.
+	* gdip.h: Renamed GRADTORAD to DEGTORAD.
+
+	* matrix.c (GdipCloneMatrix): Fix argument order.
+	* matrix.c
+	(GdipMultiplyMatrix, GdipTranslateMatrix, GdipScaleMatrix):
+	(GdipRotateMatrix, GdipInvertMatrix):
+	(GdipTransformMatrixPoints, GdipVectorTransformMatrixPoints):
+	(GdipSetMatrixElements, GdipGetMatrixElements):
+	(GdipIsMatrixInvertible): Implemented.
+
+	* matrix.c (GdipIsMatrixIdentity, GdipIsMatrixEqual): Implemented,
+	but pending commit for cairo_matrix_equals to Cairo.
+
+2003-11-14  Duncan Mak  <duncan@ximian.com>	
 
 	* general.c (gdip_get_status): Take cairo_status_t instead of
 	cairo_t. We need this because this is used in matrix.c and we only
 	have cairo_matrix_t there.
-
 	* graphics.c: Updated calls to gdip_get_status.
 
 	* pen.c

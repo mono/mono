@@ -179,3 +179,35 @@ GdipGetPenTransform (GpPen *pen, GpMatrix *matrix)
         matrix = pen->matrix;
         return Ok;
 }
+
+GpStatus
+GdipResetPenTransform (GpPen *pen)
+{
+        pen->matrix = cairo_matrix_create ();
+        return Ok;
+}
+
+GpStatus
+GdipMultiplyPenTransform (GpPen *pen, const GpMatrix *matrix, GpMatrixOrder order)
+{
+        return GdipMultiplyMatrix (pen->matrix, matrix, order);
+}
+
+GpStatus
+GdipTranslatePenTransform (GpPen *pen, float dx, float dy, GpMatrixOrder order)
+{
+        return GdipTranslateMatrix (pen->matrix, dx, dy, order);
+}
+
+GpStatus
+GdipScalePenTransform (GpPen *pen, float sx, float sy, GpMatrixOrder order)
+{
+        return GdipScaleMatrix (pen->matrix, sx, sy, order);
+}
+
+GpStatus
+GdipRotatePenTransform (GpPen *pen, float angle, GpMatrixOrder order)
+{
+        return GdipRotateMatrix (pen->matrix, angle, order);
+}
+

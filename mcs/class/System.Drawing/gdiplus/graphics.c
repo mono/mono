@@ -282,14 +282,11 @@ GdipSaveGraphics(GpGraphics *graphics, unsigned int *state)
 	return Ok;
 }
 
-#define PI 3.14159265358979323846
-#define GRADTORAD PI / 180.0
-
 GpStatus 
 GdipRotateWorldTransform (GpGraphics *graphics, float angle, int order)
 {
 	cairo_matrix_t *mtx = cairo_matrix_create ();
-	cairo_matrix_rotate (mtx, angle * GRADTORAD);
+	cairo_matrix_rotate (mtx, angle * DEGTORAD);
 	cairo_matrix_multiply (graphics->copy_of_ctm, mtx, graphics->copy_of_ctm );
 	cairo_matrix_destroy ( mtx);
 	cairo_set_matrix (graphics->ct, graphics->copy_of_ctm);
