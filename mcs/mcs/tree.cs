@@ -111,7 +111,8 @@ namespace Mono.CSharp
 	public class RootTypes : TypeContainer
 	{
 		public RootTypes ()
-			: base (null, null, "", null, Kind.Root, new Location (-1))
+			: base (null, null, MemberName.Null, null, Kind.Root,
+				new Location (-1))
 		{ }
 
 		public override void Register ()

@@ -19,6 +19,84 @@ using System.Reflection;
 
 namespace Mono.CSharp {
 
+	public class MemberName {
+		public string Name;
+		public readonly MemberName Left;
+
+		public static readonly MemberName Null = new MemberName ("");
+
+		public MemberName (string name)
+		{
+			this.Name = name;
+		}
+
+		public MemberName (MemberName left, string name)
+			: this (name)
+		{
+			this.Left = left;
+		}
+
+		public MemberName (MemberName left, MemberName right)
+			: this (left, right.Name)
+		{
+		}
+
+		public string GetName (bool is_generic)
+		{
+			string name = is_generic ? Basename : Name;
+			if (Left != null)
+				return Left.GetName (is_generic) + "." + name;
+			else
+				return name;
+		}
+
+		public string GetFullName ()
+		{
+			if (Left != null)
+				return Left.GetFullName () + "." + Name;
+			else
+				return Name;
+		}
+
+		public string GetTypeName ()
+		{
+			if (Left != null)
+				return Left.GetTypeName () + "." + Name;
+			else
+				return Name;
+		}
+
+		public Expression GetTypeExpression (Location loc)
+		{
+			if (Left != null) {
+				Expression lexpr = Left.GetTypeExpression (loc);
+
+				return new MemberAccess (lexpr, Name, loc);
+			} else {
+				return new SimpleName (Name, loc);
+			}
+		}
+
+		public MemberName Clone ()
+		{
+			if (Left != null)
+				return new MemberName (Left.Clone (), Name);
+			else
+				return new MemberName (Name);
+		}
+
+		public string Basename {
+			get {
+				return Name;
+			}
+		}
+
+		public override string ToString ()
+		{
+			return GetFullName ();
+		}
+	}
+
 	/// <summary>
 	///   Base representation for members.  This is used to keep track
 	///   of Name, Location and Modifier flags, and handling Attributes.
@@ -27,7 +105,14 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Public name
 		/// </summary>
-		public string Name;
+		public string Name {
+			get {
+				// !(this is GenericMethod) && !(this is Method)
+				return MemberName.GetName (false);
+			}
+		}
+
+		public readonly MemberName MemberName;
 
 		/// <summary>
 		///   Modifier flags that the user specified in the source code
@@ -61,12 +146,12 @@ namespace Mono.CSharp {
 		/// </summary>
 		internal Flags caching_flags;
 
-		public MemberCore (TypeContainer parent, string name, Attributes attrs,
+		public MemberCore (TypeContainer parent, MemberName name, Attributes attrs,
 				   Location loc)
 			: base (attrs)
 		{
 			Parent = parent;
-			Name = name;
+			MemberName = name;
 			Location = loc;
 			caching_flags = Flags.Obsolete_Undetected | Flags.ClsCompliance_Undetected | Flags.HasCompliantAttribute_Undetected | Flags.Excluded_Undetected;
 		}
@@ -290,11 +375,12 @@ namespace Mono.CSharp {
 
 		static string[] attribute_targets = new string [] { "type" };
 
-		public DeclSpace (NamespaceEntry ns, TypeContainer parent, string name, Attributes attrs, Location l)
+		public DeclSpace (NamespaceEntry ns, TypeContainer parent, MemberName name,
+				  Attributes attrs, Location l)
 			: base (parent, name, attrs, l)
 		{
 			NamespaceEntry = ns;
-			Basename = name.Substring (1 + name.LastIndexOf ('.'));
+			Basename = name.Name;
 			defined_names = new Hashtable ();
 		}
 
@@ -330,7 +416,7 @@ namespace Mono.CSharp {
 		public void RecordDecl ()
 		{
 			if ((NamespaceEntry != null) && (Parent == RootContext.Tree.Types))
-				NamespaceEntry.DefineName (Basename, this);
+				NamespaceEntry.DefineName (MemberName.Basename, this);
 		}
 
 		/// <summary>

@@ -49,7 +49,7 @@ namespace Mono.CSharp {
 			Modifiers.PRIVATE;
 
  		public Delegate (NamespaceEntry ns, TypeContainer parent, Expression type,
-				 int mod_flags, string name, Parameters param_list,
+				 int mod_flags, MemberName name, Parameters param_list,
 				 Attributes attrs, Location l)
 			: base (ns, parent, name, attrs, l)
 

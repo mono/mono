@@ -1,3 +1,66 @@
+2004-09-10  Martin Baulig  <martin@ximian.com>
+
+	Backported my MemberName changes from GMCS into MCS.
+
+	- we are now using a special `MemberName' class instead of using
+	strings; in GMCS, the `MemberName' also contains the type
+	arguments.
+
+	- changed the grammar rules a bit:
+	  * the old `member_name' is now a `namespace_or_type_name':
+	    The rule is that we use `namespace_or_type_name' everywhere
+	    where we expect either a "member name" (GetEnumerator) or a
+	    "member name" with an explicit interface name
+	    (IEnumerable.GetEnumerator).
+	    In GMCS, the explicit interface name may include type arguments
+	    (IEnumerable<T>.GetEnumerator).
+	  * we use `member_name' instead of just `IDENTIFIER' for
+	    "member names":
+	    The rule is that we use `member_name' wherever a member may
+	    have type parameters in GMCS.	
+
+	* decl.cs (MemberName): New public class.
+	(MemberCore.MemberName): New public readonly field.
+	(MemberCore.ctor): Take a `MemberName' argument, not a string.
+	(DeclSpace): Likewise.
+
+	* delegate.cs (Delegate.ctor): Take a MemberName, not a string.
+	* enum.cs (Enum.ctor): Likewise.
+
+	* namespace.cs (AliasEntry.Alias): Changed type from Expression to
+	MemberName.	
+	(AliasEntry.ctor): Take a MemberName, not an Expression.
+	(AliasEntry.UsingAlias): Likewise.
+
+	* class.cs (TypeContainer.ctor): Take a MemberName, not a string.
+	(IMethodData.MemberName): Changed type from string to MemberName.
+	(MemberBase.ExplicitInterfaceName): Likewise.
+	(AbstractPropertyEventMethod.SetupName): Make this private.
+	(AbstractPropertyEventMethod.ctor): Added `string prefix'
+	argument; compute the member name here.
+	(AbstractPropertyEventMethod.UpdateName): Recompute the name based
+	on the `member.MemberName' and the `prefix'.
+
+	* cs-parser.jay (attribute_name): Use `namespace_or_type_name',
+	not `type_name'.
+	(struct_declaration): Use `member_name' instead of `IDENTIFIER';
+	thus, we get a `MemberName' instead of a `string'.  These
+	declarations may have type parameters in GMCS.
+	(interface_method_declaration, delegate_declaration): Likewise.
+	(class_declaration, interface_declaration): Likewise.
+	(method_header): Use `namespace_or_type_name' instead of
+	`member_name'.  We may be an explicit interface implementation.
+	(property_declaration, event_declaration): Likewise.
+	(member_name): This is now just an `IDENTIFIER', not a
+	`namespace_or_type_name'.
+	(type_name, interface_type): Removed.
+	(namespace_or_type_name): Return a MemberName, not an Expression.
+	(primary_expression): Use `member_name' instead of `IDENTIFIER';
+	call GetTypeExpression() on the MemberName to get an expression.
+	(IndexerDeclaration.interface_type): Changed type from string to
+	MemberName.
+	(MakeName): Operate on MemberName's instead of string's.
+
 2004-09-13  Raja R Harinath  <rharinath@novell.com>
 
 	Fix bug #55770.

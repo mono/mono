@@ -24,8 +24,9 @@ namespace Mono.CSharp {
 		public FieldBuilder builder;
 		internal readonly Expression Type;
 
-		public EnumMember (Enum parent_enum, Expression expr, string name, Location loc, Attributes attrs):
-			base (null, name, attrs, loc)
+		public EnumMember (Enum parent_enum, Expression expr, string name,
+				   Location loc, Attributes attrs):
+			base (null, new MemberName (name), attrs, loc)
 		{
 			this.parent_enum = parent_enum;
 			this.ModFlags = parent_enum.ModFlags;
@@ -131,8 +132,8 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Enum (NamespaceEntry ns, TypeContainer parent, Expression type, int mod_flags,
-			     string name, Attributes attrs, Location l)
+		public Enum (NamespaceEntry ns, TypeContainer parent, Expression type,
+			     int mod_flags, MemberName name, Attributes attrs, Location l)
 			: base (ns, parent, name, attrs, l)
 		{
 			this.BaseType = type;

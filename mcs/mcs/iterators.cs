@@ -335,13 +335,13 @@ namespace Mono.CSharp {
 			point.Define (ig);
 		}
 
-		private static string MakeProxyName (string name)
+		private static MemberName MakeProxyName (string name)
 		{
 			int pos = name.LastIndexOf ('.');
 			if (pos > 0)
 				name = name.Substring (pos + 1);
 
-			return "<" + name + ">__" + (proxy_count++);
+			return new MemberName ("<" + name + ">__" + (proxy_count++));
 		}
 
 		//
@@ -576,6 +576,9 @@ namespace Mono.CSharp {
 
 		void Define_Current ()
 		{
+			MemberName left = new MemberName ("System.Collections.IEnumerator");
+			MemberName name = new MemberName (left, "Current");
+
 			Block get_block = new Block (null);
 
 			get_block.AddStatement (new If (
@@ -591,8 +594,8 @@ namespace Mono.CSharp {
 			Accessor getter = new Accessor (get_block, null, Location);
 
 			Property current = new Property (
-				this, iterator_type_expr, Modifiers.PUBLIC,
-				false, "Current", null, getter, null, Location);
+				this, iterator_type_expr, 0,
+				false, name, null, getter, null, Location);
 			AddProperty (current);
 		}
 
@@ -600,7 +603,7 @@ namespace Mono.CSharp {
 		{
 			Method move_next = new Method (
 				this, TypeManager.system_boolean_expr,
-				Modifiers.PUBLIC, false, "MoveNext",
+				Modifiers.PUBLIC, false, new MemberName ("MoveNext"),
 				Parameters.EmptyReadOnlyParameters, null,
 				Location.Null);
 			AddMethod (move_next);
@@ -613,10 +616,13 @@ namespace Mono.CSharp {
 
 		void Define_GetEnumerator ()
 		{
+			MemberName left = new MemberName ("System.Collections.IEnumerable");
+			MemberName name = new MemberName (left, "GetEnumerator");
+
 			Method get_enumerator = new Method (
 				this,
 				new TypeExpression (TypeManager.ienumerator_type, Location),
-				Modifiers.PUBLIC, false, "GetEnumerator",
+				0, false, name,
 				Parameters.EmptyReadOnlyParameters, null,
 				Location.Null);
 			AddMethod (get_enumerator);
@@ -834,8 +840,8 @@ namespace Mono.CSharp {
 		{
 			Method reset = new Method (
 				this, TypeManager.system_void_expr, Modifiers.PUBLIC,
-				false, "Reset", Parameters.EmptyReadOnlyParameters,
-				null, Location);
+				false, new MemberName ("Reset"),
+				Parameters.EmptyReadOnlyParameters, null, Location);
 			AddMethod (reset);
 
 			reset.Block = new Block (null);
@@ -846,8 +852,8 @@ namespace Mono.CSharp {
 		{
 			dispose = new Method (
 				this, TypeManager.system_void_expr, Modifiers.PUBLIC,
-				false, "Dispose", Parameters.EmptyReadOnlyParameters,
-				null, Location);
+				false, new MemberName ("Dispose"),
+				Parameters.EmptyReadOnlyParameters, null, Location);
 			AddMethod (dispose);
 
 			dispose.Block = new Block (null);

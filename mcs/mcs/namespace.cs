@@ -231,11 +231,11 @@ namespace Mono.CSharp {
 
 		public class AliasEntry {
 			public readonly string Name;
-			public readonly Expression Alias;
+			public readonly MemberName Alias;
 			public readonly NamespaceEntry NamespaceEntry;
 			public readonly Location Location;
 			
-			public AliasEntry (NamespaceEntry entry, string name, Expression alias, Location loc)
+			public AliasEntry (NamespaceEntry entry, string name, MemberName alias, Location loc)
 			{
 				Name = name;
 				Alias = alias;
@@ -353,7 +353,7 @@ namespace Mono.CSharp {
 			using_clauses.Add (ue);
 		}
 
-		public void UsingAlias (string alias, Expression namespace_or_type, Location loc)
+		public void UsingAlias (string name, MemberName alias, Location loc)
 		{
 			if (DeclarationFound){
 				Report.Error (1529, loc, "A using clause must precede all other namespace elements");
@@ -363,13 +363,13 @@ namespace Mono.CSharp {
 			if (aliases == null)
 				aliases = new Hashtable ();
 			
-			if (aliases.Contains (alias)){
-				Report.Error (1537, loc, "The using alias `" + alias +
+			if (aliases.Contains (name)){
+				Report.Error (1537, loc, "The using alias `" + name +
 					      "' appeared previously in this namespace");
 				return;
 			}
 
-			aliases [alias] = new AliasEntry (this, alias, namespace_or_type, loc);
+			aliases [name] = new AliasEntry (this, name, alias, loc);
 		}
 
 		protected AliasEntry GetAliasEntry (string alias)

@@ -312,7 +312,7 @@ using_alias_directive
 	: USING IDENTIFIER ASSIGN 
 	  namespace_or_type_name SEMICOLON
 	  {
-		  current_namespace.UsingAlias ((string) $2, (Expression) $4, lexer.Location);
+		current_namespace.UsingAlias ((string) $2, (MemberName) $4, lexer.Location);
 	  }
 	| USING error {
 		CheckIdentifierToken (yyToken);
@@ -338,14 +338,17 @@ namespace_declaration
 			Report.Error(1518, Lexer.Location, "Attributes cannot be applied to namespaces."
 					+ " Expected class, delegate, enum, interface, or struct");
 		}
-		
-		if (current_namespace.Parent != null && $3 is MemberAccess) {
-			// Cannot use qualified namespace names in nested namespace declarations
-			Report.Error (134, lexer.Location, "Cannot use qualified namespace names in nested namespace declarations");
+
+		MemberName name = (MemberName) $3;
+
+		if ((current_namespace.Parent != null) && (name.Left != null)) {
+			Report.Error (134, lexer.Location,
+				      "Cannot use qualified namespace names in nested " +
+				      "namespace declarations");
 		}
 
 		current_namespace = new NamespaceEntry (
-			current_namespace, file, $3.ToString (), lexer.Location);
+			current_namespace, file, name.GetName (false), lexer.Location);
 	  } 
 	  namespace_body opt_semicolon
 	  { 
@@ -364,7 +367,11 @@ opt_comma
 	;
 
 namespace_name
-	: namespace_or_type_name { $$ = ($1).ToString (); } 
+	: namespace_or_type_name {
+		MemberName name = (MemberName) $1;
+
+		$$ = name.GetName (false);
+	  }
 	;
 
 namespace_body
@@ -581,7 +588,7 @@ attribute
 	;
 
 attribute_name
-	: type_name  { /* reserved attribute name or identifier: 17.4 */ }
+	: namespace_or_type_name  { /* reserved attribute name or identifier: 17.4 */ }
 	;
 
 opt_attribute_arguments
@@ -705,9 +712,9 @@ struct_declaration
 	: opt_attributes
 	  opt_modifiers
 	  opt_partial
-	  STRUCT IDENTIFIER
+	  STRUCT member_name
 	  { 
-		string name = MakeName ((string) $5);
+		MemberName name = MakeName ((MemberName) $5);
 		bool partial = (bool) $3;
 
 		if (partial) {
@@ -723,7 +730,7 @@ struct_declaration
 				(Attributes) $1, lexer.Location);
 
 			current_container = current_class;
-			RootContext.Tree.RecordDecl (name, current_class);
+			RootContext.Tree.RecordDecl (name.GetName (true), current_class);
 		}
 	  }
 	  opt_class_base
@@ -953,13 +960,14 @@ opt_error_modifier
 method_header
 	: opt_attributes
 	  opt_modifiers
-	  type
-	  member_name
+	  type namespace_or_type_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  {
+		MemberName name = (MemberName) $4;
+
 		Method method = new Method (current_class, (Expression) $3, (int) $2,
-					    false, (string) $4,  (Parameters) $6,
-					    (Attributes) $1, lexer.Location);
+					    false, name,  (Parameters) $6, (Attributes) $1,
+					    lexer.Location);
 
 		current_local_parameters = (Parameters) $6;
 
@@ -967,12 +975,13 @@ method_header
 	  }
 	| opt_attributes
 	  opt_modifiers
-	  VOID
-	  member_name
+	  VOID namespace_or_type_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  {
+		MemberName name = (MemberName) $4;
+
 		Method method = new Method (current_class, TypeManager.system_void_expr,
-					    (int) $2, false, (string) $4, (Parameters) $6,
+					    (int) $2, false, name, (Parameters) $6,
 					    (Attributes) $1, lexer.Location);
 
 		current_local_parameters = (Parameters) $6;
@@ -981,14 +990,16 @@ method_header
 	| opt_attributes
 	  opt_modifiers
 	  type 
-	  modifiers member_name OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
+	  modifiers namespace_or_type_name OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  {
 		Report.Error (1585, lexer.Location, 
 			String.Format ("Modifier {0} should appear before type", 
 				Modifiers.Name ((int) $4)));
+		MemberName name = (MemberName) $4;
+
 		Method method = new Method (current_class, TypeManager.system_void_expr,
-					    0, false, (string) $5, (Parameters) $7,
-					    (Attributes) $1, lexer.Location);
+					    0, false, name, (Parameters) $7, (Attributes) $1,
+					    lexer.Location);
 
 		current_local_parameters = (Parameters) $7;
 		$$ = method;
@@ -1119,14 +1130,10 @@ parameter_array
 	  }
 	;
 
-member_name 
-	: namespace_or_type_name { $$ = ($1).ToString (); } 
-	;
-
 property_declaration
 	: opt_attributes
 	  opt_modifiers
-	  type member_name
+	  type namespace_or_type_name
 	  OPEN_BRACE 
 	  {
 		implicit_value_parameter_type = (Expression) $3;
@@ -1149,8 +1156,10 @@ property_declaration
 		Accessor set_block = (Accessor) pair.Second;
 
 		Location loc = (Location) $6;
+		MemberName name = (MemberName) $4;
+
 		prop = new Property (current_class, (Expression) $3, (int) $2, false,
-				     (string) $4, (Attributes) $1, get_block, set_block, loc);
+				     name, (Attributes) $1, get_block, set_block, loc);
 		if (SimpleIteratorContainer.Simple.Yields)
 			prop.SetYields ();
 		
@@ -1246,9 +1255,9 @@ interface_declaration
 	: opt_attributes
 	  opt_modifiers
 	  opt_partial
-	  INTERFACE IDENTIFIER
+	  INTERFACE member_name
 	  {
-		string name = MakeName ((string) $5);
+		MemberName name = MakeName ((MemberName) $5);
 		bool partial = (bool) $3;
 
 		if (partial) {
@@ -1264,7 +1273,7 @@ interface_declaration
 				(Attributes) $1, lexer.Location);
 
 			current_container = current_class;
-			RootContext.Tree.RecordDecl (name, current_class);
+			RootContext.Tree.RecordDecl (name.GetName (true), current_class);
 		}
 	  }
 	  opt_class_base
@@ -1340,21 +1349,23 @@ opt_new
 	;
 
 interface_method_declaration
-	: opt_attributes opt_new type IDENTIFIER 
+	: opt_attributes opt_new type namespace_or_type_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  SEMICOLON
 	  {
+		MemberName name = (MemberName) $4;
+
 		$$ = new Method (current_class, (Expression) $3, (int) $2, true,
-				 (string) $4, (Parameters) $6, (Attributes) $1,
-				 lexer.Location);
+				 name, (Parameters) $6, (Attributes) $1, lexer.Location);
 	  }
-	| opt_attributes opt_new VOID IDENTIFIER 
+	| opt_attributes opt_new VOID namespace_or_type_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  SEMICOLON
 	  {
+		MemberName name = (MemberName) $4;
+
 		$$ = new Method (current_class, TypeManager.system_void_expr, (int) $2,
-				 true, (string) $4, (Parameters) $6,  (Attributes) $1,
-				 lexer.Location);
+				 true, name, (Parameters) $6,  (Attributes) $1, lexer.Location);
 	  }
 	;
 
@@ -1371,8 +1382,8 @@ interface_property_declaration
                 InterfaceAccessorInfo pinfo = (InterfaceAccessorInfo) $7;
 
 		$$ = new Property (current_class, (Expression) $3, (int) $2, true,
-				   (string) $4, (Attributes) $1, pinfo.Get, pinfo.Set,
-				   lexer.Location);
+				   new MemberName ((string) $4), (Attributes) $1,
+				   pinfo.Get, pinfo.Set, lexer.Location);
 	  }
 	| opt_attributes
 	  opt_new
@@ -1394,8 +1405,9 @@ interface_accessors
 interface_event_declaration
 	: opt_attributes opt_new EVENT type IDENTIFIER SEMICOLON
 	  {
-		$$ = new EventField (current_class, (Expression) $4, (int) $2, true, (string) $5, null,
-				(Attributes) $1, lexer.Location);
+		$$ = new EventField (current_class, (Expression) $4, (int) $2, true,
+				     new MemberName ((string) $5), null,
+				     (Attributes) $1, lexer.Location);
 	  }
 	| opt_attributes opt_new EVENT type error {
 		CheckIdentifierToken (yyToken);
@@ -1422,9 +1434,10 @@ interface_indexer_declaration
 	  {
 		InterfaceAccessorInfo info = (InterfaceAccessorInfo) $10;
 
-		$$ = new Indexer (current_class, (Expression) $3, TypeContainer.DefaultIndexerName, (int) $2, true,
-				  (Parameters) $6, (Attributes) $1, info.Get, info.Set,
-				  lexer.Location);
+		$$ = new Indexer (current_class, (Expression) $3,
+				  new MemberName (TypeContainer.DefaultIndexerName),
+				  (int) $2, true, (Parameters) $6, (Attributes) $1,
+				  info.Get, info.Set, lexer.Location);
 	  }
 	;
 
@@ -1703,9 +1716,12 @@ event_declaration
 	  {
 		foreach (VariableDeclaration var in (ArrayList) $5) {
 
-			Event e = new EventField (current_class, (Expression) $4, (int) $2, false, var.identifier,
-					     var.expression_or_array_initializer,
-					     (Attributes) $1, lexer.Location);
+			MemberName name = new MemberName (var.identifier);
+
+			Event e = new EventField (
+				current_class, (Expression) $4, (int) $2, false, name,
+				var.expression_or_array_initializer, (Attributes) $1,
+				lexer.Location);
 
 			current_container.AddEvent (e);
 				       
@@ -1713,7 +1729,7 @@ event_declaration
 	  }
 	| opt_attributes
 	  opt_modifiers
-	  EVENT type member_name
+	  EVENT type namespace_or_type_name
 	  OPEN_BRACE
 	  {
 		implicit_value_parameter_type = (Expression) $4;  
@@ -1734,9 +1750,12 @@ event_declaration
 		} else {
 			Pair pair = (Pair) $8;
 			
-			Event e = new EventProperty (current_class, (Expression) $4, (int) $2, false, (string) $5,
-					     null, (Attributes) $1, (Accessor) pair.First, (Accessor) pair.Second,
-					     loc);
+			MemberName name = (MemberName) $5;
+
+			Event e = new EventProperty (
+				current_class, (Expression) $4, (int) $2, false, name, null,
+				(Attributes) $1, (Accessor) pair.First, (Accessor) pair.Second,
+				loc);
 			
 			current_container.AddEvent (e);
 			implicit_value_parameter_type = null;
@@ -1842,10 +1861,13 @@ indexer_declaration
 		Pair pair = (Pair) $6;
 		Accessor get_block = (Accessor) pair.First;
 		Accessor set_block = (Accessor) pair.Second;
-		string name = decl.interface_type;
-		if (name != null)
-			name += ".";
-		name += TypeContainer.DefaultIndexerName;
+
+		MemberName name;
+		if (decl.interface_type != null)
+			name = new MemberName (decl.interface_type,
+					       TypeContainer.DefaultIndexerName);
+		else
+			name = new MemberName (TypeContainer.DefaultIndexerName);
 
 		indexer = new Indexer (current_class, decl.type, name,
 				       (int) $2, false, decl.param_list, (Attributes) $1,
@@ -1885,7 +1907,8 @@ indexer_declarator
 		} else if (pars.FixedParameters == null && pars.ArrayParameter == null){
 			Report.Error (1551, lexer.Location, "Indexers must have at least one parameter");
 		}
-		$$ = new IndexerDeclaration ((Expression) $1, $2.ToString (), pars);
+		MemberName name = (MemberName) $2;
+		$$ = new IndexerDeclaration ((Expression) $1, name, pars);
 	  }
 	;
 
@@ -1899,7 +1922,7 @@ enum_declaration
 	  { 
 		Location enum_location = lexer.Location;
 
-		string full_name = MakeName ((string) $4);
+		MemberName full_name = MakeName (new MemberName ((string) $4));
 		Enum e = new Enum (current_namespace, current_container, (Expression) $5, (int) $2,
 				   full_name, (Attributes) $1, enum_location);
 		
@@ -1909,8 +1932,9 @@ enum_declaration
 						   ev.Location, ev.OptAttributes);
 		}
 
+		string name = full_name.GetName (false);
 		current_container.AddEnum (e);
-		RootContext.Tree.RecordDecl (full_name, e);
+		RootContext.Tree.RecordDecl (name, e);
 
 	  }
 	;
@@ -1968,48 +1992,46 @@ enum_member_declaration
 delegate_declaration
 	: opt_attributes
 	  opt_modifiers
-	  DELEGATE type	  
-	  IDENTIFIER OPEN_PARENS 
-	  opt_formal_parameter_list
-	  CLOSE_PARENS 
+	  DELEGATE type member_name
+	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  SEMICOLON
 	  {
 		Location l = lexer.Location;
-		string name = MakeName ((string) $5);
+		MemberName name = MakeName ((MemberName) $5);
 		Delegate del = new Delegate (current_namespace, current_container, (Expression) $4,
 					     (int) $2, name, (Parameters) $7, (Attributes) $1, l);
 
 		current_container.AddDelegate (del);
-		RootContext.Tree.RecordDecl (name, del);
+		RootContext.Tree.RecordDecl (name.GetName (false), del);
 	  }	
 	| opt_attributes
 	  opt_modifiers
-	  DELEGATE VOID	  
-	  IDENTIFIER OPEN_PARENS 
-	  opt_formal_parameter_list
-	  CLOSE_PARENS 
+	  DELEGATE VOID member_name
+	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  SEMICOLON
 	  {
 		Location l = lexer.Location;
-		string name = MakeName ((string) $5);
+		MemberName name = MakeName ((MemberName) $5);
 		Delegate del = new Delegate (
 			current_namespace, current_container,
 			TypeManager.system_void_expr, (int) $2, name,
 			(Parameters) $7, (Attributes) $1, l);
 
 		current_container.AddDelegate (del);
-		RootContext.Tree.RecordDecl (name, del);
+		RootContext.Tree.RecordDecl (name.GetName (false), del);
 	  }
 	;
 
-type_name
-	: namespace_or_type_name
+namespace_or_type_name
+	: member_name
+	| namespace_or_type_name DOT IDENTIFIER {
+		$$ = new MemberName ((MemberName) $1, (string) $3);
+	  }
 	;
 
-namespace_or_type_name
-	: IDENTIFIER { $$ = new SimpleName ((string) $1, lexer.Location);}
-	| namespace_or_type_name DOT IDENTIFIER { 
-		$$ = new MemberAccess ((Expression) $1, (string) $3, lexer.Location);
+member_name
+	: IDENTIFIER {
+		$$ = new MemberName ((string) $1);
 	  }
 	;
 
@@ -2020,11 +2042,9 @@ namespace_or_type_name
  * gets rid of a shift/reduce couple
  */
 type
-	: type_name {  	/* class_type */
-		/* 
-	           This does interfaces, delegates, struct_types, class_types, 
-	           parent classes, and more! 4.2 
-	         */
+	: namespace_or_type_name
+	  {
+		$$ = ((MemberName) $1).GetTypeExpression (lexer.Location);
 	  }
 	| builtin_types
 	| array_type
@@ -2121,10 +2141,6 @@ integral_type
 	| VOID		{ $$ = TypeManager.system_void_expr; }
 	;
 
-interface_type
-	: type_name
-	;
-
 array_type
 	: type rank_specifiers
 	  {
@@ -2141,7 +2157,10 @@ primary_expression
 		// 7.5.1: Literals
 	  }
  
-	| IDENTIFIER { $$ = new SimpleName ((string) $1, lexer.Location); }
+	| member_name
+	  {
+		$$ = ((MemberName) $1).GetTypeExpression (lexer.Location);
+	  }
 	| parenthesized_expression
 	| member_access
 	| invocation_expression
@@ -2946,9 +2965,9 @@ class_declaration
 	: opt_attributes
 	  opt_modifiers
 	  opt_partial
-	  CLASS IDENTIFIER
+	  CLASS member_name
 	  {
-		string name = MakeName ((string) $5);
+		MemberName name = MakeName ((MemberName) $5);
 		bool partial = (bool) $3;
 		int mod_flags = (int) $2;
 
@@ -2968,7 +2987,7 @@ class_declaration
 						(Attributes) $1, lexer.Location);
 			}
 			current_container = current_class;
-			RootContext.Tree.RecordDecl (name, current_class);
+			RootContext.Tree.RecordDecl (name.GetName (false), current_class);
 		}
 	  }
 	  opt_class_base
@@ -4095,10 +4114,11 @@ public class InterfaceAccessorInfo {
 // </summary>
 public class IndexerDeclaration {
 	public Expression type;
-	public string interface_type;
+	public MemberName interface_type;
 	public Parameters param_list;
 
-	public IndexerDeclaration (Expression type, string interface_type, Parameters param_list)
+	public IndexerDeclaration (Expression type, MemberName interface_type,
+				   Parameters param_list)
 	{
 		this.type = type;
 		this.interface_type = interface_type;
@@ -4162,19 +4182,19 @@ void Error_ExpectingTypeName (Location l, Expression expr)
 //   Given the @class_name name, it creates a fully qualified name
 //   based on the containing declaration space
 // </summary>
-string 
-MakeName (string class_name)
+MemberName
+MakeName (MemberName class_name)
 {
 	string ns = current_namespace.FullName;
-	string container_name = current_container.Name;
 
-	if (container_name == ""){
+	if (current_container.Name == ""){
 		if (ns != "")
-			return ns + "." + class_name;
+			return new MemberName (new MemberName (ns), class_name);
 		else
 			return class_name;
-	} else
-		return container_name + "." + class_name;
+	} else {
+		return new MemberName (current_container.MemberName, class_name);
+	}
 }
 
 Block declare_local_variables (Expression type, ArrayList variable_declarators, Location loc)
