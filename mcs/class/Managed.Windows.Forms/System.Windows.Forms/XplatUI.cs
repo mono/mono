@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.22 $
+// $Revision: 1.23 $
 // $Modtime: $
 // $Log: XplatUI.cs,v $
+// Revision 1.23  2004/09/21 00:54:15  jackson
+// New message loop that uses poll so we don't get a busy loop
+//
 // Revision 1.22  2004/09/13 21:18:32  pbartok
 // - Added Z-Ordering methods
 //
@@ -194,6 +197,15 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Public Static Properties
 
+                internal static event EventHandler Idle {
+                        add {
+                                driver.Idle += value;
+                        }
+                        remove {
+                                driver.Idle -= value;
+                        }
+                }
+                
 		#region Public Static Methods
 		internal static void Exit() {
 			driver.Exit();

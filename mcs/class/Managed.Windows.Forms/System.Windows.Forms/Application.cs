@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.4 $
+// $Revision: 1.5 $
 // $Modtime: $
 // $Log: Application.cs,v $
+// Revision 1.5  2004/09/21 00:54:15  jackson
+// New message loop that uses poll so we don't get a busy loop
+//
 // Revision 1.4  2004/08/23 22:45:19  pbartok
 // - Removed debug output
 // - Simplifications
@@ -273,18 +276,12 @@ namespace System.Windows.Forms {
 			messageloop_started = true;
 
 			while (!exiting && XplatUI.GetMessage(ref msg, IntPtr.Zero, 0, 0)) {
-				if (msg.message != Msg.WM_ENTERIDLE) {
-					XplatUI.TranslateMessage(ref msg);
-					XplatUI.DispatchMessage(ref msg);
+				XplatUI.TranslateMessage(ref msg);
+				XplatUI.DispatchMessage(ref msg);
 
-					// Handle exit, Form might have received WM_CLOSE and set 'closing' in response
-					if ((form != null) && form.closing) {
-						exiting = true;
-					}
-					continue;
-				} else if (Idle != null) {
-					Idle(form, EventArgs.Empty);
-					continue;
+				// Handle exit, Form might have received WM_CLOSE and set 'closing' in response
+				if ((form != null) && form.closing) {
+					exiting = true;
 				}
 			}
 
@@ -312,7 +309,16 @@ namespace System.Windows.Forms {
 
 		#region Events
 		public static event EventHandler	ApplicationExit;
-		public static event EventHandler	Idle;
+
+		public static event EventHandler	Idle {
+			add {
+				XplatUI.Idle += value;
+			}
+			remove {
+				XplatUI.Idle -= value;
+			}
+		}
+
 		public static event EventHandler	ThreadExit;
 		public static event ThreadExceptionEventHandler	ThreadException;
 		#endregion	// Events

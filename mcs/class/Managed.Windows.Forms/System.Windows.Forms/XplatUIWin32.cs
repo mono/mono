@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.35 $
+// $Revision: 1.36 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.36  2004/09/21 00:54:15  jackson
+// New message loop that uses poll so we don't get a busy loop
+//
 // Revision 1.35  2004/09/16 23:45:09  pbartok
 // - Fixed sending a window to the front
 // - Added overload for SetWindowPos to avoid casting
@@ -1128,6 +1131,8 @@ namespace System.Windows.Forms {
 				timer_list.Remove(index);
 			}
 		}
+
+		public override event EventHandler Idle;
 
 		// Santa's little helper
 		static void Where() {

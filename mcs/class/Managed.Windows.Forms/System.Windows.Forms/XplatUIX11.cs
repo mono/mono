@@ -33,6 +33,13 @@ using System.ComponentModel;
 using System.Collections;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Net;
+using System.Net.Sockets;
+
+// Only do the poll when building with mono for now
+#if __MonoCS__
+using Mono.Posix;
+#endif
 
 /// X11 Version
 namespace System.Windows.Forms {
@@ -63,6 +70,14 @@ namespace System.Windows.Forms {
 		private ArrayList timer_list;
 		private Thread timer_thread;
 		private AutoResetEvent timer_wait;
+		private Socket listen;
+		private Socket wake;
+
+#if __MonoCS__
+		private pollfd [] pollfds;
+#endif
+
+		private object xlib_lock = new object ();
 
 		private static readonly EventMask  SelectInputMask = EventMask.ButtonPressMask | 
 				EventMask.ButtonReleaseMask | 
@@ -114,11 +129,29 @@ namespace System.Windows.Forms {
 			ref_count=0;
 
 			message_queue = new Queue ();
-			ArrayList timers = new ArrayList ();
-			timer_list = ArrayList.Synchronized (timers);
+			timer_list = new ArrayList ();
 
 			// Now regular initialization
 			SetDisplay(XOpenDisplay(IntPtr.Zero));
+
+			listen = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 0);
+			listen.Bind (ep);
+			listen.Listen (1);
+
+			wake = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
+			wake.Connect (listen.LocalEndPoint);
+
+#if __MonoCS__
+			pollfds = new pollfd [2];
+			pollfds [0] = new pollfd ();
+			pollfds [0].fd = XConnectionNumber (DisplayHandle);
+			pollfds [0].events = PollEvents.POLLIN;
+
+			pollfds [1] = new pollfd ();
+			pollfds [1].fd = wake.Handle.ToInt32 ();
+			pollfds [1].events = PollEvents.POLLIN;
+#endif
 		}
 
 		~XplatUIX11() {
@@ -149,6 +182,8 @@ namespace System.Windows.Forms {
 		}
 		#endregion
 
+		internal override event EventHandler Idle;
+		
 		#region Public Static Methods
 		internal override IntPtr InitializeDriver() {
 			lock (this) {
@@ -215,7 +250,7 @@ namespace System.Windows.Forms {
 		internal override void GetDisplaySize(out Size size) {
 			XWindowAttributes	attributes=new XWindowAttributes();
 
-			lock (this) {
+			lock (xlib_lock) {
 				XGetWindowAttributes(DisplayHandle, XRootWindow(DisplayHandle, 0), ref attributes);
 			}
 
@@ -248,7 +283,7 @@ namespace System.Windows.Forms {
 			if (Height<1) Height=1;
 
 
-			lock (this) {
+			lock (xlib_lock) {
 				if (ParentHandle==IntPtr.Zero) {
 					if ((cp.Style & (int)WindowStyles.WS_CHILD)!=0) {
 						// We need to use our foster parent window until
@@ -312,7 +347,7 @@ namespace System.Windows.Forms {
 			int	width;
 			int	height;
 
-			lock (this) {
+			lock (xlib_lock) {
 
 				// We need info about our window to generate the expose 
 				XGetGeometry(DisplayHandle, handle, out root, out x, out y,
@@ -336,7 +371,7 @@ namespace System.Windows.Forms {
 
 //			backcolor = ((uint)(color.ToArgb() & 0xff0000)>>16) | (uint)(color.ToArgb() & 0xff00) | (uint)((color.ToArgb() & 0xff) << 16);
 			backcolor = ((uint)(color.ToArgb() & 0xff0000)) | (uint)(color.ToArgb() & 0xff00) | (uint)((color.ToArgb() & 0xff) );
-			lock (this) {
+			lock (xlib_lock) {
 				XSetWindowBackground(DisplayHandle, handle, backcolor);
 			}
 		}
@@ -376,7 +411,7 @@ namespace System.Windows.Forms {
 			if (height < 1) {
 				height = 1;
 			}
-			lock (this) {
+			lock (xlib_lock) {
 				XMoveResizeWindow(DisplayHandle, handle, x, y, width, height);
 			}
 			return;
@@ -387,7 +422,7 @@ namespace System.Windows.Forms {
 			int	border_width;
 			int	depth;
 
-			lock (this) {
+			lock (xlib_lock) {
 				
 				XGetGeometry(DisplayHandle, handle, out root, out x,
 						out y, out width, out height, out border_width, out depth);
@@ -400,7 +435,7 @@ namespace System.Windows.Forms {
 
 		internal override void Activate(IntPtr handle) {
 
-			lock (this) {
+			lock (xlib_lock) {
 				// Not sure this is the right method, but we don't use ICs either...	
 				XRaiseWindow(DisplayHandle, handle);
 			}
@@ -415,7 +450,7 @@ namespace System.Windows.Forms {
 			xevent.ExposeEvent.window=handle;
 			xevent.ExposeEvent.count=0;
 
-			lock (this) {
+			lock (xlib_lock) {
 
 				if (clear) {
 					// Need to clear the whole window, so we force a redraw for the whole window
@@ -485,7 +520,7 @@ namespace System.Windows.Forms {
 			int	len;
 			msg.wParam = IntPtr.Zero;
 
-			lock (this) {
+			lock (xlib_lock) {
 				len = XLookupString(ref xevent, buffer, 24, out keysym, IntPtr.Zero);
 			}
 
@@ -557,21 +592,81 @@ namespace System.Windows.Forms {
 			return (IntPtr)result;
 		}
 
-                // The message_queue should be locked when this is called
+		private int NextTimeout (DateTime now)
+		{
+			int timeout = Int32.MaxValue; 
+			lock (timer_list) {
+				foreach (Timer timer in timer_list) {
+					int next = (int) (timer.Expires - now).TotalMilliseconds;
+					if (next < 0)
+						return 0; // Have a timer that has already expired
+					if (next < timeout)
+						timeout = next;
+				}
+			}
+			if (timeout < Timer.Minimum)
+				timeout = Timer.Minimum;
+			return timeout;
+		}
+
+		private void CheckTimers (DateTime now)
+		{
+			lock (timer_list) {
+				int count = timer_list.Count;
+				if (count == 0)
+					return;
+				for (int i = 0; i < count; i++) {
+                                        Timer timer = (Timer) timer_list [i];
+                                        if (timer.Enabled && timer.Expires <= now) {
+                                                timer.FireTick ();
+                                                timer.Update (now);
+                                        }
+                                }
+			}
+		}
+
 		private void UpdateMessageQueue ()
 		{
+			DateTime now = DateTime.Now;
+
 			int pending;
-			lock (this) {
+			lock (xlib_lock) {
 				pending = XPending (DisplayHandle);
 			}
-			
+			if (pending == 0) {
+				if (Idle != null) {
+					Idle (this, EventArgs.Empty);
+				}
+				lock (xlib_lock) {
+					pending = XPending (DisplayHandle);
+				}
+			}
+
+			if (pending == 0) {
+				int timeout = NextTimeout (now);
+				if (timeout > 0) {
+#if __MonoCS__
+					Syscall.poll (pollfds, pollfds.Length, timeout);
+#endif
+					pending = XPending (DisplayHandle);
+				}
+			}
+
+			CheckTimers (now);
+
+			if (pending == 0) {
+				lock (xlib_lock) {
+					pending = XPending (DisplayHandle);
+				}
+			}
+
 			while (pending > 0) {
 				XEvent xevent = new XEvent ();
 
-				lock (this) {
+				lock (xlib_lock) {
 					XNextEvent (DisplayHandle, ref xevent);
 				}
-
+				
 				switch (xevent.type) {
 				case XEventName.Expose:
 					HandleData data = (HandleData) handle_data [xevent.AnyEvent.window];
@@ -584,37 +679,38 @@ namespace System.Windows.Forms {
 							xevent.ExposeEvent.width, xevent.ExposeEvent.height);
 				   
 					if (!data.HasExpose) {
-						message_queue.Enqueue (xevent);
+						lock (message_queue) {
+							message_queue.Enqueue (xevent);
+						}
 						data.HasExpose = true;
 					}
 					break;
 				default:
-					message_queue.Enqueue (xevent);
+					lock (message_queue) {
+						message_queue.Enqueue (xevent);
+					}
 					break;
 				}
 
-				lock (this) {
+				lock (xlib_lock) {
 					pending = XPending (DisplayHandle);
 				}
 			}
-
 		}
 
 		internal override bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
 			XEvent	xevent;
 
-			lock (message_queue) {
+			if (message_queue.Count > 0) {
+				xevent = (XEvent) message_queue.Dequeue ();
+			} else {
+				UpdateMessageQueue ();
 				if (message_queue.Count > 0) {
 					xevent = (XEvent) message_queue.Dequeue ();
 				} else {
-					UpdateMessageQueue ();
-					if (message_queue.Count > 0) {
-						xevent = (XEvent) message_queue.Dequeue ();
-					} else {
-						msg.hwnd= IntPtr.Zero;
-						msg.message = Msg.WM_ENTERIDLE;
-						return true;
-					}
+					msg.hwnd= IntPtr.Zero;
+					msg.message = Msg.WM_ENTERIDLE;
+					return true;
 				}
 			}
 
@@ -828,7 +924,7 @@ namespace System.Windows.Forms {
 			property.encoding=
 			XSetWMName(DisplayHandle, handle, ref property);
 #else
-			lock (this) {
+			lock (xlib_lock) {
 				XStoreName(DisplayHandle, handle, text);
 			}
 #endif
@@ -840,7 +936,7 @@ namespace System.Windows.Forms {
 
 			textptr = IntPtr.Zero;
 
-			lock (this) {
+			lock (xlib_lock) {
 				XFetchName(DisplayHandle, handle, ref textptr);
 			}
 			if (textptr != IntPtr.Zero) {
@@ -854,7 +950,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override bool SetVisible(IntPtr handle, bool visible) {
-			lock (this) {
+			lock (xlib_lock) {
 				if (visible) {
 					XMapWindow(DisplayHandle, handle);
 					is_visible=true;
@@ -873,7 +969,7 @@ namespace System.Windows.Forms {
 		internal override IntPtr SetParent(IntPtr handle, IntPtr parent) {
 			XWindowAttributes	attributes=new XWindowAttributes();
 
-			lock (this) {
+			lock (xlib_lock) {
 				XGetWindowAttributes(DisplayHandle, handle, ref attributes);
 				XReparentWindow(DisplayHandle, handle, parent, attributes.x, attributes.y);
 			}
@@ -891,12 +987,12 @@ namespace System.Windows.Forms {
 			Children=IntPtr.Zero;
 			ChildCount=0;
 
-			lock (this) {
+			lock (xlib_lock) {
 				XQueryTree(DisplayHandle, handle, ref Root, ref Parent, ref Children, ref ChildCount);
 			}
 
 			if (Children!=IntPtr.Zero) {
-				lock (this) {
+				lock (xlib_lock) {
 					XFree(Children);
 				}
 			}
@@ -907,7 +1003,7 @@ namespace System.Windows.Forms {
 			if (confine_hwnd != IntPtr.Zero) {
 				XWindowAttributes	attributes = new XWindowAttributes();
 
-				lock (this) {
+				lock (xlib_lock) {
 					XGetWindowAttributes(DisplayHandle, confine_hwnd, ref attributes);
 				}
 				grab_area.X = attributes.x;
@@ -917,7 +1013,7 @@ namespace System.Windows.Forms {
 				grab_confined = true;
 			}
 			grab_hwnd = hWnd;
-			lock (this) {
+			lock (xlib_lock) {
 				XGrabPointer(DisplayHandle, hWnd, false,
 					EventMask.ButtonPressMask | EventMask.ButtonMotionMask |
 					EventMask.ButtonReleaseMask | EventMask.PointerMotionMask,
@@ -932,7 +1028,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void ReleaseWindow(IntPtr hWnd) {
-			lock (this) {
+			lock (xlib_lock) {
 				XUngrabPointer(DisplayHandle, 0);
 				grab_hwnd = IntPtr.Zero;
 				grab_confined = false;
@@ -945,7 +1041,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SetCursorPos(IntPtr handle, int x, int y) {
-			lock (this) {
+			lock (xlib_lock) {
 				XWarpPointer(DisplayHandle, IntPtr.Zero, (handle!=IntPtr.Zero) ? handle : IntPtr.Zero, 0, 0, 0, 0, x, y);
 			}
 		}
@@ -959,7 +1055,7 @@ namespace System.Windows.Forms {
 			int	win_y;
 			int	keys_buttons;
 
-			lock (this) {
+			lock (xlib_lock) {
 				XQueryPointer(DisplayHandle, (handle!=IntPtr.Zero) ? handle : root_window,
 						out root, out child, out root_x, out root_y,
 						out win_x, out win_y, out keys_buttons);
@@ -980,7 +1076,7 @@ namespace System.Windows.Forms {
 			int	dest_y_return;
 			IntPtr	child;
 
-			lock (this) {
+			lock (xlib_lock) {
 				XTranslateCoordinates (DisplayHandle, root_window,
 						handle, x, y, out dest_x_return, out dest_y_return, out child);
 			}
@@ -1001,66 +1097,30 @@ namespace System.Windows.Forms {
 			xevent.ClientMessageEvent.ptr1 = (IntPtr) GCHandle.Alloc (method);
 
 			lock (message_queue) {
-                                message_queue.Enqueue (xevent);
+				message_queue.Enqueue (xevent);
 			}
+
+			WakeupMain ();
 		}
 
-		internal void TimerProc ()
+		private void WakeupMain ()
 		{
-			while (true) {
-				int next_fire = -1;
-
-				ArrayList fire_list = new ArrayList ();
-				DateTime now = DateTime.Now;
-				for (int i = 0; i < timer_list.Count; i++) {
-					Timer timer = (Timer) timer_list [i];
-						
-					if (timer.Enabled && timer.Expires <= now) {
-						XEvent xevent = new XEvent ();
-						xevent.type = XEventName.TimerNotify;
-						xevent.AnyEvent.window = IntPtr.Zero;
-						xevent.TimerNotifyEvent.handler = new EventHandler (timer.TickHandler);
-
-						fire_list.Add (xevent);
-						timer.Update (now);
-					}
-					int next = (int) (timer.Expires.AddMilliseconds (timer.Interval) - now).TotalMilliseconds;
-					if (i == 0 || next < next_fire)
-						next_fire = next;
-				}
-
-				// Everything is copied to a list and then to the queue so we
-				// don't lock the queue while calculating all the times
-				if (fire_list.Count > 0) {
-					lock (message_queue) {
-						foreach (object obj in fire_list) {
-							message_queue.Enqueue (obj);
-						}
-					}
-				}
-				if (next_fire < Timer.Minimum)
-					next_fire = Timer.Minimum;
-				timer_wait.WaitOne (next_fire, true);
-			}
+			wake.BeginSend (new byte [] { 0xFF }, 0, 1, SocketFlags.None, null, null);
 		}
 
 		internal override void SetTimer (Timer timer)
 		{
-			timer_list.Add (timer);
-
-			if (timer_thread == null) {
-				ThreadStart thread_start = new ThreadStart (TimerProc);	
-				timer_thread = new Thread (thread_start);
-				timer_thread.IsBackground = true;
-
-				timer_wait = new AutoResetEvent (true);
-				timer_thread.Start();
+			lock (timer_list) {
+				timer_list.Add (timer);
 			}
+			WakeupMain ();
 		}
 
 		internal override void KillTimer (Timer timer)
 		{
-			timer_list.Remove (timer);
+			lock (timer_list) {
+				timer_list.Remove (timer);
+			}
 		}
 
 		// Santa's little helper
@@ -1130,6 +1190,8 @@ namespace System.Windows.Forms {
 		internal extern static IntPtr XRootWindow(IntPtr display, int screen_number);
 		[DllImport ("libX11.so", EntryPoint="XNextEvent")]
 		internal extern static IntPtr XNextEvent(IntPtr display, ref XEvent xevent);
+		[DllImport ("libX11.so")]
+		internal extern static int XConnectionNumber (IntPtr diplay);
 		[DllImport ("libX11.so")]
 		internal extern static int XPending (IntPtr diplay);
 		[DllImport ("libX11.so")]
