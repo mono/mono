@@ -1,3 +1,7 @@
+2003-06-18  Nick Drochak <ndrochak@gol.com>
+
+	* ArrayTest.cs: Add .NET 1.1 overload test, and fix build problem.
+
 2003-06-13  Duncan Mak  <duncan@ximian.com>
 
 	* ArrayTest.cs (TestCreateInstance2): Expects

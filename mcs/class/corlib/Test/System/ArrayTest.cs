@@ -639,9 +639,18 @@ public class ArrayTest : Assertion
         [ExpectedException (typeof (ArgumentNullException))]
         public void TestCreateInstance2 ()
         {
-                Array a = Array.CreateInstance (typeof (Int32), null);
+                Array a = Array.CreateInstance (typeof (Int32), (int[])null);
         }
-	
+
+#if NET_1_1
+	[Test]
+        [ExpectedException (typeof (ArgumentException))]
+        public void TestCreateInstance2b ()
+        {
+                Array a = Array.CreateInstance (typeof (Int32), (long[])null);
+        }
+#endif
+
 	[Test]
 	public void TestGetEnumerator() {
 		String[] s1 = {"this", "is", "a", "test"};
@@ -1117,7 +1126,7 @@ public class ArrayTest : Assertion
 			bool errorThrown = false;
 			try {
 				char[] c = new Char[2];
-				c.GetValue((int [])null);
+				c.GetValue((long [])null);
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
@@ -1715,7 +1724,7 @@ public class ArrayTest : Assertion
 			bool errorThrown = false;
 			try {
 				char[] c = new Char[2];
-				c.SetValue("buh", (int [])null);
+				c.SetValue("buh", (long [])null);
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
@@ -2417,7 +2426,7 @@ public class ArrayTest : Assertion
         public void MoreSort10 ()
         {
                 object [] array = {true, 'k', SByte.MinValue, Byte.MinValue, (short) 2, 634, (long) 436, (float) 1.1, 1.23, "Hello World"};
-                Array.Sort (array, (System.Collections.IComparer) null);
+                Array.Sort (array, (IComparer) null);
         }
 }
 
