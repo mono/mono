@@ -130,8 +130,13 @@ namespace System.Net
 
 		internal void ReadAll ()
 		{
-			if (!isRead || totalRead >= contentLength || nextReadCalled)
+			if (!isRead || totalRead >= contentLength || nextReadCalled) {
+				if (!nextReadCalled) {
+					nextReadCalled = true;
+					cnc.NextRead ();
+				}
 				return;
+			}
 
 			pending.WaitOne ();
 			lock (this) {
@@ -144,12 +149,18 @@ namespace System.Net
 
 				if (contentLength == Int32.MaxValue) {
 					MemoryStream ms = new MemoryStream ();
-					if (readBuffer != null && diff > 0)
+					byte [] buffer = null;
+					if (readBuffer != null && diff > 0) {
 						ms.Write (readBuffer, readBufferOffset, diff);
+						if (readBufferSize >= 8192)
+							buffer = readBuffer;
+					}
 
-					byte [] buffer = new byte [2048];
+					if (buffer == null)
+						buffer = new byte [8192];
+
 					int read;
-					while ((read = cnc.Read (buffer, 0, 2048)) != 0)
+					while ((read = cnc.Read (buffer, 0, buffer.Length)) != 0)
 						ms.Write (buffer, 0, read);
 
 					b = ms.GetBuffer ();
@@ -216,6 +227,11 @@ namespace System.Net
 			if (size < 0 || offset < 0 || length < offset || length - offset < size)
 				throw new ArgumentOutOfRangeException ();
 
+			lock (this) {
+				pendingReads++;
+				pending.Reset ();
+			}
+
 			WebAsyncResult result = new WebAsyncResult (cb, state, buffer, offset, size);
 			if (totalRead >= contentLength) {
 				result.SetCompleted (true, -1);
@@ -239,11 +255,6 @@ namespace System.Net
 				result.NBytes = copy;
 			}
 
-			lock (this) {
-				pendingReads++;
-				pending.Reset ();
-			}
-
 			if (cb != null)
 				cb = new AsyncCallback (CallbackWrapper);
 
@@ -260,12 +271,6 @@ namespace System.Net
 
 			if (!result.IsCompleted) {
 				int nbytes = cnc.EndRead (result.InnerAsyncResult);
-				lock (this) {
-					pendingReads--;
-					if (pendingReads == 0)
-						pending.Set ();
-				}
-
 				bool finished = (nbytes == -1);
 				if (finished && result.NBytes > 0)
 					nbytes = 0;
@@ -276,10 +281,14 @@ namespace System.Net
 					contentLength = totalRead;
 			}
 
-			if (totalRead >= contentLength && !nextReadCalled) {
-				nextReadCalled = true;
-				cnc.NextRead ();
+			lock (this) {
+				pendingReads--;
+				if (pendingReads == 0)
+					pending.Set ();
 			}
+
+			if (totalRead >= contentLength && !nextReadCalled)
+				ReadAll ();
 
 			return result.NBytes;
 		}
