@@ -1,4 +1,9 @@
 
+Mon Jan 27 17:16:50 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* get.c: decode also the size info in get_marshal_info()
+	for ByValStr and ByValArray.
+
 Tue Sep 24 11:48:53 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* main.c: use mono_type_size () to get the size of
