@@ -22,11 +22,13 @@ namespace System.Xml.Serialization {
 
 		ObjectIDGenerator idGenerator;
 		int qnameCount;
+		bool topLevelElement = false;
 
 		ArrayList namespaces;
 		XmlWriter writer;
 		Queue referencedElements;
 		Hashtable callbacks;
+		const string xmlNamespace = "http://www.w3.org/2000/xmlns/";
 
 		#endregion // Fields
 
@@ -200,10 +202,9 @@ namespace System.Xml.Serialization {
 
 		protected abstract void InitCallbacks ();
 
-		[MonoTODO ("Implement")]
 		protected void TopLevelElement ()
 		{
-			throw new NotImplementedException ();
+			topLevelElement = true;
 		}
 
 		protected void WriteAttribute (string localName, byte[] value)
@@ -228,7 +229,7 @@ namespace System.Xml.Serialization {
 
 		protected void WriteAttribute (string localName, string ns, string value)
 		{
-			WriteAttribute (String.Empty, localName, ns, value);
+			WriteAttribute (null, localName, ns, value);
 		}
 
 		protected void WriteAttribute (string prefix, string localName, string ns, string value)
@@ -416,12 +417,9 @@ namespace System.Xml.Serialization {
 			if (ns == null)
 				return;
 
-			Hashtable tbl = ns.Namespaces;
-			foreach (string key in tbl.Keys) {
-				string val = tbl [key] as string;
-				if (val == null)
-					val = String.Empty;
-				WriteAttribute ("xmlns", key, null, val);
+			ICollection namespaces = ns.Namespaces.Values;
+			foreach (XmlQualifiedName qn in namespaces) {
+				WriteAttribute ("xmlns", qn.Name, xmlNamespace, qn.Namespace);
 			}
 		}
 
@@ -656,10 +654,11 @@ namespace System.Xml.Serialization {
 			} else
 				Writer.WriteStartElement (name, ns);
 
-			if ((o == null) || (oldState == WriteState.Prolog && !TypeTranslator.IsPrimitive (o.GetType()))) {
-				WriteAttribute ("xmlns","xsd",XmlSchema.Namespace,XmlSchema.Namespace);
-				WriteAttribute ("xmlns","xsi",XmlSchema.InstanceNamespace,XmlSchema.InstanceNamespace);
+			if (topLevelElement) {
+				WriteAttribute ("xmlns","xsd",xmlNamespace,XmlSchema.Namespace);
+				WriteAttribute ("xmlns","xsi",xmlNamespace,XmlSchema.InstanceNamespace);
 			}
+			topLevelElement = false;
 		}
 
 		protected void WriteTypedPrimitive (string name, string ns, object o, bool xsiType)
@@ -712,9 +711,9 @@ namespace System.Xml.Serialization {
 		protected void WriteXsiType (string name, string ns)
 		{
 			if (ns != null && ns != string.Empty)
-				WriteAttribute (GetNamespacePrefix (XmlSchema.InstanceNamespace), "type", ns, GetQualifiedName (name, ns));
+				WriteAttribute ("type", XmlSchema.InstanceNamespace, GetQualifiedName (name, ns));
 			else
-				WriteAttribute (GetNamespacePrefix (XmlSchema.InstanceNamespace), "type", ns, name);
+				WriteAttribute ("type", XmlSchema.InstanceNamespace, name);
 		}
 		
 		#endregion

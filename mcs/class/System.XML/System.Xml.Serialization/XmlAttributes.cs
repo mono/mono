@@ -25,7 +25,7 @@ namespace System.Xml.Serialization
 		private XmlArrayItemAttributes xmlArrayItems = new XmlArrayItemAttributes();
 		private XmlAttributeAttribute xmlAttribute;
 		private XmlChoiceIdentifierAttribute xmlChoiceIdentifier;
-		private object xmlDefaultValue;
+		private object xmlDefaultValue = System.DBNull.Value;
 		private XmlElementAttributes xmlElements = new XmlElementAttributes();
 		private XmlEnumAttribute xmlEnum;
 		private bool xmlIgnore;

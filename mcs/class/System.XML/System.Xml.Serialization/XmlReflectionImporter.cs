@@ -128,6 +128,9 @@ namespace System.Xml.Serialization {
 			{
 				if (attributeOverrides != null) 
 					atts = attributeOverrides[typeData.Type];
+
+				if (atts != null && typeData.SchemaType == SchemaTypes.Primitive)
+					throw new InvalidOperationException ("XmlRoot and XmlType attributes may not be specified for the type " + typeData.FullTypeName);
 			}
 
 			if (atts == null) 

@@ -1,3 +1,15 @@
+2003-06-10  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SoapReflectionImporter.cs: Added check: some overrides cannot be applied to primitive types.
+	* XmlAttributes.cs: Default value of XmlDefaultValue changed to System.DBNull.Value
+	* XmlCustomFormatter.cs: small fixes.
+	* XmlReflectionImporter.cs: Added check: some overrides cannot be applied to primitive types.
+	* XmlSerializationWriter.cs: Implemented TopLevelElement().
+	  WriteNamespaceDeclarations(): Fixed (the hashtable contains XmlQualifiedNames, not strings).
+	  WriteXsiType(): It is not necessary to add the namespace declaration, this will now be done by XmlWriter.
+	* XmlSerializationWriterInterpreter.cs: Call TopLevelElement() when writing classes or arrays as
+	  root elements.
+
 2003-06-05  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SoapReflectionImporter.cs: implemented.

@@ -45,6 +45,9 @@ namespace System.Xml.Serialization
 			if (_typeMap is XmlTypeMapping)
 			{
 				XmlTypeMapping mp = (XmlTypeMapping) _typeMap;
+				if (mp.TypeData.SchemaType == SchemaTypes.Class || mp.TypeData.SchemaType == SchemaTypes.Array) 
+					TopLevelElement ();
+
 				if (_format == SerializationFormat.Literal)
 					WriteObject (mp, ob, mp.ElementName, mp.Namespace, true, false, true);
 				else
@@ -109,8 +112,7 @@ namespace System.Xml.Serialization
 		void WriteMessage (XmlMembersMapping membersMap, object[] parameters)
 		{
 			if (membersMap.HasWrapperElement) {
-				WriteStartDocument();
-				// TopLevelElement();
+				TopLevelElement ();
 				WriteStartElement(membersMap.ElementName, membersMap.Namespace, (_format == SerializationFormat.Encoded));
 
 				if (Writer.LookupPrefix (XmlSchema.Namespace) == null)

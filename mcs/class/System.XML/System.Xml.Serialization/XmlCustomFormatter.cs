@@ -25,6 +25,7 @@ namespace System.Xml.Serialization {
 
 		internal static string FromByteArrayHex (byte[] value)
 		{
+			if (value == null) return null;
 			StringBuilder output = new StringBuilder ();
 			foreach (byte val in value)
 				output.Append (val.ToString ("X2"));
@@ -62,7 +63,7 @@ namespace System.Xml.Serialization {
 					else
 						return values[i].ToString ();
 			}
-			return value.ToString ();
+			return String.Empty;
 		}
 
 		internal static string FromXmlName (string name)
