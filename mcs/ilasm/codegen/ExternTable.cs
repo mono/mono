@@ -13,72 +13,94 @@ using System.Reflection;
 
 namespace Mono.ILASM {
 
-	public class ExternTable {
+        public class ExternTable {
 
-		protected class ExternAssembly {
-			
-			public PEAPI.AssemblyRef AssemblyRef;
-			
-			protected PEAPI.PEFile pefile;
-			protected Hashtable type_table;
+                protected class ExternAssembly {
 
-			public ExternAssembly (PEAPI.PEFile pefile, string name, 
-				AssemblyName asmb_name)
-			{
-				type_table = new Hashtable ();
-				this.pefile = pefile;
-				AssemblyRef = pefile.AddExternAssembly (name);
-			}
+                        public PEAPI.AssemblyRef AssemblyRef;
 
-			public PEAPI.Class GetType (string name_space, string name)
-			{
-				string full_name = String.Format ("{0}.{1}",
-					name_space, name);
-				PEAPI.Class klass = type_table[full_name] as PEAPI.Class;
-				
-				if (klass != null)
-					return klass;
+                        protected PEAPI.PEFile pefile;
+                        protected Hashtable type_table;
 
-				klass = AssemblyRef.AddClass (name_space, name);
-				type_table[full_name] = klass;
-		
-				return klass;
-			}
-		}
- 		
-		PEAPI.PEFile pefile;
-		Hashtable assembly_table;
-		Hashtable type_table;
-		Hashtable method_table;
-		Hashtable member_table;
+                        public ExternAssembly (PEAPI.PEFile pefile, string name,
+                                AssemblyName asmb_name)
+                        {
+                                type_table = new Hashtable ();
+                                this.pefile = pefile;
+                                AssemblyRef = pefile.AddExternAssembly (name);
+                        }
 
-		public ExternTable (PEAPI.PEFile pefile)
-		{
-			this.pefile = pefile;
-		}
+                        public PEAPI.Class GetType (string name_space, string name)
+                        {
+                                string full_name = String.Format ("{0}.{1}",
+                                        name_space, name);
+                                PEAPI.Class klass = type_table[full_name] as PEAPI.Class;
 
-		public void AddAssembly (string name, AssemblyName asmb_name)
-		{
-			if (assembly_table == null) {
-				assembly_table = new Hashtable ();
-			} else if (assembly_table.Contains (name)) {
-				// Maybe this is an error??
-				return;
-			}
-			
-			assembly_table[name] = new ExternAssembly (pefile, name, asmb_name);
-		}
+                                if (klass != null)
+                                        return klass;
 
-		public PEAPI.Class GetClass (string asmb_name, string name_space, string name)
-		{
-			ExternAssembly ext_asmb;
-			ext_asmb = assembly_table[asmb_name] as ExternAssembly;
+                                klass = AssemblyRef.AddClass (name_space, name);
+                                type_table[full_name] = klass;
 
-			if (ext_asmb == null)
-				throw new Exception (String.Format ("Assembly {0} not defined.", asmb_name));
-			
-			return ext_asmb.GetType (name_space, name);
-		}
-	}
+                                return klass;
+                        }
+                }
+
+                PEAPI.PEFile pefile;
+                Hashtable assembly_table;
+                Hashtable type_table;
+                Hashtable method_table;
+                Hashtable member_table;
+
+                public ExternTable (PEAPI.PEFile pefile)
+                {
+                        this.pefile = pefile;
+
+                        // Add mscorlib
+                        string mscorlib_name = "mscorlib";
+                        AssemblyName mscorlib = new AssemblyName ();
+                        mscorlib.Name = mscorlib_name;
+                        AddAssembly (mscorlib_name, mscorlib);
+                }
+
+                public void AddAssembly (string name, AssemblyName asmb_name)
+                {
+                        if (assembly_table == null) {
+                                assembly_table = new Hashtable ();
+                        } else if (assembly_table.Contains (name)) {
+                                // Maybe this is an error??
+                                return;
+                        }
+
+                        assembly_table[name] = new ExternAssembly (pefile, name, asmb_name);
+                }
+
+                public PEAPI.Class GetClass (string asmb_name, string name_space, string name)
+                {
+                        ExternAssembly ext_asmb;
+                        ext_asmb = assembly_table[asmb_name] as ExternAssembly;
+
+                        if (ext_asmb == null)
+                                throw new Exception (String.Format ("Assembly {0} not defined.", asmb_name));
+
+                        return ext_asmb.GetType (name_space, name);
+                }
+
+                public PEAPI.Class GetClass (string asmb_name, string full_name)
+                {
+                        ExternAssembly ext_asmb;
+                        ext_asmb = assembly_table[asmb_name] as ExternAssembly;
+
+                        if (ext_asmb == null)
+                                throw new Exception (String.Format ("Assembly {0} not defined.", asmb_name));
+
+                        string name_space, name;
+
+                        ClassTable.GetNameAndNamespace (full_name, out name_space, out name);
+
+                        return ext_asmb.GetType (name_space, name);
+                }
+
+        }
 }
 
