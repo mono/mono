@@ -61,8 +61,7 @@ namespace System.Web.UI {
 		
 		private void Dispose (bool disposing)
 		{
-			if (!this.dispose)
-			{
+			if (!this.dispose) {
 				//Do nothing
 				this.dispose = true;
 			}
@@ -70,8 +69,7 @@ namespace System.Web.UI {
 
 		public override bool Equals (object obj)
 		{
-			if (obj != null && obj is FilterableAttribute)
-			{
+			if (obj != null && obj is FilterableAttribute) {
 				FilterableAttribute fa = (FilterableAttribute) obj;
 				return (this.filterable == fa.filterable);
 			}
@@ -95,30 +93,25 @@ namespace System.Web.UI {
 
 		public static bool IsPropertyFilterable (PropertyDescriptor propDesc)
 		{
-			System.ComponentModel.AttributeCollection ac = propDesc.Attributes;
-			if (ac.Count != 0)
-			{
-				foreach (Attribute attrib in ac)
-					if (attrib.GetType () == FilterableAttribute.Default.GetType ())
-						return true;
-			}
-			return false;
-			
-		}
-
-		public static bool IsTypeFilterable (Type type)
-		{
-			Object [] ac = type.GetCustomAttributes (false);
-			if (ac.Length != 0)
-			{
-				foreach (Attribute attrib in ac)
-					if (attrib.GetType () == FilterableAttribute.Default.GetType ())
+			System.ComponentModel.AttributeCollection attributes = propDesc.Attributes;
+			if (attributes.Count != 0) {
+				foreach (Attribute attrib in attributes)
+					if (attrib is FilterableAttribute)
 						return true;
 			}
 			return false;			
 		}
 
-
+		public static bool IsTypeFilterable (Type type)
+		{
+			Object [] attributes = type.GetCustomAttributes (typeof (FilterableAttribute), false);
+			if (attributes.Length != 0) {
+				foreach (Attribute attrib in attributes)
+					if (attrib is FilterableAttribute)
+						return true;
+			}
+			return false;			
+		}
 	}
 }
 #endif

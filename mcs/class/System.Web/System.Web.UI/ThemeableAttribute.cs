@@ -62,8 +62,7 @@ namespace System.Web.UI {
 		
 		private void Dispose (bool disposing)
 		{
-			if (!this.dispose)
-			{
+			if (!this.dispose){
 				//Do nothing
 				this.dispose = true;
 			}
@@ -71,8 +70,7 @@ namespace System.Web.UI {
 
 		public override bool Equals (object obj)
 		{
-			if (obj != null && obj is ThemeableAttribute)
-			{
+			if (obj != null && obj is ThemeableAttribute) {
 				ThemeableAttribute ta = (ThemeableAttribute) obj;
 				return (this.themeable == ta.themeable);
 			}
@@ -91,16 +89,16 @@ namespace System.Web.UI {
 
 		public static bool IsObjectThemeable (object obj)
 		{
+			
 			return IsTypeThemeable (obj.GetType ());
 		}
 
 		public static bool IsTypeThemeable (Type type)
 		{
-			Object [] ac = type.GetCustomAttributes (false);
-			if (ac.Length != 0)
-			{
-				foreach (Attribute attrib in ac)
-					if (attrib.GetType () == ThemeableAttribute.Default.GetType ())
+			Object [] attributes = type.GetCustomAttributes (typeof (ThemeableAttribute), false);
+			if (attributes.Length != 0) {
+				foreach (Attribute attrib in attributes)
+					if (attrib is ThemeableAttribute)
 						return true;
 			}
 			return false;

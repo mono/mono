@@ -1,3 +1,8 @@
+2009-09-24 Sanjay Gupta <gsanjay@novell.com>
+
+	* ThemeableAttribute.cs:
+	* FilterableAttribute.cs: Code scrubbing and optimization.
+
 2009-09-14 Sanjay Gupta <gsanjay@novell.com>
 
 	* ThemeableAttribute.cs: Completed implementation.
