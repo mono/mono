@@ -1,3 +1,8 @@
+2004-05-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HashAlgorithm.cs: Added missing exception handling to ComputeHash,
+	TransformBlock and TransformFinalBlock.
+
 2004-05-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoStream.cs: Fixed possible integer overflow.

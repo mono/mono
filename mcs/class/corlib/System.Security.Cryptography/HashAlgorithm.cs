@@ -43,6 +43,9 @@ namespace System.Security.Cryptography {
 
 		public byte[] ComputeHash (byte[] input) 
 		{
+			if (input == null)
+				throw new ArgumentNullException ("input");
+
 			return ComputeHash (input, 0, input.Length);
 		}
 
@@ -50,6 +53,17 @@ namespace System.Security.Cryptography {
 		{
 			if (disposed)
 				throw new ObjectDisposedException ("HashAlgorithm");
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException ("offset", "< 0");
+			if (count < 0)
+				throw new ArgumentException ("count", "< 0");
+			// ordered to avoid possible integer overflow
+			if (offset > buffer.Length - count) {
+				throw new ArgumentException ("offset + count", 
+					Locale.GetText ("Overflow"));
+			}
 
 			HashCore (buffer, offset, count);
 			HashValue = HashFinal ();
@@ -126,6 +140,24 @@ namespace System.Security.Cryptography {
 		
 		public int TransformBlock (byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset) 
 		{
+			if (inputBuffer == null)
+				throw new ArgumentNullException ("inputBuffer");
+			if (outputBuffer == null)
+				throw new ArgumentNullException ("outputBuffer");
+
+			if (inputOffset < 0)
+				throw new ArgumentOutOfRangeException ("inputOffset", "< 0");
+			if (inputCount < 0)
+				throw new ArgumentException ("inputCount");
+
+			// ordered to avoid possible integer overflow
+			if ((inputOffset < 0) || (inputOffset > inputBuffer.Length - inputCount))
+				throw new ArgumentException ("inputBuffer");
+			// ordered to avoid possible integer overflow
+			if ((outputOffset < 0) || (outputOffset > outputBuffer.Length - inputCount))
+				throw new IndexOutOfRangeException ("outputBuffer");
+
+			// note: other exceptions are handled by Buffer.BlockCopy
 			Buffer.BlockCopy (inputBuffer, inputOffset, outputBuffer, outputOffset, inputCount);
 			HashCore (inputBuffer, inputOffset, inputCount);
 
@@ -134,8 +166,19 @@ namespace System.Security.Cryptography {
 	
 		public byte[] TransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount) 
 		{
+			if (inputBuffer == null)
+				throw new ArgumentNullException ("inputBuffer");
+			if (inputCount < 0)
+				throw new ArgumentException ("inputCount");
+			// ordered to avoid possible integer overflow
+			if (inputOffset > inputBuffer.Length - inputCount) {
+				throw new ArgumentException ("inputOffset + inputCount", 
+					Locale.GetText ("Overflow"));
+			}
+
 			byte[] outputBuffer = new byte [inputCount];
 			
+			// note: other exceptions are handled by Buffer.BlockCopy
 			Buffer.BlockCopy (inputBuffer, inputOffset, outputBuffer, 0, inputCount);
 			
 			HashCore (inputBuffer, inputOffset, inputCount);
