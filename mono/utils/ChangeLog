@@ -1,5 +1,10 @@
 2004-06-18  Jackson Harper  <jackson@ximian.com>
 
+	* mono-logger.c/h: Add a trace mask option for tracing loading
+	config files. A little white space love.
+	
+2004-06-18  Jackson Harper  <jackson@ximian.com>
+
 	* mono-logger.c: Change default logging level to ERROR. Make sure
 	that mono_trace_init is called if mono_tracev is our first trace
 	statement is mono_tracev. Little indentation fix.
