@@ -1,3 +1,7 @@
+2001-07-17  David Menestrina  <dmenest@yahoo.com>
+
+        * Added implementation of BitArray.
+
 2001-07-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* Hashtable.cs: Removed call to d.Count in the Hashtable
