@@ -1,3 +1,7 @@
+2004-07-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile: added System.Data.SqlXml.dll as a working target.
+
 2004-07-02  Raja R Harinath  <rharinath@novell.com>
 
 	* IBM.Data.DB2/Makefile (all-local $(STD_TARGETS:=-local)):
