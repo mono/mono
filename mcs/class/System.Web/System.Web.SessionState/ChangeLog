@@ -1,5 +1,9 @@
 2003-11-03 Jackson Harper <jackson@ximian.com>
 
+	* HttpSessionState.cs (CopyTo): Copy values not keys. Patch by Yaron Shkop.
+	
+2003-11-03 Jackson Harper <jackson@ximian.com>
+
 	* HttpSessionState.cs: Make the SessionDictionary accessable
 	* ISessionHandler.cs: Add method to update the session state
 	data in the handler. Pass the session config to handlers when

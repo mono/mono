@@ -159,7 +159,7 @@ public sealed class HttpSessionState : ICollection, IEnumerable
 	{
 		NameObjectCollectionBase.KeysCollection all = Keys;
 		for (int i = 0; i < all.Count; i++)
-			array.SetValue (_dict [all [i]], i + index);
+			array.SetValue (all.Get(i), i + index);
 	}
 
 	public IEnumerator GetEnumerator ()
