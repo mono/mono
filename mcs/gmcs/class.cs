@@ -3158,7 +3158,7 @@ namespace Mono.CSharp {
 					return false;
 
 				if ((ModFlags & Modifiers.NEW) == 0) {
-					if (MemberType != TypeManager.TypeToCoreType (parent_ret_type)) {
+					if (!MemberType.Equals (TypeManager.TypeToCoreType (parent_ret_type))) {
 						Report.SymbolRelatedToPreviousError (parent_method);
 						Report.Error (508, Location, GetSignatureForError (Parent) + ": cannot " +
 							"change return type when overriding inherited member");
