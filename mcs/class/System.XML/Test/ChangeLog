@@ -1,3 +1,11 @@
+2002-03-25  Jason Diamond  <jason@injektilo.org>
+
+	* AllTests.cs: 
+	* Microsoft.Test.csproj: 
+	* Mono.Test.csproj: Updated to include new test, XmlScannerTests.
+
+	* XPathScannerTests.cs: Added new tests for XPathScanner class.
+
 2002-03-25  Duncan Mak  <duncan@ximian.com>
 
 	* AllTests.cs: 

@@ -27,11 +27,14 @@ namespace Ximian.Mono.Tests
 				suite.AddTest (new TestSuite (typeof (NameTableTests)));
 				suite.AddTest (new TestSuite (typeof (XmlElementTests)));
 				suite.AddTest (new TestSuite (typeof (XmlNodeListTests)));
-                                suite.AddTest (new TestSuite (typeof (XmlCommentTests)));
+				suite.AddTest (new TestSuite (typeof (XmlCommentTests)));
 				suite.AddTest (new TestSuite (typeof (XmlCDataSectionTests)));
 				suite.AddTest (new TestSuite (typeof (XmlWhitespaceTests)));
 				suite.AddTest (new TestSuite (typeof (XmlSignificantWhitespaceTests)));
-                                suite.AddTest (new TestSuite (typeof (XmlDeclarationTests)));
+				suite.AddTest (new TestSuite (typeof (XmlDeclarationTests)));
+#if !MICROSOFT
+				suite.AddTest (new TestSuite (typeof (XPathScannerTests)));
+#endif
 				return suite;
 			}
 		}

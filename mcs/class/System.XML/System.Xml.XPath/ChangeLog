@@ -1,3 +1,8 @@
+2002-03-25  Jason Diamond  <jason@injektilo.org>
+
+	* XPathScanner.cs: Added new file. This class is supposed to be internal
+	but that would make it impossible to test.
+
 2002-03-08  Duncan Mak  <duncan@ximian.com>
 
 	* XPathNamespaceScope.cs:
