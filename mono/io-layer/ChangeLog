@@ -1,5 +1,10 @@
 2003-12-22  Bernie Solomon  <bernard@ugsolutions.com>
 
+	* handles-private.h: (_wapi_handle_type) check
+	for segment in range before using it
+
+2003-12-22  Bernie Solomon  <bernard@ugsolutions.com>
+
 	* thread-private.h: _wapi_thread_ops is now const
 	must match .c file.
 
