@@ -2756,6 +2756,10 @@ namespace Mono.CSharp {
 		LocalVariableReference variable;
 		Expression expr;
 		Statement statement;
+		ForeachHelperMethods hm;
+		Expression empty, conv;
+		Type array_type, element_type;
+		Type var_type;
 		
 		public Foreach (Expression type, LocalVariableReference var, Expression expr,
 				Statement stmt, Location l)
@@ -2770,7 +2774,62 @@ namespace Mono.CSharp {
 		public override bool Resolve (EmitContext ec)
 		{
 			expr = expr.Resolve (ec);
-			return statement.Resolve (ec) && expr != null;
+			if (expr == null)
+				return false;
+
+			var_type = ec.DeclSpace.ResolveType (type, false, loc);
+			if (var_type == null)
+				return false;
+			
+			//
+			// We need an instance variable.  Not sure this is the best
+			// way of doing this.
+			//
+			// FIXME: When we implement propertyaccess, will those turn
+			// out to return values in ExprClass?  I think they should.
+			//
+			if (!(expr.eclass == ExprClass.Variable || expr.eclass == ExprClass.Value ||
+			      expr.eclass == ExprClass.PropertyAccess)){
+				error1579 (expr.Type);
+				return false;
+			}
+
+			if (expr.Type.IsArray) {
+				array_type = expr.Type;
+				element_type = array_type.GetElementType ();
+
+				empty = new EmptyExpression (element_type);
+			} else {
+				hm = ProbeCollectionType (ec, expr.Type);
+				if (hm == null){
+					error1579 (expr.Type);
+					return false;
+				}
+
+				array_type = expr.Type;
+				element_type = hm.element_type;
+
+				empty = new EmptyExpression (hm.element_type);
+			}
+
+			//
+			// FIXME: maybe we can apply the same trick we do in the
+			// array handling to avoid creating empty and conv in some cases.
+			//
+			// Although it is not as important in this case, as the type
+			// will not likely be object (what the enumerator will return).
+			//
+			conv = Expression.ConvertExplicit (ec, empty, var_type, loc);
+			if (conv == null)
+				return false;
+
+			if (variable.ResolveLValue (ec, empty) == null)
+				return false;
+
+			if (!statement.Resolve (ec))
+				return false;
+
+			return true;
 		}
 		
 		//
@@ -3000,23 +3059,10 @@ namespace Mono.CSharp {
 		// FIXME: possible optimization.
 		// We might be able to avoid creating `empty' if the type is the sam
 		//
-		bool EmitCollectionForeach (EmitContext ec, Type var_type, ForeachHelperMethods hm)
+		bool EmitCollectionForeach (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			LocalBuilder enumerator, disposable;
-			Expression empty = new EmptyExpression (hm.element_type);
-			Expression conv;
-
-			//
-			// FIXME: maybe we can apply the same trick we do in the
-			// array handling to avoid creating empty and conv in some cases.
-			//
-			// Although it is not as important in this case, as the type
-			// will not likely be object (what the enumerator will return).
-			//
-			conv = Expression.ConvertExplicit (ec, empty, var_type, loc);
-			if (conv == null)
-				return false;
 
 			enumerator = ig.DeclareLocal (TypeManager.ienumerator_type);
 			disposable = ig.DeclareLocal (TypeManager.idisposable_type);
@@ -3095,17 +3141,8 @@ namespace Mono.CSharp {
 		// FIXME: possible optimization.
 		// We might be able to avoid creating `empty' if the type is the sam
 		//
-		bool EmitArrayForeach (EmitContext ec, Type var_type)
+		bool EmitArrayForeach (EmitContext ec)
 		{
-			Type array_type = expr.Type;
-			Type element_type = array_type.GetElementType ();
-			Expression conv = null;
-			Expression empty = new EmptyExpression (element_type);
-			
-			conv = Expression.ConvertExplicit (ec, empty, var_type, loc);
-			if (conv == null)
-				return false;
-
 			int rank = array_type.GetArrayRank ();
 			ILGenerator ig = ec.ig;
 
@@ -3219,26 +3256,8 @@ namespace Mono.CSharp {
 		
 		public override bool Emit (EmitContext ec)
 		{
-			Type var_type;
 			bool ret_val;
 			
-			var_type = ec.DeclSpace.ResolveType (type, false, loc);
-			if (var_type == null)
-				return false;
-			
-			//
-			// We need an instance variable.  Not sure this is the best
-			// way of doing this.
-			//
-			// FIXME: When we implement propertyaccess, will those turn
-			// out to return values in ExprClass?  I think they should.
-			//
-			if (!(expr.eclass == ExprClass.Variable || expr.eclass == ExprClass.Value ||
-			      expr.eclass == ExprClass.PropertyAccess)){
-				error1579 (expr.Type);
-				return false;
-			}
-
 			ILGenerator ig = ec.ig;
 			
 			Label old_begin = ec.LoopBegin, old_end = ec.LoopEnd;
@@ -3249,19 +3268,10 @@ namespace Mono.CSharp {
 			ec.InLoop = true;
 			ec.LoopBeginTryCatchLevel = ec.TryCatchLevel;
 			
-			if (expr.Type.IsArray)
-				ret_val = EmitArrayForeach (ec, var_type);
-			else {
-				ForeachHelperMethods hm;
-				
-				hm = ProbeCollectionType (ec, expr.Type);
-				if (hm == null){
-					error1579 (expr.Type);
-					return false;
-				}
-
-				ret_val = EmitCollectionForeach (ec, var_type, hm);
-			}
+			if (hm != null)
+				ret_val = EmitCollectionForeach (ec);
+			else
+				ret_val = EmitArrayForeach (ec);
 			
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
