@@ -22,7 +22,7 @@ if (open (EXPECT_WRONG, "<$profile-expect-wrong-error")) {
 	foreach map {
 		chomp,                     # remove trailing \n
 		s/\#.*//g,                 # remove # style comments
-		s/ //g;                    # remove whitespace
+		s/\s//g;                    # remove whitespace
 		$_ eq "" ? () : $_;        # now copy over non empty stuff
 	} <EXPECT_WRONG>;
 	
@@ -34,10 +34,10 @@ if (open (EXPECT_NO, "<$profile-expect-no-error")) {
 	foreach map {
 		chomp,                     # remove trailing \n
 		s/\#.*//g,                 # remove # style comments
-		s/ //g;                    # remove whitespace
+		s/\s//g;                    # remove whitespace
 		$_ eq "" ? () : $_;        # now copy over non empty stuff
 	} <EXPECT_NO>;
-	
+        
 	close EXPECT_NO;
 }
 
@@ -46,7 +46,7 @@ if (open (IGNORE, "<$profile-ignore-tests")) {
 	foreach map {
 		chomp,                     # remove trailing \n
 		s/\#.*//g,                 # remove # style comments
-		s/ //g;                    # remove whitespace
+		s/\s//g;                    # remove whitespace
 		$_ eq "" ? () : $_;        # now copy over non empty stuff
 	} <IGNORE>;
 	
@@ -82,6 +82,7 @@ my @status_items = (
 );
 
 my %results_map = ();
+my $total = 0;
 
 foreach (glob ($files)) {
         print "$_";
@@ -91,7 +92,7 @@ foreach (glob ($files)) {
 	print "...";
 
 	next if exists $ignore_map {$_};
-
+        $total++;
 	my $testlogfile="$profile-$_.log";
 	system "$compile --expect-error $error_number $options $_ > $testlogfile 2>&1";
 	
@@ -108,7 +109,7 @@ foreach (glob ($files)) {
 			$status = $RESULT_UNEXPECTED_CRASH;
 		}
 	}
-	
+        
 	if ($exit_value == 0) {
                 system "rm -f $testlogfile";
 		$status = $RESULT_UNEXPECTED_CORRECT_ERROR     if     exists $expecting_map {$_};
@@ -130,30 +131,29 @@ foreach (glob ($files)) {
 	print "@statuses[($status - 1)]\n";
 	$results_map{$_} = $status;
 }
-print scalar @{@status_items [($RESULT_CORRECT_ERROR              - 1)]}, " Correct errors\n";
-print scalar @{@status_items [($RESULT_EXPECTED_INCORRECT_ERROR   - 1)]}, " Incorrect errors\n";
-print scalar @{@status_items [($RESULT_EXPECTED_NO_ERROR          - 1)]}, " No errors\n";
-
-print scalar @{@status_items [($RESULT_UNEXPECTED_CORRECT_ERROR   - 1)]}, " Unexpected correct errors\n";
-print, print "\n" foreach @{@status_items [($RESULT_UNEXPECTED_CORRECT_ERROR - 1)]};
-
-print scalar @{@status_items [($RESULT_UNEXPECTED_INCORRECT_ERROR - 1)]}, " Unexpected incorrect errors\n";
-print, print "\n" foreach @{@status_items [($RESULT_UNEXPECTED_INCORRECT_ERROR - 1)]};
-
-print scalar @{@status_items [($RESULT_UNEXPECTED_CRASH - 1)]}, " Unexpected compiler crash\n";
-print, print "\n" foreach @{@status_items [($RESULT_UNEXPECTED_CRASH - 1)]};
-
-print scalar @{@status_items [($RESULT_UNEXPECTED_NO_ERROR        - 1)]}, " Unexpected no errors\n";
-print, print "\n" foreach @{@status_items [($RESULT_UNEXPECTED_NO_ERROR - 1)]};
-
 print "\n";
+my $correct = scalar @{@status_items [($RESULT_CORRECT_ERROR              - 1)]};
+print $correct, " correctly detected errors (", sprintf("%.2f",($correct / $total) * 100), " %) \n\n";
 
-print "OVERALL:";
-print scalar @{@status_items [($RESULT_CORRECT_ERROR - 1)]}, " tests succeeded\n";
-print scalar @{@status_items [($RESULT_EXPECTED_INCORRECT_ERROR - 1)]} + scalar @{@status_items [($RESULT_EXPECTED_NO_ERROR - 1)]}, " known errors (expected failures)\n";
-print scalar @{@status_items [($RESULT_UNEXPECTED_CRASH - 1)]}, " unexpected compiler crashes\n";
-print scalar @{@status_items [($RESULT_UNEXPECTED_INCORRECT_ERROR - 1)]} + scalar @{@status_items [($RESULT_UNEXPECTED_NO_ERROR - 1)]}, " errors (unexpected failures)\n";
-print scalar @{@status_items [($RESULT_UNEXPECTED_CORRECT_ERROR   - 1)]}, " new tests passing\n";
+if (scalar @{@status_items [($RESULT_UNEXPECTED_CRASH - 1)]} > 0) {
+    print scalar @{@status_items [($RESULT_UNEXPECTED_CRASH - 1)]}, " compiler crashes\n";
+    print, print "\n" foreach @{@status_items [($RESULT_UNEXPECTED_CRASH - 1)]};
+}
+
+if (scalar @{@status_items [($RESULT_UNEXPECTED_CORRECT_ERROR - 1)]} > 0) {
+    print scalar @{@status_items [($RESULT_UNEXPECTED_CORRECT_ERROR   - 1)]}, " fixed error report, remove it from expect-wrong-error or expect-no-error !\n";
+    print, print "\n" foreach @{@status_items [($RESULT_UNEXPECTED_CORRECT_ERROR - 1)]};
+}
+
+if (scalar @{@status_items [($RESULT_UNEXPECTED_INCORRECT_ERROR - 1)]} > 0) {
+    print scalar @{@status_items [($RESULT_UNEXPECTED_INCORRECT_ERROR - 1)]}, " new incorrect error report(s) !\n";
+    print, print "\n" foreach @{@status_items [($RESULT_UNEXPECTED_INCORRECT_ERROR - 1)]};
+}
+
+if (scalar @{@status_items [($RESULT_UNEXPECTED_NO_ERROR - 1)]} > 0) {
+    print scalar @{@status_items [($RESULT_UNEXPECTED_NO_ERROR        - 1)]}, " new missing error report !\n";
+    print, print "\n" foreach @{@status_items [($RESULT_UNEXPECTED_NO_ERROR - 1)]};
+}
 
 exit (
 	scalar @{@status_items [($RESULT_UNEXPECTED_INCORRECT_ERROR - 1)]} +
