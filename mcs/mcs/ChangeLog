@@ -1,5 +1,7 @@
 2004-07-18  Martin Baulig  <martin@ximian.com>
 
+	* class.cs (Property.Define): Fix iterators.
+
 	* iterators.cs (Iterator.Define): Moved the
 	`container.AddInterator (this)' call here from the .ctor; only do
 	it if we resolved successfully.

@@ -4787,6 +4787,10 @@ namespace Mono.CSharp {
 			get {
 				return block;
 			}
+
+			set {
+				block = value;
+			}
 		}
 
 		public CallingConventions CallingConventions {
@@ -5303,11 +5307,11 @@ namespace Mono.CSharp {
 					Iterator iterator = new Iterator (
 						container, "get", MemberType,
 						TypeManager.NoTypes, Get.ParameterInfo,
-						ModFlags, block, Location);
+						ModFlags, Get.Block, Location);
 					
 					if (!iterator.Define ())
 						return false;
-					block = iterator.Block;
+					Get.Block = iterator.Block;
 				}
 			}
 
