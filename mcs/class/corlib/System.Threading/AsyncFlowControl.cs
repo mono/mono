@@ -1,8 +1,8 @@
 //
-// System.Threading.Thread.cs
+// System.Threading.AsyncFlowControl structure
 //
 // Author:
-//   Zoltan Varga (vargaz@freemail.hu)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -26,59 +26,36 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+
+using System;
+using System.Globalization;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
 
 namespace System.Threading {
 
-#if NET_2_0
-	[Serializable]
 	[ComVisibleAttribute (false)]
-	public sealed class CompressedStack : ISerializable {
-#else
-	public class CompressedStack {
-#endif
+	public struct AsyncFlowControl : IDisposable {
 
-		internal CompressedStack ()
-		{
-		}
-
-		~CompressedStack ()
-		{
-		}
-
-#if NET_2_0
-		[MonoTODO]
-		[ComVisibleAttribute (false)]
-		public CompressedStack CreateCopy ()
-		{
-			throw new NotImplementedException ();
-		}
+		private bool _undo;
 
 		[MonoTODO]
-		public void GetObjectData (SerializationInfo info, StreamingContext context)
+		public void Undo ()
 		{
-			if (info == null)
-				throw new ArgumentNullException ("info");
+			if (_undo) {
+				throw new InvalidOperationException (Locale.GetText (
+					"Can only be called once."));
+			}
+			// TODO
+			_undo = true;
 		}
 
-		[MonoTODO]
-		static public CompressedStack Capture ()
+		void IDisposable.Dispose () 
 		{
-			throw new NotImplementedException ();
+			if (!_undo)
+				Undo ();
 		}
-
-		[MonoTODO]
-		static public CompressedStack GetCompressedStack ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		static public CompressedStackSwitcher SetCompressedStack (CompressedStack cs)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
 	}
-}		
+}
+
+#endif

@@ -1,3 +1,13 @@
+2004-07-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AsyncFlowControl.cs: New structure in Fx 2.0 required in 
+	System.Security namespace.
+	* CompressedStackSwitcher.cs: New structure in Fx 2.0 required in 
+	System.Security namespace.
+	* ContextCallback.cs: New delegate in Fx 2.0 required in 
+	System.Security namespace.
+	* CompressedStack.cs: Updated API for NET_2_0 profile.
+
 2004-07-10  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* SendOrPostCallback.cs: New delegate.

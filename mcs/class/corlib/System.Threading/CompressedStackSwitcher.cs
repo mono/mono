@@ -1,8 +1,8 @@
 //
-// System.Threading.Thread.cs
+// System.Threading.CompressedStackSwitcher structure
 //
 // Author:
-//   Zoltan Varga (vargaz@freemail.hu)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -26,59 +26,54 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+
+using System;
+using System.Globalization;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
 
 namespace System.Threading {
 
-#if NET_2_0
-	[Serializable]
+	[MonoTODO]
 	[ComVisibleAttribute (false)]
-	public sealed class CompressedStack : ISerializable {
-#else
-	public class CompressedStack {
-#endif
+	public struct CompressedStackSwitcher : IDisposable {
 
-		internal CompressedStack ()
+		private bool _undo;
+
+		public override bool Equals (object obj)
 		{
+			return false;
 		}
 
-		~CompressedStack ()
+		public override int GetHashCode ()
 		{
+			return 0;
 		}
 
-#if NET_2_0
-		[MonoTODO]
-		[ComVisibleAttribute (false)]
-		public CompressedStack CreateCopy ()
+		public void Undo ()
 		{
-			throw new NotImplementedException ();
+			_undo = true;
 		}
 
-		[MonoTODO]
-		public void GetObjectData (SerializationInfo info, StreamingContext context)
+// LAMESPEC: documented but not implemented (not shown by corcompare)
+#if false
+		public static bool op_Equality (CompressedStackSwitcher c1, CompressedStackSwitcher c2)
 		{
-			if (info == null)
-				throw new ArgumentNullException ("info");
+			return false;
 		}
 
-		[MonoTODO]
-		static public CompressedStack Capture ()
+		public static bool op_Inequality (CompressedStackSwitcher c1, CompressedStackSwitcher c2)
 		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		static public CompressedStack GetCompressedStack ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		static public CompressedStackSwitcher SetCompressedStack (CompressedStack cs)
-		{
-			throw new NotImplementedException ();
+			return false;
 		}
 #endif
+
+		void IDisposable.Dispose () 
+		{
+			if (!_undo)
+				Undo ();
+		}
 	}
-}		
+}
+
+#endif

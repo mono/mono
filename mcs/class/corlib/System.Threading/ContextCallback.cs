@@ -1,8 +1,8 @@
 //
-// System.Threading.Thread.cs
+// System.Threading.ContextCallback delegate
 //
 // Author:
-//   Zoltan Varga (vargaz@freemail.hu)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -26,59 +26,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
+#if NET_2_0
+
+using System;
 
 namespace System.Threading {
 
-#if NET_2_0
-	[Serializable]
-	[ComVisibleAttribute (false)]
-	public sealed class CompressedStack : ISerializable {
-#else
-	public class CompressedStack {
+	public delegate void ContextCallback (object state);
+
+}
+
 #endif
-
-		internal CompressedStack ()
-		{
-		}
-
-		~CompressedStack ()
-		{
-		}
-
-#if NET_2_0
-		[MonoTODO]
-		[ComVisibleAttribute (false)]
-		public CompressedStack CreateCopy ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void GetObjectData (SerializationInfo info, StreamingContext context)
-		{
-			if (info == null)
-				throw new ArgumentNullException ("info");
-		}
-
-		[MonoTODO]
-		static public CompressedStack Capture ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		static public CompressedStack GetCompressedStack ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		static public CompressedStackSwitcher SetCompressedStack (CompressedStack cs)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
-	}
-}		
