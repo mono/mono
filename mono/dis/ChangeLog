@@ -1,3 +1,11 @@
+2003-10-07 Jackson Harper <jackson@ximian.com>
+
+	* main.c: When dis. generic parameters the TypeOrMethodDef token
+	only needs to be shifted 1 bit. Added dis of generic constraints.
+	* get.c/get.h: New method for getting a TypeOrMethodDef token
+	* dump.c: When dumping generic parameters and generic constraints
+	output readable names instead of just tokens.
+	
 2003-10-01 Jackson Harper <jackson@latitudegeo.com>
 	
 	* main.c: Fix visibility level names, when outputing pinvoke info
