@@ -1,5 +1,10 @@
 2004-11-17  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaInference.cs,
+	  XmlSchemaInferenceException.cs : added.
+
+2004-11-17  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaException.cs : removed get_Message in 2.0 profile (all done
 	  in .ctor()).
 
