@@ -757,6 +757,8 @@ namespace Mono.CSharp {
 
 			return TypeManager.ExpandInterfaces (ifaces);
 		}
+
+		bool error = false;
 		
 		//
 		// Defines the type in the appropriate ModuleBuilder or TypeBuilder.
@@ -764,14 +766,19 @@ namespace Mono.CSharp {
 		public override TypeBuilder DefineType ()
 		{
 			Type parent;
-			bool error;
 			bool is_class;
 
 			if (TypeBuilder != null)
 				return TypeBuilder;
-			
-			if (InTransit)
+
+			if (error)
 				return null;
+			
+			if (InTransit) {
+				Report.Error (146, Location, "Class definition is circular: `{0}'", Name);
+				error = true;
+				return null;
+			}
 			
 			InTransit = true;
 
@@ -795,6 +802,7 @@ namespace Mono.CSharp {
 					Report.Error (
 						644, Location, "`" + Name + "' cannot inherit from " +
 						"special class `" + TypeManager.CSharpName (parent) + "'");
+					error = true;
 					return null;
 				}
 			}
@@ -811,8 +819,10 @@ namespace Mono.CSharp {
 			TypeAttributes type_attributes = TypeAttr;
 
 			if (IsTopLevel){
-				if (TypeManager.NamespaceClash (Name, Location))
+				if (TypeManager.NamespaceClash (Name, Location)) {
+					error = true;
 					return null;
+				}
 				
 				ModuleBuilder builder = CodeGen.ModuleBuilder;
 				TypeBuilder = builder.DefineType (
@@ -863,22 +873,34 @@ namespace Mono.CSharp {
 				
 			if (Interfaces != null) {
 				foreach (Interface iface in Interfaces)
-					iface.DefineType ();
+					if (iface.DefineType () == null) {
+						error = true;
+						return null;
+					}
 			}
 			
 			if (Types != null) {
 				foreach (TypeContainer tc in Types)
-					tc.DefineType ();
+					if (tc.DefineType () == null) {
+						error = true;
+						return null;
+					}
 			}
 
 			if (Delegates != null) {
 				foreach (Delegate d in Delegates)
-					d.DefineType ();
+					if (d.DefineType () == null) {
+						error = true;
+						return null;
+					}
 			}
 
 			if (Enums != null) {
 				foreach (Enum en in Enums)
-					en.DefineType ();
+					if (en.DefineType () == null) {
+						error = true;
+						return null;
+					}
 			}
 
 			InTransit = false;

@@ -1292,6 +1292,8 @@ namespace Mono.CSharp
 			if (timestamps)
 				ShowTime ("Resolving tree");
 			RootContext.ResolveTree ();
+			if (Report.Errors > 0)
+				return false;
 			if (timestamps)
 				ShowTime ("Populate tree");
 			if (!RootContext.StdLib)

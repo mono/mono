@@ -1,3 +1,12 @@
+2003-09-15  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (TypeContainer.DefineType): Added an error flag to
+	avoid reporting duplicate CS0146's ("class definition is
+	circular.").
+
+	* driver.cs (Driver.MainDriver): Abort if
+	RootContext.ResolveTree() reported any errors.
+
 2003-09-07  Martin Baulig  <martin@ximian.com>
 
 	* report.cs (Error, Warning): Added overloaded versions which take

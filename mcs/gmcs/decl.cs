@@ -512,7 +512,6 @@ namespace Mono.CSharp {
 			t = parent.DefineType ();
 			dh.Insert (ns, name, t);
 			if (t == null){
-				Report.Error (146, Location, "Class definition is circular: `" + MakeFQN (ns, name) + "'");
 				error = true;
 				return null;
 			}
