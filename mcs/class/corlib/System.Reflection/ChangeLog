@@ -1,3 +1,9 @@
+2003-08-08  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* ParameterInfo.cs: Modified constructor of ParameterInfo for
+	  the return type of a method. Since parameter positions are
+	  zero-based, the position of the return type must be is -1.
+
 2003-08-06  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* TargetInvocationException.cs: Fixed signature

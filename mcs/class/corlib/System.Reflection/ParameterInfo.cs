@@ -40,7 +40,7 @@ namespace System.Reflection
 			this.ClassImpl = type;
 			this.MemberImpl = member;
 			this.NameImpl = "";
-			this.PositionImpl = 0;
+			this.PositionImpl = -1;	// since parameter positions are zero-based, return type pos is -1
 			this.AttrsImpl = ParameterAttributes.Retval;
 		}
 		
