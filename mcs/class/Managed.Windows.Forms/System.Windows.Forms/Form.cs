@@ -154,6 +154,11 @@ namespace System.Windows.Forms {
 				OnDrawMenu (pevent.Graphics);
 			}
 
+			protected override void Select(bool directed, bool forward) {
+				base.Select (directed, forward);
+			}
+
+
 			protected override void WndProc(ref Message m) {
 				switch((Msg)m.Msg) {
 					case Msg.WM_CLOSE: {
@@ -167,15 +172,16 @@ namespace System.Windows.Forms {
 							base.WndProc(ref m);
 							break;
 						}
-						break;
+						return;
 					}
+
 					case Msg.WM_ACTIVATE: {
 						if (m.WParam != (IntPtr)WindowActiveFlags.WA_INACTIVE) {
 							owner.OnActivated(EventArgs.Empty);
 						} else {
 							owner.OnDeactivate(EventArgs.Empty);
 						}
-						break;
+						return;
 					}
 
 #if topmost_workaround
@@ -187,9 +193,20 @@ namespace System.Windows.Forms {
 					}
 #endif
 
+					case Msg.WM_SETFOCUS: {
+Console.WriteLine("ParentForm got focus");
+						owner.WndProc(ref m);
+						return;
+					}
+
+					case Msg.WM_KILLFOCUS: {
+						owner.WndProc(ref m);
+						return;
+					}
+
 					default: {
 						base.WndProc (ref m);
-						break;
+						return;
 					}
 				}
 			}
@@ -803,6 +820,9 @@ namespace System.Windows.Forms {
 
 		protected override void OnCreateControl() {
 			base.OnCreateControl ();
+			if (this.ActiveControl == null) {
+				SelectNextControl(this, true, true, true, true);
+			}
 			OnLoad(EventArgs.Empty);
 		}
 
@@ -883,6 +903,18 @@ namespace System.Windows.Forms {
 						break;
 					}
 					break;
+				}
+
+				case Msg.WM_KILLFOCUS: {
+					return;
+				}
+
+				case Msg.WM_SETFOCUS: {
+Console.WriteLine("Child form got focus");
+					if (this.ActiveControl != null) {
+						ActiveControl.Focus();
+					}
+					return;
 				}
 
 				default: {

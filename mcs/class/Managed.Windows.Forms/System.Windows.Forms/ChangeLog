@@ -1,3 +1,21 @@
+2005-01-13  Peter Bartok  <pbartok@novell.com>
+
+	* Form.cs:
+	  - Implemented Select() override
+	  - Now handles WM_SETFOCUS/WM_KILLFOCUS messages
+	  - Now sets keyboard focus on startup
+	* Control.cs (SelectNextControl): Now properly handles directed=true
+	* TextBoxBase.cs:
+	  - WndProc: Now passes tab key on to base if AcceptTabChar=false
+	  - Added (really bad) focus rectangle (mostly for testing)
+	* TextBox.cs: Added code to handle getting/loosing focus and invalidating
+	  to enforce redraw on focus changes
+	* ContainerControl.cs:
+	  - Fixed detection of Shift-Tab key presses
+	  - Fixed traversal with arrow keys
+	* XplatUIX11.cs: Implemented simulated keyboard focus; not sure if we're
+	  gonna keep this or if it's complete yet
+	
 2005-01-13  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ComboBox.cs: missing properties, fixes

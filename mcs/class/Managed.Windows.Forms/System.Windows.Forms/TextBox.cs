@@ -41,8 +41,17 @@ namespace System.Windows.Forms {
 			password_char = '\u25cf';
 			scrollbars = ScrollBars.None;
 			alignment = HorizontalAlignment.Left;
+			this.LostFocus +=new EventHandler(TextBox_LostFocus);
 		}
 		#endregion	// Public Constructors
+
+
+		#region Private & Internal Methods
+		private void TextBox_LostFocus(object sender, EventArgs e) {
+			has_focus = false;
+			Invalidate();
+		}
+		#endregion	// Private & Internal Methods
 
 		#region Public Instance Properties
 		public bool AcceptsReturn {
@@ -141,6 +150,8 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnGotFocus(EventArgs e) {
+			has_focus=true;
+			Invalidate();
 			base.OnGotFocus (e);
 		}
 

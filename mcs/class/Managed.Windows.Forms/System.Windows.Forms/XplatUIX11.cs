@@ -109,6 +109,7 @@ namespace System.Windows.Forms {
 		internal static Stack		modal_window;		// Stack of modal window handles
 		internal static Hover		hover;
 		internal static bool		getmessage_ret;		// Return value for GetMessage function; 0 to terminate app
+		internal static IntPtr		focus_hwnd;		// the window that currently has keyboard focus
 
 		internal static Caret		caret;			// To display a blinking caret
 
@@ -234,6 +235,8 @@ namespace System.Windows.Forms {
 			hover.timer.Tick +=new EventHandler(MouseHover);
 			hover.x = -1;
 			hover.y = -1;
+
+			focus_hwnd = IntPtr.Zero;
 
 			modal_window = new Stack(3);
 
@@ -1212,12 +1215,14 @@ namespace System.Windows.Forms {
 			//
 			switch(xevent.type) {
 				case XEventName.KeyPress: {
-					keyboard.KeyEvent (xevent.AnyEvent.window, xevent, ref msg);
+					//keyboard.KeyEvent (xevent.AnyEvent.window, xevent, ref msg);
+					keyboard.KeyEvent (focus_hwnd, xevent, ref msg);
 					break;
 				}
 
 				case XEventName.KeyRelease: {
-					keyboard.KeyEvent (xevent.AnyEvent.window, xevent, ref msg);
+					//keyboard.KeyEvent (xevent.AnyEvent.window, xevent, ref msg);
+					keyboard.KeyEvent (focus_hwnd, xevent, ref msg);
 					break;
 				}
 
@@ -1860,7 +1865,13 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SetFocus(IntPtr hwnd) {
-			XSetInputFocus(DisplayHandle, hwnd, RevertTo.None, IntPtr.Zero);
+			if (focus_hwnd != IntPtr.Zero) {
+				PostMessage(focus_hwnd, Msg.WM_KILLFOCUS, hwnd, IntPtr.Zero);
+			}
+			PostMessage(hwnd, Msg.WM_SETFOCUS, focus_hwnd, IntPtr.Zero);
+			focus_hwnd = hwnd;
+
+			//XSetInputFocus(DisplayHandle, hwnd, RevertTo.None, IntPtr.Zero);
 		}
 
 		internal override IntPtr GetActive() {

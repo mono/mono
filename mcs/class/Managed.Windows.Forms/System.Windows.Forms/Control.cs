@@ -2513,6 +2513,7 @@ namespace System.Windows.Forms
 			if (!directed) {
 				// Select this control
 				Select(this);
+				return;
 			}
 
 			if (parent == null) {

@@ -638,9 +638,6 @@ namespace System.Windows.Forms {
 				case Msg.WM_PAINT: {
 					PaintEventArgs	paint_event;
 
-#if !__MonoCS__
-XplatUIWin32.Win32SetFocus(Handle);
-#endif
 					paint_event = XplatUI.PaintEventStart(Handle);
 					
 					PaintControl(paint_event);
@@ -729,6 +726,8 @@ Console.WriteLine("Destroying caret");
 							if (accepts_tab) {
 								document.InsertChar(document.CaretLine, document.CaretPosition, '\t');
 								OnTextChanged(EventArgs.Empty);
+							} else {
+								base.WndProc(ref m);
 							}
 							return;
 						}
@@ -858,6 +857,10 @@ static int current;
 
 			// Draw the viewable document
 			document.Draw(pevent.Graphics, pevent.ClipRectangle);
+
+			if (this.has_focus) {
+				ThemeEngine.Current.CPDrawFocusRectangle(pevent.Graphics, ClientRectangle, ForeColor, BackColor);
+			}
 
 			// Set the scrollbar
 			switch (scrollbars) {

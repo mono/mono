@@ -34,6 +34,8 @@ namespace System.Windows.Forms {
 
 		#region Public Constructors
 		public ContainerControl() {
+			active_control = null;
+			focused_control = null;
 		}
 		#endregion	// Public Constructors
 
@@ -133,7 +135,7 @@ namespace System.Windows.Forms {
 
 			switch (key) {
 				case Keys.Tab: {
-					if (ProcessTabKey((keyData & Keys.Shift) == 0)) {
+					if (ProcessTabKey((Control.ModifierKeys & Keys.Shift) == 0)) {
 						return true;
 					}
 					break;
@@ -153,11 +155,7 @@ namespace System.Windows.Forms {
 					goto case Keys.Down;
 				}
 				case Keys.Down: {
-					Control control;
-
-					control = active_control;
-
-					if (control.SelectNextControl(active_control, forward, false, false, true)) {
+					if (SelectNextControl(active_control, forward, false, false, true)) {
 						return true;
 					}
 					break;
