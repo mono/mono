@@ -37,7 +37,8 @@
 
 using System;
 
-namespace ICSharpCode.SharpZipLib.Zip {
+namespace ICSharpCode.SharpZipLib.Zip 
+{
 	
 	public enum CompressionMethod
 	{
@@ -60,22 +61,63 @@ namespace ICSharpCode.SharpZipLib.Zip {
 		static int KNOWN_CRC    = 4;
 		static int KNOWN_TIME   = 8;
 		
-		DateTime cal = DateTime.Now;
-		
 		string name;
 		uint   size;
 		ushort version;
 		uint   compressedSize;
-		int    crc;
+		uint   crc;
+		uint   dosTime;
 		
 		ushort known = 0;
 		CompressionMethod  method = CompressionMethod.Deflated;
 		byte[] extra = null;
 		string comment = null;
+		bool   isCrypted;
 		
-		public int zipFileIndex = -1;  /* used by ZipFile */
-		public int flags;              /* used by ZipOutputStream */
-		public int offset;             /* used by ZipFile and ZipOutputStream */
+		int zipFileIndex = -1;  /* used by ZipFile */
+		int flags;              /* used by ZipOutputStream */
+		int offset;             /* used by ZipFile and ZipOutputStream */
+		
+		public bool IsEncrypted {
+			get {
+				return (flags & 1) != 0; 
+			}
+			set {
+				if (value) {
+					flags |= 1;
+				} else {
+					flags &= ~1;
+				}
+			}
+		}
+		
+		public int ZipFileIndex {
+			get {
+				return zipFileIndex;
+			}
+			set {
+				zipFileIndex = value;
+			}
+		}
+		
+		public int Offset {
+			get {
+				return offset;
+			}
+			set {
+				offset = value;
+			}
+		}
+		
+		public int Flags {                                // Stops having two things represent same concept in class (flag isCrypted removed)
+			get { 
+				return flags; 
+			}
+			set {
+				flags = value; 
+			}
+		}
+		
 		
 		/// <summary>
 		/// Creates a zip entry with the given name.
@@ -85,9 +127,10 @@ namespace ICSharpCode.SharpZipLib.Zip {
 		/// </param>
 		public ZipEntry(string name)
 		{
-			if (name == null) {
+			if (name == null)  {
 				throw new System.ArgumentNullException("name");
 			}
+			this.DateTime  = System.DateTime.Now;
 			this.name = name;
 		}
 		
@@ -99,72 +142,64 @@ namespace ICSharpCode.SharpZipLib.Zip {
 		/// </param>
 		public ZipEntry(ZipEntry e)
 		{
-			name = e.name;
-			known = e.known;
-			size = e.size;
+			name           = e.name;
+			known          = e.known;
+			size           = e.size;
 			compressedSize = e.compressedSize;
-			crc = e.crc;
-//			time = e.time;
-			method = e.method;
-			extra = e.extra;
-			comment = e.comment;
+			crc            = e.crc;
+			dosTime        = e.dosTime;
+			method         = e.method;
+			extra          = e.extra;
+			comment        = e.comment;
 		}
 		
-		public ushort Version {
+		public int Version {
 			get {
 				return version;
 			}
 			set {
-				version = value;
+				version = (ushort)value;
 			}
 		}
 		
-		public int DosTime {
+		public long DosTime {
 			get {
-//				if ((known & KNOWN_TIME) == 0) {
-//					return 0;
-//				}
-				lock (this) {
-					return (cal.Year - 1980 & 0x7f) << 25 |
-					       (cal.Month + 1) << 21 | 
-					       (cal.Day ) << 16 | 
-					       (cal.Hour) << 11 |
-					       (cal.Minute) << 5 |
-					       (cal.Second) >> 1;
+				if ((known & KNOWN_TIME) == 0) {
+					return 0;
+				} else {
+					return dosTime;
 				}
 			}
 			set {
-				// Guard against invalid or missing date causing
-				// IndexOutOfBoundsException.
-				try {
-					lock (this) {
-						cal = CalculateDateTime(value);
-//						time = (int) (cal.Millisecond / 1000L);
-					}
-					known |= (ushort)KNOWN_TIME;
-				} catch (Exception) {
-					/* Ignore illegal time stamp */
-					known &= (ushort)~KNOWN_TIME;
-				}
+				this.dosTime = (uint)value;
+				known |= (ushort)KNOWN_TIME;
 			}
 		}
+		
 		
 		/// <summary>
 		/// Gets/Sets the time of last modification of the entry.
 		/// </summary>
 		public DateTime DateTime {
 			get {
-				return cal;
+				uint sec  = 2 * (dosTime & 0x1f);
+				uint min  = (dosTime >> 5) & 0x3f;
+				uint hrs  = (dosTime >> 11) & 0x1f;
+				uint day  = (dosTime >> 16) & 0x1f;
+				uint mon  = ((dosTime >> 21) & 0xf);
+				uint year = ((dosTime >> 25) & 0x7f) + 1980; /* since 1900 */
+				return new System.DateTime((int)year, (int)mon, (int)day, (int)hrs, (int)min, (int)sec);
 			}
 			set {
-				lock (this) {
-					cal = value;
-//					time = (int) (cal.Millisecond / 1000L);					
-				}
-				known |= (ushort)KNOWN_TIME;
+				DosTime = ((uint)value.Year - 1980 & 0x7f) << 25 | 
+				          ((uint)value.Month) << 21 |
+				          ((uint)value.Day) << 16 |
+				          ((uint)value.Hour) << 11 |
+				          ((uint)value.Minute) << 5 |
+				          ((uint)value.Second) >> 1;
 			}
 		}
-			
+		
 		/// <summary>
 		/// Returns the entry name.  The path components in the entry are
 		/// always separated by slashes ('/').
@@ -175,21 +210,21 @@ namespace ICSharpCode.SharpZipLib.Zip {
 			}
 		}
 		
-//		/// <summary>
-//		/// Gets/Sets the time of last modification of the entry.
-//		/// </summary>
-//		/// <returns>
-//		/// the time of last modification of the entry, or -1 if unknown.
-//		/// </returns>
-//		public long Time {
-//			get {
-//				return (known & KNOWN_TIME) != 0 ? time * 1000L : -1;
-//			}
-//			set {
-//				this.time = (int) (value / 1000L);
-//				this.known |= (ushort)KNOWN_TIME;
-//			}
-//		}
+		//		/// <summary>
+		//		/// Gets/Sets the time of last modification of the entry.
+		//		/// </summary>
+		//		/// <returns>
+		//		/// the time of last modification of the entry, or -1 if unknown.
+		//		/// </returns>
+		//		public long Time {
+		//			get {
+		//				return (known & KNOWN_TIME) != 0 ? time * 1000L : -1;
+		//			}
+		//			set {
+		//				this.time = (int) (value / 1000L);
+		//				this.known |= (ushort)KNOWN_TIME;
+		//			}
+		//		}
 		
 		/// <summary>
 		/// Gets/Sets the size of the uncompressed data.
@@ -204,7 +239,7 @@ namespace ICSharpCode.SharpZipLib.Zip {
 			get {
 				return (known & KNOWN_SIZE) != 0 ? (long)size : -1L;
 			}
-			set {
+			set  {
 				if (((ulong)value & 0xFFFFFFFF00000000L) != 0) {
 					throw new ArgumentOutOfRangeException("size");
 				}
@@ -249,10 +284,11 @@ namespace ICSharpCode.SharpZipLib.Zip {
 				return (known & KNOWN_CRC) != 0 ? crc & 0xffffffffL : -1L;
 			}
 			set {
-				if (((ulong)crc & 0xffffffff00000000L) != 0) {
+				if (((ulong)crc & 0xffffffff00000000L) != 0) 
+				{
 					throw new Exception();
 				}
-				this.crc = (int)value;
+				this.crc = (uint)value;
 				this.known |= (ushort)KNOWN_CRC;
 			}
 		}
@@ -273,7 +309,7 @@ namespace ICSharpCode.SharpZipLib.Zip {
 				return method;
 			}
 			set {
-			    this.method = value;
+				this.method = value;
 			}
 		}
 		
@@ -309,13 +345,12 @@ namespace ICSharpCode.SharpZipLib.Zip {
 							/* extended time stamp, unix format by Rainer Prem <Rainer@Prem.de> */
 							int flags = extra[pos];
 							if ((flags & 1) != 0) {
-								int iTime = ((extra[pos+1] & 0xff)       |
-								             (extra[pos+2] & 0xff) << 8  |
-								             (extra[pos+3] & 0xff) << 16 |
-								             (extra[pos+4] & 0xff) << 24);
+								int iTime = ((extra[pos+1] & 0xff) |
+									(extra[pos+2] & 0xff) << 8 |
+									(extra[pos+3] & 0xff) << 16 |
+									(extra[pos+4] & 0xff) << 24);
 								
-								cal = (new DateTime ( 1970, 1, 1, 0, 0, 0 ) + 
-								       new TimeSpan ( 0, 0, 0, iTime, 0 )).ToLocalTime ();
+								DateTime = (new DateTime ( 1970, 1, 1, 0, 0, 0 ) + new TimeSpan ( 0, 0, 0, iTime, 0 )).ToLocalTime ();
 								known |= (ushort)KNOWN_TIME;
 							}
 						}
@@ -342,7 +377,8 @@ namespace ICSharpCode.SharpZipLib.Zip {
 				return comment;
 			}
 			set {
-				if (value.Length > 0xffff) {
+				if (value.Length > 0xffff) 
+				{
 					throw new ArgumentOutOfRangeException();
 				}
 				this.comment = value;
@@ -357,6 +393,18 @@ namespace ICSharpCode.SharpZipLib.Zip {
 			get {
 				int nlen = name.Length;
 				return nlen > 0 && name[nlen - 1] == '/';
+			}
+		}
+		
+		/// <value>
+		/// True, if the entry is encrypted.
+		/// </value>
+		public bool IsCrypted {
+			get {
+				return isCrypted;
+			}
+			set {
+				isCrypted = value;
 			}
 		}
 		
@@ -376,18 +424,5 @@ namespace ICSharpCode.SharpZipLib.Zip {
 		{
 			return name;
 		}
-		
-		DateTime CalculateDateTime(int dosTime)
-		{
-			int sec = 2 * (dosTime & 0x1f);
-			int min = (dosTime >> 5) & 0x3f;
-			int hrs = (dosTime >> 11) & 0x1f;
-			int day = (dosTime >> 16) & 0x1f;
-			int mon = ((dosTime >> 21) & 0xf);
-			int year = ((dosTime >> 25) & 0x7f) + 1980; /* since 1900 */
-				
-			return new DateTime(year, mon, day, hrs, min, sec);
-		}
-		
 	}
 }

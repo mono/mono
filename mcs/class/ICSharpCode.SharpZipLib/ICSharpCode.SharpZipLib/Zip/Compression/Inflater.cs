@@ -40,7 +40,8 @@ using System;
 using ICSharpCode.SharpZipLib.Checksums;
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 
-namespace ICSharpCode.SharpZipLib.Zip.Compression {
+namespace ICSharpCode.SharpZipLib.Zip.Compression 
+{
 	
 	/// <summary>
 	/// Inflater is used to decompress data that has been compressed according
@@ -69,35 +70,35 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression {
 		/// Copy lengths for literal codes 257..285
 		/// </summary>
 		private static int[] CPLENS = {
-			3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31,
-			35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258
-		};
+										  3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31,
+										  35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258
+									  };
 		
 		/// <summary>
 		/// Extra bits for literal codes 257..285
 		/// </summary>
 		private static int[] CPLEXT = {
-			0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2,
-			3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0
-		};
+										  0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2,
+										  3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0
+									  };
 		
 		/// <summary>
 		/// Copy offsets for distance codes 0..29
 		/// </summary>
 		private static int[] CPDIST = {
-			1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193,
-			257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145,
-			8193, 12289, 16385, 24577
-		};
+										  1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193,
+										  257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145,
+										  8193, 12289, 16385, 24577
+									  };
 		
 		/// <summary>
 		/// Extra bits for distance codes
 		/// </summary>
 		private static int[] CPDEXT = {
-			0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6,
-			7, 7, 8, 8, 9, 9, 10, 10, 11, 11,
-			12, 12, 13, 13
-		};
+										  0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6,
+										  7, 7, 8, 8, 9, 9, 10, 10, 11, 11,
+										  12, 12, 13, 13
+									  };
 		
 		/// <summary>
 		/// This are the state in which the inflater can be.
@@ -384,9 +385,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression {
 				neededBits -= 8;
 			}
 			if ((int) adler.Value != readAdler) {
-				throw new FormatException("Adler chksum doesn't match: "
-				                          + (int)adler.Value
-				                          + " vs. " + readAdler);
+				throw new FormatException("Adler chksum doesn't match: " + (int)adler.Value + " vs. " + readAdler);
 			}
 			mode = FINISHED;
 			return false;
@@ -433,7 +432,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression {
 					if ((type & 1) != 0) {
 						isLastBlock = true;
 					}
-					switch (type >> 1) {
+					switch (type >> 1){
 						case DeflaterConstants.STORED_BLOCK:
 							input.SkipToByteBoundary();
 							mode = DECODE_STORED_LEN1;
@@ -452,15 +451,17 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression {
 					}
 					return true;
 				
-				case DECODE_STORED_LEN1: {
+				case DECODE_STORED_LEN1: 
+				{
 					if ((uncomprLen = input.PeekBits(16)) < 0) {
 						return false;
 					}
 					input.DropBits(16);
 					mode = DECODE_STORED_LEN2;
 				}
-				goto case DECODE_STORED_LEN2; /* fall through */
-				case DECODE_STORED_LEN2: {
+					goto case DECODE_STORED_LEN2; /* fall through */
+				case DECODE_STORED_LEN2: 
+				{
 					int nlen = input.PeekBits(16);
 					if (nlen < 0) {
 						return false;
@@ -471,8 +472,9 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression {
 					}
 					mode = DECODE_STORED;
 				}
-				goto case DECODE_STORED;/* fall through */
-				case DECODE_STORED: {
+					goto case DECODE_STORED;/* fall through */
+				case DECODE_STORED: 
+				{
 					int more = outputWindow.CopyStored(input, uncomprLen);
 					uncomprLen -= more;
 					if (uncomprLen == 0) {
@@ -554,7 +556,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression {
 			}
 			
 			adler.Update(buffer, off, len);
-			if ((int) adler.Value != readAdler) {
+			if ((int)adler.Value != readAdler) {
 				throw new ArgumentException("Wrong adler checksum");
 			}
 			adler.Reset();
@@ -660,12 +662,15 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression {
 			}
 			// Special case: len may be zero
 			if (len == 0) {
+				if (IsFinished == false) {// -jr- 08-Nov-2003 INFLATE_BUG fix..
+					Decode();
+				}
 				return 0;
 			}
-/*			// Check for correct buff, off, len triple
-			if (off < 0 || off + len >= buf.Length) {
-				throw new ArgumentException("off/len outside buf bounds");
-			}*/
+			/*			// Check for correct buff, off, len triple
+						if (off < 0 || off + len >= buf.Length) {
+							throw new ArgumentException("off/len outside buf bounds");
+						}*/
 			int count = 0;
 			int more;
 			do {
@@ -687,8 +692,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression {
 						return count;
 					}
 				}
-			} while (Decode() || (outputWindow.GetAvailable() > 0 &&
-			                      mode != DECODE_CHKSUM));
+			} while (Decode() || (outputWindow.GetAvailable() > 0 && mode != DECODE_CHKSUM));
 			return count;
 		}
 		

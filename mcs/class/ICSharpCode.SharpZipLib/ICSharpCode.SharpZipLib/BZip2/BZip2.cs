@@ -35,7 +35,8 @@
 using System;
 using System.IO;
 
-namespace ICSharpCode.SharpZipLib.BZip2 {
+namespace ICSharpCode.SharpZipLib.BZip2 
+{
 	
 	/// <summary>
 	/// Does all the compress and decompress pre-operation stuff.
@@ -46,16 +47,8 @@ namespace ICSharpCode.SharpZipLib.BZip2 {
 	{
 		public static void Decompress(Stream instream, Stream outstream) 
 		{
-			BufferedStream bos = new BufferedStream(outstream);
-			BufferedStream bis = new BufferedStream(instream);
-			int b = bis.ReadByte();
-			if (b != 'B') {
-				return;
-			}
-			b = bis.ReadByte();
-			if (b != 'Z') {
-				return;
-			}
+			System.IO.Stream bos = outstream;
+			System.IO.Stream bis = instream;
 			BZip2InputStream bzis = new BZip2InputStream(bis);
 			int ch = bzis.ReadByte();
 			while (ch != -1) {
@@ -66,13 +59,11 @@ namespace ICSharpCode.SharpZipLib.BZip2 {
 		}
 		
 		public static void Compress(Stream instream, Stream outstream, int blockSize) 
-		{
-			BufferedStream bos = new BufferedStream(outstream);
-			bos.WriteByte((byte)'B');
-			bos.WriteByte((byte)'Z');
-			BufferedStream bis = new BufferedStream(instream);
+		{			
+			System.IO.Stream bos = outstream;
+			System.IO.Stream bis = instream;
 			int ch = bis.ReadByte();
-			BZip2OutputStream bzos = new BZip2OutputStream(bos);
+			BZip2OutputStream bzos = new BZip2OutputStream(bos, blockSize);
 			while(ch != -1) {
 				bzos.WriteByte((byte)ch);
 				ch = bis.ReadByte();

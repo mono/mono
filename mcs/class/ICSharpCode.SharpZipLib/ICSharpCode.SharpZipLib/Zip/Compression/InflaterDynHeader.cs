@@ -39,7 +39,8 @@ using System;
 
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 
-namespace ICSharpCode.SharpZipLib.Zip.Compression {
+namespace ICSharpCode.SharpZipLib.Zip.Compression 
+{
 	
 	class InflaterDynHeader
 	{
@@ -64,7 +65,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression {
 		byte lastLen;
 		int ptr;
 		
-		static readonly int[] BL_ORDER = { 16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15 };
+		static readonly int[] BL_ORDER = 
+		{ 16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15 };
 		
 		public InflaterDynHeader()
 		{
@@ -73,91 +75,93 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression {
 		public bool Decode(StreamManipulator input)
 		{
 			decode_loop:
-			for (;;) {
-				switch (mode) {
-					case LNUM:
-						lnum = input.PeekBits(5);
-						if (lnum < 0) {
-							return false;
-						}
-						lnum += 257;
-						input.DropBits(5);
-						//  	    System.err.println("LNUM: "+lnum);
-						mode = DNUM;
-						goto case DNUM; // fall through
-					case DNUM:
-						dnum = input.PeekBits(5);
-						if (dnum < 0) {
-							return false;
-						}
-						dnum++;
-						input.DropBits(5);
-						//  	    System.err.println("DNUM: "+dnum);
-						num = lnum+dnum;
-						litdistLens = new byte[num];
-						mode = BLNUM;
-						goto case BLNUM; // fall through
-					case BLNUM:
-						blnum = input.PeekBits(4);
-						if (blnum < 0) {
-							return false;
-						}
-						blnum += 4;
-						input.DropBits(4);
-						blLens = new byte[19];
-						ptr = 0;
-						//  	    System.err.println("BLNUM: "+blnum);
-						mode = BLLENS;
-						goto case BLLENS; // fall through
-					case BLLENS:
-						while (ptr < blnum) {
-							int len = input.PeekBits(3);
-							if (len < 0) {
+				for (;;) {
+					switch (mode) {
+						case LNUM:
+							lnum = input.PeekBits(5);
+							if (lnum < 0) {
 								return false;
 							}
-							input.DropBits(3);
-							//  		System.err.println("blLens["+BL_ORDER[ptr]+"]: "+len);
-							blLens[BL_ORDER[ptr]] = (byte) len;
-							ptr++;
-						}
-						blTree = new InflaterHuffmanTree(blLens);
-						blLens = null;
-						ptr = 0;
-						mode = LENS;
-						goto case LENS; // fall through
-					case LENS: {
-						int symbol;
-						while (((symbol = blTree.GetSymbol(input)) & ~15) == 0) {
-							/* Normal case: symbol in [0..15] */
-							
-							//  		  System.err.println("litdistLens["+ptr+"]: "+symbol);
-							litdistLens[ptr++] = lastLen = (byte)symbol;
-							
-							if (ptr == num) {
-								/* Finished */
-								return true;
+							lnum += 257;
+							input.DropBits(5);
+							//  	    System.err.println("LNUM: "+lnum);
+							mode = DNUM;
+							goto case DNUM; // fall through
+						case DNUM:
+							dnum = input.PeekBits(5);
+							if (dnum < 0) {
+								return false;
 							}
-						}
-						
-						/* need more input ? */
-						if (symbol < 0)
-							return false;
-						
-						/* otherwise repeat code */
-						if (symbol >= 17) {
-							/* repeat zero */
-							//  		  System.err.println("repeating zero");
-							lastLen = 0;
-						} else {
-							if (ptr == 0) {
-								throw new Exception();
+							dnum++;
+							input.DropBits(5);
+							//  	    System.err.println("DNUM: "+dnum);
+							num = lnum+dnum;
+							litdistLens = new byte[num];
+							mode = BLNUM;
+							goto case BLNUM; // fall through
+						case BLNUM:
+							blnum = input.PeekBits(4);
+							if (blnum < 0) {
+								return false;
 							}
+							blnum += 4;
+							input.DropBits(4);
+							blLens = new byte[19];
+							ptr = 0;
+							//  	    System.err.println("BLNUM: "+blnum);
+							mode = BLLENS;
+							goto case BLLENS; // fall through
+						case BLLENS:
+							while (ptr < blnum) {
+								int len = input.PeekBits(3);
+								if (len < 0) {
+									return false;
+								}
+								input.DropBits(3);
+								//  		System.err.println("blLens["+BL_ORDER[ptr]+"]: "+len);
+								blLens[BL_ORDER[ptr]] = (byte) len;
+								ptr++;
+							}
+							blTree = new InflaterHuffmanTree(blLens);
+							blLens = null;
+							ptr = 0;
+							mode = LENS;
+							goto case LENS; // fall through
+						case LENS: 
+						{
+							int symbol;
+							while (((symbol = blTree.GetSymbol(input)) & ~15) == 0) {
+								/* Normal case: symbol in [0..15] */
+							
+								//  		  System.err.println("litdistLens["+ptr+"]: "+symbol);
+								litdistLens[ptr++] = lastLen = (byte)symbol;
+							
+								if (ptr == num) {
+									/* Finished */
+									return true;
+								}
+							}
+						
+							/* need more input ? */
+							if (symbol < 0) {
+								return false;
+							}
+						
+							/* otherwise repeat code */
+							if (symbol >= 17) {
+								/* repeat zero */
+								//  		  System.err.println("repeating zero");
+								lastLen = 0;
+							} else {
+								if (ptr == 0) {
+									throw new Exception();
+								}
+							}
+							repSymbol = symbol-16;
 						}
-						repSymbol = symbol-16;
-						}
-						mode = REPS;
-						goto case REPS; // fall through
-					case REPS:
+							mode = REPS;
+							goto case REPS; // fall through
+						case REPS:
 						{
 							int bits = repBits[repSymbol];
 							int count = input.PeekBits(bits);
@@ -180,10 +184,10 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression {
 								return true;
 							}
 						}
-						mode = LENS;
-					goto decode_loop;
+							mode = LENS;
+							goto decode_loop;
+					}
 				}
-			}
 		}
 		
 		public InflaterHuffmanTree BuildLitLenTree()

@@ -37,7 +37,8 @@
 
 using System;
 
-namespace ICSharpCode.SharpZipLib.Zip.Compression {
+namespace ICSharpCode.SharpZipLib.Zip.Compression 
+{
 	
 	/// <summary>
 	/// This class is general purpose class for writing data to a buffer.
@@ -73,8 +74,9 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression {
 		
 		public void WriteByte(int b)
 		{
-			if (DeflaterConstants.DEBUGGING && start != 0)
+			if (DeflaterConstants.DEBUGGING && start != 0) {
 				throw new Exception();
+			}
 			buf[end++] = (byte) b;
 		}
 		
@@ -133,9 +135,9 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression {
 			if (DeflaterConstants.DEBUGGING && start != 0) {
 				throw new Exception();
 			}
-//			if (DeflaterConstants.DEBUGGING) {
-//				Console.WriteLine("writeBits("+b+","+count+")");
-//			}
+			//			if (DeflaterConstants.DEBUGGING) {
+			//				//Console.WriteLine("writeBits("+b+","+count+")");
+			//			}
 			bits |= (uint)(b << bitCount);
 			bitCount += count;
 			if (bitCount >= 16) {
@@ -198,7 +200,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression {
 		
 		public byte[] ToByteArray()
 		{
-			byte[] ret = new byte[ end - start ];
+			byte[] ret = new byte[end - start];
 			System.Array.Copy(buf, start, ret, 0, ret.Length);
 			start = 0;
 			end = 0;

@@ -37,7 +37,8 @@
 
 using System;
 
-namespace ICSharpCode.SharpZipLib {
+namespace ICSharpCode.SharpZipLib 
+{
 	
 	/// <summary>
 	/// Is thrown during the creation or input of a zip file.

@@ -32,22 +32,22 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 
+using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle("SharpZipLibrary")]
+[assembly: CLSCompliant(true)]
+
+[assembly: AssemblyTitle("ICSharpCode.SharpZipLibrary")]
 [assembly: AssemblyDescription("free C# zlib implementation")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("#ZipLibrary")]
-[assembly: AssemblyCopyright("(c) Mike Krueger 2001-2002")]
+[assembly: AssemblyCopyright("(c) Mike Krueger 2001-2004")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-#if NET_2_0
-[assembly: AssemblyVersion("0.31.2.0")]
-#else
-[assembly: AssemblyVersion("0.31.0.0")]
-#endif
+
+[assembly: AssemblyVersion("0.6.0.0")]
 
 [assembly: AssemblyDelaySign(false)]
-[assembly: AssemblyKeyFile("SharpZipLib.key")]
+[assembly: AssemblyKeyFile("../ICSharpCode.SharpZipLib.key")]

@@ -1,3 +1,10 @@
+I imported the 0.6 version of the library. The only changes from the origional were
+the case of some of the file names -- I changed them to match the names in cvs.
+
+Ben Maurer.  May, 2004.
+
+--------------------
+
 This directory contains a local copy of the Zip library from the NZipLib project.
 
 I have added this as a temporary measure to simplify the building and development

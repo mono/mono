@@ -37,7 +37,8 @@
 
 using System;
 
-namespace ICSharpCode.SharpZipLib.Checksums {
+namespace ICSharpCode.SharpZipLib.Checksums 
+{
 	
 	/// <summary>
 	/// Computes Adler32 checksum for a stream of data. An Adler32

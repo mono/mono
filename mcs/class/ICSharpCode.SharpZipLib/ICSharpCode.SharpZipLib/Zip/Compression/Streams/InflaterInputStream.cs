@@ -39,8 +39,10 @@ using System;
 using System.IO;
 
 using ICSharpCode.SharpZipLib.Zip.Compression;
+using ICSharpCode.SharpZipLib.Checksums;
 
-namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams {
+namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams 
+{
 	
 	/// <summary>
 	/// This filter stream is used to decompress data compressed baseInputStream the "deflate"
@@ -60,7 +62,6 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams {
 		/// </summary>
 		protected Inflater inf;
 		
-		
 		/// <summary>
 		/// Byte array used as a buffer
 		/// </summary>
@@ -79,6 +80,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams {
 		/// </summary>
 		protected Stream baseInputStream;
 		
+		protected long csize;
+		
 		/// <summary>
 		/// I needed to implement the abstract member.
 		/// </summary>
@@ -93,7 +96,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams {
 		/// </summary>
 		public override bool CanSeek {
 			get {
-				return baseInputStream.CanSeek;
+				return false;
+				//				return baseInputStream.CanSeek;
 			}
 		}
 		
@@ -140,7 +144,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams {
 		/// </summary>
 		public override long Seek(long offset, SeekOrigin origin)
 		{
-			return baseInputStream.Seek(offset, origin);
+			throw new NotSupportedException("Seek not supported"); // -jr- 01-Dec-2003
 		}
 		
 		/// <summary>
@@ -165,6 +169,12 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams {
 		public override void WriteByte(byte val)
 		{
 			baseInputStream.WriteByte(val);
+		}
+		
+		// -jr- 01-Dec-2003 This may be flawed for some base streams?  Depends on implementation of BeginWrite
+		public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
+		{
+			throw new NotSupportedException("Asynch write not currently supported");
 		}
 		
 		//Constructors
@@ -193,7 +203,6 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams {
 		/// </param>
 		public InflaterInputStream(Stream baseInputStream, Inflater inf) : this(baseInputStream, inf, 4096)
 		{
-			
 		}
 		
 		/// <summary>
@@ -215,7 +224,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams {
 			this.inf = inf;
 			try {
 				this.len = (int)baseInputStream.Length;
-			} catch (Exception) { // the stream may not support .Length
+			} catch (Exception) {
+				// the stream may not support .Length
 				this.len = 0;
 			}
 			
@@ -243,9 +253,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams {
 		/// </summary>
 		public override void Close()
 		{
-			// Do not close the parent, it might be used by a ZipFile, and
-			// we do not want to close the "master" source.
-			// baseInputStream.Close();
+			baseInputStream.Close();
 		}
 		
 		/// <summary>
@@ -254,8 +262,12 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams {
 		protected void Fill()
 		{
 			len = baseInputStream.Read(buf, 0, buf.Length);
+			// decrypting crypted data
+			if (cryptbuffer != null) {
+				DecryptBlock(buf, 0, System.Math.Min((int)(csize - inf.TotalIn), buf.Length));
+			}
 			
-			if (len < 0) {
+			if (len <= 0) {
 				throw new ApplicationException("Deflated stream ends early.");
 			}
 			inf.SetInput(buf, 0, len);
@@ -272,7 +284,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams {
 			if (nread > 0) {
 				return onebytebuffer[0] & 0xff;
 			}
-			return -1;
+			return -1; // ok
 		}
 		
 		/// <summary>
@@ -328,20 +340,47 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams {
 			if (n < len) {
 				len = (int) n;
 			}
-			if (false && baseInputStream.CanSeek){
-				baseInputStream.Seek (len, SeekOrigin.Current);
-			} else {
-				byte[] tmp = new byte[8192];
-
-				for (long i = 0; i < len; ){
-					long left = len - i;
-					int count = left < 8192 ? ((int) left) : 8192;
-					
-					baseInputStream.Read (tmp, 0, count);
-					i += count;
-				}
-			}
-			return (long) len;
+			byte[] tmp = new byte[len];
+			return (long)baseInputStream.Read(tmp, 0, tmp.Length);
 		}
+		
+		#region Encryption stuff
+		protected byte[] cryptbuffer = null;
+		
+		uint[] keys = null;
+		protected byte DecryptByte()
+		{
+			uint temp = ((keys[2] & 0xFFFF) | 2);
+			return (byte)((temp * (temp ^ 1)) >> 8);
+		}
+		
+		protected void DecryptBlock(byte[] buf, int off, int len)
+		{
+			for (int i = off; i < off + len; ++i) {
+				buf[i] ^= DecryptByte();
+				UpdateKeys(buf[i]);
+			}
+		}
+		
+		protected void InitializePassword(string password)
+		{
+			keys = new uint[] {
+				0x12345678,
+				0x23456789,
+				0x34567890
+			};
+			for (int i = 0; i < password.Length; ++i) {
+				UpdateKeys((byte)password[i]);
+			}
+		}
+		
+		protected void UpdateKeys(byte ch)
+		{
+			keys[0] = Crc32.ComputeCrc32(keys[0], ch);
+			keys[1] = keys[1] + (byte)keys[0];
+			keys[1] = keys[1] * 134775813 + 1;
+			keys[2] = Crc32.ComputeCrc32(keys[2], (byte)(keys[1] >> 24));
+		}
+		#endregion
 	}
 }

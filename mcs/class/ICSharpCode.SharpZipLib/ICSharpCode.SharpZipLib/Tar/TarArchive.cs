@@ -38,18 +38,18 @@ using System.Text;
 
 namespace ICSharpCode.SharpZipLib.Tar {
 	
-	public delegate void ProgressMessageHandler(TarArchive archive, string message);
+	public delegate void ProgressMessageHandler(TarArchive archive, TarEntry entry, string message);
 	
 	/// <summary>
 	/// The TarArchive class implements the concept of a
 	/// tar archive. A tar archive is a series of entries, each of
 	/// which represents a file system object. Each entry in
-	/// the archive consists of a header record. Directory entries
-	/// consist only of the header record, and are followed by entries
+	/// the archive consists of a header block. Directory entries
+	/// consist only of the header block, and are followed by entries
 	/// for the directory's contents. File entries consist of a
-	/// header record followed by the number of records needed to
+	/// header followed by the number of blocks needed to
 	/// contain the file's contents. All entries are written on
-	/// record boundaries. Records are 512 bytes long.
+	/// block boundaries. Blocks are 512 bytes long.
 	/// 
 	/// TarArchives are instantiated in either read or write mode,
 	/// based upon whether they are instantiated with an InputStream
@@ -63,31 +63,31 @@ namespace ICSharpCode.SharpZipLib.Tar {
 	/// </summary>
 	public class TarArchive
 	{
-		protected bool verbose;
-		protected bool debug;
-		protected bool keepOldFiles;
-		protected bool asciiTranslate;
+		bool verbose;
+		bool debug;
+		bool keepOldFiles;
+		bool asciiTranslate;
 		
-		protected int    userId;
-		protected string userName;
-		protected int    groupId;
-		protected string groupName;
+		int    userId;
+		string userName;
+		int    groupId;
+		string groupName;
 		
-		protected string rootPath;
-		protected string pathPrefix;
+		string rootPath;
+		string pathPrefix;
 		
-		protected int    recordSize;
-		protected byte[] recordBuf;
+		int    recordSize;
+		byte[] recordBuf;
 		
-		protected TarInputStream  tarIn;
-		protected TarOutputStream tarOut;
+		TarInputStream  tarIn;
+		TarOutputStream tarOut;
 		
 		public event ProgressMessageHandler ProgressMessageEvent;
 		
-		protected virtual void OnProgressMessageEvent(string message)
+		protected virtual void OnProgressMessageEvent(TarEntry entry, string message)
 		{
 			if (ProgressMessageEvent != null) {
-				ProgressMessageEvent(this, message);
+				ProgressMessageEvent(this, entry, message);
 			}
 		}
 		
@@ -103,19 +103,14 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		/// </summary>
 		public static TarArchive CreateInputTarArchive(Stream inputStream)
 		{
-			return CreateInputTarArchive(inputStream, TarBuffer.DEFAULT_BLKSIZE);
+			return CreateInputTarArchive(inputStream, TarBuffer.DefaultBlockFactor);
 		}
 		
-		public static TarArchive CreateInputTarArchive(Stream inputStream, int blockSize)
-		{
-			return CreateInputTarArchive(inputStream, blockSize, TarBuffer.DEFAULT_RCDSIZE);
-		}
-		
-		public static TarArchive CreateInputTarArchive(Stream inputStream, int blockSize, int recordSize)
+		public static TarArchive CreateInputTarArchive(Stream inputStream, int blockFactor)
 		{
 			TarArchive archive = new TarArchive();
-			archive.tarIn = new TarInputStream(inputStream, blockSize, recordSize);
-			archive.Initialize(recordSize);
+			archive.tarIn = new TarInputStream(inputStream, blockFactor);
+			archive.Initialize(blockFactor * TarBuffer.BlockSize);
 			return archive;
 		}
 		
@@ -126,28 +121,23 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		/// </summary>
 		public static TarArchive CreateOutputTarArchive(Stream outputStream)
 		{
-			return CreateOutputTarArchive(outputStream, TarBuffer.DEFAULT_BLKSIZE);
+			return CreateOutputTarArchive(outputStream, TarBuffer.DefaultBlockFactor);
 		}
 		
-		public static TarArchive CreateOutputTarArchive(Stream outputStream, int blockSize)
-		{
-			return CreateOutputTarArchive(outputStream, blockSize, TarBuffer.DEFAULT_RCDSIZE);
-		}
-		
-		public static TarArchive CreateOutputTarArchive(Stream outputStream, int blockSize, int recordSize)
+		public static TarArchive CreateOutputTarArchive(Stream outputStream, int blockFactor)
 		{
 			TarArchive archive = new TarArchive();
-			archive.tarOut = new TarOutputStream(outputStream, blockSize, recordSize);
-			archive.Initialize(recordSize);
+			archive.tarOut = new TarOutputStream(outputStream, blockFactor);
+			archive.Initialize(blockFactor * TarBuffer.BlockSize);
 			return archive;
 		}
-		
 		
 		/// <summary>
 		/// Common constructor initialization code.
 		/// </summary>
 		void Initialize(int recordSize)
 		{
+         this.recordSize = recordSize;
 			this.rootPath   = null;
 			this.pathPrefix = null;
 			
@@ -165,11 +155,11 @@ namespace ICSharpCode.SharpZipLib.Tar {
 			this.recordBuf = new byte[RecordSize];
 		}
 		
-		/**
-		* Set the debugging flag.
-		*
-		* @param debugF The new debug setting.
-		*/
+		///
+	   /// <summary> Set the debugging flag. </summary>
+		///
+		/// <param name=debugF> The new debug setting. </param>
+		
 		public void SetDebug(bool debugF)
 		{
 			this.debug = debugF;
@@ -206,7 +196,7 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		}
 		
 		/// <summary>
-		/// Set the ascii file translation flag. If ascii file translatio
+		/// Set the ascii file translation flag. If ascii file translation
 		/// is true, then the MIME file type will be consulted to determine
 		/// if the file is of type 'text/*'. If the MIME type is not found,
 		/// then the TransFileTyper is consulted if it is not null. If
@@ -214,8 +204,7 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		/// file, it will be translated. The translation converts the local
 		/// operating system's concept of line ends into the UNIX line end,
 		/// '\n', which is the defacto standard for a TAR archive. This makes
-		/// text files compatible with UNIX, and since most tar implementations
-		/// text files compatible with UNIX, and since most tar implementations
+		/// text files compatible with UNIX.
 		/// </summary>
 		/// <param name= "asciiTranslate">
 		/// If true, translate ascii text files.
@@ -225,7 +214,7 @@ namespace ICSharpCode.SharpZipLib.Tar {
 			this.asciiTranslate = asciiTranslate;
 		}
 		
-		/*
+/*
 		/// <summary>
 		/// Set the object that will determine if a file is of type
 		/// ascii text for translation purposes.
@@ -236,7 +225,8 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		public void SetTransFileTyper(TarTransFileTyper transTyper)
 		{
 			this.transTyper = transTyper;
-		}*/
+		}
+*/
 		
 		/// <summary>
 		/// Set user and group information that will be used to fill in the
@@ -315,11 +305,11 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		
 		/// <summary>
 		/// Get the archive's record size. Because of its history, tar
-		/// supports the concept of buffered IO consisting of BLOCKS of
-		/// RECORDS. This allowed tar to match the IO characteristics of
+		/// supports the concept of buffered IO consisting of RECORDS of
+		/// BLOCKS. This allowed tar to match the IO characteristics of
 		/// the physical device being used. Of course, in the Java world,
 		/// this makes no sense, WITH ONE EXCEPTION - archives are expected
-		/// to be propertly "blocked". Thus, all of the horrible TarBuffer
+		/// to be properly "blocked". Thus, all of the horrible TarBuffer
 		/// support boils down to simply getting the "boundaries" correct.
 		/// </summary>
 		/// <returns>
@@ -329,10 +319,11 @@ namespace ICSharpCode.SharpZipLib.Tar {
 			get {
 				if (this.tarIn != null) {
 					return this.tarIn.GetRecordSize();
-				} else if (this.tarOut != null) {
+				} 
+            else if (this.tarOut != null) {
 					return this.tarOut.GetRecordSize();
 				}
-				return TarBuffer.DEFAULT_RCDSIZE;
+				return TarBuffer.DefaultRecordSize;
 			}
 		}
 		
@@ -344,7 +335,8 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		{
 			if (this.tarIn != null) {
 				this.tarIn.Close();
-			} else if (this.tarOut != null) {
+			} 
+         else if (this.tarOut != null) {
 				this.tarOut.Flush();
 				this.tarOut.Close();
 			}
@@ -364,11 +356,11 @@ namespace ICSharpCode.SharpZipLib.Tar {
 				
 				if (entry == null) {
 					if (this.debug) {
-						Console.Error.WriteLine("READ EOF RECORD");
+						Console.Error.WriteLine("READ EOF BLOCK");
 					}
 					break;
 				}
-				OnProgressMessageEvent(entry.Name);
+				OnProgressMessageEvent(entry, null);
 			}
 		}
 		
@@ -385,7 +377,7 @@ namespace ICSharpCode.SharpZipLib.Tar {
 				
 				if (entry == null) {
 					if (this.debug) {
-						Console.Error.WriteLine("READ EOF RECORD");
+						Console.Error.WriteLine("READ EOF BLOCK");
 					}
 					break;
 				}
@@ -399,20 +391,22 @@ namespace ICSharpCode.SharpZipLib.Tar {
 			if (!Directory.Exists(directoryName)) {
 				try {
 					Directory.CreateDirectory(directoryName);
-				} catch (Exception e) {
+				}
+            catch (Exception e) {
 					throw new IOException("error making directory path '" + directoryName + "', " + e.Message);
 				}
 			}
 		}
 		
-		
+		// TODO -jr- No longer reads entire file into memory but is still a weak test!
 		bool IsBinary(string filename)
 		{
 			FileStream fs = File.OpenRead(filename);
 			
-			byte[] content = new byte[fs.Length];
+         int sampleSize = System.Math.Min(4096, (int)fs.Length);
+			byte[] content = new byte[sampleSize];
 			
-			fs.Read(content, 0, (int)fs.Length);
+			fs.Read(content, 0, sampleSize);
 			fs.Close();
 			
 			// assume that ascii 0 or 
@@ -440,7 +434,7 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		void ExtractEntry(string destDir, TarEntry entry)
 		{
 			if (this.verbose) {
-				OnProgressMessageEvent(entry.Name);
+				OnProgressMessageEvent(entry, null);
 			}
 			
 			string name = entry.Name;
@@ -454,15 +448,17 @@ namespace ICSharpCode.SharpZipLib.Tar {
 			
 			if (entry.IsDirectory) {
 				EnsureDirectoryExists(destFile);
-			} else {
+			} 
+         else {
 				string parentDirectory = Path.GetDirectoryName(destFile);
 				EnsureDirectoryExists(parentDirectory);
 				
 				if (this.keepOldFiles && File.Exists(destFile)) {
 					if (this.verbose) {
-						OnProgressMessageEvent("not overwriting " + entry.Name);
+						OnProgressMessageEvent(entry, "Destination file already exists");
 					}
-				} else {
+				} 
+            else {
 					bool asciiTrans = false;
 					Stream outputStream = File.Create(destFile);
 					if (this.asciiTranslate) {
@@ -512,14 +508,16 @@ namespace ICSharpCode.SharpZipLib.Tar {
 									off = b + 1;
 								}
 							}
-						} else {
+						} 
+                  else {
 							outputStream.Write(rdbuf, 0, numRead);
 						}
 					}
 					
 					if (asciiTrans) {
 						outw.Close();
-					} else {
+					} 
+               else {
 						outputStream.Close();
 					}
 				}
@@ -551,7 +549,8 @@ namespace ICSharpCode.SharpZipLib.Tar {
 			//
 			if (eFile == null || eFile.Length == 0) {
 				entry = TarEntry.CreateTarEntry(entry.Name);
-			} else {
+			} 
+         else {
 				//
 				// The user may have explicitly set the entry's name to
 				// something other than the file's path, so we must save
@@ -564,11 +563,12 @@ namespace ICSharpCode.SharpZipLib.Tar {
 			}
 			
 			if (this.verbose) {
-				OnProgressMessageEvent(entry.Name);
+				OnProgressMessageEvent(entry, null);
 			}
 			
 			if (this.asciiTranslate && !entry.IsDirectory) {
 				asciiTrans = !IsBinary(eFile);
+
 // original java source :
 //			    	MimeType mime = null;
 //			    	string contentType = null;
@@ -616,6 +616,7 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		    		}
 		    		
 		    		inStream.Close();
+
 		    		outStream.Flush();
 		    		outStream.Close();
 		    		
@@ -650,7 +651,8 @@ namespace ICSharpCode.SharpZipLib.Tar {
 						this.WriteEntry(list[i], recurse);
 					}
 				}
-			} else {
+			}
+         else {
 				Stream inputStream = File.OpenRead(eFile);
 				int numWritten = 0;
 				byte[] eBuf = new byte[32 * 1024];
@@ -664,7 +666,8 @@ namespace ICSharpCode.SharpZipLib.Tar {
 					this.tarOut.Write(eBuf, 0, numRead);
 					numWritten +=  numRead;
 				}
-				Console.WriteLine("written " + numWritten + " bytes");
+
+//				Console.WriteLine("written " + numWritten + " bytes");
 				
 				inputStream.Close();
 				

@@ -42,7 +42,8 @@ using ICSharpCode.SharpZipLib.Checksums;
 using ICSharpCode.SharpZipLib.Zip.Compression;
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 
-namespace ICSharpCode.SharpZipLib.GZip {
+namespace ICSharpCode.SharpZipLib.GZip 
+{
 	
 	/// <summary>
 	/// This filter stream is used to decompress a "GZIP" format stream.
@@ -80,9 +81,6 @@ namespace ICSharpCode.SharpZipLib.GZip {
 	/// </example>
 	public class GZipInputStream : InflaterInputStream 
 	{
-		
-		//Variables
-		
 		/// <summary>
 		/// CRC-32 value for uncompressed data
 		/// </summary>
@@ -92,6 +90,9 @@ namespace ICSharpCode.SharpZipLib.GZip {
 		/// Indicates end of stream
 		/// </summary>
 		protected bool eos;
+		
+		// Have we read the GZIP header yet?
+		bool readGZIPHeader;
 		
 		/// <summary>
 		/// Creates a GzipInputStream with the default buffer size
@@ -165,8 +166,8 @@ namespace ICSharpCode.SharpZipLib.GZip {
 			Crc32 headCRC = new Crc32();
 			int magic = baseInputStream.ReadByte();
 			if (magic < 0) {
-					eos = true;
-					return;
+				eos = true;
+				return;
 			}
 			headCRC.Update(magic);
 			if (magic != (GZipConstants.GZIP_MAGIC >> 8)) {
@@ -246,7 +247,8 @@ namespace ICSharpCode.SharpZipLib.GZip {
 				extraLen = (len1 << 8) | len2;
 				for (int i = 0; i < extraLen;i++) {
 					int readByte = baseInputStream.ReadByte();
-					if (readByte < 0) {
+					if (readByte < 0) 
+					{
 						throw new Exception("Early EOF baseInputStream GZIP header");
 					}
 					headCRC.Update(readByte);
@@ -330,8 +332,5 @@ namespace ICSharpCode.SharpZipLib.GZip {
 			*/
 			eos = true;
 		}
-		
-		/* Have we read the GZIP header yet? */
-		private bool readGZIPHeader;
 	}
 }

@@ -36,7 +36,8 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace ICSharpCode.SharpZipLib.Tar {
+namespace ICSharpCode.SharpZipLib.Tar 
+{
 	
 	/// <summary>
 	/// The TarOutputStream writes a UNIX tar archive as an OutputStream.
@@ -49,7 +50,7 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		protected bool   debug;
 		protected int    currSize;
 		protected int    currBytes;
-		protected byte[] recordBuf;
+		protected byte[] blockBuf;        
 		protected int    assemLen;
 		protected byte[] assemBuf;
 		
@@ -59,8 +60,10 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		/// <summary>
 		/// I needed to implement the abstract member.
 		/// </summary>
-		public override bool CanRead {
-			get {
+		public override bool CanRead 
+		{
+			get 
+			{
 				return outputStream.CanRead;
 			}
 		}
@@ -68,17 +71,21 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		/// <summary>
 		/// I needed to implement the abstract member.
 		/// </summary>
-		public override bool CanSeek {
-			get {
-				return outputStream.CanSeek;
+		public override bool CanSeek 
+		{
+			get 
+			{
+  				return outputStream.CanSeek;     // -jr- Should be false?
 			}
 		}
 		
 		/// <summary>
 		/// I needed to implement the abstract member.
 		/// </summary>
-		public override bool CanWrite {
-			get {
+		public override bool CanWrite 
+		{
+			get 
+			{
 				return outputStream.CanWrite;
 			}
 		}
@@ -86,8 +93,10 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		/// <summary>
 		/// I needed to implement the abstract member.
 		/// </summary>
-		public override long Length {
-			get {
+		public override long Length 
+		{
+			get 
+			{
 				return outputStream.Length;
 			}
 		}
@@ -95,11 +104,14 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		/// <summary>
 		/// I needed to implement the abstract member.
 		/// </summary>
-		public override long Position {
-			get {
+		public override long Position 
+		{
+			get 
+			{
 				return outputStream.Position;
 			}
-			set {
+			set 
+			{
 				outputStream.Position = value;
 			}
 		}
@@ -141,35 +153,31 @@ namespace ICSharpCode.SharpZipLib.Tar {
 			outputStream.Flush();
 		}
 				
-		public TarOutputStream(Stream outputStream) : this(outputStream, TarBuffer.DEFAULT_BLKSIZE, TarBuffer.DEFAULT_RCDSIZE)
+		public TarOutputStream(Stream outputStream) : this(outputStream, TarBuffer.DefaultBlockFactor)
 		{
 		}
 		
-		public TarOutputStream(Stream outputStream, int blockSize) : this(outputStream, blockSize, TarBuffer.DEFAULT_RCDSIZE)
-		{
-		}
-		
-		public TarOutputStream(Stream outputStream, int blockSize, int recordSize)
+		public TarOutputStream(Stream outputStream, int blockFactor)
 		{
 			this.outputStream = outputStream;
-			this.buffer       = TarBuffer.CreateOutputTarBuffer(outputStream, blockSize, recordSize);
+			this.buffer       = TarBuffer.CreateOutputTarBuffer(outputStream, blockFactor);
 			
 			this.debug     = false;
 			this.assemLen  = 0;
-			this.assemBuf  = new byte[recordSize];
-			this.recordBuf = new byte[recordSize];
+			this.assemBuf  = new byte[TarBuffer.BlockSize];
+			this.blockBuf = new byte[TarBuffer.BlockSize];
 		}
 		
 		/// <summary>
 		/// Sets the debugging flag.
 		/// </summary>
-		/// <param name = "debugF">
+		/// <param name = "debugFlag">
 		/// True to turn on debugging.
 		/// </param>
-		public void SetDebug(bool debugF)
+		public void SetDebug(bool debugFlag)
 		{
-			this.debug = debugF;
-			SetBufferDebug(debugF);
+			this.debug = debugFlag;
+			SetBufferDebug(debugFlag);
 		}
 		
 		public void SetBufferDebug(bool debug)
@@ -210,7 +218,7 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		
 		/// <summary>
 		/// Put an entry on the output stream. This writes the entry's
-		/// header record and positions the output stream for writing
+		/// header and positions the output stream for writing
 		/// the contents of the entry. Once this method is called, the
 		/// stream is ready for calls to write() to write the entry's
 		/// contents. Once the contents are written, closeEntry()
@@ -222,12 +230,36 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		/// </param>
 		public void PutNextEntry(TarEntry entry)
 		{
-			if (entry.TarHeader.name.Length > TarHeader.NAMELEN) {
-				throw new InvalidHeaderException("file name '" + entry.TarHeader.name + "' is too long ( > " + TarHeader.NAMELEN + " bytes )");
+			if (entry.TarHeader.name.Length > TarHeader.NAMELEN) 
+			{
+            TarHeader longHeader = new TarHeader();
+            longHeader.typeFlag = TarHeader.LF_GNU_LONGNAME;
+            longHeader.name.Append("././@LongLink");
+            longHeader.userId = 0;
+            longHeader.groupId = 0;
+            longHeader.groupName.Length = 0;
+            longHeader.userName.Length = 0;
+            longHeader.linkName.Length = 0;
+
+            longHeader.size = entry.TarHeader.name.Length;
+
+            Console.WriteLine("TarOutputStream: PutNext entry Long name found size = " + longHeader.size); // DEBUG
+
+            longHeader.WriteHeader(this.blockBuf);
+            this.buffer.WriteBlock(this.blockBuf);  // Add special long filename header block
+
+            int nameCharIndex = 0;
+
+            while (nameCharIndex < entry.TarHeader.name.Length)
+            {
+         		TarHeader.GetNameBytes(entry.TarHeader.name, nameCharIndex, this.blockBuf, 0, TarBuffer.BlockSize);
+               nameCharIndex += TarBuffer.BlockSize;
+               this.buffer.WriteBlock(this.blockBuf);
+            }
 			}
 			
-			entry.WriteEntryHeader(this.recordBuf);
-			this.buffer.WriteRecord(this.recordBuf);
+			entry.WriteEntryHeader(this.blockBuf);
+			this.buffer.WriteBlock(this.blockBuf);
 			
 			this.currBytes = 0;
 			
@@ -238,25 +270,28 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		/// Close an entry. This method MUST be called for all file
 		/// entries that contain data. The reason is that we must
 		/// buffer data written to the stream in order to satisfy
-		/// the buffer's record based writes. Thus, there may be
+		/// the buffer's block based writes. Thus, there may be
 		/// data fragments still being assembled that must be written
 		/// to the output stream before this entry is closed and the
 		/// next entry written.
 		/// </summary>
 		public void CloseEntry()
 		{
-			if (this.assemLen > 0) {
-				for (int i = this.assemLen; i < this.assemBuf.Length; ++i) {
+			if (this.assemLen > 0) 
+			{
+				for (int i = this.assemLen; i < this.assemBuf.Length; ++i) 
+				{
 					this.assemBuf[i] = 0;
 				}
 				
-				this.buffer.WriteRecord(this.assemBuf);
+				this.buffer.WriteBlock(this.assemBuf);
 				
 				this.currBytes += this.assemLen;
 				this.assemLen = 0;
 			}
 			
-			if (this.currBytes < this.currSize) {
+			if (this.currBytes < this.currSize) 
+			{
 				throw new IOException("entry closed at '" + this.currBytes + "' before the '" + this.currSize + "' bytes specified in the header were written");
 			}
 		}
@@ -293,7 +328,8 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		/// </param>
 		public override void Write(byte[] wBuf, int wOffset, int numToWrite)
 		{
-			if ((this.currBytes + numToWrite) > this.currSize) {
+			if ((this.currBytes + numToWrite) > this.currSize) 
+			{
 				throw new IOException("request to write '" + numToWrite + "' bytes exceeds size in header of '" + this.currSize + "' bytes");
 			}
 			
@@ -304,23 +340,27 @@ namespace ICSharpCode.SharpZipLib.Tar {
 			// REVIEW Maybe this should be in TarBuffer? Could that help to
 			//        eliminate some of the buffer copying.
 			//
-			if (this.assemLen > 0) {
-				if ((this.assemLen + numToWrite ) >= this.recordBuf.Length) {
-					int aLen = this.recordBuf.Length - this.assemLen;
+			if (this.assemLen > 0) 
+			{
+				if ((this.assemLen + numToWrite ) >= this.blockBuf.Length) 
+				{
+					int aLen = this.blockBuf.Length - this.assemLen;
 					
-					Array.Copy(this.assemBuf, 0, this.recordBuf, 0, this.assemLen);
+					Array.Copy(this.assemBuf, 0, this.blockBuf, 0, this.assemLen);
 					
-					Array.Copy(wBuf, wOffset, this.recordBuf, this.assemLen, aLen);
+					Array.Copy(wBuf, wOffset, this.blockBuf, this.assemLen, aLen);
 					
-					this.buffer.WriteRecord(this.recordBuf);
+					this.buffer.WriteBlock(this.blockBuf);
 					
-					this.currBytes += this.recordBuf.Length;
+					this.currBytes += this.blockBuf.Length;
 					
 					wOffset    += aLen;
 					numToWrite -= aLen;
 					
 					this.assemLen = 0;
-				} else {// ( (this.assemLen + numToWrite ) < this.recordBuf.length )
+				} 
+				else 
+				{// ( (this.assemLen + numToWrite ) < this.blockBuf.length )
 					Array.Copy(wBuf, wOffset, this.assemBuf, this.assemLen, numToWrite);
 					wOffset       += numToWrite;
 					this.assemLen += numToWrite;
@@ -333,16 +373,18 @@ namespace ICSharpCode.SharpZipLib.Tar {
 			//   o An empty "assemble" buffer.
 			//   o No bytes to write (numToWrite == 0)
 			//
-			while (numToWrite > 0) {
-				if (numToWrite < this.recordBuf.Length) {
+			while (numToWrite > 0) 
+			{
+				if (numToWrite < this.blockBuf.Length) 
+				{
 					Array.Copy(wBuf, wOffset, this.assemBuf, this.assemLen, numToWrite);
 					this.assemLen += numToWrite;
 					break;
 				}
 				
-				this.buffer.WriteRecord(wBuf, wOffset);
+				this.buffer.WriteBlock(wBuf, wOffset);
 				
-				int num = this.recordBuf.Length;
+				int num = this.blockBuf.Length;
 				this.currBytes += num;
 				numToWrite     -= num;
 				wOffset        += num;
@@ -355,10 +397,11 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		/// </summary>
 		void WriteEOFRecord()
 		{
-			for (int i = 0; i < this.recordBuf.Length; ++i) {
-				this.recordBuf[i] = 0;
+			for (int i = 0; i < this.blockBuf.Length; ++i) 
+			{
+				this.blockBuf[i] = 0;
 			}
-			this.buffer.WriteRecord(this.recordBuf);
+			this.buffer.WriteBlock(this.blockBuf);
 		}
 	}
 }

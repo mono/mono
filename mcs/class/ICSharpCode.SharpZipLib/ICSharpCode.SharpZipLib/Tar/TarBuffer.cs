@@ -36,14 +36,15 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace ICSharpCode.SharpZipLib.Tar {
+namespace ICSharpCode.SharpZipLib.Tar 
+{
 	
 	/// <summary>
 	/// The TarBuffer class implements the tar archive concept
 	/// of a buffered input stream. This concept goes back to the
 	/// days of blocked tape drives and special io devices. In the
 	/// C# universe, the only real function that this class
-	/// performs is to ensure that files have the correct "block"
+	/// performs is to ensure that files have the correct "record"
 	/// size, or other tars will complain.
 	/// <p>
 	/// You should never have a need to access this class directly.
@@ -52,20 +53,68 @@ namespace ICSharpCode.SharpZipLib.Tar {
 	/// </summary>
 	public class TarBuffer
 	{
-		public static readonly int DEFAULT_RCDSIZE = 512;
-		public static readonly int DEFAULT_BLKSIZE = DEFAULT_RCDSIZE * 20;
+
+/* A quote from GNU tar man file on blocking and records
+   A `tar' archive file contains a series of blocks.  Each block
+contains `BLOCKSIZE' bytes.  Although this format may be thought of as
+being on magnetic tape, other media are often used.
+
+   Each file archived is represented by a header block which describes
+the file, followed by zero or more blocks which give the contents of
+the file.  At the end of the archive file there may be a block filled
+with binary zeros as an end-of-file marker.  A reasonable system should
+write a block of zeros at the end, but must not assume that such a
+block exists when reading an archive.
+
+   The blocks may be "blocked" for physical I/O operations.  Each
+record of N blocks (where N is set by the `--blocking-factor=512-SIZE'
+(`-b 512-SIZE') option to `tar') is written with a single `write ()'
+operation.  On magnetic tapes, the result of such a write is a single
+record.  When writing an archive, the last record of blocks should be
+written at the full size, with blocks after the zero block containing
+all zeros.  When reading an archive, a reasonable system should
+properly handle an archive whose last record is shorter than the rest,
+or which contains garbage records after a zero block.
+*/
+
+//      public static readonly int DEFAULT_RCDSIZE = 512;
+//      public const int DEFAULT_BLOCKFACTOR = 20;
+//	     public static readonly int DEFAULT_BLKSIZE = DEFAULT_RCDSIZE * DEFAULT_BLOCKFACTOR;
+
+      public static readonly int BlockSize = 512;
+      public static readonly int DefaultBlockFactor = 20;
+      public static readonly int DefaultRecordSize = BlockSize * DefaultBlockFactor;
 		
 		Stream inputStream;
 		Stream outputStream;
 		
-		byte[] blockBuffer;
-		int    currBlkIdx;
-		int    currRecIdx;
-		int    blockSize;
-		int    recordSize;
-		int    recsPerBlock;
+		byte[] recordBuffer;
+		int    currentBlockIndex;
+		int    currentRecordIndex;
+
+		int    recordSize = DefaultRecordSize;
+      public int RecordSize
+      {
+         get { return recordSize; }
+      }
+
+      int    blockFactor = DefaultBlockFactor;
+
+      public int BlockFactor
+      {
+         get { return blockFactor; }
+      }
+
+		bool   debug = false;
+
+      /// <summary>
+      /// Set the debugging flag for the buffer.
+      /// </summary>
+      public void SetDebug(bool debug)
+      {
+         this.debug = debug;
+      }
 		
-		bool   debug;
 		
 		protected TarBuffer()
 		{
@@ -73,36 +122,30 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		
 		public static TarBuffer CreateInputTarBuffer(Stream inputStream)
 		{
-			return CreateInputTarBuffer(inputStream, TarBuffer.DEFAULT_BLKSIZE);
+			return CreateInputTarBuffer(inputStream, TarBuffer.DefaultBlockFactor);
 		}
-		public static TarBuffer CreateInputTarBuffer(Stream inputStream, int blockSize )
-		{
-			return CreateInputTarBuffer(inputStream, blockSize, TarBuffer.DEFAULT_RCDSIZE);
-		}
-		public static TarBuffer CreateInputTarBuffer(Stream inputStream, int blockSize, int recordSize)
+
+		public static TarBuffer CreateInputTarBuffer(Stream inputStream, int blockFactor)
 		{
 			TarBuffer tarBuffer = new TarBuffer();
 			tarBuffer.inputStream  = inputStream;
 			tarBuffer.outputStream = null;
-			tarBuffer.Initialize(blockSize, recordSize);
+			tarBuffer.Initialize(blockFactor);
 			
 			return tarBuffer;
 		}
 
 		public static TarBuffer CreateOutputTarBuffer(Stream outputStream)
 		{
-			return CreateOutputTarBuffer(outputStream, TarBuffer.DEFAULT_BLKSIZE);
+			return CreateOutputTarBuffer(outputStream, TarBuffer.DefaultBlockFactor);
 		}
-		public static TarBuffer CreateOutputTarBuffer(Stream outputStream, int blockSize )
-		{
-			return CreateOutputTarBuffer(outputStream, blockSize, TarBuffer.DEFAULT_RCDSIZE);
-		}
-		public static TarBuffer CreateOutputTarBuffer(Stream outputStream, int blockSize, int recordSize)
+
+		public static TarBuffer CreateOutputTarBuffer(Stream outputStream, int blockFactor)
 		{
 			TarBuffer tarBuffer = new TarBuffer();
 			tarBuffer.inputStream  = null;
 			tarBuffer.outputStream = outputStream;
-			tarBuffer.Initialize(blockSize, recordSize);
+			tarBuffer.Initialize(blockFactor);
 			
 			return tarBuffer;
 		}
@@ -110,29 +153,32 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		/// <summary>
 		/// Initialization common to all constructors.
 		/// </summary>
-		void Initialize(int blockSize, int recordSize)
+		void Initialize(int blockFactor)
 		{
 			this.debug        = false;
-			this.blockSize    = blockSize;
-			this.recordSize   = recordSize;
-			this.recsPerBlock = this.blockSize / this.recordSize;
-			this.blockBuffer  = new byte[this.blockSize];
+         this.blockFactor  = blockFactor;
+         this.recordSize   = blockFactor * BlockSize;
+
+			this.recordBuffer  = new byte[RecordSize];
 			
-			if (inputStream != null) {
-				this.currBlkIdx = -1;
-				this.currRecIdx = this.recsPerBlock;
-			} else {
-				this.currBlkIdx = 0;
-				this.currRecIdx = 0;
+			if (inputStream != null) 
+			{
+				this.currentRecordIndex = -1;
+				this.currentBlockIndex = BlockFactor;
+			} 
+			else 
+			{
+            this.currentRecordIndex = 0;
+            this.currentBlockIndex = 0;
 			}
 		}
 		
 		/// <summary>
-		/// Get the TAR Buffer's block size. Blocks consist of multiple records.
+		/// Get the TAR Buffer's block factor
 		/// </summary>
-		public int GetBlockSize()
+		public int GetBlockFactor()
 		{
-			return this.blockSize;
+			return this.blockFactor;
 		}
 		
 		/// <summary>
@@ -144,24 +190,21 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		}
 		
 		/// <summary>
-		/// Set the debugging flag for the buffer.
+		/// Determine if an archive block indicates End of Archive. End of
+		/// archive is indicated by a block that consists entirely of null bytes.
+		/// All remaining blocks for the record should also be null's
+		/// However some older tars only do a couple of null blocks (Old GNU tar for one)
+		/// and also partial records
 		/// </summary>
-		public void SetDebug(bool debug)
-		{
-			this.debug = debug;
-		}
-		
-		/// <summary>
-		/// Determine if an archive record indicate End of Archive. End of
-		/// archive is indicated by a record that consists entirely of null bytes.
-		/// </summary>
-		/// <param name = "record">
-		/// The record data to check.
+		/// <param name = "block">
+		/// The block data to check.
 		/// </param>
-		public bool IsEOFRecord(byte[] record)
+		public bool IsEOFBlock(byte[] block)
 		{
-			for (int i = 0, sz = this.GetRecordSize(); i < sz; ++i) {
-				if (record[i] != 0) {
+			for (int i = 0, sz = BlockSize; i < sz; ++i) 
+			{
+				if (block[i] != 0) 
+				{
 					return false;
 				}
 			}
@@ -170,156 +213,175 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		}
 		
 		/// <summary>
-		/// Skip over a record on the input stream.
+		/// Skip over a block on the input stream.
 		/// </summary>
-		public void SkipRecord()
+		public void SkipBlock()
 		{
-			if (this.debug) {
-				Console.Error.WriteLine("SkipRecord: recIdx = " + this.currRecIdx + " blkIdx = " + this.currBlkIdx);
+			if (this.debug) 
+			{
+				//Console.WriteLine.WriteLine("SkipBlock: recIdx = " + this.currentRecordIndex + " blkIdx = " + this.currentBlockIndex);
 			}
 			
-			if (this.inputStream == null) {
+			if (this.inputStream == null) 
+			{
 				throw new System.IO.IOException("no input stream defined");
 			}
 			
-			if (this.currRecIdx >= this.recsPerBlock) {
-				if (!this.ReadBlock()) {
+			if (this.currentBlockIndex >= this.BlockFactor) 
+			{
+				if (!this.ReadRecord()) 
+				{
 					return; // UNDONE
 				}
 			}
 			
-			this.currRecIdx++;
+			this.currentBlockIndex++;
 		}
 		
 		/// <summary>
-		/// Read a record from the input stream and return the data.
+		/// Read a block from the input stream and return the data.
 		/// </summary>
 		/// <returns>
-		/// The record data.
+		/// The block data.
 		/// </returns>
-		public byte[] ReadRecord()
+		public byte[] ReadBlock()
 		{
-			if (this.debug) {
-				Console.Error.WriteLine( "ReadRecord: recIdx = " + this.currRecIdx + " blkIdx = " + this.currBlkIdx );
+			if (this.debug) 
+			{
+				//Console.WriteLine.WriteLine( "ReadBlock: blockIndex = " + this.currentBlockIndex + " recordIndex = " + this.currentRecordIndex );
 			}
 			
-			if (this.inputStream == null) {
-				throw new System.IO.IOException("no input stream defined");
+			if (this.inputStream == null) 
+			{
+				throw new ApplicationException("TarBuffer.ReadBlock - no input stream defined");
 			}
 			
-			if (this.currRecIdx >= this.recsPerBlock) {
-				if (!this.ReadBlock()) {
+			if (this.currentBlockIndex >= this.BlockFactor) 
+			{
+				if (!this.ReadRecord()) 
+				{
 					return null;
 				}
 			}
 			
-			byte[] result = new byte[this.recordSize];
+			byte[] result = new byte[BlockSize];
 			
-			Array.Copy(this.blockBuffer, (this.currRecIdx * this.recordSize), result, 0, this.recordSize );
-			this.currRecIdx++;
+			Array.Copy(this.recordBuffer, (this.currentBlockIndex * BlockSize), result, 0, BlockSize );
+			this.currentBlockIndex++;
 			return result;
 		}
 		
 		/// <returns>
 		/// false if End-Of-File, else true
 		/// </returns>
-		bool ReadBlock()
+		bool ReadRecord()
 		{
-			Console.WriteLine(this.debug);
-			if (this.debug) {
-				Console.Error.WriteLine("ReadBlock: blkIdx = " + this.currBlkIdx);
+			if (this.debug) 
+			{
+				//Console.WriteLine.WriteLine("ReadRecord: recordIndex = " + this.currentRecordIndex);
 			}
 			
-			if (this.inputStream == null) {
+			if (this.inputStream == null) 
+			{
 				throw new System.IO.IOException("no input stream stream defined");
 			}
 						
-			this.currRecIdx = 0;
+			this.currentBlockIndex = 0;
 			
 			int offset = 0;
-			int bytesNeeded = this.blockSize;
-			for (; bytesNeeded > 0 ;) {
-				long numBytes = this.inputStream.Read(this.blockBuffer, offset, bytesNeeded);
+			int bytesNeeded = RecordSize;
+
+			while (bytesNeeded > 0) 
+			{
+				long numBytes = this.inputStream.Read(this.recordBuffer, offset, bytesNeeded);
 				
 				//
 				// NOTE
-				// We have fit EOF, and the block is not full!
+				// We have found EOF, and the record is not full!
 				//
 				// This is a broken archive. It does not follow the standard
 				// blocking algorithm. However, because we are generous, and
 				// it requires little effort, we will simply ignore the error
-				// and continue as if the entire block were read. This does
+				// and continue as if the entire record were read. This does
 				// not appear to break anything upstream. We used to return
 				// false in this case.
 				//
 				// Thanks to 'Yohann.Roussel@alcatel.fr' for this fix.
 				//
-				if (numBytes <= 0) {
+				if (numBytes <= 0) 
+				{
 					break;
 				}
 				
 				offset      += (int)numBytes;
 				bytesNeeded -= (int)numBytes;
-				if (numBytes != this.blockSize) {
-					if (this.debug) {
-						Console.Error.WriteLine("ReadBlock: INCOMPLETE READ " + numBytes + " of " + this.blockSize + " bytes read.");
+				if (numBytes != RecordSize)
+				{
+					if (this.debug) 
+					{
+						//Console.WriteLine.WriteLine("ReadRecord: INCOMPLETE READ " + numBytes + " of " + this.blockSize + " bytes read.");
 					}
 				}
 			}
 			
-			this.currBlkIdx++;
+			this.currentRecordIndex++;
 			return true;
 		}
 		
 		/// <summary>
-		/// Get the current block number, zero based.
+		/// Get the current block number, within the current record, zero based.
 		/// </summary>
 		/// <returns>
 		/// The current zero based block number.
 		/// </returns>
 		public int GetCurrentBlockNum()
 		{
-			return this.currBlkIdx;
+			return this.currentBlockIndex;
 		}
 		
 		/// <summary>
-		/// Get the current record number, within the current block, zero based.
-		/// Thus, current offset = (currentBlockNum * recsPerBlk) + currentRecNum.
+		/// Get the current record number
+		/// Absolute block number in file = (currentRecordNum * block factor) + currentBlockNum.
 		/// </summary>
 		/// <returns>
 		/// The current zero based record number.
 		/// </returns>
 		public int GetCurrentRecordNum()
 		{
-			return this.currRecIdx - 1;
+			return this.currentRecordIndex;
 		}
 		
 		/// <summary>
-		/// Write an archive record to the archive.
+		/// Write an archive block to the archive.
 		/// </summary>
-		/// <param name="record">
-		/// The record data to write to the archive.
+		/// <param name="block">
+		/// The data to write to the archive.
 		/// </param>
 		/// 
-		public void WriteRecord(byte[] record)
+		public void WriteBlock(byte[] block)
 		{
-			if (this.debug) {
-				Console.Error.WriteLine("WriteRecord: recIdx = " + this.currRecIdx + " blkIdx = " + this.currBlkIdx );
+			if (this.debug) 
+			{
+				//Console.WriteLine.WriteLine("WriteRecord: recIdx = " + this.currentRecordIndex + " blkIdx = " + this.currentBlockIndex );
 			}
 			
-			if (this.outputStream == null) {
-				throw new System.IO.IOException("no output stream defined");
+			if (this.outputStream == null) 
+			{
+				throw new ApplicationException("TarBuffer.WriteBlock - no output stream defined");
 			}
 						
-			if (record.Length != this.recordSize) {
-				throw new IOException("record to write has length '" + record.Length + "' which is not the record size of '" + this.recordSize + "'" );
+			if (block.Length != BlockSize) 
+			{
+				throw new ApplicationException("TarBuffer.WriteBlock - block to write has length '" + block.Length + "' which is not the block size of '" + BlockSize + "'" );
 			}
 			
-			if (this.currRecIdx >= this.recsPerBlock) {
-				this.WriteBlock();
+			if (this.currentBlockIndex >= BlockFactor) 
+			{
+				this.WriteRecord();
 			}
-			Array.Copy(record, 0, this.blockBuffer, (this.currRecIdx * this.recordSize), this.recordSize );
-			this.currRecIdx++;
+
+			Array.Copy(block, 0, this.recordBuffer, (this.currentBlockIndex * BlockSize), BlockSize);
+			this.currentBlockIndex++;
 		}
 		
 		/// <summary>
@@ -333,47 +395,53 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		/// <param name="offset">
 		/// The offset of the record data within buf.
 		/// </param>
-		public void WriteRecord(byte[] buf, int offset)
+		public void WriteBlock(byte[] buf, int offset)
 		{
-			if (this.debug) {
-				Console.Error.WriteLine("WriteRecord: recIdx = " + this.currRecIdx + " blkIdx = " + this.currBlkIdx );
+			if (this.debug) 
+			{
+				//Console.WriteLine.WriteLine("WriteBlock: recIdx = " + this.currentRecordIndex + " blkIdx = " + this.currentBlockIndex );
 			}
 			
-			if (this.outputStream == null) {
-				throw new System.IO.IOException("no output stream stream defined");
+			if (this.outputStream == null) 
+			{
+				throw new ApplicationException("TarBuffer.WriteBlock - no output stream stream defined");
 			}
 						
-			if ((offset + this.recordSize) > buf.Length) {
-				throw new IOException("record has length '" + buf.Length + "' with offset '" + offset + "' which is less than the record size of '" + this.recordSize + "'" );
+			if ((offset + BlockSize) > buf.Length) 
+			{
+				throw new ApplicationException("TarBuffer.WriteBlock - record has length '" + buf.Length + "' with offset '" + offset + "' which is less than the record size of '" + this.recordSize + "'" );
 			}
 			
-			if (this.currRecIdx >= this.recsPerBlock) {
-				this.WriteBlock();
+			if (this.currentBlockIndex >= this.BlockFactor) 
+			{
+				this.WriteRecord();
 			}
 			
-			Array.Copy(buf, offset, this.blockBuffer, (this.currRecIdx * this.recordSize), this.recordSize );
+			Array.Copy(buf, offset, this.recordBuffer, (this.currentBlockIndex * BlockSize), BlockSize);
 			
-			this.currRecIdx++;
+			this.currentBlockIndex++;
 		}
 		
 		/// <summary>
-		/// Write a TarBuffer block to the archive.
+		/// Write a TarBuffer record to the archive.
 		/// </summary>
-		void WriteBlock()
+		void WriteRecord()
 		{
-			if (this.debug) {
-				Console.Error.WriteLine("WriteBlock: blkIdx = " + this.currBlkIdx);
+			if (this.debug) 
+			{
+				//Console.WriteLine.WriteLine("Writerecord: record index = " + this.currentRecordIndex);
 			}
 			
-			if (this.outputStream == null) {
-				throw new System.IO.IOException("no output stream defined");
+			if (this.outputStream == null) 
+			{
+				throw new ApplicationException("TarBuffer.WriteRecord no output stream defined");
 			}
 			
-			this.outputStream.Write(this.blockBuffer, 0, this.blockSize);
+			this.outputStream.Write(this.recordBuffer, 0, RecordSize);
 			this.outputStream.Flush();
 			
-			this.currRecIdx = 0;
-			this.currBlkIdx++;
+         this.currentBlockIndex = 0;
+         this.currentRecordIndex++;
 		}
 		
 		/// <summary>
@@ -381,16 +449,19 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		/// </summary>
 		void Flush()
 		{
-			if (this.debug) {
-				Console.Error.WriteLine("TarBuffer.FlushBlock() called.");
+			if (this.debug) 
+			{
+				//Console.WriteLine.WriteLine("TarBuffer.FlushBlock() called.");
 			}
 			
-			if (this.outputStream == null) {
-				throw new System.IO.IOException("no output base stream defined");
+			if (this.outputStream == null) 
+			{
+				throw new ApplicationException("TarBuffer.Flush no output stream defined");
 			}
 			
-			if (this.currRecIdx > 0) {
-				this.WriteBlock();
+			if (this.currentBlockIndex > 0) 
+			{
+				this.WriteRecord();
 			}
 			outputStream.Flush();
 		}
@@ -401,25 +472,27 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		/// </summary>
 		public void Close()
 		{
-			if (this.debug) {
-				Console.Error.WriteLine("TarBuffer.Close().");
+			if (this.debug) 
+			{
+				//Console.WriteLine.WriteLine("TarBuffer.Close().");
 			}
 			
-			if (outputStream != null ) {
+			if (outputStream != null)
+			{
 				Flush();
 	
-//				if ( this.outStream != System.out
-//						&& this.outStream != System.err ) {
 				outputStream.Close();
 				outputStream = null;
-			} else if (inputStream != null) {
-//				if (this.inStream != System.in ) {
+			} 
+			else if (inputStream != null) 
+			{
 				inputStream.Close();
 				inputStream = null;
 			}
 		}
 	}
 }
+
 /* The original Java file had this header:
 	*
 	** Authored by Timothy Gerard Endres

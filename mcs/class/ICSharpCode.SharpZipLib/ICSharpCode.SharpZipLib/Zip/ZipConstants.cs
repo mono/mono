@@ -37,7 +37,8 @@
 
 using System.Text;
 
-namespace ICSharpCode.SharpZipLib.Zip {
+namespace ICSharpCode.SharpZipLib.Zip 
+{
 	
 	/// <summary>
 	/// This class contains constants used for zip.
@@ -58,6 +59,9 @@ namespace ICSharpCode.SharpZipLib.Zip {
 		public const int LOCNAM = 26;
 		public const int LOCEXT = 28;
 		
+		public const int SPANNINGSIG = 'P' | ('K' << 8) | (7 << 16) | (8 << 24);
+		public const int SPANTEMPSIG = 'P' | ('K' << 8) | ('0' << 16) | ('0' << 24);
+		
 		/* The Data descriptor */
 		public const int EXTSIG = 'P' | ('K' << 8) | (7 << 16) | (8 << 24);
 		public const int EXTHDR = 16;
@@ -70,7 +74,7 @@ namespace ICSharpCode.SharpZipLib.Zip {
 		public const int CENSIG = 'P' | ('K' << 8) | (1 << 16) | (2 << 24);
 		
 		/* The central directory file header for 64bit ZIP*/
-		public const int CENSIG64 = 0x06064b50;
+		public const int CENSIG64 = 'P' | ('K' << 8) | (6 << 16) | (6 << 24);
 		
 		public const int CENHDR = 46;
 		
@@ -94,6 +98,9 @@ namespace ICSharpCode.SharpZipLib.Zip {
 		public const int ENDSIG = 'P' | ('K' << 8) | (5 << 16) | (6 << 24);
 		public const int ENDHDR = 22;
 		
+		public const int HDRDIGITALSIG = 'P' | ('K' << 8) | (5 << 16) | (5 << 24);
+		public const int CENDIGITALSIG = 'P' | ('K' << 8) | (5 << 16) | (5 << 24);
+		
 		/* The following two fields are missing in SUN JDK */
 		public const int ENDNRD =  4;
 		public const int ENDDCD =  6;
@@ -104,21 +111,36 @@ namespace ICSharpCode.SharpZipLib.Zip {
 		public const int ENDOFF = 16;
 		public const int ENDCOM = 20;
 		
-		/* Using the codepage 1252 doesn't solve the 8bit ASCII problem :/
-		   any help would be appreciated.
-		 
-		  // get encoding for latin characters (like ö, ü, ß or ô)
-		  static Encoding ecp1252 = Encoding.GetEncoding(1252);
-		*/
+		
+		static int defaultCodePage = 0;  // 0 gives default code page, set it to whatever you like or alternatively alter it via property at runtime for more flexibility
+		                                 // Some care for compatability purposes is required as you can specify unicode code pages here.... if this way of working seems ok
+		                                 // then some protection may be added to make the interface a bit more robust perhaps.
+		
+		public static int DefaultCodePage {
+			get {
+				return defaultCodePage; 
+			}
+			set {
+				defaultCodePage = value; 
+			}
+		}
+		
 		public static string ConvertToString(byte[] data)
 		{
-			
-			return Encoding.ASCII.GetString(data);
+#if COMACT_FRAMEWORK			
+			return Encoding.ASCII.GetString(data,0, data.Length);
+#else
+			return Encoding.GetEncoding(DefaultCodePage).GetString(data, 0, data.Length);
+#endif
 		}
 		
 		public static byte[] ConvertToArray(string str)
 		{
+#if COMACT_FRAMEWORK			
 			return Encoding.ASCII.GetBytes(str);
+#else
+			return Encoding.GetEncoding(DefaultCodePage).GetBytes(str);
+#endif
 		}
 	}
 }

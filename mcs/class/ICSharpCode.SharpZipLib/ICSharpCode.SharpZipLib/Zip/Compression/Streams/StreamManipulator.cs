@@ -37,7 +37,8 @@
 
 using System;
 
-namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams {
+namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams 
+{
 	
 	/// <summary>
 	/// This class allows us to retrieve a specified amount of bits from
@@ -75,7 +76,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams {
 		{
 			if (bits_in_buffer < n) {
 				if (window_start == window_end) {
-					return -1;
+					return -1; // ok
 				}
 				buffer |= (uint)((window[window_start++] & 0xff |
 				                 (window[window_start++] & 0xff) << 8) << bits_in_buffer);
@@ -174,7 +175,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams {
 			if (length < 0) {
 				throw new ArgumentOutOfRangeException("length negative");
 			}
-			if ((bits_in_buffer & 7) != 0)   {
+			if ((bits_in_buffer & 7) != 0) {
 				/* bits_in_buffer may only be 0 or 8 */
 				throw new InvalidOperationException("Bit buffer is not aligned!");
 			}

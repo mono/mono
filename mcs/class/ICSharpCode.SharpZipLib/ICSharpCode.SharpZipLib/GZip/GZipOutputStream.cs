@@ -42,7 +42,8 @@ using ICSharpCode.SharpZipLib.Checksums;
 using ICSharpCode.SharpZipLib.Zip.Compression;
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 
-namespace ICSharpCode.SharpZipLib.GZip {
+namespace ICSharpCode.SharpZipLib.GZip 
+{
 	
 	/// <summary>
 	/// This filter stream is used to compress a stream into a "GZIP" stream.
@@ -55,7 +56,7 @@ namespace ICSharpCode.SharpZipLib.GZip {
 	/// using System;
 	/// using System.IO;
 	/// 
-	/// using NZlib.GZip;
+	/// using ICSharpCode.SharpZipLib.GZip;    // -jr- corrected
 	/// 
 	/// class MainClass
 	/// {
@@ -103,7 +104,12 @@ namespace ICSharpCode.SharpZipLib.GZip {
 		/// </param>
 		public GZipOutputStream(Stream baseOutputStream, int size) : base(baseOutputStream, new Deflater(Deflater.DEFAULT_COMPRESSION, true), size)
 		{
-			// TODO : find out correctness, orgininally this was : (int) (System.currentTimeMillis() / 1000L);
+			WriteHeader();
+			//    System.err.println("wrote GZIP header (" + gzipHeader.length + " bytes )");
+		}
+		
+		void WriteHeader()
+		{
 			int mod_time = (int)(DateTime.Now.Ticks / 10000L);  // Ticks give back 100ns intervals
 			byte[] gzipHeader = {
 				/* The two magic bytes */
@@ -125,9 +131,7 @@ namespace ICSharpCode.SharpZipLib.GZip {
 				/* The OS type (unknown) */
 				(byte) 255
 			};
-			
 			baseOutputStream.Write(gzipHeader, 0, gzipHeader.Length);
-			//    System.err.println("wrote GZIP header (" + gzipHeader.length + " bytes )");
 		}
 		
 		public override void Write(byte[] buf, int off, int len)
@@ -162,7 +166,7 @@ namespace ICSharpCode.SharpZipLib.GZip {
 				(byte) totalin, (byte) (totalin >> 8),
 				(byte) (totalin >> 16), (byte) (totalin >> 24)
 			};
-			
+
 			baseOutputStream.Write(gzipFooter, 0, gzipFooter.Length);
 			//    System.err.println("wrote GZIP trailer (" + gzipFooter.length + " bytes )");
 		}

@@ -43,7 +43,8 @@ using System.Text;
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 using ICSharpCode.SharpZipLib.Zip.Compression;
 
-namespace ICSharpCode.SharpZipLib.Zip {
+namespace ICSharpCode.SharpZipLib.Zip 
+{
 	
 	/// <summary>
 	/// This class represents a Zip archive.  You can ask for the contained
@@ -68,13 +69,13 @@ namespace ICSharpCode.SharpZipLib.Zip {
 	/// 	static public void Main(string[] args)
 	/// 	{
 	/// 		ZipFile zFile = new ZipFile(args[0]);
-	/// 		Console.WriteLine("Listing of : " + zFile.Name);
-	/// 		Console.WriteLine("");
-	/// 		Console.WriteLine("Raw Size    Size      Date     Time     Name");
-	/// 		Console.WriteLine("--------  --------  --------  ------  ---------");
+	/// 		//Console.WriteLine("Listing of : " + zFile.Name);
+	/// 		//Console.WriteLine("");
+	/// 		//Console.WriteLine("Raw Size    Size      Date     Time     Name");
+	/// 		//Console.WriteLine("--------  --------  --------  ------  ---------");
 	/// 		foreach (ZipEntry e in zFile) {
 	/// 			DateTime d = e.DateTime;
-	/// 			Console.WriteLine("{0, -10}{1, -10}{2}  {3}   {4}", e.Size, e.CompressedSize,
+	/// 			//Console.WriteLine("{0, -10}{1, -10}{2}  {3}   {4}", e.Size, e.CompressedSize,
 	/// 			                                                    d.ToString("dd-MM-yy"), d.ToString("t"),
 	/// 			                                                    e.Name);
 	/// 		}
@@ -84,6 +85,7 @@ namespace ICSharpCode.SharpZipLib.Zip {
 	public class ZipFile : IEnumerable
 	{
 		string     name;
+		string     comment;
 		Stream     baseStream;
 		ZipEntry[] entries;
 		
@@ -203,6 +205,12 @@ namespace ICSharpCode.SharpZipLib.Zip {
 			
 			int centralOffset = ReadLeInt();
 			
+			// GET COMMENT SIZE (COMES AFTER CENTRALOFFSET) 
+			int commentSize = ReadLeShort(); 
+			byte[] zipComment = new byte[commentSize]; 
+			baseStream.Read(zipComment, 0, zipComment.Length); 
+			comment = ZipConstants.ConvertToString(zipComment); 
+			
 			entries = new ZipEntry[count];
 			baseStream.Seek(centralOffset, SeekOrigin.Begin);
 			for (int i = 0; i < count; i++) {
@@ -242,7 +250,7 @@ namespace ICSharpCode.SharpZipLib.Zip {
 				entry.Crc = crc & 0xffffffffL;
 				entry.Size = size & 0xffffffffL;
 				entry.CompressedSize = csize & 0xffffffffL;
-				entry.DosTime = dostime;
+				entry.DosTime = (uint)dostime;
 				if (extraLen > 0) {
 					byte[] extra = new byte[extraLen];
 					baseStream.Read(extra, 0, extraLen);
@@ -252,8 +260,8 @@ namespace ICSharpCode.SharpZipLib.Zip {
 					baseStream.Read(buffer, 0, commentLen);
 					entry.Comment = ZipConstants.ConvertToString(buffer);
 				}
-				entry.zipFileIndex = i;
-				entry.offset = offset;
+				entry.ZipFileIndex = i;
+				entry.Offset = offset;
 				entries[i] = entry;
 			}
 		}
@@ -293,7 +301,7 @@ namespace ICSharpCode.SharpZipLib.Zip {
 					return i;
 				}
 			}
-			return -1;
+			return -1; // ok
 		}
 		
 		/// <summary>
@@ -330,7 +338,7 @@ namespace ICSharpCode.SharpZipLib.Zip {
 		long CheckLocalHeader(ZipEntry entry)
 		{
 			lock(baseStream) {
-				baseStream.Seek(entry.offset, SeekOrigin.Begin);
+				baseStream.Seek(entry.Offset, SeekOrigin.Begin);
 				if (ReadLeInt() != ZipConstants.LOCSIG) {
 					throw new ZipException("Wrong Local header signature");
 				}
@@ -359,7 +367,7 @@ namespace ICSharpCode.SharpZipLib.Zip {
 				}
 				
 				int extraLen = entry.Name.Length + ReadLeShort();
-				return entry.offset + ZipConstants.LOCHDR + extraLen;
+				return entry.Offset + ZipConstants.LOCHDR + extraLen;
 			}
 		}
 		
@@ -383,7 +391,7 @@ namespace ICSharpCode.SharpZipLib.Zip {
 				throw new InvalidOperationException("ZipFile has closed");
 			}
 			
-			int index = entry.zipFileIndex;
+			int index = entry.ZipFileIndex;
 			if (index < 0 || index >= entries.Length || entries[index].Name != entry.Name) {
 				index = GetEntryIndex(entry.Name);
 				if (index < 0) {
@@ -401,6 +409,15 @@ namespace ICSharpCode.SharpZipLib.Zip {
 					return new InflaterInputStream(istr, new Inflater(true));
 				default:
 					throw new ZipException("Unknown compression method " + method);
+			}
+		}
+		
+		/// <summary>
+		/// The comment for the whole zip file.
+		/// </summary>
+		public string ZipFileComment {
+			get {
+				return comment;
 			}
 		}
 		
@@ -465,7 +482,8 @@ namespace ICSharpCode.SharpZipLib.Zip {
 				end = start + len;
 			}
 			
-			public override int Available {
+			public override int Available 
+			{
 				get {
 					long amount = end - filepos;
 					if (amount > Int32.MaxValue) {
@@ -479,8 +497,9 @@ namespace ICSharpCode.SharpZipLib.Zip {
 			public override int ReadByte()
 			{
 				if (filepos == end) {
-					return -1;
+					return -1; //ok
 				}
+				
 				lock(baseStream) {
 					baseStream.Seek(filepos++, SeekOrigin.Begin);
 					return baseStream.ReadByte();
@@ -492,7 +511,7 @@ namespace ICSharpCode.SharpZipLib.Zip {
 				if (len > end - filepos) {
 					len = (int) (end - filepos);
 					if (len == 0) {
-						return -1;
+						return 0;
 					}
 				}
 				lock(baseStream) {

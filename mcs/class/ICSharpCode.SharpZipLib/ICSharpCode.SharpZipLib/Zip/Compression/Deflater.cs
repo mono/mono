@@ -37,7 +37,8 @@
 
 using System;
 
-namespace ICSharpCode.SharpZipLib.Zip.Compression {
+namespace ICSharpCode.SharpZipLib.Zip.Compression 
+{
 	
 	/// <summary>
 	/// This is the Deflater class.  The deflater class compresses input
@@ -119,8 +120,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression {
 		
 		private static  int INIT_STATE              = 0x00;
 		private static  int SETDICT_STATE           = 0x01;
-//		private static  int INIT_FINISHING_STATE    = 0x08;
-//		private static  int SETDICT_FINISHING_STATE = 0x09;
+		//		private static  int INIT_FINISHING_STATE    = 0x08;
+		//		private static  int SETDICT_FINISHING_STATE = 0x09;
 		private static  int BUSY_STATE              = 0x10;
 		private static  int FLUSHING_STATE          = 0x14;
 		private static  int FINISHING_STATE         = 0x1c;
@@ -137,10 +138,10 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression {
 		/// </summary>
 		private bool noHeader;
 		
-//		/// <summary>
-//		/// Compression strategy.
-//		/// </summary>
-//		private int strategy;
+		//		/// <summary>
+		//		/// Compression strategy.
+		//		/// </summary>
+		//		private int strategy;
 		
 		/// <summary>
 		/// The current state.
@@ -360,7 +361,6 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression {
 				throw new ArgumentOutOfRangeException("lvl");
 			}
 			
-			
 			if (level != lvl) {
 				level = lvl;
 				engine.SetLevel(lvl);
@@ -425,7 +425,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression {
 			if (state < BUSY_STATE) {
 				/* output header */
 				int header = (DEFLATED +
-				              ((DeflaterConstants.MAX_WBITS - 8) << 4)) << 8;
+					((DeflaterConstants.MAX_WBITS - 8) << 4)) << 8;
 				int level_flags = (level - 1) >> 1;
 				if (level_flags < 0 || level_flags > 3) {
 					level_flags = 3;

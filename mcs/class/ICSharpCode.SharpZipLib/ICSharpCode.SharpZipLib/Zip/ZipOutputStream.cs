@@ -44,8 +44,8 @@ using ICSharpCode.SharpZipLib.Checksums;
 using ICSharpCode.SharpZipLib.Zip.Compression;
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 
-namespace ICSharpCode.SharpZipLib.Zip {
-	
+namespace ICSharpCode.SharpZipLib.Zip 
+{
 	/// <summary>
 	/// This is a FilterOutputStream that writes the files into a zip
 	/// archive one after another.  It has a special method to start a new
@@ -106,7 +106,6 @@ namespace ICSharpCode.SharpZipLib.Zip {
 		
 		private byte[] zipComment = new byte[0];
 		private int defaultMethod = DEFLATED;
-		
 		
 		/// <summary>
 		/// Our Zip version is hard coded to 1.0 resp. 2.0
@@ -212,6 +211,14 @@ namespace ICSharpCode.SharpZipLib.Zip {
 		
 		
 		bool shouldWriteBack = false;
+		// -jr- Having a hard coded flag for seek capability requires this so users can determine
+		// if the entries will be patched or not.
+		public bool CanPatchEntries {
+			get { 
+				return baseOutputStream.CanSeek; 
+			}
+		}
+		
 		long seekPos         = -1;
 		/// <summary>
 		/// Starts a new Zip entry. It automatically closes the previous
@@ -237,7 +244,7 @@ namespace ICSharpCode.SharpZipLib.Zip {
 			
 			CompressionMethod method = entry.CompressionMethod;
 			int flags = 0;
-			
+			entry.IsCrypted = Password != null;
 			switch (method) {
 				case CompressionMethod.Stored:
 					if (entry.CompressedSize >= 0) {
@@ -248,6 +255,10 @@ namespace ICSharpCode.SharpZipLib.Zip {
 						}
 					} else {
 						entry.CompressedSize = entry.Size;
+					}
+					
+					if (entry.IsCrypted) {
+						entry.CompressedSize += 12;
 					}
 					
 					if (entry.Size < 0) {
@@ -267,12 +278,14 @@ namespace ICSharpCode.SharpZipLib.Zip {
 				CloseEntry();
 			}
 			
-//			if (entry.DosTime < 0) {
-//				entry.Time = System.Environment.TickCount;
-//			}
-			
-			entry.flags  = flags;
-			entry.offset = offset;
+			//			if (entry.DosTime < 0) {
+			//				entry.Time = System.Environment.TickCount;
+			//			}
+			if (entry.IsCrypted) {
+				flags |= 1;
+			}
+			entry.Flags  = flags;
+			entry.Offset = offset;
 			entry.CompressionMethod = (CompressionMethod)method;
 			
 			curMethod    = method;
@@ -284,7 +297,7 @@ namespace ICSharpCode.SharpZipLib.Zip {
 			if ((flags & 8) == 0) {
 				WriteLeShort(flags);
 				WriteLeShort((byte)method);
-				WriteLeInt(entry.DosTime);
+				WriteLeInt((int)entry.DosTime);
 				WriteLeInt((int)entry.Crc);
 				WriteLeInt((int)entry.CompressedSize);
 				WriteLeInt((int)entry.Size);
@@ -297,8 +310,10 @@ namespace ICSharpCode.SharpZipLib.Zip {
 					WriteLeShort(flags);
 				}
 				WriteLeShort((byte)method);
-				WriteLeInt(entry.DosTime);
-				seekPos = baseOutputStream.Position;
+				WriteLeInt((int)entry.DosTime);
+				if (baseOutputStream.CanSeek) {
+					seekPos = baseOutputStream.Position;
+				}
 				WriteLeInt(0);
 				WriteLeInt(0);
 				WriteLeInt(0);
@@ -321,6 +336,16 @@ namespace ICSharpCode.SharpZipLib.Zip {
 			baseOutputStream.Write(name, 0, name.Length);
 			baseOutputStream.Write(extra, 0, extra.Length);
 			
+			if (Password != null) {
+				InitializePassword(Password);
+				byte[] cryptbuffer = new byte[12];
+				Random rnd = new Random();
+				for (int i = 0; i < cryptbuffer.Length; ++i) {
+					cryptbuffer[i] = (byte)rnd.Next();
+				}
+				EncryptBlock(cryptbuffer, 0, cryptbuffer.Length);
+				baseOutputStream.Write(cryptbuffer, 0, cryptbuffer.Length);
+			}
 			offset += ZipConstants.LOCHDR + name.Length + extra.Length;
 			
 			/* Activate the entry. */
@@ -357,30 +382,33 @@ namespace ICSharpCode.SharpZipLib.Zip {
 			if (curEntry.Size < 0) {
 				curEntry.Size = size;
 			} else if (curEntry.Size != size) {
-				throw new ZipException("size was " + size +
-				                       ", but I expected " + curEntry.Size);
+				throw new ZipException("size was " + size + ", but I expected " + curEntry.Size);
+			}
+			
+			if (curEntry.IsCrypted) {
+				csize += 12;
 			}
 			
 			if (curEntry.CompressedSize < 0) {
 				curEntry.CompressedSize = csize;
 			} else if (curEntry.CompressedSize != csize) {
-				throw new ZipException("compressed size was " + csize + 
-				                       ", but I expected " + curEntry.CompressedSize);
+				throw new ZipException("compressed size was " + csize + ", but I expected " + curEntry.CompressedSize);
 			}
 			
 			if (curEntry.Crc < 0) {
 				curEntry.Crc = crc.Value;
 			} else if (curEntry.Crc != crc.Value) {
 				throw new ZipException("crc was " + crc.Value +
-				                       ", but I expected " + 
-				                       curEntry.Crc);
+					", but I expected " + 
+					curEntry.Crc);
 			}
 			
 			offset += csize;
 			
 			/* Now write the data descriptor entry if needed. */
-			if (curMethod == CompressionMethod.Deflated && (curEntry.flags & 8) != 0) {
+			if (curMethod == CompressionMethod.Deflated && (curEntry.Flags & 8) != 0) {
 				if (shouldWriteBack) {
+					curEntry.Flags &= ~8;
 					long curPos = baseOutputStream.Position;
 					baseOutputStream.Seek(seekPos, SeekOrigin.Begin);
 					WriteLeInt((int)curEntry.Crc);
@@ -400,8 +428,7 @@ namespace ICSharpCode.SharpZipLib.Zip {
 			entries.Add(curEntry);
 			curEntry = null;
 		}
-	    
-	    
+		
 		/// <summary>
 		/// Writes the given buffer to the current entry.
 		/// </summary>
@@ -422,15 +449,21 @@ namespace ICSharpCode.SharpZipLib.Zip {
 					base.Write(b, off, len);
 					break;
 				case CompressionMethod.Stored:
-					baseOutputStream.Write(b, off, len);
+					if (Password != null) {
+						byte[] buf = new byte[len];
+						Array.Copy(b, off, buf, 0, len);
+						EncryptBlock(buf, 0, len);
+						baseOutputStream.Write(buf, off, len);
+					} else {
+						baseOutputStream.Write(b, off, len);
+					}
 					break;
 			}
-			
 			crc.Update(b, off, len);
+			
 			size += len;
 		}
 		
-	    
 		/// <summary>
 		/// Finishes the stream.  This will write the central directory at the
 		/// end of the zip file and flush the stream.
@@ -438,72 +471,80 @@ namespace ICSharpCode.SharpZipLib.Zip {
 		/// <exception cref="System.IO.IOException">
 		/// if an I/O error occured.
 		/// </exception>
-	    public override void Finish()
-	    {
-	    	if (entries == null) {
-	    		return;
-	    	}
-	    	if (curEntry != null) {
-	    		CloseEntry();
-	    	}
-	    	
-	    	int numEntries = 0;
-	    	int sizeEntries = 0;
-	    	
-	    	foreach (ZipEntry entry in entries) {
-	    		// TODO : check the appnote file for compilance with the central directory standard
-	    		CompressionMethod method = entry.CompressionMethod;
-	    		WriteLeInt(ZipConstants.CENSIG); 
-	    		WriteLeShort(method == CompressionMethod.Stored ? ZIP_STORED_VERSION : ZIP_DEFLATED_VERSION);
-	    		WriteLeShort(method == CompressionMethod.Stored ? ZIP_STORED_VERSION : ZIP_DEFLATED_VERSION);
-	    		WriteLeShort(entry.flags);
-	    		WriteLeShort((short)method);
-	    		WriteLeInt(entry.DosTime);
-	    		WriteLeInt((int)entry.Crc);
-	    		WriteLeInt((int)entry.CompressedSize);
-	    		WriteLeInt((int)entry.Size);
-	    		
-	    		byte[] name = ZipConstants.ConvertToArray(entry.Name);
-	    		
-	    		if (name.Length > 0xffff) {
-	    			throw new ZipException("Name too long.");
-	    		}
-	    		byte[] extra = entry.ExtraData;
-	    		if (extra == null) {
-	    			extra = new byte[0];
-	    		}
-	    		string strComment = entry.Comment;
-	    		byte[] comment = strComment != null ? ZipConstants.ConvertToArray(strComment) : new byte[0];
-	    		if (comment.Length > 0xffff) {
-	    			throw new ZipException("Comment too long.");
-	    		}
-	    		
-	    		WriteLeShort(name.Length);
-	    		WriteLeShort(extra.Length);
-	    		WriteLeShort(comment.Length);
-	    		WriteLeShort(0); /* disk number */
-	    		WriteLeShort(0); /* internal file attr */
-	    		WriteLeInt(0);   /* external file attr */
-	    		WriteLeInt(entry.offset);
-	    		
-	    		baseOutputStream.Write(name,    0, name.Length);
-	    		baseOutputStream.Write(extra,   0, extra.Length);
-	    		baseOutputStream.Write(comment, 0, comment.Length);
-	    		++numEntries;
-	    		sizeEntries += ZipConstants.CENHDR + name.Length + extra.Length + comment.Length;
-	    	}
-	    	
-	    	WriteLeInt(ZipConstants.ENDSIG);
-	    	WriteLeShort(0); /* disk number */
-	    	WriteLeShort(0); /* disk with start of central dir */
-	    	WriteLeShort(numEntries);
-	    	WriteLeShort(numEntries);
-	    	WriteLeInt(sizeEntries);
-	    	WriteLeInt(offset);
-	    	WriteLeShort(zipComment.Length);
-	    	baseOutputStream.Write(zipComment, 0, zipComment.Length);
-	    	baseOutputStream.Flush();
-	    	entries = null;
-	    }
+		public override void Finish()
+		{
+			if (entries == null)  {
+				return;
+			}
+			
+			if (curEntry != null) {
+				CloseEntry();
+			}
+			
+			int numEntries = 0;
+			int sizeEntries = 0;
+			
+			foreach (ZipEntry entry in entries) {
+				// TODO : check the appnote file for compilance with the central directory standard
+				CompressionMethod method = entry.CompressionMethod;
+				WriteLeInt(ZipConstants.CENSIG); 
+				WriteLeShort(method == CompressionMethod.Stored ? ZIP_STORED_VERSION : ZIP_DEFLATED_VERSION);
+				WriteLeShort(method == CompressionMethod.Stored ? ZIP_STORED_VERSION : ZIP_DEFLATED_VERSION);
+				
+				WriteLeShort(entry.Flags);
+				WriteLeShort((short)method);
+				WriteLeInt((int)entry.DosTime);
+				WriteLeInt((int)entry.Crc);
+				WriteLeInt((int)entry.CompressedSize);
+				WriteLeInt((int)entry.Size);
+				
+				byte[] name = ZipConstants.ConvertToArray(entry.Name);
+				
+				if (name.Length > 0xffff) {
+					throw new ZipException("Name too long.");
+				}
+				
+				byte[] extra = entry.ExtraData;
+				if (extra == null) {
+					extra = new byte[0];
+				}
+				
+				string strComment = entry.Comment;
+				byte[] comment = strComment != null ? ZipConstants.ConvertToArray(strComment) : new byte[0];
+				if (comment.Length > 0xffff) {
+					throw new ZipException("Comment too long.");
+				}
+				
+				WriteLeShort(name.Length);
+				WriteLeShort(extra.Length);
+				WriteLeShort(comment.Length);
+				WriteLeShort(0); // disk number
+				WriteLeShort(0); // internal file attr
+				if (entry.IsDirectory) {                         // -jr- 17-12-2003 mark entry as directory (from nikolam.AT.perfectinfo.com)
+					WriteLeInt(16);
+				} else {
+					WriteLeInt(0);   // external file attr
+				}
+				WriteLeInt(entry.Offset);
+				
+				baseOutputStream.Write(name,    0, name.Length);
+				baseOutputStream.Write(extra,   0, extra.Length);
+				baseOutputStream.Write(comment, 0, comment.Length);
+				++numEntries;
+				sizeEntries += ZipConstants.CENHDR + name.Length + extra.Length + comment.Length;
+			}
+			
+			WriteLeInt(ZipConstants.ENDSIG);
+			WriteLeShort(0); // disk number 
+			WriteLeShort(0); // disk with start of central dir
+			WriteLeShort(numEntries);
+			WriteLeShort(numEntries);
+			WriteLeInt(sizeEntries);
+			WriteLeInt(offset);
+			WriteLeShort(zipComment.Length);
+			baseOutputStream.Write(zipComment, 0, zipComment.Length);
+			baseOutputStream.Flush();
+			entries = null;
+		}
 	}
 }

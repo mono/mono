@@ -39,7 +39,8 @@ using System;
 
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 
-namespace ICSharpCode.SharpZipLib.Zip.Compression {
+namespace ICSharpCode.SharpZipLib.Zip.Compression 
+{
 	
 	public class InflaterHuffmanTree 
 	{
@@ -96,8 +97,9 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression {
 			
 			for (int i = 0; i < codeLengths.Length; i++) {
 				int bits = codeLengths[i];
-				if (bits > 0)
+				if (bits > 0) {
 					blCount[bits]++;
+				}
 			}
 			
 			int code = 0;
@@ -112,9 +114,12 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression {
 					treeSize += (end - start) >> (16 - bits);
 				}
 			}
-			if (code != 65536) {
+/* -jr comment this out! doesnt work for dynamic trees and pkzip 2.04g
+			if (code != 65536) 
+			{
 				throw new Exception("Code lengths don't add up properly.");
 			}
+*/
 			/* Now create and fill the extra tables from longest to shortest
 			* bit len.  This way the sub trees will be aligned.
 			*/

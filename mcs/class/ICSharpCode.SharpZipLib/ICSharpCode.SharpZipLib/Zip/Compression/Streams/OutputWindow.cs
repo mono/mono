@@ -37,7 +37,8 @@
 
 using System;
 
-namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams {
+namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams 
+{
 	
 	/// <summary>
 	/// Contains the output from the Inflation process.
@@ -52,45 +53,45 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams {
 		private static int WINDOW_MASK = WINDOW_SIZE - 1;
 		
 		private byte[] window = new byte[WINDOW_SIZE]; //The window is 2^15 bytes
-		private int window_end  = 0;
-		private int window_filled = 0;
+		private int windowEnd  = 0;
+		private int windowFilled = 0;
 		
 		public void Write(int abyte)
 		{
-			if (window_filled++ == WINDOW_SIZE) {
+			if (windowFilled++ == WINDOW_SIZE) {
 				throw new InvalidOperationException("Window full");
 			}
-			window[window_end++] = (byte) abyte;
-			window_end &= WINDOW_MASK;
+			window[windowEnd++] = (byte) abyte;
+			windowEnd &= WINDOW_MASK;
 		}
 		
 		
-		private void SlowRepeat(int rep_start, int len, int dist)
+		private void SlowRepeat(int repStart, int len, int dist)
 		{
 			while (len-- > 0) {
-				window[window_end++] = window[rep_start++];
-				window_end &= WINDOW_MASK;
-				rep_start &= WINDOW_MASK;
+				window[windowEnd++] = window[repStart++];
+				windowEnd &= WINDOW_MASK;
+				repStart &= WINDOW_MASK;
 			}
 		}
 		
 		public void Repeat(int len, int dist)
 		{
-			if ((window_filled += len) > WINDOW_SIZE) {
+			if ((windowFilled += len) > WINDOW_SIZE) {
 				throw new InvalidOperationException("Window full");
 			}
 			
-			int rep_start = (window_end - dist) & WINDOW_MASK;
+			int rep_start = (windowEnd - dist) & WINDOW_MASK;
 			int border = WINDOW_SIZE - len;
-			if (rep_start <= border && window_end < border) {
+			if (rep_start <= border && windowEnd < border) {
 				if (len <= dist) {
-					System.Array.Copy(window, rep_start, window, window_end, len);
-					window_end += len;
-				}				else {
+					System.Array.Copy(window, rep_start, window, windowEnd, len);
+					windowEnd += len;
+				} else {
 					/* We have to copy manually, since the repeat pattern overlaps.
 					*/
 					while (len-- > 0) {
-						window[window_end++] = window[rep_start++];
+						window[windowEnd++] = window[rep_start++];
 					}
 				}
 			} else {
@@ -100,27 +101,27 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams {
 		
 		public int CopyStored(StreamManipulator input, int len)
 		{
-			len = Math.Min(Math.Min(len, WINDOW_SIZE - window_filled), input.AvailableBytes);
+			len = Math.Min(Math.Min(len, WINDOW_SIZE - windowFilled), input.AvailableBytes);
 			int copied;
 			
-			int tailLen = WINDOW_SIZE - window_end;
+			int tailLen = WINDOW_SIZE - windowEnd;
 			if (len > tailLen) {
-				copied = input.CopyBytes(window, window_end, tailLen);
+				copied = input.CopyBytes(window, windowEnd, tailLen);
 				if (copied == tailLen) {
 					copied += input.CopyBytes(window, 0, len - tailLen);
 				}
 			} else {
-				copied = input.CopyBytes(window, window_end, len);
+				copied = input.CopyBytes(window, windowEnd, len);
 			}
 			
-			window_end = (window_end + copied) & WINDOW_MASK;
-			window_filled += copied;
+			windowEnd = (windowEnd + copied) & WINDOW_MASK;
+			windowFilled += copied;
 			return copied;
 		}
 		
 		public void CopyDict(byte[] dict, int offset, int len)
 		{
-			if (window_filled > 0) {
+			if (windowFilled > 0) {
 				throw new InvalidOperationException();
 			}
 			
@@ -129,40 +130,39 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams {
 				len = WINDOW_SIZE;
 			}
 			System.Array.Copy(dict, offset, window, 0, len);
-			window_end = len & WINDOW_MASK;
+			windowEnd = len & WINDOW_MASK;
 		}
 		
 		public int GetFreeSpace()
 		{
-			return WINDOW_SIZE - window_filled;
+			return WINDOW_SIZE - windowFilled;
 		}
 		
 		public int GetAvailable()
 		{
-			return window_filled;
+			return windowFilled;
 		}
 		
 		public int CopyOutput(byte[] output, int offset, int len)
 		{
-			int copy_end = window_end;
-			if (len > window_filled) {
-				len = window_filled;
+			int copy_end = windowEnd;
+			if (len > windowFilled) {
+				len = windowFilled;
 			} else {
-				copy_end = (window_end - window_filled + len) & WINDOW_MASK;
+				copy_end = (windowEnd - windowFilled + len) & WINDOW_MASK;
 			}
 			
 			int copied = len;
 			int tailLen = len - copy_end;
 			
 			if (tailLen > 0) {
-				System.Array.Copy(window, WINDOW_SIZE - tailLen,
-				                  output, offset, tailLen);
+				System.Array.Copy(window, WINDOW_SIZE - tailLen, output, offset, tailLen);
 				offset += tailLen;
 				len = copy_end;
 			}
 			System.Array.Copy(window, copy_end - len, output, offset, len);
-			window_filled -= copied;
-			if (window_filled < 0) {
+			windowFilled -= copied;
+			if (windowFilled < 0) {
 				throw new InvalidOperationException();
 			}
 			return copied;
@@ -170,7 +170,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams {
 		
 		public void Reset()
 		{
-			window_filled = window_end = 0;
+			windowFilled = windowEnd = 0;
 		}
 	}
 }

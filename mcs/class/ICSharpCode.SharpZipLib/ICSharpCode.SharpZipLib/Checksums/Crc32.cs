@@ -37,7 +37,8 @@
 
 using System;
 
-namespace ICSharpCode.SharpZipLib.Checksums {
+namespace ICSharpCode.SharpZipLib.Checksums 
+{
 	
 	/// <summary>
 	/// Generate a table for a byte-wise 32-bit CRC calculation on the polynomial:
@@ -96,7 +97,7 @@ namespace ICSharpCode.SharpZipLib.Checksums {
 			0x2EB40D81, 0xB7BD5C3B, 0xC0BA6CAD, 0xEDB88320, 0x9ABFB3B6,
 			0x03B6E20C, 0x74B1D29A, 0xEAD54739, 0x9DD277AF, 0x04DB2615,
 			0x73DC1683, 0xE3630B12, 0x94643B84, 0x0D6D6A3E, 0x7A6A5AA8,
-			0xE40ECF0B, 0x9309FF9D, 0x0A00AE27, 0x7D079EB1, 0xF00F9344, 
+			0xE40ECF0B, 0x9309FF9D, 0x0A00AE27, 0x7D079EB1, 0xF00F9344,
 			0x8708A3D2, 0x1E01F268, 0x6906C2FE, 0xF762575D, 0x806567CB,
 			0x196C3671, 0x6E6B06E7, 0xFED41B76, 0x89D32BE0, 0x10DA7A5A,
 			0x67DD4ACC, 0xF9B9DF6F, 0x8EBEEFF9, 0x17B7BE43, 0x60B08ED5,
@@ -118,9 +119,14 @@ namespace ICSharpCode.SharpZipLib.Checksums {
 			0x37D83BF0, 0xA9BCAE53, 0xDEBB9EC5, 0x47B2CF7F, 0x30B5FFE9,
 			0xBDBDF21C, 0xCABAC28A, 0x53B39330, 0x24B4A3A6, 0xBAD03605,
 			0xCDD70693, 0x54DE5729, 0x23D967BF, 0xB3667A2E, 0xC4614AB8,
-			0x5D681B02, 0x2A6F2B94, 0xB40BBE37, 0xC30C8EA1, 0x5A05DF1B, 
+			0x5D681B02, 0x2A6F2B94, 0xB40BBE37, 0xC30C8EA1, 0x5A05DF1B,
 			0x2D02EF8D
 		};
+		
+		internal static uint ComputeCrc32(uint oldCrc, byte bval)
+		{
+			return (uint)(Crc32.CrcTable[(oldCrc ^ bval) & 0xFF] ^ (oldCrc >> 8));
+		}
 		
 		/// <summary>
 		/// The crc data checksum so far.
@@ -133,6 +139,9 @@ namespace ICSharpCode.SharpZipLib.Checksums {
 		public long Value {
 			get {
 				return (long)crc;
+			}
+			set {
+				crc = (uint)value;
 			}
 		}
 		

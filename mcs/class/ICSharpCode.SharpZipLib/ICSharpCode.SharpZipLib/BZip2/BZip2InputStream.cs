@@ -37,7 +37,8 @@ using System.IO;
 
 using ICSharpCode.SharpZipLib.Checksums;
 
-namespace ICSharpCode.SharpZipLib.BZip2 {
+namespace ICSharpCode.SharpZipLib.BZip2 
+{
 	
 	/// <summary>
 	/// An input stream that decompresses from the BZip2 format (without the file
@@ -159,23 +160,23 @@ namespace ICSharpCode.SharpZipLib.BZip2 {
 		
 		static void Cadvise()
 		{
-			Console.WriteLine("CRC Error");
+			//Console.WriteLine("CRC Error");
 			//throw new CCoruptionError();
 		}
 		
 		static void BadBGLengths() 
 		{
-			Console.WriteLine("bad BG lengths");
+			//Console.WriteLine("bad BG lengths");
 		}
 		
-		static void bitStreamEOF() 
+		static void BitStreamEOF() 
 		{
-			Console.WriteLine("bit stream eof");
+			//Console.WriteLine("bit stream eof");
 		}
 		
 		static void CompressedStreamEOF() 
 		{
-			Console.WriteLine("compressed stream eof");
+			//Console.WriteLine("compressed stream eof");
 		}
 		
 		void MakeMaps() 
@@ -209,8 +210,8 @@ namespace ICSharpCode.SharpZipLib.BZip2 {
 		
 		bool blockRandomised;
 		
-//		private int bytesIn;
-//		private int bytesOut;
+		//		private int bytesIn;
+		//		private int bytesOut;
 		int bsBuff;
 		int bsLive;
 		IChecksum mCrc = new StrangeCRC();
@@ -284,7 +285,7 @@ namespace ICSharpCode.SharpZipLib.BZip2 {
 		public override int ReadByte()
 		{
 			if (streamEnd) {
-				return -1;
+				return -1; // ok
 			}
 			
 			int retChar = currentChar;
@@ -313,10 +314,14 @@ namespace ICSharpCode.SharpZipLib.BZip2 {
 		
 		void Initialize() 
 		{
+			// -jr- 18-Nov-2003 magic1 and 2 added here so stream is fully capable on its own
+			char magic1 = BsGetUChar();
+			char magic2 = BsGetUChar();
+			
 			char magic3 = BsGetUChar();
 			char magic4 = BsGetUChar();
 			
-			if (magic3 != 'h' || magic4 < '1' || magic4 > '9') {
+			if (magic1 != 'B' || magic2 != 'Z' || magic3 != 'h' || magic4 < '1' || magic4 > '9') {
 				streamEnd = true;
 				return;
 			}
@@ -365,7 +370,7 @@ namespace ICSharpCode.SharpZipLib.BZip2 {
 				CrcError();
 			}
 			
-			 // 1528150659
+			// 1528150659
 			computedCombinedCRC = ((computedCombinedCRC << 1) & 0xFFFFFFFF) | (computedCombinedCRC >> 31);
 			computedCombinedCRC = computedCombinedCRC ^ (uint)computedBlockCRC;
 		}
@@ -382,17 +387,17 @@ namespace ICSharpCode.SharpZipLib.BZip2 {
 		
 		static void BlockOverrun() 
 		{
-			Console.WriteLine("Block overrun");
+			//Console.WriteLine("Block overrun");
 		}
 		
 		static void BadBlockHeader() 
 		{
-			Console.WriteLine("Bad block header");
+			//Console.WriteLine("Bad block header");
 		}
 		
 		static void CrcError() 
 		{
-			Console.WriteLine("crc error");
+			//Console.WriteLine("crc error");
 		}
 		
 		
@@ -518,6 +523,10 @@ namespace ICSharpCode.SharpZipLib.BZip2 {
 					for (int j = 0; j < 16; j++) {
 						inUse[i * 16 + j] = (BsR(1) == 1);
 					}
+				} else {
+					for (int j = 0; j < 16; j++) {
+						inUse[i * 16 + j] = false;
+					}
 				}
 			}
 			
@@ -622,6 +631,9 @@ namespace ICSharpCode.SharpZipLib.BZip2 {
 			int zj;
 			
 			while (zvec > limit[zt][zn]) {
+				if (zn > 20) { // the longest code
+					throw new ApplicationException("Bzip data error");  // -jr- 17-Dec-2003 from bzip 1.02 why 20???
+				}
 				zn++;
 				while (bsLive < 1) {
 					FillBuffer();
@@ -630,10 +642,12 @@ namespace ICSharpCode.SharpZipLib.BZip2 {
 				bsLive--;
 				zvec = (zvec << 1) | zj;
 			}
+			if (zvec - baseArray[zt][zn] < 0 || zvec - baseArray[zt][zn] >= BZip2Constants.MAX_ALPHA_SIZE) {
+				throw new ApplicationException("Bzip data error");  // -jr- 17-Dec-2003 from bzip 1.02
+			}
 			nextSym = perm[zt][zvec - baseArray[zt][zn]];
 			
 			while (true) {
-				
 				if (nextSym == EOB) {
 					break;
 				}
@@ -643,9 +657,9 @@ namespace ICSharpCode.SharpZipLib.BZip2 {
 					int n = 1;
 					do {
 						if (nextSym == BZip2Constants.RUNA) {
-							s += (0+1) * n;
+							s += (0 + 1) * n;
 						} else if (nextSym == BZip2Constants.RUNB) {
-							s += (1+1) * n;
+							s += (1 + 1) * n;
 						}
 
 						n <<= 1;
@@ -762,7 +776,7 @@ namespace ICSharpCode.SharpZipLib.BZip2 {
 		
 		void SetupRandPartA() 
 		{
-			if(i2 <= last) {
+			if (i2 <= last) {
 				chPrev = ch2;
 				ch2  = ll8[tPos];
 				tPos = tt[tPos];
@@ -886,11 +900,10 @@ namespace ICSharpCode.SharpZipLib.BZip2 {
 		
 		void SetDecompressStructureSizes(int newSize100k) 
 		{
-			if (!(0 <= newSize100k   && newSize100k <= 9 && 
-			      0 <= blockSize100k && blockSize100k <= 9)) {
+			if (!(0 <= newSize100k   && newSize100k <= 9 && 0 <= blockSize100k && blockSize100k <= 9)) {
 				throw new ApplicationException("Invalid block size");
 			}
-			       
+			
 			blockSize100k = newSize100k;
 			
 			if (newSize100k == 0) {
