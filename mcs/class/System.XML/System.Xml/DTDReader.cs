@@ -40,6 +40,8 @@ namespace System.Xml
 		// Parameter entity placeholder
 		private int dtdIncludeSect;
 
+		private bool processingInternalSubset;
+
 		string cachedPublicId;
 		string cachedSystemId;
 
@@ -91,7 +93,9 @@ namespace System.Xml
 			int originalParserDepth = parserInputStack.Count;
 			bool more;
 			if (DTD.InternalSubset != null && DTD.InternalSubset.Length > 0) {
+				this.processingInternalSubset = true;
 				XmlParserInput original = currentInput;
+
 				currentInput = new XmlParserInput (
 					new StringReader (DTD.InternalSubset),
 					DTD.BaseURI,
@@ -105,7 +109,9 @@ namespace System.Xml
 				} while (more || parserInputStack.Count > originalParserDepth);
 				if (dtdIncludeSect != 0)
 					throw new XmlException (this as IXmlLineInfo,"INCLUDE section is not ended correctly.");
+
 				currentInput = original;
+				this.processingInternalSubset = false;
 			}
 			if (DTD.SystemId != null && DTD.SystemId != String.Empty && DTD.Resolver != null) {
 				PushParserInput (DTD.SystemId);
@@ -121,8 +127,10 @@ namespace System.Xml
 //			/*
 			// Entity recursion check.
 			foreach (DTDEntityDeclaration ent in DTD.EntityDecls.Values) {
-				ent.ScanEntityValue (sc);
-				sc.Clear ();
+				if (ent.NotationName != null) {
+					ent.ScanEntityValue (sc);
+					sc.Clear ();
+				}
 			}
 //			*/
 
@@ -143,7 +151,7 @@ namespace System.Xml
 				return false;
 			case '%':
 				// It affects on entity references' well-formedness
-				if (this.parserInputStack.Count == 0)
+				if (this.processingInternalSubset)
 					DTD.InternalSubsetHasPEReference = true;
 				string peName = ReadName ();
 				Expect (';');
@@ -610,6 +618,8 @@ namespace System.Xml
 		private void TryExpandPERef ()
 		{
 			if (PeekChar () == '%') {
+				if (this.processingInternalSubset)
+					throw new XmlException (this as IXmlLineInfo, "Parameter entity reference is not allowed inside internal subset.");
 				ExpandPERef ();
 			}
 		}

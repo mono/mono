@@ -659,6 +659,7 @@ namespace Mono.Xml
 						normalized = FilterNormalization (def.Name, attrValue);
 					else
 						normalized = attrValue;
+					DTDEntityDeclaration ent;
 					switch (def.Datatype.TokenizedType) {
 					case XmlTokenizedType.ID:
 						if (!XmlChar.IsName (normalized))
@@ -692,16 +693,20 @@ namespace Mono.Xml
 						}
 						break;
 					case XmlTokenizedType.ENTITY:
-						if (dtd.EntityDecls [normalized] == null)
-							HandleError (String.Format ("Reference to undeclared entity was found in attribute {0}.", reader.Name),
-								XmlSeverityType.Error);
+						ent = dtd.EntityDecls [normalized];
+						if (ent == null)
+							HandleError ("Reference to undeclared entity was found in attribute: " + reader.Name + ".", XmlSeverityType.Error);
+						else if (ent.NotationName == null)
+							HandleError ("The entity specified by entity type value must be an unparsed entity. The entity definition has no NDATA in attribute: " + reader.Name + ".", XmlSeverityType.Error);
 						break;
 					case XmlTokenizedType.ENTITIES:
 						string [] entrefs = def.Datatype.ParseValue (normalized, NameTable, null) as string [];
 						foreach (string entref in entrefs) {
-							if (dtd.EntityDecls [ FilterNormalization (reader.Name, entref) ] == null)
-								HandleError (String.Format ("Reference to undeclared entity was found in attribute {0}.", reader.Name),
-									XmlSeverityType.Error);
+							ent = dtd.EntityDecls [FilterNormalization (reader.Name, entref)];
+							if (ent == null)
+								HandleError ("Reference to undeclared entity was found in attribute: " + reader.Name + ".", XmlSeverityType.Error);
+							else if (ent.NotationName == null)
+								HandleError ("The entity specified by ENTITIES type value must be an unparsed entity. The entity definition has no NDATA in attribute: " + reader.Name + ".", XmlSeverityType.Error);
 						}
 						break;
 					case XmlTokenizedType.NMTOKEN:

@@ -1,3 +1,10 @@
+2004-01-28  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDReader.cs : Make sure that parameter entities are not allowed
+	  inside internal subset unless it appears as a markupdecl.
+	* DTDValidatingReader.cs : ENTITY or ENTITIES type attributes must have
+	  a value that indicates *unparsed* entity (i.e. NDATA required).
+
 2004-01-26  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextWriter.cs : quick performance fix.
