@@ -298,7 +298,93 @@ namespace Mono.Tools
 
 		public void ShowHelp (bool detailed)
 		{
-			Console.WriteLine ("help placeholder");
+			StringBuilder sb = new StringBuilder ();
+
+			sb.Append ("Usage: gacutil.exe <commands> [ <options> ]\n");
+			sb.Append ("Commands:\n");
+			sb.Append ("  /i <assembly_path> [ /f ]\n");
+			if (detailed == false) {
+				sb.Append ("    Installs an assembly into the global assembly cache\n");
+			} else {
+				sb.Append ("    Installs an assembly to the global assembly cache. <assembly_path> is the\n     name of the file that contains the assembly manifest.                    \n     Example: /i myDll.dll\n");
+			}
+
+			sb.Append ("\n");
+
+			sb.Append ("  /il <assembly_path_list_file> [ /f ]\n");
+			if (detailed == false) {
+				sb.Append ("    Installs one or more assemblies into the global assembly cache\n");
+			} else {
+				sb.Append ("    Installs on or more assemblies to the global assembly cache.              \n    <assembly_list_file is the path to a text file that contains a list of    \n    assembly manifest file paths. Individual paths in the text file must be   \n    separated by a newline.\n");
+				sb.Append ("    Example: /il MyAssemblyList\n");
+				sb.Append ("      MyAssemblyList content:\n");
+				sb.Append ("      Mydll.dll\n");
+				sb.Append ("      Mydll2.dll\n");
+				sb.Append ("      path/to/myDll3.dll\n");
+			}
+
+			sb.Append ("\n");
+
+			sb.Append ("  /u <assembly_display_name>\n");
+			if (detailed == false) {
+				sb.Append ("    Uninstalls an assembly from the global assembly cache\n");
+			} else {
+				sb.Append ("    Uninstalls an assembly. <assembly_display_name> is the name of the assembly\n");
+				sb.Append ("    (partial or fully qualified) to remove from the global assembly cache.    \n    If a partial name is specified all matching assemblies will be uninstalled.\n");
+				sb.Append ("    Example: /u myDll,Version=1.2.1.0\n");
+			}
+
+			sb.Append ("\n");
+
+			sb.Append ("  /ul <assembly_display_name_list_file>\n");
+			if (detailed == false) {
+				sb.Append ("    Uninstalls one or more assemblies from the global assembly cache\n");
+			} else {
+				sb.Append ("    Uninstalls one or more assemblies from the global assembly cache.         \n    <assembly_display_name_list_file> is the path to a text file that contains\n    a list of assembly names. Individual names in the text file must be       \n    separated by a newline.\n");
+				sb.Append ("    Example: /ul MyAssemblyList\n");
+				sb.Append ("      MyAssemblyList content:\n");
+				sb.Append ("      MyDll1.dll,Version=1.0.0.0\n");
+				sb.Append ("      MyDll2.dll,Version=1.2.0.0\n");
+			}
+
+			sb.Append ("\n");
+
+			sb.Append ("  /l\n");
+			if (detailed == false) {
+				sb.Append ("    List the global assembly cache\n");
+			} else {
+				sb.Append ("    Lists the contents of the global assembly cache.\n");
+			}
+
+			sb.Append ("\n");
+
+			sb.Append ("  /?\n");
+			if (detailed == false) {
+				sb.Append ("    Displays a detailed help screen\n");
+			} else {
+				sb.Append ("    Displays a detailed help screen\n");
+			}
+
+			sb.Append ("\n");
+
+			if (detailed == true) {
+				sb.Append ("Options:\n");
+				sb.Append ("  /f\n");
+				sb.Append ("    Forces reinstall of assembly, resets reference count\n");
+				sb.Append ("\n");
+				sb.Append ("\n");
+				sb.Append ("Note, mono's gacutil also supports these unix like aliases for its commands:\n");
+				sb.Append ("  /i  -> --install\n");
+				sb.Append ("  /il -> --install-from-list\n");
+				sb.Append ("  /u  -> --uninstall\n");
+				sb.Append ("  /ul -> --uninstall-from-list\n");
+				sb.Append ("  /l  -> --ls\n");
+				sb.Append ("  /f  -> --force\n");
+				sb.Append ("\n");
+				sb.Append ("Mono also allows a User Assembly Cache, this cache can be accessed by passing\n/user as the first argument to gacutil.exe\n");
+			}
+
+			Console.WriteLine (sb.ToString ());
 		}
 	}
 }
