@@ -19,4 +19,4 @@ DISTFILES = \
 	profiles/net_1_0.make
 
 dist-local: dist-default
-	mkdir $(distdir)/deps
+	$(MKINSTALLDIRS) $(distdir)/deps

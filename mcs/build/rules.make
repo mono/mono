@@ -34,7 +34,6 @@ INTERNAL_RESGEN = $(RUNTIME) $(topdir)/monoresgen/monoresgen.exe
 corlib = mscorlib.dll
 
 depsdir = $(topdir)/build/deps
-distdir = $(dots)/$(package)/$(thisdir)
 
 # Make sure these propagate if set manually
 
@@ -109,31 +108,41 @@ STD_TARGETS = test run-test run-test-ondotnet clean install uninstall
 $(STD_TARGETS): %: %-recursive
 	$(MAKE) $@-local
 
+# The way this is set up, any profile-specific subdirs list should
+# be listed _before_ including rules.make.  However, the default
+# SUBDIRS list can come after, so don't use the eager := syntax when
+# using the defaults.
+PROFILE_SUBDIRS := $($(PROFILE)_SUBDIRS)
+ifndef PROFILE_SUBDIRS
+PROFILE_SUBDIRS = $(SUBDIRS)
+endif
+
 %-recursive:
 	@set . $$MAKEFLAGS; \
 	case $$2 in --unix) shift ;; esac; \
 	case $$2 in *=*) dk="exit 1" ;; *k*) dk=: ;; *) dk="exit 1" ;; esac; \
-	list='$(SUBDIRS)'; for d in $$list ; do \
+	list='$(PROFILE_SUBDIRS)'; for d in $$list ; do \
 	    (cd $$d && $(MAKE) $*) || $$dk ; \
 	done
 
-# note: dist-local dep, extra subdirs, we invoke dist-recursive in the subdir too
+ifndef DIST_SUBDIRS
+DIST_SUBDIRS = $(SUBDIRS) $(DIST_ONLY_SUBDIRS)
+endif
 dist-recursive: dist-local
-	@list='$(SUBDIRS) $(DIST_ONLY_SUBDIRS)'; for d in $$list ; do \
-	    (cd $$d && $(MAKE) $@) || exit 1 ; \
+	@case '$(distdir)' in [\\/$$]* | ?:[\\/]* ) reldir='$(distdir)' ;; *) reldir='../$(distdir)' ;; esac ; \
+	list='$(DIST_SUBDIRS)'; for d in $$list ; do \
+	    (cd $$d && $(MAKE) distdir=$$reldir/$$d $@) || exit 1 ; \
 	done
 
-# Can only do this from the top dir
-# ## dist: dist-recursive dist-local
-
-# We invert the test here to not end in an error
-# if ChangeLog doesn't exist.
+# The following target can be used like
 #
-# Note that we error out if we try to dist a nonexistant
-# file. Seems reasonable to me.
+#   dist-local: dist-default
+# 	... additional commands ...
 #
-# Pick up Makefile, makefile, or GNUmakefile
-
+# Notes: 
+#  1. we invert the test here to not end in an error if ChangeLog doesn't exist.
+#  2. we error out if we try to dist a nonexistant file.
+#  3. we pick up Makefile, makefile, or GNUmakefile.
 dist-default:
 	-mkdir -p $(distdir)
 	test '!' -f ChangeLog || cp ChangeLog $(distdir)
