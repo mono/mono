@@ -24,3 +24,5 @@ System.Drawing/TestRegion.cs
 System.Drawing.Imaging/TestImageCodecInfo.cs
 System.Drawing.Imaging/TestBmpCodec.cs
 System.Drawing.Imaging/TestJpegCodec.cs
+System.Drawing.Printing/PrintingPermissionAttributeTest.cs
+System.Drawing.Printing/PrintingPermissionTest.cs

@@ -1,3 +1,8 @@
+2004-09-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.Drawing_test.dll.sources: Added unit tests for 
+	PrintingPermission and it's attribute class.
+
 2004-06-10  Ravindra <rkumar@novell.com>
 
 	* Makefile: Suppress compiler warning cs:618 for test dll.
