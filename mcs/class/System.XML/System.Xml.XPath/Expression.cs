@@ -477,6 +477,15 @@ namespace System.Xml.XPath
 		{
 			return EvaluateBoolean (iter);
 		}
+		public override double EvaluateNumber (BaseIterator iter)
+		{
+			return EvaluateBoolean (iter) ? 1 : 0;
+		}
+		
+		public override string EvaluateString (BaseIterator iter)
+		{
+			return EvaluateBoolean (iter) ? "true" : "false";
+		}
 	}
 
 	internal class ExprOR : ExprBoolean
@@ -505,7 +514,11 @@ namespace System.Xml.XPath
 
 	internal abstract class EqualityExpr : ExprBoolean
 	{
-		public EqualityExpr (Expression left, Expression right) : base (left, right) {}
+		bool trueVal;
+		public EqualityExpr (Expression left, Expression right, bool trueVal) : base (left, right)
+		{
+			this.trueVal = trueVal;
+		}
 		[MonoTODO]
 		public override bool EvaluateBoolean (BaseIterator iter)
 		{
@@ -536,9 +549,7 @@ namespace System.Xml.XPath
 				}
 				if (typeR == XPathResultType.Boolean)
 				{
-					bool fL = left.EvaluateBoolean (iter);
-					bool fR = right.EvaluateBoolean (iter);
-					return Compare (Convert.ToDouble (fL), Convert.ToDouble (fR));
+					return left.EvaluateBoolean (iter) == right.EvaluateBoolean (iter) == trueVal;
 				}
 				else
 				{
@@ -547,14 +558,14 @@ namespace System.Xml.XPath
 					{
 						double dR = right.EvaluateNumber (iter);
 						while (iterL.MoveNext ())
-							if (Compare (XPathFunctions.ToNumber (iterL.Current.Value), dR))
+							if (XPathFunctions.ToNumber (iterL.Current.Value) == dR == trueVal)
 								return true;
 					}
 					else if (typeR == XPathResultType.String)
 					{
 						string strR = right.EvaluateString (iter);
 						while (iterL.MoveNext ())
-							if (Compare (iterL.Current.Value, strR))
+							if (iterL.Current.Value == strR == trueVal)
 								return true;
 					}
 					else if (typeR == XPathResultType.NodeSet)
@@ -567,7 +578,7 @@ namespace System.Xml.XPath
 						{
 							string strR = XPathFunctions.ToString (iterR.Current.Value);
 							foreach (string strL in rgNodesL)
-								if (Compare (strL, strR))
+								if (strL == strR == trueVal)
 									return true;
 						}
 					}
@@ -575,34 +586,24 @@ namespace System.Xml.XPath
 				}
 			}
 			else if (typeL == XPathResultType.Boolean || typeR == XPathResultType.Boolean)
-				return Compare (_left.EvaluateBoolean (iter), _right.EvaluateBoolean (iter));
+				return _left.EvaluateBoolean (iter) == _right.EvaluateBoolean (iter) == trueVal;
 			else if (typeL == XPathResultType.Number || typeR == XPathResultType.Number)
-				return Compare (_left.EvaluateNumber (iter), _right.EvaluateNumber (iter));
+				return _left.EvaluateNumber (iter) == _right.EvaluateNumber (iter) == trueVal;
 			else
-				return Compare (_left.EvaluateString (iter), _right.EvaluateString (iter));
+				return _left.EvaluateString (iter) == _right.EvaluateString (iter) == trueVal;
 		}
-		[MonoTODO]
-		public abstract bool Compare (object arg1, object arg2);	// TODO: should probably have type-safe methods here
 	}
 	
 	internal class ExprEQ : EqualityExpr
 	{
-		public ExprEQ (Expression left, Expression right) : base (left, right) {}
+		public ExprEQ (Expression left, Expression right) : base (left, right, true) {}
 		protected override String Operator { get { return "="; }}
-		public override bool Compare (object arg1, object arg2)
-		{
-			return arg1.Equals (arg2);
-		}
 	}
 
 	internal class ExprNE : EqualityExpr
 	{
-		public ExprNE (Expression left, Expression right) : base (left, right) {}
+		public ExprNE (Expression left, Expression right) : base (left, right, false) {}
 		protected override String Operator { get { return "!="; }}
-		public override bool Compare (object arg1, object arg2)
-		{
-			return !arg1.Equals (arg2);
-		}
 	}
 
 	internal abstract class RelationalExpr : ExprBoolean
