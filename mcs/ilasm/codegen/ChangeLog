@@ -1,3 +1,13 @@
+2004-06-23  Jackson Harper  <jackson@ximian.com>
+
+	* MethodDef.cs: sigh, another varargs fix that probably breaks
+	other varargs tets. Someday I will get this right, I don't think
+	today is that day though. This fix basically just makes sure to
+	trim the sentinel off of signatures. Also eliminated some code
+	duplication.
+	* ParamDef.cs: Make IsSentinel work for both cases of generating a
+	sentinel param def.
+	
 2004-06-20  Jackson Harper  <jackson@ximian.com>
 
 	* SwitchInstr.cs: Allow switches with no labels.

@@ -214,21 +214,7 @@ namespace Mono.ILASM {
                         if (is_resolved)
                                 return methoddef;
 
-                        PEAPI.Param[] param_array;
-
-                        if (param_list != null) {
-                                int param_count = param_list.Count;
-                                param_array = new PEAPI.Param[param_count];
-                                int count = 0;
-
-                                foreach (ParamDef paramdef in param_list) {
-                                        paramdef.Define (code_gen);
-                                        param_array[count++] = paramdef.PeapiParam;
-                                }
-                        } else {
-                                param_array = new PEAPI.Param[0];
-                        }
-
+                        PEAPI.Param [] param_array = GenerateParams (code_gen);
                         FixAttributes ();
                         ret_type.Resolve (code_gen);
 
@@ -246,21 +232,7 @@ namespace Mono.ILASM {
                         if (is_resolved)
                                 return methoddef;
 
-                        PEAPI.Param[] param_array;
-
-                        if (param_list != null) {
-                                int param_count = param_list.Count;
-                                param_array = new PEAPI.Param[param_count];
-                                int count = 0;
-
-                                foreach (ParamDef paramdef in param_list) {
-                                        paramdef.Define (code_gen);
-                                        param_array[count++] = paramdef.PeapiParam;
-                                }
-                        } else {
-                                param_array = new PEAPI.Param[0];
-                        }
-
+                        PEAPI.Param [] param_array = GenerateParams (code_gen);
                         FixAttributes ();
                         ret_type.Resolve (code_gen);
 
@@ -271,6 +243,33 @@ namespace Mono.ILASM {
                         is_resolved = true;
 
                         return methoddef;
+                }
+
+                private PEAPI.Param [] GenerateParams (CodeGen code_gen)
+                {
+                        PEAPI.Param[] param_array;
+
+                        if (param_list != null && param_list.Count > 0) {
+                                 int param_count = param_list.Count;
+
+                                 // Remove the last param if its the sentinel, not sure what
+                                // should happen with more then one sentinel
+                                ParamDef last = (ParamDef) param_list [param_count-1];
+                                if (last.IsSentinel ())
+                                        param_count--;
+
+                                param_array = new PEAPI.Param [param_count];
+                                for (int i = 0; i < param_count; i++) {
+                                        ParamDef paramdef = (ParamDef) param_list [i];
+                                        paramdef.Define (code_gen);
+                                        param_array [i] = paramdef.PeapiParam;
+                                }
+
+                        } else {
+                                param_array = new PEAPI.Param [0];
+                        }
+
+                        return param_array;
                 }
 
                 public PEAPI.MethodRef GetVarargSig (PEAPI.Type[] opt)
@@ -575,8 +574,11 @@ namespace Mono.ILASM {
                                                 builder.Append (',');
                                         builder.Append (param.FullName);
                                         first = false;
+                                        last = param;
+                                        if (param is SentinelTypeRef)
+                                                break;
                                 }
-                                last = (ITypeRef) param_list[param_list.Length - 1];
+                                
                         }
                         
                         if (last == null || !(last is SentinelTypeRef)) {

@@ -52,7 +52,7 @@ namespace Mono.ILASM {
 
                 public bool IsSentinel ()
                 {
-                        return (typeref is SentinelTypeRef);
+                        return (typeref is SentinelTypeRef && this != Ellipsis);
                 }
 
                 public void Define (CodeGen code_gen)
