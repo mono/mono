@@ -1,3 +1,9 @@
+2004-08-25 Sachin Kumar <skumar1@novell.com>
+	* ConditionalStatementsC.vb: 
+		Added small test for nested Select Case Statement 
+	* ConditionalStatementsC15.vb:
+		A new negative compilation test case
+
 2004-08-24 Sachin Kumar <skumar1@novell.com>
 	* ForA.vb:
 	* ForB.vb:
