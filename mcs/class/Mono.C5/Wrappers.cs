@@ -901,7 +901,11 @@ namespace C5
 		/// <param name="c">The comparer to use in the result</param>
 		/// <returns></returns>
 		public IIndexedSorted<V> Map<V>(Mapper<T,V> m, IComparer<V> c)
+#if FIXME
 		{ return indexedsorted.Map(m, c); }
+#else
+		{ return indexedsorted.Map<V>(m, c); }
+#endif
 
 		#endregion
 
@@ -1116,7 +1120,11 @@ namespace C5
         /// <typeparam name="V">The type of items of the new list</typeparam>
         /// <param name="mapper">The mapper to use.</param>
         /// <returns>The mapped list</returns>
+#if FIXME
         public IList<V> Map<V>(Mapper<T, V> mapper) { return list.Map(mapper); }
+#else
+        public IList<V> Map<V>(Mapper<T, V> mapper) { return list.Map<V>(mapper); }
+#endif
 
         /// <summary>
         /// Perform Map on the wrapped list. The result is <b>not</b> necessarily read-only.
@@ -1125,7 +1133,11 @@ namespace C5
         /// <param name="mapper">The delegate defining the map.</param>
         /// <param name="hasher">The hasher to use for the new list</param>
         /// <returns>The new list.</returns>
+#if FIXME
         public IList<V> Map<V>(Mapper<T, V> mapper, IHasher<V> hasher) { return list.Map(mapper, hasher); }
+#else
+        public IList<V> Map<V>(Mapper<T, V> mapper, IHasher<V> hasher) { return list.Map<V>(mapper, hasher); }
+#endif
 
         /// <summary>
         /// <exception cref="InvalidOperationException"/> since this is a read-only wrappper
