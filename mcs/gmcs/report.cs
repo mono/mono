@@ -76,6 +76,8 @@ namespace Mono.CSharp {
 				}
 			}
 
+			public abstract bool IsWarning { get; }
+
 			public abstract string MessageType { get; }
 
 			public virtual void Print (int code, string location, string text)
@@ -99,8 +101,10 @@ namespace Mono.CSharp {
 				if (Stacktrace)
 					Console.WriteLine (FriendlyStackTrace (new StackTrace (true)));
 
-				if (Fatal)
-					throw new Exception (text);
+				if (Fatal) {
+					if (!IsWarning || WarningsAreErrors)
+						throw new Exception (text);
+				}
 
 				Check (code);
 			}
@@ -125,6 +129,10 @@ namespace Mono.CSharp {
 			public WarningMessage (int level)
 			{
 				Level = level;
+			}
+
+			public override bool IsWarning {
+				get { return true; }
 			}
 
 			bool IsEnabled (int code)
@@ -180,6 +188,10 @@ namespace Mono.CSharp {
 			{
 				Errors++;
 				base.Print (code, location, text);
+			}
+
+			public override bool IsWarning {
+				get { return false; }
 			}
 
 			public override string MessageType {

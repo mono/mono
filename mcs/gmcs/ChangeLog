@@ -1,5 +1,10 @@
 2004-10-11  Martin Baulig  <martin@ximian.com>
 
+	* report.cs: Don't make --fatal abort on warnings, we have
+	-warnaserror for that.
+
+2004-10-11  Martin Baulig  <martin@ximian.com>
+
 	* typemanager.cs
 	(TypeManager.IsEqualGenericType): Removed, use IsEqual() instead.
 	(TypeManager.IsEqual): Call ourself recursively instead of using
