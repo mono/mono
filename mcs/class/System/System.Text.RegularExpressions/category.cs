@@ -180,7 +180,7 @@ namespace System.Text.RegularExpressions {
 	class CategoryUtils {
 		public static Category CategoryFromName (string name) {
 			try {
-				if (name.Substring (0, 2).Equals ("Is"))	// remove prefix from block range
+				if (name.StartsWith ("Is"))	// remove prefix from block range
 					name = name.Substring (2);
 
 				return (Category)Enum.Parse (typeof (Category), "Unicode" + name);
