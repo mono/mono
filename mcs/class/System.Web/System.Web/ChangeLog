@@ -1,3 +1,9 @@
+2004-09-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpServerUtility.cs: in Transfer(path), don't keep form data if
+	the transfer is done from inside a page that received a postback.
+	Fixes bug #65613.
+
 2004-09-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpValueCollection.cs: fixed signature of ToString (). Closes bug
