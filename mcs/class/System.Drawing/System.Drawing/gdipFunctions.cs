@@ -140,10 +140,29 @@ namespace System.Drawing {
  		[DllImport("gdiplus.dll")]
  		internal static extern Status GdipGetWorldTransform (IntPtr graphics, IntPtr matrix);
  		[DllImport("gdiplus.dll")]
- 		internal static extern Status GdipScaleWorldTransform (IntPtr graphics, float sx, float sy, MatrixOrder order);
- 		
+ 		internal static extern Status GdipScaleWorldTransform (IntPtr graphics, float sx, float sy, MatrixOrder order); 		
  		[DllImport("gdiplus.dll")]
- 		internal static extern Status GdipGraphicsClear(IntPtr graphics, int argb);
+ 		internal static extern Status GdipGraphicsClear(IntPtr graphics, int argb); 		
+ 		[DllImport("gdiplus.dll")]
+ 		internal static extern Status GdipDrawClosedCurve(IntPtr graphics, IntPtr pen, PointF [] points, int  count);
+		[DllImport("gdiplus.dll")]
+ 		internal static extern Status GdipDrawClosedCurveI(IntPtr graphics, IntPtr pen, Point [] points, int  count); 		
+ 		[DllImport("gdiplus.dll")]
+ 		internal static extern Status GdipDrawClosedCurve2(IntPtr graphics, IntPtr pen, PointF [] points, int count, float tension);
+ 		[DllImport("gdiplus.dll")]
+ 		internal static extern Status GdipDrawClosedCurve2I(IntPtr graphics, IntPtr pen, Point [] points, int count, float tension); 		
+ 		[DllImport("gdiplus.dll")]
+ 		internal static extern Status GdipDrawCurve(IntPtr graphics, IntPtr pen, PointF [] points, int count);
+		[DllImport("gdiplus.dll")]
+ 		internal static extern Status GdipDrawCurveI(IntPtr graphics, IntPtr pen, Point [] points, int count);
+		[DllImport("gdiplus.dll")]
+ 		internal static extern Status GdipDrawCurve2(IntPtr graphics, IntPtr pen, PointF [] points, int count, float tension);
+		[DllImport("gdiplus.dll")]
+ 		internal static extern Status GdipDrawCurve2I(IntPtr graphics, IntPtr pen, Point [] points, int count, float tension);
+		[DllImport("gdiplus.dll")]
+ 		internal static extern Status GdipDrawCurve3(IntPtr graphics, IntPtr pen, PointF [] points, int count, int offset, int numberOfSegments, float tension);
+		[DllImport("gdiplus.dll")]
+ 		internal static extern Status GdipDrawCurve3I(IntPtr graphics, IntPtr pen, Point [] points, int count, int offset, int numberOfSegments, float tension);
 		
 		// Pen functions
 		[DllImport("gdiplus.dll")]
@@ -231,6 +250,9 @@ namespace System.Drawing {
                 internal static extern Status GdipScalePenTransform (IntPtr pen, float sx, float sy, MatrixOrder order);
 		[DllImport("gdiplus.dll")]
                 internal static extern Status GdipTranslatePenTransform (IntPtr pen, float dx, float dy, MatrixOrder order);
+
+		[DllImport("gdiplus.dll")]
+				internal static  extern Status GdipCreateFromHWND(IntPtr hwnd, out IntPtr graphics);
 		
 		// Bitmap functions
 		[DllImport("gdiplus.dll")]
