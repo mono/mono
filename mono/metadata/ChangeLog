@@ -1,3 +1,22 @@
+2003-12-08  Martin Baulig  <martin@ximian.com>
+
+	* icall.c (ves_icall_TypeBuilder_define_generic_parameter): Return
+	a MonoReflectionGenericParameter, also take the parameter index
+	and name as arguments.
+	(ves_icall_MethodBuilder_define_generic_parameter): Likewise.
+	(ves_icall_MonoGenericParam_initialize): New interncall.
+	(ves_icall_Type_make_byref_type): New interncall.
+
+	* reflection.h (MonoReflectionGenericParam): Derive from
+	MonoReflectionType, not just from MonoObject.  Added `refobj' and
+	`index' fields.
+
+	* reflection.c (mono_reflection_define_generic_parameter): Create
+	and return a new MonoReflectionGenericParam; don't initialize the
+	constraints here.
+	(mono_reflection_initialize_generic_parameter): New public method;
+	initializes the constraints and creates the `param->pklass'.
+
 2003-12-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.h reflection.c: Use the new fields 'num_types', 
