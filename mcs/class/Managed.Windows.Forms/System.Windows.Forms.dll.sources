@@ -42,6 +42,7 @@ System.Windows.Forms/ButtonBase.cs
 System.Windows.Forms/ButtonBorderStyle.cs
 System.Windows.Forms/ButtonState.cs
 System.Windows.Forms/CaptionButton.cs
+System.Windows.Forms/CategoryGridEntry.cs
 System.Windows.Forms/CharacterCasing.cs
 System.Windows.Forms/CheckBox.cs
 System.Windows.Forms/CheckedListBox.cs
@@ -220,6 +221,8 @@ System.Windows.Forms/PictureBox.cs
 System.Windows.Forms/PictureBoxSizeMode.cs
 System.Windows.Forms/ProgressBar.cs
 System.Windows.Forms/PropertyGrid.cs
+System.Windows.Forms/PropertyGridEntry.cs
+System.Windows.Forms/PropertyGridTextBox.cs
 System.Windows.Forms/PropertyGridView.cs
 System.Windows.Forms/PropertyManager.cs
 System.Windows.Forms/PropertySort.cs
