@@ -1,3 +1,7 @@
+2004-04-14  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* security.c: #warning is a GCC-ism
+
 2004-04-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* security.c: Removed GetUserName as glib g_get_user_name does a
