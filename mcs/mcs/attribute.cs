@@ -764,36 +764,28 @@ namespace Mono.CSharp {
 		}
 
 		static UnmanagedMarshal GetMarshal (Attribute a)
-		{		
-			switch (a.UnmanagedType) {
-			case UnmanagedType.CustomMarshaler:
+                {
+			UnmanagedMarshal marshal;
+
+			if (a.UnmanagedType == UnmanagedType.CustomMarshaler) {
 				MethodInfo define_custom = typeof (UnmanagedMarshal).GetMethod ("DefineCustom",
                                                                        BindingFlags.Static | BindingFlags.Public);
-				if (define_custom == null)
+				if (define_custom == null) {
 					return null;
-				
-				object [] args = new object [4];
+				}
+				object[] args = new object [4];
 				args [0] = GetFieldValue (a, "MarshalTypeRef");
 				args [1] = GetFieldValue (a, "MarshalCookie");
 				args [2] = GetFieldValue (a, "MarshalType");
 				args [3] = Guid.Empty;
-				return (UnmanagedMarshal) define_custom.Invoke (null, args);
-				
-			case UnmanagedType.LPArray:
-				return UnmanagedMarshal.DefineLPArray ((UnmanagedType) GetFieldValue (a, "ArraySubType"));
-			
-			case UnmanagedType.SafeArray:
-				return UnmanagedMarshal.DefineSafeArray ((UnmanagedType) GetFieldValue (a, "ArraySubType"));
-			
-			case UnmanagedType.ByValArray:
-				return UnmanagedMarshal.DefineByValArray ((int) GetFieldValue (a, "SizeConst"));
-			
-			case UnmanagedType.ByValTStr:
-				return UnmanagedMarshal.DefineByValTStr ((int) GetFieldValue (a, "SizeConst"));
-			
-			default:
-				return UnmanagedMarshal.DefineUnmanagedMarshal (a.UnmanagedType);
+				marshal = (UnmanagedMarshal) define_custom.Invoke (null, args);
+			/*
+			 * need to special case other special marshal types
+			 */
+			} else {
+				marshal = UnmanagedMarshal.DefineUnmanagedMarshal (a.UnmanagedType);
 			}
+			return marshal;
 		}
 
 		/// <summary>
@@ -864,18 +856,7 @@ namespace Mono.CSharp {
 					} else if (kind is Constructor) {
 						((ConstructorBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is Field) {
-						if (attr_type == TypeManager.marshal_as_attr_type) {
-							UnmanagedMarshal marshal = GetMarshal (a);
-							if (marshal == null) {
-								Report.Warning (-24, loc,
-									"The Microsoft Runtime cannot set this marshal info. " +
-									"Please use the Mono runtime instead.");
-							} else {
-								((FieldBuilder) builder).SetMarshal (marshal);
-							}
-						} else { 
-							((FieldBuilder) builder).SetCustomAttribute (cb);
-						}
+						((FieldBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is Property || kind is Indexer ||
 						   kind is InterfaceProperty || kind is InterfaceIndexer) {
 						((PropertyBuilder) builder).SetCustomAttribute (cb);
