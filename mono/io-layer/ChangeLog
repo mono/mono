@@ -1,3 +1,8 @@
+
+Wed Jan 15 15:55:40 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* sockets.h, daemon.c, io.c: compilation fixes on MacOSX.
+
 2003-01-08  Dick Porter  <dick@ximian.com>
 
 	* sockets.c: Fixed setting blocking mode to true (fixes bug 36388)
