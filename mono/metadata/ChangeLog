@@ -1,4 +1,8 @@
 
+Fri Jul 26 11:58:22 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: load constant strings.
+
 Fri Jul 26 11:36:14 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: no magic numbers.
