@@ -19,6 +19,13 @@ using System.Collections;
 
 namespace System.Reflection.Emit {
 
+	internal struct MonoResource {
+		public byte[] data;
+		public string name;
+		public string filename;
+		public ResourceAttributes attrs;
+	}
+
 	public sealed class AssemblyBuilder : Assembly {
 		private IntPtr dynamic_assembly;
 		private MethodInfo entry_point;
@@ -26,6 +33,7 @@ namespace System.Reflection.Emit {
 		private string name;
 		private string dir;
 		private CustomAttributeBuilder[] cattrs;
+		private MonoResource[] resources;
 		internal Type corlib_object_type = typeof (System.Object);
 		internal Type corlib_value_type = typeof (System.ValueType);
 		internal Type corlib_enum_type = typeof (System.Enum);
@@ -78,10 +86,22 @@ namespace System.Reflection.Emit {
 
 		public void AddResourceFile (string name, string fileName)
 		{
+			AddResourceFile (name, fileName, ResourceAttributes.Public);
 		}
 
 		public void AddResourceFile (string name, string fileName, ResourceAttributes attribute)
 		{
+			if (resources != null) {
+				MonoResource[] new_r = new MonoResource [resources.Length + 1];
+				System.Array.Copy(resources, new_r, resources.Length);
+				resources = new_r;
+			} else {
+				resources = new MonoResource [1];
+			}
+			int p = resources.Length - 1;
+			resources [p].name = name;
+			resources [p].filename = fileName;
+			resources [p].attrs = attribute;
 		}
 
 		public ModuleBuilder DefineDynamicModule (string name)
@@ -118,7 +138,7 @@ namespace System.Reflection.Emit {
 
 		public IResourceWriter DefineResource (string name, string description, string fileName)
 		{
-			return null;
+			return DefineResource (name, description, fileName, ResourceAttributes.Public);
 		}
 
 		public IResourceWriter DefineResource (string name, string description,
