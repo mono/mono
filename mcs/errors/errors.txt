@@ -31,3 +31,10 @@ numbers to match the Microsoft numbers:
 	from each other.
 
 -11	Delegate creation expression takes only one argument
+
+-12     More than one integral conversion exists for the type on a
+	switch statement.
+
+-13	No return with a value found.  Warning, since we currently
+	do not perform flow analysis, and can not tell whether a
+	ret is required or not.
