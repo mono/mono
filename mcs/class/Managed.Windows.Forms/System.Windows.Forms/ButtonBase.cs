@@ -23,6 +23,10 @@
 //	Peter Bartok	pbartok@novell.com
 //
 // $Log: ButtonBase.cs,v $
+// Revision 1.5  2004/08/31 18:49:58  pbartok
+// - Removed debug
+// - Minor fixes
+//
 // Revision 1.4  2004/08/30 20:42:10  pbartok
 // - Made Redraw() and CheckRedraw() virtual
 // - Improved mouse up/down/move logic to properly track buttons
@@ -60,7 +64,7 @@ namespace System.Windows.Forms {
 		private bool			has_focus;
 		private bool			is_pressed;
 		private bool			is_entered;
-		private bool			needs_redraw;
+		internal bool			needs_redraw;
 		StringFormat			text_format;
 		#endregion	// Local Variables
 
@@ -258,7 +262,7 @@ namespace System.Windows.Forms {
 
 			set { 
 				flat_style = value; 
-				Redraw();
+				CheckRedraw();
 			}
 		}
 		
@@ -269,7 +273,7 @@ namespace System.Windows.Forms {
 
 			set { 
 				image = value;
-				Redraw();
+				CheckRedraw();
 			}
 		}
 
@@ -280,7 +284,7 @@ namespace System.Windows.Forms {
 
 			set {
 				image_alignment=value;
-				Redraw();
+				CheckRedraw();
 			}
 		}
 
@@ -294,7 +298,7 @@ namespace System.Windows.Forms {
 
 			set {
 				image_index=value;
-				Redraw();
+				CheckRedraw();
 			}
 		}
 
@@ -317,7 +321,7 @@ namespace System.Windows.Forms {
 						image_index=image_list.Images.Count-1;
 					}
 				}
-				Redraw();
+				CheckRedraw();
 			}
 		}
 
@@ -393,7 +397,7 @@ namespace System.Windows.Forms {
 							break;
 						}
 					}	
-					Redraw();
+					CheckRedraw();
 				}
 			}
 		}
@@ -409,6 +413,8 @@ namespace System.Windows.Forms {
 
 				cp.Style=(int)WindowStyles.WS_VISIBLE | (int)WindowStyles.WS_CHILD;
 
+				SetStyle(ControlStyles.UserPaint, true);
+				SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 				return cp;
 			}
 		}
@@ -433,7 +439,7 @@ namespace System.Windows.Forms {
 			set {
 				if (is_default != value) {
 					is_default = true;
-					Redraw();
+					CheckRedraw();
 				}
 			}
 		}
@@ -494,7 +500,6 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnMouseEnter(EventArgs e) {
-Console.WriteLine("have entered");
 			is_entered=true;
 			if ((this.flat_style == FlatStyle.Flat) || (this.flat_style == FlatStyle.Popup)) {
 				CheckRedraw();
@@ -503,7 +508,6 @@ Console.WriteLine("have entered");
 		}
 
 		protected override void OnMouseLeave(EventArgs e) {
-Console.WriteLine("have left");
 			is_entered=false;
 			if ((this.flat_style == FlatStyle.Flat) || (this.flat_style == FlatStyle.Popup)) {
 				CheckRedraw();
