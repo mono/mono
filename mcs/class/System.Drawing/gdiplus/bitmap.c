@@ -65,7 +65,7 @@ gdip_bitmap_new ()
 void 
 gdip_bitmap_dispose (GpBitmap *bitmap)
 {
-	GdipFree (bitmap->data.scan0);
+	GdipFree (bitmap->data.Scan0);
 }
 
 void 
