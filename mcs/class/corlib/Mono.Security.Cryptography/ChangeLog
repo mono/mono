@@ -1,3 +1,8 @@
+2003-03-01  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* PKCS1.cs: Fix for some (lame) PKCS1 v1.5 signatures done
+	without specifying an OID.
+
 2003-02-08  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoTools.cs: Renamed namespace to match new location.

@@ -264,7 +264,15 @@ namespace Mono.Security.Cryptography {
 			byte[] m = RSAVP1 (rsa, signature);
 			byte[] EM2 = I2OSP (m, size);
 			byte[] EM = Encode_v15 (oid, hash, size);
-			return Compare(EM, EM2);
+			bool result = Compare (EM, EM2);
+			if (!result) {
+				// NOTE: some signatures don't include the hash OID (pretty lame but real)
+				// and compatible with MS implementation
+				byte[] decryptedHash = new byte [hash.Length];
+				Array.Copy (EM2, EM2.Length - hash.Length, decryptedHash, 0, decryptedHash.Length);
+				result = Compare (decryptedHash, hash);
+			}
+			return result;
 		}
 	
 		// Note: MD2 isn't supported in .NET framework
