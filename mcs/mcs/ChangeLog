@@ -1,3 +1,8 @@
+2002-04-14  Duncan Mak  <duncan@ximian.com>
+
+	* cfold.cs (BinaryFold): Catch DivideByZeroException in the
+	Binary.Operator.Division case.
+
 2002-04-13  Ravi Pratap  <ravi@ximian.com>
 
 	* class.cs (DefineType): Ensure that we do a proper check on

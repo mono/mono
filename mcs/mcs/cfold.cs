@@ -634,7 +634,11 @@ namespace Mono.CSharp {
 					}
 				} catch (OverflowException){
 					Error_CompileTimeOverflow (loc);
+
+				} catch (DivideByZeroException) {
+					Report.Error (020, loc, "Division by constant zero");
 				}
+				
 				break;
 				
 			case Binary.Operator.Modulus:
