@@ -142,23 +142,8 @@ namespace Mono.CSharp {
 						return new EmptyCast (expr, target_type);
 
 				// from a generic type definition to a generic instance.
-				if ((expr_type is TypeBuilder) && expr_type.IsGenericTypeDefinition &&
-				    target_type.IsGenericInstance) {
-					if (expr_type != target_type.GetGenericTypeDefinition ())
-						return null;
-
-					Type[] gparams = expr_type.GetGenericArguments ();
-					Type[] tparams = target_type.GetGenericArguments ();
-
-					if (gparams.Length != tparams.Length)
-						return null;
-
-					for (int i = 0; i < gparams.Length; i++)
-						if (gparams [i] != tparams [i])
-							return null;
-
+				if (TypeManager.IsEqualGenericType (expr_type, target_type))
 					return new EmptyCast (expr, target_type);
-				}
 				
 				return null;
 
@@ -242,23 +227,8 @@ namespace Mono.CSharp {
 					return true;
 
 				// from a generic type definition to a generic instance.
-				if ((expr_type is TypeBuilder) && expr_type.IsGenericTypeDefinition &&
-				    target_type.IsGenericInstance) {
-					if (expr_type != target_type.GetGenericTypeDefinition ())
-						return false;
-
-					Type[] gparams = expr_type.GetGenericArguments ();
-					Type[] tparams = target_type.GetGenericArguments ();
-
-					if (gparams.Length != tparams.Length)
-						return false;
-
-					for (int i = 0; i < gparams.Length; i++)
-						if (gparams [i] != tparams [i])
-							return false;
-
+				if (TypeManager.IsEqualGenericType (expr_type, target_type))
 					return true;
-				}
 			}
 			return false;
 		}

@@ -1,5 +1,9 @@
 2003-12-19  Martin Baulig  <martin@ximian.com>
 
+	* typemanager.cs (TypeManager.IsEqualGenericType): New public
+	static method; see documentation in the method.
+	(TypeManager.IsSubclassOrNestedChild): Allow IsEqualGenericType().
+
 	* convert.cs (Convert.ImplicitReferenceConversion,
 	Convert.ImplicitReferenceConversionExists): Add support for
 	generic type declarations; see gen-36.cs.
