@@ -1,4 +1,8 @@
 
+2002-12-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DecimalFormatter.cs: fixed bug #35560.
+
 Wed Dec 4 16:04:28 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* Type.cs: implemented GetInterfaceMap (needs an updated runtime).

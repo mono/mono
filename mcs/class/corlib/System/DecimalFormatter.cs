@@ -57,6 +57,7 @@ namespace System
         {
             char specifier;
             int precision;
+	    format = format.Trim ();
             if (!DecimalFormatter.ParseFormat(format, out specifier, out precision)) 
             {
                 throw new FormatException (Locale.GetText ("The specified format is invalid"));
