@@ -1,5 +1,10 @@
 2003-12-24  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Added testresults.tar.gz and README.
+	* Modified Makefile.
+
+2003-12-24  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Added missing xalan_correct_catalog.xml.
 	* Makefile : a bit improved.
 
