@@ -1,3 +1,8 @@
+2005-02-23  Dick Porter  <dick@ximian.com>
+
+	* UdpClient.cs: Set the Broadcast option, as apparently the MS
+	runtime defaults make UDP sockets broadcastable.
+
 2004-12-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: for Receive*/Send*, don't set the connected status to false

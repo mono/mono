@@ -118,6 +118,7 @@ namespace System.Net.Sockets
 
 			socket = new Socket (family, SocketType.Dgram, ProtocolType.Udp);
 
+			socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, 1);
 			if (localEP != null)
 				socket.Bind (localEP);
 		}
