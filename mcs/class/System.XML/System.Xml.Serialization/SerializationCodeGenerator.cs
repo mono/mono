@@ -234,10 +234,10 @@ namespace System.Xml.Serialization
 				WriteLineInd ("{");
 				
 				if (!_config.NoReader)
-					GenerateReader (readerClassName, maps);
+					GenerateReader (readerClassName, (ArrayList) entry.Value);
  				WriteLine ("");
 				if (!_config.NoWriter)
-					GenerateWriter (writerClassName, maps);
+					GenerateWriter (writerClassName, (ArrayList) entry.Value);
 				WriteLine ("");
 				
 				WriteLineUni ("}");

@@ -1,3 +1,8 @@
+2005-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationCodeGenerator.cs : the last merge was wrong. Fixed the
+	  build.
+
 2005-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SerializationCodeGeneratorConfiguration.cs,
