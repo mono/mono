@@ -978,6 +978,11 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
+			//
+			// We use recurse to allow ourselfs to be the source
+			// of an assignment. This little hack prevents us from
+			// having to allocate another expression
+			//
 			if (recurse) {
 				((IAssignMethod) expr).Emit (ec, is_expr && (mode == Mode.PostIncrement  || mode == Mode.PostDecrement));
 				if (method == null)
