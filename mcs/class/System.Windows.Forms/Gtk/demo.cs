@@ -23,7 +23,6 @@ class X {
 	
 	static void Main (string [] args)
 	{
-		Gtk.Application.Init ();
 		string demo = "window";
 
 		if (args.Length > 0)

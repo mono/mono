@@ -11,7 +11,7 @@ SOURCES = \
 all: demo.exe
 
 demo.exe: demo.cs System.Windows.Forms.dll
-	$(CSC) demo.cs /r:System.Windows.Forms.dll /r:gtk-sharp.dll
+	$(CSC) demo.cs /r:System.Windows.Forms.dll
 
 System.Windows.Forms.dll: $(SOURCES)
 	$(CSC) $(SWFF) /target:library /out:System.Windows.Forms.dll $(SOURCES)
