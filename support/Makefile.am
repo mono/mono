@@ -1,4 +1,8 @@
-lib_LTLIBRARIES = libMonoPosixHelper.la
+if PLATFORM_WIN32
+lib_LTLIBRARIES= 
+else
+lib_LTLIBRARIES= libMonoPosixHelper.la
+endif
 
 libMonoPosixHelper_la_SOURCES = \
 	map.c map.h macros.c
