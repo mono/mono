@@ -13,6 +13,7 @@ using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Globalization;
+using System.Collections;
 using System.Security;
 using System.Security.Permissions;
 
@@ -274,7 +275,39 @@ namespace System.Reflection.Emit {
 		}
 
 		public override ConstructorInfo[] GetConstructors (BindingFlags bindingAttr) {
-			throw new NotImplementedException ();
+			if (ctors == null)
+				return new ConstructorInfo [0];
+			ArrayList l = new ArrayList ();
+			bool match;
+			MethodAttributes mattrs;
+			
+			foreach (ConstructorBuilder c in ctors) {
+				match = false;
+				mattrs = c.Attributes;
+				if ((mattrs & MethodAttributes.MemberAccessMask) == MethodAttributes.Public) {
+					if ((bindingAttr & BindingFlags.Public) != 0)
+						match = true;
+				} else {
+					if ((bindingAttr & BindingFlags.NonPublic) != 0)
+						match = true;
+				}
+				if (!match)
+					continue;
+				match = false;
+				if ((mattrs & MethodAttributes.Static) != 0) {
+					if ((bindingAttr & BindingFlags.Static) != 0)
+						match = true;
+				} else {
+					if ((bindingAttr & BindingFlags.Instance) != 0)
+						match = true;
+				}
+				if (!match)
+					continue;
+				l.Add (c);
+			}
+			ConstructorInfo[] result = new ConstructorInfo [l.Count];
+			l.CopyTo (result);
+			return result;
 		}
 
 		public override Type GetElementType () { return null; }
@@ -284,7 +317,7 @@ namespace System.Reflection.Emit {
 		}
 
 		public override EventInfo[] GetEvents (BindingFlags bindingAttr) {
-			throw new NotImplementedException ();
+			return new EventInfo [0];
 		}
 
 		public override FieldInfo GetField( string name, BindingFlags bindingAttr) {
@@ -293,8 +326,39 @@ namespace System.Reflection.Emit {
 		}
 
 		public override FieldInfo[] GetFields (BindingFlags bindingAttr) {
-			//FIXME
-			throw new NotImplementedException ();
+			if (fields == null)
+				return new FieldInfo [0];
+			ArrayList l = new ArrayList ();
+			bool match;
+			FieldAttributes mattrs;
+			
+			foreach (FieldInfo c in fields) {
+				match = false;
+				mattrs = c.Attributes;
+				if ((mattrs & FieldAttributes.FieldAccessMask) == FieldAttributes.Public) {
+					if ((bindingAttr & BindingFlags.Public) != 0)
+						match = true;
+				} else {
+					if ((bindingAttr & BindingFlags.NonPublic) != 0)
+						match = true;
+				}
+				if (!match)
+					continue;
+				match = false;
+				if ((mattrs & FieldAttributes.Static) != 0) {
+					if ((bindingAttr & BindingFlags.Static) != 0)
+						match = true;
+				} else {
+					if ((bindingAttr & BindingFlags.Instance) != 0)
+						match = true;
+				}
+				if (!match)
+					continue;
+				l.Add (c);
+			}
+			FieldInfo[] result = new FieldInfo [l.Count];
+			l.CopyTo (result);
+			return result;
 		}
 
 		public override Type GetInterface (string name, bool ignoreCase) {
@@ -317,13 +381,39 @@ namespace System.Reflection.Emit {
 		}
 
 		public override MethodInfo[] GetMethods (BindingFlags bindingAttr) {
-			/*MemberInfo[] m = FindMembers (MemberTypes.Method, bindingAttr, null, null);
-			MethodInfo[] res = new MethodInfo [m.Length];
-			int i;
-			for (i = 0; i < m.Length; ++i)
-				res [i] = (MethodInfo) m [i];
-			return res;*/
-			throw new NotImplementedException ();
+			if (methods == null)
+				return new MethodInfo [0];
+			ArrayList l = new ArrayList ();
+			bool match;
+			MethodAttributes mattrs;
+
+			foreach (MethodInfo c in methods) {
+				match = false;
+				mattrs = c.Attributes;
+				if ((mattrs & MethodAttributes.MemberAccessMask) == MethodAttributes.Public) {
+					if ((bindingAttr & BindingFlags.Public) != 0)
+						match = true;
+				} else {
+					if ((bindingAttr & BindingFlags.NonPublic) != 0)
+						match = true;
+				}
+				if (!match)
+					continue;
+				match = false;
+				if ((mattrs & MethodAttributes.Static) != 0) {
+					if ((bindingAttr & BindingFlags.Static) != 0)
+						match = true;
+				} else {
+					if ((bindingAttr & BindingFlags.Instance) != 0)
+						match = true;
+				}
+				if (!match)
+					continue;
+				l.Add (c);
+			}
+			MethodInfo[] result = new MethodInfo [l.Count];
+			l.CopyTo (result);
+			return result;
 		}
 
 		protected override MethodInfo GetMethodImpl( string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) {
@@ -345,9 +435,45 @@ namespace System.Reflection.Emit {
 		}
 
 		public override PropertyInfo[] GetProperties( BindingFlags bindingAttr) {
-			// FIXME
-			throw new NotImplementedException ();
-			return null;
+			if (properties == null)
+				return new PropertyInfo [0];
+			ArrayList l = new ArrayList ();
+			bool match;
+			MethodAttributes mattrs;
+			MethodInfo accessor;
+			
+			foreach (PropertyInfo c in properties) {
+				match = false;
+				accessor = c.GetGetMethod (true);
+				if (accessor == null)
+					accessor = c.GetSetMethod (true);
+				if (accessor == null)
+					continue;
+				mattrs = accessor.Attributes;
+				if ((mattrs & MethodAttributes.MemberAccessMask) == MethodAttributes.Public) {
+					if ((bindingAttr & BindingFlags.Public) != 0)
+						match = true;
+				} else {
+					if ((bindingAttr & BindingFlags.NonPublic) != 0)
+						match = true;
+				}
+				if (!match)
+					continue;
+				match = false;
+				if ((mattrs & MethodAttributes.Static) != 0) {
+					if ((bindingAttr & BindingFlags.Static) != 0)
+						match = true;
+				} else {
+					if ((bindingAttr & BindingFlags.Instance) != 0)
+						match = true;
+				}
+				if (!match)
+					continue;
+				l.Add (c);
+			}
+			PropertyInfo[] result = new PropertyInfo [l.Count];
+			l.CopyTo (result);
+			return result;
 		}
 		
 		protected override PropertyInfo GetPropertyImpl( string name, BindingFlags bindingAttr, Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers) {

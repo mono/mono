@@ -1,4 +1,9 @@
 
+Mon Mar 4 11:30:40 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* TypeBuilder.cs: implemented GetConstructors(), GetFields(),
+	GetMethods(), GetProperties().
+
 Thu Feb 28 19:15:10 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* AssemblyBuilder.cs: call into the runtime to init some basic
