@@ -78,10 +78,16 @@ run-test-local: run-test-lib
 run-test-lib: test-local
 	$(TEST_RUNTIME) $(TEST_HARNESS) $(test_lib)
 
+run-test-ondotnet-local: run-test-ondotnet-lib
+
+run-test-ondotnet-lib: test-local
+	$(TEST_HARNESS) $(test_lib)
+
 else
 test-local: $(the_lib)
 
 run-test-local:
+run-test-ondotnet-local:
 endif
 
 DISTFILES = $(sourcefile) $(test_sourcefile) $(EXTRA_DISTFILES)

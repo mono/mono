@@ -40,6 +40,8 @@ ifndef HAS_TEST
 test-local: $(PROGRAM)
 
 run-test-local:
+
+run-test-ondotnet-local:
 endif
 
 DISTFILES = $(sourcefile) $(EXTRA_DISTFILES)

@@ -124,6 +124,8 @@ test: test-recursive test-local
 
 run-test: run-test-recursive test-local run-test-local
 
+run-test-ondotnet: run-test-ondotnet-recursive test-local run-test-ondotnet-local
+
 clean: clean-recursive clean-local
 
 uninstall: uninstall-recursive uninstall-local
