@@ -1,3 +1,9 @@
+2004-04-26 David Waite <mass@akuma.org>
+
+	* io.c:
+	* timefuncs.c: declare 64-bit constants as long long types (i.e.
+	10ULL)
+
 2004-04-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* socket-wrappers.h: _wapi_socket == WSASocket now. Added
