@@ -1,3 +1,7 @@
+2004-05-14 Marek Safar <marek.safar@seznam.cz>
+
+	* cs3008-7.cs: New test for bug #58478.
+
 2004-05-11  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (run-test-local): Run gmcs and multi tests too.
