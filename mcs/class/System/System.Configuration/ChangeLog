@@ -3,6 +3,7 @@
 	* ConfigurationSettings.cs: handle allowdefinition and allowlocation,
 	added locks, don't reopen the file for every new section to be read,
 	but keep them as strings and build the section handlers with that.
+	Also allow changing the configuration system (used from System.Web).
 
 2003-11-17 Ben Maurer  <bmaurer@users.sourceforge.net>
 
