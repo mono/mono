@@ -30,6 +30,9 @@ namespace Mono.Languages
 		// Maps extensions to specific parsers
 		static private Hashtable mapOfParsers;
 
+		// Maps extensions to specific parsers
+		static private GenericParser defaultParser = null;
+
 		// Indicates if parsing should be verbose
 		static public bool yacc_verbose_flag = false;
 
@@ -57,7 +60,7 @@ namespace Mono.Languages
 		/// <summary>
 		/// Parses the current "input"
 		/// </summary>
-		public abstract int parse();
+		protected abstract int parse();
 
 		/// <summary>
 		/// Lists the extensions this parser can handle
@@ -110,7 +113,6 @@ namespace Mono.Languages
 
 		static private void MapParsers()
 		{
-
 			mapOfParsers = new Hashtable();
 
 			Assembly thisAssembly = Assembly.GetExecutingAssembly();
@@ -128,29 +130,41 @@ namespace Mono.Languages
 							else
 								mapOfParsers.Add(theFileExtension, parser);
 						}
+						object[] attribs = type.GetCustomAttributes(typeof(DefaultParserAttribute), false);
+						if (attribs != null && attribs.Length > 0)
+						{
+							if (defaultParser == null)
+								defaultParser = parser;
+							else
+								Console.WriteLine("[TRACE] " + type.FullName + " can't be another default parser");								
+						}
 					}
 			}
 		}
 
 		/// <summary>
 		/// Find the descendant parser that knows how to parse the specified file
-		/// based on the files extension
+		/// based on the file extension, or the default parser otherwise, if available
 		/// </summary>
 		/// <param name="fileName">Name of the file to be parsed</param>
 		public static GenericParser GetSpecificParserFor(string fileName)
 		{
 			int i;
-			string fileExtension;
+			GenericParser chosenParser = null;
 			
 			if (mapOfParsers == null)
 				MapParsers();
 			
-			if ((i = fileName.LastIndexOf(".")) < 0)
-				return null;
-			else
-				fileExtension = fileName.Substring(i).ToLower();
-
-			return (GenericParser)mapOfParsers[fileExtension];
+			if ((i = fileName.LastIndexOf(".")) > 0)
+			{
+				string fileExtension = fileName.Substring(i).ToLower();
+				chosenParser = (GenericParser)mapOfParsers[fileExtension];
+			}
+			
+			if (chosenParser != null)			
+				return chosenParser;
+				
+			return defaultParser;
 		}
 
 		
@@ -214,10 +228,14 @@ namespace Mono.Languages
 			} 
 			catch (FileNotFoundException ex)
 			{
-				error(2001, "Source file \'" + fileName + "\' could not be found!!!");
-				Console.WriteLine (ex);
+				Report.Error(2001, "Source file \'" + fileName + "\' could not be found!!!");
 				return 1;
 			}
+			catch (DirectoryNotFoundException ex)
+			{
+				Report.Error(2001, "Source file \'" + fileName + "\' could not be found!!!");
+				return 1;
+			}			
 			catch (Exception ex)
 			{
 				Console.WriteLine (ex);
@@ -299,28 +317,6 @@ namespace Mono.Languages
 		}
 
 
-		/// <summary>
-		/// Emits error messages and increments a global count of them
-		/// </summary>
-		/// <param name="code"></param>
-		/// <param name="desc"></param>
-		static public void error (int code, string desc)
-		{
-			Console.WriteLine ("error MC"+code+": "+ desc);
-			global_errors++;
-		}
-
-		// Emits error messages with location info.
-		// FIXME : Ideally, all error reporting should happen
-		// with Report.Error but how do you get at that non-static
-		// method everywhere you need it ?
-		static public void error (int code, Mono.CSharp.Location l, string text)
-		{
-			Console.WriteLine (l.Name + "(" + l.Row + ",?" + /*l.Col +*/
-					   "): error MC" + code + ": " + text);
-			global_errors++;
-		}
-		
 		// ---------------------------------------------------
 		// Constructors
 
@@ -331,6 +327,3 @@ namespace Mono.Languages
 
 	}
 }
-
-
-

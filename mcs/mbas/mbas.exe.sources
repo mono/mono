@@ -8,6 +8,7 @@ codegen.cs
 constant.cs
 const.cs
 decl.cs
+defaultparserattribute.cs
 delegate.cs
 driver.cs
 ecore.cs
@@ -29,4 +30,4 @@ statementCollection.cs
 statement.cs
 support.cs
 tree.cs
-typemanager.cs 
+typemanager.cs

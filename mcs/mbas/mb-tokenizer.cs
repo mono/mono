@@ -297,7 +297,7 @@ namespace Mono.MonoBASIC
 		
 		public Location Location {
 			get {
-				return new Location (ref_line);
+				return new Location (ref_line, col);
 			}
 		}
 		

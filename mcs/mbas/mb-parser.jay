@@ -24,6 +24,7 @@ namespace Mono.MonoBASIC
 	/// <summary>
 	///    The MonoBASIC Parser
 	/// </summary>
+	[DefaultParser]
 	public class Parser : GenericParser
 	{
 	
@@ -4069,7 +4070,7 @@ private void ReportError9998()
 	Report.Error (9998, lexer.Location, "This construct is only available in MonoBASIC extended syntax.");
 }
 
-public override int parse ()
+protected override int parse ()
 {
 	current_namespace = new Namespace (null, RootContext.RootNamespace);
 	current_container = RootContext.Tree.Types;

@@ -80,7 +80,8 @@ namespace Mono.CSharp {
 		
 		static void Check (int code)
 		{
-			if (code == expected_error){
+			if (code == expected_error)
+			{
 				if (Fatal)
 					throw new Exception ();
 				
@@ -88,7 +89,7 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		static public void RealError (string msg)
+		static private void RealError (string msg)
 		{
 			Errors++;
 			Console.WriteLine (msg);
@@ -102,8 +103,7 @@ namespace Mono.CSharp {
 		static public void Error (int code, Location l, string text)
 		{
 			string msg = String.Format (
-				"{0}({1}) error BC{2:0000}: {3}", l.Name, l.Row, code, text);
-//				"{0}({1}) error BC{2}: {3}", l.Name, l.Row, code, text);
+				"{0}({1},{2}) error BC{3:0000}: {4}", l.Name, l.Row, l.Col, code, text);
 			
 			RealError (msg);
 			Check (code);
@@ -122,14 +122,11 @@ namespace Mono.CSharp {
 				string row;
 				
 				if (Location.IsNull (l))
-					row = "";
+					Console.WriteLine(String.Format("{0} warning BC{2:0000}: {3}",
+						l.Name, code, text));
 				else
-					row = l.Row.ToString ();
-				
-				Console.WriteLine (String.Format (
-					"{0}({1}) warning BC{2:0000}: {3}",
-//					"{0}({1}) warning BC{2}: {3}",
-					l.Name,  row, code, text));
+					Console.WriteLine(String.Format("{0}({1},{2}) warning BC{2:0000}: {3}",
+						l.Name, l.Row, l.Col, code, text));
 				Warnings++;
 				Check (code);
 
@@ -158,7 +155,6 @@ namespace Mono.CSharp {
 		static public void Error (int code, string text)
 		{
 			string msg = String.Format ("error BC{0:0000}: {1}", code, text);
-//			string msg = String.Format ("error BC{0}: {1}", code, text);
 			
 			RealError (msg);
 			Check (code);

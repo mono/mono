@@ -875,6 +875,8 @@ namespace Mono.Languages
 		public static int Main (string[] args)
 		{
 			Driver Exec = new Driver();
+			
+			Report.Stacktrace = false;
 
 			return Exec.MainDriver(args);
 		}

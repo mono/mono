@@ -1,3 +1,13 @@
+2003/10/17  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* genericparser.cs: 
+	    Don't print exception when a file is not found to be parsed
+		File extensions not matched are now processed with the default parser
+		Better handle file/directory not found exceptions, and use Report.Error in that case
+	* added defaultparserattribute.cs
+	* mb-parser.jay : Mono.MonoBASIC.Parser is now the [DefaultParser]
+	* location.cs version 1.4 recovered (Marco Ridoni had it overwritten with an older version)
+	* mb-tokenizer.cs, rootcontext.cs, tree.cs: Location constructor needs column number now
+
 2003/09/17  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* .cvsignore: WHOOPS
 
