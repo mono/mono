@@ -1424,7 +1424,7 @@ namespace Mono.CSharp
 		public override LabeledStatement LookupLabel (string name, Location loc)
 		{
 			if (current_vector.Block == null)
-				return null;
+				return base.LookupLabel (name, loc);
 
 			LabeledStatement s = current_vector.Block.LookupLabel (name);
 			if (s != null)
