@@ -80,6 +80,7 @@ public class TypeManager {
 	static public Type exception_type;
 	static public object obsolete_attribute_type;
 	static public object conditional_attribute_type;
+	static public Type in_attribute_type;
 
 	//
 	// An empty array of types
@@ -922,8 +923,9 @@ public class TypeManager {
 		attribute_usage_type = CoreLookupType ("System.AttributeUsageAttribute");
 		dllimport_type       = CoreLookupType ("System.Runtime.InteropServices.DllImportAttribute");
 		methodimpl_attr_type = CoreLookupType ("System.Runtime.CompilerServices.MethodImplAttribute");
-		marshal_as_attr_type  = CoreLookupType ("System.Runtime.InteropServices.MarshalAsAttribute");
-		param_array_type      = CoreLookupType ("System.ParamArrayAttribute");
+		marshal_as_attr_type = CoreLookupType ("System.Runtime.InteropServices.MarshalAsAttribute");
+		param_array_type     = CoreLookupType ("System.ParamArrayAttribute");
+		in_attribute_type    = CoreLookupType ("System.Runtime.InteropServices.InAttribute");
 
 		//
 		// Temporary while people upgrade their corlibs

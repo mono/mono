@@ -956,7 +956,6 @@ namespace Mono.CSharp {
 	}
 	
 	public class AttributeSection {
-		
 		public readonly string    Target;
 		public readonly ArrayList Attributes;
 		
@@ -982,6 +981,17 @@ namespace Mono.CSharp {
 		{
 			if (a != null && !AttributeSections.Contains (a))
 				AttributeSections.Add (a);
+		}
+
+		public bool Contains (Type t)
+		{
+			foreach (AttributeSection attr_section in AttributeSections){
+				foreach (Attribute a in attr_section.Attributes){
+					if (a.Type == t)
+						return true;
+				}
+			}
+			return false;
 		}
 	}
 }

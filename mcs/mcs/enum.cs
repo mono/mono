@@ -556,8 +556,12 @@ namespace Mono.CSharp {
 
 					if (default_value == null)
 						return true;
-
 				} else {
+					if (name == "value__"){
+						Report.Error (76, loc, "The name `value__' is reserved for enumerations");
+						return false;
+					}
+
 					FieldBuilder fb = TypeBuilder.DefineField (
 						name, UnderlyingType, attr);
 					
