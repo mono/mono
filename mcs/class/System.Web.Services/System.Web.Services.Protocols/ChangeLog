@@ -1,3 +1,11 @@
+2003-09-28  Lluis Sanchez Gual  <lluis@ximian.com>
+	
+	* HttpSoapWebServiceHandler.cs: In SerializeResponse method, improved
+	  management of exceptions. Also added support for BufferResponse flag.
+	* Methods.cs: Added MethodAttribute property in MethodStubInfo. Added
+	  XmlImporter, SoapImporter and Type properties in TypeStubInfo.
+	* SoapMessage.cs: little fix.
+	
 2003-09-14  Lluis Sanchez Gual  <lluis@ximian.com>
 	
 	* SoapDocumentationHandler.cs: Added support for on-the-fly proxy

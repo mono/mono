@@ -41,7 +41,8 @@ namespace System.Web.Services.Protocols {
 		internal string ResponseName;
 		internal string ResponseNamespace;
 		
-		internal bool   OneWay;
+		internal WebMethodAttribute MethodAttribute;
+		internal bool OneWay;
 		internal SoapParameterStyle ParameterStyle;
 		internal SoapBindingStyle SoapBindingStyle;
 		internal SoapBindingUse Use;
@@ -135,12 +136,12 @@ namespace System.Web.Services.Protocols {
 			
 			object [] o = source.GetCustomAttributes (typeof (WebMethodAttribute));
 			if (o.Length == 1){
-				WebMethodAttribute wma = (WebMethodAttribute) o [0];
-				BufferResponse = wma.BufferResponse;
-				CacheDuration = wma.CacheDuration;
-				Description = wma.Description;
-				EnableSession = wma.EnableSession;
-				Name = wma.MessageName;
+				MethodAttribute = (WebMethodAttribute) o [0];
+				BufferResponse = MethodAttribute.BufferResponse;
+				CacheDuration = MethodAttribute.CacheDuration;
+				Description = MethodAttribute.Description;
+				EnableSession = MethodAttribute.EnableSession;
+				Name = MethodAttribute.MessageName;
 
 				if (Name == "")
 					Name = source.Name;
@@ -152,6 +153,7 @@ namespace System.Web.Services.Protocols {
 			if (RequestName == "") RequestName = Name;
 			if (ResponseName == "")	ResponseName = Name + "Response";
 			if (Binding == null) Binding = parent.DefaultBinding;
+			else if (parent.GetBinding (Binding) == null) throw new InvalidOperationException ("Type '" + parent.Type + "' is missing WebServiceBinding attribute that defines a binding named '" + Binding + "'");
 				
 			if (Action == null || Action == "")
 				Action = RequestNamespace.EndsWith("/") ? (RequestNamespace + Name) : (RequestNamespace + "/" + Name);
@@ -373,6 +375,9 @@ namespace System.Web.Services.Protocols {
 		internal XmlSerializer           FaultSerializer;
 		internal SoapExtensionRuntimeConfig[][] SoapExtensions;
 		internal SoapBindingStyle SoapBindingStyle;
+		internal XmlReflectionImporter 	XmlImporter;
+		internal SoapReflectionImporter SoapImporter;
+		internal Type                   Type;
 
 		void GetTypeAttributes (Type t)
 		{
@@ -450,11 +455,12 @@ namespace System.Web.Services.Protocols {
 		
 		internal TypeStubInfo (Type t)
 		{
+			this.Type = t;
 			GetTypeAttributes (t);
 
-			XmlReflectionImporter xmlImporter = new XmlReflectionImporter ();
-			SoapReflectionImporter soapImporter = new SoapReflectionImporter ();
-			GetTypeMethods (t, xmlImporter, soapImporter);
+			XmlImporter = new XmlReflectionImporter ();
+			SoapImporter = new SoapReflectionImporter ();
+			GetTypeMethods (t, XmlImporter, SoapImporter);
 		}
 
 		internal MethodStubInfo GetMethod (string name)
@@ -493,6 +499,13 @@ namespace System.Web.Services.Protocols {
 		internal ArrayList Bindings
 		{
 			get { return bindings; }
+		}
+		
+		internal BindingInfo GetBinding (string name)
+		{
+			for (int n=0; n<bindings.Count; n++)
+				if (((BindingInfo)bindings[n]).Name == name) return (BindingInfo)bindings[n];
+			return null;
 		}
 	}
 	

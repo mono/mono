@@ -135,8 +135,8 @@ namespace System.Web.Services.Protocols {
 
 		public object GetReturnValue ()
 		{
-			if (MethodInfo.IsVoid) return null;
-			else return outParameters [0];
+			if (!MethodInfo.IsVoid && exception == null) return outParameters [0];
+			else return null;
 		}
 
 		internal void SetHeaders (SoapHeaderCollection headers)

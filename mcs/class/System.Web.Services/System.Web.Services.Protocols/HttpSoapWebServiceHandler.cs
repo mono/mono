@@ -146,6 +146,7 @@ namespace System.Web.Services.Protocols
 				}
 				catch (Exception ex)
 				{
+					Console.WriteLine (ex);
 					throw new SoapException ("Could not deserialize Soap message", SoapException.ClientFaultCode, ex);
 				}
 
@@ -203,42 +204,79 @@ namespace System.Web.Services.Protocols
 		void SerializeResponse (HttpResponse response, SoapServerMessage message)
 		{
 			MethodStubInfo methodInfo = message.MethodStubInfo;
+			
+			response.ContentType = "text/xml; charset=utf-8";
+			if (message.Exception != null) response.StatusCode = 500;
 
-			Stream outStream = response.OutputStream;
-			using (outStream)
+			long contentLength = 0;
+			Stream outStream = null;
+			MemoryStream bufferStream = null;
+			Stream responseStream = response.OutputStream;
+			
+			if (methodInfo.BufferResponse)
 			{
-				response.ContentType = "text/xml; charset=utf-8";
+				bufferStream = new MemoryStream ();
+				outStream = bufferStream;
+			}
+			else
+				outStream = responseStream;
 
+			try
+			{
 				// While serializing, process extensions in reverse order
 
-				outStream = SoapExtension.ExecuteChainStream (_extensionChainHighPrio, outStream);
-				outStream = SoapExtension.ExecuteChainStream (_extensionChainMedPrio, outStream);
-				outStream = SoapExtension.ExecuteChainStream (_extensionChainLowPrio, outStream);
-
-				message.SetStage (SoapMessageStage.BeforeSerialize);
-				SoapExtension.ExecuteProcessMessage (_extensionChainLowPrio, message, true);
-				SoapExtension.ExecuteProcessMessage (_extensionChainMedPrio, message, true);
-				SoapExtension.ExecuteProcessMessage (_extensionChainHighPrio, message, true);
-
+				if (methodInfo.BufferResponse)
+				{
+					outStream = SoapExtension.ExecuteChainStream (_extensionChainHighPrio, outStream);
+					outStream = SoapExtension.ExecuteChainStream (_extensionChainMedPrio, outStream);
+					outStream = SoapExtension.ExecuteChainStream (_extensionChainLowPrio, outStream);
+	
+					message.SetStage (SoapMessageStage.BeforeSerialize);
+					SoapExtension.ExecuteProcessMessage (_extensionChainLowPrio, message, true);
+					SoapExtension.ExecuteProcessMessage (_extensionChainMedPrio, message, true);
+					SoapExtension.ExecuteProcessMessage (_extensionChainHighPrio, message, true);
+				}
+				
 				// What a waste of UTF8encoders, but it has to be thread safe.
 				XmlTextWriter xtw = new XmlTextWriter (outStream, new UTF8Encoding (false));
-				xtw.Formatting = Formatting.Indented;
+				xtw.Formatting = Formatting.Indented;	// TODO: remove formatting when code is stable
 
 				if (message.Exception == null)
 					WebServiceHelper.WriteSoapMessage (xtw, _typeStubInfo, message.MethodStubInfo.ResponseSerializer, message.OutParameters, message.Headers);
 				else
-				{
 					WebServiceHelper.WriteSoapMessage (xtw, _typeStubInfo, _typeStubInfo.FaultSerializer, new Fault (message.Exception), null);
-					response.StatusCode = 500;
+
+				if (methodInfo.BufferResponse)
+				{
+					message.SetStage (SoapMessageStage.AfterSerialize);
+					SoapExtension.ExecuteProcessMessage (_extensionChainLowPrio, message, true);
+					SoapExtension.ExecuteProcessMessage (_extensionChainMedPrio, message, true);
+					SoapExtension.ExecuteProcessMessage (_extensionChainHighPrio, message, true);
 				}
-
-				message.SetStage (SoapMessageStage.AfterSerialize);
-				SoapExtension.ExecuteProcessMessage (_extensionChainLowPrio, message, true);
-				SoapExtension.ExecuteProcessMessage (_extensionChainMedPrio, message, true);
-				SoapExtension.ExecuteProcessMessage (_extensionChainHighPrio, message, true);
-
+				
+				if (bufferStream != null) contentLength = bufferStream.Length;
 				xtw.Close ();
 			}
+			catch (Exception ex)
+			{
+				// If the response is buffered, we can discard the response and
+				// serialize a new Fault message as response.
+				if (methodInfo.BufferResponse) throw ex;
+				
+				// If it is not buffered, we can't rollback what has been sent,
+				// so we can only close the connection and return.
+				responseStream.Close ();
+				return;
+			}
+			
+			try
+			{
+				if (methodInfo.BufferResponse)
+					responseStream.Write (bufferStream.GetBuffer(), 0, (int) contentLength);
+			}
+			catch {}
+			
+			responseStream.Close ();
 		}
 
 		void SerializeFault (HttpContext context, SoapServerMessage requestMessage, Exception ex)
