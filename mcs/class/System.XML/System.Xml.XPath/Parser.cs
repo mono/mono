@@ -12,7 +12,7 @@
 
 using System;
 using System.Xml.XPath;
-using Test.Xml.XPath;
+//using Test.Xml.XPath;
 
 namespace Mono.Xml.XPath
 {
