@@ -1,3 +1,8 @@
+2005-01-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BadImageFormatException.cs: Protect the fusion (GAC) log from being
+	disclosed unless code has ControlPolicy and ControlEvidence.
+
 2005-01-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Exception.cs: Compute stack trace on demand.

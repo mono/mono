@@ -7,10 +7,7 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2001 Ximian, Inc.
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,6 +30,7 @@
 //
 
 using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace System
 {
@@ -97,8 +95,11 @@ namespace System
 		}
 
 		[MonoTODO ("Probably not entirely correct. fusionLog needs to be set somehow (we are probably missing internal constuctor)")]
-		public string FusionLog
-		{
+		public string FusionLog	{
+			// note: MS runtime throws a SecurityException when the Exception is created
+			// but a FileLoadException once the exception as been thrown. Mono always
+			// throw a SecurityException in both case (anyway fusionLog is currently empty)
+			[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 			get { return fusionLog; }
 		}
 
