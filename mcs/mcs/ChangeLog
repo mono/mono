@@ -1,7 +1,6 @@
 2004-12-07  Martin Baulig  <martin@ximian.com>
 
 	* decl.cs
-	(MemberCore.Emit): Always call VerifyObsoleteAttribute().
 	(MemberCore.GetObsoleteAttribute): Don't create a new EmitContext.
 	(MemberCore.GetClsCompliantAttributeValue): Likewise.
 	(DeclSpace.ec): New protected field; store the EmitContext here.
