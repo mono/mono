@@ -9,6 +9,7 @@ bin_SCRIPTS = \
 	chktrust		\
 	cilc			\
 	disco			\
+	dtd2xsd			\
 	gacutil			\
 	genxs			\
 	ilasm			\
