@@ -1,3 +1,21 @@
+2003-05-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* RelaxngReader.cs :
+	  + Now skips immaterial content correctly.
+	  + Removed MoveToContent().
+	  + Trimming attribute values and names.
+	  + Fixed ReadNameClassChoice(), ReadNameClassExcept(),
+	    ReadPatternExcept (). They require one or more contents.
+	  + QName resolver fix.
+	  + ReadListPattern() failed to read actual content.
+	* RelaxngValidatingReader.cs :
+	  + Fixed incorrect error message.
+	  + Fixed incorrect attribute namespace handling.
+	* RngGrammar.cs : Some simplification stuff fix. 
+	  Support for illegal recursion check.
+	* RngNameClass.cs : fixed RngNsName ctor() (argument not passed).
+	* RngPattern.cs : fixed ParentRef.Compile() (was treated same as Ref).
+
 2003-05-05  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* RelaxngReader.cs : ReadExternalRef() hadn't resolved base uri.

@@ -13,11 +13,11 @@ using System.IO;
 using System.Net;
 using System.Xml;
 using Commons.Xml.Relaxng.Derivative;
-using System.Xml.Serialization;
+//using System.Xml.Serialization;
 
 namespace Commons.Xml.Relaxng
 {
-	[XmlRoot (ElementName="grammar", Namespace="http://relaxng.org/ns/structure/1.0")]
+//	[XmlRoot (ElementName="grammar", Namespace="http://relaxng.org/ns/structure/1.0")]
 	public class RngGrammar : RngPattern
 	{
 		// field
@@ -35,12 +35,22 @@ namespace Commons.Xml.Relaxng
 
 		// compile cache fields.
 		Hashtable assembledDefs = new Hashtable ();
-		RdpPattern assembledStart;
+		RngPattern assembledStart;
+		RdpPattern compiledStart;
 
 		Hashtable includedUris = new Hashtable ();
 		RngGrammar parentGrammar;
 		ArrayList includedGrammars;
 		Hashtable refPatterns = new Hashtable (); // key = RdpPattern of assembledDefs
+
+		// only for checkRecursion()
+		Hashtable checkedDefs = new Hashtable ();
+
+		// this should be checked after its compilation finished to complete
+		// missing-at-the-tracking patterns (especially of parent grammars).
+		// key = RdpPattern, value = ArrayList of unresolvedPatterns.
+		Hashtable unresolvedPatternsTable = new Hashtable ();
+		ArrayList unresolvedPatterns = new ArrayList ();
 
 		// contents key = RdpElement and value = name of the parent define.
 		private Hashtable ElementDefMap = new Hashtable ();
@@ -51,27 +61,27 @@ namespace Commons.Xml.Relaxng
 		{
 		}
 
-		[XmlIgnore]
+//		[XmlIgnore]
 		public override RngPatternType PatternType {
 			get { return RngPatternType.Grammar; }
 		}
 
-		[XmlElement("start")]
+//		[XmlElement("start")]
 		public IList Starts {
 			get { return starts; }
 		}
 
-		[XmlElement("define")]
+//		[XmlElement("define")]
 		public IList Defines {
 			get { return defs; }
 		}
 
-		[XmlElement("include")]
+//		[XmlElement("include")]
 		public IList Includes {
 			get { return includes; }
 		}
 
-		[XmlElement("div")]
+//		[XmlElement("div")]
 		public IList Divs {
 			get { return divs; }
 		}
@@ -105,32 +115,25 @@ namespace Commons.Xml.Relaxng
 			// see RELAX NG 4.17.
 			assembleCombine ();
 
-#if false
-			// Collect defines whose child is element.
-			foreach (string key in assembledDefs.Keys) {
-				RdpElement el = assembledDefs [key] as RdpElement;
-				if (el != null)
-					this.ElementDefMap.Add (el, assembledDefs [key]);
-			}
-#endif
+			compiledStart = assembledStart.Compile (this);
 
 			// Assemble all define components into top grammar and
 			// return start patterns for descendant grammars.
 			// see RELAX NG 4.18.
 			collectGrammars ();
 			if (parentGrammar != null)
-				return assembledStart;
-
+				return assembledStart.Compile (this);
 
 			// 4.19 (a) remove non-reachable defines
 			// 4.19 (b) check illegal recursion
+			checkRecursion (compiledStart, 0);
 			// 4.19 (c) expandRef
-			startPattern = assembledStart.expandRef (assembledDefs);
+			startPattern = compiledStart.ExpandRef (assembledDefs);
 			// 4.20,21 reduce notAllowed and empty.
 			bool b;
 			do {
 				b = false;
-				startPattern = startPattern.reduceEmptyAndNotAllowed (ref b, new Hashtable ());
+				startPattern = startPattern.ReduceEmptyAndNotAllowed (ref b, new Hashtable ());
 			} while (b);
 
 			Hashtable ht = new Hashtable ();
@@ -144,16 +147,93 @@ namespace Commons.Xml.Relaxng
 			return startPattern;
 		}
 
+		private void checkRecursion (RdpPattern p, int depth)
+		{
+
+			RdpAbstractBinary binary = p as RdpAbstractBinary;
+			if (binary != null) {
+				// choice, interleave, group
+				checkRecursion (binary.LValue, depth);
+				checkRecursion (binary.RValue, depth);
+				return;
+			}
+			RdpAbstractSingleContent single = p as RdpAbstractSingleContent;
+			if (single != null) {
+				checkRecursion (single.Child, depth);
+				return;
+			}
+
+			switch (p.PatternType) {
+			case RngPatternType.Ref:
+				// get checkRecursionDepth from table.
+				int checkRecursionDepth = -1;
+				object checkedDepth = checkedDefs [p];
+				if (checkedDepth != null)
+					checkRecursionDepth = (int) checkedDepth;
+				// get refPattern
+				RdpUnresolvedRef pref = p as RdpUnresolvedRef;
+				RngGrammar target = pref.IsParentRef ? parentGrammar : this;
+				RdpPattern refPattern = target.assembledDefs [pref.Name] as RdpPattern;
+				if (refPattern == null)
+					throw new RngException ("No matching define found for " + pref.Name);
+
+				if (checkRecursionDepth == -1) {
+					checkedDefs [p] = depth;
+					checkRecursion (refPattern, depth);
+					checkedDefs [p] = -2;
+				}
+				else if (depth == checkRecursionDepth)
+					throw new RngException (String.Format ("Detected illegal recursion. Ref name is {0}.", pref.Name));
+
+				break;
+
+			case RngPatternType.Attribute:
+				checkRecursion (((RdpAttribute) p).Children, depth);
+				break;
+
+			case RngPatternType.DataExcept:
+				checkRecursion (((RdpDataExcept) p).Except, depth);
+				break;
+
+			case RngPatternType.Element:
+				RdpElement el = p as RdpElement;
+				checkRecursion (el.Children, depth + 1);	// +1
+				break;
+			case RngPatternType.List:
+				checkRecursion (((RdpList) p).Child, depth);
+				break;
+			}
+		}
+
+		private void completeReference ()
+		{
+			foreach (RdpUnresolvedRef pref in this.unresolvedPatterns) {
+				RdpPattern defP = assembledDefs [pref.Name] as RdpPattern;
+				ArrayList al = refPatterns [defP] as ArrayList;
+				if (al == null) {
+					al = new ArrayList ();
+					refPatterns [defP] = al;
+				}
+				al.Add (pref);
+			}
+		}
+
 		private void collectGrammars ()
 		{
 			// collect ref and parentRef for each define.
 			includedGrammars = (parentGrammar != null) ?
 				parentGrammar.includedGrammars : new ArrayList ();
 
-			checkReferences (assembledStart);
+			// FIXME: This should be assembledStart.
+			checkReferences (compiledStart);
+			completeReference ();
+
 			Hashtable ht = assembledDefs.Clone () as Hashtable;
 			foreach (string name in ht.Keys) {
-				checkReferences (assembledDefs [name] as RdpPattern);
+				RdpPattern p = (RdpPattern) assembledDefs [name];
+				this.unresolvedPatternsTable [p] = unresolvedPatterns;
+				checkReferences (p);
+				completeReference ();
 			}
 
 			// If it is child of any other pattern:
@@ -189,6 +269,7 @@ namespace Commons.Xml.Relaxng
 						pref.Name = newName;
 					break;
 				}
+				idx++;
 			}
 		}
 
@@ -215,13 +296,15 @@ namespace Commons.Xml.Relaxng
 				RngGrammar target = pref.IsParentRef ? parentGrammar : this;
 				RdpPattern defP = target.assembledDefs [pref.Name] as RdpPattern;
 				if (defP == null)
-					throw new RngException ("No matching define found for " + pref.Name);
-				ArrayList al = target.refPatterns [defP] as ArrayList;
-				if (al == null) {
-					al = new ArrayList ();
-					target.refPatterns [defP] = al;
+					target.unresolvedPatterns.Add (p);
+				else {
+					ArrayList al = target.refPatterns [defP] as ArrayList;
+					if (al == null) {
+						al = new ArrayList ();
+						target.refPatterns [defP] = al;
+					}
+					al.Add (p);
 				}
-				al.Add (p);
 				break;
 
 			case RngPatternType.Attribute:
@@ -271,6 +354,93 @@ namespace Commons.Xml.Relaxng
 			}
 		}
 
+#if false
+		// remove ref and parentRef.
+		// add new defines for each elements.
+		private void checkReferences (RngPattern p)
+		{
+			RngBinaryContentPattern binary = 
+				p as RngBinaryContentPattern;
+			if (binary != null) {
+				// choice, interleave, group
+				foreach (RngPattern cp in binary.Patterns)
+					checkReferences (cp);
+				return;
+			}
+
+			RngSingleContentPattern single =
+				p as RngSingleContentPattern;
+			if (single != null) {
+				// list, element, oneOrMore, zeroOrMore, optional, mixed
+				foreach (RngPattern cp in single.Patterns)
+					checkReferences (cp);
+				return;
+			}
+
+			switch (p.PatternType) {
+			case RngPatternType.Ref:
+				RdpUnresolvedRef pref = p as RdpUnresolvedRef;
+				RngGrammar target = pref.IsParentRef ? parentGrammar : this;
+				RdpPattern defP = target.assembledDefs [pref.Name] as RdpPattern;
+				if (defP == null)
+					throw new RngException ("No matching define found for " + pref.Name);
+				ArrayList al = target.refPatterns [defP] as ArrayList;
+				if (al == null) {
+					al = new ArrayList ();
+					target.refPatterns [defP] = al;
+				}
+				al.Add (p);
+				break;
+
+			case RngPatternType.Attribute:
+				checkReferences (((RngAttribute) p).Pattern);
+				break;
+
+			case RngPatternType.DataExcept:
+				foreach (RngPattern cp in ((RngData) p).Except.Patterns)
+					checkReferences (cp);
+				break;
+
+			case RngPatternType.Element:
+				RngElement el = p as RngElement;
+				checkReferences (el.Children);
+				string name = ElementDefMap [el] as string;
+				if (name == null) {
+					// add new define
+					int idx = 0;
+					string newName = "element0";
+					if (el.NameClass is RngName)
+						newName = ((RngName) el.NameClass).LocalName;
+					while (true) {
+                                                if (assembledDefs [newName] == null) {
+							assembledDefs.Add (newName, el.Children);
+							break;
+						}
+						newName = "element" + ++idx;
+					}
+				}
+				// Even though the element is replaced with ref,
+				// derivative of ref is RdpElement in fact...
+				break;
+
+			case RngPatternType.List:
+				checkReferences (((RdpList) p).Child);
+				break;
+
+			case RngPatternType.Empty:
+			case RngPatternType.NotAllowed:
+			case RngPatternType.Text:
+			case RngPatternType.Value:
+				break;
+
+			//case RngPatternType.ExternalRef:
+			//case RngPatternType.Include:
+			// Mixed, Optional, ZeroOrMore are already removed.
+			// Choice, Group, Interleave, OneOrMore are already proceeded.
+			}
+		}
+#endif
+
 		// Assemble combines.
 		private void assembleCombine ()
 		{
@@ -300,17 +470,23 @@ namespace Commons.Xml.Relaxng
 
 			// assemble starts and defines with "combine" attribute.
 
-			// 3assemble starts.
+			// 3.assemble starts.
 			if (starts.Count == 0)
 				throw new RngException ("grammar must have at least one start component.");
-			assembledStart = ((RngStart)starts [0]).Compile (this);
+			assembledStart = ((RngStart)starts [0]).Pattern;
 			for (int i=1; i<starts.Count; i++) {
-				RdpPattern p2 = ((RngStart) starts [i])
-					.Compile (this);
-				if (combineStart == "interleave")
-					assembledStart = new RdpInterleave (assembledStart, p2);
-				else
-					assembledStart = new RdpChoice (assembledStart, p2);
+				RngPattern p2 = ((RngStart) starts [i]).Pattern;;
+				if (combineStart == "interleave") {
+					RngInterleave intlv = new RngInterleave ();
+					intlv.Patterns.Add (assembledStart);
+					intlv.Patterns.Add (p2);
+					assembledStart = intlv;
+				} else {
+					RngChoice c = new RngChoice ();
+					c.Patterns.Add (assembledStart);
+					c.Patterns.Add (p2);
+					assembledStart = c;
+				}
 			}
 
 			// 4.assemble defines

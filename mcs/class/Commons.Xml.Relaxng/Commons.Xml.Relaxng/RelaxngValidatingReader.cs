@@ -73,19 +73,21 @@ namespace Commons.Xml.Relaxng
 				vState = vState.StartTagOpenDeriv (
 					reader.LocalName, reader.NamespaceURI);
 				if (vState.PatternType == RngPatternType.NotAllowed)
-					throw createValidationError ("Invalid start tag found. Name = {0}{1}");
+					throw createValidationError (String.Format ("Invalid start tag found. LocalName = {0}, NS = {1}. ", reader.LocalName, reader.NamespaceURI));
 
 				// AttsDeriv equals to for each AttDeriv
 				if (reader.AttributeCount > 0) {
+					string elementNS = reader.NamespaceURI;
 					reader.MoveToFirstAttribute ();
 					do {
 						if (reader.Name.IndexOf ("xml:") == 0 || reader.Name.IndexOf ("xmlns:") == 0 || reader.Name == "xmlns")
 							continue;
 
 						prevState = vState;
-						vState = vState.AttDeriv (reader.LocalName, reader.NamespaceURI, reader.GetAttribute (reader.Name));
+						string attrNS = reader.NamespaceURI == "" ? elementNS : reader.NamespaceURI;
+						vState = vState.AttDeriv (reader.LocalName, attrNS, reader.GetAttribute (reader.Name));
 						if (vState.PatternType == RngPatternType.NotAllowed)
-							throw createValidationError (String.Format ("Invalid attribute found. Name = {0} ", reader.Name));
+							throw createValidationError (String.Format ("Invalid attribute found. LocalName = {0}, NS = {1}. ", reader.LocalName, reader.NamespaceURI));
 					} while (reader.MoveToNextAttribute ());
 				}
 				MoveToElement ();
@@ -94,7 +96,7 @@ namespace Commons.Xml.Relaxng
 				prevState = vState;
 				vState = vState.StartTagCloseDeriv ();
 				if (vState.PatternType == RngPatternType.NotAllowed)
-					throw createValidationError (String.Format ("Invalid start tag closing found. Name = {0} ", reader.Name));
+					throw createValidationError (String.Format ("Invalid start tag closing found. LocalName = {0}, NS = {1}. ", reader.LocalName, reader.NamespaceURI));
 
 				// if it is empty, then redirect to EndElement
 				if (reader.IsEmptyElement)
@@ -105,14 +107,14 @@ namespace Commons.Xml.Relaxng
 				prevState = vState;
 				vState = vState.EndTagDeriv ();
 				if (vState.PatternType == RngPatternType.NotAllowed)
-					throw createValidationError (String.Format ("Invalid end tag found. Name = {0} ", reader.Name));
+					throw createValidationError (String.Format ("Invalid end tag found. LocalName = {0}, NS = {1}. ", reader.LocalName, reader.NamespaceURI));
 				break;
 			case XmlNodeType.CDATA:
 			case XmlNodeType.Text:
 				prevState = vState;
 				vState = vState.TextDeriv (this.Value);
 				if (vState.PatternType == RngPatternType.NotAllowed)
-					throw createValidationError (String.Format ("Validation error. Text value = {0} ", reader.Value));
+					throw createValidationError (String.Format ("Invalid text found. Text value = {0} ", reader.Value));
 				break;
 				
 			}

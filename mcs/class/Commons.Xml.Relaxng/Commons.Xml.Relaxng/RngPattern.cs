@@ -630,12 +630,12 @@ namespace Commons.Xml.Relaxng
 			throw new InvalidOperationException ();
 		}
 
-		internal override RdpPattern expandRef (Hashtable defs)
+		internal protected override RdpPattern ExpandRef (Hashtable defs)
 		{
 			RdpPattern target = (RdpPattern) defs [this.name];
 			if (target == null)
 				throw new RngException ("Target definition " + name + " not found.");
-			return target.expandRef (defs); 
+			return target.ExpandRef (defs);
 		}
 	}
 
@@ -679,7 +679,7 @@ namespace Commons.Xml.Relaxng
 		internal protected override RdpPattern Compile (RngGrammar grammar)
 		{
 			IsCompiled = false;
-			return new RdpUnresolvedRef (name, false);
+			return new RdpUnresolvedRef (name, true);
 		}
 
 		public string Name {

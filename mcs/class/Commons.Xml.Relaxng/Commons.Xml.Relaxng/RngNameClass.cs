@@ -71,8 +71,9 @@ namespace Commons.Xml.Relaxng
 	{
 		string ns;
 		RngExceptNameClass except;
-		public RngNsName ()
+		public RngNsName (string ns)
 		{
+			this.ns = ns;
 		}
 
 		public override RdpNameClass Compile (RngGrammar g)
