@@ -388,24 +388,6 @@ namespace Mono.Security.Protocol.Tls
 			}
 
 			throw new NotSupportedException();
-
-			/*
-			try
-			{
-				IAsyncResult result = this.innerStream.BeginRead(
-					buffer,
-					offset,
-					count,
-					callback,
-					state);
-
-				return result;
-			}
-			catch (Exception ex)
-			{
-				throw new IOException("An error occurred on the underlying stream. See the inner exception for details on the error.", ex);
-			}
-			*/
 		}
 
 		public override IAsyncResult BeginWrite(
@@ -430,19 +412,6 @@ namespace Mono.Security.Protocol.Tls
 			}
 
 			throw new NotSupportedException();
-
-			/*
-			try
-			{
-				int readed = this.innerStream.EndRead(asyncResult);
-								
-				return readed;
-			}
-			catch (Exception ex)
-			{
-				throw new IOException("An error occurred on the underlying stream. See the inner exception for details on the error.", ex);
-			}
-			*/
 		}
 
 		public override void EndWrite(IAsyncResult asyncResult)
@@ -479,8 +448,7 @@ namespace Mono.Security.Protocol.Tls
 			
 			if (!this.context.HandshakeFinished)
 			{
-				// Start handshake negotiation
-				this.doHandshake();
+				this.doHandshake(); // Handshake negotiation
 			}
 
 			if (buffer == null)
@@ -527,8 +495,7 @@ namespace Mono.Security.Protocol.Tls
 					long	position	= this.inputBuffer.Position;					
 					byte[]	record		= this.receiveRecord();
 					
-					if (record != null && 
-						record.Length > 0)
+					if (record != null && record.Length > 0)
 					{
 						// Write new data to the inputBuffer
 						this.inputBuffer.Seek(0, SeekOrigin.End);
@@ -544,6 +511,16 @@ namespace Mono.Security.Protocol.Tls
 							break;
 						}
 					}
+ 
+ 					// TODO: Review if we need to check the Length
+ 					// property of the innerStream for other types
+ 					// of streams, to check that there are data available
+ 					// for read
+ 					if (this.innerStream is NetworkStream &&
+ 						!((NetworkStream)this.innerStream).DataAvailable)
+ 					{
+ 						break;
+ 					}
 				}
 
 				return this.inputBuffer.Read(buffer, offset, count);

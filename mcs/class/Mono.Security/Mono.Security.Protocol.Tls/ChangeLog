@@ -1,3 +1,12 @@
+2004-02-15 Carlos Guzmán Álvarez  <carlosga@te...>
+ 
+ 	* Mono.Security.Protocol.Tls/SslClientStream.cs:
+ 
+ 		- Added specific control od available data for Network Streams
+ 		on Read ( Thanks to Francisco Figueiredo Jr. for his feedback ).
+ 
+ 		- Removed test code.
+
 2004-02-14 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
 
     * Mono.Security.Protocol.Tls/SslClientStream.cs:
