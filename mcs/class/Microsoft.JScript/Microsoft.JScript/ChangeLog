@@ -1,3 +1,13 @@
+2004-10-05  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* ast.cs: added GetContainerFunction property.
+	* Statement.cs: added class NotVoidReturnEventArgs and delegate
+	NotVoidReturnEventHandler, throw an event in case we find a
+	return, the enclosing function object takes care of changing the
+	return type of the function.
+	* FunctionDeclaration.cs, FunctionExpression.cs: take care of
+	return's inside functions.
+
 2004-09-22  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* expression.cs: Binary, use ResolveFieldAccess only in case the operator is JSToken.AccessField.

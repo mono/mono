@@ -82,6 +82,17 @@ namespace Microsoft.JScript {
 					return parent.InFunction;
 			}
 		}
+		
+		private Function GetContainerFunction {
+			get {
+				if (parent == null)
+					return null;
+				if (parent is Function)
+					return parent as Function;
+				return parent.GetContainerFunction;
+				
+			}
+		}
 	}
 
 	public abstract class Function : AST 
@@ -96,6 +107,8 @@ namespace Microsoft.JScript {
 
 		internal DictionaryEntry [] locals;
 		internal LocalBuilder local_func;
+
+		protected bool not_void_return = false;
 		
 		internal bool CheckThis {
 			get { return check_this; }
@@ -147,6 +160,22 @@ namespace Microsoft.JScript {
 			attr_builder = new CustomAttributeBuilder (func_attr.GetConstructor (func_attr_enum), 
 								   new object [] {func_type});
 			mb.SetCustomAttribute (attr_builder);			
+		}
+
+		internal void NotVoidReturnHappened (object sender, NotVoidReturnEventArgs args)
+		{			
+			not_void_return = true;
+		}
+
+		protected Type HandleReturnType {
+			get {
+				Type ret_type;
+				if (not_void_return)
+					ret_type = typeof (object);
+				else
+					ret_type = typeof (void);
+				return ret_type;
+			}
 		}
 	}
 }

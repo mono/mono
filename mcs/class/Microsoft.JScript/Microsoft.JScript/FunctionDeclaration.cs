@@ -82,7 +82,7 @@ namespace Microsoft.JScript {
 				full_name = prefix + "." + name;
 
 			MethodBuilder method_builder = type.DefineMethod (full_name, func_obj.attr, 
-									  func_obj.return_type,
+									  HandleReturnType,
 									  func_obj.params_types ());
 			TypeManager.AddMethod (name, method_builder);
 			

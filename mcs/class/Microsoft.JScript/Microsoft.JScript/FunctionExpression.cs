@@ -104,7 +104,7 @@ namespace Microsoft.JScript {
 			}
 			
 			MethodBuilder method_builder = type.DefineMethod (full_name, func_obj.attr, 
-									  func_obj.return_type,
+									  HandleReturnType,
 									  func_obj.params_types ());
 			set_custom_attr (method_builder);
 			EmitContext new_ec = new EmitContext (ec.type_builder, ec.mod_builder,

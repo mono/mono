@@ -175,15 +175,30 @@ namespace Microsoft.JScript {
 		}
 	}
 
+	internal class NotVoidReturnEventArgs : EventArgs {
+	}
+		
+	internal delegate void NotVoidReturnEventHandler (object sender, NotVoidReturnEventArgs args);
+	
 	internal class Return : AST {
 
-		internal AST expression;
+		internal AST expression;		
+		public event NotVoidReturnEventHandler not_void_return;
+		
+		
+		internal void OnNotVoidReturn (NotVoidReturnEventArgs args)
+		{
+			if (not_void_return != null)
+				not_void_return (this, args);
+		}
 
 		internal Return (AST parent, AST exp, int line_number)
 		{
 			this.parent = parent;
 			expression = exp;
 			this.line_number = line_number;
+			Function cont_func = GetContainerFunction;
+			this.not_void_return = new NotVoidReturnEventHandler (cont_func.NotVoidReturnHappened);
 		}
 
 		public override string ToString ()
@@ -198,15 +213,30 @@ namespace Microsoft.JScript {
 		{
 			if (!InFunction)
 				throw new Exception ("error JS1018: 'return' statement outside of function");
-			if (expression != null)
+			if (expression != null) {
+				OnNotVoidReturn (null);
 				return expression.Resolve (context);
-			else 
+			} else 
 				return true;
 		}
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			ILGenerator ig = ec.ig;
+			Label lbl = ig.DefineLabel ();
+			LocalBuilder loc = null;
+
+			if (expression != null) {
+				expression.Emit (ec);
+				loc = ig.DeclareLocal (typeof (object));
+				ig.Emit (OpCodes.Stloc, loc);
+			}
+					 
+			ig.Emit (OpCodes.Br, lbl);
+			ig.MarkLabel (lbl);
+
+			if (loc != null)
+				ig.Emit (OpCodes.Ldloc, loc);
 		}
 	}
 
