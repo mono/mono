@@ -1,3 +1,8 @@
+2002-10-05  Andrew Birkett  <andy@nobugs.org>
+
+	* RC2CryptoServiceProvider.cs: New implementation
+	* RC2.cs: New implementation
+
 2002-09-22  Andrew Birkett  <andy@nobugs.org>
 
 	* RijndaelManaged.cs: Added faster case for multiplication by 2 in GF(8)
