@@ -58,6 +58,7 @@ gac_assemblies_list = \
 	System.Security					\
 	System.ServiceProcess				\
 	System.Web					\
+	System.Web.Services				\
 	System.Windows.Forms				\
 	System.Xml
 
