@@ -126,17 +126,13 @@ namespace System.Resources {
 				    return null;
 			 }
 
-			 [MonoTODO]
 			 public static Version GetSatelliteContractVersion (Assembly a) {
 
 				    foreach (Attribute attribute in a.GetCustomAttributes (false)) {
 						  if (attribute is SatelliteContractVersionAttribute)
-								// TODO: ??? "Attribute" does not have a property "Version"
-								// Do you mean "attribute.ToString()"?
-								// return new Version (attribute.Version);
-								return new Version (attribute.ToString());
+								return new Version ((attribute as SatelliteContractVersionAttribute).Version);
 				    }
-				    return null;
+				    return null; // return null if no version was found.
 			 }
 	   }
 }

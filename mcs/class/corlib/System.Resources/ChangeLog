@@ -1,3 +1,10 @@
+2002-01-09  Duncan Mak  <duncan@ximian.com>
+
+	* ResourceManager.cs: Fixed the GetSatelliteContractVersion()
+	method. It was missing a cast before. Removed MonoTODO
+	attribute. ;-) It was tested by John Barn, so this shouldn't break
+	the build.
+	
 2002-01-06  Duco Fijma <duco@lorentz.xs4all.nl>
 	* Finalizing IResourceReader and IResourceWriter interfaces: 
           Added "new"-modifier to IResourceReader.GetEnumerator
