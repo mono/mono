@@ -5,28 +5,6 @@
 //
 // (C) 2002 Jonathan Pryor
 //
-// Permission is hereby granted, free of charge, to any           
-// person obtaining a copy of this software and associated        
-// documentation files (the "Software"), to deal in the           
-// Software without restriction, including without limitation     
-// the rights to use, copy, modify, merge, publish,               
-// distribute, sublicense, and/or sell copies of the Software,    
-// and to permit persons to whom the Software is furnished to     
-// do so, subject to the following conditions:                    
-//                                                                 
-// The above copyright notice and this permission notice          
-// shall be included in all copies or substantial portions        
-// of the Software.                                               
-//                                                                 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY      
-// KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO         
-// THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A               
-// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL      
-// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,      
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,  
-// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION       
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
 
 using System;
 using System.Collections;
@@ -64,7 +42,8 @@ namespace Mono.TypeReflector
 		private static char verboseOutput       = 'v';
 		private static char flattenHierarchy    = 'l';
 		private static string version           = "version";
-		private static string output            = "output";
+		private static string formatter         = "formatter";
+		private static string finder            = "finder";
 		private static string maxDepth          = "max-depth";
 
 		public TypeReflectorOptions ()
@@ -136,19 +115,25 @@ namespace Mono.TypeReflector
 			AddOption (flattenHierarchy,        "flatten-hierarchy",
 				"Static members of base types should be " + 
 				"displayed.");
-			StringBuilder outputDescription = new StringBuilder ();
-			outputDescription.Append ("Experimental.  Specify the output style touse.  Available values are:");
-			foreach (string s in TypeDisplayerFactory.Keys) {
-				outputDescription.Append (string.Format ("\n{0}", s));
-			}
-			AddArgumentOption (output, outputDescription.ToString(), "<output-format>");
+			StringBuilder formatterDescription = new StringBuilder ();
+			formatterDescription.Append ("Experimental.  Specify the output style touse.  Available values are:");
+			foreach (object o in Factories.FormatterFactory.Keys)
+				formatterDescription.Append (string.Format ("\n{0}", o));
+			AddArgumentOption (formatter, formatterDescription.ToString(), "<formatter>");
+
+			StringBuilder finderDescription = new StringBuilder ();
+			finderDescription.Append ("Experimental.  Specify how nodes are found.  Available values are:");
+			foreach (object o  in Factories.FinderFactory.Keys)
+				finderDescription.Append (string.Format ("\n{0}", o));
+			AddArgumentOption (finder, finderDescription.ToString(), "<finder>");
+
 			AddOption (verboseOutput,           "verbose-output",
 				"Print the contents of all the public " + 
 				"attributes of the reflection information " +
 				"classes.");
 			AddOption (defaultAssemblies, 
 				"Print the default search assemblies and exit.");
-			AddArgumentOption (maxDepth, "Specify how deep the verbose output tree should display output.\nDefault is 3.", "INTEGER");
+			AddArgumentOption (maxDepth, "Specify how deep the verbose output tree should display output.\nDefault is 10.", "INTEGER");
 			AddOption (version, "Output version information and exit.");
 			AddHelpOption ();
 		}
@@ -306,8 +291,7 @@ namespace Mono.TypeReflector
 					} catch {
 					}
 				}
-				// See VerboseTreeTypeDisplayer.maxDepth for reason behind '3'.
-				return 3;
+				return 10;
 			}
 		}
 
@@ -354,9 +338,18 @@ namespace Mono.TypeReflector
 			}
 		}
 
-		public string Output {
+		public string Formatter {
 			get {
-				string s = base.FoundOptionValue (output);
+				string s = base.FoundOptionValue (formatter);
+				if (s == null)
+					return "default";
+				return s;
+			}
+		}
+
+		public string Finder {
+			get {
+				string s = base.FoundOptionValue (finder);
 				if (s == null)
 					return "explicit";
 				return s;
@@ -405,7 +398,7 @@ namespace Mono.TypeReflector
 						"\n\n" +
 						"  {0} -SKt MyType\n", ProgramName));
 				sb.Append (String.Format ("    {0}", tg4.Group ("Find all types that have `MyType' as part of their name, and for those types show all information (-S) including information Mono generates exceptions for (-K) and show the values of the public attributes of the System.Type object for the type (-t).")));
-        sb.Append ("\n\nReport bugs to <jonpryor@vt.edu>.");
+				sb.Append ("\n\nReport bugs to <jonpryor@vt.edu>.");
 				return sb.ToString ();
 			}
 		}

@@ -5,28 +5,6 @@
 //
 // (C) 2002 Jonathan Pryor
 //
-// Permission is hereby granted, free of charge, to any           
-// person obtaining a copy of this software and associated        
-// documentation files (the "Software"), to deal in the           
-// Software without restriction, including without limitation     
-// the rights to use, copy, modify, merge, publish,               
-// distribute, sublicense, and/or sell copies of the Software,    
-// and to permit persons to whom the Software is furnished to     
-// do so, subject to the following conditions:                    
-//                                                                 
-// The above copyright notice and this permission notice          
-// shall be included in all copies or substantial portions        
-// of the Software.                                               
-//                                                                 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY      
-// KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO         
-// THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A               
-// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL      
-// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,      
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,  
-// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION       
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
 
 using System;
 
@@ -101,11 +79,25 @@ namespace Testing
 		private TestClass (int i) {PrivateField = 13;}
 		internal TestClass (float f) {InternalField = 64;}
 
+		// indexer
+		public int this [int index] {
+			get {return 42;}
+			set {/* ignore */}
+		}
+
 		[MyAttribute ("Public Property")]
 		public int PublicGetSet {
 			get {return 0;}
 			set {PublicField = value;}
 		}
+
+    public static int StaticGetter {
+      get {return 42;}
+    }
+
+    public static int StaticSetter {
+      set {/* ignore */}
+    }
 
 		protected short ProtectedGetter {
 			get {return -1;}
@@ -126,7 +118,7 @@ namespace Testing
 		internal event FooEventHandler IntFoo;
 
 		public static int msFoo = 42;
-		public const int msBar = 42;
+		public const int msBar = 64;
 
 		[MyAttribute ("Some Name")]
 		[return: MyAttribute ("Return Attribute")]
@@ -134,6 +126,11 @@ namespace Testing
 		{
 			PubFoo (); return s;
 		}
+
+    public static TestEnum PublicMethod2 ()
+    {
+      return TestEnum.Foo;
+    }
 
 		private int PrivateMethod (int i) {PrivFoo (); return i;}
 		protected long ProtectedMethod (long l) {ProFoo (); return l;}

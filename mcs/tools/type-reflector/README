@@ -8,9 +8,20 @@ System.Text.RegularExpressions) to be used for finding types.
 It allows a specific list of assemblies to be searched to be specified,
 narrowing down the list of assemblies searched for a matching type.
 
-It also allows for viewing the matching types according to one of (currently)
-three different output formats (specified with the --output flag).  These are
-described below.
+It also allows the types to be viewed according to two different policies.
+The "finder" policy dictates how members are found.  There are currently two
+such policies:
+  explicit - Searches for members by name
+  reflection - uses System.Reflection for member lookup
+
+The finder policies often display different results, as "explicit" has had
+more work done on it, and "reflection" is dependant upon System.Reflection,
+which may or may not be complete, depending on the platform.
+
+The other policy is the "formatter" policy, which dictates how a member is
+displayed.  There are currently two such policies:
+  default - typically the result of .ToString() on the member reflection object
+  csharp - attempts to display the member as if it were from C# source code.
 
 Finally, it shows (virtually) everything about a type that is available
 through the System.Reflection facility.  Everthing from the actual Attributes
@@ -18,42 +29,4 @@ specified for a member, to custom attributes, the reflected type, GUID, where
 it was declared...  This constitutes a great deal of information that isn't
 normally present without writing test programs to view the available
 information.
-
-
-Output Formats
-==============
-
-The current output formats are:
-  c#: displays a pseudo-C# class declaration.
-
-  explicit: displays most information available through reflection.
-    Information not displayed is information that generates exceptions from
-    within the Mono runtime.
-
-  reflection: uses System.Reflection to provide System.Reflection information.
-    This can show more information than ``explicit'', but it doesn't work on
-    Mono /at all/.  This works best on .NET.
-
-The output formats can be split into two groups: language-specific output
-formats (the c# output format) and implementation-specific output formats
-(explicit and reflection).
-
-Language-specific formats are useful for getting a declaration of a member,
-which can be useful when programming (to look up the existing methods on a
-class, for example).  It's limited in the choice of languages that are
-supported (presently only C#).
-
-The implementation-specific output formats differ in how they are implemented.
-``explicit'' explicitly prints each System.Reflection member to the console.
-The benefit of this is that if a particular member generates exceptions when
-run under Mono, the member can be individually wrapped so that it is only
-displayed with the ``-K'' option.  However, it is also the most difficult to
-maintain, containing lots of duplicated code.
-
-The ``reflection'' output format uses Reflection to determine the members of
-the Reflection classes, printing out the members it finds.  This allows it to
-find all members (including members that exist on .NET but not under Mono), 
-as the member lookup is done at runtime.  It's implementation is preferrable
-to that of ``explicit'', but it does not presently run properly under Mono, 
-as major parts of the reflection classes are unimplemented.
 
