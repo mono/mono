@@ -1,3 +1,10 @@
+2002-05-10  Dietmar Maurer  <dietmar@ximian.com>
+
+	* mono.c (usage): the option is called --nols, and it dissables
+	linear scan.
+
+	* x86.brg: better LDIND_R4, LDIND_R8, STIND_R4, STIND_R8
+
 2002-05-09  Dietmar Maurer  <dietmar@ximian.com>
 
 	* linear-scan.c: linear scan reg. allocation and data flow analysis
