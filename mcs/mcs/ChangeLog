@@ -1,3 +1,7 @@
+2002-12-18  Miguel de Icaza  <miguel@ximian.com>
+
+	* const.cs: Handle implicit null conversions here too.
+
 2002-12-17  Ravi Pratap  <ravi@ximian.com>
 
 	* class.cs (MethodCore.LabelParameters): Remove the extra
