@@ -29,7 +29,7 @@ namespace System.IO
 		 
 		public static void Copy (string sourceFilename, string destFilename)
 		{
-			Copy (sourceFilename, destFilename, true);
+			Copy (sourceFilename, destFilename, false);
 		}
 		 
 		public static void Copy (string src, string dest, bool overwrite)
