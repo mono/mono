@@ -1,3 +1,8 @@
+2002-06-25  Nick Drochak  <ndrochak@gol.com>
+
+	* QueueTest.cs: Trap some unexpected exceptions and add a bit of
+	verbosity to some assert messages.
+
 2002-06-20  Nick Drochak  <ndrochak@gol.com>
 
 	* SortedListTest.cs: Make tests pass against ms.net.

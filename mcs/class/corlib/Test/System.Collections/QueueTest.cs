@@ -58,26 +58,35 @@ namespace MonoTests.System.Collections {
 			int[] a1 = new int[100];
 			int[] a2 = new int[60];
 
-			q1.CopyTo (a1, 0);
-			for (int i = 0; i < 100; i++)
-				AssertEquals (i, a1[i]);
+			string progress_marker = "";
+			try {
+				progress_marker = "before first CopyTo";
+				q1.CopyTo (a1, 0);
+				for (int i = 0; i < 100; i++)
+					AssertEquals (i, a1[i]);
 
-			// Remove some items from q2 and add other 
-			// items, to avoid having  an "easy" just created
-			// Queue
-			for (int i = 50; i < 60; i++)
-				Assert (i == (int) q2.Dequeue ());
-			for (int i = 100; i < 110; i++)
-				q2.Enqueue (i);
-			
-			q2.CopyTo (a2, 10);
-			for (int i = 60; i < 110; i++)
-				Assert (i == a2[i - 60 + 10]);
-			
-			// Copying an empty Queue should not modify the array
-			emptyQueue.CopyTo (a2, 10);
-			for (int i = 60; i < 110; i++)
-				Assert (i == a2[i - 60 + 10]);
+				// Remove some items from q2 and add other 
+				// items, to avoid having  an "easy" just created
+				// Queue
+				for (int i = 50; i < 60; i++)
+					Assert (i == (int) q2.Dequeue ());
+				for (int i = 100; i < 110; i++)
+					q2.Enqueue (i);
+				
+				progress_marker = "before second CopyTo";
+				q2.CopyTo (a2, 10);
+				for (int i = 60; i < 110; i++)
+					Assert (i == a2[i - 60 + 10]);
+				
+				// Copying an empty Queue should not modify the array
+				progress_marker = "before third CopyTo";
+				emptyQueue.CopyTo (a2, 10);
+				for (int i = 60; i < 110; i++)
+					Assert (i == a2[i - 60 + 10]);
+			} catch (Exception e) {
+				Fail ("Unexpected exception at marker <" + progress_marker + ">: e = " + e);
+			}
+
 		}
 
 		public void TestEnumerator () {
@@ -86,7 +95,7 @@ namespace MonoTests.System.Collections {
 			e = q1.GetEnumerator ();
 			i = 0;
 			while (e.MoveNext ()) {
-				Assert (((int) e.Current) == i);
+				AssertEquals ("q1 at i=" + i, i, ((int) e.Current));
 				i++;
 			}
 			e = q2.GetEnumerator ();
@@ -96,9 +105,9 @@ namespace MonoTests.System.Collections {
 				i++;
 			}
 			e = emptyQueue.GetEnumerator ();
-			while (e.MoveNext ()) {
+			if (e.MoveNext ())
 				Fail ("Empty Queue enumerator returning elements!");
-			}
+
 			e = q1.GetEnumerator ();
 			try {
 				e.MoveNext ();
