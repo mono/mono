@@ -33,7 +33,6 @@ using System.Runtime.Serialization;
 
 namespace System.Runtime.InteropServices
 {
-	[Serializable]
 	public class SafeArrayTypeMismatchException : SystemException
 	{
 		private const int ErrorCode = -2146233037; // = 0x80131533

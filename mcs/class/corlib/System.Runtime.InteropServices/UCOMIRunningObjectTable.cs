@@ -37,11 +37,11 @@ namespace System.Runtime.InteropServices
 	public interface UCOMIRunningObjectTable
 	{
 		void EnumRunning (out UCOMIEnumMoniker ppenumMoniker);
-		void GetObject (UCOMIMoniker pmkObjectName, [MarshalAs (UnmanagedType.Interface)] out object ppunkObject);
+		void GetObject (UCOMIMoniker pmkObjectName, out object ppunkObject);
 		void GetTimeOfLastChange (UCOMIMoniker pmkObjectName, out FILETIME pfiletime);
 		void IsRunning (UCOMIMoniker pmkObjectName);
 		void NoteChangeTime (int dwRegister, ref FILETIME pfiletime);
-		void Register (int grfFlags, [MarshalAs (UnmanagedType.Interface)] object punkObject, UCOMIMoniker pmkObjectName, out int pdwRegister);
+		void Register (int grfFlags, object punkObject, UCOMIMoniker pmkObjectName, out int pdwRegister);
 		void Revoke (int dwRegister);
 	}
 }

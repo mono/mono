@@ -34,7 +34,6 @@ namespace System.Runtime.InteropServices
 	public struct CONNECTDATA
 	{
 		public int dwCookie;
-		[MarshalAs (UnmanagedType.Interface)]
 		public object pUnk;
 	}
 }

@@ -36,7 +36,7 @@ namespace System.Runtime.InteropServices
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMIConnectionPoint
 	{
-		void Advise ([MarshalAs(UnmanagedType.Interface)] object pUnkSink, out int pdwCookie);
+		void Advise (object pUnkSink, out int pdwCookie);
 		void EnumConnections (out UCOMIEnumConnections ppEnum);
 		void GetConnectionInterface (out Guid pIID);
 		void GetConnectionPointContainer (out UCOMIConnectionPointContainer ppCPC);

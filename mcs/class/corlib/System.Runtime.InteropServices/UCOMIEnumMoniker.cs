@@ -37,11 +37,8 @@ namespace System.Runtime.InteropServices
 	public interface UCOMIEnumMoniker
 	{
 		void Clone (out UCOMIEnumMoniker ppenum);
-		[PreserveSigAttribute]
-		int Next (int celt, [Out, MarshalAs(UnmanagedType.LPArray, ArraySubType = (UnmanagedType) 80, SizeParamIndex = 0)] UCOMIMoniker[] rgelt, out int pceltFetched);
-		[PreserveSigAttribute]
+		int Next (int celt, [Out] UCOMIMoniker[] rgelt, out int pceltFetched);
 		int Reset ();
-		[PreserveSigAttribute]
 		int Skip (int celt);
 	}
 }

@@ -49,13 +49,13 @@ namespace System.Runtime.InteropServices
 		}
 
 		[MonoTODO ("implement")]
-		public AssemblyBuilder ConvertTypeLibToAssembly ([MarshalAs(UnmanagedType.Interface)] object typeLib, string asmFileName, int flags, ITypeLibImporterNotifySink notifySink, byte[] publicKey, StrongNameKeyPair keyPair, bool unsafeInterfaces)
+		public AssemblyBuilder ConvertTypeLibToAssembly (object typeLib, string asmFileName, int flags, ITypeLibImporterNotifySink notifySink, byte[] publicKey, StrongNameKeyPair keyPair, bool unsafeInterfaces)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO ("implement")]
-		public AssemblyBuilder ConvertTypeLibToAssembly ([MarshalAs(UnmanagedType.Interface)] object typeLib, string asmFileName, TypeLibImporterFlags flags, ITypeLibImporterNotifySink notifySink, byte[] publicKey, StrongNameKeyPair keyPair, string asmNamespace, Version asmVersion)
+		public AssemblyBuilder ConvertTypeLibToAssembly (object typeLib, string asmFileName, TypeLibImporterFlags flags, ITypeLibImporterNotifySink notifySink, byte[] publicKey, StrongNameKeyPair keyPair, string asmNamespace, Version asmVersion)
 		{
 			throw new NotImplementedException ();
 		}

@@ -33,7 +33,6 @@ using System.Runtime.Serialization;
 
 namespace System.Runtime.InteropServices
 {
-	[Serializable]
 	public class InvalidComObjectException : SystemException
 	{
 		private const int ErrorCode = -2146233049; // = 0x80131527
