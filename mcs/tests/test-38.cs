@@ -1,8 +1,8 @@
 class X {
-	int v1, v2;
+	public int v1, v2;
 	int y;
 	
-	int this [int a] {
+	public int this [int a] {
 		get {
 			if (a == 0)
 				return v1;
@@ -18,11 +18,11 @@ class X {
 		}
 	}
 
-	int Foo () {
+	public int Foo () {
 		return 8;
 	}
 
-	int Y {
+	public int Bar {
 		get {
 			return y;
 		}
@@ -31,10 +31,49 @@ class X {
 			y = value;
 		}
 	}
+}
+
+class Y {
+	public uint v1, v2;
+	uint y;
+	
+	public uint this [uint a] {
+		get {
+			if (a == 0)
+				return v1;
+			else
+				return v2;
+		}
+
+		set {
+			if (a == 0)
+				v1 = value;
+			else
+				v2 = value;
+		}
+	}
+
+	public uint Foo () {
+		return 8;
+	}
+
+	public uint Bar {
+		get {
+			return y;
+		}
+
+		set {
+			y = value;
+		}
+	}
+}
+
+class Test {
 
 	static int Main ()
 	{
 		X x = new X ();
+		Y y = new Y ();
 		int b;
 
 		x [0] = x [1] = 1;
@@ -48,13 +87,30 @@ class X {
 		double d;
 		long l;
 
-		d = l = b = x [0] = x [1] = x.Y = x [2] = x [3] = x [4] = x.Foo ();
+		d = l = b = x [0] = x [1] = x.Bar = x [2] = x [3] = x [4] = x.Foo ();
 
-		if (x.Y != 8)
+		if (x.Bar != 8)
 			return 3;
 
 		if (l != 8)
 			return 4;
+
+		uint e, f;
+		e = 5;
+		e = f = 8;
+
+		if (e != 8)
+			return 5;
+
+		y [0] = y [1] = 9;
+		y [0] = y.Bar = 12;
+
+		if (y.Bar != 12)
+			return 6;
+
+		y.Bar = 15;
+		if (y.Bar != 15)
+			return 7;
 
 		return 0;
 		

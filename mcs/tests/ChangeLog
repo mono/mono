@@ -1,3 +1,7 @@
+2002-07-21  Martin Baulig  <martin@gnome.org>
+
+	* test-38.cs: Added a few more test cases to this test.
+
 2002-07-20  Martin Baulig  <martin@gnome.org>
 
 	* test-38.cs: This test now passes with MCS.  Added a few more
