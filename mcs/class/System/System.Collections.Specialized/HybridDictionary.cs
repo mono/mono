@@ -163,7 +163,8 @@ namespace System.Collections.Specialized {
 		{
 			if (list != null)
 				list.Remove (key);
-			hashtable.Remove (key);
+			else	
+				hashtable.Remove (key);
 		}
 		
 		private void Switch ()

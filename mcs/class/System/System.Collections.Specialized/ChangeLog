@@ -1,3 +1,8 @@
+2002-07-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HybridDictionary.cs:
+	(Remove): fixed. The value is either in the list or in the hash.
+
 2002-06-24  Andrew Birkett <adb@tardis.ed.ac.uk>
 
 	* BitVector32.cs: Implemented 'set' section indexer.  Check for
