@@ -1,3 +1,10 @@
+2001-11-06  Dietmar Maurer  <dietmar@ximian.com>
+
+	* emit-x86.c (arch_create_jit_trampoline): optimised trampoline to
+	use less the 16 bytes.
+
+	* x86.brg: code cleanup
+
 2001-11-05  Dietmar Maurer  <dietmar@ximian.com>
 
 	* testjit.c: bug fixes.
