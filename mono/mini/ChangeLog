@@ -1,5 +1,8 @@
 2004-11-07  Zoltan Varga  <vargaz@freemail.hu>
 
+	* exceptions-sparc.c (get_throw_exception): Fix more bugs in previous
+	patch.
+
 	* cpu-sparc.md: Add op_rethrow.
 
 	* exceptions-sparc.c (get_throw_exception): Fix bug in previous patch.
