@@ -6,3 +6,11 @@
 
 
 
+2002-05-18  Chris J Breisch <cjbreisch@altavista.net>
+
+	* Microsoft.VisualBasic: *.cs/Test/*.cs - Cleaned up code, added
+	implementations for Collection.cs, Conversion.cs and NUnit Tests
+	for both
+
+
+
