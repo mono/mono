@@ -1,3 +1,7 @@
+2004-11-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : don't use -codepage:utf8. It breaks csc build.
+
 2004-10-30 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* Makefile: Added some -codepage:utf8 options for mcs, or our sources (specially for tests) get miscompiled. 
 
