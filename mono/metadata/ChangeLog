@@ -42,9 +42,6 @@
 	`MonoGenericContainer *generic_container' field.
 	(MonoReflectionMethodBuilder): Likewise.
 
-	* icall.c (ves_icall_type_Equals): Use _mono_metadata_type_equal()
-	and do a signature-only comparision.
-
 2004-10-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_System_Reflection_Module_GetGlobalType): Special
