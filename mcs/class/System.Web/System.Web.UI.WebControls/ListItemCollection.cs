@@ -142,14 +142,32 @@ namespace System.Web.UI.WebControls
 		
 		public ListItem FindByValue(string value)
 		{
-			int i=-1;
-			foreach(object current in items)
+			foreach(ListItem current in items)
+			{
+				if(current.Value == value)
+				{
+					if(current is Disposable)
+						current.Dispose();
+					return current;
+				}
+			}
+			return null;
+		}
+		
+		internal int FindByValueInternal(string value)
+		{
+			int i = -1;
+			foreach(ListItem current in items)
 			{
 				i++;
-				if(((ListItem)current).Value == value)
-					break;
+				if(current.Value == value)
+				{
+					if(current is Disposable)
+						current.Dispose();
+					return i;
+				}
 			}
-			return (i==-1 ? null : (ListItem)items[i]);
+			return -1;
 		}
 		
 		public IEnumerator GetEnumerator()

@@ -1,3 +1,10 @@
+2002-01-30      Gaurav Vaish <gvaish@iitk.ac.in>
+
+	* ListItemCollection.cs       - Added method FindByValueInternal to
+	                                assist in the derived classes.
+	                                Discovered bug in FindByValue. Removed
+	* DropDownList.cs             - Completed
+
 2002-01-27      Gaurav Vaish <gvaish@iitk.ac.in>
 
 	* FontNamesConverter.cs       - Completed
