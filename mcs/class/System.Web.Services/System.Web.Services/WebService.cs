@@ -33,7 +33,7 @@ namespace System.Web.Services {
 		#region Properties
 
 		[Browsable (false)]
-		[WebServicesDescription ("The ASP.NET application object for the current request.")]
+		[Description ("The ASP.NET application object for the current request.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpApplicationState Application {
 			get { return application.Application; }
