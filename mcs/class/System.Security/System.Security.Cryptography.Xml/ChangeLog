@@ -1,5 +1,9 @@
 2004-03-16  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlDsigNodeList.cs : removed BOM from code file.
+
+2004-03-16  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlDsigNodeList.cs : added.
 	* XmlDsigXPathTransform.cs : removed XmlDsigNodeList class.
 	* XmlDsigEnvelopedSignatureTransform.cs :

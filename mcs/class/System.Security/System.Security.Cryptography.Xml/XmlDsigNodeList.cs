@@ -1,4 +1,4 @@
-﻿//
+//
 // XmlDsigNodeList.cs - derived node list class for dsig
 //
 // Author:
