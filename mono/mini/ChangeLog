@@ -1,3 +1,14 @@
+2003-04-27  Martin Baulig  <martin@ximian.com>
+
+	* debug-mini.c (mono_debug_init_method): Added
+	`guint32 breakpoint_id' argument; if the method has a breakpoint,
+	send a notification to the debugger.
+
+	* mini.c (mono_method_to_ir): Don't insert a breakpoint if we're
+	running in the Mono Debugger, just pass the breakpoint number to
+	mono_debug_init_method().
+
+	* tramp-x86.c, tramp-ppc.c: Removed the breakpoint trampolines.
 
 Sun Apr 27 13:18:04 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
