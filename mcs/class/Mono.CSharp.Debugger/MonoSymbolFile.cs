@@ -172,65 +172,62 @@ namespace Mono.CSharp.Debugger
 
 	public class MonoDebuggerSupport
 	{
-		static MethodInfo get_type;
-		static MethodInfo get_method_token;
-		static MethodInfo get_method;
-		static MethodInfo local_type_from_sig;
+		static GetTypeFunc get_type;
+		static GetMethodTokenFunc get_method_token;
+		static GetMethodFunc get_method;
+		static GetLocalTypeFromSignatureFunc local_type_from_sig;
+
+		delegate Type GetTypeFunc (Assembly assembly, int token);
+		delegate int GetMethodTokenFunc (Assembly assembly, MethodBase method);
+		delegate MethodBase GetMethodFunc (Assembly assembly, int token);
+		delegate Type GetLocalTypeFromSignatureFunc (Assembly assembly, byte[] sig);
+
+		static Delegate create_delegate (Type delegate_type, string name)
+		{
+			Type type = typeof (Assembly);
+
+			MethodInfo mi = type.GetMethod (name, BindingFlags.Static |
+							BindingFlags.NonPublic);
+			if (mi == null)
+				throw new Exception ("Can't find " + name);
+
+			return Delegate.CreateDelegate (delegate_type, mi);
+		}
 
 		static MonoDebuggerSupport ()
 		{
-			Type type = typeof (Assembly);
-			get_type = type.GetMethod ("MonoDebugger_GetType",
-						   BindingFlags.Instance |
-						   BindingFlags.NonPublic);
-			if (get_type == null)
-				throw new Exception (
-					"Can't find Assembly.MonoDebugger_GetType");
+			get_type = (GetTypeFunc) create_delegate (
+				typeof (GetTypeFunc), "MonoDebugger_GetType");
 
-			get_method_token = type.GetMethod ("MonoDebugger_GetMethodToken",
-							   BindingFlags.Instance |
-							   BindingFlags.NonPublic);
-			if (get_method_token == null)
-				throw new Exception (
-					"Can't find Assembly.MonoDebugger_GetMethodToken");
+			get_method_token = (GetMethodTokenFunc) create_delegate (
+				typeof (GetMethodTokenFunc), "MonoDebugger_GetMethodToken");
 
-			get_method = type.GetMethod ("MonoDebugger_GetMethod",
-						     BindingFlags.Instance |
-						     BindingFlags.NonPublic);
-			if (get_method == null)
-				throw new Exception (
-					"Can't find Assembly.MonoDebugger_GetMethod");
+			get_method = (GetMethodFunc) create_delegate (
+				typeof (GetMethodFunc), "MonoDebugger_GetMethod");
 
-			local_type_from_sig = type.GetMethod (
-				"MonoDebugger_GetLocalTypeFromSignature",
-				BindingFlags.Instance | BindingFlags.NonPublic);
-			if (local_type_from_sig == null)
-				throw new Exception (
-					"Can't find Assembly.MonoDebugger_GetLocalTypeFromSignature");
+			local_type_from_sig = (GetLocalTypeFromSignatureFunc) create_delegate (
+				typeof (GetLocalTypeFromSignatureFunc),
+				"MonoDebugger_GetLocalTypeFromSignature");
 		}
 
 		public static Type GetType (Assembly assembly, int token)
 		{
-			object[] args = new object[] { token };
-			return (Type) get_type.Invoke (assembly, args);
+			return get_type (assembly, token);
 		}
 
 		public static int GetMethodToken (MethodBase method)
 		{
-			object[] args = new object[] { method };
-			return (int) get_method_token.Invoke (method.ReflectedType.Assembly, args);
+			return get_method_token (method.ReflectedType.Assembly, method);
 		}
 
 		public static MethodBase GetMethod (Assembly assembly, int token)
 		{
-			object[] args = new object[] { token };
-			return (MethodBase) get_method.Invoke (assembly, args);
+			return get_method (assembly, token);
 		}
 
 		public static Type GetLocalTypeFromSignature (Assembly assembly, byte[] sig)
 		{
-			object[] args = new object[] { sig };
-			return (Type) local_type_from_sig.Invoke (assembly, args);
+			return local_type_from_sig (assembly, sig);
 		}
 	}
 
