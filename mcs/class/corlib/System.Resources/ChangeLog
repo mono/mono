@@ -1,5 +1,10 @@
 2003-05-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* ResourceManager.cs: enabled the code that calls GetSatelliteAssembly
+	and ignore the exception thrown if the assembly cannot be loaded.
+
+2003-05-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ResourceManager.cs: fixed the name for the file when the culture is
 	not de invariant culture. Commented out the GetSatelliteAssembly code
 	to avoid NotImplementedException being thrown.

@@ -262,11 +262,12 @@ namespace System.Resources
 				stream=MainAssembly.GetManifestResourceStream(filename);
 				if(stream==null) {
 					/* Try a satellite assembly */
-					/* Commented out. It's not implemented yet
 					Version sat_version=GetSatelliteContractVersion(MainAssembly);
-					Assembly a=MainAssembly.GetSatelliteAssembly(culture, sat_version);
-					stream=a.GetManifestResourceStream(filename);
-					*/
+					Assembly a = null;
+					try {
+						a = MainAssembly.GetSatelliteAssembly (culture, sat_version);
+						stream=a.GetManifestResourceStream(filename);
+					} catch (Exception) {} // Ignored
 				}
 
 				if(stream!=null && Createifnotexists==true) {

@@ -240,19 +240,25 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public static extern Assembly GetEntryAssembly();
 
-		[MonoTODO]
 		public Assembly GetSatelliteAssembly (CultureInfo culture)
 		{
-			throw new NotImplementedException ();
+			return GetSatelliteAssembly (culture, null);
 		}
 
-		[MonoTODO]
 		public Assembly GetSatelliteAssembly (CultureInfo culture, Version version)
 		{
-			throw new NotImplementedException ();
+			if (culture == null)
+				throw new ArgumentException ("culture");
+
+			AssemblyName aname = GetName (true);
+			if (version == null)
+				version = aname.Version;
+
+			aname.CultureInfo = culture;
+			aname.Name = aname.Name + ".resources";
+			return Load (aname);
 		}
 		
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static Assembly LoadFrom (String assemblyFile);
 

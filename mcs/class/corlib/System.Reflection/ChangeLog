@@ -1,4 +1,8 @@
 
+2003-05-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Assembly.cs: implemented GetSatelliteAssembly.
+
 Fri Apr 11 13:06:10 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* Assembly.cs: added GetNamespaces() icall.
