@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.34 $
+// $Revision: 1.35 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.35  2004/09/16 23:45:09  pbartok
+// - Fixed sending a window to the front
+// - Added overload for SetWindowPos to avoid casting
+//
 // Revision 1.34  2004/09/13 21:18:32  pbartok
 // - Added Z-Ordering methods
 //
@@ -978,7 +982,7 @@ namespace System.Windows.Forms {
 
 		internal override bool SetZOrder(IntPtr hWnd, IntPtr AfterhWnd, bool Top, bool Bottom) {
 			if (Top) {
-				Win32SetWindowPos(hWnd, (IntPtr)SetWindowPosZOrder.HWND_TOPMOST, 0, 0, 0, 0, SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE);
+				Win32SetWindowPos(hWnd, SetWindowPosZOrder.HWND_TOP, 0, 0, 0, 0, SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE);
 				return true;
 			} else if (!Bottom) {
 				Win32SetWindowPos(hWnd, AfterhWnd, 0, 0, 0, 0, SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE);
@@ -1155,6 +1159,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="SetWindowPos", CallingConvention=CallingConvention.StdCall)]
 		internal extern static bool Win32SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, SetWindowPosFlags Flags);
+
+		[DllImport ("user32.dll", EntryPoint="SetWindowPos", CallingConvention=CallingConvention.StdCall)]
+		internal extern static bool Win32SetWindowPos(IntPtr hWnd, SetWindowPosZOrder pos, int x, int y, int cx, int cy, SetWindowPosFlags Flags);
 
 		[DllImport ("user32.dll", EntryPoint="SetWindowTextA", CallingConvention=CallingConvention.StdCall)]
 		internal extern static bool Win32SetWindowText(IntPtr hWnd, string lpString);
