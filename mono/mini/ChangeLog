@@ -1,4 +1,9 @@
 
+Tue Aug 3 11:17:07 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: make sure temp regs are not used for global reg
+	allocation.
+
 Tue Jul 27 16:05:19 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c, mini-sparc.c, mini-s390.c: keep track of line
