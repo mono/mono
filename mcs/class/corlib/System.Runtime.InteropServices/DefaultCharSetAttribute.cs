@@ -13,7 +13,7 @@ using System.Runtime.Serialization;
 
 namespace System.Runtime.InteropServices
 {
-	[AttributeUsage (AttributeTargets.Module)]
+	[AttributeUsage (AttributeTargets.Module, Inherited = false)]
 	public class DefaultCharSetAttribute : Attribute
 	{
 		CharSet _set;

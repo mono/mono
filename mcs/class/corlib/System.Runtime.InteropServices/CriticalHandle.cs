@@ -23,6 +23,7 @@ namespace System.Runtime.InteropServices
 			handle = invalidHandleValue;
 		}
 
+		[ReliabilityContract (Consistency.WillNotCorruptState, CER.Success)]
 		~CriticalHandle ()
 		{
 			Dispose ();

@@ -39,7 +39,7 @@ namespace System.Runtime.InteropServices.ComTypes
 	public interface IEnumVARIANT
 	{
 		[PreserveSigAttribute]
-		int Next (int celt, [Out] object[] rgvar, IntPtr pceltFetched);
+		int Next (int celt, [Out, MarshalAs (UnmanagedType.LPArray, SizeParamIndex=0)] object[] rgvar, IntPtr pceltFetched);
 		[PreserveSigAttribute]
 		int Skip (int celt);
 		[PreserveSigAttribute]

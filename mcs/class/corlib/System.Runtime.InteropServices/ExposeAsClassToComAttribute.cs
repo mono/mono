@@ -11,7 +11,7 @@ using System;
 
 namespace System.Runtime.InteropServices
 {
-	[AttributeUsage (AttributeTargets.Struct)]
+	[AttributeUsage (AttributeTargets.Struct, Inherited = false)]
 	public class ExposeAsClassToComAttribute : Attribute
 	{
 		public ExposeAsClassToComAttribute ()

@@ -44,12 +44,11 @@ namespace System.Runtime.InteropServices.ComTypes
 		void SetBindOptions ([In] ref BIND_OPTS pbindopts);
 		void GetBindOptions (ref BIND_OPTS pbindopts);
 		void GetRunningObjectTable (out IRunningObjectTable pprot);
-		[PreserveSig]
 		void RegisterObjectParam ([MarshalAs (UnmanagedType.LPWStr)] string pszKey, [MarshalAs (UnmanagedType.Interface)] object punk);
 		void GetObjectParam ([MarshalAs (UnmanagedType.LPWStr)] string pszKey, [MarshalAs (UnmanagedType.Interface)] out object ppunk);
 		void EnumObjectParam (out IEnumString ppenum);
 		[PreserveSig]
-		void RevokeObjectParam ([MarshalAs(UnmanagedType.LPWStr)] string pszKey);
+		int RevokeObjectParam ([MarshalAs(UnmanagedType.LPWStr)] string pszKey);
 	}
 }
 #endif
