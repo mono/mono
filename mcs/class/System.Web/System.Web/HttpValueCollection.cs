@@ -3,6 +3,7 @@
 //
 // Author:
 // 	Patrik Torstensson (Patrik.Torstensson@labs2.com)
+// 	Gonzalo Paniagua (gonzalo@ximian.com)
 //
 using System;
 using System.Collections.Specialized;
@@ -92,25 +93,36 @@ namespace System.Web
 		{
 			_bHeaders = false;
 
-			char [] arrSplitValue = new char [] {'='};
-
 			string k, v;
+			int eq;
 			string [] arrValues = sData.Split (new char [] {'&'});
 			foreach (string sValue in arrValues) {
-				string [] arrKeyValue = sValue.Split (arrSplitValue);
-				switch (arrKeyValue.Length) {
-				case 1:	// Add key only
-					k = HttpUtility.UrlDecode (arrKeyValue [0].Trim (), encoding);
-					Add (k, String.Empty);
-					break;
-				case 2:
-					k = HttpUtility.UrlDecode (arrKeyValue [0].Trim (), encoding);
-					v = HttpUtility.UrlDecode (arrKeyValue [1].Trim (), encoding);
-					Add (k, v); 
-					break;
-				default:
+				eq = sValue.IndexOf ('=');
+				if (eq == 0)
 					throw new InvalidOperationException ("Data is malformed");
+
+				if (eq == -1) {
+					k = HttpUtility.UrlDecode (sValue.Trim (), encoding);
+					Add (k, String.Empty);
+					continue;
 				}
+
+				k = sValue.Substring (0, eq).Trim ();
+				if (k.Length == 0)
+					throw new InvalidOperationException ("Data is malformed");
+
+				v = String.Empty;
+				if (eq + 1 < sValue.Length) {
+					v = sValue.Substring (eq + 1).Trim ();
+					if (v.Length == 0)
+						v = String.Empty;
+				}
+
+				k = HttpUtility.UrlDecode (k, encoding);
+				if (v.Length > 0)
+					v = HttpUtility.UrlDecode (v, encoding);
+
+				Add (k, v); 
 			}		
 		}
 

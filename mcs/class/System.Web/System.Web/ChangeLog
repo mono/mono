@@ -1,3 +1,8 @@
+2002-11-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpValueCollection.cs: the value may contain trailing '=' as it is
+	UrlEncoded. Don't split name=value based on '='.
+
 2002-11-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpCookie.cs: made GetCookieHeader internal.
