@@ -1,5 +1,19 @@
 2004-01-22  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.c (mono_image_create_pefile): Handle the case when the
+	entry point is not a MethodBuilder.
+
+	* reflection.h (MonoReflectionAssemblyBuilder): Change 'entry_point'
+	field to ReflectionMethod since it is not allways a builder.
+
+	* reflection.c (type_get_fully_qualified_name): New helper function to
+	return the fully qualified name of a type.
+
+	* reflection.c (encode_marshal_blob): Always emit the fully qualified
+	type name for custom marshallers.
+
+	* reflection.c (mono_marshal_spec_from_builder): Ditto.
+
 	* class.c (mono_class_setup_vtable): If a parent class already 
 	implements an interface, use the implementing methods from that class.
 	Fixes #53148.
