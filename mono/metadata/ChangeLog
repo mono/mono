@@ -1,3 +1,11 @@
+
+Thu May 30 14:15:02 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c, metadata.h: added mono_metadata_implmap_from_method()
+	to lookup the implmap row for a P/Invoke method.
+	* loader.c: added mono_lookup_pinvoke_call(): we only lookup a
+	P/Invoke method from the runtime on an as needed basis.
+
 2002-05-28  Dietmar Maurer  <dietmar@ximian.com>
 
 	* metadata.c (mono_metadata_parse_signature): impl.
