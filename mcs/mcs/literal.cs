@@ -16,7 +16,7 @@ namespace CIR {
 		// <summary>
 		//   This is different from ToString in that ToString
 		//   is supposed to be there for debugging purposes,
-		//   and is not guarantee to be useful for anything else,
+		//   and is not guaranteed to be useful for anything else,
 		//   AsString() will provide something that can be used
 		//   for round-tripping C# code.  Maybe it can be used
 		//   for IL assembly as well.

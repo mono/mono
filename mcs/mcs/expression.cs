@@ -3104,7 +3104,28 @@ namespace CIR {
 
 			if (member_lookup is FieldExpr){
 				FieldExpr fe = (FieldExpr) member_lookup;
+				FieldInfo fi = fe.FieldInfo;
 
+				if (fi.IsLiteral) {
+					Type t = fi.FieldType;
+					object o = fi.GetValue (null);
+					
+					if (t.IsSubclassOf (TypeManager.enum_type)) {
+						Expression enum_member = MemberLookup (ec, t, "value__", false, loc); 
+						Type underlying_type = enum_member.Type;
+						
+						Expression e = Literalize (o, underlying_type);
+						e.Resolve (ec);
+					
+						return new EnumLiteral (e, t);
+					}
+
+					Expression exp = Literalize (o, t);
+					exp.Resolve (ec);
+					
+					return exp;
+				}
+				
 				if (expr is TypeExpr){
 					if (!fe.FieldInfo.IsStatic){
 						error176 (loc, fe.FieldInfo.Name);

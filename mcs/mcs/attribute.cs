@@ -33,8 +33,10 @@ namespace CIR {
 		public CustomAttributeBuilder Resolve (EmitContext ec)
 		{
 			string name = Name;
-			
+
 			if (Name.IndexOf ("Attribute") == -1)
+				name = Name + "Attribute";
+			else if (Name.LastIndexOf ("Attribute") == 0)
 				name = Name + "Attribute";
 			
 			Type attribute_type = ec.TypeContainer.LookupType (name, false);
@@ -49,30 +51,44 @@ namespace CIR {
 			
 			// FIXME : For now we handle only positional arguments
 
-			if (Arguments.Count != 1)
-				Console.WriteLine ("Warning : Cannot handle named arguments in attributes yet");
+			if (Arguments != null)
+				if (Arguments.Count != 1)
+					Console.WriteLine ("Warning : Cannot handle named arguments in attributes yet");
+			
+			
+			ArrayList pos_args = new ArrayList ();
+			
+			if (Arguments != null)
+				pos_args = (ArrayList) Arguments [0];
 				
-			ArrayList pos_args = (ArrayList) Arguments [0];
+			object [] values = new object [pos_args.Count];
+			
+			for (int i = 0; i < pos_args.Count; i++) {
 
-			foreach (Argument a in pos_args) {
-				if (!(a.Expr is Literal)) {
+				Argument a = (Argument) pos_args [i];
+
+				if (!a.Resolve (ec))
+					return null;
+
+				Expression e = Expression.Reduce (ec, a.Expr);
+
+				if (e is Literal) 
+					values [i] = ((Literal) e).GetValue ();
+				else { 
 					Report.Error (182, Location,
 						      "An attribute argument must be a constant expression, typeof " +
 						      "expression or array creation expression");
 					return null;
 				}
-				if (!a.Resolve (ec))
-					return null;
 			}
-
+			
 			Expression mg = Expression.MemberLookup (ec, attribute_type, ".ctor", false,
 								 MemberTypes.Constructor,
 								 BindingFlags.Public | BindingFlags.Instance,
 								 Location);
 
 			if (mg == null) {
-				Report.Error (-6, Location,
-					      "Could not find a constructor for this argument list.");
+				Report.Error (-6, Location, "Could not find a constructor for this argument list.");
 				return null;
 			}
 
@@ -81,13 +97,6 @@ namespace CIR {
 			if (constructor == null) {
 				Report.Error (-6, Location, "Could not find a constructor for this argument list.");
 				return null;
-			}
-
-			object [] values = new object [pos_args.Count];
-
-			for (int i = 0; i < pos_args.Count; i++) {
-				Expression e = ((Argument) pos_args [i]).Expr;
-				values [i] = ((Literal) e).GetValue ();
 			}
 
 			CustomAttributeBuilder cb = new CustomAttributeBuilder ((ConstructorInfo) constructor, values); 

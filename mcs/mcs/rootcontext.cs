@@ -145,6 +145,10 @@ namespace CIR {
 			if (root.Delegates != null)
 				foreach (Delegate d in root.Delegates) 
 					d.DefineDelegate (mb);
+
+			if (root.Enums != null)
+				foreach (Enum e in root.Enums)
+					e.DefineEnum (mb);
 			
 		}
 			
@@ -174,6 +178,11 @@ namespace CIR {
 			if (root.Delegates != null)
 				foreach (Delegate d in root.Delegates)
 					d.CloseDelegate ();
+
+			if (root.Enums != null)
+				foreach (Enum en in root.Enums)
+					en.CloseEnum ();
+			
 
 			//
 			// If we have a <PrivateImplementationDetails> class, close it
@@ -279,6 +288,10 @@ namespace CIR {
 			if (type_container_resolve_order != null)
 				foreach (TypeContainer tc in type_container_resolve_order)
 					tc.Emit ();
+
+			if (Tree.Types.Enums != null)
+				foreach (Enum en in Tree.Types.Enums)
+					en.Emit (Tree.Types);
 
 		}
 		

@@ -120,6 +120,12 @@ public class TypeManager {
 	// </remarks>
 
 	static Hashtable delegate_types;
+
+	// <remarks>
+	//  Keeps track of enum types
+	// </remarks>
+
+	static Hashtable enum_types;
 	
 	public TypeManager ()
 	{
@@ -130,6 +136,7 @@ public class TypeManager {
 		typecontainers = new Hashtable ();
 		builder_to_interface = new Hashtable ();
 		delegate_types = new Hashtable ();
+		enum_types = new Hashtable ();
 	}
 
 	static TypeManager ()
@@ -156,6 +163,12 @@ public class TypeManager {
 	{
 		types.Add (name, t);
 		delegate_types.Add (t, del);
+	}
+
+	public void AddEnumType (string name, TypeBuilder t, Enum en)
+	{
+		types.Add (name, t);
+		enum_types.Add (t, en);
 	}
 
 	public void AddUserInterface (string name, TypeBuilder t, Interface i)

@@ -884,6 +884,11 @@ namespace CIR {
 				foreach (Delegate d in Delegates)
 					d.DefineDelegate (TypeBuilder);
 			}
+
+			if (Enums != null) {
+				foreach (Enum en in Enums)
+					en.DefineEnum (TypeBuilder);
+			}
 			
 			InTransit = false;
 			return TypeBuilder;
@@ -982,11 +987,6 @@ namespace CIR {
 			if (Properties != null) {
 				foreach (Property p in Properties)
 					p.Define (this);
-			}
-
-			if (Enums != null) {
-				foreach (Enum e in Enums)
-					e.Define (this);
 			}
 
 			if (Events != null) {
@@ -1329,18 +1329,29 @@ namespace CIR {
 			if (indexers != null)
 				foreach (Indexer ix in indexers)
 					ix.Emit (this);
+
+			if (fields != null)
+				foreach (Field f in fields)
+					f.Emit (this);
+
+			if (events != null)
+				foreach (Event e in Events)
+					e.Emit (this);
+
+			if (enums != null)
+				foreach (Enum en in enums)
+					en.Emit (this);
 			
 			if (pending_implementations != null)
 				VerifyPendingMethods ();
 
 			if (OptAttributes != null) {
+				EmitContext ec = new EmitContext (this, null, null, ModFlags, false);
+				
 				if (OptAttributes.AttributeSections != null) {
 					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
 						if (asec.Attributes != null) {
 							foreach (Attribute a in asec.Attributes) {
-								EmitContext ec = new EmitContext (this, null,
-												  null, ModFlags, false);
-								
 								CustomAttributeBuilder cb = a.Resolve (ec);
 								if (cb != null)
 									TypeBuilder.SetCustomAttribute (cb);
@@ -1364,9 +1375,14 @@ namespace CIR {
 				Console.WriteLine ("Message:" + e.Message);
 			}
 			
-			foreach (TypeContainer tc in Types)
-				tc.CloseType ();
+			if (Types != null)
+				foreach (TypeContainer tc in Types)
+					tc.CloseType ();
 
+			if (Enums != null)
+				foreach (Enum en in Enums)
+					en.CloseEnum ();
+			
 			if (Delegates != null)
 				foreach (Delegate d in Delegates)
 					d.CloseDelegate ();
@@ -2099,6 +2115,25 @@ namespace CIR {
 			FieldBuilder = parent.TypeBuilder.DefineField (
 				Name, t, Modifiers.FieldAttr (ModFlags));
 		}
+
+		public void Emit (TypeContainer tc)
+		{
+			EmitContext ec = new EmitContext (tc, null, FieldBuilder.FieldType, ModFlags);
+			
+			if (OptAttributes != null) {
+				if (OptAttributes.AttributeSections != null) {
+					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
+						if (asec.Attributes != null) {
+							foreach (Attribute a in asec.Attributes) {
+								CustomAttributeBuilder cb = a.Resolve (ec);
+								if (cb != null)
+									FieldBuilder.SetCustomAttribute (cb);
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	public class Property {
@@ -2214,6 +2249,21 @@ namespace CIR {
 		{
 			ILGenerator ig;
 			EmitContext ec;
+
+			if (OptAttributes != null) {
+				ec = new EmitContext (tc, null, PropertyType, ModFlags);
+				if (OptAttributes.AttributeSections != null) {
+					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
+						if (asec.Attributes != null) {
+							foreach (Attribute a in asec.Attributes) {
+								CustomAttributeBuilder cb = a.Resolve (ec);
+								if (cb != null)
+									PropertyBuilder.SetCustomAttribute (cb);
+							}
+						}
+					}
+				}
+			}
 			
 			if (Get != null){
 				ig = GetBuilder.GetILGenerator ();
@@ -2254,6 +2304,8 @@ namespace CIR {
 		public EventBuilder       EventBuilder;
 		public Attributes         OptAttributes;
 
+		Type EventType;
+
 		Location Location;
 		
 		public Event (string type, string name, Object init, int flags, Block add_block, Block rem_block,
@@ -2277,11 +2329,11 @@ namespace CIR {
 			
 			MethodBuilder mb;
 
-			Type t = parent.LookupType (Type, false);
+			EventType = parent.LookupType (Type, false);
 			Type [] parameters = new Type [1];
-			parameters [0] = t;
+			parameters [0] = EventType;
 			
-			EventBuilder = parent.TypeBuilder.DefineEvent (Name, e_attr, t);
+			EventBuilder = parent.TypeBuilder.DefineEvent (Name, e_attr, EventType);
 			
 			if (Add != null) {
 				mb = parent.TypeBuilder.DefineMethod ("add_" + Name, m_attr, null,
@@ -2315,6 +2367,27 @@ namespace CIR {
 					       "same return value and parameter types for the " +
 					       "'remove' method of event `" + Name + "'");
 					return;
+				}
+			}
+
+		
+		}
+
+		public void Emit (TypeContainer tc)
+		{
+			EmitContext ec = new EmitContext (tc, null, EventType, ModFlags);
+
+			if (OptAttributes != null) {
+				if (OptAttributes.AttributeSections != null) {
+					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
+						if (asec.Attributes != null) {
+							foreach (Attribute a in asec.Attributes) {
+								CustomAttributeBuilder cb = a.Resolve (ec);
+								if (cb != null)
+									EventBuilder.SetCustomAttribute (cb);
+							}
+						}
+					}
 				}
 			}
 		}
@@ -2467,6 +2540,21 @@ namespace CIR {
 		{
 			ILGenerator ig;
 			EmitContext ec;
+
+			if (OptAttributes != null) {
+				ec = new EmitContext (tc, null, IndexerType, ModFlags);
+				if (OptAttributes.AttributeSections != null) {
+					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
+						if (asec.Attributes != null) {
+							foreach (Attribute a in asec.Attributes) {
+								CustomAttributeBuilder cb = a.Resolve (ec);
+								if (cb != null)
+									PropertyBuilder.SetCustomAttribute (cb);
+							}
+						}
+					}
+				}
+			}
 
 			if (Get != null){
 				ig = GetBuilder.GetILGenerator ();
@@ -2668,6 +2756,21 @@ namespace CIR {
 		
 		public void Emit (TypeContainer parent)
 		{
+			if (OptAttributes != null) {
+				EmitContext ec = new EmitContext (parent, null, null, ModFlags);
+				if (OptAttributes.AttributeSections != null) {
+					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
+						if (asec.Attributes != null) {
+							foreach (Attribute a in asec.Attributes) {
+								CustomAttributeBuilder cb = a.Resolve (ec);
+								if (cb != null)
+									OperatorMethodBuilder.SetCustomAttribute (cb);
+							}
+						}
+					}
+				}
+			}
+			
 			OperatorMethod.Block = Block;
 			OperatorMethod.Emit (parent);
 		}

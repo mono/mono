@@ -18,11 +18,15 @@ namespace CIR {
 	public class Enum : DeclSpace {
 
 		ArrayList ordered_enums;
-		string type;
-		string name;
+		public readonly string BaseType;
+		public readonly string EnumName;
 		int mod_flags;
-		public EnumBuilder EnumBuilder;
+		public TypeBuilder EnumBuilder;
 		public Attributes  OptAttributes;
+
+		Type UnderlyingType;
+
+		public readonly RootContext RootContext;
 		
 		public const int AllowedModifiers =
 			Modifiers.NEW |
@@ -31,11 +35,12 @@ namespace CIR {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Enum (string type, int mod_flags, string name, Attributes attrs, Location l)
+		public Enum (RootContext rc, string type, int mod_flags, string name, Attributes attrs, Location l)
 			: base (name, l)
 		{
-			this.type = type;
-			this.name = name;
+			RootContext = rc;
+			this.BaseType = type;
+			this.EnumName = name;
 			this.mod_flags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PUBLIC);
 			OptAttributes = attrs;
 			ordered_enums = new ArrayList ();
@@ -56,21 +61,100 @@ namespace CIR {
 			return AdditionResult.Success;
 		}
 
-		public void Define (TypeContainer parent)
+		public void DefineEnum (object parent_builder)
 		{
-			TypeAttributes attr = Modifiers.TypeAttr (ModFlags, parent);
+			TypeAttributes attr = TypeAttributes.Class | TypeAttributes.Sealed;
 
-			Type t = parent.LookupType (type, false);
+			UnderlyingType = RootContext.TypeManager.LookupType (BaseType);
 
-			EnumBuilder = parent.RootContext.CodeGen.ModuleBuilder.DefineEnum (name, attr, t);
-		}
+			if (parent_builder is ModuleBuilder) {
+				ModuleBuilder builder = (ModuleBuilder) parent_builder;
 
-		public string Type {
-			get {
-				return type;
+				if ((ModFlags & Modifiers.PUBLIC) != 0)
+					attr |= TypeAttributes.Public;
+				else
+					attr |= TypeAttributes.NotPublic;
+				
+				EnumBuilder = builder.DefineType (EnumName, attr, TypeManager.enum_type);
+
+			} else {
+				TypeBuilder builder = (TypeBuilder) parent_builder;
+
+				if ((ModFlags & Modifiers.PUBLIC) != 0)
+					attr |= TypeAttributes.NestedPublic;
+				else
+					attr |= TypeAttributes.NestedPrivate;
+				
+				EnumBuilder = builder.DefineNestedType (EnumName, attr, TypeManager.enum_type);
 			}
+
+			EnumBuilder.DefineField ("value__", UnderlyingType,
+						 FieldAttributes.Public | FieldAttributes.SpecialName);
+			
+			RootContext.TypeManager.AddEnumType (EnumName, EnumBuilder, this);
 		}
 
+	        bool IsValidEnumLiteral (Expression e)
+		{
+			if (!(e is Literal))
+				return false;
+
+			if (e is IntLiteral || e is UIntLiteral || e is LongLiteral || e is ULongLiteral)
+				return true;
+			else
+				return false;
+		}
+		
+		public void Emit (TypeContainer tc)
+		{
+			EmitContext ec = new EmitContext (tc, null, UnderlyingType, ModFlags);
+
+			int default_value = 0;
+
+			FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static
+				             | FieldAttributes.Literal;
+
+			foreach (string name in ordered_enums) {
+				Expression e = this [name];
+
+				if (e != null) {
+					e = Expression.Reduce (ec, e);
+
+					if (IsValidEnumLiteral (e))
+						default_value = (int) ((Literal) e).GetValue ();
+					else {
+						Report.Error (1008, Location,
+					          "Type byte, sbyte, short, ushort, int, uint, long, or ulong expected");
+						return;
+					}
+				}
+				
+				FieldBuilder fb = EnumBuilder.DefineField (name, UnderlyingType, attr);
+
+				fb.SetConstant (default_value++);
+			}
+
+			if (OptAttributes != null) {
+				if (OptAttributes.AttributeSections != null) {
+					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
+						if (asec.Attributes != null) {
+							foreach (Attribute a in asec.Attributes) {
+								CustomAttributeBuilder cb = a.Resolve (ec);
+								if (cb != null)
+									EnumBuilder.SetCustomAttribute (cb);
+							}
+						}
+					}
+				}
+			}
+			
+		}
+
+		public void CloseEnum ()
+		{
+			EnumBuilder.CreateType ();
+		}
+		
 		public ArrayList ValueNames {
 			get {
 				return ordered_enums;

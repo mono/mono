@@ -261,7 +261,7 @@ namespace CIR
 %%
 
 compilation_unit
-	: opt_using_directives opt_attributes opt_namespace_member_declarations EOF
+	: opt_using_directives opt_namespace_member_declarations EOF
 	  {
 		// Check that using comes only before namespace elements
 	  }
@@ -1453,7 +1453,7 @@ enum_declaration
 	  opt_semicolon
 	  { 
 		string name = (string) $4;
-		Enum e = new Enum ((string) $5, (int) $2, name, (Attributes) $1, lexer.Location);
+		Enum e = new Enum (rc, (string) $5, (int) $2, name, (Attributes) $1, lexer.Location);
 
 		foreach (VariableDeclaration ev in (ArrayList) $6){
 			CheckDef (e.AddEnumMember (ev.identifier, 

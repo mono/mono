@@ -1,3 +1,83 @@
+2001-11-08  Ravi Pratap  <ravi@ximian.com>
+
+	* class.cs (Property): Emit attributes.
+
+	(Field): Ditto.
+	
+	(Event): Ditto.
+
+	(Indexer): Ditto.
+
+	(Operator): Ditto.
+
+	* enum.cs (Emit): Ditto.
+
+	* rootcontext.cs (ResolveTree, EmitCode, CloseTypes): Do the same for
+	Enums too.
+
+	* class.cs (Field, Event, etc.): Move attribute generation into the
+	Emit method everywhere.
+
+	* enum.cs (Enum): Revamp to use the same definition semantics as delegates so
+	we have a DefineEnum, CloseEnum etc. The previous way of doing things was not right
+	as we had no way of defining nested enums !
+
+	* rootcontext.cs : Adjust code accordingly.
+
+	* typemanager.cs (AddEnumType): To keep track of enum types separately.
+
+2001-11-07  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (EvalConstantExpression): Move into ecore.cs
+	
+	* enum.cs (Enum): Rename some members and make them public and readonly
+	according to our convention.
+
+	* modifiers.cs (EnumAttr): Implement as we need to set only visibility flags,
+	nothing else.
+
+	* enum.cs (Enum::Define): Use the above instead of TypeAttr.
+
+	(Enum::Emit): Write a simple version for now which doesn't try to compute
+	expressions. I shall modify this to be more robust in just a while.
+
+	* class.cs (TypeContainer::Emit): Make sure we include Enums too.
+
+	(TypeContainer::CloseType): Create the Enum types too.
+
+	* attribute.cs (Resolve): Use the new Reduce method instead of EvalConstantExpression.
+
+	* expression.cs (EvalConstantExpression): Get rid of completely.
+
+	* enum.cs (Enum::Emit): Use the new expression reducer. Implement assigning
+	user-defined values and other cases.
+
+	(IsValidEnumLiteral): Helper function.
+
+	* expression.cs (ExprClassfromMemberInfo): Modify to not do any literalizing 
+	out there in the case we had a literal FieldExpr.
+
+	(MemberAccess:DoResolve): Do the literalizing of the FieldExpr here.
+
+	(Literalize): Revamp a bit to take two arguments.
+	
+	(EnumLiteral): New class which derives from Literal to wrap enum literals.
+	
+2001-11-06  Ravi Pratap  <ravi@ximian.com>
+
+	* cs-parser.jay (compilation_unit): Remove extra opt_attributes for now.
+
+	* expression.cs (ArrayCreation::ValidateInitializers): Implement.
+
+	(Resolve): Use the above to ensure we have proper initializers.
+
+2001-11-05  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (Expression::EvalConstantExpression): New method to 
+	evaluate constant expressions.
+
+	* attribute.cs (Attribute::Resolve): Modify bits to use the above function.
+
 2001-11-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (ArrayCreation.Emit): Some bits to initialize data

@@ -255,7 +255,7 @@ namespace CIR {
 		{
 			return this;
 		}
-		
+
 		// <summary>
 		//   Protected constructor.  Only derivate types should
 		//   be able to be created
@@ -270,10 +270,11 @@ namespace CIR {
 		// <summary>
 		//   Returns a literalized version of a literal FieldInfo
 		// </summary>
-		static Expression Literalize (FieldInfo fi)
+		public static Expression Literalize (object v, Type t)
 		{
-			Type t = fi.FieldType;
-			object v = fi.GetValue (fi);
+			//Type t = fi.FieldType;
+			// object v = fi.GetValue (fi);
+			// Type t = v.GetType ();
 
 			if (t == TypeManager.int32_type)
 				return new IntLiteral ((int) v);
@@ -300,8 +301,8 @@ namespace CIR {
 			else if (t == TypeManager.char_type)
 				return new IntLiteral ((int) ((char)v));
 			else
-				throw new Exception ("Unknown type for literal (" + v.GetType () +
-						     "), details: " + fi);
+				throw new Exception ("Unknown type for literal (" + t +
+						     "), details: " + v);
 		}
 
 		// 
@@ -309,26 +310,18 @@ namespace CIR {
 		//
 		static Expression ExprClassFromMemberInfo (EmitContext ec, MemberInfo mi, Location loc)
 		{
-			if (mi is EventInfo){
+			if (mi is EventInfo)
 				return new EventExpr ((EventInfo) mi, loc);
-			} else if (mi is FieldInfo){
-				FieldInfo fi = (FieldInfo) mi;
-
-				if (fi.IsLiteral){
-					Expression e = Literalize (fi);
-					e.Resolve (ec);
-
-					return e;
-				} else
-					return new FieldExpr (fi, loc);
-			} else if (mi is PropertyInfo){
+			else if (mi is FieldInfo)
+				return new FieldExpr ((FieldInfo) mi, loc);
+			else if (mi is PropertyInfo)
 				return new PropertyExpr ((PropertyInfo) mi, loc);
-			} else if (mi is Type)
+		        else if (mi is Type)
 				return new TypeExpr ((Type) mi);
 
 			return null;
 		}
-		
+
 		//
 		// FIXME: Probably implement a cache for (t,name,current_access_set)?
 		//
@@ -1688,7 +1681,7 @@ namespace CIR {
 		// </summary>
 		static public Expression Reduce (EmitContext ec, Expression e)
 		{
-			Console.WriteLine ("Calling reduce");
+			//Console.WriteLine ("Calling reduce");
 			return e.Reduce (ec);
 		}
 	}
@@ -1746,7 +1739,46 @@ namespace CIR {
 		public override void Emit (EmitContext ec)
 		{
 			child.Emit (ec);
-		}			
+		}
+
+	}
+
+	// <summary>
+	//  This class is used to wrap literals which belong inside Enums
+	// </summary>
+
+	public class EnumLiteral : Literal {
+		Expression child;
+
+		public EnumLiteral (Expression child, Type enum_type)
+		{
+			ExprClass = child.ExprClass;
+			this.child = child;
+			type = enum_type;
+		}
+		
+		public override Expression DoResolve (EmitContext ec)
+		{
+			// This should never be invoked, we are born in fully
+			// initialized state.
+
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			child.Emit (ec);
+		}
+
+		public override object GetValue ()
+		{
+			return ((Literal) child).GetValue ();
+		}
+
+		public override string AsString ()
+		{
+			return ((Literal) child).AsString ();
+		}
 	}
 
 	// <summary>
