@@ -1,3 +1,6 @@
+2004-08-04 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: Property types made optional
+
 2004-08-03 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: Interface method and property grammar got changed
 			 Support for multiple implements in class 
