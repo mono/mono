@@ -1,3 +1,9 @@
+
+Tue Jul 27 15:47:17 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: fix class loads for pointer types (typeof(int) !=
+	typeof(int*)).
+
 2004-07-27  Martin Baulig  <martin@ximian.com>
 
 	* debug-mono-symfile.c (mono_debug_open_mono_symbol_file): Support
