@@ -7,6 +7,7 @@
 // (C) 2003 Novell, Inc (http://www.novell.com)
 //
 
+using System.IO;
 using System.Web;
 using System.Web.Util;
 using System.Collections;
@@ -110,8 +111,12 @@ namespace System.Web.Caching {
 			bool lookup = true;
 			
 			if (varyby == null) {
+				string path = context.Request.MapPath (vary_key);
+				string [] files = new string [] { path };
+				string [] keys = new string [0];
 				varyby = new CachedVaryBy (context.Response.Cache, vary_key);
-				context.Cache.InsertPrivate (vary_key, varyby, null,
+				context.Cache.InsertPrivate (vary_key, varyby,
+						new CacheDependency (files, keys),
 						Cache.NoAbsoluteExpiration,
 						Cache.NoSlidingExpiration,
 						CacheItemPriority.Normal, null);
@@ -125,7 +130,7 @@ namespace System.Web.Caching {
 			
 			if (prev == null) {
 				CachedRawResponse c = context.Response.GetCachedResponse ();
-				string [] files = new string [] { vary_key };
+				string [] files = new string [] { };
 				string [] keys = new string [] { vary_key };
 				bool sliding = context.Response.Cache.Sliding;
 

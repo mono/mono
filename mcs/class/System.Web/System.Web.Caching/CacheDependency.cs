@@ -9,6 +9,7 @@
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
 //
 using System;
+using System.IO;
 using System.Web;
 
 namespace System.Web.Caching
@@ -38,7 +39,7 @@ namespace System.Web.Caching
 		bool disposed;
 		CacheEntry [] entries;
 		CacheItemRemovedCallback removedDelegate;
-		EventHandler changedDelegate;
+		FileSystemWatcher [] watchers;
 
 		private CacheDependency ()
 		{
@@ -139,10 +140,31 @@ namespace System.Web.Caching
 			}
 
 			if (filenames.Length > 0) {
-				this.changedDelegate = new EventHandler (OnChanged);
-				foreach (string s in filenames)
-					Watcher.AddWatch (s, changedDelegate);
+				watchers = new FileSystemWatcher [filenames.Length];
+				for (int i=0; i<filenames.Length; i++)
+					watchers [i] = CreateWatcher (filenames [i]);
 			}
+		}
+
+		private FileSystemWatcher CreateWatcher (string file)
+		{
+			FileSystemWatcher watcher = new FileSystemWatcher ();
+
+			watcher.Path = Path.GetFullPath (Path.GetDirectoryName (file));
+			watcher.Filter = Path.GetFileName (file);
+
+			watcher.Changed += new FileSystemEventHandler (OnFileChanged);
+			watcher.Created += new FileSystemEventHandler (OnFileChanged);
+			watcher.Deleted += new FileSystemEventHandler (OnFileChanged);
+
+			watcher.EnableRaisingEvents = true;
+
+			return watcher;
+		}
+
+		private void OnFileChanged (object sender, FileSystemEventArgs e)
+		{
+			OnChanged (sender, e);
 		}
 
 		void CacheItemRemoved (string key, object value, CacheItemRemovedReason reason)
@@ -162,6 +184,8 @@ namespace System.Web.Caching
 
 		public void Dispose ()
 		{
+			for (int i=0; i<watchers.Length; i++)
+				watchers [i].Dispose ();
 		}
 
 		public bool HasChanged

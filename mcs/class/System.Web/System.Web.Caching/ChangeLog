@@ -1,3 +1,11 @@
+2004-02-09  Jackson Harper <jackson@ximian.com>
+
+	* Cache.cs: Close entries that are removed.
+	* CacheDependency.cs: Use FileSystemWatcher instead of custom
+	Watcher for file dependencies.
+	* OutputCacheModule.cs: Make the varyby objects dependent on the
+	cached page.
+	
 2004-02-05  Jackson Harper <jackson@ximian.com>
 
 	* CacheDependency.cs: Handle cache keys that have not been added
