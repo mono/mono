@@ -85,7 +85,6 @@ namespace System.Reflection {
 			set { flags = value; }
 		}
 
-		[MonoTODO("incomplete")]
 		public string FullName {
 			get {
 				if (name == null)
@@ -98,7 +97,7 @@ namespace System.Reflection {
 				if ((cultureinfo == null) || (cultureinfo.LCID == CultureInfo.InvariantCulture.LCID))
 					fname.Append ("neutral");
 				else
-					fname.Append (cultureinfo.ToString ()); // ???
+					fname.Append (cultureinfo.Name);
 				byte[] pub_tok = GetPublicKeyToken ();
 				if (pub_tok == null || pub_tok.Length == 0)
 					fname.Append (", PublicKeyToken=null");
@@ -107,7 +106,6 @@ namespace System.Reflection {
 					for (int i = 0; i < pub_tok.Length; i++)
 						fname.Append (pub_tok[i].ToString ("x2"));
 				}
-				// TODO
 				return fname.ToString ();
 			}
 		}

@@ -6,8 +6,6 @@
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
-// TODO: Mucho left to implement.
-//
 
 using System;
 using System.Globalization;

@@ -33,6 +33,12 @@ namespace System.Reflection
 			types = classes;
 		}
 			
+		private ReflectionTypeLoadException (SerializationInfo info, StreamingContext sc): base (info, sc)
+		{
+			types = (Type[]) info.GetValue ("Types", typeof (Type[]));
+			loaderExceptions = (Exception[]) info.GetValue ("Exceptions", typeof (Exception[]));
+		}
+		
 		// Properties
 		public Type[] Types
 		{
@@ -44,18 +50,11 @@ namespace System.Reflection
 			get { return loaderExceptions; }
 		}
 
-		// Method
-		[MonoTODO]
-		//
-		// This one is a bit tough because need to serialize two arrays.
-		// The serialization output comes out as
-		// <Types href="#ref-4" /> 
-                // <Exceptions href="#ref-5" />
-		// and then goes on and appends new SOAP-ENCs, etc...
-		//
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);
+			info.AddValue ("Types", types);
+			info.AddValue ("Exceptions", loaderExceptions);
 		}
 	
 	}

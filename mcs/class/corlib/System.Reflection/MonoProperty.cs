@@ -105,33 +105,35 @@ namespace System.Reflection {
 			}
 		}
 
-		[MonoTODO]
 		public override MethodInfo[] GetAccessors (bool nonPublic)
 		{
-			// FIXME: check nonPublic
 			MonoPropertyInfo info;
-			int n = 0;
+			int nget = 0;
+			int nset = 0;
+			
 			MonoPropertyInfo.get_property_info (this, out info, PInfo.GetMethod | PInfo.SetMethod);
-			if (info.set_method != null)
-				n++;
-			if (info.get_method != null)
-				n++;
-			MethodInfo[] res = new MethodInfo [n];
-			n = 0;
-			if (info.set_method != null)
+			if (info.set_method != null && (nonPublic || info.set_method.IsPublic))
+				nget = 1;
+			if (info.get_method != null && (nonPublic || info.get_method.IsPublic))
+				nset = 1;
+
+			MethodInfo[] res = new MethodInfo [nget + nset];
+			int n = 0;
+			if (nset != 0)
 				res [n++] = info.set_method;
-			if (info.get_method != null)
+			if (nget != 0)
 				res [n++] = info.get_method;
 			return res;
 		}
 
-		[MonoTODO]
 		public override MethodInfo GetGetMethod (bool nonPublic)
 		{
-			// FIXME: check nonPublic
 			MonoPropertyInfo info;
 			MonoPropertyInfo.get_property_info (this, out info, PInfo.GetMethod);
-			return info.get_method;
+			if (info.get_method != null && (nonPublic || info.get_method.IsPublic))
+				return info.get_method;
+			else
+				return null;
 		}
 
 		public override ParameterInfo[] GetIndexParameters()
@@ -145,10 +147,12 @@ namespace System.Reflection {
 		
 		public override MethodInfo GetSetMethod (bool nonPublic)
 		{
-			// FIXME: check nonPublic
 			MonoPropertyInfo info;
 			MonoPropertyInfo.get_property_info (this, out info, PInfo.SetMethod);
-			return info.set_method;
+			if (info.set_method != null && (nonPublic || info.set_method.IsPublic))
+				return info.set_method;
+			else
+				return null;
 		}
 		
 		public override bool IsDefined (Type attributeType, bool inherit)
