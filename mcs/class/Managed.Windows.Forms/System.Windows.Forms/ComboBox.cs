@@ -182,7 +182,14 @@ namespace System.Windows.Forms
 				if (dropdown_style == value)
 					return;					
 									
-				if (dropdown_style != ComboBoxStyle.DropDownList) {					
+				if (dropdown_style == ComboBoxStyle.Simple) {
+					if (listbox_ctrl != null) {
+						listbox_ctrl.Dispose ();
+						Controls.Remove (listbox_ctrl);
+						listbox_ctrl = null;
+					}
+				}
+				else {
 					if (textbox_ctrl != null) {
 						Controls.Remove (textbox_ctrl);
 						textbox_ctrl.Dispose ();
@@ -195,20 +202,15 @@ namespace System.Windows.Forms
 				if (dropdown_style == ComboBoxStyle.Simple) {
 					CBoxInfo.show_button = false;					
 					CreateComboListBox ();
-					Controls.Add (listbox_ctrl);    					
+					Controls.Add (listbox_ctrl);  					
 				}
 				else {
 					CBoxInfo.show_button = true;
-					if (listbox_ctrl != null) {
-						listbox_ctrl.Dispose ();
-						Controls.Remove (listbox_ctrl);
-						listbox_ctrl = null;
-					}
 				}				
 				
 				if (dropdown_style != ComboBoxStyle.DropDownList) {
 					textbox_ctrl = new TextBox ();
-					//textbox_ctrl.TextChanged += new EventHandler (OnTextChangedEdit);
+					textbox_ctrl.TextChanged += new EventHandler (OnTextChangedEdit);
 					Controls.Add (textbox_ctrl);					
 					CalcTextArea ();					
 				}			
@@ -1443,7 +1445,7 @@ namespace System.Windows.Forms
 			private void VerticalScrollEvent (object sender, EventArgs e)
 			{				
 				top_item =  vscrollbar_ctrl.Value;
-				
+				UpdateLastVisibleItem ();
 				Refresh ();
 			}			
 

@@ -1,3 +1,7 @@
+2005-01-13  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ComboBox.cs: fixes dropstyle
+
 2005-01-13  Peter Bartok  <pbartok@novell.com>
 
 	* Form.cs:
