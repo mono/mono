@@ -1,3 +1,8 @@
+2003-03-04  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* unix.args: Added "DoubleFormatter.cs" and "SingleFormatter.cs"
+
+
 2003-03-03  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* unix.args: added ConstructionLevelActivator.cs, ContextLevelActivator.cs,

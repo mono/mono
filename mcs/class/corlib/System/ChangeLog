@@ -1,3 +1,12 @@
+2003-03-04  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* Double.cs: Changed ToString method. Added NumberFormatInfo support
+	with DoubleFormatter class.
+	* Single.cs: Changed ToString method. Added NumberFormatInfo support
+	with SingleFormatter class.
+	* DoubleFormatter.cs: New class with Double formatting functions.
+	* SingleFormatter.cs: New class with Single formatting functions.
+
 2003-03-03  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* Activator.cs: Added support for activation using activation attributes.

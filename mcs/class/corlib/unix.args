@@ -54,6 +54,7 @@ System/DelegateSerializationHolder.cs
 System/DivideByZeroException.cs
 System/DllNotFoundException.cs
 System/Double.cs
+System/DoubleFormatter.cs
 System/DuplicateWaitObjectException.cs
 System/EntryPointNotFoundException.cs
 System/Enum.cs
@@ -127,6 +128,7 @@ System/RuntimeTypeHandle.cs
 System/SByte.cs
 System/SerializableAttribute.cs
 System/Single.cs
+System/SingleFormatter.cs
 System/StackOverflowException.cs
 System/STAThreadAttribute.cs
 System/String.cs

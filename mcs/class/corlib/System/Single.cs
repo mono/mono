@@ -124,15 +124,11 @@ namespace System {
 			return ToString (format, null);
 		}
 
-		[MonoTODO]
 		public string ToString (string format, IFormatProvider fp)
 		{
-			// FIXME: Need to pass format and provider info to this call too.
-			return ToStringImpl(value);
+			return SingleFormatter.NumberToString(format,
+				(NumberFormatInfo)fp, value);
 		}
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern string ToStringImpl (float value);
 
 		// ============= IConvertible Methods ============ //
 
