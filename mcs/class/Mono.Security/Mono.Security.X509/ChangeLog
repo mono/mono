@@ -1,6 +1,8 @@
 2004-07-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X501Name.cs: Support for E (email) in FromString.
+	* X520Attributes.cs: Added X520.EmailAddress.
+	Both patches fix bug #61241 and were contributed by Ianier Munoz.
 
 2004-05-27  Sebastien Pouliot  <sebastien@ximian.com>
 
