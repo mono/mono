@@ -1,3 +1,9 @@
+2004-03-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threads.c: set mono_thread_detach as a cleanup routine for every
+	thread. This way it's always executed upon thread termination, either
+	aborted or finished normally. No more xsp hangs!
+
 2004-03-17  Martin Baulig  <martin@ximian.com>
 
 	* class.h (MonoGenericInst): Replaced the `GList *nested' with an
