@@ -1,3 +1,9 @@
+2005-02-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* mini.c: Fixed 2 cases where I sent a MonoMethod to managed code 
+	instead of a MonoReflectionMethod. The method information wasn't used
+	when displaying SecurityException details (but will be now).
+
 2005-02-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile.am : windows build fix.
