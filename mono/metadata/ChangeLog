@@ -1,3 +1,10 @@
+2004-08-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (create_dynamic_mono_image): Set ref_count to 1.
+
+	* image.c (mono_image_close): Dynamic images are GC_MALLOCed, so do
+	not free them with g_free.
+
 2004-08-11  Martin Baulig  <martin@ximian.com>
 
 	* reflection.c (mono_reflection_setup_internal_class): Also call
