@@ -1,3 +1,8 @@
+2004-08-13  Dick Porter  <dick@ximian.com>
+
+	* StreamWriter.cs: Allow FileShare.Read access to the underlying
+	FileStream, to be compatible with MS.  Fixes bug 62152.
+
 2004-07-06  Dick Porter  <dick@ximian.com>
 
 	* MonoIO.cs: Add ERROR_INVALID_PARAMETER to the exception list.

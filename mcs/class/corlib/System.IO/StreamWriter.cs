@@ -123,7 +123,7 @@ namespace System.IO {
 			else
 				mode = FileMode.Create;
 			
-			internalStream = new FileStream (path, mode, FileAccess.Write);
+			internalStream = new FileStream (path, mode, FileAccess.Write, FileShare.Read);
 
 			if (append)
 				internalStream.Position = internalStream.Length;
