@@ -1,3 +1,8 @@
+2004-06-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DateTimeTest.cs: Added new test cases for From|ToOADate (OLE 
+	Automation date format).
+
 2004-06-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DecimalTest.cs: Added tests for default ToString(). Added tests when

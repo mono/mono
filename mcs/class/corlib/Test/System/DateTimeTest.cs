@@ -5,6 +5,7 @@
 //   Martin Baulig (martin@gnome.org)
 //
 //   (C) 2002 Free Software Foundation
+// Copyright (C) 2004 Novell (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -643,6 +644,71 @@ public class DateTimeTest : Assertion
 		DateTime d = DateTime.FromOADate(number);
 		DTAssertEquals ("I01", d, new DateTime(1913, 9, 8, 9, 56, 46, 0), Resolution.Second);
 		AssertEquals ("I02", d.ToOADate(), number);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void FromOADate_Min () 
+	{
+		// minimum documented value isn't inclusive
+		DateTime.FromOADate (-657435.0d);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void FromOADate_Max () 
+	{
+		// maximum documented value isn't inclusive
+		DateTime.FromOADate (2958466.0d);
+	}
+
+	[Test]
+	public void FromOADate ()
+	{
+		// Note: OA (OLE Automation) dates aren't timezone sensitive
+		AssertEquals ("Ticks-Zero", 599264352000000000, DateTime.FromOADate (0.0d).Ticks);
+		AssertEquals ("Ticks-Min", 31242239136000000, DateTime.FromOADate (-657434.999d).Ticks);
+		AssertEquals ("Ticks-Max", 3155378975136000000, DateTime.FromOADate (2958465.999d).Ticks);
+	}
+
+	[Test]
+	public void ToOADate ()
+	{
+		// Note: OA (OLE Automation) dates aren't timezone sensitive
+		DateTime d = new DateTime (0);
+		AssertEquals ("Unititialized", 0.0d, d.ToOADate ());
+		d = new DateTime (599264352000000000);
+		AssertEquals ("Ticks-Zero", 0.0d, d.ToOADate ());
+		d = new DateTime (31242239136000000);
+		AssertEquals ("Ticks-Min", -657434.999d, d.ToOADate ());
+		d = new DateTime (3155378975136000000);
+		AssertEquals ("Ticks-Max", 2958465.999d, d.ToOADate ());
+	}
+
+	[Test]
+	public void ToOADate_OverMax ()
+	{
+		DateTime d = new DateTime (3155378975136000001);
+		AssertEquals ("Over-Max", 2958465.999d, d.ToOADate ());
+	}
+
+	[Test]
+	public void ToOADate_MaxValue ()
+	{
+		AssertEquals ("MaxValue", 2958465.99999999d, DateTime.MaxValue.ToOADate ());
+	}
+
+	[Test]
+	public void ToOADate_UnderMin ()
+	{
+		DateTime d = new DateTime (31242239135999999);
+		AssertEquals ("Under-Min", -657434.999d, d.ToOADate ());
+	}
+
+	[Test]
+	public void ToOADate_MinValue ()
+	{
+		AssertEquals ("MinValue", 0, DateTime.MinValue.ToOADate ());
 	}
 
 	[Test]
