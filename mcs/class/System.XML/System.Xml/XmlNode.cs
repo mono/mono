@@ -143,8 +143,7 @@ namespace System.Xml
 		{
 			get
 			{
-				// TODO - implement or decide to handle in subclass
-				return true;
+				return OwnerDocument.IsReadOnly;
 			}
 		}
 
@@ -157,7 +156,7 @@ namespace System.Xml
 		{
 			get 
 			{
-				// TODO - implement XmlNode.Item(int?)
+				// TODO - implement XmlNode.Item(string)
 				throw new NotImplementedException();
 			}
 		}
@@ -198,7 +197,7 @@ namespace System.Xml
 			get
 			{
 				// TODO - implement Namespace URI, or determine abstractness
-				return String.Empty;
+				throw new NotImplementedException("XmlNode.NamespaceURI not implemented");
 			}
 		}
 
@@ -209,8 +208,15 @@ namespace System.Xml
 		{
 			get
 			{
-				// TODO - implement NextSibling
-				throw new NotImplementedException();
+				
+				if (_parent != null)
+				{
+					XmlNodeListAsArrayList children = _parent.ChildNodes as XmlNodeListAsArrayList;
+					int ourIndex = children.data.IndexOf(this);
+					return children[ourIndex + 1];
+				}
+				else
+					return null;
 			}
 		}
 
@@ -283,8 +289,14 @@ namespace System.Xml
 		public virtual XmlNode PreviousSibling {
 			get
 			{
-				// TODO - implement PreviousSibling {get;}
-				throw new NotImplementedException();
+				if (_parent != null)
+				{
+					XmlNodeListAsArrayList children = _parent.ChildNodes as XmlNodeListAsArrayList;
+					int ourIndex = children.data.IndexOf(this);
+					return children[ourIndex - 1];
+				}
+				else
+					return null;
 			}
 		}
 
@@ -314,8 +326,7 @@ namespace System.Xml
 		/// <returns></returns>
 		public virtual XmlNode AppendChild (XmlNode newChild)
 		{
-			// TODO - implement AppendChild ();
-			throw new NotImplementedException();
+			return InsertBefore(newChild, null);
 		}
 
 		/// <summary>
@@ -341,8 +352,7 @@ namespace System.Xml
 		/// <returns></returns>
 		public IEnumerator GetEnumerator()
 		{
-			// TODO - implement GetEnumerator()
-			throw new NotImplementedException();
+			return _childNodes.data.GetEnumerator();
 		}
 
 		/// <summary>
@@ -384,58 +394,34 @@ namespace System.Xml
 		/// <returns></returns>
 		public virtual XmlNode InsertAfter(XmlNode newChild, XmlNode refChild)
 		{
-			if (newChild == null)
-				throw new ArgumentNullException("Null newNode passed to InsertAfter()");
-
-			if (! FOwnerDocument.Equals( newChild.OwnerDocument) )
-				throw new ArgumentException("Reference node has different owner document than this node");
-		
-			if ( FOwnerDocument.IsReadOnly )
-				throw new ArgumentException("Operation not supported - tree is read-only");
+			// Checks parent not ancestor, arguments valid, etc.  Throws exception on error
+			InsertionCheck(newChild, refChild);
 
 			// Scan the node list, looking for refChild and seeing if newChild is in the list
 			// Note that if refNode is null (prepend), we don't want to do the .Equals(null)
 			XmlNode retval = null;
 			int refNodeIndex = -1;
 			
-			if (refChild == null)
+			for (int i = 0; i < _childNodes.Count; i++)
 			{
-				for (int i = 0; i < _childNodes.Count; i++)
+				XmlNode e = _childNodes.data[i] as XmlNode;
+				if (e.Equals(newChild))
 				{
-					XmlNode e = _childNodes.data[i] as XmlNode;
-					if (e.Equals(newChild))
-					{
-						retval = e;
-						FOwnerDocument.onNodeRemoving(newChild, newChild.ParentNode);
-						_childNodes.data.RemoveAt(i);
-						newChild.setParent(null);
-						FOwnerDocument.onNodeRemoved(newChild, null);
-
-					}
+					retval = e;
+					FOwnerDocument.onNodeRemoving(newChild, newChild.ParentNode);
+					_childNodes.data.RemoveAt(i);
+					newChild.setParent(null);
+					FOwnerDocument.onNodeRemoved(newChild, null);
+					break;
+		
 				}
-			}
-			else
-			{
-				for (int i = 0; i < _childNodes.Count; i++)
+
+				if ( (refChild != null ) & ( e.Equals(refChild) ) )
 				{
-					XmlNode e = _childNodes.data[i] as XmlNode;
-					if (e.Equals(newChild))
-					{
-						retval = e;
-						FOwnerDocument.onNodeRemoving(newChild, this);
-						_childNodes.data.RemoveAt(i);
-						// break out if we've found the refChild, otherwise keep looking
-						if (refNodeIndex != -1)
-							break;
-					}
+					refNodeIndex = i;
 
-					if ( e.Equals(refChild) )
-					{
-						refNodeIndex = i;
-
-						if (retval != null)
-							break;
-					}
+					if (retval != null)
+						break;
 				}
 			}
 
@@ -445,16 +431,32 @@ namespace System.Xml
 			FOwnerDocument.onNodeInserting(newChild, this);
 
 			if (refChild == null)
-				_childNodes.data.Insert(0, newChild);
+				refNodeIndex = 0;
 			else
+				refNodeIndex++;			// insert after reference...
+
+			if (newChild.NodeType == XmlNodeType.DocumentFragment)
+			{
+				// Insert all children, starting from refNodeIndex (0,1,2...n)
+				for (int i = 0; i < newChild.ChildNodes.Count; i++)
+				{
+					XmlNode e = newChild.ChildNodes[i] as XmlNode;
+					FOwnerDocument.onNodeInserting(e, this);
+					_childNodes.data.Insert(refNodeIndex, newChild.ChildNodes[i]);
+					e.setParent(this);
+					FOwnerDocument.onNodeInserted(newChild, this);
+					refNodeIndex ++;
+				}
+			}
+			else
+			{
+				FOwnerDocument.onNodeInserting(newChild, this);
 				_childNodes.data.Insert(refNodeIndex, newChild);
-
-			FOwnerDocument.onNodeInserted(newChild, this);
-
-			newChild.setParent(this);
+				newChild.setParent(this);
+				FOwnerDocument.onNodeInserted(newChild, this);
+			}
 
 			return retval;
-
 		}
 		
 		/// <summary>
@@ -465,8 +467,66 @@ namespace System.Xml
 		/// <returns></returns>
 		public virtual XmlNode InsertBefore(XmlNode newChild, XmlNode refChild)
 		{
-			// TODO - implement InsertBefore()
-			throw new NotImplementedException();
+			// Checks parent not ancestor, arguments valid, etc.  Throws exception on error
+			InsertionCheck(newChild, refChild);
+
+			// Scan the node list, looking for refChild and seeing if newChild is in the list
+			XmlNode retval = null;
+			int refNodeIndex = -1;
+			
+			for (int i = 0; i < _childNodes.Count; i++)
+			{
+				XmlNode e = _childNodes.data[i] as XmlNode;
+				if (e.Equals(newChild))
+				{
+					retval = e;
+					FOwnerDocument.onNodeRemoving(newChild, newChild.ParentNode);
+					_childNodes.data.RemoveAt(i);
+					newChild.setParent(null);
+					FOwnerDocument.onNodeRemoved(newChild, null);
+					break;
+				}
+
+				if ( (refChild != null ) & ( e.Equals(refChild) ) )
+				{
+					refNodeIndex = i;
+
+					if (retval != null)
+						break;
+				}
+			}
+
+			if ( ( refNodeIndex == -1 ) & (refChild != null) )
+				throw new ArgumentException("Reference node not found (and not null) in call to XmlNode.InsertAfter()");
+
+			
+
+			if (refChild == null)
+				refNodeIndex = _childNodes.Count;
+
+			if (newChild.NodeType == XmlNodeType.DocumentFragment)
+			{
+				// Insert all children, starting from refNodeIndex (0,1,2...n)
+				for (int i = 0; i < newChild.ChildNodes.Count; i++)
+				{
+					XmlNode e = newChild.ChildNodes[i] as XmlNode;
+					FOwnerDocument.onNodeInserting(e, this);
+					_childNodes.data.Insert(refNodeIndex, newChild.ChildNodes[i]);
+					e.setParent(this);
+					FOwnerDocument.onNodeInserted(newChild, this);
+					refNodeIndex ++;
+				}
+			}
+			else
+			{
+				FOwnerDocument.onNodeInserting(newChild, this);
+				_childNodes.data.Insert(refNodeIndex, newChild);
+				newChild.setParent(this);
+				FOwnerDocument.onNodeInserted(newChild, this);
+			}
+
+			return retval;
+			
 		}
 
 		/// <summary>
@@ -486,8 +546,7 @@ namespace System.Xml
 		/// <returns>The node added</returns>
 		public virtual XmlNode PrependChild(XmlNode newChild)
 		{
-			//TODO - implement PrependChild(newChild)
-			throw new NotImplementedException();
+			return InsertAfter(newChild, null);
 		}
 
 		/// <summary>
@@ -495,8 +554,20 @@ namespace System.Xml
 		/// </summary>
 		public virtual void RemoveAll()
 		{
-			// TODO - implement RemoveAll()
-			throw new NotImplementedException();
+			if (_childNodes == null)
+				return;
+			else
+			{
+				// Remove in order, 0..n
+				while (_childNodes.Count > 0)
+				{
+					XmlNode e = _childNodes[0];
+					FOwnerDocument.onNodeRemoving(e, this);
+					e.setParent(null);
+					_childNodes.data.RemoveAt(0);
+					FOwnerDocument.onNodeRemoved(e, null);
+				}
+			}
 		}
 
 		/// <summary>
@@ -609,6 +680,37 @@ namespace System.Xml
 		//======= Protected methods    ==============================================
 
 		//======= Private Methods ===================================================
+		/// <summary>
+		/// Helper function to perform checks required before insrting a node.
+		/// Throws applicable exceptions on error.
+		/// </summary>
+		/// <param name="newChild"></param>
+		/// <param name="refChild"></param>
+		private void InsertionCheck( XmlNode newChild, XmlNode refChild)
+		{
+			if (newChild == null)
+				throw new ArgumentNullException("Null newNode passed to InsertAfter()");
+
+			if (newChild.Equals(this))
+				throw new ArgumentException("Cannot insert node onto itself");
+
+			if (! FOwnerDocument.Equals( newChild.OwnerDocument) )
+				throw new ArgumentException("Reference node has different owner document than this node");
+		
+			if ( FOwnerDocument.IsReadOnly )
+				throw new ArgumentException("Operation not supported - tree is read-only");
+
+			//Check that insert node is not in our path to the root
+			XmlNode curParent = _parent;
+			while ( (curParent != null) & (! FOwnerDocument.Equals(curParent) ))
+			{
+				if (curParent.Equals(newChild) )
+					throw new ArgumentException("Cannot insert ancestor a node");
+				curParent = curParent.ParentNode;
+			}
+
+		}
+
 		// Constructors
 		//===========================================================================
 		//When we're first created, we won't know parent, etc.

@@ -31,9 +31,24 @@ namespace System.Xml
 			}
 		}
 
-
 		// Implement abstract methods of XmlNode
 		//=====================================================================
+		/// <summary>
+		/// Remove all children and attributes.  If 
+		/// </summary>
+		public override void RemoveAll()
+		{
+			// Remove all child nodes
+			base.RemoveAll();
+
+			// Remove all attributes
+			_attributes.RemoveAll();
+
+			// If we have any default attributes, add them back in with the
+			//	appropriate namespace, baseURI, name, localName
+			// TODO - implement adding default attributes back in XmlElement.RemoveAll()
+		}
+		
 		/// <summary>
 		/// Return a clone of the node
 		/// </summary>
@@ -74,7 +89,7 @@ namespace System.Xml
 			get
 			{
 				// TODO - implement LocalName
-				return String.Empty;
+				throw new NotImplementedException();
 			}
 		}
 
@@ -89,7 +104,7 @@ namespace System.Xml
 			get
 			{
 				// TODO - implement Name
-				return String.Empty;
+				throw new NotImplementedException();
 			}
 		}
 
@@ -108,6 +123,7 @@ namespace System.Xml
 		// ==========================================================================
 		internal XmlElement( XmlDocument aOwnerDoc ) : base(aOwnerDoc)
 		{
+			_attributes = new XmlAttributeCollection(aOwnerDoc, this, null);
 		}
 
 
