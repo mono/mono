@@ -1,8 +1,10 @@
 2003-10-17  Zoltan Varga  <vargaz@freemail.hu>
 
-	* AssemblyBuilder.cs: Moved loading of the public key file into
-	managed code from reflection.c.
+	* AssemblyBuilder.cs (SetCustomAttribute): Ignore empty keyfile name.
 	
+	* AssemblyBuilder.cs: Moved loading of the public key file into
+	managed code from reflection.c.	
+
 	* AssemblyBuilder.cs: Set cultureInfo and version from the AssemblyName
 	passed to the constructor.
 

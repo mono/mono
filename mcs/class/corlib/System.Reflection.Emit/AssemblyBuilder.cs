@@ -436,6 +436,8 @@ namespace System.Reflection.Emit {
 				pos = 2;
 				len = CustomAttributeBuilder.decode_len (data, pos, out pos);
 				string keyfile_name = CustomAttributeBuilder.string_from_bytes (data, pos, len);
+				if (keyfile_name == String.Empty)
+					return;
 				using (FileStream fs = new FileStream (keyfile_name, FileMode.Open)) {
 					byte[] snkeypair = new byte [fs.Length];
 					fs.Read (snkeypair, 0, snkeypair.Length);
@@ -545,6 +547,11 @@ namespace System.Reflection.Emit {
 						throw new ArgumentException ("Duplicate name '" + name + "'");
 				}
 			}
-		}			
+		}
+
+		// Same as in Mono.Security/Mono>Security.Cryptography/CryptoConvert.cs
+
+
+
 	}
 }
