@@ -29,8 +29,11 @@ namespace System.Web.Services.Protocols
 			int start = 0;
 			int idx = cts.IndexOf (';');
 			if (idx == -1)
-				encoding = cts;
-			content_type = cts.Substring (0, idx);
+				content_type = cts;
+			else
+				content_type = cts.Substring (0, idx);
+
+			content_type = content_type.Trim ();
 			for (start = idx + 1; idx != -1;)
 			{
 				idx = cts.IndexOf (";", start);
@@ -39,9 +42,10 @@ namespace System.Web.Services.Protocols
 					body = cts.Substring (start);
 				else 
 				{
-					body = cts.Substring (start, idx);
+					body = cts.Substring (start, idx - start);
 					start = idx + 1;
 				}
+				body = body.Trim ();
 				if (body.StartsWith ("charset="))
 				{
 					encoding = body.Substring (8);
