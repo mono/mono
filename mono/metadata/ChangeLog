@@ -1,3 +1,8 @@
+
+Wed Dec 18 11:26:18 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c: fix handling of ExportedType table.
+
 2002-12-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: added WriteWindowsDebugString internal call.
