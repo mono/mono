@@ -1,3 +1,10 @@
+2004-12-15  Peter Bartok  <pbartok@novell.com>
+
+	* Design: Updated to reflect Mac Driver; added mention
+	  of System.Drawing patches for MWF support
+
+	* README: Credited Geoff Norton with the Mac driver
+
 2004-12-15  Jackson Harper  <jackson@ximian.com>
 
 	* System.Windows.Forms.dll.sources: Add keyboard love to the build.
