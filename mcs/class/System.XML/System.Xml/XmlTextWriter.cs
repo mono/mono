@@ -282,6 +282,7 @@ namespace System.Xml
 
 		public override void Flush ()
 		{
+                        CloseOpenAttributeAndElements ();
 			w.Flush ();
 		}
 

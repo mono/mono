@@ -1,3 +1,10 @@
+2003-03-26  Duncan Mak  <duncan@ximian.com>
+
+	* XmlTextWriter.cs (Write): A patch from Atsushi to fix
+	prematurely ending the write, or something like that. It was
+	causing us to chop off the end of the document when we're trying
+	to generate XML Schemas.
+
 2003-03-23  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlTextReader.cs : implemented ReadString().
