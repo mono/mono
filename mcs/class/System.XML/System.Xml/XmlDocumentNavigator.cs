@@ -301,7 +301,24 @@ namespace System.Xml
 			// returns actual namespace for the other nodes.
 			return Node.GetNamespaceOfPrefix (name);
 		}
-		
+
+		public override bool IsDescendant (XPathNavigator other)
+		{
+			if (NsNode != null)
+				return false;
+			XmlDocumentNavigator o = other as XmlDocumentNavigator;
+			if (o == null)
+				return false;
+			XmlNode n =
+				o.node.NodeType == XmlNodeType.Attribute ?
+				((XmlAttribute) o.node).OwnerElement :
+				o.node.ParentNode;
+			for (;n != null; n = n.ParentNode)
+				if (n == node)
+					return true;
+			return false;
+		}
+
 		public override bool IsSamePosition (XPathNavigator other)
 		{
 			XmlDocumentNavigator otherDocumentNavigator = other as XmlDocumentNavigator;

@@ -142,6 +142,9 @@ namespace System.Xml.XPath
 			if (IsSamePosition (nav))
 				return XmlNodeOrder.Same;
 
+			if (IsDescendant (nav))
+				return XmlNodeOrder.Before;
+
 			XPathNavigator nav1 = Clone ();
 			XPathNavigator nav2 = nav.Clone ();
 
