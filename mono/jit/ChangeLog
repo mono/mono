@@ -1,5 +1,7 @@
 2002-05-16  Dietmar Maurer  <dietmar@ximian.com>
 
+	* jit.c (mono_find_final_block): make it work with mcs
+
 	* x86.brg: buf fix. if exception variable is allocated to a register. 
 
 	* jit.c (mono_find_final_block): bug fix.
