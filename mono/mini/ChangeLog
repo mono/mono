@@ -1,5 +1,9 @@
 2005-01-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-amd64.c (mono_arch_local_regalloc): Fix some regalloc problems
+	with global registers.
+	(mono_arch_output_basic_block): Fix SWITCH in the AOT case.
+
 	* aot.c (emit_method_code): Fix the 'method emitted as' messages.
 
 2004-12-31  Zoltan Varga  <vargaz@freemail.hu>
