@@ -381,6 +381,7 @@ namespace System.Text.RegularExpressions {
 						if (Eval (Mode.Match, ref ptr, pc + 1))
 							goto Pass;
 					
+						this.repeat = current;
 						goto Fail;
 					}
 

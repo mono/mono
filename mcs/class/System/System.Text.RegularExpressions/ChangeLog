@@ -1,3 +1,8 @@
+2003-11-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* interpreter.cs: when evaluating a degenerate match, restore the
+	RepeatContext if fail. Fixes bug #42529.
+
 2003-11-22  Jackson Harper <jackson@ximian.com>
 
 	* regex.cs: Add CultureInvariant flag to RegexOptions.

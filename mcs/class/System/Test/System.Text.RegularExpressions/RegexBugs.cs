@@ -14,7 +14,7 @@ using System.Text.RegularExpressions;
 namespace MonoTests.System.Text.RegularExpressions
 {
 	[TestFixture]
-	public class PathTest : Assertion
+	public class RegexBugs : Assertion
 	{
 		[Test]
 		public void SplitGroup () // bug51146
@@ -40,6 +40,28 @@ namespace MonoTests.System.Text.RegularExpressions
 			AssertEquals ("#04", length, splitResult.Length);
 			for (i = 0; i < length; i++)
 				AssertEquals ("#05 " + i, expected [i], splitResult [i]);
+		}
+
+		[Test]
+		public void MathEmptyGroup () // bug 42529
+		{
+			string str = "Match something from here.";
+
+			AssertEquals ("MEG #01", false, Regex.IsMatch(str, @"(something|dog)$"));
+			AssertEquals ("MEG #02", true, Regex.IsMatch(str, @"(|something|dog)$"));
+			AssertEquals ("MEG #03", true, Regex.IsMatch(str, @"(something||dog)$"));
+			AssertEquals ("MEG #04", true, Regex.IsMatch(str, @"(something|dog|)$"));
+
+			AssertEquals ("MEG #05", true, Regex.IsMatch(str, @"(something|dog)*"));
+			AssertEquals ("MEG #06", true, Regex.IsMatch(str, @"(|something|dog)*"));
+			AssertEquals ("MEG #07", true, Regex.IsMatch(str, @"(something||dog)*"));
+			AssertEquals ("MEG #08", true, Regex.IsMatch(str, @"(something|dog|)*"));
+
+			AssertEquals ("MEG #09", true, Regex.IsMatch(str, @"(something|dog)*$"));
+			AssertEquals ("MEG #10", true, Regex.IsMatch(str, @"(|something|dog)*$"));
+			AssertEquals ("MEG #11", true, Regex.IsMatch(str, @"(something||dog)*$"));
+			AssertEquals ("MEG #12", true, Regex.IsMatch(str, @"(something|dog|)*$"));
+
 		}
 	}
 }
