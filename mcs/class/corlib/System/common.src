@@ -72,3 +72,5 @@ Type.cs
 TypeInitializationException.cs
 ValueType.cs
 MarshalByRefObject.cs
+MonoDummy.cs
+TimeSpan.cs
