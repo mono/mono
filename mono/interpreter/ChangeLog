@@ -1,3 +1,8 @@
+2001-09-23  Dick Porter  <dick@ximian.com>
+
+	* interp.c (main): Do some thread setup and cleanup around the
+	call to ves_exec()
+
 2001-09-21  Dick Porter  <dick@ximian.com>
 
 	* Makefile.am (mint_LDADD): Added PTHREAD_LIBS to the link line

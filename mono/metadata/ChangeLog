@@ -1,3 +1,18 @@
+2001-09-23  Dick Porter  <dick@ximian.com>
+
+	* threads-pthread.c: Implement the System.Threading.Thread::Sleep,
+	Schedule (called when asked to Sleep for 0 ms) and CurrentThread
+	internal calls.
+	(mono_thread_init): Set up a Thread object instance to return when
+	the main thread calls Thread.CurrentThread
+	(mono_thread_cleanup): Wait for all subthreads to exit
+
+	* icall.c: New internal calls for System.Threading.Thread::Sleep
+	(including Schedule) and CurrentThread
+
+	* threads.h: New file, to insulate thread-specific stuff from the
+	rest of the code
+
 2001-09-21  Dick Porter  <dick@ximian.com>
 
 	* threads-pthread.h: 
