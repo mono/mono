@@ -377,14 +377,25 @@ namespace System.Data {
 				ArrayList newDataList = new ArrayList();
 
 				//copy to array list only the column we are interested in.
-				foreach (DataRow row in clonedDataList)
-					newDataList.Add (row[this._dataColumns[0]]);
+				foreach (DataRow row in clonedDataList) {
+					
+					object colvalue = row[this._dataColumns[0]];
+					if (colvalue == DBNull.Value)
+						newDataList.Add (null);
+					else
+						newDataList.Add (colvalue);
+				}
 				
 				//sort ArrayList and check adjacent values for duplicates.
 				newDataList.Sort ();
 
 				for (int i = 0 ; i < newDataList.Count - 1 ; i++) 
-					if (newDataList[i].Equals (newDataList[i+1])) 
+					
+					if (newDataList [i] == null) {
+						if (newDataList [i+1] == null)
+							throw new InvalidConstraintException (String.Format ("Column '{0}' contains non-unique values", this._dataColumns[0]));
+					}
+					else if (newDataList[i].Equals (newDataList[i+1])) 
 						throw new InvalidConstraintException (String.Format ("Column '{0}' contains non-unique values", this._dataColumns[0]));
 			}
 
