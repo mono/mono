@@ -1,11 +1,13 @@
 //
-// System.IO.StringWriter
+// System.IO.MemoryStreamTest
 //
 // Authors:
 // 	Marcin Szczepanski (marcins@zipworld.com.au)
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
+// Copyright (C) 2004 Novell (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -330,6 +332,33 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Close_get_Length () 
+		{
+			MemoryStream ms = new MemoryStream (100);
+			ms.Close ();
+			long x = ms.Length;
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Close_get_Position () 
+		{
+			MemoryStream ms = new MemoryStream (100);
+			ms.Close ();
+			long x = ms.Position;
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Close_set_Position () 
+		{
+			MemoryStream ms = new MemoryStream (100);
+			ms.Close ();
+			ms.Position = 0;
+		}
+
+		[Test]
 		public void Seek ()
 		{
 			MemoryStream ms = new MemoryStream (100);
@@ -402,6 +431,14 @@ namespace MonoTests.System.IO
 			ms.SetLength (80);
 			AssertEquals ("#03", 80, ms.Length);
 			AssertEquals ("#04", 80, ms.Position);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void SetLength_ReadOnly ()
+		{
+			MemoryStream ms = new MemoryStream (testStreamData, false);
+			ms.SetLength (10);
 		}
 
 		[Test]
@@ -483,6 +520,18 @@ namespace MonoTests.System.IO
 			BinaryWriter bw = new BinaryWriter (ms);
 			for(int i=0; i < 44; i++)
 				bw.Write ((byte) 1);
+		}
+
+		[Test]
+		public void Expand () 
+		{
+			byte[] array = new byte [8] { 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01 };
+			MemoryStream ms = new MemoryStream ();
+			ms.Write (array, 0, array.Length);
+			ms.SetLength (4);
+			ms.Seek (4, SeekOrigin.End);
+			ms.WriteByte (0xFF);
+			AssertEquals ("Result", "01-01-01-01-00-00-00-00-FF", BitConverter.ToString (ms.ToArray ()));
 		}
 	}
 }

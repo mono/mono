@@ -1,3 +1,9 @@
+2004-05-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MemoryStreamTest.cs: Test that we zeroize old data when we manipulate
+	the length of the stream. Verify that we throw the same exceptions as
+	MS fx.
+
 2004-05-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MemoryStream.cs: SetUp is now	public (required for new nunit).
