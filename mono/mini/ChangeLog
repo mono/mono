@@ -1,4 +1,10 @@
 
+Fri Nov 28 23:03:05 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* cpu-g4.md, inssel-ppc.brg, mini-ppc.c: better long return support.
+	* tramp-ppc.c: fixed class init trampoline.
+	* inssel-ppc.brg, mini.c, jit-icalls.c, mini-ppc.h: more emulation.
+
 Fri Nov 28 16:36:29 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* cpu-g4.md, inssel-ppc.brg, jit-icalls.c, mini-ppc.c, mini-ppc.h,
