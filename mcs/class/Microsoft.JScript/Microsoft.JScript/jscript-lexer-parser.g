@@ -87,7 +87,13 @@ formal_param_list returns [FormalParameterList p]
 {
 	p = new FormalParameterList ();
 }
-	: (i:IDENTIFIER { p.Add (i.getText ()); } | ) (COMMA g:IDENTIFIER { p.Add (g.getText ()); } )*
+	: i:IDENTIFIER (COLON t1:IDENTIFIER { p.Add (i.getText (), t1.getText ()); } 
+		       | { p.Add (i.getText (), "Object"); } 
+		       )
+	  (COMMA g:IDENTIFIER (COLON t2:IDENTIFIER { p.Add (g.getText (), t2.getText ()); } 
+			      | { p.Add (g.getText (), "Object"); }
+			      )
+	  )*
 	;
 
 //
