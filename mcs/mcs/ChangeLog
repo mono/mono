@@ -1,3 +1,9 @@
+2003-11-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* cfold.cs (DoNumericPromotions): During constant folding of
+	additions on UIntConstant, special case intconstants with
+	IntConstants like we do on the expression binary operator. 
+
 2003-11-12  Miguel de Icaza  <miguel@ximian.com>
 
 	* convert.cs (ImplicitReferenceConversion): We were missing a case

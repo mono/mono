@@ -111,8 +111,18 @@ namespace Mono.CSharp {
 				if (other is UIntConstant)
 					return;
 
-				if (other is SByteConstant || other is ShortConstant ||
-				    other is IntConstant){
+				IntConstant ic = other as IntConstant;
+				if (ic != null){
+					if (ic.Value >= 0){
+						if (left == other)
+							left = new UIntConstant ((uint) ic.Value);
+						else
+							right = new UIntConstant ((uint) ic.Value);
+					}
+					return;
+				}
+				
+				if (other is SByteConstant || other is ShortConstant || ic != null){
 					left = left.ToLong (loc);
 					right = right.ToLong (loc);
 				}
@@ -180,7 +190,7 @@ namespace Mono.CSharp {
 			Type rt = right.Type;
 			Type result_type = null;
 			bool bool_res;
-			
+
 			//
 			// Enumerator folding
 			//

@@ -2091,7 +2091,7 @@ namespace Mono.CSharp {
 				//
 				// If either operand is of type uint, and the other
 				// operand is of type sbyte, short or int, othe operands are
-				// converted to type long.
+				// converted to type long (unless we have an int constant).
 				//
 				Type other = null;
 				
