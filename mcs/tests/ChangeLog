@@ -1,3 +1,9 @@
+2004-09-01  Marek Safar <marek.safar@seznam.cz>
+
+	* Makefile: Enabled test-286
+
+	* test-287.cs: New test for static classes.
+
 2004-09-01  Martin Baulig  <martin@ximian.com>
 
 	* Makefile: Disable test-286 for the moment.
