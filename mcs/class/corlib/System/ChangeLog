@@ -1,3 +1,5 @@
+2002-01-30  Duco Fijma <duco@lorentz.xs4all.nl>
+	* Guid.cs: implemented everything but Guid.NewGuid
 
 Tue Jan 29 22:32:36 CET 2002 Paolo Molaro <lupus@ximian.com>
 
