@@ -1,3 +1,7 @@
+2003-12-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Environment.cs: Bump corlib version.
+
 2003-12-19  Dick Porter  <dick@ximian.com>
 
 	* String.cs: Added Compare shortcut for length==0.
