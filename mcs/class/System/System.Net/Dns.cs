@@ -187,7 +187,7 @@ namespace System.Net {
                 }
                 
                 /// <summary>
-                /// This method resovles a DNS-style host name or IP
+                /// This method resolves a DNS-style host name or IP
                 /// address.
                 /// </summary>
                 /// <param name=hostName>
@@ -197,11 +197,8 @@ namespace System.Net {
                 public static IPHostEntry Resolve(string hostName) {
                         if (hostName == null)
                                 throw new ArgumentNullException();
-                        try {
-                                return GetHostByAddress(hostName);
-                        } catch (SocketException) {
-                                return GetHostByName(hostName);
-                        }
+
+			return GetHostByName (hostName);
                 }
         }
 }
