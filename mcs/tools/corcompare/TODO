@@ -12,3 +12,5 @@ for CorCompare - 2002/02/25
 
 	* Missing attributes on classes and members are not included at all.
 	
+	* Compare other assemblies besides corlib (then change name of
+	the utility of course :)
