@@ -49,7 +49,7 @@ namespace Microsoft.CSharp {
 
 		public string ErrorMessage {
 			get {
-				return (null == message ? "" : message);
+				return (null == message ? String.Empty : message);
 			}
 			set {
 				message = value;
@@ -84,14 +84,15 @@ namespace Microsoft.CSharp {
 
 		/// <summary>
 		///   Error message in form: 
-		///   [filename(line,column):] AAAAA CSXXX: message
+		///   filename(line,column): AAAAA CSXXX: message
   		/// </summary>
 		public override string ToString()
 		{
 			StringBuilder builder = new StringBuilder ();
 
-			builder.AppendFormat ("[{0}({1},{2}):] ", 
-				SourceFile, SourceLine, SourceColumn);
+			if (String.Empty != SourceFile)
+				builder.AppendFormat ("{0}({1},{2}) ", 
+					SourceFile, SourceLine, SourceColumn);
 			builder.AppendFormat ("{0} CS{1}: {2}", 
 				ErrorLevelString, ErrorNumber, ErrorMessage);
 			

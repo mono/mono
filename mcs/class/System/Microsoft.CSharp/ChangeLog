@@ -1,3 +1,7 @@
+2002-11-9 Jackson Harper <jackson@latitudegeo.com>
+
+	* CompilerError.cs: ToString() Do not show source file info if there was no source file in the error message
+
 2002-11-6 Jackson Harper <jackson@latitudegeo.com>
 
 	* Compiler.cs: No longers waits untill mcs is finished running to read output, this should prevent
