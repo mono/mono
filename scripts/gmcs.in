@@ -1,2 +1,2 @@
 #!/bin/sh
-MONO_PATH="@fx20_instdir@:$MONO_PATH" exec @bindir@/@mono_interp@ @fx20_instdir@/gmcs.exe "$@"
+MONO_PATH="@mono_two_instdir@:$MONO_PATH" exec @bindir@/@mono_interp@ @mono_two_instdir@/gmcs.exe "$@"
