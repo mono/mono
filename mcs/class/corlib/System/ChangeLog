@@ -1,3 +1,8 @@
+2003-02-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Int32.cs:
+	(Parse): ignore everything after a \0 (MS parses: "512\0hola" as 512).
+
 2003-02-12  Miguel de Icaza  <miguel@ximian.com>
 
 	* Type.cs: IsClass should return false for Enumerations

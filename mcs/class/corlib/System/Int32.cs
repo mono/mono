@@ -83,6 +83,11 @@ namespace System {
 			for (; i < len; i++){
 				c = s [i];
 
+				if (c == '\0') {
+					i = len;
+					continue;
+				}
+				
 				if (c >= '0' && c <= '9'){
 					val = checked (val * 10 + (c - '0') * sign);
 					digits_seen = true;
