@@ -1,3 +1,9 @@
+2004-11-17  Carlos Alberto Cortez Guevara <carlos@unixmexico.org>
+
+	* Collections.cs: Avoid the call to Array.Clear () in RemoveItem (),
+	now we only assign the last element (the deleted one) to its default
+	value.
+	
 2004-09-20  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* ReadOnlyCollection.cs: Moved over from corlib

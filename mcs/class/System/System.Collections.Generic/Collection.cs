@@ -236,7 +236,7 @@ namespace System.Collections.Generic
 			//
 			// Clear the last element
 			//
-			Array.Clear (contents, --count, 1);
+			contents [--count] = default (T);
 		}
 
 		protected virtual void SetItem (int index, T item)
