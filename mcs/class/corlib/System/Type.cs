@@ -1036,6 +1036,17 @@ namespace System {
 			}
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern Type[] GetGenericParameterConstraints_impl ();
+
+		public virtual Type[] GetGenericParameterConstraints ()
+		{
+			if (!IsGenericParameter)
+				throw new InvalidOperationException ();
+
+			return GetGenericParameterConstraints_impl ();
+		}
+
 		public abstract MethodInfo DeclaringMethod {
 			get;
 		}
