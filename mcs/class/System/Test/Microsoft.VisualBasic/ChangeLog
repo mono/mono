@@ -1,0 +1,7 @@
+2003-12-10  Jochen Wezel  <jwezel@compumaster.de>
+
+        * VBCodeProviderTest.cs: moved into proper subdir
+	                         and also extended for additional testings
+
+	* CodeGenerator*.cs: C# units copied and changed for VB use
+
