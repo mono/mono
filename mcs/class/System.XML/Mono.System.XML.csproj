@@ -116,7 +116,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml\Validation.cs"
+                    RelPath = "System.Xml\ValidationType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -237,6 +237,11 @@
                 />
                 <File
                     RelPath = "System.Xml\XmlNodeChangedEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\XmlNodeChangedEventHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
