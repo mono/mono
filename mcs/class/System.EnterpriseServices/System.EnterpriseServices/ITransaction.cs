@@ -11,7 +11,7 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices {
-	//[Guid ("")]
+	[Guid("0FB15084-AF41-11CE-BD2B-204C4F4F5020")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface ITransaction {
 

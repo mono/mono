@@ -11,7 +11,8 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices {
-	//[Guid ("")]
+
+	[Guid("6619a740-8154-43be-a186-0319578e02db")]
 	public interface IRemoteDispatch {
 
 		#region Methods
@@ -22,6 +23,6 @@ namespace System.EnterpriseServices {
 		[AutoComplete]
 		string RemoteDispatchNotAutoDone (string s);
 
-		#endregion // Methods
+		#endregion
 	}
 }
