@@ -19,22 +19,17 @@ EXTRA_DISTFILES = \
 	System.ComponentModel.Design/Changelog		\
 	Test/test-config-file
 
-ifdef CYCLIC_DEP_FILE
-LIB_MCS_FLAGS += /define:XML_DEP /r:$(CYCLIC_DEP)
-else
-
-# First pass:
-#   1. Build temporary System.dll without depending on System.Xml.dll
-#   2. Since mcs.exe depends on System.dll, use BOOT_COMPILE to compile System.dll
+ifdef USE_BOOT_COMPILE
 LIBRARY_COMPILE = $(BOOT_COMPILE)
-
 endif
 
 include ../../build/library.make
 
 ifdef CYCLIC_DEP_FILE
+LIB_MCS_FLAGS += /define:XML_DEP /r:$(CYCLIC_DEP)
 $(the_lib): $(CYCLIC_DEP_FILE)
 else
+# First pass: Build temporary System.dll without depending on System.Xml.dll
 $(the_lib): echo-warning
 .PHONY: echo-warning
 echo-warning:
