@@ -1,3 +1,9 @@
+
+Tue Dec 21 14:50:31 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: fix the stelemref wrapper to be type correct
+	(and faster).
+
 2004-12-20  Ben Maurer  <bmaurer@ximian.com>
 
 	* icall.c (ves_icall_System_Object_GetHashCode): There was no need
