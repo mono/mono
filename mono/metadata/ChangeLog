@@ -1,5 +1,10 @@
 2004-12-02  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c (emit_thread_interrupt_checkpoint_call): Call 
+	checkpoint_func as an icall so it gets a wrapper.
+	(mono_marshal_get_xappdomain_invoke): Call push/pop_appdomain_ref ()
+	in the cross-appdomain wrappers too.
+
 	* threads.c (mono_thread_has_appdomain_ref): Make this public.
 
 	* assembly.c (mono_assembly_open_from_bundle): Fix warning.
