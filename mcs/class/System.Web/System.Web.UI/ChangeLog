@@ -1,3 +1,8 @@
+2004-06-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs: don't nullify _context after processing the request as there
+	are events not triggered yet. Fixes bug #60726.
+
 2004-06-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlTextWriter.cs: only create a closing tag for unknown tags. Fixes

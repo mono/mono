@@ -765,7 +765,6 @@ public class Page : TemplateControl, IHttpHandler
 		Trace.Write ("aspx.page", "End Render");
 		
 		RenderTrace (output);
-		_context = null;
 	}
 
 	private void RenderTrace (HtmlTextWriter output)
