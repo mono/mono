@@ -1,4 +1,11 @@
 
+Tue Mar 22 16:57:01 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: added locking comments to some functions.
+	Cache the interface offsets arrays (saves about 20 KB
+	of runtime memory in a typical app).
+	Reduce the time overhead in mono_class_setup_supertypes ().
+
 Tue Mar 22 16:35:57 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: speedup and fix leaks in GetMethodsByName and
