@@ -5,6 +5,7 @@
 // Author: Everaldo Canuto everaldo.canuto@bol.com.br
 //
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.Drawing.Text {
 
