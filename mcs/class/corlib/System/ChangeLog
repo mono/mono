@@ -4,6 +4,7 @@
 	* Boolean.cs: Fixed Equals for True!=True (see bugzilla #58874).
 	* BitConverter.cs: Fixed negative index and integer overflow in
 	To... methods.
+	* Buffer.cs: Fixed integer overflow in BlockCopy.
 
 2004-05-22  Sebastien Pouliot  <sebastien@ximian.com>
 

@@ -74,7 +74,8 @@ namespace System
 			// We do the checks in unmanaged code for performance reasons
 			bool res = BlockCopyInternal (src, srcOffset, dest, destOffset, count);
 			if (!res) {
-				if (srcOffset + count > ByteLength (src) || destOffset + count > ByteLength (dest))
+				// watch for integer overflow
+				if ((srcOffset > ByteLength (src) - count) || (destOffset > ByteLength (dest) - count))
 					throw new ArgumentException (Locale.GetText (
 						"Offset and length were out of bounds for the array or count is greater than" + 
 						"the number of elements from index to the end of the source collection."));
