@@ -168,11 +168,18 @@ test-local: $(test_assemblies)
 run-test-local: run-test-lib
 run-test-ondotnet-local: run-test-ondotnet-lib
 
+## FIXME: i18n problem in the 'sed' command below
 run-test-lib: test-local
-	$(TEST_RUNTIME) $(TEST_HARNESS) $(TEST_HARNESS_FLAGS) /output:TestResult-$(PROFILE).log /exclude:NotWorking,ValueAdd /xml:TestResult-$(PROFILE).xml $(test_assemblies)
+	ok=:; \
+	$(TEST_RUNTIME) $(TEST_HARNESS) $(TEST_HARNESS_FLAGS) /output:TestResult-$(PROFILE).log /exclude:NotWorking,ValueAdd /xml:TestResult-$(PROFILE).xml $(test_assemblies) || ok=false; \
+	sed '1,/^Tests run: /d' TestResult-$(PROFILE).log; \
+	$$ok
 
 run-test-ondotnet-lib: test-local
-	$(TEST_HARNESS) $(TEST_HARNESS_FLAGS) /exclude=NotDotNet /output:TestResult-ondotnet-$(PROFILE).log /xml:TestResult-ondotnet-$(PROFILE).xml $(test_assemblies)
+	ok=:; \
+	$(TEST_HARNESS) $(TEST_HARNESS_FLAGS) /exclude=NotDotNet /output:TestResult-ondotnet-$(PROFILE).log /xml:TestResult-ondotnet-$(PROFILE).xml $(test_assemblies) || ok=false; \
+	sed '1,/^Tests run: /d' TestResult-ondotnet-$(PROFILE).log; \
+	$$ok
 endif
 
 DISTFILES = $(sourcefile) $(test_sourcefile) $(EXTRA_DISTFILES)
