@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 // $Modtime: $
 // $Log: Form.cs,v $
+// Revision 1.3  2004/08/04 21:13:47  pbartok
+// - Added AutoScale properties
+//
 // Revision 1.2  2004/07/13 15:31:45  jordi
 // commit: new properties and fixes form size problems
 //
@@ -46,7 +49,8 @@ using System.Threading;
 namespace System.Windows.Forms {
 	public class Form : ContainerControl {
 		#region Local Variables
-		//private static bool	
+		private static bool	autoscale;
+		private static Size	autoscale_base_size;
 		#endregion	// Local Variables
 
 		#region Public Constructor & Destructor
@@ -68,6 +72,25 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Properties
 
 		#region Protected Instance Properties
+		public bool AutoScale {
+			get {
+				return autoscale;
+			}
+
+			set {
+				autoscale=value;
+			}
+		}
+
+		public virtual Size AutoScaleBaseSize {
+			get {
+				return autoscale_base_size;
+			}
+
+			set {
+				autoscale_base_size=value;
+			}
+		}
 		#endregion	// Public Instance Properties
 
 		#region Public Static Methods
