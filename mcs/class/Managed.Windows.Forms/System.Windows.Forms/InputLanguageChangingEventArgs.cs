@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 // $Modtime: $
 // $Log: InputLanguageChangingEventArgs.cs,v $
+// Revision 1.3  2004/08/11 22:26:14  pbartok
+// - More signature fixes
+//
 // Revision 1.2  2004/08/11 22:20:59  pbartok
 // - Signature fixes
 //
@@ -39,7 +42,7 @@
 using System.Globalization;
 
 namespace System.Windows.Forms {
-	public class InputLanguageChangingEventArgs : EventArgs {
+	public class InputLanguageChangingEventArgs : CancelEventArgs {
 		private CultureInfo	culture;
 		private bool		system_charset;
 		private InputLanguage	input_language;
