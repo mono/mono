@@ -124,6 +124,12 @@ namespace Mono.CSharp {
 				      "expression or array creation expression" + extra);
 		}
 
+		static void Error_AttributeArgumentNotValid (Location loc)
+		{
+			Error_AttributeArgumentNotValid ("", loc);
+		}
+		
+
 		/// <summary>
 		/// This is rather hack. We report many emit attribute error with same error to be compatible with
 		/// csc. But because csc has to report them this way because error came from ilasm we needn't.
@@ -1023,11 +1029,11 @@ namespace Mono.CSharp {
 			if (tmp.Expr is Constant)
 				dll_name = (string) ((Constant) tmp.Expr).GetValue ();
 			else { 
-				Error_AttributeArgumentNotValid ("", Location);
+				Error_AttributeArgumentNotValid (Location);
 				return null;
 			}
 			if (dll_name == null || dll_name == ""){
-				Error_AttributeArgumentNotValid (": DllImport requires a non-empty string");
+				Error_AttributeArgumentNotValid (": DllImport requires a non-empty string", Location);
 				return null;
 			}
 			
