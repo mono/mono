@@ -171,17 +171,6 @@ namespace Mono.CSharp {
 		}
 	}
 
-	/// <summary>
-	///   Expression which resolves to a type.
-	/// </summary>
-	public interface ITypeExpression
-	{
-		/// <summary>
-		///   Resolve the expression, but only lookup types.
-		/// </summary>
-		Expression DoResolveType (EmitContext ec);
-	}
-
 	/// <remarks>
 	///   Base class for expressions
 	/// </remarks>
@@ -278,7 +267,33 @@ namespace Mono.CSharp {
 		{
 			return DoResolve (ec);
 		}
-		
+
+		//
+		// This is used if the expression should be resolved as a type.
+		// the default implementation fails.   Use this method in
+		// those participants in the SimpleName chain system.
+		//
+		public virtual Expression ResolveAsTypeStep (EmitContext ec)
+		{
+			return null;
+		}
+
+		//
+		// This is used to resolve the expression as a type, a null
+		// value will be returned if the expression is not a type
+		// reference
+		//
+		public Expression ResolveAsTypeTerminal (EmitContext ec)
+		{
+			Expression e = ResolveAsTypeStep (ec);
+
+			if (e == null)
+				return null;
+			if (e is SimpleName)
+				return null;
+			return e;
+		}
+	       
 		/// <summary>
 		///   Resolves an expression and performs semantic analysis on it.
 		/// </summary>
@@ -289,15 +304,8 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public Expression Resolve (EmitContext ec, ResolveFlags flags)
 		{
-			// Are we doing a types-only search ?
-			if ((flags & ResolveFlags.MaskExprClass) == ResolveFlags.Type) {
-				ITypeExpression type_expr = this as ITypeExpression;
-
-				if (type_expr == null)
-					return null;
-
-				return type_expr.DoResolveType (ec);
-			}
+			if ((flags & ResolveFlags.MaskExprClass) == ResolveFlags.Type) 
+				return ResolveAsTypeStep (ec);
 
 			bool old_do_flow_analysis = ec.DoFlowAnalysis;
 			if ((flags & ResolveFlags.DisableFlowAnalysis) != 0)
@@ -356,6 +364,11 @@ namespace Mono.CSharp {
 			case ExprClass.EventAccess:
 			case ExprClass.IndexerAccess:
 				if ((flags & ResolveFlags.VariableOrValue) == 0) {
+					Console.WriteLine ("I got: {0} and {1}", e.GetType (), e);
+					Console.WriteLine ("I am {0} and {1}", this.GetType (), this);
+					FieldInfo fi = ((FieldExpr) e).FieldInfo;
+					
+					Console.WriteLine ("{0} and {1}", fi.DeclaringType, fi.Name);
 					e.Error118 (flags);
 					return null;
 				}
@@ -3486,7 +3499,7 @@ namespace Mono.CSharp {
 	///   The downside of this is that we might be hitting `LookupType' too many
 	///   times with this scheme.
 	/// </remarks>
-	public class SimpleName : Expression, ITypeExpression {
+	public class SimpleName : Expression {
 		public readonly string Name;
 
 		//
@@ -3556,7 +3569,7 @@ namespace Mono.CSharp {
 			return SimpleNameResolve (ec, null, true);
 		}
 
-		public Expression DoResolveType (EmitContext ec)
+		public override Expression ResolveAsTypeStep (EmitContext ec)
 		{
 			DeclSpace ds = ec.DeclSpace;
 			Namespace ns = ds.Namespace;
@@ -3686,7 +3699,7 @@ namespace Mono.CSharp {
 				e = MemberLookup (ec, ec.ContainerType, Name, loc);
 
 			if (e == null)
-				return DoResolveType (ec);
+				return ResolveAsTypeStep (ec);
 
 			if (e is TypeExpr)
 				return e;
@@ -3752,7 +3765,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Fully resolved expression that evaluates to a type
 	/// </summary>
-	public class TypeExpr : Expression, ITypeExpression {
+	public class TypeExpr : Expression {
 		public TypeExpr (Type t, Location l)
 		{
 			Type = t;
@@ -3760,7 +3773,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public virtual Expression DoResolveType (EmitContext ec)
+		public override Expression ResolveAsTypeStep (EmitContext ec)
 		{
 			return this;
 		}
@@ -3794,7 +3807,7 @@ namespace Mono.CSharp {
 			this.name = name;
 		}
 
-		public override Expression DoResolveType (EmitContext ec)
+		public override Expression ResolveAsTypeStep (EmitContext ec)
 		{
 			if (type == null)
 				type = RootContext.LookupType (ec.DeclSpace, name, false, Location.Null);
@@ -3803,7 +3816,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			return DoResolveType (ec);
+			return ResolveAsTypeStep (ec);
 		}
 
 		public override void Emit (EmitContext ec)

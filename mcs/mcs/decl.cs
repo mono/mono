@@ -457,7 +457,7 @@ namespace Mono.CSharp {
 			type_resolve_ec.ContainerType = TypeBuilder;
 
 			int errors = Report.Errors;
-			Expression d = e.Resolve (type_resolve_ec, ResolveFlags.Type);
+			Expression d = e.ResolveAsTypeTerminal (type_resolve_ec);
 			
 			if (d == null || d.eclass != ExprClass.Type){
 				if (!silent && errors == Report.Errors){
@@ -484,7 +484,7 @@ namespace Mono.CSharp {
 			if (type_resolve_ec == null)
 				type_resolve_ec = GetTypeResolveEmitContext (parent, loc);
 
-			Expression d = e.Resolve (type_resolve_ec, ResolveFlags.Type);
+			Expression d = e.ResolveAsTypeTerminal (type_resolve_ec);
 			 
 			if (d == null || d.eclass != ExprClass.Type){
 				if (!silent){

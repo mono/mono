@@ -5952,10 +5952,9 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Implements the member access expression
 	/// </summary>
-	public class MemberAccess : Expression, ITypeExpression {
+	public class MemberAccess : Expression {
 		public readonly string Identifier;
 		Expression expr;
-		Expression member_lookup;
 		
 		public MemberAccess (Expression expr, string id, Location l)
 		{
@@ -6169,11 +6168,6 @@ namespace Mono.CSharp {
 				return member_lookup;
 			}
 
-			if (member_lookup is TypeExpr){
-				member_lookup.Resolve (ec, ResolveFlags.Type);
-				return member_lookup;
-			}
-			
 			Console.WriteLine ("Left is: " + left);
 			Report.Error (-100, loc, "Support for [" + member_lookup + "] is not present yet");
 			Environment.Exit (0);
@@ -6184,6 +6178,7 @@ namespace Mono.CSharp {
 		{
 			if (type != null)
 				throw new Exception ();
+
 			//
 			// Resolve the expression with flow analysis turned off, we'll do the definite
 			// assignment checks later.  This is because we don't know yet what the expression
@@ -6193,7 +6188,6 @@ namespace Mono.CSharp {
 
 			Expression original = expr;
 			expr = expr.Resolve (ec, flags | ResolveFlags.DisableFlowAnalysis);
-
 			if (expr == null)
 				return null;
 
@@ -6232,22 +6226,20 @@ namespace Mono.CSharp {
 					}
 				}
 			}
-
+			
 			if (expr_type.IsPointer){
 				Error (23, "The `.' operator can not be applied to pointer operands (" +
 				       TypeManager.CSharpName (expr_type) + ")");
 				return null;
 			}
 
+			Expression member_lookup;
 			member_lookup = MemberLookupFinal (ec, expr_type, expr_type, Identifier, loc);
 			if (member_lookup == null)
 				return null;
 
-			if (member_lookup is TypeExpr){
-				member_lookup.Resolve (ec, ResolveFlags.Type);
+			if (member_lookup is TypeExpr)
 				return member_lookup;
-			} else if ((flags & ResolveFlags.MaskExprClass) == ResolveFlags.Type)
-				return null;
 			
 			member_lookup = ResolveMemberAccess (ec, member_lookup, expr, loc, original);
 			if (member_lookup == null)
@@ -6276,9 +6268,40 @@ namespace Mono.CSharp {
 					  ResolveFlags.SimpleName | ResolveFlags.Type);
 		}
 
-		public Expression DoResolveType (EmitContext ec)
+		public override Expression ResolveAsTypeStep (EmitContext ec)
 		{
-			return DoResolve (ec, null, ResolveFlags.Type);
+			Expression new_expr = expr.ResolveAsTypeStep (ec);
+
+			if (new_expr == null)
+				return null;
+
+			if (new_expr is SimpleName){
+				SimpleName child_expr = (SimpleName) new_expr;
+				
+				new_expr = new SimpleName (child_expr.Name, Identifier, loc);
+
+				return new_expr.ResolveAsTypeStep (ec);
+			}
+
+			Type expr_type = new_expr.Type;
+			
+			if (expr_type.IsPointer){
+				Error (23, "The `.' operator can not be applied to pointer operands (" +
+				       TypeManager.CSharpName (expr_type) + ")");
+				return null;
+			}
+			
+			Expression member_lookup;
+			member_lookup = MemberLookupFinal (ec, expr_type, expr_type, Identifier, loc);
+			if (member_lookup == null)
+				return null;
+
+			if (member_lookup is TypeExpr){
+				member_lookup.Resolve (ec, ResolveFlags.Type);
+				return member_lookup;
+			} 
+
+			return null;			
 		}
 
 		public override void Emit (EmitContext ec)
@@ -7314,7 +7337,7 @@ namespace Mono.CSharp {
 	//   the type specification, we just use this to construct the type
 	//   one bit at a time.
 	// </summary>
-	public class ComposedCast : Expression, ITypeExpression {
+	public class ComposedCast : Expression {
 		Expression left;
 		string dim;
 		
@@ -7325,7 +7348,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public Expression DoResolveType (EmitContext ec)
+		public override Expression ResolveAsTypeStep (EmitContext ec)
 		{
 			Type ltype = ec.DeclSpace.ResolveType (left, false, loc);
 			if (ltype == null)
@@ -7368,7 +7391,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			return DoResolveType (ec);
+			return ResolveAsTypeStep (ec);
 		}
 
 		public override void Emit (EmitContext ec)

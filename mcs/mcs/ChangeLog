@@ -1,4 +1,25 @@
+2003-04-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs: Remove ITypeExpression.  This interface is now gone,
+	and the Expression class now contains two new methods:
+
+	ResolveAsTypeStep and ResolveAsTypeTerminal.  This is used to
+	isolate type lookup from the rest of the resolution process.
+
+	Since we use Expressions to hold type definitions due to the way
+	we parse the input we have historically overloaded Resolve to
+	perform the Type lookups if a special flag is passed.  Now this is
+	eliminated and two methods take their place. 
+	
+	The differences in the two methods between xStep and xTerminal is
+	that xStep is involved in our current lookup system that uses
+	SimpleNames to compose a name, while xTerminal is used just to
+	catch the case where the simplename lookup failed.
+	
 2003-04-16  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (ResolveMemberAccess): Remove redundant code.
+	TypeExpr expressions are always born fully resolved.
 
 	* interface.cs (PopulateMethod): Do not lookup the types twice.
 	We were doing it once during SemanticAnalysis and once during
