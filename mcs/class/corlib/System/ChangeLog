@@ -1,3 +1,9 @@
+2001-08-16  Nick Drochak <ndrochak@gol.com>
+
+	* Attribute.cs: implemented all methods except GetHashCode()
+
+	* common.src: added Attribute.cs so it would compile in
+
 2001-08-10  Dietmar Maurer  <dietmar@ximian.com>
 
 	* Object.cs: changed MemberWiseClone to MemberwiseClone, and
