@@ -1,6 +1,6 @@
 VERSION=0.13.99
 
-DIRS=jay nant mcs class nunit tools
+DIRS=jay nant mcs class nunit tools monoresgen
 
 all: linux
 

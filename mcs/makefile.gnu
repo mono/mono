@@ -1,4 +1,4 @@
-DIRS=jay mcs class nunit nunit/src/NUnitConsole
+DIRS=jay mcs class nunit nunit/src/NUnitConsole monoresgen
 DIST=monocharge-`date -u +%Y%m%d`
 
 #nant doesn't work yet
