@@ -36,7 +36,7 @@ namespace System.Runtime.Remoting.Messaging {
 			       int outArgCount, LogicalCallContext callCtx,
 			       IMethodCallMessage request)
 		{
-			// fixme: why do we need outArgCount?
+			// outArgCount tells how many values of outArgs are valid
 
 			_returnValue = returnValue;
 			_args = outArgs;

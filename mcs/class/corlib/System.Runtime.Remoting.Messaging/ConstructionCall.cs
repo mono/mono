@@ -28,7 +28,6 @@ namespace System.Runtime.Remoting.Messaging
 		public ConstructionCall(IMessage msg): base (msg)
 		{
 			_activationTypeName = TypeName;
-			_activationAttributes = null;	// FIXME: put something here
 			_isContextOk = true;
 		}
 
