@@ -2963,7 +2963,8 @@ namespace Mono.CSharp {
 					if (!TypeManager.IsSubclassOrNestedChildOf (invocation_type, mi.DeclaringType))
 						continue;
 					else {
-						must_do_cs1540_check = true;
+						if (!TypeManager.IsNestedChildOf (invocation_type, mi.DeclaringType))
+							must_do_cs1540_check = true;
 
 						return mi;
 					}

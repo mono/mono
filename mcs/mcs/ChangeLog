@@ -1,3 +1,13 @@
+2004-04-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (PropertyExpr.GetAccesor): Only perform the 1540 check
+	if we are only a derived class, not a nested class.
+	
+	* typemanager.cs: Same as above, but do this at the MemberLookup
+	level (used by field and methods, properties are handled in
+	PropertyExpr).   Allow for the qualified access if we are a nested
+	method. 
+
 2004-04-21  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs: Refactoring.

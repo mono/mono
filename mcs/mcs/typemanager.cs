@@ -2456,7 +2456,8 @@ public class TypeManager {
 				// it cannot do so through an instance of the base class (CS1540).
 				if (!mb.IsStatic && (closure_invocation_type != closure_qualifier_type) &&
 				    (closure_qualifier_type != null) &&
-				    closure_invocation_type.IsSubclassOf (closure_qualifier_type))
+				    closure_invocation_type.IsSubclassOf (closure_qualifier_type) &&
+				    !TypeManager.IsNestedChildOf (closure_invocation_type, closure_qualifier_type))
 					return false;
 
 				return true;
@@ -2505,7 +2506,8 @@ public class TypeManager {
 				// it cannot do so through an instance of the base class (CS1540).
 				if (!fi.IsStatic && (closure_invocation_type != closure_qualifier_type) &&
 				    (closure_qualifier_type != null) &&
-				    closure_invocation_type.IsSubclassOf (closure_qualifier_type))
+				    closure_invocation_type.IsSubclassOf (closure_qualifier_type) &&
+				    !TypeManager.IsNestedChildOf (closure_invocation_type, closure_qualifier_type))
 					return false;
 
 				return true;
