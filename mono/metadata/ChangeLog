@@ -1,3 +1,12 @@
+
+Thu Dec 6 16:21:30 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* tabledefs.h: missing FileAttributes.
+	* verify.h, verify.c: use is_valid_string () to simplify and check for
+	valid strings more correctly. Fix warnings and speeling.
+	Check more tables: Filed, File, ModuleRef, StandAloneSig.
+	Check code: branches, maxstack, method calls.
+
 2001-12-04  Dietmar Maurer  <dietmar@ximian.com>
 
 	* object.c (mono_object_allocate): removed static, so that the jit
