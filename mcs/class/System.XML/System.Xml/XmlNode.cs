@@ -10,6 +10,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Text;
 using System.Xml.XPath;
 
 namespace System.Xml
@@ -68,8 +69,24 @@ namespace System.Xml
 
 		[MonoTODO]
 		public virtual string InnerText {
-			get { throw new NotImplementedException (); }
+			get {
+				StringBuilder builder = new StringBuilder ();
+				AppendChildValues (this, builder);
+				return builder.ToString ();
+			}
+
 			set { throw new NotImplementedException (); }
+		}
+
+		private void AppendChildValues(XmlNode parent, StringBuilder builder)
+		{
+			XmlNode node = parent.FirstChild;
+
+			while (node != null) {
+				builder.Append (node.Value);
+				AppendChildValues (node, builder);
+				node = node.NextSibling;
+			}
 		}
 
 		[MonoTODO("Setter.")]
@@ -132,9 +149,8 @@ namespace System.Xml
 
 		public abstract string Name	{ get; }
 
-		[MonoTODO]
 		public virtual string NamespaceURI {
-			get { throw new NotImplementedException (); }
+			get { return String.Empty; }
 		}
 
 		public virtual XmlNode NextSibling {
@@ -162,10 +178,9 @@ namespace System.Xml
 			get { return parentNode; }
 		}
 
-		[MonoTODO]
 		public virtual string Prefix {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return String.Empty; }
+			set {}
 		}
 
 		public virtual XmlNode PreviousSibling {
@@ -213,9 +228,9 @@ namespace System.Xml
 		public abstract XmlNode CloneNode (bool deep);
 
 		[MonoTODO]
-		public XPathNavigator CreateNavigator ()
+		public virtual XPathNavigator CreateNavigator ()
 		{
-			throw new NotImplementedException ();
+			return new XmlDocumentNavigator(this);
 		}
 
 		public IEnumerator GetEnumerator ()

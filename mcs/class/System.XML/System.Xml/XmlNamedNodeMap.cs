@@ -46,8 +46,8 @@ namespace System.Xml
 		public virtual XmlNode GetNamedItem (string localName, string namespaceURI)
 		{
 			foreach (XmlNode node in nodeList) {
-				if ((node.Name == localName)
-				    && (parent.NamespaceURI == namespaceURI))
+				if ((node.LocalName == localName)
+				    && (node.NamespaceURI == namespaceURI))
 					return node;
 			}
 
@@ -76,8 +76,8 @@ namespace System.Xml
 		public virtual XmlNode RemoveNamedItem (string localName, string namespaceURI)
 		{
 			foreach (XmlNode node in nodeList)
-				if ((node.Name == localName)
-				    && (parent.NamespaceURI == namespaceURI)) {
+				if ((node.LocalName == localName)
+				    && (node.NamespaceURI == namespaceURI)) {
 					nodeList.Remove (node);
 					return node;
 				}

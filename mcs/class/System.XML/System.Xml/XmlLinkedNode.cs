@@ -1,3 +1,13 @@
+//
+// System.Xml.XmlLinkedNode
+//
+// Authors:
+//   Jason Diamond <jason@injektilo.org>
+//   Kral Ferch <kral_ferch@hotmail.com>
+//
+// (C) 2002 Jason Diamond, Kral Ferch
+//
+
 using System;
 
 namespace System.Xml
@@ -5,6 +15,7 @@ namespace System.Xml
 	public abstract class XmlLinkedNode : XmlNode
 	{
 		#region Fields
+
 		XmlLinkedNode nextSibling;
 
 		#endregion
@@ -14,7 +25,8 @@ namespace System.Xml
 
 		#endregion
 
-		#region Properties		
+		#region Properties
+
 		public override XmlNode NextSibling
 		{
 			get {
@@ -33,11 +45,19 @@ namespace System.Xml
 			set { nextSibling = value; }
 		}
 
-		[MonoTODO]
 		public override XmlNode PreviousSibling
 		{
 			get {
-				throw new NotImplementedException ();
+				if (ParentNode != null) {
+					XmlNode node = ParentNode.FirstChild;
+					if (node != this) {
+						do {
+							if (node.NextSibling == this)
+								return node;
+						} while ((node = node.NextSibling) != null);
+					}					
+				}
+				return null;
 			}
 		}
 

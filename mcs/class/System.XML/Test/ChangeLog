@@ -1,3 +1,12 @@
+2002-05-27  Jason Diamond  <jason@injektilo.org>
+
+	* XPathNavigatorTests.cs: Added file to directory.
+
+	* AllTests.cs: Added XPathNavigatorTests to suite.
+
+	* XmlTextReaderTests.cs: Added test to make sure attributes are ordered
+	like Microsoft's parser does it.
+
 2002-05-05  Nick Drochak  <ndrochak@gol.com>
 
 	* ChangeLog: Update build file to run correct class in the test dll.

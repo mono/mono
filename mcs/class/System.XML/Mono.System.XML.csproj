@@ -141,11 +141,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml\XmlCaseOrder.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Xml\XmlCDataSection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -177,6 +172,11 @@
                 />
                 <File
                     RelPath = "System.Xml\XmlDocumentFragment.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\XmlDocumentNavigator.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -346,6 +346,11 @@
                 />
                 <File
                     RelPath = "System.Xml.XPath\IXPathNavigable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.XPath\XmlCaseOrder.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -1,3 +1,27 @@
+2002-05-27  Jason Diamond  <jason@injektilo.org>
+
+	* XmlDocumentNavigator.cs: Added file to directory.
+
+	* XmlNode.cs (CreateNavigator): Implemented.
+	(InnerText): Implemented.
+
+	* XmlDocument.cs (NamespaceURI, Prefix): Return String.Empty instead of
+	throwing exception.
+	(Load(XmlReader)): Allow for namespace qualified attributes.
+
+	* XmlElement.cs: Implemented GetAttribute(string, string) and both 
+	GetAttributeNode overloads.
+	(SetAttributeNode(XmlAttribute)): Implemented.
+
+	* XmlNamedNodeMap.cs: Fixed copy/paste bugs in GetNamedItem(string, string)
+	and RemoveNamedItem(string, string).
+
+	* XmlLinkedNode.cs (PreviousSibling): Implemented.
+
+	* XmlTextReader.cs: Added code to maintain the order of attributes as 
+	they're parsed. XML doesn't require this but Microsoft's parser does it and
+	matching them makes testing easier so now we have it, too.
+
 2002-05-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* XmlDocument.cs: Implement the Save methods.

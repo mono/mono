@@ -374,35 +374,29 @@ namespace System.Xml
 		public override bool MoveToAttribute (string name)
 		{
 			MoveToElement ();
-			bool match = false;
+
 			if (attributes == null)
 				return false;
 
-			if (attributeEnumerator == null) {
+			if (orderedAttributesEnumerator == null) {
 				SaveProperties ();
-				attributeEnumerator = attributes.GetEnumerator ();
+				orderedAttributesEnumerator = orderedAttributes.GetEnumerator ();
 			}
 
-			while (attributeEnumerator.MoveNext ()) {
-				if(name == attributeEnumerator.Key as string) {
-					match = true;
-					break;
+			while (orderedAttributesEnumerator.MoveNext ()) {
+				if(name == orderedAttributesEnumerator.Current as string) {
+					string value = attributes [name] as string;
+					SetProperties (
+						XmlNodeType.Attribute, // nodeType
+						name, // name
+						false, // isEmptyElement
+						value, // value
+						false // clearAttributes
+					);
 				}
 			}
 
-			if (match) {
-				string attname = attributeEnumerator.Key as string;
-				string value = attributeEnumerator.Value as string;
-				SetProperties (
-					XmlNodeType.Attribute, // nodeType
-					attname, // name
-					false, // isEmptyElement
-					value, // value
-					false // clearAttributes
-				);
-			}
-
-			return match;
+			return false;
 		}
 
 		[MonoTODO]
@@ -413,8 +407,8 @@ namespace System.Xml
 
 		public override bool MoveToElement ()
 		{
-			if (attributeEnumerator != null) {
-				attributeEnumerator = null;
+			if (orderedAttributesEnumerator != null) {
+				orderedAttributesEnumerator = null;
 				RestoreProperties ();
 				return true;
 			}
@@ -433,14 +427,14 @@ namespace System.Xml
 			if (attributes == null)
 				return false;
 
-			if (attributeEnumerator == null) {
+			if (orderedAttributesEnumerator == null) {
 				SaveProperties ();
-				attributeEnumerator = attributes.GetEnumerator ();
+				orderedAttributesEnumerator = orderedAttributes.GetEnumerator ();
 			}
 
-			if (attributeEnumerator.MoveNext ()) {
-				string name = attributeEnumerator.Key as string;
-				string value = attributeEnumerator.Value as string;
+			if (orderedAttributesEnumerator.MoveNext ()) {
+				string name = orderedAttributesEnumerator.Current as string;
+				string value = attributes [name] as string;
 				SetProperties (
 					XmlNodeType.Attribute, // nodeType
 					name, // name
@@ -588,7 +582,8 @@ namespace System.Xml
 		private bool saveIsEmptyElement;
 
 		private Hashtable attributes;
-		private IDictionaryEnumerator attributeEnumerator;
+		private ArrayList orderedAttributes;
+		private IEnumerator orderedAttributesEnumerator;
 
 		private bool returnEntityReference;
 		private string entityReferenceName;
@@ -624,7 +619,8 @@ namespace System.Xml
 			value = String.Empty;
 
 			attributes = new Hashtable ();
-			attributeEnumerator = null;
+			orderedAttributes = new ArrayList ();
+			orderedAttributesEnumerator = null;
 
 			returnEntityReference = false;
 			entityReferenceName = String.Empty;
@@ -699,14 +695,17 @@ namespace System.Xml
 		private void AddAttribute (string name, string value)
 		{
 			attributes.Add (name, value);
+			orderedAttributes.Add (name);
 		}
 
 		private void ClearAttributes ()
 		{
-			if (attributes.Count > 0)
+			if (attributes.Count > 0) {
 				attributes.Clear ();
+				orderedAttributes.Clear ();
+			}
 
-			attributeEnumerator = null;
+			orderedAttributesEnumerator = null;
 		}
 
 		private int PeekChar ()

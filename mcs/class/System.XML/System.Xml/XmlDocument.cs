@@ -241,12 +241,6 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		protected internal virtual XPathNavigator CreateNavigator (XmlNode node)
-		{
-			throw new NotImplementedException ();
-		}
-
 		public virtual XmlNode CreateNode (
 			string nodeTypeString,
 			string name,
@@ -428,8 +422,11 @@ namespace System.Xml
 					currentNode.AppendChild (element);
 
 					// set the element's attributes.
-					while (xmlReader.MoveToNextAttribute ())
-						element.SetAttribute (xmlReader.Name, xmlReader.Value);
+					while (xmlReader.MoveToNextAttribute ()) {
+						XmlAttribute attribute = CreateAttribute (xmlReader.Prefix, xmlReader.LocalName, xmlReader.NamespaceURI);
+						attribute.Value = xmlReader.Value;
+						element.SetAttributeNode (attribute);
+					}
 
 					xmlReader.MoveToElement ();
 

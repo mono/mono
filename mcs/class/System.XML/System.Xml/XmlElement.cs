@@ -155,19 +155,22 @@ namespace System.Xml
 		[MonoTODO]
 		public virtual string GetAttribute (string localName, string namespaceURI)
 		{
-			throw new NotImplementedException ();
+			XmlNode attributeNode = Attributes.GetNamedItem (localName, namespaceURI);
+			return attributeNode != null ? attributeNode.Value : String.Empty;
 		}
 
 		[MonoTODO]
 		public virtual XmlAttribute GetAttributeNode (string name)
 		{
-			throw new NotImplementedException ();
+			XmlNode attributeNode = Attributes.GetNamedItem (name);
+			return attributeNode != null ? attributeNode as XmlAttribute : null;
 		}
 
 		[MonoTODO]
 		public virtual XmlAttribute GetAttributeNode (string localName, string namespaceURI)
 		{
-			throw new NotImplementedException ();
+			XmlNode attributeNode = Attributes.GetNamedItem (localName, namespaceURI);
+			return attributeNode != null ? attributeNode as XmlAttribute : null;
 		}
 
 		[MonoTODO]
@@ -259,7 +262,8 @@ namespace System.Xml
 		[MonoTODO]
 		public virtual XmlAttribute SetAttributeNode (XmlAttribute newAttr)
 		{
-			throw new NotImplementedException ();
+			XmlNode oldAttr = Attributes.SetNamedItem(newAttr);
+			return oldAttr != null ? oldAttr as XmlAttribute : null;
 		}
 
 		[MonoTODO]

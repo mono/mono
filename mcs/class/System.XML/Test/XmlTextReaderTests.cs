@@ -1762,5 +1762,24 @@ namespace MonoTests.System.Xml
 
 			AssertEndDocument (xmlReader);
 		}
+
+		public void TestAttributeOrder ()
+		{
+			string xml = @"<foo _1='1' _2='2' _3='3' />";
+			XmlReader xmlReader =
+				new XmlTextReader (new StringReader (xml));
+
+			Assert (xmlReader.Read ());
+			AssertEquals (XmlNodeType.Element, xmlReader.NodeType);
+
+			Assert (xmlReader.MoveToFirstAttribute ());
+			AssertEquals ("_1", xmlReader.Name);
+			Assert (xmlReader.MoveToNextAttribute ());
+			AssertEquals ("_2", xmlReader.Name);
+			Assert (xmlReader.MoveToNextAttribute ());
+			AssertEquals ("_3", xmlReader.Name);
+
+			Assert (!xmlReader.MoveToNextAttribute ());
+		}
 	}
 }
