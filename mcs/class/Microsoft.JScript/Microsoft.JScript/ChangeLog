@@ -1,3 +1,8 @@
+2003-10-21  cesar lopez nataren  <cesar@ciencias.unam.mx>
+
+	*  BinaryOp.cs: Made "internal" the attributes, added the two
+	operators holders.
+
 2003-10-10  cesar lopez nataren <cesar@ciencias.unam.mx>
 
 	* README: added some info about hacking the grammar
