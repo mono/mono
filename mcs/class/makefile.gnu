@@ -21,7 +21,8 @@ DIRS =	corlib				\
 	Mono.Data.TdsClient		\
 	Mono.PEToolkit			\
 	Accessibility			\
-	Microsoft.VisualBasic		
+	Microsoft.VisualBasic		\
+	System.Windows.Forms
 
 default: all
 
