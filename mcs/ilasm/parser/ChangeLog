@@ -1,3 +1,7 @@
+2003-06-08 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Add generic type parameters to types. Implement events.
+		
 2003-06-04 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Assembly and module names may have dashes in them

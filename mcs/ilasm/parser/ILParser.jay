@@ -433,18 +433,16 @@ class_head 		: D_CLASS class_attr id typars_clause extends_clause
                                 codegen.BeginTypeDef ((TypeAttr) $2, (string) $3, 
 						$5 as IClassRef, $6 as ArrayList, null);
 
-                                /*
                                 // Lets not worry about generics for now :p
                                 if ($4 != null) {
                                         ArrayList typars_list = (ArrayList) $4;
-                                        int index = 0;
                                         foreach (DictionaryEntry entry in typars_list) {
-                                                TypeRef type = (TypeRef) entry.Key;
-                                                string name = (string) entry.Value;
-                                                codegen.CurrentClass.AddGenericParameter ((short) index++, type.Type, name);
+                                                string name = (string) entry.Key;
+                                                string id = (string) entry.Value;
+                                                codegen.CurrentTypeDef.AddGenericParam (name, id);
                                         }
                                 }
-                                */
+                                
                           }
 			;
 
@@ -528,8 +526,14 @@ formal_typars           : formal_typar
                         ;
 
 
-formal_typar            : type          { $$ = new DictionaryEntry ($1, null); }
-                        | type id       { $$ = new DictionaryEntry ($1, $2); }
+formal_typar            : id
+                          {
+                                $$ = new DictionaryEntry ($1, null);
+                          }
+                        | id id
+                          {
+                                $$ = new DictionaryEntry ($1, $2);
+                          }
                         ;
                         
 class_refs		: class_ref
@@ -1900,15 +1904,32 @@ member_ref		: K_METHOD method_ref
 			;
 
 event_all		: event_head OPEN_BRACE event_decls CLOSE_BRACE
+                          {
+                                codegen.CurrentTypeDef.EndEventDef ();
+                          }
 			;
 
 event_head		: D_EVENT event_attr type_spec id
+                          {
+                                EventDef event_def = new EventDef ((FeatureAttr) $2,
+                                        (ITypeRef) $3, (string) $4);
+                                codegen.CurrentTypeDef.BeginEventDef (event_def);
+                          }
 			| D_EVENT event_attr id
 			;
 
 event_attr		: /* EMPTY */
+                          {
+                                $$ = new FeatureAttr ();
+                          }
 			| event_attr K_RTSPECIALNAME
+                          {
+                                $$ = (FeatureAttr) $1 & FeatureAttr.Rtspecialname;
+                          }
 			| event_attr K_SPECIALNAME
+                          {
+                                $$ = (FeatureAttr) $1 & FeatureAttr.Specialname;
+                          }
 			;
 
 event_decls		: /* EMPTY */
@@ -1916,9 +1937,25 @@ event_decls		: /* EMPTY */
 			;
 
 event_decl		: D_ADDON method_ref
+                          {
+                                codegen.CurrentTypeDef.CurrentEvent.AddAddon (
+                                        (MethodRef) $2);                                
+                          }
 			| D_REMOVEON method_ref
+                          {
+                                codegen.CurrentTypeDef.CurrentEvent.AddRemoveon (
+                                        (MethodRef) $2);
+                          }
 			| D_FIRE method_ref
+                          {
+                                codegen.CurrentTypeDef.CurrentEvent.AddFire (
+                                        (MethodRef) $2);
+                          }
 			| D_OTHER method_ref
+                          {
+                                codegen.CurrentTypeDef.CurrentEvent.AddOther (
+                                        (MethodRef) $2);
+                          }
 			| customattr_decl
 			| extsource_spec
 			| language_decl
