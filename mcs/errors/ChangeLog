@@ -1,3 +1,8 @@
+2004-12-02  Duncan Mak  <duncan@ximian.com>
+
+	* cs0122-7.cs: 
+        * cs0122-8.cs: Added test cases for events, from bug #70129.
+
 2004-12-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* cs1589.inc : plus one.
