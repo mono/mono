@@ -1,3 +1,10 @@
+2004-01-11  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* SignedXml.cs: Fixed class signature (for 1.1+) by adding public to 
+	Resolver property.
+	* Transform.cs: Fixed class signature (for 1.1+) by adding public to 
+	Resolver property.
+
 2003-12-14  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* SignedXml.cs: Now load the public key when verifying (bug #52084)

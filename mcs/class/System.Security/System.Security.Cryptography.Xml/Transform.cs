@@ -54,7 +54,7 @@ namespace System.Security.Cryptography.Xml {
 
 		[MonoTODO("property not (yet) used in derived classes")]
 		[ComVisible(false)]
-		XmlResolver Resolver {
+		public XmlResolver Resolver {
 			set { xmlResolver = value; }
 		}
 #endif

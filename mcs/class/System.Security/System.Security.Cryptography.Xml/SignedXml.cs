@@ -357,7 +357,7 @@ namespace System.Security.Cryptography.Xml {
 
 		[MonoTODO("property not (yet) used in class")]
 		[ComVisible(false)]
-		XmlResolver Resolver {
+		public XmlResolver Resolver {
 			set { xmlResolver = value; }
 		}
 #endif
