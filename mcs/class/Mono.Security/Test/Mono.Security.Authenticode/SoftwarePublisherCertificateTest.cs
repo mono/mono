@@ -22,7 +22,7 @@ namespace MonoTests.Mono.Security.Authenticode {
 	// cert2spc cert1.cer cacert.cer cacrl.crl ... output.spc
 	
 	[TestFixture]
-	public class SoftwarePublisherCertificateFileTest {
+	public class SoftwarePublisherCertificateFileTest : Assertion {
 	
 		static byte[] certonly = { 
 		0x30, 0x82, 0x03, 0x1E, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 
@@ -384,9 +384,9 @@ namespace MonoTests.Mono.Security.Authenticode {
 			if ((array1 == null) && (array2 == null))
 				return;
 			if (array1 == null)
-				Assertion.Fail (msg + " -> First array is NULL");
+				Fail (msg + " -> First array is NULL");
 			if (array2 == null)
-				Assertion.Fail (msg + " -> Second array is NULL");
+				Fail (msg + " -> Second array is NULL");
 	
 			bool a = (array1.Length == array2.Length);
 			if (a) {
@@ -401,7 +401,7 @@ namespace MonoTests.Mono.Security.Authenticode {
 				msg += " -> Expected " + BitConverter.ToString (array1, 0);
 				msg += " is different than " + BitConverter.ToString (array2, 0);
 			}
-			Assertion.Assert (msg, a);
+			Assert (msg, a);
 		}
 	
 		private const string testfile = "test.spc";
@@ -424,8 +424,8 @@ namespace MonoTests.Mono.Security.Authenticode {
 		{
 			WriteBuffer (certonly);
 			SoftwarePublisherCertificate spc = SoftwarePublisherCertificate.CreateFromFile (testfile);
-			Assertion.AssertEquals ("certonly.Certificates", 1, spc.Certificates.Count);
-			Assertion.AssertEquals ("certonly.CRL", 0, spc.CRLs.Count);
+			AssertEquals ("certonly.Certificates", 1, spc.Certificates.Count);
+			AssertEquals ("certonly.CRL", 0, spc.CRLs.Count);
 		}
 	
 		[Test]
@@ -439,8 +439,8 @@ namespace MonoTests.Mono.Security.Authenticode {
 			AssertEquals ("certonly.compare", certonly, newcertonly);
 	
 			SoftwarePublisherCertificate newerspc = new SoftwarePublisherCertificate (newcertonly);
-			Assertion.AssertEquals ("certonly.Certificates", 1, newerspc.Certificates.Count);
-			Assertion.AssertEquals ("certonly.CRL", 0, newerspc.CRLs.Count);
+			AssertEquals ("certonly.Certificates", 1, newerspc.Certificates.Count);
+			AssertEquals ("certonly.CRL", 0, newerspc.CRLs.Count);
 		}
 	
 		[Test]
@@ -448,8 +448,8 @@ namespace MonoTests.Mono.Security.Authenticode {
 		{
 			WriteBuffer (crlonly);
 			SoftwarePublisherCertificate spc = SoftwarePublisherCertificate.CreateFromFile (testfile);
-			Assertion.AssertEquals ("crlonly.Certificates", 0, spc.Certificates.Count);
-			Assertion.AssertEquals ("crlonly.CRL", 1, spc.CRLs.Count);
+			AssertEquals ("crlonly.Certificates", 0, spc.Certificates.Count);
+			AssertEquals ("crlonly.CRL", 1, spc.CRLs.Count);
 		}
 	
 		[Test]
@@ -463,8 +463,8 @@ namespace MonoTests.Mono.Security.Authenticode {
 			AssertEquals ("crlonly.compare", crlonly, newcrlonly);
 	
 			SoftwarePublisherCertificate newerspc = new SoftwarePublisherCertificate (newcrlonly);
-			Assertion.AssertEquals ("crlonly.Certificates", 0, newerspc.Certificates.Count);
-			Assertion.AssertEquals ("crlonly.CRL", 1, newerspc.CRLs.Count);
+			AssertEquals ("crlonly.Certificates", 0, newerspc.Certificates.Count);
+			AssertEquals ("crlonly.CRL", 1, newerspc.CRLs.Count);
 		}
 	
 		[Test]
@@ -472,8 +472,8 @@ namespace MonoTests.Mono.Security.Authenticode {
 		{
 			WriteBuffer (navy);
 			SoftwarePublisherCertificate spc = SoftwarePublisherCertificate.CreateFromFile (testfile);
-			Assertion.AssertEquals ("navy.Certificates", 3, spc.Certificates.Count);
-			Assertion.AssertEquals ("navy.CRL", 2, spc.CRLs.Count);
+			AssertEquals ("navy.Certificates", 3, spc.Certificates.Count);
+			AssertEquals ("navy.CRL", 2, spc.CRLs.Count);
 		}
 	
 		[Test]
@@ -490,8 +490,8 @@ namespace MonoTests.Mono.Security.Authenticode {
 			AssertEquals ("navy.compare", navy, newnavy);
 	
 			SoftwarePublisherCertificate newerspc = new SoftwarePublisherCertificate (newnavy);
-			Assertion.AssertEquals ("navy.Certificates", 3, newerspc.Certificates.Count);
-			Assertion.AssertEquals ("navy.CRL", 2, newerspc.CRLs.Count);
+			AssertEquals ("navy.Certificates", 3, newerspc.Certificates.Count);
+			AssertEquals ("navy.CRL", 2, newerspc.CRLs.Count);
 		}
 	}
 }

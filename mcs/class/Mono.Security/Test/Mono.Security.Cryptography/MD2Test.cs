@@ -22,7 +22,7 @@ namespace MonoTests.Mono.Security.Cryptography {
 
 	// MD2 is a abstract class - so ALL of the test included here wont be tested
 	// on the abstract class but should be tested in ALL its descendants.
-	public class MD2Test {
+	public class MD2Test : Assertion {
 
 		protected MD2 hash;
 
@@ -32,9 +32,9 @@ namespace MonoTests.Mono.Security.Cryptography {
 			if ((array1 == null) && (array2 == null))
 				return;
 			if (array1 == null)
-				Assertion.Fail (msg + " -> First array is NULL");
+				Fail (msg + " -> First array is NULL");
 			if (array2 == null)
-				Assertion.Fail (msg + " -> Second array is NULL");
+				Fail (msg + " -> Second array is NULL");
 	        
 			bool a = (array1.Length == array2.Length);
 			if (a) {
@@ -49,7 +49,7 @@ namespace MonoTests.Mono.Security.Cryptography {
 				msg += " -> Expected " + BitConverter.ToString (array1, 0);
 				msg += " is different than " + BitConverter.ToString (array2, 0);
 			}
-			Assertion.Assert (msg, a);
+			Assert (msg, a);
 		}
 
 		// MD2 ("") = 8350e5a3e24c153df2275c9f80692773
@@ -209,7 +209,7 @@ namespace MonoTests.Mono.Security.Cryptography {
 			for (int i=0; i < input.Length - 1; i++)
 				hash.TransformBlock (input, i, 1, copy, i);
 			byte[] output = hash.TransformFinalBlock (input, input.Length - 1, 1);
-			Assertion.AssertEquals (testName + ".e.1", input [input.Length - 1], output [0]);
+			AssertEquals (testName + ".e.1", input [input.Length - 1], output [0]);
 			AssertEquals (testName + ".e.2", result, hash.Hash);
 			// required or next operation will still return old hash
 			hash.Initialize ();
@@ -219,9 +219,9 @@ namespace MonoTests.Mono.Security.Cryptography {
 		public virtual void StaticInfo () 
 		{
 			string className = hash.ToString ();
-			Assertion.AssertEquals (className + ".HashSize", 128, hash.HashSize);
-			Assertion.AssertEquals (className + ".InputBlockSize", 1, hash.InputBlockSize);
-			Assertion.AssertEquals (className + ".OutputBlockSize", 1, hash.OutputBlockSize);
+			AssertEquals (className + ".HashSize", 128, hash.HashSize);
+			AssertEquals (className + ".InputBlockSize", 1, hash.InputBlockSize);
+			AssertEquals (className + ".OutputBlockSize", 1, hash.OutputBlockSize);
 		}
 	}
 }

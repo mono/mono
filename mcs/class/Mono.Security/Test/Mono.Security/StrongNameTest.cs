@@ -19,7 +19,7 @@ namespace MonoTests.Mono.Security {
 	// sn -k test.snk
 
 	[TestFixture]
-	public class StrongNameTest {
+	public class StrongNameTest : Assertion {
 
 		// because most crypto stuff works with byte[] buffers
 		static public void AssertEquals (string msg, byte[] array1, byte[] array2) 
@@ -27,9 +27,9 @@ namespace MonoTests.Mono.Security {
 			if ((array1 == null) && (array2 == null))
 				return;
 			if (array1 == null)
-				Assertion.Fail (msg + " -> First array is NULL");
+				Fail (msg + " -> First array is NULL");
 			if (array2 == null)
-				Assertion.Fail (msg + " -> Second array is NULL");
+				Fail (msg + " -> Second array is NULL");
 
 			bool a = (array1.Length == array2.Length);
 			if (a) {
@@ -44,7 +44,7 @@ namespace MonoTests.Mono.Security {
 				msg += " -> Expected " + BitConverter.ToString (array1, 0);
 				msg += " is different than " + BitConverter.ToString (array2, 0);
 			}
-			Assertion.Assert (msg, a);
+			Assert (msg, a);
 		}
 
 		static byte[] test = { 
@@ -109,7 +109,7 @@ namespace MonoTests.Mono.Security {
 		public void FromBuffer ()
 		{
 			StrongName sn = new StrongName (test);
-			Assertion.AssertEquals ("buffer.RSA", "<RSAKeyValue><Modulus>y6T/+EoARJMHW0ilpCdn+VbTffWxb1xu187/9Q+S2DwPyZ9LTNKrZgwaYmG4FPWEEH1HJxrxwh8AlD6oTz8CCcnPGKxKVFkubpIbEyvQCSTr22gUjVXXKHc2pfcCeOuNXS9kAOjv2tqpsiDbIsu9mnxfYysHWMDBqA4rxghyvT0=</Modulus><Exponent>AQAB</Exponent><P>6qYUEleRY+Wzyk7xN05UwWRna37U2aQnq2Y2VVyJeceDZPU1u1GYdQmFQw5XgvxKwWx9DAfNh1iSyLe0YmrAcw==</P><Q>3iy1IDIkPrRWBFrCAUhpUNn4/ICiVXTT7KjuEXkGr0+1Cx/V+o3eoVIo/9x2Q3IaxMbQDSa8hisIFunz/iuPjw==</Q><DP>2BouIBpfvzX8mBSOGNZePmG+0YRUeUCyfCs9XO5Fek9h1mfynVpvY1JqVbBuria2nl7Q53SEN+M+A/cT/RO9uw==</DP><DQ>pjma1ljNh2CTTrS8nAsaSJSc1gZD7l33RQRrAgWju7yN/qG2DbzhSZ9X7355uSKA5qK8/Gnz+QnvBn3JwGvE/w==</DQ><InverseQ>3U67bp3lPExfGoiTRvRyHhNtyJs6hAq/Uj7wSHKLHNoLG20kwZux8BwZKpPBBA0bQjkLUiRv9PYs18El/45/wA==</InverseQ><D>bPVOg5FMjWRBhmTbQ3ZWGkGLjRR9KEFDiTJXHs6DWjDgnZceWe9KB6KoJ0Vzkbs/Ovdcr56qBZxC2g6gTS5ALvogBYH2PrUftr4flh/z4qgOrAYCQkTecfHAGIGEldEeF1FItMbqmQa6WzVPVp4tn/+q3PAVmZqrs6/X9EARH10=</D></RSAKeyValue>", sn.RSA.ToXmlString (true));
+			AssertEquals ("buffer.RSA", "<RSAKeyValue><Modulus>y6T/+EoARJMHW0ilpCdn+VbTffWxb1xu187/9Q+S2DwPyZ9LTNKrZgwaYmG4FPWEEH1HJxrxwh8AlD6oTz8CCcnPGKxKVFkubpIbEyvQCSTr22gUjVXXKHc2pfcCeOuNXS9kAOjv2tqpsiDbIsu9mnxfYysHWMDBqA4rxghyvT0=</Modulus><Exponent>AQAB</Exponent><P>6qYUEleRY+Wzyk7xN05UwWRna37U2aQnq2Y2VVyJeceDZPU1u1GYdQmFQw5XgvxKwWx9DAfNh1iSyLe0YmrAcw==</P><Q>3iy1IDIkPrRWBFrCAUhpUNn4/ICiVXTT7KjuEXkGr0+1Cx/V+o3eoVIo/9x2Q3IaxMbQDSa8hisIFunz/iuPjw==</Q><DP>2BouIBpfvzX8mBSOGNZePmG+0YRUeUCyfCs9XO5Fek9h1mfynVpvY1JqVbBuria2nl7Q53SEN+M+A/cT/RO9uw==</DP><DQ>pjma1ljNh2CTTrS8nAsaSJSc1gZD7l33RQRrAgWju7yN/qG2DbzhSZ9X7355uSKA5qK8/Gnz+QnvBn3JwGvE/w==</DQ><InverseQ>3U67bp3lPExfGoiTRvRyHhNtyJs6hAq/Uj7wSHKLHNoLG20kwZux8BwZKpPBBA0bQjkLUiRv9PYs18El/45/wA==</InverseQ><D>bPVOg5FMjWRBhmTbQ3ZWGkGLjRR9KEFDiTJXHs6DWjDgnZceWe9KB6KoJ0Vzkbs/Ovdcr56qBZxC2g6gTS5ALvogBYH2PrUftr4flh/z4qgOrAYCQkTecfHAGIGEldEeF1FItMbqmQa6WzVPVp4tn/+q3PAVmZqrs6/X9EARH10=</D></RSAKeyValue>", sn.RSA.ToXmlString (true));
 			AssertEquals ("buffer.PublicKey", testPublicKey, sn.PublicKey);
 			AssertEquals ("buffer.PublicKeyToken", testPublicKeyToken, sn.PublicKeyToken);
 		}
@@ -119,7 +119,7 @@ namespace MonoTests.Mono.Security {
 		{
 			StrongName sn1 = new StrongName (test);
 			StrongName sn2 = new StrongName (sn1.RSA);
-			Assertion.AssertEquals ("key.RSA", sn1.RSA.ToXmlString (true), sn2.RSA.ToXmlString (true));
+			AssertEquals ("key.RSA", sn1.RSA.ToXmlString (true), sn2.RSA.ToXmlString (true));
 			AssertEquals ("key.PublicKey", sn1.PublicKey, sn2.PublicKey);
 			AssertEquals ("key.PublicKeyToken", sn1.PublicKeyToken, sn2.PublicKeyToken);
 		}

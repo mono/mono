@@ -20,7 +20,7 @@ namespace MonoTests.Mono.Security.Authenticode {
 // makecert -n "CN=PVK1" -sv 1.pvk 1.cer
 
 [TestFixture]
-public class PrivateKeyTest {
+public class PrivateKeyTest : Assertion {
 
 	// because most crypto stuff works with byte[] buffers
 	static public void AssertEquals (string msg, byte[] array1, byte[] array2) 
@@ -28,9 +28,9 @@ public class PrivateKeyTest {
 		if ((array1 == null) && (array2 == null))
 			return;
 		if (array1 == null)
-			Assertion.Fail (msg + " -> First array is NULL");
+			Fail (msg + " -> First array is NULL");
 		if (array2 == null)
-			Assertion.Fail (msg + " -> Second array is NULL");
+			Fail (msg + " -> Second array is NULL");
 
 		bool a = (array1.Length == array2.Length);
 		if (a) {
@@ -45,7 +45,7 @@ public class PrivateKeyTest {
 			msg += " -> Expected " + BitConverter.ToString (array1, 0);
 			msg += " is different than " + BitConverter.ToString (array2, 0);
 		}
-		Assertion.Assert (msg, a);
+		Assert (msg, a);
 	}
 
 	private const string testfile = "test.pvk";
@@ -98,9 +98,9 @@ public class PrivateKeyTest {
 	{
 		WriteBuffer (nopwd);
 		PrivateKey pvk = PrivateKey.CreateFromFile (testfile);
-		Assertion.AssertNotNull ("msnopwd.RSA", pvk.RSA);
-		Assertion.Assert ("msnopwd.Encrypted", !pvk.Encrypted);
-		Assertion.Assert ("msnopwd.Weak", pvk.Weak);
+		AssertNotNull ("msnopwd.RSA", pvk.RSA);
+		Assert ("msnopwd.Encrypted", !pvk.Encrypted);
+		Assert ("msnopwd.Weak", pvk.Weak);
 	}
 
 	// this will convert a PVK file without a password to a PVK file
@@ -113,11 +113,11 @@ public class PrivateKeyTest {
 		string rsa1 = pvk.RSA.ToXmlString (true);
 		pvk.Save (testfile, "password");
 		pvk = PrivateKey.CreateFromFile (testfile, "password");
-		Assertion.AssertNotNull ("topwd.RSA", pvk.RSA);
+		AssertNotNull ("topwd.RSA", pvk.RSA);
 		string rsa2 = pvk.RSA.ToXmlString (true);
-		Assertion.AssertEquals ("topwd.RSA identical", rsa1, rsa2);
-		Assertion.Assert ("topwd.Encrypted", pvk.Encrypted);
-		Assertion.Assert ("topwd.Weak", pvk.Weak);
+		AssertEquals ("topwd.RSA identical", rsa1, rsa2);
+		Assert ("topwd.Encrypted", pvk.Encrypted);
+		Assert ("topwd.Weak", pvk.Weak);
 	}
 
 	// this will convert a PVK file without a password to a PVK file
@@ -131,11 +131,11 @@ public class PrivateKeyTest {
 		pvk.Weak = false; // we want strong crypto
 		pvk.Save (testfile, "password");
 		pvk = PrivateKey.CreateFromFile (testfile, "password");
-		Assertion.AssertNotNull ("topwd.RSA", pvk.RSA);
+		AssertNotNull ("topwd.RSA", pvk.RSA);
 		string rsa2 = pvk.RSA.ToXmlString (true);
-		Assertion.AssertEquals ("topwd.RSA identical", rsa1, rsa2);
-		Assertion.Assert ("topwd.Encrypted", pvk.Encrypted);
-		Assertion.Assert ("topwd.Weak", !pvk.Weak);
+		AssertEquals ("topwd.RSA identical", rsa1, rsa2);
+		Assert ("topwd.Encrypted", pvk.Encrypted);
+		Assert ("topwd.Weak", !pvk.Weak);
 	}
 
 	static byte[] pwd = { 
@@ -174,9 +174,9 @@ public class PrivateKeyTest {
 	{
 		WriteBuffer (pwd);
 		PrivateKey pvk = PrivateKey.CreateFromFile (testfile, "password");
-		Assertion.AssertNotNull ("mspwd.RSA", pvk.RSA);
-		Assertion.Assert ("mspwd.Encrypted", pvk.Encrypted);
-		Assertion.Assert ("mspwd.Weak", pvk.Weak);
+		AssertNotNull ("mspwd.RSA", pvk.RSA);
+		Assert ("mspwd.Encrypted", pvk.Encrypted);
+		Assert ("mspwd.Weak", pvk.Weak);
 	}
 
 	// this will convert a PVK file with a password to a PVK file
@@ -189,11 +189,11 @@ public class PrivateKeyTest {
 		string rsa1 = pvk.RSA.ToXmlString (true);
 		pvk.Save (testfile);
 		pvk = PrivateKey.CreateFromFile (testfile);
-		Assertion.AssertNotNull ("nomorepwd.RSA", pvk.RSA);
+		AssertNotNull ("nomorepwd.RSA", pvk.RSA);
 		string rsa2 = pvk.RSA.ToXmlString (true);
-		Assertion.AssertEquals ("nomorepwd.RSA identical", rsa1, rsa2);
-		Assertion.Assert ("nomorepwd.Encrypted", !pvk.Encrypted);
-		Assertion.Assert ("nomorepwd.Weak", pvk.Weak);
+		AssertEquals ("nomorepwd.RSA identical", rsa1, rsa2);
+		Assert ("nomorepwd.Encrypted", !pvk.Encrypted);
+		Assert ("nomorepwd.Weak", pvk.Weak);
 	}
 }
 

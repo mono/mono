@@ -23,7 +23,7 @@ namespace MonoTests.Mono.Security.Cryptography {
 	//	http://wp.netscape.com/eng/ssl3/traces/trc-clnt-ex.html
 
 	[TestFixture]
-	public class ARC4ManagedTest {
+	public class ARC4ManagedTest : Assertion {
 
 		// because most crypto stuff works with byte[] buffers
 		static public void AssertEquals (string msg, byte[] array1, byte[] array2) 
@@ -31,9 +31,9 @@ namespace MonoTests.Mono.Security.Cryptography {
 			if ((array1 == null) && (array2 == null))
 				return;
 			if (array1 == null)
-				Assertion.Fail (msg + " -> First array is NULL");
+				Fail (msg + " -> First array is NULL");
 			if (array2 == null)
-				Assertion.Fail (msg + " -> Second array is NULL");
+				Fail (msg + " -> Second array is NULL");
 	        
 			bool a = (array1.Length == array2.Length);
 			if (a) {
@@ -46,7 +46,7 @@ namespace MonoTests.Mono.Security.Cryptography {
 			}
 			msg += " -> Expected " + BitConverter.ToString (array1, 0);
 			msg += " is different than " + BitConverter.ToString (array2, 0);
-			Assertion.Assert (msg, a);
+			Assert (msg, a);
 		}
 
 		// from ref. a
