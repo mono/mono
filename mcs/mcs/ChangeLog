@@ -1,3 +1,11 @@
+2002-06-10  Martin Baulig  <martin@gnome.org>
+
+	* interface.cs (Interface.PopulateIndexer): When creating the setter, we need to
+	add the "value" parameter to the parameter list.
+
+	* statement.cs (Fixed.Emit): Pass the return value of the child block's Emit()
+	to our caller.
+
 2002-06-19  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (ArrayCreation.ExpressionToArrayArgument): Convert
