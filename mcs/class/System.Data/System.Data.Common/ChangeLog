@@ -1,3 +1,9 @@
+2003-03-17  Aleksey Demakov <avd@openlinksw.com>
+
+	* DbDataAdapter.cs: BuildSchema now uses ColumnName instead
+	of BaseColumnName (bug #39830) for DataColumn names.
+	BaseTableName is no longer taken into account as well.
+
 2003-02-28  Aleksey Demakov <avd@openlinksw.com>
 
 	* DbDataAdapter.cs: Update (DataSet) updates the default
