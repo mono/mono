@@ -104,10 +104,12 @@ namespace Mono.Xml.XQuery.SyntaxTree
 		string version;
 		StringDictionary namespaceDecls;
 		XmlSpace xmlSpaceDecl;
+		XmlSpace constructorDecl;
 		string defaultElementNamespace;
 		string defaultFunctionNamespace;
 		string defaultCollation;
 		string baseUri;
+		bool defaultOrdered; // false by default
 		SchemaImportCollection schemaImports;
 		ModuleImportCollection moduleImports;
 		VariableDeclarationCollection variables;
@@ -126,6 +128,16 @@ namespace Mono.Xml.XQuery.SyntaxTree
 		public XmlSpace XmlSpace {
 			get { return xmlSpaceDecl; }
 			set { xmlSpaceDecl = value; }
+		}
+
+		public XmlSpace Constructor {
+			get { return constructorDecl; }
+			set { constructorDecl = value; }
+		}
+
+		public bool DefaultOrdered {
+			get { return defaultOrdered; }
+			set { defaultOrdered = value; }
 		}
 
 		public string DefaultElementNamespace {
@@ -171,11 +183,15 @@ namespace Mono.Xml.XQuery.SyntaxTree
 
 		public void Add (object item)
 		{
-			if (item is XmlQualifiedName) {
+			if (item is bool)
+				DefaultOrdered = (bool) item;
+			else if (item is XmlQualifiedName) {
 				XmlQualifiedName q = (XmlQualifiedName) item;
 				NamespaceDecls.Add (q.Name, q.Namespace);
-			} else if (item is XmlSpace) {
-				XmlSpace = (XmlSpace) item;
+			} else if (item is XmlSpaceDecl) {
+				XmlSpace = ((XmlSpaceDecl) item).Value;
+			} else if (item is ConstructionDecl) {
+				Constructor = ((ConstructionDecl) item).Value;
 			} else if (item is SimplePrologContent) {
 				SimplePrologContent c = (SimplePrologContent) item;
 				string s = c.LiteralValue;
@@ -207,6 +223,26 @@ namespace Mono.Xml.XQuery.SyntaxTree
 				Functions.Add (item as FunctionDeclaration);
 			} else
 				throw new XmlQueryCompileException ("Invalid XQuery prolog content item was found.");
+		}
+	}
+
+	class XmlSpaceDecl
+	{
+		public XmlSpace Value;
+
+		public XmlSpaceDecl (XmlSpace value)
+		{
+			Value = value;
+		}
+	}
+
+	class ConstructionDecl
+	{
+		public XmlSpace Value;
+
+		public ConstructionDecl (XmlSpace value)
+		{
+			Value = value;
 		}
 	}
 
@@ -257,14 +293,15 @@ namespace Mono.Xml.XQuery.SyntaxTree
 
 	public abstract class AbstractImport
 	{
-		public AbstractImport (string prefix, string ns, string location)
+		public AbstractImport (string prefix, string ns, ICollection locations)
 		{
 			this.prefix = prefix;
 			this.ns = ns;
-			this.location = location;
+			this.locations = locations;
 		}
 
-		string prefix, ns, location;
+		string prefix, ns;
+		ICollection locations;
 
 		public string Prefix {
 			get { return prefix; }
@@ -276,16 +313,16 @@ namespace Mono.Xml.XQuery.SyntaxTree
 			set { ns = value; }
 		}
 
-		public string Location {
-			get { return Location; }
-			set { Location = value; }
+		public ICollection Locations {
+			get { return locations; }
+			set { locations = value; }
 		}
 	}
 
 	public class SchemaImport : AbstractImport
 	{
-		public SchemaImport (string prefix, string ns, string schemaLocation)
-			: base (prefix == "default element namespace" ? String.Empty : prefix, ns, schemaLocation)
+		public SchemaImport (string prefix, string ns, ICollection schemaLocations)
+			: base (prefix == "default element namespace" ? String.Empty : prefix, ns, schemaLocations)
 		{
 			// Prefix might 1) String.Empty for non-specified prefix,
 			// 2) "default element namespace" that is as is specified
@@ -304,8 +341,8 @@ namespace Mono.Xml.XQuery.SyntaxTree
 
 	public class ModuleImport : AbstractImport
 	{
-		public ModuleImport (string prefix, string ns, string moduleLocation)
-			: base (prefix, ns, moduleLocation)
+		public ModuleImport (string prefix, string ns, ICollection moduleLocations)
+			: base (prefix, ns, moduleLocations)
 		{
 		}
 	}

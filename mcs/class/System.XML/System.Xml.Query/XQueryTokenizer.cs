@@ -362,7 +362,19 @@ namespace Mono.Xml.XQuery.Parser
 						return Token.END_TAG_START;
 					case '!':
 						ReadChar ();
-						return Token.XML_COMMENT_START;
+						switch (PeekChar ()) {
+						case '-':
+							ReadChar ();
+							if (ReadChar () != '-')
+								throw Error ("Invalid sequence of characters '<!-'.");
+							
+							return Token.XML_COMMENT_START;
+						case '[':
+							ReadChar ();
+							Expect ("CDATA[");
+							return Token.XML_CDATA_START;
+						}
+						throw Error ("Invalid sequence of characters '<!'.");
 					case '?':
 						ReadChar ();
 						return Token.XML_PI_START;
@@ -546,6 +558,8 @@ namespace Mono.Xml.XQuery.Parser
 				case "of":
 				case "or":
 				case "order":
+				case "ordered":
+				case "ordering":
 				case "return":
 				case "satisfies":
 				case "schema":
@@ -558,6 +572,7 @@ namespace Mono.Xml.XQuery.Parser
 				case "treat":
 				case "typwswitch":
 				case "union":
+				case "unordered":
 				case "variable":
 				case "where":
 				case "xmlspace":
@@ -575,6 +590,7 @@ namespace Mono.Xml.XQuery.Parser
 				case "child":
 				case "collation":
 				case "comment":
+				case "construction":
 				case "declare":
 				case "default":
 				case "descendant":
@@ -595,6 +611,7 @@ namespace Mono.Xml.XQuery.Parser
 				case "module":
 				case "namespace":
 				case "node":
+				case "ordered":
 				case "parent":
 				case "preceding":
 				case "preceding-sibling":
@@ -606,6 +623,7 @@ namespace Mono.Xml.XQuery.Parser
 				case "strip":
 				case "text":
 				case "typeswitch":
+				case "unordered":
 				case "validate":
 				case "validation":
 				case "version":
@@ -641,6 +659,14 @@ namespace Mono.Xml.XQuery.Parser
 					return Token.STRIP;
 				case "default":
 					return Token.DEFAULT;
+				case "construction":
+					return Token.CONSTRUCTION;
+				case "ordering":
+					return Token.ORDERING;
+				case "ordered":
+					return Token.ORDERED;
+				case "unordered":
+					return Token.UNORDERED;
 				case "document-node":
 					return Token.DOCUMENT_NODE;
 				case "document":
@@ -910,6 +936,13 @@ namespace Mono.Xml.XQuery.Parser
 		private string CreateValueString ()
 		{
 			return new string (buffer, 0, bufferIndex);
+		}
+
+		private void Expect (string expected)
+		{
+			for (int i = 0; i < expected.Length; i++)
+				if (ReadChar () != expected [i])
+					throw Error (String.Format ("Expected token '{0}' did not appear.", expected));
 		}
 
 		// TODO: parse three quoted

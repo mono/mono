@@ -592,91 +592,13 @@ namespace Mono.Xml.XPath2
 	public class ValidateExpr : ExprSingle
 	{
 		XmlSchemaContentProcessing schemaMode;
-		SchemaContext schemaContext;
 		ExprSequence expr;
 
-		public ValidateExpr (XmlSchemaContentProcessing schemaMode,
-			SchemaContext schemaContext, ExprSequence expr)
+		public ValidateExpr (XmlSchemaContentProcessing schemaMode, ExprSequence expr)
 		{
 			this.schemaMode = schemaMode;
-			this.schemaContext = schemaContext;
 			this.expr = expr;
 		}
-	}
-
-	public class SchemaContext
-	{
-		SchemaContextLoc loc;
-
-		public SchemaContext (SchemaContextLoc loc) // global if null
-		{
-			this.loc = loc;
-		}
-	}
-
-	public abstract class SchemaContextLoc
-	{
-	}
-	
-	public class SchemaLocalContextLoc : SchemaContextLoc
-	{
-		SchemaContextPath path;
-
-		public SchemaLocalContextLoc (SchemaContextPath path)
-		{
-			this.path = path;
-		}
-	}
-
-	public class SchemaGlobalContextLoc : SchemaContextLoc
-	{
-		XmlQualifiedName typeName;
-
-		public SchemaGlobalContextLoc (XmlQualifiedName typeName)
-		{
-			this.typeName = typeName;
-		}
-	}
-
-	public class SchemaContextPath
-	{
-		SchemaGlobalContext schemaGlobalContext;
-		ArrayList list = new ArrayList ();
-
-		public SchemaContextPath ()
-		{
-		}
-
-		public SchemaGlobalContext SchemaGlobalContext {
-			get { return schemaGlobalContext; }
-			set { schemaGlobalContext = value; }
-		}
-
-		public void Add (XmlQualifiedName step)
-		{
-			list.Add (step);
-		}
-		
-		public void Reverse ()
-		{
-			list.Reverse ();
-		}
-	}
-
-	public class SchemaGlobalContext
-	{
-		XmlQualifiedName name;
-		bool global;
-
-		public SchemaGlobalContext (XmlQualifiedName name, bool global)
-		{
-			this.name = name;
-			this.global = global;
-		}
-	}
-
-	public class SchemaContextStepList : CollectionBase
-	{
 	}
 
 	// Path expr
@@ -764,18 +686,48 @@ namespace Mono.Xml.XPath2
 		}
 	}
 
+	public enum XPathAxisType
+	{
+		Child,
+		Descendant,
+		Attribute,
+		Self,
+		DescendantOrSelf,
+		FollowingSibling,
+		Following,
+		Parent,
+		Ancestor,
+		PrecedingSibling,
+		Preceding,
+		AncestorOrSelf
+	}
+
 	public class XPathAxis
 	{
 		// FIXME: add more parameters to distinguish them
-		private XPathAxis (bool reverseOrderAxis)
+		private XPathAxis (XPathAxisType axisType)
 		{
-			this.reverse = reverseOrderAxis;
+			this.axisType = axisType;
+			switch (axisType) {
+			case XPathAxisType.Parent:
+			case XPathAxisType.Ancestor:
+			case XPathAxisType.AncestorOrSelf:
+			case XPathAxisType.Preceding:
+			case XPathAxisType.PrecedingSibling:
+				this.reverse = true;
+				break;
+			}
 		}
 
 		bool reverse;
+		XPathAxisType axisType;
 
 		public bool ReverseAxis {
 			get { return reverse; }
+		}
+
+		public XPathAxisType AxisType {
+			get { return axisType; }
 		}
 
 		static XPathAxis child, descendant, attribute, self, 
@@ -785,18 +737,18 @@ namespace Mono.Xml.XPath2
 
 		static XPathAxis ()
 		{
-			child = new XPathAxis (false);
-			descendant = new XPathAxis (false);
-			attribute = new XPathAxis (false);
-			self = new XPathAxis (false);
-			descendantOrSelf = new XPathAxis (false);
-			followingSibling = new XPathAxis (false);
-			following = new XPathAxis (false);
-			parent = new XPathAxis (true);
-			ancestor = new XPathAxis (true);
-			precedingSibling = new XPathAxis (true);
-			preceding = new XPathAxis (true);
-			ancestorOrSelf = new XPathAxis (true);
+			child = new XPathAxis (XPathAxisType.Child);
+			descendant = new XPathAxis (XPathAxisType.Descendant);
+			attribute = new XPathAxis (XPathAxisType.Attribute);
+			self = new XPathAxis (XPathAxisType.Self);
+			descendantOrSelf = new XPathAxis (XPathAxisType.DescendantOrSelf);
+			followingSibling = new XPathAxis (XPathAxisType.FollowingSibling);
+			following = new XPathAxis (XPathAxisType.Following);
+			parent = new XPathAxis (XPathAxisType.Parent);
+			ancestor = new XPathAxis (XPathAxisType.Ancestor);
+			precedingSibling = new XPathAxis (XPathAxisType.PrecedingSibling);
+			preceding = new XPathAxis (XPathAxisType.Preceding);
+			ancestorOrSelf = new XPathAxis (XPathAxisType.AncestorOrSelf);
 		}
 
 		public static XPathAxis Child {
@@ -850,7 +802,7 @@ namespace Mono.Xml.XPath2
 
 	// NodeTest
 
-	public abstract class NodeTestExpr : PathExpr
+	public abstract class NodeTestExpr : StepExpr
 	{
 	}
 
@@ -896,61 +848,30 @@ namespace Mono.Xml.XPath2
 
 	public class ElementTestExpr : NodeKindTestExpr
 	{
-		static ElementTestExpr ()
-		{
-			anyElement = new ElementTestExpr (new XmlQualifiedName ("*", "*"), null);
-		}
-
-		static ElementTestExpr anyElement;
-
-		public static ElementTestExpr AnyElement {
-			get { return anyElement; }
-		}
-
-		public ElementTestExpr (SchemaContextPath path, XmlQualifiedName name)
+		public ElementTestExpr (XmlQualifiedName name)
 			: base (XmlTypeCode.Element)
 		{
 			this.name = name;
-			this.path = path;
 		}
 
-		public ElementTestExpr (XmlQualifiedName name, NillableTypeName type)
+		public ElementTestExpr (XmlQualifiedName name, XmlQualifiedName typeName, bool nillable)
 			: base (XmlTypeCode.Element)
 		{
 			this.name = name;
-			this.type = type;
-		}
-
-		XmlQualifiedName name;
-		SchemaContextPath path;
-		NillableTypeName type;
-
-		public XmlQualifiedName Name {
-			get { return name; }
-		}
-
-		public SchemaContextPath Path {
-			get { return path; }
-		}
-
-		public NillableTypeName ElementTypeSpec {
-			get { return type; }
-		}
-	}
-
-	public class NillableTypeName
-	{
-		public NillableTypeName (XmlQualifiedName name, bool nillable)
-		{
-			this.name = name;
+			this.typeName = typeName;
 			this.nillable = nillable;
 		}
 
 		XmlQualifiedName name;
+		XmlQualifiedName typeName;
 		bool nillable;
 
 		public XmlQualifiedName Name {
 			get { return name; }
+		}
+
+		public XmlQualifiedName TypeName {
+			get { return typeName; }
 		}
 
 		public bool Nillable {
@@ -971,17 +892,9 @@ namespace Mono.Xml.XPath2
 			get { return anyAttribute; }
 		}
 
-		// FIXME: don't create new QName every time.
 		public AttributeTestExpr (XmlQualifiedName name)
-			: this (name, new XmlQualifiedName ("anyType", XmlSchema.Namespace))
-		{
-		}
-
-		public AttributeTestExpr (SchemaContextPath schemaContextPath,
-			XmlQualifiedName name)
 			: base (XmlTypeCode.Attribute)
 		{
-			this.schemaContextPath = schemaContextPath;
 			this.name = name;
 		}
 
@@ -994,7 +907,6 @@ namespace Mono.Xml.XPath2
 
 		XmlQualifiedName name;
 		XmlQualifiedName typeName;
-		SchemaContextPath schemaContextPath;
 
 		public XmlQualifiedName Name {
 			get { return name; }
@@ -1003,27 +915,16 @@ namespace Mono.Xml.XPath2
 		public XmlQualifiedName TypeName {
 			get { return typeName; }
 		}
-
-		public SchemaContextPath SchemaContextPath {
-			get { return schemaContextPath; }
-		}
 	}
 
 	public class XmlPITestExpr : NodeKindTestExpr
 	{
-		XmlQualifiedName nameTest;
-		string valueTest;
+		string name;
 
-		public XmlPITestExpr (XmlQualifiedName nameTest)
+		public XmlPITestExpr (string nameTest)
 			: base (XmlTypeCode.ProcessingInstruction)
 		{
-			this.nameTest = nameTest;
-		}
-
-		public XmlPITestExpr (string valueTest)
-			: base (XmlTypeCode.ProcessingInstruction)
-		{
-			this.valueTest = valueTest;
+			this.name = nameTest;
 		}
 	}
 
@@ -1106,12 +1007,12 @@ namespace Mono.Xml.XPath2
 
 	public class SequenceType
 	{
-		ExprSingle test;
+		NodeKindTestExpr kindTest;
 		Occurence occurence;
 
-		public SequenceType (ExprSingle test, Occurence occurence)
+		public SequenceType (NodeKindTestExpr test, Occurence occurence)
 		{
-			this.test = test;
+			this.kindTest = test;
 			this.occurence = occurence;
 		}
 	}

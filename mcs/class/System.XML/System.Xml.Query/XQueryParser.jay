@@ -67,28 +67,22 @@ namespace Mono.Xml.XQuery.Parser
 			reservedFunctionNames.Add ("typeswitch", "typeswitch");
 		}
 
+		private XQueryTokenizer tokenizer;
+
+		public XQueryParser ()
+		{
+		}
+
 		public XQueryModule Parse (TextReader source, Evidence evidence)
 		{
 			tokenizer = null;
 			try {
-				debug = new yydebug.yyDebugSimple ();
+//				debug = new yydebug.yyDebugSimple ();
 				tokenizer = new XQueryTokenizer (source, evidence);
 				return (XQueryModule) yyparse (tokenizer);
 			} catch (yyParser.yyException ex) {
 				throw new XmlQueryCompileException (String.Format ("Tokenizer error at line {0}, column {1}: {2}", tokenizer.LineNumber, tokenizer.LinePosition, ex.Message), ex);
 			}
-		}
-
-		private XQueryTokenizer tokenizer;
-
-		// For tokenization ease, every NCName is parsed as QName, thus
-		// in some context we have to make sure that such names are not
-		// qualified
-		private string VerifyLocalName (XmlQualifiedName name)
-		{
-			if (name.Namespace != String.Empty)
-				throw new XmlQueryCompileException ("Qualified name is not allowed for module namespace declaration", tokenizer, null, null);
-			return name.Name;
 		}
 
 		public XmlTypeCode GetAtomicTypeCode (XmlQualifiedName name)
@@ -190,6 +184,7 @@ namespace Mono.Xml.XQuery.Parser
 			}
 			throw new XmlQueryCompileException (String.Format ("Unexpected type name was specified as atomic type: {0}", name));
 		}
+
 %}
 
 /* --------------------------------------------------------
@@ -256,6 +251,10 @@ namespace Mono.Xml.XQuery.Parser
 %token NODE		//"node"
 %token FUNCTION		//"function"
 %token COLLATION	//"collation"
+%token CONSTRUCTION	//"construction"
+%token ORDERING		//"ordering"
+%token ORDERED		//"ordered"
+%token UNORDERED	//"unordered"
 %token BASEURI		//"base-uri"
 %token IMPORT		//"import"
 %token SCHEMA		//"schema"
@@ -319,7 +318,7 @@ namespace Mono.Xml.XQuery.Parser
 %token TYPE		//"type"
 
 %token CHILD			//"child"
-%token DESCENDAN	T	//"descendant"
+%token DESCENDANT		//"descendant"
 %token ATTRIBUTE		//"attribute"
 %token SELF			//"self"
 %token DESCENDANT_OR_SELF	//"descendant-or-self"
@@ -341,7 +340,7 @@ namespace Mono.Xml.XQuery.Parser
 %token STRING_LITERAL
 %token NUMERIC_LITERAL
 
-%token PRAGMA_CONTENTS /* characters until "::)" */
+%token PRAGMA_CONTENTS // characters until "::)"
 
 
 %token PREDEFINED_ENTITY_REF
@@ -371,7 +370,7 @@ namespace Mono.Xml.XQuery.Parser
 	 Modules and Prologs
 -------------------------------------------------------- */
 
-Module /* returns Module */
+Module // returns Module
 	: VersionDecl MainModule
 	{
 		string version = (string) $1;
@@ -387,8 +386,8 @@ Module /* returns Module */
 	}
 	;
 
-VersionDecl /* returns string */
-	: /* empty */
+VersionDecl // returns string
+	: // empty
 	{
 		$$ = null;
 	}
@@ -402,7 +401,7 @@ VersionDecl /* returns string */
 	}
 	;
 
-MainModule /* returns MainModule */
+MainModule // returns MainModule 
 	: Prolog QueryBody
 	{
 		Prolog prolog = (Prolog) $1;
@@ -415,7 +414,7 @@ MainModule /* returns MainModule */
 	}
 	;
 
-LibraryModule /* returns LibraryModule */
+LibraryModule // returns LibraryModule 
 	: ModuleDecl Prolog
 	{
 		XQueryLibraryModule mod = new XQueryLibraryModule ();
@@ -425,7 +424,7 @@ LibraryModule /* returns LibraryModule */
 	}
 	;
 
-ModuleDecl /* returns ModuleDecl */
+ModuleDecl // returns ModuleDecl 
 	: MODULE NAMESPACE {
 		tokenizer.State = ParseState.NamespaceDecl;
 	  } NCName EQUAL STRING_LITERAL {
@@ -440,33 +439,88 @@ ModuleDecl /* returns ModuleDecl */
 	}
 	;
 
-Prolog /* returns Prolog or null */
-	: /* empty */
+Prolog
+	: // empty
 	{
 		$$ = new Prolog ();
 	}
 	| PrologContent SEMICOLON Prolog
 	{
-		Prolog prolog = (Prolog) $3;
-		prolog.Add ($1);
-		$$ = prolog;
+		Prolog p = (Prolog) $3;
+		p.Add ($1);
+		$$ = p;
 	}
 	;
 
-PrologContent /* returns object */
-	: NamespaceDecl /* returns XmlQualifiedName */
-	| XmlSpaceDecl /* returns XmlSpace */
-	| DefaultNamespaceDecl /* returns SimplePrologContent */
-	| DefaultCollationDecl /* returns SimplePrologContent */
-	| BaseURIDecl /* returns SimplePrologContent */
-	| SchemaImport /* returns SchemaImport */
-	| ModuleImport /* returns ModuleImport */
-	| VarDecl /* returns VariableDeclaration */
-	| ValidationDecl /* returns XmlSchemaContentProcessing */
-	| FunctionDecl /* returns Function */
+PrologContent
+	: Setter
+	| DeclarationOrImport
 	;
 
-NamespaceDecl /* returns XmlQualifiedName */
+// FIXME: this production rule is the right one, but it brings 
+// major shift/reduce conflicts.
+/*
+Prolog // returns Prolog 
+	: Setters DeclarationsAndImports
+	{
+		Prolog p = (Prolog) $1;
+		ArrayList al = (ArrayList) $2;
+		if (al != null) {
+			foreach (object o in al)
+				p.Add (o);
+		}
+		$$ = p;
+	}
+	;
+
+Setters // returns Prolog 
+	: // empty
+	{
+		$$ = new Prolog ();
+	}
+	| Setter SEMICOLON Setters
+	{
+		Prolog p = (Prolog) $3;
+		p.Add ($1);
+		$$ = p;
+	}
+	;
+
+DeclarationsAndImports // returns ArrayList 
+	: // empty
+	{
+		$$ = null;
+	}
+	| DeclarationOrImport SEMICOLON DeclarationsAndImports
+	{
+		ArrayList al = (ArrayList) $3;
+		if (al == null)
+			al = new ArrayList ();
+		al.Add ($1);
+		$$ = al;
+	}
+	;
+
+*/
+
+Setter // returns object 
+	: XmlSpaceDecl // XmlSpaceDecl
+	| DefaultCollationDecl // SimplePrologContent
+	| BaseURIDecl // SimplePrologContent
+	| ConstructionDecl // ConstuctionDecl
+	| DefaultNamespaceDecl // SimplePrologContent
+	| DefaultOrderingDecl // bool
+	;
+
+DeclarationOrImport // returns object 
+	: SchemaImport
+	| ModuleImport
+	| NamespaceDecl
+	| VarDecl
+	| FunctionDecl
+	;
+
+NamespaceDecl // returns XmlQualifiedName 
 	: DECLARE NAMESPACE {
 		tokenizer.State = ParseState.NamespaceDecl;
 	  } NCName EQUAL STRING_LITERAL {
@@ -479,14 +533,14 @@ NamespaceDecl /* returns XmlQualifiedName */
 	}
 	;
 
-XmlSpaceDecl /* returns XmlSpace */
+XmlSpaceDecl // returns XmlSpaceDecl 
 	: DECLARE XMLSPACE { 
 		tokenizer.State = ParseState.XmlSpaceDecl;
 	  } PRESERVE {
 		tokenizer.State = ParseState.Default;
 	  }
 	{
-		$$ = XmlSpace.Preserve;
+		$$ = new XmlSpaceDecl (XmlSpace.Preserve);
 	}
 	| DECLARE XMLSPACE { 
 		tokenizer.State = ParseState.XmlSpaceDecl;
@@ -494,11 +548,30 @@ XmlSpaceDecl /* returns XmlSpace */
 		tokenizer.State = ParseState.Default;
 	  }
 	{
-		$$ = XmlSpace.Default;
+		$$ = new XmlSpaceDecl (XmlSpace.Default);
 	}
 	;
 
-DefaultNamespaceDecl /* returns SimplePrologContent */
+ConstructionDecl // returns ConstructionDecl 
+	: DECLARE CONSTRUCTION { 
+		tokenizer.State = ParseState.Operator;
+	  } PRESERVE {
+		tokenizer.State = ParseState.Default;
+	  }
+	{
+		$$ = new ConstructionDecl (XmlSpace.Preserve);
+	}
+	| DECLARE CONSTRUCTION { 
+		tokenizer.State = ParseState.Operator;
+	  } STRIP {
+		tokenizer.State = ParseState.Default;
+	  }
+	{
+		$$ = new ConstructionDecl (XmlSpace.Default);
+	}
+	;
+
+DefaultNamespaceDecl // returns SimplePrologContent 
 	: DECLARE DEFAULT ELEMENT {
 		tokenizer.State = ParseState.NamespaceKeyword;
 	  } NAMESPACE {
@@ -522,7 +595,7 @@ DefaultNamespaceDecl /* returns SimplePrologContent */
 	}
 	;
 
-DefaultCollationDecl /* returns SimplePrologContent */
+DefaultCollationDecl // returns SimplePrologContent 
 	: DECLARE DEFAULT COLLATION {
 		tokenizer.State = ParseState.NamespaceDecl;
 	  } STRING_LITERAL {
@@ -533,7 +606,26 @@ DefaultCollationDecl /* returns SimplePrologContent */
 	}
 	;
 
-BaseURIDecl /* returns SimplePrologContent */
+DefaultOrderingDecl // returns bool 
+	: DECLARE DEFAULT ORDERING {
+		tokenizer.State = ParseState.Operator;
+	  } ORDERED {
+		tokenizer.State = ParseState.Default;
+	  }
+	{
+		$$ = true;
+	}
+	| DECLARE DEFAULT ORDERING {
+		tokenizer.State = ParseState.Operator;
+	  } UNORDERED {
+		tokenizer.State = ParseState.Default;
+	  }
+	{
+		$$ = false;
+	}
+	;
+
+BaseURIDecl // returns SimplePrologContent 
 	: DECLARE BASEURI {
 		tokenizer.State = ParseState.NamespaceDecl;
 	  } STRING_LITERAL {
@@ -544,28 +636,28 @@ BaseURIDecl /* returns SimplePrologContent */
 	}
 	;
 
-SchemaImport /* returns SchemaImport */
+SchemaImport // returns SchemaImport 
 	: IMPORT SCHEMA {
 		tokenizer.State = ParseState.NamespaceKeyword;
 	  } OptionalSchemaPrefix STRING_LITERAL {
 		tokenizer.State = ParseState.Default;
-	  } OptionalLocation
+	  } OptionalLocations
 	{
 		if ($4 != null)
 			tokenizer.AddNamespace ((string) $4, (string) $5);
-		$$ = new SchemaImport ((string) $4, (string) $5, (string) $7);
+		$$ = new SchemaImport ((string) $4, (string) $5, (ICollection) $7);
 	}
 	;
 
-OptionalSchemaPrefix /* returns string or null */
-	: /* empty */
+OptionalSchemaPrefix // returns string or null 
+	: // empty
 	{
 		$$ = null;
 	}
 	| SchemaPrefix
 	;
 
-SchemaPrefix /* returns string */
+SchemaPrefix // returns string 
 	: NAMESPACE {
 		tokenizer.State = ParseState.NamespaceDecl;
 	  } NCName EQUAL {
@@ -581,20 +673,20 @@ SchemaPrefix /* returns string */
 	}
 	;
 
-ModuleImport /* returns ModuleImport */
+ModuleImport // returns ModuleImport 
 	: IMPORT MODULE {
 		tokenizer.State = ParseState.NamespaceKeyword;
 	  } OptionalModuleNamespace STRING_LITERAL {
 		tokenizer.State = ParseState.Default;
-	  } OptionalLocation
+	  } OptionalLocations
 	{
-		$$ = new ModuleImport ((string) $4, (string) $5, (string) $7);
+		$$ = new ModuleImport ((string) $4, (string) $5, (ICollection) $7);
 		tokenizer.AddNamespace ((string) $4, (string) $5);
 	}
 	;
 
-OptionalModuleNamespace /* returns string */
-	: /* empty */
+OptionalModuleNamespace // returns string 
+	: // empty
 	{
 		$$ = String.Empty;
 	}
@@ -606,18 +698,37 @@ OptionalModuleNamespace /* returns string */
 	}
 	;
 
-OptionalLocation /* returns string */
-	: /* empty */
+OptionalLocations // returns ArrayList or null 
+	: // empty
 	{
-		$$ = String.Empty;
+		$$ = null;
 	}
-	| AT STRING_LITERAL
+	| AT STRING_LITERAL AdditionalLocations
 	{
-		$$ = $2;
+		ArrayList al = (ArrayList) $3;
+		if (al != null)
+			al = new ArrayList ();
+		al.Add ((string) $2);
+		$$ = al;
 	}
 	;
 
-VarDecl /* returns VariableDeclaration */
+AdditionalLocations // returns ArrayList or null 
+	: // empty
+	{
+		$$ = null;
+	}
+	| COMMA STRING_LITERAL AdditionalLocations
+	{
+		ArrayList al = (ArrayList) $3;
+		if (al == null)
+			al = new ArrayList ();
+		al.Add ((string) $2);
+		$$ = al;
+	}
+	;
+
+VarDecl // returns VariableDeclaration 
 	: DECLARE VARIABLE DOLLAR {
 		tokenizer.PushState (ParseState.Default);
 		tokenizer.State = ParseState.VarName;
@@ -629,7 +740,7 @@ VarDecl /* returns VariableDeclaration */
 	}
 	;
 
-VarDeclBody /* returns ExprSequence or null */
+VarDeclBody // returns ExprSequence or null 
 	: OPEN_CURLY {
 		tokenizer.State = ParseState.Default;
 	  } Expr CloseCurly
@@ -645,7 +756,7 @@ VarDeclBody /* returns ExprSequence or null */
 	}
 	;
 
-VarName /* returns XmlQualifiedName */
+VarName // returns XmlQualifiedName 
 	: QName {
 		tokenizer.State = ParseState.Operator;
 	  }
@@ -654,15 +765,15 @@ VarName /* returns XmlQualifiedName */
 	}
 	;
 
-OptionalTypeDeclaration /* returns SequenceType or null */
-	: /* empty */
+OptionalTypeDeclaration // returns SequenceType or null 
+	: // empty
 	{
 		$$ = null;
 	}
 	| TypeDeclaration
 	;
 
-TypeDeclaration /* returns SequenceType */
+TypeDeclaration // returns SequenceType 
 	: AS { // Note that this transition applies only at Operator state.
 		tokenizer.State = ParseState.ItemType;
 	  } SequenceType
@@ -671,33 +782,7 @@ TypeDeclaration /* returns SequenceType */
 	}
 	;
 
-ValidationDecl /* returns XmlSchemaContentProcessing */
-	: DECLARE VALIDATION {
-		tokenizer.State = ParseState.Operator;
-	  } SchemaMode {
-		tokenizer.State = ParseState.Default;
-	  }
-	{
-		$$ = $3;
-	}
-	;
-
-SchemaMode /* returns XmlSchemaContentProcessing */
-	: LAX
-	{
-		$$ = XmlSchemaContentProcessing.Lax;
-	}
-	| STRICT
-	{
-		$$ = XmlSchemaContentProcessing.Strict;
-	}
-	| SKIP
-	{
-		$$ = XmlSchemaContentProcessing.Skip;
-	}
-	;
-
-FunctionDecl /* return FunctionDeclaration */
+FunctionDecl // returns FunctionDeclaration 
 	: DECLARE FUNCTION {
 		tokenizer.PushState (ParseState.Default);
 		tokenizer.State = ParseState.Default;
@@ -713,7 +798,7 @@ FunctionDecl /* return FunctionDeclaration */
 	}
 	;
 
-FunctionBody /* returns EnclosedExpr or null */
+FunctionBody // returns EnclosedExpr or null 
 	: EnclosedExpr
 	| EXTERNAL
 	{
@@ -721,10 +806,10 @@ FunctionBody /* returns EnclosedExpr or null */
 	}
 	;
 
-SequenceType /* returns SequenceType */
+SequenceType // returns SequenceType 
 	: ItemType OptionalOccurenceIndicator
 	{
-		$$ = new SequenceType ((ExprSingle) $1, (Occurence) $2);
+		$$ = new SequenceType ((NodeKindTestExpr) $1, (Occurence) $2);
 	}
 	| EMPTY OPEN_PAREN CLOSE_PAREN {
 		tokenizer.State = ParseState.Operator;
@@ -734,15 +819,15 @@ SequenceType /* returns SequenceType */
 	}
 	;
 
-OptionalOccurenceIndicator /* returns Occurence */
-	: /* empty */
+OptionalOccurenceIndicator // returns Occurence 
+	: // empty
 	{
 		$$ = Occurence.One;
 	}
 	| OccurenceIndicator
 	;
 
-OccurenceIndicator /* returns Occurence */
+OccurenceIndicator // returns Occurence 
 	: QUESTION
 	{
 		$$ = Occurence.Optional;
@@ -758,11 +843,11 @@ OccurenceIndicator /* returns Occurence */
 	;
 
 OptionalParamList
-	: /* empty */
+	: // empty
 	| ParamList
 	;
 
-ParamList /* returns FunctionParamList */
+ParamList // returns FunctionParamList 
 	: Param
 	{
 		FunctionParamList pl = new FunctionParamList ();
@@ -777,7 +862,7 @@ ParamList /* returns FunctionParamList */
 	}
 	;
 
-Param /* returns FunctionParam */
+Param // returns FunctionParam 
 	: DOLLAR {
 		tokenizer.State = ParseState.VarName;
 	  } VarName {
@@ -797,7 +882,7 @@ QueryBody
 	Expressions
 -------------------------------------------------------- */
 
-Expr /* returns ExprSequence */
+Expr // returns ExprSequence 
 	: ExprSequence
 	{
 		ExprSequence seq = (ExprSequence) $1;
@@ -806,7 +891,7 @@ Expr /* returns ExprSequence */
 	}
 	;
 
-ExprSequence /* returns ExprSequence */
+ExprSequence // returns ExprSequence 
 	: ExprSingle
 	{
 		ExprSequence seq = new ExprSequence ();
@@ -821,7 +906,7 @@ ExprSequence /* returns ExprSequence */
 	}
 	;
 
-ExprSingle /* returns ExprSingle */
+ExprSingle // returns ExprSingle 
 	: FLWORExpr
 	| QuantifiedExpr
 	| TypeswitchExpr
@@ -833,7 +918,7 @@ ExprSingle /* returns ExprSingle */
 	FLWORExpr
 ------------------------------------- */
 
-FLWORExpr /* returns FLWORExpr */
+FLWORExpr // returns FLWORExpr 
 	: RepeatedForLetClause OptionalWhereClause OptionalOrderByClause RETURN {
 		tokenizer.State = ParseState.Default;
 	  } ExprSingle
@@ -844,7 +929,7 @@ FLWORExpr /* returns FLWORExpr */
 	}
 	;
 
-RepeatedForLetClause /* returns ForLetClauseCollection */
+RepeatedForLetClause // returns ForLetClauseCollection 
 	: ForLetClause
 	{
 		ForLetClauseCollection col = new ForLetClauseCollection ();
@@ -859,13 +944,13 @@ RepeatedForLetClause /* returns ForLetClauseCollection */
 	}
 	;
 
-ForLetClause /* returns ForLetClause */
+ForLetClause // returns ForLetClause 
 	: ForClause
 	| LetClause
 	;
 
-OptionalWhereClause /* returns ExprSequence or null */
-	: /* empty */
+OptionalWhereClause // returns ExprSequence or null 
+	: // empty
 	{
 		$$ = null;
 	}
@@ -873,14 +958,14 @@ OptionalWhereClause /* returns ExprSequence or null */
 	;
 
 OptionalOrderByClause
-	: /* empty */
+	: // empty
 	{
 		$$ = null;
 	}
 	| OrderByClause
 	;
 
-ForClause /* returns ForClause */
+ForClause // returns ForClause 
 	: FOR ForBody
 	{
 		ForClause fc = (ForClause) $2;
@@ -904,7 +989,7 @@ ForBody
 	}
 	;
 
-ForSingleBody /* returns ForSingleBody */
+ForSingleBody // returns ForSingleBody 
 	: DOLLAR {
 		tokenizer.State = ParseState.VarName;
 	  } VarName {
@@ -953,8 +1038,8 @@ LetSingleBody
 	}
 	;
 
-OptionalPositionalVar /* returns XmlQualifiedName */
-	: /* empty */
+OptionalPositionalVar // returns XmlQualifiedName 
+	: // empty
 	{
 		$$ = XmlQualifiedName.Empty;
 	}
@@ -974,7 +1059,7 @@ PositionalVar
 	}
 	;
 
-WhereClause /* returns ExprSequence */
+WhereClause // returns ExprSequence 
 	: WHERE {
 		tokenizer.State = ParseState.Default;
 	  } Expr
@@ -983,7 +1068,7 @@ WhereClause /* returns ExprSequence */
 	}
 	;
 
-OrderByClause /* returns OrderSpecList */
+OrderByClause // returns OrderSpecList 
 	: ORDER BY {
 		tokenizer.State = ParseState.Default;
 	  } OrderSpecList
@@ -1003,7 +1088,7 @@ OrderByClause /* returns OrderSpecList */
 	}
 	;
 
-OrderSpecList /* returns OrderSpecList */
+OrderSpecList // returns OrderSpecList 
 	: OrderSpec
 	{
 		OrderSpecList osl = new OrderSpecList ();
@@ -1018,7 +1103,7 @@ OrderSpecList /* returns OrderSpecList */
 	}
 	;
 
-OrderSpec /* returns OrderSpec */
+OrderSpec // returns OrderSpec 
 	: ExprSingle OrderModifier
 	{
 		$$ = new OrderSpec ((ExprSingle) $1, (OrderModifier) $2);
@@ -1032,8 +1117,8 @@ OrderModifier
 	}
 	;
 
-OrderSpecBase /* returns XmlSortOrder */
-	: /* empty */
+OrderSpecBase // returns XmlSortOrder 
+	: // empty
 	{
 		$$ = XmlSortOrder.Ascending;
 	}
@@ -1048,8 +1133,8 @@ OrderSpecBase /* returns XmlSortOrder */
 	;
 
 /* FIXME: check if it is correct (especially empty case) */
-OrderEmptyHandling /* returns XmlSortOrder */
-	: /* empty */
+OrderEmptyHandling // returns XmlSortOrder 
+	: // empty
 	{
 		$$ = XmlSortOrder.Ascending;
 	}
@@ -1063,8 +1148,8 @@ OrderEmptyHandling /* returns XmlSortOrder */
 	}
 	;
 
-OptionalCollation /* returns string */
-	: /* empty */
+OptionalCollation // returns string 
+	: // empty
 	{
 		$$ = null;
 	}
@@ -1108,7 +1193,7 @@ QuantifiedExprBody
 	}
 	;
 
-SingleQuantifiedExprBody /* returns QuantifiedExprBody */
+SingleQuantifiedExprBody // returns QuantifiedExprBody 
 	: DOLLAR {
 		tokenizer.State = ParseState.VarName;
 	  } VarName {
@@ -1125,7 +1210,7 @@ SingleQuantifiedExprBody /* returns QuantifiedExprBody */
 	TypeswitchExpr
 ------------------------------------- */
 
-TypeswitchExpr /* returns TypeswitchExpr */
+TypeswitchExpr // returns TypeswitchExpr 
 	: TYPESWITCH OPEN_PAREN {
 		tokenizer.PushState (ParseState.Operator);
 		tokenizer.State = ParseState.Default;
@@ -1139,7 +1224,7 @@ TypeswitchExpr /* returns TypeswitchExpr */
 	}
 	;
 
-RepeatedCaseClause /* returns CaseClauseList */
+RepeatedCaseClause // returns CaseClauseList 
 	: CaseClause
 	{
 		CaseClauseList ccl = new CaseClauseList ();
@@ -1154,7 +1239,7 @@ RepeatedCaseClause /* returns CaseClauseList */
 	}
 	;
 
-CaseClause /* returns CaseClause */
+CaseClause // returns CaseClause 
 	: CASE {
 		tokenizer.State = ParseState.ItemType;
 	  } SequenceType RETURN {
@@ -1179,8 +1264,8 @@ CaseClause /* returns CaseClause */
 	}
 	;
 
-OptionalVarSpec /* returns XmlQualifiedName */
-	: /* empty */
+OptionalVarSpec // returns XmlQualifiedName 
+	: // empty
 	{
 		$$ = XmlQualifiedName.Empty;
 	}
@@ -1266,7 +1351,7 @@ CastableExpr
 	;
 
 OptionalQuestion
-	: /* empty */
+	: // empty
 	{
 		$$ = false;
 	}
@@ -1300,7 +1385,7 @@ ComparisonExpr
 	}
 	;
 
-Comp /* returns ComparisonOperator */
+Comp // returns ComparisonOperator 
 	: ValueComp
 	| GeneralComp
 	| NodeComp
@@ -1488,130 +1573,36 @@ ValueExpr
 
 // FIXME: Here state transition is not well-tracked.
 
-ValidateExpr /* returns ValidateExpr */
-	: VALIDATE OptionalSchemaMode OptionalSchemaContext OPEN_CURLY {
+ValidateExpr // returns ValidateExpr 
+	: VALIDATE OptionalValidationMode OPEN_CURLY {
 		tokenizer.State = ParseState.Default;
 		tokenizer.PushState (ParseState.Operator);
 	  } Expr CloseCurly
 	{
-		$$ = new ValidateExpr ((XmlSchemaContentProcessing) $2,
-			(SchemaContext) $3, (ExprSequence) $6);
+		$$ = new ValidateExpr ((XmlSchemaContentProcessing) $2, (ExprSequence) $6);
 	}
 	;
 
-OptionalSchemaMode /* returns XmlSchemaContentProcessing */
-	: /* empty */
+OptionalValidationMode // returns XmlSchemaContentProcessing 
+	: // empty
 	{
 		$$ = XmlSchemaContentProcessing.Strict; // FIXME: confirm
 	}
-	| SchemaMode {
-		tokenizer.State = ParseState.KindTest;
-		tokenizer.PushState (ParseState.Operator);
-	  }
-	;
-
-OptionalSchemaContext /* returns SchemaContext */
-	: /* empty */
+	| LAX
 	{
-		$$ = null;
+		$$ = XmlSchemaContentProcessing.Lax;
 	}
-	| SchemaContext
-	;
-
-SchemaContext /* returns SchemaContext */
-	: CONTEXT  {
-		tokenizer.State = ParseState.KindTest;
-		tokenizer.PushState (ParseState.Operator);
-	  } SchemaContextLoc
+	| STRICT
 	{
-		$$ = new SchemaContext ((SchemaContextLoc) $3);
-	}
-	| GLOBAL {
-		tokenizer.State = ParseState.Default;
-		tokenizer.PushState (ParseState.Operator);
-	  }
-	{
-		$$ = new SchemaContext (null);
+		$$ = XmlSchemaContentProcessing.Strict;
 	}
 	;
-
-/* Here we should be in KindTest state */
-SchemaContextLoc /* returns SchemaContextLoc */
-	: QName {
-		tokenizer.State = ParseState.CloseKindTest;
-	  }
-	{
-		SchemaContextPath scp = new SchemaContextPath ();
-		scp.Add ((XmlQualifiedName) $1);
-		$$ = new SchemaLocalContextLoc (scp);
-	}
-	| SchemaContextPath QName {
-		tokenizer.State = ParseState.CloseKindTest;
-	  }
-	{
-		SchemaContextPath l = (SchemaContextPath) $1;
-		l.Add ((XmlQualifiedName) $2);
-		$$ = new SchemaLocalContextLoc (l);
-	}
-	| SchemaGlobalTypeName {
-		tokenizer.State = ParseState.SchemaContextStep;
-	  }
-	{
-		$$ = new SchemaGlobalContextLoc ((XmlQualifiedName) $1);
-	}
-	;
-
-SchemaContextPath /* returns SchemaContextPath */
-	: SchemaGlobalContext Slash SchemaContextSteps
-	{
-		SchemaContextPath l = (SchemaContextPath) $3;
-		l.Reverse ();
-		l.SchemaGlobalContext = (SchemaGlobalContext) $1;
-		$$ = l;
-	}
-	;
-
-SchemaGlobalContext /* returns SchemaGlobalContext */
-	: QName
-	{
-		$$ = new SchemaGlobalContext ((XmlQualifiedName) $1, false);
-	}
-	| SchemaGlobalTypeName
-	{
-		$$ = new SchemaGlobalContext ((XmlQualifiedName) $1, true);
-	}
-	;
-
-SchemaGlobalTypeName /* returns XmlQualifiedName */
-	: TYPE OPEN_PAREN QName CLOSE_PAREN
-	{
-		$$ = $3;
-	}
-	;
-
-SchemaContextSteps /* returns SchemaContextPath */
-	: /* empty */
-	{
-		$$ = new SchemaContextPath ();
-	}
-	| SchemaContextStep Slash SchemaContextSteps
-	{
-		SchemaContextPath l = (SchemaContextPath) $3;
-		l.Add ((XmlQualifiedName) $1);
-		$$ = l;
-	}
-	;
-
-SchemaContextStep /* returns XmlQualifiedName */
-	: QName
-	;
-
 
 /* -----------------
  Path Expressions
 ----------------- */
 
-PathExpr /* returns PathExpr */
+PathExpr // returns PathExpr 
 	: Slash
 	{
 		$$ = new PathExprRoot ();
@@ -1627,7 +1618,7 @@ PathExpr /* returns PathExpr */
 	| RelativePathExpr
 	;
 
-RelativePathExpr /* returns PathExpr */
+RelativePathExpr // returns PathExpr 
 	: StepExpr
 	| StepExpr Slash RelativePathExpr
 	{
@@ -1639,12 +1630,12 @@ RelativePathExpr /* returns PathExpr */
 	}
 	;
 
-StepExpr /* returns ExprSingle */
+StepExpr // returns ExprSingle 
 	: AxisStep
 	| FilterStep
 	;
 
-AxisStep /* returns PathExpr */
+AxisStep // returns PathExpr 
 	: ForwardOrReverseStep Predicates
 	{
 		ExprSequenceList p = (ExprSequenceList) $2;
@@ -1655,12 +1646,12 @@ AxisStep /* returns PathExpr */
 	}
 	;
 
-ForwardOrReverseStep /* returns ExprSingle */
+ForwardOrReverseStep // returns ExprSingle 
 	: ForwardStep
 	| ReverseStep
 	;
 
-FilterStep /* return ExprSingle */
+FilterStep // returns ExprSingle 
 	: PrimaryExpr Predicates
 	{
 		if ($2 == null)
@@ -1670,7 +1661,7 @@ FilterStep /* return ExprSingle */
 	}
 	;
 
-ForwardStep /* returns NodeTestExpr */
+ForwardStep // returns NodeTestExpr 
 	: ForwardAxis NodeTest
 	{
 		$$ = new AxisStepExpr ((XPathAxis) $1, (NodeTestExpr) $2);
@@ -1678,12 +1669,12 @@ ForwardStep /* returns NodeTestExpr */
 	| AbbrevForwardStep
 	;
 
-ReverseStep /* returns NodeTestExpr */
+ReverseStep // returns NodeTestExpr 
 	: ReverseAxis NodeTest
 	| AbbrevReverseStep
 	;
 
-ForwardAxis /* returns XPathAxis */
+ForwardAxis // returns XPathAxis 
 	: CHILD COLON2
 	{
 		$$ = XPathAxis.Child;
@@ -1714,7 +1705,7 @@ ForwardAxis /* returns XPathAxis */
 	}
 	;
 
-ReverseAxis /* returns XPathAxis */
+ReverseAxis // returns XPathAxis 
 	: PARENT COLON2
 	{
 		$$ = XPathAxis.Parent;
@@ -1739,7 +1730,7 @@ ReverseAxis /* returns XPathAxis */
 
 // LAMESPEC: in the XQuery spec, it is "@? NodeTest", but NodeKindTest 
 // should not appear after AT. (imagine @processing-instruction::(name)).
-AbbrevForwardStep /* returns NodeTestExpr */
+AbbrevForwardStep // returns NodeTestExpr 
 	: NodeTest
 	| AT NameTest
 	{
@@ -1747,15 +1738,15 @@ AbbrevForwardStep /* returns NodeTestExpr */
 	}
 	;
 
-AbbrevReverseStep /* returns NodeTestExpr */
+AbbrevReverseStep // returns NodeTestExpr 
 	: DOT2
 	{
 		$$ = AxisStepExpr.ParentStep;
 	}
 	;
 
-Predicates /* returns ExprSequenceList or null */
-	: /* empty */
+Predicates // returns ExprSequenceList or null 
+	: // empty
 	{
 		$$ = null;
 	}
@@ -1771,7 +1762,7 @@ Predicates /* returns ExprSequenceList or null */
 	}
 	;
 
-NodeTest /* returns NodeTestExpr */
+NodeTest // returns NodeTestExpr 
 	: KindTest
 	| NameTest
 	{
@@ -1779,14 +1770,14 @@ NodeTest /* returns NodeTestExpr */
 	}
 	;
 
-NameTest /* returns XmlQualifiedName */
+NameTest // returns XmlQualifiedName 
 	: QName
 	| Wildcard {
 		tokenizer.State = ParseState.Operator;
 	  }
 	;
 
-Wildcard /* returns XmlQualifiedName */ /*ws:explicit*/
+Wildcard // returns XmlQualifiedName  /*ws:explicit*/
 	: ASTERISK
 	{
 		$$ = new XmlQualifiedName ("*", "*");
@@ -1801,14 +1792,14 @@ Wildcard /* returns XmlQualifiedName */ /*ws:explicit*/
 	}
 	;
 
-AtomicType /* returns XmlTypeCode */
+AtomicType // returns XmlTypeCode 
 	: QName
 	{
 		$$ = GetAtomicTypeCode ((XmlQualifiedName) $1);
 	}
 	;
 
-ItemType /* returns NodeTestExpr */
+ItemType // returns NodeTestExpr 
 	: AtomicType {
 		tokenizer.State = ParseState.OccurenceIndicator;
 	  }
@@ -1824,7 +1815,7 @@ ItemType /* returns NodeTestExpr */
 	}
 	;
 
-KindTest /* returns NodeTestExpr */
+KindTest // returns NodeTestExpr 
 	: DocumentTest
 	| ElementTest
 	| AttributeTest
@@ -1849,8 +1840,8 @@ PITest
 	}
 	;
 
-PITestContent /* returns NodeKindTestExpr */
-	: /* empty */
+PITestContent // returns NodeKindTestExpr 
+	: // empty
 	{
 		$$ = new NodeKindTestExpr (XmlTypeCode.ProcessingInstruction);
 	}
@@ -1900,7 +1891,7 @@ AnyKindTest
 	}
 	;
 
-DocumentTest /* returns DocumentTestExpr */
+DocumentTest // returns DocumentTestExpr 
 	: DOCUMENT_NODE OPEN_PAREN {
 		tokenizer.PushState (ParseState.OccurenceIndicator);
 		tokenizer.State = ParseState.KindTest;
@@ -1912,8 +1903,8 @@ DocumentTest /* returns DocumentTestExpr */
 	}
 	;
 
-DocumentTestContent /* returns DocumentTestExpr */
-	: /* empty */
+DocumentTestContent // returns DocumentTestExpr 
+	: // empty
 	{
 		$$ = new DocumentTestExpr (null);
 	}
@@ -1923,7 +1914,7 @@ DocumentTestContent /* returns DocumentTestExpr */
 	}
 	;
 
-ElementTest /* returns ElementTestExpr */
+ElementTest // returns ElementTestExpr 
 	: ELEMENT OPEN_PAREN {
 		tokenizer.PushState (ParseState.OccurenceIndicator);
 		tokenizer.State = ParseState.KindTest;
@@ -1935,44 +1926,33 @@ ElementTest /* returns ElementTestExpr */
 	}
 	;
 
-ElementTestContent /* returns ElementTestExpr */
-	: /* empty */
-	{
-		$$ = ElementTestExpr.AnyElement;
-	}
-	| SchemaContextPath ElementName 
-	{
-		$$ = new ElementTestExpr ((SchemaContextPath) $1, (XmlQualifiedName) $2);
-	}
-	| ElementNameOrWildcard OptionalElementTypeSpec
-	{
-		$$ = new ElementTestExpr ((XmlQualifiedName) $1, (NillableTypeName) $2);
-	}
-	;
-
-OptionalElementTypeSpec /* NillableTypeName or null */
-	: /* empty */
+ElementTestContent // returns ElementTestExpr 
+	: // empty
 	{
 		$$ = null;
 	}
-	| COMMA TypeNameOrWildcard OptionalNillable
+	| ElementNameOrWildcard
 	{
-		$$ = new NillableTypeName ((XmlQualifiedName) $2, (bool) $3);
+		$$ = new ElementTestExpr ((XmlQualifiedName) $1);
+	}
+	| ElementNameOrWildcard COMMA TypeName OptionalQuestion
+	{
+		$$ = new ElementTestExpr ((XmlQualifiedName) $1, (XmlQualifiedName) $3, (bool) $4);
 	}
 	;
 
-OptionalNillable /* returns bool */
-	: /* empty */
+OptionalQuestion // returns bool 
+	: // empty
 	{
 		$$ = false;
 	}
-	| NILLABLE
+	| QUESTION
 	{
 		$$ = true;
 	}
 	;
 
-AttributeTest /* returns AttributeTestExpr */
+AttributeTest // returns AttributeTestExpr 
 	: ATTRIBUTE OPEN_PAREN {
 		tokenizer.PushState (ParseState.OccurenceIndicator);
 		tokenizer.State = ParseState.KindTest;
@@ -1984,29 +1964,18 @@ AttributeTest /* returns AttributeTestExpr */
 	}
 	;
 
-AttributeTestContent /* returns AttributeTestExpr */
-	: /* empty */
+AttributeTestContent // returns AttributeTestExpr 
+	: // empty
 	{
 		$$ = AttributeTestExpr.AnyAttribute;
 	}
-	| SchemaContextPath AttributeName
+	| AttributeNameOrWildcard
 	{
-		$$ = new AttributeTestExpr ((SchemaContextPath) $1, (XmlQualifiedName) $2);
+		$$ = new AttributeTestExpr ((XmlQualifiedName) $1);
 	}
-	| AttributeNameOrWildcard OptionalAttributeTypeSpec
+	| AttributeNameOrWildcard COMMA TypeNameOrWildcard
 	{
-		$$ = new AttributeTestExpr ((XmlQualifiedName) $1, (XmlQualifiedName) $2);
-	}
-	;
-
-OptionalAttributeTypeSpec /* returns XmlQualifiedName */
-	: /* empty */
-	{
-		$$ = XmlQualifiedName.Empty;
-	}
-	| COMMA TypeNameOrWildcard
-	{
-		$$ = $2;
+		$$ = new AttributeTestExpr ((XmlQualifiedName) $1, (XmlQualifiedName) $3);
 	}
 	;
 
@@ -2022,7 +1991,7 @@ TypeName
 	: QName
 	;
 
-ElementNameOrWildcard /* returns XmlQualifiedName */
+ElementNameOrWildcard // returns XmlQualifiedName 
 	: ElementName
 	| ASTERISK
 	{
@@ -2030,7 +1999,7 @@ ElementNameOrWildcard /* returns XmlQualifiedName */
 	}
 	;
 
-AttributeNameOrWildcard /* returns XmlQualifiedName */
+AttributeNameOrWildcard // returns XmlQualifiedName 
 	: AttributeName
 	| ASTERISK
 	{
@@ -2038,7 +2007,7 @@ AttributeNameOrWildcard /* returns XmlQualifiedName */
 	}
 	;
 
-TypeNameOrWildcard /* returns XmlQualifiedName */
+TypeNameOrWildcard // returns XmlQualifiedName 
 	: TypeName
 	| ASTERISK
 	{
@@ -2050,7 +2019,7 @@ TypeNameOrWildcard /* returns XmlQualifiedName */
  Primary Expressions
 ---------------- */
 
-PrimaryExpr /* returns ExprSingle */
+PrimaryExpr // returns ExprSingle 
 	: Literal {
 		tokenizer.State = ParseState.Operator;
 	  }
@@ -2098,7 +2067,7 @@ DoubleDecimalPartSpec
 	| Digits DOT OptDigits
 
 ExponentSpec
-	: /* empty *//*
+	: // empty/*
 	| ExponentAlpha Digits
 	| ExponentAlpha PLUS Digits
 	| ExponentAlpha MINUS Digits
@@ -2110,12 +2079,12 @@ ExponentAlpha
 	;
 
 OptDigits
-	: /* empty *//*
+	: // empty/*
 	| Digits
 	;
 
 Digits
-	: ZERO_TO_NINE_SEQ /* one or more *//*
+	: ZERO_TO_NINE_SEQ
 	;
 
 STRING_LITERAL
@@ -2126,19 +2095,19 @@ STRING_LITERAL
 STRING_LITERALContentQuot
 	: PREDEFINED_ENTITY_REF
 	| CHAR_REF
-	| QUOT2 /* escape sequence? *//*
+	| QUOT2
 	| REMAINING_LITERAL
 	;
 
 STRING_LITERALContentApos
 	: PREDEFINED_ENTITY_REF
 	| CHAR_REF
-	| APOS2 /* escape sequence? *//*
+	| APOS2
 	| REMAINING_LITERAL
 	;
 */
 
-VarRef /* returns VariableReferenceExpr */
+VarRef // returns VariableReferenceExpr 
 	: DOLLAR {
 		tokenizer.State = ParseState.VarName;
 	  } VarName
@@ -2147,7 +2116,7 @@ VarRef /* returns VariableReferenceExpr */
 	}
 	;
 
-VarName /* returns XmlQualifiedName */
+VarName // returns XmlQualifiedName 
 	: QName {
 		tokenizer.State = ParseState.Operator;
 	  }
@@ -2156,7 +2125,7 @@ VarName /* returns XmlQualifiedName */
 	}
 	;
 
-ParenthesizedExpr /* returns ParenthesizedExpr */
+ParenthesizedExpr // returns ParenthesizedExpr 
 	: OPEN_PAREN OptionalExpr CLOSE_PAREN {
 		tokenizer.State = ParseState.Operator;
 	  }
@@ -2166,14 +2135,14 @@ ParenthesizedExpr /* returns ParenthesizedExpr */
 	;
 
 OptionalExpr
-	: /* empty */
+	: // empty
 	{
 		$$ = null;
 	}
 	| Expr
 	;
 
-ContextItemExpr /* returns ContextItemExpr */
+ContextItemExpr // returns ContextItemExpr 
 	: DOT {
 		tokenizer.State = ParseState.Operator;
 	  }
@@ -2190,8 +2159,11 @@ FunctionCall
 	  }
 	{
 		XmlQualifiedName name = (XmlQualifiedName) $1;
-		if (name.Namespace == String.Empty && reservedFunctionNames [name.Name] != null)
+		if (name.Namespace != ""
+				&& name.Namespace != XmlSchema.XdtNamespace
+				&& reservedFunctionNames [name.Name] != null)
 			throw new XmlQueryCompileException (String.Format ("'{0}' is reserved and cannot be used as a function name.", name.Name));
+
 		$$ = new FunctionCallExpr (name, (ExprSequence) $4);
 	}
 	;
@@ -2201,7 +2173,7 @@ FunctionCall
 ----------------- */
 
 
-Constructor /* returns ExprSingle */
+Constructor // returns ExprSingle 
 	: DirElemConstructor
 	| ComputedConstructor
 	| XmlComment
@@ -2209,7 +2181,7 @@ Constructor /* returns ExprSingle */
 	| XmlCData
 	;
 
-DirElemConstructor /* returns ElementConstructor */
+DirElemConstructor // returns ElementConstructor 
 	: LESSER {
 		if (tokenizer.State == ParseState.ElementContent)
 			tokenizer.PushState (tokenizer.State);
@@ -2227,7 +2199,7 @@ DirElemConstructor /* returns ElementConstructor */
 	}
 	;
 
-FollowDirElemConstructor /* returns ExprSequence */
+FollowDirElemConstructor // returns ExprSequence 
 	: EMPTY_TAG_CLOSE
 	{
 		$$ = new ExprSequence ();
@@ -2244,8 +2216,8 @@ FollowDirElemConstructor /* returns ExprSequence */
 	}
 	;
 
-ElementContentList /* returns ExprSequence */
-	: /* empty */
+ElementContentList // returns ExprSequence 
+	: // empty
 	{
 		$$ = new ExprSequence ();
 	}
@@ -2257,8 +2229,8 @@ ElementContentList /* returns ExprSequence */
 	}
 	;
 
-AttributeList /* returns AttributeConstructorList */
-	: /* empty */
+AttributeList // returns AttributeConstructorList 
+	: // empty
 	{
 		$$ = new AttributeConstructorList ();
 	}
@@ -2270,7 +2242,7 @@ AttributeList /* returns AttributeConstructorList */
 	}
 	;
 
-Attribute /* returns AttributeConstructor */
+Attribute // returns AttributeConstructor 
 	: QName EQUAL AttributeValue /* note: whitespace handling */
 	{
 		$$ = new AttributeConstructor ((XmlQualifiedName) $1, (ExprSequence) $3);
@@ -2288,7 +2260,7 @@ AttributeValue
 	;
 
 /*
-AttributeValue /* returns ExprSequence *//*
+AttributeValue // returns ExprSequence
 	: QUOT AttributeValueContentSequence QUOT
 	{
 		$$ = $2;
@@ -2298,10 +2270,10 @@ AttributeValue /* returns ExprSequence *//*
 		$$ = $2;
 	}
 	;
-*/
 
-AttributeValueContentSequence /* returns ExprSequence */
-	: /* empty */
+
+AttributeValueContentSequence // returns ExprSequence
+	: // empty
 	{
 		$$ = new ExprSequence ();
 	}
@@ -2313,15 +2285,16 @@ AttributeValueContentSequence /* returns ExprSequence */
 	}
 	;
 
-AttributeValueContent /* returns ExprSingle */
-	: ATT_VALUE_LITERAL /* including "{{", "}}" and char/predefined entities */
+AttributeValueContent // returns ExprSingle
+	: ATT_VALUE_LITERAL // including "{{", "}}" and char/predefined entities 
 	{
 		$$ = new ExprLiteral ((string) $1);
 	}
 	| EnclosedExpr
 	;
+*/
 
-EnclosedExpr /* returns EnclosedExpr */
+EnclosedExpr // returns EnclosedExpr 
 	// FIXME: check if this state transition is valid for ElementContent and AttributeValueContent
 	: OPEN_CURLY {
 		if (tokenizer.State == ParseState.ElementContent)
@@ -2333,8 +2306,8 @@ EnclosedExpr /* returns EnclosedExpr */
 	}
 	;
 
-ElementContent /* returns ExprSingle */
-	: ELEM_CONTENT_LITERAL /* including "{{", "}}" and char/predefined entities*/
+ElementContent // returns ExprSingle 
+	: ELEM_CONTENT_LITERAL // including "{{", "}}" and char/predefined entities
 	| DirElemConstructor
 	| EnclosedExpr
 	| XmlCData
@@ -2349,14 +2322,14 @@ XmlCData
 	}
 	;
 
-XmlComment /* returns XmlCommentConstructor */
+XmlComment // returns XmlCommentConstructor 
 	: XML_COMMENT_START XML_COMMENT_TO_END
 	{
 		$$ = new XmlCommentConstructor ((string) $2);
 	}
 	;
 
-XmlPI /* returns XmlPIConstructor */
+XmlPI // returns XmlPIConstructor 
 	: XML_PI_START {
 		tokenizer.PushState (tokenizer.State);
 		tokenizer.State = ParseState.XmlPI;
@@ -2372,10 +2345,10 @@ XmlPI /* returns XmlPIConstructor */
 	;
 
 PITarget
-	: QName /*=NCName*/
+	: NCName
 	;
 
-ComputedConstructor /* returns ExprSingle */
+ComputedConstructor // returns ExprSingle 
 	: CompElemConstructor
 	| CompAttrConstructor
 	| CompDocConstructor
@@ -2451,11 +2424,11 @@ CompXmlPI
 ----------------- */
 
 
-NCName /* returns string */
+NCName // returns string 
 	: NCNAME
 	;
 
-QName /* returns XmlQualifiedName. Note that this state is just a wrapper for state transition. */
+QName // returns XmlQualifiedName. Note that this state is just a wrapper for state transition. 
 	: QNAME {
 		switch (tokenizer.State) {
 		case ParseState.Default:
