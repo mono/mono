@@ -1,3 +1,7 @@
+2005-02-19  Kazuki Oikawa <kazuki@panicode.com>
+
+	* Array.cs: Reverse the order in the Equals calls.
+
 2005-02-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Exception.cs (StackTrace): Implement this in managed code since it is

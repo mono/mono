@@ -796,7 +796,7 @@ namespace System
 
 			int max = startIndex + count;
 			for (int i = startIndex; i < max; i++) {
-				if (Object.Equals (array.GetValueImpl (i), value))
+				if (Object.Equals (value, array.GetValueImpl (i)))
 					return i;
 			}
 
@@ -840,7 +840,7 @@ namespace System
 				throw new ArgumentOutOfRangeException ();
 
 			for (int i = startIndex; i >= startIndex - count + 1; i--) {
-				if (Object.Equals (array.GetValueImpl (i), value))
+				if (Object.Equals (value, array.GetValueImpl (i)))
 					return i;
 			}
 
@@ -1495,8 +1495,7 @@ namespace System
 
 			int max = startIndex + count;
 			for (int i = startIndex; i < max; i++) {
-				if (Object.Equals (array [i], value))
-				if (Object.Equals (array [i], value))
+				if (Object.Equals (value, array [i]))
 					return i;
 			}
 
@@ -1531,7 +1530,7 @@ namespace System
 				throw new ArgumentOutOfRangeException ();
 
 			for (int i = startIndex; i >= startIndex - count + 1; i--) {
-				if (Object.Equals (array [i], value))
+				if (Object.Equals (value, array [i]))
 					return i;
 			}
 
@@ -1691,12 +1690,7 @@ namespace System
 		}
 
 		public bool Contains (T item) {
-			int length = arr.Length;
-			for (int i = 0; i < length; i++) {
-				if (arr [i] == item)
-					return true;
-			}
-			return false;
+			return Array.IndexOf <T> (arr, item) != -1;
 		}
 
 		// IList<T> interface
@@ -1722,12 +1716,7 @@ namespace System
 		}
 
 		public int IndexOf (T item) {
-			int length = arr.Length;
-			for (int i = 0; i < length; i++) {
-				if (arr [i] == item)
-					return i;
-			}
-			return -1;
+			return Array.IndexOf <T> (arr, item);
 		}
 
 		// IEnumerable<T> interface
