@@ -24,9 +24,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 // $Modtime: $
 // $Log: CheckBox.cs,v $
+// Revision 1.3  2004/08/30 20:42:26  pbartok
+// - Implemented CheckBox drawing code
+//
 // Revision 1.2  2004/08/30 15:44:20  pbartok
 // - Updated to fix broken build. Not complete yet.
 //
@@ -48,6 +51,8 @@ namespace System.Windows.Forms {
 		private ContentAlignment	text_alignment;
 		private CheckState		check_state;
 		private bool			three_state;
+		private int			checkmark_size=13;		// Keep it configurable for accessability
+
 
 		#region Public Constructors
 		public CheckBox() {
@@ -92,7 +97,7 @@ namespace System.Windows.Forms {
 				if (value != check_alignment) {
 					check_alignment = value;
 
-					Redraw();
+					CheckRedraw();
 				}
 			}
 		}
@@ -108,11 +113,11 @@ namespace System.Windows.Forms {
 			set {
 				if (value && (check_state != CheckState.Checked)) {
 					check_state = CheckState.Checked;
-					Redraw();
+					CheckRedraw();
 					OnCheckedChanged(EventArgs.Empty);
 				} else if (!value && (check_state != CheckState.Unchecked)) {
 					check_state = CheckState.Unchecked;
-					Redraw();
+					CheckRedraw();
 					OnCheckedChanged(EventArgs.Empty);
 				}
 			}
@@ -134,7 +139,7 @@ namespace System.Windows.Forms {
 					}
 
 					OnCheckStateChanged(EventArgs.Empty);
-					Redraw();
+					CheckRedraw();
 				}
 			}
 		}
@@ -147,7 +152,7 @@ namespace System.Windows.Forms {
 			set {
 				if (value != text_alignment) {
 					text_alignment = value;
-					Redraw();
+					CheckRedraw();
 				}
 			}
 		}
@@ -216,7 +221,30 @@ Console.WriteLine("CheckState changed");
 		}
 
 		protected override void OnClick(EventArgs e) {
-Console.WriteLine("Got click");
+Console.WriteLine("Got click event");
+			if (auto_check) {
+				switch(check_state) {
+					case CheckState.Unchecked: {
+						if (three_state) {
+							CheckState = CheckState.Indeterminate;
+						} else {
+							CheckState = CheckState.Checked;
+						}
+						break;
+					}
+
+					case CheckState.Indeterminate: {
+						CheckState = CheckState.Checked;
+						break;
+					}
+
+					case CheckState.Checked: {
+						CheckState = CheckState.Unchecked;
+						break;
+					}
+				}
+				CheckRedraw();
+			}
 			base.OnClick (e);
 		}
 
@@ -231,7 +259,6 @@ Console.WriteLine("Got click");
 		protected override bool ProcessMnemonic(char charCode) {
 			return base.ProcessMnemonic (charCode);
 		}
-
 		#endregion	// Protected Instance Methods
 
 		#region Events
@@ -239,6 +266,202 @@ Console.WriteLine("Got click");
 		public event EventHandler	CheckedChanged;
 		public event EventHandler	CheckStateChanged;
 		#endregion	// Events
+
+		#region	Internal drawing code
+		internal override bool CheckRedraw() {
+			return base.CheckRedraw ();
+		}
+
+		internal override void Redraw() {
+			StringFormat		text_format;
+			Rectangle		client_rectangle;
+			Rectangle		text_rectangle;
+			Rectangle		checkbox_rectangle;
+			SolidBrush		sb;
+Console.WriteLine("REDRAWING");
+			client_rectangle = ClientRectangle;
+			text_rectangle = client_rectangle;
+			checkbox_rectangle = new Rectangle(text_rectangle.X, text_rectangle.Y, checkmark_size, checkmark_size);
+
+			text_format = new StringFormat();
+			text_format.Alignment=StringAlignment.Near;
+			text_format.LineAlignment=StringAlignment.Center;
+
+			/* Calculate the position of text and checkbox rectangle */
+			if (appearance!=Appearance.Button) {
+				switch(check_alignment) {
+					case ContentAlignment.BottomCenter: {
+						if (client_rectangle.Height<checkmark_size*2) {
+							ClientSize=new Size(client_rectangle.Width, checkmark_size*2);
+							client_rectangle = ClientRectangle;
+						}
+						checkbox_rectangle.X=(client_rectangle.Right-client_rectangle.Left)/2-checkmark_size/2;
+						checkbox_rectangle.Y=client_rectangle.Bottom-checkmark_size;
+						text_rectangle.X=client_rectangle.X;
+						text_rectangle.Width=client_rectangle.Width;
+						break;
+					}
+
+					case ContentAlignment.BottomLeft: {
+						checkbox_rectangle.X=client_rectangle.Left;
+						checkbox_rectangle.Y=client_rectangle.Bottom-checkmark_size;
+						text_rectangle.X=client_rectangle.X+checkmark_size;
+						text_rectangle.Width=client_rectangle.Width-checkmark_size;
+						break;
+					}
+
+					case ContentAlignment.BottomRight: {
+						checkbox_rectangle.X=client_rectangle.Right-checkmark_size;
+						checkbox_rectangle.Y=client_rectangle.Bottom-checkmark_size;
+						text_rectangle.X=client_rectangle.X;
+						text_rectangle.Width=client_rectangle.Width-checkmark_size;
+						break;
+					}
+
+					case ContentAlignment.MiddleCenter: {
+						checkbox_rectangle.X=(client_rectangle.Right-client_rectangle.Left)/2-checkmark_size/2;
+						checkbox_rectangle.Y=(client_rectangle.Bottom-client_rectangle.Top)/2-checkmark_size/2;
+						text_rectangle.X=client_rectangle.X;
+						text_rectangle.Width=client_rectangle.Width;
+						break;
+					}
+
+					default:
+					case ContentAlignment.MiddleLeft: {
+						checkbox_rectangle.X=client_rectangle.Left;
+						checkbox_rectangle.Y=(client_rectangle.Bottom-client_rectangle.Top)/2-checkmark_size/2;
+						text_rectangle.X=client_rectangle.X+checkmark_size;
+						text_rectangle.Width=client_rectangle.Width-checkmark_size;
+						break;
+					}
+
+					case ContentAlignment.MiddleRight: {
+						checkbox_rectangle.X=client_rectangle.Right-checkmark_size;
+						checkbox_rectangle.Y=(client_rectangle.Bottom-client_rectangle.Top)/2-checkmark_size/2;
+						text_rectangle.X=client_rectangle.X;
+						text_rectangle.Width=client_rectangle.Width-checkmark_size;
+						break;
+					}
+
+					case ContentAlignment.TopCenter: {
+						if (client_rectangle.Height<checkmark_size*2) {
+							ClientSize=new Size(client_rectangle.Width, checkmark_size*2);
+							client_rectangle = ClientRectangle;
+						}
+						checkbox_rectangle.X=(client_rectangle.Right-client_rectangle.Left)/2-checkmark_size/2;
+						checkbox_rectangle.Y=client_rectangle.Top;
+						text_rectangle.X=client_rectangle.X;
+						text_rectangle.Y=checkmark_size;
+						text_rectangle.Width=client_rectangle.Width;
+						text_rectangle.Height=client_rectangle.Height-checkmark_size;
+						break;
+					}
+
+					case ContentAlignment.TopLeft: {
+						checkbox_rectangle.X=client_rectangle.Left;
+						checkbox_rectangle.Y=client_rectangle.Top;
+						text_rectangle.X=client_rectangle.X+checkmark_size;
+						text_rectangle.Width=client_rectangle.Width-checkmark_size;
+						break;
+					}
+
+					case ContentAlignment.TopRight: {
+						checkbox_rectangle.X=client_rectangle.Right-checkmark_size;
+						checkbox_rectangle.Y=client_rectangle.Top;
+						text_rectangle.X=client_rectangle.X;
+						text_rectangle.Width=client_rectangle.Width-checkmark_size;
+						break;
+					}
+				}
+			} else {
+				text_rectangle.X=client_rectangle.X;
+				text_rectangle.Width=client_rectangle.Width;
+			}
+
+			/* Set the horizontal alignment of our text */
+			switch(text_alignment) {
+				case ContentAlignment.BottomLeft:
+				case ContentAlignment.MiddleLeft:
+				case ContentAlignment.TopLeft: {
+					text_format.Alignment=StringAlignment.Near;
+					break;
+				}
+
+				case ContentAlignment.BottomCenter:
+				case ContentAlignment.MiddleCenter:
+				case ContentAlignment.TopCenter: {
+					text_format.Alignment=StringAlignment.Center;
+					break;
+				}
+
+				case ContentAlignment.BottomRight:
+				case ContentAlignment.MiddleRight:
+				case ContentAlignment.TopRight: {
+					text_format.Alignment=StringAlignment.Far;
+					break;
+				}
+			}
+
+			/* Set the vertical alignment of our text */
+			switch(text_alignment) {
+				case ContentAlignment.TopLeft: 
+				case ContentAlignment.TopCenter: 
+				case ContentAlignment.TopRight: {
+					text_format.LineAlignment=StringAlignment.Near;
+					break;
+				}
+
+				case ContentAlignment.BottomLeft:
+				case ContentAlignment.BottomCenter:
+				case ContentAlignment.BottomRight: {
+					text_format.LineAlignment=StringAlignment.Far;
+					break;
+				}
+
+				case ContentAlignment.MiddleLeft:
+				case ContentAlignment.MiddleCenter:
+				case ContentAlignment.MiddleRight: {
+					text_format.LineAlignment=StringAlignment.Center;
+					break;
+				}
+			}
+
+			ButtonState state = ButtonState.Normal;
+			if (FlatStyle == FlatStyle.Flat) {
+				state |= ButtonState.Flat;
+			}
+			
+			if (Checked) {
+				state |= ButtonState.Checked;
+			}
+			
+			if (ThreeState && (CheckState == CheckState.Indeterminate)) {
+				state |= ButtonState.Checked;
+				state |= ButtonState.Pushed;
+			}
+
+			// Start drawing
+
+			sb=new SolidBrush(BackColor);
+			this.DeviceContext.FillRectangle(sb, ClientRectangle);
+			sb.Dispose();
+
+			if (appearance!=Appearance.Button) {
+				ControlPaint.DrawCheckBox(this.DeviceContext, checkbox_rectangle, state);
+			} else {
+				ControlPaint.DrawButton(this.DeviceContext, text_rectangle, state);
+			}
+
+			/* Place the text; to be compatible with Windows place it after the checkbox has been drawn */
+			sb=new SolidBrush(ForeColor);
+			this.DeviceContext.DrawString(Text, Font, sb, text_rectangle, text_format);
+			sb.Dispose();
+
+			if (Focused) {
+				ControlPaint.DrawFocusRectangle(this.DeviceContext, text_rectangle);
+			}
+		}
+		#endregion	// Internal drawing code
 	}
 }
 #if not
@@ -252,10 +475,10 @@ Console.WriteLine("Got click");
 		CheckState			checkState;
 		bool					threeState;
 		ContentAlignment	textAlign;
-		Rectangle			textRect;
-		Rectangle			checkRect;
+		Rectangle			text_rectangle;
+		Rectangle			checkbox_rectangle;
 		StringFormat		textFormat;
-		int					checkMarkSize=13;		// Keep it configurable for accessability
+		int					checkmark_size=13;		// Keep it configurable for accessability
 		Graphics				canvasDC;
 		Bitmap				canvasBmp;
 		
@@ -278,15 +501,15 @@ Console.WriteLine("Got click");
 			textFormat = new StringFormat();
 			textFormat.Alignment=StringAlignment.Near;
 			textFormat.LineAlignment=StringAlignment.Center;
-			textRect = ClientRectangle;
-			textRect.X+=checkMarkSize;
-			textRect.Width-=checkMarkSize;
+			text_rectangle = ClientRectangle;
+			text_rectangle.X+=checkmark_size;
+			text_rectangle.Width-=checkmark_size;
 
 			/* ... and for drawing our checkbox */
-			checkRect.X=ClientRectangle.Left;
-			checkRect.Y=(ClientRectangle.Bottom-ClientRectangle.Top)/2-checkMarkSize/2;
-			checkRect.Width=checkMarkSize;
-			checkRect.Height=checkMarkSize;
+			checkbox_rectangle.X=ClientRectangle.Left;
+			checkbox_rectangle.Y=(ClientRectangle.Bottom-ClientRectangle.Top)/2-checkmark_size/2;
+			checkbox_rectangle.Width=checkmark_size;
+			checkbox_rectangle.Height=checkmark_size;
 
 			SizeChanged+=new System.EventHandler(CheckboxSizeChanged);
 			GotFocus+=new System.EventHandler(CheckboxUpdate);
@@ -322,39 +545,6 @@ Console.WriteLine("Got click");
 					OnCheckStateChanged(new EventArgs());
 				}
 			}
-		}
-		
-		[MonoTODO]
-		protected override CreateParams CreateParams {
-			get {
-				CreateParams createParams = base.CreateParams;
-	
-				createParams.ClassName = "BUTTON";
-
-				createParams.Style = (int) (
-					(int)WindowStyles.WS_CHILD | 
-					(int)WindowStyles.WS_VISIBLE | 
-					(int)ButtonStyles.BS_CHECKBOX |
-					(int)ButtonStyles.BS_NOTIFY |
-					(int)WindowStyles.WS_CLIPSIBLINGS |
-					(int)WindowStyles.WS_CLIPCHILDREN |
-					(int)WindowStyles.WS_TABSTOP |
-					(int)SS_Static_Control_Types.SS_LEFT );
-
-				if (autoCheck) {
-					createParams.Style |= (int)ButtonStyles.BS_AUTOCHECKBOX;
-				}
-
-				/* We need this, we draw ourselves */
-				createParams.Style |= (int) ButtonStyles.BS_OWNERDRAW;
-
-				return createParams;
-			}
-		}
-		
-		[MonoTODO]
-		protected override Size DefaultSize {
-			get { return new Size(100,checkMarkSize); }
 		}
 		
 		[MonoTODO]
@@ -504,89 +694,89 @@ Console.WriteLine("Got click");
 			if (appearance!=Appearance.Button) {
 				switch(checkAlign) {
 					case ContentAlignment.BottomCenter: {
-						if (ClientRectangle.Height<checkMarkSize*2) {
-							ClientSize=new Size(ClientRectangle.Width, checkMarkSize*2);
+						if (ClientRectangle.Height<checkmark_size*2) {
+							ClientSize=new Size(ClientRectangle.Width, checkmark_size*2);
 						}
-						checkRect.X=(ClientRectangle.Right-ClientRectangle.Left)/2-checkMarkSize/2;
-						checkRect.Y=ClientRectangle.Bottom-checkMarkSize;
-						textRect.X=ClientRectangle.X;
-						textRect.Width=ClientRectangle.Width;
+						checkbox_rectangle.X=(ClientRectangle.Right-ClientRectangle.Left)/2-checkmark_size/2;
+						checkbox_rectangle.Y=ClientRectangle.Bottom-checkmark_size;
+						text_rectangle.X=ClientRectangle.X;
+						text_rectangle.Width=ClientRectangle.Width;
 						break;
 					}
 
 					case ContentAlignment.BottomLeft: {
-						checkRect.X=ClientRectangle.Left;
-						checkRect.Y=ClientRectangle.Bottom-checkMarkSize;
-						textRect.X=ClientRectangle.X+checkMarkSize;
-						textRect.Width=ClientRectangle.Width-checkMarkSize;
+						checkbox_rectangle.X=ClientRectangle.Left;
+						checkbox_rectangle.Y=ClientRectangle.Bottom-checkmark_size;
+						text_rectangle.X=ClientRectangle.X+checkmark_size;
+						text_rectangle.Width=ClientRectangle.Width-checkmark_size;
 						break;
 					}
 
 					case ContentAlignment.BottomRight: {
-						checkRect.X=ClientRectangle.Right-checkMarkSize;
-						checkRect.Y=ClientRectangle.Bottom-checkMarkSize;
-						textRect.X=ClientRectangle.X;
-						textRect.Width=ClientRectangle.Width-checkMarkSize;
+						checkbox_rectangle.X=ClientRectangle.Right-checkmark_size;
+						checkbox_rectangle.Y=ClientRectangle.Bottom-checkmark_size;
+						text_rectangle.X=ClientRectangle.X;
+						text_rectangle.Width=ClientRectangle.Width-checkmark_size;
 						break;
 					}
 
 					case ContentAlignment.MiddleCenter: {
-						checkRect.X=(ClientRectangle.Right-ClientRectangle.Left)/2-checkMarkSize/2;
-						checkRect.Y=(ClientRectangle.Bottom-ClientRectangle.Top)/2-checkMarkSize/2;
-						textRect.X=ClientRectangle.X;
-						textRect.Width=ClientRectangle.Width;
+						checkbox_rectangle.X=(ClientRectangle.Right-ClientRectangle.Left)/2-checkmark_size/2;
+						checkbox_rectangle.Y=(ClientRectangle.Bottom-ClientRectangle.Top)/2-checkmark_size/2;
+						text_rectangle.X=ClientRectangle.X;
+						text_rectangle.Width=ClientRectangle.Width;
 						break;
 					}
 
 					default:
 					case ContentAlignment.MiddleLeft: {
-						checkRect.X=ClientRectangle.Left;
-						checkRect.Y=(ClientRectangle.Bottom-ClientRectangle.Top)/2-checkMarkSize/2;
-						textRect.X=ClientRectangle.X+checkMarkSize;
-						textRect.Width=ClientRectangle.Width-checkMarkSize;
+						checkbox_rectangle.X=ClientRectangle.Left;
+						checkbox_rectangle.Y=(ClientRectangle.Bottom-ClientRectangle.Top)/2-checkmark_size/2;
+						text_rectangle.X=ClientRectangle.X+checkmark_size;
+						text_rectangle.Width=ClientRectangle.Width-checkmark_size;
 						break;
 					}
 
 					case ContentAlignment.MiddleRight: {
-						checkRect.X=ClientRectangle.Right-checkMarkSize;
-						checkRect.Y=(ClientRectangle.Bottom-ClientRectangle.Top)/2-checkMarkSize/2;
-						textRect.X=ClientRectangle.X;
-						textRect.Width=ClientRectangle.Width-checkMarkSize;
+						checkbox_rectangle.X=ClientRectangle.Right-checkmark_size;
+						checkbox_rectangle.Y=(ClientRectangle.Bottom-ClientRectangle.Top)/2-checkmark_size/2;
+						text_rectangle.X=ClientRectangle.X;
+						text_rectangle.Width=ClientRectangle.Width-checkmark_size;
 						break;
 					}
 
 					case ContentAlignment.TopCenter: {
-						if (ClientRectangle.Height<checkMarkSize*2) {
-							ClientSize=new Size(ClientRectangle.Width, checkMarkSize*2);
+						if (ClientRectangle.Height<checkmark_size*2) {
+							ClientSize=new Size(ClientRectangle.Width, checkmark_size*2);
 						}
-						checkRect.X=(ClientRectangle.Right-ClientRectangle.Left)/2-checkMarkSize/2;
-						checkRect.Y=ClientRectangle.Top;
-						textRect.X=ClientRectangle.X;
-						textRect.Y=checkMarkSize;
-						textRect.Width=ClientRectangle.Width;
-						textRect.Height=ClientRectangle.Height-checkMarkSize;
+						checkbox_rectangle.X=(ClientRectangle.Right-ClientRectangle.Left)/2-checkmark_size/2;
+						checkbox_rectangle.Y=ClientRectangle.Top;
+						text_rectangle.X=ClientRectangle.X;
+						text_rectangle.Y=checkmark_size;
+						text_rectangle.Width=ClientRectangle.Width;
+						text_rectangle.Height=ClientRectangle.Height-checkmark_size;
 						break;
 					}
 
 					case ContentAlignment.TopLeft: {
-						checkRect.X=ClientRectangle.Left;
-						checkRect.Y=ClientRectangle.Top;
-						textRect.X=ClientRectangle.X+checkMarkSize;
-						textRect.Width=ClientRectangle.Width-checkMarkSize;
+						checkbox_rectangle.X=ClientRectangle.Left;
+						checkbox_rectangle.Y=ClientRectangle.Top;
+						text_rectangle.X=ClientRectangle.X+checkmark_size;
+						text_rectangle.Width=ClientRectangle.Width-checkmark_size;
 						break;
 					}
 
 					case ContentAlignment.TopRight: {
-						checkRect.X=ClientRectangle.Right-checkMarkSize;
-						checkRect.Y=ClientRectangle.Top;
-						textRect.X=ClientRectangle.X;
-						textRect.Width=ClientRectangle.Width-checkMarkSize;
+						checkbox_rectangle.X=ClientRectangle.Right-checkmark_size;
+						checkbox_rectangle.Y=ClientRectangle.Top;
+						text_rectangle.X=ClientRectangle.X;
+						text_rectangle.Width=ClientRectangle.Width-checkmark_size;
 						break;
 					}
 				}
 			} else {
-				textRect.X=ClientRectangle.X;
-				textRect.Width=ClientRectangle.Width;
+				text_rectangle.X=ClientRectangle.X;
+				text_rectangle.Width=ClientRectangle.Width;
 			}
 
 			/* Set the horizontal alignment of our text */
@@ -677,18 +867,18 @@ Console.WriteLine("Got click");
 			}
 
 			if (appearance!=Appearance.Button) {
-				ControlPaint.DrawCheckBox(canvasDC, checkRect, state);
+				ControlPaint.DrawCheckBox(canvasDC, checkbox_rectangle, state);
 			} else {
-				ControlPaint.DrawButton(canvasDC, textRect, state);
+				ControlPaint.DrawButton(canvasDC, text_rectangle, state);
 			}
 
 			/* Place the text; to be compatible with Windows place it after the checkbox has been drawn */
 			sb=new SolidBrush(base.foreColor);
-			canvasDC.DrawString(Text, Font, sb, textRect, textFormat);
+			canvasDC.DrawString(Text, Font, sb, text_rectangle, textFormat);
 			sb.Dispose();
 
 			if (Focused) {
-				ControlPaint.DrawFocusRectangle(canvasDC, textRect);
+				ControlPaint.DrawFocusRectangle(canvasDC, text_rectangle);
 			}
 		}
 
@@ -700,8 +890,8 @@ Console.WriteLine("Got click");
 		private void CheckboxSizeChanged(object sender, System.EventArgs e)
 		{
 			/* Force recalculation of text & checkbox rectangles */
-			textRect.Y=ClientRectangle.Y;
-			textRect.Height=ClientRectangle.Height;
+			text_rectangle.Y=ClientRectangle.Y;
+			text_rectangle.Height=ClientRectangle.Height;
 			UpdateCheckbox();
 		}
 	}
