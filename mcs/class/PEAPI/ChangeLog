@@ -1,3 +1,9 @@
+2004-07-16  Jackson Harper  <jackson@ximian.com>
+
+	* PEAPI.cs: make sure small index sizes get set properly. Use a
+	continue to reduce nesting a little and make code almost mildly
+	readable.
+	
 2004-07-13  Jackson Harper  <jackson@ximian.com>
 
 	* PEAPI.cs: Use a byte array hash code provider and comprarer, so

@@ -4636,11 +4636,14 @@ if (rsrc != null)
     
     private void SetIndexSizes() {
       for (int i=0; i < numMetaDataTables; i++) {
-        if (metaDataTables[i] != null) {
+          if (metaDataTables[i] == null)
+                  continue;
+
           uint count = (uint)metaDataTables[i].Count;
-          if (count > maxSmlIxSize) {
-            largeIx[i] = true;
-                                                MDTable tabIx = (MDTable)i;
+          if (count > maxSmlIxSize)
+                  largeIx[i] = true;
+
+            MDTable tabIx = (MDTable)i;
             if (count > max5BitSmlIx) {
               lgeCIx[(int)CIx.HasCustomAttr] = true;
             }
@@ -4672,8 +4675,6 @@ if (rsrc != null)
               if ((tabIx == MDTable.TypeDef) || (tabIx == MDTable.Method)) 
                 lgeCIx[(int)CIx.TypeOrMethodDef] = true; 
             }
-          }
-        }
       }
                         if (strings.LargeIx()) {
                                 largeStrings = true;
