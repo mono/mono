@@ -1,3 +1,12 @@
+2005-02-21  Atsushi Enomoto <atsushi@ximian.com>
+
+	* simplify.xsl : currently key to external document results in
+	  infinite loop. Should be fixed but for now exclude from tests.
+	* alltest.cs : Don't use XmlTextWriter for transformation output. It
+	  prevents us from testing html output.
+	* Makefile : now RUNTIME could be empty string (for MS output
+	  generation).
+
 2005-02-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* catalog.diff : changed diff format to unified style.
