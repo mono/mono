@@ -310,21 +310,22 @@ namespace Mono.ILASM {
 
                         WriteCode (code_gen, methoddef);
 
+                        code_gen.Report.Message (String.Format ("Assembled method '<Module>'::{0}", name));
                         is_defined = true;
                 }
 
                 /// <summary>
                 ///  Define a member method
                 /// </summary>
-                public void Define (CodeGen code_gen, PEAPI.ClassDef classdef)
+                public void Define (CodeGen code_gen, TypeDef typedef)
                 {
                         if (is_defined)
                                 return;
 
-                        Resolve (code_gen, classdef);
+                        Resolve (code_gen, (PEAPI.ClassDef) typedef.ClassDef);
                         WriteCode (code_gen, methoddef);
 
-                        is_defined = true;
+                        code_gen.Report.Message (String.Format ("Assembled method {0}::{1}", typedef.FullName, name));                        is_defined = true;
                 }
 
                 public void AddInstr (IInstr instr)

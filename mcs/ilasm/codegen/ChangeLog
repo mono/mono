@@ -1,3 +1,8 @@
+2004-06-24  Jackson Harper  <jackson@ximian.com>
+
+	* MethodDef.cs: Report when defining methods just like MS.
+	* TypeDef.cs: Error message when we can't find a locla method.
+	
 2004-06-23  Jackson Harper  <jackson@ximian.com>
 
 	* MethodDef.cs: sigh, another varargs fix that probably breaks

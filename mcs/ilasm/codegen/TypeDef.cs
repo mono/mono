@@ -302,7 +302,7 @@ namespace Mono.ILASM {
                         }
 
                         foreach (MethodDef methoddef in method_table.Values) {
-                                methoddef.Define (code_gen, classdef);
+                                methoddef.Define (code_gen, this);
                         }
 
                         if (event_list != null) {
@@ -354,6 +354,11 @@ namespace Mono.ILASM {
                 {
                         MethodDef methoddef = (MethodDef) method_table[signature];
 
+                        if (methoddef == null) {
+                                code_gen.Report.Error ("Unable to resolve method: " + signature);
+                                Environment.Exit (1);
+                        }
+
                         return methoddef.Resolve (code_gen, classdef);
                 }
 
@@ -361,8 +366,13 @@ namespace Mono.ILASM {
                                 CodeGen code_gen, PEAPI.Type[] opt)
                 {
                         MethodDef methoddef = (MethodDef) method_table[signature];
-                        methoddef.Resolve (code_gen, classdef);
 
+                        if (methoddef == null) {
+                                code_gen.Report.Error ("Unable to resolve method: " + signature);
+                                Environment.Exit (1);
+                        }
+
+                        methoddef.Resolve (code_gen, classdef);
                         return methoddef.GetVarargSig (opt);
                 }
 
