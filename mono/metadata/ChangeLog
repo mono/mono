@@ -1,5 +1,10 @@
 2004-01-16  Zoltan Varga  <vargaz@freemail.hu>
 
+	* class.c (mono_bounded_array_class_get): Set 'bounded' to FALSE for
+	multi-dimensional arrays.
+	(mono_class_is_assignable_from): Check vectors<->one dim. arrays.
+	(mono_class_from_mono_type): Use bounded_array_class_get.
+	
 	* class.c (mono_bounded_array_class_get): New function which takes
 	a 'bounded' bool argument to distinguish vectors from one dimensional
 	arrays.
