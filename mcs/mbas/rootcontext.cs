@@ -24,6 +24,11 @@ namespace Mono.MonoBASIC {
 		static Tree tree;
 
 		//
+		// Tracks Imported namespaces
+		//
+		static SourceBeingCompiled sourceBeingCompiled = new SourceBeingCompiled();
+
+		//
 		// This hashtable contains all of the #definitions across the source code
 		// it is used by the ConditionalAttribute handler.
 		//
@@ -98,6 +103,21 @@ namespace Mono.MonoBASIC {
 			attribute_types.Add (tc);
 		}
 		
+		public static void InitializeImports(ArrayList ImportsList)
+		{
+			sourceBeingCompiled.InitializeImports (ImportsList);
+		}
+
+		public static SourceBeingCompiled SourceBeingCompiled
+		{
+			get { return sourceBeingCompiled; }
+		}
+
+		public static void VerifyImports()
+		{
+			sourceBeingCompiled.VerifyImports();
+		}
+
 		// 
 		// The default compiler checked state
 		//
@@ -467,7 +487,7 @@ namespace Mono.MonoBASIC {
 			//
 			// Try the aliases in the current namespace
 			//
-			string alias = curr_ns.LookupAlias (name);
+			string alias = sourceBeingCompiled.LookupAlias (name);
 
 			if (alias != null) {
 				t = TypeManager.LookupType (alias);
@@ -490,13 +510,15 @@ namespace Mono.MonoBASIC {
 				//
 				// Then try with the using clauses
 				//
-				ICollection using_list = ns.UsingTable;
 
-				if (using_list == null)
+				ICollection imports_list = sourceBeingCompiled.ImportsTable;
+
+				if (imports_list == null)
 					continue;
 
 				Type match = null;
-				foreach (Namespace.UsingEntry ue in using_list) {
+				foreach (SourceBeingCompiled.ImportsEntry ue in imports_list) {
+				//TODO: deal with standard modules
 					match = TypeManager.LookupType (MakeFQN (ue.Name, name));
 					if (match != null){
 						if (t != null){
@@ -514,7 +536,7 @@ namespace Mono.MonoBASIC {
 				//
 				// Try with aliases
 				//
-				string a = ns.LookupAlias (name);
+				string a = sourceBeingCompiled.LookupAlias (name);
 				if (a != null) {
 					t = TypeManager.LookupType (a);
 					if (t != null)

@@ -629,8 +629,8 @@ public class TypeManager {
 	{
 		CaseInsensitiveHashtable namespaces = new CaseInsensitiveHashtable ();
 
-		foreach (Assembly a in assemblies){
-			foreach (Type t in a.GetTypes ()){
+		foreach (Assembly a in assemblies) {
+			foreach (Type t in a.GetTypes ()) {
 				string ns = t.Namespace;
 
 				if (namespaces.Contains (ns))
@@ -639,8 +639,8 @@ public class TypeManager {
 			}
 		}
 
-		foreach (ModuleBuilder mb in modules){
-			foreach (Type t in mb.GetTypes ()){
+		foreach (ModuleBuilder mb in modules) {
+			foreach (Type t in mb.GetTypes ()) {
 				string ns = t.Namespace;
 
 				if (namespaces.Contains (ns))
@@ -648,6 +648,7 @@ public class TypeManager {
 				namespaces [ns] = ns;
 			}
 		}
+
 		return namespaces;
 	}
 	

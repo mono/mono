@@ -307,10 +307,7 @@ namespace Mono.MonoBASIC {
 		/// </summary>
 		public string LookupAlias (string name)
 		{
-			if (Namespace != null)
-				return Namespace.LookupAlias (name);
-			else
-				return null;
+			return RootContext.SourceBeingCompiled.LookupAlias (name);
 		}
 		
 		// 
@@ -543,13 +540,13 @@ namespace Mono.MonoBASIC {
 				//
 				// Now check the using clause list
 				//
-				ICollection using_list = ns.UsingTable;
-				
-				if (using_list == null)
+				ICollection imports_list = RootContext.SourceBeingCompiled.ImportsTable;
+
+				if (imports_list == null)
 					continue;
 
 				Type match = null;
-				foreach (Namespace.UsingEntry ue in using_list){
+				foreach (SourceBeingCompiled.ImportsEntry ue in imports_list){
 					match = LookupInterfaceOrClass (ue.Name, name, out error);
 					if (error)
 						return null;

@@ -1,3 +1,13 @@
+2004/03/02  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* sourcebeingcompiled.cs : new source/class to hold things previously contained in namespaces.cs 
+			because in C# they were semantically tied to nested namespaces, and in VB.NET 
+			they can occur only once per file.
+	* mbas.exe.sources: added sourcebeingcompiled.cs
+	* mb-parser.jay: reference RootContext.Sourcebeingcompiled things
+	* namespace.cs: move pieces to sourcebeingcompiled
+	* rootcontext.cs: use SourceBeingCompiled class
+	* decl.cs: reference RootContext.Sourcebeingcompiled things
+
 2004-03-02 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-tokenizer.cs: Support for '-' delimiter in DateTime
 

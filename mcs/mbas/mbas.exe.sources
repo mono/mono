@@ -26,6 +26,7 @@ parameter.cs
 pending.cs
 report.cs
 rootcontext.cs
+sourcebeingcompiled.cs
 statementCollection.cs
 statement.cs
 support.cs

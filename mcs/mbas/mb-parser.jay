@@ -567,11 +567,11 @@ imports_terms
 imports_term
 	: qualified_identifier
 	  {
-		current_namespace.Using ((string) $1, lexer.Location);
+		RootContext.SourceBeingCompiled.Imports ((string) $1, lexer.Location);
 	  }
 	| qualified_identifier ASSIGN qualified_identifier
 	  {
-		current_namespace.UsingAlias ((string) $1, (string) $3, lexer.Location);
+		RootContext.SourceBeingCompiled.ImportsWithAlias ((string) $1, (string) $3, lexer.Location);
 	  }
 	;
 
@@ -4074,9 +4074,8 @@ private void ReportError9998()
 
 protected override int parse ()
 {
+	RootContext.InitializeImports(ImportsList);
 	current_namespace = new Namespace (null, RootContext.RootNamespace);
-	foreach(string preImportedNamespace in ImportsList)
-		current_namespace.Using(preImportedNamespace, Location.Null);
 	current_container = RootContext.Tree.Types;
 	current_container.Namespace = current_namespace;
 	oob_stack = new Stack ();
@@ -4085,7 +4084,7 @@ protected override int parse ()
 	tmp_blocks = new Stack(); 
 	with_stack = new Stack();
 	statement_stack = new Stack(); 	
-	
+
 	UseExtendedSyntax = name.EndsWith(".mbs");
 	OptionExplicit = InitialOptionExplicit || UseExtendedSyntax;
 	OptionStrict = InitialOptionStrict || UseExtendedSyntax;
@@ -4093,19 +4092,17 @@ protected override int parse ()
 
 	lexer = new Tokenizer (input, name, defines);
 	StringBuilder value = new StringBuilder ();
-	//yacc_verbose_flag=true;
-	try 
-	{
+	try {
 		if (yacc_verbose_flag)
 			yyparse (lexer, new yydebug.yyDebugSimple ());
 		else
 			yyparse (lexer);
-	} 
-	catch (Exception e)
-	{
+	} catch (Exception e) {
 		Report.Error (29999, lexer.Location, lexer.location + "\nParsing error in " + lexer.ref_name + "\n" + e.ToString());
 	}
-	
+
+	RootContext.VerifyImports();
+
 	return Report.Errors;
 }
 
