@@ -239,9 +239,13 @@ namespace MonoTests.System.Security.Permissions {
 			snip.Version = new Version ("1.2.3.4");
 
 			// because Name == String.Empty, which is illegal using the other constructor
-			// but (somewhat) required to copy the teo other informations
+			// but (somewhat) required to copy the two other informations
 			StrongNameIdentityPermission copy = (StrongNameIdentityPermission)snip.Copy ();
+#if NET_2_0
 			Assert.IsTrue (copy.Equals (snip), "Equals");
+#else
+			Assert.IsFalse (copy.Equals (snip), "Equals");
+#endif
 		}
 
 		private void Compare (StrongNameIdentityPermission p1, StrongNameIdentityPermission p2, string prefix)

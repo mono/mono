@@ -60,7 +60,9 @@ namespace MonoTests.System.Security.Permissions {
 		public void PermissionState_None ()
 		{
 			SiteIdentityPermission sip = new SiteIdentityPermission (PermissionState.None);
+#if NET_2_0
 			Assert.AreEqual (String.Empty, sip.Site, "Site");
+#endif
 			SecurityElement se = sip.ToXml ();
 			// only class and version are present
 			Assert.AreEqual (2, se.Attributes.Count, "Xml-Attributes");

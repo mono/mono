@@ -222,12 +222,6 @@ namespace MonoTests.System.Security.Permissions {
 			p3 = (PublisherIdentityPermission) p1.Union (p2);
 			AssertEquals ("cert U None == cert", p3.ToXml ().ToString (), p1.ToXml ().ToString ());
 			X509Certificate x2 = new X509Certificate (cert2);
-#if !NET_2_0
-			// 2 different certificates
-			p2 = new PublisherIdentityPermission (x2);
-			p3 = (PublisherIdentityPermission) p1.Union (p2);
-			AssertNull ("cert1 U cert2 == null", p3);
-#endif
 			// 2 certificates (same)
 			x2 = new X509Certificate (cert);
 			p2 = new PublisherIdentityPermission (x2);
@@ -236,9 +230,6 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
-#if !NET_2_0
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void Union_DifferentCertificates ()
 		{
 			PublisherIdentityPermission p1 = new PublisherIdentityPermission (x509);
@@ -253,6 +244,8 @@ namespace MonoTests.System.Security.Permissions {
 			AssertEquals ("Cert#2", (se.Children [1] as SecurityElement).Attribute ("X509v3Certificate"), p2.ToXml ().Attribute ("X509v3Certificate"));
 			// strangely it is still versioned as 'version="1"'.
 			AssertEquals ("Version", "1", se.Attribute ("version"));
+#else
+			AssertNull ("cert1 U cert2 == null", p);
 #endif
 		}
 

@@ -69,9 +69,10 @@ namespace MonoTests.System.Security.Permissions {
 			// only class and version are present
 			Assert.AreEqual (2, se.Attributes.Count, "Xml-Attributes");
 			Assert.IsNull (se.Children, "Xml-Children");
-
+#if NET_2_0
 			UrlIdentityPermission copy = (UrlIdentityPermission)uip.Copy ();
 			Assert.IsFalse (Object.ReferenceEquals (uip, copy), "ReferenceEquals");
+#endif
 		}
 
 #if !NET_2_0
