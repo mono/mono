@@ -42,61 +42,66 @@ namespace Microsoft.JScript
 		public const int LITERAL_while = 12;
 		public const int LITERAL_for = 13;
 		public const int LITERAL_in = 14;
-		public const int LITERAL_with = 15;
-		public const int LITERAL_switch = 16;
-		public const int LITERAL_case = 17;
-		public const int COLON = 18;
-		public const int LITERAL_default = 19;
-		public const int IDENTIFIER = 20;
-		public const int LITERAL_try = 21;
-		public const int LITERAL_catch = 22;
-		public const int LITERAL_finally = 23;
-		public const int LITERAL_var = 24;
-		public const int COMMA = 25;
-		public const int ASSIGNMENT = 26;
-		public const int COMPOUND_ASSIGNMENT = 27;
-		public const int INTERROGATION = 28;
-		public const int LOGICAL_OR = 29;
-		public const int LOGICAL_AND = 30;
-		public const int BITWISE_OR = 31;
-		public const int TRIANGLE = 32;
-		public const int BITWISE_AND = 33;
-		public const int L_THAN = 34;
-		public const int G_THAN = 35;
-		public const int LE_THAN = 36;
-		public const int GE_THAN = 37;
-		public const int LITERAL_instanceof = 38;
-		public const int PLUS = 39;
-		public const int MINUS = 40;
-		public const int TIMES = 41;
-		public const int SLASH = 42;
-		public const int PERCENT = 43;
-		public const int LITERAL_delete = 44;
-		public const int LITERAL_void = 45;
-		public const int LITERAL_typeof = 46;
-		public const int INCREMENT = 47;
-		public const int DECREMENT = 48;
-		public const int ADMIRATION = 49;
-		public const int LITERAL_new = 50;
-		public const int THIS = 51;
-		public const int STRING_LITERAL = 52;
-		public const int LSQUARE = 53;
-		public const int RSQUARE = 54;
-		public const int LITERAL_print = 55;
-		public const int LITERAL_function = 56;
-		public const int LITERAL_true = 57;
-		public const int LITERAL_false = 58;
-		public const int LITERAL_null = 59;
-		public const int TAB = 60;
-		public const int VERTICAL_TAB = 61;
-		public const int FORM_FEED = 62;
-		public const int SPACE = 63;
-		public const int NO_BREAK_SPACE = 64;
-		public const int LINE_FEED = 65;
-		public const int CARRIGE_RETURN = 66;
-		public const int LINE_SEPARATOR = 67;
-		public const int PARAGRAPH_SEPARATOR = 68;
-		public const int DOT = 69;
+		public const int LITERAL_continue = 15;
+		public const int IDENTIFIER = 16;
+		public const int LITERAL_break = 17;
+		public const int LITERAL_return = 18;
+		public const int LITERAL_with = 19;
+		public const int LITERAL_switch = 20;
+		public const int LITERAL_case = 21;
+		public const int COLON = 22;
+		public const int LITERAL_default = 23;
+		public const int LITERAL_throw = 24;
+		public const int LITERAL_try = 25;
+		public const int LITERAL_catch = 26;
+		public const int LITERAL_finally = 27;
+		public const int LITERAL_var = 28;
+		public const int COMMA = 29;
+		public const int ASSIGNMENT = 30;
+		public const int COMPOUND_ASSIGNMENT = 31;
+		public const int INTERROGATION = 32;
+		public const int LOGICAL_OR = 33;
+		public const int LOGICAL_AND = 34;
+		public const int BITWISE_OR = 35;
+		public const int TRIANGLE = 36;
+		public const int BITWISE_AND = 37;
+		public const int L_THAN = 38;
+		public const int G_THAN = 39;
+		public const int LE_THAN = 40;
+		public const int GE_THAN = 41;
+		public const int LITERAL_instanceof = 42;
+		public const int PLUS = 43;
+		public const int MINUS = 44;
+		public const int TIMES = 45;
+		public const int SLASH = 46;
+		public const int PERCENT = 47;
+		public const int LITERAL_delete = 48;
+		public const int LITERAL_void = 49;
+		public const int LITERAL_typeof = 50;
+		public const int INCREMENT = 51;
+		public const int DECREMENT = 52;
+		public const int ADMIRATION = 53;
+		public const int LITERAL_new = 54;
+		public const int THIS = 55;
+		public const int STRING_LITERAL = 56;
+		public const int LSQUARE = 57;
+		public const int RSQUARE = 58;
+		public const int LITERAL_print = 59;
+		public const int LITERAL_function = 60;
+		public const int LITERAL_true = 61;
+		public const int LITERAL_false = 62;
+		public const int LITERAL_null = 63;
+		public const int TAB = 64;
+		public const int VERTICAL_TAB = 65;
+		public const int FORM_FEED = 66;
+		public const int SPACE = 67;
+		public const int NO_BREAK_SPACE = 68;
+		public const int LINE_FEED = 69;
+		public const int CARRIGE_RETURN = 70;
+		public const int LINE_SEPARATOR = 71;
+		public const int PARAGRAPH_SEPARATOR = 72;
+		public const int DOT = 73;
+		public const int SL_COMMENT = 74;
 		
 		public JScriptLexer(Stream ins) : this(new ByteBuffer(ins))
 		{
@@ -119,30 +124,34 @@ namespace Microsoft.JScript
 			caseSensitiveLiterals = true;
 			setCaseSensitive(true);
 			literals = new Hashtable();
+			literals.Add("switch", 20);
+			literals.Add("case", 21);
 			literals.Add("for", 13);
-			literals.Add("if", 7);
-			literals.Add("delete", 44);
-			literals.Add("try", 21);
-			literals.Add("function", 56);
-			literals.Add("while", 12);
-			literals.Add("var", 24);
-			literals.Add("with", 15);
-			literals.Add("null", 59);
-			literals.Add("switch", 16);
-			literals.Add("catch", 22);
-			literals.Add("in", 14);
-			literals.Add("else", 10);
-			literals.Add("case", 17);
-			literals.Add("void", 45);
-			literals.Add("true", 57);
-			literals.Add("typeof", 46);
+			literals.Add("false", 62);
+			literals.Add("print", 59);
+			literals.Add("true", 61);
+			literals.Add("try", 25);
+			literals.Add("finally", 27);
+			literals.Add("void", 49);
+			literals.Add("typeof", 50);
+			literals.Add("instanceof", 42);
+			literals.Add("throw", 24);
+			literals.Add("continue", 15);
 			literals.Add("do", 11);
-			literals.Add("print", 55);
-			literals.Add("false", 58);
-			literals.Add("finally", 23);
-			literals.Add("new", 50);
-			literals.Add("default", 19);
-			literals.Add("instanceof", 38);
+			literals.Add("in", 14);
+			literals.Add("null", 63);
+			literals.Add("function", 60);
+			literals.Add("while", 12);
+			literals.Add("break", 17);
+			literals.Add("new", 54);
+			literals.Add("return", 18);
+			literals.Add("delete", 48);
+			literals.Add("if", 7);
+			literals.Add("default", 23);
+			literals.Add("else", 10);
+			literals.Add("var", 28);
+			literals.Add("catch", 26);
+			literals.Add("with", 19);
 		}
 		
 		public new Token nextToken()			//throws TokenStreamException
@@ -286,12 +295,6 @@ tryAgain:
 							theRetToken = returnToken_;
 							break;
 						}
-						case '/':
-						{
-							mSLASH(true);
-							theRetToken = returnToken_;
-							break;
-						}
 						case '%':
 						{
 							mPERCENT(true);
@@ -374,12 +377,20 @@ tryAgain:
 								mDECREMENT(true);
 								theRetToken = returnToken_;
 							}
+							else if ((LA(1)=='/') && (LA(2)=='/')) {
+								mSL_COMMENT(true);
+								theRetToken = returnToken_;
+							}
 							else if ((LA(1)=='+') && (true)) {
 								mPLUS(true);
 								theRetToken = returnToken_;
 							}
 							else if ((LA(1)=='-') && (true)) {
 								mMINUS(true);
+								theRetToken = returnToken_;
+							}
+							else if ((LA(1)=='/') && (true)) {
+								mSLASH(true);
 								theRetToken = returnToken_;
 							}
 						else
@@ -485,7 +496,7 @@ tryAgain:
 		_ttype = LINE_FEED;
 		
 		match('\u000A');
-		newline ();  { _ttype =Token.SKIP; }
+		newline (); { _ttype =Token.SKIP; }
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
 		{
 			_token = makeToken(_ttype);
@@ -515,7 +526,7 @@ tryAgain:
 		_ttype = LINE_SEPARATOR;
 		
 		match('\u2028');
-		newline ();  { _ttype =Token.SKIP; }
+		newline (); { _ttype =Token.SKIP; }
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
 		{
 			_token = makeToken(_ttype);
@@ -1019,7 +1030,7 @@ tryAgain:
 		match('"');
 		text.Length = _saveIndex;
 		{ // ( ... )+
-		int _cnt149=0;
+		int _cnt156=0;
 		for (;;)
 		{
 			switch ( LA(1) )
@@ -1053,12 +1064,12 @@ tryAgain:
 			}
 			default:
 			{
-				if (_cnt149 >= 1) { goto _loop149_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
+				if (_cnt156 >= 1) { goto _loop156_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
 			}
 			break; }
-			_cnt149++;
+			_cnt156++;
 		}
-_loop149_breakloop:		;
+_loop156_breakloop:		;
 		}    // ( ... )+
 		_saveIndex = text.Length;
 		match('"');
@@ -1143,11 +1154,11 @@ _loop149_breakloop:		;
 				}
 				default:
 				{
-					goto _loop153_breakloop;
+					goto _loop160_breakloop;
 				}
 				 }
 			}
-_loop153_breakloop:			;
+_loop160_breakloop:			;
 		}    // ( ... )*
 		_ttype = testLiteralsTable(_ttype);
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
@@ -1158,7 +1169,51 @@ _loop153_breakloop:			;
 		returnToken_ = _token;
 	}
 	
+	public void mSL_COMMENT(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; Token _token=null; int _begin=text.Length;
+		_ttype = SL_COMMENT;
+		
+		match("//");
+		{    // ( ... )*
+			for (;;)
+			{
+				if ((tokenSet_0_.member(LA(1))))
+				{
+					{
+						match(tokenSet_0_);
+					}
+				}
+				else
+				{
+					goto _loop164_breakloop;
+				}
+				
+			}
+_loop164_breakloop:			;
+		}    // ( ... )*
+		_ttype = Token.SKIP; newline ();
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
 	
+	
+	private static long[] mk_tokenSet_0_()
+	{
+		long[] data = new long[2048];
+		data[0]=-9217L;
+		for (int i = 1; i<=127; i++) { data[i]=-1L; }
+		data[128]=-3298534883329L;
+		for (int i = 129; i<=1022; i++) { data[i]=-1L; }
+		data[1023]=9223372036854775807L;
+		for (int i = 1024; i<=2047; i++) { data[i]=0L; }
+		return data;
+	}
+	public static readonly BitSet tokenSet_0_ = new BitSet(mk_tokenSet_0_());
 	
 }
 }
