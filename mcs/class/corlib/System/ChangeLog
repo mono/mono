@@ -1,4 +1,8 @@
 
+Wed Jun 18 19:22:22 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* Enum.cs: fix race in cache (bug#41841).
+
 Wed Jun 18 18:52:11 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* FloatingPointFormatter.cs: if the precision is not specified, use

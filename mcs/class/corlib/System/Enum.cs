@@ -35,7 +35,7 @@ namespace System {
 		internal static void GetInfo (Type enumType, out MonoEnumInfo info)
 		{
 			if (cache == null)
-				cache = new Hashtable ();
+				cache = Hashtable.Synchronized (new Hashtable ());
 			lock (cache) {
 				if (cache.ContainsKey (enumType)) {
 					info = (MonoEnumInfo) cache [enumType];
