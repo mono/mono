@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.17 $
+// $Revision: 1.18 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.18  2004/08/17 21:24:03  pbartok
+// - Finished IsVisible
+// - Added Win32GetWindowPlacement
+//
 // Revision 1.17  2004/08/13 21:42:15  pbartok
 // - Changed signature for GetCursorPos
 //
@@ -136,6 +140,34 @@ namespace System.Windows.Forms {
 		private struct POINT {
 			internal int		x;
 			internal int		y;
+		}
+
+		internal enum WindowPlacementFlags {
+			SW_HIDE			= 0,
+			SW_SHOWNORMAL       	= 1,
+			SW_NORMAL           	= 1,
+			SW_SHOWMINIMIZED    	= 2,
+			SW_SHOWMAXIMIZED    	= 3,
+			SW_MAXIMIZE         	= 3,
+			SW_SHOWNOACTIVATE   	= 4,
+			SW_SHOW             	= 5,
+			SW_MINIMIZE         	= 6,
+			SW_SHOWMINNOACTIVE  	= 7,
+			SW_SHOWNA           	= 8,
+			SW_RESTORE          	= 9,
+			SW_SHOWDEFAULT      	= 10,
+			SW_FORCEMINIMIZE    	= 11,
+			SW_MAX              	= 11
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		private struct WINDOWPLACEMENT {
+			internal uint			length;
+			internal uint			flags;
+			internal WindowPlacementFlags	showCmd;
+			internal POINT			ptMinPosition;
+			internal POINT			ptMaxPosition;
+			internal RECT			rcNormalPosition;
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
@@ -640,7 +672,14 @@ Console.WriteLine("Creating window at {0}:{1} {2}x{3}", cp.X, cp.Y, cp.Width, cp
 		}
 
 		internal override bool IsVisible(IntPtr handle) {
-			Console.WriteLine("Getting window visibility");
+			WINDOWPLACEMENT	wndpl;
+
+			wndpl = new WINDOWPLACEMENT();
+			wndpl.length=(uint)Marshal.SizeOf(wndpl);
+			Win32GetWindowPlacement(handle, ref wndpl);
+			if ((wndpl.showCmd == WindowPlacementFlags.SW_SHOWMINIMIZED)) {
+				return false;
+			}
 			return true;
 		}
 
@@ -805,6 +844,9 @@ Console.WriteLine("Creating window at {0}:{1} {2}x{3}", cp.X, cp.Y, cp.Width, cp
 
 		[DllImport ("user32.dll", EntryPoint="GetCursorPos", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32GetCursorPos(out POINT lpPoint);
+
+		[DllImport ("user32.dll", EntryPoint="GetWindowPlacement", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static bool Win32GetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
 		#endregion
 
 	}
