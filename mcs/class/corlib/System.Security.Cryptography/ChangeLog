@@ -1,3 +1,9 @@
+2003-01-09  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* RNGCryptoServiceProvider.cs: Changed methods interacting with 
+	the runtime as Internal<MethodName>. This will allow to make the
+	class Windows-compatible by doing a switch at runtime.
+
 2003-01-05  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoAPITransform.cs: Removed all TODO. This class will not be

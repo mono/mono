@@ -40,10 +40,20 @@ namespace System.Security.Cryptography {
 		}
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern override void GetBytes (byte[] data);
+		private extern void InternalGetBytes (byte[] data);
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern override void GetNonZeroBytes (byte[] data);
+		private extern void InternalGetNonZeroBytes (byte[] data);
+
+		public override void GetBytes (byte[] data) 
+		{
+			InternalGetBytes (data);
+		}
+		
+		public override void GetNonZeroBytes (byte[] data) 
+		{
+			InternalGetNonZeroBytes (data);
+		}
 		
 		~RNGCryptoServiceProvider () {
 			// FIN?
