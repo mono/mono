@@ -5,9 +5,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -129,7 +127,6 @@ namespace Mono.Security.Authenticode {
 				// decrypt in place and try this
 				RC4 rc4 = RC4.Create ();
 				ICryptoTransform dec = rc4.CreateDecryptor (key, null);
-				int x = 24 + salt.Length + 8;
 				dec.TransformBlock (keypair, 8, keypair.Length - 8, keypair, 8);
 				try {
 					rsa = CryptoConvert.FromCapiPrivateKeyBlob (keypair);

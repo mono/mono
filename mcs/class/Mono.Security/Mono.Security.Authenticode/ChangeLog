@@ -1,3 +1,10 @@
+2004-09-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthenticodeDeformatter.cs: In synch with corlib version. Fixed all 
+	level 4 compilation warnings.
+	* AuthenticodeFormatter.cs: Fixed all level 4 compilation warnings.
+	* PrivateKey.cs: Fixed all level 4 compilation warnings.
+
 2004-09-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthenticodeBase.cs: Reworked not to load the entire file into 

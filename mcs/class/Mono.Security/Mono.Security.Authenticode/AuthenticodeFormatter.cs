@@ -165,7 +165,7 @@ namespace Mono.Security.Authenticode {
 		private const string commercialCodeSigning = "1.3.6.1.4.1.311.2.1.22";
 		private const string timestampCountersignature = "1.3.6.1.4.1.311.3.2.1";
 
-		private static byte[] version = { 0x01 };
+		//private static byte[] version = { 0x01 };
 		private static byte[] obsolete = { 0x03, 0x01, 0x00, 0xA0, 0x20, 0xA2, 0x1E, 0x80, 0x1C, 0x00, 0x3C, 0x00, 0x3C, 0x00, 0x3C, 0x00, 0x4F, 0x00, 0x62, 0x00, 0x73, 0x00, 0x6F, 0x00, 0x6C, 0x00, 0x65, 0x00, 0x74, 0x00, 0x65, 0x00, 0x3E, 0x00, 0x3E, 0x00, 0x3E };
 
 		private byte[] Header (byte[] fileHash, string hashAlgorithm) 
@@ -190,7 +190,7 @@ namespace Mono.Security.Authenticode {
 			pkcs7.SignerInfo.AuthenticatedAttributes.Add (Attribute (contentType, ASN1Convert.FromOid (spcIndirectDataContext)));
 			pkcs7.SignerInfo.AuthenticatedAttributes.Add (Attribute (spcStatementType, new ASN1 (0x30, ASN1Convert.FromOid (commercialCodeSigning).GetBytes ())));
 
-			ASN1 temp = pkcs7.ASN1; // sign
+			pkcs7.GetASN1 (); // sign
 			return pkcs7.SignerInfo.Signature;
 		}
 
