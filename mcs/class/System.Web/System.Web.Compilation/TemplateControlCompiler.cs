@@ -859,7 +859,7 @@ namespace System.Web.Compilation
 			if (type == typeof (string [])) {
 				string [] subs = str.Split (',');
 				CodeArrayCreateExpression expr = new CodeArrayCreateExpression ();
-				expr.CreateType = new CodeTypeReference (type);
+				expr.CreateType = new CodeTypeReference (typeof (string));
 				foreach (string v in subs) {
 					expr.Initializers.Add (new CodePrimitiveExpression (v.Trim ()));
 				}
