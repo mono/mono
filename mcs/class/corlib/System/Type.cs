@@ -469,7 +469,7 @@ namespace System {
 		public abstract EventInfo GetEvent (string name, BindingFlags bindingAttr);
 
 		public virtual EventInfo[] GetEvents () {
-			return GetEvents (BindingFlags.Public);
+			return GetEvents (BindingFlags.Public|BindingFlags.Static|BindingFlags.Instance);
 		}
 
 		public abstract EventInfo[] GetEvents (BindingFlags bindingAttr);
@@ -482,21 +482,11 @@ namespace System {
 
 		public FieldInfo[] GetFields ()
 		{
-			return GetFields (BindingFlags.Public);
+			return GetFields (BindingFlags.Public|BindingFlags.Instance|BindingFlags.Static);
 		}
 
 		public abstract FieldInfo[] GetFields (BindingFlags bindingAttr);
 		
-		/*public FieldInfo[] GetFields (BindingFlags bindingAttr)
-		{
-			MemberInfo[] m = FindMembers (MemberTypes.Field, bindingAttr, null, null);
-			FieldInfo[] res = new FieldInfo [m.Length];
-			int i;
-			for (i = 0; i < m.Length; ++i)
-				res [i] = (FieldInfo) m [i];
-			return res;
-		}*/
-
 		public override int GetHashCode() {
 			return (int)_impl.Value;
 		}
@@ -516,7 +506,7 @@ namespace System {
 		}
 
 		public MemberInfo[] GetMembers() {
-			return GetMembers (BindingFlags.Public);
+			return GetMembers (BindingFlags.Public|BindingFlags.Static|BindingFlags.Instance);
 		}
 
 		public abstract MemberInfo[] GetMembers( BindingFlags bindingAttr);
@@ -576,20 +566,10 @@ namespace System {
 
 		public PropertyInfo[] GetProperties ()
 		{
-			return GetProperties (BindingFlags.Public);
+			return GetProperties (BindingFlags.Public|BindingFlags.Static|BindingFlags.Instance);
 		}
 
 		public abstract PropertyInfo[] GetProperties( BindingFlags bindingAttr);
-
-		/*public PropertyInfo[] GetProperties (BindingFlags bindingAttr)
-		{
-			MemberInfo[] m = FindMembers (MemberTypes.Property, bindingAttr, null, null);
-			PropertyInfo[] res = new PropertyInfo [m.Length];
-			int i;
-			for (i = 0; i < m.Length; ++i)
-				res [i] = (PropertyInfo) m [i];
-			return res;
-		}*/
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern PropertyInfo get_property (Type type, string name, Type[] types);
@@ -666,7 +646,7 @@ namespace System {
 		}
 
 		public ConstructorInfo[] GetConstructors () {
-			return GetConstructors (BindingFlags.Public);
+			return GetConstructors (BindingFlags.Public|BindingFlags.Static|BindingFlags.Instance);
 		}
 		
 		public abstract ConstructorInfo[] GetConstructors (BindingFlags bindingAttr);
@@ -675,18 +655,67 @@ namespace System {
 			throw new NotImplementedException ();
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern MemberInfo[] FindMembers( MemberTypes memberType, BindingFlags bindingAttr);
-
 		public virtual MemberInfo[] FindMembers( MemberTypes memberType, BindingFlags bindingAttr,
 							 MemberFilter filter, object filterCriteria) {
-			MemberInfo[] result = FindMembers(memberType, bindingAttr);
-			if (filter == null)
-				return result;
-			ArrayList l = new ArrayList (result.Length);
-			foreach (MemberInfo m in result) {
-				if (filter (m, filterCriteria))
-					l.Add (m);
+			MemberInfo[] result;
+			ArrayList l = new ArrayList ();
+
+			//Console.WriteLine ("FindMembers for {0} (Type: {1}): {2}", this.FullName, this.GetType().FullName, this.obj_address());
+
+			if ((memberType & MemberTypes.Constructor) != 0) {
+				ConstructorInfo[] c = GetConstructors (bindingAttr);
+				if (filter != null) {
+					foreach (MemberInfo m in c) {
+						if (filter (m, filterCriteria))
+							l.Add (m);
+					}
+				} else {
+					l.AddRange (c);
+				}
+			}
+			if ((memberType & MemberTypes.Event) != 0) {
+				EventInfo[] c = GetEvents (bindingAttr);
+				if (filter != null) {
+					foreach (MemberInfo m in c) {
+						if (filter (m, filterCriteria))
+							l.Add (m);
+					}
+				} else {
+					l.AddRange (c);
+				}
+			}
+			if ((memberType & MemberTypes.Field) != 0) {
+				FieldInfo[] c = GetFields (bindingAttr);
+				if (filter != null) {
+					foreach (MemberInfo m in c) {
+						if (filter (m, filterCriteria))
+							l.Add (m);
+					}
+				} else {
+					l.AddRange (c);
+				}
+			}
+			if ((memberType & MemberTypes.Method) != 0) {
+				MethodInfo[] c = GetMethods (bindingAttr);
+				if (filter != null) {
+					foreach (MemberInfo m in c) {
+						if (filter (m, filterCriteria))
+							l.Add (m);
+					}
+				} else {
+					l.AddRange (c);
+				}
+			}
+			if ((memberType & MemberTypes.Property) != 0) {
+				PropertyInfo[] c = GetProperties (bindingAttr);
+				if (filter != null) {
+					foreach (MemberInfo m in c) {
+						if (filter (m, filterCriteria))
+							l.Add (m);
+					}
+				} else {
+					l.AddRange (c);
+				}
 			}
 			result = new MemberInfo [l.Count];
 			l.CopyTo (result);

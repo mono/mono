@@ -48,16 +48,15 @@ namespace System
 			throw new NotImplementedException ();
 		}
 
-		public override ConstructorInfo[] GetConstructors (BindingFlags bindingAttr) {
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern override ConstructorInfo[] GetConstructors (BindingFlags bindingAttr);
 
 		public override EventInfo GetEvent (string name, BindingFlags bindingAttr) {
 			throw new NotImplementedException ();
 		}
 
 		public override EventInfo[] GetEvents (BindingFlags bindingAttr) {
-			throw new NotImplementedException ();
+			return new EventInfo [0];
 		}
 
 		public override FieldInfo GetField( string name, BindingFlags bindingAttr) {
@@ -65,10 +64,8 @@ namespace System
 			return null;
 		}
 
-		public override FieldInfo[] GetFields (BindingFlags bindingAttr) {
-			//FIXME
-			return null;
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern override FieldInfo[] GetFields (BindingFlags bindingAttr);
 
 		public override Type GetInterface (string name, bool ignoreCase) {
 			throw new NotImplementedException ();
@@ -86,14 +83,8 @@ namespace System
 			throw new NotImplementedException ();
 		}
 
-		public override MethodInfo[] GetMethods (BindingFlags bindingAttr) {
-			MemberInfo[] m = FindMembers (MemberTypes.Method, bindingAttr, null, null);
-			MethodInfo[] res = new MethodInfo [m.Length];
-			int i;
-			for (i = 0; i < m.Length; ++i)
-				res [i] = (MethodInfo) m [i];
-			return res;
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern override MethodInfo[] GetMethods (BindingFlags bindingAttr);
 
 		protected override MethodInfo GetMethodImpl( string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) {
 			// FIXME
@@ -110,10 +101,8 @@ namespace System
 			return null;
 		}
 
-		public override PropertyInfo[] GetProperties( BindingFlags bindingAttr) {
-			// FIXME
-			return null;
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern override PropertyInfo[] GetProperties( BindingFlags bindingAttr);
 		
 		protected override PropertyInfo GetPropertyImpl( string name, BindingFlags bindingAttr, Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers) {
 			// FIXME

@@ -101,5 +101,8 @@ namespace System {
 		{
 			return (a == b);
 		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern IntPtr obj_address ();
 	}
 }

@@ -1,3 +1,13 @@
+
+Mon Mar 4 11:26:49 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MonoType.cs: implemented GetConstructors(), GetFields(),
+	GetMethods(), GetProperties().
+	* Object.cs: added debugging icall obj_address().
+	* Type.cs: fixed the binding flags for some Get* methods.
+	Implemented FindMembers() as calls to the specific GetMember
+	methods.
+
 2002-03-01  Duco Fijma  <duco@lorentz.xs4all.nl>
 	* BitConverter.cs: fixed one little bug: ToString(s, n, 0) 
 	should give an exception for n>=s.Length.
