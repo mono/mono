@@ -267,13 +267,13 @@ namespace Commons.Xml.Relaxng
 		{
 			grammar.CheckIncludeRecursion (Href);
 			grammar.IncludedUris.Add (Href, Href);
-			string url = Util.ResolveUri (BaseUri, href, grammar.Resolver);
 			if (grammar.Resolver == null)
 				throw new RelaxngException ("To compile 'include' element, XmlResolver is required.");
+			Uri uri = grammar.Resolver.ResolveUri (BaseUri != String.Empty ? new Uri (BaseUri) : null, Href);
 			XmlTextReader xtr = null;
 			RelaxngGrammar g = null;
 			try {
-				xtr = new XmlTextReader (url, (Stream) grammar.Resolver.GetEntity (grammar.Resolver.ResolveUri (null, url), null, typeof (Stream)));
+				xtr = new XmlTextReader (uri.AbsoluteUri, (Stream) grammar.Resolver.GetEntity (uri, null, typeof (Stream)));
 				RelaxngReader r = new RelaxngReader (xtr, ns);
 				r.MoveToContent ();
 				g = r.ReadPattern () as RelaxngGrammar;
@@ -411,11 +411,15 @@ namespace Commons.Xml.Relaxng
 		// Private Fields
 		RdpPattern startRelaxngPattern;
 		RelaxngDatatypeProvider provider;
-		XmlResolver resolver = new XmlUrlResolver ();
+		XmlResolver resolver;
+		bool nullResolver;
 
 		// Public
 		public XmlResolver XmlResolver {
-			set { resolver = value; }
+			set {
+				nullResolver = value == null;
+				resolver = value;
+			}
 		}
 
 		public abstract RelaxngPatternType PatternType { get; }
@@ -454,7 +458,13 @@ namespace Commons.Xml.Relaxng
 
 		// Internal
 		internal XmlResolver Resolver {
-			get { return resolver; }
+			get {
+				if (nullResolver)
+					return null;
+				if (resolver == null)
+					resolver = new XmlUrlResolver ();
+				return resolver;
+			}
 		}
 
 		internal abstract void CheckConstraints ();
@@ -930,11 +940,7 @@ namespace Commons.Xml.Relaxng
 		}
 
 		public override RdpContentType ContentType {
-#if REPLACE_IN_ADVANCE
-			get { throw new InvalidOperationException (); }
-#else
 			get { return RdpContentType.Empty; }
-#endif
 		}
 
 
@@ -946,12 +952,7 @@ namespace Commons.Xml.Relaxng
 
 		internal override RdpPattern ExpandRef (Hashtable defs)
 		{
-			RdpPattern target = (RdpPattern) defs [this.name];
-			if (target == null)
-				throw new RelaxngException ("Target definition " + name + " not found.");
-			if (target == this)
-				throw new RelaxngException (String.Format ("Illegal recursion was found. Definition is '{0}'.", name));
-			return target.ExpandRef (defs);
+			return referencedPattern.ExpandRef (defs);
 		}
 
 		internal override void MarkReachableDefs () 
@@ -1078,12 +1079,12 @@ namespace Commons.Xml.Relaxng
 		{
 			grammar.CheckIncludeRecursion (Href);
 			grammar.IncludedUris.Add (Href, Href);
-			string uri = Util.ResolveUri (this.BaseUri, href, grammar.Resolver);
 			if (grammar.Resolver == null)
 				throw new RelaxngException ("To compile 'include' element, XmlResolver is required.");
+			Uri uri = grammar.Resolver.ResolveUri (BaseUri != String.Empty ? new Uri (BaseUri) : null, Href);
 			XmlTextReader xtr = null;
 			try {
-				xtr = new XmlTextReader (uri, (Stream) grammar.Resolver.GetEntity (grammar.Resolver.ResolveUri (null, uri), null, typeof (Stream)));
+				xtr = new XmlTextReader (uri.AbsoluteUri, (Stream) grammar.Resolver.GetEntity (uri, null, typeof (Stream)));
 				RelaxngReader r = new RelaxngReader (xtr, ns);
 				r.MoveToContent ();
 				RelaxngPattern p = r.ReadPattern ();

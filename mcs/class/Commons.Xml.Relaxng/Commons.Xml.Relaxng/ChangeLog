@@ -1,3 +1,16 @@
+2004-06-21  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Misc.cs,
+	  RelaxngPattern.cs,
+	  RelaxngReader.cs :
+	  Use XmlResolver (or XmlUrlResolver) directly. XmlResolver was
+	  incorrectly _used_ before null check. Don't create XmlResolver
+	  instance for _every_ pattern object.
+	* RelaxngPattern.cs : UnresolvedRef.ExpandRef() should return not
+	  try to find target derivative pattern twice. It was the culprit of
+	  infinite loop. Removed dirty switches.
+	* RelaxngGrammar.cs : code cleanup.
+
 2004-06-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Misc.cs, RelaxngGrammar.cs, RelaxngPattern.cs, RelaxngReader.cs :

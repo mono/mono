@@ -441,7 +441,8 @@ namespace Commons.Xml.Relaxng
 			string href = GetSpaceStrippedAttribute ("href");
 			if (href == null)
 				throw new RelaxngException ("Required attribute href was not found.");
-			i.Href = Util.ResolveUri (BaseURI, href, resolver);
+			XmlResolver res = resolver != null ? resolver : new XmlUrlResolver ();
+			i.Href = res.ResolveUri (BaseURI != null ? new Uri (BaseURI) : null, href).AbsoluteUri;
 			if (!IsEmptyElement) {
 				Read ();
 				this.readGrammarIncludeContent (i.Starts, i.Defines, i.Divs, null);
@@ -640,7 +641,8 @@ namespace Commons.Xml.Relaxng
 			string href = GetSpaceStrippedAttribute ("href");
 			if (href == null)
 				throw new RelaxngException ("Required attribute href was not found.");
-			r.Href = Util.ResolveUri (BaseURI, href, resolver);
+			XmlResolver res = resolver != null ? resolver : new XmlUrlResolver ();
+			r.Href = res.ResolveUri (BaseURI != null ? new Uri (BaseURI) : null, href).AbsoluteUri;
 			r.NSContext = ContextNamespace;
 			if (!IsEmptyElement) {
 				Read ();

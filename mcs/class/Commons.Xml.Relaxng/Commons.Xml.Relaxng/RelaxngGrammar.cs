@@ -6,7 +6,6 @@
 //
 // 2003 Atsushi Enomoto "No rights reserved."
 //
-
 using System;
 using System.Collections;
 using System.IO;
@@ -41,7 +40,6 @@ namespace Commons.Xml.Relaxng
 
 		Hashtable includedUris = new Hashtable ();
 		RelaxngGrammar parentGrammar;
-		ArrayList includedGrammars;
 		Hashtable refPatterns = new Hashtable (); // key = RdpPattern of assembledDefs
 
 		// only for checkRecursion()
@@ -176,13 +174,7 @@ namespace Commons.Xml.Relaxng
 			// here we collected element-replaced definitions
 			foreach (DictionaryEntry entry in elementReplacedDefs)
 				assembledDefs.Add (entry.Key, entry.Value);
-#if REPLACE_IN_ADVANCE
-// Well, actual expandRef should be done after checking constraints
-			// 4.19 (c) expandRef
-			startPattern = compiledStart.ExpandRef (assembledDefs);
-#else
 			startPattern = compiledStart;
-#endif
 			// 4.20,21 reduce notAllowed and empty.
 			bool b;
 			do {
@@ -207,10 +199,8 @@ namespace Commons.Xml.Relaxng
 
 			// TODO: 7.3
 
-#if !REPLACE_IN_ADVANCE
 			// 4.19 (c) expandRef - actual replacement
 			startPattern = compiledStart.ExpandRef (assembledDefs);
-#endif
 
 			// return its start pattern.
 			IsCompiled = true;
@@ -220,10 +210,8 @@ namespace Commons.Xml.Relaxng
 		private void CheckStartPatternContent (RdpPattern p)
 		{
 			switch (p.PatternType) {
-#if !REPLACE_IN_ADVANCE
 			case RelaxngPatternType.Ref:
 				CheckStartPatternContent (((RdpUnresolvedRef) p).RefPattern);
-#endif
 				break;
 			case RelaxngPatternType.Element:
 				break;
@@ -277,8 +265,8 @@ namespace Commons.Xml.Relaxng
 					checkRecursionDepth = (int) checkedDepth;
 				// get refPattern
 				RdpUnresolvedRef pref = p as RdpUnresolvedRef;
-				RelaxngGrammar target = pref.TargetGrammar;//pref.IsParentRef ? parentGrammar : this;
-				RdpPattern refPattern = pref.RefPattern;//target.assembledDefs [pref.Name] as RdpPattern;
+				RelaxngGrammar target = pref.TargetGrammar;
+				RdpPattern refPattern = pref.RefPattern;
 				if (refPattern == null)
 					throw new RelaxngException ("No matching define found for " + pref.Name);
 
@@ -315,21 +303,15 @@ namespace Commons.Xml.Relaxng
 		private void CollectGrammars ()
 		{
 			// collect ref and parentRef for each define.
-			includedGrammars = (parentGrammar != null) ?
-				parentGrammar.includedGrammars : new ArrayList ();
 
 			// FIXME: This should be assembledStart.
 			CheckReferences (compiledStart);
 			FixupReference ();
-			this.unresolvedPatterns.Clear ();
 
-//			Hashtable ht = assembledDefs.Clone () as Hashtable;
-//			foreach (string name in ht.Keys) {
 			foreach (string name in assembledDefs.Keys) {
 				RdpPattern p = (RdpPattern) assembledDefs [name];
 				CheckReferences (p);
 				FixupReference ();
-				this.unresolvedPatterns.Clear ();
 			}
 
 			// If it is child of any other pattern:
@@ -344,13 +326,20 @@ namespace Commons.Xml.Relaxng
 					if (al == null)
 						continue; // Not referenced.
 
-					if (parentGrammar.assembledDefs [name] == null)
-						parentGrammar.assembledDefs [name] =
-							this.assembledDefs [name];
-					else
-						replaceDefines (name, al);
+					// At this point, parent grammar doesn't 
+					// collect assembledDefs as yet
+					string uname = GetUniqueName (name, parentGrammar);
+					parentGrammar.assembledDefs [uname] = assembledDefs [name];
 				}
 			}
+		}
+
+		private static string GetUniqueName (string name, RelaxngGrammar grammar)
+		{
+			foreach (RelaxngDefine def in grammar.Defines)
+				if (def.Name == name)
+					return GetUniqueName (name + '_', grammar);
+			return name;
 		}
 
 		private void FixupReference ()
@@ -366,6 +355,7 @@ namespace Commons.Xml.Relaxng
 				}
 				al.Add (pref);
 			}
+			this.unresolvedPatterns.Clear ();
 		}
 
 		private void replaceDefines (string name, ArrayList al)

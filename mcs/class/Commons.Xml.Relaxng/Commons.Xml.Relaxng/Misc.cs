@@ -16,6 +16,7 @@ namespace Commons.Xml.Relaxng
 {
 	internal class Util
 	{
+		/*
 		public static string ResolveUri (string baseUri, string href, XmlResolver resolver)
 		{
 			Uri uri = null;
@@ -26,6 +27,7 @@ namespace Commons.Xml.Relaxng
 				throw new RelaxngException ("Invalid URI format: " + href);
 			return result.ToString ();
 		}
+		*/
 
 		public static string NormalizeWhitespace (string s)
 		{
