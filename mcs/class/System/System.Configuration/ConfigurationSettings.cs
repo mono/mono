@@ -74,6 +74,7 @@ namespace System.Configuration
 		}
 
 #if NET_2_0
+#if XML_DEP
                 public static ConnectionStringSettingsCollection ConnectionStrings
 		{
 			get {
@@ -88,7 +89,7 @@ namespace System.Configuration
 				return connectionStrings;
 			}
 		}
-
+#endif // XML_DEP
 #endif // NET_2_0
 
 		// Invoked from System.Web
