@@ -1,10 +1,10 @@
 // 
-// System.Web.Services.Protocols.SoapRpcServiceAttribute.cs
+// System.Web.Services.Protocols.InvokeCompletedEventArgs.cs
 //
 // Author:
-//   Tim Coleman (tim@timcoleman.com)
+//   Lluis Sanchez (lluis@novell.com)
 //
-// Copyright (C) Tim Coleman, 2002
+// Copyright (C) Novell, Inc., 2004
 //
 
 //
@@ -28,44 +28,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Web.Services.Description;
-
-namespace System.Web.Services.Protocols {
-	[AttributeUsage (AttributeTargets.Class, Inherited = true)]
-	public sealed class SoapRpcServiceAttribute : Attribute {
-
-		#region Fields
-
-		SoapServiceRoutingStyle routingStyle;
 #if NET_2_0
-		SoapBindingUse use;
-#endif
 
-		#endregion // Fields
+using System.ComponentModel;
 
-		#region Constructors
-
-		public SoapRpcServiceAttribute ()
+namespace System.Web.Services.Protocols 
+{
+	[MonoTODO]
+	public class InvokeCompletedEventArgs : AsyncCompletedEventArgs
+	{
+		object[] _results;
+		
+		internal InvokeCompletedEventArgs ()
+		: base (null, false, null)
 		{
-			routingStyle = SoapServiceRoutingStyle.SoapAction;
+		}
+		
+		public object[] Results {
+			get { return _results; }
 		}
 
-		#endregion // Constructors
-
-		#region Properties
-
-		public SoapServiceRoutingStyle RoutingStyle {
-			get { return routingStyle; }
-			set { routingStyle = value; }
-		}
-
-#if NET_2_0
-		public SoapBindingUse Use {
-			get { return use; }
-			set { use = value; }
-		}
-#endif
-
-		#endregion // Properties
 	}
 }
+
+#endif

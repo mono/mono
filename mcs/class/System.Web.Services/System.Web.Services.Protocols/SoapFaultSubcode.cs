@@ -1,10 +1,10 @@
 // 
-// System.Web.Services.Protocols.SoapRpcServiceAttribute.cs
+// System.Web.Services.Protocols.SoapFaultSubcode.cs
 //
 // Author:
-//   Tim Coleman (tim@timcoleman.com)
+//   Lluis Sanchez (lluis@novell.com)
 //
-// Copyright (C) Tim Coleman, 2002
+// Copyright (C) Novell, Inc., 2004
 //
 
 //
@@ -28,44 +28,37 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Web.Services.Description;
-
-namespace System.Web.Services.Protocols {
-	[AttributeUsage (AttributeTargets.Class, Inherited = true)]
-	public sealed class SoapRpcServiceAttribute : Attribute {
-
-		#region Fields
-
-		SoapServiceRoutingStyle routingStyle;
 #if NET_2_0
-		SoapBindingUse use;
-#endif
 
-		#endregion // Fields
+using System.Xml;
 
-		#region Constructors
-
-		public SoapRpcServiceAttribute ()
+namespace System.Web.Services.Protocols 
+{
+	public class SoapFaultSubcode
+	{
+		XmlQualifiedName _code;
+		SoapFaultSubcode _subcode;
+		
+		public SoapFaultSubcode (XmlQualifiedName code)
 		{
-			routingStyle = SoapServiceRoutingStyle.SoapAction;
+			_code = code;
+		}
+		
+		public SoapFaultSubcode (XmlQualifiedName code, SoapFaultSubcode subcode)
+		{
+			_code = code;
+			_subcode = subcode;
+		}
+		
+		public XmlQualifiedName Code {
+			get { return _code; }
 		}
 
-		#endregion // Constructors
-
-		#region Properties
-
-		public SoapServiceRoutingStyle RoutingStyle {
-			get { return routingStyle; }
-			set { routingStyle = value; }
+		public SoapFaultSubcode Subcode {
+			get { return _subcode; }
 		}
 
-#if NET_2_0
-		public SoapBindingUse Use {
-			get { return use; }
-			set { use = value; }
-		}
-#endif
-
-		#endregion // Properties
 	}
 }
+
+#endif

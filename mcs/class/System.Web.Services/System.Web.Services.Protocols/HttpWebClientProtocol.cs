@@ -34,6 +34,7 @@ using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Web.Services;
+using System.Collections;
 
 namespace System.Web.Services.Protocols {
 	public abstract class HttpWebClientProtocol : WebClientProtocol {
@@ -197,6 +198,27 @@ namespace System.Web.Services.Protocols {
 				
 			return response;
 		}
+		
+#if NET_2_0
+
+		[MonoTODO]
+		protected void CancelAsync (object userState)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static Hashtable GenerateXmlMappings (Type type, ArrayList mapping)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static Hashtable GenerateXmlMappings (Type[] types, ArrayList mapping)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		#endregion // Methods
 	}

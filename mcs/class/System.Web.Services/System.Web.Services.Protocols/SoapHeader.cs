@@ -42,6 +42,11 @@ namespace System.Web.Services.Protocols {
 		string actor;
 		bool didUnderstand;
 		bool mustUnderstand;
+		
+#if NET_2_0
+		string role;
+		bool relay;
+#endif
 
 		#endregion // Fields
 
@@ -101,6 +106,56 @@ namespace System.Web.Services.Protocols {
 			get { return mustUnderstand; }
 			set { mustUnderstand = value; }
 		}
+		
+#if NET_2_0
+
+		[DefaultValue ("0")]
+		[SoapAttribute ("mustUnderstand", Namespace = "http://www.w3.org/2003/05/soap-envelope")]
+		[XmlAttribute ("mustUnderstand", Namespace = "http://www.w3.org/2003/05/soap-envelope")]
+		public string EncodedMustUnderstand12 {
+			get { return (MustUnderstand ? "1" : "0"); }
+			set {	
+				if (value == "true" || value == "1") 
+					MustUnderstand = true;
+				else if (value == "false" || value == "0")
+					MustUnderstand = false;
+				else
+					throw new ArgumentException ();
+			}
+		}
+
+		[DefaultValue ("0")]
+		[SoapAttribute ("relay", Namespace = "http://www.w3.org/2003/05/soap-envelope")]
+		[XmlAttribute ("relay", Namespace = "http://www.w3.org/2003/05/soap-envelope")]
+		public string EncodedRelay
+		{
+			get { return (Relay ? "1" : "0"); }
+			set {	
+				if (value == "true" || value == "1") 
+					Relay = true;
+				else if (value == "false" || value == "0")
+					Relay = false;
+				else
+					throw new ArgumentException ();
+			}
+		}
+		
+		[SoapIgnore]
+		[XmlIgnore]
+		public bool Relay {
+			get { return relay; }
+			set { relay = value; }
+		}
+		
+		[DefaultValue ("")]
+		[SoapAttribute ("role", Namespace = "http://www.w3.org/2003/05/soap-envelope")]
+		[XmlAttribute ("role", Namespace = "http://www.w3.org/2003/05/soap-envelope")]
+		public string Role {
+			get { return role; }
+			set { role = value; }
+		}
+		
+#endif
 
 		#endregion // Properties
 	}

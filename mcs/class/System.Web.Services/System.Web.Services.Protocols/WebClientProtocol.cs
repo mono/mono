@@ -51,7 +51,7 @@ namespace System.Web.Services.Protocols {
 		//
 		// Used by SoapHttpClientProtocol, use this to avoid creating a new Uri on each invocation.
 		//
-		protected internal Uri uri;
+		internal Uri uri;
 			
 		//
 		// Points to the current request, so we can call Abort() on it

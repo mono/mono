@@ -1,3 +1,13 @@
+2004-07-10  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* HttpSimpleClientProtocol.cs, HttpWebClientProtocol.cs, 
+	  SoapClientMessage.cs, SoapHttpClientProtocol.cs, SoapServerMessage.cs:
+	  Added 2.0 stubs.
+	* SoapException.cs, SoapHeader.cs, SoapHeaderException.cs, SoapMessage.cs,
+	  SoapRpcMethodAttribute.cs, SoapRpcServiceAttribute.cs: Implemented some
+	  new methods and properties.
+	* WebClientProtocol.cs: uri field must be internal.
+
 2004-07-05  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Methods.cs: When using RPC, ignore RequestElementName and MessageName, 

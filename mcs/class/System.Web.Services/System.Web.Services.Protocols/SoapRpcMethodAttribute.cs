@@ -28,6 +28,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Web.Services.Description;
+
 namespace System.Web.Services.Protocols {
 	[AttributeUsage (AttributeTargets.Method, Inherited = true)]
 	public sealed class SoapRpcMethodAttribute : Attribute {
@@ -41,7 +43,10 @@ namespace System.Web.Services.Protocols {
 		string requestNamespace;
 		string responseElementName;
 		string responseNamespace;
-
+		
+#if NET_2_0
+		SoapBindingUse use;
+#endif
 		#endregion // Fields
 
 		#region Constructors
@@ -94,6 +99,13 @@ namespace System.Web.Services.Protocols {
 			get { return responseNamespace != null ? responseNamespace : ""; }
 			set { responseNamespace = value; }
 		}
+		
+#if NET_2_0
+		public SoapBindingUse Use {
+			get { return use; }
+			set { use = value; }
+		}
+#endif
 
 		#endregion // Properties
 	}

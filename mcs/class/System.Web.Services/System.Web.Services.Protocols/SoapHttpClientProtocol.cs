@@ -47,9 +47,15 @@ using System.Xml.Schema;
 using System.Collections;
 using System.Threading;
 
-namespace System.Web.Services.Protocols {
-	public class SoapHttpClientProtocol : HttpWebClientProtocol {
+namespace System.Web.Services.Protocols 
+{
+	public class SoapHttpClientProtocol : HttpWebClientProtocol 
+	{
 		SoapTypeStubInfo type_info;
+#if NET_2_0
+		WsiClaims conformanceClaims;
+		SoapProtocolVersion soapVersion;
+#endif
 
 		#region SoapWebClientAsyncResult class
 
@@ -320,6 +326,34 @@ namespace System.Web.Services.Protocols {
 
 			return ReceiveResponse (response, message, extensions);
 		}
+		
+#if NET_2_0
+
+		[MonoTODO ("Do something with this")]
+		public WsiClaims ConformanceClaims {
+			get { return conformanceClaims; }
+			set { conformanceClaims = value; }
+		}
+		
+		[MonoTODO ("Do something with this")]
+		public SoapProtocolVersion SoapVersion {
+			get { return soapVersion; }
+			set { soapVersion = value; }
+		}
+		
+		[MonoTODO]
+		protected void InvokeAsync (string methodName, object[] parameters, SendOrPostCallback callback)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected void InvokeAsync (string methodName, object[] parameters, SendOrPostCallback callback, object userState)
+		{
+			throw new NotImplementedException ();
+		}
+
+#endif
 
 		#endregion // Methods
 	}

@@ -46,6 +46,10 @@ namespace System.Web.Services.Protocols {
 		object[] inParameters;
 		object[] outParameters;
 		
+#if NET_2_0
+		SoapProtocolVersion soapVersion;
+#endif
+
 		#endregion // Fields
 
 		#region Constructors
@@ -95,6 +99,9 @@ namespace System.Web.Services.Protocols {
 
 		public SoapException Exception {
 			get { return exception; }
+#if NET_2_0
+			set { exception = value; }
+#endif
 		}
 
 		public SoapHeaderCollection Headers {
@@ -139,6 +146,13 @@ namespace System.Web.Services.Protocols {
 		{
 			get { return content_encoding; }
 			set { content_encoding = value; }
+		}
+#endif
+
+#if NET_2_0
+		public virtual SoapProtocolVersion SoapVersion {
+			get { return soapVersion; }
+			set { soapVersion = value; }
 		}
 #endif
  

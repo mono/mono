@@ -84,6 +84,13 @@ namespace System.Web.Services.Protocols {
 		public override string Url {
 			get { return url; }
 		}
+		
+#if NET_2_0
+		[MonoTODO]
+		public override SoapProtocolVersion SoapVersion {
+			get { throw new NotImplementedException (); }
+		}
+#endif
 
 		#endregion // Properties
 

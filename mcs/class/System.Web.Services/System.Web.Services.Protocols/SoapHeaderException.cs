@@ -54,6 +54,37 @@ namespace System.Web.Services.Protocols {
 			: base (message, code, actor, innerException)
 		{
 		}
+		
+#if NET_2_0
+
+		public SoapHeaderException (
+			string message, 
+			XmlQualifiedName code, 
+			string actor, 
+			string role, 
+			string lang, 
+			SoapFaultSubcode subcode, 
+			Exception innerException)
+			
+		: base (message, code, actor, role, lang, null, subcode, innerException)
+		{
+			
+		}
+
+		public SoapHeaderException (
+			string message, 
+			XmlQualifiedName code, 
+			string actor, 
+			string role, 
+			SoapFaultSubcode subcode, 
+			Exception innerException)
+			
+		: base (message, code, actor, role, null, subcode, innerException)
+		{
+			
+		}
+
+#endif
 
 		#endregion // Constructors
 	}

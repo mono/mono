@@ -3,6 +3,7 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Lluis Sanchez Gual (lluis@novell.com)
 //
 // Copyright (C) Tim Coleman, 2002
 //
@@ -30,9 +31,11 @@
 
 using System.Xml;
 
-namespace System.Web.Services.Protocols {
-	public class SoapException : SystemException {
-
+namespace System.Web.Services.Protocols 
+{
+	[Serializable]
+	public class SoapException : SystemException 
+	{
 		#region Fields
 
 		public static readonly XmlQualifiedName ClientFaultCode = new XmlQualifiedName ("Client", "http://schemas.xmlsoap.org/soap/envelope/");
@@ -44,7 +47,12 @@ namespace System.Web.Services.Protocols {
 		string actor;
 		XmlQualifiedName code;
 		XmlNode detail;
-
+		
+#if NET_2_0
+		string lang;
+		string role;
+		SoapFaultSubcode subcode;
+#endif
 		#endregion
 
 		#region Constructors
@@ -91,6 +99,64 @@ namespace System.Web.Services.Protocols {
 			this.detail = detail;
 		}
 
+#if NET_2_0
+		public SoapException (string message, XmlQualifiedName code, SoapFaultSubcode subcode)
+			: base (message)
+		{
+			this.code = code;
+			this.subcode = subcode;
+		}
+		
+		public SoapException (string message, XmlQualifiedName code, string actor, string role, XmlNode detail, SoapFaultSubcode subcode, Exception innerException)
+			: base (message, innerException)
+		{
+			this.code = code;
+			this.subcode = subcode;
+			this.detail = detail;
+			this.actor = actor;
+			this.role = role;
+		}
+		
+		public SoapException (string message, XmlQualifiedName code, string actor, string role, string lang, XmlNode detail, SoapFaultSubcode subcode, Exception innerException)
+		{
+			this.code = code;
+			this.subcode = subcode;
+			this.detail = detail;
+			this.actor = actor;
+			this.role = role;
+			this.lang = lang;
+		}
+
+		public static bool IsClientFaultCode (XmlQualifiedName code)
+		{
+			if (code == ClientFaultCode) return true;
+			if (code == Soap12FaultCodes.SenderFaultCode) return true;
+			return false;
+		}
+
+		public static bool IsMustUnderstandFaultCode (XmlQualifiedName code)
+		{
+			if (code == MustUnderstandFaultCode) return true;
+			if (code == Soap12FaultCodes.MustUnderstandFaultCode) return true;
+			return false;
+		}
+				
+		public static bool IsServerFaultCode (XmlQualifiedName code)
+		{
+			if (code == ServerFaultCode) return true;
+			if (code == Soap12FaultCodes.ReceiverFaultCode) return true;
+			return false;
+		}
+				
+		public static bool IsVersionMismatchFaultCode (XmlQualifiedName code)
+		{
+			if (code == VersionMismatchFaultCode) return true;
+			if (code == Soap12FaultCodes.VersionMismatchFaultCode) return true;
+			return false;
+		}
+
+#endif
+
 		#endregion // Constructors
 
 		#region Properties
@@ -107,6 +173,24 @@ namespace System.Web.Services.Protocols {
 			get { return detail; }
 		}
 
+#if NET_2_0
+		public string Lang {
+			get { return lang; }
+		}
+		
+		public string Role {
+			get { return role; }
+		}
+		
+		public SoapFaultSubcode Subcode {
+			get { return subcode; }
+		}
+		
+		// Same value as actor
+		public string Node {
+			get { return actor; }
+		}
+#endif
 		#endregion // Properties
 	}
 }

@@ -32,6 +32,7 @@
 using System.Web.Services;
 using System.Net;
 using System.IO;
+using System.Threading;
 
 namespace System.Web.Services.Protocols {
 	public abstract class HttpSimpleClientProtocol : HttpWebClientProtocol {
@@ -170,6 +171,22 @@ namespace System.Web.Services.Protocols {
 			MimeReturnReader returnReader = (MimeReturnReader) method.ReturnReaderType.Create ();
 			return returnReader.Read (response, response.GetResponseStream ());
 		}
+		
+#if NET_2_0
+
+		[MonoTODO]
+		protected void InvokeAsync (string methodName, string requestUrl, object[] parameters, SendOrPostCallback callback)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected void InvokeAsync (string methodName, string requestUrl, object[] parameters, SendOrPostCallback callback, object userState)
+		{
+			throw new NotImplementedException ();
+		}
+
+#endif
 		
 		#endregion // Methods
 	}
