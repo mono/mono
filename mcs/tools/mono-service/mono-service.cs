@@ -33,7 +33,7 @@ class MonoServiceRunner {
 	{
 		Console.Error.WriteLine (
 					 "Usage is:\n" +
-					 "monod [-d:DIRECTORY] [-l:LOCKFILE] [-n:NAME] [-m:LOGNAME] service.exe\n");
+					 "mono-service [-d:DIRECTORY] [-l:LOCKFILE] [-n:NAME] [-m:LOGNAME] service.exe\n");
 		Environment.Exit (1);
 	}
 
@@ -97,6 +97,29 @@ class MonoServiceRunner {
 			}
 		}
 
+		// Use lockfile to allow only one instance
+		if (lockfile == null)
+			lockfile = String.Format ("/tmp/{0}.lock", Path.GetFileName (assembly));
+
+		int lfp = Syscall.open (lockfile, OpenFlags.O_RDWR|OpenFlags.O_CREAT, 
+			FilePermissions.S_IRUSR|FilePermissions.S_IWUSR|FilePermissions.S_IRGRP);
+	
+		if (lfp<0)  {
+			error ("Cannot open lock file.");
+			return 1;
+		}
+	
+		if (Syscall.lockf(lfp, LockFlags.F_TLOCK,0)<0)  {
+			info ("Daemon is already running.");
+			return 0;
+		}
+		
+		// Write pid to lock file
+		string pid = Syscall.getpid ().ToString () + Environment.NewLine;
+		IntPtr buf = Marshal.StringToCoTaskMemAnsi (pid);
+		Syscall.write (lfp, buf, (ulong)pid.Length);
+		Marshal.FreeCoTaskMem (buf);
+
 		Assembly a = null;
 		
 		try {
@@ -113,9 +136,6 @@ class MonoServiceRunner {
 			error ("Could not load assembly {0}", assembly);
 			return 1;
 		}
-
-		if (lockfile == null)
-			lockfile = String.Format ("/tmp/{0}.lock", Path.GetFileName (assembly));
 
 		MethodInfo entry = a.EntryPoint;
 		if (entry == null){
@@ -180,22 +200,31 @@ class MonoServiceRunner {
 				
 				switch (v){
 				case Signum.SIGTERM:
-					info ("Stopping service {0}", service.ServiceName);
-					call (service, "OnStop", null);
-					running = false;
+					if (service.CanStop) {
+						info ("Stopping service {0}", service.ServiceName);
+						call (service, "OnStop", null);
+						running = false;
+					}
 					break;
 				case Signum.SIGUSR1:
-					info ("Pausing service {0}", service.ServiceName);
-					call (service, "OnPause", null);
+					if (service.CanPauseAndContinue) {
+						info ("Pausing service {0}", service.ServiceName);
+						call (service, "OnPause", null);
+					}
 					break;
 				case Signum.SIGUSR2:
-					info ("Continuing service {0}", service.ServiceName);
-					call (service, "OnContinue", null);
+					if (service.CanPauseAndContinue) {
+						info ("Continuing service {0}", service.ServiceName);
+						call (service, "OnContinue", null);
+					}
 					break;
 				}
 			}
 		}
 
+		foreach (ServiceBase svc in services){
+			svc.Dispose ();
+		}
 		
 		return 0;
 	}

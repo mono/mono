@@ -1,0 +1,6 @@
+2004-04-06  Joerg Rosenkranz  <joergr@voelcker.com>
+
+	* mono-service.cs: 
+	    Pay attention to CanStop and CanPauseAndContinue. 
+	    Call Dispose of service. Fixed exe name in usage output.
+	    Filling and using lock file to prevent multiple instances.
