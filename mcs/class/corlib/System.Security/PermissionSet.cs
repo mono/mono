@@ -157,7 +157,7 @@ namespace System.Security {
 			}
 
 			// note: we must ignore the stack modifiers for the non-CAS permissions
-			if (count > 0)
+			if (SecurityManager.SecurityEnabled && (count > 0))
 				throw new NotSupportedException ("Currently only declarative Assert are supported.");
 		}
 
@@ -246,6 +246,9 @@ namespace System.Security {
 		[MonoTODO ("Imperative mode isn't supported")]
 		public virtual void Deny ()
 		{
+			if (!SecurityManager.SecurityEnabled)
+				return;
+
 			foreach (IPermission p in list) {
 				// note: we ignore non-CAS permissions
 				if (p is IStackWalk) {
@@ -335,6 +338,9 @@ namespace System.Security {
 		[MonoTODO ("Imperative mode isn't supported")]
 		public virtual void PermitOnly ()
 		{
+			if (!SecurityManager.SecurityEnabled)
+				return;
+
 			foreach (IPermission p in list) {
 				// note: we ignore non-CAS permissions
 				if (p is IStackWalk) {

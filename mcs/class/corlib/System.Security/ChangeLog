@@ -1,3 +1,9 @@
+2005-03-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CodeAccessPermission.cs,
+	* PermissionSet.cs: Don't throw NotSupportedException if the security 
+	manager (SecurityManager.SecurityEnabled) is off.
+
 2005-02-25  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* CodeAccessPermission.cs: Implement Equals for NET_2_0 profile.

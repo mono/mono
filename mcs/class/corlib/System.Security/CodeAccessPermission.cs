@@ -160,6 +160,9 @@ namespace System.Security {
 		[MonoTODO ("Imperative mode isn't supported")]
 		public static void RevertAll ()
 		{
+			if (!SecurityManager.SecurityEnabled)
+				return;
+
 			SecurityFrame sf = new SecurityFrame (1);
 			bool revert = false;
 			if ((sf.Assert != null) && !sf.Assert.DeclarativeSecurity) {
@@ -189,6 +192,9 @@ namespace System.Security {
 		[MonoTODO ("Imperative mode isn't supported")]
 		public static void RevertAssert ()
 		{
+			if (!SecurityManager.SecurityEnabled)
+				return;
+
 			SecurityFrame sf = new SecurityFrame (1);
 			if ((sf.Assert != null) && !sf.Assert.DeclarativeSecurity) {
 				// TODO
@@ -202,6 +208,9 @@ namespace System.Security {
 		[MonoTODO ("Imperative mode isn't supported")]
 		public static void RevertDeny ()
 		{
+			if (!SecurityManager.SecurityEnabled)
+				return;
+
 			SecurityFrame sf = new SecurityFrame (1);
 			if ((sf.Deny != null) && !sf.Deny.DeclarativeSecurity) {
 				// TODO
@@ -215,6 +224,9 @@ namespace System.Security {
 		[MonoTODO ("Imperative mode isn't supported")]
 		public static void RevertPermitOnly ()
 		{
+			if (!SecurityManager.SecurityEnabled)
+				return;
+
 			SecurityFrame sf = new SecurityFrame (1);
 			if ((sf.PermitOnly != null) && sf.PermitOnly.DeclarativeSecurity) {
 				// TODO
