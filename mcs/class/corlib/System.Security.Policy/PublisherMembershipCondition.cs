@@ -13,7 +13,8 @@ using System.Security.Cryptography.X509Certificates;
 namespace System.Security.Policy {
 
 	[Serializable]
-	public sealed class PublisherMembershipCondition : IMembershipCondition, ISecurityEncodable, ISecurityPolicyEncodable {
+	public sealed class PublisherMembershipCondition
+                : IConstantMembershipCondition, IMembershipCondition, ISecurityEncodable, ISecurityPolicyEncodable {
 	
 		private X509Certificate x509;
 	

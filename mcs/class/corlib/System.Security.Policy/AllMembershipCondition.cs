@@ -15,8 +15,8 @@ namespace System.Security.Policy
 	/// Summary description for AllMembershipCondition.
 	/// </summary>
 	[Serializable]
-	public sealed class AllMembershipCondition : IMembershipCondition,
-		ISecurityEncodable, ISecurityPolicyEncodable
+	public sealed class AllMembershipCondition
+                : IMembershipCondition, IConstantMembershipCondition, ISecurityEncodable, ISecurityPolicyEncodable
 	{
 		// Tag for Xml Data
 		private static readonly string XmlTag = "IMembershipCondition";

@@ -13,6 +13,7 @@ namespace System.Security.Policy
 
 	[Serializable]
 	public sealed class ApplicationDirectoryMembershipCondition :
+                IConstantMembershipCondition,
 		IMembershipCondition, 
 		ISecurityEncodable, 
 		ISecurityPolicyEncodable
