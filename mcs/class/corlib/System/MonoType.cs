@@ -209,9 +209,10 @@ namespace System
 			
 			PropertyInfo ret = null;
 			PropertyInfo [] props = GetProperties(bindingAttr);
+			bool ignoreCase = ((bindingAttr & BindingFlags.IgnoreCase) != 0);
 
 			foreach (PropertyInfo info in props) {
-					if (info.Name != name) 
+					if (String.Compare (info.Name, name, ignoreCase) != 0) 
 						continue;
 
 					if (returnType != null)
