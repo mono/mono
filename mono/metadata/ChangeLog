@@ -1,3 +1,12 @@
+2003-10-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (mono_mb_emit_branch): New helper function.
+
+	* marshal.c (mono_mb_emit_exception): Added exception name parameter.
+
+	* marshal.c (mono_marshal_get_managed_wrapper): Added support for
+	classes as parameters and return values of delegates. Fixes #29256. 
+
 2003-10-12  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* locales.c: use gint32 in non HAVE_ICU case
