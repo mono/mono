@@ -1,8 +1,9 @@
 //
 // System.Data.Sql.InvalidUdtException
 //
-// Author:
+// Authors:
 //   Tim Coleman (tim@timcoleman.com)
+//   Umadevi S (sumadevi@novell.com)	
 //
 // Copyright (C) Tim Coleman, 2003
 //
@@ -35,8 +36,35 @@
 using System;
 
 namespace System.Data.Sql {
-	public sealed class InvalidUdtException : Exception
+	public sealed class InvalidUdtException : SystemException
 	{
+		#region constructors 
+		
+		[MonoTODO]
+		public InvalidUdtException ()
+		{}
+		
+		[MonoTODO]
+		public InvalidUdtException (string message)	
+		{}
+
+		[MonoTODO]
+		public InvalidUdtException (string message, Exception innerException)
+		{}
+
+		[MonoTODO]
+		public InvalidUdtException (Type t, string reason)
+		{}
+
+		#endregion
+
+
+		#region methods
+
+		[MonoTODO]
+		public override void GetObjectData (SerializationInfo si, StreamingContext context)
+		{}
+		#endregion
 	}
 }
 

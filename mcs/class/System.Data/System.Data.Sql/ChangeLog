@@ -1,4 +1,7 @@
 2004-07-09 Umadevi S <sumadevi@novell.com>
+	* Modified classes ISqlCommand.cs, ISqlConnection.cs,ISqlExecutionContext.cs, InvalidUdtException.cs,TriggerAction.cs : Added missing methods,properties,constructors
+
+2004-07-09 Umadevi S <sumadevi@novell.com>
 	* Added IUdtSerializationContext.cs, SqlFacetAttribute.cs
 
 2004-01-10  Atsushi Enomoto  <atsushi@ximian.com>

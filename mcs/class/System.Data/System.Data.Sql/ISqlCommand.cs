@@ -39,7 +39,7 @@ namespace System.Data.Sql {
 	{
 		#region Properties
 
-		ISqlConnection Connection { get; }
+		ISqlConnection Connection { get; set; }
 		SqlNotificationRequest Notification { get; set; }
 		ISqlParameterCollection Parameters { get; }
 		ISqlTransaction Transaction { get; set; }
@@ -49,10 +49,11 @@ namespace System.Data.Sql {
 		#region Methods
 
 		ISqlParameter CreateParameter ();
+
 		ISqlReader ExecutePageReader (CommandBehavior behavior, int startRow, int pageSize);
 		ISqlReader ExecuteReader ();
 		ISqlReader ExecuteReader (CommandBehavior behavior);
-		ISqlResultSet ExecuteResultSet (ResultSetOptions options);
+ 		ISqlResultSet ExecuteResultSet (ResultSetOptions options);
 		ISqlResultSet ExecuteResultSet (ResultSetOptions options, string cursorname);
 		ISqlRecord ExecuteRow ();
 		object ExecuteSqlScalar ();

@@ -1,8 +1,9 @@
 //
 // System.Data.Sql.ISqlConnection
 //
-// Author:
+// Authors:
 //   Tim Coleman (tim@timcoleman.com)
+//   Umadevi S (sumadevi@novell.com)
 //
 // Copyright (C) Tim Coleman, 2003
 //
@@ -48,6 +49,9 @@ namespace System.Data.Sql {
 		ISqlTransaction BeginTransaction (IsolationLevel iso);
 		ISqlTransaction BeginTransaction (string transactionName);
 		ISqlTransaction BeginTransaction (IsolationLevel iso, string transactionName);
+		ISqlCommand CreateCommand ();
+		ISqlCommand CreateCommand (string commandText);
+		ISqlExecutionContext CreateExecutionContext (SqlDefinition sqlDefinition);
 
 		#endregion // Methods
 	}

@@ -1,12 +1,12 @@
 //
 // System.Data.Sql.TriggerAction
 //
-// Author:
+// Authors:
 //   Tim Coleman (tim@timcoleman.com)
+//   Umadevi S (sumadevi@novell.com)
 //
 // Copyright (C) Tim Coleman, 2003
 //
-
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -29,20 +29,20 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+   
 #if NET_2_0
 
 namespace System.Data.Sql {
 	public enum TriggerAction
 	{
-		AlterAppRole,
-		AlterAssembly,
-		AlterBinding,
-		AlterFunction,
-		AlterIndex,
-		AlterLogin,
-		AlterPartitionFunction,
-		AlterPartitionScheme,
+		AlterAppRole = 138,
+		AlterAssembly = 102,
+		AlterBinding = 175,
+		AlterFunction = 62,
+		AlterIndex = 25,
+		AlterLogin = 145,
+		AlterPartitionFunction = 195,
+		AlterPartitionScheme = 52,
 		AlterProcedure,
 		AlterQueue,
 		AlterRole,

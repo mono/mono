@@ -39,9 +39,10 @@ namespace System.Data.Sql {
 	{
 		#region Properties
 
-		ISqlConnection Connection { get; }
+		ISqlConnection Connection { get; set; }
 		SqlNotificationRequest Notification { get; set; }
 		ISqlTransaction Transaction { get; set; }
+		
 
 		#endregion // Properties
 
@@ -55,6 +56,7 @@ namespace System.Data.Sql {
 		ISqlRecord ExecuteRow ();
 		object ExecuteSqlScalar ();
 		XmlReader ExecuteXmlReader ();
+		
 
 		#endregion // Methods
 	}
