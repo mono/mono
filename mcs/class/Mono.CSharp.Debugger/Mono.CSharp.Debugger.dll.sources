@@ -1,3 +1,5 @@
+Assembly/AssemblyInfo.cs
+Assembly/Locale.cs
 MonoSymbolWriter.cs
 MonoSymbolTable.cs
 MonoSymbolFile.cs
