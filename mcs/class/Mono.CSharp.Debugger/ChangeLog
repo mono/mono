@@ -1,5 +1,10 @@
 2003-02-07  Martin Baulig  <martin@ximian.com>
 
+	* MonoSymbolTableWriter.cs: Removed; the code is now in
+	MonoSymbolFile.cs and MonoSymbolWriter.cs.
+
+2003-02-07  Martin Baulig  <martin@ximian.com>
+
 	* MonoSymbolFile.cs: The symbol file is now a resource in the
 	assembly instead of a separate file.
 

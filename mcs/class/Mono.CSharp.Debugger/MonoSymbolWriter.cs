@@ -593,8 +593,21 @@ namespace Mono.CSharp.Debugger
 
 		protected byte[] CreateOutput (Assembly assembly)
 		{
-			MonoSymbolTableWriter writer = new MonoSymbolTableWriter ();
-			return writer.CreateSymbolTable (this);
+			MonoSymbolFile file = new MonoSymbolFile ();
+
+			foreach (SourceMethod method in Methods) {
+				if (!method.HasSource) {
+					Console.WriteLine ("INGORING METHOD: {0}", method);
+					continue;
+				}
+
+				SourceFileEntry source = file.DefineSource (method.SourceFile.FileName);
+
+				source.DefineMethod (method.MethodBase, method.Token, method.Locals,
+						     method.Lines, method.Start.Row, method.End.Row);
+			}
+
+			return file.CreateSymbolFile ();
 		}
 	}
 }

@@ -1,5 +1,4 @@
 MonoSymbolDocumentWriter.cs
 MonoSymbolWriter.cs
 MonoSymbolTable.cs
-MonoSymbolTableWriter.cs
 MonoSymbolFile.cs
