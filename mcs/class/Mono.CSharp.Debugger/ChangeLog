@@ -1,5 +1,9 @@
 2004-05-23 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* MonoSymbolWriter.cs (AddLocal), etc: kill more arraylists.
+
+2004-05-23 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* MonoSymbolTable.cs (BuildLineNumberTable): Avoid arraylist.
 
 2004-01-16  Martin Baulig  <martin@ximian.com>
