@@ -1,3 +1,7 @@
+2004-02-13  Ravindra <rkumar@novell.com>
+	* Pen.cs: Fixed some bugs.
+	* TextureBrush.cs: Fixed some bugs.
+
 2004-02-13  Sanjay Gupta <gsanjay@novell.com>
 	* gdipFunctions.cs: Added ImageCodecInfo functions
 	* Image.cs: Added few methods 

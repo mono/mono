@@ -1,12 +1,14 @@
 //
 // System.Drawing.Pen.cs
 //
-// Author:
+// Authors:
 //   Miguel de Icaza (miguel@ximian.com)
 //   Alexandre Pigolkine (pigolkine@gmx.de)
 //   Duncan Mak (duncan@ximian.com)
+//   Ravindra (rkumar@novell.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
+// (C) Novell, Inc.  http://www.novell.com
 //
 
 using System;
@@ -20,6 +22,7 @@ namespace System.Drawing {
 		internal bool isModifiable = true;
 		internal Brush brush;
 		internal Color color;
+		internal Matrix matrix;
 
                 internal Pen (IntPtr p)
                 {
@@ -83,8 +86,8 @@ namespace System.Drawing {
 
 			set {
 				if (isModifiable) {
+					brush = value;
 					if (value is SolidBrush) {
-						brush = value;
 						GDIPlus.GdipSetPenBrushFill (nativeObject, value.nativeObject);
 						color = ((SolidBrush) brush).Color;
 						GDIPlus.GdipSetPenColor (nativeObject, color.ToArgb ());
@@ -328,14 +331,19 @@ namespace System.Drawing {
                 public Matrix Transform {
 
                         get {
-                                IntPtr matrix;
-                                GDIPlus.GdipGetPenTransform (nativeObject, out matrix);
-                                return new Matrix (matrix);
+				if (matrix == null) {
+					IntPtr m;
+					GDIPlus.GdipGetPenTransform (nativeObject, out m);
+					matrix = new Matrix (m);
+				}
+				return matrix;
                         }
 
                         set {
-				if (isModifiable)
+				if (isModifiable) {
                                 	GDIPlus.GdipSetPenTransform (nativeObject, value.nativeMatrix);
+					matrix = value;
+				}
 				else
 					throw new ArgumentException ("You may not change this Pen because it does not belong to you.");
                         }

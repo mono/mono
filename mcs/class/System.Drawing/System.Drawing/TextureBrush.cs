@@ -27,11 +27,8 @@ namespace System.Drawing
 		{
 			// get image from IntPtr
 			// image could be Bitmap or Metafile
-			IntPtr img;
-			Status status = GDIPlus.GdipGetTextureImage (nativeObject, out img);
-			GDIPlus.CheckStatus (status);
-			image = new Bitmap (img);
-			matrix = new Matrix ();
+			image = Image;
+			matrix = Transform;
 		}
 
 		public TextureBrush (Image image) : this (image, WrapMode.Tile)
@@ -43,7 +40,6 @@ namespace System.Drawing
 			this.image = image;
 			Status status = GDIPlus.GdipCreateTextureIAI (image.nativeObject, IntPtr.Zero, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
 			GDIPlus.CheckStatus (status);
-			matrix = new Matrix ();
 		}
 
 		public TextureBrush (Image image, RectangleF dstRect)
@@ -51,7 +47,6 @@ namespace System.Drawing
 			this.image = image;
 			Status status = GDIPlus.GdipCreateTextureIA (image.nativeObject, IntPtr.Zero, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
 			GDIPlus.CheckStatus (status);
-			matrix = new Matrix ();
 		}
 
 		public TextureBrush (Image image, WrapMode wrapMode)
@@ -59,7 +54,6 @@ namespace System.Drawing
 			this.image = image;
 			Status status = GDIPlus.GdipCreateTexture (image.nativeObject, wrapMode, out nativeObject);
 			GDIPlus.CheckStatus (status);
-			matrix = new Matrix ();
 		}
 
 		public TextureBrush (Image image, Rectangle dstRect, ImageAttributes imageAttr)
@@ -67,7 +61,6 @@ namespace System.Drawing
 			this.image = image;
 			Status status = GDIPlus.GdipCreateTextureIAI (image.nativeObject, imageAttr.NativeObject, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
 			GDIPlus.CheckStatus (status);
-			matrix = new Matrix ();
 		}
 
 		public TextureBrush (Image image, RectangleF dstRect, ImageAttributes imageAttr)
@@ -75,7 +68,6 @@ namespace System.Drawing
 			this.image = image;
 			Status status = GDIPlus.GdipCreateTextureIA (image.nativeObject, imageAttr.NativeObject, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
 			GDIPlus.CheckStatus (status);
-			matrix = new Matrix ();
 		}
 
 		public TextureBrush (Image image, WrapMode wrapMode, Rectangle dstRect)
@@ -83,7 +75,6 @@ namespace System.Drawing
 			this.image = image;
 			Status status = GDIPlus.GdipCreateTexture2I (image.nativeObject, wrapMode, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
 			GDIPlus.CheckStatus (status);
-			matrix = new Matrix ();
 		}
 
 		public TextureBrush (Image image, WrapMode wrapMode, RectangleF dstRect)
@@ -91,7 +82,6 @@ namespace System.Drawing
 			this.image = image;
 			Status status = GDIPlus.GdipCreateTexture2 (image.nativeObject, wrapMode, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
 			GDIPlus.CheckStatus (status);
-			matrix = new Matrix ();
 		}
 
 		// properties
@@ -121,6 +111,7 @@ namespace System.Drawing
 			set {
 				Status status = GDIPlus.GdipSetTextureTransform (nativeObject, value.nativeMatrix);
 				GDIPlus.CheckStatus (status);
+				matrix = value;
 			}
 		}
 
