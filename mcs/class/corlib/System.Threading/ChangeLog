@@ -1,3 +1,10 @@
+2002-01-16  Veronica De Santis <veron78@interfree.it>   
+        
+	* WaitHandle.cs : Renamed handle to os_handle and make it protected
+	                  instead of private.
+	* Mutex.cs : Write the System.Threading.Mutex methods ( constructors 
+	             and the ReleaseMutex)
+
 2002-01-15  Dick Porter  <dick@ximian.com>
 
 	* WaitHandle.cs:

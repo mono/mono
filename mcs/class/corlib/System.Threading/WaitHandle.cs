@@ -128,15 +128,15 @@ namespace System.Threading
 
 		public const int WaitTimeout = 258;
 
-		private IntPtr handle = IntPtr.Zero;
+		protected IntPtr os_handle = IntPtr.Zero;
 		
 		public virtual IntPtr Handle {
 			get {
-				return(handle);
+				return(os_handle);
 			}
 				
 			set {
-				handle=value;
+				os_handle=value;
 			}
 		}
 
@@ -148,18 +148,18 @@ namespace System.Threading
 		protected virtual extern bool WaitOne_internal(IntPtr handle, int ms, bool exitContext);
 
 		public virtual bool WaitOne() {
-			return(WaitOne_internal(handle, Timeout.Infinite,
+			return(WaitOne_internal(os_handle, Timeout.Infinite,
 						false));
 		}
 
 		public virtual bool WaitOne(int millisecondsTimeout, bool exitContext) {
-			return(WaitOne_internal(handle,
+			return(WaitOne_internal(os_handle,
 						millisecondsTimeout,
 						exitContext));
 		}
 
 		public virtual bool WaitOne(TimeSpan timeout, bool exitContext) {
-			return(WaitOne_internal(handle,
+			return(WaitOne_internal(os_handle,
 						timeout.Milliseconds,
 						exitContext));
 		}
