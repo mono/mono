@@ -227,15 +227,15 @@ namespace System.Web.UI.WebControls
 
 		public virtual void InitializeCell(TableCell cell, int columnIndex, ListItemType itemType)
 		{
-                        if (ItemStyleInternal != null)
-				cell.ApplyStyle (ItemStyleInternal);
 			switch(itemType)
 			{
 				case ListItemType.Header : InitializeCellHeader(cell, columnIndex);
 				                           break;
 				case ListItemType.Footer : InitializeCellFooter(cell, columnIndex);
 				                           break;
-				default                  : return;
+				default                  : if (ItemStyleInternal != null)
+							   	cell.ApplyStyle (ItemStyleInternal);
+							   return;
 			}
 		}
 
@@ -301,11 +301,15 @@ namespace System.Web.UI.WebControls
 			{
 				cell.Controls.Add(ctrl);
 			}
+			if (HeaderStyleInternal != null)
+				cell.ApplyStyle (HeaderStyleInternal);
 		}
 
 		private void InitializeCellFooter(TableCell cell, int columnIndex)
 		{
 			cell.Text = (FooterText.Length > 0 ? FooterText : "&nbsp;");
+			if (FooterStyleInternal != null)
+				cell.ApplyStyle (FooterStyleInternal);
 		}
 
 		public override string ToString()

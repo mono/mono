@@ -1,3 +1,7 @@
+2004-1-1 Alon Gazit <along@mainsoft.com>
+	* DataGridColumn.cs: Headers and Footers are initialized  
+	with the relevant Style object.	 
+
 2003-12-30 Alon Gazit <along@mainsoft.com>
 	* RepeatInfo.cs: Fixed DoVerticalRendering () and 
 	DoHorizontalRendering().
