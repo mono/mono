@@ -1,6 +1,10 @@
+2003/01/23  Nick Drochak <ndrochak@gol.com>
+
+	* ThreadTest.cs: Test for alternate possibilities
+
 2003-01-13  Nick Drochak  <ndrochak@gol.com>
 
-	* MutexTest.cs: Disable some tests that case unhandled exceptoins
+	* MutexTest.cs: Disable some tests that case unhandled exceptions
 	on MS.NET.
 
 2002-12-21  Nick Drochak <ndrochak@gol.com>

@@ -359,7 +359,9 @@ namespace MonoTests.System.Threading
 			AssertEquals("#102 Wrong Thread State", ThreadState.Running | ThreadState.Unstarted ,TestThread.ThreadState);
 			TestThread.Abort();
 			while(TestThread.IsAlive);
-			AssertEquals("#103 Wrong Thread State",ThreadState.Aborted,TestThread.ThreadState);
+			// Docs say state will be Stopped, but Aborted happens sometimes (?)
+			Assert("#103 Wrong Thread State", ThreadState.Stopped == TestThread.ThreadState 
+				|| ThreadState.Aborted == TestThread.ThreadState);
 		} 
 	}
 
