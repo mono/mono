@@ -1,5 +1,9 @@
 2003-02-21  Zoltan Varga  <vargaz@freemail.hu>
 
+	* object.h icall.c process.c: fix warnings.
+
+2003-02-21  Zoltan Varga  <vargaz@freemail.hu>
+
 	* appdomain.h appdomain.c:
 	(mono_domain_try_type_resolve): split the 
 	name_or_tb argument into a name and a tb argument.
