@@ -1,6 +1,6 @@
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
+// "Software",, to deal in the Software without restriction, including
 // without limitation the rights to use, copy, modify, merge, publish,
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
@@ -23,9 +23,15 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.6 $
+// $Revision: 1.7 $
 // $Modtime: $
 // $Log: X11Structs.cs,v $
+// Revision 1.7  2004/08/19 21:51:59  pbartok
+// - Removed packing hints (Paolo suggested this a while back)
+// - fixed colormap type
+// - Added default Atom types
+// - Added Screen and color structs and enums
+//
 // Revision 1.6  2004/08/09 20:56:18  pbartok
 // - Added GrabMode enum
 //
@@ -59,7 +65,7 @@ using System.Runtime.InteropServices;
 /// X11 Version
 namespace System.Windows.Forms {
 	#region X11 Structures
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XAnyEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -68,7 +74,7 @@ namespace System.Windows.Forms {
 		internal IntPtr		window;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XKeyEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -87,7 +93,7 @@ namespace System.Windows.Forms {
 		internal bool		same_screen;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XButtonEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -106,7 +112,7 @@ namespace System.Windows.Forms {
 		internal bool		same_screen;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XMotionEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -125,7 +131,7 @@ namespace System.Windows.Forms {
 		internal bool		same_screen;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XCrossingEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -146,7 +152,7 @@ namespace System.Windows.Forms {
 		internal int		state;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XFocusChangeEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -157,7 +163,7 @@ namespace System.Windows.Forms {
 		internal int		detail;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XKeymapEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -198,7 +204,7 @@ namespace System.Windows.Forms {
 		internal byte		key_vector31;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XExposeEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -212,7 +218,7 @@ namespace System.Windows.Forms {
 		internal int		count;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XGraphicsExposeEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -228,7 +234,7 @@ namespace System.Windows.Forms {
 		internal int		minor_code;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XNoExposeEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -239,7 +245,7 @@ namespace System.Windows.Forms {
 		internal int		minor_code;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XVisibilityEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -249,7 +255,7 @@ namespace System.Windows.Forms {
 		internal int		state;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XCreateWindowEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -265,7 +271,7 @@ namespace System.Windows.Forms {
 		internal bool		override_redirect;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XDestroyWindowEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -275,7 +281,7 @@ namespace System.Windows.Forms {
 		internal IntPtr		window;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XUnmapEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -286,7 +292,7 @@ namespace System.Windows.Forms {
 		internal bool		from_configure;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XMapEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -297,7 +303,7 @@ namespace System.Windows.Forms {
 		internal bool		override_redirect;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XMapRequestEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -307,7 +313,7 @@ namespace System.Windows.Forms {
 		internal IntPtr		window;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XReparentEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -321,7 +327,7 @@ namespace System.Windows.Forms {
 		internal bool		override_redirect;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XConfigureEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -338,7 +344,7 @@ namespace System.Windows.Forms {
 		internal bool		override_redirect;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XGravityEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -350,7 +356,7 @@ namespace System.Windows.Forms {
 		internal int		y;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XResizeRequestEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -361,7 +367,7 @@ namespace System.Windows.Forms {
 		internal int		height;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XConfigureRequestEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -372,7 +378,7 @@ namespace System.Windows.Forms {
 		internal int		height;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XCirculateEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -383,7 +389,7 @@ namespace System.Windows.Forms {
 		internal int		place;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XCirculateRequestEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -394,7 +400,7 @@ namespace System.Windows.Forms {
 		internal int		place;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XPropertyEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -406,7 +412,7 @@ namespace System.Windows.Forms {
 		internal int		state;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XSelectionClearEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -417,7 +423,7 @@ namespace System.Windows.Forms {
 		internal int		time;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XSelectionRequestEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -431,7 +437,7 @@ namespace System.Windows.Forms {
 		internal int		time;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XSelectionEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -444,7 +450,7 @@ namespace System.Windows.Forms {
 		internal int		time;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XColormapEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -456,7 +462,7 @@ namespace System.Windows.Forms {
 		internal int		state;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XClientMessageEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -472,7 +478,7 @@ namespace System.Windows.Forms {
 		internal int		l4;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XMappingEvent {
 		internal XEventName	type;
 		internal int		serial;
@@ -484,7 +490,7 @@ namespace System.Windows.Forms {
 		internal int		count;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XErrorEvent {
 		internal XEventName	type;
 		internal IntPtr		display;
@@ -495,7 +501,7 @@ namespace System.Windows.Forms {
 		internal byte		minor_code;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XEventPad {
 		internal int pad0;
 		internal int pad1;
@@ -563,7 +569,7 @@ namespace System.Windows.Forms {
 		[ FieldOffset(0) ] internal XEventPad Pad;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XWindowAttributes {
 		internal int		x;
 		internal int		y;
@@ -580,7 +586,7 @@ namespace System.Windows.Forms {
 		internal ulong		backing_planes;
 		internal ulong		backing_pixel;
 		internal bool		save_under;
-		internal IntPtr		colormap;
+		internal uint		colormap;
 		internal bool		map_installed;
 		internal int		map_state;
 		internal long		all_event_masks;
@@ -590,7 +596,7 @@ namespace System.Windows.Forms {
 		internal IntPtr		screen;
 	}
 
-	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XTextProperty {
 		internal string		value;
 		internal IntPtr		encoding;
@@ -725,6 +731,137 @@ namespace System.Windows.Forms {
 		GrabModeSync		= 0,
 		GrabModeAsync		= 1
 	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct XStandardColormap {
+		internal uint		colormap;
+		internal uint		red_max;
+		internal uint		red_mult;
+		internal uint		green_max;
+		internal uint		green_mult;
+		internal uint		blue_max;
+		internal uint		blue_mult;
+		internal uint		base_pixel;
+		internal uint		visualid;
+		internal uint		killid;
+	}
+
+	[StructLayout(LayoutKind.Sequential, Pack=2)]
+	internal struct XColor {
+		internal uint		pixel;
+		internal ushort		red;
+		internal ushort		green;
+		internal ushort		blue;
+		internal byte		flags;
+		internal byte		pad;
+	}
+
+	internal enum Atom {
+		XA_PRIMARY		= 1,
+		XA_SECONDARY		= 2,
+		XA_ARC			= 3,
+		XA_ATOM			= 4,
+		XA_BITMAP		= 5,
+		XA_CARDINAL		= 6,
+		XA_COLORMAP		= 7,
+		XA_CURSOR		= 8,
+		XA_CUT_BUFFER0		= 9,
+		XA_CUT_BUFFER1		= 10,
+		XA_CUT_BUFFER2		= 11,
+		XA_CUT_BUFFER3		= 12,
+		XA_CUT_BUFFER4		= 13,
+		XA_CUT_BUFFER5		= 14,
+		XA_CUT_BUFFER6		= 15,
+		XA_CUT_BUFFER7		= 16,
+		XA_DRAWABLE		= 17,
+		XA_FONT			= 18,
+		XA_INTEGER		= 19,
+		XA_PIXMAP		= 20,
+		XA_POINT		= 21,
+		XA_RECTANGLE		= 22,
+		XA_RESOURCE_MANAGER	= 23,
+		XA_RGB_COLOR_MAP	= 24,
+		XA_RGB_BEST_MAP		= 25,
+		XA_RGB_BLUE_MAP		= 26,
+		XA_RGB_DEFAULT_MAP	= 27,
+		XA_RGB_GRAY_MAP		= 28,
+		XA_RGB_GREEN_MAP	= 29,
+		XA_RGB_RED_MAP		= 30,
+		XA_STRING		= 31,
+		XA_VISUALID		= 32,
+		XA_WINDOW		= 33,
+		XA_WM_COMMAND		= 34,
+		XA_WM_HINTS		= 35,
+		XA_WM_CLIENT_MACHINE	= 36,
+		XA_WM_ICON_NAME		= 37,
+		XA_WM_ICON_SIZE		= 38,
+		XA_WM_NAME		= 39,
+		XA_WM_NORMAL_HINTS	= 40,
+		XA_WM_SIZE_HINTS	= 41,
+		XA_WM_ZOOM_HINTS	= 42,
+		XA_MIN_SPACE		= 43,
+		XA_NORM_SPACE		= 44,
+		XA_MAX_SPACE		= 45,
+		XA_END_SPACE		= 46,
+		XA_SUPERSCRIPT_X	= 47,
+		XA_SUPERSCRIPT_Y	= 48,
+		XA_SUBSCRIPT_X		= 49,
+		XA_SUBSCRIPT_Y		= 50,
+		XA_UNDERLINE_POSITION	= 51,
+		XA_UNDERLINE_THICKNESS	= 52,
+		XA_STRIKEOUT_ASCENT	= 53,
+		XA_STRIKEOUT_DESCENT	= 54,
+		XA_ITALIC_ANGLE		= 55,
+		XA_X_HEIGHT		= 56,
+		XA_QUAD_WIDTH		= 57,
+		XA_WEIGHT		= 58,
+		XA_POINT_SIZE		= 59,
+		XA_RESOLUTION		= 60,
+		XA_COPYRIGHT		= 61,
+		XA_NOTICE		= 62,
+		XA_FONT_NAME		= 63,
+		XA_FAMILY_NAME		= 64,
+		XA_FULL_NAME		= 65,
+		XA_CAP_HEIGHT		= 66,
+		XA_WM_CLASS		= 67,
+		XA_WM_TRANSIENT_FOR	= 68,
+
+		XA_LAST_PREDEFINED	= 68
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct XScreen {
+		IntPtr			ext_data;
+		IntPtr			display;
+		IntPtr			root;
+		int			width;
+		int			height;
+		int			mwidth;
+		int			mheight;
+		int			ndepths;
+		IntPtr			depths;
+		int			root_depth;
+		IntPtr			root_visual;
+		IntPtr			default_gc;
+		uint			cmap;
+		uint			white_pixel;
+		uint			black_pixel;
+		int			max_maps;
+		int			min_maps;
+		int			backing_store;
+		bool			save_unders;
+		EventMask		root_input_mask;
+	}
+
+	
+
+	[Flags]
+	internal enum ColorFlags {
+		DoRed			= 1<<0,
+		DoGreen			= 1<<1,
+		DoBlue			= 1<<2
+	}
+
 	#endregion
 }
 
