@@ -1,3 +1,8 @@
+2004-06-07  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0038-2.cs: New test, from bug #59477.
+	* mcs-expect-wrong-error: Add cs0038-1.
+
 2004-06-03  Raja R Harinath  <rharinath@novell.com>
 
 	* cs0038-1.cs, cs1540-3.cs, cs1540-4.cs, cs1540-5.cs:
