@@ -1,7 +1,7 @@
 <VisualStudioProject>
     <CSHARP
         ProjectType = "Local"
-        ProductVersion = "7.0.9254"
+        ProductVersion = "7.0.9372"
         SchemaVersion = "1.0"
         ProjectGuid = "{896D1461-B76B-41C0-ABE6-ACA2BB4F7B5A}"
     >
@@ -15,7 +15,6 @@
                 DefaultHTMLPageLayout = "Grid"
                 DefaultTargetSchema = "IE50"
                 DelaySign = "false"
-                NoStandardLibraries = "false"
                 OutputType = "Exe"
                 RootNamespace = "CIR"
                 StartupObject = ""
@@ -130,6 +129,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ecore.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "enum.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -161,6 +165,11 @@
                 />
                 <File
                     RelPath = "literal.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "location.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

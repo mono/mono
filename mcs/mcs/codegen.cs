@@ -45,7 +45,7 @@ namespace CIR {
 			AssemblyName an;
 			
 			an = new AssemblyName ();
-			an.Name = TrimExt (name);
+			an.Name = TrimExt (Basename (name));
 			current_domain = AppDomain.CurrentDomain;
 			assembly_builder = current_domain.DefineDynamicAssembly (
 				an, AssemblyBuilderAccess.RunAndSave);

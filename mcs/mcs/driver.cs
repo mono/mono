@@ -133,7 +133,7 @@ namespace CIR
 				return 0;
 			} catch (FileNotFoundException){
 				foreach (string dir in link_paths){
-					string full_path = dir + "/" + assembly;;
+					string full_path = dir + "/" + assembly + ".dll";
 
 					try {
 						a = Assembly.LoadFrom (full_path);
@@ -200,7 +200,8 @@ namespace CIR
 			// This is not required because Assembly.Load knows about this
 			// path.
 			//
-			// link_paths.Add ("file:///C:/WINNT/Microsoft.NET/Framework/v1.0.2914");
+			link_paths.Add ("file:///C:/WINNT/Microsoft.NET/Framework/v1.0.2914");
+			link_paths.Add ("file:///C:/WINNT/Microsoft.NET/Framework/v1.0.2914");
 			
 			for (i = 0; i < args.Length; i++){
 				string arg = args [i];

@@ -113,6 +113,9 @@ namespace CIR {
 			if (target == null)
 				return null;
 
+			Console.WriteLine ("Resolving: " + source + "/" + source.Type + " [ " + target
+					   + "/ " + target.Type + "]");
+
 			Type target_type = target.Type;
 			Type source_type = source.Type;
 
