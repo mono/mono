@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = Mono.Posix.dll
 LIB_MCS_FLAGS = /unsafe /r:$(corlib) /r:System.dll
-NO_TEST = yes
+TEST_MCS_FLAGS = /r:Mono.Posix.dll /r:System.dll
 
 include ../../build/library.make
 

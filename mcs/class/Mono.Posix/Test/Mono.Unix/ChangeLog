@@ -1,0 +1,5 @@
+2005-01-05  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* ChangeLog: Started.
+	* UnixGroupTest.cs, UnixUserTest.cs: Added.
+
