@@ -1,5 +1,12 @@
 2004-03-29  Martin Baulig  <martin@ximian.com>
 
+	* convert.cs: Use TypeManager.IsSubclassOf() instead of comparing
+	types directly to make it work for generic instances.
+
+	* typemanager.cs (TypeManager.IsSubclassOf): New static method.
+
+2004-03-29  Martin Baulig  <martin@ximian.com>
+
 	* typemanager.cs (TypeManager.MayBecomeEqualGenericTypes): Added
 	support for arrays.	
 

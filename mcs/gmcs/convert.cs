@@ -60,7 +60,7 @@ namespace Mono.CSharp {
 					return new BoxedCast (expr);
 				if (expr is NullLiteral)
 					return new NullCast (expr, target_type);
-			} else if (expr_type.IsSubclassOf (target_type)) {
+			} else if (TypeManager.IsSubclassOf (expr_type, target_type)) {
 				//
 				// Special case: enumeration to System.Enum.
 				// System.Enum is not a value type, it is a class, so we need
@@ -170,7 +170,7 @@ namespace Mono.CSharp {
 				if (expr_type.IsClass || TypeManager.IsValueType (expr_type) ||
 				    expr_type.IsInterface || expr_type == TypeManager.enum_type)
 					return true;
-			} else if (expr_type.IsSubclassOf (target_type)) 
+			} else if (TypeManager.IsSubclassOf (expr_type, target_type)) 
 				return true;
 			else {
 				// Please remember that all code below actually comes
@@ -1427,14 +1427,14 @@ namespace Mono.CSharp {
 			//
 			// From any class S to any class-type T, provided S is a base class of T
 			//
-			if (target_type.IsSubclassOf (source_type))
+			if (TypeManager.IsSubclassOf (target_type, source_type))
 				return true;
 
 			//
 			// From any interface type S to any interface T provided S is not derived from T
 			//
 			if (source_type.IsInterface && target_type.IsInterface){
-				if (!target_type.IsSubclassOf (source_type))
+				if (!TypeManager.IsSubclassOf (target_type, source_type))
 					return true;
 			}
 			    
@@ -1525,7 +1525,7 @@ namespace Mono.CSharp {
 			//
 			// From any class S to any class-type T, provided S is a base class of T
 			//
-			if (target_type.IsSubclassOf (source_type))
+			if (TypeManager.IsSubclassOf (target_type, source_type))
 				return new ClassCast (source, target_type);
 
 			//
