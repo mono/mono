@@ -202,7 +202,6 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
 			ec.ig.Emit (OpCodes.Ldstr, property_name);
 			exp.Emit (ec);
 		}

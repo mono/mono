@@ -85,8 +85,6 @@ namespace Microsoft.JScript {
 		internal override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			Type t = typeof (object);
-			bool not_inside_func = parent == null;
 			
 			ig.BeginExceptionBlock ();
 

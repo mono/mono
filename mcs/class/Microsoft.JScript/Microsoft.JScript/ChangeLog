@@ -1,3 +1,9 @@
+2005-01-05  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* Try.cs, Statement.cs (EmitStms), Literal.cs
+	(ObjectLiteralItem.Emit), CodeGenerator.cs (fall_false): delete
+	unused variables.
+
 2004-12-15  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* CodeGenerator.cs: add support for compiling not only from cwd.

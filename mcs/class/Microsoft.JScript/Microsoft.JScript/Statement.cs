@@ -563,7 +563,6 @@ namespace Microsoft.JScript {
 		
 		internal void EmitStms (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
 			foreach (AST ast in stm_list)
 				ast.Emit (ec);
 		}

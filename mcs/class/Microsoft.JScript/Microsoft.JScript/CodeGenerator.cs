@@ -407,7 +407,6 @@ namespace Microsoft.JScript {
 			
 		internal static void fall_false (EmitContext ec, AST ast, Label lbl)
 		{
-			ILGenerator ig = ec.ig;
 			Type type = ast.GetType ();
 
 			if (type == typeof (Expression)) {  
