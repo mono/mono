@@ -11,6 +11,7 @@ using System;
 
 namespace System.Collections {
 
+	[MonoTODO ("add versioning, changing the arraylist should invalidate all enumerators")]
 	[Serializable]
 	public class ArrayList : IList, ICollection, IEnumerable, ICloneable {
 		// constructors
@@ -339,11 +340,16 @@ namespace System.Collections {
 			private int start;
 			private int num;
 
-			public ArrayListEnumerator(int index, int count, object[] items) {
+			internal ArrayListEnumerator(int index, int count, object[] items) {
 				data = items;
 				start = index;
 				num = count;
 				idx = start - 1;
+			}
+
+			public object Clone ()
+			{
+				return new ArrayListEnumerator (start, num, data);
 			}
 
 			public object Current {

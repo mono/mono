@@ -444,10 +444,6 @@ namespace System.Collections
       return new BitArray(newarr, m_length);
     }
 
-    ~BitArray()
-    {
-    }
-    
     class BitArrayEnumerator : IEnumerator
     {
       BitArray m_bitArray;

@@ -48,12 +48,12 @@ public class HijriCalendar : Calendar {
 	/// <summary>
 	/// The minimum fixed day number supported by the Hijri calendar.
 	/// </summary>
-	protected static readonly int M_MinFixed =
+	internal static readonly int M_MinFixed =
 		CCHijriCalendar.fixed_from_dmy(1, 1, 1);
 	/// <summary>
 	/// The maximum fixed day number supported by the Hijri calendar.
 	/// </summary>
-	protected static readonly int M_MaxFixed =
+	internal static readonly int M_MaxFixed =
 		CCGregorianCalendar.fixed_from_dmy(31, 12, 9999);
 
 	/// <value>Overridden. Gives the eras supported by the Gregorian
@@ -69,7 +69,7 @@ public class HijriCalendar : Calendar {
 	/// Protected field storing the
 	/// <see cref="F:AddHijriDate"/>.
 	/// </summary>
-	protected int M_AddHijriDate = 0;
+	internal int M_AddHijriDate = 0;
 
 	// TODO: I don't know currently, which sign to use with the parameter.
 	/// <value>An integer property representing the adjustment to the epoch
@@ -101,7 +101,7 @@ public class HijriCalendar : Calendar {
 	/// Exception is thrown, if the AddHijriDate adjusted fixed day
 	/// number is outside the supported range.
 	/// </exception>
-	protected void M_CheckFixedHijri(string param, int rdHijri) {
+	internal void M_CheckFixedHijri(string param, int rdHijri) {
 		if (rdHijri < M_MinFixed || rdHijri > M_MaxFixed-AddHijriDate) {
 			StringWriter sw = new StringWriter();
 			int day, month, year;
@@ -137,7 +137,7 @@ public class HijriCalendar : Calendar {
 	/// <see cref="T:System.DateTime"/> parameter is not in the supported 
 	/// range of the Hijri calendar.
 	/// </exception>
-	protected void M_CheckDateTime(DateTime time) {
+	internal void M_CheckDateTime(DateTime time) {
 		int rd = CCFixed.FromDateTime(time) - AddHijriDate;
 		M_CheckFixedHijri("time", rd);
 	}
@@ -155,7 +155,7 @@ public class HijriCalendar : Calendar {
 	/// <returns>The
 	/// <see cref="F:AddHijriDate"/> adjusted fixed day number.
 	/// </returns>
-	protected int M_FromDateTime(DateTime time) {
+	internal int M_FromDateTime(DateTime time) {
 		return CCFixed.FromDateTime(time) - AddHijriDate;
 	}
 
@@ -171,7 +171,7 @@ public class HijriCalendar : Calendar {
 	/// <returns>The converted
 	/// <see cref="T:System.DateTime"/> value.
 	/// </returns>
-	protected DateTime M_ToDateTime(int rd) {
+	internal DateTime M_ToDateTime(int rd) {
 		return CCFixed.ToDateTime(rd+AddHijriDate);
 	}
 
@@ -197,7 +197,7 @@ public class HijriCalendar : Calendar {
 	/// <returns>The converted
 	/// <see cref="T:System.DateTime"/> value.
 	/// </returns>
-	protected DateTime M_ToDateTime(int date,
+	internal DateTime M_ToDateTime(int date,
 		int hour, int minute, int second, int milliseconds)
 	{
 		return CCFixed.ToDateTime(date+AddHijriDate,
@@ -212,7 +212,7 @@ public class HijriCalendar : Calendar {
 	/// The exception is thrown if the era is not equal
 	/// <see cref="F:HijriEra"/>.
 	/// </exception>
-	protected void M_CheckEra(ref int era) {
+	internal void M_CheckEra(ref int era) {
 		if (era == CurrentEra)
 			era = HijriEra;
 		if (era != HijriEra)
@@ -233,7 +233,7 @@ public class HijriCalendar : Calendar {
 	/// The exception is thrown if the calendar year is outside of
 	/// the allowed range.
 	/// </exception>
-	protected override void M_CheckYE(int year, ref int era) {
+	internal override void M_CheckYE(int year, ref int era) {
 		M_CheckEra(ref era);
 		M_ArgumentInRange("year", year, 1, 9666);
 	}
@@ -255,7 +255,7 @@ public class HijriCalendar : Calendar {
 	/// The exception is thrown if the calendar year or month is
 	/// outside of the allowed range.
 	/// </exception>
-	protected void M_CheckYME(int year, int month, ref int era) {
+	internal void M_CheckYME(int year, int month, ref int era) {
 		M_CheckYE(year, ref era);
 		if (month < 1 || month > 12)
 			throw new ArgumentOutOfRangeException("month",
@@ -285,7 +285,7 @@ public class HijriCalendar : Calendar {
 	/// The exception is thrown if the calendar year, month, or day is
 	/// outside of the allowed range.
 	/// </exception>
-	protected void M_CheckYMDE(int year, int month, int day, ref int era)
+	internal void M_CheckYMDE(int year, int month, int day, ref int era)
 	{
 		M_CheckYME(year, month, ref era);
 		M_ArgumentInRange("day", day, 1,

@@ -15,7 +15,7 @@ using System.IO;
 public abstract class Calendar {
 	/// <value>An protected integer property that gives the number of
 	/// days in a week. It might be overridden.</value>
-	protected virtual int M_DaysInWeek
+	internal virtual int M_DaysInWeek
 	{
 		get { return 7; }
 	}
@@ -31,7 +31,7 @@ public abstract class Calendar {
 	/// <returns>The string used in the
 	/// <see cref="T:System.ArgumentOutOfRangeException"/>
 	/// </returns>
-	protected string M_ValidValues(object a, object b)
+	internal string M_ValidValues(object a, object b)
 	{
 		StringWriter sw = new StringWriter();
 		sw.Write("Valid values are between {0} and {1}, inclusive.",
@@ -55,7 +55,7 @@ public abstract class Calendar {
 	/// The exception is thrown, if the <paramref name="arg"/> is outside
 	/// the allowed range.
 	/// </exception>
-	protected void M_ArgumentInRange(string param, int arg, int a, int b)
+	internal void M_ArgumentInRange(string param, int arg, int a, int b)
 	{
 		if (a <= arg && arg <= b)
 			return;
@@ -80,7 +80,7 @@ public abstract class Calendar {
 	/// The Exception is thrown, if one of the parameter is outside the
 	/// allowed the range.
 	/// </exception>
-	protected void M_CheckHMSM(int hour, int minute, int second,
+	internal void M_CheckHMSM(int hour, int minute, int second,
 		int milliseconds)
 	{
 		M_ArgumentInRange("hour", hour, 0, 23);
@@ -104,7 +104,7 @@ public abstract class Calendar {
 	/// <see cref="P:TwoDigitYearMax"/>
 	/// property.
 	/// </summary>
-	protected int M_TwoDigitYearMax;
+	internal int M_TwoDigitYearMax;
 	
 
 	/// <summary>
@@ -116,7 +116,7 @@ public abstract class Calendar {
 	/// Get-only property returing the maximum allowed year for this
 	/// class.
 	/// </value>
-	protected virtual int M_MaxYear {
+	internal virtual int M_MaxYear {
 		get {
 			if (M_MaxYearValue == 0) {
 				M_MaxYearValue = GetYear(DateTime.MaxValue);
@@ -134,7 +134,7 @@ public abstract class Calendar {
 	/// <exception cref="T:ArgumentOutOfRangeException">
 	/// The exception will be thrown, if the year is not valid.
 	/// </exception>
-	protected abstract void M_CheckYE(int year, ref int era);
+	internal abstract void M_CheckYE(int year, ref int era);
 
 	/// <value>
 	/// <para>The property gives the maximum value for years with two
@@ -499,7 +499,7 @@ public abstract class Calendar {
 	/// <returns>An integer that represents the difference of days
 	/// between <paramref name="timeA"/> and <paramref name="timeB"/>.
 	/// </returns>
-	protected int M_DiffDays(DateTime timeA, DateTime timeB) {
+	internal int M_DiffDays(DateTime timeA, DateTime timeB) {
 		long diff = timeA.Ticks - timeB.Ticks;
 
 		if (diff >= 0) {
@@ -526,7 +526,7 @@ public abstract class Calendar {
 	/// <returns>The <see cref="T:System.DateTime"/> representing 
 	/// the first day of the second week of the year.
 	/// </returns>
-	protected DateTime M_GetFirstDayOfSecondWeekOfYear(
+	internal DateTime M_GetFirstDayOfSecondWeekOfYear(
 		int year, CalendarWeekRule rule, DayOfWeek firstDayOfWeek)
 	{
 		DateTime d1 = ToDateTime(year, 1, 1, 0, 0, 0, 0);
@@ -858,10 +858,10 @@ public abstract class Calendar {
 
 	/// <summary>Protected field storing the abbreviated era names.
 	/// </summary>
-	protected string[] M_AbbrEraNames;
+	internal string[] M_AbbrEraNames;
 	/// <summary>Protected field storing the era names.
 	/// </summary>
-	protected string[] M_EraNames;
+	internal string[] M_EraNames;
 
 	/// <value>
 	/// The property stores the era names. It might be overwritten by

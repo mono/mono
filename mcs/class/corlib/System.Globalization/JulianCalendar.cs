@@ -53,7 +53,7 @@ public class JulianCalendar : Calendar {
 	/// The exception is thrown if the era is not equal
 	/// <see cref="M:JulianEra"/>.
 	/// </exception>
-	protected void M_CheckEra(ref int era) {
+	internal void M_CheckEra(ref int era) {
 		if (era == CurrentEra)
 			era = JulianEra;
 		if (era != JulianEra)
@@ -74,7 +74,7 @@ public class JulianCalendar : Calendar {
 	/// The exception is thrown if the calendar year is outside of
 	/// the allowed range.
 	/// </exception>
-	protected override void M_CheckYE(int year, ref int era) {
+	internal override void M_CheckYE(int year, ref int era) {
 		M_CheckEra(ref era);
 		M_ArgumentInRange("year", year, 1, 9999);
 	}
@@ -96,7 +96,7 @@ public class JulianCalendar : Calendar {
 	/// The exception is thrown if the calendar year or month is
 	/// outside of the allowed range.
 	/// </exception>
-	protected void M_CheckYME(int year, int month, ref int era) {
+	internal void M_CheckYME(int year, int month, ref int era) {
 		M_CheckYE(year, ref era);
 		if (month < 1 || month > 12)
 			throw new ArgumentOutOfRangeException("month",
@@ -122,7 +122,7 @@ public class JulianCalendar : Calendar {
 	/// The exception is thrown if the calendar year, month, or day is
 	/// outside of the allowed range.
 	/// </exception>
-	protected void M_CheckYMDE(int year, int month, int day, ref int era)
+	internal void M_CheckYMDE(int year, int month, int day, ref int era)
 	{
 		M_CheckYME(year, month, ref era);
 		M_ArgumentInRange("day", day, 1,

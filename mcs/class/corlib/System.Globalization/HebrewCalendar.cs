@@ -42,21 +42,21 @@ public class HebrewCalendar : Calendar {
 	/// <see cref="T:System.DateTime"/> ticks for first day of year
 	/// 5343 A.M.
 	/// </summary>
-	protected const long M_MinTicks = 499147488000000000L;
+	internal const long M_MinTicks = 499147488000000000L;
 	/// <summary>
 	/// The number of
 	/// <see cref="T:System.DateTime"/> ticks for the last day of year
 	/// 6000 A.M.
 	/// </summary>
-	protected const long M_MaxTicks = 706783967999999999L;
+	internal const long M_MaxTicks = 706783967999999999L;
 	/// <summary>
 	/// The minimum year in the A.M. era supported.
 	/// </summary>
-	protected const int M_MinYear = 5343;
+	internal const int M_MinYear = 5343;
 	/// <summary>
 	/// The maximum year supported in the A.M. era.
 	/// </summary>
-	protected override int M_MaxYear {
+	internal override int M_MaxYear {
 		get { return 6000; }
 	}
 
@@ -82,7 +82,7 @@ public class HebrewCalendar : Calendar {
 	/// <see cref="T:System.DateTime"/> parameter is not in the years
 	/// between 5343 A.M. and 6000 A.M., inclusive.
 	/// </exception>
-	protected void M_CheckDateTime(DateTime time) {
+	internal void M_CheckDateTime(DateTime time) {
 		if (time.Ticks < M_MinTicks || time.Ticks > M_MaxTicks)
 			throw new ArgumentOutOfRangeException(
 				"time",
@@ -98,7 +98,7 @@ public class HebrewCalendar : Calendar {
 	/// The exception is thrown if the era is not equal
 	/// <see cref="F:HebrewEra"/>.
 	/// </exception>
-	protected void M_CheckEra(ref int era) {
+	internal void M_CheckEra(ref int era) {
 		if (era == CurrentEra)
 			era = HebrewEra;
 		if (era != HebrewEra)
@@ -119,7 +119,7 @@ public class HebrewCalendar : Calendar {
 	/// The exception is thrown if the calendar year is outside of
 	/// the allowed range.
 	/// </exception>
-	protected override void M_CheckYE(int year, ref int era) {
+	internal override void M_CheckYE(int year, ref int era) {
 		M_CheckEra(ref era);
 		if (year < M_MinYear || year > M_MaxYear)
 			throw new ArgumentOutOfRangeException(
@@ -145,7 +145,7 @@ public class HebrewCalendar : Calendar {
 	/// The exception is thrown if the calendar year or month is
 	/// outside of the allowed range.
 	/// </exception>
-	protected void M_CheckYME(int year, int month, ref int era) {
+	internal void M_CheckYME(int year, int month, ref int era) {
 		M_CheckYE(year, ref era);
 		int l = CCHebrewCalendar.last_month_of_year(year);
 		if (month < 1 || month > l) {
@@ -175,7 +175,7 @@ public class HebrewCalendar : Calendar {
 	/// The exception is thrown if the calendar year, month, or day is
 	/// outside of the allowed range.
 	/// </exception>
-	protected void M_CheckYMDE(int year, int month, int day,
+	internal void M_CheckYMDE(int year, int month, int day,
 		ref int era)
 	{
 		M_CheckYME(year, month, ref era);
@@ -567,7 +567,7 @@ public class HebrewCalendar : Calendar {
 	/// map here.
 	/// </para>
 	/// </remarks>
-	protected int M_CCMonth(int month, int year) {
+	internal int M_CCMonth(int month, int year) {
 		if (month <= 6) {
 			return 6+month;
 		}
@@ -601,7 +601,7 @@ public class HebrewCalendar : Calendar {
 	/// map here.
 	/// </para>
 	/// </remarks>
-	protected int M_Month(int ccmonth, int year) {
+	internal int M_Month(int ccmonth, int year) {
 		if (ccmonth >= 7) {
 			return ccmonth - 6;
 		} else {

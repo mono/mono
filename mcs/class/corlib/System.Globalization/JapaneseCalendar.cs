@@ -50,7 +50,7 @@ public class JapaneseCalendar : Calendar {
 	/// Static protected field storing the
 	/// <see cref="T:CalendricalCalculations.GregorianEraHandler"/>.
 	/// </summary>
-	protected static readonly CCGregorianEraHandler M_EraHandler;
+	internal static readonly CCGregorianEraHandler M_EraHandler;
 
 	/// <summary>
 	/// Static constructor, who creates and initializes
@@ -103,7 +103,7 @@ public class JapaneseCalendar : Calendar {
 	/// <see cref="T:System.DateTime"/> parameter is outside all
 	/// supported eras.
 	/// </exception>
-	protected void M_CheckDateTime(DateTime time) {
+	internal void M_CheckDateTime(DateTime time) {
 		M_EraHandler.CheckDateTime(time);
 	}
 
@@ -115,7 +115,7 @@ public class JapaneseCalendar : Calendar {
 	/// <exception name="T:System.ArgumentException">
 	/// The exception is thrown if the era is not supported by the class.
 	/// </exception>
-	protected void M_CheckEra(ref int era) {
+	internal void M_CheckEra(ref int era) {
 		if (era == CurrentEra)
 			era = 4;
 		if (!M_EraHandler.ValidEra(era))
@@ -135,7 +135,7 @@ public class JapaneseCalendar : Calendar {
 	/// The exception is thrown if the calendar year is outside of
 	/// the supported range.
 	/// </exception>
-	protected int M_CheckYEG(int year, ref int era) {
+	internal int M_CheckYEG(int year, ref int era) {
 		M_CheckEra(ref era);
 		return M_EraHandler.GregorianYear(year, era);
 	}
@@ -149,7 +149,7 @@ public class JapaneseCalendar : Calendar {
 	/// <exception cref="T:ArgumentOutOfRangeException">
 	/// The exception will be thrown, if the year is not valid.
 	/// </exception>
-	protected override void M_CheckYE(int year, ref int era) {
+	internal override void M_CheckYE(int year, ref int era) {
 		M_CheckYEG(year, ref era);
 	}
 
@@ -169,7 +169,7 @@ public class JapaneseCalendar : Calendar {
 	/// The exception is thrown if the calendar year or month is
 	/// outside of the supported range.
 	/// </exception>
-	protected int M_CheckYMEG(int year, int month, ref int era) {
+	internal int M_CheckYMEG(int year, int month, ref int era) {
 		int gregorianYear = M_CheckYEG(year, ref era);
 		if (month < 1 || month > 12)
 			throw new ArgumentOutOfRangeException("month",
@@ -195,7 +195,7 @@ public class JapaneseCalendar : Calendar {
 	/// The exception is thrown if the calendar year, month, or day is
 	/// outside of the supported range.
 	/// </exception>
-	protected int M_CheckYMDEG(int year, int month, int day, ref int era)
+	internal int M_CheckYMDEG(int year, int month, int day, ref int era)
 	{
 		int gregorianYear = M_CheckYMEG(year, month, ref era);
 		M_ArgumentInRange("day", day, 1, GetDaysInMonth(year, month, era));

@@ -31,7 +31,7 @@ namespace System {
 		private AppDomain () {}
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern AppDomainSetup getSetup ();
+		private extern AppDomainSetup getSetup ();
 
 		public AppDomainSetup SetupInformation {
 
@@ -72,7 +72,7 @@ namespace System {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern string getFriendlyName ();
+		private extern string getFriendlyName ();
 
 		public string FriendlyName {
 
@@ -316,7 +316,7 @@ namespace System {
 		}
 	
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern Assembly LoadAssembly (AssemblyName assemblyRef, Evidence securityEvidence);
+		private extern Assembly LoadAssembly (AssemblyName assemblyRef, Evidence securityEvidence);
 
 		public Assembly Load (AssemblyName assemblyRef)
 		{
@@ -438,7 +438,7 @@ namespace System {
 		public static extern void Unload (AppDomain domain);
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern object GetData ();
+		private extern object GetData ();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern void SetData (string name, object data);

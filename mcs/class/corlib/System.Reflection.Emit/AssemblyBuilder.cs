@@ -74,12 +74,12 @@ namespace System.Reflection.Emit {
 		{
 		}
 
-		public override ModuleBuilder DefineDynamicModule (string name)
+		public ModuleBuilder DefineDynamicModule (string name)
 		{
 			return DefineDynamicModule (name, name, false);
 		}
 
-		public override ModuleBuilder DefineDynamicModule (string name, bool emitSymbolInfo)
+		public ModuleBuilder DefineDynamicModule (string name, bool emitSymbolInfo)
 		{
 			return DefineDynamicModule (name, name, emitSymbolInfo);
 		}

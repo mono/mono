@@ -20,7 +20,7 @@ namespace System.Collections {
 	[MonoTODO]
 	[Serializable]
 	public class Hashtable : IDictionary, ICollection, 
-		IEnumerable, ICloneable, ISerializable
+		IEnumerable, ICloneable, ISerializable, IDeserializationCallback
 	{
 
 		internal struct Slot {
@@ -52,7 +52,7 @@ namespace System.Collections {
 		private IHashCodeProvider hcpRef;
 		private IComparer comparerRef;
 
-		public static int [] primeTbl = {
+		private static int [] primeTbl = {
 			11,
 			19,
 			37,
@@ -404,17 +404,11 @@ namespace System.Collections {
 			info.AddValue ("Values", this.Values);
 		}
 
-		//[MonoTODO]
-		//public virtual void OnDeserialization (object sender);
-
 		[MonoTODO]
-		public override string ToString ()
+		public virtual void OnDeserialization (object sender)
 		{
-			// FIXME: What's it supposed to do?
-			//        Maybe print out some internals here? Anyway.
-			return "mono::System.Collections.Hashtable";
+			throw new NotImplementedException ();
 		}
-
 
 		/// <summary>
 		///  Returns a synchronized (thread-safe)

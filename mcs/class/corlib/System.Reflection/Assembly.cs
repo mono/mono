@@ -86,36 +86,6 @@ namespace System.Reflection {
 			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 		}
 
-		public virtual void RemoveOnTypeResolve (ResolveEventHandler handler)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public virtual void AddOnTypeResolve (ResolveEventHandler handler)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public virtual void RemoveOnResourceResolve (ResolveEventHandler handler)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		public virtual void AddOnResourceResolve (ResolveEventHandler handler)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public virtual ModuleBuilder DefineDynamicModule (String name, Boolean emitSymbolInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public virtual ModuleBuilder DefineDynamicModule (String name)
-		{
-			throw new NotImplementedException ();
-		}
-
 		public virtual FileStream[] GetFiles ()
 		{
 			throw new NotImplementedException ();
@@ -290,18 +260,5 @@ namespace System.Reflection {
 		{
 			throw new NotImplementedException ();
 		}
-
-		public static Assembly Load (AssemblyName assemblyRef, Evidence assemblySecurity,
-					     String callerLocation)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public static Assembly Load (String assemblyString, Evidence assemblySecurity,
-					     String callerLocation)
-		{
-			throw new NotImplementedException ();
-		}
-
 	}
 }

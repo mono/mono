@@ -51,12 +51,6 @@ namespace System.Collections {
 		// Instance methods
 		//
 
-		public override string ToString ()
-		{
-			return "mono::System.Collections.CaseInsensitiveComparer";
-		}
-
-
 		//
 		// IComparer
 		//

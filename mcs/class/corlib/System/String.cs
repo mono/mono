@@ -162,11 +162,13 @@ namespace System {
 			// FIXME: implement me
 		}
 
+		// FIXME: is there anything we need to do here?
+		/*
 		~String ()
 		{
-			// FIXME: is there anything we need to do here?
-			/*base.Finalize ();*/
+			base.Finalize ();
 		}
+		*/
 
 		// Properties
 		public int Length {

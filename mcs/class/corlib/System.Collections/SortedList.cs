@@ -365,14 +365,6 @@ namespace System.Collections {
 		}
 
 
-
-		public override string ToString ()
-		{
-			return "mono::System.Collections.SortedList";
-		}
-
-
-
 		//
 		// Private methods
 		//
