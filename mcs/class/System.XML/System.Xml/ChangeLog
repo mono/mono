@@ -1,3 +1,14 @@
+2004-04-05  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlAttribute.cs : get_Value should return all children's value.
+	* XmlCharacterData.cs : DOM's substring does not raise an error when
+	  startIndex + count exceeds the length of Data.
+	* XmlNamedNodeMap.cs : SetNamedItem() returns the new child when it
+	  does not replace another named item.
+	* XmlElement.cs : with related to the XmlNamedNodeMap change, 
+	  SetAttributeNode() is required to fix as to return null when it does
+	  not replace existing attribute.
+
 2004-03-31  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlDocumentNavigator.cs : When this instance is created from xmlns 

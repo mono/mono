@@ -195,12 +195,31 @@ namespace System.Xml
 			}
 		}
 
+		private string BuildChildValue (XmlNodeList list)
+		{
+			string ret = String.Empty;
+			for (int i = 0; i < list.Count; i++) {
+				if (list [i].NodeType == XmlNodeType.EntityReference)
+					ret += BuildChildValue (list [i].ChildNodes);
+				else
+					ret += list [i].Value;
+			}
+			return ret;
+		}
+
 		public override string Value {
 			get {
-				XmlNode firstChild = FirstChild;
-				if (firstChild == null)
+				/*
+				switch (ChildNodes.Count) {
+				case 0:
 					return String.Empty;
-				return firstChild.Value;
+				case 1:
+					return FirstChild.Value;
+				default:
+					return BuildChildValue (ChildNodes);
+				}
+				*/
+				return BuildChildValue (ChildNodes);
 			}
 
 			set {

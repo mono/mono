@@ -141,7 +141,7 @@ namespace System.Xml
 				else
 					nodeList.Insert (pos, node);
 
-				return null;
+				return node;
 			} finally {
 				if (raiseEvent)
 					parent.OwnerDocument.onNodeInserted (node, parent);

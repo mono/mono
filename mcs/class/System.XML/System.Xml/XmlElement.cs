@@ -113,7 +113,6 @@ namespace System.Xml
 				while (FirstChild != null)
 					this.RemoveChild (FirstChild);
 
-				// TODO: Can we optimize it?
 				XmlNameTable nt = this.OwnerDocument.NameTable;
 				XmlNamespaceManager nsmgr = this.ConstructNamespaceManager ();
 				XmlParserContext ctx = new XmlParserContext (OwnerDocument.NameTable, nsmgr,
@@ -335,7 +334,8 @@ namespace System.Xml
 				throw new InvalidOperationException (
 					"Specified attribute is already an attribute of another element.");
 
-			return Attributes.SetNamedItem (newAttr) as XmlAttribute;
+			XmlAttribute ret = Attributes.SetNamedItem (newAttr) as XmlAttribute;
+			return ret == newAttr ? null : ret;
 		}
 
 		public virtual XmlAttribute SetAttributeNode (string localName, string namespaceURI)

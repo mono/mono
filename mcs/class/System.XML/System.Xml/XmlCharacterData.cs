@@ -134,7 +134,10 @@ namespace System.Xml
 
 		public virtual string Substring (int offset, int count)
 		{
-			return data.Substring (offset, count);
+			if (data.Length < offset + count)
+				return data.Substring (offset);
+			else
+				return data.Substring (offset, count);
 		}
 		#endregion
 	}
