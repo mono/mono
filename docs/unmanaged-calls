@@ -69,7 +69,7 @@ Invoking native (unmanaged) code has several implications:
 The easiest way to implement this is to always create a wrapper function for
 PInvoke calls, which takes care of argument marshalling and LMF save/restore.
 
-3.) When/how does the runtime call unmanaged internal calls
+4.) When/how does the runtime call unmanaged internal calls
 
 We don't need to convert any arguments, so we need only take care of the LMF
 structure. 
@@ -120,7 +120,7 @@ But this depends somehow on the calling conventions, and I don't know if that
 works on all plattforms? 
 
 
-4.) What is stored in the LMF
+5.) What is stored in the LMF
 
 - all caller saved registers (since we can trust unmanaged code)
 - the instruction pointer of the last managed instruction
