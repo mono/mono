@@ -34,7 +34,7 @@ using Mono.Unix;
 
 namespace Mono.Unix {
 
-	public delegate void sighandler_t (int value);
+	public delegate void Sighandler_t (int value);
 
 	internal class XPrintfFunctions
 	{
@@ -54,6 +54,25 @@ namespace Mono.Unix {
 
 			CdeclFunction _syslog = new CdeclFunction ("libc", "syslog", typeof(void));
 			syslog = new XPrintf (_syslog.Invoke);
+		}
+	}
+
+	internal sealed class SignalWrapper {
+		private IntPtr handler;
+
+		internal SignalWrapper (IntPtr handler)
+		{
+			this.handler = handler;
+		}
+
+		private const string MPH = "MonoPosixHelper";
+
+		[DllImport (MPH, EntryPoint="Mono_Posix_Syscall_InvokeSignalHandler")]
+		private static extern void InvokeSignalHandler (int signum, IntPtr handler);
+
+		public void InvokeSignalHandler (int signum)
+		{
+			InvokeSignalHandler (signum, handler);
 		}
 	}
 
@@ -80,19 +99,72 @@ namespace Mono.Unix {
 		//
 		// <signal.h>
 		//
-		[DllImport (LIBC, SetLastError=true, EntryPoint="signal")]
-		private static extern IntPtr sys_signal (int signum, sighandler_t handler);
+		[DllImport (MPH, EntryPoint="Mono_Posix_Stdlib_SIG_DFL")]
+		private static extern IntPtr GetDefaultSignal ();
 
-		// FIXME: signal returns sighandler_t.  What should we do?
-		public static int signal (Signum signum, sighandler_t handler)
+		[DllImport (MPH, EntryPoint="Mono_Posix_Stdlib_SIG_ERR")]
+		private static extern IntPtr GetErrorSignal ();
+
+		[DllImport (MPH, EntryPoint="Mono_Posix_Stdlib_SIG_IGN")]
+		private static extern IntPtr GetIgnoreSignal ();
+
+		private static readonly IntPtr _SIG_DFL = GetDefaultSignal ();
+		private static readonly IntPtr _SIG_ERR = GetErrorSignal ();
+		private static readonly IntPtr _SIG_IGN = GetIgnoreSignal ();
+
+		private static void _ErrorHandler (int signum)
 		{
-			int _sig = UnixConvert.FromSignum (signum);
-			IntPtr r = sys_signal (_sig, handler);
-			// handle `r'
-			return 0;
+			Console.Error.WriteLine ("Error handler invoked for signum " + 
+					signum + ".  Don't do that.");
 		}
 
-		// TODO: Need access to SIG_IGN, SIG_DFL, and SIG_ERR values.
+		private static void _DefaultHandler (int signum)
+		{
+			Console.Error.WriteLine ("Default handler invoked for signum " + 
+					signum + ".  Don't do that.");
+		}
+
+		private static void _IgnoreHandler (int signum)
+		{
+			Console.Error.WriteLine ("Ignore handler invoked for signum " + 
+					signum + ".  Don't do that.");
+		}
+
+		public static readonly Sighandler_t SIG_DFL = _DefaultHandler;
+		public static readonly Sighandler_t SIG_ERR = _ErrorHandler;
+		public static readonly Sighandler_t SIG_IGN = _IgnoreHandler;
+
+		[DllImport (LIBC, SetLastError=true, EntryPoint="signal")]
+		private static extern IntPtr sys_signal (int signum, Sighandler_t handler);
+
+		[DllImport (LIBC, SetLastError=true, EntryPoint="signal")]
+		private static extern IntPtr sys_signal (int signum, IntPtr handler);
+
+		public static Sighandler_t signal (Signum signum, Sighandler_t handler)
+		{
+			int _sig = UnixConvert.FromSignum (signum);
+			IntPtr r;
+			if (handler == SIG_DFL)
+				r = sys_signal (_sig, _SIG_DFL);
+			else if (handler == SIG_ERR)
+				r = sys_signal (_sig, _SIG_ERR);
+			else if (handler == SIG_IGN)
+				r = sys_signal (_sig, _SIG_IGN);
+			else
+				r = sys_signal (_sig, handler);
+			return TranslateHandler (r);
+		}
+
+		private static Sighandler_t TranslateHandler (IntPtr handler)
+		{
+			if (handler == _SIG_DFL)
+				return SIG_DFL;
+			if (handler == _SIG_ERR)
+				return SIG_ERR;
+			if (handler == _SIG_IGN)
+				return SIG_IGN;
+			return new Sighandler_t (new SignalWrapper (handler).InvokeSignalHandler);
+		}
 
 		//
 		// <stdio.h>

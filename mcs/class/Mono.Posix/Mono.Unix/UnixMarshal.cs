@@ -67,6 +67,7 @@ namespace Mono.Unix {
 			try {
 				Translate = new ErrorTranslator (strerror_r);
 				string ignore = Translate (Error.EPERM);
+				ignore = ignore;
 				HaveStrerror_r = true;
 			}
 			catch (EntryPointNotFoundException e) {
@@ -161,11 +162,9 @@ namespace Mono.Unix {
 
 		private static int CountStrings (IntPtr stringArray)
 		{
-			int count = -1;
-			IntPtr item = Marshal.ReadIntPtr (stringArray, count * IntPtr.Size);
-			do {
+			int count = 0;
+			while (Marshal.ReadIntPtr (stringArray, count*IntPtr.Size) != IntPtr.Zero)
 				++count;
-			} while (Marshal.ReadIntPtr (stringArray, count * IntPtr.Size) != IntPtr.Zero);
 			return count;
 		}
 

@@ -119,7 +119,7 @@ namespace Mono.Unix {
 				}
 
 				TypeBuilder tb = CreateType (typeName);
-				MethodBuilder mb = tb.DefinePInvokeMethod (
+				/* MethodBuilder mb = */ tb.DefinePInvokeMethod (
 						method, 
 						library, 
 						MethodAttributes.PinvokeImpl | MethodAttributes.Static | MethodAttributes.Public,

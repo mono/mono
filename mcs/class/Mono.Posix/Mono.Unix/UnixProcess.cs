@@ -145,10 +145,9 @@ namespace Mono.Unix {
 		{
 			int status;
 			int r;
-			Error e;
 			do {
 				r = Syscall.waitpid (pid, out status, (WaitOptions) 0);
-			} while (r == -1 && (e = Syscall.GetLastError()) == Error.EINTR);
+			} while (UnixMarshal.ShouldRetrySyscall (r));
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 	}

@@ -1659,8 +1659,9 @@ namespace Mono.Unix {
 		[DllImport (LIBC, SetLastError=true, EntryPoint="cuserid")]
 		private static extern IntPtr sys_cuserid ([Out] StringBuilder @string);
 
-		[Obsolete ("\"Nobody knows precisely what cuserid() does... DO NOT USE cuserid()." +
-				"`string' must hold L_cuserid characters.  Use Unistd.getlogin_r instead.")]
+		[Obsolete ("\"Nobody knows precisely what cuserid() does... " + 
+				"DO NOT USE cuserid().\n" +
+				"`string' must hold L_cuserid characters.  Use getlogin_r instead.")]
 		public static string cuserid (StringBuilder @string)
 		{
 			if (@string.Capacity < L_cuserid) {

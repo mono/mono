@@ -1,3 +1,11 @@
+2004-12-30  Jonathan Pryor <jonpryor@vt.edu>
+
+	* CdeclFunctions.cs: Remove warning about unused variable.
+	* Stdlib.cs: Make signal(2) sane and (hopefully) complete.
+	* Syscall.cs: Fix cuserid Obsolete message to reference correct class name.
+	* UnixProcess.cs: Remove warning about unused variable.
+	* UnixMarshal.cs: Remove warnings about unused variables.
+
 2004-12-29  Jonathan Pryor <jonpryor@vt.edu>
 
 	* UnixPath.cs: Add ReadSymbolicLink(), which takes an intelligent approach
