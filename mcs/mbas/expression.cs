@@ -3575,7 +3575,7 @@ namespace Mono.CSharp {
 
 			if (a_mod == p_mod || (a_mod == Parameter.Modifier.NONE && p_mod == Parameter.Modifier.PARAMS)) {
 				if (a_mod == Parameter.Modifier.NONE)
-					if (!ImplicitConversionExists (ec, a.Expr, ptype))
+				if (! (ImplicitConversionExists (ec, a.Expr, ptype) || RuntimeConversionExists (ec, a.Expr, ptype)) )
 						return false;
 				
 				if ((a_mod & Parameter.Modifier.ISBYREF) != 0) {

@@ -1657,6 +1657,11 @@ namespace Mono.CSharp {
 			return (e);		
 		}
 		
+		static public bool RuntimeConversionExists (EmitContext ec, Expression expr, Type target_type)
+		{
+			return (RuntimeConversion (ec, expr, target_type,Location.Null)) != null;	
+		}
+		
 		static public Expression RuntimeConversion (EmitContext ec, Expression expr,
 								Type target_type, Location loc)
 		{
@@ -1665,6 +1670,14 @@ namespace Mono.CSharp {
 			TypeCode src_type = Type.GetTypeCode (expr_type);
 			Expression e = null;
 
+			// VB.NET Objects can be converted to anything by default
+			// unless, that is, an exception at runtime blows it all
+			if (src_type == TypeCode.Object) {
+				Expression cast_type = Mono.MonoBASIC.Parser.DecomposeQI(target_type.ToString(), loc);
+				Cast ce = new Cast (cast_type, expr, loc);
+				return ce.Resolve (ec);
+			}
+				
 			switch (dest_type) {
 				case TypeCode.String:
 					switch (src_type) {
