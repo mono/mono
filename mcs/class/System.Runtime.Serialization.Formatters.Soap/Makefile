@@ -11,7 +11,6 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 EXTRA_DISTFILES = \
 	README		\
 	Sample.txt	\
-	Soap.cmbx	\
 	Test/Test.cmbx	\
 	Test/Test.prjx
 
