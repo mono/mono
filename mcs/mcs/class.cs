@@ -2703,8 +2703,12 @@ namespace Mono.CSharp {
 			ec.EmitTopBlock (Block, Location);
 		}
 	}
-	
-	public class Field : MemberCore {
+
+	//
+	// Fields and Events both generate FieldBuilders, we use this to share 
+	// their common bits.  This is also used to flag usage of the field
+	//
+	abstract public class FieldBase : MemberCore {
 		public readonly string Type;
 		public readonly Object Initializer;
 		public readonly Attributes OptAttributes;
@@ -2714,7 +2718,24 @@ namespace Mono.CSharp {
 		[Flags]
 		public enum Status : byte { ASSIGNED = 1, USED = 2 }
 
-		
+		//
+		// The constructor is only exposed to our children
+		//
+		protected FieldBase (string type, int mod, int allowed_mod, string name,
+				     object init, Attributes attrs, Location loc)
+			: base (name, loc)
+		{
+			Type = type;
+			ModFlags = Modifiers.Check (allowed_mod, mod, Modifiers.PRIVATE, loc);
+			Initializer = init;
+			OptAttributes = attrs;
+		}
+	}
+
+	//
+	// The Field class is used to represents class/struct fields during parsing.
+	//
+	public class Field : FieldBase {
 		// <summary>
 		//   Modifiers allowed in a class declaration
 		// </summary>
@@ -2731,12 +2752,8 @@ namespace Mono.CSharp {
 
 		public Field (string type, int mod, string name, Object expr_or_array_init,
 			      Attributes attrs, Location loc)
-			: base (name, loc)
+			: base (type, mod, AllowedModifiers, name, expr_or_array_init, attrs, loc)
 		{
-			Type = type;
-			ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE, loc);
-			Initializer = expr_or_array_init;
-			OptAttributes = attrs;
 		}
 
 		public override bool Define (TypeContainer parent)
@@ -2793,7 +2810,7 @@ namespace Mono.CSharp {
 			FieldBuilder = parent.TypeBuilder.DefineField (
 				Name, t, Modifiers.FieldAttr (ModFlags));
 
-			TypeManager.RegisterField (FieldBuilder, this);
+			TypeManager.RegisterFieldBase (FieldBuilder, this);
 			return true;
 		}
 
@@ -3295,8 +3312,7 @@ namespace Mono.CSharp {
 		}
 	}
 	
-	public class Event : MemberCore {
-		
+	public class Event : FieldBase {
 		const int AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
@@ -3310,28 +3326,19 @@ namespace Mono.CSharp {
 			Modifiers.UNSAFE |
 			Modifiers.ABSTRACT;
 
-		public readonly string    Type;
-		public readonly Object    Initializer;
 		public readonly Block     Add;
 		public readonly Block     Remove;
 		public MyEventBuilder     EventBuilder;
-		public FieldBuilder       FieldBuilder;
-		public Attributes         OptAttributes;
 
 		Type EventType;
 		MethodBuilder AddBuilder, RemoveBuilder;
 		
-
-		public Event (string type, string name, Object init, int flags, Block add_block,
+		public Event (string type, string name, Object init, int mod, Block add_block,
 			      Block rem_block, Attributes attrs, Location loc)
-			: base (name, loc)
+			: base (type, mod, AllowedModifiers, name, init, attrs, loc)
 		{
-			Type = type;
-			Initializer = init;
-			ModFlags = Modifiers.Check (AllowedModifiers, flags, Modifiers.PRIVATE, loc);  
 			Add = add_block;
 			Remove = rem_block;
-			OptAttributes = attrs;
 		}
 
 		public override bool Define (TypeContainer parent)
@@ -3363,8 +3370,11 @@ namespace Mono.CSharp {
 
 			EventBuilder = new MyEventBuilder (parent.TypeBuilder, Name, e_attr, EventType);
 
-			if (Add == null && Remove == null)
-				FieldBuilder = parent.TypeBuilder.DefineField (Name, EventType, FieldAttributes.Private);
+			if (Add == null && Remove == null){
+				FieldBuilder = parent.TypeBuilder.DefineField (
+					Name, EventType, FieldAttributes.Private);
+				TypeManager.RegisterFieldBase (FieldBuilder, this);
+			}
 			
 			//
 			// Now define the accessors

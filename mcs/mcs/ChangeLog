@@ -1,5 +1,10 @@
 2002-05-04  Miguel de Icaza  <miguel@ximian.com>
 
+	* ecore.cs (FieldExpr): Remove un-needed tests for null, since now
+	events are always registered FieldBuilders.
+	
+	* class.cs (FieldBase): New class shared by Fields 
+
 	* delegate.cs: If we are a toplevel delegate, use our full name.
 	If we are a nested delegate, then only use our tail name.
 

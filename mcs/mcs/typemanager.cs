@@ -833,7 +833,7 @@ public class TypeManager {
 	}
 
 	static Hashtable fieldbuilders_to_fields = new Hashtable ();
-	static public bool RegisterField (FieldBuilder fb, Field f)
+	static public bool RegisterFieldBase (FieldBuilder fb, FieldBase f)
 	{
 		if (fieldbuilders_to_fields.Contains (fb))
 			return false;
@@ -842,9 +842,9 @@ public class TypeManager {
 		return true;
 	}
 
-	static public Field GetField (FieldInfo fb)
+	static public FieldBase GetField (FieldInfo fb)
 	{
-		return (Field) fieldbuilders_to_fields [fb];
+		return (FieldBase) fieldbuilders_to_fields [fb];
 	}
 	
 	static Hashtable events;

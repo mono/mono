@@ -1488,7 +1488,8 @@ event_declaration
 	  {
 		foreach (VariableDeclaration var in (ArrayList) $5) {
 
-			Event e = new Event ((string) $4, var.identifier, var.expression_or_array_initializer,
+			Event e = new Event ((string) $4, var.identifier, 
+					     var.expression_or_array_initializer,
 					     (int) $2, null, null, (Attributes) $1, lexer.Location);
 
 			CheckDef (current_container.AddEvent (e), e.Name, e.Location);

@@ -3336,13 +3336,12 @@ namespace Mono.CSharp {
 			bool is_volatile = false;
 				
 			if (FieldInfo is FieldBuilder){
-				Field f = TypeManager.GetField (FieldInfo);
-				if (f != null){
-					if ((f.ModFlags & Modifiers.VOLATILE) != 0)
-						is_volatile = true;
+				FieldBase f = TypeManager.GetField (FieldInfo);
+
+				if ((f.ModFlags & Modifiers.VOLATILE) != 0)
+					is_volatile = true;
 				
-					f.status |= Field.Status.USED;
-				}
+				f.status |= Field.Status.USED;
 			}
 			
 			if (FieldInfo.IsStatic){
@@ -3400,8 +3399,9 @@ namespace Mono.CSharp {
 			source.Emit (ec);
 
 			if (FieldInfo is FieldBuilder){
-				Field f = TypeManager.GetField (FieldInfo);
-				if (f != null && (f.ModFlags & Modifiers.VOLATILE) != 0)
+				FieldBase f = TypeManager.GetField (FieldInfo);
+				
+				if ((f.ModFlags & Modifiers.VOLATILE) != 0)
 					ig.Emit (OpCodes.Volatile);
 			}
 			
@@ -3411,7 +3411,7 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Stfld, FieldInfo);
 
 			if (FieldInfo is FieldBuilder){
-				Field f = TypeManager.GetField (FieldInfo);
+				FieldBase f = TypeManager.GetField (FieldInfo);
 
 				f.status |= Field.Status.ASSIGNED;
 			}
@@ -3422,13 +3422,13 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			
 			if (FieldInfo is FieldBuilder){
-				Field f = TypeManager.GetField (FieldInfo);
-				if (f != null && (f.ModFlags & Modifiers.VOLATILE) != 0)
+				FieldBase f = TypeManager.GetField (FieldInfo);
+				if ((f.ModFlags & Modifiers.VOLATILE) != 0)
 					ig.Emit (OpCodes.Volatile);
 			}
 
 			if (FieldInfo is FieldBuilder){
-				Field f = TypeManager.GetField (FieldInfo);
+				FieldBase f = TypeManager.GetField (FieldInfo);
 
 				if ((mode & AddressOp.Store) != 0)
 					f.status |= Field.Status.ASSIGNED;
