@@ -1,3 +1,9 @@
+2004-02-06  Martin Baulig  <martin@ximian.com>
+
+	* class.c
+	(mono_class_from_generic_parameter): Added TYPE_ATTRIBUTE_PUBLIC.
+	(my_mono_class_from_generic_parameter): Likewise.
+
 2004-02-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* debug-mono-symfile.c debug-mono-symfile.h mono-debug.c: Read the
