@@ -1,3 +1,9 @@
+2004-05-13  Mike Kestner  <mkestner@ximian.com>
+
+	* ApplicationCrmEnabledAttribute.cs : add ComVisible.  Hide val field.
+	* ClerkInfo.cs : stub
+	* ClerkMonitor.cs : stub
+
 2002-11-20  Alejandro Sánchez Acosta <raciel@es.gnu.org>
 
 	* ApplicationCrmEnabledAttribute.cs added.

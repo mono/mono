@@ -7,6 +7,8 @@
 // (C) Alejandro Sánchez Acosta
 //
 
+using System.Runtime.InteropServices;
+
 namespace System.EnterpriseServices.CompensatingResourceManager {
 
 	/// <summary>
@@ -14,9 +16,10 @@ namespace System.EnterpriseServices.CompensatingResourceManager {
 	/// </summary>
 	
 	[AttributeUsage(AttributeTargets.Assembly)]
+	[ComVisible(false)]
 	public sealed class ApplicationCrmEnabledAttribute : Attribute
 	{
-		public bool val;
+		bool val;
 
 		public ApplicationCrmEnabledAttribute()
 		{

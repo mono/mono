@@ -78,6 +78,8 @@ System.EnterpriseServices/TransactionVote.cs
 System.EnterpriseServices/XACTTRANSINFO.cs
 System.EnterpriseServices.CompensatingResourceManager/ApplicationCrmEnabledAttribute.cs
 System.EnterpriseServices.CompensatingResourceManager/Clerk.cs
+System.EnterpriseServices.CompensatingResourceManager/ClerkInfo.cs
+System.EnterpriseServices.CompensatingResourceManager/ClerkMonitor.cs
 System.EnterpriseServices.CompensatingResourceManager/Compensator.cs
 System.EnterpriseServices.CompensatingResourceManager/CompensatorOptions.cs
 System.EnterpriseServices.CompensatingResourceManager/LogRecord.cs
