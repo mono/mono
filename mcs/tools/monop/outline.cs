@@ -58,9 +58,7 @@ public class Outline {
 
 		if (t.IsEnum) {
 			bool is_first = true;
-			foreach (FieldInfo fi in t.GetFields ()) {
-				if (fi.Name == "value__")
-					continue;
+			foreach (FieldInfo fi in t.GetFields (BindingFlags.Public | BindingFlags.Static)) {
 				
 				if (! is_first)
 					o.WriteLine (",");
