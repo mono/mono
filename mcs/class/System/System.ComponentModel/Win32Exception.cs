@@ -61,8 +61,11 @@ namespace System.ComponentModel
 		/* Initialise the list of error strings */
 		static Win32Exception() {
 			/* No need to list everything, just the ones
-			 * the runtime can throw
+			 * the runtime can throw. A list of the errors
+			 * can be found in class System.IO.MonoIOError.
 			 */
+			w32_errors.Add(11001,
+				       Locale.GetText("No such host is known"));
 			w32_errors.Add(10047,
 				       Locale.GetText("AF not supported"));
 			w32_errors.Add(10043,

@@ -1,3 +1,7 @@
+2002-04-28  Lawrence Pit <loz@cable.a2000.nl>
+
+	* Added error code 11001 to Win32Exception, used by Dns.c
+
 2002-04-04  Dick Porter  <dick@ximian.com>
 
 	* ISynchronizeInvoke.cs: Needed by Process
