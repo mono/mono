@@ -1,4 +1,8 @@
 
+Sun Aug 26 23:03:09 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c: added compare for szarray.
+
 Sun Aug 26 11:34:24 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* class.h, class.c, loader.h, loader.c: export mono_class_from_mono_type ()
