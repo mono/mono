@@ -1,3 +1,26 @@
+2003-09-25  Todd Berman <tberman@gentoo.org>
+
+	* Microsoft.Web.Services/SoapContext.cs: Added Action, To and ReplyTo
+	properties.
+	* Microsoft.Web.Services.Addressing/
+		Action.cs:
+		Address.cs:
+		AttributedUri.cs:
+		AttributedUriString.cs:
+		EndpointReference.cs:
+		EndpointReferenceType.cs:
+		ReplyTo.cs:
+		To.cs: Partially stubbed.
+	* Microsoft.Web.Services.Messaging/SoapReceiver.cs: Added protected
+	abstract method Receive.
+	* Microsoft.Web.Services.Messaging/
+		SoapReceivers.cs: 
+		SoapSender.cs: Partially stubbed.
+	* Microsoft.Web.Services.Xml/IXmlElement.cs: Moved to the Xml namespace
+	which is where MS has it, added the namespace to classes that needed it
+	* Microsoft.Web.Services.Xml/OpenAttributeElement.cs: Partially stubbed
+	* Microsoft.Web.Services.dll.sources: Added new files.
+	
 2003-09-06  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Microsoft.Web.Services.dll.sources: Added stubbed input/output soap 

@@ -14,6 +14,7 @@ using System.Globalization;
 using System.Web.Services.Protocols;
 using System.Xml;
 using Microsoft.Web.Services.Routing;
+using Microsoft.Web.Services.Xml;
 
 namespace Microsoft.Web.Services.Referral {
 

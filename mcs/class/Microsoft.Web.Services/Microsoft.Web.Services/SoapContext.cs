@@ -12,6 +12,7 @@ using Microsoft.Web.Services.Referral;
 using Microsoft.Web.Services.Routing;
 using Microsoft.Web.Services.Security;
 using Microsoft.Web.Services.Timestamp;
+using Microsoft.Web.Services.Addressing;
 
 using System;
 using System.Collections;
@@ -25,6 +26,9 @@ namespace Microsoft.Web.Services {
 		private Microsoft.Web.Services.Timestamp.Timestamp timestamp;
 		private Microsoft.Web.Services.Security.Security security;
 		private Hashtable table;
+		private Action action;
+		private ReplyTo replyto;
+		private To to;
 
 		internal SoapContext () 
 		{
@@ -41,6 +45,20 @@ namespace Microsoft.Web.Services {
 
 		public Uri Actor { 
 			get { return actor; }
+		}
+
+		public Action Action {
+			get { return action; }
+			set { action = value; }
+		}
+
+		public ReplyTo ReplyTo {
+			get { return replyto; }
+			set { replyto = value; }
+		}
+
+		public To To {
+			get { return to; }
 		}
 
 		public DimeAttachmentCollection Attachments { 

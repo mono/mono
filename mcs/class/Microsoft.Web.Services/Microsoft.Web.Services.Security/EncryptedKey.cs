@@ -18,6 +18,7 @@
 using System;
 using System.Security.Cryptography.Xml;
 using System.Xml;
+using Microsoft.Web.Services.Xml;
 
 namespace Microsoft.Web.Services.Security {
 

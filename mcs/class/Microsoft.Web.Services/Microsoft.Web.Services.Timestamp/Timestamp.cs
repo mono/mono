@@ -19,6 +19,7 @@ using System;
 using System.Web.Services.Protocols;
 using System.Xml;
 using Microsoft.Web.Services;
+using Microsoft.Web.Services.Xml;
 
 namespace Microsoft.Web.Services.Timestamp {
 

@@ -6,6 +6,9 @@ namespace Microsoft.Web.Services.Messaging {
 
         public abstract class SoapReceiver : SoapPort, IHttpHandler
         {
+
+		protected abstract void Receive (SoapEnvelope envelope);
+
 		[MonoTODO]
                 public bool IsReusable {
                         get {
