@@ -44,13 +44,9 @@ namespace System.Data {
 
 		public DataTable this[string name] {
 			get { 
-				foreach (DataTable dt in list) {
-					if (dt.TableName == name)
-						return dt;
-				}
-				
-				return null;
-			}			
+				int index = IndexOf (name, true);
+				return index < 0 ? null : (DataTable) list[index];
+			}
 		}
 
 		protected override ArrayList List {
@@ -104,12 +100,7 @@ namespace System.Data {
 
 		public bool Contains (string name) 
 		{
-			foreach (DataTable dt in list) {
-				if (dt.TableName == name)
-					return true;
-			}
-
-			return false;
+			return (-1 != IndexOf (name, false));
 		}
 
 		public virtual int IndexOf (DataTable table) 
@@ -119,7 +110,7 @@ namespace System.Data {
 
 		public virtual int IndexOf (string name) 
 		{
-			return list.IndexOf (this [name]);
+			return IndexOf (name, false);
 		}
 
 		public void Remove (DataTable table) 
@@ -157,7 +148,28 @@ namespace System.Data {
 		#endregion
 
 		#region Private methods
-		
+
+		private int IndexOf (string name, bool error)
+		{
+			int count = 0, match = -1;
+			for (int i = 0; i < list.Count; i++)
+			{
+				String name2 = ((DataTable) list[i]).TableName;
+				if (String.Compare (name, name2, true) == 0)
+				{
+					if (String.Compare (name, name2, false) == 0)
+						return i;
+					match = i;
+					count++;
+				}
+			}
+			if (count == 1)
+				return match;
+			if (count > 1 && error)
+				throw new ArgumentException ("There is no match for the name in the same case and there are multiple matches in different case.");
+			return -1;
+		}
+
 		/// <summary>
 		/// gives name to Table (Table1, Table2, Table3,...)
 		/// </summary>

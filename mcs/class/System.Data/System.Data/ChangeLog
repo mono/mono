@@ -1,3 +1,14 @@
+2003-03-06  Aleksey Demakov <avd@openlinksw.com>
+
+	* DataTableCollection.cs: The Contains (string name),
+	IndexOf (string name) methods, and item[string name] indexer
+	now behave more like .NET with respect to case-sensitivity.
+	That is if there is an exactly matching item then this one is used.
+	If there is only one item differing in case then it used.
+	If there are more than one item differing in case then
+	Contains returns false, IndexOf returns -1, and item[]
+	throws an ArgumentException.
+
 2003-02-28  Ville Palo <vi64pa@kolumbus.fi>
 
 	* ExpressionElement.cs: More implementation. 
