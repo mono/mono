@@ -1,3 +1,8 @@
+2004-07-27  Martin Baulig  <martin@ximian.com>
+
+	* debug-mono-symfile.c (mono_debug_open_mono_symbol_file): Support
+	reading the debugging information from an external ".mdb" file.
+
 2004-07-24  Martin Baulig  <martin@ximian.com>
 
 	* reflection.c (mono_image_get_type_info): Only write a class
