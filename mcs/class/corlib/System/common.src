@@ -6,6 +6,7 @@ ArithmeticException.cs
 Array.cs
 ArrayTypeMismatchException.cs
 Boolean.cs
+BitArray.cs
 Convert.cs
 DivideByZeroException.cs
 DuplicateWaitObjectException.cs
@@ -40,5 +41,6 @@ TypeInitializationException.cs
 UInt16.cs
 UInt32.cs
 UInt64.cs
+UriFormatException.cs
 Version.cs
 Void.cs

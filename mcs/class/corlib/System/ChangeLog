@@ -1,3 +1,7 @@
+2001-07-18  Scott Sanders scott@stonecobra.com
+
+         * UriFormatExcpetion.cs: Add - 85% complete
+
 2001-07-17  Jeffrey Stedfast  <fejj@ximian.com>
 
 	* String.cs (IndexOf): Slight optimization that allows skipping
