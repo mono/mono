@@ -566,7 +566,13 @@ public class TypeManager {
 			t = a.GetType (name);
 			if (t == null)
 				continue;
-				
+
+			TypeAttributes ta = t.Attributes & TypeAttributes.VisibilityMask;
+			if (ta == TypeAttributes.NotPublic ||
+			    ta == TypeAttributes.NestedPrivate ||
+			    ta == TypeAttributes.NestedAssembly ||
+			    ta == TypeAttributes.NestedFamANDAssem)
+				continue;
 			return t;
 		}
 

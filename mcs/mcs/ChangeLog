@@ -1,3 +1,11 @@
+2003-07-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* typemanager.cs (LookupTypeReflection): Never expose types which
+	are NotPublic, NestedPrivate, NestedAssembly, or
+	NestedFamANDAssem.  We used to return these, and later do a check
+	that would report a meaningful error, but the problem is that we
+	would not get the real match, if there was a name override.
+
 2003-07-18  Miguel de Icaza  <miguel@ximian.com>
 
 	* namespace.cs (Namespace, Name): Do not compute the namespace
