@@ -1,3 +1,10 @@
+2002-12-28  Patrik Torstensson
+
+	* RemotingSurrogateSelector.cs: Added serialization support for MBR's.
+	* RemotingSurrogate.cs: Moved ObjRefSurrogate and MBRSurrogate to new file.
+	* ErrorMessage.cs: Dummy used when an exception occours.
+	* MonoMethodMessage.cs: Added Serializable and support for be created with null methods
+
 2002-12-26  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* ReturnMessage.cs: Implemented property Properties
