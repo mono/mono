@@ -9,6 +9,7 @@
 //
 
 using System.Runtime.CompilerServices;
+using System.Runtime.Remoting.Contexts;
 
 namespace System.Threading
 {
@@ -44,7 +45,13 @@ namespace System.Threading
 		public static bool WaitAll(WaitHandle[] waitHandles, int millisecondsTimeout, bool exitContext)
 		{
 			CheckArray (waitHandles);
-			return(WaitAll_internal(waitHandles, millisecondsTimeout, false));
+			try {
+				if (exitContext) SynchronizationAttribute.ExitContext ();
+				return(WaitAll_internal(waitHandles, millisecondsTimeout, false));
+			}
+			finally {
+				if (exitContext) SynchronizationAttribute.EnterContext ();
+			}
 		}
 
 		public static bool WaitAll(WaitHandle[] waitHandles,
@@ -57,7 +64,13 @@ namespace System.Threading
 			if (ms < -1 || ms > Int32.MaxValue)
 				throw new ArgumentOutOfRangeException ("timeout");
 
-			return (WaitAll_internal (waitHandles, (int) ms, exitContext));
+			try {
+				if (exitContext) SynchronizationAttribute.ExitContext ();
+				return (WaitAll_internal (waitHandles, (int) ms, exitContext));
+			}
+			finally {
+				if (exitContext) SynchronizationAttribute.EnterContext ();
+			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -75,7 +88,13 @@ namespace System.Threading
 					  bool exitContext)
 		{
 			CheckArray (waitHandles);
-			return(WaitAny_internal(waitHandles, millisecondsTimeout, exitContext));
+			try {
+				if (exitContext) SynchronizationAttribute.ExitContext ();
+				return(WaitAny_internal(waitHandles, millisecondsTimeout, exitContext));
+			}
+			finally {
+				if (exitContext) SynchronizationAttribute.EnterContext ();
+			}
 		}
 
 		public static int WaitAny(WaitHandle[] waitHandles,
@@ -87,7 +106,13 @@ namespace System.Threading
 			if (ms < -1 || ms > Int32.MaxValue)
 				throw new ArgumentOutOfRangeException ("timeout");
 
-			return (WaitAny_internal(waitHandles, (int) ms, exitContext));
+			try {
+				if (exitContext) SynchronizationAttribute.ExitContext ();
+				return (WaitAny_internal(waitHandles, (int) ms, exitContext));
+			}
+			finally {
+				if (exitContext) SynchronizationAttribute.EnterContext ();
+			}
 		}
 
 		[MonoTODO]
@@ -132,7 +157,13 @@ namespace System.Threading
 		public virtual bool WaitOne(int millisecondsTimeout, bool exitContext)
 		{
 			CheckDisposed ();
-			return(WaitOne_internal(os_handle, millisecondsTimeout, exitContext));
+			try {
+				if (exitContext) SynchronizationAttribute.ExitContext ();
+				return(WaitOne_internal(os_handle, millisecondsTimeout, exitContext));
+			}
+			finally {
+				if (exitContext) SynchronizationAttribute.EnterContext ();
+			}
 		}
 
 		public virtual bool WaitOne(TimeSpan timeout, bool exitContext)
@@ -142,7 +173,13 @@ namespace System.Threading
 			if (ms < -1 || ms > Int32.MaxValue)
 				throw new ArgumentOutOfRangeException ("timeout");
 
-			return (WaitOne_internal(os_handle, (int) ms, exitContext));
+			try {
+				if (exitContext) SynchronizationAttribute.ExitContext ();
+				return (WaitOne_internal(os_handle, (int) ms, exitContext));
+			}
+			finally {
+				if (exitContext) SynchronizationAttribute.EnterContext ();
+			}
 		}
 
 		protected static readonly IntPtr InvalidHandle = IntPtr.Zero;

@@ -52,7 +52,7 @@ namespace System.Threading
 			AcquireReaderLock (millisecondsTimeout, 1);
 		}
 		
-		public void AcquireReaderLock (int millisecondsTimeout, int initialLockCount) 
+		void AcquireReaderLock (int millisecondsTimeout, int initialLockCount) 
 		{
 			lock (this) {
 				if (HasWriterLock ()) {
@@ -251,7 +251,7 @@ namespace System.Threading
 			return cookie;
 		}
 
-		public bool HasWriterLock ()
+		bool HasWriterLock ()
 		{
 			return (state < 0 && Thread.CurrentThreadId == writer_lock_owner);
 		}

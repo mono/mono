@@ -1,3 +1,9 @@
+2004-04-08  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ReaderWriterLock.cs: Changed some methods to private.
+	* WaitHandle.cs: In Wait methods, release the synchronization context when 
+	  exitContext is true.
+
 2004-04-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Timer.cs: call Abort on the Runner instance too.
