@@ -431,7 +431,7 @@ namespace System.Xml.Schema
 				new ArrayList (), h, schema);
 			contentTypeParticle.ValidateUniqueTypeAttribution (
 				new XmlSchemaObjectTable (), h, schema);
-			contentTypeParticle = contentTypeParticle.GetParticleWithoutPointless ();
+//			contentTypeParticle = contentTypeParticle.GetParticleithoutPointless ();
 
 			// FIXME: move to ValidateContentModel()
 			if (contentModel != null && contentModel.Content is XmlSchemaSimpleContent)

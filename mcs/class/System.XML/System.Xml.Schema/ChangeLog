@@ -1,3 +1,7 @@
+2004-01-13  Jackson Harper <jackson@ximian.com>
+
+	* XmlSchemaComplexType.cs: Comment out line that was breaking the build.
+	
 2004-01-13  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaSimpleTypeUnion.cs : The same reason as the previous patch.
