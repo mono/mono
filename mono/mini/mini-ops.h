@@ -480,6 +480,7 @@ MINI_OP(OP_AMD64_ICOMPARE_MEMBASE_REG,   "amd64_icompare_membase_reg")
 MINI_OP(OP_AMD64_ICOMPARE_MEMBASE_IMM,   "amd64_icompare_membase_imm")
 MINI_OP(OP_AMD64_ICOMPARE_REG_MEMBASE,   "amd64_icompare_reg_membase")
 MINI_OP(OP_AMD64_OUTARG_ALIGN_STACK,     "amd64_outarg_align_stack")
+MINI_OP(OP_AMD64_LOADI8_MEMINDEX,        "amd64_loadi8_memindex")
 	
 MINI_OP(OP_PPC_SUBFIC,             "ppc_subfic")
 MINI_OP(OP_PPC_SUBFZE,             "ppc_subfze")

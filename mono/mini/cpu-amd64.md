@@ -280,7 +280,7 @@ regvar:
 reg:
 regoffset:
 label:
-store_membase_imm: dest:b len:15
+store_membase_imm: dest:b len:13
 store_membase_reg: dest:b src1:i len:9
 storei8_membase_reg: dest:b src1:i len:9
 storei1_membase_imm: dest:b len:11
@@ -289,7 +289,7 @@ storei2_membase_imm: dest:b len:13
 storei2_membase_reg: dest:b src1:i len:9
 storei4_membase_imm: dest:b len:13
 storei4_membase_reg: dest:b src1:i len:9
-storei8_membase_imm: dest:b len:18
+storei8_membase_imm: dest:b len:13
 storer4_membase_reg: dest:b src1:f len:14
 storer8_membase_reg: dest:b src1:f len:9
 load_membase: dest:i src1:b len:15
@@ -299,11 +299,12 @@ loadi2_membase: dest:i src1:b len:9
 loadu2_membase: dest:i src1:b len:9
 loadi4_membase: dest:i src1:b len:9
 loadu4_membase: dest:i src1:b len:9
-loadi8_membase: dest:i src1:b len:18
+loadi8_membase: dest:i src1:b len:10
 loadr4_membase: dest:f src1:b len:16
 loadr8_membase: dest:f src1:b len:16
 loadr8_spill_membase: src1:b len:9
 loadu4_mem: dest:i len:10
+amd64_loadi8_memindex: dest:i src1:i src2:i len:10
 move: dest:i src1:i len:4
 setreg: dest:i src1:i len:4
 add_imm: dest:i src1:i len:8 clob:1

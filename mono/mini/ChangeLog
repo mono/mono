@@ -1,3 +1,11 @@
+2005-03-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (mono_arch_local_regalloc): Split the arch-dependent
+	and the arch independent parts of the allocator.
+
+	* mini-ops.h cpu-amd64.md mini-amd64.c: Implement a lowering pass to
+	decompose some opcodes into simpler ones.
+
 2005-03-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-x86.c (emit_tls_get): Move tls handling into a separate helper function.
