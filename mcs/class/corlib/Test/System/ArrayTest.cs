@@ -473,8 +473,8 @@ public class ArrayTest : TestCase
 				Char[] c2 = new Char[2];
 				// FIXME: Our implementation doesn't throw an exception if
 				//        this is uninitialized.
-				c1[0] = "Hello";
-				c1[1] = "World";
+				//c1[0] = "Hello";
+				//c1[1] = "World";
 				c1.CopyTo(c2, 0);
 			} catch (ArrayTypeMismatchException) {
 				errorThrown = true;
@@ -563,8 +563,7 @@ public class ArrayTest : TestCase
 			try {
 				int[] lengths = new int [1];
 				int[] bounds = new int [2];
-				// FIXME: Broken
-				// Array.CreateInstance(Type.GetType("System.Char"), lengths, bounds);
+				Array.CreateInstance(Type.GetType("System.Char"), lengths, bounds);
 				errorThrown = true;
 			} catch (ArgumentException) {
 				errorThrown = true;
@@ -1689,28 +1688,18 @@ public class ArrayTest : TestCase
 		{
 			char[] c1 = { 'a', 'b', 'c' };
 			string[] c2 = new string [3];
-			bool errorThrown = false;
 			try {
 				c2.SetValue (c1 [0], 0);
-				// FIXME
-				errorThrown = true;
-			} catch (InvalidCastException) {
-				errorThrown = true;
-			}
-			Assert("#M88", errorThrown);
+				Fail ("#M88");
+			} catch (InvalidCastException) {}
 		}
 		{
 			Single[] c1 = { 1.2F, 2.3F, 3.4F, 4.5F };
 			long[] c2 = new long [3];
-			bool errorThrown = false;
 			try {
 				c2.SetValue (c1 [0], 0);
-				// FIXME
-				errorThrown = true;
-			} catch (ArgumentException) {
-				errorThrown = true;
-			}
-			Assert("#M89", errorThrown);
+				Fail ("#M89");
+			} catch (ArgumentException) {}
 		}
 		{
 			Type[] types = {
