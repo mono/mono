@@ -150,6 +150,12 @@ namespace System.Web.Services.Description {
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
+		protected virtual bool IsSoapEncodingPresent (string uriList)
+		{
+			throw new NotImplementedException ();
+		}
+
 		protected override CodeMemberMethod GenerateMethod ()
 		{
 			try

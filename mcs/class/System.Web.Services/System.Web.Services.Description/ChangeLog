@@ -1,3 +1,9 @@
+2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* SoapProtocolImporter.cs: Added stub for missing IsSoapEncodingPresent
+	method
+	* MimeContentBinding.cs: removed extra Default attribute from Part
+
 2004-06-10  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* HttpSimpleProtocolImporter.cs: Add needed XmlInclude attributes to the

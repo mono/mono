@@ -36,8 +36,7 @@ namespace System.Web.Services.Description {
 
 		#region Properties
 
-		[DefaultValue ("")]
-		[XmlAttribute ("part", DataType = "NMTOKEN")]	
+		[XmlAttribute ("part", DataType = "NMTOKEN")]
 		public string Part {
 			get { return part; }
 			set { part = value; }
