@@ -1036,7 +1036,15 @@ namespace Mono.MonoBASIC {
 			if (type != ExitType.SUB && type != ExitType.FUNCTION && 
 				type != ExitType.PROPERTY && type != ExitType.TRY) {
 				if (ec.InLoop == false && ec.Switch == null){
-					Report.Error (139, loc, "No enclosing loop or switch to exit from");
+					if (type == ExitType.FOR)
+						Report.Error (30096, loc, "No enclosing FOR loop to exit from");
+					if (type == ExitType.WHILE) 
+						Report.Error (30097, loc, "No enclosing WHILE loop to exit from");
+					if (type == ExitType.DO)
+						Report.Error (30089, loc, "No enclosing DO loop to exit from");
+					if (type == ExitType.SELECT)
+						Report.Error (30099, loc, "No enclosing SELECT to exit from");
+
 					return false;
 				}
 
@@ -1046,7 +1054,8 @@ namespace Mono.MonoBASIC {
 					ig.Emit (OpCodes.Br, ec.LoopEnd);
 			} else {			
 				if (ec.InFinally){
-					Report.Error (157,loc,"Control can not leave the body of the finally block");
+					Report.Error (30393, loc, 
+						"Control can not leave the body of the finally block");
 					return false;
 				}
 			

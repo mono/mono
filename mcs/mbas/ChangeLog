@@ -1,4 +1,8 @@
 2004-10-21 Anirban Bhattacharjee <banirban@novell.com>
+	* statement.cs: Introduced few specific execptions
+			Changed exception number
+
+2004-10-21 Anirban Bhattacharjee <banirban@novell.com>
 	* statement.cs: A trivial fix to get Exit Try working 
 
 2004-10-21  Jambunathan K  <kjambunathan@novell.com>
