@@ -1,3 +1,8 @@
+2002-06-28  Martin Baulig  <martin@gnome.org>
+
+	* MethodBuilder.cs (GetParameters): Return all parameters, not all
+	but the last one.
+
 2002-06-27  Martin Baulig  <martin@gnome.org>
 
 	* ConstructorBuilder.cs (GetParameters): Implemented.

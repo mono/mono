@@ -93,8 +93,8 @@ namespace System.Reflection.Emit {
 			if ((parameters == null) || (pinfo == null))
 				return null;
 
-			ParameterInfo[] retval = new ParameterInfo [parameters.Length - 1];
-			for (int i = 1; i < parameters.Length; i++) {
+			ParameterInfo[] retval = new ParameterInfo [parameters.Length];
+			for (int i = 1; i < parameters.Length + 1; i++) {
 				if (pinfo [i] == null)
 					return null;
 
