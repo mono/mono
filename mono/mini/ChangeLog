@@ -1,3 +1,8 @@
+2005-01-18  Neale Ferguson <NealeFerguson@earthlink.net>
+
+	* exceptions-s390.c tramp-s390.c: Allocate code using the global code
+	manager.
+
 2005-01-18  Geoff Norton  <gnorton@customerdna.com>
 
 	* jit-icalls.c (mono_llmult_ovf): Fix other overflow conditions to
