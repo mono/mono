@@ -1,3 +1,6 @@
+# Authors:
+# 	Roopa Wilson (rowilson@novell.com)
+
 #This script executes the exe files and displays the results in a web page
 
 echo "" > exec_log_linux.html 
