@@ -1,3 +1,7 @@
+2005-01-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Assembly.cs: Fixed add for ModuleResolve.
+
 2005-01-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* LocalVariableInfo.cs: Add ToString method.
