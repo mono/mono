@@ -1,3 +1,8 @@
+
+Thu Apr 4 21:46:48 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: warn if a type can't be loaded.
+
 2002-04-04  Dietmar Maurer  <dietmar@ximian.com>
 
 	* image.h: typedef MonoImageOpenStatus
