@@ -28,17 +28,14 @@ namespace System.Windows.Forms {
 			Gtk.Application.Init ();
 		}
 		
-		void delete_cb (object o, EventArgs args)
+		void delete_cb (object o, DeleteEventArgs args)
 		{
-                        SignalArgs sa = (SignalArgs) args;
 
 			//if (Closing != null)
 			//Closing (o, args);
 			
 			if (Closed != null)
 				Closed (o, args);
-			
-			sa.RetVal = false;
 		}
 		
 		internal override Widget CreateWidget ()
@@ -46,7 +43,7 @@ namespace System.Windows.Forms {
 			Widget contents = base.CreateWidget ();
 			win = new Window (WindowType.Toplevel);
 
-			win.DeleteEvent += new EventHandler (delete_cb);
+			win.DeleteEvent += new DeleteEventHandler (delete_cb);
 			win.Title = Text;
 			win.Add (contents);
 			return (Widget) win;
