@@ -3,7 +3,7 @@
 # Platform-specific makefile rules. This one's for linux.
 #
 
-PLATFORM_DEBUG_FLAGS = -g
+PLATFORM_DEBUG_FLAGS = -debug
 PLATFORM_MCS_FLAGS = 
 PLATFORM_RUNTIME = $(RUNTIME)
 PLATFORM_CORLIB = mscorlib.dll
