@@ -55,9 +55,9 @@ namespace Mono.CSharp.Debugger
 	internal class SourceMethod
 	{
 		private ArrayList _lines = new ArrayList ();
-		private ArrayList _locals = new ArrayList ();
-		private ArrayList _blocks = new ArrayList ();
-		private Stack _block_stack = new Stack ();
+		private ArrayList _locals;
+		private ArrayList _blocks;
+		private Stack _block_stack;
 		private int next_block_id = 0;
 
 		internal readonly MethodBase _method_base;
@@ -87,7 +87,11 @@ namespace Mono.CSharp.Debugger
 		public void StartBlock (int startOffset)
 		{
 			LexicalBlockEntry block = new LexicalBlockEntry (++next_block_id, startOffset);
+			if (_block_stack == null)
+				_block_stack = new Stack ();
 			_block_stack.Push (block);
+			if (_blocks == null)
+				_blocks = new ArrayList ();
 			_blocks.Add (block);
 		}
 
@@ -100,15 +104,19 @@ namespace Mono.CSharp.Debugger
 
 		public LexicalBlockEntry[] Blocks {
 			get {
-				LexicalBlockEntry[] retval = new LexicalBlockEntry [_blocks.Count];
-				_blocks.CopyTo (retval, 0);
-				return retval;
+				if (_blocks == null)
+					return new LexicalBlockEntry [0];
+				else {
+					LexicalBlockEntry[] retval = new LexicalBlockEntry [_blocks.Count];
+					_blocks.CopyTo (retval, 0);
+					return retval;
+				}
 			}
 		}
 
 		public LexicalBlockEntry CurrentBlock {
 			get {
-				if (_block_stack.Count > 0)
+				if ((_block_stack != null) && (_block_stack.Count > 0))
 					return (LexicalBlockEntry) _block_stack.Peek ();
 				else
 					return _implicit_block;
@@ -130,14 +138,20 @@ namespace Mono.CSharp.Debugger
 
 		public LocalVariableEntry[] Locals {
 			get {
-				LocalVariableEntry[] retval = new LocalVariableEntry [_locals.Count];
-				_locals.CopyTo (retval, 0);
-				return retval;
+				if (_locals == null)
+					return new LocalVariableEntry [0];
+				else {
+					LocalVariableEntry[] retval = new LocalVariableEntry [_locals.Count];
+					_locals.CopyTo (retval, 0);
+					return retval;
+				}
 			}
 		}
 
 		public void AddLocal (string name, FieldAttributes attributes, byte[] signature)
 		{
+			if (_locals == null)
+				_locals = new ArrayList ();
 			_locals.Add (new LocalVariableEntry (name, attributes, signature, CurrentBlock.Index));
 		}
 

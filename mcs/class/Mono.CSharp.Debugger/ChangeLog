@@ -1,3 +1,7 @@
+2003-12-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MonoSymbolWriter.cs: Create ArrayLists only when needed.
+
 2003-12-07 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* MonoSymbolTable.cs: It is faster to do a linear search
