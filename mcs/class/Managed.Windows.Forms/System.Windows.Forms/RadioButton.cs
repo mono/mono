@@ -23,13 +23,16 @@
 //	Peter Bartok	pbartok@novell.com
 //
 // $Log: RadioButton.cs,v $
+// Revision 1.2  2004/09/01 20:44:11  pbartok
+// - Fixed state
+//
 // Revision 1.1  2004/09/01 20:40:02  pbartok
 // - Functional initial check-in
 //
 //
 //
 
-// NOT COMPLETE
+// COMPLETE
 
 using System.Drawing;
 using System.Drawing.Text;
