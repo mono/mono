@@ -1,5 +1,8 @@
 2004-12-30  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c linear-scan.c: Add a workaround for the mcs crash when using 
+	AOT.
+
 	* aot.c (mono_aot_load_method): Free up patch info if no longer needed.
 	
 	* aot.c (emit_method_info): Increase size of temp buffer.
