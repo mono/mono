@@ -1,3 +1,8 @@
+2004-12-12  Geoff Norton  <gnorton@customerdna.com>
+
+	* exceptions-ppc.c: Reorder code so gcc3.4 can compile it
+	* mini-ppc.c: Unify mono_arch_patch_code with changes in r37636.
+
 2004-12-12  Duncan Mak  <duncan@ximian.com>
 
 	* mini-ppc.c (mono_arch_patch_code): Hopefully made this build
