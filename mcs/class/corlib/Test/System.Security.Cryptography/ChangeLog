@@ -1,3 +1,10 @@
+2004-06-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoStreamTest.cs: Added two tests for bug #60573. One shows that
+	an encryptor doesn't reduce the number of block on Write while the
+	second shows that a decryptor does reduce the number of blocks on 
+	Write.
+
 2004-06-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SignatureDescriptionTest.cs: Added missing [TestFixture] :( and 

@@ -1224,5 +1224,40 @@ namespace MonoTests.System.Security.Cryptography {
 			byte[] digest = hash.Hash;
 			AssertEquals ("Hash Validation", "71-04-12-D1-95-01-CF-F9-8D-8F-F8-0D-F9-AA-11-7D", BitConverter.ToString (digest));
 		}
+
+		// bugzilla: 60573 - the number of block is not reduced for encryptors
+
+		[Test]
+		public void EncryptorWriteBlocks () 
+		{
+			DebugStream debug = new DebugStream ();
+
+			byte[] key = {0, 1, 2, 3, 4, 5, 6, 7};
+			byte[] iv = {0, 1, 2, 3, 4, 5, 6, 7};
+			DES des = DES.Create ();
+			CryptoStream cse = new CryptoStream (debug, des.CreateEncryptor (key, iv), CryptoStreamMode.Write);
+
+			byte[] data = new byte [64];
+			cse.Write (data, 0, 64);
+			AssertEquals ("Length", 64, debug.Length);
+			cse.Close ();
+		}
+
+		[Test]
+		public void DecryptorWriteBlocks () 
+		{
+			DebugStream debug = new DebugStream ();
+
+			byte[] key = {0, 1, 2, 3, 4, 5, 6, 7};
+			byte[] iv = {0, 1, 2, 3, 4, 5, 6, 7};
+			DES des = DES.Create ();
+			CryptoStream csd = new CryptoStream (debug, des.CreateDecryptor (key, iv), CryptoStreamMode.Write);
+
+			byte[] data = new byte [64];
+			csd.Write (data, 0, 64);
+			AssertEquals ("Length", 56, debug.Length);
+			// last block is kept for later processing
+			csd.Close ();
+		}
 	}
 }
