@@ -1,3 +1,13 @@
+2004-06-10  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* RegexRunnerFactory.cs: removed comment, no longer throw exception
+	from ctor
+	* regex.cs: fixed public API signature by renaming protected 
+	internal fields and adding destructor, added MonoTODO attribute to
+	fields and method that are not yet implemented, changed not 
+	implemented methods to throw NotImplementedException instead of
+	Exception, fixed names of field that are serialized
+
 2004-06-06  Jambunathan K <kjambunathan@novell.com>
 	
 	* parser.cs: Fixed issues with Regex.Unescape() identified as part of

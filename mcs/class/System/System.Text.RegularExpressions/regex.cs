@@ -49,14 +49,15 @@ namespace System.Text.RegularExpressions {
 			(RegexCompilationInfo[] regexes, AssemblyName aname,
 			 CustomAttributeBuilder[] attribs)
 		{
-			Regex.CompileToAssembly(regexes, aname, attribs, null);		       
+			Regex.CompileToAssembly(regexes, aname, attribs, null);
 		}
 
+		[MonoTODO]
 		public static void CompileToAssembly
 			(RegexCompilationInfo[] regexes, AssemblyName aname,
 			 CustomAttributeBuilder[] attribs, string resourceFile)
 		{
-			throw new Exception ("Not fully implemented.");
+			throw new NotImplementedException ();
 			// TODO : Make use of attribs and resourceFile parameters
 			/*
 			AssemblyBuilder asmBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly (aname, AssemblyBuilderAccess.RunAndSave);
@@ -209,11 +210,15 @@ namespace System.Text.RegularExpressions {
 			}
 		}
 
-		protected Regex (SerializationInfo info, StreamingContext context) :
+		private Regex (SerializationInfo info, StreamingContext context) :
 			this (info.GetString ("pattern"), 
-			      (RegexOptions) info.GetValue ("roptions", typeof (RegexOptions))) {			
+			      (RegexOptions) info.GetValue ("options", typeof (RegexOptions))) {
 		}
 
+		// fixes public API signature
+		~Regex ()
+		{
+		}
 
 		// public instance properties
 		
@@ -422,17 +427,19 @@ namespace System.Text.RegularExpressions {
 		}
 
 		// MS undocummented method
-                               
+		[MonoTODO]
 		protected void InitializeReferences() {
-			throw new Exception ("Not implemented.");
-		}
-		
-		protected bool UseOptionC(){
-			throw new Exception ("Not implemented.");
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
+		protected bool UseOptionC(){
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		protected bool UseOptionR(){
-			throw new Exception ("Not implemented.");
+			throw new NotImplementedException ();
 		}
 
 		// object methods
@@ -444,7 +451,7 @@ namespace System.Text.RegularExpressions {
 		// ISerializable interface
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context) {
 			info.AddValue ("pattern", this.ToString (), typeof (string));
-			info.AddValue ("roptions", this.Options, typeof (RegexOptions));
+			info.AddValue ("options", this.Options, typeof (RegexOptions));
 		}
 
 		// internal
@@ -470,26 +477,32 @@ namespace System.Text.RegularExpressions {
 		protected internal RegexOptions roptions;
 		
 		// MS undocumented members
+		[MonoTODO]
 		protected internal System.Collections.Hashtable capnames;
-		protected internal System.Collections.Hashtable cap;
+		[MonoTODO]
+		protected internal System.Collections.Hashtable caps;
+		[MonoTODO]
 		protected internal int capsize;
-		protected internal string[] caplist;
+		[MonoTODO]
+		protected internal string[] capslist;
+		[MonoTODO]
 		protected internal RegexRunnerFactory factory;
 	}
 
 	[Serializable]
 	public class RegexCompilationInfo {
-		public RegexCompilationInfo (string pattern, RegexOptions options, string name, string full_namespace, bool is_public) {
+		public RegexCompilationInfo (string pattern, RegexOptions options, string name, string nspace, bool isPublic)
+		{
 			this.pattern = pattern;
 			this.options = options;
 			this.name = name;
-			this.full_namespace = full_namespace;
-			this.is_public = is_public;
+			this.nspace = nspace;
+			this.isPublic = isPublic;
 		}
 
 		public bool IsPublic {
-			get { return is_public; }
-			set { is_public = value; }
+			get { return isPublic; }
+			set { isPublic = value; }
 		}
 
 		public string Name {
@@ -498,8 +511,8 @@ namespace System.Text.RegularExpressions {
 		}
 
 		public string Namespace {
-			get { return full_namespace; }
-			set { full_namespace = value; }
+			get { return nspace; }
+			set { nspace = value; }
 		}
 
 		public RegexOptions Options {
@@ -514,8 +527,8 @@ namespace System.Text.RegularExpressions {
 
 		// private
 
-		private string pattern, name, full_namespace;
+		private string pattern, name, nspace;
 		private RegexOptions options;
-		private bool is_public;
+		private bool isPublic;
 	}
 }
