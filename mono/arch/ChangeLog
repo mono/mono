@@ -1,3 +1,12 @@
+2004-03-23  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* hppa/hppa-codegen.h: created
+
+	* hppa/tramp.c: changed style to be more like
+	other platforms.
+
+	* hppa/Makefile.am: add hppa-codegen.h
+
 2004-03-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* sparc/sparc-codegen.h: Add v9 branches with prediction.
