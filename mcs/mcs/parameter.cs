@@ -69,6 +69,10 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
 		{
+			if (a.Type == TypeManager.cls_compliant_attribute_type) {
+				Report.Warning (3023, 1, a.Location, "CLSCompliant attribute has no meaning when applied to return types. Try putting it on the method instead");
+			}
+
 			// This occurs after Warning -28
 			if (builder == null)
 				return;
@@ -157,6 +161,11 @@ namespace Mono.CSharp {
 				Report.Error (674, a.Location, "Do not use 'System.ParamArrayAttribute'. Use the 'params' keyword instead");
 				return;
 			}
+
+			if (a.Type == TypeManager.cls_compliant_attribute_type) {
+				Report.Warning (3022, 1, a.Location, "CLSCompliant attribute has no meaning when applied to parameters. Try putting it on the method instead");
+			}
+
 			base.ApplyAttributeBuilder (a, cb);
 		}
 

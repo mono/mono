@@ -1054,6 +1054,7 @@ namespace Mono.CSharp {
 		// TODO: make it private and move all builder based methods here
 		public AssemblyBuilder Builder;
 		bool is_cls_compliant;
+		public Attribute ClsCompliantAttribute;
 
 		ListDictionary declarative_security;
 
@@ -1083,11 +1084,11 @@ namespace Mono.CSharp {
 
 		public void ResolveClsCompliance ()
 		{
-			Attribute a = GetClsCompliantAttribute ();
-			if (a == null)
+			ClsCompliantAttribute = GetClsCompliantAttribute ();
+			if (ClsCompliantAttribute == null)
 				return;
 
-			is_cls_compliant = a.GetClsCompliantAttributeValue (null);
+			is_cls_compliant = ClsCompliantAttribute.GetClsCompliantAttributeValue (null);
 		}
 
 		// fix bug #56621
@@ -1321,13 +1322,20 @@ namespace Mono.CSharp {
 				return;
 			}
 				
-			ApplyAttributeBuilder (null, new CustomAttributeBuilder (TypeManager.unverifiable_code_ctor, new object [0]));
+			Builder.SetCustomAttribute (new CustomAttributeBuilder (TypeManager.unverifiable_code_ctor, new object [0]));
 		}
                 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder customBuilder)
 		{
-			if (a != null && a.Type == TypeManager.cls_compliant_attribute_type) {
-				Report.Warning (3012, a.Location, "You must specify the CLSCompliant attribute on the assembly, not the module, to enable CLS compliance checking");
+			if (a.Type == TypeManager.cls_compliant_attribute_type) {
+				if (CodeGen.Assembly.ClsCompliantAttribute == null) {
+					Report.Warning (3012, a.Location, "You must specify the CLSCompliant attribute on the assembly, not the module, to enable CLS compliance checking");
+				}
+				else if (CodeGen.Assembly.IsClsCompliant != a.GetBoolean ()) {
+					Report.SymbolRelatedToPreviousError (CodeGen.Assembly.ClsCompliantAttribute.Location, CodeGen.Assembly.ClsCompliantAttribute.Name);
+					Report.Error (3017, a.Location, "You cannot specify the CLSCompliant attribute on a module that differs from the CLSCompliant attribute on the assembly");
+					return;
+				}
 			}
 
 			Builder.SetCustomAttribute (customBuilder);

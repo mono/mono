@@ -356,8 +356,11 @@ namespace Mono.CSharp {
 		protected virtual bool VerifyClsCompliance (DeclSpace ds)
 		{
 			if (!IsClsCompliaceRequired (ds)) {
-				if ((RootContext.WarningLevel >= 2) && HasClsCompliantAttribute && !IsExposedFromAssembly (ds)) {
-					Report.Warning (3019, Location, "CLS compliance checking will not be performed on '{0}' because it is private or internal", GetSignatureForError ());
+				if (HasClsCompliantAttribute && RootContext.WarningLevel >= 2) {
+					if (!IsExposedFromAssembly (ds))
+						Report.Warning (3019, Location, "CLS compliance checking will not be performed on '{0}' because it is private or internal", GetSignatureForError ());
+					if (!CodeGen.Assembly.IsClsCompliant)
+						Report.Warning (3021, Location, "'{0}' does not need a CLSCompliant attribute because the assembly does not have a CLSCompliant attribute", GetSignatureForError ());
 				}
 				return false;
 			}

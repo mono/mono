@@ -1,3 +1,21 @@
+2004-12-13  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (TypeContainer.VerifyClsCompliance): Add error
+	3018 report.
+	(PropertyBase.VerifyClsCompliance): Add errror 3025 report.
+
+	* codegen.cs (ModuleClass.ApplyAttributeBuilder): Add error
+	3017 report.
+	
+	* decl.cs (MemberCore.VerifyClsCompliance): Add warning 3021.
+
+	* parameter.cs (ReturnParameter.ApplyAttributeBuilder): 
+	Add error 3023 report.
+	(Parameter.ApplyAttributeBuilder): Add error 3022 report.
+
+	* tree.cs (RootTypes.IsClsCompliaceRequired): Add fake
+	implementation.
+
 2004-12-12  John Luke  <john.luke@gmail.com>
 
 	* driver.cs (AddArgs): take -- into account when

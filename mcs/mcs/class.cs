@@ -2285,6 +2285,11 @@ namespace Mono.CSharp {
 			if (base_type != null && !AttributeTester.IsClsCompliant (base_type)) {
 				Report.Error (3009, Location, "'{0}': base type '{1}' is not CLS-compliant", GetSignatureForError (), TypeManager.CSharpName (base_type));
 			}
+
+			if (!Parent.IsClsCompliaceRequired (ds)) {
+				Report.Error (3018, Location, "'{0}' cannot be marked as CLS-Compliant because it is a member of non CLS-Compliant type '{1}'", 
+					GetSignatureForError (), Parent.GetSignatureForError ());
+			}
 			return true;
 		}
 
@@ -5776,10 +5781,10 @@ namespace Mono.CSharp {
 				//
 				// Check for custom access modifier
 				//
-                                if (ModFlags == 0) {
-                                        ModFlags = method.ModFlags;
-                                        flags = method.flags;
-                                } else {
+				if (ModFlags == 0) {
+					ModFlags = method.ModFlags;
+					flags = method.flags;
+				} else {
 					CheckModifiers (container, ModFlags);
 					ModFlags |= (method.ModFlags & (~Modifiers.Accessibility));
 					flags = Modifiers.MethodAttr (ModFlags);
@@ -5815,27 +5820,26 @@ namespace Mono.CSharp {
 			}
 			
 			void CheckModifiers (TypeContainer container, int modflags)
-                        {
-                                int flags = 0;
-                                int mflags = method.ModFlags & Modifiers.Accessibility;
+			{
+				int flags = 0;
+				int mflags = method.ModFlags & Modifiers.Accessibility;
 
-                                if ((mflags & Modifiers.PUBLIC) != 0) {
-                                        flags |= Modifiers.PROTECTED | Modifiers.INTERNAL | Modifiers.PRIVATE;
-                                }
-                                else if ((mflags & Modifiers.PROTECTED) != 0) {
-                                        if ((mflags & Modifiers.INTERNAL) != 0)
-                                                flags |= Modifiers.PROTECTED | Modifiers.INTERNAL;
+				if ((mflags & Modifiers.PUBLIC) != 0) {
+					flags |= Modifiers.PROTECTED | Modifiers.INTERNAL | Modifiers.PRIVATE;
+				}
+				else if ((mflags & Modifiers.PROTECTED) != 0) {
+					if ((mflags & Modifiers.INTERNAL) != 0)
+						flags |= Modifiers.PROTECTED | Modifiers.INTERNAL;
 
-                                        flags |= Modifiers.PRIVATE;
-                                }
-                                else if ((mflags & Modifiers.INTERNAL) != 0)
-                                        flags |= Modifiers.PRIVATE;
+					flags |= Modifiers.PRIVATE;
+				}
+				else if ((mflags & Modifiers.INTERNAL) != 0)
+					flags |= Modifiers.PRIVATE;
 
-                                if ((mflags == modflags) || (modflags & (~flags)) != 0)
-                                        Report.Error (273, Location, "{0}: accessibility modifier must be more restrictive than the property or indexer",
-							GetSignatureForError (container));
-                        }
-
+				if ((mflags == modflags) || (modflags & (~flags)) != 0)
+					Report.Error (273, Location, "{0}: accessibility modifier must be more restrictive than the property or indexer",
+						GetSignatureForError (container));
+			}
 		}
 
 
@@ -6039,6 +6043,17 @@ namespace Mono.CSharp {
 			Set.UpdateName (this);
 		}
 
+		protected override bool VerifyClsCompliance (DeclSpace ds)
+		{
+			if (!base.VerifyClsCompliance (ds))
+				return false;
+
+			if ((Get.ModFlags != ModFlags && !Get.IsDummy) || (Set.ModFlags != ModFlags && !Set.IsDummy)) {
+				Report.Error (3025, Get.ModFlags != ModFlags ? Get.Location : Set.Location,
+					"CLS-compliant accessors must have the same accessibility as their property");
+			}
+			return true;
+		}
 
 		public override string[] ValidAttributeTargets {
 			get {
