@@ -1,4 +1,6 @@
-2005-02-14  mono-HEAD-vs-fx-2  <vargaz@freemail.hu>
+2005-02-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* iltests.il: Add new regression test.
 
 	* mini.c (mono_method_to_ir): Allocate a GOT var in CEE_NEWOBJ. Fixes
 	#72522.
