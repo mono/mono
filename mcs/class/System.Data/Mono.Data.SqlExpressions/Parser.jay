@@ -75,7 +75,7 @@ namespace Mono.Data.SqlExpressions {
 %left AND
 %left NOT
 
-%left EQ
+%left EQ LT GT
 
 %left PLUS MINUS
 %left MUL DIV MOD
@@ -163,7 +163,7 @@ ArithExpr
 	}
 	| MINUS ArithExpr %prec UMINUS
 	{
-		$$ = new Negative ((IExpression)$1);
+		$$ = new Negative ((IExpression)$2);
 	}
 	| Function
 	| Value
