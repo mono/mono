@@ -1,3 +1,8 @@
+2004-12-26  Daniel Morgan <danielmorgan@verizon.net>
+
+	* SqlSharpCli.cs: change formatting style from vs.net default
+	to mono style, display results better aligned
+
 2004-10-21  Daniel Morgan <danielmorgan@verizon.net>
 
 	* SqlSharpCli.cs: removed obsolete providers (Mono.Data.MySql, 

@@ -9,16 +9,16 @@
 //                  visit http://www.mono-project.com/
 //
 // To build SqlSharpCli.cs
-// $ mcs SqlSharpCli.cs /r:System.Data.dll
+// $ mcs /out:sqlsharp.exe SqlSharpCli.cs /r:System.Data.dll
 //
 // To run with mono:
-// $ mono SqlSharpCli.exe
+// $ mono sqlsharp.exe
 //
 // To run with mint:
-// $ mint SqlSharpCli.exe
+// $ mint sqlsharp.exe
 //
 // To run batch commands and get the output, do something like:
-// $ cat commands.txt | mono SqlSharpCli.exe > results.txt
+// $ cat commands_example.txt | mono sqlsharp.exe -s > results.txt
 //
 // Author:
 //    Daniel Morgan <danielmorgan@verizon.net>
@@ -48,8 +48,8 @@ namespace Mono.Data.SqlSharp {
 	}
 
 	// SQL Sharp - Command Line Interface
-	public class SqlSharpCli {
-
+	public class SqlSharpCli 
+	{
 		// provider supports
 		private bool UseParameters = true;
 		private bool UseSimpleReader = false;
@@ -87,9 +87,9 @@ namespace Mono.Data.SqlSharp {
 				
 		// DisplayResult - used to Read() display a result set
 		//                   called by DisplayData()
-		public void DisplayResult(IDataReader reader, DataTable schemaTable) {
 
-			const string zero = "0";
+		public bool DisplayResult (IDataReader reader, DataTable schemaTable)
+		{
 			StringBuilder column = null;
 			StringBuilder line = null;
 			StringBuilder hdrUnderline = null;
@@ -105,265 +105,303 @@ namespace Mono.Data.SqlSharp {
 
 			string dataType; // .NET Type
 			Type theType; 
-			//string dataTypeName; // native Database type
 			DataRow row; // schema row
 
-			line = new StringBuilder();
-			hdrUnderline = new StringBuilder();
-
-			OutputLine("Fields in Query Result: " + 
-				reader.FieldCount);
-			OutputLine("");
+			line = new StringBuilder ();
+			hdrUnderline = new StringBuilder ();
 			
-			for(c = 0; c < schemaTable.Rows.Count; c++) {
-							
-				DataRow schemaRow = schemaTable.Rows[c];
-				string columnHeader = (string) schemaRow["ColumnName"];
-				if(columnHeader.Equals(""))
-					columnHeader = "?column?";
-				if(columnHeader.Length > 32)
-					columnHeader = columnHeader.Substring(0,32);											
-					
-				// spacing
-				columnSize = (int) schemaRow["ColumnSize"];
-				theType = (Type) schemaRow["DataType"];
-				dataType = theType.ToString();
-
-				switch(dataType) {
-				case "System.DateTime":
-					columnSize = 19;
-					break;
-				case "System.Boolean":
-					columnSize = 5;
-					break;
-				}
-
-				hdrLen = (columnHeader.Length > columnSize) ? 
-					columnHeader.Length : columnSize;
-
-				if(hdrLen < 0)
-					hdrLen = 0;
-				if(hdrLen > 32)
-					hdrLen = 32;
-
-				line.Append(columnHeader);
-				if(columnHeader.Length < hdrLen) {
-					spacing = hdrLen - columnHeader.Length;
-					line.Append(spacingChar, spacing);
-				}
-				hdrUnderline.Append(underlineChar, hdrLen);
-
-				line.Append(" ");
-				hdrUnderline.Append(" ");
-			}
-			OutputHeader(line.ToString());
-			line = null;
+			OutputLine ("");
 			
-			OutputHeader(hdrUnderline.ToString());
-			OutputHeader("");
-			hdrUnderline = null;		
-								
-			int rows = 0;
-
-			// column data
-			while(reader.Read()) {
-				rows++;
-				
-				line = new StringBuilder();
-				for(c = 0; c < reader.FieldCount; c++) {
-					int dataLen = 0;
-					string dataValue = "";
-					column = new StringBuilder();
-					outData = "";
+			for (c = 0; c < reader.FieldCount; c++) {
+				try {			
+					DataRow schemaRow = schemaTable.Rows [c];
+					string columnHeader = reader.GetName (c);
+					if (columnHeader.Equals (""))
+						columnHeader = "column";
+					if (columnHeader.Length > 32)
+						columnHeader = columnHeader.Substring (0,32);
 					
-					row = schemaTable.Rows[c];
-					string colhdr = (string) row["ColumnName"];
-					if(colhdr.Equals(""))
-						colhdr = "?column?";
-					if(colhdr.Length > 32)
-						colhdr = colhdr.Substring(0, 32);
+					// spacing
+					columnSize = (int) schemaRow ["ColumnSize"];
+					theType = reader.GetFieldType (c);
+					dataType = theType.ToString ();
 
-					columnSize = (int) row["ColumnSize"];
-					theType = (Type) row["DataType"];
-					dataType = theType.ToString();					
-
-					switch(dataType) {
+					switch (dataType) {
 					case "System.DateTime":
-						columnSize = 19;
+						columnSize = 25;
 						break;
 					case "System.Boolean":
 						columnSize = 5;
 						break;
+					case "System.Byte":
+						columnSize = 1;
+						break;
+					case "System.Single":
+						columnSize = 12;
+						break;
+					case "System.Double":
+						columnSize = 21;
+						break;
+					case "System.Int16":
+					case "System.Unt16":
+						columnSize = 5;
+						break;
+					case "System.Int32":
+					case "System.UInt32":
+						columnSize = 10;
+						break;
+					case "System.Int64":
+						columnSize = 19;
+						break;
+					case "System.UInt64":
+						columnSize = 20;
+						break;
+					case "System.Decimal":
+						columnSize = 29;
+						break;
 					}
 
-					columnSize = (colhdr.Length > columnSize) ? 
-						colhdr.Length : columnSize;
+					if (columnSize < 0)
+						columnSize = 32;
+					if (columnSize > 32)
+						columnSize = 32;
 
-					if(columnSize < 0)
-						columnSize = 0;
-					if(columnSize > 32)
-						columnSize = 32;							
+					hdrLen = columnHeader.Length;
+					if (hdrLen < 0)
+						hdrLen = 0;
+					if (hdrLen > 32)
+						hdrLen = 32;
+
+					hdrLen = Math.Max (hdrLen, columnSize);
+
+					line.Append (columnHeader);
+					if (columnHeader.Length < hdrLen) {
+						spacing = hdrLen - columnHeader.Length;
+						line.Append (spacingChar, spacing);
+					}
+					hdrUnderline.Append (underlineChar, hdrLen);
+
+					line.Append (" ");
+					hdrUnderline.Append (" ");
+				}
+				catch (Exception e) {
+					OutputLine ("Error: Unable to display header: " + e.Message);
+					return false;
+				}
+			}
+			OutputHeader (line.ToString ());
+			line = null;
+			
+			OutputHeader (hdrUnderline.ToString ());
+			OutputHeader ("");
+			hdrUnderline = null;		
+								
+			int numRows = 0;
+
+			// column data
+			try {
+				while (reader.Read ()) {
+					numRows++;
+				
+					line = new StringBuilder ();
+					for(c = 0; c < reader.FieldCount; c++) {
+						int dataLen = 0;
+						string dataValue = "";
+						column = new StringBuilder ();
+						outData = "";
 					
-					dataValue = "";	
-					
-					if(reader.IsDBNull(c)) {
+						row = schemaTable.Rows [c];
+						string colhdr = (string) reader.GetName (c);
+						if (colhdr.Equals (""))
+							colhdr = "column";
+						if (colhdr.Length > 32)
+							colhdr = colhdr.Substring (0, 32);
+
+						columnSize = (int) row ["ColumnSize"];
+						theType = reader.GetFieldType (c);
+						dataType = theType.ToString ();
+
+						switch (dataType) {
+						case "System.DateTime":
+							columnSize = 25;
+							break;
+						case "System.Boolean":
+							columnSize = 5;
+							break;
+						case "System.Byte":
+							columnSize = 1;
+							break;
+						case "System.Single":
+							columnSize = 12;
+							break;
+						case "System.Double":
+							columnSize = 21;
+							break;
+						case "System.Int16":
+						case "System.Unt16":
+							columnSize = 5;
+							break;
+						case "System.Int32":
+						case "System.UInt32":
+							columnSize = 10;
+							break;
+						case "System.Int64":
+							columnSize = 19;
+							break;
+						case "System.UInt64":
+							columnSize = 20;
+							break;
+						case "System.Decimal":
+							columnSize = 29;
+							break;
+						}
+
+						if (columnSize < 0)
+							columnSize = 32;
+						if (columnSize > 32)
+							columnSize = 32;
+
+						hdrLen = colhdr.Length;
+						if (hdrLen < 0)
+							hdrLen = 0;
+						if (hdrLen > 32)
+							hdrLen = 32;
+
+						columnSize = Math.Max (colhdr.Length, columnSize);
+
 						dataValue = "";
 						dataLen = 0;
-					}
-					else {											
-						StringBuilder sb;
-						DateTime dt;
-						if(dataType.Equals("System.DateTime")) {
-							// display date in ISO format
-							// "YYYY-MM-DD HH:MM:SS"
-							dt = reader.GetDateTime(c);
-							sb = new StringBuilder();
-							// year
-							if(dt.Year < 10)
-								sb.Append("000" + dt.Year);
-							else if(dt.Year < 100)
-								sb.Append("00" + dt.Year);
-							else if(dt.Year < 1000)
-								sb.Append("0" + dt.Year);
-							else
-								sb.Append(dt.Year);
-							sb.Append("-");
-							// month
-							if(dt.Month < 10)
-								sb.Append(zero + dt.Month);
-							else
-								sb.Append(dt.Month);
-							sb.Append("-");
-							// day
-							if(dt.Day < 10)
-								sb.Append(zero + dt.Day);
-							else
-								sb.Append(dt.Day);
-							sb.Append(" ");
-							// hour
-							if(dt.Hour < 10)
-								sb.Append(zero + dt.Hour);
-							else
-								sb.Append(dt.Hour);
-							sb.Append(":");
-							// minute
-							if(dt.Minute < 10)
-								sb.Append(zero + dt.Minute);
-							else
-								sb.Append(dt.Minute);
-							sb.Append(":");
-							// second
-							if(dt.Second < 10)
-								sb.Append(zero + dt.Second);
-							else
-								sb.Append(dt.Second);
 
-							dataValue = sb.ToString();
-						}
-						else {
-							dataValue = reader.GetValue(c).ToString();
-						}
+						if (!reader.IsDBNull (c)) {
+							object o = reader.GetValue (c);
+							if (o.GetType ().ToString ().Equals ("System.Byte[]"))
+								dataValue = GetHexString ( (byte[]) o);
+							else
+								dataValue = o.ToString ();
 
-						dataLen = dataValue.Length;
-						if(dataLen < 0) {
-							dataValue = "";
-							dataLen = 0;
+							dataLen = dataValue.Length;
+							
+							if (dataLen <= 0) {
+								dataValue = "";
+								dataLen = 0;
+							}
+							if (dataLen > 32) {
+								dataValue = dataValue.Substring (0, 32);
+								dataLen = 32;
+							}
+
+							if (dataValue.Equals(""))
+								dataLen = 0;
 						}
-						if(dataLen > 32) {
-							dataValue = dataValue.Substring(0,32);
-							dataLen = 32;
-						}
-					}
-					columnSize = columnSize > dataLen ? columnSize : dataLen;
+						columnSize = Math.Max (columnSize, dataLen);
 					
-					// spacing
-					spacingChar = ' ';										
-					if(columnSize < colhdr.Length) {
-						spacing = colhdr.Length - columnSize;
-						column.Append(spacingChar, spacing);
-					}
-					if(dataLen < columnSize) {
-						spacing = columnSize - dataLen;
-						column.Append(spacingChar, spacing);
-						switch(dataType) {
-						case "System.Int16":
-						case "System.Int32":
-						case "System.Int64":
-						case "System.Single":
-						case "System.Double":
-						case "System.Decimal":
-							outData = column.ToString() + dataValue;
-							break;
-						default:
-							outData = dataValue + column.ToString();
-							break;
+						if (dataLen < columnSize) {
+							switch (dataType) {
+							case "System.Byte":
+							case "System.SByte":
+							case "System.Int16":
+							case "System.UInt16":
+							case "System.Int32":
+							case "System.UInt32":
+							case "System.Int64":
+							case "System.UInt64":
+							case "System.Single":
+							case "System.Double":
+							case "System.Decimal":
+								outData = dataValue.PadLeft (columnSize);
+								break;
+							default:
+								outData = dataValue.PadRight (columnSize);
+								break;
+							}
 						}
-					}
-					else
-						outData = dataValue;
+						else
+							outData = dataValue;
 
-					line.Append(outData);
-					line.Append(" ");
+						line.Append (outData);
+						line.Append (" ");
+					}
+					OutputData (line.ToString ());
 				}
-				OutputData(line.ToString());
-				line = null;
 			}
-			OutputLine("\nRows retrieved: " + rows.ToString());
+			catch (Exception rr) {
+				OutputLine ("Error: Unable to read next row: " + rr.Message);
+				return false;
+			}
+		
+			OutputLine ("\nRows retrieved: " + numRows.ToString ());
+
+			return true; // return true - success
+		}
+
+		public static string GetHexString (byte[] bytes) 
+		{ 			
+			string bvalue = "";
+			
+			if (bytes.Length > 0) {
+				StringBuilder sb = new StringBuilder ();
+
+				for (int z = 0; z < bytes.Length; z++)
+					sb.Append (bytes [z].ToString ("x"));
+
+				bvalue = "0x" + sb.ToString ();
+			}
+	
+			return bvalue;
 		}
 		
-		public void OutputDataToHtmlFile(IDataReader rdr, DataTable dt) {
-                        		
-			StringBuilder strHtml = new StringBuilder();
+		public void OutputDataToHtmlFile (IDataReader rdr, DataTable dt) 
+		{        		
+			StringBuilder strHtml = new StringBuilder ();
 
-			strHtml.Append("<html> \n <head> <title>");
-			strHtml.Append("Results");
-			strHtml.Append("</title> </head>");
-			strHtml.Append("<body>");
-			strHtml.Append("<h1> Results </h1>");
-			strHtml.Append("<table border=1>");
+			strHtml.Append ("<html> \n <head> <title>");
+			strHtml.Append ("Results");
+			strHtml.Append ("</title> </head>");
+			strHtml.Append ("<body>");
+			strHtml.Append ("<h1> Results </h1>");
+			strHtml.Append ("<table border=1>");
 		
-			outputFilestream.WriteLine(strHtml.ToString());
+			outputFilestream.WriteLine (strHtml.ToString ());
 
-			strHtml = null;
-			strHtml = new StringBuilder();
+			strHtml = new StringBuilder ();
 
-			strHtml.Append("<tr>");
+			strHtml.Append ("<tr>");
 			foreach (DataRow schemaRow in dt.Rows) {
-				strHtml.Append("<td> <b>");
-				object dataObj = schemaRow["ColumnName"];
-				string sColumnName = dataObj.ToString();
-				strHtml.Append(sColumnName);
-				strHtml.Append("</b> </td>");
+				strHtml.Append ("<td> <b>");
+				object dataObj = schemaRow ["ColumnName"];
+				string sColumnName = dataObj.ToString ();
+				strHtml.Append (sColumnName);
+				strHtml.Append ("</b> </td>");
 			}
-			strHtml.Append("</tr>");
-			outputFilestream.WriteLine(strHtml.ToString());
+			strHtml.Append ("</tr>");
+			outputFilestream.WriteLine (strHtml.ToString ());
 			strHtml = null;
 
 			int col = 0;
 			string dataValue = "";
 			
-			while(rdr.Read()) {
-				strHtml = new StringBuilder();
+			while (rdr.Read ()) {
+				strHtml = new StringBuilder ();
 
-				strHtml.Append("<tr>");
-				for(col = 0; col < rdr.FieldCount; col++) {
+				strHtml.Append ("<tr>");
+				for (col = 0; col < rdr.FieldCount; col++) {
 						
 					// column data
-					if(rdr.IsDBNull(col) == true)
+					if (rdr.IsDBNull (col) == true)
 						dataValue = "NULL";
 					else {
-						object obj = rdr.GetValue(col);
-						dataValue = obj.ToString();
+						object obj = rdr.GetValue (col);
+						dataValue = obj.ToString ();
 					}
-					strHtml.Append("<td>");
-					strHtml.Append(dataValue);
-					strHtml.Append("</td>");
+					strHtml.Append ("<td>");
+					strHtml.Append (dataValue);
+					strHtml.Append ("</td>");
 				}
-				strHtml.Append("\t\t</tr>");
-				outputFilestream.WriteLine(strHtml.ToString());
+				strHtml.Append ("\t\t</tr>");
+				outputFilestream.WriteLine (strHtml.ToString ());
 				strHtml = null;
 			}
-			outputFilestream.WriteLine(" </table> </body> \n </html>");
+			outputFilestream.WriteLine (" </table> </body> \n </html>");
 			strHtml = null;
 		}
 		
@@ -373,107 +411,105 @@ namespace Mono.Data.SqlSharp {
 		//                 ExecuteSql() only calls this function
 		//                 for a Query, it does not get
 		//                 for a Command.
-		public void DisplayData(IDataReader reader) {
-
+		public void DisplayData (IDataReader reader) 
+		{
 			DataTable schemaTable = null;
 			int ResultSet = 0;
-
-			OutputLine("Display any result sets...");
 
 			do {
 				// by Default, SqlDataReader has the 
 				// first Result set if any
 
 				ResultSet++;
-				OutputLine("Display the result set " + ResultSet);
+				OutputLine ("Display the result set " + ResultSet);
 				
-				schemaTable = reader.GetSchemaTable();
+				schemaTable = reader.GetSchemaTable ();
 				
-				if(reader.FieldCount > 0) {
+				if (reader.FieldCount > 0) {
 					// SQL Query (SELECT)
 					// RecordsAffected -1 and DataTable has a reference
-					OutputQueryResult(reader, schemaTable);
+					OutputQueryResult (reader, schemaTable);
 				}
-				else if(reader.RecordsAffected >= 0) {
+				else if (reader.RecordsAffected >= 0) {
 					// SQL Command (INSERT, UPDATE, or DELETE)
 					// RecordsAffected >= 0
-					Console.WriteLine("SQL Command Records Affected: " + reader.RecordsAffected);
+					Console.WriteLine ("SQL Command Records Affected: " + reader.RecordsAffected);
 				}
 				else {
 					// SQL Command (not INSERT, UPDATE, nor DELETE)
 					// RecordsAffected -1 and DataTable has a null reference
-					Console.WriteLine("SQL Command Executed.");
+					Console.WriteLine ("SQL Command Executed.");
 				}
 				
 				// get next result set (if anymore is left)
-			} while(reader.NextResult());
+			} while (reader.NextResult ());
 		}
 
 		// display the result in a simple way
 		// new ADO.NET providers may have not certain
 		// things implemented yet, such as, TableSchema
 		// support
-		public void DisplayDataSimple(IDataReader reader) {
-						
+		public void DisplayDataSimple (IDataReader reader) 
+		{				
 			int row = 0;
-			Console.WriteLine("Reading Data using simple reader...");
-			while(reader.Read()){
+			Console.WriteLine ("Reading Data using simple reader...");
+			while (reader.Read ()){
 				row++;
-				Console.WriteLine("Row: " + row);
-				for(int col = 0; col < reader.FieldCount; col++) {
+				Console.WriteLine ("Row: " + row);
+				for (int col = 0; col < reader.FieldCount; col++) {
 					int co = col + 1;
-					Console.WriteLine("  Field: " + co);
+					Console.WriteLine ("  Field: " + co);
 					
-					string dname = (string) reader.GetName(col);
-					if(dname == null)
+					string dname = (string) reader.GetName (col);
+					if (dname == null)
 						dname = "?column?";
-					if(dname.Equals(String.Empty))
+					if (dname.Equals (String.Empty))
 						dname = "?column?";
-					Console.WriteLine("      Name: " + dname);
+					Console.WriteLine ("      Name: " + dname);
 
 					string dvalue = "";
-					if (reader.IsDBNull(col))
+					if (reader.IsDBNull (col))
 						dvalue = "(null)";
 					else
-						dvalue = reader.GetValue(col).ToString();
-					Console.WriteLine("      Value: " + dvalue);
+						dvalue = reader.GetValue (col).ToString ();
+					Console.WriteLine ("      Value: " + dvalue);
 				}
 			}
-			Console.WriteLine("\n" + row + " ROWS RETRIEVED\n");
+			Console.WriteLine ("\n" + row + " ROWS RETRIEVED\n");
 		}
 
-		public void OutputQueryResult(IDataReader dreader, DataTable dtable) {
-			if(outputFilestream == null) {
-				DisplayResult(dreader, dtable);
+		public void OutputQueryResult (IDataReader dreader, DataTable dtable) 
+		{
+			if (outputFilestream == null) {
+				DisplayResult (dreader, dtable);
 			}
 			else {
-				switch(outputFileFormat) {
+				switch (outputFileFormat) {
 				case FileFormat.Normal:
-					DisplayResult(dreader, dtable);
+					DisplayResult (dreader, dtable);
 					break;
 				case FileFormat.Html:
-					OutputDataToHtmlFile(dreader, dtable);
+					OutputDataToHtmlFile (dreader, dtable);
 					break;
 				default:
-					Console.WriteLine("Error: Output data file format not supported.");
+					Console.WriteLine ("Error: Output data file format not supported.");
 					break;
 				}
 			}
 		}
 
-		public void BuildParameters(IDbCommand cmd) {
-			if(UseParameters == true) {
+		public void BuildParameters (IDbCommand cmd) 
+		{
+			if (UseParameters == true) {
 
-				ParametersBuilder parmsBuilder = 
-					new ParametersBuilder(cmd, 
-					BindVariableCharacter.Colon);
+				ParametersBuilder parmsBuilder = new ParametersBuilder (cmd, BindVariableCharacter.Colon);
 			
-				Console.WriteLine("Get Parameters (if any)...");
-				parmsBuilder.ParseParameters();
+				Console.WriteLine ("Get Parameters (if any)...");
+				parmsBuilder.ParseParameters ();
 				IList parms = (IList) cmd.Parameters;
 		
-				Console.WriteLine("Print each parm...");
-				for(int p = 0; p < parms.Count; p++) {
+				Console.WriteLine ("Print each parm...");
+				for (int p = 0; p < parms.Count; p++) {
 					string theParmName;
 
 					IDataParameter prm = (IDataParameter) parms[p];
@@ -481,22 +517,22 @@ namespace Mono.Data.SqlSharp {
 				
 					string inValue = "";
 					bool found;
-					if(parmsBuilder.ParameterMarkerCharacter == '?') {
-						Console.Write("Enter Parameter " + 
+					if (parmsBuilder.ParameterMarkerCharacter == '?') {
+						Console.Write ("Enter Parameter " + 
 							(p + 1).ToString() +
 							": ");
 						inValue = Console.ReadLine();
 						prm.Value = inValue;
 					}
 					else {
-						found = GetInternalVariable(theParmName, out inValue);
-						if(found == true) {
+						found = GetInternalVariable (theParmName, out inValue);
+						if (found == true) {
 							prm.Value = inValue;
 						}
 						else {
-							Console.Write("Enter Parameter " + (p + 1).ToString() +
+							Console.Write ("Enter Parameter " + (p + 1).ToString () +
 								": " + theParmName + ": ");
-							inValue = Console.ReadLine();
+							inValue = Console.ReadLine ();
 							prm.Value = inValue;
 						}
 					}
@@ -506,10 +542,9 @@ namespace Mono.Data.SqlSharp {
 		}
 
 		// ExecuteSql - Execute the SQL Command(s) and/or Query(ies)
-		public void ExecuteSql(string sql) {
+		public void ExecuteSql (string sql) 
+		{
 			string msg = "";
-			
-			Console.WriteLine("Execute SQL: " + sql);
 
 			IDbCommand cmd = null;
 			IDataReader reader = null;
@@ -521,40 +556,33 @@ namespace Mono.Data.SqlSharp {
 			cmd.CommandText = sql;
 			cmd.Connection = conn;
 
-			BuildParameters(cmd);
+			BuildParameters (cmd);
 
 			try {
-				reader = cmd.ExecuteReader();
+				reader = cmd.ExecuteReader ();
 
-				if(UseSimpleReader == false)
-					DisplayData(reader);
+				if (UseSimpleReader == false)
+					DisplayData (reader);
 				else
-					DisplayDataSimple(reader);
+					DisplayDataSimple (reader);
 
-				reader.Close();
+				reader.Close ();
 				reader = null;
 			}
-			catch(Exception e) {
-				msg = "Error: " + e;
-				// msg = "Error: " + e.Message;
-				Console.WriteLine(msg);
-				//if(reader != null) {
-				//	if(reader.IsClosed == false)
-				//		reader.Close();
+			catch (Exception e) {
+				msg = "Error: " + e.Message;
+				Console.WriteLine (msg);
 				reader = null;
-				//}
 			}
 			finally {
-				// cmd.Dispose();
 				cmd = null;
 			}
 		}
 
 		// ExecuteSql - Execute the SQL Commands (no SELECTs)
-		public void ExecuteSqlNonQuery(string sql) {
+		public void ExecuteSqlNonQuery (string sql) 
+		{
 			string msg = "";
-
-			Console.WriteLine("Execute SQL Non Query: " + sql);
 
 			IDbCommand cmd = null;
 			int rowsAffected = -1;
@@ -569,29 +597,27 @@ namespace Mono.Data.SqlSharp {
 			BuildParameters(cmd);
 
 			try {
-				rowsAffected = cmd.ExecuteNonQuery();
+				rowsAffected = cmd.ExecuteNonQuery ();
 				cmd = null;
-				Console.WriteLine("Rows affected: " + rowsAffected);
+				Console.WriteLine ("Rows affected: " + rowsAffected);
 			}
 			catch(Exception e) {
 				msg = "Error: " + e.Message;
-				Console.WriteLine(msg);
+				Console.WriteLine (msg);
 			}
 			finally {
-				// cmd.Dispose();
 				cmd = null;
 			}
 		}
 
-		public void ExecuteSqlScalar(string sql) {
+		public void ExecuteSqlScalar(string sql) 
+		{
 			string msg = "";
-
-			Console.WriteLine("Execute SQL Scalar: " + sql);
 
 			IDbCommand cmd = null;
 			string retrievedValue = "";
 			
-			cmd = conn.CreateCommand();
+			cmd = conn.CreateCommand ();
 
 			// set command properties
 			cmd.CommandType = CommandType.Text;
@@ -601,73 +627,58 @@ namespace Mono.Data.SqlSharp {
 			BuildParameters(cmd);
 
 			try {
-				retrievedValue = (string) cmd.ExecuteScalar().ToString();
-				Console.WriteLine("Retrieved value: " + retrievedValue);
+				retrievedValue = (string) cmd.ExecuteScalar ().ToString ();
+				Console.WriteLine ("Retrieved value: " + retrievedValue);
 			}
 			catch(Exception e) {
 				msg = "Error: " + e.Message;
-				Console.WriteLine(msg);
+				Console.WriteLine (msg);
 			}
 			finally {
-				// cmd.Dispose();
 				cmd = null;
 			}
 		}
 
-		public void ExecuteSqlXml(string sql, string[] parms) {
+		public void ExecuteSqlXml(string sql, string[] parms) 
+		{
 			string filename = "";
 
-			if(parms.Length != 2) {
-				Console.WriteLine("Error: wrong number of parameters");
+			if (parms.Length != 2) {
+				Console.WriteLine ("Error: wrong number of parameters");
 				return;
 			}
 			try {
-				filename = parms[1];
+				filename = parms [1];
 			}
-			catch(Exception e) {
-				Console.WriteLine("Error: Unable to setup output results file. " + 
-					e.Message);
+			catch (Exception e) {
+				Console.WriteLine ("Error: Unable to setup output results file. " + e.Message);
 				return;
 			}
 
 			try {	
-				Console.WriteLine("Execute SQL XML: " + sql);
-
 				IDbCommand cmd = null;
 				
-				cmd = conn.CreateCommand();
+				cmd = conn.CreateCommand ();
 
 				// set command properties
 				cmd.CommandType = CommandType.Text;
 				cmd.CommandText = sql;
 				cmd.Connection = conn;
 
-				BuildParameters(cmd);
-
-				Console.WriteLine("Creating new DataSet...");
+				BuildParameters (cmd);
 				DataSet dataSet = new DataSet ();
-
-				Console.WriteLine("Creating new provider DataAdapter...");                        
-				DbDataAdapter adapter = CreateNewDataAdapter (cmd, conn);		
-
-				Console.WriteLine("Filling DataSet via Data Adapter...");
+				DbDataAdapter adapter = CreateNewDataAdapter (cmd, conn);
 				adapter.Fill (dataSet);	
-							
-				Console.WriteLine ("Write DataSet to XML file: " + 
-					filename);
 				dataSet.WriteXml (filename);
-
-				Console.WriteLine ("Done.");
+				OutputLine ("Data written to xml file: " + filename);
 			}
-			catch(Exception exexml) {
-				Console.WriteLine("Error: Execute SQL XML Failure: " + 
-					exexml);
+			catch (Exception exexml) {
+				Console.WriteLine ("Error: Execute SQL XML Failure: " + exexml);
 			}
 		}
 
-		public DbDataAdapter CreateNewDataAdapter (IDbCommand command,
-			IDbConnection connection) {
-
+		public DbDataAdapter CreateNewDataAdapter (IDbCommand command, IDbConnection connection) 
+		{
 			DbDataAdapter adapter = null;
 
 			switch(provider) {
@@ -692,16 +703,15 @@ namespace Mono.Data.SqlSharp {
 			return adapter;
 		}
 
-		public DbDataAdapter CreateExternalDataAdapter (IDbCommand command,
-			IDbConnection connection) {
-
+		public DbDataAdapter CreateExternalDataAdapter (IDbCommand command, IDbConnection connection) 
+		{
 			DbDataAdapter adapter = null;
 
 			Assembly ass = Assembly.Load (providerAssembly); 
 			Type [] types = ass.GetTypes (); 
 			foreach (Type t in types) { 
-				if (t.IsSubclassOf (typeof(System.Data.Common.DbDataAdapter))) {
-					if(t.Namespace.Equals(conType.Namespace))
+				if (t.IsSubclassOf (typeof (System.Data.Common.DbDataAdapter))) {
+					if (t.Namespace.Equals (conType.Namespace))
 						adapter = (DbDataAdapter) Activator.CreateInstance (t);
 				}
 			}
@@ -712,57 +722,60 @@ namespace Mono.Data.SqlSharp {
 		// like ShowHelp - but only show at the beginning
 		// only the most important commands are shown
 		// like help and quit
-		public void StartupHelp() {
-			Console.WriteLine(@"Type:  \Q to quit");
-			Console.WriteLine(@"       \ConnectionString to set the ConnectionString");
-			Console.WriteLine(@"       \Provider to set the Provider:");
-			Console.WriteLine(@"                 {OleDb,SqlClient,MySql,Odbc,DB2,");
-			Console.WriteLine(@"                  Oracle,PostgreSql,Sqlite,Sybase,Tds)");
-			Console.WriteLine(@"       \Open to open the connection");
-			Console.WriteLine(@"       \Close to close the connection");
-			Console.WriteLine(@"       \e to execute SQL query (SELECT)");
-			Console.WriteLine(@"       \h to show help (all commands).");
-			Console.WriteLine(@"       \defaults to show default variables.");
-			Console.WriteLine();
+		public void StartupHelp () 
+		{
+			OutputLine (@"Type:  \Q to quit");
+			OutputLine (@"       \ConnectionString to set the ConnectionString");
+			OutputLine (@"       \Provider to set the Provider:");
+			OutputLine (@"                 {OleDb,SqlClient,MySql,Odbc,DB2,");
+			OutputLine (@"                  Oracle,PostgreSql,Sqlite,Sybase,Tds)");
+			OutputLine (@"       \Open to open the connection");
+			OutputLine (@"       \Close to close the connection");
+			OutputLine (@"       \e to execute SQL query (SELECT)");
+			OutputLine (@"       \h to show help (all commands).");
+			OutputLine (@"       \defaults to show default variables.");
+			OutputLine ("");
 		}
 		
 		// ShowHelp - show the help - command a user can enter
-		public void ShowHelp() {
-			Console.WriteLine("");
-			Console.WriteLine(@"Type:  \Q to quit");
-			Console.WriteLine(@"       \ConnectionString to set the ConnectionString");
-			Console.WriteLine(@"       \Provider to set the Provider:");
-			Console.WriteLine(@"                 {OleDb,SqlClient,MySql,Odbc,MSODBC,");
-			Console.WriteLine(@"                  Oracle,PostgreSql,Sqlite,Sybase,Tds}");
-			Console.WriteLine(@"       \Open to open the connection");
-			Console.WriteLine(@"       \Close to close the connection");
-			Console.WriteLine(@"       \e to execute SQL query (SELECT)");
-			Console.WriteLine(@"       \exenonquery to execute an SQL non query (not a SELECT).");
-			Console.WriteLine(@"       \exescalar to execute SQL to get a single row and single column.");
-			Console.WriteLine(@"       \exexml FILENAME to execute SQL and save output to XML file.");
-			Console.WriteLine(@"       \f FILENAME to read a batch of SQL# commands from file.");
-			Console.WriteLine(@"       \o FILENAME to write result of commands executed to file.");
-			Console.WriteLine(@"       \load FILENAME to load from file SQL commands into SQL buffer.");
-			Console.WriteLine(@"       \save FILENAME to save SQL commands from SQL buffer to file.");
-			Console.WriteLine(@"       \h to show help (all commands).");
-			Console.WriteLine(@"       \defaults to show default variables, such as,");
-			Console.WriteLine(@"            Provider and ConnectionString.");
-			Console.WriteLine(@"       \s {TRUE, FALSE} to silent messages.");
-			Console.WriteLine(@"       \r to reset or clear the query buffer.");
-			WaitForEnterKey();
-			Console.WriteLine(@"       \set NAME VALUE to set an internal variable.");
-			Console.WriteLine(@"       \unset NAME to remove an internal variable.");
-			Console.WriteLine(@"       \variable NAME to display the value of an internal variable.");
-			Console.WriteLine(@"       \loadextprovider ASSEMBLY CLASS to load the provider"); 
-			Console.WriteLine(@"            use the complete name of its assembly and");
-			Console.WriteLine(@"            its Connection class.");
-			Console.WriteLine(@"       \print - show what's in the SQL buffer now.");
-			Console.WriteLine(@"       \UseParameters (TRUE,FALSE) to use parameters when executing SQL.");
-			Console.WriteLine(@"       \UseSimpleReader (TRUE,FALSE) to use simple reader when displaying results.");
-			Console.WriteLine();
+		public void ShowHelp () 
+		{
+			Console.WriteLine ("");
+			Console.WriteLine (@"Type:  \Q to quit");
+			Console.WriteLine (@"       \ConnectionString to set the ConnectionString");
+			Console.WriteLine (@"       \Provider to set the Provider:");
+			Console.WriteLine (@"                 {OleDb,SqlClient,MySql,Odbc,MSODBC,");
+			Console.WriteLine (@"                  Oracle,PostgreSql,Sqlite,Sybase,Tds}");
+			Console.WriteLine (@"       \Open to open the connection");
+			Console.WriteLine (@"       \Close to close the connection");
+			Console.WriteLine (@"       \e to execute SQL query (SELECT)");
+			Console.WriteLine (@"       \exenonquery to execute an SQL non query (not a SELECT).");
+			Console.WriteLine (@"       \exescalar to execute SQL to get a single row and single column.");
+			Console.WriteLine (@"       \exexml FILENAME to execute SQL and save output to XML file.");
+			Console.WriteLine (@"       \f FILENAME to read a batch of SQL# commands from file.");
+			Console.WriteLine (@"       \o FILENAME to write result of commands executed to file.");
+			Console.WriteLine (@"       \load FILENAME to load from file SQL commands into SQL buffer.");
+			Console.WriteLine (@"       \save FILENAME to save SQL commands from SQL buffer to file.");
+			Console.WriteLine (@"       \h to show help (all commands).");
+			Console.WriteLine (@"       \defaults to show default variables, such as,");
+			Console.WriteLine (@"            Provider and ConnectionString.");
+			Console.WriteLine (@"       \s {TRUE, FALSE} to silent messages.");
+			Console.WriteLine (@"       \r to reset or clear the query buffer.");
+			WaitForEnterKey ();
+			Console.WriteLine (@"       \set NAME VALUE to set an internal variable.");
+			Console.WriteLine (@"       \unset NAME to remove an internal variable.");
+			Console.WriteLine (@"       \variable NAME to display the value of an internal variable.");
+			Console.WriteLine (@"       \loadextprovider ASSEMBLY CLASS to load the provider"); 
+			Console.WriteLine (@"            use the complete name of its assembly and");
+			Console.WriteLine (@"            its Connection class.");
+			Console.WriteLine (@"       \print - show what's in the SQL buffer now.");
+			Console.WriteLine (@"       \UseParameters (TRUE,FALSE) to use parameters when executing SQL.");
+			Console.WriteLine (@"       \UseSimpleReader (TRUE,FALSE) to use simple reader when displaying results.");
+			Console.WriteLine ();
 		}
 
-		public bool WaitForEnterKey() {
+		public bool WaitForEnterKey () 
+		{
                         Console.Write("Waiting... Press Enter key to continue. ");
 			string entry = Console.ReadLine();
 			if (entry.ToUpper() == "Q")
@@ -771,114 +784,110 @@ namespace Mono.Data.SqlSharp {
 		}
 
 		// ShowDefaults - show defaults for connection variables
-		public void ShowDefaults() {
-			Console.WriteLine();
-			if(provider.Equals(""))
-				Console.WriteLine("Provider is not set.");
+		public void ShowDefaults() 
+		{
+			Console.WriteLine ();
+			if (provider.Equals (""))
+				Console.WriteLine ("Provider is not set.");
 			else {
-				Console.WriteLine("The default Provider is " + provider);
-				if(provider.Equals("LOADEXTPROVIDER")) {
-					Console.WriteLine("          Assembly: " + 
-						providerAssembly);
-					Console.WriteLine("  Connection Class: " + 
-						providerConnectionClass);
+				Console.WriteLine ("The default Provider is " + provider);
+				if (provider.Equals ("LOADEXTPROVIDER")) {
+					Console.WriteLine ("  Assembly: " + providerAssembly);
+					Console.WriteLine ("  Connection Class: " + providerConnectionClass);
 				}
 			}
-			Console.WriteLine();
-			if(connectionString.Equals(""))
-				Console.WriteLine("ConnectionString is not set.");
+			Console.WriteLine ();
+			if (connectionString.Equals (""))
+				Console.WriteLine ("ConnectionString is not set.");
 			else {
-				Console.WriteLine("The default ConnectionString is: ");
-				Console.WriteLine("    \"" + connectionString + "\"");
-				Console.WriteLine();
+				Console.WriteLine ("The default ConnectionString is: ");
+				Console.WriteLine ("    \"" + connectionString + "\"");
+				Console.WriteLine ();
 			}
 		}
 
 		// OpenDataSource - open connection to the data source
-		public void OpenDataSource() {
+		public void OpenDataSource () 
+		{
 			string msg = "";
 			
-			Console.WriteLine("Attempt to open connection...");
+			OutputLine ("Opening connection...");
 
 			try {
-				switch(provider) {
+				switch (provider) {
 				case "OLEDB":
-					conn = new OleDbConnection();
+					conn = new OleDbConnection ();
 					break;
 				case "SQLCLIENT":
-					conn = new SqlConnection();
+					conn = new SqlConnection ();
 					break;
 				case "LOADEXTPROVIDER":
-					if(LoadExternalProvider() == false)
+					if (LoadExternalProvider () == false)
 						return;
 					break;
 				default:
-					Console.WriteLine("Error: Bad argument or provider not supported.");
+					Console.WriteLine ("Error: Bad argument or provider not supported.");
 					return;
 				}
-			}
-			catch(Exception e) {
-				msg = "Error: Unable to create Connection object because: " + 
-					e.Message;
-				Console.WriteLine(msg);
+			} catch (Exception e) {
+				msg = "Error: Unable to create Connection object because: " + e.Message;
+				Console.WriteLine (msg);
 				return;
 			}
 
 			conn.ConnectionString = connectionString;
 			
 			try {
-				conn.Open();
-				if(conn.State == ConnectionState.Open)
-					Console.WriteLine("Open was successfull.");
-			}
-			catch(Exception e) {
+				conn.Open ();
+				if (conn.State == ConnectionState.Open)
+					OutputLine ("Open was successfull.");
+			} catch (Exception e) {
 				msg = "Exception Caught Opening. " + e.Message;
-				Console.WriteLine(msg);
+				Console.WriteLine (msg);
 				conn = null;
 			}
 		}
 
 		// CloseDataSource - close the connection to the data source
-		public void CloseDataSource() {
+		public void CloseDataSource () {
 			string msg = "";
 			
-			if(conn != null) {
-				Console.WriteLine("Attempt to Close...");
+			if (conn != null) {
+				OutputLine ("Attempt to Close...");
 				try {
-					conn.Close();
-					Console.WriteLine("Close was successfull.");
-				}
-				catch(Exception e) {
+					conn.Close ();
+					OutputLine ("Close was successfull.");
+				} catch(Exception e) {
 					msg = "Exeception Caught Closing. " + e.Message;
-					Console.WriteLine(msg);
+					Console.WriteLine (msg);
 				}
 				conn = null;
 			}
 		}
 
 		// ChangeProvider - change the provider string variable
-		public void ChangeProvider(string[] parms) {
+		public void ChangeProvider (string[] parms) {
 
 			string[] extp;
 
-			if(parms.Length == 2) {
-				string parm = parms[1].ToUpper();
-				switch(parm) {
+			if (parms.Length == 2) {
+				string parm = parms [1].ToUpper ();
+				switch (parm) {
 				case "ORACLE":
 					extp = new string[3] {
 								     "\\loadextprovider",
 								     @"System.Data.OracleClient, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
 								     "System.Data.OracleClient.OracleConnection"};
-					SetupExternalProvider(extp);
+					SetupExternalProvider (extp);
 					UseParameters = false;
 					UseSimpleReader = false;
 					break;
 				case "TDS":
 					extp = new string[3] {
 								     "\\loadextprovider",
-									 @"Mono.Data.TdsClient, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756",
+								     @"Mono.Data.TdsClient, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756",
 								     "Mono.Data.TdsClient.TdsConnection"};
-					SetupExternalProvider(extp);
+					SetupExternalProvider (extp);
 					UseParameters = false;
 					UseSimpleReader = false;
 					break;
@@ -887,7 +896,7 @@ namespace Mono.Data.SqlSharp {
 								     "\\loadextprovider",
 								     @"Mono.Data.SybaseClient, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756",
 								     "Mono.Data.SybaseClient.SybaseConnection"};
-					SetupExternalProvider(extp);
+					SetupExternalProvider (extp);
 					UseParameters = false;
 					UseSimpleReader = false;
 					break;
@@ -897,16 +906,16 @@ namespace Mono.Data.SqlSharp {
 								     "\\loadextprovider",
 								     @"ByteFX.Data, Version=0.7.6.1, Culture=neutral, PublicKeyToken=0738eb9f132ed756",
 								     "ByteFX.Data.MySqlClient.MySqlConnection"};
-					SetupExternalProvider(extp);
+					SetupExternalProvider (extp);
 					UseParameters = false;
 					UseSimpleReader = false;
 					break;
 				case "SQLITE":
 					extp = new string[3] {
-								    "\\loadextprovider",
-									@"Mono.Data.SqliteClient, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756",
-								    "Mono.Data.SqliteClient.SqliteConnection"};
-					SetupExternalProvider(extp);
+								     "\\loadextprovider",
+								     @"Mono.Data.SqliteClient, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756",
+								     "Mono.Data.SqliteClient.SqliteConnection"};
+					SetupExternalProvider (extp);
 					UseParameters = false;
 					UseSimpleReader = true;
 					break;
@@ -917,19 +926,19 @@ namespace Mono.Data.SqlSharp {
 					break;
 				case "ODBC": // for MS NET 1.1 and above
 					extp = new string[3] {
-									"\\loadextprovider",
-									@"System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-									"System.Data.Odbc.OdbcConnection"};
-					SetupExternalProvider(extp);
+								     "\\loadextprovider",
+								     @"System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+								     "System.Data.Odbc.OdbcConnection"};
+					SetupExternalProvider (extp);
 					UseParameters = false;
 					UseSimpleReader = false;
 					break;
 				case "MSODBC": // for MS NET 1.0
 					extp = new string[3] {
-									"\\loadextprovider",
-									@"Microsoft.Data.Odbc, Culture=neutral, PublicKeyToken=b77a5c561934e089, Version=1.0.3300.0",
-									"Microsoft.Data.Odbc.OdbcConnection"};
-					SetupExternalProvider(extp);
+								     "\\loadextprovider",
+								     @"Microsoft.Data.Odbc, Culture=neutral, PublicKeyToken=b77a5c561934e089, Version=1.0.3300.0",
+								     "Microsoft.Data.Odbc.OdbcConnection"};
+					SetupExternalProvider (extp);
 					UseParameters = false;
 					UseSimpleReader = false;
 					break;
@@ -940,10 +949,10 @@ namespace Mono.Data.SqlSharp {
 					break;
 				case "FIREBIRD":
 					extp = new string[3] {
-									"\\loadextprovider",
-									@"FirebirdSql.Data.Firebird, Version=1.6.3.0, Culture=neutral, PublicKeyToken=e1b4f92304d7b12f",
-									"FirebirdSql.Data.Firebird.FbConnection"};
-					SetupExternalProvider(extp);
+								     "\\loadextprovider",
+								     @"FirebirdSql.Data.Firebird, Version=1.6.3.0, Culture=neutral, PublicKeyToken=e1b4f92304d7b12f",
+								     "FirebirdSql.Data.Firebird.FbConnection"};
+					SetupExternalProvider (extp);
 					UseParameters = false;
 					UseSimpleReader = false;
 					break;
@@ -953,220 +962,224 @@ namespace Mono.Data.SqlSharp {
 								     "\\loadextprovider",
 								     @"Npgsql, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7",
 								     "Npgsql.NpgsqlConnection"};
-					SetupExternalProvider(extp);
+					SetupExternalProvider (extp);
 					UseParameters = false;
 					UseSimpleReader = false;
 					break;
 				default:
-					Console.WriteLine("Error: " + "Bad argument or Provider not supported.");
+					Console.WriteLine ("Error: " + "Bad argument or Provider not supported.");
 					break;
 				}
-				Console.WriteLine("The default Provider is " + provider);
-				if(provider.Equals("LOADEXTPROVIDER")) {
-					Console.WriteLine("          Assembly: " + 
+				OutputLine ("The default Provider is " + provider);
+				if (provider.Equals ("LOADEXTPROVIDER")) {
+					OutputLine ("          Assembly: " + 
 						providerAssembly);
-					Console.WriteLine("  Connection Class: " + 
+					OutputLine ("  Connection Class: " + 
 						providerConnectionClass);
 				}
 			}
 			else
-				Console.WriteLine("Error: provider only has one parameter.");
+				Console.WriteLine ("Error: provider only has one parameter.");
 		}
 
 		// ChangeConnectionString - change the connection string variable
-		public void ChangeConnectionString(string entry) {
-			
-			if(entry.Length > 18)
-				connectionString = entry.Substring(18, entry.Length - 18);
+		public void ChangeConnectionString (string entry) 
+		{		
+			if (entry.Length > 18)
+				connectionString = entry.Substring (18, entry.Length - 18);
 			else
 				connectionString = "";
 		}
 
-		public void SetupOutputResultsFile(string[] parms) {
-			if(parms.Length != 2) {
-				Console.WriteLine("Error: wrong number of parameters");
+		public void SetupOutputResultsFile (string[] parms) {
+			if (parms.Length != 2) {
+				Console.WriteLine ("Error: wrong number of parameters");
 				return;
 			}
 			try {
-				outputFilestream = new StreamWriter(parms[1]);
+				outputFilestream = new StreamWriter (parms[1]);
 			}
-			catch(Exception e) {
-				Console.WriteLine("Error: Unable to setup output results file. " + 
-					e.Message);
+			catch (Exception e) {
+				Console.WriteLine ("Error: Unable to setup output results file. " + e.Message);
 				return;
 			}
 		}
 
-		public void SetupInputCommandsFile(string[] parms) {
-			if(parms.Length != 2) {
-				Console.WriteLine("Error: wrong number of parameters");
+		public void SetupInputCommandsFile (string[] parms) 
+		{
+			if (parms.Length != 2) {
+				Console.WriteLine ("Error: wrong number of parameters");
 				return;
 			}
 			try {
-				inputFilestream = new StreamReader(parms[1]);
+				inputFilestream = new StreamReader (parms[1]);
 			}
-			catch(Exception e) {
-				Console.WriteLine("Error: Unable to setup input commmands file. " + 
-					e.Message);
+			catch (Exception e) {
+				Console.WriteLine ("Error: Unable to setup input commmands file. " + e.Message);
 				return;
 			}	
 		}
 
-		public void LoadBufferFromFile(string[] parms) {
-			if(parms.Length != 2) {
-				Console.WriteLine("Error: wrong number of parameters");
+		public void LoadBufferFromFile (string[] parms) 
+		{
+			if (parms.Length != 2) {
+				Console.WriteLine ("Error: wrong number of parameters");
 				return;
 			}
 			string inFilename = parms[1];
 			try {
-				StreamReader sr = new StreamReader( inFilename);
-				StringBuilder buffer = new StringBuilder();
+				StreamReader sr = new StreamReader (inFilename);
+				StringBuilder buffer = new StringBuilder ();
 				string NextLine;
 			
-				while((NextLine = sr.ReadLine()) != null) {
-					buffer.Append(NextLine);
-					buffer.Append("\n");
+				while ((NextLine = sr.ReadLine ()) != null) {
+					buffer.Append (NextLine);
+					buffer.Append ("\n");
 				}
-				sr.Close();
-				buff = buffer.ToString();
+				sr.Close ();
+				buff = buffer.ToString ();
 				build = null;
-				build = new StringBuilder();
+				build = new StringBuilder ();
 				build.Append(buff);
 			}
-			catch(Exception e) {
-				Console.WriteLine("Error: Unable to read file into SQL Buffer. " + 
-					e.Message);
+			catch (Exception e) {
+				Console.WriteLine ("Error: Unable to read file into SQL Buffer. " + e.Message);
 			}
 		}
 
-		public void SaveBufferToFile(string[] parms) {
-			if(parms.Length != 2) {
-				Console.WriteLine("Error: wrong number of parameters");
+		public void SaveBufferToFile(string[] parms) 
+		{
+			if (parms.Length != 2) {
+				Console.WriteLine ("Error: wrong number of parameters");
 				return;
 			}
 			string outFilename = parms[1];
 			try {
-				StreamWriter sw = new StreamWriter(outFilename);
-				sw.WriteLine(buff);
-				sw.Close();
+				StreamWriter sw = new StreamWriter (outFilename);
+				sw.WriteLine (buff);
+				sw.Close ();
 			}
-			catch(Exception e) {
-				Console.WriteLine("Error: Could not save SQL Buffer to file." + 
-					e.Message);
+			catch (Exception e) {
+				Console.WriteLine ("Error: Could not save SQL Buffer to file." + e.Message);
 			}
 		}
 
-		public void SetUseParameters(string[] parms) {
-			if(parms.Length != 2) {
-				Console.WriteLine("Error: wrong number of parameters");
+		public void SetUseParameters (string[] parms) 
+		{
+			if (parms.Length != 2) {
+				Console.WriteLine ("Error: wrong number of parameters");
 				return;
 			}
-			string parm = parms[1].ToUpper();
-			if(parm.Equals("TRUE"))
+			string parm = parms[1].ToUpper ();
+			if (parm.Equals ("TRUE"))
 				UseParameters = true;
-			else if(parm.Equals("FALSE"))
+			else if (parm.Equals ("FALSE"))
 				UseParameters = false;
 			else
-				Console.WriteLine("Error: invalid parameter.");
+				Console.WriteLine ("Error: invalid parameter.");
 
 		}
 
-		public void SetUseSimpleReader(string[] parms) {
-			if(parms.Length != 2) {
-				Console.WriteLine("Error: wrong number of parameters");
+		public void SetUseSimpleReader (string[] parms) 
+		{
+			if (parms.Length != 2) {
+				Console.WriteLine ("Error: wrong number of parameters");
 				return;
 			}
-			string parm = parms[1].ToUpper();
-			if(parm.Equals("TRUE"))
+			string parm = parms[1].ToUpper ();
+			if (parm.Equals ("TRUE"))
 				UseSimpleReader = true;
-			else if(parm.Equals("FALSE"))
+			else if (parm.Equals ("FALSE"))
 				UseSimpleReader = false;
 			else
-				Console.WriteLine("Error: invalid parameter.");
+				Console.WriteLine ("Error: invalid parameter.");
 		}
 
-		public void SetupSilentMode(string[] parms) {
-			if(parms.Length != 2) {
-				Console.WriteLine("Error: wrong number of parameters");
+		public void SetupSilentMode (string[] parms) 
+		{
+			if (parms.Length != 2) {
+				Console.WriteLine ("Error: wrong number of parameters");
 				return;
 			}
-			string parm = parms[1].ToUpper();
-			if(parm.Equals("TRUE"))
+			string parm = parms[1].ToUpper ();
+			if (parm.Equals ("TRUE"))
 				silent = true;
-			else if(parm.Equals("FALSE"))
+			else if (parm.Equals ("FALSE"))
 				silent = false;
 			else
-				Console.WriteLine("Error: invalid parameter.");
+				Console.WriteLine ("Error: invalid parameter.");
 		}
 
-		public void SetInternalVariable(string[] parms) {
-			if(parms.Length < 2) {
-				Console.WriteLine("Error: wrong number of parameters.");
+		public void SetInternalVariable(string[] parms) 
+		{
+			if (parms.Length < 2) {
+				Console.WriteLine ("Error: wrong number of parameters.");
 				return;
 			}
 			string parm = parms[1];
-			StringBuilder ps = new StringBuilder();
+			StringBuilder ps = new StringBuilder ();
 			
-			for(int i = 2; i < parms.Length; i++)
-				ps.Append(parms[i]);
+			for (int i = 2; i < parms.Length; i++)
+				ps.Append (parms[i]);
 
-			internalVariables[parm] = ps.ToString();
+			internalVariables[parm] = ps.ToString ();
 		}
 
-		public void UnSetInternalVariable(string[] parms) {
-			if(parms.Length != 2) {
-				Console.WriteLine("Error: wrong number of parameters.");
+		public void UnSetInternalVariable(string[] parms) 
+		{
+			if (parms.Length != 2) {
+				Console.WriteLine ("Error: wrong number of parameters.");
 				return;
 			}
 			string parm = parms[1];
 
 			try {
-				internalVariables.Remove(parm);
-			}
-			catch(Exception e) {
-				Console.WriteLine("Error: internal variable does not exist: " + 
-					e.Message);
+				internalVariables.Remove (parm);
+			} catch(Exception e) {
+				Console.WriteLine ("Error: internal variable does not exist: " + e.Message);
 			}
 		}
 
-		public void ShowInternalVariable(string[] parms) {
+		public void ShowInternalVariable(string[] parms) 
+		{
 			string internalVariableValue = "";
 
-			if(parms.Length != 2) {
-				Console.WriteLine("Error: wrong number of parameters.");
+			if (parms.Length != 2) {
+				Console.WriteLine ("Error: wrong number of parameters.");
 				return;
 			}
 						
 			string parm = parms[1];
 
-			if(GetInternalVariable(parm, out internalVariableValue) == true)
-				Console.WriteLine("Internal Variable - Name: " + 
+			if (GetInternalVariable(parm, out internalVariableValue) == true)
+				Console.WriteLine ("Internal Variable - Name: " + 
 					parm + "  Value: " + internalVariableValue);
 		}
 
-		public bool GetInternalVariable(string name, out string sValue) {
+		public bool GetInternalVariable(string name, out string sValue) 
+		{
 			sValue = "";
 			bool valueReturned = false;
 
 			try {
-				if(internalVariables.ContainsKey(name) == true) {
+				if (internalVariables.ContainsKey (name) == true) {
 					sValue = (string) internalVariables[name];
 					valueReturned = true;
 				}
 				else
-					Console.WriteLine("Error: internal variable does not exist.");
+					Console.WriteLine ("Error: internal variable does not exist.");
 
 			}
 			catch(Exception e) {
-				Console.WriteLine("Error: internal variable does not exist: "+
-					e.Message);
+				Console.WriteLine ("Error: internal variable does not exist: "+	e.Message);
 			}
 			return valueReturned;
 		}
 
-		public void SetupExternalProvider(string[] parms) {
-			if(parms.Length != 3) {
-				Console.WriteLine("Error: Wrong number of parameters.");
+		public void SetupExternalProvider(string[] parms) 
+		{
+			if (parms.Length != 3) {
+				Console.WriteLine ("Error: Wrong number of parameters.");
 				return;
 			}
 			provider = "LOADEXTPROVIDER";
@@ -1174,7 +1187,8 @@ namespace Mono.Data.SqlSharp {
 			providerConnectionClass = parms[2];
 		}
 
-		public bool LoadExternalProvider() {
+		public bool LoadExternalProvider () 
+		{
 			string msg = "";
 			
 			bool success = false;
@@ -1189,28 +1203,21 @@ namespace Mono.Data.SqlSharp {
 			//   \quit
 
 			try {
-				Console.WriteLine("Loading external provider...");
-				Console.Out.Flush();
+				OutputLine ("Loading external provider...");
 
-				Assembly ps = Assembly.Load(providerAssembly);
-				conType = ps.GetType(providerConnectionClass);
-				conn = (IDbConnection) Activator.CreateInstance(conType);
+				Assembly ps = Assembly.Load (providerAssembly);
+				conType = ps.GetType (providerConnectionClass);
+				conn = (IDbConnection) Activator.CreateInstance (conType);
 				success = true;
 				
-				Console.WriteLine("External provider loaded.");
-				Console.Out.Flush();
+				OutputLine ("External provider loaded.");
 				UseParameters = false;
-			}
-			catch(FileNotFoundException f) {
-				msg = "Error: unable to load the assembly of the provider: " + 
-					providerAssembly + 
-					" : " + f.Message;
+			} catch(FileNotFoundException f) {
+				msg = "Error: unable to load the assembly of the provider: " + providerAssembly + " : " + f.Message;
 				Console.WriteLine(msg);
 			}
 			catch(Exception e) {
-				msg = "Error: unable to load the assembly of the provider: " + 
-					providerAssembly + 
-					" : " + e.Message;
+				msg = "Error: unable to load the assembly of the provider: " + providerAssembly + " : " + e.Message;
 				Console.WriteLine(msg);
 			}
 			return success;
@@ -1218,140 +1225,144 @@ namespace Mono.Data.SqlSharp {
 
 		// used for outputting message, but if silent is set,
 		// don't display
-		public void OutputLine(string line) {
-			if(silent == false)
-				OutputData(line);
+		public void OutputLine (string line) 
+		{
+			if (silent == false)
+				OutputData (line);
 		}
 
 		// used for outputting the header columns of a result
-		public void OutputHeader(string line) {
-			if(showHeader == true)
-				OutputData(line);
+		public void OutputHeader (string line) 
+		{
+			if (showHeader == true)
+				OutputData (line);
 		}
 
 		// OutputData() - used for outputting data
 		//  if an output filename is set, then the data will
 		//  go to a file; otherwise, it will go to the Console.
-		public void OutputData(string line) {
-			if(outputFilestream == null)
-				Console.WriteLine(line);
+		public void OutputData(string line) 
+		{
+			if (outputFilestream == null)
+				Console.WriteLine (line);
 			else
-				outputFilestream.WriteLine(line);
+				outputFilestream.WriteLine (line);
 		}
 
 		// HandleCommand - handle SqlSharpCli commands entered
-		public void HandleCommand(string entry) {		
+		public void HandleCommand (string entry) 
+		{		
 			string[] parms;
 			
-			parms = entry.Split(new char[1] {' '});
-			string userCmd = parms[0].ToUpper();
+			parms = entry.Split (new char[1] {' '});
+			string userCmd = parms[0].ToUpper ();
 
-			switch(userCmd) {
+			switch (userCmd) {
 			case "\\PROVIDER":
-				ChangeProvider(parms);
+				ChangeProvider (parms);
 				break;
 			case "\\CONNECTIONSTRING":
-				ChangeConnectionString(entry);
+				ChangeConnectionString (entry);
 				break;
 			case "\\LOADEXTPROVIDER":
-				SetupExternalProvider(parms);
+				SetupExternalProvider (parms);
 				break;
 			case "\\OPEN":
-				OpenDataSource();
+				OpenDataSource ();
 				break;
 			case "\\CLOSE":
-				CloseDataSource();
+				CloseDataSource ();
 				break;
 			case "\\S":
-				SetupSilentMode(parms);
+				SetupSilentMode (parms);
 				break;
 			case "\\E":
 			case "\\EXEQUERY":
 			case "\\EXEREADER":
 			case "\\EXECUTE":
 				// Execute SQL Commands or Queries
-				if(conn == null)
-					Console.WriteLine("Error: connection is not Open.");
-				else if(conn.State == ConnectionState.Closed)
-					Console.WriteLine("Error: connection is not Open.");
+				if (conn == null)
+					Console.WriteLine ("Error: connection is not Open.");
+				else if (conn.State == ConnectionState.Closed)
+					Console.WriteLine ("Error: connection is not Open.");
 				else {
-					if(build == null)
-						Console.WriteLine("Error: SQL Buffer is empty.");
+					if (build == null)
+						Console.WriteLine ("Error: SQL Buffer is empty.");
 					else {
-						buff = build.ToString();
-						ExecuteSql(buff);
+						buff = build.ToString ();
+						ExecuteSql (buff);
 					}
 					build = null;
 				}
 				break;
 			case "\\EXENONQUERY":
-				if(conn == null)
-					Console.WriteLine("Error: connection is not Open.");
-				else if(conn.State == ConnectionState.Closed)
-					Console.WriteLine("Error: connection is not Open.");
+				if (conn == null)
+					Console.WriteLine ("Error: connection is not Open.");
+				else if (conn.State == ConnectionState.Closed)
+					Console.WriteLine ("Error: connection is not Open.");
 				else {
-					if(build == null)
-						Console.WriteLine("Error: SQL Buffer is empty.");
+					if (build == null)
+						Console.WriteLine ("Error: SQL Buffer is empty.");
 					else {
-						buff = build.ToString();
-						ExecuteSqlNonQuery(buff);
+						buff = build.ToString ();
+						ExecuteSqlNonQuery (buff);
 					}
 					build = null;
 				}
 				break;
 			case "\\EXESCALAR":
-				if(conn == null)
-					Console.WriteLine("Error: connection is not Open.");
-				else if(conn.State == ConnectionState.Closed)
-					Console.WriteLine("Error: connection is not Open.");
+				if (conn == null)
+					Console.WriteLine ("Error: connection is not Open.");
+				else if (conn.State == ConnectionState.Closed)
+					Console.WriteLine ("Error: connection is not Open.");
 				else {
-					if(build == null)
-						Console.WriteLine("Error: SQL Buffer is empty.");
+					if (build == null)
+						Console.WriteLine ("Error: SQL Buffer is empty.");
 					else {
-						buff = build.ToString();
-						ExecuteSqlScalar(buff);
+						buff = build.ToString ();
+						ExecuteSqlScalar (buff);
 					}
 					build = null;
 				}
 				break;
 			case "\\EXEXML":
 				// \exexml OUTPUT_FILENAME
-				if(conn == null)
-					Console.WriteLine("Error: connection is not Open.");
-				else if(conn.State == ConnectionState.Closed)
-					Console.WriteLine("Error: connection is not Open.");
+				if (conn == null)
+					Console.WriteLine ("Error: connection is not Open.");
+				else if (conn.State == ConnectionState.Closed)
+					Console.WriteLine ("Error: connection is not Open.");
 				else {
-					if(build == null)
-						Console.WriteLine("Error: SQL Buffer is empty.");
+					if (build == null)
+						Console.WriteLine ("Error: SQL Buffer is empty.");
 					else {
-						buff = build.ToString();
-						ExecuteSqlXml(buff, parms);
+						buff = build.ToString ();
+						ExecuteSqlXml (buff, parms);
 					}
 					build = null;
 				}
 				break;
 			case "\\F":
-				SetupInputCommandsFile(parms);
+				SetupInputCommandsFile (parms);
 				break;
 			case "\\O":
-				SetupOutputResultsFile(parms);
+				SetupOutputResultsFile (parms);
 				break;
 			case "\\LOAD":
 				// Load file into SQL buffer: \load FILENAME
-				LoadBufferFromFile(parms);
+				LoadBufferFromFile (parms);
 				break;
 			case "\\SAVE":
 				// Save SQL buffer to file: \save FILENAME
-				SaveBufferToFile(parms);
+				SaveBufferToFile (parms);
 				break;
 			case "\\H":
 			case "\\HELP":
 				// Help
-				ShowHelp();
+				ShowHelp ();
 				break;
 			case "\\DEFAULTS":
 				// show the defaults for provider and connection strings
-				ShowDefaults();
+				ShowDefaults ();
 				break;
 			case "\\Q": 
 			case "\\QUIT":
@@ -1366,146 +1377,149 @@ namespace Mono.Data.SqlSharp {
 			case "\\SET":
 				// sets internal variable
 				// \set name value
-				SetInternalVariable(parms);
+				SetInternalVariable (parms);
 				break;
 			case "\\UNSET":
 				// deletes internal variable
 				// \unset name
-				UnSetInternalVariable(parms);
+				UnSetInternalVariable (parms);
 				break;
 			case "\\VARIABLE":
-				ShowInternalVariable(parms);
+				ShowInternalVariable (parms);
 				break;
 			case "\\PRINT":
-				if(build == null)
-					Console.WriteLine("SQL Buffer is empty.");
+				if (build == null)
+					Console.WriteLine ("SQL Buffer is empty.");
 				else
-					Console.WriteLine("SQL Bufer:\n" + buff);
+					Console.WriteLine ("SQL Bufer:\n" + buff);
 				break;
 			case "\\USEPARAMETERS":
-				SetUseParameters(parms);
+				SetUseParameters (parms);
 				break;
 			case "\\USESIMPLEREADER":
-				SetUseSimpleReader(parms);
+				SetUseSimpleReader (parms);
 				break;
 			default:
 				// Error
-				Console.WriteLine("Error: Unknown user command.");
+				Console.WriteLine ("Error: Unknown user command.");
 				break;
 			}
 		}
 
-		public void DealWithArgs(string[] args) {
-			for(int a = 0; a < args.Length; a++) {
-				if(args[a].Substring(0,1).Equals("-")) {
-					string arg = args[a].ToUpper().Substring(1, args[a].Length - 1);
-					switch(arg) {
+		public void DealWithArgs(string[] args) 
+		{
+			for (int a = 0; a < args.Length; a++) {
+				if (args[a].Substring (0,1).Equals ("-")) {
+					string arg = args [a].ToUpper ().Substring (1, args [a].Length - 1);
+					switch (arg) {
 					case "S":
 						silent = true;
 						break;
 					case "F":		
-						if(a + 1 >= args.Length)
-							Console.WriteLine("Error: Missing FILENAME for -f switch");
+						if (a + 1 >= args.Length)
+							Console.WriteLine ("Error: Missing FILENAME for -f switch");
 						else {
-							inputFilename = args[a + 1];
-							inputFilestream = new StreamReader(inputFilename);
+							inputFilename = args [a + 1];
+							inputFilestream = new StreamReader (inputFilename);
 						}
 						break;
 					case "O":
-						if(a + 1 >= args.Length)
-							Console.WriteLine("Error: Missing FILENAME for -o switch");
+						if (a + 1 >= args.Length)
+							Console.WriteLine ("Error: Missing FILENAME for -o switch");
 						else {
-							outputFilename = args[a + 1];
-							outputFilestream = new StreamWriter(outputFilename);
+							outputFilename = args [a + 1];
+							outputFilestream = new StreamWriter (outputFilename);
 						}
 						break;
 					default:
-						Console.WriteLine("Error: Unknow switch: " + args[a]);
+						Console.WriteLine ("Error: Unknow switch: " + args [a]);
 						break;
 					}
 				}
 			}
 		}
 		
-		public string ReadSqlSharpCommand() {
+		public string ReadSqlSharpCommand() 
+		{
 			string entry = "";
 
-			if(inputFilestream == null) {
-				Console.Write("\nSQL# ");
-				entry = Console.ReadLine();		
+			if (inputFilestream == null) {
+				if (silent == false)
+					Console.Error.Write ("\nSQL# ");
+				entry = Console.ReadLine ();
 			}
 			else {
 				try {
-					entry = inputFilestream.ReadLine();
-					if(entry == null) {
-						Console.WriteLine("Executing SQL# Commands from file done.");
+					entry = inputFilestream.ReadLine ();
+					if (entry == null) {
+						OutputLine ("Executing SQL# Commands from file done.");
 					}
 				}
-				catch(Exception e) {
-					Console.WriteLine("Error: Reading command from file: " +
-						e.Message);
+				catch (Exception e) {
+					Console.WriteLine ("Error: Reading command from file: " + e.Message);
 				}
-				Console.Write("\nSQL# ");
-				entry = Console.ReadLine();
+				if (silent == false)
+					Console.Error.Write ("\nSQL# ");
+				entry = Console.ReadLine ();
 			}
 			return entry;
 		}
 		
-		public void Run(string[] args) {
-
-			DealWithArgs(args);
+		public void Run (string[] args) 
+		{
+			DealWithArgs (args);
 
 			string entry = "";
 			build = null;
 
-			if(silent == false) {
-				Console.WriteLine("Welcome to SQL#. The interactive SQL command-line client ");
-				Console.WriteLine("for Mono.Data.  See http://www.go-mono.com/ for more details.\n");
+			if (silent == false) {
+				Console.WriteLine ("Welcome to SQL#. The interactive SQL command-line client ");
+				Console.WriteLine ("for Mono.Data.  See http://www.mono-project.com/ for more details.\n");
 						
-				StartupHelp();
-				ShowDefaults();
+				StartupHelp ();
+				ShowDefaults ();
 			}
 			
-			while(entry.ToUpper().Equals("\\Q") == false &&
-				entry.ToUpper().Equals("\\QUIT") == false) {
+			while (entry.ToUpper ().Equals ("\\Q") == false &&
+				entry.ToUpper ().Equals ("\\QUIT") == false) {
 				
-				while((entry = ReadSqlSharpCommand()) == "") {}
+				while ((entry = ReadSqlSharpCommand ()) == "") {}
 			
 				
-				if(entry.Substring(0,1).Equals("\\")) {
-					HandleCommand(entry);
+				if (entry.Substring(0,1).Equals ("\\")) {
+					HandleCommand (entry);
 				}
-				else if(entry.IndexOf(";") >= 0) {
+				else if (entry.IndexOf(";") >= 0) {
 					// most likely the end of SQL Command or Query found
 					// execute the SQL
-					if(conn == null)
-						Console.WriteLine("Error: connection is not Open.");
-					else if(conn.State == ConnectionState.Closed)
-						Console.WriteLine("Error: connection is not Open.");
+					if (conn == null)
+						Console.WriteLine ("Error: connection is not Open.");
+					else if (conn.State == ConnectionState.Closed)
+						Console.WriteLine ("Error: connection is not Open.");
 					else {
-						if(build == null) {
-							build = new StringBuilder();
+						if (build == null) {
+							build = new StringBuilder ();
 						}
-						build.Append(entry);
-						//build.Append("\n");
-						buff = build.ToString();
-						ExecuteSql(buff);
+						build.Append (entry);
+						//build.Append ("\n");
+						buff = build.ToString ();
+						ExecuteSql (buff);
 						build = null;
 					}
 				}
 				else {
 					// most likely a part of a SQL Command or Query found
 					// append this part of the SQL
-					if(build == null) {
-						build = new StringBuilder();
+					if (build == null) {
+						build = new StringBuilder ();
 					}
-					build.Append(entry + "\n");
-					buff = build.ToString();
+					build.Append (entry + "\n");
+					buff = build.ToString ();
 				}
 			}			
-			CloseDataSource();
-			if(outputFilestream != null)
-				outputFilestream.Close();
+			CloseDataSource ();
+			if (outputFilestream != null)
+				outputFilestream.Close ();
 		}
 	}
 
@@ -1516,15 +1530,16 @@ namespace Mono.Data.SqlSharp {
 		SquareBrackets // '[]' - delimited named parameter - [name]
 	}
 
-	public class ParametersBuilder {
-
+	public class ParametersBuilder 
+	{
 		private BindVariableCharacter bindCharSetting;
 		private char bindChar;
 		private IDataParameterCollection parms;
 		private string sql;
 		private IDbCommand cmd;
 			
-		private void SetBindCharacter() {
+		private void SetBindCharacter () 
+		{
 			switch(bindCharSetting) {
 			case BindVariableCharacter.Colon:
 				bindChar = ':';
@@ -1541,7 +1556,8 @@ namespace Mono.Data.SqlSharp {
 			}
 		}
 
-		public ParametersBuilder(IDbCommand command, BindVariableCharacter bindVarChar) {
+		public ParametersBuilder (IDbCommand command, BindVariableCharacter bindVarChar) 
+		{
 			cmd = command;
 			sql = cmd.CommandText;
 			parms = cmd.Parameters;
@@ -1555,43 +1571,43 @@ namespace Mono.Data.SqlSharp {
 			}
 		}
 
-		public int ParseParameters() {	
-
+		public int ParseParameters () 
+		{	
 			int numParms = 0;
 
 			IDataParameterCollection parms = cmd.Parameters;
 
-			char[] chars = sql.ToCharArray();
+			char[] chars = sql.ToCharArray ();
 			bool bStringConstFound = false;
 
-			for(int i = 0; i < chars.Length; i++) {
-				if(chars[i] == '\'') {
-					if(bStringConstFound == true)
+			for (int i = 0; i < chars.Length; i++) {
+				if (chars[i] == '\'') {
+					if (bStringConstFound == true)
 						bStringConstFound = false;
 					else
 						bStringConstFound = true;
 				}
-				else if(chars[i] == bindChar && 
+				else if (chars[i] == bindChar && 
 					bStringConstFound == false) {
-					if(bindChar != '?') {
-						StringBuilder parm = new StringBuilder();
+					if (bindChar != '?') {
+						StringBuilder parm = new StringBuilder ();
 						i++;
-						if(bindChar.Equals('[')) {
+						if (bindChar.Equals ('[')) {
 							bool endingBracketFound = false;
-							while(i <= chars.Length) {
+							while (i <= chars.Length) {
 								char ch;
-								if(i == chars.Length)
+								if (i == chars.Length)
 									ch = ' '; // a space
 								else
 									ch = chars[i];
 
-								if(Char.IsLetterOrDigit(ch) || ch == ' ') {
-									parm.Append(ch);
+								if (Char.IsLetterOrDigit (ch) || ch == ' ') {
+									parm.Append (ch);
 								}
 								else if (ch == ']') {
 									endingBracketFound = true;
-									string p = parm.ToString();
-									AddParameter(p);
+									string p = parm.ToString ();
+									AddParameter (p);
 									numParms ++;
 									break;
 								}
@@ -1599,24 +1615,24 @@ namespace Mono.Data.SqlSharp {
 								i++;
 							}
 							i--;
-							if(endingBracketFound == false)
+							if (endingBracketFound == false)
 								throw new Exception("SQL Parser Error: Ending bracket not found for parameter");
 						}
 						else {
-							while(i <= chars.Length) {
+							while (i <= chars.Length) {
 								char ch;
-								if(i == chars.Length)
+								if (i == chars.Length)
 									ch = ' '; // a space
 								else
 									ch = chars[i];
 
-								if(Char.IsLetterOrDigit(ch)) {
-									parm.Append(ch);
+								if (Char.IsLetterOrDigit(ch)) {
+									parm.Append (ch);
 								}
 								else {
 
-									string p = parm.ToString();
-									AddParameter(p);
+									string p = parm.ToString ();
+									AddParameter (p);
 									numParms ++;
 									break;
 								}
@@ -1627,8 +1643,8 @@ namespace Mono.Data.SqlSharp {
 					}
 					else {
 						// placeholder paramaeter for ?
-						string p = numParms.ToString();
-						AddParameter(p);
+						string p = numParms.ToString ();
+						AddParameter (p);
 						numParms ++;
 					}
 				}			
@@ -1636,10 +1652,11 @@ namespace Mono.Data.SqlSharp {
 			return numParms;
 		}
 
-		public void AddParameter (string p) {
-			Console.WriteLine("Add Parameter: " + p);
-			if(parms.Contains(p) == false) {
-				IDataParameter prm = cmd.CreateParameter();
+		public void AddParameter (string p) 
+		{
+			Console.WriteLine ("Add Parameter: " + p);
+			if (parms.Contains (p) == false) {
+				IDataParameter prm = cmd.CreateParameter ();
 				prm.ParameterName = p;
 				prm.Direction = ParameterDirection.Input;
 				prm.DbType = DbType.String; // default
@@ -1649,10 +1666,13 @@ namespace Mono.Data.SqlSharp {
 		}
 	}
 
-	public class SqlSharpDriver {
-		public static void Main(string[] args) {
-			SqlSharpCli sqlCommandLineEngine = new SqlSharpCli();
-			sqlCommandLineEngine.Run(args);
+	public class SqlSharpDriver 
+	{
+		public static void Main (string[] args) 
+		{
+			SqlSharpCli sqlCommandLineEngine = new SqlSharpCli ();
+			sqlCommandLineEngine.Run (args);
 		}
 	}
 }
+
