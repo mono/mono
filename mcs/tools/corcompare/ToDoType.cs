@@ -142,8 +142,12 @@ namespace Mono.Util.CorCompare {
 				{
 					if (tMono == miMono.DeclaringType)
 					{
-						string strName = miMono.ToString ();
-						htMono.Add (strName, miMono);
+						try
+						{
+							string strName = miMono.ToString ();
+							htMono.Add (strName, miMono);
+						}
+						catch (Exception e) {}
 					}
 				}
 			}
