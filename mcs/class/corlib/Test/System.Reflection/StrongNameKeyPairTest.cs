@@ -5,7 +5,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -46,6 +46,21 @@ public class StrongNameKeyPairTest : Assertion {
 		} catch {} // do no affect unit tests
 	}
 
+	// helper functions (also required for CAS unit tests)
+	public string CreateSnkFile ()
+	{
+		using (FileStream fs = new FileStream (file, FileMode.OpenOrCreate)) {
+			fs.Write (test, 0, test.Length);
+			fs.Close ();
+		}
+		return file;
+	}
+
+	static public byte[] GetKey ()
+	{
+		return test;
+	}
+
 	[Test]
 	public void ConstructorByteArray () 
 	{
@@ -81,9 +96,7 @@ public class StrongNameKeyPairTest : Assertion {
 	[Test]
 	public void ConstructorFileStream () 
 	{
-		FileStream testFile = new FileStream (file, FileMode.OpenOrCreate);
-		testFile.Write (test, 0, test.Length);
-		testFile.Close ();
+		CreateSnkFile ();
 
 		FileStream fs = new FileStream (file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 		snpk = new StrongNameKeyPair (fs);

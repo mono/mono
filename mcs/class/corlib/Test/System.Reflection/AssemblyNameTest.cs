@@ -80,7 +80,7 @@ public class AssemblyNameTest {
 	{
 		try {
 			if (Directory.Exists (tempDir))
-			Directory.Delete (tempDir, true);
+				Directory.Delete (tempDir, true);
 		}
 		catch (Exception) {
 			// This can happen on windows when the directory contains
@@ -364,11 +364,89 @@ public class AssemblyNameTest {
 	}
 
 	[Test]
+	public void Serialization_WithoutStrongName ()
+	{
+		AssemblyName an = new AssemblyName ();
+		an.CodeBase = "http://www.test.com/test.dll";
+		an.CultureInfo = CultureInfo.InvariantCulture;
+		an.Flags = AssemblyNameFlags.None;
+		an.HashAlgorithm = AssemblyHashAlgorithm.SHA1;
+		an.KeyPair = null;
+		an.Name = "TestAssembly2";
+		an.Version = new Version (1, 5, 0, 0);
+		an.VersionCompatibility = AssemblyVersionCompatibility.SameMachine;
+
+		MemoryStream ms = new MemoryStream ();
+		BinaryFormatter bf = new BinaryFormatter ();
+		bf.Serialize (ms, an);
+
+		// reset position of memorystream
+		ms.Position = 0;
+
+		// deserialze assembly name
+		AssemblyName dsAssemblyName = (AssemblyName) bf.Deserialize (ms);
+
+		// close the memorystream
+		ms.Close ();
+
+		// compare orginal and deserialized assembly name
+		Assert.AreEqual (an.CodeBase, dsAssemblyName.CodeBase, "CodeBase");
+		Assert.AreEqual (an.CultureInfo, dsAssemblyName.CultureInfo, "CultureInfo");
+		Assert.AreEqual (an.Flags, dsAssemblyName.Flags, "Flags");
+		Assert.AreEqual (an.HashAlgorithm, dsAssemblyName.HashAlgorithm, "HashAlgorithm");
+		Assert.AreEqual (an.Name, dsAssemblyName.Name, "Name");
+		Assert.AreEqual (an.Version, dsAssemblyName.Version, "Version");
+		Assert.AreEqual (an.VersionCompatibility, dsAssemblyName.VersionCompatibility, "VersionCompatibility");
+		Assert.AreEqual (an.EscapedCodeBase, dsAssemblyName.EscapedCodeBase, "EscapedCodeBase");
+		Assert.AreEqual (an.FullName, dsAssemblyName.FullName, "FullName");
+		Assert.AreEqual (an.ToString (), dsAssemblyName.ToString (), "ToString");
+		AssertEqualsByteArrays ("PublicKey", an.GetPublicKey (), dsAssemblyName.GetPublicKey ());
+		AssertEqualsByteArrays ("PublicToken", an.GetPublicKeyToken (), dsAssemblyName.GetPublicKeyToken ());
+	}
+
+	[Test]
 	[ExpectedException (typeof (ArgumentNullException))]
 	public void GetObjectData_Null ()
 	{
 		AssemblyName an = new AssemblyName ();
 		an.GetObjectData (null, new StreamingContext (StreamingContextStates.All));
+	}
+
+	[Test]
+	public void Clone_Empty ()
+	{
+		an = new AssemblyName ();
+		AssemblyName clone = (AssemblyName) an.Clone ();
+
+		Assert.IsNull (clone.CodeBase, "CodeBase");
+		Assert.IsNull (clone.CultureInfo, "CultureInfo");
+		Assert.IsNull (clone.EscapedCodeBase, "EscapedCodeBase");
+		Assert.AreEqual (AssemblyNameFlags.None, clone.Flags, "Flags");
+		Assert.IsNull (clone.FullName, "FullName");
+		Assert.AreEqual (AssemblyHashAlgorithm.None, clone.HashAlgorithm, "HashAlgorithm");
+		Assert.IsNull (clone.KeyPair, "KeyPair");
+		Assert.IsNull (clone.Name, "Name");
+		Assert.IsNull (clone.Version, "Version");
+		Assert.AreEqual (AssemblyVersionCompatibility.SameMachine, 
+			clone.VersionCompatibility, "VersionCompatibility");
+	}
+
+	[Test]
+	public void Clone_Self ()
+	{
+		an = Assembly.GetExecutingAssembly ().GetName ();
+		AssemblyName clone = (AssemblyName) an.Clone ();
+
+		Assert.AreEqual (an.CodeBase, clone.CodeBase, "CodeBase");
+		Assert.AreEqual (an.CultureInfo, clone.CultureInfo, "CultureInfo");
+		Assert.AreEqual (an.EscapedCodeBase, clone.EscapedCodeBase, "EscapedCodeBase");
+		Assert.AreEqual (an.Flags, clone.Flags, "Flags");
+		Assert.AreEqual (an.FullName, clone.FullName, "FullName");
+		Assert.AreEqual (an.HashAlgorithm, clone.HashAlgorithm, "HashAlgorithm");
+		Assert.AreEqual (an.KeyPair, clone.KeyPair, "KeyPair");
+		Assert.AreEqual (an.Name, clone.Name, "Name");
+		Assert.AreEqual (an.Version, clone.Version, "Version");
+		Assert.AreEqual (an.VersionCompatibility, clone.VersionCompatibility, "VersionCompatibility");
 	}
 
 	// helpers

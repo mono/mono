@@ -1,5 +1,14 @@
 2005-04-04  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* AssemblyNameTest.cs: Added tests for Clone and serialization without
+	a strongname.
+	* AssemblyNameCas.cs: New. CAS unit tests for AssemblyName.
+	* StrongNameKeyPairTest.cs: Little changes to make it easier to reuse 
+	in CAS tests.
+	* StrongNameKeyPairCas.cs: New. CAS unit tests for StrongNameKeyPair.
+
+2005-04-04  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* AssemblyNameTest.cs: Add test for ArgumentNullException on 
 	GetObjectData. Made existing tests more nunit2.2 like.
 	* ModuleCas.cs: Added new tests for FullyQualifiedName and Name 
