@@ -1,4 +1,4 @@
-//
+﻿//
 // Mono.MonoBASIC.Tokenizer.cs: The Tokenizer for the MonoBASIC compiler
 //
 // Author: A Rafael D Teixeira (rafaelteixeirabr@hotmail.com)
@@ -961,7 +961,7 @@ namespace Mono.MonoBASIC
 				static_cmd_arg.Append ((char) c);
 			}
 
-			cmd = static_cmd_arg.ToString ();
+			cmd = static_cmd_arg.ToString().ToLower();
 
 			if (c == '\n'){
 				line++;
@@ -997,12 +997,12 @@ namespace Mono.MonoBASIC
 				col = 0;
 			arg = static_cmd_arg.ToString ().Trim ();
 			
-			if (cmd == "End" && arg == "Region") {
-				cmd = "End Region";
+			if (cmd == "end" && arg.ToLower() == "region") {
+				cmd = "end region";
 				arg = "";	
 			}
-			if (cmd == "End" && arg == "If") {
-				cmd = "End If";
+			if (cmd == "end" && arg.ToLower() == "if") {
+				cmd = "end if";
 				arg = "";	
 			}			
 				
@@ -1281,7 +1281,7 @@ namespace Mono.MonoBASIC
 			//
 			// The first group of pre-processing instructions is always processed
 			//
-			switch (cmd){
+			switch (cmd.ToLower()){
 			case "line":
 				if (!PreProcessLine (arg))
 					Report.Error (
@@ -1289,16 +1289,16 @@ namespace Mono.MonoBASIC
 						"Argument to #line directive is missing or invalid");
 				return true;
 
-			case "Region":
+			case "region":
 				region_directive = true;
 				arg = "true";
-				goto case "If";
+				goto case "if";
 
-			case "End Region":
+			case "end region":
 				region_directive = true;
-				goto case "End If";
+				goto case "end if";
 				
-			case "If":
+			case "if":
 				if (arg == ""){
 					Error_InvalidDirective ();
 					return true;
@@ -1329,7 +1329,7 @@ namespace Mono.MonoBASIC
 					return false;
 				}
 				
-			case "End If":
+			case "end if":
 				if (ifstack == null || ifstack.Count == 0){
 					Error_UnexpectedDirective ("no #if for this #endif");
 					return true;
@@ -1353,7 +1353,7 @@ namespace Mono.MonoBASIC
 					}
 				}
 
-			case "ElseIf":
+			case "elseif":
 				if (ifstack == null || ifstack.Count == 0){
 					Error_UnexpectedDirective ("no #if for this #elif");
 					return true;
@@ -1381,7 +1381,7 @@ namespace Mono.MonoBASIC
 						return false;
 				}
 
-			case "Else":
+			case "else":
 				if (ifstack == null || ifstack.Count == 0){
 					Report.Error (
 						1028, Location,
@@ -1425,7 +1425,7 @@ namespace Mono.MonoBASIC
 			if (!caller_is_taking)
 				return false;
 					
-			switch (cmd){
+			switch (cmd.ToLower()){
 			case "define":
 				/* if (any_token_seen){
 					Error_TokensSeen ();

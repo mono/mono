@@ -22,7 +22,7 @@ mb-parser.cs: mb-parser.jay
 	$(topdir)/jay/jay -ctv <$(topdir)/jay/skeleton.cs $< >$@
 
 verbose: mbas.exe
-	$(TEST_RUNTIME) mbas.exe --verbosegetoptions --stacktrace /r:Mono.GetOptions.dll /r:System.Data,System.Windows.Forms --main WriteOK testmbas/WriteOK.vb testmbas/WriteOK2.mbs
+	$(TEST_RUNTIME) ./mbas.exe --verbosegetoptions --stacktrace /libpath:../class/lib /r:Mono.GetOptions /r:System.Data,System.Windows.Forms --main WriteOK testmbas/WriteOK.vb testmbas/WriteOK2.mbs
 
 testmbas/WriteOK.exe: mbas.exe
-	$(TEST_RUNTIME) mbas.exe --stacktrace /r:Mono.GetOptions.dll /r:System.Data,System.Windows.Forms --main WriteOK testmbas/WriteOK.vb testmbas/WriteOK2.mbs
+	$(TEST_RUNTIME) ./mbas.exe --stacktrace --verbosegetoptions /libpath:../class/lib /r:Mono.GetOptions /r:System.Data,System.Windows.Forms --main WriteOK testmbas/WriteOK.vb testmbas/WriteOK2.mbs

@@ -98,9 +98,6 @@ namespace Mono.Languages
 		[Option("[Mono] Makes errors fatal", "fatal")]
 		public bool Fatal { set { Report.Fatal = value; } }
 
-		[Option("[Mono] Adds path to the assembly link path")]
-		public string[] linkpaths = null;
-
 		// Output file options
 		//------------------------------------------------------------------
 		[Option("Specifies the output file name", 'o', "out")]
@@ -278,7 +275,7 @@ namespace Mono.Languages
 
 		public string[] libpath = null;
 		
-		[Option("[NOT IMPLEMENTED YET]List of directories to search for metada references (semi-colon delimited)", "libpath")]
+		[Option("List of directories to search for metada references (semi-colon delimited)", "libpath")]
 		public WhatToDoNext setlibpath(string pathlist)
 		{
 			libpath = pathlist.Split(';');
@@ -347,9 +344,9 @@ namespace Mono.Languages
 			}
 			catch (FileNotFoundException)
 			{
-				if (linkpaths != null)
+				if (libpath != null)
 				{
-					foreach (string dir in linkpaths)
+					foreach (string dir in libpath)
 					{
 						string full_path = dir + "/" + assembly + ".dll";
 
