@@ -1,3 +1,22 @@
+2004-12-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* cs1570.cs, cs1570-2.cs, cs1570-3.cs, cs1570-4.cs, cs1570-5.cs,
+	  cs1570-6.cs, cs1570-7.cs, cs1570-8.cs, cs1570-9.cs, cs1570-10.cs,
+	  cs1570-11.cs, cs1571.cs, cs1572.cs, cs1573.cs, cs1574.cs,
+	  cs1574-2.cs, cs1574-3.cs, cs1574-4.cs, cs1574-5.cs, cs1580.cs,
+	  cs1580-2.cs, cs1581.cs, cs1581-2.cs, cs1584.cs, cs1584-2.cs,
+	  cs1584-3.cs, cs1584-4.cs, cs1587.cs, cs1587-2.cs, cs1587-3.cs,
+	  cs1587-4.cs, cs1587-5.cs, cs1587-6.cs, cs1587-7.cs, cs1587-8.cs,
+	  cs1587-9.cs, cs1587-10.cs, cs1587-11.cs, cs1587-12.cs, cs1587-13.cs,
+	  cs1587-14.cs, cs1587-15.cs, cs1587-16.cs, cs1587-17.cs, cs1587-18.cs,
+	  cs1587-19.cs, cs1587-20.cs, cs1587-21.cs, cs1587-22.cs, cs1587-23.cs,
+	  cs1587-24.cs, cs1587-25.cs, cs1587-26.cs, cs1587-27.cs, cs1587-28.cs,
+	  cs1589.cs, cs1590.cs, cs1590-2.cs, cs1590-3.cs, cs1591.cs,
+	  cs1591-2.cs, cs1591-3.cs, cs1591-4.cs, cs1591-5.cs, cs1591-6.cs,
+	  cs1591-7.cs, cs1591-8.cs, cs1591-9.cs, cs1591-10.cs, cs1591-11.cs,
+	  cs1591-12.cs, cs1591-13.cs, cs1591-14.cs, cs1591-15.cs, cs1591-16.cs,
+	  cs1591-17.cs, cs1591-18.cs, cs1592.cs : added tests for /doc feature.
+
 2004-11-26  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (DISTFILES): Add do-tests.pl.
