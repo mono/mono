@@ -273,8 +273,14 @@ namespace System.Xml.Serialization {
 				ICollection members = GetReflectionMembers (type);
 				foreach (XmlReflectionMember rmember in members)
 				{
+					string ns = map.XmlTypeNamespace;
 					if (rmember.XmlAttributes.XmlIgnore) continue;
-					XmlTypeMapMember mem = CreateMapMember (rmember, map.XmlTypeNamespace);
+					if (rmember.DeclaringType != null && rmember.DeclaringType != type) {
+						XmlTypeMapping bmap = ImportClassMapping (rmember.DeclaringType, root, defaultNamespace);
+						ns = bmap.XmlTypeNamespace;
+					}
+					
+					XmlTypeMapMember mem = CreateMapMember (rmember, ns);
 					mem.CheckOptionalValueType (type);
 					classMap.AddMember (mem);
 				}
@@ -646,6 +652,7 @@ namespace System.Xml.Serialization {
 						if (atts == null) atts = new XmlAttributes (field);
 						if (atts.XmlIgnore) continue;
 						XmlReflectionMember member = new XmlReflectionMember(field.Name, field.FieldType, atts);
+						member.DeclaringType = field.DeclaringType;
 						members.Add(member);
 					}
 					else break;
@@ -662,6 +669,7 @@ namespace System.Xml.Serialization {
 						if (atts == null) atts = new XmlAttributes (prop);
 						if (atts.XmlIgnore) continue;
 						XmlReflectionMember member = new XmlReflectionMember(prop.Name, prop.PropertyType, atts);
+						member.DeclaringType = prop.DeclaringType;
 						members.Add(member);
 					}
 					else break;

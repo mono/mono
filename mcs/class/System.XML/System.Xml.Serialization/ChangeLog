@@ -1,3 +1,10 @@
+2004-12-09  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlReflectionMember.cs: Added DeclaringType member.
+	* XmlReflectionImporter.cs: When importing fields that belong to a
+	base class, use the xml namespace of the base map for the member.
+	This fixes bug #70309.
+
 2004-11-30  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlCodeExporter.cs, XmlSerializer.cs, XmlSchemaImporter.cs: Fixed some

@@ -39,6 +39,7 @@ namespace System.Xml.Serialization {
 		bool overrideIsNullable;
 		SoapAttributes soapAttributes;
 		XmlAttributes xmlAttributes;
+		Type declaringType;
 
 		#endregion
 
@@ -100,6 +101,11 @@ namespace System.Xml.Serialization {
 				return xmlAttributes; 
 			}
 			set { xmlAttributes = value; }
+		}
+		
+		internal Type DeclaringType {
+			get { return declaringType; }
+			set { declaringType = value; }
 		}
 		
 		internal void AddKeyHash (System.Text.StringBuilder sb)
