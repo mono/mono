@@ -1,5 +1,11 @@
 2004-07-28  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c: Fix opcode mapping for STACK_MP on 64 bit platforms.
+
+	* mini.c (CEE_NEWOBJ): Call mono_array_new_va using the correct signature.
+
+	* mini.c: Use MONO_ARCH_SIGACTION on AMD64 as well.
+
 	* inssel.brg: 64 bit fixes.
 
 	* mini.h (MonoCallInst): Add some AMD64 specific data.
