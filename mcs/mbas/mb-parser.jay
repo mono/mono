@@ -260,7 +260,7 @@ namespace Mono.MonoBASIC
 %token STEP
 %token STOP
 %token STRING	
-%token STRUCTURE	
+%token STRUCTURE
 %token SUB
 %token SUMMARY // MonoBASIC extension
 %token SYNCLOCK
@@ -473,10 +473,10 @@ type_spec_declaration
 	| module_declaration
 	| interface_declaration
 	| delegate_declaration
-//	| struct_declaration
+	| struct_declaration
 //	| enum_declaration
 	;
-	
+
 class_declaration
 	: CLASS IDENTIFIER EOL opt_class_base
 	  {
@@ -711,6 +711,62 @@ func_declaration
 	  }	  
 	;		
 
+struct_declaration
+	: STRUCTURE IDENTIFIER EOL
+	  opt_implement_clause
+	  {
+		Struct new_struct;
+		string full_struct_name = MakeName ((string) $2);
+
+		new_struct = new Struct (current_container, full_struct_name, 
+					 (int) current_modifiers,
+					 (Attributes) current_attributes, lexer.Location);
+		current_container = new_struct;
+		current_container.Namespace = current_namespace;
+		RootContext.Tree.RecordDecl (full_struct_name, new_struct);
+	  }
+	  opt_struct_member_declarations
+	  {
+		Struct new_struct = (Struct) current_container;
+
+		if ($4 != null)
+			new_struct.Bases = (ArrayList) $4;
+
+		current_container = current_container.Parent;
+		CheckDef (current_container.AddStruct (new_struct), new_struct.Name, new_struct.Location);
+		$$ = new_struct;
+	  }
+	  END STRUCTURE EOL
+	;
+	
+opt_struct_member_declarations
+	: /* empty */
+	| struct_member_declarations
+	;
+
+struct_member_declarations
+	: struct_member_declaration
+	| struct_member_declarations struct_member_declaration
+	;
+
+struct_member_declaration
+	: field_declaration
+	//| constant_declaration
+	| method_declaration
+	| property_declaration
+	//| event_declaration
+	//| indexer_declaration
+	//| operator_declaration
+	| constructor_declaration
+	| type_declaration
+
+	/*
+	 * This is only included so we can flag error 575:
+	 * destructors only allowed on class types
+	 */
+	//| destructor_declaration
+	;
+
 interface_declaration
 	: INTERFACE IDENTIFIER EOL
 	  {
@@ -874,6 +930,7 @@ property_declaration
 		Pair pair = (Pair) $9;
 		Accessor get_block = (Accessor) pair.First;
 		Accessor set_block = (Accessor) pair.Second;
+
 		Location loc = lexer.Location;
 		
 		prop = new Property ((Expression) $5, (string) $2, current_modifiers, get_block, set_block,
@@ -959,7 +1016,6 @@ get_accessor_declaration
 set_accessor_declaration
 	: opt_attributes SET opt_set_parameter EOL
 	  {
-		
 		Parameter implicit_value_parameter = new Parameter (
 			set_implicit_value_parameter_type, 
 			set_implicit_value_parameter_name, 
@@ -1766,10 +1822,17 @@ statement_expression
 	;
 
 object_creation_expression
-	: NEW type OPEN_PARENS opt_argument_list CLOSE_PARENS
+	: NEW type opt_oce_args
 	  {
-		$$ = new New ((Expression) $2, (ArrayList) $4, lexer.Location);  
+		$$ = new New ((Expression) $2, (ArrayList) $3, lexer.Location);
 	  }
+	;
+
+opt_oce_args
+	: /* empty */
+	  { $$ = null; }
+	| OPEN_PARENS opt_argument_list CLOSE_PARENS
+	  { $$ = $2; }
 	;
 
 new_expression
