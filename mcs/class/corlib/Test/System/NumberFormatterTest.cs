@@ -17,7 +17,7 @@ namespace MonoTests.System {
 
 		NumberFormatInfo _nfi;
 		[SetUp]
-		protected virtual void SetUp () {
+		protected override void SetUp () {
 			_nfi = NumberFormatInfo.InvariantInfo.Clone() as NumberFormatInfo;
 		}
 
