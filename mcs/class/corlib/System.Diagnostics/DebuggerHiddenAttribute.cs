@@ -11,7 +11,8 @@ using System;
 namespace System.Diagnostics
 {
 	[AttributeUsage (AttributeTargets.Constructor |
-			 AttributeTargets.Method | AttributeTargets.Property)]
+			 AttributeTargets.Method | AttributeTargets.Property,
+			 Inherited=false)]
 	[Serializable]
 	public sealed class DebuggerHiddenAttribute : Attribute
 	{

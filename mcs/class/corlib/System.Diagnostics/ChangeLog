@@ -1,3 +1,11 @@
+2004-05-19  Gert Driesen (drieseng@users.sourceforge.net)
+
+	* DebuggerHiddenAttribute.cs
+	* DebuggerStepThroughAttribute.cs : now that Inherited is 
+	false by default on AttributeUsageAttribute (as it 
+	should be) we need to explicitly set Inherited to false 
+	for those attributes where it should be false.
+
 2003-09-18  Ravi Pratap  <ravi@ximian.com>
 
 	* ConditionalAttribute.cs: AllowMultiple should be true according
