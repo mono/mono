@@ -1,3 +1,7 @@
+2003-02-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* expression.cs: fixes bug #38328.
+
 2003-02-18  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs: Changed all the various members that can be part of a

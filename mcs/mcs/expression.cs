@@ -6255,10 +6255,13 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			bool last_check = ec.CheckState;
 			bool last_const_check = ec.ConstantCheckState;
 
+			ec.CheckState = true;
 			ec.ConstantCheckState = true;
 			Expr = Expr.Resolve (ec);
+			ec.CheckState = last_check;
 			ec.ConstantCheckState = last_const_check;
 			
 			if (Expr == null)
