@@ -175,6 +175,7 @@ System.Security.Principal/GenericPrincipalTest.cs
 System.Security.Principal/WindowsIdentityTest.cs
 System.Security.Principal/WindowsPrincipalTest.cs
 System.Security/SecurityElementTest.cs
+System.Security/SecurityExceptionTest.cs
 System.Security/SecurityManagerTest.cs
 System/SingleFormatterTest.cs
 System/StringTest.cs

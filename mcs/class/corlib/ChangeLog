@@ -1,7 +1,12 @@
+2004-01-06  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* corlib_test.dll.sources: Added SecurityException unit tests in
+	System.Security namespace.
+
 2004-01-05  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* corlib_test.dll.sources: Added CodeAccessPermission unit tests in
-	in System.Security namespace. Added CodeGroup related and PolicyLevel
+	System.Security namespace. Added CodeGroup related and PolicyLevel
 	unit tests to System.Security.Policy.
 
 2004-01-05  Zoltan Varga  <vargaz@freemail.hu>
