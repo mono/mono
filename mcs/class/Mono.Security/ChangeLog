@@ -1,3 +1,8 @@
+2004-02-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Security_test.dll.sources Added Mono.Math BigInteger unit test
+	to the build (as they cannot be executed with corlib).
+
 2004-02-09 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
 
     * Changed the license header to all the sources files
