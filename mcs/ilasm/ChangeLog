@@ -1,5 +1,9 @@
 2003-03-08 Jackson Harper <jackson@latitudegeo.com>
 
+	* makefile, makefile.gnu: Add MethodTable and TypeRef to build.
+
+2003-03-08 Jackson Harper <jackson@latitudegeo.com>
+
 	* makefile, makefile.gnu: Add ExternTable to build
 
 2003-03-08 Jackson Harper <jackson@latitudegeo.com>

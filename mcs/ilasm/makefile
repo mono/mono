@@ -11,6 +11,8 @@ SOURCES = 				\
 	codegen/CodeGen.cs		\
 	codegen/ClassTable.cs		\
 	codegen/ExternTable.cs		\
+	codegen/MethodTable.cs		\
+	codegen/TypeRef.cs		\
 	parser/ILParser.cs		\
 	parser/ScannerAdapter.cs	\
 	scanner/ILReader.cs		\
