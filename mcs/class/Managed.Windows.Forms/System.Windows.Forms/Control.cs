@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.42 $
+// $Revision: 1.43 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.43  2004/08/21 19:32:15  pbartok
+// - Implemented Created property
+//
 // Revision 1.42  2004/08/21 19:28:22  pbartok
 // - Implemented ContainsFocus
 //
@@ -875,7 +878,10 @@ namespace System.Windows.Forms
 
 		public bool Created {
 			get {
-				throw new NotImplementedException();
+				if (!this.is_disposed && (this.window.Handle != IntPtr.Zero)) {
+					return true;
+				}
+				return false;
 			}
 		}
 
