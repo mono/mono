@@ -65,11 +65,20 @@ namespace System.Data.Odbc
 			list.Add ((object) error);
 		}
 		
-		[MonoTODO]
 		public void CopyTo (Array array, int index) 
 		{
+			if (array == null)
+				throw new ArgumentNullException("array");		
+			
+			if ((index < array.GetLowerBound (0)) || (index > array.GetUpperBound (0)))
+				throw new ArgumentOutOfRangeException("index");
+		
+			// is the check for IsFixedSize required?
+			if ((array.IsFixedSize) || (index + this.Count > array.GetUpperBound (0)))
+				throw new ArgumentException("array");
+
 			((OdbcError[])(list.ToArray ())).CopyTo (array, index);
-			throw new NotImplementedException ();
+			 
 		}
 
 		public IEnumerator GetEnumerator ()
