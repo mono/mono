@@ -413,7 +413,9 @@ namespace System
 		{
 			// cache this in case we need it
 			IComparable valueCompare = value as IComparable;
-
+			if (comparer == null)
+				comparer = Comparer.Default;
+			
 			int iMin = index;
 			// Comment from Tum (tum@veridicus.com):
 			// *Must* start at index + length - 1 to pass rotor test co2460binarysearch_iioi
