@@ -1,3 +1,8 @@
+
+Tue Nov 9 17:29:28 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* dis-cil.c, get.c, get.h: update to exception clause structure changes.
+
 2004-11-08  Ben Maurer  <bmaurer@ximian.com>
 
 	* get.c, dump.c: warning free.
