@@ -123,7 +123,7 @@ namespace System.IO {
 			StringBuilder sb = new StringBuilder (GetType ().FullName);
 			sb.AppendFormat (": {0}", msg);
 
-			if (fileName != null);
+			if (fileName != null)
 				sb.AppendFormat (" : {0}", fileName);
 
 			if (this.InnerException != null)

@@ -1,3 +1,7 @@
+2005-01-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FileNotFoundException.cs, FileLoadException.cs: Fixed bad "if ();".
+
 2005-01-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FileNotFoundException.cs, FileLoadException.cs: Protect the fusion
