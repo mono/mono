@@ -1,3 +1,7 @@
+2004-07-24  Martin Baulig  <martin@ximian.com>
+
+	* TypeBuilder.cs (TypeBuilder.UnspecifiedTypeSize): Set this to 0
+	and initialize it to 0 everywhere.
 
 Thu Jun 24 15:33:04 CEST 2004 Paolo Molaro <lupus@ximian.com>
 

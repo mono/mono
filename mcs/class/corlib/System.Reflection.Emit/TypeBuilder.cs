@@ -95,7 +95,7 @@ namespace System.Reflection.Emit {
 		internal TypeBuilder (ModuleBuilder mb, TypeAttributes attr) {
 			this.parent = null;
 			this.attrs = attr;
-			this.class_size = -1;
+			this.class_size = 0;
 			fullname = this.tname = "<Module>";
 			this.nspace = "";
 			pmodule = mb;
