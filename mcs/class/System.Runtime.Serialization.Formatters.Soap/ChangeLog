@@ -1,3 +1,9 @@
+2003-08-25  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* SoapTypeMapper.cs: Added mappings for more primitive types.
+	* SoapWriter.cs: Use XmlSchema.Namespace and XmlSchema.InstanceNamespace
+	  instead of string constants.
+
 2003-06-30  Jean-Marc Andre <jean-marc.andre@polymtl.ca>
 	* SoapServices:
 		removed because it is now included in the

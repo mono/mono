@@ -14,6 +14,7 @@ using System.Runtime.Remoting;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters;
 using System.Xml;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.Globalization;
 
@@ -107,6 +108,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				soapEntry.elementType = ElementType.Id;
 				_objectIds[objValue] = id;
 			}
+
 			
 			return soapEntry;
 		}
@@ -235,7 +237,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			}
 			
 		}
-		
+
 		private void WriteElement(SoapSerializationEntry entry) {
 			_xmlWriter.WriteStartElement(entry.prefix, XmlConvert.EncodeNmToken(entry.elementName), entry.elementNamespace);
 			
@@ -258,6 +260,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			Done = DoneWithElementEvent;
 			SoapSerializationEntry entry = FillEntry(rootType, rootValue); //new SoapSerializationEntry();
 			if(rootType.IsArray) {
+
 				Done = DoneWithArray;
 				entry.IsArray = true;
 			}
@@ -305,8 +308,8 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			ArrayList lstAttr = new ArrayList();
 			_xmlWriter.WriteStartElement("SOAP-ENV", "Envelope",  "http://schemas.xmlsoap.org/soap/envelope/");
 			
-			_xmlWriter.WriteAttributeString("xmlns", "xsi", null, "http://www.w3.org/2001/XMLSchema-instance");
-			_xmlWriter.WriteAttributeString("xmlns", "xsd", null, "http://www.w3.org/2001/XMLSchema" );
+			_xmlWriter.WriteAttributeString("xmlns", "xsi", null, XmlSchema.InstanceNamespace);
+			_xmlWriter.WriteAttributeString("xmlns", "xsd", null, XmlSchema.Namespace );
 			_xmlWriter.WriteAttributeString("xmlns", "SOAP-ENC", null, "http://schemas.xmlsoap.org/soap/encoding/");
 			_xmlWriter.WriteAttributeString("xmlns", "SOAP-ENV", null, "http://schemas.xmlsoap.org/soap/envelope/");
 			_xmlWriter.WriteAttributeString("xmlns", "clr", null, "http://schemas.microsoft.com/soap/encoding/clr/1.0" );

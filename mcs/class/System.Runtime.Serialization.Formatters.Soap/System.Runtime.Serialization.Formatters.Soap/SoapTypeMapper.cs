@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Collections;
 using System.Runtime.Remoting;
 using System.Xml.Serialization;
+using System.Xml.Schema;
 
 namespace System.Runtime.Serialization.Formatters.Soap {
 	
@@ -26,7 +27,9 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		// returns the SoapTypeMapping corresponding to the System.Type
 		public static SoapTypeMapping GetSoapType(Type type) {
 			object rtnMapping;
-			
+
+			if (type.IsByRef) type = type.GetElementType ();
+
 			
 			if(type.IsArray){
 					rtnMapping = _mappingTable[typeof(System.Array)];
@@ -35,7 +38,6 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				rtnMapping = (object) _mappingTable[type];
 				
 				if(rtnMapping == null){
-					
 					string sTypeNamespace;
 					AssemblyName assName = type.Assembly.GetName();
 					if(assName.Name.StartsWith("mscorlib")) sTypeNamespace = "http://schemas.microsoft.com/clr/ns/"+type.Namespace;
@@ -79,6 +81,13 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			
 			return (Type)rtnObject;
 		}
+
+		private static void RegisterSchemaType (Type type, string typeName, bool canBeValue, bool isPrimitive,bool isValueType,bool needId)
+		{
+			SoapTypeMapping mapping =  new SoapTypeMapping (type, typeName, canBeValue, isPrimitive, isValueType, needId);
+			_mappingTable.Add(type, mapping);
+			_invertMappingTable.Add(mapping, type);
+		}
 		
 		// initialize the mapping tables
 		private static void InitMappingTable() {
@@ -88,51 +97,26 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			mapping =  new SoapTypeMapping(typeof(string), "string", true, false, false, true);
 			_mappingTable.Add(typeof(string),mapping);
 			_invertMappingTable.Add(mapping, typeof(string));
-			mapping =  new SoapTypeMapping(typeof(string), "string", "http://www.w3.org/2001/XMLSchema", true, false, false, true);
+			mapping =  new SoapTypeMapping(typeof(string), "string", XmlSchema.Namespace, true, false, false, true);
 			_invertMappingTable.Add(mapping, typeof(string));
-			
-			// the primitive type "System.Int16"
-			mapping =  new SoapTypeMapping(typeof(short), "short", "http://www.w3.org/2001/XMLSchema", true, true, true, false);
-			_mappingTable.Add(typeof(short), mapping);
-			_invertMappingTable.Add(mapping, typeof(short));
-			
-			// the primitive type "System.Int32"
-			mapping =  new SoapTypeMapping(typeof(int), "int", "http://www.w3.org/2001/XMLSchema", true, true, true, false);
-			_mappingTable.Add(typeof(int), mapping);
-			_invertMappingTable.Add(mapping, typeof(int));
-			
-			// the primitive type "System.Boolean"
-			mapping =  new SoapTypeMapping(typeof(bool), "boolean", "http://www.w3.org/2001/XMLSchema", true, true, true, false);
-			_mappingTable.Add(typeof(bool), mapping);
-			_invertMappingTable.Add(mapping, typeof(bool));
-			
-			// the primitive type "System.long"
-			mapping =  new SoapTypeMapping(typeof(long), "long", "http://www.w3.org/2001/XMLSchema", true, true, true, false);
-			_mappingTable.Add(typeof(long), mapping);
-			_invertMappingTable.Add(mapping, typeof(long));
-			
-			// the primitive type "System.double"
-			mapping =  new SoapTypeMapping(typeof(double), "double", "http://www.w3.org/2001/XMLSchema", true, true, true, false);
-			_mappingTable.Add(typeof(double), mapping);
-			_invertMappingTable.Add(mapping, typeof(double));
-			
-			// the primitive type "System.Char"
-			mapping =  new SoapTypeMapping(typeof(Char), "Char", "http://www.w3.org/2001/XMLSchema", true, true, true, false);
-			_mappingTable.Add(typeof(Char), mapping);
-			_invertMappingTable.Add(mapping, typeof(Char));
-			
-			// the primitive type "System.Single"
-			mapping = new SoapTypeMapping(typeof(System.Single), "float", "http://www.w3.org/2001/XMLSchema", true, true, true, false);
-			_mappingTable.Add(typeof(System.Single), mapping);
-			_invertMappingTable.Add(mapping, typeof(System.Single));
-			
-			mapping =  new SoapTypeMapping(typeof(System.Array), "Array", false, false, false, true);
-			_mappingTable.Add(typeof(System.Array), mapping);
-			_invertMappingTable.Add(mapping, typeof(System.Array));
-			
-			mapping = new SoapTypeMapping(typeof(object), "anyType", "http://www.w3.org/2001/XMLSchema", false, false, false, true);
-			_mappingTable.Add(typeof(object), mapping);
-			_invertMappingTable.Add(mapping, typeof(object));
+
+			RegisterSchemaType (typeof(short), "short", true, true, true, false);
+			RegisterSchemaType (typeof(ushort), "unsignedShort", true, true, true, false);
+			RegisterSchemaType (typeof(int), "int", true, true, true, false);
+			RegisterSchemaType (typeof(uint), "unsignedInt", true, true, true, false);
+			RegisterSchemaType (typeof(long), "long", true, true, true, false);
+			RegisterSchemaType (typeof(ulong), "unsignedLong", true, true, true, false);
+			RegisterSchemaType (typeof(decimal), "decimal", true, true, true, false);
+			RegisterSchemaType (typeof(sbyte), "byte", true, true, true, false);
+			RegisterSchemaType (typeof(byte), "unsignedByte", true, true, true, false);
+			RegisterSchemaType (typeof(DateTime), "dateTime", true, true, true, false);
+			RegisterSchemaType (typeof(TimeSpan), "duration", true, true, true, false);
+			RegisterSchemaType (typeof(double), "double", true, true, true, false);
+			RegisterSchemaType (typeof(Char), "char", true, true, true, false);
+			RegisterSchemaType (typeof(bool), "boolean", true, true, true, false);
+			RegisterSchemaType (typeof(System.Single), "float", true, true, true, false);
+			RegisterSchemaType (typeof(System.Array), "Array", false, false, false, true);
+			RegisterSchemaType (typeof(object), "anyType", false, false, false, true);
 			
 			mapping = new SoapTypeMapping(typeof(System.Runtime.Serialization.Formatters.SoapFault), "Fault", "http://schemas.xmlsoap.org/soap/envelope/", false, false, false, true);
 			_mappingTable.Add(typeof(System.Runtime.Serialization.Formatters.SoapFault), mapping);
