@@ -1,3 +1,19 @@
+2004-07-08  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* System.Xml.dll.sources: Added new files:
+		System.Xml.Serialization/IXmlSerializerImplementation.cs
+		System.Xml.Serialization/IXmlTextParser.cs
+		System.Xml.Serialization/ImportContext.cs
+		System.Xml.Serialization/SchemaImporter.cs
+		System.Xml.Serialization/SchemaImporterExtension.cs
+		System.Xml.Serialization/SchemaImporterExtensionCollection.cs
+		System.Xml.Serialization/XmlDeserializationEvents.cs
+		System.Xml.Serialization/XmlSchemaProviderAttribute.cs
+		System.Xml.Serialization/XmlSerializationGeneratedCode.cs
+		System.Xml.Serialization/XmlSerializerAssemblyAttribute.cs
+		System.Xml.Serialization/XmlSerializerFactory.cs
+		System.Xml.Serialization/XmlSerializerVersionAttribute.cs
+
 2004-07-06  Raja R Harinath  <rharinath@novell.com>
 
 	* System.Xml.dll.sources: List newly added NET 2.0 stubs.

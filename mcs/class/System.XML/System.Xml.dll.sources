@@ -265,10 +265,13 @@ System.Xml.Schema/XmlSchemaUtil.cs
 System.Xml.Schema/XmlSchemaReader.cs
 System.Xml.Schema/XmlTypeCode.cs
 System.Xml.Schema/XmlValueConverter.cs
+System.Xml.Serialization/IXmlSerializerImplementation.cs
+System.Xml.Serialization/IXmlTextParser.cs
 System.Xml.Serialization/CodeExporter.cs
 System.Xml.Serialization/CodeGenerationOptions.cs
 System.Xml.Serialization/CodeIdentifier.cs
 System.Xml.Serialization/CodeIdentifiers.cs
+System.Xml.Serialization/ImportContext.cs
 System.Xml.Serialization/IXmlSerializable.cs
 System.Xml.Serialization/ImportContext.cs
 System.Xml.Serialization/MapCodeGenerator.cs
@@ -330,6 +333,7 @@ System.Xml.Serialization/XmlReflectionMember.cs
 System.Xml.Serialization/XmlRootAttribute.cs
 System.Xml.Serialization/XmlSchemaExporter.cs
 System.Xml.Serialization/XmlSchemaImporter.cs
+System.Xml.Serialization/XmlSchemaProviderAttribute.cs
 System.Xml.Serialization/XmlSchemas.cs
 System.Xml.Serialization/XmlSerializationCollectionFixupCallback.cs
 System.Xml.Serialization/XmlSerializationFixupCallback.cs
@@ -341,7 +345,10 @@ System.Xml.Serialization/XmlSerializationWriteCallback.cs
 System.Xml.Serialization/XmlSerializationWriter.cs
 System.Xml.Serialization/XmlSerializationWriterInterpreter.cs
 System.Xml.Serialization/XmlSerializer.cs
+System.Xml.Serialization/XmlSerializerAssemblyAttribute.cs
+System.Xml.Serialization/XmlSerializerFactory.cs
 System.Xml.Serialization/XmlSerializerNamespaces.cs
+System.Xml.Serialization/XmlSerializerVersionAttribute.cs
 System.Xml.Serialization/XmlTextAttribute.cs
 System.Xml.Serialization/XmlTypeAttribute.cs
 System.Xml.Serialization/XmlTypeMapElementInfo.cs
