@@ -139,13 +139,14 @@ namespace Mono.CSharp {
 			Expression e = DoResolve (ec);
 
 			if (e != null){
+
 				if (e is SimpleName){
 					SimpleName s = (SimpleName) e;
 					
 					Report.Error (
-						103, s.Location,
-						"The name `" + s.Name + "' could not be found in `" +
-						ec.TypeContainer.Name + "'");
+						      103, s.Location,
+						      "The name `" + s.Name + "' could not be found in `" +
+						      ec.TypeContainer.Name + "'");
 					return null;
 				}
 				

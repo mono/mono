@@ -228,6 +228,68 @@ namespace Mono.CSharp {
 				impl_details_class.CreateType ();
 			}
 		}
+
+		//
+		// This idea is from Felix Arrese-Igor
+		//
+		// Returns : the implicit parent of a composite namespace string
+		//   eg. Implicit parent of A.B is A
+		//
+		static public string ImplicitParent (string ns)
+		{
+			int i = ns.LastIndexOf (".");
+			if (i < 0)
+				return null;
+			
+			return ns.Substring (0, i);
+		}
+
+		static Type NamespaceLookup (Namespace curr_ns, string name)
+		{
+			Type t;
+			
+			//
+			// Try in the current namespace and all its implicit parents
+			//
+			for (string ns = curr_ns.Name; ns != null; ns = ImplicitParent (ns)) {
+				t = TypeManager.LookupType (MakeFQN (ns, name));
+				if (t != null)
+					return t;
+			}
+			
+			//
+			// It's possible that name already is fully qualified. So we do
+			// a simple direct lookup without adding any namespace names
+			//
+			t = TypeManager.LookupType (name); 
+			if (t != null)
+				return t;
+			
+			for (Namespace ns = curr_ns; ns != null; ns = ns.Parent) {
+				//
+				// Look in the namespace ns
+				//
+				t = TypeManager.LookupType (MakeFQN (ns.Name, name));
+				if (t != null)
+					return t;
+				
+				//
+				// Then try with the using clauses
+				//
+				ArrayList using_list = ns.UsingTable;
+
+				if (using_list == null)
+					continue;
+
+				foreach (string n in using_list){
+					t = TypeManager.LookupType (MakeFQN (n, name));
+					if (t != null)
+						return t;
+				}
+			}
+
+			return null;
+		}
 		
 		//
 		// Public function used to locate types, this can only
@@ -241,7 +303,7 @@ namespace Mono.CSharp {
 
 			//
 			// For the case the type we are looking for is nested within this one
-			// or any base class
+			// or is in any base class
 			//
 			DeclSpace containing_ds = ds;
 			while (containing_ds != null){
@@ -257,30 +319,10 @@ namespace Mono.CSharp {
 				containing_ds = containing_ds.Parent;
 			}
 
-			t = TypeManager.LookupType (MakeFQN (ds.Namespace.Name, name));
-			if (t != null)
-				return t;
-
-			// It's possible that name already is fully qualified. So we do
-			// a simple direct lookup without adding any namespace names
-
-			t = TypeManager.LookupType (name); 
+			t = NamespaceLookup (ds.Namespace, name);
 			if (t != null)
 				return t;
 			
-			for (Namespace ns = ds.Namespace; ns != null; ns = ns.Parent){
-				ArrayList using_list = ns.UsingTable;
-
-				if (using_list == null)
-					continue;
-
-				foreach (string n in using_list){
-					t = TypeManager.LookupType (MakeFQN (n, name));
-					if (t != null)
-						return t;
-				}
-			}
-
 			if (!silent)
 				Report.Error (246, loc, "Cannot find type `"+name+"'");
 			

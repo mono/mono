@@ -1,3 +1,19 @@
+2002-02-28  Ravi Pratap  <ravi@ximian.com>
+
+	* rootcontext.cs (LookupType): As we cycle through the chain of namespaces
+	try performing lookups against those instead of jumping straight into using
+	the 'using' clauses.
+
+	(ImplicitParent): Add. Thanks to Felix Arrese-Igor for this idea.
+
+	(LookupType): Perform lookups in implicit parents too.
+
+	* class.cs (GetInterfaceOrClass): Modify to perform the exact same lookup
+	sequence as RootContext.LookupType. 
+
+	* rootcontext.cs (NamespaceLookup): Split out code from LookupType which tries 
+	the various cases of namespace lookups into this method.
+
 2002-03-01  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay: Add support for [Attribute ()] (empty arguments

@@ -736,7 +736,6 @@ namespace Mono.CSharp {
 				parent = (Class) RootContext.Tree.Classes [name];
 			else 
 				parent = (Struct) RootContext.Tree.Structs [name];
-			
 
 			if (parent != null){
 				t = parent.DefineType (builder);
@@ -762,15 +761,18 @@ namespace Mono.CSharp {
 			bool error;
 
 			//
-			// Attempt to lookup the class on our namespace
+			// Attempt to lookup the class on our namespace and all it's implicit parents
 			//
-			t = LookupInterfaceOrClass (builder, Namespace.Name, name, is_class, out error);
-			if (error)
-				return null;
-			
-			if (t != null) 
-				return t;
+			for (string ns = Namespace.Name; ns != null; ns = RootContext.ImplicitParent (ns)) {
 
+				t = LookupInterfaceOrClass (builder, ns, name, is_class, out error);
+				if (error)
+					return null;
+				
+				if (t != null) 
+					return t;
+			}
+			
 			//
 			// Attempt to do a direct unqualified lookup
 			//
@@ -787,6 +789,17 @@ namespace Mono.CSharp {
 			//
 
 			for (Namespace ns = Namespace; ns != null; ns = ns.Parent){
+
+				t = LookupInterfaceOrClass (builder, ns.Name, name, is_class, out error);
+				if (error)
+					return null;
+
+				if (t != null)
+					return t;
+
+				//
+				// Now check the using clause list
+				//
 				ArrayList using_list = ns.UsingTable;
 				
 				if (using_list == null)
@@ -802,7 +815,8 @@ namespace Mono.CSharp {
 				}
 				
 			}
-			Report.Error (246, "Can not find type `"+name+"'");
+
+			Report.Error (246, Location, "Can not find type `"+name+"'");
 			return null;
 		}
 
