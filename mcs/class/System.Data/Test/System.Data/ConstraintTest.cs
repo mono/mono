@@ -90,26 +90,17 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void SetConstraintNameDuplicateException() {
+		[ExpectedException (typeof (DuplicateNameException))]
+		public void SetConstraintNameDuplicateException ()
+		{
 			_constraint1.ConstraintName = "Dog";
 			_constraint2.ConstraintName = "Cat";
 
 			_table.Constraints.Add(_constraint1);
 			_table.Constraints.Add(_constraint2);
 
-			try {
-				//Should throw DuplicateNameException
-				_constraint2.ConstraintName = "Dog";
-			
-				Fail("Failed to throw " + 
-					" DuplicateNameException exception.");
-			}	
-			catch (DuplicateNameException) {}
-			catch (AssertionException exc) {throw exc;}
-			catch {
-				Fail("Wrong exception type thrown.");
-			}
-		
+			//Should throw DuplicateNameException
+			_constraint2.ConstraintName = "Dog";
 		}
 
 		[Test]

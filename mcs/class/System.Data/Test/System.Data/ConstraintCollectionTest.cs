@@ -90,17 +90,17 @@ namespace MonoTests.System.Data
 				col.Remove (_constraint2); // only for !1.0
 				col.Remove (_constraint1);
 			}
+#if ! NET_1_1
 			catch (DuplicateNameException) {
-#if NET_1_1
-				throw;
-#endif
 			}
+#endif
 			catch (AssertionException exc) {throw exc;}
+/* Don't use such catch. They cover our eyes from the exact exception location.
 			catch (Exception exc)
 			{
 				Fail("A2: Wrong exception type. " + exc.ToString());
 			}
-
+*/
 			//Constraint Already exists
 			try 
 			{
@@ -214,97 +214,94 @@ namespace MonoTests.System.Data
 
 		}
 
-		//TODO: Implementation not ready for this test yet
-		//[Test]
-//		public void AddFkException1()
-//		{
-//			DataSet ds = new DataSet();
-//			ds.Tables.Add(_table);
-//			ds.Tables.Add(_table2);
-//
-//			_table.Rows.Add(new object [] {1});
-//			_table.Rows.Add(new object [] {1});
-//
-//			//FKC: can't create unique constraint because duplicate values already exist
-//			try
-//			{
-//				ForeignKeyConstraint fkc = new ForeignKeyConstraint( _table.Columns[0],
-//											_table2.Columns[0]);
-//				
-//				_table2.Constraints.Add(fkc);	//should throw			
-//				Fail("B1: Failed to throw ArgumentException.");
-//			}
-//			catch (ArgumentException) {}
-//			catch (AssertionException exc) {throw exc;}
-//			catch (Exception exc)
-//			{
-//				Fail("A1: Wrong Exception type. " + exc.ToString());
-//			}
-//
-//
-//		}
+		[Test]
+		public void AddFkException1()
+		{
+			DataSet ds = new DataSet();
+			ds.Tables.Add(_table);
+			ds.Tables.Add(_table2);
+
+			_table.Rows.Add(new object [] {1});
+			_table.Rows.Add(new object [] {1});
+
+			//FKC: can't create unique constraint because duplicate values already exist
+			try
+			{
+				ForeignKeyConstraint fkc = new ForeignKeyConstraint( _table.Columns[0],
+											_table2.Columns[0]);
+				
+				_table2.Constraints.Add(fkc);	//should throw			
+				Fail("B1: Failed to throw ArgumentException.");
+			}
+			catch (ArgumentException) {}
+			catch (AssertionException exc) {throw exc;}
+			catch (Exception exc)
+			{
+				Fail("A1: Wrong Exception type. " + exc.ToString());
+			}
 
 
-		//TODO: Implementation not ready for this test yet
-		//[Test]
-//		public void AddFkException2()
-//		{
-//			//Foreign key rules only work when the tables
-//			//are apart of the dataset
-//			DataSet ds = new DataSet();
-//			ds.Tables.Add(_table);
-//			ds.Tables.Add(_table2);
-//
-//			_table.Rows.Add(new object [] {1});
-//			
-//			// will need a matching parent value in 
-//			// _table
-//			_table2.Rows.Add(new object [] {3}); 
-//								
-//
-//			//FKC: no matching parent value
-//			try
-//			{
-//				ForeignKeyConstraint fkc = new ForeignKeyConstraint( _table.Columns[0],
-//					_table2.Columns[0]);
-//				
-//				_table2.Constraints.Add(fkc);	//should throw			
-//				Fail("B1: Failed to throw ArgumentException.");
-//			}
-//			catch (ArgumentException) {}
-//			catch (AssertionException exc) {throw exc;}
-//			catch (Exception exc)
-//			{
-//				Fail("A1: Wrong Exception type. " + exc.ToString());
-//			}
-//
-//
-//		}
+		}
 
 
-		//TODO: Implementation not ready for this test yet
-		//[Test]
-//		public void AddUniqueExceptions()
-//		{
-//			
-//
-//			//UC: can't create unique constraint because duplicate values already exist
-//			try
-//			{
-//				_table.Rows.Add(new object [] {1});
-//				_table.Rows.Add(new object [] {1});
-//				UniqueConstraint uc = new UniqueConstraint( _table.Columns[0]);
-//				
-//				_table.Constraints.Add(uc);	//should throw			
-//				Fail("B1: Failed to throw ArgumentException.");
-//			}
-//			catch (ArgumentException) {}
-//			catch (AssertionException exc) {throw exc;}
-//			catch (Exception exc)
-//			{
-//				Fail("A1: Wrong Exception type. " + exc.ToString());
-//			}
-//		}
+		[Test]
+		public void AddFkException2()
+		{
+			//Foreign key rules only work when the tables
+			//are apart of the dataset
+			DataSet ds = new DataSet();
+			ds.Tables.Add(_table);
+			ds.Tables.Add(_table2);
+
+			_table.Rows.Add(new object [] {1});
+			
+			// will need a matching parent value in 
+			// _table
+			_table2.Rows.Add(new object [] {3}); 
+								
+
+			//FKC: no matching parent value
+			try
+			{
+				ForeignKeyConstraint fkc = new ForeignKeyConstraint( _table.Columns[0],
+					_table2.Columns[0]);
+				
+				_table2.Constraints.Add(fkc);	//should throw			
+				Fail("B1: Failed to throw ArgumentException.");
+			}
+			catch (ArgumentException) {}
+			catch (AssertionException exc) {throw exc;}
+			catch (Exception exc)
+			{
+				Fail("A1: Wrong Exception type. " + exc.ToString());
+			}
+
+
+		}
+
+
+		[Test]
+		public void AddUniqueExceptions()
+		{
+			
+
+			//UC: can't create unique constraint because duplicate values already exist
+			try
+			{
+				_table.Rows.Add(new object [] {1});
+				_table.Rows.Add(new object [] {1});
+				UniqueConstraint uc = new UniqueConstraint( _table.Columns[0]);
+				
+				_table.Constraints.Add(uc);	//should throw			
+				Fail("B1: Failed to throw ArgumentException.");
+			}
+			catch (ArgumentException) {}
+			catch (AssertionException exc) {throw exc;}
+			catch (Exception exc)
+			{
+				Fail("A1: Wrong Exception type. " + exc.ToString());
+			}
+		}
 
 		[Test]
                 //Tests AddRange (), CanRemove (), RemoveAt (), Remove (), Exceptions of  Remove(), and Clear ()

@@ -245,9 +245,9 @@ namespace MonoTests.System.Data
 			try {
 				Relation = new DataRelation ("Rel", Parents, Childs);
 				Fail ("test#01");
-			} catch (Exception e) {
-				AssertEquals ("test#02", typeof (InvalidConstraintException), e.GetType ());				
-				AssertEquals ("test#03", "Cannot create a Key from Columns that belong to different tables.", e.Message);
+			} catch (InvalidConstraintException e) {
+//				AssertEquals ("test#02", typeof (InvalidConstraintException), e.GetType ());				
+//				AssertEquals ("test#03", "Cannot create a Key from Columns that belong to different tables.", e.Message);
 			}
 			
 			Childs [1] = Col6;

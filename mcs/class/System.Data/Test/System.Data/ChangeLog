@@ -1,3 +1,16 @@
+2004-05-05  Atsushi Enomoto <atsushi@ximian.com>
+
+	* ConstraintCollectionTest.cs : uncommented some tests that should be
+	  implemented until mono 1.0.
+	* ConstraintTest.cs : use ExpectedException. Don't expect localizable
+	  error message.
+	* DataColumnTest.cs,
+	  DataRelationTest.cs,
+	  DataRowCollectionTest.cs : catch only specific type exception.
+	  Don't rely on (test) localizable messages.
+	* DataSetAssertion.cs : We shouldn't expect exact column ordinals
+	  when infering/reading the structures from documents/schemas.
+
 2004-04-29  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DataRowTest.cs : Added a test for auto increment column and item

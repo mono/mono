@@ -172,9 +172,9 @@ namespace MonoTests.System.Data
 			try {
 				Rows.Add (obs);
 				Fail ("test#25");
-			} catch (Exception e) {
+			} catch (ArgumentException e) {
 				// LAMESPEC: MSDN says this exception is InvalidCastException
-				AssertEquals ("test#26", typeof (ArgumentException), e.GetType ());
+//				AssertEquals ("test#26", typeof (ArgumentException), e.GetType ());
 			}
 
 			object [] obs1 = new object [5];
