@@ -4028,8 +4028,10 @@ namespace Mono.CSharp {
 			// InitOnly fields can only be assigned in constructors
 			//
 
-			if (ec.IsConstructor)
-				return this;
+			if (ec.IsConstructor){
+				if (ec.ContainerType == FieldInfo.DeclaringType)
+					return this;
+			}
 
 			Report_AssignToReadonly (true);
 			
