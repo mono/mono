@@ -102,6 +102,7 @@ namespace System.Windows.Forms
 			textbox_ctrl = null;
 			combobox_info = new ComboBoxInfo ();
 			combobox_info.item_height = FontHeight + 2;
+			dropdown_style = (ComboBoxStyle)(-1);
 			DropDownStyle = ComboBoxStyle.DropDown;
 			BackColor = ThemeEngine.Current.ColorWindow;
 			draw_mode = DrawMode.Normal;
@@ -200,6 +201,7 @@ namespace System.Windows.Forms
 			get { return dropdown_style; }
 
     			set {
+		
 				if (!Enum.IsDefined (typeof (ComboBoxStyle), value))
 					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for ComboBoxStyle", value));
 
@@ -207,37 +209,43 @@ namespace System.Windows.Forms
 					return;					
 									
 				if (dropdown_style == ComboBoxStyle.Simple) {
-					if (listbox_ctrl != null) {
-						listbox_ctrl.Dispose ();
+					if (listbox_ctrl != null) {						
 						Controls.Remove (listbox_ctrl);
+						listbox_ctrl.Dispose ();						
 						listbox_ctrl = null;
 					}
 				}
 
 				if (dropdown_style != ComboBoxStyle.DropDownList && value == ComboBoxStyle.DropDownList) {
-					if (textbox_ctrl != null) {
+					if (textbox_ctrl != null) {						
 						Controls.Remove (textbox_ctrl);
-						textbox_ctrl.Dispose ();
-						textbox_ctrl = null;
+						textbox_ctrl.Dispose ();						
+						textbox_ctrl = null;						
 					}
 				}				
-				
+
 				dropdown_style = value;					
 				
 				if (dropdown_style == ComboBoxStyle.Simple) {
 					CBoxInfo.show_button = false;					
 					CreateComboListBox ();
-					Controls.Add (listbox_ctrl);
+
+					if (IsHandleCreated == true) {
+						Controls.Add (listbox_ctrl);
+					}
 				}
 				else {
 					CBoxInfo.show_button = true;
 					CBoxInfo.button_status = ButtonState.Normal;
 				}				
-				
+	
 				if (dropdown_style != ComboBoxStyle.DropDownList && textbox_ctrl == null) {
 					textbox_ctrl = new TextBox ();
 					textbox_ctrl.TextChanged += new EventHandler (OnTextChangedEdit);
-					Controls.Add (textbox_ctrl);										
+
+					if (IsHandleCreated == true) {
+						Controls.Add (textbox_ctrl);
+					}
 				}
 				
 				if (DropDownStyleChanged  != null)
@@ -697,6 +705,15 @@ namespace System.Windows.Forms
 		protected override void OnHandleCreated (EventArgs e)
 		{
 			base.OnHandleCreated (e);
+
+			if (listbox_ctrl != null) {
+				Controls.Add (listbox_ctrl);
+			}
+			
+			if (textbox_ctrl != null) {
+				Controls.Add (textbox_ctrl);
+			}
+
 			CalcTextArea ();
 		}
 
@@ -890,7 +907,7 @@ namespace System.Windows.Forms
 		}
 		
 		internal void Draw (Rectangle clip)
-		{					
+		{				
 			// No edit control, we paint the edit ourselfs
 			if (dropdown_style == ComboBoxStyle.DropDownList) {
 				DrawItemState state = DrawItemState.None;

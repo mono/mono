@@ -1,3 +1,7 @@
+2005-02-22  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ComboBox.cs: do subcontrol creation when the control is created
+
 2005-02-19  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Label.cs: fixes image drawing (image and imagelist)
