@@ -163,7 +163,7 @@ namespace System.Windows.Forms {
 
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified) 
 		{
-			if (Owner == null) {
+			if (Owner != null) {
 				Rectangle display = Owner.DisplayRectangle;
 				base.SetBoundsCore (Owner.DisplayRectangle.X, Owner.DisplayRectangle.Y,
 							Owner.DisplayRectangle.Width, Owner.DisplayRectangle.Height,
