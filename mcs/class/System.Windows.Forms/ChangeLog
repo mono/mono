@@ -1,3 +1,8 @@
+2004-01-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Resources/ResXResourceReader.cs: read empty tags properly.
+	Fixes bug #53174. Patch by Tomasz Kaszuba.
+
 2003-08-31  Jerome Laban <jlaban@wanadoo.fr>
 	* Label.cs: Fixed Text property not redrawing the label correctly.
 

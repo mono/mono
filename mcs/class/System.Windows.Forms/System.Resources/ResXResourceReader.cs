@@ -91,6 +91,11 @@ namespace System.Resources
 					string v = reader.Value;
 					return v;
 				}
+				else if (reader.NodeType == XmlNodeType.EndElement && reader.Value == string.Empty)
+				{
+					string v = reader.Value;
+					return v;
+				}
 			}
 			return null;
 		}
