@@ -173,7 +173,7 @@ namespace Mono.CSharp {
 			} else if (target_type == TypeManager.value_type) {
 				if (TypeManager.IsValueType (expr_type))
 					return new BoxedCast (expr);
-				if (expr is NullLiteral)
+				if (expr_type == TypeManager.null_type)
 					return new NullCast (expr, target_type);
 
 				return null;
@@ -195,7 +195,7 @@ namespace Mono.CSharp {
 			// Always ensure that the code here and there is in sync
 
 			// from the null type to any reference-type.
-			if (expr is NullLiteral){
+			if (expr_type == TypeManager.null_type){
 				if (target_type.IsPointer)
 					return NullPointer.Null;
 					
@@ -346,7 +346,7 @@ namespace Mono.CSharp {
 					return true;
 				
 			// from the null type to any reference-type.
-			if (expr is NullLiteral && !target_type.IsValueType && !TypeManager.IsEnumType (target_type))
+			if (expr_type == TypeManager.null_type && !target_type.IsValueType && !TypeManager.IsEnumType (target_type))
 				return true;
 
 			// from a generic type definition to a generic instance.
@@ -1197,7 +1197,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (expr_type.Equals (target_type) && !(expr is NullLiteral))
+			if (expr_type.Equals (target_type) && !TypeManager.IsNullType (expr_type))
 				return expr;
 
 			e = ImplicitNumericConversion (ec, expr, target_type, loc);
@@ -1233,7 +1233,7 @@ namespace Mono.CSharp {
 				}
 				
 				if (target_type.IsPointer) {
-					if (expr is NullLiteral)
+					if (expr_type == TypeManager.null_type)
 						return new EmptyCast (expr, target_type);
 
 					if (expr_type == TypeManager.void_ptr_type)
@@ -1846,22 +1846,19 @@ namespace Mono.CSharp {
 			//
 			// Unboxing conversion.
 			//
-			if (expr_type == TypeManager.object_type && target_type.IsValueType){
-				if (expr is NullLiteral){
-					//
-					// Skip the ExplicitReferenceConversion because we can not convert
-					// from Null to a ValueType, and ExplicitReference wont check against
-					// null literal explicitly
-					//
-					goto skip_explicit;
-				}
+			if (expr_type == TypeManager.object_type && target_type.IsValueType)
 				return new UnboxCast (expr, target_type);
 
+			//
+			// Skip the ExplicitReferenceConversion because we can not convert
+			// from Null to a ValueType, and ExplicitReference wont check against
+			// null literal explicitly
+			//
+			if (expr_type != TypeManager.null_type){
+				ne = ExplicitReferenceConversion (expr, target_type);
+				if (ne != null)
+					return ne;
 			}
-
-			ne = ExplicitReferenceConversion (expr, target_type);
-			if (ne != null)
-				return ne;
 
 		skip_explicit:
 			if (ec.InUnsafe){

@@ -1,3 +1,32 @@
+2004-11-15  Miguel de Icaza  <miguel@ximian.com>
+
+	* anonymous.cs (AnonymousMethod.Error_AddressOfCapturedVar): New
+	routine that is used to report the use of a captured variable
+	whose address has been taken.
+
+	There are two checks: one when variables are being captured and
+	the other check is when the address of a variable is taken. 
+	
+	(because an anonymous methods might be resolved before *or* after
+	the address has been taken) and 
+
+	* expression.cs (Conditional.DoResolve): Remove the special
+	casing that Martin added to trueExpr and falseExpr being both
+	NullLiteral.  We get the right behavior now just by introducing
+	the null_type into the compiler. 
+
+	* convert.cs (ExplicitConversion): Change the code to use
+	null_type instead of testing `expr is NullLiteral'.
+	(ImplicitConversionStandard): use null_type too.
+	(ImplicitReferenceConversionExists): use null_type too.
+	(ImplicitReferenceConversion): use null_type too.
+
+	* literal.cs: The type of `NullLiteral' is now null_type instead
+	of object_type. 
+	(Resolve): Set the type here.
+
+	* typemanager.cs: Introduce null_type.
+
 2004-11-18  Martin Baulig  <martin@ximian.com>
 
 	* rootcontext.cs

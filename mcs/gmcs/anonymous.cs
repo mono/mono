@@ -314,6 +314,12 @@ namespace Mono.CSharp {
 			aec.EmitMeta (Block, amp);
 			aec.EmitResolvedTopBlock (Block, unreachable);
 		}
+
+		public static void Error_AddressOfCapturedVar (string name, Location loc)
+		{
+			Report.Error (1686, loc,
+				      "Variable {0} is captured in an anonymous method and its address is also being taken: they are exclusive", name);
+		}
 	}
 
 	//
