@@ -1,3 +1,7 @@
+2003-05-27  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* BinaryReader.cs: Stream don't need to be seekable to use PeekChar.
+
 2003-05-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Path.cs: fixed bug #42631.
