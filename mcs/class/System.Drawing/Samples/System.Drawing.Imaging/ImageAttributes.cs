@@ -24,10 +24,11 @@ public class SampleDrawingImage
 	public static void Main(string[] args)
 	{	
 		Graphics.DrawImageAbort imageCallback;
-		Bitmap outbmp = new Bitmap (500, 500);				
-		Bitmap bmp = new Bitmap("../../Test/System.Drawing/bitmaps/almogaver24bits.bmp");
+		Bitmap outbmp = new Bitmap (600, 600);				
+		Bitmap bmp = new Bitmap("../../Test/System.Drawing/bitmaps/almogaver32bits.bmp");
 		Graphics dc = Graphics.FromImage (outbmp);        
 		SolidBrush br = new SolidBrush(Color.White);
+		Bitmap img = bmp.Clone (new Rectangle (0,0, 60,60) , PixelFormat.Format32bppArgb);									
 		
 		ImageAttributes imageAttr = new ImageAttributes();
 		
@@ -46,7 +47,7 @@ public class SampleDrawingImage
 		
 		/* Draw image without any imageattributes*/		
 		dc.DrawImage (bmpred, 0,0);				
-		dc.DrawString ("Sample drawing", new Font ("Arial", 8), br,  10, 110);				
+		dc.DrawString ("Sample drawing", new Font ("Arial", 8), br,  10, 100);				
 		
 		/* Remmaping colours */
 		ColorMap[] clr = new ColorMap[1];	
@@ -56,7 +57,7 @@ public class SampleDrawingImage
 		
 		imageAttr.SetRemapTable (clr, ColorAdjustType.Bitmap);					
 		dc.DrawImage (bmpred, new Rectangle (100, 0, 100,100), 0,0, 100,100, GraphicsUnit.Pixel, imageAttr);			
-		dc.DrawString ("Remapping colors", new Font ("Arial", 8), br,  110, 110);				
+		dc.DrawString ("Remapping colors", new Font ("Arial", 8), br,  110, 100);				
 		
 		/* Gamma correction on*/
 		imageAttr = new ImageAttributes();
@@ -64,10 +65,34 @@ public class SampleDrawingImage
 		dc.DrawImage (bmpred, new Rectangle (200, 0, 100,100), 0,0, 
 			100,100, GraphicsUnit.Pixel, imageAttr);
 			
-		dc.DrawString ("Gamma corrected", new Font ("Arial", 8), br,  210, 110);				
-				
+		dc.DrawString ("Gamma corrected", new Font ("Arial", 8), br,  210, 100);				
 		
-		outbmp.Save("drawimage.bmp", ImageFormat.Bmp);				
+		/* WrapMode: TitleX */
+		imageAttr = new ImageAttributes();	
+		imageAttr.SetWrapMode (WrapMode.TileFlipX);	
+		
+		dc.DrawImage (bmpred, new Rectangle (0, 120, 200, 200), 0,0, 
+			200, 200, GraphicsUnit.Pixel, imageAttr);					
+			
+		dc.DrawString ("WrapMode.TileFlipX", new Font ("Arial", 8), br,  10, 320);								
+			
+		/* WrapMode: TitleY */		
+		imageAttr.SetWrapMode (WrapMode.TileFlipY);	
+		
+		dc.DrawImage (bmpred, new Rectangle (200, 120, 200, 200), 0,0, 
+			200, 200, GraphicsUnit.Pixel, imageAttr);				
+			
+		dc.DrawString ("WrapMode.TileFlipY", new Font ("Arial", 8), br,  210, 320);											
+			
+		/* WrapMode: TitleXY */		
+		imageAttr.SetWrapMode (WrapMode.TileFlipXY);	
+		
+		dc.DrawImage (bmpred, new Rectangle (400, 120, 200, 200), 0,0, 
+			200, 200, GraphicsUnit.Pixel, imageAttr);				
+			
+		dc.DrawString ("WrapMode.TileFlipXY", new Font ("Arial", 8), br,  410, 320);														
+		
+		outbmp.Save("imageattributes.bmp", ImageFormat.Bmp);				
 		
 	}
 
