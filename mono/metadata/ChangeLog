@@ -1,4 +1,9 @@
 
+Tue Nov 9 17:34:05 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c: fix bug introduced with the type cache changes
+	on 2004-11-06.
+
 Tue Nov 9 17:26:29 CET 2004 Paolo Molaro <lupus@ximian.com>
 
 	* metadata.h, metadata.c, domain-internals.h, marshal.c: include
