@@ -1,3 +1,18 @@
+2004-04-07  Martin Baulig  <martin@ximian.com>
+
+	* icall.c
+	(ves_icall_TypeBuilder_define_generic_parameter): Removed.
+	(ves_icall_MethodBuilder_define_generic_parameter): Removed.
+	(ves_icall_MonoGenericParam_initialize): Removed.
+	(monogenericparam_icalls): Removed.
+	(generictypeparambuilder_icalls): Added new table for
+	System.Reflection.Emit.GenericTypeParameterBuilder.
+
+	* reflection.c
+	(mono_reflection_define_generic_parameter): Removed.
+	(mono_reflection_initialize_generic_parameter): This is now called
+	from GenericTypeParameterBuilder's .ctor.
+
 2004-04-06  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_class_init): Don't inflate nested classes in a
