@@ -1,4 +1,8 @@
 
+Thu Jan 31 18:21:12 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* dis-cil.c: reverse order when outputting start try blocks.
+
 Mon Jan 14 17:00:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* dump.c: more info in method table dump.
