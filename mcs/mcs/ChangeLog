@@ -1,3 +1,7 @@
+2002-01-16  Nick Drochak  <ndrochak@gol.com>
+
+	* makefile: remove 'response' file when cleaning.
+
 2002-01-15  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay: Report 1524.

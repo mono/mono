@@ -85,7 +85,7 @@ pn:
 #	sed -e "s/@CONTAINEE@/Parameter/g" -e "s/@arrayname@/parameters/g" < X-Collection.cs > parameterCollection.cs
 
 clean:
-	rm -f mcs.exe cs-parser.cs y.output mcs.pdb *~ .*~ mb-parser.cs mcs.log
+	rm -f mcs.exe cs-parser.cs y.output mcs.pdb *~ .*~ mb-parser.cs mcs.log response
 
 MBAS_SOURCES = mb-parser.cs mb-tokenizer.cs
 
