@@ -13,6 +13,7 @@ using System.Configuration.Install;
 
 namespace System.Messaging 
 {
+	[CLSCompliant (false)]
 	public class MessageQueueInstaller: ComponentInstaller 
 	{
 		[MonoTODO]
