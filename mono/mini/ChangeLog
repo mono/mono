@@ -1,3 +1,6 @@
+2005-02-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* cpu-amd64.md (load_membase): Fix max length of load_membase.
 
 Tue Feb 8 18:21:11 CET 2005 Paolo Molaro <lupus@ximian.com>
 
