@@ -1,5 +1,10 @@
 2003-11-18  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* corlib.dll.sources: Added already existing, but not added delegate
+		Added various classes in System.InteropServices
+
+2003-11-18  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* corlib.dll.sources: Added some files:
 		System.Runtime.Serialization.Formatter.cs
 		System.Runtime.Serialization.Formatters/InternalRM.cs

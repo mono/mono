@@ -455,13 +455,16 @@ System.Runtime.InteropServices/ComSourceInterfacesAttribute.cs
 System.Runtime.InteropServices/ComUnregisterFunctionAttribute.cs
 System.Runtime.InteropServices/ComVisible.cs
 System.Runtime.InteropServices/CONNECTDATA.cs
+System.Runtime.InteropServices/CurrencyWrapper.cs
 System.Runtime.InteropServices/DESCKIND.cs
 System.Runtime.InteropServices/DISPPARAMS.cs
 System.Runtime.InteropServices/DispIdAttribute.cs
 System.Runtime.InteropServices/DllImportAttribute.cs
 System.Runtime.InteropServices/ELEMDESC.cs
+System.Runtime.InteropServices/ErrorWrapper.cs
 System.Runtime.InteropServices/EXCEPINFO.cs
 System.Runtime.InteropServices/ExporterEventKind.cs
+System.Runtime.InteropServices/ExtensibleClassFactory.cs
 System.Runtime.InteropServices/ExternalException.cs
 System.Runtime.InteropServices/FieldOffsetAttribute.cs
 System.Runtime.InteropServices/FILETIME.cs
@@ -498,6 +501,7 @@ System.Runtime.InteropServices/LayoutKind.cs
 System.Runtime.InteropServices/Marshal.cs
 System.Runtime.InteropServices/MarshalAsAttribute.cs
 System.Runtime.InteropServices/MarshalDirectiveException.cs
+System.Runtime.InteropServices/ObjectCreationDelegate.cs
 System.Runtime.InteropServices/OptionalAttribute.cs
 System.Runtime.InteropServices/OutAttribute.cs
 System.Runtime.InteropServices/PARAMDESC.cs
@@ -507,6 +511,7 @@ System.Runtime.InteropServices/PrimaryInteropAssemblyAttribute.cs
 System.Runtime.InteropServices/SEHException.cs
 System.Runtime.InteropServices/STATSTG.cs
 System.Runtime.InteropServices/ProgIdAttribute.cs
+System.Runtime.InteropServices/RegistrationServices.cs
 System.Runtime.InteropServices/RuntimeEnvironment.cs
 System.Runtime.InteropServices/SafeArrayRankMismatchException.cs
 System.Runtime.InteropServices/SafeArrayTypeMismatchException.cs
@@ -517,6 +522,7 @@ System.Runtime.InteropServices/TYPEDESC.cs
 System.Runtime.InteropServices/TYPEFLAGS.cs
 System.Runtime.InteropServices/TYPEKIND.cs
 System.Runtime.InteropServices/TYPELIBATTR.cs
+System.Runtime.InteropServices/TypeLibConverter.cs
 System.Runtime.InteropServices/TypeLibExporterFlags.cs
 System.Runtime.InteropServices/TypeLibFuncAttribute.cs
 System.Runtime.InteropServices/TypeLibFuncFlags.cs
