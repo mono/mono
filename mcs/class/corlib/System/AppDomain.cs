@@ -520,9 +520,9 @@ namespace System
 			SetupInformation.CachePath = path;
 		}
 
+		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
 		public void SetPrincipalPolicy (PrincipalPolicy policy)
 		{
-			new SecurityPermission (SecurityPermissionFlag.ControlPrincipal).Demand ();
 			if (IsFinalizingForUnload ())
 				throw new AppDomainUnloadedException ();
 
@@ -540,9 +540,9 @@ namespace System
 			SetupInformation.ShadowCopyDirectories = path;
 		}
 
+		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
 		public void SetThreadPrincipal (IPrincipal principal)
 		{
-			new SecurityPermission (SecurityPermissionFlag.ControlPrincipal).Demand ();
 			if (principal == null)
 				throw new ArgumentNullException ("principal");
 			if (_principal != null)

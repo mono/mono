@@ -1,3 +1,8 @@
+2004-09-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AppDomain.cs: Changed 2 imperative security demands to declarative
+	(unsupported) so it doesn't (for now) call the security runtime.
+
 2004-09-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Delegate.cs: Free the delegate trampoline in the finalizer.
