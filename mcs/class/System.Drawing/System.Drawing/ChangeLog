@@ -1,4 +1,7 @@
 2004-04-12  Sanjay Gupta <gsanjay@novell.com>
+	* Icon.cs: Implemented few more missing bits
+
+2004-04-12  Sanjay Gupta <gsanjay@novell.com>
 	* Icon.cs: Implemented first version
 
 2004-04-11  Peter Bartok <pbartok@novell.com>

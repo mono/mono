@@ -91,15 +91,12 @@ namespace System.Drawing
 		{
 		}
 
-		[MonoTODO ("Implement")]
 		public Icon (Stream stream, int width, int height)
 		{
 			//read the icon header
 			if (stream == null || stream.Length == 0)
 				throw new System.ArgumentException ("The argument 'stream' must be a picture that can be used as a Icon", "stream");
 			
-			//Console.WriteLine("Icon.cs StreamLength is "+stream.Length);
-
 			BinaryReader reader = new BinaryReader (stream);
             			
 			iconDir.idReserved = reader.ReadUInt16();
@@ -112,7 +109,6 @@ namespace System.Drawing
 
 			ushort dirEntryCount = reader.ReadUInt16();
 			iconDir.idCount = dirEntryCount;
-			//Console.WriteLine("Icon.cs iconDir.idCount "+iconDir.idCount);
 			iconDir.idEntries = new IconDirEntry [dirEntryCount];
 			imageData = new IconImage [dirEntryCount];
 			bool sizeObtained = false;
@@ -120,18 +116,13 @@ namespace System.Drawing
 			for (int i=0; i<dirEntryCount; i++){
 				IconDirEntry ide;
 				ide.width = reader.ReadByte ();
-				//Console.WriteLine("Icon.cs ide.width "+ide.width);
-				//Console.WriteLine("Icon.cs position of binareReader is " + reader.BaseStream.Position);
 				ide.height = reader.ReadByte ();
-				//Console.WriteLine("Icon.cs ide.height"+ide.height);
 				ide.colorCount = reader.ReadByte ();
 				ide.reserved = reader.ReadByte ();
 				ide.planes = reader.ReadUInt16 ();
 				ide.bitCount = reader.ReadUInt16 ();
 				ide.bytesInRes = reader.ReadUInt32 ();
 				ide.imageOffset = reader.ReadUInt32 ();
-				//Console.WriteLine("Icon.cs ide.imageOffset"+ide.imageOffset);
-				//Console.WriteLine("Icon.cs ide.bytesInRes"+ide.bytesInRes);
 				iconDir.idEntries [i] = ide;
 				//is this is the best fit??
 				if (!sizeObtained)   
@@ -162,16 +153,12 @@ namespace System.Drawing
 				IconImage iidata = new IconImage();
 				BitmapInfoHeader bih = new BitmapInfoHeader();
 				stream.Seek (iconDir.idEntries [j].imageOffset, SeekOrigin.Begin);
-				//Console.WriteLine("Icon.cs position of stream is" +stream.Position);
 				byte [] buffer = new byte [iconDir.idEntries [j].bytesInRes];
-				//Console.WriteLine("Icon.cs reading icondata bytes in res is "+buffer.Length);
 				stream.Read (buffer, 0, buffer.Length);
 				BinaryReader bihReader = new BinaryReader (new MemoryStream(buffer));
 				bih.biSize = bihReader.ReadUInt32 ();
 				bih.biWidth = bihReader.ReadInt32 ();
-				//Console.WriteLine("Icon.cs reading icondata bih.width "+bih.biWidth);
 				bih.biHeight = bihReader.ReadInt32 ();
-				//Console.WriteLine("Icon.cs reading icondata bih.height "+bih.biHeight);
 				bih.biPlanes = bihReader.ReadUInt16 ();
 				bih.biBitCount = bihReader.ReadUInt16 ();
 				bih.biCompression = bihReader.ReadUInt32 ();
@@ -180,11 +167,53 @@ namespace System.Drawing
 				bih.biYPelsPerMeter = bihReader.ReadInt32 ();
 				bih.biClrUsed = bihReader.ReadUInt32 ();
 				bih.biClrImportant = bihReader.ReadUInt32 ();
-				//TODO read RGBQUADS and XOR and AND masks
+
 				iidata.iconHeader = bih;
+
+				//Read the number of colors used and corresponding memory occupied by
+				//color table. Fill this memory chunk into rgbquad[]
+				int numColors;
+				switch (bih.biBitCount){
+					case 1: numColors = 2;
+						break;
+					case 4: numColors = 16;
+						break;
+					case 8: numColors = 256;
+						break;
+					default: numColors = 0;
+						break;
+				}
+				
+				
+				iidata.iconColors = new uint [numColors];
+				for (int i=0; i<numColors; i++)
+					iidata.iconColors [i] = bihReader.ReadUInt32 ();
+				//XOR mask is immediately after ColorTable and its size is 
+				//icon height* no. of bytes per line
+				
+				//icon height is half of BITMAPINFOHEADER.biHeight, since it contains
+				//both XOR as well as AND mask bytes
+				int iconHeight = bih.biHeight/2;
+				
+				//bytes per line should should be uint aligned
+				int numBytesPerLine = ((((bih.biWidth * bih.biPlanes * bih.biBitCount)+ 31)>>5)<<2);
+				
+				//Determine the XOR array Size
+				int xorSize = numBytesPerLine * iconHeight;
+				iidata.iconXOR = new byte [xorSize];
+				for (int i=0; i<xorSize; i++)
+					iidata.iconXOR[i] = bihReader.ReadByte();		
+				
+				//Determine the AND array size
+				//For this i subtract the current position from the length.
+				//ugly hack...
+				int andSize = (int) (bihReader.BaseStream.Length - bihReader.BaseStream.Position);
+				iidata.iconAND = new byte [andSize];
+				for (int i=0; i<andSize; i++)
+					iidata.iconAND[i] = bihReader.ReadByte();		
+				
 				imageData [j] = iidata;
-			}
-			
+			}			
 		}
 
 		public Icon (string fileName) : this (new FileStream (fileName, FileMode.Open))
@@ -209,9 +238,11 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		public void Dispose ()
 		{
+			//FIXME What needs to be called to free memory pointed by handle
+			if (winHandle!=IntPtr.Zero)
+				winHandle = IntPtr.Zero;
 		}
 
 		[MonoTODO ("Implement")]
@@ -238,10 +269,10 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			//is this correct, this is what returned by .Net
+			return "<Icon>";			
 		}
 
 		public IntPtr Handle {
