@@ -69,7 +69,8 @@ namespace System.Web.UI {
 		{
 			if (obj != null && obj is UrlPropertyAttribute) {
 				UrlPropertyAttribute upa = (UrlPropertyAttribute)obj;
-				return (filter.Equals (upa.filter));
+				return (filter.Equals (upa.Filter) 
+					&& urlTypes.Equals (upa.AllowedTypes));
 			}
 			return false;
 		}

@@ -1,5 +1,9 @@
 2004-10-12 Sanjay Gupta <gsanjay@novell.com>
 
+	* UrlPropertyAttribute.cs: Corrected implementation of Equals () method.
+
+2004-10-12 Sanjay Gupta <gsanjay@novell.com>
+
 	* UrlTypes.cs: Updated.
 
 2004-10-12 Sanjay Gupta <gsanjay@novell.com>
