@@ -126,7 +126,12 @@ namespace System.Runtime.Remoting.Metadata {
 				_xmlTypeName = type.Name;
 			
 			if (_xmlTypeNamespace == null)
-				_xmlTypeNamespace = SoapServices.CodeXmlNamespaceForClrTypeNamespace (type.Namespace, type.Assembly.GetName().Name);
+			{
+				string na;
+				if (type.Assembly == typeof (object).Assembly) na = string.Empty;
+				else na = type.Assembly.GetName().Name;
+				_xmlTypeNamespace = SoapServices.CodeXmlNamespaceForClrTypeNamespace (type.Namespace, na);
+			}
 			
 			if (_xmlNamespace == null)
 				_xmlNamespace = _xmlTypeNamespace;
