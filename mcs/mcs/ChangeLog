@@ -1,5 +1,10 @@
 2004-09-14  Marek Safar  <marek.safar@seznam.cz>
 
+	* decl.cs (MemberCore.Emit): Resuscitated VerifyObsoleteAttribute
+	condition with better params.
+
+2004-09-14  Marek Safar  <marek.safar@seznam.cz>
+
 	Fixed bug #65238
 	* attribute.cs (Resolve): Property has to have both
 	accessors.
