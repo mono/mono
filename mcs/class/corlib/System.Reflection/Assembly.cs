@@ -323,5 +323,8 @@ namespace System.Reflection {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern Type MonoDebugger_GetLocalTypeFromSignature (byte[] signature);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern Type MonoDebugger_GetType (int token);
 	}
 }

@@ -1,3 +1,8 @@
+2002-09-24  Martin Baulig  <martin@gnome.org>
+
+	* Assembly.cs (MonoDebugger_GetType): New method to get a Type
+	from its metadata token.  This should only be used by the debugger.
+
 2002-09-21  Martin Baulig  <martin@gnome.org>
 
 	* Assembly.cs (MonoDebugger_GetLocalTypeFromSignature): New method to
