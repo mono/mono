@@ -88,12 +88,9 @@ mcs-do-run-test-profiles: test-support-files
 	rm -fr $(tmpinst); $$ret
 
 # Use --compile-all as a poor man's PEVerify to detect invalid IL
-# This doesn't yet work on the 2.0 profile
-verify_profiles = $(filter-out net_2_0, $(build_profiles))
-#verify_profiles = $(build_profiles)
 mcs-compileall: test-support-files
 	save_MONO_PATH=$$MONO_PATH; mcs_topdir=`cd $(mcs_topdir) && pwd`; ret=:; \
-	for profile in $(verify_profiles); do \
+	for profile in $(build_profiles); do \
 	  MONO_PATH="$$mcs_topdir/class/lib/$$profile:$$save_MONO_PATH"; export MONO_PATH; \
 	  for i in $(mcs_topdir)/class/lib/$$profile/*.dll $(mcs_topdir)/class/lib/$$profile/*.exe; do \
 	    if ./$(tmpinst)/bin/mono --compile-all $$i; then \
