@@ -380,6 +380,8 @@ namespace System.Windows.Forms
 		internal ImeMode		ime_mode = ImeMode.Inherit;
 		internal bool			layout_pending;		// true if our parent needs to re-layout us
 		internal object			control_tag;		// object that contains data about our control
+		internal int			mouse_clicks;		// Counter for mouse clicks
+
 
 		// Visuals
 		internal Color			foreground_color;	// foreground color for control
@@ -774,6 +776,7 @@ namespace System.Windows.Forms
 			has_focus = false;
 			layout_suspended = 0;		
 			double_buffering = true;
+			mouse_clicks = 1;
 
 			parent = null;
 			background_image = null;
@@ -2763,14 +2766,6 @@ namespace System.Windows.Forms
 #endif
 
 			switch((Msg)m.Msg) {
-#if notyet
-				// Mouse handling
-				case Msg.WM_LBUTTONDBLCLK:	throw new NotImplementedException();	break;
-
-				case Msg.WM_RBUTTONDOWN:	throw new NotImplementedException();	break;
-				case Msg.WM_RBUTTONUP:		throw new NotImplementedException();	break;
-				case Msg.WM_RBUTTONDBLCLK:	throw new NotImplementedException();	break;
-#endif
 			case Msg.WM_WINDOWPOSCHANGED: {
 				if (Visible) {
 					UpdateBounds();
@@ -2805,24 +2800,85 @@ namespace System.Windows.Forms
     					
 				break;
 			}
-				
-			case Msg.WM_LBUTTONUP: {					
-				int clicks = 1;
-					
+
+			case Msg.WM_LBUTTONUP: {
 				OnMouseUp (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Left, 
-					clicks, 
+					mouse_clicks, 
 					LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
 					0));
+				if (mouse_clicks > 1) {
+					mouse_clicks = 1;
+				}
 				break;
 			}
 				
 			case Msg.WM_LBUTTONDOWN: {					
-				int clicks = 1;
-					
 				OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-					clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+					mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
 					0));
 					
+				break;
+			}
+
+			case Msg.WM_LBUTTONDBLCLK: {
+				mouse_clicks++;
+				OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+					mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+					0));
+				break;
+			}
+
+			case Msg.WM_MBUTTONUP: {
+				OnMouseUp (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Middle, 
+					mouse_clicks, 
+					LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+					0));
+				if (mouse_clicks > 1) {
+					mouse_clicks = 1;
+				}
+				break;
+			}
+				
+			case Msg.WM_MBUTTONDOWN: {					
+				OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+					mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+					0));
+					
+				break;
+			}
+
+			case Msg.WM_MBUTTONDBLCLK: {
+				mouse_clicks++;
+				OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+					mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+					0));
+				break;
+			}
+
+			case Msg.WM_RBUTTONUP: {
+				OnMouseUp (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Right, 
+					mouse_clicks, 
+					LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+					0));
+				if (mouse_clicks > 1) {
+					mouse_clicks = 1;
+				}
+				break;
+			}
+				
+			case Msg.WM_RBUTTONDOWN: {					
+				OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+					mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+					0));
+					
+				break;
+			}
+
+			case Msg.WM_RBUTTONDBLCLK: {
+				mouse_clicks++;
+				OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+					mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+					0));
 				break;
 			}
 
@@ -2830,17 +2886,15 @@ namespace System.Windows.Forms
 				int clicks = 1;
 
 				OnMouseWheel (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-					clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+					mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
 					HighOrder(m.WParam.ToInt32())));
 				break;
 			}
 
 				
 			case Msg.WM_MOUSEMOVE: {					
-				int clicks = 1;
-
 				OnMouseMove  (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-					clicks, 
+					mouse_clicks, 
 					LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
 					0));
 				break;
