@@ -1,3 +1,8 @@
+2003-04-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (mono_reflection_get_type): Attempt type resolve even
+	if no assembly is given.
+
 2003-04-01  Miguel de Icaza  <miguel@ximian.com>
 
 	* metadata.h: Added the new tables.
