@@ -180,13 +180,13 @@ namespace Microsoft.JScript.Tmp
 		}
 		
 	public void program(
-		ASTList astList
+		ScriptBlock prog
 	) //throws RecognitionException, TokenStreamException
 {
 		
 		
 		try {      // for error handling
-			source_elements(astList);
+			source_elements(prog);
 		}
 		catch (RecognitionException ex)
 		{
@@ -204,7 +204,7 @@ namespace Microsoft.JScript.Tmp
 	}
 	
 	public void source_elements(
-		ASTList astList
+		ScriptBlock elems
 	) //throws RecognitionException, TokenStreamException
 {
 		
@@ -214,7 +214,7 @@ namespace Microsoft.JScript.Tmp
 			ast=source_element();
 			if (0==inputState.guessing)
 			{
-				if (ast != null) astList.Add (ast);
+				if (ast != null) elems.Add (ast);
 			}
 			{
 				switch ( LA(1) )
@@ -255,7 +255,7 @@ namespace Microsoft.JScript.Tmp
 				case LITERAL_abstract:
 				case LITERAL_final:
 				{
-					source_elements(astList);
+					source_elements(elems);
 					break;
 				}
 				case EOF:
@@ -576,7 +576,7 @@ namespace Microsoft.JScript.Tmp
 			match(IDENTIFIER);
 			if (0==inputState.guessing)
 			{
-				fd.id = id.getText ();
+				fd.Function.Name = id.getText ();
 			}
 			match(LPAREN);
 			{
@@ -584,7 +584,7 @@ namespace Microsoft.JScript.Tmp
 				{
 				case IDENTIFIER:
 				{
-					formal_parameter_list(fd.parameters);
+					formal_parameter_list(fd.Function.Params);
 					break;
 				}
 				case RPAREN:
@@ -608,7 +608,7 @@ namespace Microsoft.JScript.Tmp
 					match(IDENTIFIER);
 					if (0==inputState.guessing)
 					{
-						fd.returnType = rType.getText ();
+						fd.Function.ReturnType = rType.getText ();
 					}
 					break;
 				}
@@ -662,7 +662,7 @@ namespace Microsoft.JScript.Tmp
 				case LITERAL_abstract:
 				case LITERAL_final:
 				{
-					function_body(fd.funcBody);
+					function_body(fd.Function.Body);
 					break;
 				}
 				case RBRACE:
@@ -850,13 +850,18 @@ namespace Microsoft.JScript.Tmp
 	}
 	
 	public void function_body(
-		ASTList funcBody
+		Block funcBody
 	) //throws RecognitionException, TokenStreamException
 {
 		
+		ScriptBlock body = new ScriptBlock ();
 		
 		try {      // for error handling
-			source_elements(funcBody);
+			source_elements(body);
+			if (0==inputState.guessing)
+			{
+				funcBody = body.SrcElems;
+			}
 		}
 		catch (RecognitionException ex)
 		{
@@ -2284,7 +2289,7 @@ _loop27_breakloop:				;
 			match(IDENTIFIER);
 			if (0==inputState.guessing)
 			{
-				fd.id = functionName.getText ();
+				fd.Function.Name = functionName.getText ();
 			}
 			match(LPAREN);
 			{
@@ -2292,7 +2297,7 @@ _loop27_breakloop:				;
 				{
 				case IDENTIFIER:
 				{
-					formal_parameter_list(fd.parameters);
+					formal_parameter_list(fd.Function.Params);
 					break;
 				}
 				case RPAREN:
@@ -2314,6 +2319,10 @@ _loop27_breakloop:				;
 					match(COLON);
 					type = LT(1);
 					match(IDENTIFIER);
+					if (0==inputState.guessing)
+					{
+						fd.Function.ReturnType = type.getText ();
+					}
 					break;
 				}
 				case LBRACE:
@@ -2372,7 +2381,7 @@ _loop27_breakloop:				;
 						case LITERAL_abstract:
 						case LITERAL_final:
 						{
-							function_body(fd.funcBody);
+							function_body(fd.Function.Body);
 							break;
 						}
 						case RBRACE:
