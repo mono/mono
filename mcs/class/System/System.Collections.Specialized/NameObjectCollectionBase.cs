@@ -23,6 +23,14 @@ namespace System.Collections.Specialized
 		private int m_defCapacity;
 		private bool m_readonly;
 
+		internal protected IComparer Comparer {
+			get {return m_comparer;}
+		}
+
+		internal protected IHashCodeProvider HashCodeProvider {
+			get {return m_hashprovider;}
+		}
+
 		internal protected /*?*/ class _Item
 		{
 			public string key;

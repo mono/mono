@@ -1,3 +1,9 @@
+
+Fri Feb 8 18:02:50 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* NameObjectCollectionBase.cs, NameValueCollection.cs: tweaks to make
+	it compile and provide the constructor needed by nunitcore.
+
 2002-01-05  Ravi Pratap  <ravi@ximian.com>
 
 	* BitVector32.cs, ListDictionary.cs : MonoTODO everywhere!

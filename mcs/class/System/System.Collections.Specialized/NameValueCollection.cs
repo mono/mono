@@ -42,13 +42,13 @@ namespace System.Collections.Specialized{
 		/// TODO: uncomment constructor below after it will be possible to compile NameValueCollection and
 		/// NameObjectCollectionBase to the same assembly 
 		
-/*		public NameValueCollection( NameValueCollection col ) : base(col.HashCodeProvider,col.Comparer)
+		public NameValueCollection( NameValueCollection col ) : base(col.HashCodeProvider,col.Comparer)
 		{
 			if (col==null)
 				throw new ArgumentNullException("Null argument is not allowed");
 			Add(col);
 		}
-*/
+
 		///<summary>SDK: Initializes a new instance of the NameValueCollection class that is empty, 
 		///has the default initial capacity and uses the specified hash code provider and 
 		///the specified comparer.</summary>
