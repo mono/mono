@@ -1408,6 +1408,9 @@ namespace Mono.CSharp {
 
 		public MemberInfo GetFieldFromEvent (EventExpr event_expr)
 		{
+			if (events == null)
+				return null;
+			
 			EventInfo ei = event_expr.EventInfo;
 
 			foreach (Event e in events) { 
