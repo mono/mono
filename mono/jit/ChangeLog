@@ -1,3 +1,7 @@
+2002-02-01  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg: impl. SHL/SHR/CLT for 64 bit values
+
 2002-01-31  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg: impl. CEQ(lreg,lreg)
