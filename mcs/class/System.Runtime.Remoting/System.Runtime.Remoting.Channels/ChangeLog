@@ -1,3 +1,9 @@
+2004-06-10  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* SoapMessageFormatter.cs: Don't add the signature to the headers list if
+	  the method is not overloaded, and don't add the LogicalCallContext if
+	  it has no info.
+
 2004-05-26  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* SoapMessageFormatter.cs: Include soap headers as properties when creating

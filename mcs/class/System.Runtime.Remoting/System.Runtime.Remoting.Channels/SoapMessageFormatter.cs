@@ -337,19 +337,36 @@ namespace System.Runtime.Remoting.Channels {
 			_methodCallParameters = _methodCallInfo.GetParameters();
 		}	
 		
-		Header[] BuildMessageHeaders (IMessage msg)
+		Header[] BuildMessageHeaders (IMethodMessage msg)
 		{
 			ArrayList headers = new ArrayList (1);
 			foreach (string key in msg.Properties.Keys) 
 			{
-				if (key=="__Uri" || key=="__MethodName" || key=="__TypeName" ||
-					key=="__Args" || key=="__OutArgs" || key=="__Return")
-					continue;
-					
-				object value = msg.Properties [key];
-				if (value != null)
-					headers.Add (new Header (key, value, false, "http://schemas.microsoft.com/clr/soap/messageProperties"));
+				switch (key) {
+					case "__Uri":
+					case "__MethodName":
+					case "__TypeName":
+					case "__Args":
+					case "__OutArgs":
+					case "__Return":
+					case "__MethodSignature":
+					case "__CallContext":
+						continue;
+	
+					default:
+						object value = msg.Properties [key];
+						if (value != null)
+							headers.Add (new Header (key, value, false, "http://schemas.microsoft.com/clr/soap/messageProperties"));
+						break;
+				}
 			}
+			
+			if (RemotingServices.IsMethodOverloaded (msg))
+				headers.Add (new Header ("__MethodSignature", msg.MethodSignature, false, "http://schemas.microsoft.com/clr/soap/messageProperties"));
+			
+			if (msg.LogicalCallContext != null && msg.LogicalCallContext.HasInfo)
+				headers.Add (new Header ("__CallContext", msg.LogicalCallContext, false, "http://schemas.microsoft.com/clr/soap/messageProperties"));
+			
 			if (headers.Count == 0) return null;
 			return (Header[]) headers.ToArray (typeof(Header));
 		}
