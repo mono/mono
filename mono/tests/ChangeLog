@@ -1,3 +1,7 @@
+2005-03-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* remoting1.cs: Add new regression test.
+
 2005-03-01  Zoltan Varga  <vargaz@freemail.hu>
 
 	* pinvoke3.cs: Add tests for passing blittable arrays.
