@@ -5,71 +5,112 @@
 //   Dennis Hayes (dennish@raytek.com)
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
+
 using System;
-using System.Runtime.InteropServices;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
+
 namespace System.Windows.Forms.Design
 {
-	/// <summary>
-	/// Summary description for AxImporter.
-	/// </summary>
 	[MonoTODO]
 	public class AxImporter
 	{
+		#region Public Instance Constructors
+
 		[MonoTODO]
-		public 	AxImporter(AxImporter.Options options)
+		public AxImporter (AxImporter.Options options)
+		{
+			this.options = options;
+		}
+
+		#endregion Public Instance Constructors
+
+		#region Public Instance Properties
+
+		[MonoTODO]
+		public string[] GeneratedAssemblies
+		{
+			get
+			{
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public string[] GeneratedSources
+		{
+			get
+			{
+				throw new NotImplementedException ();
+			}
+		}
+
+		#endregion Public Instance Properties
+
+		#region Public Instance Methods
+
+		[MonoTODO]
+		public TYPELIBATTR[] GeneratedTypeLibAttributes
+		{
+			get
+			{
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public string GenerateFromFile (FileInfo file)
 		{
 			throw new NotImplementedException ();
-			//
-			// TODO: Add constructor logic here
-			//
 		}
+
 		[MonoTODO]
-		public string[] GeneratedAsemblies{
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-		[MonoTODO]
-		public string[] GeneratedSoruces{
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-// 		[MonoTODO]
-// 		public TYPELIBATTR[] GeneratedTypeLibAttribute{
-// 			get {
-// 				throw new NotImplementedException ();
-// 			}
-// 		}
-		[MonoTODO]
-		public string GenerateFromFile(FileInfo file){
+		public string GenerateFromTypeLibrary (UCOMITypeLib typeLib)
+		{
 			throw new NotImplementedException ();
 		}
-//		UCOMITTypeLib documented, but not implmented by Microsoft?
-//		[MonoTODO]
-//		public string GenerateFromTypeLibrary(UCOMITTypeLib typeLib){
-//			throw new NotImplementedException ();
-//		}
-//		[MonoTODO]
-//		public string GenerateFromTypeLibrary(UCOMITTypeLib typeLib, Guid clsid){
-//			throw new NotImplementedException ();
-//		}
-//		[MonoTODO]
-//		public static string GetFileOfTypeLib(ref TYPELIBATTR tlibattr){
-//			throw new NotImplementedException ();
-//		}
 
-		public sealed class Options{
-			public Options(){
+		[MonoTODO]
+		public string GenerateFromTypeLibrary (UCOMITypeLib typeLib, Guid clsid)
+		{
+			throw new NotImplementedException ();
+		}
+
+		#endregion Public Instance Methods
+
+		#region Public Static Methods
+
+		[MonoTODO]
+		public static string GetFileOfTypeLib (ref TYPELIBATTR tlibattr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		#endregion Public Static Methods
+
+		#region Internal Instance Fields
+
+		internal AxImporter.Options options;
+
+		#endregion Internal Instance Fields
+
+		public sealed class Options
+		{
+			#region Public Instance Constructors
+
+			public Options ()
+			{
 			}
 
-			//props
+			#endregion Public Instance Constructors
+
+			#region Public Instance Fields
+
 			public bool delaySign;
-			public bool GenSources;
+			public bool genSources;
 			public string keyContainer;
-			public string keyfile;
+			public string keyFile;
 			public StrongNameKeyPair keyPair;
 
 			public bool noLogo;
@@ -77,11 +118,19 @@ namespace System.Windows.Forms.Design
 			public string outputName;
 			public bool overwriteRCW;
 			public byte[] publicKey;
-//implment
-//			public AxImporter.IReferenceResolver references;
+			public AxImporter.IReferenceResolver references;
 			public bool silentMode;
 			public bool verboseMode;
+
+			#endregion Public Instance Fields
 		}
 
+		public interface IReferenceResolver
+		{
+			string ResolveActiveXReference (UCOMITypeLib typeLib);
+			string ResolveComReference (AssemblyName name);
+			string ResolveComReference (UCOMITypeLib typeLib);
+			string ResolveManagedReference (string assemName);
+		}
 	}
 }

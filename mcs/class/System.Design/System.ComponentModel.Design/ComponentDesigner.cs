@@ -11,176 +11,206 @@ using System.Collections;
 
 namespace System.ComponentModel.Design
 {
-	public class ComponentDesigner : IDesigner, IDisposable,
-	                                 IDesignerFilter
+	public class ComponentDesigner : IDesigner, IDisposable, IDesignerFilter
 	{
 		protected sealed class ShadowPropertyCollection
 		{
-			public object this [string propertyName] {
+			public object this[string propertyName]
+			{
 				[MonoTODO]
-				get { throw new NotImplementedException(); } 
+				get { throw new NotImplementedException (); }
 
 				[MonoTODO]
-				set { throw new NotImplementedException(); }
+				set { throw new NotImplementedException (); }
 			}
 
 			[MonoTODO]
 			public bool Contains (string propertyName)
 			{
-				throw new NotImplementedException();
+				throw new NotImplementedException ();
 			}
 
 			[MonoTODO]
-			~ShadowPropertyCollection()
+			~ShadowPropertyCollection ()
 			{
 			}
 		}
 
 		[MonoTODO]
-		public ComponentDesigner()
+		public ComponentDesigner ()
 		{
 		}
 
-		public virtual ICollection AssociatedComponents {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+		#region Implementation of IDesignerFilter
+
+		void IDesignerFilter.PostFilterAttributes (IDictionary attributes)
+		{
+			PostFilterAttributes (attributes);
 		}
 
-		public IComponent Component {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+		void IDesignerFilter.PostFilterEvents (IDictionary events)
+		{
+			PostFilterEvents (events);
 		}
 
-		public virtual DesignerVerbCollection Verbs {
+		void IDesignerFilter.PostFilterProperties (IDictionary properties)
+		{
+			PostFilterProperties (properties);
+		}
+
+		void IDesignerFilter.PreFilterAttributes (IDictionary attributes)
+		{
+			PreFilterAttributes (attributes);
+		}
+
+		void IDesignerFilter.PreFilterEvents (IDictionary events)
+		{
+			PreFilterEvents (events);
+		}
+
+		void IDesignerFilter.PreFilterProperties (IDictionary properties)
+		{
+			PreFilterProperties (properties);
+		}
+
+		#endregion Implementation of IDesignerFilter
+
+		public virtual ICollection AssociatedComponents
+		{
 			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { throw new NotImplementedException (); }
+		}
+
+		public IComponent Component
+		{
+			[MonoTODO]
+			get { throw new NotImplementedException (); }
+		}
+
+		public virtual DesignerVerbCollection Verbs
+		{
+			[MonoTODO]
+			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public void Dispose()
+		public void Dispose ()
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		protected virtual void Dispose (bool disposing)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
-		
+
 		[MonoTODO]
-		public virtual void DoDefaultAction()
+		public virtual void DoDefaultAction ()
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public virtual void Initialize (IComponent component)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual void InitializeNonDefault()
+		public virtual void InitializeNonDefault ()
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual void OnSetComponentDefaults()
+		public virtual void OnSetComponentDefaults ()
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 
-		protected InheritanceAttribute InheritanceAttribute {
+		protected InheritanceAttribute InheritanceAttribute
+		{
 			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { throw new NotImplementedException (); }
 		}
 
-		protected bool Inherited {
+		protected bool Inherited
+		{
 			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { throw new NotImplementedException (); }
 		}
 
-		protected ShadowPropertyCollection ShadowProperties {
+		protected ShadowPropertyCollection ShadowProperties
+		{
 			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
 		protected virtual object GetService (Type serviceType)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected InheritanceAttribute InvokeGetInheritanceAttribute (
-					       ComponentDesigner toInvoke)
+		protected InheritanceAttribute InvokeGetInheritanceAttribute (ComponentDesigner toInvoke)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		// LAMESPEC: Spec says protected but cannot compile
-		public virtual void PostFilterAttributes (IDictionary attributes)
+		protected virtual void PostFilterAttributes (IDictionary attributes)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		// LAMESPEC: Spec says protected but cannot compile
-		public virtual void PostFilterEvents (IDictionary events)
+		protected virtual void PostFilterEvents (IDictionary events)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		// LAMESPEC: Spec says protected but cannot compile
-		public virtual void PostFilterProperties (IDictionary properties)
+		protected virtual void PostFilterProperties (IDictionary properties)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		// LAMESPEC: Spec says protected but cannot compile
-		public virtual void PreFilterAttributes (IDictionary attributes)
+		protected virtual void PreFilterAttributes (IDictionary attributes)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		// LAMESPEC: Spec says protected but cannot compile
-		public virtual void PreFilterEvents (IDictionary events)
+		protected virtual void PreFilterEvents (IDictionary events)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		// LAMESPEC: Spec says protected but cannot compile
-		public virtual void PreFilterProperties (IDictionary properties)
+		protected virtual void PreFilterProperties (IDictionary properties)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected void RaiseComponentChanged (MemberDescriptor member, 
-						      object oldValue,
-						      object newValue)
+		protected void RaiseComponentChanged (MemberDescriptor member, object oldValue, object newValue)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		protected void RaiseComponentChanging (MemberDescriptor member)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		~ComponentDesigner()
+		~ComponentDesigner ()
 		{
 		}
-		
 	}
 }

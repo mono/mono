@@ -1,4 +1,19 @@
 2004-05-15  Gert Driesen (drieseng@users.sourceforge.net)
+
+	* System.Design.dll.sources: added IOleDragClient
+	* System.ComponentModel.Design/ComponentDesigner.cs: fixed 
+	public API
+	* System.Web.UI.Design/ControlDesigner.cs: fixed public API
+	* System.Web.UI.Design/HtmlControlDesigner: fixed public API
+	* System.Windows.Forms.Design/AnchorEditor.cs: fixed public 
+	API, converted to unix linefeeds
+	* System.Windows.Forms.Design/AxImporter.cs: fixed public 
+	API, converted to unix linefeeds
+	* System.Windows.Forms.Design/ComponentDocumentDesigner.cs: 
+	fixed public API, converted to unix linefeeds
+	* System.Windows.Forms.Design/SelectionRules.cs: implementation
+
+2004-05-15  Gert Driesen (drieseng@users.sourceforge.net)
 	
 	* System.Windows.Forms.Design/FileNameEditor.cs: code formatting
 	* System.Windows.Forms.Design/FolderNameEditor.cs: code formatting
