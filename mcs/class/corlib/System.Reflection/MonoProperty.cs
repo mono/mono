@@ -24,9 +24,20 @@ namespace System.Reflection {
 		public PropertyAttributes attrs;
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern void get_property_info (MonoProperty prop, out MonoPropertyInfo info);
+		internal static extern void get_property_info (MonoProperty prop, out MonoPropertyInfo info,
+							       PInfo req_info);
 	}
 
+	[Flags]
+	internal enum PInfo {
+		Attributes = 1,
+		GetMethod  = 1 << 1,
+		SetMethod  = 1 << 2,
+		ReflectedType = 1 << 3,
+		DeclaringType = 1 << 4,
+		Name = 1 << 5
+		
+	}
 	internal class MonoProperty : PropertyInfo {
 		internal IntPtr klass;
 		internal IntPtr prop;
@@ -34,7 +45,7 @@ namespace System.Reflection {
 		public override PropertyAttributes Attributes {
 			get {
 				MonoPropertyInfo info;
-				MonoPropertyInfo.get_property_info (this, out info);
+				MonoPropertyInfo.get_property_info (this, out info, PInfo.Attributes);
 				return info.attrs;
 			}
 		}
@@ -42,7 +53,7 @@ namespace System.Reflection {
 		public override bool CanRead {
 			get {
 				MonoPropertyInfo info;
-				MonoPropertyInfo.get_property_info (this, out info);
+				MonoPropertyInfo.get_property_info (this, out info, PInfo.GetMethod);
 				return (info.get_method != null);
 			}
 		}
@@ -50,7 +61,7 @@ namespace System.Reflection {
 		public override bool CanWrite {
 			get {
 				MonoPropertyInfo info;
-				MonoPropertyInfo.get_property_info (this, out info);
+				MonoPropertyInfo.get_property_info (this, out info, PInfo.SetMethod);
 				return (info.set_method != null);
 			}
 		}
@@ -58,7 +69,7 @@ namespace System.Reflection {
 		public override Type PropertyType {
 			get {
 				MonoPropertyInfo info;
-				MonoPropertyInfo.get_property_info (this, out info);
+				MonoPropertyInfo.get_property_info (this, out info, PInfo.GetMethod | PInfo.SetMethod);
 				
 				if (info.get_method != null) {
 					return info.get_method.ReturnType;
@@ -73,7 +84,7 @@ namespace System.Reflection {
 		public override Type ReflectedType {
 			get {
 				MonoPropertyInfo info;
-				MonoPropertyInfo.get_property_info (this, out info);
+				MonoPropertyInfo.get_property_info (this, out info, PInfo.ReflectedType);
 				return info.parent;
 			}
 		}
@@ -81,7 +92,7 @@ namespace System.Reflection {
 		public override Type DeclaringType {
 			get {
 				MonoPropertyInfo info;
-				MonoPropertyInfo.get_property_info (this, out info);
+				MonoPropertyInfo.get_property_info (this, out info, PInfo.DeclaringType);
 				return info.parent;
 			}
 		}
@@ -89,7 +100,7 @@ namespace System.Reflection {
 		public override string Name {
 			get {
 				MonoPropertyInfo info;
-				MonoPropertyInfo.get_property_info (this, out info);
+				MonoPropertyInfo.get_property_info (this, out info, PInfo.Name);
 				return info.name;
 			}
 		}
@@ -100,7 +111,7 @@ namespace System.Reflection {
 			// FIXME: check nonPublic
 			MonoPropertyInfo info;
 			int n = 0;
-			MonoPropertyInfo.get_property_info (this, out info);
+			MonoPropertyInfo.get_property_info (this, out info, PInfo.GetMethod | PInfo.SetMethod);
 			if (info.set_method != null)
 				n++;
 			if (info.get_method != null)
@@ -119,14 +130,14 @@ namespace System.Reflection {
 		{
 			// FIXME: check nonPublic
 			MonoPropertyInfo info;
-			MonoPropertyInfo.get_property_info (this, out info);
+			MonoPropertyInfo.get_property_info (this, out info, PInfo.GetMethod);
 			return info.get_method;
 		}
 
 		public override ParameterInfo[] GetIndexParameters()
 		{
 			MonoPropertyInfo info;
-			MonoPropertyInfo.get_property_info (this, out info);
+			MonoPropertyInfo.get_property_info (this, out info, PInfo.GetMethod);
 			if (info.get_method != null)
 				return info.get_method.GetParameters ();
 			return new ParameterInfo [0];
@@ -136,7 +147,7 @@ namespace System.Reflection {
 		{
 			// FIXME: check nonPublic
 			MonoPropertyInfo info;
-			MonoPropertyInfo.get_property_info (this, out info);
+			MonoPropertyInfo.get_property_info (this, out info, PInfo.SetMethod);
 			return info.set_method;
 		}
 		
