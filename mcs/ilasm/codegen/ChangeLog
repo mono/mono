@@ -1,3 +1,8 @@
+2003-04-28 Jackson Harper <jackson@latitudegeo.com>
+
+	* InstrTable.cs: Much simpler system. All tokens go into one
+	hashtable now. There is no reason to have them seperated out.
+		
 2003-04-20 Jackson Harper <jackson@latitudegeo.com>
 
 	* CodeGen.cs: Add method to add data

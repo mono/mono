@@ -15,397 +15,273 @@ namespace Mono.ILASM {
 
         public class InstrTable {
 
-                private static Hashtable op_table;
-                private static Hashtable int_table;
-                private static Hashtable type_table;
-                private static Hashtable method_table;
-                private static Hashtable field_table;
-                private static Hashtable branch_table;
+                private static Hashtable inst_table;
 
                 static InstrTable ()
                 {
-                        CreateOpTable ();
-                        CreateIntTable ();
-                        CreateTypeTable ();
-                        CreateMethodTable ();
-                        CreateFieldTable ();
-                        CreateBranchTable ();
+                        CreateInstTable ();
                 }
 
                 public static ILToken GetToken (string str)
                 {
-                        if (IsOp (str)) {
-                                Op op = GetOp (str);
-                                return new ILToken (Token.INSTR_NONE, op);
-                        } else if (IsIntOp (str)) {
-                                IntOp op = GetIntOp (str);
-                                return new ILToken (Token.INSTR_I, op);
-                        } else if (IsTypeOp (str)) {
-                                TypeOp op = GetTypeOp (str);
-                                return new ILToken (Token.INSTR_TYPE, op);
-                        } else if (IsMethodOp (str)) {
-                                MethodOp op = GetMethodOp (str);
-                                return new ILToken (Token.INSTR_METHOD, op);
-                        } else if (IsLdstrOp (str)) {
-                                return new ILToken (Token.INSTR_STRING, str);
-                        } else if (IsFieldOp (str)) {
-                                FieldOp op = GetFieldOp (str);
-                                return new ILToken (Token.INSTR_FIELD, op);
-                        } else if (IsBranchOp (str)) {
-                                BranchOp op = GetBranchOp (str);
-                                return new ILToken (Token.INSTR_BRTARGET, op);
-                        } else if (IsLdcr4 (str)) {
-                                return new ILToken (Token.INSTR_R, "");
-                        } else if (IsLdcr8 (str)) {
-                                return new ILToken (Token.INSTR_R, "");
-                        } else if (IsSwitch (str)) {
-                                return new ILToken (Token.INSTR_SWITCH, str);
-                        } else if (IsCalli (str)) {
-                                return new ILToken (Token.INSTR_SIG, str);
-                        }
-
-                        return null;
+                        return inst_table[str] as ILToken;
                 }
 
                 public static bool IsInstr (string str)
                 {
-                        return (IsOp (str) || IsIntOp (str) ||
-                                IsTypeOp (str) || IsMethodOp (str) ||
-                                IsLdstrOp (str) || IsFieldOp (str) ||
-                                IsBranchOp (str) || IsLdcr4 (str) || IsLdcr8 (str) ||
-                                IsSwitch (str) || IsCalli (str));
+                        return inst_table.Contains (str);
                 }
 
-                public static bool IsOp (string str)
+                private static void CreateInstTable ()
                 {
-                        return op_table.Contains (str);
+                        inst_table = new Hashtable ();
+
+                        inst_table["nop"] = new ILToken (Token.INSTR_NONE, Op.nop);
+                        inst_table["break"] = new ILToken (Token.INSTR_NONE, Op.breakOp);
+                        inst_table["ldarg.0"] = new ILToken (Token.INSTR_NONE, Op.ldarg_0);
+                        inst_table["ldarg.1"] = new ILToken (Token.INSTR_NONE, Op.ldarg_1);
+                        inst_table["ldarg.2"] = new ILToken (Token.INSTR_NONE, Op.ldarg_2);
+                        inst_table["ldarg.3"] = new ILToken (Token.INSTR_NONE, Op.ldarg_3);
+                        inst_table["ldloc.0"] = new ILToken (Token.INSTR_NONE, Op.ldloc_0);
+                        inst_table["ldloc.1"] = new ILToken (Token.INSTR_NONE, Op.ldloc_1);
+                        inst_table["ldloc.2"] = new ILToken (Token.INSTR_NONE, Op.ldloc_2);
+                        inst_table["ldloc.3"] = new ILToken (Token.INSTR_NONE, Op.ldloc_3);
+                        inst_table["stloc.0"] = new ILToken (Token.INSTR_NONE, Op.stloc_0);
+                        inst_table["stloc.1"] = new ILToken (Token.INSTR_NONE, Op.stloc_1);
+                        inst_table["stloc.2"] = new ILToken (Token.INSTR_NONE, Op.stloc_2);
+                        inst_table["stloc.3"] = new ILToken (Token.INSTR_NONE, Op.stloc_3);
+                        inst_table["ldnull"] = new ILToken (Token.INSTR_NONE, Op.ldnull);
+                        inst_table["ldc.i4.m1"] = new ILToken (Token.INSTR_NONE, Op.ldc_i4_m1);
+                        inst_table["ldc.i4.0"] = new ILToken (Token.INSTR_NONE, Op.ldc_i4_0);
+                        inst_table["ldc.i4.1"] = new ILToken (Token.INSTR_NONE, Op.ldc_i4_1);
+                        inst_table["ldc.i4.2"] = new ILToken (Token.INSTR_NONE, Op.ldc_i4_2);
+                        inst_table["ldc.i4.3"] = new ILToken (Token.INSTR_NONE, Op.ldc_i4_3);
+                        inst_table["ldc.i4.4"] = new ILToken (Token.INSTR_NONE, Op.ldc_i4_4);
+                        inst_table["ldc.i4.5"] = new ILToken (Token.INSTR_NONE, Op.ldc_i4_5);
+                        inst_table["ldc.i4.6"] = new ILToken (Token.INSTR_NONE, Op.ldc_i4_6);
+                        inst_table["ldc.i4.7"] = new ILToken (Token.INSTR_NONE, Op.ldc_i4_7);
+                        inst_table["ldc.i4.8"] = new ILToken (Token.INSTR_NONE, Op.ldc_i4_8);
+                        inst_table["dup"] = new ILToken (Token.INSTR_NONE, Op.dup);
+                        inst_table["pop"] = new ILToken (Token.INSTR_NONE, Op.pop);
+                        inst_table["ret"] = new ILToken (Token.INSTR_NONE, Op.ret);
+                        inst_table["ldind.i1"] = new ILToken (Token.INSTR_NONE, Op.ldind_i1);
+                        inst_table["ldind.u1"] = new ILToken (Token.INSTR_NONE, Op.ldind_u1);
+                        inst_table["ldind.i2"] = new ILToken (Token.INSTR_NONE, Op.ldind_i2);
+                        inst_table["ldind.u2"] = new ILToken (Token.INSTR_NONE, Op.ldind_u2);
+                        inst_table["ldind.i4"] = new ILToken (Token.INSTR_NONE, Op.ldind_i4);
+                        inst_table["ldind.u4"] = new ILToken (Token.INSTR_NONE, Op.ldind_u4);
+                        inst_table["ldind.i8"] = new ILToken (Token.INSTR_NONE, Op.ldind_i8);
+                        inst_table["ldind.i"] = new ILToken (Token.INSTR_NONE, Op.ldind_i);
+                        inst_table["ldind.r4"] = new ILToken (Token.INSTR_NONE, Op.ldind_r4);
+                        inst_table["ldind.r8"] = new ILToken (Token.INSTR_NONE, Op.ldind_r8);
+                        inst_table["ldind.ref"] = new ILToken (Token.INSTR_NONE, Op.ldind_ref);
+                        inst_table["stind.ref"] = new ILToken (Token.INSTR_NONE, Op.stind_ref);
+                        inst_table["stind.i1"] = new ILToken (Token.INSTR_NONE, Op.stind_i1);
+                        inst_table["stind.i2"] = new ILToken (Token.INSTR_NONE, Op.stind_i2);
+                        inst_table["stind.i4"] = new ILToken (Token.INSTR_NONE, Op.stind_i4);
+                        inst_table["stind.i8"] = new ILToken (Token.INSTR_NONE, Op.stind_i8);
+                        inst_table["stind.r4"] = new ILToken (Token.INSTR_NONE, Op.stind_r4);
+                        inst_table["stind.r8"] = new ILToken (Token.INSTR_NONE, Op.stind_r8);
+                        inst_table["add"] = new ILToken (Token.INSTR_NONE, Op.add);
+                        inst_table["sub"] = new ILToken (Token.INSTR_NONE, Op.sub);
+                        inst_table["mul"] = new ILToken (Token.INSTR_NONE, Op.mul);
+                        inst_table["div"] = new ILToken (Token.INSTR_NONE, Op.div);
+                        inst_table["div.un"] = new ILToken (Token.INSTR_NONE, Op.div_un);
+                        inst_table["rem"] = new ILToken (Token.INSTR_NONE, Op.rem);
+                        inst_table["rem.un"] = new ILToken (Token.INSTR_NONE, Op.rem_un);
+                        inst_table["and"] = new ILToken (Token.INSTR_NONE, Op.and);
+                        inst_table["or"] = new ILToken (Token.INSTR_NONE, Op.or);
+                        inst_table["xor"] = new ILToken (Token.INSTR_NONE, Op.xor);
+                        inst_table["shl"] = new ILToken (Token.INSTR_NONE, Op.shl);
+                        inst_table["shr"] = new ILToken (Token.INSTR_NONE, Op.shr);
+                        inst_table["shr.un"] = new ILToken (Token.INSTR_NONE, Op.shr_un);
+                        inst_table["neg"] = new ILToken (Token.INSTR_NONE, Op.neg);
+                        inst_table["not"] = new ILToken (Token.INSTR_NONE, Op.not);
+                        inst_table["conv.i1"] = new ILToken (Token.INSTR_NONE, Op.conv_i1);
+                        inst_table["conv.i2"] = new ILToken (Token.INSTR_NONE, Op.conv_i2);
+                        inst_table["conv.i4"] = new ILToken (Token.INSTR_NONE, Op.conv_i4);
+                        inst_table["conv.i8"] = new ILToken (Token.INSTR_NONE, Op.conv_i8);
+                        inst_table["conv.r4"] = new ILToken (Token.INSTR_NONE, Op.conv_r4);
+                        inst_table["conv.r8"] = new ILToken (Token.INSTR_NONE, Op.conv_r8);
+                        inst_table["conv.u4"] = new ILToken (Token.INSTR_NONE, Op.conv_u4);
+                        inst_table["conv.u8"] = new ILToken (Token.INSTR_NONE, Op.conv_u8);
+                        inst_table["conv.r.un"] = new ILToken (Token.INSTR_NONE, Op.conv_r_un);
+                        inst_table["throw"] = new ILToken (Token.INSTR_NONE, Op.throwOp);
+                        inst_table["conv.ovf.i1.un"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_i1_un);
+                        inst_table["conv.ovf.i2.un"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_i2_un);
+                        inst_table["conv.ovf.i4.un"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_i4_un);
+                        inst_table["conv.ovf.i8.un"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_i8_un);
+                        inst_table["conf.ovf.u1.un"] = new ILToken (Token.INSTR_NONE, Op.conf_ovf_u1_un);
+                        inst_table["conv.ovf.u2.un"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_u2_un);
+                        inst_table["conv.ovf.u4.un"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_u4_un);
+                        inst_table["conv.ovf.u8.un"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_u8_un);
+                        inst_table["conv.ovf.i.un"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_i_un);
+                        inst_table["conv.ovf.u.un"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_u_un);
+                        inst_table["ldlen"] = new ILToken (Token.INSTR_NONE, Op.ldlen);
+                        inst_table["ldelem.i1"] = new ILToken (Token.INSTR_NONE, Op.ldelem_i1);
+                        inst_table["ldelem.u1"] = new ILToken (Token.INSTR_NONE, Op.ldelem_u1);
+                        inst_table["ldelem.i2"] = new ILToken (Token.INSTR_NONE, Op.ldelem_i2);
+                        inst_table["ldelem.u2"] = new ILToken (Token.INSTR_NONE, Op.ldelem_u2);
+                        inst_table["ldelem.i4"] = new ILToken (Token.INSTR_NONE, Op.ldelem_i4);
+                        inst_table["ldelem.u4"] = new ILToken (Token.INSTR_NONE, Op.ldelem_u4);
+                        inst_table["ldelem.i8"] = new ILToken (Token.INSTR_NONE, Op.ldelem_i8);
+                        inst_table["ldelem.i"] = new ILToken (Token.INSTR_NONE, Op.ldelem_i);
+                        inst_table["ldelem.r4"] = new ILToken (Token.INSTR_NONE, Op.ldelem_r4);
+                        inst_table["ldelem.r8"] = new ILToken (Token.INSTR_NONE, Op.ldelem_r8);
+                        inst_table["ldelem.ref"] = new ILToken (Token.INSTR_NONE, Op.ldelem_ref);
+                        inst_table["stelem.i"] = new ILToken (Token.INSTR_NONE, Op.stelem_i);
+                        inst_table["stelem.i1"] = new ILToken (Token.INSTR_NONE, Op.stelem_i1);
+                        inst_table["stelem.i2"] = new ILToken (Token.INSTR_NONE, Op.stelem_i2);
+                        inst_table["stelem.i4"] = new ILToken (Token.INSTR_NONE, Op.stelem_i4);
+                        inst_table["stelem.i8"] = new ILToken (Token.INSTR_NONE, Op.stelem_i8);
+                        inst_table["stelem.ref"] = new ILToken (Token.INSTR_NONE, Op.stelem_ref);
+                        inst_table["conv.ovf.i1"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_i1);
+                        inst_table["conv.ovf.u1"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_u1);
+                        inst_table["conv.ovf.i2"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_i2);
+                        inst_table["conv.ovf.u2"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_u2);
+                        inst_table["conv.ovf.i4"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_i4);
+                        inst_table["conv.ovf.u4"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_u4);
+                        inst_table["conv.ovf.i8"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_i8);
+                        inst_table["conv.ovf.u8"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_u8);
+                        inst_table["ckfinite"] = new ILToken (Token.INSTR_NONE, Op.ckfinite);
+                        inst_table["conv.u2"] = new ILToken (Token.INSTR_NONE, Op.conv_u2);
+                        inst_table["conv.u1"] = new ILToken (Token.INSTR_NONE, Op.conv_u1);
+                        inst_table["conv.i"] = new ILToken (Token.INSTR_NONE, Op.conv_i);
+                        inst_table["conv.ovf.i"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_i);
+                        inst_table["conv.ovf.u"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_u);
+                        inst_table["add.ovf"] = new ILToken (Token.INSTR_NONE, Op.add_ovf);
+                        inst_table["add.ovf.un"] = new ILToken (Token.INSTR_NONE, Op.add_ovf_un);
+                        inst_table["mul.ovf"] = new ILToken (Token.INSTR_NONE, Op.mul_ovf);
+                        inst_table["mul.ovf.un"] = new ILToken (Token.INSTR_NONE, Op.mul_ovf_un);
+                        inst_table["sub.ovf"] = new ILToken (Token.INSTR_NONE, Op.sub_ovf);
+                        inst_table["sub.ovf.un"] = new ILToken (Token.INSTR_NONE, Op.sub_ovf_un);
+                        inst_table["endfinally"] = new ILToken (Token.INSTR_NONE, Op.endfinally);
+                        inst_table["stind.i"] = new ILToken (Token.INSTR_NONE, Op.stind_i);
+                        inst_table["conv.u"] = new ILToken (Token.INSTR_NONE, Op.conv_u);
+                        inst_table["arglist"] = new ILToken (Token.INSTR_NONE, Op.arglist);
+                        inst_table["ceq"] = new ILToken (Token.INSTR_NONE, Op.ceq);
+                        inst_table["cgt"] = new ILToken (Token.INSTR_NONE, Op.cgt);
+                        inst_table["cgt.un"] = new ILToken (Token.INSTR_NONE, Op.cgt_un);
+                        inst_table["clt"] = new ILToken (Token.INSTR_NONE, Op.clt);
+                        inst_table["clt.un"] = new ILToken (Token.INSTR_NONE, Op.clt_un);
+                        inst_table["localloc"] = new ILToken (Token.INSTR_NONE, Op.localloc);
+                        inst_table["endfilter"] = new ILToken (Token.INSTR_NONE, Op.endfilter);
+                        inst_table["volatile."] = new ILToken (Token.INSTR_NONE, Op.volatile_);
+                        inst_table["tail."] = new ILToken (Token.INSTR_NONE, Op.tail_);
+                        inst_table["cpblk"] = new ILToken (Token.INSTR_NONE, Op.cpblk);
+                        inst_table["initblk"] = new ILToken (Token.INSTR_NONE, Op.initblk);
+                        inst_table["rethrow"] = new ILToken (Token.INSTR_NONE, Op.rethrow);
+                        inst_table["refanytype"] = new ILToken (Token.INSTR_NONE, Op.refanytype);
+
+                        //
+                        // Int operations
+                        //
+
+                        inst_table["ldarg.s"] = new ILToken (Token.INSTR_I, IntOp.ldarg_s);
+                        inst_table["ldarga.s"] = new ILToken (Token.INSTR_I, IntOp.ldarga_s);
+                        inst_table["starg.s"] = new ILToken (Token.INSTR_I, IntOp.starg_s);
+                        inst_table["ldloc.s"] = new ILToken (Token.INSTR_I, IntOp.ldloc_s);
+                        inst_table["ldloca.s"] = new ILToken (Token.INSTR_I, IntOp.ldloca_s);
+                        inst_table["stloc.s"] = new ILToken (Token.INSTR_I, IntOp.stloc_s);
+                        inst_table["ldc.i4.s"] = new ILToken (Token.INSTR_I, IntOp.ldc_i4_s);
+                        inst_table["ldc.i4"] = new ILToken (Token.INSTR_I, IntOp.ldc_i4);
+                        inst_table["ldc.i8"] = new ILToken (Token.INSTR_I, IntOp.ldc_i4);
+                        inst_table["ldarg"] = new ILToken (Token.INSTR_I, IntOp.ldarg);
+                        inst_table["ldarga"] = new ILToken (Token.INSTR_I, IntOp.ldarga);
+                        inst_table["starf"] = new ILToken (Token.INSTR_I, IntOp.starg);
+                        inst_table["ldloc"] = new ILToken (Token.INSTR_I, IntOp.ldloc);
+                        inst_table["ldloca"] = new ILToken (Token.INSTR_I, IntOp.ldloca);
+                        inst_table["stloc"] = new ILToken (Token.INSTR_I, IntOp.stloc);
+                        inst_table["unaligned"] =  new ILToken (Token.INSTR_I, IntOp.unaligned);
+
+                        //
+                        // Type operations
+                        //
+
+                        inst_table["cpobj"] = new ILToken (Token.INSTR_TYPE, TypeOp.cpobj);
+                        inst_table["ldobj"] = new ILToken (Token.INSTR_TYPE, TypeOp.ldobj);
+                        inst_table["castclass"] = new ILToken (Token.INSTR_TYPE, TypeOp.castclass);
+                        inst_table["isinst"] = new ILToken (Token.INSTR_TYPE, TypeOp.isinst);
+                        inst_table["unbox"] = new ILToken (Token.INSTR_TYPE, TypeOp.unbox);
+                        inst_table["stobj"] = new ILToken (Token.INSTR_TYPE, TypeOp.stobj);
+                        inst_table["box"] = new ILToken (Token.INSTR_TYPE, TypeOp.box);
+                        inst_table["newarr"] = new ILToken (Token.INSTR_TYPE, TypeOp.newarr);
+                        inst_table["ldelema"] = new ILToken (Token.INSTR_TYPE, TypeOp.ldelema);
+                        inst_table["refanyval"] = new ILToken (Token.INSTR_TYPE, TypeOp.refanyval);
+                        inst_table["mkrefany"] = new ILToken (Token.INSTR_TYPE, TypeOp.mkrefany);
+                        inst_table["ldtoken"] = new ILToken (Token.INSTR_TYPE, TypeOp.ldtoken);
+                        inst_table["initobj"] = new ILToken (Token.INSTR_TYPE, TypeOp.initobj);
+                        inst_table["sizeof"] = new ILToken (Token.INSTR_TYPE, TypeOp.sizeOf);
+
+                        //
+                        // MethodRef operations
+                        //
+
+                        inst_table["jmp"] = new ILToken (Token.INSTR_METHOD, MethodOp.jmp);
+                        inst_table["call"] = new ILToken (Token.INSTR_METHOD, MethodOp.call);
+                        inst_table["callvirt"] = new ILToken (Token.INSTR_METHOD, MethodOp.callvirt);
+                        inst_table["newobj"] = new ILToken (Token.INSTR_METHOD, MethodOp.newobj);
+                        inst_table["ldtoken"] = new ILToken (Token.INSTR_METHOD, MethodOp.ldtoken);
+                        inst_table["ldftn"] = new ILToken (Token.INSTR_METHOD, MethodOp.ldftn);
+                        inst_table["ldvirtftn"] = new ILToken (Token.INSTR_METHOD, MethodOp.ldvirtfn);
+
+                        //
+                        // FieldRef instructions
+                        //
+
+                        inst_table["ldfld"] = new ILToken (Token.INSTR_FIELD, FieldOp.ldfld);
+                        inst_table["ldflda"] = new ILToken (Token.INSTR_FIELD, FieldOp.ldflda);
+                        inst_table["stfld"] = new ILToken (Token.INSTR_FIELD, FieldOp.stfld);
+                        inst_table["ldsfld"] = new ILToken (Token.INSTR_FIELD, FieldOp.ldsfld);
+                        inst_table["ldsflda"] = new ILToken (Token.INSTR_FIELD, FieldOp.ldsflda);
+                        inst_table["stsfld"] = new ILToken (Token.INSTR_FIELD, FieldOp.stsfld);
+                        inst_table["ldtoken"] = new ILToken (Token.INSTR_FIELD, FieldOp.ldtoken);
+
+                        //
+                        // Branch Instructions
+                        //
+
+                        inst_table["br"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.br);
+                        inst_table["brfalse"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.brfalse);
+                        inst_table["brtrue"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.brtrue);
+                        inst_table["beq"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.beq);
+                        inst_table["bge"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.bge);
+                        inst_table["bgt"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.bgt);
+                        inst_table["ble"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.ble);
+                        inst_table["blt"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.blt);
+                        inst_table["bne.un"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.bne_un);
+                        inst_table["bge.un"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.bge_un);
+                        inst_table["bgt.un"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.bgt_un);
+                        inst_table["ble.un"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.ble_un);
+                        inst_table["blt.un"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.blt_un);
+                        inst_table["leave"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.leave);
+
+                        /// TODO: .s instructions don't exist in PEAPI...yet
+                        inst_table["br.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.br);
+                        inst_table["brfalse.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.brfalse);
+                        inst_table["brtrue.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.brtrue);
+                        inst_table["beq.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.beq);
+                        inst_table["bge.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.bge);
+                        inst_table["bgt.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.bgt);
+                        inst_table["ble.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.ble);
+                        inst_table["blt.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.blt);
+                        inst_table["bne.un.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.bne_un);
+                        inst_table["bge.un.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.bge_un);
+                        inst_table["bgt.un.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.bgt_un);
+                        inst_table["ble.un.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.blt_un);
+                        inst_table["leave.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.leave);
+
+                        //
+                        // Misc other instructions
+                        //
+
+                        inst_table["ldstr"] = new ILToken (Token.INSTR_STRING, "ldstr");
+                        inst_table["ldc.r4"] = new ILToken (Token.INSTR_R, "ldc.r4");
+                        inst_table["ldc.r8"] = new ILToken (Token.INSTR_R, "ldc.r8");
+                        inst_table["switch"] = new ILToken (Token.INSTR_SWITCH, "switch");
+                        inst_table["calli"] = new ILToken (Token.INSTR_SIG, "calli");
                 }
 
-                public static bool IsIntOp (string str)
-                {
-                        return int_table.Contains (str);
-                }
-
-                public static bool IsTypeOp (string str)
-                {
-                        return type_table.Contains (str);
-                }
-
-                public static bool IsMethodOp (string str)
-                {
-                        return method_table.Contains (str);
-                }
-
-                public static bool IsLdstrOp (string str)
-                {
-                        return (str == "ldstr");
-                }
-
-                public static bool IsFieldOp (string str)
-                {
-                        return field_table.Contains (str);
-                }
-
-                public static bool IsBranchOp (string str)
-                {
-                        return branch_table.Contains (str);
-                }
-
-                public static bool IsLdcr4 (string str)
-                {
-                        return "ldc.r4" == str;
-                }
-
-                public static bool IsLdcr8 (string str)
-                {
-                        return "ldc.r8" == str;
-                }
-
-                public static bool IsSwitch (string str)
-                {
-                        return "switch" == str;
-                }
-
-                public static bool IsCalli (string str)
-                {
-                        return "calli" == str;
-                }
-
-                public static Op GetOp (string str)
-                {
-                        return (Op) op_table[str];
-                }
-
-                public static IntOp GetIntOp (string str)
-                {
-                        return (IntOp) int_table[str];
-                }
-
-                public static TypeOp GetTypeOp (string str)
-                {
-                        return (TypeOp) type_table[str];
-                }
-
-                public static MethodOp GetMethodOp (string str)
-                {
-                        return (MethodOp) method_table[str];
-                }
-
-                public static FieldOp GetFieldOp (string str)
-                {
-                        return (FieldOp) field_table[str];
-                }
-
-                public static BranchOp GetBranchOp (string str)
-                {
-                        return (BranchOp) branch_table[str];
-                }
-
-                private static void CreateOpTable ()
-                {
-                        op_table = new Hashtable ();
-
-                        op_table["nop"] = Op.nop;
-                        op_table["break"] = Op.breakOp;
-                        op_table["ldarg.0"] = Op.ldarg_0;
-                        op_table["ldarg.1"] = Op.ldarg_1;
-                        op_table["ldarg.2"] = Op.ldarg_2;
-                        op_table["ldarg.3"] = Op.ldarg_3;
-                        op_table["ldloc.0"] = Op.ldloc_0;
-                        op_table["ldloc.1"] = Op.ldloc_1;
-                        op_table["ldloc.2"] = Op.ldloc_2;
-                        op_table["ldloc.3"] = Op.ldloc_3;
-                        op_table["stloc.0"] = Op.stloc_0;
-                        op_table["stloc.1"] = Op.stloc_1;
-                        op_table["stloc.2"] = Op.stloc_2;
-                        op_table["stloc.3"] = Op.stloc_3;
-                        op_table["ldnull"] = Op.ldnull;
-                        op_table["ldc.i4.m1"] = Op.ldc_i4_m1;
-                        op_table["ldc.i4.0"] = Op.ldc_i4_0;
-                        op_table["ldc.i4.1"] = Op.ldc_i4_1;
-                        op_table["ldc.i4.2"] = Op.ldc_i4_2;
-                        op_table["ldc.i4.3"] = Op.ldc_i4_3;
-                        op_table["ldc.i4.4"] = Op.ldc_i4_4;
-                        op_table["ldc.i4.5"] = Op.ldc_i4_5;
-                        op_table["ldc.i4.6"] = Op.ldc_i4_6;
-                        op_table["ldc.i4.7"] = Op.ldc_i4_7;
-                        op_table["ldc.i4.8"] = Op.ldc_i4_8;
-                        op_table["dup"] = Op.dup;
-                        op_table["pop"] = Op.pop;
-                        op_table["ret"] = Op.ret;
-                        op_table["ldind.i1"] = Op.ldind_i1;
-                        op_table["ldind.u1"] = Op.ldind_u1;
-                        op_table["ldind.i2"] = Op.ldind_i2;
-                        op_table["ldind.u2"] = Op.ldind_u2;
-                        op_table["ldind.i4"] = Op.ldind_i4;
-                        op_table["ldind.u4"] = Op.ldind_u4;
-                        op_table["ldind.i8"] = Op.ldind_i8;
-                        op_table["ldind.i"] = Op.ldind_i;
-                        op_table["ldind.r4"] = Op.ldind_r4;
-                        op_table["ldind.r8"] = Op.ldind_r8;
-                        op_table["ldind.ref"] = Op.ldind_ref;
-                        op_table["stind.ref"] = Op.stind_ref;
-                        op_table["stind.i1"] = Op.stind_i1;
-                        op_table["stind.i2"] = Op.stind_i2;
-                        op_table["stind.i4"] = Op.stind_i4;
-                        op_table["stind.i8"] = Op.stind_i8;
-                        op_table["stind.r4"] = Op.stind_r4;
-                        op_table["stind.r8"] = Op.stind_r8;
-                        op_table["add"] = Op.add;
-                        op_table["sub"] = Op.sub;
-                        op_table["mul"] = Op.mul;
-                        op_table["div"] = Op.div;
-                        op_table["div.un"] = Op.div_un;
-                        op_table["rem"] = Op.rem;
-                        op_table["rem.un"] = Op.rem_un;
-                        op_table["and"] = Op.and;
-                        op_table["or"] = Op.or;
-                        op_table["xor"] = Op.xor;
-                        op_table["shl"] = Op.shl;
-                        op_table["shr"] = Op.shr;
-                        op_table["shr.un"] = Op.shr_un;
-                        op_table["neg"] = Op.neg;
-                        op_table["not"] = Op.not;
-                        op_table["conv.i1"] = Op.conv_i1;
-                        op_table["conv.i2"] = Op.conv_i2;
-                        op_table["conv.i4"] = Op.conv_i4;
-                        op_table["conv.i8"] = Op.conv_i8;
-                        op_table["conv.r4"] = Op.conv_r4;
-                        op_table["conv.r8"] = Op.conv_r8;
-                        op_table["conv.u4"] = Op.conv_u4;
-                        op_table["conv.u8"] = Op.conv_u8;
-                        op_table["conv.r.un"] = Op.conv_r_un;
-                        op_table["throw"] = Op.throwOp;
-                        op_table["conv.ovf.i1.un"] = Op.conv_ovf_i1_un;
-                        op_table["conv.ovf.i2.un"] = Op.conv_ovf_i2_un;
-                        op_table["conv.ovf.i4.un"] = Op.conv_ovf_i4_un;
-                        op_table["conv.ovf.i8.un"] = Op.conv_ovf_i8_un;
-                        op_table["conf.ovf.u1.un"] = Op.conf_ovf_u1_un;
-                        op_table["conv.ovf.u2.un"] = Op.conv_ovf_u2_un;
-                        op_table["conv.ovf.u4.un"] = Op.conv_ovf_u4_un;
-                        op_table["conv.ovf.u8.un"] = Op.conv_ovf_u8_un;
-                        op_table["conv.ovf.i.un"] = Op.conv_ovf_i_un;
-                        op_table["conv.ovf.u.un"] = Op.conv_ovf_u_un;
-                        op_table["ldlen"] = Op.ldlen;
-                        op_table["ldelem.i1"] = Op.ldelem_i1;
-                        op_table["ldelem.u1"] = Op.ldelem_u1;
-                        op_table["ldelem.i2"] = Op.ldelem_i2;
-                        op_table["ldelem.u2"] = Op.ldelem_u2;
-                        op_table["ldelem.i4"] = Op.ldelem_i4;
-                        op_table["ldelem.u4"] = Op.ldelem_u4;
-                        op_table["ldelem.i8"] = Op.ldelem_i8;
-                        op_table["ldelem.i"] = Op.ldelem_i;
-                        op_table["ldelem.r4"] = Op.ldelem_r4;
-                        op_table["ldelem.r8"] = Op.ldelem_r8;
-                        op_table["ldelem.ref"] = Op.ldelem_ref;
-                        op_table["stelem.i"] = Op.stelem_i;
-                        op_table["stelem.i1"] = Op.stelem_i1;
-                        op_table["stelem.i2"] = Op.stelem_i2;
-                        op_table["stelem.i4"] = Op.stelem_i4;
-                        op_table["stelem.i8"] = Op.stelem_i8;
-                        op_table["stelem.ref"] = Op.stelem_ref;
-                        op_table["conv.ovf.i1"] = Op.conv_ovf_i1;
-                        op_table["conv.ovf.u1"] = Op.conv_ovf_u1;
-                        op_table["conv.ovf.i2"] = Op.conv_ovf_i2;
-                        op_table["conv.ovf.u2"] = Op.conv_ovf_u2;
-                        op_table["conv.ovf.i4"] = Op.conv_ovf_i4;
-                        op_table["conv.ovf.u4"] = Op.conv_ovf_u4;
-                        op_table["conv.ovf.i8"] = Op.conv_ovf_i8;
-                        op_table["conv.ovf.u8"] = Op.conv_ovf_u8;
-                        op_table["ckfinite"] = Op.ckfinite;
-                        op_table["conv.u2"] = Op.conv_u2;
-                        op_table["conv.u1"] = Op.conv_u1;
-                        op_table["conv.i"] = Op.conv_i;
-                        op_table["conv.ovf.i"] = Op.conv_ovf_i;
-                        op_table["conv.ovf.u"] = Op.conv_ovf_u;
-                        op_table["add.ovf"] = Op.add_ovf;
-                        op_table["add.ovf.un"] = Op.add_ovf_un;
-                        op_table["mul.ovf"] = Op.mul_ovf;
-                        op_table["mul.ovf.un"] = Op.mul_ovf_un;
-                        op_table["sub.ovf"] = Op.sub_ovf;
-                        op_table["sub.ovf.un"] = Op.sub_ovf_un;
-                        op_table["endfinally"] = Op.endfinally;
-                        op_table["stind.i"] = Op.stind_i;
-                        op_table["conv.u"] = Op.conv_u;
-                        op_table["arglist"] = Op.arglist;
-                        op_table["ceq"] = Op.ceq;
-                        op_table["cgt"] = Op.cgt;
-                        op_table["cgt.un"] = Op.cgt_un;
-                        op_table["clt"] = Op.clt;
-                        op_table["clt.un"] = Op.clt_un;
-                        op_table["localloc"] = Op.localloc;
-                        op_table["endfilter"] = Op.endfilter;
-                        op_table["volatile."] = Op.volatile_;
-                        op_table["tail."] = Op.tail_;
-                        op_table["cpblk"] = Op.cpblk;
-                        op_table["initblk"] = Op.initblk;
-                        op_table["rethrow"] = Op.rethrow;
-                        op_table["refanytype"] = Op.refanytype;
-
-                }
-
-                private static void CreateIntTable ()
-                {
-                        int_table = new Hashtable ();
-
-                        int_table["ldarg.s"] = IntOp.ldarg_s;
-                        int_table["ldarga.s"] = IntOp.ldarga_s;
-                        int_table["starg.s"] = IntOp.starg_s;
-                        int_table["ldloc.s"] = IntOp.ldloc_s;
-                        int_table["ldloca.s"] = IntOp.ldloca_s;
-                        int_table["stloc.s"] = IntOp.stloc_s;
-                        int_table["ldc.i4.s"] = IntOp.ldc_i4_s;
-                        int_table["ldc.i4"] = IntOp.ldc_i4;
-                        int_table["ldc.i8"] = IntOp.ldc_i4;
-                        int_table["ldarg"] = IntOp.ldarg;
-                        int_table["ldarga"] = IntOp.ldarga;
-                        int_table["starf"] = IntOp.starg;
-                        int_table["ldloc"] = IntOp.ldloc;
-                        int_table["ldloca"] = IntOp.ldloca;
-                        int_table["stloc"] = IntOp.stloc;
-                        int_table["unaligned"] =  IntOp.unaligned;
-                }
-
-                public static void CreateTypeTable ()
-                {
-                        type_table = new Hashtable ();
-
-                        type_table["cpobj"] = TypeOp.cpobj;
-                        type_table["ldobj"] = TypeOp.ldobj;
-                        type_table["castclass"] = TypeOp.castclass;
-                        type_table["isinst"] = TypeOp.isinst;
-                        type_table["unbox"] = TypeOp.unbox;
-                        type_table["stobj"] = TypeOp.stobj;
-                        type_table["box"] = TypeOp.box;
-                        type_table["newarr"] = TypeOp.newarr;
-                        type_table["ldelema"] = TypeOp.ldelema;
-                        type_table["refanyval"] = TypeOp.refanyval;
-                        type_table["mkrefany"] = TypeOp.mkrefany;
-                        type_table["ldtoken"] = TypeOp.ldtoken;
-                        type_table["initobj"] = TypeOp.initobj;
-                        type_table["sizeof"] = TypeOp.sizeOf;
-                }
-
-                private static void CreateMethodTable ()
-                {
-                        method_table = new Hashtable ();
-
-                        method_table["jmp"] = MethodOp.jmp;
-                        method_table["call"] = MethodOp.call;
-                        method_table["callvirt"] = MethodOp.callvirt;
-                        method_table["newobj"] = MethodOp.newobj;
-                        method_table["ldtoken"] = MethodOp.ldtoken;
-                        method_table["ldftn"] = MethodOp.ldftn;
-                        method_table["ldvirtftn"] = MethodOp.ldvirtfn;
-                }
-
-                private static void CreateFieldTable ()
-                {
-                        field_table = new Hashtable ();
-
-                        field_table["ldfld"] = FieldOp.ldfld;
-                        field_table["ldflda"] = FieldOp.ldflda;
-                        field_table["stfld"] = FieldOp.stfld;
-                        field_table["ldsfld"] = FieldOp.ldsfld;
-                        field_table["ldsflda"] = FieldOp.ldsflda;
-                        field_table["stsfld"] = FieldOp.stsfld;
-                        field_table["ldtoken"] = FieldOp.ldtoken;
-                }
-
-                /// TODO: .s needs fixin
-                private static void CreateBranchTable ()
-                {
-                        branch_table = new Hashtable ();
-
-                        branch_table["br"] = BranchOp.br;
-                        branch_table["brfalse"] = BranchOp.brfalse;
-                        branch_table["brtrue"] = BranchOp.brtrue;
-                        branch_table["beq"] = BranchOp.beq;
-                        branch_table["bge"] = BranchOp.bge;
-                        branch_table["bgt"] = BranchOp.bgt;
-                        branch_table["ble"] = BranchOp.ble;
-                        branch_table["blt"] = BranchOp.blt;
-                        branch_table["bne.un"] = BranchOp.bne_un;
-                        branch_table["bge.un"] = BranchOp.bge_un;
-                        branch_table["bgt.un"] = BranchOp.bgt_un;
-                        branch_table["ble.un"] = BranchOp.ble_un;
-                        branch_table["blt.un"] = BranchOp.blt_un;
-                        branch_table["leave"] = BranchOp.leave;
-
-                        branch_table["br.s"] = BranchOp.br;
-                        branch_table["brfalse.s"] = BranchOp.brfalse;
-                        branch_table["brtrue.s"] = BranchOp.brtrue;
-                        branch_table["beq.s"] = BranchOp.beq;
-                        branch_table["bge.s"] = BranchOp.bge;
-                        branch_table["bgt.s"] = BranchOp.bgt;
-                        branch_table["ble.s"] = BranchOp.ble;
-                        branch_table["blt.s"] = BranchOp.blt;
-                        branch_table["bne.un.s"] = BranchOp.bne_un;
-                        branch_table["bge.un.s"] = BranchOp.bge_un;
-                        branch_table["bgt.un.s"] = BranchOp.bgt_un;
-                        branch_table["ble.un.s"] = BranchOp.blt_un;
-                        branch_table["leave.s"] = BranchOp.leave;
-                }
         }
 
 }
