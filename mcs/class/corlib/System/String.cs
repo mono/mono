@@ -967,7 +967,10 @@ namespace System
 			return Concat (s1, s2, s3);
 		}
 
-		public static String Concat (Object obj1, Object obj2, Object obj3, Object obj4)
+		//
+		// Do *not* remove `internal' from that method
+		//
+		internal static String Concat (Object obj1, Object obj2, Object obj3, Object obj4)
 		{
 			string s1, s2, s3, s4;
 
