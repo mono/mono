@@ -3,8 +3,10 @@
 //
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
+//      Tim Coleman (tim@timcoleman.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) Tim Coleman, 2004
 //
 
 using System.Xml;
@@ -15,6 +17,10 @@ namespace System.Security.Cryptography.Xml {
 
 		private string URI;
 
+#if NET_1_2
+		string type;
+#endif
+
 		public KeyInfoRetrievalMethod () {}
 
 		public KeyInfoRetrievalMethod (string strUri) 
@@ -22,10 +28,24 @@ namespace System.Security.Cryptography.Xml {
 			URI = strUri;
 		}
 
+#if NET_1_2
+		public KeyInfoRetrievalMethod (string strUri, string strType)
+			: this (strUri)
+		{
+			Type = strType;
+		}
+
+		public string Type {
+			get { return type; }
+			set { type = value; }
+		}
+#endif
+
 		public string Uri {
 			get { return URI; }
 			set { URI = value; }
 		}
+
 
 		public override XmlElement GetXml () 
 		{
@@ -33,6 +53,10 @@ namespace System.Security.Cryptography.Xml {
 			XmlElement xel = document.CreateElement (XmlSignature.ElementNames.RetrievalMethod, XmlSignature.NamespaceURI);
 			if (URI != null)
 				xel.SetAttribute (XmlSignature.AttributeNames.URI, URI);
+#if NET_1_2
+			if (Type != null)
+				xel.SetAttribute (XmlSignature.AttributeNames.Type, Type);
+#endif
 			return xel;
 		}
 
@@ -41,10 +65,15 @@ namespace System.Security.Cryptography.Xml {
 			if (value == null)
 				throw new ArgumentNullException ();
 
-			if ((value.LocalName != XmlSignature.ElementNames.RetrievalMethod) || (value.NamespaceURI != XmlSignature.NamespaceURI))
+			if ((value.LocalName != XmlSignature.ElementNames.RetrievalMethod) || (value.NamespaceURI != XmlSignature.NamespaceURI)) {
 				URI = ""; // not null - so we return URI="" as attribute !!!
-			else
+			} else {
 				URI = value.Attributes [XmlSignature.AttributeNames.URI].Value;
+#if NET_1_2
+				if (value.HasAttribute (XmlSignature.AttributeNames.Type))
+					Type = value.Attributes [XmlSignature.AttributeNames.Type].Value;
+#endif
+			}
 		}
 	}
 }

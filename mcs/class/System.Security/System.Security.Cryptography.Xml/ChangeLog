@@ -1,3 +1,13 @@
+2004-02-07  Tim Coleman <tim@timcoleman.com>
+	* CipherData.cs CipherReference.cs EncryptedData.cs
+	* EncryptedReference.cs EncryptedType.cs EncryptionMethod.cs
+	* EncryptionProperties.cs EncryptionProperty.cs XmlEncryption.cs:
+		New classes added for Xml Encryption in 1.2
+	* KeyInfoRetrievalMethod.cs:
+		Added Type attribute for 1.2
+	* XmlSignature.cs:
+		Added string constants for algorithm namespaces
+
 2004-01-11  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* SignedXml.cs: Fixed class signature (for 1.1+) by adding public to 

@@ -63,6 +63,15 @@ namespace System.Security.Cryptography.Xml {
 			public AttributeNames () {}
 		}
 
+		public class AlgorithmNamespaces {
+			public const string XmlDsigBase64Transform = "http://www.w3.org/2000/09/xmldsig#base64";
+			public const string XmlDsigC14NTransform = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
+			public const string XmlDsigC14NWithCommentsTransform = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments";
+			public const string XmlDsigEnvelopedSignatureTransform = "http://www.w3.org/2000/09/xmldsig#enveloped-signature";
+			public const string XmlDsigXPathTransform = "http://www.w3.org/TR/1999/REC-xpath-19991116";
+			public const string XmlDsigXsltTransform =  "http://www.w3.org/TR/1999/REC-xslt-19991116";
+		}
+
 		public const string NamespaceURI = "http://www.w3.org/2000/09/xmldsig#";
 		public const string Prefix = "ds";
 
