@@ -20,6 +20,7 @@ namespace MonoTests
 		public static ITest Suite {
 			get {
 				TestSuite suite = new TestSuite();
+				suite.AddTest (System.AllTests.Suite);
 				suite.AddTest (System.Net.DnsTest.Suite);
 				suite.AddTest (System.Collections.Specialized.NameValueCollectionTest.Suite);
 				suite.AddTest (System.Collections.Specialized.StringCollectionTest.Suite);

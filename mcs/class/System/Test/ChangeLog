@@ -1,3 +1,7 @@
+2002/05/09  Lawrence Pit  <loz@cable.a2000.nl>
+
+	* AllTests.cs: added System.AllTests
+
 2002/05/07  Nick Drochak <ndrochak@gol.com>
 
 	* AllTests.cs: Run the System.Net tests from here.
