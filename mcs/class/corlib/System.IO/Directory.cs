@@ -74,21 +74,20 @@ namespace System.IO
 		
 		public static void Delete (string path)
 		{
-			if (path == null) {
+			if (path == null)
 				throw new ArgumentNullException ("path");
-			}
 			
-			if (path == "") {
+			if (path == "")
 				throw new ArgumentException ("Path is empty");
-			}
 			
-			if (path.IndexOfAny (Path.InvalidPathChars) != -1) {
+			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ("Path contains invalid chars");
-			}
+
 			if (path.Trim().Length == 0)
 				throw new ArgumentException ("Only blank characters in path");
+
 			if (path == ":")
-				throw new NotSupportedException ("Only ':' In path");		       
+				throw new NotSupportedException ("Only ':' In path");
 
 			MonoIOError error;
 			
@@ -101,8 +100,7 @@ namespace System.IO
 				if (error == MonoIOError.ERROR_FILE_NOT_FOUND) 
 					throw new DirectoryNotFoundException ("Directory '" + path + "' doesnt exists.");
 				else
-					throw MonoIO.GetException (path,
-								   error);
+					throw MonoIO.GetException (path, error);
 			}
 		}
 
@@ -252,6 +250,10 @@ namespace System.IO
 				throw new ArgumentException ("Path contains invalid characters");
 			if (path == "")
 				throw new ArgumentException ("The Path do not have a valid format");
+
+                        // return null if the path is the root directory
+                        if (path == "/")
+                                return null;
 			
 			return new DirectoryInfo (Path.GetDirectoryName (path));
 		}
