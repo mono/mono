@@ -131,11 +131,10 @@ namespace Mono.PEToolkit {
 				
 				reader.BaseStream.Position = RVAToVA(peHdr.CLIHdrDir.virtAddr);
 				corHdr.Read (reader);
-				
+
 				mdRoot = new MetaDataRoot(this);
 				reader.BaseStream.Position = RVAToVA(corHdr.MetaData.virtAddr);
 				mdRoot.Read(reader);
-				
 			}
 			
 		}
@@ -153,18 +152,17 @@ namespace Mono.PEToolkit {
 			
 			WriteSections (writer);
 			
-			/*
 			if (this.IsCLI) {
 				
-				reader.BaseStream.Position = RVAToVA(peHdr.CLIHdrDir.virtAddr);
-				corHdr.Read (reader);
-				
+				writer.BaseStream.Position = RVAToVA (peHdr.CLIHdrDir.virtAddr);
+				corHdr.Write (writer);
+			/*	
 				mdRoot = new MetaDataRoot(this);
 				reader.BaseStream.Position = RVAToVA(corHdr.MetaData.virtAddr);
 				mdRoot.Read(reader);
-				
+			*/	
 			}
-			*/
+			
 		}
 
 		/// <summary>
