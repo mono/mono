@@ -1031,6 +1031,12 @@ namespace System.Windows.Forms {
                 ControlMask		= (1 << 2)
         }
 
+	[StructLayout (LayoutKind.Sequential)]
+	internal struct XModifierKeymap {
+		public int max_keypermod;
+		public IntPtr modifiermap;
+	} 
+
 	internal enum PropertyMode {
 		Replace			= 0,
 		Prepend			= 1,

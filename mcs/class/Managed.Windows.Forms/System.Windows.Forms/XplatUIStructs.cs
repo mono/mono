@@ -601,6 +601,23 @@ namespace System.Windows.Forms {
 		XK_Delete		= 0xffff  /* Delete, rubout */
 	}
 
+	internal enum MiscKeys {
+		XK_Select		= 0xff60,
+		XK_Print		= 0xff61,
+		XK_Execute		= 0xff62,
+		XK_Insert		= 0xff63,
+		XK_Undo			= 0xff65,
+		XK_Redo			= 0xff66,
+		XK_Menu			= 0xff67,
+		XK_Find			= 0xff68,
+		XK_Cancel		= 0xff69,
+		XK_Help			= 0xff6a,
+		XK_Break		= 0xff6b,
+		XK_Mode_switch		= 0xff7e,
+		XK_script_switch	= 0xff7e,
+		XK_Num_Lock		= 0xff7f
+	}
+
 	internal enum KeypadKeys {
 		XK_KP_Space		= 0xff80,
 		XK_KP_Tab		= 0xff89,

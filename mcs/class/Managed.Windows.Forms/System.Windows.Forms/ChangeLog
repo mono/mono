@@ -1,3 +1,7 @@
+2004-12-16  Jackson Harper  <jackson@ximian.com>
+
+	* X11Keyboard.cs: Detect and use the num lock mask.
+
 2004-12-16  Peter Bartok  <pbartok@novell.com>
 
 	* Control.cs (CreateGraphics): Added check to make sure the
