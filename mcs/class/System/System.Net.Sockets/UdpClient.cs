@@ -17,49 +17,47 @@ namespace System.Net.Sockets
 		private bool disposed = false;
 		private bool active = false;
 		private Socket socket;
-		private IPEndPoint localEP;
 		
 #region Constructors
 		public UdpClient ()
 		{
-			localEP = new IPEndPoint (IPAddress.Any, 0);
-			InitSocket ();
+			InitSocket (null);
 		}
 
 		public UdpClient (int port)
 		{
-			// IPEndPoint throws ArgumentException when port is invalid
-			localEP = new IPEndPoint (IPAddress.Any, port);
-			InitSocket ();
+			if (port < IPEndPoint.MinPort || port > IPEndPoint.MaxPort)
+				throw new ArgumentOutOfRangeException ("port");
+
+			IPEndPoint localEP = new IPEndPoint (IPAddress.Any, port);
+			InitSocket (localEP);
 		}
 
 		public UdpClient (IPEndPoint localEP)
 		{
 			if (localEP == null)
-				throw new ArgumentNullException ("IPEndPoint cannot be null");
+				throw new ArgumentNullException ("localEP");
 
-			this.localEP = localEP;
-			InitSocket ();
+			InitSocket (localEP);
 		}
 
 		public UdpClient (string hostname, int port)
 		{
 			if (hostname == null)
-				throw new ArgumentNullException ("hostname cannot be null");
+				throw new ArgumentNullException ("hostname");
 
 			if (port < IPEndPoint.MinPort || port > IPEndPoint.MaxPort)
-				throw new ArgumentException ("Invalid port");
+				throw new ArgumentOutOfRangeException ("port");
 
-			localEP = new IPEndPoint (IPAddress.Any, 0);
-			InitSocket ();
+			InitSocket (null);
 			Connect (hostname, port);
 		}
 
-		private void InitSocket ()
+		private void InitSocket (EndPoint localEP)
 		{
-			active = false;
 			socket = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-			socket.Bind (localEP);
+			if (localEP != null)
+				socket.Bind (localEP);
 		}
 
 #endregion // Constructors
@@ -73,115 +71,110 @@ namespace System.Net.Sockets
 #region Connect
 		public void Connect (IPEndPoint endPoint)
 		{
-			try {
-				socket.Connect (endPoint);
-				active = true;
-			} finally {
-				CheckDisposed ();
-			}
+			CheckDisposed ();
+			if (endPoint == null)
+				throw new ArgumentNullException ("endPoint");
+
+			socket.Connect (endPoint);
+			active = true;
 		}
 
 		public void Connect (IPAddress addr, int port)
 		{
+			if (addr == null)
+				throw new ArgumentNullException ("addr");
+
+			if (port < IPEndPoint.MinPort || port > IPEndPoint.MaxPort)
+				throw new ArgumentOutOfRangeException ("port");
+
 			Connect (new IPEndPoint (addr, port));
 		}
 
 		public void Connect (string hostname, int port)
 		{
+			if (port < IPEndPoint.MinPort || port > IPEndPoint.MaxPort)
+				throw new ArgumentOutOfRangeException ("port");
+
 			Connect (new IPEndPoint (Dns.Resolve (hostname).AddressList [0], port));
 		}
 #endregion
 #region Multicast methods
 		public void DropMulticastGroup (IPAddress multicastAddr)
 		{
-			try {
-				socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.DropMembership,
-							new MulticastOption (multicastAddr));
-			} finally {
-				CheckDisposed ();
-			}
+			CheckDisposed ();
+			if (multicastAddr == null)
+				throw new ArgumentNullException ("multicastAddr");
+
+			socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.DropMembership,
+						new MulticastOption (multicastAddr));
 		}
 
 		public void JoinMulticastGroup (IPAddress multicastAddr)
 		{
-			try {
-				socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.AddMembership,
-							new MulticastOption (multicastAddr));
-			} finally {
-				CheckDisposed ();
-			}
+			CheckDisposed ();
+			socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.AddMembership,
+						new MulticastOption (multicastAddr));
 		}
 
 		public void JoinMulticastGroup (IPAddress multicastAddr, int timeToLive)
 		{
+			CheckDisposed ();
 			JoinMulticastGroup (multicastAddr);
-			try {
-				socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive,
-							timeToLive);
-			} finally {
-				CheckDisposed ();
-			}
+			if (timeToLive < 0 || timeToLive > 255)
+				throw new ArgumentOutOfRangeException ("timeToLive");
+
+			socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive,
+						timeToLive);
 		}
 #endregion
 #region Data I/O
 		public byte [] Receive (ref IPEndPoint remoteEP)
 		{
-			try {
-				// Length of the array for receiving data??
-				byte [] recBuffer;
-				int available = socket.Available;
-				if (available < 512)
-					available = 512;
+			CheckDisposed ();
+			// Length of the array for receiving data??
+			byte [] recBuffer;
+			int available = socket.Available;
+			if (available < 512)
+				available = 512;
 
-				recBuffer = new byte [available];
-				EndPoint endPoint = new IPEndPoint (IPAddress.Any, 0);
-				int dataRead = socket.ReceiveFrom (recBuffer, ref endPoint);
-				if (dataRead < recBuffer.Length)
-					recBuffer = CutArray (recBuffer, dataRead);
+			recBuffer = new byte [available];
+			EndPoint endPoint = new IPEndPoint (IPAddress.Any, 0);
+			int dataRead = socket.ReceiveFrom (recBuffer, ref endPoint);
+			if (dataRead < recBuffer.Length)
+				recBuffer = CutArray (recBuffer, dataRead);
 
-				remoteEP = (IPEndPoint) endPoint;
-				return recBuffer;
-			} finally {
-				CheckDisposed ();
-			}
+			remoteEP = (IPEndPoint) endPoint;
+			return recBuffer;
 		}
 
 		public int Send (byte [] dgram, int bytes)
 		{
-			try {
-				if (dgram == null)
-					throw new ArgumentNullException ("dgram is null");
+			CheckDisposed ();
+			if (dgram == null)
+				throw new ArgumentNullException ("dgram");
 
-				byte [] realDgram;
-				if (dgram.Length <= bytes)
-					realDgram = dgram;
-				else
-					realDgram = CutArray (dgram, (bytes >= dgram.Length) ? bytes : dgram.Length);
+			if (!active)
+				throw new InvalidOperationException ("Operation not allowed on " + 
+								     "non-connected sockets.");
 
-				// the socket should be connected already, so I use Send instead of SendTo
-				return socket.Send (realDgram);
-			} finally {
-				CheckDisposed ();
-			}
+			return socket.Send (dgram, 0, bytes, SocketFlags.None);
 		}
 
 		public int Send (byte [] dgram, int bytes, IPEndPoint endPoint)
 		{
-			try {
-				if (dgram == null)
-					throw new ArgumentNullException ("dgram is null");
+			CheckDisposed ();
+			if (dgram == null)
+				throw new ArgumentNullException ("dgram is null");
+			
+			if (active) {
+				if (endPoint != null)
+					throw new InvalidOperationException ("Cannot send packets to an " +
+									     "arbitrary host while connected.");
 
-				byte [] realDgram;
-				if (dgram.Length <= bytes)
-					realDgram = dgram;
-				else
-					realDgram = CutArray (dgram, (bytes >= dgram.Length) ? bytes : dgram.Length);
-
-				// the socket should not be connected
-				return socket.SendTo (realDgram, endPoint);
-			} finally {
-				CheckDisposed ();
+				return socket.Send (dgram, 0, bytes, SocketFlags.None);
 			}
+			
+			return socket.SendTo (dgram, 0, bytes, SocketFlags.None, endPoint);
 		}
 
 		public int Send (byte [] dgram, int bytes, string hostname, int port)
@@ -193,7 +186,7 @@ namespace System.Net.Sockets
 		private byte [] CutArray (byte [] orig, int length)
 		{
 			byte [] newArray = new byte [length];
-			Array.Copy (orig, 0, newArray, 0, length);
+			Buffer.BlockCopy (orig, 0, newArray, 0, length);
 
 			return newArray;
 		}
@@ -209,26 +202,6 @@ namespace System.Net.Sockets
 			set { socket = value; }
 		}
 #endregion
-
-/* 
-// commented because in the ms.net implementation these are not overriden. -- LP
-#region Overrides
-		public override bool Equals (object obj)
-		{
-			if (obj is UdpClient)
-				return (((UdpClient) obj).socket  == socket &&
-					((UdpClient) obj).localEP == localEP);
-
-			return false;
-		}
-
-		public override int GetHashCode ()
-		{
-			return (socket.GetHashCode () + localEP.GetHashCode () + (active ? 1 : 0));
-		}
-#endregion
-*/
-
 #region Disposing
 		void IDisposable.Dispose ()
 		{
@@ -243,7 +216,6 @@ namespace System.Net.Sockets
 			disposed = true;
 			if (disposing) {
 				// release managed resources
-				localEP = null;
 			}			
 			// release unmanaged resources
 			Socket s = socket;

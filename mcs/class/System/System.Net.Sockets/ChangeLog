@@ -1,3 +1,11 @@
+2003-03-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UdpClient.cs: don't bind the socket unless .ctor (IPEndPoint) is used.
+	Added more checks and throws.
+	Small fixes in Send to avoid duplicating the buffer.
+	Moved CheckIfDisposed calls to the start of the methods instead of doing
+	the check inside a finally clause.
+
 2003-03-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs:
