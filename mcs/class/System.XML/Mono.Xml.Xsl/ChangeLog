@@ -1,3 +1,8 @@
+2003-09-17 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* Compiler.cs (IStaticXsltContext.TryGetVariable): handle the case
+	where curVarScope == null
+
 2003-09-16 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Compiler.cs: 

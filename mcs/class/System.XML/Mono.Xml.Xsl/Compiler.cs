@@ -419,8 +419,14 @@ namespace Mono.Xml.Xsl {
 #region Static XSLT context
 		Expression IStaticXsltContext.TryGetVariable (string nm)
 		{
+			if (curVarScope == null)
+				return null;
+			
 			XslLocalVariable var = curVarScope.ResolveStatic (XslNameUtil.FromString (nm, Input));
-			if (var == null) return null;
+			
+			if (var == null)
+				return null;
+			
 			return new XPathVariableBinding (var);
 		}
 		
