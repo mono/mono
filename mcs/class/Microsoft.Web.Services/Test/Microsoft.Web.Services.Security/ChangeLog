@@ -1,3 +1,7 @@
+2003-10-24 Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* SignatureTest.cs: New. Basic tests for Signature.
+
 2003-10-22 Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* KeyIdentifierTest.cs: New. Unit tests for KeyIdentifier.
