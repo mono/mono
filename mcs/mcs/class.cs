@@ -1245,16 +1245,16 @@ namespace Mono.CSharp {
 				filter = accepting_filter; 
 			
 			if ((mt & MemberTypes.Field) != 0) {
-				if (Fields != null) {
-					foreach (Field f in Fields) {
+				if (fields != null) {
+					foreach (Field f in fields) {
 						FieldBuilder fb = f.FieldBuilder;
 						if (filter (fb, criteria) == true)
 							members.Add (fb);
 					}
 				}
 
-				if (Constants != null) {
-					foreach (Const con in Constants) {
+				if (constants != null) {
+					foreach (Const con in constants) {
 						FieldBuilder fb = con.FieldBuilder;
 						if (filter (fb, criteria) == true)
 							members.Add (fb);
@@ -1263,8 +1263,8 @@ namespace Mono.CSharp {
 			}
 
 			if ((mt & MemberTypes.Method) != 0) {
-				if (Methods != null) {
-					foreach (Method m in Methods) {
+				if (methods != null) {
+					foreach (Method m in methods) {
 						MethodBuilder mb = m.MethodBuilder;
 
 						// If we are in transit, ignore
@@ -1279,8 +1279,8 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (Operators != null){
-					foreach (Operator o in Operators) {
+				if (operators != null){
+					foreach (Operator o in operators) {
 						MethodBuilder ob = o.OperatorMethodBuilder;
 
 						if (filter (ob, criteria) == true)
@@ -1290,23 +1290,23 @@ namespace Mono.CSharp {
 			}
 
 			if ((mt & MemberTypes.Event) != 0) {
-				if (Events != null)
-				        foreach (Event e in Events) {
+				if (events != null)
+				        foreach (Event e in events) {
 						if (filter (e.EventBuilder, criteria) == true)
 						        members.Add (e.EventBuilder);
 					}
 			}
 			
 			if ((mt & MemberTypes.Property) != 0){
-				if (Properties != null)
-					foreach (Property p in Properties) {
+				if (properties != null)
+					foreach (Property p in properties) {
 						if (filter (p.PropertyBuilder, criteria) == true) {
 							members.Add (p.PropertyBuilder);
 						}
 					}
 
-				if (Indexers != null)
-					foreach (Indexer ix in Indexers) {
+				if (indexers != null)
+					foreach (Indexer ix in indexers) {
 						if (filter (ix.PropertyBuilder, criteria) == true) {
 							members.Add (ix.PropertyBuilder);
 						}
@@ -1775,7 +1775,6 @@ namespace Mono.CSharp {
 		//
 		static public bool AsAccessible (Type type, int flags)
 		{
-			// FIXME: Implement me
 			return true;
 		}
 
@@ -2064,6 +2063,7 @@ namespace Mono.CSharp {
 			if (!parent.MethodModifiersValid (ModFlags, Name, Location))
 				return false;
 
+			flags = Modifiers.MethodAttr (ModFlags);
 			//
 			// verify accessibility
 			//
@@ -2130,7 +2130,6 @@ namespace Mono.CSharp {
 			//
 			// If we implement an interface, extract the interface name.
 			//
-			flags = Modifiers.MethodAttr (ModFlags);
 
 			if (Name.IndexOf (".") != -1){
 				int pos = Name.LastIndexOf (".");

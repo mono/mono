@@ -747,7 +747,7 @@ namespace Mono.CSharp {
 
 			return null;
 		}
-		
+
 		public bool AddVariable (string type, string name, Parameters pars, Location l)
 		{
 			if (variables == null)
@@ -931,7 +931,7 @@ namespace Mono.CSharp {
 					string name = (string) de.Key;
 					VariableInfo vi = (VariableInfo) de.Value;
 					Type t;
-					
+
 					t = RootContext.LookupType (tc, vi.Type, false, vi.Location);
 					if (t == null)
 						continue;

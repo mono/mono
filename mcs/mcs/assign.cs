@@ -52,7 +52,13 @@ namespace Mono.CSharp {
 			builder = ec.GetTemporaryStorage (t);
 		}
 
-		public LocalTemporary (LocalBuilder b, Type t)
+		public void Release (EmitContext ec)
+		{
+			ec.FreeTemporaryStorage (builder);
+			builder = null;
+		}
+		
+		Public LocalTemporary (LocalBuilder b, Type t)
 		{
 			type = t;
 			eclass = ExprClass.Value;
@@ -245,6 +251,7 @@ namespace Mono.CSharp {
 				tempo.Store (ec);
 				am.EmitAssign (ec, tempo);
 				tempo.Emit (ec);
+				tempo.Release (ec);
 			}
 		}
 		

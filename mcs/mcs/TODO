@@ -157,6 +157,10 @@ PENDING TASKS
 OPTIMIZATIONS
 -------------
 
+* Use of local temporary in UnaryMutator
+
+	We should get rid of the Localtemporary there for some cases
+
 * Emitcontext
 
 	Do we really need to instanciate this variable all the time?

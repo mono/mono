@@ -310,7 +310,7 @@ namespace Mono.CSharp
 			// This is not required because Assembly.Load knows about this
 			// path.
 			//
-			link_paths.Add (GetSystemDir ()); 
+			link_paths.Add (GetSystemDir ());
 
 			int argc = args.Length;
 			for (i = 0; i < argc; i++){
@@ -532,6 +532,7 @@ namespace Mono.CSharp
 					first_source = arg;
 
 				string [] files = Directory.GetFiles (".", arg);
+				
 				foreach (string f in files){
 					if (!f.ToLower ().EndsWith (".cs")){
 						error ("Do not know how to compile " + arg);

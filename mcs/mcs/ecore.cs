@@ -3100,9 +3100,10 @@ namespace Mono.CSharp {
 			} else {
 				if (InstanceExpression.Type.IsValueType){
 					IMemoryLocation ml;
+					LocalTemporary tempo = null;
 					
 					if (!(InstanceExpression is IMemoryLocation)){
-						LocalTemporary tempo = new LocalTemporary (
+						tempo = new LocalTemporary (
 							ec, InstanceExpression.Type);
 
 						InstanceExpression.Emit (ec);
