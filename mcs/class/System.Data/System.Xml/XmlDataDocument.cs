@@ -34,6 +34,10 @@ namespace System.Xml
 
 	public class XmlDataDocument : XmlDocument 
 	{
+		// Should we consider overriding CloneNode() ? By default
+		// base CloneNode() will be invoked and thus no DataRow conflict
+		// would happen, that sounds the best (that means, no mapped
+		// DataRow will be provided).
 		internal class XmlDataElement : XmlElement
 		{
 			DataRow row;
@@ -45,12 +49,12 @@ namespace System.Xml
 				// Embed row ID only when the element is mapped to
 				// certain DataRow.
 				if (row != null) {
+					row.DataElement = this;
 					row.XmlRowID = doc.dataRowID;
 					doc.dataRowIDList.Add (row.XmlRowID);
 					// It should not be done here. The node is detached
 					// dt.Rows.Add (tempRow);
 					doc.dataRowID++;
-					doc.mappedRows.Add (row, this);
 				}
 			}
 
@@ -65,8 +69,6 @@ namespace System.Xml
 
 		private int dataRowID = 1;
 		private ArrayList dataRowIDList = new ArrayList ();
-
-		private Hashtable mappedRows = new Hashtable ();
 
 		// this keeps whether table change events should be handles
 		private bool raiseDataSetEvents = true;
@@ -114,9 +116,8 @@ namespace System.Xml
 				FillNodeRows (docElem, dt, dt.Rows);
 			}
 
-			// FIXME: This is required to avoid Load() error when for
-			// example empty DataSet will be filled on Load(), but
-			// not sure if it works correct.
+			// This seems required to avoid Load() error when for
+			// example empty DataSet will be filled on Load().
 			if (docElem.ChildNodes.Count > 0)
 				AppendChild (docElem);
 
@@ -192,7 +193,6 @@ namespace System.Xml
 						XmlText t = CreateTextNode (value);
 						el.AppendChild (t);
 						break;
-					// FIXME: What to do for Hidden?
 					}
 				}
 				foreach (DataRelation rel in dt.ChildRelations)
@@ -251,15 +251,13 @@ namespace System.Xml
 		}
 
 		// get the XmlElement associated with the DataRow
-		[MonoTODO ("Exceptions")]
 		public XmlElement GetElementFromRow (DataRow r) 
 		{
-			return mappedRows [r] as XmlDataElement;
+			return r.DataElement;
 		}
 
 		// get the DataRow associated with the XmlElement
-		[MonoTODO ("Exceptions")]
-		public DataRow GetRowFromElement(XmlElement e)
+		public DataRow GetRowFromElement (XmlElement e)
 		{
 			XmlDataElement el = e as XmlDataElement;
 			if (el == null)
@@ -369,6 +367,7 @@ namespace System.Xml
 			raiseDataSetEvents = false;
 
 			try {
+				// FIXME: This code is obsolete one.
 
 				if (args.OldParent == null)
 					return;
