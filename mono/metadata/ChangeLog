@@ -1,3 +1,8 @@
+2005-02-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* loader.c (mono_lookup_pinvoke_call): Add brute-force checking for mangled function names
+	under win32.
+	
 2005-02-05  Ben Maurer  <bmaurer@ximian.com>
 
 	* mono-debug-debugger.c: use iters
