@@ -44,6 +44,7 @@ namespace demo2
 
 			menuItem1.Text = "File";
 			menuItem2.Text = "Exit";
+			menuItem2.Click += new EventHandler(this.menuItem2_Click);
 			menuItem3.Text = "Edit";
 			menuItem4.Text = "&Stop";
 			menuItem4.Click += new EventHandler(this.menuItem4_Click);
@@ -88,9 +89,12 @@ namespace demo2
 			for (int i = 1; i < 5; i++) {combo1.Items.Add("Joel");}
 			combo1.EndUpdate();	
   		}
+		private void  menuItem2_Click (object sender, EventArgs e){
+			MessageBox.Show("You clicked Exit");
+		}
 		
 		private void menuItem4_Click(object sender, EventArgs e){
-    		MessageBox.Show("You clicked Start");
+    			MessageBox.Show("You clicked Start");
   		}
 
 	 }
