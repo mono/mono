@@ -1,3 +1,10 @@
+2004-08-25  Sanjay Gupta <gsanjay@novell.com>
+
+	* MailMessageWrapper.cs: Added NET_2_0 property and another missing 
+	property from NET_1_1.
+	* RelatedBodyPart.cs: Error detection and handling.
+	* SmtpClient.cs: Upgraded for NET_1_1 and WIP for NET_2_0.
+
 2004-08-18  Sanjay Gupta <gsanjay@novell.com>
 	
 	* MailEncoding.cs:

@@ -29,7 +29,7 @@
 //
 
 #if NET_2_0
-
+using System.Web;
 namespace System.Web.Mail 
 {
 	public class RelatedBodyPart
@@ -40,7 +40,10 @@ namespace System.Web.Mail
 		public RelatedBodyPart (string id, string fileName)
 		{
 			this.id = id;
-			this.fileName = fileName;
+			if (FileExists (fileName))
+				this.fileName = fileName;
+			else
+				throw new HttpException(500, "Invalid related body part");
 		}
 		
 		public string Name {
@@ -51,6 +54,18 @@ namespace System.Web.Mail
 		public string Path {
 			get { return fileName; }
 			set { fileName = value; }
+		}
+		
+		private bool FileExists (string fileName)
+		{
+			//I am handling local files only . Not sure how URL's
+			//need to be handled.
+			try {
+				System.IO.File.OpenRead (fileName).Close ();
+				return true;
+			} catch (Exception) {
+			    return false;
+			}
 		}
 	}
 }

@@ -3,9 +3,10 @@
 //
 // Author(s):
 //   Per Arneng <pt99par@student.bth.se>
+//   Sanjay Gupta <gsanjay@novell.com>
 //
+//   (C) 2004, Novell, Inc. (http://www.novell.com)
 //
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -51,8 +52,8 @@ namespace System.Web.Mail {
 	    this.message = message;
 	    
 	    if( message.From != null ) {
-		from = MailAddress.Parse( message.From );
-		header.From = from.ToString();
+			from = MailAddress.Parse( message.From );
+			header.From = from.ToString();
 	    }
 	    
 	    if( message.To != null ) {
@@ -69,8 +70,7 @@ namespace System.Web.Mail {
 		bcc = MailAddressCollection.Parse( message.Bcc );
 		header.Bcc = bcc.ToString();
 	    }
-
-	    
+   
 	    // set the subject
 	    if( message.Subject != null ) {
 		
@@ -227,6 +227,25 @@ namespace System.Web.Mail {
 	public string UrlContentLocation {
 	    get { return message.UrlContentLocation; } 
 	}
-    }
 
+#if NET_1_1
+		public MailHeader Fields {
+			get {
+					MailHeader bodyHeaders = new MailHeader();
+					// Add Fields to MailHeader Object
+					foreach( string key in message.Fields.Keys )
+						bodyHeaders.Data[ key ] = (string)this.message.Fields[ key ];
+
+					return bodyHeaders;
+			}
+			
+		}
+#endif
+
+#if NET_2_0
+		public IList RelatedBodyParts {
+			get { return message.RelatedBodyParts; }
+		}
+#endif
+    }	 
 }

@@ -3,7 +3,8 @@
 //
 // Author(s):
 //   Per Arneng <pt99par@student.bth.se>
-//
+//   Sanjay Gupta <gsanjay@novell.com>
+//   (C) 2004, Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -105,12 +106,15 @@ namespace System.Web.Mail {
 	    // write the data command and then
 	    // send the email
 	    smtp.WriteData();
-	   
-
-	    if( msg.Attachments.Count == 0 ) {
 		
-		SendSinglepartMail( msg );
-	    
+	    if( msg.Attachments.Count == 0 ) {
+#if NET_2_0
+		//The message might be multipart, if RelatedBodyParts are present
+		if (msg.RelatedBodyParts.Count != 0)
+			SendMultipartMail (msg);
+		else
+#endif		
+			SendSinglepartMail( msg );	    
 	    } else {
 		
 		SendMultipartMail( msg );
@@ -141,6 +145,12 @@ namespace System.Web.Mail {
 		
 	    // set the Content-Type header to multipart/mixed
 	    string bodyContentType = msg.Header.ContentType;
+
+#if NET_2_0
+		if (msg.RelatedBodyParts.Count != 0)
+			msg.Header.ContentType = String.Format( "multipart/related;\r\n   boundary={0}" , boundary );
+		else
+#endif
 	    msg.Header.ContentType = 
 		String.Format( "multipart/mixed;\r\n   boundary={0}" , boundary );
 		
@@ -152,17 +162,27 @@ namespace System.Web.Mail {
 	    smtp.WriteBoundary( boundary );
 		
 	    MailHeader partHeader = new MailHeader();
-	    partHeader.ContentType = bodyContentType;
-		
+	    partHeader.ContentType = bodyContentType;		
+
+#if NET_1_1
+		// Add all the custom headers to body part as specified in 
+		//Fields property of MailMessageWrapper
+		partHeader.Data.Add(msg.Fields.Data);
+#endif
+
 	    smtp.WriteHeader( partHeader );
-	    	
 	  
 	    // FIXME: probably need to use QP or Base64 on everything higher
 	    // then 8-bit .. like utf-16
 	    smtp.WriteBytes( msg.BodyEncoding.GetBytes( msg.Body )  );
 
 	    smtp.WriteBoundary( boundary );
-	    
+
+#if NET_2_0
+		//TODO Write the related body parts here
+		//Also check if there are no attachments then 
+		//WriteFinalBoundary(boundary) else call WriteBoundary (boundary)
+#endif	    
 	    // now start to write the attachments
 	    
 	    for( int i=0; i< msg.Attachments.Count ; i++ ) {
