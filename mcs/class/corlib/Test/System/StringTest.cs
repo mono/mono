@@ -1074,6 +1074,32 @@ public class StringTest : TestCase
 			     "originalbbb", s1.TrimStart(delims));
 	}
 
+	public void TestChars () {
+		// Check for invalid indexes
+		bool ok;
+		string s;
+		char c;
+
+		ok = false;
+		try {
+			s = "";
+			c = s[0];
+		}
+		catch (IndexOutOfRangeException ex) {
+			ok = true;
+		}
+		Assert (ok);
+
+		ok = false;
+		try {
+			s = "A";
+			c = s[-1];
+		}
+		catch (IndexOutOfRangeException ex) {
+			ok = true;
+		}
+		Assert (ok);
+	}
 }
 
 }

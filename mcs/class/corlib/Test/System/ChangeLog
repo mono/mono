@@ -1,3 +1,7 @@
+2003-01-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* StringTest.cs: Added tests for out-of-bounds indexes in GetChars().
+
 2003-01-13  Nick Drochak  <ndrochak@gol.com>
 
 	* DateTimeTest.cs: Use 2003, since that' the year now.  Need to work
