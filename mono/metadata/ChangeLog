@@ -9,6 +9,9 @@
 
 2005-01-12  Martin Baulig  <martin@ximian.com>
 
+	* class.c (mono_get_shared_generic_class): Use the cache for
+	non-dynamic generic classes.
+
 	* class-internals.h (mono_class_create_generic_2): Removed
 	function prototype, this function is now static inside class.c.
 
