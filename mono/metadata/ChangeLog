@@ -1,3 +1,7 @@
+2004-02-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (icall_entries): Diagnostic -> Diagnostics. Fixes #54261.
+
 2004-02-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: fixed WSAGetLastError_internal name.
