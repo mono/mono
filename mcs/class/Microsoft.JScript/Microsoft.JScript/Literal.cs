@@ -1,10 +1,10 @@
 //
-// Literal.cs: This class groups the differents types of Literals.
+// Literal.cs
 //
 // Author:
 //	Cesar Lopez Nataren (cesar@ciencias.unam.mx)
 //
-// (C) Cesar Lopez Nataren 
+// (C) 2003, 2004 Cesar Lopez Nataren 
 //
 
 //
@@ -30,6 +30,7 @@
 
 using System;
 using System.Reflection.Emit;
+using System.Collections;
 
 namespace Microsoft.JScript {
 
@@ -120,12 +121,89 @@ namespace Microsoft.JScript {
 			if (parent is Unary) {
 				Unary tmp = parent as Unary;
 				if (tmp.oper == JSToken.Minus)
-					ig.Emit (OpCodes.Ldc_I4, (int) (val * -1));
+					ig.Emit (OpCodes.Ldc_R8, (double) (val * -1));
 			} else
-				ig.Emit (OpCodes.Ldc_I4, (int) val);
-			ig.Emit (OpCodes.Box, typeof (System.Int32));
+				ig.Emit (OpCodes.Ldc_R8, (double) val);
+			ig.Emit (OpCodes.Box, typeof (System.Double));
 			if (no_effect)
 				ig.Emit (OpCodes.Pop);
+		}
+	}
+
+	public class ObjectLiteral : Exp {
+		
+		internal ArrayList elems;
+
+		internal ObjectLiteral (AST parent)
+		{
+			this.parent = parent;
+			elems = new ArrayList ();
+		}
+
+		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		{
+			this.no_effect = no_effect;
+			return Resolve (context);
+		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			bool r = true;
+			foreach (AST ast in elems)
+				r &= ast.Resolve (context);
+			return r;
+		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+
+			ig.Emit (OpCodes.Ldarg_0);
+			ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
+			ig.Emit (OpCodes.Call, typeof (Microsoft.JScript.Vsa.VsaEngine).GetMethod ("GetOriginalObjectConstructor"));
+			ig.Emit (OpCodes.Call, typeof (ObjectConstructor).GetMethod ("ConstructObject"));
+
+			foreach (ObjectLiteralItem item in elems) {
+				ig.Emit (OpCodes.Dup);
+				item.Emit (ec);
+				ig.Emit (OpCodes.Call, typeof (JSObject).GetMethod ("SetMemberValue2"));
+			}
+			if (no_effect)
+				ig.Emit (OpCodes.Pop);
+		}
+
+		internal void Add (ObjectLiteralItem item)
+		{
+			elems.Add (item);
+		}
+	}
+
+	internal class ObjectLiteralItem : AST {
+		internal string property_name;
+		internal AST exp;
+
+		internal ObjectLiteralItem ()
+		{
+		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			return exp.Resolve (context);
+		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			ec.ig.Emit (OpCodes.Ldstr, property_name);
+			exp.Emit (ec);
+		}
+	}
+
+	public class PropertyName {
+		string name;
+		internal string Name {
+			get { return name; }
+			set { name = value; }
 		}
 	}
 }
