@@ -28,7 +28,7 @@ namespace System.Globalization
 			= new string[13] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", ""};
 		private static readonly string[] INVARIANT_ERA_NAMES = {"A.D."};
 
-		internal static DateTimeFormatInfo theInvariantDateTimeFormatInfo;
+		private static DateTimeFormatInfo theInvariantDateTimeFormatInfo;
 
 		private bool readOnly;
 		private string _AMDesignator;
@@ -53,6 +53,14 @@ namespace System.Globalization
 		private string[] _MonthNames;
 		private string[] _AbbreviatedMonthNames;
 
+		// FIXME: not supported other than invariant
+		private string [] _ShortDatePatterns;
+		private string [] _LongDatePatterns;
+		private string [] _ShortTimePatterns;
+		private string [] _LongTimePatterns;
+		private string [] _MonthDayPatterns;
+		private string [] _YearMonthPatterns;
+
 		public DateTimeFormatInfo()
 		{
 			readOnly = false;
@@ -68,11 +76,14 @@ namespace System.Globalization
 			_YearMonthPattern = "yyyy MMMM";
 			_FullDateTimePattern = "dddd, dd MMMM yyyy HH:mm:ss";
 
-			// FIXME for the following three pattern: "The
+			// FIXME: for the following three pattern: "The
 			// default value of this property is derived
 			// from the calendar that is set for
 			// CultureInfo.CurrentCulture or the default
 			// calendar of CultureInfo.CurrentCulture."
+
+			// Actually, no predefined culture has different values
+			// than those default values.
 
 			_RFC1123Pattern = "ddd, dd MMM yyyy HH':'mm':'ss 'GMT'"; 
 			_SortableDateTimePattern = "yyyy'-'MM'-'dd'T'HH':'mm':'ss";
@@ -404,10 +415,10 @@ namespace System.Globalization
 		{
 			get
 			{
-				if (theInvariantDateTimeFormatInfo == null)
-				{
+				if (theInvariantDateTimeFormatInfo == null) {
 					theInvariantDateTimeFormatInfo = 
 						DateTimeFormatInfo.ReadOnly(new DateTimeFormatInfo());
+					theInvariantDateTimeFormatInfo.FillInvariantPatterns ();
 				}
 				return theInvariantDateTimeFormatInfo;
 			}
@@ -530,35 +541,60 @@ namespace System.Globalization
 		// array.
 		public string[] GetAllDateTimePatterns(char format)
 		{
+			string [] list;
 			switch (format) {
 			// Date
 			case 'D':
+				if (_LongDatePatterns != null)
+					return _LongDatePatterns.Clone () as string [];
 				return new string [] {LongDatePattern};
 			case 'd':
+				if (_ShortDatePatterns != null)
+					return _ShortDatePatterns.Clone () as string [];
 				return new string [] {ShortDatePattern};
 			// Time
 			case 'T':
+				if (_LongTimePatterns != null)
+					return _LongTimePatterns.Clone () as string [];
 				return new string [] {LongTimePattern};
 			case 't':
+				if (_ShortTimePatterns != null)
+					return _ShortTimePatterns.Clone () as string [];
 				return new string [] {ShortTimePattern};
 			// {Short|Long}Date + {Short|Long}Time
 			// FIXME: they should be the agglegation of the
 			// combination of the Date patterns and Time patterns.
 			case 'G':
+				list = PopulateCombinedList (_ShortDatePatterns, _LongTimePatterns);
+				if (list != null)
+					return list;
 				return new string [] {ShortDatePattern + ' ' + LongTimePattern};
 			case 'g':
+				list = PopulateCombinedList (_ShortDatePatterns, _ShortTimePatterns);
+				if (list != null)
+					return list;
 				return new string [] {ShortDatePattern + ' ' + ShortTimePattern};
 			case 'F':
+				list = PopulateCombinedList (_LongDatePatterns, _LongTimePatterns);
+				if (list != null)
+					return list;
 				return new string [] {LongDatePattern + ' ' + LongTimePattern};
 			case 'f':
+				list = PopulateCombinedList (_LongDatePatterns, _ShortTimePatterns);
+				if (list != null)
+					return list;
 				return new string [] {LongDatePattern + ' ' + ShortTimePattern};
 			// MonthDay
 			case 'm':
 			case 'M':
+				if (_MonthDayPatterns != null)
+					return _MonthDayPatterns.Clone () as string [];
 				return new string [] {MonthDayPattern};
 			// YearMonth
 			case 'Y':
 			case 'y':
+				if (_YearMonthPatterns != null)
+					return _YearMonthPatterns.Clone () as string [];
 				return new string [] {YearMonthPattern};
 			// RFC1123
 			case 'r':
@@ -588,6 +624,34 @@ namespace System.Globalization
 			int index = (int) dayofweek;
 			if (index < 0 || index > 6) throw new ArgumentOutOfRangeException();
 			return _AbbreviatedDayNames[index];
+		}
+
+		private void FillInvariantPatterns ()
+		{
+			_ShortDatePatterns = new string [] {"MM/dd/yyyy"};
+			_LongDatePatterns = new string [] {"dddd, dd MMMM yyyy"};
+			_ShortTimePatterns = new string [] {"HH:mm:ss"};
+			_LongTimePatterns = new string [] {
+				"HH:mm",
+				"hh:mm tt",
+				"H:mm",
+				"h:mm tt"
+			};
+			_MonthDayPatterns = new string [] {"MMMM dd"};
+			_YearMonthPatterns = new string [] {"yyyy MMMM"};
+		}
+
+		private string [] PopulateCombinedList (string [] dates, string [] times)
+		{
+			if (dates != null && times != null) {
+				string [] list = new string [dates.Length * times.Length];
+				int i = 0;
+				foreach (string d in dates)
+					foreach (string t in times)
+						list [i++] = d + ' ' + t;
+				return list;
+			}
+			return null;
 		}
 
 		private static void notImplemented()

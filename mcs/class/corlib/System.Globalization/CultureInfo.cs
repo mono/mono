@@ -508,10 +508,10 @@ namespace System.Globalization
 			this.m_useUserOverride=use_user_override;
 
 			/* NumberFormatInfo defaults to the invariant data */
-			numInfo=new NumberFormatInfo ();
+			numInfo=NumberFormatInfo.InvariantInfo;
 			
 			/* DateTimeFormatInfo defaults to the invariant data */
-			dateTimeInfo=new DateTimeFormatInfo ();
+			dateTimeInfo=DateTimeFormatInfo.InvariantInfo;
 
 			textInfo=new TextInfo ();
 
