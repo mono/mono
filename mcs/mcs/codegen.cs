@@ -65,7 +65,8 @@ namespace Mono.CSharp {
 		//
 		// This routine initializes the Mono runtime SymbolWriter.
 		//
-		static bool InitMonoSymbolWriter (string basename, string[] debug_args)
+		static bool InitMonoSymbolWriter (string basename, string output_file,
+						  string[] debug_args)
 		{
 			string symbol_output = basename + "-debug.s";
 
@@ -73,17 +74,19 @@ namespace Mono.CSharp {
 			if (itype == null)
 				return false;
 
-			Type[] arg_types = new Type [2];
+			Type[] arg_types = new Type [3];
 			arg_types [0] = typeof (string);
-			arg_types [1] = typeof (string[]);
+			arg_types [1] = typeof (string);
+			arg_types [2] = typeof (string[]);
 
 			MethodInfo initialize = itype.GetMethod ("Initialize", arg_types);
 			if (initialize == null)
 				return false;
 
-			object[] args = new object [2];
-			args [0] = symbol_output;
-			args [1] = debug_args;
+			object[] args = new object [3];
+			args [0] = output_file;
+			args [1] = symbol_output;
+			args [2] = debug_args;
 
 			initialize.Invoke (SymbolWriter, args);
 			return true;
@@ -92,7 +95,8 @@ namespace Mono.CSharp {
 		//
 		// Initializes the symbol writer
 		//
-		static void InitializeSymbolWriter (string basename, string[] args)
+		static void InitializeSymbolWriter (string basename, string output_file,
+						    string[] args)
 		{
 			SymbolWriter = ModuleBuilder.GetSymWriter ();
 
@@ -119,7 +123,7 @@ namespace Mono.CSharp {
 			
 			switch (sym_type.Name){
 			case "MonoSymbolWriter":
-				if (!InitMonoSymbolWriter (basename, args))
+				if (!InitMonoSymbolWriter (basename, output_file, args))
 					Report.Error (
 						-18, "Cannot initialize the symbol writer");
 				break;
@@ -157,8 +161,17 @@ namespace Mono.CSharp {
 			ModuleBuilder = AssemblyBuilder.DefineDynamicModule (
 				Basename (name), Basename (output), want_debugging_support);
 
-			if (want_debugging_support)
-				InitializeSymbolWriter (an.Name, debug_args);
+			if (want_debugging_support) {
+				int pos = output.LastIndexOf (".");
+
+				string basename;
+				if (pos > 0)
+					basename = output.Substring (0, pos);
+				else
+					basename = output;
+
+				InitializeSymbolWriter (basename, output, debug_args);
+			}
 		}
 
 		static public void Save (string name)
