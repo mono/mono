@@ -1,3 +1,7 @@
+2001-08-06  Bob Smith  <bob@thestuff.net>
+
+        * Random.cs: Compile fix. Needs more testing.
+
 2001-08-06 Garrett Rooney <rooneg@electricjellyfish.net>
 
 	* Uri.cs: Initial Implementation.  Parsing needs to be fixed to take 

@@ -41,6 +41,7 @@ namespace System
                         return (int)(Random.Sample()*maxValue);
                 }
                 public virtual int Next(int minValue, int maxValue)
+                {
                         if (minValue > maxValue)
                                 throw new ArgumentOutOfRangeException("Min value is greater then max value.");
                         else if (minValue == maxValue)
