@@ -2,9 +2,10 @@
 // XmlDsigXsltTransformTest.cs - NUnit Test Cases for XmlDsigXsltTransform
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -19,15 +20,24 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Security.Cryptography.Xml {
 
+	// Note: GetInnerXml is protected in XmlDsigXsltTransform making it
+	// difficult to test properly. This class "open it up" :-)
+	public class UnprotectedXmlDsigXsltTransform : XmlDsigXsltTransform {
+
+		public XmlNodeList UnprotectedGetInnerXml () {
+			return base.GetInnerXml ();
+		}
+	}
+
 	[TestFixture]
 	public class XmlDsigXsltTransformTest : Assertion {
 
-		protected XmlDsigXsltTransform transform;
+		protected UnprotectedXmlDsigXsltTransform transform;
 
 		[SetUp]
 		protected void SetUp () 
 		{
-			transform = new XmlDsigXsltTransform ();
+			transform = new UnprotectedXmlDsigXsltTransform ();
 		}
 
 		[Test]
@@ -57,11 +67,18 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			Assert ("Output #", (output.Length == 1));
 			// check presence of every supported output types
 			bool ostream = false;
-			foreach (Type t in input) {
+			foreach (Type t in output) {
 				if (t.ToString () == "System.IO.Stream")
 					ostream = true;
 			}
 			Assert ("Output Stream", ostream);
+		}
+
+		[Test]
+		public void GetInnerXml () 
+		{
+			XmlNodeList xnl = transform.UnprotectedGetInnerXml ();
+			AssertNull ("Default InnerXml", xnl);
 		}
 
 		private string Stream2Array (Stream s) 
@@ -76,7 +93,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-		// can't use ExpectedException as it doesn't have a constructor with 0 parameters
+		// can't use ExpectedException as XsltCompileException doesn't have a constructor with 0 parameters
 		// [ExpectedException (typeof (XsltCompileException))]
 		public void InvalidXslt () 
 		{
@@ -115,7 +132,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			string output = Stream2Array (s);
 		}
 
-		private XmlDocument GetDoc () 
+		private XmlDocument GetXslDoc () 
 		{
 			string test = "<Transform Algorithm=\"http://www.w3.org/TR/1999/REC-xslt-19991116\">";
 			test += "<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" xmlns=\"http://www.w3.org/TR/xhtml1/strict\" version=\"1.0\">";
@@ -133,7 +150,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		[Ignore ("not working")]
 		public void LoadInputAsXmlDocument () 
 		{
-			XmlDocument doc = GetDoc ();
+			XmlDocument doc = GetXslDoc ();
 			transform.LoadInput (doc);
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2Array (s);
@@ -143,7 +160,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		[Ignore ("not working")]
 		public void LoadInputAsXmlNodeList () 
 		{
-			XmlDocument doc = GetDoc ();
+			XmlDocument doc = GetXslDoc ();
 			transform.LoadInput (doc.ChildNodes);
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2Array (s);
@@ -153,7 +170,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		[Ignore ("not working")]
 		public void LoadInputAsStream () 
 		{
-			XmlDocument doc = GetDoc ();
+			XmlDocument doc = GetXslDoc ();
 			MemoryStream ms = new MemoryStream ();
 			doc.Save (ms);
 			ms.Position = 0;
@@ -173,20 +190,17 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		[Test]
 		public void LoadInnerXml () 
 		{
-			string value = "<Transform Algorithm=\"http://www.w3.org/TR/1999/REC-xslt-19991116\" />";
-			XmlDocument doc = new XmlDocument ();
-			doc.LoadXml (value);
-
+			XmlDocument doc = GetXslDoc ();
 			transform.LoadInnerXml (doc.ChildNodes);
-			// note: GetInnerXml is protected so we can't AssertEquals :-(
-			// unless we use reflection (making it a lot more complicated)
+			XmlNodeList xnl = transform.UnprotectedGetInnerXml ();
+			AssertEquals ("LoadInnerXml", doc.ChildNodes, xnl);
 		}
 
 		[Test]
 		[Ignore ("not working")]
 		public void Load2 () 
 		{
-			XmlDocument doc = GetDoc ();
+			XmlDocument doc = GetXslDoc ();
 			transform.LoadInnerXml (doc.ChildNodes);
 			transform.LoadInput (doc);
 			Stream s = (Stream) transform.GetOutput ();

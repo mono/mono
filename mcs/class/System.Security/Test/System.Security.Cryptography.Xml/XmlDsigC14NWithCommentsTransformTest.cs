@@ -3,9 +3,10 @@
 //	- NUnit Test Cases for XmlDsigC14NWithCommentsTransform
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -18,15 +19,24 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Security.Cryptography.Xml {
 
+	// Note: GetInnerXml is protected in XmlDsigC14NWithCommentsTransform
+	// making it difficult to test properly. This class "open it up" :-)
+	public class UnprotectedXmlDsigC14NWithCommentsTransform : XmlDsigC14NWithCommentsTransform {
+
+		public XmlNodeList UnprotectedGetInnerXml () {
+			return base.GetInnerXml ();
+		}
+	}
+
 	[TestFixture]
 	public class XmlDsigC14NWithCommentsTransformTest : Assertion {
 
-		protected XmlDsigC14NWithCommentsTransform transform;
+		protected UnprotectedXmlDsigC14NWithCommentsTransform transform;
 
 		[SetUp]
 		protected void SetUp () 
 		{
-			transform = new XmlDsigC14NWithCommentsTransform ();
+			transform = new UnprotectedXmlDsigC14NWithCommentsTransform ();
 		}
 
 		[Test]
@@ -56,11 +66,18 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			Assert ("Output #", (output.Length == 1));
 			// check presence of every supported output types
 			bool ostream = false;
-			foreach (Type t in input) {
+			foreach (Type t in output) {
 				if (t.ToString () == "System.IO.Stream")
 					ostream = true;
 			}
 			Assert ("Output Stream", ostream);
+		}
+
+		[Test]
+		public void GetInnerXml () 
+		{
+			XmlNodeList xnl = transform.UnprotectedGetInnerXml ();
+			AssertEquals ("Default InnerXml", null, xnl);
 		}
 
 		[Test]

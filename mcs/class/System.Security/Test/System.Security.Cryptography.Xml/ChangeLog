@@ -1,3 +1,21 @@
+2004-02-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ReferenceTest.cs: Tests fixed if XML is different (but equivalent)
+	to MS implementation.
+	* SignatureTest.cs: Tests fixed if XML is different (but equivalent) 
+	to MS implementation.
+	* XmlDsigBase64TransformTest.cs: New UnprotectedGetInnerXml class to get
+	results from the protected GetInnerXml. No more convertion to arrays.
+	* XmlDsigC14NTransformTest.cs: New UnprotectedGetInnerXml class to get
+	results from the protected GetInnerXml. Fixed input/output typo. Tests
+	fixed if XML is different (but equivalent) to MS implementation.
+	* XmlDsigC14NWithCommentsTransformTest.cs: New UnprotectedGetInnerXml 
+	class to get results from the protected GetInnerXml. Fixed input/output
+	typo.
+	* XmlDsigXPathTransformTest.cs: New. Unit tests XmlDsigXPathTransform.
+	* XmlDsigXsltTransformTest.cs: New UnprotectedGetInnerXml class to get 
+	results from the protected GetInnerXml. Fixed input/output typo.
+
 2003-12-14  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* SignedXmlTest.cs: Added a new unit test to verify both bugs (no

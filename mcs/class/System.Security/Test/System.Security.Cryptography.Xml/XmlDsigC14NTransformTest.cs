@@ -2,11 +2,12 @@
 // XmlDsigC14NTransformTest.cs - NUnit Test Cases for XmlDsigC14NTransform
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //	Aleksey Sanin (aleksey@aleksey.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // (C) 2003 Aleksey Sanin (aleksey@aleksey.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -19,15 +20,24 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Security.Cryptography.Xml {
 
+	// Note: GetInnerXml is protected in XmlDsigC14NTransform making it
+	// difficult to test properly. This class "open it up" :-)
+	public class UnprotectedXmlDsigC14NTransform : XmlDsigC14NTransform {
+
+		public XmlNodeList UnprotectedGetInnerXml () {
+			return base.GetInnerXml ();
+		}
+	}
+
 	[TestFixture]
 	public class XmlDsigC14NTransformTest : Assertion {
 
-		protected XmlDsigC14NTransform transform;
+		protected UnprotectedXmlDsigC14NTransform transform;
 
 		[SetUp]
 		protected void SetUp () 
 		{
-			transform = new XmlDsigC14NTransform ();
+			transform = new UnprotectedXmlDsigC14NTransform ();
 		}
 
 		[Test]
@@ -57,27 +67,33 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			Assert ("Output #", (output.Length == 1));
 			// check presence of every supported output types
 			bool ostream = false;
-			foreach (Type t in input) {
+			foreach (Type t in output) {
 				if (t.ToString () == "System.IO.Stream")
 					ostream = true;
 			}
 			Assert ("Output Stream", ostream);
 		}
 
+		[Test]
+		public void GetInnerXml () 
+		{
+			XmlNodeList xnl = transform.UnprotectedGetInnerXml ();
+			AssertNull ("Default InnerXml", xnl);
+		}
+
 		private string Stream2String (Stream s) 
 		{
-			StringBuilder sb = new StringBuilder ();
-			int b = s.ReadByte ();
-			while (b != -1) {
-				sb.Append (Convert.ToChar (b));
-				b = s.ReadByte ();
-			}
-			return sb.ToString ();
+			StreamReader sr = new StreamReader (s);
+			return sr.ReadToEnd ();
 		}
 
 		static string xml = "<Test  attrib='at ' xmlns=\"http://www.go-mono.com/\" > \r\n <Toto/> text &amp; </Test   >";
+		// BAD (framework 1.0 result)
 		static string c14xml1 = "<Test xmlns=\"http://www.go-mono.com/\" attrib=\"at \"> \r\n <Toto></Toto> text &amp; </Test>";
+		// BAD (framework 1.1 result for Stream)
 		static string c14xml2 = "<Test xmlns=\"http://www.go-mono.com/\" attrib=\"at \"> \n <Toto></Toto> text &amp; </Test>";
+		// GOOD (framework 1.1 for XmlDocument and Mono::)
+		static string c14xml3 = "<Test xmlns=\"http://www.go-mono.com/\" attrib=\"at \"> &#xD;\n <Toto></Toto> text &amp; </Test>";
 
 		private XmlDocument GetDoc () 
 		{
@@ -98,7 +114,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			// .NET 1.0 keeps the \r\n (0x0D, 0x0A) - bug
 			AssertEquals("XmlDocument", c14xml1, output);
 #else
-			AssertEquals("XmlDocument", "<Test xmlns=\"http://www.go-mono.com/\" attrib=\"at \"> &#xD;\n <Toto></Toto> text &amp; </Test>", output);
+			AssertEquals("XmlDocument", c14xml3, output);
 #endif
 		}
 
@@ -110,7 +126,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (doc.ChildNodes);
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
-			AssertEquals("XmlChildNodes", c14xml2, output);
+			// MS returns "<Test></Test>" ??? doesn't makes sense to me
+			AssertEquals("XmlChildNodes", c14xml3, output);
 		}
 
 		[Test]
@@ -123,7 +140,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (ms);
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
-			AssertEquals("MemoryStream", c14xml2, output);
+			// ARGH! HOW CAN MS RETURN SOMETHING DIFFERENT IF A 
+			// STREAM IS USED THAN IF A XMLDOCUMENT IS USED :-(
+			bool result = ((output == c14xml2) || (output == c14xml3));
+			Assert ("MemoryStream", result);
 		}
 
 		[Test]
