@@ -1385,9 +1385,8 @@ namespace Mono.MonoBASIC {
 
 						MemberInfo pb = p.PropertyBuilder;
 
-						if (pb != null && filter (pb, criteria) == true) {
+						if (pb != null && filter (pb, criteria) == true)
 							members.Add (p.PropertyBuilder);
-						}
 					}
 
 				if (indexers != null)
@@ -3916,7 +3915,7 @@ namespace Mono.MonoBASIC {
 
 			if (container is Interface)
 				return true;
-			
+
 			string report_name;
 			MethodSignature base_ms;
 			if (this is Indexer) {
@@ -3941,26 +3940,30 @@ namespace Mono.MonoBASIC {
 			MemberInfo parent_member = null;
 			MemberList mi, mi_static, mi_instance;
 
+			//
+			// Find properties with the same name on the base class
+			//
 			mi_static = TypeContainer.FindMembers (
 				ptype, MemberTypes.Property,
 				BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static,
-				MethodSignature.inheritable_method_signature_filter, ms);
+				MethodSignature.inheritable_property_signature_filter, base_ms);
 
 			mi_instance = TypeContainer.FindMembers (
 				ptype, MemberTypes.Property,
 				BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance,
-				MethodSignature.inheritable_method_signature_filter,
-				ms);
+				MethodSignature.inheritable_property_signature_filter,
+				base_ms);
 
-			if (mi_instance.Count > 0) {
+
+			if (mi_instance.Count > 0)
 				mi = mi_instance;
-			} else if (mi_static.Count > 0)
+			else if (mi_static.Count > 0)
 				mi = mi_static;
 			else
 				mi = null;
 
-			if (mi != null && mi.Count > 0)
-				parent_member = (MethodInfo) mi [0];
+			if (mi != null && mi.Count > 0) 
+				parent_member = (PropertyInfo) mi [0];
 
 			if (parent_member is PropertyInfo) {
 				PropertyInfo parent_property = (PropertyInfo)parent_member;
@@ -5165,7 +5168,7 @@ namespace Mono.MonoBASIC {
 				ReturnType = pi.PropertyType;
 			else
 				return false;
-			
+
 			//
 			// we use sig.RetType == null to mean `do not check the
 			// method return value.  
@@ -5178,7 +5181,15 @@ namespace Mono.MonoBASIC {
 			if (mi != null)
 				args = TypeManager.GetArgumentTypes (mi);
 			else
-				args = TypeManager.GetArgumentTypes (pi);
+			{
+				Type [] targs = TypeManager.GetArgumentTypes (pi);
+				args = new Type[targs.Length + 1];
+				args[0] = pi.PropertyType;
+				
+				int i = 1;
+				foreach (Type tt in targs)
+					args [i++] = tt;
+			}
 			Type [] sigp = sig.Parameters;
 
 			if (args.Length != sigp.Length)
@@ -5239,7 +5250,7 @@ namespace Mono.MonoBASIC {
 		// 
 		static bool InheritablePropertySignatureCompare (MemberInfo m, object filter_criteria)
 		{
-		        if (MemberSignatureCompare (m, filter_criteria)){
+	        if (MemberSignatureCompare (m, filter_criteria)){
 				PropertyInfo pi = (PropertyInfo) m;
 
 				MethodInfo inherited_get = TypeManager.GetPropertyGetter (pi);

@@ -1,4 +1,7 @@
 2004-08-13 Anirban Bhattacharjee <banirban@novell.com>
+	* class.cs: bug fixing to get PropertyE.vb test running - search of overridable property in base class was failing
+
+2004-08-13 Anirban Bhattacharjee <banirban@novell.com>
 	* typemanager.cs: Little correction in my last checked-in code - removed unnecessary return value from ExpandAllInterfaces function
 
 2004-08-13 Anirban Bhattacharjee <banirban@novell.com>
