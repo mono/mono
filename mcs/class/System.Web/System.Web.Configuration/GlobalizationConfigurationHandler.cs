@@ -45,15 +45,11 @@ namespace System.Web.Configuration
 				config.FileEncoding = GetEncoding (section, "fileEncoding", attvalue);
 
 			attvalue = AttValue ("culture", section, true);
-			if (attvalue == null)
-				config.Culture = CultureInfo.InvariantCulture;
-			else
+			if (attvalue != null)
 				config.Culture = GetCulture (section, "culture", attvalue);
 
 			attvalue = AttValue ("uiculture", section, true);
-			if (attvalue == null)
-				config.UICulture = CultureInfo.InvariantCulture;
-			else
+			if (attvalue != null)
 				config.UICulture = GetCulture (section, "uiculture", attvalue);
 
 			if (section.Attributes == null || section.Attributes.Count != 0)

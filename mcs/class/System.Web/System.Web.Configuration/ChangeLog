@@ -1,6 +1,12 @@
+2004-06-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* GlobalizationConfigurationHandler.cs: if no culture given, use the
+	default one, not the invariant.
+
 2004-06-07  Alon Gazit <along@mainsoft.com>
 
-	* HandlerFactoryConfiguration.cs: using cache to get performance improvement.
+	* HandlerFactoryConfiguration.cs: using cache to get performance
+	improvement.
 	
 
 2004-06-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
