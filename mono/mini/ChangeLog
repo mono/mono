@@ -1,3 +1,8 @@
+2003-09-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* tramp-x86.c (x86_magic_trampoline): Avoid patching the calling method
+	if there is no domain neutrality information.
+
 2003-09-01  Zoltan Varga  <vargaz@freemail.hu>
 
 	* aot.c (mono_compile_assembly): Emit a symbol containing the file 
