@@ -1,0 +1,31 @@
+
+Wed Jul 02 00:31:21 CEST 2003 Philip Van Hoof <me@freax.org>
+
+	* Created this ChangeLog file
+	* Fixed the positioning of MainMenus and StatusBar Controls (and ToolBar 
+	  Controls, but we don't completed this Control yet)
+	* Prepared the Button-control for button1.Controls.Add ( ... );
+
+Thu Jul 01 00:00:00 CEST 2003 Philip Van Hoof <me@freax.org>
+	
+	* Made Form1.cs compile and run on both Windows and Linux platforms
+	* A lot hacks and fixes
+
+Xyz Xyz 00 00:00:00 CEST 2003 Older changes by Philip Van Hoof <me@freax.org>
+
+	* The positioning of a MainMenu
+	* Copy/Paste/Cut in TextBoxes
+	* Minor hacks for Control.cs
+
+Xyz Xyz 00 00:00:00 CEST 2003 Older changes by Joel Basson <jstrike@mweb.co.za>
+
+	* Implementations of the GroupBox, FileDialog, ColorDialog, MainMenu, MenuItem,
+	  CheckBox, MessageBox, ...
+
+
+Xyz Xyz 00 00:00:00 CEST 2003 Philip Van Hoof <me@freax.org>
+
+	* Initial Version of this implementation by
+		Miguel de Icaza (miguel@ximian.com)
+		Rachel Hestilow (hestilow@ximian.com)
+
