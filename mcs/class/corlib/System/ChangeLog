@@ -4,6 +4,7 @@
 	* MethodAccessException.cs:
 	* ContextMarshalException.cs:
 	* CannotUnloadAppDomainException.cs:
+	* DllNotFoundException.cs:
 	* EntryPointNotFoundException.cs:
 	* FieldAccessException.cs:
 	* TypeUnloadedException.cs:
