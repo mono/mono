@@ -1,0 +1,88 @@
+.\" 
+.\" makecert manual page.
+.\" Copyright 2003 Motus Technologies
+.\" Author:
+.\"   Sebastien Pouliot (spouliot@motus.com)
+.\"
+.TH Mono "MakeCert"
+.SH NAME
+MakeCert \- Create X.509 certificates for test purposes
+.SH SYNOPSIS
+.PP
+.B MakeCert [options] certificate
+.SH DESCRIPTION
+Create an X.509 certificate using the provided informations. This
+is useful for testing Authenticode signatures, SSL and S/MIME
+technologies.
+.SH PARAMETERS
+.TP
+.I "-# num"
+Certificate serial number
+.TP
+.I "-n dn"
+Subject Distinguished Name
+.TP
+.I "-in dn"
+Issuert Distinguished Name
+.TP
+.I "-r"
+Create a self-signed (root) certificate
+.TP
+.I "-sv pkvfile"
+Private key file (.PVK) for the subject (created if missing)
+.TP
+.I "-iv pvkfile"
+Private key file (.PVK) for the issuer
+.TP
+.I "-ic certfile"
+Extract the issuer's name from the specified certificate
+.TP
+.I "-?"
+Help (display this help message)
+.TP
+.I "-!"
+Extended help (for advanced options)
+.TP
+.I "-a hash"
+Select hash algorithm. Only MD5 and SHA1 are supported.
+.TP
+.I "-b date"
+The date since when the certificate is valid (notBefore).
+.TP
+.I "-cy [authority|end]"
+Basic constraints. Select Authority or End-Entity certificate.
+.TP
+.I "-e date"
+The date until when the certificate is valid (notAfter).
+.TP
+.I "-eku oid[,oid]"
+Add some extended key usage OID to the certificate.
+.TP
+.I "-h number"
+Add a path length restriction to the certificate chain.
+.TP
+.I "-ic cert"
+Take the issuer's name from the specified certificate.
+.TP
+.I "-in name"
+Take the issuer's name from the specified parameter.
+.TP
+.I "-iv pvkfile"
+Sign the certificate using the private key inside the PVK file.
+.TP
+.I "-m number"
+Certificate validity period (in months).
+.TP
+.I "-sv pvkfile"
+Create a new PVK file if non-existant, otherwise use the PVK file as the subject public key.
+.SH AUTHOR
+Written by Sebastien Pouliot
+.SH COPYRIGHT
+Copyright (C) 2003 Motus Technologies. 
+Released under BSD license.
+.SH MAILING LISTS
+Visit http://mail.ximian.com/mailman/mono-list for details.
+.SH WEB SITE
+Visit: http://www.go-mono.com for details
+.SH SEE ALSO
+.BR signcode(1)
