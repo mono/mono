@@ -1,3 +1,17 @@
+2002-11-18  Dick Porter  <dick@ximian.com>
+
+	* threads.c: Split out some thread initialisation so that other
+	files can set the start callback function.
+
+	* gc.c: Run finalisers in a separate thread, to avoid stack
+	overflow.  Fixes bug 31333.
+
+	* appdomain.c: Set up GC finalisation thread.
+
+	* reflection.c: 
+	* object.c: 
+	* domain.c: Use gc.h macros for GC_malloc
+	
 2002-11-15  Dick Porter  <dick@ximian.com>
 
 	* threadpool.c: 
