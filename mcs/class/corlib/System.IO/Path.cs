@@ -94,7 +94,12 @@ namespace System.IO
 
 		public static string GetDirectoryName (string path)
 		{
-			if (path == null || path == "" || GetPathRoot (path) == path)
+			// LAMESPEC: For empty string MS docs say both
+			// return null AND throw exception.  Seems .NET throws.
+			if (path == String.Empty)
+				throw new ArgumentException();
+
+			if (path == null || GetPathRoot (path) == path)
 				return null;
 
 			CheckArgument.WhitespaceOnly (path);

@@ -1,3 +1,7 @@
+2003-03-31  Nick Drochak <ndrochak@gol.com>
+
+	* Path.cs (GetDirectoryName): Throw proper execption when path is empty.
+
 2003-03-20  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* FileNotFoundException.cs: fixed serialization bug.
