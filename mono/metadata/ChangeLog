@@ -1,5 +1,8 @@
 2005-03-01  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c (emit_marshal_array): Implement marshalling of arrays to
+	managed code. Fixes #73012.
+
 	* metadata.h (MonoMarshalSpec): Add elem_mult field.
 
 	* metadata.c reflection.c: Load/Emit elem_mult as well.
