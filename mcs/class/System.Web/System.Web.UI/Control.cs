@@ -688,11 +688,42 @@ namespace System.Web.UI
 
                 public virtual void DataBind() //DIT
                 {
-                        OnDataBinding(EventArgs.Empty);
-                        if (_controls != null)
-                                foreach (Control c in _controls)
-                                        c.DataBind();
+			#if NET_1_2
+			bool foundDataItem = false;
+			
+			if (_isNamingContainer && Page != null) {
+				object o = DataBinder.GetDataItem (this, out foundDataItem);
+				if (foundDataItem)
+					Page.PushDataItemContext (o);
+			}
+			
+			try {
+			#endif
+				
+				OnDataBinding (EventArgs.Empty);
+				DataBindChildren();
+			
+			#if NET_1_2
+			} finally {
+				if (foundDataItem)
+					Page.PopDataItemContext ();
+			}
+			#endif
                 }
+		
+		#if NET_1_2
+		protected virtual
+		#endif
+		
+		void DataBindChildren ()
+		{
+			if (_controls == null)
+				return;
+			
+			foreach (Control c in _controls)
+				c.DataBind();
+		}
+		
 
                 public virtual bool HasControls() //DIT
                 {

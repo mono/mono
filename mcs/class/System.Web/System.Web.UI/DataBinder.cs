@@ -152,7 +152,30 @@ namespace System.Web.UI {
 		{
 			object result = GetPropertyValue (container, propName);
 			return FormatResult (result, format);
-		}		
+		}
+
+		#if NET_1_2
+		public static object GetDataItem (object container, out bool foundDataItem)
+		{	
+			foundDataItem = false;
+			if (container == null)			
+				return null;
+			
+			PropertyInfo pi = container.GetType ().GetProperty ("DataItem", BindingFlags.Public | BindingFlags.Instance);
+			if (pi == null)
+				return null;
+			
+			foundDataItem = true;
+			return pi.GetValue (container, null); 
+		} 
+		
+		
+		public static object GetDataItem (object container)
+		{
+			bool flag;
+			return GetDataItem (container, out flag); 
+		}
+		#endif
 	}
 }
 
