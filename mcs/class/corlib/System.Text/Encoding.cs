@@ -339,7 +339,6 @@ public abstract class Encoding
 			return enc;
 		}
 
-#if false
 		// Build a code page class name.
 		String cpName = "System.Text.CP" + codePage.ToString ();
 
@@ -356,7 +355,6 @@ public abstract class Encoding
 		if (type != null) {
 			return (Encoding)(Activator.CreateInstance (type));
 		}
-#endif
 
 		// We have no idea how to handle this code page.
 		throw new NotSupportedException
@@ -401,7 +399,6 @@ public abstract class Encoding
 			return enc;
 		}
 
-#if false
 		// Build a web encoding class name.
 		String encName = "System.Text.ENC" +
 						 name.ToLower (CultureInfo.InvariantCulture)
@@ -420,7 +417,6 @@ public abstract class Encoding
 		if (type != null) {
 			return (Encoding)(Activator.CreateInstance (type));
 		}
-#endif
 
 		// We have no idea how to handle this encoding name.
 		throw new NotSupportedException (String.Format (_("NotSupp_EncodingName"), name));

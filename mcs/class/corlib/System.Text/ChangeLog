@@ -1,3 +1,7 @@
+2003-04-12  Miguel de Icaza  <miguel@ximian.com>
+
+	* Encoding.cs: Enabled the code paths that we did have commented
+	out, they seem to work now.
 
 Fri Apr 11 08:29:50 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
