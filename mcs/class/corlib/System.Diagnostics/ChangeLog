@@ -1,3 +1,7 @@
+2003-01-01  Jaime Anguiano Olarra <jaime@gnome.org>
+
+	* Process.cs: skeleton for use in Remoting.
+
 2002-06-19  Dietmar Maurer  <dietmar@ximian.com>
 
 	* StackTrace.cs: impl. remaining constructors.
