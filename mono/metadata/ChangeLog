@@ -1,3 +1,16 @@
+
+Thu Dec 13 20:27:08 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.c: yet another check for mscorlib.
+	* class.c, class.h: load nesting info for classes.
+	* icall.c: many new functions to support the Reflection classes.
+	* metadata.c, metadata.h: mono_metadata_nested_in_typedef() added.
+	* reflection.h, reflection.c: mono_image_create_token(),
+	mono_assembly_get_object(), mono_type_get_object(),
+	mono_method_get_object(), mono_field_get_object(): methods to return
+	objects that parallel the C representation of assemblies, types,
+	methods, fields.
+
 2001-12-11  Dick Porter  <dick@ximian.com>
 
 	* icall.c:

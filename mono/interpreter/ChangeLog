@@ -1,4 +1,10 @@
 
+Thu Dec 13 20:24:28 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: correctly handle exceptions generated in C code.
+	Install an handler for SIGSEGV. Bare-bones profiler and hook for the
+	verifier.
+
 Mon Dec 3 17:15:44 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: call mono_init() after registering internal calls.
