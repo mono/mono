@@ -1894,11 +1894,10 @@ id			: ID
 			;
 
 comp_name		: id
-			| dotted_name
-			;
-
-dotted_name		: id
-			| dotted_name DOT id
+			| comp_name DOT id
+                          {
+                                $$ = (string) $1 + '.' + (string) $3;
+                          }
 			;
 
 

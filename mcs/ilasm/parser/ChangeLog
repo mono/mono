@@ -1,3 +1,9 @@
+2003-05-07 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Remove extraneous dotted_name, also make comp_name
+	contain dotted_name logic. Oh how I will miss the 301
+	reduce/reduce conflicts these small changes fixed :-)
+		
 2003-05-06 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Emit INSTR_I8 instructions as int
