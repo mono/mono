@@ -93,12 +93,9 @@ namespace System
 			// originally it was my thought that the external call would be made in
 			// the directory class however that class has additional security requirements
 			// so the Directory class will call this class for its get/set current directory
-			
-			[EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
 			get {
 				return Directory.GetCurrentDirectory ();
 			}
-			[SecurityPermissionAttribute(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
 			set {
 				Directory.SetCurrentDirectory (value);
 			}
