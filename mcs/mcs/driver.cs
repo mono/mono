@@ -1112,8 +1112,8 @@ namespace Mono.CSharp
 				}
 				return true;
 			}
-			Report.Error (2007, String.Format ("Unrecognized command-line option: '{0}'", option));
-			Environment.Exit (1);
+			//Report.Error (2007, String.Format ("Unrecognized command-line option: '{0}'", option));
+			//Environment.Exit (1);
 			return false;
 		}
 		
