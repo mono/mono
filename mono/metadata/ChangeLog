@@ -1,5 +1,8 @@
 2004-02-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* debug-mono-symfile.c debug-mono-symfile.h mono-debug.c: Read the
+	contents of the symbol files lazily.
+
 	* object.h (MonoThread): Add 'name' and 'name_len' fields.
 
 	* threads.h threads.c icall.c: New icalls for getting and setting the
