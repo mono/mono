@@ -1,3 +1,8 @@
+
+Wed Sep 4 13:59:50 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: added icall to get default codepage.
+
 2002-09-03  Dick Porter  <dick@ximian.com>
 
 	* threads.h: 
