@@ -425,12 +425,19 @@ Directories are separated by the platform path separator (colons on unix). Examp
 Experimental RTC support in the statistical profiler: if the user has
 the permission, more accurate statistics are gathered.  The MONO_RTC
 value must be restricted to what the linux rtc allows: power of two
-from 64 to 8192 Hz.
+from 64 to 8192 Hz. To enable higher frequencies like 4096 Hz, run as root:
+.nf
+	echo 4096 > /proc/sys/dev/rtc/max-user-freq
+.fi
 .Sp
 For example:
 .nf
 	MONO_RTC=4096 mono --profiler=default:stat program.exe
 .fi
+.TP
+.I "MONO_NO_TLS"
+Disable inlining of thread local accesses. Try setting this if you get a segfault
+early on in the execution of mono.
 .TP 
 .I "MONO_SHARED_DIR"
 If set its the directory where the ".wapi" handle state is stored.
