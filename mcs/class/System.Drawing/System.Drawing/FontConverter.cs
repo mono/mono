@@ -7,9 +7,6 @@
 //	Ravindra (rkumar@novell.com)
 //
 // Copyright (C) 2002,2003 Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004 Novell, Inc.  http://www.novell.com
-//
-
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //

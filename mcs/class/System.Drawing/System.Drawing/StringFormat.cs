@@ -6,10 +6,7 @@
 //   Miguel de Icaza (miguel@ximian.com)
 //   Jordi Mas i Hernandez (jordi@ximian.com)
 //
-// (C) 2002 Ximian, Inc
-// (C) 2003 Novell, Inc.
-//
-
+// Copyright (C) 2002 Ximian, Inc (http://www.ximian.com)
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //

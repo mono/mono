@@ -1,10 +1,14 @@
 //
 // System.Drawing.Fonts.cs
 //
-// (C) 2004 Ximian, Inc.  http://www.ximian.com
+// Authors:
+//	Alexandre Pigolkine (pigolkine@gmx.de)
+//	Miguel de Icaza (miguel@ximian.com)
+//	Todd Berman (tberman@sevenl.com)
+//	Jordi Mas i Hernandez (jordi@ximian.com)
+//	Ravindra (rkumar@novell.com)
 //
-// Authors: 
-
+// Copyright (C) 2004 Ximian, Inc. (http://www.ximian.com)
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -28,13 +32,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
+using System;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 
-namespace System.Drawing {
-
+namespace System.Drawing
+{
 	[Serializable]
 	[ComVisible (true)]
 	[Editor ("System.Drawing.Design.FontEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
@@ -42,7 +46,7 @@ namespace System.Drawing {
 	public sealed class Font : MarshalByRefObject, ISerializable, ICloneable, IDisposable
 	{
 		private IntPtr	fontObject = IntPtr.Zero;
-		
+
        		private Font (SerializationInfo info, StreamingContext context)
 		{
 		}
@@ -50,27 +54,27 @@ namespace System.Drawing {
 		void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 		}
-		
+
 		~Font()
-		{	
+		{
 			Dispose ();
 		}
 
 		public void Dispose ()
 		{
-			if (fontObject!=IntPtr.Zero) {
+			if (fontObject != IntPtr.Zero) {
 				lock (this)
 				{
 					GDIPlus.CheckStatus (GDIPlus.GdipDeleteFont (fontObject));
 				}
 				GC.SuppressFinalize (this);
 			}
-		}		
-		
+		}
+
 		internal void unitConversion (GraphicsUnit fromUnit, GraphicsUnit toUnit, float nSrc, out float nTrg)
 		{
 			float inchs = 0;
-			nTrg = 0;		
+			nTrg = 0;
 			
 			switch (fromUnit) {
 			case GraphicsUnit.Display:
@@ -85,17 +89,17 @@ namespace System.Drawing {
 			case GraphicsUnit.Millimeter:
 				inchs = nSrc / 25.4f;
 				break;
-			case GraphicsUnit.Pixel:				
+			case GraphicsUnit.Pixel:
 			case GraphicsUnit.World:
 				inchs = nSrc / Graphics.systemDpiX;
 				break;
 			case GraphicsUnit.Point:
 				inchs = nSrc / 72f;
-				break;				
-			default:		
-				throw new ArgumentException("Invalid GraphicsUnit");				
-			}			
-			
+				break;
+			default:
+				throw new ArgumentException("Invalid GraphicsUnit");
+			}
+
 			switch (toUnit) {
 			case GraphicsUnit.Display:
 				nTrg = inchs * 75;
@@ -109,18 +113,18 @@ namespace System.Drawing {
 			case GraphicsUnit.Millimeter:
 				nTrg = inchs * 25.4f;
 				break;
-			case GraphicsUnit.Pixel:				
+			case GraphicsUnit.Pixel:
 			case GraphicsUnit.World:
 				nTrg = inchs * Graphics.systemDpiX;
 				break;
 			case GraphicsUnit.Point:
 				nTrg = inchs * 72;
 				break;
-			default:	
-				throw new ArgumentException("Invalid GraphicsUnit");				
-			}				
+			default:
+				throw new ArgumentException("Invalid GraphicsUnit");
+			}
 		}
-		
+
 		internal void setProperties (FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
 		{			
 			_name=family.Name;
@@ -131,7 +135,7 @@ namespace System.Drawing {
 			_gdiCharSet = charSet;
 			_gdiVerticalFont = isVertical;
 			
-			unitConversion(unit, GraphicsUnit.Point, emSize, out  _sizeInPoints);
+			unitConversion (unit, GraphicsUnit.Point, emSize, out  _sizeInPoints);
 						
 			_bold = _italic = _strikeout = _underline = false;
 
@@ -150,44 +154,41 @@ namespace System.Drawing {
 
 		public static Font FromHfont (IntPtr Hfont)
 		{
-			System.OperatingSystem	osInfo = System.Environment.OSVersion;
+			OperatingSystem	osInfo = Environment.OSVersion;
 			IntPtr			newObject;
 			IntPtr			hdc;
 			IntPtr			oldFont;
-			FontStyle		newStyle=FontStyle.Regular;
+			FontStyle		newStyle = FontStyle.Regular;
 			float			newSize;
-			LOGFONTA		lf = new LOGFONTA();
+			LOGFONTA		lf = new LOGFONTA ();
 
 			// Sanity. Should we throw an exception?
-			if (Hfont==IntPtr.Zero) {
-				Font result = new Font("Arial", (float)10.0, FontStyle.Regular);
+			if (Hfont == IntPtr.Zero) {
+				Font result = new Font ("Arial", (float)10.0, FontStyle.Regular);
 				return(result);
 			}
 
-			if ((int)osInfo.Platform==128) {
-				// If we're on Unix we use our private gdiplus API to avoid Wine 
-				// dependencies in S.D
+			if ((int) osInfo.Platform == 128) {
+			// If we're on Unix we use our private gdiplus API to avoid Wine 
+			// dependencies in S.D
 
 				lock (typeof (Font))
 				{
-					Status s = GDIPlus.GdipCreateFontFromHfont(Hfont, out newObject, ref lf);
+					Status s = GDIPlus.GdipCreateFontFromHfont (Hfont, out newObject, ref lf);
 					GDIPlus.CheckStatus (s);
 				}
 			} else {
 
-				// This needs testing, but I don't have a working win32 mono
-				// environment. 
+				// This needs testing
+				// GetDC, SelectObject, ReleaseDC GetTextMetric and
+				// GetFontFace are not really GDIPlus, see gdipFunctions.cs
 
-				// GetDC, SelectObject, ReleaseDC GetTextMetric and GetFontFace are not 
-				// really GDIPlus, see gdipFunctions.cs
+				newStyle = FontStyle.Regular;
 
-				newStyle=FontStyle.Regular;
-				
-				
 				lock (typeof (Font))
 				{
-					hdc=GDIPlus.GetDC (IntPtr.Zero);
-					oldFont=GDIPlus.SelectObject (hdc, Hfont);
+					hdc = GDIPlus.GetDC (IntPtr.Zero);
+					oldFont = GDIPlus.SelectObject (hdc, Hfont);
 					GDIPlus.CheckStatus (GDIPlus.GdipCreateFontFromDC (hdc, out newObject));
 					GDIPlus.CheckStatus (GDIPlus.GdipGetLogFontA (newObject, IntPtr.Zero, ref lf));
 					GDIPlus.SelectObject (hdc, oldFont);
@@ -195,38 +196,42 @@ namespace System.Drawing {
 				}
 			}
 
-			if (lf.lfItalic!=0) {
+			if (lf.lfItalic != 0) {
 				newStyle |= FontStyle.Italic;
 			}
-			if (lf.lfUnderline!=0) {
+
+			if (lf.lfUnderline != 0) {
 				newStyle |= FontStyle.Underline;
 			}
-			if (lf.lfStrikeOut!=0) {
+
+			if (lf.lfStrikeOut != 0) {
 				newStyle |= FontStyle.Strikeout;
 			}
-			if (lf.lfWeight>400) {
+
+			if (lf.lfWeight > 400) {
 				newStyle |= FontStyle.Bold;
 			}
-			if (lf.lfHeight<0) {
-				newSize=lf.lfHeight*-1;
+
+			if (lf.lfHeight < 0) {
+				newSize = lf.lfHeight * -1;
 			} else {
-				newSize=lf.lfHeight;
+				newSize = lf.lfHeight;
 			}
 
-			return (new Font(newObject, lf.lfFaceName, newStyle, newSize));
+			return (new Font (newObject, lf.lfFaceName, newStyle, newSize));
 		}
 
 		public IntPtr ToHfont ()
 		{
-			IntPtr			Hfont;
-			System.OperatingSystem	osInfo = System.Environment.OSVersion;
+			IntPtr Hfont;
+			OperatingSystem	osInfo = Environment.OSVersion;
 
 			// Sanity. Should we throw an exception?
-			if (fontObject==IntPtr.Zero){				
-				return(IntPtr.Zero);
+			if (fontObject == IntPtr.Zero) {
+				return IntPtr.Zero;
 			}
 
-			if ((int)osInfo.Platform==128) {
+			if ((int) osInfo.Platform == 128) {
 				// If we're on Unix we use our private gdiplus API
 				GDIPlus.CheckStatus (GDIPlus.GdipGetHfont (fontObject, out Hfont));
 			} else {
@@ -237,63 +242,60 @@ namespace System.Drawing {
 				GDIPlus.CheckStatus (GDIPlus.GdipGetLogFontA (fontObject, IntPtr.Zero, ref lf));
 				Hfont = GDIPlus.CreateFontIndirectA (ref lf);
 			}
-			return(Hfont);
+			return Hfont;
 		}
 
-		internal Font(IntPtr newFontObject, string familyName, FontStyle style, float size)
+		internal Font (IntPtr newFontObject, string familyName, FontStyle style, float size)
 		{
-			FontFamily	fontFamily = new FontFamily(familyName);
-
-			setProperties(fontFamily, size, style, GraphicsUnit.Pixel, 0, false);
-			fontObject=newFontObject;
+			FontFamily fontFamily = new FontFamily (familyName);
+			setProperties (fontFamily, size, style, GraphicsUnit.Pixel, 0, false);
+			fontObject = newFontObject;
 		}
 
 		public Font (Font original, FontStyle style)
 		{
 			lock (this)
-			{   
+			{
 				Status status;
-				setProperties (original.FontFamily, original.Size, style, original.Unit, 
-					original.GdiCharSet, original.GdiVerticalFont);
+				setProperties (original.FontFamily, original.Size, style, original.Unit, original.GdiCharSet, original.GdiVerticalFont);
 				
 				status = GDIPlus.GdipCreateFont (_fontFamily.NativeObject,	Size,  Style,   Unit,  out fontObject);
 				GDIPlus.CheckStatus (status);
 			}
 		}
-		
+
 		public Font (FontFamily family, float emSize,  GraphicsUnit unit)
-			: this(family, emSize, FontStyle.Regular, unit, (byte)0, false)
+			: this (family, emSize, FontStyle.Regular, unit, (byte)0, false)
 		{
-			
 		}
-		
+
 		public Font (string familyName, float emSize,  GraphicsUnit unit)
-			: this(new FontFamily (familyName), emSize, FontStyle.Regular, unit, (byte)0, false)
+			: this (new FontFamily (familyName), emSize, FontStyle.Regular, unit, (byte)0, false)
 		{
-			
 		}
 
 		public Font (FontFamily family, float emSize)
-			: this(family, emSize, FontStyle.Regular, GraphicsUnit.Point, (byte)0, false)
+			: this (family, emSize, FontStyle.Regular, GraphicsUnit.Point, (byte)0, false)
 		{
 		}
 
 		public Font (FontFamily family, float emSize, FontStyle style)
-			: this(family, emSize, style, GraphicsUnit.Point, (byte)0, false)
+			: this (family, emSize, style, GraphicsUnit.Point, (byte)0, false)
 		{
 		}
 
 		public Font (FontFamily family, float emSize, FontStyle style, GraphicsUnit unit)
-			: this(family, emSize, style, unit, (byte)0, false)
+			: this (family, emSize, style, unit, (byte)0, false)
 		{
 		}
 
 		public Font (FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet)
-			: this(family, emSize, style, unit, charSet, false)
+			: this (family, emSize, style, unit, charSet, false)
 		{
 		}
-		
-		public Font (FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
+
+		public Font (FontFamily family, float emSize, FontStyle style,
+				GraphicsUnit unit, byte charSet, bool isVertical)
 		{
 			lock (this)
 			{
@@ -305,26 +307,27 @@ namespace System.Drawing {
 		}
 
 		public Font (string familyName, float emSize)
-			: this(familyName, emSize, FontStyle.Regular, GraphicsUnit.Point, (byte)0, false)
+			: this (familyName, emSize, FontStyle.Regular, GraphicsUnit.Point, (byte)0, false)
 		{
 		}
 
 		public Font (string familyName, float emSize, FontStyle style)
-			: this(familyName, emSize, style, GraphicsUnit.Point, (byte)0, false)
+			: this (familyName, emSize, style, GraphicsUnit.Point, (byte)0, false)
 		{
 		}
-		
+
 		public Font (string familyName, float emSize, FontStyle style, GraphicsUnit unit)
-			: this(familyName, emSize, style, unit, (byte)0, false)
+			: this (familyName, emSize, style, unit, (byte)0, false)
 		{
 		}
-		
+
 		public Font (string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet)
-			: this(familyName, emSize, style, unit, charSet, false)
+			: this (familyName, emSize, style, unit, charSet, false)
 		{
 		}
-		
-		public Font (string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
+
+		public Font (string familyName, float emSize, FontStyle style,
+				GraphicsUnit unit, byte charSet, bool isVertical)
 		{
 			lock (this)
 			{
@@ -335,13 +338,13 @@ namespace System.Drawing {
 				status = GDIPlus.GdipCreateFont (family.NativeObject, emSize,  style,   unit,  out fontObject);
 				GDIPlus.CheckStatus (status);
 			}
-		}		
-		
+		}
+
 		public object Clone ()
 		{
-			return new Font(this, Style);
+			return new Font (this, Style);
 		}
-		
+
 		internal IntPtr NativeObject {            
 			get {
 					return fontObject;
@@ -350,7 +353,7 @@ namespace System.Drawing {
 					fontObject = value;
 			}
 		}
-		
+
 		private bool _bold;
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -359,7 +362,7 @@ namespace System.Drawing {
 				return _bold;
 			}
 		}
-		
+
 		private FontFamily _fontFamily;
 
 		[Browsable (false)]
@@ -368,7 +371,7 @@ namespace System.Drawing {
 				return _fontFamily;
 			}
 		}
-		
+
 		private byte _gdiCharSet;
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -377,7 +380,7 @@ namespace System.Drawing {
 				return _gdiCharSet;
 			}
 		}
-		
+
 		private bool _gdiVerticalFont;
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -386,7 +389,7 @@ namespace System.Drawing {
 				return _gdiVerticalFont;
 			}
 		}
-		
+
 		private int _height;
 
 		[Browsable (false)]
@@ -467,84 +470,81 @@ namespace System.Drawing {
 				return _unit;
 			}
 		}
-		
+
 		public override bool Equals (object obj)
 		{
-			if (!(obj is Font))
+			if (! (obj is Font))
 				return false;
 				
 			Font fnt = (Font) obj;
 			
 			if (fnt.FontFamily == FontFamily && fnt.Size == Size &&
-				fnt.Style == Style && fnt.Unit == Unit &&
-				fnt.GdiCharSet == GdiCharSet && fnt.GdiVerticalFont == GdiVerticalFont)
+			    fnt.Style == Style && fnt.Unit == Unit &&
+			    fnt.GdiCharSet == GdiCharSet && 
+			    fnt.GdiVerticalFont == GdiVerticalFont)
 				return true;
 			else
 				return false;
-			
-		}		
+		}
 
-		public override int GetHashCode()
+		public override int GetHashCode ()
 		{
-			return _name.GetHashCode();
+			return _name.GetHashCode ();
 		}
-		
-		[MonoTODO]	
-		public static Font FromHdc(IntPtr hdc)
-		{
-			throw new NotImplementedException ();
-		}		
-		
-		
-		[MonoTODO]	
-		public static Font FromLogFont( object lf,  IntPtr hdc)
+
+		[MonoTODO]
+		public static Font FromHdc (IntPtr hdc)
 		{
 			throw new NotImplementedException ();
 		}
-		
-		public float GetHeight()
+
+		[MonoTODO]
+		public static Font FromLogFont (object lf,  IntPtr hdc)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public float GetHeight ()
 		{
 			return (float) _height;
 		}
-		
-		[MonoTODO]	
-		public static Font FromLogFont(object lf)
-		{
-			throw new NotImplementedException ();	
-		}
-		
-		[MonoTODO]	
-		public void ToLogFont(object logFont)
-		{
-			throw new NotImplementedException ();
-		}	
 
 		[MonoTODO]
-		public void ToLogFont(object logFont, Graphics graphics)
+		public static Font FromLogFont (object lf)
 		{
 			throw new NotImplementedException ();
 		}
-		
-		[MonoTODO]	
-		public float GetHeight(Graphics graphics)
+
+		[MonoTODO]
+		public void ToLogFont (object logFont)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void ToLogFont (object logFont, Graphics graphics)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public float GetHeight (Graphics graphics)
 		{
 			if (Unit == GraphicsUnit.Pixel || Unit == GraphicsUnit.World)
-				return GetHeight();
-				
+				return GetHeight ();
+
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public float GetHeight(float dpi)
-		{			
-			return GetHeight();
-		}
-		
-		
-		public override System.String ToString()
+		public float GetHeight (float dpi)
 		{
-			return ("[Font: Name="+ _name +", Size="+ _size+", Style="+ _style  +", Units="+ _unit  +", GdiCharSet="+ _gdiCharSet
-				+", GdiVerticalFont="+ _gdiVerticalFont + "]");			
+			return GetHeight ();
+		}
+
+		public override String ToString ()
+		{
+			return String.Format ("[Font: Name={0}, Size={1}, Style={2}, Units={3}, GdiCharSet={4}, GdiVerticalFont={5}]", _name, _size, _style, _unit, _gdiCharSet, _gdiVerticalFont);
 		}
 	}
 }
