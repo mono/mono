@@ -1,3 +1,25 @@
+2003-01-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c: (ves_icall_System_CurrentTimeZone_GetTimeZoneData): raise an
+	exception instead of going into an infinite loop on dates which it 
+	can't yet handle.
+
+	* string-icalls.c (ves_icall_System_String_get_Chars): raise 
+	out-of-range exception if needed.
+
+	* class.c (mono_class_setup_vtable): allow a virtual method to provide
+	an implementation for an interface method and to override an inherited
+	method at the same time. 
+	Imagine a scenario when a virtual method is used to override a
+	virtual abstract method in a parent class, and this same method 
+	provides an implementation for an method inherited from an interface. 
+	In this case, the interface resolution code will set im->slot, which 
+	means that the virtual method override pass will skip this method 
+	which means a pointer to the abstract method inherited from the parent
+	will remain in the vtable of this non-abstract class.
+
+	* class.c: (mono_class_setup_vtable): continue search for a real 
+	method if only an abstract method is found.	
 
 Mon Jan 27 17:12:19 CET 2003 Paolo Molaro <lupus@ximian.com>
 
