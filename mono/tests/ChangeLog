@@ -1,3 +1,7 @@
+2004-11-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* loader.cs: New file for assembly loading tests.
+
 2004-10-29  Neale Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
 
 	* cattr-object.cs: Correct type checking so test will stop giving
