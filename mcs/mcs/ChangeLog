@@ -1,5 +1,12 @@
 2002-09-14  Martin Baulig  <martin@gnome.org>
 
+	* statement.cs (Block.Emit): Don't emit unreachable code.
+	(Switch.SimpleSwitchEmit, Switch.TableSwitchEmit): Check for missing
+	`break' statements.
+	(Goto.Emit, Continue.Emit): Set ec.Breaks = true.
+
+2002-09-14  Martin Baulig  <martin@gnome.org>
+
 	* parameter.cs (Parameter.Attributes): Make this work if Modifier.ISBYREF
 	is set.
 

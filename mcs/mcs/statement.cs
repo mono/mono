@@ -664,6 +664,7 @@ namespace Mono.CSharp {
 
 		public override bool Emit (EmitContext ec)
 		{
+			ec.Breaks = true;
 			Label l = label.LabelTarget (ec);
 			ec.ig.Emit (OpCodes.Br, l);
 			
@@ -764,6 +765,7 @@ namespace Mono.CSharp {
 				Report.Error (159, loc, "No default target on switch statement");
 				return false;
 			}
+			ec.Breaks = true;	
 			ec.ig.Emit (OpCodes.Br, ec.Switch.DefaultTarget);
 			return false;
 		}
@@ -821,6 +823,7 @@ namespace Mono.CSharp {
 
 		public override bool Emit (EmitContext ec)
 		{
+			ec.Breaks = true;
 			ec.ig.Emit (OpCodes.Br, label);
 			return true;
 		}
@@ -868,6 +871,7 @@ namespace Mono.CSharp {
 			
 		public override bool Emit (EmitContext ec)
 		{
+			ec.Breaks = true;
 			if (expr == null){
 				if (ec.InCatch)
 					ec.ig.Emit (OpCodes.Rethrow);
@@ -953,6 +957,7 @@ namespace Mono.CSharp {
 			// From:
 			// try {} catch { while () { continue; }}
 			//
+			ec.Breaks = true;
 			if (ec.TryCatchLevel > ec.LoopBeginTryCatchLevel)
 				ec.ig.Emit (OpCodes.Leave, begin);
 			else if (ec.TryCatchLevel < ec.LoopBeginTryCatchLevel)
@@ -2954,6 +2959,7 @@ namespace Mono.CSharp {
 					if (is_ret && !warning_shown && !(s is EmptyStatement)){
 						warning_shown = true;
 						Warning_DeadCodeFound (s.loc);
+						continue;
 					}
 					this_ret = s.Emit (ec);
 					if (this_ret)
@@ -2966,6 +2972,7 @@ namespace Mono.CSharp {
 					if (is_ret && !warning_shown && !(s is EmptyStatement)){
 						warning_shown = true;
 						Warning_DeadCodeFound (s.loc);
+						continue;
 					}
 					this_ret = s.Emit (ec);
 					if (this_ret)
@@ -3580,7 +3587,13 @@ namespace Mono.CSharp {
 						fFoundDefault = true;
 					}
 				}
-				fAllReturn &= ss.Block.Emit (ec);
+				ec.Breaks = false;
+				bool returns = ss.Block.Emit (ec);
+				if (!ec.Breaks && !returns)
+					Report.Error (163, ((SwitchLabel) ss.Labels [0]).loc,
+						      "Control cannot fall through from one " +
+						      "case label to another");
+				fAllReturn &= returns;
 				//ig.Emit (OpCodes.Br, lblEnd);
 			}
 			
@@ -3691,7 +3704,14 @@ namespace Mono.CSharp {
 				ig.MarkLabel (sec_begin);
 				foreach (SwitchLabel sl in ss.Labels)
 					ig.MarkLabel (sl.ILLabelCode);
-				if (ss.Block.Emit (ec))
+
+				ec.Breaks = false;
+				bool returns = ss.Block.Emit (ec);
+				if (!ec.Breaks && !returns)
+					Report.Error (163, ((SwitchLabel) ss.Labels [0]).loc,
+						      "Control cannot fall through from one " +
+						      "case label to another");
+				if (returns)
 					pending_goto_end = false;
 				else {
 					all_return = false;
