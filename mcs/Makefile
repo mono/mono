@@ -41,7 +41,6 @@ DISTFILES = \
 	MIT.X11			\
 	MonoIcon.png		\
 	README			\
-	README.building		\
 	ScalableMonoIcon.svg	\
 	winexe.in
 
