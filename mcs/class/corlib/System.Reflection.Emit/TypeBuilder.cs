@@ -90,6 +90,7 @@ namespace System.Reflection.Emit {
 		public override Assembly Assembly {
 			get {return pmodule.Assembly;}
 		}
+
 		public override string AssemblyQualifiedName {
 			get {
 				return fullname + ", " + Assembly.GetName().FullName;
@@ -185,17 +186,58 @@ namespace System.Reflection.Emit {
 		}
 
 		[MonoTODO]
-		protected override ConstructorInfo GetConstructorImpl (BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) {
-			throw new NotImplementedException ();
+		protected override ConstructorInfo GetConstructorImpl (BindingFlags bindingAttr, Binder binder,
+								       CallingConventions callConvention, Type[] types,
+								       ParameterModifier[] modifiers)
+		{
+			if (ctors == null)
+				return null;
+
+			ConstructorBuilder found = null;
+			int count = 0;
+			
+			foreach (ConstructorBuilder cb in ctors){
+				if (callConvention != CallingConventions.Any && cb.CallingConvention != callConvention)
+					continue;
+				found = cb;
+				count++;
+			}
+
+			if (count == 0)
+				return null;
+			if (types == null){
+				if (count > 1)
+					throw new AmbiguousMatchException ();
+				return found;
+			}
+			MethodBase[] match = new MethodBase [count];
+			if (count == 1)
+				match [0] = found;
+			else {
+				count = 0;
+				foreach (ConstructorInfo m in ctors) {
+					if (callConvention != CallingConventions.Any && m.CallingConvention != callConvention)
+						continue;
+					match [count++] = m;
+				}
+			}
+			if (binder == null)
+				binder = Binder.DefaultBinder;
+			return (ConstructorInfo)binder.SelectMethod (bindingAttr, match, types, modifiers);
 		}
 
-		public override bool IsDefined( Type attributeType, bool inherit) {
+		public override bool IsDefined( Type attributeType, bool inherit)
+		{
 			throw not_supported ();
 		}
-		public override object[] GetCustomAttributes(bool inherit) {
+		
+		public override object[] GetCustomAttributes(bool inherit)
+		{
 			throw not_supported ();
 		}
-		public override object[] GetCustomAttributes(Type attributeType, bool inherit) {
+		
+		public override object[] GetCustomAttributes(Type attributeType, bool inherit)
+		{
 			throw not_supported ();
 		}
 
@@ -211,7 +253,9 @@ namespace System.Reflection.Emit {
 			return DefineNestedType (name, attr, parent, null);
 		}
 
-		private TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packsize, int typesize) {
+		private TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent, Type[] interfaces,
+						      PackingSize packsize, int typesize)
+		{
 			check_name ("name", name);
 			// Visibility must be NestedXXX
 			/* This breaks mcs
@@ -251,7 +295,8 @@ namespace System.Reflection.Emit {
 			return DefineNestedType (name, attr, parent, null, packsize, UnspecifiedTypeSize);
 		}
 
-		public ConstructorBuilder DefineConstructor( MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes) {
+		public ConstructorBuilder DefineConstructor (MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes)
+		{
 			if (is_created)
 				throw not_after_created ();
 			ConstructorBuilder cb = new ConstructorBuilder (this, attributes, callingConvention, parameterTypes);
@@ -267,8 +312,21 @@ namespace System.Reflection.Emit {
 			return cb;
 		}
 
-		public ConstructorBuilder DefineDefaultConstructor( MethodAttributes attributes) {
-			return DefineConstructor (attributes, CallingConventions.Standard, null);
+		public ConstructorBuilder DefineDefaultConstructor (MethodAttributes attributes)
+		{
+			ConstructorBuilder cb = DefineConstructor (attributes, CallingConventions.Standard, null);
+
+			ConstructorInfo parent_constructor = parent.GetConstructor (
+				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
+				null, Type.EmptyTypes, null);
+
+			ILGenerator ig = cb.GetILGenerator ();
+			if (parent_constructor != null){
+				ig.Emit (OpCodes.Ldarg_0);
+				ig.Emit (OpCodes.Call, parent_constructor);
+			}
+			ig.Emit (OpCodes.Ret);
+			return cb;
 		}
 
 		public MethodBuilder DefineMethod( string name, MethodAttributes attributes, Type returnType, Type[] parameterTypes) {
@@ -401,18 +459,26 @@ namespace System.Reflection.Emit {
 					method.fixup ();
 				}
 			}
-			if (ctors != null) {
-				foreach (ConstructorBuilder ctor in ctors) {
+
+			//
+			// On classes, define a default constructor if not provided
+			//
+			if (!(IsInterface || IsValueType) && ctors == null)
+				DefineDefaultConstructor (MethodAttributes.Public);
+
+			if (ctors != null){
+				foreach (ConstructorBuilder ctor in ctors) 
 					ctor.fixup ();
-				}
 			}
+			
 			created = create_runtime_class (this);
 			if (created != null)
 				return created;
 			return this;
 		}
 
-		public override ConstructorInfo[] GetConstructors (BindingFlags bindingAttr) {
+		public override ConstructorInfo[] GetConstructors (BindingFlags bindingAttr)
+		{
 			if (ctors == null)
 				return new ConstructorInfo [0];
 			ArrayList l = new ArrayList ();
@@ -865,15 +931,18 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		private Exception not_supported () {
+		private Exception not_supported ()
+		{
 			return new NotSupportedException ("The invoked member is not supported in a dynamic module.");
 		}
 
-		private Exception not_after_created () {
+		private Exception not_after_created ()
+		{
 			return new InvalidOperationException ("Unable to change after type has been created.");
 		}
 
-		private void check_name (string argName, string name) {
+		private void check_name (string argName, string name)
+		{
 			if (name == null)
 				throw new ArgumentNullException (argName);
 			if (name == "")

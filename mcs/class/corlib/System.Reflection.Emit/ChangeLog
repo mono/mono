@@ -1,3 +1,13 @@
+2003-04-15  Miguel de Icaza  <miguel@ximian.com>
+
+	* TypeBuilder.cs (DefineDefaultConstructor): Make it generate code
+	by default for a default constructor.  This is what the MS runtime
+	does.  The PythonNet code expected this.
+
+	(TypeBuilder.GetConstructorImpl): Implement this.
+
+	(TypeBuilder.CreateType): If there are no constructors defined, we
+	create one.
 
 Tue Apr 15 13:50:41 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
