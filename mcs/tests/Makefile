@@ -55,7 +55,7 @@ TEST_SOURCES_common = \
 	test-101 test-102 test-103 test-104          test-106 test-107 test-108 test-109 test-110 \
 	test-111 test-112 test-113 test-114 test-115 test-116 test-117 test-118 test-119 	  \
 	test-121 test-122 test-123          test-125 test-126 test-127 test-128 test-129 test-130 \
-	test-131                   test-134          test-136 test-137 test-138 test-139 test-140 \
+	test-131                   test-134 test-135 test-136 test-137 test-138 test-139 test-140 \
 	test-141 test-142 test-143 test-144 test-145 test-146 test-147 test-148 test-149 test-150 \
 	test-151 test-152 test-153 test-154 test-155 test-156 test-157 test-158 test-159 test-160 \
 	test-161 test-162 test-163 test-164 test-165 test-166 test-167 test-168 test-169 test-170 \
@@ -113,7 +113,7 @@ TEST_SOURCES_win32 = test-50 test-67
 # A test is a 'no pass' if it fails on either windows or linux
 # Test 120 does not pass because the MS.NET runtime is buggy.
 
-TEST_NOPASS = test-120 test-132 test-133 a-parameter4.cs test-135
+TEST_NOPASS = test-120 test-132 test-133 a-parameter4.cs 
 #	test-28 test-45 test-53 test-91 test-102 test-106 test-107 test-122 test-66 test-177
 
 all-local install-local uninstall-local:
