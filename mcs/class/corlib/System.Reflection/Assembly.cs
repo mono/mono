@@ -189,6 +189,10 @@ namespace System.Reflection {
 			throw new ArgumentNullException ("type");
 		}
 
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public static extern Assembly GetEntryAssembly();
+
 		[MonoTODO]
 		public Assembly GetSatelliteAssembly (CultureInfo culture)
 		{
