@@ -99,30 +99,18 @@ namespace System.Drawing
     		IntPtr SigPattern;
     		IntPtr SigMask;
     		
-    		internal static void MarshalTo (GdipImageCodecInfo gdipcodec, ImageCodecInfo codec)
-    		{
-    			// FIXME: See run-time bug 57706. When fixed, we should be able to remove the if(s)    			
-    			if (gdipcodec.CodecName != IntPtr.Zero)
-    				codec.CodecName = Marshal.PtrToStringUni (gdipcodec.CodecName);  			    			
-    			
-    			if (gdipcodec.DllName != IntPtr.Zero)
-    				codec.DllName = Marshal.PtrToStringUni (gdipcodec.DllName);
-    			
-    			if (gdipcodec.FormatDescription != IntPtr.Zero)
-    				codec.FormatDescription = Marshal.PtrToStringUni (gdipcodec.FormatDescription);
-    			
-    			if (gdipcodec.FilenameExtension != IntPtr.Zero)    			
-    				codec.FilenameExtension = Marshal.PtrToStringUni (gdipcodec.FilenameExtension);
-    			
-    			if (gdipcodec.MimeType != IntPtr.Zero)    			
-    				codec.MimeType = Marshal.PtrToStringUni (gdipcodec.MimeType);
-    			
-    			codec.Clsid = gdipcodec.Clsid;
-    			codec.FormatID = gdipcodec.FormatID;			
-    			codec.Flags = gdipcodec.Flags;
-			codec.Version  = gdipcodec.Version;		
-			
-    		}
+		internal static void MarshalTo (GdipImageCodecInfo gdipcodec, ImageCodecInfo codec)
+		{	
+			codec.CodecName = Marshal.PtrToStringUni (gdipcodec.CodecName);  			    			
+			codec.DllName = Marshal.PtrToStringUni (gdipcodec.DllName);
+			codec.FormatDescription = Marshal.PtrToStringUni (gdipcodec.FormatDescription);
+			codec.FilenameExtension = Marshal.PtrToStringUni (gdipcodec.FilenameExtension);
+			codec.MimeType = Marshal.PtrToStringUni (gdipcodec.MimeType);
+			codec.Clsid = gdipcodec.Clsid;
+			codec.FormatID = gdipcodec.FormatID;			
+			codec.Flags = gdipcodec.Flags;
+			codec.Version  = gdipcodec.Version;					
+		}
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

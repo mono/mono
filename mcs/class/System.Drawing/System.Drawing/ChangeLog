@@ -1,3 +1,6 @@
+2004-05-24  Jordi Mas i Hernandez <jordi@ximian.com>
+	* gdipStructs.cs: remove unnecessary code, since bug 57706 is fixed
+
 2004-05-20  Sanjay Gupta <gsanjay@novell.com>
 
 	* Icon.cs: Fixed issue with size property.
