@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: Application.cs,v $
+// Revision 1.2  2004/08/11 22:16:50  pbartok
+// - Fixed Signature
+// - Added .Net 1.1 method
+//
 // Revision 1.1  2004/07/09 05:21:25  pbartok
 // - Initial check-in
 //
@@ -46,7 +50,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace System.Windows.Forms {
-	public sealed class Application : ContainerControl {
+	public sealed class Application {
 		private static bool			browser_embedded;
 		private static bool			exiting;
 		private static InputLanguage		input_language;
@@ -214,6 +218,10 @@ namespace System.Windows.Forms {
 			XplatUI.DoEvents();
 		}
 
+		public static void EnableVisualStyles() {
+			XplatUI.EnableThemes();
+		}
+
 		public static void Exit() {
 			XplatUI.Exit();
 		}
@@ -250,7 +258,7 @@ namespace System.Windows.Forms {
 				Message message;
 
 				message = new Message();
-				message.Hwnd=msg.hwnd;
+				message.HWnd=msg.hwnd;
 				message.Msg=(int)msg.message;
 				message.LParam=msg.lParam;
 				message.WParam=msg.wParam;
