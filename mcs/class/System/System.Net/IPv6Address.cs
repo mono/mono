@@ -24,7 +24,7 @@ namespace System.Net {
 	///   See RFC 2373 for more info on IPv6 addresses.
 	/// </remarks>
 	[Serializable]
-	public class IPv6Address {
+	internal class IPv6Address {
 		private ushort [] address;
 		private int prefixLength;
 
