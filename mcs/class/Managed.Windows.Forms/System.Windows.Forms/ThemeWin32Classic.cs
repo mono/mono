@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.21 $
+// $Revision: 1.22 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.22  2004/08/17 19:29:11  jackson
+// Don't use KnownColor to create colours. It has a large startup time.
+//
 // Revision 1.21  2004/08/15 23:20:54  ravindra
 // Changes to Theme for ToolBar control and also dos2unix format.
 //
@@ -222,7 +225,7 @@ namespace System.Windows.Forms
 		}
 
 		public Color ColorButtonFace{
-			get {return Color.FromKnownColor (KnownColor.Control);}
+			get {return Color.FromArgb (255, 192, 192, 192);}
 		}
 
 		public Color ColorButtonShadow{
@@ -234,7 +237,7 @@ namespace System.Windows.Forms
 		}
 
 		public Color ColorButtonText{
-			get {return Color.FromKnownColor (KnownColor.ControlText);}
+			get {return Color.FromArgb (255, 0, 0, 0);}
 		}
 
 		public Color ColorInactiveTitleText{
@@ -278,11 +281,11 @@ namespace System.Windows.Forms
 		}
 
 		public Color DefaultControlBackColor {
-			get { return Color.FromKnownColor (KnownColor.Control); }
+			get { return ColorButtonFace; }
 		}
 
 		public Color DefaultControlForeColor {
-			get { return Color.FromKnownColor (KnownColor.ControlText); }
+			get { return ColorButtonText; }
 		}
 
 		public Font DefaultFont {
@@ -294,7 +297,7 @@ namespace System.Windows.Forms
 		}
 
 		public Color DefaultWindowForeColor {
-			get { return Color.FromKnownColor (KnownColor.ControlText); }
+			get { return ColorButtonText; }
 		}
 
 		public int SizeGripWidth {
