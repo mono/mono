@@ -559,6 +559,15 @@ namespace MonoTests.System.IO
 			string parent = Path.GetFullPath ("..");
 			Assert ("TestCanonicalizeDotst #02", !current.EndsWith (".."));
 		}
+
+		public void TestDirectoryNameBugs ()
+		{
+			if (Windows) {
+				AssertEquals ("Win #01", "C:\\foo", Path.GetDirectoryName ("C:\\foo\\foo.txt"));
+			} else {
+				AssertEquals ("No win #01", "/etc", "/etc/hostname");
+			}
+		}
 #if !NUNIT
 		void Assert (string msg, bool result)
 		{
