@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Text;
 using System.Runtime.InteropServices;
 using System.Data;
 
@@ -193,30 +194,42 @@ namespace Mono.Data.SqliteClient {
 
                         parent_conn.StartExec ();
 
-                        try {
-                                if (want_results) {
-                                        reader = new SqliteDataReader (this);
-					unsafe {
+			string msg = "";
+			unsafe {
+				byte *msg_result;
+
+				try {
+	                                if (want_results) {
+	                                        reader = new SqliteDataReader (this);
+						
 						err = sqlite_exec (parent_conn.Handle,
-							sql,
-							new SqliteCallbackFunction (reader.SqliteCallback),
-							IntPtr.Zero,
-							IntPtr.Zero);
-					}
-                                        reader.ReadingDone ();
-                                } else {
-                                        err = sqlite_exec (parent_conn.Handle,
-                                                           sql,
-                                                           null,
-                                                           IntPtr.Zero,
-                                                           IntPtr.Zero);
-                                }
-                        } finally {
-                                parent_conn.EndExec ();
-                        }
+								   sql,
+								   new SqliteCallbackFunction (reader.SqliteCallback),
+								   IntPtr.Zero, &msg_result);
+						reader.ReadingDone ();
+	                                } else {
+	                                        err = sqlite_exec (parent_conn.Handle,
+	                                                           sql,
+	                                                           null,
+	                                                           IntPtr.Zero, &msg_result);
+	                                }
+				} finally {
+					parent_conn.EndExec ();
+				}
+
+				if (msg_result != null){
+					StringBuilder sb = new StringBuilder ();
+
+					for (byte *y = msg_result; *y != 0; y++)
+						sb.Append ((char) *y);
+					msg = sb.ToString ();
+
+					sqliteFree (msg_result);
+				}
+			}
 
                         if (err != SqliteError.OK)
-                                throw new ApplicationException ("Sqlite error " + err);
+                                throw new ApplicationException ("Sqlite error " + msg);
 
                         rows_affected = NumChanges ();
                         return reader;
@@ -230,9 +243,12 @@ namespace Mono.Data.SqliteClient {
                 internal unsafe delegate int SqliteCallbackFunction (ref object o, int argc, sbyte **argv, sbyte **colnames);
 
                 [DllImport("sqlite")]
-                static extern SqliteError sqlite_exec (IntPtr handle, string sql, SqliteCallbackFunction callback,
-                                                       IntPtr user_data, IntPtr errstr_ptr);
+                unsafe static extern SqliteError sqlite_exec (IntPtr handle, string sql, SqliteCallbackFunction callback,
+							      IntPtr user_data, byte **errstr_ptr);
 
+		[DllImport ("sqlite")]
+		unsafe static extern void sqliteFree (void *ptr);
+		
                 [DllImport("sqlite")]
                 static extern int sqlite_changes (IntPtr handle);
 

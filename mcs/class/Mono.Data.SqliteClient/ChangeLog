@@ -1,3 +1,8 @@
+2002-10-16  Miguel de Icaza  <miguel@ximian.com>
+
+	* Mono.Data.SqliteClient/SqliteCommand.cs: Reworked to return the
+	error from SqlLite.
+
 2002-10-12  Vladimir Vukicevic  <vladimir@pobox.com>
 
 	* sources.list: whoops, fix dir name
