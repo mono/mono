@@ -167,13 +167,13 @@ namespace System.Windows.Forms{
 		internal static extern int GetRgnBox(IntPtr hRegion, ref RECT rc);
 		[DllImport("gdi32.dll")]
 		internal static extern IntPtr GetStockObject(GSO_ objectType);
-		[DllImport("gdi32.dll")]
+		[DllImport("gdi32.dll",CharSet = CharSet.Ansi,EntryPoint="ExtTextOutA")]
 		internal static extern int ExtTextOut(IntPtr hdc, int x, int y,
 			ExtTextOutFlags options, ref RECT rc, int str, int strLen, IntPtr distances);
-		[DllImport("gdi32.dll")]
+		[DllImport("gdi32.dll",CharSet = CharSet.Ansi,EntryPoint="ExtTextOutA")]
 		internal static extern int ExtTextOut(IntPtr hdc, int x, int y,
 			ExtTextOutFlags options, ref RECT rc, string str, int strLen, IntPtr distances);
-		[DllImport("gdi32.dll")]
+		[DllImport("gdi32.dll",CharSet = CharSet.Ansi,EntryPoint="GetTextExtentPoint32A")]
 		internal static extern bool GetTextExtentPoint32(IntPtr hDC, string lpString, int cbString, ref SIZE lpSize);
 
 
@@ -270,7 +270,7 @@ namespace System.Windows.Forms{
 		internal static extern bool UnhookWindowsHookEx(IntPtr hhook);
 		[DllImport("user32.dll", CharSet=CharSet.Auto, ExactSpelling=true)]
 		internal static extern IntPtr CallNextHookEx(IntPtr hhook, int code, IntPtr wparam, IntPtr lparam);
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="DrawTextA")]
 		internal extern static int DrawText(IntPtr hdc, string lpString, int nCount, ref RECT lpRect, DrawTextFormatFlags flags);
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		internal extern static IntPtr GetDlgItem(IntPtr hDlg, int nControlID);

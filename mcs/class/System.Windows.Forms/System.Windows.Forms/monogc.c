@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <stdio.h>
 #include <gc/gc.h>
+#include <gc/gc_typed.h>
 #include <pthread.h>
 
 int GC_finalize_on_demand = -1;
@@ -20,7 +21,7 @@ void InitGC ()
 		printf ("Initializing Boehm GC library...\n");
 		moduleGC = LoadLibraryA ("gc.dll");
 
-		if (moduleGC == NULL) {
+		if (moduleGC == 0) {
 			exit (1);
 		}
 	}
@@ -36,8 +37,69 @@ GC_PTR GC_malloc (size_t lb)
 
 	TRACE ("GC_malloc start\n");
 	status = gc_malloc (lb);
-	TRACE ("GC_malloc end\n");
+	TRACE ("GC_malloc end status %p\n",status);
 	return status;
+}
+
+void GC_push_all_stack (GC_PTR b, GC_PTR t)
+{
+	int (*gc_push_all_stack)(GC_PTR b, GC_PTR t);
+	InitGC ();
+	TRACE ("GC_push_all_stack\n");
+	gc_push_all_stack =
+		GetProcAddress (moduleGC, "GC_push_all_stack");
+	gc_push_all_stack (b,t);
+	TRACE ("GC_push_all_stack end\n");
+}
+
+void GC_init_gcj_malloc(int mp_index, void * /* really GC_mark_proc */mp)
+{
+	int (*gc_init_gcj_malloc)(int mp_index, void * mp);
+	InitGC ();
+	TRACE ("GC_init_gcj_malloc\n");
+	gc_init_gcj_malloc =
+		GetProcAddress (moduleGC, "GC_init_gcj_malloc");
+	gc_init_gcj_malloc (mp_index,mp);
+	TRACE ("GC_init_gcj_malloc end\n");
+}
+
+void * GC_gcj_malloc(size_t lb, void * ptr_to_struct_containing_descr)
+{
+	void* (* gc_gcj_malloc)(size_t lb, void * ptr_to_struct_containing_descr);
+	void *result = 0;
+	InitGC ();
+	TRACE ("gc_gcj_malloc bytes %d\n", lb);
+	gc_gcj_malloc =
+		GetProcAddress (moduleGC, "GC_gcj_malloc");
+	result = gc_gcj_malloc (lb,ptr_to_struct_containing_descr);
+	TRACE ("gc_gcj_malloc end %p\n", result);
+	return result;
+}
+
+GC_descr GC_make_descriptor(GC_bitmap bm, size_t len)
+{
+	int (*gc_make_descriptor)(GC_bitmap b, size_t t);
+	GC_descr result = 0;
+	InitGC ();
+	TRACE ("GC_make_descriptor\n");
+	gc_make_descriptor =
+		GetProcAddress (moduleGC, "GC_make_descriptor");
+	result = gc_make_descriptor (bm,len);
+	TRACE ("GC_make_descriptor end\n");
+	return result;
+}
+
+int GC_should_invoke_finalizers(void)
+{
+	int (*gc_should_invoke_finalizers)(void);
+	int result = 0;
+	InitGC ();
+	TRACE ("GC_should_invoke_finalizers\n");
+	gc_should_invoke_finalizers =
+		GetProcAddress (moduleGC, "GC_should_invoke_finalizers");
+	result = gc_should_invoke_finalizers ();
+	TRACE ("GC_should_invoke_finalizers end\n");
+	return result;
 }
 
 void GC_register_finalizer (GC_PTR obj, GC_finalization_proc fn, GC_PTR cd,

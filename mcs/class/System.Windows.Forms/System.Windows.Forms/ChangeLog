@@ -1,3 +1,7 @@
+2003-04-26 Alexandre Pigolkine <pigolkine@gmx.de>
+	* monogc.c	GC stubs for Mini
+	* win32functions.cs 	EntryPoint added for some functions
+	
 2003-04-25  Miguel de Icaza  <miguel@ximian.com>
 
 	* SystemInformation.cs (ComputerName): Implement this.
