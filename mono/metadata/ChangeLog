@@ -1,6 +1,7 @@
 2001-08-20  Miguel de Icaza  <miguel@ximian.com>
 
-	* assembly.c (g_concat_dir_and_file): Bring g_concat_dir_and_file
+	* assembly.c 	(g_concat_dir_and_file): Use _S for string concat.
+	(g_concat_dir_and_file): Bring g_concat_dir_and_file
 	function from gnome-libs.  This uses the right path separator
 	based on the OS, and also works around a bug in some systems where
 	a double slash is not allowed. 
