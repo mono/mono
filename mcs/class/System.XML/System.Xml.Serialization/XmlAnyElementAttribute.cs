@@ -57,7 +57,7 @@ namespace System.Xml.Serialization
 		/// <summary>
 		/// Specifies Order in which Memberswill be serialized as Elements.
 		/// </summary>
-		public int Order
+		internal int Order
 		{
 			get{ return  order; }
 			set{ order = value; }

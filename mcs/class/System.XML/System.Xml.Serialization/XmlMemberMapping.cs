@@ -10,6 +10,10 @@
 namespace System.Xml.Serialization {
 	public class XmlMemberMapping {
 
+		internal XmlMemberMapping ()
+		{
+		}
+
 		#region Properties
 
 		public bool Any {	

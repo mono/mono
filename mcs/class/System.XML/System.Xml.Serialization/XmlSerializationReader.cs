@@ -1,10 +1,12 @@
 //
 // System.Xml.Serialization.XmlSerializationReader.cs
 //
-// Author:
-//   Tim Coleman (tim@timcoleman.com)
+// Authors:
+// 	Tim Coleman (tim@timcoleman.com)
+// 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2002
+// (c) 2002 Ximian, Inc. (http://www.ximian.com)
 //
 
 using System;
@@ -18,17 +20,60 @@ namespace System.Xml.Serialization {
 
 		XmlDocument document;
 		XmlReader reader;
+		ArrayList fixups;
+		ArrayList collFixups;
+		Hashtable readCallbacks = new Hashtable ();
+		Hashtable typesCallbacks = new Hashtable ();
 
+		string w3SchemaNS;
+		string w3SchemaNS2000;
+		string w3SchemaNS1999;
+		string w3InstanceNS;
+		string w3InstanceNS2000;
+		string w3InstanceNS1999;
+		string soapNS;
+		string schema;
+		string wsdlNS;
+		string wsdlArrayType;
+		string nullX;
+		string nil;
+		string typeX;
+		string arrayType;
+		string anyType;
 		#endregion
 
-		[MonoTODO]
+		private void Initialize ()
+		{
+			w3SchemaNS = reader.NameTable.Add ("http://www.w3.org/2001/XMLSchema");
+			w3SchemaNS2000 = reader.NameTable.Add ("http://www.w3.org/2000/10/XMLSchema");
+			w3SchemaNS1999 = reader.NameTable.Add ("http://www.w3.org/1999/XMLSchema");
+			w3InstanceNS = reader.NameTable.Add ("http://www.w3.org/2001/XMLSchema-instance");
+			w3InstanceNS2000 = reader.NameTable.Add ("http://www.w3.org/2000/10/XMLSchema-instance");
+			w3InstanceNS1999 = reader.NameTable.Add ("http://www.w3.org/1999/XMLSchema-instance");
+			soapNS = reader.NameTable.Add ("http://schemas.xmlsoap.org/soap/encoding/");
+			schema = reader.NameTable.Add ("schema");
+			wsdlNS = reader.NameTable.Add ("http://schemas.xmlsoap.org/wsdl/");
+			wsdlArrayType = reader.NameTable.Add ("arrayType");
+			nullX = reader.NameTable.Add ("null");
+			nil = reader.NameTable.Add ("nil");
+			typeX = reader.NameTable.Add ("type");
+			arrayType = reader.NameTable.Add ("arrayType");
+			anyType = reader.NameTable.Add ("anyType");
+			InitIDs ();
+		}
+			
 		protected XmlSerializationReader ()
 		{
-			throw new NotImplementedException ();
 		}
 
-		protected XmlDocument Document {
-			get { return document; }
+		protected XmlDocument Document
+		{
+			get {
+				if (document == null)
+					document = new XmlDocument (reader.NameTable);
+
+				return document;
+			}
 		}
 
 		protected XmlReader Reader {
@@ -37,22 +82,26 @@ namespace System.Xml.Serialization {
 
 		#region Methods
 
-		[MonoTODO ("Implement")]
-		protected void AddFixup (XmlSerializationReader.CollectionFixup fixup)
+		protected void AddFixup (CollectionFixup fixup)
 		{
-			throw new NotImplementedException ();
+			if (collFixups == null)
+				collFixups = new ArrayList();
+			collFixups.Add(fixup);
 		}
 
-		[MonoTODO ("Implement")]
-		protected void AddFixup (XmlSerializationReader.Fixup fixup)
+		protected void AddFixup (Fixup fixup)
 		{
-			throw new NotImplementedException ();
+			if (fixups == null)
+				fixups = new ArrayList();
+			fixups.Add(fixup);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void AddReadCallback (string name, string ns, Type type, XmlSerializationReadCallback read)
 		{
-			throw new NotImplementedException ();
+			XmlNameTable nt = reader.NameTable;
+			XmlQualifiedName xqn = new XmlQualifiedName (nt.Add (name), nt.Add (ns));
+			readCallbacks.Add (xqn, read);
+			typesCallbacks.Add (xqn, type);
 		}
 
 		[MonoTODO ("Implement")]
@@ -97,10 +146,23 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected Array EnsureArrayIndex (Array a, int index, Type elementType)
 		{
-			throw new NotImplementedException ();
+			if (a != null && index < a.Length)
+				return a;
+
+			int size;
+			if (a == null) {
+				size = 32;
+			} else {
+				size = a.Length * 2;
+			}
+
+			Array result = Array.CreateInstance (elementType, size);
+			if (a != null)
+				Array.Copy (a, result, index);
+
+			return result;
 		}
 
 		[MonoTODO ("Implement")]
@@ -115,10 +177,18 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected bool GetNullAttr ()
 		{
-			throw new NotImplementedException ();
+			string na = reader.GetAttribute (nullX, w3InstanceNS);
+			if (na == null) {
+				na = reader.GetAttribute (nil, w3InstanceNS);
+				if (na == null) {
+					na = reader.GetAttribute (nullX, w3InstanceNS2000);
+					if (na == null)
+						na = reader.GetAttribute (nullX, w3InstanceNS1999);
+				}
+			}
+			return (na != null);
 		}
 
 		[MonoTODO ("Implement")]
@@ -136,10 +206,16 @@ namespace System.Xml.Serialization {
 		protected abstract void InitCallbacks ();
 		protected abstract void InitIDs ();
 
-		[MonoTODO ("Implement")]
 		protected bool IsXmlnsAttribute (string name)
 		{
-			throw new NotImplementedException ();
+			int length = name.Length;
+			if (length < 5)
+				return false;
+
+			if (length == 5)
+				return (name == "xmlns");
+
+			return name.StartsWith ("xmlns:");
 		}
 
 		[MonoTODO ("Implement")]
@@ -154,10 +230,16 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected void ReadEndElement ()
 		{
-			throw new NotImplementedException ();
+			while (reader.NodeType == XmlNodeType.Whitespace)
+				reader.Skip ();
+
+			if (reader.NodeType != XmlNodeType.None) {
+				reader.ReadEndElement ();
+			} else {
+				reader.Skip ();
+			}
 		}
 
 		[MonoTODO ("Implement")]
@@ -226,10 +308,12 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected string ReadString (string value)
 		{
-			throw new NotImplementedException ();
+			if (value == null || value == String.Empty)
+				return reader.ReadString ();
+
+			return (value + reader.ReadString ());
 		}
 
 		[MonoTODO ("Implement")]

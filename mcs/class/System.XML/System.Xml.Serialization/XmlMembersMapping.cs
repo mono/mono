@@ -12,6 +12,10 @@ using System.Reflection;
 namespace System.Xml.Serialization {
 	public class XmlMembersMapping : XmlMapping {
 
+		internal XmlMembersMapping ()
+		{
+		}
+
 		#region Properties
 
 		public int Count {	

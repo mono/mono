@@ -1,3 +1,14 @@
+2002-09-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XmlSerializationReader.cs: implemented a few methods.
+
+	* XmlAnyElementAttribute.cs:
+	* XmlArrayAttribute.cs:
+	* XmlChoiceIdentifierAttribute.cs:
+	* XmlElementAttribute.cs:
+	* XmlMemberMapping.cs:
+	* XmlMembersMapping.cs: class status based fixes.
+
 2002-09-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CodeIdentifiers.cs:
