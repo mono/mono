@@ -1,3 +1,9 @@
+
+Mon Jan 17 16:14:46 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, object.c, class-internals.h, marshal.c: rearrange
+	some fields and tweak some types to lower memory usage.
+
 2005-01-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* threads.c (signal_thread_state_change): Handle the case when the
