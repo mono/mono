@@ -235,37 +235,37 @@ namespace System.Drawing
 		[MonoTODO]
 		public void DrawImage (Image image, RectangleF rect)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawImage(image, rect);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, PointF point)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawImage(image, point);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, Point [] destPoints)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawImage(image, destPoints);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, Point point)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawImage(image, point);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, Rectangle rect)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawImage(image, rect);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, PointF [] destPoints)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawImage(image, destPoints);
 		}
 
 		[MonoTODO]
@@ -277,55 +277,55 @@ namespace System.Drawing
 		[MonoTODO]
 		public void DrawImage (Image image, float x, float y)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawImage(image, x, y);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, Rectangle destRect, Rectangle srcRect, GraphicsUnit srcUnit)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawImage(image, destRect, srcRect, srcUnit);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, RectangleF destRect, RectangleF srcRect, GraphicsUnit srcUnit)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawImage(image, destRect, srcRect, srcUnit);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawImage(image, destPoints, srcRect, srcUnit);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawImage(image, destPoints, srcRect, srcUnit);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawImage(image, destPoints, srcRect, srcUnit, imageAttr);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, float x, float y, float width, float height)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawImage(image, x, y, width, height);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawImage(image, destPoints, srcRect, srcUnit, imageAttr);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, int x, int y, Rectangle srcRect, GraphicsUnit srcUnit)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawImage(image, x, y, srcRect, srcUnit);
 		}
 
 		[MonoTODO]
@@ -337,37 +337,37 @@ namespace System.Drawing
 		[MonoTODO]
 		public void DrawImage (Image image, float x, float y, RectangleF srcRect, GraphicsUnit srcUnit)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawImage(image, x, y, srcRect, srcUnit);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawImage(image, destPoints, srcRect, srcUnit, imageAttr, callback);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawImage(image, destPoints, srcRect, srcUnit, imageAttr, callback);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback, int callbackData)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawImage(image, destPoints, srcRect, srcUnit, imageAttr, callback, callbackData);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawImage(image, destRect, srcX, srcY, srcWidth, srcHeight, srcUnit);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback, int callbackData)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawImage(image, destPoints, srcRect, srcUnit, imageAttr, callback, callbackData);
 		}
 
 		[MonoTODO]
@@ -415,25 +415,25 @@ namespace System.Drawing
 		[MonoTODO]
 		public void DrawImageUnscaled (Image image, Point point)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawImageUnscaled(image, point);
 		}
 
 		[MonoTODO]
 		public void DrawImageUnscaled (Image image, Rectangle rect)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawImageUnscaled(image, rect);
 		}
 
 		[MonoTODO]
 		public void DrawImageUnscaled (Image image, int x, int y)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawImageUnscaled(image, x, y);
 		}
 
 		[MonoTODO]
 		public void DrawImageUnscaled (Image image, int x, int y, int width, int height)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawImageUnscaled(image, x, y, width, height);
 		}
 
 		[MonoTODO]

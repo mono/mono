@@ -285,16 +285,46 @@ namespace System.Drawing
 				throw new NotImplementedException ();
 			}
 
+			void DrawImageUnscaled (Image wineImage, int x, int y, int width, int height)
+			{
+				Graphics imageGraphics = wineImage.selectedIntoGraphics_;
+				if( imageGraphics == null) {
+					IntPtr tempDC = Win32.CreateCompatibleDC (hdc_);
+					IntPtr oldBmp = Win32.SelectObject (tempDC, wineImage.nativeObject_);
+					Win32.BitBlt(hdc_, x, y, width, height, tempDC, 0, 0, PatBltTypes.SRCCOPY);
+					Win32.SelectObject (tempDC, oldBmp);
+					Win32.DeleteDC (tempDC);
+				}
+				else {
+					Win32.BitBlt(hdc_, x, y, width, height, imageGraphics.hdc_, 0, 0, PatBltTypes.SRCCOPY);
+				}
+			}
+			
+			void DrawImage (Image wineImage, int x, int y, int width, int height)
+			{
+				Graphics imageGraphics = wineImage.selectedIntoGraphics_;
+				if( imageGraphics == null) {
+					IntPtr tempDC = Win32.CreateCompatibleDC (hdc_);
+					IntPtr oldBmp = Win32.SelectObject (tempDC, wineImage.nativeObject_);
+					Win32.StretchBlt(hdc_, x, y, width, height, tempDC, 0, 0, wineImage.Size.Width, wineImage.Size.Height, PatBltTypes.SRCCOPY);
+					Win32.SelectObject (tempDC, oldBmp);
+					Win32.DeleteDC (tempDC);
+				}
+				else {
+					Win32.StretchBlt(hdc_, x, y, width, height, imageGraphics.hdc_, 0, 0, wineImage.Size.Width, wineImage.Size.Height, PatBltTypes.SRCCOPY);
+				}
+			}
+
 			[MonoTODO]
 			void IGraphics.DrawImage (System.Drawing.Image image, RectangleF rect)
 			{
-				throw new NotImplementedException ();
+				DrawImage( ConvertImage(image), (int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height);
 			}
 
 			[MonoTODO]
 			void IGraphics.DrawImage (System.Drawing.Image image, PointF point)
 			{
-				throw new NotImplementedException ();
+				DrawImage( ConvertImage(image), (int)point.X, (int)point.Y, image.Size.Width, image.Size.Height);
 			}
 
 			[MonoTODO]
@@ -306,13 +336,13 @@ namespace System.Drawing
 			[MonoTODO]
 			void IGraphics.DrawImage (System.Drawing.Image image, Point point)
 			{
-				throw new NotImplementedException ();
+				DrawImage( ConvertImage(image), point.X, point.Y, image.Size.Width, image.Size.Height);
 			}
 
 			[MonoTODO]
 			void IGraphics.DrawImage (System.Drawing.Image image, Rectangle rect)
 			{
-				throw new NotImplementedException ();
+				DrawImage( ConvertImage(image), rect.X, rect.Y, rect.Width, rect.Height);
 			}
 
 			[MonoTODO]
@@ -324,13 +354,13 @@ namespace System.Drawing
 			[MonoTODO]
 			void IGraphics.DrawImage (System.Drawing.Image image, int x, int y)
 			{
-				throw new NotImplementedException ();
+				DrawImage( ConvertImage(image), x, y, image.Size.Width, image.Size.Height);
 			}
 
 			[MonoTODO]
 			void IGraphics.DrawImage (System.Drawing.Image image, float x, float y)
 			{
-				throw new NotImplementedException ();
+				DrawImage( ConvertImage(image), (int)x, (int)y, image.Size.Width, image.Size.Height);
 			}
 
 			[MonoTODO]
@@ -366,7 +396,7 @@ namespace System.Drawing
 			[MonoTODO]
 			void IGraphics.DrawImage (System.Drawing.Image image, float x, float y, float width, float height)
 			{
-				throw new NotImplementedException ();
+				DrawImage( ConvertImage(image), (int)x, (int)y, (int)width, (int)height);
 			}
 
 			[MonoTODO]
@@ -384,18 +414,7 @@ namespace System.Drawing
 			[MonoTODO]
 			void IGraphics.DrawImage (System.Drawing.Image image, int x, int y, int width, int height)
 			{
-				System.Drawing.Win32Impl.Image wineImage = image.implementation_ as System.Drawing.Win32Impl.Image;
-				Graphics imageGraphics = wineImage.selectedIntoGraphics_;
-				if( imageGraphics == null) {
-					IntPtr tempDC = Win32.CreateCompatibleDC (hdc_);
-					IntPtr oldBmp = Win32.SelectObject (tempDC, wineImage.nativeObject_);
-					Win32.BitBlt(hdc_, x, y, width, height, tempDC, 0, 0, PatBltTypes.SRCCOPY);
-					Win32.SelectObject (tempDC, oldBmp);
-					Win32.DeleteDC (tempDC);
-				}
-				else {
-					Win32.BitBlt(hdc_, x, y, width, height, imageGraphics.hdc_, 0, 0, PatBltTypes.SRCCOPY);
-				}
+				DrawImage( ConvertImage(image), x, y, width, height);
 			}
 
 			[MonoTODO]
@@ -479,25 +498,25 @@ namespace System.Drawing
 			[MonoTODO]
 			void IGraphics.DrawImageUnscaled (System.Drawing.Image image, Point point)
 			{
-				throw new NotImplementedException ();
+				DrawImageUnscaled( ConvertImage(image), point.X, point.Y, image.Size.Width, image.Size.Height);
 			}
 
 			[MonoTODO]
 			void IGraphics.DrawImageUnscaled (System.Drawing.Image image, Rectangle rect)
 			{
-				throw new NotImplementedException ();
+				DrawImageUnscaled( ConvertImage(image), rect.X, rect.Y, rect.Width, rect.Height);
 			}
 
 			[MonoTODO]
 			void IGraphics.DrawImageUnscaled (System.Drawing.Image image, int x, int y)
 			{
-				throw new NotImplementedException ();
+				DrawImageUnscaled( ConvertImage(image), x, y, image.Size.Width, image.Size.Height);
 			}
 
 			[MonoTODO]
 			void IGraphics.DrawImageUnscaled (System.Drawing.Image image, int x, int y, int width, int height)
 			{
-				throw new NotImplementedException ();
+				DrawImageUnscaled( ConvertImage(image), x, y, width, height);
 			}
 
 			void DrawLine (Pen winePen, int x1, int y1, int x2, int y2)
