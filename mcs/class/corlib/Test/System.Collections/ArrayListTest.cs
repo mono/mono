@@ -1337,7 +1337,6 @@ public class ArrayListTest : TestCase {
 		}
 	}
 
-	// TODO - TrimToSize
 	public void TestTrimToSize() {
 		{
 			bool errorThrown = false;
