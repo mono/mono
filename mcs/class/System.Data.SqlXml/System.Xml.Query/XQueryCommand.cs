@@ -35,35 +35,36 @@
 using System.Data;
 using System.Data.SqlXml;
 using System.IO;
+using System.Reflection;
+using System.Security.Policy;
+using System.Xml;
+using System.Xml.XPath;
 
 namespace System.Xml.Query 
 {
 	public class XQueryCommand
 	{
-		#region Constructors
+		// They are obtained via reflection
+		static Type xqueryParserType;
+		static MethodInfo parseMethod;
+
+		static XQueryCommand ()
+		{
+			xqueryParserType = typeof (XPathNavigator).Assembly.GetType ("Mono.Xml.XQuery.Parser.XQueryParser");
+			parseMethod = xqueryParserType.GetMethod ("Parse");
+		}
+
+		#region Constructor
 
 		[MonoTODO]
 		public XQueryCommand ()
 		{
 		}
 
-		#endregion // Constructors
+		#endregion // Constructor
 
-		#region Properties
-
-		[MonoTODO]
-		public SqlQueryOptions SqlQueryOptions {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public XmlMappingDictionary XmlMappingDictionary {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		#endregion // Properties
+		// obtained via MethodInfo.Invoke() == XQueryParser.Parse()
+		object queryModule;
 
 		#region Methods
 
@@ -75,10 +76,9 @@ namespace System.Xml.Query
 			Compile (query, null);
 		}
 
-		[MonoTODO]
 		public void Compile (string query, Evidence evidence)
 		{
-			throw new NotImplementedException ();
+			Compile (new StringReader (query), evidence);
 		}
 
 		[MonoTODO ("Null Evidence allowed?")]
@@ -90,21 +90,8 @@ namespace System.Xml.Query
 		[MonoTODO]
 		public void Compile (TextReader query, Evidence evidence)
 		{
-			throw new NotImplementedException ();
-		}
-
-		// CompileView
-
-		[MonoTODO]
-		public void CompileView (string query, string mappingLocation)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void CompileView (TextReader query, string mappingLocation)
-		{
-			throw new NotImplementedException ();
+			object o = Activator.CreateInstance (xqueryParserType);
+			this.queryModule = parseMethod.Invoke (o, new object [] {query, evidence});
 		}
 
 		// Execute
