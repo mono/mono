@@ -187,7 +187,7 @@ namespace System.Reflection {
 		}
 
 		// Mono Extension: returns the GUID of this module
-		public Guid Mono_GetGuid ()
+		internal Guid Mono_GetGuid ()
 		{
 			return new Guid (GetGuidInternal ());
 		}
