@@ -1,3 +1,15 @@
+2004-02-13  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Added DTMXPathDocumentWriter.cs. It supports DTMXPathNavigator as
+	  the resulting document tree.
+	* DTMXPathDocumentBuilder.cs : Code refactory (to get closer to dtm
+	  writer and commonify tasks they both should do). Reduced initial
+	  array size (400 to 200, for attribute 800 to 200), and extending 
+	  size from 2x to 4x (to reduce _times_ of allication copy).
+	* DTMXPathNode.cs : (and all above) added experimental "DTM_CLASS"
+	  switch, which changes nodes from struct to class. (It will reduce
+	  memory consumption by 2/3, but will also reduce speed by 2/3.)
+
 2004-01-27  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTMXPathDocumentBuilder.cs : Namespace nodes are incorrectly created.

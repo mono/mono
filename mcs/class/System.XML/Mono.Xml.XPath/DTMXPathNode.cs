@@ -8,13 +8,18 @@
 //
 // These classes represent each node of DTMXPathNavigator.
 //
+//#define DTM_CLASS
 
 using System;
 using System.Xml.XPath;
 
 namespace Mono.Xml.XPath
 {
+#if DTM_CLASS
+	public class DTMXPathLinkedNode
+#else
 	public struct DTMXPathLinkedNode
+#endif
 	{
 		public int FirstChild;
 		public int Parent;
@@ -36,7 +41,11 @@ namespace Mono.Xml.XPath
 		public int LinePosition;
 	}
 
+#if DTM_CLASS
+	public class DTMXPathAttributeNode
+#else
 	public struct DTMXPathAttributeNode
+#endif
 	{
 		public int OwnerElement;
 		public int NextAttribute;
@@ -49,7 +58,11 @@ namespace Mono.Xml.XPath
 		public int LinePosition;
 	}
 
+#if DTM_CLASS
+	public class DTMXPathNamespaceNode
+#else
 	public struct DTMXPathNamespaceNode
+#endif
 	{
 		public int DeclaredElement;
 		public int NextNamespace;
