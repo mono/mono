@@ -126,7 +126,6 @@ System.Drawing/Rectangle.cs
 System.Drawing/RectangleF.cs
 System.Drawing/Region.cs
 System.Drawing/RotateFlipType.cs
-System.Drawing/Sample.cs
 System.Drawing/SizeConverter.cs
 System.Drawing/Size.cs
 System.Drawing/SizeF.cs
