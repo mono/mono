@@ -1,3 +1,8 @@
+2002-07-04  Dick Porter  <dick@ximian.com>
+
+	* daemon.c (process_process_fork): Fix argument handling, due to
+	buggy understanding of g_strsplit() behaviour.
+
 2002-07-03  Dick Porter  <dick@ximian.com>
 
 	* threads.h:
