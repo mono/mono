@@ -1,3 +1,12 @@
+2005-02-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* loader.c (mono_lookup_pinvoke_call): Fix warning.
+
+	* object.c (mono_runtime_free_method): Call mono_free_method () and
+	put the TODOs there.
+
+	* loader.c (mono_free_method): Free up most memory allocated for 
+	dynamic methods.
 
 Wed Feb 23 18:54:26 CET 2005 Paolo Molaro <lupus@ximian.com>
 
