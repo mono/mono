@@ -1,3 +1,8 @@
+2003-12-13  Patrik Torstensson  <p@rxc.se>
+
+	* bug-48015.cs: new test for obj.Equals on ContextBound objects
+	* Makefile.am: added bug-48015.cs.
+
 2003-11-21  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* context-static.cs: new test for ContextStaticAttribute.
