@@ -1,5 +1,10 @@
 2003-04-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* TemplateParser.cs: always reference all the assemblies in bin
+	directory.
+
+2003-04-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ApplicationFileParser.cs: it works now. Prior to these changes, we
 	were using the compiler directly.
 

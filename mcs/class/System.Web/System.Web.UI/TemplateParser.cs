@@ -60,6 +60,7 @@ namespace System.Web.UI
 			assemblies.Add ("System.Data.dll");
 			assemblies.Add ("System.Web.dll");
 			assemblies.Add ("System.Xml.dll");
+			AddAssembliesInBin ();
 		}
 
 		protected abstract Type CompileIntoType ();
@@ -160,9 +161,24 @@ namespace System.Web.UI
 			return null;
 		}
 
+		void AddAssembliesInBin ()
+		{
+			if (!Directory.Exists (PrivateBinPath))
+				return;
+
+			string [] binDlls = Directory.GetFiles (PrivateBinPath, "*.dll");
+			foreach (string dll in binDlls) {
+				Assembly assembly = Assembly.LoadFrom (dll);
+				AddAssembly (assembly, true);
+			}
+		}
+
 		Assembly LoadAssemblyFromBin (string name)
 		{
 			Assembly assembly;
+			if (!Directory.Exists (PrivateBinPath))
+				return null;
+
 			string [] binDlls = Directory.GetFiles (PrivateBinPath, "*.dll");
 			foreach (string dll in binDlls) {
 				string fn = Path.GetFileName (dll);
