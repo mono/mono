@@ -80,13 +80,12 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 	// this is legal in .NET 2.0 because HMACSHA1 derives from HMAC
 	[Test]
 	[ExpectedException (typeof (InvalidCastException))]
-	public void Exceptions () 
+	public void InvalidHashName () 
 	{
 		algo = new HMACSHA1 ();
 		algo.HashName = "MD5";
 		byte[] data = Encoding.Default.GetBytes ("MD5");
-		byte[] hmac = hash.ComputeHash (data);
-		Fail ("Expected InvalidCastException but got none");
+		byte[] hmac = algo.ComputeHash (data);
 	}
 #endif
 

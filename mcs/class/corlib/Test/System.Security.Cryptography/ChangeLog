@@ -1,5 +1,15 @@
 2004-07-07  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* DESTest.cs: Added a new test case to check default values.
+	* HMACSHA1.cs: Fixed bad test (and renamed it).
+	* RC2Test.cs: Added a new test case to check default values.
+	* RijndaelTest.cs: Added a new test case to check default values.
+	Convert tests from NUnit 1 to 2.2.
+	* TripleDESTest.cs: Added a new test case to check default values.
+	Convert tests to NUnit 2.2.
+
+2004-07-07  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* AllTests2.cs: Updated to NUnit 2.2 Assert.
 	* CipherModeTest.cs: New. Tests supported CipherMode for all 
 	SymmetricAlgorithm included in the framework (enum contains two more

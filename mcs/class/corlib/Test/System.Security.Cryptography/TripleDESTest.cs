@@ -4,7 +4,26 @@
 // Author:
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
-// (C) 2004 Novell (http://www.novell.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 using NUnit.Framework;
@@ -14,7 +33,26 @@ using System.Security.Cryptography;
 namespace MonoTests.System.Security.Cryptography {
 
 	[TestFixture]
-	public class TripleDESTest : Assertion {
+	public class TripleDESTest {
+
+		[Test]
+		public void DefaultProperties ()
+		{
+			TripleDES algo = TripleDES.Create ();
+			Assert.AreEqual (64, algo.BlockSize, "BlockSize");
+			Assert.AreEqual (8, algo.FeedbackSize, "FeedbackSize");
+			Assert.AreEqual (192, algo.KeySize, "KeySize");
+			Assert.AreEqual (CipherMode.CBC, algo.Mode, "Mode");
+			Assert.AreEqual (PaddingMode.PKCS7, algo.Padding, "Padding");
+			Assert.AreEqual (1, algo.LegalBlockSizes.Length, "LegalBlockSizes");
+			Assert.AreEqual (64, algo.LegalBlockSizes [0].MaxSize, "LegalBlockSizes.MaxSize");
+			Assert.AreEqual (64, algo.LegalBlockSizes [0].MinSize, "LegalBlockSizes.MinSize");
+			Assert.AreEqual (0, algo.LegalBlockSizes [0].SkipSize, "LegalBlockSizes.SkipSize");
+			Assert.AreEqual (1, algo.LegalKeySizes.Length, "LegalKeySizes");
+			Assert.AreEqual (192, algo.LegalKeySizes [0].MaxSize, "LegalKeySizes.MaxSize");
+			Assert.AreEqual (128, algo.LegalKeySizes [0].MinSize, "LegalKeySizes.MinSize");
+			Assert.AreEqual (64, algo.LegalKeySizes [0].SkipSize, "LegalKeySizes.SkipSize");
+		}
 
 		[Test]
 		public void Key ()
@@ -22,9 +60,9 @@ namespace MonoTests.System.Security.Cryptography {
 			TripleDES algo = TripleDES.Create ();
 			algo.GenerateKey ();
 			algo.GenerateIV ();
-			AssertEquals ("Key Size", 192, algo.KeySize);
-			AssertEquals ("Key Length", 24, algo.Key.Length);
-			AssertEquals ("IV Length", 8, algo.IV.Length);
+			Assert.AreEqual (192, algo.KeySize, "Key Size");
+			Assert.AreEqual (24, algo.Key.Length, "Key Length");
+			Assert.AreEqual (8, algo.IV.Length, "IV Length");
 		}
 
 		[Test]

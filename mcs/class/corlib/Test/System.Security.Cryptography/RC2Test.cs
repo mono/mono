@@ -38,12 +38,24 @@ namespace MonoTests.System.Security.Cryptography {
 	public class RC2Test : Assertion {
 
 		[Test]
-		public void DefaultLength ()
+		public void DefaultProperties ()
 		{
 			RC2 algo = RC2.Create ();
 			AssertEquals ("Key Size", 128, algo.KeySize);
 			AssertEquals ("Key Length", 16, algo.Key.Length);
 			AssertEquals ("IV Length", 8, algo.IV.Length);
+			AssertEquals ("BlockSize", 64, algo.BlockSize);
+			AssertEquals ("FeedbackSize", 8, algo.FeedbackSize);
+			AssertEquals ("Mode", CipherMode.CBC, algo.Mode);
+			AssertEquals ("Padding", PaddingMode.PKCS7, algo.Padding);
+			AssertEquals ("LegalBlockSizes", 1, algo.LegalBlockSizes.Length);
+			AssertEquals ("LegalBlockSizes.MaxSize", 64, algo.LegalBlockSizes [0].MaxSize);
+			AssertEquals ("LegalBlockSizes.MinSize", 64, algo.LegalBlockSizes [0].MinSize);
+			AssertEquals ("LegalBlockSizes.SkipSize", 0, algo.LegalBlockSizes [0].SkipSize);
+			AssertEquals ("LegalKeySizes", 1, algo.LegalKeySizes.Length);
+			AssertEquals ("LegalKeySizes.MaxSize", 128, algo.LegalKeySizes [0].MaxSize);
+			AssertEquals ("LegalKeySizes.MinSize", 40, algo.LegalKeySizes [0].MinSize);
+			AssertEquals ("LegalKeySizes.SkipSize", 8, algo.LegalKeySizes [0].SkipSize);
 		}
 
 		private void CheckECB (int effective_bits, byte[] key, byte[] pt, byte[] expected)

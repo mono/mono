@@ -2,9 +2,29 @@
 // RijndaelTest.cs - NUnit Test Cases for Rijndael
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 using NUnit.Framework;
@@ -14,19 +34,39 @@ using System.Text;
 
 namespace MonoTests.System.Security.Cryptography {
 
-public class RijndaelTest : TestCase {
+[TestFixture]
+public class RijndaelTest {
+	
 	protected Rijndael aes;
 
-	protected override void SetUp () 
+	[SetUp]
+	public void SetUp () 
 	{
 		aes = Rijndael.Create ();
 	}
 
-	protected override void TearDown () {}
-
 	public void AssertEquals (string msg, byte[] array1, byte[] array2) 
 	{
 		AllTests.AssertEquals (msg, array1, array2);
+	}
+
+	[Test]
+	public void DefaultProperties ()
+	{
+		Rijndael algo = aes;
+		Assert.AreEqual (128, algo.BlockSize, "BlockSize");
+		Assert.AreEqual (128, algo.FeedbackSize, "FeedbackSize");
+		Assert.AreEqual (256, algo.KeySize, "KeySize");
+		Assert.AreEqual (CipherMode.CBC, algo.Mode, "Mode");
+		Assert.AreEqual (PaddingMode.PKCS7, algo.Padding, "Padding");
+		Assert.AreEqual (1, algo.LegalBlockSizes.Length, "LegalBlockSizes");
+		Assert.AreEqual (256, algo.LegalBlockSizes [0].MaxSize, "LegalBlockSizes.MaxSize");
+		Assert.AreEqual (128, algo.LegalBlockSizes [0].MinSize, "LegalBlockSizes.MinSize");
+		Assert.AreEqual (64, algo.LegalBlockSizes [0].SkipSize, "LegalBlockSizes.SkipSize");
+		Assert.AreEqual (1, algo.LegalKeySizes.Length, "LegalKeySizes");
+		Assert.AreEqual (256, algo.LegalKeySizes [0].MaxSize, "LegalKeySizes.MaxSize");
+		Assert.AreEqual (128, algo.LegalKeySizes [0].MinSize, "LegalKeySizes.MinSize");
+		Assert.AreEqual (64, algo.LegalKeySizes [0].SkipSize, "LegalKeySizes.SkipSize");
 	}
 
 	// FIPS197 B 
@@ -120,7 +160,6 @@ public class RijndaelTest : TestCase {
 		decryptor.TransformBlock(output, 0, output.Length, original, 0);
 		AssertEquals ("FIPS197 C3 Decrypt", input, original);
 	}
-
 }
 
 }
