@@ -1,5 +1,10 @@
 2004-11-10  Jackson Harper  <jackson@ximian.com>
 
+	* TabControl.cs: You can only scroll left when the slider has
+	already ben moved right.
+	
+2004-11-10  Jackson Harper  <jackson@ximian.com>
+
 	* ThemeWin32Classic.cs: Do not draw the selected tab if its not in
 	the clip area.
 	
