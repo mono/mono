@@ -1,3 +1,8 @@
+2004-10-21  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (all-profiles $(STD_TARGETS:=-profiles)): Make
+	parallelizable. 
+
 2004-09-27  Raja R Harinath  <rharinath@novell.com>
 
 	* nunit20/nunit-console/Makefile (PROGRAM): Put in

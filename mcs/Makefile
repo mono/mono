@@ -28,10 +28,19 @@ all-local $(STD_TARGETS:=-local):
 
 # fun specialty targets
 
+PROFILES = default net_2_0
+
 .PHONY: all-profiles $(STD_TARGETS:=-profiles)
 all-profiles $(STD_TARGETS:=-profiles):
-	$(MAKE) PROFILE=default $(@:-profiles=)
-	$(MAKE) PROFILE=net_2_0 $(@:-profiles=)
+	$(MAKE) $(PROFILES:%=profile-do--%--$(@:-profiles=))
+
+# The % below looks like profile-name--target-name
+profile-do--%:
+	$(MAKE) PROFILE=$(subst --, ,$*)
+
+# Ensure these don't run in parallel, for now.
+profile-do--net_2_0--all: profile-do--default--all
+profile-do--net_2_0--run-test: profile-do--default--run-test
 
 testcorlib:
 	@cd class/corlib && $(MAKE) test run-test
