@@ -1,3 +1,7 @@
+2005-01-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WebPermissionAttribute.cs: Fixed NET_1_1 behaviour.
+
 2004-12-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnectionStream.cs: remove unneeded check. Write detects and
