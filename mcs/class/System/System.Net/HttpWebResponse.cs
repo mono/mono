@@ -338,6 +338,9 @@ namespace System.Net
 			for (int i = 0; i < length; i++) {
 				pos = 0;
 				string name_value = name_values [i].Trim ();
+				if (name_value == "")
+					continue;
+
 				string name = GetCookieName (name_value, name_value.Length, ref pos);
 				string value = GetCookieValue (name_value, name_value.Length, ref pos);
 				if (cookie == null) {

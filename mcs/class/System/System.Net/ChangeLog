@@ -1,3 +1,8 @@
+2004-11-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebResponse.cs: don't lock up when the cookie received ends with
+	a semicolon. Patch by Darryl VanDorp. Fixes bug #68956.
+
 2004-10-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs: don't fail if the request has already been sent
