@@ -198,7 +198,7 @@ namespace System.Data.SqlClient {
 			StringBuilder result = new StringBuilder ();
 			result.Append (parmName);
 			result.Append (" ");
-			result.Append (dbtype.ToString ());
+			result.Append (dbtype.ToString ().ToLower ());
 
 			switch (dbtype) {
 			case SqlDbType.Image :

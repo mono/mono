@@ -34,7 +34,6 @@ namespace System.Data.SqlClient {
 
 		SqlCommand command;
 		DataTable schemaTable;
-		FieldNameLookup lookup;
 
 		ArrayList dataTypeNames;
 		ArrayList dataTypes;
@@ -82,10 +81,6 @@ namespace System.Data.SqlClient {
 			get { return GetValue (GetOrdinal (name)); }
 		}
 		
-		internal FieldNameLookup Lookup {
-			get { return lookup; }
-		}
-
 		public int RecordsAffected {
 			get { return recordsAffected; }
 		}
@@ -136,22 +131,30 @@ namespace System.Data.SqlClient {
 			return schemaTable;
 		}
 
-		[MonoTODO]
 		public bool GetBoolean (int i)
 		{
-			throw new NotImplementedException ();
+			object value = GetValue (i);
+			if (!(value is bool))
+				throw new InvalidCastException ();
+			return (bool) value;
 		}
 
-		[MonoTODO]
 		public byte GetByte (int i)
 		{
-			throw new NotImplementedException ();
+			object value = GetValue (i);
+			if (!(value is byte))
+				throw new InvalidCastException ();
+			return (byte) value;
 		}
 
 		[MonoTODO]
 		public long GetBytes (int i, long dataIndex, byte[] buffer, int bufferIndex, int length)
 		{
-			throw new NotImplementedException ();
+			object value = GetValue (i);
+			if (!(value is byte []))
+				throw new InvalidCastException ();
+			Array.Copy ((byte []) value, (int) dataIndex, buffer, bufferIndex, length);
+			return ((byte []) value).Length - dataIndex;
 		}
 
 		[MonoTODO]
@@ -163,7 +166,11 @@ namespace System.Data.SqlClient {
 		[MonoTODO]
 		public long GetChars (int i, long dataIndex, char[] buffer, int bufferIndex, int length)
 		{
-			throw new NotImplementedException ();
+			object value = GetValue (i);
+			if (!(value is char []))
+				throw new InvalidCastException ();
+			Array.Copy ((char []) value, (int) dataIndex, buffer, bufferIndex, length);
+			return ((char []) value).Length - dataIndex;
 		}
 
 		[MonoTODO]
@@ -478,16 +485,13 @@ namespace System.Data.SqlClient {
 		{
 			if ((command.CommandBehavior & CommandBehavior.SingleResult) != 0 && resultsRead > 0)
 				return false;
+			if (command.CommandType == CommandType.StoredProcedure && command.Tds.DoneProc)
+				return false;
 
 			schemaTable.Rows.Clear ();
 
-			if (lookup != null)
-				lookup.Clear ();
-
 			moreResults = command.Tds.NextResult ();
 			command.Connection.CheckForErrors ();
-			if (moreResults)
-				lookup = new FieldNameLookup (GetSchemaTable ());
 			rowsRead = 0;
 			resultsRead += 1;
 			return moreResults;

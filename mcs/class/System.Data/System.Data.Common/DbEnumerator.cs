@@ -100,7 +100,7 @@ namespace System.Data.Common {
 
 		public virtual void Reset ()
 		{
-			throw new InvalidOperationException ("This enumerator can only go forward.");	
+			throw new NotSupportedException ();
 		}
 		
 		#endregion // Methods

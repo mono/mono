@@ -21,6 +21,7 @@ using System.Data.Common;
 using System.EnterpriseServices;
 using System.Net;
 using System.Text;
+using System.Xml;
 
 namespace System.Data.SqlClient {
 	public sealed class SqlConnection : Component, IDbConnection, ICloneable	
@@ -52,7 +53,9 @@ namespace System.Data.SqlClient {
 
 		// The current state
 		ConnectionState state = ConnectionState.Closed;
-		bool dataReaderOpen = false;
+
+		SqlDataReader dataReader = null;
+		XmlReader xmlReader = null;
 
 
 		// The TDS object
@@ -89,10 +92,10 @@ namespace System.Data.SqlClient {
 		public string Database	{
 			get { return tds.Database; }
 		}
-
-		internal bool DataReaderOpen {
-			get { return dataReaderOpen; }
-			set { dataReaderOpen = value; }
+		
+		internal SqlDataReader DataReader {
+			get { return dataReader; }
+			set { dataReader = value; }
 		}
 
 		public string DataSource {
@@ -121,6 +124,11 @@ namespace System.Data.SqlClient {
 
 		public string WorkstationId {
 			get { return parms.Hostname; }
+		}
+
+		internal XmlReader XmlReader {
+			get { return xmlReader; }
+			set { xmlReader = value; }
 		}
 
 		#endregion // Properties

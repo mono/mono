@@ -1,7 +1,19 @@
 2002-11-01  Tim Coleman (tim@timcoleman.com) :
 	* System.Data.Common/DbEnumerator.cs :
+		Throw correct exception on Reset ()
+		Add ColumnSize to schema table.
 	* System.Data.SqlClient/SqlDataReader.cs :
 		Add ColumnSize to schema table.
+	* System.Data.SqlClient/SqlCommand.cs :
+		Change the way that preparing is handled.
+		Now uses sp_prepare on the server instead of temp
+		stored procedures because it's the Right Thing[tm] to do.
+	* System.Data.SqlClient/SqlConnection.cs :
+		Store data readers here rather than in command
+	* System.Data.SqlClient/SqlDataReader.cs :
+		More implementation, including binary types
+	* System.Data.SqlClient/SqlParameter.cs :
+		Lowercase type name
 
 2002-10-31  Tim Coleman (tim@timcoleman.com)
         * System.Data.Common/DbDataAdapter.cs :
