@@ -12,7 +12,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-namespace MonoTests.System.Drawing
+namespace MonoTests.System.Drawing.Drawing2D
 {
 	[TestFixture]
 	public class BlendTest : Assertion
