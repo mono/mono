@@ -1,3 +1,8 @@
+2003-10-13  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* Makefile.am hppa_atomic.s: add HP 64bit
+	implementation of atomic ops
+
 2003-10-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* threads.c (CreateThread): Wrap pthread_attr_setstacksize call in
