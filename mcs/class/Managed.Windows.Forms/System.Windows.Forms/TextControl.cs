@@ -522,7 +522,8 @@ namespace System.Windows.Forms {
 			selection_end.line = this.document;
 			selection_end.pos = 0;
 
-
+			viewport_x = -2;
+			viewport_y = -2;
 
 			// Default selection is empty
 
@@ -902,8 +903,8 @@ namespace System.Windows.Forms {
 			selection_end.line = this.document;
 			selection_end.pos = 0;
 
-			viewport_x = 0;
-			viewport_y = 0;
+			viewport_x = -2;
+			viewport_y = -2;
 
 			document_x = 0;
 			document_y = 0;

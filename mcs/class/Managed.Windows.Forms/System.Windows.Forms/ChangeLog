@@ -1,5 +1,9 @@
 2005-03-18  Peter Bartok  <pbartok@novell.com>
 
+	* TextControl.cs: Quick hack to center text better
+
+2005-03-18  Peter Bartok  <pbartok@novell.com>
+
 	* ControlPaint.cs: 
 	  - Don't throw NotImplemented exceptions, just print a notice once 
 	    instead (requested by Miguel). This makes running existing SWF 
