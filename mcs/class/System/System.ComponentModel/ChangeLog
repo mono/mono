@@ -1,3 +1,16 @@
+2003-09-13  Duncan Mak  <duncan@ximian.com>
+
+	Patch from Jörg Rosenkranz <joergr@voelcker.com>, this fixes the
+	bugs described in bug #48351.
+
+	* EnumConverter.cs (ConvertFrom): Removed the special handling for
+	multiple values. This is done in Enum.Parse already.
+
+	* TypeDescriptor.cs (GetConverter): Does not work for enumeration
+	types because EnumConverter does not have a default
+	constructor. Fixed by changing the special handling for
+	enumeration types.
+
 2003-08-31  Jerome Laban <jlaban@wanadoo.fr>
         * Container.cs: A site without name cannot be duplicate.
 

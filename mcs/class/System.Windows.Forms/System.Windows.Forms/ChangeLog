@@ -1,3 +1,8 @@
+2003-09-13  Duncan Mak  <duncan@ximian.com>
+
+	* TabPage.cs (constructor): added a constructor for constructing
+	tab pages with a title. Patch from Jonathan Hogg
+	<jonathan@onegoodidea.com>.
 
 2003-09-01  Dennis Hayes <dennish@raytek.com>
 	* Application.cs

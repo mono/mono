@@ -195,7 +195,6 @@ public sealed class TypeDescriptor
 				defaultConverters.Add (typeof (Array), typeof (ArrayConverter));
 				defaultConverters.Add (typeof (CultureInfo), typeof (CultureInfoConverter));
 				defaultConverters.Add (typeof (DateTime), typeof (DateTimeConverter));
-				defaultConverters.Add (typeof (Enum), typeof (EnumConverter));
 				defaultConverters.Add (typeof (Guid), typeof (GuidConverter));
 				defaultConverters.Add (typeof (TimeSpan), typeof (TimeSpanConverter));
 				defaultConverters.Add (typeof (ICollection), typeof (CollectionConverter));
@@ -208,38 +207,36 @@ public sealed class TypeDescriptor
 	
 	public static TypeConverter GetConverter (Type type)
 	{
-		Type t = DefaultConverters [type] as Type;
-		string converter_name = null;
-		if (t == null) {
-			object [] attrs = type.GetCustomAttributes (false);
-			foreach (object o in attrs){
-				if (o is TypeConverterAttribute){
-					TypeConverterAttribute tc = (TypeConverterAttribute) o;
-					converter_name = tc.ConverterTypeName;
-					break;
+		if (type.IsEnum) {
+			// EnumConverter needs to know the enum type
+			return new EnumConverter(type);
+		} else {
+			Type t = DefaultConverters [type] as Type;
+			string converter_name = null;
+			if (t == null) {
+				object [] attrs = type.GetCustomAttributes (false);
+				foreach (object o in attrs){
+					if (o is TypeConverterAttribute){
+						TypeConverterAttribute tc = (TypeConverterAttribute) o;
+						converter_name = tc.ConverterTypeName;
+						break;
+					}
 				}
-			}
-
-			if (converter_name == null && type.IsEnum) {
-				t = (Type) DefaultConverters [typeof (Enum)];
+			} else {
 				converter_name = t.FullName;
 			}
-
-		} else {
-			converter_name = t.FullName;
-		}
-		
-
-		if (converter_name == null)
-			return null;
-
-		object converter = null;
-		try {
-			converter = Activator.CreateInstance (Type.GetType (converter_name));
-		} catch (Exception){
-		}
 	
-		return converter as TypeConverter;
+			if (converter_name == null)
+				return null;
+	
+			object converter = null;
+			try {
+				converter = Activator.CreateInstance (Type.GetType (converter_name));
+			} catch (Exception){
+			}
+		
+			return converter as TypeConverter;
+		}
 	}
 
 	[MonoTODO]

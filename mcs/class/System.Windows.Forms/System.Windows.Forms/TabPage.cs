@@ -39,6 +39,10 @@ namespace System.Windows.Forms {
 			imageIndex = -1;
 		}
 
+		public TabPage (string textValue) : this() {
+			text = textValue;
+		}
+
 		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override AnchorStyles Anchor {
 			get {	return base.Anchor; }

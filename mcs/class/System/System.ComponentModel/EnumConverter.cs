@@ -57,13 +57,7 @@ namespace System.ComponentModel
 			if (val == null)
 				return base.ConvertFrom(context, culture, value);
 
-			string [] subValues = val.Split (new char [] {','});
-					
-			long longResult = 0;
-			foreach (string s in subValues)
-				longResult |= (long) Enum.Parse (type, s, true);
-
-			return Enum.ToObject (type, longResult);
+			return Enum.Parse (type, val, true);
 		}
 
 		public override bool IsValid (ITypeDescriptorContext context, object value)
