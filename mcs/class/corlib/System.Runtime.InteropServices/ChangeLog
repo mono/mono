@@ -1,3 +1,8 @@
+2003-03-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ExternalException.cs: doesn't need a field to keep the result code.
+	* SEHException.cs: implemented.
+
 2003-03-03  Tim Coleman <tim@timcoleman.com>
 	* HandleRef.cs: Add this struct
 

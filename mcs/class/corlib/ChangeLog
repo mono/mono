@@ -1,3 +1,7 @@
+2003-03-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* unix.args: added SEHException.
+
 2003-03-25  Martin Willemoes Hansen <mwh@sysrq.dk>
 
 	* Stubed System.Runtime.Remoting.Metadata.W3cXsd2001

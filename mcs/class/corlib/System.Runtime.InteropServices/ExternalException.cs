@@ -13,8 +13,6 @@ using System.Globalization;
 namespace System.Runtime.InteropServices {
 	[Serializable]
 	public class ExternalException : SystemException {
-		private int error_code;
-		
 		// Constructors
 		public ExternalException ()
 			: base (Locale.GetText ("External exception"))
@@ -38,12 +36,12 @@ namespace System.Runtime.InteropServices {
 		public ExternalException (string message, int errorCode)
 			: base (message)
 		{
-			error_code = errorCode;
+			HResult = errorCode;
 		}
 
 		public virtual int ErrorCode {
 			get {
-				return error_code;
+				return HResult;
 			}
 		}
 	}
