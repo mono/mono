@@ -1,5 +1,9 @@
 2004-10-08  Sanjay Gupta <gsanjay@novell.com>
 
+	* System.Web_test.dll.sources: Added new file.
+
+2004-10-08  Sanjay Gupta <gsanjay@novell.com>
+
 	* System.Web.dll.sources: Added new classes in  
 	  System.Web.UI.WebControls.
 
