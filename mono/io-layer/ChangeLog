@@ -1,3 +1,9 @@
+2003-05-02  Dick Porter  <dick@ximian.com>
+
+	* sockets.c: Rearrange closesocket() and socket_close_private(),
+	and remember to unref the handle, so we don't leak socket handles.
+	Fix from Pelle Johnsen <pelle.johnsen@mail.dk>
+
 2003-04-11  Dick Porter  <dick@ximian.com>
 
 	* atomic.h: ARM atomic operations by Malte Hildingson
