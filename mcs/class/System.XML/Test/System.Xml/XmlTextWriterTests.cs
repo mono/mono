@@ -98,7 +98,7 @@ namespace MonoTests.System.Xml
 				// MS.NET doesn't treat as an error.
 				Fail ("any prefix which name starts from \"xml\" must not be allowed.");
 			}
- 			catch (ArgumentException e) {}
+ 			catch (ArgumentException) {}
 			xtw.WriteAttributeString ("", "xmlns", null, "http://abc.def");
 		}
 
@@ -199,7 +199,7 @@ namespace MonoTests.System.Xml
 				xtw.WriteCData ("foo");
 				Fail ("WriteCData after Close Should have thrown an InvalidOperationException.");
 			} 
-			catch (InvalidOperationException e) {
+			catch (InvalidOperationException) {
 				// Don't rely on English message assertion.
 				// It is enough to check an exception occurs.
 //				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
@@ -209,7 +209,7 @@ namespace MonoTests.System.Xml
 				xtw.WriteComment ("foo");
 				Fail ("WriteComment after Close Should have thrown an InvalidOperationException.");
 			} 
-			catch (InvalidOperationException e) {
+			catch (InvalidOperationException) {
 //				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
 			}
 
@@ -217,7 +217,7 @@ namespace MonoTests.System.Xml
 				xtw.WriteProcessingInstruction ("foo", "bar");
 				Fail ("WriteProcessingInstruction after Close Should have thrown an InvalidOperationException.");
 			} 
-			catch (InvalidOperationException e) {
+			catch (InvalidOperationException) {
 //				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
 			}
 
@@ -225,7 +225,7 @@ namespace MonoTests.System.Xml
 				xtw.WriteStartElement ("foo", "bar", "baz");
 				Fail ("WriteStartElement after Close Should have thrown an InvalidOperationException.");
 			} 
-			catch (InvalidOperationException e) {
+			catch (InvalidOperationException) {
 //				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
 			}
 
@@ -234,7 +234,7 @@ namespace MonoTests.System.Xml
 				xtw.WriteAttributeString ("foo", "bar");
 				Fail ("WriteAttributeString after Close Should have thrown an InvalidOperationException.");
 			} 
-			catch (InvalidOperationException e) 
+			catch (InvalidOperationException) 
 			{
 //				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
 			}
@@ -243,7 +243,7 @@ namespace MonoTests.System.Xml
 				xtw.WriteString ("foo");
 				Fail ("WriteString after Close Should have thrown an InvalidOperationException.");
 			} 
-			catch (InvalidOperationException e) {
+			catch (InvalidOperationException) {
 //				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
 			}
 		}
@@ -336,7 +336,7 @@ namespace MonoTests.System.Xml
 				xtw.WriteStartDocument ();
 				Fail("Should have thrown an InvalidOperationException.");
 			} 
-			catch (InvalidOperationException e) {
+			catch (InvalidOperationException) {
 				// Don't rely on English message assertion.
 				// It is enough to check an exception occurs.
 //				AssertEquals ("Exception message is incorrect.",
@@ -717,7 +717,7 @@ namespace MonoTests.System.Xml
 			try {
 				xtw.WriteEndElement ();
 				Fail ("Should have thrown an InvalidOperationException.");
-			} catch (InvalidOperationException e) {
+			} catch (InvalidOperationException) {
 				// Don't rely on English message assertion.
 				// It is enough to check an exception occurs.
 //				AssertEquals ("Exception message is incorrect.", "There was no XML start tag open.", e.Message);

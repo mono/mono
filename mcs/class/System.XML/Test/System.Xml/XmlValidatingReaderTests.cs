@@ -23,12 +23,14 @@ namespace MonoTests.System.Xml
 		XmlReader xtr;
 		XmlValidatingReader dvr;
 
-		private XmlReader PrepareXmlReader (string xml)
+		private XmlValidatingReader PrepareXmlReader (string xml)
 		{
-			return new XmlTextReader (xml, XmlNodeType.Document, null);
+			XmlReader reader = new XmlTextReader (xml, XmlNodeType.Document, null);
 //			XmlDocument doc = new XmlDocument ();
 //			doc.LoadXml (xml);
-//			return new XmlNodeReader (doc);
+//			XmlReader reader = new XmlNodeReader (doc);
+
+			return new XmlValidatingReader (reader);
 		}
 
 		[Test]
@@ -36,15 +38,13 @@ namespace MonoTests.System.Xml
 		{
 			string intSubset = "<!ELEMENT root EMPTY>";
 			string dtd = "<!DOCTYPE root [" + intSubset + "]>";
-			string xml1 = dtd + "<root />";
-			xtr = PrepareXmlReader (xml1);
-			dvr = new XmlValidatingReader (xtr);
+			string xml = dtd + "<root />";
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			dvr.Read ();
 
-			string xml2 = dtd + "<invalid />";
-			xtr = PrepareXmlReader (xml2);
-			dvr = new XmlValidatingReader (xtr);
+			xml = dtd + "<invalid />";
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			try {
 				dvr.Read ();	// invalid element.
@@ -52,9 +52,8 @@ namespace MonoTests.System.Xml
 			} catch (XmlSchemaException) {
 			}
 
-			string xml3 = dtd + "<root>invalid PCDATA.</root>";
-			xtr = PrepareXmlReader (xml3);
-			dvr = new XmlValidatingReader (xtr);
+			xml = dtd + "<root>invalid PCDATA.</root>";
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			dvr.Read ();	// root
 			try {
@@ -63,9 +62,8 @@ namespace MonoTests.System.Xml
 			} catch (XmlSchemaException) {
 			}
 
-			string xml4 = dtd + "<root><invalid_child /></root>";
-			xtr = PrepareXmlReader (xml4);
-			dvr = new XmlValidatingReader (xtr);
+			xml = dtd + "<root><invalid_child /></root>";
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			dvr.Read ();	// root
 			try {
@@ -80,9 +78,8 @@ namespace MonoTests.System.Xml
 		{
 			string intSubset = "<!ELEMENT root (foo)><!ELEMENT foo EMPTY>";
 			string dtd = "<!DOCTYPE root [" + intSubset + "]>";
-			string xml1 = dtd + "<root />";
-			xtr = PrepareXmlReader (xml1);
-			dvr = new XmlValidatingReader (xtr);
+			string xml = dtd + "<root />";
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			try {
 				dvr.Read ();	// root: invalid end
@@ -90,9 +87,8 @@ namespace MonoTests.System.Xml
 			} catch (XmlSchemaException) {
 			}
 
-			string xml2 = dtd + "<root>Test.</root>";
-			xtr = PrepareXmlReader (xml2);
-			dvr = new XmlValidatingReader (xtr);
+			xml = dtd + "<root>Test.</root>";
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			dvr.Read ();	// root
 			try {
@@ -101,16 +97,14 @@ namespace MonoTests.System.Xml
 			} catch (XmlSchemaException) {
 			}
 
-			string xml3 = dtd + "<root><foo /></root>";
-			xtr = PrepareXmlReader (xml3);
-			dvr = new XmlValidatingReader (xtr);
+			xml = dtd + "<root><foo /></root>";
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			dvr.Read ();	// root
 			dvr.Read ();	// foo
 
-			string xml4 = dtd + "<root><bar /></root>";
-			xtr = PrepareXmlReader (xml4);
-			dvr = new XmlValidatingReader (xtr);
+			xml = dtd + "<root><bar /></root>";
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			dvr.Read ();	// root
 			try {
@@ -125,24 +119,21 @@ namespace MonoTests.System.Xml
 		{
 			string intSubset = "<!ELEMENT root (#PCDATA | foo)*><!ELEMENT foo EMPTY>";
 			string dtd = "<!DOCTYPE root [" + intSubset + "]>";
-			string xml1 = dtd + "<root />";
-			xtr = PrepareXmlReader (xml1);
-			dvr = new XmlValidatingReader (xtr);
+			string xml = dtd + "<root />";
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			dvr.Read ();	// root
 			dvr.Read ();	// end
 
-			string xml2 = dtd + "<root>Test.</root>";
-			xtr = PrepareXmlReader (xml2);
-			dvr = new XmlValidatingReader (xtr);
+			xml = dtd + "<root>Test.</root>";
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			dvr.Read ();	// root
 			dvr.Read ();	// valid PCDATA
 			dvr.Read ();	// endelement root
 
-			string xml3 = dtd + "<root><foo/>Test.<foo></foo></root>";
-			xtr = PrepareXmlReader (xml3);
-			dvr = new XmlValidatingReader (xtr);
+			xml = dtd + "<root><foo/>Test.<foo></foo></root>";
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			dvr.Read ();	// root
 			dvr.Read ();	// valid foo
@@ -151,9 +142,8 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// valid endElement foo
 			dvr.Read ();	// valid endElement root
 
-			string xml4 = dtd + "<root>Test.<bar /></root>";
-			xtr = PrepareXmlReader (xml4);
-			dvr = new XmlValidatingReader (xtr);
+			xml = dtd + "<root>Test.<bar /></root>";
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			dvr.Read ();	// root
 			dvr.Read ();	// valid #PCDATA
@@ -169,18 +159,16 @@ namespace MonoTests.System.Xml
 		{
 			string intSubset = "<!ELEMENT root (foo, bar)><!ELEMENT foo EMPTY><!ELEMENT bar EMPTY>";
 			string dtd = "<!DOCTYPE root [" + intSubset + "]>";
-			string xml1 = dtd + "<root><foo/><bar/></root>";
-			xtr = PrepareXmlReader (xml1);
-			dvr = new XmlValidatingReader (xtr);
+			string xml = dtd + "<root><foo/><bar/></root>";
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			dvr.Read ();	// root
 			dvr.Read ();	// foo
 			dvr.Read ();	// bar
 			dvr.Read ();	// end root
 
-			string xml2 = dtd + "<root><foo/></root>";
-			xtr = PrepareXmlReader (xml2);
-			dvr = new XmlValidatingReader (xtr);
+			xml = dtd + "<root><foo/></root>";
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			dvr.Read ();	// root
 			dvr.Read ();	// foo
@@ -190,9 +178,8 @@ namespace MonoTests.System.Xml
 			} catch (XmlSchemaException) {
 			}
 
-			string xml3 = dtd + "<root><bar/></root>";
-			xtr = PrepareXmlReader (xml3);
-			dvr = new XmlValidatingReader (xtr);
+			xml = dtd + "<root><bar/></root>";
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			dvr.Read ();	// root
 			try {
@@ -207,9 +194,8 @@ namespace MonoTests.System.Xml
 		{
 			string intSubset = "<!ELEMENT root (foo|bar)><!ELEMENT foo EMPTY><!ELEMENT bar EMPTY>";
 			string dtd = "<!DOCTYPE root [" + intSubset + "]>";
-			string xml1 = dtd + "<root><foo/><bar/></root>";
-			xtr = PrepareXmlReader (xml1);
-			dvr = new XmlValidatingReader (xtr);
+			string xml = dtd + "<root><foo/><bar/></root>";
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			dvr.Read ();	// root
 			dvr.Read ();	// foo
@@ -219,25 +205,22 @@ namespace MonoTests.System.Xml
 			} catch (XmlSchemaException) {
 			}
 
-			string xml2 = dtd + "<root><foo/></root>";
-			xtr = PrepareXmlReader (xml2);
-			dvr = new XmlValidatingReader (xtr);
+			xml = dtd + "<root><foo/></root>";
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			dvr.Read ();	// root
 			dvr.Read ();	// foo
 			dvr.Read ();	// end root
 
-			string xml3 = dtd + "<root><bar/></root>";
-			xtr = PrepareXmlReader (xml3);
-			dvr = new XmlValidatingReader (xtr);
+			xml = dtd + "<root><bar/></root>";
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			dvr.Read ();	// root
 			dvr.Read ();	// bar
 			dvr.Read ();	// end root
 
-			string xml4 = dtd + "<root><foo/>text.<bar/></root>";
-			xtr = PrepareXmlReader (xml4);
-			dvr = new XmlValidatingReader (xtr);
+			xml = dtd + "<root><foo/>text.<bar/></root>";
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			dvr.Read ();	// root
 			dvr.Read ();	// foo
@@ -253,25 +236,21 @@ namespace MonoTests.System.Xml
 		{
 			string intSubset = "<!ELEMENT root ANY><!ELEMENT foo EMPTY>";
 			string dtd = "<!DOCTYPE root [" + intSubset + "]>";
-			string xml1 = dtd + "<root />";
-			xtr = PrepareXmlReader (xml1);
-			dvr = new XmlValidatingReader (xtr);
+			string xml = dtd + "<root />";
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			dvr.Read ();	// empty root.
 			dvr.Read ();	// end of document.
 
-			string xml2 = dtd + "<root><foo/></root>";
-			xtr = PrepareXmlReader (xml2);
-			xtr = new XmlTextReader (xml2, XmlNodeType.Document, null);
-			dvr = new XmlValidatingReader (xtr);
+			xml = dtd + "<root><foo/></root>";
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			dvr.Read ();	// root
 			dvr.Read ();	// foo
 			dvr.Read ();	// end root
 
-			string xml3 = dtd + "<root><foo /><foo></foo><foo/></root>";
-			xtr = PrepareXmlReader (xml3);
-			dvr = new XmlValidatingReader (xtr);
+			xml = dtd + "<root><foo /><foo></foo><foo/></root>";
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			dvr.Read ();	// root
 			dvr.Read ();	// foo
@@ -279,9 +258,8 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// foo
 			dvr.Read ();	// end root
 
-			string xml4 = dtd + "<root><bar /></root>";
-			xtr = PrepareXmlReader (xml4);
-			dvr = new XmlValidatingReader (xtr);
+			xml = dtd + "<root><bar /></root>";
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			dvr.Read ();	// root
 			try {
@@ -297,8 +275,7 @@ namespace MonoTests.System.Xml
 			string intSubset = "<!ELEMENT root ((foo, bar)|(foo,baz))><!ELEMENT foo EMPTY><!ELEMENT bar EMPTY><!ELEMENT baz EMPTY>";
 			string dtd = "<!DOCTYPE root [" + intSubset + "]>";
 			string xml = dtd + "<root><foo/><bar/></root>";
-			xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
-			dvr = new XmlValidatingReader (xtr);
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			dvr.Read ();	// root
 			dvr.Read ();	// foo
@@ -306,8 +283,7 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// end root
 
 			xml = dtd + "<root><foo/><baz/></root>";
-			xtr = PrepareXmlReader (xml);
-			dvr = new XmlValidatingReader (xtr);
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			dvr.Read ();	// root
 			dvr.Read ();	// foo
@@ -320,7 +296,7 @@ namespace MonoTests.System.Xml
 			string intSubset = "<!ELEMENT root EMPTY><!ATTLIST root foo CDATA #REQUIRED bar CDATA #IMPLIED>";
 			string dtd = "<!DOCTYPE root [" + intSubset + "]>";
 			string xml = dtd + "<root />";
-			dvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
+			dvr = PrepareXmlReader (xml);
 			dvr.ValidationType = ValidationType.DTD;
 			dvr.Read ();	// DTD
 			try {
@@ -330,22 +306,19 @@ namespace MonoTests.System.Xml
 			}
 
 			xml = dtd + "<root foo='value' />";
-			xtr = PrepareXmlReader (xml);
-			dvr = new XmlValidatingReader (xtr);
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			dvr.Read ();	// root
 			dvr.Read ();	// end of document
 
 			xml = dtd + "<root foo='value' bar='2nd' />";
-			xtr = PrepareXmlReader (xml);
-			dvr = new XmlValidatingReader (xtr);
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			dvr.Read ();	// root
 			dvr.Read ();	// end of document
 
 			xml = dtd + "<root foo='value' bar='2nd' baz='3rd' />";
-			xtr = PrepareXmlReader (xml);
-			dvr = new XmlValidatingReader (xtr);
+			dvr = PrepareXmlReader (xml);
 			dvr.Read ();	// DTD
 			try {
 				dvr.Read ();	// undeclared attribute baz
@@ -360,7 +333,7 @@ namespace MonoTests.System.Xml
 			string intSubset = "<!ELEMENT root EMPTY><!ATTLIST root foo CDATA 'foo-def' bar CDATA 'bar-def'>";
 			string dtd = "<!DOCTYPE root [" + intSubset + "]>";
 			string xml = dtd + "<root />";
-			dvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
+			dvr = PrepareXmlReader (xml);
 			dvr.ValidationType = ValidationType.DTD;
 			dvr.Read ();	// DTD
 			dvr.Read ();
@@ -368,10 +341,183 @@ namespace MonoTests.System.Xml
 			AssertEquals ("root", dvr.Name);
 			Assert (dvr.MoveToFirstAttribute ());
 			AssertEquals ("foo", dvr.Name);
+			AssertEquals ("foo-def", dvr ["foo"]);
+			AssertNotNull (dvr ["bar"]);
+			AssertEquals ("foo-def", dvr.Value);
+			Assert (dvr.MoveToNextAttribute ());
+			AssertEquals ("bar", dvr.Name);
+			AssertEquals ("foo-def", dvr ["foo"]);
+			AssertNotNull (dvr ["bar"]);
+			AssertEquals ("bar-def", dvr.Value);
+
+			// ValidationType = None
+
+			dvr = PrepareXmlReader (xml);
+			dvr.ValidationType = ValidationType.None;
+			dvr.Read ();	// DTD
+			dvr.Read ();
+			AssertEquals (XmlNodeType.Element, dvr.NodeType);
+			AssertEquals ("root", dvr.Name);
+			Assert (dvr.MoveToFirstAttribute ());
+			AssertEquals ("foo", dvr.Name);
+			AssertNotNull (dvr ["foo"]);
+			AssertNotNull (dvr ["bar"]);
 			AssertEquals ("foo-def", dvr.Value);
 			Assert (dvr.MoveToNextAttribute ());
 			AssertEquals ("bar", dvr.Name);
 			AssertEquals ("bar-def", dvr.Value);
+			AssertNotNull (dvr ["foo"]);
+			AssertNotNull (dvr ["bar"]);
+			AssertEquals ("bar", dvr.Name);
+		}
+
+		[Test]
+		public void TestExpandEntity ()
+		{
+			string intSubset = "<!ELEMENT root EMPTY><!ATTLIST root foo CDATA 'foo-def' bar CDATA 'bar-def'><!ENTITY ent 'entity string'>";
+			string dtd = "<!DOCTYPE root [" + intSubset + "]>";
+			string xml = dtd + "<root foo='&ent;' bar='internal &ent; value' />";
+			dvr = PrepareXmlReader (xml);
+			dvr.EntityHandling = EntityHandling.ExpandEntities;
+			dvr.Read ();	// DTD
+			dvr.Read ();
+			AssertEquals (XmlNodeType.Element, dvr.NodeType);
+			AssertEquals ("root", dvr.Name);
+			Assert (dvr.MoveToFirstAttribute ());
+			AssertEquals ("foo", dvr.Name);
+			AssertEquals ("entity string", dvr.Value);
+			Assert (dvr.MoveToNextAttribute ());
+			AssertEquals ("bar", dvr.Name);
+			AssertEquals ("internal entity string value", dvr.Value);
+
+			// ValidationType = None
+
+			dvr = PrepareXmlReader (xml);
+			dvr.EntityHandling = EntityHandling.ExpandEntities;
+			dvr.ValidationType = ValidationType.None;
+			dvr.Read ();	// DTD
+			dvr.Read ();
+			AssertEquals (XmlNodeType.Element, dvr.NodeType);
+			AssertEquals ("root", dvr.Name);
+
+			Assert (dvr.MoveToFirstAttribute ());
+			AssertEquals ("foo", dvr.Name);
+			AssertEquals ("entity string", dvr.Value);
+
+			Assert (dvr.MoveToNextAttribute ());
+			AssertEquals ("bar", dvr.Name);
+			AssertEquals ("internal entity string value", dvr.Value);
+		}
+
+		[Test]
+		public void TestPreserveEntity ()
+		{
+			string intSubset = "<!ELEMENT root EMPTY><!ATTLIST root foo CDATA 'foo-def' bar CDATA 'bar-def'><!ENTITY ent 'entity string'>";
+			string dtd = "<!DOCTYPE root [" + intSubset + "]>";
+			string xml = dtd + "<root foo='&ent;' bar='internal &ent; value' />";
+			dvr = PrepareXmlReader (xml);
+			dvr.EntityHandling = EntityHandling.ExpandCharEntities;
+			dvr.Read ();	// DTD
+			dvr.Read ();
+			AssertEquals (XmlNodeType.Element, dvr.NodeType);
+			AssertEquals ("root", dvr.Name);
+			Assert (dvr.MoveToFirstAttribute ());
+			AssertEquals ("foo", dvr.Name);
+			AssertEquals ("entity string", dvr.Value);
+			//  ReadAttributeValue()
+			Assert (dvr.ReadAttributeValue ());
+			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
+			AssertEquals ("ent", dvr.Name);
+			AssertEquals ("", dvr.Value);
+			Assert (!dvr.ReadAttributeValue ());
+
+			// bar
+			Assert (dvr.MoveToNextAttribute ());
+			AssertEquals ("bar", dvr.Name);
+			AssertEquals ("internal entity string value", dvr.Value);
+			//  ReadAttributeValue()
+			Assert (dvr.ReadAttributeValue ());
+			AssertEquals (XmlNodeType.Text, dvr.NodeType);
+			AssertEquals ("", dvr.Name);
+			AssertEquals ("internal ", dvr.Value);
+			Assert (dvr.ReadAttributeValue ());
+			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
+			AssertEquals ("ent", dvr.Name);
+			AssertEquals ("", dvr.Value);
+			Assert (dvr.ReadAttributeValue ());
+			AssertEquals (XmlNodeType.Text, dvr.NodeType);
+			AssertEquals ("", dvr.Name);
+			AssertEquals (" value", dvr.Value);
+
+			// ValidationType = None
+
+			dvr = PrepareXmlReader (xml);
+			dvr.EntityHandling = EntityHandling.ExpandCharEntities;
+			dvr.ValidationType = ValidationType.None;
+			dvr.Read ();	// DTD
+			dvr.Read ();
+			AssertEquals (XmlNodeType.Element, dvr.NodeType);
+			AssertEquals ("root", dvr.Name);
+
+			// foo
+			Assert (dvr.MoveToFirstAttribute ());
+			AssertEquals ("foo", dvr.Name);
+			AssertEquals ("entity string", dvr.Value);
+			//  ReadAttributeValue()
+			Assert (dvr.ReadAttributeValue ());
+			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
+			AssertEquals ("ent", dvr.Name);
+			AssertEquals ("", dvr.Value);
+			Assert (!dvr.ReadAttributeValue ());
+
+			// bar
+			Assert (dvr.MoveToNextAttribute ());
+			AssertEquals ("bar", dvr.Name);
+			AssertEquals ("internal entity string value", dvr.Value);
+			//  ReadAttributeValue()
+			Assert (dvr.ReadAttributeValue ());
+			AssertEquals (XmlNodeType.Text, dvr.NodeType);
+			AssertEquals ("", dvr.Name);
+			AssertEquals ("internal ", dvr.Value);
+			Assert (dvr.ReadAttributeValue ());
+			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
+			AssertEquals ("ent", dvr.Name);
+			AssertEquals ("", dvr.Value);
+			Assert (dvr.ReadAttributeValue ());
+			AssertEquals (XmlNodeType.Text, dvr.NodeType);
+			AssertEquals ("", dvr.Name);
+			AssertEquals (" value", dvr.Value);
+		}
+
+		[Test]
+		public void TestNormalization ()
+		{
+			string intSubset = "<!ELEMENT root EMPTY>"
+				+ "<!ATTLIST root foo ID #REQUIRED"
+				+ " bar NMTOKEN #IMPLIED "
+				+ " baz NMTOKENS #IMPLIED "
+				+ " quux CDATA #IMPLIED >";
+			string dtd = "<!DOCTYPE root [" + intSubset + "]>";
+			string xml = dtd + "<root foo=' id1 ' bar='  nameToken  ' baz=' list  of\r\nname token' quux=' quuux\tquuux\t ' />";
+			dvr = PrepareXmlReader (xml);
+			((XmlTextReader) dvr.Reader).Normalization = true;
+			dvr.EntityHandling = EntityHandling.ExpandEntities;
+			dvr.Read ();	// DTD
+			dvr.Read ();
+			AssertEquals (XmlNodeType.Element, dvr.NodeType);
+			AssertEquals ("root", dvr.Name);
+			Assert (dvr.MoveToFirstAttribute ());
+			AssertEquals ("foo", dvr.Name);
+			AssertEquals ("id1", dvr.Value);
+			Assert (dvr.MoveToNextAttribute ());
+			AssertEquals ("bar", dvr.Name);
+			AssertEquals ("nameToken", dvr.Value);
+			Assert (dvr.MoveToNextAttribute ());
+			AssertEquals ("baz", dvr.Name);
+			AssertEquals ("list of name token", dvr.Value);
+			Assert (dvr.MoveToNextAttribute ());
+			AssertEquals ("quux", dvr.Name);
+			AssertEquals (" quuux quuux  ", dvr.Value);
 		}
 
 		[Test]
@@ -381,7 +527,7 @@ namespace MonoTests.System.Xml
 			string dtd = "<!DOCTYPE root [" + intSubset + "]>";
 			string xml = dtd + "<foo><bar att='val' /></foo>";
 			eventFired = false;
-			dvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
+			dvr = PrepareXmlReader (xml);
 			dvr.ValidationEventHandler += new ValidationEventHandler (OnInvalidityFound);
 			dvr.ValidationType = ValidationType.DTD;
 			dvr.Read ();	// DTD
@@ -396,6 +542,15 @@ namespace MonoTests.System.Xml
 			AssertEquals ("foo", dvr.Name);
 			AssertEquals (XmlNodeType.EndElement, dvr.NodeType);
 			Assert (!dvr.Read ());
+
+			// When ValidationType is None, event should not be fired,
+			eventFired = false;
+			dvr = PrepareXmlReader (xml);
+			dvr.ValidationEventHandler += new ValidationEventHandler (OnInvalidityFound);
+			dvr.ValidationType = ValidationType.None;
+			dvr.Read ();	// DTD
+			Assert (dvr.Read ());	// invalid foo
+			Assert (!eventFired);
 		}
 
 		private bool eventFired;

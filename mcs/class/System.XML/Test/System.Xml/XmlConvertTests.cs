@@ -62,19 +62,19 @@ namespace MonoTests.System.Xml
 			try {
 				XmlConvert.VerifyNCName ("?foo");
 				Fail ();
-			} catch (XmlException ex) {}
+			} catch (XmlException) {}
 			try {
 				XmlConvert.VerifyNCName (":foo");
 				Fail ();
-			} catch (XmlException ex) {}
+			} catch (XmlException) {}
 			try {
 				XmlConvert.VerifyNCName ("foo:bar");
 				Fail ();
-			} catch (XmlException ex) {}
+			} catch (XmlException) {}
 			try {
 				XmlConvert.VerifyNCName ("foo:bar:baz");
 				Fail ();
-			} catch (XmlException ex) {}
+			} catch (XmlException) {}
 		}
 	}
 }

@@ -1,3 +1,16 @@
+2003-07-24  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlConvertTests.cs,
+	  XmlNodeTests.cs,
+	  XmlTextWriterTests.cs : removed some compilation warning.
+	* XmlNodeReaderTests.cs : reverted Jul. 12th. ReadInnerXmlWrongInit()
+	  incorrect commit.
+	* XmlValidatingReaderTests.cs : Code refactory (removed xml1, xml2...
+	  and changed PrepareXmlReader() as returning validating reader.
+	  Added indexer (this[]) property check and ValidationType.None check
+	  to TestAttributeDefaultContribution().
+	  Added TestExpandEntity(), TestPreserveEntity() and TestNormalization().
+
 2003-07-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlValidatingReaderTests.cs : added TestValidationEvent() and

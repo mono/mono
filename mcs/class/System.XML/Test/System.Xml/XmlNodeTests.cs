@@ -169,7 +169,7 @@ namespace MonoTests.System.Xml
 				throw ex;
 			}
 #else
-			} catch (Exception ex) {}
+			} catch (Exception) {}
 #endif
 }
 
