@@ -1,5 +1,6 @@
 Assembly/AssemblyInfo.cs
 Assembly/Consts.cs
+Assembly/Locale.cs
 Microsoft.CSharp/CSharpCodeCompiler.cs
 Microsoft.CSharp/CSharpCodeGenerator.cs
 Microsoft.CSharp/CSharpCodeProvider.cs
@@ -378,7 +379,6 @@ System.Diagnostics/TraceLevel.cs
 System.Diagnostics/TraceListenerCollection.cs
 System.Diagnostics/TraceListener.cs
 System.Diagnostics/TraceSwitch.cs
-System.Globalization/Locale.cs
 System.IO/ErrorEventArgs.cs
 System.IO/ErrorEventHandler.cs
 System.IO/FileSystemEventArgs.cs

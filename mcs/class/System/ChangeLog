@@ -1,3 +1,7 @@
+2003-07-18  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* System.dll.sources: Assembly/Locale.cs added, Globalization.Locale.cs removed
+
 2003-07-18  Peter Williams  <peter@newton.cx>
 
 	* Makefile (EXTRA_DISTFILES): Oops, NUnit.Prefs is not
@@ -6,7 +10,7 @@
 
 2003-07-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
-	* Assembly/Consts.cs: added
+	* System.dll.sources: Assembly/Consts.cs added
 
 2003-07-16  Peter Williams  <peter@newton.cx>
 
