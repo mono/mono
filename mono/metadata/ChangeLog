@@ -1,3 +1,12 @@
+2004-10-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_System_Reflection_MethodBase_GetMethodBodyInternal): New icall.
+
+	* reflection.c (mono_method_body_get_object): New function to create
+	a MethodBody object.
+
+	* object-internals.h object.h: Add MonoReflectionMethodBody structure.
+
 2004-10-11  Martin Baulig  <martin@ximian.com>
 
 	* metadata.c (_mono_metadata_type_equal): Renamed to
