@@ -1,3 +1,8 @@
+2004-07-01  Sureshkumar T <tsureshkumar@novell.com>
+	* Added test case for OdbcCommand.ExecuteScalar Method
+	* New files:
+		OdbcCommandTest.cs 	- test suite for OdbcCommand class.
+
 2004-06-23  Sureshkumar T <TSureshkumar@novell.com>
 	* Added test to check whether the OdbcConnection.Close method closes
 	  all the handles.
