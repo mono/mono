@@ -1,3 +1,8 @@
+2004-02-27  Ravindra <rkumar@novell.com>
+
+	* WrapMode.cs: Corrected enum values. Tile should be zero
+	and Clamp should be four.
+
 2004-02-11  Ravindra <rkumar@novell.com>
 
 	* Matrix.cs: Added status checks using 

@@ -15,10 +15,10 @@ namespace System.Drawing.Drawing2D {
 	/// </summary>
 	[Serializable]
 	public enum WrapMode {
-		Clamp,
 		Tile,
 		TileFlipX,
 		TileFlipXY,
-		TileFlipY
+		TileFlipY,
+		Clamp
 	}
 }
