@@ -3,6 +3,7 @@
 //
 // Author:
 //   Daniel Morgan <danmorg@sc.rr.com>
+//   Ville Palo <vi64pa@koti.soon.fi>
 //
 // (C) Ximian, Inc 2002
 //
@@ -15,27 +16,26 @@ namespace System.Data
 	/// </summary>
 	public class DataRowChangeEventArgs : EventArgs {
 
-		[MonoTODO]
+	        private DataRow row;
+		private DataRowAction action; 
+	
 		public DataRowChangeEventArgs(DataRow row,
 			DataRowAction action) {
-
-			throw new NotImplementedException ();
+			
+			this.row = row;
+			this.action = action;
 		}
 
 		public DataRowAction Action {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return action;
 			}
 		}
 
 		public DataRow Row {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return row;
 			}
 		}
-
 	}
-
 }

@@ -1,5 +1,9 @@
 2002-11-30  Ville Palo <vi64pa@koti.soon.fi>
 
+	* DataRowChangeEventArgs.cs: Implemented Action and Row properties 
+	
+2002-11-30  Ville Palo <vi64pa@koti.soon.fi>
+
 	* System.Data/DataRow.cs: Added internal property XmlDataID
 	
 2002-11-29  Ville Palo <vi64pa@koti.soon.fi>
