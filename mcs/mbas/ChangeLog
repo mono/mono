@@ -1,4 +1,7 @@
 2004-06-04 Anirban Bhattacharjee <banirban@novell.com>
+	* decl.cs: Check for duplicate member name within same container
+
+2004-06-04 Anirban Bhattacharjee <banirban@novell.com>
 	* class.cs: changed exception number in event grammar
 
 2004-06-03 Anirban Bhattacharjee <banirban@novell.com>

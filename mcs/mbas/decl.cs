@@ -287,7 +287,15 @@ namespace Mono.MonoBASIC {
 		/// </summary>
 		protected void DefineName (string name, object o)
 		{
-			defined_names.Add (name, o);
+			try {
+				defined_names.Add (name, o);
+			} 
+			catch (ArgumentException exp) {
+				Report.Error (30260, /*Location,*/
+					"More than one defination with same name '" + name + 
+					"' is found in the container '" + Name + "'");	
+		    }
+
 		}
 
 		/// <summary>
