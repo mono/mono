@@ -209,10 +209,11 @@ namespace System {
 				return false;
 			
 			Delegate d = (Delegate) o;
+			// Do not compare method_ptr, since it can point to a trampoline
 			if ((d.target_type == target_type) &&
 			    (d.m_target == m_target) &&
 			    (d.method_name == method_name) &&
-			    (d.method_ptr == method_ptr))
+				(d.method_info == method_info))
 				return true;
 
 			return false;

@@ -1,3 +1,8 @@
+2004-02-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Delegate.cs (Equals): Do not compare method_ptr, since it might
+	point to a trampoline.
+
 2004-02-11  Marek Safar  <marek.safar@seznam.cz>
 
         * Type.cs (FilterNameIgnoreCase_impl): Added extra check for speedup.
