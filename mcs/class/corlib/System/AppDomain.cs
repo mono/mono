@@ -263,7 +263,7 @@ namespace System {
 		{
 			// FIXME: examine all other parameters
 			
-			AssemblyBuilder ab = new AssemblyBuilder (name, access);
+			AssemblyBuilder ab = new AssemblyBuilder (name, dir, access);
 			return ab;
 		}
 

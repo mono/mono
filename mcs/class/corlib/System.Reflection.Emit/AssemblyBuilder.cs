@@ -23,14 +23,16 @@ namespace System.Reflection.Emit {
 		private MethodInfo entry_point;
 		private ModuleBuilder[] modules;
 		private string name;
+		private string dir;
 		private CustomAttributeBuilder[] cattrs;
 		private int[] table_indexes;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (AssemblyBuilder ab);
 		
-		internal AssemblyBuilder (AssemblyName n, AssemblyBuilderAccess access) {
+		internal AssemblyBuilder (AssemblyName n, string directory, AssemblyBuilderAccess access) {
 			name = n.Name;
+			dir = directory;
 			basic_init (this);
 		}
 
@@ -195,6 +197,10 @@ namespace System.Reflection.Emit {
 			byte[] buf = new byte [2048];
 			FileStream file;
 			int count, data_size;
+
+			if (dir != null) {
+				assemblyFileName = String.Format ("{0}{1}{2}", dir, System.IO.Path.DirectorySeparatorChar, assemblyFileName);
+			}
 
 			file = new FileStream (assemblyFileName, FileMode.Create, FileAccess.Write);
 
