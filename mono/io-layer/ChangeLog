@@ -1,3 +1,8 @@
+
+Mon Jan 10 20:30:19 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* atomic.h: fix some functions on ppc (tests/interlocked.cs).
+
 2005-01-10  Dick Porter  <dick@ximian.com>
 
 	* misc.c (_wapi_calc_timeout): Guard against overflow when
