@@ -1,3 +1,7 @@
+2005-01-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CharUnicodeInfo.cs : added new in 2.0 (kinda hacky).
+
 2005-01-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CultureInfo.cs: the InvariantCulture returns false for
