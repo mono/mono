@@ -1,3 +1,8 @@
+2005-02-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Reverting last changes in SslClientStream and RecordProtocol. This
+	break when sending large files back and forth (echo test).
+
 2005-02-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SslClientStream.cs: Throw exception when we receive a null record.
