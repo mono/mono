@@ -1,5 +1,11 @@
 2004-03-30  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (ConstructedType.CheckConstraints): Actually follow
+	the spec here: the argument type must be convertible to the
+	constraints.
+
+2004-03-30  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs
 	(TypeParameter.Define, TypeParameter.DefineMethod): Call
 	TypeManager.AddTypeParameter().

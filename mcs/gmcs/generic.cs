@@ -509,28 +509,36 @@ namespace Mono.CSharp {
 			if (atype == ptype)
 				return true;
 
+			Expression aexpr = new EmptyExpression (atype);
+
 			//
-			// First, check parent class.
+			// First, check the class constraint.
 			//
-			if ((ptype.BaseType != atype.BaseType) &&
-			    !atype.BaseType.IsSubclassOf (ptype.BaseType)) {
-				Report.Error (-219, loc, "Cannot create constructed type `{0}': " +
-					      "type argument `{1}' must derive from `{2}'.",
-					      full_name, atype, ptype.BaseType);
-				return false;
+
+			Type parent = ptype.BaseType;
+			if ((parent != null) && (parent != TypeManager.object_type)) {
+				if (!Convert.ImplicitConversionExists (ec, aexpr, parent)) {
+					Report.Error (309, loc, "The type `{0}' must be " +
+						      "convertible to `{1}' in order to " +
+						      "use it as parameter `{2}' in the " +
+						      "generic type or method `{3}'",
+						      atype, parent, ptype, DeclarationName);
+					return false;
+				}
 			}
 
 			//
-			// Now, check the interfaces.
+			// Now, check the interface constraints.
 			//
 			foreach (Type itype in ptype.GetInterfaces ()) {
-				if (TypeManager.ImplementsInterface (atype, itype))
-					continue;
-
-				Report.Error (-219, loc, "Cannot create constructed type `{0}: " +
-					      "type argument `{1}' must implement interface `{2}'.",
-					      full_name, atype, itype);
-				return false;
+				if (!Convert.ImplicitConversionExists (ec, aexpr, itype)) {
+					Report.Error (309, loc, "The type `{0}' must be " +
+						      "convertible to `{1}' in order to " +
+						      "use it as parameter `{2}' in the " +
+						      "generic type or method `{3}'",
+						      atype, itype, ptype, DeclarationName);
+					return false;
+				}
 			}
 
 			//
