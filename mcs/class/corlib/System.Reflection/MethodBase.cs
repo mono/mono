@@ -142,21 +142,31 @@ namespace System.Reflection {
 		}
 
 #if NET_1_2
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern MethodInfo GetGenericMethodDefinition_impl ();
+		public virtual MethodInfo BindGenericParameters (Type [] types)
+		{
+			throw new NotSupportedException ();
+		}
+
+		public virtual Type [] GetGenericParameters ()
+		{
+			throw new NotSupportedException ();
+		}
 
 		public virtual MethodInfo GetGenericMethodDefinition ()
 		{
-			MethodInfo res = GetGenericMethodDefinition_impl ();
-			if (res == null)
-				throw new InvalidOperationException ();
-
-			return res;
+			throw new NotSupportedException ();
 		}
 
-		public extern bool HasGenericParameters {
-			[MethodImplAttribute(MethodImplOptions.InternalCall)]
-			get;
+		public virtual bool HasGenericParameters {
+			get {
+				throw new NotSupportedException ();
+			}
+		}
+
+		public virtual bool IsGenericMethodDefinition {
+			get {
+				throw new NotSupportedException ();
+			}
 		}
 #endif
 	}

@@ -305,6 +305,9 @@ namespace System.Reflection.Emit {
 
 #if NET_1_2
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public override extern MethodInfo BindGenericParameters (Type [] types);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern MonoGenericParam define_generic_parameter (string name, int index);
 		
 		public Type DefineGenericParameter (string name)
@@ -329,7 +332,13 @@ namespace System.Reflection.Emit {
 			generic_params [index].SetConstraints (constraints);
 		}
 
-		public override Type[] GetGenericArguments ()
+		public override bool HasGenericParameters {
+			get {
+				return generic_params != null;
+			}
+		}
+
+		public override Type[] GetGenericParameters ()
 		{
 			if (generic_params == null)
 				return new Type [0];

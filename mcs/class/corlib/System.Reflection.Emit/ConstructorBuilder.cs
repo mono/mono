@@ -215,6 +215,14 @@ namespace System.Reflection.Emit {
 				throw not_after_created ();
 		}
 
+#if NET_1_2
+		public override bool HasGenericParameters {
+			get {
+				return false;
+			}
+		}
+#endif
+
 		public override string ToString() {
 			return "constructor";
 		}

@@ -1,3 +1,8 @@
+2004-03-29  Martin Baulig  <martin@ximian.com>
+
+	* MethodBase.cs: Moved the generics stuff here, made it virtual
+	where neccessary and use the correct API.
+
 2004-03-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StrongNameKeyPair.cs: Added an internal method to return a 

@@ -271,11 +271,6 @@ namespace System.Reflection.Emit {
 			return new NotSupportedException ("The invoked member is not supported on a dynamic method.");
 		}
 
-		public override Type[] GetGenericArguments ()
-		{
-			throw new NotImplementedException ();
-		}
-
 		internal int AddRef (object reference) {
 			if (refs == null)
 				refs = new object [4];

@@ -24,18 +24,6 @@ namespace System.Reflection {
 		public override MemberTypes MemberType { get {return MemberTypes.Method;} }
 		public abstract Type ReturnType { get; }
 		public abstract ICustomAttributeProvider ReturnTypeCustomAttributes { get; } 
-
-#if NET_1_2
-		public extern bool IsGenericMethodDefinition {
-			[MethodImplAttribute(MethodImplOptions.InternalCall)]
-			get;
-		}
-
-		public abstract Type [] GetGenericArguments ();
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern MethodInfo BindGenericParameters (Type [] types);
-#endif
 	}
 
 }
