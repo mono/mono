@@ -173,7 +173,7 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (prop1, prop2);
 		}
 
-		public void Select1Match ()
+		public void Select1Match2 ()
 		{
 			Type type = typeof (SingleIndexer);
 			PropertyInfo [] props = type.GetProperties (BindingFlags.DeclaredOnly |
