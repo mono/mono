@@ -1,3 +1,6 @@
+2003-10-15  Alexandre Pigolkine <pigolkine@gmx.de>
+	* image.c			GdipDrawImageRectI changed 
+	
 2003-10-14  Alexandre Pigolkine <pigolkine@gmx.de>
 	* gdip_defs.h
 	* graphics.c

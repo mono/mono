@@ -101,7 +101,9 @@ Status GdipDrawImageRectI (gdip_graphics_ptr graphics, gdip_image_ptr image, int
 		return GenericError;
 	}
 	cairo_move_to (graphics->ct, x, y);
-	cairo_show_surface (graphics->ct, image_surface, width, height);
+	cairo_set_pattern (graphics->ct, image_surface);
+	cairo_rectangle (graphics->ct, x, y, width, height);
+	cairo_fill (graphics->ct);
 	
 	return Ok;
 }
