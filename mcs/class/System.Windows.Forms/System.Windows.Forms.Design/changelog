@@ -1,3 +1,7 @@
+2003-08-30  Alexandre Pigolkine <pigolkine@gmx.de>
+	* ComponentEditor.cs
+	* IUIService.cs				stubs added 
+
 2003-03-31  Alan Tam <Tam@SiuLung.com>
 
 	* UITypeEditor.cs: Removed because it shan't be here
