@@ -224,7 +224,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\CharacterCasing.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\CheckBox.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\CheckedListBox.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
                 />
@@ -255,6 +265,16 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ColumnHeaderStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\ComboBox.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\ComboBoxStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -584,6 +604,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\KeyboardLayouts.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\KeyEventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -675,6 +700,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\LinkState.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\ListBindingConverter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1044,6 +1074,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\TextBox.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\TextBoxBase.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\TextControl.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\Theme.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1206,6 +1251,11 @@
                 <File
                     RelPath = "System.Windows.Forms\VScrollBar.cs"
                     SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\X11Keyboard.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
