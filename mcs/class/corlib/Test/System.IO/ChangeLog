@@ -1,3 +1,8 @@
+2003-04-29  Ville Palo <vi64pa@kolumbus.fi>
+
+	* FileStreamTest.cs: Tests for Flush() adn  one one more test for
+	Ctor exceptions
+	
 2003-04-25  Ville Palo <vi64pa@kolumbus.fi>
 
 	* FileTest.cs: more tests..

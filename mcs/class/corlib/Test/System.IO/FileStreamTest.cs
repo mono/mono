@@ -167,6 +167,53 @@ namespace MonoTests.System.IO
                 	}                	
                 	
                 }
+
+		[Test]
+		[ExpectedException(typeof(IOException))]
+		public void CtorIOException ()
+		{			
+			string path = "resources/CTorIOException.Test";
+			if (File.Exists (path)) 
+				File.Delete (path);
+			
+			FileStream stream = new FileStream (path, FileMode.CreateNew);
+			
+			// used by an another process
+			FileStream stream2 = new FileStream (path, FileMode.OpenOrCreate);
+		}
+		
+		[Test]
+		public void Flush ()
+		{
+			string path = "resources/FileStreamTest.Flush";
+			if (File.Exists (path))
+				File.Delete (path);
+			
+			FileStream stream = new FileStream (path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.ReadWrite);
+			FileStream stream2 = new FileStream (path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+
+			stream.Write (new byte [] {1, 2, 3, 4, 5}, 0, 5);
+						
+			byte [] bytes = new byte [5];
+			stream2.Read (bytes, 0, 5);
+			
+			Assertion.AssertEquals ("test#01", 0, bytes [0]);
+			Assertion.AssertEquals ("test#02", 0, bytes [1]);
+			Assertion.AssertEquals ("test#03", 0, bytes [2]);
+			Assertion.AssertEquals ("test#04", 0, bytes [3]);
+			
+			stream.Flush ();
+			stream2.Read (bytes, 0, 5);			
+			Assertion.AssertEquals ("test#05", 1, bytes [0]);
+			Assertion.AssertEquals ("test#06", 2, bytes [1]);
+			Assertion.AssertEquals ("test#07", 3, bytes [2]);
+			Assertion.AssertEquals ("test#08", 4, bytes [3]);
+			stream.Close ();
+			stream2.Close ();
+			
+			if (File.Exists (path))
+				File.Delete (path);			
+		}
                 
                 public void TestDefaultProperties ()
                 {
