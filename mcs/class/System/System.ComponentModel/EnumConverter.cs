@@ -32,6 +32,8 @@
 using System;
 using System.Collections;
 using System.Globalization;
+using System.Reflection;
+using System.ComponentModel.Design.Serialization;
 
 namespace System.ComponentModel
 {
@@ -47,6 +49,9 @@ namespace System.ComponentModel
 
 		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
 		{
+			if (destinationType == typeof (InstanceDescriptor))
+				return true;
+
 			return base.CanConvertTo (context, destinationType);
 		}
 
@@ -58,6 +63,13 @@ namespace System.ComponentModel
 			if (destinationType == typeof (string))
 				if (value != null)
 					return Enum.Format (type, value, "G");
+					
+			if (destinationType == typeof (InstanceDescriptor) && type.IsInstanceOfType (value)) {
+				FieldInfo f = type.GetField (value.ToString ());
+				if (f == null) throw new ArgumentException (string.Format ("The value '{0}' is not a valid value for the enum '{1}'", value, type));
+				return new InstanceDescriptor (f, null);
+			}
+			
 			return base.ConvertTo (context, culture, value, destinationType);
 		}
 

@@ -31,6 +31,8 @@
 //
 
 using System.Globalization;
+using System.Reflection;
+using System.ComponentModel.Design.Serialization;
 
 namespace System.ComponentModel
 {
@@ -53,6 +55,8 @@ namespace System.ComponentModel
 			Type destinationType)
 		{
 			if (destinationType == typeof (string))
+				return true;
+			if (destinationType == typeof (InstanceDescriptor))
 				return true;
 			return base.CanConvertTo (context, destinationType);
 		}
@@ -83,6 +87,11 @@ namespace System.ComponentModel
 			if (destinationType == typeof (string) && value != null && (value is CultureInfo))
 				// LAMESPEC MS seems to use EnglishName (culture invariant) - check this
 				return ((CultureInfo) value).EnglishName;
+			if (destinationType == typeof (InstanceDescriptor) && value is CultureInfo) {
+				CultureInfo cval = (CultureInfo) value;
+				ConstructorInfo ctor = typeof(CultureInfo).GetConstructor (new Type[] {typeof(int)});
+				return new InstanceDescriptor (ctor, new object[] {cval.LCID});
+			}
 			return base.ConvertTo (context, culture, value, destinationType);
 		}
 

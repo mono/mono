@@ -31,6 +31,8 @@
 //
 
 using System.Globalization;
+using System.Reflection;
+using System.ComponentModel.Design.Serialization;
 
 namespace System.ComponentModel
 {
@@ -38,17 +40,26 @@ namespace System.ComponentModel
 	{
 		public DecimalConverter()
 		{
+			InnerType = typeof(Decimal);
 		}
 
 		public override bool CanConvertTo (ITypeDescriptorContext context,
 			Type destinationType)
 		{
+			if (destinationType == typeof (InstanceDescriptor))
+				return true;
 			return base.CanConvertTo (context, destinationType);
 		}
 		
 		public override object ConvertTo (ITypeDescriptorContext context,
 			CultureInfo culture, object value, Type destinationType)
 		{
+			if (destinationType == typeof (InstanceDescriptor) && value is Decimal) {
+				Decimal cval = (Decimal) value;
+				ConstructorInfo ctor = typeof(Decimal).GetConstructor (new Type[] {typeof(int[])});
+				return new InstanceDescriptor (ctor, new object[] {Decimal.GetBits (cval)});
+			}
+			Console.WriteLine (Environment.StackTrace);
 			return base.ConvertTo(context, culture, value, destinationType);
 		}
 	}

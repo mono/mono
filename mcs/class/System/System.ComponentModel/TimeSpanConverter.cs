@@ -31,6 +31,8 @@
 //
 
 using System.Globalization;
+using System.Reflection;
+using System.ComponentModel.Design.Serialization;
 
 namespace System.ComponentModel
 {
@@ -51,6 +53,8 @@ namespace System.ComponentModel
 		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
 		{
 			if (destinationType == typeof (string))
+				return true;
+			if (destinationType == typeof (InstanceDescriptor))
 				return true;
 			return base.CanConvertTo (context, destinationType);
 		}
@@ -77,6 +81,11 @@ namespace System.ComponentModel
 				// LAMESPEC Doc says TimeSpan uses Ticks, but MS uses time format
 				// [ws][-][d.]hh:mm:ss[.ff][ws]
 				return ((TimeSpan) value).ToString();
+			}
+			if (destinationType == typeof (InstanceDescriptor) && value is TimeSpan) {
+				TimeSpan cval = (TimeSpan) value;
+				ConstructorInfo ctor = typeof(TimeSpan).GetConstructor (new Type[] {typeof(long)});
+				return new InstanceDescriptor (ctor, new object[] {cval.Ticks});
 			}
 			return base.ConvertTo (context, culture, value, destinationType);
 		}

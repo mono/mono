@@ -31,6 +31,8 @@
 //
 
 using System.Globalization;
+using System.Reflection;
+using System.ComponentModel.Design.Serialization;
 
 namespace System.ComponentModel
 {
@@ -51,6 +53,8 @@ namespace System.ComponentModel
 		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
 		{
 			if (destinationType == typeof (string))
+				return true;
+			if (destinationType == typeof (InstanceDescriptor))
 				return true;
 			return base.CanConvertTo (context, destinationType);
 		}
@@ -94,6 +98,11 @@ namespace System.ComponentModel
 						return ConvertTime.ToString (CurrentCulture.DateTimeFormat.ShortDatePattern + 
 							" " + CurrentCulture.DateTimeFormat.ShortTimePattern);
 				}
+			}
+			if (destinationType == typeof (InstanceDescriptor) && value is DateTime) {
+				DateTime cval = (DateTime) value;
+				ConstructorInfo ctor = typeof(DateTime).GetConstructor (new Type[] {typeof(long)});
+				return new InstanceDescriptor (ctor, new object[] {cval.Ticks});
 			}
 			return base.ConvertTo (context, culture, value, destinationType);
 		}

@@ -1,3 +1,9 @@
+2005-01-27  LLuis Sanchez Gual  <lluis@novell.com>
+
+	* DateTimeConverter.cs, CultureInfoConverter.cs, DecimalConverter.cs,
+	TimeSpanConverter.cs, GuidConverter.cs, EnumConverter.cs: 
+	Implemented support for InstanceDescriptor.
+
 2005-01-25  LLuis Sanchez Gual  <lluis@novell.com>
 
 	* Win32Exception.cs: Set the correct name for the serialized
@@ -159,7 +165,7 @@ Fri Jun 11 11:58:22 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 2003-09-13  Duncan Mak  <duncan@ximian.com>
 
-	Patch from Jörg Rosenkranz <joergr@voelcker.com>, this fixes the
+	Patch from Jrg Rosenkranz <joergr@voelcker.com>, this fixes the
 	bugs described in bug #48351.
 
 	* EnumConverter.cs (ConvertFrom): Removed the special handling for
@@ -424,7 +430,7 @@ Fri Jun 11 11:58:22 CEST 2004 Paolo Molaro <lupus@ximian.com>
 	* DesignerAttribute.cs:
 	* EditorAttribute.cs: fixed the build.
 
-2002-11-19  Alejandro Sánchez Acosta <raciel@es.gnu.org>
+2002-11-19  Alejandro Snchez Acosta <raciel@es.gnu.org>
 
 	* EditorAttribute: implemented.
 	* DesignerAttribute: implemented.

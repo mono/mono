@@ -29,6 +29,8 @@
 //
 
 using System.Globalization;
+using System.Reflection;
+using System.ComponentModel.Design.Serialization;
 
 namespace System.ComponentModel
 {
@@ -49,6 +51,8 @@ namespace System.ComponentModel
 		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
 		{
 			if (destinationType == typeof (string))
+				return true;
+			if (destinationType == typeof (InstanceDescriptor))
 				return true;
 			return base.CanConvertTo (context, destinationType);
 		}
@@ -73,6 +77,12 @@ namespace System.ComponentModel
 			if (destinationType == typeof (string) && value != null &&value.GetType() == typeof (Guid))
 				// LAMESPEC MS seems to always parse "D" type
 				return ((Guid) value).ToString("D");
+
+			if (destinationType == typeof (InstanceDescriptor) && value is Guid) {
+				Guid cval = (Guid) value;
+				ConstructorInfo ctor = typeof(Guid).GetConstructor (new Type[] {typeof(string)});
+				return new InstanceDescriptor (ctor, new object[] {cval.ToString("D")});
+			}
 			return base.ConvertTo (context, culture, value, destinationType);
 		}
 	}
