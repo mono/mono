@@ -83,8 +83,6 @@ namespace System.Data
 
 	internal class XmlDataReader
 	{
-		const string xmlnsNS = "http://www.w3.org/2000/xmlns/";
-
 		public static void ReadXml (
 			DataSet dataset, XmlReader reader, XmlReadMode mode)
 		{
@@ -176,7 +174,7 @@ namespace System.Data
 			// Consume attributes
 			if (reader.MoveToFirstAttribute ()) {
 				do {
-					if (reader.NamespaceURI == xmlnsNS)
+					if (reader.NamespaceURI == XmlConstants.XmlnsNS)
 						continue;
 					ReadElementAttribute (row);
 				} while (reader.MoveToNextAttribute ());

@@ -1,3 +1,10 @@
+2004-01-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConstants.cs,
+	  XmlDataInferenceLoader.cs, 
+	  XmlDataReader.cs : use common const for http://www.w3.org/2000/xmlns/.
+	* XmlDiffLoader.cs : It was not handling attributes. Fixed bug #70961.
+
 2004-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSet.cs : When serializing DataTable, BuildSchema() is passed
