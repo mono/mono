@@ -16,93 +16,146 @@ namespace CIR {
 	using System.Collections;
 	
 	public abstract class Statement {
+
+		//
+		// Return value indicates whether the last instruction
+		// was a return instruction
+		//
+		public abstract bool Emit (EmitContext ec);
+
+		public static bool EmitBoolExpression (EmitContext ec, Expression e)
+		{
+			e = e.Resolve (ec);
+
+			if (e == null)
+				return false;
+
+			if (e.Type != TypeManager.bool_type)
+				e = Expression.ConvertImplicit (ec, e, TypeManager.bool_type,
+								new Location (-1));
+
+			if (e == null){
+				Report.Error (
+					31, "Can not convert the expression to a boolean");
+				return false;
+			}
+			
+			e.Emit (ec);
+
+			return true;
+		}
+
 	}
 
 	public class EmptyStatement : Statement {
+		public override bool Emit (EmitContext ec)
+		{
+			return false;
+		}
 	}
 	
 	public class If : Statement {
-		Expression expr;
-		Statement trueStatement;
-		Statement falseStatement;
+		public readonly Expression  Expr;
+		public readonly Statement   TrueStatement;
+		public readonly Statement   FalseStatement;
 		
 		public If (Expression expr, Statement trueStatement)
 		{
-			this.expr = expr;
-			this.trueStatement = trueStatement;
+			Expr = expr;
+			TrueStatement = trueStatement;
 		}
 
 		public If (Expression expr,
 			   Statement trueStatement,
 			   Statement falseStatement)
 		{
-			this.expr = expr;
-			this.trueStatement = trueStatement;
-			this.falseStatement = falseStatement;
+			Expr = expr;
+			TrueStatement = trueStatement;
+			FalseStatement = falseStatement;
 		}
 
-		public Statement TrueStatement {
-			get {
-				return trueStatement;
-			}
-		}
+		public override bool Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			Label false_target = ig.DefineLabel ();
+			Label end;
+			bool is_ret;
+			
+			if (!EmitBoolExpression (ec, Expr))
+				return false;
+			
+			ig.Emit (OpCodes.Brfalse, false_target);
+			is_ret = TrueStatement.Emit (ec);
 
-		public Statement FalseStatement {
-			get {
-				return falseStatement;
-			}
-		}
+			if (FalseStatement != null){
+				bool branch_emitted = false;
+				
+				end = ig.DefineLabel ();
+				if (!is_ret){
+					ig.Emit (OpCodes.Br, end);
+					branch_emitted = true;
+				}
+			
+				ig.MarkLabel (false_target);
+				is_ret = FalseStatement.Emit (ec);
 
-		public Expression Expr {
-			get {
-				return expr;
-			}
+				if (branch_emitted)
+					ig.MarkLabel (end);
+			} else
+				ig.MarkLabel (false_target);
+
+			return is_ret;
 		}
 	}
 
 	public class Do : Statement {
-		Expression boolExpr;
-		Statement statement;
+		public readonly Expression Expr;
+		public readonly Statement  EmbeddedStatement;
 		
 		public Do (Statement statement, Expression boolExpr)
 		{
-			this.boolExpr = boolExpr;
-			this.statement = statement;
+			Expr = boolExpr;
+			EmbeddedStatement = statement;
 		}
 
-		public Statement EmbeddedStatement {
-			get {
-				return statement;
-			}
-		}
+		public override bool Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			Label loop = ig.DefineLabel ();
 
-		public Expression Expr {
-			get {
-				return boolExpr;
-			}
+			ig.MarkLabel (loop);
+			EmbeddedStatement.Emit (ec);
+			EmitBoolExpression (ec, Expr);
+			ig.Emit (OpCodes.Brtrue, loop);
+
+			return false;
 		}
 	}
 
 	public class While : Statement {
-		Expression boolExpr;
-		Statement statement;
+		public readonly Expression Expr;
+		public readonly Statement Statement;
 		
 		public While (Expression boolExpr, Statement statement)
 		{
-			this.boolExpr = boolExpr;
-			this.statement = statement;
+			Expr = boolExpr;
+			Statement = statement;
 		}
 
-		public Statement Statement {
-			get {
-				return statement;
-			}
-		}
+		public override bool Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			Label while_eval = ig.DefineLabel ();
+			Label exit = ig.DefineLabel ();
+			
+			ig.MarkLabel (while_eval);
+			EmitBoolExpression (ec, Expr);
+			ig.Emit (OpCodes.Brfalse, exit);
+			Statement.Emit (ec);
+			ig.Emit (OpCodes.Br, while_eval);
+			ig.MarkLabel (exit);
 
-		public Expression Expr {
-			get {
-				return boolExpr;
-			}
+			return false;
 		}
 	}
 
@@ -122,29 +175,97 @@ namespace CIR {
 			Increment = increment;
 			Statement = statement;
 		}
+
+		public override bool Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			Label loop = ig.DefineLabel ();
+			Label exit = ig.DefineLabel ();
+			
+			if (! (InitStatement is EmptyStatement))
+				InitStatement.Emit (ec);
+
+			ig.MarkLabel (loop);
+			EmitBoolExpression (ec, Test);
+			ig.Emit (OpCodes.Brfalse, exit);
+			Statement.Emit (ec);
+			if (!(Increment is EmptyStatement))
+				Increment.Emit (ec);
+			ig.Emit (OpCodes.Br, loop);
+			ig.MarkLabel (exit);
+
+			return false;
+		}
 	}
 	
 	public class StatementExpression : Statement {
-		ExpressionStatement expr;
+		public readonly ExpressionStatement Expr;
 		
 		public StatementExpression (ExpressionStatement expr)
 		{
-			this.expr = expr;
+			Expr = expr;
 		}
 
-		public ExpressionStatement Expr {
-			get {
-				return expr;
+		public override bool Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			Expression ne;
+			
+			ne = Expr.Resolve (ec);
+			if (ne != null){
+				if (ne is ExpressionStatement)
+					((ExpressionStatement) ne).EmitStatement (ec);
+				else {
+					ne.Emit (ec);
+					ig.Emit (OpCodes.Pop);
+				}
 			}
+
+			return false;
 		}
 	}
 
 	public class Return : Statement {
-		public readonly Expression Expr;
+		public Expression Expr;
+		public readonly Location loc;
 		
-		public Return (Expression expr)
+		public Return (Expression expr, Location l)
 		{
 			Expr = expr;
+		}
+
+		public override bool Emit (EmitContext ec)
+		{
+			if (ec.ReturnType == null){
+				if (Expr != null){
+					Report.Error (127, loc, "Return with a value not allowed here");
+					return false;
+				}
+			} else {
+				if (Expr == null){
+					Report.Error (126, loc, "An object of type `" +
+						      TypeManager.CSharpName (ec.ReturnType) + "' is " +
+						      "expected for the return statement");
+					return false;
+				}
+
+				Expr = Expr.Resolve (ec);
+				if (Expr == null)
+					return false;
+
+				if (Expr.Type != ec.ReturnType)
+					Expr = Expression.ConvertImplicitRequired (
+						ec, Expr, ec.ReturnType, loc);
+
+				if (Expr == null)
+					return false;
+
+				Expr.Emit (ec);
+			}
+
+			ec.ig.Emit (OpCodes.Ret);
+
+			return true; 
 		}
 	}
 
@@ -161,6 +282,11 @@ namespace CIR {
 				return target;
 			}
 		}
+
+		public override bool Emit (EmitContext ec)
+		{
+			throw new Exception ("Unimplemented");
+		}
 	}
 
 	public class Throw : Statement {
@@ -170,17 +296,40 @@ namespace CIR {
 		{
 			Expr = expr;
 		}
+
+		public override bool Emit (EmitContext ec)
+		{
+			Expression e = Expr.Resolve (ec);
+
+			if (e == null)
+				return false;
+
+			e.Emit (ec);
+			ec.ig.Emit (OpCodes.Throw);
+
+			return false;
+		}
 	}
 
 	public class Break : Statement {
 		public Break ()
 		{
 		}
+
+		public override bool Emit (EmitContext ec)
+		{
+			throw new Exception ("Unimplemented");
+		}
 	}
 
 	public class Continue : Statement {
 		public Continue ()
 		{
+		}
+
+		public override bool Emit (EmitContext ec)
+		{
+			throw new Exception ("Unimplemented");
 		}
 	}
 	
@@ -496,6 +645,16 @@ namespace CIR {
 				foreach (Block b in children)
 					b.UsageWarning ();
 		}
+
+		public override bool Emit (EmitContext ec)
+		{
+			bool is_ret = false;
+
+			foreach (Statement s in Statements)
+				is_ret = s.Emit (ec);
+
+			return is_ret;
+		}
 	}
 
 	public class SwitchLabel {
@@ -561,59 +720,82 @@ namespace CIR {
 				return sections;
 			}
 		}
+
+		public override bool Emit (EmitContext ec)
+		{
+			throw new Exception ("Unimplemented");
+		}
 	}
 
 	public class Lock : Statement {
-		Expression expr;
-		Statement stmt;
+		public readonly Expression Expr;
+		public readonly Statement Statement;
 		
 		public Lock (Expression expr, Statement stmt)
 		{
-			this.expr = expr;
-			this.stmt = stmt;
+			Expr = expr;
+			Statement = stmt;
 		}
 
-		public Statement Statement {
-			get {
-				return stmt;
-			}
-		}
-
-		public Expression Expr {
-			get {
-				return expr;
-			}
+		public override bool Emit (EmitContext ec)
+		{
+			throw new Exception ("Unimplemented");
 		}
 		
 	}
 
 	public class Unchecked : Statement {
-		Block b;
+		public readonly Block Block;
 		
 		public Unchecked (Block b)
 		{
-			this.b = b;
+			Block = b;
 		}
 
-		public Block Block {
-			get {
-				return b;
-			}
+		public override bool Emit (EmitContext ec)
+		{
+			bool previous_state = ec.CheckState;
+			bool val;
+			
+			ec.CheckState = false;
+			val = Block.Emit (ec);
+			ec.CheckState = previous_state;
+
+			return val;
 		}
 	}
 
 	public class Checked : Statement {
-		Block b;
+		public readonly Block Block;
 		
 		public Checked (Block b)
 		{
-			this.b = b;
+			Block = b;
 		}
 
-		public Block Block {
-			get {
-				return b;
-			}
+		public override bool Emit (EmitContext ec)
+		{
+			bool previous_state = ec.CheckState;
+			bool val;
+			
+			ec.CheckState = true;
+			val = Block.Emit (ec);
+			ec.CheckState = previous_state;
+
+			return val;
+		}
+	}
+
+	public class Catch {
+		public readonly string Type;
+		public readonly string Name;
+		public readonly Block  Block;
+		
+		public Catch (string type, string name, Block block)
+		{
+			Type = type;
+			Name = name;
+			Block = block;
 		}
 	}
 
@@ -636,21 +818,57 @@ namespace CIR {
 			this.General = general;
 			this.Fini = fini;
 		}
-	}
-	
-	public class Catch {
-		public readonly string Type;
-		public readonly string Name;
-		public readonly Block  Block;
-		
-		public Catch (string type, string name, Block block)
+
+		public override bool Emit (EmitContext ec)
 		{
-			Type = type;
-			Name = name;
-			Block = block;
+			ILGenerator ig = ec.ig;
+			Label end;
+			Label finish = ig.DefineLabel ();;
+
+			end = ig.BeginExceptionBlock ();
+			Block.Emit (ec);
+			ig.Emit (OpCodes.Leave, finish);
+			
+			foreach (Catch c in Specific){
+				Type catch_type = ec.TypeContainer.LookupType (c.Type, false);
+				VariableInfo vi;
+				
+				if (catch_type == null)
+					return false;
+
+				ig.BeginCatchBlock (catch_type);
+
+				if (c.Name != null){
+					vi = c.Block.GetVariableInfo (c.Name);
+					if (vi == null){
+						Console.WriteLine ("This should not happen! variable does not exist in this block");
+						Environment.Exit (0);
+					}
+				
+					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+				} else
+					ig.Emit (OpCodes.Pop);
+				
+				c.Block.Emit (ec);
+			}
+
+			if (General != null){
+				ig.BeginCatchBlock (TypeManager.object_type);
+				ig.Emit (OpCodes.Pop);
+			}
+
+			ig.MarkLabel (finish);
+			if (Fini != null){
+				ig.BeginFinallyBlock ();
+				Fini.Emit (ec);
+			}
+			
+			ig.EndExceptionBlock ();
+
+			return false;
 		}
 	}
-
+	
 	public class Foreach : Statement {
 		public readonly string Type;
 		public readonly LocalVariableReference Variable;
@@ -667,6 +885,181 @@ namespace CIR {
 			Statement = stmt;
 			Location = l;
 		}
+
+		static bool GetEnumeratorFilter (MemberInfo m, object criteria)
+		{
+			if (m == null)
+				return false;
+			
+			if (!(m is MethodInfo))
+				return false;
+			
+			if (m.Name != "GetEnumerator")
+				return false;
+			
+			MethodInfo mi = (MethodInfo) m;
+			
+			if (mi.ReturnType != TypeManager.ienumerator_type)
+				return false;
+			
+			Type [] args = TypeManager.GetArgumentTypes (mi);
+			if (args == null)
+				return true;
+			
+			if (args.Length == 0)
+				return true;
+			
+			return false;
+		}
+		
+		// <summary>
+		//   This filter is used to find the GetEnumerator method
+		//   on which IEnumerator operates
+		// </summary>
+		static MemberFilter FilterEnumerator;
+		
+		static Foreach ()
+		{
+			FilterEnumerator = new MemberFilter (GetEnumeratorFilter);
+		}
+
+                void error1579 (Type t)
+                {
+                        Report.Error (1579, Location,
+                                      "foreach statement cannot operate on variables of type `" +
+                                      t.FullName + "' because that class does not provide a " +
+                                      " GetEnumerator method or it is inaccessible");
+                }
+
+		MethodInfo ProbeCollectionType (Type t)
+		{
+			MemberInfo [] mi;
+
+			mi = TypeContainer.FindMembers (t, MemberTypes.Method,
+							BindingFlags.Public,
+							FilterEnumerator, null);
+
+			if (mi == null){
+				error1579 (t);
+				return null;
+			}
+
+			if (mi.Length == 0){
+				error1579 (t);
+				return null;
+			}
+
+			return (MethodInfo) mi [0];
+		}
+		
+		public override bool Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			Expression e = Expr;
+			MethodInfo get_enum;
+			LocalBuilder enumerator, disposable;
+			Type var_type;
+			
+			e = e.Resolve (ec);
+			if (e == null)
+				return false;
+
+			var_type = ec.TypeContainer.LookupType (Type, false);
+			if (var_type == null)
+				return false;
+			
+			//
+			// We need an instance variable.  Not sure this is the best
+			// way of doing this.
+			//
+			// FIXME: When we implement propertyaccess, will those turn
+			// out to return values in ExprClass?  I think they should.
+			//
+			if (!(e.ExprClass == ExprClass.Variable || e.ExprClass == ExprClass.Value)){
+				error1579 (e.Type);
+				return false;
+			}
+			
+			if ((get_enum = ProbeCollectionType (e.Type)) == null)
+				return false;
+
+			Expression empty = new EmptyExpression ();
+			Expression conv;
+
+			conv = Expression.ConvertExplicit (ec, empty, var_type, Location);
+			if (conv == null)
+				return false;
+			
+			enumerator = ig.DeclareLocal (TypeManager.ienumerator_type);
+			disposable = ig.DeclareLocal (TypeManager.idisposable_type);
+			
+			//
+			// Instantiate the enumerator
+
+			Label end = ig.DefineLabel ();
+			Label end_try = ig.DefineLabel ();
+			Label loop = ig.DefineLabel ();
+
+			//
+			// FIXME: This code does not work for cases like:
+			// foreach (int a in ValueTypeVariable){
+			// }
+			//
+			// The code should emit an ldarga instruction
+			// for the ValueTypeVariable rather than a ldarg
+			//
+			if (e.Type.IsValueType){
+				ig.Emit (OpCodes.Call, get_enum);
+			} else {
+				e.Emit (ec);
+				ig.Emit (OpCodes.Callvirt, get_enum);
+			}
+			ig.Emit (OpCodes.Stloc, enumerator);
+
+			//
+			// Protect the code in a try/finalize block, so that
+			// if the beast implement IDisposable, we get rid of it
+			//
+			Label l = ig.BeginExceptionBlock ();
+			ig.MarkLabel (loop);
+			ig.Emit (OpCodes.Ldloc, enumerator);
+			ig.Emit (OpCodes.Callvirt, TypeManager.bool_movenext_void);
+			ig.Emit (OpCodes.Brfalse, end_try);
+			ig.Emit (OpCodes.Ldloc, enumerator);
+			ig.Emit (OpCodes.Callvirt, TypeManager.object_getcurrent_void);
+			conv.Emit (ec);
+			Variable.Store (ec);
+			Statement.Emit (ec);
+			ig.Emit (OpCodes.Br, loop);
+			ig.MarkLabel (end_try);
+
+			// The runtime provides this for us.
+			// ig.Emit (OpCodes.Leave, end);
+
+			//
+			// Now the finally block
+			//
+			Label end_finally = ig.DefineLabel ();
+			
+			ig.BeginFinallyBlock ();
+			ig.Emit (OpCodes.Ldloc, enumerator);
+			ig.Emit (OpCodes.Isinst, TypeManager.idisposable_type);
+			ig.Emit (OpCodes.Stloc, disposable);
+			ig.Emit (OpCodes.Ldloc, disposable);
+			ig.Emit (OpCodes.Brfalse, end_finally);
+			ig.Emit (OpCodes.Ldloc, disposable);
+			ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
+			ig.MarkLabel (end_finally);
+
+			// The runtime generates this anyways.
+			// ig.Emit (OpCodes.Endfinally);
+
+			ig.EndExceptionBlock ();
+			ig.MarkLabel (end);
+
+			return false;
+		}
+
 	}
 }
 

@@ -1,3 +1,51 @@
+2001-10-10  Miguel de Icaza  <miguel@ximian.com>
+
+	* makefile: Renamed the compiler to `mcs.exe' instead of compiler.exe
+
+	* expression.cs (ImplicitReferenceConversion): handle null as well
+	as a source to convert to any reference type.
+
+	* statement.cs (Return): Perform any implicit conversions to
+	expected return type.  
+
+	Validate use of return statement.  
+
+	* codegen.cs (EmitContext): Pass the expected return type here.
+
+	* class.cs (Method, Constructor, Property): Pass expected return
+	type to EmitContext.
+
+2001-10-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs: Make DoResolve take an EmitContext instead of a
+	TypeContainer.
+
+	Replaced `l' and `location' for `loc', for consistency.
+	
+	(Error, Warning): Remove unneeded Tc argument.
+
+	* assign.cs, literal.cs, constant.cs: Update to new calling
+	convention. 
+	
+	* codegen.cs: EmitContext now contains a flag indicating whether
+	code is being generated in a static method or not.
+
+	* cs-parser.jay: DecomposeQI, new function that replaces the old
+	QualifiedIdentifier.  Now we always decompose the assembled
+	strings from qualified_identifier productions into a group of
+	memberaccesses.
+
+2001-10-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* rootcontext.cs: Deal with field-less struct types correctly now
+	by passing the size option to Define Type.
+
+	* class.cs: Removed hack that created one static field. 
+
+2001-10-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs: Moved most of the code generation here. 
+
 2001-10-09  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (New::DoResolve): Revert changes for array creation, doesn't
@@ -41,8 +89,11 @@
 
 2001-10-07  Miguel de Icaza  <miguel@ximian.com>
 
-	* codegen.cs: Added support for try/catch/finalize and throw.
+	* codegen.cs: Removed most of the code generation here, and move the
+	corresponding code generation bits to the statement classes. 
 
+	Added support for try/catch/finalize and throw.
+	
 	* cs-parser.jay: Added support for try/catch/finalize.
 
 	* class.cs: Catch static methods having the flags override,

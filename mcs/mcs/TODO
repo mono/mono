@@ -1,27 +1,15 @@
-* Reorganization
+* Emitcontext
 
-	There is a mess right now between SimpleName,
-	ResolveMemberAccess and Invocation.
+	Do we really need to instanciate this variable all the time?
 
-	Nested things like:
+	It could be static for all we care, and just use it for making
+	sure that there are no recursive invocations on it.
 
-	class X {
-		X Prop () {  get ... }
-	}
+* Static-ization
 
-	class Y {
-		void a (X x)
-		{
-			x.Prop.Prop.Prop.Prop.method ();
-		}
-	}
-
-	Are valid, and our current recursive-less implementation wont
-	address these.  
-
-	We need to make sure that SimpleNames (which are a horrible
-	name, as they are really CompoundNames right now) will be remapped
-	to the propper MemberAccess after parsing. 
+	Since AppDomain exists, maybe we can get rid of all the stuff
+	that is part of the `compiler instance' and just use globals
+	everywhere.
 
 * Reorganization: calling structure methods
 
@@ -155,3 +143,29 @@
 * Work todo:
 
 	Understand how methods are invoked on structs
+
+* Using Alias
+
+	Need to reset the aliases for each compilation unit, so an
+	alias defined in a file does not have any effect on another one:
+
+	File.cs
+	=======
+	namespace A {
+		using X = Blah;
+
+		class Z : X {           <-- This X is `Blah' 
+	}
+
+	File2.cs
+	namespace {
+		class Y : X {		<-- This X Is not `Blah' 
+		}
+	}
+
+	I think we can implement Aliases by having an `Alias' context in all
+	the toplevel TypeContainers of a compilation unit.  The children typecontainers
+	just chain to the parents to resolve the information.
+
+	The driver advances the Alias for each file compiled, so that each file
+	has its own alias set.

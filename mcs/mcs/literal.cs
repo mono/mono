@@ -73,9 +73,10 @@ namespace CIR {
 			return "null";
 		}
 
-		public override Expression DoResolve (TypeContainer tc)
+		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.object_type;
+			eclass = ExprClass.Value;
 			return this;
 		}
 
@@ -98,7 +99,7 @@ namespace CIR {
 			return val ? "true" : "false";
 		}
 
-		public override Expression DoResolve (TypeContainer tc)
+		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.bool_type;
 
@@ -127,7 +128,7 @@ namespace CIR {
 			return "\"" + descape (c) + "\"";
 		}
 
-		public override Expression DoResolve (TypeContainer tc)
+		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.char_type;
 
@@ -153,7 +154,7 @@ namespace CIR {
 			return Value.ToString ();
 		}
 
-		public override Expression DoResolve (TypeContainer tc)
+		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.int32_type;
 
@@ -233,7 +234,7 @@ namespace CIR {
 			return Value.ToString ();
 		}
 
-		public override Expression DoResolve (TypeContainer tc)
+		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.uint32_type;
 
@@ -262,7 +263,7 @@ namespace CIR {
 			return Value.ToString ();
 		}
 
-		public override Expression DoResolve (TypeContainer tc)
+		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.int64_type;
 
@@ -295,7 +296,7 @@ namespace CIR {
 			return Value.ToString ();
 		}
 
-		public override Expression DoResolve (TypeContainer tc)
+		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.uint64_type;
 
@@ -323,7 +324,7 @@ namespace CIR {
 			return Value.ToString ();
 		}
 
-		public override Expression DoResolve (TypeContainer tc)
+		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.float_type;
 
@@ -349,7 +350,7 @@ namespace CIR {
 			return Value.ToString ();
 		}
 
-		public override Expression DoResolve (TypeContainer tc)
+		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.double_type;
 
@@ -375,7 +376,7 @@ namespace CIR {
 			return Value.ToString ();
 		}
 
-		public override Expression DoResolve (TypeContainer tc)
+		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.decimal_type;
 
@@ -402,7 +403,7 @@ namespace CIR {
 			return "\"" + s + "\"";
 		}
 
-		public override Expression DoResolve (TypeContainer tc)
+		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.string_type;
 

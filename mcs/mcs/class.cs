@@ -510,7 +510,7 @@ namespace CIR {
 				if (init is Expression){
 					Expression e = (Expression) init;
 
-					e = e.Resolve (this);
+					e = e.Resolve (ec);
 					if (e == null)
 						return false;
 
@@ -608,15 +608,7 @@ namespace CIR {
 			if (Fields != null){
 				foreach (Field f in Fields)
 					f.Define (this);
-			} else if (this is Struct){
-				//
-				// FIXME: Add a dummy field, because it is currently
-				// not possible with the reflection API to tell the size
-				// of a structure
-				//
-				TypeBuilder.DefineField ("Dummy", TypeManager.sbyte_type,
-							 FieldAttributes.Static | FieldAttributes.Private);
-			}
+			} 
 
 			if (this is Class){
 				if (default_constructor == null) 
@@ -738,6 +730,14 @@ namespace CIR {
 			return RootContext.LookupType (this, name, silent);
 		}
 
+		public string LookupAlias (string Name)
+		{
+			//
+			// Read the comments on `mcs/mcs/TODO' for details
+			// 
+			return null;
+		}
+		
 		//
 		// This function is based by a delegate to the FindMembers routine
 		//
@@ -868,7 +868,7 @@ namespace CIR {
 		}
 
 		public static MemberInfo [] FindMembers (Type t, MemberTypes mt, BindingFlags bf,
-						  MemberFilter filter, object criteria)
+							 MemberFilter filter, object criteria)
 		{
 			TypeContainer tc = TypeManager.LookupTypeContainer (t);
 
@@ -1050,7 +1050,7 @@ namespace CIR {
 		//
 		public override TypeAttributes TypeAttr {
 			get {
-				return base.TypeAttr | TypeAttributes.AutoLayout;
+				return base.TypeAttr | TypeAttributes.AutoLayout | TypeAttributes.Class;
 			}
 		}
 	}
@@ -1171,7 +1171,7 @@ namespace CIR {
 	}
 	
 	public class Method : MethodCore {
-		public readonly string     ReturnType;
+		public readonly string ReturnType;
 		public MethodBuilder MethodBuilder;
 		public readonly Attributes OptAttributes;
 
@@ -1468,7 +1468,7 @@ namespace CIR {
 		public void Emit (TypeContainer parent)
 		{
 			ILGenerator ig = MethodBuilder.GetILGenerator ();
-			EmitContext ec = new EmitContext (parent, ig);
+			EmitContext ec = new EmitContext (parent, ig, GetReturnType (parent), ModFlags);
 			
 			ec.EmitTopBlock (Block);
 		}
@@ -1491,7 +1491,7 @@ namespace CIR {
 			}
 		}
 
-		public bool Resolve (TypeContainer tc)
+		public bool Resolve (EmitContext ec)
 		{
 			Expression parent_constructor_group;
 			
@@ -1500,14 +1500,14 @@ namespace CIR {
 					--i;
 
 					Argument a = (Argument) argument_list [i];
-					if (!a.Resolve (tc))
+					if (!a.Resolve (ec))
 						return false;
 				}
 			}
 
 			parent_constructor_group = Expression.MemberLookup (
-				tc,
-				tc.TypeBuilder.BaseType, ".ctor", false,
+				ec,
+				ec.TypeContainer.TypeBuilder.BaseType, ".ctor", false,
 				MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance);
 
@@ -1516,7 +1516,7 @@ namespace CIR {
 				return false;
 			}
 			
-			parent_constructor = (ConstructorInfo) Invocation.OverloadResolve (tc, 
+			parent_constructor = (ConstructorInfo) Invocation.OverloadResolve (ec, 
 				(MethodGroupExpr) parent_constructor_group, argument_list, location);
 			
 			if (parent_constructor == null)
@@ -1618,15 +1618,16 @@ namespace CIR {
 		//
 		public void Emit (TypeContainer parent)
 		{
+			ILGenerator ig = ConstructorBuilder.GetILGenerator ();
+			EmitContext ec = new EmitContext (parent, ig, null, ModFlags);
+
 			if (parent is Class){
 				if (Initializer == null)
 					Initializer = new ConstructorBaseInitializer (null, parent.Location);
-				if (!Initializer.Resolve (parent))
+
+				if (!Initializer.Resolve (ec))
 					return;
 			}
-
-			ILGenerator ig = ConstructorBuilder.GetILGenerator ();
-			EmitContext ec = new EmitContext (parent, ig);
 
 			//
 			// Classes can have base initializers and instance field initializers.
@@ -1695,7 +1696,11 @@ namespace CIR {
 		public PropertyBuilder PropertyBuilder;
 		public Attributes OptAttributes;
 		MethodBuilder GetBuilder, SetBuilder;
+
+		//
+		// The type, once we compute it.
 		
+		Type PropertyType;
 
 		const int AllowedModifiers =
 			Modifiers.NEW |
@@ -1730,16 +1735,17 @@ namespace CIR {
 				                       PropertyAttributes.SpecialName;
 		
 		
-			Type tp = parent.LookupType (Type, false);
+			PropertyType = parent.LookupType (Type, false);
 			Type [] parameters = new Type [1];
-			parameters [0] = tp;
+			parameters [0] = PropertyType;
 
-			PropertyBuilder = parent.TypeBuilder.DefineProperty(Name, prop_attr, tp, null);
+			PropertyBuilder = parent.TypeBuilder.DefineProperty (
+				Name, prop_attr, PropertyType, null);
 					
 			if (Get != null)
 			{
 				GetBuilder = parent.TypeBuilder.DefineMethod (
-					"get_" + Name, method_attr, tp, null);
+					"get_" + Name, method_attr, PropertyType, null);
 				PropertyBuilder.SetGetMethod (GetBuilder);
 				//
 				// HACK because System.Reflection.Emit is lame
@@ -1768,14 +1774,14 @@ namespace CIR {
 
 			if (Get != null){
 				ig = GetBuilder.GetILGenerator ();
-				ec = new EmitContext (tc, ig);
+				ec = new EmitContext (tc, ig, PropertyType, ModFlags);
 				
 				ec.EmitTopBlock (Get);
 			}
 
 			if (Set != null){
 				ig = SetBuilder.GetILGenerator ();
-				ec = new EmitContext (tc, ig);
+				ec = new EmitContext (tc, ig, null, ModFlags);
 				
 				ec.EmitTopBlock (Set);
 			}

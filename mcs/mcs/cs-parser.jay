@@ -1532,7 +1532,7 @@ primary_expression
 		string name = (string) $1;
 
 		$$ = null;
-		$$ = QualifiedIdentifier (name, lexer.Location);
+		$$ = DecomposeQI (name, lexer.Location);
 	  }
 	| parenthesized_expression
 	| member_access
@@ -1598,7 +1598,7 @@ parenthesized_expression
 member_access
 	: primary_expression DOT IDENTIFIER
 	  {
-		$$ = new MemberAccess ((Expression) $1, (string) $3);
+		$$ = new MemberAccess ((Expression) $1, (string) $3, lexer.Location);
 	  }
 	| predefined_type DOT IDENTIFIER
 	  {
@@ -2676,7 +2676,7 @@ goto_statement
 return_statement
 	: RETURN opt_expression SEMICOLON
 	  {
-		$$ = new Return ((Expression) $2);
+		$$ = new Return ((Expression) $2, lexer.Location);
 	  }
 	;
 
@@ -2967,7 +2967,7 @@ CheckDef (bool result, string name)
 	CheckDef (DeclSpace.AdditionResult.NameExists, name);
 }
 
-object 
+Expression
 SimpleLookup (string name)
 {
 	//
@@ -2990,38 +2990,23 @@ SimpleLookup (string name)
 	return null;
 }
 
-// 
-// Assumes that the name contains a `.' and tries to perform a simple lookup
-// and shape the result to be a MemberAccess on a Local/Parameter
-//
-object CompositeLookup (string name)
+Expression DecomposeQI (string name, Location l)
 {
-	int pos = name.IndexOf (".");
-	string left = name.Substring (0, pos);
-	object o;
+	Expression o;
 
-	o = SimpleLookup (left);
-	if (o != null){
-		string right = name.Substring (pos + 1);
-		return new MemberAccess ((Expression) o, right);
-	}
-
-	return null;
-}
-
-object QualifiedIdentifier (string name, Location l)
-{
-	object o;
-
-	if (name.IndexOf ('.') == -1)
+	if (name.IndexOf ('.') == -1){
 	 	o = SimpleLookup (name);
-	else 
-		o = CompositeLookup (name);
+		if (o == null)
+			return new SimpleName (name, l);
+		return o;
+	} else {
+		int pos = name.LastIndexOf (".");
+		string left = name.Substring (0, pos);
+		string right = name.Substring (pos + 1);
 
-	if (o == null)
-		o = new SimpleName (name, l);
-
-	return o;
+		o = DecomposeQI (left, l);
+		return new MemberAccess (o, right, l);
+	}
 }
 
 Block declare_local_variables (string type, ArrayList variable_declarators)

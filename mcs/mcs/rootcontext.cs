@@ -442,11 +442,25 @@ namespace CIR {
 
 			type_container_resolve_order.Add (tc);
 
-			tb = mb.DefineType (
-				name,
-				tc.TypeAttr | TypeAttributes.Class,
-				parent,
-				ifaces);
+			//
+			// Structs with no fields need to have a ".size 1"
+			// appended
+			//
+			if (!is_class && tc.Fields == null)
+				tb = mb.DefineType(
+					name,
+					tc.TypeAttr,
+					parent, 
+					PackingSize.Unspecified, 1);
+			else
+				//
+				// classes or structs with fields
+				//
+				tb = mb.DefineType (
+					name,
+					tc.TypeAttr,
+					parent,
+					ifaces);
 			
 			tc.TypeBuilder = tb;
 
@@ -562,6 +576,10 @@ namespace CIR {
 			return null;
 		}
 
+		// <summary>
+		//   This is the silent version of LookupType, you can use this
+		//   to `probe' for a type
+		// </summary>
 		public Type LookupType (TypeContainer tc, string name)
 		{
 			return LookupType (tc, name, true);

@@ -34,14 +34,15 @@ COMPILER_SOURCES = \
 TEST_TOKENIZER_SOURCES = test-token.cs $(COMMON_SOURCES)
 
 all: cs-parser.cs
-	$(CSC) $(CSCFLAGS) /target:exe /r:System.dll /out:compiler.exe $(COMPILER_SOURCES)
+	$(CSC) $(CSCFLAGS) /target:exe /r:System.dll /out:mcs.exe $(COMPILER_SOURCES)
+	-rm compiler.exe
 
 windows: all
 
 linux: all
 
 opt:
-	$(CSC) /optimize+ /target:exe /r:System.dll /out:compiler.exe $(COMPILER_SOURCES)
+	$(CSC) /optimize+ /target:exe /r:System.dll /out:mcs.exe $(COMPILER_SOURCES)
 
 old: test-tokenizer.exe
 test-tokenizer.exe: $(TEST_TOKENIZER_SOURCES)
@@ -84,4 +85,4 @@ try:
 	done
 
 clean:
-	rm -f compiler.exe cs-parser.cs y.output compiler.pdb *~ .*~
+	rm -f mcs.exe cs-parser.cs y.output compiler.pdb *~ .*~

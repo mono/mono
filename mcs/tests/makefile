@@ -1,15 +1,15 @@
-MCS=../mcs/compiler
+MCS=../mcs/mcs
 CSC=csc
 
 TEST_SOURCES = \
 	test-1 test-2 test-3 test-4 test-6 test-7 test-8 test-9 test-10 \
-	test-11 test-12 test-13 test-16 test-17 test-20
+	test-11 test-12 test-13 test-16 test-17 test-18 test-20
 
 TEST_NOPASS = \
 	test-5
 
 test-compiler:
-	rm *.exe
+	-rm *.exe
 	for i in $(TEST_SOURCES); do \
 		if $(MCS) $$i.cs > /dev/null; then \
 			if ./$$i.exe; then \

@@ -42,10 +42,10 @@ namespace CIR {
 			}
 		}
 
-		public override Expression DoResolve (TypeContainer tc)
+		public override Expression DoResolve (EmitContext ec)
 		{
-			target = target.Resolve (tc);
-			source = source.Resolve (tc);
+			target = target.Resolve (ec);
+			source = source.Resolve (ec);
 
 			if (target == null || source == null)
 				return null;
@@ -55,7 +55,7 @@ namespace CIR {
 			Type source_type = source.Type;
 
 			if (target_type != source_type){
-				source = ConvertImplicitRequired (tc, source, target_type, l);
+				source = ConvertImplicitRequired (ec, source, target_type, l);
 				if (source == null)
 					return null;
 			}

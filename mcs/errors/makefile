@@ -1,4 +1,4 @@
-MCS=../mcs/compiler.exe
+MCS=../mcs/mcs.exe
 
 all:
 	failed=false; \
