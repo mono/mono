@@ -1,3 +1,7 @@
+2003-06-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlSelect.cs: fixed bug #44894.
+
 2003-04-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlImage.cs:

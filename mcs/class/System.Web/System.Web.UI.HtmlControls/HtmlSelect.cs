@@ -7,6 +7,7 @@ using System;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Web.Util;
 using System.Globalization;
 using System.ComponentModel;
 using System.Collections;
@@ -73,36 +74,39 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
-		protected override void OnDataBinding(EventArgs e){
-			base.OnDataBinding(e);
-			IEnumerable resolvedDataSource = System.Web.Util.DataSourceHelper.GetResolvedDataSource(DataSource, DataMember);
-			if ( resolvedDataSource != null){
+		protected override void OnDataBinding (EventArgs e)
+		{
+			base.OnDataBinding (e);
+			IEnumerable resolvedDataSource = DataSourceHelper.GetResolvedDataSource (DataSource, DataMember);
+			if (resolvedDataSource != null) {
 				string text = DataTextField;
 				string value = DataValueField;
 				Items.Clear();
+
 				ICollection rdsCollection = resolvedDataSource as ICollection;
-				if (rdsCollection != null){
+				if (rdsCollection != null)
 					Items.Capacity = rdsCollection.Count;
-				}
+
 				bool valid = false;
 				if (text.Length >= 0 && value.Length >= 0)
 					valid = true;
-				ListItem li = new ListItem();
-				IEnumerator current = resolvedDataSource.GetEnumerator();
-				while(current.MoveNext()){
+
+				foreach (object current in resolvedDataSource) {
+					ListItem li = new ListItem ();
 					if (valid == true){
-						if (text.Length >= 0)
-							li.Text = DataBinder.GetPropertyValue(current, text) as string;
-						if (value.Length >= 0)
-							li.Value = DataBinder.GetPropertyValue(current, value) as string;
-					}
-					else{
+						if (text.Length > 0)
+							li.Text = DataBinder.GetPropertyValue (current, text, null);
+						if (value.Length > 0)
+							li.Value = DataBinder.GetPropertyValue (current, value, null);
+					} else {
 						li.Value = li.Text = current.ToString();
 					}
+
+					Items.Add (li);
 				}
-				Items.Add(li);
 			}
-			if ( _cachedSelectedIndex != -1){
+
+			if (_cachedSelectedIndex != -1) {
 				SelectedIndex = _cachedSelectedIndex;
 				_cachedSelectedIndex = -1;
 			}
@@ -283,14 +287,11 @@ namespace System.Web.UI.HtmlControls{
 				return _dataSource;
 			}
 			set{
-				if (value != null && value is IListSource){
-					if (value is IEnumerable){
-						_dataSource = value;
-					}
-					else{
-						throw new ArgumentException("Invalid dataSource type");
-					}
+				if (value != null && !(value is IListSource)) {
+					if (!(value is IEnumerable))
+						throw new ArgumentException ("Invalid dataSource type");
 				}
+				_dataSource = value;
 			}
 		}
 		
