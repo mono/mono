@@ -204,6 +204,10 @@ namespace Mono.CSharp {
 		{
 			if (has_ctor_constraint)
 				type.Mono_SetConstructorConstraint ();
+			if (has_reference_type)
+				type.Mono_SetReferenceTypeConstraint ();
+			else if (has_value_type)
+				type.Mono_SetValueTypeConstraint ();
 		}
 
 		bool GenericConstraints.HasConstructor {
