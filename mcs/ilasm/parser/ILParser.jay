@@ -1273,8 +1273,8 @@ call_name		:
 			;
 			
 assembly_ref		: id
-			| id DASH id {$$ = String.Format ("{0}-{1}", $1, $3);}
-			| id DASH assembly_ref {$$ = String.Format ("{0}-{1}", $1, $3);}
+			| assembly_ref DASH id 		{$$ = String.Format ("{0}-{1}", $1, $3);}
+			| assembly_ref DOT id		{$$ = String.Format ("{0}.{1}", $1, $3); }	
 			;
 
 assembly_name		: OPEN_BRACKET assembly_ref CLOSE_BRACKET {$$ = ($2 as string);}
