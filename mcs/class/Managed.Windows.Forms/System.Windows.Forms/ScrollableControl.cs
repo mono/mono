@@ -23,9 +23,21 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.4 $
+// $Revision: 1.5 $
 // $Modtime: $
 // $Log: ScrollableControl.cs,v $
+// Revision 1.5  2004/09/22 20:12:45  pbartok
+// - Implemented DockPadding property
+// - Implemented AutoScroll property
+// - Implemented AutoScrollMargin property
+// - Implemented AutoScrollMinSize property
+// - Implemented AutoScrollPosition property
+// - Implemented DisplayRectangle property (still incomplete)
+// - Implemented CreateParams property
+// - Implemented HScroll property
+// - Implemented VScroll property
+// - Implemented OnVisibleChanged property
+//
 // Revision 1.4  2004/09/09 03:01:35  ravindra
 // Removed unreachable code.
 //
@@ -48,19 +60,21 @@ using System.Drawing;
 
 namespace System.Windows.Forms {
 	public class ScrollableControl : Control {
-		#region Public Constructors
-		public ScrollableControl() {
-		}
-		#endregion	// Public Constructors
+		#region Local Variables
+		private bool			auto_vscroll;
+		private bool			auto_hscroll;
+		private bool			hscroll_visible;
+		private bool			vscroll_visible;
+		private bool			auto_scroll;
+		private Size			auto_scroll_margin;
+		private Size			auto_scroll_min_size;
+		private Point			auto_scroll_position;
+		private DockPaddingEdges	dock_padding;
+		private ScrollBar		hscrollbar;
+		private ScrollBar		vscrollbar;
+		#endregion	// Local Variables
 
-		#region Protected Static Fields
-		protected const int ScrollStateAutoScrolling = 1;
-		protected const int ScrollStateFullDrag = 16;
-		protected const int ScrollStateHScrollVisible = 2;
-		protected const int ScrollStateUserHasScrolled = 8;
-		protected const int ScrollStateVScrollVisible= 4;
-		#endregion	// Protected Static Fields
-
+		[MonoTODO("Need to use the edge values when performing the layout")]
 		#region Subclass DockPaddingEdges
 		public class DockPaddingEdges : ICloneable {
 			#region DockPaddingEdges Local Variables
@@ -72,7 +86,12 @@ namespace System.Windows.Forms {
 			#endregion	// DockPaddingEdges Local Variables
 
 			#region DockPaddingEdges Constructor
-			private DockPaddingEdges() {
+			internal DockPaddingEdges() {
+				all = 0;
+				left = 0;
+				right = 0;
+				top = 0;
+				bottom = 0;
 			}
 			#endregion	// DockPaddingEdges Constructor
 
@@ -83,7 +102,11 @@ namespace System.Windows.Forms {
 				}
 
 				set {
-					all=value;
+					all = value;
+					left = value;
+					right = value;
+					top = value;
+					bottom = value;
 				}
 			}
 
@@ -93,7 +116,8 @@ namespace System.Windows.Forms {
 				}
 
 				set {
-					bottom=value;
+					bottom = value;
+					all = 0;
 				}
 			}
 
@@ -104,6 +128,7 @@ namespace System.Windows.Forms {
 
 				set {
 					left=value;
+					all = 0;
 				}
 			}
 
@@ -114,6 +139,7 @@ namespace System.Windows.Forms {
 
 				set {
 					right=value;
+					all = 0;
 				}
 			}
 
@@ -124,6 +150,7 @@ namespace System.Windows.Forms {
 
 				set {
 					top=value;
+					all = 0;
 				}
 			}
 
@@ -166,7 +193,7 @@ namespace System.Windows.Forms {
 				return padding_edge;
 			}
 		}
-		#endregion
+		#endregion	// Subclass DockPaddingEdges
 
 		#region Subclass DockPaddingEdgesConverter
 		public class DockPaddingEdgesConverter : System.ComponentModel.TypeConverter {
@@ -183,58 +210,122 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException();
 			}
 		}
-		#endregion
+		#endregion	// Subclass DockPaddingEdgesConverter
+
+		#region Public Constructors
+		public ScrollableControl() {
+			base.SetStyle(ControlStyles.ContainerControl, true);
+			auto_scroll = false;
+			auto_hscroll = false;
+			auto_vscroll = false;
+			hscroll_visible = false;
+			vscroll_visible = false;
+			auto_scroll_margin = new Size(0, 0);
+			auto_scroll_min_size = new Size(0, 0);
+			auto_scroll_position = new Point(0, 0);
+			dock_padding = new DockPaddingEdges();
+
+			hscrollbar = new ScrollBar();
+			hscrollbar.Visible = false;
+
+			vscrollbar = new ScrollBar();
+			vscrollbar.Visible = false;
+		}
+		#endregion	// Public Constructors
+
+		#region Protected Static Fields
+		protected const int ScrollStateAutoScrolling	= 1;
+		protected const int ScrollStateFullDrag		= 16;
+		protected const int ScrollStateHScrollVisible	= 2;
+		protected const int ScrollStateUserHasScrolled	= 8;
+		protected const int ScrollStateVScrollVisible	= 4;
+		#endregion	// Protected Static Fields
 
 		#region Public Instance Properties
 		public virtual bool AutoScroll {
 			get {
-				throw new NotImplementedException();
+				return	auto_scroll;
 			}
 
 			set {
-				throw new NotImplementedException();
+				if (auto_scroll == value) {
+					return;
+				}
+
+				auto_scroll = value;
 			}
 		}
 
 		public Size AutoScrollMargin {
 			get {
-				throw new NotImplementedException();
+				return auto_scroll_margin;
 			}
 
 			set {
-				throw new NotImplementedException();
+				if (value.Width < 0) {
+					throw new ArgumentException("Width is assigned less than 0", "value.Width");
+				}
+
+				if (value.Height < 0) {
+					throw new ArgumentException("Height is assigned less than 0", "value.Height");
+				}
+
+				auto_scroll_margin = value;
 			}
 		}
 
 		public Size AutoScrollMinSize {
 			get {
-				throw new NotImplementedException();
+				return auto_scroll_min_size;
 			}
 
 			set {
-				throw new NotImplementedException();
+				auto_scroll_min_size = value;
 			}
 		}
 
 		public Point AutoScrollPosition {
 			get {
-				throw new NotImplementedException();
+				return auto_scroll_position;
 			}
 
 			set {
-				throw new NotImplementedException();
+				auto_scroll_position = value;
 			}
 		}
 
 		public override Rectangle DisplayRectangle {
 			get {
-				return base.DisplayRectangle;
+				Rectangle	rect;
+
+				rect = base.DisplayRectangle;
+
+				if (vscroll_visible) {
+					rect.Width -= vscrollbar.Width;
+					if (rect.Width < 0) {
+						rect.Width = 0;
+					}
+				}
+
+				if (hscroll_visible) {
+					rect.Height -= hscrollbar.Height;
+					if (rect.Height < 0) {
+						rect.Height = 0;
+					}
+				}
+				return rect;
 			}
 		}
 
 		public DockPaddingEdges DockPadding {
 			get {
-				throw new NotImplementedException();
+				return dock_padding;
+			}
+
+			// DockPadding is documented as 'get' only ( http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemWindowsFormsScrollableControlClassAutoScrollTopic.asp )
+			// but Microsoft's on that pageexamples show 'set' usage
+			set {
+				dock_padding = value;
 			}
 		}
 		#endregion	// Public Instance Properties
@@ -242,27 +333,37 @@ namespace System.Windows.Forms {
 		#region Protected Instance Methods
 		protected override CreateParams CreateParams {
 			get {
-				return base.CreateParams;
+				CreateParams	ret;
+
+				ret = base.CreateParams;
+
+				ret.Style |= (int)(WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_VISIBLE);
+
+				return ret;
 			}
 		}
 
 		protected bool HScroll {
 			get {
-				throw new NotImplementedException();
+				return hscroll_visible;
 			}
 
 			set {
-				throw new NotImplementedException();
+				if (hscroll_visible != value) {
+					hscroll_visible = value;
+				}
 			}
 		}
 
 		protected bool VScroll {
 			get {
-				throw new NotImplementedException();
+				return vscroll_visible;
 			}
 
 			set {
-				throw new NotImplementedException();
+				if (vscroll_visible != value) {
+					vscroll_visible = value;
+				}
 			}
 		}
 		#endregion	// Protected Instance Methods
@@ -292,7 +393,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnVisibleChanged(EventArgs e) {
-			throw new NotImplementedException();
+			;; // Nothing to do yet
 		}
 
 		protected override void ScaleCore(float dx, float dy) {
