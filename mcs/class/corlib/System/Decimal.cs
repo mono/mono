@@ -553,6 +553,8 @@ namespace System
 
         public static Decimal Divide(Decimal d1, Decimal d2) 
         {
+            if (d1 == 0 && d2 != 0) return 0;
+
             Decimal d3;
             int rc = decimalDiv(out d3, ref d1, ref d2);
 
