@@ -594,7 +594,7 @@ namespace System {
 
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public static extern void InternalUnload (int domain_id);
+		static extern void InternalUnload (int domain_id);
 		
 		// We do this because if the domain is a transparant proxy this
 		// will still return the correct domain id.
