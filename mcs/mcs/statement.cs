@@ -968,7 +968,8 @@ namespace Mono.CSharp {
 		enum Flags : byte {
 			Used = 1,
 			ReadOnly = 2,
-			Pinned = 4
+			Pinned = 4,
+			IsThis = 8	
 		}
 
 		Flags flags;
@@ -1074,6 +1075,15 @@ namespace Mono.CSharp {
 			}
 			set {
 				flags = value ? (flags | Flags.Pinned) : (flags & ~Flags.Pinned);
+			}
+		}
+
+		public bool IsThis {
+			get {
+				return (flags & Flags.IsThis) != 0;
+			}
+			set {
+				flags = value ? (flags | Flags.IsThis) : (flags & ~Flags.IsThis);
 			}
 		}
 	}
@@ -1408,6 +1418,7 @@ namespace Mono.CSharp {
 
 			this_variable = new LocalInfo (tc, this, l);
 			this_variable.Used = true;
+			this_variable.IsThis = true;
 
 			variables.Add ("this", this_variable);
 
@@ -1682,16 +1693,14 @@ namespace Mono.CSharp {
 
 					if (remap_locals)
 						vi.FieldBuilder = ec.MapVariable (name, vi.VariableType);
-					else {
+					else if (vi.Pinned)
 						//
 						// This is needed to compile on both .NET 1.x and .NET 2.x
 						// the later introduced `DeclareLocal (Type t, bool pinned)'
 						//
-						if (vi.Pinned)
-							vi.LocalBuilder = TypeManager.DeclareLocalPinned (ig, vi.VariableType);
-						else 
-							vi.LocalBuilder = ig.DeclareLocal (vi.VariableType);
-					}
+						vi.LocalBuilder = TypeManager.DeclareLocalPinned (ig, vi.VariableType);
+					else if (!vi.IsThis)
+						vi.LocalBuilder = ig.DeclareLocal (vi.VariableType);
 
 					if (constants == null)
 						continue;

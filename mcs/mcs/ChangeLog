@@ -4,6 +4,12 @@
 	here, it makes it easier for me to see what changed in MCS since
 	the last time I merged.
 
+2004-08-02  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs (LocalInfo.Flags): Added `IsThis'.
+	(LocalInfo.IsThis): New public property.
+	(Block.EmitMeta): Don't create a LocalBuilder for `this'.
+
 2004-08-01  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (TypeContainer.GetClassBases): Don't set the default
