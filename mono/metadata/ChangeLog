@@ -1,5 +1,8 @@
 2004-04-18  Zoltan Varga  <vargaz@freemail.hu>
 
+	* metadata.c (mono_type_to_unmanaged): Handle MONO_NATIVE_FUNC as well.
+	Fixes #57081.
+
 	* marshal.c (mono_marshal_get_string_encoding): New helper function.
 
 	* marshal.c (mono_marshal_get_native_wrapper): Use the new helper
