@@ -7,6 +7,6 @@ System.ValueType:
 	C#, the problem is figuring out the size of the object.
 
 System.String:
-	Need to implement the Format() and CompareOrdincal() methods 
+	Need to implement the Format() and CompareOrdinal() methods 
 	as we all implement all of the methods that take into account 
-	CultureInfo.
+	CultureInfo or Encoding stuff.

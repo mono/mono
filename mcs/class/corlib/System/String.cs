@@ -14,13 +14,20 @@
 // FIXME: I didn't realise until later that `string' has a .Length method and so
 //        I am missing some proper bounds-checking in some methods. Find these
 //        instances and throw the ArgumentOutOfBoundsException at the programmer.
+//        I like pelting programmers with ArgumentOutOfBoundsException's :-)
+
+// FIXME: The ToLower(), ToUpper(), and Compare(..., bool ignoreCase) methods
+//        need to be made unicode aware.
+
+// FIXME: when you have a char carr[], does carr.Length include the terminating null char?
 
 using System;
+using System.Text;
 
 namespace System {
 	
 	public sealed class String : IComparable, IClonable, IConvertable, IEnumerable {
-		public static string Empty = "";
+		public static readonly string Empty = "";
 		private char c_str[];
 		private int length;
 
@@ -29,6 +36,7 @@ namespace System {
 		{
 			int i;
 
+			// FIXME: can I do value.Length here?
 			if (value == null) {
 				this.length = 0;
 			} else {
@@ -44,14 +52,12 @@ namespace System {
 
 		public String (char[] value)
 		{
-			int i, len = 0;
+			int i;
 
-			if (value != null)
-				for (this.len = 0; value[len] != '\0'; len++);
-
-			this.length = len;
-			this.c_str = new char [len + 1];
-			for (i = 0; i < len; i++)
+			// FIXME: value.Length includes the terminating null char?
+			this.length = value ? strlen (value): 0;
+			this.c_str = new char [this.length + 1];
+			for (i = 0; i < this.length; i++)
 				this.c_str[i] = value[i];
 			this.c_str[i] = '\0';
 		}
@@ -61,6 +67,7 @@ namespace System {
 			// FIXME: consider unicode?
 			int i;
 
+			// FIXME: can I do value.Length here? */
 			if (value == null) {
 				this.length = 0;
 			} else {
@@ -137,19 +144,21 @@ namespace System {
 			this.c_str[i] = '\0';
 		}
 
-		unsafe public String (sbyte *value, int startIndex, in length, Encoding enc)
+		unsafe public String (sbyte *value, int startIndex, int length, Encoding enc)
 		{
 			// FIXME: implement me
 		}
 
 		protected ~String ()
 		{
-			delete this.c_str;
+			// FIXME: is there anything we need to do here?
+			base.Finalize ();
 		}
 
 		protected string MemberwiseClone ()
 		{
 			// FIXME: implement me
+			return null;
 		}
 
 		// Properties
@@ -169,17 +178,117 @@ namespace System {
 			}
 		}
 
+		// Private helper methods
+		private int strlen (char[] str)
+		{
+			// FIXME: if str.Length includes terminating null char, then return (str.Length - 1)
+			return str.Length;
+		}
+		
+		private char tolower (char c)
+		{
+			// FIXME: make me unicode aware
+			return c >= 'A' && c <= 'Z' ? c + 33 : c;
+		}
+
+		private char toupper (char c)
+		{
+			// FIXME: make me unicode aware
+			return c >= 'a' && c <= 'z' ? c - 33 : c;
+		}
+
+		private char tolowerordinal (char c)
+		{
+			// FIXME: implement me
+			return c;
+		}
+
+		private bool is_lwsp (char c)
+		{
+			/* this comes from the msdn docs for String.Trim() */
+			if ((c >= '\x9' && c <= '\xD') || c == '\x20' || c == '\xA0' ||
+			    (c >= '\x2000' && c <= '\x200B') || c == '\x3000' || c == '\xFEFF')
+				return true;
+			else
+				return false;
+		}
+
+		private int BoyerMoore (char haystack[], char needle[], int startIndex, int count)
+		{
+			/* (hopefully) Unicode-safe Boyer-Moore implementation */
+			char skiptable[65536];  /* our unicode-safe skip-table */
+			char *he_ptr, *ne_ptr;  /* end-of-string pointers */
+			char *hc_ptr, *nc_ptr;  /* compare pointers */
+			char *h_ptr, *the_ptr;  /* haystack pointers */
+			uint h_len, n_len, n, i;
+
+			if (haystack == null || needle == null)
+				throw new ArgumentNullException ();
+
+			h_len = count;
+			n_len = strlen (needle);
+
+			/* if the search buffer is shorter than the pattern buffer, we can't match */
+			if (h_len < n_len)
+				return -1;
+
+			/* return an instant match if the pattern is 0-length */
+			if (n_len == 0)
+				return startIndex;
+
+			/* set a pointer at the end of each string */
+			ne_ptr = needle + nlen - 1;              /* point to char before '\0' */
+			he_ptr = haystack + startIndex + count;  /* point to last valid char */
+
+			/* init the skip table with the pattern length */
+			for (i = 0; i < 65536; i++)
+				skiptable[i] = n_len;
+
+			/* set the skip value for the chars that *do* appear in the
+			 * pattern buffer (needle) to the distance from the index to
+			 * the end of the pattern buffer. */
+			for (nc_ptr = needle; nc_ptr < ne_ptr; nc_ptr++)
+				skiptable[*nc_ptr] = ne_ptr - nc_ptr;
+
+			h_ptr = haystack + startIndex;
+			while (h_len >= n_len) {
+				the_ptr = h_ptr + n_len - 1;  /* set the temp haystack end pointer */
+				hc_ptr = h_ptr + n_len - 1;   /* set the haystack compare pointer */
+				nc_ptr = ne_ptr;              /* set the needle compare pointer */
+
+				/* work our way backwards until they don't match */
+				for (i = 0; nc_ptr > needle; nc_ptr--, hc_ptr--, i++)
+					if (*nc_ptr != *hc_ptr)
+						break;
+
+				if (*nc_ptr != *hc_ptr) {
+					n = skiptable[*hc_ptr];
+					if (n == 0)
+						n = n_len;
+					if (n == n_len && i > 0)
+						if (*ne_ptr == *needle)
+							n--;
+					h_ptr += n;
+					h_len -= n;
+				} else
+					return h_ptr - haystack;
+			}
+
+			return -1;
+		}
+
 		// Methods
 		public object Clone ()
 		{
 			// FIXME: implement me
+			return null;
 		}
 
 		public static int Compare (string strA, string strB)
 		{
 			int i;
 
-			/* Does this remind anyone of the nautilus string.h wrappers? :-) */
+			/* Does this remind anyone of the nautilus string.h wrappers? ;-) */
 			if (strA == null) {
 				if (strB == null)
 					return 0;
@@ -188,7 +297,7 @@ namespace System {
 			} else if (strB == null)
 				return 1;
 
-			for (i = 0; strA[i] != strB[i] && strA[i] != '\0'; i++);
+			for (i = 0; strA[i] == strB[i] && strA[i] != '\0'; i++);
 
 			return ((int) (strA[i] - strB[i]));
 		}
@@ -202,7 +311,8 @@ namespace System {
 
 			/*
 			 * And here I thought Eazel developers were on crack...
-			 * if a string is null it should throw an exception damnit!
+			 * if a string is null it should pelt the programmer with
+			 * ArgumentNullExceptions, damnit!
 			 */
 			if (strA == null) {
 				if (strB == null)
@@ -213,12 +323,7 @@ namespace System {
 				return 1;
 
 			for (i = 0; strA[i] != '\0' && strB[i] != '\0'; i++) {
-				char cA, cB;
-
-				cA = strA[i] >= 'A' && strA[i] <= 'Z' ? strA[i] + 33 : strA[i];
-				cB = strB[i] >= 'A' && strB[i] <= 'Z' ? strB[i] + 33 : strB[i];
-
-				if (cA != cB)
+				if (tolower (strA[i]) != tolower (strB[i]))
 					break;
 			}
 
@@ -228,6 +333,7 @@ namespace System {
 		public static int Compare (string strA, string strB, bool ignoreCase, CultureInfo culture)
 		{
 			// FIXME: implement me
+			return 0;
 		}
 
 		public static int Compare (string strA, int indexA, string strB, int indexB, int length)
@@ -249,7 +355,7 @@ namespace System {
 			} else if (strB == null)
 				return 1;
 
-			for (i = 0; i < length; i++) {
+			for (i = 0; i < length - 1; i++) {
 				if (strA[indexA + i] != strB[indexB + i])
 					break;
 			}
@@ -280,15 +386,8 @@ namespace System {
 			} else if (strB == null)
 				return 1;
 
-			for (i = 0; i < length; i++) {
-				int iA = indexA + i;
-				int iB = indexB + i;
-				char cA, cB;
-
-				cA = strA[iA] >= 'A' && strA[iA] <= 'Z' ? strA[iA] + 33 : strA[iA];
-				cB = strB[iB] >= 'A' && strB[iB] <= 'Z' ? strB[iB] + 33 : strB[iB];
-
-				if (cA != cB)
+			for (i = 0; i < length - 1; i++) {
+				if (tolower (strA[indexA + i]) != tolower (strB[indexB + i]))
 					break;
 			}
 
@@ -316,12 +415,7 @@ namespace System {
 			} else if (strB == null)
 				return 1;
 			// FIXME: implement me
-		}
-
-		private static char toLowerOrdinal (char value)
-		{
-			// FIXME: implement me
-			return value;
+			return 0;
 		}
 
 		public static int CompareOrdinal (string strA, string strB)
@@ -340,8 +434,8 @@ namespace System {
 			for (i = 0; strA[i] != '\0'; i++) {
 				char cA, cB;
 
-				cA = toLowerOrdinal (strA[i]);
-				cB = toLowerOrdinal (strB[i]);
+				cA = tolowerordinal (strA[i]);
+				cB = tolowerordinal (strB[i]);
 
 				if (cA != cB)
 					break;
@@ -370,8 +464,8 @@ namespace System {
 			for (i = 0; i < length; i++) {
 				char cA, cB;
 
-				cA = toLowerOrdinal (strA[indexA + i]);
-				cB = toLowerOrdinal (strB[indexB + i]);
+				cA = tolowerordinal (strA[indexA + i]);
+				cB = tolowerordinal (strB[indexB + i]);
 
 				if (cA != cB)
 					break;
@@ -397,21 +491,20 @@ namespace System {
 
 		public static string Concat (params object[] args)
 		{
-			// FIXME: I guess I don't have to `delete' strings and it's elements?
 			string strings[], str;
-			int len, i, j, k;
+			int len, i;
 
 			if (args == null)
 				throw new ArgumentNullException ();
 
 			strings = new string [args.Length];
 			len = 0;
-			for (i = 0; i < args.Length; i++) {
+			foreach (object arg in args) {
 				/* use Empty for each null argument */
-				if (args[i] == null)
+				if (arg == null)
 					strings[i] = this.Empty;
 				else
-					strings[i] = args[i].ToString ();
+					strings[i] = arg.ToString ();
 				len += strings[i].Length;
 			}
 
@@ -420,8 +513,8 @@ namespace System {
 
 			str = new string [len + 1];
 			i = 0;
-			for (j = 0; j < args.Length; j++)
-				for (k = 0; k < strings[j].Length; k++)
+			for (int j = 0; j < strings.Length; j++)
+				for (int k = 0; k < strings[j].Length; k++)
 					str[i++] = strings[j][k];
 			str[i] = '\0';
 
@@ -430,27 +523,27 @@ namespace System {
 
 		public static string Concat (params string[] values)
 		{
-			int len, i, j, k;
+			int len, i;
 			string str;
 
 			if (values == null)
 				throw new ArgumentNullException ();
 
 			len = 0;
-			for (i = 0; i < values.Length; i++)
-				len += values[i] ? values[i].Length : 0;
+			foreach (string value in values)
+				len += value ? value.Length : 0;
 
 			if (len == 0)
 				return this.Empty;
 
 			str = new string [len + 1];
 			i = 0;
-			for (j = 0; j < values.Length; j++) {
-				if (values[j] == null)
+			foreach (string value in values) {
+				if (value == null)
 					continue;
 
-				for (k = 0; k < values[j].Length; k++)
-					str[i++] = values[j][k];
+				for (int j = 0; j < value.Length; j++)
+					str[i++] = value[j];
 			}
 			str[i] = '\0';
 
@@ -568,7 +661,7 @@ namespace System {
 
 		public void CopyTo (int sourceIndex, char[] destination, int destinationIndex, int count)
 		{
-			// FIXME: should I null-terminate?
+			// LAMESPEC: should I null-terminate?
 			int i, len;
 
 			if (destination == null)
@@ -626,46 +719,55 @@ namespace System {
 		public static string Format (string format, object arg0)
 		{
 			// FIXME: implement me
+			return null;
 		}
 
 		public static string Format (string format, params object[] args)
 		{
 			// FIXME: implement me
+			return null;
 		}
 
 		public static string Format (IFormatProvider provider, string format, params object[] args)
 		{
 			// FIXME: implement me
+			return null;
 		}
 
 		public static string Format (string format, object arg0, object arg1)
 		{
 			// FIXME: implement me
+			return null;
 		}
 
 		public static string Format (string format, object arg0, object arg1, object arg2)
 		{
 			// FIXME: implement me
+			return null;
 		}
 
 		public CharEnumerator GetEnumerator ()
 		{
 			// FIXME: implement me
+			return null;
 		}
 
 		public override int GetHashCode ()
 		{
 			// FIXME: implement me
+			return 0;
 		}
 
 		public Type GetType ()
 		{
 			// FIXME: implement me
+			return null;
 		}
 
 		public TypeCode GetTypeCode ()
 		{
 			// FIXME: implement me
+			return null;
 		}
 
 		public int IndexOf (char value)
@@ -737,26 +839,19 @@ namespace System {
 
 		public int IndexOfAny (char[] values, int startIndex)
 		{
-			return IndexOfAny (values, startIndex, this.length);
+			return IndexOfAny (values, startIndex, this.length - startIndex);
 		}
 
 		public int IndexOfAny (char[] values, int startIndex, int count)
 		{
-			int i, valuelen;
-
 			if (values == null)
 				throw new ArgumentNullException ();
 
 			if (startIndex < 0 || count < 0 || startIndex + count > this.length)
 				throw new ArgumentOutOfRangeException ();
 
-			for (valuelen = 0; values[valuelen] != '\0'; valuelen++);
-
-			if (valuelen == 0)
-				return -1;
-
-			for (i = startIndex, i < startIndex + count, i++) {
-				for (int j = 0; j < vlen; j++) {
+			for (int i = startIndex; i < startIndex + count, i++) {
+				for (int j = 0; j < strlen (values); j++) {
 					if (this.c_str[i] == values[j])
 						return i;
 				}
@@ -793,6 +888,7 @@ namespace System {
 			if (str == null)
 				throw new ArgumentNullException ();
 			// FIXME: implement me
+			return null;
 		}
 
 		public static string IsInterned (string str)
@@ -800,59 +896,29 @@ namespace System {
 			if (str == null)
 				throw new ArgumentNullException ();
 			// FIXME: implement me
+			return null;
 		}
 
 		public static string Join (string separator, string[] value)
 		{
-			// FIXME: msdn doesn't specify what happens when separator is null
-			//        or what to do if value[0] is null or if even value is a
-			//        NULL terminated array (I'm just assuming it is)
-			// NOTE: this does not call Join (string, string[], int, int)
-			//       because to do so would mean counting the # of elements twice
-			string str;
-			int len, i, j;
-
-			if (separator == null || value == null)
-				throw new ArgumentNullException ();
-
-			if (value[0] == null)
-				return this.Empty;
-
-			len = value[0].Length;
-			for (i = 1; value[i] != null; i++)
-				len += separator.Length + value[i].Length;
-
-			str = new string [len + 1];
-			for (i = 0; i < value[0].Length; i++)
-				str[i] = value[0][i];
-			for (j = 1; value[j] != null; j++) {
-				int k;
-
-				for (k = 0; k < separator.Length; k++)
-					str[i++] = separator[k];
-				for (k = 0; k < value[j].Length; k++)
-					str[i++] = value[j][k];
-			}
-			str[i] = '\0';
-
-			return str;
+			return Join (separator, value, 0, value.Length);
 		}
 
 		public static string Join (string separator, string[] value, int startIndex, int count)
 		{
-			// FIXME: msdn doesn't specify what happens when separator is null
-			//        or what to do if value[0] is null
-			// FIXME: does value.Length give me the length of the array?
-			int len, i, j, elements, used;
+			// LAMESPEC: msdn doesn't specify what happens when separator is null
+			int len, i, j, used;
 			string str;
 
 			if (separator == null || value == null)
 				throw new ArgumentNullException ();
 
+			if (startIndex + count > value.Length)
+				throw new ArgumentOutOfRangeException ();
+
 			len = 0;
 			used = 0;
-			elements = 0;
-			for (i = 0; value[i] != null; i++, elements++) {
+			for (i = 0; i < value.Length; i++) {
 				if (i == startIndex) {
 					len = value[i].Length;
 					used = 1;
@@ -861,9 +927,6 @@ namespace System {
 					used++;
 				}
 			}
-
-			if (startIndex + count > elements)
-				throw new ArgumentOutOfRangeException ();
 
 			// We have no elements to join?
 			if (i == 0)
@@ -889,9 +952,7 @@ namespace System {
 
 		public int LastIndexOf (char value)
 		{
-			int i;
-
-			for (i = this.length; i >= 0; i--) {
+			for (int i = this.length; i >= 0; i--) {
 				if (this.c_str[i] == value)
 					return i;
 			}
@@ -906,12 +967,10 @@ namespace System {
 
 		public int LastIndexOf (char value, int startIndex)
 		{
-			int i;
-
 			if (startIndex < 0 || startIndex > this.length)
 				throw new ArgumentOutOfRangeException ();
 
-			for (i = startIndex; i >= 0; i--) {
+			for (int i = startIndex; i >= 0; i--) {
 				if (this.c_str[i] == value)
 					return i;
 			}
@@ -926,15 +985,13 @@ namespace System {
 
 		public int LastIndexOf (char value, int startIndex, int count)
 		{
-			int i;
-
 			if (startIndex < 0 || count < 0)
 				throw new ArgumentOutOfRangeException ();
 
 			if (startIndex > this.length || startIndex - count < 0)
 				throw new ArgumentOutOfRangeException ();
 
-			for (i = startIndex; i >= startIndex - count; i--) {
+			for (int i = startIndex; i >= startIndex - count; i--) {
 				if (this.c_str[i] == value)
 					return i;
 			}
@@ -944,9 +1001,9 @@ namespace System {
 
 		public int LastIndexOf (string value, int startIndex, int count)
 		{
-			// FIXME: currently I'm using startIndex as the 0-position in the comparison,
-			//        but maybe it's the end-position in MS's implementation?
-			//        msdn is unclear on this point. I think this is correct though.
+			// LAMESPEC: currently I'm using startIndex as the 0-position in the comparison,
+			//           but maybe it's the end-position in MS's implementation?
+			//           msdn is unclear on this point. I think this is correct though.
 			int i, len;
 
 			if (value == null)
@@ -990,17 +1047,31 @@ namespace System {
 
 		public int LastIndexOfAny (char[] values)
 		{
-			// FIXME: implement me
+			return LastIndexOfAny (values, this.length, this.length);
 		}
 
 		public int LastIndexOfAny (char[] values, int startIndex)
 		{
-			// FIXME: implement me
+			return LastIndexOfAny (values, startIndex, startIndex);
 		}
 
 		public int LastIndexOfAny (char[] values, int startIndex, int count)
 		{
-			// FIXME: implement me
+			int i;
+
+			if (values == null)
+				throw new ArgumentNullException ();
+
+			if (startIndex < 0 || count < 0 || startIndex - count < 0)
+				throw new ArgumentOutOfRangeException ();
+
+			for (i = startIndex; i >= startIndex - count; i--) {
+				for (int j = 0; j < strlen (values); j++) {
+					if (this.c_str[i] == values[j])
+						return i;
+			}
+
+			return -1;
 		}
 
 		public string PadLeft (int totalWidth)
@@ -1094,7 +1165,7 @@ namespace System {
 
 		public string Replace (string oldValue, string newValue)
 		{
-			// FIXME: msdn doesn't specify what to do if either args is null
+			// LAMESPEC: msdn doesn't specify what to do if either args is null
 			int index, len, i, j;
 			string str;
 
@@ -1124,6 +1195,23 @@ namespace System {
 			return str;
 		}
 
+		private int splitme (params char[] separators, int startIndex)
+		{
+			/* this is basically a customized IndexOfAny() for the Split() methods */
+			for (int i = startIndex; i < this.length, i++) {
+				if (separators != null) {
+					foreach (char sep in separators) {
+						if (this.c_str[i] == sep)
+							return i - startIndex;
+					}
+				} else if (is_lwsp (this.c_str[i]))
+					return i - startIndex;
+				}
+			}
+
+			return -1;
+		}
+
 		public string[] Split (params char[] separator)
 		{
 			/**
@@ -1140,13 +1228,94 @@ namespace System {
 			 * be returned wherever 2 delimiting chars are
 			 * adjacent.
 			 **/
+			// FIXME: would using a Queue be better?
+			string strings[];
+			ArrayList list;
+			int index, len;
 
-			// FIXME: implement me
+			list = new ArrayList ();
+			for (index = 0, len = 0; index < this.length; index += len + 1) {
+				len = splitme (separator, index);
+				len = len > -1 ? len : this.length - index;
+				if (len == 0) {
+					list.Add (this.Empty);
+				} else {
+					string str;
+					int i;
+
+					str = new string [len + 1];
+					for (i = 0; i < len; i++)
+						str[i] = this.c_str[index + i];
+					str[i] = '\0';
+
+					list.Add (str);
+				}
+			}
+
+			strings = new string [list.Count];
+			if (list.Count == 1) {
+				/* special case for an array holding @this */
+				strings[0] = this;
+			} else {
+				for (index = 0; index < list.Count; index++)
+					strings[index] = list[index];
+			}
+
+			return strings;
 		}
 
 		public string[] Split (params char[] separator, int maxCount)
 		{
-			// FIXME: implement me
+			// FIXME: what to do if maxCount <= 0?
+			// FIXME: would using Queue be better than ArrayList?
+			string strings[];
+			ArrayList list;
+			int index, len, used;
+
+			used = 0;
+			list = new ArrayList ();
+			for (index = 0, len = 0; index < this.length && used < maxCount; index += len + 1) {
+				len = splitme (separator, index);
+				len = len > -1 ? len : this.length - index;
+				if (len == 0) {
+					list.Add (this.Empty);
+				} else {
+					string str;
+					int i;
+
+					str = new string [len + 1];
+					for (i = 0; i < len; i++)
+						str[i] = this.c_str[index + i];
+					str[i] = '\0';
+
+					list.Add (str);
+				}
+				used++;
+			}
+
+			/* fit the remaining chunk of the @this into it's own element */
+			if (index != this.length) {
+				string str;
+				int i;
+
+				str = new string [this.length - index + 1];
+				for (i = index; i < this.length; i++)
+					str[i - index] = this.c_str[i];
+				str[i - index] = '\0';
+
+				list.Add (str);
+			}
+
+			strings = new string [list.Count];
+			if (list.Count == 1) {
+				/* special case for an array holding @this */
+				strings[0] = this;
+			} else {
+				for (index = 0; index < list.Count; index++)
+					strings[index] = list[index];
+			}
+
+			return strings;
 		}
 
 		public bool StartsWith (string value)
@@ -1212,7 +1381,7 @@ namespace System {
 
 		public char[] ToCharArray (int startIndex, int length)
 		{
-			char [] chars;
+			char chars[];
 			int i, j;
 
 			if (startIndex < 0 || length < 0 || startIndex + length > this.length)
@@ -1233,12 +1402,8 @@ namespace System {
 			int i;
 
 			str = new string [this.length + 1];
-			for (i = 0; i < this.length; i++) {
-				char c = this.c_str[i];
-
-				str[i] = c >= 'A' && c <= 'Z' ? c + 33 : c;
-			}
-
+			for (i = 0; i < this.length; i++)
+				str[i] = tolower (this.c_str[i]);
 			str[i] = '\0';
 
 			return str;
@@ -1247,6 +1412,7 @@ namespace System {
 		public string ToLower (CultureInfo culture)
 		{
 			// FIXME: implement me
+			return null;
 		}
 
 		public override string ToString ()
@@ -1257,6 +1423,7 @@ namespace System {
 		public string ToString (IFormatProvider format)
 		{
 			// FIXME: implement me
+			return null;
 		}
 
 		public string ToUpper ()
@@ -1265,11 +1432,8 @@ namespace System {
 			int i;
 
 			str = new string [this.length + 1];
-			for (i = 0; i < this.length; i++) {
-				char c = this.c_str[i];
-
-				str[i] = c >= 'a' && c <= 'z' ? c - 33 : c;
-			}
+			for (i = 0; i < this.length; i++)
+				str[i] = toupper (this.c_str[i]);
 			str[i] = '\0';
 
 			return str;
@@ -1278,16 +1442,7 @@ namespace System {
 		public string ToUpper (CultureInfo culture)
 		{
 			// FIXME: implement me
-		}
-
-		private bool is_lwsp (char c)
-		{
-			/* this comes from the msdn docs for String.Trim() */
-			if ((c >= '0x9' && c <= '0xD') || c == '0x20' || c == '0xA0' ||
-			    (c >= '0x2000' && c <= '0x200B') || c == '0x3000' || c == '0xFEFF')
-				return true;
-			else
-				return false;
+			return null;
 		}
 
 		public string Trim ()
@@ -1297,16 +1452,15 @@ namespace System {
 
 		public string Trim (params char[] trimChars)
 		{
-			// FIXME: this implementation seems lame to me...
-			int begin, end, i;
+			int begin, end;
 			bool matches;
 
 			matches = true;
 			for (begin = 0; matches && begin < this.length; begin++) {
 				if (trimChars != null) {
 					matches = false;
-					for (i = 0; !matches && i < trimChars.Length; i++)
-						matches = this.c_str[begin] == trimChars[i];
+					foreach (char c in trimChars)
+						matches = this.c_str[begin] == c;
 				} else {
 					matches = is_lwsp (this.c_str[begin]);
 				}
@@ -1316,8 +1470,8 @@ namespace System {
 			for (end = this.length; end > begin; end--) {
 				if (trimChars != null) {
 					matches = false;
-					for (i = 0; !matches && i < trimChars.Length; i++)
-						matches = this.c_str[end] == trimChars[i];
+					foreach (char c in trimChars)
+						matches = this.c_str[end] == c;
 				} else {
 					matches = is_lwsp (this.c_str[end]);
 				}
@@ -1332,13 +1486,13 @@ namespace System {
 		public string TrimEnd (params char[] trimChars)
 		{
 			bool matches = true;
-			int end, i;
+			int end;
 
 			for (end = this.length; end > 0; end--) {
 				if (trimChars != null) {
 					matches = false;
-					for (i = 0; !matches && i < trimChars.Length; i++)
-						matches = this.c_str[end] == trimChars[i];
+					foreach (char c in trimChars)
+						matches = this.c_str[end] == c;
 				} else {
 					matches = is_lwsp (this.c_str[end]);
 				}
@@ -1353,13 +1507,13 @@ namespace System {
 		public string TrimStart (params char[] trimChars)
 		{
 			bool matches = true;
-			int begin, i;
+			int begin;
 
 			for (begin = 0; matches && begin < this.length; begin++) {
 				if (trimChars != null) {
 					matches = false;
-					for (i = 0; !matches && i < trimChars.Length; i++)
-						matches = this.c_str[begin] == trimChars[i];
+					foreach (char c in trimChars)
+						matches = this.c_str[begin] == c;
 				} else {
 					matches = is_lwsp (this.c_str[begin]);
 				}

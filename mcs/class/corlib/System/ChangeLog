@@ -1,3 +1,19 @@
+2001-07-14  Jeffrey Stedfast  <fejj@ximian.com>
+
+	* String.cs: Many logic/other fixes and better usage of the
+	features of c#
+	(tolower): New convenience method to help condense code.
+	(toupper): Another new helper method.
+	(Compare): Use the new helper methods.
+	(ToLower): use tolower().
+	(ToUpper): use toupper().
+	(LastIndexOfAny): Implemented.
+	(BoyerMoore): New private helper method that implements a modified
+	version of the Boyer-Moore search algorithm. Noothing uses it yet
+	as I'm not 100% sure it even works properly with unicode strings
+	not to mention it uses a huge lookup-table :-)
+	(Split): Implemented.
+
 2001-07-13  Jeffrey Stedfast  <fejj@ximian.com>
 
 	* TODO: Added things that need to be finished in System.String
