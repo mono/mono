@@ -65,7 +65,7 @@ namespace System.Web.UI.WebControls
 
 		private AdRecord[] LoadAdFile(string file)
 		{
-			Stream      fSream;
+			Stream      fStream;
 			ArrayList   list;
 			XmlReader   reader;
 			XmlDocument document;
@@ -87,9 +87,9 @@ namespace System.Web.UI.WebControls
 				document.Load(reader);
 				if(document.DocumentElement!=null)
 				{
-					if(docuent.DocumentElement.LocalName=="Advertisements")
+					if(document.DocumentElement.LocalName=="Advertisements")
 					{
-						topNode = documentElement.FirstChild;
+						topNode = document.DocumentElement.FirstChild;
 						while(topNode!=null)
 						{
 							if(topNode.LocalName=="Ad")
@@ -103,7 +103,7 @@ namespace System.Web.UI.WebControls
 										{
 											hybirdDict = new HybridDictionary();
 										}
-										hybridDic.Add(innerNode.LocalName, innerNode.InnerText);
+										hybridDict.Add(innerNode.LocalName, innerNode.InnerText);
 									}
 									innerNode = innerNode.NextSibling;
 								}
@@ -119,15 +119,15 @@ namespace System.Web.UI.WebControls
 					adsArray = new AdRecord[list.Count];
 					for(int i=0; i < list.Count; i++)
 					{
-						adsArray[i] = new AdRecord((IDictionary)list.Item[i]);
+						adsArray[i] = new AdRecord((IDictionary)list[i]);
 					}
 				}
-			} catch(Excetion e)
+			} catch(Exception e)
 			{
 				throw new HttpException("AdRotator_Parse_Error" + file);
 			} finally
 			{
-				fStream.close();
+				fStream.Close();
 			}
 			if(adsArray == null)
 			{
@@ -143,7 +143,7 @@ namespace System.Web.UI.WebControls
 			fileDirectory = UrlUtils.GetDirectory(UrlUtils.Combine(TemplateSourceDirectory, file));
 			CacheInternal ci = HttpRuntime.CacheInternal;
 			AdRecord[] records = (AdRecord[])ci[AdKey];
-			if(!(records))
+			if(records==null)
 			{
 				records = LoadAdFile(physPath);
 				if(!(records))
@@ -168,7 +168,7 @@ namespace System.Web.UI.WebControls
 				}
 				if(impressions!=0)
 				{
-					int rnd = Random.Next(impressions) + 1;
+					int rnd = (new Random()).Next(impressions) + 1;
 					int counter = 0;
 					int index = 0;
 					for(int i=0; i < records.Length; i++)

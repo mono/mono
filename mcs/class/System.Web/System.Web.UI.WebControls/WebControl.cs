@@ -12,6 +12,7 @@
  */
 
 using System;
+using System.Collections;
 using System.Web;
 using System.Web.UI;
 using System.Drawing;
@@ -277,9 +278,10 @@ namespace System.Web.UI.WebControls
 		public virtual void RenderBeginTag(HtmlTextWriter writer)
 		{
 			AddAttributesToRender(writer);
-			if(TagKey!=null)
+			if( Enum.IsDefined(typeof(HtmlTextWriterTag), TagKey) )
 			{
 				writer.RenderBeginTag(TagKey);
+				return;
 			}
 			writer.RenderBeginTag(tagName);
 		}
@@ -293,8 +295,6 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				//FIXME: should I do new HtmlTextWriter()?
-				throw new NotImplementedException();
 				return tagKey;
 			}
 		}
@@ -303,15 +303,9 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				if(tagName==null)
+				if(tagName==null && Enum.IsDefined(typeof(HtmlTextWriterTag), TagKey) )
 				{
-					if(tagKey == null)
-					{
-						//FIXME: If it is null, is this the right way? I don't think
-						throw new NotImplementedException();
-						tagKey = new HtmlTextWriter();
-					}
-					tagName = Enum.Format(typeof(tagKey), tagKey, "G").ToLower();
+					tagName = Enum.Format(typeof(HtmlTextWriterTag), tagKey, "G").ToString();
 				}
 				return tagName;
 			}
@@ -325,7 +319,7 @@ namespace System.Web.UI.WebControls
 			}
 			if(AccessKey.Length>0)
 			{
-				writer.AddAttribute(HtmlTextWriterAttribute.AccessKey, AccessKey);
+				writer.AddAttribute(HtmlTextWriterAttribute.Accesskey, AccessKey);
 			}
 			if(!Enabled)
 			{
@@ -337,7 +331,7 @@ namespace System.Web.UI.WebControls
 			}
 			if(TabIndex != 0)
 			{
-				writer.AddAttribute(HtmlTextWriterAttribute.TabIndex, TabIndex.ToString());
+				writer.AddAttribute(HtmlTextWriterAttribute.Tabindex, TabIndex.ToString());
 			}
 			if(ControlStyleCreated)
 			{
@@ -351,7 +345,7 @@ namespace System.Web.UI.WebControls
 				IEnumerator ie = Attributes.Keys.GetEnumerator();
 				do
 				{
-					writer.AddAttribute((string)ie.Current, Attributes.Item[(string)ie.Current]);
+					writer.AddAttribute((string)ie.Current, Attributes[(string)ie.Current]);
 				} while(ie.MoveNext());
 			}
 		}
@@ -374,7 +368,7 @@ namespace System.Web.UI.WebControls
 		{
 			RenderBeginTag(writer);
 			RenderContents(writer);
-			RenderEngTags(writer);
+			RenderEndTag(writer);
 		}
 		
 		protected virtual void RenderContents(HtmlTextWriter writer)
@@ -407,9 +401,10 @@ namespace System.Web.UI.WebControls
 		{
 			if(Attributes!=null)
 				return (string)Attributes[key];
+			return null;
 		}
 		
-		void IAttributeAccessor.SetAttribute(string key, string val)
+		void IAttributeAccessor.SetAttribute(string key, string value)
 		{
 			Attributes[key] = value;
 		}

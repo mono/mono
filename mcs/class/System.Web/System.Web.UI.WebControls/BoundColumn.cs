@@ -47,10 +47,10 @@ namespace System.Web.UI.WebControls
 		{
 			//TODO: What to do?
 			base.InitializeCell(cell, columnIndex, itemType);
-			switch(itemType)
-			{
-				case 
-			}
+//			switch(itemType)
+//			{
+//				case 
+//			}
 			throw new NotImplementedException();
 		}
 		

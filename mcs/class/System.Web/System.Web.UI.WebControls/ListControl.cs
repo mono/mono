@@ -91,7 +91,7 @@ namespace System.Web.UI.WebControls
 						return;
 					}
 				}
-				throw new ArgumentException(/*HttpRuntime.FormatResourceString(ID, "Invalid DataSource Type")*/);
+				throw new ArgumentException(HttpRuntime.FormatResourceString(ID, "Invalid DataSource Type"));
 			}
 		}
 
@@ -149,7 +149,7 @@ namespace System.Web.UI.WebControls
 					items = new ListItemCollection();
 					if(IsTrackingViewState)
 					{
-						//items.TrackViewState();
+						items.TrackViewState();
 					}
 				}
 				return items;
@@ -315,7 +315,6 @@ namespace System.Web.UI.WebControls
 				{
 					Type t = GetType();
 					// If I am a derivative, let it take of storing the selected indices.
-					// Why should I bother.
 					if(t == typeof(DropDownList) || t == typeof(ListBox) || t == typeof(CheckBoxList) || t == typeof(RadioButtonList))
 						return false;
 				}
