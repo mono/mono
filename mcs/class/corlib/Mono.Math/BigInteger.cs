@@ -1,4 +1,4 @@
-﻿//
+//
 // BigInteger.cs - Big Integer implementation
 //
 // Authors:
