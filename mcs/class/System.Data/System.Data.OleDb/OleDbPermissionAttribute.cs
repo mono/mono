@@ -16,9 +16,10 @@ using System.Security.Permissions;
 
 namespace System.Data.OleDb
 {
-	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class
-			| AttributeTargets.Struct | AttributeTargets.Constructor |
-			AttributeTargets.Method)]
+	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | 
+			AttributeTargets.Struct | AttributeTargets.Constructor |
+			AttributeTargets.Method, AllowMultiple=true,
+			Inherited=false)]
 	[Serializable]
 	public sealed class OleDbPermissionAttribute : DBDataPermissionAttribute
 	{

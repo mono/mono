@@ -1,3 +1,8 @@
+2004-05-20  Gert Driesen (drieseng@users.sourceforge.net)
+
+        *  OleDbPermissionAttribute.cs: change AllowMultiple and
+        Inherited to match .NET
+
 2004-05-14 Umadevi S (sumadevi@novell.com)
         * OleDbAdapter.cs -Implemented attributes, changed method signature for fill
 
