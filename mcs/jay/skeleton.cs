@@ -135,10 +135,10 @@ t    this.debug = (yydebug.yyDebug)yyd;
 .    for (;; ++ yyTop) {
 .      if (yyTop >= yyStates.Length) {			// dynamically increase
 .        int[] i = new int[yyStates.Length+yyMax];
-.        System.Array.Copy(yyStates, i, 0);
+.        yyStates.CopyTo (i, 0);
 .        yyStates = i;
 .        Object[] o = new Object[yyVals.Length+yyMax];
-.        System.Array.Copy(yyVals, o, 0);
+.        yyVals.CopyTo (o, 0);
 .        yyVals = o;
 .      }
 .      yyStates[yyTop] = yyState;

@@ -1,3 +1,8 @@
+2002-08-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* skeleton.cs: Fix the code that expanded the arrays dynamically,
+	it was broken, and instead was copying 0 elements.
+
 2002-07-10 Alp Toker  <alp@atoker.com>
 
 	* main.c: mktemp() is deprecated with gcc 3.1.1, use mkstemp() instead
