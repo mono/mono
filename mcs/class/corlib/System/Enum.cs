@@ -30,7 +30,7 @@ namespace System {
 	};
 
 	[MonoTODO]
-	public abstract class Enum : ValueType, IComparable, IConvertible {
+	public abstract class Enum : ValueType, IComparable, IConvertible, IFormattable {
 
 		// IConvertible methods Start -->
 

@@ -1,6 +1,10 @@
 
 2003-01-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Enum.cs: implements IFormattable.
+
+2003-01-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* AppDomain.cs: implemented DoCallBack method.
 	* MonoType.cs:
 	(GetConstructorImpl): when the flag is BindingFlags.Default, set it to
