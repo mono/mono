@@ -8,7 +8,7 @@
 // (C) 2003 Novell, Inc.
 //
 
-#if NET_1_2
+#if GENERICS
 using System;
 using System.Runtime.InteropServices;
 

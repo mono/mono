@@ -1,3 +1,7 @@
+2003-12-08  Martin Baulig  <martin@ximian.com>
+
+	* *.cs: require GENERICS.
+
 2003-11-08 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* *.cs: require NET_1_2 and GENERICS
