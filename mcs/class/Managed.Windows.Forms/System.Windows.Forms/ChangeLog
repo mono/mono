@@ -1,3 +1,10 @@
+2005-01-31  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ListBox.cs:
+		- Fixes 71946 and 71950
+		- Fixes changing Multicolumn on the fly
+		- Fixes keyboard navigation on Multicolumn listboxes
+
 2005-01-31  Geoff Norton  <gnorton@customerdna.com>
 	
 	* XplatUIOSX.cs: Call ExitToShell in our teardown to avoid a 

@@ -23,7 +23,6 @@
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
 // TODO:
-//	- Keyboard navigation
 //	- Horizontal item scroll
 //	- Performance testing
 //
@@ -176,7 +175,7 @@ namespace System.Windows.Forms
 			KeyDown += new KeyEventHandler (OnKeyDownLB);
 			KeyUp += new KeyEventHandler (OnKeyUpLB);
 			GotFocus += new EventHandler (OnGotFocus);
-			LostFocus += new EventHandler (OnLostFocus);
+			LostFocus += new EventHandler (OnLostFocus);			
 
 			UpdateFormatString ();
 		}
@@ -345,11 +344,14 @@ namespace System.Windows.Forms
 
 				if (value == true && DrawMode == DrawMode.OwnerDrawVariable)
 					throw new ArgumentException ("A multicolumn ListBox cannot have a variable-sized height.");
-
+					
     				multicolumn = value;
-    				UpdateShowVerticalScrollBar (); /* the needs for scrollbars may change */
-				UpdateShowHorizontalScrollBar ();
-				base.Refresh ();
+    				
+    				if (IsHandleCreated) {
+    					RellocateScrollBars ();
+					CalcClientArea ();
+    					UpdateItemInfo (false, -1, -1);	
+    				}
 			}
 		}
 
@@ -718,8 +720,6 @@ namespace System.Windows.Forms
 		{
 			base.OnFontChanged (e);
 
-			UpdateShowHorizontalScrollBar ();
-			UpdateShowVerticalScrollBar ();
 			RellocateScrollBars ();
 			CalcClientArea ();
 			UpdateItemInfo (false, -1, -1);
@@ -998,8 +998,11 @@ namespace System.Windows.Forms
 		// Only returns visible points. The diference of with IndexFromPoint is that the rectangle
 		// has screen coordinates
 		internal int IndexFromPointDisplayRectangle (int x, int y)
-		{
-    			for (int i = LBoxInfo.top_item; i < LBoxInfo.last_item; i++) {
+		{				
+			if (LBoxInfo.top_item == LBoxInfo.last_item)
+				return -1;
+			
+    			for (int i = LBoxInfo.top_item; i <= LBoxInfo.last_item; i++) {
 				if (GetItemDisplayRectangle (i, LBoxInfo.top_item).Contains (x, y) == true)
 					return i;
 			}
@@ -1168,14 +1171,14 @@ namespace System.Windows.Forms
 					
 				if (focused_item - (LBoxInfo.page_size - 1) <= 0) {
 																		
-					LBoxInfo.top_item = 0;
-					vscrollbar_ctrl.Value = LBoxInfo.top_item;
+					LBoxInfo.top_item = 0;					
+					UpdatedTopItem ();					
 					SelectedIndex = 0;					
 				}
 				else { 
 					if (focused_item - (LBoxInfo.page_size - 1)  < LBoxInfo.top_item) {
 						LBoxInfo.top_item = focused_item - (LBoxInfo.page_size - 1);
-						vscrollbar_ctrl.Value = LBoxInfo.top_item;
+						UpdatedTopItem ();						
 					}
 					
 					selected_index = focused_item - (LBoxInfo.page_size - 1);
@@ -1189,6 +1192,7 @@ namespace System.Windows.Forms
 			
 			return selected_index;
 		}
+		
 		
 		private void OnGotFocus (object sender, EventArgs e) 			
 		{			
@@ -1298,6 +1302,12 @@ namespace System.Windows.Forms
 
 		internal virtual void OnMouseDownLB (object sender, MouseEventArgs e)
     		{
+    			if (Click != null) {
+				if (e.Button == MouseButtons.Left) {
+					Click (this, e);
+				}
+			}				
+			
     			int index = IndexFromPointDisplayRectangle (e.X, e.Y);
     			
     			if (index != -1) {
@@ -1495,9 +1505,7 @@ namespace System.Windows.Forms
 		}
 
 		private void UpdateFormatString ()
-		{
-			Console.WriteLine ("UpdateFormatString {0}", RightToLeft);
-			
+		{			
 			if (RightToLeft == RightToLeft.Yes)
 				string_format.Alignment = StringAlignment.Far;				
 			else
@@ -1513,7 +1521,7 @@ namespace System.Windows.Forms
 			if (!IsHandleCreated || suspend_ctrlupdate == true)
 				return;
 
-			UpdateShowVerticalScrollBar ();
+			UpdateShowVerticalScrollBar ();			
 
 			if (listbox_info.show_verticalsb && Items.Count > listbox_info.page_size)
 				if (vscrollbar_ctrl.Enabled)
@@ -1556,12 +1564,15 @@ namespace System.Windows.Forms
 
 			if (sorted) 
 				Sort ();
+				
+			if (adding == false) {
+				focused_item = -1;
+			}
 
 			SelectedItems.ReCreate ();
 			SelectedIndices.ReCreate ();
-			LBoxInfo.last_item = LastVisibleItem ();
-
 			UpdateShowHorizontalScrollBar ();
+			LBoxInfo.last_item = LastVisibleItem ();
 			base.Refresh ();
 		}
 
@@ -1586,9 +1597,8 @@ namespace System.Windows.Forms
 				int page_size = listbox_info.client_rect.Height / listbox_info.item_height;
 				int fullpage = (page_size * (listbox_info.textdrawing_rect.Height / ColumnWidthInternal));
 
-				if (Items.Count > fullpage) {
-					if (IntegralHeight == false)
-						show = true;
+				if (Items.Count > fullpage) {					
+					show = true;
 				}
 				else { /* Acording to MS Documentation ScrollAlwaysVisible only affects Horizontal scrollbars but
 					  this is not true for MultiColumn listboxes */
@@ -2174,8 +2184,6 @@ namespace System.Windows.Forms
 			{
 				object_items.Remove (obj);
 			}
-
-
 
 			#endregion Private Methods
 
