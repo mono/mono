@@ -1,3 +1,8 @@
+2003-12-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* main.c (dis_field_list): Update after changes to 
+	mono_metadata_get_constant_index ().
+
 2003-11-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* dump.c dump.h main.c: Added support for dumping the ImplMap table
