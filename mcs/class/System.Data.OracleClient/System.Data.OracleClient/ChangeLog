@@ -1,0 +1,7 @@
+2004-12-19  Daniel Morgan <danielmorgan@verizon.net>
+
+	* OracleCommand.cs: ExecuteReader needs to be able 
+	to handle non queries too (retrofitted from trunk)
+	
+	* ChangeLog: added file
+
