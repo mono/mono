@@ -1,3 +1,14 @@
+2003-07-15  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c: Fixed compilation for gcc < 3.2.
+
+	Fixed compilation for machines that don't have AF_INET6 (thanks to
+	Bernie Solomon <bernard@ugsolutions.com> for that part.)
+
+	Fixed compile warnings.
+	
+	Fixed formatting and line endings.
+
 2003-07-14  Jerome Laban <jlaban@wanadoo.fr>
 
 	* socket-io.h:
