@@ -16,9 +16,6 @@ namespace System.Windows.Forms {
 
 	/// <summary>
 	/// Represents the table drawn by the System.Windows.Forms.DataGrid control at run time.
-	///
-	/// ToDo note:
-	///  - no methods are implemented
 	/// </summary>
 	
 	[MonoTODO]
@@ -460,198 +457,29 @@ namespace System.Windows.Forms {
 		#endregion
 		
 		#region Events
-		[MonoTODO]
-		public event EventHandler AllowSortingChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler AlternatingBackColorChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler BackColorChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler ColumnHeadersVisibleChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler ForeColorChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler GridLineColorChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler GridLineStyleChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler HeaderBackColorChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler HeaderFontChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler HeaderForeColorChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler LinkColorChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler AllowSortingChanged ;
+		public event EventHandler AlternatingBackColorChanged;
+		public event EventHandler BackColorChanged;
+		public event EventHandler ColumnHeadersVisibleChanged;
+		public event EventHandler ForeColorChanged;
+		public event EventHandler GridLineColorChanged;
+		public event EventHandler GridLineStyleChanged;
+		public event EventHandler HeaderBackColorChanged;
+		public event EventHandler HeaderFontChanged;
+		public event EventHandler HeaderForeColorChanged;
+		public event EventHandler LinkColorChanged;
 		
 		/// This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
 		/// public event EventHandler LinkHoverColorChanged;
 		
-		[MonoTODO]
-		public event EventHandler MappingNameChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler PreferredColumnWidthChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler PreferredRowHeightChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler ReadOnlyChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler RowHeadersVisibleChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler RowHeaderWidthChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler SelectionBackColorChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler SelectionForeColorChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler MappingNameChanged;
+		public event EventHandler PreferredColumnWidthChanged;
+		public event EventHandler PreferredRowHeightChanged;
+		public event EventHandler ReadOnlyChanged;
+		public event EventHandler RowHeadersVisibleChanged;
+		public event EventHandler RowHeaderWidthChanged;
+		public event EventHandler SelectionBackColorChanged;
+		public event EventHandler SelectionForeColorChanged;
 		#endregion
 	}
 }

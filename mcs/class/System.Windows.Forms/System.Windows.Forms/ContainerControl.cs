@@ -27,8 +27,12 @@ namespace System.Windows.Forms {
 		
 		
 		public Control ActiveControl {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set { 
+				//FIXME:
+			}
 		}
 		
 		//Compact Framework
@@ -55,6 +59,7 @@ namespace System.Windows.Forms {
 		protected override void AdjustFormScrollbars (
 			bool displayScrollbars) 
 		{
+			//FIXME:
 			base.AdjustFormScrollbars (displayScrollbars);
 		}
 		
@@ -74,11 +79,13 @@ namespace System.Windows.Forms {
 		// [event methods]
 		protected override void OnControlRemoved (ControlEventArgs e) 
 		{
+			//FIXME:
 			base.OnControlRemoved (e);
 		}
 		
 		protected override void OnCreateControl ()
 		{
+			//FIXME:
 			base.OnCreateControl ();
 		}
 		// end of [event methods]
@@ -86,19 +93,22 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override bool ProcessDialogChar (char charCode) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ProcessDialogChar(charCode);
 		}
 		
 		[MonoTODO]
 		protected override bool ProcessDialogKey (Keys keyData) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ProcessDialogKey(keyData);
 		}
 		
 		[MonoTODO]
 		protected override bool ProcessMnemonic (char charCode) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ProcessMnemonic(charCode);
 		}
 		
 		[MonoTODO]
@@ -121,6 +131,7 @@ namespace System.Windows.Forms {
 		
 		protected override void WndProc(ref Message m) 
 		{
+			//FIXME:
 			base.WndProc(ref m);
 		}
 	}

@@ -74,7 +74,7 @@
     		bool tabStop;
     		string text;
     		bool visible;
-    
+			object tag;
     		// --- Constructors ---
     
 	 		//Compact Framework //only Control()
@@ -253,17 +253,16 @@
     			}
     		}
     
-    		// waiting for BindingContext
-    		//public virtual BindingContext BindingContext {
-    		//	get {
-    		//		//return bindingContext;
-    		//		throw new NotImplementedException ();
-    		//	}
-    		//	set {
-    		//		//bindingContext=value;
-    		//		throw new NotImplementedException ();
-    		//	}
-    		//}
+    		public virtual BindingContext BindingContext {
+    			get {
+    				//return bindingContext;
+    				throw new NotImplementedException ();
+    			}
+    			set {
+    				//bindingContext=value;
+    				throw new NotImplementedException ();
+    			}
+    		}
     		
 	 		//Compact Framework
     		public int Bottom {
@@ -412,7 +411,7 @@
 						menuExists = Win32.GetMenu(Handle) != IntPtr.Zero ? 1 : 0;
 					}
 					Win32.AdjustWindowRect( ref rc, style, menuExists);
-					Win32.SetWindowPos( Handle, SetWindowPosZOrder.HWND_TOP, 0, 0, rc.right - rc.left, rc.bottom - rc.top, 
+					Win32.SetWindowPos( Handle, SetWindowPosZOrder.HWND_TOP, 0, 0, 400 /*rc.right - rc.left */, rc.bottom - rc.top, 
 						SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOZORDER);
 				}
 				else {
@@ -768,14 +767,16 @@
     		[MonoTODO]
     		public string ProductName {
     			get {
-    				throw new NotImplementedException ();
+					//FIXME:
+    				return "Product Name";
     			}
     		}
     		
     		[MonoTODO]
     		public string ProductVersion {
     			get {
-    				throw new NotImplementedException ();
+					//FIXME:
+					return "Product Version";
     			}
     		}
     		
@@ -792,7 +793,7 @@
     				return region;
     			}
     			set {
-    				region=value;
+    				region = value;
     			}
     		}
     		
@@ -890,10 +891,10 @@
     		[MonoTODO]
     		public object Tag {
     			get {
-    				throw new NotImplementedException ();
+    				return tag;
     			}
     			set {
-    				throw new NotImplementedException ();
+    				tag = value;
     			}
     		}
     		
@@ -993,7 +994,7 @@
     		[MonoTODO]
     		public void BringToFront () 
     		{
-    			throw new NotImplementedException ();
+    			//FIXME:
     		}
     		
     		public bool Contains (Control ctl) 
@@ -1123,7 +1124,7 @@
     		[MonoTODO]
     		protected virtual void InitLayout () 
     		{
-    			throw new NotImplementedException ();
+				//FIXME:
     		}
     		
  			//Compact Framework
@@ -1139,7 +1140,7 @@
     		[MonoTODO]
     		public void Invalidate (bool invalidateChildren) 
     		{
-    			throw new NotImplementedException ();
+				//FIXME:
     		}
     		
  			//Compact Framework
@@ -1155,54 +1156,54 @@
     			}
     		}
     		
-    		//[MonoTODO]
+    		[MonoTODO]
     		public void Invalidate(Region region) 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		public void Invalidate (Rectangle rc, bool invalidateChildren) 
     		{
-    			throw new NotImplementedException ();
+				//FIXME:
     		}
     		
-    		//[MonoTODO]
+    		[MonoTODO]
     		public void Invalidate(Region region,bool invalidateChildren) 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		protected void InvokeGotFocus (Control toInvoke, EventArgs e) 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		protected void InvokeLostFocus (Control toInvoke, EventArgs e) 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		protected void InvokeOnClick (Control toInvoke, EventArgs e) 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		protected void InvokePaint (Control c, PaintEventArgs e) 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		protected void InvokePaintBackground (
     			Control c,PaintEventArgs e) 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		protected virtual bool IsInputChar (char charCode)
@@ -1281,8 +1282,8 @@
     		
     		protected virtual void OnCreateControl ()
     		{
-    			
-    		}
+				//FIXME:
+			}
     		
     		protected virtual void OnCursorChanged (EventArgs e)
     		{
@@ -1506,8 +1507,8 @@
     		
     		protected virtual void OnNotifyMessage (Message m) 
     		{
-    
-    		}
+				//FIXME:
+			}
     		
  			//Compact Framework
     		protected virtual void OnPaint (PaintEventArgs e) 
@@ -1519,8 +1520,8 @@
  			//Compact Framework
     		protected virtual void OnPaintBackground (PaintEventArgs e) 
     		{
-    
-    		}
+				//FIXME:
+			}
     		
     		protected virtual void OnParentBackColorChanged (EventArgs e) 
     		{
@@ -1667,15 +1668,15 @@
     		[MonoTODO]
     		public void PerformLayout () 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		public void PerformLayout (Control affectedControl,
     					   string affectedProperty) 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
  			//Compact Framework
     		[MonoTODO]
@@ -1781,57 +1782,56 @@
     		[MonoTODO]
     		public virtual void ResetBackColor () 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		public void ResetBindings () 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		public virtual void ResetFont () 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		public virtual void ResetForeColor () 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		public void ResetImeMode () 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		public virtual void ResetRightToLeft () 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		public virtual void ResetText () 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		public void ResumeLayout () 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		public void ResumeLayout (bool performLayout) 
     		{
-				//removed so itr runs
-    			//throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		protected ContentAlignment RtlTranslateAlignment (
@@ -1878,32 +1878,32 @@
     		[MonoTODO]
     		public void Scale (float ratio) 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		public void Scale (float dx,float dy) 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		protected virtual void ScaleCore (float dx, float dy) 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		public void Select () 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		protected virtual void Select (bool directed,bool forward) 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		public bool SelectNextControl (Control ctl, bool forward, 
@@ -1917,41 +1917,41 @@
     		[MonoTODO]
     		public void SendToBack () 
     		{
-    			throw new NotImplementedException ();
+				//FIXME:
     		}
     		
     		[MonoTODO]
     		public void SetBounds (int x, int y, int width, int height) 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		public void SetBounds (int x, int y, int width, int height,
     				       BoundsSpecified specified) 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		protected virtual void SetBoundsCore (
     			int x, int y, int width, int height,
     			BoundsSpecified specified) 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		protected virtual void SetClientSizeCore (int x, int y)
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		protected void SetStyle (ControlStyles flag, bool value) 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		protected void SetTopLevel (bool value)
     		{
@@ -1970,8 +1970,8 @@
     		[MonoTODO]
     		protected virtual void SetVisibleCore (bool value)
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
  			//Compact Framework
     		public void Show () 
@@ -1982,9 +1982,8 @@
     		[MonoTODO]
     		public void SuspendLayout () 
     		{
-				//removed so it  will run
-    			//throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
  			//Compact Framework
     		public void Update () 
@@ -1995,34 +1994,34 @@
     		[MonoTODO]
     		protected void UpdateBounds () 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		protected void UpdateBounds (int x, int y, int width, int height) 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		protected void UpdateBounds (
     			int x, int y, int width, int height, int clientWidth,
     			int clientHeight)
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		protected void UpdateStyles () 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		[MonoTODO]
     		protected void UpdateZOrder () 
     		{
-    			throw new NotImplementedException ();
-    		}
+				//FIXME:
+			}
     		
     		// WndProc - calls appriate On... function for the give
     		// message
@@ -2350,72 +2349,100 @@
     			/// --- ControlAccessibleObject Properties ---
     			[MonoTODO]
      			public override string DefaultAction {
-     				get { throw new NotImplementedException (); }
+     				get {
+						//FIXME:
+						return base.DefaultAction;
+					}
      			}
     			
     			[MonoTODO]
     			public override string Description {
-     				get { throw new NotImplementedException (); }
+     				get {
+						//FIXME:
+						return base.Description;
+					}
      			}
     			
     			[MonoTODO]
     			public IntPtr Handle {
-    				get { throw new NotImplementedException (); }
-    				set { throw new NotImplementedException (); }
+    				get {
+						throw new NotImplementedException ();
+					}
+    				set {
+						//FIXME:
+					}
     			}
     			
     			[MonoTODO]
      			public override string Help {
-     				get { throw new NotImplementedException (); }
+     				get {
+						//FIXME:
+						return base.Help;
+					}
      			}
     			
     			[MonoTODO]
      			public override string KeyboardShortcut {
-     				get { throw new NotImplementedException (); }
+     				get {
+						//FIXME:
+						return base.KeyboardShortcut;
+					}
      			}
     			
     			[MonoTODO]
      			public override string Name {
-     				get { throw new NotImplementedException (); }
-     				set { throw new NotImplementedException (); }
+     				get {
+						//FIXME:
+						return base.Name;
+					}
+     				set {
+						//FIXME:
+						base.Name = value;
+					}
      			}
     			
     			[MonoTODO]
     			public Control Owner {
-    				get { throw new NotImplementedException (); }
+    				get { 
+						throw new NotImplementedException ();
+					}
     			}
     			
     			[MonoTODO]
      			public override AccessibleRole Role {
-     				get { throw new NotImplementedException (); }
+     				get {
+						//FIXME:
+						return base.Role;
+					}
      			}
-    			
     			
     			/// --- ControlAccessibleObject Methods ---
     			[MonoTODO]
      			public override int GetHelpTopic(out string fileName) 
      			{
-     				throw new NotImplementedException ();
-     			}
+					//FIXME:
+					return base.GetHelpTopic(out fileName);
+				}
     			
     			[MonoTODO]
     			public void NotifyClients (AccessibleEvents accEvent) 
     			{
-    				throw new NotImplementedException ();
+					//FIXME:
     			}
     			
     			[MonoTODO]
     			public void NotifyClients (AccessibleEvents accEvent,
     						   int childID) 
     			{
-    				throw new NotImplementedException ();
-    			}
+					//FIXME:
+				}
     			
     			[MonoTODO]
     			public override string ToString ()
     			{
-    				throw new NotImplementedException ();
-    			}
+					//FIXME:
+					return base.ToString();
+				}
     		}
     		
     		/// sub-class: Control.ControlCollection
@@ -2435,15 +2462,21 @@
     		
     			/// --- ControlCollection Properties ---
     			public int Count {
-    				get { return collection.Count; }
+    				get {
+						return collection.Count;
+					}
     			}
     		
     			public bool IsReadOnly {
-    				get { return collection.IsReadOnly; }
+    				get {
+						return collection.IsReadOnly;
+					}
     			}
     			
     			public virtual Control this [int index] {
-    				get { return (Control) collection[index]; }
+    				get {
+						return (Control) collection[index];
+					}
     			}
     		
     			public virtual void Add (Control value) 
@@ -2472,16 +2505,12 @@
     			}
     			
     			[MonoTODO]
-    			public override bool Equals (object other) 
+    			public override bool Equals (object obj) 
     			{
-    				throw new NotImplementedException ();
+					//FIXME:
+					return base.Equals(obj);
     			}
-    			
-    			//inherited
-    			//public static bool Equals(object o1, object o2) {
-    			//	throw new NotImplementedException ();
-    			//}
-    
+
     			[MonoTODO]
     			public int GetChildIndex (Control child)
     			{
@@ -2496,8 +2525,9 @@
     			[MonoTODO]
     			public override int GetHashCode () 
     			{
-    				throw new NotImplementedException ();
-    			}
+					//FIXME:
+					return base.GetHashCode();
+				}
     			
     			public int IndexOf (Control control) 
     			{
@@ -2517,7 +2547,7 @@
     			[MonoTODO]
     			public void SetChildIndex (Control child,int newIndex) 
     			{
-    				throw new NotImplementedException ();
+					//FIXME:
     			}
     			
     			/// --- ControlCollection.IClonable methods ---
@@ -2529,20 +2559,30 @@
     			
     			/// --- ControlCollection.IList properties ---
     			bool IList.IsFixedSize {
-    				get { return collection.IsFixedSize; }
+    				get {
+						return collection.IsFixedSize;
+					}
     			}
     
     			object IList.this [int index] {
-    				get { return collection[index]; }
-    				set { collection[index] = value; }
+    				get {
+						return collection[index];
+					}
+    				set {
+						collection[index] = value;
+					}
     			}
     
     			object ICollection.SyncRoot {
-    				get { return collection.SyncRoot; }
+    				get {
+						return collection.SyncRoot;
+					}
     			}
     	
     			bool ICollection.IsSynchronized {
-    				get { return collection.IsSynchronized; }
+    				get {
+						return collection.IsSynchronized;
+					}
     			}
     			
     			/// --- ControlCollection.IList methods ---

@@ -116,7 +116,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			set { 
-				throw new NotImplementedException (); 
+				//FIXME:
 			}
 		}
 		
@@ -132,10 +132,12 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override Image BackgroundImage {
 			get {
-				throw new NotImplementedException ();
+				//FIXME:
+				return base.BackgroundImage;
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
+				base.BackgroundImage = value;
 			}
 		}
 		
@@ -204,20 +206,32 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		public DataGridCell CurrentCell {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set { 
+				//FIXME:
+			}
 		}
 		
 		[MonoTODO]
 		public int CurrentRowIndex {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				//FIXME:
+			}
 		}
 		
 		[MonoTODO]
 		public override Cursor Cursor {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				//FIXME:
+			}
 		}
 		
 		public string DataMember {
@@ -227,13 +241,19 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		public object DataSource {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				//FIXME:
+			}
 		}
 		
-		[MonoTODO]
 		protected override Size DefaultSize {
-			get { throw new NotImplementedException (); }
+			get {
+				//FIXME: verify numbers
+				return new Size(300,200);
+			}
 		}
 		
 		[MonoTODO]
@@ -248,8 +268,14 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		public override Color ForeColor {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				//FIXME:
+				return base.ForeColor;
+			}
+			set {
+				//FIXME:
+				base.ForeColor = value;
+			}
 		}
 		
 		public Color GridLineColor {
@@ -381,9 +407,11 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override string Text {
 			get { 
+				//FIXME:
 				return base.Text; 
 			}
 			set {
+				//FIXME:
 				base.Text = value; 
 			}
 		}
@@ -426,31 +454,32 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual void CancelEditing() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public void Collapse(int row) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected internal virtual void ColumnStartedEditing(Control editingControl) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected internal virtual void ColumnStartedEditing(Rectangle bounds) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		 protected override AccessibleObject CreateAccessibilityInstance() 
 		 {
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.CreateAccessibilityInstance();
 		}
 		
 		[MonoTODO]
@@ -498,13 +527,13 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual void GridHScrolled(object sender,ScrollEventArgs se) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void GridVScrolled(object sender,ScrollEventArgs se) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -534,120 +563,130 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void NavigateBack() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public void NavigateTo(int rowNumber,string relationName) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnAllowNavigationChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected void OnBackButtonClicked(object sender,EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected override void OnBackColorChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnBackColorChanged(e);
 		}
 		
 		[MonoTODO]
 		protected virtual void OnBackgroundColorChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected override void OnBindingContextChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnBindingContextChanged(e);
 		}
 		
 		[MonoTODO]
 		protected virtual void OnBorderStyleChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnCaptionVisibleChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnCurrentCellChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnDataSourceChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected override void OnEnter(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnEnter(e);
 		}
 		
 		[MonoTODO]
 		protected virtual void OnFlatModeChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected override void OnFontChanged(EventArgs e) 
 		{
+			//FIXME:
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		protected override void OnForeColorChanged(EventArgs e) 
 		{
+			//FIXME:
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		protected override void OnHandleCreated(EventArgs e) 
 		{
+			//FIXME:
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		protected override void OnHandleDestroyed(EventArgs e) 
 		{
+			//FIXME:
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		protected override void OnKeyDown(KeyEventArgs ke) 
 		{
+			//FIXME:
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		protected override void OnKeyPress(KeyPressEventArgs kpe) 
 		{
+			//FIXME:
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		protected override void OnLayout(LayoutEventArgs levent) 
 		{
+			//FIXME:
 			throw new NotImplementedException ();
 		}
 		
@@ -660,89 +699,97 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void OnMouseDown(MouseEventArgs e) 
 		{
+			//FIXME:
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		protected override void OnMouseLeave(EventArgs e) 
 		{
+			//FIXME:
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		protected override void OnMouseMove(MouseEventArgs e) 
 		{
+			//FIXME:
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		protected override void OnMouseUp(MouseEventArgs e) 
 		{
+			//FIXME:
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		protected override void OnMouseWheel(MouseEventArgs e) 
 		{
+			//FIXME:
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		protected void OnNavigate(NavigateEventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected override void OnPaint(PaintEventArgs pe) 
 		{
+			//FIXME:
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		protected override void OnPaintBackground(PaintEventArgs ebe) 
 		{
+			//FIXME:
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		protected virtual void OnParentRowsLabelStyleChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnParentRowsVisibleChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected virtual void OnReadOnlyChanged(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		[MonoTODO]
 		protected void OnRowHeaderClick(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected void OnScroll(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected void OnShowParentDetailsButtonClicked(object sender,EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected override bool ProcessDialogKey(Keys keyData) 
 		{
+			//FIXME:
 			throw new NotImplementedException ();
 		}
 		
@@ -755,6 +802,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override bool ProcessKeyPreview(ref Message m) 
 		{
+			//FIXME:
 			throw new NotImplementedException ();
 		}
 		
@@ -767,79 +815,81 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void ResetAlternatingBackColor() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public override void ResetBackColor() 
 		{
+			//FIXME:
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		public override void ResetForeColor() 
 		{
+			//FIXME:
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		public void ResetGridLineColor() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public void ResetHeaderBackColor() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public void ResetHeaderFont() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public void ResetHeaderForeColor() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public void ResetLinkColor() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		protected void ResetSelection() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public void ResetSelectionBackColor() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public void ResetSelectionForeColor() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public void Select(int row) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public void SetDataBinding(object dataSource,string dataMember) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -929,160 +979,26 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void UnSelect(int row) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		#endregion
 		
 		#region Events
-		[MonoTODO]
-		public event EventHandler AllowNavigationChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler BackButtonClick {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler BackgroundColorChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler BorderStyleChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler CaptionVisibleChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler CurrentCellChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler DataSourceChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler FlatModeChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event NavigateEventHandler Navigate {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler ParentRowsLabelStyleChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler ParentRowsVisibleChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler ReadOnlyChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		protected event EventHandler RowHeaderClick {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler Scroll {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler ShowParentDetailsButtonClick {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler AllowNavigationChanged;
+		public event EventHandler BackButtonClick;
+		public event EventHandler BackgroundColorChanged;
+		public event EventHandler BorderStyleChanged;
+		public event EventHandler CaptionVisibleChanged;
+		public event EventHandler CurrentCellChanged;
+		public event EventHandler DataSourceChanged;
+		public event EventHandler FlatModeChanged;
+		public event NavigateEventHandler Navigate;
+		public event EventHandler ParentRowsLabelStyleChanged;
+		public event EventHandler ParentRowsVisibleChanged;
+		public event EventHandler ReadOnlyChanged;
+		protected event EventHandler RowHeaderClick;
+		public event EventHandler Scroll;
+		public event EventHandler ShowParentDetailsButtonClick;
 		#endregion
 		
 		/// sub-class: DataGrid.HitTestInfo
@@ -1090,7 +1006,7 @@ namespace System.Windows.Forms {
 		/// Contains information about a part of the System.Windows.Forms.DataGrid at a specified coordinate. This class cannot be inherited.
 		/// </summary>
 		[MonoTODO]
-		public sealed class HitTestInfo {
+			public sealed class HitTestInfo {
 			#region DataGrid.HitTestInfo: Fields
 			[MonoTODO]
 			public static readonly DataGrid.HitTestInfo Nowhere;
@@ -1112,43 +1028,23 @@ namespace System.Windows.Forms {
 				get { throw new NotImplementedException (); }
 			}
 			#endregion
-			
-			#region DataGrid.HitTestInfo: Methods
-			[MonoTODO]
-			public override bool Equals(object value) 
-			{
-				throw new NotImplementedException ();
-			}
-			
-			[MonoTODO]
-			public override int GetHashCode() 
-			{
-				throw new NotImplementedException ();
-			}
-			
-			[MonoTODO]
-			public override string ToString() 
-			{
-				throw new NotImplementedException ();
-			}
-			#endregion
-		}
 		
-		/// sub-enumeration: DataGrid.HitTestType
-		/// <summary>
-		/// Specifies the part of the System.Windows.Forms.DataGrid control the user has clicked
-		/// </summary>
-		[Flags]
-		[Serializable]
-		public enum HitTestType {
-			Caption = 32,
-			Cell = 1,
-			ColumnHeader = 2,
-			ColumnResize = 8,
-			None = 0,
-			ParentRows = 64,
-			RowHeader = 4,
-			RowResize = 16
+			/// sub-enumeration: DataGrid.HitTestType
+			/// <summary>
+			/// Specifies the part of the System.Windows.Forms.DataGrid control the user has clicked
+			/// </summary>
+			[Flags]
+				[Serializable]
+				public enum HitTestType {
+				Caption = 32,
+				Cell = 1,
+				ColumnHeader = 2,
+				ColumnResize = 8,
+				None = 0,
+				ParentRows = 64,
+				RowHeader = 4,
+				RowResize = 16
+			}
 		}
 	}
 }

@@ -12,7 +12,6 @@ using System.ComponentModel;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template. Nothing is implemented yet.
 	//	Hosts a TextBox control in a cell of a DataGridColumnStyle for editing strings.
 	// </summary>
 	public class DataGridTextBoxColumn : DataGridColumnStyle {

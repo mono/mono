@@ -15,9 +15,6 @@ namespace System.Windows.Forms {
 
 	/// <summary>
 	/// Represents the collection of data bindings for a control.
-	///
-	/// ToDo note:
-	///  - no methods are implemented
 	/// </summary>
 	
 	[MonoTODO]
@@ -28,7 +25,6 @@ namespace System.Windows.Forms {
 		{
 		}
 		#endregion
-		
 		
 		#region Properties
 		[MonoTODO]
@@ -42,9 +38,6 @@ namespace System.Windows.Forms {
 //			get { throw new NotImplementedException (); }
 //		}
 		#endregion
-		
-		
-		
 		
 		#region Methods
 		/// following methods were not stubbed out, because they only support .NET framework:
@@ -65,19 +58,19 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public new void Clear() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public new void Remove(Binding binding) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public new void RemoveAt(int index) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		#endregion
 		

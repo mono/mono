@@ -15,9 +15,6 @@ namespace System.Windows.Forms {
 
 	/// <summary>
 	/// Represents a TextBox control that is hosted in a DataGridTextBoxColumn.
-	///
-	/// ToDo note:
-	///  - nothing is implemented
 	/// </summary>
 
 	[MonoTODO]
@@ -26,9 +23,6 @@ namespace System.Windows.Forms {
 		#region Fields
 		bool isInEditOrNavigateMode;
 		#endregion
-		
-		
-		
 		
 		#region Constructor
 		[MonoTODO]
@@ -39,18 +33,12 @@ namespace System.Windows.Forms {
 		}
 		#endregion
 		
-		
-		
-		
 		#region Properties
 		public bool IsInEditOrNavigateMode {
 			get { return isInEditOrNavigateMode; }
 			set { isInEditOrNavigateMode=value; }
 		}
 		#endregion
-		
-		
-		
 		
 		#region Methods
 		[MonoTODO]

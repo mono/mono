@@ -15,9 +15,6 @@ namespace System.Windows.Forms {
 
 	/// <summary>
 	/// Provides methods used to paint common Windows controls and their elements.
-	///
-	/// ToDo note:
-	///  - Nothing is implemented
 	/// </summary>
 	
 	[MonoTODO]
@@ -84,8 +81,7 @@ namespace System.Windows.Forms {
 		public static void DrawBorder3D(
 			Graphics graphics,
 			Rectangle rectangle) {
-
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -93,7 +89,8 @@ namespace System.Windows.Forms {
 			Graphics graphics,
 			Rectangle rectangle,
 			Border3DStyle Style) {
-			throw new NotImplementedException ();
+			//FIXME:
+
 		}
 		
 		[MonoTODO]
@@ -102,13 +99,13 @@ namespace System.Windows.Forms {
 			Rectangle rectangle,
 			Border3DStyle Style,
 			Border3DSide Sides) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public static void DrawBorder3D(
 			Graphics graphics, int x) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		//is this part of spec? I do not think so.
 		//[MonoTODO]
@@ -124,8 +121,7 @@ namespace System.Windows.Forms {
 			int y,
 			int width,
 			int height) {
-
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -136,8 +132,7 @@ namespace System.Windows.Forms {
 			int width,
 			int height,
 			Border3DStyle style) {
-
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
@@ -149,15 +144,14 @@ namespace System.Windows.Forms {
 			int height,
 			Border3DStyle style,
 			Border3DSide sides) {
-
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		public static void DrawButton(
 			Graphics graphics,
 			Rectangle rectangle) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -168,17 +162,14 @@ namespace System.Windows.Forms {
 			int width,
 			int height,
 			ButtonState state) {
-
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public static void DrawCaptionButton(
 			Graphics graphics,
 			Rectangle rectangle) {
-
-
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -190,15 +181,14 @@ namespace System.Windows.Forms {
 			int height,
 			CaptionButton button,
 			ButtonState state) {
-
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public static void DrawCheckBox(
 			Graphics graphics,
 			Rectangle rectangle) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -209,15 +199,14 @@ namespace System.Windows.Forms {
 			int width,
 			int height,
 			ButtonState state) {
-
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public static void DrawComboButton(
 			Graphics graphics,
 			Rectangle rectangle) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -228,22 +217,20 @@ namespace System.Windows.Forms {
 			int width,
 			int height,
 			ButtonState state) {
-
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public static void DrawContainerGrabHandle(Graphics graphics,Rectangle bounds) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public static void DrawFocusRectangle(
 			Graphics graphics,
 			Rectangle rectangle) {
-
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -252,7 +239,7 @@ namespace System.Windows.Forms {
 			Rectangle rectangle,
 			Color foreColor,
 			Color backColor) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -261,8 +248,7 @@ namespace System.Windows.Forms {
 			Rectangle rectangle,
 			bool primary,
 			bool enabled) {
-
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -271,8 +257,7 @@ namespace System.Windows.Forms {
 			Rectangle area,
 			Size pixelsBetweenDots,
 			Color backColor) {
-
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -282,8 +267,7 @@ namespace System.Windows.Forms {
 			int x,
 			int y,
 			Color background) {
-
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -291,8 +275,7 @@ namespace System.Windows.Forms {
 			Graphics graphics,
 			Rectangle rectangle,
 			bool primary) {
-
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -300,8 +283,7 @@ namespace System.Windows.Forms {
 			Graphics graphics,
 			Rectangle rectangle,
 			MenuGlyph glyph) {
-
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -312,8 +294,7 @@ namespace System.Windows.Forms {
 			int width,
 			int height,
 			MenuGlyph glyph) {
-
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -321,8 +302,7 @@ namespace System.Windows.Forms {
 			Graphics graphics,
 			Rectangle rectangle,
 			ButtonState state) {
-
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -333,8 +313,7 @@ namespace System.Windows.Forms {
 			int width,
 			int height,
 			ButtonState state) {
-
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -342,8 +321,7 @@ namespace System.Windows.Forms {
 			Graphics graphics,
 			Rectangle rectangle,
 			ButtonState state) {
-
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -354,15 +332,14 @@ namespace System.Windows.Forms {
 			int width,
 			int height,
 			ButtonState state) {
-
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public static void DrawReversibleFrame(
 			Rectangle rectangle,
 			Color backColor) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -370,8 +347,7 @@ namespace System.Windows.Forms {
 			Point start,
 			Point end,
 			Color backColor) {
-
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -379,7 +355,7 @@ namespace System.Windows.Forms {
 			Graphics graphics,
 			Rectangle rectangle,
 			ScrollButton button) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -391,8 +367,7 @@ namespace System.Windows.Forms {
 			int height,
 			ScrollButton button,
 			ButtonState state) {
-
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -402,15 +377,14 @@ namespace System.Windows.Forms {
 			Rectangle outsideRect,
 			Rectangle insideRect,
 			Color backColor) {
-
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public static void DrawSizeGrip(
 			Graphics graphics,
 			Color backColor) {
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -421,8 +395,7 @@ namespace System.Windows.Forms {
 			int y,
 			int width,
 			int height) {
-
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -433,16 +406,14 @@ namespace System.Windows.Forms {
 			Color color,
 			RectangleF layoutRectangle,
 			StringFormat format) {
-
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
 		public static void FillReversibleRectangle(
 			Rectangle rectangle,
 			Color backColor) {
-
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]

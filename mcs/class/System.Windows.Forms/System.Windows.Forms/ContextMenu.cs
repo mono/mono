@@ -56,7 +56,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void Show(Control control,Point pos) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		/// events

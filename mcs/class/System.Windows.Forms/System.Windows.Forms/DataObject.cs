@@ -11,7 +11,6 @@ using System.Runtime.InteropServices;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template. Nothing is implemented yet.
 	//	Implements a basic data transfer mechanism.
 	// </summary>
 	[ClassInterface(ClassInterfaceType.None)]
@@ -24,19 +23,17 @@ namespace System.Windows.Forms {
 		//[ClassInterface(ClassInterfaceType.None)]
 		public DataObject() : base()
 		{
-			throw new NotImplementedException ();
 		}
 		[MonoTODO]
 		//[ClassInterface(ClassInterfaceType.None)]
-		public DataObject(object data) : base()
+		public DataObject(object data) : this()
 		{
-			throw new NotImplementedException ();
+			
 		}
 		[MonoTODO]
 		//[ClassInterface(ClassInterfaceType.None)]
-		public DataObject(string format, object data) : base()
+		public DataObject(string format, object data) : this(data)
 		{
-			throw new NotImplementedException ();
 		}
 
 		//

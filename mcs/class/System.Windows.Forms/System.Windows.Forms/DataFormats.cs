@@ -14,9 +14,6 @@ namespace System.Windows.Forms {
 	/// <summary>
 	/// Provides static (Shared in Visual Basic), predefined Clipboard format names.
 	/// Use them to identify the format of data that you store in an IDataObject.
-	///
-	/// ToDo note:
-	///  - nothing is implemented
 	/// </summary>
 
 	[MonoTODO]
@@ -45,7 +42,6 @@ namespace System.Windows.Forms {
 		public static readonly string WaveAudio="WaveAudio";
 		#endregion
 		
-		
 		#region Methods
 		/// <todo>
 		/// these methods will have to use Windows Registry to fetch the existing Format (id,name)
@@ -64,8 +60,6 @@ namespace System.Windows.Forms {
 		}
 		#endregion
 		
-		
-		
 		/// sub-class: DataFormats.Format
 		/// <summary>
 		/// Represents a clipboard format type.
@@ -73,7 +67,6 @@ namespace System.Windows.Forms {
 		public class Format {
 			int id;
 			string name;
-			
 			
 			#region Constructors
 			/// <note>

@@ -17,9 +17,6 @@ namespace System.Windows.Forms {
 
 	/// <summary>
 	/// Represents the image used to paint the mouse pointer.
-	///
-	/// ToDo note:
-	///  - nothing is implemented
 	/// </summary>
 
 	[MonoTODO]
@@ -29,48 +26,51 @@ namespace System.Windows.Forms {
 		#region Fields
 		#endregion
 		
-		
-		
 		#region Constructors
 		[MonoTODO]
 		public Cursor(IntPtr handle) 
 		{
-			throw new NotImplementedException ();
+			
 		}
 		
 		[MonoTODO]
 		public Cursor(Stream stream) 
 		{
-			throw new NotImplementedException ();
+			
 		}
 		
 		[MonoTODO]
 		public Cursor(string fileName) 
 		{
-			throw new NotImplementedException ();
+			
 		}
 		
 		[MonoTODO]
 		public Cursor(Type type,string resource) 
 		{
-			throw new NotImplementedException ();
+			
 		}
 		#endregion
-		
-		
-		
 		
 		#region Properties
 		[MonoTODO]
 		public static Rectangle Clip {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
 		
 		[MonoTODO]
 		public static Cursor Current {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { 
+				throw new NotImplementedException (); 
+			}
+			set { 
+				throw new NotImplementedException (); 
+			}
 		}
 		
 		[MonoTODO]
@@ -89,9 +89,6 @@ namespace System.Windows.Forms {
 			get { throw new NotImplementedException (); }
 		}
 		#endregion
-		
-		
-		
 		
 		#region Methods
 		[MonoTODO]
@@ -121,7 +118,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override bool Equals(object obj) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.Equals(obj);
 		}
 		
 		[MonoTODO]
@@ -132,7 +130,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override int GetHashCode() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.GetHashCode();
 		}
 		
 		[MonoTODO]
@@ -157,11 +156,10 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override string ToString() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ToString();
 		}
 		#endregion
-		
-		
 		
 		#region Operators
 		[MonoTODO]

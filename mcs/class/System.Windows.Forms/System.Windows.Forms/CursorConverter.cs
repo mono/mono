@@ -16,59 +16,60 @@ namespace System.Windows.Forms {
 	/// <summary>
 	/// Provides a type converter to convert Cursor objects to and from various other representations.
 	///
-	/// ToDo note:
-	///  - nothing is implemented
 	/// </summary>
 
 	[MonoTODO]
 	public class CursorConverter : TypeConverter {
-
 		
 		#region Constructors
 		[MonoTODO]
 		public CursorConverter() 
 		{
-			throw new NotImplementedException ();
+			
 		}
 		#endregion
-		
-		
 		
 		#region Methods
 		[MonoTODO]
 		public override bool CanConvertFrom(ITypeDescriptorContext context,Type sourceType) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.CanConvertFrom(context, sourceType);
 		}
 		
 		[MonoTODO]
 		public override bool CanConvertTo(ITypeDescriptorContext context,Type destinationType) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.CanConvertTo(context, destinationType);
 		}
 		
 		[MonoTODO]
 		public override object ConvertFrom(ITypeDescriptorContext context,CultureInfo culture,object value) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ConvertFrom(context, culture, value);
 		}
 		
 		[MonoTODO]
 		public override object ConvertTo(ITypeDescriptorContext context,CultureInfo culture,object value,Type destinationType) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ConvertTo(context, culture, value, destinationType);
 		}
 		
 		[MonoTODO]
 		public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.GetStandardValues(context);
 		}
 		
 		[MonoTODO]
 		public override bool GetStandardValuesSupported(ITypeDescriptorContext context) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.GetStandardValuesSupported(context);
 		}
 		#endregion
 	}

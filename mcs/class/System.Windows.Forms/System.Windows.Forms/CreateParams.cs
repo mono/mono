@@ -100,7 +100,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override string ToString() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ToString();
 		}
 		#endregion
 		

@@ -14,9 +14,6 @@ namespace System.Windows.Forms {
 
 	/// <summary>
 	/// Specifies the base class used for displaying dialog boxes on the screen.
-	///
-	/// ToDo note:
-	///  - nothing is implemented
 	/// </summary>
 
 	[MonoTODO]
@@ -41,7 +38,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual void OnHelpRequest(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		// end of event methods
 		
@@ -69,13 +66,6 @@ namespace System.Windows.Forms {
 		
 		/// events
 		[MonoTODO]
-		public event EventHandler HelpRequest {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler HelpRequest;
 	}
 }

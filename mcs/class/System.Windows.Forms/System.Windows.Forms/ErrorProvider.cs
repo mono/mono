@@ -31,7 +31,8 @@ using System.ComponentModel;
 		[MonoTODO]
 		public override ISite  Site {
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
+				base.Site = value;
 			}
 		}
 
@@ -41,7 +42,7 @@ using System.ComponentModel;
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -51,7 +52,7 @@ using System.ComponentModel;
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -72,7 +73,7 @@ using System.ComponentModel;
 				return dataMember;
 			}
 			set {
-				dataMember = value;
+				//FIXME:
 			}
 		}
 
@@ -82,7 +83,7 @@ using System.ComponentModel;
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -92,7 +93,7 @@ using System.ComponentModel;
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException ();
+				//FIXME:
 			}
 		}
 
@@ -102,7 +103,7 @@ using System.ComponentModel;
 		[MonoTODO]
 		public void BindToDataAndErrors(object newDataSource, string newDataMember)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
@@ -132,30 +133,31 @@ using System.ComponentModel;
 		[MonoTODO]
 		public override object InitializeLifetimeService()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.InitializeLifetimeService();
 		}
 		[MonoTODO]
 		public void SetError(Control control,string value)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		public void SetIconAlignment(Control control, ErrorIconAlignment value)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		public void SetIconPadding(Control control, int padding)
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 
 		[MonoTODO]
 		public void UpdateBinding()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 	 }
 }
