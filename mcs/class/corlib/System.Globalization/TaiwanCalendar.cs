@@ -42,6 +42,7 @@ using System;
 /// </para>
 /// </remarks>
 [Serializable]
+[MonoTODO ("Fix serialization compatibility with MS.NET")]
 public class TaiwanCalendar : Calendar {
 	/// <summary>
 	/// Static protected field storing the

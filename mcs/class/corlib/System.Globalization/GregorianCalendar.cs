@@ -42,6 +42,7 @@ using System;
 /// </para>
 /// </remarks>
 [Serializable]
+[MonoTODO ("Fix serialization compatibility with MS.NET")]
 public class GregorianCalendar : Calendar {
 	/// <summary>
 	/// The era number for the Common Era (C.E.) or Anno Domini (A.D.)

@@ -53,6 +53,7 @@ using System.IO;
 /// </para>
 /// </remarks>
 [Serializable]
+[MonoTODO ("Fix serialization compatibility with MS.NET")]
 public class HijriCalendar : Calendar {
 	/// <summary>
 	/// Constructor.

@@ -1,3 +1,15 @@
+2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* DateTimeFormatInfo.cs: added TODO for serialization
+	* GregorianCalendar.cs:: added TODO for serialization
+	* HebrewCalendar.cs: added TODO for serialization
+	* HijriCalendar.cs: added TODO for serialization
+	* JapaneseCalendar.cs: added TODO for serialization
+	* JulianCalendar.cs: added TODO for serialization
+	* KoreanCalendar.cs: added TODO for serialization
+	* TaiwanCalendar.cs: added TODO for serialization
+	* ThaiBuddhistCalendar.cs: added TODO for serialization
+
 2004-06-08  Dick Porter  <dick@ximian.com>
 
 	* CultureInfo.cs: Make calendar_data readonly, to match the
