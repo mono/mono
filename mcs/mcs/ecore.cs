@@ -1531,7 +1531,7 @@ namespace Mono.CSharp {
 			MethodGroupExpr union;
 			Type source_type = source.Type;
 			MethodBase method = null;
-			
+
 			union = GetConversionOperators (ec, source_type, target, loc, look_for_explicit);
 			if (union == null)
 				return null;
@@ -2190,6 +2190,20 @@ namespace Mono.CSharp {
 							  Type target_type, Location loc)
 		{
 			Type expr_type = expr.Type;
+			Type original_expr_type = expr_type;
+
+			if (expr_type.IsSubclassOf (TypeManager.enum_type)){
+				//
+				// Notice that we have kept the expr_type unmodified, which is only
+				// used later on to 
+				if (expr is EnumConstant)
+					expr = ((EnumConstant) expr).Child;
+				else {
+					expr = new EmptyCast (expr, TypeManager.EnumToUnderlying (expr_type));
+				}
+				expr_type = expr.Type;
+			}
+
 			Expression ne = ConvertImplicitStandard (ec, expr, target_type, loc);
 
 			if (ne != null)
@@ -2210,34 +2224,6 @@ namespace Mono.CSharp {
 				return new UnboxCast (expr, target_type);
 			}
 
-			//
-			// Enum types
-			//
-			if (expr_type.IsSubclassOf (TypeManager.enum_type)) {
-				Expression e;
-
-				//
-				// FIXME: Is there any reason we should have EnumConstant
-				// dealt with here instead of just using always the
-				// UnderlyingSystemType to wrap the type?
-				//
-				if (expr is EnumConstant)
-					e = ((EnumConstant) expr).Child;
-				else {
-					e = new EmptyCast (expr, TypeManager.EnumToUnderlying (expr_type));
-				}
-				
-				Expression t = ConvertImplicit (ec, e, target_type, loc);
-				if (t != null)
-					return t;
-				
-				t = ConvertNumericExplicit (ec, e, target_type, loc);
-				if (t != null)
-					return t;
-				
-				Error_CannotConvertType (loc, expr_type, target_type);
-				return null;
-			}
 			
 			ne = ConvertReferenceExplicit (expr, target_type);
 			if (ne != null)
@@ -2292,7 +2278,7 @@ namespace Mono.CSharp {
 			if (ne != null)
 				return ne;
 
-			Error_CannotConvertType (loc, expr_type, target_type);
+			Error_CannotConvertType (loc, original_expr_type, target_type);
 			return null;
 		}
 

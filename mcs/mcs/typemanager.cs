@@ -810,7 +810,14 @@ public class TypeManager {
 		methodimpl_attr_type = CoreLookupType ("System.Runtime.CompilerServices.MethodImplAttribute");
 		marshal_as_attr_type  = CoreLookupType ("System.Runtime.InteropServices.MarshalAsAttribute");
 		param_array_type      = CoreLookupType ("System.ParamArrayAttribute");
-		guid_attr_type        = CoreLookupType ("System.Runtime.InteropServices.GuidAttribute");
+
+		//
+		// Temporary while people upgrade their corlibs
+		//
+		//
+		// Change from LookupType to CoreLookupType before release
+		//
+		guid_attr_type        = LookupType ("System.Runtime.InteropServices.GuidAttribute");
 
 		unverifiable_code_type= CoreLookupType ("System.Security.UnverifiableCodeAttribute");
 
@@ -1996,19 +2003,11 @@ public class TypeManager {
 				if (!IsSubclassOrNestedChildOf (closure_invocation_type, mb.DeclaringType))
 					return false;
 
-#if false
-				//
-				// See test 174 for a sample.  Essentially, it is ok in a derived
-				// class to invoke a base class protected method.  1540 is still caught
-				// elsewhere
-				//
-				
 				// Although a derived class can access protected members of its base class
 				// it cannot do so through an instance of the base class (CS1540).
 				if (!mb.IsStatic && (closure_invocation_type != closure_start_type) &&
 				    closure_start_type != mb.DeclaringType)
 					return false;
-#endif
 				
 				return true;
 			}
@@ -2051,18 +2050,12 @@ public class TypeManager {
 				if (!IsSubclassOrNestedChildOf (closure_invocation_type, fi.DeclaringType))
 					return false;
 
-#if false
-				//
-				// See test-174 for a sample.
-				//
-				
 				// Although a derived class can access protected members of its base class
 				// it cannot do so through an instance of the base class (CS1540).
 				if (!fi.IsStatic && (closure_invocation_type != closure_start_type) &&
 				    closure_start_type != fi.DeclaringType)
 					return false;
-#endif
-				
+
 				return true;
 			}
 

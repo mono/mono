@@ -189,8 +189,14 @@ namespace Mono.CSharp {
 					else if (MethodImplAttr)
 						this.ImplOptions = (MethodImplOptions) pos_values [0];
 					else if (GuidAttr){
-						if (!ValidateGuid ((string) pos_values [0]))
-							return null;
+						//
+						// we will later check the validity of the type
+						//
+						if (pos_values [0] is string){
+							if (!ValidateGuid ((string) pos_values [0]))
+								return null;
+						}
+						
 					} else if (MarshalAsAttr)
 						this.UnmanagedType =
 						(System.Runtime.InteropServices.UnmanagedType) pos_values [0];

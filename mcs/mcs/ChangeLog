@@ -1,3 +1,17 @@
+2002-11-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs: Remove redundant code for enumerations, make them use
+	the same code path as everything else, fixes the casting issue
+	with enumerations in Windows.Forms.
+
+	* attribute.cs: Do only cast to string if it is a string, the
+	validation happens later.
+
+	* typemanager.cs: Temproary hack to avoid a bootstrap issue until
+	people upgrade their corlibs.
+
+	* ecore.cs: Oops, enumerations were not following the entire code path
+
 2002-11-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs (FilterWithClosure): Commented out the test for
