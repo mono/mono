@@ -1,3 +1,13 @@
+2002-05-11  Sergey Chaban <serge@wildwestsoftware.com>
+
+	* mono.c: new --fast-iconv command line option
+	to enable fast FP-to-integer conversion code.
+	* jit.c, jit.h: added global variable to store state
+	for the above option. This optimization is disabled
+	by default.
+	* x86.brg: added code to emit fast FP-to-integer
+	conversion sequences.
+
 2002-05-10  Dan Lewis  <dihlewis@yahoo.co.uk>
 
 	* emit-x86.c: simple definite assignment analysis optimization for
