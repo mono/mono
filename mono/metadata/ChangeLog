@@ -1,5 +1,8 @@
 2003-11-24  Zoltan Varga  <vargaz@freemail.hu>
 
+	icall.c (ves_icall_System_Reflection_Assembly_InternalGetType): 
+	Enumerate all modules inside a dynamic assembly. Fixes #51293.
+	
 	* icall.c: Add new icall for creating dynamic methods.
 
 	* loader.h debug-helpers.c: Add new wrapper type for dynamic methods.
