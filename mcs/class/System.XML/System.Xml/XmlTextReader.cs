@@ -370,7 +370,32 @@ namespace System.Xml
 		[MonoTODO]
 		public override bool MoveToAttribute (string name)
 		{
-			throw new NotImplementedException ();
+			bool match = false;
+			if (attributes == null)
+				return false;
+
+			if (attributeEnumerator == null) {
+				SaveProperties ();
+				attributeEnumerator = attributes.GetEnumerator ();
+			}
+
+			while (attributeEnumerator.MoveNext ()) {
+				if(name == attributeEnumerator.Key as string) match = true; break;
+			}
+
+			if (match) {
+				string attname = attributeEnumerator.Key as string;
+				string value = attributeEnumerator.Value as string;
+				SetProperties (
+					XmlNodeType.Attribute, // nodeType
+					attname, // name
+					false, // isEmptyElement
+					value, // value
+					false // clearAttributes
+				);
+			}
+
+			return match;
 		}
 
 		[MonoTODO]
