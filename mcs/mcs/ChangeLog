@@ -1,3 +1,10 @@
+2003-05-11  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs (Block.CreateSwitchBlock): New method.  Creates a
+	new block for a switch section.
+	(Block.AddLabel, Block.LookupLabel): If we're a switch section, do
+	the adding/lookup in the switch block.  Fixes #39828.
+
 2003-05-09  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (UnaryMutator.LoadOneAndEmitOp): Missing

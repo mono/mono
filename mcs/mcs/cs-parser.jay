@@ -3037,7 +3037,7 @@ switch_sections
 switch_section
 	: switch_labels
 	  {
-		current_block = new Block (current_block, lexer.Location, lexer.Location);
+		current_block = current_block.CreateSwitchBlock (lexer.Location);
 	  }
  	  statement_list 
 	  {

@@ -2600,6 +2600,11 @@ namespace Mono.CSharp {
 		// Keeps track of constants
 		Hashtable constants;
 
+		//
+		// If this is a switch section, the enclosing switch block.
+		//
+		Block switch_block;
+
 		bool used = false;
 
 		static int id;
@@ -2646,6 +2651,13 @@ namespace Mono.CSharp {
 			statements = new ArrayList ();
 		}
 
+		public Block CreateSwitchBlock (Location start)
+		{
+			Block new_block = new Block (this, start, start);
+			new_block.switch_block = this;
+			return new_block;
+		}
+
 		public int ID {
 			get {
 				return this_id;
@@ -2676,6 +2688,9 @@ namespace Mono.CSharp {
 		///
 		public bool AddLabel (string name, LabeledStatement target)
 		{
+			if (switch_block != null)
+				return switch_block.AddLabel (name, target);
+
 			if (labels == null)
 				labels = new Hashtable ();
 			if (labels.Contains (name))
@@ -2687,6 +2702,9 @@ namespace Mono.CSharp {
 
 		public LabeledStatement LookupLabel (string name)
 		{
+			if (switch_block != null)
+				return switch_block.LookupLabel (name);
+
 			if (labels != null){
 				if (labels.Contains (name))
 					return ((LabeledStatement) labels [name]);
