@@ -1,0 +1,48 @@
+TODO
+====
+
+Make cilc.exe installable and provide a man page in mono/man
+
+--
+
+Support method arguments
+
+--
+
+Complete GObject support including macros and GType, taking into account
+inheritance etc.
+
+--
+
+Enums, delegates, events etc.
+
+--
+
+generate autoconf/automake build files. set AC_VERSION using the assembly's
+version attribute
+
+--
+
+Automatically generate inline API documentation using documentation in the
+Monodoc format. The GTK+ API documentation generator can then be used to create
+documentation familiar to GTK+ developers.
+
+--
+
+<lupus> my plan is to do something like that in the future, but smarter
+<lupus> basically, have the jit create the thunk
+<lupus> so you would not have to generate code for the assemblies
+<lupus> just header files, basically
+
+--
+
+<lupus> note that glib-allocated memory is not scammed by the GC, so you'll have to deal with that somehow
+<alp> something like overriding glib's malloc with something from libgc?
+<lupus> would work, but I wouldn't reccomend that
+<lupus> you may need to play with weak references
+<lupus> or storing the objects in something like a MonoGHashTable or something like that
+
+--
+
+<rachel> I would give the implementor extra points if they handled passing in wrapped objects automatically (pass in a GtkWidget*, managed gets Gtk.Widget)
+
