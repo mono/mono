@@ -54,9 +54,9 @@ clean-local:
 	-rm -fr $(symlinks) $(tmpinst) .wapi
 
 if INSTALL_2_0
-TEST_SUPPORT_FILES = $(tmpinst)/bin/mcs $(tmpinst)/bin/mbas $(tmpinst)/bin/ilasm $(tmpinst)/bin/gmcs
+TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/mcs $(tmpinst)/bin/mbas $(tmpinst)/bin/ilasm $(tmpinst)/bin/gmcs
 else
-TEST_SUPPORT_FILES = $(tmpinst)/bin/mcs $(tmpinst)/bin/mbas $(tmpinst)/bin/ilasm
+TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/mcs $(tmpinst)/bin/mbas $(tmpinst)/bin/ilasm
 endif
 
 if ENABLE_NUNIT_TESTS
@@ -77,6 +77,9 @@ mcs-do-run-test-profiles:
 
 check-local: mcs-do-test-profiles
 	$(MAKE) $(test_select) mcs-do-run-test-profiles
+
+$(tmpinst)/bin/mono: mono-wrapper
+	cp mono-wrapper $@
 
 $(tmpinst)/bin/mcs:
 	$(MAKE) test-support-file target=$@ file=class/lib/default/mcs.exe
