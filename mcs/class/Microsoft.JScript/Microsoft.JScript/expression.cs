@@ -98,11 +98,9 @@ namespace Microsoft.JScript {
 		}
 
 		internal Binary (AST parent, AST left, AST right, JSToken op)
+			: base (left, right, op)
 		{
 			this.parent = parent;
-			this.left = left;
-			this.right = right;
-			this.op = op;	
 		}
 		
 		public override string ToString ()
@@ -1123,12 +1121,10 @@ namespace Microsoft.JScript {
 		internal bool is_embedded;
 
 		internal Assign (AST parent, AST left, AST right, JSToken op, bool is_embedded)
+			: base (left, right, op)
 		{
 			this.parent = parent;
-			this.left = left;
-			this.right = right;
 			this.is_embedded = is_embedded;
-			this.op = op;
 		}
 
 		//
