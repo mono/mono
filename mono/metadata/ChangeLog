@@ -1,5 +1,24 @@
 2002-03-23  Martin Baulig  <martin@gnome.org>
 
+	* unicode.c (ves_icall_iconv_get_char_count): The `count' argument
+	specifies the number of bytes to be converted, not the array size.
+	Return the number of chars, not the number of bytes.
+	(ves_icall_iconv_get_chars): The `byteCount' argument
+	specifies the number of bytes to be converted, not the array size.
+
+2002-03-23  Martin Baulig  <martin@gnome.org>
+
+	* reflection.h (MonoReflectionSigHelper): New type.
+
+	* reflection.c (mono_reflection_sighelper_get_signature_local),
+	(mono_reflection_sighelper_get_signature_local): New functions.
+
+	* icall.c ("System.Reflection.Emit.SignatureHelper::get_signature_local"),
+	("System.Reflection.Emit.SignatureHelper::get_signature_field"): New
+	interncalls.
+
+2002-03-23  Martin Baulig  <martin@gnome.org>
+
 	* rawbuffer.c (mono_raw_buffer_load_mmap): Use MAP_SHARED when
 	is_writeable is set.
 	(mono_raw_buffer_update): New function to write the modified map
