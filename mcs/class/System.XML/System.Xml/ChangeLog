@@ -1,3 +1,7 @@
+2003-11-01  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlDocument.cs : Save(Stream) should not close the stream.
+
 2003-10-25  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* DTDReader.cs, DTDValidatingReader.cs, XmlInputStream.cs,

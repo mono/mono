@@ -891,7 +891,7 @@ namespace System.Xml
 			XmlTextWriter xmlWriter = new XmlTextWriter (outStream, TextEncoding);
 			xmlWriter.Formatting = Formatting.Indented;
 			WriteContentTo (xmlWriter);
-			xmlWriter.Close ();
+			xmlWriter.Flush ();
 		}
 
 		public virtual void Save (string filename)
