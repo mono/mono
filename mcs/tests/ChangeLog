@@ -1,3 +1,8 @@
+2002-07-17  Martin Baulig  <martin@gnome.org>
+
+	* test-144.cs: Added test for constant `unchecked' and `checked'
+	expressions in a constant assignment.
+
 2002-07-10  Ravi Pratap  <ravi@ximian.com>
 
 	* test-142.cs : Add. This ensures events can be accessed
