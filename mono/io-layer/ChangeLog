@@ -1,5 +1,9 @@
 2002-07-02  Dick Porter  <dick@ximian.com>
 
+	* wapi-private.h (_WAPI_HANDLE_VERSION): New protocol version
+	
+2002-07-02  Dick Porter  <dick@ximian.com>
+
 	* handles.c (shared_init): Make a second attempt to contact the
 	daemon if the shared memory attach succeeds, but the connect()
 	fails. (This copes with the daemon crashing without cleaning up
