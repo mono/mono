@@ -13,13 +13,13 @@ namespace System.Drawing.Text {
 
 	public sealed class InstalledFontCollection : FontCollection {
 		
-		internal InstalledFontCollection ( IntPtr ptr ): base ( ptr )
+		internal InstalledFontCollection(IntPtr ptr): base (ptr)
 		{}
 
-		public InstalledFontCollection ()
+		public InstalledFontCollection()
 		{
-			Status status = GDIPlus.GdipNewInstalledFontCollection( out nativeFontCollection );						
-			GDIPlus.CheckStatus ( status );			
+			Status status = GDIPlus.GdipNewInstalledFontCollection (out nativeFontCollection);						
+			GDIPlus.CheckStatus (status);			
 		}
 	}
 }

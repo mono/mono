@@ -14,7 +14,6 @@ namespace System.Drawing.Text {
 	public abstract class FontCollection : IDisposable {
 		
 		internal IntPtr nativeFontCollection = IntPtr.Zero;
-		internal FontFamily[] families;
 				
 		internal FontCollection ()
 		{
@@ -28,22 +27,11 @@ namespace System.Drawing.Text {
 		// methods
 		public void Dispose()
 		{
-			//Dispose ( true );
-			if ( families != null ) {
-				int length = families.Length;
-				Status status;
-				for ( int i = 0; i < length; i++){
-					status = GDIPlus.GdipDeleteFontFamily ( families[i].NativeObject );
-					GDIPlus.CheckStatus ( status );
-				}
-			}
-			System.GC.SuppressFinalize ( this );
 		}
 
-		[MonoTODO]
-		protected virtual void Dispose ( bool disposing )
-		{
-			//Nothing for now
+		
+		protected virtual void Dispose (bool disposing)
+		{		
 		}
 
 		// properties
@@ -53,26 +41,27 @@ namespace System.Drawing.Text {
 				int found;
 				int returned;
 				Status status;
+				FontFamily[] families;
 				
-				status = GDIPlus.GdipGetFontCollectionFamilyCount ( nativeFontCollection, out found );
-				GDIPlus.CheckStatus ( status );
+				Console.WriteLine("nativeFontCollection " + nativeFontCollection);
 				
-				int nSize =  Marshal.SizeOf ( IntPtr.Zero );
-				IntPtr dest = Marshal.AllocHGlobal ( nSize * found );           
+				status = GDIPlus.GdipGetFontCollectionFamilyCount (nativeFontCollection, out found);
+				
+				int nSize =  Marshal.SizeOf (IntPtr.Zero);
+				IntPtr dest = Marshal.AllocHGlobal (nSize * found);           
                
-				status = GDIPlus.GdipGetFontCollectionFamilyList( nativeFontCollection, found, dest, out returned );
-				GDIPlus.CheckStatus ( status );
-                   
-				IntPtr[] ptrAr = new IntPtr [ returned ];
+				status = GDIPlus.GdipGetFontCollectionFamilyList(nativeFontCollection, found, dest, out returned);
+				   
+				IntPtr[] ptrAr = new IntPtr [returned];
 				int pos = dest.ToInt32 ();
-				for ( int i = 0; i < returned ; i++, pos+=nSize )
-					ptrAr[i] = (IntPtr)Marshal.PtrToStructure ( (IntPtr)pos, typeof(IntPtr) );
+				for ( int i = 0; i < returned ; i++, pos+=nSize)
+					ptrAr[i] = (IntPtr)Marshal.PtrToStructure ((IntPtr)pos, typeof(IntPtr));
            
-				Marshal.FreeHGlobal ( dest );           
+				Marshal.FreeHGlobal (dest);           
                    
-				families = new FontFamily [ returned ];
+				families = new FontFamily [returned];
 				for ( int i = 0; i < returned; i++ )
-					families[i] = new FontFamily ( ptrAr[i] );                     
+					families[i] = new FontFamily (ptrAr[i]);                     
                            
 				return families;               
 			}
@@ -80,7 +69,7 @@ namespace System.Drawing.Text {
 
 		~FontCollection()
 		{
-			Dispose ( false );
+			Dispose (false);
 		}
 
 	}

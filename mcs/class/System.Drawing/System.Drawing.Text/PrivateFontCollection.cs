@@ -16,35 +16,46 @@ namespace System.Drawing.Text {
 	public sealed class PrivateFontCollection : FontCollection {
 
 		// constructors
-		internal PrivateFontCollection ( IntPtr ptr ): base ( ptr )
+		internal PrivateFontCollection (IntPtr ptr): base (ptr)
 		{}
 
-		public PrivateFontCollection ()
+		public PrivateFontCollection()
 		{
-			Status status = GDIPlus.GdipNewPrivateFontCollection( out nativeFontCollection );
-			GDIPlus.CheckStatus ( status );
+			Status status = GDIPlus.GdipNewPrivateFontCollection (out nativeFontCollection);
+			GDIPlus.CheckStatus (status);
 		}
 		
 		// methods
 		[ComVisible(false)]
-		public void AddFontFile( string filename ) 
+		public void AddFontFile(string filename) 
 		{
 			if ( filename == null )
-				throw new Exception ( "Value cannot be null, Parameter name : filename" );
-			bool exists = File.Exists( filename );
-			if ( !exists )
-				throw new Exception ( "The path is not of a legal form" );
+				throw new Exception ("Value cannot be null, Parameter name : filename");
+			bool exists = File.Exists(filename);
+			if (!exists)
+				throw new Exception ("The path is not of a legal form");
 
-			Status status = GDIPlus.GdipPrivateAddFontFile ( nativeFontCollection, filename );
-			GDIPlus.CheckStatus ( status );			
+			Status status = GDIPlus.GdipPrivateAddFontFile (nativeFontCollection, filename);
+			GDIPlus.CheckStatus (status);			
 		}
 
 		[ComVisible(false)]
-		public void AddMemoryFont ( IntPtr memory, int length ) 
+		public void AddMemoryFont(IntPtr memory, int length) 
 		{
-			Status status = GDIPlus.GdipPrivateAddMemoryFont ( nativeFontCollection, memory, length );
-			GDIPlus.CheckStatus ( status );						
+			Status status = GDIPlus.GdipPrivateAddMemoryFont (nativeFontCollection, memory, length);
+			GDIPlus.CheckStatus (status);						
 		}
+		
+		// methods	
+		protected override void Dispose(bool disposing)
+		{
+			if (nativeFontCollection!=IntPtr.Zero){				
+				GDIPlus.GdipDeletePrivateFontCollection (nativeFontCollection);			
+				GC.SuppressFinalize(this);
+			}
+		}		
+		
+
 	}
 }
 
