@@ -1,3 +1,11 @@
+2004-01-11  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* WebEqualComparer.cs:
+	* WebHashCodeProvider.cs:
+	* FileAction.cs:
+	* FileChangeEventHandler.cs:
+	* NativeFileChangeEventHandler.cs: Monostyled header, internalized
+
 2004-01-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UrlUtils.cs: make reduce not to throw an exception for '../'. Fixes

@@ -1,19 +1,15 @@
-/**
- * Namespace: System.Web.Util
- * Class:     FileAction
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  ??%
- *
- * (C) Gaurav Vaish (2001)
- */
+//
+// System.Web.Util.FileAction.cs
+//
+// Authors:
+//   Gaurav Vaish (my_scripts2001@yahoo.com, gvaish@iitk.ac.in)
+//
+// (c) Gaurav Vaish 2001
+//
 
 namespace System.Web.Util
 {
-	public enum FileAction
+	internal enum FileAction
 	{
 		Overwhleming,
 		Added,

@@ -1,15 +1,11 @@
-/**
- * Namespace: System.Web.Util
- * Class:     WebEqualComparer
- *
- * Author:  Gaurav Vaish
- * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Implementation: yes
- * Status:  ??%
- *
- * (C) Gaurav Vaish (2001)
- */
+//
+// System.Web.Util.WebEqualComparer.cs
+//
+// Authors:
+//   Gaurav Vaish (my_scripts2001@yahoo.com, gvaish@iitk.ac.in)
+//
+// (c) Gaurav Vaish 2001
+//
 
 using System;
 using System.Globalization;
@@ -17,7 +13,7 @@ using System.Collections;
 
 namespace System.Web.Util
 {
-	public class WebEqualComparer : IComparer
+	internal class WebEqualComparer : IComparer
 	{
 		private static IComparer defC;
 

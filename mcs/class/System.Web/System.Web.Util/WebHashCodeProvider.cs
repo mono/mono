@@ -1,32 +1,18 @@
-/**
-
- * Namespace: System.Web.Util
- * Class:     WebHashCodeProvider
- *
-
- * Author:  Gaurav Vaish
-
- * Maintainer: gvaish@iitk.ac.in
-
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
-
- * Implementation: yes
-
- * Status:  ??%
-
- *
-
- * (C) Gaurav Vaish (2001)
-
- */
-
+//
+// System.Web.Util.WebHashCodeProvider.cs
+//
+// Authors:
+//   Gaurav Vaish (my_scripts2001@yahoo.com, gvaish@iitk.ac.in)
+//
+// (c) Gaurav Vaish 2001
+//
 
 using System.Collections;
 using System.Globalization;
 
 namespace System.Web.Util
 {
-	public class WebHashCodeProvider : IHashCodeProvider
+	internal class WebHashCodeProvider : IHashCodeProvider
 	{
 		private static IHashCodeProvider defHcp;
 
