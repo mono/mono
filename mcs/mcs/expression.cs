@@ -2957,7 +2957,6 @@ namespace Mono.CSharp {
 	///   initialization data
 	/// </remarks>
 	public class ArrayCreation : ExpressionStatement {
-
 		string RequestedType;
 		string Rank;
 		ArrayList Initializers;
@@ -2967,7 +2966,6 @@ namespace Mono.CSharp {
 		MethodBase method = null;
 		Type array_element_type;
 		bool IsOneDimensional = false;
-		
 		bool IsBuiltinType = false;
 
 		int dimensions = 0;
@@ -3062,20 +3060,22 @@ namespace Mono.CSharp {
 					error178 ();
 					return false;
 				}
-				
+
+				Console.WriteLine ("Adding: " + value);
 				Bounds.Add (value);
 			}
 			
 			foreach (object o in probe) {
-
 				if (o is ArrayList) {
 					bool ret = CheckIndices (ec, (ArrayList) o, idx + 1, specified_dims);
 					if (!ret)
 						return false;
-					
 				} else {
 					Expression tmp = (Expression) o;
 					tmp = tmp.Resolve (ec);
+					if (tmp == null)
+						continue;
+					
 					tmp = Expression.Reduce (ec, tmp);
 
 					// Handle initialization from vars, fields etc.
@@ -3170,7 +3170,6 @@ namespace Mono.CSharp {
 				arg_count = Arguments.Count;
 			
 			string array_type = FormArrayType (RequestedType, arg_count, Rank);
-
 			string element_type = FormElementType (RequestedType, arg_count, Rank);
 
 			type = ec.TypeContainer.LookupType (array_type, false);
@@ -3328,8 +3327,103 @@ namespace Mono.CSharp {
 
 			return data;
 		}
-		
-		public override void Emit (EmitContext ec)
+
+		//
+		// Emits the initializers for the array
+		//
+		void EmitStaticInitializers (EmitContext ec, bool is_expression)
+		{
+			//
+			// First, the static data
+			//
+			if (underlying_type != TypeManager.string_type) {
+				FieldBuilder fb;
+				ILGenerator ig = ec.ig;
+				
+				byte [] data = MakeByteBlob (ArrayData, underlying_type, loc);
+				
+				if (data != null) {
+					fb = ec.TypeContainer.RootContext.MakeStaticData (data);
+
+					if (is_expression)
+						ig.Emit (OpCodes.Dup);
+					ig.Emit (OpCodes.Ldtoken, fb);
+					ig.Emit (OpCodes.Call,
+						 TypeManager.void_initializearray_array_fieldhandle);
+				}
+			}
+		}
+
+		//
+		// Emits pieces of the array that can not be computed at compile
+		// time (variables and string locations).
+		//
+		// This always expect the top value on the stack to be the array
+		//
+		void EmitDynamicInitializers (EmitContext ec, bool is_expression)
+		{
+			ILGenerator ig = ec.ig;
+			int dims = Bounds.Count;
+			int [] current_pos = new int [dims];
+			int top = ArrayExprs.Count;
+			LocalBuilder temp = ig.DeclareLocal (type);
+
+			ig.Emit (OpCodes.Stloc, temp);
+
+			MethodInfo set = null;
+
+			Console.WriteLine ("Dimensions: " + dims);
+			if (dims != 1){
+				Type [] args;
+				ModuleBuilder mb = null;
+				mb = ec.TypeContainer.RootContext.ModuleBuilder;
+				args = new Type [dims];
+
+				for (int j = 0; j < dims; j++)
+					args [j] = TypeManager.int32_type;
+
+				set = mb.GetArrayMethod (
+					type, "Set",
+					CallingConventions.HasThis | CallingConventions.Standard,
+					TypeManager.void_type, args);
+			}
+			
+			for (int i = 0; i < top; i++){
+				Expression e = (Expression) ArrayExprs [i];
+				
+				if (!(e is Literal && !(e is StringLiteral))){
+
+					Console.WriteLine ("Item " + i);
+					ig.Emit (OpCodes.Ldloc, temp);
+
+					for (int idx = 0; idx < dims; idx++)
+						IntLiteral.EmitInt (ig, current_pos [idx]);
+					
+					e.Emit (ec);
+					
+					if (dims == 1){
+						ArrayAccess.EmitStoreOpcode (ig, array_element_type);
+					} else {
+						ig.Emit (OpCodes.Call, set);
+					}
+				}
+
+				//
+				// Advance counter
+				//
+				for (int j = 0; j < dims; j++){
+					current_pos [j]++;
+					if (current_pos [j] < (int) Bounds [j])
+						break;
+					current_pos [j] = 0;
+				}
+			}
+
+			if (is_expression)
+				ig.Emit (OpCodes.Ldloc, temp);
+		}
+
+		void DoEmit (EmitContext ec, bool is_statement)
 		{
 			ILGenerator ig = ec.ig;
 			
@@ -3346,69 +3440,27 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Newobj, (MethodInfo) method);
 			}
 
-			if (Initializers != null) {
+			if (Initializers != null){
+				//
+				// FIXME: Set this variable correctly.
+				// 
+				bool dynamic_initializers = true;
 
-				if (underlying_type != TypeManager.string_type) {
-					FieldBuilder fb;
-					
-					byte [] data = MakeByteBlob (ArrayData, underlying_type, loc);
-					
-					if (data != null) {
-						fb = ec.TypeContainer.RootContext.MakeStaticData (data);
-						
-						ig.Emit (OpCodes.Dup);
-						ig.Emit (OpCodes.Ldtoken, fb);
-						ig.Emit (OpCodes.Call, TypeManager.void_initializearray_array_fieldhandle);
-					}
-				}
+				EmitStaticInitializers (ec, dynamic_initializers || !is_statement);
 
-       				//for (int i = 0; i < ArrayExprs.Count; ++i) {
-// 					Expression e = (Expression) ArrayExprs [i];
-
-// 					if (e is Literal && !(e is StringLiteral))
-// 						continue;
-
-// 					Expression elem_access = GenerateAccessExpr (i);
-// 					elem_access = elem_access.Resolve (ec);
-
-// 					if (elem_access == null)
-// 						return;
-					
-// 					Expression assign = new Assign (elem_access, e, loc);
-
-// 					assign = assign.Resolve (ec);
-
-// 					if (assign == null)
-// 						return;
-
-// 					assign.Emit (ec);
-// 				}
+				if (dynamic_initializers)
+					EmitDynamicInitializers (ec, !is_statement);
 			}
-		}
-
-		Expression GenerateAccessExpr (int i)
-		{
-			int n_dims = Bounds.Count;
-			
-			int [] indices = new int [n_dims];
-
-			for (int j = 0; j < n_dims; ++j) {
-				indices [j]++;
-
-
-				// FIXME : Please finish me !! I can't be completed by dumb idiots
-				// like Ravi !! :-)
-				
-				
-			}
-
-			return null;
 		}
 		
+		public override void Emit (EmitContext ec)
+		{
+			DoEmit (ec, false);
+		}
+
 		public override void EmitStatement (EmitContext ec)
 		{
-			Emit (ec);
-			ec.ig.Emit (OpCodes.Pop);
+			DoEmit (ec, true);
 		}
 		
 	}
@@ -3975,6 +4027,7 @@ namespace Mono.CSharp {
 			source.Emit (ec);
 
 			Type t = source.Type;
+
 			if (rank == 1)
 				EmitStoreOpcode (ig, t);
 			else {

@@ -765,55 +765,88 @@ namespace Mono.CSharp {
 	}
 
 	public class SwitchLabel {
-		Expression label;
-
+		Expression label, converted;
+		public Location loc;
+		
 		//
 		// if expr == null, then it is the default case.
 		//
-		public SwitchLabel (Expression expr)
+		public SwitchLabel (Expression expr, Location l)
 		{
 			label = expr;
+			loc = l;
 		}
-		
+
 		public Expression Label {
 			get {
 				return label;
 			}
 		}
+
+		public Expression Converted {
+			get {
+				return converted;
+			}
+		}
+		
+		//
+		// Resolves the expression, reduces it to a literal if possible
+		// and then converts it to the requested type.
+		//
+		public bool ResolveAndReduce (EmitContext ec, Type required_type)
+		{
+			if (label == null)
+				return true;
+			
+			Expression e = label.Resolve (ec);
+
+			if (e == null)
+				return false;
+
+			label = label.Reduce (ec);
+
+			if (!(label is Literal)){
+				Report.Error (150, loc,
+					      "A constant value is expected");
+				return false;
+			}
+			
+			converted = Expression.ConvertImplicitRequired (ec, label, required_type, loc);
+			if (converted == null)
+				return false;
+			
+			return true;
+		}
 	}
 
 	public class SwitchSection {
 		// An array of SwitchLabels.
-		ArrayList labels;
-		Block block;
+		public readonly ArrayList Labels;
+		public readonly Block Block;
 		
 		public SwitchSection (ArrayList labels, Block block)
 		{
-			this.labels = labels;
-			this.block = block;
-		}
-
-		public Block Block {
-			get {
-				return block;
-			}
-		}
-
-		public ArrayList Labels {
-			get {
-				return labels;
-			}
+			Labels = labels;
+			Block = block;
 		}
 	}
 	
 	public class Switch : Statement {
 		ArrayList sections;
 		Expression expr;
+		Location loc;
+
+		//
+		// The types allowed to be implicitly cast from
+		// on the governing type
+		//
+		static Type [] allowed_types;
 		
-		public Switch (Expression expr, ArrayList sections)
+		public Switch (Expression e, ArrayList sects, Location l)
 		{
-			this.expr = expr;
-			this.sections = sections;
+			expr = expr;
+			sections = sects;
+			loc = l;
 		}
 
 		public Expression Expr {
@@ -828,9 +861,105 @@ namespace Mono.CSharp {
 			}
 		}
 
+		//
+		// Determines the governing type for a switch.  The returned
+		// expression might be the expression from the switch, or an
+		// expression that includes any potential conversions to the
+		// integral types or to string.
+		//
+		Expression SwitchGoverningType (EmitContext ec, Type t)
+		{
+			if (t == TypeManager.int32_type ||
+			    t == TypeManager.uint32_type ||
+			    t == TypeManager.char_type ||
+			    t == TypeManager.byte_type ||
+			    t == TypeManager.sbyte_type ||
+			    t == TypeManager.ushort_type ||
+			    t == TypeManager.short_type ||
+			    t == TypeManager.uint64_type ||
+			    t == TypeManager.int64_type ||
+			    t == TypeManager.string_type ||
+			    t.IsSubclassOf (TypeManager.enum_type))
+				return expr;
+
+			if (allowed_types == null){
+				allowed_types = new Type [] {
+					TypeManager.sbyte_type,
+					TypeManager.byte_type,
+					TypeManager.short_type,
+					TypeManager.ushort_type,
+					TypeManager.int32_type,
+					TypeManager.uint32_type,
+					TypeManager.int64_type,
+					TypeManager.uint64_type,
+					TypeManager.char_type,
+					TypeManager.string_type
+				};
+			}
+
+			//
+			// Try to find a *user* defined implicit conversion.
+			//
+			// If there is no implicit conversion, or if there are multiple
+			// conversions, we have to report an error
+			//
+			Expression converted = null;
+			foreach (Type tt in allowed_types){
+				Expression e;
+				
+				e = Expression.ImplicitUserConversion (ec, expr, tt, loc);
+				if (e == null)
+					continue;
+
+				if (converted != null){
+					Report.Error (-12, loc, "More than one conversion to an integral " +
+						      " type exists for type `" +
+						      TypeManager.CSharpName (expr.Type)+"'");
+					return null;
+				}
+			}
+			return converted;
+		}
+
+		Hashtable CheckSwitch (EmitContext ec, Type switch_type)
+		{
+			bool is_string = switch_type == TypeManager.string_type;
+			bool error = false;
+			Hashtable elements = new Hashtable ();
+				
+			foreach (SwitchSection ss in sections){
+				foreach (SwitchLabel sl in ss.Labels){
+					if (!sl.ResolveAndReduce (ec, switch_type)){
+						error = true;
+						continue;
+					}
+
+					Literal l = (Literal) sl.Label;
+//					Expression conv = ImplicitNumericConversion (
+				}
+			}
+			if (error)
+				return null;
+			
+			return elements;
+		}
+
 		public override bool Emit (EmitContext ec)
 		{
-			throw new Exception ("Unimplemented");
+			expr = expr.Resolve (ec);
+			if (expr == null)
+				return false;
+
+			Expression new_expr = SwitchGoverningType (ec, expr.Type);
+			if (new_expr == null){
+				Report.Error (151, loc, "An integer type or string was expected for switch");
+				return false;
+			}
+			
+			if (CheckSwitch (ec, new_expr.Type) == null)
+				return false;
+			
+			return false;
 		}
 	}
 

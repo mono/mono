@@ -1,6 +1,24 @@
 BUGS
 ----
 
+* Adding variables.
+
+	We do add variables in a number of places, and this is erroneous:
+
+	void a (int b)
+	{
+		int b;
+	}
+
+	Also:
+
+	void a (int b)
+	{
+		foreach (int b ...)
+			;
+	}
+
+
 * Implenment Array Initialization
 
 * FindMembers

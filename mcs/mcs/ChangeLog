@@ -1,3 +1,16 @@
+2001-11-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (ArrayCreation): Implement the bits that Ravi left
+	unfinished.  They do not work, because the underlying code is
+	sloppy.
+
+2001-11-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Remove bogus fixme.
+
+	* statement.cs (Switch, SwitchSection, SwithLabel): Started work
+	on Switch statement.
+	
 2001-11-23  Ravi Pratap  <ravi@ximian.com>
 
 	* typemanager.cs (IsDelegateType, IsEnumType): Fix logic to determine
