@@ -6,7 +6,7 @@ Delegate Sub d_b1_onClick (s, evt)
 Public Class TestClass
 	Inherits Form
 			
-Public button1 as Button
+Public withevents button1 as Button
 		
 Public Sub PutButtonOnForm()
 

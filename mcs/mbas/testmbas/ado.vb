@@ -10,8 +10,7 @@ Module Module1
         Dim reader As SqlDataReader
         Dim firstName As String
 
-        con = New SqlConnection("Server=localhost;database=pubs;user
-id=someuser;password=somepass")
+        con = New SqlConnection("Server=localhost;database=pubs;user id=someuser;password=somepass")
         con.Open()
         cmd = con.CreateCommand()
         cmd.CommandText = "select fname from employee"

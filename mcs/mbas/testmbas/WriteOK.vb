@@ -125,7 +125,7 @@ Public Class Indirector
 	End Sub
 End Class
 
-Module Test ' modified Jambunathan test for intermixed directives with labels
+Module JambuTest ' modified Jambunathan test for intermixed directives with labels
      Sub MainLabeledSolo()
          100:
      End Sub

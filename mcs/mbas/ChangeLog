@@ -1,3 +1,6 @@
+2004/10/08 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* Makefile: added target 'profile', changed some sources in testmbas/ to use for that purpose.
+
 2004-10-11 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: More improvement in 'IF' statement
 

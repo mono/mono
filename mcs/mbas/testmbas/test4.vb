@@ -1,6 +1,6 @@
 Delegate Sub SubDelegate()
 
-Module Test
+Module Test4
 
 Sub MySub()
 	System.Console.WriteLine ("In MySub")

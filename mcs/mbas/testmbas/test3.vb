@@ -1,7 +1,7 @@
 Imports System.Windows.Forms
 Imports System.Drawing
 
-Module Test
+Module Test3
 
 Sub Main()
     ' Create a new instance of the form.

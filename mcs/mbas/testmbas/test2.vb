@@ -1,4 +1,4 @@
-Module Test
+Module Test2
 
 Sub Main()
 	Dim a, b as Object
