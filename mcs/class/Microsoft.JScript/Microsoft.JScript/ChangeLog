@@ -1,6 +1,13 @@
 2004-08-25  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
-	* BinaryOp.cs: renamed current_op to simply op as with the new
+	* expression.cs: made Binary is IAssignable, added fields assign
+	and right_side, added method ResolveAssign (which now receives an
+	extra parameter, being the right side of the assigment). Take care of being
+	inside a function for array indexing. Take care of lvalue case
+	too. Assign.Emit just calls left.Emit since left knows everything
+	about the right side of the assigment after Resolve process.
+	* BitwiseBinary.cs, CodeGenerator.cs, Equality.cs, NumericBinary.cs, : updates for BinaryOp change.
+	* BinaryOp.cs: renamed current_op to op as with the new
 	parser we no longer need to keep track of the old_op.
 
 2004-08-24  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
