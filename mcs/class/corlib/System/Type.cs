@@ -1094,6 +1094,17 @@ namespace System {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern virtual Type MakePointerType ();
+
+		[MonoTODO]
+		public static Type ReflectionOnlyGetType (string typeName, 
+												  bool throwIfNotFound, 
+												  bool ignoreCase)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern void GetPacking (out int packing, out int size);		
 
 		public virtual StructLayoutAttribute StructLayoutAttribute {

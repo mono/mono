@@ -1,5 +1,7 @@
 2004-09-25  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Type.cs: Add MakePointerType && stub for ReflectionOnlyGetType.
+
 	* MonoCustomAttrs.cs (GetCustomAttributesBase): Add support for
 	parameters.
 
