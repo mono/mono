@@ -1,3 +1,8 @@
+2003-12-16 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XsltCompiledContext.cs : Temporarily allow incorrectly resolved
+	  function for bugzilla #52144. It should be reverted soon.
+
 2003-12-12 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* ScriptCompilerInfo.cs : SecurityManager.ResolvePolicy() was not 
