@@ -174,11 +174,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "genericparser.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "iterators.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
