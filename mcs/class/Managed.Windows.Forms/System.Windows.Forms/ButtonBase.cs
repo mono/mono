@@ -23,12 +23,17 @@
 //	Peter Bartok	pbartok@novell.com
 //
 // $Log: ButtonBase.cs,v $
+// Revision 1.6  2004/09/01 01:55:20  pbartok
+// - Removed the rather odd split between 'needs redraw' and redrawing
+// - Now handles the events that require regeneration (ambient properties and
+//   size)
+//
 // Revision 1.5  2004/08/31 18:49:58  pbartok
 // - Removed debug
 // - Minor fixes
 //
 // Revision 1.4  2004/08/30 20:42:10  pbartok
-// - Made Redraw() and CheckRedraw() virtual
+// - Made Redraw() and Redraw() virtual
 // - Improved mouse up/down/move logic to properly track buttons
 //
 // Revision 1.3  2004/08/23 23:27:44  pbartok
@@ -64,7 +69,6 @@ namespace System.Windows.Forms {
 		private bool			has_focus;
 		private bool			is_pressed;
 		private bool			is_entered;
-		internal bool			needs_redraw;
 		StringFormat			text_format;
 		#endregion	// Local Variables
 
@@ -96,13 +100,6 @@ namespace System.Windows.Forms {
 				}
 				return ret;
 			}
-		}
-
-		internal virtual bool CheckRedraw() {
-			// FIXME - check if something has actually changed
-			needs_redraw = true;
-			Refresh();
-			return true;
 		}
 
 		[MonoTODO("Make the FillRectangle use a global brush instead of creating one every time")]
@@ -235,6 +232,9 @@ namespace System.Windows.Forms {
 			Refresh();
 		}
 
+		private void RedrawEvent(object sender, System.EventArgs e) {
+			Redraw();
+		}
 		#endregion	// Private Properties and Methods
 
 		#region Public Constructors
@@ -251,6 +251,12 @@ namespace System.Windows.Forms {
 			is_pressed	= false;
 			has_focus	= false;
 			text_format	= new StringFormat();
+
+			SizeChanged+=new System.EventHandler(RedrawEvent);
+			TextChanged+=new System.EventHandler(RedrawEvent);
+			ForeColorChanged+=new EventHandler(RedrawEvent);
+			BackColorChanged+=new System.EventHandler(RedrawEvent);
+			FontChanged+=new EventHandler(RedrawEvent);
 		}
 		#endregion	// Public Constructors
 
@@ -262,7 +268,7 @@ namespace System.Windows.Forms {
 
 			set { 
 				flat_style = value; 
-				CheckRedraw();
+				Redraw();
 			}
 		}
 		
@@ -273,7 +279,7 @@ namespace System.Windows.Forms {
 
 			set { 
 				image = value;
-				CheckRedraw();
+				Redraw();
 			}
 		}
 
@@ -284,7 +290,7 @@ namespace System.Windows.Forms {
 
 			set {
 				image_alignment=value;
-				CheckRedraw();
+				Redraw();
 			}
 		}
 
@@ -298,7 +304,7 @@ namespace System.Windows.Forms {
 
 			set {
 				image_index=value;
-				CheckRedraw();
+				Redraw();
 			}
 		}
 
@@ -321,7 +327,7 @@ namespace System.Windows.Forms {
 						image_index=image_list.Images.Count-1;
 					}
 				}
-				CheckRedraw();
+				Redraw();
 			}
 		}
 
@@ -397,7 +403,7 @@ namespace System.Windows.Forms {
 							break;
 						}
 					}	
-					CheckRedraw();
+					Redraw();
 				}
 			}
 		}
@@ -439,7 +445,7 @@ namespace System.Windows.Forms {
 			set {
 				if (is_default != value) {
 					is_default = true;
-					CheckRedraw();
+					Redraw();
 				}
 			}
 		}
@@ -461,13 +467,13 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnEnabledChanged(EventArgs e) {
-			CheckRedraw();
+			Redraw();
 			base.OnEnabledChanged(e);
 		}
 
 		protected override void OnGotFocus(EventArgs e) {
 			has_focus=true;
-			CheckRedraw();
+			Redraw();
 			base.OnGotFocus(e);
 		}
 
@@ -485,7 +491,7 @@ namespace System.Windows.Forms {
 
 		protected override void OnLostFocus(EventArgs e) {
 			has_focus=false;
-			CheckRedraw();
+			Redraw();
 			base.OnLostFocus(e);
 		}
 
@@ -493,7 +499,7 @@ namespace System.Windows.Forms {
 			if (is_enabled && (mevent.Button == MouseButtons.Left)) {
 				is_pressed = true;
 				this.Capture = true;
-				CheckRedraw();
+				Redraw();
 			}
 
 			base.OnMouseDown(mevent);
@@ -502,7 +508,7 @@ namespace System.Windows.Forms {
 		protected override void OnMouseEnter(EventArgs e) {
 			is_entered=true;
 			if ((this.flat_style == FlatStyle.Flat) || (this.flat_style == FlatStyle.Popup)) {
-				CheckRedraw();
+				Redraw();
 			}
 			base.OnMouseEnter(e);
 		}
@@ -510,7 +516,7 @@ namespace System.Windows.Forms {
 		protected override void OnMouseLeave(EventArgs e) {
 			is_entered=false;
 			if ((this.flat_style == FlatStyle.Flat) || (this.flat_style == FlatStyle.Popup)) {
-				CheckRedraw();
+				Redraw();
 			}
 			base.OnMouseLeave(e);
 		}
@@ -535,7 +541,7 @@ namespace System.Windows.Forms {
 			}
 
 			if (redraw) {
-				CheckRedraw();
+				Redraw();
 			}
 
 			base.OnMouseMove(mevent);
@@ -545,7 +551,8 @@ namespace System.Windows.Forms {
 			if (this.Capture && mevent.Button == MouseButtons.Left) {
 				this.Capture = false;
 				if (is_pressed) {
-					CheckRedraw();
+					is_pressed = false;
+					Redraw();
 				}
 
 				if (mevent.X>=0 && mevent.Y>=0 && mevent.X<this.client_size.Width && mevent.Y<=this.client_size.Height) {
@@ -556,9 +563,6 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnPaint(PaintEventArgs pevent) {
-			if (needs_redraw) {
-				Redraw();
-			}
 			pevent.Graphics.DrawImage(this.ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
 			base.OnPaint(pevent);
 		}
