@@ -4,6 +4,8 @@ CSCFLAGS=/nologo /debug+ /debug:full
 
 windows: verifier.exe
 
+linux: verifier.exe
+
 verifier.exe: verifier.cs
 	$(CSC) $(CSCFLAGS) verifier.cs
 	

@@ -38,7 +38,7 @@ all: cs-parser.cs
 
 windows: all
 
-unix: all
+linux: all
 
 opt:
 	$(CSC) /optimize+ /target:exe /r:System.dll /out:compiler.exe $(COMPILER_SOURCES)

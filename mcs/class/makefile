@@ -4,6 +4,8 @@ all:
 windows:
 	../nant/NAnt.exe windows
 
+unix: linux
+
 linux:
 	../nant/NAnt.exe linux
 

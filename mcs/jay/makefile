@@ -11,4 +11,4 @@ clean:
 
 windows: jay
 
-unix: jay
+linux: jay
