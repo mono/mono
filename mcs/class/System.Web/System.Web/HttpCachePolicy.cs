@@ -60,6 +60,9 @@ namespace System.Web {
 		ArrayList fields;
 		bool slidingExpiration;
 		int duration;
+#if NET_1_1
+		bool allowResponseInBrowserHistory;
+#endif
                 
 		#endregion
 
@@ -265,11 +268,15 @@ namespace System.Web {
 			return varyByCustom;
 		}
 
-		[MonoTODO]
+#if NET_1_1
 		public void SetAllowResponseInBrowserHistory (bool allow)
 		{
-			throw new NotImplementedException ();
+			if (cacheability == HttpCacheability.NoCache ||
+			    cacheability == HttpCacheability.ServerAndNoCache) {
+				allowResponseInBrowserHistory = allow;
+			}
 		}
+#endif
 
 		internal void SetHeaders (HttpResponse response, ArrayList headers)
 		{
@@ -277,14 +284,20 @@ namespace System.Web {
 			if (cacheability > HttpCacheability.NoCache) {
 				cc = String.Format ("{0}, max-age={1}", cacheability, (long) maxAge.TotalSeconds);
 				expires = TimeUtil.ToUtcTimeString (expireDate);
+				headers.Add (new HttpResponseHeader ("Expires", expires));
 			} else {
 				cc = "no-cache";
 				response.CacheControl = cc;
-				expires = "-1";
+#if NET_1_1
+				if (!allowResponseInBrowserHistory)
+#endif
+				{
+					expires = "-1";
+					headers.Add (new HttpResponseHeader ("Expires", expires));
+				}
 			}
 			
 			headers.Add (new HttpResponseHeader ("Cache-Control", cc));
-			headers.Add (new HttpResponseHeader ("Expires", expires));
 						
 			if (etag != null)
 				headers.Add (new HttpResponseHeader ("ETag", etag));

@@ -1,5 +1,9 @@
 2004-06-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpCachePolicy.cs: implemented SetAllowResponseInBrowserHistory.
+
+2004-06-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpRuntime.cs: implemented a 5 simple properties that were TODOs.
 
 2004-06-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
