@@ -1,5 +1,11 @@
 2002-08-05  Martin Baulig  <martin@gnome.org>
 
+	* statement.cs (Return.Emit): Return success even after reporting
+	a type mismatch error (CS0126 or CS0127), this is what csc does and
+	it avoids confusing the users with any consecutive errors.
+
+2002-08-05  Martin Baulig  <martin@gnome.org>
+
 	* enum.cs (Enum.LookupEnumValue): Catch circular definitions.
 
 	* const.cs (Const.LookupConstantValue): Catch circular definitions.

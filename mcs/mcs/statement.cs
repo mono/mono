@@ -569,14 +569,14 @@ namespace Mono.CSharp {
 			if (ec.ReturnType == null){
 				if (Expr != null){
 					Report.Error (127, loc, "Return with a value not allowed here");
-					return false;
+					return true;
 				}
 			} else {
 				if (Expr == null){
 					Report.Error (126, loc, "An object of type `" +
 						      TypeManager.CSharpName (ec.ReturnType) + "' is " +
 						      "expected for the return statement");
-					return false;
+					return true;
 				}
 
 				if (Expr.Type != ec.ReturnType)
@@ -584,7 +584,7 @@ namespace Mono.CSharp {
 						ec, Expr, ec.ReturnType, loc);
 
 				if (Expr == null)
-					return false;
+					return true;
 
 				Expr.Emit (ec);
 
