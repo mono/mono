@@ -1,5 +1,9 @@
 2003-04-11  Ville Palo <vi64pa@kolumbus.fi>
 
+	* FileStreamTest.cs: File Added and some tests in it.
+	
+2003-04-11  Ville Palo <vi64pa@kolumbus.fi>
+
 	* StringReaderTest.cs: Tests for close and some exceptions
 	
 2003-04-11  Ville Palo <vi64pa@kolumbus.fi>
