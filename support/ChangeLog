@@ -1,3 +1,10 @@
+2005-01-04  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Makefile.am: Rewrite.  Remove configure-generated warnings about 
+	  multiple _LIBADD and _SOURCES lines.  Add support for Win32.  
+	  Win32 support is limited to ANSI C functions.
+	* stdio.c: Don't compile Unix wrappers on Win32.
+
 2005-01-04  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (LIBS): Remove.  Was overriding results of configure check.
