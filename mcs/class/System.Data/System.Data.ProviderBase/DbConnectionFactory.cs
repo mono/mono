@@ -80,6 +80,11 @@ namespace System.Data.ProviderBase {
 			throw new NotImplementedException ();
 		}
 
+		internal DbConnectionString CreateConnectionOptionsInternal (string connectionString)
+		{
+			return CreateConnectionOptions (connectionString);
+		}
+
 		[MonoTODO]
 		public void SetConnectionPoolOptions (string connectionString, DbConnectionPoolOptions poolOptions)
 		{

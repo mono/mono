@@ -1,3 +1,7 @@
+2003-12-23  Tim Coleman <tim@timcoleman.com>
+	* DbCommandBase.cs DbConnectionBase.cs DbConnectionFactory.cs:
+		Some implementation
+
 2003-12-21  Tim Coleman <tim@timcoleman.com>
 	* DbConnectionBase.cs DbConnectionFactory.cs DbConnectionInternal.cs
 	* DbConnectionPoolCounters.cs DbConnectionPoolOptions.cs

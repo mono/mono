@@ -16,19 +16,23 @@ namespace System.Data.ProviderBase {
 	public abstract class DbConnectionBase : DbConnection
 	{
 		#region Fields
+
+		DbConnectionFactory connectionFactory;
+		DbConnectionString connectionOptions;
+		string connectionString;
 		
 		#endregion // Fields
 
 		#region Constructors
 
-		[MonoTODO]
 		protected DbConnectionBase (DbConnectionBase connection)
+			: this (connection.ConnectionFactory)
 		{
 		}
 
-		[MonoTODO]
 		protected DbConnectionBase (DbConnectionFactory connectionFactory)
 		{
+			this.connectionFactory = connectionFactory;
 		}
 		
 		#endregion // Constructors
@@ -40,20 +44,21 @@ namespace System.Data.ProviderBase {
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		protected internal DbConnectionFactory ConnectionFactory {
-			get { throw new NotImplementedException (); }
+			get { return connectionFactory; }
 		}
 
-		[MonoTODO]
 		protected internal DbConnectionString ConnectionOptions {
-			get { throw new NotImplementedException (); }
+			get { return connectionOptions; }
 		}
 
 		[MonoTODO]
 		public override string ConnectionString {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return connectionString; }
+			set { 
+				connectionOptions = ConnectionFactory.CreateConnectionOptionsInternal (value);
+				connectionString = value;
+			}
 		}
 
 		[MonoTODO]
@@ -119,10 +124,9 @@ namespace System.Data.ProviderBase {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected override DbCommand CreateDbCommand ()
 		{
-			throw new NotImplementedException ();
+			return (DbCommand) ConnectionFactory.ProviderFactory.CreateCommand ();
 		}
 
 		[MonoTODO]

@@ -81,7 +81,9 @@ namespace System.Data.ProviderBase {
 		[MonoTODO]
 		public override int ExecuteNonQuery ()
 		{
-			throw new NotImplementedException ();
+			DbDataReader reader = ExecuteReader ();
+			reader.Close ();
+			return reader.RecordsAffected;
 		}
 
 		[MonoTODO]
