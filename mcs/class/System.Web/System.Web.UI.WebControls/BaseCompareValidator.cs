@@ -56,7 +56,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue(ValidationDataType.String)]
-		[WebCategory("Behaviour")]
+		[WebCategory("Behavior")]
 		[WebSysDescription("RangeValidator_Type")]
 		public ValidationDataType Type
 		{
