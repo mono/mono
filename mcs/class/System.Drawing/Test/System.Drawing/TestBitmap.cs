@@ -46,7 +46,7 @@ namespace MonoTests.System.Drawing{
 		}
 		
 		/* Get the output directory depending on the runtime and location*/
-		internal string getOutSubDir()
+		public static string getOutSubDir()
 		{				
 			string sSub, sRslt;			
 			
@@ -68,7 +68,7 @@ namespace MonoTests.System.Drawing{
 		}
 		
 		/* Get the input directory depending on the runtime*/
-		internal string getInFile(string file)
+		public static string getInFile(string file)
 		{				
 			string sRslt;						
 			

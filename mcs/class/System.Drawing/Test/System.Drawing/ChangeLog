@@ -1,3 +1,9 @@
+2004-05-14 Sanjay Gupta <gsanjay@novell.com>
+                                                                                                         
+        * TestBitmap.cs: Modified method signature to static to be used in other file.
+        * TestImageConverter.cs: Added.
+        * TestImageFormatConverter.cs: Added
+
 2004-05-12 Jordi Mas <jordi@ximan.com>
 	* TestBitmap.cs: added lockbitmap tests
 
