@@ -956,10 +956,15 @@ namespace Mono.CSharp {
 
 			// If we have a parent class (we have a parent class unless we're
 			// TypeManager.object_type), we deep-copy its MemberCache here.
-			if (Container.Parent != null) {
+			if (Container.IsInterface) {
+				MemberCache parent;
+				if (Container.Parent != null)
+					parent = Container.Parent.MemberCache;
+				else
+					parent = TypeHandle.ObjectType.MemberCache;
+				member_hash = SetupCacheForInterface (parent);
+			} else if (Container.Parent != null)
 				member_hash = SetupCache (Container.Parent.MemberCache);
-			} else if (Container.IsInterface)
-				member_hash = SetupCacheForInterface ();
 			else
 				member_hash = new Hashtable ();
 
@@ -1020,9 +1025,9 @@ namespace Mono.CSharp {
 		///   Type.GetMembers() won't return any inherited members for interface types,
 		///   so we need to do this manually.  Interfaces also inherit from System.Object.
 		/// </summary>
-		Hashtable SetupCacheForInterface ()
+		Hashtable SetupCacheForInterface (MemberCache parent)
 		{
-			Hashtable hash = SetupCache (TypeHandle.ObjectType.MemberCache);
+			Hashtable hash = SetupCache (parent);
 			Type [] ifaces = TypeManager.GetInterfaces (Container.Type);
 
 			foreach (Type iface in ifaces) {
@@ -1034,6 +1039,7 @@ namespace Mono.CSharp {
 					TypeManager.LookupMemberContainer (iface);
 
 				MemberCache iface_cache = iface_container.MemberCache;
+
 				AddHashtable (hash, iface_cache.member_hash);
 				AddInterfaces (iface_cache);
 			}
