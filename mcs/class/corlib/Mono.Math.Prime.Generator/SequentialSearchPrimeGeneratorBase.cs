@@ -5,9 +5,6 @@
 //	Ben Maurer
 //
 // Copyright (c) 2003 Ben Maurer. All rights reserved
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -29,9 +26,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-using System;
-using Mono.Math.Prime;
 
 namespace Mono.Math.Prime.Generator {
 
@@ -69,7 +63,6 @@ namespace Mono.Math.Prime.Generator {
 
 			int DivisionBound = TrialDivisionBounds;
 			uint[] SmallPrimes = BigInteger.smallPrimes;
-			PrimalityTest PostTrialDivisionTest = this.PrimalityTest;
 			//
 			// STEP 2. Search for primes
 			//
