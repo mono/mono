@@ -195,7 +195,7 @@ namespace System.Collections.Specialized
 			return FindEntry(key) != null ? true : false;
 		}
 		
-		IDictionaryEnumerator IDictionary.GetEnumerator()
+		public IDictionaryEnumerator GetEnumerator()
 		{
 			return new ListEntryEnumerator(this);
 		}
