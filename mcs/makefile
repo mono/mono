@@ -12,6 +12,8 @@ linux:
 		(cd $$i; make linux)		\
 	done
 
+test:
+	(cd class; make test)
 
 clean:
 	for i in $(DIRS); do 			\

@@ -12,5 +12,8 @@ linux:
 push:
 	scp lib/*.dll mono-cvs:libs
 
+test:
+	../nant/NAnt.exe test
+
 clean:
 	../nant/NAnt.exe clean

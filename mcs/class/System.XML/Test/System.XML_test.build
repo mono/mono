@@ -16,6 +16,8 @@
 			<references basedir="..\..\..\nunit">
 				<includes name="NUnitCore.dll"/>
 			</references>
+			<arg value="/r:..\..\lib\System.XML.dll"/>
+			<arg value="/nowarn:1595"/>
 		</csc>
 	</target>
 
