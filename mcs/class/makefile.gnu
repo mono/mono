@@ -16,6 +16,7 @@ DIRS =	corlib				\
 	Mono.CSharp.Debugger		\
 	Mono.Data.MySql			\
 	Mono.Data.SqliteClient		\
+	Mono.Data.TdsClient		\
 	Mono.PEToolkit			\
 	Microsoft.VisualBasic
 
