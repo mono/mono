@@ -1,3 +1,9 @@
+2004-02-13  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* mini.c: Moved linkdemand check into helper function check_linkdemand
+	to allow reuse for all intructions (CALL, CALLVIRT, NEWOBJ, JMP, 
+	LDFTN, LDVIRTFTN).
+
 2004-02-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* declsec.c: Added statistics counter for different kinds of 
