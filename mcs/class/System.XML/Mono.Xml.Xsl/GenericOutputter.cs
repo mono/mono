@@ -70,13 +70,10 @@ namespace Mono.Xml.Xsl
 			switch (xslOutput.Method) {
 				
 				case OutputMethod.HTML:
-					Console.WriteLine ("WARNING: HTML output not fully supported, using XML output");
 					_emitter = new HtmlEmitter (writer, xslOutput);
 					break;
 				case OutputMethod.Unknown: //TODO: handle xml vs html
 				case OutputMethod.XML:
-					//TODO: XmlTextEmitter goes here
-					//_emitter = new XmlTextEmitter (writer);
 					XmlTextWriter w = new XmlTextWriter (writer);
 					if (xslOutput.Indent == "yes")
 						w.Formatting = Formatting.Indented;
@@ -95,7 +92,10 @@ namespace Mono.Xml.Xsl
 		/// when it's appropriate.
 		/// </summary>
 		private void CheckState ()
-		{		
+		{
+			if (_state == WriteState.Start)
+				WriteStartDocument ();
+
 			if (_state == WriteState.Element) {
 				//Push scope to allow to unwind namespaces scope back in WriteEndElement
 				//Subject to optimization - avoid redundant push/pop by moving 
@@ -142,6 +142,9 @@ namespace Mono.Xml.Xsl
 		int _nsCount;
 		public override void WriteStartElement (string prefix, string localName, string nsURI)
 		{
+			if (_state == WriteState.Start)
+				WriteStartDocument ();
+
 			if (_state == WriteState.Prolog) {
 				//Seems to be the first element - take care of Doctype
 				if (_currentOutput.DoctypeSystem != null)
@@ -262,6 +265,8 @@ namespace Mono.Xml.Xsl
 		public override bool CanProcessAttributes {
 			get { return canProcessAttributes; }
 		}
+
+		public override WriteState WriteState { get { return _state; } }
 		#endregion
 	}
 }

@@ -1,3 +1,17 @@
+2003-11-21 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* Compiler.cs : Modified decimal-format comparison code.
+	* Outputter.cs,
+	  TextOutputter.cs,
+	  GenericOutputter.cs : Added WriteState. Now WriteStartDocument() will
+	  be called only when required. 
+	* HtmlEmitter.cs : Improved indentation stuff.
+	* XslDecimalFormat.cs : Added incomplete implementation of 
+	  CheckSameAs() and FormatNumber().
+	* XslStylesheet.cs,
+	  XslTransformProcessor.cs : Changed XslStylesheet.StylesheetNamespaces
+	  from StringDictionary to ArrayList of QName (to keep order).
+
 2003-11-19 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XsltCompiledContext.cs : XsltGenerateId.Evaluate() should consider

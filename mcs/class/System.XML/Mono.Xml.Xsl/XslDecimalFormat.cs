@@ -21,6 +21,10 @@ namespace Mono.Xml.Xsl {
 		
 		NumberFormatInfo info = new NumberFormatInfo ();
 		char digit = '#', zeroDigit = '0', patternSeparator = ';';
+		XPathNavigator source;
+		string baseUri;
+		int lineNumber;
+		int linePosition;
 
 		public static readonly XslDecimalFormat Default = new XslDecimalFormat ();
 		
@@ -28,9 +32,17 @@ namespace Mono.Xml.Xsl {
 		public XslDecimalFormat (Compiler c)
 		{
 			XPathNavigator n = c.Input;
+
+			IXmlLineInfo li = n as IXmlLineInfo;
+			if (li != null) {
+				lineNumber = li.LineNumber;
+				linePosition = li.LinePosition;
+			}
+			baseUri = n.BaseURI;
+
 			if (n.MoveToFirstAttribute ()) {
 				do {
-					if (n.NamespaceURI != Compiler.XsltNamespace)
+					if (n.NamespaceURI != String.Empty)
 						continue;
 					
 					switch (n.LocalName) {
@@ -58,10 +70,10 @@ namespace Mono.Xml.Xsl {
 						case "per-mille":
 							info.PerMilleSymbol = n.Value;
 							break;
-						case "zero-digit":
+						case "digit":
 							digit = n.Value [0];
 							break;
-						case "digit":
+						case "zero-digit":
 							zeroDigit = n.Value [0];
 							break;
 						case "pattern-separator":
@@ -74,17 +86,20 @@ namespace Mono.Xml.Xsl {
 				info.NegativeInfinitySymbol = info.NegativeSign + info.PositiveInfinitySymbol;
 			}
 		}
-		
-		// check that the data in c is the same as this one, as we
-		// must do, per the spec.
-		public void CheckSameAs (Compiler c)
+
+		// TODO: complete comparison for XSLT spec. 12.3.
+		public void CheckSameAs (XslDecimalFormat other)
 		{
-			throw new NotImplementedException ();
+			if (this.digit != other.digit ||
+				this.patternSeparator != other.patternSeparator ||
+				this.zeroDigit != other.zeroDigit)
+				throw new XsltCompileException (null, other.baseUri, other.lineNumber, other.linePosition);
 		}
 		
+		// TODO: format pattern check.
 		public string FormatNumber (double number, string pattern)
 		{
-			throw new NotImplementedException ();
+			return number.ToString (pattern, info);
 		}
 	}
 }

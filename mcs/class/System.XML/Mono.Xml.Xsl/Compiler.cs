@@ -404,11 +404,12 @@ namespace Mono.Xml.Xsl {
 		public void CompileDecimalFormat ()
 		{
 			QName nm = ParseQNameAttribute ("name");
+			XslDecimalFormat df = new XslDecimalFormat (this);
 			
 			if (decimalFormats.Contains (nm))
-				((XslDecimalFormat)decimalFormats [nm]).CheckSameAs (this);
+				((XslDecimalFormat)decimalFormats [nm]).CheckSameAs (df);
 			else
-				decimalFormats [nm] = new XslDecimalFormat (this);
+				decimalFormats [nm] = df;
 		}
 #endregion
 #region Static XSLT context

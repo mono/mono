@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Xml;
 
 namespace Mono.Xml.Xsl {
 	/// <summary>
@@ -52,5 +53,7 @@ namespace Mono.Xml.Xsl {
 		public virtual bool CanProcessAttributes {
 			get { return false; }
 		}
+
+		public abstract WriteState WriteState { get; }
 	}
 }

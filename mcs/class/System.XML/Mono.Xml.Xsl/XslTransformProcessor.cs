@@ -263,7 +263,8 @@ namespace Mono.Xml.Xsl {
 		internal void TryStylesheetNamespaceOutput ()
 		{
 			if (outputStylesheetXmlns) {
-				foreach (string prefix in this.style.StylesheetNamespaces.Keys) {
+				foreach (XmlQualifiedName qname in this.style.StylesheetNamespaces) {
+					string prefix = qname.Name;
 					if (style.ExcludeResultPrefixes != null) {
 						bool exclude = false;
 						foreach (XmlQualifiedName exc in style.ExcludeResultPrefixes)
@@ -284,7 +285,7 @@ namespace Mono.Xml.Xsl {
 						if (exclude)
 							continue;
 					}
-					Out.WriteNamespaceDecl (prefix, this.style.StylesheetNamespaces [prefix]);
+					Out.WriteNamespaceDecl (prefix, qname.Namespace);
 				}
 				outputStylesheetXmlns = false;
 			}

@@ -50,7 +50,7 @@ namespace Mono.Xml.Xsl {
 		string version;
 		XmlQualifiedName [] extensionElementPrefixes;
 		XmlQualifiedName [] excludeResultPrefixes;
-		StringDictionary stylesheetNamespaces = new StringDictionary ();
+		ArrayList stylesheetNamespaces = new ArrayList ();
 
 		// below are newly introduced in XSLT 2.0
 		//  elements::
@@ -76,7 +76,7 @@ namespace Mono.Xml.Xsl {
 			get { return excludeResultPrefixes; }
 		}
 
-		public StringDictionary StylesheetNamespaces {
+		public ArrayList StylesheetNamespaces {
 			get { return stylesheetNamespaces; }
 		}
 
@@ -125,7 +125,7 @@ namespace Mono.Xml.Xsl {
 					do {
 						if (c.Input.Value == XsltNamespace)
 							continue;
-						this.stylesheetNamespaces.Add (c.Input.Name, c.Input.Value);
+						this.stylesheetNamespaces.Insert (0, new QName (c.Input.Name, c.Input.Value));
 					} while (c.Input.MoveToNextNamespace (XPathNamespaceScope.Local));
 					c.Input.MoveToParent ();
 				}

@@ -62,5 +62,7 @@ namespace Mono.Xml.Xsl {
 		public override void Done () {
 			_writer.Flush ();
 		}
+
+		public override WriteState WriteState { get { return WriteState.Start; } }
 	}
 }

@@ -76,18 +76,52 @@ namespace Mono.Xml.Xsl
 			openElement = false;
 		}
 
+		// FIXME: check all HTML elements' indentation.
 		private void Indent (string elementName, bool alwaysOutputNewLine)
 		{
 			if (!indent)
 				return;
 			switch (elementName.ToUpper ()) {
-			case "FORM":
-				return;
+			case "ADDRESS":
+			case "BDO":
+			case "BLOCKQUOTE":
+			case "BODY":
+			case "BUTTON":
+			case "CAPTION":
+			case "CENTER":
+			case "DD":
+			case "DEL":
+			case "DIR":
+			case "DIV":
+			case "DL":
+			case "DT":
+			case "FIELDSET":
+			case "H1":
+			case "H2":
+			case "H3":
+			case "H4":
+			case "H5":
+			case "H6":
+			case "HEAD":
+			case "HTML":
+			case "IFRAME":
+			case "INS":
+			case "LI":
+			case "MAP":
+			case "MENU":
+			case "NOFRAMES":
+			case "NOSCRIPT":
+			case "OBJECT":
+			case "P":
+			case "PRE":
+			case "TD":
+			case "TH":
+				if (alwaysOutputNewLine || elementNameStack.Count > 0)
+					writer.Write ("\r\n");
+				for (int i = 0; i < elementNameStack.Count; i++)
+						writer.Write ("  ");
+				break;
 			}
-			if (alwaysOutputNewLine || elementNameStack.Count > 0)
-				writer.Write ("\r\n");
-			for (int i = 0; i < elementNameStack.Count; i++)
-					writer.Write ("  ");
 		}
 
 		public override void WriteStartElement (string prefix, string localName, string nsURI)
