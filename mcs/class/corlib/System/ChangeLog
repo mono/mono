@@ -1,3 +1,7 @@
+2003-05-24  Philip Van Hoof  <spamfrommailing@freax.org>
+
+	* Math.cs: Add the MS.NET 1.1 methods (BigMul, DivRem, DivRem).
+
 2003-05-21  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* FloatingPointFormatter.cs: Take care with the explicit precision

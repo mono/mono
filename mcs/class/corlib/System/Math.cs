@@ -61,14 +61,6 @@ namespace System
                         return (short)((value < 0)? -value: value);
                 }
 
-		// The following methods are defined in ECMA specs but they are
-		// not implemented in MS.NET. I leave them commented.
-		/*
-		public static long BigMul (int a, int b) {
-			return ((long)a * (long)b);
-		}
-		*/
-
 		public static double Ceiling(double a) {
 			double result = Floor(a);
 			if (result != a) {
@@ -78,8 +70,13 @@ namespace System
 		}
 
 		// The following methods are defined in ECMA specs but they are
-		// not implemented in MS.NET. I leave them commented.
-		/*
+		// not implemented in MS.NET. However, they are in MS.NET 1.1
+
+#if NET_1_1
+		public static long BigMul (int a, int b) {
+			return ((long)a * (long)b);
+		}
+
 		public static int DivRem (int a, int b, out int result) {
 			result = (a % b);
 			return (int)(a / b);
@@ -89,7 +86,7 @@ namespace System
 			result = (a % b);
 			return (long)(a / b);
 		}
-		*/
+#endif
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static double Floor (double value);
