@@ -1,3 +1,7 @@
+2005-01-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* declsec.h: Remove warning by adding missing include for marshal.h
+
 2005-01-26  Martin Baulig  <martin@ximian.com>
 
 	* mini.c (mono_method_to_ir): In CEE_UNBOX_ANY, don't increase
