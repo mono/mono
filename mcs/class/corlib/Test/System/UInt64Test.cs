@@ -22,13 +22,13 @@ public class UInt64Test : TestCase
 	private const string MyString3 = "18446744073709551615";
 	private string[] Formats1 = {"c", "d", "e", "f", "g", "n", "p", "x" };
 	private string[] Formats2 = {"c5", "d5", "e5", "f5", "g5", "n5", "p5", "x5" };
-	private string[] Results1 = {NumberFormatInfo.CurrentInfo.CurrencySymbol+"0.00",
+	private string[] Results1 = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"0.00",
 					"0", "0.000000e+000", "0.00",
 					"0", "0.00", "0.00 %", "0"};
 	private string[] ResultsNfi1 = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"0.00",
 					"0", "0.000000e+000", "0.00",
 					"0", "0.00", "0.00 %", "0"};
-	private string[] Results2 = {NumberFormatInfo.CurrentInfo.CurrencySymbol+"18,446,744,073,709,551,615.00000",
+	private string[] Results2 = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"18,446,744,073,709,551,615.00000",
 					"18446744073709551615", "1.84467e+019", "18446744073709551615.00000",
 					"1.8447e+19", "18,446,744,073,709,551,615.00000",
 					"1,844,674,407,370,955,161,500.00000 %", "ffffffffffffffff"};
@@ -131,7 +131,7 @@ public class UInt64Test : TestCase
 		catch (Exception e) {
 			Assert(typeof(FormatException) == e.GetType());
 		}
-		Assert(42 == UInt64.Parse(" $42 ", NumberStyles.Currency));
+		Assert(42 == UInt64.Parse(" "+NumberFormatInfo.CurrentInfo.CurrencySymbol+"42 ", NumberStyles.Currency));
 		try {
 			UInt64.Parse("$42", NumberStyles.Integer);
 			Fail("Should raise a FormatException");

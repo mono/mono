@@ -1,3 +1,11 @@
+2002-03-06  Nick Drochak  <ndrochak@gol.com>
+
+	* UInt16Test.cs:
+	* UInt32Test.cs:
+	* UInt64Test.cs: Use NumberFormatInfo.InvariantInfo.CurrencySymbol
+	where "$" was used. Should help suppress false negatives on systems
+	where "$" is not the currency symbol.
+
 2002-03-04  Duco Fijma  <duco@lorentz.xs4all.nl>
 	* VersionTest.cs: created test cases for System.Version
 

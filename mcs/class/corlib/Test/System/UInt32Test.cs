@@ -22,13 +22,13 @@ public class UInt32Test : TestCase
 	private const string MyString3 = "4294967295";
 	private string[] Formats1 = {"c", "d", "e", "f", "g", "n", "p", "x" };
 	private string[] Formats2 = {"c5", "d5", "e5", "f5", "g5", "n5", "p5", "x5" };
-	private string[] Results1 = {NumberFormatInfo.CurrentInfo.CurrencySymbol+"0.00",
+	private string[] Results1 = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"0.00",
 					"0", "0.000000e+000", "0.00",
 					"0", "0.00", "0.00 %", "0"};
 	private string[] ResultsNfi1 = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"0.00",
 					"0", "0.000000e+000", "0.00",
 					"0", "0.00", "0.00 %", "0"};
-	private string[] Results2 = {NumberFormatInfo.CurrentInfo.CurrencySymbol+"4,294,967,295.00000",
+	private string[] Results2 = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"4,294,967,295.00000",
 					"4294967295", "4.29497e+009", "4294967295.00000",
 					"4.295e+09", "4,294,967,295.00000", "429,496,729,500.00000 %", "ffffffff"};
 	private string[] ResultsNfi2 = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"4,294,967,295.00000",
@@ -142,7 +142,7 @@ public class UInt32Test : TestCase
 			Assert("Did not get OverflowException type on '"+"4294967296"+"'. Instead, got: '"+e.GetType()+"'", typeof(OverflowException) == e.GetType());
 		}
 		//test Parse(string s, NumberStyles style)
-		Assert(42 == UInt32.Parse(" $42 ", NumberStyles.Currency));
+		Assert(42 == UInt32.Parse(" "+NumberFormatInfo.CurrentInfo.CurrencySymbol+"42 ", NumberStyles.Currency));
 		try {
 			UInt32.Parse("$42", NumberStyles.Integer);
 			Fail("Should raise a System.FormatException");

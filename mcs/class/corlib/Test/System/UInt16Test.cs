@@ -22,13 +22,13 @@ public class UInt16Test : TestCase
 	private const string MyString3 = "65535";
 	private string[] Formats1 = {"c", "d", "e", "f", "g", "n", "p", "x" };
 	private string[] Formats2 = {"c5", "d5", "e5", "f5", "g5", "n5", "p5", "x5" };
-	private string[] Results1 = {NumberFormatInfo.CurrentInfo.CurrencySymbol+"0.00",
+	private string[] Results1 = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"0.00",
 					"0", "0.000000e+000", "0.00",
 					"0", "0.00", "0.00 %", "0"};
 	private string[] ResultsNfi1 = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"0.00",
 					"0", "0.000000e+000", "0.00",
 					"0", "0.00", "0.00 %", "0"};
-	private string[] Results2 = {NumberFormatInfo.CurrentInfo.CurrencySymbol+"65,535.00000",
+	private string[] Results2 = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"65,535.00000",
 					"65535", "6.55350e+004", "65535.00000",
 					"65535", "65,535.00000", "6,553,500.00000 %", "0ffff"};
 	private string[] ResultsNfi2 = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"65,535.00000",
@@ -121,7 +121,7 @@ public class UInt16Test : TestCase
 			Assert(typeof(OverflowException) == e.GetType());
 		}
 		//test Parse(string s, NumberStyles style)
-		Assert(42 == UInt16.Parse(" $42 ", NumberStyles.Currency));
+		Assert(42 == UInt16.Parse(" "+NumberFormatInfo.CurrentInfo.CurrencySymbol+"42 ", NumberStyles.Currency));
 		try {
 			UInt16.Parse("$42", NumberStyles.Integer);
 			Fail("Should raise a System.FormatException");
@@ -152,25 +152,25 @@ public class UInt16Test : TestCase
 	public void TestToString()
 	{
 		//test ToString()
-		AssertEquals(MyString1, MyUInt16_1.ToString());
-		AssertEquals(MyString2, MyUInt16_2.ToString());
-		AssertEquals(MyString3, MyUInt16_3.ToString());
+		AssertEquals("A1", MyString1, MyUInt16_1.ToString());
+		AssertEquals("A2", MyString2, MyUInt16_2.ToString());
+		AssertEquals("A3", MyString3, MyUInt16_3.ToString());
 		//test ToString(string format)
 		for (int i=0; i < Formats1.Length; i++) {
-			AssertEquals(Results1[i], MyUInt16_2.ToString(Formats1[i]));
-			AssertEquals(Results2[i], MyUInt16_3.ToString(Formats2[i]));
+			AssertEquals("A4:"+i.ToString(), Results1[i], MyUInt16_2.ToString(Formats1[i]));
+			AssertEquals("A5:"+i.ToString(), Results2[i], MyUInt16_3.ToString(Formats2[i]));
 		}
 		//test ToString(string format, IFormatProvider provider);
 		for (int i=0; i < Formats1.Length; i++) {
-			AssertEquals(ResultsNfi1[i], MyUInt16_2.ToString(Formats1[i], Nfi));
-			AssertEquals(ResultsNfi2[i], MyUInt16_3.ToString(Formats2[i], Nfi));
+			AssertEquals("A6:"+i.ToString(), ResultsNfi1[i], MyUInt16_2.ToString(Formats1[i], Nfi));
+			AssertEquals("A7:"+i.ToString(), ResultsNfi2[i], MyUInt16_3.ToString(Formats2[i], Nfi));
 		}
 		try {
 			MyUInt16_1.ToString("z");
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert("A8", typeof(FormatException) == e.GetType());
 		}
 	}
 }
