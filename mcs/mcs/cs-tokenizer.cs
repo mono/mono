@@ -1034,13 +1034,13 @@ namespace Mono.CSharp
 					return false;
 				}
 				
-				if (Char.IsLetter (c) || c == '_'){
+				if (is_identifier_start_character(c)){
 					int j = 1;
 
 					while (j < len){
 						c = s [j];
 						
-						if (Char.IsLetter (c) || Char.IsDigit (c) || c == '_'){
+						if (is_identifier_part_character(c)){
 							j++;
 							continue;
 						}
@@ -1339,49 +1339,84 @@ namespace Mono.CSharp
 
 			Report.Error (1024, Location, "Preprocessor directive expected (got: " + cmd + ")");
 			return true;
+
+		}
+
+		private int consume_string(bool quoted) 
+		{
+			int c;
+			string_builder.Length = 0;
+								
+			while ((c = getChar ()) != -1){
+				if (c == '"'){
+					if (quoted && peekChar () == '"'){
+						string_builder.Append ((char) c);
+						getChar ();
+						continue;
+					} else {
+						val = string_builder.ToString ();
+						return Token.LITERAL_STRING;
+					}
+				}
+
+				if (c == '\n' && !quoted) {
+					Report.Error(1010, Location, "Newline in constant");
+				}
+
+				if (!quoted){
+					c = escape (c);
+					if (c == -1)
+						return Token.ERROR;
+				}
+				string_builder.Append ((char) c);
+			}
+
+			Report.Error (1039, Location, "Unterminated string literal");
+			return Token.EOF;
+		}
+
+		private int consume_identifier(int c, bool quoted) 
+		{
+			id_builder.Length = 0;
+
+			id_builder.Append ((char) c);
+					
+			while ((c = peekChar ()) != -1) {
+				if (is_identifier_part_character ((char) c)){
+					id_builder.Append ((char)getChar ());
+					col++;
+				} else 
+					break;
+			}
+					
+			string ids = id_builder.ToString ();
+
+			if (!is_keyword (ids) || quoted) {
+				val = ids;
+				if (ids.Length > 512){
+					Report.Error (
+						645, Location,
+						"Identifier too long (limit is 512 chars)");
+				}
+				return Token.IDENTIFIER;
+			}
+
+			// true, false and null are in the hash anyway.
+			return GetKeyword (ids);
 		}
 		
 		public int xtoken ()
 		{
 			int t;
-			bool allow_keyword_as_ident = false;
 			bool doread = false;
 			int c;
 
 			val = null;
 			// optimization: eliminate col and implement #directive semantic correctly.
 			for (;(c = getChar ()) != -1; col++) {
-				if (Char.IsLetter ((char)c) || c == '_'){
-					string ids;
-
-					id_builder.Length = 0;
+				if (is_identifier_start_character((char)c)){
 					tokens_seen = true;
-					id_builder.Append ((char) c);
-					
-					while ((c = peekChar ()) != -1) {
-						if (is_identifier_part_character ((char) c)){
-							id_builder.Append ((char)getChar ());
-							col++;
-						} else 
-							break;
-					}
-					
-					ids = id_builder.ToString ();
-
-					if (!is_keyword (ids) || allow_keyword_as_ident) {
-						val = ids;
-						if (ids.Length > 512){
-							Report.Error (
-								645, Location,
-								"Identifier too long (limit is 512 chars)");
-						}
-						allow_keyword_as_ident = false;
-						return Token.IDENTIFIER;
-					}
-
-					// true, false and null are in the hash anyway.
-					return GetKeyword (ids);
-
+					return consume_identifier(c, false);
 				}
 
 				if (c == '.'){
@@ -1477,30 +1512,8 @@ namespace Mono.CSharp
 					return t;
 				}
 				
-				if (c == '"'){
-					string_builder.Length = 0;
-					
-					tokens_seen = true;
-					
-					while ((c = getChar ()) != -1){
-						if (c == '"'){
-							if (allow_keyword_as_ident && peekChar () == '"'){
-								string_builder.Append ((char) c);
-								getChar ();
-								continue;
-							} 
-							allow_keyword_as_ident = false;
-							val = string_builder.ToString ();
-							return Token.LITERAL_STRING;
-						}
-
-						if (!allow_keyword_as_ident){
-							c = escape (c);
-							if (c == -1)
-								return Token.ERROR;
-						}
-						string_builder.Append ((char) c);
-					}
+				if (c == '"') {
+					return consume_string(false);
 				}
 
 				if (c == '\''){
@@ -1549,10 +1562,16 @@ namespace Mono.CSharp
 					continue;
 				}
 
-				if (c == '@'){
-					tokens_seen = true;
-					allow_keyword_as_ident = true;
-					continue;
+				if (c == '@') {
+					c = getChar();
+					if (c == '"') {
+						tokens_seen = true;
+						return consume_string(true);
+					} else if (is_identifier_start_character((char) c)){
+						return consume_identifier(c, true);
+					} else {
+						Report.Error(1033, Location, "'@' must be followed by string constant or identifier");
+					}
 				}
 
 				error_details = ((char)c).ToString ();
