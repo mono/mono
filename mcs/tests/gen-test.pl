@@ -6,7 +6,9 @@ my $mono = "mono";
 
 my @normal = qw[gen-1 gen-2 gen-3 gen-4 gen-5 gen-6 gen-7 gen-8 gen-9 gen-10 gen-11 gen-12
 		gen-14 gen-15 gen-16 gen-18 gen-19 gen-20 gen-21 gen-22 gen-23 gen-24 gen-25
-		gen-26 gen-27 gen-28 gen-29 gen-30 gen-32 gen-33 gen-34 gen-35 gen-36 gen-37];
+		gen-26 gen-27 gen-28 gen-29 gen-30 gen-32 gen-33 gen-34 gen-35 gen-36 gen-37
+		gen-38];
+my @compileonly = qw[];
 my @library = qw[gen-13 gen-17 gen-31];
 
 sub RunTest
@@ -36,7 +38,19 @@ sub NormalTest
 
     RunTest (0, $gmcs, $cs) or return 0;
     RunTest (1, $monodis, $exe) or return 0;
-    RunTest (0, $mono, $exe) or return 0;
+    RunTest (1, $mono, $exe) or return 0;
+
+    return 1;
+}
+
+sub CompileOnlyTest
+{
+    my ($file) = @_;
+
+    my $cs = qq[$file.cs];
+    my $exe = qq[$file.exe];
+
+    RunTest (0, $gmcs, $cs) or return 0;
 
     return 1;
 }
@@ -64,6 +78,16 @@ push @verify, 'bin/peverify.sh';
 foreach my $file (@normal) {
     print "RUNNING TEST: $file\n";
     if (NormalTest ($file)) {
+	print STDERR "TEST SUCCEEDED: $file\n";
+	push @verify, qq[$file.exe];
+    } else {
+	print STDERR "TEST FAILED: $file\n";
+    }
+}
+
+foreach my $file (@compileonly) {
+    print "RUNNING COMPILATION ONLY TEST: $file\n";
+    if (CompileOnlyTest ($file)) {
 	print STDERR "TEST SUCCEEDED: $file\n";
 	push @verify, qq[$file.exe];
     } else {

@@ -1,3 +1,7 @@
+2004-02-20  Martin Baulig  <martin@ximian.com>
+
+	* gen-test.pl: Enable gen-38.
+
 2004-02-18  Martin Baulig  <martin@ximian.com>
 
 	* Makefile: Disable test-157.cs, it's broken.  See #54530.
