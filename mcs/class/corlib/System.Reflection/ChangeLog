@@ -1,3 +1,7 @@
+2003-08-06  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* TargetInvocationException.cs: Fixed signature
+
 2003-07-24  Miguel de Icaza  <miguel@ximian.com>
 
 	* TypeDelegator.cs: Added generics stubs.

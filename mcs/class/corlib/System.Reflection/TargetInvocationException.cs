@@ -1,3 +1,4 @@
+//
 // System.Reflection.TargetInvocationException
 //
 // Sean MacIsaac (macisaac@ximian.com)
@@ -22,7 +23,7 @@ namespace System.Reflection
 		{
 		}		
 
-		protected TargetInvocationException (SerializationInfo info, StreamingContext sc)
+		internal TargetInvocationException (SerializationInfo info, StreamingContext sc)
 			: base (info, sc)
 		{
 		}
