@@ -44,6 +44,7 @@ namespace System.Reflection.Emit {
 		private Type[] returnModOpt;
 		private Type[][] paramModReq;
 		private Type[][] paramModOpt;
+		private RefEmitPermissionSet[] permissions;
 
 		internal MethodBuilder (TypeBuilder tb, string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] returnModReq, Type[] returnModOpt, Type[] parameterTypes, Type[][] paramModReq, Type[][] paramModOpt) {
 			this.name = name;
@@ -236,10 +237,31 @@ namespace System.Reflection.Emit {
 			iattrs = attributes;
 		}
 
-		[MonoTODO]
 		public void AddDeclarativeSecurity( SecurityAction action, PermissionSet pset) {
+			if (pset == null)
+				throw new ArgumentNullException ("pset");
+			if ((action == SecurityAction.RequestMinimum) ||
+				(action == SecurityAction.RequestOptional) ||
+				(action == SecurityAction.RequestRefuse))
+				throw new ArgumentException ("Request* values are not permitted", "action");
+
 			RejectIfCreated ();
-			throw new NotImplementedException ();
+
+			if (permissions != null) {
+				/* Check duplicate actions */
+				foreach (RefEmitPermissionSet set in permissions)
+					if (set.action == action)
+						throw new InvalidOperationException ("Multiple permission sets specified with the same SecurityAction.");
+
+				RefEmitPermissionSet[] new_array = new RefEmitPermissionSet [permissions.Length + 1];
+				permissions.CopyTo (new_array, 0);
+				permissions = new_array;
+			}
+			else
+				permissions = new RefEmitPermissionSet [1];
+
+			permissions [permissions.Length - 1] = new RefEmitPermissionSet (action, pset.ToXml ().ToString ());
+			attrs |= MethodAttributes.HasSecurity;
 		}
 
 		[MonoTODO]

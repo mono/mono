@@ -31,6 +31,7 @@ namespace System.Reflection.Emit {
 		private bool init_locals = true;
 		private Type[][] paramModReq;
 		private Type[][] paramModOpt;
+		private RefEmitPermissionSet[] permissions;
 
 		internal ConstructorBuilder (TypeBuilder tb, MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes, Type[][] paramModReq, Type[][] paramModOpt) {
 			attrs = attributes | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
@@ -95,6 +96,30 @@ namespace System.Reflection.Emit {
 		}
 
 		public void AddDeclarativeSecurity( SecurityAction action, PermissionSet pset) {
+			if (pset == null)
+				throw new ArgumentNullException ("pset");
+			if ((action == SecurityAction.RequestMinimum) ||
+				(action == SecurityAction.RequestOptional) ||
+				(action == SecurityAction.RequestRefuse))
+				throw new ArgumentException ("Request* values are not permitted", "action");
+
+			RejectIfCreated ();
+
+			if (permissions != null) {
+				/* Check duplicate actions */
+				foreach (RefEmitPermissionSet set in permissions)
+					if (set.action == action)
+						throw new InvalidOperationException ("Multiple permission sets specified with the same SecurityAction.");
+
+				RefEmitPermissionSet[] new_array = new RefEmitPermissionSet [permissions.Length + 1];
+				permissions.CopyTo (new_array, 0);
+				permissions = new_array;
+			}
+			else
+				permissions = new RefEmitPermissionSet [1];
+
+			permissions [permissions.Length - 1] = new RefEmitPermissionSet (action, pset.ToXml ().ToString ());
+			attrs |= MethodAttributes.HasSecurity;
 		}
 
 		public ParameterBuilder DefineParameter(int iSequence, ParameterAttributes attributes, string strParamName)
@@ -191,6 +216,11 @@ namespace System.Reflection.Emit {
 		}
 		internal override int get_next_table_index (object obj, int table, bool inc) {
 			return type.get_next_table_index (obj, table, inc);
+		}
+
+		private void RejectIfCreated () {
+			if (type.is_created)
+				throw new InvalidOperationException ("Type definition of the method is complete.");
 		}
 
 		private Exception not_supported () {

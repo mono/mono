@@ -18,11 +18,22 @@ using System.Runtime.CompilerServices;
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
+using System.Security.Permissions;
 
 using Mono.Security;
 using Mono.Security.Cryptography;
 
 namespace System.Reflection.Emit {
+
+	internal struct RefEmitPermissionSet {
+		public SecurityAction action;
+		public string pset;
+
+		public RefEmitPermissionSet (SecurityAction action, string pset) {
+			this.action = action;
+			this.pset = pset;
+		}
+	}
 
 	internal struct MonoResource {
 		public byte[] data;

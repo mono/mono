@@ -1,3 +1,11 @@
+2003-12-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AssemblyBuilder.cs (RefEmitPermissionSet): New helper structure.
+	
+	* MethodBuilder.cs (AddDeclarativeSecurity): Implement.
+
+	* ConstructorBuilder.cs (AddDeclarativeSecurity): Ditto.
+
 2003-12-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MethodBuilder.cs: Add stubs for missing methods.
