@@ -71,7 +71,15 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("The exit code of the process.")]
 		public int ExitCode {
 			get {
-				return(ExitCode_internal(process_handle));
+				if (process_handle == IntPtr.Zero)
+					throw new InvalidOperationException ("Process has not been started.");
+
+				int code = ExitCode_internal (process_handle);
+				if (code == 259)
+					throw new InvalidOperationException ("The process must exit before " +
+									"getting the requested information.");
+
+				return code;
 			}
 		}
 
@@ -85,6 +93,13 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("The exit time of the process.")]
 		public DateTime ExitTime {
 			get {
+				if (process_handle == IntPtr.Zero)
+					throw new InvalidOperationException ("Process has not been started.");
+
+				if (!HasExited)
+					throw new InvalidOperationException ("The process must exit before " +
+									"getting the requested information.");
+
 				return(DateTime.FromFileTime(ExitTime_internal(process_handle)));
 			}
 		}
@@ -110,7 +125,7 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("Determines if the process is still running.")]
 		public bool HasExited {
 			get {
-				int exitcode=ExitCode;
+				int exitcode = ExitCode_internal (process_handle);
 
 				if(exitcode==259) {
 					/* STILL_ACTIVE */

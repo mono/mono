@@ -1,3 +1,7 @@
+2004-02-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Process.cs: ExitCode and ExitTime check that the process is finished.
+
 2003-12-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Process.cs: if there's an error when starting the process, the 'pid'
