@@ -1258,7 +1258,7 @@ namespace System.Xml
 		{
 			if (currentState == XmlNodeType.EndElement)
 				throw new XmlException (this as IXmlLineInfo,
-					"Element cannot appear in this state.");
+					"Multiple document element was detected.");
 			currentState = XmlNodeType.Element;
 
 			parserContext.NamespaceManager.PushScope ();
@@ -1506,11 +1506,12 @@ namespace System.Xml
 					if (returnEntityReference) // Returns -1 if char validation should not be done
 						break;
 				}
-				else
+				else {
+					if (XmlChar.IsInvalid (ch))
+						throw new XmlException (this, "Not allowed character was found.");
 					ch = ReadChar ();
+				}
 
-				if (normalization && XmlChar.IsInvalid (ch))
-					throw new XmlException (this, "Not allowed character was found.");
 				AppendValueChar (ch);
 
 				// Block "]]>"

@@ -871,6 +871,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			int start = 0;
 			int pos = 0;
 			int count = source.Length;
+			char invalid = ' ';
 			for (int i = 0; i < count; i++) {
 				switch (source [i]) {
 				case '&':  pos = 0; break;
@@ -891,12 +892,27 @@ openElements [openElementCount - 1]).IndentingOverriden;
 					if (skipQuotations) continue;
 					pos = 6; break;
 				default:
-					continue;
+					if (XmlChar.IsInvalid (source [i])) {
+						invalid = source [i];
+						pos = -1;
+						break;
+					}
+					else
+						continue;
 				}
 				if (cachedStringBuilder == null)
 					cachedStringBuilder = new StringBuilder ();
 				cachedStringBuilder.Append (source.Substring (start, i - start));
-				cachedStringBuilder.Append (replacements [pos]);
+				if (pos < 0) {
+					cachedStringBuilder.Append ("&#x");
+					if (invalid < (char) 255)
+						cachedStringBuilder.Append (((int) invalid).ToString ("X02"));
+					else
+						cachedStringBuilder.Append (((int) invalid).ToString ("X04"));
+					cachedStringBuilder.Append (";");
+				}
+				else
+					cachedStringBuilder.Append (replacements [pos]);
 				start = i + 1;
 			}
 			if (start == 0)

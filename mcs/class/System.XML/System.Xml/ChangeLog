@@ -1,3 +1,12 @@
+2004-06-13  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextReader.cs : Character range check is always done. It is only
+	  character references for which check is not done when Normalization
+	  is false.
+	  A bit more kind error message for multiple document element error.
+	* XmlTextWriter.cs : Check if character is valid and entitize when
+	  it was invalid.
+
 2004-06-09  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlNamespaceManager.cs : The error message was improper.
