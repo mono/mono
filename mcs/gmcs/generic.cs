@@ -500,7 +500,7 @@ namespace Mono.CSharp {
 			bool ok = true;
 
 			atypes = new Type [count];
-			
+
 			for (int i = 0; i < count; i++){
 				TypeExpr te = ds.ResolveTypeExpr (
 					(Expression) args [i], false, Location);
@@ -888,18 +888,18 @@ namespace Mono.CSharp {
 			throw new Exception ();
 		}
 
-		public override bool Define (TypeContainer parent)
+		public override bool Define ()
 		{
 			for (int i = 0; i < TypeParameters.Length; i++)
-				if (!TypeParameters [i].Resolve (parent))
+				if (!TypeParameters [i].Resolve (Parent))
 					return false;
 
 			return true;
 		}
 
-		public bool Define (TypeContainer parent, MethodBuilder mb)
+		public bool Define (MethodBuilder mb)
 		{
-			if (!Define (parent))
+			if (!Define ())
 				return false;
 
 			GenericTypeParameterBuilder[] gen_params;

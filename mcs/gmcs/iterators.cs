@@ -371,7 +371,7 @@ namespace Mono.CSharp {
 			is_static = (modifiers & Modifiers.STATIC) != 0;
 		}
 
-		public bool Define ()
+		public bool DefineIterator ()
 		{
 			if (!CheckType (return_type)) {
 				Report.Error (
@@ -429,7 +429,7 @@ namespace Mono.CSharp {
 		//
 		// Returns the new block for the method, or null on failure
 		//
-		protected override bool DoDefineType ()
+		protected override bool DefineNestedTypes ()
 		{
 			Define_Fields ();
 			Define_Constructor ();
@@ -446,7 +446,7 @@ namespace Mono.CSharp {
 
 			Create_Block ();
 
-			return true;
+			return base.DefineNestedTypes ();
 		}
 
 
@@ -487,17 +487,18 @@ namespace Mono.CSharp {
 			Location loc = Location.Null;
 
 			pc_field = new Field (
-				TypeManager.system_int32_expr, Modifiers.PRIVATE, "PC",
+				this, TypeManager.system_int32_expr, Modifiers.PRIVATE, "PC",
 				null, null, loc);
 			AddField (pc_field);
 
 			current_field = new Field (
-				iterator_type_expr, Modifiers.PRIVATE, "current",
+				this, iterator_type_expr, Modifiers.PRIVATE, "current",
 				null, null, loc);
 			AddField (current_field);
 
 			if (!is_static) {
 				this_field = new Field (
+					this,
 					new TypeExpression (container.TypeBuilder, Location),
 					Modifiers.PRIVATE, "this", null, null, loc);
 				AddField (this_field);
@@ -509,6 +510,7 @@ namespace Mono.CSharp {
 					"field{0}_{1}", i, parameters.ParameterName (i));
 
 				parameter_fields [i] = new Field (
+					this,
 					new TypeExpression (parameters.ParameterType (i), loc),
 					Modifiers.PRIVATE, fname, null, null, loc);
 				AddField (parameter_fields [i]);
@@ -637,7 +639,7 @@ namespace Mono.CSharp {
 		void Define_MoveNext ()
 		{
 			Method move_next = new Method (
-				this, TypeManager.system_boolean_expr,
+				this, null, TypeManager.system_boolean_expr,
 				Modifiers.PUBLIC, false, new MemberName ("MoveNext"),
 				Parameters.EmptyReadOnlyParameters, null,
 				Location.Null);
@@ -666,7 +668,7 @@ namespace Mono.CSharp {
 			MemberName name = new MemberName (left, "GetEnumerator", null);
 
 			Method get_enumerator = new Method (
-				this, type, 0, false, name,
+				this, null, type, 0, false, name,
 				Parameters.EmptyReadOnlyParameters, null,
 				Location.Null);
 			AddMethod (get_enumerator);
@@ -883,7 +885,7 @@ namespace Mono.CSharp {
 		void Define_Reset ()
 		{
 			Method reset = new Method (
-				this, TypeManager.system_void_expr, Modifiers.PUBLIC,
+				this, null, TypeManager.system_void_expr, Modifiers.PUBLIC,
 				false, new MemberName ("Reset"),
 				Parameters.EmptyReadOnlyParameters, null, Location);
 			AddMethod (reset);
@@ -895,7 +897,7 @@ namespace Mono.CSharp {
 		void Define_Dispose ()
 		{
 			dispose = new Method (
-				this, TypeManager.system_void_expr, Modifiers.PUBLIC,
+				this, null, TypeManager.system_void_expr, Modifiers.PUBLIC,
 				false, new MemberName ("Dispose"),
 				Parameters.EmptyReadOnlyParameters, null, Location);
 			AddMethod (dispose);

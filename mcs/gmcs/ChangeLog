@@ -1,3 +1,140 @@
+2004-07-25  Martin Baulig  <martin@ximian.com>
+
+	* class.cs
+	(TypeContainer.RegisterOrder): Removed, this was unused.
+	(TypeContainer, interface_order): Removed.
+	(TypeContainer.AddClass, AddStruct, AddInterface): Take a
+	TypeContainer as argument since we can also be called with a
+	`PartialContainer' for a partial class/struct/interface.
+	(TypeContainer.IsInterface): Use `Kind == Kind.Interface' instead
+	of checking whether we're an `Interface' - we could be a
+	`PartialContainer'.
+	(PartialContainer.Register): Override; call
+	AddClass()/AddStruct()/AddInterface() on our parent.
+
+	* cs-parser.jay (interface_member_declaration): Add things to the
+	`current_container', not the `current_class'.
+
+	* rootcontext.cs (RegisterOrder): The overloaded version which
+	takes an `Interface' was unused, removed.
+
+	* typemanager.cs (TypeManager.LookupInterface): Return a
+	`TypeContainer', not an `Interface'.
+	(TypeManager.IsInterfaceType): The `builder_to_declspace' may
+	contain a `PartialContainer' for an interface, so check it's
+	`Kind' to figure out what it is.
+
+2004-07-25  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (Class.DefaultTypeAttributes): New public constant.
+	(Struct.DefaultTypeAttributes): Likewise.
+	(Interface.DefaultTypeAttributes): Likewise.
+	(PartialContainer.TypeAttr): Override this and add the
+	DefaultTypeAttributes.
+
+2004-07-25  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (DeclSpace.Emit): Removed the `TypeContainer' argument,
+	we can just use the `Parent' field instead.
+
+2004-07-25  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (TypeContainer.Emit): Renamed to EmitType().
+
+2004-07-25  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (TypeContainer.DefineMembers): Call DefineMembers() on
+	our parts before defining any methods.
+	(TypeContainer.VerifyImplements): Make this virtual.
+	(ClassPart.VerifyImplements): Override and call VerifyImplements()
+	on our PartialContainer.
+
+2004-07-25  Martin Baulig  <martin@ximian.com>
+
+	* iterators.cs (Iterator.Define): Renamed to DefineIterator().
+
+	* decl.cs (DeclSpace.Define): Removed the `TypeContainer'
+	argument, we can just use the `Parent' field instead.
+
+	* class.cs
+	(MemberBase.CheckBase): Removed the `TypeContainer' argument.	
+	(MemberBase.DoDefine): Likewise.
+
+2004-07-24  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (MemberCore.Parent): New public field.
+	(DeclSpace.Parent): Moved to MemberCore.
+
+	* class.cs (MethodCore.ds): Removed; use `Parent' instead.
+	(MemberBase.ctor): Added TypeContainer argument, pass it to our
+	parent's .ctor.
+	(FieldBase, Field, Operator): Likewise.
+	(EventProperty.ctor): Take a TypeContainer instead of a DeclSpace.
+	(EventField, Event): Likewise.
+
+2004-07-23  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (PartialContainer): New public class.
+	(ClassPart): New public class.
+	(TypeContainer): Added support for partial classes.
+	(TypeContainer.GetClassBases): Splitted some of the functionality
+	out into GetNormalBases() and GetPartialBases().
+
+	* cs-tokenizer.cs (Token.PARTIAL): New token.
+	(Tokenizer.consume_identifier): Added some hacks to recognize
+	`partial', but only if it's immediately followed by `class',
+	`struct' or `interface'.
+
+	* cs-parser.jay: Added support for partial clases.
+
+2004-07-23  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (MethodCore.ds): Made this a `TypeContainer' instead of
+	a `DeclSpace' and also made it readonly.
+	(MethodCore.ctor): Take a TypeContainer instead of a DeclSpace.
+	(Method.ctor, Constructor.ctor, Destruktor.ctor): Likewise.
+	(PropertyBase.ctor, Property.ctor, Indexer.ctor): Likewise.
+
+	* cs-parser.jay: Pass the `current_class', not the
+	`current_container' (at the moment, this is still the same thing)
+	to a new Method, Property, Event, Indexer or Constructor.
+
+2004-07-23  Martin Baulig  <martin@ximian.com>
+
+	* cs-parser.jay (CSharpParser): Added a new `current_class' field
+	and removed the `current_interface' one.
+	(struct_declaration, class_declaration, interface_declaration):
+	Set `current_class' to the newly created class/struct/interface;
+	set their `Bases' and call Register() before parsing their body.
+
+2004-07-23  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (Kind): New public enum.
+	(TypeContainer): Made this class abstract.
+	(TypeContainer.Kind): New public readonly field.
+	(TypeContainer.CheckDef): New public method; moved here from
+	cs-parser.jay.
+	(TypeContainer.Register): New public abstract method.
+	(TypeContainer.GetPendingImplementations): New public abstract
+	method.
+	(TypeContainer.GetClassBases): Removed the `is_class' and
+	`is_iface' parameters.
+	(TypeContainer.DefineNestedTypes): Formerly known as
+	DoDefineType().
+	(ClassOrStruct): Made this class abstract.
+
+	* tree.cs (RootTypes): New public type.	
+
+2004-07-20  Martin Baulig  <martin@ximian.com>
+
+	* tree.cs (Tree.RecordNamespace): Removed.
+	(Tree.Namespaces): Removed.
+
+	* rootcontext.cs (RootContext.IsNamespace): Removed.
+
+	* cs-parser.jay (namespace_declaration): Just create a new
+	NamespaceEntry here.
+
 2004-07-21  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* Makefile: Install gmcs.exe.config file together with gmcs.exe.

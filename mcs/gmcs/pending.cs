@@ -150,7 +150,7 @@ namespace Mono.CSharp {
 				Type t = missing.Type;
 				
 				if (t is TypeBuilder){
-					Interface iface;
+					TypeContainer iface;
 
 					iface = TypeManager.LookupInterface (t);
 					

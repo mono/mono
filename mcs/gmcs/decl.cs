@@ -178,6 +178,8 @@ namespace Mono.CSharp {
 		/// </summary>
 		public int ModFlags;
 
+		public readonly TypeContainer Parent;
+
 		/// <summary>
 		///   Location where this declaration happens
 		/// </summary>
@@ -203,9 +205,11 @@ namespace Mono.CSharp {
  		/// </summary>
 		protected Flags caching_flags;
 
-		public MemberCore (MemberName name, Attributes attrs, Location loc)
+		public MemberCore (TypeContainer parent, MemberName name, Attributes attrs,
+				   Location loc)
 			: base (attrs)
 		{
+			Parent = parent;
 			Name = name.GetName (!(this is GenericMethod) && !(this is Method));
 			MemberName = name;
 			Location = loc;
@@ -227,7 +231,7 @@ namespace Mono.CSharp {
 			AttributeTester.Report_ObsoleteMessage (obsolete_attr, type.FullName, Location);
 		}
 
-		public abstract bool Define (TypeContainer parent);
+		public abstract bool Define ();
 
 		// 
 		// Returns full member name for error message
@@ -240,14 +244,14 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Base Emit method. This is also entry point for CLS-Compliant verification.
 		/// </summary>
-		public virtual void Emit (TypeContainer container)
+		public virtual void Emit ()
 		{
 			VerifyObsoleteAttribute ();
 
 			if (!RootContext.VerifyClsCompliance)
 				return;
 
-			VerifyClsCompliance (container);
+			VerifyClsCompliance (Parent);
 		}
 
 		// 
@@ -511,20 +515,18 @@ namespace Mono.CSharp {
 			get {
 				if (is_generic)
 					return true;
-				else if (parent != null)
-					return parent.IsGeneric;
+				else if (Parent != null)
+					return Parent.IsGeneric;
 				else
 					return false;
 			}
 		}
 
-		TypeContainer parent;
-
 		static string[] attribute_targets = new string [] { "type" };
 
 		public DeclSpace (NamespaceEntry ns, TypeContainer parent, MemberName name,
 				  Attributes attrs, Location l)
-			: base (name, attrs, l)
+			: base (parent, name, attrs, l)
 		{
 			NamespaceEntry = ns;
 			Basename = name.Name;
@@ -535,12 +537,11 @@ namespace Mono.CSharp {
 			}
 			if (parent != null)
 				count_type_params += parent.count_type_params;
-			this.parent = parent;
 		}
 
 		public void RecordDecl ()
 		{
-			if ((NamespaceEntry != null) && (parent == RootContext.Tree.Types))
+			if ((NamespaceEntry != null) && (Parent == RootContext.Tree.Types))
 				NamespaceEntry.DefineName (MemberName.Basename, this);
 		}
 
@@ -649,12 +650,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public TypeContainer Parent {
-			get {
-				return parent;
-			}
-		}
-
 		/// <summary>
 		///   Looks up the alias for the name
 		/// </summary>
@@ -673,8 +668,8 @@ namespace Mono.CSharp {
 		//
 		public bool IsTopLevel {
 			get {
-				if (parent != null){
-					if (parent.parent == null)
+				if (Parent != null){
+					if (Parent.Parent == null)
 						return true;
 				}
 				return false;
@@ -720,8 +715,8 @@ namespace Mono.CSharp {
 			get {
 				if ((ModFlags & Modifiers.UNSAFE) != 0)
 					return true;
-				if (parent != null)
-					return parent.UnsafeContext;
+				if (Parent != null)
+					return Parent.UnsafeContext;
 				return false;
 			}
 		}
@@ -792,7 +787,7 @@ namespace Mono.CSharp {
 		public TypeExpr ResolveTypeExpr (Expression e, bool silent, Location loc)
 		{
 			if (type_resolve_ec == null)
-				type_resolve_ec = GetTypeResolveEmitContext (parent, loc);
+				type_resolve_ec = GetTypeResolveEmitContext (Parent, loc);
 			type_resolve_ec.loc = loc;
 			if (this is GenericMethod)
 				type_resolve_ec.ContainerType = Parent.TypeBuilder;
@@ -1311,7 +1306,7 @@ namespace Mono.CSharp {
 			caching_flags &= ~Flags.HasCompliantAttribute_Undetected;
 
 			if (OptAttributes != null) {
-				EmitContext ec = new EmitContext (parent, this, Location,
+				EmitContext ec = new EmitContext (Parent, this, Location,
 								  null, null, ModFlags, false);
 				Attribute cls_attribute = OptAttributes.GetClsCompliantAttribute (ec);
 				if (cls_attribute != null) {
@@ -1324,7 +1319,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (parent == null) {
+			if (Parent == null) {
 				if (CodeGen.Assembly.IsClsCompliant) {
 					caching_flags |= Flags.ClsCompliantAttributeTrue;
 					return true;
@@ -1332,7 +1327,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (parent.GetClsCompliantAttributeValue ()) {
+			if (Parent.GetClsCompliantAttributeValue ()) {
 				caching_flags |= Flags.ClsCompliantAttributeTrue;
 				return true;
 			}
@@ -1414,7 +1409,7 @@ namespace Mono.CSharp {
 						693, Location,
 						"Type parameter `{0}' has same name " +
 						"as type parameter from outer type `{1}'",
-						name, parent.GetInstantiationName ());
+						name, Parent.GetInstantiationName ());
 
 				return false;
 			}
@@ -1427,7 +1422,7 @@ namespace Mono.CSharp {
 			if (type_param_list != null)
 				return type_param_list;
 
-			DeclSpace the_parent = parent;
+			DeclSpace the_parent = Parent;
 			if (this is GenericMethod)
 				the_parent = null;
 
@@ -1539,8 +1534,8 @@ namespace Mono.CSharp {
 				return new TypeParameterExpr (type_param, loc);
 			}
 
-			if (parent != null)
-				return parent.LookupGeneric (name, loc);
+			if (Parent != null)
+				return Parent.LookupGeneric (name, loc);
 
 			return null;
 		}

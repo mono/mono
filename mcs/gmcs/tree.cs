@@ -34,30 +34,37 @@ namespace Mono.CSharp
 		TypeContainer root_types;
 
 		// <summary>
-		//  Keeps track of namespaces defined in the source code
-		// </summary>
-		Hashtable namespaces;
-
-		// <summary>
 		//   Keeps track of all the types definied (classes, structs, ifaces, enums)
 		// </summary>
 		Hashtable decls;
 		
 		public Tree ()
 		{
-			root_types = new TypeContainer ();
+			root_types = new RootTypes ();
 
 			decls = new Hashtable ();
-			namespaces = new Hashtable ();
 		}
 
 		DoubleHash decl_ns_name = new DoubleHash ();
 		
 		public void RecordDecl (string name, DeclSpace ds)
 		{
-			if (decls.Contains (name)){
 				DeclSpace other = (DeclSpace) decls [name];
-				Report.SymbolRelatedToPreviousError (other.Location, other.GetSignatureForError ());
+			if (other != null){
+				PartialContainer other_pc = other as PartialContainer;
+				if ((ds is TypeContainer) && (other_pc != null)) {
+					Report.Error (
+						260, ds.Location, "Missing partial modifier " +
+						"on declaration of type `{0}'; another " +
+						"partial implementation of this type exists",
+						name);
+
+					Report.LocationOfPreviousError (other.Location);
+					return;
+				}
+
+				Report.SymbolRelatedToPreviousError (
+					other.Location, other.GetSignatureForError ());
 
 				Report.Error (
 					101, ds.Location,
@@ -85,26 +92,6 @@ namespace Mono.CSharp
 			return (DeclSpace) res;
 		}
 		
-		public NamespaceEntry RecordNamespace (NamespaceEntry parent, SourceFile file, string name, Location loc)
-		{
-			NamespaceEntry ns = new NamespaceEntry (parent, file, name, loc);
-
-			if (namespaces.Contains (file)){
-				Hashtable ns_ns = (Hashtable) namespaces [file];
-
-				if (ns_ns.Contains (ns.FullName))
-					return (NamespaceEntry) ns_ns [ns.FullName];
-				ns_ns.Add (ns.FullName, ns);
-			} else {
-				Hashtable new_table = new Hashtable ();
-				namespaces [file] = new_table;
-
-				new_table.Add (ns.FullName, ns);
-			}
-
-			return ns;
-		}
-
 		//
 		// FIXME: Why are we using Types?
 		//
@@ -119,11 +106,23 @@ namespace Mono.CSharp
 				return decls;
 			}
 		}
+	}
 
-		public Hashtable Namespaces {
-			get {
-				return namespaces;
+	public class RootTypes : TypeContainer
+	{
+		public RootTypes ()
+			: base (null, null, MemberName.Null, null, Kind.Root,
+				new Location (-1))
+		{ }
+
+		public override void Register ()
+		{
+			throw new InvalidOperationException ();
 			}
+
+		public override PendingImplementation GetPendingImplementations ()
+		{
+			throw new InvalidOperationException ();
 		}
 	}
 }

@@ -622,7 +622,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
-		public override bool Define (TypeContainer parent)
+		public override bool Define ()
 		{
 			//
 			// If there was an error during DefineEnum, return
@@ -689,9 +689,10 @@ namespace Mono.CSharp {
 			return true;
 		}
 			
-		public override void Emit (TypeContainer tc)
+		public override void Emit ()
 		{
-				EmitContext ec = new EmitContext (tc, this, Location, null, null, ModFlags, false);
+			EmitContext ec = new EmitContext (
+				Parent, this, Location, null, null, ModFlags, false);
 
 			if (OptAttributes != null) {
 				OptAttributes.Emit (ec, this);
@@ -701,7 +702,7 @@ namespace Mono.CSharp {
 				em.Emit (ec);
 			}
 
-			base.Emit (tc);
+			base.Emit ();
 		}
 		
 		protected override bool IsIdentifierClsCompliant (DeclSpace ds)

@@ -41,9 +41,9 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Const (Expression constant_type, string name, Expression expr,
-			      int mod_flags, Attributes attrs, Location loc)
-			: base (constant_type, mod_flags, AllowedModifiers,
+		public Const (TypeContainer parent, Expression constant_type, string name,
+			      Expression expr, int mod_flags, Attributes attrs, Location loc)
+			: base (parent, constant_type, mod_flags, AllowedModifiers,
 				new MemberName (name), null, attrs, loc)
 		{
 			Expr = expr;
@@ -71,14 +71,14 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Defines the constant in the @parent
 		/// </summary>
-		public override bool Define (TypeContainer parent)
+		public override bool Define ()
 		{
-			type = parent.ResolveType (Type, false, Location);
+			type = Parent.ResolveType (Type, false, Location);
 
 			if (type == null)
 				return false;
 
-			const_ec = new EmitContext (parent, Location, null, type, ModFlags);
+			const_ec = new EmitContext (Parent, Location, null, type, ModFlags);
 			
 			Type ttype = type;
 			while (ttype.IsArray)
@@ -92,7 +92,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			Type ptype = parent.TypeBuilder.BaseType;
+			Type ptype = Parent.TypeBuilder.BaseType;
 
 			if (ptype != null) {
 				MemberList list = TypeContainer.FindMembers (
@@ -101,12 +101,12 @@ namespace Mono.CSharp {
 				
 				if (list.Count == 0)
 					if ((ModFlags & Modifiers.NEW) != 0)
-						WarningNotHiding (parent);
+						WarningNotHiding (Parent);
 
 			} else if ((ModFlags & Modifiers.NEW) != 0)
-				WarningNotHiding (parent);
+				WarningNotHiding (Parent);
 
-			FieldBuilder = parent.TypeBuilder.DefineField (Name, type, FieldAttr);
+			FieldBuilder = Parent.TypeBuilder.DefineField (Name, type, FieldAttr);
 
 			TypeManager.RegisterConstant (FieldBuilder, this);
 
@@ -291,7 +291,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///  Emits the field value by evaluating the expression
 		/// </summary>
-		public override void Emit (TypeContainer parent)
+		public override void Emit ()
 		{
 			object value;
 			LookupConstantValue (out value);
@@ -300,7 +300,7 @@ namespace Mono.CSharp {
 				OptAttributes.Emit (const_ec, this);
 			}
 
-			base.Emit (parent);
+			base.Emit ();
 		}
 	}
 }

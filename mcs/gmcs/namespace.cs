@@ -590,7 +590,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void VerifyUsing ()
 		{
-			TypeContainer dummy = new TypeContainer ();
+			TypeContainer dummy = new RootTypes ();
 			EmitContext ec = new EmitContext (
 				dummy, Location.Null, null, null, 0, false);
 

@@ -199,7 +199,6 @@ namespace Mono.CSharp {
 			return sb.ToString ();
 		}
 		
-		[Obsolete ("Use SymbolRelatedToPreviousError for better error description")]
 		static public void LocationOfPreviousError (Location loc)
 		{
 			Console.WriteLine (String.Format ("{0}({1}) (Location of symbol related to previous error)", loc.Name, loc.Row));

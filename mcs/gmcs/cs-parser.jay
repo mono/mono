@@ -32,6 +32,7 @@ namespace Mono.CSharp
 	public class CSharpParser {
 		NamespaceEntry  current_namespace;
 		TypeContainer   current_container;
+		TypeContainer	current_class;
 	
 		IIteratorContainer iterator_container;
 
@@ -47,14 +48,6 @@ namespace Mono.CSharp
                 ///   This is flagged by the delegate creation
                 /// </summary>
                 bool       create_toplevel_block;
-
-                /// <summary>
-		/// <summary>
-		///   Current interface is used by the various declaration
-		///   productions in the interface declaration to "add"
-		///   the interfaces as we find them.
-		/// </summary>
-		Interface  current_interface;
 
 		Delegate   current_delegate;
 
@@ -197,6 +190,7 @@ namespace Mono.CSharp
 %token WHERE
 %token WHILE	
 %token ARGLIST
+%token PARTIAL
 
 /* C# keywords which are not really keywords */
 %token GET           "get"
@@ -361,8 +355,9 @@ namespace_declaration
 			Report.Error_T (134, lexer.Location);
 		}
 
-		current_namespace = RootContext.Tree.RecordNamespace (current_namespace, file, (string) $3, lexer.Location);
-	} 
+		current_namespace = new NamespaceEntry (
+			current_namespace, file, (string) $3, lexer.Location);
+	  } 
 	  namespace_body opt_semicolon
 	  { 
 		current_namespace = current_namespace.Parent;
@@ -736,37 +731,52 @@ class_member_declaration
 struct_declaration
 	: opt_attributes
 	  opt_modifiers
+	  opt_partial
 	  STRUCT member_name
 	  { 
-		Struct new_struct;
-		MemberName full_struct_name = MakeName ((MemberName) $4);
+		MemberName name = MakeName ((MemberName) $5);
+		bool partial = (bool) $3;
 
-		new_struct = new Struct (current_namespace, current_container, full_struct_name,
-					 (int) $2, (Attributes) $1, lexer.Location);
-		current_container = new_struct;
-		RootContext.Tree.RecordDecl (full_struct_name.GetName (true), new_struct);
+		if (partial) {
+			ClassPart part = PartialContainer.CreatePart (
+				current_namespace, current_container, name, (int) $2,
+				(Attributes) $1, Kind.Struct, lexer.Location);
+
+			current_container = part.PartialContainer;
+			current_class = part;
+		} else {
+			current_class = new Struct (
+				current_namespace, current_container, name, (int) $2,
+				(Attributes) $1, lexer.Location);
+
+			current_container = current_class;
+			RootContext.Tree.RecordDecl (name.GetName (true), current_class);
+		}
+
 		lexer.ConstraintsParsing = true;
 	  }
 	  opt_class_base
 	  opt_type_parameter_constraints_clauses
 	  {
 		lexer.ConstraintsParsing = false;
+
+		if ($7 != null)
+			current_class.Bases = (ArrayList) $7;
+
+		CheckDef (current_class.SetParameterInfo ((ArrayList) $8), current_class.Name,
+			  current_class.Location);
+
+		current_class.Register ();
 	  }
 	  struct_body
 	  opt_semicolon
 	  {
-		Struct new_struct = (Struct) current_container;
-
-		CheckDef (new_struct.SetParameterInfo ((ArrayList) $7), new_struct.Name, new_struct.Location);
-
-		if ($6 != null)
-			new_struct.Bases = (ArrayList) $6;
+		$$ = current_class;
 
 		current_container = current_container.Parent;
-		CheckDef (current_container.AddStruct (new_struct), new_struct.Name, new_struct.Location);
-		$$ = new_struct;
+		current_class = current_container;
 	  }
-	| opt_attributes opt_modifiers STRUCT error {
+	| opt_attributes opt_modifiers opt_partial STRUCT error {
 		CheckIdentifierToken (yyToken);
 	  }
 	;
@@ -815,7 +825,7 @@ constant_declaration
 			Location l = constant.Location;
 
 			Const c = new Const (
-				(Expression) $4, (string) constant.identifier, 
+				current_class, (Expression) $4, (string) constant.identifier, 
 				(Expression) constant.expression_or_array_initializer, (int) $2, 
 				(Attributes) $1, l);
 
@@ -867,7 +877,7 @@ field_declaration
 		foreach (VariableDeclaration var in (ArrayList) $4){
 			Location l = var.Location;
 
-			Field field = new Field (type, mod, var.identifier, 
+			Field field = new Field (current_class, type, mod, var.identifier, 
 						 var.expression_or_array_initializer, 
 						 (Attributes) $1, l);
 
@@ -997,17 +1007,14 @@ method_header
 
 		GenericMethod generic = null;
 		if (name.TypeArguments != null) {
-			generic = new GenericMethod (current_namespace, current_container,
+			generic = new GenericMethod (current_namespace, current_class,
 						     name, lexer.Location);
 
 			CheckDef (generic.SetParameterInfo ((ArrayList) $9), name.Name, lexer.Location);
+		}
 
-			method = new Method (generic, (Expression) $3, (int) $2, false, name,
-					     (Parameters) $6, (Attributes) $1, lexer.Location);
-		} else
-			method = new Method (current_container, (Expression) $3, (int) $2,
-					     false, name, (Parameters) $6, (Attributes) $1,
-					     lexer.Location);
+		method = new Method (current_class, generic, (Expression) $3, (int) $2, false,
+				     name, (Parameters) $6, (Attributes) $1, lexer.Location);
 
 		current_local_parameters = (Parameters) $6;
 
@@ -1033,19 +1040,16 @@ method_header
 		Method method;
 		GenericMethod generic = null;
 		if (name.TypeArguments != null) {
-			generic = new GenericMethod (current_namespace, current_container,
+			generic = new GenericMethod (current_namespace, current_class,
 						     name, lexer.Location);
 
 
 			CheckDef (generic.SetParameterInfo ((ArrayList) $9), name.Name, lexer.Location);
+		}
 
-			method = new Method (generic, TypeManager.system_void_expr, (int) $2,
-					     false, name, (Parameters) $6, (Attributes) $1,
-					     lexer.Location);
-		} else
-			method = new Method (current_container, TypeManager.system_void_expr,
-					     (int) $2, false, name, (Parameters) $6,
-					     (Attributes) $1, lexer.Location);
+		method = new Method (current_class, generic, TypeManager.system_void_expr,
+				     (int) $2, false, name, (Parameters) $6, (Attributes) $1,
+				     lexer.Location);
 
 		current_local_parameters = (Parameters) $6;
 
@@ -1061,7 +1065,7 @@ method_header
 				Modifiers.Name ((int) $4)));
 		MemberName name = (MemberName) $4;
 
-		Method method = new Method (current_container, TypeManager.system_void_expr,
+		Method method = new Method (current_class, null, TypeManager.system_void_expr,
 					    0, false, name, (Parameters) $6, (Attributes) $1,
 					    lexer.Location);
 
@@ -1300,42 +1304,51 @@ accessor_body
 interface_declaration
 	: opt_attributes
 	  opt_modifiers
+	  opt_partial
 	  INTERFACE member_name
 	  {
-		Interface new_interface;
-		MemberName full_interface_name = MakeName ((MemberName) $4);
+		MemberName name = MakeName ((MemberName) $5);
+		bool partial = (bool) $3;
 
-		new_interface = new Interface (current_namespace, current_container, full_interface_name,
-					       (int) $2, (Attributes) $1, lexer.Location);
-		if (current_interface != null) {
-			Location l = lexer.Location;
-			Report.Error (-2, l, "Internal compiler error: interface inside interface");
+		if (partial) {
+			ClassPart part = PartialContainer.CreatePart (
+				current_namespace, current_container, name, (int) $2,
+				(Attributes) $1, Kind.Interface, lexer.Location);
+
+			current_container = part.PartialContainer;
+			current_class = part;
+		} else {
+			current_class = new Interface (
+				current_namespace, current_container, name, (int) $2,
+				(Attributes) $1, lexer.Location);
+
+			current_container = current_class;
+			RootContext.Tree.RecordDecl (name.GetName (true), current_class);
 		}
-		current_interface = new_interface;
-		current_container = new_interface;
-		RootContext.Tree.RecordDecl (
-			full_interface_name.GetName (true), new_interface);
+
 		lexer.ConstraintsParsing = true;
 	  }
 	  opt_class_base
 	  opt_type_parameter_constraints_clauses
 	  {
 		lexer.ConstraintsParsing = false;
+
+		if ($7 != null)
+			current_class.Bases = (ArrayList) $7;
+
+		CheckDef (current_class.SetParameterInfo ((ArrayList) $8),
+			  current_class.Name, current_class.Location);
+
+		current_class.Register ();
 	  }
 	  interface_body opt_semicolon
 	  { 
-		Interface new_interface = (Interface) current_interface;
+		$$ = current_class;
 
-		CheckDef (new_interface.SetParameterInfo ((ArrayList) $7), new_interface.Name, new_interface.Location);
-		if ($6 != null)
-			new_interface.Bases = (ArrayList) $6;
-
-		current_interface = null;
 		current_container = current_container.Parent;
-		CheckDef (current_container.AddInterface (new_interface), 
-			  new_interface.Name, new_interface.Location);
+		current_class = current_container;
 	  }
-	| opt_attributes opt_modifiers INTERFACE error {
+	| opt_attributes opt_modifiers opt_partial INTERFACE error {
 		CheckIdentifierToken (yyToken);
 	  }
 	;
@@ -1361,26 +1374,26 @@ interface_member_declaration
 	  { 
 		Method m = (Method) $1;
 
-		CheckDef (current_interface.AddMethod (m), m.Name, m.Location);
+		CheckDef (current_container.AddMethod (m), m.Name, m.Location);
 	  }
 	| interface_property_declaration	
 	  { 
 		Property p = (Property) $1;
 
-		CheckDef (current_interface.AddProperty (p), p.Name, p.Location);
+		CheckDef (current_container.AddProperty (p), p.Name, p.Location);
           }
 	| interface_event_declaration 
           { 
 		if ($1 != null){
 			Event e = (Event) $1;
-			CheckDef (current_interface.AddEvent (e), e.Name, lexer.Location);
+			CheckDef (current_container.AddEvent (e), e.Name, lexer.Location);
 		}
 	  }
 	| interface_indexer_declaration
 	  { 
 		Indexer i = (Indexer) $1;
 
-		current_interface.AddIndexer (i);
+		current_container.AddIndexer (i);
 	  }
 	;
 
@@ -1412,17 +1425,14 @@ interface_method_declaration
 
 		GenericMethod generic = null;
 		if (name.TypeArguments != null) {
-			generic = new GenericMethod (current_namespace, current_container,
+			generic = new GenericMethod (current_namespace, current_class,
 						     name, lexer.Location);
 
 			CheckDef (generic.SetParameterInfo ((ArrayList) $9), name.Name, lexer.Location);
+		}
 
-			$$ = new Method (generic, (Expression) $3, (int) $2, true, name,
-					 (Parameters) $6, (Attributes) $1, lexer.Location);
-		} else
-			$$ = new Method (current_container, (Expression) $3, (int) $2, true,
-					 name, (Parameters) $6, (Attributes) $1,
-					 lexer.Location);
+		$$ = new Method (current_class, generic, (Expression) $3, (int) $2, true, name,
+				 (Parameters) $6, (Attributes) $1, lexer.Location);
 	  }
 	| opt_attributes opt_new VOID namespace_or_type_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
@@ -1442,18 +1452,14 @@ interface_method_declaration
 
 		GenericMethod generic = null;
 		if (name.TypeArguments != null) {
-			generic = new GenericMethod (current_namespace, current_container,
+			generic = new GenericMethod (current_namespace, current_class,
 						     name, lexer.Location);
 
 			CheckDef (generic.SetParameterInfo ((ArrayList) $9), name.Name, lexer.Location);
+		}
 
-			$$ = new Method (generic, TypeManager.system_void_expr, (int) $2,
-					 true, name, (Parameters) $6, (Attributes) $1,
-					 lexer.Location);
-		} else
-			$$ = new Method (current_container, TypeManager.system_void_expr,
-					 (int) $2, true, name, (Parameters) $6,
-					 (Attributes) $1, lexer.Location);
+		$$ = new Method (current_class, generic, TypeManager.system_void_expr, (int) $2,
+				 true, name, (Parameters) $6, (Attributes) $1, lexer.Location);
 	  }
 	;
 
@@ -1469,7 +1475,7 @@ interface_property_declaration
 	  {
                 InterfaceAccessorInfo pinfo = (InterfaceAccessorInfo) $7;
 
-		$$ = new Property (current_container, (Expression) $3, (int) $2, true,
+		$$ = new Property (current_class, (Expression) $3, (int) $2, true,
 				   new MemberName ((string) $4), (Attributes) $1,
 				   pinfo.Get, pinfo.Set, lexer.Location);
 	  }
@@ -1493,7 +1499,7 @@ interface_accessors
 interface_event_declaration
 	: opt_attributes opt_new EVENT type IDENTIFIER SEMICOLON
 	  {
-		$$ = new EventField (current_container, (Expression) $4, (int) $2, true,
+		$$ = new EventField (current_class, (Expression) $4, (int) $2, true,
 				     new MemberName ((string) $5), null,
 				     (Attributes) $1, lexer.Location);
 	  }
@@ -1522,7 +1528,7 @@ interface_indexer_declaration
 	  {
 		InterfaceAccessorInfo info = (InterfaceAccessorInfo) $10;
 
-		$$ = new Indexer (current_container, (Expression) $3, (int) $2, true,
+		$$ = new Indexer (current_class, (Expression) $3, (int) $2, true,
 				  MemberName.Null, (Parameters) $6, (Attributes) $1,
 				  info.Get, info.Set, lexer.Location);
 	  }
@@ -1537,8 +1543,10 @@ operator_declaration
 	  {
 		OperatorDeclaration decl = (OperatorDeclaration) $3;
 		
-		Operator op = new Operator (decl.optype, decl.ret_type, (int) $2, decl.arg1type, decl.arg1name,
-					    decl.arg2type, decl.arg2name, (Block) $5, (Attributes) $1, decl.location);
+		Operator op = new Operator (
+			current_class, decl.optype, decl.ret_type, (int) $2, decl.arg1type,
+			decl.arg1name, decl.arg2type, decl.arg2name, (Block) $5,
+			(Attributes) $1, decl.location);
 
 		if (SimpleIteratorContainer.Simple.Yields)
 			op.SetYields ();
@@ -1718,7 +1726,7 @@ constructor_declarator
 	  opt_constructor_initializer
 	  {
 		Location l = (Location) oob_stack.Pop ();
-		$$ = new Constructor (current_container, (string) $1, 0, (Parameters) $3,
+		$$ = new Constructor (current_class, (string) $1, 0, (Parameters) $3,
 				      (ConstructorInitializer) $6, l);
 	  }
 	;
@@ -1779,7 +1787,7 @@ destructor_declaration
                         }
                         
 			Method d = new Destructor (
-				current_container, TypeManager.system_void_expr, m, "Finalize", 
+				current_class, TypeManager.system_void_expr, m, "Finalize", 
 				new Parameters (null, null, l), (Attributes) $1, l);
 		  
 			d.Block = (Block) $7;
@@ -1805,7 +1813,7 @@ event_declaration
 
 			MemberName name = new MemberName (var.identifier);
 
-			Event e = new EventField (current_container, (Expression) $4, (int) $2,
+			Event e = new EventField (current_class, (Expression) $4, (int) $2,
 						  false, name,
 						  var.expression_or_array_initializer,
 						  (Attributes) $1, lexer.Location);
@@ -1841,7 +1849,7 @@ event_declaration
 		if (name.TypeArguments != null)
 			syntax_error (lexer.Location, "an event can't have type arguments");
 
-		Event e = new EventProperty (current_container, (Expression) $4, (int) $2,
+		Event e = new EventProperty (current_class, (Expression) $4, (int) $2,
 					     false, name, null, (Attributes) $1,
 					     (Accessor) pair.First, (Accessor) pair.Second,
 					     loc);
@@ -1949,7 +1957,7 @@ indexer_declaration
 		else
 			name = MemberName.Null;
 
-		indexer = new Indexer (current_container, decl.type, (int) $2, false,
+		indexer = new Indexer (current_class, decl.type, (int) $2, false,
 				       name, decl.param_list, (Attributes) $1,
 				       get_block, set_block, loc);
 
@@ -3105,16 +3113,27 @@ boolean_expression
 class_declaration
 	: opt_attributes
 	  opt_modifiers
+	  opt_partial
 	  CLASS member_name
 	  {
-		Class new_class;
+		MemberName name = MakeName ((MemberName) $5);
+		bool partial = (bool) $3;
 
-		MemberName name = MakeName ((MemberName) $4);
+		if (partial) {
+			ClassPart part = PartialContainer.CreatePart (
+				current_namespace, current_container, name, (int) $2,
+				(Attributes) $1, Kind.Class, lexer.Location);
 
-		new_class = new Class (current_namespace, current_container, name, (int) $2, 
+			current_container = part.PartialContainer;
+			current_class = part;
+		} else {
+			current_class = new Class (
+				current_namespace, current_container, name, (int) $2,
 				       (Attributes) $1, lexer.Location);
-		current_container = new_class;
-		RootContext.Tree.RecordDecl (name.GetName (true), new_class);
+
+			current_container = current_class;
+			RootContext.Tree.RecordDecl (name.GetName (true), current_class);
+		}
 
 		lexer.ConstraintsParsing = true;
 	  }
@@ -3122,26 +3141,37 @@ class_declaration
 	  opt_type_parameter_constraints_clauses
 	  {
 		lexer.ConstraintsParsing = false;
+
+		if ($7 != null) {
+			if (current_class.Name == "System.Object") {
+				Report.Error (537, current_class.Location,
+					      "The class System.Object cannot have a base " +
+					      "class or implement an interface.");
+			}
+			current_class.Bases = (ArrayList) $7;
+		}
+
+		CheckDef (current_class.SetParameterInfo ((ArrayList) $8),
+			  current_class.Name, current_class.Location);
+
+		current_class.Register ();
 	  }
 	  class_body 
 	  opt_semicolon 
 	  {
-		Class new_class = (Class) current_container;
+		$$ = current_class;
 
-		CheckDef (new_class.SetParameterInfo ((ArrayList) $7), new_class.Name, new_class.Location);
-		if ($6 != null) {
-			if (new_class.Name == "System.Object") {
-				Report.Error (537, new_class.Location, "The class System.Object cannot have a base class or implement an interface.");
-			}
-
-			new_class.Bases = (ArrayList) $6;
-		}
 		current_container = current_container.Parent;
-		CheckDef (current_container.AddClass (new_class), new_class.Name, new_class.Location);
-
-		$$ = new_class;
+		current_class = current_container;
 	  }
 	;	
+
+opt_partial
+	: /* empty */
+	  { $$ = (bool) false; }
+	| PARTIAL
+	  { $$ = (bool) true; }
+	;
 
 opt_modifiers
 	: /* empty */		{ $$ = (int) 0; }
@@ -4367,40 +4397,7 @@ MakeName (MemberName class_name)
 void 
 CheckDef (DeclSpace.AdditionResult result, string name, Location l)
 {
-	if (result == DeclSpace.AdditionResult.Success)
-		return;
-
-	switch (result){
-	case DeclSpace.AdditionResult.NameExists:
-		Report.Error (102, l, "The container `" + current_container.Name + 
-				 "' already contains a definition for `"+
-				 name + "'");
-		break;
-
-
-		//
-		// This is handled only for static Constructors, because
-		// in reality we handle these by the semantic analysis later
-		//
- 	case DeclSpace.AdditionResult.MethodExists:
-  		Report.Error (
-			111, l, "Class `"+current_container.Name+
-  			"' already defines a member called '" + 
-  			name + "' with the same parameter types (more than one default constructor)");
-  		break;
-
-	case DeclSpace.AdditionResult.EnclosingClash:
-		Report.Error (542, l, "Member names cannot be the same as their enclosing type");
-		break;
-		
-	case DeclSpace.AdditionResult.NotAConstructor:
-		Report.Error (1520, l, "Class, struct, or interface method must have a return type");
-		break;
-
-	case DeclSpace.AdditionResult.Error:
-		// Error has already been reported.
-		break;
-	}
+	current_container.CheckDef (result, name, l);
 }
 
 void 

@@ -46,7 +46,6 @@ namespace Mono.CSharp {
 		// override).
 		//
 		static ArrayList type_container_resolve_order;
-		static ArrayList interface_resolve_order;
 		static ArrayList attribute_types;
 
 		//
@@ -83,7 +82,6 @@ namespace Mono.CSharp {
 		static RootContext ()
 		{
 			tree = new Tree ();
-			interface_resolve_order = new ArrayList ();
 			type_container_resolve_order = new ArrayList ();
 		}
 
@@ -100,11 +98,6 @@ namespace Mono.CSharp {
 		}
 
 		static public string MainClass;
-		
-		public static void RegisterOrder (Interface iface)
-		{
-			interface_resolve_order.Add (iface);
-		}
 		
 		public static void RegisterOrder (TypeContainer tc)
 		{
@@ -427,9 +420,6 @@ namespace Mono.CSharp {
 				foreach (TypeContainer tc in attribute_types)
 					tc.CloseType ();
 			
-			foreach (Interface iface in interface_resolve_order)
-				iface.CloseType ();
-
 			//
 			// We do this in two passes, first we close the structs,
 			// then the classes, because it seems the code needs it this
@@ -437,13 +427,13 @@ namespace Mono.CSharp {
 			// make sure that we define the structs in order as well.
 			//
 			foreach (TypeContainer tc in type_container_resolve_order){
-				if (tc is Struct && tc.Parent == tree.Types){
+				if (tc.Kind == Kind.Struct && tc.Parent == tree.Types){
 					tc.CloseType ();
 				}
 			}
 
 			foreach (TypeContainer tc in type_container_resolve_order){
-				if (!(tc is Struct && tc.Parent == tree.Types))
+				if (!(tc.Kind == Kind.Struct && tc.Parent == tree.Types))
 					tc.CloseType ();					
 			}
 			
@@ -461,7 +451,6 @@ namespace Mono.CSharp {
 			}
 			
 			attribute_types = null;
-			interface_resolve_order = null;
 			type_container_resolve_order = null;
 			helper_classes = null;
 			//tree = null;
@@ -586,20 +575,6 @@ namespace Mono.CSharp {
 			return LookupType (tc, name, true, loc);
 		}
 
-		static public bool IsNamespace (string name)
-		{
-			Namespace ns;
-
-			if (tree.Namespaces != null){
-				ns = (Namespace) tree.Namespaces [name];
-
-				if (ns != null)
-					return true;
-			}
-
-			return false;
-		}
-
 		static void Report1530 (Location loc)
 		{
 			Report.Error (1530, loc, "Keyword new not allowed for namespace elements");
@@ -610,7 +585,7 @@ namespace Mono.CSharp {
 			DeclSpace ds = (DeclSpace) root.GetDefinition (name);
 
 			ds.DefineMembers (root);
-			ds.Define (root);
+			ds.Define ();
 		}
 		
 		static public void BootCorlib_PopulateCoreTypes ()
@@ -635,15 +610,6 @@ namespace Mono.CSharp {
 			if (attribute_types != null)
 				foreach (TypeContainer tc in attribute_types)
 					tc.DefineMembers (root);
-			
-			if (interface_resolve_order != null){
-				foreach (Interface iface in interface_resolve_order)
-					if ((iface.ModFlags & Modifiers.NEW) == 0)
-						iface.DefineMembers (root);
-					else
-						Report1530 (iface.Location);
-			}
-
 
 			if (type_container_resolve_order != null){
 				if (RootContext.StdLib){
@@ -710,14 +676,7 @@ namespace Mono.CSharp {
 
 			if (attribute_types != null)
 				foreach (TypeContainer tc in attribute_types)
-					tc.Define (root);
-			
-			if (interface_resolve_order != null){
-				foreach (Interface iface in interface_resolve_order)
-					if ((iface.ModFlags & Modifiers.NEW) == 0)
-						iface.Define (root);
-			}
-
+					tc.Define ();
 
 			if (type_container_resolve_order != null){
 				foreach (TypeContainer tc in type_container_resolve_order) {
@@ -730,7 +689,7 @@ namespace Mono.CSharp {
 						continue;
 
 					if ((tc.ModFlags & Modifiers.NEW) == 0)
-						tc.Define (root);
+						tc.Define ();
 				}
 			}
 
@@ -738,14 +697,14 @@ namespace Mono.CSharp {
 			if (delegates != null){
 				foreach (Delegate d in delegates)
 					if ((d.ModFlags & Modifiers.NEW) == 0)
-						d.Define (root);
+						d.Define ();
 			}
 
 			ArrayList enums = root.Enums;
 			if (enums != null){
 				foreach (Enum en in enums)
 					if ((en.ModFlags & Modifiers.NEW) == 0)
-						en.Define (root);
+						en.Define ();
 			}
 		}
 
@@ -753,32 +712,27 @@ namespace Mono.CSharp {
 		{
 			if (attribute_types != null)
 				foreach (TypeContainer tc in attribute_types)
-					tc.Emit ();
+					tc.EmitType ();
 
 			CodeGen.Assembly.Emit (Tree.Types);
 			CodeGen.Module.Emit (Tree.Types);
                         
 			if (Tree.Types.Enums != null) {
 				foreach (Enum e in Tree.Types.Enums)
-					e.Emit (Tree.Types);
+					e.Emit ();
 			}
 
-                        if (interface_resolve_order != null){
-				foreach (Interface iface in interface_resolve_order)
-					iface.Emit (Tree.Types);
-			}                        
-			
 			if (type_container_resolve_order != null) {
 				foreach (TypeContainer tc in type_container_resolve_order)
 					tc.EmitConstants ();
 				
 				foreach (TypeContainer tc in type_container_resolve_order)
-					tc.Emit ();
+					tc.EmitType ();
 			}
 			
 			if (Tree.Types.Delegates != null) {
 				foreach (Delegate d in Tree.Types.Delegates)
-					d.Emit (Tree.Types);
+					d.Emit ();
 			}			
 			//
 			// Run any hooks after all the types have been defined.
