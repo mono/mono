@@ -445,6 +445,8 @@ namespace System.Windows.Forms
 
 	#endregion
 	
+	
+	
 	#region TRACKMOUSEEVENTS
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct TRACKMOUSEEVENT
@@ -484,7 +486,7 @@ namespace System.Windows.Forms
 	} 
 	#endregion
 
-	#region LVITEM
+	
 	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Auto)]
 	internal struct LVITEM
 	{
@@ -493,13 +495,13 @@ namespace System.Windows.Forms
 		internal	int iSubItem;
 		internal	int state;
 		internal	int stateMask;
-		internal	IntPtr pszText;
+		internal	string pszText;
 		internal	int cchTextMax;
 		internal	int iImage;
 		internal	int lParam;
 		internal	int iIndent;
 	}
-	#endregion
+	
 
 	#region HDITEM
 	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Auto)]
@@ -899,6 +901,55 @@ namespace System.Windows.Forms
 		internal int  				nSizeMax;         
 		                                 
 		} 
+		
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
+	public struct LVCOLUMN {
+		
+		internal	int mask;
+		internal	int fmt; 
+		internal	int cx;
+		internal	string pszText;
+		internal	int cchTextMax; 
+		internal	int iSubItem;
+		internal	int iImage;
+    	internal	int iOrder;
+		
+	}
+	
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
+	public struct NMLISTVIEW {
+		
+		internal	NMHDR hdr;
+		internal	int iItem; 
+		internal	int iSubItem;
+		internal 	uint uNewState;
+		internal 	uint uOldState;
+		internal 	uint uChanged;
+		internal	POINT ptAction;
+	    internal 	IntPtr lItemlParam;	
+	}	
+	
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
+	public struct NMITEMACTIVATE {	
+	
+    	internal	NMHDR   hdr;
+    	internal	int     iItem;
+    	internal	int     iSubItem;
+    	internal	uint    uNewState;
+    	internal 	uint    uOldState;
+    	internal	uint    uChanged;
+    	internal	POINT   ptAction;
+    	internal	IntPtr  lParam;
+    	internal	uint    uKeyFlags;
+	} 
+	
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
+	public struct LVDISPINFO {	
+    	internal	NMHDR hdr;
+    	internal	LVITEM item;
+	} 
+
+	
 
 	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
 	struct OFNOTIFY { 

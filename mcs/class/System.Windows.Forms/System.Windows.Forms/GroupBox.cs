@@ -129,7 +129,9 @@ namespace System.Windows.Forms {
 				SizeF sz = paintOn.MeasureString( Text, Font);
 				sz.Width += 2.0F;
 				paintOn.FillRectangle( br, new RectangleF(new PointF((float)bounds.Left + 3.0F, 0.0F), sz));
-				paintOn.DrawString(Text, Font, SystemBrushes.ControlText, (float)bounds.Left + 5, 0);
+				
+				//JORDI: BUG BUG
+				//paintOn.DrawString(Text, Font, SystemBrushes.ControlText, (float)bounds.Left + 5, 0);
 				e.Graphics.DrawImage(bmp, 0, 0, bmp.Width, bmp.Height);
 				br.Dispose();
 				bmp.Dispose();

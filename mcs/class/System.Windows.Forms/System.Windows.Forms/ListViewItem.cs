@@ -4,6 +4,7 @@
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //   Dennis Hayes (dennish@Raytek.com)
+//	 Implemented by Jordi Mas i Hernàndez (jmas@softcatala.org)
 //
 // (C) 2002/3 Ximian, Inc
 //
@@ -11,39 +12,64 @@ using System.Runtime.Serialization;
 using System.Drawing;
 using System.Collections;
 
-namespace System.Windows.Forms {
-
+ 
+namespace System.Windows.Forms 
+{
 	// <summary>
 	// </summary>
-
 	[Serializable]
-	public class ListViewItem :  ICloneable, ISerializable {
+	public class ListViewItem :  ICloneable, ISerializable 
+	{		
+		private ListView container = null;
+		private string  m_sText;
+		private	ListViewSubItemCollection	m_colSubItem = null;
+		private int index;
+		
+		/* Properties */
+		private	Color	m_BackColor = SystemColors.Window;
+		private	System.Drawing.Rectangle m_Bounds;
 
 		//
 		//  --- Constructor
-		//
-		[MonoTODO]
-		public ListViewItem()
+		//			
+		
+		internal void CommonConstructor()
 		{
-			throw new NotImplementedException ();
+			m_colSubItem = new 	ListViewSubItemCollection(this);
 		}
-
-		[MonoTODO]
+		
+		public ListViewItem()		
+		{
+			Console.WriteLine("ListView.ListView");							
+			CommonConstructor();			
+		}
+		
 		public ListViewItem(string str)
 		{
-			throw new NotImplementedException ();
+			Console.WriteLine("ListViewItem.ListViewItem str");					
+			CommonConstructor();			
+			m_sText = str;
 		}
-
-		[MonoTODO]
-		public ListViewItem(string[] strings)
+		
+		public ListViewItem(string[] strings)	// An array of strings that represent the subitems of the new item.
 		{
-			throw new NotImplementedException ();
+			Console.WriteLine("ListView.ListView strings");				
+			CommonConstructor();
+			
+			if (strings.Length>0)			
+				m_sText = strings[0];
+				
+			if (strings.Length>1)			
+			{
+				for (int i=1; i<strings.Length; i++)
+					m_colSubItem.Add(strings[i]);		
+			}
 		}
 
 		[MonoTODO]
 		public ListViewItem(ListViewItem.ListViewSubItem[] subItems)
 		{
-			throw new NotImplementedException ();
+			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
@@ -65,7 +91,7 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
-	       	public ListViewItem (SerializationInfo info, StreamingContext context)
+	    public ListViewItem (SerializationInfo info, StreamingContext context)
 		{
 			throw new NotImplementedException ();
 		}
@@ -82,17 +108,20 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public Color BackColor {
 			get {
-				throw new NotImplementedException ();
+				return m_BackColor;
 			}
 			set {
-				//FIXME:
+				m_BackColor = value;
 			}
 		}
 
 		[MonoTODO]
-		public Rectangle Bounds {
-			get {
-				throw new NotImplementedException ();
+		public Rectangle Bounds 
+		{
+			get 
+			{
+				// TODO: Windows Win32 api call to calculate the bound
+				return m_Bounds;
 			}
 		}
 
@@ -150,17 +179,14 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-		[MonoTODO]
+		
 		public int Index {
-			get {
-				throw new NotImplementedException ();
-			}
+			get {return index;}
 		}
-		[MonoTODO]
+		
+						
 		public ListView ListView {
-			get {
-				throw new NotImplementedException ();
-			}
+			get {return container;}						
 		}
 		[MonoTODO]
 		public bool Selected {
@@ -180,10 +206,12 @@ namespace System.Windows.Forms {
 				//FIXME:
 			}
 		}
-		[MonoTODO]
-		public ListViewSubItemCollection SubItems {
-			get {
-				throw new NotImplementedException ();
+		
+		public ListViewSubItemCollection SubItems 
+		{
+			get 
+			{
+				return m_colSubItem;
 			}
 		}
 		[MonoTODO]
@@ -196,13 +224,11 @@ namespace System.Windows.Forms {
 			}
 		}
 		[MonoTODO]
-		public string Text {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+		public string Text 
+		{
+			get { return m_sText;}
+			set { m_sText = value;}		
+			
 		}
 		[MonoTODO]
 		public bool UseItemStyleForSubItems {
@@ -213,7 +239,18 @@ namespace System.Windows.Forms {
 				//FIXME:
 			}
 		}
-
+		
+		//
+		//  --- Private Methods
+		//		
+		public ListView Container {			
+			set{container=value;}
+		}				
+		
+		public int CtrlIndex{					
+			set{index=value;}
+		}		
+		
 		//
 		//  --- Public Methods
 		//
@@ -276,75 +313,90 @@ namespace System.Windows.Forms {
 		// Author:
 		//   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 		//   stub ammended by Jaak Simm (jaaksimm@firm.ee)
+		//	 Implemented by Jordi Mas i Hernàndez (jmas@softcatala.org)
 		//
-		// (C) 2002 Ximian, Inc
+		// (C) 2002/3 Ximian, Inc
 		//
 		// <summary>
-		// </summary>
-		[MonoTODO]
+		// </summary>		
 		[Serializable]
-		public class ListViewSubItemCollection :  IList, ICollection, IEnumerable {
-			/// Constructors
-			[MonoTODO]
+		public class ListViewSubItemCollection :  IList, ICollection, IEnumerable 
+		{
+			
+			private ArrayList m_collection = new ArrayList();
+			private ListViewItem m_owner = null;
+			
+			
+			//
+			//  --- Constructor
+			//		
 			public ListViewSubItemCollection(ListViewItem owner) 
 			{
-				//FIXME:
-			}
+				m_owner = owner;
+			}			
 			
-			
-			/// Properties
-			[MonoTODO]
+			//
+			//  --- Public Properties
+			//			
 			public int Count {
-				get { throw new NotImplementedException (); }
-			}
+				get { return m_collection.Count; }
+			}			
 			
-			[MonoTODO]
-			public bool IsReadOnly {
-				get { throw new NotImplementedException (); }
-			}
-		
-			[MonoTODO]
-			public ListViewSubItem this[int index] {
-				get { throw new NotImplementedException (); }
-				set {
-					//FIXME:
-				}
-			}
+			public bool IsReadOnly 
+			{
+				get { return m_collection.IsReadOnly; }
+			}		
 			
+			public ListViewSubItem this[int index] 
+			{
+				get { return (ListViewSubItem) m_collection[index];}
+				set { m_collection[index] = value;}				
+			}	
 			
 			/// --- ICollection properties ---
-			bool IList.IsFixedSize {
-				[MonoTODO] get { throw new NotImplementedException (); }
-			}
-			
-			object IList.this[int index] {
-
-				[MonoTODO] get { throw new NotImplementedException (); }
-				[MonoTODO] set { throw new NotImplementedException (); }
-			}
-	
-			object ICollection.SyncRoot {
-
-				[MonoTODO] get { throw new NotImplementedException (); }
-			}
-	
-			bool ICollection.IsSynchronized {
-
-				[MonoTODO] get { throw new NotImplementedException (); }
-			}
-			
-			
-			/// Methods
-			[MonoTODO]
-			public ListViewSubItem Add(ListViewItem.ListViewSubItem item) 
+			bool IList.IsFixedSize 
 			{
-				throw new NotImplementedException ();
+				get { return m_collection.IsFixedSize; }
 			}
+			
+			object IList.this[int index] 
+			{
+				get { return m_collection[index]; }
+				set { m_collection[index] = value; }
+			}
+	
+			object ICollection.SyncRoot 
+			{
+				get { return m_collection.SyncRoot; }
+			}
+	
+			bool ICollection.IsSynchronized 
+			{
+				get { return m_collection.IsSynchronized; }
+			}
+			
+			//
+			//  --- Public Methods
+			//			
+			public ListViewSubItem Add(ListViewItem.ListViewSubItem item) 
+			{			
+				
+				Console.WriteLine("ListViewSubItem.Add " +  item.Text);											
+				int nIdx = m_collection.Add(item);				
+								
+				return (ListViewSubItem)m_collection[nIdx]; // TODO: Check this in .Net?
+			} 
 			
 			[MonoTODO]
 			public ListViewSubItem Add(string text) 
 			{
-				throw new NotImplementedException ();
+				
+				Console.WriteLine("ListViewSubItem.Add " +  text);											
+				ListViewItem.ListViewSubItem item = new ListViewSubItem(m_owner, text);	 //aki
+				
+						
+				int nIdx = m_collection.Add(item); 
+				return (ListViewSubItem)m_collection[nIdx]; // TODO: Check this in .Net?
 			}
 			
 			[MonoTODO]
@@ -432,7 +484,7 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			public int IndexOf(ListViewItem.ListViewSubItem subItem) 
 			{
-				throw new NotImplementedException ();
+				throw new NotImplementedException();
 			}
 			
 			[MonoTODO]
@@ -464,24 +516,41 @@ namespace System.Windows.Forms {
 	// <summary>
 	// </summary>
 
-	public class ListViewSubItem {
+	public class ListViewSubItem  //aka
+	{
+		
+		private string  m_sText;
+		public ListViewItem m_owner = null;
+		//private int index;
+		/*
+		public int CtrlIndex
+		{					
+			get{retrun index}
+			set{index=value;}
+		}*/
+		
+		public ListViewItem ListViewItem
+		{
+			get{return m_owner;}
+		}
 	
 		//
 		//  --- Constructor
 		//
-		[MonoTODO]
 		public ListViewSubItem()
 		{
+			
 		}
-		[MonoTODO]
+		
 		public ListViewSubItem(ListViewItem item, string str)
 		{
-			//FIXME:
+			m_owner = item;
+			m_sText = str;
 		}
-		[MonoTODO]
+		
 		public ListViewSubItem(ListViewItem item, string str, Color color1, Color color2, Font font)
 		{
-			//FIXME:
+			throw new NotImplementedException();
 		}
 	
 		//
@@ -517,7 +586,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public string Text {
 			get {
-				throw new NotImplementedException ();
+				return m_sText;
 			}
 			set {
 				//FIXME:

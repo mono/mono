@@ -24,6 +24,9 @@ namespace System.Windows.Forms {
 		HorizontalAlignment textAlign;
 		int width;
 		int index;
+		private ListView container = null;
+		int serial = 0;
+		
 		/// --- constructor ---
 		[MonoTODO]
 		public ColumnHeader() : base () 
@@ -34,21 +37,38 @@ namespace System.Windows.Forms {
 			index = -1;//default to not in list
 		}
 		
+		//
+		//  --- Private Methods
+		//		
+		public ListView Container 
+		{			
+			set{container=value;}
+		}		
+		
+		public int CtrlIndex{			
+			set{index=value;}
+		}		
+		
 		// --- Properties ---
-		[MonoTODO]
+		
 		public int Index {
 			get { return index; }
-		}
+		}		
 		
-		[MonoTODO]
-		public ListView ListView {
-			//return parent control.
-			get { throw new NotImplementedException (); }
+		public ListView ListView 	//return parent control.
+		{	
+			get { return container; }			
 		}
 		
 		public string Text {
 			get { return text; }
 			set { text = value; }
+		}
+		
+		// Not in the .Net spec
+		public int Serial {
+			get { return serial; }
+			set { serial = value; }
 		}
 		
 		public HorizontalAlignment TextAlign {
