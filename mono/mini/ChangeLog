@@ -1,3 +1,24 @@
+2004-07-06  Ben Maurer  <bmaurer@ximian.com>
+	* liveness.c: If liveness is recomputated we need to reset the information
+	for each variable. This way, if the liveness range has been narrowed
+	by optimizations that happened after the last computation, we can return
+	a smaller range.
+	
+	For example, if you have
+	
+	{
+		int i = 0;
+		
+		// Tons of code that does not affect i
+		
+		i = foo ();
+		...
+	}
+	
+	i = 0 is dead code and will be removed by SSA. However, when
+	linear scan gets to the code, i will still appear to be live
+	throughout the entire block. This prevents good register allocation.
+
 2004-07-06  Martin Baulig  <martin@ximian.com>
 
 	* debug-mini.c (mono_debug_init_method): Allow
