@@ -1,4 +1,9 @@
 2002-8-1  DennisHayes <dennish@raytek.com>
+* TODOAttribute.cs
+* ComVisible.cs
+* added so the namespace can compile, remove when replaced with mono equivalents.
+
+2002-8-1  DennisHayes <dennish@raytek.com>
 * System.Windows.Forms.csproj
 * System.Windows.Forms.csproj.user
 * System.Windows.Forms.sln
