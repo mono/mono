@@ -1,5 +1,8 @@
 2004-09-27  Zoltan Varga  <vargaz@freemail.hu>
 
+	* CustomAttributeData.cs CustomAttributeTypedArgument.cs 
+	CustomAttributeNamedArgument.cs: New files.
+
 	* MethodBody.cs LocalVariableInfo.cs ExceptionHandlingClause.cs
 	ExceptionHandlingClauseFlags.cs: New files.
 
