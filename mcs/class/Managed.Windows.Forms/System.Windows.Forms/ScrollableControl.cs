@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 // $Modtime: $
 // $Log: ScrollableControl.cs,v $
+// Revision 1.3  2004/08/12 15:25:49  jordi
+// calls ctrlbase instead of exeception
+//
 // Revision 1.2  2004/08/11 22:20:59  pbartok
 // - Signature fixes
 //
@@ -285,6 +288,8 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnMouseWheel(MouseEventArgs e) {
+base.OnMouseWheel(e);
+return;
 			throw new NotImplementedException();
 		}
 
