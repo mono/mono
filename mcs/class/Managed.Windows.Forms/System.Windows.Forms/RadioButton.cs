@@ -23,6 +23,9 @@
 //	Peter Bartok	pbartok@novell.com
 //
 // $Log: RadioButton.cs,v $
+// Revision 1.3  2004/09/02 20:26:48  pbartok
+// - Added missing RadioButton.RadioButtonAccessibleObject class
+//
 // Revision 1.2  2004/09/01 20:44:11  pbartok
 // - Fixed state
 //
@@ -48,6 +51,62 @@ namespace System.Windows.Forms {
 		private bool			is_tabstop;
 		private int 			radiobutton_size = 12;		// Might not be correct
 		#endregion	// Local Variables
+
+		#region RadioButtonAccessibleObject Subclass
+		public class RadioButtonAccessibleObject : ControlAccessibleObject {
+			#region RadioButtonAccessibleObject Local Variables
+			private RadioButton	owner;
+			#endregion	// RadioButtonAccessibleObject Local Variables
+
+			#region RadioButtonAccessibleObject Constructors
+			public RadioButtonAccessibleObject(Control owner) : base(owner) {
+				this.owner = (RadioButton)owner;
+			}
+			#endregion	// RadioButtonAccessibleObject Constructors
+
+			#region RadioButtonAccessibleObject Properties
+			public override string DefaultAction {
+				get {
+					return "Select";
+				}
+			}
+
+			public override AccessibleRole Role {
+				get {
+					return AccessibleRole.RadioButton;
+				}
+			}
+
+			public override AccessibleStates State {
+				get {
+					AccessibleStates	retval;
+
+					retval = AccessibleStates.Default;
+
+					if (owner.check_state == CheckState.Checked) {
+						retval |= AccessibleStates.Checked;
+					}
+
+					if (owner.Focused) {
+						retval |= AccessibleStates.Focused;
+					}
+
+					if (owner.CanFocus) {
+						retval |= AccessibleStates.Focusable;
+					}
+
+					return retval;
+				}
+			}
+			#endregion	// RadioButtonAccessibleObject Properties
+
+			#region RadioButtonAccessibleObject Methods
+			public override void DoDefaultAction() {
+				owner.PerformClick();
+			}
+			#endregion	// RadioButtonAccessibleObject Methods
+		}
+		#endregion	// RadioButtonAccessibleObject Sub-class
 
 		#region Public Constructors
 		public RadioButton() {
