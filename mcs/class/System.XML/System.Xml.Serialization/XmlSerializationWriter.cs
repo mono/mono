@@ -10,6 +10,7 @@
 using System;
 using System.Collections;
 using System.Xml;
+using System.Xml.Schema;
 
 namespace System.Xml.Serialization {
 	public abstract class XmlSerializationWriter {
@@ -26,7 +27,6 @@ namespace System.Xml.Serialization {
 		[MonoTODO]
 		protected XmlSerializationWriter ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		#endregion // Constructors
@@ -120,31 +120,37 @@ namespace System.Xml.Serialization {
 		[MonoTODO ("Implement")]
 		protected static string FromXmlName (string name)
 		{
-			throw new NotImplementedException ();
+			return XmlCustomFormatter.FromXmlName (name);
 		}
 
 		[MonoTODO ("Implement")]
 		protected static string FromXmlNCName (string ncName)
 		{
-			throw new NotImplementedException ();
+			return XmlCustomFormatter.FromXmlNCName (ncName);
 		}
 
 		[MonoTODO ("Implement")]
 		protected static string FromXmlNmToken (string nmToken)
 		{
-			throw new NotImplementedException ();
+			return XmlCustomFormatter.FromXmlNmToken (nmToken);
 		}
 
 		[MonoTODO ("Implement")]
 		protected static string FromXmlNmTokens (string nmTokens)
 		{
-			throw new NotImplementedException ();
+			return XmlCustomFormatter.FromXmlNmTokens (nmTokens);
 		}
 
 		[MonoTODO ("Implement")]
 		protected string FromXmlQualifiedName (XmlQualifiedName xmlQualifiedName)
 		{
-			throw new NotImplementedException ();
+			return GetQualifiedName (xmlQualifiedName.Name, xmlQualifiedName.Namespace).ToString ();
+		}
+
+		private XmlQualifiedName GetQualifiedName (string name, string ns)
+		{
+			WriteAttribute ("xmlns", "q1", null, ns);
+			return new XmlQualifiedName (name, "q1");
 		}
 
 		protected abstract void InitCallbacks ();
@@ -176,10 +182,9 @@ namespace System.Xml.Serialization {
 			WriteAttribute (String.Empty, localName, ns, value);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteAttribute (string prefix, string localName, string ns, string value)
 		{
-			throw new NotImplementedException ();
+			Writer.WriteAttributeString (prefix, localName, ns, value);
 		}
 
 		[MonoTODO ("Implement")]
@@ -191,31 +196,31 @@ namespace System.Xml.Serialization {
 		[MonoTODO ("Implement")]
 		protected void WriteElementLiteral (XmlNode node, string name, string ns, bool isNullable, bool any)
 		{
-			throw new NotImplementedException ();
+			WriteStartElement (name, ns);
+			node.WriteTo (Writer);
+			WriteEndElement ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteElementQualifiedName (string localName, XmlQualifiedName value)
 		{
-			throw new NotImplementedException ();
+			WriteElementQualifiedName (localName, String.Empty, value, null);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteElementQualifiedName (string localName, string ns, XmlQualifiedName value)
 		{
-			throw new NotImplementedException ();
+			WriteElementQualifiedName (localName, ns, value, null);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteElementQualifiedName (string localName, XmlQualifiedName value, XmlQualifiedName xsiType)
 		{
-			throw new NotImplementedException ();
+			WriteElementQualifiedName (localName, String.Empty, value, xsiType);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteElementQualifiedName (string localName, string ns, XmlQualifiedName value, XmlQualifiedName xsiType)
 		{
-			throw new NotImplementedException ();
+			WriteStartElement (localName, ns);
+			Writer.WriteString (FromXmlQualifiedName (value));
+			WriteEndElement ();
 		}
 
 		protected void WriteElementString (string localName, string value)
@@ -236,7 +241,13 @@ namespace System.Xml.Serialization {
 		[MonoTODO ("Implement")]
 		protected void WriteElementString (string localName, string ns, string value, XmlQualifiedName xsiType)
 		{
-			throw new NotImplementedException ();
+			WriteStartElement (localName, ns);
+
+			if (xsiType != null)
+				WriteXsiType (xsiType.Name, xsiType.Namespace);
+
+			Writer.WriteString (value);
+			WriteEndElement ();
 		}
 
 		protected void WriteElementStringRaw (string localName, byte[] value)
@@ -278,7 +289,13 @@ namespace System.Xml.Serialization {
 		[MonoTODO ("Implement")]
 		protected void WriteElementStringRaw (string localName, string ns, string value, XmlQualifiedName xsiType)
 		{
-			throw new NotImplementedException ();
+			WriteStartElement (localName, ns);
+
+			if (xsiType != null)
+				WriteXsiType (xsiType.Name, xsiType.Namespace);
+
+			Writer.WriteRaw (value);
+			WriteEndElement ();
 		}
 
 		protected void WriteEmptyTag (string name)
@@ -286,10 +303,11 @@ namespace System.Xml.Serialization {
 			WriteEmptyTag (name, String.Empty);
 		}
 
-		[MonoTODO ("Implement")]
+		[MonoTODO ("Verify")]
 		protected void WriteEmptyTag (string name, string ns)
 		{
-			throw new NotImplementedException ();
+			Writer.WriteStartElement (name, ns);
+			Writer.WriteEndElement ();
 		}
 
 		protected void WriteEndElement ()
@@ -300,7 +318,7 @@ namespace System.Xml.Serialization {
 		[MonoTODO ("Implement")]
 		protected void WriteEndElement (object o)
 		{
-			throw new NotImplementedException ();
+			Writer.WriteEndElement ();
 		}
 
 		[MonoTODO ("Implement")]
@@ -448,16 +466,25 @@ namespace System.Xml.Serialization {
 			WriteStartElement (name, ns, o, false);
 		}
 
-		[MonoTODO ("Implement")]
+		[MonoTODO]
 		protected void WriteStartElement (string name, string ns, object o, bool writePrefixed)
 		{
-			throw new NotImplementedException ();
+			if (writePrefixed)
+				Writer.WriteStartElement (String.Empty, name, ns);
+			else
+				Writer.WriteStartElement (name, ns);
 		}
 
-		[MonoTODO ("Implement")]
+		[MonoTODO ("Include XMLSchema-Instance namespace")]
 		protected void WriteTypedPrimitive (string name, string ns, object o, bool xsiType)
 		{
-			throw new NotImplementedException ();
+			if (!xsiType) {
+				WriteElementString (name, ns, o.ToString ());
+				return;
+			}
+
+			XmlQualifiedName xsiTypeQName = new XmlQualifiedName (o.GetType ().Name, XmlSchema.Namespace);
+			WriteElementString (name, ns, o.ToString (), xsiTypeQName);
 		}
 
 		protected void WriteValue (byte[] value)
@@ -482,11 +509,12 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
+		[MonoTODO ("Change prefix")]
 		protected void WriteXsiType (string name, string ns)
 		{
-			throw new NotImplementedException ();
+			WriteAttribute ("d0p1", "type", null, GetQualifiedName (name, ns).ToString ());
 		}
+		
 
 
 		#endregion
