@@ -1,3 +1,9 @@
+2003-02-05  Nick Drochak  <ndrochak@gol.com>
+
+	* FileTest.cs: Have setup remove files before testing as well in case
+	tests were interrupted before TearDown could be called in a previous
+	run. Also test for specific exception in TestGetCreationTime ().
+
 2003-01-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* FileTest.cs: Added tests for GetCreationTime.

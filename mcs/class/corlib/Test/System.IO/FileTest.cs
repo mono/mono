@@ -16,6 +16,9 @@ namespace MonoTests.System.IO
 	{
 		protected override void SetUp ()
 		{
+		        File.Delete ("resources" + Path.DirectorySeparatorChar + "baz");
+		        File.Delete ("resources" + Path.DirectorySeparatorChar + "bar");
+		        File.Delete ("resources" + Path.DirectorySeparatorChar + "foo");
 		}
 
 		protected override void TearDown ()
@@ -424,6 +427,7 @@ namespace MonoTests.System.IO
 			}
 		}
 
+		[ExpectedException(typeof(IOException))]
 		public void TestGetCreationTime ()
 		{
 			string path = "resources" + Path.DirectorySeparatorChar + "baz";
@@ -432,12 +436,9 @@ namespace MonoTests.System.IO
 
 			// Test nonexistent files
 			string path2 = "resources" + Path.DirectorySeparatorChar + "filedoesnotexist";
-			try {
-				File.GetCreationTime (path2);
-				Fail ();
-			}
-			catch (Exception ex) {
-			}
+
+			// should throw an exception
+			File.GetCreationTime (path2);
 		}
 	}
 }
