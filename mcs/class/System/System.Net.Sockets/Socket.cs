@@ -424,22 +424,28 @@ namespace System.Net.Sockets
 
 			if(read_list!=null) {
 				read_list.Clear();
-				for(i=0; i<read_arr.Length; i++) {
-					read_list.Add(read_arr[i]);
+				if (read_arr != null) {
+					for(i=0; i<read_arr.Length; i++) {
+						read_list.Add(read_arr[i]);
+					}
 				}
 			}
 			
 			if(write_list!=null) {
 				write_list.Clear();
-				for(i=0; i<write_arr.Length; i++) {
-					write_list.Add(write_arr[i]);
+				if (write_arr != null) {
+					for(i=0; i<write_arr.Length; i++) {
+						write_list.Add(write_arr[i]);
+					}
 				}
 			}
 			
 			if(err_list!=null) {
 				err_list.Clear();
-				for(i=0; i<err_arr.Length; i++) {
-					err_list.Add(err_arr[i]);
+				if (err_arr != null) {
+					for(i=0; i<err_arr.Length; i++) {
+						err_list.Add(err_arr[i]);
+					}
 				}
 			}
 		}
