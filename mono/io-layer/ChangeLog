@@ -1,3 +1,15 @@
+2003-12-01  Dick Porter  <dick@ximian.com>
+
+	* wapi-private.h: 
+	* mutexes.c (CreateMutex): 
+	* mutex-private.h (struct _WapiHandle_mutex): 
+	* handles.c: Look up certain handle types by name, in a shared
+	namespace.  Currently only mutex handles have this implemented.
+	Fixes bug 51089.
+
+	* semaphores.c (CreateSemaphore): 
+	* events.c (CreateEvent): Fix signature
+
 2003-11-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* io.c: don't call g_free before testing errno as it may modify it.

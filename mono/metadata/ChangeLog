@@ -1,5 +1,10 @@
 2003-12-01  Dick Porter  <dick@ximian.com>
 
+	* threads.c: Fix signature and call in CreateMutex and
+	CreateEvent.
+
+2003-12-01  Dick Porter  <dick@ximian.com>
+
 	* icall.c: 
 	* locales.c: Implement string compares and searching
 
