@@ -1,5 +1,20 @@
 2002-05-10  Duncan Mak  <duncan@ximian.com>
 
+	* ConstructorNeedsTagAttribute.cs: 
+	* ControlBuilderAttribute.cs: 
+	* ImageClickEventArgs.cs: 
+	* ParseChildrenAttribute.cs: 
+	* PartialCachingAttribute.cs: 
+	* PersistChildrenAttribute.cs: 
+	* PersistenceModeAttribute.cs: 
+	* TemplateContainerAttribute.cs: Added to CVS.
+
+	* PersistanceMode.cs: Removed, fixed typo.
+	* PersistenceMode.cs: Replacing above.
+
+	* StateBag.cs (this): Fixed indexer, it takes a string as the
+	index, not an object.
+
 	* ValidatorCollection.cs: Fixed typo, ValidatedCollection to ValidatorCollection. 
 
 	* Page.cs (Validators): return type should be ValidatorCollection,

@@ -1,5 +1,5 @@
 //
-// System.Web.UI.PersistanceMode.cs
+// System.Web.UI.PersistenceMode.cs
 //
 // Author:
 //   Bob Smith <bob@thestuff.net>
@@ -14,9 +14,9 @@ namespace System.Web.UI
 {
         public enum PersistenceMode
         {
-                Attribute,
-                EncodedInnerDefaultProperty,
-                InnerDefaultProperty,
-                InnerProperty
+                Attribute = 0,
+		InnerProperty = 1,
+		InnerDefaultProperty = 2,
+                EncodedInnerDefaultProperty = 3,
         }
 }

@@ -48,22 +48,33 @@ namespace System.Web.UI
 				return bag.Count;
 			}
 		}
+
 		
-		public object this[object key]
+		public object this[string key]
 		{
 			get
 			{
-				string sKey = (string)key;
-				if(sKey==null || sKey.Length==0)
+				if(key==null || key.Length==0)
 					throw new ArgumentException(HttpRuntime.FormatResourceString("Key_Cannot_Be_Null"));
-				object val = bag[sKey];
+				object val = bag[key];
 				if(val is StateItem)
 					return val;
 				return null;
 			}
 			set
 			{
-				Add((string)key, value);
+				Add(key, value);
+			}
+		}
+
+		public object this [object key]
+		{
+			get {
+				return this [(string) key] as object;
+			}
+
+			set {
+				Add ((string) key, value);
 			}
 		}
 		
