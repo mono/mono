@@ -1,3 +1,8 @@
+2003-11-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: notify listener on async processing handles after
+	invoking the async callback. Thanks to Zoltan.
+
 2003-11-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (create_dynamic_mono_image): Call mono_image_init to 
