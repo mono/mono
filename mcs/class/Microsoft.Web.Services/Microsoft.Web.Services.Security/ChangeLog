@@ -1,3 +1,9 @@
+2003-10-20  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AsymmetricEncryptionKey.cs: Added internal property to get the AsymmetricAlgorithm object.
+	* EncryptedKey.cs: Almost complete (still lacking LoadXml).
+	* SymmetricEncryptionKey.cs: Added internal property to get the SymmetricAlgorithm object.
+
 2003-10-18  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* BinarySecurityToken.cs: Added support for GetXml/LoadXml
