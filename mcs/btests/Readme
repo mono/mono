@@ -1,14 +1,34 @@
-In this directory we have three types of test cases :
+* Organization of Test Cases:
 
-	* The test cases which should compile and run without failure (positive test cases). Any failure during compile and run shows some defect in the compiler or class libraries
-	* Test cases which should fail during compilation time. If these test cases get compiled without failure denotes that the compiler is deviating from the specification.
-	* Test cases those fails during run time.
+	There are three different kinds of mbas Test Cases
 
-The make file picks-up test cases from Test.Sources file.
+	* Positive Tests: These test cases should compile and run
+          without failure. Any failure during compile and run is
+          deemed as a bug in the compiler or run time.
 
-The new test cases have to be added to Test.Sources in appropriate section.
+	* Negative Tests: These test cases trigger a compile time
+          failure with a pre-determined error number at pre-determined
+          location within the source file. A successful compilation or
+          a failure at a different line or with a different error
+          number is deemed as a bug in the compiler.
 
-To run the tests type following command
-	make run-test-local or just make
+	* Negative Run Time Tests: These test cases should trigger a
+          pre-determined run time error. A successful execution or a
+          run-time error that is any different is deemed as a bug in
+          the compiler.
 
-All the failure/success messages get stored in results.out file.
+* Contributing Test Cases:
+
+	* All test cases are listed in the file Test.Sources under one
+          of TEST_SOURCES, TEST_NGTIVE_COMPILATION_SOURCES,
+          TEST_NGTIVE_RUNTIME_SOURCES as appropriate. Refer the
+          previous paragraph to understand what these exactly mean.
+
+* Running Test Cases: 
+
+  	* To run tests do a 'make'. All the console messages get
+    	  redirected to results.out file.
+
+
+
+
