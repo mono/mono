@@ -1,3 +1,13 @@
+2001-10-10  Dietmar Maurer  <dietmar@ximian.com>
+
+	* metadata.c (mono_metadata_interfaces_from_typedef): also return the
+	number of interfaces.
+	
+	* class.h: merged MonoArrayClass into MonoClass
+
+	* class.c (mono_class_create_from_typedef): compute the vtable size and
+	allocate space to include the vtable inside MonoClass
+	(mono_class_metadata_init): initialize the vtable
 
 Mon Oct 8 16:12:38 CEST 2001 Paolo Molaro <lupus@ximian.com>
 

@@ -1,3 +1,6 @@
+2001-10-10  Dietmar Maurer  <dietmar@ximian.com>
+
+	* interp.c (get_virtual_method): use the vtable
 
 Mon Oct 8 16:14:40 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
