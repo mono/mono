@@ -30,9 +30,9 @@ namespace System.IO {
 		protected override void Dispose( bool disposing ) {
 			return;
 		}
-	
+
 		public override int Peek() {
-			if( nextChar > sourceLength ) {
+			if( nextChar >= sourceLength ) {
 				return -1;
 			} else {
 				return (int)source[ nextChar ];
@@ -40,17 +40,17 @@ namespace System.IO {
 		}
 
 		public override int Read() {
-			if( nextChar > sourceLength ) {
+			if( nextChar >= sourceLength ) {
 				return -1;
 			} else {
 				return (int)source[ nextChar++ ];
 			}
 		}
 
-		
-		// The method will read up to count characters from the StringReader 
-		// into the buffer character array starting at position index. Returns 
-		// the actual number of characters read, or zero if the end of the string 
+
+		// The method will read up to count characters from the StringReader
+		// into the buffer character array starting at position index. Returns
+		// the actual number of characters read, or zero if the end of the string
 		// has been reached and no characters are read.
 
 		public override int Read( char[] buffer, int index, int count ) {
@@ -58,7 +58,7 @@ namespace System.IO {
 			if( buffer == null ) {
 				throw new ArgumentNullException();
 			} else if( buffer.Length - index < count ) {
-				throw new ArgumentException(); 
+				throw new ArgumentException();
 			} else if( index < 0 || count < 0 ) {
 				throw new ArgumentOutOfRangeException();
 			}
@@ -83,24 +83,24 @@ namespace System.IO {
 
                         // LAMESPEC:
                         // The Beta 2 SDK help says that the ReadLine method returns
-                        // "The next line from the input stream [...] A line is defined as a sequence of 
-                        // characters followed by a carriage return (\r), a line feed (\n), or a carriage 
+                        // "The next line from the input stream [...] A line is defined as a sequence of
+                        // characters followed by a carriage return (\r), a line feed (\n), or a carriage
                         // return immediately followed by a line feed (\r\n). [...]
                         // The returned value is a null reference if the end of the input stream has been reached."
                         //
                         // HOWEVER, the MS implementation returns the rest of the string if no \r and/or \n is found
                         // in the string
-                   
-			
+
+
 			int nextCR = source.IndexOf( '\r', nextChar );
                         int nextLF = source.IndexOf( '\n', nextChar );
-        
+
                         if( nextCR == -1 && nextLF == -1 ) {
                                 return ReadToEnd();
                         }
-                                       
+
                         if( nextChar > sourceLength ) return null;
-                        
+
                         int readTo;
 
                         if( nextCR == -1 ) {

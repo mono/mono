@@ -1,3 +1,7 @@
+2002-03-02  Jason Diamond  <jason@injektilo.org>
+
+	* StringReader.cs: Fixed off-by-one error in Peek() and Read().
+
 2002-02-12  Nick Drochak  <ndrochak@gol.com>
 
 	* PathTooLongException.cs: put it in the correct namespace

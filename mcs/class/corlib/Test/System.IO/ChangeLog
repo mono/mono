@@ -1,3 +1,8 @@
+2002-03-02  Jason Diamond  <jason@injektilo.org>
+
+	* StringReader.cs: Added test for peeking and reading at the end of
+	a string.
+
 2002-02-28  Nick Drochak  <ndrochak@gol.com>
 
 	* MemoryStreamTest.cs 

@@ -15,7 +15,7 @@ using System;
 namespace MonoTests.System.IO {
 
 public class StringReaderTest : TestCase {
-	
+
 	public static ITest Suite {
 		get {
 			return new TestSuite(typeof(StringReaderTest));
@@ -34,10 +34,39 @@ public class StringReaderTest : TestCase {
 		char read = (char)reader.Read();
 
 		AssertEquals("A2", 'T', read );
-		
+
 		c = (char)reader.Peek();
 
 		AssertEquals("A3", 'e', c );
+	}
+
+	public void TestPeekAndReadAtEndOfString() {
+		StringReader reader = new StringReader("x");
+
+		char c = (char)reader.Peek();
+		AssertEquals("A1", 'x', c );
+
+		c = (char)reader.Read();
+		AssertEquals("A2", 'x', c);
+
+		int i = reader.Peek();
+		AssertEquals("A3", -1, i);
+
+		i = reader.Read();
+		AssertEquals("A4", -1, i);
+
+		i = reader.Peek();
+		AssertEquals("A5", -1, i);
+	}
+
+	public void TestPeekAndReadEmptyString() {
+		StringReader reader = new StringReader("");
+
+		int i = reader.Peek();
+		AssertEquals("A1", -1, i);
+
+		i = reader.Read();
+		AssertEquals("A2", -1, i);
 	}
 
 	public void TestRead() {
@@ -45,7 +74,7 @@ public class StringReaderTest : TestCase {
 
 		/* Read from start of string */
 		char[] test = new char[5];
-		
+
 		int charsRead = reader.Read( test, 0, 5 );
 
 		AssertEquals( 5, charsRead );
@@ -53,7 +82,7 @@ public class StringReaderTest : TestCase {
 
 		/* Read to end of string */
 		//reader = new StringReader( "Test String" );
-		
+
 		test = new char[6];
 		charsRead = reader.Read( test, 0, 6 );
 		AssertEquals( 6, charsRead);
@@ -89,5 +118,5 @@ public class StringReaderTest : TestCase {
                 AssertEquals( "Line4", test );
         }
 }
-        
+
 }
