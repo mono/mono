@@ -33,15 +33,16 @@ using System;
 namespace System.Security.Permissions {
 
 	[Flags]
+	[SerializableAttribute]
 	public enum StorePermissionFlags {
 		NoFlags = 0,
-		AddToStore,
-		CreateStore,
-		DeleteStore,
-		EnumerateCertificates,
-		EnumerateStores,
-		OpenStore,
-		RemoveFromStore,
+		CreateStore = 1,
+		DeleteStore = 2,
+		EnumerateStores = 4,
+		OpenStore = 16,
+		AddToStore = 32,
+		RemoveFromStore = 64,
+		EnumerateCertificates = 128,
 		AllFlags = AddToStore | CreateStore | DeleteStore | OpenStore |
 			EnumerateCertificates | EnumerateStores | RemoveFromStore
 	}
