@@ -2394,16 +2394,9 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Load the object from the pointer.  The `IsReference' is used
-		// to control whether we should use Ldind_Ref or LdObj if the
-		// value is not a `core' type.
+		// Load the object from the pointer.  
 		//
-		// Maybe we should try to extract this infromation form the type?
-		// TODO: Maybe this is a bug.  The reason we have this flag is because
-		// I had almost identical code in ParameterReference (for handling
-		// references) and in UnboxCast.
-		//
-		public static void LoadFromPtr (ILGenerator ig, Type t, bool IsReference)
+		public static void LoadFromPtr (ILGenerator ig, Type t)
 		{
 			if (t == TypeManager.int32_type)
 				ig.Emit (OpCodes.Ldind_I4);
@@ -2431,14 +2424,12 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldind_I1);
 			else if (t == TypeManager.intptr_type)
 				ig.Emit (OpCodes.Ldind_I);
-			else if (TypeManager.IsEnumType (t)){
-				LoadFromPtr (ig, TypeManager.EnumToUnderlying (t), IsReference);
-			} else {
-				if (IsReference)
-					ig.Emit (OpCodes.Ldind_Ref);
-				else 
-					ig.Emit (OpCodes.Ldobj, t);
-			}
+			else if (TypeManager.IsEnumType (t))
+				LoadFromPtr (ig, TypeManager.EnumToUnderlying (t));
+			else if (t.IsValueType)
+				ig.Emit (OpCodes.Ldobj, t);
+			else
+				ig.Emit (OpCodes.Ldind_Ref);
 		}
 
 		//
@@ -2462,6 +2453,8 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Stind_I1);
 			else if (type == TypeManager.intptr_type)
 				ig.Emit (OpCodes.Stind_I);
+			else if (type.IsValueType)
+				ig.Emit (OpCodes.Stobj);
 			else
 				ig.Emit (OpCodes.Stind_Ref);
 		}
@@ -2722,7 +2715,7 @@ namespace Mono.CSharp {
 			base.Emit (ec);
 			ig.Emit (OpCodes.Unbox, t);
 
-			LoadFromPtr (ig, t, false);
+			LoadFromPtr (ig, t);
 		}
 	}
 	

@@ -544,7 +544,7 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			expr.Emit (ec);
-			LoadFromPtr (ec.ig, Type, false);
+			LoadFromPtr (ec.ig, Type);
 		}
 
 		public void EmitAssign (EmitContext ec, Expression source)
@@ -725,6 +725,29 @@ namespace Mono.CSharp {
 		{
 			return GetTypeSize (t.GetElementType ());
 		}
+
+		//
+		// Loads the proper "1" into the stack based on the type
+		//
+		static void LoadOne (ILGenerator ig, Type t)
+		{
+			if (t == TypeManager.uint64_type || t == TypeManager.int64_type)
+				ig.Emit (OpCodes.Ldc_I8, 1L);
+			else if (t == TypeManager.double_type)
+				ig.Emit (OpCodes.Ldc_R8, 1.0);
+			else if (t == TypeManager.float_type)
+				ig.Emit (OpCodes.Ldc_R4, 1.0F);
+			else if (t.IsPointer){
+				int n = PtrTypeSize (t);
+				
+				if (n == 0)
+					ig.Emit (OpCodes.Sizeof, t);
+				else
+					IntConstant.EmitInt (ig, n);
+			} else 
+				ig.Emit (OpCodes.Ldc_I4_1);
+		}
+
 		
 		//
 		// FIXME: We need some way of avoiding the use of temp_storage
@@ -746,23 +769,8 @@ namespace Mono.CSharp {
 				if (method == null){
 					expr.Emit (ec);
 
-					if (expr_type == TypeManager.uint64_type ||
-					    expr_type == TypeManager.int64_type)
-						ig.Emit (OpCodes.Ldc_I8, 1L);
-					else if (expr_type == TypeManager.double_type)
-						ig.Emit (OpCodes.Ldc_R8, 1.0);
-					else if (expr_type == TypeManager.float_type)
-						ig.Emit (OpCodes.Ldc_R4, 1.0F);
-					else if (expr_type.IsPointer){
-						int n = PtrTypeSize (expr_type);
-
-						if (n == 0)
-							ig.Emit (OpCodes.Sizeof, expr_type);
-						else
-							IntConstant.EmitInt (ig, n);
-					} else 
-						ig.Emit (OpCodes.Ldc_I4_1);
-
+					LoadOne (ig, expr_type);
+					
 					//
 					// Select the opcode based on the check state (then the type)
 					// and the actual operation
@@ -792,16 +800,13 @@ namespace Mono.CSharp {
 						else
 							ig.Emit (OpCodes.Add);
 					}
-				} else
+				} else 
 					method.Emit (ec);
 
 				temp_storage.Store (ec);
-				ig.Emit (OpCodes.Nop);
 				ia.EmitAssign (ec, temp_storage);
-				ig.Emit (OpCodes.Nop);
-				if (is_expr){
+				if (is_expr)
 					temp_storage.Emit (ec);
-				}
 				break;
 				
 			case Mode.PostIncrement:
@@ -815,23 +820,8 @@ namespace Mono.CSharp {
 					else
 						ig.Emit (OpCodes.Dup);
 
-					if (expr_type == TypeManager.uint64_type ||
-					    expr_type == TypeManager.int64_type)
-						ig.Emit (OpCodes.Ldc_I8, 1L);
-					else if (expr_type == TypeManager.double_type)
-						ig.Emit (OpCodes.Ldc_R8, 1.0);
-					else if (expr_type == TypeManager.float_type)
-						ig.Emit (OpCodes.Ldc_R4, 1.0F);
-					else if (expr_type.IsPointer){
-						int n = PtrTypeSize (expr_type);
-
-						if (n == 0)
-							ig.Emit (OpCodes.Sizeof, expr_type);
-						else
-							IntConstant.EmitInt (ig, n);
-					} else
-						ig.Emit (OpCodes.Ldc_I4_1);
-
+					LoadOne (ig, expr_type);
+					
 					if (ec.CheckState){
 						if (expr_type == TypeManager.int32_type ||
 						    expr_type == TypeManager.int64_type){
@@ -2744,7 +2734,7 @@ namespace Mono.CSharp {
 			// If we are a reference, we loaded on the stack a pointer
 			// Now lets load the real value
 			//
-			LoadFromPtr (ig, type, true);
+			LoadFromPtr (ig, type);
 		}
 
 		public void EmitAssign (EmitContext ec, Expression source)

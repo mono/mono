@@ -1,5 +1,11 @@
 2002-05-16  Miguel de Icaza  <miguel@ximian.com>
 
+	* ecore.cs (LoadFromPtr): figure out on our own if we need to use
+	ldobj or ldind_ref.  
+	(StoreFromPtr): Handle stobj as well.
+
+	* expression.cs (UnaryMutator): Share more code.
+	
 	* typemanager.cs (FindMembers): Thanks to Paolo for tracking this
 	down: I was not tracking the Filter function as well, which
 	was affecting the results of the cache.
