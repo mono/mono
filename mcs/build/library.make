@@ -156,10 +156,10 @@ run-test-local: run-test-lib
 run-test-ondotnet-local: run-test-ondotnet-lib
 
 run-test-lib: test-local
-	$(TEST_RUNTIME) $(TEST_HARNESS) $(TEST_HARNESS_FLAGS) /xml:TestResult-$(PROFILE).xml $(test_assemblies)
+	$(TEST_RUNTIME) $(TEST_HARNESS) $(TEST_HARNESS_FLAGS) /output:TestResult-$(PROFILE).log /xml:TestResult-$(PROFILE).xml $(test_assemblies)
 
 run-test-ondotnet-lib: test-local
-	$(TEST_HARNESS) $(TEST_HARNESS_FLAGS) /xml:TestResult-ondotnet-$(PROFILE).xml $(test_assemblies)
+	$(TEST_HARNESS) $(TEST_HARNESS_FLAGS) /output:TestResult-$(PROFILE).log /xml:TestResult-ondotnet-$(PROFILE).xml $(test_assemblies)
 endif
 
 DISTFILES = $(sourcefile) $(test_sourcefile) $(EXTRA_DISTFILES)
