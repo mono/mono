@@ -1,3 +1,6 @@
+2003-01-09  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* icall.c, rand.c, rand.h: Prepended RNG functions with Internal.
 
 2003-01-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
