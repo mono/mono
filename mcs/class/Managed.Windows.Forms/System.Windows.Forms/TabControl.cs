@@ -800,7 +800,7 @@ namespace System.Windows.Forms {
 				} else {
 					// Setting the selected index will calc the tab rows so
 					// we don't need to do it again
-					owner.CalcTabRows ();
+					owner.ResizeTabPages ();
 				}
 			}
 		}

@@ -1,5 +1,10 @@
 2005-01-14  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: Recalculate the tab pages when a new one is added
+	so that the proper bounding rects are created.
+
+2005-01-14  Jackson Harper  <jackson@ximian.com>
+
 	* TreeView.cs: Draw a gray box instead of a grip in the lower
 	right hand corner when there are both horizontal and vertical
 	scroll bars.
