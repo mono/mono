@@ -1,3 +1,8 @@
+
+Fri Sep 7 12:28:01 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* AsyncCallback.cs, common.src: add AsyncCallback delegate.
+
 2001-09-06  Jeffrey Stedfast  <fejj@ximian.com>
 
 	* String.cs (System): Don't mix uint and int.
