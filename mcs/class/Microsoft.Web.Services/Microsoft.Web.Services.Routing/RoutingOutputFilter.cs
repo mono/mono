@@ -29,6 +29,9 @@ namespace Microsoft.Web.Services.Routing {
 			if(envelope.Context.Action != null) {
 				envelope.CreateHeader ().AppendChild (envelope.Context.Action.GetXml (envelope));
 			}
+			if(envelope.Context.ReplyTo != null) {
+				envelope.CreateHeader ().AppendChild (envelope.Context.ReplyTo.GetXml (envelope));
+			}
 		
 #endif
 		}
