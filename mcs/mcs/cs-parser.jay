@@ -1494,8 +1494,8 @@ enum_declaration
 	;
 
 opt_enum_base
-	: /* empty */			{ $$ = "System.Int32"; }
-	| COLON integral_type		{ $$ = $2;   }
+	: /* empty */		{ $$ = "System.Int32"; }
+	| COLON type		{ $$ = $2;   }
 	;
 
 enum_body
@@ -1844,14 +1844,16 @@ base_access
 post_increment_expression
 	: primary_expression OP_INC
 	  {
-		$$ = new Unary (Unary.Operator.PostIncrement, (Expression) $1, lexer.Location);
+		$$ = new UnaryMutator (UnaryMutator.Mode.PostIncrement,
+				       (Expression) $1, lexer.Location);
 	  }
 	;
 
 post_decrement_expression
 	: primary_expression OP_DEC
 	  {
-		$$ = new Unary (Unary.Operator.PostDecrement, (Expression) $1, lexer.Location);
+		$$ = new UnaryMutator (UnaryMutator.Mode.PostDecrement,
+				       (Expression) $1, lexer.Location);
 	  }
 	;
 
@@ -2028,11 +2030,13 @@ unary_expression
 	  }
 	| OP_INC unary_expression 
 	  {
-		$$ = new Unary (Unary.Operator.PreIncrement, (Expression) $2, lexer.Location);
+		$$ = new UnaryMutator (UnaryMutator.Mode.PreIncrement,
+				       (Expression) $2, lexer.Location);
 	  }
 	| OP_DEC unary_expression 
 	  {
-		$$ = new Unary (Unary.Operator.PreDecrement, (Expression) $2, lexer.Location);
+		$$ = new UnaryMutator (UnaryMutator.Mode.PreDecrement,
+				       (Expression) $2, lexer.Location);
 	  }
         | cast_expression 
 	/*
@@ -2045,14 +2049,16 @@ unary_expression
 pre_increment_expression
 	: OP_INC unary_expression 
 	  {
-		$$ = new Unary (Unary.Operator.PreIncrement, (Expression) $2, lexer.Location);
+		$$ = new UnaryMutator (UnaryMutator.Mode.PreIncrement,
+				       (Expression) $2, lexer.Location);
 	  }
 	;
 
 pre_decrement_expression
 	: OP_DEC unary_expression 
 	  {
-		$$ = new Unary (Unary.Operator.PreDecrement, (Expression) $2, lexer.Location);
+		$$ = new UnaryMutator (UnaryMutator.Mode.PreDecrement,
+				       (Expression) $2, lexer.Location);
 	  }
 	;
 

@@ -22,7 +22,7 @@ namespace CIR {
 	//   type, method group, property access, event access, indexer access,
 	//   nothing).
 	// </remarks>
-	public enum ExprClass {
+	public enum ExprClass : byte {
 		Invalid,
 		
 		Value,
@@ -34,21 +34,6 @@ namespace CIR {
 		EventAccess,
 		IndexerAccess,
 		Nothing, 
-	}
-
-	// <summary>
-	//   An interface provided by expressions that can be used as
-	//   LValues and can store the value on the top of the stack on
-	//   their storage
-	// </summary>
-	public interface IStackStore {
-
-		// <summary>
-		//   The Store method should store the contents of the top
-		//   of the stack into the storage that is implemented by
-		//   the particular implementation of LValue
-		// </summary>
-		void Store     (EmitContext ec);
 	}
 
 	// <summary>
@@ -2140,7 +2125,7 @@ namespace CIR {
 	// <summary>
 	//   Fully resolved expression that evaluates to a Field
 	// </summary>
-	public class FieldExpr : Expression, IStackStore, IMemoryLocation {
+	public class FieldExpr : Expression, IAssignMethod, IMemoryLocation {
 		public readonly FieldInfo FieldInfo;
 		public Expression InstanceExpression;
 		Location loc;
@@ -2202,14 +2187,21 @@ namespace CIR {
 			}
 		}
 
-		public void Store (EmitContext ec)
+		public void EmitAssign (EmitContext ec, Expression source)
 		{
-			if (FieldInfo.IsStatic)
+			bool is_static = FieldInfo.IsStatic;
+
+			if (!is_static)
+				InstanceExpression.Emit (ec);
+			source.Emit (ec);
+			
+			if (is_static)
 				ec.ig.Emit (OpCodes.Stsfld, FieldInfo);
 			else
 				ec.ig.Emit (OpCodes.Stfld, FieldInfo);
+			
 		}
-
+		
 		public void AddressOf (EmitContext ec)
 		{
 			if (FieldInfo.IsStatic)

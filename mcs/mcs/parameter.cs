@@ -17,7 +17,7 @@ namespace CIR {
 	using System.Collections;
 	
 	public class Parameter {
-		public enum Modifier {
+		public enum Modifier : byte {
 			NONE,
 			REF,
 			OUT,

@@ -16,7 +16,6 @@ namespace CIR
 	using System.Collections;
 	using System.IO;
 	using CIR;
-	using Generator;
 	using Mono.Languages;
 
 	/// <summary>
@@ -86,23 +85,11 @@ namespace CIR
 				"--fatal      Makes errors fatal\n" + 
 				"--nostdlib   Does not load core libraries\n" +
 				"--target     Specifies the target (exe, winexe, library, module)\n" +
-				"--dumper     Specifies a tree dumper\n" +
 				"--parse      Only parses the source file\n" +
 				"--probe X L  Probes for the source to generate code X on line L\n" +
 				"--checked    Set default context to checked\n" +
 				"-r           References an assembly\n");
 			
-		}
-
-		public ITreeDump lookup_dumper (string name)
-		{
-			if (name == "tree")
-				return new Generator.TreeDump ();
-			
-			//			if (name == "il")
-			// return new MSIL.Generator ();
-			
-			return null;
 		}
 
 		public static void error (string msg)
@@ -209,11 +196,6 @@ namespace CIR
 					if (arg.StartsWith ("-")){
 						if (arg == "-v"){
 							yacc_verbose = true;
-							continue;
-						}
-						
-						if (arg.StartsWith ("--dumper")){
-							generator = lookup_dumper (args [++i]);
 							continue;
 						}
 						

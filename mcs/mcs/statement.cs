@@ -1198,8 +1198,7 @@ namespace CIR {
 			ig.Emit (OpCodes.Brfalse, end_try);
 			ig.Emit (OpCodes.Ldloc, enumerator);
 			ig.Emit (OpCodes.Callvirt, TypeManager.object_getcurrent_void);
-			conv.Emit (ec);
-			Variable.Store (ec);
+			Variable.EmitAssign (ec, conv);
 			Statement.Emit (ec);
 			ig.Emit (OpCodes.Br, ec.LoopBegin);
 			ig.MarkLabel (end_try);

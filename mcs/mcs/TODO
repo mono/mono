@@ -252,3 +252,10 @@
 
 	Not sure that this grammar is correct, we might have to
 	resolve this during semantic analysis.
+
+* Optimizations
+
+	In Indexers and Properties, probably support an EmitWithDup
+	That emits the code to call Get and then leaves a this pointer
+	in the stack, so that later a Store can be emitted using that
+	this pointer (consider Property++ or Indexer++)

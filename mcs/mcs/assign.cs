@@ -36,7 +36,7 @@ namespace CIR {
 	//   basically it creates a local variable, and its emit instruction generates
 	//   code to access this value, return its address or save its value.
 	// </remarks>
-	public class LocalTemporary : Expression, IStackStore, IMemoryLocation {
+	public class LocalTemporary : Expression, IMemoryLocation {
 		LocalBuilder builder;
 		
 		public LocalTemporary (EmitContext ec, Type t)
@@ -113,9 +113,6 @@ namespace CIR {
 			if (target == null)
 				return null;
 
-			Console.WriteLine ("Resolving: " + source + "/" + source.Type + " [ " + target
-					   + "/ " + target.Type + "]");
-
 			Type target_type = target.Type;
 			Type source_type = source.Type;
 
@@ -175,44 +172,22 @@ namespace CIR {
 			ExprClass eclass = target.ExprClass;
 
 			//
-			// Properties, Indexers and Arrays are of this kind
-			// (Arrays because multi-dimensional arrays are manipulated
-			// through calls that the runtime expands. 
-			//
-			if (target is IAssignMethod){
-				IAssignMethod am = (IAssignMethod) target;
-
-				if (is_statement)
-					am.EmitAssign (ec, source);
-				else {
-					LocalTemporary tempo;
-					
-					tempo = new LocalTemporary (ec, source.Type);
-
-					source.Emit (ec);
-					tempo.Store (ec);
-					am.EmitAssign (ec, source);
-					tempo.Emit (ec);
-				}
-			} else if (target is IStackStore) {
-				//
-				// If it is an instance field, load the this pointer
-				//
-				if (target is FieldExpr){
-					FieldExpr fe = (FieldExpr) target;
-					
-					if (!fe.FieldInfo.IsStatic)
-						ig.Emit (OpCodes.Ldarg_0);
-				}
-
+			// FIXME! We need a way to "probe" if the process can
+			// just use `dup' to propagate the result
+			// 
+			IAssignMethod am = (IAssignMethod) target;
+			
+			if (is_statement)
+				am.EmitAssign (ec, source);
+			else {
+				LocalTemporary tempo;
+				
+				tempo = new LocalTemporary (ec, source.Type);
+				
 				source.Emit (ec);
-
-				if (!is_statement)
-					ig.Emit (OpCodes.Dup);
-
-				((IStackStore) target).Store (ec);
-			} else {
-				Console.WriteLine ("Unhandled class: " + eclass + "\n Type:" + target);
+				tempo.Store (ec);
+				am.EmitAssign (ec, source);
+				tempo.Emit (ec);
 			}
 		}
 		

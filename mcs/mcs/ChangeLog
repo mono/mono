@@ -1,4 +1,44 @@
-2001-11-13  Ravi Pratap  <ravi@ximian.com>
+2001-11-13  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (Foreach.Emit): Use EmitAssign instead of Store.
+
+	* expression.cs (ParameterReference): Drop IStackStorage and implement
+	IAssignMethod instead. 
+
+	(LocalVariableReference): ditto.
+	
+	* ecore.cs (FieldExpr): Drop IStackStorage and implement
+	IAssignMethod instead. 
+
+2001-11-13  Miguel de Icaza <miguel@ximian.com>
+
+	* parameter.cs, expression.cs, class.cs, ecore.cs: Made all
+	enumerations that are used in heavily used structures derive from
+	byte in a laughable and pathetic attempt to reduce memory usage.
+	This is the kind of pre-optimzations that you should not do at
+	home without adult supervision.
+
+	* expression.cs (UnaryMutator): New class, used to handle ++ and
+	-- separatedly from the other unary operators.  Cleans up the
+	code, and kills the ExpressionStatement dependency in Unary.
+
+	(Unary): Removed `method' and `Arguments' from this class, making
+	it smaller, and moving it all to SimpleCall, so I can reuse this
+	code in other locations and avoid creating a lot of transient data
+	strucutres when not required.
+
+	* cs-parser.jay: Adjust for new changes.
+
+2001-11-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* enum.cs (Enum.Populate): If there is a failure during
+	definition, return
+
+	* cs-parser.jay (opt_enum_base): we used to catch type errors
+	here, but this is really incorrect.  The type error should be
+	catched during semantic analysis.
+
+2001-12-11  Ravi Pratap  <ravi@ximian.com>
 
 	* cs-parser.jay (operator_declarator, conversion_operator_declarator): Set
 	current_local_parameters as expected since I, in my stupidity, had forgotten

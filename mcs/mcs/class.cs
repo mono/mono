@@ -2657,7 +2657,7 @@ namespace CIR {
 			Modifiers.PUBLIC |
 			Modifiers.STATIC;
 
-		public enum OpType {
+		public enum OpType : byte {
 
 			// Unary operators
 			LogicalNot,

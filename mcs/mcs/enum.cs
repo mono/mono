@@ -104,11 +104,12 @@ namespace CIR {
 				EnumBuilder = builder.DefineNestedType (EnumName, attr, TypeManager.enum_type);
 			}
 
-
 			EnumBuilder.DefineField ("value__", UnderlyingType,
 						 FieldAttributes.Public | FieldAttributes.SpecialName);
 			
 			RootContext.TypeManager.AddEnumType (EnumName, EnumBuilder, this);
+
+			return;
 		}
 
 	        bool IsValidEnumLiteral (Expression e)
@@ -195,6 +196,13 @@ namespace CIR {
 		
 		public void Populate (TypeContainer tc)
 		{
+			//
+			// If there was an error during DefineEnum, return
+			//
+			if (EnumBuilder == null){
+				return;
+			}
+			
 			EmitContext ec = new EmitContext (tc, null, UnderlyingType, ModFlags);
 			
 			object default_value = 0;
