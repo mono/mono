@@ -3,183 +3,183 @@
 //
 // Author:
 //   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
-
+using System.Collections;
 namespace System.Windows.Forms
 {
 	// <summary>
 	//	This is only a template. Nothing is implemented yet.
 	//	Represents a Windows up-down control that displays string values.
 	// </summary>
-	//public class DomainUpDown : UpDownBase
-	//{
-		//
+	public class DomainUpDown : UpDownBase
+	{
+		
 		//  --- Constructors/Destructors
-		//
-		//[MonoTODO]
-		//public DomainUpDown() : base()
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		
+		[MonoTODO]
+		public DomainUpDown() : base()
+		{
+			throw new NotImplementedException ();
+		}
 
-		//
+		
 		//  --- Public Methods
-		//
-		//[MonoTODO]
-		//public override void DownButton()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public override string ToString()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public override void UpButton()
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		
+		[MonoTODO]
+		public override void DownButton()
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		public override string ToString()
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		public override void UpButton()
+		{
+			throw new NotImplementedException ();
+		}
 
-		//
+		
 		//  --- Protected Methods
-		//
-		//[MonoTODO]
-		//protected override AccessibleObject CreateAccessibilityInstance()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected override void OnChanged(object source, EventArgs e)
-		//{
-		//	//This method is internal to the .NET framework.
-		//	if (Changed != null)
-		//	{
-		//		Changed(this, e)
-		//	}
-		//}
-		//[MonoTODO]
-		//protected void OnSelectedItemChanged(object source, EventArgs e)
-		//{
-		//	if (SelectedItemChanged != null)
-		//	{
-		//		SelectedItemChanged(this, e)
-		//	}
-		//}
-		//[MonoTODO]
-		//protected override void OnTextBoxKeyDown(object source, KeyEventArgs e)
-		//{
-		//	if (TextBoxKeyDown != null)
-		//	{
-		//		TextBoxKeyDown(this, e)
-		//	}
-		//}
-		//[MonoTODO]
-		//protected override void UpdateEditText()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected override void WndProc(ref Message m)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		
+		[MonoTODO]
+		protected override AccessibleObject CreateAccessibilityInstance()
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		protected override void OnChanged(object source, EventArgs e)
+		{
+			//This method is internal to the .NET framework.
+			if (Changed != null)
+			{
+				Changed(this, e);
+			}
+		}
+		[MonoTODO]
+		protected void OnSelectedItemChanged(object source, EventArgs e)
+		{
+			if (SelectedItemChanged != null)
+			{
+				SelectedItemChanged(this, e);
+			}
+		}
+		[MonoTODO]
+		protected override void OnTextBoxKeyDown(object source, KeyEventArgs e)
+		{
+			if (TextBoxKeyDown != null)
+			{
+				TextBoxKeyDown(this, e);
+			}
+		}
+		[MonoTODO]
+		protected override void UpdateEditText()
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		protected override void WndProc(ref Message m)
+		{
+			throw new NotImplementedException ();
+		}
 
-		//
+		
 		//  --- Public Events
-		//
-		//public event EventHandler SelectedItemChanged;
+		
+		public event EventHandler SelectedItemChanged;
 
-		//
+		
 		//  --- Public Properties
-		//
-		//[MonoTODO]
-		//public DomainUpDown.DomainUpDownItemCollection Items
-		//{
-		//	get { throw new NotImplementedException (); }
-		//}
-		//[MonoTODO]
-		//public int SelectedIndex // default -1
-		//{
-		//	get { throw new NotImplementedException (); }
-		//	set { throw new NotImplementedException (); }
-		//}
-		//[MonoTODO]
-		//public object SelectedItem // default null
-		//{
-		//	get { throw new NotImplementedException (); }
-		//	set { throw new NotImplementedException (); }
-		//}
-		//[MonoTODO]
-		//public bool Sorted // default false
-		//{
-		//	get { throw new NotImplementedException (); }
-		//	set { throw new NotImplementedException (); }
-		//}
-		//[MonoTODO]
-		//public bool Wrap // default false
-		//{
-		//	get { throw new NotImplementedException (); }
-		//	set { throw new NotImplementedException (); }
-		//}
+		
+		[MonoTODO]
+		public DomainUpDown.DomainUpDownItemCollection Items
+		{
+			get { throw new NotImplementedException (); }
+		}
+		[MonoTODO]
+		public int SelectedIndex // default -1
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+		[MonoTODO]
+		public object SelectedItem // default null
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+		[MonoTODO]
+		public bool Sorted // default false
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+		[MonoTODO]
+		public bool Wrap // default false
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
 
+		//System.Windows.Forms.DomainUpDown.DomainUpDownItemCollection
 		//
-		// System.Windows.Forms.DomainUpDown.DomainUpDownItemCollection
+		//Author:
+		//stubbed out by Richard Baumann (biochem333@nyc.rr.com)
 		//
-		// Author:
-		//   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
+		//(C) Ximian, Inc., 2002
 		//
-		// (C) Ximian, Inc., 2002
-		//
-		// <summary>
-		//	This is only a template. Nothing is implemented yet.
-		//	Encapsulates a collection of objects for use by the DomainUpDown class.
-		// </summary>
-		//public class DomainUpDownItemCollection : ArrayList
-		//{
+		//<summary>
+		//This is only a template. Nothing is implemented yet.
+		//Encapsulates a collection of objects for use by the DomainUpDown class.
+		//</summary>
+		public class DomainUpDownItemCollection : ArrayList
+		{
 			//
 			//  --- Constructors/Destructors
 			//
-			//[MonoTODO]
-			//internal DomainUpDownItemCollection(DomainUpDown owner) : base()
-			//{
-			//	throw new NotImplementedException ();
-			//}
+			[MonoTODO]
+			internal DomainUpDownItemCollection(DomainUpDown owner) : base()
+			{
+				throw new NotImplementedException ();
+			}
 
-			//
+			
 			//  --- Public Methods
-			//
-			//[MonoTODO]
-			//public override int Add(object item)
-			//{
-			//	throw new NotImplementedException ();
-			//}
-			//[MonoTODO]
-			//public override void Insert(int index, object item)
-			//{
-			//	throw new NotImplementedException ();
-			//}
-			//[MonoTODO]
-			//public override void Remove(object item)
-			//{
-			//	throw new NotImplementedException ();
-			//}
-			//[MonoTODO]
-			//public override void RemoveAt(int item)
-			//{
-			//	throw new NotImplementedException ();
-			//}
+			
+			[MonoTODO]
+			public override int Add(object item)
+			{
+				throw new NotImplementedException ();
+			}
+			[MonoTODO]
+			public override void Insert(int index, object item)
+			{
+				throw new NotImplementedException ();
+			}
+			[MonoTODO]
+			public override void Remove(object item)
+			{
+				throw new NotImplementedException ();
+			}
+			[MonoTODO]
+			public override void RemoveAt(int item)
+			{
+				throw new NotImplementedException ();
+			}
 
-			//
+			
 			//  --- Public Properties
-			//		
-			//public override object this[int index]
-			//{
-			//	get { throw new NotImplementedException (); }
-			//	set { throw new NotImplementedException (); }
-			//}
-		//}
-	//}
+					
+			public override object this[int index]
+			{
+				get { throw new NotImplementedException (); }
+				set { throw new NotImplementedException (); }
+			}
+		}
+	}
 }

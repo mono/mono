@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -93,13 +94,13 @@ namespace System.Windows.Forms
 			set { y = value; }
 		}
 		#endregion
-//		
-//		#region Methods
-//		[MonoTODO]
-//		public override string ToString() {
-//			throw new NotImplementedException ();
-//		}
-//		#endregion
-//		
+		
+		#region Methods
+		[MonoTODO]
+		public override string ToString() {
+			throw new NotImplementedException ();
+		}
+		#endregion
+		
 	}
 }

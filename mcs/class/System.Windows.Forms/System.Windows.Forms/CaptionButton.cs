@@ -9,11 +9,11 @@
 
 using System;
 
-namespace System.Windows.CaptionButton
+namespace System.Windows.Forms
 {
 
 	/// <summary>
-  /// Specifies the type of caption button to display.
+	/// Specifies the type of caption button to display.
 	/// </summary>
 
 	[Serializable]

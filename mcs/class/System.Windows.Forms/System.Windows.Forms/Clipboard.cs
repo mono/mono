@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -19,20 +20,20 @@ namespace System.Windows.Forms
 	[MonoTODO]
 	public sealed class Clipboard
 	{
-//		// --- Methods ---
-//		[MonoTODO]
-//		public static IDataObject GetDataObject() {
-//			throw new NotImplementedException ();
-//		}
-//		
-//		[MonoTODO]
-//		public static void SetDataObject(object data) {
-//			throw new NotImplementedException ();
-//		}
-//		
-//		[MonoTODO]
-//		public static void SetDataObject(object data,bool copy) {
-//			throw new NotImplementedException ();
-//		}
+		// --- Methods ---
+		[MonoTODO]
+		public static IDataObject GetDataObject() {
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public static void SetDataObject(object data) {
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public static void SetDataObject(object data,bool copy) {
+			throw new NotImplementedException ();
+		}
 	}
 }

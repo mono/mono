@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -21,81 +22,81 @@ namespace System.Windows.Forms
 
 		// --- Constructor
 		//
-//		public Binding(string propertyName,object dataSource,string dataMember)
-//		{
-//			throw new NotImplementedException ();
-//		}
-//
-//
-//		//
-//		// --- Public Properties
-//		//
-//		[MonoTODO]
-//		public BindingManagerBase BindingManagerBase 
-//		{
-//			get { throw new NotImplementedException (); }
-//		}
-//		
-//		[MonoTODO]
-//		public BindingMemberInfo BindingMemberInfo 
-//		{
-//			get { throw new NotImplementedException (); }
-//		}
-//		
-//		[MonoTODO]
-//		public Control Control 
-//		{
-//			get { throw new NotImplementedException (); }
-//		}
-//		
-//		[MonoTODO]
-//		public object DataSource 
-//		{
-//			get { throw new NotImplementedException (); }
-//		}
-//		
-//		[MonoTODO]
-//		public bool IsBinding 
-//		{
-//			get { throw new NotImplementedException (); }
-//		}
-//		
-//		[MonoTODO]
-//		public string PropertyName 
-//		{
-//			get { throw new NotImplementedException (); }
-//		}
-//
-//		//
-//		// --- Public Methods
-//		//
-//		[MonoTODO]
-//		protected virtual void OnFormat(ConvertEventArgs cevent)
-//		{
-//			throw new NotImplementedException ();
-//		}
-//		
-//		[MonoTODO]
-//		protected virtual void OnParse(ConvertEventArgs cevent)
-//		{
-//			throw new NotImplementedException ();
-//		}
-//
-//		//
-//		// --- Public Events
-//		//
-//		[MonoTODO]
-//		public event ConvertEventHandler Format
-//		{
-//			add { throw new NotImplementedException (); }
-//			remove { throw new NotImplementedException (); }
-//		}
-//		
-//		[MonoTODO]
-//		public event ConvertEventHandler Parse
-//		{
-//			add { throw new NotImplementedException (); }
-//			remove { throw new NotImplementedException (); }
-//		}
+		public Binding(string propertyName,object dataSource,string dataMember)
+		{
+			throw new NotImplementedException ();
+		}
+
+
+		//
+		// --- Public Properties
+		//
+		[MonoTODO]
+		public BindingManagerBase BindingManagerBase 
+		{
+			get { throw new NotImplementedException (); }
+		}
+		
+		[MonoTODO]
+		public BindingMemberInfo BindingMemberInfo 
+		{
+			get { throw new NotImplementedException (); }
+		}
+		
+		[MonoTODO]
+		public Control Control 
+		{
+			get { throw new NotImplementedException (); }
+		}
+		
+		[MonoTODO]
+		public object DataSource 
+		{
+			get { throw new NotImplementedException (); }
+		}
+		
+		[MonoTODO]
+		public bool IsBinding 
+		{
+			get { throw new NotImplementedException (); }
+		}
+		
+		[MonoTODO]
+		public string PropertyName 
+		{
+			get { throw new NotImplementedException (); }
+		}
+
+		//
+		// --- Public Methods
+		//
+		[MonoTODO]
+		protected virtual void OnFormat(ConvertEventArgs cevent)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		protected virtual void OnParse(ConvertEventArgs cevent)
+		{
+			throw new NotImplementedException ();
+		}
+
+		//
+		// --- Public Events
+		//
+		[MonoTODO]
+		public event ConvertEventHandler Format
+		{
+			add { throw new NotImplementedException (); }
+			remove { throw new NotImplementedException (); }
+		}
+		
+		[MonoTODO]
+		public event ConvertEventHandler Parse
+		{
+			add { throw new NotImplementedException (); }
+			remove { throw new NotImplementedException (); }
+		}
 	}
 }

@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -23,45 +24,45 @@ namespace System.Windows.Forms
 	public class CursorConverter : TypeConverter
 	{
 		
-//		#region Constructors
-//		[MonoTODO]
-//		public CursorConverter() {
-//			throw new NotImplementedException ();
-//		}
-//		#endregion
-//		
-//		
-//		
-//		#region Methods
-//		[MonoTODO]
-//		public override bool CanConvertFrom(ITypeDescriptorContext context,Type sourceType) {
-//			throw new NotImplementedException ();
-//		}
-//		
-//		[MonoTODO]
-//		public override bool CanConvertTo(ITypeDescriptorContext context,Type destinationType) {
-//			throw new NotImplementedException ();
-//		}
-//		
-//		[MonoTODO]
-//		public override object ConvertFrom(ITypeDescriptorContext context,CultureInfo culture,object value) {
-//			throw new NotImplementedException ();
-//		}
-//		
-//		[MonoTODO]
-//		public override object ConvertTo(ITypeDescriptorContext context,CultureInfo culture,object value,Type destinationType) {
-//			throw new NotImplementedException ();
-//		}
-//		
-//		[MonoTODO]
-//		public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context) {
-//			throw new NotImplementedException ();
-//		}
-//		
-//		[MonoTODO]
-//		public override bool GetStandardValuesSupported(ITypeDescriptorContext context) {
-//			throw new NotImplementedException ();
-//		}
-//		#endregion
+		#region Constructors
+		[MonoTODO]
+		public CursorConverter() {
+			throw new NotImplementedException ();
+		}
+		#endregion
+		
+		
+		
+		#region Methods
+		[MonoTODO]
+		public override bool CanConvertFrom(ITypeDescriptorContext context,Type sourceType) {
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public override bool CanConvertTo(ITypeDescriptorContext context,Type destinationType) {
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public override object ConvertFrom(ITypeDescriptorContext context,CultureInfo culture,object value) {
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public override object ConvertTo(ITypeDescriptorContext context,CultureInfo culture,object value,Type destinationType) {
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context) {
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public override bool GetStandardValuesSupported(ITypeDescriptorContext context) {
+			throw new NotImplementedException ();
+		}
+		#endregion
 	}
 }
