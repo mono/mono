@@ -1,3 +1,8 @@
+2005-01-13  Geoff Norton  <gnorton@customerdna.com>
+
+	* Guid.cs: Fix endian issues (use Mono.Security.BitConverterLE).  Fixes
+	#71242
+
 2005-01-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AppDomain.cs: Removed Activate and ActivateNewProcess methods. They

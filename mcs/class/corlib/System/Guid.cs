@@ -266,9 +266,9 @@ namespace System
 		public Guid (byte[] b)
 		{
 			CheckArray (b, 16);
-			_a = System.BitConverter.ToInt32 (b, 0);
-			_b = System.BitConverter.ToInt16 (b, 4);
-			_c = System.BitConverter.ToInt16 (b, 6);
+			_a = Mono.Security.BitConverterLE.ToInt32 (b, 0);
+			_b = Mono.Security.BitConverterLE.ToInt16 (b, 4);
+			_c = Mono.Security.BitConverterLE.ToInt16 (b, 6);
 			_d = b [8];
 			_e = b [9];
 			_f = b [10];
@@ -521,17 +521,17 @@ namespace System
 			int d = 0;
 			int s;
 
-			tmp = BitConverter.GetBytes(_a);
+			tmp = Mono.Security.BitConverterLE.GetBytes(_a);
 			for (s=0; s<4; ++s) {
 				res[d++] = tmp[s];
 			}
 
-			tmp = BitConverter.GetBytes(_b);
+			tmp = Mono.Security.BitConverterLE.GetBytes(_b);
 			for (s=0; s<2; ++s) {
 				res[d++] = tmp[s];
 			}
 
-			tmp = BitConverter.GetBytes(_c);
+			tmp = Mono.Security.BitConverterLE.GetBytes(_c);
 			for (s=0; s<2; ++s) {
 				res[d++] = tmp[s];
 			}
