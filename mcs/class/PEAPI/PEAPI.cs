@@ -1410,10 +1410,8 @@ namespace PEAPI
     }
 
     internal uint GetLabelOffset() {
-      if (offset > 0)
-	return offset;
       if (labInstr == null) return 0;
-      return labInstr.offset;
+      return labInstr.offset + offset;
     }
 
 	}

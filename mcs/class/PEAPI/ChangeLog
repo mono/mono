@@ -1,3 +1,8 @@
+2003-08-03 Jackson Harper <jackson@latitudegeo.com>
+
+	* PEAPI.cs: Offsets are not explicit offsets, they are just
+	byte offsets from the current position.
+
 2003-07-29 Jackson Harper <jackson@latitudegeo.com>
 
 	* PEAPI.cs: Allow labels to be created with an explicit offset
