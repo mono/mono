@@ -1,5 +1,11 @@
 2004-09-21  Martin Baulig  <martin@ximian.com>
 
+	Merged latest changes into gmcs.  Please keep this comment in
+	here, it makes it easier for me to see what changed in MCS since
+	the last time I merged.
+
+2004-09-21  Martin Baulig  <martin@ximian.com>
+
 	* codegen.cs (VariableStorage): Don't store the ILGenerator here;
 	if we're used in an iterator, we may be called from different
 	methods.
@@ -90,12 +96,6 @@
 	Fixed bug #65238
 	* attribute.cs (Resolve): Property has to have both
 	accessors.
-
-2004-09-14  Martin Baulig  <martin@ximian.com>
-
-	Merged latest changes into gmcs.  Please keep this comment in
-	here, it makes it easier for me to see what changed in MCS since
-	the last time I merged.
 
 2004-09-14  Martin Baulig  <martin@ximian.com>
 
