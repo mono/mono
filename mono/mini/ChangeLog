@@ -1,3 +1,8 @@
+2004-11-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.h mini.c tramp-*.c: Moved xp parts of JIT trampoline creation
+	into a new function mono_create_jit_trampoline ().
+
 2004-11-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* trace.c (get_spec): Allow tracing of classes without a namespace.
