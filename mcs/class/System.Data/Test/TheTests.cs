@@ -4,8 +4,20 @@
 
 using NUnit.Framework;
 using System;
+using System.Data;
 using System.Threading;
 using System.Globalization;
+
+namespace MonoTests.System.Data
+{
+	public class RunDataColumnTest : DataColumnTest
+	{
+		protected override void RunTest ()
+		{
+			throw new NotImplementedException ();
+		}
+	}
+}
 
 namespace MonoTests.System.Data.SqlTypes
 {
@@ -47,7 +59,8 @@ namespace MonoTests
 	{
 		public static void AddAllTests (TestSuite suite)
 		{
-			suite.AddTest (new MonoTests.System.Data.SqlTypes.RunSqlInt32Test());
+			suite.AddTest (new MonoTests.System.Data.RunDataColumnTest ());
+			suite.AddTest (new MonoTests.System.Data.SqlTypes.RunSqlInt32Test ());
 		}
 	}
 }

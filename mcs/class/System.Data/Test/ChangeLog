@@ -1,3 +1,16 @@
+2002-05-10  Rodrigo Moya <rodrigo@ximian.com>
+
+        * TestDataColumn.cs: removed.
+
+	* System.Data_test.build: removed reference to TestDataColumn.
+
+	* TheTests.cs: added RunDataColumnTest class.
+	(RunAllTests.AddAllTests): added test for RunDataColumnTest.
+
+        * System.Data/AllTests.cs: test suite for System.Data.
+
+        * System.Data/DataColumnTest.cs: NUnit test for DataColumn.
+
 2002-05-09  Daniel Morgan <danmorg@sc.rr.com>
 
 	* System.Data_test.build: exclude file TestDataColumn.cs
