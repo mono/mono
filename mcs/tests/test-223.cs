@@ -19,6 +19,12 @@ class T {
 		
 		if (((int) vt2) != 1)
 			return 3;
+
+		//
+		// Test that we can assign null to a valueType
+		//
+
+		System.ValueType vt = null;
 		
 		return 0;
 	}
