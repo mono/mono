@@ -1,3 +1,7 @@
+2001-07-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* interp.c (newobj): Added function to handle newobj opcode.
+
 2001-07-18  Miguel de Icaza  <miguel@ximian.com>
 
 	* interp.c (ves_exec_method): Make the interpreter abort with more

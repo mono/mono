@@ -1,0 +1,5 @@
+2001-07-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* object.h, object.c, class.h, class.c: Implemented the beginning
+	of the object system. x
+
