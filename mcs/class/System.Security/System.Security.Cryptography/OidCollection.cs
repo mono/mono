@@ -2,11 +2,10 @@
 // OidCollection.cs - System.Security.Cryptography.OidCollection
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
+// Copyright (C) 2005 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,16 +29,14 @@
 
 #if NET_2_0
 
-using System;
 using System.Collections;
 
 namespace System.Security.Cryptography {
 
-	// Note: Match the definition of framework version 1.2.3400.0 on http://longhorn.msdn.microsoft.com
-
 	public sealed class OidCollection : ICollection, IEnumerable {
 
 		private ArrayList _list;
+		private bool _readOnly;
 
 		// constructors
 
@@ -80,7 +77,7 @@ namespace System.Security.Cryptography {
 
 		public int Add (Oid oid)
 		{
-			return _list.Add (oid);
+			return (_readOnly ? 0 : _list.Add (oid));
 		}
 
 		public void CopyTo (Oid[] array, int index)
@@ -103,6 +100,23 @@ namespace System.Security.Cryptography {
 		IEnumerator IEnumerable.GetEnumerator () 
 		{
 			return new OidEnumerator (this);
+		}
+
+		// internal stuff
+
+		internal bool ReadOnly {
+			get { return _readOnly; }
+			set { _readOnly = value; }
+		}
+
+		internal OidCollection ReadOnlyCopy ()
+		{
+			OidCollection copy = new OidCollection ();
+			foreach (Oid oid in _list) {
+				copy.Add (oid);
+			}
+			copy._readOnly = true;
+			return copy;
 		}
 	}
 }

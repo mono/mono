@@ -29,14 +29,24 @@
 
 #if NET_2_0
 
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace System.Security.Cryptography {
 
+	internal enum AsnDecodeStatus {
+		NotDecoded = -1,
+		Ok = 0,
+		BadAsn = 1,
+		BadTag = 2,
+		BadLength = 3,
+		InformationNotAvailable = 4
+	}
+
 	public class AsnEncodedData {
 
-		private Oid _oid;
-		private byte[] _raw;
+		internal Oid _oid;
+		internal byte[] _raw;
 
 		// constructors
 
@@ -62,7 +72,11 @@ namespace System.Security.Cryptography {
 
 		public AsnEncodedData (AsnEncodedData asnEncodedData)
 		{
-			CopyFrom (asnEncodedData);
+			if (asnEncodedData == null)
+				throw new ArgumentNullException ("asnEncodedData");
+
+			Oid = new Oid (asnEncodedData._oid);
+			RawData = asnEncodedData._raw;
 		}
 
 		public AsnEncodedData (byte[] rawData)
@@ -104,12 +118,147 @@ namespace System.Security.Cryptography {
 
 		public virtual string Format (bool multiLine) 
 		{
+			if (_raw == null)
+				return String.Empty;
+
+			if (_oid == null)
+				return Default (multiLine);
+
+			return ToString (multiLine);
+		}
+
+		// internal decoding/formatting methods
+
+		internal virtual string ToString (bool multiLine)
+		{
+			switch (_oid.Value) {
+			// fx supported objects
+			case X509BasicConstraintsExtension.oid:
+				return BasicConstraintsExtension (multiLine);
+			case X509EnhancedKeyUsageExtension.oid:
+				return EnhancedKeyUsageExtension (multiLine);
+			case X509KeyUsageExtension.oid:
+				return KeyUsageExtension (multiLine);
+			case X509SubjectKeyIdentifierExtension.oid:
+				return SubjectKeyIdentifierExtension (multiLine);
+			// other known objects (i.e. supported structure) - 
+			// but without any corresponding framework class
+			case Oid.oidNetscapeCertType:
+				return NetscapeCertType (multiLine);
+			default:
+				return Default (multiLine);
+			}
+		}
+
+		internal string Default (bool multiLine)
+		{
 			StringBuilder sb = new StringBuilder ();
 			for (int i=0; i < _raw.Length; i++) {
 				sb.Append (_raw [i].ToString ("x2"));
 				if (i != _raw.Length - 1)
 					sb.Append (" ");
 			}
+			return sb.ToString ();
+		}
+
+		// Indirectly (undocumented but) supported extensions
+
+		internal string BasicConstraintsExtension (bool multiLine)
+		{
+			try {
+				X509BasicConstraintsExtension bc = new X509BasicConstraintsExtension  (this, false);
+				return bc.ToString (multiLine);
+			}
+			catch {
+				return String.Empty;
+			}
+		}
+
+		internal string EnhancedKeyUsageExtension (bool multiLine)
+		{
+			try {
+				X509EnhancedKeyUsageExtension eku = new X509EnhancedKeyUsageExtension  (this, false);
+				return eku.ToString (multiLine);
+			}
+			catch {
+				return String.Empty;
+			}
+		}
+
+		internal string KeyUsageExtension (bool multiLine)
+		{
+			try {
+				X509KeyUsageExtension ku = new X509KeyUsageExtension  (this, false);
+				return ku.ToString (multiLine);
+			}
+			catch {
+				return String.Empty;
+			}
+		}
+
+		internal string SubjectKeyIdentifierExtension (bool multiLine)
+		{
+			try {
+				X509SubjectKeyIdentifierExtension ski = new X509SubjectKeyIdentifierExtension  (this, false);
+				return ski.ToString (multiLine);
+			}
+			catch {
+				return String.Empty;
+			}
+		}
+
+		// Indirectly (undocumented but) supported extensions
+
+		internal string NetscapeCertType (bool multiLine)
+		{
+			// 4 byte long, BITSTRING (0x03), Value length of 2
+			if ((_raw.Length < 4) || (_raw [0] != 0x03) || (_raw [1] != 0x02))
+				return "Information Not Available";
+			// first value byte is the number of unused bits
+			int value = (_raw [3] >> _raw [2]) << _raw [2];
+
+			StringBuilder sb = new StringBuilder ();
+
+			bool first = false;
+			if ((value & 0x80) == 0x80) {
+				sb.Append ("SSL Client Authentication");
+			}
+			if ((value & 0x40) == 0x40) {
+				if (sb.Length > 0)
+					sb.Append (", ");
+				sb.Append ("SSL Server Authentication");
+			}
+			if ((value & 0x20) == 0x20) {
+				if (sb.Length > 0)
+					sb.Append (", ");
+				sb.Append ("SMIME");
+			}
+			if ((value & 0x10) == 0x10) {
+				if (sb.Length > 0)
+					sb.Append (", ");
+				sb.Append ("Signature"); // a.k.a. Object Signing / Code Signing
+			}
+			if ((value & 0x08) == 0x08) {
+				if (sb.Length > 0)
+					sb.Append (", ");
+				sb.Append ("Unknown cert type");
+			}
+			if ((value & 0x04) == 0x04) {
+				if (sb.Length > 0)
+					sb.Append (", ");
+				sb.Append ("SSL CA");	// CA == Certificate Authority
+			}
+			if ((value & 0x02) == 0x02) {
+				if (sb.Length > 0)
+					sb.Append (", ");
+				sb.Append ("SMIME CA");
+			}
+			if ((value & 0x01) == 0x01) {
+				if (sb.Length > 0)
+					sb.Append (", ");
+				sb.Append ("Signature CA");
+			}
+			sb.AppendFormat (" ({0})", value.ToString ("x2"));
 			return sb.ToString ();
 		}
 	}

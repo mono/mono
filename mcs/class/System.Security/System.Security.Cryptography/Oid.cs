@@ -29,6 +29,9 @@
 
 #if NET_2_0
 
+using System.Security.Cryptography.Pkcs;
+using System.Security.Cryptography.X509Certificates;
+
 namespace System.Security.Cryptography {
 
 	public sealed class Oid {
@@ -84,22 +87,52 @@ namespace System.Security.Cryptography {
 			}
 		}
 
-		// private methods
+		// internal stuff
+
+		// Known OID/Names not defined anywhere else (by OID order)
+		internal const string oidRSA = "1.2.840.113549.1.1.1";
+		internal const string nameRSA = "RSA";
+		internal const string oidPkcs7Data = "1.2.840.113549.1.7.1";
+		internal const string namePkcs7Data = "PKCS 7 Data";
+		internal const string oidMd5 = "1.2.840.113549.2.5";
+		internal const string nameMd5 = "md5";
+		internal const string oid3Des = "1.2.840.113549.3.7";
+		internal const string name3Des = "3des";
+		internal const string oidSha1 = "1.3.14.3.2.26";
+		internal const string nameSha1 = "sha1";
+		internal const string oidNetscapeCertType = "2.16.840.1.113730.1.1";
+		internal const string nameNetscapeCertType = "Netscape Cert Type";
 
 		// TODO - find the complete list
 		private string GetName (string oid) 
 		{
-			if (oid == null)
-				return null;
 			switch (oid) {
-				case "1.2.840.113549.1.1.1":
-					return "RSA";
-				case "1.2.840.113549.1.7.1":
-					return "PKCS 7 Data";
-				case "1.2.840.113549.1.9.5":
-					return "Signing Time";
-				case "1.2.840.113549.3.7":
-					return "3des";
+				case oidRSA:
+					return nameRSA;
+				case oidPkcs7Data:
+					return namePkcs7Data;
+				case Pkcs9ContentType.oid:
+					return Pkcs9ContentType.friendlyName;
+				case Pkcs9MessageDigest.oid:
+					return Pkcs9MessageDigest.friendlyName;
+				case Pkcs9SigningTime.oid:
+					return Pkcs9SigningTime.friendlyName;
+				case oid3Des:
+					return name3Des;
+				case X509BasicConstraintsExtension.oid:
+					return X509BasicConstraintsExtension.friendlyName;
+				case X509KeyUsageExtension.oid:
+					return X509KeyUsageExtension.friendlyName;
+				case X509EnhancedKeyUsageExtension.oid:
+					return X509EnhancedKeyUsageExtension.friendlyName;
+				case X509SubjectKeyIdentifierExtension.oid:
+					return X509SubjectKeyIdentifierExtension.friendlyName;
+				case oidNetscapeCertType:
+					return nameNetscapeCertType;
+				case oidMd5:
+					return nameMd5;
+				case oidSha1:
+					return nameSha1;
 				default:
 					return _name;
 			}
@@ -108,17 +141,33 @@ namespace System.Security.Cryptography {
 		// TODO - find the complete list
 		private string GetValue (string name) 
 		{
-			if (name == null)
-				return null;
 			switch (name) {
-				case "RSA":
-					return "1.2.840.113549.1.1.1";
-				case "PKCS 7 Data":
-					return "1.2.840.113549.1.7.1";
-				case "Signing Time":
-					return "1.2.840.113549.1.9.5";
-				case "3des":
-					return "1.2.840.113549.3.7";
+				case nameRSA:
+					return oidRSA;
+				case namePkcs7Data:
+					return oidPkcs7Data;
+				case Pkcs9ContentType.friendlyName:
+					return Pkcs9ContentType.oid;
+				case Pkcs9MessageDigest.friendlyName:
+					return Pkcs9MessageDigest.oid;
+				case Pkcs9SigningTime.friendlyName:
+					return Pkcs9SigningTime.oid;
+				case name3Des:
+					return oid3Des;
+				case X509BasicConstraintsExtension.friendlyName:
+					return X509BasicConstraintsExtension.oid;
+				case X509KeyUsageExtension.friendlyName:
+					return X509KeyUsageExtension.oid;
+				case X509EnhancedKeyUsageExtension.friendlyName:
+					return X509EnhancedKeyUsageExtension.oid;
+				case X509SubjectKeyIdentifierExtension.friendlyName:
+					return X509SubjectKeyIdentifierExtension.oid;
+				case nameNetscapeCertType:
+					return oidNetscapeCertType;
+				case nameMd5:
+					return oidMd5;
+				case nameSha1:
+					return oidSha1;
 				default:
 					return _value;
 			}
