@@ -1,3 +1,7 @@
+2001-07-16  Michael Lambert <michaellambert@email.com>
+
+	* EventArgs.cs: Add.
+	
 2001-07-16  Miguel de Icaza  <miguel@ximian.com>
 
 	* Version.cs: Remove my buggy comment.
