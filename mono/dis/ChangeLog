@@ -1,5 +1,10 @@
 2004-06-11  Martin Baulig  <martin@ximian.com>
 
+	* get.c (get_methodref_signature): Include "vararg " in the
+	signature of a varargs method.
+
+2004-06-11  Martin Baulig  <martin@ximian.com>
+
 	* get.c (get_methodref_signature): If we're a varargs method,
 	print "..." for the sentinel followed by the actual types.
 
