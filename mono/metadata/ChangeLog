@@ -1,4 +1,9 @@
 
+Sat Jan 29 15:18:54 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c, private.h: remove some unneeded data
+	and use a more compact representation for table schemas.
+
 Fri Jan 28 18:23:44 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* metadata.c, metadata-internals.h: add mono_aligned_addr_hash()
