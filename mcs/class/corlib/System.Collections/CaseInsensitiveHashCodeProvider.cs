@@ -17,13 +17,17 @@ namespace System.Collections {
 	public class CaseInsensitiveHashCodeProvider : IHashCodeProvider {
 
 		private static CaseInsensitiveHashCodeProvider singleton;
+		private static CaseInsensitiveHashCodeProvider singletonInvariant;
+		
+		CultureInfo culture;
 
 
 		// Class constructor
 
 		static CaseInsensitiveHashCodeProvider ()
 		{
-			singleton=new CaseInsensitiveHashCodeProvider ();
+			singleton = new CaseInsensitiveHashCodeProvider ();
+			singletonInvariant = new CaseInsensitiveHashCodeProvider (CultureInfo.InvariantCulture);
 		}
 
 
@@ -34,12 +38,10 @@ namespace System.Collections {
 		{
 		}
 
-		[MonoTODO]
 		public CaseInsensitiveHashCodeProvider (CultureInfo culture)
 		{
-			throw new NotImplementedException ();
+			this.culture = culture;
 		}
-
 
 
 		//
@@ -51,6 +53,14 @@ namespace System.Collections {
 				return singleton;
 			}
 		}
+
+#if NET_1_1
+		public static CaseInsensitiveHashCodeProvider DefaultInvariant {
+			get {
+				return singletonInvariant;
+			}
+		}
+#endif
 
 
 		//
@@ -77,7 +87,7 @@ namespace System.Collections {
 
 			int length = str.Length;
 			for (int i = 0;i<length;i++) {
-				c = Char.ToLower (str [i]);
+				c = Char.ToLower (str [i], culture);
 				h = h * 31 + c;
 			}
 

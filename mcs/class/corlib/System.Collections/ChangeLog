@@ -1,3 +1,8 @@
+2004-03-30  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* CaseInsensitiveHashCodeProvider.cs: Added support for CultureInfo.
+	  Implemented property DefaultInvariant.
+
 2004-03-29  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* CollectionBase.cs: Renamed internal arraylist member to match MS.NET
