@@ -161,10 +161,10 @@ namespace Mono.CSharp {
 			//
 		}
 
-		static void Error_DuplicateParameterName (string name)
+		void Error_DuplicateParameterName (string name)
 		{
 			Report.Error (
-				100, "The parameter name `" + name + "' is a duplicate");
+				100, loc, "The parameter name `" + name + "' is a duplicate");
 		}
 		
 		public bool VerifyArgs ()
