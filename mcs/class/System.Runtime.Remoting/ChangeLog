@@ -1,3 +1,8 @@
+2003-07-23  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* System.Runtime.Remoting_test.dll.sources: Added.
+	* Makefile: added test support.
+
 2003-06-21  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* HttpChannel.cs, HttpClientChannel.cs, HttpHelper.cs, HttpServer.cs,
