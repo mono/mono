@@ -75,37 +75,32 @@ namespace Npgsql
 				serverEndPoint = new IPEndPoint(serverHostEntry.AddressList[0], Int32.Parse(context.ServerPort));	
 			}
 			
-			// Connect to the server.
-            TlsSessionSettings tlsSettings = new TlsSessionSettings();
-
-			tlsSettings.Protocol	= TlsProtocol.Tls1;
-			tlsSettings.ServerName	= context.ServerName;
-			tlsSettings.ServerPort	= Int32.Parse(context.ServerPort);
-
             // Create a new TLS Session
 			try 
 			{
-				context.TlsSession = new TlsSession(tlsSettings);
-				BufferedStream stream = new BufferedStream(context.TlsSession.NetworkStream);
-				context.setNormalStream(context.TlsSession.NetworkStream);
-				context.setStream(stream);
-				BinaryReader receive = new BinaryReader(context.TlsSession.NetworkStream);
-				BinaryWriter send = new BinaryWriter(context.TlsSession.NetworkStream);
-
-				// If the PostgreSQL server has SSL connections enabled Open TLS context.TlsSession if (response == 'S') {
+				TcpClient tcpc = new TcpClient(context.ServerName, Int32.Parse(context.ServerPort));
+				Stream stream = tcpc.GetStream();
+				/*
+				// If the PostgreSQL server has SSL connections enabled Open SslClientStream if (response == 'S') {
 				if (context.SSL=="yes")
 				{
-					PGUtil.WriteInt32(context.TlsSession.NetworkStream, 8);
-					PGUtil.WriteInt32(context.TlsSession.NetworkStream,80877103);
+					PGUtil.WriteInt32(stream, 8);
+					PGUtil.WriteInt32(stream,80877103);
 					// Receive response
-					Char response = (Char)context.TlsSession.NetworkStream.ReadByte();
+					Char response = (Char)stream.ReadByte();
 
 					if (response == 'S') 
 					{
-						context.TlsSession.Open(); // open TLS context.TlsSession
+						stream = new SslClientStream(tcpc.GetStream(), context.ServerName, true, Mono.Security.Protocol.Tls.SecurityProtocolType.Default);
 					} 
 					
-				} 
+				}
+				*/
+				BufferedStream bstream = new BufferedStream(stream);
+				context.setNormalStream(stream);
+				context.setStream(bstream);
+				BinaryReader receive = new BinaryReader(stream);
+				BinaryWriter send = new BinaryWriter(stream);
 				
 			}
 			catch (TlsException e) 

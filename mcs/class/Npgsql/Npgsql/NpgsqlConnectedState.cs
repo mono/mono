@@ -24,7 +24,6 @@
 
 using System;
 using System.IO;
-using Mono.Security.Protocol.Tls;
 
 
 namespace Npgsql
@@ -77,7 +76,7 @@ namespace Npgsql
   																   "",
   																   "");
   		  
-  			startupPacket.WriteToStream( new BufferedStream(context.TlsSession.NetworkStream), context.Encoding );
+  			startupPacket.WriteToStream( new BufferedStream(context.SecuredStream), context.Encoding );
   			ProcessBackendResponses( context );
 		    
 		    

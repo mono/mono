@@ -27,7 +27,6 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Resources;
-using Mono.Security.Protocol.Tls;
 
 namespace Npgsql
 {

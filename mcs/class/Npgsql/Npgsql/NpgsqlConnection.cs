@@ -34,7 +34,6 @@ using System.Collections;
 using System.Collections.Specialized;
 using NpgsqlTypes;
 using Npgsql.Design;
-using Mono.Security.Protocol.Tls;
 
 
 namespace Npgsql {
@@ -96,9 +95,8 @@ namespace Npgsql {
 		// Logging related values
 		private readonly String CLASSNAME = "NpgsqlConnection";
   		
-		private TlsSession				session;
-        private TlsNetworkStream		secstream;
-        private BufferedStream			stream;
+        private Stream					stream;
+        private BufferedStream			bstream;
 
 		private Encoding				connection_encoding;
   	
@@ -438,8 +436,8 @@ namespace Npgsql {
 			}
 			finally {
 				// Even if an exception occurs, let object in a consistent state.
-				if (TlsSession != null)
-					TlsSession.Close();
+				if (stream != null)
+					stream.Close();
 				connection_state = ConnectionState.Closed;
 			}
 		}
@@ -549,19 +547,19 @@ namespace Npgsql {
     
         internal BufferedStream getStream()
 		{
-			return stream;
+			return bstream;
 		}
 		internal void setStream(BufferedStream bs)
 		{
-			stream=bs;
+			bstream=bs;
 		}
-		internal TlsNetworkStream getNormalStream()
+		internal Stream getNormalStream()
 		{
-			return secstream;
+			return stream;
 		}
-		internal void setNormalStream(TlsNetworkStream tns)
+		internal void setNormalStream(Stream tns)
 		{
-			secstream=tns;
+			stream = tns;
 		}
         
 		/*
@@ -663,20 +661,11 @@ namespace Npgsql {
 
 		}
 
-		internal TlsSession TlsSession {
-			get {
-				return session;
-			}
-			set {
-				session = value;
-			}
-		}
-        
-        internal TlsNetworkStream SecuredStream 
+        internal Stream SecuredStream 
 		{
 			get 
 			{
-				return SecuredStream;
+				return stream;
 			}
 		}
         

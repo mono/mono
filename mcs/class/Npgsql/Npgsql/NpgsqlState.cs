@@ -32,7 +32,6 @@ using System.Net.Sockets;
 using System.Collections;
 using System.Text;
 using System.Resources;
-using Mono.Security.Protocol.Tls;
 
 namespace Npgsql
 {
@@ -68,7 +67,7 @@ namespace Npgsql
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Close");
 			if ( context.State == ConnectionState.Open )
 			{
-				TlsNetworkStream stream = context.getNormalStream();
+				Stream stream = context.getNormalStream();
 				if ( stream.CanWrite )
 				{
 					stream.WriteByte((Byte)'X');

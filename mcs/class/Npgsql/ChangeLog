@@ -1,3 +1,13 @@
+2003-11-22  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* Npgsql/NpgsqlClosedState.cs:
+	* Npgsql/NpgsqlConnectedState.cs:
+	* Npgsql/NpgsqlConnection.cs:
+	* Npgsql/NpgsqlReadyState.cs:
+	* Npgsql/NpgsqlState.cs: Changes related to the last update of SSL
+	implementation. Now we're using TcpClient for the connection and
+	Stream for the abstraction layer to SslClientStream.
+
 2003-11-11  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* Npgsql/NpgsqlDataReader.cs: GetSchemaTable has nothing to do with
