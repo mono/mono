@@ -1,4 +1,7 @@
 2004-04-29 Anirban Bhattacharjee <banirban@novell.com>
+	* enum.cs: bug fixing - setting one enum member to another
+
+2004-04-29 Anirban Bhattacharjee <banirban@novell.com>
 	* enum.cs:
 	* expression.cs:
 		Implemented check for access modifier in enum

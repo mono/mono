@@ -444,43 +444,46 @@ namespace Mono.MonoBASIC {
 				
 			} else {
 				// check for any cyclic dependency
-				if (val is Mono.MonoBASIC.SimpleName){
+				if (val is Mono.MonoBASIC.SimpleName) {
 					int var_idx = ordered_enums.IndexOf (val.ToString());
 
 					if (idx <= var_idx)
 						Report.Error(30500, loc,
 							"The evaluation of the constant value for `" +
-					      Name + "." + name + "' involves a circular definition");
+							Name + "." + name + "' involves a circular definition");
+					else
+						default_value = member_to_value [val.ToString()];
 				}
+				else {
+					bool old = ec.InEnumContext;
+					ec.InEnumContext = true;
+					in_transit.Add (name, true);
+					val = val.Resolve (ec);
+					in_transit.Remove (name);
+					ec.InEnumContext = old;
 
-				bool old = ec.InEnumContext;
-				ec.InEnumContext = true;
-				in_transit.Add (name, true);
-				val = val.Resolve (ec);
-				in_transit.Remove (name);
-				ec.InEnumContext = old;
+					if (val == null)
+						return null;
 
-				if (val == null)
-					return null;
+					if (!IsValidEnumConstant (val)) {
+						Report.Error (
+							30650, loc,
+							"Type byte, sbyte, short, ushort, int, uint, long, or " +
+							"ulong expected (have: " + val + ")");
+						return null;
+					}
 
-				if (!IsValidEnumConstant (val)) {
-					Report.Error (
-						30650, loc,
-						"Type byte, sbyte, short, ushort, int, uint, long, or " +
-						"ulong expected (have: " + val + ")");
-					return null;
-				}
-
-				c = (Constant) val;
+					c = (Constant) val;
 				
-				default_value = c.GetValue ();
+					default_value = c.GetValue ();
+				}
 
 				if (default_value == null) {
 					Error_ConstantValueCannotBeConverted (c, loc);
 					return null;
 				}
 
-				if (val is EnumConstant){
+				if (val is EnumConstant) {
 					Type etype = TypeManager.EnumToUnderlying (c.Type);
 					
 					if ( (!ImplicitConversionExists (etype, UnderlyingType)) &&
