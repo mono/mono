@@ -1,4 +1,9 @@
 
+Mon Oct 1 18:48:27 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* x86/tramp.c: fix thinko (s/SUB/ADD/) in stack adjustment
+	and avoid a couple of unnecessary instructions.
+
 Fri Sep 28 19:43:12 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* x86/tramp.c: marshal valuetypes that are enums.
