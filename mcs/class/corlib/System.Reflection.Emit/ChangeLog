@@ -1,3 +1,7 @@
+Mon Apr  8 06:19:01  2002 Piers Haken <piersh@friskit.com>
+
+	* ILGenerator.cs: added LabelField.label_base to allow for
+	arbitrary offsets (for switch statement)
 
 Fri Apr 5 15:41:19 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

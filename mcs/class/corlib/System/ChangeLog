@@ -1,3 +1,7 @@
+Mon Apr  8 06:22:42  2002 Piers Haken <piersh@friskit.com>
+
+	* Convert.cs: switched the To*(object) methods to use
+	IConvertible directly instead of calling ChangeType
 
 Sat Apr 6 20:08:41 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
