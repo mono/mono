@@ -20,8 +20,7 @@ namespace System.Security.Policy {
                 string name;
                 Version version;
                 
-                public StrongNameMembershipCondition (
-                        StrongNamePublicKeyBlob blob, string name, Version version)
+                public StrongNameMembershipCondition (StrongNamePublicKeyBlob blob, string name, Version version)
                 {
                         if (blob == null)
                                 throw new ArgumentNullException ("blob");
@@ -30,6 +29,14 @@ namespace System.Security.Policy {
                         this.name = name;
                         this.version = version;
                 }
+
+		// for PolicyLevel (to avoid validation duplication)
+		internal StrongNameMembershipCondition (SecurityElement e)
+		{
+			FromXml (e);
+		}
+
+		// properties
 
                 public string Name {
 
@@ -80,11 +87,11 @@ namespace System.Security.Policy {
 
 		public override bool Equals (object o)
 		{	 
-			if (o is StrongName == false)
+			if (o is StrongNameMembershipCondition == false)
 				return false;
 			else {
-				StrongName sn = (StrongName) o;
-				return (sn.Name == Name && sn.Version == Version && sn.PublicKey == PublicKey);
+				StrongNameMembershipCondition snmc = (StrongNameMembershipCondition) o;
+				return (snmc.Name == Name && snmc.Version == Version && snmc.PublicKey == PublicKey);
 			}
 		}
 
@@ -101,20 +108,21 @@ namespace System.Security.Policy {
 		public void FromXml (SecurityElement e, PolicyLevel level)
 		{
 			if (e == null)
-				throw new ArgumentNullException (
-					Locale.GetText ("The argument is null."));
+				throw new ArgumentNullException ("e");
 
-			if (e.Attribute ("class") != GetType ().AssemblyQualifiedName)
-				throw new ArgumentException (
-					Locale.GetText ("The argument is invalid."));
+			if (e.Attribute ("class").IndexOf (GetType ().Name) < 0)
+				throw new ArgumentException (Locale.GetText ("Invalid class"));
 
 			if (e.Attribute ("version") != "1")
-				throw new ArgumentException (
-					Locale.GetText ("The argument is invalid."));
+				throw new ArgumentException (Locale.GetText ("Invalid version"));
 
 			blob = StrongNamePublicKeyBlob.FromString (e.Attribute ("PublicKeyBlob"));
 			name = e.Attribute ("Name");
-			version = new Version (e.Attribute ("AssemblyVersion"));
+			string v = (string) e.Attribute ("AssemblyVersion");
+			if (v == null)
+				version = new Version ();
+			else
+				version = new Version (v);
 		}
 
                 public override string ToString ()
@@ -136,9 +144,11 @@ namespace System.Security.Policy {
 
                         element.AddAttribute ("PublicKeyBlob", blob.ToString ());
                         element.AddAttribute ("Name", name);
-                        element.AddAttribute ("AssemblyVersion", version.ToString ());
+			string v = version.ToString ();
+			if (v != "0.0")
+				element.AddAttribute ("AssemblyVersion", version.ToString ());
 
-                        return element;
+			return element;
                 }
         }
 }

@@ -12,10 +12,11 @@ namespace System.Security.Policy {
 	[Serializable]
 	public sealed class FirstMatchCodeGroup : CodeGroup {
 		
-		public FirstMatchCodeGroup(IMembershipCondition membershipCondition, PolicyStatement policy) :
-			base (membershipCondition, policy)
-		{
-		}
+		public FirstMatchCodeGroup (IMembershipCondition membershipCondition, PolicyStatement policy) :
+			base (membershipCondition, policy) {}
+
+		// for PolicyLevel (to avoid validation duplication)
+		internal FirstMatchCodeGroup (SecurityElement e) : base (e) {}
 
 		//
 		// Public Properties
@@ -33,11 +34,9 @@ namespace System.Security.Policy {
 		public override CodeGroup Copy()
 		{
 			FirstMatchCodeGroup copy = CopyNoChildren ();
-
-			foreach (CodeGroup group in Children) {
-				copy.AddChild ( group );
+			foreach (CodeGroup child in Children) {
+				copy.AddChild (child.Copy ());	// deep copy
 			}
-
 			return copy;
 		}
 

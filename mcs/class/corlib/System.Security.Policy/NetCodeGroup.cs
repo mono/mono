@@ -15,9 +15,10 @@ namespace System.Security.Policy {
 	public sealed class NetCodeGroup : CodeGroup {
 
 		public NetCodeGroup (IMembershipCondition condition) 
-			: base (condition,null) 
-		{
-		}
+			: base (condition, null) {}
+
+		// for PolicyLevel (to avoid validation duplication)
+		internal NetCodeGroup (SecurityElement e) : base (e) {}
 	
 		//
 		// Public Properties
@@ -32,9 +33,8 @@ namespace System.Security.Policy {
 		}
 
 		public override string PermissionSetName {
-			get { return "Same site Web"; }
+			get { return "Same site Web."; }
 		}
-
 
 		//
 		// Public Methods
@@ -43,16 +43,14 @@ namespace System.Security.Policy {
 		public override CodeGroup Copy ()
 		{
 			NetCodeGroup copy = new NetCodeGroup (MembershipCondition);
-	
 			copy.Name = Name;
 			copy.Description = Description;
 			copy.PolicyStatement = PolicyStatement;		
 
 			foreach (CodeGroup child in Children) {
-				copy.AddChild (child);	
+				copy.AddChild (child.Copy ());	// deep copy
 			}
-
-			return copy;	
+			return copy;
 		}
 
 		[MonoTODO]

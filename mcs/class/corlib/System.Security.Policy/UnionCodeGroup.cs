@@ -15,8 +15,8 @@ using System.Security.Policy;
 namespace System.Security.Policy {
 
         [Serializable]
-        public sealed class UnionCodeGroup : CodeGroup
-        {
+        public sealed class UnionCodeGroup : CodeGroup {
+
                 public UnionCodeGroup (
                         IMembershipCondition membershipCondition,
                         PolicyStatement policyStatement)
@@ -24,16 +24,23 @@ namespace System.Security.Policy {
                 {
                 }
 
+		// for PolicyLevel (to avoid validation duplication)
+		internal UnionCodeGroup (SecurityElement e) : base (e) {}
+
                 public override CodeGroup Copy ()
                 {
-                        return new UnionCodeGroup (MembershipCondition, PolicyStatement);
+                        UnionCodeGroup copy = new UnionCodeGroup (MembershipCondition, PolicyStatement);
+			foreach (CodeGroup child in Children) {
+				copy.AddChild (child.Copy ());	// deep copy
+			}
+			return copy;
                 }
 
                 [MonoTODO]
                 public override PolicyStatement Resolve (Evidence evidence)
                 {
                         if (evidence == null)
-                                throw new ArgumentNullException (Locale.GetText ("Evidence is null"));
+                                throw new ArgumentNullException ("evidence");
 
                         throw new NotImplementedException ();
                 }
@@ -42,7 +49,7 @@ namespace System.Security.Policy {
                 public override CodeGroup ResolveMatchingCodeGroups (Evidence evidence)
                 {
                         if (evidence == null)
-                                throw new ArgumentNullException (Locale.GetText ("Evidence is null"));
+				throw new ArgumentNullException ("evidence");
 
                         throw new NotImplementedException ();
                 }

@@ -4,74 +4,111 @@
 // Authors:
 //      Nick Drochak (ndrochak@gol.com)
 //      Duncan Mak (duncan@ximian.com)
+//	Sebastien Pouliot (spouliot@motus.com)
 //
 // (C) 2001 Nick Drochak
 // (C) 2003 Duncan Mak, Ximian Inc.
+// Portions (C) 2004 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System.Collections; // for IList
 using System.Globalization;
-using System.Security.Policy;
+using System.IO;
+using System.Reflection;
+using System.Security;
+using System.Security.Permissions;
 
-namespace System.Security.Policy
-{
-	[MonoTODO][Serializable]
-	public sealed class PolicyLevel
-	{
+using Mono.Xml;
+
+namespace System.Security.Policy {
+
+	[Serializable]
+	public sealed class PolicyLevel {
+
                 string label;
-                StrongNameMembershipCondition [] full_trust_assemblies;
                 CodeGroup root_code_group;
-                NamedPermissionSet [] named_permission_sets;
+		private ArrayList full_trust_assemblies;
+		private ArrayList named_permission_sets;
+		private string _location;
 
 		internal PolicyLevel (string label)
                 {
                         this.label = label;
-
-                        // What's a good default size?                        
-                        full_trust_assemblies = new StrongNameMembershipCondition [10];
-                        named_permission_sets = new NamedPermissionSet [10];
+                        full_trust_assemblies = new ArrayList ();
+                        named_permission_sets = new ArrayList ();
                 }
 
-                [MonoTODO]
+		internal void LoadFromFile (string filename) 
+		{
+			if (!File.Exists (filename))
+				throw new ArgumentException (Locale.GetText ("file do not exist"));
+			
+			// throw a SecurityException if we don't have Read, Write and PathDiscovery permissions
+			FileIOPermissionAccess access = FileIOPermissionAccess.Read | FileIOPermissionAccess.Write | FileIOPermissionAccess.PathDiscovery;
+			new FileIOPermission (access, filename).Demand ();
+
+			using (StreamReader sr = File.OpenText (filename)) {
+				string xml = sr.ReadToEnd ();
+				LoadFromString (xml);
+			}
+			_location = filename;
+		}
+
+		internal void LoadFromString (string xml) 
+		{
+			SecurityParser parser = new SecurityParser ();
+			parser.LoadXml (xml);
+			// configuration / mscorlib / security / policy / PolicyLevel
+			SecurityElement configuration = parser.ToXml ();
+			if (configuration.Tag != "configuration")
+				throw new ArgumentException (Locale.GetText ("missing <configuration> root element"));
+			SecurityElement mscorlib = (SecurityElement) configuration.Children [0];
+			if (mscorlib.Tag != "mscorlib")
+				throw new ArgumentException (Locale.GetText ("missing <mscorlib> tag"));
+			SecurityElement security = (SecurityElement) mscorlib.Children [0];
+			if (security.Tag != "security")
+				throw new ArgumentException (Locale.GetText ("missing <security> tag"));
+			SecurityElement policy = (SecurityElement) security.Children [0];
+			if (policy.Tag != "policy")
+				throw new ArgumentException (Locale.GetText ("missing <policy> tag"));
+			SecurityElement policyLevel = (SecurityElement) policy.Children [0];
+			FromXml (policyLevel);
+		}
+
+		// properties
+
 		public IList FullTrustAssemblies
 		{
-			get {
-                                if (full_trust_assemblies != null)
-                                        return (IList) full_trust_assemblies;
-                                
-                                return (IList) null;
-			}
+			get { return full_trust_assemblies; }
 		}
 
 		public string Label {
-
 			get { return label; }
 		}
 
 		public IList NamedPermissionSets {
-
-			get {
-				return (IList) named_permission_sets;
-			}
+			get { return named_permission_sets; }
 		}
 
 		public CodeGroup RootCodeGroup {
-                        
                         get { return root_code_group; }
-			
-			set { root_code_group = value; }
+			set { 
+				if (value == null)
+					throw new ArgumentNullException ("value");
+				root_code_group = value; 
+			}
 		}
 
-                [MonoTODO]
 		public string StoreLocation {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return _location; }
 		}
 
                 public void AddFullTrustAssembly (StrongName sn)
                 {
-                        StrongNameMembershipCondition snMC = new StrongNameMembershipCondition(
+			if (sn == null)
+				throw new ArgumentNullException ("sn");
+
+			StrongNameMembershipCondition snMC = new StrongNameMembershipCondition(
                                 sn.PublicKey, sn.Name, sn.Version);
 
                         AddFullTrustAssembly (snMC);
@@ -80,51 +117,110 @@ namespace System.Security.Policy
                 public void AddFullTrustAssembly (StrongNameMembershipCondition snMC)
                 {
                         if (snMC == null)
-                                throw new ArgumentNullException (
-                                        Locale.GetText ("The argument is null."));
+                                throw new ArgumentNullException ("snMC");
                         
-                        if (((IList) full_trust_assemblies).Contains (snMC))
-                                throw new ArgumentException (
-                                        Locale.GetText ("sn already has full trust."));
-                                        
-                        ((IList) full_trust_assemblies).Add (snMC);
+			foreach (StrongNameMembershipCondition sn in full_trust_assemblies) {
+				if (sn.Equals (snMC)) {
+					throw new ArgumentException (Locale.GetText ("sn already has full trust."));
+				}
+			}
+                        full_trust_assemblies.Add (snMC);
                 }
 
                 public void AddNamedPermissionSet (NamedPermissionSet permSet)
                 {
                         if (permSet == null)
-                                throw new ArgumentNullException (
-                                        Locale.GetText ("The argument is null."));
+                                throw new ArgumentNullException ("permSet");
 
-                        foreach (NamedPermissionSet n in named_permission_sets)
-                                if (permSet.Name == n.Name)
-                                        throw new ArgumentException (
-                                                Locale.GetText ("This NamedPermissionSet is the same an existing NamedPermissionSet."));
-
-                        ((IList) named_permission_sets).Add (permSet);
+			foreach (NamedPermissionSet n in named_permission_sets) {
+				if (permSet.Name == n.Name) {
+					throw new ArgumentException (
+						Locale.GetText ("This NamedPermissionSet is the same an existing NamedPermissionSet."));
+				}
+			}
+                        named_permission_sets.Add (permSet);
                 }
 
-                [MonoTODO ("Set NamedPermissionSet to the one from default policy and grant a FullTrust RootCodeGroup")]
+		public NamedPermissionSet ChangeNamedPermissionSet (string name, PermissionSet pSet)
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if (pSet == null)
+				throw new ArgumentNullException ("pSet");
+			if (IsReserved (name))
+				throw new ArgumentException (Locale.GetText ("Reserved name"));
+
+			foreach (NamedPermissionSet n in named_permission_sets) {
+				if (name == n.Name) {
+					named_permission_sets.Remove (n);
+					AddNamedPermissionSet (new NamedPermissionSet (name, pSet));
+					return n;
+				}
+			}
+			throw new ArgumentException (Locale.GetText ("PermissionSet not found"));
+		}
+
                 public static PolicyLevel CreateAppDomainLevel ()
                 {
-                        PolicyLevel p = new PolicyLevel ("AppDomain");
-
-                        return p;
+			NamedPermissionSet fullTrust = new NamedPermissionSet ("FullTrust", PermissionState.Unrestricted);
+			UnionCodeGroup cg = new UnionCodeGroup (new AllMembershipCondition (), new PolicyStatement (fullTrust));
+			cg.Name = "All_Code";
+			PolicyLevel pl = new PolicyLevel ("AppDomain");
+			pl.RootCodeGroup = cg;
+                        return pl;
                 }
 
-                [MonoTODO ("Check for the element's validity")]
                 public void FromXml (SecurityElement e)
                 {
                         if (e == null)
-                                throw new ArgumentNullException (
-                                        Locale.GetText ("The Argument is null."));
-                }
+                                throw new ArgumentNullException ("e");
+// MS doesn't throw an exception for this case
+//			if (e.Tag != "PolicyLevel")
+//				throw new ArgumentException (Locale.GetText ("Invalid XML"));
+
+			Hashtable fullNames = null;
+			SecurityElement sc = e.SearchForChildByTag ("SecurityClasses");
+			if ((sc != null) && (sc.Children != null) && (sc.Children.Count > 0)) {
+				fullNames = new Hashtable (sc.Children.Count);
+				foreach (SecurityElement se in sc.Children) {
+					fullNames.Add (se.Attributes ["Name"], se.Attributes ["Description"]);
+				}
+			}
+
+			SecurityElement nps = e.SearchForChildByTag ("NamedPermissionSets");
+			if ((nps != null) && (nps.Children != null) && (nps.Children.Count > 0)) {
+				named_permission_sets.Clear ();
+				foreach (SecurityElement se in nps.Children) {
+					named_permission_sets.Add (new NamedPermissionSet (se));
+				}
+			}
+
+			SecurityElement cg = e.SearchForChildByTag ("CodeGroup");
+			if ((cg != null) && (cg.Children != null) && (cg.Children.Count > 0)) {
+				root_code_group = CodeGroup.CreateFromXml (cg);
+			}
+			else
+				throw new ArgumentException (Locale.GetText ("Missing Root CodeGroup"));
+
+			SecurityElement fta = e.SearchForChildByTag ("FullTrustAssemblies");
+			if ((fta != null) && (fta.Children != null) && (fta.Children.Count > 0)) {
+				full_trust_assemblies.Clear ();
+				foreach (SecurityElement se in fta.Children) {
+					if (se.Tag != "IMembershipCondition")
+						throw new ArgumentException (Locale.GetText ("Invalid XML"));
+					string className = (string) se.Attributes ["class"];
+					if (className.IndexOf ("StrongNameMembershipCondition") < 0)
+						throw new ArgumentException (Locale.GetText ("Invalid XML - must be StrongNameMembershipCondition"));
+					// we directly use StrongNameMembershipCondition
+					full_trust_assemblies.Add (new StrongNameMembershipCondition (se));
+				}
+			}
+		}
 
                 public NamedPermissionSet GetNamedPermissionSet (string name)
                 {
                         if (name == null)
-                                throw new ArgumentNullException (
-                                        Locale.GetText ("The Argument is null."));
+                                throw new ArgumentNullException ("name");
 
                         foreach (NamedPermissionSet n in named_permission_sets)
                                 if (n.Name == name)
@@ -141,16 +237,17 @@ namespace System.Security.Policy
 
                 public void RemoveFullTrustAssembly (StrongName sn)
                 {
-                        StrongNameMembershipCondition s = new StrongNameMembershipCondition (sn.PublicKey, sn.Name, sn.Version);
+			if (sn == null)
+				throw new ArgumentNullException ("sn");
 
+			StrongNameMembershipCondition s = new StrongNameMembershipCondition (sn.PublicKey, sn.Name, sn.Version);
                         RemoveFullTrustAssembly (s);
                 }
 
                 public void RemoveFullTrustAssembly (StrongNameMembershipCondition snMC)
                 {
                         if (snMC == null)
-                                throw new ArgumentNullException (
-                                        Locale.GetText ("The Argument is null."));
+                                throw new ArgumentNullException ("snMC");
 
                         if (((IList) full_trust_assemblies).Contains (snMC))
                                 ((IList) full_trust_assemblies).Remove (snMC);
@@ -179,12 +276,11 @@ namespace System.Security.Policy
                 public NamedPermissionSet RemoveNamedPermissionSet (string name)
                 {
                         if (name == null)
-                                throw new ArgumentNullException (
-                                        Locale.GetText ("The Argument is null."));
+                                throw new ArgumentNullException ("name");
 
                         int idx = -1;
-                        for (int i = 0; i < named_permission_sets.Length; i++) {
-                                NamedPermissionSet current = named_permission_sets [i];
+                        for (int i = 0; i < named_permission_sets.Count; i++) {
+                                NamedPermissionSet current = (NamedPermissionSet) named_permission_sets [i];
 
                                 if (current.Name == name)
                                         idx = i;
@@ -195,8 +291,8 @@ namespace System.Security.Policy
                                 throw new ArgumentException (
                                         Locale.GetText ("Name cannot be found."));
 
-                        NamedPermissionSet retval = named_permission_sets [idx];
-                        ((IList) named_permission_sets).RemoveAt (idx);
+                        NamedPermissionSet retval = (NamedPermissionSet) named_permission_sets [idx];
+                        named_permission_sets.RemoveAt (idx);
 
                         return retval;
                 }
@@ -211,8 +307,7 @@ namespace System.Security.Policy
                 public PolicyStatement Resolve (Evidence evidence)
                 {
                         if (evidence == null)
-                                throw new ArgumentNullException (
-                                        Locale.GetText ("The Argument is null."));
+                                throw new ArgumentNullException ("evidence");
 
                         throw new NotImplementedException ();
                 }
@@ -221,38 +316,75 @@ namespace System.Security.Policy
                 public CodeGroup ResolveMatchingCodeGroups (Evidence evidence)
                 {
                         if (evidence == null)
-                                throw new ArgumentNullException (
-                                        Locale.GetText ("The Argument is null."));
+				throw new ArgumentNullException ("evidence");
 
                         throw new NotImplementedException ();
                 }
 
-                [MonoTODO ("Populate security_classes")]
                 public SecurityElement ToXml ()
                 {
-                        SecurityElement element = new SecurityElement (
-                                typeof (System.Security.Policy.PolicyLevel).Name);
-                        
-                        element.AddAttribute ("version", "1");
-
-                        SecurityElement security_classes = new SecurityElement ("SecurityClasses");
-                        element.AddChild (security_classes);
+			Hashtable fullNames = new Hashtable ();
+			// only StrongNameMembershipCondition so no need to loop
+			if (full_trust_assemblies.Count > 0) {
+				if (!fullNames.Contains ("StrongNameMembershipCondition")) {
+					fullNames.Add ("StrongNameMembershipCondition", typeof (StrongNameMembershipCondition).FullName);
+				}
+			}
                         
                         SecurityElement namedPSs = new SecurityElement ("NamedPermissionSets");
-                        element.AddChild (namedPSs);
-
-                        foreach (NamedPermissionSet nps in named_permission_sets)
-                                namedPSs.AddChild (nps.ToXml ());
-
-                        element.AddChild (root_code_group.ToXml ());
+			foreach (NamedPermissionSet nps in named_permission_sets) {
+				SecurityElement se = nps.ToXml ();
+				object objectClass = se.Attributes ["class"];
+				if (!fullNames.Contains (objectClass)) {
+					fullNames.Add (objectClass, nps.GetType ().FullName);
+				}
+				namedPSs.AddChild (se);
+			}
 
                         SecurityElement fta = new SecurityElement ("FullTrustAssemblies");
-                        element.AddChild (fta);
-                        
-                        foreach (StrongNameMembershipCondition s in full_trust_assemblies)
-                                element.AddChild (s.ToXml (this));
-                        
+			foreach (StrongNameMembershipCondition snmc in full_trust_assemblies) {
+				fta.AddChild (snmc.ToXml (this));
+			}
+
+			SecurityElement security_classes = new SecurityElement ("SecurityClasses");
+			if (fullNames.Count > 0) {
+				foreach (DictionaryEntry de in fullNames) {
+					SecurityElement sc = new SecurityElement ("SecurityClass");
+					sc.AddAttribute ("Name", (string)de.Key);
+					sc.AddAttribute ("Description", (string)de.Value);
+					security_classes.AddChild (sc);
+				}
+			}
+
+			SecurityElement element = new SecurityElement (typeof (System.Security.Policy.PolicyLevel).Name);
+			element.AddAttribute ("version", "1");
+			element.AddChild (security_classes);
+			element.AddChild (namedPSs);
+			if (root_code_group != null) {
+				element.AddChild (root_code_group.ToXml (this));
+			}
+			element.AddChild (fta);
+
                         return element;
                 }
+
+		// internal stuff
+
+		internal bool IsReserved (string name) 
+		{
+			switch (name) {
+				case "FullTrust":
+				case "LocalIntranet":
+				case "Internet":
+				case "SkipVerification":
+				case "Execution":
+				case "Nothing":
+				case "Everything":
+					// FIXME: Are there others ?
+					return true;
+				default:
+					return false;
+			}
+		}
         }
 }

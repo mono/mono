@@ -1,3 +1,22 @@
+2004-01-05  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CodeGroup.cs: Added internal constructor for PolicyLevel. Complete
+	FromXml. Various small fixes to match the unit tests.
+	* FileCodeGroup.cs: Added internal constructor for PolicyLevel. 
+	Implemented GetHashCode (may not be exactly the same as MS).
+	* FirstMatchCodeGroup.cs: Added internal constructor for PolicyLevel.
+	Copy method now returns a deep copy (as documented).
+	* NetCodeGroup.cs: Added internal constructor for PolicyLevel. Fixed 
+	"Same site Web" (as documented) to "Same site Web." (as real life).
+	Copy method now returns a deep copy (as documented).
+	* PolicyLevel.cs: Added missing ChangeNamedPermissionSet. Implemented
+	FromXml method. Added internal methods to load from file or string. 
+	Added/changed lots of things to match unit tests.
+	* StrongNameMembershipCondition.cs: Added internal constructor for 
+	PolicyLevel. Fixed Equals.
+	* UnionCodeGroup.cs: Added internal constructor for PolicyLevel.
+	Copy method now returns a deep copy (as documented).
+
 2004-01-03  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Site.cs: Completed implementation.

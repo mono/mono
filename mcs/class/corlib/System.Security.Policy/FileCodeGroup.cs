@@ -10,45 +10,39 @@ using System.Security.Permissions;
 using System.Collections;
 using System;  // for MonoTODO attribute
 
-namespace System.Security.Policy
-{
+namespace System.Security.Policy {
+
 	[Serializable]
-	public sealed class FileCodeGroup : CodeGroup
-	{
+	public sealed class FileCodeGroup : CodeGroup {
+
 		FileIOPermissionAccess m_access;
 
-		[MonoTODO("Check if membershipCondition is valid")]
-		public FileCodeGroup(IMembershipCondition membershipCondition,
+		public FileCodeGroup (IMembershipCondition membershipCondition,
 					FileIOPermissionAccess access) 
 			: base(membershipCondition, null)
 		{
-			if (!Enum.IsDefined(typeof(FileIOPermissionAccess), access))
-				throw new ArgumentException("Value not defined for FileIOPermissionAccess","access");
-			
+			// note: FileIOPermissionAccess is a [Flag]
 			m_access = access;
 		}
 
-		public override CodeGroup Copy()
-		{
-			FileCodeGroup copy = new FileCodeGroup(MembershipCondition, m_access);
-			foreach (CodeGroup child in Children)
-			{
-				AddChild(child.Copy());
-			}
+		// for PolicyLevel (to avoid validation duplication)
+		internal FileCodeGroup (SecurityElement e) : base (e) {}
 
+		public override CodeGroup Copy ()
+		{
+			FileCodeGroup copy = new FileCodeGroup (MembershipCondition, m_access);
+			foreach (CodeGroup child in Children) {
+				copy.AddChild (child.Copy ());	// deep copy
+			}
 			return copy;
 		}
 		
-		public override string MergeLogic
-		{
-			get
-			{
-				return "Union";
-			}
+		public override string MergeLogic {
+			get { return "Union";}
 		}
 
 		[MonoTODO]
-		public override PolicyStatement Resolve(	Evidence evidence)
+		public override PolicyStatement Resolve (Evidence evidence)
 		{
 			if (null == evidence)
 				throw new ArgumentNullException("evidence");
@@ -88,20 +82,12 @@ namespace System.Security.Policy
 			return matchRoot;
 		}
 
-		public override string AttributeString
-		{
-			get
-			{
-				return null;
-			}
+		public override string AttributeString {
+			get { return null; }
 		}
 
-		public override string PermissionSetName
-		{
-			get
-			{
-				return "Same directory FileIO - " + m_access.ToString();
-			}
+		public override string PermissionSetName {
+			get { return "Same directory FileIO - " + m_access.ToString(); }
 		}
 
 		public override bool Equals(object o)
@@ -115,10 +101,9 @@ namespace System.Security.Policy
 			return Equals((CodeGroup)o, false);
 		}
 
-		[MonoTODO]
-		public override int GetHashCode()
+		public override int GetHashCode ()
 		{
-			throw new NotImplementedException();
+			return m_access.GetHashCode ();
 		}
 
 		protected override void ParseXml(SecurityElement e, PolicyLevel level)
@@ -131,5 +116,4 @@ namespace System.Security.Policy
 			element.AddAttribute("Access", m_access.ToString());
 		}
 	}  // public abstract class CodeGroup
-
 }  // namespace System.Security.Policy
