@@ -1,11 +1,3 @@
-2003-02-27  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
-
-	* XmlDocument.cs: modified Load().
-	  Uri.Parse might not allow non-uri string.
-	* XmlInputStream.cs: patch by Gonzalo (CanSeek).
-	  added some constructors for convenience.
-	* XmlTextReader.cs: modified some constructors.
-
 2003-02-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XmlDocument.cs:

@@ -552,12 +552,24 @@ namespace System.Xml
 
 		public virtual void Load (Stream inStream)
 		{
-			Load (new XmlTextReader (new XmlStreamReader (inStream)));
+			XmlReader xmlReader = new XmlTextReader (new XmlInputStream (inStream));
+			Load (xmlReader);
 		}
 
 		public virtual void Load (string filename)
 		{
-			Load (new XmlTextReader (new XmlStreamReader (filename)));
+			//HACK, HACK
+			if (filename.IndexOf (':') != -1) {
+				// While we fix Uri the code that uses it is only triggered by a colon in the filename.
+				Uri uri = new Uri (filename);
+				baseURI = filename;	// FIXME: resolve base
+				Stream stream = new XmlUrlResolver ().GetEntity (uri, null, typeof(Stream)) as Stream;
+				XmlReader xmlReader = new XmlTextReader (new XmlStreamReader (new XmlInputStream (stream)));
+				Load (xmlReader);
+			} else {
+				//Remove this once Uri.Parse is fixed.
+				Load (File.OpenRead (filename));
+			}
 		}
 
 		public virtual void Load (TextReader txtReader)
@@ -565,7 +577,6 @@ namespace System.Xml
 			Load (new XmlTextReader (txtReader));
 		}
 
-		[MonoTODO("XmlValidatingReader should be used.")]
 		public virtual void Load (XmlReader xmlReader)
 		{
 			// Reset our document
@@ -573,8 +584,6 @@ namespace System.Xml
 			// may turn out o need to call a private method that resets other things
 			// like properties we have, etc.
 			RemoveAll ();
-
-			this.baseURI = xmlReader.BaseURI;
 
 			// create all contents with use of ReadNode()
 			do {
