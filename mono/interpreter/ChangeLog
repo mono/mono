@@ -1,4 +1,13 @@
 
+Wed Aug 22 20:37:51 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: simplified init_class (). Make sure a class
+	is fully initialized before executing a method in the class.
+	Search for the class constructor only on beforefieldinit classes.
+	Implement a bunch of opcodes: br, brfalse, brtrue, beq, bge,
+	bgt, blt, ble, bne.un, bge.un, bgt.un, ble.un, blt.un, stind.i,
+	ldflda, ldsflda, ldelem.i8, stelem.i8, leave.
+
 Wed Aug 22 16:34:03 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: Updates for changes in metadata/. Better output in debug mode
