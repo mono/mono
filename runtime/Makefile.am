@@ -100,3 +100,7 @@ copy_dlls:
 
 push_dlls:
 	scp -o "Protocol 1" *.dll *.exe snapshot@mono-cvs.ximian.com:dlls
+
+cleanassemblies:
+	find -name \*.dll -exec rm -vf {} \;
+	find -name \*.exe -exec rm -vf {} \;
