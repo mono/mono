@@ -41,7 +41,7 @@ namespace Npgsql
     /// Represents a SQL statement or function (stored procedure) to execute against a PostgreSQL database. This class cannot be inherited.
     /// </summary>
     [System.Drawing.ToolboxBitmapAttribute(typeof(NpgsqlCommand)), ToolboxItem(true)]
-    public sealed class NpgsqlCommand : Component, IDbCommand, IDisposable
+    public sealed class NpgsqlCommand : Component, IDbCommand
     {
 
         private NpgsqlConnection            connection;
@@ -557,15 +557,24 @@ namespace Npgsql
 
 
             // First data is the RowDescription object.
-            //NpgsqlRowDescription rd = (NpgsqlRowDescription)results[0];
-
-            NpgsqlResultSet firstResultSet = (NpgsqlResultSet)resultSets[0];
-
-            NpgsqlRowDescription rd = firstResultSet.RowDescription;
-
-            NpgsqlAsciiRow ascii_row = (NpgsqlAsciiRow)firstResultSet[0];
-
-            return ascii_row[0];
+            // Check all resultsets as insert commands could have been sent along
+            // with resultset queries. The insert commands return null, so, if 
+            // we find one, skip to next resultset. If no resultset is found, return null
+            // as per specification.
+            
+            NpgsqlAsciiRow ascii_row = null;
+            foreach( Object rs in resultSets )
+            {
+                if( rs != null )
+                {
+                    NpgsqlResultSet nrs = (NpgsqlResultSet) rs;
+                    ascii_row = (NpgsqlAsciiRow) nrs[0];
+                    return ascii_row[0];
+                }
+            }
+            
+            
+            return null;
 
 
         }
@@ -614,7 +623,7 @@ namespace Npgsql
         /// <summary>
         /// Releases the resources used by the <see cref="Npgsql.NpgsqlCommand">NpgsqlCommand</see>.
         /// </summary>
-        protected override void Dispose (bool disposing)
+        /*protected override void Dispose (bool disposing)
         {
             
             if (disposing)
@@ -629,7 +638,7 @@ namespace Npgsql
                 base.Dispose(disposing);
                 
             }
-        }
+        }*/
 
         ///<summary>
         /// This method checks the connection state to see if the connection
