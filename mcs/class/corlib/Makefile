@@ -16,6 +16,8 @@ endif
 
 LOCAL_MCS_FLAGS = /nowarn:649 /nowarn:169 -d:INSIDE_CORLIB
 
+gmcs = $(topdir)/gmcs/gmcs.exe
+
 corlib = $(topdir)/class/lib/$(PROFILE)/mscorlib.dll
 testlib = corlib_test.dll
 cmplib = $(topdir)/class/lib/$(PROFILE)/corlib_cmp.dll
@@ -35,6 +37,14 @@ stampfile = $(depsdir)/$(PROFILE)_corlib.dll.stamp
 # disable, until people fix their code...
 #corlib_flags = /unsafe /nostdlib /d:INSIDE_CORLIB
 corlib_flags = /unsafe /nostdlib
+
+net_2_0_bootstrap_response = $(depsdir)/corlib_net_2_0_bootstrap.dll.response
+net_2_0_bootstrap_makefrag = $(depsdir)/corlib_net_2_0_bootstrap.dll.makefrag
+net_2_0_bootstrap_stampfile = $(depsdir)/corlib_net_2_0_bootstrap.dll.stamp
+
+net_2_0_response = $(depsdir)/corlib_net_2_0.dll.response
+net_2_0_makefrag = $(depsdir)/corlib_net_2_0.dll.makefrag
+net_2_0_stampfile = $(depsdir)/corlib_net_2_0.dll.stamp
 
 test_sourcefile = corlib_test.dll.sources
 test_response = $(depsdir)/$(PROFILE)_$(testlib).response
@@ -72,6 +82,8 @@ uninstall-local:
 clean-local:
 	-rm -f $(corlib) $(cmplib) $(testlib) $(reslib) $(plattestlib) TestResult.xml \
 	       $(response) $(makefrag) $(stampfile) \
+	       $(net_2_0_bootstrap_response) $(net_2_0_bootstrap_makefrag) $(net_2_0_bootstrap_stampfile) \
+	       $(net_2_0_response) $(net_2_0_makefrag) $(net_2_0_stampfile) \
 	       $(test_response) $(test_makefrag) $(test_stampfile) \
 	       $(cmp_response) $(cmp_makefrag) $(cmp_stampfile) \
 	       $(res_response) $(res_makefrag) $(res_stampfile) \
@@ -124,8 +136,29 @@ dist-local: dist-default
 
 # plain ol corlib
 
-$(corlib): $(makefrag) $(response) $(stampfile)
-	$(BOOT_COMPILE) $(LIBRARY_FLAGS) $(corlib_flags) /target:library /out:$@ @$(response)
+$(corlib): 
+	@if test $(PROFILE) = "net_2_0" ; then \
+		$(MAKE) corlib_net_2_0 || exit 1 ; \
+	else \
+		$(MAKE) corlib_compile || exit 1 ; \
+	fi
+
+corlib_compile: $(makefrag) $(response) $(stampfile)
+	$(BOOT_COMPILE) $(LIBRARY_FLAGS) $(corlib_flags) /target:library /out:../lib/default/mscorlib.dll @$(response)
+
+# A bootstrap corlib 2.0 needs to be built so gmcs can be built and the full net 2.0 corlib can be built
+# here we go,....
+
+corlib_net_2_0: corlib_net_2_0_compile
+
+corlib_net_2_0_compile: corlib_net_2_0_bootstrap $(net_2_0_makefrag) $(net_2_0_response) $(net_2_0_stampfile) $(gmcs)
+	MONO_PATH="../lib/net_2_0_bootstrap:$(MONO_PATH)" $(RUNTIME) $(gmcs) $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(corlib_flags) /define:NET_1_1 /define:NET_2_0 /target:library /out:../lib/net_2_0/mscorlib.dll @$(net_2_0_response)
+
+corlib_net_2_0_bootstrap: $(net_2_0_bootstrap_response) $(net_2_0_bootstrap_stampfile)
+	$(BOOTSTRAP_MCS) /nowarn:649 /nowarn:169 /define:INSIDE_CORLIB /define:NET_1_1 /define:BOOTSTRAP_NET_2_0 $(corlib_flags) /target:library /out:../lib/net_2_0_bootstrap/mscorlib.dll @$(net_2_0_bootstrap_response)
+
+$(gmcs):
+	cd $(topdir)/gmcs/ && $(MAKE) ;
 
 $(response): $(sourcefile)
 	@echo Creating $@ ...
@@ -284,3 +317,58 @@ ifndef HAVE_PLATTEST_MAKEFRAG
 $(plattest_stampfile):
 	touch $@
 endif
+
+#net_2_0_bootstrap
+
+$(net_2_0_bootstrap_response): $(sourcefile)
+	@echo Creating $@ ...
+ifdef PLATFORM_CHANGE_SEPARATOR_CMD
+	@cat $< |$(PLATFORM_TWEAK_CORLIB_SOURCES) |$(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
+else
+	@cat $< |$(PLATFORM_TWEAK_CORLIB_SOURCES) >$@
+endif
+
+# warning: embedded tab in the 'echo touch' line
+$(net_2_0_boostrap_makefrag): $(net_2_0_boostrap_response)
+	@echo Creating $@ ...
+	@echo "HAVE_NET_2_0_BOOTSTRAP_MAKEFRAG = yes" >$@.new
+	@echo "$(net_2_0_bootstrap_stampfile): \\" >>$@.new
+	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
+	@cat $@.new |sed -e '$$s, \\$$,,' >$@
+	@echo "	touch \$$@" >>$@
+	@rm -rf $@.new
+
+-include $(net_2_0_bootstrap_makefrag)
+
+ifndef HAVE_NET_2_0_BOOTSTRAP_MAKEFRAG
+$(net_2_0_bootstrap_stampfile):
+	touch $@
+endif
+
+#net_2_0
+
+$(net_2_0_response): $(sourcefile)
+	@echo Creating $@ ...
+ifdef PLATFORM_CHANGE_SEPARATOR_CMD
+	@cat $< |$(PLATFORM_TWEAK_CORLIB_SOURCES) |$(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
+else
+	@cat $< |$(PLATFORM_TWEAK_CORLIB_SOURCES) >$@
+endif
+
+# warning: embedded tab in the 'echo touch' line
+$(net_2_0_makefrag): $(net_2_0_response)
+	@echo Creating $@ ...
+	@echo "HAVE_NET_2_0_MAKEFRAG = yes" >$@.new
+	@echo "$(net_2_0_stampfile): \\" >>$@.new
+	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
+	@cat $@.new |sed -e '$$s, \\$$,,' >$@
+	@echo "	touch \$$@" >>$@
+	@rm -rf $@.new
+
+-include $(net_2_0_makefrag)
+
+ifndef HAVE_NET_2_0_MAKEFRAG
+$(net_2_0_stampfile):
+	touch $@
+endif
+
