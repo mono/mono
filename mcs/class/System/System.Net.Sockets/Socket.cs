@@ -422,11 +422,18 @@ namespace System.Net.Sockets
 				throw new SocketException (error);
 			}
 
+			/* Make sure the connected state is updated
+			 * for each socket returned from the select;
+			 * for non blocking Connect()s, this is when
+			 * we find out that the connect succeeded.
+			 */
+
 			if(read_list!=null) {
 				read_list.Clear();
 				if (read_arr != null) {
 					for(i=0; i<read_arr.Length; i++) {
 						read_list.Add(read_arr[i]);
+						read_arr[i].connected = true;
 					}
 				}
 			}
@@ -436,6 +443,7 @@ namespace System.Net.Sockets
 				if (write_arr != null) {
 					for(i=0; i<write_arr.Length; i++) {
 						write_list.Add(write_arr[i]);
+						write_arr[i].connected = true;
 					}
 				}
 			}
@@ -445,6 +453,7 @@ namespace System.Net.Sockets
 				if (err_arr != null) {
 					for(i=0; i<err_arr.Length; i++) {
 						err_list.Add(err_arr[i]);
+						err_arr[i].connected = true;
 					}
 				}
 			}
@@ -1236,6 +1245,15 @@ namespace System.Net.Sockets
 			if (error != 0)
 				throw new SocketException (error);
 
+			if (result == true) {
+				/* Update the connected state; for
+				 * non-blocking Connect()s this is
+				 * when we can find out that the
+				 * connect succeeded.
+				 */
+				connected = true;
+			}
+			
 			return result;
 		}
 		
