@@ -380,8 +380,9 @@ namespace Mono.CSharp.Debugger
 			get { return full_name; }
 		}
 
-		internal MethodEntry (MonoSymbolFile file, BinaryReader reader)
+		internal MethodEntry (MonoSymbolFile file, BinaryReader reader, int index)
 		{
+			this.index = index;
 			SourceFileIndex = reader.ReadInt32 ();
 			Token = reader.ReadInt32 ();
 			StartRow = reader.ReadInt32 ();
@@ -578,7 +579,7 @@ namespace Mono.CSharp.Debugger
 		public override string ToString ()
 		{
 			return String.Format ("[Method {0}:{1}:{2}:{3}:{4} - {7}:{8}:{9}:{10} - {5} - {6}]",
-					      SourceFileIndex, index, Token, StartRow, EndRow,
+					      index, Token, SourceFileIndex, StartRow, EndRow,
 					      SourceFile, FullName, ThisTypeIndex, NumParameters,
 					      NumLocals, NumLineNumbers);
 		}

@@ -399,7 +399,7 @@ namespace Mono.CSharp.Debugger
 			reader.BaseStream.Position = ot.MethodTableOffset + 8 * (index - 1);
 			reader.BaseStream.Position = reader.ReadInt32 ();
 
-			entry = new MethodEntry (this, reader);
+			entry = new MethodEntry (this, reader, index);
 			method_hash.Add (index, entry);
 			return entry;
 		}
