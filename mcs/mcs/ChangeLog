@@ -1,3 +1,7 @@
+2003-01-16 Jackson Harper <jackson@latitudegeo.com>
+
+	* cs-tokenizer.cs: Set file name when specified with #line
+
 2003-01-15  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay: Only perform the constructor checks here if we
