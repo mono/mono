@@ -1,3 +1,10 @@
+2003-04-20 Jackson Harper <jackson@latitudegeo.com>
+
+	* CodeGen.cs: Add method to add data
+	* FieldDef.cs: Add method to set a fields value
+	* TypeDef.cs: Add method to add data
+	* DataDef.cs: New file - Definition of a data constant
+		
 2003-04-18 Jackson Harper <jackson@latitudegeo.com>
 
 	* FieldDef.cs: Change peapi fielddef name.

@@ -30,6 +30,7 @@ namespace Mono.ILASM {
                 private ExternTable extern_table;
                 private ArrayList global_field_list;
                 private ArrayList global_method_list;
+                private ArrayList global_data_list;
 
                 public CodeGen (string output_file, bool is_dll, bool is_assembly)
                 {
@@ -39,6 +40,7 @@ namespace Mono.ILASM {
                         typedef_stack = new Stack ();
                         global_field_list = new ArrayList ();
                         global_method_list = new ArrayList ();
+                        global_data_list = new ArrayList ();
                 }
 
                 public PEFile PEFile {
@@ -95,6 +97,15 @@ namespace Mono.ILASM {
                                 current_typedef.AddFieldDef (fielddef);
                         } else {
                                 global_field_list.Add (fielddef);
+                        }
+                }
+
+                public void AddDataDef (DataDef datadef)
+                {
+                        if (current_typedef != null) {
+                                current_typedef.AddDataDef (datadef);
+                        } else {
+                                global_data_list.Add (datadef);
                         }
                 }
 

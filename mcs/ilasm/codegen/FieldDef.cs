@@ -24,6 +24,7 @@ namespace Mono.ILASM {
                 private bool value_set;
 
                 private uint offset;
+                private PEAPI.Constant constant;
 
                 public FieldDef (PEAPI.FieldAttr attr, string name,
                                 ITypeRef type)
@@ -45,9 +46,16 @@ namespace Mono.ILASM {
                         get { return field_def; }
                 }
 
-                public void SetOffset (uint val) {
+                public void SetOffset (uint val)
+                {
                         offset_set = true;
                         offset = val;
+                }
+
+                public void SetValue (PEAPI.Constant constant)
+                {
+                        value_set = true;
+                        this.constant = constant;
                 }
 
                 /// <summary>
@@ -61,7 +69,10 @@ namespace Mono.ILASM {
 
                         if (offset_set) {
                                 field_def.SetOffset (offset);
+                        }
 
+                        if (value_set) {
+                                field_def.AddValue (constant);
                         }
                 }
 
