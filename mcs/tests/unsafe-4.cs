@@ -1,3 +1,5 @@
+// Compiler options: -unsafe
+
 unsafe class X {
 	static int v;
 	static int v_calls;

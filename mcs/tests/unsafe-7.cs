@@ -1,4 +1,4 @@
-//Compile with /unsafe
+// Compiler options: -unsafe
 
 struct Obsolete {
 	int a;

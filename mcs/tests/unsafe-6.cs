@@ -1,3 +1,5 @@
+// Compiler options: -unsafe
+
 //
 // This tests excercises the compound assignment when the left side
 // is an dereference operator.

@@ -1,3 +1,17 @@
+2004-09-27  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile: Re-apply patches from 2004-09-14.
+	(NEW_TEST_SOURCES_common): Rename from NEW_TEST_SOURCES.
+	(TEST_SOURCES_common): Rename from TEST_SOURCES.  
+	(TEST_SOURCES_all): Rename to ALL_TEST_SOURCES.  Handle profile- and
+	platform-specific test inclusion and exclusion.
+	(TEST_SOURCES_default, TEST_SOURCES_net_2_0, TEST_EXCLUDES_common)
+	(TEST_EXCLUDES_net_2_0): New.  Reorganized from various other variables.
+	(TEST2_SOURCES, UNSAFE_SOURCES): Remove.  Merge into TEST_SOURCES_common.
+	(test-2, test-unsafe-compiler-jit): Remove.  Merge into test-compiler-jit.	
+	* 2tests-*.cs, unsafe-*.cs, test-58.cs, test-171.cs:
+	Add 'Compiler options: '.
+
 2004-09-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* test-254.cs: Fix test so it runs under NET 2.0.

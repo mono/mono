@@ -1,3 +1,5 @@
+// Compiler options: -unsafe
+
 // this tests making a pointer to a pointer
 
 using System;

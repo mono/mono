@@ -1,4 +1,6 @@
 *.dll
+*.exe
+*.netmodule
 *.log
 boot-casts.out
 mcs-casts.out

@@ -1,3 +1,5 @@
+// Compiler options: -unsafe
+
 //
 // Tests unsafe operators.  address-of, dereference, member access
 //

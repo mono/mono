@@ -1,3 +1,5 @@
+// Compiler options: -unsafe
+
 using System;
 
 unsafe class X {

@@ -1,3 +1,5 @@
+// Compiler options: -unsafe
+
 //
 // Checks for an implicit void * conversion during an
 // explicit conversion
@@ -25,4 +27,3 @@ namespace IntPtr_Conv
 		}
 	}
 }
-

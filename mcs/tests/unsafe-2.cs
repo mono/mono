@@ -1,3 +1,5 @@
+// Compiler options: -unsafe
+
 //
 // This test excercises stackalloc, some pointer arithmetic,
 // and dereferences

@@ -1,3 +1,5 @@
+// Compiler options: -langversion:default
+
 namespace Foo
 {
 	public class Hello

@@ -1,3 +1,5 @@
+// Compiler options: -unsafe
+
 using System;
 using System.Reflection;
 

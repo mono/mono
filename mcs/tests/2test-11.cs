@@ -1,3 +1,5 @@
+// Compiler options: -langversion:default
+
 namespace Test1
 {
 	public class Base

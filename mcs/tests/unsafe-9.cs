@@ -1,3 +1,5 @@
+// Compiler options: -unsafe
+
 //
 // Test for http://bugzilla.ximian.com/show_bug.cgi?id=62263
 //

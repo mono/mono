@@ -1,3 +1,5 @@
+// Compiler options: -langversion:default
+
 using System;
 using System.Collections;
 

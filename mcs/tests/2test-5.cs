@@ -1,3 +1,5 @@
+// Compiler options: -langversion:default
+
 //
 // Anonymous method group conversions
 //

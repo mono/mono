@@ -1,3 +1,5 @@
+// Compiler options: -unsafe
+
 unsafe class T {
 	static int Main () {
 		int len = 10;
