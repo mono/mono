@@ -1,0 +1,16 @@
+2004-11-08 14:28  pbartok
+
+	* ResXResourceReader.cs:
+	  - BenM's Fix for bug 68260
+
+2004-10-13 08:14  pbartok
+
+	* ResXResourceReader.cs:
+	  - Patch by joel.reed@ddiworld.com (joel) to handle CDATA sections.
+
+2004-08-29 22:36  pbartok
+
+	* ResXResourceReader.cs, ResXResourceWriter.cs:
+	  - Transfered files from previous version of System.Windows.Forms
+	  - Added full copyright header
+

@@ -1,0 +1,288 @@
+2004-11-01 23:19  ravindra
+
+	* SWF.csproj: Updated project.
+
+2004-10-26 03:38  ravindra
+
+	* SWF.csproj: Updated project.
+
+2004-10-20 04:16  jordi
+
+	* System.Windows.Forms.dll.sources: enum need it by SystemInfo
+
+2004-10-19 16:50  jackson
+
+	* System.Windows.Forms.dll.sources: New optimized event queue
+
+2004-10-18 00:31  ravindra
+
+	* SWF.csproj, System.Windows.Forms.dll.sources: Updated sources
+	  list and project to fix the build.
+
+2004-10-15 09:14  ravindra
+
+	* SWF.csproj, System.Windows.Forms.dll.sources: Updates sources
+	  list and project.
+
+2004-10-15 06:43  jordi
+
+	* System.Windows.Forms.dll.sources: menu work, mainmenu, subitems,
+	  etc
+
+2004-10-13 21:21  ravindra
+
+	* SWF.csproj: Updated project.
+
+2004-10-04 04:58  ravindra
+
+	* SWF.csproj: Updated project.
+
+2004-10-02 12:55  pbartok
+
+	* System.Windows.Forms.dll.sources:
+	  - Added LeftRightAlignment source reference
+
+2004-09-30 07:32  ravindra
+
+	* SWF.csproj, System.Windows.Forms.dll.sources: Updated project and
+	  sources list.
+
+2004-09-29 23:02  jambunathan
+
+	* SWF.csproj: Updated csproj to include Appearance.cs, CheckBox.cs,
+	  CheckState.cs
+
+2004-09-28 14:11  jackson
+
+	* System.Windows.Forms.dll.sources: Give the build some love
+
+2004-09-28 04:31  ravindra
+
+	* Notes: Added a minor note.
+
+2004-09-28 00:18  pbartok
+
+	* Notes:
+	  - Initial check in. A place to log info about MWF that doesn't fit
+	    anywhere else
+
+2004-09-24 12:02  jackson
+
+	* System.Windows.Forms.dll.sources: Add tab classes to the build
+
+2004-09-23 01:44  ravindra
+
+	* SWF.csproj, System.Windows.Forms.dll.sources: Updated sources
+	  list and project file.
+
+2004-09-20 18:54  jackson
+
+	* Makefile: New message loop that uses poll so we don't get a busy
+	  loop
+
+2004-09-19 23:41  ravindra
+
+	* Guidelines: Added a note to Guidelines.
+
+2004-09-17 06:19  jordi
+
+	* System.Windows.Forms.dll.sources: Very early menu support
+
+2004-09-16 01:19  ravindra
+
+	* SWF.csproj, System.Windows.Forms.dll.sources: Updated project and
+	  sources list.
+
+2004-09-13 22:09  ravindra
+
+	* SWF.csproj: Updated project.
+
+2004-09-13 09:24  jordi
+
+	* System.Windows.Forms.dll.sources: Add to the build Process
+
+2004-09-09 01:15  jordi
+
+	* System.Windows.Forms.dll.sources: measureitem args and handler
+
+2004-09-09 00:03  ravindra
+
+	* SWF.csproj: Updated project.
+
+2004-09-08 23:57  ravindra
+
+	* System.Windows.Forms.dll.sources: Added some new enums to the
+	  list.
+
+2004-09-08 06:45  jordi
+
+	* System.Windows.Forms.dll.sources: enumerations need it by menus
+
+2004-09-07 11:12  jordi
+
+	* System.Windows.Forms.dll.sources: GroupBox control
+
+2004-09-02 14:28  pbartok
+
+	* System.Windows.Forms.dll.sources:
+	  - Added AccessibleNavigation and AccessibleSelection source files
+
+2004-08-31 20:52  ravindra
+
+	* Design, Guidelines: Minor formatting changes and added location
+	  for the coding style guideline for Mono.
+
+2004-08-31 19:37  pbartok
+
+	* Guidelines:
+	  - Removed wrong stuff
+
+2004-08-31 16:10  pbartok
+
+	* README:
+	  - Updated
+
+2004-08-31 03:13  ravindra
+
+	* System.Windows.Forms_test.dll.sources: Added sources list for
+	  test dll.
+
+2004-08-30 10:48  pbartok
+
+	* Design, Guidelines:
+	  - Initial check-in
+
+2004-08-29 22:35  pbartok
+
+	* System.Windows.Forms.dll.sources:
+	  - Added System.Resources source files
+
+2004-08-27 16:18  ravindra
+
+	* Makefile: Lets do some tests too.
+
+2004-08-27 16:14  ravindra
+
+	* System.Windows.Forms.dll.sources: Added ImageIndexConverter to
+	  sources.
+
+2004-08-23 13:14  pbartok
+
+	* SWF.csproj, SWF.sln:
+	  - Created properly pathed VS.Net project and solution
+
+2004-08-23 10:46  jackson
+
+	* System.Windows.Forms.dll.sources: oops. remove unused file
+
+2004-08-22 17:47  jackson
+
+	* System.Windows.Forms.dll.sources: Add PictureBox to the build
+
+2004-08-22 12:04  pbartok
+
+	* System.Windows.Forms.dll.sources:
+	  - Added Cursor.cs source
+
+2004-08-22 11:59  pbartok
+
+	* System.Windows.Forms.dll.sources:
+	  - Restored sort order for file
+	  - Added UserControl source file
+
+2004-08-20 13:10  jackson
+
+	* System.Windows.Forms.dll.sources: Classes for sending Async
+	  messages through X/Win32
+
+2004-08-19 16:25  jordi
+
+	* System.Windows.Forms.dll.sources: theme enhancaments
+
+2004-08-17 15:09  jackson
+
+	* System.Windows.Forms.dll.sources: Add Panel to the build
+
+2004-08-16 15:24  jackson
+
+	* System.Windows.Forms.dll.sources: HandleData is used for storing
+	  message information for window handles
+
+2004-08-16 08:59  pbartok
+
+	* System.Windows.Forms.dll.sources:
+	  - Added ButtonBase.cs
+
+2004-08-15 17:22  ravindra
+
+	* System.Windows.Forms.dll.sources: Updated sources list for
+	  ToolBar Control.
+
+2004-08-13 10:25  jackson
+
+	* System.Windows.Forms.dll.sources: SWF Timer
+
+2004-08-12 10:19  jackson
+
+	* System.Windows.Forms.dll.sources: Classes for handling status bar
+	  panel click events
+
+2004-08-11 15:24  pbartok
+
+	* System.Windows.Forms.dll.sources:
+	  - Fixed filename for BindingManagerBase.cs
+	  - Alphabetized files
+
+2004-08-10 19:11  jackson
+
+	* System.Windows.Forms.dll.sources: Add StatusBarDrawItem stuff to
+	  build
+
+2004-08-10 12:59  jackson
+
+	* System.Windows.Forms.dll.sources: Add Draw Item
+
+2004-08-09 15:40  jackson
+
+	* System.Windows.Forms.dll.sources: Add status bar panel files to
+	  the build
+
+2004-08-07 17:01  jackson
+
+	* System.Windows.Forms.dll.sources: Add HorizontalAlignment enum to
+	  build
+
+2004-07-26 11:42  jordi
+
+	* System.Windows.Forms.dll.sources: Theme support
+
+2004-07-26 05:41  jordi
+
+	* System.Windows.Forms.dll.sources: initial messagebox
+	  implementation
+
+2004-07-21 10:19  jordi
+
+	* System.Windows.Forms.dll.sources: LinkLabel control
+	  implementation
+
+2004-07-16 05:18  jordi
+
+	* System.Windows.Forms.dll.sources: add ImageList,
+	  ImageListStreamer, and ColorDepth to the build process
+
+2004-07-15 03:38  jordi
+
+	* System.Windows.Forms.dll.sources: Horizontal and Vertical
+	  TrackBar control implementation
+
+2004-07-13 09:33  jordi
+
+	* System.Windows.Forms.dll.sources: vertical and hort. classes
+	  commit
+
+2004-07-08 23:21  pbartok
+
+	* Makefile, README, System.Windows.Forms.dll.sources:
+	  - Initial check-in
+
