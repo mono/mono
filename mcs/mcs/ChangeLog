@@ -1,3 +1,18 @@
+2002-03-08  Ravi Pratap  <ravi@ximian.com>
+
+	* attribute.cs (Attribute.UnmanagedType): This is to keep track of
+	the unmanaged type in the case we have a MarshalAs attribute.
+
+	(Resolve): Handle the case when we are parsing the special MarshalAs
+	attribute [we need to store the unmanaged type to use later]
+	
+	* typemanager.cs (marshal_as_attr_type): Built in type for the 
+	MarshalAs Attribute.
+
+	* attribute.cs (ApplyAttributes): Recognize the MarshalAs attribute 
+	on parameters and accordingly set the marshalling info.
+	
+
 2002-03-09  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs: Optimizing slightly by removing redundant code after

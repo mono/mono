@@ -3148,7 +3148,7 @@ namespace Mono.CSharp {
 
 	/// </summary>
 	///  Gigantic workaround  for lameness in SRE follows :
-	///  This class derived from EventInfo and attempts to basically
+	///  This class derives from EventInfo and attempts to basically
 	///  wrap around the EventBuilder so that FindMembers can quickly
 	///  return this in it search for members
 	/// </summary>

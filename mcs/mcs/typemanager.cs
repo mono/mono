@@ -58,6 +58,7 @@ public class TypeManager {
 	static public Type dllimport_type;
 	static public Type unverifiable_code_type;
 	static public Type methodimpl_attr_type;
+	static public Type marshal_as_attr_type;
 	static public Type param_array_type;
 	static public Type void_ptr_type;
 
@@ -439,6 +440,7 @@ public class TypeManager {
 		attribute_usage_type = CoreLookupType ("System.AttributeUsageAttribute");
 		dllimport_type       = CoreLookupType ("System.Runtime.InteropServices.DllImportAttribute");
 		methodimpl_attr_type = CoreLookupType ("System.Runtime.CompilerServices.MethodImplAttribute");
+		marshal_as_attr_type  = CoreLookupType ("System.Runtime.InteropServices.MarshalAsAttribute");
 		param_array_type     = CoreLookupType ("System.ParamArrayAttribute");
 
 		unverifiable_code_type = CoreLookupType ("System.Security.UnverifiableCodeAttribute");

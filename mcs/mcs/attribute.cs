@@ -38,6 +38,7 @@ namespace Mono.CSharp {
 		public bool UsageAttr = false;
 		
 		public MethodImplOptions ImplOptions;
+		public UnmanagedType     UnmanagedType;
 		
 		public Attribute (string name, ArrayList args, Location loc)
 		{
@@ -65,6 +66,7 @@ namespace Mono.CSharp {
 		{
 			string name = Name;
 			bool MethodImplAttr = false;
+			bool MarshalAsAttr = false;
 
 			UsageAttr = false;
 
@@ -86,6 +88,9 @@ namespace Mono.CSharp {
 				UsageAttr = true;
 			if (Type == TypeManager.methodimpl_attr_type)
 				MethodImplAttr = true;
+			if (Type == TypeManager.marshal_as_attr_type)
+				MarshalAsAttr = true;
+			
 
 			// Now we extract the positional and named arguments
 			
@@ -121,6 +126,9 @@ namespace Mono.CSharp {
 
 					if (MethodImplAttr)
 						this.ImplOptions = (MethodImplOptions) pos_values [0];
+
+					if (MarshalAsAttr)
+						this.UnmanagedType = (UnmanagedType) pos_values [0];
 					
 				} else { 
 					error182 ();
@@ -423,6 +431,7 @@ namespace Mono.CSharp {
 
 					
 					if (kind is Method || kind is Operator) {
+
 						if (a.Type == TypeManager.methodimpl_attr_type) {
 							if (a.ImplOptions == MethodImplOptions.InternalCall)
 								((MethodBuilder) builder).SetImplementationFlags (
@@ -430,6 +439,7 @@ namespace Mono.CSharp {
 									   MethodImplAttributes.Runtime);
 						} else if (a.Type != TypeManager.dllimport_type)
 							((MethodBuilder) builder).SetCustomAttribute (cb);
+
 					} else if (kind is Constructor) {
 						((ConstructorBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is Field) {
@@ -438,8 +448,16 @@ namespace Mono.CSharp {
 						((PropertyBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is Event) {
 						((EventBuilder) builder).SetCustomAttribute (cb);
-					} else if (kind is ParameterBuilder){
-						((ParameterBuilder) builder).SetCustomAttribute (cb);
+					} else if (kind is ParameterBuilder) {
+
+						if (a.Type == TypeManager.marshal_as_attr_type) {
+							UnmanagedMarshal marshal =
+								UnmanagedMarshal.DefineUnmanagedMarshal (a.UnmanagedType);
+							
+							((ParameterBuilder) builder).SetMarshal (marshal);
+						} else 
+							((ParameterBuilder) builder).SetCustomAttribute (cb);
+						
 					} else if (kind is Enum) {
 						((TypeBuilder) builder).SetCustomAttribute (cb); 
 
