@@ -30,6 +30,7 @@
 #if NET_2_0
 
 using System.Collections;
+using System.Reflection;
 
 namespace System.Web.UI.WebControls.WebParts
 {
@@ -41,18 +42,12 @@ namespace System.Web.UI.WebControls.WebParts
 
 		public WebPartVerbCollection (ICollection verbs)
 		{
-			if (verbs == null)
-				throw new ArgumentNullException ("Parameter verbs cannot be null");
 			InnerList.AddRange (verbs);
 		}
 
 		public WebPartVerbCollection (WebPartVerbCollection existingVerbs, 
 								ICollection verbs)
 		{
-			if (existingVerbs == null)
-				throw new ArgumentNullException ("Parameter existingVerbs cannot be null");
-			if (verbs == null)
-				throw new ArgumentNullException ("Parameter verbs cannot be null");
 			InnerList.AddRange (existingVerbs.InnerList);
 			InnerList.AddRange (verbs);
 		}
@@ -64,21 +59,19 @@ namespace System.Web.UI.WebControls.WebParts
 			return InnerList.Contains (value);
 		}
 
-		[MonoTODO]
 		public void CopyTo (WebPartVerb [] array, int index)
-		{ 
-			throw new NotImplementedException();
+		{
+			InnerList.CopyTo (0, array, index, Count);		
 		}
 
 		public int IndexOf(WebPartVerb value)
 		{
-			return (InnerList.IndexOf(value));
+			return (InnerList.IndexOf (value));
 		}
 
 		public WebPartVerb this [int index ] {
-			get { return (WebPartVerb)InnerList[index]; }
+			get { return (WebPartVerb)InnerList [index]; }
 		}
-
 	}
 }
 #endif
