@@ -1,3 +1,19 @@
+2003-12-29  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* PrincipalPolicy.cs: Added missing [Serializable] to enum.
+	* WindowsAccountType.cs: Added missing [Serializable] to enum.
+	* WindowsBuiltInRole.cs: Added missing [Serializable] to enum.
+	* WindowsIdentity.cs: Updated to match the unit tests.
+	* WindowsPrincipal.cs: Return false for a null role.
+
+2003-12-25  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* WindowsIdentity.cs: Added ISerializable (for 1.1+) and default 
+	implementation for constructors/properties.
+	* WindowsImpersonationContext.cs: Added MonoTODO on class and 
+	NotImplementedException in constructor.
+	* WindowsPrincipal.cs: New. Basic implementation (mostly a stub).
+
 2003-07-01  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ChangeLog: Sorry it seems that I couldn't find the right combinaison

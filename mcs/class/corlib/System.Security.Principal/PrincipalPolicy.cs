@@ -9,6 +9,7 @@
 
 namespace System.Security.Principal {
 
+	[Serializable]
 	public enum PrincipalPolicy {
 		UnauthenticatedPrincipal,
 		NoPrincipal,

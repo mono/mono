@@ -24,48 +24,38 @@ namespace System.Security.Principal {
 		private string _type;
 		private WindowsAccountType _account;
 		private bool _authenticated;
+		private string _name;
 
-		public WindowsIdentity (IntPtr userToken)
-		{
-			_token = userToken;
-			_type = "NTLM";
-			_account = WindowsAccountType.Normal;
-			_authenticated = false;
-		}
+		public WindowsIdentity (IntPtr userToken) 
+			: this (userToken, "NTLM", WindowsAccountType.Normal, false) {}
 
-		public WindowsIdentity (IntPtr userToken, string type)
-		{
-			_token = userToken;
-			_type = type;
-			_account = WindowsAccountType.Normal;
-			_authenticated = false;
-		}
+		public WindowsIdentity (IntPtr userToken, string type) 
+			: this (userToken, type, WindowsAccountType.Normal, false) {}
 
 		public WindowsIdentity (IntPtr userToken, string type, WindowsAccountType acctType)
-		{
-			_token = userToken;
-			_type = type;
-			_account = acctType;
-			_authenticated = false;
-		}
+			: this (userToken, type, acctType, false) {}
 
 		public WindowsIdentity (IntPtr userToken, string type, WindowsAccountType acctType, bool isAuthenticated)
 		{
+			if (userToken == IntPtr.Zero)
+				throw new ArgumentException ("Invalid token");
+
 			_token = userToken;
 			_type = type;
 			_account = acctType;
 			_authenticated = isAuthenticated;
+			_name = null;
 		}
 #if !NET_1_0
-		[MonoTODO]
 		public WindowsIdentity (string sUserPrincipalName) 
-		{
-			throw new ArgumentException ("only for Windows Server 2003 +");
-		}
+			: this (sUserPrincipalName, null) {}
 
 		[MonoTODO]
 		public WindowsIdentity (string sUserPrincipalName, string type)
 		{
+			if (sUserPrincipalName == null)
+				throw new NullReferenceException ("sUserPrincipalName");
+
 			throw new ArgumentException ("only for Windows Server 2003 +");
 		}
 
@@ -75,15 +65,18 @@ namespace System.Security.Principal {
 		[MonoTODO]
 		~WindowsIdentity ()
 		{
-			_token = (IntPtr) 0;
+			_token = IntPtr.Zero;
 		}
 
-		// methods
+		// static methods
 
-		[MonoTODO]
 		public static WindowsIdentity GetAnonymous ()
 		{
-			throw new NotImplementedException ();
+			WindowsIdentity id = new WindowsIdentity ((IntPtr)1, String.Empty, WindowsAccountType.Anonymous, false);
+			// special case
+			id._token = IntPtr.Zero;
+			id._name = String.Empty;
+			return id;
 		}
 
 		[MonoTODO]
@@ -91,6 +84,8 @@ namespace System.Security.Principal {
 		{
 			throw new NotImplementedException ();
 		}
+
+		// methods
 
 		public virtual WindowsImpersonationContext Impersonate ()
 		{
@@ -129,11 +124,15 @@ namespace System.Security.Principal {
 			get { return (_account == WindowsAccountType.System); }
 		}
 
-		[MonoTODO]
+		[MonoTODO ("resolve missing")]
 		public virtual string Name
 		{
 			get {
-				throw new NotImplementedException ();
+				if (_name == null) {
+					// TODO: resolve name from token
+					throw new NotImplementedException ();
+				}
+				return _name; 
 			}
 		}
 

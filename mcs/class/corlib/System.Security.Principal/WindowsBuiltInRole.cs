@@ -9,6 +9,7 @@
 
 namespace System.Security.Principal {
 
+	[Serializable]
 	public enum WindowsBuiltInRole {
 		Administrator = 544,
 		User = 545,
