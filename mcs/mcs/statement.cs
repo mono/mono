@@ -2199,7 +2199,14 @@ namespace Mono.CSharp {
 		
 		public override bool Emit (EmitContext ec)
 		{
-			return Block.Emit (ec);
+			bool previous_state = ec.InUnsafe;
+			bool val;
+			
+			ec.InUnsafe = true;
+			val = Block.Emit (ec);
+			ec.InUnsafe = previous_state;
+
+			return val;
 		}
 	}
 

@@ -1,3 +1,12 @@
+2002-07-12  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (Unsafe): Ok, so I got the semantics wrong.
+	Statements *are* currently doing part of their resolution during
+	Emit.  
+
+	Expressions do always resolve during resolve, but statements are
+	only required to propagate resolution to their children.
+
 2002-07-11  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs (CSCParseOption): Finish the /r: and /lib: support.
