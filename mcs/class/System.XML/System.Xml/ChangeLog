@@ -1,5 +1,10 @@
 2003-07-12  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* DTDObjectModel.cs,
+	  DTDValidatingReader.cs : Completely rewrote attribute handling.
+
+2003-07-12  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlAttribute.cs,
 	  XmlElement.cs : Fixed CloneNode() for bug #46129.
 	* XmlDocument.cs : Fixed MakeReaderErrorMessage that specified invalid

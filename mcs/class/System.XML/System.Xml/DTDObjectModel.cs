@@ -373,6 +373,9 @@ namespace Mono.Xml
 
 		private string ComputeDefaultValue ()
 		{
+			if (UnresolvedDefaultValue == null)
+				return null;
+
 			StringBuilder sb = new StringBuilder ();
 			int pos = 0;
 			int next = 0;
@@ -383,9 +386,18 @@ namespace Mono.Xml
 				sb.Append (Root.ResolveEntity (name));
 			}
 			sb.Append (this.UnresolvedDefaultValue.Substring (pos));
-			string ret = sb.ToString ();
+			// strip quote chars
+			string ret = sb.ToString (1, sb.Length - 2);
 			sb.Length = 0;
 			return ret;
+		}
+
+		public char QuoteChar {
+			get {
+				return UnresolvedDefaultValue.Length > 0 ?
+					this.UnresolvedDefaultValue [0] :
+					'"';
+			}
 		}
 
 //		public object Clone ()
@@ -394,13 +406,13 @@ namespace Mono.Xml
 //		}
 	}
 
-	public class DTDAttListDeclaration : DTDNode// : ICloneable
+	public class DTDAttListDeclaration : DTDNode // : ICloneable
 	{
 		public string Name;
 
 		internal DTDAttListDeclaration () {}
 		private Hashtable attributeOrders = new Hashtable ();
-		private Hashtable attributes = new Hashtable ();
+		private ArrayList attributes = new ArrayList ();
 
 		public DTDAttributeDefinition this [int i] {
 			get { return Get (i); }
@@ -417,22 +429,26 @@ namespace Mono.Xml
 
 		public DTDAttributeDefinition Get (string name)
 		{
-			return attributes [name] as DTDAttributeDefinition;
+			object o = attributeOrders [name];
+			if (o != null)
+				return attributes [(int) o] as DTDAttributeDefinition;
+			else
+				return null;
 		}
 
 		public ICollection Definitions {
-			get { return attributes.Values; }
+			get { return attributes; }
 		}
 
 		public void Add (DTDAttributeDefinition def)
 		{
-			if (attributes [def.Name] != null)
+			if (attributeOrders [def.Name] != null)
 				throw new InvalidOperationException (String.Format (
 					"Attribute definition for {0} was already added at element {1}.",
 					def.Name, this.Name));
 			def.SetRoot (Root);
-			attributes.Add (def.Name, def);
-			attributeOrders.Add (def.Name, attributeOrders.Count);
+			attributeOrders.Add (def.Name, attributes.Count);
+			attributes.Add (def);
 		}
 
 		public int Count {

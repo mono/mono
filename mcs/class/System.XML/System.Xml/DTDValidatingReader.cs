@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Specialized;
 using System.Collections;
 using System.Xml;
 using System.Xml.Schema;
@@ -8,18 +9,34 @@ namespace Mono.Xml
 	public class DTDValidatingReader : XmlValidatingReader, IXmlLineInfo
 	{
 		public DTDValidatingReader (XmlReader reader)
+			: this (reader, null)
+		{
+		}
+
+		public DTDValidatingReader (XmlReader reader,
+			ValidationEventHandler validationEventHandler)
 			: base (reader)
 		{
 			this.reader = reader;
 			elementStack = new Stack ();
 			automataStack = new Stack ();
+			attributes = new StringCollection ();
+			this.validationEventHandler = validationEventHandler;
 		}
 
 		XmlReader reader;
 		DTDObjectModel dtd;
 		Stack elementStack;
 		Stack automataStack;
+		string currentElement;
 		string currentAttribute;
+		bool consumedDefaultAttribute;
+		bool inContent;
+		DTDAutomata currentAutomata;
+		DTDAutomata previousAutomata;
+		bool isStandalone;
+		StringCollection attributes;
+		ValidationEventHandler validationEventHandler;
 
 		public DTDObjectModel DTD {
 			get { return dtd; }
@@ -36,13 +53,23 @@ namespace Mono.Xml
 			if (dtd == null)
 				return reader.GetAttribute (i);
 
-			// It should access attributes by *defined* order.
-			if (elementStack.Count == 0)
+			if (NodeType != XmlNodeType.Element)
 				return String.Empty;
-			DTDAttributeDefinition def = dtd.ElementDecls [elementStack.Peek () as string]
+#if true
+			if (attributes.Count <= i)
+				throw new IndexOutOfRangeException ("Specified index is out of range: " + i);
+			if (reader.AttributeCount > i)
+				return reader [i];
+			// Otherwise, the value is default.
+			DTDAttributeDefinition def = dtd.ElementDecls [currentElement]
+				.Attributes [i] as DTDAttributeDefinition;
+			return def.DefaultValue;
+#else
+			DTDAttributeDefinition def = dtd.ElementDecls [currentElement]
 				.Attributes [i] as DTDAttributeDefinition;
 			string specified = reader.GetAttribute (def.Name);
 			return (specified != null) ? specified : def.DefaultValue;
+#endif
 		}
 
 		public override string GetAttribute (string name)
@@ -50,13 +77,14 @@ namespace Mono.Xml
 			if (dtd == null)
 				return reader.GetAttribute (name);
 
-			if (elementStack.Count == 0)
+			if (NodeType != XmlNodeType.Element)
 				return String.Empty;
+
 			string specified = reader.GetAttribute (name);
 			if (specified != null)
 				return specified;
 
-			DTDAttributeDefinition def = dtd.ElementDecls [elementStack.Peek () as string]
+			DTDAttributeDefinition def = dtd.ElementDecls [currentElement]
 				.Attributes [name] as DTDAttributeDefinition;
 			return def.DefaultValue;
 		}
@@ -65,6 +93,13 @@ namespace Mono.Xml
 		{
 			if (dtd == null)
 				return reader.GetAttribute (name, ns);
+
+			if (NodeType != XmlNodeType.Element)
+				return String.Empty;
+
+			string specified = reader.GetAttribute (name, ns);
+			if (specified != null)
+				return specified;
 
 			if (ns != String.Empty)
 				throw new InvalidOperationException ("DTD validating reader does not support namespace.");
@@ -91,55 +126,90 @@ namespace Mono.Xml
 			if (dtd == null) {
 				reader.MoveToAttribute (i);
 				currentAttribute = reader.Name;
+				consumedDefaultAttribute = false;
 				return;
 			}
 
-			// It should access attributes by *defined* order.
-			if (elementStack.Count == 0)
+			if (currentElement == null)
 				return;
 
-			DTDAttListDeclaration decl = dtd.ElementDecls [elementStack.Peek () as string].Attributes;
+#if true
+			if (attributes.Count > i) {
+				currentAttribute = attributes [i];
+				consumedDefaultAttribute = false;
+				return;
+			} else
+				throw new IndexOutOfRangeException ("The index is out of range.");
+#else
+			DTDAttListDeclaration decl = dtd.ElementDecls [currentElement].Attributes;
 			if (decl.Count <= i)
 				throw new ArgumentOutOfRangeException ("i");
 			DTDAttributeDefinition def = decl [i] as DTDAttributeDefinition;
 			currentAttribute = def.Name;
 			// We can ignore return value here.
 			reader.MoveToAttribute (def.Name);
+#endif
 		}
 
 		public override bool MoveToAttribute (string name)
 		{
 			if (dtd == null) {
 				bool b = reader.MoveToAttribute (name);
-				if (b)
+				if (b) {
 					currentAttribute = reader.Name;
+					consumedDefaultAttribute = false;
+				}
 				return b;
 			}
 
-			if (elementStack.Count == 0)
+			if (currentElement == null)
 				return false;
 
-			DTDAttributeDefinition def = dtd.ElementDecls [elementStack.Peek () as string]
+#if true
+			int idx = attributes.IndexOf (name);
+			if (idx >= 0) {
+				currentAttribute = name;
+				consumedDefaultAttribute = false;
+				return true;
+			}
+			return false;
+#else
+			DTDAttributeDefinition def = dtd.ElementDecls [currentElement]
 				.Attributes [name] as DTDAttributeDefinition;
 			if (def == null)
 				return false;
 			reader.MoveToAttribute (name);
 			currentAttribute = name;
 			return true;
+#endif
 		}
 
 		public override bool MoveToAttribute (string name, string ns)
 		{
 			if (dtd == null) {
 				bool b = reader.MoveToAttribute (name, ns);
-				if (b)
+				if (b) {
 					currentAttribute = reader.Name;
+					consumedDefaultAttribute = false;
+				}
 				return b;
+			}
+
+#if true
+			if (reader.MoveToAttribute (name, ns)) {
+				currentAttribute = reader.Name;
+				consumedDefaultAttribute = false;
+				return true;
 			}
 
 			if (ns != String.Empty)
 				throw new InvalidOperationException ("DTD validating reader does not support namespace.");
 			return MoveToAttribute (name);
+#else
+			if (ns != String.Empty)
+				throw new InvalidOperationException ("DTD validating reader does not support namespace.");
+			return MoveToAttribute (name);
+#endif
 		}
 
 		public override bool MoveToElement ()
@@ -148,6 +218,7 @@ namespace Mono.Xml
 			if (!b)
 				return false;
 			currentAttribute = null;
+			consumedDefaultAttribute = false;
 			return true;
 		}
 
@@ -155,34 +226,55 @@ namespace Mono.Xml
 		{
 			if (dtd == null) {
 				bool b = reader.MoveToFirstAttribute ();
-				if (b)
+				if (b) {
 					currentAttribute = reader.Name;
+					consumedDefaultAttribute = false;
+				}
 				return b;
 			}
 
 			// It should access attributes by *defined* order.
-			if (elementStack.Count == 0)
+			if (NodeType != XmlNodeType.Element)
 				return false;
-
-			DTDAttListDeclaration decl = dtd.ElementDecls [elementStack.Peek () as string].Attributes;
+#if true
+			if (attributes.Count == 0)
+				return false;
+			reader.MoveToFirstAttribute ();
+			currentAttribute = attributes [0];
+			consumedDefaultAttribute = false;
+			return true;
+#else
+			DTDAttListDeclaration decl = dtd.ElementDecls [this.Name].Attributes;
 			if (decl.Count == 0)
 				return false;
 			return reader.MoveToAttribute (decl [0].Name);
+#endif
 		}
 
 		public override bool MoveToNextAttribute ()
 		{
 			if (dtd == null) {
 				bool b = reader.MoveToNextAttribute ();
-				if (b)
+				if (b) {
 					currentAttribute = reader.Name;
+					consumedDefaultAttribute = false;
+				}
 				return b;
 			}
 
 			if (currentAttribute == null)
 				return false;
-
-			DTDAttListDeclaration decl = dtd.ElementDecls [elementStack.Peek () as string].Attributes;
+#if true
+			int idx = attributes.IndexOf (currentAttribute);
+			if (idx + 1 < attributes.Count) {
+				reader.MoveToNextAttribute ();
+				currentAttribute = attributes [idx + 1];
+				consumedDefaultAttribute = false;
+				return true;
+			} else
+				return false;
+#else
+			DTDAttListDeclaration decl = dtd.ElementDecls [currentElement].Attributes;
 			int pos = 0;
 			for (; pos < decl.Count; pos++) {
 				if (decl [pos].Name == currentAttribute)
@@ -194,12 +286,8 @@ namespace Mono.Xml
 			currentAttribute = decl [pos].Name;
 			reader.MoveToAttribute (currentAttribute);
 			return true;
+#endif
 		}
-
-		bool inContent;
-		DTDAutomata currentAutomata;
-		DTDAutomata previousAutomata;
-		bool isStandalone;
 
 		[MonoTODO]
 		public override bool Read ()
@@ -207,6 +295,10 @@ namespace Mono.Xml
 			MoveToElement ();
 
 			bool b = reader.Read ();
+			currentElement = null;
+			currentAttribute = null;
+			consumedDefaultAttribute = false;
+			attributes.Clear ();
 
 			if (!inContent && reader.NodeType == XmlNodeType.Element) {
 				inContent = true;
@@ -252,11 +344,13 @@ namespace Mono.Xml
 				if (decl == null)
 					throw new XmlException (reader as IXmlLineInfo,
 						String.Format ("Element {0} is not declared.", reader.Name));
+
+				currentElement = Name;
 				elementStack.Push (reader.Name);
 				automataStack.Push (currentAutomata);
 				currentAutomata = decl.ContentModel.GetAutomata ();
 
-				// TODO: check attributes
+				// check attributes
 				if (decl.Attributes == null) {
 					if (reader.HasAttributes)
 						throw new XmlException (reader as IXmlLineInfo,
@@ -271,7 +365,7 @@ namespace Mono.Xml
 					goto case XmlNodeType.EndElement;
 				break;
 
-			case XmlNodeType.EndElement:	// endTagDeriv
+			case XmlNodeType.EndElement:	// endElementDeriv
 				// If no schema specification, then skip validation.
 				if (currentAutomata == null)
 					break;
@@ -310,44 +404,51 @@ namespace Mono.Xml
 
 		private void ValidateAttributes (DTDElementDeclaration decl)
 		{
-			Hashtable atts = new Hashtable ();
 			if (reader.MoveToFirstAttribute ()) {
 				do {
-					atts.Add (reader.Name, reader.Value);
+					attributes.Add (reader.Name);
+					DTDAttributeDefinition def = decl.Attributes [reader.Name];
+					if (def == null)
+						throw new XmlException (this as IXmlLineInfo,
+							String.Format ("Attribute {0} is not declared.", reader.Name));
+					switch (def.OccurenceType) {
+					case DTDAttributeOccurenceType.Required:
+						if (reader.Value == String.Empty)
+							throw new XmlException (reader as IXmlLineInfo,
+								String.Format ("Required attribute {0} in element {1} not found .",
+								def.Name, decl.Name));
+						break;
+					case DTDAttributeOccurenceType.Fixed:
+						if (reader.Value != def.DefaultValue)
+							throw new XmlException (reader as IXmlLineInfo,
+								String.Format ("Fixed attribute {0} in element {1} has invalid value {2}.",
+								def.Name, decl.Name, reader.Value));
+						break;
+					}
 				} while (reader.MoveToNextAttribute ());
 			}
-			foreach (DTDAttributeDefinition def in decl.Attributes.Definitions) {
-				string value = atts [def.Name] as string;
-				switch (def.OccurenceType) {
-				case DTDAttributeOccurenceType.Required:
-					if (value == null)
+			// Check if all required attributes exist, and/or
+			// if there is default values, then add them.
+			foreach (DTDAttributeDefinition def in decl.Attributes.Definitions)
+				if (!attributes.Contains (def.Name)) {
+					if (def.OccurenceType == DTDAttributeOccurenceType.Required)
 						throw new XmlException (reader as IXmlLineInfo,
-							String.Format ("Required attribute {0} in element {1} not found .",
-							def.Name, decl.Name));
-					break;
-				case DTDAttributeOccurenceType.Fixed:
-					if (value != def.DefaultValue)
-						throw new XmlException (reader as IXmlLineInfo,
-							String.Format ("Fixed attribute {0} in element {1} has invalid value {2}.",
-							def.Name, decl.Name, reader.Value));
-					break;
+							String.Format ("Required attribute {0} was not found.", decl.Name));
+					else if (def.DefaultValue != null)
+						attributes.Add (def.Name);
 				}
-				atts.Remove (def.Name);
-			}
-			if (atts.Count > 0) {
-				string [] extraneous = new string [atts.Count];
-				int i=0;
-				foreach (string attribute in atts.Keys)
-					extraneous [i++] = attribute;
-				throw new XmlException (reader as IXmlLineInfo,
-					String.Format ("These attributes are not declared in element {0}: {1}",
-					decl.Name, String.Join (",", extraneous)));
-			}
+
 			reader.MoveToElement ();
 		}
 
 		public override bool ReadAttributeValue ()
 		{
+			if (this.IsDefault) {
+				if (consumedDefaultAttribute)
+					return false;
+				consumedDefaultAttribute = true;
+				return true;
+			}
 			return reader.ReadAttributeValue ();
 		}
 
@@ -377,11 +478,13 @@ namespace Mono.Xml
 			get {
 				if (dtd == null || !inContent)
 					return reader.AttributeCount;
-
+#if true
+				return attributes.Count;
+#else
 				if (elementStack.Count == 0)
 					return 0;
-				return dtd.ElementDecls [elementStack.Peek () as string]
-					.Attributes.Count;
+				return dtd.ElementDecls [currentElement].Attributes.Count;
+#endif
 			}
 		}
 
@@ -398,11 +501,7 @@ namespace Mono.Xml
 
 		[MonoTODO ("Should consider general entities' depth")]
 		public override int Depth {
-			get {
-				return (currentAttribute != null
-					|| reader.NodeType != XmlNodeType.Attribute) ?
-					reader.Depth : reader.Depth + 1;
-			}
+			get { return IsDefault ? reader.Depth + 1 : reader.Depth; }
 		}
 
 		[MonoTODO]
@@ -411,18 +510,14 @@ namespace Mono.Xml
 		}
 
 		public override bool HasValue {
-			get {
-				return (currentAttribute != null
-					|| reader.NodeType != XmlNodeType.Attribute) ?
-					reader.HasValue : true;
-			}
+			get { return IsDefault ? true : reader.HasValue; }
 		}
 
 		public override bool IsDefault {
 			get {
 				if (currentAttribute == null)
 					return false;
-				return reader.GetAttribute (currentAttribute) != null;
+				return reader.GetAttribute (currentAttribute) == null;
 			}
 		}
 
@@ -443,27 +538,15 @@ namespace Mono.Xml
 		}
 
 		public override string LocalName {
-			get {
-				return (currentAttribute != null
-					|| reader.NodeType != XmlNodeType.Attribute) ?
-					reader.LocalName : currentAttribute;
-			}
+			get { return IsDefault ? currentAttribute : reader.LocalName; }
 		}
 
 		public override string Name {
-			get {
-				return (currentAttribute != null
-					|| reader.NodeType != XmlNodeType.Attribute) ?
-					reader.Name : currentAttribute;
-			}
+			get { return IsDefault ? currentAttribute : reader.Name; }
 		}
 
 		public override string NamespaceURI {
-			get {
-				if (currentAttribute != null)
-					return String.Empty;
-				return reader.NamespaceURI;
-			}
+			get { return IsDefault ? String.Empty : reader.NamespaceURI; }
 		}
 
 		public override XmlNameTable NameTable {
@@ -471,24 +554,11 @@ namespace Mono.Xml
 		}
 
 		public override XmlNodeType NodeType {
-			get {
-				return (currentAttribute != null 
-					|| reader.NodeType != XmlNodeType.Attribute) ?
-					reader.NodeType : XmlNodeType.Attribute;
-			}
+			get { return IsDefault ? XmlNodeType.Attribute : reader.NodeType; }
 		}
 
 		public override string Prefix {
-			get {
-				if (currentAttribute != null) {
-					int colon = currentAttribute.IndexOf (':');
-					return colon < 0 ?
-						currentAttribute :
-						currentAttribute.Substring (0, colon - 1);
-				}
-				else
-					return reader.Prefix;
-			}
+			get { return IsDefault ? String.Empty : reader.Prefix; }
 		}
 		
 		public override char QuoteChar {
@@ -505,11 +575,21 @@ namespace Mono.Xml
 			}
 		}
 
+		public ValidationEventHandler ValidationEventHandler {
+			get { return validationEventHandler; }
+		}
+
 		public override string Value {
 			get {
-				if (currentAttribute != null || reader.NodeType != XmlNodeType.Attribute)
+				if (IsDefault) {
+					DTDAttributeDefinition def = 
+						dtd.ElementDecls [currentElement]
+						.Attributes [currentAttribute]
+						as DTDAttributeDefinition;
+					return def.DefaultValue;
+				}
+				else
 					return reader.Value;
-				return reader.GetAttribute (currentAttribute);
 			}
 		}
 
