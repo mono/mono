@@ -13,11 +13,19 @@ Handle nested classes
 
 Generate structs
 
+Make parsing of existing C headers more comprehensive (support enums, structs, classes, mark as byval where necessary)
+
 Better support for return values and ref/out parameters
 
 Support more primitive types
 
 Only install relevant headers, and use the proper subdirectory path for includes
+
+Generate pkg-config files and consider the use of more than one generated assembly binding in a single unmanaged application.
+
+Test with assemblies containing multiple namespaces (eg. SWF).
+
+Make "mono-object" string a global const.
 
 Allow bundling of glib-sharp.dll if using the GObject tie-in feature.
 
