@@ -268,8 +268,13 @@ namespace System.Data.OracleClient {
 			if (preparedStatement == null)
 				PrepareStatement (statement);
 
+			bool isNonQuery = IsNonQuery (statement);
+
 			BindParameters (statement);
-			statement.ExecuteNonQuery (useAutoCommit);
+			if (isNonQuery == true)
+				statement.ExecuteNonQuery (useAutoCommit);
+			else
+				statement.ExecuteQuery ();
 
 			int rowsAffected = statement.GetAttributeInt32 (OciAttributeType.RowCount, ErrorHandle);
 		
@@ -342,20 +347,27 @@ namespace System.Data.OracleClient {
 			try {
 				if (preparedStatement == null)
 					PrepareStatement (statement);
+
+				bool isNonQuery = IsNonQuery (statement);
+
 				BindParameters (statement);
 
-				statement.ExecuteQuery ();
+				if (isNonQuery == true)
+					ExecuteNonQueryInternal (statement, false);
+				else {
+					statement.ExecuteQuery ();
 
-				if (statement.Fetch ()) {
-					OciDefineHandle defineHandle = (OciDefineHandle) statement.Values [0];
-					if (!defineHandle.IsNull)
-						output = defineHandle.GetOracleValue ();
+					if (statement.Fetch ()) {
+						OciDefineHandle defineHandle = (OciDefineHandle) statement.Values [0];
+						if (!defineHandle.IsNull)
+							output = defineHandle.GetOracleValue ();
 						switch (defineHandle.DataType) {
 						case OciDataType.Blob:
 						case OciDataType.Clob:
 							((OracleLob) output).connection = Connection;
 							break;
 						}
+					}
 				}
 
 				return output;
@@ -422,7 +434,7 @@ namespace System.Data.OracleClient {
 
 		public object ExecuteScalar ()
 		{
-			object output;
+			object output = DBNull.Value;
 
 			AssertConnectionIsOpen ();
 			AssertTransactionMatch ();
@@ -435,31 +447,38 @@ namespace System.Data.OracleClient {
 			try {
 				if (preparedStatement == null)
 					PrepareStatement (statement);
+
+				bool isNonQuery = IsNonQuery (statement);
+
 				BindParameters (statement);
 
-				statement.ExecuteQuery ();
+				if (isNonQuery == true)
+					ExecuteNonQueryInternal (statement, false);
+				else {
+					statement.ExecuteQuery ();
 
-				if (statement.Fetch ()) {
-					OciDefineHandle defineHandle = (OciDefineHandle) statement.Values [0];
-					if (defineHandle.IsNull)
-						output = DBNull.Value;
-					else {
-						switch (defineHandle.DataType) {
-						case OciDataType.Blob:
-						case OciDataType.Clob:
-							OracleLob lob = (OracleLob) defineHandle.GetValue ();
-							lob.connection = Connection;
-							output = lob.Value;
-							lob.Close ();
-							break;
-						default:
-							output = defineHandle.GetValue ();
-							break;
+					if (statement.Fetch ()) {
+						OciDefineHandle defineHandle = (OciDefineHandle) statement.Values [0];
+						if (defineHandle.IsNull)
+							output = DBNull.Value;
+						else {
+							switch (defineHandle.DataType) {
+							case OciDataType.Blob:
+							case OciDataType.Clob:
+								OracleLob lob = (OracleLob) defineHandle.GetValue ();
+								lob.connection = Connection;
+								output = lob.Value;
+								lob.Close ();
+								break;
+							default:
+								output = defineHandle.GetValue ();
+								break;
+							}
 						}
 					}
+					else
+						output = DBNull.Value;
 				}
-				else
-					output = DBNull.Value;
 			}
 			finally {
 				SafeDisposeHandle (statement);

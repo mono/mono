@@ -1,5 +1,10 @@
 2005-02-20  Daniel Morgan <danielmorgan@verizon.net>
 
+	* System.Data.OracleClient/OracleCommand.cs: fix bug #72407
+	ExecuteNonQuery with a SELECT SQL statement caused an error
+
+2005-02-20  Daniel Morgan <danielmorgan@verizon.net>
+
 	* System.Data.OracleClient/OracleDateTime.cs: modified -
 	added functions for converting the date format strings between
 	OracleDateTime and DateTime based on 
