@@ -1,3 +1,12 @@
+2005-03-13  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (Nullable.LiftedBinaryOperator): Add support for the
+	boolean operators '&&', '||', '&' and '|'.
+	(Nullable.OperatorTrueOrFalse): New public class.
+
+	* ecore.cs (Expression.GetOperatorTrue/False): Return an `Expression'
+	instead of a `StaticCallExpr'; added support for nullables.
+
 2005-03-10  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs

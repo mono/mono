@@ -2349,17 +2349,17 @@ namespace Mono.CSharp {
 				ec.ig.EmitCall (OpCodes.Call, info.Value, null);
 			}
 
-			public void EmitCheck (EmitContext ec, Label label)
+			public void EmitCheck (EmitContext ec)
 			{
 				AddressOf (ec, AddressOp.LoadStore);
 				ec.ig.EmitCall (OpCodes.Call, info.HasValue, null);
-				ec.ig.Emit (OpCodes.Brfalse, label);
 			}
 
 			public void AddressOf (EmitContext ec, AddressOp mode)
 			{
 				if (temp != null) {
 					if (!has_temp) {
+						expr.Emit (ec);
 						temp.Store (ec);
 						has_temp = true;
 					}
@@ -2483,7 +2483,8 @@ namespace Mono.CSharp {
 				Label is_null_label = ig.DefineLabel ();
 				Label end_label = ig.DefineLabel ();
 
-				unwrap.EmitCheck (ec, is_null_label);
+				unwrap.EmitCheck (ec);
+				ig.Emit (OpCodes.Brfalse, is_null_label);
 
 				wrap.Emit (ec);
 				ig.Emit (OpCodes.Br, end_label);
@@ -2569,8 +2570,9 @@ namespace Mono.CSharp {
 		{
 			public readonly Binary.Operator Oper;
 
-			Expression left, right, underlying, null_value;
+			Expression left, right, underlying, null_value, bool_wrap;
 			Unwrap left_unwrap, right_unwrap;
+			bool is_equality, is_boolean;
 
 			public LiftedBinaryOperator (Binary.Operator op, Expression left, Expression right,
 						     Location loc)
@@ -2583,14 +2585,6 @@ namespace Mono.CSharp {
 
 			public override Expression DoResolve (EmitContext ec)
 			{
-				left = left.Resolve (ec);
-				if (left == null)
-					return null;
-
-				right = right.Resolve (ec);
-				if (right == null)
-					return null;
-
 				if (TypeManager.IsNullableType (left.Type)) {
 					left_unwrap = new Unwrap (left, loc);
 					left = left_unwrap.Resolve (ec);
@@ -2605,16 +2599,172 @@ namespace Mono.CSharp {
 						return null;
 				}
 
-				underlying = new Wrap (new Binary (Oper, left, right, loc), loc);
-				underlying = underlying.Resolve (ec);
+				underlying = new Binary (Oper, left, right, loc).Resolve (ec);
 				if (underlying == null)
 					return null;
 
-				null_value = new NullLiteral (underlying.Type, loc).Resolve (ec);
-				if (null_value == null)
+				if (((Oper == Binary.Operator.BitwiseAnd) || (Oper == Binary.Operator.BitwiseOr) ||
+				     (Oper == Binary.Operator.LogicalAnd) || (Oper == Binary.Operator.LogicalOr)) &&
+				    ((left.Type == TypeManager.bool_type) && (right.Type == TypeManager.bool_type))) {
+					Expression empty = new EmptyExpression (TypeManager.bool_type);
+					bool_wrap = new Wrap (empty, loc).Resolve (ec);
+					null_value = new NullLiteral (bool_wrap.Type, loc).Resolve (ec);
+
+					type = bool_wrap.Type;
+					is_boolean = true;
+				} else if ((Oper == Binary.Operator.Equality) || (Oper == Binary.Operator.Inequality)) {
+					type = TypeManager.bool_type;
+					is_equality = true;
+				} else {
+					underlying = new Wrap (underlying, loc).Resolve (ec);
+					if (underlying == null)
+						return null;
+
+					type = underlying.Type;
+					null_value = new NullLiteral (type, loc).Resolve (ec);
+				}
+
+				eclass = ExprClass.Value;
+				return this;
+			}
+
+			void EmitBoolean (EmitContext ec)
+			{
+				ILGenerator ig = ec.ig;
+
+				Label left_is_null_label = ig.DefineLabel ();
+				Label right_is_null_label = ig.DefineLabel ();
+				Label is_null_label = ig.DefineLabel ();
+				Label wrap_label = ig.DefineLabel ();
+				Label end_label = ig.DefineLabel ();
+
+				if (left_unwrap != null) {
+					left_unwrap.EmitCheck (ec);
+					ig.Emit (OpCodes.Brfalse, left_is_null_label);
+				}
+
+				left.Emit (ec);
+				ig.Emit (OpCodes.Dup);
+				if ((Oper == Binary.Operator.BitwiseOr) || (Oper == Binary.Operator.LogicalOr))
+					ig.Emit (OpCodes.Brtrue, wrap_label);
+				else
+					ig.Emit (OpCodes.Brfalse, wrap_label);
+
+				if (right_unwrap != null) {
+					right_unwrap.EmitCheck (ec);
+					ig.Emit (OpCodes.Brfalse, right_is_null_label);
+				}
+
+				if ((Oper == Binary.Operator.LogicalAnd) || (Oper == Binary.Operator.LogicalOr))
+					ig.Emit (OpCodes.Pop);
+
+				right.Emit (ec);
+				if (Oper == Binary.Operator.BitwiseOr)
+					ig.Emit (OpCodes.Or);
+				else if (Oper == Binary.Operator.BitwiseAnd)
+					ig.Emit (OpCodes.And);
+				ig.Emit (OpCodes.Br, wrap_label);
+
+				ig.MarkLabel (left_is_null_label);
+				if (right_unwrap != null) {
+					right_unwrap.EmitCheck (ec);
+					ig.Emit (OpCodes.Brfalse, is_null_label);
+				}
+
+				right.Emit (ec);
+				ig.Emit (OpCodes.Dup);
+				if ((Oper == Binary.Operator.BitwiseOr) || (Oper == Binary.Operator.LogicalOr))
+					ig.Emit (OpCodes.Brtrue, wrap_label);
+				else
+					ig.Emit (OpCodes.Brfalse, wrap_label);
+
+				ig.MarkLabel (right_is_null_label);
+				ig.Emit (OpCodes.Pop);
+				ig.MarkLabel (is_null_label);
+				null_value.Emit (ec);
+				ig.Emit (OpCodes.Br, end_label);
+
+				ig.MarkLabel (wrap_label);
+				ig.Emit (OpCodes.Nop);
+				bool_wrap.Emit (ec);
+				ig.Emit (OpCodes.Nop);
+
+				ig.MarkLabel (end_label);
+			}
+
+			public override void Emit (EmitContext ec)
+			{
+				if (is_boolean) {
+					EmitBoolean (ec);
+					return;
+				}
+
+				ILGenerator ig = ec.ig;
+
+				Label is_null_label = ig.DefineLabel ();
+				Label end_label = ig.DefineLabel ();
+
+				if ((left_unwrap != null) && (right_unwrap != null)) {
+					left_unwrap.EmitCheck (ec);
+					right_unwrap.EmitCheck (ec);
+					ig.Emit (OpCodes.And);
+					ig.Emit (OpCodes.Brfalse, is_null_label);
+				} else if (left_unwrap != null) {
+					left_unwrap.EmitCheck (ec);
+					ig.Emit (OpCodes.Brfalse, is_null_label);
+				} else if (right_unwrap != null) {
+					right_unwrap.EmitCheck (ec);
+					ig.Emit (OpCodes.Brfalse, is_null_label);
+				}
+
+				underlying.Emit (ec);
+				ig.Emit (OpCodes.Br, end_label);
+
+				ig.MarkLabel (is_null_label);
+				if (is_equality) {
+					if ((left_unwrap != null) && (right_unwrap != null)) {
+						left_unwrap.EmitCheck (ec);
+						right_unwrap.EmitCheck (ec);
+						if (Oper == Binary.Operator.Equality)
+							ig.Emit (OpCodes.Ceq);
+						else
+							ig.Emit (OpCodes.Xor);
+					} else if (Oper == Binary.Operator.Equality)
+						ig.Emit (OpCodes.Ldc_I4_0);
+					else
+						ig.Emit (OpCodes.Ldc_I4_1);
+				} else
+					null_value.Emit (ec);
+
+				ig.MarkLabel (end_label);
+			}
+		}
+
+		public class OperatorTrueOrFalse : Expression
+		{
+			public readonly bool IsTrue;
+
+			Expression expr;
+			Unwrap unwrap;
+
+			public OperatorTrueOrFalse (Expression expr, bool is_true, Location loc)
+			{
+				this.IsTrue = is_true;
+				this.expr = expr;
+				this.loc = loc;
+			}
+
+			public override Expression DoResolve (EmitContext ec)
+			{
+				unwrap = new Unwrap (expr, loc);
+				expr = unwrap.Resolve (ec);
+				if (expr == null)
 					return null;
 
-				type = underlying.Type;
+				if (unwrap.Type != TypeManager.bool_type)
+					return null;
+
+				type = TypeManager.bool_type;
 				eclass = ExprClass.Value;
 				return this;
 			}
@@ -2626,17 +2776,18 @@ namespace Mono.CSharp {
 				Label is_null_label = ig.DefineLabel ();
 				Label end_label = ig.DefineLabel ();
 
-				if (left_unwrap != null)
-					left_unwrap.EmitCheck (ec, is_null_label);
+				unwrap.EmitCheck (ec);
+				ig.Emit (OpCodes.Brfalse, is_null_label);
 
-				if (right_unwrap != null)
-					right_unwrap.EmitCheck (ec, is_null_label);
-
-				underlying.Emit (ec);
+				unwrap.Emit (ec);
+				if (!IsTrue) {
+					ig.Emit (OpCodes.Ldc_I4_0);
+					ig.Emit (OpCodes.Ceq);
+				}
 				ig.Emit (OpCodes.Br, end_label);
 
 				ig.MarkLabel (is_null_label);
-				null_value.Emit (ec);
+				ig.Emit (OpCodes.Ldc_I4_0);
 
 				ig.MarkLabel (end_label);
 			}
