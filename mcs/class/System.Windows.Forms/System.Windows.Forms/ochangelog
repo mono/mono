@@ -1,0 +1,16 @@
+2002-8-7  DennisHayes <dennish@raytek.com>
+
+*  Started cheanglog
+
+2002-8-4  DennisHayes <dennish@raytek.com>
+Checked in for John Sohn <jsohn@columbus.rr.com
+
+* build.sh
+* changelog
+* monostart.c
+* monostub.c
+* monostub.exe.dbg.c
+* monostub.exe.spec.c
+* Test.cs
+* test.sh
+* Experiment to get first form working using WINELIB
