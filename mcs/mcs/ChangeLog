@@ -1,3 +1,20 @@
+2002-03-28  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (Method.Define), (Property.Define), (Indexer.Define):
+	Remove the gratuitous set of Final:
+
+				// If an interface implementation, then we can set Final.
+				if (((flags & MethodAttributes.Abstract) == 0) &&
+				    implementing.DeclaringType.IsInterface)
+					flags |= MethodAttributes.Final;
+
+        I do not know what I was smoking when I used that.
+	
+
+	* cs-parser.jay, delegate.cs: Make Delegate be a DeclSpace, first
+	step into fixing the name resolution issues for delegates and
+	unifying the toplevel name resolution.
+
 2002-03-28  Martin Baulig  <martin@gnome.org>
 
 	* class.cs (Method.Emit): If we have a symbol writer, call its

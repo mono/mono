@@ -81,6 +81,8 @@ namespace Mono.CSharp {
 				// Now we check that the overriden method is not final
 				
 				if (mb.IsFinal) {
+					MethodAttributes m = mb.Attributes;
+
 					Report.Error (239, Location, parent.MakeName (Name) + " : cannot " +
 						      "override inherited member " + MethodBaseName (mb) +
 						      " because it is sealed.");
@@ -184,6 +186,10 @@ namespace Mono.CSharp {
 		///   created with System.Reflection.Emit
 		/// </summary>
 		TypeBuilder definition;
+
+		/// <summary>
+		///   This variable tracks whether we have Closed the type
+		/// </summary>
 		public bool Created = false;
 		
 		//

@@ -151,6 +151,7 @@ namespace Mono.CSharp {
 			}
 			if ((mod_flags & SEALED) != 0)
 				ma |= MethodAttributes.Final;
+
 			if ((mod_flags & VIRTUAL) != 0)
 				ma |= MethodAttributes.Virtual;
 

@@ -20,11 +20,10 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Holds Delegates
 	/// </summary>
-	public class Delegate : MemberCore {
+	public class Delegate : DeclSpace {
 		public readonly string ReturnType;
 		public Parameters      Parameters;
 		public Attributes      OptAttributes;
-		public TypeBuilder     TypeBuilder;
 
 		public ConstructorBuilder ConstructorBuilder;
 		public MethodBuilder      InvokeBuilder;
@@ -45,9 +44,10 @@ namespace Mono.CSharp {
 		        Modifiers.UNSAFE |
 			Modifiers.PRIVATE;
 
-		public Delegate (string type, int mod_flags, string name, Parameters param_list,
+		public Delegate (TypeContainer parent, string type, int mod_flags,
+				 string name, Parameters param_list,
 				 Attributes attrs, Location l)
-			: base (name, l)
+			: base (parent, name, l)
 		{
 			this.ReturnType = type;
 			ModFlags        = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PUBLIC, l);
@@ -87,7 +87,7 @@ namespace Mono.CSharp {
 		{
 			MethodAttributes mattr;
 			int i;
-			
+
 			// FIXME: POSSIBLY make this static, as it is always constant
 			// 
 			Type [] const_arg_types = new Type [2];

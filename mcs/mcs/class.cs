@@ -2367,11 +2367,6 @@ namespace Mono.CSharp {
 					MethodAttributes.Virtual |
 					MethodAttributes.HideBySig;
 
-				// If not abstract, then we can set Final.
-				if (((flags & MethodAttributes.Abstract) == 0) &&
-				    implementing.DeclaringType.IsInterface)
-					flags |= MethodAttributes.Final;
-
 				//
 				// clear the flag
 				//
@@ -2405,12 +2400,12 @@ namespace Mono.CSharp {
 					ec, parent.TypeBuilder,
 					Name, flags, ret_type, parameters);
 			} else {
-				
+
 				MethodBuilder = parent.TypeBuilder.DefineMethod (
 					Name, flags,
 					GetCallingConvention (parent is Class),
 					ret_type, parameters);
-				
+
 				if (implementing != null && explicit_impl)
 					parent.TypeBuilder.DefineMethodOverride (
 						MethodBuilder, implementing);
@@ -3024,11 +3019,6 @@ namespace Mono.CSharp {
 					MethodAttributes.Virtual |
 					MethodAttributes.HideBySig;
 
-				// If an interface implementation, then we can set Final.
-				if (((flags & MethodAttributes.Abstract) == 0) &&
-				    implementing.DeclaringType.IsInterface)
-					flags |= MethodAttributes.Final;
-				
 				//
 				// clear the pending flag
 				//
@@ -3606,11 +3596,6 @@ namespace Mono.CSharp {
 					MethodAttributes.Virtual |
 					MethodAttributes.HideBySig;
 
-				// If an interface implementing, then we can set final.
-				if (((attr & MethodAttributes.Abstract) == 0) &&
-				    implementing.DeclaringType.IsInterface)
-					attr |= MethodAttributes.Final;
-				
 				//
 				// clear the pending flag
 				//
