@@ -1,3 +1,8 @@
+2004-07-13  Peter Williams  <peter@newton.cx>
+ 
+ 	* process.c (complete_path): Make sure we don't attempt to execute
+ 	directories.
+  
 2004-07-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* debug-helpers.c: undo my previous patch and fixed the real issue in
