@@ -1,3 +1,8 @@
+2005-01-14  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* SoapMessageFormatter.cs, SoapServerFormatterSink.cs: Fixed warnings.
+	* RemotingThreadPool.cs: New thread pool for the tcp and http channels.
+
 2004-07-26  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* SoapMessageFormater.cs: In BuildSoapMessageFromMethodResponse, add the

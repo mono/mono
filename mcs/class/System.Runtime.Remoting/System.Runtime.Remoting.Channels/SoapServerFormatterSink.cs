@@ -134,7 +134,6 @@ namespace System.Runtime.Remoting.Channels {
 			responseHeaders = null;
 			responseStream = null;
 
-			Exception exception;
 			ServerProcessing sp;
 			SoapMessageFormatter soapMsgFormatter = new SoapMessageFormatter();
 			sinkStack.Push(this, soapMsgFormatter);

@@ -149,7 +149,6 @@ namespace System.Runtime.Remoting.Channels {
 			
 			requestHeaders = new TransportHeaders();
 			SoapMessage soapMsg = new SoapMessage();
-			string uri = mcm.Uri;
 
 			GetInfoFromMethodCallMessage(mcm);
 
