@@ -1,3 +1,9 @@
+2003-07-30  Alexandre Pigolkine <pigolkine@gmx.de>
+	* Bitmap.cs		
+	* GDKfunctions.cs
+	* Image.cs
+			painting on loaded image 
+
 2003-06-26  Alexandre Pigolkine <pigolkine@gmx.de>
 	* Bitmap.cs		remember format
 	* Graphics.cs	DrawLine functions

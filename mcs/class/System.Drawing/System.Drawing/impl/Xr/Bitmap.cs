@@ -55,29 +55,34 @@ namespace System.Drawing {
 			float verticalResolution;
 			
 			internal void CommonInit (int width, int height) {
+				CommonInit (width, height, true);
+			}
+
+			internal void CommonInit (int width, int height, bool allocNativeObject) {
 				size = new Size(width, height);
-				switch( format) {
+				imageFormat = ImageFormat.Bmp;
+				switch( pixelFormat) {
 				case PixelFormat.Format32bppArgb:
 					xr_format = Xr.Format.ARGB32;
-					native_object = GDK.gdk_pixbuf_new(0, true, 8, width, height);
+					if (allocNativeObject) native_object = GDK.gdk_pixbuf_new(0, true, 8, width, height);
 					break;
 				case PixelFormat.Format24bppRgb:
 					xr_format = Xr.Format.RGB24;
-					native_object = GDK.gdk_pixbuf_new(0, false, 8, width, height);
+					if (allocNativeObject) native_object = GDK.gdk_pixbuf_new(0, true, 8, width, height);
 					break;
 				default:
 					throw new NotImplementedException ();
 				}
 				horizontalResolution = verticalResolution = 96.0F;
 			}
-
+			
 			#region constructors
 			/// <summary>
 			/// Constructors
 			/// </summary>
 
 			public Bitmap (int width, int height) {
-				format = PixelFormat.Format32bppArgb;
+				pixelFormat = PixelFormat.Format32bppArgb;
 				CommonInit (width, height);
 			}
 
@@ -90,7 +95,7 @@ namespace System.Drawing {
 
 			[MonoTODO]
 			public Bitmap(int width, int height, PixelFormat format) {
-				this.format = format;
+				this.pixelFormat = format;
 				CommonInit (width, height);
 			}
 
@@ -99,14 +104,26 @@ namespace System.Drawing {
 				//this.original = original;
 			}
 			
-			void InitFromStream( Stream stream) {
+			unsafe void InitFromStream( Stream stream) {
 				InternalImageInfo info = System.Drawing.Image.Decode(stream);
 				if (info != null) {
-					createdFrom_ = info;
-					size = info.Size;
-					image_format = info.RawFormat;
-					format =  info.Format;
-
+					imageFormat = info.RawFormat;
+					pixelFormat = info.PixelFormat;
+					CommonInit (info.Size.Width, info.Size.Height, false);
+					if (pixelFormat == PixelFormat.Format32bppArgb) {
+						native_object = GDK.gdk_pixbuf_new_from_data (info.UnmanagedImagePtr, GDK.GdkColorspace.GDK_COLORSPACE_RGB, 
+										true, 8, Size.Width, Size.Height, info.Stride, IntPtr.Zero, IntPtr.Zero);
+					}
+					else if (pixelFormat == PixelFormat.Format24bppRgb) {
+						info.ChangePixelFormat (PixelFormat.Format32bppArgb);
+						native_object = GDK.gdk_pixbuf_new_from_data (info.UnmanagedImagePtr, GDK.GdkColorspace.GDK_COLORSPACE_RGB, 
+										true, 8, Size.Width, Size.Height, info.Stride, IntPtr.Zero, IntPtr.Zero);
+					}
+					else {
+						throw new NotImplementedException();
+					}
+					// FIXME: Is it safe to free the unmanaged memory block now ?
+					info.Dispose();
 				}
 			}
 			
@@ -220,7 +237,7 @@ namespace System.Drawing {
 			//public override PixelFormat PixelFormat {
 			public new PixelFormat PixelFormat {
 				get {
-					return format;
+					return pixelFormat;
 				}
 			}
 

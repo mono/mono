@@ -27,8 +27,8 @@ namespace System.Drawing {
 			internal Xr.Format xr_format;
 			internal System.Drawing.XrImpl.Graphics selected_into_graphics = null;
 			internal Size size;
-			internal PixelFormat format;
-			protected ImageFormat image_format;
+			internal PixelFormat pixelFormat;
+			protected ImageFormat imageFormat;
 			
 			// constructor
 			public Image () {}
@@ -125,20 +125,20 @@ namespace System.Drawing {
 				throw new NotImplementedException ();
 			}
 
-			protected InternalImageInfo createdFrom_ = null;
-			public InternalImageInfo ConvertToInternalImageInfo() {
-				if (createdFrom_ == null) {
-					createdFrom_ = new InternalImageInfo();
-					createdFrom_.Size = size;
-					createdFrom_.Format = format;
-					IntPtr memptr = GDK.gdk_pixbuf_get_pixels(native_object);
-					int rowSize = (format == PixelFormat.Format32bppArgb) ? 4 * size.Width: 3 * size.Width;
-					int totalSize = rowSize * size.Height;
-					createdFrom_.Stride = rowSize;
-					createdFrom_.RawImageBytes = new byte[totalSize];
-					Marshal.Copy( memptr, createdFrom_.RawImageBytes, 0, totalSize);
+			protected InternalImageInfo sourceImageInfo = null;
+			public unsafe InternalImageInfo ConvertToInternalImageInfo() {
+				if (sourceImageInfo == null) {
+					sourceImageInfo = new InternalImageInfo();
+					sourceImageInfo.Size = size;
+					sourceImageInfo.RawFormat = imageFormat;
+					sourceImageInfo.PixelFormat = PixelFormat.Format32bppArgb;
+					sourceImageInfo.Stride = GDK.gdk_pixbuf_get_rowstride (native_object);
+					sourceImageInfo.RawImageBytes = new byte[sourceImageInfo.Stride * size.Height];
+					IntPtr memptr = GDK.gdk_pixbuf_get_pixels (native_object);
+					Marshal.Copy( memptr, sourceImageInfo.RawImageBytes, 0, sourceImageInfo.RawImageBytes.Length);
+					sourceImageInfo.ChangePixelFormat (pixelFormat);
 				}
-				return createdFrom_;
+				return sourceImageInfo;
 			}
 			public void Save (string filename) {
 				throw new NotImplementedException();
@@ -225,7 +225,7 @@ namespace System.Drawing {
 	
 			public PixelFormat PixelFormat {
 				get {
-					return format;
+					return pixelFormat;
 				}
 			}
 	
@@ -245,7 +245,7 @@ namespace System.Drawing {
 			[MonoTODO]
 			public ImageFormat RawFormat {
 				get {
-					throw new NotImplementedException();
+					return imageFormat;
 				}
 			}
 			public Size Size {

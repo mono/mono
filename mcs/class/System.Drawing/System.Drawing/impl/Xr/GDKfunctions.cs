@@ -25,6 +25,12 @@ namespace System.Drawing.XrImpl {
 			//const string GDK = "libgdk-0.dll";
 			//const string GLIB = "libgobject-2.0-0.dll";
 			
+			internal enum GdkColorspace : int
+			{
+				GDK_COLORSPACE_RGB = 0
+			}
+			
+			
 			static GDK() {		
 				gdk_init(0, new IntPtr(0));
 			}
@@ -35,6 +41,9 @@ namespace System.Drawing.XrImpl {
 			[DllImport(GDKimp)]
 			internal static extern IntPtr gdk_pixbuf_new(int colorspace, bool has_alpha, int bits_per_sample, int width, int height);
 
+			[DllImport(GDKimp)]
+			internal static extern IntPtr gdk_pixbuf_new_from_data (IntPtr data, GdkColorspace colorspace, bool has_alpha, int bits_per_sample, int width, int height, int rowstride, IntPtr destroy_fn, IntPtr destroy_fn_data);
+			
 			[DllImport(GDKimp)]
 			internal static extern int gdk_pixbuf_get_width(IntPtr pixbuf);
 		
