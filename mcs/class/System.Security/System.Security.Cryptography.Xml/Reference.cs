@@ -156,6 +156,9 @@ namespace System.Security.Cryptography.Xml {
 				Transform t = null;
 				foreach (XmlNode xn in xnl) {
 					string a = GetAttribute ((XmlElement)xn, XmlSignature.AttributeNames.Algorithm);
+/*	This code is useful for debugging in VS.NET because using CryptoConfig
+	(from MS mscorlib) would throw InvalidCastException because it's 
+	Transform would come from MS System.Security.dll not Mono's.
 					switch (a) {
 						case "http://www.w3.org/2000/09/xmldsig#base64":
 							t = new XmlDsigBase64Transform ();
@@ -178,6 +181,11 @@ namespace System.Security.Cryptography.Xml {
 						default:
 							throw new NotSupportedException ();
 					}
+*/
+					t = (Transform) CryptoConfig.CreateFromName (a);
+					if (t == null)
+						throw new CryptographicException ("Unknown transform {0}.", a);
+
 					if (xn.ChildNodes.Count > 0) {
 						t.LoadInnerXml (xn.ChildNodes);
 					}

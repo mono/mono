@@ -1,3 +1,10 @@
+2004-03-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Reference.cs: Changed code to use CryptoConfig to create transforms.
+	This is "the" way to do it (e.g. to allow new transforms to be added)
+	but cause problems when using VS.NET for debugging. Old code is still
+	present, but commented, for that cause.
+
 2004-03-27  Atsushi Enomoto <atsushi@ximian.com>
 
 	* SignedXml.cs : namespace nodes also should be supplied for enveloped
