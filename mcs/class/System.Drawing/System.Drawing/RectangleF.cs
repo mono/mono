@@ -15,9 +15,7 @@ namespace System.Drawing {
 	[Serializable]
 	public struct RectangleF { 
 		
-		// Private position and size fields.
-		private PointF loc;
-		private SizeF sz;
+                float x, y, width, height;
 
 		/// <summary>
 		///	Empty Shared Field
@@ -42,8 +40,7 @@ namespace System.Drawing {
 		public static RectangleF FromLTRB (float left, float top,
 						   float right, float bottom)
 		{
-			return new RectangleF (left, top, right - left,
-					       bottom - top);
+			return new RectangleF (left, top, right - left, bottom - top);
 		}
 
 		/// <summary>
@@ -58,7 +55,7 @@ namespace System.Drawing {
 		public static RectangleF Inflate (RectangleF r, 
 						  float x, float y)
 		{
-			RectangleF ir = new RectangleF (r.Location, r.Size);
+			RectangleF ir = new RectangleF (r.X, r.Y, r.Width, r.Height);
 			ir.Inflate (x, y);
 			return ir;
 		}
@@ -73,7 +70,10 @@ namespace System.Drawing {
 		
 		public void Inflate (float width, float height)
 		{
-			Inflate (new SizeF (width, height));
+                        x -= width;
+                        y -= height;
+                        width += width * 2;
+                        height += height * 2;                        
 		}
 
 		/// <summary>
@@ -86,9 +86,7 @@ namespace System.Drawing {
 		
 		public void Inflate (SizeF sz)
 		{
-			Offset(sz.Width, sz.Height);
-			SizeF ds = new SizeF (sz.Width * 2, sz.Height * 2);
-			this.sz += ds;
+			Inflate (sz.Width, sz.Height);
 		}
 
 		/// <summary>
@@ -103,7 +101,7 @@ namespace System.Drawing {
 		public static RectangleF Intersect (RectangleF r1, 
 						    RectangleF r2)
 		{
-			RectangleF r = new RectangleF (r1.Location, r1.Size);
+			RectangleF r = new RectangleF (r1.X, r1.Y, r1.Width, r1.Height);
 			r.Intersect (r2);
 			return r;
 		}
@@ -120,14 +118,16 @@ namespace System.Drawing {
 		public void Intersect (RectangleF r)
 		{
 			if (!IntersectsWith (r)) {
-				loc = PointF.Empty;
-				sz = SizeF.Empty;
+                                x = 0;
+                                y = 0;
+                                width = 0;
+                                height = 0;
 			}
 
-			X = Math.Max (Left, r.Left);
-			Y = Math.Max (Top, r.Top);
-			Width = Math.Min (Right, r.Right) - X;
-			Height = Math.Min (Bottom, r.Bottom) - Y;
+			x = Math.Max (Left, r.Left);
+			y = Math.Max (Top, r.Top);
+			width = Math.Min (Right, r.Right) - X;
+			height = Math.Min (Bottom, r.Bottom) - Y;
 		}
 
 		/// <summary>
@@ -159,8 +159,8 @@ namespace System.Drawing {
 
 		public static bool operator == (RectangleF r1, RectangleF r2)
 		{
-			return ((r1.Location == r2.Location) && 
-				(r1.Size == r2.Size));
+			return (r1.X == r2.X) && (r1.Y == r2.Y) &&
+                                (r1.Width == r2.Width) && (r1.Height == r2.Height);
 		}
 		
 		/// <summary>
@@ -175,8 +175,8 @@ namespace System.Drawing {
 
 		public static bool operator != (RectangleF r1, RectangleF r2)
 		{
-			return ((r1.Location != r2.Location) || 
-				(r1.Size != r2.Size));
+			return (r1.X != r2.X) && (r1.Y != r2.Y) &&
+                                (r1.Width != r2.Width) && (r1.Height != r2.Height);
 		}
 		
 		/// <summary>
@@ -189,7 +189,7 @@ namespace System.Drawing {
 
 		public static implicit operator RectangleF (Rectangle r)
 		{
-			return new RectangleF (r.Location, r.Size);
+			return new RectangleF (r.X, r.Y, r.Width, r.Height);
 		}
 		
 
@@ -207,8 +207,10 @@ namespace System.Drawing {
 		
 		public RectangleF (PointF loc, SizeF sz)
 		{
-			this.loc = loc;
-			this.sz = sz;
+			x = loc.X;
+                        y = loc.Y;
+                        width = sz.Width;
+                        height = sz.Height;
 		}
 
 		/// <summary>
@@ -222,8 +224,10 @@ namespace System.Drawing {
 		
 		public RectangleF (float x, float y, float width, float height)
 		{
-			loc = new PointF (x, y);
-			sz = new SizeF (width, height);
+			this.x = x;
+                        this.y = y;
+                        this.width = width;
+                        this.height = height;
 		}
 
 
@@ -254,10 +258,10 @@ namespace System.Drawing {
 		
 		public float Height {
 			get {
-				return sz.Height;
+				return height;
 			}
 			set {
-				sz.Height = value;
+				height = value;
 			}
 		}
 
@@ -272,7 +276,7 @@ namespace System.Drawing {
 		[Browsable (false)]
 		public bool IsEmpty {
 			get {
-				return ((sz.Width == 0) || (sz.Height == 0));
+				return ((width == 0) || (height == 0));
 			}
 		}
 
@@ -303,10 +307,11 @@ namespace System.Drawing {
 		[Browsable (false)]
 		public PointF Location {
 			get {
-				return loc;
+				return new PointF (x, y);
 			}
 			set {
-				loc = value;
+				x = value.X;
+                                y = value.Y;
 			}
 		}
 
@@ -337,10 +342,11 @@ namespace System.Drawing {
 		[Browsable (false)]
 		public SizeF Size {
 			get {
-				return sz;
+				return new SizeF (width, height);
 			}
 			set {
-				sz = value;
+				width = value.Width;
+                                height = value.Height;
 			}
 		}
 
@@ -370,10 +376,10 @@ namespace System.Drawing {
 		
 		public float Width {
 			get {
-				return sz.Width;
+				return width;
 			}
 			set {
-				sz.Width = value;
+				width = value;
 			}
 		}
 
@@ -387,10 +393,10 @@ namespace System.Drawing {
 		
 		public float X {
 			get {
-				return loc.X;
+				return x;
 			}
 			set {
-				loc.X = value;
+				x = value;
 			}
 		}
 
@@ -404,10 +410,10 @@ namespace System.Drawing {
 		
 		public float Y {
 			get {
-				return loc.Y;
+				return y;
 			}
 			set {
-				loc.Y = value;
+				y = value;
 			}
 		}
 
@@ -478,7 +484,7 @@ namespace System.Drawing {
 		
 		public override int GetHashCode ()
 		{
-			return loc.GetHashCode()^sz.GetHashCode();
+			return (int) (x + y + width + height);
 		}
 
 		/// <summary>

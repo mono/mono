@@ -106,7 +106,7 @@ namespace System.Drawing.Drawing2D
                         }
                 }
 
-                public int PathCount {
+                public int PointCount {
 
                         get {
                                 int count;
@@ -316,6 +316,14 @@ namespace System.Drawing.Drawing2D
                 public void AddRectangles (RectangleF [] rects)
                 {
                         GDIPlus.GdipAddPathRectangles (nativePath, rects, rects.Length);
+                }
+
+                //
+                // AddPath
+                //
+                public void AddPath (GraphicsPath addingPath, bool connect)
+                {
+                        GDIPlus.GdipAddPathPath (nativePath, addingPath.nativePath, connect);
                 }
 
                 public PointF GetLastPoint ()
