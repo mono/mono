@@ -4113,8 +4113,7 @@ namespace Mono.CSharp {
                                                      " does not resolve its type");
 
 			//
-			// This is a special case since csc behaves this way. I can't find
-			// it anywhere in the spec but oh well ...
+			// This is a special case since csc behaves this way.
 			//
 			if (argument_expr is NullLiteral &&
                             p == TypeManager.string_type &&
@@ -4125,6 +4124,25 @@ namespace Mono.CSharp {
                                  q == TypeManager.string_type)
 				return 0;
 			
+                        //
+                        // csc behaves this way so we emulate it. Basically, if the argument
+                        // is null and one of the types to compare is 'object' and the other
+                        // is a reference type, we prefer the other.
+                        //
+                        // I can't find this anywhere in the spec but we can interpret this
+                        // to mean that null can be of any type you wish in such a context
+                        //
+                        if (p != null && q != null) {
+                                if (argument_expr is NullLiteral &&
+                                    !p.IsValueType &&
+                                    q == TypeManager.object_type)
+                                        return 1;
+                                else if (argument_expr is NullLiteral &&
+                                         !q.IsValueType &&
+                                         p == TypeManager.object_type)
+                                        return 0;
+                        }
+                                
 			if (p == q)
 				return 0;
 			
@@ -4281,7 +4299,6 @@ namespace Mono.CSharp {
 			// best method, we cant tell. This happens
 			// if we have:
 			// 
-			//
 			//	interface IFoo {
 			//		void DoIt ();
 			//	}
@@ -4296,6 +4313,7 @@ namespace Mono.CSharp {
 			//
 			// However, we have to consider that
 			// Trim (); is better than Trim (params char[] chars);
+                        //
 			if (cand_count == 0 && argument_count == 0)
 				return best == null || best_params ? 1 : 0;
 
@@ -4380,6 +4398,9 @@ namespace Mono.CSharp {
 		public static string FullMethodDesc (MethodBase mb)
 		{
 			string ret_type = "";
+
+                        if (mb == null)
+                                return "";
 
 			if (mb is MethodInfo)
 				ret_type = TypeManager.CSharpName (((MethodInfo) mb).ReturnType);
@@ -4584,8 +4605,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
-		
-
 		/// <summary>
 		///   Find the Applicable Function Members (7.4.2.1)
 		///
@@ -4614,6 +4633,8 @@ namespace Mono.CSharp {
                         // Used to keep a map between the candidate
                         // and whether it is being considered in its
                         // normal or expanded form
+                        //
+                        // false is normal form, true is expanded form
                         //
                         Hashtable candidate_to_form = new PtrHashtable ();
 
@@ -4654,8 +4675,7 @@ namespace Mono.CSharp {
                                         applicable_type = candidate.DeclaringType;
                                         found_applicable = true;
                                         candidate_to_form [candidate] = false;
-                                } else {
-                                        if (IsParamsMethodApplicable (ec, Arguments, candidate)) {
+                                } else if (IsParamsMethodApplicable (ec, Arguments, candidate)) {
                                                 // Candidate is applicable in expanded form
                                                 candidates.Add (candidate);
                                                 applicable_type = candidate.DeclaringType;
@@ -4663,7 +4683,6 @@ namespace Mono.CSharp {
                                                 candidate_to_form [candidate] = true;
                                         }
                                 }
-                        }
                         
 
                         //
@@ -4745,9 +4764,9 @@ namespace Mono.CSharp {
 				// applicable so we debar the params
 				// method.
 				//
-                                if ((IsParamsMethodApplicable (ec, Arguments, candidate) &&
-                                     IsApplicable (ec, Arguments, method)))
-                                        continue;
+                                // if ((IsParamsMethodApplicable (ec, Arguments, candidate) &&
+//                                      IsApplicable (ec, Arguments, method)))
+//                                         continue;
                                 
                                 bool cand_params = (bool) candidate_to_form [candidate];
 				int x = BetterFunction (ec, Arguments,
