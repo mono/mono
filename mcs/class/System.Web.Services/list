@@ -83,6 +83,7 @@ System.Web.Services.Protocols/HtmlFormParameterWriter.cs
 System.Web.Services.Protocols/HttpGetClientProtocol.cs
 System.Web.Services.Protocols/HttpMethodAttribute.cs
 System.Web.Services.Protocols/HttpPostClientProtocol.cs
+System.Web.Services.Protocols/HttpServerProtocol.cs
 System.Web.Services.Protocols/HttpSimpleClientProtocol.cs
 System.Web.Services.Protocols/HttpWebClientProtocol.cs
 System.Web.Services.Protocols/LogicalMethodInfo.cs
@@ -124,6 +125,7 @@ System.Web.Services.Protocols/UrlParameterWriter.cs
 System.Web.Services.Protocols/ValueCollectionParameterReader.cs
 System.Web.Services.Protocols/WebClientAsyncResult.cs
 System.Web.Services.Protocols/WebClientProtocol.cs
+System.Web.Services.Protocols/WebServiceHandler.cs
 System.Web.Services.Protocols/WebServiceHandlerFactory.cs
 System.Web.Services.Protocols/XmlReturnReader.cs
 System.Web.Services.Discovery/ContractReference.cs
