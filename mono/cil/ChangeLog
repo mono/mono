@@ -1,3 +1,7 @@
+2005-01-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* cil-opcodes.xml opcode.def: Add mono_classconst.
+
 2004-08-05  Duncan Mak  <duncan@ximian.com>
 
 	* cil-opcodes.xml: 
