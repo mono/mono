@@ -1,3 +1,10 @@
+2002-10-01  Martin Baulig  <martin@gnome.org>
+
+	* debug-mono-symfile.c: Don't emit methods and line numbers for
+	the dynamic symbol file, just write the type table.  We can easily
+	have an external helper program which creates a symbol file for an
+	IL file.	
+
 2002-10-01  Dick Porter  <dick@ximian.com>
 
 	* threads.c (ves_icall_System_Threading_Thread_Start_internal):
