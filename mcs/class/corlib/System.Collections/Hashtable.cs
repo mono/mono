@@ -461,7 +461,7 @@ namespace System.Collections {
 		{
 			if (table == null)
 				throw new ArgumentNullException("table");
-			return new SynchedHashtable (table);
+			return new SyncHashtable (table);
 		}
 
 
@@ -934,25 +934,25 @@ namespace System.Collections {
 
 
 		[Serializable]
-		private class SynchedHashtable : Hashtable, IEnumerable {
+		private class SyncHashtable : Hashtable, IEnumerable {
 
 			private Hashtable host;
 
-			public SynchedHashtable (Hashtable host) {
+			public SyncHashtable (Hashtable host) {
 				if (host == null)
 					throw new ArgumentNullException ();
 
 				this.host = host;
 			}
 
-			internal SynchedHashtable (SerializationInfo info, StreamingContext context)
+			internal SyncHashtable (SerializationInfo info, StreamingContext context)
 			{
-				host = (Hashtable) info.GetValue("host", typeof(Hashtable));
+				host = (Hashtable) info.GetValue("ParentTable", typeof(Hashtable));
 			}
 			
 			public override void GetObjectData (SerializationInfo info, StreamingContext context)
 			{
-				info.AddValue ("host", host);
+				info.AddValue ("ParentTable", host);
 			}
 			
 			// ICollection
@@ -1096,7 +1096,7 @@ namespace System.Collections {
 				return (host.Clone () as Hashtable);
 			}
 
-		} // SynchedHashtable
+		} // SyncHashtable
 
 
 	} // Hashtable
