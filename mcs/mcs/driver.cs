@@ -745,7 +745,7 @@ namespace Mono.CSharp
 				}
 				return true;
 
-			case "/out:":
+			case "/out":
 				if (value == ""){
 					Usage ();
 					Environment.Exit (1);
@@ -978,9 +978,10 @@ namespace Mono.CSharp
 						if (CSCParseOption (csc_opt, ref args, ref i))
 							continue;
 					} else {
-						if (arg.StartsWith ("/"))
+						if (arg.StartsWith ("/")){
 							if (CSCParseOption (arg, ref args, ref i))
 								continue;
+						}
 					}
 				}
 
