@@ -1477,7 +1477,7 @@ abstruct_propery_declaration
 				TypeManager.system_object_expr : (Expression) $4 ) : (Expression) $7;
 
 	  	if (current_container is Module)
-	  		Report.Error (433, "Methods in a Module cannot be declared 'MustOverride'.");
+	  		Report.Error (30503, "Properties in a Module cannot be declared 'MustOverride'.");
 	  		
 	  	if (current_container is Struct)
 	  		Report.Error (435, "Methods in a Structure cannot be declared 'MustOverride'.");
@@ -1629,6 +1629,9 @@ opt_set_accessor_declaration
 get_accessor_declaration
 	: opt_attributes GET EOL
 	  {
+		if ((current_modifiers & Modifiers.WRITEONLY) != 0)
+	  		Report.Error (30023, "'WriteOnly' properties cannot have a 'Get' accessor");
+	  
 		current_local_parameters = get_parameters;
 		
 		lexer.PropertyParsing = false;
@@ -1652,6 +1655,9 @@ get_accessor_declaration
 set_accessor_declaration
 	: opt_attributes SET opt_set_parameter EOL
 	  {
+        if ((current_modifiers & Modifiers.READONLY) != 0)
+	  		Report.Error (30022, "'ReadOnly' properties cannot have a 'Set' accessor");
+	  		
 		Parameter implicit_value_parameter = new Parameter (
 			set_implicit_value_parameter_type, 
 			set_implicit_value_parameter_name, 

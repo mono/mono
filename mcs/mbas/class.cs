@@ -1364,6 +1364,7 @@ namespace Mono.MonoBASIC {
 							continue;
 
 						MemberInfo pb = p.PropertyBuilder;
+
 						if (pb != null && filter (pb, criteria) == true) {
 							members.Add (p.PropertyBuilder);
 						}
@@ -3839,7 +3840,7 @@ namespace Mono.MonoBASIC {
 							      parent.MakeName (Name) +
 							      " no suitable indexers found to override");
 					else
-						Report.Error (115, Location,
+						Report.Error (30284, Location,
 							      parent.MakeName (Name) +
 							      " no suitable properties found to override");
 					return false;

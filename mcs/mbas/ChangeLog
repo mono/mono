@@ -1,3 +1,8 @@
+2004-05-26 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay:
+	* class.cs:
+		Few property related checks applied
+
 2004-05-24 Anirban Bhattacharjee <banirban@novell.com>
 	* class.cs: Check for ReadOnly and WriteOnly modifiers added to property
 
