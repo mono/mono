@@ -1,3 +1,8 @@
+2005-02-01  Raja R Harinath  <rharinath@novell.com>
+
+	* get.c (get_method_core): Use mono_method_signature (mh), not
+	mh->signature.
+
 2005-01-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* get.c dis-cil.c dump.c: Fix 64 bit warnings.
