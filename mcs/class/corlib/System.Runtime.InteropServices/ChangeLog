@@ -1,3 +1,16 @@
+2004-06-18  Raja R Harinath  <rharinath@novell.com>
+
+	Fix breaking build (see tests/test-272.cs).  Since corlib is a
+	bootstrap library, we have to keep this fix even if the in-tree
+	mcs compiler is fixed.
+	* UCOMIEnumConnections.cs: Replace '(UnmanagedType) 80' in
+	attribute field initialization with Consts.UnmanagedType_80.
+	* UCOMIEnumMoniker.cs: Likewise.
+	* UCOMIEnumString.cs: Likewise.
+	* UCOMIStream.cs: Likewise.
+	* UCOMITypeInfo.cs: Likewise.
+	* UCOMITypeLib.cs: Likewise.
+
 2004-06-18  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* BINDPTR.cs: have layout and charset match MS.NET

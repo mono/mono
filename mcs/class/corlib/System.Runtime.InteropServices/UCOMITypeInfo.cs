@@ -42,10 +42,10 @@ namespace System.Runtime.InteropServices
 		void GetDllEntry (int memid, INVOKEKIND invKind, out string pBstrDllName, out string pBstrName, out short pwOrdinal);
 		void GetDocumentation (int index, out string strName, out string strDocString, out int dwHelpContext, out string strHelpFile);
 		void GetFuncDesc (int index, out IntPtr ppFuncDesc);
-		void GetIDsOfNames ([In, MarshalAs(UnmanagedType.LPArray, ArraySubType = (UnmanagedType.LPWStr), SizeParamIndex=1)] string[] rgszNames, int cNames, [Out, MarshalAs (UnmanagedType.LPArray, ArraySubType = (UnmanagedType) 80, SizeParamIndex=1)] int[] pMemId);
+		void GetIDsOfNames ([In, MarshalAs(UnmanagedType.LPArray, ArraySubType = (UnmanagedType.LPWStr), SizeParamIndex=1)] string[] rgszNames, int cNames, [Out, MarshalAs (UnmanagedType.LPArray, ArraySubType = Consts.UnmanagedType_80, SizeParamIndex=1)] int[] pMemId);
 		void GetImplTypeFlags (int index, out int pImplTypeFlags);
 		void GetMops (int memid, out string pBstrMops);
-		void GetNames (int memid, [Out, MarshalAs (UnmanagedType.LPArray, ArraySubType = (UnmanagedType) 80, SizeParamIndex=2)] string[] rgBstrNames, int cMaxNames, out int pcNames);
+		void GetNames (int memid, [Out, MarshalAs (UnmanagedType.LPArray, ArraySubType = Consts.UnmanagedType_80, SizeParamIndex=2)] string[] rgBstrNames, int cMaxNames, out int pcNames);
 		void GetRefTypeInfo (int hRef, out UCOMITypeInfo ppTI);
 		void GetRefTypeOfImplType (int index, out int href);
 		void GetTypeAttr (out IntPtr ppTypeAttr);

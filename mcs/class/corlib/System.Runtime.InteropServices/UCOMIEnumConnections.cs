@@ -38,7 +38,7 @@ namespace System.Runtime.InteropServices
 	{
 		void Clone (out UCOMIEnumConnections ppenum);
 		[PreserveSigAttribute]
-		int Next (int celt, [Out, MarshalAs(UnmanagedType.LPArray, ArraySubType=(UnmanagedType) 80, SizeParamIndex=0)] CONNECTDATA[] rgelt, out int pceltFetched);
+		int Next (int celt, [Out, MarshalAs(UnmanagedType.LPArray, ArraySubType=Consts.UnmanagedType_80, SizeParamIndex=0)] CONNECTDATA[] rgelt, out int pceltFetched);
 		[PreserveSigAttribute]
 		void Reset ();
 		[PreserveSigAttribute]
