@@ -27,6 +27,7 @@ namespace System.Data
 	[Editor]
 	[DefaultEvent ("PositionChanged")]
 	[DefaultProperty ("Table")]
+	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.DataViewDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 	public class DataView : MarshalByValueComponent, IBindingList, IList, ICollection, IEnumerable, ITypedList, ISupportInitialize
 	{
 		DataTable dataTable = null;

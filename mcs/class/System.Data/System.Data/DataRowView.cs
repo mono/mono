@@ -170,6 +170,11 @@ namespace System.Data
 			}
 		}
 
+		[MonoTODO]
+		public override int GetHashCode() {
+			throw new NotImplementedException ();
+		}	
+
 		#endregion // Properties
 		
 		#region ICustomTypeDescriptor implementations

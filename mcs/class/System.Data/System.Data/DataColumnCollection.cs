@@ -581,10 +581,14 @@ namespace System.Data {
 			return -1;
 		}
 		
+		#region Events
 
 		/// <summary>
 		/// Occurs when the columns collection changes, either by adding or removing a column.
 		/// </summary>
+                [ResDescriptionAttribute ("Occurs whenever this collection's membership changes.")] 
 		public event CollectionChangeEventHandler CollectionChanged;
+
+		#endregion 
 	}
 }

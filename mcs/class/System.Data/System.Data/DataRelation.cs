@@ -24,6 +24,10 @@ namespace System.Data
 	[Editor]
 	[DefaultProperty ("RelationName")]
 	[Serializable]
+	[MonoTODO]
+	// MS returns value as System.Data.RelationshipConverter
+	//( TODO is for this attribute only)
+	//[TypeConverterAttribute (typeof (RelationshipConverter))]	
 	public class DataRelation {
 		private DataSet dataSet;
 		private string relationName;

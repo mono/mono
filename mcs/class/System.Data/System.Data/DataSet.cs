@@ -30,6 +30,8 @@ namespace System.Data {
 
 	[ToolboxItem (false)]
 	[DefaultProperty ("DataSetName")]
+	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.DataSetDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
+
 	[Serializable]
 	public class DataSet : MarshalByValueComponent, IListSource, 
 		ISupportInitialize, ISerializable, IXmlSerializable 

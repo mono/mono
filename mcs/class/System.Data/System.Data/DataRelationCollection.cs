@@ -22,6 +22,7 @@ namespace System.Data {
 	/// </summary>
 	[Editor]
 	[DefaultEvent ("CollectionChanged")]
+	[DefaultProperty ("Table")]
 	[Serializable]
 	public abstract class DataRelationCollection : InternalDataCollectionBase
 	{
@@ -526,7 +527,11 @@ namespace System.Data {
 			// TODO: What have to be done?
 		}
 
+		#region Events
+
 		[ResDescriptionAttribute ("Occurs whenever this collection's membership changes.")]
 		public event CollectionChangeEventHandler CollectionChanged;
+
+		#endregion
 	}
 }

@@ -1,3 +1,14 @@
+2004-05-13  Umadevi S  <sumadevi@novell.com>
+
+	* DataColumnCollection.cs - Added ResDescriptionAttribute
+	* DataRelation.cs - Added TypeConverterAttribute
+	* DataRelationCollection.cs - Added DefaultPropertyAttribute
+	* DataRowView.cs - Added GetHashCode method with a TODO tag
+        * DataSet.cs - Added DesignerAttribute
+	* DataView.cs - Added DesignerAttribute
+        * DataViewManager.cs - Added DesignerAttribute
+ 	* DataViewSetting.cs - Added TypeConverterAttribute
+	
 2004-05-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataRow.cs : Added XmlDataElement initialization code.
