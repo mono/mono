@@ -3,8 +3,10 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Dave Bettin (dave@opendotnet.com)
 //
 // Copyright (C) Tim Coleman, 2002
+// Copyright (C) Dave Bettin, 2003
 //
 
 using NUnit.Framework;
@@ -13,43 +15,19 @@ using System.Web.Services.Discovery;
 
 namespace MonoTests.System.Web.Services.Discovery {
 
-	public class ContractReferenceTest : TestCase {
+	[TestFixture]
+	public class ContractReferenceTest {
 
-		public ContractReferenceTest () :
-			base ("[MonoTests.System.Web.Services.Discovery.ContractReferenceTest]") 
-		{
-		}
-
-		public ContractReferenceTest (string name) :
-			base (name) 
-		{
-		}
-
-		protected override void SetUp ()
-		{
-		}
-
-		protected override void TearDown ()
-		{
-		}
-
-		public static ITest Suite {
-			get { return new TestSuite (typeof (ContractReferenceTest)); }
-		}
-
+		[Test]
 		public void TestConstructors ()
 		{
 			ContractReference contractReference;
-
-			contractReference = new ContractReference ();
-			AssertEquals (String.Empty, contractReference.DocRef);
-			AssertEquals (String.Empty, contractReference.Ref);
-			AssertEquals (String.Empty, contractReference.Url);
 		}
 
+		[Test]
 		public void TestConstants ()
 		{
-			AssertEquals ("http://schemas.xmlsoap.org/disco/scl/", ContractReference.Namespace);
+			Assertion.AssertEquals ("http://schemas.xmlsoap.org/disco/scl/", ContractReference.Namespace);
 		}
 	}
 }

@@ -17,15 +17,15 @@
 			<sources>
 				<includes name="**/*.cs"/>
 			</sources>
-			<references basedir="..\..\..\nunit">
-				<includes name="NUnitCore.dll"/>
+			<references basedir="..\..\..\nunit20">
+				<includes name="NUnit.Framework.dll"/>
 			</references>
 			<arg value="/r:..\..\lib\System.Web.Services.dll"/>
 		</csc>
 	</target>
 
 	<target name="test" depends="assemblies">
-		<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.System.Web.Services.AllTests,System.Web.Services_test.dll" failonerror="false"/>
+		<exec program="..\..\..\nunit20\nunit-console.exe" commandline="System.Web.Services_test.dll" failonerror="false"/>
 	</target>
 
 	<target name="clean">

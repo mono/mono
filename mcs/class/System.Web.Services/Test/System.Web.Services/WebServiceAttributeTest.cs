@@ -3,8 +3,10 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Dave Bettin (dave@opendotnet.com)
 //
 // Copyright (C) Tim Coleman, 2002
+// Copyright (C) Dave Bettin, 2003
 //
 
 using NUnit.Framework;
@@ -13,38 +15,18 @@ using System.Web.Services;
 
 namespace MonoTests.System.Web.Services {
 
-	public class WebServiceAttributeTest : TestCase {
+	[TestFixture]
+	public class WebServiceAttributeTest {
 
-		public WebServiceAttributeTest () :
-			base ("[MonoTests.System.Web.Services.WebServiceAttributeTest]") 
-		{
-		}
-
-		public WebServiceAttributeTest (string name) :
-			base (name) 
-		{
-		}
-
-		protected override void SetUp ()
-		{
-		}
-
-		protected override void TearDown ()
-		{
-		}
-
-		public static ITest Suite {
-			get { return new TestSuite (typeof (WebServiceAttributeTest)); }
-		}
-
+		[Test]
 		public void TestConstructors ()
 		{
 			WebServiceAttribute attribute;
 
 			attribute = new WebServiceAttribute ();
-			AssertEquals (String.Empty, attribute.Description);
-			AssertEquals (String.Empty, attribute.Name);
-			AssertEquals ("http://tempuri.org/", attribute.Namespace);
+			Assertion.AssertEquals (String.Empty, attribute.Description);
+			Assertion.AssertEquals (String.Empty, attribute.Name);
+			Assertion.AssertEquals ("http://tempuri.org/", attribute.Namespace);
 		}
 	}
 }
