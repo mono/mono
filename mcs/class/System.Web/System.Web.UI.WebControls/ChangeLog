@@ -1,3 +1,7 @@
+2005-02-02  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* ControlPropertyNameConverter.cs: Added file.
+
 2005-02-02  Lluis Sanchez Gual <lluis@novell.com>
 
 	* Button.cs, MonthChangedEventArgs.cs, FontInfo.cs, Xml.cs, Style.cs,
