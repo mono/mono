@@ -87,11 +87,11 @@ namespace System.Web.UI.WebControls {
 			return ExecuteSelect (arguments);
 		}
 
-		[MonoTODO("Extra method to keep things compiling, need to remove later")]
+		/*[MonoTODO("Extra method to keep things compiling, need to remove later")]
 		public override IEnumerable Select()
 		{
 			throw new NotImplementedException ("Not required");
-		}
+		}*/
 
 		[MonoTODO ("Handle arguments")]
 		protected internal override IEnumerable ExecuteSelect (
@@ -117,6 +117,8 @@ namespace System.Web.UI.WebControls {
 			SqlDataSourceStatusEventArgs statusEventArgs = 
 				new SqlDataSourceStatusEventArgs (command, reader.RecordsAffected, exception);
 			OnSelected (statusEventArgs);
+			if (exception !=null)
+				throw exception;
 			return enums;
 			
 		}
