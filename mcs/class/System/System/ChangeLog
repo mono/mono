@@ -1,3 +1,9 @@
+2005-03-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Uri.cs: when unescaping in stages, handle the case when the next
+	substring is not a escaped sequence or the string ends. Fixes bug
+	#73316.
+
 2005-01-20  Miguel de Icaza  <miguel@ximian.com>
 
 	* Uri.cs: Set the UriSchemNews port default to 119 as well.

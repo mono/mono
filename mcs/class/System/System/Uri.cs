@@ -646,25 +646,25 @@ namespace System
 			if (index < 0 || index >= pattern.Length)
 				throw new ArgumentOutOfRangeException ("index");
 
+			if (!IsHexEncoding (pattern, index))
+				return pattern [index++];
+
 			int stage = 0;
 			int c = 0;
+			int b = 0;
+			bool looped = false;
 			do {
-				if (((index + 3) > pattern.Length) ||
-				    (pattern [index] != '%') || 
-				    !IsHexDigit (pattern [index + 1]) || 
-				    !IsHexDigit (pattern [index + 2]))
-				{
-					if (stage == 0)
-						return pattern [index++];
-					break;
-				}
-
 				index++;
 				int msb = FromHex (pattern [index++]);
 				int lsb = FromHex (pattern [index++]);
-				int b = (msb << 4) + lsb;
-
-				if (stage == 0) {
+				b = (msb << 4) + lsb;
+				if (!IsHexEncoding (pattern, index)) {
+					if (looped)
+						c += (b - 0x80) << ((stage - 1) * 6);
+					else
+						c = b;
+					break;
+				} else if (stage == 0) {
 					if (b < 0xc0)
 						return (char) b;
 					else if (b < 0xE0) {
@@ -684,11 +684,11 @@ namespace System
 						stage = 6;
 					}
 					c <<= (stage - 1) * 6;
-				}
-				else
+				} else {
 					c += (b - 0x80) << ((stage - 1) * 6);
-//Console.WriteLine ("stage {0}: {5:X04} <-- {1:X02}|{2:X01},{3:X01} {4}", new object [] {stage, b, msb, lsb, pattern.Substring (index), c});
+				}
 				stage--;
+				looped = true;
 			} while (stage > 0);
 			
 			return (char) c;
@@ -785,9 +785,9 @@ namespace System
 
 				// check for escape code already placed in str, 
 				// i.e. for encoding that follows the pattern 
-                // "%hexhex" in a string, where "hex" is a digit from 0-9 
+				// "%hexhex" in a string, where "hex" is a digit from 0-9 
 				// or a letter from A-F (case-insensitive).
-				if('%'.Equals(c) && IsHexEncoding(str,i))
+				if('%' == c && IsHexEncoding(str,i))
 				{
 					// if ,yes , copy it as is
 					s.Append(c);
