@@ -1,4 +1,8 @@
 
+Mon Oct 22 15:20:14 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* x86/tramp.c: handle boolean, u1 and i1 as return values.
+
 Wed Oct 10 16:07:24 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* x86/x86-codegen.c: added x86_set_{reg,mem,membase}.
