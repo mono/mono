@@ -1,4 +1,9 @@
 
+Wed Apr 17 12:33:10 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* profiler.c, profiler.h: track time spent compiling methods.
+	* threads.c: track thread creation/destruction.
+
 Tue Apr 16 20:08:43 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* profiler.c, profiler.h, profiler-private.h: profiling interface
