@@ -1,3 +1,21 @@
+2004-11-25  Sureshkumar T  <tsureshkumar@novell.com>
+
+	These changes are for 2.0 profile only. These changes implement
+	the generic data base access technique using Provider Factory
+	Implementation. These classes need to be dervided from abstract
+	base classes so that the corresponding factory classes are
+	created when calling CreateCommand, CreateParameter, etc.
+	
+	* SqlClientFactory.cs: Provider Factory class  Implementaion for SqlServer
+	* SqlParameter.cs: Change base classes and override methods.
+	* SqlParameterCollection.cs:  Change base classes and override methods.
+	* SqlTransaction.cs:  Change base classes and override methods.
+	* SqlDataSourceEnumerator.cs: DataSource Enumerator stubs.
+	* SqlDataReader.cs: Change base classes and override methods.
+	* SqlConnection.cs: Change base classes and override methods.
+	* SqlCommandBuilder.cs: Change base classes and override methods.
+	* SqlCommand.cs: Change base classes and override necessary methods.
+
 2004-10-14 Umadevi S <sumadevi@novell.com>
 	* SqlCommand.cs - Implemented the clone method correctly.
 	 (fixed bug 67301)

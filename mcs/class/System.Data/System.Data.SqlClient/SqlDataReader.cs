@@ -41,9 +41,16 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlTypes;
+#if NET_2_0
+using System.Data.ProviderBase;
+#endif // NET_2_0
 
 namespace System.Data.SqlClient {
+#if NET_2_0
+	public sealed class SqlDataReader : DbDataReaderBase, IEnumerable, IDataReader, IDisposable, IDataRecord
+#else
 	public sealed class SqlDataReader : MarshalByRefObject, IEnumerable, IDataReader, IDisposable, IDataRecord
+#endif // NET_2_0
 	{
 		#region Fields
 
@@ -66,7 +73,10 @@ namespace System.Data.SqlClient {
 
 		#region Constructors
 
-		internal SqlDataReader (SqlCommand command)
+		internal SqlDataReader (SqlCommand command) 
+#if NET_2_0
+                        : base ((DbCommand) command)
+#endif // NET_2_0
 		{
 			readResult = false;
 			haveRead = false;
@@ -85,27 +95,51 @@ namespace System.Data.SqlClient {
 
 		#region Properties
 
-		public int Depth {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                int Depth {
 			get { return 0; }
 		}
 
-		public int FieldCount {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                int FieldCount {
 			get { return fieldCount; }
 		}
 
-		public bool IsClosed {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                bool IsClosed {
 			get { return isClosed; }
 		}
 
-		public object this [int i] {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                object this [int i] {
 			get { return GetValue (i); }
 		}
 
-		public object this [string name] {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                object this [string name] {
 			get { return GetValue (GetOrdinal (name)); }
 		}
 	
-		public int RecordsAffected {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                int RecordsAffected {
 			get { 
 				if (isSelect) 
 					return -1;
@@ -114,7 +148,11 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-		public bool HasRows {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                bool HasRows {
 			get {
 				if (haveRead) 
 					return readResult;
@@ -129,7 +167,11 @@ namespace System.Data.SqlClient {
 
 		#region Methods
 
-		public void Close ()
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                void Close ()
 		{
 			// skip to end & read output parameters.
 			while (NextResult ())
@@ -187,7 +229,11 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-		public bool GetBoolean (int i)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                bool GetBoolean (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is bool)) {
@@ -197,7 +243,11 @@ namespace System.Data.SqlClient {
 			return (bool) value;
 		}
 
-		public byte GetByte (int i)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                byte GetByte (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is byte)) {
@@ -207,7 +257,11 @@ namespace System.Data.SqlClient {
 			return (byte) value;
 		}
 
-		public long GetBytes (int i, long dataIndex, byte[] buffer, int bufferIndex, int length)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                long GetBytes (int i, long dataIndex, byte[] buffer, int bufferIndex, int length)
 		{
 			object value = GetValue (i);
 			if (!(value is byte [])) {
@@ -227,7 +281,11 @@ namespace System.Data.SqlClient {
 		}
                                                                                                     
 		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
-		public char GetChar (int i)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                char GetChar (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is char)) {
@@ -237,7 +295,11 @@ namespace System.Data.SqlClient {
 			return (char) value;
 		}
 
-		public long GetChars (int i, long dataIndex, char[] buffer, int bufferIndex, int length)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                long GetChars (int i, long dataIndex, char[] buffer, int bufferIndex, int length)
 		{
 			object value = GetValue (i);
 			char [] valueBuffer;
@@ -263,17 +325,25 @@ namespace System.Data.SqlClient {
 		}
 		
 		[EditorBrowsableAttribute (EditorBrowsableState.Never)] 
-		public IDataReader GetData (int i)
+		public new IDataReader GetData (int i)
 		{
 			return ( (IDataReader) this [i]);
 		}
 
-		public string GetDataTypeName (int i)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                string GetDataTypeName (int i)
 		{
 			return (string) dataTypeNames [i];
 		}
 
-		public DateTime GetDateTime (int i)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                DateTime GetDateTime (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is DateTime)) {
@@ -283,7 +353,11 @@ namespace System.Data.SqlClient {
 			return (DateTime) value;
 		}
 
-		public decimal GetDecimal (int i)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                decimal GetDecimal (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is decimal)) {
@@ -293,7 +367,11 @@ namespace System.Data.SqlClient {
 			return (decimal) value;
 		}
 
-		public double GetDouble (int i)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                double GetDouble (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is double)) {
@@ -303,12 +381,20 @@ namespace System.Data.SqlClient {
 			return (double) value;
 		}
 
-		public Type GetFieldType (int i)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                Type GetFieldType (int i)
 		{
 			return (Type) schemaTable.Rows[i]["DataType"];
 		}
 
-		public float GetFloat (int i)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                float GetFloat (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is float)) {
@@ -318,7 +404,11 @@ namespace System.Data.SqlClient {
 			return (float) value;
 		}
 
-		public Guid GetGuid (int i)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                Guid GetGuid (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is Guid)) {
@@ -328,7 +418,11 @@ namespace System.Data.SqlClient {
 			return (Guid) value;
 		}
 
-		public short GetInt16 (int i)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                short GetInt16 (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is short)) {
@@ -338,7 +432,11 @@ namespace System.Data.SqlClient {
 			return (short) value;
 		}
 
-		public int GetInt32 (int i)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                int GetInt32 (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is int)) {
@@ -348,7 +446,11 @@ namespace System.Data.SqlClient {
 			return (int) value;
 		}
 
-		public long GetInt64 (int i)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                long GetInt64 (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is long)) {
@@ -358,12 +460,20 @@ namespace System.Data.SqlClient {
 			return (long) value;
 		}
 
-		public string GetName (int i)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                string GetName (int i)
 		{
 			return (string) schemaTable.Rows[i]["ColumnName"];
 		}
 
-		public int GetOrdinal (string name)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                int GetOrdinal (string name)
 		{
 			foreach (DataRow schemaRow in schemaTable.Rows)
 				if (((string) schemaRow ["ColumnName"]).Equals (name))
@@ -374,7 +484,11 @@ namespace System.Data.SqlClient {
 			throw new IndexOutOfRangeException ();
 		}
 
-		public DataTable GetSchemaTable ()
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                DataTable GetSchemaTable ()
 		{
 			if (schemaTable.Rows != null && schemaTable.Rows.Count > 0)
 				return schemaTable;
@@ -779,7 +893,11 @@ namespace System.Data.SqlClient {
 			return count;
 		}
 
-		public string GetString (int i)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                string GetString (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is string)) {
@@ -789,12 +907,20 @@ namespace System.Data.SqlClient {
 			return (string) value;
 		}
 
-		public object GetValue (int i)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                object GetValue (int i)
 		{
 			return command.Tds.ColumnValues [i];
 		}
 
-		public int GetValues (object[] values)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                int GetValues (object[] values)
 		{
 			int len = values.Length;
 			int bigDecimalIndex = command.Tds.ColumnValues.BigDecimalIndex;
@@ -819,12 +945,20 @@ namespace System.Data.SqlClient {
 			return new DbEnumerator (this);
 		}
 
-		public bool IsDBNull (int i)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                bool IsDBNull (int i)
 		{
 			return GetValue (i) == DBNull.Value;
 		}
 
-		public bool NextResult ()
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                bool NextResult ()
 		{
 			if ((command.CommandBehavior & CommandBehavior.SingleResult) != 0 && resultsRead > 0)
 				return false;
@@ -842,7 +976,11 @@ namespace System.Data.SqlClient {
 			return moreResults;
 		}
 
-		public bool Read ()
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                bool Read ()
 		{
 			if ((command.CommandBehavior & CommandBehavior.SingleRow) != 0 && rowsRead > 0)
 				return false;
@@ -872,7 +1010,38 @@ namespace System.Data.SqlClient {
 			return result;
 		}
 				
-		
+#if NET_2_0
+                [MonoTODO]
+                protected override bool IsValidRow 
+                {
+                        get {throw new NotImplementedException ();}
+                }
+
+                [MonoTODO]
+                public override Type GetFieldProviderSpecificType (int position)
+                {
+                        throw new NotImplementedException ();
+                }
+
+                [MonoTODO]                
+                public override object GetProviderSpecificValue (int position)
+                {
+                        throw new NotImplementedException ();                        
+                }
+                
+                [MonoTODO]
+                public override int GetProviderSpecificValues (object [] values)
+                {
+                        throw new NotImplementedException ();                        
+                }
+                
+                [MonoTODO]
+                public override int VisibleFieldCount 
+                {
+                        get {throw new NotImplementedException ();}
+                }
+
+#endif // NET_2_0
 
 		#endregion // Methods
 	}

@@ -38,7 +38,11 @@ using System.Data.Common;
 using System.Text;
 
 namespace System.Data.SqlClient {
+#if NET_2_0
+	public sealed class SqlCommandBuilder : DbCommandBuilder
+#else
 	public sealed class SqlCommandBuilder : Component
+#endif // NET_2_0
 	{
 		#region Fields
 
@@ -83,7 +87,7 @@ namespace System.Data.SqlClient {
 
 		[DataSysDescription ("The DataAdapter for which to automatically generate SqlCommands")]
 		[DefaultValue (null)]
-		public SqlDataAdapter DataAdapter {
+		public new SqlDataAdapter DataAdapter {
 			get { return adapter; }
 			set { 
 				adapter = value; 
@@ -99,7 +103,11 @@ namespace System.Data.SqlClient {
 		[Browsable (false)]
 		[DataSysDescription ("The character used in a text command as the opening quote for quoting identifiers that contain special characters.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public string QuotePrefix {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                string QuotePrefix {
 			get { return quotePrefix; }
 			set { 
 				if (dbSchemaTable != null)
@@ -111,7 +119,11 @@ namespace System.Data.SqlClient {
 		[Browsable (false)]
 		[DataSysDescription ("The character used in a text command as the closing quote for quoting identifiers that contain special characters.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public string QuoteSuffix {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                string QuoteSuffix {
 			get { return quoteSuffix; }
 			set {
 				if (dbSchemaTable != null)
@@ -388,13 +400,21 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-		public SqlCommand GetDeleteCommand ()
+		public 
+#if NET_2_0
+		new
+#endif // NET_2_0
+                SqlCommand GetDeleteCommand ()
 		{
 			BuildCache (true);
 			return CreateDeleteCommand (null, null);
 		}
 
-		public SqlCommand GetInsertCommand ()
+		public 
+#if NET_2_0
+		new
+#endif // NET_2_0
+                SqlCommand GetInsertCommand ()
 		{
 			BuildCache (true);
 			return CreateInsertCommand (null, null);
@@ -409,7 +429,11 @@ namespace System.Data.SqlClient {
 			return String.Format ("{0}{1}{2}", quotePrefix, value, quoteSuffix);
 		}
 
-		public SqlCommand GetUpdateCommand ()
+		public 
+#if NET_2_0
+		new
+#endif // NET_2_0
+                SqlCommand GetUpdateCommand ()
 		{
 			BuildCache (true);
 			return CreateUpdateCommand (null, null);
@@ -455,12 +479,42 @@ namespace System.Data.SqlClient {
 		}
 
 		[MonoTODO ("Figure out what else needs to be cleaned up when we refresh.")]
-		public void RefreshSchema () 
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                void RefreshSchema () 
 		{
 			tableName = String.Empty;
 			dbSchemaTable = null;
 		}
 
+#if NET_2_0
+                [MonoTODO]
+                protected override void ApplyParameterInfo (IDbDataParameter dbParameter, DataRow row)
+                {
+                        throw new NotImplementedException ();
+                }
+
+                [MonoTODO]
+                protected override string GetParameterName (int position)
+                {
+                        throw new NotImplementedException ();                        
+                }
+                
+
+                [MonoTODO]
+                protected override string GetParameterPlaceholder (int position)
+                {
+                        throw new NotImplementedException ();                        
+                }
+                
+                [MonoTODO]
+                protected override DbProviderFactory ProviderFactory
+                {
+                        get {throw new NotImplementedException ();}
+                }
+#endif // NET_2_0
 		#endregion // Methods
 
 		#region Event Handlers
@@ -512,6 +566,14 @@ namespace System.Data.SqlClient {
 				e.Status = UpdateStatus.ErrorsOccurred;
 			}
 		}
+
+#if NET_2_0
+                [MonoTODO]
+                protected override void SetRowUpdatingHandler (DbDataAdapter adapter)
+                {
+                        throw new NotImplementedException ();
+                }
+#endif // NET_2_0
 
 		#endregion // Event Handlers
 	}

@@ -40,12 +40,19 @@ using System;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+#if NET_2_0
+using System.Data.ProviderBase;
+#endif // NET_2_0
 using System.Runtime.InteropServices;
 using System.Text;
 
 namespace System.Data.SqlClient {
 	[TypeConverterAttribute (typeof (SqlParameterConverter))]
+#if NET_2_0
+	public sealed class SqlParameter : DbParameterBase, IDbDataParameter, IDataParameter, ICloneable
+#else
 	public sealed class SqlParameter : MarshalByRefObject, IDbDataParameter, IDataParameter, ICloneable
+#endif // NET_2_0
 	{
 		#region Fields
 
@@ -156,7 +163,11 @@ namespace System.Data.SqlClient {
 		[DataSysDescription ("The parameter generic type.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[RefreshProperties (RefreshProperties.All)]
-		public DbType DbType {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 DbType DbType {
 			get { return dbType; }
 			set { 
 				SetDbType (value); 
@@ -167,7 +178,11 @@ namespace System.Data.SqlClient {
 		[DataCategory ("Data")]
 		[DataSysDescription ("Input, output, or bidirectional parameter.")]
 		[DefaultValue (ParameterDirection.Input)]
-		public ParameterDirection Direction {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 ParameterDirection Direction {
 			get { return direction; }
 			set { 
 				direction = value; 
@@ -199,7 +214,11 @@ namespace System.Data.SqlClient {
 		[DefaultValue (false)]
 		[DesignOnly (true)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]	 
-		public bool IsNullable	{
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 bool IsNullable	{
 			get { return metaParameter.IsNullable; }
 			set { metaParameter.IsNullable = value; }
 		}
@@ -208,14 +227,22 @@ namespace System.Data.SqlClient {
 		[DataCategory ("Data")]
 		[DataSysDescription ("Offset in variable length data types.")]
 		[DefaultValue (0)]
-		public int Offset {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 int Offset {
 			get { return offset; }
 			set { offset = value; }
 		}
 		
 		[DataSysDescription ("Name of the parameter, like '@p1'")]
 		[DefaultValue ("")]
-		public string ParameterName {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 string ParameterName {
 			get { return metaParameter.ParameterName; }
 			set { metaParameter.ParameterName = value; }
 		}
@@ -223,7 +250,11 @@ namespace System.Data.SqlClient {
 		[DataCategory ("Data")]
 		[DataSysDescription ("For decimal, numeric, varnumeric DBTypes.")]
 		[DefaultValue (0)]
-		public byte Precision {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 byte Precision {
 			get { return metaParameter.Precision; }
 			set { metaParameter.Precision = value; }
 		}
@@ -231,7 +262,11 @@ namespace System.Data.SqlClient {
 		[DataCategory ("Data")]
 		[DataSysDescription ("For decimal, numeric, varnumeric DBTypes.")]
 		[DefaultValue (0)]
-                public byte Scale {
+                public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 byte Scale {
 			get { return metaParameter.Scale; }
 			set { metaParameter.Scale = value; }
 		}
@@ -239,7 +274,11 @@ namespace System.Data.SqlClient {
 		[DataCategory ("Data")]
 		[DataSysDescription ("Size of variable length datatypes (strings & arrays).")]
 		[DefaultValue (0)]
-                public int Size {
+                public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 int Size {
 			get { return metaParameter.Size; }
 			set { metaParameter.Size = value; }
 		}
@@ -247,7 +286,11 @@ namespace System.Data.SqlClient {
 		[DataCategory ("Data")]
 		[DataSysDescription ("When used by a DataAdapter.Update, the source column name that is used to find the DataSetColumn name in the ColumnMappings. This is to copy a value between the parameter and a datarow.")]
 		[DefaultValue ("")]
-		public string SourceColumn {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 string SourceColumn {
 			get { return sourceColumn; }
 			set { sourceColumn = value; }
 		}
@@ -255,7 +298,11 @@ namespace System.Data.SqlClient {
 		[DataCategory ("Data")]
 		[DataSysDescription ("When used by a DataAdapter.Update (UpdateCommand only), the version of the DataRow value that is used to update the data source.")]
 		[DefaultValue (DataRowVersion.Current)]
-		public DataRowVersion SourceVersion {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 DataRowVersion SourceVersion {
 			get { return sourceVersion; }
 			set { sourceVersion = value; }
 		}
@@ -276,7 +323,11 @@ namespace System.Data.SqlClient {
 		[DataSysDescription ("Value of the parameter.")]
 		[DefaultValue (null)]
 	        [TypeConverterAttribute (typeof (StringConverter))]
-		public object Value {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 object Value {
 			get { return metaParameter.Value; }
 			set { 
 				if (!isTypeSet)
@@ -627,6 +678,20 @@ namespace System.Data.SqlClient {
 		{
 			return ParameterName;
 		}
+
+#if NET_2_0
+                [MonoTODO]
+                public override void CopyTo (DbParameter param)
+                {
+                        throw new NotImplementedException ();
+                }
+                
+                [MonoTODO]
+                public override void ResetDbType ()
+                {
+                        throw new NotImplementedException ();
+                }
+#endif // NET_2_0
 
 		#endregion // Methods
 	}

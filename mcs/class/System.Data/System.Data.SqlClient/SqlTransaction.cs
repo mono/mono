@@ -35,7 +35,11 @@ using System.Data;
 using System.Data.Common;
 
 namespace System.Data.SqlClient {
+#if NET_2_0
+        public sealed class SqlTransaction : DbTransaction, IDbTransaction, IDisposable
+#else
 	public sealed class SqlTransaction : MarshalByRefObject, IDbTransaction, IDisposable
+#endif // NET_2_0
 	{
 		#region Fields
 
@@ -61,7 +65,11 @@ namespace System.Data.SqlClient {
 
 		#region Properties
 
-		public SqlConnection Connection {
+		public 
+#if NET_2_0
+		new
+#endif // NET_2_0
+	 SqlConnection Connection {
 			get { return connection; }
 		}
 
@@ -69,7 +77,11 @@ namespace System.Data.SqlClient {
 			get { return isOpen; }
 		}
 
-		public IsolationLevel IsolationLevel {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 IsolationLevel IsolationLevel {
 			get { return isolationLevel; }
 		}
 		
@@ -81,7 +93,11 @@ namespace System.Data.SqlClient {
                
 		#region Methods
 
-		public void Commit ()
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 void Commit ()
 		{
 			if (!isOpen)
 				throw new InvalidOperationException ("The Transaction was not open.");
@@ -101,13 +117,21 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-		public void Dispose ()
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 void Dispose ()
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);
 		}
 
-		public void Rollback ()
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 void Rollback ()
 		{
 			Rollback (String.Empty);
 		}
@@ -130,7 +154,12 @@ namespace System.Data.SqlClient {
 				throw new InvalidOperationException ("The Transaction was not open.");
 			connection.Tds.Execute (String.Format ("SAVE TRANSACTION {0}", savePointName));
 		}
-
+#if NET_2_0
+                protected override DbConnection DbConnection
+                {
+                        get {return (DbConnection) Connection;}
+                }
+#endif // NET_2_0
 		#endregion // Methods
 	}
 }

@@ -45,6 +45,11 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+
+#if NET_2_0
+using System.Data.ProviderBase;
+#endif // NET_2_0
+
 using System.EnterpriseServices;
 using System.Globalization;
 using System.Net;
@@ -54,7 +59,11 @@ using System.Xml;
 
 namespace System.Data.SqlClient {
 	[DefaultEvent ("InfoMessage")]
-	public sealed class SqlConnection : Component, IDbConnection, ICloneable	
+#if NET_2_0
+	public sealed class SqlConnection : DbConnectionBase, IDbConnection, ICloneable	
+#else
+	public sealed class SqlConnection : Component, IDbConnection, ICloneable	                
+#endif // NET_2_0
 	{
 		#region Fields
 		bool disposed = false;
@@ -100,7 +109,7 @@ namespace System.Data.SqlClient {
 		{
 		}
 	
-		public SqlConnection (string connectionString) 
+		public SqlConnection (string connectionString)
 		{
 			ConnectionString = connectionString;
 		}
@@ -116,20 +125,32 @@ namespace System.Data.SqlClient {
 		[RecommendedAsConfigurable (true)]	
 		[RefreshProperties (RefreshProperties.All)]
 		[MonoTODO("persist security info, encrypt, enlist and , attachdbfilename keyword not implemented")]
-		public string ConnectionString	{
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                string ConnectionString	{
 			get { return connectionString; }
 			set { SetConnectionString (value); }
 		}
 	
 		[DataSysDescription ("Current connection timeout value, 'Connect Timeout=X' in the ConnectionString.")]	
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public int ConnectionTimeout {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                int ConnectionTimeout {
 			get { return connectionTimeout; }
 		}
 
 		[DataSysDescription ("Current SQL Server database, 'Initial Catalog=X' in the ConnectionString.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public string Database	{
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                string Database	{
 			get { return tds.Database; }
 		}
 		
@@ -140,7 +161,11 @@ namespace System.Data.SqlClient {
 
 		[DataSysDescription ("Current SqlServer that the connection is opened to, 'Data Source=X' in the ConnectionString.")]	
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public string DataSource {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                string DataSource {
 			get { return dataSource; }
 		}
 
@@ -153,14 +178,22 @@ namespace System.Data.SqlClient {
 		[Browsable (false)]
 		[DataSysDescription ("Version of the SQL Server accessed by the SqlConnection.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public string ServerVersion {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                string ServerVersion {
 			get { return tds.ServerVersion; }
 		}
 
 		[Browsable (false)]
 		[DataSysDescription ("The ConnectionState indicating whether the connection is open or closed.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public ConnectionState State {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                ConnectionState State {
 			get { return state; }
 		}
 
@@ -194,7 +227,11 @@ namespace System.Data.SqlClient {
 
 		[DataCategory ("StateChange")]
 		[DataSysDescription ("Event triggered when the connection changes state.")]
-		public event StateChangeEventHandler StateChange;
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                event StateChangeEventHandler StateChange;
 		
 		#endregion // Events
 
@@ -214,12 +251,12 @@ namespace System.Data.SqlClient {
 
 		#region Methods
 
-		public SqlTransaction BeginTransaction ()
+		public new SqlTransaction BeginTransaction ()
 		{
 			return BeginTransaction (IsolationLevel.ReadCommitted, String.Empty);
 		}
 
-		public SqlTransaction BeginTransaction (IsolationLevel iso)
+		public new SqlTransaction BeginTransaction (IsolationLevel iso)
 		{
 			return BeginTransaction (iso, String.Empty);
 		}
@@ -261,7 +298,11 @@ namespace System.Data.SqlClient {
 			return transaction;
 		}
 
-		public void ChangeDatabase (string database) 
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 void ChangeDatabase (string database) 
 		{
 			if (!IsValidDatabaseName (database))
 				throw new ArgumentException (String.Format ("The database name {0} is not valid."));
@@ -277,7 +318,11 @@ namespace System.Data.SqlClient {
 			OnStateChange (CreateStateChangeEvent (originalState, currentState));
 		}
 
-		public void Close () 
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                void Close () 
 		{
 			if (transaction != null && transaction.IsOpen)
 				transaction.Rollback ();
@@ -301,7 +346,7 @@ namespace System.Data.SqlClient {
 			ChangeState (ConnectionState.Closed);
 		}
 
-		public SqlCommand CreateCommand () 
+		public new SqlCommand CreateCommand () 
 		{
 			SqlCommand command = new SqlCommand ();
 			command.Connection = this;
@@ -333,7 +378,11 @@ namespace System.Data.SqlClient {
 		}
 
 		[MonoTODO ("Not sure what this means at present.")]
-		public void EnlistDistributedTransaction (ITransaction transaction)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                void EnlistDistributedTransaction (ITransaction transaction)
 		{
 			throw new NotImplementedException ();
 		}
@@ -364,7 +413,11 @@ namespace System.Data.SqlClient {
 			GC.SuppressFinalize (this);
 		}
 
-		public void Open () 
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                void Open () 
 		{
 			string serverName = "";
 			if (connectionString == null)

@@ -43,6 +43,9 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+#if NET_2_0
+using System.Data.ProviderBase;
+#endif // NET_2_0
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml;
@@ -50,7 +53,11 @@ using System.Xml;
 namespace System.Data.SqlClient {
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.SqlCommandDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 	 [ToolboxItemAttribute ("System.Drawing.Design.ToolboxItem, "+ Consts.AssemblySystem_Drawing)]
-	public sealed class SqlCommand : Component, IDbCommand, ICloneable
+#if NET_2_0
+	public sealed class SqlCommand : DbCommandBase, IDbCommand, ICloneable
+#else
+        public sealed class SqlCommand : Component, IDbCommand, ICloneable
+#endif // NET_2_0
 	{
 		#region Fields
 
@@ -126,7 +133,11 @@ namespace System.Data.SqlClient {
 		[DefaultValue ("")]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.SQL.Design.SqlCommandTextEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		[RefreshProperties (RefreshProperties.All)]
-		public string CommandText {
+		public 
+#if NET_2_0
+                override 
+#endif //NET_2_0
+                string CommandText {
 			get { return commandText; }
 			set { 
 				if (value != commandText && preparedStatement != null)
@@ -137,7 +148,11 @@ namespace System.Data.SqlClient {
 
 		[DataSysDescription ("Time to wait for command to execute.")]
 		[DefaultValue (30)]
-		public int CommandTimeout {
+		public 
+#if NET_2_0
+                override
+#endif //NET_2_0
+                int CommandTimeout {
 			get { return commandTimeout;  }
 			set { 
 				if (commandTimeout < 0)
@@ -150,7 +165,11 @@ namespace System.Data.SqlClient {
 		[DataSysDescription ("How to interpret the CommandText.")]
 		[DefaultValue (CommandType.Text)]
 		[RefreshProperties (RefreshProperties.All)]
-		public CommandType CommandType	{
+		public 
+#if NET_2_0
+                override 
+#endif //NET_2_0
+                CommandType CommandType	{
 			get { return commandType; }
 			set { 
 				if (value == CommandType.TableDirect)
@@ -162,7 +181,12 @@ namespace System.Data.SqlClient {
 		[DataCategory ("Behavior")]
 		[DefaultValue (null)]
 		[DataSysDescription ("Connection used by the command.")]
-		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]		public SqlConnection Connection {
+		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]		
+                public 
+#if NET_2_0
+                new
+#endif //NET_2_0
+                SqlConnection Connection {
 			get { return connection; }
 			set { 
 				if (transaction != null && connection.Transaction != null && connection.Transaction.IsOpen)
@@ -175,7 +199,11 @@ namespace System.Data.SqlClient {
 		[Browsable (false)]
 		[DefaultValue (true)]
 		[DesignOnly (true)]
-		public bool DesignTimeVisible {
+		public 
+#if NET_2_0
+                override
+#endif //NET_2_0
+                bool DesignTimeVisible {
 			get { return designTimeVisible; } 
 			set { designTimeVisible = value; }
 		}
@@ -183,7 +211,11 @@ namespace System.Data.SqlClient {
 		[DataCategory ("Data")]
 		[DataSysDescription ("The parameters collection.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public SqlParameterCollection Parameters {
+		public 
+#if NET_2_0
+                new 
+#endif //NET_2_0
+                SqlParameterCollection Parameters {
 			get { return parameters; }
 		}
 
@@ -216,7 +248,7 @@ namespace System.Data.SqlClient {
 		[Browsable (false)]
 		[DataSysDescription ("The transaction used by the command.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public SqlTransaction Transaction {
+		public new SqlTransaction Transaction {
 			get { return transaction; }
 			set { transaction = value; }
 		}	
@@ -224,7 +256,11 @@ namespace System.Data.SqlClient {
 		[DataCategory ("Behavior")]
 		[DataSysDescription ("When used by a DataAdapter.Update, how command results are applied to the current DataRow.")]
 		[DefaultValue (UpdateRowSource.Both)]
-		public UpdateRowSource UpdatedRowSource	{
+		public 
+#if NET_2_0
+                override
+#endif // NET_2_0
+                UpdateRowSource UpdatedRowSource	{
 			get { return updatedRowSource; }
 			set { updatedRowSource = value; }
 		}
@@ -233,7 +269,11 @@ namespace System.Data.SqlClient {
 
 		#region Methods
 
-		public void Cancel () 
+		public 
+#if NET_2_0
+                override
+#endif // NET_2_0
+                void Cancel () 
 		{
 			if (Connection == null || Connection.Tds == null)
 				return;
@@ -248,7 +288,7 @@ namespace System.Data.SqlClient {
 				Connection.Close ();
 		}
 
-		public SqlParameter CreateParameter () 
+		public new SqlParameter CreateParameter () 
 		{
 			return new SqlParameter ();
 		}
@@ -316,7 +356,11 @@ namespace System.Data.SqlClient {
 				Connection.Tds.ExecPrepared (preparedStatement, parms, CommandTimeout, wantResults);
 		}
 
-		public int ExecuteNonQuery ()
+		public 
+#if NET_2_0
+                override
+#endif // NET_2_0
+                int ExecuteNonQuery ()
 		{
 			ValidateCommand ("ExecuteNonQuery");
 			int result = 0;
@@ -345,12 +389,12 @@ namespace System.Data.SqlClient {
 			return result;
 		}
 
-		public SqlDataReader ExecuteReader ()
+		public new SqlDataReader ExecuteReader ()
 		{
 			return ExecuteReader (CommandBehavior.Default);
 		}
 
-		public SqlDataReader ExecuteReader (CommandBehavior behavior)
+		public new SqlDataReader ExecuteReader (CommandBehavior behavior)
 		{
 			ValidateCommand ("ExecuteReader");
 			try {
@@ -364,7 +408,11 @@ namespace System.Data.SqlClient {
 			return Connection.DataReader;
 		}
 
-		public object ExecuteScalar ()
+		public 
+#if NET_2_0
+                override
+#endif // NET_2_0
+                object ExecuteScalar ()
 		{
 			ValidateCommand ("ExecuteScalar");
 			try {
@@ -437,14 +485,22 @@ namespace System.Data.SqlClient {
 			return ExecuteReader (behavior);
 		}
 
-		public void Prepare ()
+		public 
+#if NET_2_0
+                override
+#endif // NET_2_0
+                void Prepare ()
 		{
 			ValidateCommand ("Prepare");
 			if (CommandType == CommandType.Text) 
 				preparedStatement = Connection.Tds.Prepare (CommandText, Parameters.MetaParameters);
 		}
 
-		public void ResetCommandTimeout ()
+		public 
+#if NET_2_0
+                override
+#endif // NET_2_0
+                void ResetCommandTimeout ()
 		{
 			commandTimeout = 30;
 		}
@@ -470,6 +526,40 @@ namespace System.Data.SqlClient {
 			if (Connection.XmlReader != null)
 				throw new InvalidOperationException ("There is already an open XmlReader associated with this Connection which must be closed first.");
 		}
+
+#if NET_2_0
+                [MonoTODO]
+                protected override DbParameter CreateDbParameter ()
+                {
+                        return (DbParameter) CreateParameter ();
+                }
+
+                [MonoTODO]
+                protected override DbDataReader ExecuteDbDataReader (CommandBehavior behavior)
+                {
+                        return (DbDataReader) ExecuteReader (behavior);
+                }
+
+                [MonoTODO]                
+                protected override DbConnection DbConnection 
+                {
+                        get { return (DbConnection) Connection;  }
+                        set { Connection = (SqlConnection) value; }
+                }
+                
+                [MonoTODO]
+                protected override DbParameterCollection DbParameterCollection
+                {
+                        get { return (DbParameterCollection) Parameters; }
+                }
+
+                [MonoTODO]
+                protected override DbTransaction DbTransaction 
+                {
+                        get { return (DbTransaction) Transaction; }
+                        set { Transaction = (SqlTransaction) value; }
+                }
+#endif // NET_2_0
 
 		#endregion // Methods
 	}

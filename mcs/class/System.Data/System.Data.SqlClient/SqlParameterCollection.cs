@@ -39,12 +39,21 @@ using System;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+
+#if NET_2_0
+using System.Data.ProviderBase;
+#endif // NET_2_0
+
 using System.Collections;
 
 namespace System.Data.SqlClient {
 	[ListBindable (false)]
 	[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DataParametersEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
+#if NET_2_0
+	public sealed class SqlParameterCollection : DbParameterBaseCollection, IDataParameterCollection, IList, ICollection, IEnumerable
+#else
 	public sealed class SqlParameterCollection : MarshalByRefObject, IDataParameterCollection, IList, ICollection, IEnumerable
+#endif // NET_2_0
 	{
 		#region Fields
 
@@ -68,13 +77,21 @@ namespace System.Data.SqlClient {
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]	
-		public int Count {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 int Count {
 			get { return list.Count; }			  
 		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]	
-		public SqlParameter this [int index] {
+		public 
+#if NET_2_0
+		new
+#endif // NET_2_0
+	 SqlParameter this [int index] {
 			get { return (SqlParameter) list [index]; }			  
 			set { list [index] = (SqlParameter) value; }			  
 		}
@@ -90,7 +107,11 @@ namespace System.Data.SqlClient {
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]	
-		public SqlParameter this [string parameterName] {
+		public 
+#if NET_2_0
+		new
+#endif // NET_2_0
+	 SqlParameter this [string parameterName] {
 			get {
 				foreach (SqlParameter p in list)
 					if (p.ParameterName.Equals (parameterName))
@@ -133,7 +154,11 @@ namespace System.Data.SqlClient {
 
 		#region Methods
 
-		public int Add (object value)
+		public  
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 int Add (object value)
 		{
 			if (!(value is SqlParameter))
 				throw new InvalidCastException ("The parameter was not an SqlParameter.");
@@ -172,7 +197,11 @@ namespace System.Data.SqlClient {
 			return Add (new SqlParameter (parameterName, sqlDbType, size, sourceColumn));
 		}
 
-		public void Clear()
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 void Clear()
 		{
 			metaParameters.Clear ();
 			
@@ -182,14 +211,22 @@ namespace System.Data.SqlClient {
 			list.Clear ();
 		}
 		
-		public bool Contains (object value)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 bool Contains (object value)
 		{
 			if (!(value is SqlParameter))
 				throw new InvalidCastException ("The parameter was not an SqlParameter.");
 			return Contains (((SqlParameter) value).ParameterName);
 		}
 
-		public bool Contains (string value)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 bool Contains (string value)
 		{
 			foreach (SqlParameter p in list)
 				if (p.ParameterName.Equals (value))
@@ -197,24 +234,40 @@ namespace System.Data.SqlClient {
 			return false;
 		}
 
-		public void CopyTo (Array array, int index)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 void CopyTo (Array array, int index)
 		{
 			list.CopyTo (array, index);
 		}
 
-		public IEnumerator GetEnumerator()
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 IEnumerator GetEnumerator()
 		{
 			return list.GetEnumerator ();
 		}
 		
-		public int IndexOf (object value)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 int IndexOf (object value)
 		{
 			if (!(value is SqlParameter))
 				throw new InvalidCastException ("The parameter was not an SqlParameter.");
 			return IndexOf (((SqlParameter) value).ParameterName);
 		}
 		
-		public int IndexOf (string parameterName)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 int IndexOf (string parameterName)
 		{
 			for (int i = 0; i < Count; i += 1)
                                 if (this [i].ParameterName.Equals (parameterName))
@@ -223,12 +276,20 @@ namespace System.Data.SqlClient {
 
 		}
 
-		public void Insert (int index, object value)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 void Insert (int index, object value)
 		{
 			list.Insert (index, value);
 		}
 
-		public void Remove (object value)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 void Remove (object value)
 		{
 			((SqlParameter) value).Container = null;
 			
@@ -236,17 +297,37 @@ namespace System.Data.SqlClient {
 			list.Remove (value);
 		}
 
-		public void RemoveAt (int index)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 void RemoveAt (int index)
 		{
 			this [index].Container = null;
 			metaParameters.RemoveAt (index);
 			list.RemoveAt (index);
 		}
 
-		public void RemoveAt (string parameterName)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 void RemoveAt (string parameterName)
 		{
 			RemoveAt (IndexOf (parameterName));
 		}
+
+                [MonoTODO]
+                protected 
+#if NET_2_0
+		override
+#endif // NET_2_0
+	 Type ItemType
+                {
+                        get {throw new NotImplementedException ();}
+                        
+                }
+
 
 		#endregion // Methods	
 	}
