@@ -1,3 +1,12 @@
+2003-09-04  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (DeclSpace.GetTypeParameters): New method to return the
+	generic parameters.
+
+	* class.cs (TypeContainer.DefineType): Call
+	TypeBuilder.DefineGenericParameter () on all generic parameters if
+	this is a generic type.
+
 2003-08-28  Martin Baulig  <martin@ximian.com>
 
 	* sample-stack.il: Compile this with ilasm: "ilasm /dll

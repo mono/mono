@@ -823,7 +823,12 @@ namespace Mono.CSharp {
 				TypeBuilder = builder.DefineNestedType (
 					Basename, type_attributes, parent, ifaces);
 			}
-				
+
+			if (IsGeneric) {
+				foreach (TypeParameterExpr param_expr in GetTypeParameters (Location))
+					TypeBuilder.DefineGenericParameter (param_expr.Name, new Type [0]);
+			}
+
 			//
 			// Structs with no fields need to have at least one byte.
 			// The right thing would be to set the PackingSize in a DefineType

@@ -700,6 +700,17 @@ namespace Mono.CSharp {
 
 			return null;
 		}
+
+		public TypeParameterExpr[] GetTypeParameters (Location l)
+		{
+			TypeParameterExpr[] retval = new TypeParameterExpr [type_parameter_list.Count];
+
+			for (int i = 0; i < type_parameter_list.Count; i++){
+				retval [i] = new TypeParameterExpr ((string) type_parameter_list [i], l);
+			}
+
+			return retval;
+		}
 	}
 
 	/// <summary>
