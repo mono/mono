@@ -1,3 +1,8 @@
+2003-01-13  Ville Palo <vi64pa@koti.soon.fi>
+
+	* System.Xml/XmlDataDocument.cs: lots of bugfixes and more implemented
+	methods.
+
 2003-01-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* list: added System.Data/DataTablePropertyDescriptor.cs
