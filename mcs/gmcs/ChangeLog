@@ -1,3 +1,9 @@
+2004-07-21  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* Makefile: Install gmcs.exe.config file together with gmcs.exe.
+	* gmcs.exe.config: Renamed from mcs.exe.config. Added supportedRuntime
+	entry to make sure it runs in the correct runtime version.
+	
 2004-07-18  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (ConstructedType.CheckConstraints): Improved

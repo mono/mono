@@ -46,7 +46,7 @@ DISTFILES = \
 	compiler.doc		\
 	compiler.sln		\
 	cs-parser.jay		\
-	mcs.exe.config		\
+	gmcs.exe.config		\
 	NOTES			\
 	TODO
 #uncomment to enable some debug stuff
@@ -57,6 +57,7 @@ all-local: gmcs.exe
 install-local: gmcs.exe
 	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib/mono/2.0
 	$(INSTALL_BIN) gmcs.exe $(DESTDIR)$(prefix)/lib/mono/2.0
+	$(INSTALL_DATA) gmcs.exe.config $(DESTDIR)$(prefix)/lib/mono/2.0
 
 uninstall-local:
 	-rm -f $(DESTDIR)$(prefix)/bin/mcs.exe
