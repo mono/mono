@@ -47,9 +47,11 @@ endif
 
 ifndef test_lib
 test_lib = $(LIBRARY:.dll=_test_$(PROFILE).dll)
+test_sourcefile = $(LIBRARY:.dll=_test.dll.sources)
+else
+test_sourcefile = $(test_lib).sources
 endif
 test_pdb = $(test_lib:.dll=.pdb)
-test_sourcefile = $(LIBRARY:.dll=_test.dll.sources)
 test_response = $(depsdir)/$(PROFILE)_$(test_lib).response
 test_makefrag = $(depsdir)/$(PROFILE)_$(test_lib).makefrag
 test_flags = /r:$(test_against) $(test_nunit_ref) $(TEST_MCS_FLAGS)
@@ -57,9 +59,11 @@ library_CLEAN_FILES += $(LIBRARY:.dll=_test*.dll) $(LIBRARY:.dll=_test*.pdb) $(t
 
 ifndef btest_lib
 btest_lib = $(LIBRARY:.dll=_btest_$(PROFILE).dll)
+btest_sourcefile = $(LIBRARY:.dll=_btest.dll.sources)
+else
+btest_sourcefile = $(btest_lib).sources
 endif
 btest_pdb = $(btest_lib:.dll=.pdb)
-btest_sourcefile = $(LIBRARY:.dll=_btest.dll.sources)
 btest_response = $(depsdir)/$(btest_lib).response
 btest_makefrag = $(depsdir)/$(btest_lib).makefrag
 btest_flags = /r:$(test_against) $(test_nunit_ref) $(TEST_MBAS_FLAGS)

@@ -3,6 +3,8 @@
 	* library.make (test_lib, btest_lib): Build separate test
 	assemblies for separate profiles.
 	(dist-local): Don't copy files beginning with '../'.
+	(test_sourcefile, btest_sourcefile): Define in terms of
+	$(test_lib) or $(btest_lib) only if they're overriden.
 	* rules.make (dist-default): Handle any of Makefile, makefile, or
 	GNUmakefile being present.
 	* profiles/net_2_0.make (TEST_RUNTIME): Don't define.
