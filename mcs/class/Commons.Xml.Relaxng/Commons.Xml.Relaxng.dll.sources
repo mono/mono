@@ -26,6 +26,7 @@ Commons.Xml.Nvdl/NvdlBuiltInValidationProvider.cs
 Commons.Xml.Nvdl/NvdlCompileContext.cs
 Commons.Xml.Nvdl/NvdlConfig.cs
 Commons.Xml.Nvdl/NvdlException.cs
+Commons.Xml.Nvdl/NvdlFilteredXmlReader.cs
 Commons.Xml.Nvdl/NvdlReader.cs
 Commons.Xml.Nvdl/NvdlRelaxngSupport.cs
 Commons.Xml.Nvdl/NvdlSimplified.cs

@@ -13,7 +13,9 @@ namespace Commons.Xml.Nvdl
 	public class Nvdl
 	{
 		public const string Namespace = "http://purl.oclc.org/dsdl/nvdl/ns/structure/1.0";
-		public const string BuiltInValidationUri = "http://purl.oclc.org/dsdl/nvdl/ns/predefinedSchema/1.0";
+		public const string BuiltInValidationNamespace = "http://purl.oclc.org/dsdl/nvdl/ns/predefinedSchema/1.0";
+
+		public const string PlaceHolderNamespace = "http://purl.oclc.org/dsdl/nvdl/ns/instance/1.0";
 
 		internal const string XmlNamespaceUri = "http://www.w3.org/xml/1998/namespace";
 

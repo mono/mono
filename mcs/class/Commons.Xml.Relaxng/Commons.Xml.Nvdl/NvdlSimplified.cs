@@ -514,7 +514,7 @@ namespace Commons.Xml.Nvdl.Simplified
 			XmlDocument doc = new XmlDocument ();
 			XmlElement el = doc.CreateElement (
 				allow ? "allow" : "reject",
-				Nvdl.BuiltInValidationUri);
+				Nvdl.BuiltInValidationNamespace);
 			doc.AppendChild (doc.CreateElement ("schema",
 				Nvdl.Namespace));
 			doc.DocumentElement.AppendChild (el);

@@ -1,0 +1,24 @@
+2005-03-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* NvdlFilteredXmlReader.cs : New file. Supports createPlaceHolder()
+	  and attBubble[I].
+	* NvdlValidator.cs : support for attachPlaceHolder.
+	* NvdlSimplified.cs,
+	  NvdlStructures.cs,
+	  NvdlBuiltInValidationProvider.cs : renamed namespace const.
+	* NvdlValidationProvider.cs : removed extraneous debug.
+
+2005-03-01  Atsushi Enomoto <atsushi@ximian.com>
+
+	* NvdlStructures.cs,
+	  NvdlSimplified.cs,
+	  NvdlReader.cs,
+	  NvdlValidatingReader.cs,
+	  NvdlConfig.cs,
+	  NvdlValidationProvider.cs,
+	  NvdlBuiltInValidationProvider.cs,
+	  NvdlRelaxngSupport.cs,
+	  NvdlXsdSupport.cs,
+	  NvdlException.cs,
+	  NvdlValidator.cs,
+	  NvdlCompileContext.cs : initial checkin.

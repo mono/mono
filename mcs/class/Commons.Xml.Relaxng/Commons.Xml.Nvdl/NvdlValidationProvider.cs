@@ -10,7 +10,6 @@ namespace Commons.Xml.Nvdl
 	{
 		public virtual NvdlValidatorGenerator CreateGenerator (NvdlValidate validate, string schemaType, NvdlConfig config)
 		{
-NvdlDebug.Writer.WriteLine (": : : : Trying to create generator from MIME type " + schemaType);
 			XmlReader schema = null;
 			if (schemaType != "text/xml")
 				return null;

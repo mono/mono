@@ -17,7 +17,7 @@ namespace Commons.Xml.Nvdl
 		{
 			reader.MoveToContent ();
 			if (reader.NodeType != XmlNodeType.Element ||
-				reader.NamespaceURI != Nvdl.BuiltInValidationUri)
+				reader.NamespaceURI != Nvdl.BuiltInValidationNamespace)
 				return null;
 			return new NvdlBuiltInValidatorGenerator (reader.LocalName == "allow");
 		}

@@ -8,8 +8,8 @@ namespace Commons.Xml.Nvdl
 {
 	internal class NvdlDebug
 	{
-		public static TextWriter Writer = TextWriter.Null;
-//		public static TextWriter Writer = Console.Out;
+//		public static TextWriter Writer = TextWriter.Null;
+		public static TextWriter Writer = Console.Out;
 	}
 
 	internal class NvdlDispatcher
@@ -52,7 +52,7 @@ Reader.Name, sectionStack.Count, section == null ? "(none)" : section.Namespace)
 			sectionStack.Push (section);
 			section.StartElement ();
 			if (Reader.IsEmptyElement)
-				sectionStack.Pop ();
+				sectionStack.Pop ().EndSection ();
 		}
 
 		public void EndElement ()
@@ -62,6 +62,7 @@ Reader.Name, sectionStack.Count);
 			if (section != null) {
 				section = sectionStack.Pop ();
 				section.EndElement ();
+				section.EndSection ();
 				if (sectionStack.Count > 0)
 					section = sectionStack.Peek ();
 				else
@@ -214,6 +215,13 @@ NvdlDebug.Writer.WriteLine (" : : : : anyNamespace rule being applied.");
 			throw new NvdlValidationException ("NVDL internal error: should not happen. No matching rule was found.", Reader as IXmlLineInfo);
 		}
 
+		// It is invoked regardless of IsEmptyElement.
+		public void EndSection ()
+		{
+			foreach (NvdlInterpretation i in ilist)
+				i.EndSection ();
+		}
+
 		public void StartElement ()
 		{
 NvdlDebug.Writer.WriteLine ("    <state.StartElement {0}", Reader.Name);
@@ -305,29 +313,6 @@ NvdlDebug.Writer.WriteLine ("    <state.EndElement {0} (for {2}). {1} interp.", 
 			List.Remove (i);
 		}
 	}
-
-	internal class PlaceHoldableXmlReader : XmlDefaultReader
-	{
-		bool isPlaceHolder;
-
-		public PlaceHoldableXmlReader (XmlReader reader)
-			: base (reader)
-		{
-		}
-
-		public void AttachPlaceHolder ()
-		{
-			isPlaceHolder = true;
-		}
-
-		public override bool Read ()
-		{
-			// This class itself never proceeds, just checks if
-			// the reader is placed on EOF.
-			return !Reader.EOF;
-		}
-	}
-
 	internal abstract class NvdlInterpretation
 	{
 		NvdlDispatcher dispatcher;
@@ -361,6 +346,8 @@ NvdlDebug.Writer.WriteLine ("    <state.EndElement {0} (for {2}). {1} interp.", 
 			get { return parent; }
 		}
 
+		public abstract void AttachPlaceHolder ();
+		public abstract void DetachPlaceHolder ();
 		public abstract void StartElement ();
 		public abstract void EndElement ();
 		public abstract void Text ();
@@ -369,6 +356,7 @@ NvdlDebug.Writer.WriteLine ("    <state.EndElement {0} (for {2}). {1} interp.", 
 		public abstract void ValidateEndElement ();
 		public abstract void ValidateText ();
 		public abstract void ValidateWhitespace ();
+		public abstract void EndSection ();
 	}
 
 	internal class NvdlResultInterp : NvdlInterpretation
@@ -383,6 +371,27 @@ NvdlDebug.Writer.WriteLine ("    <state.EndElement {0} (for {2}). {1} interp.", 
 		{
 NvdlDebug.Writer.WriteLine ("++++++ new resultAction " + resultAction.Location);
 			type = resultAction.ResultType;
+
+			if (type == NvdlResultType.AttachPlaceHolder && parent != null)
+				parent.AttachPlaceHolder ();
+		}
+
+		public override void EndSection ()
+		{
+			if (type == NvdlResultType.AttachPlaceHolder && Parent != null)
+				Parent.DetachPlaceHolder ();
+		}
+
+		public override void AttachPlaceHolder ()
+		{
+			if (type == NvdlResultType.Unwrap)
+				Parent.AttachPlaceHolder ();
+		}
+
+		public override void DetachPlaceHolder ()
+		{
+			if (type == NvdlResultType.Unwrap)
+				Parent.DetachPlaceHolder ();
 		}
 
 		public override void StartElement ()
@@ -473,7 +482,7 @@ NvdlDebug.Writer.WriteLine (": : : : Unwrapping Whitespace ");
 
 	internal class NvdlValidateInterp : NvdlInterpretation
 	{
-		PlaceHoldableXmlReader reader; // s
+		NvdlFilteredXmlReader reader; // s
 		XmlReader validator;
 
 		public NvdlValidateInterp (NvdlDispatcher dispatcher,
@@ -482,10 +491,26 @@ NvdlDebug.Writer.WriteLine (": : : : Unwrapping Whitespace ");
 			: base (dispatcher, createdMode, validate, parent)
 		{
 NvdlDebug.Writer.WriteLine ("++++++ new validate " + validate.Location);
-			this.reader = new PlaceHoldableXmlReader (dispatcher.Reader);
+			this.reader = new NvdlFilteredXmlReader (dispatcher.Reader, this);
 			validator = validate.CreateValidator (this.reader);
 
 			dispatcher.Validator.OnMessage (validate.Messages);
+		}
+
+		public override void AttachPlaceHolder ()
+		{
+			reader.AttachPlaceHolder ();
+			validator.Read (); // check start Element
+		}
+
+		public override void DetachPlaceHolder ()
+		{
+			reader.DetachPlaceHolder ();
+			validator.Read (); // check EndElement
+		}
+
+		public override void EndSection ()
+		{
 		}
 
 		public override void StartElement ()
