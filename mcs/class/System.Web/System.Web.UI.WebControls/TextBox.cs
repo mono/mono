@@ -6,12 +6,13 @@
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
- * Status:  20%
+ * Status:  80%
  * 
  * (C) Gaurav Vaish (2002)
  */
 
 using System;
+using System.Collections.Specialized;
 using System.Web;
 using System.Web.UI;
 
@@ -238,10 +239,45 @@ namespace System.Web.UI.WebControls
 			throw new HttpException(HttpRuntime.FormatResourceString("Cannot_Have_Children_Of_Type", "TextBox", GetType().Name.ToString()));
 		}
 		
+		[MonoTODO("OnPreRender")]
 		protected override void OnPreRender(EventArgs e)
 		{
 			OnPreRender(e);
 			throw new NotImplementedException();
+		}
+		
+		protected virtual void OnTextChanged(EventArgs e)
+		{
+			if(Events != null)
+			{
+				EventHandler eh = (EventHandler)(Events[TextChangedEvent]);
+				if(eh != null)
+					eh(this, e);
+			}
+		}
+		
+		[MonoTODO("Encode_Text")]
+		protected override void Render(HtmlTextWriter writer)
+		{
+			RenderBeginTag(writer);
+			//TODO: if(TextMode == MultiLine) { Encode(Text) and writeTo(writer) }
+			RenderEndTag(writer);
+			throw new NotImplementedException();
+		}
+		
+		bool IPostBackDataHandler.LoadPostData(string postDataKey, NameValueCollection postCollection)
+		{
+			if(postCollection[postDataKey] != Text)
+			{
+				Text = postCollection[postDataKey];
+				return true;
+			}
+			return false;
+		}
+		
+		void IPostBackDataHandler.RaisePostDataChangedEvent()
+		{
+			OnTextChanged(EventArgs.Empty);
 		}
 	}
 }
