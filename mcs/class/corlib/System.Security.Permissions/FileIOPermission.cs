@@ -407,5 +407,12 @@ namespace System.Security.Permissions {
 			}
 		}
 
+		// IBuiltInPermission
+		int IBuiltInPermission.GetTokenIndex ()
+		{
+			return 2;C
+		}
+                
+
 	}
 }

@@ -1,5 +1,8 @@
 2003-08-05  Duncan Mak  <duncan@ximian.com>
 
+	* FileIOPermission.cs (GetTokenIndex): Add implementation for
+	IBuiltInPermission for Sebastien.
+
 	* IsolatedStorageFilePermission.cs:
 	* RegistryPermission.cs:
 	* SecurityPermission.cs
