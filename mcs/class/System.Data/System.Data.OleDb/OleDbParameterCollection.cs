@@ -28,6 +28,34 @@ namespace System.Data.OleDb
 			}
 		}
 
+		bool IList.IsFixedSize
+	        {
+			get {
+				return false;
+			}
+		}
+		
+		bool IList.IsReadOnly
+		{
+			get {
+				return false;
+			}
+		}
+		
+		bool ICollection.IsSynchronized
+		{
+			get {
+				return m_list.IsSynchronized;
+			}
+		}
+
+		object ICollection.SyncRoot
+		{
+			get {
+				return m_list.SyncRoot;
+			}
+		}
+		
 		public IDataParameter this[int index]
 		{
 			get {
@@ -126,6 +154,11 @@ namespace System.Data.OleDb
 			((OleDbParameter[])(m_list.ToArray ())).CopyTo (array, index);
 		}
 
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return m_list.GetEnumerator ();
+		}
+		
 		int IList.IndexOf (object value)
 		{
 			return m_list.IndexOf (value);

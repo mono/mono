@@ -1,3 +1,8 @@
+2002-06-03  Rodrigo Moya <rodrigo@ximian.com>
+
+	* OleDbParameterCollection.cs (GetEnumerator, SyncRoot,
+	IsSynchronized): implemented.
+
 2002-06-02  Rodrigo Moya <rodrigo@ximian.com>
 
 	* OleDbTransaction.cs (Dispose): added missing method.
