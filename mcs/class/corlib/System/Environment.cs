@@ -134,12 +134,13 @@ namespace System
 		/// <summary>
 		/// Get StackTrace
 		/// </summary>
-		[MonoTODO]
-		public static string StackTrace
-		{
-			get
-			{
-				return null;
+		public static string StackTrace	{
+			get {
+				try {
+					throw new Exception ();
+				} catch (Exception e) {
+					return e.StackTrace;
+				}
 			}
 		}
 
@@ -166,11 +167,9 @@ namespace System
 		/// Get UserDomainName
 		/// </summary>
 		[MonoTODO]
-		public static string UserDomainName
-		{
-			get
-			{
-				return null;
+		public static string UserDomainName {
+			get {
+				return MachineName;
 			}
 		}
 
