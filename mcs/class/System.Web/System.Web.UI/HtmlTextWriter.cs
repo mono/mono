@@ -180,9 +180,13 @@ static HtmlTextWriter(){
 	HtmlTextWriter.RegisterAttribute("width", HtmlTextWriterAttribute.Width, false);
 	HtmlTextWriter.RegisterAttribute("wrap", HtmlTextWriterAttribute.Wrap, false);
 
-	HtmlTextWriter._styleKeyLookupTable = new Hashtable(14,CaseInsensitiveHashCodeProvider.Default,
-								CaseInsensitiveComparer.Default);
+#if NET_2_0
+	HtmlTextWriter._styleNameLookupArray = new String[42];
+#else
 	HtmlTextWriter._styleNameLookupArray = new String[14];
+#endif
+	HtmlTextWriter._styleKeyLookupTable = new Hashtable (HtmlTextWriter._styleNameLookupArray.Length,
+								CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
 	HtmlTextWriter.RegisterStyle("background-color", HtmlTextWriterStyle.BackgroundColor);
 	HtmlTextWriter.RegisterStyle("background-image", HtmlTextWriterStyle.BackgroundImage);
 	HtmlTextWriter.RegisterStyle("border-collapse", HtmlTextWriterStyle.BorderCollapse);
@@ -197,6 +201,36 @@ static HtmlTextWriter(){
 	HtmlTextWriter.RegisterStyle("height", HtmlTextWriterStyle.Height);
 	HtmlTextWriter.RegisterStyle("text-decoration", HtmlTextWriterStyle.TextDecoration);
 	HtmlTextWriter.RegisterStyle("width", HtmlTextWriterStyle.Width);
+#if NET_2_0
+	HtmlTextWriter.RegisterStyle("list-style-image", HtmlTextWriterStyle.ListStyleImage);
+	HtmlTextWriter.RegisterStyle("list-style-type", HtmlTextWriterStyle.ListStyleType);
+	HtmlTextWriter.RegisterStyle("cursor", HtmlTextWriterStyle.Cursor);
+	HtmlTextWriter.RegisterStyle("direction", HtmlTextWriterStyle.Direction);
+	HtmlTextWriter.RegisterStyle("display", HtmlTextWriterStyle.Display);
+	HtmlTextWriter.RegisterStyle("filter", HtmlTextWriterStyle.Filter);
+	HtmlTextWriter.RegisterStyle("font-variant", HtmlTextWriterStyle.FontVariant);
+	HtmlTextWriter.RegisterStyle("left", HtmlTextWriterStyle.Left);
+	HtmlTextWriter.RegisterStyle("margin", HtmlTextWriterStyle.Margin);
+	HtmlTextWriter.RegisterStyle("margin-bottom", HtmlTextWriterStyle.MarginBottom);
+	HtmlTextWriter.RegisterStyle("margin-left", HtmlTextWriterStyle.MarginLeft);
+	HtmlTextWriter.RegisterStyle("margin-right", HtmlTextWriterStyle.MarginRight);
+	HtmlTextWriter.RegisterStyle("margin-top", HtmlTextWriterStyle.MarginTop);
+	HtmlTextWriter.RegisterStyle("overflow", HtmlTextWriterStyle.Overflow);
+	HtmlTextWriter.RegisterStyle("overflow-x", HtmlTextWriterStyle.OverflowX);
+	HtmlTextWriter.RegisterStyle("overflow-y", HtmlTextWriterStyle.OverflowY);
+	HtmlTextWriter.RegisterStyle("padding", HtmlTextWriterStyle.Padding);
+	HtmlTextWriter.RegisterStyle("padding-bottom", HtmlTextWriterStyle.PaddingBottom);
+	HtmlTextWriter.RegisterStyle("padding-left", HtmlTextWriterStyle.PaddingLeft);
+	HtmlTextWriter.RegisterStyle("padding-right", HtmlTextWriterStyle.PaddingRight);
+	HtmlTextWriter.RegisterStyle("padding-top", HtmlTextWriterStyle.PaddingTop);
+	HtmlTextWriter.RegisterStyle("position", HtmlTextWriterStyle.Position);
+	HtmlTextWriter.RegisterStyle("text-align", HtmlTextWriterStyle.TextAlign);
+	HtmlTextWriter.RegisterStyle("text-overflow", HtmlTextWriterStyle.TextOverflow);
+	HtmlTextWriter.RegisterStyle("top", HtmlTextWriterStyle.Top);
+	HtmlTextWriter.RegisterStyle("visibility", HtmlTextWriterStyle.Visibility);
+	HtmlTextWriter.RegisterStyle("white-space", HtmlTextWriterStyle.WhiteSpace);
+	HtmlTextWriter.RegisterStyle("z-index", HtmlTextWriterStyle.ZIndex);
+#endif
 }
 
 public HtmlTextWriter(TextWriter writer):this(writer, "	"){}

@@ -42,6 +42,7 @@ namespace System.Web.UI {
 
 		internal CssStyleCollection ()
 		{
+			style = new StateBag ();
 		}
 		
 		internal CssStyleCollection (StateBag bag)

@@ -1,3 +1,8 @@
+2004-12-17 Lluis Sanchez Gual  <lluis@novell.com>
+
+	* CssStyleCollection.cs: Minor (!) fix.
+	* HtmlTextWriter.cs: Register names for new 2.0 styles.
+
 2004-12-17 Lluis Sanchez Gual <lluis@novell.com>
 
 	* CssStyleCollection.cs: Make it work as a standalone collection.
