@@ -630,7 +630,7 @@ namespace System.Web.UI.WebControls
 			bool foundBranch = true;
 			while (col.Count > 0 && foundBranch) {
 				foundBranch = false;
-				foreach (TreeNode node in Nodes) {
+				foreach (TreeNode node in col) {
 					if (node.Value == path [n]) {
 						if (++n == path.Length) return node;
 						col = node.ChildNodes;
@@ -766,7 +766,6 @@ namespace System.Web.UI.WebControls
 				((IStateManager)Nodes).LoadViewState(states[9]);
 		}
 
-		[MonoTODO]
 		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
 		{
 			string[] args = eventArgument.Split ('|');

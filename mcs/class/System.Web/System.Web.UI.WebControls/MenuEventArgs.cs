@@ -32,7 +32,7 @@
 
 namespace System.Web.UI.WebControls
 {
-	public class MenuEventArgs : CommandEventArgs
+	public sealed class MenuEventArgs : CommandEventArgs
 	{
 		private MenuItem item; 
 		private object source;
