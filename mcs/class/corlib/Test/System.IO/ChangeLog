@@ -1,3 +1,7 @@
+2003-03-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MemoryStreamTest.cs: some nunit2 love. Added a bunch of new tests.
+
 2003-02-05  Nick Drochak  <ndrochak@gol.com>
 
 	* FileTest.cs: Have setup remove files before testing as well in case
