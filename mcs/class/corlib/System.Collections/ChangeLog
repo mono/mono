@@ -1,3 +1,7 @@
+2003-02-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ArrayList.cs: fixed setSize (!).
+
 2003-01-31  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ArrayList.cs (RemoveAt): duplicated the the code from RemoveRange

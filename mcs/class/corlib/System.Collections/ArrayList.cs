@@ -446,7 +446,7 @@ namespace System.Collections {
 
 			// note that this assumes that we've already sanity-checked
 			// the new size
-			object[] newDataArray = new object[newSize];
+			object[] newDataArray = new object[capacity];
 			copyDataArray (newDataArray);
 			dataArray = newDataArray;
 		}
