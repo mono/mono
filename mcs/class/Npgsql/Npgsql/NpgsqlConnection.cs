@@ -354,7 +354,6 @@ namespace Npgsql
                 connection_string_values[CONN_PORT] = PG_PORT;
             if (connection_string_values[SSL_ENABLED] == null)
                 connection_string_values[SSL_ENABLED] = "no";
-            
             if (connection_string_values[MIN_POOL_SIZE] == null)
                 connection_string_values[MIN_POOL_SIZE] = "1";
             if (connection_string_values[MAX_POOL_SIZE] == null)
@@ -418,9 +417,7 @@ namespace Npgsql
                     }
     
                     backend_keydata = _mediator.GetBackEndKeyData();
-    
-                    
-    
+
                     // Get version information to enable/disable server version features.
                     // Only for protocol 2.0.
                     if (BackendProtocolVersion == ProtocolVersion.Version2)
@@ -429,7 +426,8 @@ namespace Npgsql
                         _serverVersion = (String) command.ExecuteScalar();
                     }
                     
-                    Connector.ServerVersion = _serverVersion;
+                    Connector.ServerVersion = ServerVersion;
+                    Connector.BackendProtocolVersion = BackendProtocolVersion;
                     
                 }
                 //NpgsqlCommand commandEncoding = new NpgsqlCommand("show client_encoding", this);
@@ -443,17 +441,14 @@ namespace Npgsql
                 // Do a mini initialization in the state machine.
                 
                 connection_state = ConnectionState.Open;
-                _serverVersion = Connector.ServerVersion;
+                ServerVersion = Connector.ServerVersion;
+                BackendProtocolVersion = Connector.BackendProtocolVersion;
                 CurrentState = NpgsqlReadyState.Instance;
                 
                 ProcessServerVersion();
                 _oidToNameMapping = NpgsqlTypesHelper.LoadTypesMapping(this);
 
             }
-
-
-
-
 
             catch(IOException e)
             {

@@ -51,6 +51,8 @@ namespace Npgsql
         // Change later for a more generic way to keep it. (Hashtable)
         private String _serverVersion;
         
+        private Int32 _backendProtocolVersion;
+        
         private Boolean _isInitialized;
         
         private Boolean mPooled;
@@ -96,6 +98,18 @@ namespace Npgsql
             }
         }
         
+        internal Int32 BackendProtocolVersion
+        {
+            get
+            {
+                return _backendProtocolVersion;
+            }
+            
+            set
+            {
+                _backendProtocolVersion = value;
+            }
+        }
         
         internal Stream Stream {
             get
