@@ -79,7 +79,7 @@ namespace System.IO {
 
 				data.FSW = fsw;
 				data.Directory = fsw.FullPath;
-				data.FileMask = fsw.Filter;
+				data.FileMask = fsw.MangledFilter;
 				data.IncludeSubdirs = fsw.IncludeSubdirectories;
 				data.Enabled = true;
 				data.DisabledTime = DateTime.MaxValue;

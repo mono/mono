@@ -51,6 +51,7 @@ namespace System.IO {
 
 			if (pattern == "*") {	// common case
 				ops = new Op (OpCode.True);
+				hasWildcard = true;
 				return;
 			}
 

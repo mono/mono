@@ -105,7 +105,7 @@ namespace System.IO {
 				data = new FAMData ();
 				data.FSW = fsw;
 				data.Directory = fsw.FullPath;
-				data.FileMask = fsw.Filter;
+				data.FileMask = fsw.MangledFilter;
 				data.IncludeSubdirs = fsw.IncludeSubdirectories;
 				if (data.IncludeSubdirs)
 					data.SubDirs = new Hashtable ();
@@ -134,7 +134,7 @@ namespace System.IO {
 				FAMData fd = new FAMData ();
 				fd.FSW = data.FSW;
 				fd.Directory = directory;
-				fd.FileMask = data.FSW.Filter;
+				fd.FileMask = data.FSW.MangledFilter;
 				fd.IncludeSubdirs = true;
 				fd.SubDirs = new Hashtable ();
 				fd.Enabled = true;
@@ -268,7 +268,7 @@ namespace System.IO {
 							FAMData fd = new FAMData ();
 							fd.FSW = fsw;
 							fd.Directory = datadir;
-							fd.FileMask = fsw.Filter;
+							fd.FileMask = fsw.MangledFilter;
 							fd.IncludeSubdirs = true;
 							fd.SubDirs = new Hashtable ();
 							fd.Enabled = true;

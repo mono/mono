@@ -33,6 +33,8 @@ namespace System.IO {
 		WaitForChangedResult lastData;
 		bool waiting;
 		SearchPattern2 pattern;
+		bool disposed;
+		string mangledFilter;
 		static IFileWatcher watcher;
 
 		#endregion // Fields
@@ -112,14 +114,26 @@ namespace System.IO {
 			set { waiting = value; }
 		}
 
+		internal string MangledFilter {
+			get {
+				if (filter != "*.*")
+					return filter;
+
+				if (mangledFilter != null)
+					return mangledFilter;
+
+				string mangledFilter = "*.*";
+				if (!(watcher.GetType () == typeof (WindowsWatcher)))
+					mangledFilter = "*";
+
+				return mangledFilter;
+			}
+		}
+
 		internal SearchPattern2 Pattern {
 			get {
 				if (pattern == null) {
-					string f = Filter;
-					if (f == "*.*" && !(watcher.GetType () == typeof (WindowsWatcher)))
-						f = "*";
-
-					pattern = new SearchPattern2 (f);
+					pattern = new SearchPattern2 (MangledFilter);
 				}
 				return pattern;
 			}
@@ -168,6 +182,7 @@ namespace System.IO {
 				if (filter != value) {
 					filter = value;
 					pattern = null;
+					mangledFilter = null;
 				}
 			}
 		}
@@ -283,12 +298,20 @@ namespace System.IO {
 
 		protected override void Dispose (bool disposing)
 		{
-			if (disposing) {
+			if (!disposed) {
+				disposed = true;
 				Stop ();
 			}
+
 			base.Dispose (disposing);
 		}
 
+		~FileSystemWatcher ()
+		{
+			disposed = true;
+			Stop ();
+		}
+		
 		[MonoTODO]
 		public void EndInit ()
 		{
