@@ -1,4 +1,9 @@
 
+Mon Mar 11 11:58:27 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* monograph.c: update --help output, Make error messages less
+	intimidating and more informative.
+
 Mon Mar 11 11:16:53 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* monograph.c: removed method signature and searching helpers
