@@ -1,5 +1,11 @@
 2003-10-30 Jackson Harper <jackson@ximian.com>
 
+	* Repeater.cs: Throw an exception if the datasource is set to
+	something that does not implement either IListSource or
+	IEnumerable. This fixes bug #50155.
+	
+2003-10-30 Jackson Harper <jackson@ximian.com>
+
 	* DataGridPagerStyle.cs: Do not allow page button counts to be set
 	to less then 1. Patch by Yaron Shkop. This fixes bug #50236.
 	

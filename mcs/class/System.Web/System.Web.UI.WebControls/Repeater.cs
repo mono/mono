@@ -144,6 +144,11 @@ namespace System.Web.UI.WebControls
 			}
 			set
 			{
+				if (!(value is IListSource) && !(value is IEnumerable))
+					throw new ArgumentException ("An invalid data source is being used for " +
+						ID + ". A valid data source must implement either " +
+						"IListSource or IEnumerable.");
+				
 				dataSource = value;
 			}
 		}
