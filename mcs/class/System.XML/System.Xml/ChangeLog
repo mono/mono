@@ -1,3 +1,8 @@
+2004-09-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextReader.cs : When Normalization is true, CRLF and CR should
+	  be converted to single LF. This should fix part of bug #62076.
+
 2004-08-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlAttribute.cs : some property getters threw NullReferenceException
