@@ -1,4 +1,9 @@
 
+Wed Feb 2 16:37:13 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: setup the statistical profiler in the thread attach
+	callback to cope with the new single thread code.
+
 Wed Feb 2 15:43:58 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c: ensure we have enough room for the profiler
