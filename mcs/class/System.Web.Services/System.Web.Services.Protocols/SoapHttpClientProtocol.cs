@@ -217,7 +217,12 @@ namespace System.Web.Services.Protocols {
 			//
 			// Remove optional encoding
 			//
-			Encoding encoding = WebServiceHelper.GetContentEncoding (response.ContentType);
+			string ctype;
+			Encoding encoding = WebServiceHelper.GetContentEncoding (response.ContentType, out ctype);
+			if (ctype != "text/xml")
+				WebServiceHelper.InvalidOperation (
+					"Content is not 'text/xml' but '" + response.ContentType + "'",
+					response, encoding);
 
 			Stream stream = response.GetResponseStream ();
 

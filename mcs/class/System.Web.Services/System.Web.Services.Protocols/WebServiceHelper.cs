@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.IO;
 using System.Net;
 using System.Text;
 using System.Xml;
@@ -21,10 +22,9 @@ namespace System.Web.Services.Protocols
 	{
 		public const string SoapEnvelopeNamespace = "http://schemas.xmlsoap.org/soap/envelope/";
 
-		public static Encoding GetContentEncoding (string cts)
+		public static Encoding GetContentEncoding (string cts, out string content_type)
 		{
 			string encoding;
-			string content_type;
 
 			encoding = "utf-8";
 			int start = 0;
@@ -52,9 +52,6 @@ namespace System.Web.Services.Protocols
 					encoding = body.Substring (8);
 				}
 			}
-
-			if (content_type != "text/xml")
-				throw new WebException ("Content is not XML: " + content_type);
 
 			return Encoding.GetEncoding (encoding);
 		}
@@ -128,6 +125,27 @@ namespace System.Web.Services.Protocols
 					xmlReader.Skip ();
 			}
 			return headers;
+		}
+
+		public static void InvalidOperation (string message, WebResponse response, Encoding enc)
+		{
+			if (response == null)
+				throw new InvalidOperationException (message);
+
+			if (enc == null)
+				enc = Encoding.UTF8;
+
+			StringBuilder sb = new StringBuilder ();
+			sb.Append (message);
+			sb.Append ("\r\nResponse error message:\r\n--\r\n");
+
+			try {
+				StreamReader resp = new StreamReader (response.GetResponseStream (), enc);
+				sb.Append (resp.ReadToEnd ());
+			} catch (Exception) {
+			}
+
+			throw new InvalidOperationException (sb.ToString ());
 		}
 	}
 }

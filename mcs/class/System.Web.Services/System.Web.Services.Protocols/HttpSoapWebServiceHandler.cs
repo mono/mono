@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Net;
 using System.Web;
 using System.Xml;
 using System.Text;
@@ -60,7 +61,11 @@ namespace System.Web.Services.Protocols
 			{
 				string soapAction = null;
 				SoapMethodStubInfo methodInfo = null;
-				Encoding encoding = WebServiceHelper.GetContentEncoding (request.ContentType);
+				string ctype;
+				Encoding encoding = WebServiceHelper.GetContentEncoding (request.ContentType, out ctype);
+				if (ctype != "text/xml")
+					throw new WebException ("Content is not XML: " + ctype);
+					
 				object server = CreateServerInstance ();
 
 				SoapServerMessage message = new SoapServerMessage (request, server, stream);

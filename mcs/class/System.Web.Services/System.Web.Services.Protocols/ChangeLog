@@ -1,5 +1,18 @@
 2003-11-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpSoapWebServiceHandler.cs: WebException is ok here for wrong 
+	content encoding...
+	* SoapHttpClientProtocol.cs: ... but here, we should throw an
+	InvalidOperationException including the full response.
+
+	* WebServiceHelper.cs:
+	(GetContentEncoding): now fills an output variable with the name of the
+	content encoding used.
+	(InvalidOperation): new method to build the message for
+	InvalidOperationException.
+
+2003-11-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* SoapHttpClientProtocol.cs:
 	* WebServiceHelper.cs: throw a WebException instead of an Exception.
 	Fixes bug #51193.
