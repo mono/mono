@@ -253,9 +253,10 @@ namespace Mono.Data.TdsClient {
 
 			foreach (TdsSchemaInfo schemaObject in command.Tds.Schema) {
 				DataRow schemaRow = schemaTable.NewRow ();
+				schemaRow ["BaseColumnName"] = schemaObject.BaseColumnName;
 				schemaRow ["ColumnName"] = schemaObject.ColumnName;
 				schemaRow ["ColumnOrdinal"] = schemaObject.ColumnOrdinal;
-				schemaRow ["BaseTableName"] = schemaObject.TableName;
+				schemaRow ["BaseTableName"] = schemaObject.BaseTableName;
 				schemaRow ["AllowDBNull"] = schemaObject.AllowDBNull;
 				schemaRow ["IsReadOnly"] = schemaObject.IsReadOnly;
 				schemaTable.Rows.Add (schemaRow);
