@@ -1,3 +1,8 @@
+2004-06-30  Ben Maurer  <bmaurer@ximian.com>
+
+	* icall.c: Added a new icall for the property version of
+	OffsetOfStringData.
+
 2004-06-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* class-internals.h (MonoVTable): Make max_interface_id a guint32 so
@@ -5,7 +10,7 @@
 
 	* marshal.c (mono_delegate_end_invoke): Avoid crash when there is no
 	stack trace.
-	
+
 2004-06-29  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.c (mono_debug_add_method): Protect the whole function
