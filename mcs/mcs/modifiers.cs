@@ -70,7 +70,7 @@ namespace Mono.CSharp {
 		{
 			TypeAttributes t = 0;
 			bool top_level = caller.IsTopLevel;
-			
+
 			if (top_level){
 				if ((mod_flags & PUBLIC) != 0)
 					t |= TypeAttributes.Public;

@@ -170,16 +170,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool IsTopLevel {
-			get {
-				if (Parent != null){
-					if (Parent.Parent == null)
-						return true;
-				}
-				return false;
-			}
-		}
-
 		public virtual TypeAttributes InterfaceAttr {
 			get {
 				TypeAttributes x = TypeAttributes.Interface | TypeAttributes.Abstract;
@@ -553,7 +543,7 @@ namespace Mono.CSharp {
 		// is `name'.
 		//
 		
-		Type LookupInterfaceByName (object builder, string ns, string name, out bool error)
+		Type LookupInterfaceByName (string ns, string name, out bool error)
 		{
 			Interface parent;
 			Type t;
@@ -587,7 +577,7 @@ namespace Mono.CSharp {
 			if (parent == null)
 				return null;
 			
-			t = parent.DefineInterface (builder);
+			t = parent.DefineInterface ();
 			if (t == null){
 				Report.Error (529,
 					      "Inherited interface `"+name+"' is circular");
@@ -598,7 +588,7 @@ namespace Mono.CSharp {
 			return t;
 		}
 
-		Type GetInterfaceTypeByName (object builder, string name)
+		Type GetInterfaceTypeByName (string name)
 		{
 			//
 			// For the case the type we are looking for is nested within this one
@@ -614,7 +604,7 @@ namespace Mono.CSharp {
 				while (current_type != null) {
 					string pre = current_type.FullName;
 					
-					t = LookupInterfaceByName (builder, pre, name, out error);
+					t = LookupInterfaceByName (pre, name, out error);
 					if (error)
 						return null;
 				
@@ -630,7 +620,7 @@ namespace Mono.CSharp {
 			// Attempt to lookup the class on our namespace and all it's implicit parents
 			//
 			for (string ns = Namespace.Name; ns != null; ns = RootContext.ImplicitParent (ns)){
-				t = LookupInterfaceByName (builder, ns, name, out error);
+				t = LookupInterfaceByName (ns, name, out error);
 				if (error)
 					return null;
 				if (t != null)
@@ -640,7 +630,7 @@ namespace Mono.CSharp {
 			//
 			// Attempt to do a direct unqualified lookup
 			//
-			t = LookupInterfaceByName (builder, "", name, out error);
+			t = LookupInterfaceByName ("", name, out error);
 			if (error)
 				return null;
 			
@@ -653,7 +643,7 @@ namespace Mono.CSharp {
 			//
 
 			for (Namespace ns = Namespace; ns != null; ns = ns.Parent){
-				t = LookupInterfaceByName (builder, ns.Name, name, out error);
+				t = LookupInterfaceByName (ns.Name, name, out error);
 				if (error)
 					return null;
 
@@ -669,7 +659,7 @@ namespace Mono.CSharp {
 					continue;
 
 				foreach (string n in using_list){
-					t = LookupInterfaceByName (builder, n, name, out error);
+					t = LookupInterfaceByName (n, name, out error);
 					if (error)
 						return null;
 
@@ -688,7 +678,7 @@ namespace Mono.CSharp {
 		//
 		// Sets the error boolean accoringly.
 		//
-		Type [] GetInterfaceBases (object builder, out bool error)
+		Type [] GetInterfaceBases (out bool error)
 		{
 			Type [] tbases;
 			int i;
@@ -703,7 +693,7 @@ namespace Mono.CSharp {
 			foreach (string name in Bases){
 				Type t;
 				
-				t = GetInterfaceTypeByName (builder, name);
+				t = GetInterfaceTypeByName (name);
 				if (t == null){
 					error = true;
 					return null;
@@ -724,7 +714,7 @@ namespace Mono.CSharp {
 		//   definitions of interfaces (A:B and B:A) we report the
 		//   error twice, rather than once.  
 		
-		public TypeBuilder DefineInterface (object parent_builder)
+		public TypeBuilder DefineInterface ()
 		{
 			Type [] ifaces;
 			bool error;
@@ -737,13 +727,13 @@ namespace Mono.CSharp {
 			
 			InTransit = true;
 			
-			ifaces = GetInterfaceBases (parent_builder, out error);
+			ifaces = GetInterfaceBases (out error);
 
 			if (error)
 				return null;
 
-			if (parent_builder is ModuleBuilder) {
-				ModuleBuilder builder = (ModuleBuilder) parent_builder;
+			if (IsTopLevel) {
+				ModuleBuilder builder = RootContext.ModuleBuilder;
 
 				TypeBuilder = builder.DefineType (
 					Name,
@@ -752,7 +742,7 @@ namespace Mono.CSharp {
 					ifaces);
 				RootContext.RegisterOrder (this);
 			} else {
-				TypeBuilder builder = (System.Reflection.Emit.TypeBuilder) parent_builder;
+				TypeBuilder builder = Parent.TypeBuilder;
 
 				TypeBuilder = builder.DefineNestedType (
 					Basename,

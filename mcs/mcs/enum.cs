@@ -73,7 +73,7 @@ namespace Mono.CSharp {
 			return AdditionResult.Success;
 		}
 
-		public Type DefineEnum (object parent_builder)
+		public Type DefineEnum ()
 		{
 			if (TypeBuilder != null)
 				return TypeBuilder;
@@ -96,8 +96,8 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (parent_builder is ModuleBuilder) {
-				ModuleBuilder builder = (ModuleBuilder) parent_builder;
+			if (IsTopLevel) {
+				ModuleBuilder builder = RootContext.ModuleBuilder;
 
 				if ((ModFlags & Modifiers.PUBLIC) != 0)
 					attr |= TypeAttributes.Public;
@@ -106,7 +106,7 @@ namespace Mono.CSharp {
 				
 				TypeBuilder = builder.DefineType (Name, attr, TypeManager.enum_type);
 			} else {
-				TypeBuilder builder = (System.Reflection.Emit.TypeBuilder) parent_builder;
+				TypeBuilder builder = Parent.TypeBuilder;
 
 				if ((ModFlags & Modifiers.PUBLIC) != 0)
 					attr |= TypeAttributes.NestedPublic;

@@ -450,21 +450,6 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		// 
-		// root_types contains all the types.  All TopLevel types
-		// hence have a parent that points to `root_types', that is
-		// why there is a non-obvious test down here.
-		//
-		public bool IsTopLevel {
-			get {
-				if (Parent != null){
-					if (Parent.Parent == null)
-						return true;
-				}
-				return false;
-			}
-		}
-			
 		public bool HaveStaticConstructor {
 			get {
 				return have_static_constructor;
@@ -747,7 +732,7 @@ namespace Mono.CSharp {
 			return prefix + name;
 		}
 		       
-		Type LookupInterfaceOrClass (object builder, string ns, string name, bool is_class, out bool error)
+		Type LookupInterfaceOrClass (string ns, string name, bool is_class, out bool error)
 		{
 			TypeContainer parent;
 			Type t;
@@ -771,7 +756,7 @@ namespace Mono.CSharp {
 					en = (Enum) RootContext.Tree.Enums [name];
 				
 				if (en != null) {
-					t = en.DefineEnum (builder);
+					t = en.DefineEnum ();
 					
 					if (t != null)
 						return t;
@@ -779,7 +764,7 @@ namespace Mono.CSharp {
 			}
 			
 			if (parent != null){
-				t = parent.DefineType (builder);
+				t = parent.DefineType ();
 				if (t == null){
 					Report.Error (146, "Class definition is circular: `"+name+"'");
 					error = true;
@@ -796,7 +781,7 @@ namespace Mono.CSharp {
 		// returns the type for an interface or a class, this will recursively
 		// try to define the types that it depends on.
 		//
-		Type GetInterfaceOrClass (object builder, string name, bool is_class)
+		Type GetInterfaceOrClass (string name, bool is_class)
 		{
 			Type t;
 			bool error;
@@ -813,7 +798,7 @@ namespace Mono.CSharp {
 				while (current_type != null) {
 					string pre = current_type.FullName;
 					
-					t = LookupInterfaceOrClass (builder, pre, name, is_class, out error);
+					t = LookupInterfaceOrClass (pre, name, is_class, out error);
 					if (error)
 						return null;
 				
@@ -830,7 +815,7 @@ namespace Mono.CSharp {
 			//
 			for (string ns = Namespace.Name; ns != null; ns = RootContext.ImplicitParent (ns)) {
 
-				t = LookupInterfaceOrClass (builder, ns, name, is_class, out error);
+				t = LookupInterfaceOrClass (ns, name, is_class, out error);
 				if (error)
 					return null;
 				
@@ -841,7 +826,7 @@ namespace Mono.CSharp {
 			//
 			// Attempt to do a direct unqualified lookup
 			//
-			t = LookupInterfaceOrClass (builder, "", name, is_class, out error);
+			t = LookupInterfaceOrClass ("", name, is_class, out error);
 			if (error)
 				return null;
 			
@@ -855,7 +840,7 @@ namespace Mono.CSharp {
 
 			for (Namespace ns = Namespace; ns != null; ns = ns.Parent){
 
-				t = LookupInterfaceOrClass (builder, ns.Name, name, is_class, out error);
+				t = LookupInterfaceOrClass (ns.Name, name, is_class, out error);
 				if (error)
 					return null;
 
@@ -871,7 +856,7 @@ namespace Mono.CSharp {
 					continue;
 
 				foreach (string n in using_list){
-					t = LookupInterfaceOrClass (builder, n, name, is_class, out error);
+					t = LookupInterfaceOrClass (n, name, is_class, out error);
 					if (error)
 						return null;
 
@@ -895,7 +880,7 @@ namespace Mono.CSharp {
 		///   The @parent argument is set to the parent object or null
 		///   if this is `System.Object'. 
 		/// </summary>
-		Type [] GetClassBases (object builder, bool is_class, out Type parent, out bool error)
+		Type [] GetClassBases (bool is_class, out Type parent, out bool error)
 		{
 			ArrayList bases = Bases;
 			int count;
@@ -934,7 +919,7 @@ namespace Mono.CSharp {
 
 			if (is_class){
 				string name = (string) bases [0];
-				Type first = GetInterfaceOrClass (builder, name, is_class);
+				Type first = GetInterfaceOrClass (name, is_class);
 
 				if (first == null){
 					error = true;
@@ -956,7 +941,7 @@ namespace Mono.CSharp {
 			
 			for (i = start, j = 0; i < count; i++, j++){
 				string name = (string) bases [i];
-				Type t = GetInterfaceOrClass (builder, name, is_class);
+				Type t = GetInterfaceOrClass (name, is_class);
 				
 				if (t == null){
 					error = true;
@@ -1001,7 +986,7 @@ namespace Mono.CSharp {
 		//
 		// Defines the type in the appropriate ModuleBuilder or TypeBuilder.
 		//
-		public TypeBuilder DefineType (object parent_builder)
+		public TypeBuilder DefineType ()
 		{
 			Type parent;
 			Type [] ifaces;
@@ -1021,7 +1006,7 @@ namespace Mono.CSharp {
 			else
 				is_class = false;
 
-			ifaces = GetClassBases (parent_builder, is_class, out parent, out error); 
+			ifaces = GetClassBases (is_class, out parent, out error); 
 			
 			if (error)
 				return null;
@@ -1037,9 +1022,11 @@ namespace Mono.CSharp {
 					return null;
 				}
 			}
-			
-			if (parent_builder is ModuleBuilder) {
-				ModuleBuilder builder = (ModuleBuilder) parent_builder;
+
+			// if (parent_builder is ModuleBuilder) {
+			if (IsTopLevel){
+				ModuleBuilder builder = RootContext.ModuleBuilder;
+				
 				//
 				// Structs with no fields need to have a ".size 1"
 				// appended
@@ -1059,7 +1046,7 @@ namespace Mono.CSharp {
 									  parent,
 									  ifaces);
 			} else {
-				TypeBuilder builder = (System.Reflection.Emit.TypeBuilder) parent_builder;
+				TypeBuilder builder = Parent.TypeBuilder;
 				
 				//
 				// Structs with no fields need to have a ".size 1"
@@ -1086,12 +1073,12 @@ namespace Mono.CSharp {
 
 			if (Interfaces != null){
 				foreach (Interface iface in Interfaces)
-					iface.DefineInterface (TypeBuilder);
+					iface.DefineInterface ();
 			}
 			
 			if (Types != null) {
 				foreach (TypeContainer tc in Types)
-					tc.DefineType (TypeBuilder);
+					tc.DefineType ();
 			}
 
 			if (Delegates != null) {
@@ -1101,7 +1088,7 @@ namespace Mono.CSharp {
 
 			if (Enums != null) {
 				foreach (Enum en in Enums)
-					en.DefineEnum (TypeBuilder);
+					en.DefineEnum ();
 			}
 
 			InTransit = false;

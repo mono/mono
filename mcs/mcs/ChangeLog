@@ -1,9 +1,34 @@
 2002-03-27  Miguel de Icaza  <miguel@ximian.com>
 
+	* decl.cs (DeclSpace.IsTopLevel): Move property here from
+	TypeContainer, so that Enum and Interface can use this too.
+
+	* class.cs (TypeContainer.LookupInterfaceOrClass,
+	GetInterfaceOrClass, GetClassBases, DefineType): Drop the
+	`builder' argument.  Typically this was used to pass the parent
+	builder (a ModuleBuilder or a TypeBuilder from whoever triggered
+	the definition).  
+
+	The problem is that a nested class could trigger the definition of
+	a toplevel class, and the builder would be obviously wrong in that
+	case. 
+
+	So we drop this argument, and we compute dynamically the
+	TypeBuilder/ModuleBuilder (the correct information was available
+	to us anyways from DeclSpace.Parent)
+
+	* interface.cs (Interface.DefineInterface): Drop builder
+	parameter cleanup like class.cs
+
+	* enum.cs (Enum.DefineEnum): Drop builder parameter.  Clean up
+	like class.cs
+
 	* statement.cs (Switch.EmitObjectInteger): Emit short/ushort
 	values. 
 
-	(Try): Propagate the returns value from the statement.
+	(Try.Emit): Propagate the returns value from the statement.
+
+	(Return.Emit): Even if we are leavning 
 
 	* driver.cs: Catch IOExpcetion for Directory.GetFiles as well.
 

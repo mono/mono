@@ -275,6 +275,21 @@ namespace Mono.CSharp {
 			}
 		}
 
+		// 
+		// root_types contains all the types.  All TopLevel types
+		// hence have a parent that points to `root_types', that is
+		// why there is a non-obvious test down here.
+		//
+		public bool IsTopLevel {
+			get {
+				if (parent != null){
+					if (parent.parent == null)
+						return true;
+				}
+				return false;
+			}
+		}
+
 		public virtual void CloseType ()
 		{
 			if (!Created){

@@ -148,11 +148,11 @@ namespace Mono.CSharp {
 			ArrayList ifaces = root.Interfaces;
 			if (ifaces != null){
 				foreach (Interface i in ifaces) 
-					i.DefineInterface (mb);
+					i.DefineInterface ();
 			}
 						
 			foreach (TypeContainer tc in root.Types) 
-				tc.DefineType (mb);
+				tc.DefineType ();
 
 			if (root.Delegates != null)
 				foreach (Delegate d in root.Delegates) 
@@ -160,7 +160,7 @@ namespace Mono.CSharp {
 
 			if (root.Enums != null)
 				foreach (Enum e in root.Enums)
-					e.DefineEnum (mb);
+					e.DefineEnum ();
 			
 		}
 
@@ -198,7 +198,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			((TypeContainer) o).DefineType (mb);
+			((TypeContainer) o).DefineType ();
 		}
 
 		//
@@ -223,7 +223,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			((TypeContainer) o).DefineType (mb);
+			((TypeContainer) o).DefineType ();
 		}
 
 		//
@@ -248,7 +248,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			((Interface) o).DefineInterface (mb);
+			((Interface) o).DefineInterface ();
 		}
 
 		//
