@@ -1,5 +1,13 @@
 2004-02-28  Atsushi Enomoto <atsushi@ximian.com>
 
+	* Removed Commons.Xml.Relaxng_test.args.
+	* RelaxngReaderTests.cs,
+	  RelaxngValidatingReaderTests.cs : file path fix.
+	* XsdDatatypeTests.cs : It causes infinite loop (maybe bug in libs),
+	  so comment out right now.
+
+2004-02-28  Atsushi Enomoto <atsushi@ximian.com>
+
 	* Added XsdDatatypeTests.cs.
 	* RdpPatternTests.cs,
 	  RelaxngReaderTests.cs,

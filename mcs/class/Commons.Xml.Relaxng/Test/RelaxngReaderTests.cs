@@ -33,7 +33,7 @@ namespace MonoTests.Commons.Xml.Relaxng
 		[Test]
 		public void SimpleRead ()
 		{
-			loadGrammarFromUrl ("XmlFiles/SimpleElementPattern1.rng");
+			loadGrammarFromUrl ("Test/XmlFiles/SimpleElementPattern1.rng");
 			RelaxngPattern p = reader.ReadPattern ();
 
 			AssertEquals (RelaxngPatternType.Element, p.PatternType);

@@ -43,8 +43,8 @@ namespace MonoTests.Commons.Xml.Relaxng
 		[Test]
 		public void SimpleElementPattern1 ()
 		{
-			SetupReaderFromUrl ("XmlFiles/SimpleElementPattern1.xml",
-				"XmlFiles/SimpleElementPattern1.rng");
+			SetupReaderFromUrl ("Test/XmlFiles/SimpleElementPattern1.xml",
+				"Test/XmlFiles/SimpleElementPattern1.rng");
 
 			while (!reader.EOF)
 				reader.Read ();
@@ -53,8 +53,8 @@ namespace MonoTests.Commons.Xml.Relaxng
 		[Test]
 		public void SimpleElementPattern2 ()
 		{
-			SetupReaderFromUrl ("XmlFiles/SimpleElementPattern2.xml",
-				"XmlFiles/SimpleElementPattern2.rng");
+			SetupReaderFromUrl ("Test/XmlFiles/SimpleElementPattern2.xml",
+				"Test/XmlFiles/SimpleElementPattern2.rng");
 
 			while (!reader.EOF)
 				reader.Read ();
@@ -63,7 +63,7 @@ namespace MonoTests.Commons.Xml.Relaxng
 		[Test]
 		public void ReadPracticalSample1 ()
 		{
-			SetupReaderFromUrl ("XmlFiles/team.xml", "XmlFiles/team.rng");
+			SetupReaderFromUrl ("Test/XmlFiles/team.xml", "Test/XmlFiles/team.rng");
 			while (!reader.EOF)
 				reader.Read ();
 		}
