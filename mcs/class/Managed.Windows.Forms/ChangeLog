@@ -1,7 +1,7 @@
 2004-11-11  Jackson Harper  <jackson@ximian.com>
 
 	* System.Windows.Forms.dll.sources: Add
-	TreeViewImageIndexConverter.cs to build
+	TreeViewImageIndexConverter.cs and OwnerDrawPropertyBag.cs to build
 
 2004-11-01 23:19  ravindra
 
