@@ -1,3 +1,8 @@
+2005-01-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_method_to_ir): Disable inlining of ldfld wrappers with
+	a struct type.
+
 2005-01-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* driver.c: Added --security option to activate the security manager.
