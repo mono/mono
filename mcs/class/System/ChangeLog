@@ -1,3 +1,6 @@
+2004-09-03  Tim Coleman <tim@timcoleman.com>
+	* System.dll.sources: Add new class in System.Net
+
 2004-08-16  Duncan Mak  <duncan@ximian.com>
 
 	* System.dll.sources: Added new classes in System.Configuration.

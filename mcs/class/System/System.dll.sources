@@ -469,6 +469,7 @@ System.Net/HttpWebResponse.cs
 System.Net/IAuthenticationModule.cs
 System.Net/ICertificatePolicy.cs
 System.Net/ICredentialLookup.cs
+System.Net/ICredentialsByHost.cs
 System.Net/IPAddress.cs
 System.Net/IPEndPoint.cs
 System.Net/IPHostEntry.cs
