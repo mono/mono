@@ -1,5 +1,14 @@
-2002-03-24  Miguel de Icaza  <miguel@ximian.com>
-	
+2002-05-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ChangeLog: removed empty entry at the top of the file.
+
+	* Int32.cs: made static functions used by Parse internal.
+
+	* Int64.cs:
+	* UInt32.cs:
+	* UInt64.cs: removed static fucntions used by Parse and use the ones
+	in Int32.cs
+
 2002-05-12  Daniel Morgan <danmorg@sc.rr.com>
 
 	* IServiceProvider.cs: added using System

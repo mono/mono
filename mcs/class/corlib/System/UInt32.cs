@@ -115,83 +115,6 @@ namespace System {
 			return Parse (s, style, null);
 		}
 
-		private static void CheckStyle (NumberStyles style)
-		{
-			if ((style & NumberStyles.AllowHexSpecifier) != 0) {
-				NumberStyles ne = style ^ NumberStyles.AllowHexSpecifier;
-				if ((ne & NumberStyles.AllowLeadingWhite) != 0)
-					ne ^= NumberStyles.AllowLeadingWhite;
-				if ((ne & NumberStyles.AllowTrailingWhite) != 0)
-					ne ^= NumberStyles.AllowTrailingWhite;
-				if (ne != 0)
-					throw new ArgumentException (
-						"With AllowHexSpecifier only " + 
-						"AllowLeadingWhite and AllowTrailingWhite " + 
-						"are permitted.");
-			}
-		}
-	
-		private static int JumpOverWhite (int pos, string s, bool excp)
-		{
-			while (pos < s.Length && Char.IsWhiteSpace (s [pos]))
-				pos++;
-
-			if (excp && pos >= s.Length)
-				throw new FormatException ("Input string was not in the correct format.");
-
-			return pos;
-		}
-
-		private static void FindSign (ref int pos, string s, NumberFormatInfo nfi, 
-				      ref bool foundSign, ref bool negative)
-		{
-			if ((pos + nfi.NegativeSign.Length) <= s.Length &&
-			     s.Substring (pos, nfi.NegativeSign.Length) == nfi.NegativeSign) {
-				negative = true;
-				foundSign = true;
-				pos += nfi.NegativeSign.Length;
-			} 
-			else if ((pos + nfi.PositiveSign.Length) < s.Length &&
-			     s.Substring (pos, nfi.PositiveSign.Length) == nfi.PositiveSign) {
-				negative = false;
-				pos += nfi.PositiveSign.Length;
-				foundSign = true;
-			} 
-		}
-
-		private static void FindCurrency (ref int pos,
-						  string s, 
-						  NumberFormatInfo nfi,
-						  ref bool foundCurrency)
-		{
-			if ((pos + nfi.CurrencySymbol.Length) <= s.Length &&
-			     s.Substring (pos, nfi.CurrencySymbol.Length) == nfi.CurrencySymbol) {
-				foundCurrency = true;
-				pos += nfi.CurrencySymbol.Length;
-			} 
-		}
-
-		private static bool FindOther (ref int pos,
-					       string s, 
-					       string other)
-		{
-			if ((pos + other.Length) <= s.Length &&
-			     s.Substring (pos, other.Length) == other) {
-				pos += other.Length;
-				return true;
-			} 
-
-			return false;
-		}
-
-		private static bool ValidDigit (char e, bool allowHex)
-		{
-			if (allowHex)
-				return Char.IsDigit (e) || (e >= 'A' && e <= 'F') || (e >= 'a' && e <= 'f');
-
-			return Char.IsDigit (e);
-		}
-		
 		[CLSCompliant(false)]
 		public static uint Parse (string s, NumberStyles style, IFormatProvider fp)
 		{
@@ -209,7 +132,7 @@ namespace System {
 			else
 				nfi = Thread.CurrentThread.CurrentCulture.NumberFormat;
 
-			CheckStyle (style);
+			Int32.CheckStyle (style);
 
 			bool AllowCurrencySymbol = (style & NumberStyles.AllowCurrencySymbol) != 0;
 			bool AllowExponent = (style & NumberStyles.AllowExponent) != 0;
@@ -225,7 +148,7 @@ namespace System {
 			int pos = 0;
 
 			if (AllowLeadingWhite)
-				pos = JumpOverWhite (pos, s, true);
+				pos = Int32.JumpOverWhite (pos, s, true);
 
 			bool foundOpenParentheses = false;
 			bool negative = false;
@@ -240,7 +163,7 @@ namespace System {
 						 // even when NumberFormatInfo.NumberNegativePattern != 0!!!
 				pos++;
 				if (AllowLeadingWhite)
-					pos = JumpOverWhite (pos, s, true);
+					pos = Int32.JumpOverWhite (pos, s, true);
 
 				if (s.Substring (pos, nfi.NegativeSign.Length) == nfi.NegativeSign)
 					throw new FormatException ("Input string was not in the correct format.");
@@ -250,31 +173,31 @@ namespace System {
 
 			if (AllowLeadingSign && !foundSign) {
 				// Sign + Currency
-				FindSign (ref pos, s, nfi, ref foundSign, ref negative);
+				Int32.FindSign (ref pos, s, nfi, ref foundSign, ref negative);
 				if (foundSign) {
 					if (AllowLeadingWhite)
-						pos = JumpOverWhite (pos, s, true);
+						pos = Int32.JumpOverWhite (pos, s, true);
 					if (AllowCurrencySymbol) {
-						FindCurrency (ref pos, s, nfi,
-							      ref foundCurrency);
+						Int32.FindCurrency (ref pos, s, nfi,
+								    ref foundCurrency);
 						if (foundCurrency && AllowLeadingWhite)
-							pos = JumpOverWhite (pos, s, true);
+							pos = Int32.JumpOverWhite (pos, s, true);
 					}
 				}
 			}
 			
 			if (AllowCurrencySymbol && !foundCurrency) {
 				// Currency + sign
-				FindCurrency (ref pos, s, nfi, ref foundCurrency);
+				Int32.FindCurrency (ref pos, s, nfi, ref foundCurrency);
 				if (foundCurrency) {
 					if (AllowLeadingWhite)
-						pos = JumpOverWhite (pos, s, true);
+						pos = Int32.JumpOverWhite (pos, s, true);
 					if (foundCurrency) {
 						if (!foundSign && AllowLeadingSign) {
-							FindSign (ref pos, s, nfi, ref foundSign,
-								  ref negative);
+							Int32.FindSign (ref pos, s, nfi, ref foundSign,
+									ref negative);
 							if (foundSign && AllowLeadingWhite)
-								pos = JumpOverWhite (pos, s, true);
+								pos = Int32.JumpOverWhite (pos, s, true);
 						}
 					}
 				}
@@ -290,13 +213,13 @@ namespace System {
 			// Just the same as Int32, but this one adds instead of substract
 			do {
 
-				if (!ValidDigit (s [pos], AllowHexSpecifier)) {
+				if (!Int32.ValidDigit (s [pos], AllowHexSpecifier)) {
 					if (AllowThousands &&
-					    FindOther (ref pos, s, nfi.NumberGroupSeparator))
+					    Int32.FindOther (ref pos, s, nfi.NumberGroupSeparator))
 					    continue;
 					else
 					if (!decimalPointFound && AllowDecimalPoint &&
-					    FindOther (ref pos, s, nfi.NumberDecimalSeparator)) {
+					    Int32.FindOther (ref pos, s, nfi.NumberDecimalSeparator)) {
 					    decimalPointFound = true;
 					    continue;
 					}
@@ -342,37 +265,37 @@ namespace System {
 
 			if (AllowTrailingSign && !foundSign) {
 				// Sign + Currency
-				FindSign (ref pos, s, nfi, ref foundSign, ref negative);
+				Int32.FindSign (ref pos, s, nfi, ref foundSign, ref negative);
 				if (foundSign) {
 					if (AllowTrailingWhite)
-						pos = JumpOverWhite (pos, s, true);
+						pos = Int32.JumpOverWhite (pos, s, true);
 					if (AllowCurrencySymbol)
-						FindCurrency (ref pos, s, nfi,
-							      ref foundCurrency);
+						Int32. FindCurrency (ref pos, s, nfi,
+								     ref foundCurrency);
 				}
 			}
 			
 			if (AllowCurrencySymbol && !foundCurrency) {
 				// Currency + sign
-				FindCurrency (ref pos, s, nfi, ref foundCurrency);
+				Int32.FindCurrency (ref pos, s, nfi, ref foundCurrency);
 				if (foundCurrency) {
 					if (AllowTrailingWhite)
-						pos = JumpOverWhite (pos, s, true);
+						pos = Int32.JumpOverWhite (pos, s, true);
 					if (!foundSign && AllowTrailingSign)
-						FindSign (ref pos, s, nfi, ref foundSign,
-							  ref negative);
+						Int32.FindSign (ref pos, s, nfi, ref foundSign,
+								ref negative);
 				}
 			}
 			
 			if (AllowTrailingWhite && pos < s.Length)
-				pos = JumpOverWhite (pos, s, false);
+				pos = Int32.JumpOverWhite (pos, s, false);
 
 			if (foundOpenParentheses) {
 				if (pos >= s.Length || s [pos++] != ')')
 					throw new FormatException ("Input string was not in the correct " + 
 								   "format.");
 				if (AllowTrailingWhite && pos < s.Length)
-					pos = JumpOverWhite (pos, s, false);
+					pos = Int32.JumpOverWhite (pos, s, false);
 			}
 
 			if (pos < s.Length)

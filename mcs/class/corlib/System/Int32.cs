@@ -113,7 +113,7 @@ namespace System {
 			return Parse (s, style, null);
 		}
 
-		private static void CheckStyle (NumberStyles style)
+		internal static void CheckStyle (NumberStyles style)
 		{
 			if ((style & NumberStyles.AllowHexSpecifier) != 0) {
 				NumberStyles ne = style ^ NumberStyles.AllowHexSpecifier;
@@ -129,7 +129,7 @@ namespace System {
 			}
 		}
 		
-		private static int JumpOverWhite (int pos, string s, bool excp)
+		internal static int JumpOverWhite (int pos, string s, bool excp)
 		{
 			while (pos < s.Length && Char.IsWhiteSpace (s [pos]))
 				pos++;
@@ -140,7 +140,7 @@ namespace System {
 			return pos;
 		}
 
-		private static void FindSign (ref int pos, string s, NumberFormatInfo nfi, 
+		internal static void FindSign (ref int pos, string s, NumberFormatInfo nfi, 
 				      ref bool foundSign, ref bool negative)
 		{
 			if ((pos + nfi.NegativeSign.Length) <= s.Length &&
@@ -157,7 +157,7 @@ namespace System {
 			} 
 		}
 
-		private static void FindCurrency (ref int pos,
+		internal static void FindCurrency (ref int pos,
 						 string s, 
 						 NumberFormatInfo nfi,
 						 ref bool foundCurrency)
@@ -169,7 +169,7 @@ namespace System {
 			} 
 		}
 
-		private static bool FindOther (ref int pos,
+		internal static bool FindOther (ref int pos,
 					      string s, 
 					      string other)
 		{
@@ -182,7 +182,7 @@ namespace System {
 			return false;
 		}
 
-		private static bool ValidDigit (char e, bool allowHex)
+		internal static bool ValidDigit (char e, bool allowHex)
 		{
 			if (allowHex)
 				return Char.IsDigit (e) || (e >= 'A' && e <= 'F') || (e >= 'a' && e <= 'f');
