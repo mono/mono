@@ -4,6 +4,7 @@
 // Author:
 //   Sean MacIsaac (macisaac@ximian.com)
 //   Daniel Stodden (stodden@in.tum.de)
+//   Marek Safar (marek.safar@seznam.cz)
 //
 // (C) 2001 Ximian, Inc.
 //
@@ -44,6 +45,11 @@ namespace System.CodeDom
 		private CodeCommentStatementCollection comments;
 		private CodeAttributeDeclarationCollection customAttributes;
 		private CodeLinePragma linePragma;
+
+#if NET_2_0
+		CodeDirectiveCollection endDirectives;
+		CodeDirectiveCollection startDirectives;
+#endif
 
 		//
 		// Constructors
@@ -104,5 +110,23 @@ namespace System.CodeDom
 				name = value;
 			}
 		}
+
+#if NET_2_0
+		public CodeDirectiveCollection EndDirectives {
+			get {
+				if (endDirectives == null)
+					endDirectives = new CodeDirectiveCollection ();
+				return endDirectives;
+			}
+		}
+
+		public CodeDirectiveCollection StartDirectives {
+			get {
+				if (startDirectives == null)
+					startDirectives = new CodeDirectiveCollection ();
+				return startDirectives;
+			}
+		}
+#endif
 	}
 }

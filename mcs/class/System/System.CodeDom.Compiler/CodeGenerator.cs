@@ -6,6 +6,7 @@
 //   Daniel Stodden (stodden@in.tum.de)
 //   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Marek Safar (marek.safar@seznam.cz)
 //
 // (C) 2001-2003 Ximian, Inc.
 //
@@ -210,10 +211,20 @@ namespace System.CodeDom.Compiler {
 
 		protected virtual void GenerateCompileUnitEnd (CodeCompileUnit compileUnit)
 		{
+#if NET_2_0
+			if (compileUnit.EndDirectives.Count > 0)
+				GenerateDirectives (compileUnit.EndDirectives);
+#endif
 		}
 
 		protected virtual void GenerateCompileUnitStart (CodeCompileUnit compileUnit)
 		{
+#if NET_2_0
+			if (compileUnit.StartDirectives.Count > 0) {
+				GenerateDirectives (compileUnit.StartDirectives);
+				Output.WriteLine ();
+			}
+#endif
 		}
 
 		protected abstract void GenerateConditionStatement (CodeConditionStatement s);
@@ -508,6 +519,10 @@ namespace System.CodeDom.Compiler {
 		{
 			bool handled = false;
 
+#if NET_2_0
+			if (s.StartDirectives.Count > 0)
+				GenerateDirectives (s.StartDirectives);
+#endif
 			if (s.LinePragma != null)
 				GenerateLinePragmaStart (s.LinePragma);
 
@@ -587,7 +602,11 @@ namespace System.CodeDom.Compiler {
 
 			if (s.LinePragma != null)
 				GenerateLinePragmaEnd (s.LinePragma);
-			
+
+#if NET_2_0
+			if (s.EndDirectives.Count > 0)
+				GenerateDirectives (s.EndDirectives);
+#endif			
 		}
 
 		protected void GenerateStatements (CodeStatementCollection c)
@@ -894,6 +913,9 @@ namespace System.CodeDom.Compiler {
 				break;
 			}
 
+			if (!IsCurrentClass)
+				OutputExtraTypeAttribute (currentType);
+
 			if (isStruct)
 				output.Write ("struct ");
 
@@ -910,9 +932,14 @@ namespace System.CodeDom.Compiler {
 					if ((attributes & TypeAttributes.Abstract) != 0)
 						output.Write ("abstract ");
 					
+					OutputExtraTypeAttribute (currentType);
 					output.Write ("class ");
 				}
 			}
+		}
+
+		internal virtual void OutputExtraTypeAttribute (CodeTypeDeclaration type)
+		{
 		}
 		
 		protected virtual void OutputTypeNamePair (CodeTypeReference type,
@@ -991,6 +1018,13 @@ namespace System.CodeDom.Compiler {
 
 		private void GenerateType (CodeTypeDeclaration type)
 		{
+#if NET_2_0
+			if (type.StartDirectives.Count > 0)
+				GenerateDirectives (type.StartDirectives);
+#endif
+			foreach (CodeCommentStatement statement in type.Comments)
+				GenerateCommentStatement (statement);
+
 			if (type.LinePragma != null)
 				GenerateLinePragmaStart (type.LinePragma);
 
@@ -1002,15 +1036,17 @@ namespace System.CodeDom.Compiler {
 
 			if (type.LinePragma != null)
 				GenerateLinePragmaEnd (type.LinePragma);
+
+#if NET_2_0
+			if (type.EndDirectives.Count > 0)
+				GenerateDirectives (type.EndDirectives);
+#endif
 		}
 
 		private void GenerateDelegate (CodeTypeDelegate type)
 		{
 			CodeTypeDeclaration prevType = this.currentType;
 			this.currentType = type;
-
-			foreach (CodeCommentStatement statement in type.Comments)
-				GenerateCommentStatement (statement);
 
 			GenerateTypeStart (type);
 
@@ -1025,35 +1061,53 @@ namespace System.CodeDom.Compiler {
 			CodeTypeDeclaration prevType = this.currentType;
 			this.currentType = type;
 
-			foreach (CodeCommentStatement statement in type.Comments)
-				GenerateCommentStatement (statement);
-
 			GenerateTypeStart (type);
 
 			CodeTypeMember [] members = new CodeTypeMember [type.Members.Count];
 			type.Members.CopyTo (members, 0);
 
-			int[] order = new int[members.Length];
-			for (int n=0; n<members.Length; n++)
-				order[n] = Array.IndexOf(memberTypes, members[n].GetType()) * members.Length + n;
+#if NET_2_0
+			if (!Options.VerbatimOrder)
+#endif
+			{
+				int[] order = new int[members.Length];
+				for (int n=0; n<members.Length; n++)
+					order[n] = Array.IndexOf(memberTypes, members[n].GetType()) * members.Length + n;
 
-			Array.Sort (order, members);
+				Array.Sort (order, members);
+			}
 			
 			// WARNING: if anything is missing in the foreach loop and you add it, add the type in
 			// its corresponding place in CodeTypeMemberComparer class (below)
 
+			CodeTypeDeclaration subtype = null;
 			foreach (CodeTypeMember member in members) 
 			{
-
 				CodeTypeMember prevMember = this.currentMember;
 				this.currentMember = member;
 
-				if (prevMember != null && prevMember.LinePragma != null)
-					GenerateLinePragmaEnd (prevMember.LinePragma);
+				if (prevMember != null && subtype == null) {
+					if (prevMember.LinePragma != null)
+						GenerateLinePragmaEnd (prevMember.LinePragma);
+#if NET_2_0
+					if (prevMember.EndDirectives.Count > 0)
+						GenerateDirectives (prevMember.EndDirectives);
+#endif
+				}
 
 				if (options.BlankLinesBetweenMembers)
 					output.WriteLine ();
 
+				subtype = member as CodeTypeDeclaration;
+				if (subtype != null) {
+					GenerateType (subtype);
+					continue;
+				}
+
+#if NET_2_0
+				if (currentMember.StartDirectives.Count > 0)
+					GenerateDirectives (currentMember.StartDirectives);
+#endif
 				foreach (CodeCommentStatement statement in member.Comments)
 					GenerateCommentStatement (statement);
 
@@ -1108,18 +1162,19 @@ namespace System.CodeDom.Compiler {
 					GenerateSnippetMember (snippet);
 					continue;
 				}
-				CodeTypeDeclaration subtype = member as CodeTypeDeclaration;
-				if (subtype != null) 
-				{
-					GenerateType (subtype);
-					continue;
-				}
 				
 				this.currentMember = prevMember;
 			}
 
-			if (currentMember != null && currentMember.LinePragma != null)
-				GenerateLinePragmaEnd (currentMember.LinePragma);
+			// Hack because of previous continue usage
+			if (currentMember != null && !(currentMember is CodeTypeDeclaration)) {
+				if (currentMember.LinePragma != null)
+					GenerateLinePragmaEnd (currentMember.LinePragma);
+#if NET_2_0
+				if (currentMember.EndDirectives.Count > 0)
+					GenerateDirectives (currentMember.EndDirectives);
+#endif
+			}
 				
 			GenerateTypeEnd (type);
 			this.currentType = prevType;
@@ -1219,5 +1274,13 @@ namespace System.CodeDom.Compiler {
 						typeof (CodeTypeDeclaration),
 						typeof (CodeEntryPointMethod)
 					};
+
+
+#if NET_2_0
+		protected virtual void GenerateDirectives (CodeDirectiveCollection directives)
+		{
+		}
+#endif
+
 	}
 }

@@ -4,6 +4,7 @@
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
 //   Daniel Stodden (stodden@in.tum.de)
+//   Marek Safar (marek.safar@seznam.cz)
 //
 // (C) 2001 Ximian, Inc.
 //
@@ -41,6 +42,9 @@ namespace System.CodeDom
 	{
 		private string methodName;
 		private CodeExpression targetObject;
+#if NET_2_0
+		CodeTypeReferenceCollection typeArguments;
+#endif
 		
 		//
 		// Constructors
@@ -55,6 +59,16 @@ namespace System.CodeDom
 			this.targetObject = targetObject;
 			this.methodName = methodName;
 		}
+
+#if NET_2_0
+		public CodeMethodReferenceExpression (CodeExpression targetObject, 
+			string methodName, params CodeTypeReference[] typeParameters) :
+			this (targetObject, methodName)
+		{
+			if (typeParameters != null && typeParameters.Length > 0)
+				TypeArguments.AddRange (typeParameters);
+		}
+#endif
 
 		//
 		// Properties
@@ -76,5 +90,16 @@ namespace System.CodeDom
 				targetObject = value;
 			}
 		}
+
+#if NET_2_0
+		[ComVisible (false)]
+		public CodeTypeReferenceCollection TypeArguments {
+			get {
+				if (typeArguments == null)
+					typeArguments = new CodeTypeReferenceCollection ();
+				return typeArguments;
+			}
+		}
+#endif
 	}
 }

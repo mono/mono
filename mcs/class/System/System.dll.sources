@@ -18,7 +18,6 @@ Microsoft.Win32/SessionEndReasons.cs
 Microsoft.Win32/SystemEvents.cs
 Microsoft.Win32/TimerElapsedEventArgs.cs
 Microsoft.Win32/TimerElapsedEventHandler.cs
-Microsoft.Win32/TODOAttribute.cs
 Microsoft.Win32/UserPreferenceCategory.cs
 Microsoft.Win32/UserPreferenceChangedEventArgs.cs
 Microsoft.Win32/UserPreferenceChangedEventHandler.cs
@@ -39,6 +38,7 @@ System.CodeDom/CodeBinaryOperatorType.cs
 System.CodeDom/CodeCastExpression.cs
 System.CodeDom/CodeCatchClauseCollection.cs
 System.CodeDom/CodeCatchClause.cs
+System.CodeDom/CodeChecksumPragma.cs
 System.CodeDom/CodeComment.cs
 System.CodeDom/CodeCommentStatementCollection.cs
 System.CodeDom/CodeCommentStatement.cs
@@ -48,6 +48,8 @@ System.CodeDom/CodeConstructor.cs
 System.CodeDom/CodeDelegateCreateExpression.cs
 System.CodeDom/CodeDelegateInvokeExpression.cs
 System.CodeDom/CodeDirectionExpression.cs
+System.CodeDom/CodeDirective.cs
+System.CodeDom/CodeDirectiveCollection.cs
 System.CodeDom/CodeEntryPointMethod.cs
 System.CodeDom/CodeEventReferenceExpression.cs
 System.CodeDom/CodeExpressionCollection.cs
@@ -77,6 +79,8 @@ System.CodeDom/CodeParameterDeclarationExpression.cs
 System.CodeDom/CodePrimitiveExpression.cs
 System.CodeDom/CodePropertyReferenceExpression.cs
 System.CodeDom/CodePropertySetValueReferenceExpression.cs
+System.CodeDom/CodeRegionDirective.cs
+System.CodeDom/CodeRegionMode.cs
 System.CodeDom/CodeRemoveEventStatement.cs
 System.CodeDom/CodeSnippetCompileUnit.cs
 System.CodeDom/CodeSnippetExpression.cs
@@ -94,9 +98,12 @@ System.CodeDom/CodeTypeDelegate.cs
 System.CodeDom/CodeTypeMemberCollection.cs
 System.CodeDom/CodeTypeMember.cs
 System.CodeDom/CodeTypeOfExpression.cs
+System.CodeDom/CodeTypeParameter.cs
+System.CodeDom/CodeTypeParameterCollection.cs
 System.CodeDom/CodeTypeReferenceCollection.cs
 System.CodeDom/CodeTypeReference.cs
 System.CodeDom/CodeTypeReferenceExpression.cs
+System.CodeDom/CodeTypeReferenceOptions.cs
 System.CodeDom/CodeVariableDeclarationStatement.cs
 System.CodeDom/CodeVariableReferenceExpression.cs
 System.CodeDom.Compiler/CodeCompiler.cs
@@ -106,6 +113,7 @@ System.CodeDom.Compiler/CodeGeneratorOptions.cs
 System.CodeDom.Compiler/CodeParser.cs
 System.CodeDom.Compiler/CompilerErrorCollection.cs
 System.CodeDom.Compiler/CompilerError.cs
+System.CodeDom.Compiler/CompilerInfo.cs
 System.CodeDom.Compiler/CompilerParameters.cs
 System.CodeDom.Compiler/CompilerResults.cs
 System.CodeDom.Compiler/Executor.cs

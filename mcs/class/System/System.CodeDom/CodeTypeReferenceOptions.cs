@@ -1,10 +1,10 @@
 //
-// TODOAttribute.cs
+// System.CodeDom CodeTypeReferenceOptions enum
 //
 // Author:
-//   Ravi Pratap (ravi@ximian.com)
+//   Marek Safar (marek.safar@seznam.cz)
 //
-// (C) Ximian, Inc.  http://www.ximian.com
+// (C) 2004 Ximian, Inc.
 //
 
 //
@@ -28,32 +28,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.Win32 {
+#if NET_2_0
 
-using System;
+using System.Runtime.InteropServices;
 
-	/// <summary>
-	///   The TODO attribute is used to flag all incomplete bits in our class libraries
-	/// </summary>
-	///
-	/// <remarks>
-	///   Use this to decorate any element which you think is not complete
-	/// </remarks>
-	[AttributeUsage (AttributeTargets.All)]
-	internal class MonoTODOAttribute : Attribute{
-
-		string comment;
-
-		public MonoTODOAttribute ()
-		{}
-
-		public MonoTODOAttribute (string comment)
-		{
-			this.comment = comment;
-		}
-
-		public string Comment {
-			get { return comment; }
-		}
+namespace System.CodeDom
+{
+	[Flags]
+	[Serializable]
+	[ComVisible (true)]
+	public enum CodeTypeReferenceOptions
+	{
+		GlobalReference = 1,
+		GenericTypeParameter = 1 << 1
 	}
 }
+
+#endif

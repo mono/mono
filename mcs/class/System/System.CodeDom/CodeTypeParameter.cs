@@ -1,11 +1,10 @@
 //
-// System.CodeDom.Compiler GeneratorSupport Class implementation
+// System.CodeDom CodeTypeParameter class
 //
 // Author:
-//   Daniel Stodden (stodden@in.tum.de)
 //   Marek Safar (marek.safar@seznam.cz)
 //
-// (C) 2002 Ximian, Inc.
+// (C) 2004 Ximian, Inc.
 //
 
 //
@@ -29,40 +28,61 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.CodeDom.Compiler
-{
-	[Flags]
-	[Serializable]
-	public enum GeneratorSupport {
-		ArraysOfArrays = 1,
-		EntryPointMethod = 1 << 1,
-		GotoStatements = 1 << 2,
-		MultidimensionalArrays = 1 << 3,
-		StaticConstructors = 1 << 4,
-		TryCatchStatements = 1 << 5,
-		ReturnTypeAttributes = 1 << 6,
-		DeclareValueTypes = 1 << 7,
-		DeclareEnums = 1 << 8,
-		DeclareDelegates = 1 << 9,
-		DeclareInterfaces = 1 << 10,
-		DeclareEvents = 1 << 11,
-		AssemblyAttributes = 1 << 12,
-		ParameterAttributes = 1 << 13,
-		ReferenceParameters = 1 << 14,
-		ChainedConstructorArguments = 1 << 15,
-		NestedTypes = 1 << 16,
-		MultipleInterfaceMembers = 1 << 17,
-		PublicStaticMembers = 1 << 18,
-		ComplexExpressions = 1 << 19,
-		Win32Resources = 1 << 20,
-
 #if NET_2_0
-		Resources = 1 << 21,
-		PartialTypes = 1 << 22,
-		GenericTypeReference = 1 << 23,
-		GenericTypeDeclaration = 1 << 24,
-		DeclareIndexerProperties = 1 << 25,
-#endif
+
+using System.Runtime.InteropServices;
+
+namespace System.CodeDom
+{
+	[Serializable]
+	[ComVisible (true), ClassInterface (ClassInterfaceType.AutoDispatch)]
+	public class CodeTypeParameter: CodeObject
+	{
+		CodeTypeReferenceCollection constraints;
+		CodeAttributeDeclarationCollection customAttributes;
+		bool hasConstructorConstraint;
+		string name;
+
+		public CodeTypeParameter () {}
+
+		public CodeTypeParameter (string name)
+		{
+			this.name = name;
+		}
+
+		public CodeTypeReferenceCollection Constraints {
+			get {
+				if (constraints == null)
+					constraints = new CodeTypeReferenceCollection ();
+				return constraints;
+			}
+		}
+
+		public CodeAttributeDeclarationCollection CustomAttributes {
+			get {
+				if (customAttributes == null)
+					customAttributes = new CodeAttributeDeclarationCollection ();
+				return customAttributes;
+			}
+		}
+
+		public bool HasConstructorConstraint {
+			get {
+				return hasConstructorConstraint;
+			}
+			set {
+				hasConstructorConstraint = value;
+			}
+		}
+
+		public string Name {
+			get {
+				return name;
+			}
+			set {
+				name = value;
+			}
+		}
 	}
 }
-
+#endif

@@ -4,6 +4,7 @@
 // Author:
 //   Sean MacIsaac (macisaac@ximian.com)
 //   Daniel Stodden (stodden@in.tum.de)
+//   Marek Safar (marek.safar@seznam.cz)
 //
 // (C) 2001 Ximian, Inc.
 //
@@ -45,6 +46,11 @@ namespace System.CodeDom
 		private TypeAttributes typeAttributes = TypeAttributes.Public;
 		private bool isEnum;
 		private bool isStruct;
+
+#if NET_2_0
+		bool isPartial;
+		CodeTypeParameterCollection typeParameters;
+#endif
 
 		//
 		// Constructors
@@ -159,6 +165,25 @@ namespace System.CodeDom
 #endif
 			}
 		}
+
+#if NET_2_0
+		public bool IsPartial {
+			get {
+				return isPartial;
+			}
+			set {
+				isPartial = value;
+			}
+		}
+
+		public CodeTypeParameterCollection TypeParameters {
+			get {
+				if (typeParameters == null)
+					typeParameters = new CodeTypeParameterCollection ();
+				return typeParameters;
+			}
+		}
+#endif
 
 		//
 		// Events

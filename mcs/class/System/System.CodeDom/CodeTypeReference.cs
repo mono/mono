@@ -3,6 +3,7 @@
 //
 // Author:
 //   Daniel Stodden (stodden@in.tum.de)
+//   Marek Safar (marek.safar@seznam.cz)
 //
 // (C) 2001 Ximian, Inc.
 //
@@ -42,13 +43,38 @@ namespace System.CodeDom
 		private CodeTypeReference arrayType;
 		private int rank;
 
+#if NET_2_0
+		CodeTypeReferenceCollection typeArguments;
+		CodeTypeReferenceOptions codeTypeReferenceOption;
+#endif
+
 		//
 		// Constructors
 		//
-		[MonoTODO ("Missing implementation. Implement array info extraction from the string")]
 		public CodeTypeReference( string baseType )
 		{
-			this.baseType = baseType;
+			if (baseType.Length == 0) {
+				this.baseType = typeof (void).FullName;
+				return;
+			}
+
+			int array_start = baseType.IndexOf ('[');
+			if (array_start == -1) {
+				this.baseType = baseType;
+				return;
+			}
+			string[] args = baseType.Split (',');
+
+			int array_end = baseType.IndexOf (']');
+
+#if NET_2_0
+			if ((array_end - array_start) != args.Length) {
+				arrayType = new CodeTypeReference (baseType.Substring (0, array_start));
+				array_start++;
+				TypeArguments.Add (new CodeTypeReference (baseType.Substring (array_start, array_end - array_start)));
+			} else
+#endif
+				arrayType = new CodeTypeReference (baseType.Substring (0, array_start), args.Length);
 		}
 		
 		public CodeTypeReference( Type baseType )
@@ -56,6 +82,7 @@ namespace System.CodeDom
 			if (baseType.IsArray) {
 				this.rank = baseType.GetArrayRank ();
 				this.arrayType = new CodeTypeReference (baseType.GetElementType ());
+				this.baseType = arrayType.BaseType;
 				return;
 			}
 			this.baseType = baseType.FullName;
@@ -73,6 +100,30 @@ namespace System.CodeDom
 		{
 		}
 			
+#if NET_2_0
+		public CodeTypeReference( CodeTypeParameter typeParameter ) :
+			this (typeParameter.Name)
+		{
+		}
+
+		public CodeTypeReference( string typeName, CodeTypeReferenceOptions codeTypeReferenceOption ) :
+			this (typeName)
+		{
+			this.codeTypeReferenceOption = codeTypeReferenceOption;
+		}
+
+		public CodeTypeReference( Type type, CodeTypeReferenceOptions codeTypeReferenceOption ) :
+			this (type)
+		{
+			this.codeTypeReferenceOption = codeTypeReferenceOption;
+		}
+
+		public CodeTypeReference( string typeName, params CodeTypeReference[] typeArguments ) :
+			this (typeName)
+		{
+			TypeArguments.AddRange (typeArguments);
+		}
+#endif
 
 		//
 		// Properties
@@ -108,5 +159,26 @@ namespace System.CodeDom
 				baseType = value;
 			}
 		}
+
+#if NET_2_0
+		[ComVisible (false)]
+		public CodeTypeReferenceOptions Options {
+			get {
+				return codeTypeReferenceOption;
+			}
+			set {
+				codeTypeReferenceOption = value;
+			}
+		}
+
+		[ComVisible (false)]
+		public CodeTypeReferenceCollection TypeArguments {
+			get {
+				if (typeArguments == null)
+					typeArguments = new CodeTypeReferenceCollection ();
+				return typeArguments;
+			}
+		}
+#endif
 	}
 }

@@ -48,6 +48,9 @@ namespace System.CodeDom.Compiler
 			properties.Add( "BracingStyle", "Block" );
 			properties.Add( "ElseOnClosing", false );
 			properties.Add( "IndentString", "    " );
+#if NET_2_0
+			properties.Add( "VerbatimOrder", false );
+#endif
 		}
 
 		//
@@ -116,5 +119,16 @@ namespace System.CodeDom.Compiler
 				properties[index] = value;
 			}
 		}
+
+#if NET_2_0
+		public bool VerbatimOrder {
+			get {
+				return (bool)properties["VerbatimOrder"];
+			}
+			set {
+				properties["VerbatimOrder"] = value;
+			}
+		}
+#endif
 	}
 }

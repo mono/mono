@@ -46,6 +46,9 @@ namespace System.CodeDom
 		private CodeStatementCollection statements;
 		private CodeAttributeDeclarationCollection returnTypeCustomAttributes;
 
+#if NET_2_0
+		CodeTypeParameterCollection typeParameters;
+#endif
 		//
 		// Constructors
 		//
@@ -117,6 +120,17 @@ namespace System.CodeDom
 				return returnTypeCustomAttributes;
 			}
 		}
+
+#if NET_2_0
+		[ComVisible (false)]
+		public CodeTypeParameterCollection TypeParameters {
+			get {
+				if (typeParameters == null)
+					typeParameters = new CodeTypeParameterCollection ();
+				return typeParameters;
+			}
+		}
+#endif
 
 		//
 		// Events

@@ -3,6 +3,7 @@
 //
 // Author:
 //   Daniel Stodden (stodden@in.tum.de)
+//   Marek Safar (marek.safar@seznam.cz)
 //
 // (C) 2002 Ximian, Inc.
 //
@@ -77,5 +78,29 @@ namespace System.CodeDom
 				return referencedAssemblies;
 			}
 		}
+
+#if NET_2_0
+
+		CodeDirectiveCollection startDirectives;
+		CodeDirectiveCollection endDirectives;
+
+		public CodeDirectiveCollection StartDirectives {
+			get {
+				if (startDirectives == null)
+					startDirectives = new CodeDirectiveCollection ();
+				return startDirectives;
+			}
+		}
+
+		public CodeDirectiveCollection EndDirectives {
+			get {
+				if (endDirectives == null)
+					endDirectives = new CodeDirectiveCollection ();
+				return endDirectives;
+			}
+		}
+
+#endif
+
 	}
 }

@@ -3,6 +3,7 @@
 //
 // Author:
 //   Daniel Stodden (stodden@in.tum.de)
+//   Marek Safar (marek.safar@seznam.cz)
 //
 // (C) 2002 Ximian, Inc.
 //
@@ -84,6 +85,42 @@ namespace System.CodeDom.Compiler
 		{
 			return TypeDescriptor.GetConverter (type);
 		}
+
+#if NET_2_0
+
+		public virtual CompilerResults CompileAssemblyFromDom (CompilerParameters options, params CodeCompileUnit[] compilationUnits)
+		{
+			return CreateCompiler ().CompileAssemblyFromDomBatch (options, compilationUnits);
+		}
+
+		public static CodeDomProvider CreateProvider (string language)
+		{
+			return GetCompilerInfo (language).CreateProvider ();
+		}
+
+		public virtual void GenerateCodeFromCompileUnit (CodeCompileUnit compileUnit, 
+			TextWriter writer, CodeGeneratorOptions options)
+		{
+			CreateGenerator ().GenerateCodeFromCompileUnit (compileUnit, writer, options);
+		}
+
+		public virtual void GenerateCodeFromStatement (CodeStatement statement, TextWriter writer, CodeGeneratorOptions options)
+		{
+			CreateGenerator ().GenerateCodeFromStatement (statement, writer, options);
+		}
+
+		[MonoTODO ("Not implemented")]
+		public static CompilerInfo GetCompilerInfo (string language)
+		{
+			return null;
+		}
+
+		public virtual bool Supports (GeneratorSupport supports)
+		{
+			return CreateGenerator ().Supports (supports);
+		}
+
+#endif
 
 	}
 }
