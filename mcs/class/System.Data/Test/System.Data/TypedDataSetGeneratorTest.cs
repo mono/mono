@@ -37,6 +37,7 @@ using Microsoft.CSharp;
 
 namespace MonoTests.System.Data
 {
+	[TestFixture]
 	public class TypedDataSetGeneratorTest : Assertion
 	{
 		private ICodeGenerator gen;

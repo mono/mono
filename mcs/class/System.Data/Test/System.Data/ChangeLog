@@ -1,3 +1,7 @@
+2004-06-18  Atsushi Enomoto <atsushi@ximian.com>
+
+	* TypedDataSetGeneratorTest.cs : [TestFixture] was missing.
+
 2004-06-15  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DataSetTest.cs : Added regression for #53959.
