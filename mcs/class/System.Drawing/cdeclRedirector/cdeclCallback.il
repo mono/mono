@@ -11,11 +11,6 @@
 .assembly cdeclCallback
 {
 }
-.module cdeclCallback.dll
-.imagebase 0x00400000
-.subsystem 0x00000003
-.file alignment 4096
-.corflags 0x00000001
 
 .namespace cdeclCallback
 {
