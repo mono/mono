@@ -1,5 +1,10 @@
 2002-04-23  Daniel Morgan <danmorg@sc.rr.com>
 
+	* TODO: modified - added classes TODO, and
+	a poor attempt at System.Data plan
+
+2002-04-23  Daniel Morgan <danmorg@sc.rr.com>
+
 	* ChangeLog: modified - put tabs where they belong
 	
 	* System.Data.SqlClient/SqlDataReader.cs

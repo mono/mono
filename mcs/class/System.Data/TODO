@@ -1,6 +1,38 @@
-System.Data.Common
-------------------
+System.Data TODO List
+=====================
 
+This TODO list last updated on 2002-04-23
+
+Update this file as needed...
+
+* To get ExecuteReader() in a SqlCommand object to return 
+  a SqlDataReader object which can Read() data and get a String or
+  Int32 from the database.  Other types can be done later.
+
+In order to do this, we need to compile 
+	SqlDataReader 
+	DataTable
+	and dependencies...
+
+MSDN has the classes: 
+	DataRelation, DataRelationCollection, DataTable, DataTableCollection
+
+Mono has the classes:
+	DataRelationCollection, DataTable, DataTableRelationCollection
+
+Something is not right here:
+	maybe mono's DataTableRelationCollection 
+	was suppose to be DataTableCollection
+
+        This would mean that DataRelation is missing.
+
+Other classes missing:
+	* InternalDataCollectionBase - this is a public class despite its name
+	* DataRowBuilder
+	* Constraint
+	* ConstraintCollection
+
+System.Data.Common classes that need to be implemented:
  - implement DataAdapter.cs
  - implement DataColumnMapping.cs
  - implement DataColumnMappingCollection.cs
@@ -11,3 +43,97 @@ System.Data.Common
  - implement DbDataPermissionAttribute.cs
  - implement RowUpdatedEventArgs.cs
  - implement RowUpdatingEventArgs.cs
+
+The following classes implement InternalDataCollectionBase:
+	* DataRowCollection
+	* DataColumnCollection
+	* DataTableCollection
+	* DataRelationCollection
+	* DataConstraintCollection
+
+Other classes, structs, etc. that are missing:
+	DataView
+	DataViewManager
+	DataViewSetting
+	DataViewSettingCollection
+	ForeignKeyConstraint
+	PropertyCollection
+	UniqueConstraint
+	TypedDataSetGenerator
+
+Exceptions that still need to be done:
+	(need to see what exceptions need to be done)
+	SyntaxErrorException
+	SqlNullValueException
+	SqlTruncateException
+	SqlTypeException
+	TypedDataSetGeneratorException
+ 
+The additional System.Data.SqlTypes classes need to be stubbed:
+	SqlByte
+	SqlDataTime
+	SqlDecimal
+	SqlDouble
+	SqlGuid
+	SqlInt16
+	SqlInt64
+	SqlMoney
+	SqlSingle
+
+* allow Execute methods in SqlCommand to
+  call a stored procedure
+
+* get SqlParameter/SqlParameterCollection
+  working so you can:
+  - for queries/commands that have parameters:
+    o  input 
+    o  output 
+    o  return
+    o  input/output
+  - call a stored procedure with parameters
+ 
+* be able to return a XmlReader from
+  using method ExecuteXmlReader of
+  a SqlCommand object
+
+* get SqlDataAdapter/DataSet working
+
+* provide a standard scheme for stroring
+  connection string data
+
+* Begin System.Data.OleDb classes:
+  - OleDbConnection
+  - OleDbCommand
+  - OleDbTransaction
+
+* Do more of the OleDb classes to
+  retrieve a OleDbDataReader object
+  from a query (SELECT FROM):
+  - OleDbDataReader
+  - others...
+
+* Do more OleDb classes for DataSet:
+  - OleDbDataAdapter
+  - others...
+
+* Create a MySQL ADO.NET Provider
+
+* Create an Oracle ADO.NET Provider
+
+* Create an Interbase ADO.NET Provider
+
+* Create a Sybase ADO.NET Provider (TDS?)
+
+* Create an IBM UDB DB2 ADO.NET Provider
+
+* Create other ADO.NET providers...
+
+Integration
+===========
+
+* get System.Data to work with ASP.NET's
+  System.Web.UI.WebControls.DataGrid
+
+* get System.Data to work with GUI
+  System.Windows.Forms.DataGrid
+
