@@ -1,3 +1,14 @@
+2002-04-04  Dick Porter  <dick@ximian.com>
+
+	* ThreadWaitReason.cs:
+	* ThreadState.cs:
+	* ThreadPriorityLevel.cs:
+	* ProcessWindowStyle.cs:
+	* ProcessThreadCollection.cs
+	* ProcessThread.cs:
+	* ProcessStartInfo.cs:
+	* ProcessModuleCollection.cs: Stub out more classes needed for Process
+
 2002-03-31  Dick Porter  <dick@ximian.com>
 
 	* Process.cs: 

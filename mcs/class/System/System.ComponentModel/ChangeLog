@@ -1,3 +1,7 @@
+2002-04-04  Dick Porter  <dick@ximian.com>
+
+	* ISynchronizeInvoke.cs: Needed by Process
+
 2002-01-23  Dick Porter  <dick@ximian.com>
 
 	* Win32Exception.cs: implement, with support for looking up
