@@ -42,6 +42,8 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void EncodeLocalName ()
 		{
+			AssertNull (XmlConvert.EncodeLocalName (null));
+			AssertEquals (String.Empty, XmlConvert.EncodeLocalName (String.Empty));
 			AssertEquals ("Hello_x003A__x0020_", XmlConvert.EncodeLocalName ("Hello: "));
 			AssertEquals ("Hello", XmlConvert.EncodeLocalName ("Hello"));
 		}
@@ -49,6 +51,8 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void EncodeName ()
 		{
+			AssertNull (XmlConvert.EncodeName (null));
+			AssertEquals (String.Empty, XmlConvert.EncodeName (String.Empty));
 			AssertName ("Test", "Test");
 			AssertName ("Hello_x0020_my_x0020_friends.", "Hello my friends.");
 			AssertName ("_x0031_23", "123");
@@ -58,12 +62,20 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void EncodeNmToken ()
 		{
+			AssertNull (XmlConvert.EncodeNmToken (null));
 			AssertNmToken ("Test", "Test");
 			AssertNmToken ("Hello_x0020_my_x0020_friends.", "Hello my friends.");
 			AssertNmToken ("123", "123");
 			AssertNmToken ("_x005F_x0031_23", "_x0031_23");
 		}
-		
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void EncodeNmTokenError ()
+		{
+			XmlConvert.EncodeNmToken (String.Empty);
+		}
+
 		[Test]
 		public void ToBoolean ()
 		{
