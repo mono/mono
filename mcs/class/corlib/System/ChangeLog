@@ -1,3 +1,9 @@
+2005-01-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Environment.cs: Added CAS security (both declarative and imperative)
+	as a test. This shouldn't affect execution unless --security is 
+	specified.
+
 2005-01-19  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
 	* Type.cs: Corrected implementation for the Type.FilterNameIgnoreCase
 	and Type.FilterName delegates They weren't dealing with the optional '*'

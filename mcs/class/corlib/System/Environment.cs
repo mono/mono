@@ -10,7 +10,7 @@
 //
 //------------------------------------------------------------------------------
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,19 +32,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.IO;
-//using System.Diagnostics;
 using System.Collections;
+using System.Runtime.CompilerServices;
 using System.Security;
 using System.Security.Permissions;
-using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace System
-{
-	public sealed class Environment
-	{
+namespace System {
+
+#if NET_2_0
+	public static class Environment {
+#else
+	public sealed class Environment {
+
+		private Environment ()
+		{
+		}
+#endif
 		/*
 		 * This is the version number of the corlib-runtime interface. When
 		 * making changes to this interface (by changing the layout
@@ -55,16 +60,14 @@ namespace System
 		 * of icalls, do not require an increment.
 		 */
 		private const int mono_corlib_version = 32;
-
-		private Environment ()
-		{
-		}
-                
+               
 		[MonoTODO]
 		public enum SpecialFolder
 		{	// TODO: Determine if these windoze style folder identifiers 
 			//       have unix/linux counterparts
-
+#if NET_2_0
+			MyDocuments = 0x05,
+#endif
 #if NET_1_1
 			Desktop = 0x00,
 			MyComputer = 0x11,
@@ -91,16 +94,12 @@ namespace System
 			CommonProgramFiles = 0x2b,
 		}
 
-		// TODO: Make sure the security attributes do what I expect
-			
 		/// <summary>
 		/// Gets the command line for this process
 		/// </summary>
-		public static string CommandLine
-		{	// TODO: Coordinate with implementor of EnvironmentPermissionAttribute
-			// [EnvironmentPermissionAttribute(SecurityAction.Demand, Read = "COMMANDLINE")]
-			get
-			{
+		public static string CommandLine {
+			// note: security demand inherited from calling GetCommandLineArgs
+			get {
 				// FIXME: we may need to quote, but any sane person
 				// should use GetCommandLineArgs () instead.
 				return String.Join (" ", GetCommandLineArgs ());
@@ -114,9 +113,6 @@ namespace System
 		/// </summary>
 		public static string CurrentDirectory
 		{
-			// originally it was my thought that the external call would be made in
-			// the directory class however that class has additional security requirements
-			// so the Directory class will call this class for its get/set current directory
 			get {
 				return Directory.GetCurrentDirectory ();
 			}
@@ -151,6 +147,8 @@ namespace System
 		/// </summary>
 		public extern static string MachineName {
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			[EnvironmentPermission (SecurityAction.Demand, Read="COMPUTERNAME")]
+			[SecurityPermission (SecurityAction.Demand, UnmanagedCode=true)]
 			get;
 		}
 
@@ -192,6 +190,7 @@ namespace System
 		/// Get StackTrace
 		/// </summary>
 		public static string StackTrace {
+			[EnvironmentPermission (SecurityAction.Demand, Unrestricted=true)]
 			get {
 				System.Diagnostics.StackTrace trace = new System.Diagnostics.StackTrace (1);
 				return trace.ToString ();
@@ -219,6 +218,8 @@ namespace System
 		/// Get UserDomainName
 		/// </summary>
 		public static string UserDomainName {
+			// FIXME: this variable doesn't exist (at least not on WinXP) - reported to MS as FDBK20562
+			[EnvironmentPermission (SecurityAction.Demand, Read="USERDOMAINNAME")]
 			get {
 				return MachineName;
 			}
@@ -237,9 +238,9 @@ namespace System
 		/// <summary>
 		/// Get the user name of current process is running under
 		/// </summary>
-		public extern static string UserName
-		{
+		public extern static string UserName {
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			[EnvironmentPermission (SecurityAction.Demand, Read="USERNAME;USER")]
 			get;
 		}
 
@@ -264,14 +265,13 @@ namespace System
 		/// Get the amount of physical memory mapped to process
 		/// </summary>
 		[MonoTODO]
-		public static long WorkingSet
-		{
-			get {
-				return 0;
-			}
+		public static long WorkingSet {
+			[EnvironmentPermission (SecurityAction.Demand, Unrestricted=true)]
+			get { return 0; }
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode=true)]
 		public extern static void Exit (int exitCode);
 
 		/// <summary>
@@ -345,14 +345,23 @@ namespace System
 		/// Return an array of the command line arguments of the current process
 		/// </summary>
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static string[] GetCommandLineArgs();
+		[EnvironmentPermissionAttribute (SecurityAction.Demand, Read = "PATH")]
+		public extern static string[] GetCommandLineArgs ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern static string internalGetEnvironmentVariable (string name);
 
 		/// <summary>
 		/// Return a string containing the value of the environment
 		/// variable identifed by parameter "variable"
 		/// </summary>
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static string GetEnvironmentVariable (string name);
+		public static string GetEnvironmentVariable (string name)
+		{
+			if (SecurityManager.SecurityEnabled) {
+				new EnvironmentPermission (EnvironmentPermissionAccess.Read, name).Demand ();
+			}
+			return internalGetEnvironmentVariable (name);
+		}
 
 		static Hashtable GetEnvironmentVariablesNoCase ()
 		{
@@ -360,7 +369,7 @@ namespace System
 							CaseInsensitiveComparer.Default);
 
 			foreach (string name in GetEnvironmentVariableNames ()) {
-				vars [name] = GetEnvironmentVariable (name);
+				vars [name] = internalGetEnvironmentVariable (name);
 			}
 
 			return vars;
@@ -370,13 +379,28 @@ namespace System
 		/// Return a set of all environment variables and their values
 		/// </summary>
 	   
-		public static IDictionary GetEnvironmentVariables()
+		public static IDictionary GetEnvironmentVariables ()
 		{
-			Hashtable vars = new Hashtable ();
-			foreach (string name in GetEnvironmentVariableNames ()) {
-				vars [name] = GetEnvironmentVariable (name);
+			StringBuilder sb = null;
+			if (SecurityManager.SecurityEnabled) {
+				// we must have access to each variable to get the lot
+				sb = new StringBuilder ();
+				// but (performance-wise) we do not want a stack-walk
+				// for each of them so we concatenate them
 			}
 
+			Hashtable vars = new Hashtable ();
+			foreach (string name in GetEnvironmentVariableNames ()) {
+				vars [name] = internalGetEnvironmentVariable (name);
+				if (sb != null) {
+					sb.Append (name);
+					sb.Append (";");
+				}
+			}
+
+			if (sb != null) {
+				new EnvironmentPermission (EnvironmentPermissionAccess.Read, sb.ToString ()).Demand ();
+			}
 			return vars;
 		}
 
@@ -390,19 +414,37 @@ namespace System
 		/// </summary>
 		public static string GetFolderPath (SpecialFolder folder)
 		{
-			if ((int) Platform != 128)
-				return GetWindowsFolderPath ((int) folder);
+			string dir = null;
 
+			if ((int) Platform != 128) {
+				dir = GetWindowsFolderPath ((int) folder);
+			} else {
+				dir = InternalGetFolderPath (folder);
+			}
+
+			if ((dir != null) && (dir.Length > 0) && SecurityManager.SecurityEnabled) {
+				new FileIOPermission (FileIOPermissionAccess.PathDiscovery, dir).Demand ();
+			}
+			return dir;
+		}
+
+		// the security runtime (and maybe other parts of corlib) needs the
+		// information to initialize themselves before permissions can be checked
+		internal static string InternalGetFolderPath (SpecialFolder folder)
+		{
 			string home = internalGetHome ();
 
 			// http://freedesktop.org/Standards/basedir-spec/basedir-spec-0.6.html
-			string data = GetEnvironmentVariable ("XDG_DATA_HOME");
+
+			// note: skip security check for environment variables
+			string data = internalGetEnvironmentVariable ("XDG_DATA_HOME");
 			if ((data == null) || (data == String.Empty)) {
 				data = Path.Combine (home, ".local");
 				data = Path.Combine (data, "share");
 			}
 
-			string config = GetEnvironmentVariable ("XDG_CONFIG_HOME");
+			// note: skip security check for environment variables
+			string config = internalGetEnvironmentVariable ("XDG_CONFIG_HOME");
 			if ((config == null) || (config == String.Empty)) {
 				config = Path.Combine (home, ".config");
 			}
@@ -411,7 +453,7 @@ namespace System
 #if NET_1_1
 			// MyComputer is a virtual directory
 			case SpecialFolder.MyComputer:
-				return "";
+				return String.Empty;
 #endif
 			// personal == ~
 			case SpecialFolder.Personal:
@@ -446,7 +488,7 @@ namespace System
 			case SpecialFolder.CommonProgramFiles:
 			case SpecialFolder.ProgramFiles:
 			case SpecialFolder.System:
-				return "";
+				return String.Empty;
 			// This is where data common to all users goes
 			case SpecialFolder.CommonApplicationData:
 				return "/usr/share";
@@ -455,49 +497,102 @@ namespace System
                         }
                 }
 
+		[EnvironmentPermission (SecurityAction.Demand, Unrestricted=true)]
 		public static string[] GetLogicalDrives ()
 		{
 			return GetLogicalDrivesInternal ();
 		}
 
+		// FIXME: Anyone using this anywhere ?
 		static internal string GetResourceString (string s) { return ""; }
 
                 
 #if NET_2_0
+		[MonoTODO ("Machine and User targets aren't supported")]
 		public static string GetEnvironmentVariable (string variable, EnvironmentVariableTarget target)
 		{
-			return (string)(GetEnvironmentVariables (target) [variable]);
+			switch (target) {
+			case EnvironmentVariableTarget.Process:
+				return GetEnvironmentVariable (variable);
+			case EnvironmentVariableTarget.Machine:
+				new EnvironmentPermission (PermissionState.Unrestricted).Demand ();
+				// under Windows this reads the LOCAL_MACHINE registry key for env vars
+				throw new NotImplementedException ();
+			case EnvironmentVariableTarget.User:
+				new EnvironmentPermission (PermissionState.Unrestricted).Demand ();
+				// under Windows this reads the CURRENT_USER registry key for env vars
+				throw new NotImplementedException ();
+			default:
+				throw new ArgumentException ("target");
+			}
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Machine and User targets aren't supported")]
 		public static IDictionary GetEnvironmentVariables (EnvironmentVariableTarget target)
 		{
-			throw new NotImplementedException ();
+			switch (target) {
+			case EnvironmentVariableTarget.Process:
+				return GetEnvironmentVariables ();
+			case EnvironmentVariableTarget.Machine:
+				new EnvironmentPermission (PermissionState.Unrestricted).Demand ();
+				// under Windows this reads the LOCAL_MACHINE registry key for env vars
+				throw new NotImplementedException ();
+			case EnvironmentVariableTarget.User:
+				new EnvironmentPermission (PermissionState.Unrestricted).Demand ();
+				// under Windows this reads the CURRENT_USER registry key for env vars
+				throw new NotImplementedException ();
+			default:
+				throw new ArgumentException ("target");
+			}
 		}
 
+		[MonoTODO]
+		[EnvironmentPermission (SecurityAction.Demand, Unrestricted=true)]
 		public static void SetEnvironmentVariable (string variable, string value)
 		{
-			SetEnvironmentVariable (variable, value, EnvironmentVariableTarget.Process);
+			InternalSetEnvironmentVariable (variable, value);
 		}
 
 		[MonoTODO]
+		[EnvironmentPermission (SecurityAction.Demand, Unrestricted=true)]
 		public static void SetEnvironmentVariable (string variable, string value, EnvironmentVariableTarget target)
+		{
+			switch (target) {
+			case EnvironmentVariableTarget.Process:
+				InternalSetEnvironmentVariable (variable, value);
+				break;
+			case EnvironmentVariableTarget.Machine:
+				// under Windows this reads the LOCAL_MACHINE registry key for env vars
+				throw new NotImplementedException ();
+			case EnvironmentVariableTarget.User:
+				// under Windows this reads the CURRENT_USER registry key for env vars
+				throw new NotImplementedException ();
+			default:
+				throw new ArgumentException ("target");
+			}
+		}
+
+		// FIXME: to be changed as an icall when implemented
+		internal static void InternalSetEnvironmentVariable (string variable, string value)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		static bool IsServerGC {
+		public static int ProcessorCount {
+			[EnvironmentPermission (SecurityAction.Demand, Read="NUMBER_OF_PROCESSORS")]
 			get {
+				// note: Changes to the NUMBER_OF_PROCESSORS environment variable
+				// under Windows doesn't affect the (good) value returned.
 				throw new NotImplementedException ();
 			}
 		}
 
-		[MonoTODO]
-		static int ProcessorCount {
-			get {
-				throw new NotImplementedException ();
-			}
+		[MonoTODO ("not much documented")]
+		// FIXME: doesn't seems to have any protection ?!? reported as FDBK20543
+		public static void FailFast (string message)
+		{
+			throw new NotImplementedException ();
 		}
 #endif                
                 
