@@ -1,3 +1,10 @@
+2004-06-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DecimalTest.cs: Added rounding tests for negative values. Added more
+	checks to ParseFractions. Removed test TooSmall because it was a bad
+	interaction between a buggy corlib (buggy decimal) and the tests (i.e.
+	the value was legal).
+
 2004-06-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeTest.cs : added more "common pattern" tests.
