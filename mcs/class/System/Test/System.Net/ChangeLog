@@ -1,3 +1,9 @@
+2002-04-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AllTests.cs: added IPEndPointTest.
+	* IPEndPointTest.cs: added file (author: Lawrence Pit).
+	* IPAdressTest.cs: use Fail is expected exception are not raised.
+
 2002-04-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* IPAddressTest.cs: use System.BitConverter.IsLittleEndian (suggested

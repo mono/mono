@@ -94,6 +94,7 @@ public class IPAddressTest : TestCase
 		failure = false;
 		try {
 			ip = IPAddress.Parse ("12.+1.1.4");
+                        Fail("Should raise a FormatException #1");
 		} catch (FormatException) {
 			failure = true;
 		}
@@ -103,6 +104,7 @@ public class IPAddressTest : TestCase
 		failure = false;
 		try {
 			ip = IPAddress.Parse ("12.1.-1.5");
+                        Fail("Should raise a FormatException #2");
 		} catch (FormatException) {
 			failure = true;
 		}
@@ -112,6 +114,7 @@ public class IPAddressTest : TestCase
 		failure = false;
 		try {
 			ip = IPAddress.Parse ("257.1.1.9");
+                        Fail("Should raise a FormatException #3");
 		} catch (FormatException) {
 			failure = true;
 		}
@@ -121,6 +124,7 @@ public class IPAddressTest : TestCase
 		failure = false;
 		try {
 			ip = IPAddress.Parse (null);
+                        Fail("Should raise a ArgumentNullException #1");
 		} catch (ArgumentNullException) {
 			failure = true;
 		}

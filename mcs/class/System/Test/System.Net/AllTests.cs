@@ -21,6 +21,7 @@ namespace MonoTests.System.Net {
                         {
                                 TestSuite suite = new TestSuite();
                                 suite.AddTest (IPAddressTest.Suite);
+                                suite.AddTest (IPEndPointTest.Suite);
 				return suite;
                         }
                 }
