@@ -1,3 +1,9 @@
+2003-10-20  Duncan Mak  <duncan@ximian.com>
+
+	* Mono.Security.dll.sources: Added TlsAbstractCipherSuite.cs,
+	TlsCipherSuiteFactory.cs and TlsCompressMethod.cs. This fixes the
+	build.
+
 2003-10-20  Carlos Guzmán Álvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.dll.sources: Added references for new Tls files.

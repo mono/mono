@@ -31,8 +31,11 @@
 ./Mono.Security.X509.Extensions/SubjectAltNameExtension.cs
 ./Mono.Security.Cryptography/TlsHMAC.cs
 ./Mono.Security.Protocol.Tls/AssemblyInfo.cs
+./Mono.Security.Protocol.Tls/TlsAbstractCipherSuite.cs
 ./Mono.Security.Protocol.Tls/TlsCipherSuite.cs
 ./Mono.Security.Protocol.Tls/TlsCipherSuiteCollection.cs
+./Mono.Security.Protocol.Tls/TlsCipherSuiteFactory.cs
+./Mono.Security.Protocol.Tls/TlsCompressionMethod.cs
 ./Mono.Security.Protocol.Tls/TlsContentType.cs
 ./Mono.Security.Protocol.Tls/TlsException.cs
 ./Mono.Security.Protocol.Tls/TlsNetworkStream.cs
