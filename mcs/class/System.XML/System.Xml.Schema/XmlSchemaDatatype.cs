@@ -151,8 +151,20 @@ namespace System.Xml.Schema
 			switch (ns) {
 			case XmlSchema.Namespace:
 				break;
+#if NET_2_0
 			case XmlSchema.XdtNamespace:
-				return null; // FIXME: implement
+				switch (localName) {
+				case "anyAtomicType":
+					return datatypeAnyAtomicType;
+				case "untypedAtomic":
+					return datatypeUntypedAtomic;
+				case "dayTimeDuration":
+					return datatypeDayTimeDuration;
+				case "yearMonthDuration":
+					return datatypeYearMonthDuration;
+				}
+				return null;
+#endif
 			default:
 				// Maybe invalid name was specified. In such cases, let processors handle them.
 				return null;
@@ -300,5 +312,16 @@ namespace System.Xml.Schema
 		static readonly XsdGYear datatypeGYear = new XsdGYear ();
 		static readonly XsdGMonth datatypeGMonth = new XsdGMonth ();
 		static readonly XsdGDay datatypeGDay = new XsdGDay ();
+#if NET_2_0
+		static readonly XdtAnyAtomicType datatypeAnyAtomicType
+			= new XdtAnyAtomicType ();
+		static readonly XdtUntypedAtomic datatypeUntypedAtomic
+			= new XdtUntypedAtomic ();
+		static readonly XdtDayTimeDuration datatypeDayTimeDuration
+			= new XdtDayTimeDuration ();
+		static readonly XdtYearMonthDuration datatypeYearMonthDuration
+			= new XdtYearMonthDuration ();
+#endif
+
 	}
 }

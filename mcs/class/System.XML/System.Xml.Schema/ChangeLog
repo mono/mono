@@ -1,3 +1,7 @@
+2004-09-22  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaDatatype.cs : handle xdt:* types in FromName().
+
 2004-09-16  Atsushi Enomoto <atsushi@ximian.com>
 
 	* BuiltInDatatype.cs, SchemaDataValueType.cs :
