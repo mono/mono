@@ -1,5 +1,9 @@
 2004-04-29  Martin Baulig  <martin@ximian.com>
 
+	* property-il.il, property-main.cs: New test for #56013.
+
+2004-04-29  Martin Baulig  <martin@ximian.com>
+
 	* test-248.cs: New test for #52731.
 
 2004-04-29  Martin Baulig  <martin@ximian.com>

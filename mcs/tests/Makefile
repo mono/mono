@@ -155,7 +155,7 @@ test-unsafe-compiler-jit:
 #
 # Tests that require separate compilation
 #
-multi: multi-1 multi-2 multi-3 multi-5
+multi: multi-1 multi-2 multi-3 multi-5 ilasm
 	echo Multi-assembly test passes
 
 multi-1:
@@ -191,3 +191,7 @@ multi-5:
 	$(INTERNAL_MCS) /r:dll-2.dll prog-2.cs /out:prog-2.exe
 	$(TEST_RUNTIME) prog-2.exe
 
+ilasm:
+	$(INTERNAL_ILASM) /dll property-il.il
+	$(INTERNAL_MCS) /r:property-il.dll property-main.cs /out:property-main.exe
+	$(TEST_RUNTIME) property-main.exe
