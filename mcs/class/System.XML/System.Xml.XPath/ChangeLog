@@ -1,3 +1,7 @@
+2002-04-12  Duncan Mak  <duncan@ximian.com>
+
+	* XmlCaseOrder.cs: Moved to here from System.Xml.
+
 2002-03-26  Jason Diamond  <jason@injektilo.org>
 
 	* XPathScanner.cs: Now handles name tests with wildacards. Abbreviated 
