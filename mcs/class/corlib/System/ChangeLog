@@ -1,5 +1,13 @@
 2004-09-24  Zoltan Varga  <vargaz@freemail.hu>
 
+	* MonoCustomAttrs.cs: Beginnings of support for returning 2.0 pseudo
+	custom attributes.
+
+	* MonoCustomAttrs.cs (RetrieveAttributeUsage): Avoid infinite recursion.
+
+	* MonoCustomAttrs.cs (GetCustomAttributes): Fix the 'attributeType is 
+	sealed' optimization.
+
 	* Type.cs: Implement 2.0 StructLayoutAttribute property. 
 
 	* Type.cs Add GetPseudoCustomAttributes () method.

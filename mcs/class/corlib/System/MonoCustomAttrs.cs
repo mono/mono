@@ -40,14 +40,32 @@ namespace System
 {
 	internal class MonoCustomAttrs
 	{
-#if NET_2_0 || BOOTSTRAP_NET_2_0
-		internal static readonly bool pseudoAttrs = true;
-#else
-		internal static readonly bool pseudoAttrs = false;
-#endif
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern object[] GetCustomAttributesInternal (ICustomAttributeProvider obj, bool pseudoAttrs);
+
+		internal static object[] GetCustomAttributesBase (ICustomAttributeProvider obj)
+		{
+			object[] attrs = GetCustomAttributesInternal (obj, false);
+
+#if NET_2_0 || BOOTSTRAP_NET_2_0
+			object[] pseudoAttrs = null;
+
+			/* FIXME: Add other types */
+			if (obj is Type)
+				pseudoAttrs = ((Type)obj).GetPseudoCustomAttributes ();
+
+			if (pseudoAttrs != null) {
+				object[] res = new object [attrs.Length + pseudoAttrs.Length];
+				System.Array.Copy (attrs, res, attrs.Length);
+				System.Array.Copy (pseudoAttrs, 0, res, attrs.Length, pseudoAttrs.Length);
+				return res;
+			}
+			else
+				return attrs;
+#else
+			return attrs;
+#endif
+		}
 
 		internal static Attribute GetCustomAttribute (ICustomAttributeProvider obj,
 								Type attributeType,
@@ -74,7 +92,7 @@ namespace System
 				throw new ArgumentNullException ("obj");
 
 			object[] r;
-			object[] res = GetCustomAttributesInternal (obj, pseudoAttrs);
+			object[] res = GetCustomAttributesBase (obj);
 			// shortcut
 			if (!inherit && res.Length == 1)
 			{
@@ -100,7 +118,7 @@ namespace System
 
 			// if AttributeType is sealed, and Inherited is set to false, then 
 			// there's no use in scanning base types 
-			if ((attributeType != null && attributeType.IsSealed) && !inherit)
+			if ((attributeType != null && attributeType.IsSealed) && inherit)
 			{
 				AttributeUsageAttribute usageAttribute = RetrieveAttributeUsage (
 					attributeType);
@@ -168,7 +186,7 @@ namespace System
 				if ((btype = GetBase (btype)) != null)
 				{
 					inheritanceLevel++;
-					res = GetCustomAttributesInternal (btype, pseudoAttrs);
+					res = GetCustomAttributesBase (btype);
 				}
 			} while (inherit && btype != null);
 
@@ -194,14 +212,14 @@ namespace System
 				throw new ArgumentNullException ("obj");
 
 			if (!inherit)
-				return (object[]) GetCustomAttributesInternal (obj, pseudoAttrs).Clone ();
+				return (object[]) GetCustomAttributesBase (obj).Clone ();
 
 			return GetCustomAttributes (obj, null, inherit);
 		}
 
 		internal static bool IsDefined (ICustomAttributeProvider obj, Type attributeType, bool inherit)
 		{
-			object [] res = GetCustomAttributesInternal (obj, pseudoAttrs);
+			object [] res = GetCustomAttributesBase (obj);
 			foreach (object attr in res)
 				if (attributeType.Equals (attr.GetType ()))
 					return true;
@@ -255,6 +273,10 @@ namespace System
 
 		private static AttributeUsageAttribute RetrieveAttributeUsage (Type attributeType)
 		{
+			if (attributeType == typeof (AttributeUsageAttribute))
+				/* Avoid endless recursion */
+				return new AttributeUsageAttribute (AttributeTargets.Class);
+
 			AttributeUsageAttribute usageAttribute = null;
 			object[] attribs = GetCustomAttributes (attributeType,
 				MonoCustomAttrs.AttributeUsageType, false);
