@@ -1450,40 +1450,58 @@ namespace System.Drawing
 
 		public bool IsClipEmpty {
 			get {
-				throw new NotImplementedException ();
+				
+					bool isEmpty = false;
+
+        			GDIPlus.GdipIsClipEmpty(nativeObject, out isEmpty);
+        			return isEmpty;
 			}
 		}
 
 		public bool IsVisibleClipEmpty {
 			get {
-				throw new NotImplementedException ();
+				
+					bool isEmpty = false;
+
+        			GDIPlus.GdipIsVisibleClipEmpty(nativeObject, out isEmpty);
+        			return isEmpty;
 			}
 		}
 
 		public float PageScale {
 			get {
-				throw new NotImplementedException ();
+					float scale;
+
+        			GDIPlus.GdipGetPageScale(nativeObject, out scale);
+        			return scale;
 			}
 			set {
-				throw new NotImplementedException ();
+					GDIPlus.GdipSetPageScale(nativeObject, value);
 			}
 		}
 
 		public GraphicsUnit PageUnit {
 			get {
-				throw new NotImplementedException ();
+					GraphicsUnit unit;
+
+					GDIPlus.GdipGetPageUnit(nativeObject, out unit);
+        			return unit;
 			}
 			set {
-				throw new NotImplementedException ();
+				  	GDIPlus.GdipSetPageUnit(nativeObject, value);
 			}
 		}
 
 		public PixelOffsetMode PixelOffsetMode {
 			get {
-				throw new NotImplementedException ();
+			        PixelOffsetMode pixelOffset = PixelOffsetMode.Invalid;
+
+    			    GDIPlus.GdipGetPixelOffsetMode(nativeObject, out pixelOffset);
+
+        			return pixelOffset;
 			}
 			set {
-				throw new NotImplementedException ();
+					GDIPlus.GdipSetPixelOffsetMode(nativeObject, value);    	
 			}
 		}
 
@@ -1503,28 +1521,40 @@ namespace System.Drawing
 
 		public SmoothingMode SmoothingMode {
 			get {
-				throw new NotImplementedException ();
+					SmoothingMode mode = SmoothingMode.Invalid;
+
+        			GDIPlus.GdipGetSmoothingMode(nativeObject, out mode);
+	
+    			    return mode;
 			}
 			set {
-				throw new NotImplementedException ();
+					GDIPlus.GdipSetSmoothingMode(nativeObject, value);
 			}
 		}
 
 		public int TextContrast {
-			get {
-				throw new NotImplementedException ();
+			get {	
+					int contrast;
+					
+				 	GDIPlus.GdipGetTextContrast(nativeObject, out contrast);
+				 	return contrast;
 			}
 			set {
-				throw new NotImplementedException ();
+					GDIPlus.GdipSetTextContrast(nativeObject, value);
 			}
 		}
 
 		public TextRenderingHint TextRenderingHint {
 			get {
-				throw new NotImplementedException ();
+				
+					TextRenderingHint hint;
+
+        			GDIPlus.GdipGetTextRenderingHint(nativeObject, out hint);
+					return hint;        
 			}
 			set {
-				throw new NotImplementedException ();
+				
+					GDIPlus.GdipSetTextRenderingHint(nativeObject, value);
 			}
 		}
 
@@ -1542,7 +1572,10 @@ namespace System.Drawing
 
 		public RectangleF VisibleClipBounds {
 			get {
-				throw new NotImplementedException ();
+					RectangleF	rect;
+					
+					GDIPlus.GdipGetVisibleClipBounds(nativeObject, out rect);
+					return rect;
 			}
 		}
 	}

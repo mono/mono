@@ -3,7 +3,7 @@
 //
 // Author: 
 // Alexandre Pigolkine (pigolkine@gmx.de)
-// Jordi Mas i Hernàndez (jmas@softcatala.org)
+// Jordi Mas i Hernàndez (jordi@ximian.com)
 //
 
 using System;
@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Drawing.Text;
 
 namespace System.Drawing {
 	/// <summary>
@@ -301,8 +302,38 @@ namespace System.Drawing {
 		internal static extern Status GdipGetDpiX(IntPtr graphics, out float dpi);
 		[DllImport("gdiplus.dll")]                   
 		internal static extern Status GdipGetDpiY(IntPtr graphics, out float dpi);
+		[DllImport("gdiplus.dll")]                   
+		internal static extern Status GdipIsClipEmpty(IntPtr graphics, out bool result);
+		[DllImport("gdiplus.dll")]                   
+		internal static extern Status GdipIsVisibleClipEmpty(IntPtr graphics, out bool result);		
+		[DllImport("gdiplus.dll")]                   
+		internal static extern Status GdipGetPageUnit(IntPtr graphics, out GraphicsUnit unit);		
+		[DllImport("gdiplus.dll")]                   
+		internal static extern Status GdipGetPageScale(IntPtr graphics, out float scale);		
+		[DllImport("gdiplus.dll")]                   
+		internal static extern Status GdipSetPageUnit(IntPtr graphics, GraphicsUnit unit);
+		[DllImport("gdiplus.dll")]                   
+		internal static extern Status GdipSetPageScale(IntPtr graphics, float scale);
+		[DllImport("gdiplus.dll")]                   
+		internal static extern Status GdipSetPixelOffsetMode(IntPtr graphics, PixelOffsetMode pixelOffsetMode);
+		[DllImport("gdiplus.dll")]                   
+		internal static extern Status GdipGetPixelOffsetMode(IntPtr graphics, out PixelOffsetMode pixelOffsetMode);
+		[DllImport("gdiplus.dll")]                   
+		internal static extern Status GdipSetSmoothingMode(IntPtr graphics, SmoothingMode smoothingMode);
+		[DllImport("gdiplus.dll")]                   
+		internal static extern Status GdipGetSmoothingMode(IntPtr graphics, out SmoothingMode smoothingMode);
+		[DllImport("gdiplus.dll")]                   
+		internal static extern Status GdipSetTextContrast(IntPtr graphics, int contrast);
+		[DllImport("gdiplus.dll")]                   
+		internal static extern Status GdipGetTextContrast(IntPtr graphics, out int contrast);
+		[DllImport("gdiplus.dll")]                   
+		internal static extern Status GdipSetTextRenderingHint(IntPtr graphics, TextRenderingHint mode);
+		[DllImport("gdiplus.dll")]                   
+		internal static extern Status GdipGetTextRenderingHint(IntPtr graphics, out TextRenderingHint mode);
+		[DllImport("gdiplus.dll")]                   
+		internal static extern Status GdipGetVisibleClipBounds(IntPtr graphics, out RectangleF rect);
 
-		
+				
 		// Pen functions
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipCreatePen1(int argb, float width, Unit unit, out int pen);
