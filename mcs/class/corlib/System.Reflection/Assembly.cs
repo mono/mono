@@ -27,6 +27,9 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern string get_code_base ();
 		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern string get_location ();
+		
 		public virtual string CodeBase {
 			get {
 				return get_code_base ();
@@ -62,7 +65,7 @@ namespace System.Reflection {
 
 		public virtual String Location {
 			get {
-				return null;
+				return get_location ();
 			}
 		}
 
