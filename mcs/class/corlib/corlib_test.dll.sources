@@ -220,5 +220,6 @@ System/TypeTest.cs
 System/UInt16Test.cs
 System/UInt32Test.cs
 System/UInt64Test.cs
+System/UIntPtrTest.cs
 System/VersionTest.cs
 System/ValueTypeTest.cs
