@@ -1,5 +1,12 @@
 2004-04-26 David Waite <mass@akuma.org>
 
+	* file-io.h:
+	* socket-io.h:
+	* threads.h:
+	* unicode.h: remove comma from end of enumeration declarations
+
+2004-04-26 David Waite <mass@akuma.org>
+
 	* debug-mono-symfile.h:
 	* decimal.c:
 	* mono_debug.h:
