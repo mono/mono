@@ -112,6 +112,7 @@ namespace System {
 			AllowSign, Digits, Decimal, ExponentSign, Exponent, ConsumeWhiteSpace
 		}
 		
+		[MonoTODO("check if digits are group in correct numbers between the group separators")]
 		public static double Parse (string s, NumberStyles style, IFormatProvider provider)
 		{
 			if (s == null) throw new ArgumentNullException();
@@ -153,10 +154,16 @@ namespace System {
 			// Setup
 			//
 			string decimal_separator = null;
+			string group_separator = null;
 			int decimal_separator_len = 0;
+			int group_separator_len = 0;
 			if ((style & NumberStyles.AllowDecimalPoint) != 0){
 				decimal_separator = format.NumberDecimalSeparator;
 				decimal_separator_len = decimal_separator.Length;
+			}
+			if ((style & NumberStyles.AllowThousands) != 0){
+				group_separator = format.NumberGroupSeparator;
+				group_separator_len = group_separator.Length;
 			}
 			string positive = format.PositiveSign;
 			string negative = format.NegativeSign;
@@ -200,6 +207,15 @@ namespace System {
 							b [didx++] = (byte) '.';
 							sidx += decimal_separator_len-1;
 							state = State.Decimal; 
+							break;
+						}
+					}
+					if (group_separator != null &&
+					    group_separator [0] == c){
+						if (s.Substring (sidx, group_separator_len) ==
+						    group_separator){
+							sidx += group_separator_len-1;
+							state = State.Digits; 
 							break;
 						}
 					}
@@ -273,7 +289,11 @@ namespace System {
 			b [didx] = 0;
 			unsafe {
 				fixed (byte *p = &b [0]){
-					return ParseImpl (p);
+					double retVal = ParseImpl (p);
+					if (IsPositiveInfinity(retVal) || IsNegativeInfinity(retVal))
+						throw new OverflowException();
+
+					return retVal;
 				}
 			}
 		}

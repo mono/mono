@@ -1,3 +1,10 @@
+2002-06-04  Nick Drochak  <ndrochak@gol.com>
+
+	* Double.cs (Parse): Recognize the group separator string, but still we
+	don't check the format for the proper number of digits between
+	separators. Also throw OverflowException when we get Pos or Neg
+	Infinity from runtime.
+
 2002-06-03  Duncan Mak  <duncan@ximian.com>
 
 	* Convert.cs (ToDouble): Fixed ToDouble (byte value).
