@@ -1,3 +1,7 @@
+2001-10-15  Martin Weindel <martin.weindel@t-online.de>
+        * added Decimal.cs
+        * added DecimalFormatter.cs (internal class used from System.Decimal)
+
 2001-10-11  Thomas Neidhart <tome@sbox.tugraz.at>
 
 	* Convert.cs: Added methods for Base64 transforming
