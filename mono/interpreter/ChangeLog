@@ -1,3 +1,8 @@
+
+Fri Jul 25 19:06:27 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: updates for new instructions.
+
 2003-07-22  Zoltan Varga  <vargaz@freemail.hu>
 
 	* interp.c: Use the new metadata_section lock instead of metadata_lock.
