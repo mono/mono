@@ -1,3 +1,8 @@
+
+Wed May 8 16:48:11 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* test-118.cs: test alternate type lookup for attributes.
+
 2002-05-07  Ravi Pratap  <ravi@ximian.com>
 
 	* test-117.cs : Add.
