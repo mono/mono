@@ -1,5 +1,10 @@
 2003-07-06  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlElement.cs : IsEmpty has removed attributes since it incorrectly
+	  used RemoveAll().
+
+2003-07-06  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlDocument.cs : Load(string filename) should close its stream.
 	  Small change for the latest DTDObjectModel change.
 	* XmlTextReader.cs : Changed for the latest DTDObjectModel change (all

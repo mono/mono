@@ -109,8 +109,10 @@ namespace System.Xml
 
 			set {
 				isNotEmpty = !value;
-				if(value)
-					RemoveAll();
+				if(value) {
+					while (FirstChild != null)
+						RemoveChild (FirstChild);
+				}
 			}
 		}
 
