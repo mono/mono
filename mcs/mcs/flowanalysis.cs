@@ -748,8 +748,10 @@ namespace Mono.CSharp
 
 				reachability = Reachability.Never ();
 
-				if (o_vectors == null)
+				if (o_vectors == null) {
+					reachability.SetBarrier ();
 					return;
+				}
 
 				bool first = true;
 
