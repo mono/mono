@@ -34,5 +34,13 @@ namespace System.Web.UI.Design.WebControls
 		{
 			throw new NotImplementedException();
 		}
+
+		protected override string HelpKeyword
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+		}
 	}
 }

@@ -19,7 +19,7 @@ namespace System.Web.UI.Design.WebControls
 {
 	class BordersPageInternal : BaseDataListPageInternal
 	{
-		public BordersPageInternal() : base()
+		public BordersPageInternal()
 		{
 		}
 
@@ -33,6 +33,27 @@ namespace System.Web.UI.Design.WebControls
 		protected override void SaveComponent()
 		{
 			throw new NotImplementedException();
+		}
+
+		public override void SetComponent(IComponent component)
+		{
+			base.SetComponent(component);
+			InitializeForm();
+		}
+
+		[MonoTODO]
+		private void InitializeForm()
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		protected override string HelpKeyword
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
 		}
 	}
 }

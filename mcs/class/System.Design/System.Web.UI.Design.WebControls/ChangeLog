@@ -1,4 +1,28 @@
 
+2002-10-07     Gaurav Vaish <gvaish_mono@lycos.com>
+
+	* BaseDataListPageInternal.cs
+	                          : ctor()         - Removed call to base.
+	                                             It's by default.
+	                          : HelpKeyword    - Added abstract property.
+	                          : IsDataGridMode - Implemented.
+	                          : ShowHelp(),
+	                          : SupportsHelp(),
+	                          : SetComponent(IComponent),
+	                          : GetBaseControl(),
+	                          : GetBaseDesigner()
+	                                           - Implemented.
+	* BordersPageInternal.cs  : SetComponent(IComponent)
+	                                           - Implemented.
+	                          : HelpKeyword { get; },
+	                          : InitializeForm()
+	                                           - Stubbed.
+	* FormatPageInternal.cs   : HelpKeyword { get; }
+	                                           - Stubbed.
+	* GeneralPageDataListInternal.cs
+	                          : HelpKeyword { get; }
+	                                           - Stubbed.
+
 2002-09-25     Gaurav Vaish <gvaish_mono@lycos.com>
 
 	* RegextEditorDialog.cs   : Added a few more methods.
