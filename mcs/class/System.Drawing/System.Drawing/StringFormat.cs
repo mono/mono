@@ -15,8 +15,8 @@ namespace System.Drawing
 	/// </summary>
 	public class StringFormat
 	{
-		protected StringAlignment alignment;
-		protected StringAlignment line_alignment;
+		private StringAlignment alignment;
+		private StringAlignment line_alignment;
 
 		public StringFormat()
 		{
