@@ -1650,16 +1650,15 @@ enum_declaration
 		Location enum_location = lexer.Location;
 
 		string full_name = MakeName ((string) $4);
-		Enum e = new Enum (
-				current_container, (string) $5, (int) $2, full_name, 
-				(Attributes) $1, enum_location);
-
-		foreach (VariableDeclaration ev in (ArrayList) $6){
+		Enum e = new Enum (current_container, (string) $5, (int) $2, full_name, 
+				   (Attributes) $1, enum_location);
+		
+		foreach (VariableDeclaration ev in (ArrayList) $6) {
 			Location loc = (Location) ev.Location;
 
 			CheckDef (e.AddEnumMember (ev.identifier, 
 						   (Expression) ev.expression_or_array_initializer,
-						   loc),
+						   loc, ev.OptAttributes),
 				  ev.identifier, loc);
 		}
 
@@ -1709,7 +1708,7 @@ enum_member_declarations
 enum_member_declaration
 	: opt_attributes IDENTIFIER 
 	  {
-		$$ = new VariableDeclaration ((string) $2, null, lexer.Location);
+		$$ = new VariableDeclaration ((string) $2, null, lexer.Location, (Attributes) $1);
 	  }
 	| opt_attributes IDENTIFIER
 	  {
@@ -1717,7 +1716,7 @@ enum_member_declaration
 	  }
           ASSIGN expression
 	  { 
-		$$ = new VariableDeclaration ((string) $2, $5, lexer.Location);
+		$$ = new VariableDeclaration ((string) $2, $5, lexer.Location, (Attributes) $1);
 	  }
 	;
 
@@ -3559,11 +3558,18 @@ public class VariableDeclaration {
 	public string identifier;
 	public object expression_or_array_initializer;
 	public Location Location;
+	public Attributes OptAttributes;
 
-	public VariableDeclaration (string id, object eoai, Location l){
+	public VariableDeclaration (string id, object eoai, Location l, Attributes opt_attrs)
+	{
 		this.identifier = id;
 		this.expression_or_array_initializer = eoai;
 		this.Location = l;
+		this.OptAttributes = opt_attrs;
+	}
+
+	public VariableDeclaration (string id, object eoai, Location l) : this (id, eoai, l, null)
+	{
 	}
 }
 

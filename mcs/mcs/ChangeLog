@@ -1,3 +1,14 @@
+2002-06-13  Ravi Pratap  <ravi@ximian.com>
+
+	* cs-parser.jay (enum_member_declaration): Pass in the attributes
+	attached.
+
+	* enum.cs (AddEnumMember): Add support to store the attributes associated 
+	with each member too.
+
+	* attribute.cs (CheckAttribute, ApplyAttributes): Update to handle
+	field builders too - this takes care of the enum member case.
+
 2002-06-10  Rachel Hestilow  <hestilow@ximian.com>
 
 	* typemanager.cs (TypeManager.VerifyUnManaged): Allow

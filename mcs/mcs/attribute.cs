@@ -442,7 +442,7 @@ namespace Mono.CSharp {
 					return true;
 				else
 					return false;
-			} else if (element is Field) {
+			} else if (element is Field || element is FieldBuilder) {
 				if ((targets & AttributeTargets.Field) != 0)
 					return true;
 				else
@@ -452,7 +452,7 @@ namespace Mono.CSharp {
 					return true;
 				else
 					return false;
-			} else if (element is Method || element is Operator || element is InterfaceMethod) {
+			} else if (element is Method || element is Operator || element is InterfaceMethod || element is Accessor) {
 				if ((targets & AttributeTargets.Method) != 0)
 					return true;
 				else
@@ -463,7 +463,7 @@ namespace Mono.CSharp {
 				else
 					return false;
 			} else if (element is Property || element is Indexer ||
-				   element is InterfaceProperty || element is InterfaceIndexer || element is Accessor) {
+				   element is InterfaceProperty || element is InterfaceIndexer) {
 				if ((targets & AttributeTargets.Property) != 0)
 					return true;
 				else
@@ -635,6 +635,8 @@ namespace Mono.CSharp {
 						((AssemblyBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is ModuleBuilder) {
 						((ModuleBuilder) builder).SetCustomAttribute (cb);
+					} else if (kind is FieldBuilder) {
+						((FieldBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is Accessor) {
 						((MethodBuilder) builder).SetCustomAttribute (cb);
 					} else
