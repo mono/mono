@@ -1,3 +1,9 @@
+2004-09-06  Jambunathan K  <kjambunathan@novell.com>
+
+	* Strings.cs: Fixed formatting issues. For the sake of consistency
+	in style, stripped out all the comment strings that were documenting
+	the APIs.
+
 2004-09-05  Jambunathan K  <kjambunathan@novell.com>
 	* DateAndTime.cs (DateTime.Today): Changed signature of stime().
 	* Strings.cs: 

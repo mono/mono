@@ -44,30 +44,20 @@
 using System;
 using System.Text;
 using System.ComponentModel;
+using System.Globalization;
 
 using System.Runtime.InteropServices;
 using Microsoft.VisualBasic.CompilerServices;
 
 namespace Microsoft.VisualBasic
 {
-	/// <summary>
-	/// The Strings module contains procedures used to perform string operations. 
-	/// </summary>
-
 	[StandardModule] 
 	[StructLayout(LayoutKind.Auto)] 
 	public class Strings
 	{
 		private Strings()
 		{
-			//Do nothing. Nobody should be creating this.
 		}
-
-		
-		/// <summary>
-		/// Returns an Integer value representing the character code corresponding to a character.
-		/// </summary>
-		/// <param name="String">Required. Any valid Char or String expression. If String is a String expression, only the first character of the string is used for input. If String is Nothing or contains no characters, an ArgumentException error occurs.</param>
 		public static int Asc(char String) 
 		{
 			//FIXME: Check the docs, it says something about Locales, DBCS, etc.
@@ -82,11 +72,6 @@ namespace Microsoft.VisualBasic
 			return (int)String;
 		}
 
-
-		/// <summary>
-		/// Returns an Integer value representing the character code corresponding to a character.
-		/// </summary>
-		/// <param name="String">Required. Any valid Char or String expression. If String is a String expression, only the first character of the string is used for input. If String is Nothing or contains no characters, an ArgumentException error occurs.</param>
 		public static int Asc(string String)
 		{
 			if ((String == null) || (String.Length < 1))
@@ -94,12 +79,6 @@ namespace Microsoft.VisualBasic
 
 			return Asc(String[0]);
 		}
-
-
-		/// <summary>
-		/// Returns an Integer value representing the character code corresponding to a character.
-		/// </summary>
-		/// <param name="String">Required. Any valid Char or String expression. If String is a String expression, only the first character of the string is used for input. If String is Nothing or contains no characters, an ArgumentException error occurs.</param>
 		public static int AscW(char String) 
 		{
 			/*
@@ -109,11 +88,6 @@ namespace Microsoft.VisualBasic
 			 */
 			return (int) String;
 		}
-		
-		/// <summary>
-		/// Returns an Integer value representing the character code corresponding to a character.
-		/// </summary>
-		/// <param name="String">Required. Any valid Char or String expression. If String is a String expression, only the first character of the string is used for input. If String is Nothing or contains no characters, an ArgumentException error occurs.</param>
 		public static int AscW(string String) 
 		{
 			/*
@@ -127,10 +101,6 @@ namespace Microsoft.VisualBasic
 			return AscW(String[0]);
 		}
 
-		/// <summary>
-		/// Returns the character associated with the specified character code.
-		/// </summary>
-		/// <param name="CharCode">Required. An Integer expression representing the code point, or character code, for the character. If CharCode is outside the range -32768 through 65535, an ArgumentException error occurs.</param>
 		public static char Chr(int CharCode) 
 		{
 
@@ -146,10 +116,6 @@ namespace Microsoft.VisualBasic
 			return System.Convert.ToChar(CharCode);
 		}
 
-		/// <summary>
-		/// Returns the character associated with the specified character code.
-		/// </summary>
-		/// <param name="CharCode">Required. An Integer expression representing the code point, or character code, for the character. If CharCode is outside the range -32768 through 65535, an ArgumentException error occurs.</param>
 		public static char ChrW(int CharCode ) 
 		{
 			/*
@@ -172,13 +138,6 @@ namespace Microsoft.VisualBasic
 			return System.Convert.ToChar(CharCode);
 		}
 
-		/// <summary>
-		/// Returns a zero-based array containing a subset of a String array based on specified filter criteria.
-		/// </summary>
-		/// <param name="Source">Required. One-dimensional array of strings to be searched.</param>
-		/// <param name="Match">Required. String to search for.</param>
-		/// <param name="Include">Optional. Boolean value indicating whether to return substrings that include or exclude Match. If Include is True, the Filter function returns the subset of the array that contains Match as a substring. If Include is False, the Filter function returns the subset of the array that does not contain Match as a substring.</param>
-		/// <param name="Compare">Optional. Numeric value indicating the kind of string comparison to use. See Settings for values.</param>
 		public static string[] Filter(object[] Source, 
 					      string Match, 
 					      [Optional, __DefaultArgumentValue(true)] 
@@ -199,13 +158,6 @@ namespace Microsoft.VisualBasic
 
 		}
 
-		/// <summary>
-		/// Returns a zero-based array containing a subset of a String array based on specified filter criteria.
-		/// </summary>
-		/// <param name="Source">Required. One-dimensional array of strings to be searched.</param>
-		/// <param name="Match">Required. String to search for.</param>
-		/// <param name="Include">Optional. Boolean value indicating whether to return substrings that include or exclude Match. If Include is True, the Filter function returns the subset of the array that contains Match as a substring. If Include is False, the Filter function returns the subset of the array that does not contain Match as a substring.</param>
-		/// <param name="Compare">Optional. Numeric value indicating the kind of string comparison to use. See Settings for values.</param>
 		public static string[] Filter(string[] Source, 
 					      string Match, 
 					      [Optional, __DefaultArgumentValue(true)] 
@@ -281,11 +233,6 @@ namespace Microsoft.VisualBasic
 			}
 		}
 
-		/// <summary>
-		/// Returns a string formatted according to instructions contained in a format String expression.
-		/// </summary>
-		/// <param name="Expression">Required. Any valid expression.</param>
-		/// <param name="Style">Optional. A valid named or user-defined format String expression. </param>
 		public static string Format(object expression, 
 					    [Optional, __DefaultArgumentValue("")]string style)
 		{
@@ -405,9 +352,9 @@ namespace Microsoft.VisualBasic
 					}
 					else
 						try 
-							{
-								returnstr=Convert.ToDouble(expression).ToString (style);
-							}
+						{
+							returnstr=Convert.ToDouble(expression).ToString (style);
+						}
 					catch (Exception ex){
 						style = "0" + style;
 						returnstr=Convert.ToDouble(expression).ToString (style);
@@ -423,14 +370,6 @@ namespace Microsoft.VisualBasic
 			return returnstr;
 		}
 
-		/// <summary>
-		/// Returns an expression formatted as a currency value using the currency symbol defined in the system control panel.
-		/// </summary>
-		/// <param name="Expression">Required. Expression to be formatted.</param>
-		/// <param name="NumDigitsAfterDecimal">Optional. Numeric value indicating how many places are displayed to the right of the decimal. Default value is 1, which indicates that the computer's regional settings are used.</param>
-		/// <param name="IncludeLeadingDigit">Optional. Tristate enumeration that indicates whether or not a leading zero is displayed for fractional values. See Settings for values.</param>
-		/// <param name="UseParensForNegativeNumbers">Optional. Tristate enumeration that indicates whether or not to place negative values within parentheses. See Settings for values.</param>
-		/// <param name="GroupDigits">Optional. Tristate enumeration that indicates whether or not numbers are grouped using the group delimiter specified in the computer's regional settings. See Settings for values.</param>
 		public static string FormatCurrency(object Expression, 
 						    [Optional, __DefaultArgumentValue(-1)] 
 						    int NumDigitsAfterDecimal, 
@@ -442,63 +381,58 @@ namespace Microsoft.VisualBasic
 						    TriState GroupDigits)
 		{
 			if (NumDigitsAfterDecimal > 99 || NumDigitsAfterDecimal < -1 )
-											      throw new ArgumentException(
-															  VBUtils.GetResourceString("Argument_Range0to99_1",
-																		    "NumDigitsAfterDecimal" ));       
+				throw new ArgumentException(
+							    VBUtils.GetResourceString("Argument_Range0to99_1",
+										      "NumDigitsAfterDecimal" ));       
 											      
-											      if (Expression == null)
-															     return "";
+			if (Expression == null)
+				return "";
 															     
-															     if (!(Expression is IFormattable))
-																				       throw new InvalidCastException(
-																								      VBUtils.GetResourceString("InvalidCast_FromStringTo",Expression.ToString(),"Double"));
+			if (!(Expression is IFormattable))
+				throw new InvalidCastException(
+							       VBUtils.GetResourceString("InvalidCast_FromStringTo",Expression.ToString(),"Double"));
 
-															     String formatStr = "00";
+			String formatStr = "00";
 
-															     if (GroupDigits == TriState.True)
-																     formatStr = formatStr + ",00";
+			if (GroupDigits == TriState.True)
+				formatStr = formatStr + ",00";
 
-															     if (NumDigitsAfterDecimal > -1)	{
-																     string decStr = ".";
-																     for (int count=1; count<=NumDigitsAfterDecimal; count ++)
-																	     decStr = decStr + "0";
+			if (NumDigitsAfterDecimal > -1)	{
+				string decStr = ".";
+				for (int count=1; count<=NumDigitsAfterDecimal; count ++)
+					decStr = decStr + "0";
 			
-																     formatStr = formatStr + decStr;
-															     }
+				formatStr = formatStr + decStr;
+			}
 
-															     if (UseParensForNegativeNumbers == TriState.True) {
-																     String temp = formatStr;
-																     formatStr = formatStr + ";(" ;
-																     formatStr = formatStr + temp;
-																     formatStr = formatStr + ")";
-															     }
+			if (UseParensForNegativeNumbers == TriState.True) {
+				String temp = formatStr;
+				formatStr = formatStr + ";(" ;
+				formatStr = formatStr + temp;
+				formatStr = formatStr + ")";
+			}
 
-															     //Console.WriteLine("formatStr : " + formatStr);	
+			//Console.WriteLine("formatStr : " + formatStr);	
 
-															     string returnstr=null;
-															     string expstring= Expression.GetType().ToString();
-															     switch(expstring) {
-															     case "System.Decimal":	case "System.Byte":	case "System.SByte":
-															     case "System.Int16":	case "System.Int32":	case "System.Int64":
-															     case "System.Double":	case "System.Single":	case "System.UInt16":
-															     case "System.UInt32":	case "System.UInt64":
-																     returnstr = Convert.ToDouble(Expression).ToString (formatStr);
-																     break;
-															     default:
-																     throw new InvalidCastException(
-																				    VBUtils.GetResourceString("InvalidCast_FromStringTo",Expression.ToString(),"Double"));
-															     }
-															     String curSumbol = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.CurrencySymbol;
-															     returnstr = curSumbol + returnstr;
+			string returnstr=null;
+			string expstring= Expression.GetType().ToString();
+			switch(expstring) {
+			case "System.Decimal":	case "System.Byte":	case "System.SByte":
+			case "System.Int16":	case "System.Int32":	case "System.Int64":
+			case "System.Double":	case "System.Single":	case "System.UInt16":
+			case "System.UInt32":	case "System.UInt64":
+				returnstr = Convert.ToDouble(Expression).ToString (formatStr);
+				break;
+			default:
+				throw new InvalidCastException(
+							       VBUtils.GetResourceString("InvalidCast_FromStringTo",Expression.ToString(),"Double"));
+			}
+			String curSumbol = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.CurrencySymbol;
+			returnstr = curSumbol + returnstr;
 			
-															     return returnstr;
+			return returnstr;
 		}
 
-		/// <summary>
-		/// Returns an expression formatted as a date or time.
-		/// </summary>
-		/// <param name="Expression">Required. Date expression to be formatted. </param>
-		/// <param name="NamedFormat">Optional. Numeric value that indicates the date or time format used. If omitted, GeneralDate is used.</param>
 		public static string FormatDateTime(DateTime Expression, 
 						    [Optional, __DefaultArgumentValue(DateFormat.GeneralDate)] 
 						    DateFormat NamedFormat)
@@ -519,14 +453,6 @@ namespace Microsoft.VisualBasic
 			}
 		}
 
-		/// <summary>
-		/// Returns an expression formatted as a number.
-		/// </summary>
-		/// <param name="Expression">Required. Expression to be formatted.</param>
-		/// <param name="NumDigitsAfterDecimal">Optional. Numeric value indicating how many places are displayed to the right of the decimal. Default value is 1, which indicates that the computer's regional settings are used.</param>
-		/// <param name="IncludeLeadingDigit">Optional. Tristate enumeration that indicates whether or not a leading zero is displayed for fractional values. See Settings for values.</param>
-		/// <param name="UseParensForNegativeNumbers">Optional. Tristate enumeration that indicates whether or not to place negative values within parentheses. See Settings for values.</param>
-		/// <param name="GroupDigits">Optional. Tristate enumeration that indicates whether or not numbers are grouped using the group delimiter specified in the computer's regional settings. See Settings for values.</param>
 		public static string FormatNumber(object Expression, 
 						  [Optional, __DefaultArgumentValue(-1)] 
 						  int NumDigitsAfterDecimal, 
@@ -538,64 +464,56 @@ namespace Microsoft.VisualBasic
 						  TriState GroupDigits)
 		{
 			if (NumDigitsAfterDecimal > 99 || NumDigitsAfterDecimal < -1 )
-											      throw new ArgumentException(
-															  VBUtils.GetResourceString("Argument_Range0to99_1",
-																		    "NumDigitsAfterDecimal" ));       
+				throw new ArgumentException(
+							    VBUtils.GetResourceString("Argument_Range0to99_1",
+										      "NumDigitsAfterDecimal" ));       
 											      
-											      if (Expression == null)
-															     return "";
+			if (Expression == null)
+				return "";
 															     
-															     if (!(Expression is IFormattable))
-																				       throw new InvalidCastException(
-																								      VBUtils.GetResourceString("InvalidCast_FromStringTo",Expression.ToString(),"Double"));
+			if (!(Expression is IFormattable))
+				throw new InvalidCastException(
+							       VBUtils.GetResourceString("InvalidCast_FromStringTo",Expression.ToString(),"Double"));
 
-															     String formatStr = "00";
+			String formatStr = "00";
 
-															     if (GroupDigits == TriState.True)
-																     formatStr = formatStr + ",00";
+			if (GroupDigits == TriState.True)
+				formatStr = formatStr + ",00";
 
-															     if (NumDigitsAfterDecimal > -1)	{
-																     string decStr = ".";
-																     for (int count=1; count<=NumDigitsAfterDecimal; count ++)
-																	     decStr = decStr + "0";
+			if (NumDigitsAfterDecimal > -1)	{
+				string decStr = ".";
+				for (int count=1; count<=NumDigitsAfterDecimal; count ++)
+					decStr = decStr + "0";
 			
-																     formatStr = formatStr + decStr;
-															     }
+				formatStr = formatStr + decStr;
+			}
 
-															     if (UseParensForNegativeNumbers == TriState.True) {
-																     String temp = formatStr;
-																     formatStr = formatStr + ";(" ;
-																     formatStr = formatStr + temp;
-																     formatStr = formatStr + ")";
-															     }
+			if (UseParensForNegativeNumbers == TriState.True) {
+				String temp = formatStr;
+				formatStr = formatStr + ";(" ;
+				formatStr = formatStr + temp;
+				formatStr = formatStr + ")";
+			}
 
-															     //Console.WriteLine("formatStr : " + formatStr);	
+			//Console.WriteLine("formatStr : " + formatStr);	
 
-															     string returnstr=null;
-															     string expstring= Expression.GetType().ToString();
-															     switch(expstring) {
-															     case "System.Decimal":	case "System.Byte":	case "System.SByte":
-															     case "System.Int16":	case "System.Int32":	case "System.Int64":
-															     case "System.Double":	case "System.Single":	case "System.UInt16":
-															     case "System.UInt32":	case "System.UInt64":
-																     returnstr = Convert.ToDouble(Expression).ToString (formatStr);
-																     break;
-															     default:
-																     throw new InvalidCastException(
-																				    VBUtils.GetResourceString("InvalidCast_FromStringTo",Expression.ToString(),"Double"));
-															     }
+			string returnstr=null;
+			string expstring= Expression.GetType().ToString();
+			switch(expstring) {
+			case "System.Decimal":	case "System.Byte":	case "System.SByte":
+			case "System.Int16":	case "System.Int32":	case "System.Int64":
+			case "System.Double":	case "System.Single":	case "System.UInt16":
+			case "System.UInt32":	case "System.UInt64":
+				returnstr = Convert.ToDouble(Expression).ToString (formatStr);
+				break;
+			default:
+				throw new InvalidCastException(
+							       VBUtils.GetResourceString("InvalidCast_FromStringTo",Expression.ToString(),"Double"));
+			}
 			
-															     return returnstr;
+			return returnstr;
 		}
 
-		/// <summary>
-		/// Returns an expression formatted as a percentage (that is, multiplied by 100) with a trailing % character.
-		/// </summary>
-		/// <param name="Expression">Required. Expression to be formatted.</param>
-		/// <param name="NumDigitsAfterDecimal">Optional. Numeric value indicating how many places are displayed to the right of the decimal. Default value is 1, which indicates that the computer's regional settings are used.</param>
-		/// <param name="IncludeLeadingDigit">Optional. Tristate enumeration that indicates whether or not a leading zero is displayed for fractional values. See Settings for values.</param>
-		/// <param name="UseParensForNegativeNumbers">Optional. Tristate enumeration that indicates whether or not to place negative values within parentheses. See Settings for values.</param>
-		/// <param name="GroupDigits">Optional. Tristate enumeration that indicates whether or not numbers are grouped using the group delimiter specified in the computer's regional settings. See Settings for values.</param>
 		public static string FormatPercent(object Expression, 
 						   [Optional, __DefaultArgumentValue(-1)] 
 						   int NumDigitsAfterDecimal, 
@@ -607,61 +525,56 @@ namespace Microsoft.VisualBasic
 						   TriState GroupDigits)
 		{
 			if (NumDigitsAfterDecimal > 99 || NumDigitsAfterDecimal < -1 )
-											      throw new ArgumentException(
-															  VBUtils.GetResourceString("Argument_Range0to99_1",
-																		    "NumDigitsAfterDecimal" ));       
+				throw new ArgumentException(
+							    VBUtils.GetResourceString("Argument_Range0to99_1",
+										      "NumDigitsAfterDecimal" ));       
 											      
-											      if (Expression == null)
-															     return "";
+			if (Expression == null)
+				return "";
 															     
-															     if (!(Expression is IFormattable))
-																				       throw new InvalidCastException(
-																								      VBUtils.GetResourceString("InvalidCast_FromStringTo",Expression.ToString(),"Double"));
+			if (!(Expression is IFormattable))
+				throw new InvalidCastException(
+							       VBUtils.GetResourceString("InvalidCast_FromStringTo",Expression.ToString(),"Double"));
 
-															     String formatStr = "00";
+			String formatStr = "00";
 
-															     if (GroupDigits == TriState.True)
-																     formatStr = formatStr + ",00";
+			if (GroupDigits == TriState.True)
+				formatStr = formatStr + ",00";
 
-															     if (NumDigitsAfterDecimal > -1) {
-																     string decStr = ".";
-																     for (int count=1; count<=NumDigitsAfterDecimal; count ++)
-																	     decStr = decStr + "0";
+			if (NumDigitsAfterDecimal > -1) {
+				string decStr = ".";
+				for (int count=1; count<=NumDigitsAfterDecimal; count ++)
+					decStr = decStr + "0";
 			
-																     formatStr = formatStr + decStr;
-															     }
+				formatStr = formatStr + decStr;
+			}
 
-															     if (UseParensForNegativeNumbers == TriState.True) {
-																     String temp = formatStr;
-																     formatStr = formatStr + ";(" ;
-																     formatStr = formatStr + temp;
-																     formatStr = formatStr + ")";
-															     }
+			if (UseParensForNegativeNumbers == TriState.True) {
+				String temp = formatStr;
+				formatStr = formatStr + ";(" ;
+				formatStr = formatStr + temp;
+				formatStr = formatStr + ")";
+			}
 
-															     formatStr = formatStr + "%";
+			formatStr = formatStr + "%";
 
-															     string returnstr=null;
-															     string expstring= Expression.GetType().ToString();
-															     switch(expstring) {
-															     case "System.Decimal":	case "System.Byte":	case "System.SByte":
-															     case "System.Int16":	case "System.Int32":	case "System.Int64":
-															     case "System.Double":	case "System.Single":	case "System.UInt16":
-															     case "System.UInt32":	case "System.UInt64":
-																     returnstr = Convert.ToDouble(Expression).ToString (formatStr);
-																     break;
-															     default:
-																     throw new InvalidCastException(
-																				    VBUtils.GetResourceString("InvalidCast_FromStringTo",Expression.ToString(),"Double"));
-															     }
+			string returnstr=null;
+			string expstring= Expression.GetType().ToString();
+			switch(expstring) {
+			case "System.Decimal":	case "System.Byte":	case "System.SByte":
+			case "System.Int16":	case "System.Int32":	case "System.Int64":
+			case "System.Double":	case "System.Single":	case "System.UInt16":
+			case "System.UInt32":	case "System.UInt64":
+				returnstr = Convert.ToDouble(Expression).ToString (formatStr);
+				break;
+			default:
+				throw new InvalidCastException(
+							       VBUtils.GetResourceString("InvalidCast_FromStringTo",Expression.ToString(),"Double"));
+			}
 			
-															     return returnstr;
+			return returnstr;
 		}
 
-		/// <summary>
-		/// Returns a Char value representing the character from the specified index in the supplied string.
-		/// </summary>
-		/// <param name="Str">Required. Any valid String expression.</param>
-		/// <param name="Index">Required. Integer expression. The (1-based) index of the character in Str to be returned.</param>
 		public static char GetChar(string Str, 
 					   int Index)
 		{
@@ -676,13 +589,6 @@ namespace Microsoft.VisualBasic
 			return Str.ToCharArray(Index -1, 1)[0];
 		}
 
-		/// <summary>
-		/// Returns an integer specifying the start position of the first occurrence of one string within another.
-		/// </summary>
-		/// <param name="Start">Required. Numeric expression that sets the starting position for each search. If omitted, search begins at the first character position. The start index is 1 based.</param>
-		/// <param name="String1">Required. String expression being searched.</param>
-		/// <param name="String2">Required. String expression sought.</param>
-		/// <param name="Compare">Optional. Specifies the type of string comparison. If Compare is omitted, the Option Compare setting determines the type of comparison. Specify a valid LCID (LocaleID) to use locale-specific rules in the comparison. </param>
 		public static int InStr(string String1, 
 					string String2, 
 					[OptionCompare, Optional, __DefaultArgumentValue(CompareMethod.Binary)] 
@@ -691,14 +597,6 @@ namespace Microsoft.VisualBasic
 			return InStr(1, String1, String2, Compare);
 		}
 		
-
-		/// <summary>
-		/// Returns an integer specifying the start position of the first occurrence of one string within another.
-		/// </summary>
-		/// <param name="Start">Required. Numeric expression that sets the starting position for each search. If omitted, search begins at the first character position. The start index is 1 based.</param>
-		/// <param name="String1">Required. String expression being searched.</param>
-		/// <param name="String2">Required. String expression sought.</param>
-		/// <param name="Compare">Optional. Specifies the type of string comparison. If Compare is omitted, the Option Compare setting determines the type of comparison. Specify a valid LCID (LocaleID) to use locale-specific rules in the comparison. </param>
 		public static int InStr(int Start, 
 					string String1, 
 					string String2, 
@@ -732,13 +630,6 @@ namespace Microsoft.VisualBasic
 			}
 		}
 
-		/// <summary>
-		/// Returns the position of the first occurrence of one string within another, starting from the right side of the string.
-		/// </summary>
-		/// <param name="StringCheck">Required. String expression being searched.</param>
-		/// <param name="StringMatch">Required. String expression being searched for.</param>
-		/// <param name="Start">Optional. Numeric expression that sets the one-based starting position for each search, starting from the left side of the string. If Start is omitted, 1 is used, which means that the search begins at the last character position. Search then proceeds from right to left.</param>
-		/// <param name="Compare">Optional. Numeric value indicating the kind of comparison to use when evaluating substrings. If omitted, a binary comparison is performed. See Settings for values.</param>
 		public static int InStrRev(string StringCheck, 
 					   string StringMatch, 
 					   [Optional, __DefaultArgumentValue(-1)] 
@@ -750,53 +641,48 @@ namespace Microsoft.VisualBasic
 				throw new ArgumentException("Argument 'StringCheck' must be greater than 0 or equal to -1", "StringCheck");
 
 			if (StringCheck == null)
-							return 0;
+				return 0;
 							
-							if (Start == -1)
-										Start = StringCheck.Length;
+			if (Start == -1)
+				Start = StringCheck.Length;
 										
-										if (Start > StringCheck.Length || StringCheck.Length == 0)
-																		  return 0;
+			if (Start > StringCheck.Length || StringCheck.Length == 0)
+				return 0;
 																		  
-																		  if (StringMatch == null || StringMatch.Length == 0)
-																			  return Start;
+			if (StringMatch == null || StringMatch.Length == 0)
+				return Start;
 
-																		  int retindex = -1;
-																		  int index = -1;
-																		  while (index == 0){
-																			  switch (Compare)
-																			  {
-																			  case CompareMethod.Text:
-																				  index = System.Globalization.CultureInfo.CurrentCulture.CompareInfo.IndexOf(
-																													      StringCheck.ToLower(System.Globalization.CultureInfo.CurrentCulture), 
-																													      StringMatch.ToLower(System.Globalization.CultureInfo.CurrentCulture), 
-																													      Start - 1) + 1;
-																				  break;
-																			  case CompareMethod.Binary:
-																				  index = StringCheck.IndexOf(StringMatch, Start - 1) + 1;
-																				  break;
-																			  default:
-																				  throw new System.ArgumentException("Argument 'Compare' must be CompareMethod.Binary or CompareMethod.Text.", "Compare");
-																			  }
-																			  if (index == 0){
-																				  if (retindex == -1)
-																					  return index;
-																				  else
-																					  return retindex;
-																			  }
-																			  else {
-																				  retindex = index;
-																				  Start = index;
-																			  }
-																		  }
-																		  return retindex;
+			int retindex = -1;
+			int index = -1;
+			while (index == 0){
+				switch (Compare)
+				{
+				case CompareMethod.Text:
+					index = System.Globalization.CultureInfo.CurrentCulture.CompareInfo.IndexOf(
+														    StringCheck.ToLower(System.Globalization.CultureInfo.CurrentCulture), 
+														    StringMatch.ToLower(System.Globalization.CultureInfo.CurrentCulture), 
+														    Start - 1) + 1;
+					break;
+				case CompareMethod.Binary:
+					index = StringCheck.IndexOf(StringMatch, Start - 1) + 1;
+					break;
+				default:
+					throw new System.ArgumentException("Argument 'Compare' must be CompareMethod.Binary or CompareMethod.Text.", "Compare");
+				}
+				if (index == 0){
+					if (retindex == -1)
+						return index;
+					else
+						return retindex;
+				}
+				else {
+					retindex = index;
+					Start = index;
+				}
+			}
+			return retindex;
 		}
 
-		/// <summary>
-		/// Returns a string created by joining a number of substrings contained in an array.
-		/// </summary>
-		/// <param name="SourceArray">Required. One-dimensional array containing substrings to be joined.</param>
-		/// <param name="Delimiter">Optional. String used to separate the substrings in the returned string. If omitted, the space character (" ") is used. If Delimiter is a zero-length string (""), all items in the list are concatenated with no delimiters.</param>
 		public static string Join(string[] SourceArray, 
 					  [Optional, __DefaultArgumentValue(" ")] 
 					  string Delimiter)
@@ -808,46 +694,34 @@ namespace Microsoft.VisualBasic
 
 			return string.Join(Delimiter, SourceArray);
 		}
-		/// <summary>
-		/// Returns a string created by joining a number of substrings contained in an array.
-		/// </summary>
-		/// <param name="SourceArray">Required. One-dimensional array containing substrings to be joined.</param>
-		/// <param name="Delimiter">Optional. String used to separate the substrings in the returned string. If omitted, the space character (" ") is used. If Delimiter is a zero-length string (""), all items in the list are concatenated with no delimiters.</param>
+
 		public static string Join(object[] SourceArray, 
 					  [Optional, __DefaultArgumentValue(" ")] 
 					  string Delimiter)
 		{
 			try 
-				{
-					if (SourceArray == null)
-						throw new ArgumentException("Argument 'SourceArray' can not be null.", "SourceArray");
-					if (SourceArray.Rank > 1)
-						throw new ArgumentException("Argument 'SourceArray' can have only one dimension.", "SourceArray");
+			{
+				if (SourceArray == null)
+					throw new ArgumentException("Argument 'SourceArray' can not be null.", "SourceArray");
+				if (SourceArray.Rank > 1)
+					throw new ArgumentException("Argument 'SourceArray' can have only one dimension.", "SourceArray");
 
-					string[] dest;
-					dest = new string[SourceArray.Length];
+				string[] dest;
+				dest = new string[SourceArray.Length];
 
-					SourceArray.CopyTo(dest, 0);
-					return string.Join(Delimiter, dest);
-				}
+				SourceArray.CopyTo(dest, 0);
+				return string.Join(Delimiter, dest);
+			}
 			catch (System.InvalidCastException ie){
 				throw new System.ArgumentException("Invalid argument");
 			}
 		}
 
-		/// <summary>
-		/// Returns a string or character converted to lowercase.
-		/// </summary>
-		/// <param name="Value">Required. Any valid String or Char expression.</param>
 		public static char LCase(char Value) 
 		{
 			return char.ToLower(Value);
 		}
 
-		/// <summary>
-		/// Returns a string or character converted to lowercase.
-		/// </summary>
-		/// <param name="Value">Required. Any valid String or Char expression.</param>
 		public static string LCase(string Value) 
 		{
 			if ((Value == null) || (Value.Length == 0)) 
@@ -856,14 +730,6 @@ namespace Microsoft.VisualBasic
 			return Value.ToLower();
 		}
 
-		
-		/// <summary>
-		/// Returns a string containing a specified number of characters from the left side of a string.
-		/// </summary>
-		/// <param name="Str">Required. String expression from which the leftmost characters are returned.</param>
-		/// <param name="Length">Required. Integer expression. Numeric expression indicating how many characters to return. 
-		///	If 0, a zero-length string ("") is returned. If greater than or equal to the number of characters in Str, 
-		///	the entire string is returned.</param>
 		public static string Left(string Str, int Length) 
 		{
 			if (Length < 0)
@@ -875,167 +741,110 @@ namespace Microsoft.VisualBasic
 			return Str;
 		}
 
-		/// <summary>
-		/// Returns an integer containing either the number of characters in a string or the number of bytes required to store a variable.
-		/// </summary>
-		/// <param name="Expression">Any valid String expression or variable name. If Expression is of type Object, the Len function returns the size as it will be written to the file.</param>
 		public static int Len(bool Expression) 
 		{
 			return 2; //sizeof(bool)
 		}
 
-		/// <summary>
-		/// Returns an integer containing either the number of characters in a string or the number of bytes required to store a variable.
-		/// </summary>
-		/// <param name="Expression">Any valid String expression or variable name. If Expression is of type Object, the Len function returns the size as it will be written to the file.</param>
 		public static int Len(byte Expression) 
 		{
 			return 1; //sizeof(byte)
 		}
 		
-		/// <summary>
-		/// Returns an integer containing either the number of characters in a string or the number of bytes required to store a variable.
-		/// </summary>
-		/// <param name="Expression">Any valid String expression or variable name. If Expression is of type Object, the Len function returns the size as it will be written to the file.</param>
 		public static int Len(char Expression) 
 		{
 			return 2; //sizeof(char)
 		}
 		
-		/// <summary>
-		/// Returns an integer containing either the number of characters in a string or the number of bytes required to store a variable.
-		/// </summary>
-		/// <param name="Expression">Any valid String expression or variable name. If Expression is of type Object, the Len function returns the size as it will be written to the file.</param>
 		public static int Len(double Expression) 
 		{
 			return 8; //sizeof(double)
 		}
 		
-		/// <summary>
-		/// Returns an integer containing either the number of characters in a string or the number of bytes required to store a variable.
-		/// </summary>
-		/// <param name="Expression">Any valid String expression or variable name. If Expression is of type Object, the Len function returns the size as it will be written to the file.</param>
 		public static int Len(int Expression) 
 		{
 			return 4; //sizeof(int)
 		}
 		
-		/// <summary>
-		/// Returns an integer containing either the number of characters in a string or the number of bytes required to store a variable.
-		/// </summary>
-		/// <param name="Expression">Any valid String expression or variable name. If Expression is of type Object, the Len function returns the size as it will be written to the file.</param>
 		public static int Len(long Expression) 
 		{
 			return 8; //sizeof(long)
 		}
 
-		/// <summary>
-		/// Returns an integer containing either the number of characters in a string or the number of bytes required to store a variable.
-		/// </summary>
-		/// <param name="Expression">Any valid String expression or variable name. If Expression is of type Object, the Len function returns the size as it will be written to the file.</param>
 		public static int Len(object expression) 
 		{
 			IConvertible convertible = null;
 				
-				if (expression == null)
-							       return 0;
+			if (expression == null)
+				return 0;
 							       
-							       if (expression is String)
-												return ((String)expression).Length;
+			if (expression is String)
+				return ((String)expression).Length;
 												
-												if (expression is char[])
-																 return ((char[])expression).Length;
+			if (expression is char[])
+				return ((char[])expression).Length;
 																 
-																 if (expression is IConvertible)
-																					convertible = (IConvertible)expression;
+			if (expression is IConvertible)
+				convertible = (IConvertible)expression;
 																					
-																					if (convertible != null) {
-switch (convertible.GetTypeCode()) {
-case TypeCode.String :
-	return expression.ToString().Length;
-		case TypeCode.Int16 :
-			return 2;
+			if (convertible != null) {
+				switch (convertible.GetTypeCode()) {
+				case TypeCode.String :
+					return expression.ToString().Length;
+				case TypeCode.Int16 :
+					return 2;
 				case TypeCode.Byte :
 					return 1;
-						case TypeCode.Int32 :
-							return 4;
-								case TypeCode.Int64 :
-									return 8;
-										case TypeCode.Single :
-											return 4;
-												case TypeCode.Double :
-													return 8;
-														case TypeCode.Boolean :
-															return 2;
-																case TypeCode.Decimal :
-																	return 16;
-																		case TypeCode.Char :
-																			return 2;
-																				case TypeCode.DateTime :
-																					return 8;
-																						}
+				case TypeCode.Int32 :
+					return 4;
+				case TypeCode.Int64 :
+					return 8;
+				case TypeCode.Single :
+					return 4;
+				case TypeCode.Double :
+					return 8;
+				case TypeCode.Boolean :
+					return 2;
+				case TypeCode.Decimal :
+					return 16;
+				case TypeCode.Char :
+					return 2;
+				case TypeCode.DateTime :
+					return 8;
+				}
 					   
-					   }
-																									 if (expression is ValueType)
-																													     return System.Runtime.InteropServices.Marshal.SizeOf(expression);
+			}
+			if (expression is ValueType)
+				return System.Runtime.InteropServices.Marshal.SizeOf(expression);
 																													     
-																													     throw new InvalidCastException(VBUtils.GetResourceString(13));
+			throw new InvalidCastException(VBUtils.GetResourceString(13));
 		}
 		
-		/// <summary>
-		/// Returns an integer containing either the number of characters in a string or the number of bytes required to store a variable.
-		/// </summary>
-		/// <param name="Expression">Any valid String expression or variable name. If Expression is of type Object, the Len function returns the size as it will be written to the file.</param>
 		public static int Len(short Expression) 
 		{
 			return 2; //sizeof(short)
 		}
 		
-		/// <summary>
-		/// Returns an integer containing either the number of characters in a string or the number of bytes required to store a variable.
-		/// </summary>
-		/// <param name="Expression">Any valid String expression or variable name. If Expression is of type Object, the Len function returns the size as it will be written to the file.</param>
 		public static int Len(Single Expression) 
 		{
 			return 4; //sizeof(Single)
 		}
 		
-		/// <summary>
-		/// Returns an integer containing either the number of characters in a string or the number of bytes required to store a variable.
-		/// </summary>
-		/// <param name="Expression">Any valid String expression or variable name. If Expression is of type Object, the Len function returns the size as it will be written to the file.</param>
-		//public static int Len(string Expression) 
-		//{
-		//	return Expression.Length; //length of the string
-		//}
 		public static int Len(string Expression) {
-if (Expression == null)return 0;
-			       return Expression.Length;
-				       }
+			if (Expression == null)return 0;
+			return Expression.Length;
+		}
 
-		/// <summary>
-		/// Returns an integer containing either the number of characters in a string or the number of bytes required to store a variable.
-		/// </summary>
-		/// <param name="Expression">Any valid String expression or variable name. If Expression is of type Object, the Len function returns the size as it will be written to the file.</param>
 		public static int Len(DateTime Expression) 
 		{
 			return 8; //sizeof(DateTime)
 		}
 		
-		/// <summary>
-		/// Returns an integer containing either the number of characters in a string or the number of bytes required to store a variable.
-		/// </summary>
-		/// <param name="Expression">Any valid String expression or variable name. If Expression is of type Object, the Len function returns the size as it will be written to the file.</param>
 		public static int Len(decimal Expression) 
 		{
 			return 8; //sizeof(decimal)
 		}
 
-		/// <summary>
-		/// Returns a left-aligned string containing the specified string adjusted to the specified length.
-		/// </summary>
-		/// <param name="Source">Required. String expression. Name of string variable.</param>
-		/// <param name="Length">Required. Integer expression. Length of returned string.</param>
 		public static string LSet(string Source, 
 					  int Length) 
 		{
@@ -1051,10 +860,6 @@ if (Expression == null)return 0;
 			return Source.Substring(0, Length);
 		}
 
-		/// <summary>
-		/// Returns a string containing a copy of a specified string with no leading spaces.
-		/// </summary>
-		/// <param name="Str">Required. Any valid String expression.</param>
 		public static string LTrim(string Str) 
 		{
 			if ((Str == null) || (Str.Length == 0))
@@ -1063,10 +868,6 @@ if (Expression == null)return 0;
 			return Str.TrimStart(null);
 		}
 
-		/// <summary>
-		/// Returns a string containing a copy of a specified string with no trailing spaces.
-		/// </summary>
-		/// <param name="Str">Required. Any valid String expression.</param>
 		public static string RTrim(string Str) 
 		{
 			if ((Str == null) || (Str.Length == 0))
@@ -1074,11 +875,7 @@ if (Expression == null)return 0;
 
 			return Str.TrimEnd(null);
 		}
-	
-		/// <summary>
-		/// Returns a string containing a copy of a specified string with no leading or trailing spaces.
-		/// </summary>
-		/// <param name="Str">Required. Any valid String expression.</param>
+
 		public static string Trim(string Str) 
 		{
 			if ((Str == null) || (Str.Length == 0))
@@ -1087,12 +884,6 @@ if (Expression == null)return 0;
 			return Str.Trim();
 		}
 
-		/// <summary>
-		/// Returns a string containing a specified number of characters from a string.
-		/// </summary>
-		/// <param name="Str">Required. String expression from which characters are returned.</param>
-		/// <param name="Start">Required. Integer expression. Character position in Str at which the part to be taken starts. If Start is greater than the number of characters in Str, the Mid function returns a zero-length string (""). Start is one based.</param>
-		/// <param name="Length">Required Integer expression. Number of characters to return. If there are fewer than Length characters in the text (including the character at position Start), all characters from the start position to the end of the string are returned.</param>
 		public static string Mid(string Str, 
 					 int Start, 
 					 int Length)
@@ -1115,11 +906,6 @@ if (Expression == null)return 0;
 
 		}
 
-		/// <summary>
-		/// Returns a string containing all characters from a string beyond an start point.
-		/// </summary>
-		/// <param name="Str">Required. String expression from which characters are returned.</param>
-		/// <param name="Start">Required. Integer expression. Character position in Str at which the part to be taken starts. If Start is greater than the number of characters in Str, the Mid function returns a zero-length string (""). Start is one based.</param>
 		public static string Mid (string Str, int Start) 
 		{
 			if (Start <= 0)
@@ -1134,15 +920,6 @@ if (Expression == null)return 0;
 			return Str.Substring(Start - 1);
 		}
 
-		/// <summary>
-		/// Returns a string in which a specified substring has been replaced with another substring a specified number of times.
-		/// </summary>
-		/// <param name="Expression">Required. String expression containing substring to replace.</param>
-		/// <param name="Find">Required. Substring being searched for.</param>
-		/// <param name="Replacement">Required. Replacement substring.</param>
-		/// <param name="Start">Optional. Position within Expression where substring search is to begin. If omitted, 1 is assumed.</param>
-		/// <param name="Count">Optional. Number of substring substitutions to perform. If omitted, the default value is 1, which means make all possible substitutions.</param>
-		/// <param name="Compare">Optional. Numeric value indicating the kind of comparison to use when evaluating substrings. See Settings for values.</param>
 		public static string Replace(string Expression, 
 					     string Find, 
 					     string Replacement, 
@@ -1168,12 +945,7 @@ if (Expression == null)return 0;
 
 			return Expression.Replace(Find, Replacement);
 		}
- 
-		/// <summary>
-		/// Returns a string containing a specified number of characters from the right side of a string.
-		/// </summary>
-		/// <param name="Str">Required. String expression from which the rightmost characters are returned.</param>
-		/// <param name="Length">Required. Integer. Numeric expression indicating how many characters to return. If 0, a zero-length string ("") is returned. If greater than or equal to the number of characters in Str, the entire string is returned.</param>
+
 		public static string Right(string Str, 
 					   int Length) 
 		{
@@ -1191,11 +963,6 @@ if (Expression == null)return 0;
 			return Str.Substring (Str.Length - Length);
 		}
 
-		/// <summary>
-		/// Returns a right-aligned string containing the specified string adjusted to the specified length.
-		/// </summary>
-		/// <param name="Source">Required. String expression. Name of string variable.</param>
-		/// <param name="Length">Required. Integer expression. Length of returned string.</param>
 		public static string RSet(string Source, int Length) 
 		{
 		
@@ -1208,10 +975,6 @@ if (Expression == null)return 0;
 			return Source.Substring(0, Length);
 		}
 
-		/// <summary>
-		/// Returns a string consisting of the specified number of spaces.
-		/// </summary>
-		/// <param name="Number">Required. Integer expression. The number of spaces you want in the string.</param>
 		public static string Space(int Number) 
 		{
 			if (Number < 0)
@@ -1220,13 +983,6 @@ if (Expression == null)return 0;
 			return new string((char) ' ', Number);
 		}
 
-		/// <summary>
-		/// Returns a zero-based, one-dimensional array containing a specified number of substrings.
-		/// </summary>
-		/// <param name="Expression">Required. String expression containing substrings and delimiters. If Expression is a zero-length string (""), the Split function returns an array with no elements and no data.</param>
-		/// <param name="Delimiter">Optional. Single character used to identify substring limits. If Delimiter is omitted, the space character (" ") is assumed to be the delimiter. If Delimiter is a zero-length string, a single-element array containing the entire Expression string is returned.</param>
-		/// <param name="Limit">Optional. Number of substrings to be returned; the default, 1, indicates that all substrings are returned.</param>
-		/// <param name="Compare">Optional. Numeric value indicating the comparison to use when evaluating substrings. See Settings for values.</param>
 		public static string[] Split(string Expression, 
 					     [Optional, __DefaultArgumentValue("")] 
 					     string Delimiter,
@@ -1238,7 +994,7 @@ if (Expression == null)return 0;
 			if (Expression == null)
 				return new string[1];
 
-			if ((Delimiter == null) || (Delimiter.Length == 0))	{
+			if ((Delimiter == null) || (Delimiter.Length == 0)){
 				string [] ret = new string[1];
 				ret[0] = Expression;
 				return ret;
@@ -1249,32 +1005,26 @@ if (Expression == null)return 0;
 				throw new OverflowException("Arithmetic operation resulted in an overflow.");
 
 			if (Limit != -1) {
-switch (Compare){
-case CompareMethod.Binary:
-	return Expression.Split(Delimiter.ToCharArray(0, 1), Limit);
-		case CompareMethod.Text:
-			return Expression.Split(Delimiter.ToCharArray(0, 1), Limit);
+				switch (Compare){
+				case CompareMethod.Binary:
+					return Expression.Split(Delimiter.ToCharArray(0, 1), Limit);
+				case CompareMethod.Text:
+					return Expression.Split(Delimiter.ToCharArray(0, 1), Limit);
 				default:
 					throw new System.ArgumentException("Argument 'Compare' must be CompareMethod.Binary or CompareMethod.Text.", "Compare");
-						}
+				}
 			} else {
-switch (Compare) {
-case CompareMethod.Binary:
-	return Expression.Split(Delimiter.ToCharArray(0, 1));
-		case CompareMethod.Text:
-			return Expression.Split(Delimiter.ToCharArray(0, 1));
+				switch (Compare) {
+				case CompareMethod.Binary:
+					return Expression.Split(Delimiter.ToCharArray(0, 1));
+				case CompareMethod.Text:
+					return Expression.Split(Delimiter.ToCharArray(0, 1));
 				default:
 					throw new System.ArgumentException("Argument 'Compare' must be CompareMethod.Binary or CompareMethod.Text.", "Compare");
-						}
-			 }
+				}
+			}
 		}
 
-		/// <summary>
-		/// Returns -1, 0, or 1, based on the result of a string comparison. 
-		/// </summary>
-		/// <param name="String1">Required. Any valid String expression.</param>
-		/// <param name="String2">Required. Any valid String expression.</param>
-		/// <param name="Compare">Optional. Specifies the type of string comparison. If compare is omitted, the Option Compare setting determines the type of comparison.</param>
 		public static int StrComp(string String1, 
 					  string String2,
 					  [OptionCompare, Optional, __DefaultArgumentValue(CompareMethod.Binary)] 
@@ -1290,61 +1040,49 @@ case CompareMethod.Binary:
 			case CompareMethod.Binary:
 				return string.Compare(String2, String1, false);
 			case CompareMethod.Text:
-				return System.Globalization.CultureInfo.CurrentCulture.CompareInfo.Compare(
-													   String1.ToLower(System.Globalization.CultureInfo.CurrentCulture), 
-													   String2.ToLower(System.Globalization.CultureInfo.CurrentCulture));
+				CultureInfo curCulture = CultureInfo.CurrentCulture;
+				return curCulture.CompareInfo.Compare(String1.ToLower(curCulture), String2.ToLower(curCulture));
 			default:
 				throw new System.ArgumentException("Argument 'Compare' must be CompareMethod.Binary or CompareMethod.Text", "Compare");
 			}
 		}
 
-		/// <summary>
-		/// Returns a string converted as specified.
-		/// </summary>
-		/// <param name="Str">Required. String expression to be converted.</param>
-		/// <param name="Conversion">Required. VbStrConv member. The enumeration value specifying the type of conversion to perform. </param>
-		/// <param name="LocaleID">Optional. The LocaleID value, if different from the system LocaleID value. (The system LocaleID value is the default.)</param>
 		public static string StrConv (string str, 
 					      VbStrConv Conversion, 
 					      [Optional, __DefaultArgumentValue(0)]
 					      int LocaleID)
 		{
 			if (str == null)
-						throw new ArgumentNullException("str");
-						
-						if (Conversion == VbStrConv.None){
-return str;
-	}
-											 else if (Conversion == VbStrConv.UpperCase)	{
-return str.ToUpper();
-	}
-											 else if (Conversion == VbStrConv.LowerCase)	{
-return str.ToLower();
-	}
-											 else if (Conversion == VbStrConv.ProperCase){
-String[] arr = str.Split(null);
-	String tmp = "" ;
-		for (int i =0 ; i < (arr.Length - 1) ; i++)	{
-arr[i] =  arr[i].ToLower();
-	tmp +=  arr[i].Substring(0,1).ToUpper() + arr[i].Substring(1) + " ";
-		}
-									arr[arr.Length - 1] =  arr[arr.Length - 1].ToLower();
-										tmp +=  arr[arr.Length - 1].Substring(0,1).ToUpper() + arr[arr.Length - 1].Substring(1);
+				throw new ArgumentNullException("str");
+					
+			if (Conversion == VbStrConv.None){
+				return str;
+			}
+			else if (Conversion == VbStrConv.UpperCase) {
+				return str.ToUpper();
+			}
+			else if (Conversion == VbStrConv.LowerCase) {
+				return str.ToLower();
+			}
+			else if (Conversion == VbStrConv.ProperCase) {
+				String[] arr = str.Split(null);
+				String tmp = "" ;
+				for (int i =0 ; i < (arr.Length - 1) ; i++){
+					arr[i] =  arr[i].ToLower();
+					tmp +=  arr[i].Substring(0,1).ToUpper() + arr[i].Substring(1) + " ";
+				}
+				arr[arr.Length - 1] =  arr[arr.Length - 1].ToLower();
+				tmp +=  arr[arr.Length - 1].Substring(0,1).ToUpper() + arr[arr.Length - 1].Substring(1);
 											
-											return tmp;
-												}         
-											 else if (Conversion == VbStrConv.SimplifiedChinese || 
-												  Conversion == VbStrConv.TraditionalChinese ) 
-																		       return str;
-											 else
-												     throw new ArgumentException("Unsuported conversion in StrConv");	
+				return tmp;
+			}         
+			else if (Conversion == VbStrConv.SimplifiedChinese || 
+				 Conversion == VbStrConv.TraditionalChinese ) 
+				return str;
+			else
+				throw new ArgumentException("Unsuported conversion in StrConv");	
 		}
 
-		/// <summary>
-		/// Returns a string or object consisting of the specified character repeated the specified number of times.
-		/// </summary>
-		/// <param name="Number">Required. Integer expression. The length to the string to be returned.</param>
-		/// <param name="Character">Required. Any valid Char, String, or Object expression. Only the first character of the expression will be used. If Character is of type Object, it must contain either a Char or a String value.</param>
 		public static string StrDup(int Number, 
 					    char Character)
 		{
@@ -1353,11 +1091,7 @@ arr[i] =  arr[i].ToLower();
 
 			return new string(Character, Number);
 		}
-		/// <summary>
-		/// Returns a string or object consisting of the specified character repeated the specified number of times.
-		/// </summary>
-		/// <param name="Number">Required. Integer expression. The length to the string to be returned.</param>
-		/// <param name="Character">Required. Any valid Char, String, or Object expression. Only the first character of the expression will be used. If Character is of type Object, it must contain either a Char or a String value.</param>
+
 		public static string StrDup(int Number, 
 					    string Character)
 		{
@@ -1369,11 +1103,6 @@ arr[i] =  arr[i].ToLower();
 			return new string(Character[0], Number);
 		}
 
-		/// <summary>
-		/// Returns a string or object consisting of the specified character repeated the specified number of times.
-		/// </summary>
-		/// <param name="Number">Required. Integer expression. The length to the string to be returned.</param>
-		/// <param name="Character">Required. Any valid Char, String, or Object expression. Only the first character of the expression will be used. If Character is of type Object, it must contain either a Char or a String value.</param>
 		public static object StrDup(int Number, 
 					    object Character)
 		{
@@ -1402,10 +1131,6 @@ arr[i] =  arr[i].ToLower();
 			}
 		}
 
-		/// <summary>
-		/// Returns a string in which the character order of a specified string is reversed.
-		/// </summary>
-		/// <param name="Expression">Required. String expression whose characters are to be reversed. If Expression is a zero-length string (""), a zero-length string is returned.</param>
 		public static string StrReverse(string Expression)
 		{
 			// Patched by Daniel Campos (danielcampos@myway.com)
@@ -1423,19 +1148,11 @@ arr[i] =  arr[i].ToLower();
 			}
 		}
 
-		/// <summary>
-		/// Returns a string or character containing the specified string converted to uppercase.
-		/// </summary>
-		/// <param name="Value">Required. Any valid String or Char expression.</param>
 		public static char UCase(char Value) 
 		{
 			return char.ToUpper(Value);
 		}
 
-		/// <summary>
-		/// Returns a string or character containing the specified string converted to uppercase.
-		/// </summary>
-		/// <param name="Value">Required. Any valid String or Char expression.</param>
 		public static string UCase(string Value) 
 		{
 			if ((Value == null) || (Value.Length == 0))
@@ -1443,9 +1160,5 @@ arr[i] =  arr[i].ToLower();
 
 			return Value.ToUpper();
 		}
-
-
-
 	}
-
 }
