@@ -32,6 +32,7 @@ gac_assemblies_list = \
 	Microsoft.VisualBasic				\
 	Microsoft.VisualC				\
 	Microsoft.Vsa					\
+	Mono.C5						\
 	Mono.Cairo					\
 	$(MONO_CSHARP_DEBUGGER)				\
 	Mono.Data.SybaseClient				\
