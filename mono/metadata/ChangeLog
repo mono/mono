@@ -1,4 +1,8 @@
 
+Tue Jun 4 18:10:47 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c, gc.h, icall.c: weakreference support.
+
 Tue Jun 4 16:06:19 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* Makefile.am, mono-config.c: use $(sysconfdir).
