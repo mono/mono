@@ -579,6 +579,7 @@ System.Runtime.Remoting.Activation/IConstructionReturnMessage.cs
 System.Runtime.Remoting.Activation/RemoteActivator.cs
 System.Runtime.Remoting.Activation/RemoteActivationAttribute.cs
 System.Runtime.Remoting.Activation/UrlAttribute.cs
+System.Runtime.Remoting.Channels/AggregateDictionary.cs
 System.Runtime.Remoting.Channels/BaseChannelObjectWithProperties.cs
 System.Runtime.Remoting.Channels/BaseChannelSinkWithProperties.cs
 System.Runtime.Remoting.Channels/BaseChannelWithProperties.cs
@@ -690,6 +691,7 @@ System.Runtime.Remoting.Metadata.W3cXsd2001/SoapMonthDay.cs
 System.Runtime.Remoting.Metadata.W3cXsd2001/SoapNonPositiveInteger.cs
 System.Runtime.Remoting.Metadata.W3cXsd2001/SoapYear.cs
 System.Runtime.Remoting.Metadata.W3cXsd2001/SoapDate.cs
+System.Runtime.Remoting.Metadata.W3cXsd2001/SoapHelper.cs
 System.Runtime.Remoting.Metadata.W3cXsd2001/SoapId.cs
 System.Runtime.Remoting.Metadata.W3cXsd2001/SoapName.cs
 System.Runtime.Remoting.Metadata.W3cXsd2001/SoapNormalizedString.cs
