@@ -60,6 +60,7 @@ namespace System.Xml.XPath
 
 		public Tokenizer (string strInput)
 		{
+			//Console.WriteLine ("Tokenizing: " + strInput);
 			m_rgchInput = strInput.ToCharArray ();
 			m_ich = 0;
 			m_cch = strInput.Length;
@@ -156,7 +157,8 @@ namespace System.Xml.XPath
 			if (!IsFirstToken)
 			{
 				// the second half of a QName is always an NCName
-				if (m_iTokenPrev == Token.COLON)
+				if (m_iTokenPrev == Token.COLON ||
+					m_iTokenPrev == Token.DOLLAR)
 					return Token.NCName;
 
 				// If there is a preceding token and the preceding

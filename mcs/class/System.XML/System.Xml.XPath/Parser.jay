@@ -9,6 +9,7 @@
 // TODO: flatten argument/predicate lists in place
 
 using System;
+using System.Xml;
 using System.Xml.XPath;
 
 namespace Mono.Xml.XPath
@@ -22,9 +23,12 @@ namespace Mono.Xml.XPath
 
 		internal object yyparseSafe (Tokenizer tok, object yyDebug)
 		{
+			//yyDebug = new yydebug.yyDebugSimple ();
 			try
 			{
-				return yyparse (tok, yyDebug);
+				Expression expr = (Expression) yyparse (tok, yyDebug);
+				//Console.WriteLine (expr.ToString ());
+				return expr;
 			}
 			catch (XPathException e)
 			{
@@ -263,7 +267,7 @@ RelativeLocationPath
 Step
 	: AxisSpecifier QName ZeroOrMorePredicates
 	{
-		$$ = new ExprStep (new NodeNameTest ((Axes) $1, (QName) $2), (ExprPredicates) $3);
+		$$ = new ExprStep (new NodeNameTest ((Axes) $1, (XmlQualifiedName) $2), (ExprPredicates) $3);
 	}
 	| AxisSpecifier ASTERISK ZeroOrMorePredicates
 	{
@@ -317,8 +321,8 @@ FilterExpr
 PrimaryExpr
 	: DOLLAR QName
 	{
-		$$ = new ExprVariable ((QName) $2);
-	} 
+		$$ = new ExprVariable ((XmlQualifiedName) $2);
+	}
 	| PAREN_OPEN Expr PAREN_CLOSE
 	{
 		$$ = $2;
@@ -335,10 +339,23 @@ PrimaryExpr
 	;
 
 FunctionCall
-	: FUNCTION_NAME PAREN_OPEN OptionalArgumentList PAREN_CLOSE
+	: FunctionName PAREN_OPEN OptionalArgumentList PAREN_CLOSE
 	{
-		$$ = new ExprFunctionCall ((String) $1, (FunctionArguments) $3);
+		$$ = new ExprFunctionCall ((XmlQualifiedName) $1, (FunctionArguments) $3);
 	}
+	;
+
+FunctionName
+	: FUNCTION_NAME
+	{
+		$$ = new XmlQualifiedName ((string) $1);
+	}
+/*
+	| NCName
+	{
+		$$ = new XmlQualifiedName ((string) $1);
+	}
+*/
 	;
 
 OptionalArgumentList
@@ -397,15 +414,15 @@ OptionalLiteral
 QName
 	: NCName
 	{
-		$$ = new NCName ((String) $1);
+		$$ = new XmlQualifiedName ((String) $1);
 	}
 	| NCName COLON ASTERISK
 	{
-		$$ = new QName ((String) $1, null);
+		$$ = new XmlQualifiedName (null, (String) $1);
 	}
 	| NCName COLON NCName
 	{
-		$$ = new QName ((String) $1, (String) $3);
+		$$ = new XmlQualifiedName ((String) $3, (String) $1);
 	}
 	;
 

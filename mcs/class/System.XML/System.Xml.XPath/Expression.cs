@@ -761,8 +761,8 @@ namespace System.Xml.XPath
 	}
 	internal class NodeNameTest : NodeTest
 	{
-		protected QName _name;
-		public NodeNameTest (Axes axis, QName name) : base (axis)
+		protected XmlQualifiedName _name;
+		public NodeNameTest (Axes axis, XmlQualifiedName name) : base (axis)
 		{
 			_name = name;
 		}
@@ -774,20 +774,20 @@ namespace System.Xml.XPath
 			if (nav.NodeType != _axis.NodeType)
 				return false;
 
-			if (_name.Local != null && _name.Local != "")
+			if (_name.Name != null && _name.Name != "")
 			{
 				// test the local part of the name first
-				if (_name.Local != nav.LocalName)
+				if (_name.Name != nav.LocalName)
 					return false;
 			}
 
 			// get the prefix for the given name
 			String strURI1 = "";
-			if (_name.Prefix != null && nsm != null)
+			if (_name.Namespace != null && nsm != null)
 			{
-				strURI1 = nsm.LookupNamespace (_name.Prefix);	// TODO: check to see if this returns null or ""
+				strURI1 = nsm.LookupNamespace (_name.Namespace);	// TODO: check to see if this returns null or ""
 				if (strURI1 == null)
-					throw new XPathException ("Invalid namespace prefix: "+_name.Prefix);
+					throw new XPathException ("Invalid namespace prefix: "+_name.Namespace);
 			}
 
 			string strURI = nav.NamespaceURI;
@@ -875,30 +875,6 @@ namespace System.Xml.XPath
 		public override XPathResultType ReturnType { get { return XPathResultType.NodeSet; }}
 	}
 
-	internal class QName
-	{
-		protected String _prefix;
-		protected String _local;
-		public QName (String prefix, String local)
-		{
-			_prefix = prefix;
-			_local = local;
-		}
-		public override String ToString ()
-		{
-			String strLocal = (_local != null) ? _local : "*";
-			if (_prefix != null)
-				return _prefix + ':' + strLocal;
-			return strLocal;
-		}
-		public String Prefix { get { return _prefix; } }
-		public String Local { get { return _local; } }
-	}
-	internal class NCName : QName
-	{
-		public NCName (String local) : base (null, local) {}
-	}
-
 	internal class ExprNumber : Expression
 	{
 		protected double _value;
@@ -930,8 +906,8 @@ namespace System.Xml.XPath
 
 	internal class ExprVariable : Expression
 	{
-		protected QName _name;
-		public ExprVariable (QName name)
+		protected XmlQualifiedName _name;
+		public ExprVariable (XmlQualifiedName name)
 		{
 			_name = name;
 		}
@@ -942,11 +918,11 @@ namespace System.Xml.XPath
 			IXsltContextVariable var = null;
 			XsltContext context = iter.NamespaceManager as XsltContext;
 			if (context != null)
-				var = context.ResolveVariable (_name.Prefix, _name.Local);
+				var = context.ResolveVariable (_name.Namespace, _name.Name);
 			if (context == null)
-				var = DefaultContext.ResolveVariable (_name.Prefix, _name.Local);
+				var = DefaultContext.ResolveVariable (_name.Namespace, _name.Name);
 			if (var == null)
-				throw new XPathException ("variable "+_name.Prefix+":"+_name.Local+" not found");
+				throw new XPathException ("variable "+_name.Namespace+":"+_name.Name+" not found");
 			return var.VariableType;
 		}
 	}
@@ -971,11 +947,11 @@ namespace System.Xml.XPath
 	}
 	internal class ExprFunctionCall : Expression
 	{
-		protected QName _name;
+		protected XmlQualifiedName _name;
 		protected ArrayList _args = new ArrayList ();
-		public ExprFunctionCall (String name, FunctionArguments args)
+		public ExprFunctionCall (XmlQualifiedName name, FunctionArguments args)
 		{
-			_name = new NCName (name);
+			_name = name;
 			while (args != null)
 			{
 				_args.Add (args.Arg);
@@ -999,11 +975,11 @@ namespace System.Xml.XPath
 			IXsltContextFunction func = null;
 			XsltContext context = iter.NamespaceManager as XsltContext;
 			if (context != null)
-				func = context.ResolveFunction (_name.Prefix, _name.Local, GetArgTypes (iter));
+				func = context.ResolveFunction (_name.Namespace, _name.Name, GetArgTypes (iter));
 			if (func == null)
-				func = DefaultContext.ResolveFunction (_name.Prefix, _name.Local, GetArgTypes (iter));
+				func = DefaultContext.ResolveFunction (_name.Namespace, _name.Name, GetArgTypes (iter));
 			if (func == null)
-				throw new XPathException ("function "+_name.Prefix+":"+_name.Local+" not found");
+				throw new XPathException ("function "+_name.Namespace+":"+_name.Name+" not found");
 			return func.ReturnType;
 		}
 		private XPathResultType [] GetArgTypes (BaseIterator iter)
@@ -1017,13 +993,13 @@ namespace System.Xml.XPath
 		public override object Evaluate (BaseIterator iter)
 		{
 			//special-case the 'last' and 'position' functions
-			if (_args.Count == 0 && _name.Prefix == null)
+			if (_args.Count == 0 && _name.Namespace == null)
 			{
-				if (_name.Local == "last")
+				if (_name.Name == "last")
 				{
 					return (double) iter.Count;
 				}
-				else if (_name.Local == "position")
+				else if (_name.Name == "position")
 				{
 					return (double) iter.CurrentPosition;
 				}
@@ -1034,14 +1010,14 @@ namespace System.Xml.XPath
 			IXsltContextFunction func = null;
 			XsltContext context = iter.NamespaceManager as XsltContext;
 			if (context != null)
-				func = context.ResolveFunction (_name.Prefix, _name.Local, rgTypes);
+				func = context.ResolveFunction (_name.Namespace, _name.Name, rgTypes);
 			if (func == null)
 			{
 				context = DefaultContext;
-				func = context.ResolveFunction (_name.Prefix, _name.Local, rgTypes);
+				func = context.ResolveFunction (_name.Namespace, _name.Name, rgTypes);
 			}
 			if (func == null)
-				throw new XPathException ("function "+_name.Prefix+":"+_name.Local+" not found");
+				throw new XPathException ("function "+_name.Namespace+":"+_name.Name+" not found");
 
 			object [] rgArgs = new object [_args.Count];
 			if (func.Maxargs != 0)

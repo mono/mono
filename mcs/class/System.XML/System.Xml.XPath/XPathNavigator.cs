@@ -204,7 +204,7 @@ namespace System.Xml.XPath
 				throw new NotImplementedException ();
 
 			Axes axis = (matchSelf) ? Axes.AncestorOrSelf : Axes.Ancestor;
-			QName qname = new QName ("", name);
+			XmlQualifiedName qname = new XmlQualifiedName (name);
 			NodeTest test = new NodeNameTest (axis, qname);
 			return SelectTest (test);
 		}
@@ -222,7 +222,7 @@ namespace System.Xml.XPath
 				throw new NotImplementedException ();
 
 			Axes axis = Axes.Child;
-			QName qname = new QName ("", name);
+			XmlQualifiedName qname = new XmlQualifiedName (name);
 			NodeTest test = new NodeNameTest (axis, qname);
 			return SelectTest (test);
 		}
@@ -241,7 +241,7 @@ namespace System.Xml.XPath
 				throw new NotImplementedException ();
 
 			Axes axis = (matchSelf) ? Axes.DescendantOrSelf : Axes.Descendant;
-			QName qname = new QName ("", name);
+			XmlQualifiedName qname = new XmlQualifiedName (name);
 			NodeTest test = new NodeNameTest (axis, qname);
 			return SelectTest (test);
 		}
