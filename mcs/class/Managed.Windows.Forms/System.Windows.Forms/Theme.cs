@@ -23,9 +23,12 @@
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
 //
-// $Revision: 1.11 $
+// $Revision: 1.12 $
 // $Modtime: $
 // $Log: Theme.cs,v $
+// Revision 1.12  2004/10/15 15:08:49  ravindra
+// Added ColumnHeaderHeight property in Theme for ListView.
+//
 // Revision 1.11  2004/10/05 09:03:55  ravindra
 // 	- Added DrawListView method and ListViewDefaultSize property.
 //
@@ -321,6 +324,7 @@ namespace System.Windows.Forms
 
 		// Sizing
 		public abstract Size ListViewDefaultSize { get; }
+		public abstract int ColumnHeaderHeight { get; }
 		#endregion	// ListView
 
 		#region Panel

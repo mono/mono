@@ -26,9 +26,12 @@
 //
 //
 //
-// $Revision: 1.47 $
+// $Revision: 1.48 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.48  2004/10/15 15:08:49  ravindra
+// Added ColumnHeaderHeight property in Theme for ListView.
+//
 // Revision 1.47  2004/10/13 15:06:37  pbartok
 // - Path from John BouAntoun:
 //   * Fix check rendering (centre correctly for normal style, offset
@@ -821,7 +824,7 @@ namespace System.Windows.Forms
 
 		public override Size LabelDefaultSize {
 			get {
-				return new Size (100,23);
+				return new Size (100, 23);
 			}
 		}
 		#endregion	// Label
@@ -830,13 +833,26 @@ namespace System.Windows.Forms
 		// Drawing
 		public override void DrawListView (Graphics dc, Rectangle clip_rectangle, ListView control)
 		{
-			// FIXME: TODO
+			Rectangle control_area = control.ClientRectangle;
+
+			// Draw the border of the list view with a background
+			dc.FillRectangle (ResPool.GetSolidBrush (control.BackColor), control_area);
+			this.CPDrawBorderStyle (dc, control_area, control.BorderStyle);
+			if (control.View == View.Details)
+				dc.FillRectangle (ResPool.GetSolidBrush (SystemColors.Control),
+						  0, 0, control_area.Width, this.ColumnHeaderHeight);
 		}
 
 		// Sizing
 		public override Size ListViewDefaultSize {
 			get {
 				return new Size (121, 97);
+			}
+		}
+
+		public override int ColumnHeaderHeight {
+			get {
+				return 16;
 			}
 		}
 		#endregion	// ListView
@@ -847,7 +863,6 @@ namespace System.Windows.Forms
 				return new Size (200, 100);
 			}
 		}
-
 		#endregion	// Panel
 
 		#region PictureBox
