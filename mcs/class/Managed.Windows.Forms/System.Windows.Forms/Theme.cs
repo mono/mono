@@ -23,9 +23,12 @@
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
 //
-// $Revision: 1.10 $
+// $Revision: 1.11 $
 // $Modtime: $
 // $Log: Theme.cs,v $
+// Revision 1.11  2004/10/05 09:03:55  ravindra
+// 	- Added DrawListView method and ListViewDefaultSize property.
+//
 // Revision 1.10  2004/09/28 18:44:25  pbartok
 // - Streamlined Theme interfaces:
 //   * Each DrawXXX method for a control now is passed the object for the
@@ -312,6 +315,14 @@ namespace System.Windows.Forms
 		#region LinkLabel
 		#endregion	// LinkLabel
 
+		#region ListView
+		// Drawing
+		public abstract void DrawListView (Graphics dc, Rectangle clip_rectangle, ListView control);
+
+		// Sizing
+		public abstract Size ListViewDefaultSize { get; }
+		#endregion	// ListView
+
 		#region Panel
 		// Sizing
 		public abstract Size PanelDefaultSize{get;}
@@ -362,7 +373,7 @@ namespace System.Windows.Forms
 
 		#region	ToolBar
 		// Drawing
-		public abstract void DrawToolBar (Graphics dc, Rectangle clip_area, ToolBar control);
+		public abstract void DrawToolBar (Graphics dc, Rectangle clip_rectangle, ToolBar control);
 
 		// Sizing
 		public abstract int ToolBarGripWidth {get;}              // Grip width for the ToolBar
