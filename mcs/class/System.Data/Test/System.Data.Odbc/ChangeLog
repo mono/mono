@@ -1,3 +1,7 @@
+2004-09-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* OdbcPermissionTest.cs: New. Unit tests for OdbcPermission.
+
 2004-09-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* OdbcPermissionAttributeTest.cs: New. Unit tests for OdbcPermission
