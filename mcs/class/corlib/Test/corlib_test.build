@@ -16,9 +16,6 @@
 			<sources>
 				<includes name="**/*.cs"/>
 				<excludes name="System.Security.Policy/*.cs"/>
-				<excludes name="System.Security.Cryptography/DSATest.cs"/>
-				<excludes name="System.Security.Cryptography/RSATest.cs"/>
-				<excludes name="System.Security.Cryptography/AsymmetricAlgorithmTest.cs"/>
 			</sources>
 			<references basedir="..\..\..\nunit">
 				<includes name="NUnitCore_mono.dll"/>
@@ -44,6 +41,7 @@
 		<csc target="library" output="corlib_reference.dll" debug="${debug}">
 			<sources>
 				<includes name="**/*.cs"/>
+				<!-- DSA only constructor is declared as internal -->
 				<excludes name="System.Security.Cryptography/DSATest.cs"/>
 			</sources>
 			<references basedir="..\..\..\nunit">
