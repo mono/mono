@@ -1,3 +1,9 @@
+2003-12-24  Nick Drochak  <ndrochak@ieee.org>
+
+	* Array.cs (CreateInstance): Throw NullRef exception like .NET 1.1, 
+	even though docs say it should be an ArgumentNull. Sent email to MS
+	about this "bug".
+
 2003-12-23  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Exception.cs: Several changes to make it compatible with MS.NET (needed

@@ -462,8 +462,11 @@ namespace System
 
 		public static Array CreateInstance (Type elementType, params long [] lengths)
 		{
-			if (lengths == null)
-				throw new ArgumentNullException ("lengths");
+			if (lengths == null) {
+				// LAMESPEC: Docs say we should throw a ArgumentNull, but .NET
+				// 1.1 actually throws a NullReference.
+				throw new NullReferenceException ("'lengths' cannot be null");
+			}
 			return CreateInstance (elementType, GetIntArray (lengths));
 		}
 
