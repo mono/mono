@@ -569,7 +569,6 @@ namespace System {
 			return GetMethodImpl (name, bindingAttr, null, CallingConventions.Any, null, null);
 		}
 		
-		[MonoTODO]
 		public MethodInfo GetMethod (string name, Type[] types)
 		{
 			return GetMethod (name, DefaultBindingFlags, null, CallingConventions.Any, types, null);
@@ -697,9 +696,6 @@ namespace System {
 								 Type[] types,
 								 ParameterModifier[] modifiers);
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern ConstructorInfo get_constructor (Type type, Type[] types);
-
 		protected abstract ConstructorInfo GetConstructorImpl (BindingFlags bindingAttr,
 								       Binder binder,
 								       CallingConventions callConvention,
@@ -732,19 +728,16 @@ namespace System {
 			return typeof (MarshalByRefObject).IsAssignableFrom (this);
 		}
 
-		[MonoTODO]
 		public ConstructorInfo GetConstructor (Type[] types)
 		{
-			// TODO: return GetConstructor
-			// (BindingFlags.Public | BindingFlags.NonPublic, null, types, null);
-			
-			return get_constructor (this, types);
+			return GetConstructorImpl (
+				DefaultBindingFlags, null, CallingConventions.Any, types, null);
 		}
 
 		public ConstructorInfo GetConstructor (BindingFlags bindingAttr, Binder binder,
 						       Type[] types, ParameterModifier[] modifiers)
 		{
-			return GetConstructor (
+			return GetConstructorImpl (
 				bindingAttr, binder, CallingConventions.Any, types, modifiers);
 		}
 

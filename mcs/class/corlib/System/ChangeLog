@@ -1,3 +1,10 @@
+
+Fri Sep 6 12:11:28 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MonoType.cs: implemented GetMembers, GetConstructorImpl and
+	GetMethodImpl using the binder.
+	* Type.cs: GetConstructorImpl/GetConstructor fixes.
+
 2002-09-03  Jonathan Pryor <jonpryor@vt.edu>
 	* Enum.cs: Get rid of warning CS0162.
 

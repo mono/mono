@@ -24,7 +24,7 @@ namespace System
 		public bool isprimitive;
 	}
 
-	internal class MonoType : Type
+	internal sealed class MonoType : Type
 	{
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -50,15 +50,43 @@ namespace System
 			return get_attributes (this);
 		}
 
-		[MonoTODO]
 		protected override ConstructorInfo GetConstructorImpl (BindingFlags bindingAttr,
 								       Binder binder,
 								       CallingConventions callConvention,
 								       Type[] types,
 								       ParameterModifier[] modifiers)
 		{
-			// FIXME
-			throw new NotImplementedException ();
+			ConstructorInfo[] methods = GetConstructors (bindingAttr);
+			ConstructorInfo found = null;
+			MethodBase[] match;
+			int count = 0;
+			foreach (ConstructorInfo m in methods) {
+				if (callConvention != CallingConventions.Any && m.CallingConvention != callConvention)
+					continue;
+				found = m;
+				count++;
+			}
+			if (count == 0)
+				return null;
+			if (types == null) {
+				if (count > 1)
+					throw new AmbiguousMatchException ();
+				return found;
+			}
+			match = new MethodBase [count];
+			if (count == 1)
+				match [0] = found;
+			else {
+				count = 0;
+				foreach (ConstructorInfo m in methods) {
+					if (callConvention != CallingConventions.Any && m.CallingConvention != callConvention)
+						continue;
+					match [count++] = m;
+				}
+			}
+			if (binder == null)
+				binder = Binder.DefaultBinder;
+			return (ConstructorInfo)binder.SelectMethod (bindingAttr, match, types, modifiers);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -100,24 +128,52 @@ namespace System
 		
 		public override MemberInfo[] GetMembers( BindingFlags bindingAttr)
 		{
-			// FIXME
-			throw new NotImplementedException ();
+			return FindMembers (MemberTypes.All, bindingAttr, null, null);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern override MethodInfo[] GetMethods (BindingFlags bindingAttr);
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern MethodInfo get_method (Type type, string name, Type[] types);
-
-
-		[MonoTODO]
 		protected override MethodInfo GetMethodImpl (string name, BindingFlags bindingAttr,
 							     Binder binder,
 							     CallingConventions callConvention,
 							     Type[] types, ParameterModifier[] modifiers)
 		{
-			return get_method (this, name, types);
+			MethodInfo[] methods = GetMethods (bindingAttr);
+			MethodInfo found = null;
+			MethodBase[] match;
+			int count = 0;
+			foreach (MethodInfo m in methods) {
+				if (m.Name != name)
+					continue;
+				if (callConvention != CallingConventions.Any && m.CallingConvention != callConvention)
+					continue;
+				found = m;
+				count++;
+			}
+			if (count == 0)
+				return null;
+			if (types == null) {
+				if (count > 1)
+					throw new AmbiguousMatchException ();
+				return found;
+			}
+			match = new MethodBase [count];
+			if (count == 1)
+				match [0] = found;
+			else {
+				count = 0;
+				foreach (MethodInfo m in methods) {
+					if (m.Name != name)
+						continue;
+					if (callConvention != CallingConventions.Any && m.CallingConvention != callConvention)
+						continue;
+					match [count++] = m;
+				}
+			}
+			if (binder == null)
+				binder = Binder.DefaultBinder;
+			return (MethodInfo)binder.SelectMethod (bindingAttr, match, types, modifiers);
 		}
 		
 		public override Type GetNestedType( string name, BindingFlags bindingAttr)
