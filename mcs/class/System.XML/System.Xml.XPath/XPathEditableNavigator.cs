@@ -38,7 +38,7 @@ using System.IO;
 using System.Security.Policy;
 using System.Xml.Schema;
 using System.Xml.XPath;
-//using Mono.Xml.XPath2;
+using Mono.Xml.XPath;
 //using MS.Internal.Xml;
 
 namespace System.Xml.XPath
@@ -67,15 +67,19 @@ namespace System.Xml.XPath
 		{
 			XmlWriter w = AppendChild ();
 			w.WriteNode (reader, false);
-			throw new NotImplementedException ();
+			w.Close ();
+			XPathEditableNavigator nav = (XPathEditableNavigator) Clone ();
+			nav.MoveToFirstChild ();
+			while (!nav.MoveToNext ())
+				;
+			return nav;
 		}
 
 		[MonoTODO]
 		public virtual XPathEditableNavigator AppendChild (
 			XPathNavigator nav)
 		{
-			throw new NotImplementedException ();
-//			AppendChild (new XPathNavigatorReader (nav));
+			return AppendChild (new XPathNavigatorReader (nav));
 		}
 
 		public void AppendChildElement (string prefix, string name, string ns, string value)
@@ -110,11 +114,12 @@ namespace System.Xml.XPath
 
 		// LAMESPEC: documented as public abstract, but it conflicts
 		// with XPathNavigator.CreateNavigator ().
+/*
 		[MonoTODO]
 		public override XPathNavigator CreateNavigator ()
 		{
-			throw new NotImplementedException ();
 		}
+*/
 
 		[MonoTODO ("No implementation as yet")]
 		public abstract bool DeleteCurrent ();
@@ -139,14 +144,15 @@ namespace System.Xml.XPath
 			using (XmlWriter w = InsertAfter ()) {
 				w.WriteNode (reader, false);
 			}
-			throw new NotImplementedException ();
+			XPathEditableNavigator nav = (XPathEditableNavigator) Clone ();
+			nav.MoveToNext ();
+			return nav;
 		}
 
 		[MonoTODO]
 		public virtual XPathEditableNavigator InsertAfter (XPathNavigator nav)
 		{
-//			InsertAfter (new XPathNavigatorReader (nav));
-			throw new NotImplementedException ();
+			return InsertAfter (new XPathNavigatorReader (nav));
 		}
 
 		[MonoTODO ("No implementation as yet")]
@@ -163,14 +169,15 @@ namespace System.Xml.XPath
 			using (XmlWriter w = InsertBefore ()) {
 				w.WriteNode (reader, false);
 			}
-			throw new NotImplementedException ();
+			XPathEditableNavigator nav = (XPathEditableNavigator) Clone ();
+			nav.MoveToPrevious ();
+			return nav;
 		}
 
 		[MonoTODO]
 		public virtual XPathEditableNavigator InsertBefore (XPathNavigator nav)
 		{
-//			InsertBefore (new XPathNavigatorReader (nav));
-			throw new NotImplementedException ();
+			return InsertBefore (new XPathNavigatorReader (nav));
 		}
 
 		public virtual void InsertElementAfter (string prefix, 
@@ -209,14 +216,15 @@ namespace System.Xml.XPath
 			using (XmlWriter w = PrependChild ()) {
 				w.WriteNode (reader, false);
 			}
-			throw new NotImplementedException ();
+			XPathEditableNavigator nav = (XPathEditableNavigator) Clone ();
+			nav.MoveToFirstChild ();
+			return nav;
 		}
 
 		[MonoTODO]
 		public virtual XPathEditableNavigator PrependChild (XPathNavigator nav)
 		{
-//			PrependChild (new XPathNavigatorReader (nav));
-			throw new NotImplementedException ();
+			return PrependChild (new XPathNavigatorReader (nav));
 		}
 
 		public virtual void PrependChildElement (string prefix, 
@@ -245,14 +253,73 @@ namespace System.Xml.XPath
 
 		[MonoTODO]
 		public override string InnerXml {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				XmlReader r = ReadSubtree ();
+				r.Read (); // start
+				// skip the element itself (or will reach to 
+				// EOF if other than element) unless writing
+				// doc itself
+				int depth = r.Depth;
+				if (NodeType != XPathNodeType.Root)
+					r.Read ();
+				StringWriter sw = new StringWriter ();
+				XmlWriter xtw = XmlWriter.Create (sw);
+				while (!r.EOF && r.Depth > depth)
+					xtw.WriteNode (r, false);
+				return sw.ToString ();
+			}
+			set {
+				DeleteChildren ();
+				if (NodeType == XPathNodeType.Attribute) {
+					SetValue (value);
+					return;
+				}
+				AppendChild (new XmlTextReader (value, XmlNodeType.Element, null));
+			}
+		}
+
+		private void DeleteChildren ()
+		{
+			switch (NodeType) {
+			case XPathNodeType.Namespace:
+				throw new InvalidOperationException ("Removing namespace node content is not supported.");
+			case XPathNodeType.Attribute:
+				return;
+			case XPathNodeType.Text:
+			case XPathNodeType.SignificantWhitespace:
+			case XPathNodeType.Whitespace:
+			case XPathNodeType.ProcessingInstruction:
+			case XPathNodeType.Comment:
+				DeleteCurrent ();
+				return;
+			}
+			if (!HasChildren)
+				return;
+			XPathEditableNavigator nav = (XPathEditableNavigator) Clone ();
+			nav.MoveToFirstChild ();
+			while (!nav.IsSamePosition (this))
+				nav.DeleteCurrent ();
 		}
 
 		[MonoTODO]
 		public override string OuterXml {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				StringWriter sw = new StringWriter ();
+				XmlWriter xw = XmlWriter.Create (sw);
+				WriteSubtree (xw);
+				return sw.ToString ();
+			}
+			set {
+				if (NodeType == XPathNodeType.Root) {
+					InnerXml = value;
+					return;
+				}
+
+				XPathEditableNavigator nav = (XPathEditableNavigator) Clone ();
+				nav.MoveToParent ();
+				DeleteCurrent ();
+				nav.AppendChild (new XmlTextReader (value, XmlNodeType.Document, null));
+			}
 		}
 	}
 }
