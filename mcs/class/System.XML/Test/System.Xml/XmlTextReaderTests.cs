@@ -799,5 +799,32 @@ namespace MonoTests.System.Xml
 			while (!xtr.EOF)
 				xtr.Read ();
 		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void CheckNamespaceValidity1 ()
+		{
+			string xml = "<x:root />";
+			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			xtr.Read ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void CheckNamespaceValidity2 ()
+		{
+			string xml = "<root x:attr='val' />";
+			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			xtr.Read ();
+		}
+
+		[Test]
+		public void NamespaceFalse ()
+		{
+			string xml = "<x:root />";
+			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			xtr.Namespaces = false;
+			xtr.Read ();
+		}
 	}
 }
