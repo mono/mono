@@ -1,3 +1,7 @@
+2002-02-07  Nick Drochak  <ndrochak@gol.com>
+
+	* CodeGroupTest.cs: Tests everything except the (To|From)Xml methods.
+
 2002-02-01  Nick Drochak  <ndrochak@gol.com>
 
 	* CodeGroupTest.cs: Still not done, checking in now just in case
