@@ -66,6 +66,9 @@ namespace System.ComponentModel
 		{
 			if (value.GetType() == typeof (string)) {
 				string CultureString = (String) value;
+				if (String.Compare (CultureString, "(default)", true) == 0) {
+					return CultureInfo.InvariantCulture;
+				}
 				try {
 					// try to create a new CultureInfo if form is RFC 1766
 					return new CultureInfo (CultureString);
