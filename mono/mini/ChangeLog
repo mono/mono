@@ -1,3 +1,7 @@
+2003-08-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* mini.c: register a SIGINT handler if MONO_DEBUG is defined.
+
 2003-08-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* inssel.brg (OP_UNBOXCAST): Add support for the AOT case.
