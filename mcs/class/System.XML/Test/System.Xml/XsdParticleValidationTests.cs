@@ -16,7 +16,7 @@ namespace MonoTests.System.Xml
 //	using XmlValidatingReader = XmlTextReader;
 
 	[TestFixture]
-	public class XsdValidatingReaderTests : Assertion
+	public class XsdParticleValidationTests : Assertion
 	{
 		XmlSchema schema;
 		XmlReader xr;
@@ -24,7 +24,7 @@ namespace MonoTests.System.Xml
 
 		private void PrepareReader1 (string xsdUrl, string xml)
 		{
-			schema = XmlSchema.Read (new XmlTextReader ("XmlFiles/XsdValidation/" + xsdUrl), null);
+			schema = XmlSchema.Read (new XmlTextReader ("Test/XmlFiles/XsdValidation/" + xsdUrl), null);
 			xr = new XmlTextReader (xml, XmlNodeType.Document, null);
 			xvr = new XmlValidatingReader (xr);
 			xvr.Schemas.Add (schema);
@@ -35,6 +35,9 @@ namespace MonoTests.System.Xml
 		public void ValidateRootElementOnlyValid ()
 		{
 			PrepareReader1 ("1.xsd", "<root xmlns='urn:foo' />");
+			xvr.Read ();
+			PrepareReader1 ("1.xsd", "<root xmlns='urn:foo'></root>");
+			xvr.Read ();
 			xvr.Read ();
 		}
 

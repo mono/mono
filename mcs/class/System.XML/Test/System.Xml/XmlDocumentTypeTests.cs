@@ -89,6 +89,19 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void IncorrectInternalSubset ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			XmlDocumentType doctype = doc.CreateDocumentType (
+				"root", "public-hogehoge", null,
+				"invalid_intsubset");
+			doctype = doc.CreateDocumentType ("root",
+				"public-hogehoge", null, 
+				"<!ENTITY % pe1 '>'> <!ELEMENT e EMPTY%pe1;");
+		}
+
+		[Test]
 		public void CloneNode ()
 		{
 			XmlNode original = docType;

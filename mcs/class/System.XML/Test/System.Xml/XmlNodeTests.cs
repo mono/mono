@@ -158,17 +158,9 @@ namespace MonoTests.System.Xml
 			// These are required for .NET 1.0 but not for .NET 1.1.
 			try {
 				document.InsertBefore (document.CreateElement ("BAD_MAN"), docelem);
-#if !USE_VERSION_1_1
 				Fail ("#InsertBefore.BadPositionButNoError.1");
-#endif
 			}
-#if USE_VERSION_1_1
-			catch (XmlException ex) {
-				throw ex;
-			}
-#else
 			catch (Exception) {}
-#endif
 		}
 
 		[Test]

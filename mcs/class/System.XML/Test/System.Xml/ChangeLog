@@ -1,3 +1,13 @@
+2004-01-28  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDocumentTypeTests.cs : Added IncorrectInternalSubset().
+	* XmlNodeTests.cs : Since .NET 1.1 also prohibits multiple document
+	  element, removed extraneous test switch for InsertBefore().
+	* XsdParticleValidationTests.cs,
+	  XsdValidatingReaderTests.cs : These test class names are too
+	  ambiguous so just renamed them. (No bug reports are found on them,
+	  but should be warned in the meantime.)
+
 2004-01-23  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlElementTests.cs : Added SetAttributeXmlns.

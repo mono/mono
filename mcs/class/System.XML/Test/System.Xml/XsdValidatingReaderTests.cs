@@ -14,9 +14,9 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XsdValidationTests : Assertion
+	public class XsdValidatingReaderTests : Assertion
 	{
-		public XsdValidationTests ()
+		public XsdValidatingReaderTests ()
 		{
 		}
 
@@ -97,6 +97,8 @@ namespace MonoTests.System.Xml
 
 			xvr.Read ();	// element root
 			AssertEquals (XmlNodeType.Element, xvr.NodeType);
+			AssertNotNull (xvr.SchemaType);
+			Assert (xvr.SchemaType is XmlSchemaDatatype);
 			o = xvr.ReadTypedValue ();	// read "12"
 			AssertEquals (XmlNodeType.EndElement, xvr.NodeType);
 			AssertNotNull (o);
