@@ -1,3 +1,9 @@
+2004-06-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TimeSpanTest.cs: Added more cases with MinValue and MaxValue for 
+	each parameter of the constructor. Some tests are ignored because
+	they are too long to run (but useful when debugging).
+
 2004-06-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* FloatingPointFormatterTest.cs : Added more permille and percent
