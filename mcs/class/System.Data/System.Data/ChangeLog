@@ -1,3 +1,8 @@
+2005-02-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataViewManager.cs: misuse of ReadStartElement(string).
+	* DataRowView.cs : removed some MonoTODO.
+
 2005-02-02  Sureshkumar T  <tsureshkumar@novell.com>
 	    Ankit Jain     <radical@corewars.org>
 

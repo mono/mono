@@ -102,7 +102,6 @@ namespace System.Data
 				dataRow.Table.ChildRelations [name]);
 		}
 
-		[MonoTODO]
 		public void Delete ()
 		{
 			dataView.DeleteRowView (this);
@@ -137,12 +136,10 @@ namespace System.Data
 		
 		[System.Runtime.CompilerServices.IndexerName("Item")]
 		public object this[string column] {
-			[MonoTODO]
 			get {
 				DataColumn dc = dataView.Table.Columns[column];
 				return dataRow[dc];
 			}
-			[MonoTODO]
 			set {
 				DataColumn dc = dataView.Table.Columns[column];
 				dataRow[dc] = value;
@@ -152,12 +149,10 @@ namespace System.Data
 		// the compiler creates a DefaultMemeberAttribute from
 		// this IndexerNameAttribute
 		public object this[int column] {
-			[MonoTODO]
 			get {
 				DataColumn dc = dataView.Table.Columns[column];
 				return dataRow[dc];
 			}
-			[MonoTODO]
 			set {
 				DataColumn dc = dataView.Table.Columns[column];
 				dataRow[dc] = value;

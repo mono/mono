@@ -197,7 +197,10 @@ namespace System.Data
 			XmlTextReader xtr = new XmlTextReader (source,
 				XmlNodeType.Element, null);
 
-			xtr.ReadStartElement ("DataViewSettingCollectionString");
+			xtr.Read ();
+			if (xtr.Name != "DataViewSettingCollectionString")
+				// easy way to throw the expected exception ;-)
+				xtr.ReadStartElement ("DataViewSettingCollectionString");
 			if (xtr.IsEmptyElement)
 				return; // MS does not change the value.
 
