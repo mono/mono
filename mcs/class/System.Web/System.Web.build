@@ -20,6 +20,7 @@
 				<!--<excludes name="System.Web.UI/**"/>-->
 				<excludes name="System.Web/IHttpModule.cs"/>
 				<excludes name="System.Web.UI.HtmlControls/**"/>
+				<excludes name="System.Web.Security/**"/>
 				<excludes name="System.Web.UI.WebControls/**"/>
 				<excludes name="System.Web/IHttpHandlerFactory.cs"/>
 				<excludes name="System.Web/HttpCacheValidateHandler.cs"/>
