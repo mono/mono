@@ -1,5 +1,10 @@
 2005-01-05  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (reverse_branch_op): New helper function.
+
+	* mini.c (optimize_branches): Run the new optimization only on 
+	platforms which support it. Also reverse all kinds of branches.
+
 	* mini.h (MonoBasicBlock): Add 'out_of_line' field.
 
 	* mini.c (mono_method_to_ir): Set 'out_of_line' for bblocks which have
