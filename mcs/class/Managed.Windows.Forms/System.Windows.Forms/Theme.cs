@@ -23,9 +23,12 @@
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
 //
-// $Revision: 1.14 $
+// $Revision: 1.15 $
 // $Modtime: $
 // $Log: Theme.cs,v $
+// Revision 1.15  2004/10/30 10:23:02  ravindra
+// Drawing ListView and some default values.
+//
 // Revision 1.14  2004/10/26 09:35:18  ravindra
 // Added some default values for ListView control.
 //
@@ -329,10 +332,11 @@ namespace System.Windows.Forms
 		public abstract void DrawListView (Graphics dc, Rectangle clip_rectangle, ListView control);
 
 		// Sizing
-		public abstract int CheckBoxWidth { get; }
+		public abstract Size CheckBoxSize { get; }
 		public abstract int ColumnHeaderHeight { get; }
 		public abstract int DefaultColumnWidth { get; }
-		public abstract int DetailViewSpacing { get; }
+		public abstract int VerticalSpacing { get; }
+		public abstract int EmptyColumnWidth { get; }
 		public abstract int HorizontalSpacing { get; }
 		public abstract Size ListViewDefaultSize { get; }
 		#endregion	// ListView

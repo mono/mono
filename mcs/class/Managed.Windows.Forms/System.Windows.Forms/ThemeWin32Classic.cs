@@ -26,9 +26,12 @@
 //
 //
 //
-// $Revision: 1.51 $
+// $Revision: 1.52 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.52  2004/10/30 10:23:02  ravindra
+// Drawing ListView and some default values.
+//
 // Revision 1.51  2004/10/26 09:55:48  ravindra
 // Some formatting for my last checkins.
 //
@@ -850,7 +853,7 @@ namespace System.Windows.Forms
 			this.CPDrawBorderStyle (dc, control_area, control.BorderStyle);
 			if (details) {
 				dc.FillRectangle (ResPool.GetSolidBrush (SystemColors.Control),
-						  0, 0, control_area.Width, control.Font.Height);
+						  0, 0, control.TotalWidth, control.Font.Height);
 				if (control.Columns.Count > 0) {
 					foreach (ColumnHeader col in control.Columns) {
 						this.CPDrawButton (dc, col.Rect, ButtonState.Normal);
@@ -880,66 +883,80 @@ namespace System.Windows.Forms
 		// draws the ListViewItem of the given index
 		private void DrawListViewItem (Graphics dc, ListView control, ListViewItem item)
 		{
-			if (control.View == View.Details && control.Columns.Count > 0) {
-				// Item is drawn as a special case, as it is not just text
-				if (item.ImageIndex > -1 && control.SmallImageList != null)
-					dc.DrawImage (control.SmallImageList.Images [item.ImageIndex],
-						      item.IconRect);
-				if (item.Text != null && item.Text.Length > 0)
-					dc.DrawString (item.Text, item.Font,
-						       this.ResPool.GetSolidBrush (item.ForeColor),
-						       item.LabelRect, control.Columns[0].Format);
+			//if (control.CheckBoxes) {
+			//	if (item.Checked)
+			//		this.CPDrawCheckBox (dc, item.CheckRect, ButtonState.Checked);
+			//	else
+			//		this.CPDrawCheckBox (dc, item.CheckRect, ButtonState.Normal);
+			//}
 
-				// draw subitems
+			// Item is drawn as a special case, as it is not just text
+			if (item.ImageIndex > -1 && control.SmallImageList != null)
+				dc.DrawImage (control.SmallImageList.Images [item.ImageIndex],
+					      item.IconRect);
+
+			// draw the item text
+			Rectangle text_rect = Rectangle.Empty;
+			text_rect.X = item.LabelRect.X + 1;
+			text_rect.Y = item.LabelRect.Y + 1;
+			text_rect.Width = item.LabelRect.Width - 1;
+			text_rect.Height = item.LabelRect.Height - 2;
+
+			dc.FillRectangle (ResPool.GetSolidBrush (item.BackColor), text_rect);
+			text_rect.Width ++;
+			if (item.Text != null && item.Text.Length > 0)
+				dc.DrawString (item.Text, item.Font, this.ResPool.GetSolidBrush
+					       (item.ForeColor), text_rect, control.Columns[0].Format);
+
+			if (control.View == View.Details && control.Columns.Count > 0) {
+				// draw subitems for details view
 				ListViewItem.ListViewSubItemCollection subItems = item.SubItems;
 				int count = (control.Columns.Count < subItems.Count ? 
 					     control.Columns.Count : subItems.Count);
-				
+
 				if (count > 0) {
 					Rectangle sub_item_rect = Rectangle.Empty;
-					sub_item_rect.X = item.EntireRect.Right;
-					sub_item_rect.Y = item.EntireRect.Y;
-					sub_item_rect.Height = item.EntireRect.Height;
+					sub_item_rect.X = item.LabelRect.Right + 1;
+					sub_item_rect.Y = item.LabelRect.Y + 1;
+					sub_item_rect.Height = item.LabelRect.Height - 2;
 
 					ListViewItem.ListViewSubItem subItem;
 					ColumnHeader col;
 
+					// 0th subitem is the item already drawn
 					for (int index = 1; index < count; index++) {
 						subItem = subItems [index];
 						col = control.Columns [index];
-						sub_item_rect.Width = col.Wd;
+						sub_item_rect.Width = col.Wd - 2;
 
 						if (item.UseItemStyleForSubItems) {
 							dc.FillRectangle (this.ResPool.GetSolidBrush
 									  (item.BackColor), sub_item_rect);
-							dc.DrawString (subItem.Text, item.Font,
-								       this.ResPool.GetSolidBrush
-								       (item.ForeColor), sub_item_rect,
-								       col.Format);
+							if (subItem.Text != null && subItem.Text.Length > 0)
+								dc.DrawString (subItem.Text, item.Font,
+									       this.ResPool.GetSolidBrush
+									       (item.ForeColor),
+									       sub_item_rect, col.Format);
 						}
 						else {
 							dc.FillRectangle (this.ResPool.GetSolidBrush
 									  (subItem.BackColor),
 									  sub_item_rect);
-							dc.DrawString (subItem.Text, subItem.Font,
-								       this.ResPool.GetSolidBrush
-								       (subItem.ForeColor),
-								       sub_item_rect, col.Format);
+							if (subItem.Text != null && subItem.Text.Length > 0)
+								dc.DrawString (subItem.Text, subItem.Font,
+									       this.ResPool.GetSolidBrush
+									       (subItem.ForeColor),
+									       sub_item_rect, col.Format);
 						}
 						sub_item_rect.X += col.Wd;
 					}
 				}
 			}
-			else if (control.View != View.Details) { // Not a detail view
-
-			}
-			else
-				return;
 		}
 
 		// Sizing
-		public override int CheckBoxWidth {
-			get { return 16; }
+		public override Size CheckBoxSize {
+			get { return new Size (16, 16); }
 		}
 
 		public override int ColumnHeaderHeight {
@@ -950,8 +967,12 @@ namespace System.Windows.Forms
 			get { return 60; }
 		}
 
-		public override int DetailViewSpacing {
+		public override int VerticalSpacing {
 			get { return 22; }
+		}
+
+		public override int EmptyColumnWidth {
+			get { return 10; }
 		}
 
 		public override int HorizontalSpacing {
