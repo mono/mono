@@ -154,15 +154,16 @@ namespace Mono.CSharp {
 		{
 			AdditionResult res;
 			string basename = constant.Name;
+			string fullname = Name + "." + basename;
 
-			if ((res = IsValid (basename)) != AdditionResult.Success)
+			if ((res = IsValid (fullname)) != AdditionResult.Success)
 				return res;
 			
 			if (constants == null)
 				constants = new ArrayList ();
 
 			constants.Add (constant);
-			DefineName (Name + "." + basename, constant);
+			DefineName (fullname, constant);
 
 			return AdditionResult.Success;
 		}
@@ -303,8 +304,9 @@ namespace Mono.CSharp {
 		{
 			AdditionResult res;
 			string basename = field.Name;
+			string fullname = Name + "." + basename;
 
-			if ((res = IsValid (basename)) != AdditionResult.Success)
+			if ((res = IsValid (fullname)) != AdditionResult.Success)
 				return res;
 			
 			if (fields == null)
@@ -335,7 +337,7 @@ namespace Mono.CSharp {
 			if ((field.ModFlags & Modifiers.STATIC) == 0)
 				have_nonstatic_fields = true;
 
-			DefineName (Name + "." + basename, field);
+			DefineName (fullname, field);
 			return AdditionResult.Success;
 		}
 
@@ -343,8 +345,9 @@ namespace Mono.CSharp {
 		{
 			AdditionResult res;
 			string basename = prop.Name;
+			string fullname = Name + "." + basename;
 
-			if ((res = IsValid (basename)) != AdditionResult.Success)
+			if ((res = IsValid (fullname)) != AdditionResult.Success)
 				return res;
 
 			if (properties == null)
@@ -354,7 +357,7 @@ namespace Mono.CSharp {
 				properties.Insert (0, prop);
 			else
 				properties.Add (prop);
-			DefineName (Name + "." + basename, prop);
+			DefineName (fullname, prop);
 
 			return AdditionResult.Success;
 		}
@@ -363,15 +366,16 @@ namespace Mono.CSharp {
 		{
 			AdditionResult res;
 			string basename = e.Name;
+			string fullname = Name + "." + basename;
 
-			if ((res = IsValid (basename)) != AdditionResult.Success)
+			if ((res = IsValid (fullname)) != AdditionResult.Success)
 				return res;
 
 			if (events == null)
 				events = new ArrayList ();
 			
 			events.Add (e);
-			DefineName (Name + "." + basename, e);
+			DefineName (fullname, e);
 
 			return AdditionResult.Success;
 		}

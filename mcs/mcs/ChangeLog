@@ -1,3 +1,9 @@
+2003-03-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* class.cs:
+	(Add*): check if the name is valid using the full name for constants,
+	fields, properties and events.
+
 2003-03-28  Miguel de Icaza  <miguel@ximian.com>
 
 	* enum.cs (Enum.DefineType, Enum.IsValidEnumConstant): Also allow
