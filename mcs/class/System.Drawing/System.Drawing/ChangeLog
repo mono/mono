@@ -1,3 +1,8 @@
+2003-07-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* Factories.cs: If the AppDomain key `Mono.Running.Windows.Forms'
+	is set, default to Win32Impl 
+
 2003-07-22 Alexandre Pigolkine <pigolkine@gmx.de>
 	* Image.cs	implementation added
 	

@@ -154,7 +154,7 @@ namespace System.Drawing.XrImpl {
 		internal static extern void XrSetDash (IntPtr xr_state, double [] dashes, int ndash, double offset);
 
 		[DllImport (Xrimp)]
-		internal static extern void XtSetMiterLimit (IntPtr xr_state, double limit);
+		internal static extern void XrSetMiterLimit (IntPtr xr_state, double limit);
 		
 		[DllImport (Xrimp)]
 		internal static extern void XrTranslate (IntPtr xr_state, double tx, double ty);
@@ -286,10 +286,15 @@ namespace System.Drawing.XrImpl {
 		[DllImport (Xrimp)]
 		internal static extern double XrGetMiterLimit (IntPtr xr_state);
 
+#if false
+		//
+		// This is not implemented in Xr
+		//
 		[DllImport (Xrimp)]
 		internal static extern void XrGetMatrix (IntPtr xr_state,
 							 out double a, out double b, out double c, out double d,
 							 out double tx, out double ty);
+#endif
 
 		[DllImport (Xrimp)]
 		internal static extern double XrGetTargetSurface (IntPtr xr_state);

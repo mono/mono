@@ -262,9 +262,10 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		return implementation.ConvertToInternalImageInfo();
 	}
 
-	public void Save(Stream stream, ImageFormat format) {
+	public void Save (Stream stream, ImageFormat format)
+	{
 		ImageCodecInfo[] encoders = ImageCodecInfo.GetImageEncoders();
-		foreach( ImageCodecInfo encoder in encoders) {
+		foreach (ImageCodecInfo encoder in encoders) {
 			if (encoder.FormatID == format.Guid) {
 				if(encoder.encode != null) {
 					InternalImageInfo imageInfo = ConvertToInternalImageInfo();

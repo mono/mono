@@ -13,6 +13,7 @@ using System.Configuration;
 using System.Collections.Specialized;
 using System.Reflection;
 using System.Drawing.Text;
+using System.Threading;
 
 namespace System.Drawing {
 internal class Factories {
@@ -60,7 +61,15 @@ internal class Factories {
 	static Factories ()
 	{
 		FactoryAssembly = Assembly.GetExecutingAssembly();
-		string implNamespace = Environment.GetEnvironmentVariable ("SystemDrawingImpl");
+		string implNamespace = null;
+
+		if (Thread.GetDomain ().GetData ("Mono.Running.Windows.Forms") != null)
+			implNamespace = "Win32Impl";
+
+		string s = Environment.GetEnvironmentVariable ("SystemDrawingImpl");
+		if (s != null)
+			implNamespace = s;
+		
 		if (implNamespace == null){
 			implNamespace = Factories.DefaultImplementationNamespace;
 			NameValueCollection sysdrawconfig = (NameValueCollection) ConfigurationSettings.GetConfig("system.drawing");
