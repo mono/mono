@@ -1,3 +1,8 @@
+2004-08-09  Sanjay Gupta <gsanjay@novell.com>
+
+	* SessionStateItemExpireCallback.cs: Added delegate.
+	* SessionStateStoreData.cs: Added a new class.
+
 2004-08-05  Sanjay Gupta <gsanjay@novell.com>
 
 	* IHttpSessionState.cs: 
