@@ -1,3 +1,17 @@
+2004-08-26 Sachin Kumar <skumar1@novell.com>
+	* ExceptionHandlingA.vb:
+	* ExceptionHandlingB.vb:
+	* ExceptionHandlingC1.vb:
+	* ExceptionHandlingC2.vb:
+	* ExceptionHandlingC3.vb:
+	* ExceptionHandlingC4.vb:
+	* ExceptionHandlingC5.vb:
+	* ExceptionHandlingC6.vb:
+	* ExceptionHandlingC7.vb:
+	* ExceptionHandlingC8.vb:
+	* ExceptionHandlingC9.vb:
+	* Test.Sources: included new tests
+
 2004-08-26 Anirban Bhattacharjee <banirban@novell.com>
 	Following tests are submtted by Manish Sinha <manishkumarsinha@sify.com>
 	* Arguments_ByValueA:

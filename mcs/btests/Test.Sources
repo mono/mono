@@ -214,7 +214,9 @@ ConditionalStatementsD \
 ForA \
 ForB \
 ForEachB \
-LoopStatementsA
+LoopStatementsA \
+ExceptionHandlingA \
+ExceptionHandlingB
 
 # All negetive test cases which should
 # fail during compilation goes here
@@ -458,7 +460,16 @@ ForEachC4 \
 ForEachC5 \
 ForEachC6 \
 ForEachC7 \
-ForEachC8
+ForEachC8 \
+ExceptionHandlingC1 \
+ExceptionHandlingC2 \
+ExceptionHandlingC3 \
+ExceptionHandlingC4 \
+ExceptionHandlingC5 \
+ExceptionHandlingC6 \
+ExceptionHandlingC7 \
+ExceptionHandlingC8 \
+ExceptionHandlingC9
 
 # All negetive test cases which should fail at
 # runtime goes here
