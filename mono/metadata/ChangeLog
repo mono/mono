@@ -1,5 +1,8 @@
 2005-01-18  Zoltan Varga  <vargaz@freemail.hu>
 
+	* loader.c (mono_lookup_pinvoke_call): Revert the previous patch as it breaks 
+	System.Drawing.
+
 	* reflection.c (mono_method_body_get_object): Handle abstract and
 	runtime methods.
 
