@@ -1,3 +1,10 @@
+2004-05-24  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (EXTRA_FLAGS): Remove.
+	(LIBRARY_COMPILE) [!HAVE_SYSTEM_XML]: Use $(BOOT_COMPILE) for
+	non-Xml first build.
+	(all-local) [!SECOND_PASS]: Simplify.
+
 2004-05-10  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (install-local,test-local,run-test-local,clean-local):
