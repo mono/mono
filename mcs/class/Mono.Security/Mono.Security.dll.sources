@@ -40,6 +40,7 @@
 ./Mono.Security.X509/X509CertificateCollection.cs
 ./Mono.Security.X509/X509CertificateBuilder.cs
 ./Mono.Security.X509/X509Chain.cs
+./Mono.Security.X509/X509ChainStatusFlags.cs
 ./Mono.Security.X509/X509Extension.cs
 ./Mono.Security.X509/X509Extensions.cs
 ./Mono.Security.X509/X520Attributes.cs
