@@ -1,3 +1,7 @@
+2003-06-20  Nick Drochak  <ndrochak@gol.com>
+
+	* SortedListTest.cs: Make it pass on .NET 1.1.
+
 2003-06-14  Duncan Mak  <duncan@ximian.com>
 
 	* SortedListTest.cs

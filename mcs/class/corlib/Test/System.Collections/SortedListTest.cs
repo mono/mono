@@ -145,10 +145,15 @@ public class SortedListTest : Assertion {
         [Test]
         public void TestCapacity3 ()
         {
+		int new_capacity = 5;
                 SortedList list = new SortedList (1000);
-                list.Capacity = 5;
+                list.Capacity = new_capacity;
 
+#if NET_1_1
+                AssertEquals (new_capacity, list.Capacity);
+#else
                 AssertEquals (16, list.Capacity);
+#endif
         }
 
         [Test]
