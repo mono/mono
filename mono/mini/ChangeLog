@@ -1,3 +1,8 @@
+
+Tue Sep 23 10:50:27 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* inssel.brg: string chars are unsigned.
+
 2003-09-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TODO: New todo item.
