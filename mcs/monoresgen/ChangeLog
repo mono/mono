@@ -1,3 +1,8 @@
+2004-01-12  Miguel de Icaza  <miguel@ximian.com>
+
+	* monoresgen.cs (PoResourceWriter.AddResource): Escape strings,
+	fixes #52105
+
 2003-12-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* monoresgen.cs: ignore entries marked as 'fuzzy' in .po files.

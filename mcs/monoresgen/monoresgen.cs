@@ -15,6 +15,7 @@
  */
 
 using System;
+using System.Text;
 using System.IO;
 using System.Collections;
 using System.Resources;
@@ -406,6 +407,35 @@ class PoResourceWriter : IResourceWriter
 		}
 		throw new InvalidOperationException ("Objects not valid in a po resource file");
 	}
+
+	StringBuilder ebuilder = new StringBuilder ();
+	
+	public string Escape (string ns)
+	{
+		ebuilder.Length = 0;
+
+		foreach (char c in ns){
+			switch (c){
+			case '"':
+				ebuilder.Append ('\\');
+				ebuilder.Append (c);
+				break;
+			case '\a':
+				ebuilder.Append ("\\a");
+				break;
+			case '\n':
+				ebuilder.Append ("\\n");
+				break;
+			case '\r':
+				ebuilder.Append ("\\r");
+				break;
+			default:
+				ebuilder.Append (c);
+				break;
+			}
+		}
+		return ebuilder.ToString ();
+	}
 	
 	public void AddResource (string name, string value)
 	{
@@ -414,9 +444,9 @@ class PoResourceWriter : IResourceWriter
 			WriteHeader ();
 		}
 		
-		s.WriteLine ("msgid \"{0}\"", name);
-		s.WriteLine ("msgstr \"{0}\"", value);
-		s.WriteLine ();
+		s.WriteLine ("msgid \"{0}\"", Escape (name));
+		s.WriteLine ("msgstr \"{0}\"", Escape (value));
+		s.WriteLine ("");
 	}
 	
 	void WriteHeader ()
