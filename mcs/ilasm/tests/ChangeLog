@@ -1,3 +1,9 @@
+2003-02-04 Jackson Harper <jackson@latitudegeo.com>
+
+	* HelloWorld.il: Remove
+	* test-1.il: New test 
+	* makefile: Added file
+
 2003-02-02 Jackson Harper <jackson@latitudegeo.com>
 
 	* HelloWorld.il: Add HelloWorld test

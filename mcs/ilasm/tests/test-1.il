@@ -10,7 +10,6 @@
 	
 		ldstr "Hello World."
 		call void [corlib]System.Console::WriteLine(string)
-
 	
 		ret
 	}		
