@@ -90,7 +90,7 @@ public class SocketPermissionTest : TestCase
 		s2 = new SocketPermission(NetworkAccess.Connect, TransportType.Tcp, "12.13.14.15", 80);
 		s2.AddPermission(NetworkAccess.Accept, TransportType.All, "10.11.4.*", SocketPermission.AllPorts);
 		Assert ("#7", !s1.IsSubsetOf (s2));
-		Assert ("#8", s2.IsSubsetOf (s1));
+		Assert ("#8", !s2.IsSubsetOf (s1));
 	}
 	
 	public void TestIntersect ()

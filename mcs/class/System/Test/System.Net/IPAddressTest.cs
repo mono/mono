@@ -58,11 +58,36 @@ public class IPAddressTest : TestCase
 		IPAddress ip = IPAddress.Parse ("127.0.0.1");
 		AssertEquals ("IsLoopback #1", true, IPAddress.IsLoopback (ip));
 	}
+	
+	public void TestAddress ()
+	{
+		// hm, lame, anything is accepted by ms.net
+		/*
+		try {
+			IPAddress ip1 = new IPAddress (0x0000000100000000);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException) {}
+		IPAddress ip = IPAddress.Parse ("127.0.0.1");
+		ip.Address = 0;
+		ip.Address = 0xffffffff;
+		try {
+			ip.Address = -1;
+			Fail ("#2");
+		} catch (ArgumentOutOfRangeException) {}
+		try {
+			ip.Address = 0x0000000100000000;
+			Fail ("#3");
+		} catch (ArgumentOutOfRangeException) {}
+		*/
+	}
 
 	public void TestParseOk ()
 	{
 		IPAddress ip = IPAddress.Parse ("192.168.1.1");
 		Assert ("Parse #1", ip.ToString () == "192.168.1.1");
+
+		ip = IPAddress.Parse ("0xff.0x7f.0x20.0x01");
+		Assert ("Parse #1b", ip.ToString () == "255.127.32.1");
 
 		ip = IPAddress.Parse ("0.0.0.0");
 		AssertEquals ("Parse #2", ip, IPAddress.Any);
@@ -92,6 +117,18 @@ public class IPAddressTest : TestCase
 
 		ip = IPAddress.Parse ("12.1.8. ");
 		AssertEquals ("Parse #10", IPAddress.Parse ("12.1.8.0"), ip);
+
+		ip = IPAddress.Parse ("12");
+		AssertEquals ("Parse #11", IPAddress.Parse ("0.0.0.12"), ip);	
+
+		ip = IPAddress.Parse ("12.1 foo.1.2.3.4.5.bar");
+		AssertEquals ("Parse #13", IPAddress.Parse ("12.0.0.1"), ip);			
+
+		ip = IPAddress.Parse ("12.1.2. ");
+		AssertEquals ("Parse #14", IPAddress.Parse ("12.1.2.0"), ip);			
+
+		ip = IPAddress.Parse ("12.. .");
+		AssertEquals ("Parse #15", IPAddress.Parse ("12.0.0.0"), ip);			
 	}
 
 	public void TestParseWrong ()
@@ -129,6 +166,21 @@ public class IPAddressTest : TestCase
 		} catch (Exception e) {
 			Fail ("ParseWrong #4:" + e.ToString());
 		}
+
+		try {
+			ip = IPAddress.Parse ("12.");
+			Fail ("ParseWrong #5: Should raise a FormatException");
+		} catch (FormatException) {}
+		
+		try {
+			ip = IPAddress.Parse ("12.1.2.");
+			Fail ("ParseWrong #6: Should raise a FormatException");
+		} catch (FormatException) {}		
+		
+		try {
+			ip = IPAddress.Parse ("12...");
+			Fail ("ParseWrong #7: Should raise a FormatException");
+		} catch (FormatException) {}		
 	}
 
 	public void TestNetworkHost ()

@@ -1,3 +1,8 @@
+2002-05-09  Lawrence Pit <loz@cable.a2000.nl>
+
+	* Added tests to IPAddressTest.cs
+	* Fixed tests in CookieTest.cs, SocketPermissionsTest.cs, IPEndPointTest.cs
+
 2002-05-05  Lawrence Pit <loz@cable.a2000.nl>
 
 	* CredentialCacheTest.cs: added

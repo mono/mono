@@ -34,8 +34,8 @@ public class IPEndPointTest : TestCase
         {
                 ipAddress = IPAddress.Parse (MyIPAddressString);
                 ip = ipAddress.Address;
-                endPoint1 = new IPEndPoint(ipAddress, MyPort);
-                endPoint2 = new IPEndPoint(ip, MyPort);
+                endPoint1 = new IPEndPoint (ipAddress, MyPort);
+                endPoint2 = new IPEndPoint (ip, MyPort);
         }
 
         protected override void TearDown () {}
@@ -43,7 +43,7 @@ public class IPEndPointTest : TestCase
         public static ITest Suite
         {
                 get {
-                        return new TestSuite(typeof(IPEndPointTest));
+                        return new TestSuite (typeof (IPEndPointTest));
                 }
         }
 
@@ -56,29 +56,29 @@ public class IPEndPointTest : TestCase
         public void TestConstructors ()
         {
                 try {
-                        new IPEndPoint(null, 0);
-                        Fail("Should raise an ArgumentNullException");
+                        new IPEndPoint (null, 0);
+                        Fail ("Should raise an ArgumentNullException");
                 } catch (ArgumentNullException) {
                 }
                 try {
-                        new IPEndPoint(ipAddress, MyMinPort - 1);
-                        Fail("Should raise an ArgumentOutOfRangeException #1");
+                        new IPEndPoint (ipAddress, MyMinPort - 1);
+                        Fail ("Should raise an ArgumentOutOfRangeException #1");
                 } catch (ArgumentOutOfRangeException) {
                 }
                 try {
-                        new IPEndPoint(ipAddress, MyMaxPort + 1);
-                        Fail("Should raise an ArgumentOutOfRangeException #2");
+                        new IPEndPoint (ipAddress, MyMaxPort + 1);
+                        Fail ("Should raise an ArgumentOutOfRangeException #2");
                 } catch (ArgumentOutOfRangeException) {
                 }
 
                 try {
-                        new IPEndPoint(ip, MyMinPort -1);
-                        Fail("Should raise an ArgumentOutOfRangeException #3");
+                        new IPEndPoint (ip, MyMinPort -1);
+                        Fail ("Should raise an ArgumentOutOfRangeException #3");
                 } catch (ArgumentOutOfRangeException) {
                 }
                 try {
-                        new IPEndPoint(ip, MyMaxPort + 1);
-                        Fail("Should raise an ArgumentOutOfRangeException #4");
+                        new IPEndPoint (ip, MyMaxPort + 1);
+                        Fail ("Should raise an ArgumentOutOfRangeException #4");
                 } catch (ArgumentOutOfRangeException) {
                 }
         }
@@ -87,34 +87,34 @@ public class IPEndPointTest : TestCase
         {
                 try {
                         endPoint1.Port = MyMinPort - 1;
-                        Fail("Should raise an ArgumentOutOfRangeException #1");
+                        Fail ("Should raise an ArgumentOutOfRangeException #1");
                 } catch (ArgumentOutOfRangeException) {
                 }
                 try {
                         endPoint1.Port = MyMaxPort + 1;
-                        Fail("Should raise an ArgumentOutOfRangeException #2");
+                        Fail ("Should raise an ArgumentOutOfRangeException #2");
                 } catch (ArgumentOutOfRangeException) {
                 }
         }
 
         public void TestCreateAndSerialize()
         {
-		SocketAddress addr = endPoint1.Serialize();
-		EndPoint endPoint3 = endPoint2.Create(addr);
-		Assert("#1", endPoint1.Equals(endPoint3));
+		SocketAddress addr = endPoint1.Serialize ();
+		EndPoint endPoint3 = endPoint2.Create (addr);
+		Assert ("#1", endPoint1.Equals (endPoint3));
 
 		IPAddress ipAddress = IPAddress.Parse ("255.255.255.255");
-                IPEndPoint endPoint4 = new IPEndPoint(ipAddress, MyMaxPort);
-		addr = endPoint4.Serialize();
+                IPEndPoint endPoint4 = new IPEndPoint (ipAddress, MyMaxPort);
+		addr = endPoint4.Serialize ();
 		EndPoint endPoint5 = endPoint2.Create(addr);
-		Assert("#2", endPoint4.Equals(endPoint5));
-		AssertEquals("#3", endPoint5.ToString(), "255.255.255.255:" + MyMaxPort);
+		Assert ("#2", endPoint4.Equals (endPoint5));
+		AssertEquals ("#3", endPoint5.ToString (), "255.255.255.255:" + MyMaxPort);
 	}
 
         public void TestEquals ()
         {
-                Assert("Equals", endPoint1.Equals(endPoint2));
-                Assert("Not Equals", !endPoint1.Equals(new IPEndPoint(ip, MyPort + 1)));
+                Assert("Equals", endPoint1.Equals (endPoint2));
+                Assert("Not Equals", !endPoint1.Equals (new IPEndPoint (ip, MyPort + 1)));
         }
 
         public void TestGetHashCode ()
@@ -124,8 +124,8 @@ public class IPEndPointTest : TestCase
 
         public void TestToString ()
         {
-                AssertEquals("ToString #1", endPoint1.ToString(), MyIPAddressString + ":" + MyPort);
-                AssertEquals("ToString #2", endPoint2.ToString(), MyIPAddressString + ":" + MyPort);
+                AssertEquals("ToString #1", endPoint1.ToString (), MyIPAddressString + ":" + MyPort);
+                AssertEquals("ToString #2", endPoint2.ToString (), MyIPAddressString + ":" + MyPort);
         }
 
 }
