@@ -1,4 +1,9 @@
 
+Sat Jan 4 18:26:41 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* MonoMethod.cs: propagate exceptions from the internal invoke
+	code that need to be propagated.
+
 Sat Jan 4 18:04:07 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* Binder.cs: throw an exception if the number of arguments 

@@ -78,6 +78,8 @@ namespace System.Reflection {
 				throw new ArgumentException ("parameters");
 			try {
 				return InternalInvoke (obj, parameters);
+			} catch (TargetException e) {
+				throw;
 			} catch (Exception e) {
 				throw new TargetInvocationException (e);
 			}
@@ -165,6 +167,8 @@ namespace System.Reflection {
 				throw new ArgumentException ("parameters");
 			try {
 				return InternalInvoke (obj, parameters);
+			} catch (TargetException e) {
+				throw;
 			} catch (Exception e) {
 				throw new TargetInvocationException (e);
 			}
