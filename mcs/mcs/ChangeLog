@@ -1,3 +1,8 @@
+2005-03-03  Dan Winship  <danw@novell.com>
+
+	* convert.cs (Error_CannotImplicitConversion): fix two bugs in
+	the warning message [#73219]
+
 2005-03-03  Raja R Harinath  <rharinath@novell.com>
 
 	Fix compile with MCS 1.0.0.0.
