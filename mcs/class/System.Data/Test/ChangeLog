@@ -1,3 +1,7 @@
+2002-05-27  Tim Coleman <tim@timcoleman.com>
+	* TestSqlDataAdapter.cs: remove explicit opening of connection.
+	This should occur implicitly now.
+
 2002-05-23  Daniel Morgan <danmorg@sc.rr.com>
 
 	* TestSqlParameters.cs: read and display the schema columns

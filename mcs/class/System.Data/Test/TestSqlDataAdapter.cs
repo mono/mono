@@ -37,9 +37,6 @@ namespace TestSystemDataSqlClient
 			adapter = new SqlDataAdapter (sqlQuery, 
 					connectionString);
 
-			System.Console.WriteLine ("open connection...");
-			adapter.SelectCommand.Connection.Open ();
-				
 			System.Console.WriteLine ("new DataSet...");
 			dataSet = new DataSet ();
 
