@@ -1,5 +1,8 @@
 2004-02-11  Zoltan Varga  <vargaz@freemail.hu>
 
+	* debug-mini.c (mono_init_debugger): Remove call to mono_verify_corlib,
+	which is not up-to-date. Add check_corlib_version () instead.
+
 	* mini.c (mini_init): Call mono_thread_attach () so embedders do not 
 	have to call it.
 	
