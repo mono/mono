@@ -157,11 +157,8 @@ namespace System
 		/// </summary>
 		public static string StackTrace	{
 			get {
-				try {
-					throw new Exception ();
-				} catch (Exception e) {
-					return e.StackTrace;
-				}
+				System.Diagnostics.StackTrace trace = new System.Diagnostics.StackTrace (1);
+				return trace.ToString ();
 			}
 		}
 

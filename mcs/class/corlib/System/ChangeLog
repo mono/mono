@@ -1,3 +1,7 @@
+2002-10-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Environment.cs: fixed StackTrace property.
+
 2002-10-16  Nick Drochak  <ndrochak@gol.com>
 
 	* Enum.cs (Parse): Then fix the code so that it works too.
