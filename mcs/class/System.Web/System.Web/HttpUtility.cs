@@ -1,10 +1,11 @@
 // 
 // System.Web.HttpUtility
 //
-// Author:
+// Authors:
 //   Patrik Torstensson (Patrik.Torstensson@labs2.com)
 //   Wictor Wilén (decode/encode functions) (wictor@ibizkit.se)
 //   Tim Coleman (tim@timcoleman.com)
+//   Gonzalo Paniagua Javuer (gonzalo@ximian.com)
 //
 using System;
 using System.Collections;
@@ -328,29 +329,144 @@ namespace System.Web {
 			return UrlDecode(str, Encoding.UTF8);
 		}
 	
-		[MonoTODO("Use Encoding")]
-		public static string UrlDecode(string s, Encoding Enc) {
+		private static char [] GetChars (ArrayList b, Encoding e)
+		{
+			byte [] bytes = (byte []) b.ToArray (typeof (byte));
+			return e.GetChars (bytes);
+		}
+		
+		public static string UrlDecode (string s, Encoding e)
+		{
 			if (null == s) 
 				return null;
+
+			if (e == null)
+				e = Encoding.Default;
 	
 			StringBuilder output = new StringBuilder ();
 			long len = s.Length;
+			NumberStyles hexa = NumberStyles.HexNumber;
+			ArrayList bytes = new ArrayList ();
+			char [] chars;
 	
 			for (int i = 0; i < len; i++) {
 				if (s [i] == '%' && i + 2 < len) {
-					output.Append ((char) Int32.Parse (s.Substring (i + 1, 2), NumberStyles.HexNumber));
-					i += 2;
+					if (s [i + 1] == 'u' && i + 5 < len) {
+						if (bytes.Count > 0) {
+							chars = GetChars (bytes, e);
+							output.Append (chars);
+							bytes.Clear ();
+						}
+						output.Append ((char) Int32.Parse (s.Substring (i + 2, 4), hexa));
+						i += 5;
+					} else {
+						bytes.Add ((byte) Int32.Parse (s.Substring (i + 1, 2), hexa));
+						i += 2;
+					}
 				} 
-				else if (s [i] == '+')
-					output.Append (' ');
-				else
-					output.Append (s [i]);
+				else {
+					if (bytes.Count > 0) {
+						chars = GetChars (bytes, e);
+						output.Append (chars);
+						bytes.Clear ();
+					}
+
+					if (s [i] == '+') {
+						output.Append (' ');
+					} else {
+						output.Append (s [i]);
+					}
+				}
 	         	}
 	
+			if (bytes.Count > 0) {
+				chars = GetChars (bytes, e);
+				output.Append (chars);
+			}
+
 			return output.ToString ();
 		}
 	
-	
+		public static string UrlDecode (byte [] bytes, Encoding e)
+		{
+			if (bytes == null)
+				return null;
+
+			return UrlDecode (bytes, 0, bytes.Length, e);
+		}
+
+		private static int GetInt (byte b)
+		{
+			char c = Char.ToUpper ((char) b);
+			if (c >= '0' && c <= '9')
+				return c - '0';
+
+			return (c - 'A' + 10);
+		}
+
+		private static char GetChar (byte [] bytes, int offset, int length)
+		{
+			int value = 0;
+			for (int i = offset; i < length; i++)
+				value = (value << 4) + GetInt (bytes [offset]);
+
+			return (char) value;
+		}
+		
+		public static string UrlDecode (byte [] bytes, int offset, int count, Encoding e)
+		{
+			if (bytes == null || count == 0)
+				return null;
+
+			if (bytes == null)
+				throw new ArgumentNullException ("bytes");
+
+			if (offset < 0 || offset > (int) bytes.Length)
+				throw new ArgumentOutOfRangeException ("offset");
+
+			if (count < 0 || offset + count > (int) bytes.Length)
+				throw new ArgumentOutOfRangeException ("count");
+
+			StringBuilder output = new StringBuilder ();
+			ArrayList byteArray = new ArrayList ();
+			char [] chars;
+
+			for (int i = offset; i < count; i++) {
+				if (bytes [i] == '%' && i + 2 < count) {
+					if (bytes [i + 1] == (byte) 'u' && i + 5 < count) {
+						if (byteArray.Count > 0) {
+							chars = GetChars (byteArray, e);
+							output.Append (chars);
+							byteArray.Clear ();
+						}
+						output.Append (GetChar (bytes, offset + 2, 4));
+						i += 5;
+					} else {
+						byteArray.Add ((byte) GetChar (bytes, offset + 1, 2));
+						i += 2;
+					}
+				} else {
+					if (byteArray.Count > 0) {
+						chars = GetChars (byteArray, e);
+						output.Append (chars);
+						byteArray.Clear ();
+					}
+
+					if (bytes [i] == '+') {
+						output.Append (' ');
+					} else {
+						output.Append ((char) bytes [i]);
+					}
+				}
+			}
+
+			if (byteArray.Count > 0) {
+				chars = GetChars (byteArray, e);
+				output.Append (chars);
+			}
+			
+			return output.ToString ();
+		}
 	
 		public static string UrlEncode(string str) 
 		{

@@ -685,7 +685,11 @@ namespace System.Web {
 		[MonoTODO("Deal with other handlers")]
 		private IHttpHandler CreateHttpHandler(HttpContext context, string type, string file, string path) {
 			//return (IHttpHandler) HandlerFactoryConfiguration.FindHandler(type, path).Create();
-			return new PageHandlerFactory ().GetHandler (context, type, file, path);
+			// FIXME: dummy stuff that should be replaced with machine.config + web.config stuff
+			if (file.EndsWith (".aspx"))
+				return new PageHandlerFactory ().GetHandler (context, type, file, path);
+			else
+				return new StaticFileHandler ();
 		}
 
 		[MonoTODO()]

@@ -1,3 +1,14 @@
+2002-09-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Web/HttpApplication.cs: use the static file handler.
+	* System.Web/HttpForbiddenHandler.cs: handler to forbid access.
+	* System.Web/HttpMethodNotAllowedHandler.cs: handler for method not
+	allowed.
+	
+	* System.Web/HttpUtility.cs: finished all UrlDecode methods.
+	* System.Web/MimeTypes.cs: map from file extension to MIME type.
+	* System.Web/StaticFileHandler.cs: serves static files
+
 2002-09-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Web/HttpApplication.cs:

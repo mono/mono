@@ -32,6 +32,7 @@ System.Web/HttpCompileException.cs
 System.Web/HttpContext.cs
 System.Web/HttpException.cs
 System.Web/HttpFileCollection.cs
+System.Web/HttpForbiddenHandler.cs
 System.Web/HttpHelper.cs
 System.Web/HttpParseException.cs
 System.Web/HttpRequest.cs
@@ -45,11 +46,14 @@ System.Web/HttpValueCollection.cs
 System.Web/HttpCacheValidateHandler.cs
 System.Web/HttpCacheVaryByHeaders.cs
 System.Web/HttpCacheVaryByParams.cs
+System.Web/HttpMethodNotAllowedHandler.cs
 System.Web/HttpModuleCollection.cs
 System.Web/HttpPostedFile.cs
 System.Web/HttpStaticObjectsCollection.cs
 System.Web/HttpUnhandledException.cs
+System.Web/MimeTypes.cs
 System.Web/ProcessInfo.cs
+System.Web/StaticFileHandler.cs
 System.Web.Caching/Cache.cs
 System.Web.Caching/CacheDefinitions.cs
 System.Web.Caching/CacheDependency.cs
