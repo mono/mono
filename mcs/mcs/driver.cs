@@ -1247,6 +1247,14 @@ namespace Mono.CSharp
 			if (timestamps)
 				ShowTime ("Closing types");
 
+#if WORKS
+			//
+			// Currently this can not be commited unles 30020 is fixed
+			//
+			if (!Namespace.VerifyUsing ())
+				return false;
+#endif
+			
 			RootContext.CloseTypes ();
 
 			PEFileKinds k = PEFileKinds.ConsoleApplication;

@@ -16,11 +16,33 @@ namespace Mono.CSharp {
 	///   Keeps track of the namespaces defined in the C# code.
 	/// </summary>
 	public class Namespace {
+		static ArrayList all_namespaces = new ArrayList ();
+		
 		Namespace parent;
 		string name;
 		ArrayList using_clauses;
 		Hashtable aliases;
 		public bool DeclarationFound = false;
+
+		//
+		// This class holds the location where a using definition is
+		// done, and whether it has been used by the program or not.
+		//
+		// We use this to flag using clauses for namespaces that do not
+		// exist.
+		//
+		public class UsingEntry {
+			public string Name;
+			public bool Used;
+			public Location Location;
+			
+			public UsingEntry (string name, Location loc)
+			{
+				Name = name;
+				Location = loc;
+				Used = false;
+			}
+		}
 		
 		/// <summary>
 		///   Constructor Takes the current namespace and the
@@ -31,6 +53,8 @@ namespace Mono.CSharp {
 		{
 			this.name = name;
 			this.parent = parent;
+
+			all_namespaces.Add (this);
 		}
 
 		/// <summary>
@@ -70,7 +94,8 @@ namespace Mono.CSharp {
 			if (using_clauses == null)
 				using_clauses = new ArrayList ();
 
-			using_clauses.Add (ns);
+			UsingEntry ue = new UsingEntry (ns, loc);
+			using_clauses.Add (ue);
 		}
 
 		public ArrayList UsingTable {
@@ -109,21 +134,42 @@ namespace Mono.CSharp {
 
 		/// <summary>
 		///   Used to validate that all the using clauses are correct
-		///   after we are finished parsing all the files
+		///   after we are finished parsing all the files.  
 		/// </summary>
-		public void VerifyUsing ()
+		public static bool VerifyUsing ()
 		{
-			foreach (DictionaryEntry de in using_clauses){
-				if (de.Value == null){
-					string name = (string) de.Key;
-					
-					Report.Error (234, "The type or namespace `" +
-							    name + "' does not exist in the " +
-							    "class or namespace `" + name + "'");
+			ArrayList unused = new ArrayList ();
+			int errors = 0;
+			
+			foreach (Namespace ns in all_namespaces){
+				foreach (UsingEntry ue in ns.UsingTable){
+					if (ue.Used)
+						continue;
+					unused.Add (ue);
 				}
 			}
+
+			//
+			// If we have unused using aliases, load all namespaces and check
+			// whether it is unused, or it was missing
+			//
+			if (unused.Count > 0){
+				Hashtable namespaces = TypeManager.GetNamespaces ();
+
+				foreach (UsingEntry ue in unused){
+					if (namespaces.Contains (ue.Name)){
+						Report.Warning (-24, ue.Location, "Unused namespace in `using' declaration");
+						continue;
+					}
+
+					errors++;
+					Report.Error (246, ue.Location, "The namespace " + ue.Name +
+						      " can not be found (missing assembly reference?)");
+				}
+			}
+			
+			return errors == 0;
 		}
 
 	}
 }
-
