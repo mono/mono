@@ -1,3 +1,8 @@
+2003-11-07 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* IComparable.cs, IComparer.cs, IDictionary.cs, IKeyComparer.cs, KeyValuePair.cs
+	Added.
+
 2003-11-06  Martin Baulig  <martin@ximian.com>
 
 	* ICollection.cs, IList.cs, IEnumerator.cs, IEnumerable.cs:
