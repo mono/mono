@@ -1,3 +1,13 @@
+2001-12-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs: report location.
+	
+	* cs-parser.jay: pass location to throw statement.
+
+	* driver.cs: Small bug fix.
+
+	* report.cs: Updated format to be 4-zero filled digits.
+
 2001-12-22  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (CheckIndices): Fix minor bug where the wrong

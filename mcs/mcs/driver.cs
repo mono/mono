@@ -488,7 +488,10 @@ namespace Mono.CSharp
 			if (output_file == null){
 				int pos = first_source.LastIndexOf (".");
 
-				output_file = first_source.Substring (0, pos) + target_ext;
+				if (pos > 0)
+					output_file = first_source.Substring (0, pos) + target_ext;
+				else
+					output_file = first_source + target_ext;
 			}
 
 			RootContext.CodeGen = new CodeGen (output_file, output_file);

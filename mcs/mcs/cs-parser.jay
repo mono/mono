@@ -2968,7 +2968,7 @@ return_statement
 throw_statement
 	: THROW opt_expression SEMICOLON
 	  {
-		$$ = new Throw ((Expression) $2);
+		$$ = new Throw ((Expression) $2, lexer.Location);
 	  }
 	;
 

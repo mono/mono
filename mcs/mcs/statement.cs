@@ -445,10 +445,12 @@ namespace Mono.CSharp {
 	
 	public class Throw : Statement {
 		public readonly Expression Expr;
+		Location loc;
 		
-		public Throw (Expression expr)
+		public Throw (Expression expr, Location l)
 		{
 			Expr = expr;
+			loc = l;
 		}
 
 		public override bool Emit (EmitContext ec)
@@ -458,7 +460,8 @@ namespace Mono.CSharp {
 					ec.ig.Emit (OpCodes.Rethrow);
 				else {
 					Report.Error (
-						156, "A throw statement with no argument is only " +
+						156, loc,
+						"A throw statement with no argument is only " +
 						"allowed in a catch clause");
 				}
 				return false;
