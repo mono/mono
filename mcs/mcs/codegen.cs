@@ -65,13 +65,13 @@ namespace Mono.CSharp {
 		//
 		// This routine initializes the Mono runtime SymbolWriter.
 		//
-		static void InitMonoSymbolWriter (string basename, string[] debug_args)
+		static bool InitMonoSymbolWriter (string basename, string[] debug_args)
 		{
 			string symbol_output = basename + "-debug.s";
 
 			Type itype = SymbolWriter.GetType ();
 			if (itype == null)
-				return;
+				return false;
 
 			Type[] arg_types = new Type [2];
 			arg_types [0] = typeof (string);
@@ -79,13 +79,14 @@ namespace Mono.CSharp {
 
 			MethodInfo initialize = itype.GetMethod ("Initialize", arg_types);
 			if (initialize == null)
-				return;
+				return false;
 
 			object[] args = new object [2];
 			args [0] = symbol_output;
 			args [1] = debug_args;
 
 			initialize.Invoke (SymbolWriter, args);
+			return true;
 		}
 
 		//
@@ -98,8 +99,11 @@ namespace Mono.CSharp {
 			//
 			// If we got an ISymbolWriter instance, initialize it.
 			//
-			if (SymbolWriter == null)
+			if (SymbolWriter == null) {
+				Report.Error (
+					-18, "Cannot find any symbol writer");
 				return;
+			}
 			
 			//
 			// Due to lacking documentation about the first argument of the
@@ -115,7 +119,9 @@ namespace Mono.CSharp {
 			
 			switch (sym_type.Name){
 			case "MonoSymbolWriter":
-				InitMonoSymbolWriter (basename, args);
+				if (!InitMonoSymbolWriter (basename, args))
+					Report.Error (
+						-18, "Cannot initialize the symbol writer");
 				break;
 
 			default:
