@@ -453,6 +453,7 @@ namespace System.Xml.Serialization {
 				if (!prop.CanRead) continue;
 				if (!prop.CanWrite && TypeTranslator.GetTypeData (prop.PropertyType).SchemaType != SchemaTypes.Array)
 					continue;
+				if (prop.GetIndexParameters().Length > 0) continue;
 					
 				XmlAttributes atts = attributeOverrides[type, prop.Name];
 				if (atts == null) atts = new XmlAttributes (prop);
