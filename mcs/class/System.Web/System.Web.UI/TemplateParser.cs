@@ -377,17 +377,7 @@ namespace System.Web.UI
 					return privateBinPath;
 
 				AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
-				privateBinPath = setup.PrivateBinPath;
-					
-				if (!Path.IsPathRooted (privateBinPath)) {
-					string appbase = setup.ApplicationBase;
-					if (appbase.StartsWith ("file://")) {
-						appbase = appbase.Substring (7);
-						if (Path.DirectorySeparatorChar != '/')
-							appbase = appbase.Replace ('/', Path.DirectorySeparatorChar);
-					}
-					privateBinPath = Path.Combine (appbase, privateBinPath);
-				}
+				privateBinPath = Path.Combine (setup.ApplicationBase, setup.PrivateBinPath);
 
 				return privateBinPath;
 			}
