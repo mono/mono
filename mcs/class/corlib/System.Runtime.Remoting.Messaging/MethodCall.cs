@@ -282,7 +282,7 @@ namespace System.Runtime.Remoting.Messaging {
 
 		bool CanCastTo (string clientType, Type serverType)
 		{
-			int i = clientType.IndexOf(",");
+			int i = clientType.IndexOf(',');
 			if (i != -1) clientType = clientType.Substring (0,i).Trim();
 
 			if (clientType == serverType.FullName) return true;

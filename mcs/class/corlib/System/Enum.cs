@@ -275,7 +275,7 @@ namespace System {
 			foreach (string name in names) {
 				bool found = false;
 				for (i = 0; i < info.values.Length; ++i) {				
-					if (String.Compare (name, info.names [i], ignoreCase) == 0) {
+					if (String.Compare (name, info.names [i], ignoreCase, CultureInfo.InvariantCulture) == 0) {
 						switch (typeCode) {
 							case TypeCode.Byte:
 								retVal |= (long)((byte)info.values.GetValue (i));

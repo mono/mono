@@ -452,7 +452,7 @@ namespace Mono.CSharp {
 		//
 		static public string ImplicitParent (string ns)
 		{
-			int i = ns.LastIndexOf (".");
+			int i = ns.LastIndexOf ('.');
 			if (i < 0)
 				return null;
 			

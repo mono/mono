@@ -267,7 +267,7 @@ namespace System.IO
 			// method should return the index of the path extension
 			// start or -1 if no valid extension
 			if (path != null){
-				int iLastDot = path.LastIndexOf (".");
+				int iLastDot = path.LastIndexOf ('.');
 				int iLastSep = path.LastIndexOfAny ( PathSeparatorChars );
 
 				if (iLastDot > iLastSep)

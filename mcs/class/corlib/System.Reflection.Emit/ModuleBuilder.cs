@@ -16,6 +16,7 @@ using System.Runtime.InteropServices;
 using System.Diagnostics.SymbolStore;
 using System.IO;
 using Mono.CSharp.Debugger;
+using System.Globalization;
 
 namespace System.Reflection.Emit {
 	public class ModuleBuilder : Module {
@@ -244,7 +245,7 @@ namespace System.Reflection.Emit {
 		private TypeBuilder search_in_array (TypeBuilder[] arr, string className) {
 			int i;
 			for (i = 0; i < arr.Length; ++i) {
-				if (String.Compare (className, arr [i].FullName, true) == 0) {
+				if (String.Compare (className, arr [i].FullName, true, CultureInfo.InvariantCulture) == 0) {
 					return arr [i];
 				}
 			}
@@ -254,7 +255,7 @@ namespace System.Reflection.Emit {
 		private TypeBuilder search_nested_in_array (TypeBuilder[] arr, string className) {
 			int i;
 			for (i = 0; i < arr.Length; ++i) {
-				if (String.Compare (className, arr [i].Name, true) == 0)
+				if (String.Compare (className, arr [i].Name, true, CultureInfo.InvariantCulture) == 0)
 					return arr [i];
 			}
 			return null;

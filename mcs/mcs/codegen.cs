@@ -27,12 +27,12 @@ namespace Mono.CSharp {
 
 		public static string Basename (string name)
 		{
-			int pos = name.LastIndexOf ("/");
+			int pos = name.LastIndexOf ('/');
 
 			if (pos != -1)
 				return name.Substring (pos + 1);
 
-			pos = name.LastIndexOf ("\\");
+			pos = name.LastIndexOf ('\\');
 			if (pos != -1)
 				return name.Substring (pos + 1);
 
@@ -41,12 +41,12 @@ namespace Mono.CSharp {
 
 		public static string Dirname (string name)
 		{
-			int pos = name.LastIndexOf ("/");
+			int pos = name.LastIndexOf ('/');
 
 			if (pos != -1)
 				return name.Substring (0, pos);
 
-			pos = name.LastIndexOf ("\\");
+			pos = name.LastIndexOf ('\\');
 			if (pos != -1)
 				return name.Substring (0, pos);
 
@@ -55,7 +55,7 @@ namespace Mono.CSharp {
 
 		static string TrimExt (string name)
 		{
-			int pos = name.LastIndexOf (".");
+			int pos = name.LastIndexOf ('.');
 
 			return name.Substring (0, pos);
 		}

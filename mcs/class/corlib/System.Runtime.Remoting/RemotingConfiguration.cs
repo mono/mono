@@ -731,7 +731,7 @@ namespace System.Runtime.Remoting
 		
 		string ExtractAssembly (ref string type)
 		{
-			int i = type.IndexOf (",");
+			int i = type.IndexOf (',');
 			if (i == -1) return "";
 			
 			string asm = type.Substring (i+1).Trim();

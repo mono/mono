@@ -72,8 +72,8 @@ namespace System.Runtime.Remoting
 			// Find the type comparing the name of the type and the name of the assembly,
 			// excluding version and other assembly info
 
-			int i = fromName.IndexOf (",");
-			if (i != -1) i = fromName.IndexOf (",", i+1);
+			int i = fromName.IndexOf (',');
+			if (i != -1) i = fromName.IndexOf (',', i+1);
 			if (i != -1) fromName = fromName.Substring (0,i+1);
 			else fromName += ",";
 

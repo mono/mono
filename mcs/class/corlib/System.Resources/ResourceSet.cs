@@ -11,6 +11,7 @@
 
 using System.Collections;
 using System.IO;
+using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace System.Resources
@@ -133,7 +134,7 @@ namespace System.Resources
 			if (ignoreCase) {
 				foreach (DictionaryEntry de in Table) {
 					string key = (string) de.Key;
-					if (String.Compare (key, name, true) == 0)
+					if (String.Compare (key, name, true, CultureInfo.InvariantCulture) == 0)
 						return de.Value;
 				}
 				return null;

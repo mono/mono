@@ -1,3 +1,8 @@
+2003-11-28  Dick Porter  <dick@ximian.com>
+
+	* Path.cs: Use the char form of LastIndexOf, so that the
+	comparison is done with the Invariant culture.
+
 2003-11-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Directory.cs: provide the path when getting the IOException.

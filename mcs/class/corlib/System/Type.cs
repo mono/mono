@@ -48,7 +48,7 @@ namespace System {
 		static bool FilterNameIgnoreCase_impl (MemberInfo m, object filterCriteria)
 		{
 			string name = (string) filterCriteria;
-			return String.Compare (name, m.Name, true) == 0;
+			return String.Compare (name, m.Name, true, CultureInfo.InvariantCulture) == 0;
 		}
 		
 		[MonoTODO]

@@ -1,3 +1,7 @@
+2003-11-28  Dick Porter  <dick@ximian.com>
+
+	* ModuleBuilder.cs: Do string compares with the Invariant culture.
+
 2003-11-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyBuilder.cs (SetCustomAttribute): Implement automatic 

@@ -236,12 +236,12 @@ namespace Mono.CSharp {
 			}
 			
 			if (a is string)
-				return String.Compare ((string) a, ((MemberInfo)b).Name);
+				return String.Compare ((string) a, ((MemberInfo)b).Name, false, CultureInfo.InvariantCulture);
 
 			if (b is string)
-				return String.Compare (((MemberInfo)a).Name, (string) b);
+				return String.Compare (((MemberInfo)a).Name, (string) b, false, CultureInfo.InvariantCulture);
 
-			return String.Compare (((MemberInfo)a).Name, ((MemberInfo)b).Name);
+			return String.Compare (((MemberInfo)a).Name, ((MemberInfo)b).Name, false, CultureInfo.InvariantCulture);
 		}
 	}
 

@@ -1,3 +1,9 @@
+2003-11-28  Dick Porter  <dick@ximian.com>
+
+	* TypeInfo.cs: 
+	* RemotingConfiguration.cs: Use the char form of IndexOf, so that
+	the comparison is done with the Invariant culture.
+
 2003-11-26  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* InternalRemotingServices.cs: Fixed GetCachedSoapAttribute().

@@ -68,7 +68,7 @@ namespace System.Runtime.Remoting.Metadata.W3cXsd2001
 		public static SoapQName Parse (string value)
 		{
 			SoapQName res = new SoapQName ();
-			int i = value.IndexOf (":");
+			int i = value.IndexOf (':');
 			if (i != -1)
 			{
 				res.Key = value.Substring (0,i);

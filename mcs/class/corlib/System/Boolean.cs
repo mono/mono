@@ -146,10 +146,12 @@ namespace System {
 	    
 			val = val.Trim ();
 	    
-			if (String.Compare (val, TrueString, true) == 0)
+			if (String.Compare (val, TrueString, true,
+					    CultureInfo.InvariantCulture) == 0)
 				return true;
 	    
-			if (String.Compare (val, FalseString, true) == 0)
+			if (String.Compare (val, FalseString, true,
+					    CultureInfo.InvariantCulture) == 0)
 				return false;
 	    
 			throw new FormatException (Locale.GetText (

@@ -898,7 +898,7 @@ namespace Generator {
 		string ClassName (string name)
 		{
 			return name;
-			//return name.Substring (1 + name.LastIndexOf ("."));
+			//return name.Substring (1 + name.LastIndexOf ('.'));
 		}
 
 		string GenBases (ArrayList bases)

@@ -405,7 +405,7 @@ namespace Mono.CSharp
 		//
 		static void SplitPathAndPattern (string spec, out string path, out string pattern)
 		{
-			int p = spec.LastIndexOf ("/");
+			int p = spec.LastIndexOf ('/');
 			if (p != -1){
 				//
 				// Windows does not like /file.cs, switch that to:
@@ -421,7 +421,7 @@ namespace Mono.CSharp
 				return;
 			}
 
-			p = spec.LastIndexOf ("\\");
+			p = spec.LastIndexOf ('\\');
 			if (p != -1){
 				path = spec.Substring (0, p);
 				pattern = spec.Substring (p + 1);
@@ -458,7 +458,7 @@ namespace Mono.CSharp
 			string path, pattern;
 
 			SplitPathAndPattern (spec, out path, out pattern);
-			if (pattern.IndexOf ("*") == -1){
+			if (pattern.IndexOf ('*') == -1){
 				ProcessFile (spec);
 				return;
 			}
@@ -836,7 +836,7 @@ namespace Mono.CSharp
 		//
 		static bool CSCParseOption (string option, ref string [] args, ref int i)
 		{
-			int idx = option.IndexOf (":");
+			int idx = option.IndexOf (':');
 			string arg, value;
 
 			if (idx == -1){
@@ -1260,7 +1260,7 @@ namespace Mono.CSharp
 			// Quick hack
 			//
 			if (output_file == null){
-				int pos = first_source.LastIndexOf (".");
+				int pos = first_source.LastIndexOf ('.');
 
 				if (pos > 0)
 					output_file = first_source.Substring (0, pos) + target_ext;

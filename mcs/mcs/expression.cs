@@ -5580,9 +5580,9 @@ namespace Mono.CSharp {
 			this.rank = rank;
 			loc = l;
 
-			//this.rank = rank.Substring (0, rank.LastIndexOf ("["));
+			//this.rank = rank.Substring (0, rank.LastIndexOf ('['));
 			//
-			//string tmp = rank.Substring (rank.LastIndexOf ("["));
+			//string tmp = rank.Substring (rank.LastIndexOf ('['));
 			//
 			//dimensions = tmp.Length - 1;
 			expect_initializers = true;

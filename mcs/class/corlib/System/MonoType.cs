@@ -126,9 +126,9 @@ namespace System
 			Type[] interfaces = GetInterfaces();
 
 			foreach (Type type in interfaces) {
-				if (String.Compare (type.Name, name, ignoreCase) == 0)
+				if (String.Compare (type.Name, name, ignoreCase, CultureInfo.InvariantCulture) == 0)
 					return type;
-				if (String.Compare (type.FullName, name, ignoreCase) == 0)
+				if (String.Compare (type.FullName, name, ignoreCase, CultureInfo.InvariantCulture) == 0)
 					return type;
 			}
 
@@ -157,7 +157,7 @@ namespace System
 			MethodBase[] match;
 			int count = 0;
 			foreach (MethodInfo m in methods) {
-				if (String.Compare (m.Name, name, ignoreCase) != 0)
+				if (String.Compare (m.Name, name, ignoreCase, CultureInfo.InvariantCulture) != 0)
 					continue;
 				// Under MS.NET, Standard|HasThis matches Standard...
 				if (callConvention != CallingConventions.Any && ((m.CallingConvention & callConvention) != callConvention))
@@ -178,7 +178,7 @@ namespace System
 			else {
 				count = 0;
 				foreach (MethodInfo m in methods) {
-					if (String.Compare (m.Name, name, ignoreCase) != 0)
+					if (String.Compare (m.Name, name, ignoreCase, CultureInfo.InvariantCulture) != 0)
 						continue;
 					if (callConvention != CallingConventions.Any && ((m.CallingConvention & callConvention) != callConvention))
 						continue;
@@ -214,7 +214,7 @@ namespace System
 			bool ignoreCase = ((bindingAttr & BindingFlags.IgnoreCase) != 0);
 
 			foreach (PropertyInfo info in props) {
-					if (String.Compare (info.Name, name, ignoreCase) != 0) 
+					if (String.Compare (info.Name, name, ignoreCase, CultureInfo.InvariantCulture) != 0) 
 						continue;
 
 					if (returnType != null && info.PropertyType != returnType)
@@ -333,13 +333,13 @@ namespace System
 				object state = null;
 				int i, count = 0;
 				for (i = 0; i < methods.Length; ++i) {
-					if (String.Compare (methods [i].Name, name, ignoreCase) == 0)
+					if (String.Compare (methods [i].Name, name, ignoreCase, CultureInfo.InvariantCulture) == 0)
 						count++;
 				}
 				MethodBase[] smethods = new MethodBase [count];
 				count = 0;
 				for (i = 0; i < methods.Length; ++i) {
-					if (String.Compare (methods [i].Name, name, ignoreCase) == 0)
+					if (String.Compare (methods [i].Name, name, ignoreCase, CultureInfo.InvariantCulture) == 0)
 						smethods [count++] = methods [i];
 				}
 				MethodBase m = binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, out state);
@@ -372,14 +372,14 @@ namespace System
 				object state = null;
 				int i, count = 0;
 				for (i = 0; i < properties.Length; ++i) {
-					if (String.Compare (properties [i].Name, name, ignoreCase) == 0 && (properties [i].GetGetMethod () != null))
+					if (String.Compare (properties [i].Name, name, ignoreCase, CultureInfo.InvariantCulture) == 0 && (properties [i].GetGetMethod () != null))
 						count++;
 				}
 				MethodBase[] smethods = new MethodBase [count];
 				count = 0;
 				for (i = 0; i < properties.Length; ++i) {
 					MethodBase mb = properties [i].GetGetMethod ();
-					if (String.Compare (properties [i].Name, name, ignoreCase) == 0 && (mb != null))
+					if (String.Compare (properties [i].Name, name, ignoreCase, CultureInfo.InvariantCulture) == 0 && (mb != null))
 						smethods [count++] = mb;
 				}
 				MethodBase m = binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, out state);
@@ -393,14 +393,14 @@ namespace System
 				object state = null;
 				int i, count = 0;
 				for (i = 0; i < properties.Length; ++i) {
-					if (String.Compare (properties [i].Name, name, ignoreCase) == 0 && (properties [i].GetSetMethod () != null))
+					if (String.Compare (properties [i].Name, name, ignoreCase, CultureInfo.InvariantCulture) == 0 && (properties [i].GetSetMethod () != null))
 						count++;
 				}
 				MethodBase[] smethods = new MethodBase [count];
 				count = 0;
 				for (i = 0; i < properties.Length; ++i) {
 					MethodBase mb = properties [i].GetSetMethod ();
-					if (String.Compare (properties [i].Name, name, ignoreCase) == 0 && (mb != null))
+					if (String.Compare (properties [i].Name, name, ignoreCase, CultureInfo.InvariantCulture) == 0 && (mb != null))
 						smethods [count++] = mb;
 				}
 				MethodBase m = binder.BindToMethod (invokeAttr, smethods, ref args, modifiers, culture, namedParameters, out state);
