@@ -41,8 +41,8 @@ gac_assemblies_list = \
 	Mono.Security.Win32				\
 	Novell.Directory.Ldap				\
 	Npgsql						\
-	NUnit.Util.dll					\
-	NUnit.Framework.dll				\
+	NUnit.Util					\
+	NUnit.Framework					\
 	PEAPI						\
 	System.Configuration.Install			\
 	System.Data					\
