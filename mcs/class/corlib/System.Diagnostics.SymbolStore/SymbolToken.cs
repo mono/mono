@@ -22,8 +22,7 @@ public struct SymbolToken {
 	[MonoTODO]
 	public override int GetHashCode() { return 0; }
 
-	[MonoTODO]
-	public int GetToken() { return 0; }
+	public int GetToken() { return _val; }
 	
 }
 

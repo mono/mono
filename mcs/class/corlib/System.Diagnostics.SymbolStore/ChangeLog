@@ -1,3 +1,7 @@
+2002-03-20  Martin Baulig  <martin@gnome.org>
+
+	* SymbolToken.cs (GetToken): Implemented.
+
 2002-03-05  Duncan Mak  <duncan@ximian.com>
 
 	* ISymbolWriter.cs:
