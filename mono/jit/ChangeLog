@@ -1,4 +1,9 @@
+2002-03-11  Dietmar Maurer  <dietmar@ximian.com>
 
+	* emit-x86.c (mono_delegate_ctor): use C impl. instead of x86_*
+	macros, included new delegate code from Daniel Stodden. 
+	
+	
 Mon Mar 11 14:47:21 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* jit.c: verify that corlib and runtime are in sync.

@@ -1,3 +1,6 @@
+2002-03-11  Dietmar Maurer  <dietmar@ximian.com>
+
+	* interp.c (ves_runtime_method): set method_info field
 
 Mon Mar 11 14:48:07 CET 2002 Paolo Molaro <lupus@ximian.com>
 

@@ -1,3 +1,10 @@
+2002-03-12  Dietmar Maurer  <dietmar@ximian.com>
+
+	* icall.c (ves_icall_System_Object_GetHashCode): impl.
+
+2002-03-11  Dietmar Maurer  <dietmar@ximian.com>
+
+	* icall.c (ves_icall_System_ValueType_GetHashCode): impl.
 
 Mon Mar 11 14:45:42 CET 2002 Paolo Molaro <lupus@ximian.com>
 
