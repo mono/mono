@@ -1,4 +1,8 @@
 
+Fri May 24 15:33:50 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: added partial async delegate and remoting support.
+
 Thu May 23 18:45:38 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: special case string ctors in invoke.
