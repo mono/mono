@@ -49,26 +49,6 @@ Other classes, structs, etc. that are missing:
 	FillErrorEventArgs
 	MergeFailedEventArgs
 	TypedDataSetGenerator
-
-Exceptions that still need to be stubbed:
-	(need to see what exceptions need to be done)
-	DuplicateNameException
-	ConstraintException
-	DataException
-	DBConcurrencyException
-	InvalidConstraintException
-	InvalidExpressionException
-	MissingPrimaryKeyException
-	NonNullAllowedException
-	ReadOnlyException
-	RowNotInTableException
-	SqlNullValueException
-	SqlTruncateException
-	SqlTypeException
-	StrongTypingException
-	SyntaxErrorException
-	TypedDataSetGeneratorException
-	VersionNotFoundException
  
 The additional System.Data.SqlTypes classes need to be implemented:
 	SqlByte
