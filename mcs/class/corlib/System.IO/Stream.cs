@@ -7,6 +7,8 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Threading;
+
 namespace System.IO
 {
 
@@ -57,6 +59,11 @@ namespace System.IO
 
 		public virtual void Dispose ()
 		{
+		}
+		
+		protected virtual WaitHandle CreateWaitHandle()
+		{
+			return(null);
 		}
 		
 		protected virtual void Dispose (bool disposing)

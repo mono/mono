@@ -7,40 +7,42 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Runtime.CompilerServices;
 
 namespace System.Threading
 {
 	public abstract class WaitHandle : MarshalByRefObject, IDisposable
 	{
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern bool WaitAll_internal(WaitHandle[] handles, int ms, bool exitContext);
+		
 		public static bool WaitAll(WaitHandle[] waitHandles) {
-			// FIXME
-			return(false);
+			return(WaitAll_internal(waitHandles, 0, false));
 		}
 
 		public static bool WaitAll(WaitHandle[] waitHandles,
 					   int millisecondsTimeout,
 					   bool exitContext) {
-			// FIXME
-			return(false);
+			return(WaitAll_internal(waitHandles, millisecondsTimeout, false));
 		}
 
 		public static bool WaitAll(WaitHandle[] waitHandles,
 					   TimeSpan timeout,
 					   bool exitContext) {
-			// FIXME
-			return(false);
+			return(WaitAll_internal(waitHandles, timeout.Milliseconds, exitContext));
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern int WaitAny_internal(WaitHandle[] handles, int ms, bool exitContext);
+
 		public static int WaitAny(WaitHandle[] waitHandles) {
-			// FIXME
-			return(0);
+			return(WaitAny_internal(waitHandles, 0, false));
 		}
 
 		public static int WaitAny(WaitHandle[] waitHandles,
 					  int millisecondsTimeout,
 					  bool exitContext) {
-			// FIXME
-			return(0);
+			return(WaitAny_internal(waitHandles, millisecondsTimeout, exitContext));
 		}
 
 		public static int WaitAny(WaitHandle[] waitHandles,
@@ -49,27 +51,44 @@ namespace System.Threading
 			   timeout.Milliseconds > Int32.MaxValue) {
 				throw new ArgumentOutOfRangeException("Timeout out of range");
 			}
-			// FIXME
-			return(0);
+			return(WaitAny_internal(waitHandles, timeout.Milliseconds, exitContext));
 		}
 
 		public WaitHandle() {
 			// FIXME
 		}
 
+		public const int WaitTimeout = 258;
+
+		private IntPtr handle = IntPtr.Zero;
+		
 		public virtual IntPtr Handle {
 			get {
-				// FIXME
-				return new IntPtr();
+				return(handle);
 			}
 				
 			set {
-				// FIXME
+				handle=value;
 			}
 		}
 
 		public virtual void Close() {
 			Dispose(false);
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		protected virtual extern bool WaitOne_internal(IntPtr handle, int ms, bool exitContext);
+
+		public virtual bool WaitOne() {
+			return(WaitOne_internal(handle, 0, false));
+		}
+
+		public virtual bool WaitOne(int millisecondsTimeout, bool exitContext) {
+			return(WaitOne_internal(handle, millisecondsTimeout, exitContext));
+		}
+
+		public virtual bool WaitOne(TimeSpan timeout, bool exitContext) {
+			return(WaitOne_internal(handle, timeout.Milliseconds, exitContext));
 		}
 
 		protected static readonly IntPtr InvalidHandle;

@@ -15,7 +15,7 @@ namespace System.IO {
 
 	/// <summary>
 	/// </summary>
-	public enum SeekOrigin {
+	public enum SeekOrigin : int {
 
 		/// <summary>
 		/// </summary>

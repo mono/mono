@@ -1,3 +1,9 @@
+2001-12-11  Dick Porter  <dick@ximian.com>
+
+	* DateTime.cs: Implemented FromFileTime() and ToFileTime()
+
+	* Console.cs: Use handles rather than casting file descriptors
+
 2001-12-08  Nick Drochak  <ndrochak@gol.com>
 
 	* Byte.cs (Parse): Start implementation. Parse(string) works, but

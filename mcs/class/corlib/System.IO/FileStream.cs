@@ -9,6 +9,7 @@
 using System;
 using System.PAL;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 // fixme: I do not know how to handle errno when calling PInvoke functions
 // fixme: emit the correct exceptions everywhere
@@ -19,23 +20,24 @@ namespace System.IO
 	public class FileStream : Stream
 	{
 		private OpSys _os = Platform.OS;
-		private IntPtr fd;
+		private IntPtr fdhandle;
 		private FileAccess acc;
 		private bool owner;
 		
-		public FileStream (IntPtr fd, FileAccess access)
-			: this (fd, access, true, 0, false) {}
+		public FileStream (IntPtr handle, FileAccess access)
+			: this (handle, access, true, 0, false) {}
 
-		public FileStream (IntPtr fd, FileAccess access, bool ownsHandle)
-			: this (fd, access, ownsHandle, 0, false) {}
+		public FileStream (IntPtr handle, FileAccess access, bool ownsHandle)
+			: this (handle, access, ownsHandle, 0, false) {}
 		
-		public FileStream (IntPtr fd, FileAccess access, bool ownsHandle, int bufferSize)
-			: this (fd, access, ownsHandle, bufferSize, false) {}
+		public FileStream (IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize)
+			: this (handle, access, ownsHandle, bufferSize, false) {}
 		
-		public FileStream (IntPtr fd, FileAccess access, bool ownsHandle,
+		public FileStream (IntPtr handle, FileAccess access, bool ownsHandle,
 				   int bufferSize, bool isAsync)
 		{
-			fd = fd;
+			fdhandle = handle;
+			
 			//acc = access;
 			//owner = ownsHandle;
 		}
@@ -57,8 +59,14 @@ namespace System.IO
 		public FileStream (string name, FileMode mode, FileAccess access, FileShare share,
 				   int buferSize, bool useAsync)
 		{
-			if ((int)(fd = _os.OpenFile (name, mode, access, share)) == -1)
+			fdhandle = _os.OpenFile (name, mode, access, share);
+			
+			/* Implement error checking, with some sort of access
+			   to the errno error reason
+			if(fdhandle == error) {
 				throw new IOException();
+			}
+			*/
 
 			acc = access;
 			owner = true;
@@ -102,17 +110,17 @@ namespace System.IO
 		unsafe public override long Length
 		{
 			get {
-				return _os.FileLength (fd);
+				return _os.FileLength (fdhandle);
 			}
 		}
 
 		public override long Position
 		{
 			get {
-				return _os.SeekFile (fd, 0,  SeekOrigin.Current);
+				return _os.SeekFile (fdhandle, 0,  SeekOrigin.Current);
 			}
 			set {
-				_os.SeekFile (fd, value, SeekOrigin.Begin);
+				_os.SeekFile (fdhandle, value, SeekOrigin.Begin);
 			}
 		}
 
@@ -123,7 +131,7 @@ namespace System.IO
 		public override void Close ()
 		{
 			if (owner) {
-				_os.CloseFile (fd);
+				_os.CloseFile (fdhandle);
 			}
 		}
 
@@ -131,7 +139,7 @@ namespace System.IO
 					  int offset,
 					  int count)
 		{
-			return _os.ReadFile (fd, buffer, offset, count);
+			return _os.ReadFile (fdhandle, buffer, offset, count);
 		}
 
 		public unsafe override int ReadByte ()
@@ -143,31 +151,26 @@ namespace System.IO
 				throw new IOException();
 			if (res == 0)
 				return -1;
-			
+
 			return val[0];
 		}
 
 		public override long Seek (long offset,
 					   SeekOrigin origin)
 		{
-			return _os.SeekFile (fd, offset, origin);
+			return _os.SeekFile (fdhandle, offset, origin);
 		}
 
 		public override void SetLength (long value)
 		{
-			int res;
-
-			if ((res = _os.SetLengthFile (fd, value)) == -1)
-				throw new IOException();
-
-			
+			_os.SetLengthFile (fdhandle, value);
 		}
 
 		public unsafe override void Write (byte[] buffer,
 						   int offset,
 						   int count)
 		{
-			int res = _os.WriteFile (fd, buffer, offset, count);
+			int res = _os.WriteFile (fdhandle, buffer, offset, count);
 			
 			if (res != count)
 				throw new IOException();
@@ -182,5 +185,11 @@ namespace System.IO
 			Write (buf, 0, 1);
 		}
 
+		public virtual IntPtr Handle
+		{
+			get {
+				return(fdhandle);
+			}
+		}
 	}
 }

@@ -27,6 +27,10 @@ namespace System
 		private const int dp400 = 146097;
 		private const int dp100 = 36524;
 		private const int dp4 = 1461;
+
+		// w32 file time starts counting from 1/1/1601 00:00 GMT
+		// which is the constant ticks from the .NET epoch
+		private const long w32file_epoch = 504911232000000000L;
 		
 		public static readonly DateTime MaxValue = new DateTime (MaxTicks);
 		public static readonly DateTime MinValue = new DateTime (MinTicks);
@@ -420,10 +424,9 @@ namespace System
 			return (t1.ticks == t2.ticks );
 		}
 
-		// TODO: Implement me.
 		public static DateTime FromFileTime (long fileTime) 
 		{
-			return new DateTime (0);
+			return new DateTime (w32file_epoch + fileTime);
 		}
 
 		// TODO: Implement me.
@@ -521,8 +524,11 @@ namespace System
 
 		public long ToFileTime()
 		{
-				// TODO: Implement me
-			return 0 ;
+			if(ticks < w32file_epoch) {
+				throw new ArgumentOutOfRangeException("file time is not valid");
+			}
+			
+			return(ticks - w32file_epoch);
 		}
 
 		public DateTime ToLocalTime()

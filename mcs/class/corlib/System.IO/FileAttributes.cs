@@ -13,7 +13,7 @@
 namespace System.IO
 {
 	[Flags]
-	public enum FileAttributes
+	public enum FileAttributes : int
 	{
 		Archive,
 		Compressed, 

@@ -1,3 +1,9 @@
+2001-12-11  Dick Porter  <dick@ximian.com>
+
+	* Linux.cs: IO implemented with file handles with internal calls,
+	rather than casting file descriptors for C library p/invokes.
+	Implemented Get/Set Creation/LastAccess/LastWrite TimeFile
+	functions.
 
 Wed Nov 14 16:30:27 CET 2001 Paolo Molaro <lupus@ximian.com>
 

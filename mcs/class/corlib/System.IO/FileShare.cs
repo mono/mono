@@ -16,7 +16,7 @@ namespace System.IO {
 	/// <summary>
 	/// </summary>
 	[Flags]
-	public enum FileShare {
+	public enum FileShare : int {
 
 		/// <summary>
 		/// </summary>

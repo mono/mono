@@ -15,7 +15,7 @@ namespace System.IO {
 
 	/// <summary>
 	/// </summary>
-	public enum FileMode {
+	public enum FileMode : int {
 
 		/// <summary>
 		/// </summary>

@@ -1,3 +1,7 @@
+2001-12-11  Dick Porter  <dick@ximian.com>
+
+	* FileStream.cs: Use handles rather than casting file descriptors.
+	Added Handle property.
 
 Wed Nov 14 16:47:47 CET 2001 Paolo Molaro <lupus@ximian.com>
 

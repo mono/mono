@@ -23,6 +23,7 @@ using System.Text;
 using System.IO;
 using System.Collections;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace System.PAL
 {
@@ -40,9 +41,9 @@ namespace System.PAL
 	
 
 		// For StdInputStream and StdOutputStream
-		private	const int STDOUT = 1; // TODO: Linux: Is this true?
-		private	const int STDIN	= 0; //	TODO: Linux: Is	this true?
-
+		private IntPtr Stdin;
+		private IntPtr Stdout;
+		private IntPtr Stderr;
 
 		//----------------------------------
 		//		Class Fields
@@ -53,6 +54,9 @@ namespace System.PAL
 		//----------------------------------
 		public OpSys()
 		{
+			Stdin=GetStdHandle(0);
+			Stdout=GetStdHandle(1);
+			Stderr=GetStdHandle(2);
 		}
 
 
@@ -346,122 +350,163 @@ namespace System.PAL
 		//		I/O Services
 		//-----------------------------------
 
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		private extern IntPtr GetStdHandle(int fd);
+
+		public IntPtr StdinHandle {
+			get {
+				return(Stdin);
+			}
+		}
+
+		public IntPtr StdoutHandle {
+			get {
+				return(Stdout);
+			}
+		}
+
+		public IntPtr StderrHandle {
+			get {
+				return(Stderr);
+			}
+		}
+
+
 		// For StdInputStream
 		public int ReadStdInput(byte[] buffer, int offset, int count)
 		{
-			return ReadFile(new IntPtr(STDIN), buffer, offset, count);
+			return ReadFile(StdinHandle, buffer, offset, count);
 		}
 
 		// For StdOutputStream
 		public void FlushStdOutput(byte[] byteBuf)
 		{
-			FlushFile(new IntPtr(STDOUT), byteBuf);
+			FlushFile(StdoutHandle, byteBuf);
 		}
 
-		public unsafe int ReadFile(IntPtr handle, byte[] buffer, int offset, int count)
-		{
-			int res;
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		public extern int ReadFile(IntPtr handle, byte[] buffer, int offset, int count);
 
-			fixed (void *p = &buffer [offset]) {
-				res = _read(handle, p, count);
-			}
-			
-			return res;
-		}
-
-		public unsafe int WriteFile(IntPtr handle, byte[] buffer, int offset, int count)
-		{
-			int res;
-
-			fixed (void *p = &buffer [offset]) {
-				res = _write(handle, p, count);
-			}
-
-			return res;
-		}
-
-		public int SetLengthFile(IntPtr handle, long length)
-		{
-			return _ftruncate (handle, (int)length);
-		}
-
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		public extern int WriteFile(IntPtr handle, byte[] buffer, int offset, int count);
+		
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		public extern int SetLengthFile(IntPtr handle, long length);
+		
 		public void FlushFile(IntPtr handle, byte[] byteBuf)
 		{
 			WriteFile(handle, byteBuf, 0, byteBuf.Length);
 		}
 
-		public IntPtr OpenFile(string path, FileMode mode, FileAccess access, FileShare	share)
-		{
-			int flags = _getUnixFlags (mode, access);
-
-			return _open (path, flags, 0x1a4);
-		}
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		public extern IntPtr OpenFile(String path, FileMode mode, FileAccess access, FileShare share);
 	    
-		public void CloseFile(IntPtr handle)
-		{
-			_close (handle);
-		}
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		public extern void CloseFile(IntPtr handle);
 	
-		public long SeekFile(IntPtr handle, long offset, SeekOrigin origin)
-		{
-			switch (origin) {
-				case SeekOrigin.End:
-					return _lseek (handle, (int)offset, SEEK_END);
-				case SeekOrigin.Current:
-					return _lseek (handle, (int)offset, SEEK_CUR);
-				default:
-					return _lseek (handle, (int)offset, SEEK_SET);
-			}
-			
-		}
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		public extern long SeekFile(IntPtr handle, long offset, SeekOrigin origin);
 	
 		public IntPtr CreateFile(string	path, FileMode mode, FileAccess	access,	FileShare share)
 		{
 			return OpenFile(path, FileMode.CreateNew, access, share);
 		}
 	
-		public void DeleteFile(string path)
-		{
-			_unlink(path);
-		}
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		public extern void DeleteFile(string path);
 	
-		public bool ExistsFile(string path)
-		{
-			System.Diagnostics.Debug.WriteLine("Linux:ExistsFile(System.String): Stub Method");
-			return false;
-		}
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		public extern bool ExistsFile(string path);
+
+		/* The long time parameters in GetFileTime and
+		 * SetFileTime correspond to Windows file times (ticks
+		 * from DateTime(1/1/1601 00:00 GMT))
+		 */
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		private extern bool GetFileTime(IntPtr handle, out long creat, out long lastaccess, out long lastwrite);
+
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		private extern bool SetFileTime(IntPtr handle, long creat, long lastaccess, long lastwrite);
 	
 		public DateTime	GetCreationTimeFile(string path)
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:GetCreationTimeFile(System.String): Stub Method");
-			return new DateTime(0);
+			long creat, lastaccess, lastwrite;
+			bool ret;
+			FileStream s = new FileStream(path, FileMode.Open, FileAccess.Read);
+			
+			ret=GetFileTime(s.Handle, out creat, out lastaccess, out lastwrite);
+			s.Close();
+			
+			return DateTime.FromFileTime(creat);
 		}
 	
 		public DateTime	GetLastAccessTimeFile(string path)
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:GetLastAccessTimeFile(System.String):	Stub Method");
-			return new DateTime(0);
+			long creat, lastaccess, lastwrite;
+			bool ret;
+			FileStream s = new FileStream(path, FileMode.Open, FileAccess.Read);
+			
+			ret=GetFileTime(s.Handle, out creat, out lastaccess, out lastwrite);
+			s.Close();
+			
+			return DateTime.FromFileTime(lastaccess);
 		}
 	
 		public DateTime	GetLastWriteTimeFile(string path)
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:GetLastWriteFile(System.String): Stub	Method");
-			return new DateTime(0);
+			long creat, lastaccess, lastwrite;
+			bool ret;
+			FileStream s = new FileStream(path, FileMode.Open, FileAccess.Read);
+			
+			ret=GetFileTime(s.Handle, out creat, out lastaccess, out lastwrite);
+			s.Close();
+			
+			return DateTime.FromFileTime(lastwrite);
 		}
 	
 		public void SetCreationTimeFile(string path, DateTime creationTime)
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:SetCreationTimeFile(System.String, System.DateTime): Stub Method");
+			long creat, lastaccess, lastwrite;
+			bool ret;
+			FileStream s = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+			
+			// Get the existing times first
+			ret=GetFileTime(s.Handle, out creat, out lastaccess, out lastwrite);
+
+			creat=creationTime.ToFileTime();
+			
+			ret=SetFileTime(s.Handle, creat, lastaccess, lastwrite);
+			s.Close();
 		}
 	
 		public void SetLastAccessTimeFile(string path, DateTime	lastAccessTime)
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:SetLastAccessTimeFile(System.String, System.DateTime): Stub Method");
+			long creat, lastaccess, lastwrite;
+			bool ret;
+			FileStream s = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+			
+			// Get the existing times first
+			ret=GetFileTime(s.Handle, out creat, out lastaccess, out lastwrite);
+
+			lastaccess=lastAccessTime.ToFileTime();
+			
+			ret=SetFileTime(s.Handle, creat, lastaccess, lastwrite);
+			s.Close();
 		}
 	
 		public void SetLastWriteTimeFile(string	path, DateTime lastWriteTime)
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:SetCLastWriteTimeFile(System.String, System.DateTime): Stub Method");
+			long creat, lastaccess, lastwrite;
+			bool ret;
+			FileStream s = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+			
+			// Get the existing times first
+			ret=GetFileTime(s.Handle, out creat, out lastaccess, out lastwrite);
+
+			lastwrite=lastWriteTime.ToFileTime();
+			
+			ret=SetFileTime(s.Handle, creat, lastaccess, lastwrite);
+			s.Close();
 		}
 
 
@@ -481,80 +526,6 @@ namespace System.PAL
 
 		[DllImport("libc", EntryPoint="getpid")]
 		private unsafe static extern int _getPid();
-
-		[DllImport("libc", EntryPoint="read", CharSet=CharSet.Ansi)]
-		private unsafe static extern int _read(IntPtr fd, void * buf, int count);
-
-		[DllImport("libc", EntryPoint="write", CharSet=CharSet.Ansi)]
-		private unsafe static extern int _write(IntPtr fd, void * buf, int count);
-
-		[DllImport("libc", EntryPoint="ftruncate", CharSet=CharSet.Ansi)]
-		private unsafe static extern int _ftruncate(IntPtr fd, int count);
-
-		[DllImport("libc", EntryPoint="lseek", CharSet=CharSet.Ansi)]
-		private unsafe static extern int _lseek(IntPtr fd, int offset, int whence);
-
-		[DllImport("libc", EntryPoint="fflush", CharSet=CharSet.Ansi)]
-		private unsafe static extern int _fflush(IntPtr fd);
-
-		[DllImport("libc", EntryPoint="close", CharSet=CharSet.Ansi)]
-		private unsafe static extern int _close(IntPtr fd);
-
-		[DllImport("libc", EntryPoint="open", CharSet=CharSet.Ansi)]
-		private unsafe static extern IntPtr _open(string path, int flags, int mode);
-
-		[DllImport("libc", EntryPoint="unlink", CharSet=CharSet.Ansi)]
-		private unsafe static extern int _unlink(string path);
-
-		private const int O_RDONLY             = 0x00000000;
-		private const int O_WRONLY             = 0x00000001;
-		private const int O_RDWR               = 0x00000002;
-		private const int O_CREAT              = 0x00000040;
-		private const int O_EXCL               = 0x00000080;
-		private const int O_TRUNC              = 0x00000200;
-		private const int O_APPEND             = 0x00000400;
-
-		private const int SEEK_SET             = 0;
-		private const int SEEK_CUR             = 1;
-		private const int SEEK_END             = 2;
-
-		private int _getUnixFlags (FileMode mode, FileAccess access)
-		{
-			int flags = 0;
-			switch (access) {
-				case FileAccess.Read:
-					flags = O_RDONLY;
-					break;
-				case FileAccess.Write:
-					flags = O_WRONLY;
-					break;
-				case FileAccess.ReadWrite:
-					flags = O_RDWR;
-					break;
-			}
-
-			switch (mode) {
-				case FileMode.Append:
-					flags |= O_APPEND;
-					break;
-				case FileMode.Create:
-					flags |= O_CREAT;
-					break;
-				case FileMode.CreateNew:
-					flags |= O_CREAT | O_EXCL;
-					break;
-				case FileMode.Open:
-					break;
-				case FileMode.OpenOrCreate:
-					flags |= O_CREAT;
-					break;
-				case FileMode.Truncate:
-					flags |= O_TRUNC;
-					break;
-			}
-
-			return flags;
-		}
 
 		[ DllImport("libm", EntryPoint="acos") ]
 		public extern static double Acos(double d);

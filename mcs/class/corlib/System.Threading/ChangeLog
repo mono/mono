@@ -1,3 +1,8 @@
+2001-12-11  Dick Porter  <dick@ximian.com>
+
+	* WaitHandle.cs: Implemented WaitAll(), WaitAny() and WaitOne() as
+	internal calls.
+
 2001-11-26  Dick Porter  <dick@ximian.com>
 
 	* Thread.cs: DataSlot uses a single system TLS slot, and a
