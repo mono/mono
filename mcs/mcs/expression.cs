@@ -866,6 +866,7 @@ namespace CIR {
 		{
 			Expression mg1 = null, mg2 = null, mg3 = null, mg4 = null;
 			Expression mg5 = null, mg6 = null, mg7 = null, mg8 = null;
+			Expression e;
 			MethodBase method = null;
 			Type source_type = source.Type;
 
@@ -952,10 +953,20 @@ namespace CIR {
 					return null;
 				}
 				
+				//
+				// This will do the conversion to the best match that we
+				// found.  Now we need to perform an implict standard conversion
+				// if the best match was not the type that we were requested
+				// by target.
+				//
+				e =  new UserCast ((MethodInfo) method, source, most_specific_source,
+						   most_specific_target, look_for_explicit);
 
-				return new UserCast ((MethodInfo) method, source, most_specific_source,
-						     most_specific_target, look_for_explicit);
-
+				if (e.Type != target){
+					e = ConvertImplicitStandard (tc, e, target, l);
+					return e;
+				} else
+					return e;
 			}
 			
 			return null;

@@ -31,13 +31,20 @@ namespace CIR {
 
 			return name;
 		}
+
+		string TrimExt (string name)
+		{
+			int pos = name.LastIndexOf (".");
+
+			return name.Substring (0, pos);
+		}
 		
 		public CodeGen (string name, string output)
 		{
 			AssemblyName an;
 			
 			an = new AssemblyName ();
-			an.Name = name;
+			an.Name = TrimExt (name);
 			current_domain = AppDomain.CurrentDomain;
 			assembly_builder = current_domain.DefineDynamicAssembly (
 				an, AssemblyBuilderAccess.RunAndSave);
@@ -214,6 +221,7 @@ namespace CIR {
 
 		bool ProbeCollectionType (Type t)
 		{
+			
 			return true;
 		}
 		

@@ -1,3 +1,7 @@
+2001-10-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs: Implicity convert the result from UserCast.
+
 2001-10-05  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (Expression::FindMostEncompassingType): Fix bug which
