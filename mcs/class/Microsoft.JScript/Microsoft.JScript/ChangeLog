@@ -1,5 +1,10 @@
 2004-11-22  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* Parser.cs: use ToJSToken for building the Relational
+	object. Map relational Token's to JSToken's.
+	* expression.cs: Added Size property to class
+	Expression. (emit_create_instance): Added Number code generation. 
+
 	* Relational.cs (Emit): fix typo, emit boxing to boolean.
 
 2004-11-19  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>

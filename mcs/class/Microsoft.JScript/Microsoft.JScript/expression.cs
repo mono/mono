@@ -1065,6 +1065,10 @@ namespace Microsoft.JScript {
 
 		internal ArrayList exprs;
 
+		internal int Size {
+			get { return exprs.Count; }
+		}
+
 		internal Expression (AST parent)
 		{
 			this.parent = parent;
@@ -1242,6 +1246,9 @@ namespace Microsoft.JScript {
 					break;
 				case "Date":
 					type = typeof (DateConstructor);
+					break;
+				case "Number":
+					type = typeof (NumberConstructor);
 					break;
 				}
 				if (type != null)

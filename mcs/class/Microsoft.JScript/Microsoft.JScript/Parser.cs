@@ -768,7 +768,7 @@ namespace Microsoft.JScript {
 						break;
 				} else if (tt == Token.INSTANCEOF || tt == Token.LE || tt == Token.LT || tt == Token.GE || tt == Token.GT) {
 					ts.GetToken ();
-					pn = new Relational (parent, pn, ShiftExpr (parent), JSToken.LessThan);
+					pn = new Relational (parent, pn, ShiftExpr (parent), ToJSToken (tt));
 					continue;
 				}
 				break;
@@ -895,6 +895,16 @@ namespace Microsoft.JScript {
 				return JSToken.Divide;
 			else if (tt == Token.MOD)
 				return JSToken.Modulo;
+			else if (tt == Token.INSTANCEOF)
+				return JSToken.InstanceOf;
+			else if (tt == Token.LE)
+				return JSToken.LessThanEqual;
+			else if (tt == Token.LT)
+				return JSToken.LessThan;
+			else if (tt == Token.GE)
+				return JSToken.GreaterThanEqual;
+			else if (tt == Token.GT)
+				return JSToken.GreaterThan;
 			else
 				throw new NotImplementedException ();
 		}
