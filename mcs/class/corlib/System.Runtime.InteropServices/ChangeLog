@@ -1,3 +1,7 @@
+2004-09-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Marshal.cs: Add stubs for missing 2.0 methods.
+
 2004-09-24  Zoltan Varga  <vargaz@freemail.hu>
 
 	* DllImportAttribute.cs: Reorder fields and mark this class as visible

@@ -162,6 +162,33 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static void FreeHGlobal (IntPtr hglobal);
 
+#if NET_2_0
+		[MonoTODO]
+		public static void ZeroFreeBSTR (IntPtr ptr) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void ZeroFreeCoTaskMemAnsi (IntPtr ptr) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void ZeroFreeCoTaskMemUni (IntPtr ptr) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void ZeroFreeGlobalAllocAnsi (IntPtr hglobal) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void ZeroFreeGlobalAllocUni (IntPtr hglobal) {
+			throw new NotImplementedException ();
+		}
+#endif
+
 		[MonoTODO]
 		public static Guid GenerateGuidForType (Type type) {
 			throw new NotImplementedException ();
@@ -181,6 +208,13 @@ namespace System.Runtime.InteropServices
 		public static IntPtr GetComInterfaceForObject (object o, Type T) {
 			throw new NotImplementedException ();
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public static IntPtr GetComInterfaceForObjectInContext (object o, Type t) {
+			throw new NotImplementedException ();
+		}
+#endif
 
 		[MonoTODO]
 		public static object GetComObjectData (object obj, object key) {
@@ -227,6 +261,13 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		public static IntPtr GetIDispatchForObjectInContext (object o) {
+			throw new NotImplementedException ();
+		}
+#endif
+
 		[MonoTODO]
 		public static IntPtr GetITypeInfoForType (Type t) {
 			throw new NotImplementedException ();
@@ -236,6 +277,13 @@ namespace System.Runtime.InteropServices
 		public static IntPtr GetIUnknownForObject (object o) {
 			throw new NotImplementedException ();
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public static IntPtr GetIUnknownForObjectInContext (object o) {
+			throw new NotImplementedException ();
+		}
+#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static extern int GetLastWin32Error();
@@ -290,11 +338,17 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
+#if NET_2_0
+		[Obsolete]
+#endif
 		[MonoTODO]
 		public static string GetTypeInfoName (UCOMITypeInfo pTI) {
 			throw new NotImplementedException ();
 		}
 
+#if NET_2_0
+		[Obsolete]
+#endif
 		[MonoTODO]
 		public static Guid GetTypeLibGuid (UCOMITypeLib pTLB) {
 			throw new NotImplementedException ();
@@ -305,15 +359,28 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
+#if NET_2_0
+		[Obsolete]
+#endif
 		[MonoTODO]
 		public static int GetTypeLibLcid (UCOMITypeLib pTLB) {
 			throw new NotImplementedException ();
 		}
 
+#if NET_2_0
+		[Obsolete]
+#endif
 		[MonoTODO]
 		public static string GetTypeLibName (UCOMITypeLib pTLB) {
 			throw new NotImplementedException ();
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public static void GetTypeLibVersionForAssembly (Assembly inputAssembly, out int majorVersion, out int minorVersion) {
+			throw new NotImplementedException ();
+		}
+#endif
 
 		[MonoTODO]
 		public static IntPtr GetUnmanagedThunkForManagedMethodPtr (IntPtr pfnMethodToWrap, IntPtr pbSignature, int cbSignature) {
@@ -454,6 +521,9 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
+#if NET_2_0
+		[Obsolete]
+#endif
 		[MonoTODO]
 		public static void ReleaseThreadCache() {
 			throw new NotImplementedException ();
@@ -514,6 +584,33 @@ namespace System.Runtime.InteropServices
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr StringToHGlobalUni (string s);
+
+#if NET_2_0
+		[MonoTODO]
+		public static IntPtr SecureStringToBSTR (SecureString s) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static IntPtr SecureStringToCoTaskMemAnsi (SecureString s) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static IntPtr SecureStringToCoTaskMemUni (SecureString s) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static IntPtr SecureStringToGlobalAllocAnsi (SecureString s) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static IntPtr SecureStringToGlobalAllocUni (SecureString s) {
+			throw new NotImplementedException ();
+		}
+#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static void StructureToPtr (object structure, IntPtr ptr, bool fDeleteOld);
@@ -604,5 +701,39 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		public static int FinalReleaseComObject (object o) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static Delegate GetDelegateForFunctionPointer (IntPtr ptr, Type t) {
+			if (!t.IsSubclassOf (typeof (MulticastDelegate)) || (t == typeof (MulticastDelegate)))
+				throw new ArgumentException ("Type is not a delegate", "t");
+			if (ptr == IntPtr.Zero)
+				throw new ArgumentNullException ("ptr");
+
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static Exception GetExceptionForHR (int errorCode) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static Exception GetExceptionForHR (int errorCode, IntPtr errorInfo) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static IntPtr GetFunctionPointerForDelegate (Delegate d) {
+			if (d == null)
+				throw new ArgumentNullException ("d");
+			
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }
