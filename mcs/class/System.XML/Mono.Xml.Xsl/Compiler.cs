@@ -238,6 +238,11 @@ namespace Mono.Xml.Xsl {
 		
 		public void AddAttributeSet (XslAttributeSet set)
 		{
+			XslAttributeSet existing = attrSets [set.Name] as XslAttributeSet;
+			// The latter set will have higher priority
+			if (existing != null)
+				set.Merge (existing);
+			
 			attrSets [set.Name] = set; 
 		}
 		

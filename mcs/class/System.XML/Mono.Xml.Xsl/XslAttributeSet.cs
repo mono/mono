@@ -25,7 +25,7 @@ namespace Mono.Xml.Xsl {
 	public class XslAttributeSet : XslCompiledElement {
 		QName name;
 		// [QName]=>XslAttributeSet
-		QName [] usedAttributeSets;
+		ArrayList usedAttributeSets = new ArrayList ();
 		
 		// [QName]=>XslAttribute
 		ArrayList attributes = new ArrayList ();
@@ -40,7 +40,8 @@ namespace Mono.Xml.Xsl {
 		{
 			this.name = c.ParseQNameAttribute ("name");
 			
-			usedAttributeSets = c.ParseQNameListAttribute ("use-attribute-sets");
+			foreach (QName q in c.ParseQNameListAttribute ("use-attribute-sets"))
+				usedAttributeSets.Add (q);
 
 			
 			if (!c.Input.MoveToFirstChild ()) return;
@@ -57,7 +58,17 @@ namespace Mono.Xml.Xsl {
 			
 		}
 		
+		public void Merge (XslAttributeSet s)
+		{
+			attributes.AddRange (s.attributes);
+			
+			foreach (QName q in s.usedAttributeSets)
+				if (!usedAttributeSets.Contains (q))
+					usedAttributeSets.Add (q);
+		}
+		
 		// busy flag to detect circular dependencies
+		// TODO: Move this logic into the compiler, for MT safty
 		bool busy = false;
 		public override void Evaluate (XslTransformProcessor p) {
 			busy = true;
