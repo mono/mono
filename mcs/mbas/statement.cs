@@ -4105,7 +4105,7 @@ namespace Mono.MonoBASIC {
 			ig.Emit (OpCodes.Call, TypeManager.void_monitor_enter_object);
 
 			// try
-			//Label end = ig.BeginExceptionBlock ();
+			ig.BeginExceptionBlock ();
 			bool old_in_try = ec.InTry;
 			ec.InTry = true;
 			Label finish = ig.DefineLabel ();
