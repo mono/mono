@@ -12,6 +12,7 @@ System.Data/Constraint.cs
 System.Data/ConstraintCollection.cs
 System.Data/ConstraintConverter.cs
 System.Data/ConstraintException.cs
+System.Data/CustomDataClassGenerator.cs
 System.Data/DataAdapterException.cs
 System.Data/DataCategoryAttribute.cs
 System.Data/DataColumn.cs
