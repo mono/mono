@@ -1,5 +1,10 @@
 2001-11-15  Ravi Pratap  <ravi@ximian.com>
 
+	* interface.cs : Default modifier is private, not public. The
+	make verify test passes again.
+
+2001-11-15  Ravi Pratap  <ravi@ximian.com>
+
 	* support.cs (ReflectionParameters): Fix logic to determine
 	whether the last parameter is a params one. Test 9 passes again.
 

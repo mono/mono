@@ -67,7 +67,7 @@ namespace CIR {
 		public Interface (RootContext rc, TypeContainer parent, string name, int mod, Attributes attrs, Location l)
 			: base (name, l)
 		{
-			this.mod_flags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PUBLIC);
+			this.mod_flags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE);
 			this.parent = parent;
 			OptAttributes = attrs;
 			RootContext = rc;
