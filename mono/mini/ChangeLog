@@ -1,3 +1,11 @@
+2005-02-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_jit_free_method): Free the method info even if the native code is
+	invalidated. Fixes #73001.
+
+	* mini.c: Add a proper icall wrapper for mono_delegate_ctor.
+
+	* mini-x86.c: Only use stdcall for pinvokes on windows.
 
 Thu Feb 24 15:22:30 CET 2005 Paolo Molaro <lupus@ximian.com>
 
