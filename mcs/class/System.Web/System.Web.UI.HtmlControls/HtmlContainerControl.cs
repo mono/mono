@@ -80,11 +80,11 @@ namespace System.Web.UI.HtmlControls
 		public virtual string InnerText
 		{
 			get {
-				return InnerHtml; //FIXME: decode it
+				return HttpUtility.HtmlDecode (InnerHtml);
 			}
 
 			set {
-				InnerHtml = value; //FIXME: encode it
+				InnerHtml = HttpUtility.HtmlEncode (value);
 			}
 		}
 		

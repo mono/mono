@@ -1,5 +1,9 @@
 2003-12-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HtmlContainerControl.cs: encode/decode InnerText. Fixes bug #51653.
+
+2003-12-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HtmlSelect.cs: with the new LosFormatter, we get array types right, so
 	remove the code used to workaround that.
 
