@@ -1,3 +1,8 @@
+2005-02-16  Peter Bartok  <pbartok@novell.com>
+
+	* ResXResourceReader.cs, ResXResourceWriter.cs: Removed sealed
+	  attribute from classes
+
 2005-02-12  Geoff Norton  (gnorton@customerdna.com)
 
 	* ResXResourceReader.cs (load_data): Undo previous change as

@@ -36,7 +36,7 @@ using System.Globalization;
 
 namespace System.Resources
 {
-	public sealed class ResXResourceReader : IResourceReader, IDisposable
+	public class ResXResourceReader : IResourceReader, IDisposable
 	{
 		Stream stream;
 		XmlTextReader reader;

@@ -31,7 +31,7 @@ using System.Xml;
 
 namespace System.Resources
 {
-	public sealed class ResXResourceWriter : IResourceWriter, IDisposable
+	public class ResXResourceWriter : IResourceWriter, IDisposable
 	{
 		string filename;
 		Stream stream;
