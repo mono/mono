@@ -1,8 +1,12 @@
 EXTRA_DIST = mcs.in mbas.in ilasm.in cilc.in monoresgen.in resgen.in secutil.in sqlsharp.in xsd.in wsdl2.in wsdl.in genxs.in soapsuds.in chktrust.in signcode.in disco.in sn.in al.in cert2spc.in setreg.in makecert.in certmgr.in monop.in gacutil.in gmcs.in mono-find-provides.in mono-find-requires.in
 
-bin_SCRIPTS = mcs mbas ilasm cilc monoresgen resgen secutil sqlsharp xsd wsdl wsdl2 al genxs soapsuds chktrust signcode disco sn cert2spc setreg makecert certmgr monop gacutil gmcs mono-find-requires mono-find-provides
+bin2dir = $(bindir)
 
-CLEANFILES = $(bin_SCRIPTS)
+bin_SCRIPTS = mcs mbas ilasm cilc monoresgen resgen secutil sqlsharp xsd wsdl al genxs soapsuds chktrust signcode disco sn cert2spc setreg makecert certmgr monop gacutil mono-find-requires mono-find-provides
+
+bin2_SCRIPTS = gmcs wsdl2
+
+CLEANFILES = $(bin_SCRIPTS) $(bin2_SCRIPTS)
 
 if USE_JIT
 MONO_INTERP = mono
@@ -26,36 +30,14 @@ REWRITE = sed \
 	-e 's,@''mono_one_instdir@,$(mono_one_instdir),g'	\
 	-e 's,@''mono_two_instdir@,$(mono_two_instdir),g'	\
 	-e 's,@''gtkdir@,$(gtkdir),g'				\
+	-e 's,@''exe_file@,$@.exe,g'				\
 	-e 's,@''mono_interp@,$(MONO_INTERP),g'
 
-$(bin_SCRIPTS): Makefile.am
-	$(REWRITE) $(srcdir)/$@.in > $@.tmp
+$(bin_SCRIPTS): script.in Makefile.am
+	$(REWRITE) $(srcdir)/script.in > $@.tmp
 	mv $@.tmp $@
 
-mcs: mcs.in
-gmcs: gmcs.in
-mbas: mbas.in
-ilasm: ilasm.in
-cilc: cilc.in
-monoresgen: monoresgen.in
-resgen: resgen.in
-secutil: secutil.in
-sqlsharp: sqlsharp.in
-xsd: xsd.in
-wsdl: wsdl.in
-wsdl2: wsdl2.in
-al: al.in
-genxs: genxs.in
-disco: disco.in
-soapsuds: soapsuds.in
-chktrust: chktrust.in
-signcode: signcode.in
-sn: sn.in
-cert2spc: cert2spc.in
-setreg: setreg.in
-makecert: makecert.in
-certmgr: certmgr.in
-monop: monop.in
-gacutil: gacutil.in
-mono-find-provides: mono-find-provides.in
-mono-find-requires: mono-find-requires.in
+$(bin2_SCRIPTS): script2.in Makefile.am
+	$(REWRITE) $(srcdir)/script2.in > $@.tmp
+	mv $@.tmp $@
+
