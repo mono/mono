@@ -1,3 +1,8 @@
+2003-10-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: OutputDebugStringW expects 16-bit unicode characters, not
+	utf8.
+
 2003-10-18  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* icall.c: Removed GetUninitializedObject method because
