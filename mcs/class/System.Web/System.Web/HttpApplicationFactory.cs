@@ -240,6 +240,8 @@ namespace System.Web {
 					target = app;
 				} else {
 					target = app.Modules [moduleName];
+					if (target == null)
+						continue;
 				}
 
 				string eventName = key.Substring (pos + 1);
