@@ -1,5 +1,16 @@
 2003-02-23  Martin Baulig  <martin@ximian.com>
 
+	* statement.cs (Block.Emit): Override this and set ec.CurrentBlock
+	while calling DoEmit ().
+
+	* codegen.cs (EmitContext.Mark): Don't mark locations in other
+	source files; if you use the #line directive inside a method, the
+	compiler stops emitting line numbers for the debugger until it
+	reaches the end of the method or another #line directive which
+	restores the original file.
+
+2003-02-23  Martin Baulig  <martin@ximian.com>
+
 	* statement.cs (FlowBranching.UsageVector.MergeChildren): Fix bug #37708.
 
 2003-02-23  Martin Baulig  <martin@ximian.com>
