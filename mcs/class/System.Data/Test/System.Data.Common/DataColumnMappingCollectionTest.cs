@@ -129,8 +129,8 @@ namespace MonoTests.System.Data.Common
 		[ExpectedException(typeof(InvalidCastException))]
 		public void ContainsException1()
 		{
-			DataColumnMappingCollection c=new DataColumnMappingCollection();
-			columnMapCollection.Contains(c);
+			Object o = new Object();
+			bool a = columnMapCollection.Contains(o);
 		}
 		
 		[Test]

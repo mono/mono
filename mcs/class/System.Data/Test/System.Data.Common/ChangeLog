@@ -1,2 +1,5 @@
+2004-06-08 Umadevi S <sumadevi@novell.com>
+	* Corrected the contains testcase to test for invalidcastexception
+
 2004-05-27 Umadevi S <sumadevi@novell.com>
 	* Added Classes DataColumnMappingCollectionTest and DataTableMappingCollectionTest
