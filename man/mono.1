@@ -252,6 +252,19 @@ If set, this variable overrides the default runtime configuration file
 ($PREFIX/etc/mono/config). The --config command line options overrides the
 environment variable.
 .TP
+.I "MONO_LOG_LEVEL"
+If set, the logging level is changed to the set value. Possible values
+are "error", "critical", "warning", "message", "info", "debug". The
+default value is "error". Messages with a logging level greater then
+or equal to the log level will be printed to stdout/stderr.
+.TP
+.I "MONO_LOG_MASK"
+If set, the log mask is changed to the set value. Possible values are
+"asm" (assembly loader), "type", "dll" (native library loader), "gc"
+(garbage collector), "cfg" (config file loader), "all". The default value is
+"all". Changing the mask value allows you to display only messages for
+a certain component.
+.TP
 .I "MONO_DEBUG"
 If set, enables some features of the runtime useful for debugging.
 It makes the runtime display the stack traces for all the threads
