@@ -94,28 +94,15 @@ namespace System.Collections {
 		public virtual object Clone () {
 			Queue newQueue;
 			
-			newQueue = new Queue (); // FIXME: improve this...
+			newQueue = new Queue (this.capacity, this.growFactor);
 			
-			newQueue.contents = new object[this.contents.Length];
 			Array.Copy (this.contents, 0, newQueue.contents, 0,
-				    this.contents.Length);
+				    this.capacity);
 			newQueue.head = this.head;
 			newQueue.count = this.count;
-			newQueue.capacity = this.capacity;
-			newQueue.growFactor = this.growFactor;
 
 			return newQueue;
 		}
-
-		// FIXME: should override Equals?
-
-		// from Queue spec
-
-/*
-		public virtual bool IsReadOnly {
-			get { return false; }
-		}
-*/
 
 		public virtual void Clear () {
 			modCount++;
@@ -170,7 +157,7 @@ namespace System.Collections {
 
 		public static Queue Synchronized (Queue queue) {
 			if (queue == null) {
-				throw new ArgumentNullException ();
+				throw new ArgumentNullException ("queue");
 			}
 			return new SyncQueue (queue);
 		}
@@ -182,6 +169,7 @@ namespace System.Collections {
 		}
 
 		public virtual void TrimToSize() {
+			modCount++;
 			object[] trimmed = new object [count];
 			CopyTo (trimmed, 0);
 			contents = trimmed;
@@ -242,7 +230,7 @@ namespace System.Collections {
 			
 			public override object Clone () {
 				lock (queue) {
-					return queue.Clone ();
+					return new SyncQueue((Queue) queue.Clone ());
 				}
 			}
 			
@@ -259,6 +247,12 @@ namespace System.Collections {
 			public override void Clear () {
 				lock (queue) {
 					queue.Clear ();
+				}
+			}
+
+			public override void TrimToSize () {
+				lock (queue) {
+					queue.TrimToSize ();
 				}
 			}
 
