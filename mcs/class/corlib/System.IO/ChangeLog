@@ -1,3 +1,14 @@
+2003-04-04  Miguel de Icaza  <miguel@ximian.com>
+
+	* FileStream.cs (Read, ReadByte, Seek): throw
+	ObjectDisposedException if the handle has been released.
+	
+	(Read): Throw exceptions specified in the spec.
+
+	(Read, Write, ReadSegment, WriteSegment): There is no requirement for any
+	instance methods of FileStream to be thread safe, so remove all
+	the calls to lock on the object
+
 2003-03-31  Nick Drochak <ndrochak@gol.com>
 
 	* Path.cs (GetDirectoryName): Throw proper execption when path is empty.

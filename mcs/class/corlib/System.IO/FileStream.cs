@@ -192,13 +192,18 @@ namespace System.IO
 		}
 
 		public virtual IntPtr Handle {
-			get { return handle; }
+			get {
+				return handle;
+			}
 		}
 
 		// methods
 
 		public override int ReadByte ()
 		{
+			if (handle == MonoIO.InvalidHandle)
+				throw new ObjectDisposedException ("Stream has been closed");
+			
 			lock(this) {
 				if (buf_offset >= buf_length) {
 					RefillBuffer ();
@@ -230,6 +235,21 @@ namespace System.IO
 
 		public override int Read (byte[] dest, int dest_offset, int count)
 		{
+			if (handle == MonoIO.InvalidHandle)
+				throw new ObjectDisposedException ("Stream has been closed");
+			if (dest == null)
+				throw new ArgumentNullException ("destination array is null");
+			if (!CanRead)
+				throw new NotSupportedException ("Stream does not support reading");
+			int len = dest.Length;
+			if (dest_offset < 0 || count < 0)
+				throw new ArgumentException ("dest or count is negative");
+			if (dest_offset > len)
+				throw new ArgumentException ("destination offset is beyond array size");
+			if ((dest_offset + count) > len)
+				throw new ArgumentException ("Reading would overrun buffer");
+
+			
 			int copied = 0;
 
 			lock(this) {
@@ -275,26 +295,24 @@ namespace System.IO
 		{
 			int copied = 0;
 
-			lock(this) {
-				while (count > 0) {
-					int n = WriteSegment (src, src_offset + copied, count);
-					copied += n;
-					count -= n;
-
-					FlushBuffer ();
-
-					if (count == 0) {
-						break;
-					}
-
-					if (count > buf_size) {
-						// shortcut for long writes
-						MonoIOError error;
+			while (count > 0) {
+				int n = WriteSegment (src, src_offset + copied, count);
+				copied += n;
+				count -= n;
+				
+				FlushBuffer ();
+				
+				if (count == 0) {
+					break;
+				}
+				
+				if (count > buf_size) {
+					// shortcut for long writes
+					MonoIOError error;
 					
-						MonoIO.Write (handle, src, src_offset + copied, count, out error);
-						buf_start += count;
-						break;
-					}
+					MonoIO.Write (handle, src, src_offset + copied, count, out error);
+					buf_start += count;
+					break;
 				}
 			}
 		}
@@ -303,6 +321,9 @@ namespace System.IO
 		{
 			long pos;
 
+			if (handle == MonoIO.InvalidHandle)
+				throw new ObjectDisposedException ("Stream has been closed");
+			
 			// make absolute
 
 			if(CanSeek == false) {
@@ -429,75 +450,67 @@ namespace System.IO
 		private int ReadSegment (byte [] dest, int dest_offset,
 					 int count)
 		{
-			lock(this) {
-				if (count > buf_length - buf_offset) {
-					count = buf_length - buf_offset;
-				}
-
-				if (count > 0) {
-					Buffer.BlockCopy (buf, buf_offset,
-							  dest, dest_offset,
-							  count);
-					buf_offset += count;
-				}
-				
-				return(count);
+			if (count > buf_length - buf_offset) {
+				count = buf_length - buf_offset;
 			}
+			
+			if (count > 0) {
+				Buffer.BlockCopy (buf, buf_offset,
+						  dest, dest_offset,
+						  count);
+				buf_offset += count;
+			}
+			
+			return(count);
 		}
 
 		private int WriteSegment (byte [] src, int src_offset,
 					  int count)
 		{
-			lock(this) {
-				if (count > buf_size - buf_offset) {
-					count = buf_size - buf_offset;
-				}
-
-				if (count > 0) {
-					Buffer.BlockCopy (src, src_offset,
-							  buf, buf_offset,
-							  count);
-					buf_offset += count;
-					if (buf_offset > buf_length) {
-						buf_length = buf_offset;
-					}
-
-					buf_dirty = true;
-				}
-
-				return(count);
+			if (count > buf_size - buf_offset) {
+				count = buf_size - buf_offset;
 			}
+			
+			if (count > 0) {
+				Buffer.BlockCopy (src, src_offset,
+						  buf, buf_offset,
+						  count);
+				buf_offset += count;
+				if (buf_offset > buf_length) {
+					buf_length = buf_offset;
+				}
+				
+				buf_dirty = true;
+			}
+			
+			return(count);
 		}
 
 		private void FlushBuffer ()
 		{
-			lock(this) {
-				if (buf_dirty) {
-					MonoIOError error;
+			if (buf_dirty) {
+				MonoIOError error;
 				
-					if (CanSeek == true) {
-						MonoIO.Seek (handle, buf_start,
-							     SeekOrigin.Begin,
-							     out error);
-					}
-					MonoIO.Write (handle, buf, 0,
-						      buf_length, out error);
+				if (CanSeek == true) {
+					MonoIO.Seek (handle, buf_start,
+						     SeekOrigin.Begin,
+						     out error);
 				}
-
-				buf_start += buf_length;
-				buf_offset = buf_length = 0;
-				buf_dirty = false;
+				MonoIO.Write (handle, buf, 0,
+					      buf_length, out error);
 			}
+			
+			buf_start += buf_length;
+			buf_offset = buf_length = 0;
+			buf_dirty = false;
 		}
 
 		private void RefillBuffer ()
 		{
-			lock(this) {
-				FlushBuffer();
-
-				buf_length = ReadData (handle, buf, 0,
-						       buf_size);
-			}
+			FlushBuffer();
+			
+			buf_length = ReadData (handle, buf, 0,
+					       buf_size);
 		}
 
 		private int ReadData (IntPtr handle, byte[] buf, int offset,
@@ -505,22 +518,20 @@ namespace System.IO
 		{
 			MonoIOError error;
 			
-			lock(this) {
-				int amount = MonoIO.Read (handle, buf, offset,
-							  count, out error);
-
-				/* Check for read error */
-				if(amount == -1) {
-					/* Kludge around broken pipes */
-					if(error == MonoIOError.ERROR_BROKEN_PIPE) {
-						amount = 0;
-					} else {
-						throw new IOException ();
-					}
+			int amount = MonoIO.Read (handle, buf, offset,
+						  count, out error);
+			
+			/* Check for read error */
+			if(amount == -1) {
+				/* Kludge around broken pipes */
+				if(error == MonoIOError.ERROR_BROKEN_PIPE) {
+					amount = 0;
+				} else {
+					throw new IOException ();
 				}
-
-				return(amount);
 			}
+			
+			return(amount);
 		}
 		
 		
