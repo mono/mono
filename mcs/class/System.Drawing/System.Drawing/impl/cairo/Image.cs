@@ -23,7 +23,7 @@ namespace System.Drawing.Cairo {
 	{
 
 		internal IntPtr state;
-		internal Cairo.Format cairo_format;
+		internal Format cairo_format;
 		internal System.Drawing.Cairo.Graphics selected_into_graphics = null;
 		internal Size size;
 		internal PixelFormat pixelFormat;

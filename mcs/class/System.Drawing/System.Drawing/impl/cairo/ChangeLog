@@ -1,5 +1,8 @@
 2003-08-24  Duncan Mak  <duncan@ximian.com> 		
 
+	* cairo-api.cs: New file, replace Cairo.cs and cairo.cs. That
+	naming thing is just too confusing.
+
 	* Cairo.cs: Make all references to the enums (Cairo.Foo) be just
 	Foo. This should (hopefully) fix the build on Windows.
 
