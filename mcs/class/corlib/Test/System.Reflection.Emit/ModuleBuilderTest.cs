@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.IO;
 using System.Collections;
+using System.Diagnostics.SymbolStore;
 
 using NUnit.Framework;
 
@@ -41,6 +42,20 @@ public class ModuleBuilderTest : Assertion
 		}
 		catch (Exception) {
 		}
+	}
+
+	[Test]
+	public void TestIsTransient () {
+		AssemblyName assemblyName = new AssemblyName();
+		assemblyName.Name = "foo";
+
+		AssemblyBuilder ab
+			= Thread.GetDomain().DefineDynamicAssembly(
+				assemblyName, AssemblyBuilderAccess.RunAndSave, TempFolder);		
+		ModuleBuilder mb1 = ab.DefineDynamicModule ("foo.dll");
+		AssertEquals (true, mb1.IsTransient ());
+		ModuleBuilder mb2 = ab.DefineDynamicModule ("foo2.dll", "foo2.dll");
+		AssertEquals (false, mb2.IsTransient ());
 	}
 
 	// Some of these tests overlap with the tests for Module
@@ -90,6 +105,26 @@ public class ModuleBuilderTest : Assertion
 		AssertEquals (module.GetField ("DATA4") != null, true);
 		AssertEquals (module.GetField ("DATA_PRIVATE"), null);
 		AssertEquals (module.GetField ("DATA_PRIVATE", BindingFlags.NonPublic | BindingFlags.Static) != null, true);
+	}
+
+	[Test]
+	public void DuplicateSymbolDocument () {
+		AssemblyName assemblyName = new AssemblyName();
+		assemblyName.Name = "ModuleBuilderTest.DuplicateSymbolDocument";
+
+		AssemblyBuilder ab
+			= Thread.GetDomain().DefineDynamicAssembly(
+				assemblyName, AssemblyBuilderAccess.RunAndSave, TempFolder);
+
+		ModuleBuilder mb = ab.DefineDynamicModule("foo.dll", "foo.dll", true);
+
+		// Check that it is possible to redefine a symbol document
+		ISymbolDocumentWriter doc1 =
+			mb.DefineDocument("foo.il", SymDocumentType.Text,
+							  SymLanguageType.ILAssembly,SymLanguageVendor.Microsoft);
+		ISymbolDocumentWriter doc2 =
+			mb.DefineDocument("foo.il", SymDocumentType.Text,
+							  SymLanguageType.ILAssembly,SymLanguageVendor.Microsoft);
 	}
 	
     private static void AssertArrayEqualsSorted (Array o1, Array o2) {

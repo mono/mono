@@ -1,5 +1,9 @@
 2003-07-11  Zoltan Varga  <vargaz@freemail.hu>
 
+	* ModuleBuilderTest.cs: Added tests for IsTransient ().
+
+	* ModuleBuilderTest.cs: Added tests for DefineDocument ().
+
 	* AssemblyBuilderTest.cs: Added error handling tests.
 
 2003-06-30  Zoltan Varga  <vargaz@freemail.hu>
