@@ -1,3 +1,9 @@
+2004-07-02  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* BinaryCommon.cs: Added CheckSerializable method.
+	* ObjectWriter.cs: Check for type serializability even for members with
+	  null values.
+	
 2004-05-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ObjectWriter.cs: reduce contention in GetObjectData.

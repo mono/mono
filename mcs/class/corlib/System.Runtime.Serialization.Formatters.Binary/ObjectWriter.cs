@@ -357,10 +357,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 			// Check if the object is marked with the Serializable attribute
 
-			if (!instanceType.IsSerializable)
-				throw new SerializationException ("Type " + instanceType +
-								  " is not marked as Serializable " + 
-								  "and does not implement ISerializable.");
+			BinaryCommon.CheckSerializable (instanceType, _surrogateSelector, _context);
 
 			ISerializable ser = obj as ISerializable;
 
@@ -653,6 +650,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		{
 			if (val == null) 
 			{
+				BinaryCommon.CheckSerializable (valueType, _surrogateSelector, _context);
 				writer.Write ((byte) BinaryElement.NullValue);
 			}
 			else if (BinaryCommon.IsPrimitive(val.GetType()))

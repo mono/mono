@@ -107,6 +107,17 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		{
 			return _typeCodesToType [code];
 		}
+		
+		public static void CheckSerializable (Type type, ISurrogateSelector selector, StreamingContext context)
+		{
+			if (!type.IsSerializable && !type.IsInterface) 
+			{
+				if (selector != null && selector.GetSurrogate (type, context, out selector) != null)
+					return;
+
+				throw new SerializationException ("Type " + type + " is not marked as Serializable.");
+			}
+		}
 	}
 
 	internal enum BinaryElement : byte
