@@ -66,37 +66,6 @@ namespace System.Windows.Forms{
 		[DllImport("comctl32.dll", EntryPoint="DllGetVersion")]
 		internal extern static int GetCommonControlDLLVersion(ref DLLVERSIONINFO dvi);
 
-		[DllImport ("comdlg32.dll",
-			 CallingConvention = CallingConvention.StdCall, 
-			 CharSet = CharSet.Ansi)]
-		internal static extern bool GetOpenFileName ( ref OPENFILENAME lpofn );
-		
-		[DllImport ("comdlg32.dll",
-			 CallingConvention = CallingConvention.StdCall, 
-			 CharSet = CharSet.Ansi)]
-		internal static extern bool GetSaveFileName ( ref OPENFILENAME lpofn );
-
-		[DllImport ("comdlg32.dll",
-			 CallingConvention = CallingConvention.StdCall, 
-			 CharSet = CharSet.Ansi)]
-		internal static extern bool ChooseColor ( ref CHOOSECOLOR lpofn );
-		
-		
-		[DllImport ("comdlg32.dll",
-			 CallingConvention = CallingConvention.StdCall, 
-			 CharSet = CharSet.Ansi)]
-		internal static extern bool PrintDlg (IntPtr pDlg);
-		
-		
-		[DllImport ("comdlg32.dll",
-			 CallingConvention = CallingConvention.StdCall, 
-			 CharSet = CharSet.Ansi)]
-		internal static extern bool ChooseFont ( ref CHOOSEFONT lpcf );
-
-		[DllImport ("comdlg32.dll",
-			 CallingConvention = CallingConvention.StdCall, 
-			 CharSet = CharSet.Ansi)]
-		internal static extern uint CommDlgExtendedError ( );
 	}
 	
 	/// <summary>
@@ -171,19 +140,18 @@ namespace System.Windows.Forms{
 			return sb.ToString();
 		}
 		
-		[DllImport ("kernel32.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Auto)]
-		internal extern static int wine_get_unix_file_name (string dos, IntPtr unix, int len);
-		
-		internal static string wine_get_unix_file_name (string dos)
+		internal static string WineToUnixPath(string dos)
 		{
 			string result = dos;
-			if (RunningOnUnix){
-				// FIXME: shall we have a static buffer here ?
-				IntPtr tempBuf = Marshal.AllocHGlobal(2048);
-				if( Win32.wine_get_unix_file_name( dos, tempBuf, 2048) != 0){
-					result = Marshal.PtrToStringAnsi(tempBuf);
+
+			if (RunningOnUnix) {
+				IntPtr	unix;
+
+				if ((unix=WineGetUnixPath(dos))==IntPtr.Zero) {
+					throw new ArgumentException("WineLib function WineGetUnixPath() failed");
 				}
-				Marshal.FreeHGlobal(tempBuf);
+				result=Marshal.PtrToStringAnsi(unix);
+				WineReleaseUnixPath(unix);
 			}
 			return result;
 		}
@@ -193,7 +161,7 @@ namespace System.Windows.Forms{
 		internal static extern int MultiByteToWideChar(DefaultCodePages CodePage, int dwFlags, string lpMultiByteStr,
 			int cbMultiByte, IntPtr lpWideCharSt, int cchWideChar);
 		
-	#endregion
+		#endregion
 	
 		#region Gdi32.dll functions
 		[DllImport("gdi32.dll")]
@@ -664,6 +632,40 @@ namespace System.Windows.Forms{
 			}
 		}
 #endif
+		#endregion
+
+		#region Common Dialog
+		[DllImport ("comdlg32.dll",
+			 CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Ansi)]
+		internal static extern bool GetOpenFileName ( ref OPENFILENAME lpofn );
+		
+		[DllImport ("comdlg32.dll",
+			 CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Ansi)]
+		internal static extern bool GetSaveFileName ( ref OPENFILENAME lpofn );
+
+		[DllImport ("comdlg32.dll",
+			 CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Ansi)]
+		internal static extern bool ChooseColor ( ref CHOOSECOLOR lpofn );
+		
+		
+		[DllImport ("comdlg32.dll",
+			 CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Ansi)]
+		internal static extern bool PrintDlg (IntPtr pDlg);
+		
+		
+		[DllImport ("comdlg32.dll",
+			 CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Ansi)]
+		internal static extern bool ChooseFont ( ref CHOOSEFONT lpcf );
+
+		[DllImport ("comdlg32.dll",
+			 CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Ansi)]
+		internal static extern uint CommDlgExtendedError ( );
 		#endregion
 
 		#region Common Controls functions
@@ -1306,6 +1308,10 @@ namespace System.Windows.Forms{
 		extern static void WineLoadLibrary(string s);
 		[DllImport ("winelib.exe.so", EntryPoint="WineGetInstance")]
 		extern static IntPtr WineGetInstance();
+		[DllImport ("winelib.exe.so", EntryPoint="WineGetUnixPath")]
+		extern static IntPtr WineGetUnixPath(string DosPath);
+		[DllImport ("winelib.exe.so", EntryPoint="WineReleaseUnixPath")]
+		extern static void WineReleaseUnixPath(IntPtr UnixPathPtr);
 		#endregion
 
 		static string[] WinColors = 	{

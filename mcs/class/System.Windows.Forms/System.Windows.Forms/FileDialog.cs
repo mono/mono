@@ -151,7 +151,7 @@ namespace System.Windows.Forms {
 				case ( int ) CommDlgNotifications.CDN_FILEOK:
 					OPENFILENAME ofn = ( OPENFILENAME ) Marshal.PtrToStructure ( ofnhdr.lpOFN, typeof ( OPENFILENAME ) );
 					string oldFileName = FileName;
-					FileName = Win32.wine_get_unix_file_name(ofn.lpstrFile);
+					FileName = Win32.WineToUnixPath(ofn.lpstrFile);
 					CancelEventArgs e = new CancelEventArgs ( false );
 					OnFileOk ( e );
 					if ( e.Cancel ){
@@ -186,13 +186,13 @@ namespace System.Windows.Forms {
 			uint error = 0;
 			
 			if (isSave)
-			 	res = Win32_WineLess.GetSaveFileName ( ref opf );
+			 	res = Win32.GetSaveFileName ( ref opf );
 			else
-			 	res = Win32_WineLess.GetOpenFileName ( ref opf );
+			 	res = Win32.GetOpenFileName ( ref opf );
 			 	
 			if (!res)
 			{
-				error = Win32_WineLess.CommDlgExtendedError();
+				error = Win32.CommDlgExtendedError();
 				
 				if (error==(uint)CommonDlgErrorCode.CDERR_STRUCTSIZE)	// This system does not support the place bar
 				{								
@@ -200,14 +200,14 @@ namespace System.Windows.Forms {
 					opf.lStructSize  = (uint)Marshal.SizeOf(new OPENFILENAME_PREWIN50());		
 					//  Try with the struct for older Systems
 					if (isSave)
-					 	res = Win32_WineLess.GetSaveFileName ( ref opf );
+					 	res = Win32.GetSaveFileName ( ref opf );
 					else
-					 	res = Win32_WineLess.GetOpenFileName ( ref opf );					
+					 	res = Win32.GetOpenFileName ( ref opf );					
 				}								
 			}				 					
 			
 			if ( res )
-				FileName = Win32.wine_get_unix_file_name(opf.lpstrFile);
+				FileName = Win32.WineToUnixPath(opf.lpstrFile);
 			else {				
 				if ( error != 0 ) {
 					string errorMes = string.Empty;

@@ -150,7 +150,7 @@ namespace System.Windows.Forms {
 			
 			bool res = false;
 			try {
-				res = Win32_WineLess.ChooseColor ( ref cc );
+				res = Win32.ChooseColor ( ref cc );
 
 				if ( res ) {
 					this.Color = Color.FromArgb ( cc.rgbResult );

@@ -210,7 +210,7 @@ namespace System.Windows.Forms
 	      		cf.lpLogFont = lfBuffer;										        
 				
 				// Show dialog box
-				if (Win32_WineLess.ChooseFont(ref cf))
+				if (Win32.ChooseFont(ref cf))
 				{				
 					lf = (LOGFONT) Marshal.PtrToStructure(lfBuffer,  typeof(LOGFONT));			
 			    	Marshal.FreeHGlobal(lfBuffer);

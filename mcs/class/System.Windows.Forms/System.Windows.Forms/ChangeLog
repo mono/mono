@@ -1,7 +1,17 @@
 2004-05-24  Peter Bartok <pbartok@novell.com>
-	* win32functions.cs: Added loading of comdlg32 for wine to enable
-	  usage of common dialogs
-
+	* win32functions.cs:
+          - Fixed translation of wine pathnames to their 
+            unix counterpart (Was broken in multiple ways, first it had to 
+            pass unicode and second the function changed in the latest wine
+            version.) 
+          - Added loading of comdlg32 for wine to enable usage of 
+            common dialogs.
+	  - Moved the comdlg32 functions into the Win32 section
+	* ColorDialog.cs: Changed class reference for comdlg functions
+	* FileDialog.cs: 
+	  - Changed class reference for comdlg functions
+	  - Changed call to path translation function to better match usage
+	* FontDialog.cs: Changed class reference for comdlg functions
 
 2004-05-16  Gert Driesen (drieseng@users.sourceforge.net)
 
