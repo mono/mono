@@ -1570,6 +1570,10 @@ add_accessor_declaration
 		$$ = new Accessor ((Block) $4, (Attributes) $1);
 		lexer.EventParsing = true;
 	  }
+	| opt_attributes ADD error {
+		Report.Error (73, lexer.Location, "Add or remove accessor must have a body");
+		$$ = null;
+	  }
 	;
 
 remove_accessor_declaration
@@ -1589,6 +1593,10 @@ remove_accessor_declaration
 	  {
 		$$ = new Accessor ((Block) $4, (Attributes) $1);
 		lexer.EventParsing = true;
+	  }
+	| opt_attributes REMOVE error {
+		Report.Error (73, lexer.Location, "Add or remove accessor must have a body");
+		$$ = null;
 	  }
 	;
 
