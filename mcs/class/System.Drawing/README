@@ -1,0 +1,17 @@
+Following is the directory structure for System.Drawing Tests and samples.
+
+Test/		(all the test classes go here)
+	System.Drawing
+	System.Drawing.Drawing2D
+	System.Drawing.Imaging
+	System.Drawing.Printing
+	System.Drawing.Text
+
+Samples/	(all the samples go here)
+
+	General (samples that affect more than a single area of SD)
+	System.Drawing
+	System.Drawing.Drawing2D
+	System.Drawing.Imaging
+	System.Drawing.Printing
+	System.Drawing.Text
