@@ -104,7 +104,7 @@ namespace Mono.CSharp {
 	///   the expression represented by target. 
 	/// </summary>
 	public class Assign : ExpressionStatement {
-		Expression target, source;
+		protected Expression target, source;
 		public Location l;
 
 		public Assign (Expression target, Expression source, Location l)
@@ -243,10 +243,6 @@ namespace Mono.CSharp {
 			if (this is CompoundAssign){
 				CompoundAssign a = (CompoundAssign) this;
 				
-				a.original_source = a.original_source.Resolve (ec);
-				if (a.original_source == null)
-					return null;
-				
 				Binary b = source as Binary;
 				if (b != null && b.IsBuiltinOperator){
 					//
@@ -264,12 +260,6 @@ namespace Mono.CSharp {
 					// 2. and the original right side is implicitly convertible to
 					// the type of target_type.
 					//
-					a.original_source = a.original_source.Resolve (ec);
-					if (a.original_source == null){
-						Error_CannotConvertImplicit (l, source_type, target_type);
-						return null;
-					}
-					
 					if (StandardConversionExists (a.original_source, target_type))
 						return this;
 
@@ -334,17 +324,33 @@ namespace Mono.CSharp {
 	// compound assignment, hence allowing a set of extra rules to be used.
 	//
 	class CompoundAssign : Assign {
+		Binary.Operator op;
 		public Expression original_source;
 		
-		public CompoundAssign (Expression target, Expression source, Expression osource, Location l)
+		public CompoundAssign (Binary.Operator op, Expression target, Expression source, Location l)
 			: base (target, source, l)
 		{
-			original_source = osource;
+			original_source = source;
+			this.op = op;
 		}
 
 		public Expression ResolveSource (EmitContext ec)
 		{
 			return original_source.Resolve (ec);
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			target = target.ResolveLValue (ec, source);
+			if (target == null)
+				return null;
+
+			original_source = original_source.Resolve (ec);
+			if (original_source == null)
+				return null;
+			
+			source = new Binary (op, target, original_source, l);
+			return base.DoResolve (ec);
 		}
 	}
 }

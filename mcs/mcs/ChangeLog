@@ -1,3 +1,15 @@
+2002-05-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* assign.cs (CompoundAssign): We pass more semantic information
+	now to Compound Assignments than we did before: now we have all
+	the information at hand, and now we resolve the target *before* we
+	do the expression expansion, which allows the "CacheValue" method
+	to have the effect we intended (before, a [x] += 1 would generate
+	two differen ArrayAccess expressions from the ElementAccess,
+	during the resolution process).
+
+	(CompoundAssign.DoResolve): Resolve target and original_source here.
+
 2002-05-16  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (ArrayAccess): dropped debugging information. 

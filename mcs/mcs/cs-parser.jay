@@ -2481,110 +2481,70 @@ assignment_expression
 		Location l = lexer.Location;
 
 		$$ = new CompoundAssign (
-			(Expression) $1,
-			new Binary (Binary.Operator.Multiply, 
-				     (Expression) $1,
-				     (Expression) $3, l), 
-			(Expression) $3, l);
+			Binary.Operator.Multiply, (Expression) $1, (Expression) $3, l);
 	  }
 	| prefixed_unary_expression OP_DIV_ASSIGN expression
 	  {
 		Location l = lexer.Location;
 
 		$$ = new CompoundAssign (
-			(Expression) $1,
-			new Binary (Binary.Operator.Division, 
-				     (Expression) $1,
-				     (Expression) $3, l),
-			(Expression) $3, l);
+			Binary.Operator.Division, (Expression) $1, (Expression) $3, l);
 	  }
 	| prefixed_unary_expression OP_MOD_ASSIGN expression
 	  {
 		Location l = lexer.Location;
 
 		$$ = new CompoundAssign (
-			(Expression) $1,
-			new Binary (Binary.Operator.Modulus, 
-				     (Expression) $1,
-				     (Expression) $3, l),
-			(Expression) $3, l);
+			Binary.Operator.Modulus, (Expression) $1, (Expression) $3, l);
 	  }
 	| prefixed_unary_expression OP_ADD_ASSIGN expression
 	  {
 		Location l = lexer.Location;
 
 		$$ = new CompoundAssign (
-			(Expression) $1,
-			new Binary (Binary.Operator.Addition, 
-				     (Expression) $1,
-				     (Expression) $3, l),
-			(Expression) $3, l);
+			Binary.Operator.Addition, (Expression) $1, (Expression) $3, l);
 	  }
 	| prefixed_unary_expression OP_SUB_ASSIGN expression
 	  {
 		Location l = lexer.Location;
 
 		$$ = new CompoundAssign (
-			(Expression) $1,
-			new Binary (Binary.Operator.Subtraction, 
-				     (Expression) $1,
-				     (Expression) $3, l),
-			(Expression) $3, l);
+			Binary.Operator.Subtraction, (Expression) $1, (Expression) $3, l);
 	  }
 	| prefixed_unary_expression OP_SHIFT_LEFT_ASSIGN expression
 	  {
 		Location l = lexer.Location;
 
 		$$ = new CompoundAssign (
-			(Expression) $1,
-			new Binary (Binary.Operator.LeftShift, 
-				     (Expression) $1,
-				     (Expression) $3, l), 
-			(Expression) $3, l);
+			Binary.Operator.LeftShift, (Expression) $1, (Expression) $3, l);
 	  }
 	| prefixed_unary_expression OP_SHIFT_RIGHT_ASSIGN expression
 	  {
 		Location l = lexer.Location;
 
 		$$ = new CompoundAssign (
-			(Expression) $1,
-			new Binary (Binary.Operator.RightShift, 
-				     (Expression) $1,
-				     (Expression) $3, l), 
-			(Expression) $3, l);
+			Binary.Operator.RightShift, (Expression) $1, (Expression) $3, l);
 	  }
 	| prefixed_unary_expression OP_AND_ASSIGN expression
 	  {
 		Location l = lexer.Location;
 
 		$$ = new CompoundAssign (
-			(Expression) $1,
-			new Binary (Binary.Operator.BitwiseAnd, 
-				     (Expression) $1,
-				     (Expression) $3, l),
-			(Expression) $3, l);
+			Binary.Operator.BitwiseAnd, (Expression) $1, (Expression) $3, l);
 	  }
 	| prefixed_unary_expression OP_OR_ASSIGN expression
 	  {
 		Location l = lexer.Location;
 
 		$$ = new CompoundAssign (
-			(Expression) $1,
-			new Binary (Binary.Operator.BitwiseOr, 
-				     (Expression) $1,
-				     (Expression) $3, l),
-			(Expression) $3, l);
+			Binary.Operator.BitwiseOr, (Expression) $1, (Expression) $3, l);
 	  }
 	| prefixed_unary_expression OP_XOR_ASSIGN expression
 	  {
 		Location l = lexer.Location;
 
 		$$ = new CompoundAssign (
-			(Expression) $1,
-			new Binary (Binary.Operator.ExclusiveOr, 
-				     (Expression) $1,
-				     (Expression) $3, l),
-			(Expression) $3, l);
+			Binary.Operator.ExclusiveOr, (Expression) $1, (Expression) $3, l);
 	  }
 	;
 
