@@ -1,3 +1,9 @@
+2004-04-21  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* icall.cs: Registered new icalls for Char.ToLower and Char.ToUpper.
+	* locales.c, locales.h: Added new icalls for culture-specific Char.ToLower
+	  and Char.ToUpper.
+
 2004-04-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threads.c: the 2nd argument when aborting a thread is NULL now. Patch
