@@ -26,7 +26,11 @@ namespace System.Web.Compilation
 		public CompilationCacheItem (CompilationResult result)
 		{
 			this.result = result;
-			this.reference = File.GetLastWriteTime (result.OutputFile);
+			try {
+				this.reference = File.GetLastWriteTime (result.OutputFile);
+			} catch (FileNotFoundException fnf){
+				throw new FileNotFoundException (String.Format ("File: {0} at {1}", fnf.FileName, System.Environment.CurrentDirectory), fnf.FileName);
+			}
 		}
 
 		public bool CheckDependencies ()
