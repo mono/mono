@@ -1,3 +1,8 @@
+2004-09-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ControlBuilder.cs: don't close server tags when we get to a closing
+	tag that is not applied to a server control. Fixes bug #60323.
+
 2004-09-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebServiceCompiler.cs: fix buglet in my last commit.
