@@ -1,3 +1,7 @@
+2004-09-29  Sanjay Gupta <gsanjay@novell.com>
+		
+	* WebPartPageMenuMode.cs: Added new enumeration.
+
 2004-09-28  Sanjay Gupta <gsanjay@novell.com>
 		
 	* Part.cs: Corrected access modifier of constructor.
