@@ -1,3 +1,8 @@
+
+Thu Feb 21 16:56:51 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Type.cs: implemented IsAssignableFrom.
+
 2002-02-21  Duco Fijma <duco@lorentz.xs4all.nl>
 	* Guid.cs: fixed Guid.Guid(string) ctor. Changed format:
 	"{0xdddddddd,0xdddd,0xdddd,{0xdd},{0xdd},{0xdd},{0xdd},{0xdd},{0xdd}}" 

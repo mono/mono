@@ -443,7 +443,7 @@ namespace System {
 		public virtual bool IsAssignableFrom (Type c)
 		{
 			// FIXME
-			throw new NotImplementedException ();
+			return type_is_subtype_of (this, c);
 		}
 
 		public virtual bool IsInstanceOfType (object o) {
