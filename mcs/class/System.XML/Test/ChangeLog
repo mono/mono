@@ -1,3 +1,7 @@
+2003-02-02  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlTextReaderTests.cs : added TestQuoteChar.
+
 2003-01-26  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* XmlNodeTests.cs : added TestReplaceChild.

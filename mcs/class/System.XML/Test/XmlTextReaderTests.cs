@@ -1772,5 +1772,19 @@ namespace MonoTests.System.Xml
 			xmlReader.Read ();
 			AssertEquals ("hello & world", xmlReader ["value"]);
 		}
+
+		public void TestQuoteChar ()
+		{
+			string xml = @"<a value='hello &amp; world' value2="""" />";
+			XmlReader xmlReader =
+				new XmlTextReader (new StringReader (xml));
+			xmlReader.Read ();
+			xmlReader.MoveToFirstAttribute ();
+			AssertEquals ("First", '\'', xmlReader.QuoteChar);
+			xmlReader.MoveToNextAttribute ();
+			AssertEquals ("Next", '"', xmlReader.QuoteChar);
+			xmlReader.MoveToFirstAttribute ();
+			AssertEquals ("First.Again", '\'', xmlReader.QuoteChar);
+		}
 	}
 }
