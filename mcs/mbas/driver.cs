@@ -343,8 +343,12 @@ namespace Mono.Languages
 
 				if (assembly.IndexOfAny (path_chars) != -1)
 					a = Assembly.LoadFrom(assembly);
-				else
-					a = Assembly.Load(assembly);
+				else {
+					string ass = assembly;
+					if (ass.EndsWith (".dll"))
+						ass = assembly.Substring (0, assembly.Length - 4);
+					a = Assembly.Load (ass);
+				}
 				TypeManager.AddAssembly (a);
 				return 0;
 			}
