@@ -1,31 +1,106 @@
-TEST_SOURCES = BoolLiteralTest1 \
-BoolLiteralTest \
-DecimalTypeCharTest \
-DoubleTypeCharTest \
-Identifier \
-IdentifierFail1 \
-IntegerLiteral1Test \
-IntegerLiteral2Test \
-IntegerLiteralTest1 \
-IntegerLiteralTest2 \
-IntegerLiteralTest3 \
-IntegerLiteralTest4 \
-IntegerLiteralTest \
-IntegerTypeCharTest \
-LongTypeCharTest \
+#
+# All positive test cases goes here
+#
+
+TEST_SOURCES = \
+Test1 \
+Test2 \
 misc1 \
 misc2 \
-SingleTypeCharTest \
-StringLiteralTest \
+Identifier \
 StringTypeCharTest \
-Test1 \
-Test2
+SingleTypeCharTest \
+IntegerTypeCharTest\
+DecimalTypeCharTest \
+DoubleTypeCharTest \
+LongTypeCharTest\
+IntegerLiteralTest \
+IntegerLiteral1Test \
+IntegerLiteral2Test \
+BoolLiteralTest \
+StringLiterals \
+CharacterLiterals \
+DateLiterals \
+FloatingPointLiteralsTest \
+LiteralNothing \
+InheritanceA \
+InheritanceB \
+InheritanceC \
+InheritanceD \
+InheritanceE \
+MustInherit \
+InterfaceA \
+InterfaceB \
+InterfaceC \
+InterfaceD \
+InterfaceE \
+NotInheritable \
+NameSpace* \
+NS* \
+Overloading \
+OverrideA \
+OverrideB \
+Scope \
+ShadowsA \
+ShadowsB \
+ShadowsC \
+ShadowsD 
 
-TEST_NGTIVE_COMPILATION_SOURCES = IdentifierFail2 \
+# All negetive test cases which should
+# fail during compilation goes here
+
+TEST_NGTIVE_COMPILATION_SOURCES = \
+IdentifierFail1 \
+IdentifierFail2 \
 IdentifierFail3 \
 IdentifierFail4 \
 IntegerLiteralTestC1 \
 IntegerLiteralTestC2 \
 IntegerLiteralTestC3 \
-IntegerLiteralTestC4
+IntegerLiteralTestC4 \
+BoolLiteralTest1 \
+CharacterLiteralsC2 \
+CharacterLiteralsC3 \
+DateLiteralsC1 \
+DateLiteralsC2 \
+DateLiteralsC3 \
+DateLiteralsC4 \
+DateLiteralsC5 \
+DateLiteralsC6 \
+DateLiteralsC7 \
+DateLiteralsC8 \
+DateLiteralsC9 \
+DateLiteralsC10 \
+DateLiteralsC11 \
+DateLiteralsC12 \
+InheritanceC1 \
+InheritanceC2 \
+InheritanceC3 \
+MustInheritC1 \
+MustInheritC2 \
+MustInheritC3 \
+InterfaceC1 \
+InterfaceC2 \
+NotInheritableC1 \
+NotInheritableC2 \
+OverloadingC1 \
+OverloadingC2 \
+OverloadingC3 \
+OverrideC1 \
+ScopeC1 \
+ShadowsC1 \
+ShadowsC2 \
+ShadowsC3 \
+StringLiteralsC1
+
+# All negetive test cases which should fail at
+# runtime goes here
+
+TEST_NGTIVE_RUNTIME_SOURCES = \
+IntegerLiteralTest1 \
+IntegerLiteralTest2 \
+IntegerLiteralTest3 \
+IntegerLiteralTest4 \
+CharacterLiterals1 \
+Inheritance1
 
