@@ -1,3 +1,9 @@
+2001-12-15  Miguel de Icaza  <miguel@ximian.com>
+
+	* test-45.cs: Make test also use variables as arguments to new;
+	We used to have a bug in the compiler that did not resolve some of
+	the arguments.
+
 2001-12-15  Ravi Pratap  <ravi@ximian.com>
 
 	* makefile : Include test-52.cs in the suite, it works fine!

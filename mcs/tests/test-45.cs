@@ -66,7 +66,19 @@ public class Blah {
 
 		if (names [0] != "Miguel")
 			return 1;
-		
+
+		int count = 10;
+
+		int [] x = new int [count];
+
+		for (int idx = 0; idx < count; idx++)
+			x [idx] = idx + 1;
+
+		for (int idx = count; idx > 0; ){
+			idx--;
+			if (x [idx] != idx + 1)
+				return 12;
+		}
 		Console.WriteLine ("Array initialization test okay.");
 				   
 		return 0;
