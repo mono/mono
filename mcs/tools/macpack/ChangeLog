@@ -1,3 +1,9 @@
+2005-03-24  Geoff Norton  <gnorton@customerdna.com>
+
+	* MacPack.cs:
+	  LOADER:
+		Add support for macpacking Gtk#/X11 applications.
+
 2005-02-01  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (EXTRA_DISTFILES): Distribute the resource files too.

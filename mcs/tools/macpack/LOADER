@@ -7,6 +7,7 @@
 # bundle maker.
 #
 
+X11_MODE=%X11_MODE%
 MWF_MODE=%MWF_MODE%
 COCOASHARP_MODE=%COCOASHARP_MODE%
 
@@ -15,7 +16,11 @@ PWD=`pwd`
 APP_PATH=`echo $0 | awk '{split($0,patharr,"/"); idx=1; while(patharr[idx+3] != "") { if (patharr[idx] != "/") {printf("%s/", patharr[idx]); idx++ }} }'`
 
 # Fetch the app name (its our own name)
-APP_NAME=`echo $0 | awk '{split($0,patharr,"/"); idx=1; while(patharr[idx+1] != "") {idx++} printf("%s.exe", patharr[idx]); }'`
+if [ "$X11_MODE" -eq "1" ]; then
+	APP_NAME=`echo $0 | awk '{split($0,patharr,"/"); idx=1; while(patharr[idx+1] != "") {idx++} printf("%s", patharr[idx]); }'`
+else
+	APP_NAME=`echo $0 | awk '{split($0,patharr,"/"); idx=1; while(patharr[idx+1] != "") {idx++} printf("%s.exe", patharr[idx]); }'`
+fi
 
 # Setup the environment for MWF if needed
 if [ "$MWF_MODE" -eq "1" ]; then
@@ -30,4 +35,9 @@ if [ "$COCOASHARP_MODE" -eq "1" ]; then
 fi
 
 cd $APP_PATH/Contents/Resources
-mono $APP_NAME
+
+if [ "$X11_MODE" -eq "1" ]; then
+	open-x11 $APP_NAME
+else
+	mono $APP_NAME
+fi

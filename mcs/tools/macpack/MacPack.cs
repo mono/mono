@@ -56,7 +56,11 @@ namespace Mac {
 					}
 				}
 			}
-			File.Copy (opts.assembly, Path.Combine (opts.output, String.Format ("{0}.app/Contents/Resources/{0}.exe", opts.appname))); 
+			if (opts.mode <= 2) {
+				File.Copy (opts.assembly, Path.Combine (opts.output, String.Format ("{0}.app/Contents/Resources/{0}.exe", opts.appname))); 
+			} else {
+				File.Copy (opts.assembly, Path.Combine (opts.output, String.Format ("{0}.app/Contents/Resources/{0}", opts.appname))); 
+			}
 
 			Stream s = Assembly.GetEntryAssembly ().GetManifestResourceStream ("LOADER");
 			BinaryReader reader = new BinaryReader (s);
@@ -69,14 +73,22 @@ namespace Mac {
 				case 0:
 					script = script.Replace ("%MWF_MODE%", "0");
 					script = script.Replace ("%COCOASHARP_MODE%", "0");
+					script = script.Replace ("%X11_MODE%", "0");
 					break;
 				case 1:
 					script = script.Replace ("%MWF_MODE%", "1");
 					script = script.Replace ("%COCOASHARP_MODE%", "0");
+					script = script.Replace ("%X11_MODE%", "0");
 					break;
 				case 2:
 					script = script.Replace ("%MWF_MODE%", "0");
 					script = script.Replace ("%COCOASHARP_MODE%", "1");
+					script = script.Replace ("%X11_MODE%", "0");
+					break;
+				case 3:
+					script = script.Replace ("%MWF_MODE%", "0");
+					script = script.Replace ("%COCOASHARP_MODE%", "0");
+					script = script.Replace ("%X11_MODE%", "1");
 					break;
 			}
 			data = Encoding.ASCII.GetBytes (script);
