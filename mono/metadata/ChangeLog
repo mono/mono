@@ -1,5 +1,60 @@
 2003-10-24  Zoltan Varga  <vargaz@freemail.hu>
 
+	* object.c (mono_class_proxy_vtable): Run the whole vtable construction
+	inside the domain lock. Fixes #49993.
+	
+	* object.c (mono_class_vtable): When typed allocation is used, 
+	allocate vtables in the GC heap instead of in the mempool, since the
+	vtables contain GC descriptors which are used by the collector even
+	after the domain owning the mempool is unloaded.
+
+	* domain.c (mono_domain_set): Rename to mono_domain_set_internal.
+
+	* domain.c (mono_domain_unload): Rename to mono_domain_free to better
+	reflect what it does. Also invalidate mempools instead of freeing
+	them if a define is set.
+
+	* appdomain.h (MonoAppDomainState): New enumeration to hold the state
+	of the appdomain.
+	
+	* appdomain.h (_MonoDomain): New field 'finalizable_object_hash' to
+	hold the finalizable objects in this domain.
+
+	* appdomain.h (_MonoDomain): New field 'state' to hold the state of the
+	appdomain.
+
+	* appdomain.c (mono_domain_set): New function to set the current
+	appdomain, but only if it is not being unloaded.
+
+	* appdomain.c threads.c threadpool.c object.c: Avoid entering an
+	appdomain which is being unloaded.
+	
+	* appdomain.c (ves_icall_System_AppDomain_InternalUnload): Prevent
+	unloading of the root appdomain.
+
+	* appdomain.c (ves_icall_System_AppDomain_InternalInvokeInDomain): New
+	icall to execute a method in another appdomain. Intended as a 
+	replacement for InternalSetDomain, which can confuse the code 
+	generation in the JIT.
+
+	* appdomain.c (mono_domain_is_unloading): New function to determine
+	whenever an appdomain is unloading.
+
+	* appdomain.c (mono_domain_unload): New function to correctly unload
+	an appdomain.
+
+	* assembly.c (mono_assembly_load_references): Check that an assembly
+	does not references itself.
+
+	* gc.c (mono_domain_finalize): Rewrote so instead of finalizing a
+	domain manually, it asks the finalizer thread to do it, then waits for
+	the result. Also added a timeout.
+
+	* icall.c: Register the new icalls.
+
+	* threads.h threads.c: Export the mono_gc_stop_world and 
+	mono_gc_start_world functions.
+	
 	* mempool.h mempool.c (mono_mempool_invalidate): New debugging 
 	function to fill out the mempool with 0x2a.
 
