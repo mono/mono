@@ -1,5 +1,10 @@
 2002-05-22  Martin Baulig  <martin@gnome.org>
 
+	* ModuleBuilder.cs (GetSymbolWriter): Pass the this pointer to the
+	symbol writer's constructor.
+
+2002-05-22  Martin Baulig  <martin@gnome.org>
+
 	* AssemblyBuilder.cs (methods): New field.
 	(get_next_table_index): Record all methods and constructors
 	(table 0x06) in the `methods' array.  This is read by the
