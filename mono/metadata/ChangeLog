@@ -1,3 +1,7 @@
+2004-10-07  Jackson Harper  <jackson@ximian.com>
+
+	* culture-info-tables.h: regenerate file.
+
 2004-10-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* loader.c (mono_lookup_pinvoke_call): Try the dllname prefixed with
