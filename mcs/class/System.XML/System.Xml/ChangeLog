@@ -1,3 +1,9 @@
+2002-03-15  Duncan Mak  <duncan@ximian.com>
+
+	* XmlProcessingInstruction.cs (Value): Added the missing Set
+	block.
+	(InnerText): Added in, but not implemented.
+
 2002-03-14  Kral Ferch  <kral_ferch@hotmail.com>
 
 	* XmlTextWriter.cs: implemented constructors and 
