@@ -1,3 +1,7 @@
+2003-11-21  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* jit-icalls.c, mini.c: Added support for context static fields.
+
 2003-11-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_method_blittable): Methods which set LastError are not 
