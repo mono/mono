@@ -1,5 +1,7 @@
 2005-02-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* loader.c: Add missing setup_... call.
+
 	* class.c: Add missing setup_... calls.
 
 	* class.c (mono_class_init): Switch on lazy initialization of 
