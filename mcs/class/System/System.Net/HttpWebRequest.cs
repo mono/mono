@@ -913,6 +913,10 @@ namespace System.Net
 					string err = String.Format ("The remote server returned an error: ({0}) {1}.",
 								    (int) code, webResponse.StatusDescription);
 					throwMe = new WebException (err, null, protoError, webResponse);
+				} else if ((int) code == 304 && allowAutoRedirect) {
+					string err = String.Format ("The remote server returned an error: ({0}) {1}.",
+								    (int) code, webResponse.StatusDescription);
+					throwMe = new WebException (err, null, protoError, webResponse);
 				} else if ((int) code >= 300 && allowAutoRedirect && redirects > maxAutoRedirect) {
 					throwMe = new WebException ("Max. redirections exceeded.", null,
 								    protoError, webResponse);

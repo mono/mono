@@ -170,6 +170,8 @@ namespace System.Net
 
 			if (nread == 0) {
 				Console.WriteLine ("nread == 0: may be the connection was closed?");
+				data.request.SetResponseData (data);
+				cnc.Close ();
 				cnc.dataAvailable.Set ();
 				return;
 			}

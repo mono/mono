@@ -18,7 +18,7 @@ namespace System.Net
 		public string StatusDescription;
 		public WebHeaderCollection Headers;
 		public Version Version;
-		public WebConnectionStream stream;
+		public Stream stream;
 		public byte [] initialData;
 		public int initialOffset;
 		public int length;

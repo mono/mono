@@ -31,7 +31,7 @@ namespace System.Net
 		string contentType;
 
 		bool disposed = false;
-		WebConnectionStream stream;
+		Stream stream;
 		
 		// Constructors
 		
@@ -216,6 +216,8 @@ namespace System.Net
 		public override Stream GetResponseStream ()
 		{
 			CheckDisposed ();
+			if (stream == null)
+				return Stream.Null;  
 			if (0 == String.Compare (method, "HEAD", true)) // see par 4.3 & 9.4
 				return Stream.Null;  
 
