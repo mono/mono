@@ -870,6 +870,7 @@ namespace System.Web
 			// Initialize all IHttpModule(s)
 			InitModules ();
 			HttpApplicationFactory.AttachEvents (this);
+			InitCulture ();
 
 			// Initialize custom application
 			_InPreRequestResponseMode = true;
@@ -972,7 +973,7 @@ namespace System.Web
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpApplicationState Application {
-			get { return HttpApplicationFactory.ApplicationState; }
+			get { return _appState; }
 		}
 
 		[Browsable (false)]
@@ -1041,8 +1042,10 @@ namespace System.Web
 				if (null != _Session)
 					return _Session;
 
-				if (null != _Context && null != _Context.Session)
-					return _Context.Session;
+				if (null != _Context && null != _Context.Session) {
+					_Session = _Context.Session;
+					return _Session;
+				}
 
 				throw new HttpException ("Failed to get session object");
 			}

@@ -1,10 +1,32 @@
 using System;
-using System.IO;
 using System.Collections;
+using System.IO;
+using System.Web.UI;
 
 namespace System.Web {
 	public sealed class HttpStaticObjectsCollection : ICollection, IEnumerable {
 		private Hashtable _Objects;
+
+		class StaticItem {
+			Type type;
+			object instance;
+
+			public StaticItem (Type type)
+			{
+				this.type = type;
+			}
+
+			public object Instance {
+				get {
+					lock (this) {
+						if (instance == null)
+							instance = Activator.CreateInstance (type);
+					}
+
+					return instance;
+				}
+			}
+		}
 
 		// Needs to hold object items that can be latebound and can be serialized
 		public HttpStaticObjectsCollection ()
@@ -33,7 +55,13 @@ namespace System.Web {
 		}
 
 		public object this [string name] {
-			get { return _Objects [name]; }
+			get {
+				StaticItem item = _Objects [name] as StaticItem;
+				if (item == null)
+					return null;
+				
+				return item.Instance;
+			}
 		}
 
 		public int Count {
@@ -52,7 +80,11 @@ namespace System.Web {
 			get { return this; }
 		}
 
-
+		internal void Add (ObjectTagBuilder tag)
+		{
+			_Objects.Add (tag.ObjectID, new StaticItem (tag.Type));
+		}
+		
 		private void Set (string name, object obj)
 		{
 			_Objects [name] = obj;

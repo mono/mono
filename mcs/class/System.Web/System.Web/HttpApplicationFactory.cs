@@ -122,22 +122,25 @@ namespace System.Web {
 			return appTypeEventHandlers;
 		}
 
-		static void FireEvents (string method_name, object target, object [] args)
+		static bool FireEvents (string method_name, object target, object [] args)
 		{
 			Hashtable possibleEvents = GetApplicationTypeEvents ((HttpApplication) target);
 			MethodInfo method = possibleEvents [method_name] as MethodInfo;
 			if (method == null)
-				return;
+				return false;
 
 			if (method.GetParameters ().Length == 0)
 				method.Invoke (target, null);
 			else
 				method.Invoke (target, args);
+
+			return true;
 		}
 		
 		internal static void FireOnAppStart (HttpApplication app)
 		{
-			FireEvents ("Application_Start", app, new object [] {app, EventArgs.Empty});
+			object [] args = new object [] {app, EventArgs.Empty};
+			FireEvents ("Application_Start", app, args);
 		}
 
 		void FireOnAppEnd ()
@@ -233,18 +236,14 @@ namespace System.Web {
 
 				string moduleName = key.Substring (0, pos);
 				object target;
-				if (moduleName == "Application" || moduleName == "Session")
+				if (moduleName == "Application") {
 					target = app;
-				else
+				} else {
 					target = app.Modules [moduleName];
-
-				if (target == null)
-					continue;
-				
-				Type targetType = target.GetType ();
+				}
 
 				string eventName = key.Substring (pos + 1);
-				EventInfo evt = targetType.GetEvent (eventName);
+				EventInfo evt = target.GetType ().GetEvent (eventName);
 				if (evt == null)
 					continue;
 			
@@ -269,7 +268,7 @@ namespace System.Web {
 			int length = method.GetParameters ().Length;
 
 			if (length == 0) {
-				NoParamsInvoker npi = new NoParamsInvoker (target, method.Name);
+				NoParamsInvoker npi = new NoParamsInvoker (app, method.Name);
 				evt.AddEventHandler (target, npi.FakeDelegate);
 			} else {
 				evt.AddEventHandler (target, Delegate.CreateDelegate (
@@ -312,10 +311,25 @@ namespace System.Web {
 			}
 		}
 
+		static HttpStaticObjectsCollection MakeStaticCollection (ArrayList list)
+		{
+			if (list == null || list.Count == 0)
+				return null;
+
+			HttpStaticObjectsCollection coll = new HttpStaticObjectsCollection ();
+			foreach (ObjectTagBuilder tag in list) {
+				coll.Add (tag);
+			}
+
+			return coll;
+		}
+		
 		static internal HttpApplicationState ApplicationState {
 			get {
 				if (null == s_Factory._state) {
-					s_Factory._state = new HttpApplicationState();
+					HttpStaticObjectsCollection app = MakeStaticCollection (GlobalAsaxCompiler.ApplicationObjects);
+					HttpStaticObjectsCollection ses = MakeStaticCollection (GlobalAsaxCompiler.SessionObjects);
+					s_Factory._state = new HttpApplicationState (app, ses);
 				}
 
 				return s_Factory._state;

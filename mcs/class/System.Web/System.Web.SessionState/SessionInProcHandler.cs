@@ -107,7 +107,7 @@ namespace System.Web.SessionState
 			string sessionID = SessionId.Create (module.Rng);
 			container = new SessionContainer (new HttpSessionState (sessionID, // unique identifier
 										new SessionDictionary(), // dictionary
-										new HttpStaticObjectsCollection(),
+										HttpApplicationFactory.ApplicationState.SessionObjects,
 										SESSION_LIFETIME, //lifetime befor death.
 										true, //new session
 										false, // is cookieless

@@ -62,7 +62,7 @@ namespace System.Web.SessionState {
 				if (item != null) {
 					dict = SessionDictionary.FromByteArray (item.DictionaryData);
 					sobjs = HttpStaticObjectsCollection.FromByteArray (item.StaticObjectsData);
-					session = new HttpSessionState (id, dict, sobjs, 
+					session = new HttpSessionState (id, dict, HttpApplicationFactory.ApplicationState.SessionObjects,
 							config.Timeout, false, config.CookieLess,
 							SessionStateMode.StateServer, module.IsReadOnly);
 					context.SetSession (session);
@@ -72,7 +72,7 @@ namespace System.Web.SessionState {
 			
 			id = SessionId.Create (module.Rng);
 			dict = new SessionDictionary ();
-			sobjs = new HttpStaticObjectsCollection ();
+			sobjs = HttpApplicationFactory.ApplicationState.SessionObjects;
 			item = new StateServerItem (dict.ToByteArray (), sobjs.ToByteArray (), config.Timeout);
 			
 			state_server.Insert (id, item);

@@ -1,3 +1,11 @@
+2004-02-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SessionInProcHandler.cs:
+	* SessionSQLServerHandler.cs:
+	* SessionStateServerHandler.cs: when creating the
+	HttpSessionStateObjets, use the session objects that we know about
+	in HttpApplicationFactory.
+
 2004-01-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpSessionState.cs:

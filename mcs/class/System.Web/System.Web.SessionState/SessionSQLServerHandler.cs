@@ -86,7 +86,7 @@ namespace System.Web.SessionState {
 
 			id = SessionId.Create (module.Rng);
 			session = new HttpSessionState (id, new SessionDictionary (),
-					new HttpStaticObjectsCollection (), config.Timeout, true,
+					HttpApplicationFactory.ApplicationState.SessionObjects, config.Timeout, true,
 					config.CookieLess, SessionStateMode.SQLServer, module.IsReadOnly);
 
 			InsertSession (session, config.Timeout);

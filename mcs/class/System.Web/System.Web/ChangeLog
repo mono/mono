@@ -1,3 +1,16 @@
+2004-02-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: ApplicationState is inited by the factory so,
+	return that value in the property. when we use the context Session,
+	cache it in the instance field.
+
+	* HttpApplicationFactory.cs: fixed target Type for the event when
+	hooking application and module events. Initialize application
+	and session scope objects. Fixes non-aplication events hook up.
+
+	* HttpStaticObjectsCollection.cs: added StaticItem and delay the
+	creation of the objects until they are requested.
+
 2004-01-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplicationFactory.cs: fixlet for session events hook.
