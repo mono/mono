@@ -61,7 +61,7 @@ namespace Microsoft.JScript {
 				FieldBuilder field;
 				TypeBuilder type  = ec.type_builder;
 				
-				field = type.DefineField (id, type,
+				field = type.DefineField (id, this.type,
 							  FieldAttributes.Public |
 							  FieldAttributes.Static);
 				
@@ -85,7 +85,6 @@ namespace Microsoft.JScript {
 		internal override bool Resolve (IdentificationTable context)
 		{
 			context.Enter (id, this);
-			Console.WriteLine ("VariableDeclaration::Resolve");
 			return true;
 		}
 	}

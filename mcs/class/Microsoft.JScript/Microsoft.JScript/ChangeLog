@@ -1,3 +1,7 @@
+2004-01-13  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* VariableDeclaration.cs: get the this.type which is a Type not a TypeBuilder.
+
 2004-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* JSMethodInfo.cs : tiny fix for NET_1_2 build.
