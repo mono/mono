@@ -1,3 +1,11 @@
+2002-08-24  Martin Baulig  <martin@gnome.org>
+
+	* debug-mono-symfile.[ch]: New files.  Similar to debug-symfile.[ch]
+	but they can read the new symbol file format which mcs is now creating.
+
+	* debug-symfile.c (mono_debug_find_source_location): Moved to
+	debug-mono-symfile.c; this is now operating on the new symbol file.
+
 2002-08-23  Martin Baulig  <martin@gnome.org>
 
 	* debug-helpers.c (mono_method_desc_from_method): New function to get
