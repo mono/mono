@@ -799,7 +799,8 @@ namespace Mono.CSharp {
 			IPermission perm = sa.CreatePermission ();
 			SecurityAction action;
 
-			if (perm.GetType().IsSubclassOf (TypeManager.code_access_permission_type)) {
+			// IS is correct because for corlib we are using an instance from old corlib
+			if (perm is System.Security.CodeAccessPermission) {
 				action = GetSecurityActionValue ();
 			} else {
 				switch (GetSecurityActionValue ()) {
