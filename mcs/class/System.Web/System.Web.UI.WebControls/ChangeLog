@@ -1,5 +1,10 @@
 2003-11-22 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* SqlDataSource*: Implement almost everything. Data access is
+	still missing.
+
+2003-11-22 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* Calendar.cs (SaveViewState):
 	    - We were allocating a 11 item array, we only used 10 items,
 	      so only allocate 10.
