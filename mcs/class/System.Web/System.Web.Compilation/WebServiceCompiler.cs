@@ -93,7 +93,7 @@ namespace System.Web.Compilation
 			sw.WriteLine (parser.Program);
 			sw.Close ();
 
-			string dllfilename = tempcoll.AddExtension ("dll", true);
+			string dllfilename = Path.GetFileName (tempcoll.AddExtension ("dll", true));
 			if (!Directory.Exists (dynamicBase))
 				Directory.CreateDirectory (dynamicBase);
 
