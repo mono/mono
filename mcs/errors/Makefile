@@ -32,7 +32,7 @@ run-test-local:
 	@ ./do-tests.pl mcs "$(CSCOMPILE)" "cs*.cs"
 
 run-generics-local:
-	@ ./do-tests.pl gmcs "$(GMCS_COMPILE)" "gmcs*.cs"
+	@ ./do-tests.pl gmcs "$(GMCS_COMPILE)" "gcs*.cs"
 
 test-multi-local:
 	@ failed=false; \
