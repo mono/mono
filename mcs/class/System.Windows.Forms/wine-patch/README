@@ -1,13 +1,4 @@
-System.Windows.Forms wine-patch README
 
-After applying the patch to wine, run "autoconf" and then 
-./configure in the wine directory and 'make && make depend && make install'.
+The contents of this directory has been moved to the
+winlib module in cvs (do cvs co winelib)
 
-Also, once the install is done you will need to create symbolic links for
-all the dlls you plan on using in System.Windows.Forms:
-
-cd /usr/local/lib
-for i in wine/*dll.so; do ln -s $i lib`basename $i`; done
-
-Peter
-pbartok@novell.com
