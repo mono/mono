@@ -1,3 +1,10 @@
+2004-04-17	Dennis Hayes <dennish@raytek.com>
+  Added Mainsoft java code, lots of todos where the code has not been completly translated.
+
+ 	* LateBinding.cs
+ 	* Utils.cs
+	* StringType.cs
+
 2004-04-04	Dennis Hayes <dennish@raytek.com>
 	Changed some System.String to string and System.Object to object.
 	This seems to match the spec better, if some has documents that this is wrong
