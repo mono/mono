@@ -1,3 +1,8 @@
+2004-02-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile.am: Remove the SHELL=bash setting since some people do not seem to
+	have bash.
+
 2004-02-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* pinvoke2.cs libtest.c: Add test for unicode StringBuilder marshalling.
