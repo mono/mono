@@ -89,13 +89,11 @@ namespace System.Runtime.Remoting.Proxies
 		{
 			MonoMethodMessage mMsg = (MonoMethodMessage) msg;
 			mMsg.LogicalCallContext = CallContext.CreateLogicalCallContext();
+			
+			if (mMsg.CallType == CallType.BeginInvoke) 
+				mMsg.AsyncResult.CallMessage = mMsg;	// TODO: do this in the runtime
 
 			IMethodReturnMessage res_msg = (IMethodReturnMessage)rp.Invoke (msg);
-
-			if (!(res_msg is IConstructionReturnMessage) && (res_msg.Exception == null))
-				out_args = ProcessResponse (res_msg, mMsg);
-			else
-				out_args = res_msg.OutArgs;
 
 			if (res_msg.LogicalCallContext != null && res_msg.LogicalCallContext.HasInfo)
 				CallContext.UpdateCurrentCallContext (res_msg.LogicalCallContext);
@@ -103,8 +101,22 @@ namespace System.Runtime.Remoting.Proxies
 			exc = res_msg.Exception;
 
 			// todo: remove throw exception from the runtime invoke
-			if (null != exc) 
+			if (null != exc) {
+				out_args = res_msg.OutArgs;
 				throw exc.FixRemotingException();
+			}
+			else if (res_msg is IConstructionReturnMessage || mMsg.CallType == CallType.BeginInvoke) {
+				out_args = res_msg.OutArgs;
+			}
+			else if (mMsg.CallType == CallType.Sync) {
+				out_args = ProcessResponse (res_msg, mMsg);
+			}
+			else if (mMsg.CallType == CallType.EndInvoke) {
+				out_args = ProcessResponse (res_msg, mMsg.AsyncResult.CallMessage);
+			}
+			else {
+				out_args = res_msg.OutArgs;
+			}
 
 			return res_msg.ReturnValue;
 		}
@@ -144,7 +156,7 @@ namespace System.Runtime.Remoting.Proxies
 		{
 			// Check return type
 
-			MethodInfo mi = (MethodInfo) mrm.MethodBase;
+			MethodInfo mi = (MethodInfo) call.MethodBase;
 			if (mrm.ReturnValue != null && !mi.ReturnType.IsInstanceOfType (mrm.ReturnValue))
 				throw new RemotingException ("Return value has an invalid type");
 
@@ -170,7 +182,7 @@ namespace System.Runtime.Remoting.Proxies
 						object outArg = mrm.GetOutArg (nout++);
 						if (outArg != null) {
 							object local = call.GetArg (par.Position);
-							if (local == null) throw new RemotingException ("Unexpected null value in local out parameter");
+							if (local == null) throw new RemotingException ("Unexpected null value in local out parameter '" + par.Position + " " + par.Name + "'");
 							RemotingServices.UpdateOutArgObject (par, local, outArg);
 						}
 					}
@@ -178,7 +190,9 @@ namespace System.Runtime.Remoting.Proxies
 					{
 						object outArg = mrm.GetOutArg (nout++);
 						if (outArg != null && !par.ParameterType.IsInstanceOfType (outArg))
+						{
 							throw new RemotingException ("Return argument '" + par.Name + "' has an invalid type");
+						}
 						outArgs [narg++] = outArg;
 					}
 				}

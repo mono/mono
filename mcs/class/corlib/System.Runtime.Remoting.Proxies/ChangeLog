@@ -1,3 +1,7 @@
+2003-10-07  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* RealProxy.cs: Fixed support for [out] parameters in async calls.
+
 2003-09-11  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* RemotingProxy.cs: Return message check moved to RealProxy.
