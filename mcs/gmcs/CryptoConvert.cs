@@ -356,7 +356,7 @@ namespace Mono.Security.Cryptography {
 			if (rsa == null)
 				throw new ArgumentNullException ("rsa");
 
-			RSAParameters p = rsa.ExportParameters (includePrivateKey);
+			rsa.ExportParameters (includePrivateKey);
 			if (includePrivateKey)
 				return ToCapiPrivateKeyBlob (rsa);
 			else

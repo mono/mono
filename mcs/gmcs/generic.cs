@@ -159,8 +159,6 @@ namespace Mono.CSharp {
 
 		public bool Resolve (EmitContext ec)
 		{
-			DeclSpace ds = ec.DeclSpace;
-
 			iface_constraints = new ArrayList ();
 			type_param_constraints = new ArrayList ();
 
@@ -976,7 +974,6 @@ namespace Mono.CSharp {
 
 		public bool Resolve (EmitContext ec)
 		{
-			DeclSpace ds = ec.DeclSpace;
 			int count = args.Count;
 			bool ok = true;
 
@@ -1696,9 +1693,6 @@ namespace Mono.CSharp {
 			}
 
 			if (a.IsGenericInstance && b.IsGenericInstance) {
-				Type at = a.GetGenericTypeDefinition ();
-				Type bt = b.GetGenericTypeDefinition ();
-
 				if (a.GetGenericTypeDefinition () != b.GetGenericTypeDefinition ())
 					return false;
 
@@ -1820,9 +1814,6 @@ namespace Mono.CSharp {
 			if (a.GetGenericTypeDefinition () != b.GetGenericTypeDefinition ())
 				return false;
 
-			Type[] aargs = GetTypeArguments (a);
-			Type[] bargs = GetTypeArguments (b);
-
 			return MayBecomeEqualGenericInstances (
 				GetTypeArguments (a), GetTypeArguments (b), class_infered, method_infered);
 		}
@@ -1833,7 +1824,6 @@ namespace Mono.CSharp {
 			if (aargs.Length != bargs.Length)
 				return false;
 
-			Type[] args = new Type [aargs.Length];
 			for (int i = 0; i < aargs.Length; i++) {
 				if (!MayBecomeEqualGenericTypes (aargs [i], bargs [i], class_infered, method_infered))
 					return false;

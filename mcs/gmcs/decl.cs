@@ -112,7 +112,6 @@ namespace Mono.CSharp {
 
 		public string GetTypeName ()
 		{
-			string suffix = "";
 			if (Left != null)
 				return Left.GetTypeName () + "." +
 					MakeName (Name, TypeArguments);

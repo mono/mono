@@ -1734,9 +1734,6 @@ public partial class TypeManager {
 		}
 
 		if (type.IsGenericInstance && parent.IsGenericInstance) {
-			Type tdef = type.GetGenericTypeDefinition ();
-			Type pdef = parent.GetGenericTypeDefinition ();
-
 			if (type.GetGenericTypeDefinition () != parent.GetGenericTypeDefinition ())
 				return false;
 

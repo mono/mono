@@ -7509,8 +7509,6 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			int errors = Report.Errors;
-
 			Expression member_lookup;
 			member_lookup = MemberLookup (
 				ec, expr_type, expr_type, Identifier, loc);
@@ -7656,9 +7654,6 @@ namespace Mono.CSharp {
 			}
 
 			return texpr;
-
-			member_lookup = member_lookup.Resolve (ec, ResolveFlags.Type);
-			return (member_lookup as TypeExpr);
 		}
 
 		public override void Emit (EmitContext ec)

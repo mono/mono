@@ -2011,8 +2011,6 @@ namespace Mono.CSharp
 
 		int consume_whitespace ()
 		{
-			int t;
-			bool doread = false;
 			int c;
 
 			// Whether we have seen comments on the current line

@@ -472,7 +472,7 @@ namespace Mono.CSharp {
 			for (int i = 0; i < pd.Count; i++) {
 				string name = pd.ParameterName (i);
 				ParameterAttributes attr = Parameter.GetParameterAttributes (pd.ParameterModifier (i));
-				ParameterBuilder pb = proxy.DefineParameter (i + 1, attr, name);
+				proxy.DefineParameter (i + 1, attr, name);
 			}
 
 			int top = args.Length;
