@@ -1,5 +1,10 @@
 2004-03-25  Martin Baulig  <martin@ximian.com>
 
+	* loader.h (MonoMethodInflated): Store the MonoGenericContext
+	instead of the MonoGenericMethod here.
+
+2004-03-25  Martin Baulig  <martin@ximian.com>
+
 	* class.h (MonoGenericInst): Added `MonoGenericContext *context';
 	each time we create a new MonoGenericInst, we also create a new
 	context which points back to us.
