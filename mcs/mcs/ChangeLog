@@ -1,3 +1,8 @@
+2002-09-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* compiler.csproj:
+	* compiler.csproj.user: patch from Adam Chester (achester@bigpond.com).
+
 2002-09-03  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs (SwitchLabel.ResolveAndReduce): In the string case,

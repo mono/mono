@@ -198,6 +198,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "pending.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "report.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
