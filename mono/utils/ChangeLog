@@ -1,3 +1,9 @@
+2005-04-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* mono-poll.[ch]: mono_poll uses poll() when available, otherwise
+	implement it in terms of select().
+	* Makefile.am: added new files.
+
 2005-03-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* mono-compiler.h: Added defines to make it easier to compile mono and
