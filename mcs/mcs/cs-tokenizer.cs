@@ -945,9 +945,7 @@ namespace Mono.CSharp
 					
 					char [] quotes = { '\"' };
 					
-					ref_name = arg.Substring (pos);
-					ref_name.TrimStart (quotes);
-					ref_name.TrimEnd (quotes);
+					ref_name = arg.Substring (pos). Trim(quotes);
 				} else {
 					ref_line = System.Int32.Parse (arg);
 				}
@@ -997,7 +995,7 @@ namespace Mono.CSharp
 
 		bool pp_primary (ref string s)
 		{
-			s.Trim ();
+			s = s.Trim ();
 			int len = s.Length;
 
 			if (len > 0){

@@ -1,3 +1,7 @@
+2002-04-22  Patrik Torstensson <totte@labs2.com>
+
+	* cs-tokenizer.cs: fixed a number of trim() issues.
+
 2002-04-22  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (Argument.Type): Ensure that we return the correct
