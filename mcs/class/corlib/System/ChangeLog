@@ -1,6 +1,11 @@
 
 2003-01-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Activator.cs: fixed bug #36052. Also added checks to avoid trying to
+	instantiate an abstract class.
+
+2003-01-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Type.cs:
 	(IsSubclassOf): return false when null. Use != instead of Equals.
 

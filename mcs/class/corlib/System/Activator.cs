@@ -9,9 +9,10 @@
 // (c) 2002 Ximian, Inc. (http://www.ximian.com)
 //
 
-using System.Runtime.Remoting;
-using System.Reflection;
 using System.Globalization;
+using System.Reflection;
+using System.Runtime.Remoting;
+using System.Runtime.CompilerServices;
 using System.Security.Policy;
 
 namespace System 
@@ -131,6 +132,9 @@ namespace System
 			if (type == null)
 				throw new ArgumentNullException ("type");
 
+			if (type.IsAbstract)
+				throw new MemberAccessException ("Cannot create an abstract class");
+
 			int length = 0;
 			if (args != null)
 				length = args.Length;
@@ -140,8 +144,12 @@ namespace System
 				atypes [i] = args [i].GetType ();
 			}
 			ConstructorInfo ctor = type.GetConstructor (atypes);
-			if (ctor == null)
+			if (ctor == null) {
+				if (type.IsValueType && atypes.Length == 0)
+					return CreateInstanceInternal (type);
+
 				throw new MissingMethodException ("Constructor not found");
+			}
 
 
 			return ctor.Invoke (args);
@@ -167,6 +175,9 @@ namespace System
 			if (type == null)
 				throw new ArgumentNullException ("type");
 		
+			if (type.IsAbstract)
+				throw new MemberAccessException ("Cannot create an abstract class");
+
 			// activationAttributes?
 			int length = 0;
 			if (args != null)
@@ -177,8 +188,14 @@ namespace System
 				atypes [i] = args [i].GetType ();
 			}
 			ConstructorInfo ctor = type.GetConstructor (bindingAttr, binder, atypes, null);
-			if (ctor == null)
+			if (ctor == null) {
+				// Not sure about this
+				if (type.IsValueType && atypes.Length == 0) {
+					return CreateInstanceInternal (type);
+				}
+
 				throw new MissingMethodException ("Constructor not found");
+			}
 
 			return ctor.Invoke (bindingAttr, binder, args, culture);
 		}
@@ -187,13 +204,20 @@ namespace System
 		{ 
 			if (type == null)
 				throw new ArgumentNullException ("type");
-				
+		
+			if (type.IsAbstract)
+				throw new MemberAccessException ("Cannot create an abstract class");
+
 			ConstructorInfo ctor = type.GetConstructor (Type.EmptyTypes);
 			if (ctor != null && !ctor.IsPublic && nonPublic == false)
 				throw new MissingMethodException ("Default constructor not found");
 
-			if (ctor == null)
+			if (ctor == null) {
+				if (type.IsValueType)
+					return CreateInstanceInternal (type);
+
 				throw new MissingMethodException ("Default constructor not found");
+			}
 
 			return ctor.Invoke (null);
 		}
@@ -207,6 +231,10 @@ namespace System
 		{ 
 			return RemotingServices.Connect (type, url, state);
 		}
+
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern object CreateInstanceInternal (Type type);
 	}
 }
 
