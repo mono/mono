@@ -430,9 +430,12 @@ namespace System.Xml.Serialization {
 
 			if (IsInbuiltType(objType)) 
 			{
-				writer.WriteStartDocument ();
+				if (writer.WriteState == WriteState.Start)
+                                        writer.WriteStartDocument ();
 				SerializeBuiltIn (writer, o);
-				writer.WriteEndDocument();
+				// Keep WriteState.Content state.
+				// writer.WriteEndDocument();
+				writer.Flush ();
 				return;
 			}
 
@@ -451,7 +454,8 @@ namespace System.Xml.Serialization {
 			XmlSerializerNamespaces nss = new XmlSerializerNamespaces ();
 			XmlQualifiedName[] qnames;
 			
-			writer.WriteStartDocument ();
+			if (writer.WriteState == WriteState.Start)
+				writer.WriteStartDocument ();
 			object [] memberObj = (object []) typeTable [objType];
 			if (memberObj == null)
 				throw new Exception ("Unknown Type " + objType +
@@ -512,7 +516,9 @@ namespace System.Xml.Serialization {
 
 			SerializeMembers (writer, o, true);//, namespaces);
 
-			writer.WriteEndDocument ();
+			// Keep WriteState.Content state.
+			// writer.WriteEndDocument ();
+			writer.Flush ();
 		}
 
 		private void SerializeBuiltIn (XmlWriter writer, object o)
