@@ -1,5 +1,12 @@
 2005-02-10  Martin Baulig  <martin@ximian.com>
 
+	* MonoSymbolFile.cs
+	(MonoDebuggerSupport.MakeArrayType): New public method.
+	(MonoDebuggerSupport.ResolveType): New public method.
+	(MonoDebuggerSupport.GetTypeToken): New public method.
+
+2005-02-10  Martin Baulig  <martin@ximian.com>
+
 	* MonoSymbolFile.cs (MonoDebuggerSupport.GetMethodIndex): New
 	public method.
 
