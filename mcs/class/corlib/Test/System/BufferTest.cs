@@ -1,30 +1,28 @@
+//
 // BufferTest.cs - NUnit Test Cases for the Buffer class.
 //
-// Cesar Octavio Lopez Nataren (cesar@ciencias.unam.mx)
+// Authors
+//	Cesar Octavio Lopez Nataren (cesar@ciencias.unam.mx)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) Cesar Octavio Lopez Nataren 2002
+// Copyright (C) 2004 Novell (http://www.novell.com)
 // 
 
 using NUnit.Framework;
 using System;
 
+namespace MonoTests.System {
 
-namespace MonoTests.System
-{
-	public class BufferTest : TestCase
-	{
+	[TestFixture]
+	public class BufferTest : Assertion {
+
 		const int SIZE = 10;
 		byte [] byteArray  = new byte [SIZE];   // 8-bits unsigned integer array
 		float [] floatArray = new float [SIZE];
 		
-		public BufferTest () {}
-
-		protected override void SetUp () {}
-
-
-		protected override void TearDown () {}
-
-		public void TestBlockCopy ()
+		[Test]
+		public void BlockCopy ()
 		{
 			int SizeOfInt32 = 4;
 			int [] myArray1 = new int [5] {1, 2, 3, 4, 5};
@@ -35,9 +33,88 @@ namespace MonoTests.System
 			for (int i = 0; i < myArray1.Length; i++) 
 				AssertEquals ("TestBlockCopy Error at i=" + i, i + 1, myArray2 [i]);		
 		}
-	
-	
-		public void TestByteLength ()
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void BlockCopy_NullSource ()
+		{
+			byte[] dest = new byte [8];
+			Buffer.BlockCopy (null, 0, dest, 0, dest.Length);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void BlockCopy_NullDest ()
+		{
+			byte[] src = new byte [8];
+			Buffer.BlockCopy (src, 0, null, 0, src.Length);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void BlockCopy_ObjectSource ()
+		{
+			object[] src = new object [8];
+			byte[] dest = new byte [8];
+			Buffer.BlockCopy (src, 0, dest, 0, src.Length);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void BlockCopy_ObjectDest ()
+		{
+			byte[] src = new byte [8];
+			object[] dest = new object [8];
+			Buffer.BlockCopy (src, 0, dest, 0, src.Length);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void BlockCopy_SourceTooShort ()
+		{
+			byte[] src = new byte [8];
+			byte[] dest = new byte [8];
+			Buffer.BlockCopy (src, 4, dest, 0, src.Length);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void BlockCopy_DestTooShort ()
+		{
+			byte[] src = new byte [8];
+			byte[] dest = new byte [8];
+			Buffer.BlockCopy (src, 0, dest, 4, src.Length);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void BlockCopy_SourceOffsetNegative ()
+		{
+			byte[] src = new byte [8];
+			byte[] dest = new byte [8];
+			Buffer.BlockCopy (src, -1, dest, 0, src.Length);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void BlockCopy_DestOffsetNegative ()
+		{
+			byte[] src = new byte [8];
+			byte[] dest = new byte [8];
+			Buffer.BlockCopy (src, 0, dest, -1, src.Length);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void BlockCopy_LengthNegative ()
+		{
+			byte[] src = new byte [8];
+			byte[] dest = new byte [8];
+			Buffer.BlockCopy (src, 0, dest, 0, -1);
+		}
+
+		[Test]
+		public void ByteLength ()
 		{
 			int numBytes;	
 			float [] floatArray = new float [10];
@@ -85,7 +162,8 @@ namespace MonoTests.System
 			AssertEquals ("TestByteLength: wrong byteLength for floatArray6", 0, numBytes);
 		}
 		
-		public void TestGetByte () 
+		[Test]
+		public void GetByte () 
 		{
 			Byte [] byteArray;
 			bool errorThrown = false;
@@ -134,8 +212,8 @@ namespace MonoTests.System
 			AssertEquals ("TestGetByte Error", (Byte)8, Buffer.GetByte (byteArray, 5));
 		}
 	
-	
-		public void TestSetByte ()
+		[Test]
+		public void SetByte ()
 		{
 			bool errorThrown = false;
 			TestCase [] someArray = new TestCase [3];
