@@ -1,3 +1,8 @@
+
+Mon May 26 20:20:13 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* jit-icalls.c: call the type ctor on field access if needed.
+
 Mon May 26 15:21:21 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ops.h, mini.c, inssel.brg, exceptions.cs: validate arguments passed
