@@ -395,6 +395,14 @@ public class DateTimeTest : TestCase
 		t1 = DateTime.Parse ("February 8");
 		AssertEquals ("H16", t2.Ticks, t1.Ticks);
 	}
+
+	public void TestOA ()
+	{
+		double number=5000.41443;
+		DateTime d = DateTime.FromOADate(number);
+		AssertEquals ("I01", d.ToString(), "09/08/1913 9:56:46");
+		AssertEquals ("I02", d.ToOADate(), number);
+	}
 }
 
 }
