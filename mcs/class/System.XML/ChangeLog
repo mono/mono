@@ -1,3 +1,10 @@
+2004-01-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml.dll.sources : replaced CustomSerializer with 
+	  XmlSchemaSerializer.
+	  Replaced XmlNodeReader with XmlNodeReaderImpl.cs and
+	  XmlNodeReader2.cs. (dispatches entity reader and non-entity reader.)
+
 2004-12-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml.dll.sources : added XmlReaderBinarySupport.cs.
