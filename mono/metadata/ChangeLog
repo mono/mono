@@ -1,4 +1,9 @@
 
+Tue Jan 28 22:57:57 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c, marshal.h: use larger integers in mono_mb_emit_add_to_local()
+	to avoid overflows (bug spotted and fixed by Jerome Laban <jlaban@wanadoo.fr>).
+
 Tue Jan 28 18:55:19 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* profiler.c: provide more callers information.
