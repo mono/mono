@@ -1,3 +1,8 @@
+
+Wed Mar 16 16:34:38 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* *.c, private.h: cleanup, removing old private.h header file.
+
 2005-03-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (mono_image_get_method_info): Encode best_fit_mapping
