@@ -1,3 +1,9 @@
+2002-06-26  Martin Baulig  <martin@gnome.org>
+
+	* debug-symfile.c (mono_debug_find_source_location): Added
+	`guint32 *line_number' argument.  If it's not NULL, store the line number
+	there and return the file name without the line number.
+
 2002-06-25  Dick Porter  <dick@ximian.com>
 
 	* icall.c:
