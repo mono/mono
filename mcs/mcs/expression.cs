@@ -4445,6 +4445,8 @@ namespace Mono.CSharp {
 			if (expr is BaseAccess)
 				is_base = true;
 
+			Expression old = expr;
+			
 			expr = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
 			if (expr == null)
 				return null;
@@ -6822,7 +6824,7 @@ namespace Mono.CSharp {
 			map = new Hashtable ();
 		}
 
-		Indexers (MemberInfo [] mi)
+		void Append (MemberInfo [] mi)
 		{
 			foreach (PropertyInfo property in mi){
 				MethodInfo get, set;
@@ -6844,13 +6846,8 @@ namespace Mono.CSharp {
 			}
 		}
 
-		static private Indexers GetIndexersForTypeOrInterface (Type caller_type, Type lookup_type)
+		static private MemberInfo [] GetIndexersForTypeOrInterface (Type caller_type, Type lookup_type)
 		{
-			Indexers ix = (Indexers) map [lookup_type];
-			
-			if (ix != null)
-				return ix;
-
 			string p_name = TypeManager.IndexerPropertyName (lookup_type);
 
 			MemberInfo [] mi = TypeManager.MemberLookup (
@@ -6861,10 +6858,7 @@ namespace Mono.CSharp {
 			if (mi == null || mi.Length == 0)
 				return null;
 
-			ix = new Indexers (mi);
-			map [lookup_type] = ix;
-
-			return ix;
+			return mi;
 		}
 		
 		static public Indexers GetIndexersForType (Type caller_type, Type lookup_type, Location loc) 
@@ -6876,24 +6870,32 @@ namespace Mono.CSharp {
 
 			Type copy = lookup_type;
 			while (copy != TypeManager.object_type && copy != null){
-				ix = GetIndexersForTypeOrInterface (caller_type, copy);
+				MemberInfo [] mi = GetIndexersForTypeOrInterface (caller_type, copy);
 
-				if (ix != null)
-					return ix;
+				if (mi != null){
+					if (ix == null)
+						ix = new Indexers ();
 
+					ix.Append (mi);
+				}
+					
 				copy = copy.BaseType;
 			}
 
 			Type [] ifaces = TypeManager.GetInterfaces (lookup_type);
 			if (ifaces != null) {
 				foreach (Type itype in ifaces) {
-					ix = GetIndexersForTypeOrInterface (caller_type, itype);
-					if (ix != null)
-						return ix;
+					MemberInfo [] mi = GetIndexersForTypeOrInterface (caller_type, itype);
+					if (mi != null){
+						if (ix == null)
+							ix = new Indexers ();
+					
+						ix.Append (mi);
+					}
 				}
 			}
 
-			return null;
+			return ix;
 		}
 	}
 
@@ -6905,7 +6907,6 @@ namespace Mono.CSharp {
 		// Points to our "data" repository
 		//
 		MethodInfo get, set;
-		Indexers ilist;
 		ArrayList set_arguments;
 		bool is_base_indexer;
 
@@ -6951,18 +6952,18 @@ namespace Mono.CSharp {
 
 			bool found_any = false, found_any_getters = false;
 			Type lookup_type = indexer_type;
-			while (lookup_type != null) {
-				ilist = Indexers.GetIndexersForType (current_type, lookup_type, loc);
-				if (ilist != null) {
-					found_any = true;
-					if (ilist.getters != null) {
-						foreach (object o in ilist.getters) {
-							AllGetters.Add(o);
-						}
+
+			Indexers ilist;
+			ilist = Indexers.GetIndexersForType (current_type, lookup_type, loc);
+			if (ilist != null) {
+				found_any = true;
+				if (ilist.getters != null) {
+					foreach (object o in ilist.getters) {
+						AllGetters.Add(o);
 					}
 				}
-				lookup_type = lookup_type.BaseType;
 			}
+
 			if (AllGetters.Count > 0) {
 				found_any_getters = true;
 				get = (MethodInfo) Invocation.OverloadResolve (
@@ -7016,6 +7017,8 @@ namespace Mono.CSharp {
 
 			bool found_any = false, found_any_setters = false;
 			Type lookup_type = indexer_type;
+
+			Indexers ilist;
 			while (lookup_type != null) {
 				ilist = Indexers.GetIndexersForType (current_type, lookup_type, loc);
 				if (ilist != null) {
