@@ -1,3 +1,8 @@
+2005-01-24 Joerg Rosenkranz <joergr@voelcker.com>
+
+	* TypeDescriptor.cs: Changed handling of interfaces and objects in
+	GetConverter to reflect the behaviour of .NET. This fixes bug #71444.
+    
 2005-01-19  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* TypeDescriptor.cs: Fix Info.GetDefaultEvent() so that it filters events

@@ -189,17 +189,10 @@ public sealed class TypeDescriptor
 				t = GetTypeFromName (component as IComponent, tca.ConverterTypeName);
 			}
 			
-			Type primitive = component.GetType ();
-			while (t == null && primitive != typeof (object)) {
-				t = (Type) DefaultConverters [primitive];
-				if (t == null)
-					primitive = primitive.BaseType;
-			}
-			
 			if (t != null)
 				return (TypeConverter) Activator.CreateInstance (t);
 			else
-				return null;
+				return GetConverter (component.GetType ());
 		}
 	}
 
@@ -236,8 +229,6 @@ public sealed class TypeDescriptor
 				defaultConverters.Add (typeof (Guid), typeof (GuidConverter));
 				defaultConverters.Add (typeof (TimeSpan), typeof (TimeSpanConverter));
 				defaultConverters.Add (typeof (ICollection), typeof (CollectionConverter));
-				//FIXME We need to add the type for the ReferenceConverter
-				//defaultConverters.Add (typeof (????), typeof (ReferenceConverter));
 			}
 			return defaultConverters;
 		}
@@ -245,33 +236,56 @@ public sealed class TypeDescriptor
 	
 	public static TypeConverter GetConverter (Type type)
 	{
-		if (type.IsEnum) {
-			// EnumConverter needs to know the enum type
-			return new EnumConverter(type);
-		} else {
-			TypeConverterAttribute tca = null;
-			Type t = null;
-			object [] atts = type.GetCustomAttributes (typeof(TypeConverterAttribute), true);
-			
-			if (atts.Length > 0)
-				tca = (TypeConverterAttribute)atts[0];
-			
-			if (tca != null) {
-				t = GetTypeFromName (null, tca.ConverterTypeName);
-			}
-			
-			Type primitive = type;
-			while (t == null && primitive != typeof (object)) {
-				t = (Type) DefaultConverters [primitive];
-				if (t == null)
-					primitive = primitive.BaseType;
-			}
-			
-			if (t != null)
-				return (TypeConverter) Activator.CreateInstance (t);
-			else
-				return null;
+		TypeConverterAttribute tca = null;
+		Type t = null;
+		object [] atts = type.GetCustomAttributes (typeof(TypeConverterAttribute), true);
+		
+		if (atts.Length > 0)
+			tca = (TypeConverterAttribute)atts[0];
+		
+		if (tca != null) {
+			t = GetTypeFromName (null, tca.ConverterTypeName);
 		}
+		
+		if (t == null) {
+			if (type.IsEnum) {
+				// EnumConverter needs to know the enum type
+				return new EnumConverter(type);
+			} else if (type.IsArray) {
+				return new ArrayConverter ();
+			}
+		}
+		
+		if (t == null)
+			t = FindConverterType (type);
+
+		if (t != null)
+			return (TypeConverter) Activator.CreateInstance (t);
+		else
+			return new ReferenceConverter (type);    // Default?
+	}
+
+	private static Type FindConverterType (Type type)
+	{
+		Type t = null;
+		
+		// Is there a default converter
+		t = (Type) DefaultConverters [type];
+		if (t != null)
+			return t;
+		
+		// Find default converter with a type this type is assignable to
+		foreach (Type defType in DefaultConverters.Keys) {
+			if (defType.IsInterface && defType.IsAssignableFrom (type)) {
+				return (Type) DefaultConverters [defType];
+			}
+		}
+		
+		// Nothing found, try the same with our base type
+		if (type.BaseType != null)
+			return FindConverterType (type.BaseType);
+		else
+			return null;
 	}
 
 	public static EventDescriptor GetDefaultEvent (Type componentType)
