@@ -89,7 +89,11 @@ mcs-do-run-test-profiles:
 	( cd $(mcs_topdir) && $(MAKE) RUNTIME=$$d/$(tmpinst)/bin/mono PROFILES='$(build_profiles)' run-test-profiles ) || ret=false ; \
 	rm -fr $(tmpinst) ; $$ret
 
-check-local: mcs-do-test-profiles
+# Use --compile-all as a poor man's PEVerify to detect invalid IL
+mcs-compileall:
+	d=`pwd`; for profile in $(build_profiles); do for i in $(mcs_topdir)/class/lib/$$profile/*.dll $(mcs_topdir)/class/lib/$$profile/*.exe; do echo $$i; $$d/mono-wrapper --compile-all $$i || exit 1; done; done
+
+check-local: mcs-compileall mcs-do-test-profiles
 	$(MAKE) $(test_select) mcs-do-run-test-profiles
 
 $(tmpinst)/config: ../data/config
