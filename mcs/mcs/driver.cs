@@ -273,6 +273,17 @@ namespace Mono.CSharp
 
 			return ret_value;
 		}
+
+		//
+		// Returns the directory where the system assemblies are installed
+		//
+		static string GetSystemDir ()
+		{
+			Assembly [] assemblies = AppDomain.CurrentDomain.GetAssemblies ();
+			string s = assemblies [0].CodeBase;
+			
+			return s.Substring (0, s.LastIndexOf ("/"));
+		}
 		
 		/// <summary>
 		///    Parses the arguments, and drives the compilation
@@ -299,7 +310,7 @@ namespace Mono.CSharp
 			// This is not required because Assembly.Load knows about this
 			// path.
 			//
-			link_paths.Add ("file:///C:/WINNT/Microsoft.NET/Framework/v1.0.2914");
+			link_paths.Add (GetSystemDir ()); 
 
 			int argc = args.Length;
 			for (i = 0; i < argc; i++){

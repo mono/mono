@@ -1,5 +1,7 @@
 2002-01-19  Miguel de Icaza  <miguel@ximian.com>
 
+	* driver.cs: Compute dynamically the system directory.
+
 	* ecore.cs (CopyNewMethods): reworked, exposed, made public.
 	Slower, but more generally useful.  Used by the abstract
 	registering implementation. 
@@ -46,6 +48,19 @@
 	* makefile: remove path to beta2 csc.exe.  path to csc.exe must be in PATH instead.
 
 2002-01-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* interface.cs: (PopulateMethod): Check for pointers being defined
+	only if the unsafe context is active.
+	(PopulateProperty): ditto.
+	(PopulateIndexer): ditto.
+
+	* class.cs (Method, Method.Define): Allow `unsafe' modifier to be
+	specified.  If pointers are present, make sure that they are
+	present in an unsafe context.
+	(Constructor, Constructor.Define): ditto.
+	(Field, Field.Define): ditto.
+	(Property, Property.Define): ditto.
+	(Event, Event.Define): ditto.
 
 	* interface.cs (Interface.GetInterfaceTypeByName): Only lookup the
 	hashtable if there are classes or structs defined.

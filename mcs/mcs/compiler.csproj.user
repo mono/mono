@@ -15,7 +15,7 @@
                     StartPage = ""
                     StartProgram = ""
                     StartURL = ""
-                    StartWorkingDirectory = "c:\mono\mcs\mcs"
+                    StartWorkingDirectory = "\mono\mcs\mcs"
                     StartWithIE = "false"
                 />
                 <Config
@@ -41,6 +41,7 @@
             CopyProjectUncPath = ""
             CopyProjectOption = "0"
             ProjectView = "ProjectFiles"
+            ProjectTrust = "0"
         />
     </CSHARP>
 </VisualStudioProject>
