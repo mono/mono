@@ -182,6 +182,7 @@ namespace Mono.CSharp
 %token VOLATILE
 %token WHILE	
 %token ARGLIST
+%token PARTIAL
 
 /* C# keywords which are not really keywords */
 %token GET           "get"
@@ -703,20 +704,32 @@ class_member_declaration
 struct_declaration
 	: opt_attributes
 	  opt_modifiers
+	  opt_partial
 	  STRUCT IDENTIFIER
 	  { 
-		string name = MakeName ((string) $4);
+		string name = MakeName ((string) $5);
+		bool partial = (bool) $3;
 
-		current_class = new Struct (current_namespace, current_container, name,
-					    (int) $2, (Attributes) $1, lexer.Location);
+		if (partial) {
+			ClassPart part = PartialContainer.CreatePart (
+				current_namespace, current_container, name, (int) $2,
+				(Attributes) $1, Kind.Struct, lexer.Location);
 
-		current_container = current_class;
-		RootContext.Tree.RecordDecl (name, current_class);
+			current_container = part.PartialContainer;
+			current_class = part;
+		} else {
+			current_class = new Struct (
+				current_namespace, current_container, name, (int) $2,
+				(Attributes) $1, lexer.Location);
+
+			current_container = current_class;
+			RootContext.Tree.RecordDecl (name, current_class);
+		}
 	  }
 	  opt_class_base
 	  {
-		if ($6 != null)
-			current_class.Bases = (ArrayList) $6;
+		if ($7 != null)
+			current_class.Bases = (ArrayList) $7;
 
 		current_class.Register ();
 	  }
@@ -728,7 +741,7 @@ struct_declaration
 		current_container = current_container.Parent;
 		current_class = current_container;
 	  }
-	| opt_attributes opt_modifiers STRUCT error {
+	| opt_attributes opt_modifiers opt_partial STRUCT error {
 		CheckIdentifierToken (yyToken);
 	  }
 	;
@@ -1212,24 +1225,31 @@ accessor_body
 interface_declaration
 	: opt_attributes
 	  opt_modifiers
+	  opt_partial
 	  INTERFACE IDENTIFIER
 	  {
-		string name = MakeName ((string) $4);
+		string name = MakeName ((string) $5);
+		bool partial = (bool) $3;
 
-		if ((current_class != null) && (current_class.Kind == Kind.Interface)) {
-			Report.Error (-2, lexer.Location,
-				      "Internal compiler error: interface inside interface");
+		if (partial) {
+			ClassPart part = PartialContainer.CreatePart (
+				current_namespace, current_container, name, (int) $2,
+				(Attributes) $1, Kind.Interface, lexer.Location);
+
+			current_container = part.PartialContainer;
+			current_class = part;
+		} else {
+			current_class = new Interface (
+				current_namespace, current_container, name, (int) $2,
+				(Attributes) $1, lexer.Location);
+
+			current_container = current_class;
+			RootContext.Tree.RecordDecl (name, current_class);
 		}
-
-		current_class = new Interface (current_namespace, current_container, name,
-					       (int) $2, (Attributes) $1, lexer.Location);
-
-		current_container = current_class;
-		RootContext.Tree.RecordDecl (name, current_class);
 	  }
 	  opt_class_base
 	  {
-		current_class.Bases = (ArrayList) $6;
+		current_class.Bases = (ArrayList) $7;
 
 		current_class.Register ();
 	  }
@@ -1241,7 +1261,7 @@ interface_declaration
 		current_container = current_container.Parent;
 		current_class = current_container;
 	  }
-	| opt_attributes opt_modifiers INTERFACE error {
+	| opt_attributes opt_modifiers opt_partial INTERFACE error {
 		CheckIdentifierToken (yyToken);
 	  }
 	;
@@ -2893,25 +2913,37 @@ boolean_expression
 class_declaration
 	: opt_attributes
 	  opt_modifiers
+	  opt_partial
 	  CLASS IDENTIFIER
 	  {
-		string name = MakeName ((string) $4);
+		string name = MakeName ((string) $5);
+		bool partial = (bool) $3;
 
-		current_class = new Class (current_namespace, current_container, name,
-					   (int) $2, (Attributes) $1, lexer.Location);
+		if (partial) {
+			ClassPart part = PartialContainer.CreatePart (
+				current_namespace, current_container, name, (int) $2,
+				(Attributes) $1, Kind.Class, lexer.Location);
 
-		current_container = current_class;
-		RootContext.Tree.RecordDecl (name, current_class);
+			current_container = part.PartialContainer;
+			current_class = part;
+		} else {
+			current_class = new Class (
+				current_namespace, current_container, name, (int) $2,
+				(Attributes) $1, lexer.Location);
+
+			current_container = current_class;
+			RootContext.Tree.RecordDecl (name, current_class);
+		}
 	  }
 	  opt_class_base
 	  {
-		if ($6 != null) {
+		if ($7 != null) {
 			if (current_class.Name == "System.Object") {
 				Report.Error (537, current_class.Location,
 					      "The class System.Object cannot have a base " +
 					      "class or implement an interface.");
 			}
-			current_class.Bases = (ArrayList) $6;
+			current_class.Bases = (ArrayList) $7;
 		}
 
 		current_class.Register ();
@@ -2925,6 +2957,13 @@ class_declaration
 		current_class = current_container;
 	  }
 	;	
+
+opt_partial
+	: /* empty */
+	  { $$ = (bool) false; }
+	| PARTIAL
+	  { $$ = (bool) true; }
+	;
 
 opt_modifiers
 	: /* empty */		{ $$ = (int) 0; }

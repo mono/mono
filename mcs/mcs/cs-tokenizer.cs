@@ -54,7 +54,7 @@ namespace Mono.CSharp
 		//
 		bool any_token_seen = false;
 		static Hashtable tokenValues;
-		
+
 		private static Hashtable TokenValueName
 		{
 			get {
@@ -291,6 +291,7 @@ namespace Mono.CSharp
 			AddKeyword ("void", Token.VOID);
 			AddKeyword ("volatile", Token.VOLATILE);
 			AddKeyword ("while", Token.WHILE);
+			AddKeyword ("partial", Token.PARTIAL);
 		}
 
 		//
@@ -327,6 +328,7 @@ namespace Mono.CSharp
 				return -1;
 			if (handle_assembly == false && res == Token.ASSEMBLY)
 				return -1;
+
 			return res;
 			
 		}
@@ -1676,13 +1678,43 @@ namespace Mono.CSharp
 			return Token.EOF;
 		}
 
+		private int consume_identifier (int s)
+		{
+			int res = consume_identifier (s, false);
+
+			if (res == Token.PARTIAL) {
+				// Save current position and parse next token.
+				int old = reader.Position;
+				int old_putback = putback_char;
+
+				putback_char = -1;
+
+				int next_token = token ();
+				bool ok = (next_token == Token.CLASS) ||
+					(next_token == Token.STRUCT) ||
+					(next_token == Token.INTERFACE);
+
+				reader.Position = old;
+				putback_char = old_putback;
+
+				if (ok)
+					return res;
+				else {
+					val = "partial";
+					return Token.IDENTIFIER;
+				}
+			}
+
+			return res;
+		}
+
 		private int consume_identifier (int s, bool quoted) 
 		{
 			int pos = 1;
 			int c;
 			
 			id_builder [0] = (char) s;
-					
+
 			while ((c = reader.Read ()) != -1) {
 				if (is_identifier_part_character ((char) c)){
 					if (pos == max_id_size){
@@ -1703,9 +1735,9 @@ namespace Mono.CSharp
 			// Optimization: avoids doing the keyword lookup
 			// on uppercase letters and _
 			//
-			if (s >= 'a' || s == '_'){
+			if (!quoted && (s >= 'a' || s == '_')){
 				int keyword = GetKeyword (id_builder, pos);
-				if (keyword != -1 && !quoted)
+				if (keyword != -1)
 					return keyword;
 			}
 
@@ -1806,7 +1838,7 @@ namespace Mono.CSharp
 				
 				if (is_identifier_start_character ((char)c)){
 					tokens_seen = true;
-					return consume_identifier (c, false);
+					return consume_identifier (c);
 				}
 
 			is_punct_label:

@@ -102,6 +102,9 @@ namespace Mono.CSharp {
 		// Holds the iterators
 		ArrayList iterators;
 
+		// Holds the parts of a partial class;
+		ArrayList parts;
+
 		// The emit context for toplevel objects.
 		EmitContext ec;
 		
@@ -481,6 +484,19 @@ namespace Mono.CSharp {
 			iterators.Add (i);
 		}
 
+		public void AddType (TypeContainer tc)
+		{
+			types.Add (tc);
+		}
+
+		public void AddPart (ClassPart part)
+		{
+			if (parts == null)
+				parts = new ArrayList ();
+
+			parts.Add (part);
+		}
+
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
 			if (a.Type == TypeManager.default_member_type) {
@@ -607,6 +623,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public ArrayList Parts {
+			get {
+				return parts;
+			}
+		}
+
 		public virtual TypeAttributes TypeAttr {
 			get {
 				return Modifiers.TypeAttr (ModFlags, this);
@@ -694,13 +716,118 @@ namespace Mono.CSharp {
 		}
 
 		/// <remarks>
-		///  The pending methods that need to be implemented (interfaces or abstract methods)
+		///  The pending methods that need to be implemented
+		//   (interfaces or abstract methods)
 		/// </remarks>
 		public PendingImplementation Pending;
 
 		public abstract void Register ();
 
 		public abstract PendingImplementation GetPendingImplementations ();
+
+		TypeExpr[] GetPartialBases (out TypeExpr parent, out bool error)
+		{
+			ArrayList ifaces = new ArrayList ();
+
+			parent = null;
+			Location parent_loc = Location.Null;
+
+			foreach (ClassPart part in parts) {
+				TypeExpr new_parent;
+				TypeExpr[] new_ifaces;
+
+				new_ifaces = part.GetClassBases (out new_parent, out error);
+				if (error)
+					return null;
+
+				if ((parent != null) && (new_parent != null) &&
+				    !parent.Equals (new_parent)) {
+					Report.Error (263, part.Location,
+						      "Partial declarations of `{0}' must " +
+						      "not specify different base classes",
+						      Name);
+
+					if (!Location.IsNull (parent_loc))
+						Report.LocationOfPreviousError (parent_loc);
+
+					error = true;
+					return null;
+				}
+
+				if ((parent == null) && (new_parent != null)) {
+					parent = new_parent;
+					parent_loc = part.Location;
+				}
+
+				if (new_ifaces == null)
+					continue;
+
+				foreach (TypeExpr iface in new_ifaces) {
+					bool found = false;
+					foreach (TypeExpr old_iface in ifaces) {
+						if (old_iface.Equals (iface)) {
+							found = true;
+							break;
+						}
+					}
+
+					if (!found)
+						ifaces.Add (iface);
+				}
+			}
+
+			error = false;
+
+			TypeExpr[] retval = new TypeExpr [ifaces.Count];
+			ifaces.CopyTo (retval, 0);
+			return retval;
+		}
+
+		TypeExpr[] GetNormalBases (out TypeExpr parent, out bool error)
+		{
+			parent = null;
+
+			int count = Bases.Count;
+			int start, i, j;
+
+			if (Kind == Kind.Class){
+				TypeExpr name = ResolveTypeExpr (
+					(Expression) Bases [0], false, Location);
+
+				if (name == null){
+					error = true;
+					return null;
+				}
+
+				if (name.IsClass){
+					parent = name;
+					start = 1;
+				} else {
+					start = 0;
+				}
+			} else {
+				start = 0;
+			}
+
+			Report.Debug (64, "GET NORMAL BASES", this, Name, Kind,
+				      Bases, count, start, count-start);
+
+			TypeExpr [] ifaces = new TypeExpr [count-start];
+			
+			for (i = start, j = 0; i < count; i++, j++){
+				Expression name = (Expression) Bases [i];
+				TypeExpr resolved = ResolveTypeExpr (name, false, Location);
+				if (resolved == null) {
+					error = true;
+					return null;
+				}
+				
+				ifaces [j] = resolved;
+			}
+
+			error = false;
+			return ifaces;
+		}
 
 		/// <summary>
 		///   This function computes the Base class and also the
@@ -715,7 +842,6 @@ namespace Mono.CSharp {
 		TypeExpr [] GetClassBases (out TypeExpr parent, out bool error)
 		{
 			ArrayList bases = Bases;
-			int count;
 			int start, j, i;
 
 			error = false;
@@ -725,7 +851,12 @@ namespace Mono.CSharp {
 			else
 				parent = null;
 
-			if (bases == null){
+			TypeExpr[] ifaces;
+			TypeExpr new_parent;
+
+			if (parts != null)
+				ifaces = GetPartialBases (out new_parent, out error);
+			else if (Bases == null){
 				if (Kind == Kind.Class){
 					if (RootContext.StdLib)
 						parent = TypeManager.system_object_expr;
@@ -742,37 +873,30 @@ namespace Mono.CSharp {
 				}
 
 				return null;
-			}
+			} else
+				ifaces = GetNormalBases (out new_parent, out error);
+
+			if (error)
+				return null;
 
 			//
 			// Bases should be null if there are no bases at all
 			//
-			count = bases.Count;
-
 			if (Kind == Kind.Class){
-				TypeExpr name = ResolveTypeExpr ((Expression) bases [0], false, Location);
-
-				if (name == null){
-					error = true;
-					return null;
-				}
-
-				if (name.IsClass){
-					parent = name;
-					start = 1;
-				} else {
+				if (new_parent != null)
+					parent = new_parent;
+				else
 					parent = TypeManager.system_object_expr;
-					start = 0;
-				}
-				if (name.IsSealed){
+
+				if (parent.IsSealed){
 					string detail = "";
 					
-					if (name.IsValueType)
+					if (parent.IsValueType)
 						detail = " (a class can not inherit from a struct/enum)";
 					
 					Report.Error (509, "class `"+ Name +
 						      "': Cannot inherit from sealed class `"+
-						      name.Name + "'" + detail);
+						      parent.Name + "'" + detail);
 					error = true;
 					return null;
 				}
@@ -788,68 +912,59 @@ namespace Mono.CSharp {
 				if (!parent.AsAccessible (this, ModFlags))
 					Report.Error (60, Location,
 						      "Inconsistent accessibility: base class `" +
-						      name.Name + "' is less accessible than class `" +
+						      parent.Name + "' is less accessible than class `" +
 						      Name + "'");
-
-			} else {
-				start = 0;
 			}
 
 			if (parent != null)
 				base_class_name = parent.Name;
 
-			TypeExpr [] ifaces = new TypeExpr [count-start];
-			
-			for (i = start, j = 0; i < count; i++, j++){
-				Expression name = (Expression) bases [i];
-				TypeExpr resolved = ResolveTypeExpr (name, false, Location);
-				if (resolved == null)
-					return null;
-				
-				bases [i] = resolved;
+			if (ifaces == null)
+				return null;
 
-				if ((Kind != Kind.Class) && !resolved.IsInterface){
+			int count = ifaces != null ? ifaces.Length : 0;
+
+			for (i = 0; i < count; i++) {
+				TypeExpr iface = (TypeExpr) ifaces [i];
+
+				if ((Kind != Kind.Class) && !iface.IsInterface){
 					string what = Kind == Kind.Struct ?
 						"Struct" : "Interface";
 
 					Report.Error (527, Location,
 						      "In {0} `{1}', type `{2}' is not "+
-						      "an interface", what, Name,
-						      resolved.Name);
+						      "an interface", what, Name, iface.Name);
 					error = true;
 					return null;
 				}
 				
-				if (resolved.IsClass) {
+				if (iface.IsClass) {
 					if (parent != null){
 						Report.Error (527, Location,
 							      "In Class `{0}', `{1}' is not " +
-							      "an interface", Name,
-							      resolved.Name);
+							      "an interface", Name, iface.Name);
 						error = true;
 						return null;
 					}
 				}
 
-				for (int x = 0; x < j; x++) {
-					if (resolved.Equals (ifaces [x])) {
+				for (int x = 0; x < i; x++) {
+					if (iface.Equals (ifaces [x])) {
 						Report.Error (528, Location,
 							      "`{0}' is already listed in " +
-							      "interface list", resolved.Name);
+							      "interface list", iface.Name);
 						error = true;
 						return null;
 					}
 				}
 
 				if ((Kind == Kind.Interface) &&
-				    !resolved.AsAccessible (Parent, ModFlags))
+				    !iface.AsAccessible (Parent, ModFlags))
 					Report.Error (61, Location,
 						      "Inconsistent accessibility: base " +
 						      "interface `{0}' is less accessible " +
-						      "than interface `{1}'", resolved.Name,
+						      "than interface `{1}'", iface.Name,
 						      Name);
-
-				ifaces [j] = resolved;
 			}
 
 			return TypeManager.ExpandInterfaces (ifaces);
@@ -979,6 +1094,13 @@ namespace Mono.CSharp {
 				foreach (Enum en in Enums)
 					if (en.DefineType () == null)
 						return false;
+			}
+
+			if (Parts != null) {
+				foreach (ClassPart part in Parts) {
+					part.TypeBuilder = TypeBuilder;
+					part.base_class_type = base_class_type;
+				}
 			}
 
 			return true;
@@ -1187,7 +1309,7 @@ namespace Mono.CSharp {
 			if (fields != null)
 				DefineMembers (fields, defined_names);
 
-			if (Kind == Kind.Class){
+			if ((Kind == Kind.Class) && !(this is ClassPart)){
 				if (instance_constructors == null){
 					if (default_constructor == null)
 						DefineDefaultConstructor (false);
@@ -1246,9 +1368,22 @@ namespace Mono.CSharp {
 			if (delegates != null)
 				DefineMembers (delegates, defined_names);
 
+			if (parts != null) {
+				foreach (ClassPart part in parts) {
+					if (!part.DefineMembers (this))
+						return false;
+				}
+			}
+
 #if CACHE
-			member_cache = new MemberCache (this);
+			if (!(this is ClassPart))
+				member_cache = new MemberCache (this);
 #endif
+
+			if (parts != null) {
+				foreach (ClassPart part in parts)
+					part.member_cache = member_cache;
+			}
 
 			if (iterators != null) {
 				foreach (Iterator iterator in iterators) {
@@ -1273,6 +1408,13 @@ namespace Mono.CSharp {
 						if (!iface.Define (this))
 							return false;
 					}
+				}
+			}
+
+			if (parts != null) {
+				foreach (ClassPart part in parts) {
+					if (!part.Define (this))
+						return false;
 				}
 			}
 
@@ -1886,7 +2028,7 @@ namespace Mono.CSharp {
 			
 			if (methods != null)
 				foreach (Method m in methods)
-					m.Emit (this);
+					m.Emit (m.ds);
 
 			if (operators != null)
 				foreach (Operator o in operators)
@@ -1924,6 +2066,11 @@ namespace Mono.CSharp {
 				foreach (Enum e in enums) {
 					e.Emit (this);
 				}
+			}
+
+			if (parts != null) {
+				foreach (ClassPart part in parts)
+					part.Emit ();
 			}
 
 			if (Pending != null)
@@ -2011,7 +2158,7 @@ namespace Mono.CSharp {
 			if (Iterators != null)
 				foreach (Iterator i in Iterators)
 					i.CloseType ();
-			
+
 			types = null;
 			properties = null;
 			enums = null;
@@ -2424,14 +2571,126 @@ namespace Mono.CSharp {
 							"not override Object.GetHashCode ()");
 			}
 		}
-		
-		
+	}
+
+	public class PartialContainer : TypeContainer {
+
+		protected readonly Namespace Namespace;
+
+		static PartialContainer Create (NamespaceEntry ns, TypeContainer parent,
+						string name, int mod_flags, Kind kind,
+						Location loc)
+		{
+			PartialContainer pc;
+			DeclSpace ds = (DeclSpace) RootContext.Tree.Decls [name];
+			if (ds != null) {
+				pc = ds as PartialContainer;
+
+				if (pc == null) {
+					Report.Error (
+						260, ds.Location, "Missing partial modifier " +
+						"on declaration of type `{0}'; another " +
+						"partial implementation of this type exists",
+						name);
+
+					Report.LocationOfPreviousError (loc);
+					return null;
+				}
+
+				if (pc.Kind != kind) {
+					Report.Error (
+						261, loc, "Partial declarations of `{0}' " +
+						"must be all classes, all structs or " +
+						"all interfaces", name);
+					return null;
+				}
+
+				if (pc.ModFlags != mod_flags) {
+					Report.Error (
+						262, loc, "Partial declarations of `{0}' " +
+						"have conflicting accessibility modifiers",
+						name);
+					return null;
+				}
+
+				return pc;
+			}
+
+			pc = new PartialContainer (ns, parent, name, mod_flags, kind, loc);
+			RootContext.Tree.RecordDecl (name, pc);
+			parent.AddType (pc);
+			return pc;
+		}
+
+		public static ClassPart CreatePart (NamespaceEntry ns, TypeContainer parent,
+						    string name, int mod, Attributes attrs,
+						    Kind kind, Location loc)
+		{
+			PartialContainer pc = Create (ns, parent, name, mod, kind, loc);
+			if (pc == null) {
+				// An error occured; create a dummy container, but don't
+				// register it.
+				pc = new PartialContainer (ns, parent, name, mod, kind, loc);
+			}
+
+			ClassPart part = new ClassPart (ns, pc, mod, attrs, kind, loc);
+			pc.AddPart (part);
+			return part;
+		}
+
+		protected PartialContainer (NamespaceEntry ns, TypeContainer parent,
+					    string name, int mod_flags, Kind kind, Location l)
+			: base (ns, parent, name, null, kind, l)
+		{
+			this.Namespace = ns.NS;
+			this.ModFlags = mod_flags;
+		}
+
+		public override void Register ()
+		{ }
+
+		public override PendingImplementation GetPendingImplementations ()
+		{
+			return PendingImplementation.GetPendingImplementations (this);
+		}
+
+		public ClassPart AddPart (NamespaceEntry ns, int mod, Attributes attrs,
+					  Location l)
+		{
+			ClassPart part = new ClassPart (ns, this, mod, attrs, Kind, l);
+			AddPart (part);
+			return part;
+		}
+	}
+
+	public class ClassPart : TypeContainer {
+		public readonly PartialContainer PartialContainer;
+		public readonly bool IsPartial;
+
+		public ClassPart (NamespaceEntry ns, PartialContainer parent,
+				  int mod, Attributes attrs, Kind kind, Location l)
+			: base (ns, parent.Parent, parent.Name, attrs, kind, l)
+		{
+			this.PartialContainer = parent;
+			this.IsPartial = true;
+		}
+
+		public override void Register ()
+		{
+		}
+
+		public override PendingImplementation GetPendingImplementations ()
+		{
+			return PartialContainer.Pending;
+		}
 	}
 
 	public abstract class ClassOrStruct : TypeContainer {
 		bool hasExplicitLayout = false;
-		public ClassOrStruct (NamespaceEntry ns, TypeContainer parent, string name,
-				      Attributes attrs, Kind kind, Location l)
+
+		public ClassOrStruct (NamespaceEntry ns, TypeContainer parent,
+				      string name, Attributes attrs, Kind kind,
+				      Location l)
 			: base (ns, parent, name, attrs, kind, l)
 		{
 		}

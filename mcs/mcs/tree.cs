@@ -49,9 +49,22 @@ namespace Mono.CSharp
 		
 		public void RecordDecl (string name, DeclSpace ds)
 		{
-			if (decls.Contains (name)){
-				DeclSpace other = (DeclSpace) decls [name];
-				Report.SymbolRelatedToPreviousError (other.Location, other.GetSignatureForError ());
+			DeclSpace other = (DeclSpace) decls [name];
+			if (other != null){
+				PartialContainer other_pc = other as PartialContainer;
+				if ((ds is TypeContainer) && (other_pc != null)) {
+					Report.Error (
+						260, ds.Location, "Missing partial modifier " +
+						"on declaration of type `{0}'; another " +
+						"partial implementation of this type exists",
+						name);
+
+					Report.LocationOfPreviousError (other.Location);
+					return;
+				}
+
+				Report.SymbolRelatedToPreviousError (
+					other.Location, other.GetSignatureForError ());
 
 				Report.Error (
 					101, ds.Location,
