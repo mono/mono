@@ -2138,7 +2138,9 @@ namespace Mono.CSharp {
 							// String.Concat (string, string, string, string)
 							// if possible.
 							//
-							if (b.oper == Operator.Addition){
+							if (b.oper == Operator.Addition &&
+							    (b.method == TypeManager.string_concat_string_string_string ||
+							     b.method == TypeManager.string_concat_string_string_string_string)){
 								ArrayList bargs = b.Arguments;
 								int count = bargs.Count;
 								
@@ -2508,22 +2510,16 @@ namespace Mono.CSharp {
 			if (left == null || right == null)
 				return null;
 
-			if (left.Type == null)
-				throw new Exception (
-					"Resolve returned non null, but did not set the type! (" +
-					left + ") at Line: " + loc.Row);
-			if (right.Type == null)
-				throw new Exception (
-					"Resolve returned non null, but did not set the type! (" +
-					right + ") at Line: "+ loc.Row);
-
 			eclass = ExprClass.Value;
 
-			if (left is Constant && right is Constant){
+			Constant rc = right as Constant;
+			Constant lc = left as Constant;
+
+			if (rc != null & lc != null){
 				Expression e = ConstantFold.BinaryFold (
-					ec, oper, (Constant) left, (Constant) right, loc);
-				if (e != null)
-					return e;
+					ec, oper, lc, rc, loc);
+					if (e != null)
+						return e;
 			}
 
 			return ResolveOperator (ec);

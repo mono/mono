@@ -1,3 +1,10 @@
+2002-12-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Binary.ResolveOperator): I can only use the
+	Concat (string, string, string) and Concat (string, string,
+	string, string) if the child is actually a concatenation of
+	strings. 
+
 2002-12-04  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-tokenizer.cs: Small fix, because decimal_digits is used in a
