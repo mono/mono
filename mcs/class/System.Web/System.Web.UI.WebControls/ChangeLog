@@ -1,5 +1,13 @@
 2003-11-09 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* BaseDataList.cs:
+	* DataGrid.cs:
+	* DataList.cs:
+	* Repeater.cs: add v2 databinding stuff
+	* XmlDataSource.cs: make it load the xml.
+
+2003-11-09 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* XmlDataSource.cs:
 	* XmlDataSourceView.cs:
 	* XmlHierarchicalDataSourceView.cs:

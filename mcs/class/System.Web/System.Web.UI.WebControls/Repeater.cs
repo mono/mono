@@ -304,7 +304,7 @@ namespace System.Web.UI.WebControls
 
 			IEnumerable ds = null;
 			if (useDataSource) {
-				ds = DataSourceHelper.GetResolvedDataSource (DataSource, DataMember);
+				ds = GetResolvedDataSource ();
 			} else {
 				int itemCount  = (int) ViewState [ITEMCOUNT];
 				if (itemCount != -1)
@@ -411,5 +411,101 @@ namespace System.Web.UI.WebControls
 		{
 			InstantiateItem (item);
 		}
+		
+		#if NET_1_2
+
+			
+			// should be `internal protected' (why, oh WHY did they do that !?!)
+			protected override void OnInit (EventArgs e)
+			{
+				base.OnInit(e);
+				inited = true;
+				if (!Page.IsPostBack)
+					RequiresDataBinding = true;
+			}
+			
+			// should be `internal protected' (why, oh WHY did they do that !?!)
+			protected override void OnLoad (EventArgs e)
+			{
+				IDataSource ds = GetDataSourceObject () as IDataSource;
+				if (ds != null && DataSourceID != "")
+					ds.DataSourceChanged += new EventHandler (OnDataSourceChanged);
+				
+				base.OnLoad(e);
+			}
+			
+			// should be `internal protected' (why, oh WHY did they do that !?!)
+			protected override void OnPreRender (EventArgs e)
+			{
+				EnsureDataBound ();
+				base.OnPreRender (e);
+			}
+				
+			protected void EnsureDataBound ()
+			{
+				if (RequiresDataBinding && DataSourceID != "")
+					DataBind ();
+			}
+			
+			protected virtual object GetDataSourceObject ()
+			{
+				if (DataSourceID != "")
+					return (IDataSource) NamingContainer.FindControl (DataSourceID);
+				
+				return DataSource;
+			}
+			
+			protected virtual IEnumerable GetResolvedDataSource ()
+			{
+				if (DataSource != null && DataSourceID != "")
+					throw new HttpException ();
+				
+				IDataSource ds = this.GetDataSourceObject () as IDataSource;
+				if (ds != null && DataSourceID != "")
+					return ds.GetView (DataMember).Select ();
+				else if (DataSource != null)
+					return DataSourceHelper.GetResolvedDataSource (DataSource, DataMember);
+				else
+					return null; 
+			}
+			
+			protected void OnDataSourceChanged (object sender, EventArgs e)
+			{
+				RequiresDataBinding = true;
+			}
+			
+			public virtual string DataSourceID {
+				get {
+					object o = ViewState ["DataSourceID"];
+					if (o != null)
+						return (string)o;
+					
+					return String.Empty;
+				}
+				set {
+					if (inited)
+						RequiresDataBinding = true;
+					
+					ViewState ["DataSourceID"] = value;
+				}
+			}
+			
+			bool requiresDataBinding;
+			protected bool RequiresDataBinding {
+				get { return requiresDataBinding; }
+				set { requiresDataBinding = value; }
+			}
+			
+			protected bool inited;
+				
+		#else
+			IEnumerable GetResolvedDataSource ()
+			{
+				if (DataSource != null)
+					return DataSourceHelper.GetResolvedDataSource (DataSource, DataMember);
+				else
+					return null; 
+			}
+		#endif
 	}
 }

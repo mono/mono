@@ -725,7 +725,7 @@ namespace System.Web.UI.WebControls
 				}
 			} else {
 				dkeys.Clear ();
-				source = DataSourceHelper.GetResolvedDataSource (DataSource, DataMember);
+				source = GetResolvedDataSource ();
 				if (source is ICollection) {
 					dkeys.Capacity = ((ICollection) source).Count;
 					itemsArray.Capacity = ((ICollection) source).Count;

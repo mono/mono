@@ -14,6 +14,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Xsl;
 using System.ComponentModel;
+using System.IO;
 
 namespace System.Web.UI.WebControls {
 	public class XmlDataSource : HierarchicalDataSourceControl, IDataSource, IListSource {
@@ -37,34 +38,60 @@ namespace System.Web.UI.WebControls {
 				eh (this, e);
 		}
 		
-		[MonoTODO]
+		XmlDataDocument xmlDataDocument;
+		[MonoTODO ("caching stuff")]
 		public XmlDataDocument GetXmlDataDocument ()
 		{
-			throw new NotImplementedException ();
+			if (xmlDataDocument == null) {
+				xmlDataDocument = new XmlDataDocument ();
+				LoadXmlDataDocument (xmlDataDocument);
+			}
+			return xmlDataDocument;
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("XSLT, schema")]
+		void LoadXmlDataDocument (XmlDataDocument document)
+		{
+			if (Transform == "" && TransformFile == "") {
+				if (DataFile != "")
+					document.Load (MapPathSecure (DataFile));
+				else
+					document.LoadXml (Data);
+			} else {
+				throw new NotImplementedException ("XSLT transform not implemented");
+			}
+		}
+
 		public void Save ()
 		{
-			throw new NotImplementedException ();
+			if (!CanBeSaved)
+				throw new InvalidOperationException ();
+			
+			xmlDataDocument.Save (MapPathSecure (DataFile));
+		}
+		
+		bool CanBeSaved {
+			get {
+				return !ReadOnly && Transform == "" && TransformFile == "" && DataFile != "";
+			}
 		}
 		
 		[MonoTODO]
 		protected override void LoadViewState (object savedState)
 		{
-			throw new NotImplementedException ();
+			base.LoadViewState (savedState);
 		}
 		
 		[MonoTODO]
 		protected override object SaveViewState ()
 		{
-			throw new NotImplementedException ();
+			return base.SaveViewState ();
 		}
 		
 		[MonoTODO]
 		protected override void TrackViewState ()
 		{
-			throw new NotImplementedException ();
+			base.TrackViewState ();
 		}
 		
 		protected override HierarchicalDataSourceView GetHierarchicalView (string viewPath)
@@ -131,6 +158,7 @@ namespace System.Web.UI.WebControls {
 			set {
 				if (Data != value) {
 					ViewState ["Data"] = value;
+					xmlDataDocument = null;
 					OnDataSourceChanged(EventArgs.Empty);
 				}
 			}
@@ -144,6 +172,7 @@ namespace System.Web.UI.WebControls {
 			set {
 				if (DataFile != value) {
 					ViewState ["DataFile"] = value;
+					xmlDataDocument = null;
 					OnDataSourceChanged(EventArgs.Empty);
 				}
 			}
@@ -167,6 +196,7 @@ namespace System.Web.UI.WebControls {
 			set {
 				if (Schema != value) {
 					ViewState ["Schema"] = value;
+					xmlDataDocument = null;
 					OnDataSourceChanged(EventArgs.Empty);
 				}
 			}
@@ -180,6 +210,7 @@ namespace System.Web.UI.WebControls {
 			set {
 				if (SchemaFile != value) {
 					ViewState ["SchemaFile"] = value;
+					xmlDataDocument = null;
 					OnDataSourceChanged(EventArgs.Empty);
 				}
 			}
@@ -199,6 +230,7 @@ namespace System.Web.UI.WebControls {
 			set {
 				if (Transform != value) {
 					ViewState ["Transform"] = value;
+					xmlDataDocument = null;
 					OnDataSourceChanged(EventArgs.Empty);
 				}
 			}
@@ -212,6 +244,7 @@ namespace System.Web.UI.WebControls {
 			set {
 				if (TransformFile != value) {
 					ViewState ["TransformFile"] = value;
+					xmlDataDocument = null;
 					OnDataSourceChanged(EventArgs.Empty);
 				}
 			}

@@ -1072,7 +1072,7 @@ namespace System.Web.UI.WebControls
 			} else
 			{
 				dataKeys.Clear();
-				resolvedDS = DataSourceHelper.GetResolvedDataSource(DataSource, DataMember);
+				resolvedDS = GetResolvedDataSource ();
 				if(resolvedDS != null)
 				{
 					collResolvedDS = resolvedDS as ICollection;
