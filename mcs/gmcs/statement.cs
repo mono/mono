@@ -668,7 +668,7 @@ namespace Mono.CSharp {
 		bool referenced;
 		Label label;
 
-		ArrayList vectors;
+		FlowBranching.UsageVector vectors;
 		
 		public LabeledStatement (string label_name, Location l)
 		{
@@ -699,10 +699,9 @@ namespace Mono.CSharp {
 
 		public void AddUsageVector (FlowBranching.UsageVector vector)
 		{
-			if (vectors == null)
-				vectors = new ArrayList ();
-
-			vectors.Add (vector.Clone ());
+			vector = vector.Clone ();
+			vector.Next = vectors;
+			vectors = vector;
 		}
 
 		public override bool Resolve (EmitContext ec)
@@ -886,7 +885,11 @@ namespace Mono.CSharp {
 				Error (157, "Control can not leave the body of the finally block");
 				return false;
 			} else if (ec.CurrentBranching.InTryOrCatch (false))
-				ec.CurrentBranching.AddFinallyVector (ec.CurrentBranching.CurrentUsageVector);
+				ec.CurrentBranching.AddFinallyVector (
+					ec.CurrentBranching.CurrentUsageVector);
+			else if (ec.CurrentBranching.InLoop ())
+				ec.CurrentBranching.AddBreakVector (
+					ec.CurrentBranching.CurrentUsageVector);
 
 			crossing_exc = ec.CurrentBranching.BreakCrossesTryCatchBoundary ();
 
@@ -1181,6 +1184,14 @@ namespace Mono.CSharp {
 			this.loc = start;
 			this_id = id++;
 			statements = new ArrayList ();
+
+			if (parent != null && Implicit) {
+				if (parent.child_variable_names == null)
+					parent.child_variable_names = new Hashtable();
+				// share with parent
+				child_variable_names = parent.child_variable_names;
+			}
+				
 		}
 
 		public Block CreateSwitchBlock (Location start)
@@ -1218,16 +1229,39 @@ namespace Mono.CSharp {
 		///   otherwise.
 		/// </returns>
 		///
-		public bool AddLabel (string name, LabeledStatement target)
+		public bool AddLabel (string name, LabeledStatement target, Location loc)
 		{
 			if (switch_block != null)
-				return switch_block.AddLabel (name, target);
+				return switch_block.AddLabel (name, target, loc);
+
+			Block cur = this;
+			while (cur != null && cur.Implicit) {
+				if (cur.LookupLabel (name) != null) {
+					Report.Error (
+						140, loc, "The label '{0}' is a duplicate",
+						name);
+					return false;
+				}
+
+				cur = cur.Parent;
+			}
+
+			while (cur != null) {
+				if (cur.LookupLabel (name) != null) {
+					Report.Error (
+						158, loc,
+						"The label '{0}' shadows another label " +
+						"by the same name in a containing scope.",
+						name);
+					return false;
+				}
+
+				cur = cur.Parent;
+			}
 
 			if (labels == null)
 				labels = new Hashtable ();
-			if (labels.Contains (name))
-				return false;
-			
+
 			labels.Add (name, target);
 			return true;
 		}
@@ -1305,28 +1339,6 @@ namespace Mono.CSharp {
 		}
 
 		// <summary>
-		//   Marks all variables from block @block and all its children as being
-		//   used in a child block.
-		// </summary>
-		public void AddChildVariableNames (Block block)
-		{
-			if (block.Variables != null) {
-				foreach (string name in block.Variables.Keys)
-					AddChildVariableName (name);
-			}
-
-			if (block.children != null) {
-				foreach (Block child in block.children)
-					AddChildVariableNames (child);
-			}
-
-			if (block.child_variable_names != null) {
-				foreach (string name in block.child_variable_names.Keys)
-					AddChildVariableName (name);
-			}
-		}
-
-		// <summary>
 		//   Checks whether a variable name has already been used in a child block.
 		// </summary>
 		public bool IsVariableNameUsedInChildBlock (string name)
@@ -1400,10 +1412,18 @@ namespace Mono.CSharp {
 					return null;
 				}
 			}
-			
+
 			vi = new LocalInfo (type, name, this, l);
 
 			variables.Add (name, vi);
+
+			// Mark 'name' as "used by a child block" in every surrounding block
+			Block cur = this;
+			while (cur != null && cur.Implicit) 
+				cur = cur.Parent;
+			if (cur != null)
+				for (Block par = cur.Parent; par != null; par = par.Parent)
+					par.AddChildVariableName (name);
 
 			if ((flags & Flags.VariablesInitialized) != 0)
 				throw new Exception ();
