@@ -1,3 +1,8 @@
+2004-04-29  Boris Kirzner <borisk@mainsoft.com>
+
+	* UniqueConstraint.cs : There is no reason to mark constraint's columns as unique, because
+	  each of the columns should not be unique, but only all the constraint's columns together.
+	
 2004-04-28  Boris Kirzner <borisk@mainsoft.com>
 	* DataRow.cs :
 	  - Perfomance fixes: 

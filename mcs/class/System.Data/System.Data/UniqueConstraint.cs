@@ -190,8 +190,8 @@ namespace System.Data {
 		internal void UpdatePrimaryKey ()
 		{
 			_isPrimaryKey = __isPrimaryKey;
-			foreach (DataColumn Col in _dataColumns)
-				Col.SetUnique();
+			//foreach (DataColumn Col in _dataColumns)
+			//	Col.SetUnique();
 			
 		}
 
