@@ -1,3 +1,21 @@
+2004-07-23  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (Kind): New public enum.
+	(TypeContainer): Made this class abstract.
+	(TypeContainer.Kind): New public readonly field.
+	(TypeContainer.CheckDef): New public method; moved here from
+	cs-parser.jay.
+	(TypeContainer.Register): New public abstract method.
+	(TypeContainer.GetPendingImplementations): New public abstract
+	method.
+	(TypeContainer.GetClassBases): Removed the `is_class' and
+	`is_iface' parameters.
+	(TypeContainer.DefineNestedTypes): Formerly known as
+	DoDefineType().
+	(ClassOrStruct): Made this class abstract.
+
+	* tree.cs (RootTypes): New public type.	
+
 2004-07-20  Martin Baulig  <martin@ximian.com>
 
 	* tree.cs (Tree.RecordNamespace): Removed.

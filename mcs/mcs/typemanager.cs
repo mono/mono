@@ -1881,7 +1881,7 @@ public class TypeManager {
 	public static bool CheckStructCycles (TypeContainer tc, Hashtable seen,
 					      Hashtable hash)
 	{
-		if (!(tc is Struct) || IsBuiltinType (tc))
+		if ((tc.Kind != Kind.Struct) || IsBuiltinType (tc))
 			return true;
 
 		//

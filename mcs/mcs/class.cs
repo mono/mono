@@ -39,10 +39,21 @@ using System.Runtime.InteropServices;
 
 namespace Mono.CSharp {
 
+	public enum Kind {
+		Root,
+		Struct,
+		Class,
+		Interface
+	}
+
 	/// <summary>
 	///   This is the base class for structs and classes.  
 	/// </summary>
-	public class TypeContainer : DeclSpace, IMemberContainer {
+	public abstract class TypeContainer : DeclSpace, IMemberContainer {
+
+		// Whether this is a struct, class or interface
+		public readonly Kind Kind;
+
 		// Holds a list of classes and structures
 		ArrayList types;
 
@@ -135,16 +146,58 @@ namespace Mono.CSharp {
 		//
 		public string IndexerName;
 
-		public TypeContainer ():
-			this (null, null, "", null, new Location (-1)) {
-		}
-
-		public TypeContainer (NamespaceEntry ns, TypeContainer parent, string name, Attributes attrs, Location l)
+		public TypeContainer (NamespaceEntry ns, TypeContainer parent, string name,
+				      Attributes attrs, Kind kind, Location l)
 			: base (ns, parent, name, attrs, l)
 		{
+			this.Kind = kind;
+
 			types = new ArrayList ();
 
 			base_class_name = null;
+		}
+
+		// <summary>
+		//   Used to report back to the user the result of a declaration
+		//   in the current declaration space
+		// </summary>
+		public void CheckDef (AdditionResult result, string name, Location loc)
+		{
+			if (result == AdditionResult.Success)
+				return;
+
+			switch (result){
+			case AdditionResult.NameExists:
+				Report.Error (102, loc, "The container `{0}' already " +
+					      "contains a definition for `{1}'",
+					      Name, name);
+				break;
+
+				//
+				// This is handled only for static Constructors, because
+				// in reality we handle these by the semantic analysis later
+				//
+			case AdditionResult.MethodExists:
+				Report.Error (111, loc, "Class `{0}' already defines a " +
+					      "member called '{1}' with the same parameter " +
+					      "types (more than one default constructor)",
+					      Name, name);
+				break;
+
+			case AdditionResult.EnclosingClash:
+				Report.Error (542, loc, "Member names cannot be the same " +
+					      "as their enclosing type");
+				break;
+		
+			case AdditionResult.NotAConstructor:
+				Report.Error (1520, loc, "Class, struct, or interface method " +
+					      "must have a return type");
+				break;
+
+			case AdditionResult.Error:
+				// Error has already been reported.
+				break;
+			}
 		}
 
 		public AdditionResult AddConstant (Const constant)
@@ -645,6 +698,10 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public PendingImplementation Pending;
 
+		public abstract void Register ();
+
+		public abstract PendingImplementation GetPendingImplementations ();
+
 		/// <summary>
 		///   This function computes the Base class and also the
 		///   list of interfaces that the class or struct @c implements.
@@ -655,8 +712,7 @@ namespace Mono.CSharp {
 		///   The @parent argument is set to the parent object or null
 		///   if this is `System.Object'. 
 		/// </summary>
-		TypeExpr [] GetClassBases (bool is_class, bool is_iface,
-					   out TypeExpr parent, out bool error)
+		TypeExpr [] GetClassBases (out TypeExpr parent, out bool error)
 		{
 			ArrayList bases = Bases;
 			int count;
@@ -664,13 +720,13 @@ namespace Mono.CSharp {
 
 			error = false;
 
-			if (is_class || is_iface)
-				parent = null;
-			else
+			if (Kind == Kind.Struct)
 				parent = TypeManager.system_valuetype_expr;
+			else
+				parent = null;
 
 			if (bases == null){
-				if (is_class){
+				if (Kind == Kind.Class){
 					if (RootContext.StdLib)
 						parent = TypeManager.system_object_expr;
 					else if (Name != "System.Object")
@@ -693,7 +749,7 @@ namespace Mono.CSharp {
 			//
 			count = bases.Count;
 
-			if (is_class){
+			if (Kind == Kind.Class){
 				TypeExpr name = ResolveTypeExpr ((Expression) bases [0], false, Location);
 
 				if (name == null){
@@ -752,17 +808,24 @@ namespace Mono.CSharp {
 				
 				bases [i] = resolved;
 
-				if (is_class == false && !resolved.IsInterface){
-					Report.Error (527, "In Struct `" + Name + "', type `"+
-						      name +"' is not an interface");
+				if ((Kind != Kind.Class) && !resolved.IsInterface){
+					string what = Kind == Kind.Struct ?
+						"Struct" : "Interface";
+
+					Report.Error (527, Location,
+						      "In {0} `{1}', type `{2}' is not "+
+						      "an interface", what, Name,
+						      resolved.Name);
 					error = true;
 					return null;
 				}
 				
 				if (resolved.IsClass) {
 					if (parent != null){
-						Report.Error (527, "In Class `" + Name + "', type `"+
-							      name+"' is not an interface");
+						Report.Error (527, Location,
+							      "In Class `{0}', `{1}' is not " +
+							      "an interface", Name,
+							      resolved.Name);
 						error = true;
 						return null;
 					}
@@ -770,18 +833,21 @@ namespace Mono.CSharp {
 
 				for (int x = 0; x < j; x++) {
 					if (resolved.Equals (ifaces [x])) {
-						Report.Error (528, "`" + name + "' is already listed in interface list");
+						Report.Error (528, Location,
+							      "`{0}' is already listed in " +
+							      "interface list", resolved.Name);
 						error = true;
 						return null;
 					}
 				}
 
-				if (is_iface &&
+				if ((Kind == Kind.Interface) &&
 				    !resolved.AsAccessible (Parent, ModFlags))
 					Report.Error (61, Location,
-						      "Inconsistent accessibility: base interface `" +
-						      name + "' is less accessible than interface `" +
-						      Name + "'");
+						      "Inconsistent accessibility: base " +
+						      "interface `{0}' is less accessible " +
+						      "than interface `{1}'", resolved.Name,
+						      Name);
 
 				ifaces [j] = resolved;
 			}
@@ -797,7 +863,6 @@ namespace Mono.CSharp {
 		public override TypeBuilder DefineType ()
 		{
 			TypeExpr parent;
-			bool is_class, is_iface;
 
 			if (TypeBuilder != null)
 				return TypeBuilder;
@@ -813,25 +878,14 @@ namespace Mono.CSharp {
 			
 			InTransit = true;
 
-			if (this is Interface) {
-				is_iface = true;
-				is_class = false;
-			} else {
-				is_iface = false;
-				if (this is Class)
-					is_class = true;
-				else
-					is_class = false;
-			}
-
 			ec = new EmitContext (this, Mono.CSharp.Location.Null, null, null, ModFlags);
 
-			ifaces = GetClassBases (is_class, is_iface, out parent, out error); 
+			ifaces = GetClassBases (out parent, out error); 
 
 			if (error)
 				return null;
 
-			if (!is_class && TypeManager.value_type == null)
+			if ((Kind == Kind.Struct) && TypeManager.value_type == null)
 				throw new Exception ();
 
 			TypeAttributes type_attributes = TypeAttr;
@@ -865,7 +919,7 @@ namespace Mono.CSharp {
 			// be specified.
 			//
 
-			if (!is_class && !is_iface && !have_nonstatic_fields){
+			if ((Kind == Kind.Struct) && !have_nonstatic_fields){
 				TypeBuilder.DefineField ("$PRIVATE$", TypeManager.byte_type,
 							 FieldAttributes.Private);
 			}
@@ -892,52 +946,43 @@ namespace Mono.CSharp {
 			} else if (!(this is Iterator))
 				RootContext.RegisterOrder (this); 
 
-			if (!DoDefineType ()) {
+			if (!DefineNestedTypes ()) {
 				error = true;
 				return null;
-			}
-
-			if (Interfaces != null) {
-				foreach (Interface iface in Interfaces)
-					if (iface.DefineType () == null) {
-						error = true;
-						return null;
-					}
-			}
-			
-			if (Types != null) {
-				foreach (TypeContainer tc in Types)
-					if (tc.DefineType () == null) {
-						error = true;
-						return null;
-					}
-			}
-
-			if (Delegates != null) {
-				foreach (Delegate d in Delegates)
-					if (d.DefineType () == null) {
-						error = true;
-						return null;
-					}
-			}
-
-			if (Enums != null) {
-				foreach (Enum en in Enums)
-					if (en.DefineType () == null) {
-						error = true;
-						return null;
-					}
 			}
 
 			InTransit = false;
 			return TypeBuilder;
 		}
 
-		protected virtual bool DoDefineType ()
+		protected virtual bool DefineNestedTypes ()
 		{
+			if (Interfaces != null) {
+				foreach (Interface iface in Interfaces)
+					if (iface.DefineType () == null)
+						return false;
+			}
+			
+			if (Types != null) {
+				foreach (TypeContainer tc in Types)
+					if (tc.DefineType () == null)
+						return false;
+			}
+
+			if (Delegates != null) {
+				foreach (Delegate d in Delegates)
+					if (d.DefineType () == null)
+						return false;
+			}
+
+			if (Enums != null) {
+				foreach (Enum en in Enums)
+					if (en.DefineType () == null)
+						return false;
+			}
+
 			return true;
 		}
-
 
 		/// <summary>
 		///   Defines the MemberCore objects that are in the `list' Arraylist
@@ -1142,7 +1187,7 @@ namespace Mono.CSharp {
 			if (fields != null)
 				DefineMembers (fields, defined_names);
 
-			if (this is Class){
+			if (Kind == Kind.Class){
 				if (instance_constructors == null){
 					if (default_constructor == null)
 						DefineDefaultConstructor (false);
@@ -1153,7 +1198,7 @@ namespace Mono.CSharp {
 					DefineDefaultConstructor (true);
 			}
 
-			if (this is Struct){
+			if (Kind == Kind.Struct){
 				//
 				// Structs can not have initialized instance
 				// fields
@@ -1166,8 +1211,7 @@ namespace Mono.CSharp {
 					ReportStructInitializedInstanceError ();
 			}
 
-			if (!(this is Interface))
-				Pending = PendingImplementation.GetPendingImplementations (this);
+			Pending = GetPendingImplementations ();
 			
 			//
 			// Constructors are not in the defined_names array
@@ -1224,9 +1268,12 @@ namespace Mono.CSharp {
 		public override bool Define (TypeContainer container)
 		{
 			if (interface_order != null){
-				foreach (Interface iface in interface_order)
-					if ((iface.ModFlags & Modifiers.NEW) == 0)
-						iface.Define (this);
+				foreach (Interface iface in interface_order) {
+					if ((iface.ModFlags & Modifiers.NEW) == 0) {
+						if (!iface.Define (this))
+							return false;
+					}
+				}
 			}
 
 			return true;
@@ -1949,11 +1996,11 @@ namespace Mono.CSharp {
 			
 			if (Types != null){
 				foreach (TypeContainer tc in Types)
-					if (tc is Struct)
+					if (tc.Kind == Kind.Struct)
 						tc.CloseType ();
 
 				foreach (TypeContainer tc in Types)
-					if (!(tc is Struct))
+					if (tc.Kind != Kind.Struct)
 						tc.CloseType ();
 			}
 
@@ -2045,7 +2092,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (this is Struct){
+			if (Kind == Kind.Struct){
 				if ((flags & va) != 0){
 					Modifiers.Error_InvalidModifier (loc, "virtual or abstract");
 					ok = false;
@@ -2381,11 +2428,17 @@ namespace Mono.CSharp {
 		
 	}
 
-	public class ClassOrStruct : TypeContainer {
+	public abstract class ClassOrStruct : TypeContainer {
 		bool hasExplicitLayout = false;
-		public ClassOrStruct (NamespaceEntry ns, TypeContainer parent, string name, Attributes attrs, Location l)
-			: base (ns, parent, name, attrs, l)
+		public ClassOrStruct (NamespaceEntry ns, TypeContainer parent, string name,
+				      Attributes attrs, Kind kind, Location l)
+			: base (ns, parent, name, attrs, kind, l)
 		{
+		}
+
+		public override PendingImplementation GetPendingImplementations ()
+		{
+			return PendingImplementation.GetPendingImplementations (this);
 		}
 
 		protected override void VerifyMembers (EmitContext ec) 
@@ -2440,13 +2493,12 @@ namespace Mono.CSharp {
 			Modifiers.SEALED |
 			Modifiers.UNSAFE;
 
-
 		// Information in the case we are an attribute type
 		AttributeUsageAttribute attribute_usage;
 
 		public Class (NamespaceEntry ns, TypeContainer parent, string name, int mod,
 			      Attributes attrs, Location l)
-			: base (ns, parent, name, attrs, l)
+			: base (ns, parent, name, attrs, Kind.Class, l)
 		{
 			int accmods;
 
@@ -2479,6 +2531,11 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override void Register ()
+		{
+			CheckDef (Parent.AddClass (this), Name, Location);
+		}
+
 		//
 		// FIXME: How do we deal with the user specifying a different
 		// layout?
@@ -2502,8 +2559,9 @@ namespace Mono.CSharp {
 			Modifiers.UNSAFE    |
 			Modifiers.PRIVATE;
 
-		public Struct (NamespaceEntry ns, TypeContainer parent, string name, int mod, Attributes attrs, Location l)
-			: base (ns, parent, name, attrs, l)
+		public Struct (NamespaceEntry ns, TypeContainer parent, string name,
+			       int mod, Attributes attrs, Location l)
+			: base (ns, parent, name, attrs, Kind.Struct, l)
 		{
 			int accmods;
 			
@@ -2523,6 +2581,10 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override void Register ()
+		{
+			CheckDef (Parent.AddStruct (this), Name, Location);
+		}
 
 		//
 		// FIXME: Allow the user to specify a different set of attributes
@@ -2556,7 +2618,7 @@ namespace Mono.CSharp {
 
 		public Interface (NamespaceEntry ns, TypeContainer parent, string name, int mod,
 				  Attributes attrs, Location l)
-			: base (ns, parent, name, attrs, l)
+			: base (ns, parent, name, attrs, Kind.Interface, l)
 		{
 			int accmods;
 
@@ -2566,6 +2628,16 @@ namespace Mono.CSharp {
 				accmods = Modifiers.PRIVATE;
 
 			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, l);
+		}
+
+		public override void Register ()
+		{
+			CheckDef (Parent.AddInterface (this), Name, Location);
+		}
+
+		public override PendingImplementation GetPendingImplementations ()
+		{
+			return null;
 		}
 
 		public override AttributeTargets AttributeTargets {
@@ -3457,7 +3529,7 @@ namespace Mono.CSharp {
 			if ((ModFlags & Modifiers.STATIC) != 0)
 				return true;
 			
-			if (container is Struct && ParameterTypes.Length == 0) {
+			if (container.Kind == Kind.Struct && ParameterTypes.Length == 0) {
 				Report.Error (568, Location, 
 					"Structs can not contain explicit parameterless " +
 					"constructors");
@@ -3514,7 +3586,8 @@ namespace Mono.CSharp {
 				return false;
 
 			ConstructorBuilder = container.TypeBuilder.DefineConstructor (
-				ca, GetCallingConvention (container is Class), ParameterTypes);
+				ca, GetCallingConvention (container.Kind == Kind.Class),
+				ParameterTypes);
 
 			if ((ModFlags & Modifiers.UNSAFE) != 0)
 				ConstructorBuilder.InitLocals = false;
@@ -3555,7 +3628,7 @@ namespace Mono.CSharp {
 			}
 
 			if ((ModFlags & Modifiers.STATIC) == 0){
-				if (container is Class && Initializer == null)
+				if (container.Kind == Kind.Class && Initializer == null)
 					Initializer = new ConstructorBaseInitializer (
 						null, Parameters.EmptyReadOnlyParameters, Location);
 
@@ -3587,7 +3660,7 @@ namespace Mono.CSharp {
 			//
 			// Classes can have base initializers and instance field initializers.
 			//
-			if (container is Class){
+			if (container.Kind == Kind.Class){
 				if ((ModFlags & Modifiers.STATIC) == 0){
 
 					//
@@ -3611,7 +3684,8 @@ namespace Mono.CSharp {
 
 			// If this is a non-static `struct' constructor and doesn't have any
 			// initializer, it must initialize all of the struct's fields.
-			if ((container is Struct) && ((ModFlags & Modifiers.STATIC) == 0) && (Initializer == null))
+			if ((container.Kind == Kind.Struct) &&
+			    ((ModFlags & Modifiers.STATIC) == 0) && (Initializer == null))
 				Block.AddThisVariable (container, Location);
 
 			ec.EmitTopBlock (block, ParameterInfo, Location);
@@ -4143,9 +4217,9 @@ namespace Mono.CSharp {
 
 		protected virtual bool CheckBase (TypeContainer container)
 		{
-			if ((container is Struct) || (RootContext.WarningLevel > 3)){
+			if ((container.Kind == Kind.Struct) || (RootContext.WarningLevel > 3)){
 				if ((ModFlags & Modifiers.PROTECTED) != 0 && (container.ModFlags & Modifiers.SEALED) != 0){
-					if (container is Struct){
+					if (container.Kind == Kind.Struct){
 						Report.Error (666, Location, "Protected member in struct declaration");
 						return false;
 					} else
@@ -4709,7 +4783,7 @@ namespace Mono.CSharp {
 
 			FieldAttributes fa = Modifiers.FieldAttr (ModFlags);
 
-			if (container is Struct && 
+			if (container.Kind == Kind.Struct && 
 			    ((fa & FieldAttributes.Static) == 0) &&
 			    MemberType == container.TypeBuilder &&
 			    !TypeManager.IsBuiltinType (MemberType)){

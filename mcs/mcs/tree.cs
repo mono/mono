@@ -40,7 +40,7 @@ namespace Mono.CSharp
 		
 		public Tree ()
 		{
-			root_types = new TypeContainer ();
+			root_types = new RootTypes ();
 
 			decls = new Hashtable ();
 		}
@@ -92,6 +92,23 @@ namespace Mono.CSharp
 			get {
 				return decls;
 			}
+		}
+	}
+
+	public class RootTypes : TypeContainer
+	{
+		public RootTypes ()
+			: base (null, null, "", null, Kind.Root, new Location (-1))
+		{ }
+
+		public override void Register ()
+		{
+			throw new InvalidOperationException ();
+		}
+
+		public override PendingImplementation GetPendingImplementations ()
+		{
+			throw new InvalidOperationException ();
 		}
 	}
 }

@@ -405,7 +405,7 @@ namespace Mono.CSharp {
 		//
 		// Returns the new block for the method, or null on failure
 		//
-		protected override bool DoDefineType ()
+		protected override bool DefineNestedTypes ()
 		{
 			Define_Fields ();
 			Define_Constructor ();
@@ -419,7 +419,7 @@ namespace Mono.CSharp {
 
 			Create_Block ();
 
-			return true;
+			return base.DefineNestedTypes ();
 		}
 
 
