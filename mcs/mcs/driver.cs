@@ -284,6 +284,8 @@ namespace CSC
 			context.ResolveInterfaceBases ();
 			context.ResolveClassBases ();
 
+			context.CloseTypes ();
+			
 			context.CodeGen.Save (output_file);
 		}
 

@@ -1,7 +1,7 @@
 //
 // rootcontext.cs: keeps track of our tree representation, and assemblies loaded.
 //
-// Author: Miguel de Icaza (miguel@gnu.org)
+// Author: Miguel de Icaza (miguel@ximian.com)
 //
 // Licensed under the terms of the GNU GPL
 //
@@ -32,11 +32,14 @@ namespace CIR {
 		CilCodeGen cg;
 
 		ModuleBuilder mb;
+
+		Report report;
 		
 		public RootContext ()
 		{
 			tree = new Tree ();
 			type_manager = new TypeManager ();
+			report = new Report ();
 		}
 
 		public TypeManager TypeManager {
@@ -80,14 +83,25 @@ namespace CIR {
 			
 			foreach (string name in iface.Bases){
 				Type t = type_manager.LookupType (name);
-
+				Interface parent;
+				
 				if (t != null){
 					tbases [i++] = t;
 					continue;
 				}
-				n = source_ifaces [name];
-				if (n == null){
+				parent = (Interface) source_ifaces [name];
+				if (parent == null){
+					report.Error (246, "Can not find type `"+name+"'");
+					return null;
 				}
+				t = CreateInterface (parent);
+				if (t == null){
+					report.Error (529,
+						      "Inherited interface `"+name+"' in `"+
+						      iface.Name+"' is recursive");
+					return null;
+				}
+				tbases [i++] = t;
 			}
 
 			return tbases;
@@ -99,16 +113,18 @@ namespace CIR {
 		// TODO:
 		//   Resolve recursively dependencies.
 		//
-		bool CreateInterface (Interface iface)
+		TypeBuilder CreateInterface (Interface iface)
 		{
 			TypeBuilder tb;
 
 			if (iface.InTransit)
-				return false;
+				return null;
 			iface.InTransit = true;
 
 			string name = iface.Name;
 			Type [] ifaces = GetInterfaces (iface);
+			if (ifaces == null)
+				return null;
 			
 			tb = mb.DefineType (name,
 					    TypeAttributes.Interface |
@@ -123,17 +139,17 @@ namespace CIR {
 			type_manager.AddUserType (name, tb);
 
 			iface.InTransit = false;
-			return true;
+			return tb;
 		}
 		
 		public void ResolveInterfaceBases ()
 		{
-			ArrayList ifaces = tree.Interfaces;
+			Hashtable ifaces = tree.Interfaces;
 
 			foreach (Interface iface in ifaces){
 				string name = iface.Name;
 
-				DefineInterface (iface);
+				CreateInterface (iface);
 			}
 		}
 
@@ -153,7 +169,9 @@ namespace CIR {
 		// </remarks>
 		public void CloseTypes ()
 		{
-			
+			foreach (TypeBuilder t in type_manager.UserTypes){
+				t.CreateType ();
+			}
 		}
 	}
 }

@@ -21,6 +21,7 @@ COMPILER_SOURCES = \
 	namespace.cs			\
 	parameter.cs			\
 	parameterCollection.cs		\
+	report.cs			\
 	rootcontext.cs			\
 	statement.cs			\
 	statementCollection.cs		\

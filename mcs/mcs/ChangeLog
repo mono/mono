@@ -1,3 +1,14 @@
+2001-08-03  Miguel de Icaza  <miguel@ximian.com>
+
+	* rootcontext.cs (CloseTypes): Routine to flush types at the end.
+	(CreateInterface): Track types.
+	(GetInterfaces): Returns an array of Types from the list of
+	defined interfaces.
+
+	* typemanager.c (AddUserType): Mechanism to track user types (puts
+	the type on the global type hash, and allows us to close it at the
+	end). 
+	
 2001-08-02  Miguel de Icaza  <miguel@ximian.com>
 
 	* tree.cs: Removed RecordType, added RecordClass, RecordStruct and
