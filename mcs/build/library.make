@@ -52,8 +52,8 @@ else
 test_sourcefile = $(test_lib).sources
 endif
 test_pdb = $(test_lib:.dll=.pdb)
-test_response = $(depsdir)/$(PROFILE)_$(test_lib).response
-test_makefrag = $(depsdir)/$(PROFILE)_$(test_lib).makefrag
+test_response = $(depsdir)/$(test_lib).response
+test_makefrag = $(depsdir)/$(test_lib).makefrag
 test_flags = /r:$(test_against) $(test_nunit_ref) $(TEST_MCS_FLAGS)
 library_CLEAN_FILES += $(LIBRARY:.dll=_test*.dll) $(LIBRARY:.dll=_test*.pdb) $(test_response) $(test_makefrag)
 

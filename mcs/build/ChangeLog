@@ -5,6 +5,7 @@
 	(dist-local): Don't copy files beginning with '../'.
 	(test_sourcefile, btest_sourcefile): Define in terms of
 	$(test_lib) or $(btest_lib) only if they're overriden.
+	(test_response, test_makefrag): Remove redundant $(PROFILE) in name.
 	* rules.make (dist-default): Handle any of Makefile, makefile, or
 	GNUmakefile being present.
 	* profiles/net_2_0.make (TEST_RUNTIME): Don't define.
