@@ -1,3 +1,8 @@
+2004-01-04  Nick Drochak <ndrochak@gol.com>
+
+	* Assembly.cs: Removed unused variable in catch block.Eliminates a build
+	warning.
+
 2003-12-29 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* MethodBase.cs: Internal method to get param count (this

@@ -376,7 +376,7 @@ namespace System.Reflection {
 			try {
 				return AppDomain.CurrentDomain.Load (partialName, securityEvidence);
 			}
-			catch (Exception ex) {
+			catch (Exception) {
 				// According to MSDN, this should return null instead of
 				// throwing an exception
 				return null;
