@@ -15,7 +15,7 @@ namespace System.Runtime.InteropServices
 
 		public ErrorWrapper (Exception e)
 		{
-			Marshal.GetHRForException (e);
+			this.errorCode = Marshal.GetHRForException (e);
 		}
 
 		public ErrorWrapper (int errorCode)

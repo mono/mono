@@ -1,3 +1,9 @@
+2003-11-26  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* DispatchWrapper.cs: Added and implemented
+	* ErrorWrapper.cs: Fixed bug
+	* Marshal.cs: Added missing members
+
 2003-11-18  Jackson Harper <jackson@ximian.com>
 
 	* CurrencyWrapper.cs: Fix file name.

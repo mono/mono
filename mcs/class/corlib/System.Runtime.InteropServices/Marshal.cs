@@ -1,4 +1,4 @@
-// System.Runtime.InteropServices.Marshal
+// System.Runtime.InteropServices.Marshal.cs
 //
 // Sean MacIsaac (macisaac@ximian.com)
 // Paolo Molaro (lupus@ximian.com)
@@ -511,6 +511,19 @@ namespace System.Runtime.InteropServices
 
 		[MonoTODO]
 		public static void WriteInt16([In,Out] object ptr, int ofs, short val) {
+			throw new NotImplementedException ();
+		}
+
+		public static void WriteInt16 (IntPtr ptr, char val) {
+			WriteInt16 (ptr, 0, val);
+		}
+
+		[MonoTODO]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static void WriteInt16 (IntPtr ptr, int ofs, char val);
+
+		[MonoTODO]
+		public static void WriteInt16([In,Out] object ptr, int ofs, char val) {
 			throw new NotImplementedException ();
 		}
 
