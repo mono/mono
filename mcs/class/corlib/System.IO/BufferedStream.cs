@@ -207,7 +207,7 @@ namespace System.IO {
 			}
 
 			if (count <= m_buffer_read_ahead - m_buffer_pos) {
-				Array.Copy(m_buffer, m_buffer_pos, array, offset, count);
+				Buffer.BlockCopyInternal (m_buffer, m_buffer_pos, array, offset, count);
 
 				m_buffer_pos += count;
 				if (m_buffer_pos == m_buffer_read_ahead) {
@@ -219,7 +219,7 @@ namespace System.IO {
 			}
 
 			int ret = m_buffer_read_ahead - m_buffer_pos;
-			Array.Copy(m_buffer, m_buffer_pos, array, offset, ret);
+			Buffer.BlockCopyInternal (m_buffer, m_buffer_pos, array, offset, ret);
 			m_buffer_pos = 0;
 			m_buffer_read_ahead = 0;
 			offset += ret;
@@ -231,11 +231,11 @@ namespace System.IO {
 				m_buffer_read_ahead = m_stream.Read(m_buffer, 0, m_buffer.Length);
 				
 				if (count < m_buffer_read_ahead) {
-					Array.Copy(m_buffer, 0, array, offset, count);
+					Buffer.BlockCopyInternal (m_buffer, 0, array, offset, count);
 					m_buffer_pos = count;
 					ret += count;
 				} else {
-					Array.Copy(m_buffer, 0, array, offset, m_buffer_read_ahead);
+					Buffer.BlockCopyInternal (m_buffer, 0, array, offset, m_buffer_read_ahead);
 					ret += m_buffer_read_ahead;
 					m_buffer_read_ahead = 0;
 				}
@@ -272,7 +272,7 @@ namespace System.IO {
 				m_stream.Write (array, offset, count);
 			} 
 			else {
-				Array.Copy (array, offset, m_buffer, m_buffer_pos, count);
+				Buffer.BlockCopyInternal  (array, offset, m_buffer, m_buffer_pos, count);
 				m_buffer_pos += count;
 			}
 		}
