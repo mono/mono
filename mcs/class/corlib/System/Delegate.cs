@@ -161,9 +161,6 @@ namespace System {
 			if ( o == null )
 				return false;
 			
-			if ( o.GetType() != this.GetType() )
-				return false;
-
 			Delegate d = (Delegate) o;
 			if ((d.target_type == target_type) &&
 			    (d.m_target == m_target) &&
