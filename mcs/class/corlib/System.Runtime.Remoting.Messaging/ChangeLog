@@ -1,3 +1,7 @@
+2003-07-09  Jean-Marc André <jean-marc.andre@polymtl.ca>
+
+	* ReturnMessage.cs: Bug fix. GetOutArgName didn't return the right Name for the given out parameter.
+
 2003-05-13  Lluis Sanchez Gual <lluis@ideary.com>
 	
 	* MethodCall.cs: ResolveMethod now uses the type of the target object (identified

@@ -27,6 +27,7 @@ namespace System.Runtime.Remoting.Messaging {
 		string _typeName;
 		MethodReturnDictionary _properties;
 		Identity _targetIdentity;
+		ArgInfo _inArgInfo;
 
 		public ReturnMessage (object returnValue, object [] outArgs,
 			       int outArgCount, LogicalCallContext callCtx,
@@ -160,7 +161,8 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public string GetOutArgName (int arg_num)
 		{
-			return _methodBase.GetParameters()[arg_num].Name;
+			if (_inArgInfo == null) _inArgInfo = new ArgInfo (MethodBase, ArgInfoType.Out);
+			return _inArgInfo.GetInOutArgName(arg_num);
 		}
 
 		Identity IInternalMessage.TargetIdentity
