@@ -1,4 +1,9 @@
 
+Mon May 26 20:21:52 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: updates for new mono_class_vtable() not calling
+	the type constructor anymore.
+
 Mon May 26 12:10:35 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* object.h, object.c: separate vtable creation from type
