@@ -1,4 +1,10 @@
 
+2003-04-05	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* MobileCapabilities.cs    : Completed all properties.
+	                             Thanks to the tool that I made.
+	* ErrorHandlerModule.cs    : Initial implementation.
+
 2003-03-08	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* MobileCapabilities.cs    : Stub-ing methods / properties.
