@@ -1,5 +1,9 @@
 2004-05-04  Lluis Sanchez Gual  <lluis@ximian.com>
 
+	* XmlSchemaDataImporter.cs: Added little type check.
+
+2004-05-04  Lluis Sanchez Gual  <lluis@ximian.com>
+
 	* DataSet.cs: Implemented support for runtime serialization. Fixed support
 	  for xml serialization.
 	* XmlDiffLoader.cs: Skip diffgram element when it is empty.

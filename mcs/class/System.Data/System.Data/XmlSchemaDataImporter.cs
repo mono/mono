@@ -333,9 +333,10 @@ namespace System.Data
 				if (el.ElementType is XmlSchemaComplexType && el.RefName != el.QualifiedName)
 					ProcessDataTableElement (el);
 			}
-			else
+			else if (p is XmlSchemaGroupBase) {
 				foreach (XmlSchemaParticle pc in ((XmlSchemaGroupBase) p).Items)
 					HandleDataSetContentTypeParticle (pc);
+			}
 		}
 
 		private void ProcessDataTableElement (XmlSchemaElement el)
