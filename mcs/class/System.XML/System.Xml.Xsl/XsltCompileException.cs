@@ -11,6 +11,7 @@
 
 using System;
 using System.Runtime.Serialization;
+using System.Xml.XPath;
 
 namespace System.Xml.Xsl
 {
@@ -35,6 +36,10 @@ namespace System.Xml.Xsl
 		{
 		}
 
+		internal XsltCompileException (string message, Exception innerException, XPathNavigator nav)
+			: base (message, innerException, nav)
+		{
+		}
 		#endregion
 
 		#region Properties

@@ -11,6 +11,7 @@
 
 using System;
 using System.Runtime.Serialization;
+using System.Xml.XPath;
 
 namespace System.Xml.Xsl
 {
@@ -47,6 +48,15 @@ namespace System.Xml.Xsl
 			this.lineNumber = lineNumber;
 			this.linePosition = linePosition;
 			this.sourceUri = sourceUri;
+		}
+
+		internal XsltException (string message, Exception innerException, XPathNavigator nav)
+			: base (message, innerException)
+		{
+			IXmlLineInfo li = nav as IXmlLineInfo;
+			this.lineNumber = li != null ? li.LineNumber : 0;
+			this.linePosition = li != null ? li.LinePosition : 0;
+			this.sourceUri = nav != null ? nav.BaseURI : String.Empty;
 		}
 
 		#endregion

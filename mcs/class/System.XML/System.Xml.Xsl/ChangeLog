@@ -1,3 +1,7 @@
+2003-12-07  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XsltException.cs, XsltCompileException.cs : Added locatable .ctor().
+
 2003-12-05  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* Multiplexer.cs : set_XmlResolver is marked as obsolete.
