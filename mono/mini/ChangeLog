@@ -1,4 +1,9 @@
 
+Fri Jun 18 18:24:28 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini.h, mini-ppc.c: handle varargs methods with a special
+	case until bug #59509 is fixed (shows up in #60332).
+
 Tue Jun 15 16:36:51 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: make sure the needed wrappers are compiled, too, with
