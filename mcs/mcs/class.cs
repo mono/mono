@@ -2359,7 +2359,8 @@ namespace Mono.CSharp {
 			}
 			
 			if (!found){
-				Report.Error (540, "`" + full + "': containing class does not implement interface `" + interface_type.FullName + "'");
+				Report.Error (540, loc, "`{0}': containing class does not implement interface `{1}'",
+					      full, interface_type.FullName);
 				return false;
 			}
 
