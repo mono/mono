@@ -3012,6 +3012,7 @@ statement_expression
 	| pre_decrement_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1, lexer.Location); }
 	| error {
 		Report.Error (1002, lexer.Location, "Expecting `;'");
+		$$ = null;
 	  }
 	;
 
