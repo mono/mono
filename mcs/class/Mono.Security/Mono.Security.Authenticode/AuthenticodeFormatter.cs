@@ -186,7 +186,14 @@ namespace Mono.Security.Authenticode {
 
 			pkcs7.SignerInfo.Certificate = certs [0];
 			pkcs7.SignerInfo.Key = rsa;
-			pkcs7.SignerInfo.AuthenticatedAttributes.Add (Attribute (spcSpOpusInfo, Opus (description, url.ToString ())));
+
+			ASN1 opus = null;
+			if (url == null)
+				Attribute (spcSpOpusInfo, Opus (description, null));
+			else
+				Attribute (spcSpOpusInfo, Opus (description, url.ToString ()));
+			pkcs7.SignerInfo.AuthenticatedAttributes.Add (opus);
+
 			pkcs7.SignerInfo.AuthenticatedAttributes.Add (Attribute (contentType, ASN1Convert.FromOid (spcIndirectDataContext)));
 			pkcs7.SignerInfo.AuthenticatedAttributes.Add (Attribute (spcStatementType, new ASN1 (0x30, ASN1Convert.FromOid (commercialCodeSigning).GetBytes ())));
 

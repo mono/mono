@@ -1,3 +1,8 @@
+2004-10-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthenticodeFormatter.cs: Fix NullReferenceException from signcode
+	tool when no URL is specified on the command line.
+
 2004-09-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthenticodeBase.cs: Merge optimizations from HEAD.
