@@ -1,3 +1,30 @@
+2001-11-10  Sean MacIsaac  <macisaac@ximian.com>
+
+	* loader.h: Removed type class from MonoDefaults, added monotype
+
+	* loader.c: Loaded MonoType, removed loading of Type
+
+	* icall.c (my_mono_new_object): Now returns a System.MonoType,
+	and fills in System.Type._impl with a RuntimeTypeHandle rather
+	than the actual MonoClass *
+
+	(ves_icall_type_from_handle): change from type_class to
+	monotype_class
+
+	(ves_icall_System_Runtime_InteropServices_Marshal_ReadIntPtr):
+	implemented
+
+	(ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAuto):
+	implemented
+
+	(ves_icall_System_Reflection_Assembly_LoadFrom): implemented
+
+	(ves_icall_System_Reflection_Assembly_GetType): implemented
+
+	(ves_icall_System_MonoType_assQualifiedName): implemented
+
+	(ves_icall_System_PAL_OpSys_GetCurrentDirecotry): implemented
+
 2001-11-09  Miguel de Icaza  <miguel@ximian.com>
 
 	* assembly.c (mono_assembly_open): Implement a cache for the
