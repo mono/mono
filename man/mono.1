@@ -283,6 +283,14 @@ running and exit when mono is interrupted (Ctrl-C) and print some
 additional messages on error conditions. It may not exit cleanly. Use at
 your own risk.
 .TP
+.I "MONO_TRACE"
+If set, enables the System.Diagnostics.DefaultTraceListener, which will 
+print the output of the System.Diagnostics Trace and Debug classes.  
+It can be set to a filename, and to Console.Out or Console.Error to display
+output to standard output or standard error, respectively.
+See the System.Diagnostics.DefaultTraceListener documentation for more
+information.
+.TP
 .I "MONO_DISABLE_AIO"
 If set, tells mono NOT to attempt using native asynchronous I/O services. In
 that case, the threadpool is used for asynchronous I/O on files and sockets.
