@@ -1,3 +1,7 @@
+2002-10-28  Jackson Harper <jackson@latitudegeo.com>
+
+	* AllTests.cs EvidenceTest.cs: Added test for Evidence class
+
 2002-02-10  Nick Drochak  <ndrochak@gol.com>
 
 	* AllTests.cs: Add new file.

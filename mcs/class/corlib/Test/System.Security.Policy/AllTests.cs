@@ -18,8 +18,9 @@ namespace MonoTests.System.Security.Policy {
                 { 
                         get 
                         {
-                                TestSuite suite =  new TestSuite();
+                                TestSuite suite = new TestSuite();
                                 suite.AddTest(CodeGroupTest.Suite);
+				suite.AddTest(EvidenceTest.Suite);
                                 return suite;
                         }
                 }
