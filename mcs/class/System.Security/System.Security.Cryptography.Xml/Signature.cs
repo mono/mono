@@ -27,20 +27,27 @@ namespace System.Security.Cryptography.Xml {
 		private KeyInfo key;
 		private string id;
 		private byte[] signature;
+		private XmlElement element;
 
-		public Signature() 
+		public Signature () 
 		{
 			list = new ArrayList ();
 		}
 
 		public string Id {
 			get { return id; }
-			set { id = value; }
+			set {
+				element = null;
+				id = value;
+			}
 		}
 
 		public KeyInfo KeyInfo {
 			get { return key; }
-			set { key = value; }
+			set {
+				element = null;
+				key = value;
+			}
 		}
 
 		public IList ObjectList {
@@ -50,12 +57,18 @@ namespace System.Security.Cryptography.Xml {
 
 		public byte[] SignatureValue {
 			get { return signature; }
-			set { signature = value; }
+			set {
+				element = null;
+				signature = value;
+			}
 		}
 
 		public SignedInfo SignedInfo {
 			get { return info; }
-			set { info = value; }
+			set {
+				element = null;
+				info = value;
+			}
 		}
 
 		public void AddObject (DataObject dataObject) 
@@ -65,6 +78,9 @@ namespace System.Security.Cryptography.Xml {
 
 		public XmlElement GetXml () 
 		{
+			if (element != null)
+				return element;
+
 			if (info == null)
 				throw new CryptographicException ("SignedInfo");
 			if (signature == null)

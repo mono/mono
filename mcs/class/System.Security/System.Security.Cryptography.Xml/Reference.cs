@@ -22,6 +22,8 @@ namespace System.Security.Cryptography.Xml {
 		private string id;
 		private string uri;
 		private string type;
+		private Stream stream;
+		private XmlElement element;
 
 		public Reference () 
 		{
@@ -29,9 +31,10 @@ namespace System.Security.Cryptography.Xml {
 			digestMethod = XmlSignature.NamespaceURI + "sha1";
 		}
 
-		[MonoTODO()]
+		[MonoTODO ("There is no description about how it is used.")]
 		public Reference (Stream stream) : this () 
 		{
+			this.stream = stream;
 		}
 
 		public Reference (string uri) : this ()
@@ -42,17 +45,26 @@ namespace System.Security.Cryptography.Xml {
 		// default to SHA1
 		public string DigestMethod {
 			get { return digestMethod; }
-			set { digestMethod = value; }
+			set {
+				element = null;
+				digestMethod = value;
+			}
 		}
 
 		public byte[] DigestValue {
 			get { return digestValue; }
-			set { digestValue = value; }
+			set {
+				element = null;
+				digestValue = value;
+			}
 		}
 
 		public string Id {
 			get { return id; }
-			set { id = value; }
+			set {
+				element = null;
+				id = value;
+			}
 		}
 
 		public TransformChain TransformChain {
@@ -61,12 +73,18 @@ namespace System.Security.Cryptography.Xml {
 
 		public string Type {
 			get { return type; }
-			set { type = value; }
+			set {
+				element = null;
+				type = value;
+			}
 		}
 
 		public string Uri {
 			get { return uri; }
-			set { uri = value; }
+			set {
+				element = null;
+				uri = value;
+			}
 		}
 
 		public void AddTransform (Transform transform) 
@@ -76,6 +94,9 @@ namespace System.Security.Cryptography.Xml {
 
 		public XmlElement GetXml () 
 		{
+			if (element != null)
+				return element;
+
 			if (digestMethod == null)
 				throw new CryptographicException ("DigestMethod");
 			if (digestValue == null)
@@ -169,6 +190,7 @@ namespace System.Security.Cryptography.Xml {
 			XmlElement dig = XmlSignature.GetChildElement (value, XmlSignature.ElementNames.DigestValue, XmlSignature.NamespaceURI);
 			if (dig != null)
 				DigestValue = Convert.FromBase64String (dig.InnerText);
+			element = value;
 		}
 	}
 }

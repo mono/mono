@@ -1,3 +1,12 @@
+2004-03-24  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Reference.cs, Signature.cs : They should keep input element and hence
+	  keep namespace context nodes on LoadXml() as same as SignedInfo.
+	* SignedXml.cs : Fixed SignedInfoTransformed() to fill context 
+	  namespace nodes into the input document (unlike other classes, there
+	  seems no other way to keep ns-nodes here).
+	  Now some of W3C phaos xmldsig test passes.
+
 2004-03-23  Atsushi Enomoto <atsushi@ximian.com>
 
 	* SignedInfo.cs : It holds input element and directly returns it

@@ -218,8 +218,29 @@ namespace System.Security.Cryptography.Xml {
 			else {
 				// when verifying signatures
 				// TODO - check signature.SignedInfo.Id
-				XmlNodeList xnl = signatureElement.GetElementsByTagName (XmlSignature.ElementNames.SignedInfo, XmlSignature.NamespaceURI);
-				byte[] si = Encoding.UTF8.GetBytes (xnl [0].OuterXml);
+				XmlElement el = signatureElement.GetElementsByTagName (XmlSignature.ElementNames.SignedInfo, XmlSignature.NamespaceURI) [0] as XmlElement;
+				StringWriter sw = new StringWriter ();
+				XmlTextWriter xtw = new XmlTextWriter (sw);
+				xtw.WriteStartElement (el.Prefix, el.LocalName, el.NamespaceURI);
+
+				// context namespace nodes (except for "xmlns:xml")
+				XmlNodeList nl = el.SelectNodes ("namespace::*");
+				foreach (XmlAttribute attr in nl) {
+					if (attr.ParentNode == el)
+						continue;
+					if (attr.LocalName == "xml")
+						continue;
+					attr.WriteTo (xtw);
+				}
+
+				foreach (XmlNode attr in el.Attributes)
+					attr.WriteTo (xtw);
+				foreach (XmlNode n in el.ChildNodes)
+					n.WriteTo (xtw);
+
+				xtw.WriteEndElement ();
+
+				byte [] si = Encoding.UTF8.GetBytes (sw.ToString ());
 
 				MemoryStream ms = new MemoryStream ();
 				ms.Write (si, 0, si.Length);
@@ -230,6 +251,25 @@ namespace System.Security.Cryptography.Xml {
 			// C14N and C14NWithComments always return a Stream in GetOutput
 			return (Stream) t.GetOutput ();
 		}
+
+/*
+		private void CollectDescendants (XmlNode n, ArrayList al)
+		{
+			switch (n.NodeType) {
+			case XmlNodeType.EntityReference:
+				break;
+			default:
+				al.Add (n);
+				break;
+			}
+
+			if (n.Attributes != null)
+				foreach (XmlAttribute a in n.Attributes)
+					al.Add (a);
+			foreach (XmlNode c in n.ChildNodes)
+				CollectDescendants (c, al);
+		}
+*/
 
 		// reuse hash - most document will always use the same hash
 		private HashAlgorithm GetHash (string algorithm) 
