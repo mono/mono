@@ -1793,12 +1793,26 @@ namespace Mono.CSharp {
 			return null;
 		}
 		
+		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		{
+			expr = expr.DoResolveLValue (ec, right_side);
+			if (expr == null)
+				return null;
+
+			return ResolveRest (ec);
+		}
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			expr = expr.Resolve (ec);
 			if (expr == null)
 				return null;
 
+			return ResolveRest (ec);
+		}
+
+		Expression ResolveRest (EmitContext ec)
+		{
 			TypeExpr target = target_type.ResolveAsTypeTerminal (ec, false);
 			if (target == null)
 				return null;
@@ -1828,7 +1842,7 @@ namespace Mono.CSharp {
 			expr = Convert.ExplicitConversion (ec, expr, type, loc);
 			return expr;
 		}
-
+		
 		public override void Emit (EmitContext ec)
 		{
 			//
