@@ -94,16 +94,64 @@ namespace Mono.CSharp {
 						      "' because it is sealed.");
 					ok = false;
 				}
-
 				//
 				// Check that the permissions are not being changed
 				//
 				MethodAttributes thisp = my_attrs & MethodAttributes.MemberAccessMask;
 				MethodAttributes parentp = mb.Attributes & MethodAttributes.MemberAccessMask;
 
-				if (thisp != parentp){
-					Error_CannotChangeAccessModifiers (parent, mb, name);
-					ok = false;
+				//
+				// special case for "protected internal"
+				//
+
+				if ((parentp & MethodAttributes.FamORAssem) == MethodAttributes.FamORAssem){
+					//
+					// when overriding protected internal, the method can be declared
+					// protected internal only within the same assembly
+					//
+
+					if ((thisp & MethodAttributes.FamORAssem) == MethodAttributes.FamORAssem){
+						if (parent.TypeBuilder.Assembly != mb.DeclaringType.Assembly){
+							//
+							// assemblies differ - report an error
+							//
+							
+							Error_CannotChangeAccessModifiers (parent, mb, name);
+						    ok = false;
+						} else if (thisp != parentp) {
+							//
+							// same assembly, but other attributes differ - report an error
+							//
+							
+							Error_CannotChangeAccessModifiers (parent, mb, name);
+							ok = false;
+						};
+					} else if ((thisp & MethodAttributes.Family) != MethodAttributes.Family) {
+						//
+						// if it's not "protected internal", it must be "protected"
+						//
+
+						Error_CannotChangeAccessModifiers (parent, mb, name);
+						ok = false;
+					} else if (parent.TypeBuilder.Assembly == mb.DeclaringType.Assembly) {
+						//
+						// protected within the same assembly - an error
+						//
+						Error_CannotChangeAccessModifiers (parent, mb, name);
+						ok = false;
+					} else if ((thisp & ~(MethodAttributes.Family | MethodAttributes.FamORAssem)) != 
+						   (parentp & ~(MethodAttributes.Family | MethodAttributes.FamORAssem))) {
+						//
+						// protected ok, but other attributes differ - report an error
+						//
+						Error_CannotChangeAccessModifiers (parent, mb, name);
+						ok = false;
+					}
+				} else {
+					if (thisp != parentp){
+						Error_CannotChangeAccessModifiers (parent, mb, name);
+						ok = false;
+					}
 				}
 			}
 
