@@ -5565,15 +5565,18 @@ namespace Mono.CSharp {
 						ig.Emit (OpCodes.Ldarg_0);
 						t = decl_type;
 					} else {
+						Type iexpr_type = instance_expr.Type;
+
 						//
 						// Push the instance expression
 						//
-						if (instance_expr.Type.IsValueType) {
+						if (TypeManager.IsValueType (iexpr_type)) {
 							//
 							// Special case: calls to a function declared in a 
 							// reference-type with a value-type argument need
 							// to have their value boxed.
-							if (decl_type.IsValueType) {
+							if (decl_type.IsValueType ||
+							    iexpr_type.IsGenericParameter) {
 								//
 								// If the expression implements IMemoryLocation, then
 								// we can optimize and use AddressOf on the
@@ -5585,7 +5588,7 @@ namespace Mono.CSharp {
 									((IMemoryLocation)instance_expr).
 										AddressOf (ec, AddressOp.LoadStore);
 								} else {
-									LocalTemporary temp = new LocalTemporary (ec, instance_expr.Type);
+									LocalTemporary temp = new LocalTemporary (ec, iexpr_type);
 									instance_expr.Emit (ec);
 									temp.Store (ec);
 									temp.AddressOf (ec, AddressOp.Load);
@@ -5593,7 +5596,7 @@ namespace Mono.CSharp {
 
 								// avoid the overhead of doing this all the time.
 								if (dup_args)
-									t = TypeManager.GetReferenceType (instance_expr.Type);
+									t = TypeManager.GetReferenceType (iexpr_type);
 							} else {
 								instance_expr.Emit (ec);
 								ig.Emit (OpCodes.Box, instance_expr.Type);
@@ -5615,6 +5618,9 @@ namespace Mono.CSharp {
 
 			if (!omit_args)
 				EmitArguments (ec, method, Arguments, dup_args, this_arg);
+
+			if ((instance_expr != null) && (instance_expr.Type.IsGenericParameter))
+				ig.Emit (OpCodes.Constrained, instance_expr.Type);
 
 			OpCode call_op;
 			if (is_static || struct_call || is_base || (this_call && !method.IsVirtual))
@@ -5905,7 +5911,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			bool is_struct = type.IsValueType;
+			bool is_struct = type.IsValueType && !type.IsGenericInstance;
 			eclass = ExprClass.Value;
 
 			//
@@ -5914,7 +5920,7 @@ namespace Mono.CSharp {
 			//
 			if (is_struct && Arguments == null)
 				return this;
-			
+
 			Expression ml;
 			ml = MemberLookupFinal (ec, type, type, ".ctor",
 						// For member-lookup, treat 'new Foo (bar)' as call to 'foo.ctor (bar)', where 'foo' is of type 'Foo'.
@@ -5994,7 +6000,8 @@ namespace Mono.CSharp {
 		//
 		bool DoEmit (EmitContext ec, bool need_value_on_stack)
 		{
-			bool is_value_type = type.IsValueType;
+			bool is_value_type = TypeManager.IsValueType (type) &&
+				!type.IsGenericInstance;
 			ILGenerator ig = ec.ig;
 
 			if (is_value_type){

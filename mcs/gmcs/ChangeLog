@@ -1,5 +1,11 @@
 2004-08-02  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (Invocation.EmitCall): If we're invoking a method
+	on a type parameter, use the new `Constrained' prefix opcode.
+	(New.DoEmit): Also use the `Newobj' opcode for generic instances.
+
+2004-08-02  Martin Baulig  <martin@ximian.com>
+
 	* statement.cs (LocalInfo.Flags): Added `IsThis'.
 	(LocalInfo.IsThis): New public property.
 	(Block.EmitMeta): Don't create a LocalBuilder for `this'.
@@ -1740,11 +1746,6 @@
 2004-04-01  Martin Baulig  <martin@ximian.com>
 
 	* cs-tokenizer.cs (parse_less_than): Allow Token.DOT.
-
-2004-04-01  Martin Baulig  <martin@ximian.com>
-
-	* expression.cs (Invocation.EmitCall): If we're invoking a method
-	on a type parameter, use the new `Constrained' prefix opcode.
 
 2004-04-01  Martin Baulig  <martin@ximian.com>
 
