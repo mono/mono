@@ -84,21 +84,10 @@ namespace System {
 
 			return CreateDelegate_internal (type, null, info);
 		}
-		
+
 		public static Delegate CreateDelegate (Type type, object target, string method)
 		{
-			if (type == null)
-				throw new ArgumentNullException (Locale.GetText ("Type is null"));
-
-			if (target == null)
-				throw new ArgumentNullException (Locale.GetText ("Target object is null"));
-
-			if (method == null)
-				throw new ArgumentNullException (Locale.GetText ("method string is null"));
-
-			BindingFlags flags =  BindingFlags.Public | BindingFlags.Instance;
-			MethodInfo info = target.GetType ().GetMethod (method, flags);
-			return CreateDelegate_internal (type, target, info);
+			return CreateDelegate(type, target, method, false);
 		}
 
  		public static Delegate CreateDelegate (Type type, Type target, string method)
@@ -112,8 +101,18 @@ namespace System {
 			if (method == null)
 				throw new ArgumentNullException (Locale.GetText ("method string is null"));
 
+			ParameterInfo[] delargs = type.GetMethod ("Invoke").GetParameters ();
+			Type[] delargtypes = new Type [delargs.Length];
+
+			for (int i=0; i<delargs.Length; i++)
+				delargtypes [i] = delargs [i].ParameterType;
+
 			BindingFlags flags =  BindingFlags.Public | BindingFlags.Static;
-			MethodInfo info = target.GetMethod (method, flags);
+			MethodInfo info = target.GetMethod (method, flags, null, delargtypes, new ParameterModifier [0]);
+
+			if (info == null)
+				throw new ArgumentException ("Couldn't bind to method");
+
 			return CreateDelegate_internal (type, null, info);
 		}
 
@@ -127,11 +126,24 @@ namespace System {
 
 			if (method == null)
 				throw new ArgumentNullException (Locale.GetText ("method string is null"));
-			
-			Type target_type = target.GetType ();
-			BindingFlags flags =  BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase;
-			MethodInfo info = target_type.GetMethod (method, flags);
-			return CreateDelegate_internal (type, target, info);			
+
+			ParameterInfo[] delargs = type.GetMethod ("Invoke").GetParameters ();
+			Type[] delargtypes = new Type [delargs.Length];
+
+			for (int i=0; i<delargs.Length; i++)
+				delargtypes [i] = delargs [i].ParameterType;
+
+			BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
+
+			if (ignorecase)
+				flags |= BindingFlags.IgnoreCase;
+
+			MethodInfo info = target.GetType ().GetMethod (method, flags, null, delargtypes, new ParameterModifier [0]);
+
+			if (info == null)
+				throw new ArgumentException ("Couldn't bind to method");
+
+			return CreateDelegate_internal (type, target, info);
 		}
 
 		public object DynamicInvoke( object[] args )
