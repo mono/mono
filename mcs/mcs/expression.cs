@@ -2044,7 +2044,12 @@ namespace Mono.CSharp {
 						method = TypeManager.delegate_combine_delegate_delegate;
 					else
 						method = TypeManager.delegate_remove_delegate_delegate;
-					
+
+					if (l != r) {
+						Error_OperatorCannotBeApplied ();
+						return null;
+					}
+
 					DelegateOperation = true;
 					type = l;
 					return this;

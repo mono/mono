@@ -1,5 +1,10 @@
 2002-08-05  Martin Baulig  <martin@gnome.org>
 
+	* expression.cs (Binary.ResolveOperator): When combining delegates,
+	they must have the same type.
+
+2002-08-05  Martin Baulig  <martin@gnome.org>
+
 	* typemanager.cs (TypeManager.GetArgumentTypes): Don't call
 	PropertyInfo.GetIndexParameters() on dynamic types, this doesn't
 	work with the ms runtime and we also don't need it: if we're a
