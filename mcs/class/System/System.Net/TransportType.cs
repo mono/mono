@@ -2,9 +2,10 @@
 //
 // This code was automatically generated from
 // ECMA CLI XML Library Specification.
-// Generator: libgen.xsl
-// Source file: all.xml
-// URL: http://devresource.hp.com/devresource/Docs/TechPapers/CSharp/all.xml
+// Generator: libgen.xsl [1.0; (C) Sergey Chaban (serge@wildwestsoftware.com)]
+// Created: Wed, 5 Sep 2001 06:32:18 UTC
+// Source file: AllTypes.xml
+// URL: http://msdn.microsoft.com/net/ecma/AllTypes.xml
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 
@@ -13,30 +14,26 @@ namespace System.Net {
 
 
 	/// <summary>
-	/// <para>
-	///                   Defines the transport type allowed for the socket.
-	///                </para>
 	/// </summary>
 	public enum TransportType {
 
 		/// <summary>
-		/// <para>
-		///                   Udp connections are allowed.
-		///                </para>
 		/// </summary>
 		Udp = 1,
 
 		/// <summary>
-		/// <para>
-		///                   TCP connections are allowed.
-		///                </para>
+		/// </summary>
+		Connectionless = 1,
+
+		/// <summary>
 		/// </summary>
 		Tcp = 2,
 
 		/// <summary>
-		/// <para>
-		///                   Any connection is allowed.
-		///                </para>
+		/// </summary>
+		ConnectionOriented = 2,
+
+		/// <summary>
 		/// </summary>
 		All = 3,
 	} // TransportType

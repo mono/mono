@@ -2,9 +2,10 @@
 //
 // This code was automatically generated from
 // ECMA CLI XML Library Specification.
-// Generator: libgen.xsl
-// Source file: all.xml
-// URL: http://devresource.hp.com/devresource/Docs/TechPapers/CSharp/all.xml
+// Generator: libgen.xsl [1.0; (C) Sergey Chaban (serge@wildwestsoftware.com)]
+// Created: Wed, 5 Sep 2001 06:32:11 UTC
+// Source file: AllTypes.xml
+// URL: http://msdn.microsoft.com/net/ecma/AllTypes.xml
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 
@@ -13,23 +14,14 @@ namespace System.Net {
 
 
 	/// <summary>
-	/// <para>
-	///                   Defines network access permissions.
-	///                </para>
 	/// </summary>
 	public enum NetworkAccess {
 
 		/// <summary>
-		/// <para>
-		///                   An application is allowed to accept connections from the Internet.
-		///                </para>
 		/// </summary>
 		Accept = 128,
 
 		/// <summary>
-		/// <para>
-		///                   An application is allowed to connect to Internet resources.
-		///                </para>
 		/// </summary>
 		Connect = 64,
 	} // NetworkAccess
