@@ -1,3 +1,10 @@
+2004-02-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* object.h (MonoThread): Add 'name' and 'name_len' fields.
+
+	* threads.h threads.c icall.c: New icalls for getting and setting the
+	threads name.
+
 2004-02-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* appdomain.c (ves_icall_System_AppDomain_InternalPushDomainRefByID): 
