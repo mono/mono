@@ -7,7 +7,9 @@ public class Blah {
 		int [] i = new int [] { 0, 1, 2, 3 };
 
 		int [,] j = new int [,] { {0,1}, {2,3}, {4,5}, {6,7} };
+		int a = 5;
 
+		int [] k = new int [] { a };
 		if (i [2] != 2)
 			return 1;
 		

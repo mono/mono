@@ -1,3 +1,16 @@
+2001-11-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay (for_statement): Reworked the way For works: now
+	we declare manually any variables that are introduced in
+	for_initializer to solve the problem of having out-of-band code
+	emition (that is what got for broken).
+
+	(declaration_statement): Perform the actual variable declaration
+	that used to be done in local_variable_declaration here.
+
+	(local_variable_declaration): Do not declare anything, just pass
+	the information on a DictionaryEntry
+
 2001-11-20  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (ArrayCreation::CheckIndices): The story continues :-) Complete

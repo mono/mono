@@ -2466,6 +2466,8 @@ statement
 	  }
 	| embedded_statement
 	  {
+		Statement s = (Statement) $1;
+
 		current_block.AddStatement ((Statement) $1);
 	  }
 	| labeled_statement 
@@ -2514,7 +2516,13 @@ labeled_statement
 	;
 
 declaration_statement
-	: local_variable_declaration SEMICOLON		// done
+	: local_variable_declaration SEMICOLON
+	  {
+		DictionaryEntry de = (DictionaryEntry) $1;
+
+		$$ = declare_local_variables ((string) de.Key, (ArrayList) de.Value);
+	  }
+
 	| local_constant_declaration SEMICOLON		// finishme
 	;
 
@@ -2574,7 +2582,7 @@ local_variable_type
 local_variable_declaration
 	: local_variable_type variable_declarators
 	  {
-		$$ = declare_local_variables ((string) $1, (ArrayList) $2);
+		$$ = new DictionaryEntry ($1, $2);
 	  }
 	;
 
@@ -2727,11 +2735,44 @@ do_statement
 for_statement
 	: FOR OPEN_PARENS 
 	  opt_for_initializer SEMICOLON
+	  {
+		if ($3 is DictionaryEntry){
+			DictionaryEntry de = (DictionaryEntry) $3;
+			$3 = null;
+			
+			string type = (string) de.Key;
+			ArrayList var_declarators = (ArrayList) de.Value;
+
+			foreach (VariableDeclaration decl in var_declarators){
+				if (!current_block.AddVariable (type, decl.identifier, decl.Location)){
+					Report.Error (128, decl.Location, 
+					"A local variable `" + decl.identifier + "' is already" +
+					"defined in this scope");
+				}
+			}
+
+			Block assign_block = new Block (current_block);
+			foreach (VariableDeclaration decl in var_declarators){
+				if (decl.expression_or_array_initializer is Expression){
+					Expression expr = (Expression) decl.expression_or_array_initializer;
+					Assign a = new Assign (
+						new LocalVariableReference (
+							assign_block, decl.identifier),
+							expr, decl.Location);
+
+					assign_block.AddStatement (new StatementExpression (a));
+				} else {
+					Console.WriteLine ("Not handling array initializers, strange");
+				}
+			}
+			$3 = assign_block;
+		}
+	  } 
 	  opt_for_condition SEMICOLON
 	  opt_for_iterator CLOSE_PARENS 
 	  embedded_statement
 	  {
-		$$ = new For ((Statement) $3, (Expression) $5, (Statement) $7, (Statement) $9);
+		$$ = new For ((Statement) $3, (Expression) $6, (Statement) $8, (Statement) $10);
 	  }
 	;
 
@@ -2741,14 +2782,7 @@ opt_for_initializer
 	;
 
 for_initializer
-	: local_variable_declaration 
-	  {
-		if ((Block) $1 != current_block){
-			current_block.AddStatement ((Statement) $1);
-			current_block = (Block) $1;
-		}
-		$$ = null;
-	  }
+	: local_variable_declaration
 	| statement_expression_list
 	;
 
@@ -3246,8 +3280,7 @@ Block declare_local_variables (string type, ArrayList variable_declarators)
 				inits.Add (decl);
 			}
 		} else {
-			Location l = lexer.Location;
-			Report.Error (128, l, "A local variable `" + decl.identifier +
+			Report.Error (128, decl.Location, "A local variable `" + decl.identifier +
 					 "' is already defined in this scope");
 		}
 	}
@@ -3262,7 +3295,8 @@ Block declare_local_variables (string type, ArrayList variable_declarators)
 			
 			assign = new Assign (new LocalVariableReference (
 					     implicit_block, decl.identifier), 
-					     expr, lexer.Location);
+					     expr, decl.Location);
+
 			implicit_block.AddStatement (new StatementExpression (assign));
 		} else {
 			Console.WriteLine ("Not handling Array initializers yet");

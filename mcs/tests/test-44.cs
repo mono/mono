@@ -17,7 +17,7 @@ class X {
 		return total;
 	}
 	
-	static void Main ()
+	static int Main ()
 	{
 		int [,] b = new int [10,10];
 

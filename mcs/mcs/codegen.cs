@@ -174,14 +174,14 @@ namespace Mono.CSharp {
 			
 			if (temporary_storage == null)
 				temporary_storage = new Hashtable ();
-
+			
 			location = (LocalBuilder) temporary_storage [t];
 			if (location != null)
 				return location;
-
+			
 			location = ig.DeclareLocal (t);
 			temporary_storage.Add (t, location);
-
+			
 			return location;
 		}
 

@@ -24,10 +24,7 @@ namespace Mono.CSharp {
 		public abstract bool Emit (EmitContext ec);
 
 		/// <remarks>
-		///    Emits a bool expression.  Generates a jump to the `t' label if true
-		///    if defined, or to `f' if defined.
-		///
-		///    t and f can not be both non-null
+		///    Emits a bool expression.
 		/// </remarks>
 		public static bool EmitBoolExpression (EmitContext ec, Expression e, Label l, bool isTrue)
 		{
@@ -282,6 +279,11 @@ namespace Mono.CSharp {
 
 			return false;
 		}
+
+		public override string ToString ()
+		{
+			return "StatementExpression (" + Expr + ")";
+		}
 	}
 
 	public class Return : Statement {
@@ -453,9 +455,16 @@ namespace Mono.CSharp {
 	}
 		
 	/// <summary>
-	///   Used for Label management
+	///   Block represents a C# block.
 	/// </summary>
 	///
+	/// <remarks>
+	///   This class is used in a number of places: either to represent
+	///   explicit blocks that the programmer places or implicit blocks.
+	///
+	///   Implicit blocks are used as labels or to introduce variable
+	///   declarations.
+	/// </remarks>
 	public class Block : Statement {
 		public readonly Block  Parent;
 		public readonly bool   Implicit;
@@ -492,6 +501,10 @@ namespace Mono.CSharp {
 
 		bool used = false;
 
+		static int id;
+
+		int this_id;
+		
 		public Block (Block parent)
 		{
 			if (parent != null)
@@ -499,6 +512,8 @@ namespace Mono.CSharp {
 			
 			this.Parent = parent;
 			this.Implicit = false;
+
+			this_id = id++;
 		}
 
 		public Block (Block parent, bool implicit_block)
@@ -508,6 +523,7 @@ namespace Mono.CSharp {
 			
 			this.Parent = parent;
 			this.Implicit = true;
+			this_id = id++;
 		}
 
 		public Block (Block parent, string labeled)
@@ -518,9 +534,16 @@ namespace Mono.CSharp {
 			this.Parent = parent;
 			this.Implicit = true;
 			Label = labeled;
+			this_id = id++;
 		}
 
-		public void AddChild (Block b)
+		public int ID {
+			get {
+				return this_id;
+			}
+		}
+		
+		void AddChild (Block b)
 		{
 			if (children == null)
 				children = new ArrayList ();
@@ -557,8 +580,9 @@ namespace Mono.CSharp {
 				return false;
 
 			VariableInfo vi = new VariableInfo (type, l);
-			
+
 			variables.Add (name, vi);
+
 			return true;
 		}
 
@@ -652,19 +676,6 @@ namespace Mono.CSharp {
 		}
 		
 		/// <summary>
-		///   Creates a compiler-internal identifier, this is
-		///   used to create temporary variables that should not
-		///   be seen by the application
-		/// </summary>
-		int internal_id_serial;
-		public string MakeInternalID () {
-			string ret = internal_id_serial.ToString ();
-
-			internal_id_serial++;
-			return "0_" + ret;
-		}
-
-		/// <summary>
 		///   Emits the variable declarations and labels.
 		/// </summary>
 		/// <remarks>
@@ -740,7 +751,7 @@ namespace Mono.CSharp {
 		{
 			bool is_ret = false;
 			Block prev_block = ec.CurrentBlock;
-			
+
 			ec.CurrentBlock = this;
 			foreach (Statement s in Statements)
 				is_ret = s.Emit (ec);
