@@ -1,3 +1,10 @@
+2004-07-27 Alon Gazit <along@mainsoft.com>
+        * WebControl.cs: changed RenderBeginTag()to use TagKey instead of 
+        TagName.
+        * Unit.cs : changed GetTypeFromString() and GetStringFromPixel() to use 
+        switch statements in order to improve performance.
+        
+
 2004-06-10 Alon Gazit <along@mainsoft.com>
         * WebControl.cs: fixed LoadViewState(). 
         Creates new attributes state bag only when the current is null.

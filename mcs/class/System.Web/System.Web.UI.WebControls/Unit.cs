@@ -134,7 +134,7 @@ namespace System.Web.UI.WebControls
 			string valueTrim;
 			if (value == null || (valueTrim = value.Trim ()).Length == 0) {
 				val = 0;
-				type = UnitType.Pixel;
+				type = (UnitType)0;
 				return;
 			}
 
@@ -180,44 +180,56 @@ namespace System.Web.UI.WebControls
 		{
 			if(s == null || s.Length == 0)
 				return UnitType.Pixel;
-			s = s.ToLower().Trim();
-			string[] uTypes = {
-				"px",
-				"pt",
-				"pc",
-				"in",
-				"mm",
-				"cm",
-				"%",
-				"em",
-				"ex"
-			};
-			int i = 0;
-			foreach(string cType in uTypes)
+			switch(s)
 			{
-				if(s == cType)
-					return (UnitType)Enum.ToObject(typeof(UnitType), (i + 1));
-				i++;
+				case "px":
+					return UnitType.Pixel;
+				case "pt":
+					return UnitType.Point;
+				case "pc":
+					return UnitType.Pica;
+				case "in":
+					return UnitType.Inch;
+				case "mm":
+					return UnitType.Mm;
+				case "cm":
+					return UnitType.Cm;
+				case "%":
+					return UnitType.Percentage;
+				case "em":
+					return UnitType.Em;
+				case "ex":
+					return UnitType.Ex;
+				default:
+					return UnitType.Pixel;
 			}
-			return UnitType.Pixel;
 		}
 
 		private string GetStringFromPixel(UnitType ut)
 		{
-			string[] uTypes = {
-				"px",
-				"pt",
-				"pc",
-				"in",
-				"mm",
-				"cm",
-				"%",
-				"em",
-				"ex"
-			};
-			if( !Enum.IsDefined(typeof(UnitType), ut) )
-				return "px";
-			return uTypes[(int)ut - 1];
+			switch(ut)
+			{
+				case UnitType.Pixel:
+					return "px";
+				case UnitType.Point:
+					return "pt";
+				case UnitType.Pica:
+					return "pc";
+				case UnitType.Inch:
+					return "in";
+				case UnitType.Mm:
+					return "mm";
+				case UnitType.Cm:
+					return "cm";
+				case UnitType.Percentage:
+					return "%";
+				case UnitType.Em:
+					return "em";
+				case UnitType.Ex:
+					return "ex";
+				default:
+					return String.Empty;
+			}
 		}
 
 		public bool IsEmpty

@@ -364,7 +364,7 @@ namespace System.Web.UI.WebControls
 		public virtual void RenderBeginTag(HtmlTextWriter writer)
 		{
 			AddAttributesToRender(writer);
-			writer.RenderBeginTag(TagName);
+			writer.RenderBeginTag(TagKey);
 		}
 
 		public virtual void RenderEndTag(HtmlTextWriter writer)
