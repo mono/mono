@@ -150,13 +150,17 @@ namespace System.Web {
 
 				context.Response.Clear ();
 				context.Response.ClearHeaders ();
+
 				if (!(error is HttpException)) {
 					error = new HttpException (String.Empty, error);
 					context.Response.StatusCode = 500;
 				} else {
 					context.Response.StatusCode = ((HttpException) error).GetHttpCode ();
 				}
-				context.Response.Write (((HttpException) error).GetHtmlErrorMessage ());
+
+				if (!RedirectCustomError (context))
+					context.Response.Write (((HttpException) error).GetHtmlErrorMessage ());
+
 				context.Response.FinalFlush ();
 			}
 
@@ -175,6 +179,36 @@ namespace System.Web {
 				request.EndOfRequest();
 
 			TryExecuteQueuedRequests ();
+		}
+
+		bool RedirectCustomError (HttpContext context)
+		{
+			if (!context.IsCustomErrorEnabled)
+				return false;
+
+			CustomErrorsConfig config = null;
+			try {
+				config = (CustomErrorsConfig) context.GetConfig ("system.web/customErrors");
+			} catch { }
+
+			if (config == null) {
+				if (context.ErrorPage != null)
+					return context.Response.RedirectCustomError (context.ErrorPage);
+
+				return false;
+			}
+
+			string redirect =  config [context.Response.StatusCode];
+			if (redirect == null) {
+				redirect = context.ErrorPage;
+				if (redirect == null)
+					redirect = config.DefaultRedirect;
+			}
+
+			if (redirect == null)
+				return false;
+
+			return context.Response.RedirectCustomError (redirect);
 		}
 
 		internal static void FinishUnavailable (HttpWorkerRequest wr)

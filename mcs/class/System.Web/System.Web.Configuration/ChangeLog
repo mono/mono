@@ -1,3 +1,7 @@
+2003-12-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CustomErrorsConfigHandler.cs: handle <system.web><customErrors />..
+
 2003-12-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpCapabilitiesBase.cs: use the new loader.

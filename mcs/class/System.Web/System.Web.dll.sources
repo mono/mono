@@ -99,6 +99,7 @@ System.Web.Configuration/ClientTargetSectionHandler.cs
 System.Web.Configuration/CompilationConfiguration.cs
 System.Web.Configuration/CompilationConfigurationHandler.cs
 System.Web.Configuration/CompilerCollection.cs
+System.Web.Configuration/CustomErrorsConfigHandler.cs
 System.Web.Configuration/FormsAuthPasswordFormat.cs
 System.Web.Configuration/FormsProtectionEnum.cs
 System.Web.Configuration/GlobalizationConfiguration.cs

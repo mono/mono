@@ -40,6 +40,7 @@ namespace System.Web
 		int timeoutPossible;
 		long timeoutBegin;
 		object configTimeout;
+		string errorPage;
 
 		public HttpContext (HttpRequest Request, HttpResponse Response)
 		{
@@ -158,20 +159,31 @@ namespace System.Web
 			}
 		}
 
-		[MonoTODO("bool IsCustomErrorEnabled")]
-		public bool IsCustomErrorEnabled
-		{
+		public bool IsCustomErrorEnabled {
 			get {
-				return false;
-				//throw new NotImplementedException ();
+				CustomErrorsConfig cfg;
+				try {
+					cfg = (CustomErrorsConfig) GetConfig ("system.web/customErrors");
+				} catch (Exception e) {
+					return false;
+				}
+				
+				if (cfg == null)
+					return false;
+
+				CustomErrorMode mode = cfg.Mode;
+				if (mode == CustomErrorMode.On)
+					return true;
+
+				return (mode == CustomErrorMode.RemoteOnly &&
+					_oRequest.ServerVariables ["LOCAL_ADDR"] == _oRequest.UserHostAddress);
 			}
 		}
 
-		[MonoTODO("bool IsDebuggingEnabled")]
 		public bool IsDebuggingEnabled
 		{
 			get {
-				throw new NotImplementedException ();
+				return CompilationConfiguration.GetInstance (this).Debug;
 			}
 		}
 
@@ -234,7 +246,6 @@ namespace System.Web
 			}
 		}
 
-		[MonoTODO("TraceContext Trace")]
 		public TraceContext Trace
 		{
 			get {
@@ -290,6 +301,11 @@ namespace System.Web
 
 				return (TimeSpan) configTimeout;
 			}
+		}
+		
+		internal string ErrorPage {
+			get { return errorPage; }
+			set { errorPage = value; }
 		}
 		
 		internal void SetSession (HttpSessionState session)

@@ -28,6 +28,7 @@ namespace System.Web.UI
 		int lcid = -1;
 		string culture;
 		string uiculture;
+		string errorPage;
 
 		// FIXME: this is here just for DesignTimeTemplateParser. Anything to do?
 		internal PageParser ()
@@ -186,13 +187,12 @@ namespace System.Web.UI
 							"one of the following values: SortByTime, SortByCategory.");
 			}
 			
+			errorPage = GetString (atts, "ErrorPage", null);
+
 			// Ignored by now
 			GetString (atts, "Buffer", null);
 			GetString (atts, "ClientTarget", null);
 			GetString (atts, "EnableViewStateMac", null);
-			GetString (atts, "ErrorPage", null);
-			GetString (atts, "Trace", null);
-			GetString (atts, "TraceMode", null);
 			GetString (atts, "SmartNavigation", null);
 			GetBool (atts, "ValidateRequest", true);
 
@@ -261,6 +261,10 @@ namespace System.Web.UI
 
 		internal int LCID {
 			get { return lcid; }
+		}
+
+		internal string ErrorPage {
+			get { return errorPage; }
 		}
 	}
 }

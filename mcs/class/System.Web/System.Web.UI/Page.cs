@@ -37,10 +37,10 @@ namespace System.Web.UI
 public class Page : TemplateControl, IHttpHandler
 {
 	private bool _viewState = true;
-	private bool _viewStateMac = false;
+	private bool _viewStateMac;
 	private string _errorPage;
 	private bool _isValid;
-	private bool _smartNavigation = false;
+	private bool _smartNavigation;
 	private int _transactionMode;
 	private HttpContext _context;
 	private ValidatorCollection _validators;
@@ -51,8 +51,8 @@ public class Page : TemplateControl, IHttpHandler
 	private ArrayList requiresPostDataChanged;
 	private IPostBackEventHandler requiresRaiseEvent;
 	private NameValueCollection secondPostData;
-	private bool requiresPostBackScript = false;
-	private bool postBackScriptRendered = false;
+	private bool requiresPostBackScript;
+	private bool postBackScriptRendered;
 	private Hashtable registeredArrayDeclares;
 	Hashtable clientScriptBlocks;
 	Hashtable startupScriptBlocks;
@@ -154,7 +154,11 @@ public class Page : TemplateControl, IHttpHandler
 	public string ErrorPage
 	{
 		get { return _errorPage; }
-		set { _errorPage = value; }
+		set {
+			_errorPage = value;
+			if (_context != null)
+				_context.ErrorPage = value;
+		}
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
@@ -646,6 +650,7 @@ public class Page : TemplateControl, IHttpHandler
 		CultureInfo culture = Thread.CurrentThread.CurrentCulture;
 		CultureInfo uiculture = Thread.CurrentThread.CurrentUICulture;
 		FrameworkInitialize ();
+		context.ErrorPage = _errorPage;
 
 		try {
 			InternalProcessRequest ();

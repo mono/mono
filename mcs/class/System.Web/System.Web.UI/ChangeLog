@@ -1,3 +1,10 @@
+2003-12-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs: assign the ErrorPage to the context if we get an exception
+	when processing the page which only calls Unload.
+
+	* PageParser.cs: handle ErrorPage.
+
 2003-12-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ObjectStateFormatter.cs: added formatters for Unit and FontUnit, which

@@ -92,6 +92,10 @@ namespace System.Web.Compilation
 			if (culture != null)
 				method.Statements.Add (CreatePropertyAssign ("UICulture", culture));
 
+			string errorPage = pageParser.ErrorPage;
+			if (errorPage != null)
+				method.Statements.Add (CreatePropertyAssign ("ErrorPage", errorPage));
+
                         if (pageParser.Trace) {
                                 CodeAssignStatement stmt = new CodeAssignStatement ();
                                 stmt.Left = new CodePropertyReferenceExpression (thisRef, "TraceEnabled");

@@ -1,3 +1,7 @@
+2003-12-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* PageCompiler.cs: assign the ErrorPage property if provided.
+
 2003-12-15  Jackson Harper <jackson@ximian.com>
 
 	* PageCompiler.cs: Add Trace and TraceMode to framework initialize

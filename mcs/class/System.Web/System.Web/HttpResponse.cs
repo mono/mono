@@ -861,6 +861,18 @@ namespace System.Web
 				End ();
 		}
 
+		internal bool RedirectCustomError (string errorPage)
+		{
+			if (_bHeadersSent)
+				return false;
+
+			if (Request.QueryString ["aspxerrorpath"] != null)
+				return false; // Prevent endless loop
+
+			Redirect (errorPage + "?aspxerrorpath=" + Request.Path, false);
+			return true;
+		}
+		
 		public void Write (char ch)
 		{
 			_TextWriter.Write(ch);

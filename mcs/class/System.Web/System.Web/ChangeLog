@@ -1,3 +1,14 @@
+2003-12-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpContext.cs: implemented IsCustomErrorEnabled and
+	IsDebuggingEnabled. Added internal ErrorPage property.
+
+	* HttpRuntime.cs: on error, check if we have a custom error page enabled
+	to handle it and redirect.
+
+	* HttpResponse.cs: added RedirectCustomError (), which actually does
+	the redirection to the error page.
+	
 2003-12-16  Jackson Harper <jackson@ximian.com>
 
 	* TraceContext.cs: Render all the data, and the stylesheet.
