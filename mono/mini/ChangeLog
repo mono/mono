@@ -1,3 +1,7 @@
+2004-07-31  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c: Fix some vararg cases.
+
 2004-07-30  Neale Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
 
 	* mini-s390.c: Corrected macro in emit_float_to_int
