@@ -1,4 +1,11 @@
 
+Thu Apr 29 18:26:56 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, exceptions-ppc.c: save the registers in reverse
+	order from the stack top (moved the stack room to save the
+	return value for trace after the param area). Fixed corruption
+	in restoring registers on unwind.
+
 Thu Apr 29 16:47:15 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c, cpu-g4.md: fixed unisgned -> double conversion.
