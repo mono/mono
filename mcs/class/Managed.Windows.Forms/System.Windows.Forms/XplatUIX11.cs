@@ -310,6 +310,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal override void SetWindowBackground(IntPtr handle, Color color) {
+			XSetWindowBackground(DisplayHandle, handle, (uint)(color.ToArgb() & 0x00ffffff));
+		}
+
 		[MonoTODO("Add support for internal table of windows/DCs for looking up paint area and cleanup")]
 		internal override PaintEventArgs PaintEventStart(IntPtr handle) {
 			PaintEventArgs	paint_event;

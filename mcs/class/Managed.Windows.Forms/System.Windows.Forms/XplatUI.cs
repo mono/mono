@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.15 $
+// $Revision: 1.16 $
 // $Modtime: $
 // $Log: XplatUI.cs,v $
+// Revision 1.16  2004/08/20 20:03:20  pbartok
+// - Added method for setting the window background
+//
 // Revision 1.15  2004/08/20 19:14:35  jackson
 // Expose functionality to send async messages through the driver
 //
@@ -221,6 +224,10 @@ namespace System.Windows.Forms {
 			driver.RefreshWindow(handle);
 		}
 
+		internal static void SetWindowBackground(IntPtr handle, Color color) {
+			driver.SetWindowBackground(handle, color);
+		}
+			
 		internal static PaintEventArgs PaintEventStart(IntPtr handle) {
 			return driver.PaintEventStart(handle);
 		}
