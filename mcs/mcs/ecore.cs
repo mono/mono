@@ -4371,7 +4371,7 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			throw new Exception ("Should not happen I think");
+			Report.Error (70, loc, "The event `" + Name + "' can only appear on the left hand side of += or -= (except on the defining type)");
 		}
 
 		public void EmitAddOrRemove (EmitContext ec, Expression source)

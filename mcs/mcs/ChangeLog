@@ -1,3 +1,8 @@
+2002-09-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (EventExpr.Emit): Instead of emitting an exception,
+	report error 70.
+
 2002-09-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (ConvertNumericExplicit): It is not enough that the
