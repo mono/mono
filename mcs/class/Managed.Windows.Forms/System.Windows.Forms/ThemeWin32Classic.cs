@@ -22,12 +22,18 @@
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //	Peter Bartok, pbartok@novell.com
+//	John BouAntoun, jba-mono@optusnet.com.au
 //
 //
 //
-// $Revision: 1.43 $
+// $Revision: 1.44 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.44  2004/10/13 02:45:21  pbartok
+// - Fixes from John BouAntoun: now handles forecolors and backcolors for
+//   flatstyle rendered controls much better; It also fixes normal checkbox
+//   rendering when pushed or disabled.
+//
 // Revision 1.43  2004/10/07 14:56:51  jordi
 // Removes deletion of cached brushes
 //
@@ -573,30 +579,133 @@ namespace System.Windows.Forms
 			
 			if (checkbox.ThreeState && (checkbox.CheckState == CheckState.Indeterminate)) {
 				state |= ButtonState.Checked;
+				state |= ButtonState.Pushed;				
+			}
+			
+			// finally make sure the pushed and inavtive states are rendered
+			if (!checkbox.Enabled) {
+				state |= ButtonState.Inactive;
+			}
+			else if (checkbox.is_pressed) {
 				state |= ButtonState.Pushed;
 			}
-
+			
+			
 			// Start drawing
 
 			sb=new SolidBrush(checkbox.BackColor);
 			dc.FillRectangle(sb, checkbox.ClientRectangle);
 			sb.Dispose();
 
-			if (checkbox.appearance!=Appearance.Button) {
-				ControlPaint.DrawCheckBox(dc, checkbox_rectangle, state);
+			// establish if we are rendering a flat style of some sort
+			if (checkbox.FlatStyle == FlatStyle.Flat || checkbox.FlatStyle == FlatStyle.Popup) {
+				DrawFlatStyleCheckBox (dc, checkbox_rectangle, checkbox);
 			} else {
-				ControlPaint.DrawButton(dc, text_rectangle, state);
+				// render as per normal
+				if (checkbox.appearance!=Appearance.Button) {
+					ControlPaint.DrawCheckBox(dc, checkbox_rectangle, state);
+				} else {
+					ControlPaint.DrawButton(dc, text_rectangle, state);
+				}
 			}
+			
+			// win32 compat - win32 seems to give the text a slight (3px) offset when rendering
+			Rectangle inner_text_rectangle = new Rectangle (text_rectangle.X + 3, text_rectangle.Y, Math.Max (text_rectangle.Width - 3, 0), text_rectangle.Height); 
 
 			/* Place the text; to be compatible with Windows place it after the checkbox has been drawn */
-			sb=new SolidBrush(checkbox.ForeColor);
-			dc.DrawString(checkbox.Text, checkbox.Font, sb, text_rectangle, text_format);
-			sb.Dispose();
+			if (checkbox.Enabled) {
+				sb = ResPool.GetSolidBrush(checkbox.ForeColor);
+				dc.DrawString(checkbox.Text, checkbox.Font, sb, inner_text_rectangle, text_format);				
+			} else if (checkbox.FlatStyle == FlatStyle.Flat || checkbox.FlatStyle == FlatStyle.Popup) {
+				dc.DrawString(checkbox.Text, checkbox.Font, SystemBrushes.ControlDark, inner_text_rectangle, text_format);
+			} else {
+				CPDrawStringDisabled(dc, checkbox.Text, checkbox.Font, SystemColors.ControlText, inner_text_rectangle, text_format);
+			}
 
 			if (checkbox.Focused) {
 				ControlPaint.DrawFocusRectangle(dc, text_rectangle);
 			}
 		}
+
+		// renders a checkBox with the Flat and Popup FlatStyle
+		private void DrawFlatStyleCheckBox (Graphics graphics, Rectangle rectangle, CheckBox checkbox)
+		{
+			Pen			pen;
+			int			lineWidth;
+			Rectangle	rect;
+			Rectangle	checkbox_rectangle;
+			Rectangle	fill_rectangle;
+			int			Scale;
+		
+			// first clip the last pixel of the height and width (windows compat)
+			checkbox_rectangle = new Rectangle(rectangle.X, rectangle.Y, Math.Max(rectangle.Width-1, 0), Math.Max(rectangle.Height-1,0));
+			// clip the fill rectangle
+			fill_rectangle = new Rectangle(rectangle.X+1, rectangle.Y+1, Math.Max(rectangle.Width-2, 0), Math.Max(rectangle.Height-2,0));
+			
+			// if disabled render in disabled state
+			if (checkbox.Enabled) {
+				// process the state of the checkbox
+				if (checkbox.is_entered || checkbox.is_pressed) {
+					// decide on which background color to use
+					if (checkbox.FlatStyle == FlatStyle.Popup && checkbox.is_entered && checkbox.is_pressed) {
+						graphics.FillRectangle(ResPool.GetSolidBrush (checkbox.BackColor), fill_rectangle);
+					} else if (checkbox.FlatStyle == FlatStyle.Flat && !(checkbox.is_entered && checkbox.is_pressed)) {
+						graphics.FillRectangle(ResPool.GetSolidBrush (ControlPaint.Light(checkbox.BackColor)), fill_rectangle);
+					} else {
+						// use regular window background color
+						graphics.FillRectangle(ResPool.GetSolidBrush (ControlPaint.LightLight (checkbox.BackColor)), fill_rectangle);
+					}
+					
+					// render the outer border
+					if (checkbox.FlatStyle == FlatStyle.Flat) {
+						ControlPaint.DrawBorder(graphics, checkbox_rectangle, checkbox.ForeColor, ButtonBorderStyle.Solid);
+					} else {
+						// draw sunken effect
+						CPDrawBorder3D (graphics, checkbox_rectangle, Border3DStyle.SunkenInner, Border3DSide.Bottom | Border3DSide.Right);
+						// draw top left
+						graphics.DrawLine(ResPool.GetPen (ControlPaint.DarkDark (checkbox.BackColor)), checkbox_rectangle.X, checkbox_rectangle.Y, checkbox_rectangle.X, checkbox_rectangle.Y+checkbox_rectangle.Height);
+						graphics.DrawLine(ResPool.GetPen (ControlPaint.DarkDark (checkbox.BackColor)), checkbox_rectangle.X, checkbox_rectangle.Y, Math.Max(checkbox_rectangle.X + checkbox_rectangle.Width - 1, 0), checkbox_rectangle.Y);
+					}
+				} else {
+					graphics.FillRectangle(ResPool.GetSolidBrush (ControlPaint.LightLight (checkbox.BackColor)), fill_rectangle);				
+					
+					if (checkbox.FlatStyle == FlatStyle.Flat) {
+						ControlPaint.DrawBorder(graphics, checkbox_rectangle, checkbox.ForeColor, ButtonBorderStyle.Solid);
+					} else {
+						// draw the outer border
+						ControlPaint.DrawBorder(graphics, checkbox_rectangle, ControlPaint.DarkDark (checkbox.BackColor), ButtonBorderStyle.Solid);
+					}			
+				}
+			} else {
+				if (checkbox.FlatStyle == FlatStyle.Popup) {
+					graphics.FillRectangle(SystemBrushes.Control, fill_rectangle);
+				}	
+			
+				// draw disabled state,
+				ControlPaint.DrawBorder(graphics, checkbox_rectangle, SystemColors.ControlDark, ButtonBorderStyle.Solid);
+			}		
+			
+			/* Make sure we've got at least a line width of 1 */
+			lineWidth=Math.Max(3, rectangle.Width/6);
+			Scale=Math.Max(1, rectangle.Width/12);
+
+			rect=new Rectangle(rectangle.X+lineWidth, rectangle.Y+lineWidth, rectangle.Width-lineWidth*2, rectangle.Height-lineWidth*2);
+			if (checkbox.Enabled) {
+				pen=ResPool.GetPen(checkbox.ForeColor);
+			} else {
+				pen=SystemPens.ControlDark;
+			}
+
+			if (checkbox.Checked) {
+				/* Need to draw a check-mark */
+				for (int i=0; i<lineWidth; i++) {
+					graphics.DrawLine(pen, rect.Left+lineWidth/2, rect.Top+lineWidth+i, rect.Left+lineWidth/2+2*Scale, rect.Top+lineWidth+2*Scale+i);
+					graphics.DrawLine(pen, rect.Left+lineWidth/2+2*Scale, rect.Top+lineWidth+2*Scale+i, rect.Left+lineWidth/2+6*Scale, rect.Top+lineWidth-2*Scale+i);
+				}
+
+			}					
+		}
+
 
 		#endregion	// CheckBox
 
@@ -3068,13 +3177,12 @@ namespace System.Windows.Forms
 					Rectangle	rect;
 					int			Scale;
 
-					/* FIXME: I'm sure there's an easier way to calculate all this, but it should do for now */
-
 					/* Goes first, affects the background */
-					if ((State & DrawFrameControlStates.Pushed)!=0) {
-						HatchBrush	hatchBrush=new HatchBrush(HatchStyle.Percent50, SystemColors.ControlLight, SystemColors.ControlLightLight);
-						graphics.FillRectangle(hatchBrush,rectangle);
-						hatchBrush.Dispose();
+					if ((State & DrawFrameControlStates.Pushed)!=0 ||
+						(State & DrawFrameControlStates.Inactive)!=0) {
+						graphics.FillRectangle(SystemBrushes.Control, rectangle);
+					} else {
+						graphics.FillRectangle(SystemBrushes.Window, rectangle);
 					}
 
 					/* Draw the sunken frame */
