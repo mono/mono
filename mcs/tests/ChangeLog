@@ -1,5 +1,11 @@
 2002-04-05  Ravi Pratap  <ravi@ximian.com>
 
+	* test-101.cs : Add test from Paolo.
+
+	* test-102.cs : Another test for attribute emission.
+
+2002-04-05  Ravi Pratap  <ravi@ximian.com>
+
 	* test-90.cs : Fix bug where we had no class !
 
 	* test-96.cs : Here too !
