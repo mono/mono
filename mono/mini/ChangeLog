@@ -1,3 +1,7 @@
+2004-07-29  Ben Maurer  <bmaurer@ximian.com>
+
+	* inssel.brg: Make memcpy and memset takes bases.
+
 2004-07-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* *-amd64.*: More AMD64 work.
