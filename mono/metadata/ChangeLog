@@ -1,3 +1,8 @@
+2004-08-16  Martin Baulig  <martin@ximian.com>
+
+	* metadata.c (do_mono_metadata_parse_generic_inst): Store the
+	MonoGenericInst, not the MonoType in the `generic_inst_cache'.
+
 2004-08-14  Martin Baulig  <martin@ximian.com>
 
 	* class.c (dup_type): Also copy the `byref' field.
