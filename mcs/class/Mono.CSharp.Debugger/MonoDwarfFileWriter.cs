@@ -654,9 +654,9 @@ namespace Mono.CSharp.Debugger
 				}
 			}
 
-			public int Token {
+			public ISourceMethod Method {
 				get {
-					return _method.Token;
+					return _method;
 				}
 			}
 
@@ -1002,10 +1002,12 @@ namespace Mono.CSharp.Debugger
 					new DieMethodVariable (this, method);
 
 				ParameterInfo[] parameters = method.MethodBase.GetParameters ();
-				foreach (ParameterInfo param in parameters) {
-					MethodParameter mp = new MethodParameter (method, param);
+				if (parameters != null) {
+					foreach (ParameterInfo param in parameters) {
+						MethodParameter mp = new MethodParameter (method, param);
 
-					new DieMethodVariable (this, mp);
+						new DieMethodVariable (this, mp);
+					}
 				}
 
 				DieCompileUnit.LineNumberEngine.AddMethod (method);
@@ -1867,11 +1869,11 @@ namespace Mono.CSharp.Debugger
 				switch (vtype) {
 				case VariableType.VARIABLE_LOCAL:
 					dw.AddRelocEntry (RelocEntryType.LOCAL_VARIABLE,
-							  var.Token, var.Index);
+							  var.Method.Token, var.Index);
 					break;
 				case VariableType.VARIABLE_PARAMETER:
 					dw.AddRelocEntry (RelocEntryType.METHOD_PARAMETER,
-							  var.Token, var.Index);
+							  var.Method.Token, var.Index);
 					break;
 				case VariableType.VARIABLE_THIS:
 					dw.AddRelocEntry (RelocEntryType.METHOD_PARAMETER,
@@ -1891,10 +1893,10 @@ namespace Mono.CSharp.Debugger
 			protected override void DoEmitScope ()
 			{
 				dw.AddRelocEntry (RelocEntryType.VARIABLE_START_SCOPE,
-						  var.Token, var.Index);
+						  var.Method.Token, var.Index);
 				aw.WriteAddress (0);
 				dw.AddRelocEntry (RelocEntryType.VARIABLE_END_SCOPE,
-						  var.Token, var.Index);
+						  var.Method.Token, var.Index);
 				aw.WriteAddress (0);
 			}
 		}

@@ -1,5 +1,17 @@
 2002-05-22  Martin Baulig  <martin@gnome.org>
 
+	* IMonoSymbolWriter.cs (IVariable): Replaced Token with `ISourceMethod Method'.
+
+	* MonoSymbolWriter.cs (MonoSymbolWriter): The constructor now has an additional
+	ModuleBuilder argument.
+	(OpenMethod): Immediately call the `get_method' interncall to get the MethodBase
+	from the token, then store the MethodBase instead of the token.  The token may
+	still change during the metadata library's fixup process.
+	(DoFixups): When the image has been written to disk, call the GetToken () method
+	on all MethodBuilders and all ConstructorBuilders to get the final metadata tokens.
+
+2002-05-22  Martin Baulig  <martin@gnome.org>
+
 	* AssemblerWriterI386.cs: Don't use GNU extensions and produce assembler
 	output which is free of comments and extra whitespaces so that it's suitable
 	for `as -f'.

@@ -24,10 +24,11 @@ namespace Mono.CSharp.Debugger
 	public class MonoSymbolWriter : IMonoSymbolWriter
 	{
 		protected Assembly assembly;
+		protected ModuleBuilder module_builder;
 		protected string output_filename = null;
 		protected ArrayList locals = null;
 		protected ArrayList orphant_methods = null;
-		protected Hashtable methods = null;
+		protected ArrayList methods = null;
 		protected Hashtable sources = null;
 
 		protected class SourceFile : ISourceFile
@@ -209,16 +210,17 @@ namespace Mono.CSharp.Debugger
 
 		protected class LocalVariable : ILocalVariable
 		{
-			public LocalVariable (string name, byte[] signature, int token, int index)
-				: this (name, signature, token, index, null)
+			public LocalVariable (string name, byte[] signature, ISourceMethod method,
+					      int index)
+				: this (name, signature, method, index, null)
 			{ }
 
-			public LocalVariable (string name, byte[] signature, int token, int index,
-					      ISourceLine line)
+			public LocalVariable (string name, byte[] signature, ISourceMethod method,
+					      int index, ISourceLine line)
 			{
 				this._name = name;
 				this._signature = signature;
-				this._token = token;
+				this._method = method;
 				this._index = index;
 				this._line = line;
 			}
@@ -226,7 +228,7 @@ namespace Mono.CSharp.Debugger
 			private readonly string _name;
 			internal Type _type;
 			private readonly byte[] _signature;
-			private readonly int _token;
+			private readonly ISourceMethod _method;
 			private readonly int _index;
 			private readonly ISourceLine _line;
 
@@ -243,9 +245,9 @@ namespace Mono.CSharp.Debugger
 				}
 			}
 
-			public int Token {
+			public ISourceMethod Method {
 				get {
-					return _token;
+					return _method;
 				}
 			}
 
@@ -281,22 +283,21 @@ namespace Mono.CSharp.Debugger
 			private Hashtable _block_hash = new Hashtable ();
 			private Stack _block_stack = new Stack ();
 
-			internal MethodBase _method_base;
+			internal readonly MethodBase _method_base;
 			internal ISourceFile _source_file;
-			private readonly int _token;
+			internal int _token;
 
 			private SourceBlock _implicit_block;
 
-			public SourceMethod (int token, MethodBase method_base, ISourceFile source_file)
-				: this (token)
+			public SourceMethod (MethodBase method_base, ISourceFile source_file)
+				: this (method_base)
 			{
-				this._method_base = method_base;
 				this._source_file = source_file;
 			}
 
-			internal SourceMethod (int token)
+			internal SourceMethod (MethodBase method_base)
 			{
-				this._token = token;
+				this._method_base = method_base;
 
 				this._implicit_block = new SourceBlock (this, 0);
 			}
@@ -394,7 +395,7 @@ namespace Mono.CSharp.Debugger
 					else if (_method_base is ConstructorInfo)
 						return _method_base.DeclaringType;
 					else
-						throw new ArgumentException ("OOPS FUCK");
+						throw new NotSupportedException ();
 				}
 			}
 
@@ -406,7 +407,10 @@ namespace Mono.CSharp.Debugger
 
 			public int Token {
 				get {
-					return _token;
+					if (_token != 0)
+						return _token;
+					else
+						throw new NotSupportedException ();
 				}
 			}
 
@@ -430,11 +434,12 @@ namespace Mono.CSharp.Debugger
 		// Interface IMonoSymbolWriter
 		//
 
-		public MonoSymbolWriter (string filename)
+		public MonoSymbolWriter (ModuleBuilder mb, string filename)
 		{
 			this.assembly_filename = filename;
+			this.module_builder = mb;
 
-			this.methods = new Hashtable ();
+			this.methods = new ArrayList ();
 			this.sources = new Hashtable ();
 			this.orphant_methods = new ArrayList ();
 			this.locals = new ArrayList ();
@@ -497,9 +502,8 @@ namespace Mono.CSharp.Debugger
 			if (current_method == null)
 				return;
 
-			int token = current_method.Token;
-
-			LocalVariable local_info = new LocalVariable (name, signature, token, addr1);
+			LocalVariable local_info = new LocalVariable (name, signature,
+								      current_method, addr1);
 
 			current_method.CurrentBlock.AddLocal (local_info);
 			locals.Add (local_info);
@@ -538,12 +542,11 @@ namespace Mono.CSharp.Debugger
 		{
 			int token = symbol_token.GetToken ();
 
-			if (methods.ContainsKey (token))
-				methods.Remove (token);
+			MethodBuilder mb = get_method (module_builder, token);
 
-			current_method = new SourceMethod (token);
+			current_method = new SourceMethod (mb);
 
-			methods.Add (token, current_method);
+			methods.Add (current_method);
 		}
 
 		public void SetMethodSourceRange (ISymbolDocumentWriter startDoc,
@@ -680,15 +683,22 @@ namespace Mono.CSharp.Debugger
 
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern static Type get_local_type_from_sig (Assembly module, byte[] sig);
+		internal extern static Type get_local_type_from_sig (Assembly assembly, byte[] sig);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern static MethodBase get_method (Assembly module, int token);
+		internal extern static MethodBuilder get_method (ModuleBuilder mb, int token);
 
 		protected void DoFixups (Assembly assembly)
 		{
-			foreach (SourceMethod method in methods.Values) {
-				method._method_base = get_method (assembly, method.Token);
+			foreach (SourceMethod method in methods) {
+				if (method._method_base is MethodBuilder) {
+					MethodBuilder mb = (MethodBuilder) method._method_base;
+					method._token = mb.GetToken ().Token;
+				} else if (method._method_base is ConstructorBuilder) {
+					ConstructorBuilder cb = (ConstructorBuilder) method._method_base;
+					method._token = cb.GetToken ().Token;
+				} else
+					throw new NotSupportedException ();
 
 				if (method.SourceFile == null)
 					orphant_methods.Add (method);

@@ -154,7 +154,7 @@ namespace Mono.CSharp.Debugger
 			get;
 		}
 
-		int Token {
+		ISourceMethod Method {
 			get;
 		}
 
