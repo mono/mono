@@ -1,5 +1,10 @@
 2004-02-20  Martin Baulig  <martin@ximian.com>
 
+	* reflection.c (method_encode_methodspec): Actually use the
+	uninflated signature for the memberref.
+
+2004-02-20  Martin Baulig  <martin@ximian.com>
+
 	* class.h (MonoGenericMethod): Removed `declaring'.
 
 	* class.c (mono_class_inflate_generic_method): If `gmethod->klass'
