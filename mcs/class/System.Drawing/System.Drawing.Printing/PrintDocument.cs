@@ -15,6 +15,7 @@ namespace System.Drawing.Printing {
 	public class PrintDocument{// : Component {
 		private PageSettings defaultpagesettings;
 		private string documentname;
+		private bool originAtMargins; // .NET V1.1 Beta
 
 		//[MonoTODO]
 		public PrintDocument() {
@@ -57,6 +58,15 @@ namespace System.Drawing.Printing {
 			}
 			set{
 				throw new NotImplementedException ();
+			}
+		}
+		[MonoTODO]
+		public bool OriginAtMargins{// .NET V1.1 Beta
+			get{
+				return originAtMargins;
+			}
+			set{
+				originAtMargins = value;
 			}
 		}
 		public void Print(){

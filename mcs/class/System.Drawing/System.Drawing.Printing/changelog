@@ -1,16 +1,20 @@
+2002-10-13  DennisHayes <dennish@raytek.com>
+	* PrintDocument
+	* Added OriginAtMargin for .NET V 1.1 compatablity.
+
 2002-9-2  DennisHayes <dennish@raytek.com>
 
-* PageSettings.cs 
-* PaperSize.cs 
-* PaperSource.cs 
-* PrintControler.cs 
-* PrintDocument.cs 
-* PrintingPermission.cs 
-* PrintPageEventHandler.cs 
-* QueryPageSettingEventArgs.cs 
-* QueryPageSettingsEventHandler.cs 
-* added todos back
-* minor bug fixes
+	* PageSettings.cs 
+	* PaperSize.cs 
+	* PaperSource.cs 
+	* PrintControler.cs 
+	* PrintDocument.cs 
+	* PrintingPermission.cs 
+	* PrintPageEventHandler.cs 
+	* QueryPageSettingEventArgs.cs 
+	* QueryPageSettingsEventHandler.cs 
+	* added todos back
+	* minor bug fixes
 
 2002-9-2  DennisHayes <dennish@raytek.com>
 
