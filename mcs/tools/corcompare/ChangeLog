@@ -1,3 +1,26 @@
+2004-06-14  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* mono-api-diff.cs: now also check charset, layout and 
+	serializability of types
+	* mono-api-info.cs: output charset, layout and flag indicating
+	whether type is serializable
+
+2004-06-12  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* mono-api-diff.cs: 
+	  - check method/ctor parameters
+	  - use target attribute for attributes in key for attributes 
+	    (if available). This allows us to differentiate between method 
+	    and return type attributes for methods
+	  - check field values (for literal fields)
+	  - LoadExtraData was not always called, causing certain signature
+	    mismatches not to be reported
+
+	* mono-api-info.cs: 
+	  - check field values of literal fields
+	  - document parameters of method/ctors
+	  - also output attribute applied to return type of methods
+
 2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* mono-api-info.cs: ignore non-public attributes

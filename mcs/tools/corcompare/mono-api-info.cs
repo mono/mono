@@ -9,7 +9,9 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml;
 
@@ -260,11 +262,22 @@ namespace Mono.AssemblyInfo
 			AddAttribute (nclass, "name", type.Name);
 			string classType = GetClassType (type);
 			AddAttribute (nclass, "type", classType);
+
 			if (type.BaseType != null)
 				AddAttribute (nclass, "base", type.BaseType.FullName);
 
 			if (type.IsSealed)
 				AddAttribute (nclass, "sealed", "true");
+
+			if (type.IsSerializable)
+				AddAttribute (nclass, "serializable", "true");
+
+			string charSet = GetCharSet (type);
+			AddAttribute (nclass, "charset", charSet);
+
+			string layout = GetLayout (type);
+			if (layout != null)
+				AddAttribute (nclass, "layout", layout);
 
 			parent.AppendChild (nclass);
 			
@@ -342,7 +355,7 @@ namespace Mono.AssemblyInfo
 			if (member != type)
 				throw new InvalidOperationException ("odd");
 				
-			return ((int) type.Attributes).ToString ();
+			return ((int) type.Attributes).ToString (CultureInfo.InvariantCulture);
 		}
 
 		public static bool MustDocumentMethod(MethodBase method)
@@ -366,6 +379,34 @@ namespace Mono.AssemblyInfo
 				return "delegate";
 
 			return "class";
+		}
+
+		private static string GetCharSet (Type type)
+		{
+			if (type.IsAnsiClass)
+				return CharSet.Ansi.ToString (CultureInfo.InvariantCulture);
+
+			if (type.IsAutoClass)
+				return CharSet.Auto.ToString (CultureInfo.InvariantCulture);
+
+			if (type.IsUnicodeClass)
+				return CharSet.Unicode.ToString (CultureInfo.InvariantCulture);
+
+			return CharSet.None.ToString (CultureInfo.InvariantCulture);
+		}
+
+		private static string GetLayout (Type type)
+		{
+			if (type.IsAutoLayout)
+				return LayoutKind.Auto.ToString (CultureInfo.InvariantCulture);
+
+			if (type.IsExplicitLayout)
+				return LayoutKind.Explicit.ToString (CultureInfo.InvariantCulture);
+
+			if (type.IsLayoutSequential)
+				return LayoutKind.Sequential.ToString (CultureInfo.InvariantCulture);
+
+			return null;
 		}
 
 		private FieldInfo[] GetFields (Type type)
@@ -489,7 +530,7 @@ namespace Mono.AssemblyInfo
 		protected override string GetMemberAttributes (MemberInfo member)
 		{
 			FieldInfo field = (FieldInfo) member;
-			return ((int) field.Attributes).ToString ();
+			return ((int) field.Attributes).ToString (CultureInfo.InvariantCulture);
 		}
 
 		protected override void AddExtraData (XmlNode p, MemberInfo member)
@@ -497,6 +538,22 @@ namespace Mono.AssemblyInfo
 			base.AddExtraData (p, member);
 			FieldInfo field = (FieldInfo) member;
 			AddAttribute (p, "fieldtype", field.FieldType.FullName);
+
+			if (field.IsLiteral) {
+				object value = field.GetValue (null);
+				string stringValue = null;
+				if (value is Enum) {
+					// FIXME: when Mono bug #60090 has been
+					// fixed, we should just be able to use
+					// Convert.ToString
+					stringValue = ((Enum) value).ToString ("D", CultureInfo.InvariantCulture);
+				} else {
+					stringValue = Convert.ToString (value, CultureInfo.InvariantCulture);
+				}
+
+				if (stringValue != null)
+					AddAttribute (p, "value", stringValue);
+			}
 		}
 
 		public override string ParentTag {
@@ -554,7 +611,7 @@ namespace Mono.AssemblyInfo
 		protected override string GetMemberAttributes (MemberInfo member)
 		{
 			PropertyInfo prop = (PropertyInfo) member;
-			return ((int) prop.Attributes).ToString ();
+			return ((int) prop.Attributes).ToString (CultureInfo.InvariantCulture);
 		}
 
 		public override string ParentTag {
@@ -582,7 +639,7 @@ namespace Mono.AssemblyInfo
 		protected override string GetMemberAttributes (MemberInfo member)
 		{
 			EventInfo evt = (EventInfo) member;
-			return ((int) evt.Attributes).ToString ();
+			return ((int) evt.Attributes).ToString (CultureInfo.InvariantCulture);
 		}
 
 		protected override void AddExtraData (XmlNode p, MemberInfo member)
@@ -621,17 +678,25 @@ namespace Mono.AssemblyInfo
 		protected override string GetMemberAttributes (MemberInfo member)
 		{
 			MethodBase method = (MethodBase) member;
-			return ((int) method.Attributes).ToString ();
+			return ((int) method.Attributes).ToString (CultureInfo.InvariantCulture);
 		}
 
 		protected override void AddExtraData (XmlNode p, MemberInfo member)
 		{
 			base.AddExtraData (p, member);
+
+			ParameterData parms = new ParameterData (document, p, 
+				((MethodBase) member).GetParameters ());
+			parms.DoOutput ();
+
 			if (!(member is MethodInfo))
 				return;
-				
+
 			MethodInfo method = (MethodInfo) member;
 			AddAttribute (p, "returntype", method.ReturnType.FullName);
+
+			AttributeData.OutputAttributes (document, p,
+				method.ReturnTypeCustomAttributes.GetCustomAttributes (false));
 		}
 
 		public override bool NoMemberAttributes {
@@ -664,14 +729,66 @@ namespace Mono.AssemblyInfo
 		}
 	}
 
+	class ParameterData : BaseData
+	{
+		private ParameterInfo[] parameters;
+
+		public ParameterData (XmlDocument document, XmlNode parent, ParameterInfo[] parameters)
+			: base (document, parent)
+		{
+			this.parameters = parameters;
+		}
+
+		public override void DoOutput ()
+		{
+			XmlNode parametersNode = document.CreateElement ("parameters", null);
+			parent.AppendChild (parametersNode);
+
+			foreach (ParameterInfo parameter in parameters) {
+				XmlNode paramNode = document.CreateElement ("parameter", null);
+				parametersNode.AppendChild (paramNode);
+				AddAttribute (paramNode, "name", parameter.Name);
+				AddAttribute (paramNode, "position", parameter.Position.ToString(CultureInfo.InvariantCulture));
+				AddAttribute (paramNode, "attrib", ((int) parameter.Attributes).ToString());
+
+				string direction = "in";
+
+				if (parameter.ParameterType.IsByRef) {
+					direction = parameter.IsOut ? "out" : "ref";
+				}
+
+				Type t = parameter.ParameterType;
+				AddAttribute (paramNode, "type", t.FullName);
+
+				if (parameter.IsOptional) {
+					AddAttribute (paramNode, "optional", "true");
+					if (parameter.DefaultValue != null)
+						AddAttribute (paramNode, "defaultValue", parameter.DefaultValue.ToString ());
+				}
+
+				if (direction != "in")
+					AddAttribute (paramNode, "direction", direction);
+
+				AttributeData.OutputAttributes (document, paramNode, parameter.GetCustomAttributes (false));
+			}
+		}
+	}
+
 	class AttributeData : BaseData
 	{
 		object [] atts;
+		string target;
 
-		AttributeData (XmlDocument doc, XmlNode parent, object [] attributes)
+		AttributeData (XmlDocument doc, XmlNode parent, object[] attributes, string target)
 			: base (doc, parent)
 		{
-			this.atts = attributes;
+			atts = attributes;
+			this.target = target;
+		}
+
+		AttributeData (XmlDocument doc, XmlNode parent, object [] attributes)
+			: this (doc, parent, attributes, null)
+		{
 		}
 
 		public override void DoOutput ()
@@ -682,8 +799,11 @@ namespace Mono.AssemblyInfo
 			if (atts == null || atts.Length == 0)
 				return;
 
-			XmlNode natts = document.CreateElement ("attributes", null);
-			parent.AppendChild (natts);
+			XmlNode natts = parent.SelectSingleNode("attributes");
+			if (natts == null) {
+				natts = document.CreateElement ("attributes", null);
+				parent.AppendChild (natts);
+			}
 
 			ArrayList typeList = new ArrayList (atts.Length);
 			string comment = null;
@@ -704,6 +824,9 @@ namespace Mono.AssemblyInfo
 			foreach (Type t in types) {
 				XmlNode node = document.CreateElement ("attribute");
 				AddAttribute (node, "name", t.FullName);
+				if (target != null) {
+					AddAttribute (node, "target", target);
+				}
 				if (comment != null && t.Name.EndsWith ("TODOAttribute"))
 					AddAttribute (node, "comment", comment);
 
@@ -711,16 +834,22 @@ namespace Mono.AssemblyInfo
 			}
 		}
 
-		public static void OutputAttributes (XmlDocument doc, XmlNode parent, object [] attributes)
+		public static void OutputAttributes (XmlDocument doc, XmlNode parent, object[] attributes)
 		{
-			AttributeData ad = new AttributeData (doc, parent, attributes);
+			AttributeData ad = new AttributeData (doc, parent, attributes, null);
+			ad.DoOutput ();
+		}
+
+		public static void OutputAttributes (XmlDocument doc, XmlNode parent, object [] attributes, string target)
+		{
+			AttributeData ad = new AttributeData (doc, parent, attributes, target);
 			ad.DoOutput ();
 		}
 
 		private static bool MustDocumentAttribute (Type attributeType)
 		{
-			// only document public attributes
-			return attributeType.IsPublic;
+			// only document MonoTODOAttribute and public attributes
+			return attributeType.Name.EndsWith ("TODOAttribute") || attributeType.IsPublic;
 		}
 	}
 
@@ -745,8 +874,6 @@ namespace Mono.AssemblyInfo
 				else
 					modifier = "";
 
-				//TODO: parameter attributes
-				
 				string type_name = info.ParameterType.ToString ();
 				sb.AppendFormat ("{0}{1}, ", modifier, type_name);
 			}
