@@ -1,3 +1,8 @@
+2004-12-30  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Syscall.cs: All syscall_ functions should explicitly specify EntryPoint 
+	  so that an EntryPointNotFoundException is avoided.  Fixes 70706.
+
 2004-11-16  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* IncludeAttribute.cs: Removed.

@@ -221,7 +221,7 @@ namespace Mono.Posix {
 		[DllImport ("MonoPosixHelper", EntryPoint="wstopsig")]
 		public static extern int WSTOPSIG (int status);
 
-		[DllImport ("libc", SetLastError=true)]
+		[DllImport ("libc", EntryPoint="creat", SetLastError=true)]
 		internal static extern int syscall_creat (string pathname, int flags);
 
 		public static int creat (string pathname, FileMode flags)
@@ -286,7 +286,7 @@ namespace Mono.Posix {
 
 		// TODO: utime
 
-		[DllImport ("libc")]
+		[DllImport ("libc", EntryPoint="access", SetLastError=true)]
 		internal extern static int syscall_access (string pathname, int mode);
 
 		[DllImport ("MonoPosixHelper")]
@@ -311,7 +311,7 @@ namespace Mono.Posix {
 		[DllImport ("libc", SetLastError=true)]
 		public static extern int rename (string oldPath, string newPath);
 		
-		[DllImport ("libc", SetLastError=true)]
+		[DllImport ("libc", EntryPoint="mkdir", SetLastError=true)]
 		internal extern static int syscall_mkdir (string pathname, int mode);
 
 		public static int mkdir (string pathname, FileMode mode)
