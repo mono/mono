@@ -1,5 +1,9 @@
 2003-08-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpApplication.cs: fixed typos. Closes bug #44197.
+
+2003-08-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpApplication.cs:
 	* HttpApplicationFactory.cs: fix duplicate application OnStart events.
 

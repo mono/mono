@@ -561,8 +561,8 @@ namespace System.Web
 				GetAsStates (HttpApplication.UpdateRequestCacheId, states);
 
 				// EndRequest
-				if (null != _app._updateRequestCacheAsync)
-					_app._updateRequestCacheAsync.GetAsStates (_app, states);
+				if (null != _app._endRequestAsync)
+					_app._endRequestAsync.GetAsStates (_app, states);
 				GetAsStates (HttpApplication.EndRequestId, states);
 
 				// Make list ready to execute
