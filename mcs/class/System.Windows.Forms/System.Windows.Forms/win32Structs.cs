@@ -1034,5 +1034,17 @@ namespace System.Windows.Forms
 		internal IntPtr			hPrintTemplate;
 		internal IntPtr			hSetupTemplate;
 	}
+	
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi,  Pack=1)]		
+	internal struct BROWSEINFO {
+		internal IntPtr				hwndOwner;
+    	internal IntPtr				pidlRoot;
+    	internal IntPtr				pszDisplayName;
+    	internal string				lpszTitle;     
+    	internal uint				ulFlags; 
+    	internal IntPtr		  		lpfn;
+    	internal IntPtr      		lParam;    
+    	internal int				iImage;    
+	} 
 }
 

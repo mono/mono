@@ -82,7 +82,7 @@ namespace System.Windows.Forms{
 	{
 		[PreserveSig]
 		int ParseDisplayName(IntPtr hWnd, IntPtr bindingContext, 
-			IntPtr OLEString, out int chEaten, ref IntPtr idList, ref int attributes);
+			IntPtr OLEString, ref int chEaten, ref IntPtr idList, ref int attributes);
 		
 		[PreserveSig]
 		int EnumObjects(IntPtr hWnd, ShellEnumFlags flags,  ref IEnumIDList enumList);

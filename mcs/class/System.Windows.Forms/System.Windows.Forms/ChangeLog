@@ -1,5 +1,8 @@
-2003-11-11 Ben Maurer  <bmaurer@users.sourceforge.net>
+2003-11-12 Jordi Mas i Hernàndez <jmas@softcatala.org>
+	* FolderBrowserDialog.cs, win32Enums.cs,  win32Interfaces.cs, win32Structs.cs, win32functions.cs	
+	FolderBrowserDialog implementation. 
 
+2003-11-11 Ben Maurer  <bmaurer@users.sourceforge.net>
 	* LinkLabel.cs, InputLanguageChangedEventArgs.cs: recursion!
 
 2003-10-27 Jordi Mas i Hernàndez <jmas@softcatala.org>

@@ -28,6 +28,8 @@
  * authorization from Carlos Harvey Perez.
  */
 
+#define HAVE_SHELL_SUPPORT 
+
 using System;
 using System.Threading;
 using System.Drawing;
@@ -37,6 +39,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Xml;
 using System.IO;
+
 
 //using UtilityLibrary.WinControls;
 
@@ -183,6 +186,12 @@ namespace System.Windows.Forms{
 			}
 			return result;
 		}
+				
+		
+		[DllImport("kernel32.dll", CharSet=CharSet.Auto)]
+		internal static extern int MultiByteToWideChar(DefaultCodePages CodePage, int dwFlags, string lpMultiByteStr,
+			int cbMultiByte, IntPtr lpWideCharSt, int cchWideChar);
+		
 	#endregion
 	
 		#region Gdi32.dll functions
@@ -610,8 +619,8 @@ namespace System.Windows.Forms{
 		#endregion
 
 		#region Shell32.dll functions
-#if HAVE_SHELL_SUPPORT 
-		[DllImport("shell32.dll", CharSet=CharSet.Auto)]
+#if HAVE_SHELL_SUPPORT  
+		[DllImport("shell32.dll", CharSet=CharSet.Auto)] 
 		internal static extern IntPtr SHGetFileInfo(string drivePath, int fileAttributes,
 			out SHFILEINFO fileInfo, int countBytesFileInfo, ShellFileInfoFlags flags);
 
@@ -630,6 +639,9 @@ namespace System.Windows.Forms{
 
 		[DllImport("shell32.dll", CharSet=CharSet.Auto)]
 		internal static extern int SHGetPathFromIDList(IntPtr idl, StringBuilder path);
+		
+		[DllImport("shell32.dll", CharSet=CharSet.Auto)]
+		internal static extern IntPtr SHBrowseForFolder(ref BROWSEINFO browser);
 
 		internal static void SHFreeMalloc(IntPtr handle) 
 		{

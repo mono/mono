@@ -1693,6 +1693,7 @@ namespace System.Windows.Forms{
 		CSIDL_SENDTO                    = 0x0009,
 		CSIDL_BITBUCKET                 = 0x000a,
 		CSIDL_STARTMENU                 = 0x000b,
+		CSIDL_MYMUSIC					= 0x000d,
 		CSIDL_DESKTOPDIRECTORY          = 0x0010,
 		CSIDL_DRIVES                    = 0x0011,
 		CSIDL_NETWORK                   = 0x0012,
@@ -1705,12 +1706,18 @@ namespace System.Windows.Forms{
 		CSIDL_COMMON_DESKTOPDIRECTORY   = 0x0019,
 		CSIDL_APPDATA                   = 0x001a,
 		CSIDL_PRINTHOOD                 = 0x001b,
+		CSIDL_LOCAL_APPDATA				= 0x001c,
 		CSIDL_ALTSTARTUP                = 0x001d,         
 		CSIDL_COMMON_ALTSTARTUP         = 0x001e,         
 		CSIDL_COMMON_FAVORITES          = 0x001f,
 		CSIDL_INTERNET_CACHE            = 0x0020,
 		CSIDL_COOKIES                   = 0x0021,
-		CSIDL_HISTORY                   = 0x0022
+		CSIDL_HISTORY                   = 0x0022,
+		CSIDL_COMMON_APPDATA			= 0x0023,
+		CSIDL_SYSTEM					= 0x0025,
+		CSIDL_PROGRAM_FILES				= 0x0026,
+		CSIDL_MYPICTURES				= 0x0027,		
+				
 	}
 	#endregion
 
@@ -3184,4 +3191,28 @@ namespace System.Windows.Forms{
 		CDERR_NOHOOK			= 0x000B,
 		CDERR_REGISTERMSGFAIL	= 0x000C
 	}
+	
+	public enum BrowseDirFlags: uint 	// Browsing directory flags
+	{			
+		BIF_RETURNONLYFSDIRS	= 0x0001,  
+		BIF_DONTGOBELOWDOMAIN	= 0x0002,
+		BIF_STATUSTEXT			= 0x0004,
+		BIF_RETURNFSANCESTORS	= 0x0008,
+		BIF_EDITBOX				= 0x0010,
+		BIF_VALIDATE			= 0x0020,
+		BIF_BROWSEFORCOMPUTER  	= 0x1000,
+		BIF_BROWSEFORPRINTER    = 0x2000,
+		BIF_BROWSEINCLUDEFILES  = 0x4000
+	}
+	
+	public enum DefaultCodePages:	uint
+	{
+		CP_ACP      			= 0x0000,	  /* ANSI code page */
+		CP_OEMCP    			= 0x0001, 
+		CP_MACCP               	= 0x0002,   
+		CP_THREAD_ACP          	= 0x0003,   
+		CP_SYMBOL              	= 0x002a,  
+		
+	}
+
 }
