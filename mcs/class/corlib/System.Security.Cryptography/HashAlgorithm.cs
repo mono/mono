@@ -71,11 +71,15 @@ namespace System.Security.Cryptography {
 			if (disposed)
 				throw new ObjectDisposedException ("HashAlgorithm");
 
-			int l = (int) (inputStream.Length - inputStream.Position);
-			byte[] buffer = new byte [l];
-			inputStream.Read (buffer, 0, l);
-
-			return ComputeHash (buffer, 0, l);
+			byte[] buffer = new byte [4096];
+			int len = inputStream.Read (buffer, 0, 4096);
+			while (len > 0) {
+				HashCore (buffer, 0, len);
+				len = inputStream.Read (buffer, 0, 4096);
+			}
+			HashValue = HashFinal ();
+			Initialize ();
+			return HashValue;
 		}
 	
 		/// <summary>
@@ -192,4 +196,3 @@ namespace System.Security.Cryptography {
 		}
 	}
 }
-

@@ -22,6 +22,7 @@ namespace System.Security.Cryptography {
 		private const int HASH_SIZE_BYTES  =  16;
 		private const int HASH_SIZE_BITS   = 128;
 		[CLSCompliant(false)] private uint[] _H;
+		[CLSCompliant(false)] private uint[] buff;
 		[CLSCompliant(false)] private uint count;
 		private byte[] _ProcessingBuffer;   // Used to start data when passed less than a block worth.
 		private int _ProcessingBufferCount; // Counts how much data we have stored that still needs processed.
@@ -32,6 +33,7 @@ namespace System.Security.Cryptography {
 		public MD5CryptoServiceProvider () 
 		{
 			_H = new uint[4];
+			buff = new uint[16];
 			HashSizeValue = HASH_SIZE_BITS;
 			_ProcessingBuffer = new byte[BLOCK_SIZE_BYTES];
 
@@ -125,7 +127,6 @@ namespace System.Security.Cryptography {
 		/// <param name="inputOffset">Where in the byte array to start processing.</param>
 		private void ProcessBlock (byte[] inputBuffer, int inputOffset) 
 		{
-			uint[] buff = new uint[16];
 			uint a, b, c, d;
 			int i;
 		

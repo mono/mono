@@ -1,3 +1,14 @@
+2004-02-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HashAlgorithm.cs: Changed the ComputeHash(Stream) method to (a) not
+	allocate the whole stream memory (big memory saver as suggested by
+	Peter Williams in bugzilla entry #54022) and (b) to never use Stream.
+	Length and Stream.Position because they aren't implemented for every
+	stream class (similar issue to the CryptoStream patch).
+	* MD5CryptoServiceProvider.cs: Moved a buffer allocation from 
+	ProcessBlock to constructor to reduce memory allocation. Optimization
+	suggested by Peter Williams in bugzilla entry #54024.
+
 2004-02-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DSACryptoServiceProvider.cs: Added keypair persistence support.
