@@ -1,3 +1,8 @@
+2002-12-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-tokenizer.cs: Small fix to the parser: compute the ascii
+	number before adding it.
+
 2002-12-21  Ravi Pratap  <ravi@ximian.com>
 
 	* ecore.cs (StandardImplicitConversion): When in an unsafe
