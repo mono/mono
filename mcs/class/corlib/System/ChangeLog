@@ -1,3 +1,7 @@
+2003-09-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Array.cs: reduced xsp allocated memory by 1/2.
+
 2003-09-25  Martin Baulig  <martin@ximian.com>
 
 	* Type.cs (Type.IsGenericTypeDefinition): Removed this method

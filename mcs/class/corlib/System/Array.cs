@@ -191,11 +191,10 @@ namespace System
 
 		public object GetValue (int idx)
 		{
-			int[] ind = new int [1];
+			if (idx < 0 || idx >= Length)
+				throw new ArgumentOutOfRangeException ("idx");
 
-			ind [0] = idx;
-
-			return GetValue (ind);
+			return GetValueImpl (idx);
 		}
 
 		public object GetValue (int idx1, int idx2)
@@ -258,11 +257,7 @@ namespace System
 			if (idx < 0 || idx > Int32.MaxValue)
 				throw new ArgumentOutOfRangeException ("idx");
 
-			int[] ind = new int [1];
-
-			ind [0] = (int) idx;
-
-			SetValue (value, ind);
+			SetValue (value, (int) idx);
 		}
 		
 		public void SetValue (object value, long idx1, long idx2)
@@ -329,11 +324,10 @@ namespace System
 
 		public void SetValue (object value, int idx)
 		{
-			int[] ind = new int [1];
+			if (idx < 0 || idx >= Length)
+				throw new ArgumentOutOfRangeException ("idx");
 
-			ind [0] = idx;
-
-			SetValue (value, ind);
+			SetValueImpl (value, idx);
 		}
 		
 		public void SetValue (object value, int idx1, int idx2)
