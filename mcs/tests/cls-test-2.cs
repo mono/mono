@@ -26,3 +26,11 @@ public class CLSClass {
         public static void Main() {
 	}
 }
+public class InnerTypeClasss {
+    public struct Struct {
+    }
+    
+    public Struct Method () {
+        return new Struct ();
+    }
+}

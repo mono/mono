@@ -36,3 +36,12 @@ public class CLSClass {
     
         public static void Main() {}
 }
+public class CLSClass_2 {
+    [CLSCompliant (false)]
+    public CLSClass_2(int[,,] b) {
+    }
+
+    public CLSClass_2(int[,] b) {
+    }
+
+}

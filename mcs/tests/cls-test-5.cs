@@ -68,3 +68,34 @@ namespace B {
 
 public class c1 {
 }
+// Test
+[System.CLSCompliant (false)]
+public interface I1 {
+}
+
+public interface i1 {
+}
+
+// Test
+enum AB {
+}
+
+[CLSCompliant (false)]
+public enum aB {
+}
+
+public interface ab {
+}
+
+// Test
+public class CLSClass_2 {
+        [CLSCompliant (false)]
+        public void Method () {}
+        public void method () {}
+}
+
+// Test
+namespace System {
+    public class sByte {
+    }
+}
