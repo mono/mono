@@ -1,0 +1,4 @@
+2003-10-05  Todd Berman <tberman@gentoo.org>
+
+	* AddressList.cs: Implemented.
+	* ChangeLog: Added.
