@@ -15,6 +15,7 @@ using System.Security.Cryptography;
 
 namespace MonoTests.System.Security.Cryptography {
 
+[TestFixture]
 public class SignatureDescriptionTest : Assertion {
 
 	protected SignatureDescription sig;
@@ -22,7 +23,7 @@ public class SignatureDescriptionTest : Assertion {
 	protected static RSA rsa;
 
 	[SetUp]
-	void Setup () 
+	public void SetUp () 
 	{
 		sig = new SignatureDescription();
 		// key generation is VERY long so one time is enough
@@ -55,13 +56,46 @@ public class SignatureDescriptionTest : Assertion {
 	}
 	
 	[Test]
-	[Ignore ("Undocumented format - unsupported by Mono")]
-	public void Constructor_SecurityElement () 
+	public void Constructor_SecurityElement_Empty () 
 	{
 		// (empty) SecurityElement constructor
 		SecurityElement se = new SecurityElement ("xml");
 		SignatureDescription sig = new SignatureDescription (se);
 		AssertNotNull ("SignatureDescription(SecurityElement)", sig);
+	}
+
+	[Test]
+	public void Constructor_SecurityElement_DSA ()
+	{
+		SecurityElement se = new SecurityElement ("DSASignature");
+		se.AddChild (new SecurityElement ("Key", "System.Security.Cryptography.DSACryptoServiceProvider"));
+		se.AddChild (new SecurityElement ("Digest", "System.Security.Cryptography.SHA1CryptoServiceProvider"));
+		se.AddChild (new SecurityElement ("Formatter", "System.Security.Cryptography.DSASignatureFormatter"));
+		se.AddChild (new SecurityElement ("Deformatter", "System.Security.Cryptography.DSASignatureDeformatter"));
+
+		SignatureDescription sig = new SignatureDescription (se);
+		AssertNotNull ("SignatureDescription(SecurityElement)", sig);
+		AssertEquals ("Key", "System.Security.Cryptography.DSACryptoServiceProvider", sig.KeyAlgorithm);
+		AssertEquals ("Digest", "System.Security.Cryptography.SHA1CryptoServiceProvider", sig.DigestAlgorithm);
+		AssertEquals ("Formatter", "System.Security.Cryptography.DSASignatureFormatter", sig.FormatterAlgorithm);
+		AssertEquals ("Deformatter", "System.Security.Cryptography.DSASignatureDeformatter", sig.DeformatterAlgorithm);
+	}
+
+	[Test]
+	public void Constructor_SecurityElement_RSA ()
+	{
+		SecurityElement se = new SecurityElement ("RSASignature");
+		se.AddChild (new SecurityElement ("Key", "System.Security.Cryptography.RSACryptoServiceProvider"));
+		se.AddChild (new SecurityElement ("Digest", "System.Security.Cryptography.SHA1CryptoServiceProvider"));
+		se.AddChild (new SecurityElement ("Formatter", "System.Security.Cryptography.RSAPKCS1SignatureFormatter"));
+		se.AddChild (new SecurityElement ("Deformatter", "System.Security.Cryptography.RSAPKCS1SignatureDeformatter"));
+
+		SignatureDescription sig = new SignatureDescription (se);
+		AssertNotNull ("SignatureDescription(SecurityElement)", sig);
+		AssertEquals ("Key", "System.Security.Cryptography.RSACryptoServiceProvider", sig.KeyAlgorithm);
+		AssertEquals ("Digest", "System.Security.Cryptography.SHA1CryptoServiceProvider", sig.DigestAlgorithm);
+		AssertEquals ("Formatter", "System.Security.Cryptography.RSAPKCS1SignatureFormatter", sig.FormatterAlgorithm);
+		AssertEquals ("Deformatter", "System.Security.Cryptography.RSAPKCS1SignatureDeformatter", sig.DeformatterAlgorithm);
 	}
 
 	[Test]

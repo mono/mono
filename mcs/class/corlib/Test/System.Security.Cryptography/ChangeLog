@@ -1,3 +1,9 @@
+2004-06-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SignatureDescriptionTest.cs: Added missing [TestFixture] :( and 
+	cases for the previously undocumented .ctor(SecurityElement) - which
+	is now, backwardly, documented in VS.NET 2005.
+
 2004-05-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HashAlgorithmTest.cs: Added new tests to check for more exceptions.
