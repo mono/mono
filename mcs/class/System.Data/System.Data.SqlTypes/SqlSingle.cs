@@ -201,16 +201,25 @@ namespace System.Data.SqlTypes
 
 		public static SqlSingle operator + (SqlSingle x, SqlSingle y)
 		{
-			checked {
-				return new SqlSingle ((float)(x.Value + y.Value));
-			}
+			float f = (float)(x.Value + y.Value);
+
+			if (Single.IsInfinity (f))
+				throw new OverflowException ();
+
+			return new SqlSingle (f);
 		}
 
 		public static SqlSingle operator / (SqlSingle x, SqlSingle y)
 		{
-			checked {
-				return new SqlSingle (x.Value / y.Value);
+			float f = (float)(x.Value / y.Value);
+
+			if (Single.IsInfinity (f)) {
+				
+				if (y.Value == 0d) 
+					throw new DivideByZeroException ();
 			}
+
+			return new SqlSingle (x.Value / y.Value);
 		}
 
 		public static SqlBoolean operator == (SqlSingle x, SqlSingle y)
@@ -251,16 +260,22 @@ namespace System.Data.SqlTypes
 
 		public static SqlSingle operator * (SqlSingle x, SqlSingle y)
 		{
-			checked {
-				return new SqlSingle (x.Value * y.Value);
-			}
+			float f = (float)(x.Value * y.Value);
+			
+			if (Single.IsInfinity (f))
+				throw new OverflowException ();
+
+			return new SqlSingle (f);
 		}
 
 		public static SqlSingle operator - (SqlSingle x, SqlSingle y)
 		{
-			checked {
-				return new SqlSingle (x.Value - y.Value);
-			}
+			float f = (float)(x.Value - y.Value);
+
+			if (Single.IsInfinity (f))
+				throw new OverflowException ();
+
+			return new SqlSingle (f);
 		}
 
 		public static SqlSingle operator - (SqlSingle n)

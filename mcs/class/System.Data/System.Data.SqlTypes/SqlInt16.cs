@@ -354,12 +354,10 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlInt16 (SqlDouble x)
 		{
-			//			checked {
-				if (x.IsNull)
-					return Null;
-				else 
-					return new SqlInt16 (checked ((short)x.Value));
-				//}
+			if (x.IsNull)
+				return Null;
+			else 
+				return new SqlInt16 (checked ((short)x.Value));
 		}
 
 		public static explicit operator short (SqlInt16 x)
