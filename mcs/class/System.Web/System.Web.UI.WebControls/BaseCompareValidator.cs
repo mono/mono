@@ -25,19 +25,12 @@ namespace System.Web.UI.WebControls
 	{
 		protected BaseCompareValidator(): base()
 		{
-			super();
 		}
 		
-		/*[
-			WebSysDescriptionAttribute("RangeValidator_Type"),
-			WebCategoryAttribute("Behaviour"),
-			DefaultValueAttribute(System.Web.UI.WebControls.ValidationDataType)
-		]*/
-
 		public static bool CanConvert(string text, ValidationDataType type)
 		{
-			//TODO: Implement me
-			return false;
+			object o = null;
+			return Convert(text, type, out o);
 		}
 		
 		public ValidationDataType Type
@@ -67,7 +60,12 @@ namespace System.Web.UI.WebControls
 
 		protected static int GetFullYear(int shortYear)
 		{
-			//TODO: Implement me
+			int century = DateTime.Today.Year - (DateTime.Today.Year % 100);			
+			if(century < CutoffYear)
+			{
+				return (shortYear + century);
+			}
+			return (shortYear + century - 100);
 		}
 		
 		protected override void AddAttributesToRender(HtmlTextWriter writer)
@@ -85,24 +83,171 @@ namespace System.Web.UI.WebControls
 			throw new NotImplementedException();
 		}
 		
-		// Undocumented
-		protected bool Compare(string leftText, string rightText, ValidationCompareOperator op, ValidationDataType type)
+		/// <summary>
+		/// Undocumented
+		/// </summary>
+		protected static bool Compare(string leftText, string rightText, ValidationCompareOperator op, ValidationDataType type)
 		{
+			object left = null, right = null;
+			if(!Convert(leftText, type, out left))
+			{
+				return false;
+			}
+			if(op == ValidationCompareOperator.DataTypeCheck)
+			{
+				return true;
+			}
+			if(!Convert(rightText, type, out right))
+			{
+				return true;
+			}
+			int compareResult;
+			switch(type)
+			{
+				case ValidationDataType.String:
+					compareResult = ((String)left).CompareTo(right);
+					break;
+			}
 			throw new NotImplementedException();
+			return false;
+		}
+		
+		/// <summary>
+		/// Undocumented
+		/// </summary>
+		protected static string GetDateElementOrder()
+		{
+			string pattern = DateTimeFormatInfo.CurrentInfo.ShortDatePattern;
+			
+			//TODO: What are the various possibilities?
+			// I can think of only y*/M*/d*, d*/M*/y*, M*/d*/y*
+			if(pattern.IndexOf('y') < pattern.IndexOf('M'))
+			{
+				return "ymd";
+			}
+			if(pattern.IndexOf('M') < pattern.IndexOf('d'))
+			{
+				return "mdy";
+			}
+			return "dmy";
 		}
 		
 		// Uncodumented
-		protected bool Convert(string text, ValidationDataType type, out object convertedValue)
+		protected static bool Convert(string text, ValidationDataType type, out object convertedValue)
 		{
-			throw new NotImplementedException();
+			//throw new NotImplementedException();
 			convertedValue = null;
 			try
 			{
 				switch(type)
 				{
-					case
+					case ValidationDataType.String:	convertedValue = text;
+						break;
+					case ValidationDataType.Integer: convertedValue = Int32.Parse(text, CultureInfo.InvariantCulture);
+						break;
+					case ValidationDataType.Double:
+						Match matchDouble = Regex.Match(text, @"^\s*([-\+])?(\d+)?(\"
+			            + NumberFormatInfo.CurrentInfo.NumberDecimalSeparator
+			            + @"(\d+))?\s*$");
+						if(matchDouble.Success)
+						{
+							string sign     = (matchDouble.Groups[1].Success ? matchDouble.Groups[1].Value : "+");
+							string decPart  = (matchDouble.Groups[2].Success ? matchDouble.Groups[2].Value : "0");
+							string mantissa = (matchDouble.Groups[4].Success ? matchDouble.Groups[4].Value : "0");
+							convertedValue  = Double.Parse(sign + decPart + "." + mantissa, CultureInfo.InvariantCulture);
+						}
+						break;
+					case ValidationDataType.Date:
+						if(DateTimeFormatInfo.CurrentInfo.Calendar.GetType() != typeof(GregorianCalendar))
+						{
+							convertedValue = DateTime.Parse(text);
+							break;
+						}
+						string order = GetDateElementOrder();
+						int date = 0, mth = 0, year = 0;
+						Match  matchDate = Regex.Match(text, @"^\s*((\d{4})|(\d{2}))([\.\/-])(\d{1,2})\4(\d{1,2})\s*$");
+						if(matchDate.Success && order == "ymd")
+						{
+							date = Int32.Parse(matchDate.Groups[6].Value, CultureInfo.InvariantCulture);
+							mth  = Int32.Parse(matchDate.Groups[5].Value, CultureInfo.InvariantCulture);
+							year = Int32.Parse((matchDate.Groups[2].Success ? matchDate.Groups[2].Value : matchDate.Groups[3].Value), CultureInfo.InvariantCulture);
+						} else
+						{
+							matchDate = Regex.Match(text, @"^\s*(\d{1,2})([\.\/-])(\d{1,2})\2((\d{4}|\d{2}))\s*$");
+							if(matchDate.Success)
+							{
+								if(order == "dmy")
+								{
+									date = Int32.Parse(matchDate.Groups[1].Value, CultureInfo.InvariantCulture);
+									mth  = Int32.Parse(matchDate.Groups[3].Value, CultureInfo.InvariantCulture);
+									year = Int32.Parse((matchDate.Groups[5].Success ? matchDate.Groups[5].Value : matchDate.Groups[6].Value), CultureInfo.InvariantCulture);
+								}
+								if(order == "mdy")
+								{
+									date = Int32.Parse(matchDate.Groups[3].Value, CultureInfo.InvariantCulture);
+									mth  = Int32.Parse(matchDate.Groups[1].Value, CultureInfo.InvariantCulture);
+									year = Int32.Parse((matchDate.Groups[5].Success ? matchDate.Groups[5].Value : matchDate.Groups[6].Value), CultureInfo.InvariantCulture);
+								}
+							}
+						}
+						year = (year < 100 ? GetFullYear(year) : year);
+						if(matchDate.Success && date!=0 && mth!=0 && year!=0)
+						{
+							convertedValue = new DateTime(year, mth, date);
+						}
+						break;
+					case  ValidationDataType.Currency:
+						string decSep = NumberFormatInfo.CurrentInfo.CurrencyDecimalSeparator;
+						string grpSep = NumberFormatInfo.CurrentInfo.CurrencyGroupSeparator;
+						int    decDig = NumberFormatInfo.CurrentInfo.CurrencyDecimalDigits;
+						if(grpSep[0] > 0xA0)
+						{
+							grpSep = " ";
+						}
+						string[] patternArray = new string[5];
+						patternArray[0] = "^\\s*([-\\+])?(((\\d+)\\";
+						patternArray[1] = grpSep;
+						patternArray[2] = @")*)(\d+)";
+						if(decDig > 0)
+						{
+							string[] decPattern = new string[5];
+							decPattern[0] = "(\\";
+							decPattern[1] = decSep;
+							decPattern[2] = @"(\d{1,";
+							decPattern[3] = decDig.ToString(NumberFormatInfo.InvariantInfo);
+							decPattern[4] = @"}))";
+							patternArray[3] = String.Concat(decPattern);
+							
+						} else
+						{
+							patternArray[3] = String.Empty;
+						}
+						patternArray[4] = @"?\s*$";
+						Match matchCurrency = Regex.Match(text, String.Concat(patternArray));
+						if(matchCurrency.Success)
+						{
+							StringBuilder sb = new StringBuilder();
+							sb.Append(matchCurrency.Groups[1]);
+							CaptureCollection cc = matchCurrency.Groups[4].Captures;
+							foreach(IEnumerable current in cc)
+							{
+								sb.Append((Capture)current);
+							}
+							sb.Append(matchCurrency.Groups[5]);
+							if(decDig > 0)
+							{
+								sb.Append(".");
+								sb.Append(matchCurrency.Groups[7]);
+							}
+							convertedValue = Decimal.Parse(sb.ToString(), CultureInfo.InvariantCulture);
+						}
+						break;
 				}
+			} catch(Exception e)
+			{
+				convertedValue = null;
 			}
+			return (convertedValue != null);
 		}
 	}
 }

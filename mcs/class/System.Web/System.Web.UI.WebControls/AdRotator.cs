@@ -37,7 +37,7 @@ namespace System.Web.UI.WebControls
 
 		private string fileDirctory;
 
-		private static class AdRecord
+		private class AdRecord
 		{
 			public IDictionary adProps;
 			public int         hits; // or impressions or clicks

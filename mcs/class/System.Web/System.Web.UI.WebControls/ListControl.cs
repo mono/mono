@@ -28,11 +28,11 @@ namespace System.Web.UI.WebControls
 		private ListItemCollection items;
 
 		private int cachedSelectedIndex = -1;
-		
+
 		public ListControl(): base(HtmlTextWriterTag.Select)
 		{
 		}
-		
+
 		public event EventHandler SelectedIndexChanged
 		{
 			add
@@ -44,7 +44,7 @@ namespace System.Web.UI.WebControls
 				Events.RemoveHandler(SelectedIndexChangedEvent, value);
 			}
 		}
-		
+
 		public virtual bool AutoPostBack
 		{
 			get
@@ -59,7 +59,7 @@ namespace System.Web.UI.WebControls
 				ViewState["AutoPostBack"] = value;
 			}
 		}
-		
+
 		public virtual string DataMember
 		{
 			get
@@ -74,7 +74,7 @@ namespace System.Web.UI.WebControls
 				ViewState["DataMember"] = value;
 			}
 		}
-		
+
 		public virtual object DataSource
 		{
 			get
@@ -94,7 +94,7 @@ namespace System.Web.UI.WebControls
 				throw new ArgumentException(/*HttpRuntime.FormatResourceString(ID, "Invalid DataSource Type")*/);
 			}
 		}
-		
+
 		public virtual string DataTextField
 		{
 			get
@@ -109,7 +109,7 @@ namespace System.Web.UI.WebControls
 				ViewState["DataTextField"] = value;
 			}
 		}
-		
+
 		public virtual string DataTextFormatString
 		{
 			get
@@ -124,7 +124,7 @@ namespace System.Web.UI.WebControls
 				ViewState["DataTextFormatString"] = value;
 			}
 		}
-		
+
 		public virtual string DataValueField
 		{
 			get
@@ -139,7 +139,7 @@ namespace System.Web.UI.WebControls
 				ViewState["DataValueField"] = value;
 			}
 		}
-		
+
 		public virtual ListItemCollection Items
 		{
 			get
@@ -155,7 +155,7 @@ namespace System.Web.UI.WebControls
 				return items;
 			}
 		}
-		
+
 		public virtual int SelectedIndex
 		{
 			get
@@ -172,7 +172,7 @@ namespace System.Web.UI.WebControls
 				ViewState["SelectedIndex"] = value;
 			}
 		}
-		
+
 		public virtual ListItem SelectedItem
 		{
 			get
@@ -198,7 +198,7 @@ namespace System.Web.UI.WebControls
 				return si;
 			}
 		}
-		
+
 		internal void Select(ArrayList indices)
 		{
 			ClearSelection();
@@ -216,7 +216,7 @@ namespace System.Web.UI.WebControls
 				Items[i].Selected = false;
 			}
 		}
-		
+
 		protected override void LoadViewState(object savedState)
 		{
 			//Order: BaseClass, Items (Collection), Indices
@@ -232,23 +232,23 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		protected override void OnDataBinding(EventArgs e)
 		{
 			base.OnDataBinding(e);
-			IEnumerable resolvedData = DataSourceHelper.GetResolvedDataSource(DataSource, DataMember);
+			IEnumerable resolvedDataSource = DataSourceHelper.GetResolvedDataSource(DataSource, DataMember);
 			if(resolvedData != null)
 			{
 				string dataTextField = DataTextField;
 				string dataValueField = DataValueField;
 				Items.Clear();
-				ICollection rdsCollection = resolvedDataSource as ICollection;
+				ICollection rdsCollection = (ICollection)resolvedDataSource;
 				if(rdsCollection != null)
 				{
 					Items.Capacity = rdsCollection.Count;
 				}
 				bool valid = ( (dataTextField.Length >= 0) && (dataValueField.Length >=0) );
-				foreach(IEnumerable current in resolvedDataSource.GetEnumerator())
+				foreach(IEnumerable current in resolvedDataSource)
 				{
 					ListItem li = new ListItem();
 					if(valid)
@@ -275,7 +275,7 @@ namespace System.Web.UI.WebControls
 				cachedSelectedIndex = -1;
 			}
 		}
-		
+
 		protected virtual void OnSelectedIndexChanged(EventArgs e)
 		{
 			if(Events!=null)
@@ -285,7 +285,7 @@ namespace System.Web.UI.WebControls
 						eh(this, e);
 				}
 		}
-		
+
 		protected override object SaveViewState()
 		{
 			//Order: BaseClass, Items (Collection), Indices
@@ -300,13 +300,13 @@ namespace System.Web.UI.WebControls
 			}
 			return null;
 		}
-		
-		protected ovrride void TrackViewState()
+
+		protected override void TrackViewState()
 		{
 			base.TrackViewState();
 			Items.TrackViewState();
 		}
-		
+
 		private bool SaveSelectedIndicesViewState
 		{
 			get
