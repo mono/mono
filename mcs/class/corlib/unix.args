@@ -459,6 +459,8 @@ System.Runtime.Remoting.Activation/IConstructionReturnMessage.cs
 System.Runtime.Remoting.Activation/UrlAttribute.cs
 System.Runtime.Remoting.Channels/BaseChannelObjectWithProperties.cs
 System.Runtime.Remoting.Channels/BaseChannelSinkWithProperties.cs
+System.Runtime.Remoting.Channels/BaseChannelWithProperties.cs
+System.Runtime.Remoting.Channels/BinaryClientFormatterSink.cs
 System.Runtime.Remoting.Channels/BinaryServerFormatterSink.cs
 System.Runtime.Remoting.Channels/IChannel.cs
 System.Runtime.Remoting.Channels/IChannelDataStore.cs
