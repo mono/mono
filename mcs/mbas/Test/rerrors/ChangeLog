@@ -1,3 +1,7 @@
+2005-03-08 Satya Sudha K <ksathyasudha@novell.com>
+        * Negative runtime test cases for Inheritance
+                - Contributed by Sudharsan V <vsudharsan@novell.com>
+
 2005-02-18 Ritvik Mayank <mritvik@novell.com>
 	* removed some replicated test cases	
 

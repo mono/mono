@@ -1,3 +1,7 @@
+2005-03-08 Satya Sudha K <ksathyasudha@novell.com>
+	* Negative test cases for Delegates, Events and Inheritance 
+		- Contributed by Sudharsan V <vsudharsan@novell.com>
+
 2005-02-17 Satya Sudha K <ksathyasudha@novell.com>
 
 	* Negative test case for Conversions with Overloaded functions -

@@ -1,3 +1,7 @@
+2005-03-08 Satya Sudha K <ksathyasudha@novell.com>
+        *  Testcases for Delegates, Events and Inheritance
+                - Contributed by Sudharsan V <vsudharsan@novell.com>
+
 2005-03-04 Ritvik Mayank <mritvik@novell.com>
 	* Made some correction in the Conversion Test
 
