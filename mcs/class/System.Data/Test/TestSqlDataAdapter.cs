@@ -27,7 +27,6 @@ namespace TestSystemDataSqlClient
 			string sqlQuery;
 			SqlDataAdapter adapter;
 			DataSet dataSet = null;
-			DataRow row;
 
 			connectionString =
 				"host=localhost;" +
