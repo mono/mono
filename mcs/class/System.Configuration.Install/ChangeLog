@@ -1,4 +1,9 @@
-2004-05-15  Gert Driesen (drieseng@users.sourceforge.net)
+2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* System.Configuration.Install.dll.sources: added
+	stubbed classes
+
+2004-05-15  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* System.Configuration.Install.dll.sources: added
 	Assembly/Consts.cs
