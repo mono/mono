@@ -45,6 +45,7 @@ namespace System.Reflection {
 		public MethodInfo remove_method;
 		public MethodInfo raise_method;
 		public EventAttributes attrs;
+		public MethodInfo[] other_methods;
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern void get_event_info (MonoEvent ev, out MonoEventInfo info);
@@ -83,6 +84,15 @@ namespace System.Reflection {
 				
 			return info.remove_method;
 		}
+
+#if NET_2_0
+		public override MethodInfo[] GetOtherMethods (bool nonPublic) {
+			MonoEventInfo info;
+			MonoEventInfo.get_event_info (this, out info);
+
+			return info.other_methods;
+		}
+#endif
 
 		public override Type DeclaringType {
 			get {

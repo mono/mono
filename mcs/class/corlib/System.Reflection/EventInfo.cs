@@ -90,6 +90,17 @@ namespace System.Reflection {
 		}
 		public abstract MethodInfo GetRemoveMethod( bool nonPublic);
 
+#if NET_2_0
+		public virtual MethodInfo[] GetOtherMethods (bool nonPublic) {
+			// Shouldn't this be abstract, like the other methods ?
+			throw new NotImplementException ();
+		}
+
+		public MethodInfo[] GetOtherMethods () {
+			return GetOtherMethods (false);
+		}
+#endif		
+
 		[DebuggerHidden]
 		[DebuggerStepThrough]
 		public void RemoveEventHandler (object target, Delegate handler)
