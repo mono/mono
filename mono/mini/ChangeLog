@@ -1,5 +1,7 @@
 2005-01-31  Zoltan Varga  <vargaz@freemail.hu>
 
+	* aot.c (mono_compile_assembly): Get rid of Skip (other) messages.
+
 	* mini.c (mono_method_to_ir): Revert the previous change.
 	
 	* mini.c (mono_method_to_ir): Do not inline ldfld and stfld wrappers
