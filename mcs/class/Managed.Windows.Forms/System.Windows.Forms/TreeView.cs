@@ -628,7 +628,7 @@ namespace System.Windows.Forms {
 		{
 			if (node.ImageIndex > -1 && ImageList != null && node.ImageIndex < ImageList.Images.Count) {
 				ImageList.Draw (DeviceContext, x, y + 2, ImageList.ImageSize.Width, 
-						ImageList.ImageSize.Height, image_index);
+						ImageList.ImageSize.Height, node.ImageIndex);
 			} else if (ImageIndex > -1 && ImageList != null && ImageIndex < ImageList.Images.Count) {
 				ImageList.Draw (DeviceContext, x, y + 2, ImageList.ImageSize.Width, 
 						ImageList.ImageSize.Height, ImageIndex);
