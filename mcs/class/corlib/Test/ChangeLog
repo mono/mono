@@ -1,3 +1,7 @@
+2001-11-08  Nick Drochak  <ndrochak@gol.com>
+
+	* corlib_test.build: Include test for Queue in the dll
+
 2001-10-15  Martin Weindel <martin.weindel@t-online.de>
 
         * added System/DecimalTest.cs and System/DecimalTest2.cs

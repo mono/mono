@@ -14,7 +14,6 @@
 				<includes name="**/*.cs"/>
 				<excludes name="System/IntegerFormatterTest.cs"/>
 				<excludes name="System/Int64Test.cs"/>
-				<excludes name="System.Collections/QueueTest.cs"/>
 				<excludes name="System/IntegerFormatterTest.cs"/>
 			</sources>
 			<references basedir="..\..\..\nunit">
