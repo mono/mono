@@ -8,11 +8,13 @@
 //
 //
 
+using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
 namespace System {
 
 	[Serializable]
+	[ClassInterface (ClassInterfaceType.AutoDual)]
 	public class Object {
 
 		// <summary>

@@ -19,6 +19,7 @@ namespace System
 
 [CLSCompliant(false)]
 [InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
+[Guid ("05F696DC-2B29-3663-AD8B-C4389CF2A713")]
 public interface _AppDomain {
 
 	string BaseDirectory {get; }
