@@ -10,14 +10,25 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Xml;
 
-namespace System.Xml
+namespace Mono.Xml.Native
 {
 	#region XmlStreamReader
-	internal class XmlStreamReader : StreamReader
+	public class XmlStreamReader : StreamReader
 	{
 		public XmlStreamReader (XmlInputStream input)
 			: base (input, input.ActualEncoding != null ? input.ActualEncoding : Encoding.UTF8)
+		{
+		}
+
+		public XmlStreamReader (Stream input)
+			: this (new XmlInputStream (input))
+		{
+		}
+
+		public XmlStreamReader (string url)
+			: this (new XmlInputStream (url))
 		{
 		}
 	}
@@ -33,9 +44,18 @@ namespace System.Xml
 
 		static XmlException encodingException = new XmlException ("invalid encoding specification.");
 
-		public XmlInputStream (string uri)
+		public XmlInputStream (string url)
 		{
-			Initialize (new System.Net.WebClient ().OpenRead (uri));
+#if NetworkEnabled
+			try {
+				Uri uri = new Uri (url);
+				Initialize (new MemoryStream (new System.Net.WebClient ().DownloadData (url)));
+			} catch (UriFormatException ex) {
+				Initialize (new FileStream (url, FileMode.Open));
+			}
+#else
+			Initialize (new FileStream (url, FileMode.Open));
+#endif
 		}
 
 		public XmlInputStream (Stream stream)

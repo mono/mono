@@ -20,6 +20,7 @@ using System.Text;
 using System.Xml.XPath;
 using System.Diagnostics;
 using System.Collections;
+using Mono.Xml.Native;
 
 namespace System.Xml
 {
@@ -558,18 +559,7 @@ namespace System.Xml
 
 		public virtual void Load (string filename)
 		{
-			//HACK, HACK
-			if (filename.IndexOf (':') != -1) {
-				// While we fix Uri the code that uses it is only triggered by a colon in the filename.
-				Uri uri = new Uri (filename);
-				baseURI = filename;	// FIXME: resolve base
-				Stream stream = new XmlUrlResolver ().GetEntity (uri, null, typeof(Stream)) as Stream;
-				XmlReader xmlReader = new XmlTextReader (new XmlStreamReader (new XmlInputStream (stream)));
-				Load (xmlReader);
-			} else {
-				//Remove this once Uri.Parse is fixed.
-				Load (File.OpenRead (filename));
-			}
+			Load (new XmlTextReader (filename));
 		}
 
 		public virtual void Load (TextReader txtReader)
@@ -702,26 +692,23 @@ namespace System.Xml
 			XmlNode resultNode = null;
 			XmlNode newNode = null;
 			XmlNode currentNode = null;
+
+			if (reader.ReadState == ReadState.Initial)
+				reader.Read ();
+
 			// It was originally XmlDocument.Load(reader reader) when mcs was v0.16.
 			int startDepth = reader.Depth;
-			bool atStart = true;
+//			bool atStart = true;
 			bool ignoredWhitespace;
 			bool reachedEOF = false;
 
 			do {
 				ignoredWhitespace = false;
-				reader.Read ();
 				if (reader.NodeType == XmlNodeType.None)
 					if (reachedEOF)
 						throw new Exception ("XML Reader reached to end while reading node.");
 					else
 						reachedEOF = true;
-				// This complicated check is because we shouldn't make
-				// improper additional XmlReader.Read() by this method itself.
-				if(atStart && (reader.NodeType == XmlNodeType.EndElement || 
-					reader.NodeType == XmlNodeType.EndEntity))
-					throw new InvalidOperationException ("the XmlReader now holds invalid position.");
-				atStart = false;
 				switch (reader.NodeType) {
 
 				case XmlNodeType.Attribute:
@@ -761,7 +748,7 @@ namespace System.Xml
 					break;
 
 				case XmlNodeType.EndElement:
-					if(currentNode.Name != reader.Name)
+					if(currentNode == null || currentNode.Name != reader.Name)
 						throw new XmlException ("mismatch end tag.");
 					currentNode = currentNode.ParentNode;
 					break;
@@ -828,12 +815,9 @@ namespace System.Xml
 						ignoredWhitespace = true;
 					break;
 				}
-			} while ((!reader.EOF && ignoredWhitespace) ||
-				reader.Depth > startDepth || 
-				// This complicated condition is because reader.Depth was set
-				// before XmlTextReader.depth increments ;-)
-				(reader.Depth == startDepth && reader.NodeType == XmlNodeType.Element && reader.IsEmptyElement == false)
-				);
+				reader.Read ();
+			} while (ignoredWhitespace || reader.Depth > startDepth ||
+				(reader.Depth == startDepth && reader.NodeType == XmlNodeType.EndElement));
 			return resultNode != null ? resultNode : newNode;
 		}
 

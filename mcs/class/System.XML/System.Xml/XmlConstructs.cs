@@ -366,7 +366,7 @@ namespace System.Xml
 
 		public static bool IsSpace(int c) 
 		{
-			return (CHARS[c] & SPACE) != 0;
+			return c > 0 && (CHARS[c] & SPACE) != 0;
 		}
 
 		/// <summary>
@@ -381,7 +381,7 @@ namespace System.Xml
 
 		public static bool IsNameStart(int c) 
 		{
-			return (CHARS[c] & NAME_START) != 0;
+			return c > 0 && (CHARS[c] & NAME_START) != 0;
 		} 
 
 		/// <summary>
@@ -396,7 +396,7 @@ namespace System.Xml
 
 		public static bool IsName(int c) 
 		{
-			return (CHARS[c] & NAME) != 0;
+			return c > 0 && (CHARS[c] & NAME) != 0;
 		} 
 
 		/// <summary>
@@ -425,7 +425,7 @@ namespace System.Xml
 
 		public static bool IsNCName(int c) 
 		{
-			return (CHARS[c] & NCNAME) != 0;
+			return c > 0 && (CHARS[c] & NCNAME) != 0;
 		} 
 
 		/// <summary>
@@ -440,7 +440,7 @@ namespace System.Xml
 
 		public static bool IsPubid(int c) 
 		{
-			return (CHARS[c] & PUBID) != 0;
+			return c > 0 && (CHARS[c] & PUBID) != 0;
 		}
 
 		/// <summary>

@@ -6,6 +6,9 @@
 //
 // (C) 2002 Kral Ferch
 //
+// [FIXME]
+// Document state should be considered.
+//
 
 using System;
 using System.Collections;
@@ -597,7 +600,7 @@ namespace System.Xml
 			string encodingFormatting = "";
 
 			if (!nullEncoding) 
-				encodingFormatting = String.Format (" encoding={0}{1}{0}", quoteChar, w.Encoding.HeaderName);
+				encodingFormatting = String.Format (" encoding={0}{1}{0}", quoteChar, w.Encoding.WebName);
 
 			w.Write("<?xml version={0}1.0{0}{1}{2}?>", quoteChar, encodingFormatting, standaloneFormatting);
 			ws = WriteState.Prolog;

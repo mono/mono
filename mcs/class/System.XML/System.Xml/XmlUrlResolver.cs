@@ -8,6 +8,7 @@
 
 using System.Net;
 using System.IO;
+using Mono.Xml.Native;
 
 namespace System.Xml
 {

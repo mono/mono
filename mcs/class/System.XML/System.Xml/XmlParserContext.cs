@@ -106,7 +106,7 @@ namespace System.Xml
 			this.publicID = pubId;
 			this.systemID = sysId;
 			this.internalSubset = internalSubset;
-			this.baseURI = baseURI;
+			this.baseURI = baseURI != null ? baseURI : String.Empty;
 			this.xmlLang = xmlLang;
 			this.xmlSpace = xmlSpace;
 			this.encoding = enc;

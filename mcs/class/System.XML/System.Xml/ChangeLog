@@ -1,3 +1,15 @@
+2003-03-15  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlConstructs.cs : fix "int IsXXX()" to reject negative value.
+	* XmlDocument.cs : simplify Load(string url) to use XmlTextReader.
+	  fixed ReadNode(), it should call reader.Read() only on Initial state.
+	* XmlInputStream.cs : Changed namespace. Added XmlStreamReader(stream)
+	  and XmlStreamReader (string). Fixed XmlInputStream(url) not to use
+	  System.Net.WebClient directly.
+	* XmlParserContext.cs : baseURI don't be null.
+	* XmlTextWriter.cs : use WebName for Encoding instead of HeaderName.
+	* XmlUrlResolver.cs : namespace change for XmlInputStream.
+
 2003-03-12  Elan Feingold <efeingold@mn.rr.com>
 
 	* XmlTextReader.cs: When throwing a ReaderException, show what
