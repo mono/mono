@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.23 $
+// $Revision: 1.24 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.24  2004/08/12 16:10:42  jackson
+// Add missing properties
+//
 // Revision 1.23  2004/08/11 22:20:59  pbartok
 // - Signature fixes
 //
@@ -144,9 +147,11 @@ namespace System.Windows.Forms
 		internal bool			is_visible;		// true if control is visible
 		internal bool			is_enabled;		// true if control is enabled (usable/not grayed out)
 		internal int			tab_index;		// position in tab order of siblings
+		internal bool			tab_stop = true;
 		internal bool			is_disposed;		// has the window already been disposed?
 		internal Size			client_size;		// size of the client area (window excluding decorations)
 		internal ControlStyles		control_style;		// rather win32-specific, style bits for control
+		internal ImeMode		ime_mode = ImeMode.Inherit;
 
 		// Visuals
 		internal Color			foreground_color;	// foreground color for control
@@ -971,7 +976,17 @@ namespace System.Windows.Forms
 				SetBoundsCore(bounds.X, bounds.Y, value.Width, value.Height, BoundsSpecified.Size);
 			}
 		}
-		
+
+		public ImeMode ImeMode {
+			get { return ime_mode; }
+			set { ime_mode = value; }
+		}
+
+		public bool TabStop {
+			get { return tab_stop; }
+			set { tab_stop = value; }
+		}
+
 		public int TabIndex {
 			get {
 				return tab_index;
