@@ -65,8 +65,6 @@ namespace CIR {
 		
 		public void Save (Report report, string name)
 		{
-			Console.WriteLine ("This is it " + Basename (name));
-			
 			try {
 				assembly_builder.Save (Basename (name));
 			} catch (System.IO.IOException io){

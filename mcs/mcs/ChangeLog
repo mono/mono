@@ -1,3 +1,18 @@
+2001-09-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs:  Instead of having FIXMEs in the Resolve
+	functions, throw exceptions so it is obvious that we are facing a
+	bug. 
+
+	* cs-parser.jay (invocation_expression): Pass Location information.
+
+	* codegen.cs (CodeGen::Save, CodeGen::CodeGen, CodeGen::Basename):
+	Use a basename for those routines because .NET does not like paths
+	on them. 
+
+	* class.cs (TypeContainer::AddMethod): Do not call DefineName if the name was
+	already defined.
+
 2001-09-19  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs (TypeManager::CoreLookupType): A function to make sure that we

@@ -696,7 +696,7 @@ namespace CIR {
 				// Note that operators are static anyway
 				
 				if (Arguments != null) 
-					Invocation.EmitArguments (ec, Arguments);
+					Invocation.EmitArguments (ec, method, Arguments);
 				
 				if (method is MethodInfo)
 					ig.Emit (OpCodes.Call, (MethodInfo) method);
@@ -1288,7 +1288,7 @@ namespace CIR {
 				// Note that operators are static anyway
 				
 				if (Arguments != null) 
-					Invocation.EmitArguments (ec, Arguments);
+					Invocation.EmitArguments (ec, method, Arguments);
 				
 				if (method is MethodInfo)
 					ig.Emit (OpCodes.Call, (MethodInfo) method);
@@ -1955,7 +1955,7 @@ namespace CIR {
 			return this;
 		}
 
-		public static void EmitArguments (EmitContext ec, ArrayList Arguments)
+		public static void EmitArguments (EmitContext ec, MethodBase method, ArrayList Arguments)
 		{
 			int top;
 
@@ -1967,6 +1967,8 @@ namespace CIR {
 			for (int i = 0; i < top; i++){
 				Argument a = (Argument) Arguments [i];
 
+				Console.WriteLine ("Perform the actual type widening of arguments here for things like: void fn (sbyte s);  ... fn (1)");
+				
 				a.Emit (ec);
 			}
 		}
@@ -1986,7 +1988,7 @@ namespace CIR {
 			}
 
 			if (Arguments != null)
-				EmitArguments (ec, Arguments);
+				EmitArguments (ec, method, Arguments);
 
 			if (is_static){
 				if (method is MethodInfo)
@@ -2079,7 +2081,7 @@ namespace CIR {
 
 		public override void Emit (EmitContext ec)
 		{
-			Invocation.EmitArguments (ec, Arguments);
+			Invocation.EmitArguments (ec, method, Arguments);
 			ec.ig.Emit (OpCodes.Newobj, (ConstructorInfo) method);
 		}
 	}
