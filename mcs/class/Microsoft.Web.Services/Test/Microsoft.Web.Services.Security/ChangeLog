@@ -1,3 +1,7 @@
+2003-10-22 Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* KeyIdentifierTest.cs: New. Unit tests for KeyIdentifier.
+
 2003-10-20 Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* EncryptedKeyTest.cs: New. Unit tests for EncryptedKey.
