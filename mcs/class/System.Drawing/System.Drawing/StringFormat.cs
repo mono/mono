@@ -18,6 +18,7 @@ namespace System.Drawing
 	/// </summary>
 	public sealed class StringFormat
 	{
+		private static StringFormat genericDefault;
 		StringAlignment alignment;
 		StringAlignment line_alignment;
 		StringFormatFlags format_flags;
@@ -102,6 +103,20 @@ namespace System.Drawing
 				trimming = value;
 			}
 		}
-		
+
+		public static StringFormat GenericDefault {
+			get {
+				lock (typeof (StringFormat)) {
+					if (genericDefault == null)  {
+						genericDefault = new StringFormat ();
+						genericDefault.Alignment = StringAlignment.Near;
+						//genericDefault.DigitSubstitutionMethod = StringDigitSubstitute.User;
+						genericDefault.LineAlignment = StringAlignment.Near;
+						genericDefault.Trimming = StringTrimming.Character;
+					}
+				}
+				return(genericDefault);
+			}
+		}
 	}
 }
