@@ -15,12 +15,16 @@ namespace Mono.ILASM {
         /// <summary>
         /// A reference to a type in another assembly
         /// </summary>
-        public class ExternTypeRef : PeapiTypeRef {
+        public class ExternTypeRef : PeapiTypeRef, IClassRef {
 
                 public ExternTypeRef (PEAPI.ClassRef extern_type,
                                 string full_name) : base (extern_type, full_name)
                 {
 
+                }
+
+                public PEAPI.Class PeapiClass {
+                        get { return PeapiType as PEAPI.Class; }
                 }
         }
 
