@@ -1,3 +1,8 @@
+2004-08-10  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchema.cs : code reformatting. convert CRLF to LF.
+	  Use String.Format() instead of +. Removed commented code.
+
 2004-07-28  Atsushi Enomoto <atsushi@ximian.com>
 
 	* BuiltInDatatype.cs : use XmlQualifiedName.Parse().
