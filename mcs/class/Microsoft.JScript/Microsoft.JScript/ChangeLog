@@ -18,7 +18,13 @@
 	*  BinaryOp.cs: Made "internal" the attributes, added the two
 	operators holders.
 
+	* JScriptLexer.cs, JScriptParser.cs, JScriptParserokenTypes.cs,: updates from grammar changes.
+	
 	* driver.cs: Dump the string representation of the parsed exps.
+
+	* Literal.cs:  added BooleanLiteral
+
+	* Relational.cs: added constructor, ToString, 
 
 2003-10-10  cesar lopez nataren <cesar@ciencias.unam.mx>
 

@@ -15,10 +15,14 @@ namespace Microsoft.JScript {
 
 		private string id;
 		private string type;
-		private AST assignExp;
+		private AST val;
 
-		internal VariableDeclaration ()
-		{}
+		internal VariableDeclaration (string id, string type, AST init)
+		{
+			this.id = id;
+			this.type = type;
+			this.val = init;
+		}
 
 
 		public string Id {
@@ -38,9 +42,10 @@ namespace Microsoft.JScript {
 			StringBuilder sb = new StringBuilder ();
 
 			// FIXME: we must add the string 
-			// representation of assignExp, too.
+			// representation of val, too.
+
 			sb.Append (Id);
-			
+
 			return sb.ToString ();
 		}
 	}

@@ -30,11 +30,11 @@ namespace Microsoft.JScript
 		public const int OPEN_BRACE = 8;
 		public const int CLOSE_BRACE = 9;
 		public const int COMMA = 10;
-		public const int LITERAL_try = 11;
-		public const int LITERAL_catch = 12;
-		public const int LITERAL_finally = 13;
-		public const int LITERAL_throw = 14;
-		public const int SEMI_COLON = 15;
+		public const int SEMI_COLON = 11;
+		public const int LITERAL_try = 12;
+		public const int LITERAL_catch = 13;
+		public const int LITERAL_finally = 14;
+		public const int LITERAL_throw = 15;
 		public const int LITERAL_switch = 16;
 		public const int LITERAL_default = 17;
 		public const int COLON = 18;
@@ -60,66 +60,63 @@ namespace Microsoft.JScript
 		// "[" = 38
 		// "]" = 39
 		public const int DOT = 40;
-		// "++" = 41
-		// "--" = 42
+		public const int INCREMENT = 41;
+		public const int DECREMENT = 42;
 		public const int LITERAL_delete = 43;
 		public const int LITERAL_void = 44;
 		public const int LITERAL_typeof = 45;
-		public const int INCREMENT = 46;
-		public const int DECREMENT = 47;
-		public const int PLUS = 48;
-		public const int MINUS = 49;
-		public const int BITWISE_NOT = 50;
-		public const int LOGICAL_NOT = 51;
-		public const int MULT = 52;
-		public const int DIVISION = 53;
-		public const int MODULE = 54;
-		public const int SHIFT_LEFT = 55;
-		public const int SHIFT_RIGHT = 56;
-		public const int UNSIGNED_SHIFT_RIGHT = 57;
-		public const int LESS_THAN = 58;
-		public const int GREATER_THAN = 59;
-		public const int LESS_EQ = 60;
-		public const int GREATER_EQ = 61;
-		public const int LITERAL_instanceof = 62;
-		public const int EQ = 63;
-		public const int NEQ = 64;
-		public const int STRICT_EQ = 65;
-		public const int STRICT_NEQ = 66;
-		public const int BITWISE_AND = 67;
-		public const int BITWISE_XOR = 68;
-		public const int BITWISE_OR = 69;
-		public const int LOGICAL_AND = 70;
-		public const int LOGICAL_OR = 71;
-		public const int INTERR = 72;
-		public const int MULT_ASSIGN = 73;
-		public const int DIV_ASSIGN = 74;
-		public const int MOD_ASSIGN = 75;
-		public const int ADD_ASSIGN = 76;
-		public const int SUB_ASSIGN = 77;
-		public const int SHIFT_LEFT_ASSIGN = 78;
-		public const int SHIFT_RIGHT_ASSIGN = 79;
-		public const int AND_ASSIGN = 80;
-		public const int XOR_ASSIGN = 81;
-		public const int OR_ASSIGN = 82;
-		public const int LITERAL_this = 83;
-		public const int LITERAL_null = 84;
-		public const int LITERAL_true = 85;
-		public const int LITERAL_false = 86;
-		public const int STRING_LITERAL = 87;
-		public const int DECIMAL_LITERAL = 88;
-		public const int HEX_INTEGER_LITERAL = 89;
-		public const int LINE_FEED = 90;
-		public const int CARRIAGE_RETURN = 91;
-		public const int LINE_SEPARATOR = 92;
-		public const int PARAGRAPH_SEPARATOR = 93;
-		public const int TAB = 94;
-		public const int VERTICAL_TAB = 95;
-		public const int FORM_FEED = 96;
-		public const int SPACE = 97;
-		public const int NO_BREAK_SPACE = 98;
-		public const int STRICT_NEW = 99;
-		public const int SL_COMMENT = 100;
+		public const int PLUS = 46;
+		public const int MINUS = 47;
+		public const int BITWISE_NOT = 48;
+		public const int LOGICAL_NOT = 49;
+		public const int MULT = 50;
+		public const int DIVISION = 51;
+		public const int MODULE = 52;
+		public const int SHIFT_LEFT = 53;
+		public const int SHIFT_RIGHT = 54;
+		public const int UNSIGNED_SHIFT_RIGHT = 55;
+		public const int LESS_THAN = 56;
+		public const int GREATER_THAN = 57;
+		public const int LESS_EQ = 58;
+		public const int GREATER_EQ = 59;
+		public const int LITERAL_instanceof = 60;
+		public const int EQ = 61;
+		public const int NEQ = 62;
+		public const int STRICT_EQ = 63;
+		public const int STRICT_NEQ = 64;
+		public const int BITWISE_AND = 65;
+		public const int BITWISE_XOR = 66;
+		public const int BITWISE_OR = 67;
+		public const int LOGICAL_AND = 68;
+		public const int LOGICAL_OR = 69;
+		public const int INTERR = 70;
+		public const int MULT_ASSIGN = 71;
+		public const int DIV_ASSIGN = 72;
+		public const int MOD_ASSIGN = 73;
+		public const int ADD_ASSIGN = 74;
+		public const int SUB_ASSIGN = 75;
+		public const int SHIFT_LEFT_ASSIGN = 76;
+		public const int SHIFT_RIGHT_ASSIGN = 77;
+		public const int AND_ASSIGN = 78;
+		public const int XOR_ASSIGN = 79;
+		public const int OR_ASSIGN = 80;
+		public const int LITERAL_this = 81;
+		public const int LITERAL_null = 82;
+		public const int LITERAL_true = 83;
+		public const int LITERAL_false = 84;
+		public const int STRING_LITERAL = 85;
+		public const int DECIMAL_LITERAL = 86;
+		public const int HEX_INTEGER_LITERAL = 87;
+		public const int LINE_FEED = 88;
+		public const int CARRIAGE_RETURN = 89;
+		public const int LINE_SEPARATOR = 90;
+		public const int PARAGRAPH_SEPARATOR = 91;
+		public const int TAB = 92;
+		public const int VERTICAL_TAB = 93;
+		public const int FORM_FEED = 94;
+		public const int SPACE = 95;
+		public const int NO_BREAK_SPACE = 96;
+		public const int SL_COMMENT = 97;
 		
 		
 		protected void initialize()
@@ -151,13 +148,16 @@ namespace Microsoft.JScript
 			initialize();
 		}
 		
-	public void program() //throws RecognitionException, TokenStreamException
+	public ScriptBlock  program() //throws RecognitionException, TokenStreamException
 {
+		ScriptBlock prog;
 		
 		traceIn("program");
 		try { // debugging
+			prog = new ScriptBlock ();
 			
-			source_elements();
+			source_elements(prog.src_elems);
+			return prog;
 		}
 		finally
 		{ // debugging
@@ -165,7 +165,9 @@ namespace Microsoft.JScript
 		}
 	}
 	
-	public void source_elements() //throws RecognitionException, TokenStreamException
+	public void source_elements(
+		Block elems
+	) //throws RecognitionException, TokenStreamException
 {
 		
 		traceIn("source_elements");
@@ -177,7 +179,7 @@ namespace Microsoft.JScript
 			{
 				if ((tokenSet_0_.member(LA(1))))
 				{
-					source_element();
+					source_element(elems);
 				}
 				else
 				{
@@ -195,20 +197,23 @@ _loop4_breakloop:			;
 		}
 	}
 	
-	public void source_element() //throws RecognitionException, TokenStreamException
+	public void source_element(
+		Block elems
+	) //throws RecognitionException, TokenStreamException
 {
 		
 		traceIn("source_element");
 		try { // debugging
+			AST stm = null;
 			
 			switch ( LA(1) )
 			{
 			case IDENTIFIER:
 			case OPEN_PARENS:
 			case OPEN_BRACE:
+			case SEMI_COLON:
 			case LITERAL_try:
 			case LITERAL_throw:
-			case SEMI_COLON:
 			case LITERAL_switch:
 			case LITERAL_with:
 			case LITERAL_return:
@@ -221,11 +226,11 @@ _loop4_breakloop:			;
 			case LITERAL_if:
 			case LITERAL_new:
 			case OPEN_BRACKET:
+			case INCREMENT:
+			case DECREMENT:
 			case LITERAL_delete:
 			case LITERAL_void:
 			case LITERAL_typeof:
-			case INCREMENT:
-			case DECREMENT:
 			case PLUS:
 			case MINUS:
 			case BITWISE_NOT:
@@ -238,7 +243,17 @@ _loop4_breakloop:			;
 			case DECIMAL_LITERAL:
 			case HEX_INTEGER_LITERAL:
 			{
-				statement();
+				stm=statement();
+				if (0==inputState.guessing)
+				{
+					
+							  if (stm != null) {
+							  	  elems.Add (stm); 
+							  	  Console.WriteLine ("DEBUG::src_elem::Add::{0}", 
+										     stm.ToString ());
+							  }
+						
+				}
 				break;
 			}
 			case LITERAL_function:
@@ -258,11 +273,13 @@ _loop4_breakloop:			;
 		}
 	}
 	
-	public void statement() //throws RecognitionException, TokenStreamException
+	public AST  statement() //throws RecognitionException, TokenStreamException
 {
+		AST stm;
 		
 		traceIn("statement");
 		try { // debugging
+			stm = null;
 			
 			switch ( LA(1) )
 			{
@@ -271,11 +288,11 @@ _loop4_breakloop:			;
 			case OPEN_BRACE:
 			case LITERAL_new:
 			case OPEN_BRACKET:
+			case INCREMENT:
+			case DECREMENT:
 			case LITERAL_delete:
 			case LITERAL_void:
 			case LITERAL_typeof:
-			case INCREMENT:
-			case DECREMENT:
 			case PLUS:
 			case MINUS:
 			case BITWISE_NOT:
@@ -288,12 +305,13 @@ _loop4_breakloop:			;
 			case DECIMAL_LITERAL:
 			case HEX_INTEGER_LITERAL:
 			{
-				expr_stm();
+				stm=expr_stm();
+				match(SEMI_COLON);
 				break;
 			}
 			case LITERAL_var:
 			{
-				var_stm();
+				stm=var_stm();
 				break;
 			}
 			case SEMI_COLON:
@@ -353,6 +371,7 @@ _loop4_breakloop:			;
 				throw new NoViableAltException(LT(1), getFilename());
 			}
 			 }
+			return stm;
 		}
 		finally
 		{ // debugging
@@ -452,7 +471,7 @@ _loop12_breakloop:				;
 		traceIn("function_body");
 		try { // debugging
 			
-			source_elements();
+			source_elements(null);
 		}
 		finally
 		{ // debugging
@@ -460,13 +479,16 @@ _loop12_breakloop:				;
 		}
 	}
 	
-	public void expr_stm() //throws RecognitionException, TokenStreamException
+	public AST  expr_stm() //throws RecognitionException, TokenStreamException
 {
+		AST e;
 		
 		traceIn("expr_stm");
 		try { // debugging
+			e = null;
 			
-			expr();
+			e=expr();
+			return e;
 		}
 		finally
 		{ // debugging
@@ -474,15 +496,18 @@ _loop12_breakloop:				;
 		}
 	}
 	
-	public void var_stm() //throws RecognitionException, TokenStreamException
+	public VariableStatement  var_stm() //throws RecognitionException, TokenStreamException
 {
+		VariableStatement var_stm;
 		
 		traceIn("var_stm");
 		try { // debugging
+			var_stm = new VariableStatement ();
 			
 			match(LITERAL_var);
-			var_decl_list();
+			var_decl_list(var_stm);
 			match(SEMI_COLON);
+			return var_stm;
 		}
 		finally
 		{ // debugging
@@ -514,39 +539,8 @@ _loop12_breakloop:				;
 			match(OPEN_PARENS);
 			expr();
 			match(CLOSE_PARENS);
+			match(LITERAL_else);
 			statement();
-			{
-				bool synPredMatched50 = false;
-				if (((LA(1)==LITERAL_else)))
-				{
-					int _m50 = mark();
-					synPredMatched50 = true;
-					inputState.guessing++;
-					try {
-						{
-							match(LITERAL_else);
-						}
-					}
-					catch (RecognitionException)
-					{
-						synPredMatched50 = false;
-					}
-					rewind(_m50);
-					inputState.guessing--;
-				}
-				if ( synPredMatched50 )
-				{
-					match(LITERAL_else);
-					statement();
-				}
-				else if ((tokenSet_1_.member(LA(1)))) {
-				}
-				else
-				{
-					throw new NoViableAltException(LT(1), getFilename());
-				}
-				
-			}
 		}
 		finally
 		{ // debugging
@@ -684,11 +678,11 @@ _loop12_breakloop:				;
 				case OPEN_BRACE:
 				case LITERAL_new:
 				case OPEN_BRACKET:
+				case INCREMENT:
+				case DECREMENT:
 				case LITERAL_delete:
 				case LITERAL_void:
 				case LITERAL_typeof:
-				case INCREMENT:
-				case DECREMENT:
 				case PLUS:
 				case MINUS:
 				case BITWISE_NOT:
@@ -791,10 +785,10 @@ _loop12_breakloop:				;
 				case OPEN_PARENS:
 				case OPEN_BRACE:
 				case CLOSE_BRACE:
+				case SEMI_COLON:
 				case LITERAL_try:
 				case LITERAL_catch:
 				case LITERAL_throw:
-				case SEMI_COLON:
 				case LITERAL_switch:
 				case LITERAL_default:
 				case LITERAL_case:
@@ -807,14 +801,13 @@ _loop12_breakloop:				;
 				case LITERAL_for:
 				case LITERAL_var:
 				case LITERAL_if:
-				case LITERAL_else:
 				case LITERAL_new:
 				case OPEN_BRACKET:
+				case INCREMENT:
+				case DECREMENT:
 				case LITERAL_delete:
 				case LITERAL_void:
 				case LITERAL_typeof:
-				case INCREMENT:
-				case DECREMENT:
 				case PLUS:
 				case MINUS:
 				case BITWISE_NOT:
@@ -847,9 +840,9 @@ _loop12_breakloop:				;
 								case OPEN_PARENS:
 								case OPEN_BRACE:
 								case CLOSE_BRACE:
+								case SEMI_COLON:
 								case LITERAL_try:
 								case LITERAL_throw:
-								case SEMI_COLON:
 								case LITERAL_switch:
 								case LITERAL_default:
 								case LITERAL_case:
@@ -862,14 +855,13 @@ _loop12_breakloop:				;
 								case LITERAL_for:
 								case LITERAL_var:
 								case LITERAL_if:
-								case LITERAL_else:
 								case LITERAL_new:
 								case OPEN_BRACKET:
+								case INCREMENT:
+								case DECREMENT:
 								case LITERAL_delete:
 								case LITERAL_void:
 								case LITERAL_typeof:
-								case INCREMENT:
-								case DECREMENT:
 								case PLUS:
 								case MINUS:
 								case BITWISE_NOT:
@@ -898,9 +890,9 @@ _loop12_breakloop:				;
 						case OPEN_PARENS:
 						case OPEN_BRACE:
 						case CLOSE_BRACE:
+						case SEMI_COLON:
 						case LITERAL_try:
 						case LITERAL_throw:
-						case SEMI_COLON:
 						case LITERAL_switch:
 						case LITERAL_default:
 						case LITERAL_case:
@@ -913,14 +905,13 @@ _loop12_breakloop:				;
 						case LITERAL_for:
 						case LITERAL_var:
 						case LITERAL_if:
-						case LITERAL_else:
 						case LITERAL_new:
 						case OPEN_BRACKET:
+						case INCREMENT:
+						case DECREMENT:
 						case LITERAL_delete:
 						case LITERAL_void:
 						case LITERAL_typeof:
-						case INCREMENT:
-						case DECREMENT:
 						case PLUS:
 						case MINUS:
 						case BITWISE_NOT:
@@ -971,7 +962,7 @@ _loop12_breakloop:				;
 			{    // ( ... )*
 				for (;;)
 				{
-					if ((tokenSet_2_.member(LA(1))))
+					if ((tokenSet_1_.member(LA(1))))
 					{
 						statement();
 					}
@@ -1024,29 +1015,43 @@ _loop16_breakloop:				;
 		}
 	}
 	
-	public void expr() //throws RecognitionException, TokenStreamException
+	public Expression  expr() //throws RecognitionException, TokenStreamException
 {
+		Expression e;
 		
 		traceIn("expr");
 		try { // debugging
 			
-			assignment_expr();
+				e = new Expression ();
+				AST a = null;
+			
+			
+			a=assignment_expr();
+			if (0==inputState.guessing)
+			{
+				e.Add (a);
+			}
 			{    // ( ... )*
 				for (;;)
 				{
 					if ((LA(1)==COMMA))
 					{
 						match(COMMA);
-						assignment_expr();
+						a=assignment_expr();
+						if (0==inputState.guessing)
+						{
+							e.Add (a);
+						}
 					}
 					else
 					{
-						goto _loop65_breakloop;
+						goto _loop62_breakloop;
 					}
 					
 				}
-_loop65_breakloop:				;
+_loop62_breakloop:				;
 			}    // ( ... )*
+			return e;
 		}
 		finally
 		{ // debugging
@@ -1125,17 +1130,17 @@ _loop29_breakloop:				;
 			{    // ( ... )*
 				for (;;)
 				{
-					if ((tokenSet_2_.member(LA(1))))
+					if ((tokenSet_1_.member(LA(1))))
 					{
 						statement();
 					}
 					else
 					{
-						goto _loop62_breakloop;
+						goto _loop59_breakloop;
 					}
 					
 				}
-_loop62_breakloop:				;
+_loop59_breakloop:				;
 			}    // ( ... )*
 		}
 		finally
@@ -1175,11 +1180,11 @@ _loop62_breakloop:				;
 			case SEMI_COLON:
 			case LITERAL_new:
 			case OPEN_BRACKET:
+			case INCREMENT:
+			case DECREMENT:
 			case LITERAL_delete:
 			case LITERAL_void:
 			case LITERAL_typeof:
-			case INCREMENT:
-			case DECREMENT:
 			case PLUS:
 			case MINUS:
 			case BITWISE_NOT:
@@ -1200,11 +1205,11 @@ _loop62_breakloop:				;
 					case OPEN_BRACE:
 					case LITERAL_new:
 					case OPEN_BRACKET:
+					case INCREMENT:
+					case DECREMENT:
 					case LITERAL_delete:
 					case LITERAL_void:
 					case LITERAL_typeof:
-					case INCREMENT:
-					case DECREMENT:
 					case PLUS:
 					case MINUS:
 					case BITWISE_NOT:
@@ -1239,11 +1244,11 @@ _loop62_breakloop:				;
 					case OPEN_BRACE:
 					case LITERAL_new:
 					case OPEN_BRACKET:
+					case INCREMENT:
+					case DECREMENT:
 					case LITERAL_delete:
 					case LITERAL_void:
 					case LITERAL_typeof:
-					case INCREMENT:
-					case DECREMENT:
 					case PLUS:
 					case MINUS:
 					case BITWISE_NOT:
@@ -1278,11 +1283,11 @@ _loop62_breakloop:				;
 					case OPEN_BRACE:
 					case LITERAL_new:
 					case OPEN_BRACKET:
+					case INCREMENT:
+					case DECREMENT:
 					case LITERAL_delete:
 					case LITERAL_void:
 					case LITERAL_typeof:
-					case INCREMENT:
-					case DECREMENT:
 					case PLUS:
 					case MINUS:
 					case BITWISE_NOT:
@@ -1314,7 +1319,7 @@ _loop62_breakloop:				;
 			{
 				match(LITERAL_var);
 				{
-					var_decl_list();
+					var_decl_list(null);
 					{
 						switch ( LA(1) )
 						{
@@ -1329,11 +1334,11 @@ _loop62_breakloop:				;
 								case OPEN_BRACE:
 								case LITERAL_new:
 								case OPEN_BRACKET:
+								case INCREMENT:
+								case DECREMENT:
 								case LITERAL_delete:
 								case LITERAL_void:
 								case LITERAL_typeof:
-								case INCREMENT:
-								case DECREMENT:
 								case PLUS:
 								case MINUS:
 								case BITWISE_NOT:
@@ -1368,11 +1373,11 @@ _loop62_breakloop:				;
 								case OPEN_BRACE:
 								case LITERAL_new:
 								case OPEN_BRACKET:
+								case INCREMENT:
+								case DECREMENT:
 								case LITERAL_delete:
 								case LITERAL_void:
 								case LITERAL_typeof:
-								case INCREMENT:
-								case DECREMENT:
 								case PLUS:
 								case MINUS:
 								case BITWISE_NOT:
@@ -1427,28 +1432,45 @@ _loop62_breakloop:				;
 		}
 	}
 	
-	public void var_decl_list() //throws RecognitionException, TokenStreamException
+	public void var_decl_list(
+		VariableStatement var_stm
+	) //throws RecognitionException, TokenStreamException
 {
 		
 		traceIn("var_decl_list");
 		try { // debugging
+			VariableDeclaration var_decln = null;
 			
-			var_decl();
+			var_decln=var_decl();
+			if (0==inputState.guessing)
+			{
+				
+						if (var_decln != null)
+							var_stm.Add (var_decln);
+					
+			}
 			{    // ( ... )*
 				for (;;)
 				{
 					if ((LA(1)==COMMA))
 					{
 						match(COMMA);
-						var_decl();
+						var_decln=var_decl();
+						if (0==inputState.guessing)
+						{
+							
+									  if (var_decln != null) 
+									  	  var_stm.Add (var_decln);
+								
+						}
 					}
 					else
 					{
-						goto _loop55_breakloop;
+						goto _loop52_breakloop;
 					}
 					
 				}
-_loop55_breakloop:				;
+_loop52_breakloop:				;
 			}    // ( ... )*
 		}
 		finally
@@ -1457,25 +1479,44 @@ _loop55_breakloop:				;
 		}
 	}
 	
-	public void var_decl() //throws RecognitionException, TokenStreamException
+	public VariableDeclaration  var_decl() //throws RecognitionException, TokenStreamException
 {
+		VariableDeclaration var_decl;
 		
 		traceIn("var_decl");
 		try { // debugging
+			Token  id = null;
 			
+				var_decl = null;
+				AST init = null;
+			
+			
+			id = LT(1);
 			match(IDENTIFIER);
 			{
 				switch ( LA(1) )
 				{
 				case ASSIGN:
 				{
-					initializer();
+					init=initializer();
+					if (0==inputState.guessing)
+					{
+						
+								  var_decl = new VariableDeclaration (id.getText (), null, init); 
+							
+					}
 					break;
 				}
 				case COMMA:
 				case SEMI_COLON:
 				case LITERAL_in:
 				{
+					if (0==inputState.guessing)
+					{
+						
+								  var_decl = new VariableDeclaration (id.getText (), null, null);
+							
+					}
 					break;
 				}
 				default:
@@ -1484,6 +1525,7 @@ _loop55_breakloop:				;
 				}
 				 }
 			}
+			return var_decl;
 		}
 		finally
 		{ // debugging
@@ -1491,14 +1533,17 @@ _loop55_breakloop:				;
 		}
 	}
 	
-	public void initializer() //throws RecognitionException, TokenStreamException
+	public AST  initializer() //throws RecognitionException, TokenStreamException
 {
+		AST init;
 		
 		traceIn("initializer");
 		try { // debugging
+			init = null;
 			
 			match(ASSIGN);
-			assignment_expr();
+			init=assignment_expr();
+			return init;
 		}
 		finally
 		{ // debugging
@@ -1506,18 +1551,25 @@ _loop55_breakloop:				;
 		}
 	}
 	
-	public void assignment_expr() //throws RecognitionException, TokenStreamException
+	public AST  assignment_expr() //throws RecognitionException, TokenStreamException
 {
+		AST assign_expr;
 		
 		traceIn("assignment_expr");
 		try { // debugging
 			
+				assign_expr = null;
+				JSToken op = JSToken.None;
+				AST left, right;
+				left = right = null;
+			
+			
 			{
-				bool synPredMatched69 = false;
-				if (((tokenSet_3_.member(LA(1)))))
+				bool synPredMatched66 = false;
+				if (((tokenSet_2_.member(LA(1)))))
 				{
-					int _m69 = mark();
-					synPredMatched69 = true;
+					int _m66 = mark();
+					synPredMatched66 = true;
 					inputState.guessing++;
 					try {
 						{
@@ -1527,19 +1579,27 @@ _loop55_breakloop:				;
 					}
 					catch (RecognitionException)
 					{
-						synPredMatched69 = false;
+						synPredMatched66 = false;
 					}
-					rewind(_m69);
+					rewind(_m66);
 					inputState.guessing--;
 				}
-				if ( synPredMatched69 )
+				if ( synPredMatched66 )
 				{
-					left_hand_side_expr();
-					assignment_op();
-					assignment_expr();
+					left=left_hand_side_expr();
+					op=assignment_op();
+					right=assignment_expr();
+					if (0==inputState.guessing)
+					{
+						
+								  Binary a = new Binary (left, right, op);
+								  Console.WriteLine ("\nDEBUG::jscript.g::assign_expr::ToString::" + a.ToString () + "\n");
+								  assign_expr = a;
+							
+					}
 				}
-				else if ((tokenSet_4_.member(LA(1)))) {
-					cond_expr();
+				else if ((tokenSet_3_.member(LA(1)))) {
+					assign_expr=cond_expr();
 				}
 				else
 				{
@@ -1547,6 +1607,7 @@ _loop55_breakloop:				;
 				}
 				
 			}
+			return assign_expr;
 		}
 		finally
 		{ // debugging
@@ -1554,13 +1615,18 @@ _loop55_breakloop:				;
 		}
 	}
 	
-	public void left_hand_side_expr() //throws RecognitionException, TokenStreamException
+	public Call  left_hand_side_expr() //throws RecognitionException, TokenStreamException
 {
+		Call call;
 		
 		traceIn("left_hand_side_expr");
 		try { // debugging
 			
-			call_expr();
+				call = null;
+			
+			
+			call=call_expr();
+			return call;
 		}
 		finally
 		{ // debugging
@@ -1568,67 +1634,115 @@ _loop55_breakloop:				;
 		}
 	}
 	
-	public void assignment_op() //throws RecognitionException, TokenStreamException
+	public JSToken  assignment_op() //throws RecognitionException, TokenStreamException
 {
+		JSToken assign_op;
 		
 		traceIn("assignment_op");
 		try { // debugging
+			
+			assign_op = JSToken.None;
+			
 			
 			switch ( LA(1) )
 			{
 			case ASSIGN:
 			{
 				match(ASSIGN);
+				if (0==inputState.guessing)
+				{
+					assign_op = JSToken.Assign;
+				}
 				break;
 			}
 			case MULT_ASSIGN:
 			{
 				match(MULT_ASSIGN);
+				if (0==inputState.guessing)
+				{
+					assign_op = JSToken.MultiplyAssign;
+				}
 				break;
 			}
 			case DIV_ASSIGN:
 			{
 				match(DIV_ASSIGN);
+				if (0==inputState.guessing)
+				{
+					assign_op = JSToken.DivideAssign;
+				}
 				break;
 			}
 			case MOD_ASSIGN:
 			{
 				match(MOD_ASSIGN);
+				if (0==inputState.guessing)
+				{
+					assign_op = JSToken.ModuloAssign;
+				}
 				break;
 			}
 			case ADD_ASSIGN:
 			{
 				match(ADD_ASSIGN);
+				if (0==inputState.guessing)
+				{
+					assign_op = JSToken.PlusAssign;
+				}
 				break;
 			}
 			case SUB_ASSIGN:
 			{
 				match(SUB_ASSIGN);
+				if (0==inputState.guessing)
+				{
+					assign_op = JSToken.MinusAssign;
+				}
 				break;
 			}
 			case SHIFT_LEFT_ASSIGN:
 			{
 				match(SHIFT_LEFT_ASSIGN);
+				if (0==inputState.guessing)
+				{
+					assign_op = JSToken.LeftShiftAssign;
+				}
 				break;
 			}
 			case SHIFT_RIGHT_ASSIGN:
 			{
 				match(SHIFT_RIGHT_ASSIGN);
+				if (0==inputState.guessing)
+				{
+					assign_op = JSToken.RightShiftAssign;
+				}
 				break;
 			}
 			case AND_ASSIGN:
 			{
 				match(AND_ASSIGN);
+				if (0==inputState.guessing)
+				{
+					assign_op = JSToken.BitwiseAndAssign;
+				}
 				break;
 			}
 			case XOR_ASSIGN:
 			{
 				match(XOR_ASSIGN);
+				if (0==inputState.guessing)
+				{
+					assign_op = JSToken.BitwiseXorAssign;
+				}
 				break;
 			}
 			case OR_ASSIGN:
 			{
 				match(OR_ASSIGN);
+				if (0==inputState.guessing)
+				{
+					assign_op = JSToken.BitwiseOrAssign;
+				}
 				break;
 			}
 			default:
@@ -1636,6 +1750,7 @@ _loop55_breakloop:				;
 				throw new NoViableAltException(LT(1), getFilename());
 			}
 			 }
+			return assign_op;
 		}
 		finally
 		{ // debugging
@@ -1643,72 +1758,59 @@ _loop55_breakloop:				;
 		}
 	}
 	
-	public void cond_expr() //throws RecognitionException, TokenStreamException
+	public AST  cond_expr() //throws RecognitionException, TokenStreamException
 {
+		AST conditional;
 		
 		traceIn("cond_expr");
 		try { // debugging
 			
-			logical_or_expr();
+				conditional = null; 
+				AST cond;
+				AST trueExpr, falseExpr;
+				cond = null;
+				trueExpr = falseExpr = null;
+			
+			
+			cond=logical_or_expr();
 			{
 				switch ( LA(1) )
 				{
 				case INTERR:
 				{
 					match(INTERR);
-					assignment_expr();
+					trueExpr=assignment_expr();
 					match(COLON);
-					assignment_expr();
+					falseExpr=assignment_expr();
+					if (0==inputState.guessing)
+					{
+						
+							  	  if (trueExpr != null && falseExpr != null) {
+								  	  Conditional c = new Conditional ((AST) cond, trueExpr, falseExpr); 
+									  conditional =  c;
+								  }
+							
+					}
 					break;
 				}
-				case EOF:
-				case LITERAL_function:
 				case IDENTIFIER:
-				case OPEN_PARENS:
 				case CLOSE_PARENS:
-				case OPEN_BRACE:
 				case CLOSE_BRACE:
 				case COMMA:
-				case LITERAL_try:
-				case LITERAL_throw:
 				case SEMI_COLON:
-				case LITERAL_switch:
-				case LITERAL_default:
 				case COLON:
-				case LITERAL_case:
-				case LITERAL_with:
-				case LITERAL_return:
-				case LITERAL_break:
-				case LITERAL_continue:
-				case LITERAL_do:
-				case LITERAL_while:
-				case LITERAL_for:
-				case LITERAL_var:
 				case LITERAL_in:
-				case LITERAL_if:
-				case LITERAL_else:
-				case LITERAL_new:
-				case OPEN_BRACKET:
 				case CLOSE_BRACKET:
 				case 37:
 				case 39:
-				case LITERAL_delete:
-				case LITERAL_void:
-				case LITERAL_typeof:
-				case INCREMENT:
-				case DECREMENT:
-				case PLUS:
-				case MINUS:
-				case BITWISE_NOT:
-				case LOGICAL_NOT:
-				case LITERAL_this:
-				case LITERAL_null:
-				case LITERAL_true:
-				case LITERAL_false:
 				case STRING_LITERAL:
 				case DECIMAL_LITERAL:
 				case HEX_INTEGER_LITERAL:
 				{
+					if (0==inputState.guessing)
+					{
+						conditional = cond;
+					}
 					break;
 				}
 				default:
@@ -1717,6 +1819,7 @@ _loop55_breakloop:				;
 				}
 				 }
 			}
+			return conditional;
 		}
 		finally
 		{ // debugging
@@ -1724,11 +1827,15 @@ _loop55_breakloop:				;
 		}
 	}
 	
-	public void member_expr() //throws RecognitionException, TokenStreamException
+	public AST  member_expr() //throws RecognitionException, TokenStreamException
 {
+		AST mem_exp;
 		
 		traceIn("member_expr");
 		try { // debugging
+			
+				mem_exp = null;
+			
 			
 			switch ( LA(1) )
 			{
@@ -1744,7 +1851,7 @@ _loop55_breakloop:				;
 			case DECIMAL_LITERAL:
 			case HEX_INTEGER_LITERAL:
 			{
-				primary_expr();
+				mem_exp=primary_expr();
 				member_aux();
 				break;
 			}
@@ -1761,11 +1868,11 @@ _loop55_breakloop:				;
 					case OPEN_BRACE:
 					case LITERAL_new:
 					case OPEN_BRACKET:
+					case INCREMENT:
+					case DECREMENT:
 					case LITERAL_delete:
 					case LITERAL_void:
 					case LITERAL_typeof:
-					case INCREMENT:
-					case DECREMENT:
 					case PLUS:
 					case MINUS:
 					case BITWISE_NOT:
@@ -1778,7 +1885,7 @@ _loop55_breakloop:				;
 					case DECIMAL_LITERAL:
 					case HEX_INTEGER_LITERAL:
 					{
-						arguments_list();
+						arguments_list(null);
 						break;
 					}
 					case CLOSE_PARENS:
@@ -1799,6 +1906,7 @@ _loop55_breakloop:				;
 				throw new NoViableAltException(LT(1), getFilename());
 			}
 			 }
+			return mem_exp;
 		}
 		finally
 		{ // debugging
@@ -1806,17 +1914,30 @@ _loop55_breakloop:				;
 		}
 	}
 	
-	public void primary_expr() //throws RecognitionException, TokenStreamException
+	public AST  primary_expr() //throws RecognitionException, TokenStreamException
 {
+		AST prim_exp;
 		
 		traceIn("primary_expr");
 		try { // debugging
+			Token  p = null;
+			Token  id = null;
+			
+				prim_exp = null;
+				Literal l = null;
+				Expression e = null;
+			
 			
 			switch ( LA(1) )
 			{
 			case LITERAL_this:
 			{
+				p = LT(1);
 				match(LITERAL_this);
+				if (0==inputState.guessing)
+				{
+					prim_exp = new This ();
+				}
 				break;
 			}
 			case OPEN_BRACE:
@@ -1826,7 +1947,15 @@ _loop55_breakloop:				;
 			}
 			case IDENTIFIER:
 			{
+				id = LT(1);
 				match(IDENTIFIER);
+				if (0==inputState.guessing)
+				{
+					
+							Identifier ident = new Identifier (id.getText ());
+							prim_exp = (AST) ident;
+						
+				}
 				break;
 			}
 			case LITERAL_null:
@@ -1836,7 +1965,11 @@ _loop55_breakloop:				;
 			case DECIMAL_LITERAL:
 			case HEX_INTEGER_LITERAL:
 			{
-				literal();
+				l=literal();
+				if (0==inputState.guessing)
+				{
+					prim_exp = l;
+				}
 				break;
 			}
 			case OPEN_BRACKET:
@@ -1847,7 +1980,11 @@ _loop55_breakloop:				;
 			case OPEN_PARENS:
 			{
 				match(OPEN_PARENS);
-				expr();
+				e=expr();
+				if (0==inputState.guessing)
+				{
+					prim_exp = e;
+				}
 				match(CLOSE_PARENS);
 				break;
 			}
@@ -1856,6 +1993,7 @@ _loop55_breakloop:				;
 				throw new NoViableAltException(LT(1), getFilename());
 			}
 			 }
+			return prim_exp;
 		}
 		finally
 		{ // debugging
@@ -1870,74 +2008,126 @@ _loop55_breakloop:				;
 		try { // debugging
 			
 			{
-				if ((LA(1)==33))
+				switch ( LA(1) )
+				{
+				case 33:
 				{
 					match(33);
 					match(IDENTIFIER);
 					member_aux();
+					break;
 				}
-				else {
-					bool synPredMatched75 = false;
-					if (((LA(1)==OPEN_BRACKET)))
-					{
-						int _m75 = mark();
-						synPredMatched75 = true;
-						inputState.guessing++;
-						try {
-							{
-								match(OPEN_BRACKET);
-							}
-						}
-						catch (RecognitionException)
-						{
-							synPredMatched75 = false;
-						}
-						rewind(_m75);
-						inputState.guessing--;
-					}
-					if ( synPredMatched75 )
-					{
-						match(OPEN_BRACKET);
-						expr();
-						match(CLOSE_BRACKET);
-					}
-					else if ((tokenSet_5_.member(LA(1)))) {
-					}
-					else
-					{
-						throw new NoViableAltException(LT(1), getFilename());
-					}
-					}
+				case OPEN_BRACKET:
+				{
+					match(OPEN_BRACKET);
+					expr();
+					match(CLOSE_BRACKET);
+					break;
 				}
-			}
-			finally
-			{ // debugging
-				traceOut("member_aux");
+				case IDENTIFIER:
+				case OPEN_PARENS:
+				case CLOSE_PARENS:
+				case CLOSE_BRACE:
+				case COMMA:
+				case SEMI_COLON:
+				case COLON:
+				case LITERAL_in:
+				case ASSIGN:
+				case CLOSE_BRACKET:
+				case 36:
+				case 37:
+				case 38:
+				case 39:
+				case DOT:
+				case INCREMENT:
+				case DECREMENT:
+				case PLUS:
+				case MINUS:
+				case MULT:
+				case DIVISION:
+				case MODULE:
+				case SHIFT_LEFT:
+				case SHIFT_RIGHT:
+				case UNSIGNED_SHIFT_RIGHT:
+				case LESS_THAN:
+				case GREATER_THAN:
+				case LESS_EQ:
+				case GREATER_EQ:
+				case LITERAL_instanceof:
+				case EQ:
+				case NEQ:
+				case STRICT_EQ:
+				case STRICT_NEQ:
+				case BITWISE_AND:
+				case BITWISE_XOR:
+				case BITWISE_OR:
+				case LOGICAL_AND:
+				case LOGICAL_OR:
+				case INTERR:
+				case MULT_ASSIGN:
+				case DIV_ASSIGN:
+				case MOD_ASSIGN:
+				case ADD_ASSIGN:
+				case SUB_ASSIGN:
+				case SHIFT_LEFT_ASSIGN:
+				case SHIFT_RIGHT_ASSIGN:
+				case AND_ASSIGN:
+				case XOR_ASSIGN:
+				case OR_ASSIGN:
+				case STRING_LITERAL:
+				case DECIMAL_LITERAL:
+				case HEX_INTEGER_LITERAL:
+				{
+					break;
+				}
+				default:
+				{
+					throw new NoViableAltException(LT(1), getFilename());
+				}
+				 }
 			}
 		}
-		
-	public void arguments_list() //throws RecognitionException, TokenStreamException
+		finally
+		{ // debugging
+			traceOut("member_aux");
+		}
+	}
+	
+	public void arguments_list(
+		Args args
+	) //throws RecognitionException, TokenStreamException
 {
 		
 		traceIn("arguments_list");
 		try { // debugging
 			
-			assignment_expr();
+				AST a = null;
+			
+			
+			a=assignment_expr();
+			if (0==inputState.guessing)
+			{
+				args.Add (a);
+			}
 			{    // ( ... )*
 				for (;;)
 				{
 					if ((LA(1)==COMMA))
 					{
 						match(COMMA);
-						assignment_expr();
+						a=assignment_expr();
+						if (0==inputState.guessing)
+						{
+							args.Add (a);
+						}
 					}
 					else
 					{
-						goto _loop83_breakloop;
+						goto _loop80_breakloop;
 					}
 					
 				}
-_loop83_breakloop:				;
+_loop80_breakloop:				;
 			}    // ( ... )*
 		}
 		finally
@@ -1946,14 +2136,27 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void call_expr() //throws RecognitionException, TokenStreamException
+	public Call  call_expr() //throws RecognitionException, TokenStreamException
 {
+		Call func_call;
 		
 		traceIn("call_expr");
 		try { // debugging
 			
-			member_expr();
-			call_aux();
+				func_call = null;
+				AST member = null;
+				AST args;
+			
+			
+			member=member_expr();
+			args=call_aux();
+			if (0==inputState.guessing)
+			{
+				
+						  func_call = new Call (member, args);
+					
+			}
+			return func_call;
 		}
 		finally
 		{ // debugging
@@ -1961,11 +2164,16 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void call_aux() //throws RecognitionException, TokenStreamException
+	public AST  call_aux() //throws RecognitionException, TokenStreamException
 {
+		AST args;
 		
 		traceIn("call_aux");
 		try { // debugging
+			
+				Args tmp_args = new Args ();
+				args = null;
+			
 			
 			{
 				switch ( LA(1) )
@@ -1988,11 +2196,11 @@ _loop83_breakloop:				;
 								case OPEN_BRACE:
 								case LITERAL_new:
 								case OPEN_BRACKET:
+								case INCREMENT:
+								case DECREMENT:
 								case LITERAL_delete:
 								case LITERAL_void:
 								case LITERAL_typeof:
-								case INCREMENT:
-								case DECREMENT:
 								case PLUS:
 								case MINUS:
 								case BITWISE_NOT:
@@ -2005,7 +2213,11 @@ _loop83_breakloop:				;
 								case DECIMAL_LITERAL:
 								case HEX_INTEGER_LITERAL:
 								{
-									arguments_list();
+									arguments_list(tmp_args);
+									if (0==inputState.guessing)
+									{
+										args = tmp_args;
+									}
 									break;
 								}
 								case 37:
@@ -2043,49 +2255,21 @@ _loop83_breakloop:				;
 					call_aux();
 					break;
 				}
-				case EOF:
-				case LITERAL_function:
 				case IDENTIFIER:
-				case OPEN_PARENS:
 				case CLOSE_PARENS:
-				case OPEN_BRACE:
 				case CLOSE_BRACE:
 				case COMMA:
-				case LITERAL_try:
-				case LITERAL_throw:
 				case SEMI_COLON:
-				case LITERAL_switch:
-				case LITERAL_default:
 				case COLON:
-				case LITERAL_case:
-				case LITERAL_with:
-				case LITERAL_return:
-				case LITERAL_break:
-				case LITERAL_continue:
-				case LITERAL_do:
-				case LITERAL_while:
-				case LITERAL_for:
-				case LITERAL_var:
 				case LITERAL_in:
-				case LITERAL_if:
-				case LITERAL_else:
 				case ASSIGN:
-				case LITERAL_new:
-				case OPEN_BRACKET:
 				case CLOSE_BRACKET:
 				case 37:
 				case 39:
-				case 41:
-				case 42:
-				case LITERAL_delete:
-				case LITERAL_void:
-				case LITERAL_typeof:
 				case INCREMENT:
 				case DECREMENT:
 				case PLUS:
 				case MINUS:
-				case BITWISE_NOT:
-				case LOGICAL_NOT:
 				case MULT:
 				case DIVISION:
 				case MODULE:
@@ -2117,10 +2301,6 @@ _loop83_breakloop:				;
 				case AND_ASSIGN:
 				case XOR_ASSIGN:
 				case OR_ASSIGN:
-				case LITERAL_this:
-				case LITERAL_null:
-				case LITERAL_true:
-				case LITERAL_false:
 				case STRING_LITERAL:
 				case DECIMAL_LITERAL:
 				case HEX_INTEGER_LITERAL:
@@ -2133,6 +2313,7 @@ _loop83_breakloop:				;
 				}
 				 }
 			}
+			return args;
 		}
 		finally
 		{ // debugging
@@ -2140,66 +2321,52 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void postfix_expr() //throws RecognitionException, TokenStreamException
+	public Unary  postfix_expr() //throws RecognitionException, TokenStreamException
 {
+		Unary post_expr;
 		
 		traceIn("postfix_expr");
 		try { // debugging
 			
-			left_hand_side_expr();
+				post_expr = null;
+				JSToken op = JSToken.None;
+				AST left = null;
+			
+			
+			left=left_hand_side_expr();
 			{
 				switch ( LA(1) )
 				{
-				case 41:
+				case INCREMENT:
 				{
-					match(41);
+					match(INCREMENT);
+					if (0==inputState.guessing)
+					{
+						op = JSToken.Increment;
+					}
 					break;
 				}
-				case 42:
+				case DECREMENT:
 				{
-					match(42);
+					match(DECREMENT);
+					if (0==inputState.guessing)
+					{
+						op = JSToken.Decrement;
+					}
 					break;
 				}
-				case EOF:
-				case LITERAL_function:
 				case IDENTIFIER:
-				case OPEN_PARENS:
 				case CLOSE_PARENS:
-				case OPEN_BRACE:
 				case CLOSE_BRACE:
 				case COMMA:
-				case LITERAL_try:
-				case LITERAL_throw:
 				case SEMI_COLON:
-				case LITERAL_switch:
-				case LITERAL_default:
 				case COLON:
-				case LITERAL_case:
-				case LITERAL_with:
-				case LITERAL_return:
-				case LITERAL_break:
-				case LITERAL_continue:
-				case LITERAL_do:
-				case LITERAL_while:
-				case LITERAL_for:
-				case LITERAL_var:
 				case LITERAL_in:
-				case LITERAL_if:
-				case LITERAL_else:
-				case LITERAL_new:
-				case OPEN_BRACKET:
 				case CLOSE_BRACKET:
 				case 37:
 				case 39:
-				case LITERAL_delete:
-				case LITERAL_void:
-				case LITERAL_typeof:
-				case INCREMENT:
-				case DECREMENT:
 				case PLUS:
 				case MINUS:
-				case BITWISE_NOT:
-				case LOGICAL_NOT:
 				case MULT:
 				case DIVISION:
 				case MODULE:
@@ -2221,10 +2388,6 @@ _loop83_breakloop:				;
 				case LOGICAL_AND:
 				case LOGICAL_OR:
 				case INTERR:
-				case LITERAL_this:
-				case LITERAL_null:
-				case LITERAL_true:
-				case LITERAL_false:
 				case STRING_LITERAL:
 				case DECIMAL_LITERAL:
 				case HEX_INTEGER_LITERAL:
@@ -2237,6 +2400,13 @@ _loop83_breakloop:				;
 				}
 				 }
 			}
+			if (0==inputState.guessing)
+			{
+				
+						  post_expr = new Unary (left, op);
+					
+			}
+			return post_expr;
 		}
 		finally
 		{ // debugging
@@ -2244,11 +2414,17 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void unary_expr() //throws RecognitionException, TokenStreamException
+	public Unary  unary_expr() //throws RecognitionException, TokenStreamException
 {
+		Unary unary_exprn;
 		
 		traceIn("unary_expr");
 		try { // debugging
+			
+				unary_exprn = null;
+				JSToken op = JSToken.None;
+				AST u_expr = null;
+			
 			
 			switch ( LA(1) )
 			{
@@ -2265,21 +2441,27 @@ _loop83_breakloop:				;
 			case DECIMAL_LITERAL:
 			case HEX_INTEGER_LITERAL:
 			{
-				postfix_expr();
+				unary_exprn=postfix_expr();
 				break;
 			}
+			case INCREMENT:
+			case DECREMENT:
 			case LITERAL_delete:
 			case LITERAL_void:
 			case LITERAL_typeof:
-			case INCREMENT:
-			case DECREMENT:
 			case PLUS:
 			case MINUS:
 			case BITWISE_NOT:
 			case LOGICAL_NOT:
 			{
-				unary_op();
-				unary_expr();
+				op=unary_op();
+				u_expr=unary_expr();
+				if (0==inputState.guessing)
+				{
+					
+							  unary_exprn = new Unary (u_expr, op); 
+						
+				}
 				break;
 			}
 			default:
@@ -2287,6 +2469,7 @@ _loop83_breakloop:				;
 				throw new NoViableAltException(LT(1), getFilename());
 			}
 			 }
+			return unary_exprn;
 		}
 		finally
 		{ // debugging
@@ -2294,57 +2477,95 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void unary_op() //throws RecognitionException, TokenStreamException
+	public JSToken  unary_op() //throws RecognitionException, TokenStreamException
 {
+		JSToken unary_op;
 		
 		traceIn("unary_op");
 		try { // debugging
+			unary_op = JSToken.None;
 			
 			switch ( LA(1) )
 			{
 			case LITERAL_delete:
 			{
 				match(LITERAL_delete);
+				if (0==inputState.guessing)
+				{
+					unary_op = JSToken.Delete;
+				}
 				break;
 			}
 			case LITERAL_void:
 			{
 				match(LITERAL_void);
+				if (0==inputState.guessing)
+				{
+					unary_op = JSToken.Void;
+				}
 				break;
 			}
 			case LITERAL_typeof:
 			{
 				match(LITERAL_typeof);
+				if (0==inputState.guessing)
+				{
+					unary_op = JSToken.Typeof;
+				}
 				break;
 			}
 			case INCREMENT:
 			{
 				match(INCREMENT);
+				if (0==inputState.guessing)
+				{
+					unary_op = JSToken.Increment;
+				}
 				break;
 			}
 			case DECREMENT:
 			{
 				match(DECREMENT);
+				if (0==inputState.guessing)
+				{
+					unary_op = JSToken.Decrement;
+				}
 				break;
 			}
 			case PLUS:
 			{
 				match(PLUS);
+				if (0==inputState.guessing)
+				{
+					unary_op = JSToken.Plus;
+				}
 				break;
 			}
 			case MINUS:
 			{
 				match(MINUS);
+				if (0==inputState.guessing)
+				{
+					unary_op = JSToken.Minus;
+				}
 				break;
 			}
 			case BITWISE_NOT:
 			{
 				match(BITWISE_NOT);
+				if (0==inputState.guessing)
+				{
+					unary_op = JSToken.BitwiseNot;
+				}
 				break;
 			}
 			case LOGICAL_NOT:
 			{
 				match(LOGICAL_NOT);
+				if (0==inputState.guessing)
+				{
+					unary_op = JSToken.LogicalNot;
+				}
 				break;
 			}
 			default:
@@ -2352,6 +2573,7 @@ _loop83_breakloop:				;
 				throw new NoViableAltException(LT(1), getFilename());
 			}
 			 }
+			return unary_op;
 		}
 		finally
 		{ // debugging
@@ -2359,14 +2581,30 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void multiplicative_expr() //throws RecognitionException, TokenStreamException
+	public AST  multiplicative_expr() //throws RecognitionException, TokenStreamException
 {
+		AST mult_expr;
 		
 		traceIn("multiplicative_expr");
 		try { // debugging
 			
-			unary_expr();
-			multiplicative_aux();
+				mult_expr = null;
+				Unary left = null;
+				AST right = null;
+			
+			
+			left=unary_expr();
+			right=multiplicative_aux();
+			if (0==inputState.guessing)
+			{
+				
+						  if (right == null)
+							  mult_expr = left;
+						  else
+						  	  mult_expr = new Binary (left, right, ((Binary) right).old_op);
+					
+			}
+			return mult_expr;
 		}
 		finally
 		{ // debugging
@@ -2374,11 +2612,18 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void multiplicative_aux() //throws RecognitionException, TokenStreamException
+	public AST  multiplicative_aux() //throws RecognitionException, TokenStreamException
 {
+		AST mult_aux;
 		
 		traceIn("multiplicative_aux");
 		try { // debugging
+			
+				mult_aux = null;
+				JSToken mult_op = JSToken.None;
+				Unary left = null;
+				AST right = null;
+			
 			
 			{
 				switch ( LA(1) )
@@ -2393,16 +2638,28 @@ _loop83_breakloop:				;
 						case MULT:
 						{
 							match(MULT);
+							if (0==inputState.guessing)
+							{
+								mult_op = JSToken.Multiply;
+							}
 							break;
 						}
 						case DIVISION:
 						{
 							match(DIVISION);
+							if (0==inputState.guessing)
+							{
+								mult_op = JSToken.Divide;
+							}
 							break;
 						}
 						case MODULE:
 						{
 							match(MODULE);
+							if (0==inputState.guessing)
+							{
+								mult_op = JSToken.Modulo;
+							}
 							break;
 						}
 						default:
@@ -2411,50 +2668,32 @@ _loop83_breakloop:				;
 						}
 						 }
 					}
-					unary_expr();
-					multiplicative_aux();
+					left=unary_expr();
+					right=multiplicative_aux();
+					if (0==inputState.guessing)
+					{
+						
+									  if (right == null)
+										  mult_aux = new Binary (left, null, JSToken.None);
+									  else
+										  mult_aux = new Binary (left, right, ((Binary) right).old_op);
+									  ((Binary) mult_aux).old_op = mult_op;
+							
+					}
 					break;
 				}
-				case EOF:
-				case LITERAL_function:
 				case IDENTIFIER:
-				case OPEN_PARENS:
 				case CLOSE_PARENS:
-				case OPEN_BRACE:
 				case CLOSE_BRACE:
 				case COMMA:
-				case LITERAL_try:
-				case LITERAL_throw:
 				case SEMI_COLON:
-				case LITERAL_switch:
-				case LITERAL_default:
 				case COLON:
-				case LITERAL_case:
-				case LITERAL_with:
-				case LITERAL_return:
-				case LITERAL_break:
-				case LITERAL_continue:
-				case LITERAL_do:
-				case LITERAL_while:
-				case LITERAL_for:
-				case LITERAL_var:
 				case LITERAL_in:
-				case LITERAL_if:
-				case LITERAL_else:
-				case LITERAL_new:
-				case OPEN_BRACKET:
 				case CLOSE_BRACKET:
 				case 37:
 				case 39:
-				case LITERAL_delete:
-				case LITERAL_void:
-				case LITERAL_typeof:
-				case INCREMENT:
-				case DECREMENT:
 				case PLUS:
 				case MINUS:
-				case BITWISE_NOT:
-				case LOGICAL_NOT:
 				case SHIFT_LEFT:
 				case SHIFT_RIGHT:
 				case UNSIGNED_SHIFT_RIGHT:
@@ -2473,10 +2712,6 @@ _loop83_breakloop:				;
 				case LOGICAL_AND:
 				case LOGICAL_OR:
 				case INTERR:
-				case LITERAL_this:
-				case LITERAL_null:
-				case LITERAL_true:
-				case LITERAL_false:
 				case STRING_LITERAL:
 				case DECIMAL_LITERAL:
 				case HEX_INTEGER_LITERAL:
@@ -2489,6 +2724,7 @@ _loop83_breakloop:				;
 				}
 				 }
 			}
+			return mult_aux;
 		}
 		finally
 		{ // debugging
@@ -2496,14 +2732,30 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void additive_expr() //throws RecognitionException, TokenStreamException
+	public AST  additive_expr() //throws RecognitionException, TokenStreamException
 {
+		AST add_expr;
 		
 		traceIn("additive_expr");
 		try { // debugging
 			
-			multiplicative_expr();
-			additive_aux();
+				add_expr = null;
+				AST left, right;
+				left = right = null;
+			
+			
+			left=multiplicative_expr();
+			right=additive_aux();
+			if (0==inputState.guessing)
+			{
+				
+							  if (right == null)
+								  add_expr = left;
+							  else
+								  add_expr = new Binary (left, right, ((Binary) right).old_op);
+					
+			}
+			return add_expr;
 		}
 		finally
 		{ // debugging
@@ -2511,14 +2763,24 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void additive_aux() //throws RecognitionException, TokenStreamException
+	public AST  additive_aux() //throws RecognitionException, TokenStreamException
 {
+		AST add_aux;
 		
 		traceIn("additive_aux");
 		try { // debugging
 			
+				add_aux = null;
+				JSToken op = JSToken.None;
+				AST left, right;
+				left = right = null;
+			
+			
 			{
-				if ((LA(1)==PLUS||LA(1)==MINUS))
+				switch ( LA(1) )
+				{
+				case PLUS:
+				case MINUS:
 				{
 					{
 						switch ( LA(1) )
@@ -2526,11 +2788,19 @@ _loop83_breakloop:				;
 						case PLUS:
 						{
 							match(PLUS);
+							if (0==inputState.guessing)
+							{
+								op = JSToken.Plus;
+							}
 							break;
 						}
 						case MINUS:
 						{
 							match(MINUS);
+							if (0==inputState.guessing)
+							{
+								op = JSToken.Minus;
+							}
 							break;
 						}
 						default:
@@ -2539,17 +2809,61 @@ _loop83_breakloop:				;
 						}
 						 }
 					}
-					multiplicative_expr();
-					additive_aux();
+					left=multiplicative_expr();
+					right=additive_aux();
+					if (0==inputState.guessing)
+					{
+						
+								     if (right == null)
+									     add_aux = new Binary (left, null, JSToken.None);
+								     else
+									     add_aux = new Binary (left, right, ((Binary) right).old_op);
+								     ((Binary) add_aux).old_op = op;
+							
+					}
+					break;
 				}
-				else if ((tokenSet_6_.member(LA(1)))) {
+				case IDENTIFIER:
+				case CLOSE_PARENS:
+				case CLOSE_BRACE:
+				case COMMA:
+				case SEMI_COLON:
+				case COLON:
+				case LITERAL_in:
+				case CLOSE_BRACKET:
+				case 37:
+				case 39:
+				case SHIFT_LEFT:
+				case SHIFT_RIGHT:
+				case UNSIGNED_SHIFT_RIGHT:
+				case LESS_THAN:
+				case GREATER_THAN:
+				case LESS_EQ:
+				case GREATER_EQ:
+				case LITERAL_instanceof:
+				case EQ:
+				case NEQ:
+				case STRICT_EQ:
+				case STRICT_NEQ:
+				case BITWISE_AND:
+				case BITWISE_XOR:
+				case BITWISE_OR:
+				case LOGICAL_AND:
+				case LOGICAL_OR:
+				case INTERR:
+				case STRING_LITERAL:
+				case DECIMAL_LITERAL:
+				case HEX_INTEGER_LITERAL:
+				{
+					break;
 				}
-				else
+				default:
 				{
 					throw new NoViableAltException(LT(1), getFilename());
 				}
-				
+				 }
 			}
+			return add_aux;
 		}
 		finally
 		{ // debugging
@@ -2557,14 +2871,30 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void shift_expr() //throws RecognitionException, TokenStreamException
+	public AST  shift_expr() //throws RecognitionException, TokenStreamException
 {
+		AST shift_expr;
 		
 		traceIn("shift_expr");
 		try { // debugging
 			
-			additive_expr();
-			shift_aux();
+				shift_expr = null;
+				AST left, right;
+				left = right = null;
+			
+			
+			left=additive_expr();
+			right=shift_aux();
+			if (0==inputState.guessing)
+			{
+				
+						  if (right == null)
+							  shift_expr = left;
+						  else
+							  shift_expr = new Binary (left, right, ((Binary) right).old_op);
+					
+			}
+			return shift_expr;
 		}
 		finally
 		{ // debugging
@@ -2572,11 +2902,18 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void shift_aux() //throws RecognitionException, TokenStreamException
+	public AST  shift_aux() //throws RecognitionException, TokenStreamException
 {
+		AST shift_auxr;
 		
 		traceIn("shift_aux");
 		try { // debugging
+			
+				shift_auxr = null; 
+				JSToken op = JSToken.None;
+				AST left, right;
+				left = right = null;
+			
 			
 			{
 				switch ( LA(1) )
@@ -2585,51 +2922,32 @@ _loop83_breakloop:				;
 				case SHIFT_RIGHT:
 				case UNSIGNED_SHIFT_RIGHT:
 				{
-					shift_op();
-					additive_expr();
-					shift_aux();
+					op=shift_op();
+					left=additive_expr();
+					right=shift_aux();
+					if (0==inputState.guessing)
+					{
+						
+								   if (right == null)
+									   shift_auxr = new Binary (left, null, JSToken.None);
+								   else
+									   shift_auxr = new Binary (left, right, ((Binary) right).old_op);
+						
+								   ((Binary) shift_auxr).old_op = op;
+							
+					}
 					break;
 				}
-				case EOF:
-				case LITERAL_function:
 				case IDENTIFIER:
-				case OPEN_PARENS:
 				case CLOSE_PARENS:
-				case OPEN_BRACE:
 				case CLOSE_BRACE:
 				case COMMA:
-				case LITERAL_try:
-				case LITERAL_throw:
 				case SEMI_COLON:
-				case LITERAL_switch:
-				case LITERAL_default:
 				case COLON:
-				case LITERAL_case:
-				case LITERAL_with:
-				case LITERAL_return:
-				case LITERAL_break:
-				case LITERAL_continue:
-				case LITERAL_do:
-				case LITERAL_while:
-				case LITERAL_for:
-				case LITERAL_var:
 				case LITERAL_in:
-				case LITERAL_if:
-				case LITERAL_else:
-				case LITERAL_new:
-				case OPEN_BRACKET:
 				case CLOSE_BRACKET:
 				case 37:
 				case 39:
-				case LITERAL_delete:
-				case LITERAL_void:
-				case LITERAL_typeof:
-				case INCREMENT:
-				case DECREMENT:
-				case PLUS:
-				case MINUS:
-				case BITWISE_NOT:
-				case LOGICAL_NOT:
 				case LESS_THAN:
 				case GREATER_THAN:
 				case LESS_EQ:
@@ -2645,10 +2963,6 @@ _loop83_breakloop:				;
 				case LOGICAL_AND:
 				case LOGICAL_OR:
 				case INTERR:
-				case LITERAL_this:
-				case LITERAL_null:
-				case LITERAL_true:
-				case LITERAL_false:
 				case STRING_LITERAL:
 				case DECIMAL_LITERAL:
 				case HEX_INTEGER_LITERAL:
@@ -2661,6 +2975,7 @@ _loop83_breakloop:				;
 				}
 				 }
 			}
+			return shift_auxr;
 		}
 		finally
 		{ // debugging
@@ -2668,27 +2983,41 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void shift_op() //throws RecognitionException, TokenStreamException
+	public JSToken  shift_op() //throws RecognitionException, TokenStreamException
 {
+		JSToken shift_op;
 		
 		traceIn("shift_op");
 		try { // debugging
+			shift_op = JSToken.None;
 			
 			switch ( LA(1) )
 			{
 			case SHIFT_LEFT:
 			{
 				match(SHIFT_LEFT);
+				if (0==inputState.guessing)
+				{
+					shift_op = JSToken.LeftShift;
+				}
 				break;
 			}
 			case SHIFT_RIGHT:
 			{
 				match(SHIFT_RIGHT);
+				if (0==inputState.guessing)
+				{
+					shift_op = JSToken.RightShift;
+				}
 				break;
 			}
 			case UNSIGNED_SHIFT_RIGHT:
 			{
 				match(UNSIGNED_SHIFT_RIGHT);
+				if (0==inputState.guessing)
+				{
+					shift_op = JSToken.UnsignedRightShift;
+				}
 				break;
 			}
 			default:
@@ -2696,6 +3025,7 @@ _loop83_breakloop:				;
 				throw new NoViableAltException(LT(1), getFilename());
 			}
 			 }
+			return shift_op;
 		}
 		finally
 		{ // debugging
@@ -2703,14 +3033,30 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void relational_expr() //throws RecognitionException, TokenStreamException
+	public AST  relational_expr() //throws RecognitionException, TokenStreamException
 {
+		AST rel_expr;
 		
 		traceIn("relational_expr");
 		try { // debugging
 			
-			shift_expr();
-			relational_aux();
+				rel_expr = null;
+				AST left = null;
+				Relational right = null;
+			
+			
+			left=shift_expr();
+			right=relational_aux();
+			if (0==inputState.guessing)
+			{
+				
+						  if (right == null)
+							  rel_expr = left;
+						  else
+							  rel_expr = new Relational (left, right, right.old_op);
+					
+			}
+			return rel_expr;
 		}
 		finally
 		{ // debugging
@@ -2718,11 +3064,18 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void relational_aux() //throws RecognitionException, TokenStreamException
+	public Relational  relational_aux() //throws RecognitionException, TokenStreamException
 {
+		Relational rel_aux;
 		
 		traceIn("relational_aux");
 		try { // debugging
+			
+				rel_aux = null;
+				JSToken op = JSToken.None;
+				AST left = null;
+				Relational right = null;
+			
 			
 			{
 				switch ( LA(1) )
@@ -2733,51 +3086,32 @@ _loop83_breakloop:				;
 				case GREATER_EQ:
 				case LITERAL_instanceof:
 				{
-					relational_op();
-					shift_expr();
-					relational_aux();
+					op=relational_op();
+					left=shift_expr();
+					right=relational_aux();
+					if (0==inputState.guessing)
+					{
+						
+								   if (right == null)
+									  rel_aux = new Relational (left, null, JSToken.None);
+								   else
+									   rel_aux = new Relational (left, right, right.old_op);
+								   rel_aux.old_op = op;
+						
+							
+					}
 					break;
 				}
-				case EOF:
-				case LITERAL_function:
 				case IDENTIFIER:
-				case OPEN_PARENS:
 				case CLOSE_PARENS:
-				case OPEN_BRACE:
 				case CLOSE_BRACE:
 				case COMMA:
-				case LITERAL_try:
-				case LITERAL_throw:
 				case SEMI_COLON:
-				case LITERAL_switch:
-				case LITERAL_default:
 				case COLON:
-				case LITERAL_case:
-				case LITERAL_with:
-				case LITERAL_return:
-				case LITERAL_break:
-				case LITERAL_continue:
-				case LITERAL_do:
-				case LITERAL_while:
-				case LITERAL_for:
-				case LITERAL_var:
 				case LITERAL_in:
-				case LITERAL_if:
-				case LITERAL_else:
-				case LITERAL_new:
-				case OPEN_BRACKET:
 				case CLOSE_BRACKET:
 				case 37:
 				case 39:
-				case LITERAL_delete:
-				case LITERAL_void:
-				case LITERAL_typeof:
-				case INCREMENT:
-				case DECREMENT:
-				case PLUS:
-				case MINUS:
-				case BITWISE_NOT:
-				case LOGICAL_NOT:
 				case EQ:
 				case NEQ:
 				case STRICT_EQ:
@@ -2788,10 +3122,6 @@ _loop83_breakloop:				;
 				case LOGICAL_AND:
 				case LOGICAL_OR:
 				case INTERR:
-				case LITERAL_this:
-				case LITERAL_null:
-				case LITERAL_true:
-				case LITERAL_false:
 				case STRING_LITERAL:
 				case DECIMAL_LITERAL:
 				case HEX_INTEGER_LITERAL:
@@ -2804,6 +3134,7 @@ _loop83_breakloop:				;
 				}
 				 }
 			}
+			return rel_aux;
 		}
 		finally
 		{ // debugging
@@ -2811,37 +3142,59 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void relational_op() //throws RecognitionException, TokenStreamException
+	public JSToken  relational_op() //throws RecognitionException, TokenStreamException
 {
+		JSToken rel_op;
 		
 		traceIn("relational_op");
 		try { // debugging
+			rel_op = JSToken.None;
 			
 			switch ( LA(1) )
 			{
 			case LESS_THAN:
 			{
 				match(LESS_THAN);
+				if (0==inputState.guessing)
+				{
+					rel_op = JSToken.LessThan;
+				}
 				break;
 			}
 			case GREATER_THAN:
 			{
 				match(GREATER_THAN);
+				if (0==inputState.guessing)
+				{
+					rel_op = JSToken.GreaterThan;
+				}
 				break;
 			}
 			case LESS_EQ:
 			{
 				match(LESS_EQ);
+				if (0==inputState.guessing)
+				{
+					rel_op = JSToken.LessThanEqual;
+				}
 				break;
 			}
 			case GREATER_EQ:
 			{
 				match(GREATER_EQ);
+				if (0==inputState.guessing)
+				{
+					rel_op = JSToken.GreaterThanEqual;
+				}
 				break;
 			}
 			case LITERAL_instanceof:
 			{
 				match(LITERAL_instanceof);
+				if (0==inputState.guessing)
+				{
+					rel_op = JSToken.InstanceOf;
+				}
 				break;
 			}
 			default:
@@ -2849,6 +3202,7 @@ _loop83_breakloop:				;
 				throw new NoViableAltException(LT(1), getFilename());
 			}
 			 }
+			return rel_op;
 		}
 		finally
 		{ // debugging
@@ -2856,14 +3210,31 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void equality_expr() //throws RecognitionException, TokenStreamException
+	public AST  equality_expr() //throws RecognitionException, TokenStreamException
 {
+		AST eq_expr;
 		
 		traceIn("equality_expr");
 		try { // debugging
 			
-			relational_expr();
-			equality_aux();
+				eq_expr = null;
+				AST left = null;
+				Equality right = null;
+			
+			
+			left=relational_expr();
+			right=equality_aux();
+			if (0==inputState.guessing)
+			{
+				
+						  if (right == null)
+							  eq_expr = left;
+						  else {
+							  eq_expr = new Equality (left, right, right.old_op);
+						  }
+					
+			}
+			return eq_expr;
 		}
 		finally
 		{ // debugging
@@ -2871,11 +3242,18 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void equality_aux() //throws RecognitionException, TokenStreamException
+	public Equality  equality_aux() //throws RecognitionException, TokenStreamException
 {
+		Equality eq_aux;
 		
 		traceIn("equality_aux");
 		try { // debugging
+			
+				eq_aux = null;
+				AST left = null;
+				Equality right = null;
+				JSToken op = JSToken.None;
+			
 			
 			{
 				switch ( LA(1) )
@@ -2885,61 +3263,38 @@ _loop83_breakloop:				;
 				case STRICT_EQ:
 				case STRICT_NEQ:
 				{
-					equality_op();
-					relational_expr();
-					equality_aux();
+					op=equality_op();
+					left=relational_expr();
+					right=equality_aux();
+					if (0==inputState.guessing)
+					{
+						
+								   if (right == null)
+									  eq_aux = new Equality (left, null, JSToken.None);
+								   else
+									  eq_aux = new Equality (left, right, right.old_op);
+						
+								  eq_aux.old_op = op;
+							
+					}
 					break;
 				}
-				case EOF:
-				case LITERAL_function:
 				case IDENTIFIER:
-				case OPEN_PARENS:
 				case CLOSE_PARENS:
-				case OPEN_BRACE:
 				case CLOSE_BRACE:
 				case COMMA:
-				case LITERAL_try:
-				case LITERAL_throw:
 				case SEMI_COLON:
-				case LITERAL_switch:
-				case LITERAL_default:
 				case COLON:
-				case LITERAL_case:
-				case LITERAL_with:
-				case LITERAL_return:
-				case LITERAL_break:
-				case LITERAL_continue:
-				case LITERAL_do:
-				case LITERAL_while:
-				case LITERAL_for:
-				case LITERAL_var:
 				case LITERAL_in:
-				case LITERAL_if:
-				case LITERAL_else:
-				case LITERAL_new:
-				case OPEN_BRACKET:
 				case CLOSE_BRACKET:
 				case 37:
 				case 39:
-				case LITERAL_delete:
-				case LITERAL_void:
-				case LITERAL_typeof:
-				case INCREMENT:
-				case DECREMENT:
-				case PLUS:
-				case MINUS:
-				case BITWISE_NOT:
-				case LOGICAL_NOT:
 				case BITWISE_AND:
 				case BITWISE_XOR:
 				case BITWISE_OR:
 				case LOGICAL_AND:
 				case LOGICAL_OR:
 				case INTERR:
-				case LITERAL_this:
-				case LITERAL_null:
-				case LITERAL_true:
-				case LITERAL_false:
 				case STRING_LITERAL:
 				case DECIMAL_LITERAL:
 				case HEX_INTEGER_LITERAL:
@@ -2952,6 +3307,7 @@ _loop83_breakloop:				;
 				}
 				 }
 			}
+			return eq_aux;
 		}
 		finally
 		{ // debugging
@@ -2959,32 +3315,50 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void equality_op() //throws RecognitionException, TokenStreamException
+	public JSToken  equality_op() //throws RecognitionException, TokenStreamException
 {
+		JSToken eq_op;
 		
 		traceIn("equality_op");
 		try { // debugging
+			eq_op = JSToken.None;
 			
 			switch ( LA(1) )
 			{
 			case EQ:
 			{
 				match(EQ);
+				if (0==inputState.guessing)
+				{
+					eq_op = JSToken.Equal;
+				}
 				break;
 			}
 			case NEQ:
 			{
 				match(NEQ);
+				if (0==inputState.guessing)
+				{
+					eq_op = JSToken.NotEqual;
+				}
 				break;
 			}
 			case STRICT_EQ:
 			{
 				match(STRICT_EQ);
+				if (0==inputState.guessing)
+				{
+					eq_op = JSToken.StrictEqual;
+				}
 				break;
 			}
 			case STRICT_NEQ:
 			{
 				match(STRICT_NEQ);
+				if (0==inputState.guessing)
+				{
+					eq_op = JSToken.StrictNotEqual;
+				}
 				break;
 			}
 			default:
@@ -2992,6 +3366,7 @@ _loop83_breakloop:				;
 				throw new NoViableAltException(LT(1), getFilename());
 			}
 			 }
+			return eq_op;
 		}
 		finally
 		{ // debugging
@@ -2999,14 +3374,32 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void bitwise_and_expr() //throws RecognitionException, TokenStreamException
+	public AST  bitwise_and_expr() //throws RecognitionException, TokenStreamException
 {
+		AST bit_and_expr;
 		
 		traceIn("bitwise_and_expr");
 		try { // debugging
 			
-			equality_expr();
-			bitwise_and_aux();
+				bit_and_expr = null;
+			AST left;
+				AST right;
+				left = null;
+				right = null;
+			
+			
+			left=equality_expr();
+			right=bitwise_and_aux();
+			if (0==inputState.guessing)
+			{
+				
+						  if (right == null)
+							  bit_and_expr = left;
+						  else
+							  bit_and_expr = new Binary (left, right, JSToken.BitwiseAnd);
+					
+			}
+			return bit_and_expr;
 		}
 		finally
 		{ // debugging
@@ -3014,11 +3407,17 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void bitwise_and_aux() //throws RecognitionException, TokenStreamException
+	public AST  bitwise_and_aux() //throws RecognitionException, TokenStreamException
 {
+		AST bit_and_aux;
 		
 		traceIn("bitwise_and_aux");
 		try { // debugging
+			
+				bit_and_aux = null;
+			AST left = null;
+				AST right = null;
+			
 			
 			{
 				switch ( LA(1) )
@@ -3026,59 +3425,34 @@ _loop83_breakloop:				;
 				case BITWISE_AND:
 				{
 					match(BITWISE_AND);
-					equality_expr();
-					bitwise_and_aux();
+					left=equality_expr();
+					right=bitwise_and_aux();
+					if (0==inputState.guessing)
+					{
+						
+								   if (right == null)
+									   bit_and_aux = left;
+								   else
+									   bit_and_aux = new Binary (left, right, JSToken.BitwiseAnd);
+							
+					}
 					break;
 				}
-				case EOF:
-				case LITERAL_function:
 				case IDENTIFIER:
-				case OPEN_PARENS:
 				case CLOSE_PARENS:
-				case OPEN_BRACE:
 				case CLOSE_BRACE:
 				case COMMA:
-				case LITERAL_try:
-				case LITERAL_throw:
 				case SEMI_COLON:
-				case LITERAL_switch:
-				case LITERAL_default:
 				case COLON:
-				case LITERAL_case:
-				case LITERAL_with:
-				case LITERAL_return:
-				case LITERAL_break:
-				case LITERAL_continue:
-				case LITERAL_do:
-				case LITERAL_while:
-				case LITERAL_for:
-				case LITERAL_var:
 				case LITERAL_in:
-				case LITERAL_if:
-				case LITERAL_else:
-				case LITERAL_new:
-				case OPEN_BRACKET:
 				case CLOSE_BRACKET:
 				case 37:
 				case 39:
-				case LITERAL_delete:
-				case LITERAL_void:
-				case LITERAL_typeof:
-				case INCREMENT:
-				case DECREMENT:
-				case PLUS:
-				case MINUS:
-				case BITWISE_NOT:
-				case LOGICAL_NOT:
 				case BITWISE_XOR:
 				case BITWISE_OR:
 				case LOGICAL_AND:
 				case LOGICAL_OR:
 				case INTERR:
-				case LITERAL_this:
-				case LITERAL_null:
-				case LITERAL_true:
-				case LITERAL_false:
 				case STRING_LITERAL:
 				case DECIMAL_LITERAL:
 				case HEX_INTEGER_LITERAL:
@@ -3091,6 +3465,7 @@ _loop83_breakloop:				;
 				}
 				 }
 			}
+			return bit_and_aux;
 		}
 		finally
 		{ // debugging
@@ -3098,14 +3473,30 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void bitwise_xor_expr() //throws RecognitionException, TokenStreamException
+	public AST  bitwise_xor_expr() //throws RecognitionException, TokenStreamException
 {
+		AST bit_xor_expr;
 		
 		traceIn("bitwise_xor_expr");
 		try { // debugging
 			
-			bitwise_and_expr();
-			bitwise_xor_aux();
+				bit_xor_expr = null;
+				AST left, right;
+				left = right = null;
+			
+			
+			left=bitwise_and_expr();
+			right=bitwise_xor_aux();
+			if (0==inputState.guessing)
+			{
+				
+						  if (right == null)
+							  bit_xor_expr = left;
+						  else
+							  bit_xor_expr = new Binary (left, right, JSToken.BitwiseXor);
+					
+			}
+			return bit_xor_expr;
 		}
 		finally
 		{ // debugging
@@ -3113,11 +3504,17 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void bitwise_xor_aux() //throws RecognitionException, TokenStreamException
+	public AST  bitwise_xor_aux() //throws RecognitionException, TokenStreamException
 {
+		AST bit_xor_aux;
 		
 		traceIn("bitwise_xor_aux");
 		try { // debugging
+			
+				bit_xor_aux = null;
+				AST left, right;
+				left = right = null;
+			
 			
 			{
 				switch ( LA(1) )
@@ -3125,58 +3522,33 @@ _loop83_breakloop:				;
 				case BITWISE_XOR:
 				{
 					match(BITWISE_XOR);
-					bitwise_and_expr();
-					bitwise_xor_aux();
+					left=bitwise_and_expr();
+					right=bitwise_xor_aux();
+					if (0==inputState.guessing)
+					{
+						
+								  if (right == null)
+									  bit_xor_aux = left;
+								  else
+									  bit_xor_aux = new Binary (left, right, JSToken.BitwiseXor);
+							
+					}
 					break;
 				}
-				case EOF:
-				case LITERAL_function:
 				case IDENTIFIER:
-				case OPEN_PARENS:
 				case CLOSE_PARENS:
-				case OPEN_BRACE:
 				case CLOSE_BRACE:
 				case COMMA:
-				case LITERAL_try:
-				case LITERAL_throw:
 				case SEMI_COLON:
-				case LITERAL_switch:
-				case LITERAL_default:
 				case COLON:
-				case LITERAL_case:
-				case LITERAL_with:
-				case LITERAL_return:
-				case LITERAL_break:
-				case LITERAL_continue:
-				case LITERAL_do:
-				case LITERAL_while:
-				case LITERAL_for:
-				case LITERAL_var:
 				case LITERAL_in:
-				case LITERAL_if:
-				case LITERAL_else:
-				case LITERAL_new:
-				case OPEN_BRACKET:
 				case CLOSE_BRACKET:
 				case 37:
 				case 39:
-				case LITERAL_delete:
-				case LITERAL_void:
-				case LITERAL_typeof:
-				case INCREMENT:
-				case DECREMENT:
-				case PLUS:
-				case MINUS:
-				case BITWISE_NOT:
-				case LOGICAL_NOT:
 				case BITWISE_OR:
 				case LOGICAL_AND:
 				case LOGICAL_OR:
 				case INTERR:
-				case LITERAL_this:
-				case LITERAL_null:
-				case LITERAL_true:
-				case LITERAL_false:
 				case STRING_LITERAL:
 				case DECIMAL_LITERAL:
 				case HEX_INTEGER_LITERAL:
@@ -3189,6 +3561,7 @@ _loop83_breakloop:				;
 				}
 				 }
 			}
+			return bit_xor_aux;
 		}
 		finally
 		{ // debugging
@@ -3196,14 +3569,30 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void bitwise_or_expr() //throws RecognitionException, TokenStreamException
+	public AST  bitwise_or_expr() //throws RecognitionException, TokenStreamException
 {
+		AST bit_or_expr;
 		
 		traceIn("bitwise_or_expr");
 		try { // debugging
 			
-			bitwise_xor_expr();
-			bitwise_or_aux();
+				bit_or_expr = null;
+				AST left, right;
+				left = right = null;
+			
+			
+			left=bitwise_xor_expr();
+			right=bitwise_or_aux();
+			if (0==inputState.guessing)
+			{
+				
+					  	  if (right == null)
+							  bit_or_expr = left;
+						  else
+							  bit_or_expr = new Binary (left, right, JSToken.BitwiseOr);
+					
+			}
+			return bit_or_expr;
 		}
 		finally
 		{ // debugging
@@ -3211,11 +3600,17 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void bitwise_or_aux() //throws RecognitionException, TokenStreamException
+	public AST  bitwise_or_aux() //throws RecognitionException, TokenStreamException
 {
+		AST bit_or_aux;
 		
 		traceIn("bitwise_or_aux");
 		try { // debugging
+			
+				bit_or_aux = null;
+				AST left, right;
+				left = right = null;
+			
 			
 			{
 				switch ( LA(1) )
@@ -3223,57 +3618,32 @@ _loop83_breakloop:				;
 				case BITWISE_OR:
 				{
 					match(BITWISE_OR);
-					bitwise_xor_expr();
-					bitwise_or_aux();
+					left=bitwise_xor_expr();
+					right=bitwise_or_aux();
+					if (0==inputState.guessing)
+					{
+						
+								   if (right == null)
+									   bit_or_aux = left;
+								   else
+									   bit_or_aux = new Binary (left, right, JSToken.BitwiseOr);
+							
+					}
 					break;
 				}
-				case EOF:
-				case LITERAL_function:
 				case IDENTIFIER:
-				case OPEN_PARENS:
 				case CLOSE_PARENS:
-				case OPEN_BRACE:
 				case CLOSE_BRACE:
 				case COMMA:
-				case LITERAL_try:
-				case LITERAL_throw:
 				case SEMI_COLON:
-				case LITERAL_switch:
-				case LITERAL_default:
 				case COLON:
-				case LITERAL_case:
-				case LITERAL_with:
-				case LITERAL_return:
-				case LITERAL_break:
-				case LITERAL_continue:
-				case LITERAL_do:
-				case LITERAL_while:
-				case LITERAL_for:
-				case LITERAL_var:
 				case LITERAL_in:
-				case LITERAL_if:
-				case LITERAL_else:
-				case LITERAL_new:
-				case OPEN_BRACKET:
 				case CLOSE_BRACKET:
 				case 37:
 				case 39:
-				case LITERAL_delete:
-				case LITERAL_void:
-				case LITERAL_typeof:
-				case INCREMENT:
-				case DECREMENT:
-				case PLUS:
-				case MINUS:
-				case BITWISE_NOT:
-				case LOGICAL_NOT:
 				case LOGICAL_AND:
 				case LOGICAL_OR:
 				case INTERR:
-				case LITERAL_this:
-				case LITERAL_null:
-				case LITERAL_true:
-				case LITERAL_false:
 				case STRING_LITERAL:
 				case DECIMAL_LITERAL:
 				case HEX_INTEGER_LITERAL:
@@ -3286,6 +3656,7 @@ _loop83_breakloop:				;
 				}
 				 }
 			}
+			return bit_or_aux;
 		}
 		finally
 		{ // debugging
@@ -3293,14 +3664,30 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void logical_and_expr() //throws RecognitionException, TokenStreamException
+	public AST  logical_and_expr() //throws RecognitionException, TokenStreamException
 {
+		AST log_and_expr;
 		
 		traceIn("logical_and_expr");
 		try { // debugging
 			
-			bitwise_or_expr();
-			logical_and_aux();
+				log_and_expr = null;
+				AST left, right;
+				left = right = null;
+			
+			
+			left=bitwise_or_expr();
+			right=logical_and_aux();
+			if (0==inputState.guessing)
+			{
+				
+						  if (right == null)
+							  log_and_expr = left;
+					  	  else
+							  log_and_expr = new Binary (left, right, JSToken.LogicalAnd);
+					
+			}
+			return log_and_expr;
 		}
 		finally
 		{ // debugging
@@ -3308,11 +3695,17 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void logical_and_aux() //throws RecognitionException, TokenStreamException
+	public AST  logical_and_aux() //throws RecognitionException, TokenStreamException
 {
+		AST log_and_aux;
 		
 		traceIn("logical_and_aux");
 		try { // debugging
+			
+				log_and_aux = null;
+				AST left, right;
+				left = right = null;
+			
 			
 			{
 				switch ( LA(1) )
@@ -3320,56 +3713,31 @@ _loop83_breakloop:				;
 				case LOGICAL_AND:
 				{
 					match(LOGICAL_AND);
-					bitwise_or_expr();
-					logical_and_aux();
+					left=bitwise_or_expr();
+					right=logical_and_aux();
+					if (0==inputState.guessing)
+					{
+						
+							   	   if (right == null)
+									   log_and_aux = left;
+								   else
+									   log_and_aux = new Binary (left, right, JSToken.LogicalAnd);
+							
+					}
 					break;
 				}
-				case EOF:
-				case LITERAL_function:
 				case IDENTIFIER:
-				case OPEN_PARENS:
 				case CLOSE_PARENS:
-				case OPEN_BRACE:
 				case CLOSE_BRACE:
 				case COMMA:
-				case LITERAL_try:
-				case LITERAL_throw:
 				case SEMI_COLON:
-				case LITERAL_switch:
-				case LITERAL_default:
 				case COLON:
-				case LITERAL_case:
-				case LITERAL_with:
-				case LITERAL_return:
-				case LITERAL_break:
-				case LITERAL_continue:
-				case LITERAL_do:
-				case LITERAL_while:
-				case LITERAL_for:
-				case LITERAL_var:
 				case LITERAL_in:
-				case LITERAL_if:
-				case LITERAL_else:
-				case LITERAL_new:
-				case OPEN_BRACKET:
 				case CLOSE_BRACKET:
 				case 37:
 				case 39:
-				case LITERAL_delete:
-				case LITERAL_void:
-				case LITERAL_typeof:
-				case INCREMENT:
-				case DECREMENT:
-				case PLUS:
-				case MINUS:
-				case BITWISE_NOT:
-				case LOGICAL_NOT:
 				case LOGICAL_OR:
 				case INTERR:
-				case LITERAL_this:
-				case LITERAL_null:
-				case LITERAL_true:
-				case LITERAL_false:
 				case STRING_LITERAL:
 				case DECIMAL_LITERAL:
 				case HEX_INTEGER_LITERAL:
@@ -3382,6 +3750,7 @@ _loop83_breakloop:				;
 				}
 				 }
 			}
+			return log_and_aux;
 		}
 		finally
 		{ // debugging
@@ -3389,14 +3758,30 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void logical_or_expr() //throws RecognitionException, TokenStreamException
+	public AST  logical_or_expr() //throws RecognitionException, TokenStreamException
 {
+		AST log_or_expr;
 		
 		traceIn("logical_or_expr");
 		try { // debugging
 			
-			logical_and_expr();
-			logical_or_aux();
+				log_or_expr = null; 
+				AST left, right;
+				left = right = null;
+			
+			
+			left=logical_and_expr();
+			right=logical_or_aux();
+			if (0==inputState.guessing)
+			{
+				
+						  if (right == null)
+						  	  log_or_expr = left;
+						  else
+							  log_or_expr = new Binary (left, right, JSToken.LogicalOr);
+					
+			}
+			return log_or_expr;
 		}
 		finally
 		{ // debugging
@@ -3404,11 +3789,17 @@ _loop83_breakloop:				;
 		}
 	}
 	
-	public void logical_or_aux() //throws RecognitionException, TokenStreamException
+	public AST  logical_or_aux() //throws RecognitionException, TokenStreamException
 {
+		AST log_or_aux;
 		
 		traceIn("logical_or_aux");
 		try { // debugging
+			
+				AST left, right;
+				log_or_aux = null;
+				left = right = null;	
+			
 			
 			{
 				switch ( LA(1) )
@@ -3416,55 +3807,30 @@ _loop83_breakloop:				;
 				case LOGICAL_OR:
 				{
 					match(LOGICAL_OR);
-					logical_and_expr();
-					logical_or_aux();
+					left=logical_and_expr();
+					right=logical_or_aux();
+					if (0==inputState.guessing)
+					{
+						
+								  if (right == null)
+								  	  log_or_aux = left; 
+								  else
+									  log_or_aux = new Binary (left, right, JSToken.LogicalOr);
+							
+					}
 					break;
 				}
-				case EOF:
-				case LITERAL_function:
 				case IDENTIFIER:
-				case OPEN_PARENS:
 				case CLOSE_PARENS:
-				case OPEN_BRACE:
 				case CLOSE_BRACE:
 				case COMMA:
-				case LITERAL_try:
-				case LITERAL_throw:
 				case SEMI_COLON:
-				case LITERAL_switch:
-				case LITERAL_default:
 				case COLON:
-				case LITERAL_case:
-				case LITERAL_with:
-				case LITERAL_return:
-				case LITERAL_break:
-				case LITERAL_continue:
-				case LITERAL_do:
-				case LITERAL_while:
-				case LITERAL_for:
-				case LITERAL_var:
 				case LITERAL_in:
-				case LITERAL_if:
-				case LITERAL_else:
-				case LITERAL_new:
-				case OPEN_BRACKET:
 				case CLOSE_BRACKET:
 				case 37:
 				case 39:
-				case LITERAL_delete:
-				case LITERAL_void:
-				case LITERAL_typeof:
-				case INCREMENT:
-				case DECREMENT:
-				case PLUS:
-				case MINUS:
-				case BITWISE_NOT:
-				case LOGICAL_NOT:
 				case INTERR:
-				case LITERAL_this:
-				case LITERAL_null:
-				case LITERAL_true:
-				case LITERAL_false:
 				case STRING_LITERAL:
 				case DECIMAL_LITERAL:
 				case HEX_INTEGER_LITERAL:
@@ -3477,6 +3843,7 @@ _loop83_breakloop:				;
 				}
 				 }
 			}
+			return log_or_aux;
 		}
 		finally
 		{ // debugging
@@ -3492,11 +3859,11 @@ _loop83_breakloop:				;
 			
 			match(OPEN_BRACE);
 			{
-				bool synPredMatched131 = false;
+				bool synPredMatched128 = false;
 				if (((LA(1)==OPEN_BRACE)))
 				{
-					int _m131 = mark();
-					synPredMatched131 = true;
+					int _m128 = mark();
+					synPredMatched128 = true;
 					inputState.guessing++;
 					try {
 						{
@@ -3506,19 +3873,19 @@ _loop83_breakloop:				;
 					}
 					catch (RecognitionException)
 					{
-						synPredMatched131 = false;
+						synPredMatched128 = false;
 					}
-					rewind(_m131);
+					rewind(_m128);
 					inputState.guessing--;
 				}
-				if ( synPredMatched131 )
+				if ( synPredMatched128 )
 				{
 					match(OPEN_BRACE);
 					{ // ( ... )+
-					int _cnt133=0;
+					int _cnt130=0;
 					for (;;)
 					{
-						if ((tokenSet_7_.member(LA(1))))
+						if ((tokenSet_4_.member(LA(1))))
 						{
 							property_name();
 							match(COLON);
@@ -3526,29 +3893,29 @@ _loop83_breakloop:				;
 						}
 						else
 						{
-							if (_cnt133 >= 1) { goto _loop133_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
+							if (_cnt130 >= 1) { goto _loop130_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
 						}
 						
-						_cnt133++;
+						_cnt130++;
 					}
-_loop133_breakloop:					;
+_loop130_breakloop:					;
 					}    // ( ... )+
 				}
-				else if ((tokenSet_8_.member(LA(1)))) {
+				else if ((tokenSet_5_.member(LA(1)))) {
 					{    // ( ... )*
 						for (;;)
 						{
-							if ((tokenSet_2_.member(LA(1))))
+							if ((tokenSet_1_.member(LA(1))))
 							{
 								statement();
 							}
 							else
 							{
-								goto _loop135_breakloop;
+								goto _loop132_breakloop;
 							}
 							
 						}
-_loop135_breakloop:						;
+_loop132_breakloop:						;
 					}    // ( ... )*
 				}
 				else
@@ -3565,11 +3932,14 @@ _loop135_breakloop:						;
 		}
 	}
 	
-	public void literal() //throws RecognitionException, TokenStreamException
+	public Literal  literal() //throws RecognitionException, TokenStreamException
 {
+		Literal l;
 		
 		traceIn("literal");
 		try { // debugging
+			Token  s = null;
+			l = null;
 			
 			switch ( LA(1) )
 			{
@@ -3581,16 +3951,38 @@ _loop135_breakloop:						;
 			case LITERAL_true:
 			{
 				match(LITERAL_true);
+				if (0==inputState.guessing)
+				{
+					
+							  BooleanLiteral bl = new BooleanLiteral (true);
+							  l = bl;
+						
+				}
 				break;
 			}
 			case LITERAL_false:
 			{
 				match(LITERAL_false);
+				if (0==inputState.guessing)
+				{
+					
+							  BooleanLiteral bl = new BooleanLiteral (false);
+							  l = bl;
+						
+				}
 				break;
 			}
 			case STRING_LITERAL:
 			{
+				s = LT(1);
 				match(STRING_LITERAL);
+				if (0==inputState.guessing)
+				{
+					
+							  StringLiteral str = new StringLiteral (s.getText ());
+							  l = str;
+						
+				}
 				break;
 			}
 			case DECIMAL_LITERAL:
@@ -3604,6 +3996,7 @@ _loop135_breakloop:						;
 				throw new NoViableAltException(LT(1), getFilename());
 			}
 			 }
+			return l;
 		}
 		finally
 		{ // debugging
@@ -3644,11 +4037,11 @@ _loop135_breakloop:						;
 							}
 							else
 							{
-								goto _loop145_breakloop;
+								goto _loop142_breakloop;
 							}
 							
 						}
-_loop145_breakloop:						;
+_loop142_breakloop:						;
 					}    // ( ... )*
 					break;
 				}
@@ -3745,10 +4138,10 @@ _loop145_breakloop:						;
 		try { // debugging
 			
 			{ // ( ... )+
-			int _cnt139=0;
+			int _cnt136=0;
 			for (;;)
 			{
-				if ((tokenSet_7_.member(LA(1))))
+				if ((tokenSet_4_.member(LA(1))))
 				{
 					property_name();
 					match(COLON);
@@ -3756,12 +4149,12 @@ _loop145_breakloop:						;
 				}
 				else
 				{
-					if (_cnt139 >= 1) { goto _loop139_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
+					if (_cnt136 >= 1) { goto _loop136_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
 				}
 				
-				_cnt139++;
+				_cnt136++;
 			}
-_loop139_breakloop:			;
+_loop136_breakloop:			;
 			}    // ( ... )+
 		}
 		finally
@@ -3871,11 +4264,11 @@ _loop139_breakloop:			;
 		@"""OPEN_BRACE""",
 		@"""CLOSE_BRACE""",
 		@"""COMMA""",
+		@"""SEMI_COLON""",
 		@"""try""",
 		@"""catch""",
 		@"""finally""",
 		@"""throw""",
-		@"""SEMI_COLON""",
 		@"""switch""",
 		@"""default""",
 		@"""COLON""",
@@ -3901,13 +4294,11 @@ _loop139_breakloop:			;
 		@"""[""",
 		@"""]""",
 		@"""DOT""",
-		@"""++""",
-		@"""--""",
+		@"""INCREMENT""",
+		@"""DECREMENT""",
 		@"""delete""",
 		@"""void""",
 		@"""typeof""",
-		@"""INCREMENT""",
-		@"""DECREMENT""",
 		@"""PLUS""",
 		@"""MINUS""",
 		@"""BITWISE_NOT""",
@@ -3959,64 +4350,45 @@ _loop139_breakloop:			;
 		@"""FORM_FEED""",
 		@"""SPACE""",
 		@"""NO_BREAK_SPACE""",
-		@"""STRICT_NEW""",
 		@"""SL_COMMENT"""
 	};
 	
 	private static long[] mk_tokenSet_0_()
 	{
-		long[] data = { 4494825813559664L, 66584576L, 0L, 0L};
+		long[] data = { 1123723162786160L, 16646144L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_0_ = new BitSet(mk_tokenSet_0_());
 	private static long[] mk_tokenSet_1_()
 	{
-		long[] data = { 4494826887957362L, 66584576L, 0L, 0L};
+		long[] data = { 1123723162786144L, 16646144L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_1_ = new BitSet(mk_tokenSet_1_());
 	private static long[] mk_tokenSet_2_()
 	{
-		long[] data = { 4494825813559648L, 66584576L, 0L, 0L};
+		long[] data = { 21474836832L, 16646144L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_2_ = new BitSet(mk_tokenSet_2_());
 	private static long[] mk_tokenSet_3_()
 	{
-		long[] data = { 21474836832L, 66584576L, 0L, 0L};
+		long[] data = { 1123722358423904L, 16646144L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_3_ = new BitSet(mk_tokenSet_3_());
 	private static long[] mk_tokenSet_4_()
 	{
-		long[] data = { 4494825009185120L, 66584576L, 0L, 0L};
+		long[] data = { 32L, 14680064L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_4_ = new BitSet(mk_tokenSet_4_());
 	private static long[] mk_tokenSet_5_()
 	{
-		long[] data = { -8589946894L, 67108863L, 0L, 0L};
+		long[] data = { 1123723162786656L, 16646144L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_5_ = new BitSet(mk_tokenSet_5_());
-	private static long[] mk_tokenSet_6_()
-	{
-		long[] data = { -31533248307802126L, 66585087L, 0L, 0L};
-		return data;
-	}
-	public static readonly BitSet tokenSet_6_ = new BitSet(mk_tokenSet_6_());
-	private static long[] mk_tokenSet_7_()
-	{
-		long[] data = { 32L, 58720256L, 0L, 0L};
-		return data;
-	}
-	public static readonly BitSet tokenSet_7_ = new BitSet(mk_tokenSet_7_());
-	private static long[] mk_tokenSet_8_()
-	{
-		long[] data = { 4494825813560160L, 66584576L, 0L, 0L};
-		return data;
-	}
-	public static readonly BitSet tokenSet_8_ = new BitSet(mk_tokenSet_8_());
 	
 }
 }

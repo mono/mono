@@ -1,15 +1,17 @@
 //
 // UnaryOp.cs:
 //
-// Author: Cesar Octavio Lopez Nataren
+// Author:
+//	 Cesar Lopez Nataren (cesar@ciencias.unam.mx)
 //
-// (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
+// (C) 2003, Cesar Lopez Nataren
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	public abstract class UnaryOp : AST
-	{
-		AST operand;
+namespace Microsoft.JScript {
+
+	public abstract class UnaryOp : AST {
+
+		internal AST operand;
+		internal JSToken oper;
 	}
 }

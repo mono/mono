@@ -14,17 +14,17 @@ namespace Microsoft.JScript {
 
 	public class VariableStatement : Statement {
 
-		internal ArrayList varDecls;
+		internal ArrayList var_decls;
 
 		internal VariableStatement ()
 		{
-			varDecls = new ArrayList ();
+			var_decls = new ArrayList ();
 		}
 
 
 		internal void Add (VariableDeclaration varDecl)
 		{
-			varDecls.Add (varDecl);
+			var_decls.Add (varDecl);
 		}
 
 
@@ -32,8 +32,8 @@ namespace Microsoft.JScript {
 		{
 			StringBuilder sb = new StringBuilder ();
 
-			foreach (VariableDeclaration varDecl in varDecls)
-				sb.Append (varDecl.ToString () + " ");
+			foreach (VariableDeclaration var_decl in var_decls)
+				sb.Append (var_decl.ToString () + " ");
 
 			return sb.ToString ();
 		}

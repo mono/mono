@@ -11,7 +11,7 @@ using System;
 
 namespace Microsoft.JScript {
 
-	public class Context  {
+	public class Context {
 
 		internal DocumentContext Document;
 

@@ -10,21 +10,21 @@ namespace Microsoft.JScript {
 
 	public class ScriptBlock : AST {
 
-		internal Block SrcElems;
+		internal Block src_elems;
 
 		internal ScriptBlock ()
 		{
-			SrcElems = new Block ();
+			src_elems = new Block ();
 		}
 
 		internal void Add (AST e)
 		{
-			SrcElems.Add (e);
+			src_elems.Add (e);
 		}
 
 		public override string ToString ()
 		{
-			return SrcElems.ToString ();
+			return src_elems.ToString ();
 		}
 	}
 }

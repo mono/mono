@@ -30,6 +30,8 @@ namespace Microsoft.JScript {
 			JSParser parser = new JSParser (ctx);
 
 			ScriptBlock prog_tree = parser.Parse ();
+
+			Console.WriteLine (prog_tree.ToString ());
 		}
 	}
 }

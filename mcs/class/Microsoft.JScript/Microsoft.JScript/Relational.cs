@@ -8,13 +8,23 @@
 //
 
 using System;
+using System.Text;
 
-namespace Microsoft.JScript.Tmp {
+namespace Microsoft.JScript {
 
 	public class Relational : BinaryOp {
 
+		internal Relational (AST left, AST right, JSToken op)
+		{
+			this.left = left;
+			this.right = right;
+			this.current_op = op;
+		}
+		
 		public Relational (int operatorTok)
-		{}
+		{
+			this.current_op = (JSToken) operatorTok;
+		}
 
 		public double EvaluateRelational (object v1, object v2)
 		{
@@ -25,6 +35,21 @@ namespace Microsoft.JScript.Tmp {
 		public static double JScriptCompare (object v1, object v2)
 		{
 			throw new NotImplementedException ();
+		}
+
+		public override string ToString ()
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			sb.Append (left.ToString ());
+
+			if (current_op != JSToken.None)
+				sb.Append (current_op + " ");
+
+			if (right != null)
+				sb.Append (right.ToString ());
+
+			return sb.ToString ();
 		}
 	}
 }

@@ -27,10 +27,13 @@ namespace Microsoft.JScript {
 
 		public override string ToString ()
 		{
+			System.Console.WriteLine (Elements.Count);
+
 			StringBuilder sb = new StringBuilder ();
 
 			foreach (AST a in Elements)
-				sb.Append (a.ToString () + " ");
+				if (a != null)
+					sb.Append (a.ToString () + " ");
 
 			return sb.ToString ();
 		}

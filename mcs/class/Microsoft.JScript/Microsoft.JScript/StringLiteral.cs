@@ -13,13 +13,17 @@ namespace Microsoft.JScript {
 
 	internal class StringLiteral : Literal {
 
-		string str;
-	
+		internal string str;
+
 		public string Str {
 			get { return str; }
 			set { str = value; }
 		}
 
+		internal StringLiteral (string s)
+		{
+			str = s;
+		}
 
 		public override string ToString ()
 		{

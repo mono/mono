@@ -26,7 +26,7 @@ namespace Microsoft.JScript {
 		{
 			ScriptBlock prog = new ScriptBlock ();
 
-			Parser.program ();
+			prog = Parser.program ();
 			return prog;
 		}
 

@@ -16,4 +16,23 @@ namespace Microsoft.JScript {
 		public Literal ()
 		{}
 	}
+
+
+	internal class This : Literal {
+	}
+
+	internal class BooleanLiteral : Literal {
+
+		internal bool val;
+
+		internal BooleanLiteral (bool val)
+		{
+			this.val = val;
+		}
+
+		public override string ToString ()
+		{
+			return val.ToString ();
+		}
+	}
 }
