@@ -1,4 +1,9 @@
 
+Fri Apr 5 15:40:24 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MonoEvent.cs: remove unused code.
+	* MonoProperty: implement ToString().
+
 Wed Apr 3 17:59:26 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* Assembly.cs: implement GetTypes() and GetExportedTypes().

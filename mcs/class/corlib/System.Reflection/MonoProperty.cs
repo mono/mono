@@ -144,6 +144,10 @@ namespace System.Reflection {
 		}
 		public override void SetValue( object obj, object value, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture) {
 		}
+
+		public override string ToString () {
+			return PropertyType.ToString () + " " + Name;
+		}
 	}
 }
 

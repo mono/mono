@@ -29,16 +29,6 @@ namespace System.Reflection {
 			return null;
 		}
 
-		/*public override bool IsDefined (Type attributeType, bool inherit) {
-			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
-		}
-
-		public override object[] GetCustomAttributes( bool inherit) {
-			return MonoCustomAttrs.GetCustomAttributes (this, inherit);
-		}
-		public override object[] GetCustomAttributes( Type attributeType, bool inherit) {
-			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
-		}*/
 		public override Type DeclaringType {
 			get {
 				return null;
