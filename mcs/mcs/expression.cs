@@ -8576,9 +8576,7 @@ namespace Mono.CSharp {
 				//
 				// For now, fall back to the full lookup in that case.
 				//
-				type = RootContext.LookupType (
-					ec.DeclSpace, cname, false, loc);
-
+				type = RootContext.LookupType (ec.DeclSpace, cname, false, loc);
 				if (type == null)
 					return null;
 			}

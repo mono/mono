@@ -489,14 +489,18 @@ namespace Mono.CSharp {
 
 		static Type NamespaceLookup (DeclSpace ds, string name, Location loc)
 		{
-			object result = ds.NamespaceEntry.LookupNamespaceOrType (ds, name, loc);
+			IAlias result = ds.NamespaceEntry.LookupNamespaceOrType (ds, name, loc);
 			if (result == null)
 				return null;
 
-			if (result is Type)
-				return (Type) result;
+			if (!result.IsType)
+				return null;
 
-			return null;
+			TypeExpr texpr = result.ResolveAsType (ds.EmitContext);
+			if (texpr == null)
+				return null;
+
+			return texpr.Type;
 		}
 		
 		//
@@ -529,7 +533,7 @@ namespace Mono.CSharp {
 							containing_ds = containing_ds.Parent;
 							continue;
 						}
-						
+
 						ds.Cache [name] = t;
 						return t;
 					}

@@ -413,7 +413,7 @@ namespace Mono.CSharp {
 	///   provides the common foundation for managing those name
 	///   spaces.
 	/// </remarks>
-	public abstract class DeclSpace : MemberCore {
+	public abstract class DeclSpace : MemberCore, IAlias {
 		/// <summary>
 		///   This points to the actual definition that is being
 		///   created with System.Reflection.Emit
@@ -514,7 +514,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Looks up the alias for the name
 		/// </summary>
-		public string LookupAlias (string name)
+		public IAlias LookupAlias (string name)
 		{
 			if (NamespaceEntry != null)
 				return NamespaceEntry.LookupAlias (name);
@@ -880,11 +880,11 @@ namespace Mono.CSharp {
 			return t;
 		}
 
-		public static void Error_AmbiguousTypeReference (Location loc, string name, Type t1, Type t2)
+		public static void Error_AmbiguousTypeReference (Location loc, string name, string t1, string t2)
 		{
 			Report.Error (104, loc,
-				      String.Format ("`{0}' is an ambiguous reference ({1} or {2}) ", name,
-						     t1.FullName, t2.FullName));
+				      "`{0}' is an ambiguous reference ({1} or {2})",
+				      name, t1, t2);
 		}
 
 		/// <summary>
@@ -968,9 +968,9 @@ namespace Mono.CSharp {
 				if (name.IndexOf ('.') > 0)
 					continue;
 
-				string alias_value = ns.LookupAlias (name);
+				IAlias alias_value = ns.LookupAlias (name);
 				if (alias_value != null) {
-					t = LookupInterfaceOrClass ("", alias_value, out error);
+					t = LookupInterfaceOrClass ("", alias_value.Name, out error);
 					if (error)
 						return null;
 
@@ -990,7 +990,7 @@ namespace Mono.CSharp {
 					if (match != null){
 						if (t != null){
 							if (CheckAccessLevel (match)) {
-								Error_AmbiguousTypeReference (loc, name, t, match);
+								Error_AmbiguousTypeReference (loc, name, t.FullName, match.FullName);
 								return null;
 							}
 							continue;
@@ -1080,6 +1080,22 @@ namespace Mono.CSharp {
 			get {
 				return attribute_targets;
 			}
+		}
+
+		bool IAlias.IsType {
+			get { return true; }
+		}
+
+		string IAlias.Name {
+			get { return Name; }
+		}
+
+		TypeExpr IAlias.ResolveAsType (EmitContext ec)
+		{
+			if (TypeBuilder == null)
+				throw new InvalidOperationException ();
+
+			return new TypeExpression (TypeBuilder, Location);
 		}
 	}
 

@@ -322,9 +322,9 @@ namespace Mono.CSharp {
 				return typeof (void);
 			}
 			if (allowAlias) {
-				string alias = ds.LookupAlias (identifier);
+				IAlias alias = ds.LookupAlias (identifier);
 				if (alias != null)
-					identifier = alias;
+					identifier = alias.Name;
 			}
 			Type t = ds.FindType (mc.Location, identifier);
 			if (t == null)

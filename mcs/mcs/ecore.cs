@@ -96,6 +96,23 @@ namespace Mono.CSharp {
 	}
 
 	/// <summary>
+	///   We are either a namespace or a type.
+	///   If we're a type, `IsType' is true and we may use `Type' to get
+	///   a TypeExpr representing that type.
+	/// </summary>
+	public interface IAlias {
+		bool IsType {
+			get;
+		}
+
+		string Name {
+			get;
+		}
+
+		TypeExpr ResolveAsType (EmitContext ec);
+	}
+
+	/// <summary>
 	///   This interface is implemented by variables
 	/// </summary>
 	public interface IVariable {
@@ -2057,7 +2074,7 @@ namespace Mono.CSharp {
 			DeclSpace ds = ec.DeclSpace;
 			NamespaceEntry ns = ds.NamespaceEntry;
 			Type t;
-			string alias_value;
+			IAlias alias_value;
 
 			//
 			// Since we are cheating: we only do the Alias lookup for
@@ -2079,7 +2096,9 @@ namespace Mono.CSharp {
 					return new TypeExpression (dt, loc);
 
 				if (alias_value != null){
-					if ((t = RootContext.LookupType (ds, alias_value, true, loc)) != null)
+					if (alias_value.IsType)
+						return alias_value.ResolveAsType (ec);
+					if ((t = RootContext.LookupType (ds, alias_value.Name, true, loc)) != null)
 						return new TypeExpression (t, loc);
 				}
 			}
@@ -2088,11 +2107,13 @@ namespace Mono.CSharp {
 				return new TypeExpression (t, loc);
 
 			if (alias_value != null) {
-				if ((t = RootContext.LookupType (ds, alias_value, true, loc)) != null)
+				if (alias_value.IsType)
+					return alias_value.ResolveAsType (ec);
+				if ((t = RootContext.LookupType (ds, alias_value.Name, true, loc)) != null)
 					return new TypeExpression (t, loc);
-				
+
 				// we have alias value, but it isn't Type, so try if it's namespace
-				return new SimpleName (alias_value, loc);
+				return new SimpleName (alias_value.Name, loc);
 			}
 
 			// No match, maybe our parent can compose us
@@ -2197,9 +2218,12 @@ namespace Mono.CSharp {
 				//
 				NamespaceEntry ns = ec.DeclSpace.NamespaceEntry;
 				if (is_base && ns != null){
-					string alias_value = ns.LookupAlias (Name);
+					IAlias alias_value = ns.LookupAlias (Name);
 					if (alias_value != null){
-						Name = alias_value;
+						if (alias_value.IsType)
+							return alias_value.ResolveAsType (ec);
+
+						Name = alias_value.Name;
 						Type t;
 
 						if ((t = TypeManager.LookupType (Name)) != null)
@@ -2278,7 +2302,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Fully resolved expression that evaluates to a type
 	/// </summary>
-	public abstract class TypeExpr : Expression {
+	public abstract class TypeExpr : Expression, IAlias {
 		override public Expression ResolveAsTypeStep (EmitContext ec)
 		{
 			TypeExpr t = DoResolveAsTypeStep (ec);
@@ -2377,9 +2401,18 @@ namespace Mono.CSharp {
 		{
 			return Name;
 		}
+
+		bool IAlias.IsType {
+			get { return true; }
+		}
+
+		TypeExpr IAlias.ResolveAsType (EmitContext ec)
+		{
+			return ResolveAsTypeTerminal (ec, false);
+		}
 	}
 
-	public class TypeExpression : TypeExpr {
+	public class TypeExpression : TypeExpr, IAlias {
 		public TypeExpression (Type t, Location l)
 		{
 			Type = t;
@@ -2395,6 +2428,12 @@ namespace Mono.CSharp {
 		public override string Name {
 			get {
 				return Type.ToString ();
+			}
+		}
+
+		string IAlias.Name {
+			get {
+				return Type.FullName;
 			}
 		}
 	}
@@ -2414,8 +2453,13 @@ namespace Mono.CSharp {
 
 		public override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
-			if (type == null)
-				type = RootContext.LookupType (ec.DeclSpace, name, false, Location.Null);
+			if (type == null) {
+				type = RootContext.LookupType (
+					ec.DeclSpace, name, false, Location.Null);
+				if (type == null)
+					return null;
+			}
+
 			return this;
 		}
 
@@ -2423,6 +2467,63 @@ namespace Mono.CSharp {
 			get {
 				return name;
 			}
+		}
+	}
+
+	public class TypeAliasExpression : TypeExpr, IAlias {
+		TypeExpr texpr;
+		string name;
+
+		public TypeAliasExpression (TypeExpr texpr, Location l)
+		{
+			this.texpr = texpr;
+			loc = texpr.Location;
+
+			eclass = ExprClass.Type;
+			name = texpr.Name;
+		}
+
+		public override string Name {
+			get { return name; }
+		}
+
+		public override TypeExpr DoResolveAsTypeStep (EmitContext ec)
+		{
+			Type type = texpr.ResolveType (ec);
+			if (type == null)
+				return null;
+
+			return new TypeExpression (type, loc);
+		}
+
+		public override bool CheckAccessLevel (DeclSpace ds)
+		{
+			return texpr.CheckAccessLevel (ds);
+		}
+
+		public override bool AsAccessible (DeclSpace ds, int flags)
+		{
+			return texpr.AsAccessible (ds, flags);
+		}
+
+		public override bool IsClass {
+			get { return texpr.IsClass; }
+		}
+
+		public override bool IsValueType {
+			get { return texpr.IsValueType; }
+		}
+
+		public override bool IsInterface {
+			get { return texpr.IsInterface; }
+		}
+
+		public override bool IsSealed {
+			get { return texpr.IsSealed; }
+		}
+
+		public override bool IsAttribute {
+			get { return texpr.IsAttribute; }
 		}
 	}
 

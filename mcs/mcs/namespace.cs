@@ -14,7 +14,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Keeps track of the namespaces defined in the C# code.
 	/// </summary>
-	public class Namespace {
+	public class Namespace : IAlias {
 		static ArrayList all_namespaces = new ArrayList ();
 		static Hashtable namespaces_map = new Hashtable ();
 		
@@ -88,9 +88,9 @@ namespace Mono.CSharp {
 			return Root.GetNamespace (name, create);
 		}
 
-		public object Lookup (DeclSpace ds, string name)
+		public IAlias Lookup (DeclSpace ds, string name, Location loc)
 		{
-			object o = Lookup (name);
+			IAlias o = Lookup (name);
 
 			Type t;
 			DeclSpace tdecl = o as DeclSpace;
@@ -98,7 +98,7 @@ namespace Mono.CSharp {
 				t = tdecl.DefineType ();
 
 				if ((ds == null) || ds.CheckAccessLevel (t))
-					return t;
+					return new TypeExpression (t, loc);
 			}
 
 			Namespace ns = GetNamespace (name, false);
@@ -109,7 +109,7 @@ namespace Mono.CSharp {
 			if ((t == null) || ((ds != null) && !ds.CheckAccessLevel (t)))
 				return null;
 
-			return t;
+			return new TypeExpression (t, loc);
 		}
 
 		public void AddNamespaceEntry (NamespaceEntry entry)
@@ -117,14 +117,14 @@ namespace Mono.CSharp {
 			entries.Add (entry);
 		}
 
-		public void DefineName (string name, object o)
+		public void DefineName (string name, IAlias o)
 		{
 			defined_names.Add (name, o);
 		}
 
-		public object Lookup (string name)
+		public IAlias Lookup (string name)
 		{
-			return defined_names [name];
+			return (IAlias) defined_names [name];
 		}
 
 		static public ArrayList UserDefinedNamespaces {
@@ -178,6 +178,15 @@ namespace Mono.CSharp {
 				return "Namespace (<root>)";
 			else
 				return String.Format ("Namespace ({0})", Name);
+		}
+
+		bool IAlias.IsType {
+			get { return false; }
+		}
+
+		TypeExpr IAlias.ResolveAsType (EmitContext ec)
+		{
+			throw new InvalidOperationException ();
 		}
 	}
 
@@ -237,9 +246,9 @@ namespace Mono.CSharp {
 				Location = loc;
 			}
 
-			object resolved;
+			IAlias resolved;
 
-			public object Resolve ()
+			public IAlias Resolve ()
 			{
 				if (resolved != null)
 					return resolved;
@@ -301,7 +310,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void DefineName (string name, object o)
+		public void DefineName (string name, IAlias o)
 		{
 			ns.DefineName (name, o);
 		}
@@ -365,20 +374,14 @@ namespace Mono.CSharp {
 			return entry;
 		}
 
-		public string LookupAlias (string alias)
+		public IAlias LookupAlias (string alias)
 		{
 			AliasEntry entry = GetAliasEntry (alias);
 
 			if (entry == null)
 				return null;
 
-			object resolved = entry.Resolve ();
-			if (resolved == null)
-				return null;
-			else if (resolved is Namespace)
-				return ((Namespace) resolved).Name;
-			else
-				return ((Type) resolved).FullName;
+			return entry.Resolve ();
 		}
 
 		//
@@ -388,7 +391,7 @@ namespace Mono.CSharp {
 		// Section 16.3.2 says that the same rule is applied when resolving the namespace-name
 		// in the using-namespace-directive.
 		//
-		public object LookupForUsing (string dotted_name, Location loc)
+		public IAlias LookupForUsing (string dotted_name, Location loc)
 		{
 			int pos = dotted_name.IndexOf ('.');
 			string simple_name = dotted_name;
@@ -398,7 +401,7 @@ namespace Mono.CSharp {
 				rest = dotted_name.Substring (pos + 1);
 			}
 
-			object o = NS.Lookup (null, simple_name);
+			IAlias o = NS.Lookup (null, simple_name, loc);
 			if (o == null && ImplicitParent != null)
 				o = ImplicitParent.LookupNamespaceOrType (null, simple_name, loc);
 
@@ -407,15 +410,18 @@ namespace Mono.CSharp {
 
 			Namespace ns = o as Namespace;
 			if (ns != null)
-				return ns.Lookup (null, rest);
+				return ns.Lookup (null, rest, loc);
 			
-			Type nested = TypeManager.LookupType ((((Type) o).Name + "." + rest));
-			return nested;
+			Type nested = TypeManager.LookupType (o.Name + "." + rest);
+			if (nested == null)
+				return null;
+
+			return new TypeExpression (nested, loc);
 		}
 
-		public object LookupNamespaceOrType (DeclSpace ds, string name, Location loc)
+		public IAlias LookupNamespaceOrType (DeclSpace ds, string name, Location loc)
 		{
-			object resolved = null;
+			IAlias resolved = null;
 			for (NamespaceEntry curr_ns = this; curr_ns != null; curr_ns = curr_ns.ImplicitParent) {
 				if ((resolved = curr_ns.Lookup (ds, name, loc)) != null)
 					break;
@@ -423,9 +429,9 @@ namespace Mono.CSharp {
 			return resolved;
 		}
 
-		private object Lookup (DeclSpace ds, string name, Location loc)
+		private IAlias Lookup (DeclSpace ds, string name, Location loc)
 		{
-			object o;
+			IAlias o;
 			Namespace ns;
 
 			//
@@ -447,19 +453,19 @@ namespace Mono.CSharp {
 
 				ns = o as Namespace;
 				if (ns != null)
-					return ns.Lookup (ds, last);
+					return ns.Lookup (ds, last, loc);
 
-				Type nested = TypeManager.LookupType ((((Type) o).Name + "." + last));
+				Type nested = TypeManager.LookupType (o.Name + "." + last);
 				if ((nested == null) || ((ds != null) && !ds.CheckAccessLevel (nested)))
 					return null;
 
-				return nested;
+				return new TypeExpression (nested, loc);
 			}
 
 			//
 			// Check whether it's in the namespace.
 			//
-			o = NS.Lookup (ds, name);
+			o = NS.Lookup (ds, name, loc);
 			if (o != null)
 				return o;
 
@@ -479,12 +485,12 @@ namespace Mono.CSharp {
 			//
 			// Check using entries.
 			//
-			Type t = null, match = null;
+			IAlias t = null, match = null;
 			foreach (Namespace using_ns in GetUsingTable ()) {
-				match = using_ns.Lookup (ds, name) as Type;
-				if (match != null){
+				match = using_ns.Lookup (ds, name, loc);
+				if ((match != null) && match.IsType){
 					if (t != null) {
-						DeclSpace.Error_AmbiguousTypeReference (loc, name, t, match);
+						DeclSpace.Error_AmbiguousTypeReference (loc, name, t.Name, match.Name);
 						return null;
 					} else {
 						t = match;
