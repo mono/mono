@@ -364,6 +364,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\DrawMode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\FlatStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -659,6 +664,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\ListBox.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\ListControl.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\ListView.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
@@ -874,6 +889,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\SelectionMode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\Shortcut.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -960,7 +980,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\TabPage.cs"
-                    SubType = "Code"
+                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
@@ -1046,6 +1066,11 @@
                 <File
                     RelPath = "System.Windows.Forms\TrackBar.cs"
                     SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\TreeViewImageIndexConverter.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
