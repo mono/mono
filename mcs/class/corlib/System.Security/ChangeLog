@@ -1,3 +1,11 @@
+2005-02-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityException.cs: Show more information when a SecurityException
+	occurs to help debugging.
+	* SecurityManager.cs: Reworked LinkDemand implementation. Supply more
+	informations when throwing a SecurityException for LinkDemand.
+	* PermissionSet.cs: Remove (now) unused code for LinkDemand.
+
 2005-02-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityManager.cs: Updated code for LinkDemand (and it's special

@@ -48,6 +48,7 @@ namespace System.Security {
 		private static object _lockObject;
 		private static ArrayList _hierarchy;
 		private static PermissionSet _fullTrust; // for [AllowPartiallyTrustedCallers]
+		private static IPermission _unmanagedCode;
 		private static Hashtable _declsecCache;
 
 		static SecurityManager () 
@@ -127,6 +128,30 @@ namespace System.Security {
 				CodeAccessPermission refuse = (CodeAccessPermission) a.DeniedPermissionSet.GetPermission (perm.GetType ());
 				if ((refuse != null) && perm.IsSubsetOf (refuse))
 					return false;
+			}
+			return true;
+		}
+
+		internal static bool IsGranted (Assembly a, PermissionSet ps, bool noncas)
+		{
+			if (ps.IsEmpty ())
+				return true;
+
+			foreach (IPermission p in ps) {
+				// note: this may contains non CAS permissions
+				if ((!noncas) && (p is CodeAccessPermission)) {
+					if (!SecurityManager.IsGranted (a, p))
+						return false;
+				} else {
+					// but non-CAS will throw on failure...
+					try {
+						p.Demand ();
+					}
+					catch (SecurityException) {
+						// ... so we catch
+						return false;
+					}
+				}
 			}
 			return true;
 		}
@@ -391,6 +416,9 @@ namespace System.Security {
 
 		internal static PermissionSet Decode (byte[] encodedPermissions)
 		{
+			if ((encodedPermissions == null) || (encodedPermissions.Length < 1))
+				throw new SecurityException ("Invalid metadata format.");
+
 			switch (encodedPermissions [0]) {
 			case 60:
 				// Fx 1.0/1.1 declarative security permissions metadata is in Unicode-encoded XML
@@ -419,23 +447,18 @@ namespace System.Security {
 
 		//  security check when using reflection
 
-		internal static void ReflectedLinkDemandEcma ()
+		internal static void ReflectedLinkDemand ()
 		{
+			// TODO - get the declarative LinkDemand permission set
+			PermissionSet ps = null;
+
 			Assembly corlib = typeof (int).Assembly;
 			// find the real caller of the icall
 			foreach (SecurityFrame f in SecurityFrame.GetStack (0)) {
 				// ignore System.Reflection class in corlib
 				if ((f.Assembly != corlib) || !f.Method.Name.StartsWith ("System.Reflection")) {
-					// else check for the ECMA key
-					byte[] pk = f.Assembly.GetName ().GetPublicKey ();
-					if ((pk != null) && (pk.Length == 16) && (pk [8] == 0x04)) {
-						int n = 0;
-						for (int i=0; i < pk.Length; i++)
-							n += pk [i];
-						if (n == 4)
-							return;
-					}
-					LinkDemandSecurityException (4, f.Assembly);
+					if (!SecurityManager.IsGranted (f.Assembly, ps, false))
+						LinkDemandSecurityException (1, f.Assembly, f.Method);
 				}
 			}
 		}
@@ -443,6 +466,7 @@ namespace System.Security {
 		// internal - get called at JIT time
 
 		private static bool LinkDemand (
+			Assembly a,
 			IntPtr casClassPermission, int casClassLength,
 			IntPtr nonCasClassPermission, int nonCasClassLength,
 			IntPtr choiceClassPermission, int choiceClassLength,
@@ -452,26 +476,28 @@ namespace System.Security {
 		{
 			try {
 				PermissionSet ps = null;
+				bool result = true;
+
 				if (casClassLength > 0) {
 					ps = Decode (casClassPermission, casClassLength);
-					ps.ImmediateCallerDemand ();
+					result = SecurityManager.IsGranted (a, ps, false);
 				}
 				if (nonCasClassLength > 0) {
 					ps = Decode (nonCasClassPermission, nonCasClassLength);
-					ps.ImmediateCallerNonCasDemand ();
+					result = SecurityManager.IsGranted (a, ps, true);
 				}
 
 				if (casMethodLength > 0) {
 					ps = Decode (casMethodPermission, casMethodLength);
-					ps.ImmediateCallerDemand ();
+					result = SecurityManager.IsGranted (a, ps, false);
 				}
 				if (nonCasMethodLength > 0) {
 					ps = Decode (nonCasMethodPermission, nonCasMethodLength);
-					ps.ImmediateCallerNonCasDemand ();
+					result = SecurityManager.IsGranted (a, ps, true);
 				}
 
 				// TODO LinkDemandChoice (2.0)
-				return true;
+				return result;
 			}
 			catch (SecurityException) {
 				return false;
@@ -487,10 +513,9 @@ namespace System.Security {
 						_fullTrust = new NamedPermissionSet ("FullTrust");
 				}
 			}
+
 			try {
-				// FIXME: to be optimized with a flag
-				_fullTrust.ImmediateCallerDemand ();
-				return true;
+				return SecurityManager.IsGranted (a, _fullTrust, false);
 			}
 			catch (SecurityException) {
 				return false;
@@ -499,36 +524,55 @@ namespace System.Security {
 
 		private static bool LinkDemandUnmanaged (Assembly a)
 		{
-			return IsGranted (a, new SecurityPermission (SecurityPermissionFlag.UnmanagedCode));
+			// double-lock pattern
+			if (_unmanagedCode == null) {
+				lock (_lockObject) {
+					if (_unmanagedCode == null)
+						_unmanagedCode = new SecurityPermission (SecurityPermissionFlag.UnmanagedCode);
+				}
+			}
+
+			return IsGranted (a, _unmanagedCode);
 		}
 
-		private static void LinkDemandSecurityException (int securityViolation, Assembly a)
+		// we try to provide as much details as possible to help debugging
+		private static void LinkDemandSecurityException (int securityViolation, Assembly a, MethodInfo method)
 		{
 			string message = null;
+			AssemblyName an = null;
+			PermissionSet granted = null;
+			PermissionSet refused = null;
+			object demanded = null;
+			IPermission failed = null;
+
+			if (a != null) {
+				an = a.GetName ();
+				granted = a.GrantedPermissionSet;
+				refused = a.DeniedPermissionSet;
+			}
+
 			switch (securityViolation) {
 			case 1: // MONO_JIT_LINKDEMAND_PERMISSION
 				message = Locale.GetText ("Permissions refused to call this method.");
 				break;
 			case 2: // MONO_JIT_LINKDEMAND_APTC
 				message = Locale.GetText ("Partially trusted callers aren't allowed to call into this assembly.");
+				demanded = (object) _fullTrust;
 				break;
 			case 4: // MONO_JIT_LINKDEMAND_ECMA
 				message = Locale.GetText ("Calling internal calls is restricted to ECMA signed assemblies.");
 				break;
 			case 8: // MONO_JIT_LINKDEMAND_PINVOKE
 				message = Locale.GetText ("Calling unmanaged code isn't allowed from this assembly.");
+				demanded = (object) _unmanagedCode;
+				failed = _unmanagedCode;
 				break;
 			default:
 				message = Locale.GetText ("JIT time LinkDemand failed.");
 				break;
 			}
 
-			AssemblyName an = null;
-			if (a != null)
-				an = a.GetName ();
-
-			// TODO - add more details to the exception
-			throw new SecurityException (message, an, null, null, null, SecurityAction.LinkDemand, null, null, null);
+			throw new SecurityException (message, an, granted, refused, method, SecurityAction.LinkDemand, demanded, failed, null);
 		}
 
 		// internal - get called by the class loader
@@ -536,24 +580,25 @@ namespace System.Security {
 		// Called when
 		// - class inheritance
 		// - method overrides
-		private static void InheritanceDemand (byte[] permissions, byte[] nonCasPermissions)
+		private static bool InheritanceDemand (Assembly a, byte[] permissions, byte[] nonCasPermissions)
 		{
+			bool result = true;
 			if (permissions != null) {
 				PermissionSet ps = Decode (permissions);
-				if (ps != null)
-					ps.ImmediateCallerDemand ();
+				result = SecurityManager.IsGranted (a, ps, false);
 			}
 			if (nonCasPermissions != null) {
 				PermissionSet ps = Decode (nonCasPermissions);
-				if (ps != null)
-					ps.ImmediateCallerNonCasDemand ();
+				result &= SecurityManager.IsGranted (a, ps, true);
 			}
+			return result;
 		}
 
 		// internal - get called by JIT generated code
 
 		private static void InternalDemand (IntPtr permissions, int length)
 		{
+Console.WriteLine ("InternalDemand {0} {1}", permissions, length);
 			PermissionSet ps = Decode (permissions, length);
 			ps.Demand ();
 		}

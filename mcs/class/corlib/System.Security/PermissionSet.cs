@@ -645,37 +645,6 @@ namespace System.Security {
 			set { _policyLevel = value; }
 		}
 
-
-		internal void ImmediateCallerDemand ()
-		{
-			if (IsEmpty ())
-				return;
-
-			// skip ourself
-			SecurityFrame sf = new SecurityFrame (1);	// FIXME skip
-			foreach (IPermission p in list) {
-				// note: this may contains non CAS permissions
-				if (p is CodeAccessPermission) {
-					if (SecurityManager.SecurityEnabled)
-						SecurityManager.IsGranted (sf.Assembly, p);
-				} else {
-					p.Demand ();
-				}
-			}
-		}
-
-		// Note: Non-CAS demands aren't affected by SecurityManager.SecurityEnabled
-		internal void ImmediateCallerNonCasDemand ()
-		{
-			if (IsEmpty ())
-				return;
-
-			// non CAS permissions (e.g. PrincipalPermission) requires direct call to Demand
-			foreach (IPermission p in list) {
-				p.Demand ();
-			}
-		}
-
 		internal bool ProcessFrame (SecurityFrame frame, ref Assembly current)
 		{
 			if (IsUnrestricted ()) {

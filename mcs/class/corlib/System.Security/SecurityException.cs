@@ -71,13 +71,6 @@ namespace System.Security {
 		}
 
 		[ComVisible (false)]
-		public object Demanded {
-			[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
-			get { return _demanded; }
-			set { _demanded = value; }
-		}
-
-		[ComVisible (false)]
 		public object DenySetInstance {
 			[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 			get { return _denyset; }
@@ -89,12 +82,6 @@ namespace System.Security {
 			[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 			get { return _assembly; }
 			set { _assembly = value; }
-		}
-
-		public IPermission FirstPermissionThatFailed {
-			[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
-			get { return _firstperm; }
-			set { _firstperm = value; }
 		}
 
 		[ComVisible (false)]
@@ -129,6 +116,29 @@ namespace System.Security {
 			set { _zone = value; }
 		}
 #endif
+
+#if NET_2_0
+		[ComVisible (false)]
+		public 
+#else
+		internal
+#endif
+		object Demanded {
+			[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
+			get { return _demanded; }
+			set { _demanded = value; }
+		}
+
+#if NET_2_0
+		public 
+#else
+		internal
+#endif
+		IPermission FirstPermissionThatFailed {
+			[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
+			get { return _firstperm; }
+			set { _firstperm = value; }
+		}
 
 		public string PermissionState {
 			[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
@@ -226,7 +236,7 @@ namespace System.Security {
 			_permitset = permitOnly;
 			_method = method;
 			_demanded = demanded;
-			_permfailed = permThatFailed;
+			_firstperm = permThatFailed;
 		}
 
 #if NET_2_0
@@ -246,9 +256,9 @@ namespace System.Security {
 			_method = method;
 			_action = action;
 			_demanded = demanded;
-			_permfailed = permThatFailed;
-			if (_permfailed != null)
-				permissionType = _permfailed.GetType ();
+			_firstperm = permThatFailed;
+			if (_firstperm != null)
+				permissionType = _firstperm.GetType ();
 			// FIXME ? evidence ?
 		}
 
@@ -275,14 +285,12 @@ namespace System.Security {
 				if ((_refused != null) && (_refused.Length > 0)) {
 					sb.AppendFormat ("{0}Refused: {1}", Environment.NewLine, RefusedSet);
 				}
-#if NET_2_0
 				if (_demanded != null) {
 					sb.AppendFormat ("{0}Demanded: {1}", Environment.NewLine, Demanded);
 				}
-				if (_permfailed != null) {
+				if (_firstperm != null) {
 					sb.AppendFormat ("{0}Failed Permission: {1}", Environment.NewLine, FirstPermissionThatFailed);
 				}
-#endif
 			}
 			catch (SecurityException) {
 				// some informations can't be displayed
