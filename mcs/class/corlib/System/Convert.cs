@@ -1388,6 +1388,9 @@ namespace System {
 		{
 			int retVal = ConvertFromBase (value, fromBase);
 
+			if (retVal == 255)
+				return (sbyte)-1;
+
 			if (retVal < (int) SByte.MinValue || retVal > (int) SByte.MaxValue)
 				throw new OverflowException ();
 			else
@@ -2258,7 +2261,7 @@ namespace System {
 				if (Char.IsNumber (c))
 					digitValue = c - '0';
 				else if (Char.IsLetter (c))
-					digitValue = c - 'a' + 10;
+					digitValue = Char.ToLower(c) - 'a' + 10;
 				else
 					throw new FormatException ("This is an invalid string: " + value);
 

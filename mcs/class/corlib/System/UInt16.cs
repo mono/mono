@@ -51,6 +51,7 @@ namespace System {
 			int len;
 			int i;
 			bool digits_seen = false;
+			bool has_negative_sign = false;
 			
 			if (s == null)
 				throw new ArgumentNullException (Locale.GetText ("s is null"));
@@ -69,6 +70,11 @@ namespace System {
 
 			if (s [i] == '+')
 				i++;
+			else
+				if (s[i] == '-'){
+					i++;
+					has_negative_sign = true;
+				}
 
 			for (; i < len; i++){
 				c = s [i];
@@ -92,6 +98,9 @@ namespace System {
 			if (!digits_seen)
 				throw new FormatException ();
 			
+			if (has_negative_sign)
+				throw new OverflowException ();
+
 			return val;
 
 		}

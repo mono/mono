@@ -71,24 +71,40 @@ namespace System {
 
 		public static float Parse (string s)
 		{
-			return (float) Double.Parse (
+			double parsed_value = Double.Parse (
 				s, (NumberStyles.Float | NumberStyles.AllowThousands), null);
+			if (parsed_value > (double) float.MaxValue)
+				throw new OverflowException();
+			
+			return (float) parsed_value;
 		}
 
 		public static float Parse (string s, IFormatProvider fp)
 		{
-			return (float) Double.Parse (
+			double parsed_value = Double.Parse (
 				s, (NumberStyles.Float | NumberStyles.AllowThousands), fp);
+			if (parsed_value > (double) float.MaxValue)
+				throw new OverflowException();
+			
+			return (float) parsed_value;
 		}
 		
 		public static float Parse (string s, NumberStyles style)
 		{
-			return (float) Double.Parse (s, style, null);
+			double parsed_value = Double.Parse (s, style, null);
+			if (parsed_value > (double) float.MaxValue)
+				throw new OverflowException();
+			
+			return (float) parsed_value;
 		}
 
 		public static float Parse (string s, NumberStyles style, IFormatProvider fp) 
 		{
-			return (float) Double.Parse (s, style, fp);
+			double parsed_value = Double.Parse (s, style, fp);
+			if (parsed_value > (double) float.MaxValue)
+				throw new OverflowException();
+			
+			return (float) parsed_value;
 		}
 
 		public override string ToString ()
