@@ -41,6 +41,10 @@ Test cases listed by Category:
 
   test-154.cs error-1.cs
 
+* Type Containers
+
+  test-155.cs
+
 Test cases listed by Number:
 ============================
 
@@ -85,6 +89,10 @@ Testing invocation of varargs function.
 test-154.cs
 -----------
 Flow analysis: This test contains all situations which are "allowed".
+
+test-155.cs
+-----------
+Nested interfaces.
 
 error-1.cs
 ----------
