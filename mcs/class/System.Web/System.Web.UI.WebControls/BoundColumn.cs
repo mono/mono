@@ -59,10 +59,12 @@ namespace System.Web.UI.WebControls
 					                   : if(!ReadOnly)
 					                     {
 					                     	TextBox box = new TextBox();
-					                     	toAdd = box;
-					                     	if(DataField.Length != 0)
-					                     		bindCtrl = box;
-					                     }
+								toAdd = box;
+								if(DataField.Length != 0)
+									bindCtrl = box;
+							     } else 
+								     goto case ListItemType.SelectedItem;
+
 					                     break;
 			}
 			if(toAdd != null)
