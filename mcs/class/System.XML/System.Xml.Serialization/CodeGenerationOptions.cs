@@ -30,15 +30,19 @@
 
 #if NET_2_0
 
+using System;
+
 namespace System.Xml.Serialization 
 {
+	[Flags]
+	[Serializable]
 	public enum CodeGenerationOptions
 	{
-		GenerateNewAsync,
-		GenerateOldAsync,
-		GenerateProperties,
-		None,
-		[Obsolete] UseSqlTypes
+		None = 0,
+		[Obsolete] UseSqlTypes = 1,
+		GenerateProperties = 2,
+		GenerateNewAsync = 4,
+		GenerateOldAsync = 8
 	}
 }
 

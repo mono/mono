@@ -34,6 +34,7 @@ using System;
 
 namespace System.Xml.Serialization 
 {
+	[AttributeUsage (AttributeTargets.Assembly)]
 	public sealed class XmlSerializerVersionAttribute : Attribute
 	{
 		string _namespace;
@@ -68,6 +69,7 @@ namespace System.Xml.Serialization
 			set { _type = value; }
 		}
 		
+		[Obsolete]
 		public string Version
 		{
 			get { return _version; }

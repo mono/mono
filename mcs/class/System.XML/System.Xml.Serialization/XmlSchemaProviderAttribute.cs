@@ -34,6 +34,7 @@ using System;
 
 namespace System.Xml.Serialization 
 {
+	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface)]
 	public sealed class XmlSchemaProviderAttribute: Attribute
 	{
 		string _methodName;

@@ -1,3 +1,15 @@
+2004-07-10  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* CodeExporter.cs: Added private constructor.
+	* CodeGenerationOptions.cs: Set the correct enum values.
+	* CodeIdentifier.cs: Added private constructor.
+	* SchemaImporter.cs: Added internal constructor.
+	* XmlMapping.cs, XmlSerializer.cs: 2.0 api fix.
+	* XmlMemberMapping.cs, XmlSchemaImporter.cs, XmlSerializationWriter.cs: Added 2.0 stubs.
+	* XmlSchemaProviderAttribute.cs, XmlSerializerAssemblyAttribute.cs,
+	  XmlSerializerVersionAttribute.cs: Set correct attribute usage.
+	* XmlSerializationReader.cs: Added missing setter for DecodeName.
+
 2004-07-08  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* XmlSerializer.cs: Fix fix.

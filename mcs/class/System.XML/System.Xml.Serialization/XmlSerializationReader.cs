@@ -1039,6 +1039,7 @@ namespace System.Xml.Serialization
 		protected bool DecodeName
 		{
 			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
 		}
 
 		[MonoTODO]

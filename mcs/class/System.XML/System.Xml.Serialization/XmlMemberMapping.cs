@@ -128,6 +128,12 @@ namespace System.Xml.Serialization
 		{
 			get { throw new NotImplementedException (); }
 		}
+		
+		[MonoTODO]
+		public string GetTypeName (System.CodeDom.Compiler.ICodeGenerator codeGenerator)
+		{
+			throw new NotImplementedException ();
+		}
 #endif
 
 #if NET_1_1

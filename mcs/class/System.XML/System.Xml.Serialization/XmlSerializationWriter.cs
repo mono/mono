@@ -901,6 +901,13 @@ namespace System.Xml.Serialization
 		{
 			throw new NotImplementedException ();
 		}
+		
+		[MonoTODO]
+		protected bool EscapeName
+		{
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
 #endif
 		
 		#endregion

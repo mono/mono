@@ -473,6 +473,7 @@ namespace System.Xml.Serialization
 		}
 		
 		[MonoTODO]
+		[Obsolete]
 		public static Assembly GenerateSerializer (Type[] types, 
 			XmlMapping[] mappings, 
 			string codePath, 
@@ -483,6 +484,7 @@ namespace System.Xml.Serialization
 		}
 		
 		[MonoTODO]
+		[Obsolete]
 		public static Assembly GenerateSerializer (Type[] types, 
 			XmlMapping[] mappings, 
 			string codePath, 

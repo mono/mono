@@ -34,8 +34,8 @@ using System.Globalization;
 namespace System.Xml.Serialization {
 	public class CodeIdentifier {
 
-#if !NET_2_0
-		public CodeIdentifier ()
+#if NET_2_0
+		private CodeIdentifier ()
 		{
 		}
 #endif

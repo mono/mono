@@ -34,6 +34,7 @@ using System;
 
 namespace System.Xml.Serialization 
 {
+	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface | AttributeTargets.Enum)]
 	public sealed class XmlSerializerAssemblyAttribute : Attribute
 	{	
 		string _assemblyName;

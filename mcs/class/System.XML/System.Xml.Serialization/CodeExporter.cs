@@ -39,6 +39,10 @@ namespace System.Xml.Serialization
 	{
 		internal MapCodeGenerator codeGenerator;
 		
+		internal CodeExporter ()
+		{
+		}
+		
 		public CodeAttributeDeclarationCollection IncludeMetadata
 		{
 			get { return codeGenerator.IncludeMetadata; }

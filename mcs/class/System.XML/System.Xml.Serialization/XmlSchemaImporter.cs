@@ -33,9 +33,13 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Collections;
 
-namespace System.Xml.Serialization {
-	public class XmlSchemaImporter {
-
+namespace System.Xml.Serialization 
+{
+	public class XmlSchemaImporter
+#if NET_2_0
+		: SchemaImporter
+#endif
+	{
 		#region Fields
 
 		XmlSchemas schemas;
@@ -79,6 +83,23 @@ namespace System.Xml.Serialization {
 		{
 			this.typeIdentifiers = typeIdentifiers;
 		}
+		
+#if NET_2_0
+		[MonoTODO]
+		public XmlSchemaImporter (XmlSchemas schemas, CodeGenerationOptions options, System.CodeDom.Compiler.ICodeGenerator codeGenerator, ImportContext context)
+		{
+		}
+		
+		[MonoTODO]
+		public XmlSchemaImporter (XmlSchemas schemas, CodeGenerationOptions options, ImportContext context)
+		{
+		}
+		
+		[MonoTODO]
+		public XmlSchemaImporter (XmlSchemas schemas, CodeIdentifiers typeIdentifiers, CodeGenerationOptions options)
+		{
+		}
+#endif
 		
 		internal bool UseEncodedFormat
 		{
