@@ -548,6 +548,10 @@ namespace System {
 			throw new NotImplementedException ();
 		}
 
+		public override string ToString () {
+			return getFriendlyName ();
+		}
+
 
 		public event AssemblyLoadEventHandler AssemblyLoad;
 		
