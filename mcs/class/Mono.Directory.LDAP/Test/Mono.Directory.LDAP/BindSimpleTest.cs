@@ -1,4 +1,10 @@
 // BindSimpleTest.cs 
+//
+// Authors:
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//
+// (C) 2003 Martin Willemoes Hansen
+//
 
 using NUnit.Framework;
 using System;
