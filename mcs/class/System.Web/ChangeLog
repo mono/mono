@@ -1,3 +1,8 @@
+2004-02-09  Jackson Harper  <jackson@ximian.com>
+
+	* System.Web.dll.sources: Remove System.Web.Caching.Watcher from
+	build. We are now using FileSystemWatcher.
+	
 2004-01-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Web.dll.sources: added new files in S.W.Configuration.

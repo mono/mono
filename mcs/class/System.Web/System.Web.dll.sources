@@ -74,7 +74,6 @@ System.Web.Caching/CacheEntry.cs
 System.Web.Caching/CacheExpires.cs
 System.Web.Caching/OutputCacheModule.cs
 System.Web.Caching/ExpiresBuckets.cs
-System.Web.Caching/Watcher.cs
 System.Web.Caching/CachedRawResponse.cs
 System.Web.Caching/CachedVaryBy.cs
 System.Web.Compilation/BaseCompiler.cs
