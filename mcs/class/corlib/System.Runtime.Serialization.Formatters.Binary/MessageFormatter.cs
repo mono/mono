@@ -18,7 +18,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 {
 	internal class MessageFormatter
 	{
-		public static void WriteMethodCall (BinaryWriter writer, object obj, Header[] headers, ISurrogateSelector surrogateSelector, StreamingContext context)
+		public static void WriteMethodCall (BinaryWriter writer, object obj, Header[] headers, ISurrogateSelector surrogateSelector, StreamingContext context, FormatterAssemblyStyle assemblyFormat)
 		{
 			IMethodCallMessage call = (IMethodCallMessage)obj;
 			writer.Write ((byte) BinaryElement.MethodCall);
@@ -110,14 +110,14 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 			if (info != null)
 			{
-				ObjectWriter objectWriter = new ObjectWriter(surrogateSelector, context);
+				ObjectWriter objectWriter = new ObjectWriter (surrogateSelector, context, assemblyFormat);
 				objectWriter.WriteObjectGraph (writer, info, headers);
 			}
 			else
 				writer.Write ((byte) BinaryElement.End);
 		}
 
-		public static void WriteMethodResponse (BinaryWriter writer, object obj, Header[] headers, ISurrogateSelector surrogateSelector, StreamingContext context)
+		public static void WriteMethodResponse (BinaryWriter writer, object obj, Header[] headers, ISurrogateSelector surrogateSelector, StreamingContext context, FormatterAssemblyStyle assemblyFormat)
 		{
 			IMethodReturnMessage resp = (IMethodReturnMessage)obj;
 			writer.Write ((byte) BinaryElement.MethodResponse);
@@ -238,7 +238,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 			if (info != null)
 			{
-				ObjectWriter objectWriter = new ObjectWriter(surrogateSelector, context);
+				ObjectWriter objectWriter = new ObjectWriter (surrogateSelector, context, assemblyFormat);
 				objectWriter.WriteObjectGraph (writer, info, headers);
 			}
 			else

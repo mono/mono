@@ -16,7 +16,7 @@ using System.Runtime.Remoting.Messaging;
 namespace System.Runtime.Serialization.Formatters.Binary {
 	public sealed class BinaryFormatter : IRemotingFormatter, IFormatter 
 	{
-		private FormatterAssemblyStyle assembly_format;	// TODO: Do something with this
+		private FormatterAssemblyStyle assembly_format = FormatterAssemblyStyle.Full;
 		private SerializationBinder binder;
 		private StreamingContext context;
 		private ISurrogateSelector surrogate_selector;
@@ -160,13 +160,13 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 			WriteBinaryHeader (writer, headers!=null);
 
 			if (graph is IMethodCallMessage) {
-				MessageFormatter.WriteMethodCall (writer, graph, headers, surrogate_selector, context);
+				MessageFormatter.WriteMethodCall (writer, graph, headers, surrogate_selector, context, assembly_format);
 			}
 			else if (graph is IMethodReturnMessage)  {
-				MessageFormatter.WriteMethodResponse (writer, graph, headers, surrogate_selector, context);
+				MessageFormatter.WriteMethodResponse (writer, graph, headers, surrogate_selector, context, assembly_format);
 			}
 			else {
-				ObjectWriter serializer = new ObjectWriter (surrogate_selector, context);
+				ObjectWriter serializer = new ObjectWriter (surrogate_selector, context, assembly_format);
 				serializer.WriteObjectGraph (writer, graph, headers);
 			}
 			writer.Flush();

@@ -1,3 +1,8 @@
+2003-11-16  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* BinaryFormatter.cs, MessageFormatter.cs, ObjectWriter.cs: 
+	  Implemented support for AssemblyFormat property.
+
 2003-11-12  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ObjectReader.cs, ObjectWriter.cs: Changed some GetType calls to "is" checks.

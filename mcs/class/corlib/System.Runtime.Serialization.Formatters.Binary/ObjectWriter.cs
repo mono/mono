@@ -27,6 +27,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 		ISurrogateSelector _surrogateSelector;
 		StreamingContext _context;
+		FormatterAssemblyStyle _assemblyFormat;
 
 		class TypeMetadata
 		{
@@ -54,10 +55,11 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			}
 		}
 
-		public ObjectWriter(ISurrogateSelector surrogateSelector, StreamingContext context)
+		public ObjectWriter (ISurrogateSelector surrogateSelector, StreamingContext context, FormatterAssemblyStyle assemblyFormat)
 		{
 			_surrogateSelector = surrogateSelector;
 			_context = context;
+			_assemblyFormat = assemblyFormat;
 		}
 
 		public void WriteObjectGraph (BinaryWriter writer, object obj, Header[] headers)
@@ -537,7 +539,10 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		{
 			writer.Write ((byte) BinaryElement.Assembly);
 			writer.Write (id);
-			writer.Write (assembly.GetName ().FullName);
+			if (_assemblyFormat == FormatterAssemblyStyle.Full)
+				writer.Write (assembly.GetName ().FullName);
+			else
+				writer.Write (assembly.GetName ().Name);
 		}
 
 		private int GetAssemblyId (Assembly assembly)
