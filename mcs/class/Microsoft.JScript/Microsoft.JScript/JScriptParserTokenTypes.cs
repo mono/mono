@@ -61,22 +61,21 @@ namespace Microsoft.JScript
 		public const int STRING_LITERAL = 56;
 		public const int LSQUARE = 57;
 		public const int RSQUARE = 58;
-		public const int LITERAL_print = 59;
-		public const int LITERAL_function = 60;
-		public const int LITERAL_true = 61;
-		public const int LITERAL_false = 62;
-		public const int LITERAL_null = 63;
-		public const int TAB = 64;
-		public const int VERTICAL_TAB = 65;
-		public const int FORM_FEED = 66;
-		public const int SPACE = 67;
-		public const int NO_BREAK_SPACE = 68;
-		public const int LINE_FEED = 69;
-		public const int CARRIGE_RETURN = 70;
-		public const int LINE_SEPARATOR = 71;
-		public const int PARAGRAPH_SEPARATOR = 72;
-		public const int DOT = 73;
-		public const int SL_COMMENT = 74;
+		public const int LITERAL_function = 59;
+		public const int LITERAL_true = 60;
+		public const int LITERAL_false = 61;
+		public const int LITERAL_null = 62;
+		public const int TAB = 63;
+		public const int VERTICAL_TAB = 64;
+		public const int FORM_FEED = 65;
+		public const int SPACE = 66;
+		public const int NO_BREAK_SPACE = 67;
+		public const int LINE_FEED = 68;
+		public const int CARRIGE_RETURN = 69;
+		public const int LINE_SEPARATOR = 70;
+		public const int PARAGRAPH_SEPARATOR = 71;
+		public const int DOT = 72;
+		public const int SL_COMMENT = 73;
 		
 	}
 }

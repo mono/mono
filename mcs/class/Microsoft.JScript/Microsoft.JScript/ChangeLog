@@ -1,3 +1,90 @@
+2003-04-20	Cesar Octavio Lopez Nataren <cesar@ciencias.unam.mx>
+
+	* driver.cs: 
+	- Erased the Context class, it was used for the first
+	test of the print_statement and Reflection.Emit. As I erased the
+	Program, SourceElements, SourceElement from the ANTLR grammar (for
+	the rework of the AST tied to the MS JScript public API), I erased
+	some uses in here.
+	- Erased the methods: EmitJScript0Type, EmitJScript0Cons,
+	EmitGlobalCode, EmitJScript0, EmitJScriptMainType,
+	EmitJScriptMainCons, EmitJScriptMainFunction, EmitJScriptMain,
+	Emit.
+
+	* jscript-lexer-parser.g: 
+	- Erased the references to the classes Program, SourceElements,
+	SourceElement, Statement, FunctionDeclaration and erased
+	print_statement rule. 
+
+	* JSCriptLexer.cs JScriptParser.cs and the other files generated
+	by antlr, reflect changes from the grammar changes.
+
+2003-04-19	Cesar Octavio Lopez Nataren <cesar@ciencias.unam.mx>
+	* Added stubs for the classes:
+	ASTList.cs 
+	ActivationObject.cs 
+	ActiveXObjectConstructor.cs 
+	ArrayConstructor.cs 
+	ArrayLiteral.cs 
+	ArrayObject.cs 
+	AssemblyCustomAttributeList.cs 
+	BaseVsaEngine.cs 
+	BinaryOp.cs 
+	Binding.cs 
+	Block.cs 
+	BooleanConstructor.cs 
+	BooleanObject.cs 
+	Closure.cs 
+	Context.cs 
+	DateConstructor.cs 
+	DateObject.cs 
+	DebugBreak.cs 
+	Empty.cs 
+	EnumeratorConstructor.cs 
+	EnumeratorObject.cs 
+	ErrorConstructor.cs 
+	ErrorObject.cs 
+	Eval.cs 
+	ForIn.cs 
+	FunctionConstructor.cs 
+	FunctionDeclaration.cs 
+	FunctionExpression.cs 
+	FunctionObject.cs 
+	GlobalObject.cs 
+	GlobalScope.cs 
+	IActivationObject.cs 
+	IRedirectOutput.cs 
+	IVsaScriptScope.cs 
+	Import.cs 
+	JSBuiltIn.cs 
+	JSField.cs 
+	JSFunctionAttribute.cs 
+	JSFunctionAttributeEnum.cs 
+	JSLocalField.cs 
+	JSObject.cs 
+	JSToken.cs 
+	JSVariableField.cs 
+	LenientGlobalObject.cs 
+	MathObject.cs 
+	NumberConstructor.cs 
+	NumberObject.cs 
+	ObjectConstructor.cs 
+	Package.cs 
+	RegExpConstructor.cs 
+	RegExpObject.cs 
+	ScriptBlock.cs 
+	ScriptFunction.cs 
+	ScriptObject.cs 
+	StringConstructor.cs 
+	StringObject.cs 
+	Throw.cs 
+	Try.cs 
+	UnaryOp.cs 
+	VBArrayConstructor.cs 
+	VsaEngine.cs 
+	With.cs 	
+	
+
 2003-04-11	Cesar Octavio Lopez Nataren <cesar@ciencias.unam.mx>
 
 	* jscript-lexer-parser.g:

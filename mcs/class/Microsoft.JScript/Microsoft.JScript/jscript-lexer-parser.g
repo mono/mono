@@ -17,45 +17,29 @@ options {
 class JScriptParser extends Parser;
 
 // Program, see section 14 from Ecma-262, page 75.
-program [Program p]
-{ 
-    SourceElements elems;
-}
+program
     : 
-        source_elements [p.SourceElements]
+        source_elements
     ;
 
 
-source_elements [SourceElements elems]
-{
-    SourceElement se;
-}
+source_elements
     : 
-        se = source_element { elems.Add (se); } (source_elements [elems] | )
+	source_element (source_elements | )
     ;
 
 
 // See Section 14 from Ecma-262, page 75.
-source_element returns [SourceElement se]
-{
-    se = new SourceElement ();
-    Statement stm = null;
-    FunctionDeclaration fd = null;
-}
+source_element
     : 
-        stm = statement
-        { se = stm; }
+	statement
     |
-        fd = function_declaration
-        { se = fd; }
+	function_declaration
     ;
 
 
 // Statement, see section 12 from Ecma-262, page 61.
-statement returns [Statement stm]
-{
-    stm = null;
-}
+statement
     : 
 	block	    
     |
@@ -82,8 +66,6 @@ statement returns [Statement stm]
 	labelled_statement
     |
 	try_statement
-    |	    
-        stm = print_statement
     ;
 
 
@@ -444,34 +426,17 @@ property_name
 expression: assignment_expression (COMMA  expression | ) ;
 
 
-// Non-Ecma statements
-print_statement returns [PrintStatement pn]
-{ pn = new PrintStatement (); }
-    : 
-        "print" LPAREN str:STRING_LITERAL RPAREN SEMI_COLON
-        { 
-            pn.Message =  str.getText (); 
-        }         
-    ;
-
-
-
-
 // Function definition, see Section 13 from Ecma-262, page 71.
-function_declaration returns [FunctionDeclaration fd]
-{
-    fd = new FunctionDeclaration ();
-}
+function_declaration
     :
-        "function" IDENTIFIER LPAREN (formal_parameter_list | ) RPAREN LBRACE function_body [fd.elems] RBRACE
+        "function" IDENTIFIER LPAREN (formal_parameter_list | ) RPAREN LBRACE function_body RBRACE
     ;
 
 
 // This elems are just for compiling purposes.
 function_expression
-{ SourceElements elems = new SourceElements (); }
     :
-	"function" (IDENTIFIER | ) LPAREN (formal_parameter_list | ) RPAREN LBRACE function_body [elems] RBRACE
+	"function" (IDENTIFIER | ) LPAREN (formal_parameter_list | ) RPAREN LBRACE function_body RBRACE
     ;
 
 
@@ -481,9 +446,9 @@ formal_parameter_list
     ;
 
 
-function_body [SourceElements elems]
+function_body
     :
-        source_elements [elems]
+        source_elements
     ;
 
 

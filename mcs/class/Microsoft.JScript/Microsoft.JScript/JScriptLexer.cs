@@ -86,22 +86,21 @@ namespace Microsoft.JScript
 		public const int STRING_LITERAL = 56;
 		public const int LSQUARE = 57;
 		public const int RSQUARE = 58;
-		public const int LITERAL_print = 59;
-		public const int LITERAL_function = 60;
-		public const int LITERAL_true = 61;
-		public const int LITERAL_false = 62;
-		public const int LITERAL_null = 63;
-		public const int TAB = 64;
-		public const int VERTICAL_TAB = 65;
-		public const int FORM_FEED = 66;
-		public const int SPACE = 67;
-		public const int NO_BREAK_SPACE = 68;
-		public const int LINE_FEED = 69;
-		public const int CARRIGE_RETURN = 70;
-		public const int LINE_SEPARATOR = 71;
-		public const int PARAGRAPH_SEPARATOR = 72;
-		public const int DOT = 73;
-		public const int SL_COMMENT = 74;
+		public const int LITERAL_function = 59;
+		public const int LITERAL_true = 60;
+		public const int LITERAL_false = 61;
+		public const int LITERAL_null = 62;
+		public const int TAB = 63;
+		public const int VERTICAL_TAB = 64;
+		public const int FORM_FEED = 65;
+		public const int SPACE = 66;
+		public const int NO_BREAK_SPACE = 67;
+		public const int LINE_FEED = 68;
+		public const int CARRIGE_RETURN = 69;
+		public const int LINE_SEPARATOR = 70;
+		public const int PARAGRAPH_SEPARATOR = 71;
+		public const int DOT = 72;
+		public const int SL_COMMENT = 73;
 		
 		public JScriptLexer(Stream ins) : this(new ByteBuffer(ins))
 		{
@@ -124,34 +123,33 @@ namespace Microsoft.JScript
 			caseSensitiveLiterals = true;
 			setCaseSensitive(true);
 			literals = new Hashtable();
-			literals.Add("switch", 20);
-			literals.Add("case", 21);
 			literals.Add("for", 13);
-			literals.Add("false", 62);
-			literals.Add("print", 59);
-			literals.Add("true", 61);
-			literals.Add("try", 25);
-			literals.Add("finally", 27);
-			literals.Add("void", 49);
-			literals.Add("typeof", 50);
-			literals.Add("instanceof", 42);
-			literals.Add("throw", 24);
-			literals.Add("continue", 15);
-			literals.Add("do", 11);
-			literals.Add("in", 14);
-			literals.Add("null", 63);
-			literals.Add("function", 60);
-			literals.Add("while", 12);
-			literals.Add("break", 17);
-			literals.Add("new", 54);
-			literals.Add("return", 18);
-			literals.Add("delete", 48);
 			literals.Add("if", 7);
-			literals.Add("default", 23);
-			literals.Add("else", 10);
+			literals.Add("delete", 48);
+			literals.Add("throw", 24);
+			literals.Add("try", 25);
+			literals.Add("function", 59);
+			literals.Add("while", 12);
 			literals.Add("var", 28);
-			literals.Add("catch", 26);
 			literals.Add("with", 19);
+			literals.Add("null", 62);
+			literals.Add("break", 17);
+			literals.Add("switch", 20);
+			literals.Add("catch", 26);
+			literals.Add("in", 14);
+			literals.Add("else", 10);
+			literals.Add("continue", 15);
+			literals.Add("case", 21);
+			literals.Add("void", 49);
+			literals.Add("true", 60);
+			literals.Add("typeof", 50);
+			literals.Add("do", 11);
+			literals.Add("false", 61);
+			literals.Add("return", 18);
+			literals.Add("finally", 27);
+			literals.Add("new", 54);
+			literals.Add("default", 23);
+			literals.Add("instanceof", 42);
 		}
 		
 		public new Token nextToken()			//throws TokenStreamException
@@ -1030,7 +1028,7 @@ tryAgain:
 		match('"');
 		text.Length = _saveIndex;
 		{ // ( ... )+
-		int _cnt156=0;
+		int _cnt155=0;
 		for (;;)
 		{
 			switch ( LA(1) )
@@ -1064,12 +1062,12 @@ tryAgain:
 			}
 			default:
 			{
-				if (_cnt156 >= 1) { goto _loop156_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
+				if (_cnt155 >= 1) { goto _loop155_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
 			}
 			break; }
-			_cnt156++;
+			_cnt155++;
 		}
-_loop156_breakloop:		;
+_loop155_breakloop:		;
 		}    // ( ... )+
 		_saveIndex = text.Length;
 		match('"');
@@ -1154,11 +1152,11 @@ _loop156_breakloop:		;
 				}
 				default:
 				{
-					goto _loop160_breakloop;
+					goto _loop159_breakloop;
 				}
 				 }
 			}
-_loop160_breakloop:			;
+_loop159_breakloop:			;
 		}    // ( ... )*
 		_ttype = testLiteralsTable(_ttype);
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
@@ -1186,11 +1184,11 @@ _loop160_breakloop:			;
 				}
 				else
 				{
-					goto _loop164_breakloop;
+					goto _loop163_breakloop;
 				}
 				
 			}
-_loop164_breakloop:			;
+_loop163_breakloop:			;
 		}    // ( ... )*
 		_ttype = Token.SKIP; newline ();
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))

@@ -78,22 +78,21 @@ namespace Microsoft.JScript
 		public const int STRING_LITERAL = 56;
 		public const int LSQUARE = 57;
 		public const int RSQUARE = 58;
-		public const int LITERAL_print = 59;
-		public const int LITERAL_function = 60;
-		public const int LITERAL_true = 61;
-		public const int LITERAL_false = 62;
-		public const int LITERAL_null = 63;
-		public const int TAB = 64;
-		public const int VERTICAL_TAB = 65;
-		public const int FORM_FEED = 66;
-		public const int SPACE = 67;
-		public const int NO_BREAK_SPACE = 68;
-		public const int LINE_FEED = 69;
-		public const int CARRIGE_RETURN = 70;
-		public const int LINE_SEPARATOR = 71;
-		public const int PARAGRAPH_SEPARATOR = 72;
-		public const int DOT = 73;
-		public const int SL_COMMENT = 74;
+		public const int LITERAL_function = 59;
+		public const int LITERAL_true = 60;
+		public const int LITERAL_false = 61;
+		public const int LITERAL_null = 62;
+		public const int TAB = 63;
+		public const int VERTICAL_TAB = 64;
+		public const int FORM_FEED = 65;
+		public const int SPACE = 66;
+		public const int NO_BREAK_SPACE = 67;
+		public const int LINE_FEED = 68;
+		public const int CARRIGE_RETURN = 69;
+		public const int LINE_SEPARATOR = 70;
+		public const int PARAGRAPH_SEPARATOR = 71;
+		public const int DOT = 72;
+		public const int SL_COMMENT = 73;
 		
 		
 		protected void initialize()
@@ -125,17 +124,12 @@ namespace Microsoft.JScript
 			initialize();
 		}
 		
-	public void program(
-		Program p
-	) //throws RecognitionException, TokenStreamException
+	public void program() //throws RecognitionException, TokenStreamException
 {
 		
 		
-		SourceElements elems;
-		
-		
 		try {      // for error handling
-			source_elements(p.SourceElements);
+			source_elements();
 		}
 		catch (RecognitionException ex)
 		{
@@ -152,21 +146,12 @@ namespace Microsoft.JScript
 		}
 	}
 	
-	public void source_elements(
-		SourceElements elems
-	) //throws RecognitionException, TokenStreamException
+	public void source_elements() //throws RecognitionException, TokenStreamException
 {
 		
 		
-		SourceElement se;
-		
-		
 		try {      // for error handling
-			se=source_element();
-			if (0==inputState.guessing)
-			{
-				elems.Add (se);
-			}
+			source_element();
 			{
 				switch ( LA(1) )
 				{
@@ -185,10 +170,9 @@ namespace Microsoft.JScript
 				case LITERAL_throw:
 				case LITERAL_try:
 				case LITERAL_var:
-				case LITERAL_print:
 				case LITERAL_function:
 				{
-					source_elements(elems);
+					source_elements();
 					break;
 				}
 				case EOF:
@@ -218,14 +202,8 @@ namespace Microsoft.JScript
 		}
 	}
 	
-	public SourceElement  source_element() //throws RecognitionException, TokenStreamException
+	public void source_element() //throws RecognitionException, TokenStreamException
 {
-		SourceElement se;
-		
-		
-		se = new SourceElement ();
-		Statement stm = null;
-		FunctionDeclaration fd = null;
 		
 		
 		try {      // for error handling
@@ -246,22 +224,13 @@ namespace Microsoft.JScript
 			case LITERAL_throw:
 			case LITERAL_try:
 			case LITERAL_var:
-			case LITERAL_print:
 			{
-				stm=statement();
-				if (0==inputState.guessing)
-				{
-					se = stm;
-				}
+				statement();
 				break;
 			}
 			case LITERAL_function:
 			{
-				fd=function_declaration();
-				if (0==inputState.guessing)
-				{
-					se = fd;
-				}
+				function_declaration();
 				break;
 			}
 			default:
@@ -283,15 +252,10 @@ namespace Microsoft.JScript
 				throw;
 			}
 		}
-		return se;
 	}
 	
-	public Statement  statement() //throws RecognitionException, TokenStreamException
+	public void statement() //throws RecognitionException, TokenStreamException
 {
-		Statement stm;
-		
-		
-		stm = null;
 		
 		
 		try {      // for error handling
@@ -364,11 +328,6 @@ namespace Microsoft.JScript
 				try_statement();
 				break;
 			}
-			case LITERAL_print:
-			{
-				stm=print_statement();
-				break;
-			}
 			default:
 			{
 				throw new NoViableAltException(LT(1), getFilename());
@@ -388,15 +347,10 @@ namespace Microsoft.JScript
 				throw;
 			}
 		}
-		return stm;
 	}
 	
-	public FunctionDeclaration  function_declaration() //throws RecognitionException, TokenStreamException
+	public void function_declaration() //throws RecognitionException, TokenStreamException
 {
-		FunctionDeclaration fd;
-		
-		
-		fd = new FunctionDeclaration ();
 		
 		
 		try {      // for error handling
@@ -423,7 +377,7 @@ namespace Microsoft.JScript
 			}
 			match(RPAREN);
 			match(LBRACE);
-			function_body(fd.elems);
+			function_body();
 			match(RBRACE);
 		}
 		catch (RecognitionException ex)
@@ -439,7 +393,6 @@ namespace Microsoft.JScript
 				throw;
 			}
 		}
-		return fd;
 	}
 	
 	public void block() //throws RecognitionException, TokenStreamException
@@ -466,7 +419,6 @@ namespace Microsoft.JScript
 				case LITERAL_throw:
 				case LITERAL_try:
 				case LITERAL_var:
-				case LITERAL_print:
 				{
 					statement_list();
 					break;
@@ -944,7 +896,6 @@ namespace Microsoft.JScript
 							case LITERAL_throw:
 							case LITERAL_try:
 							case LITERAL_var:
-							case LITERAL_print:
 							case LITERAL_function:
 							{
 								break;
@@ -985,43 +936,6 @@ namespace Microsoft.JScript
 		}
 	}
 	
-	public PrintStatement  print_statement() //throws RecognitionException, TokenStreamException
-{
-		PrintStatement pn;
-		
-		Token  str = null;
-		pn = new PrintStatement ();
-		
-		try {      // for error handling
-			match(LITERAL_print);
-			match(LPAREN);
-			str = LT(1);
-			match(STRING_LITERAL);
-			match(RPAREN);
-			match(SEMI_COLON);
-			if (0==inputState.guessing)
-			{
-				
-				pn.Message =  str.getText (); 
-				
-			}
-		}
-		catch (RecognitionException ex)
-		{
-			if (0 == inputState.guessing)
-			{
-				reportError(ex);
-				consume();
-				consumeUntil(tokenSet_3_);
-			}
-			else
-			{
-				throw;
-			}
-		}
-		return pn;
-	}
-	
 	public void statement_list() //throws RecognitionException, TokenStreamException
 {
 		
@@ -1046,7 +960,6 @@ namespace Microsoft.JScript
 				case LITERAL_throw:
 				case LITERAL_try:
 				case LITERAL_var:
-				case LITERAL_print:
 				{
 					statement_list();
 					break;
@@ -1285,7 +1198,6 @@ _loop28_breakloop:			;
 				case LITERAL_throw:
 				case LITERAL_try:
 				case LITERAL_var:
-				case LITERAL_print:
 				{
 					statement_list();
 					break;
@@ -1343,7 +1255,6 @@ _loop28_breakloop:			;
 				case LITERAL_throw:
 				case LITERAL_try:
 				case LITERAL_var:
-				case LITERAL_print:
 				{
 					statement_list();
 					break;
@@ -2543,7 +2454,6 @@ _loop28_breakloop:			;
 	public void function_expression() //throws RecognitionException, TokenStreamException
 {
 		
-		SourceElements elems = new SourceElements ();
 		
 		try {      // for error handling
 			match(LITERAL_function);
@@ -2586,7 +2496,7 @@ _loop28_breakloop:			;
 			}
 			match(RPAREN);
 			match(LBRACE);
-			function_body(elems);
+			function_body();
 			match(RBRACE);
 		}
 		catch (RecognitionException ex)
@@ -2992,14 +2902,12 @@ _loop91_breakloop:			;
 		}
 	}
 	
-	public void function_body(
-		SourceElements elems
-	) //throws RecognitionException, TokenStreamException
+	public void function_body() //throws RecognitionException, TokenStreamException
 {
 		
 		
 		try {      // for error handling
-			source_elements(elems);
+			source_elements();
 		}
 		catch (RecognitionException ex)
 		{
@@ -3080,7 +2988,6 @@ _loop91_breakloop:			;
 		@"""STRING_LITERAL""",
 		@"""LSQUARE""",
 		@"""RSQUARE""",
-		@"""print""",
 		@"""function""",
 		@"""true""",
 		@"""false""",
@@ -3112,19 +3019,19 @@ _loop91_breakloop:			;
 	public static readonly BitSet tokenSet_1_ = new BitSet(mk_tokenSet_1_());
 	private static long[] mk_tokenSet_2_()
 	{
-		long[] data = { 1729382257231116530L, 0L};
+		long[] data = { 576460752624269554L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_2_ = new BitSet(mk_tokenSet_2_());
 	private static long[] mk_tokenSet_3_()
 	{
-		long[] data = { 1729382257241603314L, 0L};
+		long[] data = { 576460752634756338L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_3_ = new BitSet(mk_tokenSet_3_());
 	private static long[] mk_tokenSet_4_()
 	{
-		long[] data = { 1729382257442929906L, 0L};
+		long[] data = { 576460752836082930L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_4_ = new BitSet(mk_tokenSet_4_());
@@ -3160,7 +3067,7 @@ _loop91_breakloop:			;
 	public static readonly BitSet tokenSet_9_ = new BitSet(mk_tokenSet_9_());
 	private static long[] mk_tokenSet_10_()
 	{
-		long[] data = { 1729382257375821042L, 0L};
+		long[] data = { 576460752768974066L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_10_ = new BitSet(mk_tokenSet_10_());
