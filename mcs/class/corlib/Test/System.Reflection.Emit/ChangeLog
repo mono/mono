@@ -1,3 +1,7 @@
+2003-05-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ModuleBuilderTest.cs: New file.
+
 2003-05-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeBuilderTest.cs: More tests.
