@@ -1,5 +1,10 @@
 2003-11-17  Zoltan Varga  <vargaz@freemail.hu>
 
+	* appdomain.c (mono_runtime_get_out_of_memory_ex): New function to
+	return a preallocated out-of-memory exception instance.
+
+	* object.c (out_of_memory): Use the new function.
+
 	* metadata.c (mono_metadata_parse_type): Handle the case when the byref
 	flag is before the custom modifiers. Fixes #49802.
 
