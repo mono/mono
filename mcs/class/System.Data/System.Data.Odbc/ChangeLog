@@ -1,3 +1,10 @@
+2004-06-16  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* OdbcError.cs: fixed serialization compatibility with MS.NET
+	* OdbcErrorCollection.cs: fixed serialization compatibility with
+	MS.NET
+	* OdbcException.cs: fixed serialization compatibility with MS.NET
+
 2004-06-16  Sureshkumar T (tsureshkumar@novell.com)
 	* OdbcDataReader.cs: Added GetValue support for Sql Binary type to return byte array.
 			     Implemented GetBytes method.

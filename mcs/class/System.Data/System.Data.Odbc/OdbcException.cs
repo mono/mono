@@ -1,8 +1,8 @@
 //
-// System.Data.Odbc.OdbcDataReader
+// System.Data.Odbc.OdbcException
 //
 // Author:
-//   Brian Ritchie (brianlritchie@hotmail.com) 
+//   Brian Ritchie (brianlritchie@hotmail.com)
 //
 // Copyright (C) Brian Ritchie, 2002
 //
@@ -39,21 +39,22 @@ using System.Runtime.Serialization;
 
 namespace System.Data.Odbc
 {
-	public sealed class OdbcException : SystemException 
+	[Serializable]
+	public sealed class OdbcException : SystemException
 	{
-		OdbcErrorCollection col;
+		OdbcErrorCollection odbcErrors;
 
 		internal OdbcException(OdbcError Error) : base (Error.Message)
 		{
-			col=new OdbcErrorCollection();
-			col.Add(Error);
+			odbcErrors = new OdbcErrorCollection ();
+			odbcErrors.Add (Error);
 		}
 
 		public OdbcErrorCollection Errors 
 		{
 			get 
 			{
-				return col;
+				return odbcErrors;
 			}
 		}
 
@@ -61,7 +62,7 @@ namespace System.Data.Odbc
 		{	
 			get
 			{
-				return col[0].Source;
+				return odbcErrors[0].Source;
 			}
 		}
 
@@ -69,11 +70,17 @@ namespace System.Data.Odbc
 		public override string Message {
 			get 
 			{
-				
-				return  col[0].Message;
+
+				return odbcErrors[0].Message;
 			}
-		}	
-		
+		}
+
+		private OdbcException (SerializationInfo si, StreamingContext sc) : base(si, sc)
+		{
+			odbcErrors = new OdbcErrorCollection ();
+			odbcErrors = ((OdbcErrorCollection) si.GetValue ("odbcErrors", typeof(OdbcErrorCollection)));
+		}
+
 		#region Methods
 
 		public override void GetObjectData (SerializationInfo si, StreamingContext context)
@@ -81,7 +88,7 @@ namespace System.Data.Odbc
 			if (si == null)
 				throw new ArgumentNullException ("si");
 
-			si.AddValue ("col", col);
+			si.AddValue ("odbcErrors", odbcErrors, typeof(OdbcErrorCollection));
 			base.GetObjectData (si, context);
 		}
 

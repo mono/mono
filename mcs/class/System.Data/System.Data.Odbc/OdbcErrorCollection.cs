@@ -37,11 +37,12 @@ using System.Data.Common;
 
 namespace System.Data.Odbc
 {
+	[Serializable]
 	public sealed class OdbcErrorCollection : ICollection, IEnumerable
 	{
 		#region Fields
 
-		ArrayList list = new ArrayList ();
+		ArrayList _items = new ArrayList ();
 	
 		#endregion // Fields
 
@@ -58,7 +59,7 @@ namespace System.Data.Odbc
 		{
 			get 
 			{
-				return list.Count;
+				return _items.Count;
 			}
 		}
 
@@ -66,7 +67,7 @@ namespace System.Data.Odbc
 		{
 			get 
 			{
-				return (OdbcError) list[index];
+				return (OdbcError) _items[index];
 			}
 		}
 
@@ -74,7 +75,7 @@ namespace System.Data.Odbc
 		{
 			get 
 			{
-				return list.SyncRoot;
+				return _items.SyncRoot;
 			}
 		}
 
@@ -82,7 +83,7 @@ namespace System.Data.Odbc
 		{
 			get 
 			{
-				return list.IsSynchronized;
+				return _items.IsSynchronized;
 			}
 		}
 
@@ -92,7 +93,7 @@ namespace System.Data.Odbc
 
 		internal void Add (OdbcError error)
 		{
-			list.Add ((object) error);
+			_items.Add ((object) error);
 		}
 		
 		public void CopyTo (Array array, int index)
@@ -107,13 +108,13 @@ namespace System.Data.Odbc
 			if ((array.IsFixedSize) || (index + this.Count > array.GetUpperBound (0)))
 				throw new ArgumentException("array");
 
-			((OdbcError[])(list.ToArray ())).CopyTo (array, index);
-			 
+			((OdbcError[]) (_items.ToArray ())).CopyTo (array, index);
+
 		}
 
 		public IEnumerator GetEnumerator ()
 		{
-			return list.GetEnumerator ();
+			return _items.GetEnumerator ();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()

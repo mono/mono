@@ -37,19 +37,22 @@ using System.Data.Common;
 
 namespace System.Data.Odbc
 {
+	[Serializable]
 	public sealed class OdbcError
 	{
-		string message,source,sqlstate;
-		int nativeerror;
+		string _message;
+		string _source;
+		string _state;
+		int _nativeerror;
 
 		#region Constructors
 
 		internal OdbcError(string Source)
 		{
-			nativeerror=1;
-			source=Source;
-			message="Error in "+source;
-			sqlstate="";
+			_nativeerror = 1;
+			_source = Source;
+			_message = "Error in " + _source;
+			_state = "";
 		}
 
 		internal OdbcError(string Source, OdbcHandleType HandleType, IntPtr Handle)
@@ -59,26 +62,26 @@ namespace System.Data.Odbc
 			byte[] buf_MsgText=new byte[buflen];
 			byte[] buf_SqlState=new byte[buflen];
 			bool NeedsDecode=true;
-			this.source=Source;
+			_source = Source;
 			switch (HandleType)
 			{
 				case OdbcHandleType.Dbc:
 					ret=libodbc.SQLError(IntPtr.Zero,Handle,IntPtr.Zero, buf_SqlState,
-						ref nativeerror, buf_MsgText, buflen, ref txtlen);
+						ref _nativeerror, buf_MsgText, buflen, ref txtlen);
 					break;
 				case OdbcHandleType.Stmt:
 					ret=libodbc.SQLError(IntPtr.Zero,IntPtr.Zero,Handle, buf_SqlState,
-						ref nativeerror, buf_MsgText, buflen, ref txtlen);
+						ref _nativeerror, buf_MsgText, buflen, ref txtlen);
 					break;
 				case OdbcHandleType.Env:
 					ret=libodbc.SQLError(Handle,IntPtr.Zero,IntPtr.Zero, buf_SqlState,
-						ref nativeerror, buf_MsgText, buflen, ref txtlen);
+						ref _nativeerror, buf_MsgText, buflen, ref txtlen);
 					break;
 				default:
-					nativeerror=1;
-					source=Source;
-					message="Error in "+source;
-					sqlstate="";
+					_nativeerror = 1;
+					_source = Source;
+					_message = "Error in " + _source;
+					_state = "";
 					NeedsDecode=false;
 					break;
 			}
@@ -86,15 +89,15 @@ namespace System.Data.Odbc
 			{
 				if (ret!=OdbcReturn.Success)
 				{
-					nativeerror=1;
-					source=Source;
-					message="Unable to retreive error information from ODBC driver manager";
-					sqlstate="";
+					_nativeerror = 1;
+					_source = Source;
+					_message = "Unable to retreive error information from ODBC driver manager";
+					_state = "";
 				}
 				else
 				{
-					sqlstate=System.Text.Encoding.Default.GetString(buf_SqlState).Replace((char) 0,' ').Trim();;
-					message=System.Text.Encoding.Default.GetString(buf_MsgText).Replace((char) 0,' ').Trim();;
+					_state = System.Text.Encoding.Default.GetString (buf_SqlState).Replace ((char) 0, ' ').Trim ();
+					_message = System.Text.Encoding.Default.GetString (buf_MsgText).Replace ((char) 0, ' ').Trim ();
 				}
 			}
 		}
@@ -107,7 +110,7 @@ namespace System.Data.Odbc
 		{
 			get
 			{
-				return message;
+				return _message;
 			}
 		}
 
@@ -115,7 +118,7 @@ namespace System.Data.Odbc
 		{
 			get
 			{
-				return nativeerror;
+				return _nativeerror;
 			}
 		}
 
@@ -123,7 +126,7 @@ namespace System.Data.Odbc
 		{
 			get
 			{
-				return source;
+				return _source;
 			}
 		}
 
@@ -131,7 +134,7 @@ namespace System.Data.Odbc
 		{
 			get
 			{
-				return sqlstate;
+				return _state;
 			}
 		}
 
