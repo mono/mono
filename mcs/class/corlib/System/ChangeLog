@@ -1,5 +1,7 @@
 2002-05-17  Miguel de Icaza  <miguel@ximian.com>
 
+	* MonoType.cs: Style changes.
+
 	* Type.cs: Style changes.
 
 2002-05-16  Piers Haken <piersh@friksit.com

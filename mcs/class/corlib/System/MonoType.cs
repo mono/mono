@@ -1,3 +1,4 @@
+//
 // System.MonoType
 //
 // Sean MacIsaac (macisaac@ximian.com)
@@ -5,6 +6,7 @@
 // Patrik Torstensson (patrik.torstensson@labs2.com)
 //
 // (C) 2001 Ximian, Inc.
+//
 
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -35,21 +37,30 @@ namespace System
 		private static extern void get_type_info (RuntimeTypeHandle type, out MonoTypeInfo info);
 
 		[MonoTODO]
-		internal MonoType (Object obj) {
+		internal MonoType (Object obj)
+		{
 			// this should not be used - lupus
 			type_from_obj (this, obj);
+			
 			throw new NotImplementedException ();
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern TypeAttributes get_attributes (Type type);
 	
-		protected override TypeAttributes GetAttributeFlagsImpl () {
+		protected override TypeAttributes GetAttributeFlagsImpl ()
+		{
 			return get_attributes (this);
 		}
 
 		[MonoTODO]
-		protected override ConstructorInfo GetConstructorImpl (BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) {
+		protected override ConstructorInfo GetConstructorImpl (BindingFlags bindingAttr,
+								       Binder binder,
+								       CallingConventions callConvention,
+								       Type[] types,
+								       ParameterModifier[] modifiers)
+		{
+			// FIXME
 			throw new NotImplementedException ();
 		}
 
@@ -57,23 +68,28 @@ namespace System
 		public extern override ConstructorInfo[] GetConstructors (BindingFlags bindingAttr);
 
 		[MonoTODO]
-		public override EventInfo GetEvent (string name, BindingFlags bindingAttr) {
+		public override EventInfo GetEvent (string name, BindingFlags bindingAttr)
+		{
+			// FIXME
 			throw new NotImplementedException ();
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern override EventInfo[] GetEvents (BindingFlags bindingAttr);
 
-		public override FieldInfo GetField( string name, BindingFlags bindingAttr) {
-			//FIXME
-			return null;
+		public override FieldInfo GetField (string name, BindingFlags bindingAttr)
+		{
+			// FIXME
+			throw new NotImplementedException ();
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		[MonoTODO]
 		public extern override FieldInfo[] GetFields (BindingFlags bindingAttr);
 
-		public override Type GetInterface (string name, bool ignoreCase) {
+		public override Type GetInterface (string name, bool ignoreCase)
+		{
+			// FIXME
 			throw new NotImplementedException ();
 		}
 
@@ -81,7 +97,8 @@ namespace System
 		[MonoTODO]
 		public extern override Type[] GetInterfaces();
 		
-		public override MemberInfo[] GetMembers( BindingFlags bindingAttr) {
+		public override MemberInfo[] GetMembers( BindingFlags bindingAttr)
+		{
 			// FIXME
 			throw new NotImplementedException ();
 		}
@@ -89,14 +106,19 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern override MethodInfo[] GetMethods (BindingFlags bindingAttr);
 
-		protected override MethodInfo GetMethodImpl( string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) {
+		protected override MethodInfo GetMethodImpl (string name, BindingFlags bindingAttr,
+							     Binder binder,
+							     CallingConventions callConvention,
+							     Type[] types, ParameterModifier[] modifiers)
+		{
 			// FIXME
-			return null;
+			throw new NotImplementedException ();
 		}
 		
-		public override Type GetNestedType( string name, BindingFlags bindingAttr) {
+		public override Type GetNestedType( string name, BindingFlags bindingAttr)
+		{
 			// FIXME
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -106,10 +128,14 @@ namespace System
 		public extern override PropertyInfo[] GetProperties( BindingFlags bindingAttr);
 
 		[MonoTODO]
-		protected override PropertyInfo GetPropertyImpl( string name, BindingFlags bindingAttr, Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers) {
+		protected override PropertyInfo GetPropertyImpl (string name, BindingFlags bindingAttr,
+								 Binder binder, Type returnType,
+								 Type[] types,
+								 ParameterModifier[] modifiers)
+		{
 			// fixme: needs to use the binder, and send the modifiers to that binder
 			if (null == name || types == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException ();
 			
 			PropertyInfo ret = null;
 			PropertyInfo [] props = GetProperties(bindingAttr);
@@ -138,44 +164,63 @@ namespace System
 			return ret;
 		}
 
-		protected override bool HasElementTypeImpl () {
+		protected override bool HasElementTypeImpl ()
+		{
 			return IsArrayImpl() || IsByRefImpl() || IsPointerImpl ();
 		}
 
-		protected override bool IsArrayImpl () {
+		protected override bool IsArrayImpl ()
+		{
 			return type_is_subtype_of (this, typeof (System.Array), false);
 		}
-		protected override bool IsByRefImpl () {
+
+		protected override bool IsByRefImpl ()
+		{
 			MonoTypeInfo info;
+
 			get_type_info (_impl, out info);
 			return info.isbyref;
 		}
-		protected override bool IsCOMObjectImpl () {
+
+		protected override bool IsCOMObjectImpl ()
+		{
 			return false;
 		}
-		protected override bool IsPointerImpl () {
+
+		protected override bool IsPointerImpl ()
+		{
 			MonoTypeInfo info;
+
 			get_type_info (_impl, out info);
 			return info.ispointer;
 		}
-		protected override bool IsPrimitiveImpl () {
+
+		protected override bool IsPrimitiveImpl ()
+		{
 			MonoTypeInfo info;
+
 			get_type_info (_impl, out info);
 			return info.isprimitive;
 		}
-		protected override bool IsValueTypeImpl () {
+
+		protected override bool IsValueTypeImpl ()
+		{
 			return type_is_subtype_of (this, typeof (System.ValueType), false) &&
 				this != typeof (System.ValueType) &&
 				this != typeof (System.Enum);
 		}
 		
-		public override object InvokeMember( string name, BindingFlags invokeAttr, Binder binder, object target, object[] args, ParameterModifier[] modifiers, CultureInfo culture, string[] namedParameters) {
+		public override object InvokeMember (string name, BindingFlags invokeAttr,
+						     Binder binder, object target, object[] args,
+						     ParameterModifier[] modifiers,
+						     CultureInfo culture, string[] namedParameters)
+		{
 			// FIXME
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern override Type GetElementType();
+		public extern override Type GetElementType ();
 
 		public override Type UnderlyingSystemType {
 			get {
@@ -217,7 +262,9 @@ namespace System
 		}
 
 		public override Guid GUID {
-			get {return Guid.Empty;}
+			get {
+				return Guid.Empty;
+			}
 		}
 
 		public override bool IsDefined (Type attributeType, bool inherit)
@@ -275,8 +322,10 @@ namespace System
 			}
 		}
 
-		public override int GetArrayRank () {
+		public override int GetArrayRank ()
+		{
 			MonoTypeInfo info;
+			
 			get_type_info (_impl, out info);
 			return info.rank;
 		}
