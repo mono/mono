@@ -1,5 +1,10 @@
 2004-07-17  Martin Baulig  <martin@ximian.com>
 
+	* reflection.c (mono_reflection_bind_generic_method_parameters):
+	Set `gmethod->reflection_info'.
+
+2004-07-17  Martin Baulig  <martin@ximian.com>
+
 	* class.c (mono_class_create_from_typedef): Insert the newly
 	created class into the hash table before computing the interfaces
 	since we could be called recursively.
