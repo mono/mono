@@ -6,9 +6,9 @@
 
 Structure: Divided by compilation phase.
 
-Lexical Analysis: We use the Antlr [1] lexer generator for
-producing the one needed for our compiler. But, the Microsoft.JScript
-namespace, exposes some classes related to that task. Those are:
+Lexical Analysis: We use a ported version of the parser from Mozilla's
+Rhino (Token.cs, TokenStream.cs and Parser.cs)
+The public API exposed by namespace Microsoft.JScript are:
 - JSToken
 - JSScanner
 - Context
