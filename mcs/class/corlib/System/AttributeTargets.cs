@@ -53,8 +53,15 @@ namespace System
 		Parameter = 0x00000800,
 		Delegate = 0x00001000,
 		ReturnValue = 0x00002000,
+
+#if NET_2_0
+		GenericParameter = 0x00004000,
+		All = Assembly | Module | Class | Struct | Enum | Constructor |
+			Method | Property | Field | Event | Interface | Parameter | Delegate | ReturnValue | GenericParameter
+#else
 		All = Assembly | Module | Class | Struct | Enum | Constructor |
 			Method | Property | Field | Event | Interface | Parameter | Delegate | ReturnValue
+#endif
 	}
 }
 

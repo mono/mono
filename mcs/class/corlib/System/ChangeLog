@@ -1,5 +1,7 @@
 2004-10-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* AttributeTargets.cs: Add 2.0 GenericParameter value.
+
 	* Environment.cs: Bump corlib version.
 
 2004-10-02  Zoltan Varga  <vargaz@freemail.hu>
