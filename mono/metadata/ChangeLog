@@ -1,4 +1,8 @@
 
+Wed Jun 18 15:26:58 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: avoid infinite loop in GetTimeZoneData.
+
 Wed Jun 18 12:47:43 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: added Marshal.Prelink/All icalls.
