@@ -1,5 +1,10 @@
 2003-01-08  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlTextReader.cs : bugfix for attributes related to creation of 
+	  XmlAttribute *node*.
+
+2003-01-08  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlTextReader.cs : bugfix for attribute values which have entity
 	  references.
 

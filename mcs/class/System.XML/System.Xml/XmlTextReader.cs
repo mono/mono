@@ -537,7 +537,7 @@ namespace System.Xml
 					value += attributeString.Substring (attributeStringCurrentPosition,
 						nextPosition - attributeStringCurrentPosition);
 					attributeStringCurrentPosition = nextPosition;
-					break;
+					continue;
 				}
 			}
 
