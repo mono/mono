@@ -1,3 +1,10 @@
+2004-12-11  Martin Baulig  <martin@ximian.com>
+
+	* get.c (dis_stringify_type): Added `gboolean is_def' argument; if
+	false, display type parameters as numbers and not as names.
+	(dis_stringify_object_with_class): Added `gboolean is_def' argument.
+	(dis_stringify_array): Likewise.
+
 2004-12-10  Martin Baulig  <martin@ximian.com>
 
 	* get.c (init_key_table): Added `type'.
