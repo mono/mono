@@ -1,3 +1,8 @@
+2004-12-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (mono_assembly_get_object): Add a workaround so __MetadataTypes won't
+	be visible in other appdomains.
+
 2004-12-07  Ben Maurer  <bmaurer@ximian.com>
 
 	* threads.c: Interlocked inc and dec for longs were messed up,
