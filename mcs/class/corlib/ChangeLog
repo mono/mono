@@ -1,3 +1,8 @@
+2002-08-15  Tim Coleman <tim@timcoleman.com>
+	* unix.args: 
+		Add System.Globalization/TextInfo.cs
+		Add System.Runtime.Serialization/FormatterConverter.cs
+
 2002-07-31  Rodrigo Moya <rodrigo@ximian.com>
 
 	* unix.args: added new files from System.Runtime.Remoting.Channels.

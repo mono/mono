@@ -207,6 +207,7 @@ System.Globalization/NumberFormatInfo.cs
 System.Globalization/NumberStyles.cs
 System.Globalization/RegionInfo.cs
 System.Globalization/TaiwanCalendar.cs
+System.Globalization/TextInfo.cs
 System.Globalization/ThaiBuddhistCalendar.cs
 System.Globalization/UnicodeCategory.cs
 System.IO/BinaryReader.cs
@@ -539,6 +540,7 @@ System.Runtime.Remoting.Metadata/XmlFieldOrderOption.cs
 System.Runtime.Remoting.Proxies/RealProxy.cs
 System.Runtime.Remoting.Proxies/ProxyAttribute.cs
 System.Runtime.Remoting.Services/ITrackingHandler.cs
+System.Runtime.Serialization/FormatterConverter.cs
 System.Runtime.Serialization/IDeserializationCallback.cs
 System.Runtime.Serialization/IFormatter.cs
 System.Runtime.Serialization/IFormatterConverter.cs
