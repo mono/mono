@@ -1415,7 +1415,7 @@ namespace nist_dom.fundamental
             string computedValue = "";
             System.Xml.XmlEntity entityNode = null;
             System.Xml.XmlElement entityDesc = null;
-            string expectedValue = util.NO_MODIFICATION_ALLOWED_ERR;
+            string expectedValue = "System.ArgumentException";//util.NO_MODIFICATION_ALLOWED_ERR;
 
             testResults results = new testResults("Core0024E");
             try
@@ -1437,7 +1437,7 @@ namespace nist_dom.fundamental
                 }
                 catch(System.Exception ex) 
                 {
-                    computedValue = ex.Message; 
+                    computedValue = ex.GetType ().FullName; 
                 }
             }
             catch(System.Exception ex)
@@ -1475,7 +1475,7 @@ namespace nist_dom.fundamental
             string computedValue = "";
             System.Xml.XmlEntity entityNode = null;
             System.Xml.XmlElement entityDesc = null;
-            string expectedValue = util.NO_MODIFICATION_ALLOWED_ERR;
+            string expectedValue = "System.ArgumentException";//util.NO_MODIFICATION_ALLOWED_ERR;
 
             testResults results = new testResults("Core0025E");
             try
@@ -1496,7 +1496,7 @@ namespace nist_dom.fundamental
                 }
                 catch(System.Exception ex) 
                 {
-                    computedValue = ex.Message; 
+                    computedValue = ex.GetType ().FullName; 
                 }
             }
             catch(System.Exception ex)
@@ -1536,7 +1536,7 @@ namespace nist_dom.fundamental
             System.Xml.XmlEntity entityNode = null;
             System.Xml.XmlElement entityDesc = null;
             System.Xml.XmlAttribute newAttr = (System.Xml.XmlAttribute)util.createNode(util.ATTRIBUTE_NODE,"newAttribute");
-            string expectedValue = util.NO_MODIFICATION_ALLOWED_ERR;
+            string expectedValue = "System.ArgumentException";//util.NO_MODIFICATION_ALLOWED_ERR;
 
             testResults results = new testResults("Core0026E");
             try
@@ -1557,7 +1557,7 @@ namespace nist_dom.fundamental
                 }
                 catch(System.Exception ex) 
                 {
-                    computedValue = ex.Message; 
+                    computedValue = ex.GetType ().FullName; 
                 }
             }
             catch(System.Exception ex)
@@ -1597,7 +1597,7 @@ namespace nist_dom.fundamental
             System.Xml.XmlEntity entityNode = null;
             System.Xml.XmlElement entityDesc = null;
             System.Xml.XmlAttribute oldAttribute = null;
-            string expectedValue = util.NO_MODIFICATION_ALLOWED_ERR;
+            string expectedValue = "System.ArgumentException";//util.NO_MODIFICATION_ALLOWED_ERR;
 
             testResults results = new testResults("Core0027E");
             try
@@ -1620,7 +1620,7 @@ namespace nist_dom.fundamental
                 }
                 catch(System.Exception ex) 
                 {
-                    computedValue = ex.Message; 
+                    computedValue = ex.GetType ().FullName; 
                 }
             }
             catch(System.Exception ex)
@@ -1795,7 +1795,7 @@ namespace nist_dom.fundamental
             string computedValue = "";
             System.Xml.XmlElement addressElement = null;
             System.Xml.XmlAttribute oldAttribute = (System.Xml.XmlAttribute)util.createNode(util.ATTRIBUTE_NODE,"oldAttribute");
-            string expectedValue = util.NOT_FOUND1_ERR;
+            string expectedValue = "System.ArgumentException";//util.NOT_FOUND1_ERR;
 
             testResults results = new testResults("Core0030E");
             try
@@ -1814,9 +1814,9 @@ namespace nist_dom.fundamental
                 {
                     addressElement.RemoveAttributeNode(oldAttribute);//.node.
                 }
-                catch(System.Exception ex) 
+                catch(ArgumentException ex) 
                 {
-                    computedValue = ex.Message; 
+                    computedValue = ex.GetType ().FullName; 
                 }
             }
             catch(System.Exception ex)

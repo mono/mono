@@ -1160,7 +1160,7 @@ namespace nist_dom.fundamental
 			string computedValue = "";
 			System.Xml.XmlNode testNode = null;
 			System.Xml.XmlText readOnlyText = null;
-			string expectedValue = util.NO_MODIFICATION_ALLOWED_ERR;
+			string expectedValue = "System.ArgumentException";//util.NO_MODIFICATION_ALLOWED_ERR;
 
 			testResults results = new testResults("Core0021C");
 			try
@@ -1179,12 +1179,12 @@ namespace nist_dom.fundamental
 				{
 					readOnlyText.Data = "ABCD";
 				}
-				catch(System.Exception ex) 
+				catch (ArgumentException ex) 
 				{
-					computedValue = ex.Message; 
+					computedValue = ex.GetType ().FullName; 
 				}
 			}
-			catch(System.Exception ex)
+			catch(InvalidOperationException ex)
 			{
 				computedValue = "Exception " + ex.Message;
 			}
@@ -1222,7 +1222,7 @@ namespace nist_dom.fundamental
 			string computedValue = "";
 			System.Xml.XmlNode testNode = null;
 			System.Xml.XmlCharacterData readOnlyNode = null;
-			string expectedValue = util.NO_MODIFICATION_ALLOWED_ERR;
+			string expectedValue = "System.ArgumentException";//util.NO_MODIFICATION_ALLOWED_ERR;
 
 			testResults results = new testResults("Core0022C");
 			try
@@ -1242,9 +1242,9 @@ namespace nist_dom.fundamental
 				{
 					readOnlyNode.AppendData("002");
 				}
-				catch(System.Exception ex) 
+				catch(ArgumentException ex) 
 				{
-					computedValue = ex.Message; 
+					computedValue = ex.GetType ().FullName; 
 				}
 			}
 			catch(System.Exception ex)
@@ -1284,7 +1284,7 @@ namespace nist_dom.fundamental
 			string computedValue = "";
 			System.Xml.XmlNode testNode = null;
 			System.Xml.XmlCharacterData readOnlyNode = null;
-			string expectedValue = util.NO_MODIFICATION_ALLOWED_ERR;
+			string expectedValue = "System.ArgumentException";//util.NO_MODIFICATION_ALLOWED_ERR;
 
 			testResults results = new testResults("Core0023C");
 			try
@@ -1304,9 +1304,9 @@ namespace nist_dom.fundamental
 				{
 					readOnlyNode.InsertData(2,"ABCD");
 				}
-				catch(System.Exception ex) 
+				catch(ArgumentException ex) 
 				{
-					computedValue = ex.Message; 
+					computedValue = ex.GetType ().FullName; 
 				}
 			}
 			catch(System.Exception ex)
@@ -1346,7 +1346,7 @@ namespace nist_dom.fundamental
 			string computedValue = "";
 			System.Xml.XmlCharacterData readOnlyNode = null;
 			System.Xml.XmlNode testNode = null;
-			string expectedValue = util.NO_MODIFICATION_ALLOWED_ERR;
+			string expectedValue = "System.ArgumentException";//util.NO_MODIFICATION_ALLOWED_ERR;
 
 			testResults results = new testResults("Core0024C");
 			try
@@ -1369,7 +1369,7 @@ namespace nist_dom.fundamental
 				}
 				catch(System.Exception ex) 
 				{
-					computedValue = ex.Message; 
+					computedValue = ex.GetType ().FullName; 
 				}
 			}
 			catch(System.Exception ex)
@@ -1409,7 +1409,7 @@ namespace nist_dom.fundamental
 			string computedValue = "";
 			System.Xml.XmlCharacterData readOnlyNode = null;
 			System.Xml.XmlNode testNode = null;
-			string expectedValue = util.NO_MODIFICATION_ALLOWED_ERR;
+			string expectedValue = "System.ArgumentException";//util.NO_MODIFICATION_ALLOWED_ERR;
 
 			testResults results = new testResults("Core0025C");
 			try
@@ -1432,7 +1432,7 @@ namespace nist_dom.fundamental
 				}
 				catch(System.Exception ex) 
 				{
-					computedValue = ex.Message; 
+					computedValue = ex.GetType ().FullName; 
 				}
 			}
 			catch(System.Exception ex)

@@ -265,7 +265,7 @@ namespace nist_dom.fundamental
             string computedValue = "";
             System.Xml.XmlNode testNode = null;
             System.Xml.XmlNode entRefNode = null;
-            int expectedValue = util.ENTITY_REFERENCE_NODE;
+            string expectedValue = XmlNodeType.EntityReference.ToString ();//util.ENTITY_REFERENCE_NODE;
 
             testResults results = new testResults("Core0005NO");
             try
@@ -4239,7 +4239,7 @@ namespace nist_dom.fundamental
                 else
                     expectedValue = "street domestic";
             }
-            catch(System.Exception ex)
+            catch(Exception ex)
             {
                 computedValue = "Exception " + ex.Message;
             }
@@ -4276,7 +4276,7 @@ namespace nist_dom.fundamental
             string computedValue = "";
             System.Xml.XmlEntity testNode = null;
             System.Xml.XmlText entityDesc = null;
-            string expectedValue = util.NO_MODIFICATION_ALLOWED_ERR;
+            string expectedValue = "System.ArgumentException";//util.NO_MODIFICATION_ALLOWED_ERR;
 
             testResults results = new testResults("Core0087NO");
             try
@@ -4298,7 +4298,7 @@ namespace nist_dom.fundamental
                 }
                 catch(System.Exception ex) 
                 {
-                    computedValue = ex.Message; 
+                    computedValue = ex.GetType ().FullName; 
                 }
             }
             catch(System.Exception ex)
@@ -4341,7 +4341,7 @@ namespace nist_dom.fundamental
             System.Xml.XmlEntityReference entityRefNode = null;
             System.Xml.XmlNode refChild = null;
             System.Xml.XmlElement newChild = (System.Xml.XmlElement)util.createNode(util.ELEMENT_NODE,"newChild");
-            string expectedValue = util.NO_MODIFICATION_ALLOWED_ERR;
+            string expectedValue = "System.InvalidOperationException";//util.NO_MODIFICATION_ALLOWED_ERR;
  
             testResults results = new testResults("Core0088NO");
             try
@@ -4363,9 +4363,9 @@ namespace nist_dom.fundamental
                 {
                     entityRefNode.InsertBefore(newChild,refChild);
                 }
-                catch(System.Exception ex) 
+                catch(InvalidOperationException ex) 
                 {
-                    computedValue = ex.Message; 
+                    computedValue = ex.GetType ().FullName; 
                 }
             }
             catch(System.Exception ex)
@@ -4407,7 +4407,7 @@ namespace nist_dom.fundamental
             System.Xml.XmlEntityReference entityRefNode = null;
             System.Xml.XmlNode oldChild = null;
             System.Xml.XmlElement newChild = (System.Xml.XmlElement)util.createNode(util.ELEMENT_NODE,"newChild");
-            string expectedValue = util.NO_MODIFICATION_ALLOWED_ERR;
+            string expectedValue = "System.ArgumentException";//util.NO_MODIFICATION_ALLOWED_ERR;
 
             testResults results = new testResults("Core0089NO");
             try
@@ -4429,9 +4429,9 @@ namespace nist_dom.fundamental
                 {
                     entityRefNode.ReplaceChild(newChild,oldChild);
                 }
-                catch(System.Exception ex) 
+                catch(ArgumentException ex) 
                 {
-                    computedValue = ex.Message; 
+                    computedValue = ex.GetType ().FullName; 
                 }
             }
             catch(System.Exception ex)
@@ -4470,7 +4470,7 @@ namespace nist_dom.fundamental
             System.Xml.XmlEntityReference entityRefNode = null;
             System.Xml.XmlNode testNode = null;
             System.Xml.XmlNode oldChild = null;
-            string expectedValue = util.NO_MODIFICATION_ALLOWED_ERR;
+            string expectedValue = "System.ArgumentException";//util.NO_MODIFICATION_ALLOWED_ERR;
 
             testResults results = new testResults("Core0090NO");
             try
@@ -4492,9 +4492,9 @@ namespace nist_dom.fundamental
                 {
                     entityRefNode.RemoveChild(oldChild);
                 }
-                catch(System.Exception ex) 
+                catch(ArgumentException ex) 
                 {
-                    computedValue = ex.Message; 
+                    computedValue = ex.GetType ().FullName; 
                 }
             }
             catch(System.Exception ex)
@@ -4536,7 +4536,7 @@ namespace nist_dom.fundamental
             System.Xml.XmlEntityReference entityRefNode = null;
             System.Xml.XmlNode testNode = null;
             System.Xml.XmlElement newChild = (System.Xml.XmlElement)util.createNode(util.ELEMENT_NODE,"newChild");
-            string expectedValue = util.NO_MODIFICATION_ALLOWED_ERR;
+            string expectedValue = "System.InvalidOperationException";//util.NO_MODIFICATION_ALLOWED_ERR;
 
             testResults results = new testResults("Core0091NO");
             try
@@ -4557,9 +4557,9 @@ namespace nist_dom.fundamental
                 {
                     entityRefNode.AppendChild(newChild);
                 }
-                catch(System.Exception ex) 
+                catch(InvalidOperationException ex) 
                 {
-                    computedValue = ex.Message; 
+                    computedValue = ex.GetType ().FullName; 
                 }
             }
             catch(System.Exception ex)
@@ -4786,7 +4786,7 @@ namespace nist_dom.fundamental
             System.Xml.XmlNode newChild = null;
             System.Xml.XmlNode oldChild = null;
             System.Xml.XmlElement testNode = null;
-            string expectedValue = "System.ArgumentException";
+            string expectedValue = "System.InvalidOperationException";
 
             testResults results = new testResults("Core0095NO");
             try
@@ -4807,7 +4807,7 @@ namespace nist_dom.fundamental
                 {
                     testNode.ReplaceChild(newChild,oldChild);//.node.
                 }
-                catch(System.Exception ex) 
+                catch(InvalidOperationException ex) 
                 {
                     computedValue = ex.GetType().ToString(); 
                 }
@@ -4971,7 +4971,7 @@ namespace nist_dom.fundamental
             System.Xml.XmlElement newChild = (System.Xml.XmlElement)util.createNode(util.ELEMENT_NODE,"newChild");
             System.Xml.XmlElement refChild = (System.Xml.XmlElement)util.createNode(util.ELEMENT_NODE,"refChild");
             System.Xml.XmlNode testNode = null;
-            string expectedValue = util.NOT_FOUND2_ERR;
+            string expectedValue = "System.ArgumentException";//util.NOT_FOUND2_ERR;
 
             testResults results = new testResults("Core0098NO");
             try
@@ -4991,9 +4991,9 @@ namespace nist_dom.fundamental
                 {
                     testNode.InsertBefore(newChild,refChild);//.node.
                 }
-                catch(System.Exception ex) 
+                catch(ArgumentException ex) 
                 {
-                    computedValue = ex.Message; 
+                    computedValue = ex.GetType ().FullName; 
                 }
             }
             catch(System.Exception ex)
@@ -5032,7 +5032,7 @@ namespace nist_dom.fundamental
             System.Xml.XmlElement newChild = (System.Xml.XmlElement)util.createNode(util.ELEMENT_NODE,"newChild");
             System.Xml.XmlElement oldChild = (System.Xml.XmlElement)util.createNode(util.ELEMENT_NODE,"oldChild");
             System.Xml.XmlNode testNode = null;
-            string expectedValue = util.NOT_FOUND2_ERR;
+            string expectedValue = "System.ArgumentException";//util.NOT_FOUND2_ERR;
 
             testResults results = new testResults("Core0099NO");
             try
@@ -5051,9 +5051,9 @@ namespace nist_dom.fundamental
                 {
                     testNode.ReplaceChild(newChild,oldChild);//.node.
                 }
-                catch(System.Exception ex) 
+                catch(ArgumentException ex) 
                 {
-                    computedValue = ex.Message; 
+                    computedValue = ex.GetType ().FullName; 
                 }
             }
             catch(System.Exception ex)
@@ -5091,7 +5091,7 @@ namespace nist_dom.fundamental
             string computedValue = "";
             System.Xml.XmlElement oldChild = (System.Xml.XmlElement)util.createNode(util.ELEMENT_NODE,"oldChild");
             System.Xml.XmlNode testNode = null;
-            string expectedValue = util.NOT_FOUND3_ERR;
+            string expectedValue = typeof (ArgumentException).FullName;//util.NOT_FOUND3_ERR;
 
             testResults results = new testResults("Core0100NO");
             try
@@ -5110,9 +5110,9 @@ namespace nist_dom.fundamental
                 {
                     testNode.RemoveChild(oldChild);//.node.
                 }
-                catch(System.Exception ex) 
+                catch(ArgumentException ex) 
                 {
-                    computedValue = ex.Message; 
+                    computedValue = ex.GetType ().FullName; 
                 }
             }
             catch(System.Exception ex)

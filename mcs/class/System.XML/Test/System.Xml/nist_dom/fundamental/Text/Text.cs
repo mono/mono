@@ -546,7 +546,7 @@ namespace nist_dom.fundamental
             string computedValue = "";
             System.Xml.XmlNode testNode = null;
             System.Xml.XmlText readOnlyText = null;
-            string expectedValue = util.NO_MODIFICATION_ALLOWED_ERR;
+            string expectedValue = "System.ArgumentException";//util.NO_MODIFICATION_ALLOWED_ERR;
 
             testResults results = new testResults("Core0009T");
             try
@@ -565,9 +565,9 @@ namespace nist_dom.fundamental
                 {
                     readOnlyText.SplitText(5);
                 }
-                catch(System.Exception ex) 
+                catch(ArgumentException ex) 
                 {
-                    computedValue = ex.Message; 
+                    computedValue = ex.GetType ().FullName; 
                 }
 
             }

@@ -1042,7 +1042,7 @@ namespace nist_dom.fundamental
             System.Xml.XmlNode testNode = null;
             System.Xml.XmlNode entityDesc;
             System.Xml.XmlAttribute newAttrNode = (System.Xml.XmlAttribute)util.createNode(util.ATTRIBUTE_NODE,"newAttribute");
-            string expectedValue = util.NO_MODIFICATION_ALLOWED_ERR;
+            string expectedValue = "System.ArgumentException";//util.NO_MODIFICATION_ALLOWED_ERR;
 
             testResults results = new testResults("Core0019M");
 
@@ -1060,9 +1060,9 @@ namespace nist_dom.fundamental
             {
                 entityDesc.Attributes.SetNamedItem(newAttrNode);
             }
-            catch(System.Exception ex) 
+            catch(ArgumentException ex) 
             {
-                computedValue = ex.Message; 
+                computedValue = ex.GetType ().FullName; 
             }
 
 
@@ -1099,7 +1099,7 @@ namespace nist_dom.fundamental
             System.Xml.XmlAttribute inUseAttribute = null;
             System.Xml.XmlElement firstEmployee = null;
             System.Xml.XmlNode testNode = null;
-            string expectedValue = util.INUSE_ATTRIBUTE_ERR;
+            string expectedValue = "System.ArgumentException";//util.INUSE_ATTRIBUTE_ERR;
 
             testResults results = new testResults("Core0020M");
             try
@@ -1123,7 +1123,7 @@ namespace nist_dom.fundamental
                 }
                 catch (System.Exception ex) 
                 {
-                    computedValue = ex.Message; 
+                    computedValue = ex.GetType ().FullName; 
                 }
 
             }

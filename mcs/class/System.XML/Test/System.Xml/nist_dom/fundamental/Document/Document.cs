@@ -958,13 +958,13 @@ namespace nist_dom.fundamental
             }
             catch(System.Exception ex)
             {
-                computedValue = ex.Message;
+                computedValue = ex.GetType ().FullName;
             }
 
             //
             // Write out results.
             //
-            results.expected = expectedValue;
+            results.expected = typeof (ArgumentException).FullName; // MS.NET BUG: It never raise an error.
             results.actual = computedValue;
 
             util.resetData();
@@ -1016,13 +1016,13 @@ namespace nist_dom.fundamental
             }
             catch(System.Exception ex)
             {
-                computedValue = ex.Message;
+                computedValue = ex.GetType ().FullName;
             }
 
             //
             // Write out results.
             //
-            results.expected = expectedValue;
+            results.expected = typeof (ArgumentException).FullName; // MS.NET BUG: It never raises an error.
             results.actual = computedValue;
 
             util.resetData();
@@ -1051,7 +1051,7 @@ namespace nist_dom.fundamental
 	public void core0021D()
         {
             string computedValue = "";
-            string expectedValue = util.INVALID_CHARACTER_ERR;
+            string expectedValue = "System.Xml.XmlException";//util.INVALID_CHARACTER_ERR;
             System.Xml.XmlDocument testNode = null;
             System.Xml.XmlEntityReference invalidEntRef = null;
 
@@ -1072,9 +1072,9 @@ namespace nist_dom.fundamental
             {
                 invalidEntRef =  testNode.CreateEntityReference("invalid^Name");
             }
-            catch(System.Exception ex)
+            catch(XmlException ex)
             {
-                computedValue = ex.Message;
+                computedValue = ex.GetType ().FullName;
             }
             //
             // Write out results.
@@ -1109,7 +1109,7 @@ namespace nist_dom.fundamental
 	public void core0022D()
         {
             string computedValue = "";
-            string expectedValue = util.INVALID_CHARACTER_ERR;
+            string expectedValue = "System.Xml.XmlException";//util.INVALID_CHARACTER_ERR;
             System.Xml.XmlDocument testNode = null;
             System.Xml.XmlProcessingInstruction invalidPI = null;
 
@@ -1130,9 +1130,9 @@ namespace nist_dom.fundamental
             {
                 invalidPI =  testNode.CreateProcessingInstruction("invalid^target","data");
             }
-            catch(System.Exception ex)
+            catch(XmlException ex)
             {
-                computedValue = ex.Message;
+                computedValue = ex.GetType ().FullName;
             }
 
             //
@@ -1283,7 +1283,7 @@ namespace nist_dom.fundamental
 	public void core0025D()
         {
             string computedValue = "";
-            string expectedValue = util.NOT_SUPPORTED_ERR;
+            string expectedValue = "";//util.NOT_SUPPORTED_ERR;
             System.Xml.XmlDocument testNode = null;
             System.Xml.XmlEntityReference invalidEntRef = null;
 
