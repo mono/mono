@@ -381,7 +381,7 @@ namespace System.Security.Cryptography {
 				if (KeySizes.IsLegalKeySize (this.LegalBlockSizesValue, value))
 					this.BlockSizeValue = value;
 				else
-					throw new CryptographicException("block size not supported by algorithm");
+					throw new CryptographicException ("block size not supported by algorithm");
 			}
 		}
 
@@ -392,7 +392,7 @@ namespace System.Security.Cryptography {
 			get { return this.FeedbackSizeValue; }
 			set {
 				if (value > this.BlockSizeValue)
-					throw new CryptographicException("feedback size larger than block size");
+					throw new CryptographicException ("feedback size larger than block size");
 				else
 					this.FeedbackSizeValue = value;
 			}
@@ -404,19 +404,18 @@ namespace System.Security.Cryptography {
 		public virtual byte[] IV {
 			get {
 				if (this.IVValue == null)
-					GenerateIV();
+					GenerateIV ();
 
 				return this.IVValue;
 			}
 			set {
 				if (value == null)
-					throw new ArgumentNullException ("tried setting initial vector to null");
-					
-				if (value.Length * 8 != this.BlockSizeValue)
-					throw new CryptographicException ("IV length must match block size");
+					throw new ArgumentNullException ("value");
+				// compare bytes with bits
+				if ((value.Length << 3) > this.BlockSizeValue)
+					throw new CryptographicException ("IV length can't be greater than block size");
 				
-				this.IVValue = new byte [value.Length];
-				Array.Copy (value, 0, this.IVValue, 0, value.Length);
+				this.IVValue = (byte[]) value.Clone ();
 			}
 		}
 
@@ -426,20 +425,21 @@ namespace System.Security.Cryptography {
 		public virtual byte[] Key {
 			get {
 				if (this.KeyValue == null)
-					GenerateKey();
+					GenerateKey ();
 
 				return this.KeyValue;
 			}
 			set {
 				if (value == null)
-					throw new ArgumentNullException ("tried setting key to null");
+					throw new ArgumentNullException ("value");
+				// compare bytes with bits
+				int length = (value.Length << 3);
 
-				if (!KeySizes.IsLegalKeySize (this.LegalKeySizesValue, value.Length * 8))
+				if (!KeySizes.IsLegalKeySize (this.LegalKeySizesValue, length))
 					throw new CryptographicException ("key size not supported by algorithm");
 
-				this.KeySizeValue = value.Length * 8;
-				this.KeyValue = new byte [value.Length];
-				Array.Copy (value, 0, this.KeyValue, 0, value.Length);
+				this.KeySizeValue = length;
+				this.KeyValue = (byte[]) value.Clone ();
 			}
 		}
 		
@@ -477,7 +477,7 @@ namespace System.Security.Cryptography {
 		public virtual CipherMode Mode {
 			get { return this.ModeValue; }
 			set {
-				if (Enum.IsDefined( ModeValue.GetType (), value))
+				if (Enum.IsDefined (ModeValue.GetType (), value))
 					this.ModeValue = value;
 				else
 					throw new CryptographicException ("padding mode not available");
