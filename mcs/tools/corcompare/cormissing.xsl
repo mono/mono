@@ -83,13 +83,26 @@
 	</xsl:template>
 
 
-	<!-- class -->
 	<xsl:template match="namespace/classes">
+		<xsl:apply-templates select="interface">
+			<xsl:sort select="@name"/>
+		</xsl:apply-templates>
 		<xsl:apply-templates select="class">
+			<xsl:sort select="@name"/>
+		</xsl:apply-templates>
+		<xsl:apply-templates select="struct">
+			<xsl:sort select="@name"/>
+		</xsl:apply-templates>
+		<xsl:apply-templates select="delegate">
+			<xsl:sort select="@name"/>
+		</xsl:apply-templates>
+		<xsl:apply-templates select="enum">
 			<xsl:sort select="@name"/>
 		</xsl:apply-templates>
 	</xsl:template>
 
+
+	<!-- class -->
 	<xsl:template match="classes/class">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
@@ -102,13 +115,7 @@
 
 
 	<!-- struct -->
-	<xsl:template match="namespace/structs">
-		<xsl:apply-templates select="struct">
-			<xsl:sort select="@name"/>
-		</xsl:apply-templates>
-	</xsl:template>
-
-	<xsl:template match="structs/struct">
+	<xsl:template match="classes/struct">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">s</xsl:with-param>
@@ -118,14 +125,19 @@
 	</xsl:template>
 
 
-	<!-- delegate -->
-	<xsl:template match="namespace/delegates">
-		<xsl:apply-templates select="delegate">
-			<xsl:sort select="@name"/>
-		</xsl:apply-templates>
+	<!-- interface -->
+	<xsl:template match="classes/interface">
+		<DIV>
+			<xsl:call-template name="ELEMENT">
+				<xsl:with-param name="class">i</xsl:with-param>
+			</xsl:call-template>
+			<xsl:apply-templates/>
+		</DIV>
 	</xsl:template>
 
-	<xsl:template match="delegates/delegate">
+
+	<!-- delegate -->
+	<xsl:template match="classes/delegate">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">d</xsl:with-param>
@@ -136,13 +148,7 @@
 
 
 	<!-- enumeration -->
-	<xsl:template match="namespace/enumerations">
-		<xsl:apply-templates select="enumeration">
-			<xsl:sort select="@name"/>
-		</xsl:apply-templates>
-	</xsl:template>
-
-	<xsl:template match="enumerations/enumeration">
+	<xsl:template match="classes/enum">
 		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">en</xsl:with-param>
@@ -153,7 +159,7 @@
 
 
 	<!-- method -->
-	<xsl:template match="class/methods">
+	<xsl:template match="methods">
 		<xsl:apply-templates select="method">
 			<xsl:sort select="@name"/>
 		</xsl:apply-templates>
@@ -170,7 +176,7 @@
 
 
 	<!-- property -->
-	<xsl:template match="class/properties">
+	<xsl:template match="properties">
 		<xsl:apply-templates select="property">
 			<xsl:sort select="@name"/>
 		</xsl:apply-templates>
@@ -187,7 +193,7 @@
 
 
 	<!-- event -->
-	<xsl:template match="class/events">
+	<xsl:template match="events">
 		<xsl:apply-templates select="event">
 			<xsl:sort select="@name"/>
 		</xsl:apply-templates>
@@ -204,7 +210,7 @@
 
 
 	<!-- constructor -->
-	<xsl:template match="class/constructors">
+	<xsl:template match="constructors">
 		<xsl:apply-templates select="constructor">
 			<xsl:sort select="@name"/>
 		</xsl:apply-templates>
@@ -222,7 +228,7 @@
 
 
 	<!-- field -->
-	<xsl:template match="class/fields">
+	<xsl:template match="fields">
 		<xsl:apply-templates select="field">
 			<xsl:sort select="@name"/>
 		</xsl:apply-templates>
