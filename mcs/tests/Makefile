@@ -155,7 +155,7 @@ test-unsafe-compiler-jit:
 #
 # Tests that require separate compilation
 #
-multi: multi-1 multi-2 multi-3
+multi: multi-1 multi-2 multi-3 multi-5
 	echo Multi-assembly test passes
 
 multi-1:
@@ -185,3 +185,9 @@ multi-4:
 	$(INTERNAL_MCS) /target:module module-2.cs
 	$(INTERNAL_MCS) /addmodule:module-1.netmodule /addmodule:module-2.netmodule module-3.cs
 	$(TEST_RUNTIME) module-3.exe
+
+multi-5:
+	$(INTERNAL_MCS) /target:library dll-2.cs
+	$(INTERNAL_MCS) /r:dll-2.dll prog-2.cs /out:prog-2.exe
+	$(TEST_RUNTIME) prog-2.exe
+
