@@ -1,3 +1,9 @@
+2002-07-22  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg (LOCALLOC): align to MONO_FRAME_ALIGNMENT
+
+	* emit-x86.c (arch_get_argument_info): impl.
+
 2002-07-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* exception.c (arch_handle_exception): Memory leak fix.
