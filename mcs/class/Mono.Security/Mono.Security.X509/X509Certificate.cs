@@ -174,8 +174,8 @@ namespace Mono.Security.X509 {
 				// keep a copy of the original data
 				m_encodedcert = (byte[]) data.Clone ();
 			}
-			catch {
-				throw new CryptographicException (e);
+			catch (Exception ex) {
+				throw new CryptographicException (e, ex);
 			}
 		}
 
