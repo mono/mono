@@ -1,5 +1,11 @@
 2004-04-29  Martin Baulig  <martin@ximian.com>
 
+	* ecore.cs (PropertyExpr.FindAccessor): New private method.  Walk
+	the list of PropertyInfo's in class hierarchy and find the
+	accessor.  Fixes #56013.
+
+2004-04-29  Martin Baulig  <martin@ximian.com>
+
 	* typemanager.cs (TypeManager.CheckStructCycles): Fixed.
 
 2004-04-29  Martin Baulig  <martin@ximian.com>
