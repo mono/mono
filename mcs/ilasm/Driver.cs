@@ -24,6 +24,9 @@ namespace Mono.ILASM {
 
                 public static int Main (string[] args)
                 {
+                        // Do everything in Invariant
+			System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+
                         DriverMain driver = new DriverMain (args);
                         try {
                                 driver.Run ();

@@ -1,3 +1,7 @@
+2004-06-04  Jackson Harper  <jackson@ximian.com>
+
+	* Driver.cs: Do everything using the invariant culture.
+	
 2004-04-26  Jackson Harper  <jackson@ximian.com>
 
 	* Makefile: Get libs from the default profile directory
