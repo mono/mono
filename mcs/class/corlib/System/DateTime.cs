@@ -526,7 +526,7 @@ namespace System
 
 		public static DateTime Parse (string s, IFormatProvider fp)
 		{
-			return Parse (s, null, DateTimeStyles.AllowWhiteSpaces);
+			return Parse (s, fp, DateTimeStyles.AllowWhiteSpaces);
 		}
 
 		public static DateTime Parse (string s, IFormatProvider fp, DateTimeStyles styles)

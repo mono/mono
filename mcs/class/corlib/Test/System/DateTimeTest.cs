@@ -611,6 +611,16 @@ public class DateTimeTest : Assertion
 		AssertEquals ("H16", t2.Ticks, t1.Ticks);
 	}
 
+	[Test]
+	[ExpectedException(typeof (FormatException))]
+	public void ParseFormatException1 ()
+	{
+		// Following string is not a correct French date i.e. dd/mm/yyyy.
+		String frDateTime = "11/13/2003 11:28:15";
+	        IFormatProvider format = new System.Globalization.CultureInfo("fr-FR", true);
+		DateTime t1 = DateTime.Parse(frDateTime, format);
+	}
+
 	public void TestOA ()
 	{
 		double number=5000.41443;

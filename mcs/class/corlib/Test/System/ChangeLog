@@ -1,3 +1,8 @@
+2003-12-06  Ravindra <rkumar@novell.com>
+
+	* DateTimeTest.cs: Added a test case for Parse(String, format).
+	Bug #51464.
+
 2003-11-14  Nick Drochak <ndrochak@gol.com>
 
 	* FloatingPointFormatterTest.cs: Make test pass on .NET 1.1.
