@@ -412,6 +412,12 @@ namespace Mono.CSharp {
 			get { return gt.IsSealed; }
 		}
 
+		public override TypeExpr[] GetInterfaces ()
+		{
+			TypeExpr[] ifaces = TypeManager.GetInterfaces (gt);
+			return ifaces;
+		}
+
 		public override string Name {
 			get {
 				return full_name;

@@ -1,3 +1,7 @@
+2003-11-15  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (ConstructedType.GetInterfaces): Override this.
+
 2003-11-14  Martin Baulig  <martin@ximian.com>
 
 	* interface.cs (Interface.DefineType): Define all type parameters
