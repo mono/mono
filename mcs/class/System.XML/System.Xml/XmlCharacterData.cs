@@ -57,11 +57,12 @@ namespace System.Xml
 			get { return data; }
 			
 			set {
-				OwnerDocument.onNodeChanging (this, this.ParentNode);
+				string old = data;
+				OwnerDocument.onNodeChanging (this, this.ParentNode, old, value);
 
 				data = value;
 
-				OwnerDocument.onNodeChanged (this, this.ParentNode);
+				OwnerDocument.onNodeChanged (this, this.ParentNode, old, value);
 			}
 		}
 
@@ -93,15 +94,15 @@ namespace System.Xml
 
 		public virtual void AppendData (string strData)
 		{
-			OwnerDocument.onNodeChanging (this, this.ParentNode);
-			data += strData;
-			OwnerDocument.onNodeChanged (this, this.ParentNode);
+			string oldData = data;
+			string newData = data += strData;
+			OwnerDocument.onNodeChanging (this, this.ParentNode, oldData, newData);
+			data = newData;
+			OwnerDocument.onNodeChanged (this, this.ParentNode, oldData, newData);
 		}
 
 		public virtual void DeleteData (int offset, int count)
 		{
-			OwnerDocument.onNodeChanging (this, this.ParentNode);
-
 			if (offset < 0)
 				throw new ArgumentOutOfRangeException ("offset", "Must be non-negative and must not be greater than the length of this instance.");
 
@@ -110,27 +111,33 @@ namespace System.Xml
 			if ((offset + count) < data.Length)
 				newCount = count;
 
-			data = data.Remove (offset, newCount);
+			string oldValue = data;
+			string newValue = data.Remove (offset, newCount);
+
+			OwnerDocument.onNodeChanging (this, this.ParentNode, oldValue, newValue);
+
+			data = newValue;
 			
-			OwnerDocument.onNodeChanged (this, this.ParentNode);
+			OwnerDocument.onNodeChanged (this, this.ParentNode, oldValue, newValue);
 		}
 
 		public virtual void InsertData (int offset, string strData)
 		{
-			OwnerDocument.onNodeChanging (this, this.ParentNode);
-
 			if ((offset < 0) || (offset > data.Length))
 				throw new ArgumentOutOfRangeException ("offset", "Must be non-negative and must not be greater than the length of this instance.");
 
-			data = data.Insert(offset, strData);
+			string oldData = data;
+			string newData = data.Insert(offset, strData);
 			
-			OwnerDocument.onNodeChanged (this, this.ParentNode);
+			OwnerDocument.onNodeChanging (this, this.ParentNode, oldData, newData);
+
+			data = newData;
+
+			OwnerDocument.onNodeChanged (this, this.ParentNode, oldData, newData);
 		}
 
 		public virtual void ReplaceData (int offset, int count, string strData)
 		{
-			OwnerDocument.onNodeChanging (this, this.ParentNode);
-
 			if ((offset < 0) || (offset > data.Length))
 				throw new ArgumentOutOfRangeException ("offset", "Must be non-negative and must not be greater than the length of this instance.");
 
@@ -140,14 +147,17 @@ namespace System.Xml
 			if (strData == null)
 				throw new ArgumentNullException ("strData", "Must be non-null.");
 
+			string oldData = data;
 			string newData = data.Substring (0, offset) + strData;
 			
 			if ((offset + count) < data.Length)
 				newData += data.Substring (offset + count);
 
+			OwnerDocument.onNodeChanging (this, this.ParentNode, oldData, newData);
+
 			data = newData;
 
-			OwnerDocument.onNodeChanged (this, this.ParentNode);
+			OwnerDocument.onNodeChanged (this, this.ParentNode, oldData, newData);
 		}
 
 		public virtual string Substring (int offset, int count)

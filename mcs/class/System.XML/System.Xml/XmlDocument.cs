@@ -645,22 +645,22 @@ namespace System.Xml
 			}
 		}
 
-		internal void onNodeChanged (XmlNode node, XmlNode Parent)
+		internal void onNodeChanged (XmlNode node, XmlNode parent, string oldValue, string newValue)
 		{
 			if (NodeChanged != null)
 				NodeChanged (node, new XmlNodeChangedEventArgs
 					(XmlNodeChangedAction.Change,
-					node, Parent, Parent));
+					node, parent, oldValue, newValue));
 		}
 
-		internal void onNodeChanging(XmlNode node, XmlNode Parent)
+		internal void onNodeChanging(XmlNode node, XmlNode parent, string oldValue, string newValue)
 		{
 			if (node.IsReadOnly)
 				throw new ArgumentException ("Node is read-only.");
 			if (NodeChanging != null)
 				NodeChanging (node, new XmlNodeChangedEventArgs
 					(XmlNodeChangedAction.Change,
-					node, Parent, Parent));
+					node, parent, oldValue, newValue));
 		}
 
 		internal void onNodeInserted (XmlNode node, XmlNode newParent)

@@ -1,5 +1,12 @@
 2004-08-03  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlCharacterData.cs,
+	  XmlDocument.cs,
+	  XmlNodeChangedEventArgs.cs : 
+	  Implemented XmlNodeChangedEventArgs.OldValue and .NewValue.
+
+2004-08-03  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlWriter.cs : implemented settings-less Create().
 	* XmlWriterSettings.cs : added some comments.
 

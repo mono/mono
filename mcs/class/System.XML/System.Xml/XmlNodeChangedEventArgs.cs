@@ -37,6 +37,8 @@ namespace System.Xml
 		XmlNode _newParent;
 		XmlNodeChangedAction _action;
 		XmlNode _node;
+		string _oldValue;
+		string _newValue;
 
 		// public properties
 		public XmlNodeChangedAction Action 
@@ -79,7 +81,7 @@ namespace System.Xml
 		{
 			get
 			{
-				throw new NotImplementedException ();
+				return _oldValue != null ? _oldValue : _node.Value;
 			}
 		}
 		
@@ -88,15 +90,29 @@ namespace System.Xml
 		{
 			get
 			{
-				throw new NotImplementedException ();
+				return _newValue != null ? _newValue : _node.Value;
 			}
 		}
 #endif
 
+		internal XmlNodeChangedEventArgs (
+			XmlNodeChangedAction action,
+			XmlNode node,
+			XmlNode parent,
+			string oldValue,
+			string newValue)
+		{
+			_node = node;
+			_oldParent = _newParent = parent;
+			_oldValue = oldValue;
+			_newValue = newValue;
+			_action = action;
+		}
+
 
 		// Public Methods
 		// Internal Methods
-		internal XmlNodeChangedEventArgs(
+		internal XmlNodeChangedEventArgs (
 			XmlNodeChangedAction action, 
 			XmlNode node, 
 			XmlNode oldParent,
