@@ -1,3 +1,8 @@
+2003-07-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* attribute.cs (Attribute.Resolve): Add call to CheckAccessLevel
+	on the type we resolved.
+
 2003-07-05  Martin Baulig  <martin@ximian.com>
 
 	* pending.cs (PendingImplementation.ParentImplements): Don't
@@ -12,7 +17,7 @@
 	defined recursively;  but since we modify the input parameters
 	(left is set to `this' temporarily), we reset this value if the
 	left_is_explicit is false, which gives the original semantics to
-	the code. 
+	the code.  
 
 	* literal.cs (NullPointer): new class used to represent a null
 	literal in a pointer context.
