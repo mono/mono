@@ -438,7 +438,7 @@ namespace MonoTests.System {
 						"##;(##)", "12345678901234600000"));
 			foreach (Element e in list) {
 				Assertion.AssertEquals(
-						"ToString Failed: Should be \"" + e.result + "\" -",
+						"ToString Failed: '" + e.value + "' Should be \"" + e.result + "\" with \"" + e.format + "\"",
 						e.result, e.value.ToString(e.format, nfi));
 			}
 			
