@@ -442,6 +442,7 @@ namespace MonoTests.System.Runtime.Serialization
 		SimpleClass[] _emptySimpleArray;
 		int[] _emptyIntArray;
 		string[] _emptyStringArray;
+		Point[] _emptyPointArray;
 
 
 		SampleDelegate _sampleDelegate;
@@ -501,6 +502,7 @@ namespace MonoTests.System.Runtime.Serialization
 			_emptySimpleArray = new SimpleClass[0];
 			_emptyIntArray = new int[0];
 			_emptyStringArray = new string[0];
+			_emptyPointArray = new Point[0];
 
 			_doubles = new double[] { 1010101.101010, 292929.29292, 3838383.38383, 4747474.474, 56565.5656565, 0, Double.NaN, Double.MaxValue, Double.MinValue, Double.NegativeInfinity, Double.PositiveInfinity };
 
@@ -563,6 +565,7 @@ namespace MonoTests.System.Runtime.Serialization
 			SerializationTest.EqualsArray ("SomeValues._emptySimpleArray", _emptySimpleArray, obj._emptySimpleArray);
 			SerializationTest.EqualsArray ("SomeValues._emptyIntArray", _emptyIntArray, obj._emptyIntArray);
 			SerializationTest.EqualsArray ("SomeValues._emptyStringArray", _emptyStringArray, obj._emptyStringArray);
+			SerializationTest.EqualsArray ("SomeValues._emptyPointArray", _emptyPointArray, obj._emptyPointArray);
 
 			for (int i=0; i<2; i++)
 				for (int j=0; j<3; j++)
