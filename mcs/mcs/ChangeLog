@@ -1,5 +1,11 @@
 2002-06-29  Martin Baulig  <martin@gnome.org>
 
+	* ecore.cs (Expression.ImplicitReferenceConversionExists): If expr
+	is the NullLiteral, we also need to make sure that target_type is not
+	an enum type.	
+
+2002-06-29  Martin Baulig  <martin@gnome.org>
+
 	* rootcontext.cs (RootContext.ResolveCore): We must initialize
 	`TypeManager.multicast_delegate_type' and `TypeManager.delegate_type'
 	before calling BootstrapCorlib_ResolveDelegate ().

@@ -812,7 +812,8 @@ namespace Mono.CSharp {
 						return true;
 				
 				// from the null type to any reference-type.
-				if (expr is NullLiteral && !target_type.IsValueType)
+				if (expr is NullLiteral && !target_type.IsValueType &&
+				    !TypeManager.IsEnumType (target_type))
 					return true;
 				
 			}
