@@ -1,5 +1,10 @@
 2003-09-04  Martin Baulig  <martin@ximian.com>
 
+	* class.cs (TypeContainer.AsAccessible): Ignore generic parameters
+	for the moment.
+
+2003-09-04  Martin Baulig  <martin@ximian.com>
+
 	* decl.cs (DeclSpace.LookupGeneric): New method.
 	(DeclSpace.CheckAccessLevel): Ignore generic parameters for the
 	moment.
