@@ -13,6 +13,9 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
+class NoNamespaceClass {
+}
+
 namespace MonoTests.System
 {
 	class Super : ICloneable {
@@ -182,6 +185,10 @@ namespace MonoTests.System
 		}
 #endif
 
+		[Test]
+		public void Namespace () {
+			AssertEquals (null, typeof (NoNamespaceClass).Namespace);
+		}
 	}
 }
 
