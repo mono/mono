@@ -1,4 +1,29 @@
-2003-02-27  Reggie Burnett <reggie@bytefx.com>	* Added several external functions to Win32funcs.cs	* Added necessary LoadLibrary to RichTextEdit to load common control library	2003-02-26  Reggie Burnett <reggie@bytefx.com>	* Form.Close now actually destroys the Window	* Application now closes when launching form is closed 2003-02-19 Alexandre Pigolkine <pigolkine@gmx.de>
+2003-03-01 Alexandre Pigolkine <pigolkine@gmx.de>
+	* Button.cs					changed painting code
+	* ButtonBase.cs				ContentAlignment operations implemented in separate functions
+	* CheckedListBox.cs 		Implementation added
+	* ComboBox.cs				small modifications
+	* Control.cs				repaint on style changes
+	* ControlPaint.cs			Implementation added
+	* Form.cs					delegate Size to Control
+	* ImageList.cs				small modifications
+	* ListBox.cs				Implementation added
+	* ListControl.cs			small modifications
+	* NativeWindow.cs			fixed line terminators
+	* ScrollableControl.cs		small modifications
+	* win32Enums.cs				declaration added
+	* win32functions.cs			Implementation added, fixed line terminators
+
+
+2003-02-27  Reggie Burnett <reggie@bytefx.com>
+	* Added several external functions to Win32funcs.cs
+	* Added necessary LoadLibrary to RichTextEdit to load common control library
+	
+2003-02-26  Reggie Burnett <reggie@bytefx.com>
+	* Form.Close now actually destroys the Window
+	* Application now closes when launching form is closed
+
+ 2003-02-19 Alexandre Pigolkine <pigolkine@gmx.de>
 	* Button.cs
 	* CheckedListBox.cs
 	* ComboBox.cs
@@ -907,6 +932,7 @@
 * StatusBarPanelClickEventHandler.cs
 * StatusBarPanelCollection.cs
 * SystemInformation.cs
+
 * TabControl.cs
 * TabPage.cs
 * TextBox.cs
