@@ -206,6 +206,8 @@ namespace System.Reflection.Emit {
 		}
 
 		public TypeBuilder DefineType (string name, TypeAttributes attr) {
+			if ((attr & TypeAttributes.Interface) != 0)
+				return DefineType (name, attr, null, null);
 			return DefineType (name, attr, typeof(object), null);
 		}
 
