@@ -1,5 +1,12 @@
 2002-07-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* System.Web.UI/Page.cs:
+	(GetViewStateString): new function to give the server access to the
+	generated view state string.
+	(Validate): d'oh!
+
+2002-07-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Control.cs:
 	(SaveViewstateRecursive): implemented.
 	(SaveViewState): fixed.

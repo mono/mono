@@ -365,8 +365,19 @@ public class Page : TemplateControl, IHttpHandler
 		_hasForm = true;
 		writer.WriteLine();
 		writer.Write("<input type=\"hidden\" name=\"__VIEWSTATE\" ");
-		writer.WriteLine("value=\"{0}\" />", GetTypeHashCode ()); //FIXME: should use a random 
-									  // secure value.
+		writer.WriteLine("value=\"{0}\" />", GetViewStateString ());
+	}
+
+	public string GetViewStateString ()
+	{
+		StringBuilder state_string = new StringBuilder ();
+		state_string.AppendFormat ("{0:X}", GetTypeHashCode ());
+		if (_context != null)
+			state_string.Append (_context.Request.QueryString.GetHashCode ());
+
+		DateTime _now = DateTime.Now;
+		state_string.AppendFormat ("{0:X}", _now.ToString ().GetHashCode ());
+		return state_string.ToString ();
 	}
 
 	internal void OnFormPostRender (HtmlTextWriter writer, string formUniqueID)
@@ -581,7 +592,7 @@ public class Page : TemplateControl, IHttpHandler
 
 	public virtual void Validate ()
 	{
-		if (_validators == null && _validators.Count == 0){
+		if (_validators == null || _validators.Count == 0){
 			_isValid = true;
 			return;
 		}
