@@ -18,7 +18,7 @@ namespace System.Xml.Serialization
 		AttributeTargets.Enum | AttributeTargets.Interface)]
 	public class XmlTypeAttribute : Attribute
 	{
-		private bool includeInSchema;
+		private bool includeInSchema = true;
 		private string ns;
 		private string typeName;
 

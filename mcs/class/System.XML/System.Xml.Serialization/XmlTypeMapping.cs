@@ -25,6 +25,7 @@ namespace System.Xml.Serialization
 		bool multiReferenceType = false;
 		bool isSimpleType;
 		string documentation;
+		bool includeInSchema;
 
 		ArrayList _derivedTypes = new ArrayList();
 
@@ -100,6 +101,12 @@ namespace System.Xml.Serialization
 		{
 			set { documentation = value; }
 			get { return documentation; }
+		}
+
+		internal bool IncludeInSchema
+		{
+			get { return includeInSchema; }
+			set { includeInSchema = value; }
 		}
 
 		internal XmlTypeMapping GetRealTypeMap (string objectFullTypeName)

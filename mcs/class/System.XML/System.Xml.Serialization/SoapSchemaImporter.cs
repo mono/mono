@@ -36,10 +36,9 @@ namespace System.Xml.Serialization {
 
 		#region Methods
 
-		[MonoTODO]
 		public XmlTypeMapping ImportDerivedTypeMapping (XmlQualifiedName name, Type baseType, bool baseTypeCanBeIndirect)
 		{
-			throw new NotImplementedException ();
+			return _importer.ImportDerivedTypeMapping (name, baseType, baseTypeCanBeIndirect);
 		}
 
 		public XmlMembersMapping ImportMembersMapping (string name, string ns, SoapSchemaMember member)

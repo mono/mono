@@ -1,3 +1,15 @@
+2003-09-28  Lluis Sanchez Gual <lluis@ximian.com>
+	
+	* SoapReflectionImporter.cs, XmlReflectionImporter.cs, XmlSchemaExporter.cs:
+	  Added support for IncludeInSchema flag.
+	* SoapSchemaImporter.cs: Implemented ImportDerivedTypeMapping method.
+	* XmlCodeExporter.cs: Implemented AddMappingMetadata and AddMappingMetadata
+	  methods. Added support for IncludeInSchema flag.
+	* XmlSchemaImporter.cs: Implemented ImportDerivedTypeMapping method.
+	  Added support for IncludeInSchema flag.
+	* XmlTypeAttribute.cs: Set includeInSchema to true by default.
+	* XmlTypeMapping.cs: Added IncludeInSchema property.
+	
 2003-09-25  Lluis Sanchez Gual <lluis@ximian.com>
 	
 	* SoapIncludeAttribute.cs: Added AllowMultiple option. This fixes bug #48877.

@@ -52,10 +52,9 @@ namespace System.Xml.Serialization {
 
 		#region Methods
 
-		[MonoTODO]
 		public void AddMappingMetadata (CodeAttributeDeclarationCollection metadata, XmlMemberMapping member, string ns)
 		{
-			throw new NotImplementedException ();
+			AddMappingMetadata (metadata, member, ns, false);
 		}
 
 		[MonoTODO]
@@ -64,10 +63,27 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void AddMappingMetadata (CodeAttributeDeclarationCollection metadata, XmlMemberMapping member, string ns, bool forceUseMemberName)
 		{
-			throw new NotImplementedException ();
+			CodeAttributeDeclaration att;
+			TypeData memType = member.TypeMapMember.TypeData;
+			
+			if (memType.SchemaType == SchemaTypes.Array)
+			{
+				// Array parameter
+				att = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlArray");
+				if (forceUseMemberName || (member.ElementName != member.MemberName)) att.Arguments.Add (GetArg ("ElementName", member.ElementName));
+				if (member.Namespace != ns) att.Arguments.Add (GetArg ("Namespace", member.Namespace));
+				if (att.Arguments.Count > 0) metadata.Add (att);
+			}
+			else
+			{
+				att = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlElement");
+				if (forceUseMemberName || (member.ElementName != member.MemberName)) att.Arguments.Add (GetArg ("ElementName", member.ElementName));
+				if (member.Namespace != ns) att.Arguments.Add (GetArg ("Namespace", member.Namespace));
+				if (!TypeTranslator.IsDefaultPrimitiveTpeData (memType)) att.Arguments.Add (GetArg ("DataType", member.TypeName));
+				if (att.Arguments.Count > 0) metadata.Add (att);
+			}
 		}
 
 		public void ExportMembersMapping (XmlMembersMapping xmlMembersMapping)
@@ -402,6 +418,7 @@ namespace System.Xml.Serialization {
 		{
 			if (exportedMaps.Contains (map)) return true;
 			if (map.TypeData.Type == typeof(object)) return true;
+			if (!map.IncludeInSchema) return true;
 			return false;
 		}
 

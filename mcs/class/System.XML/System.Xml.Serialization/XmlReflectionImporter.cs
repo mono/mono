@@ -133,6 +133,7 @@ namespace System.Xml.Serialization {
 		{
 			string membersNamespace;
 			string elementName;
+			bool includeInSchema = true;
 			XmlAttributes atts = null;
 			if (defaultXmlType == null) defaultXmlType = typeData.XmlType;
 
@@ -158,6 +159,8 @@ namespace System.Xml.Serialization {
 
 				if (atts.XmlType.TypeName != null && atts.XmlType.TypeName != string.Empty)
 					defaultXmlType = atts.XmlType.TypeName;
+					
+				includeInSchema = atts.XmlType.IncludeInSchema;
 			}
 
 			membersNamespace = defaultNamespace;
@@ -173,7 +176,9 @@ namespace System.Xml.Serialization {
 
 			if (membersNamespace == null) membersNamespace = "";
 			XmlTypeMapping map = new XmlTypeMapping (elementName, membersNamespace, typeData, defaultXmlType, defaultNamespace);
+			map.IncludeInSchema = includeInSchema;
 			relatedMaps.Add (map);
+			
 			return map;
 		}
 

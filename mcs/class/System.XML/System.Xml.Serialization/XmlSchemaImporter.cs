@@ -25,6 +25,9 @@ namespace System.Xml.Serialization {
 		Queue pendingMaps = new Queue ();
 		Hashtable sharedAnonymousTypes = new Hashtable ();
 		bool encodedFormat = false;
+		XmlReflectionImporter auxXmlRefImporter;
+		SoapReflectionImporter auxSoapRefImporter;
+		Hashtable forcedBaseTypes;
 
 		static readonly XmlQualifiedName anyType = new XmlQualifiedName ("anyType",XmlSchema.Namespace);
 		static readonly XmlQualifiedName arrayType = new XmlQualifiedName ("Array",XmlSerializer.EncodingNamespace);
@@ -71,22 +74,42 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public XmlTypeMapping ImportDerivedTypeMapping (XmlQualifiedName name, Type baseType)
 		{
-			throw new NotImplementedException ();
+			return ImportDerivedTypeMapping (name, baseType, true);
+		}
+		
+		public XmlTypeMapping ImportDerivedTypeMapping (XmlQualifiedName name, Type baseType, bool baseTypeCanBeIndirect)
+		{
+			XmlQualifiedName qname;
+			XmlSchemaType stype;
+			
+			if (encodedFormat)
+			{
+				qname = name;
+				stype = schemas.Find (name, typeof (XmlSchemaComplexType)) as XmlSchemaComplexType;
+				if (stype == null) throw new InvalidOperationException ("Schema type '" + name + "' not found or not valid");
+			}
+			else
+			{
+				if (!LocateElement (name, out qname, out stype)) return null;
+			}
+			
+			XmlTypeMapping map = GetRegisteredTypeMapping (qname);
+			if (map != null) return map;
+			
+			RegisterForcedBaseType (qname, baseType);
+			
+			map = CreateTypeMapping (qname, SchemaTypes.Class, name);
+			map.Documentation = GetDocumentation (stype);
+			RegisterMapFixup (map, qname, (XmlSchemaComplexType)stype);
+			
+			BuildPendingMaps ();
+			return map;
 		}
 
 		[MonoTODO]
 		public XmlTypeMapping ImportDerivedTypeMapping (XmlQualifiedName name, bool baseTypeCanBeIndirect)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public XmlTypeMapping ImportDerivedTypeMapping (XmlQualifiedName name,
-								Type baseType,
-								bool baseTypeCanBeIndirect)
 		{
 			throw new NotImplementedException ();
 		}
@@ -195,13 +218,31 @@ namespace System.Xml.Serialization {
 
 		public XmlTypeMapping ImportTypeMapping (XmlQualifiedName name)
 		{
+			XmlQualifiedName qname;
+			XmlSchemaType stype;
+			if (!LocateElement (name, out qname, out stype)) return null;
+			
+			XmlTypeMapping map = GetRegisteredTypeMapping (qname);
+			if (map != null) return map;
+			
+			map = CreateTypeMapping (qname, SchemaTypes.Class, name);
+			map.Documentation = GetDocumentation (stype);
+			RegisterMapFixup (map, qname, (XmlSchemaComplexType)stype);
+			
+			BuildPendingMaps ();
+			return map;
+		}
+
+		bool LocateElement (XmlQualifiedName name, out XmlQualifiedName qname, out XmlSchemaType stype)
+		{
+			qname = null;
+			stype = null;
+			
 			XmlSchemaElement elem = (XmlSchemaElement) schemas.Find (name, typeof (XmlSchemaElement));
-			if (elem == null) return null;
+			if (elem == null) return false;
 
 			// The root element must be an element with complex type
 
-			XmlQualifiedName qname;
-			XmlSchemaType stype;
 			if (elem.SchemaType != null)
 			{
 				stype = elem.SchemaType;
@@ -209,8 +250,8 @@ namespace System.Xml.Serialization {
 			}
 			else
 			{
-				if (elem.SchemaTypeName.IsEmpty) return null;
-				if (elem.SchemaTypeName.Namespace == XmlSchema.Namespace) return null;
+				if (elem.SchemaTypeName.IsEmpty) return false;
+				if (elem.SchemaTypeName.Namespace == XmlSchema.Namespace) return false;
 				object type = schemas.Find (elem.SchemaTypeName, typeof (XmlSchemaComplexType));
 				if (type == null) type = schemas.Find (elem.SchemaTypeName, typeof (XmlSchemaSimpleType));
 				if (type == null) throw new InvalidOperationException ("Schema type '" + elem.SchemaTypeName + "' not found");
@@ -218,14 +259,8 @@ namespace System.Xml.Serialization {
 				qname = stype.QualifiedName;
 			}
 
-			if (stype is XmlSchemaSimpleType) return null;
-
-			XmlTypeMapping map = CreateTypeMapping (qname, SchemaTypes.Class, name);
-			map.Documentation = GetDocumentation (stype);
-			RegisterMapFixup (map, qname, (XmlSchemaComplexType)stype);
-			
-			BuildPendingMaps ();
-			return map;
+			if (stype is XmlSchemaSimpleType) return false;
+			return true;
 		}
 
 		public XmlTypeMapping ImportType (XmlQualifiedName name, XmlQualifiedName root)
@@ -347,6 +382,9 @@ namespace System.Xml.Serialization {
 
 			if (stype.Particle != null)
 			{
+				if  (HasForcedBaseType (typeQName))
+					ImportForcedDerivedType (map, typeQName, ref isMixed);
+					
 				ImportParticleComplexContent (typeQName, cmap, stype.Particle, classIds, isMixed);
 			}
 			else
@@ -842,6 +880,9 @@ namespace System.Xml.Serialization {
 			if (ext != null) qname = ext.BaseTypeName;
 			else qname = ((XmlSchemaComplexContentRestriction)content.Content).BaseTypeName;
 			
+			if (HasForcedBaseType (typeQName))
+				RegisterForcedBaseType (qname, GetForcedBaseType (typeQName));
+				
 			// Add base map members to this map
 
 			XmlTypeMapping baseMap = ImportType (qname, null);
@@ -867,6 +908,34 @@ namespace System.Xml.Serialization {
 			else {
 				if (isMixed) ImportParticleComplexContent (typeQName, cmap, null, classIds, true);
 			}
+		}
+		
+		public void ImportForcedDerivedType (XmlTypeMapping map, XmlQualifiedName qname, ref bool isMixed)
+		{
+			ClassMap cmap = (ClassMap)map.ObjectMap;
+
+			XmlTypeMapping baseMap;
+			Type baseType = GetForcedBaseType (qname);
+			if (encodedFormat)
+			{
+				if (auxXmlRefImporter == null) auxXmlRefImporter = new XmlReflectionImporter ();
+				baseMap = auxXmlRefImporter.ImportTypeMapping (baseType);
+			}
+			else
+			{
+				if (auxSoapRefImporter == null) auxSoapRefImporter = new SoapReflectionImporter ();
+				baseMap = auxSoapRefImporter.ImportTypeMapping (baseType);
+			}
+
+			ClassMap baseClassMap = (ClassMap)baseMap.ObjectMap;
+
+			foreach (XmlTypeMapMember member in baseClassMap.AllMembers)
+				cmap.AddMember (member);
+
+			if (baseClassMap.XmlTextCollector != null) isMixed = false;
+
+			map.BaseMap = baseMap;
+			baseMap.DerivedTypes.Add (map);
 		}
 		
 		void ImportExtensionTypes (XmlQualifiedName qname)
@@ -1071,6 +1140,24 @@ namespace System.Xml.Serialization {
 			if (elem.RefName != new XmlQualifiedName ("schema",XmlSchema.Namespace)) return false;
 			return (seq.Items[1] is XmlSchemaAny);
 		}
+		
+		void RegisterForcedBaseType (XmlQualifiedName tname, Type type)
+		{
+			if (forcedBaseTypes == null) forcedBaseTypes = new Hashtable ();
+			forcedBaseTypes [tname] = type;
+		}
+		
+		bool HasForcedBaseType (XmlQualifiedName tname)
+		{
+			if (forcedBaseTypes == null) return false;
+			return forcedBaseTypes.ContainsKey (tname);
+		}
+
+		Type GetForcedBaseType (XmlQualifiedName tname)
+		{
+			if (forcedBaseTypes == null) return null;
+			return (Type) forcedBaseTypes [tname];
+		}
 
 		XmlTypeMapElementInfo CreateElementInfo (string ns, XmlTypeMapMember member, string name, TypeData typeData, bool isNillable)
 		{
@@ -1103,6 +1190,7 @@ namespace System.Xml.Serialization {
 			XmlQualifiedName elemName = (root != null) ? root : typeQName;
 			
 			XmlTypeMapping map = new XmlTypeMapping (elemName.Name, elemName.Namespace, typeData, typeQName.Name, typeQName.Namespace);
+			map.IncludeInSchema = true;
 			mappedTypes [typeQName] = map;
 			dataMappedTypes [typeData] = map;
 
@@ -1115,6 +1203,7 @@ namespace System.Xml.Serialization {
 			if (encodedFormat) map = new XmlTypeMapping ("Array", XmlSerializer.EncodingNamespace, arrayTypeData, "Array", XmlSerializer.EncodingNamespace);
 			else map = new XmlTypeMapping (arrayTypeData.XmlType, typeQName.Namespace, arrayTypeData, arrayTypeData.XmlType, typeQName.Namespace);
 			
+			map.IncludeInSchema = true;
 			mappedTypes [typeQName] = map;
 			dataMappedTypes [arrayTypeData] = map;
 
@@ -1229,6 +1318,8 @@ namespace System.Xml.Serialization {
 				XmlTypeMapping itemMap = GetTypeMapping (typeData.ListItemTypeData);
 				
 				map = new XmlTypeMapping (typeData.XmlType, itemMap.Namespace, typeData, typeData.XmlType, itemMap.Namespace);
+				map.IncludeInSchema = true;
+
 				ListMap listMap = new ListMap ();
 				listMap.ItemInfo = new XmlTypeMapElementInfoList();
 				listMap.ItemInfo.Add (CreateElementInfo (itemMap.Namespace, null, typeData.ListItemTypeData.XmlType, typeData.ListItemTypeData, false));
@@ -1241,6 +1332,7 @@ namespace System.Xml.Serialization {
 			else if (typeData.SchemaType == SchemaTypes.Primitive || typeData.Type == typeof(object) || typeof(XmlNode).IsAssignableFrom(typeData.Type))
 			{
 				map = new XmlTypeMapping (typeData.XmlType, XmlSchema.Namespace, typeData, typeData.XmlType, XmlSchema.Namespace);
+				map.IncludeInSchema = false;
 				dataMappedTypes [typeData] = map;
 				return map;
 			}

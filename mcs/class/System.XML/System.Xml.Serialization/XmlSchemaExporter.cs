@@ -108,6 +108,9 @@ namespace System.Xml.Serialization {
 
 		public void ExportTypeMapping (XmlTypeMapping xmlTypeMapping)
 		{
+			if (!xmlTypeMapping.IncludeInSchema) return;
+			if (IsMapExported (xmlTypeMapping)) return;
+			
 			if (encodedFormat)
 				ExportClassSchema (xmlTypeMapping);
 			else
@@ -150,7 +153,7 @@ namespace System.Xml.Serialization {
 				else
 					ext.BaseTypeName = new XmlQualifiedName (map.BaseMap.XmlType, map.BaseMap.XmlTypeNamespace);
 			}
-			else if (map.BaseMap != null)
+			else if (map.BaseMap != null && map.BaseMap.IncludeInSchema)
 			{
 				XmlSchemaComplexContent cstype = new XmlSchemaComplexContent ();
 				XmlSchemaComplexContentExtension ext = new XmlSchemaComplexContentExtension ();
