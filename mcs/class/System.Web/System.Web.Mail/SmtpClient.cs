@@ -48,6 +48,11 @@ namespace System.Web.Mail {
 	    if( ( ! HasData( msg.From )  ) || ( ! HasData( msg.To ) ) )
 		throw new SmtpException( "From & To properties must be set." );
 	    
+	    // if no encoding is set then set the system
+	    // default encoding
+	    if( msg.BodyEncoding == null ) 
+		msg.BodyEncoding = Encoding.Default;
+	    
 	    // start with a reset incase old data
 	    // is present at the server in this session
 	    smtp.WriteRset();
@@ -180,20 +185,23 @@ namespace System.Web.Mail {
 	    
 	    if( HasData( msg.UrlContentLocation ) ) 
 		headers[ "Content-Location" ] = msg.UrlContentLocation;
+	   
 	    
+	    string charset = String.Format( "charset=\"{0}\"" , msg.BodyEncoding.BodyName );
+
 	    // set body the content type
 	    switch( msg.BodyFormat ) {
 		
 	    case MailFormat.Html: 
-		headers[ "Content-Type" ] = "text/html"; 
+		headers[ "Content-Type" ] = "text/html; " + charset; 
 		break;
 	    
 	    case MailFormat.Text: 
-		headers[ "Content-Type" ] = "text/plain"; 
+		headers[ "Content-Type" ] = "text/plain; " + charset; 
 		break;
 	    
 	    default: 
-		headers[ "Content-Type" ] = "text/plain"; 
+		headers[ "Content-Type" ] = "text/plain; " + charset; 
 		break;
 
 	    }
@@ -228,6 +236,7 @@ namespace System.Web.Mail {
 	    
 	    // set the mailer -- should probably be changed
 	    headers[ "X-Mailer" ] = "Mono (System.Web.Mail.SmtpMail.Send)";
+	    
 	    
 	    // add the custom headers they will overwrite
 	    // the earlier ones if they are the same
