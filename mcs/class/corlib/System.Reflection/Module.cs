@@ -211,7 +211,7 @@ namespace System.Reflection {
 	
 		public override string ToString () 
 		{
-			return "Reflection.Module: " + name;
+			return name;
 		}
 
 		// Mono Extension: returns the GUID of this module
