@@ -93,7 +93,7 @@ namespace System.Data {
 		public DataColumn( string columnName, Type dataType, 
 			string expr): this(columnName, dataType)
 		{
-			Expression = expr;
+			if (expr != null) Expression = expr;
 		}
 
 		public DataColumn(string columnName, Type dataType, 
