@@ -1,3 +1,12 @@
+2003-06-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* profiler.h profiler-private.h profiler.c: Added infrastructure for 
+	instruction level coverage data collection.
+	* profiler.h profiler.c (: Added new callback function which can be
+	used by the profiler to limit which functions should have coverage
+	instrumentation.
+	* profiler.c (mono_profiler_load): Call g_module_build_path to
+	generate the file name of the profiler library.
 
 Mon Jun 16 18:11:13 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
