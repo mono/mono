@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- NAnt build file for Security Tools -->
+
+<project name="sectools" default="build">
+	<property name="debug" value="false"/>
+
+	<target name="build">
+		<csc target="exe" output="cert2spc.exe" debug="${debug}">
+			<arg value="/r:..\..\class\lib\System.dll"/>
+			<arg value="/r:..\..\class\lib\Mono.Security.dll"/>
+			<sources basedir=".">
+				<includes name="AssemblyInfo.cs"/>
+				<includes name="cert2spc.cs"/>
+			</sources>
+		</csc>
+		<!-- csc target="exe" output="chktrust.exe" debug="${debug}">
+			<arg value="/r:..\..\class\lib\System.dll"/>
+			<arg value="/r:..\..\class\lib\Mono.Security.dll"/>
+			<sources basedir=".">
+				<includes name="AssemblyInfo.cs"/>
+				<includes name="chktrust.cs"/>
+			</sources>
+		</csc>
+		<csc target="exe" output="makecert.exe" debug="${debug}">
+			<arg value="/r:..\..\class\lib\System.dll"/>
+			<arg value="/r:..\..\class\lib\Mono.Security.dll"/>
+			<sources basedir=".">
+				<includes name="AssemblyInfo.cs"/>
+				<includes name="MakeCert.cs"/>
+			</sources>
+		</csc -->
+		<csc target="exe" output="secutil.exe" debug="${debug}">
+			<sources basedir=".">
+				<includes name="AssemblyInfo.cs"/>
+				<includes name="secutil.cs"/>
+			</sources>
+		</csc>
+		<!-- csc target="exe" output="signcode.exe" debug="${debug}">
+			<arg value="/r:..\..\class\lib\Mono.Security.dll"/>
+			<sources basedir=".">
+				<includes name="AssemblyInfo.cs"/>
+				<includes name="signcode.cs"/>
+			</sources>
+		</csc>
+		<csc target="exe" output="sn.exe" debug="${debug}">
+			<arg value="/r:..\..\class\lib\Mono.Security.dll"/>
+			<sources basedir=".">
+				<includes name="AssemblyInfo.cs"/>
+				<includes name="sn.cs"/>
+			</sources>
+		</csc -->
+	</target>
+
+	<target name="sign">
+		<!-- sign (strongname) all tools -->
+		<exec program="D:\Program Files\Microsoft Visual Studio .NET\FrameworkSDK\Bin\sn.exe" commandline="-R secutil.exe sectools.snk"/>
+		<!-- sign (authenticode) all tools -->
+	</target>
+
+	<target name="test">
+	</target>
+
+	<target name="clean">
+		<delete file="cert2spc.exe" failonerror="false"/>
+		<delete file="cert2spc.pdb" failonerror="false"/>
+		<delete file="chktrust.exe" failonerror="false"/>
+		<delete file="chktrust.pdb" failonerror="false"/>
+		<delete file="makecert.exe" failonerror="false"/>
+		<delete file="makecert.pdb" failonerror="false"/>
+		<delete file="secutil.exe" failonerror="false"/>
+		<delete file="secutil.pdb" failonerror="false"/>
+		<delete file="signcode.exe" failonerror="false"/>
+		<delete file="signcode.pdb" failonerror="false"/>
+		<delete file="sn.exe" failonerror="false"/>
+		<delete file="sn.pdb" failonerror="false"/>
+	</target>
+</project>

@@ -2,4 +2,10 @@
 
 	* AssemblyInfo.cs: New. Global assembly attributes (version and 
 	  copyright) for security tools.
+	* cert2spc.cs: Update to use the new PKCS7 class (from Mono.Security
+	assembly) and AssemblyInfo.cs. Older version was located in /mcs/tools.
+	* makefile: New. PROTOTYPE makefile (not tested) for Linux.
 	* README: New. Important information about the Mono's security tools
+	* secutil.cs: Updated to use AssemblyInfo.cs. Older version was located
+	in /mcs/tools.
+	* sectools.build: New. NAnt build file to build all security tools.

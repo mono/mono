@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
 //
-// (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System;
@@ -14,10 +14,6 @@ using System.Security.Cryptography.X509Certificates;
 
 [assembly: AssemblyTitle("Mono SecUtil")]
 [assembly: AssemblyDescription("Extract strongname and X509 certificates from assemblies.")]
-[assembly: AssemblyCompany("Sébastien Pouliot, Motus Technologies")]
-[assembly: AssemblyProduct("Open Source Tools for .NET")]
-[assembly: AssemblyCopyright("Copyright 2002 Motus Technologies. Released under BSD license.")]
-[assembly: AssemblyVersion("0.17.99.0")]
 
 namespace Mono.Tools {
 
@@ -99,7 +95,7 @@ class SecUtil {
 		Console.WriteLine ("secutil -array");
 		Console.WriteLine ("\tShow data in a decimal array (default){0}", Environment.NewLine);
 		Console.WriteLine ("secutil -v");
-		Console.WriteLine ("secutil -vbcode");
+		Console.WriteLine ("secutil -vbmode");
 		Console.WriteLine ("\tShow data in a VisualBasic friendly format{0}", Environment.NewLine);
 		Console.WriteLine ("secutil -c");
 		Console.WriteLine ("secutil -cmode");
