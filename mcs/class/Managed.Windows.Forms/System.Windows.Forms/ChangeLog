@@ -1,3 +1,8 @@
+2005-02-26  Peter Bartok  <pbartok@novell.com>
+
+	* Control.cs: Properly destroy child windows when our handle is 
+	  destroyed
+
 2005-02-25  Peter Bartok  <pbartok@novell.com>
 
 	* XplatUI.cs:

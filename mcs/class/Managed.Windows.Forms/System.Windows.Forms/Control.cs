@@ -99,7 +99,7 @@ namespace System.Windows.Forms
 		internal Size			prev_size;		// previous size of the control; required for anchoring
 
 		// to be categorized...
-		static internal ArrayList	controls = new ArrayList();		// All of the applications controls, in a flat list
+		static internal ArrayList	controls = new ArrayList();		// All of the application's controls, in a flat list
 		internal ControlCollection	child_controls;		// our children
 		internal Control		parent;			// our parent control
 		internal AccessibleObject	accessibility_object;	// object that contains accessibility information about our control
@@ -2580,6 +2580,13 @@ namespace System.Windows.Forms
 				if (Handle != IntPtr.Zero) {
 					controls.Remove(Handle);
 				}
+
+				// Destroy our children before we destroy ourselves, to prevent them from
+				// being implictly (without us knowing) destroyed
+				for (int i=0; i < child_controls.Count; i++) {
+					child_controls[i].DestroyHandle();
+				}
+
 
 				if (window != null) {
 					window.DestroyHandle();
