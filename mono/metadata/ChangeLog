@@ -1,5 +1,11 @@
 2004-12-03  Martin Baulig  <martin@ximian.com>
 
+	* class-internals.h (MonoGenericContainer): Replaced the
+	`MonoGenericContext * pointer with a `MonoGenericContext'
+	structure and made it the first element.
+
+2004-12-03  Martin Baulig  <martin@ximian.com>
+
 	* class.c
 	(inflate_generic_type): Set the `context->container' when creating
 	a new MonoGenericContext.
