@@ -1,3 +1,8 @@
+2004-01-15  Jackson Harper <jackson@ximian.com>
+
+	* HttpCachePolicy.cs: Fix typo causing varyby params headers to be
+	created when they shouldn't be.
+	
 2004-01-14  Jackson Harper <jackson@ximian.com>
 
 	* TraceData.cs: Fix some typos in the output text. Fix control
