@@ -7,6 +7,7 @@
 // (C) 2002 Ximian, Inc
 //
 using System.ComponentModel;
+using System.Collections;
 namespace System.Windows.Forms {
 
 	// <summary>

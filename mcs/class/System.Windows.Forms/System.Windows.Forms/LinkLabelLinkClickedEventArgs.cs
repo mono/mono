@@ -26,7 +26,8 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Properties
 		//
-		public Link Link {
+		//public 
+		Link Link {
 			get {
 				return link;
 			}

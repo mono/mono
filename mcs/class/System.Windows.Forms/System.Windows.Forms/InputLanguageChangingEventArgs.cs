@@ -8,13 +8,14 @@
 // (C) 2002 Ximian, Inc
 //
 using System.Globalization;
+using System.ComponentModel;
 namespace System.Windows.Forms {
 
 	// <summary>
 	// </summary>
 
     public class InputLanguageChangingEventArgs : EventArgs {
-		private Culture culture;
+		private CultureInfo culture;
 		private bool systemcharset;
 		private InputLanguage inputlanguage;
 		//

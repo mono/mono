@@ -6,7 +6,7 @@
 //
 // (C) 2002 Ximian, Inc
 //
-
+ using System.ComponentModel;
 namespace System.Windows.Forms {
 
 	// <summary>
@@ -15,7 +15,6 @@ namespace System.Windows.Forms {
 	// </summary>
 
     public class ListViewItemConverter : ExpandableObjectConverter {
-
 		//
 		//  --- Constructor
 		//

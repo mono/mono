@@ -25,7 +25,7 @@ namespace System.Windows.Forms
 	/// MSDN gives little info on the members of IAccessible: "This member supports the .NET Framework infrastructure and is not intended to be used directly from your code."
 	/// </summary>
 	[MonoTODO]
-	public class AccessibleObject : MarshalByRefObject, IReflect/*, [MonoTODO]: */,IAccessible
+	public class AccessibleObject : MarshalByRefObject, IReflect/*, [MonoTODO]: */ //,IAccessible
 	{
 		string name;
 		

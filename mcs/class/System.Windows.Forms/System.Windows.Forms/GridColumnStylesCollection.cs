@@ -6,6 +6,7 @@
 //
 // (C) 2002 Ximian, Inc
 //
+using System.Collections;
 
 namespace System.Windows.Forms {
 

@@ -7,7 +7,7 @@
 //
 // (C) Ximian, Inc., 2002
 //
-
+using System.Drawing;
 namespace System.Windows.Forms
 {
 	/// <summary>
