@@ -1,3 +1,11 @@
+2004-04-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile.am: Added security.c|h.
+	* icall.c: Added icall for get_UserName;
+	* security.c: New file for security related icalls. Added function
+	get_UserName for System.Environment (fix #56144).
+	* security.h: New. Header file for security.c
+
 2004-04-02  Dick Porter  <dick@ximian.com>
 
 	* icall.c: Deleted the icalls that were obsoleted some time ago
