@@ -1,3 +1,9 @@
+2003-06-04  Dietmar Maurer  <dietmar@ximian.com>
+
+	* mini-x86.c (mono_arch_output_basic_block): use IEEE compatible fprem1
+
+	* mini.c (mini_get_opcode_for_method): inline IEEERemainder
+
 2003-06-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* mini.c:
