@@ -1,3 +1,9 @@
+
+Fri Feb 25 16:18:59 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* socket-io.c: load Mono.Posix if it's not loaded already
+	(fixes bug#73033).
+
 2005-02-24  Martin Baulig  <martin@ximian.com>
 
 	* class.c (dup_type): Correctly duplicate MONO_TYPE_PTR.
