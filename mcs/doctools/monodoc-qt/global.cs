@@ -4,7 +4,7 @@
 // (c) 2002 Adam Treat
 // Licensed under the terms of the GNU GPL
 
-namespace Mono.Util.MonoDoc.Qt {
+namespace Mono.Document.Editor {
 
 	using Qt;
 
@@ -23,6 +23,8 @@ namespace Mono.Util.MonoDoc.Qt {
 		public static QPixmap IField = new QPixmap (QDir.HomeDirPath ()+"/.monodoc/images/field.gif");
 		public static QPixmap IProperty = new QPixmap (QDir.HomeDirPath ()+"/.monodoc/images/property.gif");
 		public static QPixmap IEvent = new QPixmap (QDir.HomeDirPath ()+"/.monodoc/images/event.gif");
+		public static string Summary = "<summary> Provide a brief (usually one sentence) description of a member or type.";
+		public static string Remarks = "<remarks> Provide verbose information for a type or member.";
 		
 		static string init;
 

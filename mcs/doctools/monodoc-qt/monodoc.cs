@@ -4,7 +4,7 @@
 // (c) 2002 Adam Treat
 // Licensed under the terms of the GNU GPL
 
-namespace Mono.Util.MonoDoc.Qt {
+namespace Mono.Document.Editor {
 
 	using Qt;
 	using System;
@@ -12,7 +12,7 @@ namespace Mono.Util.MonoDoc.Qt {
 	using System.Text;
 	using System.Reflection;
 	using System.Collections;
-	using Mono.Util.MonoDoc.Lib;
+	using Mono.Document.Library;
 
 	[DeclareQtSignal ("Load (String)")]
 	public class MonoDoc : QMainWindow {
@@ -254,44 +254,78 @@ namespace Mono.Util.MonoDoc.Qt {
 			}
 		}
 
-		[DeclareQtSignal ("SyncSum (String)")]
-		[DeclareQtSignal ("SyncRem (String)")]
+		[DeclareQtSignal ("Sync ()")]
+		[DeclareQtSignal ("Flush ()")]
 		private class TypeEdit : QVGroupBox, IEditForm {
 
-			DocType reference;
 			DocType document;
 
-			public TypeEdit (DocType reference) : base (reference.Name)
+			public TypeEdit (DocType document) : base (document.Name)
 			{
-				this.reference = reference;
+				this.document = document;
 				SetInsideMargin (20);
-				QLabel sum = new QLabel (
-					"<summary> Provide a brief (usually one sentence) description of a member or type.",
-					 this);
-				QLineEdit sumedit = new QLineEdit (this);
-				Connect (this, SIGNAL ("SyncSum (String)"), sumedit, SLOT ("SetText (String)"));
+				
+				SummaryForm sum = new SummaryForm (document, this);
+				Connect (this, SIGNAL ("Sync ()"), sum, SLOT ("OnSync ()"));
+				Connect (this, SIGNAL ("Flush ()"), sum, SLOT ("OnFlush ()"));
 
-				QLabel rem = new QLabel (
-					"<remarks> Provide verbose information for a type or member.",
-					this);
-				QTextEdit remedit = new QTextEdit (this);
-				Connect (this, SIGNAL ("SyncRem (String)"), remedit, SLOT ("SetText (String)"));
-				//remedit.SetTextFormat (Qt.TextFormat.RichText);
+				RemarksForm rem = new RemarksForm (document, this);
+				Connect (this, SIGNAL ("Sync ()"), rem, SLOT ("OnSync ()"));
+				Connect (this, SIGNAL ("Flush ()"), rem, SLOT ("OnFlush ()"));
 			}
 
 			public void Sync ()
 			{
-				if (!File.Exists (reference.FilePath))
+				if (!File.Exists (document.FilePath))
 					return;
-				document = DocParser.GetDoc (reference.FilePath);
-				Emit ("SyncSum (String)", document.Summary);
-				Emit ("SyncRem (String)", document.Remarks);
-				Console.WriteLine ("Found doc for: "+document.Name);
+				DocParser.Parse (document);
+				Emit ("Sync ()", null);
+				//Console.WriteLine ("Found doc for: "+document.Name);
 			}
 
 			public void Flush ()
 			{
-				Console.WriteLine ("Flush IO");
+				Emit ("Flush ()", null);
+				DocArchiver.Archive (document);
+				//Console.WriteLine ("Wrote doc for:"+document.Name);
+			}
+		}
+
+		private class SummaryForm : QVBox {
+			QLineEdit edit;
+			DocType document;
+			public SummaryForm (DocType document, QWidget parent) : base (parent)
+			{
+				new QLabel (Global.Summary, this);
+				edit = new QLineEdit (this);
+				this.document = document;
+			}
+			public void OnSync ()
+			{
+				edit.SetText (document.Summary);
+			}
+			public void OnFlush ()
+			{
+				document.Summary = edit.Text ();
+			}
+		}
+
+		private class RemarksForm : QVBox {
+			QTextEdit edit;
+			DocType document;
+			public RemarksForm (DocType document, QWidget parent) : base (parent)
+			{
+				new QLabel (Global.Remarks, this);
+				edit = new QTextEdit (this);
+				this.document = document;
+			}
+			public void OnSync ()
+			{
+				edit.SetText (document.Remarks);
+			}
+			public void OnFlush ()
+			{
+				document.Remarks = edit.Text ();
 			}
 		}
 
@@ -340,11 +374,6 @@ namespace Mono.Util.MonoDoc.Qt {
 				ForceShow ();
 				SetProgress (1);
 			}
-		}
-
-		public interface IEditForm {
-			void Sync ();
-			void Flush ();
 		}
 
 		private class OptionsDialog : QDialog {
@@ -396,5 +425,10 @@ namespace Mono.Util.MonoDoc.Qt {
 				}
 			}
 		}
+	}
+	
+	public interface IEditForm {
+			void Sync ();
+			void Flush ();
 	}
 }
