@@ -1097,6 +1097,11 @@ namespace System.Net.Sockets
 			Shutdown_internal(socket, how);
 		}
 
+		public override int GetHashCode ()
+		{ 
+			return (int) socket; 
+		}
+
 		private bool disposed = false;
 		
 		protected virtual void Dispose(bool explicitDisposing) {

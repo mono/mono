@@ -1,3 +1,7 @@
+2003-07-18  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* Socket.cs: Added GetHashCode method
+
 2003-07-14  Jerome Laban <jlaban@wanadoo.fr>
 
 	* Socket.cs:
