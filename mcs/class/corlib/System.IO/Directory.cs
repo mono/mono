@@ -219,7 +219,24 @@ namespace System.IO
 
 		public static void Move (string src, string dest)
 		{
-			File.Move (src, dest);
+			if (src == null)
+				throw new ArgumentNullException ("src");
+
+			if (dest == null)
+				throw new ArgumentNullException ("dest");
+
+			if (src.Trim () == "" || src.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ("Invalid source directory name: " + src, "src");
+
+			if (dest.Trim () == "" || dest.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ("Invalid target directory name: " + dest, "dest");
+
+			if (!Exists (src))
+				throw new DirectoryNotFoundException (src + " does not exist");
+
+			MonoIOError error;
+			if (!MonoIO.MoveFile (src, dest, out error))
+				throw MonoIO.GetException (error);
 		}
 
 		public static void SetCreationTime (string path, DateTime creation_time)

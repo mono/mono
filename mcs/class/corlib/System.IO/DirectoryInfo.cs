@@ -43,7 +43,10 @@ namespace System.IO {
 
 		public override string Name {
 			get {
-				return Path.GetFileName (FullPath);
+				string result = Path.GetFileName (FullPath);
+				if (result == "")
+					return FullPath;
+				return result;
 			}
 		}
 

@@ -1,3 +1,11 @@
+2003-03-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Directory.cs:
+	(Move): don't use File.Move.
+	* DirectoryInfo.cs: fixed Name property.
+	
+	Fixes bug #37755.
+
 2003-03-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DirectoryInfo.cs: changed ToString to match MS behavior.
