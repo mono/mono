@@ -643,7 +643,7 @@ namespace System.Windows.Forms {
 			}
 
 			if (SelectedIndex != -1) {
-				ExpandSelected (TabPages [SelectedIndex], 1, row_width - 1);
+				ExpandSelected (TabPages [SelectedIndex], 2, row_width - 1);
 			}
 		}
 
@@ -720,11 +720,11 @@ namespace System.Windows.Forms {
 			for (int i = start; i <= end; i++) {
 				TabPage page = TabPages [i];
 				int top = ypos;
-				int height = (i == end ? Height - top - 3 : page.TabBounds.Height + amount);
+				int height = (i == end ? Height - top - 5 : page.TabBounds.Height + amount);
 
 				page.TabBounds = new Rectangle (page.TabBounds.Left, top,
 						page.TabBounds.Width, height);
-				ypos = page.TabBounds.Bottom + 1 + spacing.Width;
+				ypos = page.TabBounds.Bottom + 1;
 			}
 		}
 

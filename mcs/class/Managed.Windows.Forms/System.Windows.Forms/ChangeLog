@@ -1,3 +1,7 @@
+2005-01-26  Jackson Harper  <jackson@ximian.com>
+
+	* TabControl.cs: Space vertically layed out tabs properly.
+
 2005-01-26  Peter Bartok  <pbartok@novell.com>
 
 	* Form.cs (CreateClientParams): Always set the location to 0,0
