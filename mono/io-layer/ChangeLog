@@ -1,3 +1,7 @@
+2003-12-22  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* thread-private.h: _wapi_thread_ops is now const
+	must match .c file.
 
 Mon Dec 22 18:29:03 CET 2003 Paolo Molaro <lupus@ximian.com>
 
