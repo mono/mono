@@ -1,4 +1,8 @@
 
+Fri May 31 16:35:56 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c, socket-io.c: more compilation fixes.
+
 Fri May 31 15:58:22 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* appdomain.c, class.c, class.h, debug-symfile.c, decimal.c,
