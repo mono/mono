@@ -1,7 +1,7 @@
 2005-01-05  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* ObjectConstructor.cs: implemented CreateInstance.
 	* expression.cs (emit_create_instance): add Boolean case.
-
 	* Try.cs, Statement.cs (EmitStms), Literal.cs
 	(ObjectLiteralItem.Emit), CodeGenerator.cs (fall_false): delete
 	unused variables.
