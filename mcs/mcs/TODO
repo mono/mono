@@ -1,24 +1,7 @@
-* Assignment
-
-	string a, b;
-	property string c;
-
-	a = c = b = "hello"
-
-	Problem is that setter properties do not return a value, so we must
-	create a temporary on the situation above to store the value of "b"
-	and then pass that on to "a".
-
 * Optimizations
 
 	Handle if (!x) converting to remove the `!' and instead of using
 	a brfalse use a brtrue to jump to the end.
-
-* LValueResolve
-
-	Maybe we should only call Resolve on RValues and LValueRsolve
-	on LValues so that DoREsolve can flag errors on properties
-	missing `get' and indexers without a get indexer.
 
 * Emitcontext
 
@@ -143,10 +126,6 @@
 
 	I need to get the address of that bad boy
 
-* Work todo:
-
-	Understand how methods are invoked on structs
-
 * Using Alias
 
 	Need to reset the aliases for each compilation unit, so an
@@ -193,15 +172,6 @@
 		LogIt ();
 		throw;
 	}
-
-* Implement lock()
-
-* SimpleNames and ElementAccess
-
-	If a SimpleName makes it outside the ElementAccess, we should
-	flag a 246.  I am not sure the current hack in
-	Invocation.DoResolve is appropiate (catching 246 there), as I
-	am pretty sure, SimpleNames will appear elsewhere.
 
 * Remove the tree dumper
 
