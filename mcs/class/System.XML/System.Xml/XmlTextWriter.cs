@@ -277,13 +277,9 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			}
 			if ((documentStarted == true) && (formatting == Formatting.Indented) && (!IndentingOverriden)) {
 				indentFormatting = w.NewLine;
-				if (indentLevel > 0) {
-					for (int i = 0; i < indentLevel; i++)
-						indentFormatting += indentChars;
-				}
 			}
 			else
-				indentFormatting = "";
+				indentFormatting = null;
 
 			documentStarted = true;
 		}
@@ -341,9 +337,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 
 		private void UpdateIndentChars ()
 		{
-			indentChars = "";
-			for (int i = 0; i < indentation; i++)
-				indentChars += indentChar;
+			indentChars = new string (indentChar, indentation);
 		}
 
 		public override void WriteBase64 (byte[] buffer, int index, int count)
@@ -516,6 +510,15 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			WriteEndElementInternal (false);
 		}
 
+		private void WriteIndent ()
+		{
+			if (indentFormatting == null)
+				return;
+			w.Write (w.NewLine);
+			for (int i = 0; i < indentLevel; i++)
+				w.Write (indentChars);
+		}
+
 		private void WriteEndElementInternal (bool fullEndElement)
 		{
 			if (openElementCount == 0)
@@ -534,7 +537,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 				if (fullEndElement) {
 					w.Write ('>');
 					if (!ParentIndentingOverriden)
-						w.Write (indentFormatting);
+						WriteIndent ();
 					w.Write ("</");
 					XmlTextWriterOpenElement el = (XmlTextWriterOpenElement) openElements [openElementCount - 1];
 					if (el.Prefix != String.Empty) {
@@ -549,7 +552,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 				openElementCount--;
 				openStartElement = false;
 			} else {
-				w.Write (indentFormatting);
+				WriteIndent ();
 				w.Write ("</");
 				XmlTextWriterOpenElement el = (XmlTextWriterOpenElement) openElements [openElementCount - 1];
 				openElementCount--;
@@ -601,7 +604,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			CheckState ();
 			CloseStartElement ();
 
-			w.Write (indentFormatting);
+			WriteIndent ();
 			w.Write ("<?");
 			w.Write (name);
 			w.Write (' ');
@@ -804,7 +807,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			if (prefix == null)
 				prefix = String.Empty;
 
-			w.Write (indentFormatting);
+			WriteIndent ();
 			w.Write ('<');
 			if (prefix != String.Empty) {
 				w.Write (prefix);
