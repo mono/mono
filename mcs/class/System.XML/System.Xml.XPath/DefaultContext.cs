@@ -588,11 +588,18 @@ namespace System.Xml.XPath
 			
 			StringBuilder ret = new StringBuilder (s0.Length);
 				
-			int pos = 0, len = s0.Length, s2Len = s2.Length;
+			int pos = 0, len = s0.Length, s2len = s2.Length;
 			
 			while (pos < len) {
-				int idx = s1.IndexOf (s0 [pos], 0, s2Len);
-				ret.Append (idx != -1 ? s2 [idx] : s0 [pos]);
+				int idx = s1.IndexOf (s0 [pos]);
+				
+				if (idx != -1) {
+					if (idx < s2len)
+						ret.Append (s2 [idx]);
+				}
+				else
+					ret.Append (s0 [pos]);
+				
 				pos++;
 			}
 			

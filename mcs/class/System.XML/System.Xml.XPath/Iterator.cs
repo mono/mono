@@ -93,7 +93,7 @@ namespace System.Xml.XPath
 
 	internal abstract class SimpleIterator : BaseIterator
 	{
-		protected XPathNavigator _nav;
+		protected readonly XPathNavigator _nav;
 		protected int _pos;
 
 		public SimpleIterator (BaseIterator iter) : base (iter)
@@ -223,15 +223,25 @@ namespace System.Xml.XPath
 		}
 	}
 
-	internal class AncestorOrSelfIterator : MergedIterator
+	internal class AncestorOrSelfIterator : SimpleIterator
 	{
-		public AncestorOrSelfIterator (BaseIterator iter) : base (iter)
-		{
-			Add (new SelfIterator (iter));
-			Add (new AncestorIterator (iter));
-		}
+		public AncestorOrSelfIterator (BaseIterator iter) : base (iter) {}
 		protected AncestorOrSelfIterator (AncestorOrSelfIterator other) : base (other) {}
 		public override XPathNodeIterator Clone () { return new AncestorOrSelfIterator (this); }
+		public override bool MoveNext ()
+		{
+			if (_pos == 0)
+			{
+				_pos ++;
+				return true;
+			}
+			if (_nav.MoveToParent ())
+			{
+				_pos ++;
+				return true;
+			}
+			return false;
+		}
 	}
 
 	internal class DescendantIterator : SimpleIterator
@@ -267,15 +277,42 @@ namespace System.Xml.XPath
 		}
 	}
 
-	internal class DescendantOrSelfIterator : MergedIterator
+	internal class DescendantOrSelfIterator : SimpleIterator
 	{
-		public DescendantOrSelfIterator (BaseIterator iter) : base (iter)
+		protected int _depth;
+		public DescendantOrSelfIterator (BaseIterator iter) : base (iter) {}
+		protected DescendantOrSelfIterator (DescendantOrSelfIterator other) : base (other)
 		{
-			Add (new SelfIterator (iter));
-			Add (new DescendantIterator (iter));
+			_depth = other._depth;
 		}
-		protected DescendantOrSelfIterator (DescendantOrSelfIterator other) : base (other) {}
 		public override XPathNodeIterator Clone () { return new DescendantOrSelfIterator (this); }
+		[MonoTODO]
+		public override bool MoveNext ()
+		{
+			if (_pos == 0)
+			{
+				_pos ++;
+				return true;
+			}
+			if (_nav.MoveToFirstChild ())
+			{
+				_depth ++;
+				_pos ++;
+				return true;
+			}
+			while (_depth != 0)
+			{
+				if (_nav.MoveToNext ())
+				{
+					_pos ++;
+					return true;
+				}
+				if (!_nav.MoveToParent ())	// should NEVER fail!
+					throw new XPathException ("unexpected depth");	// TODO: better message
+				_depth --;
+			}
+			return false;
+		}
 	}
 
 	internal class FollowingIterator : SimpleIterator
@@ -402,11 +439,11 @@ namespace System.Xml.XPath
 
 	internal class AxisIterator : BaseIterator
 	{
-		protected BaseIterator _iter;
+		protected SimpleIterator _iter;
 		protected NodeTest _test;
 		protected int _pos;
 
-		public AxisIterator (BaseIterator iter, NodeTest test) : base (iter)
+		public AxisIterator (SimpleIterator iter, NodeTest test) : base (iter)
 		{
 			_iter = iter;
 			_test = test;
@@ -414,7 +451,7 @@ namespace System.Xml.XPath
 
 		protected AxisIterator (AxisIterator other) : base (other)
 		{
-			_iter = (BaseIterator) other._iter.Clone ();
+			_iter = (SimpleIterator) other._iter.Clone ();
 			_test = other._test;
 			_pos = other._pos;
 		}

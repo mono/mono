@@ -952,7 +952,7 @@ namespace System.Xml.XPath
 			}
 		}
 		public Axes Axis { get { return _axis; }}
-		public virtual BaseIterator Evaluate (BaseIterator iter)
+		public virtual SimpleIterator Evaluate (BaseIterator iter)
 		{
 			switch (_axis)
 			{
@@ -999,7 +999,7 @@ namespace System.Xml.XPath
 		public AxisSpecifier Axis { get { return _axis; }}
 		public override object Evaluate (BaseIterator iter)
 		{
-			BaseIterator iterAxis = _axis.Evaluate (iter);
+			SimpleIterator iterAxis = _axis.Evaluate (iter);
 			return new AxisIterator (iterAxis, this);
 		}
 	}
