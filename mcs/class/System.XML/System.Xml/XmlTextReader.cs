@@ -161,6 +161,12 @@ namespace System.Xml
 			get { return parserContext.BaseURI; }
 		}
 
+#if NET_2_0
+		public override bool CanResolveEntity {
+			get { return true; }
+		}
+#endif
+
 		// for XmlReaderSettings.CloseInput support
 		internal bool CloseInput {
 			get { return closeInput; }
@@ -186,18 +192,13 @@ namespace System.Xml
 #if NET_2_0
 		[MonoTODO]
 		public EntityHandling EntityHandling {
-			get { throw new NotImplementedException (); }
+			get { return entityHandling; }
+			set { entityHandling = value; }
 		}
 #endif
 
-		public override bool EOF
-		{
-			get
-			{
-				return
-					readState == ReadState.EndOfFile ||
-					readState == ReadState.Closed;
-			}
+		public override bool EOF {
+			get { return readState == ReadState.EndOfFile; }
 		}
 
 #if NET_2_0
@@ -739,6 +740,7 @@ namespace System.Xml
 
 		public void ResetState ()
 		{
+			throw new InvalidOperationException ("Cannot call ResetState when parsing an XML fragment.");
 			Init ();
 		}
 
@@ -1115,6 +1117,7 @@ namespace System.Xml
 
 		private bool prohibitDtd = false;
 		private bool closeInput = true;
+		private EntityHandling entityHandling; // 2.0
 
 		private void Init ()
 		{
@@ -1157,7 +1160,7 @@ namespace System.Xml
 				peekChars = new char [peekCharCapacity];
 
 			line = 1;
-			column = 0;
+			column = 1;
 			currentTagLength = 0;
 
 			currentLinkedNodeLineNumber = currentLinkedNodeLinePosition = 0;
@@ -1167,6 +1170,10 @@ namespace System.Xml
 
 			shouldSkipUntilEndTag = false;
 			base64CacheStartsAt = -1;
+
+			prohibitDtd = false;
+			closeInput = true;
+			entityHandling = EntityHandling.ExpandCharEntities;
 		}
 
 		private void InitializeContext (string url, XmlParserContext context, TextReader fragment, XmlNodeType fragType)
@@ -1450,6 +1457,9 @@ namespace System.Xml
 
 			parserContext.NamespaceManager.PushScope ();
 
+			currentLinkedNodeLineNumber = line;
+			currentLinkedNodeLinePosition = column;
+
 			string name = ReadName ();
 			if (currentState == XmlNodeType.EndElement)
 				throw new XmlException (this as IXmlLineInfo,"document has terminated, cannot open new element");
@@ -1549,6 +1559,9 @@ namespace System.Xml
 			if (currentState != XmlNodeType.Element)
 				throw new XmlException (this as IXmlLineInfo,
 					"End tag cannot appear in this state.");
+
+			currentLinkedNodeLineNumber = line;
+			currentLinkedNodeLinePosition = column;
 
 			string name = ReadName ();
 			if (elementNameStackPos == 0)

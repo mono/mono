@@ -66,9 +66,13 @@ namespace System.Xml
 		/// </summary>
 		Closed = 5,
 
+#if NET_2_0
 
-
-
+		/// <summary>
+		/// After an error has happened.
+		/// </summary>
+		Error = 6,
+#endif
 
 	} 
 }

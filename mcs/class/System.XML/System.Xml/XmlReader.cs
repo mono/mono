@@ -742,7 +742,7 @@ namespace System.Xml
 		}
 
 		[MonoTODO]
-		public object ReadTypedValue ()
+		public virtual object ReadTypedValue ()
 		{
 			throw new NotImplementedException ();
 		}
