@@ -1,3 +1,14 @@
+2002-04-28  Duncan Mak  <duncan@ximian.com>
+
+	* ArrayList.cs (ReadOnly):
+	(IList.ReadOnly): Implemented.
+
+	(Synchronized):
+	(IList.Synchronized): Implemented.
+
+	(ixedSize):
+	(IList.FixedSize): Implemented.
+
 2002-03-24  Duncan Mak  <duncan@ximian.com>
 
 	* SortedList.cs (Synchronized): Stubbed out a missing method

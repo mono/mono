@@ -14,27 +14,27 @@ namespace System.Collections {
 	[MonoTODO ("add versioning, changing the arraylist should invalidate all enumerators")]
 	[Serializable]
 	public class ArrayList : IList, ICollection, IEnumerable, ICloneable {
+		
 		// constructors
-
 		public ArrayList () {
 			dataArray = new object[capacity];
 		}
 
 		public ArrayList (ICollection c) {
-			if (null == c) {
+			if (null == c)
 				throw new ArgumentNullException();
-			}
-			dataArray = new object[c.Count];
+
+			dataArray = new object [c.Count];
 			this.capacity = c.Count;
-			foreach(object o in c) {
-				Add(o);
+			foreach (object o in c) {
+				Add (o);
 			}
 		}
 
 		public ArrayList (int capacity) {
-			if (capacity < 0) {
-				throw new ArgumentOutOfRangeException("capacity", capacity, "Value must be greater than or equal to zero.");
-			}
+			if (capacity < 0)
+				throw new ArgumentOutOfRangeException ("capacity", capacity, "Value must be greater than or equal to zero.");
+
 			dataArray = new object[capacity];
 			this.capacity = capacity;
 		}
@@ -42,7 +42,7 @@ namespace System.Collections {
 		private ArrayList (object[] dataArray, int count, int capacity,
 				   bool fixedSize, bool readOnly, bool synchronized)
 		{
-			this.dataArray = (object[])dataArray.Clone();
+			this.dataArray = (object []) dataArray.Clone();
 			this.count = count;
 			this.capacity = capacity;
 			this.fixedSize = fixedSize;
@@ -50,37 +50,74 @@ namespace System.Collections {
 			this.synchronized = synchronized;
 		}
 
-		[MonoTODO]
-		public static ArrayList ReadOnly (ArrayList list) {
-			throw new NotImplementedException ("System.Collections.ArrayList.ReadOnly");
+		public static ArrayList ReadOnly (ArrayList list)
+		{
+			if (list == null)
+				throw new ArgumentNullException ();
+			
+			return new ArrayList (list.ToArray (), list.Count, list.Capacity,
+					      list.IsFixedSize, true, list.IsSynchronized);
 		}
 
-		[MonoTODO]
-		public static IList ReadOnly (IList list) {
-			throw new NotImplementedException ("System.Collections.ArrayList.ReadOnly");
+		public static IList ReadOnly (IList list)
+		{
+			if (list == null)
+				throw new ArgumentNullException ();
+
+			ArrayList al = new ArrayList ();
+
+			foreach (object o in list)
+				al.Add (o);
+
+			return (IList) ArrayList.ReadOnly (al);
 		}
 
-		[MonoTODO]
-		public static ArrayList Synchronized (ArrayList list) {
-			throw new NotImplementedException ("System.Collections.ArrayList.Synchronized");
+		public static ArrayList Synchronized (ArrayList list)
+		{
+			if (list == null)
+				throw new ArgumentNullException ();
+
+			return new ArrayList (list.ToArray (), list.Count, list.Capacity,
+					      list.IsFixedSize, list.IsReadOnly, true);
 		}
 
-		[MonoTODO]
-		public static IList Synchronized (IList list) {
-			throw new NotImplementedException ("System.Collections.ArrayList.Synchronized");
+		public static IList Synchronized (IList list)
+		{
+			if (list == null)
+				throw new ArgumentNullException ();
+
+			ArrayList al = new ArrayList ();
+
+			foreach (object o in list)
+				al.Add (o);
+
+			return (IList) ArrayList.Synchronized (al);
 		}
 
-		[MonoTODO]
-		public static ArrayList FixedSize (ArrayList list) {
-			throw new NotImplementedException ("System.Collections.ArrayList.FixedSize");
+		public static ArrayList FixedSize (ArrayList list)
+		{
+			if (list == null)
+				throw new ArgumentNullException ();
+
+			return new ArrayList (list.ToArray (), list.Count, list.Capacity,
+					      true, list.IsReadOnly, this.IsSynchronized);
 		}
 
-		[MonoTODO]
-		public static IList FixedSize (IList list) {
-			throw new NotImplementedException ("System.Collections.ArrayList.FixedSize");
+		public static IList FixedSize (IList list)
+		{
+			if (list == null)
+				throw new ArgumentNullException ();
+
+			ArrayList al = new ArrayList ();
+
+			foreach (object o in list)
+				al.Add (o);
+
+			return (IList) ArrayList.FixedSize (al);			
 		}
 
-		public static ArrayList Repeat (object value, int count) {
+		public static ArrayList Repeat (object value, int count)
+		{
 			ArrayList al = new ArrayList (count);
 			for (int i = 0; i < count; i++) {
 				al.dataArray[i] = value;
@@ -91,7 +128,8 @@ namespace System.Collections {
 		}
 
 		[MonoTODO]
-		public static ArrayList Adapter (IList list) {
+		public static ArrayList Adapter (IList list)
+		{
 			throw new NotImplementedException ("System.Collections.ArrayList.Adapter");
 		}
 
