@@ -1,3 +1,16 @@
+2002-08-15  Rodrigo Moya <rodrigo@ximian.com>
+
+	* System.Data/UniqueConstraint.cs (UniqueConstraint): commented
+	unreachable code to avoid compiler warning.
+
+	* System.Data.OleDb/libgda.cs (GdaList): added new internal class.
+
+	* System.Data.OleDb/OleDbConnection.cs (DataSource): implemented.
+	(OpenReader): removed internal method.
+
+	* System.Data.OleDb/OleDbCommand.cs (ExecuteReader): split correctly
+	the list of returned data models.
+
 2002-08-15  Franklin Wise <gracenote@earthlink.net>
 	
 	* System.Data/Constraint.cs: Added helper virtual functions

@@ -63,7 +63,8 @@ namespace System.Data.OleDb
 
 		public string Database { 
 			get {
-				if (gdaConnection != IntPtr.Zero && libgda.gda_connection_is_open (gdaConnection)) {
+				if (gdaConnection != IntPtr.Zero
+				    && libgda.gda_connection_is_open (gdaConnection)) {
 					return libgda.gda_connection_get_database (gdaConnection);
 				}
 
@@ -72,15 +73,20 @@ namespace System.Data.OleDb
 		}
 
 		public string DataSource {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				if (gdaConnection != IntPtr.Zero
+				    && libgda.gda_connection_is_open (gdaConnection)) {
+					return libgda.gda_connection_get_dsn (gdaConnection);
+				}
+
+				return null;
 			}
 		}
 
 		public string Provider {
 			get {
-				if (gdaConnection != IntPtr.Zero && libgda.gda_connection_is_open (gdaConnection)) {
+				if (gdaConnection != IntPtr.Zero
+				    && libgda.gda_connection_is_open (gdaConnection)) {
 					return libgda.gda_connection_get_provider (gdaConnection);
 				}
 
@@ -159,7 +165,8 @@ namespace System.Data.OleDb
 
 		public OleDbCommand CreateCommand ()
 		{
-			if (gdaConnection != IntPtr.Zero && libgda.gda_connection_is_open (gdaConnection))
+			if (gdaConnection != IntPtr.Zero
+			    && libgda.gda_connection_is_open (gdaConnection))
 				return new OleDbCommand (null, this);
 
 			return null;
@@ -203,28 +210,6 @@ namespace System.Data.OleDb
 		{
 			throw new NotImplementedException ();
 		}
-
-		#endregion
-
-		#region Internal Methods
-
-		// Used to prevent OleDbConnection
-		// from doing anything while
-		// OleDbDataReader is open.
-		// Open the Reader. (called from OleDbCommand)
-		internal void OpenReader (OleDbDataReader reader)
-		{
-			if(dataReaderOpen == true) {
-				// TODO: throw exception here?
-				//       because a reader
-				//       is already open
-			}
-			else {
-				dataReader = reader;
-				dataReaderOpen = true;
-			}
-		}
-
 
 		#endregion
 

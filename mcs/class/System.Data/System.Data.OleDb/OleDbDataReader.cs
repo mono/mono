@@ -25,7 +25,6 @@ namespace System.Data.OleDb
 		private ArrayList gdaResults;
 		private int currentResult;
 		private int currentRow;
-		private bool isOpened;
 
 		#endregion
 
@@ -41,7 +40,6 @@ namespace System.Data.OleDb
 				gdaResults = new ArrayList ();
 			currentResult = -1;
 			currentRow = -1;
-			isOpened = true;
 		}
 
 		#endregion
@@ -68,13 +66,15 @@ namespace System.Data.OleDb
 
 		public bool IsClosed {
 			get {
-				return !isOpened;
+				return !open;
 			}
 		}
 
 		public object this[string name] {
 			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 
 		public object this[int index] {
@@ -306,6 +306,7 @@ namespace System.Data.OleDb
 			int i = currentResult + 1;
 			if (i >= 0 && i < gdaResults.Count) {
 				currentResult++;
+				currentRow = 0;
 				return true;
 			}
 

@@ -50,6 +50,14 @@ namespace System.Data.OleDb
 		Type = 16,
 		Unknown = 17
 	};
+
+	[StructLayout(LayoutKind.Sequential)]
+	internal class GdaList
+	{
+		public IntPtr data;
+		public IntPtr next;
+		public IntPtr prev;
+	}
 	
 	sealed internal class libgda
 	{

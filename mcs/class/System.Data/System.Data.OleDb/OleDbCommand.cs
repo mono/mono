@@ -13,6 +13,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.Collections;
+using System.Runtime.InteropServices;
 
 namespace System.Data.OleDb
 {
@@ -52,8 +53,7 @@ namespace System.Data.OleDb
 			gdaCommand = IntPtr.Zero;
 		}
 
-		public OleDbCommand (string cmdText)
-			: this ()
+		public OleDbCommand (string cmdText) : this ()
 		{
 			CommandText = cmdText;
 		}
@@ -64,8 +64,9 @@ namespace System.Data.OleDb
 			Connection = connection;
 		}
 
-		public OleDbCommand (string cmdText, OleDbConnection connection, OleDbTransaction transaction)
-			: this (cmdText, connection)
+		public OleDbCommand (string cmdText,
+				     OleDbConnection connection,
+				     OleDbTransaction transaction) : this (cmdText, connection)
 		{
 			this.transaction = transaction;
 		}
@@ -256,6 +257,8 @@ namespace System.Data.OleDb
 		public OleDbDataReader ExecuteReader (CommandBehavior behavior)
 		{
 			ArrayList results = new ArrayList ();
+			IntPtr rs_list;
+			GdaList glist_node;
 
 			if (connection.State != ConnectionState.Open)
 				throw new InvalidOperationException ();
@@ -265,16 +268,23 @@ namespace System.Data.OleDb
 			IntPtr gdaConnection = connection.GdaConnection;
 			IntPtr gdaParameterList = parameters.GdaParameterList;
 
+			/* execute the command */
 			SetupGdaCommand ();
-			/* FIXME: split all returned resultsets into the array
-			   list of results */
-			results.Add (libgda.gda_connection_execute_command (
-						gdaConnection,
-						gdaCommand,
-						gdaParameterList));
+			rs_list = libgda.gda_connection_execute_command (
+				gdaConnection,
+				gdaCommand,
+				gdaParameterList);
+			if (rs_list != IntPtr.Zero) {
+				glist_node = (GdaList) Marshal.PtrToStructure (rs_list, typeof (GdaList));
 
-			dataReader = new OleDbDataReader (this, results);
-			dataReader.NextResult ();
+				while (glist_node != null) {
+					results.Add (glist_node.data);
+					glist_node = (GdaList) Marshal.PtrToStructure (glist_node.next,
+										       typeof (GdaList));
+				}
+				dataReader = new OleDbDataReader (this, results);
+				dataReader.NextResult ();
+			}
 
 			return dataReader;
 		}

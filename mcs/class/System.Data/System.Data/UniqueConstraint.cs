@@ -77,7 +77,7 @@ namespace System.Data
 			string[] columnNames, bool isPrimaryKey) {
 
 			throw new NotImplementedException(); //need to finish related logic
-
+			/*
 			base.ConstraintName = name;
 			
 			//set unique
@@ -87,6 +87,7 @@ namespace System.Data
 			_dataColumnNames = columnNames;
 
 			_isPrimaryKey = isPrimaryKey;
+			*/
 		}
 
 		//helper ctor
