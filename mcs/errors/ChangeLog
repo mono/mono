@@ -1,5 +1,9 @@
 2005-01-25 Marek Safar <marek.safar@seznam.cz>
 
+	* cs0176-4.cs: Bug #71257.
+
+2005-01-25 Marek Safar <marek.safar@seznam.cz>
+
 	* cs0647-14.cs: Bug #71651.
 	
 2005-01-12  Raja R Harinath  <rharinath@novell.com>
