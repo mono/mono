@@ -65,26 +65,19 @@ namespace MonoTests.System.Data.SqlTypes
                         TestString = new SqlString (2057, SqlCompareOptions.BinarySort, new byte [2] {113, 100}, 0, 2);
                         Assert ("#A07", !TestString.IsNull);
 
-                        try {
-                                TestString = new SqlString (2057, SqlCompareOptions.BinarySort, new byte [2] {113, 100}, 2, 1);
-                                Fail ("#A07b");
-                        } catch (Exception e) {
-                                AssertEquals ("#A07c", typeof (ArgumentOutOfRangeException), e.GetType ());
-                        }
-
-                        try {
-                                TestString = new SqlString (2057, SqlCompareOptions.BinarySort, new byte [2] {113, 100}, 0, 4);
-                                Fail ("#A07d");
-                        } catch (Exception e) {
-                                AssertEquals ("#A07e", typeof (ArgumentOutOfRangeException), e.GetType ());
-                        }
-
                         // SqlString (int, SqlCompareOptions, byte[], int, int, bool)
                         TestString = new SqlString (2057, SqlCompareOptions.IgnoreCase, new byte [3] {100, 111, 50}, 1, 2, false);
                         AssertEquals ("#A08", "o2", TestString.Value);
                         TestString = new SqlString (2057, SqlCompareOptions.IgnoreCase, new byte [3] {123, 111, 222}, 1, 2, true);
                         Assert ("#A09", !TestString.IsNull);                        
                 }
+
+		[Test]
+		[ExpectedException(typeof (ArgumentOutOfRangeException))]
+		public void CtorArgumentOutOfRangeException ()
+		{
+			SqlString TestString = new SqlString (2057, SqlCompareOptions.BinarySort, new byte [2] {113, 100}, 2, 1);
+		}
 
                 // Test public fields
 		[Test]

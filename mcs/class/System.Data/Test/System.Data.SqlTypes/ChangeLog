@@ -1,3 +1,7 @@
+2003-06-01  Ville Palo <vi64pa@kolumbus.fi>
+
+	* SqlStringTest.cs: one exception test to nunit2
+	
 2003-05-13  Martin Willemoes Hansen <mwh@sysrq.dk>
 	* All tests inherits from Assertion and Assertion. prefixes removed
 
