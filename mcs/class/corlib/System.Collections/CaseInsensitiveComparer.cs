@@ -22,7 +22,7 @@ namespace System.Collections
 		// Public instance constructor
 		public CaseInsensitiveComparer ()
 		{
-			LAMESPEC: This seems to be encoded while the object is created while Comparer does this at runtime.
+			//LAMESPEC: This seems to be encoded while the object is created while Comparer does this at runtime.
 			culture = CultureInfo.CurrentCulture;
 		}
 
