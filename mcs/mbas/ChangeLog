@@ -1,3 +1,7 @@
+2005-03-25 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* genericparser.cs: another Parse overload to support specifying encoding when parsing from a file.
+	Preparing to implement support for a /codepage option similar to mcs
+
 2005-03-24 Manjula GHM <mmanjula@novell.com>
           * mb-tokenizer.cs: To fix parser error for ExternalSource Directives
 
@@ -19,8 +23,7 @@
 2005-03-24 Manjula GHM <mmanjula@novell.com>
         * statement.cs: Fix bug in 'Exit Function'
 
-
-2005-23-03 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+2005-03-23 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* AssemblyInfo.cs: Some more diligent authors
 	* ecore.cs, cfold.cs, delegate.cs: remove warnings-causing code 
 

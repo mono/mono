@@ -14,6 +14,7 @@ namespace Mono.Languages
 	using System.Reflection;
 	using System.Collections;
 	using System.IO;
+	using System.Text;
 	using Mono.MonoBASIC;
 
 	/// <summary>
@@ -78,7 +79,6 @@ namespace Mono.Languages
 		/// Initializes this parser from a file and parses it
 		/// </summary>
 		/// <param name="fileName">Name of the file to be parsed</param>
-		/// <param name="context">Context to output the parsed tree</param>
 		public int ParseFile(string fileName)
 		{
 			// file exceptions must be caught by caller
@@ -94,11 +94,28 @@ namespace Mono.Languages
 		}
 
 		/// <summary>
+		/// Initializes this parser from a file and parses it
+		/// </summary>
+		/// <param name="fileName">Name of the file to be parsed</param>
+		/// <param name="encoding">Specific encoding to use in parsing</param>
+		public int ParseFile(string fileName, Encoding encoding)
+		{
+			// file exceptions must be caught by caller
+
+			global_errors = 0;
+			name = fileName;
+			// TODO: Encoding switching as needed
+			//   We are here forcing StreamReader to assume an specific encoding
+			input = new StreamReader(fileName, encoding); 
+			//rc = context;
+			return parse();
+		}
+
+		/// <summary>
 		/// Initializes this parser from a string and parses it
 		/// </summary>
 		/// <param name="source">String to be parsed</param>
 		/// <param name="sourceName">Name of the source to be parsed (just for error reporting)</param>
-		/// <param name="context">Context to output the parsed tree</param>
 		public int ParseString(string source, string sourceName)
 		{
 			global_errors = 0;
