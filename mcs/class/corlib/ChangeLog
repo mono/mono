@@ -1,3 +1,7 @@
+2004-04-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib_test.dll.sources: Added DESTest.cs.
+
 2004-04-22  Martin Baulig  <martin@ximian.com>
 
 	Use `#if NET_2_0 || BOOTSTRAP_2_0' for the generic reflection stuff.

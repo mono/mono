@@ -102,6 +102,7 @@ System.Security.Cryptography/AllTests2.cs
 System.Security.Cryptography/AsymmetricAlgorithmTest.cs
 System.Security.Cryptography/CryptoConfigTest.cs
 System.Security.Cryptography/CryptoStreamTest.cs
+System.Security.Cryptography/DESTest.cs
 System.Security.Cryptography/DSACryptoServiceProviderTest.cs
 System.Security.Cryptography/DSASignatureDeformatterTest.cs
 System.Security.Cryptography/DSASignatureFormatterTest.cs
