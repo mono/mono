@@ -1,4 +1,11 @@
 
+Thu Feb 10 15:19:01 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* domain.c, object.h: expose mono_string_equal () and 
+	mono_string_hash ().
+	* icall.c, string-icalls.c: remove the string.GetHashCode () icall,
+	it's implemented in managed code.
+
 Thu Feb 10 15:03:46 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c, gc.c, gc-internal.h: make sure gchandles can't be used
