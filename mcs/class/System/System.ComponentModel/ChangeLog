@@ -1,3 +1,7 @@
+2005-03-02  Jackson Harper  <jackson@ximian.com>
+
+	* EventDescriptorCollection.cs: Handle null in the constructor properly.
+
 2005-02-12  Geoff Norton  <gnorton@customerdna.com>
 
 	* CharConverter.cs: Implement the ability to convert from "".

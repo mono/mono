@@ -53,6 +53,9 @@ namespace System.ComponentModel
 		
 		public EventDescriptorCollection (EventDescriptor[] events) 
 		{
+			if (events == null)
+				return;
+
 			for (int i = 0; i < events.Length; i++)
 				this.Add (events[i]);
 		}
