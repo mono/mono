@@ -60,6 +60,8 @@ namespace System.ComponentModel
 		protected Win32Exception(SerializationInfo info,
 					 StreamingContext context)
 			: base (info, context) {
+
+			native_error_code = info.GetInt32 ("NativeErrorCode");
 		}
 
 		public int NativeErrorCode {
@@ -73,7 +75,7 @@ namespace System.ComponentModel
 			if (info==null)
 				throw new ArgumentNullException ("info");
 
-			info.AddValue ("native_error_code", native_error_code);
+			info.AddValue ("NativeErrorCode", native_error_code);
 			base.GetObjectData (info, context);
 		}
 
