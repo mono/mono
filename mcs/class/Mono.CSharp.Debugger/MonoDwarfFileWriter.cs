@@ -302,7 +302,10 @@ namespace Mono.CSharp.Debugger
 					type_die = new DieBaseType (parent_die, this);
 					return;
 				} else if (type.Equals (typeof (string))) {
-					type_die = new DieStringType (parent_die, this);
+					if (parent_die.Writer.use_gnu_extensions)
+						type_die = new DieMonoStringType (parent_die);
+					else
+						type_die = new DieStringType (parent_die, this);
 					pointer_die = new DieInternalPointer (parent_die, type_die);
 					type_die.CreateType ();
 					return;
@@ -328,11 +331,13 @@ namespace Mono.CSharp.Debugger
 					type_die = new DiePointerType (parent_die, this);
 				else if (type.IsEnum)
 					type_die = new DieEnumType (parent_die, this);
-				else if (type.IsValueType)
+				else if (type.IsValueType) {
 					type_die = new DieStructureType (parent_die, this);
-				else if (type.IsClass) {
+					new DieInternalTypeDef (parent_die, type_die, type.FullName);
+				} else if (type.IsClass) {
 					type_die = new DieClassType (parent_die, this);
 					pointer_die = new DieInternalPointer (parent_die, type_die);
+					new DieInternalTypeDef (parent_die, type_die, type.FullName);
 				} else
 					type_die = new DieTypeDef (parent_die, void_type, type.FullName);
 
@@ -777,6 +782,7 @@ namespace Mono.CSharp.Debugger
 			AT_declaration		= 0x3c,
 			AT_encoding		= 0x3e,
 			AT_external		= 0x3f,
+			AT_specification	= 0x47,
 			AT_type			= 0x49,
 			AT_data_location	= 0x50,
 			AT_end_scope		= 0x2121
@@ -801,6 +807,7 @@ namespace Mono.CSharp.Debugger
 		}
 
 		public enum DW_OP {
+			OP_addr			= 0x03,
 			OP_deref		= 0x06,
 			OP_const1u		= 0x08,
 			OP_const1s		= 0x09,
@@ -1329,6 +1336,40 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
+		public class DieInternalTypeDef : Die
+		{
+			private static int my_abbrev_id;
+
+			static DieInternalTypeDef ()
+			{
+				AbbrevEntry[] entries = {
+					new AbbrevEntry (DW_AT.AT_name, DW_FORM.FORM_string),
+					new AbbrevEntry (DW_AT.AT_type, DW_FORM.FORM_ref4)
+				};
+
+				AbbrevDeclaration decl = new AbbrevDeclaration (
+					DW_TAG.TAG_typedef, false, entries);
+
+				my_abbrev_id = RegisterAbbrevDeclaration (decl);
+			}
+
+			protected Die type_die;
+			protected string name;
+
+			public DieInternalTypeDef (DieCompileUnit parent_die, Die type_die, string name)
+				: base (parent_die, my_abbrev_id)
+			{
+				this.type_die = type_die;
+				this.name = name;
+			}
+
+			public override void DoEmit ()
+			{
+				aw.WriteString (name);
+				DieCompileUnit.WriteRelativeDieReference (type_die);
+			}
+		}
+
 		public class DieInternalPointer : Die
 		{
 			private static int my_abbrev_id;
@@ -1466,6 +1507,7 @@ namespace Mono.CSharp.Debugger
 				my_abbrev_id = RegisterAbbrevDeclaration (decl);
 			}
 
+			protected DieCompileUnit parent_die;
 			protected readonly Type type;
 			protected string name;
 			protected FieldInfo[] fields;
@@ -1473,8 +1515,8 @@ namespace Mono.CSharp.Debugger
 			protected Die[] field_dies;
 
 			protected const BindingFlags FieldBindingFlags =
-				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static |
-				BindingFlags.Instance;
+				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance |
+				BindingFlags.Static;
 
 			public override void CreateType ()
 			{
@@ -1494,8 +1536,16 @@ namespace Mono.CSharp.Debugger
 					else
 						access = DW_ACCESS.ACCESS_protected;
 
-					field_dies [i] = new DieMember (this, fields [i].Name, i,
-									field_types [i], access);
+					if (fields [i].IsStatic) {
+						field_dies [i] = new DieStaticVariable (this, fields [i].Name,
+											i, field_types [i]);
+						string name = String.Concat (type.FullName, ".",
+									     fields [i].Name);
+						new DieStaticVariableDefinition (parent_die, name,
+										 field_dies [i]);
+					} else
+						field_dies [i] = new DieMember (this, fields [i].Name, i,
+										field_types [i], access);
 				}
 
 				base.CreateType ();
@@ -1519,6 +1569,7 @@ namespace Mono.CSharp.Debugger
 						    string name, int abbrev_id)
 				: base (parent_die, type, abbrev_id)
 			{
+				this.parent_die = parent_die;
 				this.type = type.Type;
 				this.name = name;
 			}
@@ -1612,6 +1663,49 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
+		public class DieMonoStringType : DieType
+		{
+			private static int my_abbrev_id;
+
+			static DieMonoStringType ()
+			{
+				AbbrevEntry[] entries = {
+					new AbbrevEntry (DW_AT.AT_string_length, DW_FORM.FORM_block4),
+					new AbbrevEntry (DW_AT.AT_byte_size, DW_FORM.FORM_data4),
+					new AbbrevEntry (DW_AT.AT_data_location, DW_FORM.FORM_block4)
+				};
+
+				AbbrevDeclaration decl = new AbbrevDeclaration (
+					DW_TAG.TAG_string_type, false, entries);
+
+				my_abbrev_id = RegisterAbbrevDeclaration (decl);
+			}
+
+			public DieMonoStringType (Die parent_die)
+				: base (parent_die, parent_die.Writer.string_type, my_abbrev_id)
+			{ }
+
+			public override void DoEmit ()
+			{
+				object end_index;
+
+				end_index = aw.StartSubsectionWithSize ();
+				dw.AddRelocEntry (RelocEntryType.MONO_STRING_STRING_LENGTH);
+				aw.WriteUInt32 (0);
+				aw.WriteUInt32 (0);
+				aw.EndSubsection (end_index);
+
+				dw.AddRelocEntry (RelocEntryType.MONO_STRING_BYTE_SIZE);
+				aw.WriteUInt32 (0);
+
+				end_index = aw.StartSubsectionWithSize ();
+				dw.AddRelocEntry (RelocEntryType.MONO_STRING_DATA_LOCATION);
+				aw.WriteUInt32 (0);
+				aw.WriteUInt32 (0);
+				aw.EndSubsection (end_index);
+			}
+		}
+
 		protected class DieInternalArray : DieType
 		{
 			private static int my_abbrev_id;
@@ -1687,7 +1781,8 @@ namespace Mono.CSharp.Debugger
 			{
 				AbbrevEntry[] entries = {
 					new AbbrevEntry (DW_AT.AT_name, DW_FORM.FORM_string),
-					new AbbrevEntry (DW_AT.AT_byte_size, DW_FORM.FORM_data1)
+					new AbbrevEntry (DW_AT.AT_byte_size, DW_FORM.FORM_data1),
+					new AbbrevEntry (DW_AT.AT_external, DW_FORM.FORM_flag)
 				};
 
 				AbbrevDeclaration decl = new AbbrevDeclaration (
@@ -1721,6 +1816,7 @@ namespace Mono.CSharp.Debugger
 				aw.WriteString (TypeHandle.Name);
 				dw.AddRelocEntry_TypeSize (TypeHandle);
 				aw.WriteUInt8 (0);
+				aw.WriteUInt8 (true);
 			}
 		}
 
@@ -1850,16 +1946,18 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		public abstract class DieVariable : Die
+		public abstract class DieVariable : DieType
 		{
 			private static int my_abbrev_id_this;
 			private static int my_abbrev_id_local;
 			private static int my_abbrev_id_param;
+			private static int my_abbrev_id_static;
 
 			public enum VariableType {
 				VARIABLE_THIS,
 				VARIABLE_PARAMETER,
-				VARIABLE_LOCAL
+				VARIABLE_LOCAL,
+				VARIABLE_STATIC
 			};
 
 			static int get_abbrev_id (VariableType vtype)
@@ -1871,6 +1969,8 @@ namespace Mono.CSharp.Debugger
 					return my_abbrev_id_param;
 				case VariableType.VARIABLE_LOCAL:
 					return my_abbrev_id_local;
+				case VariableType.VARIABLE_STATIC:
+					return my_abbrev_id_static;
 				default:
 					throw new ArgumentException ();
 				}
@@ -1898,6 +1998,12 @@ namespace Mono.CSharp.Debugger
 					new AbbrevEntry (DW_AT.AT_artificial, DW_FORM.FORM_flag),
 					new AbbrevEntry (DW_AT.AT_location, DW_FORM.FORM_block4),
 				};
+				AbbrevEntry[] entries_4 = {
+					new AbbrevEntry (DW_AT.AT_name, DW_FORM.FORM_string),
+					new AbbrevEntry (DW_AT.AT_type, DW_FORM.FORM_ref4),
+					new AbbrevEntry (DW_AT.AT_declaration, DW_FORM.FORM_flag),
+					new AbbrevEntry (DW_AT.AT_location, DW_FORM.FORM_block4)
+				};
 
 				AbbrevDeclaration decl_local = new AbbrevDeclaration (
 					DW_TAG.TAG_variable, false, entries_1);
@@ -1905,23 +2011,21 @@ namespace Mono.CSharp.Debugger
 					DW_TAG.TAG_formal_parameter, false, entries_2);
 				AbbrevDeclaration decl_this = new AbbrevDeclaration (
 					DW_TAG.TAG_formal_parameter, false, entries_3);
-
+				AbbrevDeclaration decl_static = new AbbrevDeclaration (
+					DW_TAG.TAG_variable, false, entries_4);
 
 				my_abbrev_id_local = RegisterAbbrevDeclaration (decl_local);
 				my_abbrev_id_param = RegisterAbbrevDeclaration (decl_param);
 				my_abbrev_id_this = RegisterAbbrevDeclaration (decl_this);
+				my_abbrev_id_static = RegisterAbbrevDeclaration (decl_static);
 			}
 
 			protected string name;
 			protected ITypeHandle type_handle;
 			protected VariableType vtype;
 
-			public DieVariable (Die parent_die, string name, Type type, VariableType vtype)
-				: this (parent_die, name, parent_die.Writer.RegisterType (type), vtype)
-			{ }
-
 			public DieVariable (Die parent_die, string name, ITypeHandle handle, VariableType vtype)
-				: base (parent_die, get_abbrev_id (vtype))
+				: base (parent_die, handle, get_abbrev_id (vtype))
 			{
 				this.name = name;
 				this.type_handle = handle;
@@ -1946,6 +2050,10 @@ namespace Mono.CSharp.Debugger
 					aw.WriteUInt8 (true);
 					DoEmitLocation ();
 					break;
+				case VariableType.VARIABLE_STATIC:
+					aw.WriteUInt8 (true);
+					DoEmitLocation ();
+					break;
 				}
 			}
 
@@ -1966,11 +2074,13 @@ namespace Mono.CSharp.Debugger
 				: base (parent_die, param.Name, param.TypeHandle,
 					VariableType.VARIABLE_PARAMETER)
 			{
+				Console.WriteLine ("PARAM: " + param.Name);
 				this.var = param;
 			}
 
 			public DieMethodVariable (Die parent_die, ISourceMethod method)
-				: base (parent_die, "this", method.MethodBase.ReflectedType,
+				: base (parent_die, "this",
+					parent_die.Writer.RegisterType (method.MethodBase.ReflectedType),
 					VariableType.VARIABLE_THIS)
 			{
 				this.method = method;
@@ -1999,7 +2109,7 @@ namespace Mono.CSharp.Debugger
 					break;
 				}
 				// This looks a bit strange, but OP_fbreg takes a sleb128
-				// agument and we can't fields of variable size.
+				// agument and we can't use fields of variable size.
 				aw.WriteUInt8 ((int) DW_OP.OP_fbreg);
 				aw.WriteSLeb128 (0);
 				aw.WriteUInt8 ((int) DW_OP.OP_const4s);
@@ -2019,7 +2129,72 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		protected const int reloc_table_version = 12;
+		public class DieStaticVariable : DieVariable
+		{
+			public DieStaticVariable (DieType parent_die, string name, int index,
+						  ITypeHandle type)
+				: base (parent_die, name, type, VariableType.VARIABLE_STATIC)
+			{
+				this.parent_die = parent_die;
+				this.index = index;
+				this.type = type;
+			}
+
+			DieType parent_die;
+			ITypeHandle type;
+			int index;
+
+			protected override void DoEmitLocation ()
+			{
+				object end_index = aw.StartSubsectionWithSize ();
+				aw.WriteUInt8 ((int) DW_OP.OP_addr);
+				dw.AddRelocEntry_TypeStaticFieldOffset (parent_die.TypeHandle, index);
+				aw.WriteAddress (0);
+				aw.EndSubsection (end_index);
+			}
+
+			protected override void DoEmitScope ()
+			{ }
+		}
+
+		public class DieStaticVariableDefinition : Die
+		{
+			private static int my_abbrev_id;
+
+			static DieStaticVariableDefinition ()
+			{
+				AbbrevEntry[] entries = {
+					new AbbrevEntry (DW_AT.AT_name, DW_FORM.FORM_string),
+					new AbbrevEntry (DW_AT.AT_specification, DW_FORM.FORM_ref4),
+					new AbbrevEntry (DW_AT.AT_external, DW_FORM.FORM_flag)
+				};
+
+				AbbrevDeclaration decl = new AbbrevDeclaration (
+					DW_TAG.TAG_variable, false, entries);
+
+				my_abbrev_id = RegisterAbbrevDeclaration (decl);
+			}
+
+			protected Die specification_die;
+			protected string name;
+
+			public DieStaticVariableDefinition (DieCompileUnit parent_die, string name,
+							    Die specification_die)
+				: base (parent_die, my_abbrev_id)
+			{
+				this.name = name;
+				this.specification_die = specification_die;
+			}
+
+			public override void DoEmit ()
+			{
+				aw.WriteString (name);
+				DieCompileUnit.WriteRelativeDieReference (specification_die);
+				aw.WriteUInt8 (true);
+			}
+		}
+
+		protected const int reloc_table_version = 13;
 
 		protected enum Section {
 			DEBUG_INFO		= 0x01,
@@ -2111,7 +2286,11 @@ namespace Mono.CSharp.Debugger
 			VARIABLE_END_SCOPE		= 0x10,
 			MONO_STRING_FIELDSIZE		= 0x11,
 			MONO_ARRAY_FIELDSIZE		= 0x12,
-			TYPE_FIELD_FIELDSIZE		= 0x13
+			TYPE_FIELD_FIELDSIZE		= 0x13,
+			MONO_STRING_STRING_LENGTH	= 0x14,
+			MONO_STRING_BYTE_SIZE		= 0x15,
+			MONO_STRING_DATA_LOCATION	= 0x16,
+			TYPE_STATIC_FIELD_OFFSET	= 0x17
 		}
 
 		protected class RelocEntry {
@@ -2255,6 +2434,11 @@ namespace Mono.CSharp.Debugger
 				AddRelocEntry (RelocEntryType.TYPE_FIELD_FIELDSIZE, type, index);
 		}
 
+		protected void AddRelocEntry_TypeStaticFieldOffset (ITypeHandle type, int index)
+		{
+			AddRelocEntry (RelocEntryType.TYPE_STATIC_FIELD_OFFSET, type, index);
+		}
+
 		//
 		// Mono relocation table. See the README.relocation-table file in this
 		// directory for a detailed description of the file format.
@@ -2287,6 +2471,7 @@ namespace Mono.CSharp.Debugger
 				case RelocEntryType.LOCAL_VARIABLE:
 				case RelocEntryType.METHOD_PARAMETER:
 				case RelocEntryType.TYPE_FIELD_OFFSET:
+				case RelocEntryType.TYPE_STATIC_FIELD_OFFSET:
 				case RelocEntryType.VARIABLE_START_SCOPE:
 				case RelocEntryType.VARIABLE_END_SCOPE:
 				case RelocEntryType.TYPE_FIELD_FIELDSIZE:
