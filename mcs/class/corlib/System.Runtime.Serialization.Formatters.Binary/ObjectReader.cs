@@ -477,7 +477,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 				// Register the value
 
-				if (info == null && !parentObject.GetType().IsArray)
+				if (info == null && !(parentObject is Array))
 					RegisterObject (objectId, val, objectInfo, parentObjectId, memberInfo, null);
 				else
 					RegisterObject (objectId, val, objectInfo, parentObjectId, null, indices);
@@ -493,7 +493,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			if (value is IObjectReference)
 				value = ((IObjectReference)value).GetRealObject (_context);
 
-			if (parentObject.GetType().IsArray) 
+			if (parentObject is Array) 
 			{
 				if (value is ArrayNullFiller) 
 				{
@@ -521,7 +521,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			if (info != null) {
 				_manager.RecordDelayedFixup (parentObjectId, fieldName, childObjectId);
 			}
-			else if (parentObject.GetType().IsArray) {
+			else if (parentObject is Array) {
 				if (indices.Length == 1)
 					_manager.RecordArrayElementFixup (parentObjectId, indices[0], childObjectId);
 				else

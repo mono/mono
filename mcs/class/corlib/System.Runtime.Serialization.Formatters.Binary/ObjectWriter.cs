@@ -93,10 +93,10 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			if (isValueObject) id = _idGenerator.NextId;
 			else id = _idGenerator.GetId (obj, out firstTime);
 
-			if (obj.GetType() == typeof(string)) {
+			if (obj is string) {
 				WriteString (writer, id, (string)obj);
 			}
-			else if (obj.GetType().IsArray) {
+			else if (obj is Array) {
 				WriteArray (writer, id, (Array)obj);
 			}
 			else
@@ -504,7 +504,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				// Value types are written embedded in the containing object
 				WriteObjectInstance (writer, val, true);
 			}
-			else if (val.GetType() == typeof(string))
+			else if (val is string)
 			{
 				// Strings are written embedded, unless already registered
 				bool firstTime;
